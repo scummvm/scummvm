@@ -76,7 +76,7 @@ bool PopUp::internalEvents(pyrodactyl::event::Info &info, const Common::String &
 				_show = false;
 
 				for (auto &i : _effect)
-					i.Execute(info, playerId, result, endSeq);
+					i.execute(info, playerId, result, endSeq);
 
 				return true;
 			} else {

@@ -42,118 +42,118 @@ void Effect::load(rapidxml::xml_node<char> *node) {
 	loadStr(ty, "type", node);
 
 	// Should we throw a warning about missing fields? Depends on the type of effect
-	bool echo_op = true, echo_sub = true, echo_val = true;
+	bool echoOp = true, echoSub = true, echoVal = true;
 
 	if (ty == "var")
-		type = EFF_VAR;
+		_type = EFF_VAR;
 	else if (ty == "journal")
-		type = EFF_JOURNAL;
+		_type = EFF_JOURNAL;
 	else if (ty == "person")
-		type = EFF_OBJ;
+		_type = EFF_OBJ;
 	else if (ty == "item")
-		type = EFF_ITEM;
+		_type = EFF_ITEM;
 	else if (ty == "like")
-		type = EFF_LIKE;
+		_type = EFF_LIKE;
 	else if (ty == "fear")
-		type = EFF_FEAR;
+		_type = EFF_FEAR;
 	else if (ty == "respect")
-		type = EFF_RESPECT;
+		_type = EFF_RESPECT;
 	else if (ty == STATNAME_HEALTH)
-		type = EFF_HEALTH;
+		_type = EFF_HEALTH;
 	else if (ty == "sound")
-		type = EFF_SOUND;
+		_type = EFF_SOUND;
 	else if (ty == "money")
-		type = EFF_MONEY;
+		_type = EFF_MONEY;
 	else if (ty == "end") {
-		type = EFF_END;
-		echo_sub = false;
-		echo_val = false;
+		_type = EFF_END;
+		echoSub = false;
+		echoVal = false;
 	} else if (ty == "map")
-		type = EFF_MAP;
+		_type = EFF_MAP;
 	else if (ty == "dest")
-		type = EFF_DEST;
+		_type = EFF_DEST;
 	else if (ty == "img") {
-		type = EFF_IMG;
-		echo_op = false;
-		echo_sub = false;
+		_type = EFF_IMG;
+		echoOp = false;
+		echoSub = false;
 	} else if (ty == "trait") {
-		type = EFF_TRAIT;
-		echo_op = false;
+		_type = EFF_TRAIT;
+		echoOp = false;
 	} else if (ty == "move") {
-		type = EFF_MOVE;
-		echo_op = false;
+		_type = EFF_MOVE;
+		echoOp = false;
 	} else if (ty == "level")
-		type = EFF_LEVEL;
+		_type = EFF_LEVEL;
 	else if (ty == "player") {
-		type = EFF_PLAYER;
-		echo_op = false;
-		echo_sub = false;
+		_type = EFF_PLAYER;
+		echoOp = false;
+		echoSub = false;
 	} else if (ty == "save") {
-		type = EFF_SAVE;
-		echo_op = false;
-		echo_sub = false;
-		echo_val = false;
+		_type = EFF_SAVE;
+		echoOp = false;
+		echoSub = false;
+		echoVal = false;
 	} else if (ty == "quit") {
-		type = EFF_QUIT;
-		echo_op = false;
-		echo_sub = false;
-		echo_val = false;
+		_type = EFF_QUIT;
+		echoOp = false;
+		echoSub = false;
+		echoVal = false;
 	} else
-		type = EFF_VAR;
+		_type = EFF_VAR;
 
-	loadStr(subject, "subject", node, echo_sub);
-	loadStr(operation, "operation", node, echo_op);
-	loadStr(val, "val", node, echo_val);
+	loadStr(_subject, "_subject", node, echoSub);
+	loadStr(_operation, "operation", node, echoOp);
+	loadStr(_val, "_val", node, echoVal);
 }
 
-void Effect::ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType opType) {
-	int old_op = 0;
+void Effect::changeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType opType) {
+	int oldOp = 0;
 
 	// Only bother if the person exists and has a valid opinion
-	if (info.OpinionGet(subject, opType, old_op)) {
-		if (operation == "=")
-			info.OpinionSet(subject, opType, StringToNumber<int>(val));
-		else if (operation == "+")
-			info.OpinionChange(subject, opType, StringToNumber<int>(val));
-		else if (operation == "-")
-			info.OpinionChange(subject, opType, -1 * StringToNumber<int>(val));
+	if (info.OpinionGet(_subject, opType, oldOp)) {
+		if (_operation == "=")
+			info.OpinionSet(_subject, opType, StringToNumber<int>(_val));
+		else if (_operation == "+")
+			info.OpinionChange(_subject, opType, StringToNumber<int>(_val));
+		else if (_operation == "-")
+			info.OpinionChange(_subject, opType, -1 * StringToNumber<int>(_val));
 
-		int new_op = 0;
-		info.OpinionGet(subject, opType, new_op);
+		int newOp = 0;
+		info.OpinionGet(_subject, opType, newOp);
 
-		if (new_op > old_op)
+		if (newOp > oldOp)
 			info.sound.rep_inc = true;
-		else if (new_op < old_op)
+		else if (newOp < oldOp)
 			info.sound.rep_dec = true;
 	}
 }
 
-bool Effect::Execute(pyrodactyl::event::Info &info, const Common::String &player_id,
-					 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
-	if (type < EFF_MOVE) {
-		switch (type) {
+bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &playerId,
+					 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq) {
+	if (_type < EFF_MOVE) {
+		switch (_type) {
 		case EFF_VAR:
-			if (operation == "=")
-				info.VarSet(subject, val);
-			else if (operation == "del")
-				info.VarDel(subject);
-			else if (operation == "+")
-				info.VarAdd(subject, StringToNumber<int>(val));
-			else if (operation == "-")
-				info.VarSub(subject, StringToNumber<int>(val));
-			else if (operation == "*")
-				info.VarMul(subject, StringToNumber<int>(val));
-			else if (operation == "/")
-				info.VarDiv(subject, StringToNumber<int>(val));
+			if (_operation == "=")
+				info.VarSet(_subject, _val);
+			else if (_operation == "del")
+				info.VarDel(_subject);
+			else if (_operation == "+")
+				info.VarAdd(_subject, StringToNumber<int>(_val));
+			else if (_operation == "-")
+				info.VarSub(_subject, StringToNumber<int>(_val));
+			else if (_operation == "*")
+				info.VarMul(_subject, StringToNumber<int>(_val));
+			else if (_operation == "/")
+				info.VarDiv(_subject, StringToNumber<int>(_val));
 			break;
 
 		case EFF_JOURNAL:
-			if (subject == "finish")
-				info.journal.Move(player_id, operation, true);
-			else if (subject == "start")
-				info.journal.Move(player_id, operation, false);
+			if (_subject == "finish")
+				info.journal.Move(playerId, _operation, true);
+			else if (_subject == "start")
+				info.journal.Move(playerId, _operation, false);
 			else
-				info.journal.Add(player_id, subject, operation, val);
+				info.journal.Add(playerId, _subject, _operation, _val);
 
 			// Update unread status of journal
 			info.unread.journal = true;
@@ -163,17 +163,17 @@ bool Effect::Execute(pyrodactyl::event::Info &info, const Common::String &player
 			break;
 
 		case EFF_OBJ:
-			if (operation == "type")
-				info.Type(subject, pyrodactyl::people::StringToPersonType(val));
-			else if (operation == "state")
-				info.State(subject, pyrodactyl::people::StringToPersonState(val));
+			if (_operation == "type")
+				info.Type(_subject, pyrodactyl::people::StringToPersonType(_val));
+			else if (_operation == "state")
+				info.State(_subject, pyrodactyl::people::StringToPersonState(_val));
 			break;
 
 		case EFF_ITEM:
-			if (operation == "del")
-				info.inv.DelItem(subject, val);
+			if (_operation == "del")
+				info.inv.DelItem(_subject, _val);
 			else
-				info.inv.LoadItem(subject, val);
+				info.inv.LoadItem(_subject, _val);
 
 			// Update unread status of inventory
 			info.unread.inventory = true;
@@ -183,56 +183,56 @@ bool Effect::Execute(pyrodactyl::event::Info &info, const Common::String &player
 			break;
 
 		case EFF_LIKE:
-			ChangeOpinion(info, pyrodactyl::people::OPI_LIKE);
+			changeOpinion(info, pyrodactyl::people::OPI_LIKE);
 			break;
 
 		case EFF_FEAR:
-			ChangeOpinion(info, pyrodactyl::people::OPI_FEAR);
+			changeOpinion(info, pyrodactyl::people::OPI_FEAR);
 			break;
 
 		case EFF_RESPECT:
-			ChangeOpinion(info, pyrodactyl::people::OPI_RESPECT);
+			changeOpinion(info, pyrodactyl::people::OPI_RESPECT);
 			break;
 
 		case EFF_HEALTH: {
 			using namespace pyrodactyl::stat;
-			int num = StringToNumber<int>(val);
+			int num = StringToNumber<int>(_val);
 
-			if (operation == "=")
-				info.StatSet(subject, STAT_HEALTH, num);
-			else if (operation == "+")
-				info.StatChange(subject, STAT_HEALTH, num);
-			else if (operation == "-")
-				info.StatChange(subject, STAT_HEALTH, -1 * num);
+			if (_operation == "=")
+				info.StatSet(_subject, STAT_HEALTH, num);
+			else if (_operation == "+")
+				info.StatChange(_subject, STAT_HEALTH, num);
+			else if (_operation == "-")
+				info.StatChange(_subject, STAT_HEALTH, -1 * num);
 		} break;
 
 		case EFF_SOUND:
-			if (subject == "music") {
-				if (operation == "play") {
-					MusicKey m = StringToNumber<MusicKey>(val);
+			if (_subject == "music") {
+				if (_operation == "play") {
+					MusicKey m = StringToNumber<MusicKey>(_val);
 					g_engine->_musicManager->PlayMusic(m);
-				} else if (operation == "stop")
+				} else if (_operation == "stop")
 					g_engine->_musicManager->Stop();
-				else if (operation == "pause")
+				else if (_operation == "pause")
 					g_engine->_musicManager->Pause();
-				else if (operation == "resume")
+				else if (_operation == "resume")
 					g_engine->_musicManager->Resume();
 			} else
-				g_engine->_musicManager->PlayEffect(StringToNumber<ChunkKey>(val), 0);
+				g_engine->_musicManager->PlayEffect(StringToNumber<ChunkKey>(_val), 0);
 			break;
 
 		case EFF_MONEY:
-			info.money_var = val;
+			info.money_var = _val;
 			break;
 
 		case EFF_END:
-			if (operation == "cur")
-				end_seq.push_back(true);
+			if (_operation == "cur")
+				endSeq.push_back(true);
 			else {
 				EventSeqInfo seqinfo;
-				seqinfo.loc = subject;
-				seqinfo.val = val;
-				end_seq.push_back(seqinfo);
+				seqinfo._loc = _subject;
+				seqinfo._val = _val;
+				endSeq.push_back(seqinfo);
 			}
 			break;
 
@@ -243,40 +243,40 @@ bool Effect::Execute(pyrodactyl::event::Info &info, const Common::String &player
 		return true;
 	} else {
 		EventResult r;
-		r.val = subject;
-		r.x = StringToNumber<int>(operation);
-		r.y = StringToNumber<int>(val);
+		r._val = _subject;
+		r._x = StringToNumber<int>(_operation);
+		r._y = StringToNumber<int>(_val);
 
-		switch (type) {
+		switch (_type) {
 		case EFF_MOVE:
-			r.type = ER_MOVE;
+			r._type = ER_MOVE;
 			break;
 		case EFF_MAP:
-			r.type = ER_MAP;
+			r._type = ER_MAP;
 			break;
 		case EFF_DEST:
-			r.type = ER_DEST;
+			r._type = ER_DEST;
 			break;
 		case EFF_IMG:
-			r.type = ER_IMG;
-			info.PlayerImg(StringToNumber<int>(val));
+			r._type = ER_IMG;
+			info.PlayerImg(StringToNumber<int>(_val));
 			break;
 		case EFF_TRAIT:
-			r.type = ER_TRAIT;
+			r._type = ER_TRAIT;
 			info.unread.trait = true;
 			info.sound.notify = true;
 			break;
 		case EFF_LEVEL:
-			r.type = ER_LEVEL;
+			r._type = ER_LEVEL;
 			break;
 		case EFF_PLAYER:
-			r.type = ER_PLAYER;
+			r._type = ER_PLAYER;
 			break;
 		case EFF_SAVE:
-			r.type = ER_SAVE;
+			r._type = ER_SAVE;
 			break;
 		case EFF_QUIT:
-			r.type = ER_QUIT;
+			r._type = ER_QUIT;
 			break;
 		default:
 			break;

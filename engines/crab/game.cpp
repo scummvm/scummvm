@@ -569,22 +569,22 @@ bool Game::ApplyResult() {
 	using namespace pyrodactyl::event;
 
 	for (auto i = event_res.begin(); i != event_res.end(); ++i) {
-		switch (i->type) {
+		switch (i->_type) {
 		case ER_MAP:
-			if (i->val == "img")
-				map.SetImage(i->y);
-			else if (i->val == "pos") {
-				map.player_pos.x = i->x;
-				map.player_pos.y = i->y;
+			if (i->_val == "img")
+				map.SetImage(i->_y);
+			else if (i->_val == "pos") {
+				map.player_pos.x = i->_x;
+				map.player_pos.y = i->_y;
 			}
 			break;
 		case ER_DEST:
-			if (i->x < 0 || i->y < 0) {
-				info.journal.Marker(level.PlayerID(), i->val, false);
-				map.DestDel(i->val);
+			if (i->_x < 0 || i->_y < 0) {
+				info.journal.Marker(level.PlayerID(), i->_val, false);
+				map.DestDel(i->_val);
 			} else {
-				map.DestAdd(i->val, i->x, i->y);
-				info.journal.Marker(level.PlayerID(), i->val, true);
+				map.DestAdd(i->_val, i->_x, i->_y);
+				info.journal.Marker(level.PlayerID(), i->_val, true);
 				info.unread.map = true;
 			}
 			break;
@@ -592,22 +592,22 @@ bool Game::ApplyResult() {
 			PlayerImg();
 			break;
 		case ER_TRAIT:
-			if (i->x == 42)
-				info.TraitDel(i->val, i->y);
+			if (i->_x == 42)
+				info.TraitDel(i->_val, i->_y);
 			else
-				info.TraitAdd(i->val, i->y);
+				info.TraitAdd(i->_val, i->_y);
 			break;
 		case ER_LEVEL:
-			if (i->val == "Map")
+			if (i->_val == "Map")
 				ToggleState(STATE_MAP);
 			else
-				LoadLevel(i->val, i->x, i->y);
+				LoadLevel(i->_val, i->_x, i->_y);
 			break;
 		case ER_MOVE:
 			for (auto &o : level.objects) {
-				if (i->val == o.id()) {
-					o.x(i->x);
-					o.y(i->y);
+				if (i->_val == o.id()) {
+					o.x(i->_x);
+					o.y(i->_y);
 					break;
 				}
 			}
@@ -617,7 +617,7 @@ bool Game::ApplyResult() {
 			level.PlayerStop();
 
 			// Then swap to the new id
-			level.PlayerID(i->val, i->x, i->y);
+			level.PlayerID(i->_val, i->_x, i->_y);
 
 			// Stop the new player sprite's movement as well
 			level.PlayerStop();
@@ -630,7 +630,7 @@ bool Game::ApplyResult() {
 			map.Update(info);
 			break;
 		case ER_QUIT:
-			g_engine->_tempData->credits = (i->val == "credits");
+			g_engine->_tempData->credits = (i->_val == "credits");
 			return true;
 		default:
 			break;
