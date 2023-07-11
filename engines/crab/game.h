@@ -120,7 +120,7 @@ private:
 	}
 
 	// Load the current player image
-	void PlayerImg() { hud.PlayerImg(g_engine->_eventStore->img[info.PlayerImg()]); }
+	void PlayerImg() { hud.PlayerImg(g_engine->_eventStore->_img[info.PlayerImg()]); }
 
 public:
 	Game() : _isInited(false) {}

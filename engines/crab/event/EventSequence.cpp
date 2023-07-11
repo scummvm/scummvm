@@ -44,7 +44,7 @@ void EventSequence::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("events");
 		for (auto n = node->first_node("event"); n != NULL; n = n->next_sibling("event")) {
 			GameEvent e(n);
-			events.push_back(e);
+			_events.push_back(e);
 		}
 	}
 }
@@ -53,11 +53,11 @@ void EventSequence::load(const Common::String &filename) {
 // Purpose: Check for events happening
 //------------------------------------------------------------------------
 void EventSequence::internalEvents(pyrodactyl::event::Info &info) {
-	for (auto nxe = next.begin(); nxe != next.end(); ++nxe)
-		if (*nxe < events.size()) {
-			if (events[*nxe].trig.Evaluate(info)) {
-				event_in_progress = true;
-				cur = *nxe;
+	for (auto nxe = _next.begin(); nxe != _next.end(); ++nxe)
+		if (*nxe < _events.size()) {
+			if (_events[*nxe].trig.Evaluate(info)) {
+				_eventInProgress = true;
+				_cur = *nxe;
 				break;
 			}
 		}
@@ -66,13 +66,13 @@ void EventSequence::internalEvents(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Go to next event
 //------------------------------------------------------------------------
-void EventSequence::NextEvent(pyrodactyl::event::Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
+void EventSequence::nextEvent(pyrodactyl::event::Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
 							  Common::Array<EventSeqInfo> &end_seq, int NextEventChoice) {
 	bool sync = false;
-	event_in_progress = false;
+	_eventInProgress = false;
 
 	// Execute all effects associated with the event
-	for (auto i = events[cur].effect.begin(); i != events[cur].effect.end(); ++i)
+	for (auto i = _events[_cur].effect.begin(); i != _events[_cur].effect.end(); ++i)
 		if (i->execute(info, player_id, result, end_seq))
 			sync = true;
 
@@ -97,14 +97,14 @@ void EventSequence::NextEvent(pyrodactyl::event::Info &info, const Common::Strin
 	}
 
 	// Clear the next event list
-	next.clear();
+	_next.clear();
 
 	// Add the next event to the event list
 	if (NextEventChoice != -1)
-		next.push_back(NextEventChoice);
+		_next.push_back(NextEventChoice);
 	else {
-		for (auto i = events[cur].next.begin(); i != events[cur].next.end(); ++i)
-			next.push_back(*i);
+		for (auto i = _events[_cur].next.begin(); i != _events[_cur].next.end(); ++i)
+			_next.push_back(*i);
 	}
 }
 
@@ -116,12 +116,12 @@ void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 
 	// Write current event id and name to node
 	seqnode->append_attribute(doc.allocate_attribute("name", name));
-	seqnode->append_attribute(doc.allocate_attribute("current", gStrPool->Get(cur)));
+	seqnode->append_attribute(doc.allocate_attribute("current", gStrPool->Get(_cur)));
 
 	// Prepare strings of next events and write them
-	for (unsigned int i = 0; i < next.size(); i++) {
+	for (unsigned int i = 0; i < _next.size(); i++) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "next");
-		child->value(gStrPool->Get(next[i]));
+		child->value(gStrPool->Get(_next[i]));
 		seqnode->append_node(child);
 	}
 
@@ -134,14 +134,14 @@ void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 void EventSequence::loadState(rapidxml::xml_node<char> *node) {
 	rapidxml::xml_attribute<char> *curid = node->first_attribute("current");
 	if (curid != NULL)
-		cur = StringToNumber<unsigned int>(curid->value());
+		_cur = StringToNumber<unsigned int>(curid->value());
 
-	next.clear();
+	_next.clear();
 	for (auto n = node->first_node("next"); n != NULL; n = n->next_sibling("next"))
-		next.push_back(StringToNumber<unsigned int>(n->value()));
+		_next.push_back(StringToNumber<unsigned int>(n->value()));
 
-	if (next.empty())
-		next.push_back(0);
+	if (_next.empty())
+		_next.push_back(0);
 }
 
 } // End of namespace Crab

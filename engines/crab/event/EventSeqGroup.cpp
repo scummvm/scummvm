@@ -45,16 +45,16 @@ void EventSeqGroup::addSeq(const unsigned int &id, Common::String &path) {
 }
 
 bool EventSeqGroup::eventInProgress(const unsigned int &id) {
-	return _seq.contains(id) > 0 && _seq[id].EventInProgress();
+	return _seq.contains(id) > 0 && _seq[id].eventInProgress();
 }
 
 GameEvent *EventSeqGroup::curEvent(const unsigned int &id) {
-	return _seq[id].CurrentEvent();
+	return _seq[id].currentEvent();
 }
 
 void EventSeqGroup::nextEvent(const unsigned int &id, Info &info, const Common::String &playerId,
 							  Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq, const int choice) {
-	return _seq[id].NextEvent(info, playerId, result, endSeq, choice);
+	return _seq[id].nextEvent(info, playerId, result, endSeq, choice);
 }
 
 void EventSeqGroup::internalEvents(Info &info) {
@@ -64,7 +64,7 @@ void EventSeqGroup::internalEvents(Info &info) {
 
 bool EventSeqGroup::activeSeq(unsigned int &activeSeq) {
 	for (auto i = _seq.begin(); i != _seq.end(); ++i)
-		if (i->_value.EventInProgress()) {
+		if (i->_value.eventInProgress()) {
 			activeSeq = i->_key;
 			return true;
 		}
