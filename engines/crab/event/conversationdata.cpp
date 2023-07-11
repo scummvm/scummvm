@@ -35,21 +35,21 @@ namespace Crab {
 using namespace pyrodactyl::event;
 
 void ReplyChoice::load(rapidxml::xml_node<char> *node) {
-	loadStr(text, "text", node);
-	loadNum(tone, "tone", node);
-	loadNum(nextid, "next", node);
+	loadStr(_text, "text", node);
+	loadNum(_tone, "tone", node);
+	loadNum(_nextid, "next", node);
 
 	if (nodeValid("unlock", node, false))
-		unlock.load(node->first_node("unlock"));
+		_unlock.load(node->first_node("unlock"));
 
 	if (nodeValid("change", node, false))
 		for (auto n = node->first_node("change"); n != NULL; n = n->next_sibling("change"))
-			change.push_back(n);
+			_change.push_back(n);
 }
 
 void ConversationData::load(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("reply"); n != NULL; n = n->next_sibling("reply"))
-		reply.push_back(n);
+		_reply.push_back(n);
 }
 
 } // End of namespace Crab

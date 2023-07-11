@@ -41,33 +41,36 @@ namespace pyrodactyl {
 namespace event {
 struct ReplyChoice {
 	// The text for the reply
-	Common::String text;
+	Common::String _text;
 
 	// The tone of the response
-	unsigned int tone;
+	unsigned int _tone;
 
 	// The next event id
-	unsigned int nextid;
+	unsigned int _nextid;
 
 	// The conditions to unlock this choice
-	TriggerSet unlock;
+	TriggerSet _unlock;
 
 	// The changes to opinion that are possible for this reply
 	// All NPCs affected by this conversation
-	Common::Array<ChangeVal> change;
+	Common::Array<ChangeVal> _change;
 
 	ReplyChoice() {
-		tone = 0;
-		nextid = 0;
+		_tone = 0;
+		_nextid = 0;
 	}
-	ReplyChoice(rapidxml::xml_node<char> *node) : ReplyChoice() { load(node); }
+
+	ReplyChoice(rapidxml::xml_node<char> *node) : ReplyChoice() {
+		load(node);
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 };
 
 struct ConversationData {
 	// The set of replies
-	Common::Array<ReplyChoice> reply;
+	Common::Array<ReplyChoice> _reply;
 
 	ConversationData() {}
 
