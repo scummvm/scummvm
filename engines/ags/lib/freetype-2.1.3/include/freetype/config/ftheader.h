@@ -177,7 +177,7 @@
 /*                                                                       */
 /*    It is included by @FT2_1_3_FREETYPE_H.                                  */
 /*                                                                       */
-#define FT2_1_3_ERRORS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
+#define FT2_1_3_ERRORS_H  "engines/ags/lib/freetype-2.1.3/fterrors.h"
 
 
 /*************************************************************************/
@@ -219,7 +219,7 @@
 /*                                                                       */
 /*    It is included by @FT2_1_3_FREETYPE_H.                                  */
 /*                                                                       */
-#define FT2_1_3_IMAGE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftimage.h"
+#define FT2_1_3_IMAGE_H  "engines/ags/lib/freetype-2.1.3/ftimage.h"
 
 
 /*************************************************************************/
@@ -247,7 +247,7 @@
 /*                                                                       */
 /*    (Most applications will never need to include this file.)          */
 /*                                                                       */
-#define FT2_1_3_LIST_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftlist.h"
+#define FT2_1_3_LIST_H  "engines/ags/lib/freetype-2.1.3/ftlist.h"
 
 
 /*************************************************************************/
@@ -259,7 +259,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the scalable outline management API of FreeType 2.                 */
 /*                                                                       */
-#define FT2_1_3_OUTLINE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
+#define FT2_1_3_OUTLINE_H  "engines/ags/lib/freetype-2.1.3/ftoutln.h"
 
 
 /*************************************************************************/
@@ -470,7 +470,7 @@
 /*    applications compiled on the Mac (note that the base API still     */
 /*    works though).                                                     */
 /*                                                                       */
-#define FT2_1_3_MAC_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftmac.h"
+#define FT2_1_3_MAC_H  "engines/ags/lib/freetype-2.1.3/ftmac.h"
 
 
 /*************************************************************************/
@@ -482,7 +482,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the optional multiple-masters management API of FreeType 2.        */
 /*                                                                       */
-#define FT2_1_3_MULTIPLE_MASTERS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftmm.h"
+#define FT2_1_3_MULTIPLE_MASTERS_H  "engines/ags/lib/freetype-2.1.3/ftmm.h"
 
 
 /*************************************************************************/
@@ -502,7 +502,7 @@
 #define FT2_1_3_TRIGONOMETRY_H          "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
 #define FT2_1_3_STROKER_H               "engines/ags/lib/freetype-2.1.3/include/freetype/ftstroker.h"
 #define FT2_1_3_SYNTHESIS_H             "engines/ags/lib/freetype-2.1.3/include/freetype/ftsynth.h"
-#define FT2_1_3_ERROR_DEFINITIONS_H     "engines/ags/lib/freetype-2.1.3/include/freetype/fterrdef.h"
+#define FT2_1_3_ERROR_DEFINITIONS_H     "engines/ags/lib/freetype-2.1.3/fterrdef.h"
 
 #define FT2_1_3_CACHE_MANAGER_H         "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcmanag.h"
 

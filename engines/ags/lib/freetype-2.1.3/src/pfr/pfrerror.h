@@ -32,7 +32,7 @@
 #define FT2_1_3_ERR_PREFIX  PFR_Err_
 #define FT2_1_3_ERR_BASE    FT2_1_3_Mod_Err_PFR
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
+#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
 
 #endif /* __PFRERROR_H__ */
 

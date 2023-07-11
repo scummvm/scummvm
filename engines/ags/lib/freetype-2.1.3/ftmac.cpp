@@ -72,7 +72,7 @@
 #include <TextUtils.h>
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmac.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmac.h"
 
 
 /* Set PREFER_LWFN to 1 if LWFN (Type 1) is preferred over

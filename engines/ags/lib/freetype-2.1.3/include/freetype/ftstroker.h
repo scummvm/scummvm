@@ -2,7 +2,7 @@
 #define AGS_LIB_FREETYPE_FTSTROKER_H
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
+#include "engines/ags/lib/freetype-2.1.3/ftoutln.h"
 
 namespace AGS3 {
 namespace FreeType213 {

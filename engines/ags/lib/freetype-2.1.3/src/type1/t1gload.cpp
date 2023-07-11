@@ -20,7 +20,7 @@
 #include "t1gload.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
+#include "engines/ags/lib/freetype-2.1.3/ftoutln.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
 
 #include "t1errors.h"

@@ -20,7 +20,7 @@
 #include "t42error.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftlist.h"
+#include "engines/ags/lib/freetype-2.1.3/ftlist.h"
 
 
 #undef  FT2_1_3_COMPONENT

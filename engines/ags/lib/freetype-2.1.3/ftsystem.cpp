@@ -29,7 +29,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftsystem.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
+#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
 
 #include <stdio.h>

@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftgzip.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
+#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
 
 #include "pcf.h"
 #include "pcfdriver.h"

@@ -19,7 +19,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
+#include "engines/ags/lib/freetype-2.1.3/ftoutln.h"
 
 #include "t1decode.h"
 #include "psobjs.h"

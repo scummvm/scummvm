@@ -22,7 +22,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
+#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
 
 #include "ftcerror.h"
 

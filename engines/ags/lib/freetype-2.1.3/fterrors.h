@@ -81,7 +81,7 @@
 /*         const char*  err_msg                                          */
 /*       } ft_errors[] =                                                 */
 /*                                                                       */
-/*       #include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"                                            */
+/*       #include "engines/ags/lib/freetype-2.1.3/fterrors.h"                                            */
 /*     }                                                                 */
 /*                                                                       */
 /*************************************************************************/
@@ -169,7 +169,7 @@ FT2_1_3_ERROR_START_LIST
 
 
 /* no include the error codes */
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrdef.h"
+#include "engines/ags/lib/freetype-2.1.3/fterrdef.h"
 
 
 #ifdef FT2_1_3_ERROR_END_LIST
