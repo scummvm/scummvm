@@ -145,7 +145,7 @@ void Button::HoverInfoOnlyDraw(const int &XOffset, const int &YOffset, Rect *cli
 //------------------------------------------------------------------------
 // Purpose: Handle input and stuff
 //------------------------------------------------------------------------
-ButtonAction Button::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+ButtonAction Button::handleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
 	Rect dim = *this;
 	dim.x += XOffset;
 	dim.y += YOffset;
@@ -183,7 +183,7 @@ ButtonAction Button::HandleEvents(const Common::Event &Event, const int &XOffset
 				} else if (Event.type == Common::EVENT_RBUTTONUP)
 					return BUAC_RCLICK;
 			}
-		} else if (hotkey.HandleEvents(Event)) {
+		} else if (hotkey.handleEvents(Event)) {
 			g_engine->_musicManager->PlayEffect(se_click, 0);
 			return BUAC_LCLICK;
 		}
@@ -196,7 +196,7 @@ ButtonAction Button::HandleEvents(const Common::Event &Event, const int &XOffset
 //------------------------------------------------------------------------
 // Purpose: Handle input and stuff
 //------------------------------------------------------------------------
-ButtonAction Button::HandleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
+ButtonAction Button::handleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
 	Rect dim = *this;
 	dim.x += XOffset;
 	dim.y += YOffset;
@@ -234,7 +234,7 @@ ButtonAction Button::HandleEvents(const SDL_Event &Event, const int &XOffset, co
 				} else if (Event.button.button == SDL_BUTTON_RIGHT)
 					return BUAC_RCLICK;
 			}
-		} else if (hotkey.HandleEvents(Event)) {
+		} else if (hotkey.handleEvents(Event)) {
 			g_engine->_musicManager->PlayEffect(se_click, 0);
 			return BUAC_LCLICK;
 		}

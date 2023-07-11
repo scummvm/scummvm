@@ -149,19 +149,19 @@ void OptionMenu::draw(Button &back) {
 	}
 }
 
-bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
+bool OptionMenu::handleEvents(Button &back, const Common::Event &Event) {
 	if (state < STATE_ENTER_W) {
 		bg.draw();
 
 		switch (state) {
 		case STATE_GENERAL:
-			general.HandleEvents(Event);
+			general.handleEvents(Event);
 			break;
 		case STATE_KEYBOARD:
-			keybind.HandleEvents(Event);
+			keybind.handleEvents(Event);
 			break;
 		case STATE_GRAPHICS: {
-			int result = gfx.HandleEvents(Event);
+			int result = gfx.handleEvents(Event);
 			if (result == 1) {
 				state = STATE_CONFIRM;
 				timer.Start();
@@ -180,23 +180,23 @@ bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 
 		switch (state) {
 		case STATE_ENTER_W:
-			if (prompt_w.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
+			if (prompt_w.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->cur.w = StringToNumber<int>(prompt_w.text);
 				state = STATE_ENTER_H;
-			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
+			} else if (cancel.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
 			break;
 		case STATE_ENTER_H:
-			if (prompt_h.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
+			if (prompt_h.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->cur.h = StringToNumber<int>(prompt_h.text);
 				state = STATE_CONFIRM;
 				timer.Start();
 				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
-			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
+			} else if (cancel.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
@@ -204,10 +204,10 @@ bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 
 			break;
 		case STATE_CONFIRM:
-			if (accept.HandleEvents(Event)) {
+			if (accept.handleEvents(Event)) {
 				state = STATE_GRAPHICS;
 				timer.Stop();
-			} else if (cancel.HandleEvents(Event)) {
+			} else if (cancel.handleEvents(Event)) {
 				g_engine->_screenSettings->RestoreBackup();
 				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
@@ -232,19 +232,19 @@ bool OptionMenu::HandleTabs(Button &back, const Common::Event &Event) {
 }
 
 #if 0
-bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
+bool OptionMenu::handleEvents(Button &back, const SDL_Event &Event) {
 	if (state < STATE_ENTER_W) {
 		bg.draw();
 
 		switch (state) {
 		case STATE_GENERAL:
-			general.HandleEvents(Event);
+			general.handleEvents(Event);
 			break;
 		case STATE_KEYBOARD:
-			keybind.HandleEvents(Event);
+			keybind.handleEvents(Event);
 			break;
 		case STATE_GRAPHICS: {
-			int result = gfx.HandleEvents(Event);
+			int result = gfx.handleEvents(Event);
 			if (result == 1) {
 				state = STATE_CONFIRM;
 				timer.Start();
@@ -263,23 +263,23 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 
 		switch (state) {
 		case STATE_ENTER_W:
-			if (prompt_w.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
+			if (prompt_w.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->cur.w = StringToNumber<int>(prompt_w.text);
 				state = STATE_ENTER_H;
-			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
+			} else if (cancel.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
 			break;
 		case STATE_ENTER_H:
-			if (prompt_h.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
+			if (prompt_h.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->cur.h = StringToNumber<int>(prompt_h.text);
 				state = STATE_CONFIRM;
 				timer.Start();
 				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
-			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
+			} else if (cancel.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
@@ -287,10 +287,10 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 
 			break;
 		case STATE_CONFIRM:
-			if (accept.HandleEvents(Event)) {
+			if (accept.handleEvents(Event)) {
 				state = STATE_GRAPHICS;
 				timer.Stop();
-			} else if (cancel.HandleEvents(Event)) {
+			} else if (cancel.handleEvents(Event)) {
 				g_engine->_screenSettings->RestoreBackup();
 				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
@@ -310,12 +310,12 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 
 
 bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
-	if (back.HandleEvents(Event) == BUAC_LCLICK) {
+	if (back.handleEvents(Event) == BUAC_LCLICK) {
 		reset();
 		return true;
 	}
 
-	int choice = menu.HandleEvents(Event);
+	int choice = menu.handleEvents(Event);
 	if (choice >= 0) {
 		if (choice < 4)
 			for (unsigned i = 0; i < menu.element.size(); ++i)

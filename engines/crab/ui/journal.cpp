@@ -128,8 +128,8 @@ void Journal::draw(const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool Journal::HandleEvents(const Common::String &id, const Common::Event &Event) {
-	int choice = category.HandleEvents(Event);
+bool Journal::handleEvents(const Common::String &id, const Common::Event &Event) {
+	int choice = category.handleEvents(Event);
 	if (choice >= 0 && (unsigned int)choice < category.element.size())
 		Select(id, choice);
 
@@ -138,7 +138,7 @@ bool Journal::HandleEvents(const Common::String &id, const Common::Event &Event)
 		// Always find valid journal group first
 		for (auto &jo : journal)
 			if (jo.id == id)
-				return jo.menu[select].HandleEvents(bu_map, marker_title, Event);
+				return jo.menu[select].handleEvents(bu_map, marker_title, Event);
 	}
 
 	return false;
@@ -148,8 +148,8 @@ bool Journal::HandleEvents(const Common::String &id, const Common::Event &Event)
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool Journal::HandleEvents(const Common::String &id, const SDL_Event &Event) {
-	int choice = category.HandleEvents(Event);
+bool Journal::handleEvents(const Common::String &id, const SDL_Event &Event) {
+	int choice = category.handleEvents(Event);
 	if (choice >= 0 && choice < category.element.size())
 		Select(id, choice);
 
@@ -158,7 +158,7 @@ bool Journal::HandleEvents(const Common::String &id, const SDL_Event &Event) {
 		// Always find valid journal group first
 		for (auto &jo : journal)
 			if (jo.id == id)
-				return jo.menu[select].HandleEvents(bu_map, marker_title, Event);
+				return jo.menu[select].handleEvents(bu_map, marker_title, Event);
 	}
 
 	return false;

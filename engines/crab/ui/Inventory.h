@@ -72,9 +72,9 @@ public:
 	void load(const Common::String &filename);
 	void draw(pyrodactyl::people::Person &obj, const int &money_val);
 
-	void HandleEvents(const Common::String &char_id, const Common::Event &Event);
+	void handleEvents(const Common::String &char_id, const Common::Event &Event);
 #if 0
-	void HandleEvents(const Common::String &char_id, const SDL_Event &Event);
+	void handleEvents(const Common::String &char_id, const SDL_Event &Event);
 #endif
 
 	void loadState(rapidxml::xml_node<char> *node);

@@ -54,8 +54,8 @@ void ToggleButton::draw(const int &XOffset, const int &YOffset, Rect *clip) {
 		g_engine->_imageManager->draw(x + offset.x, y + offset.y, off);
 }
 
-ButtonAction ToggleButton::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction action = Button::HandleEvents(Event, XOffset, YOffset);
+ButtonAction ToggleButton::handleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+	ButtonAction action = Button::handleEvents(Event, XOffset, YOffset);
 
 	if (action == BUAC_LCLICK)
 		state = !state;
@@ -64,8 +64,8 @@ ButtonAction ToggleButton::HandleEvents(const Common::Event &Event, const int &X
 }
 
 #if 0
-ButtonAction ToggleButton::HandleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction action = Button::HandleEvents(Event, XOffset, YOffset);
+ButtonAction ToggleButton::handleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
+	ButtonAction action = Button::handleEvents(Event, XOffset, YOffset);
 
 	if (action == BUAC_LCLICK)
 		state = !state;

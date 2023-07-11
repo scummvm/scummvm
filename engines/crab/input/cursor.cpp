@@ -78,7 +78,7 @@ void Cursor::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
-void Cursor::HandleEvents(const Common::Event &event) {
+void Cursor::handleEvents(const Common::Event &event) {
 	g_engine->_mouse->hover = false;
 
 #if 0

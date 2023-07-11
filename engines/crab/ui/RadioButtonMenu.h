@@ -62,8 +62,8 @@ public:
 		Menu::draw(XOffset, YOffset);
 	}
 
-	int HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
-		int result = Menu::HandleEvents(Event, XOffset, YOffset);
+	int handleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
+		int result = Menu::handleEvents(Event, XOffset, YOffset);
 
 		if (result >= 0) {
 			select = result;
@@ -76,8 +76,8 @@ public:
 	}
 
 #if 0
-	int HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
-		int result = Menu::HandleEvents(Event, XOffset, YOffset);
+	int handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
+		int result = Menu::handleEvents(Event, XOffset, YOffset);
 
 		if (result >= 0) {
 			select = result;

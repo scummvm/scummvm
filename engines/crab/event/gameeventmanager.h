@@ -95,10 +95,10 @@ public:
 	// cur_per is also updated here
 	void internalEvents(Info &info, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 
-	void HandleEvents(Info &info, const Common::String &player_id, Common::Event &Event,
+	void handleEvents(Info &info, const Common::String &player_id, Common::Event &Event,
 					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 #if 0
-	void HandleEvents(Info &info, const Common::String &player_id, SDL_Event &Event,
+	void handleEvents(Info &info, const Common::String &player_id, SDL_Event &Event,
 					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 #endif
 

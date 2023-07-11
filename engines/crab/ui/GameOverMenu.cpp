@@ -56,13 +56,13 @@ void GameOverMenu::load(rapidxml::xml_node<char> *node) {
 	}
 }
 
-int GameOverMenu::HandleEvents(const Common::Event &Event) {
-	return menu.HandleEvents(Event);
+int GameOverMenu::handleEvents(const Common::Event &Event) {
+	return menu.handleEvents(Event);
 }
 
 #if 0
-int GameOverMenu::HandleEvents(const SDL_Event &Event) {
-	return menu.HandleEvents(Event);
+int GameOverMenu::handleEvents(const SDL_Event &Event) {
+	return menu.handleEvents(Event);
 }
 #endif
 

@@ -91,7 +91,7 @@ void Level::CalcProperties(Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Handle the level movement
 //------------------------------------------------------------------------
-void Level::HandleEvents(Info &info, const Common::Event &Event) {
+void Level::handleEvents(Info &info, const Common::Event &Event) {
 	if (!g_engine->_mouse->inside_hud) {
 		if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
 			// Only go to path if our mouse is a normal walking cursor
@@ -119,7 +119,7 @@ void Level::HandleEvents(Info &info, const Common::Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Handle the level movement
 //------------------------------------------------------------------------
-void Level::HandleEvents(Info &info, const SDL_Event &Event) {
+void Level::handleEvents(Info &info, const SDL_Event &Event) {
 	if (!g_engine->_mouse->inside_hud) {
 		if (Event.type == SDL_MOUSEBUTTONDOWN) {
 			// Only go to path if our mouse is a normal walking cursor
@@ -140,7 +140,7 @@ void Level::HandleEvents(Info &info, const SDL_Event &Event) {
 		}
 	}
 
-	objects[player_index].HandleEvents(info, camera, sc_default, Event);
+	objects[player_index].handleEvents(info, camera, sc_default, Event);
 }
 #endif
 

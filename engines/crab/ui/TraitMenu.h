@@ -75,9 +75,9 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 	void draw(const pyrodactyl::people::Person *obj);
 
-	void HandleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event);
+	void handleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event);
 #if 0
-	void HandleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event);
+	void handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event);
 #endif
 
 	void Cache(const pyrodactyl::people::Person &obj);

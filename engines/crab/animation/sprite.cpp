@@ -391,7 +391,7 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	}
 
-	updateMove(_input.HandleEvents(Event));
+	updateMove(_input.handleEvents(Event));
 
 	// This is to prevent one frame of drawing with incorrect parameters
 	animate(info);
@@ -401,7 +401,7 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 //------------------------------------------------------------------------
 // Purpose: Handle the movement in a level for the player only
 //------------------------------------------------------------------------
-void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const SDL_Event &Event) {
+void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const SDL_Event &Event) {
 	int num = 0;
 	info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
 	++num;
@@ -456,7 +456,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 			yVel(0.0f);
 	}
 
-	UpdateMove(input.HandleEvents(Event));
+	UpdateMove(input.handleEvents(Event));
 
 	// This is to prevent one frame of drawing with incorrect parameters
 	Animate(info);

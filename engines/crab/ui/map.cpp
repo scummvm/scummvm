@@ -187,7 +187,7 @@ void Map::Move(const Common::Event &Event) {
 	vel.y = 0;
 
 	// We don't use the result, but this keeps the button states up to date
-	scroll.HandleEvents(Event);
+	scroll.handleEvents(Event);
 
 	switch (Event.type) {
 	case Common::EVENT_LBUTTONDOWN:
@@ -263,7 +263,7 @@ void Map::Move(const SDL_Event &Event) {
 	vel.y = 0;
 
 	// We don't use the result, but this keeps the button states up to date
-	scroll.HandleEvents(Event);
+	scroll.handleEvents(Event);
 
 	switch (Event.type) {
 	case SDL_MOUSEBUTTONDOWN: {
@@ -343,18 +343,18 @@ void Map::internalEvents(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
-bool Map::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
-	int choice = travel.HandleEvents(Event, -1 * camera.x, -1 * camera.y);
+bool Map::handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
+	int choice = travel.handleEvents(Event, -1 * camera.x, -1 * camera.y);
 	if (choice >= 0) {
 		cur_loc = travel.element[choice].loc;
 		pan = false;
 		return true;
 	}
 
-	marker.HandleEvents(pos, player_pos, camera, Event);
+	marker.handleEvents(pos, player_pos, camera, Event);
 
 	Move(Event);
-	if (bu_overlay.HandleEvents(Event) == BUAC_LCLICK)
+	if (bu_overlay.handleEvents(Event) == BUAC_LCLICK)
 		overlay = bu_overlay.state;
 
 	return false;
@@ -364,18 +364,18 @@ bool Map::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
-bool Map::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
-	int choice = travel.HandleEvents(Event, -1 * camera.x, -1 * camera.y);
+bool Map::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
+	int choice = travel.handleEvents(Event, -1 * camera.x, -1 * camera.y);
 	if (choice >= 0) {
 		cur_loc = travel.element[choice].loc;
 		pan = false;
 		return true;
 	}
 
-	marker.HandleEvents(pos, player_pos, camera, Event);
+	marker.handleEvents(pos, player_pos, camera, Event);
 
 	Move(Event);
-	if (bu_overlay.HandleEvents(Event) == BUAC_LCLICK)
+	if (bu_overlay.handleEvents(Event) == BUAC_LCLICK)
 		overlay = bu_overlay.state;
 
 	return false;

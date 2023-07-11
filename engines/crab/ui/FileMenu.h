@@ -195,8 +195,8 @@ public:
 		ScanDir();
 	}
 
-	bool HandleEvents(const Common::Event &Event) {
-		int choice = menu.HandleEvents(Event);
+	bool handleEvents(const Common::Event &Event) {
+		int choice = menu.handleEvents(Event);
 		if (choice >= 0) {
 			menu.reset();
 			selected = slot_info[menu.Index() + choice].path;
@@ -208,8 +208,8 @@ public:
 	}
 
 #if 0
-	bool HandleEvents(const SDL_Event &Event) {
-		int choice = menu.HandleEvents(Event);
+	bool handleEvents(const SDL_Event &Event) {
+		int choice = menu.handleEvents(Event);
 		if (choice >= 0) {
 			menu.reset();
 			selected = slot_info[menu.Index() + choice].path;

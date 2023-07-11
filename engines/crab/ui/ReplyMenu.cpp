@@ -60,9 +60,9 @@ void ReplyMenu::load(const Common::String &filename) {
 	}
 }
 
-int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event) {
+int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event) {
 	// After that, check if the user has clicked on any reply option
-	int choice = Menu<ReplyButton>::HandleEvents(Event);
+	int choice = Menu<ReplyButton>::handleEvents(Event);
 	if (choice >= 0 && (unsigned int)choice < dat._reply.size()) {
 		bool play_sound = false;
 
@@ -101,9 +101,9 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::Str
 }
 
 #if 0
-int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event) {
+int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event) {
 	// After that, check if the user has clicked on any reply option
-	int choice = Menu<ReplyButton>::HandleEvents(Event);
+	int choice = Menu<ReplyButton>::handleEvents(Event);
 	if (choice >= 0 && choice < dat._reply.size()) {
 		bool play_sound = false;
 

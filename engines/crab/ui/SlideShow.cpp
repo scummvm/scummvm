@@ -77,34 +77,34 @@ void SlideShow::draw() {
 		next.draw();
 }
 
-void SlideShow::HandleEvents(const Common::Event &Event) {
+void SlideShow::handleEvents(const Common::Event &Event) {
 	using namespace pyrodactyl::input;
 
 	if (index > 0)
-		if (prev.HandleEvents(Event) == BUAC_LCLICK) {
+		if (prev.handleEvents(Event) == BUAC_LCLICK) {
 			index--;
 			Refresh();
 		}
 
 	if (index < path.size() - 1)
-		if (next.HandleEvents(Event) == BUAC_LCLICK) {
+		if (next.handleEvents(Event) == BUAC_LCLICK) {
 			index++;
 			Refresh();
 		}
 }
 
 #if 0
-void SlideShow::HandleEvents(const SDL_Event &Event) {
+void SlideShow::handleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;
 
 	if (index > 0)
-		if (prev.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)) {
+		if (prev.handleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)) {
 			index--;
 			Refresh();
 		}
 
 	if (index < path.size() - 1)
-		if (next.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
+		if (next.handleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
 			index++;
 			Refresh();
 		}

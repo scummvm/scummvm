@@ -68,10 +68,10 @@ public:
 
 	void load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val);
 
-	bool HandleEvents(const Common::Event &Event);
+	bool handleEvents(const Common::Event &Event);
 #if 0
 	// Return true if volume changed
-	bool HandleEvents(const SDL_Event &Event);
+	bool handleEvents(const SDL_Event &Event);
 #endif
 
 	void draw();

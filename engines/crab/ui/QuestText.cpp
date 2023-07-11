@@ -136,11 +136,11 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 	}
 }
 
-void QuestText::HandleEvents(pyrodactyl::event::Quest &q, const Common::Event &Event) {
-	if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK)
+void QuestText::handleEvents(pyrodactyl::event::Quest &q, const Common::Event &Event) {
+	if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK)
 		current_page--;
 
-	if (current_page < total_page - 1 && next.HandleEvents(Event) == BUAC_LCLICK) {
+	if (current_page < total_page - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
 		current_page++;
 
 		if (current_page >= total_page)
@@ -149,15 +149,15 @@ void QuestText::HandleEvents(pyrodactyl::event::Quest &q, const Common::Event &E
 }
 
 #if 0
-void QuestText::HandleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event) {
-	if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK) {
+void QuestText::handleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event) {
+	if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK) {
 		current_page--;
 
 		if (current_page < 0)
 			current_page = 0;
 	}
 
-	if (current_page < total_page - 1 && next.HandleEvents(Event) == BUAC_LCLICK) {
+	if (current_page < total_page - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
 		current_page++;
 
 		if (current_page >= total_page)

@@ -55,8 +55,8 @@ void TextArea::load(rapidxml::xml_node<char> *node) {
 	}
 }
 
-bool TextArea::HandleEvents(const Common::Event &Event, bool numbers_only) {
-	warning("STUB: TextArea::HandleEvents()");
+bool TextArea::handleEvents(const Common::Event &Event, bool numbers_only) {
+	warning("STUB: TextArea::handleEvents()");
 	if (Event.type == Common::EVENT_KEYDOWN && Event.kbd.ascii == Common::ASCII_BACKSPACE && text.size() != 0) {
 		// Now play the text erase sound
 		g_engine->_musicManager->PlayEffect(se_erase, 0);
@@ -92,7 +92,7 @@ bool TextArea::HandleEvents(const Common::Event &Event, bool numbers_only) {
 
 
 #if 0
-bool TextArea::HandleEvents(const SDL_Event &Event, bool numbers_only) {
+bool TextArea::handleEvents(const SDL_Event &Event, bool numbers_only) {
 	// If a key was pressed
 	if (Event.type == SDL_TEXTINPUT) {
 		// If the string less than maximum size and does not contain invalid characters \ / : * ? " < > |

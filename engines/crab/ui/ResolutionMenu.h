@@ -72,9 +72,9 @@ public:
 	void draw();
 
 	// Return 1 if one of resolution buttons is pressed, 2 if custom button is pressed, 0 otherwise
-	int HandleEvents(const Common::Event &Event);
+	int handleEvents(const Common::Event &Event);
 #if 0
-	int HandleEvents(const SDL_Event &Event);
+	int handleEvents(const SDL_Event &Event);
 #endif
 
 	void SetInfo();

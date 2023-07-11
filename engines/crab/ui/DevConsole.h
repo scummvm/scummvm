@@ -67,7 +67,7 @@ public:
 	void draw(pyrodactyl::event::Info &info);
 
 #if 0
-	void HandleEvents(const SDL_Event &Event);
+	void handleEvents(const SDL_Event &Event);
 #endif
 	void internalEvents();
 };

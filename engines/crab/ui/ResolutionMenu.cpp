@@ -96,26 +96,26 @@ void ResolutionMenu::draw() {
 	}
 }
 
-int ResolutionMenu::HandleEvents(const Common::Event &Event) {
+int ResolutionMenu::handleEvents(const Common::Event &Event) {
 	switch (state) {
 	case STATE_NORMAL:
-		if (change.HandleEvents(Event) == BUAC_LCLICK)
+		if (change.handleEvents(Event) == BUAC_LCLICK)
 			state = STATE_CHANGE;
 		break;
 	case STATE_CHANGE: {
-		int choice = Menu::HandleEvents(Event);
+		int choice = Menu::handleEvents(Event);
 		if (choice >= 0) {
 			g_engine->_screenSettings->cur = dim[choice];
 			state = STATE_NORMAL;
 			return 1;
 		}
 
-		if (custom.HandleEvents(Event) == BUAC_LCLICK) {
+		if (custom.handleEvents(Event) == BUAC_LCLICK) {
 			state = STATE_NORMAL;
 			return 2;
 		}
 
-		if (cancel.HandleEvents(Event) == BUAC_LCLICK)
+		if (cancel.handleEvents(Event) == BUAC_LCLICK)
 			state = STATE_NORMAL;
 	} break;
 	default:
@@ -126,26 +126,26 @@ int ResolutionMenu::HandleEvents(const Common::Event &Event) {
 }
 
 #if 0
-int ResolutionMenu::HandleEvents(const SDL_Event &Event) {
+int ResolutionMenu::handleEvents(const SDL_Event &Event) {
 	switch (state) {
 	case STATE_NORMAL:
-		if (change.HandleEvents(Event) == BUAC_LCLICK)
+		if (change.handleEvents(Event) == BUAC_LCLICK)
 			state = STATE_CHANGE;
 		break;
 	case STATE_CHANGE: {
-		int choice = Menu::HandleEvents(Event);
+		int choice = Menu::handleEvents(Event);
 		if (choice >= 0) {
 			g_engine->_screenSettings->cur = dim[choice];
 			state = STATE_NORMAL;
 			return 1;
 		}
 
-		if (custom.HandleEvents(Event) == BUAC_LCLICK) {
+		if (custom.handleEvents(Event) == BUAC_LCLICK) {
 			state = STATE_NORMAL;
 			return 2;
 		}
 
-		if (cancel.HandleEvents(Event) == BUAC_LCLICK)
+		if (cancel.handleEvents(Event) == BUAC_LCLICK)
 			state = STATE_NORMAL;
 	} break;
 	default:

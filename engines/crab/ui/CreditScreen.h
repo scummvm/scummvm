@@ -114,9 +114,9 @@ public:
 	void load(const Common::String &filename);
 	void reset();
 
-	bool HandleEvents(Common::Event &Event);
+	bool handleEvents(Common::Event &Event);
 #if 0
-	bool HandleEvents(SDL_Event &Event);
+	bool handleEvents(SDL_Event &Event);
 #endif
 	void draw();
 

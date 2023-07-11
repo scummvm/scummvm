@@ -42,7 +42,7 @@ void HotKey::load(rapidxml::xml_node<char> *node) {
 }
 
 #if 0
-bool HotKey::HandleEvents(const SDL_Event &Event) {
+bool HotKey::handleEvents(const SDL_Event &Event) {
 	if (input > IT_NONE && input < IT_TOTAL) {
 		int result = g_engine->_inputManager->Equals(input, Event);
 
@@ -58,8 +58,8 @@ bool HotKey::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
-bool HotKey::HandleEvents(const Common::Event &Event) {
-	//warning("STUB: HotKey::HandleEvents()");
+bool HotKey::handleEvents(const Common::Event &Event) {
+	//warning("STUB: HotKey::handleEvents()");
 
 	if (input > IT_NONE && input < IT_TOTAL) {
 		return g_engine->_inputManager->State(input);
