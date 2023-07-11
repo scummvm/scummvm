@@ -71,6 +71,11 @@ extern bool player_enters_scene(int16 scene_num);
  */
 extern void player_forgets_scene(int16 scene_num);
 
+/**
+ * Checks whether player has been in specified scene before
+ */
+extern bool player_been_here(int16 scene_num);
+
 } // End of namespace M4
 
 #endif

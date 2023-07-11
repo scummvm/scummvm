@@ -80,6 +80,7 @@ private:
 	int32 cameraShift_vert_Amount = 0;
 	bool shut_down_digi_tracks_between_rooms = true;
 	int32 camera_pan_step = 10;
+	bool _visited_room = false;
 
 	void get_ipl();
 	void get_walker();

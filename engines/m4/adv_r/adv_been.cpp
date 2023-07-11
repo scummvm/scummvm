@@ -58,10 +58,7 @@ void player_been_sync(Common::Serializer &s) {
 	s.syncBytes(_G(scene_list).table, _G(scene_list).total_scenes);
 }
 
-/**
- * Checks whether player has been in specified scene before
- */
-static bool player_been_here(int16 scene_num) {
+bool player_been_here(int16 scene_num) {
 	for (int i = 0; i < _G(scene_list).tail; i++)
 		if (_G(scene_list).table[i] == scene_num)
 			return true;

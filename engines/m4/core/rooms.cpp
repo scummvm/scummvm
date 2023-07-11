@@ -21,12 +21,17 @@
 
 #include "m4/core/rooms.h"
 #include "m4/core/errors.h"
+#include "m4/adv_r/adv_been.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/adv_interface.h"
+#include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/db_env.h"
 #include "m4/fileio/extensions.h"
+#include "m4/graphics/krn_pal.h"
 #include "m4/gui/gui_buffer.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
@@ -100,47 +105,50 @@ void Sections::m4SceneLoad() {
 	_G(between_rooms) = false;
 
 	room_init();
-#ifdef TODO
 	_G(player).walker_trigger = -1;
 
-	if (_G(game).previous_room == KERNEL_RESTORING_GAME)
-	{
-		if (_G(player).walker_in_this_scene) {
-			// if restoring game, restore player position and facing
-			player_demand_location(player_info.x, player_info.y);
-			player_demand_facing(player_info.facing);
-		}
-		// restore camera position
-		MoveScreenAbs(game_buff_ptr, player_info.camera_x, player_info.camera_y);
-	}
 
-	//enable_end_user_hot_keys();
-	term_message("calling room_init_code");
-	util_exec_function(room_init_code_pointer);
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
-		interface_show();
+		if (_G(player).walker_in_this_scene) {
+			// If restoring game, restore player position and facing
+			player_demand_location(_G(player_info).x, _G(player_info).y);
+			player_demand_facing(_G(player_info).facing);
+		}
+
+		// Restore camera position
+		MoveScreenAbs(_G(game_buff_ptr), _G(player_info).camera_x, _G(player_info).camera_y);
+	}
+
+	_visited_room = player_been_here(_G(game).room_id);
+
+	term_message("calling room_init_code");
+	g_engine->room_init();
+
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		_G(game).previous_room = -1;
 	}
 
-	// init for fade up screen
+	// Init for fade up screen
 	if (!_G(kernel).supress_fadeup) {
-		pal_fade_set_start(&master_palette[0], 0);			//set fade to black instantly (0 ticks)
-		pal_fade_init(&master_palette[0], _G(kernel).first_fade, 255, 100, _G(kernel).fade_up_time, 32765);      // 30 ticks
+		pal_fade_set_start(&_G(master_palette)[0], 0);	// Set fade to black instantly (0 ticks)
+		pal_fade_init(&_G(master_palette)[0], _G(kernel).first_fade, 255, 100,
+			_G(kernel).fade_up_time, 32765);      // 30 ticks
 	}
 
 	if (!_G(set_commands_allowed_since_last_checked))
 		player_set_commands_allowed(true);
 
-	if (player_been_here(_G(game).room_id))
+	if (player_been_here(_G(game).room_id)) {
 		_G(player).been_here_before = true;
-	else {
+	} else {
 		_G(player).been_here_before = false;
 		player_enters_scene(_G(game).room_id);
 	}
 
 	//-------------------- PLAY ROOM ------------------
-#endif
+
+	term_message("Off to the races -- %d", timer_read_60());
 }
 
 void Sections::get_ipl() {
