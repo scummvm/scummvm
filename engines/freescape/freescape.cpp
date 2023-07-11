@@ -456,6 +456,7 @@ void FreescapeEngine::processInput() {
 
 		case Common::EVENT_SCREEN_CHANGED:
 			_gfx->computeScreenViewport();
+			_gfx->clear(0, 0, 0, true);
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -573,7 +574,7 @@ Common::Error FreescapeEngine::run() {
 
 	resetInput();
 	_gfx->computeScreenViewport();
-	drawFrame();
+	_gfx->clear(0, 0, 0, true);
 	_gfx->flipBuffer();
 	g_system->updateScreen();
 

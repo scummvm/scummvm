@@ -98,6 +98,7 @@ void DrillerEngine::titleScreen() {
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(3000);
+		_gfx->clear(0, 0, 0, true);
 	}
 }
 void DrillerEngine::borderScreen() {
@@ -109,6 +110,7 @@ void DrillerEngine::borderScreen() {
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(3000);
+		_gfx->clear(0, 0, 0, true);
 	}
 }
 

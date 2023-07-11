@@ -213,7 +213,7 @@ void TinyGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 	tglColor3ub(r, g, b);
 }
 
-void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b) {
+void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
 	tglClearColor(r / 255., g / 255., b / 255., 1.0);
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
