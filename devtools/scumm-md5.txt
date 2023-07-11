@@ -803,7 +803,7 @@ socks	Pajama Sam's Sock Works
 
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	32898	us	All	HE 98	-	-	Kirben
-	05d3143827ab4f5d2521a1a47dab8ff2	-1	it	All	HE 98	-	-	Saleck
+	05d3143827ab4f5d2521a1a47dab8ff2	-1	it	All	HE 99	-	-	Saleck
 	1ed22f601f8b3695804a6583cc3083f1	32898	nl	All	HE 98.5	-	-	daniel9
 	33e989f85da700e2014d00f345cab3d7	32754	fr	Windows	HE 98.5	-	-	gist974
 	b47be81e39a9710f6f595f7b527b60f8	32923	gb	Windows	HE 99	-	-	Reckless
