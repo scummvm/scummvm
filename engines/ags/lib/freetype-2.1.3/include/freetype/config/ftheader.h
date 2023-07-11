@@ -233,7 +233,7 @@
 /*                                                                       */
 /*    It is included by @FT2_1_3_FREETYPE_H.                                  */
 /*                                                                       */
-#define FT2_1_3_TYPES_H  "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
+#define FT2_1_3_TYPES_H  "engines/ags/lib/freetype-2.1.3/fttypes.h"
 
 
 /*************************************************************************/
@@ -510,7 +510,7 @@
 #define FT2_1_3_CACHE_INTERNAL_GLYPH_H  "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
 #define FT2_1_3_CACHE_INTERNAL_CACHE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftccache.h"
 
-#define FT2_1_3_XFREE86_H               "engines/ags/lib/freetype-2.1.3/include/freetype/ftxf86.h"
+#define FT2_1_3_XFREE86_H               "engines/ags/lib/freetype-2.1.3/ftxf86.h"
 
 #define FT2_1_3_INCREMENTAL_H           "engines/ags/lib/freetype-2.1.3/ftincrem.h"
 

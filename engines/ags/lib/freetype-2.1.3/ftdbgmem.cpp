@@ -22,7 +22,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftmemory.h"
 #include "engines/ags/lib/freetype-2.1.3/ftsystem.h"
 #include "engines/ags/lib/freetype-2.1.3/fterrors.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
+#include "engines/ags/lib/freetype-2.1.3/fttypes.h"
 
 
 #ifdef FT2_1_3_DEBUG_MEMORY

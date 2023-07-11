@@ -30,7 +30,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/ftsystem.h"
 #include "engines/ags/lib/freetype-2.1.3/fterrors.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
+#include "engines/ags/lib/freetype-2.1.3/fttypes.h"
 
 #include <stdio.h>
 #include <stdlib.h>

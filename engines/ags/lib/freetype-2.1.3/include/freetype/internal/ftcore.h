@@ -2,7 +2,7 @@
 #define AGS_LIB_FREETYPE_FTCORE_H
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
+#include "engines/ags/lib/freetype-2.1.3/fttypes.h"
 #include FT2_1_3_SYSTEM_MEMORY_H
 
 namespace AGS3 {

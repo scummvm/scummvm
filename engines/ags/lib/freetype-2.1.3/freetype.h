@@ -41,7 +41,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/fterrors.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
+#include "engines/ags/lib/freetype-2.1.3/fttypes.h"
 
 namespace AGS3 {
 namespace FreeType213 {
