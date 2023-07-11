@@ -127,6 +127,11 @@ int rCreateSurface(unsigned int dimx, unsigned int dimy, unsigned char flags) {
 	return 0;
 }
 
+void *rCreateSurfaceP(unsigned int dimx, unsigned int dimy, unsigned char flags) {
+	warning("STUBBED: rCreateSurfaceP");
+	return nullptr;
+}
+
 VertexBuffer rCreateVertexBuffer(unsigned int num) {
 	//warning("STUBBED: rCreateVertexBuffer");
 	return VertexBuffer();

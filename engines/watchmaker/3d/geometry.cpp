@@ -654,7 +654,7 @@ void t3dCreateProceduralSky(void) {
 	tab = new uint8[MaxSetDimX * MaxSetDimY * 3]{};
 
 	if (!SkySurface)  // rReleaseBitmapDirect( SkySurface );
-		SkySurface = (gTexture *)rCreateSurface(256, 256, rTEXTURESURFACE);
+		SkySurface = (gTexture *)rCreateSurfaceP(256, 256, rTEXTURESURFACE);
 
 	p = (unsigned short *)rLockSurfaceDirect(SkySurface, (unsigned int *)&pitch);
 	pitch /= 2;

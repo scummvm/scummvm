@@ -171,7 +171,7 @@ void HandleCameraCarrello(t3dBODY *croom) {
 
 //	Se e' appena partito il carrello
 	if (!bCameraCarrello) {
-		memcpy(&CameraCarrello, t3dCurCamera, sizeof(CameraCarrello));
+		CameraCarrello = *t3dCurCamera;
 		t3dCurCamera = &CameraCarrello;
 	}
 
@@ -868,9 +868,9 @@ void StartAnimCamera(WGame &game) {
 
 	LastCamera = t3dCurCamera;
 	DestCamera = PickCamera(t3dCurRoom, t3dCurCameraIndex);
-
-	memcpy(&AnimCamera, DestCamera, sizeof(AnimCamera));
+	AnimCamera = *DestCamera;
 	t3dCurCamera = &AnimCamera;
+
 	game._renderer->setCurCameraViewport(t3dCurCamera->Fov, bSuperView);
 
 	bCameraCarrello = FALSE;
