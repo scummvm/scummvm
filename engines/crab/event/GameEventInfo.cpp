@@ -185,7 +185,7 @@ void Info::VarDel(const Common::String &name) {
 void Info::TraitAdd(const Common::String &per_id, const int &trait_id) {
 	if (PersonValid(per_id)) // Valid person id
 	{
-		if (trait_id >= 0 && (unsigned int)trait_id < g_engine->_eventStore->trait.size()) // Valid trait id
+		if (trait_id >= 0 && (unsigned int)trait_id < g_engine->_eventStore->_trait.size()) // Valid trait id
 		{
 			// Check for duplicate traits, DONT award anything if duplicate found
 			Person *p = &PersonGet(per_id);
@@ -194,9 +194,9 @@ void Info::TraitAdd(const Common::String &per_id, const int &trait_id) {
 				if (i->id == trait_id)
 					return;
 
-			p->trait.push_back(g_engine->_eventStore->trait[trait_id]);
+			p->trait.push_back(g_engine->_eventStore->_trait[trait_id]);
 
-			g_engine->_eventStore->SetAchievement(g_engine->_eventStore->trait[trait_id].id);
+			g_engine->_eventStore->setAchievement(g_engine->_eventStore->_trait[trait_id].id);
 		}
 	}
 }
@@ -204,7 +204,7 @@ void Info::TraitAdd(const Common::String &per_id, const int &trait_id) {
 void Info::TraitDel(const Common::String &per_id, const int &trait_id) {
 	if (PersonValid(per_id)) // Valid person id
 	{
-		if (trait_id > 0 && (unsigned int)trait_id < g_engine->_eventStore->trait.size()) // Valid trait id
+		if (trait_id > 0 && (unsigned int)trait_id < g_engine->_eventStore->_trait.size()) // Valid trait id
 		{
 			Person *p = &PersonGet(per_id);
 

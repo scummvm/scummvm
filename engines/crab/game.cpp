@@ -57,7 +57,7 @@ void Game::LoadGame() {
 
 void Game::Init(const Common::String &filename) {
 	g_engine->_loadingScreen->Dim();
-	g_engine->_eventStore->Clear();
+	g_engine->_eventStore->clear();
 	game_over.Clear(false);
 	state = STATE_GAME;
 	savefile.auto_slot = false;

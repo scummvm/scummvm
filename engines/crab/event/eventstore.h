@@ -43,44 +43,45 @@ namespace event {
 // This structure is responsible for storing the special data structures for events like replies, conversations
 struct GameEventStore {
 	// Data related to conversation events
-	Common::Array<ConversationData> con;
+	Common::Array<ConversationData> _con;
 
 	// Data related to animations
-	Common::Array<pyrodactyl::anim::Animation> anim;
+	Common::Array<pyrodactyl::anim::Animation> _anim;
 
 	// Data related to the tones of a character
 	struct ToneData {
-		Common::String text;
+		Common::String _text;
 	};
 
 	// This sets the text the player sees as "tone" during the reply menu
-	Common::Array<ToneData> tone;
+	Common::Array<ToneData> _tone;
 
 	// We need to change player character images when switching between characters
-	Common::Array<pyrodactyl::ui::StateButtonImage> img;
+	Common::Array<pyrodactyl::ui::StateButtonImage> _img;
 
 	// The set of traits for various characters
-	Common::Array<pyrodactyl::people::Trait> trait;
+	Common::Array<pyrodactyl::people::Trait> _trait;
 
 	// Steam UserStats interface
 	// ISteamUserStats *m_pSteamUserStats;
 
 	GameEventStore() {
 		// Huge number to prevent lots of resizing and stuff
-		con.reserve(9999);
+		_con.reserve(9999);
 
-		trait.reserve(120);
-		tone.reserve(120);
+		_trait.reserve(120);
+		_tone.reserve(120);
 	}
 
-	void Clear() {
-		con.clear();
-		anim.clear();
+	void clear() {
+		_con.clear();
+		_anim.clear();
 	}
+
 	void load(const Common::String &filename);
 
-	void AddConv(rapidxml::xml_node<char> *node, unsigned int &index);
-	void SetAchievement(const int &id);
+	void addConv(rapidxml::xml_node<char> *node, unsigned int &index);
+	void setAchievement(const int &id);
 };
 
 } // End of namespace event

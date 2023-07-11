@@ -140,7 +140,7 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, Common::
 					if (info.PersonValid(cur_event->title))
 						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
-				int choice = reply.handleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
+				int choice = reply.handleEvents(info, g_engine->_eventStore->_con[cur_event->special], cur_event->title, oh, Event);
 				if (choice >= 0) {
 					event_map[info.CurLocID()].nextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
@@ -280,7 +280,7 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 				using namespace pyrodactyl::anim;
 
 				DrawType draw_val = DRAW_SAME;
-				if (g_engine->_eventStore->anim[cur_event->special].internalEvents(draw_val))
+				if (g_engine->_eventStore->_anim[cur_event->special].internalEvents(draw_val))
 					event_map[info.CurLocID()].nextEvent(active_seq, info, level.PlayerID(), result, end_seq);
 
 				if (draw_val == DRAW_STOP)
@@ -319,7 +319,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 	if (event_map.contains(info.CurLocID()) > 0 && event_map[info.CurLocID()].eventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->anim[cur_event->special].draw();
+			g_engine->_eventStore->_anim[cur_event->special].draw();
 			break;
 		case EVENT_DIALOG:
 			g_engine->_imageManager->DimScreen();
@@ -373,10 +373,10 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 
 		switch (cur_event->type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->anim[cur_event->special].start();
+			g_engine->_eventStore->_anim[cur_event->special].start();
 			break;
 		case EVENT_REPLY:
-			reply.Cache(info, g_engine->_eventStore->con[cur_event->special]);
+			reply.Cache(info, g_engine->_eventStore->_con[cur_event->special]);
 			break;
 		default:
 			break;

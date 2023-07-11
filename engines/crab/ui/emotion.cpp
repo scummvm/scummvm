@@ -42,8 +42,8 @@ void EmotionIndicator::load(rapidxml::xml_node<char> *node) {
 
 void EmotionIndicator::draw(const int &select) {
 	if (select >= 0 && (unsigned int)select < value.size())
-		if (value[select] < g_engine->_eventStore->tone.size()) {
-			text.draw(g_engine->_eventStore->tone[value[select]].text);
+		if (value[select] < g_engine->_eventStore->_tone.size()) {
+			text.draw(g_engine->_eventStore->_tone[value[select]]._text);
 		}
 }
 

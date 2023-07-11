@@ -44,34 +44,42 @@ namespace Crab {
 namespace pyrodactyl {
 namespace event {
 class EventSequence {
-	Common::Array<GameEvent> events;
-	bool event_in_progress;
+	Common::Array<GameEvent> _events;
+	bool _eventInProgress;
 
 	// The event currently in execution - updated only when all trigger conditions are met in InternalEvents
-	unsigned int cur;
+	unsigned int _cur;
 
 	// The events that can happen next - these are updated when the cur event is over
 	// This means cur and next operate in an alternating way
 	// scan next until find event, make it cur, end cur and update next, repeat
-	Common::Array<unsigned int> next;
+	Common::Array<unsigned int> _next;
 
 public:
 	EventSequence() {
-		event_in_progress = false;
-		next.push_back(0);
-		cur = 0;
+		_eventInProgress = false;
+		_next.push_back(0);
+		_cur = 0;
 	}
+
 	~EventSequence() {}
 
-	GameEvent *CurrentEvent() { return &events[cur]; }
+	GameEvent *currentEvent() {
+		 return &_events[_cur];
+	}
 
 	// See if we should trigger any event
 	void internalEvents(pyrodactyl::event::Info &info);
-	void NextEvent(Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
-				   Common::Array<EventSeqInfo> &end_seq, int NextEventChoice = -1);
+	void nextEvent(Info &info, const Common::String &playerId, Common::Array<EventResult> &result,
+				   Common::Array<EventSeqInfo> &endSeq, int nextEventChoice = -1);
 
-	bool EventInProgress() { return event_in_progress; }
-	void EventInProgress(bool val) { event_in_progress = val; }
+	bool eventInProgress() {
+		return _eventInProgress;
+	}
+
+	void eventInProgress(bool val) {
+		_eventInProgress = val;
+	}
 
 	// Load and save
 	void load(const Common::String &filename);
