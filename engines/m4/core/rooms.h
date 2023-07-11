@@ -134,7 +134,7 @@ public:
 	}
 
 	void m4SceneLoad();
-	void m4SceneRun();
+	void m4EndScene();
 };
 
 } // namespace M4

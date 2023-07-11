@@ -24,8 +24,10 @@
 #include "m4/adv_r/adv_been.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/adv_interface.h"
+#include "m4/adv_r/adv_scale.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/db_env.h"
+#include "m4/adv_r/other.h"
 #include "m4/fileio/extensions.h"
 #include "m4/graphics/krn_pal.h"
 #include "m4/gui/gui_buffer.h"
@@ -35,8 +37,6 @@
 #include "m4/m4.h"
 
 namespace M4 {
-
-constexpr int kScaleEditor = 1;
 
 HotSpotRec *Section::walker_spotter(int32 x, int32 y) {
 	warning("TODO: walker_spotter");
@@ -140,18 +140,76 @@ void Sections::m4SceneLoad() {
 	if (!_G(set_commands_allowed_since_last_checked))
 		player_set_commands_allowed(true);
 
-	//-------------------- PLAY ROOM ------------------
+	//-------------------- PRE-PLAY ROOM ------------------
 
 	term_message("Off to the races -- %d", timer_read_60());
-}
 
-void Sections::m4SceneRun() {
 	game_control_cycle();
 
 	if (!player_been_here(_G(game).room_id))
 		player_enters_scene(_G(game).room_id);
+}
 
+void Sections::m4EndScene() {
+	_G(between_rooms) = true;
+	hotspot_unhide_and_dump();
 
+	if (!_G(kernel).going && _GI()._visible && player_commands_allowed())
+		other_save_game_for_resurrection();
+
+	if (_G(kernel).teleported_in) {
+		_G(kernel).teleported_in = false;
+		pal_fade_set_start(&_G(master_palette)[0], 0);			// Set fade to black instantly (0 ticks)
+	}
+
+	//-------------------- cancel all editors ------------------
+
+	scale_editor_cancel();
+#ifdef TODO
+	//-------------------- ROOM SHUTDOWN CODE ------------------
+
+	term_message("Shuttin' down the scene");
+	util_exec_function(room_shutdown_code_pointer);
+	kernel_unload_room(&currentSceneDef, &screenCodeBuff, &game_bgBuff);
+
+	pal_cycle_stop();
+
+	if (shut_down_digi_tracks_between_rooms) {
+		digi_stop(1);
+		digi_stop(2);
+		digi_stop(3);
+		digi_flush_mem();
+	}
+	conv_unload(conv_get_handle()); //apr24
+
+	//-------------------- DUMP ASSETS AND MINI-ENGINES ------------------
+	//note machines should always be cleared before anything else
+	ClearWSAssets(_WS_ASSET_MACH, 0, 255);
+	ClearWSAssets(_WS_ASSET_SEQU, 0, 255);
+	ClearWSAssets(_WS_ASSET_DATA, 0, 255);
+	ClearWSAssets(_WS_ASSET_CELS, 0, 255);
+
+	//reload the walker and show scripts.
+	if (!LoadWSAssets("walker script", &_G(master_palette)[0]))
+	{
+		error_show(FL, 'FNF!', "walker script");
+	}
+	if (!LoadWSAssets("show script", &_G(master_palette)[0]))
+	{
+		error_show(FL, 'FNF!', "show script");
+	}
+	if (!LoadWSAssets("stream script", &_G(master_palette)[0]))
+	{
+		error_show(FL, 'FNF', "stream script");
+	}
+
+	// load main interface sprites
+	main_interface_sprite = AddWSAssetCELS("INTERFACE STUFF", 22, &_G(master_palette)[0]);
+	//gr_pal_interface(&_G(master_palette)[0]);
+	if (main_interface_sprite != 22) {
+		error_show(FL, 'SLF!', "interface stuff");
+	}
+#endif
 }
 
 void Sections::get_ipl() {

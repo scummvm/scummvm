@@ -33,6 +33,7 @@
 #include "m4/adv_r/adv_inv.h"
 #include "m4/adv_r/adv_player.h"
 #include "m4/adv_r/adv_rails.h"
+#include "m4/adv_r/adv_scale.h"
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/conv_io.h"
@@ -107,6 +108,7 @@ public:
 	Sound::Digi _digi;
 	Sound::Midi _midi;
 	KernelPal_Globals _krnPal;
+	ADVScale_Globals _scale;
 
 	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;
@@ -171,6 +173,7 @@ public:
 	Common::String _currCodeFN;
 	ScreenContext *_game_buff_ptr = nullptr;
 	machine *_my_walker = nullptr;
+	uint32 _editors_in_use = 0;
 };
 
 #define _G(X) (g_vars->_##X)

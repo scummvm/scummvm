@@ -280,6 +280,11 @@ bool kernel_save_game_exists(int32 slot) {
 	return result;
 }
 
+int kernel_save_game(int slot, const char *desc, int32 sizeofDesc, M4sprite *thumbNail, int32 sizeofThumbData) {
+	error("TODO: kernel_save_game");
+	return 0;
+}
+
 bool kernel_load_game(int slot) {
 	return g_engine->loadGameState(slot).getCode() == Common::kNoError;
 }

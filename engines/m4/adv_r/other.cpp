@@ -19,20 +19,16 @@
  *
  */
 
-#include "m4/burger/other.h"
-#include "m4/burger/vars.h"
+#include "m4/adv_r/other.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/core/errors.h"
 
 namespace M4 {
-namespace Burger {
-
 
 void other_save_game_for_resurrection(void) {
-	if (kernel_save_game(0, NULL, 0, NULL, 0)) {
+	if (kernel_save_game(0, nullptr, 0, nullptr, 0)) {
 		error_show(FL, 0, "couldn't other_save_game_for_res");
 	}
 }
 
-} // namespace Burger
 } // namespace M4
