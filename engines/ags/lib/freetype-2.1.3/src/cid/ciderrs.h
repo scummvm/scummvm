@@ -25,7 +25,7 @@
 #ifndef __CIDERRS_H__
 #define __CIDERRS_H__
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmoderr.h"
 
 #undef __FTERRORS_H__
 

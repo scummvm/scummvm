@@ -20,7 +20,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmodule.h"
 #include "ahhint.h"
 
 namespace AGS3 {

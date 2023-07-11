@@ -189,7 +189,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the list of FreeType 2 module error offsets (and messages).        */
 /*                                                                       */
-#define FT2_1_3_MODULE_ERRORS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
+#define FT2_1_3_MODULE_ERRORS_H  "engines/ags/lib/freetype-2.1.3/ftmoderr.h"
 
 
 /*************************************************************************/
@@ -271,7 +271,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the API used to manage multiple @FT_Size objects per face.         */
 /*                                                                       */
-#define FT2_1_3_SIZES_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftsizes.h"
+#define FT2_1_3_SIZES_H  "engines/ags/lib/freetype-2.1.3/ftsizes.h"
 
 
 /*************************************************************************/
@@ -283,7 +283,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the module management API of FreeType 2.                           */
 /*                                                                       */
-#define FT2_1_3_MODULE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
+#define FT2_1_3_MODULE_H  "engines/ags/lib/freetype-2.1.3/ftmodule.h"
 
 
 /*************************************************************************/

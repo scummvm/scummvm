@@ -26,7 +26,7 @@
 #ifndef AGS_LIB_FREETYPE_AHERRORS_H
 #define AGS_LIB_FREETYPE_AHERRORS_H
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmoderr.h"
 
 #undef __FTERRORS_H__
 

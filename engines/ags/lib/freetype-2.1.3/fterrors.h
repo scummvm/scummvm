@@ -92,7 +92,7 @@
 
 
 /* include module base error codes */
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmoderr.h"
 
 
 /*******************************************************************/
