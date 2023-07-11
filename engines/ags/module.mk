@@ -28,11 +28,11 @@ MODULE_OBJS = \
 	lib/allegro/unicode.o \
 	lib/freetype-2.1.3/builds/win32/ftdebug.o \
 	lib/freetype-2.1.3/freetype213.o \
-	lib/freetype-2.1.3/src/autohint/ahangles.o \
-	lib/freetype-2.1.3/src/autohint/ahglyph.o \
-	lib/freetype-2.1.3/src/autohint/ahglobal.o \
-	lib/freetype-2.1.3/src/autohint/ahhint.o \
-	lib/freetype-2.1.3/src/autohint/ahmodule.o \
+	lib/freetype-2.1.3/autohint/ahangles.o \
+	lib/freetype-2.1.3/autohint/ahglyph.o \
+	lib/freetype-2.1.3/autohint/ahglobal.o \
+	lib/freetype-2.1.3/autohint/ahhint.o \
+	lib/freetype-2.1.3/autohint/ahmodule.o \
 	lib/freetype-2.1.3/ftbbox.o \
 	lib/freetype-2.1.3/ftbdf.o \
 	lib/freetype-2.1.3/ftcalc.o \
