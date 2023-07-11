@@ -76,7 +76,7 @@ public:
 
 class Sections {
 private:
-	int32 cameraShiftAmount = 0;
+	int32 _cameraShiftAmount = 0;
 	int32 cameraShift_vert_Amount = 0;
 	bool shut_down_digi_tracks_between_rooms = true;
 	int32 camera_pan_step = 10;
@@ -86,6 +86,7 @@ private:
 	void get_walker();
 
 	void game_control_cycle();
+	void parse_player_command_now();
 
 public:
 	Section *_sections = nullptr;
