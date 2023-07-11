@@ -20,17 +20,28 @@
  *
  */
 
-#ifndef M4_BURGER_OTHER_H
-#define M4_BURGER_OTHER_H
+#ifndef M4_ADV_R_ADV_SCALE_H
+#define M4_ADV_R_ADV_SCALE_H
 
 #include "m4/m4_types.h"
 
 namespace M4 {
-namespace Burger {
 
-extern void other_save_game_for_resurrection();
+constexpr int kScaleEditor = 1;
 
-} // namespace Burger
-} // namespace M4
+struct ADVScale_Globals {
+	int32 _old_front = -1;
+	int32 _old_back = -1;
+	int _myback = -1;
+	int _myfront = -1;
+	int _mybs = -1;
+	int _myfs = -1;
+};
+
+extern void scale_editor_draw();
+extern void scale_editor_cancel();
+extern void scale_editor_toggle(void *, void *);
+
+} // End of namespace M4
 
 #endif

@@ -38,7 +38,7 @@ extern bool kernel_CreateSSFromGrBuff(GrBuff *myBuff, RGB8 *myPalette, bool comp
 extern bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff **scr_orig_data, GrBuff **scr_orig);
 extern void kernel_unload_room(SceneDef *rdef, GrBuff **code_data, GrBuff **loadBuffer);
 
-extern int kernel_save_game(int slot, char *desc, int32 sizeofDesc, M4sprite *thumbNail, int32 sizeofThumbData);
+extern int kernel_save_game(int slot, const char *desc, int32 sizeofDesc, M4sprite *thumbNail, int32 sizeofThumbData);
 extern bool kernel_load_game(int slot);
 extern bool kernel_save_game_exists(int32 slot);
 

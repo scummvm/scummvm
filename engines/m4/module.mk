@@ -16,11 +16,13 @@ MODULE_OBJS = \
 	adv_r/adv_inv.o \
 	adv_r/adv_player.o \
 	adv_r/adv_rails.o \
+	adv_r/adv_scale.o \
 	adv_r/adv_trigger.o \
 	adv_r/adv_walk.o \
 	adv_r/conv_io.o \
 	adv_r/db_env.o \
 	adv_r/kernel.o \
+	adv_r/other.o \
 	core/cstring.o \
 	core/errors.o \
 	core/globals.o \
@@ -82,7 +84,6 @@ MODULE_OBJS = \
 	burger/globals.o \
 	burger/hotkeys.o \
 	burger/inventory.o \
-	burger/other.o \
 	burger/series_player.o \
 	burger/vars.o \
 	burger/walker.o
