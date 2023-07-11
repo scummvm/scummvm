@@ -48,7 +48,7 @@
 #include "ags/lib/allegro/draw.h"
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/unicode.h"
-#include "ags/lib/freetype-2.1.3/freetype.h"
+#include "ags/lib/freetype-2.1.3/freetype213.h"
 //#include "graphics/fonts/freetype.h"
 
 namespace AGS3 {

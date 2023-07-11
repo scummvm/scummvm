@@ -27,7 +27,7 @@ MODULE_OBJS = \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
 	lib/freetype-2.1.3/builds/win32/ftdebug.o \
-	lib/freetype-2.1.3/freetype.o \
+	lib/freetype-2.1.3/freetype213.o \
 	lib/freetype-2.1.3/src/autohint/ahangles.o \
 	lib/freetype-2.1.3/src/autohint/ahglyph.o \
 	lib/freetype-2.1.3/src/autohint/ahglobal.o \

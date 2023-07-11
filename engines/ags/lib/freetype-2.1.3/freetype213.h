@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGS_LIB_FREETYPE_H
-#define AGS_LIB_FREETYPE_H
+#ifndef AGS_LIB_FREETYPE213_H
+#define AGS_LIB_FREETYPE213_H
 
 #ifdef USE_FREETYPE2
 
