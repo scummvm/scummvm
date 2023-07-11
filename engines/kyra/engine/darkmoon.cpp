@@ -794,6 +794,8 @@ const KyraRpgGUISettings *DarkMoonEngine::guiSettings() const {
 		return &_guiSettingsFMTowns;
 	else if (_flags.platform == Common::kPlatformPC98)
 		return &_guiSettingsPC98;
+	else if (_flags.lang == Common::ZH_TWN)
+		return &_guiSettingsDOS_ZH;
 	else
 		return &_guiSettingsDOS;
 }

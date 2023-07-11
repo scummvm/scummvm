@@ -126,12 +126,15 @@ void TextDisplayer_rpg::setColorMapping(int sd, uint8 from, uint8 to) {
 	if (sd == -1) {
 		for (int i = 0; i < _dimCount; ++i) {
 			delete[] _textDimData[i].colorMap;
-			_textDimData[i].colorMap = 0;
+			_textDimData[i].colorMap = nullptr;
 		}
 		_colorMap[from] = to;
 	} else {
-		if (_textDimData[sd].colorMap == nullptr)
+		if (_textDimData[sd].colorMap == nullptr) {
 			_textDimData[sd].colorMap = new uint8[256];
+			for (int i = 0; i < 256; ++i)
+				_textDimData[sd].colorMap[i] = i;
+		}
 		_textDimData[sd].colorMap[from] = to;
 	}
 }
@@ -333,6 +336,11 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 	int fh = _screen->getFontHeight() + _screen->_lineSpacing + _textDimData[sdx].lineSpacing;
 	int lines = (sd->h - _screen->_lineSpacing) / fh;
+
+	// Another hack for Chinese EOB II...The original prints text at the very bottom of the text field,
+	// even if there is a good risk of printing text over the dialogue buttons.
+	if (_isChinese && _allowPageBreak)
+		++lines;
 
 	while (_textDimData[sdx].line >= lines) {
 		if ((lines - _waitButtonSpace) <= _lineCount && _allowPageBreak) {
@@ -656,7 +664,7 @@ void TextDisplayer_rpg::textPageBreak() {
 	int w = _vm->_dialogueButtonWidth;
 
 	if (_vm->game() == GI_LOL) {
-		if (_vm->gameFlags().lang == Common::Language::ZH_TWN) {
+		if (_isChinese) {
 			y = dim->sy + dim->h - 15;
 		} else if (_vm->_needSceneRestore && (_vm->_updateFlags & 2)) {
 			if (_vm->_currentControlMode || !(_vm->_updateFlags & 2)) {
@@ -681,7 +689,10 @@ void TextDisplayer_rpg::textPageBreak() {
 		_screen->set16bitShadingLevel(4);
 		_vm->gui_drawBox(x, y, w, _vm->guiSettings()->buttons.height, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 		_screen->set16bitShadingLevel(0);
-		_screen->printText(_pageBreakString.c_str(), x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString.c_str()) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0);
+		if (_vm->guiSettings()->buttons.labelShadow && _vm->game() != GI_LOL)
+			((Screen_EoB*)screen())->printShadedText(_pageBreakString.c_str(), x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString.c_str()) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0, _vm->guiSettings()->colors.guiColorBlack);
+		else
+			_screen->printText(_pageBreakString.c_str(), x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString.c_str()) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0);
 	}
 
 	_vm->removeInputTop();
@@ -730,6 +741,10 @@ void TextDisplayer_rpg::textPageBreak() {
 		_screen->fillRect(x + 8, y, x + 57, y + _vm->guiSettings()->buttons.height, remapColor(sdx, _textDimData[sdx].color2));
 	else
 		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, remapColor(sdx, _textDimData[sdx].color2));
+
+	// Fix border overdraw glitch
+	if (_vm->game() == GI_EOB2 && _isChinese && y + _vm->guiSettings()->buttons.height == 200)
+		_screen->drawClippedLine(x, 199, x + w - 1, 199, _vm->guiSettings()->colors.frame1);
 
 	clearCurDim();
 	_screen->set16bitShadingLevel(0);
@@ -784,7 +799,7 @@ void TextDisplayer_rpg::displayWaitButton() {
 	clearCurDim();
 	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
-	_vm->_dialogueButtonWidth = 95;
+	_vm->_dialogueButtonWidth = _vm->guiSettings()->buttons.width;
 	SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
 }
 
@@ -812,7 +827,7 @@ void TextDisplayer_rpg::convertString(char *str) {
 bool TextDisplayer_rpg::isTwoByteChar(uint8 c) const {
 	if (_vm->gameFlags().lang == Common::JA_JPN)
 		return (c >= 0xE0 || (c > 0x80 && c < 0xA0));
-	else if (_vm->gameFlags().lang == Common::ZH_TWN)
+	else if (_isChinese)
 		return (c & 0x80);
 	return false;
 }

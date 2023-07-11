@@ -92,6 +92,7 @@ struct KyraRpgGUISettings {
 		const uint8 *posY;
 		uint8 labelColor1;
 		uint8 labelColor2;
+		bool labelShadow;
 		uint16 width;
 		uint16 height;
 		int16 txtOffsY;

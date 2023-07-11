@@ -1574,8 +1574,16 @@ void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 
 	_dialogueButtonPosX = &guiSettings()->buttons.posX[presetfirst];
 	_dialogueButtonPosY = &guiSettings()->buttons.posY[presetfirst];
-	_dialogueButtonXoffs = (_flags.platform == Common::kPlatformSegaCD) ? 8 : 0;
-	_dialogueButtonYoffs = (_flags.platform == Common::kPlatformSegaCD) ? 160 : yOffs;
+	_dialogueButtonXoffs = 0;
+
+	if (_flags.lang == Common::ZH_TWN) {
+		_dialogueButtonYoffs = numStr > 3 ? 166 : 184;
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		_dialogueButtonXoffs = 8;
+		_dialogueButtonYoffs =  160;
+	} else {
+		_dialogueButtonYoffs = yOffs;
+	}
 
 	drawDialogueButtons();
 

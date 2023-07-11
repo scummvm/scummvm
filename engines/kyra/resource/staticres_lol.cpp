@@ -805,7 +805,7 @@ const int8 LoLEngine::_mapCoords[12][4] = {
 // And it is hardly worth the time to add any usage for this, since the only significant version difference would
 // be the PC-98 16 color version. That said, I have filled all the unused parts of the struct with zeroes.
 const KyraRpgGUISettings LoLEngine::_guiSettings = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, 74, 9, 2, 80, { 0, 0 }, { 0, 0 }, { 0, 0 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, false, 74, 9, 2, 80, { 0, 0 }, { 0, 0 }, { 0, 0 } },
 	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{	{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
 		{ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
@@ -816,7 +816,7 @@ const KyraRpgGUISettings LoLEngine::_guiSettings = {
 };
 
 const KyraRpgGUISettings LoLEngine::_guiSettingsZH = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, 68, 18, 2, 66, { 0, 0 }, { 0, 0 }, { 0, 0 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, false, 68, 18, 2, 66, { 0, 0 }, { 0, 0 }, { 0, 0 } },
 	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{	{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
 		{ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },

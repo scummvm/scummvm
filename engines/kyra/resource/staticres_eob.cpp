@@ -1663,7 +1663,7 @@ void EoBEngine::initSpells() {
 }
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, false, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1674,7 +1674,7 @@ const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, false, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1685,7 +1685,7 @@ const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsPC98 = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 11, 1, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, false, 95, 11, 1, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1696,7 +1696,7 @@ const KyraRpgGUISettings EoBEngine::_guiSettingsPC98 = {
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmiga = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, false, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1707,7 +1707,7 @@ const KyraRpgGUISettings EoBEngine::_guiSettingsAmiga = {
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmigaMainMenu = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, false, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1718,7 +1718,7 @@ const KyraRpgGUISettings EoBEngine::_guiSettingsAmigaMainMenu = {
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsSegaCD = {
-	{ _dlgButtonPosX_Sega, _dlgButtonPosY_Sega, 0x66, 0xFF, 90, 14, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ _dlgButtonPosX_Sega, _dlgButtonPosY_Sega, 0x66, 0xFF, false, 90, 14, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
 	{ 135, 130, 132, 180, 0x00, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 0x31, 9, 2, 0x35, 4, 0x33, 0x3C },
 	{	{ 184, 256, -1}, { 1, 57, 113 }, 64, 55,
 		{ 8, 80, -1 }, { 16, 72, 128 }, { 184, -1, -1 }, { 8, -1, -1 },
@@ -1939,7 +1939,7 @@ void DarkMoonEngine::initSpells() {
 }
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 11, 1, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, false, 95, 11, 1, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1950,7 +1950,7 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsPC98 = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 11, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, false, 95, 11, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1961,7 +1961,18 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettingsPC98 = {
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 9, 15, false, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
+	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
+		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
+		{ 40, 112, -1 }, { 11, 27, 63, 79, 115, 131 },
+		{ 23, 95, -1}, { 46, 98, 150 }, 38, 3, { 250, 250, -1}, { 16, 25, -1 }, 51, 5,
+		13, 30
+	}
+};
+
+const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS_ZH = {
+	{ _dlgButtonPosX_ZH, _dlgButtonPosY_ZH, 9, 15, true, 69, 16, 1, 7, { 246, 86 }, { 184, 184 }, { 69, 69 } },
 	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1972,7 +1983,7 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 28, 31, false, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 },
 	{	{ 184, 256, -1}, { 2, 54, 106 }, 64, 50,
 		{ 8, 80, -1 }, { 11, 63, 115 }, { 181, -1, -1 }, { 3, -1, -1 },
@@ -1981,6 +1992,10 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
 		13, 30
 	}
 };
+
+const uint16 DarkMoonEngine::_dlgButtonPosX_ZH[17] = { 62, 192, 6, 86, 166, 246, 6, 86, 166, 246, 168, 250, 32, 174, 248, 0 };
+
+const uint8 DarkMoonEngine::_dlgButtonPosY_ZH[17] = { 0, 0, 0, 0, 0, 0, 18, 18, 18, 18, 36, 36, 36, 36, 54, 54, 54 };
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
