@@ -73,7 +73,7 @@ void EventSequence::NextEvent(pyrodactyl::event::Info &info, const Common::Strin
 
 	// Execute all effects associated with the event
 	for (auto i = events[cur].effect.begin(); i != events[cur].effect.end(); ++i)
-		if (i->Execute(info, player_id, result, end_seq))
+		if (i->execute(info, player_id, result, end_seq))
 			sync = true;
 
 	// Play a notification sound
@@ -92,7 +92,7 @@ void EventSequence::NextEvent(pyrodactyl::event::Info &info, const Common::Strin
 
 	if (!result.empty() || sync) {
 		EventResult r;
-		r.type = ER_SYNC;
+		r._type = ER_SYNC;
 		result.push_back(r);
 	}
 

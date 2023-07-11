@@ -390,10 +390,10 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 void Manager::EndSequence(const Common::String &curloc) {
 	if (end_seq.empty() == false) {
 		for (auto i = end_seq.begin(); i != end_seq.end(); ++i)
-			if (i->cur)
+			if (i->_cur)
 				event_map[curloc].EndSeq(active_seq);
-			else if (event_map.contains(i->loc) > 0)
-				event_map[i->loc].EndSeq(StringToNumber<unsigned int>(i->val));
+			else if (event_map.contains(i->_loc) > 0)
+				event_map[i->_loc].EndSeq(StringToNumber<unsigned int>(i->_val));
 
 		active_seq = UINT_MAX;
 		end_seq.clear();

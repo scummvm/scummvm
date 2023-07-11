@@ -56,23 +56,28 @@ enum EventResultType {
 };
 
 struct EventResult {
-	EventResultType type;
-	Common::String val;
-	int x, y;
+	EventResultType _type;
+	Common::String _val;
+	int _x, _y;
 
-	EventResult() : val("") {
-		type = ER_NONE;
-		x = -1;
-		y = -1;
+	EventResult() : _val("") {
+		_type = ER_NONE;
+		_x = -1;
+		_y = -1;
 	}
 };
 
 struct EventSeqInfo {
-	bool cur;
-	Common::String loc, val;
+	bool _cur;
+	Common::String _loc, _val;
 
-	EventSeqInfo() { cur = false; }
-	EventSeqInfo(const bool &Cur) { cur = Cur; }
+	EventSeqInfo() {
+		_cur = false;
+	}
+
+	EventSeqInfo(const bool &cur) {
+		_cur = cur;
+	}
 };
 
 enum EffectType {
@@ -100,17 +105,20 @@ enum EffectType {
 };
 
 struct Effect {
-	EffectType type;
-	Common::String subject, operation, val;
+	EffectType _type;
+	Common::String _subject, _operation, _val;
 
-	Effect() { type = EFF_VAR; }
+	Effect() {
+		_type = EFF_VAR;
+	}
+
 	~Effect() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	bool Execute(pyrodactyl::event::Info &info, const Common::String &player_id,
-				 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq);
+	bool execute(pyrodactyl::event::Info &info, const Common::String &playerId,
+				 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq);
 
-	void ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType type);
+	void changeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType type);
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
