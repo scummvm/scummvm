@@ -144,16 +144,16 @@ void KeyBindMenu::SetCaption() {
 #endif
 }
 
-void KeyBindMenu::HandleEvents(const Common::Event &Event) {
-	warning("STUB: KeyBindMenu::HandleEvents()");
+void KeyBindMenu::handleEvents(const Common::Event &Event) {
+	warning("STUB: KeyBindMenu::handleEvents()");
 
 	/*
-	if (sel_controls.HandleEvents(Event))
+	if (sel_controls.handleEvents(Event))
 		SetCaption();
 
 	switch (state) {
 	case STATE_NORMAL:
-		choice = menu[sel_controls.cur].HandleEvents(Event);
+		choice = menu[sel_controls.cur].handleEvents(Event);
 		if (choice >= 0) {
 			prompt.Swap(menu[sel_controls.cur].element[choice].caption);
 			state = STATE_KEY;
@@ -176,13 +176,13 @@ void KeyBindMenu::HandleEvents(const Common::Event &Event) {
 }
 
 #if 0
-void KeyBindMenu::HandleEvents(const SDL_Event &Event) {
-	if (sel_controls.HandleEvents(Event))
+void KeyBindMenu::handleEvents(const SDL_Event &Event) {
+	if (sel_controls.handleEvents(Event))
 		SetCaption();
 
 	switch (state) {
 	case STATE_NORMAL:
-		choice = menu[sel_controls.cur].HandleEvents(Event);
+		choice = menu[sel_controls.cur].handleEvents(Event);
 		if (choice >= 0) {
 			prompt.Swap(menu[sel_controls.cur].element[choice].caption);
 			state = STATE_KEY;

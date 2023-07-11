@@ -58,9 +58,9 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	bool HandleEvents(Common::Event &Event);
+	bool handleEvents(Common::Event &Event);
 #if 0
-	bool HandleEvents(SDL_Event &Event);
+	bool handleEvents(SDL_Event &Event);
 #endif
 
 	void draw(pyrodactyl::event::Info &info, Common::String &text,

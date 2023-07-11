@@ -121,10 +121,10 @@ void HUD::internalEvents(bool ShowMap) {
 	}
 }
 
-HUDSignal HUD::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
+HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
 	g_engine->_mouse->inside_hud = bg.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y);
 
-	int choice = menu.HandleEvents(Event);
+	int choice = menu.handleEvents(Event);
 
 	if (choice == HS_JOURNAL)
 		info.unread.journal = false;
@@ -139,10 +139,10 @@ HUDSignal HUD::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &
 }
 
 #if 0
-HUDSignal HUD::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
+HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
 	g_engine->_mouse->inside_hud = bg.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y);
 
-	int choice = menu.HandleEvents(Event);
+	int choice = menu.handleEvents(Event);
 
 	if (choice == HS_JOURNAL)
 		info.unread.journal = false;

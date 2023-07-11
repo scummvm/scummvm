@@ -67,9 +67,9 @@ public:
 	void load(const Common::String &filename);
 	void Cache(pyrodactyl::event::Info &info, const Common::String &id, pyrodactyl::level::Level &level);
 
-	void HandleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event);
 #if 0
-	void HandleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event);
 #endif
 
 	void internalEvents();

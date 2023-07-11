@@ -61,10 +61,10 @@ public:
 
 	void load(const Common::String &filename);
 
-	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
+	int handleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
 					 const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event);
 #if 0
-	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
+	int handleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
 					 const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event);
 #endif
 

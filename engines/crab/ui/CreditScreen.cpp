@@ -104,36 +104,36 @@ void CreditScreen::load(const Common::String &filename) {
 	}
 }
 
-bool CreditScreen::HandleEvents(Common::Event &Event) {
-	if (slow.HandleEvents(Event) == BUAC_LCLICK)
+bool CreditScreen::handleEvents(Common::Event &Event) {
+	if (slow.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.slow;
-	else if (fast.HandleEvents(Event) == BUAC_LCLICK)
+	else if (fast.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.fast;
-	else if (pause.HandleEvents(Event) == BUAC_LCLICK)
+	else if (pause.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = 0.0f;
-	else if (reverse.HandleEvents(Event) == BUAC_LCLICK)
+	else if (reverse.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.reverse;
 
-	return (back.HandleEvents(Event) == BUAC_LCLICK);
+	return (back.handleEvents(Event) == BUAC_LCLICK);
 }
 
 #if 0
-bool CreditScreen::HandleEvents(SDL_Event &Event) {
-	if (slow.HandleEvents(Event) == BUAC_LCLICK)
+bool CreditScreen::handleEvents(SDL_Event &Event) {
+	if (slow.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.slow;
-	else if (fast.HandleEvents(Event) == BUAC_LCLICK)
+	else if (fast.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.fast;
-	else if (pause.HandleEvents(Event) == BUAC_LCLICK)
+	else if (pause.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = 0.0f;
-	else if (reverse.HandleEvents(Event) == BUAC_LCLICK)
+	else if (reverse.handleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.reverse;
 
-	if (website.HandleEvents(Event))
+	if (website.handleEvents(Event))
 		OpenURL("http://pyrodactyl.com");
-	else if (twitter.HandleEvents(Event))
+	else if (twitter.handleEvents(Event))
 		OpenURL("https://www.twitter.com/pyrodactylgames");
 
-	return (back.HandleEvents(Event) == BUAC_LCLICK);
+	return (back.handleEvents(Event) == BUAC_LCLICK);
 }
 #endif
 

@@ -256,7 +256,7 @@ public:
 	// The reason this function doesn't declare its own Event object is because
 	// a menu might not be the only object in a game state
 	//------------------------------------------------------------------------
-	int HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
+	int handleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
 		// The keyboard/joystick event handling bit
 		if (use_keyboard) {
 			int result = HandleKeyboard(Event);
@@ -281,7 +281,7 @@ public:
 		int i = 0;
 		for (auto it = element.begin(); it != element.end(); ++it, ++i) {
 			// We clicked on a button using the mouse
-			if (it->HandleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
+			if (it->handleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
 				// Reset the menu state
 				reset();
 				g_engine->_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
@@ -313,7 +313,7 @@ public:
 	// The reason this function doesn't declare its own Event object is because
 	// a menu might not be the only object in a game state
 	//------------------------------------------------------------------------
-	int HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
+	int handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
 		// The keyboard/joystick event handling bit
 		if (use_keyboard) {
 			int result = HandleKeyboard(Event);
@@ -337,7 +337,7 @@ public:
 		int i = 0;
 		for (auto it = element.begin(); it != element.end(); ++it, ++i) {
 			// We clicked on a button using the mouse
-			if (it->HandleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
+			if (it->handleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
 				// Reset the menu state
 				reset();
 				return i;

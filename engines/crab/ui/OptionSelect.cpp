@@ -64,12 +64,12 @@ void OptionSelect::draw() {
 		next.draw();
 }
 
-bool OptionSelect::HandleEvents(const Common::Event &Event) {
+bool OptionSelect::handleEvents(const Common::Event &Event) {
 	using namespace pyrodactyl::input;
 
 	if (cur > 0) {
 		// Don't check for keyboard inputs for now
-		if (prev.HandleEvents(Event) == BUAC_LCLICK) {
+		if (prev.handleEvents(Event) == BUAC_LCLICK) {
 			cur--;
 			return true;
 		}
@@ -78,7 +78,7 @@ bool OptionSelect::HandleEvents(const Common::Event &Event) {
 	if ((unsigned int)cur < option.text.size() - 1) {
 
 		// Don't check for keyboard inputs for now
-		if (next.HandleEvents(Event) == BUAC_LCLICK) {
+		if (next.handleEvents(Event) == BUAC_LCLICK) {
 			cur++;
 			return true;
 		}
@@ -88,18 +88,18 @@ bool OptionSelect::HandleEvents(const Common::Event &Event) {
 }
 
 #if 0
-bool OptionSelect::HandleEvents(const SDL_Event &Event) {
+bool OptionSelect::handleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;
 
 	if (cur > 0) {
-		if (prev.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)) {
+		if (prev.handleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)) {
 			cur--;
 			return true;
 		}
 	}
 
 	if (cur < option.text.size() - 1) {
-		if (next.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
+		if (next.handleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
 			cur++;
 			return true;
 		}

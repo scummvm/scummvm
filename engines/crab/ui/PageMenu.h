@@ -85,7 +85,7 @@ public:
 	// Get the elements per page
 	unsigned int ElementsPerPage() { return elements_per_page; }
 
-	// This is added to the result from HandleEvents to calculate the exact position
+	// This is added to the result from handleEvents to calculate the exact position
 	unsigned int Index() { return current_page * elements_per_page; }
 
 	// The end position of the elements
@@ -200,10 +200,10 @@ public:
 		UpdateInfo();
 	}
 
-	int HandleEvents(const Common::Event &Event) {
+	int handleEvents(const Common::Event &Event) {
 		using namespace pyrodactyl::input;
 
-		if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK) {
+		if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK) {
 			current_page--;
 			UpdateInfo();
 
@@ -211,7 +211,7 @@ public:
 				current_page = 0;
 		}
 
-		if (current_page < menu.size() - 1 && next.HandleEvents(Event) == BUAC_LCLICK) {
+		if (current_page < menu.size() - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
 			current_page++;
 			UpdateInfo();
 
@@ -219,14 +219,14 @@ public:
 				current_page = menu.size() - 1;
 		}
 
-		return menu[current_page].HandleEvents(Event);
+		return menu[current_page].handleEvents(Event);
 	}
 
 #if 0
-	int HandleEvents(const SDL_Event &Event) {
+	int handleEvents(const SDL_Event &Event) {
 		using namespace pyrodactyl::input;
 
-		if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK) {
+		if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK) {
 			current_page--;
 			UpdateInfo();
 
@@ -234,7 +234,7 @@ public:
 				current_page = 0;
 		}
 
-		if (current_page < menu.size() - 1 && next.HandleEvents(Event) == BUAC_LCLICK) {
+		if (current_page < menu.size() - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
 			current_page++;
 			UpdateInfo();
 
@@ -242,7 +242,7 @@ public:
 				current_page = menu.size() - 1;
 		}
 
-		return menu[current_page].HandleEvents(Event);
+		return menu[current_page].handleEvents(Event);
 	}
 #endif
 

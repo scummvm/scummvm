@@ -57,19 +57,19 @@ void PersonScreen::load(const Common::String &filename) {
 	}
 }
 
-void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event) {
+void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event) {
 	if (info.PersonValid(id))
-		menu.HandleEvents(&info.PersonGet(id), Event);
+		menu.handleEvents(&info.PersonGet(id), Event);
 	else
-		menu.HandleEvents(nullptr, Event);
+		menu.handleEvents(nullptr, Event);
 }
 
 #if 0
-void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event) {
+void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event) {
 	if (info.PersonValid(id))
-		menu.HandleEvents(&info.PersonGet(id), Event);
+		menu.handleEvents(&info.PersonGet(id), Event);
 	else
-		menu.HandleEvents(nullptr, Event);
+		menu.handleEvents(nullptr, Event);
 }
 #endif
 

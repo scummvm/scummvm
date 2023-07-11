@@ -72,10 +72,10 @@ public:
 	void draw(pyrodactyl::event::Info &info, Common::String &message);
 	void draw(const bool &player);
 
-	bool HandleEvents(const Common::Event &Event);
+	bool handleEvents(const Common::Event &Event);
 
 #if 0
-	bool HandleEvents(const SDL_Event &Event);
+	bool handleEvents(const SDL_Event &Event);
 #endif
 
 	void setUI();

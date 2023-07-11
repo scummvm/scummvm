@@ -77,9 +77,9 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 	void draw(Button &bu_map);
 
-	bool HandleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event);
+	bool handleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event);
 #if 0
-	bool HandleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event);
+	bool handleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event);
 #endif
 
 	void UseKeyboard(const bool &val) { menu.UseKeyboard(val); }

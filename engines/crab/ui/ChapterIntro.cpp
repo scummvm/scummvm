@@ -45,19 +45,19 @@ void ChapterIntro::load(rapidxml::xml_node<char> *node) {
 		traits.load(node->first_node("trait"));
 }
 
-bool ChapterIntro::HandleEvents(Common::Event &Event) {
-	if (traits.HandleEvents(Event))
+bool ChapterIntro::handleEvents(Common::Event &Event) {
+	if (traits.handleEvents(Event))
 		show_traits = true;
 
-	return dialog.HandleEvents(Event);
+	return dialog.handleEvents(Event);
 }
 
 #if 0
-bool ChapterIntro::HandleEvents(SDL_Event &Event) {
-	if (traits.HandleEvents(Event))
+bool ChapterIntro::handleEvents(SDL_Event &Event) {
+	if (traits.handleEvents(Event))
 		show_traits = true;
 
-	return dialog.HandleEvents(Event);
+	return dialog.handleEvents(Event);
 }
 #endif
 

@@ -189,9 +189,9 @@ public:
 	// Get index of a sprite in the object array
 	pyrodactyl::anim::Sprite *GetSprite(const Common::String &id);
 
-	void HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
 #if 0
-	void HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
 	LevelResult internalEvents(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
 							   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, bool EventInProgress);

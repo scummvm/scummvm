@@ -77,8 +77,8 @@ void ModMenu::load(const Common::String &filename) {
 	}
 }
 
-bool ModMenu::HandleEvents(const Common::Event &Event) {
-	int choice = menu.HandleEvents(Event);
+bool ModMenu::handleEvents(const Common::Event &Event) {
+	int choice = menu.handleEvents(Event);
 	if (choice >= 0) {
 		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path;
 		return true;
@@ -88,8 +88,8 @@ bool ModMenu::HandleEvents(const Common::Event &Event) {
 }
 
 #if 0
-bool ModMenu::HandleEvents(const SDL_Event &Event) {
-	int choice = menu.HandleEvents(Event);
+bool ModMenu::handleEvents(const SDL_Event &Event) {
+	int choice = menu.handleEvents(Event);
 	if (choice >= 0) {
 		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path;
 		return true;

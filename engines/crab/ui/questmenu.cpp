@@ -152,8 +152,8 @@ void QuestMenu::draw(Button &bu_map) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event) {
-	int res = menu.HandleEvents(Event);
+bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event) {
+	int res = menu.handleEvents(Event);
 	if (res != -1) {
 		if (sel_bu >= 0 && sel_page >= 0)
 			menu.Image(sel_bu, sel_page, img_n);
@@ -170,13 +170,13 @@ bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const Co
 
 	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
 		if (quest[sel_quest].marker)
-			if (bu_map.HandleEvents(Event) == BUAC_LCLICK) {
+			if (bu_map.handleEvents(Event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
 				map_title = quest[sel_quest].title;
 				return true;
 			}
 
-		text.HandleEvents(quest[sel_quest], Event);
+		text.handleEvents(quest[sel_quest], Event);
 	}
 
 	return false;
@@ -186,8 +186,8 @@ bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const Co
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event) {
-	int res = menu.HandleEvents(Event);
+bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event) {
+	int res = menu.handleEvents(Event);
 	if (res != -1) {
 		if (sel_bu >= 0 && sel_page >= 0)
 			menu.Image(sel_bu, sel_page, img_n);
@@ -204,13 +204,13 @@ bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const SD
 
 	if (sel_quest >= 0 && sel_quest < quest.size()) {
 		if (quest[sel_quest].marker)
-			if (bu_map.HandleEvents(Event) == BUAC_LCLICK) {
+			if (bu_map.handleEvents(Event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
 				map_title = quest[sel_quest].title;
 				return true;
 			}
 
-		text.HandleEvents(quest[sel_quest], Event);
+		text.handleEvents(quest[sel_quest], Event);
 	}
 
 	return false;

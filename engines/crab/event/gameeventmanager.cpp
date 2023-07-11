@@ -95,15 +95,15 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::HandleEvents(Info &info, const Common::String &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
+void Manager::handleEvents(Info &info, const Common::String &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (event_map.contains(info.CurLocID()) > 0 && event_map[info.CurLocID()].eventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_DIALOG:
 			if (oh.show_journal) {
-				info.journal.HandleEvents(player_id, Event);
+				info.journal.handleEvents(player_id, Event);
 
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
@@ -130,9 +130,9 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, Common::
 			break;
 		case EVENT_REPLY:
 			if (oh.show_journal) {
-				info.journal.HandleEvents(player_id, Event);
+				info.journal.handleEvents(player_id, Event);
 
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
@@ -140,7 +140,7 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, Common::
 					if (info.PersonValid(cur_event->title))
 						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
-				int choice = reply.HandleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
+				int choice = reply.handleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
 				if (choice >= 0) {
 					event_map[info.CurLocID()].nextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
@@ -153,17 +153,17 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, Common::
 				if (info.PersonValid(cur_event->title))
 					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
-			if (textin.HandleEvents(Event))
+			if (textin.handleEvents(Event))
 				event_map[info.CurLocID()].nextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_SPLASH:
 			if (intro.show_traits) {
-				per.HandleEvents(info, cur_event->title, Event);
+				per.handleEvents(info, cur_event->title, Event);
 
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					intro.show_traits = false;
 			} else {
-				if (intro.HandleEvents(Event))
+				if (intro.handleEvents(Event))
 					event_map[info.CurLocID()].nextEvent(active_seq, info, player_id, result, end_seq);
 
 				if (intro.show_traits)
@@ -182,15 +182,15 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, Common::
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::HandleEvents(Info &info, const Common::String &player_id, SDL_Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
+void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (event_map.contains(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_DIALOG:
 			if (oh.show_journal) {
-				info.journal.HandleEvents(player_id, Event);
+				info.journal.handleEvents(player_id, Event);
 
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
@@ -217,9 +217,9 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, SDL_Even
 			break;
 		case EVENT_REPLY:
 			if (oh.show_journal) {
-				info.journal.HandleEvents(player_id, Event);
+				info.journal.handleEvents(player_id, Event);
 
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
@@ -227,7 +227,7 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, SDL_Even
 					if (info.PersonValid(cur_event->title))
 						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
-				int choice = reply.HandleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
+				int choice = reply.handleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
 				if (choice >= 0) {
 					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
@@ -240,17 +240,17 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, SDL_Even
 				if (info.PersonValid(cur_event->title))
 					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
-			if (textin.HandleEvents(Event))
+			if (textin.handleEvents(Event))
 				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_SPLASH:
 			if (intro.show_traits) {
-				per.HandleEvents(info, cur_event->title, Event);
+				per.handleEvents(info, cur_event->title, Event);
 
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					intro.show_traits = false;
 			} else {
-				if (intro.HandleEvents(Event))
+				if (intro.handleEvents(Event))
 					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
 
 				if (intro.show_traits)

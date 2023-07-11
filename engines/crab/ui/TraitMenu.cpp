@@ -84,8 +84,8 @@ void TraitMenu::draw(const pyrodactyl::people::Person *obj) {
 			i.draw();
 }
 
-void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event) {
-	int choice = menu.HandleEvents(Event);
+void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event) {
+	int choice = menu.handleEvents(Event);
 	if (choice >= 0) {
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
 			i->State(false);
@@ -101,8 +101,8 @@ void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const Common::Even
 }
 
 #if 0
-void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event) {
-	int choice = menu.HandleEvents(Event);
+void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event) {
+	int choice = menu.handleEvents(Event);
 	if (choice >= 0) {
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
 			i->State(false);

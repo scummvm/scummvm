@@ -98,9 +98,9 @@ public:
 	void draw(const Common::String &id);
 
 	// Return true if "go to map" is selected
-	bool HandleEvents(const Common::String &id, const Common::Event &Event);
+	bool handleEvents(const Common::String &id, const Common::Event &Event);
 #if 0
-	bool HandleEvents(const Common::String &id, const SDL_Event &Event);
+	bool handleEvents(const Common::String &id, const SDL_Event &Event);
 #endif
 
 	void Add(const Common::String &id, const Common::String &Category, const Common::String &Title, const Common::String &Text);

@@ -71,9 +71,9 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void HandleEvents(const Common::String &char_id, const Common::Event &Event);
+	void handleEvents(const Common::String &char_id, const Common::Event &Event);
 #if 0
-	void HandleEvents(const Common::String &char_id, const SDL_Event &Event);
+	void handleEvents(const Common::String &char_id, const SDL_Event &Event);
 #endif
 
 	void Init(const Common::String &char_id);

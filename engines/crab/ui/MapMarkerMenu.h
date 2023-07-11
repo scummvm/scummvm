@@ -87,9 +87,9 @@ public:
 
 	void draw(const Element &pos, const Vector2i &player_pos, const Rect &camera);
 
-	void HandleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const Common::Event &Event);
+	void handleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const Common::Event &Event);
 #if 0
-	void HandleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const SDL_Event &Event);
+	void handleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const SDL_Event &Event);
 #endif
 	void internalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds);
 

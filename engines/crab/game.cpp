@@ -156,15 +156,15 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	g_engine->_mouse->HandleEvents(Event);
+void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
+	g_engine->_mouse->handleEvents(Event);
 
 	//	if (GameDebug)
-	//		debug_console.HandleEvents(Event);
+	//		debug_console.handleEvents(Event);
 
 	if (!debug_console.RestrictInput()) {
 		if (state == STATE_LOSE_MENU) {
-			switch (hud.gom.HandleEvents(Event)) {
+			switch (hud.gom.handleEvents(Event)) {
 			case 0:
 				state = STATE_LOSE_LOAD;
 				break;
@@ -175,17 +175,17 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 				break;
 			}
 		} else if (state == STATE_LOSE_LOAD) {
-			if (g_engine->_loadMenu->HandleEvents(Event)) {
+			if (g_engine->_loadMenu->handleEvents(Event)) {
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_LOAD_GAME;
 				return;
 			}
 
-			if (hud.pausekey.HandleEvents(Event) || hud.back.HandleEvents(Event) == BUAC_LCLICK)
+			if (hud.pausekey.handleEvents(Event) || hud.back.handleEvents(Event) == BUAC_LCLICK)
 				state = STATE_LOSE_MENU;
 		} else {
 			if (!gem.EventInProgress() && !hud.pause.DisableHotkeys()) {
-				switch (hud.HandleEvents(info, Event)) {
+				switch (hud.handleEvents(info, Event)) {
 				case HS_MAP:
 					ToggleState(STATE_MAP);
 					break;
@@ -209,14 +209,14 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 
 			if (state == STATE_GAME) {
 				if (gem.EventInProgress()) {
-					gem.HandleEvents(info, level.PlayerID(), Event, hud, level, event_res);
+					gem.handleEvents(info, level.PlayerID(), Event, hud, level, event_res);
 					if (ApplyResult())
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
 					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
 
-					level.HandleEvents(info, Event);
+					level.handleEvents(info, Event);
 
 					if (!game_over.Empty() && game_over.Evaluate(info)) {
 						state = STATE_LOSE_MENU;
@@ -236,11 +236,11 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 #endif
 
-					if (hud.pausekey.HandleEvents(Event))
+					if (hud.pausekey.handleEvents(Event))
 						ToggleState(STATE_PAUSE);
 				}
 			} else if (state == STATE_PAUSE) {
-				switch (hud.pause.HandleEvents(Event, hud.back)) {
+				switch (hud.pause.handleEvents(Event, hud.back)) {
 				case PS_RESUME:
 					ToggleState(STATE_GAME);
 					hud.SetTooltip();
@@ -273,19 +273,19 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					break;
 				}
 			} else {
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK)
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK)
 					ToggleState(STATE_GAME);
 
 				switch (state) {
 				case STATE_MAP:
-					if (map.HandleEvents(info, Event)) {
+					if (map.handleEvents(info, Event)) {
 						// We need to load the new level
 						LoadLevel(map.cur_loc);
 						ToggleState(STATE_GAME);
 					}
 					break;
 				case STATE_JOURNAL:
-					if (info.journal.HandleEvents(level.PlayerID(), Event)) {
+					if (info.journal.handleEvents(level.PlayerID(), Event)) {
 						// This means we selected the "find on map" button, so we need to:
 						// switch to the world map, and highlight the appropriate quest marker
 						map.SelectDest(info.journal.marker_title);
@@ -293,13 +293,13 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 					break;
 				case STATE_CHARACTER:
-					gem.per.HandleEvents(info, level.PlayerID(), Event);
+					gem.per.handleEvents(info, level.PlayerID(), Event);
 					break;
 				case STATE_INVENTORY:
-					info.inv.HandleEvents(level.PlayerID(), Event);
+					info.inv.handleEvents(level.PlayerID(), Event);
 					break;
 				case STATE_HELP:
-					g_engine->_helpScreen->HandleEvents(Event);
+					g_engine->_helpScreen->handleEvents(Event);
 				default:
 					break;
 				}
@@ -312,15 +312,15 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	g_engine->_mouse->HandleEvents(Event);
+void Game::handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
+	g_engine->_mouse->handleEvents(Event);
 
 	if (GameDebug)
-		debug_console.HandleEvents(Event);
+		debug_console.handleEvents(Event);
 
 	if (!debug_console.RestrictInput()) {
 		if (state == STATE_LOSE_MENU) {
-			switch (hud.gom.HandleEvents(Event)) {
+			switch (hud.gom.handleEvents(Event)) {
 			case 0:
 				state = STATE_LOSE_LOAD;
 				break;
@@ -331,17 +331,17 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 				break;
 			}
 		} else if (state == STATE_LOSE_LOAD) {
-			if (g_engine->_loadMenu->HandleEvents(Event)) {
+			if (g_engine->_loadMenu->handleEvents(Event)) {
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_LOAD_GAME;
 				return;
 			}
 
-			if (hud.pausekey.HandleEvents(Event) || hud.back.HandleEvents(Event) == BUAC_LCLICK)
+			if (hud.pausekey.handleEvents(Event) || hud.back.handleEvents(Event) == BUAC_LCLICK)
 				state = STATE_LOSE_MENU;
 		} else {
 			if (!gem.EventInProgress() && !hud.pause.DisableHotkeys()) {
-				switch (hud.HandleEvents(info, Event)) {
+				switch (hud.handleEvents(info, Event)) {
 				case HS_MAP:
 					ToggleState(STATE_MAP);
 					break;
@@ -365,14 +365,14 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 
 			if (state == STATE_GAME) {
 				if (gem.EventInProgress()) {
-					gem.HandleEvents(info, level.PlayerID(), Event, hud, level, event_res);
+					gem.handleEvents(info, level.PlayerID(), Event, hud, level, event_res);
 					if (ApplyResult())
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
 					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
 
-					level.HandleEvents(info, Event);
+					level.handleEvents(info, Event);
 
 					if (!game_over.Empty() && game_over.Evaluate(info)) {
 						state = STATE_LOSE_MENU;
@@ -390,11 +390,11 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 						return;
 					}
 
-					if (hud.pausekey.HandleEvents(Event))
+					if (hud.pausekey.handleEvents(Event))
 						ToggleState(STATE_PAUSE);
 				}
 			} else if (state == STATE_PAUSE) {
-				switch (hud.pause.HandleEvents(Event, hud.back)) {
+				switch (hud.pause.handleEvents(Event, hud.back)) {
 				case PS_RESUME:
 					ToggleState(STATE_GAME);
 					hud.SetTooltip();
@@ -427,19 +427,19 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 					break;
 				}
 			} else {
-				if (hud.back.HandleEvents(Event) == BUAC_LCLICK)
+				if (hud.back.handleEvents(Event) == BUAC_LCLICK)
 					ToggleState(STATE_GAME);
 
 				switch (state) {
 				case STATE_MAP:
-					if (map.HandleEvents(info, Event)) {
+					if (map.handleEvents(info, Event)) {
 						// We need to load the new level
 						LoadLevel(map.cur_loc);
 						ToggleState(STATE_GAME);
 					}
 					break;
 				case STATE_JOURNAL:
-					if (info.journal.HandleEvents(level.PlayerID(), Event)) {
+					if (info.journal.handleEvents(level.PlayerID(), Event)) {
 						// This means we selected the "find on map" button, so we need to:
 						// switch to the world map, and highlight the appropriate quest marker
 						map.SelectDest(info.journal.marker_title);
@@ -447,13 +447,13 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 					}
 					break;
 				case STATE_CHARACTER:
-					gem.per.HandleEvents(info, level.PlayerID(), Event);
+					gem.per.handleEvents(info, level.PlayerID(), Event);
 					break;
 				case STATE_INVENTORY:
-					info.inv.HandleEvents(level.PlayerID(), Event);
+					info.inv.handleEvents(level.PlayerID(), Event);
 					break;
 				case STATE_HELP:
-					g_engine->_helpScreen->HandleEvents(Event);
+					g_engine->_helpScreen->handleEvents(Event);
 				default:
 					break;
 				}

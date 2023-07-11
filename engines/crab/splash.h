@@ -59,7 +59,7 @@ class Splash : public GameState {
 public:
 	Splash();
 	~Splash();
-	void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {}
+	void handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {}
 	void internalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 	void draw();
 	void setUI();

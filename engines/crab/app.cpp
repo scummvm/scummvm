@@ -205,7 +205,7 @@ void App::Run() {
 #if 0
 		while (SDL_PollEvent(&Event)) {
 			// Do state Event handling
-			CurrentState->HandleEvents(Event, ShouldChangeState, NextStateID);
+			CurrentState->handleEvents(Event, ShouldChangeState, NextStateID);
 
 			// If the user has closed the window or pressed ALT+F4
 			if (Event.type == SDL_QUIT || (Event.type == SDL_KEYDOWN && Event.key.keysym.scancode == SDL_SCANCODE_F4 && Event.key.keysym.mod & KMOD_ALT)) {
@@ -241,7 +241,7 @@ void App::Run() {
 			}
 
 			// Do state Event handling
-			CurrentState->HandleEvents(e, ShouldChangeState, NextStateID);
+			CurrentState->handleEvents(e, ShouldChangeState, NextStateID);
 		}
 
 

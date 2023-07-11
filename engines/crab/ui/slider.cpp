@@ -57,9 +57,9 @@ void Slider::load(rapidxml::xml_node<char> *node, const int &Min, const int &Max
 	CreateBackup();
 }
 
-bool Slider::HandleEvents(const Common::Event &Event) {
+bool Slider::handleEvents(const Common::Event &Event) {
 	// A person is moving the knob
-	if (knob.HandleEvents(Event) == BUAC_GRABBED) {
+	if (knob.handleEvents(Event) == BUAC_GRABBED) {
 		int dx = g_engine->_mouse->motion.x - bar.x;
 
 		if (dx < 0)
@@ -87,9 +87,9 @@ bool Slider::HandleEvents(const Common::Event &Event) {
 }
 
 #if 0
-bool Slider::HandleEvents(const SDL_Event &Event) {
+bool Slider::handleEvents(const SDL_Event &Event) {
 	// A person is moving the knob
-	if (knob.HandleEvents(Event) == BUAC_GRABBED) {
+	if (knob.handleEvents(Event) == BUAC_GRABBED) {
 		int dx = g_engine->_mouse->motion.x - bar.x;
 
 		if (dx < 0)

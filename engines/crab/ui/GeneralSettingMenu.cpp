@@ -71,23 +71,23 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-void GeneralSettingMenu::HandleEvents(const Common::Event &Event) {
-	if (vol_music.HandleEvents(Event))
+void GeneralSettingMenu::handleEvents(const Common::Event &Event) {
+	if (vol_music.handleEvents(Event))
 		g_engine->_musicManager->VolMusic(vol_music.Value());
 
-	if (vol_effects.HandleEvents(Event))
+	if (vol_effects.handleEvents(Event))
 		g_engine->_musicManager->VolEffects(vol_effects.Value());
 
 	// No need to change screen here
-	if (save_on_exit.HandleEvents(Event))
+	if (save_on_exit.handleEvents(Event))
 		g_engine->_screenSettings->save_on_exit = !g_engine->_screenSettings->save_on_exit;
 
-	if (mouse_trap.HandleEvents(Event)) {
+	if (mouse_trap.handleEvents(Event)) {
 		g_engine->_screenSettings->mouse_trap = !g_engine->_screenSettings->mouse_trap;
 		g_engine->_screenSettings->SetMouseTrap();
 	}
 
-	int result = text_speed.HandleEvents(Event);
+	int result = text_speed.handleEvents(Event);
 	if (result >= 0)
 		g_engine->_screenSettings->text_speed = text_speed.element[result].val;
 }
@@ -96,23 +96,23 @@ void GeneralSettingMenu::HandleEvents(const Common::Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
-	if (vol_music.HandleEvents(Event))
+void GeneralSettingMenu::handleEvents(const SDL_Event &Event) {
+	if (vol_music.handleEvents(Event))
 		g_engine->_musicManager->VolMusic(vol_music.Value());
 
-	if (vol_effects.HandleEvents(Event))
+	if (vol_effects.handleEvents(Event))
 		g_engine->_musicManager->VolEffects(vol_effects.Value());
 
 	// No need to change screen here
-	if (save_on_exit.HandleEvents(Event))
+	if (save_on_exit.handleEvents(Event))
 		g_engine->_screenSettings->save_on_exit = !g_engine->_screenSettings->save_on_exit;
 
-	if (mouse_trap.HandleEvents(Event)) {
+	if (mouse_trap.handleEvents(Event)) {
 		g_engine->_screenSettings->mouse_trap = !g_engine->_screenSettings->mouse_trap;
 		g_engine->_screenSettings->SetMouseTrap();
 	}
 
-	int result = text_speed.HandleEvents(Event);
+	int result = text_speed.handleEvents(Event);
 	if (result >= 0)
 		g_engine->_screenSettings->text_speed = text_speed.element[result].val;
 }

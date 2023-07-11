@@ -154,11 +154,11 @@ MainMenu::MainMenu() {
 //------------------------------------------------------------------------
 // Purpose: Event/input handling Events
 //------------------------------------------------------------------------
-void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	g_engine->_mouse->HandleEvents(Event);
+void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
+	g_engine->_mouse->handleEvents(Event);
 
 	if (state != STATE_CREDITS) {
-		int choice = me_main.HandleEvents(Event);
+		int choice = me_main.handleEvents(Event);
 		if (choice >= 0) {
 			for (unsigned i = 0; i < me_main.element.size(); ++i)
 				me_main.element[i].State(i == (unsigned int)choice);
@@ -202,7 +202,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 	}
 
 #if 0
-	if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
+	if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_PRESSED || (back.handleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
 		if (state == STATE_SAVENAME)
 			ChangeState(STATE_DIFF);
 		else if (state != STATE_NORMAL)
@@ -213,24 +213,24 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 	switch (state) {
 #ifdef UNREST_DEMO
 	case STATE_NORMAL:
-		if (steam.HandleEvents(Event) == BUAC_LCLICK) {
+		if (steam.handleEvents(Event) == BUAC_LCLICK) {
 			// Open steam in browser window
 			OpenURL("https://store.steampowered.com/app/292400/");
 		}
 
-		if (direct.HandleEvents(Event) == BUAC_LCLICK) {
+		if (direct.handleEvents(Event) == BUAC_LCLICK) {
 			// Open humble widget in browser window
 			OpenURL("https://www.humblebundle.com/store/unrest/Udg6Ytd8Dfw");
 		}
 		break;
 #endif
 	case STATE_OPTIONS:
-		if (g_engine->_optionMenu->HandleEvents(back, Event))
+		if (g_engine->_optionMenu->handleEvents(back, Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
 	case STATE_CREDITS:
-		if (credits.HandleEvents(Event))
+		if (credits.handleEvents(Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
@@ -245,7 +245,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		break;
 
 	case STATE_DIFF: {
-		int choice = diff.menu.HandleEvents(Event);
+		int choice = diff.menu.handleEvents(Event);
 
 		// First menu option is Non-iron man, second is iron man
 		// For the second choice, we must display a prompt to choose the name of the save game
@@ -258,7 +258,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 	} break;
 
 	case STATE_SAVENAME:
-		if (save.HandleEvents(Event) || accept.HandleEvents(Event)) {
+		if (save.handleEvents(Event) || accept.handleEvents(Event)) {
 			if (save.text != "") {
 				g_engine->_tempData->filename = save.text;
 				g_engine->_tempData->ironman = true;
@@ -266,18 +266,18 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 				NewStateID = GAMESTATE_NEW_GAME;
 			} else
 				debug("Please enter a valid filename for the iron man save.");
-		} else if (cancel.HandleEvents(Event))
+		} else if (cancel.handleEvents(Event))
 			ChangeState(STATE_DIFF);
 
 		break;
 
 	case STATE_MOD:
-		if (mod.HandleEvents(Event))
+		if (mod.handleEvents(Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
 	case STATE_HELP:
-		g_engine->_helpScreen->HandleEvents(Event);
+		g_engine->_helpScreen->handleEvents(Event);
 		break;
 
 	default:
@@ -289,11 +289,11 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 //------------------------------------------------------------------------
 // Purpose: Event/input handling Events
 //------------------------------------------------------------------------
-void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	g_engine->_mouse->HandleEvents(Event);
+void MainMenu::handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
+	g_engine->_mouse->handleEvents(Event);
 
 	if (state != STATE_CREDITS) {
-		int choice = me_main.HandleEvents(Event);
+		int choice = me_main.handleEvents(Event);
 		if (choice >= 0) {
 			for (unsigned i = 0; i < me_main.element.size(); ++i)
 				me_main.element[i].State(i == choice);
@@ -336,7 +336,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		}
 	}
 
-	if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
+	if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_PRESSED || (back.handleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
 		if (state == STATE_SAVENAME)
 			ChangeState(STATE_DIFF);
 		else if (state != STATE_NORMAL)
@@ -346,29 +346,29 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 	switch (state) {
 #ifdef UNREST_DEMO
 	case STATE_NORMAL:
-		if (steam.HandleEvents(Event) == BUAC_LCLICK) {
+		if (steam.handleEvents(Event) == BUAC_LCLICK) {
 			// Open steam in browser window
 			OpenURL("https://store.steampowered.com/app/292400/");
 		}
 
-		if (direct.HandleEvents(Event) == BUAC_LCLICK) {
+		if (direct.handleEvents(Event) == BUAC_LCLICK) {
 			// Open humble widget in browser window
 			OpenURL("https://www.humblebundle.com/store/unrest/Udg6Ytd8Dfw");
 		}
 		break;
 #endif
 	case STATE_OPTIONS:
-		if (g_engine->_optionMenu->HandleEvents(back, Event))
+		if (g_engine->_optionMenu->handleEvents(back, Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
 	case STATE_CREDITS:
-		if (credits.HandleEvents(Event))
+		if (credits.handleEvents(Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
 	case STATE_LOAD:
-		if (g_engine->_loadMenu->HandleEvents(Event)) {
+		if (g_engine->_loadMenu->handleEvents(Event)) {
 			ChangeState(STATE_NORMAL);
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_LOAD_GAME;
@@ -377,7 +377,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		break;
 
 	case STATE_DIFF: {
-		int choice = diff.menu.HandleEvents(Event);
+		int choice = diff.menu.handleEvents(Event);
 
 		// First menu option is Non-iron man, second is iron man
 		// For the second choice, we must display a prompt to choose the name of the save game
@@ -390,7 +390,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 	} break;
 
 	case STATE_SAVENAME:
-		if (save.HandleEvents(Event) || accept.HandleEvents(Event)) {
+		if (save.handleEvents(Event) || accept.handleEvents(Event)) {
 			if (save.text != "") {
 				g_engine->_tempData->filename = save.text;
 				g_engine->_tempData->ironman = true;
@@ -398,18 +398,18 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 				NewStateID = GAMESTATE_NEW_GAME;
 			} else
 				fprintf(stdout, "Please enter a valid filename for the iron man save.\n");
-		} else if (cancel.HandleEvents(Event))
+		} else if (cancel.handleEvents(Event))
 			ChangeState(STATE_DIFF);
 
 		break;
 
 	case STATE_MOD:
-		if (mod.HandleEvents(Event))
+		if (mod.handleEvents(Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
 	case STATE_HELP:
-		g_engine->_helpScreen->HandleEvents(Event);
+		g_engine->_helpScreen->handleEvents(Event);
 		break;
 
 	default:

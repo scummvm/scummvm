@@ -59,12 +59,12 @@ bool PauseMenu::draw(Button &back) {
 	return false;
 }
 
-PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
+PauseSignal PauseMenu::handleEvents(const Common::Event &Event, Button &back) {
 	switch (state) {
 	case STATE_NORMAL:
-		choice = menu.HandleEvents(Event);
+		choice = menu.handleEvents(Event);
 		if (choice == -1) {
-			if (back.hotkey.HandleEvents(Event))
+			if (back.hotkey.handleEvents(Event))
 				return PS_RESUME;
 		} else {
 			switch (choice) {
@@ -100,7 +100,7 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 		}
 		break;
 	case STATE_OPTION:
-		if (g_engine->_optionMenu->HandleEvents(back, Event)) {
+		if (g_engine->_optionMenu->handleEvents(back, Event)) {
 			g_engine->_optionMenu->reset();
 			state = STATE_NORMAL;
 		}
@@ -119,12 +119,12 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 }
 
 #if 0
-PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
+PauseSignal PauseMenu::handleEvents(const SDL_Event &Event, Button &back) {
 	switch (state) {
 	case STATE_NORMAL:
-		choice = menu.HandleEvents(Event);
+		choice = menu.handleEvents(Event);
 		if (choice == -1) {
-			if (back.hotkey.HandleEvents(Event))
+			if (back.hotkey.handleEvents(Event))
 				return PS_RESUME;
 		} else {
 			switch (choice) {
@@ -154,22 +154,22 @@ PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 		}
 		break;
 	case STATE_SAVE:
-		if (save.HandleEvents(Event)) {
+		if (save.handleEvents(Event)) {
 			state = STATE_NORMAL;
 			return PS_SAVE;
-		} else if (back.HandleEvents(Event) == BUAC_LCLICK && !save.DisableHotkeys())
+		} else if (back.handleEvents(Event) == BUAC_LCLICK && !save.DisableHotkeys())
 			state = STATE_NORMAL;
 		break;
 	case STATE_OPTION:
-		if (g_engine->_optionMenu->HandleEvents(back, Event)) {
+		if (g_engine->_optionMenu->handleEvents(back, Event)) {
 			g_engine->_optionMenu->reset();
 			state = STATE_NORMAL;
 		}
 		break;
 	case STATE_LOAD:
-		if (g_engine->_loadMenu->HandleEvents(Event))
+		if (g_engine->_loadMenu->handleEvents(Event))
 			return PS_LOAD;
-		else if (back.HandleEvents(Event) == BUAC_LCLICK)
+		else if (back.handleEvents(Event) == BUAC_LCLICK)
 			state = STATE_NORMAL;
 		break;
 	default:

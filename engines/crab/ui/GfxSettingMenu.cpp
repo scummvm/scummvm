@@ -90,74 +90,74 @@ void GfxSettingMenu::draw() {
 //------------------------------------------------------------------------
 // Purpose: Handle input
 //------------------------------------------------------------------------
-int GfxSettingMenu::HandleEvents(const Common::Event &Event) {
-	if (fullscreen.HandleEvents(Event)) {
+int GfxSettingMenu::handleEvents(const Common::Event &Event) {
+	if (fullscreen.handleEvents(Event)) {
 		// Setting video flags is necessary when toggling fullscreen
 		g_engine->_screenSettings->fullscreen = !g_engine->_screenSettings->fullscreen;
 		g_engine->_screenSettings->SetFullscreen();
 	}
 
 	// Vsync doesn't need to set the change value
-	if (vsync.HandleEvents(Event)) {
+	if (vsync.handleEvents(Event)) {
 		g_engine->_screenSettings->vsync = !g_engine->_screenSettings->vsync;
 		g_engine->_screenSettings->SetVsync();
 	}
 
 	// Quality and resolution can only be changed in the main menu
 	if (!g_engine->_screenSettings->in_game) {
-		if (quality.HandleEvents(Event))
+		if (quality.handleEvents(Event))
 			g_engine->_screenSettings->quality = !g_engine->_screenSettings->quality;
 	}
 
 	// Window border doesn't matter if you are in fullscreen
-	if (border.HandleEvents(Event) && !g_engine->_screenSettings->fullscreen) {
+	if (border.handleEvents(Event) && !g_engine->_screenSettings->fullscreen) {
 		g_engine->_screenSettings->border = !g_engine->_screenSettings->border;
 		g_engine->_screenSettings->SetWindowBorder();
 	}
 
-	if (brightness.HandleEvents(Event)) {
+	if (brightness.handleEvents(Event)) {
 		g_engine->_screenSettings->gamma = static_cast<float>(brightness.Value()) / 100.0f;
 		g_engine->_screenSettings->SetGamma();
 	}
 
-	return resolution.HandleEvents(Event);
+	return resolution.handleEvents(Event);
 }
 
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle input
 //------------------------------------------------------------------------
-int GfxSettingMenu::HandleEvents(const SDL_Event &Event) {
-	if (fullscreen.HandleEvents(Event)) {
+int GfxSettingMenu::handleEvents(const SDL_Event &Event) {
+	if (fullscreen.handleEvents(Event)) {
 		// Setting video flags is necessary when toggling fullscreen
 		g_engine->_screenSettings->fullscreen = !g_engine->_screenSettings->fullscreen;
 		g_engine->_screenSettings->SetFullscreen();
 	}
 
 	// Vsync doesn't need to set the change value
-	if (vsync.HandleEvents(Event)) {
+	if (vsync.handleEvents(Event)) {
 		g_engine->_screenSettings->vsync = !g_engine->_screenSettings->vsync;
 		g_engine->_screenSettings->SetVsync();
 	}
 
 	// Quality and resolution can only be changed in the main menu
 	if (!g_engine->_screenSettings->in_game) {
-		if (quality.HandleEvents(Event))
+		if (quality.handleEvents(Event))
 			g_engine->_screenSettings->quality = !g_engine->_screenSettings->quality;
 	}
 
 	// Window border doesn't matter if you are in fullscreen
-	if (border.HandleEvents(Event) && !g_engine->_screenSettings->fullscreen) {
+	if (border.handleEvents(Event) && !g_engine->_screenSettings->fullscreen) {
 		g_engine->_screenSettings->border = !g_engine->_screenSettings->border;
 		g_engine->_screenSettings->SetWindowBorder();
 	}
 
-	if (brightness.HandleEvents(Event)) {
+	if (brightness.handleEvents(Event)) {
 		g_engine->_screenSettings->gamma = static_cast<float>(brightness.Value()) / 100.0f;
 		g_engine->_screenSettings->SetGamma();
 	}
 
-	return resolution.HandleEvents(Event);
+	return resolution.handleEvents(Event);
 }
 #endif
 

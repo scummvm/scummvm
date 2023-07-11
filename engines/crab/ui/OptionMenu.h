@@ -107,9 +107,9 @@ public:
 
 	void load(const Common::String &filename);
 	void draw(Button &back);
-	bool HandleEvents(Button &back, const Common::Event &Event);
+	bool handleEvents(Button &back, const Common::Event &Event);
 #if 0
-	bool HandleEvents(Button &back, const SDL_Event &Event);
+	bool handleEvents(Button &back, const SDL_Event &Event);
 #endif
 	void internalEvents();
 

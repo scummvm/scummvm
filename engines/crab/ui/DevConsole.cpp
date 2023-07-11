@@ -90,17 +90,17 @@ void DebugConsole::draw(pyrodactyl::event::Info &info) {
 }
 
 #if 0
-void DebugConsole::HandleEvents(const SDL_Event &Event) {
+void DebugConsole::handleEvents(const SDL_Event &Event) {
 	switch (state) {
 	case STATE_NORMAL: {
-		int choice = menu.HandleEvents(Event);
+		int choice = menu.handleEvents(Event);
 		if (choice == 0)
 			state = STATE_VAR;
 	} break;
 	case STATE_VAR:
-		text_field.HandleEvents(Event);
+		text_field.handleEvents(Event);
 
-		if (check.HandleEvents(Event))
+		if (check.handleEvents(Event))
 			var_name = text_field.text;
 
 		// Control+V pastes clipboard text into text field
@@ -112,7 +112,7 @@ void DebugConsole::HandleEvents(const SDL_Event &Event) {
 			}
 		}
 
-		if (back.HandleEvents(Event))
+		if (back.handleEvents(Event))
 			state = STATE_NORMAL;
 		break;
 

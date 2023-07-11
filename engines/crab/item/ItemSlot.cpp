@@ -116,8 +116,8 @@ void ItemSlot::draw() {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-ButtonAction ItemSlot::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction ac = StateButton::HandleEvents(Event, XOffset, YOffset);
+ButtonAction ItemSlot::handleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+	ButtonAction ac = StateButton::handleEvents(Event, XOffset, YOffset);
 	if (ac == BUAC_LCLICK || ac == BUAC_RCLICK)
 		unread = false;
 
@@ -128,8 +128,8 @@ ButtonAction ItemSlot::HandleEvents(const Common::Event &Event, const int &XOffs
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-ButtonAction ItemSlot::HandleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction ac = StateButton::HandleEvents(Event, XOffset, YOffset);
+ButtonAction ItemSlot::handleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
+	ButtonAction ac = StateButton::handleEvents(Event, XOffset, YOffset);
 	if (ac == BUAC_LCLICK || ac == BUAC_RCLICK)
 		unread = false;
 
