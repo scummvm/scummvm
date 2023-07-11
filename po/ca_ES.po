@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-11 12:36+0000\n"
-"PO-Revision-Date: 2023-06-14 05:40+0000\n"
+"PO-Revision-Date: 2023-07-12 04:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -2745,6 +2745,8 @@ msgstr "Error en el fitxer de configuració"
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
+"No s'ha pogut llegir el fitxer de configuració de ScummVM o crear-ne un de "
+"nou!"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Save Path Error"
@@ -2753,6 +2755,8 @@ msgstr "Error en el camí de les partides desades"
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
 msgstr ""
+"No s'ha pogut crear o accedir a la ruta predeterminada de les partides "
+"desades!"
 
 #: dists/android.strings.xml.cpp:38
 msgid "Icons Path Error"
@@ -2761,12 +2765,16 @@ msgstr "Error en el camí de les icones"
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
 msgstr ""
+"No s'han pogut crear o accedir a la ruta predeterminada de les icones i els "
+"shaders!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"No es pot accedir a la ruta de desament establerta globalment! Torneu al "
+"valor predeterminat des de les opcions de ScummVM"
 
 #: dists/android.strings.xml.cpp:41
 msgid "Toggle virtual keyboard"
@@ -2781,15 +2789,15 @@ msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "Fet"
 
 #: dists/android.strings.xml.cpp:46
 msgid "Mode change"
-msgstr ""
+msgstr "Canvi de mode"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
-msgstr ""
+msgstr "Majúscules"
 
 #: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:154
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:87
@@ -2805,10 +2813,14 @@ msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Seleccioneu l'arrel de la targeta SD externa (física). És necessari perquè "
+"ScummVM accedeixi a aquest camí: "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
+"S'han revocat els permisos del framework d'accés a l'emmagatzematge per a "
+"ScummVM!"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -4241,39 +4253,33 @@ msgstr "En jocs 3D"
 #: backends/platform/android/options.cpp:163
 #: backends/platform/ios7/ios7_options.mm:85
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Seleccioneu l'orientació:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:89
 #: backends/platform/ios7/ios7_options.mm:104
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Perforació automàtica"
+msgstr "Automàtica"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 #: backends/platform/ios7/ios7_options.mm:90
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Portrait"
-msgstr ""
+msgstr "Vertical"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
 #: backends/platform/ios7/ios7_options.mm:91
 #: backends/platform/ios7/ios7_options.mm:106
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "Tecla Escapa"
+msgstr "Horitzontal"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:97
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "En jocs 2D"
+msgstr "En jocs"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -4306,7 +4312,7 @@ msgstr "Mode de clic-i-arrossega amb el ratolí"
 
 #: backends/platform/ios7/ios7_options.mm:82
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Mostra la barra de funcions del teclat"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Controls Help"
