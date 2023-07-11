@@ -88,10 +88,13 @@ void M4Engine::m4_inflight() {
 		_G(kernel).going = kernel_section_startup();
 		section_init();
 
+		m4SceneLoad();
+		m4SceneRun();
+		/*
 		while (_G(game).section_id == _G(game).new_section && _G(kernel).going) {
 
 		}
-
+		*/
 		// TODO
 	}
 }

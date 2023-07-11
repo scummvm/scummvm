@@ -45,7 +45,7 @@ namespace M4 {
 #define FREE_END     255
 #define NUM_FREE     FREE_END-(FREE_START)+1
 
-static void krn_pal_game_task() {
+void krn_pal_game_task() {
 	int32 status;
 
 	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);

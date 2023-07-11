@@ -30,6 +30,7 @@
 #include "m4/graphics/krn_pal.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/wscript/wst_regs.h"
 #include "m4/vars.h"
 #include "m4/m4.h"
 
@@ -55,7 +56,7 @@ void Sections::section_room_constructor() {
 
 void Sections::m4SceneLoad() {
 	_G(between_rooms) = true;
-	cameraShiftAmount = 0;
+	_cameraShiftAmount = 0;
 	cameraShift_vert_Amount = 0;
 	_G(art_base_override) = nullptr;
 	_G(use_alternate_attribute_file) = true;
@@ -184,7 +185,74 @@ void Sections::get_walker() {
 }
 
 void Sections::game_control_cycle() {
-	// TODO
+	int32 status;
+
+	while (_G(game).new_room == _G(game).room_id && _G(kernel).going) {
+		krn_pal_game_task();
+
+		ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &status);
+		if (!screen)
+			error_show(FL, 'BUF!');
+
+		if (_G(player).ready_to_walk) {
+			if (_G(player).need_to_walk) {
+				if (_G(player).noun[0] == '@' || !_G(player).walker_in_this_scene) {
+					term_message("parsing0");
+					parse_player_command_now();
+					term_message("parsed0");
+				} else {
+					term_message("player: walk to (%ld, %ld), facing: %ld",
+						_G(player).walk_x, _G(player).walk_y, _G(player).walk_facing);
+
+					if (_G(player).walk_x < 0 || _G(player).walk_y < 0) {
+						term_message("walk x or y < 0 - player: %s %s %s",
+							_G(player).verb, _G(player).noun, _G(player).prep);
+					}
+
+					_G(player).waiting_for_walk = true;
+					ws_walk(_G(my_walker), _G(player).walk_x, _G(player).walk_y,
+						nullptr, _G(player).walker_trigger, _G(player).walk_facing);
+					term_message("walked");
+
+					_G(player).need_to_walk = false;
+				}
+			} else if (!_G(player).waiting_for_walk) {
+				term_message("parsing1");
+				parse_player_command_now();
+				term_message("parsed0");
+
+				_G(player).ready_to_walk = false;
+			}
+		}
+
+		if (_G(player).walker_in_this_scene && _G(camera_reacts_to_player) &&
+				_G(gameDrawBuff)->w > 640 && _G(my_walker)) {
+			int xp = (_G(my_walker)->myAnim8->myRegs[IDX_X] >> 16) + screen->x1;
+
+			if (xp > 560 && _cameraShiftAmount >= 0) {
+				_cameraShiftAmount += screen->x1 - 427;
+				int xv = _cameraShiftAmount + _G(gameDrawBuff)->w - 1;
+
+				if (xv < 639)
+					_cameraShiftAmount = -(_G(gameDrawBuff)->w - 640);
+				_cameraShiftAmount -= screen->x1;
+			} else if (xp < 80 && _cameraShiftAmount <= 0) {
+				_cameraShiftAmount += screen->x1 + 427;
+
+				if (_cameraShiftAmount > 0)
+					_cameraShiftAmount = 0;
+
+				_cameraShiftAmount -= screen->x1;
+			}
+		}
+	}
+
+	_GI().cancel_sentence();
+}
+
+void Sections::parse_player_command_now() {
+	// TODO: parse_player_command_now
+	error("TODO: parse_player_command_now");
 }
 
 /*------------------------------------------------------------------------*/

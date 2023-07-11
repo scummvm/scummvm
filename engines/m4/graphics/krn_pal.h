@@ -104,6 +104,8 @@ extern void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scr
 	int32 greyX1, int32 greyY1, int32 greyX2, int32 greyY2);
 extern void krn_ChangeBufferLuminance(Buffer *target, int32 percent);
 
+extern void krn_pal_game_task();
+
 } // namespace M4
 
 #endif
