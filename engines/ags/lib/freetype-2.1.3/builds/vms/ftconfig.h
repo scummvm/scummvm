@@ -39,7 +39,7 @@
 
 
 /* Include the header file containing all developer build options */
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include FT_CONFIG_OPTIONS_H
 #include FT_CONFIG_STANDARD_LIBRARY_H
 

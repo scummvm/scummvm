@@ -63,7 +63,7 @@
 #define AGS_LIB_FREETYPE_FTCMANAG_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftlru.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftccache.h"

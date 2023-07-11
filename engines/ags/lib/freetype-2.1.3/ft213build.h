@@ -28,8 +28,8 @@
 /*************************************************************************/
 
 
-#ifndef AGS_LIB_FREETYPE_FT2_BUILD_H
-#define AGS_LIB_FREETYPE_FT2_BUILD_H
+#ifndef AGS_LIB_FREETYPE_FT213_BUILD_H
+#define AGS_LIB_FREETYPE_FT213_BUILD_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftheader.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/internal.h"
@@ -42,4 +42,4 @@
 #define FT2_1_3_END_HEADER
 #endif
 
-#endif /* AGS_LIB_FREETYPE_FT2_BUILD_H */
+#endif /* AGS_LIB_FREETYPE_FT213_BUILD_H */

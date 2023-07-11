@@ -44,7 +44,7 @@ extern void __stdargs KVPrintF( const char *formatString, const void *values );
 /*************************************************************************/
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include FT_INTERNAL_DEBUG_H
 
 

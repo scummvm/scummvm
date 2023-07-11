@@ -20,7 +20,7 @@
 #define AGS_LIB_FREETYPE_CFFOBJS_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/cfftypes.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"

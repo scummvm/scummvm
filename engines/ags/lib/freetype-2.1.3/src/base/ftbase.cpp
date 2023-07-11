@@ -16,7 +16,7 @@
 /***************************************************************************/
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
 #define  FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 

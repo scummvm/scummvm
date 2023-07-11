@@ -20,7 +20,7 @@
 #define AGS_LIB_FREETYPE_WINFNT_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
 
 namespace AGS3 {

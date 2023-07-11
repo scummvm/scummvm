@@ -19,7 +19,7 @@
 #ifndef AGS_LIB_FREETYPE_T1AFM_H
 #define AGS_LIB_FREETYPE_T1AFM_H
 
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "t1objs.h"
 
 namespace AGS3 {

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef AGS_LIB_FREETYPE_PCFUTIL_H
 #define AGS_LIB_FREETYPE_PCFUTIL_H
 
-#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
 namespace AGS3 {
 namespace FreeType213 {
