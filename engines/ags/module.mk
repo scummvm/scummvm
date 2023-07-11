@@ -33,24 +33,24 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/autohint/ahglobal.o \
 	lib/freetype-2.1.3/src/autohint/ahhint.o \
 	lib/freetype-2.1.3/src/autohint/ahmodule.o \
-	lib/freetype-2.1.3/src/base/ftutil.o \
-	lib/freetype-2.1.3/src/base/ftdbgmem.o \
-	lib/freetype-2.1.3/src/base/ftstream.o \
-	lib/freetype-2.1.3/src/base/ftcalc.o \
-	lib/freetype-2.1.3/src/base/fttrigon.o \
-	lib/freetype-2.1.3/src/base/ftoutln.o \
-	lib/freetype-2.1.3/src/base/ftgloadr.o \
-	lib/freetype-2.1.3/src/base/ftobjs.o \
-	lib/freetype-2.1.3/src/base/ftnames.o \
-	lib/freetype-2.1.3/src/base/ftbbox.o \
-	lib/freetype-2.1.3/src/base/ftbdf.o \
-	lib/freetype-2.1.3/src/base/ftglyph.o \
-	lib/freetype-2.1.3/src/base/ftinit.o \
-	lib/freetype-2.1.3/src/base/ftmm.o \
-	lib/freetype-2.1.3/src/base/ftpfr.o \
-	lib/freetype-2.1.3/src/base/ftsystem.o \
-	lib/freetype-2.1.3/src/base/fttype1.o \
-	lib/freetype-2.1.3/src/base/ftxf86.o \
+	lib/freetype-2.1.3/ftbbox.o \
+	lib/freetype-2.1.3/ftbdf.o \
+	lib/freetype-2.1.3/ftcalc.o \
+	lib/freetype-2.1.3/ftdbgmem.o \
+	lib/freetype-2.1.3/ftgloadr.o \
+	lib/freetype-2.1.3/ftglyph.o \
+	lib/freetype-2.1.3/ftinit.o \
+	lib/freetype-2.1.3/ftmm.o \
+	lib/freetype-2.1.3/ftnames.o \
+	lib/freetype-2.1.3/ftobjs.o \
+	lib/freetype-2.1.3/ftoutln.o \
+	lib/freetype-2.1.3/ftpfr.o \
+	lib/freetype-2.1.3/ftstream.o \
+	lib/freetype-2.1.3/ftsystem.o \
+	lib/freetype-2.1.3/fttrigon.o \
+	lib/freetype-2.1.3/fttype1.o \
+	lib/freetype-2.1.3/ftutil.o \
+	lib/freetype-2.1.3/ftxf86.o \
 	lib/freetype-2.1.3/src/bdf/bdflib.o \
 	lib/freetype-2.1.3/src/bdf/bdfdrivr.o \
 	lib/freetype-2.1.3/src/cache/ftlru.o \
