@@ -23,6 +23,7 @@
 #include "m4/adv_r/adv_interface.h"
 #include "m4/core/errors.h"
 #include "m4/mem/memman.h"
+#include "m4/wscript/ws_machine.h"
 #include "m4/vars.h"
 
 namespace M4 {
