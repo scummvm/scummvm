@@ -42,23 +42,23 @@ class EventSeqGroup {
 	typedef Common::HashMap<unsigned int, EventSequence> SeqMap;
 
 	// The event sequences in this group
-	SeqMap seq;
+	SeqMap _seq;
 
 	// The sequences that have ended in this group
-	Common::Array<unsigned int> end;
+	Common::Array<unsigned int> _end;
 
 public:
 	EventSeqGroup(void) {}
 	~EventSeqGroup(void) {}
 
-	void AddSeq(const unsigned int &id, Common::String &path);
-	void EndSeq(const unsigned int &id);
-	bool EventInProgress(const unsigned int &id);
-	bool ActiveSeq(unsigned int &active_seq);
+	void addSeq(const unsigned int &id, Common::String &path);
+	void endSeq(const unsigned int &id);
+	bool eventInProgress(const unsigned int &id);
+	bool activeSeq(unsigned int &activeSeq);
 
-	GameEvent *CurEvent(const unsigned int &id);
-	void NextEvent(const unsigned int &id, Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
-				   Common::Array<EventSeqInfo> &end_seq, const int choice = -1);
+	GameEvent *curEvent(const unsigned int &id);
+	void nextEvent(const unsigned int &id, Info &info, const Common::String &playerId, Common::Array<EventResult> &result,
+				   Common::Array<EventSeqInfo> &endSeq, const int choice = -1);
 
 	void internalEvents(Info &info);
 
