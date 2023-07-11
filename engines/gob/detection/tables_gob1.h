@@ -400,6 +400,21 @@
 	0, 0, 0
 },
 
+{ // Supplied by Svipur in bug report #14531
+	{
+		"gob1cd",
+		"",
+		AD_ENTRY1s("intro.stk", "dd3975b66f37d2f360f34ee1f83041f1", 3231773),
+		RU_RUS,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob1,
+	kFeaturesCD,
+	0, 0, 0
+},
+
 // -- Windows --
 
 { // Supplied by Hkz on #scummvm
