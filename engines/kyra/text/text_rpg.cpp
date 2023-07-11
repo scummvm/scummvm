@@ -363,7 +363,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 			_screen->drawBox(3, 170, 290, 199, _vm->guiSettings()->colors.fill);
 
 		_screen->set16bitShadingLevel(4);
-		_screen->fillRect(sd->sx << 3, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, remapColor(sdx, _textDimData[sdx].color2));
+		_screen->fillRect(sd->sx << 3, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, _textDimData[sdx].color2);
 		_screen->set16bitShadingLevel(0);
 
 		if (_textDimData[sdx].line)
@@ -493,7 +493,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[s] = 0;
 
 	uint8 col1 = remapColor(sdx, _textDimData[sdx].color1);
-	uint8 col2 = remapColor(sdx, _textDimData[sdx].color2);
+	uint8 col2 = _isChinese ? remapColor(sdx, _textDimData[sdx].color2) : _textDimData[sdx].color2;
 	if (sjisTextMode && (sdx == 2 || sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) {
 		x1 &= ~3;
 		y = (y + 8) & ~7;
@@ -623,7 +623,7 @@ void TextDisplayer_rpg::clearCurDim() {
 		--hOffs;
 	}
 
-	_screen->fillRect((tmp->sx << 3) - xOffs, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1 + wOffs, (tmp->sy + tmp->h) - 1 + hOffs, remapColor(d, _textDimData[d].color2));
+	_screen->fillRect((tmp->sx << 3) - xOffs, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1 + wOffs, (tmp->sy + tmp->h) - 1 + hOffs, _textDimData[d].color2);
 
 	_lineCount = 0;
 	_textDimData[d].column = _textDimData[d].line = 0;
@@ -738,9 +738,9 @@ void TextDisplayer_rpg::textPageBreak() {
 
 	_screen->set16bitShadingLevel(4);
 	if (_vm->game() == GI_LOL && _vm->gameFlags().use16ColorMode)
-		_screen->fillRect(x + 8, y, x + 57, y + _vm->guiSettings()->buttons.height, remapColor(sdx, _textDimData[sdx].color2));
+		_screen->fillRect(x + 8, y, x + 57, y + _vm->guiSettings()->buttons.height, _textDimData[sdx].color2);
 	else
-		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, remapColor(sdx, _textDimData[sdx].color2));
+		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, _textDimData[sdx].color2);
 
 	// Fix border overdraw glitch
 	if (_vm->game() == GI_EOB2 && _isChinese && y + _vm->guiSettings()->buttons.height == 200)
