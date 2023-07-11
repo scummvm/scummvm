@@ -43,7 +43,15 @@ class Sprite;
 class TextCastMember;
 
 enum {
-	kChannelDataSize = (25 * 50)
+	kChannelDataSize = (25 * 50),
+	kMainChannelSizeD2 = 32,
+	kSprChannelSizeD2 = 16,
+	kMainChannelSizeD4 = 40,
+	kSprChannelSizeD4 = 20,
+	kMainChannelSizeD5 = 48,
+	kSprChannelSizeD5 = 24,
+	kMainChannelSizeD6 = 48,
+	kSprChannelSizeD6 = 24
 };
 
 struct PaletteInfo {
@@ -154,6 +162,11 @@ public:
 	Score *_score;
 	DirectorEngine *_vm;
 };
+
+void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
+void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
+void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
+void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 
 } // End of namespace Director
 

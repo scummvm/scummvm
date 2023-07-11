@@ -42,8 +42,10 @@ public:
 
 	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel);
 
-	void loadFilmLoopData(Common::SeekableReadStreamEndian &stream);
-	void loadFilmLoopDataV4(Common::SeekableReadStreamEndian &stream);
+	void loadFilmLoopDataD2(Common::SeekableReadStreamEndian &stream);
+	void loadFilmLoopDataD4(Common::SeekableReadStreamEndian &stream);
+	void loadFilmLoopDataD5(Common::SeekableReadStreamEndian &stream);
+	void loadFilmLoopDataD6(Common::SeekableReadStreamEndian &stream);
 
 	Common::String formatInfo() override;
 

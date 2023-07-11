@@ -29,33 +29,6 @@ class BitmapCastMember;
 class ShapeCastMember;
 class TextCastMember;
 
-enum SpritePosition {
-	kSpritePositionUnk1 = 0,
-	kSpritePositionEnabled = 1,
-	kSpritePositionUnk2 = 2,
-	kSpritePositionFlags = 4,
-	kSpritePositionCastId = 6,
-	kSpritePositionY = 8,
-	kSpritePositionX = 10,
-	kSpritePositionHeight = 12,
-	kSpritePositionWidth = 14
-};
-
-enum MainChannelsPosition {
-	kScriptIdPosition = 0,
-	kSoundType1Position,
-	kTransFlagsPosition,
-	kTransChunkSizePosition,
-	kTempoPosition,
-	kTransTypePosition,
-	kSound1Position,
-	kSkipFrameFlagsPosition = 8,
-	kBlendPosition,
-	kSound2Position,
-	kSound2TypePosition = 11,
-	kPalettePosition = 15
-};
-
 class Sprite {
 public:
 	Sprite(Frame *frame = nullptr);

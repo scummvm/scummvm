@@ -139,33 +139,34 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
  *
  **************************/
 
-enum {
-	kMainChannelSizeD2 = 32,
-	kSprChannelSizeD2 = 16
-};
-
 void Frame::readChannelD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	if (offset < kMainChannelSizeD2) {
+		uint16 needSize = MIN(size, (uint16)(kMainChannelSizeD2 - offset));
+		readMainChannelsD2(stream, offset, needSize);
+		size -= needSize;
+		offset += needSize;
+	}
+
 	if (offset >= kMainChannelSizeD2) {
-		if (size <= kSprChannelSizeD2)
-			readSpriteD2(stream, offset, size);
-		else {
-			// read > 1 sprites channel
-			while (size > kSprChannelSizeD2) {
-				byte spritePosition = (offset - kMainChannelSizeD2) / kSprChannelSizeD2;
-				uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD2 + kMainChannelSizeD2;
-				uint16 needSize = nextStart - offset;
-				readSpriteD2(stream, offset, needSize);
-				offset += needSize;
-				size -= needSize;
-			}
-			readSpriteD2(stream, offset, size);
+		byte spritePosition = (offset - kMainChannelSizeD2) / kSprChannelSizeD2;
+		uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD2 + kMainChannelSizeD2;
+
+		while (size > 0) {
+			uint16 needSize = MIN((uint16)(nextStart - offset), size);
+			readSpriteD2(stream, offset, needSize);
+			offset += needSize;
+			size -= needSize;
+			nextStart += kSprChannelSizeD2;
 		}
-	} else {
-		readMainChannelsD2(stream, offset, size);
 	}
 }
 
 void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	if (debugChannelSet(8, kDebugLoading)) {
+		debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): %d byte header", size);
+		stream.hexdump(size);
+	}
+
 	uint32 initPos = stream.pos();
 	uint32 finishPosition = initPos + size;
 	byte unk[6];
@@ -260,8 +261,6 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 			debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
 				unk[1], unk[2], unk[3], unk[4], unk[5]);
 			break;
-		case 32:
-			break;
 		default:
 			// This means that a `case` label has to be split at this position
 			error("Frame::readMainChannelsD2(): Miscomputed field position: %ld", stream.pos() - initPos + offset);
@@ -301,8 +300,22 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	uint32 initPos = stream.pos();
 	uint32 finishPosition = initPos + size;
 
+	readSpriteDataD2(stream, sprite, initPos - fieldPosition, finishPosition);
+
+	if (stream.pos() > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD2(): Read %ld extra bytes", stream.pos() - finishPosition);
+	}
+
+	// Sometimes removed sprites leave garbage in the channel
+	// We set it to zero, so then could skip
+	if (sprite._width <= 0 || sprite._height <= 0)
+		sprite._width = sprite._height = 0;
+}
+
+void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
 	while (stream.pos() < finishPosition) {
-		switch (stream.pos() - initPos + fieldPosition) {
+		switch (stream.pos() - startPosition) {
 		case 0:
 			sprite._scriptId = CastMemberID(stream.readByte(), DEFAULT_CAST_LIB);
 			break;
@@ -313,11 +326,11 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			break;
 		case 2:
 			// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
-			sprite._foreColor = _vm->transformColor((128 + stream.readByte()) & 0xff);
+			sprite._foreColor = g_director->transformColor((128 + stream.readByte()) & 0xff);
 			break;
 		case 3:
 			// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
-			sprite._backColor = _vm->transformColor((128 + stream.readByte()) & 0xff);
+			sprite._backColor = g_director->transformColor((128 + stream.readByte()) & 0xff);
 			break;
 		case 4:
 			sprite._thickness = stream.readByte();
@@ -351,26 +364,12 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		case 14:
 			sprite._width = (int16)stream.readUint16();
 			break;
-		case 16:
-			// end of channel, go to next sprite channel
-			readSpriteD2(stream, spriteStart + kSprChannelSizeD2, finishPosition - stream.pos());
-			fieldPosition = finishPosition;
-			break;
 		default:
 			// This means that a `case` label has to be split at this position
-			error("Frame::readSpriteD2(): Miscomputed field position: %ld", stream.pos() - initPos + fieldPosition);
+			error("readSpriteDataD2(): Miscomputed field position: %ld", stream.pos() - startPosition);
 		}
 	}
 
-	if (stream.pos() > finishPosition) {
-		// This means that the relevant `case` label reads too many bytes and must be split
-		error("Frame::readSpriteD2(): Read %ld extra bytes", stream.pos() - finishPosition);
-	}
-
-	// Sometimes removed sprites leave garbage in the channel
-	// We set it to zero, so then could skip
-	if (sprite._width <= 0 || sprite._height <= 0)
-		sprite._width = sprite._height = 0;
 }
 
 
@@ -380,37 +379,33 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
  *
  **************************/
 
-enum {
-	kMainChannelSizeD4 = 40,
-	kSprChannelSizeD4 = 20
-};
-
 void Frame::readChannelD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	// 40 bytes header
+	if (offset < kMainChannelSizeD4) {
+		uint16 needSize = MIN(size, (uint16)(kMainChannelSizeD4 - offset));
+		readMainChannelsD4(stream, offset, needSize);
+		size -= needSize;
+		offset += needSize;
+	}
+
 	if (offset >= kMainChannelSizeD4) {
-		if (size <= kSprChannelSizeD4)
-			readSpriteD4(stream, offset, size);
-		else {
-			// read > 1 sprites channel
-			while (size > kSprChannelSizeD4) {
-				byte spritePosition = (offset - kMainChannelSizeD4) / kSprChannelSizeD4;
-				uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD4 + kMainChannelSizeD4;
-				uint16 needSize = nextStart - offset;
-				readSpriteD4(stream, offset, needSize);
-				offset += needSize;
-				size -= needSize;
-			}
-			readSpriteD4(stream, offset, size);
+		byte spritePosition = (offset - kMainChannelSizeD4) / kSprChannelSizeD4;
+		uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD4 + kMainChannelSizeD4;
+
+		while (size > 0) {
+			uint16 needSize = MIN((uint16)(nextStart - offset), size);
+			readSpriteD4(stream, offset, needSize);
+			offset += needSize;
+			size -= needSize;
+			nextStart += kSprChannelSizeD4;
 		}
-	} else {
-		readMainChannelsD4(stream, offset, size);
 	}
 }
 
 void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "Frame::readMainChannelsD4(): 40 byte header");
-		stream.hexdump(kMainChannelSizeD4);
+		debugC(8, kDebugLoading, "Frame::readMainChannelsD4(): %d byte header", size);
+		stream.hexdump(size);
 	}
 
 	uint32 initPos = stream.pos();
@@ -541,8 +536,6 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 			if (unk1)
 				warning("Frame::readMainChannelsD4(): STUB: unk5: 0x%02x", unk1);
 			break;
-		case 40:
-			break;
 		default:
 			// This means that a `case` label has to be split at this position
 			error("Frame::readMainChannelsD4(): Miscomputed field position: %ld", stream.pos() - initPos + offset);
@@ -582,8 +575,22 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	uint32 initPos = stream.pos();
 	uint32 finishPosition = initPos + size;
 
+	readSpriteDataD4(stream, sprite, initPos - fieldPosition, finishPosition);
+
+	if (stream.pos() > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD4(): Read %ld extra bytes", stream.pos() - finishPosition);
+	}
+
+	// Sometimes removed sprites leave garbage in the channel
+	// We set it to zero, so then could skip
+	if (sprite._width <= 0 || sprite._height <= 0)
+		sprite._width = sprite._height = 0;
+}
+
+void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
 	while (stream.pos() < finishPosition) {
-		switch (stream.pos() - initPos + fieldPosition) {
+		switch (stream.pos() - startPosition) {
 		case 0:
 			sprite._scriptId = CastMemberID(stream.readByte(), DEFAULT_CAST_LIB);
 			break;
@@ -593,10 +600,10 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			sprite._enabled = sprite._spriteType != kInactiveSprite;
 			break;
 		case 2:
-			sprite._foreColor = _vm->transformColor((uint8)stream.readByte());
+			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
 			break;
 		case 3:
-			sprite._backColor = _vm->transformColor((uint8)stream.readByte());
+			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
 			break;
 		case 4:
 			sprite._thickness = stream.readByte();
@@ -648,26 +655,11 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		case 19:
 			sprite._blendAmount = stream.readByte();
 			break;
-		case 20:
-			// end of channel, go to next sprite channel
-			readSpriteD4(stream, spriteStart + kSprChannelSizeD4, finishPosition - stream.pos());
-			fieldPosition = finishPosition;
-			break;
 		default:
 			// This means that a `case` label has to be split at this position
-			error("Frame::readSpriteD4(): Miscomputed field position: %ld", stream.pos() - initPos + fieldPosition);
+			error("readSpriteDataD4(): Miscomputed field position: %ld", stream.pos() - startPosition);
 		}
 	}
-
-	if (stream.pos() > finishPosition) {
-		// This means that the relevant `case` label reads too many bytes and must be split
-		error("Frame::readMainChannelsD4(): Read %ld extra bytes", stream.pos() - finishPosition);
-	}
-
-	// Sometimes removed sprites leave garbage in the channel
-	// We set it to zero, so then could skip
-	if (sprite._width <= 0 || sprite._height <= 0)
-		sprite._width = sprite._height = 0;
 }
 
 /**************************
@@ -676,37 +668,33 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
  *
  **************************/
 
-enum {
-	kMainChannelSizeD5 = 48,
-	kSprChannelSizeD5 = 24
-};
-
 void Frame::readChannelD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	// 48 bytes header
+	if (offset < kMainChannelSizeD5) {
+		uint16 needSize = MIN(size, (uint16)(kMainChannelSizeD5 - offset));
+		readMainChannelsD5(stream, offset, needSize);
+		size -= needSize;
+		offset += needSize;
+	}
+
 	if (offset >= kMainChannelSizeD5) {
-		if (size <= kSprChannelSizeD5)
-			readSpriteD5(stream, offset, size);
-		else {
-			// read > 1 sprites channel
-			while (size > kSprChannelSizeD5) {
-				byte spritePosition = (offset - kMainChannelSizeD5) / kSprChannelSizeD5;
-				uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD5 + kMainChannelSizeD5;
-				uint16 needSize = nextStart - offset;
-				readSpriteD5(stream, offset, needSize);
-				offset += needSize;
-				size -= needSize;
-			}
-			readSpriteD5(stream, offset, size);
+		byte spritePosition = (offset - kMainChannelSizeD5) / kSprChannelSizeD5;
+		uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD5 + kMainChannelSizeD5;
+
+		while (size > 0) {
+			uint16 needSize = MIN((uint16)(nextStart - offset), size);
+			readSpriteD5(stream, offset, needSize);
+			offset += needSize;
+			size -= needSize;
+			nextStart += kSprChannelSizeD5;
 		}
-	} else {
-		readMainChannelsD5(stream, offset, size);
 	}
 }
 
 void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "Frame::readMainChannelsD5(): 40 byte header");
-		stream.hexdump(kMainChannelSizeD4);
+		debugC(8, kDebugLoading, "Frame::readMainChannelsD5(): %d byte header", size);
+		stream.hexdump(size);
 	}
 
 	uint32 initPos = stream.pos();
@@ -806,8 +794,6 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 				warning("Frame::readMainChannelsD5(): STUB: unk4: %s", s.c_str());
 			}
 			break;
-		case 48:
-			break;
 		default:
 			// This means that a `case` label has to be split at this position
 			error("Frame::readMainChannelsD5(): Miscomputed field position: %ld", stream.pos() - initPos + offset);
@@ -817,7 +803,7 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 
 	if (stream.pos() > finishPosition) {
 		// This means that the relevant `case` label reads too many bytes and must be split
-		error("Frame::readMainChannelsD4(): Read %ld extra bytes", stream.pos() - finishPosition);
+		error("Frame::readMainChannelsD5(): Read %ld extra bytes", stream.pos() - finishPosition);
 	}
 
 	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
@@ -847,8 +833,22 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	uint32 initPos = stream.pos();
 	uint32 finishPosition = initPos + size;
 
+	readSpriteDataD5(stream, sprite, initPos - fieldPosition, finishPosition);
+
+	if (fieldPosition > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD5(): Read %ld extra bytes", stream.pos() - finishPosition);
+	}
+
+	// Sometimes removed sprites leave garbage in the channel
+	// We set it to zero, so then could skip
+	if (sprite._width <= 0 || sprite._height <= 0)
+		sprite._width = sprite._height = 0;
+}
+
+void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
 	while (stream.pos() < finishPosition) {
-		switch (stream.pos() - initPos + fieldPosition) {
+		switch (stream.pos() - startPosition) {
 		case 0:
 			sprite._spriteType = (SpriteType)stream.readByte();
 			break;
@@ -885,10 +885,10 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			}
 			break;
 		case 10:
-			sprite._foreColor = _vm->transformColor((uint8)stream.readByte());
+			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
 			break;
 		case 11:
-			sprite._backColor = _vm->transformColor((uint8)stream.readByte());
+			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
 			break;
 		case 12:
 			sprite._startPoint.y = (int16)stream.readUint16();
@@ -923,26 +923,12 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		case 23:
 			(void)stream.readByte(); // unused
 			break;
-		case 24:
-			// end of channel, go to next sprite channel
-			readSpriteD5(stream, spriteStart + kSprChannelSizeD5, finishPosition - stream.pos());
-			fieldPosition = finishPosition;
-			break;
 		default:
 			// This means that a `case` label has to be split at this position
-			error("Frame::readSpriteD2(): Miscomputed field position: %ld", stream.pos() - initPos + fieldPosition);
+			error("readSpriteDataD5(): Miscomputed field position: %ld", stream.pos() - startPosition);
 		}
 	}
 
-	if (fieldPosition > finishPosition) {
-		// This means that the relevant `case` label reads too many bytes and must be split
-		error("Frame::readMainChannelsD4(): Read %ld extra bytes", stream.pos() - finishPosition);
-	}
-
-	// Sometimes removed sprites leave garbage in the channel
-	// We set it to zero, so then could skip
-	if (sprite._width <= 0 || sprite._height <= 0)
-		sprite._width = sprite._height = 0;
 }
 
 /**************************
@@ -951,34 +937,34 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
  *
  **************************/
 
-enum {
-	kMainChannelSizeD6 = 48,
-	kSprChannelSizeD6 = 24
-};
-
 void Frame::readChannelD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	// 48 bytes header
+	if (offset < kMainChannelSizeD6) {
+		uint16 needSize = MIN(size, (uint16)(kMainChannelSizeD6 - offset));
+		readMainChannelsD6(stream, offset, needSize);
+		size -= needSize;
+		offset += needSize;
+	}
+
 	if (offset >= kMainChannelSizeD6) {
-		if (size <= kSprChannelSizeD6)
-			readSpriteD6(stream, offset, size);
-		else {
-			// read > 1 sprites channel
-			while (size > kSprChannelSizeD6) {
-				byte spritePosition = (offset - kMainChannelSizeD6) / kSprChannelSizeD6;
-				uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD6 + kMainChannelSizeD6;
-				uint16 needSize = nextStart - offset;
-				readSpriteD6(stream, offset, needSize);
-				offset += needSize;
-				size -= needSize;
-			}
-			readSpriteD6(stream, offset, size);
+		byte spritePosition = (offset - kMainChannelSizeD6) / kSprChannelSizeD6;
+		uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD6 + kMainChannelSizeD6;
+
+		while (size > 0) {
+			uint16 needSize = MIN((uint16)(nextStart - offset), size);
+			readSpriteD6(stream, offset, needSize);
+			offset += needSize;
+			size -= needSize;
+			nextStart += kSprChannelSizeD6;
 		}
-	} else {
-		readMainChannelsD6(stream, offset, size);
 	}
 }
 
 void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	if (debugChannelSet(8, kDebugLoading)) {
+		debugC(8, kDebugLoading, "Frame::readMainChannelsD6(): %d byte header", size);
+		stream.hexdump(size);
+	}
 	error("Frame::readMainChannelsD6(): Miscomputed field position: %d", offset);
 }
 
@@ -1005,8 +991,22 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	uint32 initPos = stream.pos();
 	uint32 finishPosition = initPos + size;
 
+	readSpriteDataD6(stream, sprite, initPos - fieldPosition, finishPosition);
+
+	if (stream.pos() > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD6(): Read %ld extra bytes", stream.pos() - finishPosition);
+	}
+
+	// Sometimes removed sprites leave garbage in the channel
+	// We set it to zero, so then could skip
+	if (sprite._width <= 0 || sprite._height <= 0)
+		sprite._width = sprite._height = 0;
+}
+
+void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
 	while (stream.pos() < finishPosition) {
-		switch (stream.pos() - initPos + fieldPosition) {
+		switch (stream.pos() - startPosition) {
 		case 0:
 			sprite._spriteType = (SpriteType)stream.readByte();
 			break;
@@ -1021,10 +1021,10 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 			break;
 		case 2:
-			sprite._foreColor = _vm->transformColor((uint8)stream.readByte());
+			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
 			break;
 		case 3:
-			sprite._backColor = _vm->transformColor((uint8)stream.readByte());
+			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
 			break;
 		case 4: {
 				uint16 castLib = stream.readUint16();
@@ -1071,26 +1071,11 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		case 23:
 			(void)stream.readByte(); // unused
 			break;
-		case 24:
-			// end of channel, go to next sprite channel
-			readSpriteD6(stream, spriteStart + kSprChannelSizeD6, finishPosition - stream.pos());
-			fieldPosition = finishPosition;
-			break;
 		default:
 			// This means that a `case` label has to be split at this position
-			error("Frame::readSpriteD2(): Miscomputed field position: %ld", stream.pos() - initPos + fieldPosition);
+			error("readSpriteDataD6(): Miscomputed field position: %ld", stream.pos() - startPosition);
 		}
 	}
-
-	if (stream.pos() > finishPosition) {
-		// This means that the relevant `case` label reads too many bytes and must be split
-		error("Frame::readMainChannelsD4(): Read %ld extra bytes", stream.pos() - finishPosition);
-	}
-
-	// Sometimes removed sprites leave garbage in the channel
-	// We set it to zero, so then could skip
-	if (sprite._width <= 0 || sprite._height <= 0)
-		sprite._width = sprite._height = 0;
 }
 
 Common::String Frame::formatChannelInfo() {
