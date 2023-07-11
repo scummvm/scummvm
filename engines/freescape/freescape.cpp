@@ -424,6 +424,7 @@ void FreescapeEngine::processInput() {
 				_gfx->setViewport(_fullscreenViewArea);
 				openMainMenuDialog();
 				_gfx->setViewport(_viewArea);
+				_gfx->computeScreenViewport();
 				_savedScreen->free();
 				delete _savedScreen;
 				break;
@@ -571,6 +572,7 @@ Common::Error FreescapeEngine::run() {
 	// Draw first frame
 
 	resetInput();
+	_gfx->computeScreenViewport();
 	drawFrame();
 	_gfx->flipBuffer();
 	g_system->updateScreen();

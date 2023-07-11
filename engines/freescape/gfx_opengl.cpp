@@ -312,8 +312,10 @@ void OpenGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 }
 
 void OpenGLRenderer::clear(uint8 r, uint8 g, uint8 b) {
+	glDisable(GL_SCISSOR_TEST);
 	glClearColor(r / 255., g / 255., b / 255., 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_SCISSOR_TEST);
 }
 
 void OpenGLRenderer::drawFloor(uint8 color) {
