@@ -63,21 +63,21 @@ void ReplyMenu::load(const Common::String &filename) {
 int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::HandleEvents(Event);
-	if (choice >= 0 && (unsigned int)choice < dat.reply.size()) {
+	if (choice >= 0 && (unsigned int)choice < dat._reply.size()) {
 		bool play_sound = false;
 
 		// Loop through any opinion changes required
-		for (auto &i : dat.reply[element[choice].index].change) {
-			if (i.id == cur_id) {
+		for (auto &i : dat._reply[element[choice].index]._change) {
+			if (i._id == cur_id) {
 				// This is a special case because we also need to update the opinion bars
-				oh.OpinionChange(info, i.id, OPI_LIKE, i.val[OPI_LIKE]);
-				oh.OpinionChange(info, i.id, OPI_RESPECT, i.val[OPI_RESPECT]);
-				oh.OpinionChange(info, i.id, OPI_FEAR, i.val[OPI_FEAR]);
+				oh.OpinionChange(info, i._id, OPI_LIKE, i._val[OPI_LIKE]);
+				oh.OpinionChange(info, i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
+				oh.OpinionChange(info, i._id, OPI_FEAR, i._val[OPI_FEAR]);
 				play_sound = true;
 			} else {
-				info.OpinionChange(i.id, OPI_LIKE, i.val[OPI_LIKE]);
-				info.OpinionChange(i.id, OPI_RESPECT, i.val[OPI_RESPECT]);
-				info.OpinionChange(i.id, OPI_FEAR, i.val[OPI_FEAR]);
+				info.OpinionChange(i._id, OPI_LIKE, i._val[OPI_LIKE]);
+				info.OpinionChange(i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
+				info.OpinionChange(i._id, OPI_FEAR, i._val[OPI_FEAR]);
 				play_sound = true;
 			}
 		}
@@ -94,7 +94,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::Str
 		}
 #endif
 
-		return dat.reply[element[choice].index].nextid;
+		return dat._reply[element[choice].index]._nextid;
 	}
 
 	return -1;
@@ -104,11 +104,11 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::Str
 int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::HandleEvents(Event);
-	if (choice >= 0 && choice < dat.reply.size()) {
+	if (choice >= 0 && choice < dat._reply.size()) {
 		bool play_sound = false;
 
 		// Loop through any opinion changes required
-		for (auto &i : dat.reply[element[choice].index].change) {
+		for (auto &i : dat._reply[element[choice].index].change) {
 			if (i.id == cur_id) {
 				// This is a special case because we also need to update the opinion bars
 				oh.OpinionChange(info, i.id, OPI_LIKE, i.val[OPI_LIKE]);
@@ -131,7 +131,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::Str
 				info.sound.rep_inc = true;
 		}
 
-		return dat.reply[element[choice].index].nextid;
+		return dat._reply[element[choice].index].nextid;
 	}
 
 	return -1;
@@ -151,16 +151,16 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 	// which is why we need two count variables
 	unsigned int reply_count = 0, element_count = 0;
 
-	for (auto i = dat.reply.begin(); i != dat.reply.end() && reply_count < dat.reply.size(); ++i, ++reply_count) {
-		if (i->unlock.Evaluate(info)) {
+	for (auto i = dat._reply.begin(); i != dat._reply.end() && reply_count < dat._reply.size(); ++i, ++reply_count) {
+		if (i->_unlock.Evaluate(info)) {
 			element[element_count].visible = true;
 			element[element_count].index = reply_count;
 
-			tone.value[element_count] = dat.reply[reply_count].tone;
+			tone.value[element_count] = dat._reply[reply_count]._tone;
 
 			const InputType type = static_cast<InputType>(IU_REPLY_0 + element_count);
 			Common::String text = g_engine->_inputManager->GetAssociatedKey(type);
-			text += ". " + i->text;
+			text += ". " + i->_text;
 			info.InsertName(text);
 
 			if (element_count == 0)

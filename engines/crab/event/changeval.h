@@ -36,30 +36,32 @@
 
 namespace Crab {
 
+using namespace pyrodactyl::people;
+
 namespace pyrodactyl {
 namespace event {
 struct ChangeVal {
 	// The person whose opinion is changed
-	Common::String id;
+	Common::String _id;
 
 	// How much does opinion change?
-	int val[pyrodactyl::people::OPI_TOTAL];
+	int _val[pyrodactyl::people::OPI_TOTAL];
 
 	ChangeVal() {
-		using namespace pyrodactyl::people;
-		val[OPI_LIKE] = 0;
-		val[OPI_RESPECT] = 0;
-		val[OPI_FEAR] = 0;
+		_val[OPI_LIKE] = 0;
+		_val[OPI_RESPECT] = 0;
+		_val[OPI_FEAR] = 0;
 	}
 
-	ChangeVal(rapidxml::xml_node<char> *node) : ChangeVal() { load(node); }
+	ChangeVal(rapidxml::xml_node<char> *node) : ChangeVal() {
+		load(node);
+	}
 
 	void load(rapidxml::xml_node<char> *node) {
-		using namespace pyrodactyl::people;
-		loadStr(id, "id", node);
-		loadNum(val[OPI_LIKE], "like", node);
-		loadNum(val[OPI_RESPECT], "respect", node);
-		loadNum(val[OPI_FEAR], "fear", node);
+		loadStr(_id, "id", node);
+		loadNum(_val[OPI_LIKE], "like", node);
+		loadNum(_val[OPI_RESPECT], "respect", node);
+		loadNum(_val[OPI_FEAR], "fear", node);
 	}
 };
 } // End of namespace event
