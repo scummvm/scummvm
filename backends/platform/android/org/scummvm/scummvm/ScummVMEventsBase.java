@@ -77,6 +77,8 @@ public class ScummVMEventsBase implements
 	protected View _currentView;
 	protected int _touchMode;
 
+	protected boolean _doubleTapMode;
+
 	// Custom handler code (to avoid mem leaks, see warning "This Handler Class Should Be Static Or Leaks Might Occur”) based on:
 	// https://stackoverflow.com/a/27826094
 	public static class ScummVMEventHandler extends Handler {
@@ -125,6 +127,7 @@ public class ScummVMEventsBase implements
 		_gd.setOnDoubleTapListener(this);
 		_gd.setIsLongpressEnabled(false);
 
+		_doubleTapMode = false;
 		_longPressTimeout = ViewConfiguration.getLongPressTimeout();
 	}
 
@@ -158,7 +161,7 @@ public class ScummVMEventsBase implements
 			                   0,
 			                   0);
 		} else if (msg.what == MSG_LONG_TOUCH_EVENT) {
-			if (!_multitouchHelper.isMultitouchMode()) {
+			if (!_multitouchHelper.isMultitouchMode() && getTouchMode() != TOUCH_MODE_GAMEPAD && !_doubleTapMode) {
 				_currentView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
 			}
 		}
@@ -605,6 +608,7 @@ public class ScummVMEventsBase implements
 		//										e1.toString(), e2.toString(),
 		//										velocityX, velocityY));
 
+//		Log.d(ScummVM.LOG_TAG, "onFling");
 		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 		return true;
 	}
@@ -631,16 +635,20 @@ public class ScummVMEventsBase implements
 
 	@Override
 	final public void onShowPress(MotionEvent e) {
+//		Log.d(ScummVM.LOG_TAG, "onShowPress");
 		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
-		// Schedule a Right click notification
-		_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 0, 0), e.getDownTime() + 500);
-		// Middle click
-		_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 1, 0), e.getDownTime() + 1500);
+		if (_touchMode != TOUCH_MODE_GAMEPAD && !_doubleTapMode) {
+			// Schedule a Right click notification
+			_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 0, 0), e.getDownTime() + 500);
+			// Middle click
+			_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 1, 0), e.getDownTime() + 1500);
+		}
 	}
 
 	@Override
 	final public boolean onSingleTapUp(MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "onSingleTapUp");
+		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			_scummvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
 							(int)(e.getEventTime() - e.getDownTime()), 0, 0, 0);
@@ -652,23 +660,34 @@ public class ScummVMEventsBase implements
 	@Override
 	final public boolean onDoubleTap(MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "onDoubleTap");
+		_doubleTapMode = true;
+		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 		return true;
 	}
 
 	@Override
 	final public boolean onDoubleTapEvent(MotionEvent e) {
+		switch (e.getAction()) {
+			case MotionEvent.ACTION_MOVE:
+				//if the second tap hadn't been released and it's being moved
+//				Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent Moving X: " + Float.toString(e.getRawX()) + " Y: " + Float.toString(e.getRawY()));
+				break;
 
-		//if the second tap hadn't been released and it's being moved
-//		if (e.getAction() == MotionEvent.ACTION_MOVE)  {
-//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent Moving X: " + Float.toString(e.getRawX()) + " Y: " + Float.toString(e.getRawY()));
-//		} else if(e.getAction() == MotionEvent.ACTION_UP) {
-//			//user released the screen
-//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent Release");
-//		} else if(e.getAction() == MotionEvent.ACTION_DOWN) {
-//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent DOWN");
-//		} else {
-//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent UNKNOWN!!!!");
-//		}
+			case MotionEvent.ACTION_UP:
+//				Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent Release!");
+				//user released the screen
+				_doubleTapMode = false;
+				break;
+
+			case MotionEvent.ACTION_DOWN:
+//				Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent DOWN!");
+				break;
+
+			default:
+//				Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent UNKNOWN!");
+				break;
+		}
+
 		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(), e.getAction(), 0, 0, 0);
 		}
@@ -677,7 +696,7 @@ public class ScummVMEventsBase implements
 
 	@Override
 	final public boolean onSingleTapConfirmed(MotionEvent e) {
-		// Note, timing thresholds for double tap detection seem to be hardcoded in the frameworl
+		// Note, timing thresholds for double tap detection seem to be hardcoded in the framework
 		// as ViewConfiguration.getDoubleTapTimeout()
 //		Log.d(ScummVM.LOG_TAG, "onSingleTapConfirmed - double tap failed");
 		return true;
