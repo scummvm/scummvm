@@ -98,7 +98,7 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 void Manager::handleEvents(Info &info, const Common::String &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (event_map.contains(info.CurLocID()) > 0 && event_map[info.CurLocID()].eventInProgress(active_seq)) {
-		switch (cur_event->type) {
+		switch (cur_event->_type) {
 		case EVENT_DIALOG:
 			if (oh.show_journal) {
 				info.journal.handleEvents(player_id, Event);
@@ -108,8 +108,8 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, Common::
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (oh.HandleCommonEvents(Event)) {
-					if (info.PersonValid(cur_event->title)) {
-						Person &p = info.PersonGet(cur_event->title);
+					if (info.PersonValid(cur_event->_title)) {
+						Person &p = info.PersonGet(cur_event->_title);
 						if (p.alt_journal_name)
 							info.journal.Open(player_id, JE_PEOPLE, p.journal_name);
 						else
@@ -137,10 +137,10 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, Common::
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (oh.HandleCommonEvents(Event))
-					if (info.PersonValid(cur_event->title))
-						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
+					if (info.PersonValid(cur_event->_title))
+						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->_title).name);
 
-				int choice = reply.handleEvents(info, g_engine->_eventStore->_con[cur_event->special], cur_event->title, oh, Event);
+				int choice = reply.handleEvents(info, g_engine->_eventStore->_con[cur_event->_special], cur_event->_title, oh, Event);
 				if (choice >= 0) {
 					event_map[info.CurLocID()].nextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
@@ -150,15 +150,15 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, Common::
 		case EVENT_TEXT:
 			// If journal button is select from within an event, go to the entry corresponding to that person's name
 			if (oh.HandleCommonEvents(Event))
-				if (info.PersonValid(cur_event->title))
-					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
+				if (info.PersonValid(cur_event->_title))
+					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->_title).name);
 
 			if (textin.handleEvents(Event))
 				event_map[info.CurLocID()].nextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_SPLASH:
 			if (intro.show_traits) {
-				per.handleEvents(info, cur_event->title, Event);
+				per.handleEvents(info, cur_event->_title, Event);
 
 				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					intro.show_traits = false;
@@ -195,8 +195,8 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (oh.HandleCommonEvents(Event)) {
-					if (info.PersonValid(cur_event->title)) {
-						Person &p = info.PersonGet(cur_event->title);
+					if (info.PersonValid(cur_event->_title)) {
+						Person &p = info.PersonGet(cur_event->_title);
 						if (p.alt_journal_name)
 							info.journal.Open(player_id, JE_PEOPLE, p.journal_name);
 						else
@@ -224,10 +224,10 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (oh.HandleCommonEvents(Event))
-					if (info.PersonValid(cur_event->title))
-						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
+					if (info.PersonValid(cur_event->_title))
+						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->_title).name);
 
-				int choice = reply.handleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
+				int choice = reply.handleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->_title, oh, Event);
 				if (choice >= 0) {
 					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
@@ -237,15 +237,15 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 		case EVENT_TEXT:
 			// If journal button is select from within an event, go to the entry corresponding to that person's name
 			if (oh.HandleCommonEvents(Event))
-				if (info.PersonValid(cur_event->title))
-					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
+				if (info.PersonValid(cur_event->_title))
+					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->_title).name);
 
 			if (textin.handleEvents(Event))
 				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_SPLASH:
 			if (intro.show_traits) {
-				per.handleEvents(info, cur_event->title, Event);
+				per.handleEvents(info, cur_event->_title, Event);
 
 				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					intro.show_traits = false;
@@ -272,7 +272,7 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult> &result) {
 	if (event_map.contains(info.CurLocID()) > 0) {
 		if (event_map[info.CurLocID()].eventInProgress(active_seq)) {
-			switch (cur_event->type) {
+			switch (cur_event->_type) {
 			case EVENT_DIALOG:
 				UpdateDialogBox(info, level);
 				break;
@@ -280,7 +280,7 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 				using namespace pyrodactyl::anim;
 
 				DrawType draw_val = DRAW_SAME;
-				if (g_engine->_eventStore->_anim[cur_event->special].internalEvents(draw_val))
+				if (g_engine->_eventStore->_anim[cur_event->_special].internalEvents(draw_val))
 					event_map[info.CurLocID()].nextEvent(active_seq, info, level.PlayerID(), result, end_seq);
 
 				if (draw_val == DRAW_STOP)
@@ -310,16 +310,16 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 }
 
 void Manager::UpdateDialogBox(Info &info, Level &level) {
-	oh.internalEvents(cur_event->state, cur_sp);
+	oh.internalEvents(cur_event->_state, cur_sp);
 }
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Manager::draw(Info &info, HUD &hud, Level &level) {
 	if (event_map.contains(info.CurLocID()) > 0 && event_map[info.CurLocID()].eventInProgress(active_seq)) {
-		switch (cur_event->type) {
+		switch (cur_event->_type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->_anim[cur_event->special].draw();
+			g_engine->_eventStore->_anim[cur_event->_special].draw();
 			break;
 		case EVENT_DIALOG:
 			g_engine->_imageManager->DimScreen();
@@ -327,7 +327,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 				info.journal.draw(level.PlayerID());
 				hud.back.draw();
 			} else
-				oh.draw(info, cur_event, cur_event->title, player, cur_sp);
+				oh.draw(info, cur_event, cur_event->_title, player, cur_sp);
 			break;
 		case EVENT_REPLY:
 			g_engine->_imageManager->DimScreen();
@@ -335,21 +335,21 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 				info.journal.draw(level.PlayerID());
 				hud.back.draw();
 			} else {
-				oh.draw(info, cur_event, cur_event->title, player, cur_sp);
+				oh.draw(info, cur_event, cur_event->_title, player, cur_sp);
 				reply.draw();
 			}
 			break;
 		case EVENT_TEXT:
-			oh.draw(info, cur_event, cur_event->title, player, cur_sp);
+			oh.draw(info, cur_event, cur_event->_title, player, cur_sp);
 			textin.draw();
 			break;
 		case EVENT_SPLASH:
 			g_engine->_imageManager->DimScreen();
 			if (intro.show_traits) {
-				per.draw(info, cur_event->title);
+				per.draw(info, cur_event->_title);
 				hud.back.draw();
 			} else
-				intro.draw(info, cur_event->dialog, cur_sp, cur_event->state);
+				intro.draw(info, cur_event->_dialog, cur_sp, cur_event->_state);
 
 			break;
 		default:
@@ -365,18 +365,18 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 	if (event_map[info.CurLocID()].activeSeq(active_seq)) {
 		// Set all the pointers to the new values
 		cur_event = event_map[info.CurLocID()].curEvent(active_seq);
-		oh.reset(cur_event->title);
-		cur_sp = level.GetSprite(cur_event->title);
+		oh.reset(cur_event->_title);
+		cur_sp = level.GetSprite(cur_event->_title);
 
 		// The player character's dialog is drawn a bit differently compared to others
-		player = (cur_event->title == level.PlayerID());
+		player = (cur_event->_title == level.PlayerID());
 
-		switch (cur_event->type) {
+		switch (cur_event->_type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->_anim[cur_event->special].start();
+			g_engine->_eventStore->_anim[cur_event->_special].start();
 			break;
 		case EVENT_REPLY:
-			reply.Cache(info, g_engine->_eventStore->_con[cur_event->special]);
+			reply.Cache(info, g_engine->_eventStore->_con[cur_event->_special]);
 			break;
 		default:
 			break;

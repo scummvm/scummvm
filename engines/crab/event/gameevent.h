@@ -60,32 +60,36 @@ enum EventType {
 
 struct GameEvent {
 	// The event identifier
-	EventID id;
+	EventID _id;
 
 	// The heading for the dialog spoken
-	Common::String title;
+	Common::String _title;
 
 	// The dialog spoken in the event
-	Common::String dialog;
+	Common::String _dialog;
 
 	// The state decides which animation is drawn in the dialog box
-	pyrodactyl::people::PersonState state;
+	pyrodactyl::people::PersonState _state;
 
 	// Event type and related data index
-	EventType type;
-	unsigned int special;
+	EventType _type;
+	unsigned int _special;
 
 	// The variables changed/added in the event
-	Common::Array<Effect> effect;
+	Common::Array<Effect> _effect;
 
 	// The triggers for the event
-	TriggerSet trig;
+	TriggerSet _trig;
 
 	// The id of the next event
-	Common::Array<EventID> next;
+	Common::Array<EventID> _next;
 
 	GameEvent();
-	GameEvent(rapidxml::xml_node<char> *node) : GameEvent() { load(node); }
+
+	GameEvent(rapidxml::xml_node<char> *node) : GameEvent() {
+		load(node);
+	}
+
 	~GameEvent() {}
 
 	void load(rapidxml::xml_node<char> *node);

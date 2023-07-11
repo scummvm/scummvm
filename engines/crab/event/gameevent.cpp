@@ -36,55 +36,55 @@ using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
 
 GameEvent::GameEvent() {
-	id = 0;
-	type = EVENT_DIALOG;
-	special = 0;
-	state = PST_NORMAL;
+	_id = 0;
+	_type = EVENT_DIALOG;
+	_special = 0;
+	_state = PST_NORMAL;
 }
 
 void GameEvent::load(rapidxml::xml_node<char> *node) {
-	if (!LoadEventID(id, "id", node))
-		id = 0;
+	if (!LoadEventID(_id, "id", node))
+		_id = 0;
 
-	loadStr(title, "title", node);
-	loadStr(dialog, "dialog", node);
-	loadEnum(state, "state", node, false);
+	loadStr(_title, "title", node);
+	loadStr(_dialog, "dialog", node);
+	loadEnum(_state, "state", node, false);
 
-	Common::String Type;
-	loadStr(Type, "type", node);
+	Common::String type;
+	loadStr(type, "type", node);
 
-	if (Type == "dlg") {
-		type = EVENT_DIALOG;
-		special = 0;
-	} else if (Type == "reply") {
-		type = EVENT_REPLY;
-		g_engine->_eventStore->addConv(node, special);
-	} else if (Type == "animation") {
-		type = EVENT_ANIM;
-		loadNum(special, "anim", node);
-	} else if (Type == "silent") {
-		type = EVENT_SILENT;
-		special = 0;
-	} else if (Type == "text") {
-		type = EVENT_TEXT;
-		special = 0;
+	if (type == "dlg") {
+		_type = EVENT_DIALOG;
+		_special = 0;
+	} else if (type == "reply") {
+		_type = EVENT_REPLY;
+		g_engine->_eventStore->addConv(node, _special);
+	} else if (type == "animation") {
+		_type = EVENT_ANIM;
+		loadNum(_special, "anim", node);
+	} else if (type == "silent") {
+		_type = EVENT_SILENT;
+		_special = 0;
+	} else if (type == "text") {
+		_type = EVENT_TEXT;
+		_special = 0;
 	} else {
-		type = EVENT_SPLASH;
-		special = 0;
+		_type = EVENT_SPLASH;
+		_special = 0;
 	}
 
-	trig.load(node);
+	_trig.load(node);
 
-	next.clear();
+	_next.clear();
 	for (rapidxml::xml_node<char> *i = node->first_node("next"); i != NULL; i = i->next_sibling("next"))
 		if (i->first_attribute("id") != NULL)
-			next.push_back(StringToNumber<EventID>(i->first_attribute("id")->value()));
+			_next.push_back(StringToNumber<EventID>(i->first_attribute("id")->value()));
 
-	effect.clear();
+	_effect.clear();
 	for (rapidxml::xml_node<char> *it = node->first_node("effect"); it != NULL; it = it->next_sibling("effect")) {
 		Effect e;
 		e.load(it);
-		effect.push_back(e);
+		_effect.push_back(e);
 	}
 }
 
