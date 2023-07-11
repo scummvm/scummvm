@@ -75,7 +75,7 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 	dlbox.draw(player);
 
 	if (s != NULL) {
-		Rect r = s->dialogClip(Event->state);
+		Rect r = s->dialogClip(Event->_state);
 		int x = img.x, y = img.y;
 
 		if (sprite_align.x == ALIGN_CENTER)
@@ -105,7 +105,7 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 	jb.draw();
 
 	// Draw the dialog box text
-	dlbox.draw(info, Event->dialog);
+	dlbox.draw(info, Event->_dialog);
 }
 
 bool PersonHandler::HandleCommonEvents(const Common::Event &Event) {

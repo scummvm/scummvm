@@ -55,7 +55,7 @@ void EventSequence::load(const Common::String &filename) {
 void EventSequence::internalEvents(pyrodactyl::event::Info &info) {
 	for (auto nxe = _next.begin(); nxe != _next.end(); ++nxe)
 		if (*nxe < _events.size()) {
-			if (_events[*nxe].trig.Evaluate(info)) {
+			if (_events[*nxe]._trig.Evaluate(info)) {
 				_eventInProgress = true;
 				_cur = *nxe;
 				break;
@@ -72,7 +72,7 @@ void EventSequence::nextEvent(pyrodactyl::event::Info &info, const Common::Strin
 	_eventInProgress = false;
 
 	// Execute all effects associated with the event
-	for (auto i = _events[_cur].effect.begin(); i != _events[_cur].effect.end(); ++i)
+	for (auto i = _events[_cur]._effect.begin(); i != _events[_cur]._effect.end(); ++i)
 		if (i->execute(info, player_id, result, end_seq))
 			sync = true;
 
@@ -103,7 +103,7 @@ void EventSequence::nextEvent(pyrodactyl::event::Info &info, const Common::Strin
 	if (NextEventChoice != -1)
 		_next.push_back(NextEventChoice);
 	else {
-		for (auto i = _events[_cur].next.begin(); i != _events[_cur].next.end(); ++i)
+		for (auto i = _events[_cur]._next.begin(); i != _events[_cur]._next.end(); ++i)
 			_next.push_back(*i);
 	}
 }
