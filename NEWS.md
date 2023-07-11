@@ -76,6 +76,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Fixed playback speed for Theora videos.
   - Added scummvm.log file viewer.
   - Exposed ScummVM debug level in the GUI (Misc tab).
+  - Fixed shader scaler loading failing in certain conditions.
 
  AGI:
    - Restored possibility to pick arbitrary render mode in Game Options.
