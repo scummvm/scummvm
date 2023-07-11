@@ -22,7 +22,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftsystem.h"
+#include "engines/ags/lib/freetype-2.1.3/ftsystem.h"
 #include "engines/ags/lib/freetype-2.1.3/ftimage.h"
 
 #include <stddef.h>

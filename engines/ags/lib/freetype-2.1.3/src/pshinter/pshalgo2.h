@@ -22,7 +22,7 @@
 
 #include "pshrec.h"
 #include "pshglob.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
+#include "engines/ags/lib/freetype-2.1.3/fttrigon.h"
 
 namespace AGS3 {
 namespace FreeType213 {

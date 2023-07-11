@@ -19,8 +19,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftsystem.h"
+#include "engines/ags/lib/freetype-2.1.3/fttrigon.h"
+#include "engines/ags/lib/freetype-2.1.3/ftsystem.h"
 
 #include "ttinterp.h"
 

@@ -204,7 +204,7 @@
 /*                                                                       */
 /*    It is included by @FT2_1_3_FREETYPE_H.                                  */
 /*                                                                       */
-#define FT2_1_3_SYSTEM_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftsystem.h"
+#define FT2_1_3_SYSTEM_H  "engines/ags/lib/freetype-2.1.3/ftsystem.h"
 
 
 /*************************************************************************/
@@ -295,7 +295,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the renderer module management API of FreeType 2.                  */
 /*                                                                       */
-#define FT2_1_3_RENDER_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftrender.h"
+#define FT2_1_3_RENDER_H  "engines/ags/lib/freetype-2.1.3/ftrender.h"
 
 
 /*************************************************************************/
@@ -499,8 +499,8 @@
 
 /* */
 
-#define FT2_1_3_TRIGONOMETRY_H          "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
-#define FT2_1_3_STROKER_H               "engines/ags/lib/freetype-2.1.3/include/freetype/ftstroker.h"
+#define FT2_1_3_TRIGONOMETRY_H          "engines/ags/lib/freetype-2.1.3/fttrigon.h"
+#define FT2_1_3_STROKER_H               "engines/ags/lib/freetype-2.1.3/ftstroker.h"
 #define FT2_1_3_SYNTHESIS_H             "engines/ags/lib/freetype-2.1.3/include/freetype/ftsynth.h"
 #define FT2_1_3_ERROR_DEFINITIONS_H     "engines/ags/lib/freetype-2.1.3/fterrdef.h"
 
@@ -512,7 +512,7 @@
 
 #define FT2_1_3_XFREE86_H               "engines/ags/lib/freetype-2.1.3/include/freetype/ftxf86.h"
 
-#define FT2_1_3_INCREMENTAL_H           "engines/ags/lib/freetype-2.1.3/include/freetype/ftincrem.h"
+#define FT2_1_3_INCREMENTAL_H           "engines/ags/lib/freetype-2.1.3/ftincrem.h"
 
 /* now include internal headers definitions from <freetype/internal/...> */
 
