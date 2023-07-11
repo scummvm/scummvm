@@ -170,6 +170,7 @@ public:
 	Common::String _currBackgroundFN;
 	Common::String _currCodeFN;
 	ScreenContext *_game_buff_ptr = nullptr;
+	machine *_my_walker = nullptr;
 };
 
 #define _G(X) (g_vars->_##X)

@@ -61,4 +61,18 @@ void game_pause(bool flag) {
 	}
 }
 
+void player_hotspot_walk_override(int32 x, int32 y, int32 facing, int32 trigger) {
+	_G(player).walk_x = x;
+	_G(player).walk_y = y;
+	_G(player).walk_facing = facing;
+	_G(player).walker_trigger = trigger;
+	_G(player).ready_to_walk = true;
+	_G(player).need_to_walk = true;
+}
+
+void player_hotspot_walk_override_just_face(int32 facing, int32 trigger) {
+	player_update_info(_G(my_walker), &_G(player_info));
+	player_hotspot_walk_override(_G(player_info).x, _G(player_info).y, facing, trigger);
+}
+
 } // End of namespace M4
