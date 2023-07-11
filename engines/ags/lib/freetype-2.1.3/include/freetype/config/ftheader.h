@@ -163,7 +163,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the base FreeType 2 API.                                           */
 /*                                                                       */
-#define FT2_1_3_FREETYPE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+#define FT2_1_3_FREETYPE_H  "engines/ags/lib/freetype-2.1.3/freetype.h"
 
 
 /*************************************************************************/
@@ -361,7 +361,7 @@
 /*    the definitions of an API to access BDF-specific strings from a    */
 /*    face.                                                              */
 /*                                                                       */
-#define FT2_1_3_BDF_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftbdf.h"
+#define FT2_1_3_BDF_H  "engines/ags/lib/freetype-2.1.3/ftbdf.h"
 
 /*************************************************************************/
 /*                                                                       */
@@ -384,7 +384,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the API of the optional glyph management component.                */
 /*                                                                       */
-#define FT2_1_3_GLYPH_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftglyph.h"
+#define FT2_1_3_GLYPH_H  "engines/ags/lib/freetype-2.1.3/ftglyph.h"
 
 
 /*************************************************************************/
@@ -396,7 +396,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the API of the optional exact bounding box computation routines.   */
 /*                                                                       */
-#define FT2_1_3_BBOX_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftbbox.h"
+#define FT2_1_3_BBOX_H  "engines/ags/lib/freetype-2.1.3/ftbbox.h"
 
 
 /*************************************************************************/

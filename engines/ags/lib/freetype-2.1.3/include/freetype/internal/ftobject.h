@@ -2,7 +2,7 @@
 #define AGS_LIB_FREETYPE_FTOBJECT_H
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+#include "engines/ags/lib/freetype-2.1.3/freetype.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fthash.h"
 
 namespace AGS3 {

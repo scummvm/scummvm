@@ -20,7 +20,7 @@
 #define AGS_LIB_FREETYPE_PSHGLOB_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+#include "engines/ags/lib/freetype-2.1.3/freetype.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 
 namespace AGS3 {

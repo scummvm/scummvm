@@ -60,7 +60,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+#include "engines/ags/lib/freetype-2.1.3/freetype.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 #include "truetype/ttobjs.h"
 #include "type1/t1objs.h"
