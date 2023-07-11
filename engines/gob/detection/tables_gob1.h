@@ -400,7 +400,7 @@
 	0, 0, 0
 },
 
-{ // Supplied by Svipur in bug report #14531
+{ // Supplied by Svipur in bug report #14531 (Adapted to CD by A.P.$lasH)
 	{
 		"gob1cd",
 		"",
