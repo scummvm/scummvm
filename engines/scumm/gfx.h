@@ -31,6 +31,97 @@ namespace Scumm {
 
 class ScummEngine;
 
+/*
+ *  Bitmap compression algorithm labels
+ */
+
+#define BMCOMP_RAW256           1   // Raw pixels
+#define BMCOMP_TOWNS_2          2
+#define BMCOMP_TOWNS_3          3
+#define BMCOMP_TOWNS_4          4
+#define BMCOMP_TOWNS_7          7
+#define BMCOMP_TRLE8BIT         8
+#define BMCOMP_RLE8BIT          9
+
+#define BMCOMP_PIX32            10  // Amiga 16/32 color compression
+
+#define BMCOMP_ZIGZAG_V0        10  // Vertical
+#define BMCOMP_ZIGZAG_V4        14
+#define BMCOMP_ZIGZAG_V5        15
+#define BMCOMP_ZIGZAG_V6        16
+#define BMCOMP_ZIGZAG_V7        17
+#define BMCOMP_ZIGZAG_V8        18
+
+#define BMCOMP_ZIGZAG_H0        20  // Horizontal
+#define BMCOMP_ZIGZAG_H4        24
+#define BMCOMP_ZIGZAG_H5        25
+#define BMCOMP_ZIGZAG_H6        26
+#define BMCOMP_ZIGZAG_H7        27
+#define BMCOMP_ZIGZAG_H8        28
+
+#define BMCOMP_ZIGZAG_VT0       30  // Vertical with transparency
+#define BMCOMP_ZIGZAG_VT4       34
+#define BMCOMP_ZIGZAG_VT5       35
+#define BMCOMP_ZIGZAG_VT6       36
+#define BMCOMP_ZIGZAG_VT7       37
+#define BMCOMP_ZIGZAG_VT8       38
+
+#define BMCOMP_ZIGZAG_HT0       40  // Horizontal with transparency
+#define BMCOMP_ZIGZAG_HT4       44
+#define BMCOMP_ZIGZAG_HT5       45
+#define BMCOMP_ZIGZAG_HT6       46
+#define BMCOMP_ZIGZAG_HT7       47
+#define BMCOMP_ZIGZAG_HT8       48
+
+#define BMCOMP_MAJMIN_H0        60  // Major-Minor jump algorithm (-4 to +3)
+#define BMCOMP_MAJMIN_H4        64
+#define BMCOMP_MAJMIN_H5        65
+#define BMCOMP_MAJMIN_H6        66
+#define BMCOMP_MAJMIN_H7        67
+#define BMCOMP_MAJMIN_H8        68
+
+#define BMCOMP_MAJMIN_HT0       80  // Major-Minor jump algorithm (-4 to +3, with transparency)
+#define BMCOMP_MAJMIN_HT4       84
+#define BMCOMP_MAJMIN_HT5       85
+#define BMCOMP_MAJMIN_HT6       86
+#define BMCOMP_MAJMIN_HT7       87
+#define BMCOMP_MAJMIN_HT8       88
+
+#define BMCOMP_RMAJMIN_H0       100 // Run Major-Minor jump algorithm (-4 to +3)
+#define BMCOMP_RMAJMIN_H4       104
+#define BMCOMP_RMAJMIN_H5       105
+#define BMCOMP_RMAJMIN_H6       106
+#define BMCOMP_RMAJMIN_H7       107
+#define BMCOMP_RMAJMIN_H8       108
+
+#define BMCOMP_RMAJMIN_HT0      120 // Run Major-Minor jump algorithm (-4 to +3, with transparency)
+#define BMCOMP_RMAJMIN_HT4      124
+#define BMCOMP_RMAJMIN_HT5      125
+#define BMCOMP_RMAJMIN_HT6      126
+#define BMCOMP_RMAJMIN_HT7      127
+#define BMCOMP_RMAJMIN_HT8      128
+
+#define BMCOMP_NMAJMIN_H0       130 // New Major-Minor jump algorithm (-4 to +4)
+#define BMCOMP_NMAJMIN_H4       134
+#define BMCOMP_NMAJMIN_H5       135
+#define BMCOMP_NMAJMIN_H6       136
+#define BMCOMP_NMAJMIN_H7       137
+#define BMCOMP_NMAJMIN_H8       138
+
+#define BMCOMP_NMAJMIN_HT0      140 // New Major-Minor jump algorithm (-4 to +4, with transparency)
+#define BMCOMP_NMAJMIN_HT4      144
+#define BMCOMP_NMAJMIN_HT5      145
+#define BMCOMP_NMAJMIN_HT6      146
+#define BMCOMP_NMAJMIN_HT7      147
+#define BMCOMP_NMAJMIN_HT8      148
+
+#define BMCOMP_TPIX256          149 // Transparent raw pixels
+
+#define BMCOMP_SOLID_COLOR_FILL 150
+
+#define BMCOMP_CUSTOM_RU_TR     143
+
+
 enum HerculesDimensions {
 	kHercWidth = 720,
 	kHercHeight = 350

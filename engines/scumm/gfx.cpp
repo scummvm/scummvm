@@ -2475,21 +2475,21 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
 	switch (code) {
-	case 134:
-	case 135:
-	case 136:
-	case 137:
-	case 138:
+	case BMCOMP_NMAJMIN_H4:
+	case BMCOMP_NMAJMIN_H5:
+	case BMCOMP_NMAJMIN_H6:
+	case BMCOMP_NMAJMIN_H7:
+	case BMCOMP_NMAJMIN_H8:
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
-	case 144:
-	case 145:
-	case 146:
-	case 147:
-	case 148:
+	case BMCOMP_NMAJMIN_HT4:
+	case BMCOMP_NMAJMIN_HT5:
+	case BMCOMP_NMAJMIN_HT6:
+	case BMCOMP_NMAJMIN_HT7:
+	case BMCOMP_NMAJMIN_HT8:
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, true);
 		break;
-	case 150:
+	case BMCOMP_SOLID_COLOR_FILL:
 		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h, vs->format.bytesPerPixel);
 		break;
 	default:
@@ -2663,121 +2663,121 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
 	switch (code) {
-	case 1:
+	case BMCOMP_RAW256:
 		drawStripRaw(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 2:
+	case BMCOMP_TOWNS_2:
 		unkDecode8(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
-	case 3:
+	case BMCOMP_TOWNS_3:
 		unkDecode9(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
-	case 4:
+	case BMCOMP_TOWNS_4:
 		unkDecode10(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
-	case 7:
+	case BMCOMP_TOWNS_7:
 		unkDecode11(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
-	case 8:
+	case BMCOMP_TRLE8BIT:
 		// Used in 3DO versions of HE games
 		transpStrip = true;
 		drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 9:
+	case BMCOMP_RLE8BIT:
 		drawStrip3DO(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 10:
+	case BMCOMP_PIX32:
 		// Used in Amiga version of Monkey Island 1
 		drawStripEGA(dst, dstPitch, src, numLinesToProcess);
 		break;
 
-	case 14:
-	case 15:
-	case 16:
-	case 17:
-	case 18:
+	case BMCOMP_ZIGZAG_V4:
+	case BMCOMP_ZIGZAG_V5:
+	case BMCOMP_ZIGZAG_V6:
+	case BMCOMP_ZIGZAG_V7:
+	case BMCOMP_ZIGZAG_V8:
 		drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 24:
-	case 25:
-	case 26:
-	case 27:
-	case 28:
+	case BMCOMP_ZIGZAG_H4:
+	case BMCOMP_ZIGZAG_H5:
+	case BMCOMP_ZIGZAG_H6:
+	case BMCOMP_ZIGZAG_H7:
+	case BMCOMP_ZIGZAG_H8:
 		drawStripBasicH(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 34:
-	case 35:
-	case 36:
-	case 37:
-	case 38:
+	case BMCOMP_ZIGZAG_VT4:
+	case BMCOMP_ZIGZAG_VT5:
+	case BMCOMP_ZIGZAG_VT6:
+	case BMCOMP_ZIGZAG_VT7:
+	case BMCOMP_ZIGZAG_VT8:
 		transpStrip = true;
 		drawStripBasicV(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 44:
-	case 45:
-	case 46:
-	case 47:
-	case 48:
+	case BMCOMP_ZIGZAG_HT4:
+	case BMCOMP_ZIGZAG_HT5:
+	case BMCOMP_ZIGZAG_HT6:
+	case BMCOMP_ZIGZAG_HT7:
+	case BMCOMP_ZIGZAG_HT8:
 		transpStrip = true;
 		drawStripBasicH(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 64:
-	case 65:
-	case 66:
-	case 67:
-	case 68:
-	case 104:
-	case 105:
-	case 106:
-	case 107:
-	case 108:
+	case BMCOMP_MAJMIN_H4:
+	case BMCOMP_MAJMIN_H5:
+	case BMCOMP_MAJMIN_H6:
+	case BMCOMP_MAJMIN_H7:
+	case BMCOMP_MAJMIN_H8:
+	case BMCOMP_RMAJMIN_H4:
+	case BMCOMP_RMAJMIN_H5:
+	case BMCOMP_RMAJMIN_H6:
+	case BMCOMP_RMAJMIN_H7:
+	case BMCOMP_RMAJMIN_H8:
 		drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 84:
-	case 85:
-	case 86:
-	case 87:
-	case 88:
-	case 124:
-	case 125:
-	case 126:
-	case 127:
-	case 128:
+	case BMCOMP_MAJMIN_HT4:
+	case BMCOMP_MAJMIN_HT5:
+	case BMCOMP_MAJMIN_HT6:
+	case BMCOMP_MAJMIN_HT7:
+	case BMCOMP_MAJMIN_HT8:
+	case BMCOMP_RMAJMIN_HT4:
+	case BMCOMP_RMAJMIN_HT5:
+	case BMCOMP_RMAJMIN_HT6:
+	case BMCOMP_RMAJMIN_HT7:
+	case BMCOMP_RMAJMIN_HT8:
 		transpStrip = true;
 		drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 134:
-	case 135:
-	case 136:
-	case 137:
-	case 138:
+	case BMCOMP_NMAJMIN_H4:
+	case BMCOMP_NMAJMIN_H5:
+	case BMCOMP_NMAJMIN_H6:
+	case BMCOMP_NMAJMIN_H7:
+	case BMCOMP_NMAJMIN_H8:
 		drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
 		break;
 
-	case 143: // Triggered by Russian water
-	case 144:
-	case 145:
-	case 146:
-	case 147:
-	case 148:
+	case BMCOMP_CUSTOM_RU_TR: // Triggered by Russian water
+	case BMCOMP_NMAJMIN_HT4:
+	case BMCOMP_NMAJMIN_HT5:
+	case BMCOMP_NMAJMIN_HT6:
+	case BMCOMP_NMAJMIN_HT7:
+	case BMCOMP_NMAJMIN_HT8:
 		transpStrip = true;
 		drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
 		break;
 
-	case 149:
+	case BMCOMP_TPIX256:
 		drawStripRaw(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
