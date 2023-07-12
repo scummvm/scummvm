@@ -52,7 +52,7 @@
 #define FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H    "engines/ags/lib/freetype-2.1.3/pshints.h"
 #define FT2_1_3_INTERNAL_POSTSCRIPT_GLOBALS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psglobal.h"
 
-#define FT2_1_3_INTERNAL_AUTOHINT_H            "engines/ags/lib/freetype-2.1.3/include/freetype/internal/autohint.h"
+#define FT2_1_3_INTERNAL_AUTOHINT_H            "engines/ags/lib/freetype-2.1.3/autohint/autohint.h"
 
 #endif
 /* END */
