@@ -46,7 +46,6 @@ private:
 
 protected:
 	void main_cold_data_init() override;
-	void global_menu_system_init() override;
 	void initialize_game() override;
 
 public:
@@ -74,6 +73,7 @@ public:
 		return &_walker;
 	}
 
+	void global_menu_system_init() override;
 };
 
 extern Vars *g_globals;

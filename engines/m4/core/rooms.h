@@ -134,6 +134,7 @@ public:
 	}
 
 	void m4SceneLoad();
+	void m4RunScene();
 	void m4EndScene();
 };
 
