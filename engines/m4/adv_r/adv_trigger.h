@@ -27,6 +27,9 @@
 
 namespace M4 {
 
+constexpr int NO_TRIGGER       =    -1;
+constexpr int CALLED_EACH_LOOP = 32764;
+
 constexpr int MAX_TIMERS = 32;
 
 struct Triggers {
