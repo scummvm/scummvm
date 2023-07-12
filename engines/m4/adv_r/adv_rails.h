@@ -30,13 +30,13 @@
 namespace M4 {
 
 struct Rails_Globals {
-	railNode **myNodes;
-	int16 *myEdges;
+	railNode **myNodes = nullptr;
+	int16 *myEdges = nullptr;
 
-	railNode **stackBottom, **stackTop;
-	noWalkRect *noWalkRectList;
+	railNode **stackBottom = nullptr, **stackTop = nullptr;
+	noWalkRect *noWalkRectList = nullptr;
 
-	int32 memtypePATHN;
+	int32 memtypePATHN = 0;
 };
 
 extern bool InitRails();

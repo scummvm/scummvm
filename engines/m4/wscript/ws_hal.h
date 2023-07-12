@@ -41,7 +41,7 @@ namespace M4 {
 #define ERR_MACH			2
 
 struct WSHal_Globals {
-	RectList *_deadRectList;
+	RectList *_deadRectList = nullptr;
 };
 
 extern bool ws_InitHAL();
