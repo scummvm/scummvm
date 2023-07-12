@@ -20,7 +20,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fnttypes.h"
+#include "engines/ags/lib/freetype-2.1.3/winfonts/fnttypes.h"
 
 #include "winfnt.h"
 
