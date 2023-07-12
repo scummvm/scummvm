@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Section : public M4::Section {
 public:
-	Section(Room *rooms, size_t count) : M4::Section(rooms, count) {}
+	Section() : M4::Section() {}
 	~Section() override {}
 
 	void daemon_code() override;
