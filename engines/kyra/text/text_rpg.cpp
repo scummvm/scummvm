@@ -352,9 +352,10 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 		int h1 = ((sd->h / fh) - 1) * fh;
 		int h2 = sd->h - fh;
+		int wOffs = (_textDimData[sdx].shadowColor && sd->sx > 0) ? 1 : 0;
 
 		if (h2)
-			_screen->copyRegion(sd->sx << 3, sd->sy + fh, sd->sx << 3, sd->sy, sd->w << 3, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion((sd->sx << 3) - wOffs, sd->sy + fh, (sd->sx << 3) - wOffs, sd->sy, (sd->w << 3) + wOffs, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
 		// HACK: In Chinese EOBII some characters overdraw the valid boundaries by one pixel
 		// (at least the ',' does). So, the original redraws the border here. We do the same
@@ -363,7 +364,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 			_screen->drawBox(3, 170, 290, 199, _vm->guiSettings()->colors.fill);
 
 		_screen->set16bitShadingLevel(4);
-		_screen->fillRect(sd->sx << 3, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, _textDimData[sdx].color2);
+		_screen->fillRect((sd->sx << 3) - wOffs, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, _textDimData[sdx].color2);
 		_screen->set16bitShadingLevel(0);
 
 		if (_textDimData[sdx].line)
