@@ -16,5 +16,5 @@
 // ppc-morphos-gcc-2.95.3-bin.tgz (gcc for 68k producing MorphOS PPC elf
 // binaries from http://www.morphos.de)
 #define _LIBC_LIMITS_H_
-#include "/FT/include/freetype/config/ftconfig.h"
+#include "/FT/config/ftconfig.h"
 #endif

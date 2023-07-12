@@ -18,7 +18,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
+#include "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/ftmm.h"
 #include "engines/ags/lib/freetype-2.1.3/t1types.h"
 

@@ -26,7 +26,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
+#include "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
 
 
 FT2_1_3_BEGIN_HEADER

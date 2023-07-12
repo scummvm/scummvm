@@ -106,7 +106,7 @@
 /*    FreeType 2 configuration data.                                     */
 /*                                                                       */
 #ifndef FT2_1_3_CONFIG_CONFIG_H
-#define FT2_1_3_CONFIG_CONFIG_H  "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
+#define FT2_1_3_CONFIG_CONFIG_H  "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
 #endif
 
 
@@ -120,7 +120,7 @@
 /*    FreeType 2 configuration data.                                     */
 /*                                                                       */
 #ifndef FT2_1_3_CONFIG_STANDARD_LIBRARY_H
-#define FT2_1_3_CONFIG_STANDARD_LIBRARY_H  "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftstdlib.h"
+#define FT2_1_3_CONFIG_STANDARD_LIBRARY_H  "engines/ags/lib/freetype-2.1.3/config/ftstdlib.h"
 #endif
 
 
@@ -134,7 +134,7 @@
 /*    FreeType 2 project-specific configuration options.                 */
 /*                                                                       */
 #ifndef FT2_1_3_CONFIG_OPTIONS_H
-#define FT2_1_3_CONFIG_OPTIONS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftoption.h"
+#define FT2_1_3_CONFIG_OPTIONS_H  "engines/ags/lib/freetype-2.1.3/config/ftoption.h"
 #endif
 
 
@@ -149,7 +149,7 @@
 /*    library instances in @FT2_1_3_Init_FreeType.                            */
 /*                                                                       */
 #ifndef FT2_1_3_CONFIG_MODULES_H
-#define FT2_1_3_CONFIG_MODULES_H  "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftmodule.h"
+#define FT2_1_3_CONFIG_MODULES_H  "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
 #endif
 
 /* public headers */

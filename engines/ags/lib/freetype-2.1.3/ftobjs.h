@@ -27,7 +27,7 @@
 #define AGS_LIB_FREETYPE_FTOBJS_H
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftstdlib.h"   /* for ft_setjmp and ft_longjmp */
+#include "engines/ags/lib/freetype-2.1.3/config/ftstdlib.h"   /* for ft_setjmp and ft_longjmp */
 #include "engines/ags/lib/freetype-2.1.3/ftrender.h"
 #include "engines/ags/lib/freetype-2.1.3/ftsizes.h"
 #include "engines/ags/lib/freetype-2.1.3/ftmemory.h"

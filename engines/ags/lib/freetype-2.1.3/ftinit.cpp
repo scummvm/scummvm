@@ -38,7 +38,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
+#include "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/ftmodule.h"
@@ -63,7 +63,7 @@ namespace FreeType213 {
 #endif
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftmodule.h"
+#include "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
 
 
 #undef  FT2_1_3_USE_MODULE
@@ -71,7 +71,7 @@ namespace FreeType213 {
 
 static
 const FT_Module_Class*  const ft_default_modules[] = {
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftmodule.h"
+#include "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
 	0
 };
 
