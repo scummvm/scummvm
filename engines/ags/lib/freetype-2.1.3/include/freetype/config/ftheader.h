@@ -372,7 +372,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the definitions of an API to support for gzip-compressed files.    */
 /*                                                                       */
-#define FT2_1_3_GZIP_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftgzip.h"
+#define FT2_1_3_GZIP_H  "engines/ags/lib/freetype-2.1.3/ftgzip.h"
 
 
 /*************************************************************************/

@@ -71,7 +71,6 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/cid/cidobjs.o \
 	lib/freetype-2.1.3/cid/cidriver.o \
 	lib/freetype-2.1.3/cid/cidgload.o \
-	lib/freetype-2.1.3/src/gzip/ftgzip.o \
 	lib/freetype-2.1.3/pcf/pcfutil.o \
 	lib/freetype-2.1.3/pcf/pcfread.o \
 	lib/freetype-2.1.3/pcf/pcfdriver.o \
