@@ -18,8 +18,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcsbits.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
+#include "engines/ags/lib/freetype-2.1.3/cache/ftcsbits.h"
+#include "engines/ags/lib/freetype-2.1.3/cache/ftcglyph.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/fterrors.h"

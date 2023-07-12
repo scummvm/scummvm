@@ -424,7 +424,7 @@
 /*    see the API defined in @FT2_1_3_CACHE_SMALL_BITMAPS_H if you only need  */
 /*    to store small glyph bitmaps, as it will use less memory.          */
 /*                                                                       */
-#define FT2_1_3_CACHE_IMAGE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcimage.h"
+#define FT2_1_3_CACHE_IMAGE_H  "engines/ags/lib/freetype-2.1.3/cache/ftcimage.h"
 
 
 /*************************************************************************/
@@ -441,7 +441,7 @@
 /*    in @FT2_1_3_CACHE_IMAGE_H if you want to cache arbitrary glyph images,  */
 /*    including scalable outlines.                                       */
 /*                                                                       */
-#define FT2_1_3_CACHE_SMALL_BITMAPS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcsbits.h"
+#define FT2_1_3_CACHE_SMALL_BITMAPS_H  "engines/ags/lib/freetype-2.1.3/cache/ftcsbits.h"
 
 
 /*************************************************************************/
@@ -453,7 +453,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the `charmap' API of the FreeType 2 cache sub-system.              */
 /*                                                                       */
-#define FT2_1_3_CACHE_CHARMAP_H  "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftccmap.h"
+#define FT2_1_3_CACHE_CHARMAP_H  "engines/ags/lib/freetype-2.1.3/cache/ftccmap.h"
 
 
 /*************************************************************************/
@@ -504,11 +504,11 @@
 #define FT2_1_3_SYNTHESIS_H             "engines/ags/lib/freetype-2.1.3/include/freetype/ftsynth.h"
 #define FT2_1_3_ERROR_DEFINITIONS_H     "engines/ags/lib/freetype-2.1.3/fterrdef.h"
 
-#define FT2_1_3_CACHE_MANAGER_H         "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcmanag.h"
+#define FT2_1_3_CACHE_MANAGER_H         "engines/ags/lib/freetype-2.1.3/cache/ftcmanag.h"
 
-#define FT2_1_3_CACHE_INTERNAL_LRU_H    "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftlru.h"
-#define FT2_1_3_CACHE_INTERNAL_GLYPH_H  "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
-#define FT2_1_3_CACHE_INTERNAL_CACHE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftccache.h"
+#define FT2_1_3_CACHE_INTERNAL_LRU_H    "engines/ags/lib/freetype-2.1.3/cache/ftlru.h"
+#define FT2_1_3_CACHE_INTERNAL_GLYPH_H  "engines/ags/lib/freetype-2.1.3/cache/ftcglyph.h"
+#define FT2_1_3_CACHE_INTERNAL_CACHE_H  "engines/ags/lib/freetype-2.1.3/cache/ftccache.h"
 
 #define FT2_1_3_XFREE86_H               "engines/ags/lib/freetype-2.1.3/ftxf86.h"
 
