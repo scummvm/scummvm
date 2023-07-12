@@ -87,17 +87,17 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/pfr/pfrobjs.o \
 	lib/freetype-2.1.3/pfr/pfrdrivr.o \
 	lib/freetype-2.1.3/pfr/pfrsbit.o \
-	lib/freetype-2.1.3/src/psaux/psobjs.o \
-	lib/freetype-2.1.3/src/psaux/psauxmod.o \
-	lib/freetype-2.1.3/src/psaux/t1decode.o \
-	lib/freetype-2.1.3/src/psaux/t1cmap.o \
-	lib/freetype-2.1.3/src/pshinter/pshrec.o \
-	lib/freetype-2.1.3/src/pshinter/pshglob.o \
-	lib/freetype-2.1.3/src/pshinter/pshalgo1.o \
-	lib/freetype-2.1.3/src/pshinter/pshalgo2.o \
-	lib/freetype-2.1.3/src/pshinter/pshalgo3.o \
-	lib/freetype-2.1.3/src/pshinter/pshmod.o \
-	lib/freetype-2.1.3/src/psnames/psmodule.o \
+	lib/freetype-2.1.3/psaux/psobjs.o \
+	lib/freetype-2.1.3/psaux/psauxmod.o \
+	lib/freetype-2.1.3/psaux/t1decode.o \
+	lib/freetype-2.1.3/psaux/t1cmap.o \
+	lib/freetype-2.1.3/pshinter/pshrec.o \
+	lib/freetype-2.1.3/pshinter/pshglob.o \
+	lib/freetype-2.1.3/pshinter/pshalgo1.o \
+	lib/freetype-2.1.3/pshinter/pshalgo2.o \
+	lib/freetype-2.1.3/pshinter/pshalgo3.o \
+	lib/freetype-2.1.3/pshinter/pshmod.o \
+	lib/freetype-2.1.3/psnames/psmodule.o \
 	lib/freetype-2.1.3/src/raster/ftraster.o \
 	lib/freetype-2.1.3/src/raster/ftrend1.o \
 	lib/freetype-2.1.3/src/sfnt/ttload.o \
