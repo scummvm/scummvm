@@ -77,6 +77,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
   - Die Wiedergabe-Geschwindigkeit von Theora-Videos wurde korrigiert.
   - Log-Betrachter für die scummvm.log-Datei hinzugefügt.
   - Das Debug-Level kann nun in der ScummVM-GUI angepasst werden.
+  - Fehler behoben, durch den einige Shader unter bestimmten Umständen nicht geladen werden konnten.
+  - Fehler behoben, der bei einigen Schüttel-Effekten (wie in DOTT) zum Absturz von SDL1-Ports geführt hat.
 
  AGI:
    - In den Spiel-Optionen kann jetzt wieder ein beliebiger Render-Modus ausgewählt werden.
@@ -97,8 +99,24 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  CRYOMNI3D:
    - Fehler beim Dateizugriff behoben, der verhindert hat, dass Versailles vollständig durchgespielt werden kann.
 
+ FREESCAPE:
+   - Unterstützung für OpenGL-Shader hinzugaefügt.
+   - Die Spiele laden nun die originalen Bilder aus den Daten-Dateien.
+   - Erkennungsdatenbank für Driller und andere nicht unterstützte Spiele überarbeitet und erweitert.
+   - Objekt-Spieler-Kollisionen sind nun robuster.
+
  HDB:
    - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
+
+ HYPNO:
+   - Unterstützung für koreanische Schritarten in Wetlands hinzugefügt.
+
+ Private:
+   - Die Engine kann jetzt auch ohne 16-Bit-unterstützung genutzt werden.
+
+ SAGA:
+   - Zusätzliche Ressourcen werden nun auch in der Amiga-Version von ITE korrekt geladen.
+   - Abstürze oder fehlerhaftes Verhalten im Zusammenhang mit einigen Spieler-Aktionen behoben.
 
  SAGA2:
    - Fehler behoben, der zu einem Absturz bei der Nutzung einiger Zaubersprüche führt.
@@ -114,6 +132,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Sword2:
    - Unterstützung für die GOG.com-Version hinzugefügt.
    - Unterstützung für eine alternative polnische Version hinzugefügt.
+
+ Tinsel:
+   - Ältere Spielstände von Discworld II werden jetzt korrekt geladen.
 
  Touche:
    - Unterstützung für von old-games.ru erstellte russische Übersetzung hinzugefügt.
