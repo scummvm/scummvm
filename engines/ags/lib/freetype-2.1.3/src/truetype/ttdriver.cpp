@@ -20,7 +20,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/sfnt.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ttnameid.h"
+#include "engines/ags/lib/freetype-2.1.3/ttnameid.h"
 
 #include "ttdriver.h"
 #include "ttgload.h"

@@ -21,7 +21,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftcalc.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/sfnt.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/tttags.h"
+#include "engines/ags/lib/freetype-2.1.3/tttags.h"
 #include "engines/ags/lib/freetype-2.1.3/ftoutln.h"
 
 #include "ttgload.h"

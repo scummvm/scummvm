@@ -307,7 +307,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the types and API specific to the Type 1 format.                   */
 /*                                                                       */
-#define FT2_1_3_TYPE1_TABLES_H  "engines/ags/lib/freetype-2.1.3/include/freetype/t1tables.h"
+#define FT2_1_3_TYPE1_TABLES_H  "engines/ags/lib/freetype-2.1.3/t1tables.h"
 
 
 /*************************************************************************/
@@ -322,7 +322,7 @@
 /*    constant macro definitions, taken from the TrueType and OpenType   */
 /*    specifications.                                                    */
 /*                                                                       */
-#define FT2_1_3_TRUETYPE_IDS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ttnameid.h"
+#define FT2_1_3_TRUETYPE_IDS_H  "engines/ags/lib/freetype-2.1.3/ttnameid.h"
 
 
 /*************************************************************************/
@@ -335,7 +335,7 @@
 /*    the types and API specific to the TrueType (as well as OpenType)   */
 /*    format.                                                            */
 /*                                                                       */
-#define FT2_1_3_TRUETYPE_TABLES_H  "engines/ags/lib/freetype-2.1.3/include/freetype/tttables.h"
+#define FT2_1_3_TRUETYPE_TABLES_H  "engines/ags/lib/freetype-2.1.3/tttables.h"
 
 
 /*************************************************************************/
@@ -348,7 +348,7 @@
 /*    the definitions of TrueType 4-byte `tags' used to identify blocks  */
 /*    in SFNT-based font formats (i.e. TrueType and OpenType).           */
 /*                                                                       */
-#define FT2_1_3_TRUETYPE_TAGS_H  "engines/ags/lib/freetype-2.1.3/include/freetype/tttags.h"
+#define FT2_1_3_TRUETYPE_TAGS_H  "engines/ags/lib/freetype-2.1.3/tttags.h"
 
 
 /*************************************************************************/

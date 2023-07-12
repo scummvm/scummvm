@@ -22,8 +22,8 @@
 #include "ttcmap0.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/sfnt.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/ttnameid.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/tttags.h"
+#include "engines/ags/lib/freetype-2.1.3/ttnameid.h"
+#include "engines/ags/lib/freetype-2.1.3/tttags.h"
 
 #include "sferrors.h"
 

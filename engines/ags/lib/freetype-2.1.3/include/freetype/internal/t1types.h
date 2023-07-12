@@ -22,7 +22,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/t1tables.h"
+#include "engines/ags/lib/freetype-2.1.3/t1tables.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 

@@ -990,7 +990,7 @@ typedef struct  FT_FaceRec_ {
 /*    embedded bitmap fonts.                                             */
 /*                                                                       */
 /*    If this macro is true, all functions defined in @FT2_1_3_SFNT_NAMES_H   */
-/*    and @"engines/ags/lib/freetype-2.1.3/include/freetype/tttables.h" are available.                           */
+/*    and @"engines/ags/lib/freetype-2.1.3/tttables.h" are available.                           */
 /*                                                                       */
 #define FT2_1_3_IS_SFNT( face ) \
 		  ( face->face_flags & FT2_1_3_FACE_FLAG_SFNT )

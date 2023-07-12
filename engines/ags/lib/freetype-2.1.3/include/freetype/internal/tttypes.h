@@ -22,7 +22,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/tttables.h"
+#include "engines/ags/lib/freetype-2.1.3/tttables.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
 namespace AGS3 {
