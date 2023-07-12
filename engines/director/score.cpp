@@ -406,7 +406,6 @@ void Score::update() {
 	if (_curFrameNumber >= getFramesNum()) {
 		Window *window = _vm->getCurrentWindow();
 		if (!window->_movieStack.empty()) {
-			warning("Are we changing movie?");
 			MovieReference ref = window->_movieStack.back();
 			window->_movieStack.pop_back();
 			if (!ref.movie.empty()) {
