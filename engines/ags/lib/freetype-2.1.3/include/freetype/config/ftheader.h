@@ -495,7 +495,7 @@
 /*    the optional FreeType 2 API used to access embedded `name' strings */
 /*    in SFNT-based font formats (i.e. TrueType and OpenType).           */
 /*                                                                       */
-#define FT2_1_3_SFNT_NAMES_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftsnames.h"
+#define FT2_1_3_SFNT_NAMES_H  "engines/ags/lib/freetype-2.1.3/ftsnames.h"
 
 /* */
 
