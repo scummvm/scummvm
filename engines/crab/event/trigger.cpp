@@ -39,89 +39,89 @@ void Trigger::load(rapidxml::xml_node<char> *node) {
 	loadStr(ty, "type", node);
 
 	// Should we throw a warning about missing fields? Depends on the type of trigger
-	bool echo_op = true, echo_tar = false, echo_sub = true;
+	bool echoOp = true, echoTar = false, echoSub = true;
 
 	if (ty == "obj")
-		type = TRIG_OBJ;
+		_type = TRIG_OBJ;
 	else if (ty == "opinion") {
-		type = TRIG_OPINION;
-		echo_tar = true;
+		_type = TRIG_OPINION;
+		echoTar = true;
 	} else if (ty == "loc") {
-		type = TRIG_LOC;
-		echo_op = false;
+		_type = TRIG_LOC;
+		echoOp = false;
 	} else if (ty == "item") {
-		type = TRIG_ITEM;
-		echo_op = false;
+		_type = TRIG_ITEM;
+		echoOp = false;
 	} else if (ty == "rect") {
-		type = TRIG_RECT;
-		echo_op = false;
+		_type = TRIG_RECT;
+		echoOp = false;
 	} else if (ty == "stat") {
-		type = TRIG_STAT;
-		echo_tar = true;
+		_type = TRIG_STAT;
+		echoTar = true;
 	} else if (ty == "diff") {
-		type = TRIG_DIFF;
-		echo_sub = false;
+		_type = TRIG_DIFF;
+		echoSub = false;
 	} else if (ty == "trait") {
-		type = TRIG_TRAIT;
+		_type = TRIG_TRAIT;
 	} else
-		type = TRIG_VAR;
+		_type = TRIG_VAR;
 
-	loadStr(target, "target", node, echo_tar);
-	loadStr(subject, "subject", node, echo_sub);
-	loadStr(operation, "operation", node, echo_op);
-	loadStr(val, "val", node);
+	loadStr(_target, "target", node, echoTar);
+	loadStr(_subject, "subject", node, echoSub);
+	loadStr(_operation, "operation", node, echoOp);
+	loadStr(_val, "val", node);
 
 	Common::String str;
 	loadStr(str, "rel", node, false);
 	if (str == "or")
-		rel = OP_OR;
+		_rel = OP_OR;
 	else
-		rel = OP_AND;
+		_rel = OP_AND;
 
 	loadStr(str, "prefix", node, false);
 	if (str == "!")
-		negate = true;
+		_negate = true;
 	else
-		negate = false;
+		_negate = false;
 }
 
-bool Trigger::Evaluate(int lhs, int rhs) {
-	if (operation == ">" && lhs > rhs)
+bool Trigger::evaluate(int lhs, int rhs) {
+	if (_operation == ">" && lhs > rhs)
 		return true;
-	else if (operation == "=" && lhs == rhs)
+	else if (_operation == "=" && lhs == rhs)
 		return true;
-	else if (operation == "<" && lhs < rhs)
+	else if (_operation == "<" && lhs < rhs)
 		return true;
-	else if (operation == "!=" && lhs != rhs)
+	else if (_operation == "!=" && lhs != rhs)
 		return true;
-	else if (operation == "<=" && lhs <= rhs)
+	else if (_operation == "<=" && lhs <= rhs)
 		return true;
-	else if (operation == ">=" && lhs >= rhs)
+	else if (_operation == ">=" && lhs >= rhs)
 		return true;
 
 	return false;
 }
 
-bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
+bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 	using namespace pyrodactyl::people;
 	using namespace pyrodactyl::stat;
 
-	switch (type) {
+	switch (_type) {
 	case TRIG_OBJ:
-		if (operation == "p") {
-			if (info._talkKeyDown && info.lastPerson() == val)
+		if (_operation == "p") {
+			if (info._talkKeyDown && info.lastPerson() == _val)
 				return true;
 			else
 				return false;
-		} else if (operation == "status") {
-			PersonType ty = StringToPersonType(val);
-			if (info.type(subject) == ty)
+		} else if (_operation == "status") {
+			PersonType ty = StringToPersonType(_val);
+			if (info.type(_subject) == ty)
 				return true;
 			else
 				return false;
-		} else if (operation == "state") {
-			PersonState st = StringToPersonState(val);
-			if (info.state(subject) == st)
+		} else if (_operation == "state") {
+			PersonState st = StringToPersonState(_val);
+			if (info.state(_subject) == st)
 				return true;
 			else
 				return false;
@@ -130,66 +130,69 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 
 	case TRIG_OPINION: {
 		Person p;
-		if (info.personGet(subject, p)) {
-			if (target == "like")
-				return Evaluate(p.opinion.val[OPI_LIKE], StringToNumber<int>(val));
-			else if (target == "fear")
-				return Evaluate(p.opinion.val[OPI_FEAR], StringToNumber<int>(val));
-			else if (target == "respect")
-				return Evaluate(p.opinion.val[OPI_RESPECT], StringToNumber<int>(val));
+		if (info.personGet(_subject, p)) {
+			if (_target == "like")
+				return evaluate(p.opinion.val[OPI_LIKE], StringToNumber<int>(_val));
+			else if (_target == "fear")
+				return evaluate(p.opinion.val[OPI_FEAR], StringToNumber<int>(_val));
+			else if (_target == "respect")
+				return evaluate(p.opinion.val[OPI_RESPECT], StringToNumber<int>(_val));
 		}
-	} break;
+	}
+	break;
 
 	case TRIG_LOC:
-		return (info.curLocID() == val);
+		return (info.curLocID() == _val);
 		break;
 
 	case TRIG_ITEM:
-		return info._inv.HasItem(target, subject, val);
+		return info._inv.HasItem(_target, _subject, _val);
 		break;
 
 	case TRIG_RECT:
-		return info.collideWithTrigger(subject, StringToNumber<int>(val));
+		return info.collideWithTrigger(_subject, StringToNumber<int>(_val));
 
 	case TRIG_STAT: {
-		StatType ty = StringToStatType(target);
+		StatType ty = StringToStatType(_target);
 		int sub = 0, value = 0;
-		bool compare_to_var = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
+		bool compareToVar = Common::find_if(_val.begin(), _val.end(), IsChar) != _val.end();
 
-		info.statGet(subject, ty, sub);
-		if (compare_to_var)
-			info.statGet(val, ty, value);
+		info.statGet(_subject, ty, sub);
+		if (compareToVar)
+			info.statGet(_val, ty, value);
 		else
-			value = StringToNumber<int>(val);
+			value = StringToNumber<int>(_val);
 
-		return Evaluate(sub, value);
-	} break;
+		return evaluate(sub, value);
+	}
+		break;
 
 	case TRIG_DIFF:
-		return Evaluate(info.ironMan(), StringToNumber<int>(val));
+		return evaluate(info.ironMan(), StringToNumber<int>(_val));
 
 	case TRIG_TRAIT:
-		if (info.personValid(target)) {
-			Person *p = &info.personGet(target);
+		if (info.personValid(_target)) {
+			Person *p = &info.personGet(_target);
 
 			for (auto &i : p->trait)
-				if (i.name == val)
+				if (i.name == _val)
 					return true;
 		}
 		break;
 
 	case TRIG_VAR: {
 		int var_sub = 0, var_val = 0;
-		bool compare_to_var = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
+		bool compare_to_var = Common::find_if(_val.begin(), _val.end(), IsChar) != _val.end();
 
-		info.varGet(subject, var_sub);
+		info.varGet(_subject, var_sub);
 		if (compare_to_var)
-			info.varGet(val, var_val);
+			info.varGet(_val, var_val);
 		else
-			var_val = StringToNumber<int>(val);
+			var_val = StringToNumber<int>(_val);
 
-		return Evaluate(var_sub, var_val);
-	} break;
+		return evaluate(var_sub, var_val);
+	}
+		break;
 
 	default:
 		break;

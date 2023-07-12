@@ -41,26 +41,36 @@ namespace event {
 class TriggerSet {
 	// The conditions needed to unlock whatever we want
 	// Places where this is used - events, levels, fighting moves
-	Common::Array<Trigger> statement;
+	Common::Array<Trigger> _statement;
 
 	// Is the thing unlocked or not?
-	bool result;
+	bool _result;
 
 public:
-	TriggerSet() { result = true; }
+	TriggerSet() {
+		_result = true;
+	}
 
 	void load(rapidxml::xml_node<char> *node);
-	bool Evaluate(pyrodactyl::event::Info &info);
-	void Add(const Trigger &t);
+	bool evaluate(pyrodactyl::event::Info &info);
+	void add(const Trigger &t);
 
-	bool Result() { return result; }
-	void Result(bool val) { result = val; }
-
-	void Clear(const bool &val = true) {
-		statement.clear();
-		result = val;
+	bool result() {
+		return _result;
 	}
-	bool Empty() { return statement.empty(); }
+
+	void result(bool val) {
+		_result = val;
+	}
+
+	void clear(const bool &val = true) {
+		_statement.clear();
+		_result = val;
+	}
+
+	bool empty() {
+		return _statement.empty();
+	}
 };
 } // End of namespace event
 } // End of namespace pyrodactyl

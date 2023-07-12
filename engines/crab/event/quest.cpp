@@ -34,29 +34,29 @@ namespace Crab {
 
 using namespace pyrodactyl::event;
 
-Quest::Quest(const Common::String &Title, const Common::String &Text, const bool &Unread, const bool &Marker) : title(Title) {
-	text.insert_at(0, Text);
-	unread = Unread;
-	marker = Marker;
+Quest::Quest(const Common::String &title, const Common::String &text, const bool &unread, const bool &marker) : _title(title) {
+	_text.insert_at(0, text);
+	_unread = unread;
+	_marker = marker;
 }
 
 void Quest::loadState(rapidxml::xml_node<char> *node) {
-	loadStr(title, "title", node);
-	loadBool(unread, "unread", node);
-	loadBool(marker, "marker", node);
+	loadStr(_title, "title", node);
+	loadBool(_unread, "unread", node);
+	loadBool(_marker, "marker", node);
 
 	for (rapidxml::xml_node<char> *n = node->first_node("info"); n != NULL; n = n->next_sibling("info"))
-		text.push_back(n->value());
+		_text.push_back(n->value());
 }
 
 void Quest::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "quest");
-	child->append_attribute(doc.allocate_attribute("title", title.c_str()));
+	child->append_attribute(doc.allocate_attribute("title", _title.c_str()));
 
-	saveBool(unread, "unread", doc, child);
-	saveBool(marker, "marker", doc, child);
+	saveBool(_unread, "unread", doc, child);
+	saveBool(_marker, "marker", doc, child);
 
-	for (auto i = text.begin(); i != text.end(); ++i) {
+	for (auto i = _text.begin(); i != _text.end(); ++i) {
 		rapidxml::xml_node<char> *grandchild = doc.allocate_node(rapidxml::node_element, "info");
 		grandchild->value(i->c_str());
 		child->append_node(grandchild);

@@ -157,7 +157,7 @@ bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 	_cur = index;
 
 	if ((unsigned int)_cur < _move.size()) {
-		if (_move[_cur]._unlock.Result()) {
+		if (_move[_cur]._unlock.result()) {
 			_frameTotal = _move[_cur]._frames[d]._frame.size();
 			if (_frameTotal > 0) {
 				input = _move[_cur]._input;
@@ -182,7 +182,7 @@ bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 //------------------------------------------------------------------------
 void FightMoves::evaluate(pyrodactyl::event::Info &info) {
 	for (auto i = _move.begin(); i != _move.end(); ++i)
-		i->_unlock.Evaluate(info);
+		i->_unlock.evaluate(info);
 }
 
 //------------------------------------------------------------------------

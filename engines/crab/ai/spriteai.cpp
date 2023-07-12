@@ -197,7 +197,7 @@ void Sprite::flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 		}
 	} break;
 	case FLEESTATE_DISAPPEAR:
-		_visible.Result(false);
+		_visible.result(false);
 		break;
 	default:
 		break;

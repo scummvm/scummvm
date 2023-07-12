@@ -415,8 +415,8 @@ void Map::SelectDest(const Common::String &name) {
 //------------------------------------------------------------------------
 void Map::Update(pyrodactyl::event::Info &info) {
 	for (auto &i : travel.element) {
-		i.unlock.Evaluate(info);
-		i.visible = i.unlock.Result();
+		i.unlock.evaluate(info);
+		i.visible = i.unlock.result();
 	}
 }
 
