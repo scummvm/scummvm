@@ -143,7 +143,9 @@ void Sections::m4SceneLoad() {
 	//-------------------- PRE-PLAY ROOM ------------------
 
 	term_message("Off to the races -- %d", timer_read_60());
+}
 
+void Sections::m4RunScene() {
 	game_control_cycle();
 
 	if (!player_been_here(_G(game).room_id))
@@ -165,51 +167,40 @@ void Sections::m4EndScene() {
 	//-------------------- cancel all editors ------------------
 
 	scale_editor_cancel();
-#ifdef TODO
+
 	//-------------------- ROOM SHUTDOWN CODE ------------------
 
 	term_message("Shuttin' down the scene");
-	util_exec_function(room_shutdown_code_pointer);
-	kernel_unload_room(&currentSceneDef, &screenCodeBuff, &game_bgBuff);
+	room_shutdown();
+	kernel_unload_room(&_G(currentSceneDef), &_G(screenCodeBuff), &_G(game_bgBuff));
 
 	pal_cycle_stop();
 
 	if (shut_down_digi_tracks_between_rooms) {
-		digi_stop(1);
-		digi_stop(2);
-		digi_stop(3);
-		digi_flush_mem();
+		_G(digi).stop(1);
+		_G(digi).stop(2);
+		_G(digi).stop(3);
+		_G(digi).flush_mem();
 	}
-	conv_unload(conv_get_handle()); //apr24
+
+	conv_unload(conv_get_handle());
 
 	//-------------------- DUMP ASSETS AND MINI-ENGINES ------------------
-	//note machines should always be cleared before anything else
+	// Note machines should always be cleared before anything else
 	ClearWSAssets(_WS_ASSET_MACH, 0, 255);
 	ClearWSAssets(_WS_ASSET_SEQU, 0, 255);
 	ClearWSAssets(_WS_ASSET_DATA, 0, 255);
 	ClearWSAssets(_WS_ASSET_CELS, 0, 255);
 
-	//reload the walker and show scripts.
+	// Reload the walker and show scripts.
 	if (!LoadWSAssets("walker script", &_G(master_palette)[0]))
-	{
 		error_show(FL, 'FNF!', "walker script");
-	}
 	if (!LoadWSAssets("show script", &_G(master_palette)[0]))
-	{
 		error_show(FL, 'FNF!', "show script");
-	}
 	if (!LoadWSAssets("stream script", &_G(master_palette)[0]))
-	{
 		error_show(FL, 'FNF', "stream script");
-	}
 
-	// load main interface sprites
-	main_interface_sprite = AddWSAssetCELS("INTERFACE STUFF", 22, &_G(master_palette)[0]);
-	//gr_pal_interface(&_G(master_palette)[0]);
-	if (main_interface_sprite != 22) {
-		error_show(FL, 'SLF!', "interface stuff");
-	}
-#endif
+	g_vars->global_menu_system_init();
 }
 
 void Sections::get_ipl() {

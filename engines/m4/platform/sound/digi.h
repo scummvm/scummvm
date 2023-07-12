@@ -51,6 +51,8 @@ public:
 
 	int32 play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
 	int32 play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
+	void stop(int slot);
+	void flush_mem();
 
 	void read_another_chunk();
 };

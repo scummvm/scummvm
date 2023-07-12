@@ -43,5 +43,16 @@ void Converstation_Globals::conv_reset_all() {
 	conv_save_buff.clear();
 }
 
+/*------------------------------------------------------------------------*/
+
+void conv_unload(Conv *c) {
+	error("TODO: conv_unload");
+}
+
+Conv *conv_get_handle() {
+	error("TODO: conv_get_handle");
+	return nullptr;
+}
+
 
 } // End of namespace M4

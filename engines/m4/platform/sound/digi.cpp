@@ -66,6 +66,14 @@ int32 Digi::play_loop(const char *name, int32 channel, int32 vol, int32 trigger,
 	return 0;
 }
 
+void Digi::stop(int slot) {
+	error("TODO: Digi::stop");
+}
+
+void Digi::flush_mem() {
+	error("TODO: Digi::flush_mem");
+}
+
 void Digi::read_another_chunk() {
 	warning("TODO: Digi::read_another_chunk");
 }
