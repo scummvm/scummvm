@@ -32,7 +32,7 @@ namespace M4 {
 struct Scene_list {
 	int32 total_scenes = 0;
 	int32 tail = 0;
-	byte *table = nullptr;
+	int16 *table = nullptr;
 };
 
 /**

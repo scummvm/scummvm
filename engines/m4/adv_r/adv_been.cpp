@@ -26,8 +26,11 @@
 
 namespace M4 {
 
+#define TOTAL_SCENES 180
+
 bool player_been_init(int16 num_scenes) {
-	_G(scene_list).table = (byte *)mem_alloc(sizeof(byte) * num_scenes, "been_scenes");
+	assert(num_scenes == TOTAL_SCENES);
+	_G(scene_list).table = (int16 *)mem_alloc(sizeof(int16) * num_scenes, "been_scenes");
 
 	if (!_G(scene_list).table)
 		error_show(FL, 'OOM!', "player_been_init");
@@ -43,19 +46,23 @@ void player_been_shutdown() {
 }
 
 void player_reset_been() {
-	memset(_G(scene_list).table, 0, sizeof(int16) * _G(scene_list).total_scenes);
+	Common::fill(_G(scene_list).table, _G(scene_list).table + TOTAL_SCENES, 180);
+	_G(scene_list).total_scenes = TOTAL_SCENES;
 	_G(scene_list).tail = 0;
 }
 
 void player_been_sync(Common::Serializer &s) {
 	// Handle number of scenes
-	s.syncAsUint32LE(_G(scene_list).total_scenes);
+	int count = _G(scene_list).total_scenes;
+	s.syncAsUint32LE(count);
+	assert(s.isSaving() || count == _G(scene_list).total_scenes);
 
 	// Handle current tail
 	s.syncAsUint32LE(_G(scene_list).tail);
 
-	// Handle scene list table
-	s.syncBytes(_G(scene_list).table, _G(scene_list).total_scenes);
+	// Handle table
+	for (int i = 0; i < count; ++i)
+		s.syncAsSint16LE(_G(scene_list).table[i]);
 }
 
 bool player_been_here(int16 scene_num) {
