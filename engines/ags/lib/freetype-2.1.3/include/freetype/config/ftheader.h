@@ -408,7 +408,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the API of the optional FreeType 2 cache sub-system.               */
 /*                                                                       */
-#define FT2_1_3_CACHE_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
+#define FT2_1_3_CACHE_H  "engines/ags/lib/freetype-2.1.3/cache/ftcache.h"
 
 
 /*************************************************************************/
