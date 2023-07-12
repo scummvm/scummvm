@@ -337,7 +337,7 @@ void Sprite::drawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const Common::Event &Event) {
 
 	int num = 0;
-	info.StatGet(_id, pyrodactyl::stat::STAT_SPEED, num);
+	info.statGet(_id, pyrodactyl::stat::STAT_SPEED, num);
 	++num;
 	float player_speed = static_cast<float>(num);
 
@@ -505,9 +505,9 @@ void Sprite::walk(const bool &reset) {
 //------------------------------------------------------------------------
 void Sprite::animate(Info &info) {
 	if (_input.Idle())
-		walk(info.State(_id));
+		walk(info.state(_id));
 	else
-		updateFrame(info.State(_id));
+		updateFrame(info.state(_id));
 }
 
 void Sprite::animate(const pyrodactyl::people::PersonState &pst) {
@@ -664,15 +664,15 @@ void Sprite::takeDamage(Info &info, Sprite &s) {
 	using namespace pyrodactyl::music;
 
 	FightMove f;
-	if (s._animSet._fight.curMove(f) && info.PersonValid(s.id()) && info.PersonValid(_id)) {
-		int dmg = -1 * (f._eff._dmg + info.PersonGet(s.id()).stat.val[STAT_ATTACK].cur - info.PersonGet(_id).stat.val[STAT_DEFENSE].cur);
+	if (s._animSet._fight.curMove(f) && info.personValid(s.id()) && info.personValid(_id)) {
+		int dmg = -1 * (f._eff._dmg + info.personGet(s.id()).stat.val[STAT_ATTACK].cur - info.personGet(_id).stat.val[STAT_DEFENSE].cur);
 		if (dmg >= 0)
 			dmg = -1;
 
-		info.StatChange(_id, STAT_HEALTH, dmg);
+		info.statChange(_id, STAT_HEALTH, dmg);
 
 		int health = 1;
-		info.StatGet(_id, STAT_HEALTH, health);
+		info.statGet(_id, STAT_HEALTH, health);
 
 		// Play death animation if dead, hurt animation otherwise
 		if (health <= 0 && f._eff._death != -1)
@@ -706,16 +706,16 @@ void Sprite::exchangeDamage(Info &info, Sprite &s, const SpriteConstant &sc) {
 
 	// We change the animation to dying in order to give time to the death animation to play out
 	int num = 0;
-	info.StatGet(s.id(), STAT_HEALTH, num);
+	info.statGet(s.id(), STAT_HEALTH, num);
 	if (num <= 0) {
-		info.State(s.id(), PST_DYING);
-		info.StatChange(s.id(), STAT_HEALTH, 1);
+		info.state(s.id(), PST_DYING);
+		info.statChange(s.id(), STAT_HEALTH, 1);
 	}
 
-	info.StatGet(_id, STAT_HEALTH, num);
+	info.statGet(_id, STAT_HEALTH, num);
 	if (num <= 0) {
-		info.State(_id, PST_DYING);
-		info.StatChange(_id, STAT_HEALTH, 1);
+		info.state(_id, PST_DYING);
+		info.statChange(_id, STAT_HEALTH, 1);
 	}
 }
 

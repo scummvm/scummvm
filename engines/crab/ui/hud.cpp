@@ -86,22 +86,22 @@ void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
 	bg.draw();
 	menu.draw();
 
-	if (info.unread.journal) {
+	if (info._unread._journal) {
 		g_engine->_imageManager->draw(menu.element[HS_JOURNAL].x + menu.element[HS_JOURNAL].w - clip.w / 2,
 						   menu.element[HS_JOURNAL].y - clip.h / 2, notify_anim, &clip);
 	}
 
-	if (info.unread.inventory) {
+	if (info._unread._inventory) {
 		g_engine->_imageManager->draw(menu.element[HS_INV].x + menu.element[HS_INV].w - clip.w / 2,
 						   menu.element[HS_INV].y - clip.h / 2, notify_anim, &clip);
 	}
 
-	if (info.unread.trait) {
+	if (info._unread._trait) {
 		g_engine->_imageManager->draw(menu.element[HS_CHAR].x + menu.element[HS_CHAR].w - clip.w / 2,
 						   menu.element[HS_CHAR].y - clip.h / 2, notify_anim, &clip);
 	}
 
-	if (info.unread.map) {
+	if (info._unread._map) {
 		g_engine->_imageManager->draw(menu.element[HS_MAP].x + menu.element[HS_MAP].w - clip.w / 2,
 						   menu.element[HS_MAP].y - clip.h / 2, notify_anim, &clip);
 	}
@@ -127,13 +127,13 @@ HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const Common::Event &
 	int choice = menu.handleEvents(Event);
 
 	if (choice == HS_JOURNAL)
-		info.unread.journal = false;
+		info._unread._journal = false;
 	else if (choice == HS_INV)
-		info.unread.inventory = false;
+		info._unread._inventory = false;
 	else if (choice == HS_CHAR)
-		info.unread.trait = false;
+		info._unread._trait = false;
 	else if (choice == HS_MAP)
-		info.unread.map = false;
+		info._unread._map = false;
 
 	return static_cast<HUDSignal>(choice);
 }

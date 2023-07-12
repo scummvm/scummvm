@@ -42,11 +42,11 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 void Game::StartNewGame() {
 	Init(g_engine->_filePath->mod_cur);
-	LoadLevel(info.CurLocID());
-	info.IronMan(g_engine->_tempData->ironman);
+	LoadLevel(info.curLocID());
+	info.ironMan(g_engine->_tempData->ironman);
 	savefile.ironman = g_engine->_tempData->filename;
 	clock.Start();
-	hud.pause.UpdateMode(info.IronMan());
+	hud.pause.UpdateMode(info.ironMan());
 
 	CreateSaveGame(SAVEGAME_EVENT);
 }
@@ -129,8 +129,8 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 		level.load(g_engine->_filePath->level[id].layout, info, game_over, player_x, player_y);
 
 		// Set the current location
-		info.CurLocID(id);
-		info.CurLocName(g_engine->_filePath->level[id].name);
+		info.curLocID(id);
+		info.curLocName(g_engine->_filePath->level[id].name);
 		map.player_pos = level.map_loc;
 
 		// Update and center the world map to the player current position
@@ -141,10 +141,10 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 		map.RevealAdd(level.map_clip.id, level.map_clip.rect);
 
 		// Initialize inventory
-		info.inv.Init(level.PlayerID());
+		info._inv.Init(level.PlayerID());
 
 		// Initialize journal
-		info.journal.Init(level.PlayerID());
+		info._journal.Init(level.PlayerID());
 
 		level.PreDraw();
 		return true;
@@ -214,7 +214,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
+					info._talkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.lastPerson(), Event);
 
 					level.handleEvents(info, Event);
 
@@ -285,10 +285,10 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 					break;
 				case STATE_JOURNAL:
-					if (info.journal.handleEvents(level.PlayerID(), Event)) {
+					if (info._journal.handleEvents(level.PlayerID(), Event)) {
 						// This means we selected the "find on map" button, so we need to:
 						// switch to the world map, and highlight the appropriate quest marker
-						map.SelectDest(info.journal.marker_title);
+						map.SelectDest(info._journal.marker_title);
 						ToggleState(STATE_MAP);
 					}
 					break;
@@ -296,7 +296,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					gem.per.handleEvents(info, level.PlayerID(), Event);
 					break;
 				case STATE_INVENTORY:
-					info.inv.handleEvents(level.PlayerID(), Event);
+					info._inv.handleEvents(level.PlayerID(), Event);
 					break;
 				case STATE_HELP:
 					g_engine->_helpScreen->handleEvents(Event);
@@ -480,7 +480,7 @@ void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 		}
 
 		gem.internalEvents(info, level, event_res);
-		info.TalkKeyDown = false;
+		info._talkKeyDown = false;
 
 		if (ApplyResult())
 			Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
@@ -524,7 +524,7 @@ void Game::draw() {
 		break;
 	case STATE_JOURNAL:
 		g_engine->_imageManager->DimScreen();
-		info.journal.draw(level.PlayerID());
+		info._journal.draw(level.PlayerID());
 		hud.draw(info, level.PlayerID());
 		hud.back.draw();
 		break;
@@ -536,7 +536,7 @@ void Game::draw() {
 		break;
 	case STATE_INVENTORY:
 		g_engine->_imageManager->DimScreen();
-		info.InvDraw(level.PlayerID());
+		info.invDraw(level.PlayerID());
 		hud.draw(info, level.PlayerID());
 		hud.back.draw();
 		break;
@@ -580,12 +580,12 @@ bool Game::ApplyResult() {
 			break;
 		case ER_DEST:
 			if (i->_x < 0 || i->_y < 0) {
-				info.journal.Marker(level.PlayerID(), i->_val, false);
+				info._journal.Marker(level.PlayerID(), i->_val, false);
 				map.DestDel(i->_val);
 			} else {
 				map.DestAdd(i->_val, i->_x, i->_y);
-				info.journal.Marker(level.PlayerID(), i->_val, true);
-				info.unread.map = true;
+				info._journal.Marker(level.PlayerID(), i->_val, true);
+				info._unread._map = true;
 			}
 			break;
 		case ER_IMG:
@@ -593,9 +593,9 @@ bool Game::ApplyResult() {
 			break;
 		case ER_TRAIT:
 			if (i->_x == 42)
-				info.TraitDel(i->_val, i->_y);
+				info.traitDel(i->_val, i->_y);
 			else
-				info.TraitAdd(i->_val, i->_y);
+				info.traitAdd(i->_val, i->_y);
 			break;
 		case ER_LEVEL:
 			if (i->_val == "Map")
@@ -681,9 +681,9 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
 		if (nodeValid(node)) {
-			info.LoadIronMan(node);
+			info.loadIronMan(node);
 			loadStr(savefile.ironman, "file", node);
-			hud.pause.UpdateMode(info.IronMan());
+			hud.pause.UpdateMode(info.ironMan());
 
 			if (nodeValid("events", node))
 				gem.loadState(node->first_node("events"));
@@ -728,22 +728,22 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	doc.append_node(root);
 
 	// Save location id
-	Common::String loc = info.CurLocID();
+	Common::String loc = info.curLocID();
 	root->append_attribute(doc.allocate_attribute("loc_id", loc.c_str()));
 
 	// Save location name
-	Common::String loc_name = info.CurLocName();
+	Common::String loc_name = info.curLocName();
 	root->append_attribute(doc.allocate_attribute("loc_name", loc_name.c_str()));
 
 	// Save player character name
 	Common::String char_name;
-	if (info.PersonValid(level.PlayerID()))
-		char_name = info.PersonGet(level.PlayerID()).name;
+	if (info.personValid(level.PlayerID()))
+		char_name = info.personGet(level.PlayerID()).name;
 	root->append_attribute(doc.allocate_attribute("char_name", char_name.c_str()));
 
 	// Difficulty
 	Common::String diff = "Normal";
-	if (info.IronMan())
+	if (info.ironMan())
 		diff = "Iron Man";
 	root->append_attribute(doc.allocate_attribute("diff", diff.c_str()));
 

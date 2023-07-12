@@ -72,11 +72,11 @@ LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result
 		Think(info, result, end_seq, l_result.val);
 
 	if (l_result.val != "")
-		info.LastPerson(l_result.val);
+		info.lastPerson(l_result.val);
 	else if (CollidingWithObject(info, l_result.val))
-		info.LastPerson(l_result.val);
+		info.lastPerson(l_result.val);
 	else
-		info.LastPerson("");
+		info.lastPerson("");
 
 	return l_result;
 }
@@ -95,14 +95,14 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 				i->_pathing.initialize(&pathfindingGrid);
 
 			// If a sprite is dead, nothing else matters
-			if (info.State(i->id()) == PST_DYING) {
+			if (info.state(i->id()) == PST_DYING) {
 				if (i->lastFrame()) {
-					info.StatSet(i->id(), STAT_HEALTH, 0);
-					info.State(i->id(), PST_KO);
+					info.statSet(i->id(), STAT_HEALTH, 0);
+					info.state(i->id(), PST_KO);
 					i->effectImg(false);
 					i->inputStop();
 				}
-			} else if (info.State(i->id()) != PST_KO) {
+			} else if (info.state(i->id()) != PST_KO) {
 				Rect boundRect = i->boundRect();
 
 				i->_pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
@@ -110,10 +110,10 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 
 				// For the AI sprites
 				if (index != player_index) {
-					switch (info.State(i->id())) {
+					switch (info.state(i->id())) {
 					case PST_FIGHT: {
 						// Only attack if the player is alive
-						if (info.State(objects[player_index].id()) < PST_KO)
+						if (info.state(objects[player_index].id()) < PST_KO)
 							i->attack(info, objects[player_index], sc_default);
 					} break;
 					case PST_FLEE:
@@ -134,7 +134,7 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 					}
 
 					// Only do this if the player is alive
-					if (info.State(objects[player_index].id()) < PST_KO)
+					if (info.state(objects[player_index].id()) < PST_KO)
 						objects[player_index].exchangeDamage(info, *i, sc_default);
 				} else {
 					// For the player sprite
@@ -172,14 +172,14 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 void Level::BattleAlert(Info &info) {
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
-		if (index != player_index && i->visible() && info.State(i->id()) != PST_KO) {
-			switch (info.Type(i->id())) {
+		if (index != player_index && i->visible() && info.state(i->id()) != PST_KO) {
+			switch (info.type(i->id())) {
 			case PE_NEUTRAL:
 			case PE_HOSTILE:
-				info.State(i->id(), PST_FIGHT);
+				info.state(i->id(), PST_FIGHT);
 				break;
 			case PE_COWARD:
-				info.State(i->id(), PST_FLEE);
+				info.state(i->id(), PST_FLEE);
 				break;
 			default:
 				break;
@@ -210,7 +210,7 @@ void Level::MoveObject(Info &info, pyrodactyl::anim::Sprite &s) {
 bool Level::PlayerInCombat(Info &info) {
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index)
-		if (index != player_index && info.State(i->id()) == PST_FIGHT && i->visible())
+		if (index != player_index && info.state(i->id()) == PST_FIGHT && i->visible())
 			return true;
 
 	return false;

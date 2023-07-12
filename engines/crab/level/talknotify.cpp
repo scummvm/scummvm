@@ -52,7 +52,7 @@ void TalkNotify::draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s
 	pos.y = rect.y + offset.y;
 
 	// Find the sprite name
-	Common::String text = info.GetName(s.id());
+	Common::String text = info.getName(s.id());
 
 	g_engine->_textManager->draw(pos.x - camera.x, pos.y - camera.y, text, col, font, align, true);
 }

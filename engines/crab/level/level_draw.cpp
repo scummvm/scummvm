@@ -125,7 +125,7 @@ void Level::draw(pyrodactyl::event::Info &info) {
 				// Only draw their name if they are
 				//(a) hovered over by the mouse, OR
 				//(b) are in talk range and don't have popup text over their head
-				if (i._hover || (info.LastPerson() == i.id() && !i.popupShow()))
+				if (i._hover || (info.lastPerson() == i.id() && !i.popupShow()))
 					talk_notify.draw(info, i, camera);
 			}
 		}

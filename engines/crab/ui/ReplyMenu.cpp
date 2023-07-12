@@ -75,9 +75,9 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 				oh.OpinionChange(info, i._id, OPI_FEAR, i._val[OPI_FEAR]);
 				play_sound = true;
 			} else {
-				info.OpinionChange(i._id, OPI_LIKE, i._val[OPI_LIKE]);
-				info.OpinionChange(i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
-				info.OpinionChange(i._id, OPI_FEAR, i._val[OPI_FEAR]);
+				info.opinionChange(i._id, OPI_LIKE, i._val[OPI_LIKE]);
+				info.opinionChange(i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
+				info.opinionChange(i._id, OPI_FEAR, i._val[OPI_FEAR]);
 				play_sound = true;
 			}
 		}
@@ -161,7 +161,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 			const InputType type = static_cast<InputType>(IU_REPLY_0 + element_count);
 			Common::String text = g_engine->_inputManager->GetAssociatedKey(type);
 			text += ". " + i->_text;
-			info.InsertName(text);
+			info.insertName(text);
 
 			if (element_count == 0)
 				element[element_count].Cache(text, spacing, 0, &bg);

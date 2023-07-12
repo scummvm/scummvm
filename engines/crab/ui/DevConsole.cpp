@@ -77,7 +77,7 @@ void DebugConsole::draw(pyrodactyl::event::Info &info) {
 
 		{
 			int temp = 0;
-			if (info.VarGet(var_name, temp))
+			if (info.varGet(var_name, temp))
 				value.draw(NumberToString(temp));
 			else
 				value.draw("Does not exist.");

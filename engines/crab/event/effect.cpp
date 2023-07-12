@@ -110,21 +110,21 @@ void Effect::changeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::Op
 	int oldOp = 0;
 
 	// Only bother if the person exists and has a valid opinion
-	if (info.OpinionGet(_subject, opType, oldOp)) {
+	if (info.opinionGet(_subject, opType, oldOp)) {
 		if (_operation == "=")
-			info.OpinionSet(_subject, opType, StringToNumber<int>(_val));
+			info.opinionSet(_subject, opType, StringToNumber<int>(_val));
 		else if (_operation == "+")
-			info.OpinionChange(_subject, opType, StringToNumber<int>(_val));
+			info.opinionChange(_subject, opType, StringToNumber<int>(_val));
 		else if (_operation == "-")
-			info.OpinionChange(_subject, opType, -1 * StringToNumber<int>(_val));
+			info.opinionChange(_subject, opType, -1 * StringToNumber<int>(_val));
 
 		int newOp = 0;
-		info.OpinionGet(_subject, opType, newOp);
+		info.opinionGet(_subject, opType, newOp);
 
 		if (newOp > oldOp)
-			info.sound.rep_inc = true;
+			info._sound._repInc = true;
 		else if (newOp < oldOp)
-			info.sound.rep_dec = true;
+			info._sound._repDec = true;
 	}
 }
 
@@ -134,52 +134,52 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 		switch (_type) {
 		case EFF_VAR:
 			if (_operation == "=")
-				info.VarSet(_subject, _val);
+				info.varSet(_subject, _val);
 			else if (_operation == "del")
-				info.VarDel(_subject);
+				info.varDel(_subject);
 			else if (_operation == "+")
-				info.VarAdd(_subject, StringToNumber<int>(_val));
+				info.varAdd(_subject, StringToNumber<int>(_val));
 			else if (_operation == "-")
-				info.VarSub(_subject, StringToNumber<int>(_val));
+				info.varSub(_subject, StringToNumber<int>(_val));
 			else if (_operation == "*")
-				info.VarMul(_subject, StringToNumber<int>(_val));
+				info.varMul(_subject, StringToNumber<int>(_val));
 			else if (_operation == "/")
-				info.VarDiv(_subject, StringToNumber<int>(_val));
+				info.varDiv(_subject, StringToNumber<int>(_val));
 			break;
 
 		case EFF_JOURNAL:
 			if (_subject == "finish")
-				info.journal.Move(playerId, _operation, true);
+				info._journal.Move(playerId, _operation, true);
 			else if (_subject == "start")
-				info.journal.Move(playerId, _operation, false);
+				info._journal.Move(playerId, _operation, false);
 			else
-				info.journal.Add(playerId, _subject, _operation, _val);
+				info._journal.Add(playerId, _subject, _operation, _val);
 
 			// Update unread status of journal
-			info.unread.journal = true;
+			info._unread._journal = true;
 
 			// used so we only play one notify sound per event
-			info.sound.notify = true;
+			info._sound._notify = true;
 			break;
 
 		case EFF_OBJ:
 			if (_operation == "type")
-				info.Type(_subject, pyrodactyl::people::StringToPersonType(_val));
+				info.type(_subject, pyrodactyl::people::StringToPersonType(_val));
 			else if (_operation == "state")
-				info.State(_subject, pyrodactyl::people::StringToPersonState(_val));
+				info.state(_subject, pyrodactyl::people::StringToPersonState(_val));
 			break;
 
 		case EFF_ITEM:
 			if (_operation == "del")
-				info.inv.DelItem(_subject, _val);
+				info._inv.DelItem(_subject, _val);
 			else
-				info.inv.LoadItem(_subject, _val);
+				info._inv.LoadItem(_subject, _val);
 
 			// Update unread status of inventory
-			info.unread.inventory = true;
+			info._unread._inventory = true;
 
 			// used so we only play one notify sound per event
-			info.sound.notify = true;
+			info._sound._notify = true;
 			break;
 
 		case EFF_LIKE:
@@ -199,11 +199,11 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 			int num = StringToNumber<int>(_val);
 
 			if (_operation == "=")
-				info.StatSet(_subject, STAT_HEALTH, num);
+				info.statSet(_subject, STAT_HEALTH, num);
 			else if (_operation == "+")
-				info.StatChange(_subject, STAT_HEALTH, num);
+				info.statChange(_subject, STAT_HEALTH, num);
 			else if (_operation == "-")
-				info.StatChange(_subject, STAT_HEALTH, -1 * num);
+				info.statChange(_subject, STAT_HEALTH, -1 * num);
 		} break;
 
 		case EFF_SOUND:
@@ -222,7 +222,7 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 			break;
 
 		case EFF_MONEY:
-			info.money_var = _val;
+			info._moneyVar = _val;
 			break;
 
 		case EFF_END:
@@ -259,12 +259,12 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 			break;
 		case EFF_IMG:
 			r._type = ER_IMG;
-			info.PlayerImg(StringToNumber<int>(_val));
+			info.playerImg(StringToNumber<int>(_val));
 			break;
 		case EFF_TRAIT:
 			r._type = ER_TRAIT;
-			info.unread.trait = true;
-			info.sound.notify = true;
+			info._unread._trait = true;
+			info._sound._notify = true;
 			break;
 		case EFF_LEVEL:
 			r._type = ER_LEVEL;

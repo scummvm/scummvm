@@ -53,7 +53,7 @@ void Info::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("people", node)) {
 		rapidxml::xml_node<char> *pnode = node->first_node("people");
 
-		stem.load(pnode->first_attribute("templates")->value());
+		_stem.load(pnode->first_attribute("templates")->value());
 
 		XMLDoc conf(pnode->first_attribute("list")->value());
 		if (conf.ready()) {
@@ -63,24 +63,24 @@ void Info::load(rapidxml::xml_node<char> *node) {
 				loadNum(OPINION_MAX, "op_max", cnode);
 
 				for (auto n = cnode->first_node("group"); n != NULL; n = n->next_sibling("group"))
-					LoadPeople(n->value());
+					loadPeople(n->value());
 			}
 		}
 	}
 
 	if (nodeValid("objective", node))
-		journal.load(node->first_node("objective")->first_attribute("layout")->value());
+		_journal.load(node->first_node("objective")->first_attribute("layout")->value());
 
 	if (nodeValid("inventory", node)) {
 		rapidxml::xml_node<char> *inode = node->first_node("inventory");
-		inv.load(inode->first_attribute("layout")->value());
+		_inv.load(inode->first_attribute("layout")->value());
 	}
 
-	CurLocID(node->first_node("level")->first_attribute("start")->value());
-	inv.ItemFile(node->first_node("item")->first_attribute("list")->value());
+	curLocID(node->first_node("level")->first_attribute("start")->value());
+	_inv.ItemFile(node->first_node("item")->first_attribute("list")->value());
 }
 
-void Info::LoadPeople(const Common::String &filename) {
+void Info::loadPeople(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("people");
@@ -88,7 +88,7 @@ void Info::LoadPeople(const Common::String &filename) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				Common::String str;
 				loadStr(str, "id", n);
-				people[str].load(n, stem);
+				_people[str].load(n, _stem);
 			}
 		}
 	}
@@ -97,14 +97,14 @@ void Info::LoadPeople(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object type
 //------------------------------------------------------------------------
-void Info::Type(const Common::String &id, const PersonType &val) {
-	if (people.contains(id) > 0)
-		people[id].type = val;
+void Info::type(const Common::String &id, const PersonType &val) {
+	if (_people.contains(id) > 0)
+		_people[id].type = val;
 }
 
-PersonType Info::Type(const Common::String &id) {
-	if (people.contains(id) > 0)
-		return people[id].type;
+PersonType Info::type(const Common::String &id) {
+	if (_people.contains(id) > 0)
+		return _people[id].type;
 
 	return PE_NEUTRAL;
 }
@@ -112,14 +112,14 @@ PersonType Info::Type(const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object state
 //------------------------------------------------------------------------
-void Info::State(const Common::String &id, const PersonState &val) {
-	if (people.contains(id) > 0)
-		people[id].state = val;
+void Info::state(const Common::String &id, const PersonState &val) {
+	if (_people.contains(id) > 0)
+		_people[id].state = val;
 }
 
-PersonState Info::State(const Common::String &id) {
-	if (people.contains(id) > 0)
-		return people[id].state;
+PersonState Info::state(const Common::String &id) {
+	if (_people.contains(id) > 0)
+		return _people[id].state;
 
 	return PST_NORMAL;
 }
@@ -127,89 +127,89 @@ PersonState Info::State(const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about variables
 //------------------------------------------------------------------------
-bool Info::VarGet(const Common::String &name, int &val) {
-	if (var.contains(name) == 0)
+bool Info::varGet(const Common::String &name, int &val) {
+	if (_var.contains(name) == 0)
 		return false;
 	else
-		val = var[name];
+		val = _var[name];
 	return true;
 }
 
-void Info::VarSet(const Common::String &name, const Common::String &val) {
-	int var_val = 0;
-	bool assign_to_var = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
+void Info::varSet(const Common::String &name, const Common::String &val) {
+	int varVal = 0;
+	bool assignToVar = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
 
-	if (assign_to_var)
-		VarGet(val, var_val);
+	if (assignToVar)
+		varGet(val, varVal);
 	else
-		var_val = StringToNumber<int>(val);
+		varVal = StringToNumber<int>(val);
 
-	var[name] = var_val;
+	_var[name] = varVal;
 }
 
-void Info::VarAdd(const Common::String &name, const int &val) {
-	if (var.contains(name) == 0)
-		VarSet(name, 0);
+void Info::varAdd(const Common::String &name, const int &val) {
+	if (_var.contains(name) == 0)
+		varSet(name, 0);
 
-	var[name] += val;
+	_var[name] += val;
 }
 
-void Info::VarSub(const Common::String &name, const int &val) {
-	if (var.contains(name) == 0)
-		VarSet(name, 0);
+void Info::varSub(const Common::String &name, const int &val) {
+	if (_var.contains(name) == 0)
+		varSet(name, 0);
 
-	var[name] -= val;
+	_var[name] -= val;
 }
 
-void Info::VarMul(const Common::String &name, const int &val) {
-	if (var.contains(name) == 0)
-		VarSet(name, 0);
+void Info::varMul(const Common::String &name, const int &val) {
+	if (_var.contains(name) == 0)
+		varSet(name, 0);
 
-	var[name] *= val;
+	_var[name] *= val;
 }
 
-void Info::VarDiv(const Common::String &name, const int &val) {
-	if (var.contains(name) == 0)
-		VarSet(name, 0);
+void Info::varDiv(const Common::String &name, const int &val) {
+	if (_var.contains(name) == 0)
+		varSet(name, 0);
 
-	var[name] /= val;
+	_var[name] /= val;
 }
 
-void Info::VarDel(const Common::String &name) {
-	var.erase(name);
+void Info::varDel(const Common::String &name) {
+	_var.erase(name);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get/Set person traits
 //------------------------------------------------------------------------
-void Info::TraitAdd(const Common::String &per_id, const int &trait_id) {
-	if (PersonValid(per_id)) // Valid person id
+void Info::traitAdd(const Common::String &perId, const int &traitId) {
+	if (personValid(perId)) // Valid person id
 	{
-		if (trait_id >= 0 && (unsigned int)trait_id < g_engine->_eventStore->_trait.size()) // Valid trait id
+		if (traitId >= 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) // Valid trait id
 		{
 			// Check for duplicate traits, DONT award anything if duplicate found
-			Person *p = &PersonGet(per_id);
+			Person *p = &personGet(perId);
 
 			for (auto i = p->trait.begin(); i != p->trait.end(); ++i)
-				if (i->id == trait_id)
+				if (i->id == traitId)
 					return;
 
-			p->trait.push_back(g_engine->_eventStore->_trait[trait_id]);
+			p->trait.push_back(g_engine->_eventStore->_trait[traitId]);
 
-			g_engine->_eventStore->setAchievement(g_engine->_eventStore->_trait[trait_id].id);
+			g_engine->_eventStore->setAchievement(g_engine->_eventStore->_trait[traitId].id);
 		}
 	}
 }
 
-void Info::TraitDel(const Common::String &per_id, const int &trait_id) {
-	if (PersonValid(per_id)) // Valid person id
+void Info::traitDel(const Common::String &perId, const int &traitId) {
+	if (personValid(perId)) // Valid person id
 	{
-		if (trait_id > 0 && (unsigned int)trait_id < g_engine->_eventStore->_trait.size()) // Valid trait id
+		if (traitId > 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) // Valid trait id
 		{
-			Person *p = &PersonGet(per_id);
+			Person *p = &personGet(perId);
 
 			for (auto j = p->trait.begin(); j != p->trait.end(); ++j) {
-				if (j->id == trait_id) {
+				if (j->id == traitId) {
 					p->trait.erase(j);
 					break;
 				}
@@ -221,70 +221,70 @@ void Info::TraitDel(const Common::String &per_id, const int &trait_id) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object opinion
 //------------------------------------------------------------------------
-bool Info::OpinionGet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int &val) {
-	if (people.contains(name) == 0)
+bool Info::opinionGet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int &val) {
+	if (_people.contains(name) == 0)
 		return false;
 
-	val = people[name].opinion.val[type];
+	val = _people[name].opinion.val[type];
 	return true;
 }
 
-void Info::OpinionChange(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
-	if (people.contains(name) > 0)
-		people[name].opinion.Change(type, val);
+void Info::opinionChange(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
+	if (_people.contains(name) > 0)
+		_people[name].opinion.Change(type, val);
 }
 
-void Info::OpinionSet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
-	if (people.contains(name) > 0)
-		people[name].opinion.Set(type, val);
+void Info::opinionSet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
+	if (_people.contains(name) > 0)
+		_people[name].opinion.Set(type, val);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object stats
 //------------------------------------------------------------------------
-bool Info::StatGet(const Common::String &name, const pyrodactyl::stat::StatType &type, int &num) {
-	if (people.contains(name) == 0)
+bool Info::statGet(const Common::String &name, const pyrodactyl::stat::StatType &type, int &num) {
+	if (_people.contains(name) == 0)
 		return false;
 
-	num = people[name].stat.val[type].cur;
+	num = _people[name].stat.val[type].cur;
 	return true;
 }
 
-void Info::StatSet(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
-	if (people.contains(name) > 0)
-		people[name].stat.Set(type, num);
+void Info::statSet(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
+	if (_people.contains(name) > 0)
+		_people[name].stat.Set(type, num);
 }
 
-void Info::StatChange(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
-	if (people.contains(name) > 0)
-		people[name].stat.Change(type, num);
+void Info::statChange(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
+	if (_people.contains(name) > 0)
+		_people[name].stat.Change(type, num);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get person object
 //------------------------------------------------------------------------
-bool Info::PersonGet(const Common::String &id, pyrodactyl::people::Person &p) {
-	if (people.contains(id) == 0)
+bool Info::personGet(const Common::String &id, pyrodactyl::people::Person &p) {
+	if (_people.contains(id) == 0)
 		return false;
 
-	p = people[id];
+	p = _people[id];
 	return true;
 }
 
-bool Info::PersonValid(const Common::String &id) {
-	return people.contains(id) > 0;
+bool Info::personValid(const Common::String &id) {
+	return _people.contains(id) > 0;
 }
 
-pyrodactyl::people::Person &Info::PersonGet(const Common::String &id) {
+pyrodactyl::people::Person &Info::personGet(const Common::String &id) {
 	// Make sure to check PersonValid before doing this!
 	// Only use this to change parts of an object
-	return people[id];
+	return _people[id];
 }
 
-bool Info::CollideWithTrigger(const Common::String &id, int rect_index) {
-	if (people.contains(id) > 0) {
-		for (auto i = people[id].trig.begin(); i != people[id].trig.end(); ++i)
-			if (*i == rect_index)
+bool Info::collideWithTrigger(const Common::String &id, int rectIndex) {
+	if (_people.contains(id) > 0) {
+		for (auto i = _people[id].trig.begin(); i != _people[id].trig.end(); ++i)
+			if (*i == rectIndex)
 				return true;
 	}
 
@@ -294,7 +294,7 @@ bool Info::CollideWithTrigger(const Common::String &id, int rect_index) {
 //------------------------------------------------------------------------
 // Purpose: Replace all #values with their appropriate names in a string
 //------------------------------------------------------------------------
-void Info::InsertName(Common::String &msg) {
+void Info::insertName(Common::String &msg) {
 	// We scan the dialog for #id values, which we convert to actual NPC names
 	for (unsigned int i = 0; i < msg.size(); ++i) {
 		// The # symbol indicates that the next string until an end character needs to be replaced by the name
@@ -313,16 +313,16 @@ void Info::InsertName(Common::String &msg) {
 				Common::String s = msg.substr(start + 1, len);
 
 				// We use length+1 here because otherwise it lets the last character stay in dialog
-				if (PersonValid(s))
-					msg.replace(start, len + 1, PersonGet(s).name);
+				if (personValid(s))
+					msg.replace(start, len + 1, personGet(s).name);
 			}
 		}
 	}
 }
 
-Common::String Info::GetName(const Common::String &id) {
-	if (PersonValid(id))
-		return PersonGet(id).name;
+Common::String Info::getName(const Common::String &id) {
+	if (personValid(id))
+		return personGet(id).name;
 
 	return id;
 }
@@ -334,14 +334,14 @@ void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	warning("Info::saveState()");
 
 #if 0
-	for (auto v = var.begin(); v != var.end(); ++v) {
+	for (auto v = _var.begin(); v != _var.end(); ++v) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "var");
 		child->append_attribute(doc.allocate_attribute("id", v->first.c_str()));
 		child->append_attribute(doc.allocate_attribute("val", gStrPool->Get(v->second)));
 		root->append_node(child);
 	}
 
-	for (auto p = people.begin(); p != people.end(); ++p)
+	for (auto p = _people.begin(); p != _people.end(); ++p)
 		p->second.saveState(doc, root);
 
 	rapidxml::xml_node<char> *child_unr = doc.allocate_node(rapidxml::node_element, "unread");
@@ -361,45 +361,45 @@ void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	child_money->append_attribute(doc.allocate_attribute("var", money_var.c_str()));
 	root->append_node(child_money);
 
-	journal.saveState(doc, root);
-	inv.saveState(doc, root);
+	_journal.saveState(doc, root);
+	_inv.saveState(doc, root);
 #endif
 }
 
 void Info::loadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *v = node->first_node("var"); v != NULL; v = v->next_sibling("var"))
-		var[v->first_attribute("id")->value()] = StringToNumber<int>(v->first_attribute("val")->value());
+		_var[v->first_attribute("id")->value()] = StringToNumber<int>(v->first_attribute("val")->value());
 
 	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object")) {
 		Common::String id;
 		loadStr(id, "id", p);
-		people[id].loadState(p);
+		_people[id].loadState(p);
 	}
 
 	if (nodeValid("unread", node)) {
 		rapidxml::xml_node<char> *unrnode = node->first_node("unread");
-		loadBool(unread.inventory, "inventory", unrnode);
-		loadBool(unread.journal, "journal", unrnode);
-		loadBool(unread.trait, "trait", unrnode);
-		loadBool(unread.map, "map", unrnode);
+		loadBool(_unread._inventory, "inventory", unrnode);
+		loadBool(_unread._journal, "journal", unrnode);
+		loadBool(_unread._trait, "trait", unrnode);
+		loadBool(_unread._map, "map", unrnode);
 	}
 
 	if (nodeValid("img", node))
-		loadNum(player_img, "index", node->first_node("img"));
+		loadNum(_playerImg, "index", node->first_node("img"));
 
 	if (nodeValid("money", node))
-		loadStr(money_var, "var", node->first_node("money"));
+		loadStr(_moneyVar, "var", node->first_node("money"));
 
-	journal.loadState(node);
-	inv.loadState(node);
+	_journal.loadState(node);
+	_inv.loadState(node);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Calculate UI positions after change in screen size
 //------------------------------------------------------------------------
 void Info::setUI() {
-	journal.setUI();
-	inv.setUI();
+	_journal.setUI();
+	_inv.setUI();
 }
 
 } // End of namespace Crab
