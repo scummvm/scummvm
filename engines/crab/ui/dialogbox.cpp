@@ -73,7 +73,7 @@ void GameDialogBox::draw(const bool &player) {
 void GameDialogBox::draw(pyrodactyl::event::Info &info, Common::String &message) {
 	// Create a copy of the string
 	Common::String msg = message;
-	info.InsertName(msg);
+	info.insertName(msg);
 
 	text.draw(message);
 	button.draw();

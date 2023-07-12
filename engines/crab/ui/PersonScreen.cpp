@@ -58,8 +58,8 @@ void PersonScreen::load(const Common::String &filename) {
 }
 
 void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event) {
-	if (info.PersonValid(id))
-		menu.handleEvents(&info.PersonGet(id), Event);
+	if (info.personValid(id))
+		menu.handleEvents(&info.personGet(id), Event);
 	else
 		menu.handleEvents(nullptr, Event);
 }
@@ -81,9 +81,9 @@ void PersonScreen::internalEvents() {
 void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id) {
 	bg.draw();
 
-	if (info.PersonValid(id)) {
-		name.draw(info.PersonGet(id).name);
-		menu.draw(&info.PersonGet(id));
+	if (info.personValid(id)) {
+		name.draw(info.personGet(id).name);
+		menu.draw(&info.personGet(id));
 	} else
 		menu.draw(nullptr);
 
@@ -96,8 +96,8 @@ void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id)
 void PersonScreen::Cache(Info &info, const Common::String &id, pyrodactyl::level::Level &level) {
 	cur_sp = level.GetSprite(id);
 
-	if (info.PersonValid(id))
-		menu.Cache(info.PersonGet(id));
+	if (info.personValid(id))
+		menu.Cache(info.personGet(id));
 	else
 		menu.Clear();
 }

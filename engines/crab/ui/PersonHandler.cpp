@@ -91,13 +91,13 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 		g_engine->_imageManager->draw(x, y, s->img(), &r);
 	}
 
-	if (info.PersonValid(person_id)) {
-		name.draw(info.PersonGet(person_id).name);
+	if (info.personValid(person_id)) {
+		name.draw(info.personGet(person_id).name);
 
 		if (!player) {
-			opinion[OPI_LIKE].draw(info.PersonGet(person_id).opinion.val[OPI_LIKE], OPINION_MAX);
-			opinion[OPI_RESPECT].draw(info.PersonGet(person_id).opinion.val[OPI_RESPECT], OPINION_MAX);
-			opinion[OPI_FEAR].draw(info.PersonGet(person_id).opinion.val[OPI_FEAR], OPINION_MAX);
+			opinion[OPI_LIKE].draw(info.personGet(person_id).opinion.val[OPI_LIKE], OPINION_MAX);
+			opinion[OPI_RESPECT].draw(info.personGet(person_id).opinion.val[OPI_RESPECT], OPINION_MAX);
+			opinion[OPI_FEAR].draw(info.personGet(person_id).opinion.val[OPI_FEAR], OPINION_MAX);
 		}
 	}
 
@@ -152,17 +152,17 @@ void PersonHandler::internalEvents(const pyrodactyl::people::PersonState &state,
 }
 
 void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const Common::String &id, const pyrodactyl::people::OpinionType &type, const int &val) {
-	if (info.PersonValid(id)) {
+	if (info.personValid(id)) {
 		// First, get the value of the object's opinion
 		int old = 0;
-		info.OpinionGet(id, type, old);
+		info.opinionGet(id, type, old);
 
 		// Update the opinion value to the new one
-		info.OpinionChange(id, type, val);
+		info.opinionChange(id, type, val);
 
 		// Then get the current value of the object's opinion
 		int value = 0;
-		info.OpinionGet(id, type, value);
+		info.opinionGet(id, type, value);
 
 		// Now, send the new and old value of the object's opinion for drawing the change effect
 		opinion[type].Effect(value, old);

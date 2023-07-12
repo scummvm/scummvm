@@ -79,16 +79,16 @@ void EventSequence::nextEvent(pyrodactyl::event::Info &info, const Common::Strin
 	// Play a notification sound
 	using namespace pyrodactyl::music;
 
-	if (info.sound.rep_dec)
+	if (info._sound._repDec)
 		g_engine->_musicManager->PlayEffect(g_engine->_musicManager->rep_dec, 0);
-	else if (info.sound.rep_inc)
+	else if (info._sound._repInc)
 		g_engine->_musicManager->PlayEffect(g_engine->_musicManager->rep_inc, 0);
-	else if (info.sound.notify)
+	else if (info._sound._notify)
 		g_engine->_musicManager->PlayEffect(g_engine->_musicManager->notify, 0);
 
-	info.sound.notify = false;
-	info.sound.rep_dec = false;
-	info.sound.rep_inc = false;
+	info._sound._notify = false;
+	info._sound._repDec = false;
+	info._sound._repInc = false;
 
 	if (!result.empty() || sync) {
 		EventResult r;

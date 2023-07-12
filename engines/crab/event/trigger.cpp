@@ -109,19 +109,19 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 	switch (type) {
 	case TRIG_OBJ:
 		if (operation == "p") {
-			if (info.TalkKeyDown && info.LastPerson() == val)
+			if (info._talkKeyDown && info.lastPerson() == val)
 				return true;
 			else
 				return false;
 		} else if (operation == "status") {
 			PersonType ty = StringToPersonType(val);
-			if (info.Type(subject) == ty)
+			if (info.type(subject) == ty)
 				return true;
 			else
 				return false;
 		} else if (operation == "state") {
 			PersonState st = StringToPersonState(val);
-			if (info.State(subject) == st)
+			if (info.state(subject) == st)
 				return true;
 			else
 				return false;
@@ -130,7 +130,7 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 
 	case TRIG_OPINION: {
 		Person p;
-		if (info.PersonGet(subject, p)) {
+		if (info.personGet(subject, p)) {
 			if (target == "like")
 				return Evaluate(p.opinion.val[OPI_LIKE], StringToNumber<int>(val));
 			else if (target == "fear")
@@ -141,24 +141,24 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 	} break;
 
 	case TRIG_LOC:
-		return (info.CurLocID() == val);
+		return (info.curLocID() == val);
 		break;
 
 	case TRIG_ITEM:
-		return info.inv.HasItem(target, subject, val);
+		return info._inv.HasItem(target, subject, val);
 		break;
 
 	case TRIG_RECT:
-		return info.CollideWithTrigger(subject, StringToNumber<int>(val));
+		return info.collideWithTrigger(subject, StringToNumber<int>(val));
 
 	case TRIG_STAT: {
 		StatType ty = StringToStatType(target);
 		int sub = 0, value = 0;
 		bool compare_to_var = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
 
-		info.StatGet(subject, ty, sub);
+		info.statGet(subject, ty, sub);
 		if (compare_to_var)
-			info.StatGet(val, ty, value);
+			info.statGet(val, ty, value);
 		else
 			value = StringToNumber<int>(val);
 
@@ -166,11 +166,11 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 	} break;
 
 	case TRIG_DIFF:
-		return Evaluate(info.IronMan(), StringToNumber<int>(val));
+		return Evaluate(info.ironMan(), StringToNumber<int>(val));
 
 	case TRIG_TRAIT:
-		if (info.PersonValid(target)) {
-			Person *p = &info.PersonGet(target);
+		if (info.personValid(target)) {
+			Person *p = &info.personGet(target);
 
 			for (auto &i : p->trait)
 				if (i.name == val)
@@ -182,9 +182,9 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 		int var_sub = 0, var_val = 0;
 		bool compare_to_var = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
 
-		info.VarGet(subject, var_sub);
+		info.varGet(subject, var_sub);
 		if (compare_to_var)
-			info.VarGet(val, var_val);
+			info.varGet(val, var_val);
 		else
 			var_val = StringToNumber<int>(val);
 

@@ -136,7 +136,7 @@ void Map::draw(pyrodactyl::event::Info &info) {
 	fg.draw();
 	bu_overlay.draw();
 
-	title.text = info.CurLocName();
+	title.text = info.curLocName();
 	title.draw();
 
 	marker.draw(pos, player_pos, camera);

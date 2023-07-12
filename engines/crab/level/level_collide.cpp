@@ -134,8 +134,8 @@ bool Level::LayerVisible(Sprite *obj) {
 //------------------------------------------------------------------------
 void Level::CalcTrigCollide(Info &info) {
 	for (auto i = objects.begin(); i != objects.end(); ++i)
-		if (info.PersonValid(i->id()))
-			terrain.CollideWithTrigger(i->boundRect(), info.PersonGet(i->id()).trig);
+		if (info.personValid(i->id()))
+			terrain.CollideWithTrigger(i->boundRect(), info.personGet(i->id()).trig);
 }
 
 //------------------------------------------------------------------------
@@ -148,7 +148,7 @@ bool Level::CollidingWithObject(Info &info, Common::String &id) {
 
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
-		if (i->visible() && player_index != index && info.State(i->id()) == PST_NORMAL) {
+		if (i->visible() && player_index != index && info.state(i->id()) == PST_NORMAL) {
 			// Clip and bounding rectangles for the NPC sprite
 			Rect i_pos = i->posRect(), i_bound = i->boundRect();
 
