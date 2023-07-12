@@ -16,7 +16,7 @@
 /***************************************************************************/
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pfr.h"
+#include "engines/ags/lib/freetype-2.1.3/pfr.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
 namespace AGS3 {

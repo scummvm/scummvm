@@ -66,21 +66,27 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/cff/cffobjs.o \
 	lib/freetype-2.1.3/cff/cffgload.o \
 	lib/freetype-2.1.3/cff/cffcmap.o \
-	lib/freetype-2.1.3/src/cid/cidparse.o \
-	lib/freetype-2.1.3/src/cid/cidload.o \
-	lib/freetype-2.1.3/src/cid/cidobjs.o \
-	lib/freetype-2.1.3/src/cid/cidriver.o \
-	lib/freetype-2.1.3/src/cid/cidgload.o \
+	lib/freetype-2.1.3/cid/cidparse.o \
+	lib/freetype-2.1.3/cid/cidload.o \
+	lib/freetype-2.1.3/cid/cidobjs.o \
+	lib/freetype-2.1.3/cid/cidriver.o \
+	lib/freetype-2.1.3/cid/cidgload.o \
 	lib/freetype-2.1.3/src/gzip/ftgzip.o \
-	lib/freetype-2.1.3/src/pcf/pcfutil.o \
-	lib/freetype-2.1.3/src/pcf/pcfread.o \
-	lib/freetype-2.1.3/src/pcf/pcfdriver.o \
-	lib/freetype-2.1.3/src/pfr/pfrload.o \
-	lib/freetype-2.1.3/src/pfr/pfrgload.o \
-	lib/freetype-2.1.3/src/pfr/pfrcmap.o \
-	lib/freetype-2.1.3/src/pfr/pfrobjs.o \
-	lib/freetype-2.1.3/src/pfr/pfrdrivr.o \
-	lib/freetype-2.1.3/src/pfr/pfrsbit.o \
+	lib/freetype-2.1.3/pcf/pcfutil.o \
+	lib/freetype-2.1.3/pcf/pcfread.o \
+	lib/freetype-2.1.3/pcf/pcfdriver.o \
+	lib/freetype-2.1.3/pfr/pfrload.o \
+	lib/freetype-2.1.3/pfr/pfrload.o \
+	lib/freetype-2.1.3/pfr/pfrload.o \
+	lib/freetype-2.1.3/pfr/pfrgload.o \
+	lib/freetype-2.1.3/pfr/pfrgload.o \
+	lib/freetype-2.1.3/pfr/pfrgload.o \
+	lib/freetype-2.1.3/pfr/pfrcmap.o \
+	lib/freetype-2.1.3/pfr/pfrcmap.o \
+	lib/freetype-2.1.3/pfr/pfrcmap.o \
+	lib/freetype-2.1.3/pfr/pfrobjs.o \
+	lib/freetype-2.1.3/pfr/pfrdrivr.o \
+	lib/freetype-2.1.3/pfr/pfrsbit.o \
 	lib/freetype-2.1.3/src/psaux/psobjs.o \
 	lib/freetype-2.1.3/src/psaux/psauxmod.o \
 	lib/freetype-2.1.3/src/psaux/t1decode.o \
