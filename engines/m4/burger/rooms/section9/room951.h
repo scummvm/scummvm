@@ -31,6 +31,11 @@ namespace Rooms {
 class Room951 : public Rooms::Room {
 public:
 	Room951() : Rooms::Room(951) {}
+
+	void preload() override;
+	void init() override;
+	void pre_parser() override {}
+	void daemon() override;
 };
 
 } // namespace Rooms

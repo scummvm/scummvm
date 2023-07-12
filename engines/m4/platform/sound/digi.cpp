@@ -80,6 +80,10 @@ void Digi::read_another_chunk() {
 
 } // namespace Sound
 
+void digi_preload(const Common::String &name, int roomNum) {
+	_G(digi).preload(name, roomNum);
+}
+
 int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
 	return _G(digi).play(name, channel, vol, trigger, room_num);
 }
@@ -90,6 +94,10 @@ int32 digi_play_loop(const char *name, int32 channel, int32 vol, int32 trigger, 
 
 void digi_read_another_chunk() {
 	return _G(digi).read_another_chunk();
+}
+
+void digi_stop(int slot) {
+	_G(digi).stop(slot);
 }
 
 } // namespace M4

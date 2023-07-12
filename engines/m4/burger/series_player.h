@@ -31,14 +31,15 @@ namespace Burger {
 
 struct seriesStreamBreak {
 	int32 frame = 0;
-	char *sound = nullptr;
+	const char *sound = nullptr;
 	int32 channel = 0;
 	int32 volume = 0;
 	int32 trigger = 0;
 	uint32 flags = 0;
-	int32 *variable = nullptr;
+	const int32 *variable = nullptr;
 	int32 value = 0;
 };
+
 // Used as last line of seriesStreamBreak arrays
 #define SERIES_STREAM_BREAK_END -1,nullptr,0,0,NO_TRIGGER,nullptr,nullptr,nullptr
 
