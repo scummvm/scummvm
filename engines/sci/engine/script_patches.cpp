@@ -8910,10 +8910,32 @@ static const uint16 larry5PatchTPrintUninitParameter[] = {
 	PATCH_END
 };
 
+// The palette animation for the Mr. Bigg close-up in the LSL5 intro is running
+// very slowly, probably because of speed throttling. It updates every 32th
+// time the doit script is run. There is no consensus on how fast the animation
+// should run, so we arbitrarily change it to every 6th time.
+//
+// Applies to: All known versions
+// Responsible method: Mr. Bigg::doit (script 130)
+
+static const uint16 larry5SignatureMrBiggPaletteAnimation[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x20,                         // ldi 20
+	0x0a,                               // mod
+	0x18,                               // not
+	SIG_END
+};
+
+static const uint16 larry5PatchMrBiggPaletteAnimation[] = {
+	0x35, 0x06,                         // ldi 06
+	PATCH_END
+};
+
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,     0, "update stopGroop client",                     1, larry5SignatureUpdateStopGroopClient,   larry5PatchUpdateStopGroopClient },
 	{  true,     0, "TPrint uninit parameter",                     1, larry5SignatureHTPrintUninitParameter,  larry5PatchTPrintUninitParameter },
+	{  true,   130, "speed up palette animation",                  1, larry5SignatureMrBiggPaletteAnimation,  larry5PatchMrBiggPaletteAnimation },
 	{  true,   190, "hollywood sign",                              1, larry5SignatureHollywoodSign,           larry5PatchHollywoodSign },
 	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
