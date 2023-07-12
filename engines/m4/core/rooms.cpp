@@ -48,10 +48,12 @@ void Sections::global_section_constructor() {
 	assert(sectionNum >= 1 && sectionNum <= 9);
 
 	_activeSection = &_sections[sectionNum - 1];
+	assert(_activeSection);
 }
 
 void Sections::section_room_constructor() {
 	_activeRoom = (*_activeSection)[_G(game).new_room];
+	assert(_activeRoom);
 }
 
 void Sections::m4SceneLoad() {

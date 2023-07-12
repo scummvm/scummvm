@@ -75,6 +75,7 @@ Common::Error M4Engine::run() {
 
 void M4Engine::m4_inflight() {
 	Hotkeys::add_hot_keys();
+	_G(kernel).going = true;
 
 	while (_G(kernel).going && !shouldQuit()) {
 		if (_G(game).previous_room == -2) {
