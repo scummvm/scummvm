@@ -98,17 +98,17 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/pshinter/pshalgo3.o \
 	lib/freetype-2.1.3/pshinter/pshmod.o \
 	lib/freetype-2.1.3/psnames/psmodule.o \
-	lib/freetype-2.1.3/src/raster/ftraster.o \
-	lib/freetype-2.1.3/src/raster/ftrend1.o \
-	lib/freetype-2.1.3/src/sfnt/ttload.o \
-	lib/freetype-2.1.3/src/sfnt/ttcmap.o \
-	lib/freetype-2.1.3/src/sfnt/ttcmap0.o \
-	lib/freetype-2.1.3/src/sfnt/sfobjs.o \
-	lib/freetype-2.1.3/src/sfnt/sfdriver.o \
-	lib/freetype-2.1.3/src/sfnt/ttsbit.o \
-	lib/freetype-2.1.3/src/sfnt/ttpost.o \
-	lib/freetype-2.1.3/src/smooth/ftgrays.o \
-	lib/freetype-2.1.3/src/smooth/ftsmooth.o \
+	lib/freetype-2.1.3/raster/ftraster.o \
+	lib/freetype-2.1.3/raster/ftrend1.o \
+	lib/freetype-2.1.3/sfnt/ttload.o \
+	lib/freetype-2.1.3/sfnt/ttcmap.o \
+	lib/freetype-2.1.3/sfnt/ttcmap0.o \
+	lib/freetype-2.1.3/sfnt/sfobjs.o \
+	lib/freetype-2.1.3/sfnt/sfdriver.o \
+	lib/freetype-2.1.3/sfnt/ttsbit.o \
+	lib/freetype-2.1.3/sfnt/ttpost.o \
+	lib/freetype-2.1.3/smooth/ftgrays.o \
+	lib/freetype-2.1.3/smooth/ftsmooth.o \
 	lib/freetype-2.1.3/src/truetype/ttdriver.o \
 	lib/freetype-2.1.3/src/truetype/ttpload.o \
 	lib/freetype-2.1.3/src/truetype/ttgload.o \
