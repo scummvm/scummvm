@@ -109,20 +109,20 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/sfnt/ttpost.o \
 	lib/freetype-2.1.3/smooth/ftgrays.o \
 	lib/freetype-2.1.3/smooth/ftsmooth.o \
-	lib/freetype-2.1.3/src/truetype/ttdriver.o \
-	lib/freetype-2.1.3/src/truetype/ttpload.o \
-	lib/freetype-2.1.3/src/truetype/ttgload.o \
-	lib/freetype-2.1.3/src/truetype/ttobjs.o \
-	lib/freetype-2.1.3/src/type1/t1parse.o \
-	lib/freetype-2.1.3/src/type1/t1load.o \
-	lib/freetype-2.1.3/src/type1/t1objs.o \
-	lib/freetype-2.1.3/src/type1/t1driver.o \
-	lib/freetype-2.1.3/src/type1/t1gload.o \
-	lib/freetype-2.1.3/src/type1/t1afm.o \
-	lib/freetype-2.1.3/src/type42/t42objs.o \
-	lib/freetype-2.1.3/src/type42/t42parse.o \
-	lib/freetype-2.1.3/src/type42/t42drivr.o \
-	lib/freetype-2.1.3/src/winfonts/winfnt.o \
+	lib/freetype-2.1.3/truetype/ttdriver.o \
+	lib/freetype-2.1.3/truetype/ttpload.o \
+	lib/freetype-2.1.3/truetype/ttgload.o \
+	lib/freetype-2.1.3/truetype/ttobjs.o \
+	lib/freetype-2.1.3/type1/t1parse.o \
+	lib/freetype-2.1.3/type1/t1load.o \
+	lib/freetype-2.1.3/type1/t1objs.o \
+	lib/freetype-2.1.3/type1/t1driver.o \
+	lib/freetype-2.1.3/type1/t1gload.o \
+	lib/freetype-2.1.3/type1/t1afm.o \
+	lib/freetype-2.1.3/type42/t42objs.o \
+	lib/freetype-2.1.3/type42/t42parse.o \
+	lib/freetype-2.1.3/type42/t42drivr.o \
+	lib/freetype-2.1.3/winfonts/winfnt.o \
 	lib/std/std.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/script_audio_clip.o \
