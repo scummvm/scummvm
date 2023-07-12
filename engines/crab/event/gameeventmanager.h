@@ -31,15 +31,15 @@
 #ifndef CRAB_GAMEEVENTMANAGER_H
 #define CRAB_GAMEEVENTMANAGER_H
 
-#include "crab/ui/ChapterIntro.h"
+#include "crab/common_header.h"
 #include "crab/event/EventSeqGroup.h"
+#include "crab/level/level.h"
+#include "crab/ui/ChapterIntro.h"
 #include "crab/ui/PersonHandler.h"
 #include "crab/ui/PersonScreen.h"
 #include "crab/ui/ReplyMenu.h"
-#include "crab/common_header.h"
 #include "crab/ui/hud.h"
 #include "crab/ui/journal.h"
-#include "crab/level/level.h"
 #include "crab/ui/textarea.h"
 
 namespace Crab {
@@ -49,45 +49,48 @@ namespace event {
 class Manager {
 protected:
 	// All the events in the game
-	Common::HashMap<Common::String, EventSeqGroup> event_map;
+	Common::HashMap<Common::String, EventSeqGroup> _eventMap;
 
 	// The currently happening or active sequence
-	unsigned int active_seq;
+	unsigned int _activeSeq;
 
 	// THIS IS NOT THE DEFINITIVE LIST OF ENDED SEQUENCES
 	// JUST A TEMPORARY LIST OF EVENT SEQUENCES TO PASS AROUND
-	Common::Array<EventSeqInfo> end_seq;
+	Common::Array<EventSeqInfo> _endSeq;
 
 	// The objects used to draw the dialog box and opinion bars
-	pyrodactyl::ui::PersonHandler oh;
+	pyrodactyl::ui::PersonHandler _oh;
 
-	// The reply menu and the colors and font of the text
-	pyrodactyl::ui::ReplyMenu reply;
+	// The _reply menu and the colors and font of the text
+	pyrodactyl::ui::ReplyMenu _reply;
 
 	// The field for text input
-	pyrodactyl::ui::TextArea textin;
+	pyrodactyl::ui::TextArea _textin;
 
 	// The info for intro events
-	pyrodactyl::ui::ChapterIntro intro;
+	pyrodactyl::ui::ChapterIntro _intro;
 
 	// Store the current event data temporarily
-	GameEvent *cur_event;
-	bool player;
-	pyrodactyl::anim::Sprite *cur_sp;
+	GameEvent *_curEvent;
+	bool _player;
+	pyrodactyl::anim::Sprite *_curSp;
 
-	void UpdateDialogBox(Info &info, pyrodactyl::level::Level &level);
+	void updateDialogBox(Info &info, pyrodactyl::level::Level &level);
 
 public:
 	// The object used to draw the character screen
-	pyrodactyl::ui::PersonScreen per;
+	pyrodactyl::ui::PersonScreen _per;
 
 	// A flag used to stop drawing the game for a better fade in/fade out experience
-	bool draw_game;
+	bool _drawGame;
 
-	Manager() { Init(); }
+	Manager() {
+		init();
+	}
+
 	~Manager() {}
 
-	void Init();
+	void init();
 	void load(rapidxml::xml_node<char> *node, pyrodactyl::ui::ParagraphData &popup);
 
 	void draw(Info &info, pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level);
@@ -95,17 +98,17 @@ public:
 	// cur_per is also updated here
 	void internalEvents(Info &info, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 
-	void handleEvents(Info &info, const Common::String &player_id, Common::Event &Event,
+	void handleEvents(Info &info, const Common::String &playerId, Common::Event &Event,
 					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 #if 0
 	void handleEvents(Info &info, const Common::String &player_id, SDL_Event &Event,
 					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 #endif
 
-	void CalcActiveSeq(Info &info, pyrodactyl::level::Level &level, const Rect &camera);
+	void calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const Rect &camera);
 
-	void EndSequence(const Common::String &curloc);
-	bool EventInProgress();
+	void endSequence(const Common::String &curloc);
+	bool eventInProgress();
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);

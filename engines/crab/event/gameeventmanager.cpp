@@ -38,13 +38,13 @@ using namespace pyrodactyl::level;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::ui;
 
-void Manager::Init() {
-	event_map.clear();
-	active_seq = UINT_MAX;
-	cur_sp = nullptr;
-	player = false;
-	cur_event = nullptr;
-	draw_game = true;
+void Manager::init() {
+	_eventMap.clear();
+	_activeSeq = UINT_MAX;
+	_curSp = nullptr;
+	_player = false;
+	_curEvent = nullptr;
+	_drawGame = true;
 }
 
 //------------------------------------------------------------------------
@@ -56,125 +56,125 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *lnode = conf.doc()->first_node("event_list");
 			for (rapidxml::xml_node<char> *loc = lnode->first_node("loc"); loc != NULL; loc = loc->next_sibling("loc")) {
-				Common::String loc_name;
-				loadStr(loc_name, "name", loc);
+				Common::String locName;
+				loadStr(locName, "name", loc);
 
 				for (auto n = loc->first_node("file"); n != NULL; n = n->next_sibling("file")) {
 					unsigned int id;
 					Common::String path;
 					loadNum(id, "name", n);
 					loadStr(path, "path", n);
-					event_map[loc_name].addSeq(id, path);
+					_eventMap[locName].addSeq(id, path);
 				}
 			}
 		}
 
-		active_seq = UINT_MAX;
+		_activeSeq = UINT_MAX;
 
 		conf.load(node->first_attribute("layout")->value());
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *layout = conf.doc()->first_node("layout");
 			if (nodeValid(layout)) {
 				if (nodeValid("character", layout))
-					oh.load(layout->first_node("character"));
+					_oh.load(layout->first_node("character"));
 
 				if (nodeValid("popup", layout))
 					popup.load(layout->first_node("popup"));
 
 				if (nodeValid("intro", layout))
-					intro.load(layout->first_node("intro"));
+					_intro.load(layout->first_node("intro"));
 			}
 		}
 
-		reply.load(node->first_attribute("conversation")->value());
+		_reply.load(node->first_attribute("conversation")->value());
 
-		per.load(node->first_attribute("char")->value());
+		_per.load(node->first_attribute("char")->value());
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::handleEvents(Info &info, const Common::String &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
+void Manager::handleEvents(Info &info, const Common::String &playerId, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
-	if (event_map.contains(info.curLocID()) > 0 && event_map[info.curLocID()].eventInProgress(active_seq)) {
-		switch (cur_event->_type) {
+	if (_eventMap.contains(info.curLocID()) > 0 && _eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
+		switch (_curEvent->_type) {
 		case EVENT_DIALOG:
-			if (oh.show_journal) {
-				info._journal.handleEvents(player_id, Event);
+			if (_oh.show_journal) {
+				info._journal.handleEvents(playerId, Event);
 
 				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
-					oh.show_journal = false;
+					_oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
-				if (oh.HandleCommonEvents(Event)) {
-					if (info.personValid(cur_event->_title)) {
-						Person &p = info.personGet(cur_event->_title);
+				if (_oh.HandleCommonEvents(Event)) {
+					if (info.personValid(_curEvent->_title)) {
+						Person &p = info.personGet(_curEvent->_title);
 						if (p.alt_journal_name)
-							info._journal.Open(player_id, JE_PEOPLE, p.journal_name);
+							info._journal.Open(playerId, JE_PEOPLE, p.journal_name);
 						else
-							info._journal.Open(player_id, JE_PEOPLE, p.name);
+							info._journal.Open(playerId, JE_PEOPLE, p.name);
 					}
 				}
 
-				if (oh.HandleDlboxEvents(Event)) {
-					event_map[info.curLocID()].nextEvent(active_seq, info, player_id, result, end_seq);
-					oh.show_journal = false;
+				if (_oh.HandleDlboxEvents(Event)) {
+					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
+					_oh.show_journal = false;
 				}
 			}
 			break;
 		case EVENT_ANIM:
 			// Skip animation if key pressed or mouse pressed
 			if (Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP)
-				event_map[info.curLocID()].nextEvent(active_seq, info, player_id, result, end_seq);
+				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 			break;
 		case EVENT_REPLY:
-			if (oh.show_journal) {
-				info._journal.handleEvents(player_id, Event);
+			if (_oh.show_journal) {
+				info._journal.handleEvents(playerId, Event);
 
 				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
-					oh.show_journal = false;
+					_oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
-				if (oh.HandleCommonEvents(Event))
-					if (info.personValid(cur_event->_title))
-						info._journal.Open(player_id, JE_PEOPLE, info.personGet(cur_event->_title).name);
+				if (_oh.HandleCommonEvents(Event))
+					if (info.personValid(_curEvent->_title))
+						info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title).name);
 
-				int choice = reply.handleEvents(info, g_engine->_eventStore->_con[cur_event->_special], cur_event->_title, oh, Event);
+				int choice = _reply.handleEvents(info, g_engine->_eventStore->_con[_curEvent->_special], _curEvent->_title, _oh, Event);
 				if (choice >= 0) {
-					event_map[info.curLocID()].nextEvent(active_seq, info, player_id, result, end_seq, choice);
-					oh.show_journal = false;
+					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq, choice);
+					_oh.show_journal = false;
 				}
 			}
 			break;
 		case EVENT_TEXT:
 			// If journal button is select from within an event, go to the entry corresponding to that person's name
-			if (oh.HandleCommonEvents(Event))
-				if (info.personValid(cur_event->_title))
-					info._journal.Open(player_id, JE_PEOPLE, info.personGet(cur_event->_title).name);
+			if (_oh.HandleCommonEvents(Event))
+				if (info.personValid(_curEvent->_title))
+					info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title).name);
 
-			if (textin.handleEvents(Event))
-				event_map[info.curLocID()].nextEvent(active_seq, info, player_id, result, end_seq);
+			if (_textin.handleEvents(Event))
+				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 			break;
 		case EVENT_SPLASH:
-			if (intro.show_traits) {
-				per.handleEvents(info, cur_event->_title, Event);
+			if (_intro.show_traits) {
+				_per.handleEvents(info, _curEvent->_title, Event);
 
 				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
-					intro.show_traits = false;
+					_intro.show_traits = false;
 			} else {
-				if (intro.handleEvents(Event))
-					event_map[info.curLocID()].nextEvent(active_seq, info, player_id, result, end_seq);
+				if (_intro.handleEvents(Event))
+					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 
-				if (intro.show_traits)
-					per.Cache(info, level.PlayerID(), level);
+				if (_intro.show_traits)
+					_per.Cache(info, level.PlayerID(), level);
 			}
 			break;
 		default:
 			break;
 		}
 
-		EndSequence(info.curLocID());
+		endSequence(info.curLocID());
 	}
 }
 
@@ -184,8 +184,8 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, Common::
 //------------------------------------------------------------------------
 void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
-	if (event_map.contains(info.curLocID()) > 0 && event_map[info.curLocID()].EventInProgress(active_seq)) {
-		switch (cur_event->type) {
+	if (eventMap.contains(info.curLocID()) > 0 && eventMap[info.curLocID()].EventInProgress(activeSeq)) {
+		switch (_curEvent->type) {
 		case EVENT_DIALOG:
 			if (oh.show_journal) {
 				info._journal.handleEvents(player_id, Event);
@@ -195,8 +195,8 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (oh.HandleCommonEvents(Event)) {
-					if (info.personValid(cur_event->_title)) {
-						Person &p = info.PersonGet(cur_event->_title);
+					if (info.personValid(_curEvent->_title)) {
+						Person &p = info.PersonGet(_curEvent->_title);
 						if (p.alt_journal_name)
 							info._journal.Open(player_id, JE_PEOPLE, p._journal_name);
 						else
@@ -205,7 +205,7 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 				}
 
 				if (oh.HandleDlboxEvents(Event)) {
-					event_map[info.curLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+					eventMap[info.curLocID()].NextEvent(activeSeq, info, player_id, result, endSeq);
 					oh.show_journal = false;
 				}
 			}
@@ -213,7 +213,7 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 		case EVENT_ANIM:
 			// Skip animation if key pressed or mouse pressed
 			if (Event.type == SDL_KEYUP || Event.type == SDL_MOUSEBUTTONUP)
-				event_map[info.curLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+				eventMap[info.curLocID()].NextEvent(activeSeq, info, player_id, result, endSeq);
 			break;
 		case EVENT_REPLY:
 			if (oh.show_journal) {
@@ -224,12 +224,12 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (oh.HandleCommonEvents(Event))
-					if (info.personValid(cur_event->_title))
-						info._journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->_title).name);
+					if (info.personValid(_curEvent->_title))
+						info._journal.Open(player_id, JE_PEOPLE, info.PersonGet(_curEvent->_title).name);
 
-				int choice = reply.handleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->_title, oh, Event);
+				int choice = reply.handleEvents(info, g_engine->_eventStore->con[_curEvent->special], _curEvent->_title, oh, Event);
 				if (choice >= 0) {
-					event_map[info.curLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
+					eventMap[info.curLocID()].NextEvent(activeSeq, info, player_id, result, endSeq, choice);
 					oh.show_journal = false;
 				}
 			}
@@ -237,21 +237,21 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 		case EVENT_TEXT:
 			// If journal button is select from within an event, go to the entry corresponding to that person's name
 			if (oh.HandleCommonEvents(Event))
-				if (info.personValid(cur_event->_title))
-					info._journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->_title).name);
+				if (info.personValid(_curEvent->_title))
+					info._journal.Open(player_id, JE_PEOPLE, info.PersonGet(_curEvent->_title).name);
 
-			if (textin.handleEvents(Event))
-				event_map[info.curLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+			if (_textin.handleEvents(Event))
+				eventMap[info.curLocID()].NextEvent(activeSeq, info, player_id, result, endSeq);
 			break;
 		case EVENT_SPLASH:
 			if (intro.show_traits) {
-				per.handleEvents(info, cur_event->_title, Event);
+				per.handleEvents(info, _curEvent->_title, Event);
 
 				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
 					intro.show_traits = false;
 			} else {
 				if (intro.handleEvents(Event))
-					event_map[info.curLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+					eventMap[info.curLocID()].NextEvent(activeSeq, info, player_id, result, endSeq);
 
 				if (intro.show_traits)
 					per.Cache(info, level.PlayerID(), level);
@@ -270,86 +270,86 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 // Purpose: Internal Events
 //------------------------------------------------------------------------
 void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult> &result) {
-	if (event_map.contains(info.curLocID()) > 0) {
-		if (event_map[info.curLocID()].eventInProgress(active_seq)) {
-			switch (cur_event->_type) {
+	if (_eventMap.contains(info.curLocID()) > 0) {
+		if (_eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
+			switch (_curEvent->_type) {
 			case EVENT_DIALOG:
-				UpdateDialogBox(info, level);
+				updateDialogBox(info, level);
 				break;
 			case EVENT_ANIM: {
 				using namespace pyrodactyl::anim;
 
-				DrawType draw_val = DRAW_SAME;
-				if (g_engine->_eventStore->_anim[cur_event->_special].internalEvents(draw_val))
-					event_map[info.curLocID()].nextEvent(active_seq, info, level.PlayerID(), result, end_seq);
+				DrawType drawVal = DRAW_SAME;
+				if (g_engine->_eventStore->_anim[_curEvent->_special].internalEvents(drawVal))
+					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, level.PlayerID(), result, _endSeq);
 
-				if (draw_val == DRAW_STOP)
-					draw_game = false;
-				else if (draw_val == DRAW_START)
-					draw_game = true;
+				if (drawVal == DRAW_STOP)
+					_drawGame = false;
+				else if (drawVal == DRAW_START)
+					_drawGame = true;
 			} break;
 			case EVENT_SILENT:
-				event_map[info.curLocID()].nextEvent(active_seq, info, level.PlayerID(), result, end_seq);
+				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, level.PlayerID(), result, _endSeq);
 				break;
 			case EVENT_REPLY:
-				UpdateDialogBox(info, level);
+				updateDialogBox(info, level);
 				break;
 			case EVENT_SPLASH:
-				UpdateDialogBox(info, level);
+				updateDialogBox(info, level);
 				break;
 			default:
 				break;
 			}
 
-			EndSequence(info.curLocID());
+			endSequence(info.curLocID());
 		} else {
-			event_map[info.curLocID()].internalEvents(info);
-			CalcActiveSeq(info, level, level.Camera());
+			_eventMap[info.curLocID()].internalEvents(info);
+			calcActiveSeq(info, level, level.Camera());
 		}
 	}
 }
 
-void Manager::UpdateDialogBox(Info &info, Level &level) {
-	oh.internalEvents(cur_event->_state, cur_sp);
+void Manager::updateDialogBox(Info &info, pyrodactyl::level::Level &level) {
+	_oh.internalEvents(_curEvent->_state, _curSp);
 }
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Manager::draw(Info &info, HUD &hud, Level &level) {
-	if (event_map.contains(info.curLocID()) > 0 && event_map[info.curLocID()].eventInProgress(active_seq)) {
-		switch (cur_event->_type) {
+	if (_eventMap.contains(info.curLocID()) > 0 && _eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
+		switch (_curEvent->_type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->_anim[cur_event->_special].draw();
+			g_engine->_eventStore->_anim[_curEvent->_special].draw();
 			break;
 		case EVENT_DIALOG:
 			g_engine->_imageManager->DimScreen();
-			if (oh.show_journal) {
+			if (_oh.show_journal) {
 				info._journal.draw(level.PlayerID());
 				hud.back.draw();
 			} else
-				oh.draw(info, cur_event, cur_event->_title, player, cur_sp);
+				_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
 			break;
 		case EVENT_REPLY:
 			g_engine->_imageManager->DimScreen();
-			if (oh.show_journal) {
+			if (_oh.show_journal) {
 				info._journal.draw(level.PlayerID());
 				hud.back.draw();
 			} else {
-				oh.draw(info, cur_event, cur_event->_title, player, cur_sp);
-				reply.draw();
+				_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
+				_reply.draw();
 			}
 			break;
 		case EVENT_TEXT:
-			oh.draw(info, cur_event, cur_event->_title, player, cur_sp);
-			textin.draw();
+			_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
+			_textin.draw();
 			break;
 		case EVENT_SPLASH:
 			g_engine->_imageManager->DimScreen();
-			if (intro.show_traits) {
-				per.draw(info, cur_event->_title);
+			if (_intro.show_traits) {
+				_per.draw(info, _curEvent->_title);
 				hud.back.draw();
 			} else
-				intro.draw(info, cur_event->_dialog, cur_sp, cur_event->_state);
+				_intro.draw(info, _curEvent->_dialog, _curSp, _curEvent->_state);
 
 			break;
 		default:
@@ -361,22 +361,22 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 //------------------------------------------------------------------------
 // Purpose: Calculate the current sequence in progress
 //------------------------------------------------------------------------
-void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
-	if (event_map[info.curLocID()].activeSeq(active_seq)) {
+void Manager::calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const Rect &camera) {
+	if (_eventMap[info.curLocID()].activeSeq(_activeSeq)) {
 		// Set all the pointers to the new values
-		cur_event = event_map[info.curLocID()].curEvent(active_seq);
-		oh.reset(cur_event->_title);
-		cur_sp = level.GetSprite(cur_event->_title);
+		_curEvent = _eventMap[info.curLocID()].curEvent(_activeSeq);
+		_oh.reset(_curEvent->_title);
+		_curSp = level.GetSprite(_curEvent->_title);
 
 		// The player character's dialog is drawn a bit differently compared to others
-		player = (cur_event->_title == level.PlayerID());
+		_player = (_curEvent->_title == level.PlayerID());
 
-		switch (cur_event->_type) {
+		switch (_curEvent->_type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->_anim[cur_event->_special].start();
+			g_engine->_eventStore->_anim[_curEvent->_special].start();
 			break;
 		case EVENT_REPLY:
-			reply.Cache(info, g_engine->_eventStore->_con[cur_event->_special]);
+			_reply.Cache(info, g_engine->_eventStore->_con[_curEvent->_special]);
 			break;
 		default:
 			break;
@@ -387,21 +387,21 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 //------------------------------------------------------------------------
 // Purpose: Get/set info
 //------------------------------------------------------------------------
-void Manager::EndSequence(const Common::String &curloc) {
-	if (end_seq.empty() == false) {
-		for (auto i = end_seq.begin(); i != end_seq.end(); ++i)
+void Manager::endSequence(const Common::String &curloc) {
+	if (_endSeq.empty() == false) {
+		for (auto i = _endSeq.begin(); i != _endSeq.end(); ++i)
 			if (i->_cur)
-				event_map[curloc].endSeq(active_seq);
-			else if (event_map.contains(i->_loc) > 0)
-				event_map[i->_loc].endSeq(StringToNumber<unsigned int>(i->_val));
+				_eventMap[curloc].endSeq(_activeSeq);
+			else if (_eventMap.contains(i->_loc) > 0)
+				_eventMap[i->_loc].endSeq(StringToNumber<unsigned int>(i->_val));
 
-		active_seq = UINT_MAX;
-		end_seq.clear();
+		_activeSeq = UINT_MAX;
+		_endSeq.clear();
 	}
 }
 
-bool Manager::EventInProgress() {
-	if (active_seq == UINT_MAX)
+bool Manager::eventInProgress() {
+	if (_activeSeq == UINT_MAX)
 		return false;
 	return true;
 }
@@ -410,7 +410,7 @@ bool Manager::EventInProgress() {
 // Purpose: Save the state of the object
 //------------------------------------------------------------------------
 void Manager::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto i = event_map.begin(); i != event_map.end(); ++i) {
+	for (auto i = _eventMap.begin(); i != _eventMap.end(); ++i) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "loc");
 		child->append_attribute(doc.allocate_attribute("name", i->_key.c_str()));
 		i->_value.saveState(doc, child);
@@ -425,8 +425,8 @@ void Manager::loadState(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
 		if (n->first_attribute("name") != NULL) {
 			Common::String name = n->first_attribute("name")->value();
-			if (event_map.contains(name) > 0)
-				event_map[name].loadState(n);
+			if (_eventMap.contains(name) > 0)
+				_eventMap[name].loadState(n);
 		}
 	}
 }
@@ -435,10 +435,10 @@ void Manager::loadState(rapidxml::xml_node<char> *node) {
 // Purpose: Function called when window size is changed to adjust UI
 //------------------------------------------------------------------------
 void Manager::setUI() {
-	oh.setUI();
-	reply.setUI();
-	textin.setUI();
-	per.setUI();
+	_oh.setUI();
+	_reply.setUI();
+	_textin.setUI();
+	_per.setUI();
 }
 
 } // End of namespace Crab

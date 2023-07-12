@@ -61,7 +61,7 @@ void Game::Init(const Common::String &filename) {
 	game_over.Clear(false);
 	state = STATE_GAME;
 	savefile.auto_slot = false;
-	gem.Init();
+	gem.init();
 	info.Init();
 
 	XMLDoc conf(filename);
@@ -184,7 +184,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 			if (hud.pausekey.handleEvents(Event) || hud.back.handleEvents(Event) == BUAC_LCLICK)
 				state = STATE_LOSE_MENU;
 		} else {
-			if (!gem.EventInProgress() && !hud.pause.DisableHotkeys()) {
+			if (!gem.eventInProgress() && !hud.pause.DisableHotkeys()) {
 				switch (hud.handleEvents(info, Event)) {
 				case HS_MAP:
 					ToggleState(STATE_MAP);
@@ -194,7 +194,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					break;
 				case HS_CHAR:
 					ToggleState(STATE_CHARACTER);
-					gem.per.Cache(info, level.PlayerID(), level);
+					gem._per.Cache(info, level.PlayerID(), level);
 					break;
 				case HS_JOURNAL:
 					ToggleState(STATE_JOURNAL);
@@ -208,7 +208,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 			}
 
 			if (state == STATE_GAME) {
-				if (gem.EventInProgress()) {
+				if (gem.eventInProgress()) {
 					gem.handleEvents(info, level.PlayerID(), Event, hud, level, event_res);
 					if (ApplyResult())
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
@@ -293,7 +293,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 					break;
 				case STATE_CHARACTER:
-					gem.per.handleEvents(info, level.PlayerID(), Event);
+					gem._per.handleEvents(info, level.PlayerID(), Event);
 					break;
 				case STATE_INVENTORY:
 					info._inv.handleEvents(level.PlayerID(), Event);
@@ -476,7 +476,7 @@ void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 			// HACK: Since sequences can only be ended in GameEventManager, we use this empty array
 			// to get effects to work for levels
 			Common::Array<pyrodactyl::event::EventSeqInfo> end_seq;
-			ApplyResult(level.internalEvents(info, event_res, end_seq, gem.EventInProgress()));
+			ApplyResult(level.internalEvents(info, event_res, end_seq, gem.eventInProgress()));
 		}
 
 		gem.internalEvents(info, level, event_res);
@@ -490,7 +490,7 @@ void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 		map.internalEvents(info);
 		break;
 	case STATE_CHARACTER:
-		gem.per.internalEvents();
+		gem._per.internalEvents();
 		break;
 	default:
 		break;
@@ -500,13 +500,13 @@ void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Game::draw() {
-	if (gem.draw_game)
+	if (gem._drawGame)
 		level.draw(info);
 	else
 		g_engine->_imageManager->BlackScreen();
 	switch (state) {
 	case STATE_GAME:
-		if (gem.EventInProgress())
+		if (gem.eventInProgress())
 			gem.draw(info, hud, level);
 		else
 			hud.draw(info, level.PlayerID());
@@ -530,7 +530,7 @@ void Game::draw() {
 		break;
 	case STATE_CHARACTER:
 		g_engine->_imageManager->DimScreen();
-		gem.per.draw(info, level.PlayerID());
+		gem._per.draw(info, level.PlayerID());
 		hud.draw(info, level.PlayerID());
 		hud.back.draw();
 		break;
@@ -637,7 +637,7 @@ bool Game::ApplyResult() {
 		}
 	}
 
-	gem.per.Cache(info, level.PlayerID(), level);
+	gem._per.Cache(info, level.PlayerID(), level);
 	event_res.clear();
 	return false;
 }
@@ -703,7 +703,7 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 			if (nodeValid("level", node))
 				level.loadState(node->first_node("level"));
 
-			gem.per.Cache(info, level.PlayerID(), level);
+			gem._per.Cache(info, level.PlayerID(), level);
 
 			Common::String playtime;
 			loadStr(playtime, "time", node);
