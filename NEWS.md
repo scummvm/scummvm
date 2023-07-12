@@ -77,6 +77,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added scummvm.log file viewer.
   - Exposed ScummVM debug level in the GUI (Misc tab).
   - Fixed shader scaler loading failing in certain conditions.
+  - Fixed some screen shaking effects (as in DOTT) causing a crash on SDL1 ports.
 
  AGI:
    - Restored possibility to pick arbitrary render mode in Game Options.
@@ -112,6 +113,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Private:
    - Dropped 16bit engine requirement.
 
+ SAGA:
+   - Fixed loading resources from the Amiga release of ITE.
+   - Fixed crash or misbehaviors when handling certain actor actions.
+
  SAGA2:
    - Fixed crash when hovering over certain spells.
 
@@ -126,6 +131,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword2:
    - Added support for GOG.com version.
    - Added detection for alternate Polish version.
+
+ Tinsel:
+   - Fixed reading older Discworld II savegames.
 
  Touche:
    - Added support for Russian translation by old-games.ru.
