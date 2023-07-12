@@ -37,8 +37,10 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace event {
-enum RelOp { OP_AND,
-			 OP_OR };
+enum RelOp {
+	OP_AND,
+	OP_OR
+};
 
 enum TriggerType {
 	TRIG_OBJ,     // Interacting with an object, status of character (hostile, coward etc), state (stand, fight, flee, KO)
@@ -53,26 +55,29 @@ enum TriggerType {
 };
 
 struct Trigger {
-	TriggerType type;
-	Common::String target, subject, operation, val;
+	TriggerType _type;
+	Common::String _target, _subject, _operation, _val;
 
 	// Relation to the next trigger
-	RelOp rel;
+	RelOp _rel;
 
 	// Represents the Boolean ! operator
-	bool negate;
+	bool _negate;
 
 	Trigger() {
-		type = TRIG_VAR;
-		rel = OP_AND;
-		negate = false;
+		_type = TRIG_VAR;
+		_rel = OP_AND;
+		_negate = false;
 	}
-	Trigger(rapidxml::xml_node<char> *node) { load(node); }
+
+	Trigger(rapidxml::xml_node<char> *node) {
+		load(node);
+	}
 
 	void load(rapidxml::xml_node<char> *node);
-	bool Evaluate(pyrodactyl::event::Info &info);
+	bool evaluate(pyrodactyl::event::Info &info);
 
-	bool Evaluate(int lhs, int rhs);
+	bool evaluate(int lhs, int rhs);
 };
 } // End of namespace event
 } // End of namespace pyrodactyl

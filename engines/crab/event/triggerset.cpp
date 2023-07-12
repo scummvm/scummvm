@@ -38,39 +38,39 @@ using namespace pyrodactyl::event;
 void TriggerSet::load(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *n = node->first_node("trigger"); n != NULL; n = n->next_sibling("trigger")) {
 		Trigger t(n);
-		statement.push_back(t);
+		_statement.push_back(t);
 	}
 }
 
-void TriggerSet::Add(const Trigger &t) {
-	statement.push_back(t);
+void TriggerSet::add(const Trigger &t) {
+	_statement.push_back(t);
 }
 
-bool TriggerSet::Evaluate(pyrodactyl::event::Info &info) {
-	result = true;
+bool TriggerSet::evaluate(pyrodactyl::event::Info &info) {
+	_result = true;
 
-	if (statement.empty() == false) {
-		RelOp next_op = OP_AND;
-		result = true;
-		bool cur_result = false;
+	if (_statement.empty() == false) {
+		RelOp nextOp = OP_AND;
+		_result = true;
+		bool curResult = false;
 
-		for (auto i = statement.begin(); i != statement.end(); ++i) {
-			if (i->negate)
-				cur_result = !i->Evaluate(info);
+		for (auto i = _statement.begin(); i != _statement.end(); ++i) {
+			if (i->_negate)
+				curResult = !i->evaluate(info);
 			else
-				cur_result = i->Evaluate(info);
+				curResult = i->evaluate(info);
 
-			if (next_op == OP_AND)
-				result = cur_result && result;
+			if (nextOp == OP_AND)
+				_result = curResult && _result;
 			else
-				result = cur_result || result;
+				_result = curResult || _result;
 
-			next_op = i->rel;
+			nextOp = i->_rel;
 		}
 	} else
-		result = true;
+		_result = true;
 
-	return result;
+	return _result;
 }
 
 } // End of namespace Crab

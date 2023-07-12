@@ -85,10 +85,10 @@ void QuestMenu::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void QuestMenu::Add(const Common::String &title, const Common::String &txt) {
 	for (auto i = quest.begin(); i != quest.end(); ++i)
-		if (i->title == title) // We already have the quest entry
+		if (i->_title == title) // We already have the quest entry
 		{
-			i->text.insert_at(0, txt); // Just add the new string to the start of the quest messages and return
-			i->unread = true;
+			i->_text.insert_at(0, txt); // Just add the new string to the start of the quest messages and return
+			i->_unread = true;
 			return;
 		}
 
@@ -116,8 +116,8 @@ void QuestMenu::Erase(const int &index) {
 //------------------------------------------------------------------------
 void QuestMenu::Marker(const Common::String &title, const bool &val) {
 	for (auto i = quest.begin(); i != quest.end(); ++i)
-		if (i->title == title)
-			i->marker = val;
+		if (i->_title == title)
+			i->_marker = val;
 }
 //------------------------------------------------------------------------
 // Purpose: Draw
@@ -131,11 +131,11 @@ void QuestMenu::draw(Button &bu_map) {
 
 		// Only draw in _s color if we are on the same button and page
 		if ((unsigned int)sel_bu == count && (unsigned int)sel_page == menu.CurrentPage())
-			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_s, font, align);
+			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i]._title, col_s, font, align);
 		else
-			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_n, font, align);
+			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i]._title, col_n, font, align);
 
-		if (quest[i].unread) {
+		if (quest[i]._unread) {
 			using namespace pyrodactyl::image;
 			g_engine->_imageManager->draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->notify);
 		}
@@ -144,7 +144,7 @@ void QuestMenu::draw(Button &bu_map) {
 	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
 		text.draw(quest[sel_quest]);
 
-		if (quest[sel_quest].marker)
+		if (quest[sel_quest]._marker)
 			bu_map.draw();
 	}
 }
@@ -162,17 +162,17 @@ bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const Co
 		sel_page = menu.CurrentPage();
 		sel_quest = menu.Index() + sel_bu;
 
-		quest[sel_quest].unread = false;
+		quest[sel_quest]._unread = false;
 		text.reset();
 
 		menu.Image(sel_bu, sel_page, img_s);
 	}
 
 	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
-		if (quest[sel_quest].marker)
+		if (quest[sel_quest]._marker)
 			if (bu_map.handleEvents(Event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
-				map_title = quest[sel_quest].title;
+				map_title = quest[sel_quest]._title;
 				return true;
 			}
 
@@ -233,7 +233,7 @@ void QuestMenu::Select(const int &quest_index) {
 
 		sel_bu = quest_index % menu.ElementsPerPage();
 
-		quest[quest_index].unread = false;
+		quest[quest_index]._unread = false;
 		text.reset();
 
 		menu.Image(sel_bu, sel_page, img_s);

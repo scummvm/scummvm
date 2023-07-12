@@ -152,7 +152,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 	unsigned int reply_count = 0, element_count = 0;
 
 	for (auto i = dat._reply.begin(); i != dat._reply.end() && reply_count < dat._reply.size(); ++i, ++reply_count) {
-		if (i->_unlock.Evaluate(info)) {
+		if (i->_unlock.evaluate(info)) {
 			element[element_count].visible = true;
 			element[element_count].index = reply_count;
 

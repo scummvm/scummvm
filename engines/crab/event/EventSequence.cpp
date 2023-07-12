@@ -55,7 +55,7 @@ void EventSequence::load(const Common::String &filename) {
 void EventSequence::internalEvents(pyrodactyl::event::Info &info) {
 	for (auto nxe = _next.begin(); nxe != _next.end(); ++nxe)
 		if (*nxe < _events.size()) {
-			if (_events[*nxe]._trig.Evaluate(info)) {
+			if (_events[*nxe]._trig.evaluate(info)) {
 				_eventInProgress = true;
 				_cur = *nxe;
 				break;

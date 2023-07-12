@@ -58,7 +58,7 @@ void Game::LoadGame() {
 void Game::Init(const Common::String &filename) {
 	g_engine->_loadingScreen->Dim();
 	g_engine->_eventStore->clear();
-	game_over.Clear(false);
+	game_over.clear(false);
 	state = STATE_GAME;
 	savefile.auto_slot = false;
 	gem.init();
@@ -218,7 +218,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 
 					level.handleEvents(info, Event);
 
-					if (!game_over.Empty() && game_over.Evaluate(info)) {
+					if (!game_over.empty() && game_over.evaluate(info)) {
 						state = STATE_LOSE_MENU;
 						hud.gom.reset();
 						return;

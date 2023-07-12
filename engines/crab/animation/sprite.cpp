@@ -635,7 +635,7 @@ bool Sprite::damageValid(Sprite &s, const SpriteConstant &sc) {
 // Purpose: Checks about dealing damage to sprite
 //------------------------------------------------------------------------
 void Sprite::calcProperties(Info &info) {
-	_visible.Evaluate(info);
+	_visible.evaluate(info);
 	_animSet._fight.evaluate(info);
 }
 

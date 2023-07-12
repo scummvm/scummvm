@@ -127,11 +127,11 @@ public:
 	}
 
 	void visible(bool val) {
-		_visible.Result(val);
+		_visible.result(val);
 	}
 
 	bool visible() {
-		return _visible.Result();
+		return _visible.result();
 	}
 
 	void calcProperties(pyrodactyl::event::Info &info);

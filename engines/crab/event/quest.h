@@ -40,22 +40,23 @@ namespace pyrodactyl {
 namespace event {
 struct Quest {
 	// The title of the quest
-	Common::String title;
+	Common::String _title;
 
 	// The objective text, the last one being the current objective
-	Common::Array<Common::String> text;
+	Common::Array<Common::String> _text;
 
 	// Keep track of which quests the player has read
-	bool unread;
+	bool _unread;
 
 	// Does this quest have an associated destination marker
-	bool marker;
+	bool _marker;
 
 	Quest() {
-		unread = true;
-		marker = false;
+		_unread = true;
+		_marker = false;
 	}
-	Quest(const Common::String &Title, const Common::String &Text, const bool &Unread, const bool &Marker);
+
+	Quest(const Common::String &title, const Common::String &text, const bool &unread, const bool &marker);
 
 	void loadState(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root);

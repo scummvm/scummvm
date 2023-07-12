@@ -70,7 +70,7 @@ void PopUpCollection::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 bool PopUp::internalEvents(pyrodactyl::event::Info &info, const Common::String &playerId,
 						   Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq) {
-	if (_visible.Evaluate(info) || _startedShow) {
+	if (_visible.evaluate(info) || _startedShow) {
 		if (_delay.TargetReached()) {
 			if (_duration.TargetReached(g_engine->_screenSettings->text_speed)) {
 				_show = false;

@@ -149,19 +149,19 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 			if (nodeValid("popup", node, false))
 				pop.load(node->first_node("popup"));
 
-			game_over.Clear();
+			game_over.clear();
 			if (nodeValid("game_over", node, false))
 				game_over.load(node->first_node("game_over"));
 			else if (player_index < objects.size()) {
 				// The default lose condition is the death of the player
 				using namespace pyrodactyl::event;
 				Trigger t;
-				t.type = TRIG_STAT;
-				t.target = STATNAME_HEALTH;
-				t.subject = objects[player_index].id();
-				t.operation = "<";
-				t.val = "1";
-				game_over.Add(t);
+				t._type = TRIG_STAT;
+				t._target = STATNAME_HEALTH;
+				t._subject = objects[player_index].id();
+				t._operation = "<";
+				t._val = "1";
+				game_over.add(t);
 			}
 
 			CalcProperties(info);

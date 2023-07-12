@@ -219,7 +219,7 @@ void Journal::Move(const Common::String &id, const Common::String &Title, const 
 			// Find the quest chain in the source menu
 			unsigned int index = 0;
 			for (auto i = jo.menu[source].quest.begin(); i != jo.menu[source].quest.end(); ++i, ++index)
-				if (i->title == Title)
+				if (i->_title == Title)
 					break;
 
 			if (index < jo.menu[source].quest.size()) {
@@ -246,7 +246,7 @@ void Journal::Open(const Common::String &id, const JournalCategory &Category, co
 				if (select > 0 && select < JE_TOTAL) {
 					// Search for the title with same name
 					for (unsigned int num = 0; num < jo.menu[select].quest.size(); ++num)
-						if (jo.menu[select].quest[num].title == Title) {
+						if (jo.menu[select].quest[num]._title == Title) {
 							// Found it, switch to this
 							jo.menu[select].Select(num);
 							break;

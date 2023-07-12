@@ -69,15 +69,15 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 
 	// Assign default values to start and stop
 	start = 0;
-	stop = q.text.size();
+	stop = q._text.size();
 
 	// Keep count of lines and pages - remember a single entry can take more than one line
 	unsigned int page_count = 0, page_start = 0;
 
 	// Start from line 0, page 0 and scan the list of entries
-	for (unsigned int i = 0, line_count = 0; i < q.text.size(); ++i) {
+	for (unsigned int i = 0, line_count = 0; i < q._text.size(); ++i) {
 		// Increment the number of lines by one text entry
-		line_count += (q.text[i].size() / line.x) + 1;
+		line_count += (q._text[i].size() / line.x) + 1;
 
 		// If we go over the quota for lines per page, go to next page and reset line counter to 0
 		if (line_count > lines_per_page) {
@@ -98,7 +98,7 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 	// Used for the final page, because the page count won't be incremented for the last one
 	if (page_count == current_page) {
 		start = page_start;
-		stop = q.text.size();
+		stop = q._text.size();
 	}
 
 	// Find out how many pages the lines need
@@ -117,7 +117,7 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 		next.draw();
 
 	// Draw the current page of quest text
-	if (!q.text.empty()) {
+	if (!q._text.empty()) {
 		// Count the number of lines, because a single entry can take more than one line
 		int count = 0;
 
@@ -126,12 +126,12 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 
 			// Draw first entry in selected color, and older quest entries in standard color
 			if (i == 0)
-				g_engine->_textManager->draw(x, y, q.text[i], col_s, font, align, line.x, line.y);
+				g_engine->_textManager->draw(x, y, q._text[i], col_s, font, align, line.x, line.y);
 			else
-				ParagraphData::draw(q.text[i], inc.x * count, inc.y * count);
+				ParagraphData::draw(q._text[i], inc.x * count, inc.y * count);
 
 			// Count is reduced extra by the amount of lines it takes for the message to be drawn
-			count += (q.text[i].size() / line.x) + 1;
+			count += (q._text[i].size() / line.x) + 1;
 		}
 	}
 }
