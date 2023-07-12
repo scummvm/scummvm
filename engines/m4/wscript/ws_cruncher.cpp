@@ -155,6 +155,28 @@ bool ws_InitCruncher(void) {
 	return true;
 }
 
+void ws_KillCruncher() {
+	Anim8 *myAnim8;
+
+	if (_GWS(cruncherInitialized)) {
+		myAnim8 = _GWS(myCruncher)->firstAnim8ToCrunch;
+		while (myAnim8) {
+			_GWS(myCruncher)->firstAnim8ToCrunch = myAnim8->next;
+			if (myAnim8->myCCB) {
+				KillCCB(myAnim8->myCCB, false);
+			}
+			mem_free(myAnim8->myRegs);
+			myAnim8 = _GWS(myCruncher)->firstAnim8ToCrunch;
+		}
+		mem_free(_GWS(myCruncher));
+		if (_GWS(stackBase)) {
+			mem_free(_GWS(stackBase));
+		}
+
+		_GWS(cruncherInitialized) = false;
+	}
+}
+
 Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 	Anim8 *myAnim8;
 	frac16 *myRegs;
@@ -1545,29 +1567,6 @@ void ws_CrunchEOSreqs(void) {
 		ws_StepWhile(myXM, pcOffset, pcCount);
 		tempEOSreq = _GWS(EOSreqList);
 	}
-}
-
-void ws_KillCruncher() {
-	Anim8 *myAnim8;
-
-	// Make sure the cruncher has been initialized
-	VERIFY_INTIALIZED("ws_KillCruncher()");
-
-	myAnim8 = _GWS(myCruncher)->firstAnim8ToCrunch;
-	while (myAnim8) {
-		_GWS(myCruncher)->firstAnim8ToCrunch = myAnim8->next;
-		if (myAnim8->myCCB) {
-			KillCCB(myAnim8->myCCB, false);
-		}
-		mem_free(myAnim8->myRegs);
-		myAnim8 = _GWS(myCruncher)->firstAnim8ToCrunch;
-	}
-	mem_free(_GWS(myCruncher));
-	if (_GWS(stackBase)) {
-		mem_free(_GWS(stackBase));
-	}
-
-	_GWS(cruncherInitialized) = false;
 }
 
 // This proc was designed to allow the state machine to issue an OnEndSeq request
