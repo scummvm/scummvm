@@ -86,7 +86,7 @@ void AnimationFrames::load(rapidxml::xml_node<char> *node) {
 		}
 	}
 
-	if (random)
+	if (_random)
 		_currentClip = g_engine->getRandomNumber(_frame.size() - 1);
 	else
 		_currentClip = 0;
