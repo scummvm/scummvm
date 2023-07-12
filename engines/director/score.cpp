@@ -360,7 +360,13 @@ void Score::update() {
 				updateWidgets(true);
 				_window->render();
 			}
-			processFrozenScripts();
+
+			// Don't process frozen script if we use jump instructions
+			// like "go to frame", or open a new movie.
+			if (!_nextFrame || _nextFrame == _curFrameNumber) {
+				processFrozenScripts();
+			}
+
 			return;
 		}
 	}
