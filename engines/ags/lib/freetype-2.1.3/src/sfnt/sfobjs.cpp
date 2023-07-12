@@ -20,8 +20,8 @@
 #include "sfobjs.h"
 #include "ttload.h"
 #include "ttcmap0.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/sfnt.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/sfnt.h"
+#include "engines/ags/lib/freetype-2.1.3/psnames.h"
 #include "engines/ags/lib/freetype-2.1.3/ttnameid.h"
 #include "engines/ags/lib/freetype-2.1.3/tttags.h"
 

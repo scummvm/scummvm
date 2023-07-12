@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t42types.h"
+#include "engines/ags/lib/freetype-2.1.3/t1types.h"
+#include "engines/ags/lib/freetype-2.1.3/t42types.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
 namespace AGS3 {

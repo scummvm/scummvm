@@ -20,7 +20,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/ftlist.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
+#include "engines/ags/lib/freetype-2.1.3/psaux.h"
 
 
 /*************************************************************************/

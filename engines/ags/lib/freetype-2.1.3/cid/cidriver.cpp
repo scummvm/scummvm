@@ -21,7 +21,7 @@
 #include "cidgload.h"
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/psnames.h"
 
 #include "ciderrs.h"
 

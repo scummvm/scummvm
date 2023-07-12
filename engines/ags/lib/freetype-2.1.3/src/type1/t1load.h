@@ -22,7 +22,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
+#include "engines/ags/lib/freetype-2.1.3/psaux.h"
 #include "engines/ags/lib/freetype-2.1.3/ftmm.h"
 
 #include "t1parse.h"

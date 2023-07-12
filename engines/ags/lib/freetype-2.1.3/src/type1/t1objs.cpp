@@ -29,8 +29,8 @@
 #include "t1afm.h"
 #endif
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
+#include "engines/ags/lib/freetype-2.1.3/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/psaux.h"
 
 
 /*************************************************************************/

@@ -52,7 +52,7 @@ namespace FreeType213 {
 #ifdef FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/psnames.h"
 
 #define MAC_NAME( x )  ( const_cast<FT_String *>(psnames->macintosh_name( x )) )
 

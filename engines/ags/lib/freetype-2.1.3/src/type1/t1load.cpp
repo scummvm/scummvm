@@ -65,7 +65,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/ftmm.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
+#include "engines/ags/lib/freetype-2.1.3/t1types.h"
 
 #include "t1load.h"
 #include "t1errors.h"

@@ -22,8 +22,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/ttnameid.h"
 #include "engines/ags/lib/freetype-2.1.3/tttags.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/sfnt.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/sfnt.h"
+#include "engines/ags/lib/freetype-2.1.3/psnames.h"
 
 #include "ttgload.h"
 #include "ttpload.h"

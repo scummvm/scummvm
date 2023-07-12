@@ -21,9 +21,9 @@
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "cidgload.h"
 #include "cidload.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
+#include "engines/ags/lib/freetype-2.1.3/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/psaux.h"
+#include "engines/ags/lib/freetype-2.1.3/pshints.h"
 
 #include "ciderrs.h"
 

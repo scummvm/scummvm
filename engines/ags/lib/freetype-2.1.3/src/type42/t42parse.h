@@ -20,7 +20,7 @@
 
 
 #include "t42objs.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
+#include "engines/ags/lib/freetype-2.1.3/psaux.h"
 
 namespace AGS3 {
 namespace FreeType213 {
