@@ -42,9 +42,9 @@
 #define FT2_1_3_INTERNAL_TRUETYPE_TYPES_H      "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 #define FT2_1_3_INTERNAL_TYPE1_TYPES_H         "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
 #define FT2_1_3_INTERNAL_TYPE42_TYPES_H        "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t42types.h"
-#define FT2_1_3_INTERNAL_CFF_TYPES_H           "engines/ags/lib/freetype-2.1.3/include/freetype/internal/cfftypes.h"
+#define FT2_1_3_INTERNAL_CFF_TYPES_H           "engines/ags/lib/freetype-2.1.3/cff/cfftypes.h"
 #define FT2_1_3_INTERNAL_FNT_TYPES_H           "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fnttypes.h"
-#define FT2_1_3_INTERNAL_BDF_TYPES_H           "engines/ags/lib/freetype-2.1.3/include/freetype/internal/bdftypes.h"
+#define FT2_1_3_INTERNAL_BDF_TYPES_H           "engines/ags/lib/freetype-2.1.3/bdftypes.h"
 #define FT2_1_3_INTERNAL_PFR_H                 "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pfr.h"
 
 #define FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H    "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"

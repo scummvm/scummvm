@@ -51,8 +51,8 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/fttype1.o \
 	lib/freetype-2.1.3/ftutil.o \
 	lib/freetype-2.1.3/ftxf86.o \
-	lib/freetype-2.1.3/src/bdf/bdflib.o \
-	lib/freetype-2.1.3/src/bdf/bdfdrivr.o \
+	lib/freetype-2.1.3/bdf/bdflib.o \
+	lib/freetype-2.1.3/bdf/bdfdrivr.o \
 	lib/freetype-2.1.3/cache/ftlru.o \
 	lib/freetype-2.1.3/cache/ftcmanag.o \
 	lib/freetype-2.1.3/cache/ftccache.o \
@@ -60,12 +60,12 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/cache/ftcimage.o \
 	lib/freetype-2.1.3/cache/ftcsbits.o \
 	lib/freetype-2.1.3/cache/ftccmap.o \
-	lib/freetype-2.1.3/src/cff/cffdrivr.o \
-	lib/freetype-2.1.3/src/cff/cffparse.o \
-	lib/freetype-2.1.3/src/cff/cffload.o \
-	lib/freetype-2.1.3/src/cff/cffobjs.o \
-	lib/freetype-2.1.3/src/cff/cffgload.o \
-	lib/freetype-2.1.3/src/cff/cffcmap.o \
+	lib/freetype-2.1.3/cff/cffdrivr.o \
+	lib/freetype-2.1.3/cff/cffparse.o \
+	lib/freetype-2.1.3/cff/cffload.o \
+	lib/freetype-2.1.3/cff/cffobjs.o \
+	lib/freetype-2.1.3/cff/cffgload.o \
+	lib/freetype-2.1.3/cff/cffcmap.o \
 	lib/freetype-2.1.3/src/cid/cidparse.o \
 	lib/freetype-2.1.3/src/cid/cidload.o \
 	lib/freetype-2.1.3/src/cid/cidobjs.o \
