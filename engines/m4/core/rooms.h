@@ -22,6 +22,7 @@
 #ifndef M4_CORE_ROOMS_H
 #define M4_CORE_ROOMS_H
 
+#include "common/array.h"
 #include "m4/adv_r/adv.h"
 
 namespace M4 {
@@ -48,10 +49,15 @@ public:
 
 class Section {
 private:
-	Room *const _rooms;
-	const size_t _roomsCount = 0;
+	Common::Array<Room *> _rooms;
+protected:
+	// Add a room to the section
+	void add(Room *room) {
+		_rooms.push_back(room);
+	}
+
 public:
-	Section(Room *rooms, size_t count) : _rooms(rooms), _roomsCount(count) {}
+	Section() {}
 	virtual ~Section() {}
 
 	virtual void preLoad() {}
@@ -88,8 +94,10 @@ private:
 	void game_control_cycle();
 	void parse_player_command_now();
 
+protected:
+	Common::Array<Section *> _sections;
+
 public:
-	Section *_sections = nullptr;
 	Section *_activeSection = nullptr;
 	Room *_activeRoom = nullptr;
 public:

@@ -28,7 +28,15 @@ namespace Burger {
 
 BurgerEngine::BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		M4Engine(syst, gameDesc) {
-	_sections = &_SECTIONS[0];
+	_sections.push_back(&_section1);
+	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section9);
 }
 
 M4::Vars *BurgerEngine::createVars() {

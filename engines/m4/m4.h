@@ -43,19 +43,9 @@ namespace M4 {
 struct M4GameDescription;
 
 class M4Engine : public Engine, public Sections {
-	enum GamePhase {
-		FirstRun,
-		SectionStartup,
-		SceneLoad,
-		SceneRun,
-		EndScene,
-		LastRun,
-		GameFinished
-	};
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	GamePhase _gamePhase = FirstRun;
 
 	/**
 	 * Main game loop
@@ -73,7 +63,6 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	const Section *_sections = nullptr;
 
 public:
 	M4Engine(OSystem *syst, const ADGameDescription *gameDesc);

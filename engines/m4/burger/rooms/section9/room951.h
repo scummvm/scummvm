@@ -19,14 +19,22 @@
  *
  */
 
-#include "m4/burger/rooms/section1.h"
+#ifndef M4_BURGER_ROOMS_SECTION9_ROOM951_H
+#define M4_BURGER_ROOMS_SECTION9_ROOM951_H
+
+#include "m4/burger/rooms/room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-
+class Room951 : public Rooms::Room {
+public:
+	Room951() : Rooms::Room(951) {}
+};
 
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
+
+#endif

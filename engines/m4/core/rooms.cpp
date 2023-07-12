@@ -47,7 +47,7 @@ void Sections::global_section_constructor() {
 	uint sectionNum = _G(game).new_section;
 	assert(sectionNum >= 1 && sectionNum <= 9);
 
-	_activeSection = &_sections[sectionNum - 1];
+	_activeSection = _sections[sectionNum - 1];
 	assert(_activeSection);
 }
 
@@ -309,9 +309,9 @@ void Sections::parse_player_command_now() {
 /*------------------------------------------------------------------------*/
 
 Room *Section::operator[](uint roomNum) {
-	for (uint i = 0; i < _roomsCount; ++i) {
-		if (_rooms[i]._roomNum == roomNum)
-			return &_rooms[i];
+	for (uint i = 0; i < _rooms.size(); ++i) {
+		if (_rooms[i]->_roomNum == roomNum)
+			return _rooms[i];
 	}
 
 	error("Unknown room number - %d", roomNum);

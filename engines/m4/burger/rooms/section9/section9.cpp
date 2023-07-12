@@ -19,33 +19,16 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION1_H
-#define M4_BURGER_ROOMS_SECTION1_H
-
-#include "m4/burger/rooms/room.h"
-#include "m4/burger/rooms/section.h"
+#include "m4/burger/rooms/section9/section9.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class DummyRoom : public Rooms::Room {
-public:
-	DummyRoom() : Rooms::Room(666) {}
-};
-
-class Section1 : public Rooms::Section {
-private:
-	Room _ROOMS[1] = {
-		DummyRoom()
-	};
-public:
-	Section1() : Rooms::Section(&_ROOMS[0], 1) {}
-	virtual ~Section1() {}
-};
+Section9::Section9() : Rooms::Section() {
+	add(&_room951);
+}
 
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
-
-#endif

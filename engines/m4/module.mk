@@ -79,7 +79,9 @@ MODULE_OBJS = \
 	burger/gui/interface.o \
 	burger/rooms/room.o \
 	burger/rooms/section.o \
-	burger/rooms/section1.o \
+	burger/rooms/section1/section1.o \
+	burger/rooms/section9/section9.o \
+	burger/rooms/section9/room951.o \
 	burger/burger.o \
 	burger/globals.o \
 	burger/hotkeys.o \
