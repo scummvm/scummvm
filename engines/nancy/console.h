@@ -26,6 +26,10 @@
 
 namespace Nancy {
 
+namespace Action {
+struct DependencyRecord;
+}
+
 class NancyEngine;
 
 class NancyConsole : public GUI::Debugger {
@@ -49,7 +53,7 @@ private:
 	bool Cmd_playAudio(int argc, const char **argv);
 	bool Cmd_loadScene(int argc, const char **argv);
 	bool Cmd_sceneID(int argc, const char **argv);
-	bool Cmd_listAcionRecords(int argc, const char **argv);
+	bool Cmd_listActionRecords(int argc, const char **argv);
 	bool Cmd_scanForActionRecordType(int argc, const char **argv);
 	bool Cmd_getEventFlags(int argc, const char **argv);
 	bool Cmd_setEventFlags(int argc, const char **argv);
@@ -59,6 +63,8 @@ private:
 	bool Cmd_setPlayerTime(int argc, const char **argv);
 	bool Cmd_getDifficulty(int argc, const char **argv);
 	bool Cmd_setDifficulty(int argc, const char **argv);
+
+	void recurseDependencies(const Nancy::Action::DependencyRecord &record);
 
 	Common::String _videoFile;
 	Common::String _imageFile;

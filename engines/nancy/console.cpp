@@ -52,7 +52,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("play_audio", WRAP_METHOD(NancyConsole, Cmd_playAudio));
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
 	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
-	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listAcionRecords));
+	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listActionRecords));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
 	registerCmd("get_eventflags", WRAP_METHOD(NancyConsole, Cmd_getEventFlags));
 	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
@@ -430,7 +430,102 @@ bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
 	return true;
 }
 
-bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
+void NancyConsole::recurseDependencies(const Nancy::Action::DependencyRecord &record) {
+	using namespace Nancy::Action;
+
+	for (const DependencyRecord &dep : record.children) {
+		debugPrintf("\n\t\t");
+		switch (dep.type) {
+		case DependencyType::kNone :
+			debugPrintf("kNone");
+			break;
+		case DependencyType::kInventory :
+			debugPrintf("kInventory, item %u, %s, %s",
+				dep.label,
+				g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
+				dep.condition == g_nancy->_true ? "true" : "false");
+			break;
+		case DependencyType::kEvent :
+			debugPrintf("kEvent, flag %u, %s, %s",
+				dep.label,
+				g_nancy->getStaticData().eventFlagNames[dep.label > 1000 ? dep.label - 1000 : dep.label].c_str(),
+				dep.condition == g_nancy->_true ? "true" : "false");
+			break;
+		case DependencyType::kLogic :
+			debugPrintf("kLogic, flag %u, %s",
+				dep.label,
+				dep.condition == g_nancy->_true ? "used" : "not used");
+			break;
+		case DependencyType::kElapsedGameTime :
+			debugPrintf("kElapsedGameTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+				dep.hours,
+				dep.minutes,
+				dep.seconds,
+				dep.milliseconds);
+			break;
+		case DependencyType::kElapsedSceneTime :
+			debugPrintf("kElapsedSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+				dep.hours,
+				dep.minutes,
+				dep.seconds,
+				dep.milliseconds);
+			break;
+		case DependencyType::kElapsedPlayerTime :
+			debugPrintf("kPlayerTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+				dep.hours,
+				dep.minutes,
+				dep.seconds,
+				dep.milliseconds);
+			break;
+		case DependencyType::kSceneCount :
+			debugPrintf("kSceneCount, scene ID %i, hit count %s %i",
+				dep.hours,
+				dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
+				dep.seconds);
+			break;
+		case DependencyType::kElapsedPlayerDay :
+			debugPrintf("kElapsedPlayerDay");
+			break;
+		case DependencyType::kCursorType :
+			debugPrintf("kCursorType, item %u, %s, %s",
+				dep.label,
+				g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
+				dep.condition == ActionManager::kCursInvHolding ? "kCursInvHolding" : "kCursInvNotHolding");
+			break;
+		case DependencyType::kPlayerTOD :
+			debugPrintf("kPlayerTOD, %s",
+				dep.label == 0 ? "kPlayerDay" : dep.label == 1 ? "kPLayerNight" : "kPLayerDuskDawn");
+			break;
+		case DependencyType::kTimerLessThanDependencyTime :
+			debugPrintf("kTimerLessThanDependencyTime");
+			break;
+		case DependencyType::kTimerGreaterThanDependencyTime :
+			debugPrintf("kTimerGreaterThanDependencyTime");
+			break;
+		case DependencyType::kDifficultyLevel :
+			debugPrintf("kDifficultyLevel, level %i", dep.condition);
+			break;
+		case DependencyType::kClosedCaptioning :
+			debugPrintf("kClosedCaptioning, %s", dep.condition == 2 ? "true" : "false");
+			break;
+		case DependencyType::kSound :
+			debugPrintf("kSound, channel %i", dep.condition);
+			break;
+		case DependencyType::kOpenParenthesis :
+			debugPrintf("((((((((\n");
+			recurseDependencies(dep);
+			debugPrintf("\n))))))))");
+			break;
+		default:
+			debugPrintf("unknown type %u", (uint)dep.type);
+			break;
+		}
+
+		debugPrintf("\n\t\t\torFlag == %s", dep.orFlag == true ? "true" : "false");
+	}
+}
+
+bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 	using namespace Nancy::Action;
 
 	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
@@ -452,85 +547,7 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 		if (rec->_dependencies.children.size()) {
 			debugPrintf("\n\tDependencies:");
 
-			for (DependencyRecord &dep : rec->_dependencies.children) {
-				debugPrintf("\n\t\t");
-				switch (dep.type) {
-				case DependencyType::kNone :
-					debugPrintf("kNone");
-					break;
-				case DependencyType::kInventory :
-					debugPrintf("kInventory, item %u, %s, %s",
-						dep.label,
-						g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
-						dep.condition == g_nancy->_true ? "true" : "false");
-					break;
-				case DependencyType::kEvent :
-					debugPrintf("kEvent, flag %u, %s, %s",
-						dep.label,
-						g_nancy->getStaticData().eventFlagNames[dep.label].c_str(),
-						dep.condition == g_nancy->_true ? "true" : "false");
-					break;
-				case DependencyType::kLogic :
-					debugPrintf("kLogic, flag %u, %s",
-						dep.label,
-						dep.condition == g_nancy->_true ? "used" : "not used");
-					break;
-				case DependencyType::kElapsedGameTime :
-					debugPrintf("kElapsedGameTime, %i hours, %i minutes, %i seconds, %i milliseconds",
-						dep.hours,
-						dep.minutes,
-						dep.seconds,
-						dep.milliseconds);
-					break;
-				case DependencyType::kElapsedSceneTime :
-					debugPrintf("kElapsedSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
-						dep.hours,
-						dep.minutes,
-						dep.seconds,
-						dep.milliseconds);
-					break;
-				case DependencyType::kElapsedPlayerTime :
-					debugPrintf("kPlayerTime, %i hours, %i minutes, %i seconds, %i milliseconds",
-						dep.hours,
-						dep.minutes,
-						dep.seconds,
-						dep.milliseconds);
-					break;
-				case DependencyType::kSceneCount :
-					debugPrintf("kSceneCount, scene ID %i, hit count %s %i",
-						dep.hours,
-						dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
-						dep.seconds);
-					break;
-				case DependencyType::kElapsedPlayerDay :
-					debugPrintf("kElapsedPlayerDay");
-					break;
-				case DependencyType::kCursorType :
-					debugPrintf("kCursorType, item %u, %s, %s",
-						dep.label,
-						g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
-						dep.condition == ActionManager::kCursInvHolding ? "kCursInvHolding" : "kCursInvNotHolding");
-					break;
-				case DependencyType::kPlayerTOD :
-					debugPrintf("kPlayerTOD, %s",
-						dep.label == 0 ? "kPlayerDay" : dep.label == 1 ? "kPLayerNight" : "kPLayerDuskDawn");
-					break;
-				case DependencyType::kTimerLessThanDependencyTime :
-					debugPrintf("kTimerLessThanDependencyTime");
-					break;
-				case DependencyType::kTimerGreaterThanDependencyTime :
-					debugPrintf("kTimerGreaterThanDependencyTime");
-					break;
-				case DependencyType::kDifficultyLevel :
-					debugPrintf("kDifficultyLevel, level %i", dep.condition);
-					break;
-				default:
-					debugPrintf("unknown type %u", (uint)dep.type);
-					break;
-				}
-
-				debugPrintf("\n\t\t\torFlag == %s", dep.orFlag == true ? "true" : "false");
-			}
+			recurseDependencies(rec->_dependencies);
 		}
 
 		debugPrintf("\n\n");
