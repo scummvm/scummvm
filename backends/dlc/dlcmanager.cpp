@@ -22,6 +22,8 @@
 
 #include "backends/dlc/android/playstore.h"
 #include "backends/dlc/dlcmanager.h"
+#include "backends/dlc/scummvmcloud.h"
+#include "backends/dlc/android/playstore.h"
 #include "common/system.h"
 
 namespace Common {
@@ -33,48 +35,49 @@ DECLARE_SINGLETON(DLC::DLCManager);
 namespace DLC {
 
 DLCManager::DLCManager() {
-	_store = g_system->getDLCStore();
+	// _store = g_system->getDLCStore();
+	// TODO: Handle creation through getDLCStore()
+	_store = new DLC::ScummVMCloud::ScummVMCloud();
 }
 
 void DLCManager::init() {
-	getAllDLCs(_dlcs);
+	DLCManager::getAllDLCs(_dlcs);
 }
 
-void DLCManager::getAllDLCs(Common::Array<DLC*>& dlcs) {
-	// if distribution store's API available call it else hardcode
+void DLCManager::getAllDLCs(Common::Array<DLCDesc*> &dlcs) {
+	_store->getAllDLCs(dlcs);
 }
 
 void DLCManager::addDownload(uint32 idx) {
-	_dlcs[idx]->state = kInProgress;
+	_dlcs[idx]->state = DLCDesc::kInProgress;
 	_queuedDownloadTasks.push(_dlcs[idx]);
 	if (!_isDLCDownloading) {
-		DLCManager::processDownload();
+		// if queue is not already processing
+		DLCManager::processDownloadQueue();
 	}
 }
 
-void DLCManager::processDownload() {
+void DLCManager::processDownloadQueue() {
+	_isDLCDownloading = true;
 	if (!_queuedDownloadTasks.empty()) {
-		if (_dlcs[_queuedDownloadTasks.front()->idx]->state == kInProgress) {
-			_isDLCDownloading = true;
+		if (_queuedDownloadTasks.front()->state == DLCDesc::kInProgress) {
 			_currentDownloadingDLC = _queuedDownloadTasks.front()->id;
-			DLCManager::startDownloadAsync(_queuedDownloadTasks.front()->id, &DLCManager::cb);
+			DLCManager::startDownloadAsync(_queuedDownloadTasks.front()->id);
 		} else {
 			// state is already cancelled/downloaded -> skip download
 			_queuedDownloadTasks.pop();
 			// process next download in the queue
-			processDownload();
+			processDownloadQueue();
 		}
 	} else {
+		// no more download in queue
 		_isDLCDownloading = false;
+		_currentDownloadingDLC = "";
 	}
 }
 
-void DLCManager::cb() {
-	// if finished successfully
-	_dlcs[_queuedDownloadTasks.front()->idx]->state = kDownloaded;
-	_queuedDownloadTasks.pop();
-	// process next download in the queue
-	DLCManager::processDownload();
+void DLCManager::startDownloadAsync(Common::String &id) {
+	_store->startDownloadAsync(id);
 }
 
 bool DLCManager::cancelDownload(uint32 idx) {
@@ -82,7 +85,7 @@ bool DLCManager::cancelDownload(uint32 idx) {
 		// if already downloading, interrupt startDownloadAsync
 	} else {
 		// if not started, skip it in processDownload()
-		_dlcs[idx]->state = kCancelled;
+		_dlcs[idx]->state = DLCDesc::kCancelled;
 	}
 	return true;
 }
