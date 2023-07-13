@@ -443,6 +443,8 @@ void Score::update() {
 		}
 	}
 
+	loadFrame(_curFrameNumber);
+
 	byte tempo = _currentFrame->_scoreCachedTempo;
 	// puppetTempo is overridden by changes in score tempo
 	if (_currentFrame->_tempo || tempo != _lastTempo) {
@@ -522,7 +524,6 @@ void Score::update() {
 			*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
 #endif
 
-	loadFrame(_curFrameNumber);
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_curFrameNumber);
 	_window->_newMovieStarted = false;
