@@ -33,7 +33,7 @@
 		AD_ENTRY1s("intro.stk", "6db110188fcb7c5208d9721b5282682a", 4805104),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
@@ -48,7 +48,7 @@
 		AD_ENTRY1s("intro.stk", "904a93f46687617bb34e672020fc17a4", 248724),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
@@ -63,7 +63,7 @@
 		AD_ENTRY1s("intro.stk", "228edf921ebcd9f1c6d566856f264ea4", 2647968),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
@@ -80,7 +80,7 @@
 		AD_ENTRY1s("intro.stk", "4d4c23da4cd7e080cb1769b49ace1805", 4731020),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
@@ -97,7 +97,7 @@
 		AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
@@ -113,7 +113,7 @@
 		AD_ENTRY1s("intro.stk", "6d234641b74b3bdf746c39a64ff1abcc", 2678326),
 		EN_GRB,
 		kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
@@ -131,7 +131,7 @@
 		AD_ENTRY1s("intro.stk", "71e7db034890885ac96dd1be43a21c38", 556834),
 		EN_ANY,
 		kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
