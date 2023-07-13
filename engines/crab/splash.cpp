@@ -53,7 +53,7 @@ Splash::Splash() {
 // Purpose: Destructor
 //------------------------------------------------------------------------
 Splash::~Splash() {
-	background.Delete();
+	background.deleteImage();
 }
 
 //------------------------------------------------------------------------
@@ -88,8 +88,8 @@ void Splash::draw() {
 //------------------------------------------------------------------------
 void Splash::setUI() {
 	warning("ScreenSettings cur w : %d h : %d", g_engine->_screenSettings->cur.w, g_engine->_screenSettings->cur.h);
-	x = (g_engine->_screenSettings->cur.w - background.W()) / 2;
-	y = (g_engine->_screenSettings->cur.h - background.H()) / 2;
+	x = (g_engine->_screenSettings->cur.w - background.w()) / 2;
+	y = (g_engine->_screenSettings->cur.h - background.h()) / 2;
 }
 
 }

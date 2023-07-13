@@ -114,8 +114,8 @@ public:
 		overlay = true;
 	}
 	~Map() {
-		img_bg.Delete();
-		img_overlay.Delete();
+		img_bg.deleteImage();
+		img_overlay.deleteImage();
 	}
 
 	void load(const Common::String &filename, pyrodactyl::event::Info &info);

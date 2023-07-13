@@ -45,7 +45,7 @@ using namespace pyrodactyl::image;
 //------------------------------------------------------------------------
 void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 	for (auto it = map[mapid].begin(); it != map[mapid].end(); ++it)
-		it->_value.Delete();
+		it->_value.deleteImage();
 
 	map[mapid].clear();
 	XMLDoc image_list(filename);
@@ -185,7 +185,7 @@ void ImageManager::BlackScreen() {
 void ImageManager::Quit() {
 	for (int i = 0; i < MAP_TOTAL; i++) {
 		for (auto it = map[i].begin(); it != map[i].end(); ++it)
-			it->_value.Delete();
+			it->_value.deleteImage();
 
 		map[i].clear();
 	}

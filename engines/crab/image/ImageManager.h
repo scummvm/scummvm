@@ -92,7 +92,7 @@ public:
 	void LoadMap(const Common::String &filename, const MapID &mapid = MAP_CURRENT);
 
 	void AddTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex = MAP_COMMON);
-	void FreeTexture(const ImageKey &id, int mapindex = MAP_COMMON) { map[mapindex][id].Delete(); }
+	void FreeTexture(const ImageKey &id, int mapindex = MAP_COMMON) { map[mapindex][id].deleteImage(); }
 	void GetTexture(const ImageKey &id, Image &data);
 	Image &GetTexture(const ImageKey &id);
 	bool ValidTexture(const ImageKey &id);
@@ -108,7 +108,7 @@ public:
 	// Draw the notification icon
 	void NotifyDraw(const int &x, const int &y) {
 		auto *k = &GetTexture(notify);
-		draw(x - k->W() / 2, y - k->H() / 2, notify);
+		draw(x - k->w() / 2, y - k->h() / 2, notify);
 	}
 };
 

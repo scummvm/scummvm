@@ -44,10 +44,7 @@ namespace image {
 // Image data used in Asset Manager
 class Image {
 	// The dimensions of the image
-	int w, h;
-
-	// The actual hardware texture
-	//SDL_Texture *texture;
+	int _w, _h;
 
 	enum ImageRotateDegrees {
 		kImageRotateBy90,
@@ -56,15 +53,15 @@ class Image {
 	};
 
 public:
-	Graphics::ManagedSurface *texture;
+	Graphics::ManagedSurface *_texture;
 
-	Image() : texture(nullptr), w(0), h(0) {}
+	Image() : _texture(nullptr), _w(0), _h(0) {}
 	~Image() {}
 
 	Graphics::Surface* rotate(const Graphics::ManagedSurface &src, ImageRotateDegrees rotation);
 
 	// Set color modulation
-	void Color(const uint8 &r, const uint8 &g, const uint8 &b) {
+	void color(const uint8 &r, const uint8 &g, const uint8 &b) {
 #if 0
 		SDL_SetTextureColorMod(texture, r, g, b);
 #endif
@@ -77,7 +74,7 @@ public:
 #endif
 
 	// Set alpha modulation
-	int Alpha(const uint8 &alpha) {
+	int alpha(const uint8 &alpha) {
 #if 0
 		return SDL_SetTextureAlphaMod(texture, alpha);
 #endif
@@ -86,7 +83,7 @@ public:
 	}
 
 	// Get alpha modulation
-	uint8 Alpha() {
+	uint8 alpha() {
 		uint8 res = 255;
 #if 0
 		SDL_GetTextureAlphaMod(texture, &res);
@@ -105,14 +102,22 @@ public:
 	// Draw the openGL texture
 	void draw(const int &x, const int &y, Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
 	void draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip = FLIP_NONE, Graphics::ManagedSurface *surf = NULL);
-	void FastDraw(const int &x, const int &y, Rect *clip = NULL);
+	void fastDraw(const int &x, const int &y, Rect *clip = NULL);
 
 	// Delete the openGL texture
-	void Delete();
+	void deleteImage();
 
-	int W() { return w; }
-	int H() { return h; }
-	bool Valid() { return texture != nullptr; }
+	int w() {
+		return _w;
+	}
+
+	int h() {
+		return _h;
+	}
+
+	bool valid() {
+		return _texture != nullptr;
+	}
 };
 } // End of namespace image
 } // End of namespace pyrodactyl

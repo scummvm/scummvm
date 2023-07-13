@@ -128,14 +128,14 @@ void Cursor::draw() {
 	if (state != oldState) {
 		if (hover) {
 			if (pressed)
-				CursorMan.replaceCursor(img_hover_s.texture->rawSurface(), 0, 0, 0);
+				CursorMan.replaceCursor(img_hover_s._texture->rawSurface(), 0, 0, 0);
 			else
-				CursorMan.replaceCursor(img_hover.texture->rawSurface(), 0, 0, 0);
+				CursorMan.replaceCursor(img_hover._texture->rawSurface(), 0, 0, 0);
 		} else {
 			if (pressed)
-				CursorMan.replaceCursor(img_s.texture->rawSurface(), 0, 0, 0);
+				CursorMan.replaceCursor(img_s._texture->rawSurface(), 0, 0, 0);
 			else
-				CursorMan.replaceCursor(img.texture->rawSurface(), 0, 0, 0);
+				CursorMan.replaceCursor(img._texture->rawSurface(), 0, 0, 0);
 		}
 	}
 }

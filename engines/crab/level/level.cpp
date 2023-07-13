@@ -65,7 +65,7 @@ void Level::reset() {
 	music.id = -1;
 	preview_path.clear();
 
-	img.Delete();
+	img.deleteImage();
 }
 
 //------------------------------------------------------------------------

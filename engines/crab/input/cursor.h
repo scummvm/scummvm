@@ -74,10 +74,10 @@ public:
 	~Cursor() {}
 
 	void Quit() {
-		img.Delete();
-		img_s.Delete();
-		img_hover.Delete();
-		img_hover_s.Delete();
+		img.deleteImage();
+		img_s.deleteImage();
+		img_hover.deleteImage();
+		img_hover_s.deleteImage();
 	}
 
 	void reset();

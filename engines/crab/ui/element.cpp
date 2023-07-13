@@ -47,8 +47,8 @@ void Element::Init(const int &X, const int &Y, const Align &align_x, const Align
 		h = H;
 	} else {
 		Image dat = g_engine->_imageManager->GetTexture(img);
-		w = dat.W();
-		h = dat.H();
+		w = dat.w();
+		h = dat.h();
 	}
 }
 
@@ -62,12 +62,12 @@ void Element::load(rapidxml::xml_node<char> *node, ImageKey img, const bool &ech
 	Basicload(node, echo);
 
 	if (node->first_attribute("w") == NULL)
-		w = g_engine->_imageManager->GetTexture(img).W();
+		w = g_engine->_imageManager->GetTexture(img).w();
 	else
 		loadNum(w, "w", node);
 
 	if (node->first_attribute("h") == NULL)
-		h = g_engine->_imageManager->GetTexture(img).H();
+		h = g_engine->_imageManager->GetTexture(img).h();
 	else
 		loadNum(h, "h", node);
 

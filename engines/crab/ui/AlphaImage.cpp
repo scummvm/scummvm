@@ -64,7 +64,7 @@ void AlphaImage::internalEvents() {
 	}
 
 	if (g_engine->_imageManager->ValidTexture(img))
-		g_engine->_imageManager->GetTexture(img).Alpha(alpha.cur);
+		g_engine->_imageManager->GetTexture(img).alpha(alpha.cur);
 }
 
 void AlphaImage::draw(const int &XOffset, const int &YOffset) {

@@ -67,7 +67,7 @@ public:
 	~SlideShow() { Clear(); }
 
 	void Refresh();
-	void Clear() { img.Delete(); }
+	void Clear() { img.deleteImage(); }
 
 	void load(rapidxml::xml_node<char> *node);
 

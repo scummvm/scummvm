@@ -40,44 +40,44 @@ using namespace pyrodactyl::image;
 // Purpose: Load a texture
 //------------------------------------------------------------------------
 bool Image::load(Graphics::Surface *surface) {
-	Delete();
+	deleteImage();
 
-	texture->create(surface->w, surface->h, surface->format);
-	texture->copyFrom(*surface);
-	w = surface->w;
-	h = surface->h;
+	_texture->create(surface->w, surface->h, surface->format);
+	_texture->copyFrom(*surface);
+	_w = surface->w;
+	_h = surface->h;
 	return true;
 }
 
 bool Image::load(Graphics::ManagedSurface *surface) {
-	Delete();
-	texture = new Graphics::ManagedSurface(*surface);
-	w = surface->w;
-	h = surface->h;
+	deleteImage();
+	_texture = new Graphics::ManagedSurface(*surface);
+	_w = surface->w;
+	_h = surface->h;
 	return true;
 }
 
 bool Image::load(const Common::String &path) {
 	// Get rid of preexisting texture
-	Delete();
+	deleteImage();
 
 	// Load image at specified path
 	Common::File file;
 	ImageDecoder decoder;
 
 	if (FileOpen(path, &file) && decoder.loadStream(file)) {
-		texture = new Graphics::ManagedSurface(decoder.getSurface()->w, decoder.getSurface()->h, *g_engine->_format);
-		texture->blitFrom(decoder.getSurface());
-		w = texture->w;
-		h = texture->h;
+		_texture = new Graphics::ManagedSurface(decoder.getSurface()->w, decoder.getSurface()->h, *g_engine->_format);
+		_texture->blitFrom(decoder.getSurface());
+		_w = _texture->w;
+		_h = _texture->h;
 
 		file.close();
 
-		warning("Image::load() Image Texture(%s): w: %d h: %d", path.c_str(), w, h);
+		warning("Image::load() Image Texture(%s): w: %d h: %d", path.c_str(), _w, _h);
 
 	}
 
-	return texture != nullptr;
+	return _texture != nullptr;
 }
 
 bool Image::load(rapidxml::xml_node<char> *node, const char *name) {
@@ -88,30 +88,30 @@ bool Image::load(rapidxml::xml_node<char> *node, const char *name) {
 }
 
 bool Image::load(const Image &image, Rect *clip, const TextureFlipType &flip) {
-	Delete();
+	deleteImage();
 
-	Common::Rect srcRect(0, 0, w, h);
+	Common::Rect srcRect(0, 0, _w, _h);
 
 	if (clip)
 		srcRect = Common::Rect(clip->x, clip->y, clip->x + clip->w, clip->y + clip->h);
 
-	texture = new Graphics::ManagedSurface();
-	texture->copyFrom(image.texture->getSubArea(srcRect));
+	_texture = new Graphics::ManagedSurface();
+	_texture->copyFrom(image._texture->getSubArea(srcRect));
 
 	switch (flip) {
 	case FLIP_NONE:
 		break;
 
 	case FLIP_X:
-		texture->surfacePtr()->flipHorizontal(Common::Rect(texture->w, texture->h));
+		_texture->surfacePtr()->flipHorizontal(Common::Rect(_texture->w, _texture->h));
 		break;
 
 	default:
 		warning("Flipped texture: %d", flip);
 	}
 
-	w = texture->w;
-	h = texture->h;
+	_w = _texture->w;
+	_h = _texture->h;
 
 	return true;
 }
@@ -125,17 +125,17 @@ void Image::draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 	if (clip != NULL) {
 		srcRect = *clip;
 	} else {
-		srcRect = Common::Rect(x, y, w + x, h + y);
+		srcRect = Common::Rect(x, y, _w + x, _h + y);
 	}
 
-	Common::Rect destRect(x, y, w + x, h + y);
+	Common::Rect destRect(x, y, _w + x, _h + y);
 	if (clip != NULL) {
 		destRect.right = clip->right;
 		destRect.bottom = clip->bottom;
 	}
 
 	// TODO: Do proper clipping
-	g_engine->_screen->blitFrom(*texture, Common::Point(static_cast<int16>(x), static_cast<int16>(y)));
+	g_engine->_screen->blitFrom(*_texture, Common::Point(static_cast<int16>(x), static_cast<int16>(y)));
 }
 
 Graphics::Surface* Image::rotate(const Graphics::ManagedSurface &src, ImageRotateDegrees rotation) {
@@ -190,8 +190,8 @@ void Image::draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 	if (surf == NULL)
 		surf = g_engine->_screen;
 
-	Common::Rect srcRect(0, 0, w, h);
-	Common::Rect destRect(x, y, w + x, h + y);
+	Common::Rect srcRect(0, 0, _w, _h);
+	Common::Rect destRect(x, y, _w + x, _h + y);
 
 	if (clip) {
 		srcRect = Common::Rect(clip->x, clip->y, clip->x + clip->w, clip->y + clip->h);
@@ -200,7 +200,7 @@ void Image::draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 	}
 
 	Graphics::ManagedSurface s;
-	s.copyFrom(texture->getSubArea(srcRect));
+	s.copyFrom(_texture->getSubArea(srcRect));
 
 	if (s.w < 1 || s.h < 1)
 		return;
@@ -253,8 +253,8 @@ void Image::draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 	surf->blitFrom(s, Common::Rect(s.w, s.h), destRect);
 }
 
-void Image::FastDraw(const int &x, const int &y, Rect *clip) {
-	Common::Rect destRect(x, y, w + x, h + y);
+void Image::fastDraw(const int &x, const int &y, Rect *clip) {
+	Common::Rect destRect(x, y, _w + x, _h + y);
 	int in_y = 0, in_x = 0;
 
 	if (clip) {
@@ -267,10 +267,10 @@ void Image::FastDraw(const int &x, const int &y, Rect *clip) {
 	const int he = destRect.height();
 	const int destW = destRect.width();
 	uint32 *out = (uint32*)g_engine->_screen->getBasePtr(destRect.left, destRect.top);
-	uint32 *in = (uint32*)texture->getBasePtr(in_x, in_y);
+	uint32 *in = (uint32*)_texture->getBasePtr(in_x, in_y);
 
 	const uint32 outPitch = g_engine->_screen->pitch / sizeof(uint32);
-	const uint32 inPitch = texture->pitch / sizeof(uint32);
+	const uint32 inPitch = _texture->pitch / sizeof(uint32);
 
 	for (int y_ = 0; y_ < he; y_++) {
 		memcpy(out, in, destW * 4);
@@ -285,13 +285,13 @@ void Image::FastDraw(const int &x, const int &y, Rect *clip) {
 //------------------------------------------------------------------------
 // Purpose: Delete texture data
 //------------------------------------------------------------------------
-void Image::Delete() {
-	if (texture != nullptr && w > 0 && h > 0) {
-		texture->free();
-		delete texture;
-		texture = nullptr;
-		w = 0;
-		h = 0;
+void Image::deleteImage() {
+	if (_texture != nullptr && _w > 0 && _h > 0) {
+		_texture->free();
+		delete _texture;
+		_texture = nullptr;
+		_w = 0;
+		_h = 0;
 	}
 }
 

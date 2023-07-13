@@ -74,8 +74,8 @@ void Sprite::load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 
 		Image dat;
 		g_engine->_imageManager->GetTexture(_image, dat);
-		_imgSize.x = dat.W();
-		_imgSize.y = dat.H();
+		_imgSize.x = dat.w();
+		_imgSize.y = dat.h();
 
 		unsigned int index = 0;
 		loadNum(index, "moveset", node);
