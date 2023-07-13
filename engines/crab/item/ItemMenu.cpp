@@ -124,9 +124,9 @@ bool ItemMenu::Del(const Common::String &id) {
 	bool result = false;
 
 	for (auto &i : element)
-		if (i.item.id == id) {
+		if (i.item._id == id) {
 			i.empty = true;
-			i.item.Clear();
+			i.item.clear();
 			i.unread = false;
 			result = true;
 			break;
@@ -140,7 +140,7 @@ bool ItemMenu::Del(const Common::String &id) {
 //------------------------------------------------------------------------
 bool ItemMenu::Has(const Common::String &container, const Common::String &id) {
 	for (auto i = element.begin(); i != element.end(); ++i)
-		if (i->item.id == id) {
+		if (i->item._id == id) {
 			if (container == "equip") {
 				if (i->category == SLOT_EQUIP)
 					return true;

@@ -59,8 +59,8 @@ public:
 	}
 
 	void draw(pyrodactyl::item::Item &item) {
-		name.draw(item.name);
-		desc.draw(item.desc);
+		name.draw(item._name);
+		desc.draw(item._desc);
 	}
 
 	void setUI() {

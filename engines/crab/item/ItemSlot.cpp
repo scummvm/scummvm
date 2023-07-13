@@ -94,7 +94,7 @@ void ItemSlot::loadState(rapidxml::xml_node<char> *node) {
 	item.load(node);
 	loadBool(unread, "unread", node);
 
-	if (item.id == "")
+	if (item._id == "")
 		empty = true;
 	else
 		empty = false;
@@ -161,7 +161,7 @@ bool ItemSlot::Swap(ItemSlot &target) {
 // Purpose: Equip an item
 //------------------------------------------------------------------------
 bool ItemSlot::Equip(Item &i) {
-	if ((item_type == i.type || no_type) && empty) {
+	if ((item_type == i._type || no_type) && empty) {
 		item = i;
 		empty = false;
 		unread = true;
@@ -176,7 +176,7 @@ bool ItemSlot::Equip(Item &i) {
 //------------------------------------------------------------------------
 void ItemSlot::StatChange(Person &obj, bool increase) {
 	if (enabled)
-		item.StatChange(obj, increase);
+		item.statChange(obj, increase);
 }
 
 } // End of namespace Crab

@@ -42,51 +42,52 @@ namespace item {
 // All the items owned by characters controlled by the player
 class ItemCollection {
 	// The items for all player characters
-	Common::HashMap<Common::String, ItemMenu> item;
+	Common::HashMap<Common::String, ItemMenu> _item;
 
 	// The reference information for these menus used to display these items
 
 	// The reference item slot
-	ItemSlot ref;
+	ItemSlot _ref;
 
 	// This vector stores the increments in x,y for each new slot
-	Vector2i inc;
+	Vector2i _inc;
 
 	// The dimensions of the menu
-	unsigned int rows, cols;
+	unsigned int _rows, _cols;
 
 	// Draw item description when user clicks an item to select it
-	pyrodactyl::ui::ItemDesc item_info;
+	pyrodactyl::ui::ItemDesc _itemInfo;
 
 	// Should we enable keyboard for the menus
-	bool usekeyboard;
+	bool _useKeyboard;
 
 public:
 	ItemCollection() {
-		rows = 1;
-		cols = 1;
-		usekeyboard = true;
+		_rows = 1;
+		_cols = 1;
+		_useKeyboard = true;
 	}
+
 	~ItemCollection() {}
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void handleEvents(const Common::String &char_id, const Common::Event &Event);
+	void handleEvents(const Common::String &charId, const Common::Event &event);
 #if 0
 	void handleEvents(const Common::String &char_id, const SDL_Event &Event);
 #endif
 
-	void Init(const Common::String &char_id);
-	void draw(const Common::String &char_id);
+	void init(const Common::String &charId);
+	void draw(const Common::String &charId);
 
 	// Requires: id of the character, the item information
-	void Add(const Common::String &char_id, Item &item_data);
+	void add(const Common::String &charId, Item &itemData);
 
 	// Requires: id of the character from which to remove the item, and id of the item
-	void Del(const Common::String &char_id, const Common::String &item_id);
+	void del(const Common::String &charId, const Common::String &itemId);
 
 	// Requires: id of the character, the name of the container and name of the item
-	bool Has(const Common::String &char_id, const Common::String &container, const Common::String &item_id);
+	bool has(const Common::String &charId, const Common::String &container, const Common::String &itemId);
 
 	void loadState(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
