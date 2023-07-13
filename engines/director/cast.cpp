@@ -818,6 +818,11 @@ void Cast::loadExternalSound(Common::SeekableReadStreamEndian &stream) {
 
 	Common::Path resPath = findPath(str, true, true, false);
 
+	if (resPath.empty()) {
+		warning("Cast::loadExternalSound: could not find external sound file %s", str.c_str());
+		return;
+	}
+
 	g_director->openArchive(resPath);
 }
 
