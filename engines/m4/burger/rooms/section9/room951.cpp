@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/ },.
  *
  */
 
@@ -55,7 +55,7 @@ enum scene_triggers {
 };
 
 
-static seriesStreamBreak planet_x_hilltop_a[] = {
+static const seriesStreamBreak planet_x_hilltop_a[] = {
 	// frame	  sound   chan  vol   trigger 		 flags  variable value
 	{   0,  "951_000", 3, 100, NO_TRIGGER, 0, nullptr, 0 },
 	{  15,  "951_004", 2, 150, NO_TRIGGER, 0, nullptr, 0 },
@@ -67,6 +67,176 @@ static seriesStreamBreak planet_x_hilltop_a[] = {
 	{ 158,  "951_006", 1, 255, NO_TRIGGER, 0, nullptr, 0 },
 	{ 165,    nullptr, 0,   0, NO_TRIGGER, 0, nullptr, 0 },
 	{  -1,    nullptr, 0,   0, NO_TRIGGER, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak planet_x_low_shot[] = {
+	{   0,   nullptr, 2,   0, -1, 2048, 0, 0 },
+	{   0, "952_003", 1, 200, -1, 0, 0, 0 },
+	{  21, "952_001", 3, 120, -1, 0, 0, 0 },
+	{  73, "952_002", 2, 160, -1, 0, 0, 0 },
+	{  80, "952Z001", 1, 255, -1, 0, 0, 0 },
+	{  92, "952_005", 2, 160, -1, 0, 0, 0 },
+	{ 111, "952_006", 2, 100, -1, 0, 0, 0 },
+	{ 117, "952_007", 2, 100, -1, 0, 0, 0 },
+	{ 124, "952_004", 1, 225, -1, 0, 0, 0 },
+	{ 136, "952_004", 1, 245, -1, 0, 0, 0 },
+	{ 143, "952_010", 1, 255, -1, 0, 0, 0 },
+	{ 147, "952_004", 1, 235, -1, 0, 0, 0 },
+	{ 153, "952_008", 2, 100, -1, 0, 0, 0 },
+	{ 154, "952_009", 3, 200, -1, 0, 0, 0 },
+	{ 157, 0, 0, 0, 52, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak planet_x_hilltop_b[] = {
+	{  1, "951_020", 3, 100, -1, 0, nullptr, 0 },
+	{  4, "951_007", 2, 125, -1, 0, nullptr, 0 },
+	{  7, "951z002", 1, 255, -1, 0, nullptr, 0 },
+	{ 54,   nullptr, 0,   0, 50, 0, nullptr, 0 },
+	{ 56, "951_008", 2, 150, -1, 0, nullptr, 0 },
+	{ 75,   nullptr, 0,   0, 52, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak panorama_a[] = {
+	{   1, "955_001", 1, 150, -1,    0, nullptr, 0 },
+	{   7, "955_007", 2, 220, -1,    0, nullptr, 0 },
+	{  24, "955_007", 2, 220, -1,    0, nullptr, 0 },
+	{  25,   nullptr, 2,   0, -1, 2048, nullptr, 0 },
+	{  26, "955_007", 2, 220, -1,    0, nullptr, 0 },
+	{  35, "955_002", 2, 255, -1,    0, nullptr, 0 },
+	{  90, "955_007", 1, 220, -1,    0, nullptr, 0 },
+	{  92,   nullptr, 1,   0, -1, 2048, nullptr, 0 },
+	{  93, "955_007", 1, 220, -1,    0, nullptr, 0 },
+	{  99, "955_010", 1, 150, -1,    0, nullptr, 0 },
+	{ 104,   nullptr, 3, 240, -1,    0, nullptr, 0 },
+	{ 105,   nullptr, 3, 220, -1,    0, nullptr, 0 },
+	{ 105, "955_007", 1, 210, -1,    0, nullptr, 0 },
+	{ 106,   nullptr, 3, 200, -1,    0, nullptr, 0 },
+	{ 107,   nullptr, 3, 190, -1,    0, nullptr, 0 },
+	{ 108,   nullptr, 3, 180, -1,    0, nullptr, 0 },
+	{ 109,   nullptr, 3, 170, -1,    0, nullptr, 0 },
+	{ 110,   nullptr, 3, 160, -1,    0, nullptr, 0 },
+	{ 111,   nullptr, 3, 150, -1,    0, nullptr, 0 },
+	{ 112,   nullptr, 0,   0, 52,    0, nullptr, 0 },
+	{ 113,   nullptr, 3, 140, -1,    0, nullptr, 0 },
+	{ 114,   nullptr, 3, 120, -1,    0, nullptr, 0 },
+	{ 115,   nullptr, 3, 110, -1,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak cargo_transfer_a[] = {
+	{   0,   nullptr, 3, 100, -1, 0, nullptr, 0 },
+	{   1, "956_001", 2,  80, -1, 0, nullptr, 0 },
+	{   4, "956v001", 1, 255, -1, 0, nullptr, 0 },
+	{ 136,   nullptr, 0,   0, 52, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak vps_office_a[] = {
+	{   1, "957_005", 3,  40, -1, 1024, nullptr, 0 },
+	{   1, "957v001", 1, 255, -1,    0, nullptr, 0 },
+	{  92, "957v002", 1, 255, -1,    0, nullptr, 0 },
+	{ 110, "957v003", 1, 255, -1,    0, nullptr, 0 },
+	{ 125, "957_004", 2, 230, -1,    0, nullptr, 0 },
+	{ 177, "957_007", 2, 100, -1,    0, nullptr, 0 },
+	{ 183, "957_001", 2, 150, -1,    0, nullptr, 0 },
+	{ 191, "957v004", 1, 255, -1,    0, nullptr, 0 },
+	{ 194, "957_006", 2, 120, -1, 1024, nullptr, 0 },
+	{ 267,   nullptr, 0,   0, 52,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak hologram[] = {
+	{   0, "958v001", 1, 255, -1,    0, nullptr, 0 },
+	{   0, "957_005", 3,  20, -1, 1024, nullptr, 0 },
+	{   1,   nullptr, 2, 210, -1,    0, nullptr, 0 },
+	{  39, "958_003", 1, 150, -1,    0, nullptr, 0 },
+	{  42, "958_001", 1, 200, -1,    0, nullptr, 0 },
+	{  52, "958z001", 1, 255, -1,    0, nullptr, 0 },
+	{ 161, "958_003", 1, 150, -1,    0, nullptr, 0 },
+	{ 164, "958_004", 2, 200, -1,    0, nullptr, 0 },
+	{ 170, "958v002", 1, 255, -1,    0, nullptr, 0 },
+	{ 264, "958z002", 1, 255, -1,    0, nullptr, 0 },
+	{ 329, "958v003", 1, 255, -1,    0, nullptr, 0 },
+	{ 362, "958_002", 2,  50, -1,    0, nullptr, 0 },
+	{ 425, "958v004", 1, 255, -1,    0, nullptr, 0 },
+	{ 456,   nullptr, 0,   0, 52,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak vps_office_b[] = {
+	{   0,  "957_005", 3,  40, -1, 1024, nullptr, 0 },
+	{   8, "957Z001y", 1, 255, -1,    0, nullptr, 0 },
+	{  43, "957Z001z", 1, 255, -1,    0, nullptr, 0 },
+	{ 112,  "957V005", 2, 255, -1,    0, nullptr, 0 },
+	{ 139,  "957_002", 1, 255, -1,    0, nullptr, 0 },
+	{ 154,  "957_003", 1, 255, -1,    0, nullptr, 0 },
+	{ 170,    nullptr, 0,   0, 52,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak cargo_transfer_b[] = {
+	{   0, "956_020", 1, 130, -1,    0, nullptr, 0 },
+	{   0, "956_000", 2,  60, -1, 1024, nullptr, 0 },
+	{   0, "956_001", 3,  80, -1, 1024, nullptr, 0 },
+	{  29, "956Z002", 1, 255, -1,    0, nullptr, 0 },
+	{  67, "956_003", 1,  60, -1,    0, nullptr, 0 },
+	{  83, "956Z003", 1, 255, -1,    0, nullptr, 0 },
+	{ 121, "956_002", 1, 200, -1,    0, nullptr, 0 },
+	{ 132,   nullptr, 0,   0, 52,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak transfer_controls[] = {
+	{   0,   nullptr, 2,   0, -1, 2048, nullptr, 0 },
+	{   0,   nullptr, 3,   0, -1, 2048, nullptr, 0 },
+	{   0, "956_001", 3, 180, -1, 1024, nullptr, 0 },
+	{   1, "959F001", 1, 255, -1,    0, nullptr, 0 },
+	{   5, "959_010", 2, 170, -1,    0, nullptr, 0 },
+	{  27, "959_010", 2, 170, -1,    0, nullptr, 0 },
+	{  36, "959Z001", 1, 255, -1,    0, nullptr, 0 },
+	{  43, "959_013", 2, 100, -1,    0, nullptr, 0 },
+	{  48,   nullptr, 2,   0, -1, 2048, nullptr, 0 },
+	{  69, "959Z002", 1, 255, -1,    0, nullptr, 0 },
+	{ 100, "959F002", 1, 255, -1,    0, nullptr, 0 },
+	{ 146, "959Z003", 1, 255, -1,    0, nullptr, 0 },
+	{ 207, "959_002", 2, 150, -1,    0, nullptr, 0 },
+	{ 226, "959_003", 2, 255, -1,    0, nullptr, 0 },
+	{ 235, "959_013", 1, 100, -1,    0, nullptr, 0 },
+	{ 245,   nullptr, 1,   0, -1, 2048, nullptr, 0 },
+	{ 254, "959_010", 2, 170, -1,    0, nullptr, 0 },
+	{ 257, "959_013", 1, 100, -1,    0, nullptr, 0 },
+	{ 272,   nullptr, 1,   0, -1, 2048, nullptr, 0 },
+	{ 274, "959_004", 2, 255, -1,    0, nullptr, 0 },
+	{ 277, "959_005", 2, 255, -1,    0, nullptr, 0 },
+	{ 288, "959_012", 1, 255, -1,    0, nullptr, 0 },
+	{ 295, "959_011", 2, 255, -1,    0, nullptr, 0 },
+	{ 307, "959_005", 1, 200, -1,    0, nullptr, 0 },
+	{ 311,   nullptr, 0,   0, 52,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak panorama_b[] = {
+	{   0, "955_000", 3, 180, -1, 1024, nullptr, 0 },
+	{   0, "955_003", 2, 150, -1,    0, nullptr, 0 },
+	{   2, "955z001", 1, 255, -1,    0, nullptr, 0 },
+	{  74, "955_004", 2, 255, -1,    0, nullptr, 0 },
+	{  89, "955z002", 1, 255, -1,    0, nullptr, 0 },
+	{ 125, "955_006", 2, 245, -1,    0, nullptr, 0 },
+	{ 140,   nullptr, 0,   0, -1,    0, nullptr, 0 },
+	{ 148,   nullptr, 0,   0, 52,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak call_to_action[] = {
+	{   0,   nullptr, 0,   0, -1, 0, nullptr, 0 },
+	{   1,   nullptr, 0,   0, 47, 0, nullptr, 0 },
+	{   1, "961_001", 1, 100, -1, 0, nullptr, 0 },
+	{  63, "961_002", 1, 180, -1, 0, nullptr, 0 },
+	{ 143,   nullptr, 0,   0, 52, 0, nullptr, 0 },
+	{ 147,   nullptr, 0,   0, 48, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -92,16 +262,12 @@ void Room951::daemon() {
 		digi_preload("952music", -1);
 
 		digi_preload_stream_breaks(planet_x_hilltop_a);
-#ifdef TODO
 		digi_preload_stream_breaks(planet_x_low_shot);
 		digi_preload_stream_breaks(planet_x_hilltop_b);
 		digi_preload_stream_breaks(panorama_a);
 		digi_preload_stream_breaks(cargo_transfer_a);
-		digi_preload_stream_breaks(vps_office_a);
-		digi_preload_stream_breaks(hologram);
-		digi_preload_stream_breaks(vps_office_b);
 		break;
-
+#ifdef TODO
 	case START_PLANET_X_HILLTOP_A:
 		palette_prep_for_stream();
 		series_stream_with_breaks(planet_x_hilltop_a, "PLANET X HILLTOP A", 6, 1, START_PLANET_X_LOW_GROUND_SHOT);
