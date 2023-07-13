@@ -58,7 +58,7 @@ public:
 
 	void set(const InputType &val) {
 		_input = val;
-		_name = g_engine->_inputManager->GetAssociatedKey(_input);
+		_name = g_engine->_inputManager->getAssociatedKey(_input);
 	}
 
 	const char *name();

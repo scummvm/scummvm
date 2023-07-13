@@ -95,13 +95,13 @@ const int IU_START = IU_UP, IU_SIZE = IT_TOTAL - IU_START;
 
 class InputManager {
 	// The backups used to restore in case of the user pressing cancel
-	InputVal backup[IT_TOTAL];
+	InputVal _backup[IT_TOTAL];
 
 	// Load key configuration from file
 	void load(const Common::String &filename);
 
 	// The current version of the input scheme
-	unsigned int version;
+	unsigned int _version;
 
 	// The current mode of keymap applied
 	KeyBindingMode _keyMode;
@@ -112,29 +112,29 @@ class InputManager {
 public:
 	InputManager() {
 		//controller = nullptr;
-		version = 0;
+		_version = 0;
 
-		ClearInputs();
+		clearInputs();
 	}
 
 	~InputManager() {}
 
-	static Common::Keymap* GetDefaultKeyMapsForGame();
-	static Common::Keymap* GetDefaultKeyMapsForUI();
-	static Common::Keymap* GetDefaultKeyMapsForHUD();
+	static Common::Keymap *getDefaultKeyMapsForGame();
+	static Common::Keymap *getDefaultKeyMapsForUI();
+	static Common::Keymap *getDefaultKeyMapsForHUD();
 
-	void ClearInputs() {
+	void clearInputs() {
 		for (int i = 0; i < IT_TOTAL; i++)
 			_ivState[i] = false;
 	}
 
-	void PopulateKeyTable();
+	void populateKeyTable();
 
-	void SetKeyBindingMode(KeyBindingMode mode);
+	void setKeyBindingMode(KeyBindingMode mode);
 
-	KeyBindingMode GetKeyBindingMode() const { return _keyMode; }
+	KeyBindingMode getKeyBindingMode() const { return _keyMode; }
 
-	void Quit() {
+	void quit() {
 		warning("STUB: InputManager::Quit()");
 
 #if 0
@@ -147,7 +147,7 @@ public:
 	// Ex. UI and Fight can have buttons in common, but not two keys within UI
 
 	// Inputs used in the game
-	InputVal iv[IT_TOTAL];
+	InputVal _iv[IT_TOTAL];
 	bool _ivState[IT_TOTAL];
 
 	// Our controller object
@@ -160,15 +160,15 @@ public:
 #endif
 
 	// These functions return true if key is pressed, false otherwise
-	bool State(const InputType &val);
+	bool state(const InputType &val);
 
-	void CreateBackup();
-	void RestoreBackup();
+	void createBackup();
+	void restoreBackup();
 
 	// Initialize the controller if it is plugged in
-	void AddController();
+	void addController();
 
-	Common::String GetAssociatedKey(const InputType &type);
+	Common::String getAssociatedKey(const InputType &type);
 
 #if 0
 	// Handle plugging and unplugging of controllers on the fly
@@ -176,9 +176,9 @@ public:
 #endif
 
 	// Initialize the input system
-	void Init();
+	void init();
 
-	void Save();
+	void save();
 };
 
 } // End of namespace input

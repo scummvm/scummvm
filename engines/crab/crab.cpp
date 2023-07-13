@@ -132,9 +132,9 @@ Common::Error CrabEngine::run() {
 	CursorMan.showMouse(true);
 	_mouse->reset();
 
-	_inputManager->Init();
-	_inputManager->PopulateKeyTable();
-	_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
+	_inputManager->init();
+	_inputManager->populateKeyTable();
+	_inputManager->setKeyBindingMode(pyrodactyl::input::KBM_GAME);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
