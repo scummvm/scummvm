@@ -1271,6 +1271,16 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 			b = value ? t.v : t.p;
 		}
 
+		// Special case, we can retrieve symbolic key by giving their string representation, ie
+		// for arr [a: "abc", "b": "def"], both getProp(arr, "a") and getProp(arr, #a) will return "abc",
+		// vice-versa is also true, ie getProp(arr, "b") and getProp(arr, #b) will return "def"
+		if (a.type == SYMBOL && b.type == STRING) {
+			a = Datum(a.asString());
+		} else if (a.type == STRING && b.type == SYMBOL) {
+            b = Datum(b.asString());
+        }
+
+
 		res = compareFunc(a, b);
 		if (!location) {
 			if (res.u.i == 0) {
