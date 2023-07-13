@@ -675,7 +675,10 @@ void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 
 	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		auto g = ((const ADGameDescription *)descPtr);
-		const char *title = ((const PlainGameDescriptor *)_gameIds)->description;
+		const PlainGameDescriptor *gameDesc = findPlainGameDescriptor(g->gameId, _gameIds);
+		const char *title = "";
+		if (gameDesc != 0)
+			title = gameDesc->description;
 
 		printf("game (\n");
 		printf("\tname \"%s\"\n", escapeString(g->gameId).c_str());
@@ -684,6 +687,7 @@ void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 		printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(g->language)).c_str());
 		printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(g->platform)).c_str());
 		printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
+		printf("\tengine \"%s\"\n", escapeString(getEngineName()).c_str());
 
 		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			const char *fname = fileDesc->fileName;
