@@ -637,6 +637,24 @@ static const uint16 sci11SpeedTestPatch[] = {
 	PATCH_END
 };
 
+// The speed test originally used a signed comparison, causing the test to take
+//  nine minutes if kGetTime rolled over during it. This could happen when
+//  restarting the game. This bug conflicts with our speed test patch in KQ4,
+//  because after its very long introduction it runs the test again.
+//  We fix this with an unsigned comparison, as Sierra did.
+static const uint16 sci0SpeedTestOverflowSignature[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x46, 0x00,                   // callk GetTime
+	0x22,                               // lt?
+	SIG_END
+};
+
+static const uint16 sci0SpeedTestOverflowPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x2a,                               // ult?
+	PATCH_END
+};
+
 // The Narrator class contains a bug that's responsible for rare random lockups
 //  in almost every Messager SCI game from 1992 to 1996. The later first-person
 //  and FMV games have structures that tend to survive this bug. It was finally,
@@ -1159,6 +1177,7 @@ static const SciScriptPatcherEntry camelotSignatures[] = {
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
 	{ true,    64, "fix Fatima room messages",                     2, camelotSignatureFatimaRoomMessages,   camelotPatchFatimaRoomMessages },
 	{ true,   112, "disable speed test",                           1, sci01SpeedTestLocalSignature,         sci01SpeedTestLocalPatch },
+	{ true,   112, "fix speed test overflow",                      1, sci0SpeedTestOverflowSignature,       sci0SpeedTestOverflowPatch },
 	{ true,   158, "fix give mule message",                        1, camelotSignatureGiveMuleMessage,      camelotPatchGiveMuleMessage },
 	{ true,   169, "fix relic merchant lockup (1/2)",              1, camelotSignatureRelicMerchantLockup1, camelotPatchRelicMerchantLockup1 },
 	{ true,   169, "fix relic merchant lockup (2/2)",              1, camelotSignatureRelicMerchantLockup2, camelotPatchRelicMerchantLockup2 },
@@ -5138,7 +5157,9 @@ static const SciScriptPatcherEntry kq4Signatures[] = {
 	{ false,    24, "missing waterfall view",                      1, kq4SignatureMissingWaterfallView,         kq4PatchMissingWaterfallView },
 	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
 	{  true,    98, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
+	{  true,    98, "fix speed test overflow",                     1, sci0SpeedTestOverflowSignature,           sci0SpeedTestOverflowPatch },
 	{  true,    99, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
+	{  true,    99, "fix speed test overflow",                     1, sci0SpeedTestOverflowSignature,           sci0SpeedTestOverflowPatch },
 	{  true,   994, "restore fix",                                 1, kq4SignatureRestoreFix1,                  kq4PatchRestoreFix1 },
 	{  true,   994, "restore fix",                                 1, kq4SignatureRestoreFix2,                  kq4PatchRestoreFix2 },
 	{  true,   994, "ride unicorn at night",                       1, kq4SignatureUnicornNightRide,             kq4PatchUnicornNightRide },
@@ -8690,6 +8711,7 @@ static const SciScriptPatcherEntry larry2Signatures[] = {
 	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints,    larry2PatchWearParachutePoints },
 	{  true,    99, "disable speed test",                          1, sci0EarlySpeedTestSignature,           sci0EarlySpeedTestPatch },
 	{  true,    99, "disable speed test",                          1, sci01SpeedTestGlobalSignature,         sci01SpeedTestGlobalPatch },
+	{  true,    99, "fix speed test overflow",                     1, sci0SpeedTestOverflowSignature,        sci0SpeedTestOverflowPatch },
 	{  true,   114, "lottery ticket messages (1/2)",               1, larry2SignatureLotteryTicketMessages1, larry2PatchLotteryTicketMessages1 },
 	{  true,   114, "lottery ticket messages (2/2)",               1, larry2SignatureLotteryTicketMessages2, larry2PatchLotteryTicketMessages2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -8750,6 +8772,7 @@ static const uint16 larry3PatchVolumeSlider[] = {
 //          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry larry3Signatures[] = {
 	{  true,   290, "disable speed test",                          1, sci01SpeedTestGlobalSignature, larry3PatchSpeedTest },
+	{  true,   290, "fix speed test overflow",                     1, sci0SpeedTestOverflowSignature,sci0SpeedTestOverflowPatch },
 	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,   larry3PatchVolumeSlider },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -9938,6 +9961,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    47, "left stairs lockup fix",                   3, laurabow1SignatureLeftStairsLockupFix,             laurabow1PatchLeftStairsLockupFix },
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,    99, "disable speed test",                       1, sci01SpeedTestGlobalSignature,                     sci01SpeedTestGlobalPatch },
+	{  true,    99, "fix speed test overflow",                  1, sci0SpeedTestOverflowSignature,                    sci0SpeedTestOverflowPatch },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	{  true,   414, "copy protection random fix",               1, laurabow1SignatureCopyProtectionRandomFix,         laurabow1PatchCopyProtectionRandomFix },
