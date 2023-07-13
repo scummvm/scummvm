@@ -36,11 +36,11 @@ namespace Crab {
 using namespace pyrodactyl::input;
 
 void FightInput::load(rapidxml::xml_node<char> *node) {
-	loadEnum(type, "type", node);
-	loadNum(state, "state", node);
+	loadEnum(_type, "type", node);
+	loadNum(_state, "state", node);
 }
 
-FightAnimationType FightInput::handleEvents(const Common::Event &Event) {
+FightAnimationType FightInput::handleEvents(const Common::Event &event) {
 	if (g_engine->_inputManager->State(IG_ATTACK))
 		return FA_ATTACK;
 	else if (g_engine->_inputManager->State(IG_BLOCK))
