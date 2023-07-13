@@ -322,7 +322,7 @@ void App::LoadSettings(const Common::String &filename) {
 }
 
 App::~App() {
-	g_engine->_imageManager->Quit();
+	g_engine->_imageManager->quit();
 	g_engine->_musicManager->Quit();
 	g_engine->_textManager->Quit();
 	g_engine->_inputManager->Quit();

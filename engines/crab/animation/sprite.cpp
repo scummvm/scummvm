@@ -73,7 +73,7 @@ void Sprite::load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 		loadNum(_layer, "layer", node, false);
 
 		Image dat;
-		g_engine->_imageManager->GetTexture(_image, dat);
+		g_engine->_imageManager->getTexture(_image, dat);
 		_imgSize.x = dat.w();
 		_imgSize.y = dat.h();
 

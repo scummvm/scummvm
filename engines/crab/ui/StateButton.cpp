@@ -75,8 +75,8 @@ void StateButton::State(const bool val) {
 	}
 
 	// Images might be different in size
-	w = g_engine->_imageManager->GetTexture(img.normal).w();
-	h = g_engine->_imageManager->GetTexture(img.normal).h();
+	w = g_engine->_imageManager->getTexture(img.normal).w();
+	h = g_engine->_imageManager->getTexture(img.normal).h();
 }
 
 void StateButton::Img(const StateButtonImage &sbi) {

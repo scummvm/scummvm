@@ -121,7 +121,7 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 		// If the filename is same as the previous one, skip loading
 		if (g_engine->_filePath->current_r != g_engine->_filePath->level[id].asset) {
 			g_engine->_filePath->current_r = g_engine->_filePath->level[id].asset;
-			g_engine->_imageManager->LoadMap(g_engine->_filePath->level[id].asset);
+			g_engine->_imageManager->loadMap(g_engine->_filePath->level[id].asset);
 		}
 
 		// Load the level itself
@@ -503,7 +503,7 @@ void Game::draw() {
 	if (gem._drawGame)
 		level.draw(info);
 	else
-		g_engine->_imageManager->BlackScreen();
+		g_engine->_imageManager->blackScreen();
 	switch (state) {
 	case STATE_GAME:
 		if (gem.eventInProgress())
@@ -512,36 +512,36 @@ void Game::draw() {
 			hud.draw(info, level.PlayerID());
 		break;
 	case STATE_PAUSE:
-		g_engine->_imageManager->DimScreen();
+		g_engine->_imageManager->dimScreen();
 		hud.pause.draw(hud.back);
 		hud.draw(info, level.PlayerID());
 		break;
 	case STATE_MAP:
-		g_engine->_imageManager->DimScreen();
+		g_engine->_imageManager->dimScreen();
 		map.draw(info);
 		hud.draw(info, level.PlayerID());
 		hud.back.draw();
 		break;
 	case STATE_JOURNAL:
-		g_engine->_imageManager->DimScreen();
+		g_engine->_imageManager->dimScreen();
 		info._journal.draw(level.PlayerID());
 		hud.draw(info, level.PlayerID());
 		hud.back.draw();
 		break;
 	case STATE_CHARACTER:
-		g_engine->_imageManager->DimScreen();
+		g_engine->_imageManager->dimScreen();
 		gem._per.draw(info, level.PlayerID());
 		hud.draw(info, level.PlayerID());
 		hud.back.draw();
 		break;
 	case STATE_INVENTORY:
-		g_engine->_imageManager->DimScreen();
+		g_engine->_imageManager->dimScreen();
 		info.invDraw(level.PlayerID());
 		hud.draw(info, level.PlayerID());
 		hud.back.draw();
 		break;
 	case STATE_HELP:
-		g_engine->_imageManager->DimScreen();
+		g_engine->_imageManager->dimScreen();
 		g_engine->_helpScreen->draw();
 		hud.back.draw();
 		hud.draw(info, level.PlayerID());
@@ -817,7 +817,7 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 void Game::Quit(bool &ShouldChangeState, GameStateID &NewStateID, const GameStateID &NewStateVal) {
 	ShouldChangeState = true;
 	NewStateID = NewStateVal;
-	g_engine->_imageManager->LoadMap(g_engine->_filePath->mainmenu_r);
+	g_engine->_imageManager->loadMap(g_engine->_filePath->mainmenu_r);
 }
 //------------------------------------------------------------------------
 // Purpose: Change our internal state

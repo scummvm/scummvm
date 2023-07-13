@@ -137,7 +137,7 @@ void QuestMenu::draw(Button &bu_map) {
 
 		if (quest[i]._unread) {
 			using namespace pyrodactyl::image;
-			g_engine->_imageManager->draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->notify);
+			g_engine->_imageManager->draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->_notify);
 		}
 	}
 

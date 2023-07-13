@@ -63,13 +63,13 @@ void AlphaImage::internalEvents() {
 		}
 	}
 
-	if (g_engine->_imageManager->ValidTexture(img))
-		g_engine->_imageManager->GetTexture(img).alpha(alpha.cur);
+	if (g_engine->_imageManager->validTexture(img))
+		g_engine->_imageManager->getTexture(img).alpha(alpha.cur);
 }
 
 void AlphaImage::draw(const int &XOffset, const int &YOffset) {
-	if (g_engine->_imageManager->ValidTexture(img))
-		g_engine->_imageManager->GetTexture(img).draw(pos.x + XOffset, pos.y + YOffset);
+	if (g_engine->_imageManager->validTexture(img))
+		g_engine->_imageManager->getTexture(img).draw(pos.x + XOffset, pos.y + YOffset);
 }
 
 } // End of namespace Crab

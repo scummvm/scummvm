@@ -66,49 +66,55 @@ enum MapID {
 class ImageManager {
 	// Assets are stored in images
 	// Common is stuff used everywhere - this is only loaded once
-	TextureMap map[MAP_TOTAL];
+	TextureMap _map[MAP_TOTAL];
 
 	// The default image for all invalid image names
-	Image invalid_img;
+	Image _invalidImg;
 
 public:
 	// The tile sets used in the level
-	TMX::TileSetGroup tileset;
+	TMX::TileSetGroup _tileset;
 
 	// This image is used to notify player about changes to quests and inventory
-	ImageKey notify;
+	ImageKey _notify;
 
-	ImageManager() { notify = 0; }
+	ImageManager() {
+		_notify = 0;
+	}
+
 	~ImageManager() {}
 
-	void Quit();
+	void quit();
 
-	bool Init();
-	void LoadPaths();
+	bool init();
+	void loadPaths();
 
 	// image related stuff
 
 	// Load all images specified in an xml file in a map
-	void LoadMap(const Common::String &filename, const MapID &mapid = MAP_CURRENT);
+	void loadMap(const Common::String &filename, const MapID &mapid = MAP_CURRENT);
 
-	void AddTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex = MAP_COMMON);
-	void FreeTexture(const ImageKey &id, int mapindex = MAP_COMMON) { map[mapindex][id].deleteImage(); }
-	void GetTexture(const ImageKey &id, Image &data);
-	Image &GetTexture(const ImageKey &id);
-	bool ValidTexture(const ImageKey &id);
+	void addTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex = MAP_COMMON);
+	void freeTexture(const ImageKey &id, int mapindex = MAP_COMMON) {
+		_map[mapindex][id].deleteImage();
+	}
+
+	void getTexture(const ImageKey &id, Image &data);
+	Image &getTexture(const ImageKey &id);
+	bool validTexture(const ImageKey &id);
 
 	void draw(const int &x, const int &y, const ImageKey &id,
 			  Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
 	void draw(const int &x, const int &y, const ImageKey &id,
 			  Rect *clip, const TextureFlipType &flip = FLIP_NONE);
 
-	void DimScreen();
-	void BlackScreen();
+	void dimScreen();
+	void blackScreen();
 
 	// Draw the notification icon
-	void NotifyDraw(const int &x, const int &y) {
-		auto *k = &GetTexture(notify);
-		draw(x - k->w() / 2, y - k->h() / 2, notify);
+	void notifyDraw(const int &x, const int &y) {
+		auto *k = &getTexture(_notify);
+		draw(x - k->w() / 2, y - k->h() / 2, _notify);
 	}
 };
 

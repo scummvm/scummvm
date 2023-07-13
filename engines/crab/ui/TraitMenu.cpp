@@ -71,7 +71,7 @@ void TraitMenu::draw(const pyrodactyl::people::Person *obj) {
 		for (auto t = obj->trait.begin(); t != obj->trait.end() && i != menu.element.end(); ++t, ++i) {
 			i->draw();
 			if (t->unread)
-				g_engine->_imageManager->NotifyDraw(i->x + i->w, i->y);
+				g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 		}
 
 		for (; i != menu.element.end(); ++i)

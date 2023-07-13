@@ -59,7 +59,7 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 			if (nodeValid("notify", node)) {
 				rapidxml::xml_node<char> *notifynode = node->first_node("notify");
 
-				loadImgKey(g_engine->_imageManager->notify, "img", notifynode);
+				loadImgKey(g_engine->_imageManager->_notify, "img", notifynode);
 				tn.load(notifynode);
 				pdm.load(notifynode);
 
@@ -114,7 +114,7 @@ void HUD::internalEvents(bool ShowMap) {
 	if (timer.TargetReached()) {
 		clip.x += clip.w;
 
-		if (clip.x >= g_engine->_imageManager->GetTexture(notify_anim).w())
+		if (clip.x >= g_engine->_imageManager->getTexture(notify_anim).w())
 			clip.x = 0;
 
 		timer.Start();

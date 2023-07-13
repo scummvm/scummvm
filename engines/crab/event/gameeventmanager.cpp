@@ -322,7 +322,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 			g_engine->_eventStore->_anim[_curEvent->_special].draw();
 			break;
 		case EVENT_DIALOG:
-			g_engine->_imageManager->DimScreen();
+			g_engine->_imageManager->dimScreen();
 			if (_oh.show_journal) {
 				info._journal.draw(level.PlayerID());
 				hud.back.draw();
@@ -330,7 +330,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 				_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
 			break;
 		case EVENT_REPLY:
-			g_engine->_imageManager->DimScreen();
+			g_engine->_imageManager->dimScreen();
 			if (_oh.show_journal) {
 				info._journal.draw(level.PlayerID());
 				hud.back.draw();
@@ -344,7 +344,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 			_textin.draw();
 			break;
 		case EVENT_SPLASH:
-			g_engine->_imageManager->DimScreen();
+			g_engine->_imageManager->dimScreen();
 			if (_intro.show_traits) {
 				_per.draw(info, _curEvent->_title);
 				hud.back.draw();
