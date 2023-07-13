@@ -116,7 +116,7 @@ void Journal::draw(const Common::String &id) {
 			int count = 0;
 			for (auto i = category.element.begin(); i != category.element.end() && count < JE_TOTAL; ++i, ++count)
 				if (jo.menu[count].unread)
-					g_engine->_imageManager->NotifyDraw(i->x + i->w, i->y);
+					g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 
 			if (select >= 0 && select < JE_TOTAL)
 				jo.menu[select].draw(bu_map);

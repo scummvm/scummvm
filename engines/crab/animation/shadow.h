@@ -59,7 +59,7 @@ struct ShadowData {
 
 		using namespace pyrodactyl::image;
 		Image dat;
-		g_engine->_imageManager->GetTexture(_img, dat);
+		g_engine->_imageManager->getTexture(_img, dat);
 		_size.x = dat.w() / 2;
 		_size.y = dat.h() / 2;
 	}

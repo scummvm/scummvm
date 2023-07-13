@@ -99,7 +99,7 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 			path_rows = (int)ceil((float)w / (float)path_size.x + .5f); // Adding .5 before casting in order to round up (SZ)
 			path_cols = (int)ceil((float)h / (float)path_size.y + .5f);
 
-			g_engine->_imageManager->tileset.load(path, node);
+			g_engine->_imageManager->_tileset.load(path, node);
 
 			// Reset the layer at which sprites are drawn
 			sprite_layer = 0;
@@ -232,7 +232,7 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 // Purpose: Clear all data from the level
 //------------------------------------------------------------------------
 void TMXMap::reset() {
-	g_engine->_imageManager->tileset.reset();
+	g_engine->_imageManager->_tileset.reset();
 	layer.clear();
 
 	area_nowalk.clear();

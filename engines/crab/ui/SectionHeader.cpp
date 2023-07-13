@@ -52,23 +52,23 @@ void SectionHeader::load(rapidxml::xml_node<char> *node) {
 		Graphics::ManagedSurface *surf = g_engine->_textManager->RenderTextBlended(font, text, col);
 
 		if (align == ALIGN_CENTER) {
-			left.x = x - surf->w / 2 - g_engine->_imageManager->GetTexture(img).w();
-			left.y = y - surf->h / 2 + g_engine->_imageManager->GetTexture(img).h() / 2;
+			left.x = x - surf->w / 2 - g_engine->_imageManager->getTexture(img).w();
+			left.y = y - surf->h / 2 + g_engine->_imageManager->getTexture(img).h() / 2;
 
 			right.x = x + surf->w / 2;
-			right.y = y - surf->h / 2 + g_engine->_imageManager->GetTexture(img).h() / 2;
+			right.y = y - surf->h / 2 + g_engine->_imageManager->getTexture(img).h() / 2;
 		} else if (align == ALIGN_LEFT) {
-			left.x = x - g_engine->_imageManager->GetTexture(img).w();
-			left.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).h() / 2;
+			left.x = x - g_engine->_imageManager->getTexture(img).w();
+			left.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
 
 			right.x = x + surf->w;
-			right.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).h() / 2;
+			right.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
 		} else {
-			left.x = x - surf->w - g_engine->_imageManager->GetTexture(img).w();
-			left.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).h() / 2;
+			left.x = x - surf->w - g_engine->_imageManager->getTexture(img).w();
+			left.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
 
 			right.x = x;
-			right.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).h() / 2;
+			right.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
 		}
 
 		delete surf;

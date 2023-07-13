@@ -55,7 +55,7 @@ void HealthIndicator::draw(int num) {
 		if (num == i->val) {
 			using namespace pyrodactyl::image;
 			g_engine->_imageManager->draw(x, y, i->normal);
-			g_engine->_imageManager->GetTexture(i->glow).alpha(alpha);
+			g_engine->_imageManager->getTexture(i->glow).alpha(alpha);
 			g_engine->_imageManager->draw(x, y, i->glow);
 
 			if (inc) {

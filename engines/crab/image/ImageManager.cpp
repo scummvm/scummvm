@@ -43,14 +43,14 @@ using namespace pyrodactyl::image;
 //------------------------------------------------------------------------
 // Purpose: Load assets here.
 //------------------------------------------------------------------------
-void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
-	for (auto it = map[mapid].begin(); it != map[mapid].end(); ++it)
+void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
+	for (auto it = _map[mapid].begin(); it != _map[mapid].end(); ++it)
 		it->_value.deleteImage();
 
-	map[mapid].clear();
-	XMLDoc image_list(filename);
-	if (image_list.ready()) {
-		rapidxml::xml_node<char> *node = image_list.doc()->first_node("res");
+	_map[mapid].clear();
+	XMLDoc imageList(filename);
+	if (imageList.ready()) {
+		rapidxml::xml_node<char> *node = imageList.doc()->first_node("res");
 		for (auto n = node->first_node("image"); n != NULL; n = n->next_sibling("image")) {
 			ImageKey key;
 			if (loadImgKey(key, "name", n)) {
@@ -68,9 +68,9 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 					valid = loadStr(path, "path", n, false);
 
 				if (valid)
-					map[mapid][key].load(path);
+					_map[mapid][key].load(path);
 				else
-					error("ImageManager::LoadMap : Unable to load image id %u from %s!", key, path.c_str());
+					error("ImageManager::loadMap : Unable to load image id %u from %s!", key, path.c_str());
 #if 0
 					fprintf(stderr, "Unable to load image id %u from %s! SDL Error: %s\n", key, path.c_str(), SDL_GetError());
 #endif
@@ -85,17 +85,17 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 	}
 }
 
-bool ImageManager::Init() {
+bool ImageManager::init() {
 	// First, delete everything that exists
-	Quit();
+	quit();
 
 	// Load common assets
-	LoadMap(g_engine->_filePath->common, MAP_COMMON);
+	loadMap(g_engine->_filePath->common, MAP_COMMON);
 
 	// Load main menu assets
-	LoadMap(g_engine->_filePath->current_r, MAP_CURRENT);
+	loadMap(g_engine->_filePath->current_r, MAP_CURRENT);
 
-	invalid_img = map[MAP_COMMON][0];
+	_invalidImg = _map[MAP_COMMON][0];
 
 	return true;
 }
@@ -103,11 +103,11 @@ bool ImageManager::Init() {
 //------------------------------------------------------------------------
 // Purpose: Add texture to image map
 //------------------------------------------------------------------------
-void ImageManager::AddTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex) {
-	if (map[mapindex].contains(id))
-		FreeTexture(id, mapindex);
+void ImageManager::addTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex) {
+	if (_map[mapindex].contains(id))
+		freeTexture(id, mapindex);
 
-	map[mapindex][id].load(surface);
+	_map[mapindex][id].load(surface);
 #if 0
 	SDL_FreeSurface(surface);
 #endif
@@ -116,26 +116,26 @@ void ImageManager::AddTexture(const ImageKey &id, Graphics::Surface *surface, in
 //------------------------------------------------------------------------
 // Purpose: Get texture for a particular id
 //------------------------------------------------------------------------
-void ImageManager::GetTexture(const ImageKey &id, Image &data) {
-	if (map[MAP_CURRENT].contains(id))
-		data = map[MAP_CURRENT][id];
-	else if (map[MAP_COMMON].contains(id))
-		data = map[MAP_COMMON][id];
+void ImageManager::getTexture(const ImageKey &id, Image &data) {
+	if (_map[MAP_CURRENT].contains(id))
+		data = _map[MAP_CURRENT][id];
+	else if (_map[MAP_COMMON].contains(id))
+		data = _map[MAP_COMMON][id];
 	else
-		data = invalid_img;
+		data = _invalidImg;
 }
 
-Image &ImageManager::GetTexture(const ImageKey &id) {
-	if (map[MAP_CURRENT].contains(id))
-		return map[MAP_CURRENT][id];
-	else if (map[MAP_COMMON].contains(id))
-		return map[MAP_COMMON][id];
+Image &ImageManager::getTexture(const ImageKey &id) {
+	if (_map[MAP_CURRENT].contains(id))
+		return _map[MAP_CURRENT][id];
+	else if (_map[MAP_COMMON].contains(id))
+		return _map[MAP_COMMON][id];
 
-	return invalid_img;
+	return _invalidImg;
 }
 
-bool ImageManager::ValidTexture(const ImageKey &id) {
-	if (id != 0 && (map[MAP_CURRENT].contains(id) || map[MAP_COMMON].contains(id)))
+bool ImageManager::validTexture(const ImageKey &id) {
+	if (id != 0 && (_map[MAP_CURRENT].contains(id) || _map[MAP_COMMON].contains(id)))
 		return true;
 
 	return false;
@@ -146,7 +146,7 @@ bool ImageManager::ValidTexture(const ImageKey &id) {
 //------------------------------------------------------------------------
 void ImageManager::draw(const int &x, const int &y, const ImageKey &id, Common::Rect *clip,
 						const TextureFlipType &flip) {
-	GetTexture(id).draw(x, y, clip, flip);
+	getTexture(id).draw(x, y, clip, flip);
 }
 
 //------------------------------------------------------------------------
@@ -154,13 +154,13 @@ void ImageManager::draw(const int &x, const int &y, const ImageKey &id, Common::
 //------------------------------------------------------------------------
 void ImageManager::draw(const int &x, const int &y, const ImageKey &id, Rect *clip,
 						const TextureFlipType &flip) {
-	GetTexture(id).draw(x, y, clip, flip);
+	getTexture(id).draw(x, y, clip, flip);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Dim the screen by drawing a 128 alpha black rectangle over it
 //------------------------------------------------------------------------
-void ImageManager::DimScreen() {
+void ImageManager::dimScreen() {
 	warning("STUB: ImageManger::DimScreen()");
 
 #if 0
@@ -170,8 +170,8 @@ void ImageManager::DimScreen() {
 #endif
 }
 
-void ImageManager::BlackScreen() {
-	warning("STUB: ImageManger::BlackScreen()");
+void ImageManager::blackScreen() {
+	warning("STUB: ImageManger::blackScreen()");
 
 #if 0
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
@@ -182,12 +182,12 @@ void ImageManager::BlackScreen() {
 //------------------------------------------------------------------------
 // Purpose: free resources
 //------------------------------------------------------------------------
-void ImageManager::Quit() {
+void ImageManager::quit() {
 	for (int i = 0; i < MAP_TOTAL; i++) {
-		for (auto it = map[i].begin(); it != map[i].end(); ++it)
+		for (auto it = _map[i].begin(); it != _map[i].end(); ++it)
 			it->_value.deleteImage();
 
-		map[i].clear();
+		_map[i].clear();
 	}
 }
 

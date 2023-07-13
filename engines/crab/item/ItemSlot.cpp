@@ -110,7 +110,7 @@ void ItemSlot::draw() {
 		item.draw(x, y);
 
 	if (unread)
-		g_engine->_imageManager->NotifyDraw(x + w, y);
+		g_engine->_imageManager->notifyDraw(x + w, y);
 }
 
 //------------------------------------------------------------------------
