@@ -639,18 +639,19 @@ static const uint16 sci11SpeedTestPatch[] = {
 
 // The speed test originally used a signed comparison, causing the test to take
 //  nine minutes if kGetTime rolled over during it. This could happen when
-//  restarting the game. This bug conflicts with our speed test patch in KQ4,
-//  because after its very long introduction it runs the test again.
-//  We fix this with an unsigned comparison, as Sierra did.
+//  restarting the game. We fix this bug with an unsigned comparison, as Sierra
+//  did, otherwise our patch will cause the test to hang when kGetTime is large.
 static const uint16 sci0SpeedTestOverflowSignature[] = {
 	SIG_MAGICDWORD,
-	0x43, 0x46, 0x00,                   // callk GetTime
+	0x8b, 0x00,                         // lsl 00
+	0x76,                               // push0
+	0x43, SIG_ADDTOOFFSET(+1), 0x00,    // callk GetTime 00
 	0x22,                               // lt?
 	SIG_END
 };
 
 static const uint16 sci0SpeedTestOverflowPatch[] = {
-	PATCH_ADDTOOFFSET(+3),
+	PATCH_ADDTOOFFSET(+6),
 	0x2a,                               // ult?
 	PATCH_END
 };
