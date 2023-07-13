@@ -19,64 +19,48 @@
  *
  */
 
-#ifndef DLC_DLCMANAGER_H
-#define DLC_DLCMANAGER_H
+#ifndef BACKENDS_DLC_ScummVMCloud_ScummVMCloud_H
+#define BACKENDS_DLC_ScummVMCloud_ScummVMCloud_H
 
-#include "common/str.h"
-#include "common/str-array.h"
-#include "common/queue.h"
-#include "common/singleton.h"
 #include "backends/dlc/store.h"
 #include "backends/dlc/dlcdesc.h"
+#include "backends/networking/curl/session.h"
 #include "backends/networking/curl/request.h"
+#include "common/queue.h"
 
 namespace DLC {
+namespace ScummVMCloud {
 
-class DLCManager : public Common::Singleton<DLCManager> {
+class ScummVMCloud: public DLC::Store {
 
-	Common::Array<DLCDesc*> _dlcs;
+Networking::Session session;
 
-	Store *_store;
+public:	
+	ScummVMCloud() {}
+	virtual ~ScummVMCloud() {}
 
-	bool _isDLCDownloading = false;
-	Common::String _currentDownloadingDLC;
+	virtual void init() override {}
 
-public:
-	Common::Queue<DLCDesc*> _queuedDownloadTasks;
-	
-	DLCManager();
-	virtual ~DLCManager() {}
+	virtual void requestInfo() override {}
 
-	void init();
+	virtual void getDownloadState() override {}
 
-	// Runs only once in init()
-	void getAllDLCs(Common::Array<DLCDesc*> &dlcs);
+	virtual void requestDownload() override {}
 
-	// Requested by GUI to show all available DLCs in simple list view
-	Common::U32StringArray getDLCList();
+	virtual void getBytesDownloaded() override {}
 
-	// Add download task to queue, runs on click download button, 
-	void addDownload(uint32 idx);
+	virtual void cancelDownload() override {}
 
-	bool cancelDownload(uint32 idx);
+	virtual void getAllDLCs(Common::Array<DLCDesc*> &dlcs) override;
 
-	void processDownloadQueue();
+	virtual void startDownloadAsync(Common::String &id) override;
 
-	// Returns the % download progress of current downloading game
-	uint32 downloadProgress();
-
-	Common::String getCurrentDownloadingDLC();
-
-	void startDownloadAsync(Common::String &id);
+	void downloadFileCallback(Networking::DataResponse response);
 
 	void errorCallback(Networking::ErrorResponse error);
-
-	void downloadFileCallback(Networking::DataResponse r);
 };
 
-#define DLCMan        DLC::DLCManager::instance()
-
+} // End of namespace ScummVMCloud
 } // End of namespace DLC
-
 
 #endif

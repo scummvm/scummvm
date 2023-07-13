@@ -24,6 +24,7 @@
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 #include "common/translation.h"
+#include "backends/dlc/dlcmanager.h"
 
 namespace GUI {
 
@@ -78,6 +79,7 @@ void DownloadGamesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kDownloadSelectedCmd: {
 		MessageDialog dialog("Downloading: " + _gamesList->getSelectedString());
 		dialog.runModal();
+		DLCMan.addDownload(1);
 		}
 		break;
 	default:

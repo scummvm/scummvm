@@ -19,41 +19,31 @@
  *
  */
 
-#ifndef DLC_STORE_H
-#define DLC_STORE_H
+#ifndef DLC_DLCT_H
+#define DLC_DLCT_H
 
 #include "common/str.h"
-#include "common/array.h"
-#include "common/queue.h"
-#include "backends/dlc/dlcdesc.h"
 
 namespace DLC {
 
-class Store {
-	
+class DLCDesc {
+
 public:
-	Store() {}
-	virtual ~Store() {}
-
-	virtual void init() = 0;
-
-	virtual void requestInfo() = 0;
-
-	virtual void getDownloadState() = 0;
-
-	virtual void requestDownload() = 0;
-
-	virtual void getBytesDownloaded() = 0;
-
-	virtual void cancelDownload() = 0;
-
-	virtual void getAllDLCs(Common::Array<DLCDesc*> &dlcs) = 0;
-
-	virtual void startDownloadAsync(Common::String &id) = 0;
-
+	enum State {
+		kAvailable,
+		kInProgress,
+		kDownloaded,
+		kCancelled,
+		kErrorDownloading
+	};
+	Common::String name;
+	Common::String id;
+	uint32 size;
+	uint32 idx;
+	State state;
 };
 
-} // End of namespace DLC
 
+} // End of namespace DLC
 
 #endif
