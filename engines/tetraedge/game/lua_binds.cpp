@@ -1766,10 +1766,7 @@ static void SetCharacterLookChar(const Common::String &charname, const Common::S
 		return;
 	}
 	character->setLookingAtTallThing(tall);
-
-	if (f != 0.0)
-		warning("TODO: Use float param %f in SetCharacterLookChar", f);
-	character->setCharLookingAtFloat(f);
+	character->setCharLookingAtOffset(f);
 
 	if (destname.empty()) {
 		character->setCharLookingAt(nullptr);

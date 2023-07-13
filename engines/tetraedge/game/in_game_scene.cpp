@@ -1682,9 +1682,19 @@ void InGameScene::update() {
 			}
 		}
 		if (_character->charLookingAt()) {
-			TeVector3f32 targetpos = _character->charLookingAt()->_model->position();
-			if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
-				targetpos = targetpos * _character->lastHeadBoneTrans();
+			Character *targetc = _character->charLookingAt();
+			TeVector3f32 targetpos;
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+				targetpos = targetc->_model->position();
+			else
+				targetpos = targetc->_model->worldTransformationMatrix() * targetc->lastHeadBoneTrans();
+
+			//
+			// Note: The below general code for NPCs is different in Syberia 2,
+			// and uses c->charLookingAtOffset(), but the player look-at code
+			// is the same in both games and always adds 17 for "tall" characters.
+			//
+
 			if (_character->lookingAtTallThing())
 				targetpos.y() += 17;
 			TeVector2f32 headRot(getHeadHorizontalRotation(_character, targetpos),
@@ -1699,13 +1709,15 @@ void InGameScene::update() {
 		}
 	}
 	for (Character *c : _characters) {
-		if (c->charLookingAt()) {
-			TeVector3f32 targetpos = c->charLookingAt()->_model->position();
+		Character *targetc = c->charLookingAt();
+		if (targetc) {
+			TeVector3f32 targetpos;
 			if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+				targetpos = targetc->_model->position();
 				if (c->lookingAtTallThing())
 					targetpos.y() += 17;
 			} else {
-				targetpos = targetpos * c->lastHeadBoneTrans();
+				targetpos = targetc->_model->worldTransformationMatrix() * targetc->lastHeadBoneTrans();
 			}
 			TeVector2f32 headRot(getHeadHorizontalRotation(c, targetpos),
 					getHeadVerticalRotation(c, targetpos));
@@ -1714,6 +1726,12 @@ void InGameScene::update() {
 				headRot.setX((float)M_PI_2);
 			else if (hangle < -90)
 				headRot.setX((float)-M_PI_2);
+
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
+				if (c->lookingAtTallThing())
+					headRot.setY(headRot.getY() + c->charLookingAtOffset());
+			}
+
 			c->setHeadRotation(headRot);
 			c->setHasAnchor(true);
 		}

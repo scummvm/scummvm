@@ -169,7 +169,8 @@ public:
 	bool needsSomeUpdate() const { return _needsSomeUpdate; }
 	void setNeedsSomeUpdate(bool val) { _needsSomeUpdate = val; }
 	void setCharLookingAt(Character *other) { _charLookingAt = other; }
-	void setCharLookingAtFloat(float f) { _charLookingAtFloat = f; }
+	void setCharLookingAtOffset(float val) { _charLookingAtOffset = val; }
+	float charLookingAtOffset() const { return _charLookingAtOffset; }
 	const TeVector3f32 &positionCharacter() const { return _positionCharacter; }
 	void setPositionCharacter(const TeVector3f32 &val) { _positionCharacter = val; }
 	bool positionFlag() const { return _positionFlag; }
@@ -211,7 +212,7 @@ private:
 	Common::String _animSound;
 
 	Character *_charLookingAt;
-	float _charLookingAtFloat; // TODO: what is this?
+	float _charLookingAtOffset; // Only used in Syberia 2
 
 	uint _animSoundOffset;
 
