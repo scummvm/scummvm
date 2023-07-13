@@ -35,6 +35,7 @@
 #include "engines/nancy/action/riddlepuzzle.h"
 #include "engines/nancy/action/overridelockpuzzle.h"
 #include "engines/nancy/action/bombpuzzle.h"
+#include "engines/nancy/action/soundequalizerpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -152,6 +153,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new StopSound(); // StopAndUnloadSound, but we always unload
 	case 160:
 		return new HintSystem();
+	case 200:
+		return new SoundEqualizerPuzzle();
 	case 201:
 		return new TowerPuzzle();
 	case 202:

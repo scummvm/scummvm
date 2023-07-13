@@ -71,6 +71,14 @@ public:
 	void calculatePan(const SoundDescription &description);
 	void calculatePanForAllSounds();
 
+	void setVolume(uint16 channelID, uint16 volume);
+	void setVolume(const SoundDescription &description, uint16 volume);
+	void setVolume(const Common::String &chunkName, uint16 volume);
+
+	void setRate(uint16 channelID, uint32 rate);
+	void setRate(const SoundDescription &description, uint32 rate);
+	void setRate(const Common::String &chunkName, uint32 rate);
+
 	// Used when changing scenes
 	void stopAndUnloadSpecificSounds();
 

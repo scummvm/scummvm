@@ -78,6 +78,15 @@ struct RiddlePuzzleData : public PuzzleData {
 	int8 incorrectRiddleID;
 };
 
+struct SoundEqualizerPuzzleData : public PuzzleData {
+	SoundEqualizerPuzzleData();
+
+	static constexpr uint32 getTag() { return MKTAG('S', 'E', 'Q', 'L'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<byte> sliderValues;
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy

@@ -96,6 +96,14 @@ void RiddlePuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncArray(solvedRiddleIDs.data(), numRiddles, Common::Serializer::Byte);
 }
 
+SoundEqualizerPuzzleData::SoundEqualizerPuzzleData() {
+	sliderValues.resize(6, 255);
+}
+
+void SoundEqualizerPuzzleData::synchronize(Common::Serializer &ser) {
+	ser.syncArray(sliderValues.data(), 6, Common::Serializer::Byte);
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -106,6 +114,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new TowerPuzzleData();
 	case RiddlePuzzleData::getTag():
 		return new RiddlePuzzleData();
+	case SoundEqualizerPuzzleData::getTag():
+		return new SoundEqualizerPuzzleData();
 	default:
 		return nullptr;
 	}

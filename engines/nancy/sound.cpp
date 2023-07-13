@@ -486,6 +486,30 @@ void SoundManager::calculatePanForAllSounds() {
 	}
 }
 
+void SoundManager::setVolume(uint16 channelID, uint16 volume) {
+	_mixer->setChannelVolume(_channels[channelID].handle, volume);
+}
+
+void SoundManager::setVolume(const SoundDescription &description, uint16 volume) {
+	setVolume(description.channelID, volume);
+}
+
+void SoundManager::setVolume(const Common::String &chunkName, uint16 volume) {
+	setVolume(_commonSounds[chunkName], volume);
+}
+
+void SoundManager::setRate(uint16 channelID, uint32 rate) {
+	_mixer->setChannelRate(_channels[channelID].handle, rate);
+}
+
+void SoundManager::setRate(const SoundDescription &description, uint32 rate) {
+	setRate(description.channelID, rate);
+}
+
+void SoundManager::setRate(const Common::String &chunkName, uint32 rate) {
+	setRate(_commonSounds[chunkName], rate);
+}
+
 void SoundManager::stopAndUnloadSpecificSounds() {
 	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
 		// Don't stop the map sound in certain scenes
