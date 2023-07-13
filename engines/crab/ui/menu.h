@@ -127,32 +127,32 @@ protected:
 	int HandleKeyboard(const Common::Event &Event) {
 		using namespace pyrodactyl::input;
 
-		if (g_engine->_inputManager->GetKeyBindingMode() != KBM_UI) {
-			g_engine->_inputManager->SetKeyBindingMode(KBM_UI);
+		if (g_engine->_inputManager->getKeyBindingMode() != KBM_UI) {
+			g_engine->_inputManager->setKeyBindingMode(KBM_UI);
 		}
 
 		if (!element.empty()) {
 			if (path_type != PATH_HORIZONTAL) {
-				if (g_engine->_inputManager->State(IU_DOWN)) {
+				if (g_engine->_inputManager->state(IU_DOWN)) {
 					Next();
 					latest_input = KEYBOARD;
-				} else if (g_engine->_inputManager->State(IU_UP)) {
+				} else if (g_engine->_inputManager->state(IU_UP)) {
 					Prev();
 					latest_input = KEYBOARD;
 				}
 			}
 
 			if (path_type != PATH_VERTICAL) {
-				if (g_engine->_inputManager->State(IU_RIGHT)) {
+				if (g_engine->_inputManager->state(IU_RIGHT)) {
 					Next();
 					latest_input = KEYBOARD;
-				} else if (g_engine->_inputManager->State(IU_LEFT)) {
+				} else if (g_engine->_inputManager->state(IU_LEFT)) {
 					Prev();
 					latest_input = KEYBOARD;
 				}
 			}
 
-			if (g_engine->_inputManager->State(IU_ACCEPT) && hover_index != -1)
+			if (g_engine->_inputManager->state(IU_ACCEPT) && hover_index != -1)
 				return hover_index;
 
 			// We pressed a key, which means we have to update the hovering status
@@ -265,7 +265,7 @@ public:
 			if (result != -1) {
 				// Reset the menu state
 				reset();
-				g_engine->_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
+				g_engine->_inputManager->setKeyBindingMode(pyrodactyl::input::KBM_GAME);
 				return result;
 			}
 		}
@@ -284,7 +284,7 @@ public:
 			if (it->handleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
 				// Reset the menu state
 				reset();
-				g_engine->_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
+				g_engine->_inputManager->setKeyBindingMode(pyrodactyl::input::KBM_GAME);
 				return i;
 			}
 

@@ -91,9 +91,9 @@ Common::KeymapArray CrabMetaEngine::initKeymaps(const char *target) const {
 
 	KeymapArray arr;
 
-	Keymap *gameKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForGame();
-	Keymap *uiKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForUI();
-	Keymap *hudKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForHUD();
+	Keymap *gameKeymaps = Crab::pyrodactyl::input::InputManager::getDefaultKeyMapsForGame();
+	Keymap *uiKeymaps = Crab::pyrodactyl::input::InputManager::getDefaultKeyMapsForUI();
+	Keymap *hudKeymaps = Crab::pyrodactyl::input::InputManager::getDefaultKeyMapsForHUD();
 
 	arr.push_back(gameKeymaps);
 	arr.push_back(uiKeymaps);

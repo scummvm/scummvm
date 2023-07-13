@@ -168,7 +168,7 @@ void HUD::SetTooltip() {
 	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
 		i->tooltip.text = tooltip[count] + " (" + i->hotkey.name() + ")";
 
-	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->GetAssociatedKey(IG_PAUSE) + ")";
+	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->getAssociatedKey(IG_PAUSE) + ")";
 }
 
 void HUD::setUI() {

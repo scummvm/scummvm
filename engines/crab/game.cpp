@@ -214,7 +214,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info._talkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.lastPerson(), Event);
+					info._talkKeyDown = g_engine->_inputManager->state(IG_TALK) || level.ContainsClick(info.lastPerson(), Event);
 
 					level.handleEvents(info, Event);
 

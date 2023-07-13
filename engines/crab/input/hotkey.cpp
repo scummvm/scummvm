@@ -38,7 +38,7 @@ using namespace pyrodactyl::input;
 void HotKey::load(rapidxml::xml_node<char> *node) {
 	loadEnum(_input, "input", node);
 
-	_name = g_engine->_inputManager->GetAssociatedKey(_input);
+	_name = g_engine->_inputManager->getAssociatedKey(_input);
 }
 
 #if 0
@@ -62,7 +62,7 @@ bool HotKey::handleEvents(const Common::Event &Event) {
 	//warning("STUB: HotKey::handleEvents()");
 
 	if (_input > IT_NONE && _input < IT_TOTAL) {
-		return g_engine->_inputManager->State(_input);
+		return g_engine->_inputManager->state(_input);
 	}
 
 	return false;

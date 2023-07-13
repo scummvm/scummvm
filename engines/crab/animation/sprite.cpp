@@ -370,20 +370,20 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 	{
 		// Disable destination as soon as player presses a direction key
 		// X axis
-		if (g_engine->_inputManager->State(IG_LEFT)) {
+		if (g_engine->_inputManager->state(IG_LEFT)) {
 			_aiData._dest._active = false;
 			xVel(-player_speed * sc._walkVelMod.x);
-		} else if (g_engine->_inputManager->State(IG_RIGHT)) {
+		} else if (g_engine->_inputManager->state(IG_RIGHT)) {
 			_aiData._dest._active = false;
 			xVel(player_speed * sc._walkVelMod.x);
 		} else if (!_aiData._dest._active)
 			xVel(0.0f);
 
 		// Y axis
-		if (g_engine->_inputManager->State(IG_UP)) {
+		if (g_engine->_inputManager->state(IG_UP)) {
 			_aiData._dest._active = false;
 			yVel(-player_speed * sc._walkVelMod.y);
-		} else if (g_engine->_inputManager->State(IG_DOWN)) {
+		} else if (g_engine->_inputManager->state(IG_DOWN)) {
 			_aiData._dest._active = false;
 			yVel(player_speed * sc._walkVelMod.y);
 		} else if (!_aiData._dest._active)

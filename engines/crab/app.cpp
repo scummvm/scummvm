@@ -325,7 +325,7 @@ App::~App() {
 	g_engine->_imageManager->quit();
 	g_engine->_musicManager->Quit();
 	g_engine->_textManager->Quit();
-	g_engine->_inputManager->Quit();
+	g_engine->_inputManager->quit();
 	g_engine->_loadingScreen->Quit();
 	g_engine->_mouse->Quit();
 #if 0

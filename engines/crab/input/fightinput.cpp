@@ -41,9 +41,9 @@ void FightInput::load(rapidxml::xml_node<char> *node) {
 }
 
 FightAnimationType FightInput::handleEvents(const Common::Event &event) {
-	if (g_engine->_inputManager->State(IG_ATTACK))
+	if (g_engine->_inputManager->state(IG_ATTACK))
 		return FA_ATTACK;
-	else if (g_engine->_inputManager->State(IG_BLOCK))
+	else if (g_engine->_inputManager->state(IG_BLOCK))
 		return FA_BLOCK;
 
 	return FA_IDLE;

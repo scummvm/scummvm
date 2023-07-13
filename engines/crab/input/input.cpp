@@ -40,7 +40,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Return pressed/depressed state of key
 //------------------------------------------------------------------------
-bool InputManager::State(const InputType &val) {
+bool InputManager::state(const InputType &val) {
 	return _ivState[val];
 
 #if 0
@@ -106,7 +106,7 @@ const int InputManager::Equals(const InputType &val, const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Load from file
 //------------------------------------------------------------------------
-void InputManager::Init() {
+void InputManager::init() {
 
 	const Common::String DEFAULT_FILENAME = "res/controls.xml";
 	load(DEFAULT_FILENAME);
@@ -154,15 +154,15 @@ void InputManager::Init() {
 // Purpose: Load key & controller binding settings from file
 //------------------------------------------------------------------------
 void InputManager::load(const Common::String &filename) {
-	XMLDoc control_list(filename);
-	if (control_list.ready()) {
-		rapidxml::xml_node<char> *node = control_list.doc()->first_node("controls");
+	XMLDoc controlList(filename);
+	if (controlList.ready()) {
+		rapidxml::xml_node<char> *node = controlList.doc()->first_node("controls");
 		if (nodeValid(node)) {
-			loadNum(version, "version", node);
+			loadNum(_version, "version", node);
 
 			int i = 0;
 			for (auto n = node->first_node(); n != NULL && i < IT_TOTAL; n = n->next_sibling(), ++i)
-				iv[i].loadState(n);
+				_iv[i].loadState(n);
 		}
 	}
 }
@@ -170,8 +170,8 @@ void InputManager::load(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Initialize the controller if it is plugged in
 //------------------------------------------------------------------------
-void InputManager::AddController() {
-	warning("STUB: InputManager::AddController()");
+void InputManager::addController() {
+	warning("STUB: InputManager::addController()");
 
 #if 0
 	if (SDL_NumJoysticks() > 0) {
@@ -196,39 +196,39 @@ void InputManager::HandleController(const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Create and restore backup
 //------------------------------------------------------------------------
-void InputManager::CreateBackup() {
+void InputManager::createBackup() {
 	for (int i = 0; i < IT_TOTAL; ++i)
-		backup[i] = iv[i];
+		_backup[i] = _iv[i];
 }
 
-void InputManager::RestoreBackup() {
+void InputManager::restoreBackup() {
 	for (int i = 0; i < IT_TOTAL; ++i)
-		iv[i] = backup[i];
+		_iv[i] = _backup[i];
 }
 
-void InputManager::PopulateKeyTable() {
+void InputManager::populateKeyTable() {
 	for (unsigned int type = IG_START; type < IT_TOTAL; type++) {
 		_keyDescs[type] = '\0';
 	}
 
-	SetKeyBindingMode(KBM_GAME);
+	setKeyBindingMode(KBM_GAME);
 	for (unsigned int i = IG_START; i < IG_SIZE + IG_START; i++) {
-		GetAssociatedKey((InputType)i);
+		getAssociatedKey((InputType)i);
 	}
 
-	SetKeyBindingMode(KBM_UI);
+	setKeyBindingMode(KBM_UI);
 	for (unsigned int i = IU_START; i < IU_SIZE + IU_START; i++) {
-		GetAssociatedKey((InputType)i);
+		getAssociatedKey((InputType)i);
 	}
 }
 
-Common::String InputManager::GetAssociatedKey(const InputType &type) {
+Common::String InputManager::getAssociatedKey(const InputType &type) {
 	// Return cached copy if available
 	if (_keyDescs[type].size() > 0)
 		return _keyDescs[type];
 
-	Common::KeymapArray keymaparr = g_system->getEventManager()->getKeymapper()->getKeymaps();
-	for(Common::Keymap *keymap : keymaparr) {
+	Common::KeymapArray keymapArr = g_system->getEventManager()->getKeymapper()->getKeymaps();
+	for(Common::Keymap *keymap : keymapArr) {
 		if (keymap->getType() != Common::Keymap::kKeymapTypeGame)
 			continue;
 
@@ -248,7 +248,7 @@ Common::String InputManager::GetAssociatedKey(const InputType &type) {
 //------------------------------------------------------------------------
 // Purpose: Save to file
 //------------------------------------------------------------------------
-void InputManager::Save() {
+void InputManager::save() {
 	warning("STUB: InputManager::Save()");
 
 #if 0
@@ -284,7 +284,7 @@ void InputManager::Save() {
 #endif
 }
 
-Common::Keymap* InputManager::GetDefaultKeyMapsForGame() {
+Common::Keymap* InputManager::getDefaultKeyMapsForGame() {
 	using namespace Common;
 
 	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest-Game", "Keymappings for Game");
@@ -324,7 +324,7 @@ Common::Keymap* InputManager::GetDefaultKeyMapsForGame() {
 	return keymap;
 }
 
-Common::Keymap* InputManager::GetDefaultKeyMapsForUI() {
+Common::Keymap* InputManager::getDefaultKeyMapsForUI() {
 	using namespace Common;
 
 	Keymap *uiKeymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest-UI", "Keymappings for UI");
@@ -394,7 +394,7 @@ Common::Keymap* InputManager::GetDefaultKeyMapsForUI() {
 	return uiKeymap;
 }
 
-Common::Keymap* InputManager::GetDefaultKeyMapsForHUD() {
+Common::Keymap* InputManager::getDefaultKeyMapsForHUD() {
 	using namespace Common;
 
 	Keymap *hudKeymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest-HUD", "Keymappings for HUD");
@@ -424,7 +424,7 @@ Common::Keymap* InputManager::GetDefaultKeyMapsForHUD() {
 	return hudKeymap;
 }
 
-void InputManager::SetKeyBindingMode(KeyBindingMode mode) {
+void InputManager::setKeyBindingMode(KeyBindingMode mode) {
 	_keyMode = mode;
 
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
@@ -444,7 +444,7 @@ void InputManager::SetKeyBindingMode(KeyBindingMode mode) {
 	}
 
 	// Clear All inputs
-	ClearInputs();
+	clearInputs();
 }
 
 } // End of namespace Crab

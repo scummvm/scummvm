@@ -159,7 +159,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 			tone.value[element_count] = dat._reply[reply_count]._tone;
 
 			const InputType type = static_cast<InputType>(IU_REPLY_0 + element_count);
-			Common::String text = g_engine->_inputManager->GetAssociatedKey(type);
+			Common::String text = g_engine->_inputManager->getAssociatedKey(type);
 			text += ". " + i->_text;
 			info.insertName(text);
 

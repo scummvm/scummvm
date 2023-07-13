@@ -87,8 +87,8 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 		}
 		break;
 	case STATE_NAME:
-		if (g_engine->_inputManager->GetKeyBindingMode() != input::KBM_UI)
-			g_engine->_inputManager->SetKeyBindingMode(KBM_UI);
+		if (g_engine->_inputManager->getKeyBindingMode() != input::KBM_UI)
+			g_engine->_inputManager->setKeyBindingMode(KBM_UI);
 
 		if (ta_name.handleEvents(Event)) {
 			if (index <= (int)slot_info.size() && index != 0)
@@ -97,11 +97,11 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 			selected = ta_name.text;
 			state = STATE_NORMAL;
 			reset();
-			g_engine->_inputManager->SetKeyBindingMode(KBM_GAME);
+			g_engine->_inputManager->setKeyBindingMode(KBM_GAME);
 			return true;
 		}
 
-		if (g_engine->_inputManager->State(IU_BACK)) {
+		if (g_engine->_inputManager->state(IU_BACK)) {
 			ta_name.text = "New Save";
 			state = STATE_NORMAL;
 		}

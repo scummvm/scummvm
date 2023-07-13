@@ -80,7 +80,7 @@ bool TextArea::handleEvents(const Common::Event &Event, bool numbers_only) {
 			// Append the character to string
 			text += Event.kbd.ascii;
 		}
-	} else if (g_engine->_inputManager->State(IU_ACCEPT) && text.size() != 0) {
+	} else if (g_engine->_inputManager->state(IU_ACCEPT) && text.size() != 0) {
 		// Now play the accept sound
 		g_engine->_musicManager->PlayEffect(se_accept, 0);
 
