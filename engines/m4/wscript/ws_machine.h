@@ -195,7 +195,7 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 extern void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	uint32 machHash, machine *sendM, int32 msgCount);
 
-#define kernel_spawn_machine(name,hash,callback) TriggerMachineByHash(hash, NULL, -1, -1, callback, FALSE, (char*)name)
+#define kernel_spawn_machine(name,hash,callback) TriggerMachineByHash(hash, nullptr, -1, -1, callback, false, name)
 #define kernel_terminate_machine(m) TerminateMachine(m)
 
 } // End of namespace M4

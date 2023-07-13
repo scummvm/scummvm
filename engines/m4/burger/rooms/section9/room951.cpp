@@ -66,7 +66,8 @@ static seriesStreamBreak planet_x_hilltop_a[] = {
 	{ 134,  "951Z001", 2, 230, NO_TRIGGER, 0, nullptr, 0 },
 	{ 158,  "951_006", 1, 255, NO_TRIGGER, 0, nullptr, 0 },
 	{ 165,    nullptr, 0,   0, NO_TRIGGER, 0, nullptr, 0 },
-	{  -1,    nullptr, 0,   0, NO_TRIGGER, 0, nullptr, 0 }
+	{  -1,    nullptr, 0,   0, NO_TRIGGER, 0, nullptr, 0 },
+	STREAM_BREAK_END
 };
 
 void Room951::preload() {
@@ -89,9 +90,9 @@ void Room951::daemon() {
 		digi_preload("951music", -1);
 		digi_play("951music", 1, 255, START_PLANET_X_HILLTOP_A, -1);
 		digi_preload("952music", -1);
-#ifdef TODO
-		digi_preload_stream_breaks(planet_x_hilltop_a);
 
+		digi_preload_stream_breaks(planet_x_hilltop_a);
+#ifdef TODO
 		digi_preload_stream_breaks(planet_x_low_shot);
 		digi_preload_stream_breaks(planet_x_hilltop_b);
 		digi_preload_stream_breaks(panorama_a);

@@ -29,20 +29,6 @@
 namespace M4 {
 namespace Burger {
 
-struct seriesStreamBreak {
-	int32 frame = 0;
-	const char *sound = nullptr;
-	int32 channel = 0;
-	int32 volume = 0;
-	int32 trigger = 0;
-	uint32 flags = 0;
-	const int32 *variable = nullptr;
-	int32 value = 0;
-};
-
-// Used as last line of seriesStreamBreak arrays
-#define SERIES_STREAM_BREAK_END -1,nullptr,0,0,NO_TRIGGER,nullptr,nullptr,nullptr
-
 struct seriesPlayBreak {
 	int32 firstFrame = 0;
 	int32 lastFrame = 0;
@@ -57,7 +43,6 @@ struct seriesPlayBreak {
 };
 #define WITH_SHADOW     1       // Flag for seriesPlayBreak
 #define PRELOAD_SOUNDS  2       // Flag for seriesPlayBreak
-#define SERIES_PLAY_BREAK_END -1,-1,nullptr,0,0,NO_TRIGGER,nullptr,0,nullptr,nullptr        // used as last line of seriesPlayBreak arrays
 
 struct seriesPlayer {
 	seriesPlayBreak *break_list = nullptr;	// Holds the list of breaks for digi plays

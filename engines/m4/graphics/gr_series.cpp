@@ -22,8 +22,17 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/core/errors.h"
 #include "m4/wscript/ws_load.h"
+#include "m4/wscript/ws_machine.h"
+#include "m4/wscript/wst_regs.h"
+#include "m4/vars.h"
 
 namespace M4 {
+
+#define CHECK_SERIES if (!_G(globals)) error_show(FL, 'SERI');
+
+static void series_trigger_dispatch_callback(frac16 myMessage, struct machine * /*sender*/) {
+	kernel_trigger_dispatch(myMessage);
+}
 
 int32 series_load(const char *seriesName, int32 assetIndex, RGB8 *myPal) {
 	int32 myAssetIndex = AddWSAssetCELS(seriesName, assetIndex, myPal);
@@ -51,6 +60,53 @@ machine *series_play_xy(char *seriesName, int32 loopCount, uint32 flags,
 		int32 x, int32 y, int32 s, int32 layer, int32 frameRate, int16 triggerNum) {
 	error("TODO: series_play_xy");
 	return nullptr;
+}
+
+machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger) {
+	machine *m;
+	StreamFile *streamFil = new StreamFile(seriesName);
+
+	//store the frameRate in g_temp1
+	//if it is < 0, the default frame rate for the ss will be used
+	_G(globals)[GLB_TEMP_1] = frameRate << 16;
+
+	//an unusual way to use global regs, but a FILE* is as good a value as any other...
+
+	_G(globals)[GLB_TEMP_4] = (frac16)(streamFil); //apr29
+
+	//set the callback trigger
+	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
+
+	//set the layer
+	_G(globals)[GLB_TEMP_6] = layer << 16;
+
+	m = kernel_spawn_machine(seriesName, HASH_STREAM_MACHINE, series_trigger_dispatch_callback);
+	return m;
+}
+
+bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
+	CHECK_SERIES
+
+	// Parameter verification
+	if (!m)
+		return false;
+
+	_G(globals)[GLB_TEMP_2] = frameNum << 16;
+	_G(globals)[GLB_TEMP_3] = kernel_trigger_create(trigger);
+
+	//send the message to the machine to accept the new callback frame num and trigger
+	SendWSMessage(0x10000, 0, m, 0, NULL, 1);
+
+	return true;
+}
+
+void series_set_frame_rate(machine *m, int32 newFrameRate) {
+	CHECK_SERIES
+
+	if ((!m) || (!m->myAnim8) || !VerifyMachineExists(m))
+		error_show(FL, 'SSFR');
+
+	m->myAnim8->myRegs[IDX_CELS_FRAME_RATE] = newFrameRate << 16;
 }
 
 } // namespace M4

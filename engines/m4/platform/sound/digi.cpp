@@ -44,8 +44,9 @@ void Digi::unload_sounds() {
 		unload(_names[i]);
 }
 
-void Digi::preload(const Common::String &name, int roomNum) {
+bool Digi::preload(const Common::String &name, int roomNum) {
 	warning("TODO: Digi::preload - %s, %d", name.c_str(), roomNum);
+	return false;
 }
 
 void Digi::unload(const Common::String &name) {
@@ -80,8 +81,12 @@ void Digi::read_another_chunk() {
 
 } // namespace Sound
 
-void digi_preload(const Common::String &name, int roomNum) {
-	_G(digi).preload(name, roomNum);
+bool digi_preload(const Common::String &name, int roomNum) {
+	return _G(digi).preload(name, roomNum);
+}
+
+void digi_unload(const Common::String &name) {
+	_G(digi).unload(name);
 }
 
 int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {

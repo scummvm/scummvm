@@ -951,7 +951,7 @@ void IntoTheState(machine * m) {
 
 // This proc creates an instance of a machine based on the machine chunk
 
-machine *TriggerMachineByHash(int32 myHash, Anim8 * parentAnim8, int32 dataHash, int32 dataRow, MessageCB CintrMsg, bool debug, const char *machName) {
+machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, int32 dataRow, MessageCB CintrMsg, bool debug, const char *machName) {
 	machine *m;
 
 	if ((m = (machine *)mem_alloc(sizeof(machine), "machine")) == nullptr) {

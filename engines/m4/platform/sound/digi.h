@@ -34,16 +34,16 @@ private:
 	Common::StringArray _names;
 
 private:
-	void unload(const Common::String &name);
 
 public:
 	/**
 	 * Preload a digi sample into memory buffer for play back later.
 	 */
-	void preload(const Common::String &name, int roomNum);
+	bool preload(const Common::String &name, int roomNum = -1);
 
 	void preload_sounds(const char **names);
 	void unload_sounds();
+	void unload(const Common::String &name);
 	void task();
 
 	// digi_play and digi_play_loop play a particular sound file in a given channel,
@@ -63,14 +63,12 @@ public:
 
 } // namespace Sound
 
-extern void digi_preload(const Common::String &name, int roomNum);
+extern bool digi_preload(const Common::String &name, int roomNum = -1);
+extern void digi_unload(const Common::String &name);
 extern int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
 extern int32 digi_play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
 extern void digi_read_another_chunk();
 extern void digi_stop(int slot);
-
-//extern void digi_preload_stream_breaks(const seriesStreamBreak *list);
-//extern void digi_unload_stream_breaks(const seriesStreamBreak *list);
 
 } // namespace M4
 
