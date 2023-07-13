@@ -41,7 +41,10 @@ void ActionManager::handleInput(NancyInput &input) {
 			rec->handleInput(input);
 		}
 
-		if (rec->_isActive && rec->_hasHotspot && NancySceneState.getViewport().convertViewportToScreen(rec->_hotspot).contains(input.mousePos)) {
+		if (	rec->_isActive &&
+				rec->_hasHotspot &&
+				rec->_hotspot.isValidRect() && // Needed for nancy2 scene 1600
+				NancySceneState.getViewport().convertViewportToScreen(rec->_hotspot).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(rec->getHoverCursor());
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
