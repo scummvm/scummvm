@@ -23,11 +23,12 @@
 #define M4_BURGER_BURGER_VARS_H
 
 #include "m4/vars.h"
+#include "m4/burger/core/release_trigger.h"
+#include "m4/burger/core/stream_break.h"
 #include "m4/burger/gui/interface.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/globals.h"
 #include "m4/burger/series_player.h"
-#include "m4/burger/stream_break.h"
 #include "m4/burger/walker.h"
 
 namespace M4 {
@@ -46,9 +47,11 @@ enum global_triggers {
 	gNONPLAYERS_SPEECH_FINISHED,	// digi_play trigger, used in talk.cpp
 	gSERIES_STREAM_BREAK,			// Used only by set_next_stream_break () in global.cpp
 	gSERIES_PLAY_BREAK_0,			// Used only by set_next_play_break () in global.cpp
+/*
 	gSERIES_PLAY_BREAK_1,			// Used only by set_next_play_break () in global.cpp
 	gSERIES_PLAY_BREAK_2,			// Used only by set_next_play_break () in global.cpp
-	gRELEASE_TRIGGER_DIGI_CHECK,	// Used only by release_trigger_digi_check() in global.cpp
+*/
+	gRELEASE_TRIGGER_DIGI_CHECK = 10006,	// Used only by release_trigger_digi_check() in global.cpp
 
 	// General triggers
 	gREACT_TO_WHISTLE,				// For anything that reacts to the wistle being blown
@@ -76,6 +79,7 @@ public:
 	GameMode _executing = WHOLE_GAME;
 	GUI::Interface _interface;
 	SeriesPlayers _seriesPlayers;
+	ReleaseTrigger_Globals _releaseTrigger;
 	StreamBreak_Globals _streamBreak;
 	Burger::Walker _walker;
 	int _wilburTerm = 2;

@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,31 +20,22 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_ROOM_H
-#define M4_BURGER_ROOMS_ROOM_H
+#ifndef M4_BURGER_CORE_RELEASE_TRIGGER_H
+#define M4_BURGER_CORE_RELEASE_TRIGGER_H
 
-#include "m4/core/rooms.h"
-#include "m4/burger/core/stream_break.h"
+#include "m4/m4_types.h"
 
 namespace M4 {
 namespace Burger {
-namespace Rooms {
 
-class Room : public M4::Room {
-private:
-	void init_series_players();
-
-public:
-	Room(uint roomNum) : M4::Room(roomNum) {}
-	~Room() override {}
-
-	void init() override;
-	void shutdown() override;
-	void parser_code() override;
-
+struct ReleaseTrigger_Globals {
+	uint32 _released_digi_trigger = 0;
+	uint32 _check_channels = 0, _match_value = 0;
 };
 
-} // namespace Rooms
+extern void release_trigger_on_digi_state(int32 trigger, int32 checkChannels, int32 matchValue);
+extern void release_trigger_digi_check();
+
 } // namespace Burger
 } // namespace M4
 

@@ -566,7 +566,7 @@ static void pal_fade_callback(frac16 myMessage) {
 }
 
 void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry,
-		int32 targetPercent, int32 numTicks, uint32 triggerNum) {
+		int32 targetPercent, int32 numTicks, int32 triggerNum) {
 	if ((!origPalette) || (firstPalEntry < 0) || (lastPalEntry > 255) || (firstPalEntry > lastPalEntry))
 		return;
 	if ((targetPercent < 0) || (targetPercent > 100))
@@ -639,7 +639,7 @@ static void pal_cycle_callback(frac16 myMessage) {
 }
 
 void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry,
-		int32 delayTicks, int32 totalTicks, uint32 triggerNum) {
+		int32 delayTicks, int32 totalTicks, int32 triggerNum) {
 	if ((firstPalEntry < 0) || (lastPalEntry > 255) || (firstPalEntry > lastPalEntry)) {
 		// This should generate an error
 		return;

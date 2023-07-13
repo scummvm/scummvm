@@ -57,6 +57,12 @@ extern void digi_preload_stream_breaks(const seriesStreamBreak list[]);
 extern void digi_unload_stream_breaks(const seriesStreamBreak list[]);
 extern void handle_series_stream_break();
 
+/**
+ * Palette_prep_for_stream is called just before series_stream() for a full screen animation.
+ * It clears the palette, (debug: sets ui colors) and sets up a palette fade up from 0%
+ */
+extern void palette_prep_for_stream();
+
 } // namespace Burger
 } // namespace M4
 

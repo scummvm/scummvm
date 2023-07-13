@@ -74,6 +74,8 @@ MODULE_OBJS = \
 	wscript/ws_timer.o \
 	wscript/wscript.o \
 	wscript/wst_regs.o \
+	burger/core/release_trigger.o \
+	burger/core/stream_break.o \
 	burger/gui/game_menu.o \
 	burger/gui/gui_cheapo.o \
 	burger/gui/interface.o \
@@ -87,7 +89,6 @@ MODULE_OBJS = \
 	burger/hotkeys.o \
 	burger/inventory.o \
 	burger/series_player.o \
-	burger/stream_break.o \
 	burger/vars.o \
 	burger/walker.o
 

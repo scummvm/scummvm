@@ -29,9 +29,9 @@ namespace Rooms {
 
 enum scene_triggers {
 	START_ORION_BURGER_POSTER = 1,
-
-	// Triggers to start streamers
 	START_PLANET_X_HILLTOP_A,
+	START_3,
+	START_4,
 	START_PLANET_X_LOW_GROUND_SHOT,
 	START_PLANET_X_HILLTOP_B,
 	START_SPACE_STATION_PANORAMA_A,
@@ -267,59 +267,67 @@ void Room951::daemon() {
 		digi_preload_stream_breaks(panorama_a);
 		digi_preload_stream_breaks(cargo_transfer_a);
 		break;
-#ifdef TODO
+
 	case START_PLANET_X_HILLTOP_A:
 		palette_prep_for_stream();
 		series_stream_with_breaks(planet_x_hilltop_a, "PLANET X HILLTOP A", 6, 1, START_PLANET_X_LOW_GROUND_SHOT);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER);		// Half second fade up
 		break;
 
-	case START_PLANET_X_LOW_GROUND_SHOT:
+	case START_3:
 		palette_prep_for_stream();
+		kernel_timing_trigger(6, 4, nullptr);
+		break;
+
+	case START_4:
+		release_trigger_on_digi_state(5, 1, 0);
+		break;
+#ifdef TODO
+	case START_PLANET_X_LOW_GROUND_SHOT:
 		series_stream_with_breaks(planet_x_low_shot, "Planet X Low Ground Shot", 6, 1, START_PLANET_X_HILLTOP_B);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_PLANET_X_HILLTOP_B:
 		palette_prep_for_stream();
 		digi_unload_stream_breaks(planet_x_hilltop_a);
 		series_stream_with_breaks(planet_x_hilltop_b, "Planet X Hilltop B", 6, 1, START_SPACE_STATION_PANORAMA_A);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_SPACE_STATION_PANORAMA_A:
 		palette_prep_for_stream();
 		digi_unload_stream_breaks(planet_x_low_shot);
 		series_stream_with_breaks(panorama_a, "Space Station Panorama A", 6, 1, START_CARGO_TRANSFER_AREA_A);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_CARGO_TRANSFER_AREA_A:
 		palette_prep_for_stream();
 		digi_unload_stream_breaks(planet_x_hilltop_b);
 		series_stream_with_breaks(cargo_transfer_a, "Cargo Transfer Area A", 6, 1, START_VPS_OFFICE_A);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_VPS_OFFICE_A:
 		palette_prep_for_stream();
 		digi_unload_stream_breaks(panorama_a);
 		series_stream_with_breaks(vps_office_a, "VP's Office A", 6, 1, START_HOLOGRAM);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_HOLOGRAM:
 		palette_prep_for_stream();
 		digi_unload_stream_breaks(cargo_transfer_a);
 		series_stream_with_breaks(hologram, "Hologram", 6, 1, START_VPS_OFFICE_B);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_VPS_OFFICE_B:
 		palette_prep_for_stream();
 		digi_unload_stream_breaks(vps_office_a);
 		series_stream_with_breaks(vps_office_b, "VP's Office B", 6, 1, START_CARGO_TRANSFER_AREA_B);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_CARGO_TRANSFER_AREA_B:
@@ -327,7 +335,7 @@ void Room951::daemon() {
 		digi_unload_stream_breaks(hologram);
 		digi_preload_stream_breaks(cargo_transfer_b);
 		series_stream_with_breaks(cargo_transfer_b, "Cargo Transfer Area B", 6, 1, START_CARGO_TRANSFER_CONTROLS);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_CARGO_TRANSFER_CONTROLS:
@@ -338,7 +346,7 @@ void Room951::daemon() {
 		digi_unload_stream_breaks(vps_office_b);
 		digi_preload_stream_breaks(transfer_controls);
 		series_stream_with_breaks(transfer_controls, "Cargo Transfer Controls", 6, 1, START_SPACE_STATION_PANORAMA_B);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_SPACE_STATION_PANORAMA_B:
@@ -347,7 +355,7 @@ void Room951::daemon() {
 		digi_unload_stream_breaks(cargo_transfer_b);
 		digi_preload_stream_breaks(panorama_b);
 		series_stream_with_breaks(panorama_b, "Space Station Panorama B", 6, 1, START_CALL_TO_ACTION);
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case START_CALL_TO_ACTION:
@@ -356,26 +364,26 @@ void Room951::daemon() {
 			digi_unload_stream_breaks(transfer_controls);
 			digi_preload_stream_breaks(call_to_action);
 			series_stream_with_breaks(call_to_action, "Call To Action", 6, 1, LAST_SCENE_TRIGGER);
-			pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+			pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		} else {
 			kernel_trigger_dispatch_now(LAST_SCENE_TRIGGER);
 		}
 		break;
 
 	case FADE_DOWN_FAST:
-		pal_fade_init(&master_palette[0], 0, 255, 0, 30, NO_TRIGGER); // half second fade down
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 0, 30, NO_TRIGGER); // half second fade down
 		break;
 
 	case FADE_DOWN_SLOW:
-		pal_fade_init(&master_palette[0], 0, 255, 0, 60, NO_TRIGGER); // one second fade down
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 0, 60, NO_TRIGGER); // one second fade down
 		break;
 
 	case FADE_UP_FAST:
-		pal_fade_init(&master_palette[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
 		break;
 
 	case FADE_UP_SLOW:
-		pal_fade_init(&master_palette[0], 0, 255, 100, 60, NO_TRIGGER); // one second fade up
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 60, NO_TRIGGER); // one second fade up
 		break;
 
 	case LAST_SCENE_TRIGGER:
