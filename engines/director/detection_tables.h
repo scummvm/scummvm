@@ -1364,9 +1364,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ultrobotss",			"Screen Saver Viewer" },
 	{ "urubonus",			"Uru: Ages Beyond Myst Bonus CD" },
 	{ "williamsbts",		"Williams Arcade Classics: Behind the Scenes" },
-	{ "aquazonelibrary",	"Aquazone Library" },
-	{ "aquazoneshop",		"Aquazone Shop" },
-	{ "aquazoneuserguide",	"Aquazone User's Guide" },
+//	{ "aquazonelibrary",	"Aquazone Library" },
+//	{ "aquazoneshop",		"Aquazone Shop" },
+//	{ "aquazoneuserguide",	"Aquazone User's Guide" },
 
 	// DVD-ROM bonus content
 	{ "planetrav",			"Planetary Traveler" },
@@ -7375,7 +7375,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t_l("onsalakorv", "", "onsala.EXE", "41d87422d7c0f48886a99a7fe05ba1c0", 1713409, Common::SE_SWE, 650),
 
-	MACGAME1_l("ozawaken", "v1.2", "Ozawa-Ken1.2", "8d83064402198a909b0abcebc6b46d2b", 118562, Common::JA_JPN, 602),
+//	MACGAME1_l("ozawaken", "v1.2", "Ozawa-Ken1.2", "8d83064402198a909b0abcebc6b46d2b", 118562, Common::JA_JPN, 602),
 
 	MACGAME2_l("pantosstory", "", "START", "7d0c7ae431938c53e64d443b05bf19fd", 1035232,
 								  "PANTOS/A00.Dxr", "a36c3a6044d0dbcfa30b147cbdfc4f5f", 1367720, Common::JA_JPN, 602),
