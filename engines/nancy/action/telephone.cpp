@@ -47,22 +47,12 @@ void Telephone::init() {
 void Telephone::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 
-	_srcRects.reserve(12);
-	for (uint i = 0; i < 12; ++i) {
-		_srcRects.push_back(Common::Rect());
-		readRect(stream, _srcRects.back());
-	}
+	readRectArray(stream, _srcRects, 12);
+	readRectArray(stream, _destRects, 12);
 
-	_destRects.reserve(12);
+	_screenPosition = _destRects[0];
 	for (uint i = 0; i < 12; ++i) {
-		_destRects.push_back(Common::Rect());
-		readRect(stream, _destRects.back());
-
-		if (i == 0) {
-			_screenPosition = _destRects.back();
-		} else {
-			_screenPosition.extend(_destRects.back());
-		}
+		_screenPosition.extend(_destRects[i]);
 	}
 
 	_genericDialogueSound.readNormal(stream);
@@ -72,12 +62,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	_dialAgainSound.readNormal(stream);
 	_hangUpSound.readNormal(stream);
 
-	_buttonSoundNames.reserve(12);
-	for (uint i = 0; i < 12; ++i) {
-		Common::String buttonSoundName;
-		readFilename(stream, buttonSoundName);
-		_buttonSoundNames.push_back(buttonSoundName);
-	}
+	readFilenameArray(stream, _buttonSoundNames, 12);
 
 	char textBuf[200];
 	stream.read(textBuf, 200);
@@ -87,19 +72,20 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	textBuf[199] = '\0';
 	_dialAgainString = textBuf;
 	_reloadScene.readData(stream);
+	stream.skip(1);
 	_exitScene.readData(stream);
+	stream.skip(1);
 	readRect(stream, _exitHotspot);
 
 	uint numCalls = stream.readUint16LE();
 
-	_calls.reserve(numCalls);
+	_calls.resize(numCalls);
 	for (uint i = 0; i < numCalls; ++i) {
-		_calls.push_back(PhoneCall());
-		PhoneCall &call = _calls.back();
+		PhoneCall &call = _calls[i];
 
-		call.phoneNumber.reserve(11);
+		call.phoneNumber.resize(11);
 		for (uint j = 0; j < 11; ++j) {
-			call.phoneNumber.push_back(stream.readByte());
+			call.phoneNumber[j] = stream.readByte();
 		}
 
 		readFilename(stream, call.soundName);
@@ -107,6 +93,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		textBuf[199] = '\0';
 		call.text = textBuf;
 		call.sceneChange.readData(stream);
+		stream.skip(1);
 	}
 }
 
