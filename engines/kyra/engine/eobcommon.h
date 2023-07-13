@@ -762,6 +762,7 @@ protected:
 	void gui_setCastOnWhomButtons();
 	void gui_initButton(int index, int x = -1, int y = -1, int val = -1) override;
 	Button *gui_getButton(Button *buttonList, int index);
+	void printStatsPageString(const char *str, int x, int y, int col);
 
 	int clickedInventoryNextPage(Button *button);
 	int clickedPortraitRestore(Button *button);
@@ -835,9 +836,12 @@ protected:
 	Screen::FontId _invFont2;
 	Screen::FontId _invFont3;
 	Screen::FontId _invFont4;
+	Screen::FontId _invFont5;
+	Screen::FontId _invFont6;
 	Screen::FontId _conFont;
 	Screen::FontId _titleFont;
 	Screen::FontId _bookFont;
+	Screen::FontId _hpStatFont;
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
 	uint8 *_swapShape;

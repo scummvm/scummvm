@@ -127,9 +127,12 @@ struct KyraRpgGUISettings {
 		uint8 guiColorDarkRed;
 		uint8 guiColorLightBlue;
 		uint8 guiColorBlue;
+		uint8 guiColorDarkBlue;
 		uint8 guiColorYellow;
 		uint8 guiColorLightGreen;
 		uint8 guiColorDarkGreen;
+		uint8 guiColorPurple;
+		uint8 guiColorBrown;
 		uint8 guiColorBlack;
 	} colors;
 
@@ -150,11 +153,64 @@ struct KyraRpgGUISettings {
 		uint8 hpBarHeight_1;
 		int16 hpFoodBarX_2[3];
 		int16 hpFoodBarY_2[3];
-		uint8 hpFoodBarWidth_2;
+		uint8 hpFoodBarWidth_2[2];
 		uint8 hpFoodBarHeight_2;
+		int16 nameLabelOffsetX;
+		int16 nameLabelOffsetY;
+		int16 exchangeLabelOffsetX;
+		int16 exchangeLabelOffsetY;
 		int16 redSplatOffsetX;
 		int16 redSplatOffsetY;
 	} charBoxCoords;
+
+	struct StatsPageCoords {
+		int16 headlineX;
+		int16 headlineY;
+		int16 descStartX;
+		int16 descStartY;
+		uint8 descYInc;
+		int16 statsGroup1StringsX;
+		int16 statsGroup1StringsY;
+		int16 statsGroup2StringsX;
+		int16 statsGroup2StringsY;
+		uint8 statsStringsYInc;
+		int16 statsGroup1StatsX;
+		int16 statsGroup1StatsY;
+		int16 statsGroup2StatsX;
+		int16 statsGroup2StatsY;
+		uint8 statsStatsYInc;
+		int16 acStringX;
+		int16 acStringY;
+		int16 acStatsX;
+		int16 acStatsY;
+		int16 expStringX;
+		int16 expStringY;
+		int16 expStatsX;
+		int16 expStatsY;
+		uint8 expStatsXInc;
+		uint8 expStatsYInc;
+		int16 lvlStringX;
+		int16 lvlStringY;
+		int16 lvlStatsX;
+		int16 lvlStatsY;
+		uint8 lvlStatsXInc;
+		uint8 lvlStatsYInc;
+		int16 classStringsX;
+		int16 classStringsY;
+		uint8 classStringsXInc;
+		uint8 classStringsYInc;
+	} statsPageCoords;
+
+	struct StatsPageColors {
+		uint8 headLine;
+		uint8 cls[3];
+		uint8 alignment;
+		uint8 race;
+		uint8 acString;
+		uint8 statsStrings;
+		uint8 statsValues;
+		uint8 expLvl[3];
+	} statsPageColors;
 };
 
 class KyraRpgEngine : public KyraEngine_v1 {

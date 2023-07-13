@@ -101,31 +101,37 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 		return;
 
 	EoBCharacter *c = &_characters[index];
-	int txtCol1 = guiSettings()->colors.guiColorBlack;
-	int txtCol2 = guiSettings()->colors.guiColorWhite;
+	const KyraRpgGUISettings *g = guiSettings();
+	int txtCol1 = g->colors.guiColorBlack;
+	int txtCol2 = g->colors.guiColorWhite;
 
 	if ((_flags.gameID == GI_EOB1 && c->flags & 6) || (_flags.gameID == GI_EOB2 && c->flags & 0x0E)) {
-		txtCol1 = guiSettings()->colors.guiColorDarkRed;
-		txtCol2 = guiSettings()->colors.guiColorLightRed;
+		txtCol1 = g->colors.guiColorDarkRed;
+		txtCol2 = g->colors.guiColorLightRed;
 	}
 
 	if (_currentControlMode == 0) {
-		int x2 = guiSettings()->charBoxCoords.facePosX_1[index & 1];
-		int y2 = guiSettings()->charBoxCoords.boxY[index >> 1];
-
-		_screen->copyRegion(176, 168, x2, y2, guiSettings()->charBoxCoords.boxWidth, 24, 2, 2, Screen::CR_NO_P_CHECK);
-		_screen->copyRegion(240, 168, x2, y2 + 24, guiSettings()->charBoxCoords.boxWidth, guiSettings()->charBoxCoords.boxHeight - 24, 2, 2, Screen::CR_NO_P_CHECK);
+		int x2 = g->charBoxCoords.facePosX_1[index & 1];
+		int y2 = g->charBoxCoords.boxY[index >> 1];
 
 		int cp = _screen->setCurPage(2);
 		Screen::FontId cf = _screen->setFont(_invFont1);
+
+		if (_flags.lang == Common::ZH_TWN)
+			gui_drawBox(176, 168, 63, 15, g->colors.frame1, g->colors.frame2, g->colors.fill);
+
+		_screen->copyRegion(176, 168, x2, y2, g->charBoxCoords.boxWidth, 24, 2, 2, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(240, 168, x2, y2 + 24, g->charBoxCoords.boxWidth, g->charBoxCoords.boxHeight - 24, 2, 2, Screen::CR_NO_P_CHECK);
 
 		if (_flags.platform == Common::kPlatformSegaCD) {
 			_screen->drawShape(_screen->_curPage, (index == _exchangeCharacterId) ? _swapShape : c->nameShape, x2 + 4, y2 + 4, 0);
 		} else {
 			if (index == _exchangeCharacterId)
-				_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, guiSettings()->colors.guiColorDarkRed, guiSettings()->colors.fill);
+				_screen->printText(_characterGuiStringsSt[0], x2 + g->charBoxCoords.exchangeLabelOffsetX, y2 + g->charBoxCoords.exchangeLabelOffsetY, g->colors.guiColorDarkRed, g->colors.fill);
+			else if (_flags.lang == Common::ZH_TWN)
+				_screen->printShadedText(c->name, x2 + g->charBoxCoords.nameLabelOffsetX, y2 + g->charBoxCoords.nameLabelOffsetY, g->colors.guiColorYellow, 0, g->colors.guiColorBlack);
 			else
-				_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, _flags.platform == Common::kPlatformPC98 ? 0 : guiSettings()->colors.fill);
+				_screen->printText(c->name, x2 + g->charBoxCoords.nameLabelOffsetX, y2 + g->charBoxCoords.nameLabelOffsetY, txtCol1, _flags.platform == Common::kPlatformPC98 ? 0 : g->colors.fill);
 		}
 
 		_screen->setFont(_invFont2);
@@ -138,12 +144,14 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 			gui_drawCharPortraitStatusFrame(index);
 
 		if (c->damageTaken > 0) {
-			_screen->drawShape(2, _redSplatShape, x2 + guiSettings()->charBoxCoords.redSplatOffsetX, y2 + guiSettings()->charBoxCoords.redSplatOffsetY, 0);
+			_screen->drawShape(2, _redSplatShape, x2 + g->charBoxCoords.redSplatOffsetX, y2 + g->charBoxCoords.redSplatOffsetY, 0);
 			if (_flags.platform == Common::kPlatformSegaCD) {
-				gui_printInventoryDigits(x2 + guiSettings()->charBoxCoords.redSplatOffsetX + 12, y2 + guiSettings()->charBoxCoords.redSplatOffsetY + 10, c->damageTaken);
+				gui_printInventoryDigits(x2 + g->charBoxCoords.redSplatOffsetX + 12, y2 + g->charBoxCoords.redSplatOffsetY + 10, c->damageTaken);
 			} else {
 				Common::String tmpStr = Common::String::format("%d", c->damageTaken);
-				_screen->printText(tmpStr.c_str(), x2 + 34 - tmpStr.size() * 3, y2 + 42, (_configRenderMode == Common::kRenderCGA) ? 12 : guiSettings()->colors.guiColorWhite, 0);
+				Screen::FontId fnt = _screen->setFont(_hpStatFont);
+				_screen->printText(tmpStr.c_str(), x2 + 34 - tmpStr.size() * 3, y2 + 42, (_configRenderMode == Common::kRenderCGA) ? 12 : g->colors.guiColorWhite, 0);
+				_screen->setFont(fnt);
 			}
 		}
 
@@ -152,14 +160,14 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 
 		if (!cp) {
 			if (_redSplatBG[index])
-				_screen->copyBlockToPage(0, guiSettings()->charBoxCoords.boxX[index & 1] + guiSettings()->charBoxCoords.redSplatOffsetX, y2 + guiSettings()->charBoxCoords.boxHeight - 1, _redSplatShape[2] << 3, 4, _redSplatBG[index]);
+				_screen->copyBlockToPage(0, g->charBoxCoords.boxX[index & 1] + g->charBoxCoords.redSplatOffsetX, y2 + g->charBoxCoords.boxHeight - 1, _redSplatShape[2] << 3, 4, _redSplatBG[index]);
 
-			_screen->copyRegion(x2, y2, guiSettings()->charBoxCoords.boxX[index & 1], y2, guiSettings()->charBoxCoords.boxWidth, guiSettings()->charBoxCoords.boxHeight, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(x2, y2, g->charBoxCoords.boxX[index & 1], y2, g->charBoxCoords.boxWidth, g->charBoxCoords.boxHeight, 2, 0, Screen::CR_NO_P_CHECK);
 
 			// Redraw this for the SegaCD version, since the red splat shapes do overlap with the next portrait to the bottom and would otherwise be cut off.
 			if (_flags.platform == Common::kPlatformSegaCD && c->damageTaken > 0) {
-				_screen->drawShape(0, _redSplatShape, guiSettings()->charBoxCoords.boxX[index & 1] + guiSettings()->charBoxCoords.redSplatOffsetX, y2 + guiSettings()->charBoxCoords.redSplatOffsetY, 0);
-				gui_printInventoryDigits(guiSettings()->charBoxCoords.boxX[index & 1] + guiSettings()->charBoxCoords.redSplatOffsetX + 12, y2 + guiSettings()->charBoxCoords.redSplatOffsetY + 10, c->damageTaken);
+				_screen->drawShape(0, _redSplatShape, g->charBoxCoords.boxX[index & 1] + g->charBoxCoords.redSplatOffsetX, y2 + g->charBoxCoords.redSplatOffsetY, 0);
+				gui_printInventoryDigits(g->charBoxCoords.boxX[index & 1] + g->charBoxCoords.redSplatOffsetX + 12, y2 + g->charBoxCoords.redSplatOffsetY + 10, c->damageTaken);
 			}
 			if (screenUpdt)
 				_screen->updateScreen();
@@ -172,11 +180,17 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 
 		gui_drawFaceShape(index);
 
+		if (_flags.lang == Common::ZH_TWN) {
+			_screen->fillRect(216, 5, 300, 33, g->colors.fill);
+			_screen->printShadedText(_characterGuiStringsHp[0], 214, 20, g->colors.guiColorDarkBlue, 0, 0);
+			_screen->printShadedText(_characterGuiStringsHp[3], 272, 20, g->colors.guiColorDarkBlue, 0, 0);
+		}
+
 		Screen::FontId cf = _screen->setFont(_invFont1);
 		if (_flags.platform == Common::kPlatformSegaCD)
 			_screen->drawShape(_screen->_curPage, (index == _exchangeCharacterId) ? _swapShape : c->nameShape, 224, 8);
 		else
-			_screen->printShadedText(c->name, 219, 6, txtCol2, 0, guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(c->name, 219, 6, txtCol2, 0, g->colors.guiColorBlack);
 		_screen->setFont(_invFont2);
 
 		gui_drawHitpoints(index);
@@ -191,17 +205,17 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 
 			if (_characterGuiStringsSt) {
 				if (c->hitPointsCur == -10)
-					_screen->printShadedText(_characterGuiStringsSt[1], 247, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
+					_screen->printShadedText(_characterGuiStringsSt[1], 247, statusTxtY, g->colors.guiColorLightRed, 0, g->colors.guiColorBlack);
 				else if (c->hitPointsCur < 1)
-					_screen->printShadedText(_characterGuiStringsSt[2], 226, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
+					_screen->printShadedText(_characterGuiStringsSt[2], 226, statusTxtY, g->colors.guiColorLightRed, 0, g->colors.guiColorBlack);
 				else if (c->effectFlags & 0x2000)
-					_screen->printShadedText(_characterGuiStringsSt[3], 220, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
+					_screen->printShadedText(_characterGuiStringsSt[3], 220, statusTxtY, g->colors.guiColorLightRed, 0, g->colors.guiColorBlack);
 				else if (c->flags & 2)
-					_screen->printShadedText(_characterGuiStringsSt[4], 235, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
+					_screen->printShadedText(_characterGuiStringsSt[4], 235, statusTxtY, g->colors.guiColorLightRed, 0, g->colors.guiColorBlack);
 				else if (c->flags & 4)
-					_screen->printShadedText(_characterGuiStringsSt[5], 232, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
+					_screen->printShadedText(_characterGuiStringsSt[5], 232, statusTxtY, g->colors.guiColorLightRed, 0, g->colors.guiColorBlack);
 				else if (c->flags & 8)
-					_screen->printShadedText(_characterGuiStringsSt[6], 232, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
+					_screen->printShadedText(_characterGuiStringsSt[6], 232, statusTxtY, g->colors.guiColorLightRed, 0, g->colors.guiColorBlack);
 			}
 
 			_screen->setFont(_invFont2);
@@ -351,6 +365,8 @@ void EoBCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 	if (!tmpStr2.empty()) {
 		_screen->printText(tmpStr.c_str(), x + (16 - tmpStr.size() * 3), y + 2, textColor, 0);
 		_screen->printText(tmpStr2.c_str(), x + (16 - tmpStr.size() * 3), y + 9, textColor, 0);
+	} else if (_flags.lang == Common::ZH_TWN) {
+		_screen->printText(tmpStr.c_str(), x + (status > -1 ? (12 - ((tmpStr.size() - 1) << 2)) : (32 - (tmpStr.size() << 3))), y + 1, textColor, 0);
 	} else {
 		_screen->printText(tmpStr.c_str(), x + (16 - tmpStr.size() * 3), y + 5, textColor, 0);
 	}
@@ -363,22 +379,24 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 	if (_currentControlMode && (index != _updateCharNum))
 		return;
 
-	int x = guiSettings()->charBoxCoords.hpBarX_1[index & 1];
-	int y = guiSettings()->charBoxCoords.hpBarY_1[index >> 1];
-	int w = guiSettings()->charBoxCoords.hpBarWidth_1;
-	int h = guiSettings()->charBoxCoords.hpBarHeight_1;
-	uint8 bgCol = guiSettings()->colors.fill;
+	const KyraRpgGUISettings *g = guiSettings();
+
+	int x = g->charBoxCoords.hpBarX_1[index & 1];
+	int y = g->charBoxCoords.hpBarY_1[index >> 1];
+	int w = g->charBoxCoords.hpBarWidth_1;
+	int h = g->charBoxCoords.hpBarHeight_1;
+	uint8 bgCol = g->colors.fill;
 
 	if (!_screen->_curPage)
 		x += 176;
 
 	if (_currentControlMode) {
-		x = guiSettings()->charBoxCoords.hpFoodBarX_2[0];
-		y = guiSettings()->charBoxCoords.hpFoodBarY_2[0];
-		w = guiSettings()->charBoxCoords.hpFoodBarWidth_2;
-		h = guiSettings()->charBoxCoords.hpFoodBarHeight_2;
+		x = g->charBoxCoords.hpFoodBarX_2[0];
+		y = g->charBoxCoords.hpFoodBarY_2[0];
+		w = g->charBoxCoords.hpFoodBarWidth_2[0];
+		h = g->charBoxCoords.hpFoodBarHeight_2;
 		if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1)
-			bgCol = guiSettings()->colors.sfill;
+			bgCol = g->colors.sfill;
 	}
 
 	EoBCharacter *c = &_characters[index];
@@ -386,26 +404,39 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 	if (_configHpBarGraphs) {
 		int bgCur = c->hitPointsCur + 10;
 		int bgMax = c->hitPointsMax + 10;
-		int col = ((bgMax / 3) > bgCur) ? guiSettings()->colors.guiColorYellow : guiSettings()->colors.guiColorDarkGreen;
+		int col = ((bgMax / 3) > bgCur) ? g->colors.guiColorYellow : g->colors.guiColorDarkGreen;
 		if (bgCur <= 10)
-			col = guiSettings()->colors.guiColorDarkRed;
+			col = g->colors.guiColorDarkRed;
 
 		if (_flags.platform == Common::kPlatformSegaCD)
-			col = (bgCur * 40 / bgMax) < 12 ? guiSettings()->colors.guiColorDarkRed : ((bgCur * 40 / bgMax) < 24 ? guiSettings()->colors.guiColorYellow : guiSettings()->colors.guiColorDarkGreen);
-		else if (!_currentControlMode)
-			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, guiSettings()->colors.guiColorBlack, 0);
+			col = (bgCur * 40 / bgMax) < 12 ? g->colors.guiColorDarkRed : ((bgCur * 40 / bgMax) < 24 ? g->colors.guiColorYellow : g->colors.guiColorDarkGreen);
+		else if (!_currentControlMode && _flags.lang != Common::ZH_TWN)
+			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, g->colors.guiColorBlack, 0);
 
-		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, col, guiSettings()->colors.barGraph);
+		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, col, g->colors.barGraph);
 
 	} else {
 		Common::String tmpString = Common::String::format(_characterGuiStringsHp[1], c->hitPointsCur, c->hitPointsMax);
+		int txtCol = g->colors.guiColorBlack;
 
-		if (!_currentControlMode) {
+		if (_flags.lang == Common::ZH_TWN) {
+			txtCol = g->colors.guiColorWhite;
+			if (_currentControlMode) {
+				tmpString = Common::String::format(_characterGuiStringsHp[2], c->hitPointsCur, c->hitPointsMax);
+				x -= 3;
+				y += 1;
+			} else {
+				x -= 1;
+				y -= 3;
+			}
+		} else if (!_currentControlMode) {
 			x -= 13;
 			y -= 1;
 		}
 
-		_screen->printText(tmpString.c_str(), x, y, guiSettings()->colors.guiColorBlack, bgCol);
+		Screen::FontId of = _screen->setFont(_hpStatFont);
+		_screen->printText(tmpString.c_str(), x, y, txtCol, bgCol);
+		_screen->setFont(of);
 	}
 }
 
@@ -423,8 +454,9 @@ void EoBCoreEngine::gui_drawFoodStatusGraph(int index) {
 	if (index != _updateCharNum)
 		return;
 
-	uint8 col = c->food < 20 ? guiSettings()->colors.guiColorDarkRed : (c->food < 33 ? guiSettings()->colors.guiColorYellow : guiSettings()->colors.guiColorDarkGreen);
-	gui_drawHorizontalBarGraph(guiSettings()->charBoxCoords.hpFoodBarX_2[1], guiSettings()->charBoxCoords.hpFoodBarY_2[1], guiSettings()->charBoxCoords.hpFoodBarWidth_2, guiSettings()->charBoxCoords.hpFoodBarHeight_2, c->food, 100, col, guiSettings()->colors.barGraph);
+	const KyraRpgGUISettings *g = guiSettings();
+	uint8 col = c->food < 20 ? g->colors.guiColorDarkRed : (c->food < 33 ? g->colors.guiColorYellow : g->colors.guiColorDarkGreen);
+	gui_drawHorizontalBarGraph(g->charBoxCoords.hpFoodBarX_2[1], g->charBoxCoords.hpFoodBarY_2[1], g->charBoxCoords.hpFoodBarWidth_2[1], g->charBoxCoords.hpFoodBarHeight_2, c->food, 100, col, g->colors.barGraph);
 }
 
 void EoBCoreEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2) {
@@ -438,9 +470,10 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 	if (_flags.platform == Common::kPlatformSegaCD)
 		return;
 
-	uint8 redGreenColor = (_partyEffectFlags & 0x20000) ? guiSettings()->colors.guiColorLightGreen : ((_configRenderMode == Common::kRenderCGA) ? 3 : guiSettings()->colors.guiColorLightRed);
-	int x = guiSettings()->charBoxCoords.facePosX_1[index & 1];
-	int y = guiSettings()->charBoxCoords.boxY[index >> 1];
+	const KyraRpgGUISettings *g = guiSettings();
+	uint8 redGreenColor = (_partyEffectFlags & 0x20000) ? g->colors.guiColorLightGreen : ((_configRenderMode == Common::kRenderCGA) ? 3 : g->colors.guiColorLightRed);
+	int x = g->charBoxCoords.facePosX_1[index & 1];
+	int y = g->charBoxCoords.boxY[index >> 1];
 	int xOffset = (_configRenderMode == Common::kRenderCGA) ? 0 : 1;
 
 	if (!_screen->_curPage)
@@ -453,12 +486,12 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 
 	if (redGreen || yellow) {
 		if (redGreen && !yellow) {
-			_screen->drawBox(x, y, x + guiSettings()->charBoxCoords.boxWidth - 1, y + guiSettings()->charBoxCoords.boxHeight - 1, redGreenColor);
+			_screen->drawBox(x, y, x + g->charBoxCoords.boxWidth - 1, y + g->charBoxCoords.boxHeight - 1, redGreenColor);
 			return;
 		}
 
 		if (yellow && !redGreen) {
-			_screen->drawBox(x, y, x + guiSettings()->charBoxCoords.boxWidth - 1, y + guiSettings()->charBoxCoords.boxHeight - 1, guiSettings()->colors.guiColorYellow);
+			_screen->drawBox(x, y, x + g->charBoxCoords.boxWidth - 1, y + g->charBoxCoords.boxHeight - 1, g->colors.guiColorYellow);
 			return;
 		}
 
@@ -469,11 +502,11 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 			x = iX + i;
 			if (redGreen) {
 				_screen->drawClippedLine(x, y, x + 7, y, redGreenColor);
-				_screen->drawClippedLine(x + 8, y + guiSettings()->charBoxCoords.boxHeight - 1, x + 15, y + guiSettings()->charBoxCoords.boxHeight - 1, redGreenColor);
+				_screen->drawClippedLine(x + 8, y + g->charBoxCoords.boxHeight - 1, x + 15, y + g->charBoxCoords.boxHeight - 1, redGreenColor);
 			}
 			if (yellow) {
-				_screen->drawClippedLine(x + 8, y, x + 15, y, guiSettings()->colors.guiColorYellow);
-				_screen->drawClippedLine(x, y + guiSettings()->charBoxCoords.boxHeight - 1, x + 7, y + guiSettings()->charBoxCoords.boxHeight - 1, guiSettings()->colors.guiColorYellow);
+				_screen->drawClippedLine(x + 8, y, x + 15, y, g->colors.guiColorYellow);
+				_screen->drawClippedLine(x, y + g->charBoxCoords.boxHeight - 1, x + 7, y + g->charBoxCoords.boxHeight - 1, g->colors.guiColorYellow);
 			}
 		}
 
@@ -483,20 +516,20 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 			y = iY + i - 1;
 
 			if (yellow) {
-				_screen->drawClippedLine(x, y + 1, x, y + 6, guiSettings()->colors.guiColorYellow);
-				_screen->drawClippedLine(x + guiSettings()->charBoxCoords.boxWidth - 1, y + 7, x + guiSettings()->charBoxCoords.boxWidth - 1, y + 12, guiSettings()->colors.guiColorYellow);
+				_screen->drawClippedLine(x, y + 1, x, y + 6, g->colors.guiColorYellow);
+				_screen->drawClippedLine(x + g->charBoxCoords.boxWidth - 1, y + 7, x + g->charBoxCoords.boxWidth - 1, y + 12, g->colors.guiColorYellow);
 			}
 			if (redGreen) {
 				_screen->drawClippedLine(x, y + 7, x, y + 12, redGreenColor);
-				_screen->drawClippedLine(x + guiSettings()->charBoxCoords.boxWidth - 1, y + 1, x + guiSettings()->charBoxCoords.boxWidth - 1, y + 6, redGreenColor);
+				_screen->drawClippedLine(x + g->charBoxCoords.boxWidth - 1, y + 1, x + g->charBoxCoords.boxWidth - 1, y + 6, redGreenColor);
 			}
 		}
 
 	} else {
-		_screen->drawClippedLine(x, y, x + guiSettings()->charBoxCoords.boxWidth - 2, y, guiSettings()->colors.frame2);
-		_screen->drawClippedLine(x, y + guiSettings()->charBoxCoords.boxHeight - 1, x + guiSettings()->charBoxCoords.boxWidth - 2, y + guiSettings()->charBoxCoords.boxHeight - 1, guiSettings()->colors.frame1);
-		_screen->drawClippedLine(x - xOffset, y, x - xOffset, y + guiSettings()->charBoxCoords.boxHeight, guiSettings()->colors.guiColorBlack);
-		_screen->drawClippedLine(x + guiSettings()->charBoxCoords.boxWidth - 1, y, x + guiSettings()->charBoxCoords.boxWidth - 1, y + guiSettings()->charBoxCoords.boxHeight, guiSettings()->colors.guiColorBlack);
+		_screen->drawClippedLine(x, y, x + g->charBoxCoords.boxWidth - 2, y, g->colors.frame2);
+		_screen->drawClippedLine(x, y + g->charBoxCoords.boxHeight - 1, x + g->charBoxCoords.boxWidth - 2, y + g->charBoxCoords.boxHeight - 1, g->colors.frame1);
+		_screen->drawClippedLine(x - xOffset, y, x - xOffset, y + g->charBoxCoords.boxHeight, g->colors.guiColorBlack);
+		_screen->drawClippedLine(x + g->charBoxCoords.boxWidth - 1, y, x + g->charBoxCoords.boxWidth - 1, y + g->charBoxCoords.boxHeight, g->colors.guiColorBlack);
 	}
 }
 
@@ -559,66 +592,53 @@ void EoBCoreEngine::gui_drawCharacterStatsPage() {
 	static const uint16 cm2Y2[] = { 165, 165, 147 };
 
 	EoBCharacter *c = &_characters[_updateCharNum];
+	const KyraRpgGUISettings *g = guiSettings();
+	const KyraRpgGUISettings::StatsPageCoords &cd = g->statsPageCoords;
+	const KyraRpgGUISettings::StatsPageColors &cl = g->statsPageColors;
 
-	if (_flags.platform != Common::kPlatformSegaCD) {
-		for (int i = 0; i < 3; i++)
-			_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], guiSettings()->colors.sfill);
-	}
-
-	int lineH = MIN(_screen->getFontHeight() + 1, 8);
-	_screen->printShadedText(_characterGuiStringsIn[0], 183, 42, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
-	_screen->printText(_chargenClassStrings[c->cClass], 183, 55, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-	_screen->printText(_chargenAlignmentStrings[c->alignment], 183, 55 + lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-	_screen->printText(_chargenRaceSexStrings[c->raceSex], 183, 55 + 2 * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-
-	lineH = _screen->getFontHeight() + 1;
-	int tX = 183;
-	int tY = _flags.use16ColorMode ? 87 : 82;
 	for (int i = 0; i < 3; i++)
-		_screen->printText(_chargenStatStrings[6 + i], tX, tY + i * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+		_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], g->colors.sfill);
 
-	if (_flags.use16ColorMode) {
-		tX += 72;
-		tY -= 27;
+	_screen->printShadedText(_characterGuiStringsIn[0], cd.headlineX, cd.headlineY, cl.headLine, g->colors.sfill, g->colors.guiColorBlack);
+	if (_flags.lang != Common::ZH_TWN)
+		printStatsPageString(_chargenClassStrings[c->cClass], cd.descStartX, cd.descStartY , cl.cls[0]);
+	printStatsPageString(_chargenAlignmentStrings[c->alignment], cd.descStartX, cd.descStartY + cd.descYInc, cl.alignment);
+	printStatsPageString(_chargenRaceSexStrings[c->raceSex], cd.descStartX, cd.descStartY + 2 * cd.descYInc, cl.race);
+
+	for (int i = 0; i < 3; i++) {
+		printStatsPageString(_chargenStatStrings[6 + i], cd.statsGroup1StringsX, cd.statsGroup1StringsY + i * cd.statsStringsYInc, cl.statsStrings);
+		printStatsPageString(_chargenStatStrings[9 + i], cd.statsGroup2StringsX, cd.statsGroup2StringsY + i * cd.statsStringsYInc, cl.statsStrings);
 	}
-	for (int i = 3; i < 6; i++)
-		_screen->printText(_chargenStatStrings[6 + i], tX, tY + i * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
 
-	_screen->printText(_characterGuiStringsIn[1], 183, tY + 6 * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+	printStatsPageString(_characterGuiStringsIn[1], cd.acStringX, cd.acStringY, cl.acString);
+	printStatsPageString(_characterGuiStringsIn[2], cd.expStringX, cd.expStringY, cl.statsStrings);
+	printStatsPageString(_characterGuiStringsIn[3], cd.lvlStringX, cd.lvlStringY, cl.statsStrings);
 
-	tY = _flags.use16ColorMode ? 127 : 138;
-	_screen->printText(_characterGuiStringsIn[2], 239, tY, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-	_screen->printText(_characterGuiStringsIn[3], 278, tY, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+	Screen::FontId of = _screen->setFont(_invFont5);
+	printStatsPageString(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY, cl.statsValues);
+	printStatsPageString(Common::String::format("%d", c->intelligenceCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY + cd.statsStatsYInc, cl.statsValues);
+	printStatsPageString(Common::String::format("%d", c->wisdomCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY + 2 * cd.statsStatsYInc, cl.statsValues);
+	printStatsPageString(Common::String::format("%d", c->dexterityCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY, cl.statsValues);
+	printStatsPageString(Common::String::format("%d", c->constitutionCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY + cd.statsStatsYInc, cl.statsValues);
+	printStatsPageString(Common::String::format("%d", c->charismaCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY + 2 * cd.statsStatsYInc, cl.statsValues);
+	printStatsPageString(Common::String::format("%d", c->armorClass).c_str(), cd.acStatsX, cd.acStatsY, cl.statsValues);
+	_screen->setFont(of);
 
-	tX = _flags.use16ColorMode ? 210 : 275;
-	tY = _flags.use16ColorMode ? 87 : 82;
-	_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), tX, tY, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-	_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), tX, tY + lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-	_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), tX, tY + 2 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-
-	if (_flags.use16ColorMode) {
-		tX = 285;
-		tY -= 27;
-	}
-	_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), tX, tY + 3 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-	_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), tX, tY + 4 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-	_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), tX, tY + 5 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-
-	if (_flags.use16ColorMode)
-		tX = 255;
-	_screen->printText(Common::String::format("%d", c->armorClass).c_str(), tX, tY + 6 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-
-	tY = _flags.use16ColorMode ? 136 : 145;
 	for (int i = 0; i < 3; i++) {
 		int t = getCharacterClassType(c->cClass, i);
 		if (t == -1)
 			continue;
-		tX = (_flags.use16ColorMode) ? 183 : 180;
-		_screen->printText(_chargenClassStrings[t + 15], tX, tY + lineH * i, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
+
+		printStatsPageString(_chargenClassStrings[t + 15], cd.classStringsX + cd.classStringsXInc * i, cd.classStringsY + cd.classStringsYInc * i, cl.cls[i]);
+		if (_flags.lang == Common::ZH_TWN && i < 2 && getCharacterClassType(c->cClass, i + 1) != -1)
+			_screen->printShadedText("/", 182 + i * 8 + (i + 1) * 30, 148, g->colors.guiColorWhite, 0, g->colors.guiColorBlack);
+
+		of = _screen->setFont(_invFont6);
 		Common::String tmpStr = Common::String::format("%d", c->experience[i]);
-		_screen->printText(tmpStr.c_str(), 251 - (_screen->getTextWidth(tmpStr.c_str()) >> 1), tY + lineH * i, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+		printStatsPageString(tmpStr.c_str(), cd.expStatsX - (_screen->getTextWidth(tmpStr.c_str()) >> 1) + cd.expStatsXInc * i, cd.expStatsY + cd.expStatsYInc * i, cl.expLvl[i]);
 		tmpStr = Common::String::format("%d", c->level[i]);
-		_screen->printText(tmpStr.c_str(), 286 - (_screen->getTextWidth(tmpStr.c_str()) >> 1), tY + lineH * i, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
+		printStatsPageString(tmpStr.c_str(), cd.lvlStatsX - (_screen->getTextWidth(tmpStr.c_str()) >> 1) + cd.lvlStatsXInc * i, cd.lvlStatsY + cd.lvlStatsYInc * i, cl.expLvl[i]);
+		_screen->setFont(of);
 	}
 }
 
@@ -865,6 +885,13 @@ void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	b->keyCode = d->keyCode;
 	b->keyCode2 = d->keyCode2;
 	b->arg = d->arg;
+}
+
+void EoBCoreEngine::printStatsPageString(const char *str, int x, int y, int col) {
+	if (_flags.lang == Common::ZH_TWN)
+		_screen->printShadedText(str, x, y, col, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+	else
+		_screen->printText(str, x, y, col, guiSettings()->colors.sfill);
 }
 
 int EoBCoreEngine::clickedCharPortraitDefault(Button *button) {

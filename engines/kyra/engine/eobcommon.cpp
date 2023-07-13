@@ -197,7 +197,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = 0;
 	_buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
-	_invFont1 = _invFont2 = _invFont4 = _conFont = _bookFont = Screen::FID_6_FNT;
+	_invFont1 = _invFont2 = _invFont4 = _invFont5 = _invFont6 = _hpStatFont = _conFont = _bookFont = Screen::FID_6_FNT;
 	_titleFont = _invFont3 = Screen::FID_8_FNT;
 	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
@@ -596,17 +596,18 @@ void EoBCoreEngine::loadFonts() {
 		if (_flags.gameID == GI_EOB1) {
 			_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
 			_bookFont = Screen::FID_SJIS_SMALL_FNT;
-			_invFont4 = Screen::FID_SJIS_FNT;
+			_invFont4 = _invFont5 = _invFont6 = Screen::FID_SJIS_FNT;
 		}		
 		_titleFont = _conFont = _invFont3 = Screen::FID_SJIS_FNT;
 		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
 		_screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleNone);
-		_invFont1 = _invFont2 = _invFont4 = _conFont = Screen::FID_8_FNT;
+		_invFont1 = _invFont2 = _invFont4 = _invFont5 = _invFont6 = _hpStatFont = _conFont = Screen::FID_8_FNT;
 	} else if (_flags.lang == Common::ZH_TWN) {
 		_screen->loadFont(Screen::FID_CHINESE_FNT, "FONT8.FNT");
-		_titleFont = _conFont = Screen::FID_CHINESE_FNT;
+		_titleFont = _conFont = _invFont1 = _invFont2 = _invFont4 = Screen::FID_CHINESE_FNT;
+		_invFont5 = Screen::FID_8_FNT;
 	}
 }
 
