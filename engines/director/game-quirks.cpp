@@ -163,6 +163,11 @@ struct Quirk {
 	{ "easternmind", Common::kPlatformMacintosh, &quirkLimit15FPS },
 	{ "easternmind", Common::kPlatformWindows, &quirkLimit15FPS },
 
+	// Wrath of the Gods has shooting gallery minigames which are
+	// clocked to 60fps; in reality this is far too fast to be playable.
+	{ "wrath", Common::kPlatformMacintosh, &quirkLimit15FPS },
+	{ "wrath", Common::kPlatformWindows, &quirkLimit15FPS },
+
 	// Rodem expects to be able to track the mouse cursor outside the
 	// window, which is impossible in ScummVM. Giving it a virtual
 	// desktop allows it to work like it would have on the original OS.
