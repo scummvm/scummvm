@@ -8928,14 +8928,22 @@ static const uint16 larry5PatchTPrintUninitParameter[] = {
 	PATCH_END
 };
 
-// The palette animation for the Mr. Bigg close-up in the LSL5 intro is running
-// very slowly, probably because of speed throttling. It updates every 32th
-// time the doit script is run. There is no consensus on how fast the animation
-// should run, so we arbitrarily change it to every 6th time.
+// The palette animations for the Mr. Bigg close-up in the introduction, and in
+//  room 500, both run too slow due to a conflict with our speed throttlers.
 //
-// Applies to: All known versions
-// Responsible method: Mr. Bigg::doit (script 130)
-
+// Both scripts limit animation to once every X game cycles, but the game ran
+//  unthrottled so the animation speed was still relative to machine speed.
+//  We throttle game cycles for consistent speed, and the combination causes
+//  both animations to run slower than ever.
+//
+// We fix this by lowering each script's throttle value so that the animations
+//  run at a faster yet consistent speed. Room 500 is handled by our throttler
+//  in kGameIsRestarting. Mr. Bigg displays a message box in "fast cast" mode,
+//  preventing kGameIsRestarting from being called, so our kGetEvent throttler
+//  detects and handles that.
+//
+// Applies to: All versions
+// Responsible methods: Mr Bigg:doit (script 130), rm500:doit
 static const uint16 larry5SignatureMrBiggPaletteAnimation[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x20,                         // ldi 20
@@ -8949,6 +8957,19 @@ static const uint16 larry5PatchMrBiggPaletteAnimation[] = {
 	PATCH_END
 };
 
+static const uint16 larry5SignatureRoom500PaletteAnimation[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x0a,                         // ldi 0a
+	0x0a,                               // mod
+	0x18,                               // not
+	SIG_END
+};
+
+static const uint16 larry5PatchRoom500PaletteAnimation[] = {
+	0x35, 0x03,                         // ldi 03
+	PATCH_END
+};
+
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,     0, "update stopGroop client",                     1, larry5SignatureUpdateStopGroopClient,   larry5PatchUpdateStopGroopClient },
@@ -8957,6 +8978,7 @@ static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,   190, "hollywood sign",                              1, larry5SignatureHollywoodSign,           larry5PatchHollywoodSign },
 	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
+	{  true,   500, "speed up palette animation",                  1, larry5SignatureRoom500PaletteAnimation, larry5PatchRoom500PaletteAnimation },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
