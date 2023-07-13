@@ -253,7 +253,7 @@ void Textbox::drawTextbox() {
 				if (colorTokens.size()) {
 					// Text contains color part
 
-					if (totalCharsDrawn == colorTokens.front()) {
+					if (totalCharsDrawn >= colorTokens.front()) {
 						// Token is at begginning of (what's left of) the current line
 						isColor = !isColor;
 						colorTokens.pop();
