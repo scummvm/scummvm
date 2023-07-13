@@ -42,25 +42,28 @@ namespace pyrodactyl {
 namespace item {
 struct Item {
 	// The id, name and description of the item
-	Common::String id, name, desc;
+	Common::String _id, _name, _desc;
 
 	// The image for the item
-	ImageKey img;
+	ImageKey _img;
 
 	// The type of item
-	Common::String type;
+	Common::String _type;
 
 	// The stat bonuses provided by the item
-	Common::Array<pyrodactyl::stat::Bonus> bonus;
+	Common::Array<pyrodactyl::stat::Bonus> _bonus;
 
 	// The price
-	unsigned int value;
+	unsigned int _value;
 
-	Item() { Clear(); }
+	Item() {
+		clear();
+	}
+
 	~Item() {}
 
-	void Clear();
-	void StatChange(pyrodactyl::people::Person &obj, bool increase);
+	void clear();
+	void statChange(pyrodactyl::people::Person &obj, bool increase);
 
 	void load(rapidxml::xml_node<char> *node);
 	void draw(const int &x, const int &y);

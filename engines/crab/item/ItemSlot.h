@@ -85,7 +85,7 @@ public:
 	pyrodactyl::ui::ButtonAction handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #endif
 
-	bool CanSwap(ItemSlot &target) { return target.no_type || item.type == target.item_type; }
+	bool CanSwap(ItemSlot &target) { return target.no_type || item._type == target.item_type; }
 	bool Swap(ItemSlot &target);
 	bool Equip(Item &i);
 

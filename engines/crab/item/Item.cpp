@@ -43,42 +43,42 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 void Item::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		loadStr(id, "id", node);
-		loadStr(name, "name", node);
-		loadStr(type, "type", node);
-		loadStr(desc, "desc", node);
-		loadImgKey(img, "img", node);
+		loadStr(_id, "id", node);
+		loadStr(_name, "name", node);
+		loadStr(_type, "type", node);
+		loadStr(_desc, "desc", node);
+		loadImgKey(_img, "img", node);
 
-		bonus.clear();
+		_bonus.clear();
 		for (auto n = node->first_node("bonus"); n != NULL; n = n->next_sibling("bonus")) {
 			Bonus b;
 			b.load(n);
-			bonus.push_back(b);
+			_bonus.push_back(b);
 		}
 	}
 }
 
-void Item::Clear() {
-	id = "";
-	name = "";
-	type = "";
-	desc = "";
-	img = 0;
-	bonus.clear();
-	value = 0;
+void Item::clear() {
+	_id = "";
+	_name = "";
+	_type = "";
+	_desc = "";
+	_img = 0;
+	_bonus.clear();
+	_value = 0;
 }
 
 //------------------------------------------------------------------------
 // Purpose: Save and load state
 //------------------------------------------------------------------------
 void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	root->append_attribute(doc.allocate_attribute("id", id.c_str()));
-	root->append_attribute(doc.allocate_attribute("name", name.c_str()));
-	root->append_attribute(doc.allocate_attribute("type", type.c_str()));
-	root->append_attribute(doc.allocate_attribute("img", gStrPool->Get(img)));
-	root->append_attribute(doc.allocate_attribute("desc", desc.c_str()));
+	root->append_attribute(doc.allocate_attribute("id", _id.c_str()));
+	root->append_attribute(doc.allocate_attribute("name", _name.c_str()));
+	root->append_attribute(doc.allocate_attribute("type", _type.c_str()));
+	root->append_attribute(doc.allocate_attribute("img", gStrPool->Get(_img)));
+	root->append_attribute(doc.allocate_attribute("desc", _desc.c_str()));
 
-	for (auto i = bonus.begin(); i != bonus.end(); ++i) {
+	for (auto i = _bonus.begin(); i != _bonus.end(); ++i) {
 		auto n = doc.allocate_node(rapidxml::node_element, "bonus");
 		switch (i->type) {
 		case STAT_HEALTH:
@@ -107,8 +107,8 @@ void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 //------------------------------------------------------------------------
 // Purpose: Calculate effect of item on stats
 //------------------------------------------------------------------------
-void Item::StatChange(Person &obj, bool increase) {
-	for (auto i = bonus.begin(); i != bonus.end(); ++i)
+void Item::statChange(pyrodactyl::people::Person &obj, bool increase) {
+	for (auto i = _bonus.begin(); i != _bonus.end(); ++i)
 		if (increase)
 			obj.stat.Change(i->type, i->val);
 		else
@@ -116,7 +116,7 @@ void Item::StatChange(Person &obj, bool increase) {
 }
 
 void Item::draw(const int &x, const int &y) {
-	g_engine->_imageManager->draw(x, y, img);
+	g_engine->_imageManager->draw(x, y, _img);
 }
 
 } // End of namespace Crab

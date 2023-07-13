@@ -56,7 +56,7 @@ void StatPreview::load(rapidxml::xml_node<char> *node) {
 void StatPreview::draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper) {
 	if (enabled) {
 		int count = 0;
-		for (auto i = item.bonus.begin(); i != item.bonus.end(); ++i, ++count) {
+		for (auto i = item._bonus.begin(); i != item._bonus.end(); ++i, ++count) {
 			stat.draw(helper.Name(i->type), inc_s.x * count, inc_s.y * count);
 			unit.draw(gStrPool->Get(i->val), inc_u.x * count, inc_u.y * count);
 		}

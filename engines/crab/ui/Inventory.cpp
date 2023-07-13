@@ -76,15 +76,15 @@ void Inventory::LoadItem(const Common::String &char_id, const Common::String &id
 }
 
 void Inventory::DelItem(const Common::String &char_id, const Common::String &item_id) {
-	collection.Del(char_id, item_id);
+	collection.del(char_id, item_id);
 }
 
 void Inventory::AddItem(const Common::String &char_id, Item &item) {
-	collection.Add(char_id, item);
+	collection.add(char_id, item);
 }
 
 bool Inventory::HasItem(const Common::String &char_id, const Common::String &container, const Common::String &item_id) {
-	return collection.Has(char_id, container, item_id);
+	return collection.has(char_id, container, item_id);
 }
 
 //------------------------------------------------------------------------

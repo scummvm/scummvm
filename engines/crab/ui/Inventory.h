@@ -62,7 +62,7 @@ public:
 	Inventory() {}
 	~Inventory() {}
 
-	void Init(const Common::String &char_id) { collection.Init(char_id); }
+	void Init(const Common::String &char_id) { collection.init(char_id); }
 
 	void LoadItem(const Common::String &char_id, const Common::String &name);
 	void AddItem(const Common::String &char_id, pyrodactyl::item::Item &item);
