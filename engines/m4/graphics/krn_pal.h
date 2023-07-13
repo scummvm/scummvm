@@ -84,9 +84,9 @@ struct KernelPal_Globals {
 };
 
 extern void pal_fade_set_start(RGB8 *origPalette, int32 percent);
-extern void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, uint32 triggerNum);
+extern void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
 
-extern void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks, int32 totalTicks, uint32 triggerNum);
+extern void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks, int32 totalTicks, int32 triggerNum);
 extern bool pal_cycle_active();        // Returns true if color cycling is on
 extern void pal_cycle_stop();          // Stops color cycling
 extern void pal_cycle_resume();        // Starts color cycling

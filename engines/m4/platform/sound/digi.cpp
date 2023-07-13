@@ -79,6 +79,11 @@ void Digi::read_another_chunk() {
 	warning("TODO: Digi::read_another_chunk");
 }
 
+bool Digi::play_state(int channel) const {
+	warning("TODO: Digi::play_state");
+	return true;
+}
+
 } // namespace Sound
 
 bool digi_preload(const Common::String &name, int roomNum) {
@@ -103,6 +108,10 @@ void digi_read_another_chunk() {
 
 void digi_stop(int slot) {
 	_G(digi).stop(slot);
+}
+
+bool digi_play_state(int channel) {
+	return _G(digi).play_state(channel);
 }
 
 } // namespace M4

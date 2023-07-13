@@ -59,6 +59,7 @@ public:
 	void flush_mem();
 
 	void read_another_chunk();
+	bool play_state(int channel) const;
 };
 
 } // namespace Sound
@@ -68,7 +69,8 @@ extern void digi_unload(const Common::String &name);
 extern int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
 extern int32 digi_play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
 extern void digi_read_another_chunk();
-extern void digi_stop(int slot);
+extern void digi_stop(int channel);
+extern bool digi_play_state(int channel);
 
 } // namespace M4
 

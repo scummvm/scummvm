@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/stream_break.h"
+#include "m4/burger/core/stream_break.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/burger/vars.h"
@@ -115,6 +115,11 @@ void digi_unload_stream_breaks(const seriesStreamBreak list[]) {
 		}
 		++i; // next in list please
 	}
+}
+
+void palette_prep_for_stream() {
+	gr_pal_clear(&_G(master_palette)[0]);			// Clear out colours in palette 
+	pal_fade_set_start(&_G(master_palette)[0], 0);	// Set fade to zero percent instantly (0 ticks)
 }
 
 } // namespace Burger
