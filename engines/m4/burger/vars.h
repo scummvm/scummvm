@@ -27,6 +27,7 @@
 #include "m4/burger/inventory.h"
 #include "m4/burger/globals.h"
 #include "m4/burger/series_player.h"
+#include "m4/burger/stream_break.h"
 #include "m4/burger/walker.h"
 
 namespace M4 {
@@ -34,6 +35,28 @@ namespace Burger {
 
 enum GameMode {
 	JUST_OVERVIEW = 0, INTERACTIVE_DEMO = 1, MAGAZINE_DEMO = 2, WHOLE_GAME = 3
+};
+
+enum global_triggers {
+	gFIRST_GLOBAL_TRIGGER = 10000,
+
+	// System triggers 
+	gRESUME_CONVERSATION,			// Yep, that's what it does!
+	gWILBURS_SPEECH_FINISHED,		// digi_play trigger, used in talk.cpp
+	gNONPLAYERS_SPEECH_FINISHED,	// digi_play trigger, used in talk.cpp
+	gSERIES_STREAM_BREAK,			// Used only by set_next_stream_break () in global.cpp
+	gSERIES_PLAY_BREAK_0,			// Used only by set_next_play_break () in global.cpp
+	gSERIES_PLAY_BREAK_1,			// Used only by set_next_play_break () in global.cpp
+	gSERIES_PLAY_BREAK_2,			// Used only by set_next_play_break () in global.cpp
+	gRELEASE_TRIGGER_DIGI_CHECK,	// Used only by release_trigger_digi_check() in global.cpp
+
+	// General triggers
+	gREACT_TO_WHISTLE,				// For anything that reacts to the wistle being blown
+
+	// Wilbur specific triggers
+	gCHANGE_WILBUR_ANIMATION,
+
+	gLAST_GLOBAL_TRIGGER
 };
 
 class Vars : public M4::Vars {
@@ -53,6 +76,7 @@ public:
 	GameMode _executing = WHOLE_GAME;
 	GUI::Interface _interface;
 	SeriesPlayers _seriesPlayers;
+	StreamBreak_Globals _streamBreak;
 	Burger::Walker _walker;
 	int _wilburTerm = 2;
 	const Common::String _wilbur = "WILBUR";

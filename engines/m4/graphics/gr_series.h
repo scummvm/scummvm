@@ -33,6 +33,14 @@ constexpr uint32 BACKWARD = 2;
 constexpr uint32 STICK = 4;
 constexpr uint32 NO_TOSS = 8;
 
+enum {
+	HASH_SERIES_PLAY_MACHINE = 0,
+	HASH_SERIES_SHOW_MACHINE = 1,
+	// HASH_TIMER_MACHINE = 2,  // defined in adv.h
+
+	HASH_STREAM_MACHINE = 6
+};
+
 extern int32 series_load(const char *seriesName, int32 assetIndex, RGB8 *myPal);
 extern void series_unload(int32 assetIndex);
 extern bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);
@@ -61,6 +69,10 @@ machine *series_ranged_play_xy(char *seriesName, int32 loopCount, uint32 flags,
 	int32 x, int32 y,
 	int32 s, int32 layer, int32 frameRate,
 	int16 triggerNum, bool stick_when_done);
+
+machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger);
+bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger);
+void series_set_frame_rate(machine *m, int32 newFrameRate);
 
 } // namespace M4
 

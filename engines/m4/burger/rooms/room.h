@@ -23,6 +23,7 @@
 #define M4_BURGER_ROOMS_ROOM_H
 
 #include "m4/core/rooms.h"
+#include "m4/burger/stream_break.h"
 
 namespace M4 {
 namespace Burger {
