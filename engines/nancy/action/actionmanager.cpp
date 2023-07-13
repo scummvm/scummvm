@@ -74,6 +74,8 @@ void ActionManager::handleInput(NancyInput &input) {
 
 							NancySceneState.setHeldItem(-1);
 						}
+
+						rec->_cursorDependency = nullptr;
 					}
 					
 				}
@@ -371,13 +373,8 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 					}
 				}
 
-				if (isSatisfied) {
-					dep.satisfied = true;
-					record._cursorDependency = nullptr;
-				} else {
-					dep.satisfied = false;
-					record._cursorDependency = &dep;
-				}
+				dep.satisfied = isSatisfied;
+				record._cursorDependency = &dep;
 			}
 			
 			break;
