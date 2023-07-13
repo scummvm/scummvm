@@ -371,6 +371,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	// Fan translation patch for GOG version (provided by Condezer0, bug #14484)
+	{
+		{
+			"ultima8",
+			"Gold Edition",
+			AD_ENTRY1s("eusecode.flx", "cd4b330e09efd232360fd476bcc6a1d1", 1285847),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA8
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
 	// German CD version
 	{
 		{
