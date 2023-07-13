@@ -100,7 +100,10 @@ bool init_voicepak(const String &name) {
 
 	// First remove existing voice packs
 	_GP(play).voice_avail = false;
-	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).SpeechPak.Path);
+	// FIXME: don't remove the default speech.vox when changing pak, as this causes a crash in Beyond the Edge of Owlsgard
+	// Duplicate checks are already present so this shouldn't cause problems but still, it should be looked into
+	if (_GP(ResPaths).SpeechPak.Name.CompareNoCase("speech.vox") != 0)
+		_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).SpeechPak.Path);
 	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).VoiceDirSub);
 
 	// Now check for the new packs and add if they exist
