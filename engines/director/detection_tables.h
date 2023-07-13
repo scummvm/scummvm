@@ -5542,7 +5542,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Full game is not Director
 	// Demo developed by The Tuesday Group
-	WINDEMO1("waldogeo", "Demo", "WALDOPC.EXE", "t:019433037fe5b5d166536d0f28819519", 2094361, 404),
+	WINDEMO1("wwaldogeo", "Demo", "WALDOPC.EXE", "t:019433037fe5b5d166536d0f28819519", 2094361, 404),
 
 	WINDEMO1("wwanimals", "Demo", "ANIMALS.EXE", "25fee176193d52cf7cbc2b604bfcbf8c", 6961631, 404),
 
