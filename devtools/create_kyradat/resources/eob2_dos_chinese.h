@@ -501,15 +501,17 @@ static const char *const kEoB2MenuStringsSpecDOSChinese[2] = {
 static const StringListProvider kEoB2MenuStringsSpecDOSChineseProvider = { ARRAYSIZE(kEoB2MenuStringsSpecDOSChinese), kEoB2MenuStringsSpecDOSChinese };
 
 static const char *const kEoB2MenuYesNoStringsDOSChinese[2] = {
-	"Yes",
-	"No"
+	"\xac""O",	/* "是" */
+	"\xa4\xa3"	/* "不" */
 };
 
 static const StringListProvider kEoB2MenuYesNoStringsDOSChineseProvider = { ARRAYSIZE(kEoB2MenuYesNoStringsDOSChinese), kEoB2MenuYesNoStringsDOSChinese };
 
-static const char *const kEoB2CharGuiStringsHpDOSChinese[2] = {
-	"HP",
-	"%3d of %-3d"
+static const char *const kEoB2CharGuiStringsHpDOSChinese[4] = {
+	"\xa9""R", /* "命" */
+	"%2d",
+	"%2d/%-2d",
+	"\xad\xb9" /* "食" */
 };
 
 static const StringListProvider kEoB2CharGuiStringsHpDOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsHpDOSChinese), kEoB2CharGuiStringsHpDOSChinese };
@@ -525,20 +527,20 @@ static const StringListProvider kEoB2CharGuiStringsWp2DOSChineseProvider = { ARR
 static const char *const kEoB2CharGuiStringsWrDOSChinese[4] = {
 	"\xb5\x4c\xaa\x6b\xa7\xf0\xc0\xbb", /* "無法攻擊"; */
 	"",
-	"NO",
-	"AMMO"
+	"\xb5""L""\xa8\xbe\xc5""@""\xa4""O",/* "無防護力"; */
+	""
 };
 
 static const StringListProvider kEoB2CharGuiStringsWrDOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsWrDOSChinese), kEoB2CharGuiStringsWrDOSChinese };
 
 static const char *const kEoB2CharGuiStringsSt2DOSChinese[7] = {
-	"Swapping",
+	"\xa5\xe6\xb4\xab\xa6\xec\xb8""m",	/* "交換位置"; */
 	"\xa5\xfa\xba\x61\xb0\x7d\xa4\x60", /* "光榮陣亡"; */
 	"\xa9\xfc\xb0\x67\xa4\xa3\xbf\xf4", /* "昏迷不醒"; */
 	"\xba\x43\xa9\xca\xa4\xa4\xac\x72", /* "慢性中毒"; */
 	"\xa8\xad\xac\x56\xbc\x40\xac\x72", /* "身染劇毒"; */
 	"\xa5\xfe\xa8\xad\xb7\xf2\xb7\xf4", /* "全身痲痺"; */
-	"\xc5\xdc\xa6\xa8\xa4\xc6\xa5\xdb", /* "變成化石"; */
+	"\xc5\xdc\xa6\xa8\xa4\xc6\xa5\xdb"	/* "變成化石"; */
 };
 
 static const StringListProvider kEoB2CharGuiStringsSt2DOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsSt2DOSChinese), kEoB2CharGuiStringsSt2DOSChinese };
@@ -547,7 +549,7 @@ static const char *const kEoB2CharGuiStringsInDOSChinese[4] = {
 	"\xb6\xa4\xad\xfb\xb8\xea\xae\xc6", /* "隊員資料"; */
 	"\xa8\xbe\xc5\x40\xa4\x4f\x3a", /* "防護力:"; */
 	"\xb8\x67\xc5\xe7", /* "經驗"; */
-	"\xb5\xa5\xaf\xc5", /* "等級"; */
+	"\xb5\xa5\xaf\xc5"	/* "等級"; */
 };
 
 static const StringListProvider kEoB2CharGuiStringsInDOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsInDOSChinese), kEoB2CharGuiStringsInDOSChinese };
