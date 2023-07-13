@@ -206,7 +206,13 @@ void Textbox::drawTextbox() {
 			colorTokens.push(newLinePos);
 
 			newLinePos = currentLine.find(_colorEndToken);
-			currentLine.erase(newLinePos, ARRAYSIZE(_colorEndToken) - 1);
+
+			if (newLinePos != Common::String::npos) {
+				currentLine.erase(newLinePos, ARRAYSIZE(_colorEndToken) - 1);
+			} else {
+				// If we find no color end token we assume the whole line needs to be colored
+				newLinePos = currentLine.size();
+			}
 			colorTokens.push(newLinePos);
 		}
 
