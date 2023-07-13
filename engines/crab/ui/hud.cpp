@@ -114,7 +114,7 @@ void HUD::internalEvents(bool ShowMap) {
 	if (timer.TargetReached()) {
 		clip.x += clip.w;
 
-		if (clip.x >= g_engine->_imageManager->GetTexture(notify_anim).W())
+		if (clip.x >= g_engine->_imageManager->GetTexture(notify_anim).w())
 			clip.x = 0;
 
 		timer.Start();

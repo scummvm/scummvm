@@ -71,7 +71,7 @@ class TextManager {
 			col = 0;
 			font = 0;
 		}
-		~TextCacheUnit() { img.Delete(); }
+		~TextCacheUnit() { img.deleteImage(); }
 
 		bool EqualCol(int color) { return col == color; }
 	};

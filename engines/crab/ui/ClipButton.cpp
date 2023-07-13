@@ -44,8 +44,8 @@ void ClipButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	else {
 		clip.x = 0;
 		clip.y = 0;
-		clip.w = g_engine->_imageManager->GetTexture(img.normal).W();
-		clip.h = g_engine->_imageManager->GetTexture(img.normal).H();
+		clip.w = g_engine->_imageManager->GetTexture(img.normal).w();
+		clip.h = g_engine->_imageManager->GetTexture(img.normal).h();
 	}
 }
 

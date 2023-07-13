@@ -67,10 +67,10 @@ void ProgressBar::draw(const int &value, const int &max) {
 
 	// If we don't have to draw animations for changing value, just draw the bar
 	if (!changed) {
-		clip.w = (g_engine->_imageManager->GetTexture(img.normal).W() * value) / max;
+		clip.w = (g_engine->_imageManager->GetTexture(img.normal).w() * value) / max;
 		ClipButton::draw();
 	} else {
-		clip.w = (g_engine->_imageManager->GetTexture(img.normal).W() * cur) / max;
+		clip.w = (g_engine->_imageManager->GetTexture(img.normal).w() * cur) / max;
 		ClipButton::draw();
 
 		switch (type) {

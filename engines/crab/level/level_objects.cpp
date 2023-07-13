@@ -38,8 +38,8 @@ using namespace pyrodactyl::level;
 
 void PlayerDestMarker::load(rapidxml::xml_node<char> *node) {
 	loadImgKey(img, "dest", node);
-	size.x = g_engine->_imageManager->GetTexture(img).W();
-	size.y = g_engine->_imageManager->GetTexture(img).H();
+	size.x = g_engine->_imageManager->GetTexture(img).w();
+	size.y = g_engine->_imageManager->GetTexture(img).h();
 }
 
 void PlayerDestMarker::draw(const Vector2i &pos, const Rect &camera) {

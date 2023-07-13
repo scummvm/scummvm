@@ -44,8 +44,8 @@ class LoadingScreen {
 		pyrodactyl::image::Image bg;
 
 		Screen(rapidxml::xml_node<char> *node) { bg.load(node, "bg"); }
-		void Delete() { bg.Delete(); }
-		void draw() { bg.draw((g_engine->_screenSettings->cur.w - bg.W()) / 2, (g_engine->_screenSettings->cur.h - bg.H()) / 2); }
+		void Delete() { bg.deleteImage(); }
+		void draw() { bg.draw((g_engine->_screenSettings->cur.w - bg.w()) / 2, (g_engine->_screenSettings->cur.h - bg.h()) / 2); }
 	};
 
 	// The different loading screens

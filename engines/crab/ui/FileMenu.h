@@ -99,11 +99,11 @@ public:
 
 	~FileMenu() {
 		if (img.loaded)
-			img.preview.Delete();
+			img.preview.deleteImage();
 	}
 	void reset() {
 		if (img.loaded)
-			img.preview.Delete();
+			img.preview.deleteImage();
 		img.loaded = false;
 		hover = false;
 	}

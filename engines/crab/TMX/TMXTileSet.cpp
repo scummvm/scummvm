@@ -53,8 +53,8 @@ void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 			loc = path + filename;
 
 			img.load(loc);
-			total_rows = img.H() / tile_h;
-			total_cols = img.W() / tile_w;
+			total_rows = img.h() / tile_h;
+			total_cols = img.w() / tile_w;
 			warning("Total rows : %d Total cols: %d gid: %d", total_rows, total_cols, first_gid);
 
 		}
@@ -67,7 +67,7 @@ void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 
 void TileSetGroup::reset() {
 	for (auto i = tileset.begin(); i != tileset.end(); ++i)
-		i->img.Delete();
+		i->img.deleteImage();
 
 	tileset.clear();
 }
@@ -250,7 +250,7 @@ void TileSetGroup::draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 		end.y = camera.y + g_engine->_screen->h;
 
 		Rect clip(v.x, v.y, end.x - v.x, end.y - v.y);
-		img.FastDraw(0, 0, &clip);
+		img.fastDraw(0, 0, &clip);
 	}
 }
 

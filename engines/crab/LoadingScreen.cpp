@@ -60,7 +60,7 @@ void LoadingScreen::draw() {
 		screen[cur].draw();
 
 	// Draw the loading text
-	text.draw((g_engine->_screenSettings->cur.w - text.W()) / 2, (g_engine->_screenSettings->cur.h - text.H()) / 2);
+	text.draw((g_engine->_screenSettings->cur.w - text.w()) / 2, (g_engine->_screenSettings->cur.h - text.h()) / 2);
 
 	g_engine->_screen->update();
 
@@ -82,7 +82,7 @@ void LoadingScreen::Dim() {
 }
 
 void LoadingScreen::Quit() {
-	text.Delete();
+	text.deleteImage();
 
 	for (auto i = screen.begin(); i != screen.end(); ++i)
 		i->Delete();

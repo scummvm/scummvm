@@ -386,14 +386,14 @@ void Map::SetImage(const unsigned int &val, const bool &force) {
 	if (force || (cur != val && val < map.size())) {
 		cur = val;
 
-		img_bg.Delete();
-		img_overlay.Delete();
+		img_bg.deleteImage();
+		img_overlay.deleteImage();
 
 		img_bg.load(map[cur].path_bg);
 		img_overlay.load(map[cur].path_overlay);
 
-		size.x = img_bg.W();
-		size.y = img_bg.H();
+		size.x = img_bg.w();
+		size.y = img_bg.h();
 
 		marker.Clear();
 		for (auto &i : map[cur].dest)

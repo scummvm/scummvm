@@ -156,7 +156,7 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 		SDL_Surface *surf = RenderTextBlended(font, text, color);
 #endif
 		Graphics::ManagedSurface *surf = RenderTextBlended(fontk, text, color);
-		cache[pos].img.Delete();
+		cache[pos].img.deleteImage();
 		cache[pos].empty = false;
 
 		cache[pos].text = text;
@@ -172,8 +172,8 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 	}
 
 	if (background) {
-		rect.w = cache[pos].img.W() + (2 * pad_bg.x);
-		rect.h = cache[pos].img.H() + (2 * pad_bg.y);
+		rect.w = cache[pos].img.w() + (2 * pad_bg.x);
+		rect.h = cache[pos].img.h() + (2 * pad_bg.y);
 
 		uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
 		Graphics::Surface surf;
@@ -195,23 +195,23 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 #endif
 			cache[pos].img.draw(x, y);
 		} else if (align == ALIGN_CENTER) {
-			rect.x = x - cache[pos].img.W() / 2 - pad_bg.x;
-			rect.y = y - cache[pos].img.H() / 2 - pad_bg.y;
+			rect.x = x - cache[pos].img.w() / 2 - pad_bg.x;
+			rect.y = y - cache[pos].img.h() / 2 - pad_bg.y;
 			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
+			cache[pos].img.draw(x - cache[pos].img.w() / 2, y - cache[pos].img.h() / 2);
 		} else {
-			rect.x = x - cache[pos].img.W() - pad_bg.x;
+			rect.x = x - cache[pos].img.w() - pad_bg.x;
 			rect.y = y - pad_bg.y;
 			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.draw(x - cache[pos].img.W(), y);
+			cache[pos].img.draw(x - cache[pos].img.w(), y);
 		}
 
 		surf.free();
@@ -220,9 +220,9 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 		if (align == ALIGN_LEFT)
 			cache[pos].img.draw(x, y);
 		else if (align == ALIGN_CENTER)
-			cache[pos].img.draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
+			cache[pos].img.draw(x - cache[pos].img.w() / 2, y - cache[pos].img.h() / 2);
 		else
-			cache[pos].img.draw(x - cache[pos].img.W(), y);
+			cache[pos].img.draw(x - cache[pos].img.w(), y);
 	}
 }
 
@@ -272,7 +272,7 @@ void TextManager::Quit() {
 
 	for (auto i = cache.begin(); i != cache.end(); ++i) {
 		if (i->empty == false) {
-			i->img.Delete();
+			i->img.deleteImage();
 			i->empty = true;
 		}
 	}
