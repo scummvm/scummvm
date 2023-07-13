@@ -42,26 +42,26 @@ namespace input {
 // This class is built to integrate the input check for hotkeys bound to buttons
 class HotKey {
 	// The type of input the hotkey is checking for
-	InputType input;
+	InputType _input;
 
 	// Has the key been pressed?
-	bool keydown;
+	bool _keydown;
 
 	// Description of the key associated with the Input
-	Common::String name;
+	Common::String _name;
 
 public:
 	HotKey() {
-		input = IT_NONE;
-		keydown = false;
+		_input = IT_NONE;
+		_keydown = false;
 	}
 
-	void Set(const InputType &val) {
-		input = val;
-		name = g_engine->_inputManager->GetAssociatedKey(input);
+	void set(const InputType &val) {
+		_input = val;
+		_name = g_engine->_inputManager->GetAssociatedKey(_input);
 	}
 
-	const char *Name();
+	const char *name();
 
 	void load(rapidxml::xml_node<char> *node);
 

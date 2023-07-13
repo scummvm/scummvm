@@ -88,7 +88,7 @@ public:
 	Button back;
 
 	HUD() {
-		pausekey.Set(pyrodactyl::input::IG_PAUSE);
+		pausekey.set(pyrodactyl::input::IG_PAUSE);
 		notify_anim = 0;
 	}
 	~HUD() {}

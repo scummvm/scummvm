@@ -166,7 +166,7 @@ void HUD::State(const int &val) {
 void HUD::SetTooltip() {
 	unsigned int count = 0;
 	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
-		i->tooltip.text = tooltip[count] + " (" + i->hotkey.Name() + ")";
+		i->tooltip.text = tooltip[count] + " (" + i->hotkey.name() + ")";
 
 	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->GetAssociatedKey(IG_PAUSE) + ")";
 }

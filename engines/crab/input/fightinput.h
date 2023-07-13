@@ -59,23 +59,31 @@ enum FightAnimationType {
 // The input necessary to launch a move
 struct FightInput {
 	// The state needed to execute this move
-	FightAnimationType type;
+	FightAnimationType _type;
 
 	// The sprite state, used to have different moves trigger from the same move
-	unsigned int state;
+	unsigned int _state;
 
-	FightInput() { reset(); }
-	void reset() {
-		type = FA_IDLE;
-		state = 0;
+	FightInput() {
+		reset();
 	}
 
-	bool operator==(const FightInput &input) { return type == input.type && state == input.state; }
-	bool Idle() { return type == FA_IDLE; }
+	void reset() {
+		_type = FA_IDLE;
+		_state = 0;
+	}
+
+	bool operator==(const FightInput &input) {
+		return _type == input._type && _state == input._state;
+	}
+
+	bool idle() {
+		return _type == FA_IDLE;
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 
-	FightAnimationType handleEvents(const Common::Event &Event);
+	FightAnimationType handleEvents(const Common::Event &event);
 #if 0
 	FightAnimationType handleEvents(const SDL_Event &Event);
 #endif

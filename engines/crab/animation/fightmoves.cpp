@@ -127,12 +127,12 @@ FrameUpdateResult FightMoves::updateFrame(const Direction &d) {
 unsigned int FightMoves::findMove(const pyrodactyl::input::FightAnimationType &type, const int &state) {
 	unsigned int pos = 0;
 	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
-		if (i->_input.type == type && i->_input.state == (unsigned int)state)
+		if (i->_input._type == type && i->_input._state == (unsigned int)state)
 			return pos;
 
 	pos = 0;
 	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
-		if (i->_input.type == type && i->_input.state == SPRITE_STATE_OVERRIDE)
+		if (i->_input._type == type && i->_input._state == SPRITE_STATE_OVERRIDE)
 			return pos;
 
 	return SPRITE_STATE_OVERRIDE;
@@ -161,7 +161,7 @@ bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 			_frameTotal = _move[_cur]._frames[d]._frame.size();
 			if (_frameTotal > 0) {
 				input = _move[_cur]._input;
-				input.state = _move[_cur]._frames[d]._frame[0]._state;
+				input._state = _move[_cur]._frames[d]._frame[0]._state;
 			} else
 				input.reset();
 

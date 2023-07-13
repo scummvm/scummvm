@@ -45,12 +45,12 @@ void SlideShow::load(rapidxml::xml_node<char> *node) {
 
 		if (nodeValid("prev", node)) {
 			prev.load(node->first_node("prev"));
-			prev.hotkey.Set(IU_PREV);
+			prev.hotkey.set(IU_PREV);
 		}
 
 		if (nodeValid("next", node)) {
 			next.load(node->first_node("next"));
-			next.hotkey.Set(IU_NEXT);
+			next.hotkey.set(IU_NEXT);
 		}
 
 		path.clear();

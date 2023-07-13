@@ -504,7 +504,7 @@ void Sprite::walk(const bool &reset) {
 // Purpose: Decide which animation to play
 //------------------------------------------------------------------------
 void Sprite::animate(Info &info) {
-	if (_input.Idle())
+	if (_input.idle())
 		walk(info.state(_id));
 	else
 		updateFrame(info.state(_id));
@@ -563,7 +563,7 @@ void Sprite::assignFrame() {
 		_pos.x += faf._delta.x;
 		_pos.y += faf._delta.y;
 
-		_input.state = faf._state;
+		_input._state = faf._state;
 	}
 }
 
@@ -572,7 +572,7 @@ void Sprite::assignFrame() {
 //------------------------------------------------------------------------
 void Sprite::updateMove(const FightAnimationType &combo) {
 	if (combo != FA_IDLE) {
-		if (_input.Idle())
+		if (_input.idle())
 			forceUpdateMove(combo);
 		else {
 			FightAnimFrame faf;
@@ -584,7 +584,7 @@ void Sprite::updateMove(const FightAnimationType &combo) {
 }
 
 void Sprite::forceUpdateMove(const FightAnimationType &combo) {
-	unsigned int index = _animSet._fight.findMove(combo, _input.state);
+	unsigned int index = _animSet._fight.findMove(combo, _input._state);
 	forceUpdateMove(index);
 }
 
@@ -592,7 +592,7 @@ void Sprite::forceUpdateMove(const FightAnimationType &combo) {
 // Purpose: Update the move info of the AI or player sprite
 //------------------------------------------------------------------------
 void Sprite::updateMove(const unsigned int &index) {
-	if (_input.Idle())
+	if (_input.idle())
 		forceUpdateMove(index);
 }
 

@@ -36,9 +36,9 @@ namespace Crab {
 using namespace pyrodactyl::input;
 
 void HotKey::load(rapidxml::xml_node<char> *node) {
-	loadEnum(input, "input", node);
+	loadEnum(_input, "input", node);
 
-	name = g_engine->_inputManager->GetAssociatedKey(input);
+	_name = g_engine->_inputManager->GetAssociatedKey(_input);
 }
 
 #if 0
@@ -61,15 +61,15 @@ bool HotKey::handleEvents(const SDL_Event &Event) {
 bool HotKey::handleEvents(const Common::Event &Event) {
 	//warning("STUB: HotKey::handleEvents()");
 
-	if (input > IT_NONE && input < IT_TOTAL) {
-		return g_engine->_inputManager->State(input);
+	if (_input > IT_NONE && _input < IT_TOTAL) {
+		return g_engine->_inputManager->State(_input);
 	}
 
 	return false;
 }
 
-const char *HotKey::Name() {
-	return name.c_str();
+const char *HotKey::name() {
+	return _name.c_str();
 
 #if 0
 	if (input > IT_NONE && input < IT_TOTAL)
