@@ -238,7 +238,8 @@ void MarkForTranslationUpdate();
 void MarkForFontUpdate(int font);
 // Mark labels that acts as special text placeholders for redraw
 void MarkSpecialLabelsForUpdate(GUILabelMacro macro);
-// Mark inventory windows for redraw, optionally only ones linked to given character
+// Mark inventory windows for redraw, optionally only ones linked to given character;
+// also marks buttons with inventory icon mode
 void MarkInventoryForUpdate(int char_id, bool is_player);
 
 // Parses the string and returns combination of label macro flags
