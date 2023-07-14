@@ -112,6 +112,11 @@ public:
 	}
 
 	/**
+	 * Returns true if an autosave exists
+	 */
+	bool autosaveExists() const;
+
+	/**
 	 * Show the engine information
 	 */
 	virtual void showEngineInfo() = 0;

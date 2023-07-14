@@ -41,6 +41,7 @@ public:
 	void shutdown() override;
 	void parser_code() override;
 
+	void compact_mem_and_report() {}
 };
 
 } // namespace Rooms
