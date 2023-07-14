@@ -53,6 +53,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  SCUMM:
    - Die Steuerung der Musiklautstärke in Loom funktioniert nun wieder korrekt.
+   - Absturz in Full Throttle behoben, der auftritt, wenn die "A"-Taste im Debug-Modus gedrückt wird.
+   - Warnung wegen fehlender Musikdateien in Monkey Island 1 Ultimate Talkie ausgeblendet.
+   - Fehlerhafter oder unsichtbarer Mauszeiger in Sam & Max korrigiert, der auftritt, wenn
+     im originalen Menü ein Spielstand gespeichert und wieder geladen wird.
+   - Mehrere Probleme mit Spielständen und Abstürzen in frühen FM-Towns-Spielen korrigiert.
+   - Die originalen Banner der Benutzeroberfläche werden jetzt in allen Fällen korrekt ausgeblendet.
 
  Sword1:
    - Die tschechischen und polnischen Versionen mit DXA-Zwischensequenzen werden nun korrekt erkannt.
