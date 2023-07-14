@@ -72,7 +72,6 @@ private:
 
 protected:
 	void main_cold_data_init() override;
-	void initialize_game() override;
 
 public:
 	Burger::GlobalVars _globals;
@@ -100,6 +99,7 @@ public:
 	M4::Walker *getWalker() override {
 		return &_walker;
 	}
+	void initialize_game() override;
 
 	void global_menu_system_init() override;
 };

@@ -85,7 +85,7 @@ enum scene_triggers {
 	START_53,
 	START_54,
 	START_55,
-
+	SAVEGAME_CHECK,
 	LAST_SCENE_TRIGGER
 };
 
@@ -307,6 +307,10 @@ static const seriesStreamBreak break_961c[] = {
 	{ 116,   nullptr, 3,  10,  -1, 0, 0, 0 },
 	{ 117,   nullptr, 0,   0,  52, 0, 0, 0 },
 	{ 118,   nullptr, 3,   0,  -1, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak break_961d[] = {
 	{  -1,   nullptr, 0,   0,  -1, 0, 0, 0 },
 	{   0,   nullptr, 0,   0,  -1, 0, 0, 0 },
 	{  39,   nullptr, 0,   0,  52, 0, 0, 0 },
@@ -577,10 +581,10 @@ void Room951::daemon() {
 	case START_43:
 		digi_unload_stream_breaks(break_961b);
 		compact_mem_and_report();
-		kernel_trigger_dispatch_now(LAST_SCENE_TRIGGER);
+		kernel_trigger_dispatch_now(SAVEGAME_CHECK);
 		break;
 
-	case LAST_SCENE_TRIGGER:
+	case SAVEGAME_CHECK:
 		if (_G(executing) == WHOLE_GAME && !g_engine->autosaveExists()) {
 			_G(game).new_room = 903;
 			adv_kill_digi_between_rooms(false);
@@ -590,7 +594,65 @@ void Room951::daemon() {
 		break;
 
 	case START_44:
-		// TODO: 44 through 55
+		pal_fade_set_start(_G(master_palette), 0);
+		series_stream_with_breaks(break_961d, "961d", 6, 1, START_45);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 100, 30, -1);
+		break;
+
+	case START_45:
+		kernel_timing_trigger(TENTH_SECOND, START_46, nullptr);
+		break;
+
+	case START_46:
+		digi_preload_stream_breaks(break_961c);
+		digi_preload_stream_breaks(break_961d);
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_47, 1, 0);
+		break;
+
+	case START_47:
+		pal_cycle_init(224, 254, 4, -1, -1);
+		break;
+
+	case START_48:
+		pal_cycle_stop();
+		break;
+
+	case START_50:
+		digi_play("952music", 3, 255, -1, -1);
+		break;
+
+	case START_51:
+		digi_play_loop("952music", 3, 255, -1, -1);
+		break;
+
+	case START_52:
+		pal_fade_init(_G(master_palette), 0, 255, 0, 30, -1);
+		break;
+
+	case START_53:
+		pal_fade_init(_G(master_palette), 0, 255, 100, 30, -1);
+		break;
+
+	case START_54:
+		pal_fade_init(_G(master_palette), 0, 255, 0, 60, -1);
+		break;
+
+	case START_55:
+		pal_fade_init(_G(master_palette), 0, 255, 100, 60, -1);
+		break;
+
+	case LAST_SCENE_TRIGGER:
+		compact_mem_and_report();
+		if (_G(executing) == WHOLE_GAME) {
+			g_vars->initialize_game();
+			_G(game).new_room = 801;
+			_G(game).new_section = 8;
+		} else if (g_engine->getLanguage() == Common::EN_ANY) {
+			_G(game).new_room = 901;
+		} else {
+			_G(kernel).force_restart = true;
+		}
 		break;
 
 	case START_49:

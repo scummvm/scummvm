@@ -75,7 +75,6 @@ private:
 
 protected:
 	virtual void main_cold_data_init() = 0;
-	virtual void initialize_game() = 0;
 
 public:
 	Vars();
@@ -86,6 +85,7 @@ public:
 	virtual Interface *getInterface() = 0;
 	virtual Walker *getWalker() = 0;
 	virtual void global_menu_system_init() = 0;
+	virtual void initialize_game() = 0;
 
 	GameControl _game;
 	Kernel _kernel;
