@@ -438,10 +438,8 @@ int ccInstance::Run(int32_t curpc) {
 	int32_t thisbase[MAXNEST], funcstart[MAXNEST];
 	int was_just_callas = -1;
 	int curnest = 0;
-	unsigned loopIterations = 0;
 	int num_args_to_func = -1;
 	int next_call_needs_object = 0;
-	int loopIterationCheckDisabled = 0;
 	thisbase[0] = 0;
 	funcstart[0] = pc;
 	ccInstance *codeInst = runningInst;
@@ -449,6 +447,9 @@ int ccInstance::Run(int32_t curpc) {
 		(gDebugLevel > 0 && DebugMan.isDebugChannelEnabled(::AGS::kDebugScript));
 	ScriptOperation codeOp;
 	FunctionCallStack func_callstack;
+	int loopIterationCheckDisabled = 0;
+	unsigned loopIterations = 0u;      // any loop iterations (needed for timeout test)
+	unsigned loopCheckIterations = 0u; // loop iterations accumulated only if check is enabled
 
 	const auto timeout = std::chrono::milliseconds(_G(timeoutCheckMs));
 	// NOTE: removed timeout_abort check for now: was working *logically* wrong;
@@ -791,14 +792,15 @@ int ccInstance::Run(int32_t curpc) {
 				if (flags & INSTF_RUNNING) {
 					// was notified still running, don't do anything
 					flags &= ~INSTF_RUNNING;
-					loopIterations = 0;
-				} else if ((loopIterationCheckDisabled == 0) && (_G(maxWhileLoops) > 0) && (loopIterations > _G(maxWhileLoops))) {
-					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopIterations);
+					loopIterations = 0u;
+					loopCheckIterations = 0u;
+				} else if ((loopIterationCheckDisabled == 0) && (_G(maxWhileLoops) > 0) && (++loopIterations > _G(maxWhileLoops))) {
+					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopCheckIterations);
 					return -1;
-				} else if ((loopIterations % 1000) == 0 && (std::chrono::duration_cast<std::chrono::milliseconds>(AGS_Clock::now() - _lastAliveTs) > timeout)) {
+				} else if ((loopIterations & 0x3FF) == 0 && // test each 1024 loops (arbitrary)
+						   (std::chrono::duration_cast<std::chrono::milliseconds>(AGS_Clock::now() - _lastAliveTs) > timeout)) {
 					// minimal timeout occurred
 					// NOTE: removed timeout_abort check for now: was working *logically* wrong;
-					// at least let user to manipulate the game window
 					sys_evt_process_pending();
 					_lastAliveTs = AGS_Clock::now();
 				}
