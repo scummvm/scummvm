@@ -36,6 +36,7 @@
 #include "engines/nancy/action/overridelockpuzzle.h"
 #include "engines/nancy/action/bombpuzzle.h"
 #include "engines/nancy/action/soundequalizerpuzzle.h"
+#include "engines/nancy/action/setplayerclock.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -153,6 +154,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new StopSound(); // StopAndUnloadSound, but we always unload
 	case 160:
 		return new HintSystem();
+	case 170:
+		return new SetPlayerClock();
 	case 200:
 		return new SoundEqualizerPuzzle();
 	case 201:

@@ -17,6 +17,7 @@ MODULE_OBJS = \
   action/riddlepuzzle.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
+  action/setplayerclock.o \
   action/sliderpuzzle.o \
   action/soundequalizerpuzzle.o \
   action/towerpuzzle.o \
