@@ -62,7 +62,7 @@ void DLCManager::processDownloadQueue() {
 	if (!_queuedDownloadTasks.empty()) {
 		if (_queuedDownloadTasks.front()->state == DLCDesc::kInProgress) {
 			_currentDownloadingDLC = _queuedDownloadTasks.front()->id;
-			DLCManager::startDownloadAsync(_queuedDownloadTasks.front()->id);
+			DLCManager::startDownloadAsync(_queuedDownloadTasks.front()->id, _queuedDownloadTasks.front()->url);
 		} else {
 			// state is already cancelled/downloaded -> skip download
 			_queuedDownloadTasks.pop();
@@ -76,8 +76,8 @@ void DLCManager::processDownloadQueue() {
 	}
 }
 
-void DLCManager::startDownloadAsync(Common::String &id) {
-	_store->startDownloadAsync(id);
+void DLCManager::startDownloadAsync(const Common::String &id, const Common::String &url) {
+	_store->startDownloadAsync(id, url);
 }
 
 bool DLCManager::cancelDownload(uint32 idx) {

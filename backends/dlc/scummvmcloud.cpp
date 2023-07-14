@@ -27,8 +27,8 @@ namespace DLC {
 namespace ScummVMCloud {
 
 void ScummVMCloud::getAllDLCs(Common::Array<DLCDesc*> &dlcs) {
-    dlcs.push_back(new DLCDesc{"Beneath a Steel Sky - Freeware CD Version", "bass_cd", 100, 0, DLCDesc::kAvailable});
-    dlcs.push_back(new DLCDesc{"Beneath a Steel Sky - Freeware Floppy Version", "bass_floppy", 230, 1, DLCDesc::kAvailable});
+    dlcs.push_back(new DLCDesc{"Beneath a Steel Sky - Freeware CD Version", "bass_cd", "https://downloads.scummvm.org/frs/extras/Beneath%20a%20Steel%20Sky/bass-cd-1.2.zip", 100, 0, DLCDesc::kAvailable});
+    dlcs.push_back(new DLCDesc{"Beneath a Steel Sky - Freeware Floppy Version", "bass_floppy", "https://downloads.scummvm.org/frs/extras/Beneath%20a%20Steel%20Sky/BASS-Floppy-1.3.zip", 230, 1, DLCDesc::kAvailable});
 }
 
 void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
@@ -48,9 +48,9 @@ void ScummVMCloud::errorCallback(Networking::ErrorResponse error) {
 	DLCMan.processDownloadQueue();
 }
 
-void ScummVMCloud::startDownloadAsync(Common::String &id) {
-	Common::String url = Common::String::format("https://downloads.scummvm.org/frs/extras/Beneath%%20a%%20Steel%%20Sky/bass-cd-1.2.zip");
-	Common::String localFile = "";
+void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::String &url) {
+	// TODO: Change it to dlcpath
+	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + id, '/');
 
 	Networking::SessionRequest *rq = session.get(url, localFile,
 		new Common::Callback<ScummVMCloud, Networking::DataResponse>(this, &ScummVMCloud::downloadFileCallback),
