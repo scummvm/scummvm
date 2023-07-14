@@ -45,6 +45,9 @@ public:
 	void updateGraphics() override;
 	void handleInput(NancyInput &input);
 
+	// Used to disable the UI clock when a scene can change the in-game time (e.g. SetPlayerClock)
+	void lockClock(bool val) { _locked = val; }
+
 	void drawClockHands();
 
 protected:
@@ -72,6 +75,7 @@ protected:
 	RenderObject _staticImage;
 
 	Time _playerTime;
+	bool _locked;
 };
 
 } // End of namespace UI

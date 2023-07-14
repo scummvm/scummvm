@@ -176,6 +176,7 @@ public:
 	UI::Viewport &getViewport() { return _viewport; }
 	UI::Textbox &getTextbox() { return _textbox; }
 	UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
+	UI::Clock *getClock() { return _clock; }
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
 

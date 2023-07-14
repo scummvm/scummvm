@@ -37,7 +37,8 @@ namespace UI {
 Clock::Clock() : 	RenderObject(g_nancy->getGameType() == kGameTypeVampire ? 11 : 10),
 					_animation(g_nancy->getGameType() == kGameTypeVampire ? 10 : 11, this),
 					_staticImage(9),
-					_clockData(nullptr) {}
+					_clockData(nullptr),
+					_locked(false) {}
 
 void Clock::init() {
 	Graphics::ManagedSurface &object0 = g_nancy->_graphicsManager->_object0;
@@ -99,7 +100,9 @@ void Clock::updateGraphics() {
 }
 
 void Clock::handleInput(NancyInput &input) {
-	_animation.handleInput(input);
+	if (!_locked) {
+		_animation.handleInput(input);
+	}
 }
 
 void Clock::drawClockHands() {
@@ -142,7 +145,7 @@ void Clock::ClockAnim::init() {
 
 void Clock::ClockAnim::updateGraphics() {
 	AnimatedButton::updateGraphics();
-	if (_isOpen && !isPlaying() && g_nancy->getTotalPlayTime() > _closeTime && _isVisible) {
+	if (_isOpen && !isPlaying() && (g_nancy->getTotalPlayTime() > _closeTime || _owner->_locked) && _isVisible) {
 		setOpen(false);
 		if (g_nancy->getGameType() == kGameTypeVampire) {
 			_owner->_staticImage.setVisible(false);

@@ -21,6 +21,7 @@
 
 #include "engines/nancy/action/setplayerclock.h"
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/clock.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/input.h"
@@ -31,6 +32,13 @@
 
 namespace Nancy {
 namespace Action {
+
+SetPlayerClock::~SetPlayerClock() {
+	Nancy::UI::Clock *clock = NancySceneState.getClock();
+	if (clock) {
+		clock->lockClock(false);
+	}
+}
 
 void SetPlayerClock::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
@@ -83,7 +91,7 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 
 void SetPlayerClock::execute() {
 	switch (_state) {
-	case kBegin:
+	case kBegin: {
 		init();
 		registerGraphics();
 
@@ -91,8 +99,14 @@ void SetPlayerClock::execute() {
 		g_nancy->_sound->loadSound(_alarmRingSound);
 
 		_alarmHours = NancySceneState.getPlayerTime().getHours();
+		
+		Nancy::UI::Clock *clock = NancySceneState.getClock();
+		if (clock) {
+			clock->lockClock(true);
+		}
 
 		_state = kRun;
+	}
 		// fall through
 	case kRun:
 		if (_alarmState == kTimeMode) {

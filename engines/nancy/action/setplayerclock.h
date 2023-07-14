@@ -32,7 +32,7 @@ class SetPlayerClock : public RenderActionRecord {
 public:
 	enum AlarmState { kTimeMode, kAlarmMode, kWait };
 	SetPlayerClock() : RenderActionRecord(7) {}
-	virtual ~SetPlayerClock() {}
+	virtual ~SetPlayerClock();
 
 	void init() override;
 
