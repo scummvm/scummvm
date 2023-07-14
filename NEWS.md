@@ -71,7 +71,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added custom engine option to replace the health gems with HP/SP bars.
 
 
-#### 2.7.1 (2023-XX-XX)
+#### 2.7.1 (2023-07-31)
 
  General:
   - Fixed playback speed for Theora videos.
@@ -99,7 +99,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  CRYOMNI3D:
    - Fixed files access preventing to finish Versailles.
 
- FREESCAPE:
+ Freescape:
    - Added OpenGL shaders renderer.
    - Games are loading original images from the data files.
    - Refactored and expanded detection tables for Driller and other unsupported games.
@@ -108,7 +108,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
 
- HYPNO:
+ Hypno:
    - Support rendering Korean font for Wetlands.
 
  Private:
