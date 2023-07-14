@@ -122,7 +122,7 @@ void HUD::internalEvents(bool ShowMap) {
 }
 
 HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
-	g_engine->_mouse->inside_hud = bg.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y);
+	g_engine->_mouse->_insideHud = bg.Contains(g_engine->_mouse->_motion.x, g_engine->_mouse->_motion.y);
 
 	int choice = menu.handleEvents(Event);
 
@@ -140,7 +140,7 @@ HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const Common::Event &
 
 #if 0
 HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
-	g_engine->_mouse->inside_hud = bg.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y);
+	g_engine->_mouse->_insideHud = bg.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y);
 
 	int choice = menu.handleEvents(Event);
 

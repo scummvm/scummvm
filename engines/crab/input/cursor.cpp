@@ -42,17 +42,17 @@ using namespace pyrodactyl::input;
 // Purpose: Reset all values
 //------------------------------------------------------------------------
 void Cursor::reset() {
-	motion.x = 0;
-	motion.y = 0;
+	_motion.x = 0;
+	_motion.y = 0;
 
-	button.x = 0;
-	button.y = 0;
+	_button.x = 0;
+	_button.y = 0;
 
-	rel.x = 0;
-	rel.y = 0;
+	_rel.x = 0;
+	_rel.y = 0;
 
 	// set to -1, so its set to 0 on first update
-	state = -1;
+	_state = -1;
 }
 
 //------------------------------------------------------------------------
@@ -61,17 +61,17 @@ void Cursor::reset() {
 void Cursor::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("normal", node)) {
 		rapidxml::xml_node<char> *nornode = node->first_node("normal");
-		img.load(nornode, "img");
-		img_s.load(nornode, "img_s");
+		_img.load(nornode, "img");
+		_imgS.load(nornode, "img_s");
 	}
 
 	if (nodeValid("hover", node)) {
 		rapidxml::xml_node<char> *hovnode = node->first_node("hover");
-		img_hover.load(hovnode, "img");
-		img_hover_s.load(hovnode, "img_s");
+		_imgHover.load(hovnode, "img");
+		_imgHoverS.load(hovnode, "img_s");
 
 		if (nodeValid("offset", hovnode))
-			hover_offset.load(hovnode->first_node("offset"));
+			_hoverOffset.load(hovnode->first_node("offset"));
 	}
 }
 
@@ -79,7 +79,7 @@ void Cursor::load(rapidxml::xml_node<char> *node) {
 // Purpose: Handle Events
 //------------------------------------------------------------------------
 void Cursor::handleEvents(const Common::Event &event) {
-	g_engine->_mouse->hover = false;
+	g_engine->_mouse->_hover = false;
 
 #if 0
 	if (event.type == SDL_MOUSEMOTION) {
@@ -100,21 +100,21 @@ void Cursor::handleEvents(const Common::Event &event) {
 #endif
 
 	if (event.type == Common::EVENT_MOUSEMOVE) {
-		motion.x = event.mouse.x;
-		motion.y = event.mouse.y;
+		_motion.x = event.mouse.x;
+		_motion.y = event.mouse.y;
 
-		rel.x = event.relMouse.x;
-		rel.y = event.relMouse.y;
+		_rel.x = event.relMouse.x;
+		_rel.y = event.relMouse.y;
 	} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-		pressed = true;
+		_pressed = true;
 
-		button.x = event.mouse.x;
-		button.y = event.mouse.y;
+		_button.x = event.mouse.x;
+		_button.y = event.mouse.y;
 	} else if (event.type == Common::EVENT_LBUTTONUP) {
-		pressed = false;
+		_pressed = false;
 
-		button.x = event.mouse.x;
-		button.y = event.mouse.y;
+		_button.x = event.mouse.x;
+		_button.y = event.mouse.y;
 	}
 }
 
@@ -122,20 +122,20 @@ void Cursor::handleEvents(const Common::Event &event) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Cursor::draw() {
-	uint8 oldState = state;
-	state = (hover ? 1 : 0) | (pressed << 1);
+	uint8 oldState = _state;
+	_state = (_hover ? 1 : 0) | (_pressed << 1);
 
-	if (state != oldState) {
-		if (hover) {
-			if (pressed)
-				CursorMan.replaceCursor(img_hover_s._texture->rawSurface(), 0, 0, 0);
+	if (_state != oldState) {
+		if (_hover) {
+			if (_pressed)
+				CursorMan.replaceCursor(_imgHoverS._texture->rawSurface(), 0, 0, 0);
 			else
-				CursorMan.replaceCursor(img_hover._texture->rawSurface(), 0, 0, 0);
+				CursorMan.replaceCursor(_imgHover._texture->rawSurface(), 0, 0, 0);
 		} else {
-			if (pressed)
-				CursorMan.replaceCursor(img_s._texture->rawSurface(), 0, 0, 0);
+			if (_pressed)
+				CursorMan.replaceCursor(_imgS._texture->rawSurface(), 0, 0, 0);
 			else
-				CursorMan.replaceCursor(img._texture->rawSurface(), 0, 0, 0);
+				CursorMan.replaceCursor(_img._texture->rawSurface(), 0, 0, 0);
 		}
 	}
 }

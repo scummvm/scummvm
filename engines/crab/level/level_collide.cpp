@@ -51,24 +51,24 @@ bool Level::ContainsClick(const Common::String &id, const Common::Event &Event) 
 		for (auto &i : objects) {
 			Rect r = i.posRect();
 
-			if (r.Contains(g_engine->_mouse->motion.x + camera.x, g_engine->_mouse->motion.y + camera.y)) {
+			if (r.Contains(g_engine->_mouse->_motion.x + camera.x, g_engine->_mouse->_motion.y + camera.y)) {
 				// This is to show the sprite's name on top of their head
 				i._hover = true;
 
 				// This is to update the mouse cursor only if we're in talking range of a sprite
 				if (i.id() == id)
-					g_engine->_mouse->hover = true;
+					g_engine->_mouse->_hover = true;
 			} else
 				i._hover = false;
 		}
 
 		return false;
-	} else if (g_engine->_mouse->Pressed()) {
+	} else if (g_engine->_mouse->pressed()) {
 		for (auto &i : objects) {
 			if (i.id() == id) {
 				Rect r = i.posRect();
-				if (r.Contains(g_engine->_mouse->button.x + camera.x, g_engine->_mouse->button.y + camera.y)) {
-					g_engine->_mouse->hover = true;
+				if (r.Contains(g_engine->_mouse->_button.x + camera.x, g_engine->_mouse->_button.y + camera.y)) {
+					g_engine->_mouse->_hover = true;
 					return true;
 				}
 			}

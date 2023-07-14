@@ -343,7 +343,7 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	// This is for Diablo style hold-mouse-button-in-direction-of-movement
 	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
-	if (!_aiData._dest._active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
+	if (!_aiData._dest._active && !g_engine->_mouse->_insideHud && !g_engine->_mouse->_hover && g_engine->_mouse->pressed()) {
 		// To find where the click is w.r.t sprite, we need to see where it is being drawn
 		int x = _pos.x - camera.x - _animSet.anchorX(_dir), y = _pos.y - camera.y - _animSet.anchorY(_dir);
 
@@ -352,17 +352,17 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		int w = b.w, h = b.h;
 
 		// X axis
-		if (g_engine->_mouse->motion.x > x + w)
+		if (g_engine->_mouse->_motion.x > x + w)
 			xVel(player_speed * sc._walkVelMod.x);
-		else if (g_engine->_mouse->motion.x < x)
+		else if (g_engine->_mouse->_motion.x < x)
 			xVel(-player_speed * sc._walkVelMod.x);
 		else
 			xVel(0.0f);
 
 		// Y axis
-		if (g_engine->_mouse->motion.y > y + h)
+		if (g_engine->_mouse->_motion.y > y + h)
 			yVel(player_speed * sc._walkVelMod.y);
-		else if (g_engine->_mouse->motion.y < y)
+		else if (g_engine->_mouse->_motion.y < y)
 			yVel(-player_speed * sc._walkVelMod.y);
 		else
 			yVel(0.0f);
@@ -409,7 +409,7 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	// This is for Diablo style hold-mouse-button-in-direction-of-movement
 	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
-	if (!_aiData._dest._active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
+	if (!_aiData._dest._active && !g_engine->_mouse->_insideHud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
 		// To find where the click is w.r.t sprite, we need to see where it is being drawn
 		int x = _pos.x - camera.x - _animSet.anchorX(_dir), y = _pos.y - camera.y - _animSet.anchorY(_dir);
 

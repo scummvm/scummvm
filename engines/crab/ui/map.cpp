@@ -195,7 +195,7 @@ void Map::Move(const Common::Event &Event) {
 		bool click = false;
 		int count = 0;
 		for (auto &i : scroll.element) {
-			if (i.Contains(g_engine->_mouse->button)) {
+			if (i.Contains(g_engine->_mouse->_button)) {
 				if (count == DIRECTION_UP)
 					vel.y = -1 * speed;
 				else if (count == DIRECTION_DOWN)
@@ -225,8 +225,8 @@ void Map::Move(const Common::Event &Event) {
 
 	case Common::EVENT_MOUSEMOVE:
 		if (pan) {
-			camera.x -= g_engine->_mouse->rel.x;
-			camera.y -= g_engine->_mouse->rel.y;
+			camera.x -= g_engine->_mouse->_rel.x;
+			camera.y -= g_engine->_mouse->_rel.y;
 			Validate();
 		}
 		break;
