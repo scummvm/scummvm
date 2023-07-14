@@ -3044,7 +3044,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Produced by Microsoft; designed by AdWare Inc, Los Gatos, California (1992)
 	WINDEMO1("wfw31", "Demo", "WFWDEMO.EXE", "d98c3f5c1b7ea3039c47cc63d238a60d", 253540, 300),
 
-	// Mac version is D4
+	// Copyright and disc data indicates there was probably a 1.0
+	// release in 1993; this 1.2 disc is from 1994
+	MACGAME1t("willywabbit", "Singapore release 1.2", "Willy Wabbit (Click me)", "a2872c10536314456417f7f6eaa87aa2", 384220, 313),
+	// US Mac version is D4
 	WINGAME2t("willywabbit", "North American release",
 			  "WILLY.EXE", "d5a5389a2c9fcae112f1d5772d2d6fd3", 375280,
 			  "LANDMRKS.MMM", "4ad136593e943df6e05021616eae990a", 8830134, 310),
