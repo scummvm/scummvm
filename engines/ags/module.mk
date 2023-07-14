@@ -51,8 +51,6 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/fttype1.o \
 	lib/freetype-2.1.3/ftutil.o \
 	lib/freetype-2.1.3/ftxf86.o \
-	lib/freetype-2.1.3/modules/bdf/bdflib.o \
-	lib/freetype-2.1.3/modules/bdf/bdfdrivr.o \
 	lib/freetype-2.1.3/cache/ftlru.o \
 	lib/freetype-2.1.3/cache/ftcmanag.o \
 	lib/freetype-2.1.3/cache/ftccache.o \
@@ -60,43 +58,10 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/cache/ftcimage.o \
 	lib/freetype-2.1.3/cache/ftcsbits.o \
 	lib/freetype-2.1.3/cache/ftccmap.o \
-	lib/freetype-2.1.3/modules/cff/cffdrivr.o \
-	lib/freetype-2.1.3/modules/cff/cffparse.o \
-	lib/freetype-2.1.3/modules/cff/cffload.o \
-	lib/freetype-2.1.3/modules/cff/cffobjs.o \
-	lib/freetype-2.1.3/modules/cff/cffgload.o \
-	lib/freetype-2.1.3/modules/cff/cffcmap.o \
-	lib/freetype-2.1.3/modules/cid/cidparse.o \
-	lib/freetype-2.1.3/modules/cid/cidload.o \
-	lib/freetype-2.1.3/modules/cid/cidobjs.o \
-	lib/freetype-2.1.3/modules/cid/cidriver.o \
-	lib/freetype-2.1.3/modules/cid/cidgload.o \
-	lib/freetype-2.1.3/modules/pcf/pcfutil.o \
-	lib/freetype-2.1.3/modules/pcf/pcfread.o \
-	lib/freetype-2.1.3/modules/pcf/pcfdriver.o \
-	lib/freetype-2.1.3/modules/pfr/pfrload.o \
-	lib/freetype-2.1.3/modules/pfr/pfrload.o \
-	lib/freetype-2.1.3/modules/pfr/pfrload.o \
-	lib/freetype-2.1.3/modules/pfr/pfrgload.o \
-	lib/freetype-2.1.3/modules/pfr/pfrgload.o \
-	lib/freetype-2.1.3/modules/pfr/pfrgload.o \
-	lib/freetype-2.1.3/modules/pfr/pfrcmap.o \
-	lib/freetype-2.1.3/modules/pfr/pfrcmap.o \
-	lib/freetype-2.1.3/modules/pfr/pfrcmap.o \
-	lib/freetype-2.1.3/modules/pfr/pfrobjs.o \
-	lib/freetype-2.1.3/modules/pfr/pfrdrivr.o \
-	lib/freetype-2.1.3/modules/pfr/pfrsbit.o \
 	lib/freetype-2.1.3/modules/psaux/psobjs.o \
 	lib/freetype-2.1.3/modules/psaux/psauxmod.o \
 	lib/freetype-2.1.3/modules/psaux/t1decode.o \
 	lib/freetype-2.1.3/modules/psaux/t1cmap.o \
-	lib/freetype-2.1.3/modules/pshinter/pshrec.o \
-	lib/freetype-2.1.3/modules/pshinter/pshglob.o \
-	lib/freetype-2.1.3/modules/pshinter/pshalgo1.o \
-	lib/freetype-2.1.3/modules/pshinter/pshalgo2.o \
-	lib/freetype-2.1.3/modules/pshinter/pshalgo3.o \
-	lib/freetype-2.1.3/modules/pshinter/pshmod.o \
-	lib/freetype-2.1.3/modules/psnames/psmodule.o \
 	lib/freetype-2.1.3/modules/raster/ftraster.o \
 	lib/freetype-2.1.3/modules/raster/ftrend1.o \
 	lib/freetype-2.1.3/modules/sfnt/ttload.o \
@@ -118,10 +83,6 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/modules/type1/t1driver.o \
 	lib/freetype-2.1.3/modules/type1/t1gload.o \
 	lib/freetype-2.1.3/modules/type1/t1afm.o \
-	lib/freetype-2.1.3/modules/type42/t42objs.o \
-	lib/freetype-2.1.3/modules/type42/t42parse.o \
-	lib/freetype-2.1.3/modules/type42/t42drivr.o \
-	lib/freetype-2.1.3/modules/winfonts/winfnt.o \
 	lib/std/std.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/script_audio_clip.o \
