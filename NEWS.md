@@ -49,6 +49,12 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword2:
    - Added support for Chinese translation.
 
+ Tinsel:
+   - Fixed unaligned accesses.
+
+ TONY:
+   - Fixed unaligned accesses.
+
  TwinE:
    - Added support for Japanese translation.
 
