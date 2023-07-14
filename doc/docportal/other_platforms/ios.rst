@@ -135,7 +135,7 @@ When the build is finished, ScummVM launches on your connected device.
 .. note::
 
   If ScummVM does not launch and you get an error message advising that the app failed to launch due to an invalid code signature, inadequate entitlements or because its profile has not been explicitly trusted by the user, you need to trust the apps that you have built. On your iOS device, go to:
-  
+
   - **Settings > General > Device Management > Developer App > Trust "Apple Development:yourAppleIDhere" > Trust**
   - or **Settings > General > VPN & Device Management** (iOS 15+)
 
@@ -190,8 +190,9 @@ Controls
         :ref:`twofinger`, Right mouse click
         :ref:`twofingerdouble`,ESC
         Two finger swipe (bottom to top), Toggles `Click and drag mode`_
-        Two finger swipe (left to right),Toggles between touch direct mode and touchpad mode.
-        Two finger swipe (top to bottom),Global Main Menu
+        Two finger swipe (left to right), Toggles between touch direct mode and touchpad mode.
+        Two finger swipe (right to left), Show/hide on-screen control (iOS 15 and later)
+        Two finger swipe (top to bottom), Global Main Menu
         Three finger swipe, Arrow keys
 
         Pinch gesture, Enables/disables keyboard
