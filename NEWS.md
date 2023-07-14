@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.7.1 (2023-XX-XX)
+#### 2.7.1 (2023-07-31)
 
  General:
   - Fixed playback speed for Theora videos.
