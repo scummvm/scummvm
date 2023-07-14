@@ -22,13 +22,49 @@
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/dlcmanager.h"
 #include "common/config-manager.h"
+#include "common/formats/json.h"
 
 namespace DLC {
 namespace ScummVMCloud {
 
+void ScummVMCloud::jsonCallbackGetAllDLCs(Networking::JsonResponse response) {
+	Common::JSONValue *json = (Common::JSONValue *)response.value;
+	if (json == nullptr || !json->isObject()) {
+		return;
+	}
+	// warning("%s", json->stringify(true).c_str());
+	Common::JSONObject result = json->asObject();
+	if (result.contains("entries")) {
+		Common::JSONArray items = result.getVal("entries")->asArray();
+		for (uint32 i = 0; i < items.size(); ++i) {
+			if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "ScummVMCloud")) continue;
+			Common::JSONObject item = items[i]->asObject();
+			Common::String id = item.getVal("id")->asString();
+			Common::String name = item.getVal("name")->asString();
+			Common::String url = item.getVal("url")->asString();
+			uint32 size;
+			if (item.getVal("size")->isString()) {
+				size = item.getVal("size")->asString().asUint64();
+			} else {
+				size = item.getVal("size")->asIntegerNumber();
+			}
+			DLCMan._dlcs.push_back(new DLCDesc{name, id, url, size, i, DLCDesc::kAvailable});
+		}
+	}
+}
+
+void ScummVMCloud::errorCallbackGetAllDLCs(Networking::ErrorResponse error) {
+	warning("JsonRequest Error - getAllDLCs");
+}
+
 void ScummVMCloud::getAllDLCs(Common::Array<DLCDesc*> &dlcs) {
-    dlcs.push_back(new DLCDesc{"Beneath a Steel Sky - Freeware CD Version", "bass_cd", "https://downloads.scummvm.org/frs/extras/Beneath%20a%20Steel%20Sky/bass-cd-1.2.zip", 100, 0, DLCDesc::kAvailable});
-    dlcs.push_back(new DLCDesc{"Beneath a Steel Sky - Freeware Floppy Version", "bass_floppy", "https://downloads.scummvm.org/frs/extras/Beneath%20a%20Steel%20Sky/BASS-Floppy-1.3.zip", 230, 1, DLCDesc::kAvailable});
+	Common::String url("https://mocki.io/v1/0d86064d-1c04-41c8-a7b0-7e7e044b9b58"); // temporary mock api
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(
+		new Common::Callback<ScummVMCloud, Networking::JsonResponse>(this, &ScummVMCloud::jsonCallbackGetAllDLCs), 
+		new Common::Callback<ScummVMCloud, Networking::ErrorResponse>(this, &ScummVMCloud::errorCallbackGetAllDLCs), 
+		url);
+
+	request->execute();
 }
 
 void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
