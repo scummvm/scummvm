@@ -33,7 +33,14 @@ namespace Tony {
 
 namespace MPAL {
 
-static const size_t EXPR_LENGTH_SIZE = alignof(max_align_t);
+static const size_t EXPR_LENGTH_SIZE =
+#ifndef NO_CXX11_ALIGNAS
+	alignof(max_align_t)
+#else
+	sizeof(byte)
+#endif
+	;
+
 
 /**
  * Duplicate a mathematical expression.
