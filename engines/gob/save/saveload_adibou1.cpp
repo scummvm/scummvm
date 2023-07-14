@@ -38,7 +38,10 @@ SaveLoad_Adibou1::SaveFile SaveLoad_Adibou1::_saveFiles[] = {
 	{ "dessin5.inf", kSaveModeSave, nullptr, "paint game drawing"},
 	{ "dessin6.inf", kSaveModeSave, nullptr, "paint game drawing"},
 	{ "dessin7.inf", kSaveModeSave, nullptr, "paint game drawing"},
-	{ "dessin8.inf", kSaveModeSave, nullptr, "paint game drawing"}
+	{ "dessin8.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "a:\\bou.inf", kSaveModeIgnore, nullptr, "copy of the savegame to be sent "
+											   "to Coktel Vision on a floppy"
+											   "when completing the game"},
 };
 
 SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
@@ -236,6 +239,13 @@ bool SaveLoad_Adibou1::GameFileHandler::load(int16 dataVar, int32 size, int32 of
 	Common::String fileName = _file.build();
 	if (fileName.empty())
 		return false;
+
+	if (size < 0) {
+		// Hack in original game, using a bitmap memory as a temporary buffer to make
+		// a copy the savegame. We do not need this copy, so we can just ignore it.
+		debugC(1, kDebugSaveLoad, "Ignoring bou.inf save with negative size");
+		return true;
+	}
 
 	if (size == 0) {
 		uint32 varSize = SaveHandler::getVarSize(_vm);
