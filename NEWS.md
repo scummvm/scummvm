@@ -10,6 +10,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Might and Magic Book One.
    - Added support for Muppet Treasure Island.
    - Added support for Primordia, Shardlight and Technobabylon.
+   - Added support for Adibou 1
 
  New platforms:
    - Added libretro new shiny port.
