@@ -1,3 +1,9 @@
+scummvm (2.7.1) unstable; urgency=low
+
+  * 2.7.1 release
+
+ -- Eugene Sandulenko <sev@scummvm.org>  Fri, Jul 14 2023 22:51:07 +0100
+
 scummvm (2.2.0~git) unstable; urgency=low
 
   * Development snapshot
