@@ -53,6 +53,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Fixed music volume regression in Loom.
+   - Fixed a crash in Full Throttle when pressing 'A' in debug mode.
+   - Silence the warning for missing music files in Monkey Island 1 Ultimate Talkie.
+   - Fixed glitched or invisible cursor in Sam & Max when saving and reloading from
+     the classic menu.
+   - Fixed several savegame loading issues and crashes for early FM-Towns games.
+   - Fixed original GUI banners not disappearing properly in some edge cases.
 
  Sword1:
    - Added detection for Czech and Polish versions with DXA cutscenes.
