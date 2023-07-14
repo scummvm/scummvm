@@ -2306,6 +2306,25 @@ else
 		define_in_config_if_yes yes 'NO_CXX11_NULLPTR_T'
 fi
 
+# Check if alignas and alignof are available
+echo_n "Checking if C++11 alignas and alignof keywords are available... "
+cat > $TMPC << EOF
+#include <stddef.h>
+struct test {
+	char c;
+	alignas(max_align_t) size_t _size;
+};
+static const size_t LENGTH = alignof(max_align_t);
+int main(int argc, char *argv[]) { return 0; }
+EOF
+cc_check
+if test "$TMPR" -eq 0; then
+	echo yes
+else
+	echo no
+	define_in_config_if_yes yes 'NO_CXX11_ALIGNAS'
+fi
+
 #
 # Determine extra build flags for debug and/or release builds
 #
