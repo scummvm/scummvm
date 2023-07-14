@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="core">
+			<UniqueIdentifier>1E254639-5C9D-4E12-892F-3A87F322F30B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="file">
+			<UniqueIdentifier>E75AF658-AE5C-4CE6-B9A7-F84E283783B2</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics">
+			<UniqueIdentifier>B2330E08-4285-4372-BD94-A202719B4C74</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics\cursors">
+			<UniqueIdentifier>566E79F9-AF24-403A-89E3-37F9909BA38A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics\effects">
+			<UniqueIdentifier>4E7722D3-B866-426E-9AE9-185469608314</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scripting">
+			<UniqueIdentifier>5E0B57AF-680C-4BBE-BBBC-D53097C96AA4</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scripting\controls">
+			<UniqueIdentifier>27DEB988-6931-4CE2-89A7-EA9F27842761</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scripting\effects">
+			<UniqueIdentifier>93CE6B12-4F6B-4814-9B05-2C6427745724</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound">
+			<UniqueIdentifier>60BA2D54-0F5B-4EB2-876A-D7349A3BF0E8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="text">
+			<UniqueIdentifier>83116317-8CE3-43DE-97E0-E1033C3DB378</UniqueIdentifier>
+		</Filter>
+		<Filter Include="video">
+			<UniqueIdentifier>6A64DF97-C7E3-4608-ACC4-0A562C60E7A3</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\zvision\core\clock.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\core\console.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\core\events.cpp">
+			<Filter>core</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\file\lzss_read_stream.cpp">
+			<Filter>file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\file\save_manager.cpp">
+			<Filter>file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\file\search_manager.cpp">
+			<Filter>file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\file\zfs_archive.cpp">
+			<Filter>file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\graphics\cursors\cursor.cpp">
+			<Filter>graphics\cursors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\graphics\cursors\cursor_manager.cpp">
+			<Filter>graphics\cursors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\graphics\effects\fog.cpp">
+			<Filter>graphics\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\graphics\effects\light.cpp">
+			<Filter>graphics\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\graphics\effects\wave.cpp">
+			<Filter>graphics\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\graphics\render_manager.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\graphics\render_table.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\fist_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\hotmov_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\input_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\lever_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\paint_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\push_toggle_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\safe_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\save_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\slot_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\controls\titler_control.cpp">
+			<Filter>scripting\controls</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\animation_effect.cpp">
+			<Filter>scripting\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\distort_effect.cpp">
+			<Filter>scripting\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\music_effect.cpp">
+			<Filter>scripting\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\region_effect.cpp">
+			<Filter>scripting\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\syncsound_effect.cpp">
+			<Filter>scripting\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\timer_effect.cpp">
+			<Filter>scripting\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\effects\ttytext_effect.cpp">
+			<Filter>scripting\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\actions.cpp">
+			<Filter>scripting</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\control.cpp">
+			<Filter>scripting</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\inventory.cpp">
+			<Filter>scripting</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\menu.cpp">
+			<Filter>scripting</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\scr_file_handling.cpp">
+			<Filter>scripting</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\scripting\script_manager.cpp">
+			<Filter>scripting</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\sound\midi.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\sound\zork_raw.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\text\string_manager.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\text\subtitles.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\text\text.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\text\truetype_font.cpp">
+			<Filter>text</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\video\rlf_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\video\video.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\video\zork_avi_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\zvision\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\zvision\zvision.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\zvision\core\clock.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\core\console.h">
+			<Filter>core</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\file\lzss_read_stream.h">
+			<Filter>file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\file\save_manager.h">
+			<Filter>file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\file\search_manager.h">
+			<Filter>file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\file\zfs_archive.h">
+			<Filter>file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\cursors\cursor.h">
+			<Filter>graphics\cursors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\cursors\cursor_manager.h">
+			<Filter>graphics\cursors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\effects\fog.h">
+			<Filter>graphics\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\effects\light.h">
+			<Filter>graphics\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\effects\wave.h">
+			<Filter>graphics\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\graphics_effect.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\render_manager.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\graphics\render_table.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\fist_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\hotmov_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\input_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\lever_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\paint_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\push_toggle_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\safe_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\save_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\slot_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\controls\titler_control.h">
+			<Filter>scripting\controls</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\animation_effect.h">
+			<Filter>scripting\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\distort_effect.h">
+			<Filter>scripting\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\music_effect.h">
+			<Filter>scripting\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\region_effect.h">
+			<Filter>scripting\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\syncsound_effect.h">
+			<Filter>scripting\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\timer_effect.h">
+			<Filter>scripting\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\effects\ttytext_effect.h">
+			<Filter>scripting\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\actions.h">
+			<Filter>scripting</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\control.h">
+			<Filter>scripting</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\menu.h">
+			<Filter>scripting</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\puzzle.h">
+			<Filter>scripting</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\script_manager.h">
+			<Filter>scripting</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\scripting\scripting_effect.h">
+			<Filter>scripting</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\sound\midi.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\sound\zork_raw.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\text\string_manager.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\text\subtitles.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\text\text.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\text\truetype_font.h">
+			<Filter>text</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\video\rlf_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\video\zork_avi_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\zvision\detection.h" />
+		<ClInclude Include="..\..\engines\zvision\detection_tables.h" />
+		<ClInclude Include="..\..\engines\zvision\zvision.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\zvision\module.mk" />
+	</ItemGroup>
+</Project>

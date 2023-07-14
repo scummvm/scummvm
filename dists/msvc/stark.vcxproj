@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{9DEEA327-D9D6-4999-B942-7D213F9317EC}</ProjectGuid>
+		<RootNamespace>stark</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\stark\formats\biff.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\biffmesh.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\dds.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\iss.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\tm.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\xarc.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\xmg.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\xrc.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\driver.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\opengl.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglactor.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglbitmap.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglfade.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglprop.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\opengls.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglsactor.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglsfade.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglsprop.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglssurface.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\openglsurface.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\opengltexture.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\renderentry.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\surfacerenderer.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\texture.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\tinygl.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglactor.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglbitmap.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglfade.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglprop.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglsurface.cpp" />
+		<ClCompile Include="..\..\engines\stark\gfx\tinygltexture.cpp" />
+		<ClCompile Include="..\..\engines\stark\model\animhandler.cpp" />
+		<ClCompile Include="..\..\engines\stark\model\model.cpp" />
+		<ClCompile Include="..\..\engines\stark\model\skeleton_anim.cpp" />
+		<ClCompile Include="..\..\engines\stark\movement\followpath.cpp" />
+		<ClCompile Include="..\..\engines\stark\movement\followpathlight.cpp" />
+		<ClCompile Include="..\..\engines\stark\movement\movement.cpp" />
+		<ClCompile Include="..\..\engines\stark\movement\shortestpath.cpp" />
+		<ClCompile Include="..\..\engines\stark\movement\stringpullingpath.cpp" />
+		<ClCompile Include="..\..\engines\stark\movement\turn.cpp" />
+		<ClCompile Include="..\..\engines\stark\movement\walk.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\anim.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\animhierarchy.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\animscript.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\animsoundtrigger.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\bonesmesh.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\bookmark.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\camera.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\command.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\container.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\dialog.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\direction.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\floor.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\floorface.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\floorfield.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\fmv.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\image.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\item.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\knowledge.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\knowledgeset.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\layer.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\level.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\light.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\lipsync.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\location.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\object.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\path.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\pattable.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\root.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\script.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\scroll.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\sound.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\speech.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\string.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\textureset.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\archiveloader.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\dialogplayer.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\diary.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\fontprovider.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\gamechapter.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\gameinterface.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\gamemessage.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\global.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\resourceprovider.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\services.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\settings.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\stateprovider.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\staticprovider.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\userinterface.cpp" />
+		<ClCompile Include="..\..\engines\stark\tools\abstractsyntaxtree.cpp" />
+		<ClCompile Include="..\..\engines\stark\tools\block.cpp" />
+		<ClCompile Include="..\..\engines\stark\tools\command.cpp" />
+		<ClCompile Include="..\..\engines\stark\tools\decompiler.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\dialogmenu.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\diaryindex.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\diarypages.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\fmvmenu.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\locationscreen.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\mainmenu.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\saveloadmenu.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\menu\settingsmenu.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\actionmenu.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\button.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\clicktext.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\dialogpanel.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\fmvscreen.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\gamescreen.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\gamewindow.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\inventorywindow.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\world\topmenu.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\cursor.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\dialogbox.cpp" />
+		<ClCompile Include="..\..\engines\stark\ui\window.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\effects\bubbles.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\effects\effect.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\effects\fireflies.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\effects\fish.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\actor.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\explodingimage.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\flashingimage.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\image.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\prop.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\smacker.cpp" />
+		<ClCompile Include="..\..\engines\stark\visual\text.cpp" />
+		<ClCompile Include="..\..\engines\stark\console.cpp" />
+		<ClCompile Include="..\..\engines\stark\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\stark\resourcereference.cpp" />
+		<ClCompile Include="..\..\engines\stark\savemetadata.cpp" />
+		<ClCompile Include="..\..\engines\stark\scene.cpp" />
+		<ClCompile Include="..\..\engines\stark\stark.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\stark\formats\biff.h" />
+		<ClInclude Include="..\..\engines\stark\formats\biffmesh.h" />
+		<ClInclude Include="..\..\engines\stark\formats\dds.h" />
+		<ClInclude Include="..\..\engines\stark\formats\iss.h" />
+		<ClInclude Include="..\..\engines\stark\formats\tm.h" />
+		<ClInclude Include="..\..\engines\stark\formats\xarc.h" />
+		<ClInclude Include="..\..\engines\stark\formats\xmg.h" />
+		<ClInclude Include="..\..\engines\stark\formats\xrc.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\bitmap.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\driver.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\faderenderer.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\opengl.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglactor.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglbitmap.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglfade.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglprop.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\opengls.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglsactor.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglsfade.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglsprop.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglssurface.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\openglsurface.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\opengltexture.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\renderentry.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\surfacerenderer.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\texture.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\tinygl.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglactor.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglbitmap.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglfade.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglprop.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglsurface.h" />
+		<ClInclude Include="..\..\engines\stark\gfx\tinygltexture.h" />
+		<ClInclude Include="..\..\engines\stark\model\animhandler.h" />
+		<ClInclude Include="..\..\engines\stark\model\model.h" />
+		<ClInclude Include="..\..\engines\stark\model\skeleton_anim.h" />
+		<ClInclude Include="..\..\engines\stark\movement\followpath.h" />
+		<ClInclude Include="..\..\engines\stark\movement\followpathlight.h" />
+		<ClInclude Include="..\..\engines\stark\movement\movement.h" />
+		<ClInclude Include="..\..\engines\stark\movement\shortestpath.h" />
+		<ClInclude Include="..\..\engines\stark\movement\stringpullingpath.h" />
+		<ClInclude Include="..\..\engines\stark\movement\turn.h" />
+		<ClInclude Include="..\..\engines\stark\movement\walk.h" />
+		<ClInclude Include="..\..\engines\stark\resources\anim.h" />
+		<ClInclude Include="..\..\engines\stark\resources\animhierarchy.h" />
+		<ClInclude Include="..\..\engines\stark\resources\animscript.h" />
+		<ClInclude Include="..\..\engines\stark\resources\animsoundtrigger.h" />
+		<ClInclude Include="..\..\engines\stark\resources\bonesmesh.h" />
+		<ClInclude Include="..\..\engines\stark\resources\bookmark.h" />
+		<ClInclude Include="..\..\engines\stark\resources\camera.h" />
+		<ClInclude Include="..\..\engines\stark\resources\command.h" />
+		<ClInclude Include="..\..\engines\stark\resources\container.h" />
+		<ClInclude Include="..\..\engines\stark\resources\dialog.h" />
+		<ClInclude Include="..\..\engines\stark\resources\direction.h" />
+		<ClInclude Include="..\..\engines\stark\resources\floor.h" />
+		<ClInclude Include="..\..\engines\stark\resources\floorface.h" />
+		<ClInclude Include="..\..\engines\stark\resources\floorfield.h" />
+		<ClInclude Include="..\..\engines\stark\resources\fmv.h" />
+		<ClInclude Include="..\..\engines\stark\resources\image.h" />
+		<ClInclude Include="..\..\engines\stark\resources\item.h" />
+		<ClInclude Include="..\..\engines\stark\resources\knowledge.h" />
+		<ClInclude Include="..\..\engines\stark\resources\knowledgeset.h" />
+		<ClInclude Include="..\..\engines\stark\resources\layer.h" />
+		<ClInclude Include="..\..\engines\stark\resources\level.h" />
+		<ClInclude Include="..\..\engines\stark\resources\light.h" />
+		<ClInclude Include="..\..\engines\stark\resources\lipsync.h" />
+		<ClInclude Include="..\..\engines\stark\resources\location.h" />
+		<ClInclude Include="..\..\engines\stark\resources\object.h" />
+		<ClInclude Include="..\..\engines\stark\resources\path.h" />
+		<ClInclude Include="..\..\engines\stark\resources\pattable.h" />
+		<ClInclude Include="..\..\engines\stark\resources\root.h" />
+		<ClInclude Include="..\..\engines\stark\resources\script.h" />
+		<ClInclude Include="..\..\engines\stark\resources\scroll.h" />
+		<ClInclude Include="..\..\engines\stark\resources\sound.h" />
+		<ClInclude Include="..\..\engines\stark\resources\speech.h" />
+		<ClInclude Include="..\..\engines\stark\resources\string.h" />
+		<ClInclude Include="..\..\engines\stark\resources\textureset.h" />
+		<ClInclude Include="..\..\engines\stark\services\archiveloader.h" />
+		<ClInclude Include="..\..\engines\stark\services\dialogplayer.h" />
+		<ClInclude Include="..\..\engines\stark\services\diary.h" />
+		<ClInclude Include="..\..\engines\stark\services\fontprovider.h" />
+		<ClInclude Include="..\..\engines\stark\services\gamechapter.h" />
+		<ClInclude Include="..\..\engines\stark\services\gameinterface.h" />
+		<ClInclude Include="..\..\engines\stark\services\gamemessage.h" />
+		<ClInclude Include="..\..\engines\stark\services\global.h" />
+		<ClInclude Include="..\..\engines\stark\services\resourceprovider.h" />
+		<ClInclude Include="..\..\engines\stark\services\services.h" />
+		<ClInclude Include="..\..\engines\stark\services\settings.h" />
+		<ClInclude Include="..\..\engines\stark\services\stateprovider.h" />
+		<ClInclude Include="..\..\engines\stark\services\staticprovider.h" />
+		<ClInclude Include="..\..\engines\stark\services\userinterface.h" />
+		<ClInclude Include="..\..\engines\stark\tools\abstractsyntaxtree.h" />
+		<ClInclude Include="..\..\engines\stark\tools\block.h" />
+		<ClInclude Include="..\..\engines\stark\tools\command.h" />
+		<ClInclude Include="..\..\engines\stark\tools\decompiler.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\dialogmenu.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\diaryindex.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\diarypages.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\fmvmenu.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\locationscreen.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\mainmenu.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\saveloadmenu.h" />
+		<ClInclude Include="..\..\engines\stark\ui\menu\settingsmenu.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\actionmenu.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\button.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\clicktext.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\dialogpanel.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\fmvscreen.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\gamescreen.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\gamewindow.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\inventorywindow.h" />
+		<ClInclude Include="..\..\engines\stark\ui\world\topmenu.h" />
+		<ClInclude Include="..\..\engines\stark\ui\cursor.h" />
+		<ClInclude Include="..\..\engines\stark\ui\dialogbox.h" />
+		<ClInclude Include="..\..\engines\stark\ui\screen.h" />
+		<ClInclude Include="..\..\engines\stark\ui\window.h" />
+		<ClInclude Include="..\..\engines\stark\visual\effects\bubbles.h" />
+		<ClInclude Include="..\..\engines\stark\visual\effects\effect.h" />
+		<ClInclude Include="..\..\engines\stark\visual\effects\fireflies.h" />
+		<ClInclude Include="..\..\engines\stark\visual\effects\fish.h" />
+		<ClInclude Include="..\..\engines\stark\visual\actor.h" />
+		<ClInclude Include="..\..\engines\stark\visual\explodingimage.h" />
+		<ClInclude Include="..\..\engines\stark\visual\flashingimage.h" />
+		<ClInclude Include="..\..\engines\stark\visual\image.h" />
+		<ClInclude Include="..\..\engines\stark\visual\prop.h" />
+		<ClInclude Include="..\..\engines\stark\visual\smacker.h" />
+		<ClInclude Include="..\..\engines\stark\visual\text.h" />
+		<ClInclude Include="..\..\engines\stark\visual\visual.h" />
+		<ClInclude Include="..\..\engines\stark\console.h" />
+		<ClInclude Include="..\..\engines\stark\debug.h" />
+		<ClInclude Include="..\..\engines\stark\detection.h" />
+		<ClInclude Include="..\..\engines\stark\resourcereference.h" />
+		<ClInclude Include="..\..\engines\stark\savemetadata.h" />
+		<ClInclude Include="..\..\engines\stark\scene.h" />
+		<ClInclude Include="..\..\engines\stark\stark.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\stark\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

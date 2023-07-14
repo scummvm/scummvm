@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="audio">
+			<UniqueIdentifier>B18BDB63-CAD6-4F2C-9F76-F74BF638D0E3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="debugger">
+			<UniqueIdentifier>890EDB2A-4043-49C7-A569-6CE20C059E80</UniqueIdentifier>
+		</Filter>
+		<Filter Include="menu">
+			<UniqueIdentifier>28885A22-2DDA-428F-AD13-0CA44FF8EAC3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="parser">
+			<UniqueIdentifier>FCD17322-7FAA-4CD0-8A7D-970B9EA224B1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="renderer">
+			<UniqueIdentifier>04A739B4-8387-4B3B-8389-7FAB7D093BBF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="resources">
+			<UniqueIdentifier>A2B629BE-8E5E-45B7-93CC-755FC0AA1A66</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scene">
+			<UniqueIdentifier>EA8DA8F6-8742-45BB-8F1B-68A33941C3CB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="script">
+			<UniqueIdentifier>308ED9B0-DD50-45DC-A197-6DD9F462E4F6</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\twine\audio\music.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\audio\sound.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\debugger\console.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\debugger\debug.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\debugger\debug_grid.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\debugger\debug_scene.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\menu\interface.cpp">
+			<Filter>menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\menu\menu.cpp">
+			<Filter>menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\menu\menuoptions.cpp">
+			<Filter>menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\anim.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\blocklibrary.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\body.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\entity.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\holomap.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\parser.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\sprite.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\parser\text.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\renderer\redraw.cpp">
+			<Filter>renderer</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\renderer\renderer.cpp">
+			<Filter>renderer</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\renderer\screens.cpp">
+			<Filter>renderer</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\resources\hqr.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\resources\lzss.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\resources\resources.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\actor.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\animations.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\collision.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\extra.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\gamestate.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\grid.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\movements.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\scene\scene.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\script\script_life.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\script\script_life_v1.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\script\script_life_v2.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\script\script_move.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\script\script_move_v1.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\script\script_move_v2.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\twine\holomap.cpp" />
+		<ClCompile Include="..\..\engines\twine\input.cpp" />
+		<ClCompile Include="..\..\engines\twine\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\twine\movies.cpp" />
+		<ClCompile Include="..\..\engines\twine\shared.cpp" />
+		<ClCompile Include="..\..\engines\twine\slideshow.cpp" />
+		<ClCompile Include="..\..\engines\twine\text.cpp" />
+		<ClCompile Include="..\..\engines\twine\twine.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\twine\audio\music.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\audio\sound.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\debugger\console.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\debugger\debug.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\debugger\debug_grid.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\debugger\debug_scene.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\menu\interface.h">
+			<Filter>menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\menu\menu.h">
+			<Filter>menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\menu\menuoptions.h">
+			<Filter>menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\anim.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\blocklibrary.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\body.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\bodytypes.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\entity.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\holomap.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\parser.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\sprite.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\parser\text.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\renderer\redraw.h">
+			<Filter>renderer</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\renderer\renderer.h">
+			<Filter>renderer</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\renderer\screens.h">
+			<Filter>renderer</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\renderer\shadeangletab.h">
+			<Filter>renderer</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\resources\hqr.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\resources\lzss.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\resources\resources.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\actor.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\animations.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\collision.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\extra.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\gamestate.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\grid.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\movements.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\scene\scene.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\script\script_life.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\script\script_life_v1.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\script\script_life_v2.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\script\script_move.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\script\script_move_v1.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\script\script_move_v2.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\twine\achievements_tables.h" />
+		<ClInclude Include="..\..\engines\twine\detection.h" />
+		<ClInclude Include="..\..\engines\twine\holomap.h" />
+		<ClInclude Include="..\..\engines\twine\input.h" />
+		<ClInclude Include="..\..\engines\twine\movies.h" />
+		<ClInclude Include="..\..\engines\twine\shared.h" />
+		<ClInclude Include="..\..\engines\twine\slideshow.h" />
+		<ClInclude Include="..\..\engines\twine\text.h" />
+		<ClInclude Include="..\..\engines\twine\twine.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\twine\module.mk" />
+	</ItemGroup>
+</Project>

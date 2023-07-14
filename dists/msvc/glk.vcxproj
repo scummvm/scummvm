@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{587A2AD5-81B8-4F08-8A09-6751591C6855}</ProjectGuid>
+		<RootNamespace>glk</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\glk\adrift\adrift.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\os_glk.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scdebug.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scevents.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scexpr.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scgamest.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scinterf.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sclibrar.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sclocale.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scmemos.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scnpcs.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scobjcts.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scparser.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scprintf.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scprops.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scresour.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\screstrs.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scrunner.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sctaffil.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sctafpar.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sctasks.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scutils.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\scvars.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\serialization.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sxfile.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sxglob.cpp" />
+		<ClCompile Include="..\..\engines\glk\adrift\sxutils.cpp" />
+		<ClCompile Include="..\..\engines\glk\advsys\advsys.cpp" />
+		<ClCompile Include="..\..\engines\glk\advsys\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\advsys\game.cpp" />
+		<ClCompile Include="..\..\engines\glk\advsys\glk_interface.cpp" />
+		<ClCompile Include="..\..\engines\glk\advsys\vm.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\agil.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\agt.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\agtread.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\agxfile.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\auxfile.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\debugcmd.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\disassemble.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\exec.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\filename.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\gamedata.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\interface.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\metacommand.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\object.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\os_glk.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\parser.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\runverb.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\savegame.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\token.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\util.cpp" />
+		<ClCompile Include="..\..\engines\glk\agt\vars.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\alan2.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\alan_version.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\args.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\debug.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\decode.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\exe.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\glkio.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\inter.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\main.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\params.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\parse.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\reverse.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\rules.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\stack.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\sysdep.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan2\types.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\acode.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\act.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\actor.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\alan3.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\alan_version.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\alt_info.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\attribute.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\checkentry.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\class.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\compatibility.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\container.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\current.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\debug.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\decode.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\dictionary.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\event.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\exe.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\fnmatch.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\glkio.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\instance.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\inter.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\lists.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\literal.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\location.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\main.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\memory.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\msg.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\options.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\output.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\parameter_position.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\params.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\parse.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\reverse.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\rules.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\save.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\scan.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\score.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\set.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\stack.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\state.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\state_stack.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\syntax.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\sysdep.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\syserr.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\types.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\utils.cpp" />
+		<ClCompile Include="..\..\engines\glk\alan3\word.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\archetype.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\array.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\crypt.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\error.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\expression.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\game_stat.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\heap_sort.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\id_table.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\interpreter.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\keywords.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\linked_list.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\misc.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\parser.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\saveload.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\semantic.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\string.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\sys_object.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\timestamp.cpp" />
+		<ClCompile Include="..\..\engines\glk\archetype\token.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\charset.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\comprehend.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\debugger.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\debugger_dumper.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\dictionary.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\draw_surface.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\file_buf.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game_cc.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game_data.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game_oo.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game_opcodes.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game_tm.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game_tr1.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\game_tr2.cpp" />
+		<ClCompile Include="..\..\engines\glk\comprehend\pics.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\accel.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\exec.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\float.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\funcs.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\gestalt.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\glkop.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\glulx.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\heap.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\operand.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\search.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\serial.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\string.cpp" />
+		<ClCompile Include="..\..\engines\glk\glulx\vm.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\heexpr.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\heglk.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\hemedia.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\hemisc.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\heobject.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\heparse.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\heres.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\herun.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\heset.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\htokens.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\hugo.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\resource_archive.cpp" />
+		<ClCompile Include="..\..\engines\glk\hugo\stringfn.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\display.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\encapsulate.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\errors.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\findroute.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\glk_saver.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\interpreter.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\jacl.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\jacl_main.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\jpp.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\libcsv.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\loader.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\logging.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\parser.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\resolvers.cpp" />
+		<ClCompile Include="..\..\engines\glk\jacl\utils.cpp" />
+		<ClCompile Include="..\..\engines\glk\level9\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\glk\level9\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\level9\level9.cpp" />
+		<ClCompile Include="..\..\engines\glk\level9\level9_main.cpp" />
+		<ClCompile Include="..\..\engines\glk\level9\os_glk.cpp" />
+		<ClCompile Include="..\..\engines\glk\magnetic\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\magnetic\emu.cpp" />
+		<ClCompile Include="..\..\engines\glk\magnetic\glk.cpp" />
+		<ClCompile Include="..\..\engines\glk\magnetic\magnetic.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\geas_file.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\geas_glk.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\geas_runner.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\geas_state.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\geas_util.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\quest.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\read_file.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\streams.cpp" />
+		<ClCompile Include="..\..\engines\glk\quest\string.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\action_packer.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\byte_boiler.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\caution.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\ccs.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\cruel.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\eca.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\exomizer.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\expert.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\master_compressor.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\megabyte.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\pu_crunch.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\scanners.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\section8.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\tbc_multicomp.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\tcs_crunch.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\scanners\xtc.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\6502_emu.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\exo_util.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\unp64\unp64.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\c64_checksums.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\command_parser.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\decompress_text.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\decompress_z80.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\definitions.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\disk_image.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\game_info.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\game_specific.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\globals.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\gremlins.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\hulk.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\layout_text.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\line_drawing.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\load_game.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\load_ti99_4a.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\resource.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\restore_state.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\ring_buffer.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\robin_of_sherwood.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\saga_draw.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\scott.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\seas_of_blood.cpp" />
+		<ClCompile Include="..\..\engines\glk\scott\ti99_4a_terp.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\built_in.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\character_map.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\command_line.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\data.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\debug.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\error.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\error_handling.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\error_message.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\execute_command.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\file_io.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\get_string.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\line_source_file.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\list.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\ltk.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\memory_cache.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\memory_cache_heap.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\memory_cache_swap.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\object.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\os.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\output.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\play.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\post_compilation.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\qa_scriptor.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\regex.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\run.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\runstat.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\runtime_app.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\runtime_driver.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\tads2.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\tokenizer.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\tokenizer_hash.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\vocabulary.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads2\vocabulary_parser.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads3\tads3.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\os_banners.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\os_buffer.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\os_frob_tads.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\os_glk.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\os_parse.cpp" />
+		<ClCompile Include="..\..\engines\glk\tads\tads.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\bitmap_font.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\config.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\glk_interface.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\mem.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\pics.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\pics_decoder.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_buffer.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_input.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_maths.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_mem.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_objects.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_screen.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_streams.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_table.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_text.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_variables.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\processor_windows.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\quetzal.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\screen.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\sound_folder.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\windows.cpp" />
+		<ClCompile Include="..\..\engines\glk\zcode\zcode.cpp" />
+		<ClCompile Include="..\..\engines\glk\blorb.cpp" />
+		<ClCompile Include="..\..\engines\glk\conf.cpp" />
+		<ClCompile Include="..\..\engines\glk\debugger.cpp" />
+		<ClCompile Include="..\..\engines\glk\detection.cpp" />
+		<ClCompile Include="..\..\engines\glk\events.cpp" />
+		<ClCompile Include="..\..\engines\glk\fonts.cpp" />
+		<ClCompile Include="..\..\engines\glk\glk.cpp" />
+		<ClCompile Include="..\..\engines\glk\glk_api.cpp" />
+		<ClCompile Include="..\..\engines\glk\glk_dispa.cpp" />
+		<ClCompile Include="..\..\engines\glk\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\glk\pc_speaker.cpp" />
+		<ClCompile Include="..\..\engines\glk\picture.cpp" />
+		<ClCompile Include="..\..\engines\glk\quetzal.cpp" />
+		<ClCompile Include="..\..\engines\glk\raw_decoder.cpp" />
+		<ClCompile Include="..\..\engines\glk\screen.cpp" />
+		<ClCompile Include="..\..\engines\glk\selection.cpp" />
+		<ClCompile Include="..\..\engines\glk\sound.cpp" />
+		<ClCompile Include="..\..\engines\glk\speech.cpp" />
+		<ClCompile Include="..\..\engines\glk\streams.cpp" />
+		<ClCompile Include="..\..\engines\glk\time.cpp" />
+		<ClCompile Include="..\..\engines\glk\unicode.cpp" />
+		<ClCompile Include="..\..\engines\glk\unicode_gen.cpp" />
+		<ClCompile Include="..\..\engines\glk\utils.cpp" />
+		<ClCompile Include="..\..\engines\glk\window_graphics.cpp" />
+		<ClCompile Include="..\..\engines\glk\window_pair.cpp" />
+		<ClCompile Include="..\..\engines\glk\window_text_buffer.cpp" />
+		<ClCompile Include="..\..\engines\glk\window_text_grid.cpp" />
+		<ClCompile Include="..\..\engines\glk\windows.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\glk\adrift\adrift.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\detection.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\os_glk.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\scare.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\scgamest.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\scprotos.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\serialization.h" />
+		<ClInclude Include="..\..\engines\glk\adrift\sxprotos.h" />
+		<ClInclude Include="..\..\engines\glk\advsys\advsys.h" />
+		<ClInclude Include="..\..\engines\glk\advsys\definitions.h" />
+		<ClInclude Include="..\..\engines\glk\advsys\detection.h" />
+		<ClInclude Include="..\..\engines\glk\advsys\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\advsys\game.h" />
+		<ClInclude Include="..\..\engines\glk\advsys\glk_interface.h" />
+		<ClInclude Include="..\..\engines\glk\advsys\vm.h" />
+		<ClInclude Include="..\..\engines\glk\agt\agility.h" />
+		<ClInclude Include="..\..\engines\glk\agt\agt.h" />
+		<ClInclude Include="..\..\engines\glk\agt\config.h" />
+		<ClInclude Include="..\..\engines\glk\agt\detection.h" />
+		<ClInclude Include="..\..\engines\glk\agt\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\agt\exec.h" />
+		<ClInclude Include="..\..\engines\glk\agt\interp.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\acode.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\alan2.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\alan_version.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\args.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\debug.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\decode.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\detection.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\exe.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\glkio.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\inter.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\main.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\params.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\parse.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\reverse.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\rules.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\stack.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\sysdep.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\types.h" />
+		<ClInclude Include="..\..\engines\glk\alan2\version.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\acode.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\act.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\actor.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\alan3.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\alan_version.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\alt_info.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\attribute.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\checkentry.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\class.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\compatibility.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\container.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\current.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\debug.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\decode.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\detection.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\dictionary.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\event.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\exe.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\fnmatch.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\glkio.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\instance.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\inter.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\lists.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\literal.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\location.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\main.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\memory.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\msg.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\options.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\output.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\parameter_position.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\params.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\parse.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\resources.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\reverse.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\rules.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\save.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\scan.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\score.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\set.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\stack.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\state.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\state_stack.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\syntax.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\sysdep.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\syserr.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\types.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\utils.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\version.h" />
+		<ClInclude Include="..\..\engines\glk\alan3\word.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\archetype.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\array.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\crypt.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\detection.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\error.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\expression.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\game_stat.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\heap_sort.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\id_table.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\interpreter.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\keywords.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\linked_list.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\misc.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\parser.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\saveload.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\semantic.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\statement.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\string.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\sys_object.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\timestamp.h" />
+		<ClInclude Include="..\..\engines\glk\archetype\token.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\charset.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\comprehend.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\debugger.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\debugger_dumper.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\detection.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\dictionary.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\draw_surface.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\file_buf.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game_cc.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game_data.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game_oo.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game_opcodes.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game_tm.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game_tr1.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\game_tr2.h" />
+		<ClInclude Include="..\..\engines\glk\comprehend\pics.h" />
+		<ClInclude Include="..\..\engines\glk\glulx\detection.h" />
+		<ClInclude Include="..\..\engines\glk\glulx\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\glulx\float.h" />
+		<ClInclude Include="..\..\engines\glk\glulx\glulx.h" />
+		<ClInclude Include="..\..\engines\glk\glulx\glulx_types.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\detection.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\htokens.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\hugo.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\hugo_defines.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\hugo_types.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\resource_archive.h" />
+		<ClInclude Include="..\..\engines\glk\hugo\stringfn.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\constants.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\csv.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\detection.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\jacl.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\language.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\prototypes.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\types.h" />
+		<ClInclude Include="..\..\engines\glk\jacl\version.h" />
+		<ClInclude Include="..\..\engines\glk\level9\detection.h" />
+		<ClInclude Include="..\..\engines\glk\level9\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\level9\level9.h" />
+		<ClInclude Include="..\..\engines\glk\level9\level9_main.h" />
+		<ClInclude Include="..\..\engines\glk\level9\os_glk.h" />
+		<ClInclude Include="..\..\engines\glk\magnetic\detection.h" />
+		<ClInclude Include="..\..\engines\glk\magnetic\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\magnetic\magnetic.h" />
+		<ClInclude Include="..\..\engines\glk\magnetic\magnetic_defs.h" />
+		<ClInclude Include="..\..\engines\glk\magnetic\magnetic_types.h" />
+		<ClInclude Include="..\..\engines\glk\quest\detection.h" />
+		<ClInclude Include="..\..\engines\glk\quest\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\quest\geas_file.h" />
+		<ClInclude Include="..\..\engines\glk\quest\geas_glk.h" />
+		<ClInclude Include="..\..\engines\glk\quest\geas_impl.h" />
+		<ClInclude Include="..\..\engines\glk\quest\geas_runner.h" />
+		<ClInclude Include="..\..\engines\glk\quest\geas_state.h" />
+		<ClInclude Include="..\..\engines\glk\quest\geas_util.h" />
+		<ClInclude Include="..\..\engines\glk\quest\limit_stack.h" />
+		<ClInclude Include="..\..\engines\glk\quest\quest.h" />
+		<ClInclude Include="..\..\engines\glk\quest\read_file.h" />
+		<ClInclude Include="..\..\engines\glk\quest\reserved_words.h" />
+		<ClInclude Include="..\..\engines\glk\quest\streams.h" />
+		<ClInclude Include="..\..\engines\glk\quest\string.h" />
+		<ClInclude Include="..\..\engines\glk\scott\unp64\6502_emu.h" />
+		<ClInclude Include="..\..\engines\glk\scott\unp64\exo_util.h" />
+		<ClInclude Include="..\..\engines\glk\scott\unp64\unp64.h" />
+		<ClInclude Include="..\..\engines\glk\scott\unp64\unp64_interface.h" />
+		<ClInclude Include="..\..\engines\glk\scott\c64_checksums.h" />
+		<ClInclude Include="..\..\engines\glk\scott\command_parser.h" />
+		<ClInclude Include="..\..\engines\glk\scott\decompress_text.h" />
+		<ClInclude Include="..\..\engines\glk\scott\decompress_z80.h" />
+		<ClInclude Include="..\..\engines\glk\scott\definitions.h" />
+		<ClInclude Include="..\..\engines\glk\scott\detection.h" />
+		<ClInclude Include="..\..\engines\glk\scott\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\scott\disk_image.h" />
+		<ClInclude Include="..\..\engines\glk\scott\game_info.h" />
+		<ClInclude Include="..\..\engines\glk\scott\game_specific.h" />
+		<ClInclude Include="..\..\engines\glk\scott\games.h" />
+		<ClInclude Include="..\..\engines\glk\scott\globals.h" />
+		<ClInclude Include="..\..\engines\glk\scott\gremlins.h" />
+		<ClInclude Include="..\..\engines\glk\scott\hulk.h" />
+		<ClInclude Include="..\..\engines\glk\scott\layout_text.h" />
+		<ClInclude Include="..\..\engines\glk\scott\line_drawing.h" />
+		<ClInclude Include="..\..\engines\glk\scott\load_game.h" />
+		<ClInclude Include="..\..\engines\glk\scott\load_ti99_4a.h" />
+		<ClInclude Include="..\..\engines\glk\scott\resource.h" />
+		<ClInclude Include="..\..\engines\glk\scott\restore_state.h" />
+		<ClInclude Include="..\..\engines\glk\scott\ring_buffer.h" />
+		<ClInclude Include="..\..\engines\glk\scott\robin_of_sherwood.h" />
+		<ClInclude Include="..\..\engines\glk\scott\saga_draw.h" />
+		<ClInclude Include="..\..\engines\glk\scott\scott.h" />
+		<ClInclude Include="..\..\engines\glk\scott\seas_of_blood.h" />
+		<ClInclude Include="..\..\engines\glk\scott\ti99_4a_terp.h" />
+		<ClInclude Include="..\..\engines\glk\scott\types.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\appctx.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\built_in.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\character_map.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\command_line.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\data.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\debug.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\error.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\error_handling.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\file_io.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\lib.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\line_source.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\line_source_file.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\list.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\ltk.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\memory_cache.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\memory_cache_heap.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\memory_cache_loader.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\memory_cache_swap.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\object.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\opcode.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\os.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\play.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\post_compilation.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\property.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\regex.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\run.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\runtime_app.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\string_resources.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\tads2.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\text_io.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\tokenizer.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads2\vocabulary.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads3\tads3.h" />
+		<ClInclude Include="..\..\engines\glk\tads\detection.h" />
+		<ClInclude Include="..\..\engines\glk\tads\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\tads\os_banners.h" />
+		<ClInclude Include="..\..\engines\glk\tads\os_buffer.h" />
+		<ClInclude Include="..\..\engines\glk\tads\os_filetype.h" />
+		<ClInclude Include="..\..\engines\glk\tads\os_frob_tads.h" />
+		<ClInclude Include="..\..\engines\glk\tads\os_glk.h" />
+		<ClInclude Include="..\..\engines\glk\tads\os_parse.h" />
+		<ClInclude Include="..\..\engines\glk\tads\tads.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\bitmap_font.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\config.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\detection.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\detection_tables.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\frotz_types.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\glk_interface.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\mem.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\pics.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\pics_decoder.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\processor.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\quetzal.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\screen.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\sound_folder.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\windows.h" />
+		<ClInclude Include="..\..\engines\glk\zcode\zcode.h" />
+		<ClInclude Include="..\..\engines\glk\blorb.h" />
+		<ClInclude Include="..\..\engines\glk\conf.h" />
+		<ClInclude Include="..\..\engines\glk\debugger.h" />
+		<ClInclude Include="..\..\engines\glk\detection.h" />
+		<ClInclude Include="..\..\engines\glk\events.h" />
+		<ClInclude Include="..\..\engines\glk\fonts.h" />
+		<ClInclude Include="..\..\engines\glk\game_description.h" />
+		<ClInclude Include="..\..\engines\glk\glk.h" />
+		<ClInclude Include="..\..\engines\glk\glk_api.h" />
+		<ClInclude Include="..\..\engines\glk\glk_types.h" />
+		<ClInclude Include="..\..\engines\glk\jumps.h" />
+		<ClInclude Include="..\..\engines\glk\pc_speaker.h" />
+		<ClInclude Include="..\..\engines\glk\picture.h" />
+		<ClInclude Include="..\..\engines\glk\quetzal.h" />
+		<ClInclude Include="..\..\engines\glk\raw_decoder.h" />
+		<ClInclude Include="..\..\engines\glk\screen.h" />
+		<ClInclude Include="..\..\engines\glk\selection.h" />
+		<ClInclude Include="..\..\engines\glk\sound.h" />
+		<ClInclude Include="..\..\engines\glk\speech.h" />
+		<ClInclude Include="..\..\engines\glk\streams.h" />
+		<ClInclude Include="..\..\engines\glk\time.h" />
+		<ClInclude Include="..\..\engines\glk\unicode.h" />
+		<ClInclude Include="..\..\engines\glk\unicode_gen.h" />
+		<ClInclude Include="..\..\engines\glk\utils.h" />
+		<ClInclude Include="..\..\engines\glk\window_graphics.h" />
+		<ClInclude Include="..\..\engines\glk\window_pair.h" />
+		<ClInclude Include="..\..\engines\glk\window_text_buffer.h" />
+		<ClInclude Include="..\..\engines\glk\window_text_grid.h" />
+		<ClInclude Include="..\..\engines\glk\windows.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\glk\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="supernova1">
+			<UniqueIdentifier>610F1743-3570-4E43-8256-09CADD2D1108</UniqueIdentifier>
+		</Filter>
+		<Filter Include="supernova2">
+			<UniqueIdentifier>D71F88B7-EB59-4781-83A9-A36B6CEA5A0C</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\supernova\supernova1\rooms.cpp">
+			<Filter>supernova1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\supernova\supernova1\state.cpp">
+			<Filter>supernova1</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\supernova\supernova2\rooms.cpp">
+			<Filter>supernova2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\supernova\supernova2\state.cpp">
+			<Filter>supernova2</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\supernova\console.cpp" />
+		<ClCompile Include="..\..\engines\supernova\game-manager.cpp" />
+		<ClCompile Include="..\..\engines\supernova\graphics.cpp" />
+		<ClCompile Include="..\..\engines\supernova\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\supernova\resman.cpp" />
+		<ClCompile Include="..\..\engines\supernova\room.cpp" />
+		<ClCompile Include="..\..\engines\supernova\screen.cpp" />
+		<ClCompile Include="..\..\engines\supernova\sound.cpp" />
+		<ClCompile Include="..\..\engines\supernova\supernova.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\supernova\supernova1\rooms.h">
+			<Filter>supernova1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\supernova\supernova1\state.h">
+			<Filter>supernova1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\supernova\supernova1\stringid.h">
+			<Filter>supernova1</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\supernova\supernova2\rooms.h">
+			<Filter>supernova2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\supernova\supernova2\state.h">
+			<Filter>supernova2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\supernova\supernova2\stringid.h">
+			<Filter>supernova2</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\supernova\console.h" />
+		<ClInclude Include="..\..\engines\supernova\detection.h" />
+		<ClInclude Include="..\..\engines\supernova\game-manager.h" />
+		<ClInclude Include="..\..\engines\supernova\graphics.h" />
+		<ClInclude Include="..\..\engines\supernova\imageid.h" />
+		<ClInclude Include="..\..\engines\supernova\msn_def.h" />
+		<ClInclude Include="..\..\engines\supernova\resman.h" />
+		<ClInclude Include="..\..\engines\supernova\room.h" />
+		<ClInclude Include="..\..\engines\supernova\screen.h" />
+		<ClInclude Include="..\..\engines\supernova\sound.h" />
+		<ClInclude Include="..\..\engines\supernova\supernova.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\supernova\module.mk" />
+	</ItemGroup>
+</Project>

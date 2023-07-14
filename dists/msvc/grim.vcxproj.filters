@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="costume">
+			<UniqueIdentifier>95914357-1085-48E8-923E-A2512DCCAB18</UniqueIdentifier>
+		</Filter>
+		<Filter Include="emi">
+			<UniqueIdentifier>3BCC6A66-8674-4E15-9DD1-5F8BAF63B84A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="emi\costume">
+			<UniqueIdentifier>0F8CBB92-5D28-4EC4-BB5C-1D9E47C1639F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="emi\sound">
+			<UniqueIdentifier>EA6DBE3C-30FD-491E-80F1-0A3C5E18D7FC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="emi\sound\codecs">
+			<UniqueIdentifier>D8D87BC0-6447-4082-ADFA-4912854221A6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="imuse">
+			<UniqueIdentifier>45354D26-D188-438A-8200-A586B9EF597D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lua">
+			<UniqueIdentifier>8F67422A-16DC-4668-BECF-3F1A1725A548</UniqueIdentifier>
+		</Filter>
+		<Filter Include="movie">
+			<UniqueIdentifier>4578D385-7739-45C3-9E4B-E9D08C28CA47</UniqueIdentifier>
+		</Filter>
+		<Filter Include="movie\codecs">
+			<UniqueIdentifier>3F952C64-C2DB-4CFC-A426-746343DC9739</UniqueIdentifier>
+		</Filter>
+		<Filter Include="remastered">
+			<UniqueIdentifier>2874380E-99F9-4E49-8D2B-E18C5340DE62</UniqueIdentifier>
+		</Filter>
+		<Filter Include="update">
+			<UniqueIdentifier>D322F86E-5263-4D9B-8282-DD3C97D175B0</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\grim\costume\anim_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\bitmap_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\chore.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\colormap_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\head.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\keyframe_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\lua_var_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\main_model_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\material_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\mesh_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\model_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\sound_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\costume\sprite_component.cpp">
+			<Filter>costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emianim_component.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emichore.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emihead.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emiluacode_component.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emiluavar_component.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emimesh_component.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emiskel_component.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emisprite_component.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costume\emitexi_component.cpp">
+			<Filter>emi\costume</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\sound\codecs\scx.cpp">
+			<Filter>emi\sound\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\sound\aifftrack.cpp">
+			<Filter>emi\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\sound\emisound.cpp">
+			<Filter>emi\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\sound\mp3track.cpp">
+			<Filter>emi\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\sound\scxtrack.cpp">
+			<Filter>emi\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\sound\track.cpp">
+			<Filter>emi\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\sound\vimatrack.cpp">
+			<Filter>emi\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\animationemi.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\costumeemi.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\emi.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\emi_registry.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\layer.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\lua_v2.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\lua_v2_actor.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\lua_v2_sound.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\modelemi.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\poolsound.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\emi\skeleton.cpp">
+			<Filter>emi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\imuse\imuse.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\imuse\imuse_mcmp_mgr.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\imuse\imuse_music.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\imuse\imuse_script.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\imuse\imuse_sndmgr.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\imuse\imuse_tables.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\imuse\imuse_track.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lapi.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lauxlib.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lbuffer.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lbuiltin.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\ldo.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lfunc.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lgc.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\liolib.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\llex.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lmathlib.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lmem.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lobject.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lrestore.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lsave.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lstate.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lstring.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lstrlib.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lstx.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\ltable.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\ltask.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\ltm.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lundump.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lvm.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\lua\lzio.cpp">
+			<Filter>lua</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\bink.cpp">
+			<Filter>movie</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\codecs\blocky16.cpp">
+			<Filter>movie\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\codecs\blocky8.cpp">
+			<Filter>movie\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\codecs\codec48.cpp">
+			<Filter>movie\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\codecs\smush_decoder.cpp">
+			<Filter>movie\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\codecs\vima.cpp">
+			<Filter>movie\codecs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\movie.cpp">
+			<Filter>movie</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\mpeg.cpp">
+			<Filter>movie</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\quicktime.cpp">
+			<Filter>movie</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\movie\smush.cpp">
+			<Filter>movie</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\remastered\commentary.cpp">
+			<Filter>remastered</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\remastered\hotspot.cpp">
+			<Filter>remastered</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\remastered\lua_remastered.cpp">
+			<Filter>remastered</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\remastered\overlay.cpp">
+			<Filter>remastered</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\update\lang_filter.cpp">
+			<Filter>update</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\update\mscab.cpp">
+			<Filter>update</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\update\packfile.cpp">
+			<Filter>update</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\update\update.cpp">
+			<Filter>update</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\grim\actor.cpp" />
+		<ClCompile Include="..\..\engines\grim\animation.cpp" />
+		<ClCompile Include="..\..\engines\grim\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\grim\color.cpp" />
+		<ClCompile Include="..\..\engines\grim\colormap.cpp" />
+		<ClCompile Include="..\..\engines\grim\costume.cpp" />
+		<ClCompile Include="..\..\engines\grim\debug.cpp" />
+		<ClCompile Include="..\..\engines\grim\debugger.cpp" />
+		<ClCompile Include="..\..\engines\grim\font.cpp" />
+		<ClCompile Include="..\..\engines\grim\gfx_base.cpp" />
+		<ClCompile Include="..\..\engines\grim\gfx_opengl.cpp" />
+		<ClCompile Include="..\..\engines\grim\gfx_opengl_shaders.cpp" />
+		<ClCompile Include="..\..\engines\grim\gfx_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\grim\grim.cpp" />
+		<ClCompile Include="..\..\engines\grim\grim_controls.cpp" />
+		<ClCompile Include="..\..\engines\grim\inputdialog.cpp" />
+		<ClCompile Include="..\..\engines\grim\iris.cpp" />
+		<ClCompile Include="..\..\engines\grim\keyframe.cpp" />
+		<ClCompile Include="..\..\engines\grim\lab.cpp" />
+		<ClCompile Include="..\..\engines\grim\lipsync.cpp" />
+		<ClCompile Include="..\..\engines\grim\localize.cpp" />
+		<ClCompile Include="..\..\engines\grim\lua.cpp" />
+		<ClCompile Include="..\..\engines\grim\lua_v1.cpp" />
+		<ClCompile Include="..\..\engines\grim\lua_v1_actor.cpp" />
+		<ClCompile Include="..\..\engines\grim\lua_v1_graphics.cpp" />
+		<ClCompile Include="..\..\engines\grim\lua_v1_set.cpp" />
+		<ClCompile Include="..\..\engines\grim\lua_v1_sound.cpp" />
+		<ClCompile Include="..\..\engines\grim\lua_v1_text.cpp" />
+		<ClCompile Include="..\..\engines\grim\material.cpp" />
+		<ClCompile Include="..\..\engines\grim\md5check.cpp" />
+		<ClCompile Include="..\..\engines\grim\md5checkdialog.cpp" />
+		<ClCompile Include="..\..\engines\grim\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\grim\model.cpp" />
+		<ClCompile Include="..\..\engines\grim\object.cpp" />
+		<ClCompile Include="..\..\engines\grim\objectstate.cpp" />
+		<ClCompile Include="..\..\engines\grim\patchr.cpp" />
+		<ClCompile Include="..\..\engines\grim\primitives.cpp" />
+		<ClCompile Include="..\..\engines\grim\registry.cpp" />
+		<ClCompile Include="..\..\engines\grim\resource.cpp" />
+		<ClCompile Include="..\..\engines\grim\savegame.cpp" />
+		<ClCompile Include="..\..\engines\grim\sector.cpp" />
+		<ClCompile Include="..\..\engines\grim\set.cpp" />
+		<ClCompile Include="..\..\engines\grim\sound.cpp" />
+		<ClCompile Include="..\..\engines\grim\sprite.cpp" />
+		<ClCompile Include="..\..\engines\grim\textobject.cpp" />
+		<ClCompile Include="..\..\engines\grim\textsplit.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\grim\costume\anim_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\bitmap_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\chore.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\colormap_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\head.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\keyframe_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\lua_var_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\main_model_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\material_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\mesh_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\model_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\sound_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\costume\sprite_component.h">
+			<Filter>costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emianim_component.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emichore.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emihead.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emiluacode_component.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emiluavar_component.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emimesh_component.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emiskel_component.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emisprite_component.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costume\emitexi_component.h">
+			<Filter>emi\costume</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\sound\codecs\scx.h">
+			<Filter>emi\sound\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\sound\aifftrack.h">
+			<Filter>emi\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\sound\emisound.h">
+			<Filter>emi\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\sound\mp3track.h">
+			<Filter>emi\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\sound\scxtrack.h">
+			<Filter>emi\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\sound\track.h">
+			<Filter>emi\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\sound\vimatrack.h">
+			<Filter>emi\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\animationemi.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\costumeemi.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\emi.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\emi_registry.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\layer.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\lua_v2.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\modelemi.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\poolsound.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\emi\skeleton.h">
+			<Filter>emi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\imuse\imuse.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\imuse\imuse_mcmp_mgr.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\imuse\imuse_sndmgr.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\imuse\imuse_tables.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\imuse\imuse_track.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lapi.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lauxlib.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lbuiltin.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\ldo.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lfunc.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lgc.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\llex.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lmem.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lobject.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lopcodes.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lparser.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lstate.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lstring.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lstx.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\ltable.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\ltask.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\ltm.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lua.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\luadebug.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lualib.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lundump.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lvm.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\lua\lzio.h">
+			<Filter>lua</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\bink.h">
+			<Filter>movie</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\codecs\blocky16.h">
+			<Filter>movie\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\codecs\blocky8.h">
+			<Filter>movie\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\codecs\codec48.h">
+			<Filter>movie\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\codecs\smush_decoder.h">
+			<Filter>movie\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\codecs\vima.h">
+			<Filter>movie\codecs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\movie.h">
+			<Filter>movie</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\mpeg.h">
+			<Filter>movie</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\quicktime.h">
+			<Filter>movie</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\movie\smush.h">
+			<Filter>movie</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\remastered\commentary.h">
+			<Filter>remastered</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\remastered\hotspot.h">
+			<Filter>remastered</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\remastered\lua_remastered.h">
+			<Filter>remastered</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\remastered\overlay.h">
+			<Filter>remastered</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\update\lang_filter.h">
+			<Filter>update</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\update\mscab.h">
+			<Filter>update</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\update\packfile.h">
+			<Filter>update</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\update\update.h">
+			<Filter>update</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\grim\actor.h" />
+		<ClInclude Include="..\..\engines\grim\animation.h" />
+		<ClInclude Include="..\..\engines\grim\bitmap.h" />
+		<ClInclude Include="..\..\engines\grim\color.h" />
+		<ClInclude Include="..\..\engines\grim\colormap.h" />
+		<ClInclude Include="..\..\engines\grim\costume.h" />
+		<ClInclude Include="..\..\engines\grim\debug.h" />
+		<ClInclude Include="..\..\engines\grim\debugger.h" />
+		<ClInclude Include="..\..\engines\grim\detection.h" />
+		<ClInclude Include="..\..\engines\grim\font.h" />
+		<ClInclude Include="..\..\engines\grim\gfx_base.h" />
+		<ClInclude Include="..\..\engines\grim\gfx_opengl.h" />
+		<ClInclude Include="..\..\engines\grim\gfx_opengl_shaders.h" />
+		<ClInclude Include="..\..\engines\grim\gfx_tinygl.h" />
+		<ClInclude Include="..\..\engines\grim\grim.h" />
+		<ClInclude Include="..\..\engines\grim\inputdialog.h" />
+		<ClInclude Include="..\..\engines\grim\iris.h" />
+		<ClInclude Include="..\..\engines\grim\keyframe.h" />
+		<ClInclude Include="..\..\engines\grim\lab.h" />
+		<ClInclude Include="..\..\engines\grim\lipsync.h" />
+		<ClInclude Include="..\..\engines\grim\localize.h" />
+		<ClInclude Include="..\..\engines\grim\lua.h" />
+		<ClInclude Include="..\..\engines\grim\lua_v1.h" />
+		<ClInclude Include="..\..\engines\grim\material.h" />
+		<ClInclude Include="..\..\engines\grim\md5check.h" />
+		<ClInclude Include="..\..\engines\grim\md5checkdialog.h" />
+		<ClInclude Include="..\..\engines\grim\model.h" />
+		<ClInclude Include="..\..\engines\grim\object.h" />
+		<ClInclude Include="..\..\engines\grim\objectstate.h" />
+		<ClInclude Include="..\..\engines\grim\patchr.h" />
+		<ClInclude Include="..\..\engines\grim\pool.h" />
+		<ClInclude Include="..\..\engines\grim\primitives.h" />
+		<ClInclude Include="..\..\engines\grim\registry.h" />
+		<ClInclude Include="..\..\engines\grim\resource.h" />
+		<ClInclude Include="..\..\engines\grim\savegame.h" />
+		<ClInclude Include="..\..\engines\grim\sector.h" />
+		<ClInclude Include="..\..\engines\grim\set.h" />
+		<ClInclude Include="..\..\engines\grim\sound.h" />
+		<ClInclude Include="..\..\engines\grim\sprite.h" />
+		<ClInclude Include="..\..\engines\grim\textobject.h" />
+		<ClInclude Include="..\..\engines\grim\textsplit.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\grim\module.mk" />
+	</ItemGroup>
+</Project>

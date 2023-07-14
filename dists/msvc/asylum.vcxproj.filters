@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="puzzles">
+			<UniqueIdentifier>4B4B70B9-F874-4729-9294-E903F73C2A21</UniqueIdentifier>
+		</Filter>
+		<Filter Include="resources">
+			<UniqueIdentifier>05722176-3106-4E47-86B2-1FE6BE81EF78</UniqueIdentifier>
+		</Filter>
+		<Filter Include="system">
+			<UniqueIdentifier>53A6D441-B3D3-4490-A234-A758F401CCAC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="views">
+			<UniqueIdentifier>2B6433B1-D985-4158-8972-1B61DBA97216</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\asylum\puzzles\board.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\boardkeyhidesto.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\boardsalvation.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\boardyouth.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\clock.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\fisherman.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\hivecontrol.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\hivemachine.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\lock.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\morguedoor.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\pipes.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\puzzle.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\puzzles.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\tictactoe.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\timemachine.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\vcr.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\wheel.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\puzzles\writings.cpp">
+			<Filter>puzzles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\actor.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\data.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\encounters.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\inventory.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\object.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\polygons.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\script.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\special.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\resources\worldstats.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\config.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\cursor.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\graphics.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\savegame.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\screen.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\sound.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\speech.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\system\text.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\views\insertdisc.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\views\menu.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\views\resviewer.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\views\scene.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\views\scenetitle.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\views\video.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\asylum\asylum.cpp" />
+		<ClCompile Include="..\..\engines\asylum\console.cpp" />
+		<ClCompile Include="..\..\engines\asylum\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\asylum\respack.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\asylum\puzzles\board.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\boardkeyhidesto.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\boardsalvation.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\boardyouth.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\clock.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\fisherman.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\hivecontrol.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\hivemachine.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\lock.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\morguedoor.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\pipes.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\puzzle.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\puzzles.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\tictactoe.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\timemachine.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\vcr.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\wheel.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\puzzles\writings.h">
+			<Filter>puzzles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\actor.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\data.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\encounters.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\inventory.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\object.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\polygons.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\script.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\special.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\resources\worldstats.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\config.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\cursor.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\graphics.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\savegame.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\screen.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\sound.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\speech.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\system\text.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\views\insertdisc.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\views\menu.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\views\resviewer.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\views\scene.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\views\scenetitle.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\views\video.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\asylum\asylum.h" />
+		<ClInclude Include="..\..\engines\asylum\console.h" />
+		<ClInclude Include="..\..\engines\asylum\detection_tables.h" />
+		<ClInclude Include="..\..\engines\asylum\eventhandler.h" />
+		<ClInclude Include="..\..\engines\asylum\respack.h" />
+		<ClInclude Include="..\..\engines\asylum\shared.h" />
+		<ClInclude Include="..\..\engines\asylum\staticres.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\asylum\module.mk" />
+	</ItemGroup>
+</Project>
