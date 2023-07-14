@@ -46,38 +46,38 @@ namespace pyrodactyl {
 namespace input {
 class Cursor {
 	// Mouse images
-	pyrodactyl::image::Image img, img_s, img_hover, img_hover_s;
+	pyrodactyl::image::Image _img, _imgS, _imgHover, _imgHoverS;
 
 	// The hover mouse cursor is drawn at a slight offset to the normal cursor
-	Vector2i hover_offset;
+	Vector2i _hoverOffset;
 
 	// Mouse image changes slightly if left click button is pressed
-	bool pressed;
+	bool _pressed;
 
-	uint8 state;
+	uint8 _state;
 
 public:
 	// Various coordinates
-	Vector2i motion, button, rel;
+	Vector2i _motion, _button, _rel;
 
 	// Is the mouse inside the HUD? Used to disable level mouse movement if true
-	bool inside_hud;
+	bool _insideHud;
 
 	// Was the last click on an NPC?
-	bool hover;
+	bool _hover;
 
 	Cursor() {
-		pressed = false;
-		inside_hud = false;
-		hover = false;
+		_pressed = false;
+		_insideHud = false;
+		_hover = false;
 	}
 	~Cursor() {}
 
 	void Quit() {
-		img.deleteImage();
-		img_s.deleteImage();
-		img_hover.deleteImage();
-		img_hover_s.deleteImage();
+		_img.deleteImage();
+		_imgS.deleteImage();
+		_imgHover.deleteImage();
+		_imgHoverS.deleteImage();
 	}
 
 	void reset();
@@ -86,7 +86,9 @@ public:
 	void handleEvents(const Common::Event &event);
 
 	void draw();
-	bool Pressed() { return pressed; }
+	bool pressed() {
+		return _pressed;
+	}
 };
 
 } // End of namespace input

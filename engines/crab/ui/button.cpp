@@ -151,7 +151,7 @@ ButtonAction Button::handleEvents(const Common::Event &Event, const int &XOffset
 	dim.y += YOffset;
 
 	if (visible) {
-		if (dim.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y)) {
+		if (dim.Contains(g_engine->_mouse->_motion.x, g_engine->_mouse->_motion.y)) {
 			hover_mouse = true;
 
 			if (!hover_prev) {
@@ -165,17 +165,17 @@ ButtonAction Button::handleEvents(const Common::Event &Event, const int &XOffset
 
 		if (Event.type == Common::EVENT_MOUSEMOVE) {
 			if (canmove && mousepressed) {
-				x += g_engine->_mouse->rel.x;
-				y += g_engine->_mouse->rel.y;
+				x += g_engine->_mouse->_rel.x;
+				y += g_engine->_mouse->_rel.y;
 				return BUAC_GRABBED;
 			}
 		} else if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
 			// The g_engine->_mouse button pressed, then released, comprises of a click action
-			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y))
+			if (dim.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y))
 				mousepressed = true;
 		} else if ((Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP) && mousepressed) {
 			reset();
-			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y)) {
+			if (dim.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
 				mousepressed = false;
 				if (Event.type == Common::EVENT_LBUTTONUP) {
 					g_engine->_musicManager->PlayEffect(se_click, 0);

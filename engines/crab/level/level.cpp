@@ -92,12 +92,12 @@ void Level::CalcProperties(Info &info) {
 // Purpose: Handle the level movement
 //------------------------------------------------------------------------
 void Level::handleEvents(Info &info, const Common::Event &Event) {
-	if (!g_engine->_mouse->inside_hud) {
+	if (!g_engine->_mouse->_insideHud) {
 		if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
 			// Only go to path if our mouse is a normal walking cursor
-			if (!g_engine->_mouse->hover) {
+			if (!g_engine->_mouse->_hover) {
 				// The destination coordinate is set by adding camera position to click position
-				Vector2i dest = g_engine->_mouse->button;
+				Vector2i dest = g_engine->_mouse->_button;
 				dest.x += camera.x;
 				dest.y += camera.y;
 
@@ -120,7 +120,7 @@ void Level::handleEvents(Info &info, const Common::Event &Event) {
 // Purpose: Handle the level movement
 //------------------------------------------------------------------------
 void Level::handleEvents(Info &info, const SDL_Event &Event) {
-	if (!g_engine->_mouse->inside_hud) {
+	if (!g_engine->_mouse->_insideHud) {
 		if (Event.type == SDL_MOUSEBUTTONDOWN) {
 			// Only go to path if our mouse is a normal walking cursor
 			if (!g_engine->_mouse->hover) {
