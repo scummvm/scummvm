@@ -71,6 +71,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Fixed reading older Discworld II savegames.
+   - Fixed unaligned accesses.
+
+ TONY:
+   - Fixed unaligned accesses.
 
  Touche:
    - Added support for Russian translation by old-games.ru.
