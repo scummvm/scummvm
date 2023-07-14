@@ -53,7 +53,7 @@ public:
 
 	virtual void getAllDLCs(Common::Array<DLCDesc*> &dlcs) override;
 
-	virtual void startDownloadAsync(Common::String &id) override;
+	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) override;
 
 	void downloadFileCallback(Networking::DataResponse response);
 

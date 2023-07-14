@@ -49,7 +49,7 @@ public:
 
 	virtual void getAllDLCs(Common::Array<DLCDesc*> &dlcs) = 0;
 
-	virtual void startDownloadAsync(Common::String &id) = 0;
+	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) = 0;
 
 };
 

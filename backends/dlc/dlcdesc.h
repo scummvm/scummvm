@@ -38,6 +38,7 @@ public:
 	};
 	Common::String name;
 	Common::String id;
+	Common::String url;
 	uint32 size;
 	uint32 idx;
 	State state;
