@@ -159,12 +159,12 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 // (eg. a room change occurred)
 int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny) {
 
-	if ((nint->ScriptFuncNames[evnt] == nullptr) || (nint->ScriptFuncNames[evnt][0u] == 0)) {
+	if ((nint->ScriptFuncNames.size() <= evnt) || nint->ScriptFuncNames[evnt].IsEmpty()) {
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
 		if (chkAny < 0);
-		else if ((nint->ScriptFuncNames[chkAny] != nullptr) && (nint->ScriptFuncNames[chkAny][0u] != 0))
+		else if (!nint->ScriptFuncNames[chkAny].IsEmpty())
 			return 0;
 
 		// Otherwise, run unhandled_event
@@ -223,7 +223,7 @@ int create_global_script() {
 		instances_for_resolving.push_back(_G(dialogScriptsInst));
 	}
 
-	// Resolve the script imports after all the scripts have been loaded 
+	// Resolve the script imports after all the scripts have been loaded
 	for (size_t instance_idx = 0; instance_idx < instances_for_resolving.size(); instance_idx++) {
 		auto inst = instances_for_resolving[instance_idx];
 		if (!inst->ResolveScriptImports(inst->instanceof.get()))
