@@ -75,4 +75,9 @@ void player_hotspot_walk_override_just_face(int32 facing, int32 trigger) {
 	player_hotspot_walk_override(_G(player_info).x, _G(player_info).y, facing, trigger);
 }
 
+void adv_kill_digi_between_rooms(bool true_or_false) {
+	_G(shut_down_digi_tracks_between_rooms) = true_or_false;
+}
+
+
 } // End of namespace M4

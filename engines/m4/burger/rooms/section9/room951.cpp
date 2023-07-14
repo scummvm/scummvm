@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section9/room951.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/burger/vars.h"
 #include "m4/m4.h"
@@ -582,9 +583,7 @@ void Room951::daemon() {
 	case LAST_SCENE_TRIGGER:
 		if (_G(executing) == WHOLE_GAME && !g_engine->autosaveExists()) {
 			_G(game).new_room = 903;
-#ifdef TODO
-			adv_kill_digi_between_rooms();
-#endif
+			adv_kill_digi_between_rooms(false);
 		} else {
 			kernel_trigger_dispatch_now(START_44);
 		}
