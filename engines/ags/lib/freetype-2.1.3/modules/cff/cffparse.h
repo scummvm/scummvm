@@ -1,8 +1,8 @@
 /***************************************************************************/
 /*                                                                         */
-/*  cffload.h                                                              */
+/*  cffparse.h                                                             */
 /*                                                                         */
-/*    OpenType & CFF data/program tables loader (specification).           */
+/*    CFF token stream parser (specification)                              */
 /*                                                                         */
 /*  Copyright 1996-2001, 2002 by                                           */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
@@ -16,56 +16,49 @@
 /***************************************************************************/
 
 
-#ifndef AGS_LIB_FREETYPE_CFFLOAD_H
-#define AGS_LIB_FREETYPE_CFFLOAD_H
+#ifndef AGS_LIB_FREETYPE_CFF_PARSE_H
+#define AGS_LIB_FREETYPE_CFF_PARSE_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/cff/cfftypes.h"
-#include "engines/ags/lib/freetype-2.1.3/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cfftypes.h"
+#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
 namespace AGS3 {
 namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
-FT2_1_3_LOCAL( FT_UShort )
-cff_get_standard_encoding( FT_UInt  charcode );
+
+#define CFF_MAX_STACK_DEPTH  96
+
+#define CFF_CODE_TOPDICT  0x1000
+#define CFF_CODE_PRIVATE  0x2000
 
 
-FT2_1_3_LOCAL( FT_String* )
-cff_index_get_name( CFF_Index  idx,
-					FT_UInt    element );
+typedef struct  CFF_ParserRec_ {
+	FT_Byte*   start;
+	FT_Byte*   limit;
+	FT_Byte*   cursor;
 
-FT2_1_3_LOCAL( FT_String* )
-cff_index_get_sid_string( CFF_Index        idx,
-						  FT_UInt          sid,
-						  PSNames_Service  psnames_interface );
+	FT_Byte*   stack[CFF_MAX_STACK_DEPTH + 1];
+	FT_Byte**  top;
 
+	FT_UInt    object_code;
+	void*      object;
 
-FT2_1_3_LOCAL( FT_Error )
-cff_index_access_element( CFF_Index  idx,
-						  FT_UInt    element,
-						  FT_Byte**  pbytes,
-						  FT_ULong*  pbyte_len );
+} CFF_ParserRec, *CFF_Parser;
+
 
 FT2_1_3_LOCAL( void )
-cff_index_forget_element( CFF_Index  idx,
-						  FT_Byte**  pbytes );
-
+cff_parser_init( CFF_Parser  parser,
+				 FT_UInt     code,
+				 void*       object );
 
 FT2_1_3_LOCAL( FT_Error )
-cff_font_load( FT_Stream  stream,
-			   FT_Int     face_index,
-			   CFF_Font   font );
-
-FT2_1_3_LOCAL( void )
-cff_font_done( CFF_Font  font );
-
-
-FT2_1_3_LOCAL( FT_Byte )
-cff_fd_select_get( CFF_FDSelect  select,
-				   FT_UInt       glyph_index );
+cff_parser_run( CFF_Parser  parser,
+				FT_Byte*    start,
+				FT_Byte*    limit );
 
 
 FT2_1_3_END_HEADER
@@ -73,7 +66,7 @@ FT2_1_3_END_HEADER
 } // End of namespace FreeType213
 } // End of namespace AGS3
 
-#endif /* AGS_LIB_FREETYPE_CFFLOAD_H */
+#endif /* AGS_LIB_FREETYPE_CFF_PARSE_H */
 
 
 /* END */

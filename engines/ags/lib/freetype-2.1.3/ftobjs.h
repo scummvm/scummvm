@@ -33,7 +33,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
 #include "engines/ags/lib/freetype-2.1.3/ftgloadr.h"
 #include "engines/ags/lib/freetype-2.1.3/ftdriver.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/autohint.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/autohint/autohint.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobject.h"
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL

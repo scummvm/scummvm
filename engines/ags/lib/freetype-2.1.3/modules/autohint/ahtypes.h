@@ -28,7 +28,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
 #ifdef DEBUG_HINTER
-#include <../autohint/ahloader.h>
+#include <../modules/autohint/ahloader.h>
 #else
 #include "ahloader.h"
 #endif

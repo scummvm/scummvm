@@ -22,7 +22,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/cff/cfftypes.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cfftypes.h"
 #include "engines/ags/lib/freetype-2.1.3/tttypes.h"
 #include "engines/ags/lib/freetype-2.1.3/psnames.h"
 
