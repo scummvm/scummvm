@@ -143,7 +143,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed reading older Discworld II savegames.
    - Fixed unaligned accesses.
 
- TONY:
+ Tony:
    - Fixed unaligned accesses.
 
  Touche:
@@ -1874,7 +1874,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Crusade, Indiana Jones and the Fate of Atlantis, Loom and The Dig. Both
      the Windows and the Macintosh versions are supported.
 
- TONY:
+ Tony:
    - Savegames in Tony Tough now work on big-endian systems.
 
  Tinsel:
