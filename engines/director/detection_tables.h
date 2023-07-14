@@ -465,6 +465,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "warlock",			"Spaceship Warlock" },
 	{ "wiggles1",			"A Day with the Wiggles" },
 	{ "willywabbit",		"Willy Wabbit & His Magical Books" },
+	{ "willywabbitmosaic",	"Mosaic Game" },
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
 	{ "wrath",				"Wrath of the Gods" },
@@ -5501,6 +5502,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Windows version is D3
 	MACGAME1t("willywabbit", "North American release", "Willy Wabbit(Click me)", "04e5a9a6c98f48aaef7fe7115b3606ca", 304029, 400),
+
+	// Free download from SEC's website:
+	// https://web.archive.org/web/19970109103231/http://www.sec.com.sg/freegame.htm
+	// Just calls itself "Mosaic Game" in-game, but is based on
+	// the first Willy Wabbit game.
+	WINDEMO1t("willywabbitmosaic", "", "NMOSAIC.EXE", "2f05037f5b5172e2758a093caad72077", 1077959, 404),
 
 	WINDEMO1("windows95", "Demo", "W95DEMO.EXE", "508a025373f0e8f6ae514578cf97c281", 24814094, 404),
 
