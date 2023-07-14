@@ -111,6 +111,7 @@ extern void player_hotspot_walk_override_just_face(int32 facing, int32 trigger =
 
 extern bool player_commands_allowed();
 extern PlayerInfo *player_update_info(machine *myWalker, PlayerInfo *player_info);
+extern void adv_kill_digi_between_rooms(bool true_or_false);
 
 } // End of namespace M4
 
