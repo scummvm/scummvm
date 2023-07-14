@@ -88,11 +88,13 @@ public class MultitouchHelper {
 		// (action & ACTION_POINTER_INDEX_MASK) >> ACTION_POINTER_INDEX_SHIFT
 		//final int pointer = (action & 0xff00) >> 8;
 
+		final int maskedAction = event.getActionMasked();
+
 		int pointerIndex = -1;
 		int actionEventX;
 		int actionEventY;
 
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		if (maskedAction == MotionEvent.ACTION_DOWN) {
 			// start of a multitouch session! one finger down -- this is sent for the first pointer who touches the screen
 			resetPointers();
 			setMultitouchLevel(0);
@@ -104,13 +106,13 @@ public class MultitouchHelper {
 			_firstPointerId = event.getPointerId(pointerIndex);
 			// TODO - do we want this as true?
 			return false;
-		} else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+		} else if (maskedAction == MotionEvent.ACTION_CANCEL) {
 			resetPointers();
 			setMultitouchLevel(0);
 			setMultitouchMode(false);
 			_multiTouchLevelUpgradeHandler.clear();
 			return true;
-		} else if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+		} else if (maskedAction == MotionEvent.ACTION_OUTSIDE) {
 			return false;
 		}
 
@@ -122,7 +124,7 @@ public class MultitouchHelper {
 			}
 
 			if (isMultitouchMode()) {
-				if ((event.getAction() & MotionEvent.ACTION_POINTER_DOWN) == MotionEvent.ACTION_POINTER_DOWN) {
+				if (maskedAction == MotionEvent.ACTION_POINTER_DOWN) {
 					pointerIndex = event.getActionIndex();
 					if (event.getPointerCount() == 2) {
 						_secondPointerId = event.getPointerId(pointerIndex);
@@ -160,19 +162,27 @@ public class MultitouchHelper {
 						// we prioritize the second pointer/ finger
 						pointerIndex = event.findPointerIndex(_secondPointerId);
 
+						if (pointerIndex != -1) {
+							actionEventX = (int)event.getX(pointerIndex);
+							actionEventY = (int)event.getY(pointerIndex);
+						} else {
+							actionEventX = -1;
+							actionEventY = -1;
+						}
+
+						// Fast trigger an ACTION_POINTER_DOWN if:
+						//  - we were not yet decided on which level to use or
+						//  - a finger got up (from 3 to 2, shouldn't happen) or
+						//  - our main finger moved from cached position
 						if (getMultitouchLevel() == 0
-						    && ((event.getAction() & MotionEvent.ACTION_POINTER_UP) == MotionEvent.ACTION_POINTER_UP
-						        || (event.getAction() & MotionEvent.ACTION_MOVE) == MotionEvent.ACTION_MOVE)) {
+						    && (maskedAction == MotionEvent.ACTION_POINTER_UP ||
+								(maskedAction == MotionEvent.ACTION_MOVE &&
+								(actionEventX != _cachedActionEventOnPointer2DownX ||
+								 actionEventY != _cachedActionEventOnPointer2DownY)))) {
+
 							setMultitouchLevel(2);
 							_multiTouchLevelUpgradeHandler.removeMessages(MSG_MT_UPGRADE_TO_LEVEL_3_TIMEDOUT);
 
-							if (pointerIndex != -1) {
-								actionEventX = (int)event.getX(pointerIndex);
-								actionEventY = (int)event.getY(pointerIndex);
-							} else {
-								actionEventX = -1;
-								actionEventY = -1;
-							}
 
 							// send the missing pointer down event first
 							_scummvm.pushEvent(JE_MULTI,
