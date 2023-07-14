@@ -58,6 +58,10 @@ Common::String M4Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Language M4Engine::getLanguage() const {
+	return _gameDescription->language;
+}
+
 Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 480);
