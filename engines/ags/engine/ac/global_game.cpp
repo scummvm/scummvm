@@ -459,6 +459,9 @@ int SetGameOption(int opt, int newval) {
 	case OPT_ANTIALIASFONTS:
 		adjust_fonts_for_render_mode(newval != 0);
 		break;
+	case OPT_RIGHTLEFTWRITE:
+		GUI::MarkForTranslationUpdate();
+		break;
 	case OPT_DUPLICATEINV:
 		update_invorder();
 		break;
