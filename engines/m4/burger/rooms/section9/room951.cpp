@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section9/room951.h"
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/burger/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Burger {
@@ -33,23 +34,56 @@ enum scene_triggers {
 	START_3,
 	START_4,
 	START_PLANET_X_LOW_GROUND_SHOT,
+	START_6,
+	START_7,
 	START_PLANET_X_HILLTOP_B,
+	START_9,
+	START_10,
 	START_SPACE_STATION_PANORAMA_A,
+	START_12,
+	START_13,
 	START_CARGO_TRANSFER_AREA_A,
+	START_15,
+	START_16,
 	START_VPS_OFFICE_A,
+	START_18,
+	START_19,
 	START_HOLOGRAM,
+	START_21,
+	START_22,
 	START_VPS_OFFICE_B,
+	START_24,
+	START_25,
 	START_CARGO_TRANSFER_AREA_B,
+	START_27,
+	START_28,
 	START_CARGO_TRANSFER_CONTROLS,
+	START_30,
+	START_31,
 	START_SPACE_STATION_PANORAMA_B,
-	START_CALL_TO_ACTION,
-
-	// Misc triggers for all animations
-	FADE_DOWN_FAST,
-	FADE_UP_FAST,
-
-	FADE_DOWN_SLOW,
-	FADE_UP_SLOW,
+	START_33,
+	START_34,
+	START_35,
+	START_36,
+	START_37,
+	START_38,
+	START_39,
+	START_40,
+	START_41,
+	START_42,
+	START_43,
+	START_44,
+	START_45,
+	START_46,
+	START_47,
+	START_48,
+	START_49,
+	START_50,
+	START_51,
+	START_52,
+	START_53,
+	START_54,
+	START_55,
 
 	LAST_SCENE_TRIGGER
 };
@@ -230,13 +264,52 @@ static const seriesStreamBreak panorama_b[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak call_to_action[] = {
+static const seriesStreamBreak break_961a[] = {
 	{   0,   nullptr, 0,   0, -1, 0, nullptr, 0 },
 	{   1,   nullptr, 0,   0, 47, 0, nullptr, 0 },
 	{   1, "961_001", 1, 100, -1, 0, nullptr, 0 },
 	{  63, "961_002", 1, 180, -1, 0, nullptr, 0 },
 	{ 143,   nullptr, 0,   0, 52, 0, nullptr, 0 },
 	{ 147,   nullptr, 0,   0, 48, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak break_961b[] = {
+	{   0,   nullptr, 0,   0, -1, 0, 0, 0 },
+	{   4, "961_003", 1, 255, -1, 0, 0, 0 },
+	{  19, "961_004", 2, 180, -1, 0, 0, 0 },
+	{  38, "961_005", 1, 255, -1, 0, 0, 0 },
+	{  55,   nullptr, 0,   0, 52, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak break_961c[] = {
+	{   0,   nullptr, 0,   0,  -1, 0, 0, 0 },
+	{   1, "961_006", 2, 130,  -1, 0, 0, 0 },
+	{  29, "961_007", 1, 255,  -1, 0, 0, 0 },
+	{  62, "961_008", 1, 255,  -1, 0, 0, 0 },
+	{  75, "961_009", 1, 200,  -1, 0, 0, 0 },
+	{  95, "961_007", 2, 255,  -1, 0, 0, 0 },
+	{ 100,   nullptr, 3, 240,  -1, 0, 0, 0 },
+	{ 101,   nullptr, 3, 220,  -1, 0, 0, 0 },
+	{ 102,   nullptr, 3, 200,  -1, 0, 0, 0 },
+	{ 103,   nullptr, 3, 180,  -1, 0, 0, 0 },
+	{ 104,   nullptr, 3, 160,  -1, 0, 0, 0 },
+	{ 105,   nullptr, 3, 140,  -1, 0, 0, 0 },
+	{ 106,   nullptr, 3, 120,  -1, 0, 0, 0 },
+	{ 107,   nullptr, 3, 100,  -1, 0, 0, 0 },
+	{ 108,   nullptr, 3,  90,  -1, 0, 0, 0 },
+	{ 109,   nullptr, 3,  80,  -1, 0, 0, 0 },
+	{ 110,   nullptr, 3,  60,  -1, 0, 0, 0 },
+	{ 112,   nullptr, 3,  40,  -1, 0, 0, 0 },
+	{ 114,   nullptr, 3,  20,  -1, 0, 0, 0 },
+	{ 116,   nullptr, 3,  10,  -1, 0, 0, 0 },
+	{ 117,   nullptr, 0,   0,  52, 0, 0, 0 },
+	{ 118,   nullptr, 3,   0,  -1, 0, 0, 0 },
+	{  -1,   nullptr, 0,   0,  -1, 0, 0, 0 },
+	{   0,   nullptr, 0,   0,  -1, 0, 0, 0 },
+	{  39,   nullptr, 0,   0,  52, 0, 0, 0 },
+	{  42,   nullptr, 0,   0,2048, 0, 0, 0 },
 	STREAM_BREAK_END
 };
 
@@ -270,138 +343,258 @@ void Room951::daemon() {
 
 	case START_PLANET_X_HILLTOP_A:
 		palette_prep_for_stream();
-		series_stream_with_breaks(planet_x_hilltop_a, "PLANET X HILLTOP A", 6, 1, START_PLANET_X_LOW_GROUND_SHOT);
+		series_stream_with_breaks(planet_x_hilltop_a, "PLANET X HILLTOP A", 6, 1, START_3);
 		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER);		// Half second fade up
 		break;
 
 	case START_3:
 		palette_prep_for_stream();
-		kernel_timing_trigger(6, 4, nullptr);
+		kernel_timing_trigger(TENTH_SECOND, START_4, nullptr);
 		break;
 
 	case START_4:
-		release_trigger_on_digi_state(5, 1, 0);
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_PLANET_X_LOW_GROUND_SHOT, 1, 0);
 		break;
-#ifdef TODO
+
 	case START_PLANET_X_LOW_GROUND_SHOT:
-		series_stream_with_breaks(planet_x_low_shot, "Planet X Low Ground Shot", 6, 1, START_PLANET_X_HILLTOP_B);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		series_stream_with_breaks(planet_x_low_shot, "Planet X Low Ground Shot", 6, 1, START_6);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_6:
+		palette_prep_for_stream();
+		kernel_timing_trigger(TENTH_SECOND, START_7, nullptr);
+		break;
+
+	case START_7:
+		digi_unload_stream_breaks(planet_x_hilltop_a);
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_PLANET_X_HILLTOP_B, 1, 0);
 		break;
 
 	case START_PLANET_X_HILLTOP_B:
+		series_stream_with_breaks(planet_x_hilltop_b, "Planet X Hilltop B", 6, 1, START_9);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_9:
 		palette_prep_for_stream();
-		digi_unload_stream_breaks(planet_x_hilltop_a);
-		series_stream_with_breaks(planet_x_hilltop_b, "Planet X Hilltop B", 6, 1, START_SPACE_STATION_PANORAMA_A);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		kernel_timing_trigger(TENTH_SECOND, START_10, nullptr);
+		break;
+
+	case START_10:
+		digi_unload_stream_breaks(planet_x_low_shot);
+		compact_mem_and_report();
+		digi_preload_stream_breaks(vps_office_a);
+		digi_preload_stream_breaks(hologram);
+		digi_preload_stream_breaks(vps_office_b);
+		release_trigger_on_digi_state(START_SPACE_STATION_PANORAMA_A, 1, 0);
 		break;
 
 	case START_SPACE_STATION_PANORAMA_A:
+		series_stream_with_breaks(panorama_a, "Space Station Panorama A", 6, 1, START_12);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_12:
 		palette_prep_for_stream();
-		digi_unload_stream_breaks(planet_x_low_shot);
-		series_stream_with_breaks(panorama_a, "Space Station Panorama A", 6, 1, START_CARGO_TRANSFER_AREA_A);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		kernel_timing_trigger(TENTH_SECOND, START_13, nullptr);
+		break;
+
+	case START_13:
+		digi_unload_stream_breaks(planet_x_hilltop_b);
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_CARGO_TRANSFER_AREA_A, 1, 0);
 		break;
 
 	case START_CARGO_TRANSFER_AREA_A:
+		series_stream_with_breaks(cargo_transfer_a, "Cargo Transfer Area A", 6, 1, START_15);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_15:
 		palette_prep_for_stream();
-		digi_unload_stream_breaks(planet_x_hilltop_b);
-		series_stream_with_breaks(cargo_transfer_a, "Cargo Transfer Area A", 6, 1, START_VPS_OFFICE_A);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		kernel_timing_trigger(TENTH_SECOND, START_16, nullptr);
+		break;
+
+	case START_16:
+		digi_unload_stream_breaks(panorama_a);
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_VPS_OFFICE_A, 1, 0);
 		break;
 
 	case START_VPS_OFFICE_A:
 		palette_prep_for_stream();
 		digi_unload_stream_breaks(panorama_a);
-		series_stream_with_breaks(vps_office_a, "VP's Office A", 6, 1, START_HOLOGRAM);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		series_stream_with_breaks(vps_office_a, "VP's Office A", 6, 1, START_18);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_18:
+		palette_prep_for_stream();
+		kernel_timing_trigger(TENTH_SECOND, START_19, nullptr);
+		break;
+
+	case START_19:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_HOLOGRAM, 1, 0);
 		break;
 
 	case START_HOLOGRAM:
-		palette_prep_for_stream();
 		digi_unload_stream_breaks(cargo_transfer_a);
-		series_stream_with_breaks(hologram, "Hologram", 6, 1, START_VPS_OFFICE_B);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		series_stream_with_breaks(hologram, "Hologram", 6, 1, START_21);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_21:
+		palette_prep_for_stream();
+		kernel_timing_trigger(TENTH_SECOND, START_22, nullptr);
+		break;
+
+
+	case START_22:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_VPS_OFFICE_B, 1, 0);
 		break;
 
 	case START_VPS_OFFICE_B:
+		series_stream_with_breaks(vps_office_b, "VP's Office B", 6, 1, START_24);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_24:
 		palette_prep_for_stream();
-		digi_unload_stream_breaks(vps_office_a);
-		series_stream_with_breaks(vps_office_b, "VP's Office B", 6, 1, START_CARGO_TRANSFER_AREA_B);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		kernel_timing_trigger(TENTH_SECOND, START_25, nullptr);
+		break;
+
+	case START_25:
+		compact_mem_and_report();
+		digi_preload_stream_breaks(cargo_transfer_b);
+		release_trigger_on_digi_state(START_CARGO_TRANSFER_AREA_B, 1, 0);
 		break;
 
 	case START_CARGO_TRANSFER_AREA_B:
+		series_stream_with_breaks(cargo_transfer_b, "Cargo Transfer Area B", 6, 1, START_27);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_27:
 		palette_prep_for_stream();
+		kernel_timing_trigger(TENTH_SECOND, START_28, nullptr);
+		break;
+
+	case START_28:
+		digi_unload_stream_breaks(vps_office_a);
 		digi_unload_stream_breaks(hologram);
-		digi_preload_stream_breaks(cargo_transfer_b);
-		series_stream_with_breaks(cargo_transfer_b, "Cargo Transfer Area B", 6, 1, START_CARGO_TRANSFER_CONTROLS);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		digi_unload_stream_breaks(vps_office_b);
+		compact_mem_and_report();
+		digi_preload_stream_breaks(transfer_controls);
+		release_trigger_on_digi_state(START_CARGO_TRANSFER_CONTROLS, 1, 0);
 		break;
 
 	case START_CARGO_TRANSFER_CONTROLS:
+		series_stream_with_breaks(transfer_controls, "Cargo Transfer Controls", 6, 1, START_30);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_30:
 		palette_prep_for_stream();
-		digi_stop(1);
-		digi_stop(2);
-		digi_stop(3);
-		digi_unload_stream_breaks(vps_office_b);
-		digi_preload_stream_breaks(transfer_controls);
-		series_stream_with_breaks(transfer_controls, "Cargo Transfer Controls", 6, 1, START_SPACE_STATION_PANORAMA_B);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		kernel_timing_trigger(TENTH_SECOND, START_31, nullptr);
+		break;
+
+	case START_31:
+		digi_unload_stream_breaks(cargo_transfer_b);
+		compact_mem_and_report();
+		digi_preload_stream_breaks(panorama_b);
+		release_trigger_on_digi_state(START_SPACE_STATION_PANORAMA_B, 1, 0);
 		break;
 
 	case START_SPACE_STATION_PANORAMA_B:
+		series_stream_with_breaks(panorama_b, "Space Station Panorama B", 6, 1, START_33);
+		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // Half second fade up
+		break;
+
+	case START_33:
 		palette_prep_for_stream();
+		kernel_timing_trigger(TENTH_SECOND, START_34, 0);
+		break;
+
+	case START_34:
 		digi_unload_stream_breaks(transfer_controls);
-		digi_unload_stream_breaks(cargo_transfer_b);
-		digi_preload_stream_breaks(panorama_b);
-		series_stream_with_breaks(panorama_b, "Space Station Panorama B", 6, 1, START_CALL_TO_ACTION);
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+		kernel_timing_trigger(60, START_35, nullptr);
 		break;
 
-	case START_CALL_TO_ACTION:
-		if (executing == INTERACTIVE_DEMO) {
-			palette_prep_for_stream();
-			digi_unload_stream_breaks(transfer_controls);
-			digi_preload_stream_breaks(call_to_action);
-			series_stream_with_breaks(call_to_action, "Call To Action", 6, 1, LAST_SCENE_TRIGGER);
-			pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
-		} else {
-			kernel_trigger_dispatch_now(LAST_SCENE_TRIGGER);
-		}
+	case START_35:
+		digi_preload_stream_breaks(break_961a);
+		pal_fade_set_start(_G(master_palette), 0);
+		series_stream_with_breaks(break_961a, "961a", 6, 1, START_36);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 100, 60, NO_TRIGGER);
 		break;
 
-	case FADE_DOWN_FAST:
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 0, 30, NO_TRIGGER); // half second fade down
+	case START_36:
+		pal_fade_set_start(_G(master_palette), 0);
+		pal_cycle_stop();
+		kernel_timing_trigger(TENTH_SECOND, START_37, 0);
 		break;
 
-	case FADE_DOWN_SLOW:
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 0, 60, NO_TRIGGER); // one second fade down
+	case START_37:
+		compact_mem_and_report();
+		kernel_timing_trigger(1, START_38, 0);
 		break;
 
-	case FADE_UP_FAST:
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 30, NO_TRIGGER); // half second fade up
+	case START_38:
+		digi_unload_stream_breaks(panorama_b);
+		digi_preload_stream_breaks(break_961b);
+		pal_fade_set_start(_G(master_palette), 0);
+		series_stream_with_breaks(break_961b, "961b", 6, 1, START_39);
 		break;
 
-	case FADE_UP_SLOW:
-		pal_fade_init(&_G(master_palette)[0], 0, 255, 100, 60, NO_TRIGGER); // one second fade up
+	case START_39:
+		pal_fade_set_start(_G(master_palette), 0);
+		kernel_timing_trigger(TENTH_SECOND, START_40, 0);
+		break;
+
+	case START_40:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(START_41, 1, 0);
+		break;
+
+	case START_41:
+		digi_unload_stream_breaks(break_961a);
+		digi_preload_stream_breaks(break_961c);
+		pal_fade_set_start(_G(master_palette), 0);
+		series_stream_with_breaks(break_961c, "961c", 6, 1, START_42);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 100, 30, NO_TRIGGER);
+		break;
+
+	case START_42:
+		pal_fade_set_start(_G(master_palette), 0);
+		kernel_timing_trigger(TENTH_SECOND, START_43, 0);
+		break;
+
+	case START_43:
+		digi_unload_stream_breaks(break_961b);
+		compact_mem_and_report();
+		kernel_trigger_dispatch_now(LAST_SCENE_TRIGGER);
 		break;
 
 	case LAST_SCENE_TRIGGER:
-
-		switch (executing) {
-
-		case INTERACTIVE_DEMO:
-			game.new_room = 901;  // go back to demo menu
-			break;
-
-		case WHOLE_GAME:
-			game.new_room = 901;	 // debug for now go back to demo menu until main game menu is available
-			break;
-		}
-		ShowCursor();
-		break;
+		if (_G(executing) == WHOLE_GAME && !g_engine->autosaveExists()) {
+			_G(game).new_room = 903;
+#ifdef TODO
+			adv_kill_digi_between_rooms();
 #endif
-	case 49:
+		} else {
+			kernel_trigger_dispatch_now(START_44);
+		}
+		break;
+
+	case START_44:
+		// TODO: 44 through 55
+		break;
+
+	case START_49:
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;

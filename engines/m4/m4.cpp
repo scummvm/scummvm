@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/savefile.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "m4/m4.h"
@@ -120,5 +121,15 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 
 	return Common::kNoError;
 }
+
+bool M4Engine::autosaveExists() const {
+	Common::String slotName = getSaveStateName(getAutosaveSlot());
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
+	bool result = saveFile != nullptr;
+	delete saveFile;
+
+	return result;
+}
+
 
 } // End of namespace M4
