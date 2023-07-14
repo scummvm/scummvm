@@ -26,6 +26,7 @@
 #include "backends/dlc/dlcdesc.h"
 #include "backends/networking/curl/session.h"
 #include "backends/networking/curl/request.h"
+#include "backends/networking/curl/curljsonrequest.h"
 #include "common/queue.h"
 
 namespace DLC {
@@ -54,6 +55,11 @@ public:
 	virtual void getAllDLCs(Common::Array<DLCDesc*> &dlcs) override;
 
 	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) override;
+
+	// callback functions
+	void jsonCallbackGetAllDLCs(Networking::JsonResponse response);
+
+	void errorCallbackGetAllDLCs(Networking::ErrorResponse error);
 
 	void downloadFileCallback(Networking::DataResponse response);
 

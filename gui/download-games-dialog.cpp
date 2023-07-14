@@ -43,18 +43,10 @@ DownloadGamesDialog::DownloadGamesDialog()
 	_gamesList->setEditable(false);
 
 	// Populate the ListWidget
-	Common::U32StringArray games = {
-		_("Beneath a Steel Sky - Freeware CD Version"),
-		_("Beneath a Steel Sky - Freeware Floppy Version"),
-		_("Broken Sword 2.5: The Return of the Templars - Freeware Version"),
-		_("Broken Sword 2.5: The Return of the Templars - Hebrew translation AddOn"),
-		_("Dráscula: The Vampire Strikes Back - Freeware Version (English)"),
-		_("Dráscula: The Vampire Strikes Back - Freeware Version (Music AddOn, MP3 format)"),
-		_("Dráscula: The Vampire Strikes Back - Freeware Version (Music AddOn, FLAC format)"),
-		_("Dráscula: The Vampire Strikes Back - Freeware Version (Music AddOn, OGG format)"),
-		_("Dráscula: The Vampire Strikes Back - Freeware Version (Spanish, German, French and Italian AddOn)"),
-		_("Dráscula: The Vampire Strikes Back - Freeware Version (Updated Spanish, German, French and Italian AddOn) - requires ScummVM 1.3.0 or more"),
-	};
+	Common::U32StringArray games;
+	for (int i = 0; i < DLCMan._dlcs.size(); ++i) {
+		games.push_back(DLCMan._dlcs[i]->name);
+	}
 
 	// Gray out already downloaded packages
 	for (Common::ConfigManager::DomainMap::iterator domain = ConfMan.beginGameDomains(); domain != ConfMan.endGameDomains(); ++domain) {
@@ -79,7 +71,7 @@ void DownloadGamesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kDownloadSelectedCmd: {
 		MessageDialog dialog("Downloading: " + _gamesList->getSelectedString());
 		dialog.runModal();
-		DLCMan.addDownload(1);
+		DLCMan.addDownload(_gamesList->getSelected());
 		}
 		break;
 	default:

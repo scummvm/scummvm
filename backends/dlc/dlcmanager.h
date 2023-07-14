@@ -34,14 +34,13 @@ namespace DLC {
 
 class DLCManager : public Common::Singleton<DLCManager> {
 
-	Common::Array<DLCDesc*> _dlcs;
-
 	Store *_store;
 
 	bool _isDLCDownloading = false;
 	Common::String _currentDownloadingDLC;
 
 public:
+	Common::Array<DLCDesc*> _dlcs;
 	Common::Queue<DLCDesc*> _queuedDownloadTasks;
 	
 	DLCManager();
@@ -51,9 +50,6 @@ public:
 
 	// Runs only once in init()
 	void getAllDLCs(Common::Array<DLCDesc*> &dlcs);
-
-	// Requested by GUI to show all available DLCs in simple list view
-	Common::U32StringArray getDLCList();
 
 	// Add download task to queue, runs on click download button, 
 	void addDownload(uint32 idx);
