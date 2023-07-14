@@ -1439,6 +1439,11 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 			}
 		}
 
+		if (_virtkeybd_on != JNI::virt_keyboard_state) {
+			_virtkeybd_on = JNI::virt_keyboard_state;
+			dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->syncVirtkeyboardState(_virtkeybd_on);
+		}
+
 		if (JNI::pause) {
 			LOGD("main thread going to sleep");
 			sem_wait(&JNI::pause_sem);

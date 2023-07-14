@@ -79,6 +79,7 @@ int JNI::egl_surface_width = 0;
 int JNI::egl_surface_height = 0;
 int JNI::egl_bits_per_pixel = 0;
 bool JNI::_ready_for_events = 0;
+bool JNI::virt_keyboard_state = false;
 
 jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
@@ -969,7 +970,7 @@ void JNI::syncVirtkeyboardState(JNIEnv *env, jobject self, jboolean newState) {
 	if (!_system)
 		return;
 
-	_system->syncVirtkeyboardState(newState);
+	JNI::virt_keyboard_state = newState;
 }
 
 void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {

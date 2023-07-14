@@ -951,11 +951,6 @@ int OSystem_Android::getGraphicsMode() const {
 	return 0;
 }
 
-void OSystem_Android::syncVirtkeyboardState(bool virtkeybd_on) {
-	_virtkeybd_on = virtkeybd_on;
-	dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->syncVirtkeyboardState(virtkeybd_on);
-}
-
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
 	// eglGetProcAddress exists since Android 2.3 (API Level 9)

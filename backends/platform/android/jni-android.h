@@ -58,6 +58,8 @@ public:
 	static int egl_surface_height;
 	static int egl_bits_per_pixel;
 
+	static bool virt_keyboard_state;
+
 	static jint onLoad(JavaVM *vm);
 
 	static inline JNIEnv *getEnv() {
