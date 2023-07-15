@@ -1,17 +1,29 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  ftgloadr.h                                                             */
 /*                                                                         */
 /*    The FreeType glyph loader (specification).                           */
-/*                                                                         */
-/*  Copyright 2002 by                                                      */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg                       */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -29,21 +41,7 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 
-/*************************************************************************/
-/*                                                                       */
-/* <Struct>                                                              */
-/*    FT_GlyphLoader                                                     */
-/*                                                                       */
-/* <Description>                                                         */
-/*    The glyph loader is an internal object used to load several glyphs */
-/*    together (for example, in the case of composites).                 */
-/*                                                                       */
-/* <Note>                                                                */
-/*    The glyph loader implementation is not part of the high-level API, */
-/*    hence the forward structure declaration.                           */
-/*                                                                       */
-typedef struct FT_GlyphLoaderRec_*  FT_GlyphLoader ;
-
+typedef struct FT_GlyphLoaderRec_ *FT_GlyphLoader;
 
 #define FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_WORDS          1
 #define FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES      2
@@ -70,10 +68,10 @@ typedef struct  FT_SubGlyphRec_ {
 
 
 typedef struct  FT_GlyphLoadRec_ {
-	FT_Outline   outline;       /* outline             */
-	FT_Vector*   extra_points;  /* extra points table  */
-	FT_UInt      num_subglyphs; /* number of subglyphs */
-	FT_SubGlyph  subglyphs;     /* subglyphs           */
+	FT_Outline   outline;        /* outline             */
+	FT_Vector    *extra_points;  /* extra points table  */
+	FT_UInt      num_subglyphs;  /* number of subglyphs */
+	FT_SubGlyph  subglyphs;      /* subglyphs           */
 
 } FT_GlyphLoadRec, *FT_GlyphLoad;
 
@@ -94,53 +92,46 @@ typedef struct  FT_GlyphLoaderRec_ {
 
 
 /* create new empty glyph loader */
-FT2_1_3_BASE( FT_Error )
-FT_GlyphLoader_New( FT_Memory        memory,
-                    FT_GlyphLoader  *aloader );
+FT2_1_3_BASE(FT_Error)
+FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader);
 
 /* add an extra points table to a glyph loader */
-FT2_1_3_BASE( FT_Error )
-FT_GlyphLoader_CreateExtra( FT_GlyphLoader  loader );
+FT2_1_3_BASE(FT_Error)
+FT_GlyphLoader_CreateExtra(FT_GlyphLoader loader);
 
 /* destroy a glyph loader */
-FT2_1_3_BASE( void )
-FT_GlyphLoader_Done( FT_GlyphLoader  loader );
+FT2_1_3_BASE(void)
+FT_GlyphLoader_Done(FT_GlyphLoader loader);
 
 /* reset a glyph loader (frees everything int it) */
-FT2_1_3_BASE( void )
-FT_GlyphLoader_Reset( FT_GlyphLoader  loader );
+FT2_1_3_BASE(void)
+FT_GlyphLoader_Reset(FT_GlyphLoader loader);
 
 /* rewind a glyph loader */
-FT2_1_3_BASE( void )
-FT_GlyphLoader_Rewind( FT_GlyphLoader  loader );
+FT2_1_3_BASE(void)
+FT_GlyphLoader_Rewind(FT_GlyphLoader loader);
 
 /* check that there is enough room to add 'n_points' and 'n_contours' */
 /* to the glyph loader                                                */
-FT2_1_3_BASE( FT_Error )
-FT_GlyphLoader_CheckPoints( FT_GlyphLoader  loader,
-                            FT_UInt         n_points,
-                            FT_UInt         n_contours );
+FT2_1_3_BASE(FT_Error)
+FT_GlyphLoader_CheckPoints(FT_GlyphLoader loader, FT_UInt n_points, FT_UInt n_contours);
 
 /* check that there is enough room to add 'n_subs' sub-glyphs to */
 /* a glyph loader                                                */
-FT2_1_3_BASE( FT_Error )
-FT_GlyphLoader_CheckSubGlyphs( FT_GlyphLoader  loader,
-                               FT_UInt         n_subs );
+FT2_1_3_BASE(FT_Error)
+FT_GlyphLoader_CheckSubGlyphs(FT_GlyphLoader loader, FT_UInt n_subs);
 
 /* prepare a glyph loader, i.e. empty the current glyph */
-FT2_1_3_BASE( void )
-FT_GlyphLoader_Prepare( FT_GlyphLoader  loader );
+FT2_1_3_BASE(void)
+FT_GlyphLoader_Prepare(FT_GlyphLoader loader);
 
 /* add the current glyph to the base glyph */
-FT2_1_3_BASE( void )
-FT_GlyphLoader_Add( FT_GlyphLoader  loader );
+FT2_1_3_BASE(void)
+FT_GlyphLoader_Add(FT_GlyphLoader loader);
 
 /* copy points from one glyph loader to another */
-FT2_1_3_BASE( FT_Error )
-FT_GlyphLoader_CopyPoints( FT_GlyphLoader  target,
-                           FT_GlyphLoader  source );
-
-/* */
+FT2_1_3_BASE(FT_Error)
+FT_GlyphLoader_CopyPoints(FT_GlyphLoader target, FT_GlyphLoader source);
 
 
 FT2_1_3_END_HEADER
@@ -149,6 +140,3 @@ FT2_1_3_END_HEADER
 } // End of namespace AGS3
 
 #endif /* AGS_LIB_FREETYPE_FTGLOADR_H */
-
-
-/* END */
