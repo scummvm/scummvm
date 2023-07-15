@@ -27,22 +27,10 @@
 
 namespace M4 {
 
-struct Timer_Globals {
-	uint32 _timer_600_low = 0;
-	uint32 _timer_60_low = 0;
-	uint32 _timer_dos_low = 0;
-
-	bool _timer_installed = false;
-	uint16 _timer_600_handle = 0;
-	uint16 _timer_60_handle = 0;
-	uint16 _timer_dos_handle = 0;
-};
-
 extern uint32 timer_read();
 extern uint32 timer_read_dos();
 extern uint32 timer_read_600();
 extern uint32 timer_read_60();
-extern void timer_600_proc();
 
 } // End of namespace M4
 

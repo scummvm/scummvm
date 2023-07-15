@@ -64,7 +64,7 @@ class Vars;
 
 extern Vars *g_vars;
 
-class Vars : public Mouse_Globals, public Timer_Globals {
+class Vars : public Mouse_Globals {
 private:
 	void game_systems_initialize(byte flags);
 	void game_systems_shutdown();
