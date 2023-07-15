@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/events.h"
+#include "common/config-manager.h"
 #include "backends/platform/ios7/ios7_video.h"
 #include "backends/platform/ios7/ios7_touch_controller.h"
 #include "backends/platform/ios7/ios7_mouse_controller.h"
@@ -331,6 +332,18 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	}
 
 	[self adjustViewFrameForSafeArea];
+#if TARGET_OS_IOS
+	// The virtual controller does not fit in portrait orientation on iPhones
+	// Make sure to disconnect the virtual controller in those cases
+	if (!iOS7_isBigDevice() &&
+		(_currentOrientation == UIInterfaceOrientationPortrait ||
+		 _currentOrientation == UIInterfaceOrientationPortraitUpsideDown)) {
+		[self virtualController:false];
+	} else {
+		// Connect or disconnect the virtual controller
+		[self virtualController:ConfMan.getBool("onscreen_control")];
+	}
+#endif
 }
 
 #ifndef __has_builtin
