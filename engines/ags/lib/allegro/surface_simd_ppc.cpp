@@ -72,7 +72,7 @@ void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, ui
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = xStart; xCtr < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
 				byte *destPtr = &destP[destX * DestBytesPerPixel];
 				// Skip pixels that are beyond the row
-				vector unsigned int skipMask = vec_cmpeq(vec_add(vec_splat_u32(xCtr), addIndexes), xCtrWidthSIMD);
+				vector unsigned int skipMask = (vector unsigned int)vec_cmpeq(vec_add(vec_splat_u32(xCtr), addIndexes), xCtrWidthSIMD);
 				//drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, srcP, tint, alphas, maskedAlphas, transColors, xDir, xCtrBpp, srcAlpha, skipTrans, horizFlip, useTint, skipMask);
 			}
 			// Goto next row in source and destination image
@@ -115,7 +115,7 @@ void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, ui
 				// Now this is pretty much the same as before with non-scaled code, except that we use
 				// our dummy source buffer instead of the actuall source bitmap
 				byte *destPtr = &destP[destX * (uintptr_t)DestBytesPerPixel];
-				vector unsigned int skipMask = vec_cmpeq(vec_add(vec_splat_u32(xCtr), addIndexes), xCtrWidthSIMD);
+				vector unsigned int skipMask = (vector unsigned int)vec_cmpeq(vec_add(vec_splat_u32(xCtr), addIndexes), xCtrWidthSIMD);
 				//drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, (const byte *)srcBuffer, tint, alphas, maskedAlphas, transColors, 1, 0, srcAlpha, skipTrans, horizFlip, useTint, skipMask);
 			}
 			// We calculate every row here except the last (because then we need to
@@ -244,7 +244,7 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = xStart; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
 				byte *destPtr = &destP[destX * 2];
 				// Skip pixels that are beyond the row
-				vector unsigned int skipMask = vec_cmpgt(vec_add(vec_add(vec_splat_u16(xCtr), addIndexes) vec_splat_u16(1)), xCtrWidthSIMD);
+				vector unsigned int skipMask = (vector unsigned int)vec_cmpgt(vec_add(vec_add(vec_splat_u16(xCtr), addIndexes) vec_splat_u16(1)), xCtrWidthSIMD);
 				//drawPixelSIMD2Bpp(destPtr, srcP, tint, alphas, transColors, xDir, xCtrBpp, srcAlpha, skipTrans, horizFlip, useTint, skipMask);
 			}
 			// Goto next row in source and destination image
@@ -267,7 +267,7 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 			uint16 srcBuffer[8];
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = xStart, scaleXCtr = xCtrStart * scaleX; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
 				if (yCtr + 1 == yCtrHeight && xCtr + 8 > xCtrWidth) break;
-				vector unsigned int indexes = vec_splat_u32(scaleXCtr), indexes2 = vect_splat_u32(scaleXCtr);
+				vector unsigned int indexes = vec_splat_u32(scaleXCtr), indexes2 = vec_splat_u32(scaleXCtr);
 #if (ScaleThreshold == 0 || ScaleThreshold == 0x100)
 				// Calculate in parallel the indexes of the pixels
 				indexes = vec_sl(vec_sr(vec_add(indexes, scaleAdds), 8), 1);
@@ -289,7 +289,7 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 				// Now this is pretty much the same as before with non-scaled code, except that we use
 				// our dummy source buffer instead of the actuall source bitmap
 				byte *destPtr = &destP[destX * 2];
-				vector unsigned int skipMask = vec_cmpgt(vec_add(vec_add(vec_splat_u16(xCtr), addIndexes) vec_splat_u16(1)), xCtrWidthSIMD);
+				vector unsigned int skipMask = (vector unsigned int)vec_cmpgt(vec_add(vec_add(vec_splat_u16(xCtr), addIndexes) vec_splat_u16(1)), xCtrWidthSIMD);
 				//drawPixelSIMD2Bpp(destPtr, (const byte *)srcBuffer, tint, alphas, transColors, 1, 0, srcAlpha, skipTrans, horizFlip, useTint, skipMask);
 			}
 			// We calculate every row here except the last (because then we need to
@@ -458,7 +458,7 @@ void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 			}
 
 			// Mask out transparent pixels
-			vector unsigned char mask1 = skipTrans ? vec_cmpeq(srcCols, transColors) : vec_splat_u8(0);
+			vector unsigned char mask1 = skipTrans ? (vector unsigned int)vec_cmpeq(srcCols, transColors) : vec_splat_u8(0);
 			vector unsigned char final = vec_or(vec_and(srcCols, vec_nor(mask1, vec_splat_u8(0))), vec_and(destCols, mask1));
 			if (horizFlip) {
 				final = (vector unsigned char){
