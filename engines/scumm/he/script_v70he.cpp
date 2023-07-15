@@ -69,7 +69,7 @@ void ScummEngine_v70he::o70_soundOps() {
 	case SO_SOUND_VOLUME:
 		value = pop();
 		_heSndSoundId = pop();
-		_sound->addSoundToQueue(_heSndSoundId, 0, 0, HE_SND_VOL, 0, 0, value);
+		_sound->startSound(_heSndSoundId, 0, 0, HE_SND_VOL, 0, 0, value);
 		break;
 	case SO_NOW:
 		_heSndFlags |= HE_SND_QUICK_START;
@@ -99,7 +99,7 @@ void ScummEngine_v70he::o70_soundOps() {
 		_heSndFlags |= HE_SND_LOOP;
 		break;
 	case SO_END:
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift);
+		_sound->startSound(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift);
 		_heSndFlags = 0;
 		break;
 

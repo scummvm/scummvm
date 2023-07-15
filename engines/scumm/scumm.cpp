@@ -2970,7 +2970,7 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 
 		// Restore the previous sound
 		if (readVar(305)) {
-			_sound->addSoundToQueue(readVar(305));
+			_sound->startSound(readVar(305));
 		}
 
 		// Show the cursor
@@ -3030,7 +3030,7 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 
 		// Restore the previous sound
 		if (readVar(0x4007)) {
-			_sound->addSoundToQueue(readVar(0x4007));
+			_sound->startSound(readVar(0x4007));
 		}
 
 		// Terminate the cutscene state
@@ -3237,7 +3237,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 				if (_game.platform == Common::kPlatformNES) {
 					runScript(5, 0, 0, nullptr);
 					if (VAR(224))
-						_sound->addSoundToQueue(VAR(224));
+						_sound->startSound(VAR(224));
 				}
 
 			} else if (_game.platform != Common::kPlatformMacintosh) {

@@ -62,26 +62,26 @@ SoundHE::~SoundHE() {
 	delete[] _heSoundChannels;
 }
 
-void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void SoundHE::startSound(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 
 	if (heFlags & ScummEngine_v70he::HESndFlags::HE_SND_QUICK_START) {
-		playHESound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+		triggerDigitalSound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	} else {
-		Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+		Sound::startSound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	}
 }
 
-void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
-	int i = _soundQue2Pos;
+void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+	int i = _soundQueuePos;
 	while (i--) {
-		if (_soundQue2[i].sound == sound && !(heFlags & ScummEngine_v70he::HESndFlags::HE_SND_APPEND))
+		if (_soundQueue[i].sound == sound && !(heFlags & ScummEngine_v70he::HESndFlags::HE_SND_APPEND))
 			// Sound is already queued
 			return;
 	}
 
-	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+	Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 }
 
 void SoundHE::modifySound(int sound, int offset, int frequencyShift, int pan, int volume, int flags) {
@@ -109,30 +109,30 @@ void SoundHE::processSoundQueues() {
 	int snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol;
 
 	if (_vm->_game.heversion >= 72) {
-		for (int i = 0; i <_soundQue2Pos; i++) {
-			snd = _soundQue2[i].sound;
-			heOffset = _soundQue2[i].offset;
-			heChannel = _soundQue2[i].channel;
-			heFlags = _soundQue2[i].flags;
-			heFreq = _soundQue2[_soundQue2Pos].freq;
-			hePan = _soundQue2[_soundQue2Pos].pan;
-			heVol = _soundQue2[_soundQue2Pos].vol;
+		for (int i = 0; i <_soundQueuePos; i++) {
+			snd = _soundQueue[i].sound;
+			heOffset = _soundQueue[i].offset;
+			heChannel = _soundQueue[i].channel;
+			heFlags = _soundQueue[i].flags;
+			heFreq = _soundQueue[_soundQueuePos].freq;
+			hePan = _soundQueue[_soundQueuePos].pan;
+			heVol = _soundQueue[_soundQueuePos].vol;
 			if (snd)
-				playHESound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+				triggerDigitalSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
-		_soundQue2Pos = 0;
+		_soundQueuePos = 0;
 	} else {
-		while (_soundQue2Pos) {
-			_soundQue2Pos--;
-			snd = _soundQue2[_soundQue2Pos].sound;
-			heOffset = _soundQue2[_soundQue2Pos].offset;
-			heChannel = _soundQue2[_soundQue2Pos].channel;
-			heFlags = _soundQue2[_soundQue2Pos].flags;
-			heFreq = _soundQue2[_soundQue2Pos].freq;
-			hePan = _soundQue2[_soundQue2Pos].pan;
-			heVol = _soundQue2[_soundQue2Pos].vol;
+		while (_soundQueuePos) {
+			_soundQueuePos--;
+			snd = _soundQueue[_soundQueuePos].sound;
+			heOffset = _soundQueue[_soundQueuePos].offset;
+			heChannel = _soundQueue[_soundQueuePos].channel;
+			heFlags = _soundQueue[_soundQueuePos].flags;
+			heFreq = _soundQueue[_soundQueuePos].freq;
+			hePan = _soundQueue[_soundQueuePos].pan;
+			heVol = _soundQueue[_soundQueuePos].vol;
 			if (snd)
-				playHESound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+				triggerDigitalSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
 	}
 
@@ -249,12 +249,12 @@ void SoundHE::stopSoundChannel(int chan) {
 	_heChannel[chan].codeOffs = 0;
 	memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
 
-	for (int i = 0; i < ARRAYSIZE(_soundQue2); i++) {
-		if (_soundQue2[i].channel == chan) {
-			_soundQue2[i].sound = 0;
-			_soundQue2[i].offset = 0;
-			_soundQue2[i].channel = 0;
-			_soundQue2[i].flags = 0;
+	for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
+		if (_soundQueue[i].channel == chan) {
+			_soundQueue[i].sound = 0;
+			_soundQueue[i].offset = 0;
+			_soundQueue[i].channel = 0;
+			_soundQueue[i].flags = 0;
 		}
 	}
 }
@@ -693,7 +693,7 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 	return nullptr;
 }
 
-void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	Audio::RewindableAudioStream *stream = nullptr;
 	byte *ptr, *spoolPtr;
 	int size = -1;
@@ -710,7 +710,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 	if (heChannel == -1)
 		heChannel = (_vm->VAR_START_DYN_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
 
-	debug(5,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
+	debug(5,"triggerDigitalSound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 
 	if (soundID >= 10000) {
 		// Special codes, used in pjgames
@@ -723,11 +723,11 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		Common::String buf(_vm->generateFilename(-4));
 
 		if (musicFile.open(buf) == false) {
-			warning("playHESound: Can't open music file %s", buf.c_str());
+			warning("triggerDigitalSound: Can't open music file %s", buf.c_str());
 			return;
 		}
 		if (!getHEMusicDetails(soundID, music_offs, size)) {
-			debug(0, "playHESound: musicID %d not found", soundID);
+			debug(0, "triggerDigitalSound: musicID %d not found", soundID);
 			return;
 		}
 
@@ -791,7 +791,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		Common::MemoryReadStream memStream(ptr, size);
 
 		if (!Audio::loadWAVFromStream(memStream, size, rate, flags, &compType, &blockAlign, &samplesPerBlock)) {
-			error("playHESound: Not a valid WAV file (%d)", soundID);
+			error("triggerDigitalSound: Not a valid WAV file (%d)", soundID);
 		}
 
 		assert(heOffset >= 0 && heOffset < size);
@@ -1063,7 +1063,7 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	// _heTalkOffset is used at tryLoadSoundOverride.
 	_heTalkOffset = offset;
 
-	_sfxMode |= 2;
+	_digiSndMode |= DIGI_SND_MODE_TALKIE;
 	_vm->_res->nukeResource(rtSound, 1);
 
 	file.seek(offset + 4, SEEK_SET);
@@ -1075,7 +1075,7 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	file.read(ptr, size);
 
 	int channel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
-	addSoundToQueue2(1, 0, channel, 0);
+	addSoundToQueue(1, 0, channel, 0);
 }
 
 #ifdef ENABLE_HE

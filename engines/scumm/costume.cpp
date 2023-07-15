@@ -1162,7 +1162,7 @@ bool ClassicCostumeLoader::increaseAnim(Actor *a, int slot) {
 			if (_vm->_game.version >= 6) {
 				if (nc >= 0x71 && nc <= 0x78) {
 					uint sound = (_vm->_game.heversion == 60) ? 0x78 - nc : nc - 0x71;
-					_vm->_sound->addSoundToQueue2(a->_sound[sound]);
+					_vm->_sound->addSoundToQueue(a->_sound[sound]);
 					if (a->_cost.start[slot] != end)
 						continue;
 				}

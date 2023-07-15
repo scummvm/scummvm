@@ -1647,7 +1647,7 @@ void ScummEngine_v6::akos_processQueue() {
 			a->putActor(0, 0, 0);
 			break;
 		case AKQC_StartSound:
-			_sound->addSoundToQueue(param1, 0, -1, 0);
+			_sound->startSound(param1, 0, -1, 0);
 			break;
 		case AKQC_StartAnimation:
 			a->startAnimActor(param1);
@@ -1678,7 +1678,7 @@ void ScummEngine_v6::akos_processQueue() {
 
 			break;
 		case AKQC_SoftStartSound:
-			_sound->addSoundToQueue(param1, 0, -1, 4);
+			_sound->startSound(param1, 0, -1, 4);
 			break;
 		default:
 			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param1, param2);

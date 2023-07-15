@@ -1762,7 +1762,7 @@ void ScummEngine_v100he::o100_soundOps() {
 		break;
 	case SO_END:
 		if (_heSndStartNewSoundFlag) {
-			_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift, _heSndPan, _heSndVol);
+			_sound->startSound(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift, _heSndPan, _heSndVol);
 		} else {
 			_sound->modifySound(_heSndSoundId, _heSndOffset, _heSndFrequencyShift, _heSndPan, _heSndVol, _heSndFlags);
 		}

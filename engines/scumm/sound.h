@@ -35,6 +35,10 @@
 
 #define DEFAULT_LOOM_OVERTURE_TRANSITION 1160
 
+#define DIGI_SND_MODE_EMPTY  0
+#define DIGI_SND_MODE_SFX    1
+#define DIGI_SND_MODE_TALKIE 2
+
 namespace Audio {
 class Mixer;
 class SoundHandle;
@@ -65,8 +69,8 @@ protected:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 
-	int16 _soundQuePos, _soundQue[0x100];
-	int16 _soundQue2Pos;
+	int16 _midiQueuePos, _midiQueue[0x100];
+	int16 _soundQueuePos;
 
 	struct {
 		int16 sound;
@@ -76,7 +80,7 @@ protected:
 		int16 freq;
 		int16 pan;
 		int16 vol;
-	} _soundQue2[10];
+	} _soundQueue[10];
 
 	Common::String _sfxFilename;
 	byte _sfxFileEncByte;
@@ -84,8 +88,8 @@ protected:
 	MP3OffsetTable *_offsetTable;	// For compressed audio
 	int _numSoundEffects;		// For compressed audio
 
-	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;
-	byte _talk_sound_mode, _talk_sound_channel;
+	uint32 _queuedSfxOffset, _queuedTalkieOffset, _queuedSfxLen, _queuedTalkieLen;
+	byte _queuedSoundMode, _queuedSfxChannel;
 	bool _mouthSyncMode;
 	bool _endOfMouthSync;
 	uint16 _mouthSyncTimes[64];
@@ -106,7 +110,7 @@ public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
 
 	bool _soundsPaused;
-	byte _sfxMode;
+	byte _digiSndMode;
 	uint _lastSound;
 	uint32 _cdMusicTimerMod;
 	uint32 _cdMusicTimer;
@@ -117,12 +121,12 @@ public:
 public:
 	Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioTracks);
 	~Sound() override;
+	virtual void startSound(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
-	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	void processSound();
 	virtual void modifySound(int sound, int offset, int frequencyShift, int pan, int volume, int flags) {};
 
-	void playSound(int soundID);
+	void triggerSound(int soundID);
 	void startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
@@ -131,7 +135,7 @@ public:
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
 	void soundKludge(int *list, int num);
-	void talkSound(uint32 a, uint32 b, int mode, int channel = 0);
+	void talkSound(uint32 offset, uint32 length, int mode, int channel = 0);
 	virtual void setupSound();
 	void pauseSounds(bool pause);
 	bool isSfxFileCompressed();

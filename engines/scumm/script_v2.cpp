@@ -1598,7 +1598,7 @@ void ScummEngine_v2::o2_pickupObject() {
 
 	runInventoryScript(1);
 	if (_game.platform == Common::kPlatformNES)
-		_sound->addSoundToQueue(51);	// play 'pickup' sound
+		_sound->startSound(51);	// play 'pickup' sound
 }
 
 void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
