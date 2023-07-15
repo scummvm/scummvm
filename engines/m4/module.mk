@@ -60,10 +60,9 @@ MODULE_OBJS = \
 	mem/memman.o \
 	mem/reloc.o \
 	mem/res.o \
+	platform/events.o \
 	platform/sound.o \
 	platform/timer.o \
-	platform/events/events.o \
-	platform/events/mickey.o \
 	platform/sound/digi.o \
 	platform/sound/midi.o \
 	platform/tile/tile_read.o \

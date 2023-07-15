@@ -20,7 +20,7 @@
  */
 
 #include "common/system.h"
-#include "m4/platform/events/events.h"
+#include "m4/platform/events.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -209,8 +209,19 @@ mausEvent Events::mouse_get_event() {
 	return _ME_no_event;
 }
 
+bool Events::util_kbd_check(int32 *parm1) {
+	if (!parm1)
+		return false;
+
+	return true;
+}
+
 mausEvent mouse_get_event() {
 	return g_events->mouse_get_event();
+}
+
+bool util_kbd_check(int32 *parm1) {
+	return g_events->util_kbd_check(parm1);
 }
 
 } // namespace M4

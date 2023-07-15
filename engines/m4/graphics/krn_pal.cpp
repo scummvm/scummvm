@@ -28,7 +28,7 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
-#include "m4/platform/events/keys.h"
+#include "m4/platform/keys.h"
 #include "m4/vars.h"
 
 namespace M4 {

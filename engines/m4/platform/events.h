@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_PLATFORM_EVENTS_EVENTS_H
-#define M4_PLATFORM_EVENTS_EVENTS_H
+#ifndef M4_PLATFORM_EVENTS_H
+#define M4_PLATFORM_EVENTS_H
 
 #include "common/events.h"
 #include "m4/m4_types.h"
@@ -103,11 +103,17 @@ public:
 	 * Get the next pending mouse event
 	 */
 	mausEvent mouse_get_event();
+
+	/**
+	 * Get the next pending keyboard event
+	 */
+	bool util_kbd_check(int32 *parm1);
 };
 
 extern Events *g_events;
 
-mausEvent mouse_get_event();
+extern mausEvent mouse_get_event();
+extern bool util_kbd_check(int32 *parm1);
 
 } // namespace M4
 

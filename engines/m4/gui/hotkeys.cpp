@@ -21,7 +21,7 @@
 
 #include "m4/gui/hotkeys.h"
 #include "m4/gui/gui_sys.h"
-#include "m4/platform/events/keys.h"
+#include "m4/platform/keys.h"
 #include "m4/vars.h"
 
 namespace M4 {

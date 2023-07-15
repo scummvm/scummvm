@@ -25,7 +25,7 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/gui/gui.h"
 #include "m4/core/imath.h"
-#include "m4/platform/events/keys.h"
+#include "m4/platform/keys.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/krn_pal.h"
