@@ -207,6 +207,8 @@ MouseEvent Events::mouse_get_event() {
 }
 
 bool Events::util_kbd_check(int32 *parm1) {
+	process();
+
 	if (!parm1 || _pendingKeys.empty())
 		return false;
 
