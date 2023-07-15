@@ -32,8 +32,6 @@ MODULE_OBJS = \
 	core/rooms.o \
 	core/term.o \
 	dbg/dbg_wscript.o \
-	events/mickey.o \
-	events/mouse_handler.o \
 	fileio/extensions.o \
 	fileio/fileio.o \
 	fileio/fstream.o \
@@ -64,6 +62,8 @@ MODULE_OBJS = \
 	mem/res.o \
 	platform/sound.o \
 	platform/timer.o \
+	platform/events/mickey.o \
+	platform/events/mouse_handler.o \
 	platform/sound/digi.o \
 	platform/sound/midi.o \
 	platform/tile/tile_read.o \

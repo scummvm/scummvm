@@ -23,12 +23,12 @@
 #include "m4/adv_r/adv_control.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
-#include "m4/events/keys.h"
 #include "m4/graphics/krn_pal.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/platform/events/keys.h"
 #include "m4/vars.h"
 
 namespace M4 {

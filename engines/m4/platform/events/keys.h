@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_EVENTS_KEYS_H
-#define M4_EVENTS_KEYS_H
+#ifndef M4_PLATFORM_EVENTS_KEYS_H
+#define M4_PLATFORM_EVENTS_KEYS_H
 
 #include "common/events.h"
 #include "m4/m4_types.h"

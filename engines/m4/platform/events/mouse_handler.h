@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_EVENTS_MOUSE_HANDLER_H
-#define M4_EVENTS_MOUSE_HANDLER_H
+#ifndef M4_PLATFORM_EVENTS_MOUSE_HANDLER_H
+#define M4_PLATFORM_EVENTS_MOUSE_HANDLER_H
 
 #include "m4/m4_types.h"
 #include "m4/core/mouse.h"
