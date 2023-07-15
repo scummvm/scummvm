@@ -130,9 +130,9 @@ static bool checkForSIMDExtensions() {
 	return true;
 #elif defined(__powerpc__)
 #  if __GNUC__ > 6 || \
-		(__GNUC__ == 6 && (__GNUC_MINOR__ > 59 ||
-							__GNUC_MINOR__ == 59) &&
-							(__GNUC_PATCHLEVEL__ > 21 ||
+		(__GNUC__ == 6 && (__GNUC_MINOR__ > 59 || \
+							__GNUC_MINOR__ == 59) && \
+							(__GNUC_PATCHLEVEL__ > 21 || \
 							__GNUC_PATCHLEVEL__ == 21))
 	return __builtin_cpu_supports("altivec");
 #  else
