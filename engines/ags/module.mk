@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	lib/allegro/surface.o \
 	lib/allegro/surface_simd_neon.o \
 	lib/allegro/surface_simd_sse.o \
+	lib/allegro/surface_simd_ppc.o \
 	lib/allegro/surface_simd_none.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
