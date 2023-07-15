@@ -1,7 +1,3 @@
-#include "ags/lib/allegro/surface_simd_ppc.h"
-
-#ifdef AGS_LIB_ALLEGRO_SURFACE_SIMD_PPC_IMPL
-
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
@@ -9,6 +5,10 @@
 #include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
+
+#include "ags/lib/allegro/surface_simd_ppc.h"
+
+#ifdef AGS_LIB_ALLEGRO_SURFACE_SIMD_PPC_IMPL
 
 namespace AGS3 {
 
