@@ -20,7 +20,7 @@
  */
 
 #include "m4/gui/gui_item.h"
-#include "m4/events/keys.h"
+#include "m4/platform/events/keys.h"
 #include "m4/graphics/gr_draw.h"
 #include "m4/graphics/gr_line.h"
 #include "m4/graphics/gr_pal.h"

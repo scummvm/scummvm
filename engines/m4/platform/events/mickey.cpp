@@ -20,7 +20,7 @@
  */
 
 #include "common/textconsole.h"
-#include "m4/events/mickey.h"
+#include "m4/platform/events/mickey.h"
 
 namespace M4 {
 
