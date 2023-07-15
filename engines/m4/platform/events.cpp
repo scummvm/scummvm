@@ -130,14 +130,11 @@ void Events::handleMouseEvent(const Common::Event &ev) {
 }
 
 void Events::handleKeyboardEvent(const Common::Event &ev) {
-	if (ev.type == Common::EVENT_KEYDOWN) {
-		// TODO
-	} else if (ev.type == Common::EVENT_KEYUP) {
-		// TODO
-	}
+	if (ev.type == Common::EVENT_KEYDOWN && _pendingKeys.size() < 16)
+		_pendingKeys.push(ev.kbd);
 }
 
-mausEvent Events::mouse_get_event() {
+MouseEvent Events::mouse_get_event() {
 	process();
 
 	switch (_mouse_state) {
@@ -210,13 +207,16 @@ mausEvent Events::mouse_get_event() {
 }
 
 bool Events::util_kbd_check(int32 *parm1) {
-	if (!parm1)
+	if (!parm1 || _pendingKeys.empty())
 		return false;
+
+	Common::KeyState ks = _pendingKeys.pop();
+	*parm1 = ks.keycode | (ks.flags << 16);
 
 	return true;
 }
 
-mausEvent mouse_get_event() {
+MouseEvent mouse_get_event() {
 	return g_events->mouse_get_event();
 }
 
