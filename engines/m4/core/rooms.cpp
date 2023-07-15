@@ -110,8 +110,6 @@ void Sections::m4SceneLoad() {
 	room_init();
 	_G(player).walker_trigger = -1;
 
-
-
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		if (_G(player).walker_in_this_scene) {
 			// If restoring game, restore player position and facing
