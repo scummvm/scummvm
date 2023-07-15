@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/events.h"
+#include "common/config-manager.h"
 #include "backends/platform/ios7/ios7_gamepad_controller.h"
 #include "backends/platform/ios7/ios7_video.h"
 #include <GameController/GameController.h>
@@ -63,13 +64,48 @@
 	return self;
 }
 
+// Undocumented way to retreive the GCControllerView.
+// Drill down the layer structure to get the GCControllerView.
+// The view layers for iPhones are:
+// - TransitionView
+//   - DropShadowView
+//     - LayoutContainerView
+//       - ContainerView
+// iPads have an additional layer under the ContainerView
+- (BOOL)setGCControllerViewProperties:(NSArray<UIView*>*)subviews {
+	BOOL stop = NO;
+	for (UIView *view in subviews) {
+		if ([[view classForCoder] isEqual:NSClassFromString(@"GCControllerView")]) {
+			// Set the virtual controller frame to full screen.
+			// Else buttons can be placed partly out of the frame
+			// due to the iPhoneView frame is adjusted according
+			// to the safe area insets.
+			// Also set the frame alpha to the user specified value
+			// to make the virtual controller more transparent
+			view.alpha = ((float)ConfMan.getInt("onscreen_control_opacity") / 10.0);
+			view.frame = [[UIScreen mainScreen] bounds];
+			stop = YES;
+		} else {
+			// Keep drilling
+			stop = [self setGCControllerViewProperties:view.subviews];
+		}
+		if (stop) {
+			break;
+		}
+	}
+	return stop;
+}
+
 - (void)virtualController:(bool)connect {
 #if TARGET_OS_IOS
 #ifdef __IPHONE_15_0
 	if (@available(iOS 15.0, *)) {
-		if (connect && ![self isConnected]) {
-			[_virtualController connectWithReplyHandler:^(NSError * _Nullable error) { }];		}
-		else if (!connect && [self isConnected]) {
+		if (connect) {
+			[_virtualController connectWithReplyHandler:^(NSError * _Nullable error) {
+				[self setGCControllerViewProperties:[[[UIApplication sharedApplication] keyWindow] subviews]];
+			}];
+		}
+		else {
 			[_virtualController disconnect];
 			[self setIsConnected:NO];
 		}
