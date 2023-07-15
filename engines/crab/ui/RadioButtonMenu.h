@@ -69,7 +69,7 @@ public:
 			select = result;
 
 			for (int i = 0; i < (int)element.size(); ++i)
-				element[i].state = (i == result);
+				element[i]._state = (i == result);
 		}
 
 		return result;

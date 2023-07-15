@@ -38,38 +38,38 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
 void AlphaImage::load(rapidxml::xml_node<char> *node, const bool &echo) {
-	pos.load(node, echo);
-	loadImgKey(img, "img", node, echo);
+	_pos.load(node, echo);
+	loadImgKey(_img, "img", node, echo);
 
-	loadNum(alpha.min, "min", node);
-	loadNum(alpha.max, "max", node);
-	loadNum(alpha.change, "inc", node);
+	loadNum(alpha._min, "min", node);
+	loadNum(alpha._max, "max", node);
+	loadNum(alpha._change, "inc", node);
 
-	alpha.cur = alpha.max; //alpha.cur = alpha.min + gRandom.Num() % (alpha.max - alpha.min - 1);
+	alpha._cur = alpha._max; //alpha.cur = alpha.min + gRandom.Num() % (alpha.max - alpha.min - 1);
 }
 
 void AlphaImage::internalEvents() {
-	if (alpha.inc) {
-		alpha.cur += alpha.change;
-		if (alpha.cur >= alpha.max) {
-			alpha.cur = alpha.max;
-			alpha.inc = false;
+	if (alpha._inc) {
+		alpha._cur += alpha._change;
+		if (alpha._cur >= alpha._max) {
+			alpha._cur = alpha._max;
+			alpha._inc = false;
 		}
 	} else {
-		alpha.cur -= alpha.change;
-		if (alpha.cur <= alpha.min) {
-			alpha.cur = alpha.min;
-			alpha.inc = true;
+		alpha._cur -= alpha._change;
+		if (alpha._cur <= alpha._min) {
+			alpha._cur = alpha._min;
+			alpha._inc = true;
 		}
 	}
 
-	if (g_engine->_imageManager->validTexture(img))
-		g_engine->_imageManager->getTexture(img).alpha(alpha.cur);
+	if (g_engine->_imageManager->validTexture(_img))
+		g_engine->_imageManager->getTexture(_img).alpha(alpha._cur);
 }
 
-void AlphaImage::draw(const int &XOffset, const int &YOffset) {
-	if (g_engine->_imageManager->validTexture(img))
-		g_engine->_imageManager->getTexture(img).draw(pos.x + XOffset, pos.y + YOffset);
+void AlphaImage::draw(const int &xOffset, const int &yOffset) {
+	if (g_engine->_imageManager->validTexture(_img))
+		g_engine->_imageManager->getTexture(_img).draw(_pos.x + xOffset, _pos.y + yOffset);
 }
 
 } // End of namespace Crab

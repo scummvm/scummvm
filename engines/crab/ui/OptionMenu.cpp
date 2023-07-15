@@ -49,7 +49,7 @@ void OptionMenu::load(const Common::String &filename) {
 				menu.load(node->first_node("state"));
 
 				if (!menu.element.empty())
-					menu.element[0].State(true);
+					menu.element[0].state(true);
 			}
 
 			if (nodeValid("keybind", node))
@@ -100,7 +100,7 @@ void OptionMenu::reset() {
 	state = STATE_GENERAL;
 
 	for (unsigned i = 0; i < menu.element.size(); ++i)
-		menu.element[i].State(i == STATE_GENERAL);
+		menu.element[i].state(i == STATE_GENERAL);
 }
 
 void OptionMenu::draw(Button &back) {

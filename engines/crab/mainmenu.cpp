@@ -161,7 +161,7 @@ void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		int choice = me_main.handleEvents(Event);
 		if (choice >= 0) {
 			for (unsigned i = 0; i < me_main.element.size(); ++i)
-				me_main.element[i].State(i == (unsigned int)choice);
+				me_main.element[i].state(i == (unsigned int)choice);
 
 			switch (choice) {
 			case 0:
@@ -456,7 +456,7 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 	// We are entering the normal state, i.e outside all menus - reset color of menu items
 	if (state == STATE_NORMAL) {
 		for (unsigned i = 0; i < me_main.element.size(); ++i)
-			me_main.element[i].State(false);
+			me_main.element[i].state(false);
 	}
 
 	// Enable keyboard navigation if outside all menus, otherwise disable it

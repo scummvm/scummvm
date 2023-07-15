@@ -41,22 +41,25 @@ namespace pyrodactyl {
 namespace ui {
 class TraitButton : public StateButton {
 	// The offset for drawing the trait image
-	Vector2i offset;
+	Vector2i _offset;
 
 	// The trait image
-	ImageKey trait_img;
+	ImageKey _traitImg;
 
 public:
-	TraitButton() { trait_img = 0; }
+	TraitButton() {
+		_traitImg = 0;
+	}
+
 	~TraitButton() {}
 
-	void Init(const TraitButton &ref, const int &XOffset = 0, const int &YOffset = 0);
+	void init(const TraitButton &ref, const int &xOffset = 0, const int &yOffset = 0);
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 
-	void draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
 
-	void Cache(const pyrodactyl::people::Trait &trait);
-	void Empty();
+	void cache(const pyrodactyl::people::Trait &trait);
+	void empty();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

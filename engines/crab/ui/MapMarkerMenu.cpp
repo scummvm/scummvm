@@ -90,9 +90,9 @@ void MapMarkerMenu::handleEvents(const Element &pos, const Vector2i &player_pos,
 		int c = 0;
 		for (auto &i : menu.element) {
 			if (c == choice) // For an already selected marker, clicking it toggles the selection state
-				i.State(!i.State());
+				i.state(!i.state());
 			else
-				i.State(false);
+				i.state(false);
 
 			++c;
 		}

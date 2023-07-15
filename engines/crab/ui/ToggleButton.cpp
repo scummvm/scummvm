@@ -38,27 +38,27 @@ using namespace pyrodactyl::image;
 
 void ToggleButton::load(rapidxml::xml_node<char> *node) {
 	Button::load(node);
-	loadImgKey(on, "on", node);
-	loadImgKey(off, "off", node);
+	loadImgKey(_on, "on", node);
+	loadImgKey(_off, "off", node);
 
 	if (nodeValid("offset", node))
-		offset.load(node->first_node("offset"));
+		_offset.load(node->first_node("offset"));
 }
 
-void ToggleButton::draw(const int &XOffset, const int &YOffset, Rect *clip) {
-	Button::draw(XOffset, YOffset, clip);
+void ToggleButton::draw(const int &xOffset, const int &yOffset, Rect *clip) {
+	Button::draw(xOffset, yOffset, clip);
 
-	if (state)
-		g_engine->_imageManager->draw(x + offset.x, y + offset.y, on);
+	if (_state)
+		g_engine->_imageManager->draw(x + _offset.x, y + _offset.y, _on);
 	else
-		g_engine->_imageManager->draw(x + offset.x, y + offset.y, off);
+		g_engine->_imageManager->draw(x + _offset.x, y + _offset.y, _off);
 }
 
-ButtonAction ToggleButton::handleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction action = Button::handleEvents(Event, XOffset, YOffset);
+ButtonAction ToggleButton::handleEvents(const Common::Event &event, const int &xOffset, const int &yOffset) {
+	ButtonAction action = Button::handleEvents(event, xOffset, yOffset);
 
 	if (action == BUAC_LCLICK)
-		state = !state;
+		_state = !_state;
 
 	return action;
 }

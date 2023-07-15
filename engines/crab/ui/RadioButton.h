@@ -40,14 +40,17 @@ namespace ui {
 class RadioButton : public ToggleButton {
 public:
 	// The value associated with the radio button
-	float val;
+	float _val;
 
-	RadioButton() { val = 0.0f; }
+	RadioButton() {
+		_val = 0.0f;
+	}
+	
 	~RadioButton() {}
 
 	void load(rapidxml::xml_node<char> *node) {
 		ToggleButton::load(node);
-		loadNum(val, "val", node);
+		loadNum(_val, "val", node);
 	}
 };
 } // End of namespace ui

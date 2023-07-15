@@ -90,9 +90,9 @@ void Journal::Init(const Common::String &id) {
 //------------------------------------------------------------------------
 void Journal::Select(const Common::String &id, const int &choice) {
 	for (unsigned int i = 0; i < category.element.size(); ++i)
-		category.element[i].State(false);
+		category.element[i].state(false);
 
-	category.element[choice].State(true);
+	category.element[choice].state(true);
 	select = choice;
 
 	// Always find valid journal group first

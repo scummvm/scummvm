@@ -41,38 +41,38 @@ namespace ui {
 // This button is used to draw multiple lines of text instead of an image
 class ReplyButton : public Button {
 	// Information about drawing reply options
-	int col_b, col_s, col_h;
-	FontKey font;
-	Align align;
-	Vector2D<unsigned int> line_size;
+	int _colB, _colS, _colH;
+	FontKey _font;
+	Align _replyAlign;
+	Vector2D<unsigned int> _lineSize;
 
 	// Reply options get moved around a lot, this remembers their actual position
-	Rect orig;
+	Rect _orig;
 
 	// The text for this button
-	Common::String text;
+	Common::String _text;
 
 public:
 	// The object it points to
-	int index;
+	int _index;
 
 	ReplyButton() {
-		index = 0;
-		col_b = 0;
-		col_s = 0;
-		col_h = 0;
-		font = 0;
-		align = ALIGN_LEFT;
+		_index = 0;
+		_colB = 0;
+		_colS = 0;
+		_colH = 0;
+		_font = 0;
+		_replyAlign = ALIGN_LEFT;
 	}
 	~ReplyButton() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void draw(const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &xOffset = 0, const int &yOffset = 0);
 
 	// Used to calculate size and set the string
 	// Spacing is the minimum space between buttons added in case of overflow
 	// Bottom edge is the y+h value of the previous choice
-	void Cache(const Common::String &val, const int &spacing, const int &bottom_edge, Rect *parent);
+	void Cache(const Common::String &val, const int &spacing, const int &bottomEdge, Rect *parent);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
