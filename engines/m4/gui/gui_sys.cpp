@@ -50,7 +50,7 @@ void gui_system_shutdown() {
 }
 
 void gui_system_event_handler() {
-	mausEvent newMouseEvent;
+	MouseEvent newMouseEvent;
 
 	ScreenContext *myScreen;
 	Hotkey *myHotkey;

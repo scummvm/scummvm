@@ -22,12 +22,13 @@
 #ifndef M4_PLATFORM_EVENTS_H
 #define M4_PLATFORM_EVENTS_H
 
+#include "common/queue.h"
 #include "common/events.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 
-enum mausEvent {
+enum MouseEvent {
 	_ME_no_event,		// 0
 	_ME_move,			// 1
 	_ME_L_click,		// 2
@@ -67,6 +68,7 @@ struct MouseInfo {
 
 struct Events : public MouseInfo {
 private:
+	Common::Queue<Common::KeyState> _pendingKeys;
 	uint16 &_mouseX = CursorColumn;
 	uint16 &_mouseY = CursorRow;
 	uint16 _oldX = 0xffff;
@@ -102,7 +104,7 @@ public:
 	/**
 	 * Get the next pending mouse event
 	 */
-	mausEvent mouse_get_event();
+	MouseEvent mouse_get_event();
 
 	/**
 	 * Get the next pending keyboard event
@@ -112,7 +114,7 @@ public:
 
 extern Events *g_events;
 
-extern mausEvent mouse_get_event();
+extern MouseEvent mouse_get_event();
 extern bool util_kbd_check(int32 *parm1);
 
 } // namespace M4
