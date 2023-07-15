@@ -24384,6 +24384,88 @@ static const uint16 sq6ExitFeatureIconPatch[] = {
 	PATCH_END
 };
 
+// The ExitFeature class has a bug that breaks the walk icon. This is unrelated
+//  to the bug above. ExitFeature changes walkIcon0's type and message (verb)
+//  when mousing over it. ExitFeature is supposed to restore these values, or
+//  else walking doesn't work, but the script doesn't handle leaving the room
+//  by other methods, among other things. If the next room has an ExitFeature
+//  then the bug is masked, because that ExitFeature resets the icon state.
+//
+// In room 340 on Polysorbate LX, the player leaves by clicking the transporter
+//  signaler in their inventory. If the inventory window places the signaler
+//  over the entrance to the liquor store, and the previous icon was walk, then
+//  clicking on the right spot will close the window and change the icon state
+//  to ExitFeature values before beaming the player to room 480. Room 480 does
+//  not have any ExitFeatures, and so the player can no longer walk.
+//
+// We fix this by resetting walkIcon0's internal state on room initialization.
+//  Other obscure methods have been found to trigger this bug, and this patch
+//  should handle them all. By patching a system script (64994), we can also fix
+//  all versions with one patch: some versions of SQ6 were compiled with debug
+//  instructions, but only in the game scripts.
+//
+// Applies to: All versions
+// Responsible method: Room:init
+// Fixes bug: #14537
+static const uint16 sq6ResetWalkIconSignature[] = {
+	SIG_MAGICDWORD,
+	0x54, SIG_UINT16(0x0006),           // self 06 [ self drawPic: picture ]
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi reflectPosn
+	0x7a,                               // push2
+	0x38, SIG_SELECTOR16(alterEgo),     // pushi alterEgo
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50 [ User ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ User alterEgo: ]
+	0x36,                               // push
+	0x38, SIG_SELECTOR16(edgeHit),      // pushi edgeHit
+	0x76,                               // push0
+	0x38, SIG_SELECTOR16(alterEgo),     // pushi alterEgo
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50 [ User ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ User alterEgo: ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ ego edgeHit: ]
+	0x36,                               // push
+	0x54, SIG_UINT16(0x0008),           // self 08 [ self reflectPosn: ego (ego edgeHit:) ]
+	0x38, SIG_SELECTOR16(edgeHit),      // pushi edgeHit
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, SIG_SELECTOR16(alterEgo),     // pushi alterEgo
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50 [ User ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ User alterEgo: ]
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ ego edgeHit: 0 ]
+	SIG_END
+};
+
+static const uint16 sq6ResetWalkIconPatch[] = {
+	PATCH_GETORIGINALBYTES(3, 4),       // pushi reflectPosn, push2
+	0x81, 0x00,                         // lag 00 [ ego ]
+	0x36,                               // push
+	0x38, PATCH_SELECTOR16(edgeHit),    // pushi edgeHit
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ ego edgeHit: ]
+	0x36,                               // push
+	0x54, PATCH_UINT16(0x000e),         // self 0e [ self drawPicture: picture, reflectPosn: ego (ego edgeHit:) ]
+	0x38, PATCH_SELECTOR16(edgeHit),    // pushi edgeHit
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00 [ ego ]
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ ego edgeHit: 0 ]
+	0x81, 0x45,                         // lag 45 [ SQIconbar ]
+	0x30, PATCH_UINT16(0x0015),         // bnt 0015  [ skip reset if no iconbar ]
+	0x38, PATCH_SELECTOR16(walkIconItem), // pushi walkIconItem
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ SQIconbar walkIconItem: ]
+	0x39, PATCH_SELECTOR8(type),        // pushi type
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x5000),         // pushi 5000 [ verb | move ]
+	0x39, PATCH_SELECTOR8(message),     // pushi message
+	0x78,                               // push1
+	0x39, 0x03,                         // pushi 03 [ walk ]
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ walkIcon0 type: $5000, message: 3 ]
+	PATCH_END
+};
+
 // Narrator lockup fix for SQ6's SQNarrator:sayForReal in versions compiled
 //  without debug line number instructions, see sciNarratorLockupSignature.
 //  SQ6 also uses the regular Narrator:say which the generic patches handle.
@@ -24460,6 +24542,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true, 64990, "fix save game dialog message",                1, sq6SaveDialogMessageSignature,   sq6SaveDialogMessagePatch },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,          sci2ChangeDirPatch },
 	{  true, 64994, "fix restore-error dialog",                    1, sq6RestoreErrorDialogSignature,  sq6RestoreErrorDialogPatch },
+	{  true, 64994, "reset walk icon",                             1, sq6ResetWalkIconSignature,       sq6ResetWalkIconPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
