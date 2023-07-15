@@ -23,16 +23,18 @@
 
 #if defined(__powerpc__)
 
-#ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
-#define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
-#endif
-#ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_PPC_IMPL
-#define AGS_LIB_ALLEGRO_SURFACE_SIMD_PPC_IMPL
-#endif
+// TODO: Complete PowerPC code
 
-#include <altivec.h>
-#include "ags/globals.h"
-#include "ags/lib/allegro/surface.h"
+//#ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
+//#define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
+//#endif
+//#ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_PPC_IMPL
+//#define AGS_LIB_ALLEGRO_SURFACE_SIMD_PPC_IMPL
+//#endif
+//
+//#include <altivec.h>
+//#include "ags/globals.h"
+//#include "ags/lib/allegro/surface.h"
 
 namespace AGS3 {
 
