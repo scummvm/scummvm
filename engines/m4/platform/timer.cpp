@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "m4/platform/timer.h"
 #include "m4/vars.h"
 

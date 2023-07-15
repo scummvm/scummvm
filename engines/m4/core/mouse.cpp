@@ -20,6 +20,7 @@
  */
 
 #include "m4/core/mouse.h"
+#include "m4/vars.h"
 
 namespace M4 {
 
@@ -60,9 +61,12 @@ static byte Pointer[] = {
 
 // returns FALSE if the mouse couldn't be initialized
 int mouse_init() {
+	auto &ms = _G(MouseState);
+	ms.CursorColumn = 640 / 2;
+	ms.CursorRow = 480 / 2;
+
 	return true;
 }
-
 
 void mouse_uninstall() {
 	// No implementation
