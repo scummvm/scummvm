@@ -359,7 +359,8 @@ void SdlGraphicsManager::saveScreenshot() {
 			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
 
 #ifdef USE_OSD
-		displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+		if (!ConfMan.getBool("disable_saved_screenshot_osd"))
+			displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
 #endif
 	} else {
 		if (screenshotsPath.empty())
