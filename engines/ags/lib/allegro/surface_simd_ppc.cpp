@@ -1,4 +1,6 @@
-#include "ags/lib/allegro/gfx.h"
+// TODO: Complete PowerPC code
+
+/*#include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
 #include "ags/ags.h"
@@ -350,9 +352,9 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 				gSrc = tintGreen;
 				bSrc = tintBlue;
 				aSrc = srcAlpha;
-			}/* else {
-				format.colorToARGB((uint32)(*(uint16 *)destVal), aDest, rDest, gDest, bDest);
-			}*/
+			}// else {
+			//	format.colorToARGB((uint32)(*(uint16 *)destVal), aDest, rDest, gDest, bDest);
+			//}
 			blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
 			srcCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
 		} else {
@@ -507,4 +509,4 @@ template void BITMAP::drawInner1Bpp<0x100>(int, int, uint32, uint32, PALETTE, in
 
 } // namespace AGS3
 
-#endif
+#endif*/
