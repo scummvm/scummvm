@@ -30,14 +30,10 @@ namespace Burger {
 namespace Rooms {
 
 class Room : public M4::Room {
-private:
-	void init_series_players();
-
 public:
 	Room(uint roomNum) : M4::Room(roomNum) {}
 	~Room() override {}
 
-	void init() override;
 	void shutdown() override;
 	void parser_code() override;
 

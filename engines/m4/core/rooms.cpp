@@ -107,7 +107,7 @@ void Sections::m4SceneLoad() {
 	_G(set_commands_allowed_since_last_checked) = false;
 	_G(between_rooms) = false;
 
-	room_init();
+	global_room_init();
 	_G(player).walker_trigger = -1;
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
@@ -124,7 +124,7 @@ void Sections::m4SceneLoad() {
 	_visited_room = player_been_here(_G(game).room_id);
 
 	term_message("calling room_init_code");
-	g_engine->room_init();
+	room_init();
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		_G(game).previous_room = -1;
