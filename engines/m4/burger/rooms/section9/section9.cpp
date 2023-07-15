@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section9/section9.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
@@ -27,6 +28,26 @@ namespace Rooms {
 
 Section9::Section9() : Rooms::Section() {
 	add(&_room951);
+}
+
+void Section9::daemon_code() {
+	switch (_G(kernel).trigger) {
+	case 9002:
+		_G(game).new_room = 902;
+		break;
+	case 9004:
+		_G(game).new_room = 904;
+		break;
+	case 9005:
+		_G(game).new_room = 951;
+		break;
+	case 9006:
+		_G(game).new_room = 971;
+		break;
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
