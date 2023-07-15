@@ -77,6 +77,7 @@ public:
 	 */
 	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
 
+	virtual void global_room_init() {}
 	virtual void daemon_code() {}
 };
 
@@ -111,6 +112,9 @@ public:
 	}
 	void daemon_code() {
 		_activeSection->daemon_code();
+	}
+	void global_room_init() {
+		_activeSection->global_room_init();
 	}
 
 	void room_preload() {

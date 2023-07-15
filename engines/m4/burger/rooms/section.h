@@ -29,10 +29,14 @@ namespace Burger {
 namespace Rooms {
 
 class Section : public M4::Section {
+private:
+	void init_series_players();
+
 public:
 	Section() : M4::Section() {}
 	~Section() override {}
 
+	void global_room_init() override;
 	void daemon_code() override;
 };
 
