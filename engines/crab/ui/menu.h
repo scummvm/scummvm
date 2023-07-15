@@ -72,7 +72,7 @@ protected:
 	void Next() {
 		if (hover_index == -1) {
 			for (unsigned int pos = 0; pos < path.size(); pos++)
-				if (element[path[pos]].visible == true) {
+				if (element[path[pos]]._visible == true) {
 					hover_index = path[pos];
 					break;
 				}
@@ -83,7 +83,7 @@ protected:
 					break;
 
 			for (unsigned int nextloc = (curpos + 1) % element.size(); nextloc != curpos; nextloc = (nextloc + 1) % element.size())
-				if (element[nextloc].visible == true) {
+				if (element[nextloc]._visible == true) {
 					hover_index = path[nextloc];
 					break;
 				}
@@ -96,7 +96,7 @@ protected:
 	void Prev() {
 		if (hover_index == -1) {
 			for (unsigned int pos = 0; pos < path.size(); pos++)
-				if (element[path[pos]].visible == true) {
+				if (element[path[pos]]._visible == true) {
 					hover_index = path[pos];
 					break;
 				}
@@ -111,7 +111,7 @@ protected:
 				if (nextloc < 0)
 					nextloc = element.size() - 1;
 
-				if (element[nextloc].visible == true) {
+				if (element[nextloc]._visible == true) {
 					hover_index = path[nextloc];
 					break;
 				}
@@ -160,7 +160,7 @@ protected:
 				// Update hover status of keys according to the current index
 				int i = 0;
 				for (auto it = element.begin(); it != element.end(); ++it, ++i)
-					it->hover_key = (i == hover_index);
+					it->_hoverKey = (i == hover_index);
 			}
 		}
 
@@ -290,19 +290,19 @@ public:
 
 			// We did not click a button, however we did hover over the button
 			// However if we are use keyboard to browse through the menu, hovering is forgotten until we move the mouse again
-			if (it->hover_mouse && latest_input == MOUSE) {
+			if (it->_hoverMouse && latest_input == MOUSE) {
 				hover_index = i;
 
 				// The latest input is the mouse, which means we have to forget the keyboard hover states
 				for (auto e = element.begin(); e != element.end(); ++e)
-					e->hover_key = false;
+					e->_hoverKey = false;
 			}
 		}
 
 		if (latest_input == KEYBOARD) {
 			// The latest input is the keyboard, which means we have to forget the mouse hover states
 			for (auto it = element.begin(); it != element.end(); ++it)
-				it->hover_mouse = false;
+				it->_hoverMouse = false;
 		}
 		return -1;
 	}

@@ -64,10 +64,10 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 			if (g_engine->_screenSettings->ValidDimension(d)) {
 				dim.push_back(d);
 				Button b;
-				b.Init(ref, inc.x * (count_slot % columns), inc.y * (count_slot / columns));
-				b.caption.text = NumberToString(d.w);
-				b.caption.text += " x ";
-				b.caption.text += NumberToString(d.h);
+				b.init(ref, inc.x * (count_slot % columns), inc.y * (count_slot / columns));
+				b._caption.text = NumberToString(d.w);
+				b._caption.text += " x ";
+				b._caption.text += NumberToString(d.h);
 				element.push_back(b);
 			}
 		}

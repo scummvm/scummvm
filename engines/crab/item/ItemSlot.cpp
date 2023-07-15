@@ -64,7 +64,7 @@ void ItemSlot::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset) {
 	StateButton::Init(ref, XOffset, YOffset);
-	canmove = ref.canmove;
+	_canmove = ref._canmove;
 	no_type = ref.no_type;
 	category = ref.category;
 	unread = ref.unread;

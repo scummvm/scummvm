@@ -40,17 +40,17 @@ void ClipButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	Button::load(node, echo);
 
 	if (nodeValid("clip", node, false))
-		clip.load(node->first_node("clip"));
+		_clip.load(node->first_node("clip"));
 	else {
-		clip.x = 0;
-		clip.y = 0;
-		clip.w = g_engine->_imageManager->getTexture(img.normal).w();
-		clip.h = g_engine->_imageManager->getTexture(img.normal).h();
+		_clip.x = 0;
+		_clip.y = 0;
+		_clip.w = g_engine->_imageManager->getTexture(_img._normal).w();
+		_clip.h = g_engine->_imageManager->getTexture(_img._normal).h();
 	}
 }
 
-void ClipButton::draw(const int &XOffset, const int &YOffset) {
-	Button::draw(XOffset, YOffset, &clip);
+void ClipButton::draw(const int &xOffset, const int &yOffset) {
+	Button::draw(xOffset, yOffset, &_clip);
 }
 
 } // End of namespace Crab

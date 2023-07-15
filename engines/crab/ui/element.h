@@ -43,31 +43,31 @@ namespace pyrodactyl {
 namespace ui {
 class Element : public Rect {
 	// The position loaded directly from xml
-	Vector2i raw;
+	Vector2i _raw;
 
 	// Which side of the screen is this object aligned to?
 	struct {
 		Align x, y;
-	} align;
+	} _align;
 
-	void Basicload(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void basicload(rapidxml::xml_node<char> *node, const bool &echo = true);
 
 public:
 	Element() {
-		align.x = ALIGN_LEFT;
-		align.y = ALIGN_LEFT;
+		_align.x = ALIGN_LEFT;
+		_align.y = ALIGN_LEFT;
 	}
 	~Element() {}
 
 	// Initialize an element without loading it from file
-	void Init(const int &X, const int &Y, const Align &align_x, const Align &align_y,
-			  const ImageKey image = 0, const int &W = 0, const int &H = 0);
+	void init(const int &x, const int &y, const Align &alignX, const Align &alignY,
+			  const ImageKey image = 0, const int &w = 0, const int &h = 0);
 
 	// Initialize an element from another
-	void Init(const Element &e, ImageKey img = 0, const int &XOffset = 0, const int &YOffset = 0) {
-		raw.x = e.raw.x + XOffset;
-		raw.y = e.raw.y + YOffset;
-		Init(e.x + XOffset, e.y + YOffset, e.align.x, e.align.y, img, e.w, e.h);
+	void init(const Element &e, ImageKey img = 0, const int &xOffset = 0, const int &yOffset = 0) {
+		_raw.x = e._raw.x + xOffset;
+		_raw.y = e._raw.y + yOffset;
+		init(e.x + xOffset, e.y + yOffset, e._align.x, e._align.y, img, e.w, e.h);
 	}
 
 	// The parent is the object inside which the element exists

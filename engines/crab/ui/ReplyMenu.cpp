@@ -153,7 +153,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 	for (auto i = dat._reply.begin(); i != dat._reply.end() && reply_count < dat._reply.size(); ++i, ++reply_count) {
 		if (i->_unlock.evaluate(info)) {
-			element[element_count].visible = true;
+			element[element_count]._visible = true;
 			element[element_count].index = reply_count;
 
 			tone.value[element_count] = dat._reply[reply_count]._tone;
@@ -177,7 +177,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 	// Unused element buttons are hidden
 	for (; element_count < element.size(); element_count++)
-		element[element_count].visible = false;
+		element[element_count]._visible = false;
 }
 
 void ReplyMenu::setUI() {

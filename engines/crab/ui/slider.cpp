@@ -43,9 +43,9 @@ void Slider::load(rapidxml::xml_node<char> *node, const int &Min, const int &Max
 		bar.load(node->first_node("bar"));
 
 		knob.y = bar.y;
-		knob.w = g_engine->_imageManager->getTexture(knob.img.normal).w();
-		knob.h = g_engine->_imageManager->getTexture(knob.img.normal).h();
-		knob.canmove = true;
+		knob.w = g_engine->_imageManager->getTexture(knob._img._normal).w();
+		knob.h = g_engine->_imageManager->getTexture(knob._img._normal).h();
+		knob._canmove = true;
 
 		min = Min;
 		max = Max;
@@ -141,8 +141,8 @@ void Slider::setUI() {
 
 	knob.x = bar.x + ((bar.w - knob.w) * value / (max - min));
 	knob.y = bar.y;
-	knob.w = g_engine->_imageManager->getTexture(knob.img.normal).w();
-	knob.h = g_engine->_imageManager->getTexture(knob.img.normal).h();
+	knob.w = g_engine->_imageManager->getTexture(knob._img._normal).w();
+	knob.h = g_engine->_imageManager->getTexture(knob._img._normal).h();
 }
 
 } // End of namespace Crab

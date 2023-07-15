@@ -61,28 +61,28 @@ void ProgressBar::draw(const int &value, const int &max) {
 	// Figure out which text to draw as caption
 	for (auto &i : ct)
 		if (value > i.val) {
-			caption.text = i.text;
+			_caption.text = i.text;
 			break;
 		}
 
 	// If we don't have to draw animations for changing value, just draw the bar
 	if (!changed) {
-		clip.w = (g_engine->_imageManager->getTexture(img.normal).w() * value) / max;
+		_clip.w = (g_engine->_imageManager->getTexture(_img._normal).w() * value) / max;
 		ClipButton::draw();
 	} else {
-		clip.w = (g_engine->_imageManager->getTexture(img.normal).w() * cur) / max;
+		_clip.w = (g_engine->_imageManager->getTexture(_img._normal).w() * cur) / max;
 		ClipButton::draw();
 
 		switch (type) {
 		case INCREASE:
-			g_engine->_imageManager->draw(x + clip.w + offset.x, y + offset.y, inc);
+			g_engine->_imageManager->draw(x + _clip.w + offset.x, y + offset.y, inc);
 			if (timer.TargetReached()) {
 				cur++;
 				timer.Start();
 			}
 			break;
 		case DECREASE:
-			g_engine->_imageManager->draw(x + clip.w + offset.x, y + offset.y, dec);
+			g_engine->_imageManager->draw(x + _clip.w + offset.x, y + offset.y, dec);
 			if (timer.TargetReached()) {
 				cur--;
 				timer.Start();

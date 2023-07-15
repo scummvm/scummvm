@@ -66,16 +66,16 @@ void MapMarkerMenu::draw(const Element &pos, const Vector2i &player_pos, const R
 	Vector2i offset_m(pos.x - camera.x + offset.marker.x, pos.y - camera.y + offset.marker.y);
 
 	// Only draw the image - captions drawn later to prevent drawing another button over caption
-	player.ImageCaptionOnlyDraw(offset_p.x, offset_p.y);
+	player.imageCaptionOnlyDraw(offset_p.x, offset_p.y);
 
 	for (auto &i : menu.element)
-		i.ImageCaptionOnlyDraw(offset_m.x, offset_m.y);
+		i.imageCaptionOnlyDraw(offset_m.x, offset_m.y);
 
 	// Now draw the tool-tips for everything combined
-	player.HoverInfoOnlyDraw(offset_p.x, offset_p.y);
+	player.hoverInfoOnlyDraw(offset_p.x, offset_p.y);
 
 	for (auto &i : menu.element)
-		i.HoverInfoOnlyDraw(offset_m.x, offset_m.y);
+		i.hoverInfoOnlyDraw(offset_m.x, offset_m.y);
 }
 
 //------------------------------------------------------------------------
@@ -133,7 +133,7 @@ void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &player_po
 			   player.w + offset.marker.x,
 			   player.h + offset.marker.y);
 
-		player.visible = bounds.Contains(r);
+		player._visible = bounds.Contains(r);
 	}
 
 	// Redefine p for marker buttons
@@ -144,7 +144,7 @@ void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &player_po
 		Rect r(i.x + p.x - offset.marker.x, i.y + p.y - offset.marker.y,
 			   i.w + offset.marker.x, i.h + offset.marker.y);
 
-		i.visible = bounds.Contains(r);
+		i._visible = bounds.Contains(r);
 	}
 }
 

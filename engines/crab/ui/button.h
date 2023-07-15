@@ -48,84 +48,97 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace ui {
-enum ButtonAction { BUAC_IGNORE,
-					BUAC_LCLICK,
-					BUAC_RCLICK,
-					BUAC_GRABBED };
+enum ButtonAction {
+	BUAC_IGNORE,
+	BUAC_LCLICK,
+	BUAC_RCLICK,
+	BUAC_GRABBED
+};
 
 struct ButtonImage {
-	ImageKey normal, select, hover;
+	ImageKey _normal, _select, _hover;
 
-	bool operator==(const ButtonImage &img) { return normal == img.normal && select == img.select && hover == img.hover; }
+	bool operator==(const ButtonImage &img) {
+		return _normal == img._normal && _select == img._select && _hover == img._hover; }
+
 
 	ButtonImage() {
-		normal = 0;
-		select = 0;
-		hover = 0;
+		_normal = 0;
+		_select = 0;
+		_hover = 0;
 	}
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true) {
 		if (nodeValid(node)) {
-			loadImgKey(normal, "img_b", node, echo);
-			loadImgKey(select, "img_s", node, echo);
-			loadImgKey(hover, "img_h", node, echo);
+			loadImgKey(_normal, "img_b", node, echo);
+			loadImgKey(_select, "img_s", node, echo);
+			loadImgKey(_hover, "img_h", node, echo);
 		}
 	}
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-		root->append_attribute(doc.allocate_attribute("img_b", gStrPool->Get(normal)));
-		root->append_attribute(doc.allocate_attribute("img_s", gStrPool->Get(select)));
-		root->append_attribute(doc.allocate_attribute("img_h", gStrPool->Get(hover)));
+		root->append_attribute(doc.allocate_attribute("img_b", gStrPool->Get(_normal)));
+		root->append_attribute(doc.allocate_attribute("img_s", gStrPool->Get(_select)));
+		root->append_attribute(doc.allocate_attribute("img_h", gStrPool->Get(_hover)));
 	}
 };
 
 class Button : public Element {
 public:
-	bool visible, mousepressed;
+	bool _visible, _mousePressed;
 
 	// We need to keep track of keyboard and mouse hovering separately
-	bool hover_mouse, hover_key, hover_prev;
+	bool _hoverMouse, _hoverKey, _hoverPrev;
 
 	// Can the player move this button?
-	bool canmove;
+	bool _canmove;
 
 	// The button images
-	ButtonImage img;
+	ButtonImage _img;
 
 	// The sound effect played when button is clicked
-	pyrodactyl::music::ChunkKey se_click, se_hover;
+	pyrodactyl::music::ChunkKey _seClick, _seHover;
 
 	// Text shown when mouse is hovered over the button
-	HoverInfo tooltip;
+	HoverInfo _tooltip;
 
 	// Text shown all times on the button
-	Caption caption;
+	Caption _caption;
 
 	// A hotkey is a keyboard key(s) that are equivalent to pressing a button
-	pyrodactyl::input::HotKey hotkey;
+	pyrodactyl::input::HotKey _hotkey;
 
 	Button();
 	~Button() {}
 	void reset();
+
 	void setUI(Rect *parent = NULL);
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
-	void Init(const Button &ref, const int &XOffset = 0, const int &YOffset = 0);
+	void init(const Button &ref, const int &xOffset = 0, const int &yOffset = 0);
 
-	void Img(Button &b) { img = b.img; }
-	void Img(ButtonImage &image) { img = image; }
-	ButtonImage Img() { return img; }
+	void img(Button &b) {
+		_img = b._img;
+	}
 
-	void draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+	void img(ButtonImage &image) {
+		_img = image;
+	}
 
-	ButtonAction handleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0);
+	ButtonImage img() {
+		return _img;
+	}
+
+	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
+
+	ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 #if 0
 	ButtonAction handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #endif
 
 	// Special functions to only draw parts of a button (used in special situations like world map)
-	void ImageCaptionOnlyDraw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
-	void HoverInfoOnlyDraw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+	void imageCaptionOnlyDraw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
+	void hoverInfoOnlyDraw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

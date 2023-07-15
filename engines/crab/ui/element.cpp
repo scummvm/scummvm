@@ -35,16 +35,16 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void Element::Init(const int &X, const int &Y, const Align &align_x, const Align &align_y,
-				   const ImageKey img, const int &W, const int &H) {
-	x = X;
-	y = Y;
-	align.x = align_x;
-	align.y = align_y;
+void Element::init(const int &xCord, const int &yCord, const Align &alignX, const Align &alignY,
+				   const ImageKey img, const int &width, const int &height) {
+	x = xCord;
+	y = yCord;
+	_align.x = alignX;
+	_align.y = alignY;
 
 	if (img == 0) {
-		w = W;
-		h = H;
+		w = width;
+		h = height;
 	} else {
 		Image dat = g_engine->_imageManager->getTexture(img);
 		w = dat.w();
@@ -52,14 +52,14 @@ void Element::Init(const int &X, const int &Y, const Align &align_x, const Align
 	}
 }
 
-void Element::Basicload(rapidxml::xml_node<char> *node, const bool &echo) {
-	raw.load(node, echo);
-	loadAlign(align.x, node, echo, "align_x");
-	loadAlign(align.y, node, echo, "align_y");
+void Element::basicload(rapidxml::xml_node<char> *node, const bool &echo) {
+	_raw.load(node, echo);
+	loadAlign(_align.x, node, echo, "align_x");
+	loadAlign(_align.y, node, echo, "align_y");
 }
 
 void Element::load(rapidxml::xml_node<char> *node, ImageKey img, const bool &echo) {
-	Basicload(node, echo);
+	basicload(node, echo);
 
 	if (node->first_attribute("w") == NULL)
 		w = g_engine->_imageManager->getTexture(img).w();
@@ -75,7 +75,7 @@ void Element::load(rapidxml::xml_node<char> *node, ImageKey img, const bool &ech
 }
 
 void Element::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
-	Basicload(node, echo);
+	basicload(node, echo);
 	loadNum(w, "w", node, false);
 	loadNum(h, "h", node, false);
 	setUI(parent);
@@ -83,51 +83,51 @@ void Element::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &ech
 
 void Element::setUI(Rect *parent) {
 	if (parent == NULL) {
-		switch (align.x) {
+		switch (_align.x) {
 		case ALIGN_CENTER:
-			x = g_engine->_screenSettings->cur.w / 2 - w / 2 + raw.x;
+			x = g_engine->_screenSettings->cur.w / 2 - w / 2 + _raw.x;
 			break;
 		case ALIGN_RIGHT:
-			x = g_engine->_screenSettings->cur.w - w + raw.x;
+			x = g_engine->_screenSettings->cur.w - w + _raw.x;
 			break;
 		default:
-			x = raw.x;
+			x = _raw.x;
 			break;
 		}
 
-		switch (align.y) {
+		switch (_align.y) {
 		case ALIGN_CENTER:
-			y = g_engine->_screenSettings->cur.h / 2 - h / 2 + raw.y;
+			y = g_engine->_screenSettings->cur.h / 2 - h / 2 + _raw.y;
 			break;
 		case ALIGN_RIGHT:
-			y = g_engine->_screenSettings->cur.h - h + raw.y;
+			y = g_engine->_screenSettings->cur.h - h + _raw.y;
 			break;
 		default:
-			y = raw.y;
+			y = _raw.y;
 			break;
 		}
 	} else {
-		switch (align.x) {
+		switch (_align.x) {
 		case ALIGN_CENTER:
-			x = parent->x + parent->w / 2 - w / 2 + raw.x;
+			x = parent->x + parent->w / 2 - w / 2 + _raw.x;
 			break;
 		case ALIGN_RIGHT:
-			x = parent->x + parent->w - w + raw.x;
+			x = parent->x + parent->w - w + _raw.x;
 			break;
 		default:
-			x = parent->x + raw.x;
+			x = parent->x + _raw.x;
 			break;
 		}
 
-		switch (align.y) {
+		switch (_align.y) {
 		case ALIGN_CENTER:
-			y = parent->y + parent->h / 2 - h / 2 + raw.y;
+			y = parent->y + parent->h / 2 - h / 2 + _raw.y;
 			break;
 		case ALIGN_RIGHT:
-			y = parent->y + parent->h - h + raw.y;
+			y = parent->y + parent->h - h + _raw.y;
 			break;
 		default:
-			y = parent->y + raw.y;
+			y = parent->y + _raw.y;
 			break;
 		}
 	}

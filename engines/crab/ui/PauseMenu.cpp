@@ -64,7 +64,7 @@ PauseSignal PauseMenu::handleEvents(const Common::Event &Event, Button &back) {
 	case STATE_NORMAL:
 		choice = menu.handleEvents(Event);
 		if (choice == -1) {
-			if (back.hotkey.handleEvents(Event))
+			if (back._hotkey.handleEvents(Event))
 				return PS_RESUME;
 		} else {
 			switch (choice) {

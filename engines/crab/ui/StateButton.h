@@ -80,7 +80,7 @@ public:
 
 	// The state of the button - false is original image, true is second image
 	void State(const bool val);
-	bool State() { return (img == img_set.select); }
+	bool State() { return (_img == img_set.select); }
 
 	// Set the image
 	void Img(const StateButtonImage &sbi);
