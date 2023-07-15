@@ -267,7 +267,7 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 			uint16 srcBuffer[8];
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = xStart, scaleXCtr = xCtrStart * scaleX; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
 				if (yCtr + 1 == yCtrHeight && xCtr + 8 > xCtrWidth) break;
-				vector unsigned int indexes = vector_splat_u32(scaleXCtr), indexes2 = vector_splat_u32(scaleXCtr);
+				vector unsigned int indexes = vec_splat_u32(scaleXCtr), indexes2 = vect_splat_u32(scaleXCtr);
 #if (ScaleThreshold == 0 || ScaleThreshold == 0x100)
 				// Calculate in parallel the indexes of the pixels
 				indexes = vec_sl(vec_sr(vec_add(indexes, scaleAdds), 8), 1);
