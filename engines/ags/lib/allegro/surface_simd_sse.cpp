@@ -499,7 +499,6 @@ void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 	}
 }
 
-
 template void BITMAP::drawInner4BppWithConv<4, 4, 0>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
 template void BITMAP::drawInner4BppWithConv<4, 4, 0x100>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
 template void BITMAP::drawInner4BppWithConv<4, 2, 0>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
