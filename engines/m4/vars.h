@@ -51,6 +51,7 @@
 #include "m4/mem/memman.h"
 #include "m4/mem/res.h"
 #include "m4/platform/timer.h"
+#include "m4/platform/events/events.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/platform/sound/midi.h"
 #include "m4/wscript/wscript.h"
@@ -87,6 +88,8 @@ public:
 	virtual void global_menu_system_init() = 0;
 	virtual void initialize_game() = 0;
 
+	Events _events;
+	MouseInfo &_MouseState = _events;
 	GameControl _game;
 	Kernel _kernel;
 	Term _term;
@@ -99,7 +102,6 @@ public:
 	Resources _resources;
 	Rails_Globals _rails;
 	Catalog _catalog;
-	MouseInfo _MouseState;
 	Dialog_Globals _dialog;
 	Item_Globals _items;
 	Converstation_Globals _conversations;
