@@ -15,6 +15,7 @@ namespace AGS3 {
 // This template handles 2bpp and 4bpp, the other specializations handle 1bpp and format conversion blits
 template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
 void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
+	drawInnerGeneric(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY);
 	const int xDir = horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
@@ -27,11 +28,11 @@ void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, ui
 	vector unsigned int alphas = vec_splat_u32(srcAlpha);
 
 	// This is so that we can calculate what pixels to crop off in a vectorized way
-	vector unsigned int addIndexes = {0, 1, 2, 3};
-	if (horizFlip) addIndexes = {3, 2, 1, 0};
+	vector unsigned int addIndexes = (vector unsigned int){0, 1, 2, 3};
+	if (horizFlip) addIndexes = (vector unsigned int){3, 2, 1, 0};
 
 	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
-	vector unsigned int scaleAdds = {0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
+	vector unsigned int scaleAdds = (vector unsigned int){0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
 
 	// Clip the bounds ahead of time (so we don't waste time checking if we are in bounds when
 	// we are in the inner loop)
@@ -197,12 +198,12 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 	vector unsigned short alphas = vec_splat_u16(srcAlpha);
 
 	// This is so that we can calculate what pixels to crop off in a vectorized way
-	vector unsigned short addIndexes = {0, 1, 2, 3, 4, 5, 6, 7};
+	vector unsigned short addIndexes = (vector unsigned short){0, 1, 2, 3, 4, 5, 6, 7};
 
 	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
-	if (horizFlip) addIndexes = {7, 6, 5, 4, 3, 2, 1, 0};
-	vector unsigned int scaleAdds = {0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
-	vector unsigned int scaleAdds2 = {(uint32)scaleX*4, (uint32)scaleX*5, (uint32)scaleX*6, (uint32)scaleX*7};
+	if (horizFlip) addIndexes = (vector unsigned short){7, 6, 5, 4, 3, 2, 1, 0};
+	vector unsigned int scaleAdds = (vector unsigned int){0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
+	vector unsigned int scaleAdds2 = (vector unsigned int){(uint32)scaleX*4, (uint32)scaleX*5, (uint32)scaleX*6, (uint32)scaleX*7};
 
 	// Clip the bounds ahead of time (so we don't waste time checking if we are in bounds when
 	// we are in the inner loop)
@@ -364,10 +365,10 @@ void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 	vector unsigned char transColors = vec_splat_u8(transColor);
 
 	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
-	vector unsigned int scaleAdds1 = {0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
-	vector unsigned int scaleAdds2 = {(uint32)scaleX*4, (uint32)scaleX*5, (uint32)scaleX*6, (uint32)scaleX*7};
-	vector unsigned int scaleAdds3 = {(uint32)scaleX*8, (uint32)scaleX*9, (uint32)scaleX*10, (uint32)scaleX*11};
-	vector unsigned int scaleAdds4 = {(uint32)scaleX*12, (uint32)scaleX*13, (uint32)scaleX*14, (uint32)scaleX*15};
+	vector unsigned int scaleAdds1 = (vector unsigned int){0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
+	vector unsigned int scaleAdds2 = (vector unsigned int){(uint32)scaleX*4, (uint32)scaleX*5, (uint32)scaleX*6, (uint32)scaleX*7};
+	vector unsigned int scaleAdds3 = (vector unsigned int){(uint32)scaleX*8, (uint32)scaleX*9, (uint32)scaleX*10, (uint32)scaleX*11};
+	vector unsigned int scaleAdds4 = (vector unsigned int){(uint32)scaleX*12, (uint32)scaleX*13, (uint32)scaleX*14, (uint32)scaleX*15};
 	
 	// Clip the bounds ahead of time (so we don't waste time checking if we are in bounds when
 	// we are in the inner loop)
@@ -487,7 +488,6 @@ void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 		if (ScaleThreshold == 0) srcP += vertFlip ? -src.pitch : src.pitch;
 	}
 }
-
 
 template void BITMAP::drawInner4BppWithConv<4, 4, 0>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
 template void BITMAP::drawInner4BppWithConv<4, 4, 0x100>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
