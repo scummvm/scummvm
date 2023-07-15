@@ -26,7 +26,7 @@ inline uint32 extract32_idx3(__m128i x) {
 
 // This template handles 2bpp and 4bpp, the other specializations handle 1bpp and format conversion blits
 template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
-void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
+void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, int useTint, int sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
 	const int xDir = horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
@@ -200,7 +200,7 @@ void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, ui
 }
 
 template<int ScaleThreshold>
-void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
+void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, int useTint, int sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
 	const int xDir = horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
@@ -371,7 +371,7 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 }
 
 template<int ScaleThreshold>
-void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
+void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, int useTint, int sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
 	const int xDir = horizFlip ? -1 : 1;
 	__m128i transColors = _mm_set1_epi16(transColor | (transColor << 8));
 
@@ -500,16 +500,16 @@ void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 }
 
 
-template void BITMAP::drawInner4BppWithConv<4, 4, 0>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner4BppWithConv<4, 4, 0x100>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner4BppWithConv<4, 2, 0>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner4BppWithConv<4, 2, 0x100>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner4BppWithConv<2, 4, 0>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner4BppWithConv<2, 4, 0x100>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner2Bpp<0>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner2Bpp<0x100>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner1Bpp<0>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
-template void BITMAP::drawInner1Bpp<0x100>(int, int, uint32, uint32, PALETTE, bool, bool, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, bool, bool, bool, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner4BppWithConv<4, 4, 0>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner4BppWithConv<4, 4, 0x100>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner4BppWithConv<4, 2, 0>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner4BppWithConv<4, 2, 0x100>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner4BppWithConv<2, 4, 0>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner4BppWithConv<2, 4, 0x100>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner2Bpp<0>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner2Bpp<0x100>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner1Bpp<0>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
+template void BITMAP::drawInner1Bpp<0x100>(int, int, uint32, uint32, PALETTE, int, int, const ::Graphics::ManagedSurface &, ::Graphics::Surface &, int, int, int, int, int, int, int, const Common::Rect &, const Common::Rect &, const BlenderMode, int, int);
 
 } // namespace AGS3
 
