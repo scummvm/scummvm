@@ -22,9 +22,9 @@ void BITMAP::drawInner4BppWithConv(int yStart, int xStart, uint32 transColor, ui
 	tint = vec_or(tint, vec_sl(vec_splat_u32(tintRed), 16));
 	tint = vec_or(tint, vec_sl(vec_splat_u32(tintGreen), 8));
 	tint = vec_or(tint, vec_splat_u32(tintBlue));
-	vector unsigned int maskedAlphas = vec_splat_u32(&alphaMask);
-	vector unsigned int transColors = vec_splat_u32(&transColor);
-	vector unsigned int alphas = vec_splat_u32(&srcAlpha);
+	vector unsigned int maskedAlphas = vec_splat_u32(alphaMask);
+	vector unsigned int transColors = vec_splat_u32(transColor);
+	vector unsigned int alphas = vec_splat_u32(srcAlpha);
 
 	// This is so that we can calculate what pixels to crop off in a vectorized way
 	vector unsigned int addIndexes = {0, 1, 2, 3};
@@ -361,7 +361,7 @@ void BITMAP::drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alp
 template<int ScaleThreshold>
 void BITMAP::drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
 	const int xDir = horizFlip ? -1 : 1;
-	vector unsigned char transColors = vec_splat_u8(&transColor);
+	vector unsigned char transColors = vec_splat_u8(transColor);
 
 	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
 	vector unsigned int scaleAdds1 = {0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
