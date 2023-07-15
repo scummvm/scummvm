@@ -128,6 +128,8 @@ static bool checkForSIMDExtensions() {
 #  endif
 #elif defined(__aarch64__)
 	return true;
+#elif defined(__powerpc__)
+	return __builtin_cpu_supports("altivec");
 #else
 	return false;
 #endif
