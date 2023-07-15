@@ -129,11 +129,11 @@ void ScummEngine::debugMessage(const byte *msg) {
 	}
 
 	if (buffer[0] == 0xFF && buffer[1] == 10) {
-		uint32 a, b;
+		uint32 offset, length;
 		int channel = 0;
 
-		a = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
-		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
+		offset = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+		length = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 
 		// Sam and Max uses a caching system, printing empty messages
 		// and setting VAR_V6_SOUNDMODE beforehand. See patch #8051.
@@ -141,7 +141,7 @@ void ScummEngine::debugMessage(const byte *msg) {
 			channel = VAR(VAR_V6_SOUNDMODE);
 
 		if (channel != 2)
-			_sound->talkSound(a, b, 1, channel);
+			_sound->talkSound(offset, length, DIGI_SND_MODE_SFX, channel);
 	}
 }
 
@@ -173,8 +173,8 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 
 
 bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
-	uint32 talk_sound_a = 0;
-	uint32 talk_sound_b = 0;
+	uint32 digiTalkieOffset = 0;
+	uint32 digiTalkieLength = 0;
 	int color, frme, c = 0, oldy;
 	bool endLoop = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
@@ -419,17 +419,17 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			break;
 		case 10:
 			// Note the similarity to the code in debugMessage()
-			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
+			digiTalkieOffset = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
+			digiTalkieLength = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
 			if (_game.heversion >= 60) {
 #ifdef ENABLE_HE
-				((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+				((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset);
 #else
-				((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+				((SoundHE *)_sound)->startHETalkSound(digiTalkieOffset);
 #endif
 			} else {
-				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				_sound->talkSound(digiTalkieOffset, digiTalkieLength, DIGI_SND_MODE_TALKIE);
 			}
 			_haveActorSpeechMsg = false;
 			break;
@@ -464,8 +464,8 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 #ifdef ENABLE_HE
 bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	const int charsetCode = (_game.heversion >= 80) ? 127 : 64;
-	uint32 talk_sound_a = 0;
-	//uint32 talk_sound_b = 0;
+	uint32 digiTalkieOffset = 0;
+	//uint32 digiTalkieLength = 0;
 	int i, c = 0;
 	char value[32];
 	bool endLoop = false;
@@ -487,7 +487,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			talk_sound_a = atoi(value);
+			digiTalkieOffset = atoi(value);
 			i = 0;
 			c = *buffer++;
 			while (c != charsetCode) {
@@ -496,8 +496,8 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			//talk_sound_b = atoi(value);
-			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+			//digiTalkieLength = atoi(value);
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset);
 			break;
 		case 104:
 			_haveMsg = 0;
@@ -518,9 +518,9 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			talk_sound_a = atoi(value);
-			//talk_sound_b = 0;
-			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+			digiTalkieOffset = atoi(value);
+			//digiTalkieLength = 0;
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset);
 			break;
 		case 119:
 			_haveMsg = 0xFF;
@@ -929,7 +929,7 @@ void ScummEngine::CHARSET_1() {
 			if (_sound->isSoundRunning(1) == 0)
 				stopTalk();
 		} else {
-			if ((_sound->_sfxMode & 2) == 0)
+			if ((_sound->_digiSndMode & DIGI_SND_MODE_TALKIE) == 0)
 				stopTalk();
 		}
 		return;
@@ -2009,7 +2009,7 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 		_sound->stopTalkSound();
 		_imuseDigital->stopSound(kTalkSoundID);
 		_imuseDigital->startVoice(kTalkSoundID, pointerStr.c_str(), _actorToPrintStrFor);
-		_sound->talkSound(0, 0, 2);
+		_sound->talkSound(0, 0, DIGI_SND_MODE_TALKIE);
 	}
 }
 

@@ -2160,7 +2160,7 @@ void ScummEngine::playActorSounds() {
 			}
 			// fast mode will flood the queue with walk sounds
 			if (!_fastMode) {
-				_sound->addSoundToQueue(sound);
+				_sound->startSound(sound);
 			}
 			for (j = 1; j < _numActors; j++) {
 				_actors[j]->_cost.soundCounter = 0;
@@ -3124,7 +3124,7 @@ void ScummEngine::stopTalk() {
 
 	_haveMsg = 0;
 	_talkDelay = 0;
-	_sound->_sfxMode = 0;
+	_sound->_digiSndMode = DIGI_SND_MODE_EMPTY;
 
 	act = getTalkingActor();
 	if (act && act < 0x80) {

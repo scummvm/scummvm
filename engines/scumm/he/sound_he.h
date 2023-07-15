@@ -129,8 +129,8 @@ public:
 	SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex);
 	~SoundHE() override;
 
+	void startSound(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0) override;
 	void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0) override;
-	void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0) override;
 	void modifySound(int sound, int offset, int frequencyShift, int pan, int volume, int flags) override;
 
 	int isSoundRunning(int sound) const override;
@@ -145,7 +145,7 @@ public:
 	int getSoundPos(int sound);
 	int getSoundVar(int sound, int var);
 	void setSoundVar(int sound, int var, int val);
-	void playHESound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
+	void triggerDigitalSound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
 	void handleSoundFrame();
 	void unqueueSoundCallbackScripts();
 	void checkSoundTimeouts();

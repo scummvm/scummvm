@@ -1288,7 +1288,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	} else if (talkstopKeyEnabled && lastKeyHit.ascii == '.') {
 		_talkDelay = 0;
-		if (_sound->_sfxMode & 2)
+		if (_sound->_digiSndMode & DIGI_SND_MODE_TALKIE)
 			stopTalk();
 
 	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.hasFlags(0))) {

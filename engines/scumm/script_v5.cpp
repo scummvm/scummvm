@@ -2641,7 +2641,7 @@ void ScummEngine_v5::o5_startMusic() {
 		debugC(DEBUG_GENERAL,"o5_startMusic(%d)", b);
 		setResult(result);
 	} else {
-		_sound->addSoundToQueue(getVarOrDirectByte(PARAM_1));
+		_sound->startSound(getVarOrDirectByte(PARAM_1));
 	}
 }
 
@@ -2669,7 +2669,7 @@ void ScummEngine_v5::o5_startSound() {
 
 	if (VAR_MUSIC_TIMER != 0xFF)
 		VAR(VAR_MUSIC_TIMER) = 0;
-	_sound->addSoundToQueue(sound);
+	_sound->startSound(sound);
 }
 
 void ScummEngine_v5::o5_stopMusic() {

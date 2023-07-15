@@ -676,7 +676,7 @@ void ScummEngine_v7::CHARSET_1() {
 		return;
 
 	if ((!usingOldSystem && VAR(VAR_HAVE_MSG)) || (usingOldSystem && _haveMsg != 1)) {
-		if ((_sound->_sfxMode & 2) == 0) {
+		if ((_sound->_digiSndMode & DIGI_SND_MODE_TALKIE) == 0) {
 			stopTalk();
 		}
 		return;
