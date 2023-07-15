@@ -62,6 +62,9 @@ void gui_system_event_handler() {
 	if (!_G(vmng_Initted))
 		return;
 
+	// Allow pending events to be processed
+	g_events->process();
+
 	// Deal with mouse events first..
 	_G(mouseX) = _G(MouseState).CursorColumn;
 	_G(mouseY) = _G(MouseState).CursorRow;

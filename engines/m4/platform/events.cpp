@@ -82,7 +82,6 @@ Events::~Events() {
 
 void Events::process() {
 	pollEvents();
-
 }
 
 void Events::pollEvents() {
