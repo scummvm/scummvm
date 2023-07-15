@@ -35,6 +35,7 @@
 
 enum {
 	kHelpCmd = 'Help',
+	kOnscreenOpacityChanged = 'osoc',
 };
 
 class IOS7OptionsWidget final : public GUI::OptionsContainerWidget {
@@ -58,6 +59,9 @@ private:
 #endif
 
 	GUI::CheckboxWidget *_onscreenCheckbox;
+	GUI::StaticTextWidget *_onscreenOpacityDesc;
+	GUI::SliderWidget *_onscreenOpacitySlider;
+	GUI::StaticTextWidget *_onscreenOpacityLabel;
 	GUI::CheckboxWidget *_touchpadCheckbox;
 	GUI::CheckboxWidget *_clickAndDragCheckbox;
 	GUI::CheckboxWidget *_keyboardFnBarCheckbox;
@@ -77,6 +81,11 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControl", _("Show On-screen control (iOS 15 and later)"));
+	_onscreenOpacityDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControlOpacity", _("Control opacity"));
+	_onscreenOpacitySlider = new GUI::SliderWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControlOpacitySlider", _("Control opacity"), kOnscreenOpacityChanged);
+	_onscreenOpacityLabel = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControlOpacityLabel", Common::U32String(" "), Common::U32String(), GUI::ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
+	_onscreenOpacitySlider->setMinValue(1);
+	_onscreenOpacitySlider->setMaxValue(10);
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.TouchpadMouseMode", _("Touchpad mouse mode"));
 	_clickAndDragCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
 	_keyboardFnBarCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.KeyboardFunctionBar", _("Show keyboard function bar"));
@@ -123,6 +132,12 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("OnScreenControl", "Checkbox")
+	        .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	            .addPadding(0, 0, 0, 0)
+	            .addWidget("OnScreenControlOpacity", "OptionsLabel")
+	            .addWidget("OnScreenControlOpacitySlider", "Slider")
+	            .addWidget("OnScreenControlOpacityLabel", "OptionsLabel")
+	        .closeLayout()
 	            .addWidget("TouchpadMouseMode", "Checkbox")
 	            .addWidget("ClickAndDragMode", "Checkbox")
 	            .addWidget("KeyboardFunctionBar", "Checkbox")
@@ -184,6 +199,12 @@ void IOS7OptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		help.runModal();
 		break;
 	}
+	case kOnscreenOpacityChanged: {
+		const int newValue = _onscreenOpacitySlider->getValue();
+		_onscreenOpacityLabel->setValue(newValue);
+		_onscreenOpacityLabel->markAsDirty();
+		break;
+	}
 	default:
 		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
 	}
@@ -230,6 +251,8 @@ void IOS7OptionsWidget::load() {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
+	_onscreenOpacitySlider->setValue(ConfMan.getInt("onscreen_control_opacity", _domain));
+	_onscreenOpacityLabel->setValue(_onscreenOpacitySlider->getValue());
 	_touchpadCheckbox->setState(ConfMan.getBool("touchpad_mode", _domain));
 	_clickAndDragCheckbox->setState(ConfMan.getBool("clickanddrag_mode", _domain));
 	_keyboardFnBarCheckbox->setState(ConfMan.getBool("keyboard_fn_bar", _domain));
@@ -247,6 +270,7 @@ bool IOS7OptionsWidget::save() {
 
 	if (_enabled) {
 		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
+		ConfMan.setInt("onscreen_control_opacity", _onscreenOpacitySlider->getValue(), _domain);
 		ConfMan.setBool("touchpad_mode", _touchpadCheckbox->getState(), _domain);
 		ConfMan.setBool("clickanddrag_mode", _clickAndDragCheckbox->getState(), _domain);
 		ConfMan.setBool("keyboard_fn_bar", _keyboardFnBarCheckbox->getState(), _domain);
@@ -259,6 +283,7 @@ bool IOS7OptionsWidget::save() {
 #endif
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
+		ConfMan.removeKey("onscreen_control_opacity", _domain);
 		ConfMan.removeKey("touchpad_mode", _domain);
 		ConfMan.removeKey("clickanddrag_mode", _domain);
 		ConfMan.removeKey("keyboard_fn_bar", _domain);
@@ -276,6 +301,7 @@ bool IOS7OptionsWidget::save() {
 
 bool IOS7OptionsWidget::hasKeys() {
 	bool hasKeys = ConfMan.hasKey("onscreen_control", _domain) ||
+	ConfMan.hasKey("onscreen_control_opacity", _domain) ||
 	ConfMan.hasKey("touchpad_mode", _domain) ||
 	ConfMan.hasKey("clickanddrag_mode", _domain);
 
@@ -296,11 +322,20 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	// On-screen controls (virtual controller is supported in iOS 15 and later)
 	if (@available(iOS 15.0, *)) {
 		_onscreenCheckbox->setEnabled(e);
+		_onscreenOpacityDesc->setEnabled(e);
+		_onscreenOpacitySlider->setEnabled(e);
+		_onscreenOpacityLabel->setEnabled(e);
 	} else {
 		_onscreenCheckbox->setEnabled(false);
+		_onscreenOpacityDesc->setEnabled(false);
+		_onscreenOpacitySlider->setEnabled(false);
+		_onscreenOpacityLabel->setEnabled(false);
 	}
 #else
 	_onscreenCheckbox->setEnabled(false);
+	_onscreenOpacityDesc->setEnabled(false);
+	_onscreenOpacitySlider->setEnabled(false);
+	_onscreenOpacityLabel->setEnabled(false);
 #endif
 #if TARGET_OS_IOS
 	_touchpadCheckbox->setEnabled(e);
@@ -326,6 +361,7 @@ GUI::OptionsContainerWidget *OSystem_iOS7::buildBackendOptionsWidget(GUI::GuiObj
 
 void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("onscreen_control", false);
+	ConfMan.registerDefault("onscreen_control_opacity", 6);
 	ConfMan.registerDefault("touchpad_mode", !iOS7_isBigDevice());
 	ConfMan.registerDefault("clickanddrag_mode", false);
 	ConfMan.registerDefault("keyboard_fn_bar", true);
