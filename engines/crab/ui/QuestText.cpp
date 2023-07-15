@@ -52,12 +52,12 @@ void QuestText::load(rapidxml::xml_node<char> *node) {
 
 	if (nodeValid("prev", node)) {
 		prev.load(node->first_node("prev"));
-		prev.hotkey.set(IU_PAGE_PREV);
+		prev._hotkey.set(IU_PAGE_PREV);
 	}
 
 	if (nodeValid("next", node)) {
 		next.load(node->first_node("next"));
-		next.hotkey.set(IU_PAGE_NEXT);
+		next._hotkey.set(IU_PAGE_NEXT);
 	}
 
 	if (nodeValid("status", node))

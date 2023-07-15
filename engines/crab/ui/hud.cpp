@@ -76,7 +76,7 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 
 		// Create a copy of all the tooltips
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
-			tooltip.push_back(i->tooltip.text);
+			tooltip.push_back(i->_tooltip.text);
 
 		SetTooltip();
 	}
@@ -109,7 +109,7 @@ void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
 }
 
 void HUD::internalEvents(bool ShowMap) {
-	menu.element[HS_MAP].visible = ShowMap;
+	menu.element[HS_MAP]._visible = ShowMap;
 
 	if (timer.TargetReached()) {
 		clip.x += clip.w;
@@ -166,9 +166,9 @@ void HUD::State(const int &val) {
 void HUD::SetTooltip() {
 	unsigned int count = 0;
 	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
-		i->tooltip.text = tooltip[count] + " (" + i->hotkey.name() + ")";
+		i->_tooltip.text = tooltip[count] + " (" + i->_hotkey.name() + ")";
 
-	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->getAssociatedKey(IG_PAUSE) + ")";
+	menu.element[HS_PAUSE]._tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->getAssociatedKey(IG_PAUSE) + ")";
 }
 
 void HUD::setUI() {

@@ -58,12 +58,12 @@ void TraitButton::draw(const int &XOffset, const int &YOffset, Rect *clip) {
 
 void TraitButton::Cache(const pyrodactyl::people::Trait &trait) {
 	trait_img = trait.img;
-	caption.text = trait.name;
+	_caption.text = trait.name;
 }
 
 void TraitButton::Empty() {
 	trait_img = 0;
-	caption.text = "";
+	_caption.text = "";
 }
 
 } // End of namespace Crab

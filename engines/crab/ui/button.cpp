@@ -47,124 +47,124 @@ using namespace pyrodactyl::text;
 // Purpose: Constructor
 //------------------------------------------------------------------------
 Button::Button() {
-	visible = false;
-	canmove = false;
-	se_click = -1;
-	se_hover = -1;
-	hover_prev = false;
+	_visible = false;
+	_canmove = false;
+	_seClick = -1;
+	_seHover = -1;
+	_hoverPrev = false;
 	reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Load a new Button from a file
 //------------------------------------------------------------------------
 void Button::load(rapidxml::xml_node<char> *node, const bool &echo) {
-	img.load(node, echo);
-	Element::load(node, img.normal, echo);
+	_img.load(node, echo);
+	Element::load(node, _img._normal, echo);
 
-	loadNum(se_click, "click", node, echo);
-	loadNum(se_hover, "hover", node, echo);
+	loadNum(_seClick, "click", node, echo);
+	loadNum(_seHover, "hover", node, echo);
 
 	if (nodeValid("hotkey", node, false))
-		hotkey.load(node->first_node("hotkey"));
+		_hotkey.load(node->first_node("hotkey"));
 
-	tooltip.load(node->first_node("tooltip"), this);
-	caption.load(node->first_node("caption"), this);
+	_tooltip.load(node->first_node("tooltip"), this);
+	_caption.load(node->first_node("caption"), this);
 
-	visible = true;
-	canmove = false;
+	_visible = true;
+	_canmove = false;
 	reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Load a new Button
 //------------------------------------------------------------------------
-void Button::Init(const Button &ref, const int &XOffset, const int &YOffset) {
-	img = ref.img;
-	Element::Init(ref, img.normal, XOffset, YOffset);
-	se_click = ref.se_click;
-	se_hover = ref.se_hover;
+void Button::init(const Button &ref, const int &xOffset, const int &yOffset) {
+	_img = ref._img;
+	Element::init(ref, _img._normal, xOffset, yOffset);
+	_seClick = ref._seClick;
+	_seHover = ref._seHover;
 
-	caption.Init(ref.caption, XOffset, YOffset);
-	tooltip.Init(ref.tooltip, XOffset, YOffset);
+	_caption.Init(ref._caption, xOffset, yOffset);
+	_tooltip.Init(ref._tooltip, xOffset, yOffset);
 
-	visible = true;
-	canmove = false;
+	_visible = true;
+	_canmove = false;
 	reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Reset the button
 //------------------------------------------------------------------------
 void Button::reset() {
-	mousepressed = false;
-	hover_mouse = false;
-	hover_key = false;
+	_mousePressed = false;
+	_hoverMouse = false;
+	_hoverKey = false;
 }
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Button::draw(const int &XOffset, const int &YOffset, Rect *clip) {
-	if (visible) {
-		if (mousepressed) {
-			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.select, clip);
+void Button::draw(const int &xOffset, const int &yOffset, Rect *clip) {
+	if (_visible) {
+		if (_mousePressed) {
+			g_engine->_imageManager->draw(x + xOffset, y + yOffset, _img._select, clip);
 
-			tooltip.draw(XOffset, YOffset);
-			caption.draw(true, XOffset, YOffset);
-		} else if (hover_mouse || hover_key) {
-			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.hover, clip);
+			_tooltip.draw(xOffset, yOffset);
+			_caption.draw(true, xOffset, yOffset);
+		} else if (_hoverMouse || _hoverKey) {
+			g_engine->_imageManager->draw(x + xOffset, y + yOffset, _img._hover, clip);
 
-			tooltip.draw(XOffset, YOffset);
-			caption.draw(true, XOffset, YOffset);
+			_tooltip.draw(xOffset, yOffset);
+			_caption.draw(true, xOffset, yOffset);
 		} else {
-			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.normal, clip);
-			caption.draw(false, XOffset, YOffset);
+			g_engine->_imageManager->draw(x + xOffset, y + yOffset, _img._normal, clip);
+			_caption.draw(false, xOffset, yOffset);
 		}
 	}
 }
 
-void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
-	if (visible) {
-		if (mousepressed) {
-			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.select, clip);
-			caption.draw(true, XOffset, YOffset);
-		} else if (hover_mouse || hover_key) {
-			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.hover, clip);
-			caption.draw(true, XOffset, YOffset);
+void Button::imageCaptionOnlyDraw(const int &xOffset, const int &yOffset, Rect *clip) {
+	if (_visible) {
+		if (_mousePressed) {
+			g_engine->_imageManager->draw(x + xOffset, y + yOffset, _img._select, clip);
+			_caption.draw(true, xOffset, yOffset);
+		} else if (_hoverMouse || _hoverKey) {
+			g_engine->_imageManager->draw(x + xOffset, y + yOffset, _img._hover, clip);
+			_caption.draw(true, xOffset, yOffset);
 		} else {
-			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.normal, clip);
-			caption.draw(false, XOffset, YOffset);
+			g_engine->_imageManager->draw(x + xOffset, y + yOffset, _img._normal, clip);
+			_caption.draw(false, xOffset, yOffset);
 		}
 	}
 }
 
-void Button::HoverInfoOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
-	if (visible) {
-		if (mousepressed || hover_mouse || hover_key)
-			tooltip.draw(XOffset, YOffset);
+void Button::hoverInfoOnlyDraw(const int &xOffset, const int &yOffset, Rect *clip) {
+	if (_visible) {
+		if (_mousePressed || _hoverMouse || _hoverKey)
+			_tooltip.draw(xOffset, yOffset);
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle input and stuff
 //------------------------------------------------------------------------
-ButtonAction Button::handleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+ButtonAction Button::handleEvents(const Common::Event &Event, const int &xOffset, const int &yOffset) {
 	Rect dim = *this;
-	dim.x += XOffset;
-	dim.y += YOffset;
+	dim.x += xOffset;
+	dim.y += yOffset;
 
-	if (visible) {
+	if (_visible) {
 		if (dim.Contains(g_engine->_mouse->_motion.x, g_engine->_mouse->_motion.y)) {
-			hover_mouse = true;
+			_hoverMouse = true;
 
-			if (!hover_prev) {
-				hover_prev = true;
-				g_engine->_musicManager->PlayEffect(se_hover, 0);
+			if (!_hoverPrev) {
+				_hoverPrev = true;
+				g_engine->_musicManager->PlayEffect(_seHover, 0);
 			}
 		} else {
-			hover_prev = false;
-			hover_mouse = false;
+			_hoverPrev = false;
+			_hoverMouse = false;
 		}
 
 		if (Event.type == Common::EVENT_MOUSEMOVE) {
-			if (canmove && mousepressed) {
+			if (_canmove && _mousePressed) {
 				x += g_engine->_mouse->_rel.x;
 				y += g_engine->_mouse->_rel.y;
 				return BUAC_GRABBED;
@@ -172,19 +172,19 @@ ButtonAction Button::handleEvents(const Common::Event &Event, const int &XOffset
 		} else if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
 			// The g_engine->_mouse button pressed, then released, comprises of a click action
 			if (dim.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y))
-				mousepressed = true;
-		} else if ((Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP) && mousepressed) {
+				_mousePressed = true;
+		} else if ((Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP) && _mousePressed) {
 			reset();
 			if (dim.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
-				mousepressed = false;
+				_mousePressed = false;
 				if (Event.type == Common::EVENT_LBUTTONUP) {
-					g_engine->_musicManager->PlayEffect(se_click, 0);
+					g_engine->_musicManager->PlayEffect(_seClick, 0);
 					return BUAC_LCLICK;
 				} else if (Event.type == Common::EVENT_RBUTTONUP)
 					return BUAC_RCLICK;
 			}
-		} else if (hotkey.handleEvents(Event)) {
-			g_engine->_musicManager->PlayEffect(se_click, 0);
+		} else if (_hotkey.handleEvents(Event)) {
+			g_engine->_musicManager->PlayEffect(_seClick, 0);
 			return BUAC_LCLICK;
 		}
 	}
@@ -247,8 +247,8 @@ ButtonAction Button::handleEvents(const SDL_Event &Event, const int &XOffset, co
 void Button::setUI(Rect *parent) {
 	Element::setUI(parent);
 
-	tooltip.setUI(this);
-	caption.setUI(this);
+	_tooltip.setUI(this);
+	_caption.setUI(this);
 }
 
 } // End of namespace Crab

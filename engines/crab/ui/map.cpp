@@ -159,7 +159,7 @@ void Map::Center(const Vector2i &vec) {
 void Map::Validate() {
 	// Make all scroll buttons visible first
 	for (auto &i : scroll.element)
-		i.visible = true;
+		i._visible = true;
 
 	// Keep camera in bounds
 	if (camera.x + camera.w > size.x)
@@ -172,10 +172,10 @@ void Map::Validate() {
 		camera.y = 0;
 
 	// decide visibility of scroll buttons
-	scroll.element[DIRECTION_RIGHT].visible = !(camera.x == size.x - camera.w);
-	scroll.element[DIRECTION_DOWN].visible = !(camera.y == size.y - camera.h);
-	scroll.element[DIRECTION_LEFT].visible = !(camera.x == 0);
-	scroll.element[DIRECTION_UP].visible = !(camera.y == 0);
+	scroll.element[DIRECTION_RIGHT]._visible = !(camera.x == size.x - camera.w);
+	scroll.element[DIRECTION_DOWN]._visible = !(camera.y == size.y - camera.h);
+	scroll.element[DIRECTION_LEFT]._visible = !(camera.x == 0);
+	scroll.element[DIRECTION_UP]._visible = !(camera.y == 0);
 }
 
 //------------------------------------------------------------------------
@@ -335,7 +335,7 @@ void Map::internalEvents(pyrodactyl::event::Info &info) {
 	Validate();
 
 	for (auto &i : travel.element)
-		i.visible = i.x >= camera.x && i.y >= camera.y;
+		i._visible = i.x >= camera.x && i.y >= camera.y;
 
 	marker.internalEvents(pos, player_pos, camera, bounds);
 }
@@ -416,7 +416,7 @@ void Map::SelectDest(const Common::String &name) {
 void Map::Update(pyrodactyl::event::Info &info) {
 	for (auto &i : travel.element) {
 		i.unlock.evaluate(info);
-		i.visible = i.unlock.result();
+		i._visible = i.unlock.result();
 	}
 }
 

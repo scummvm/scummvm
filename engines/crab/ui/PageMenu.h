@@ -111,7 +111,7 @@ public:
 	const int &CurX(const int &count) { return menu[current_page].element[count].x; }
 	const int &CurY(const int &count) { return menu[current_page].element[count].y; }
 
-	void Image(const int &slot, const int &page, ButtonImage &bi) { menu[page].element[slot].Img(bi); }
+	void Image(const int &slot, const int &page, ButtonImage &bi) { menu[page].element[slot].img(bi); }
 
 	void AssignPaths() {
 		for (auto m = menu.begin(); m != menu.end(); ++m)
@@ -144,12 +144,12 @@ public:
 		if (nodeValid(node)) {
 			if (nodeValid("prev", node)) {
 				prev.load(node->first_node("prev"));
-				prev.hotkey.set(IU_PREV);
+				prev._hotkey.set(IU_PREV);
 			}
 
 			if (nodeValid("next", node)) {
 				next.load(node->first_node("next"));
-				next.hotkey.set(IU_NEXT);
+				next._hotkey.set(IU_NEXT);
 			}
 
 			if (nodeValid("reference", node))
@@ -179,7 +179,7 @@ public:
 		}
 
 		T b;
-		b.Init(ref, inc.x * (slot % cols), inc.y * (slot / cols));
+		b.init(ref, inc.x * (slot % cols), inc.y * (slot / cols));
 		menu[page].element.push_back(b);
 		++slot;
 

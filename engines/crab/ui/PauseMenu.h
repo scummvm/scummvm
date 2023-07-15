@@ -79,8 +79,8 @@ public:
 	~PauseMenu(void) {}
 
 	void UpdateMode(const bool &ironman) {
-		menu.element[PS_SAVE - 1].visible = !ironman;
-		menu.element[PS_LOAD - 1].visible = !ironman;
+		menu.element[PS_SAVE - 1]._visible = !ironman;
+		menu.element[PS_LOAD - 1]._visible = !ironman;
 	}
 
 	void load(rapidxml::xml_node<char> *node);

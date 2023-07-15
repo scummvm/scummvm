@@ -463,11 +463,11 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 	me_main.UseKeyboard((state == STATE_NORMAL));
 
 	// Continue button is only enabled if there is a save to load
-	me_main.element[0].visible = !g_engine->_loadMenu->Empty();
+	me_main.element[0]._visible = !g_engine->_loadMenu->Empty();
 
 	// Enable credits and quit button if outside all menus, otherwise disable it
-	me_main.element[6].visible = (state == STATE_NORMAL);
-	me_main.element[7].visible = (state == STATE_NORMAL);
+	me_main.element[6]._visible = (state == STATE_NORMAL);
+	me_main.element[7]._visible = (state == STATE_NORMAL);
 
 	// If switching to help screen, load latest image otherwise remove it from memory
 	if (state == STATE_HELP)

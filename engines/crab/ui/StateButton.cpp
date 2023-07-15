@@ -37,7 +37,7 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
 void StateButton::Init(const StateButton &ref, const int &XOffset, const int &YOffset) {
-	Button::Init(ref, XOffset, YOffset);
+	Button::init(ref, XOffset, YOffset);
 	img_set = ref.img_set;
 	col_normal = ref.col_normal;
 	col_select = ref.col_select;
@@ -46,9 +46,9 @@ void StateButton::Init(const StateButton &ref, const int &XOffset, const int &YO
 void StateButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	Button::load(node, echo);
 
-	img_set.normal = img;
-	col_normal.col = caption.col;
-	col_normal.col_s = caption.col_s;
+	img_set.normal = _img;
+	col_normal.col = _caption.col;
+	col_normal.col_s = _caption.col_s;
 
 	if (nodeValid("select", node, false)) {
 		rapidxml::xml_node<char> *selnode = node->first_node("select");
@@ -57,34 +57,34 @@ void StateButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 		loadNum(col_select.col, "color", selnode);
 		loadNum(col_select.col_s, "color_s", selnode);
 	} else {
-		img_set.select = img;
-		col_select.col = caption.col;
-		col_select.col_s = caption.col_s;
+		img_set.select = _img;
+		col_select.col = _caption.col;
+		col_select.col_s = _caption.col_s;
 	}
 }
 
 void StateButton::State(const bool val) {
 	if (val) {
-		img = img_set.select;
-		caption.col = col_select.col;
-		caption.col_s = col_select.col_s;
+		_img = img_set.select;
+		_caption.col = col_select.col;
+		_caption.col_s = col_select.col_s;
 	} else {
-		img = img_set.normal;
-		caption.col = col_normal.col;
-		caption.col_s = col_normal.col_s;
+		_img = img_set.normal;
+		_caption.col = col_normal.col;
+		_caption.col_s = col_normal.col_s;
 	}
 
 	// Images might be different in size
-	w = g_engine->_imageManager->getTexture(img.normal).w();
-	h = g_engine->_imageManager->getTexture(img.normal).h();
+	w = g_engine->_imageManager->getTexture(_img._normal).w();
+	h = g_engine->_imageManager->getTexture(_img._normal).h();
 }
 
 void StateButton::Img(const StateButtonImage &sbi) {
 	// Find which is the current image and set it
-	if (img == img_set.normal)
-		img = sbi.normal;
+	if (_img == img_set.normal)
+		_img = sbi.normal;
 	else
-		img = sbi.select;
+		_img = sbi.select;
 
 	img_set = sbi;
 }
