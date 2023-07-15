@@ -63,7 +63,7 @@ void ItemSlot::load(rapidxml::xml_node<char> *node) {
 // Purpose: Initialize from reference item slot
 //------------------------------------------------------------------------
 void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset) {
-	StateButton::Init(ref, XOffset, YOffset);
+	StateButton::init(ref, XOffset, YOffset);
 	_canmove = ref._canmove;
 	no_type = ref.no_type;
 	category = ref.category;

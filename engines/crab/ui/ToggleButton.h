@@ -42,29 +42,30 @@ namespace ui {
 // Similar to the radio button / checkbox UI element in windows/web
 class ToggleButton : public Button {
 	// The images corresponding to the state
-	ImageKey on, off;
+	ImageKey _on, _off;
 
 	// The offset at which the on/off image is drawn
-	Vector2i offset;
+	Vector2i _offset;
 
 public:
 	// The state of the button - true is on, false is off
-	bool state;
+	bool _state;
 
 	ToggleButton() {
-		state = false;
-		on = 0;
-		off = 0;
+		_state = false;
+		_on = 0;
+		_off = 0;
 	}
+
 	~ToggleButton() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
 
 #if 0
 	ButtonAction handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #endif
-	ButtonAction handleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0);
+	ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

@@ -42,44 +42,48 @@ namespace ui {
 class AlphaImage {
 	// The image used - we don't use the image manager
 	// because we don't change the alpha for those images
-	ImageKey img;
+	ImageKey _img;
 
 	// The information for drawing the image
-	Element pos;
+	Element _pos;
 
 	// The information related to alpha modulation of the image
 	struct AlphaVal {
-		int cur, min, max;
+		int _cur, _min, _max;
 
 		// Are we increasing or decreasing the alpha
-		bool inc;
+		bool _inc;
 
 		// By how much do we change the alpha every update
-		int change;
+		int _change;
 
 		AlphaVal() {
-			cur = 255;
-			min = 255;
-			max = 255;
-			inc = true;
-			change = 0;
+			_cur = 255;
+			_min = 255;
+			_max = 255;
+			_inc = true;
+			_change = 0;
 		}
 	} alpha;
 
 public:
 	AlphaImage() {}
-	AlphaImage(rapidxml::xml_node<char> *node) { load(node); }
+	AlphaImage(rapidxml::xml_node<char> *node) {
+		load(node);
+	}
 
 	~AlphaImage() {}
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 
-	void draw(const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &xOffset = 0, const int &yOffset = 0);
 
 	// This is used to vary the alpha
 	void internalEvents();
 
-	void setUI() { pos.setUI(); }
+	void setUI() {
+		_pos.setUI();
+	}
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

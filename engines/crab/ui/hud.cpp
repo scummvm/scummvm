@@ -160,7 +160,7 @@ HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Even
 void HUD::State(const int &val) {
 	int count = 0;
 	for (auto i = menu.element.begin(); i != menu.element.end(); ++i, ++count)
-		i->State(val == count);
+		i->state(val == count);
 }
 
 void HUD::SetTooltip() {

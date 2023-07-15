@@ -328,7 +328,7 @@ void Map::Move(const SDL_Event &Event) {
 //------------------------------------------------------------------------
 void Map::internalEvents(pyrodactyl::event::Info &info) {
 	// The map overlay and button state should be in sync
-	bu_overlay.state = overlay;
+	bu_overlay._state = overlay;
 
 	camera.x += vel.x;
 	camera.y += vel.y;
@@ -355,7 +355,7 @@ bool Map::handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event
 
 	Move(Event);
 	if (bu_overlay.handleEvents(Event) == BUAC_LCLICK)
-		overlay = bu_overlay.state;
+		overlay = bu_overlay._state;
 
 	return false;
 }

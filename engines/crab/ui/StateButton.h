@@ -39,26 +39,26 @@ namespace Crab {
 namespace pyrodactyl {
 namespace ui {
 struct StateButtonImage {
-	ButtonImage normal, select;
+	ButtonImage _normal, _select;
 
 	StateButtonImage() {}
 	StateButtonImage(rapidxml::xml_node<char> *node) {
 		if (nodeValid("normal", node))
-			normal.load(node->first_node("normal"));
+			_normal.load(node->first_node("normal"));
 
 		if (nodeValid("select", node, false))
-			select.load(node->first_node("select"));
+			_select.load(node->first_node("select"));
 		else
-			select = normal;
+			_select = _normal;
 	}
 };
 
 struct StateButtonColor {
-	int col, col_s;
+	int _col, _colS;
 
 	StateButtonColor() {
-		col = 0;
-		col_s = 0;
+		_col = 0;
+		_colS = 0;
 	}
 };
 
@@ -66,24 +66,26 @@ struct StateButtonColor {
 // Similar to the checkbox UI element in windows/web
 class StateButton : public Button {
 	// The two images
-	StateButtonImage img_set;
+	StateButtonImage _imgSet;
 
 	// The color for the caption when the image is selected
-	StateButtonColor col_normal, col_select;
+	StateButtonColor _colNormal, _colSelect;
 
 public:
 	StateButton() {}
 	~StateButton() {}
 
-	void Init(const StateButton &ref, const int &XOffset = 0, const int &YOffset = 0);
+	void init(const StateButton &ref, const int &xOffset = 0, const int &yOffset = 0);
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 
 	// The state of the button - false is original image, true is second image
-	void State(const bool val);
-	bool State() { return (_img == img_set.select); }
+	void state(const bool val);
+	bool state() {
+		return (_img == _imgSet._select);
+	}
 
 	// Set the image
-	void Img(const StateButtonImage &sbi);
+	void img(const StateButtonImage &sbi);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

@@ -60,7 +60,7 @@ public:
 
 	void AddButton(const Common::String &name, const int &x, const int &y) {
 		StateButton b;
-		b.Init(ref, x, y);
+		b.init(ref, x, y);
 		b._tooltip.text = name;
 		menu.element.push_back(b);
 	}
@@ -70,7 +70,7 @@ public:
 
 	void SelectDest(const Common::String &name) {
 		for (auto &i : menu.element)
-			i.State(i._tooltip.text == name);
+			i.state(i._tooltip.text == name);
 	}
 
 	void Erase(const Common::String &name) {

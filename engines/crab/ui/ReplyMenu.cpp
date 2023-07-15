@@ -67,7 +67,7 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 		bool play_sound = false;
 
 		// Loop through any opinion changes required
-		for (auto &i : dat._reply[element[choice].index]._change) {
+		for (auto &i : dat._reply[element[choice]._index]._change) {
 			if (i._id == cur_id) {
 				// This is a special case because we also need to update the opinion bars
 				oh.OpinionChange(info, i._id, OPI_LIKE, i._val[OPI_LIKE]);
@@ -94,7 +94,7 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 		}
 #endif
 
-		return dat._reply[element[choice].index]._nextid;
+		return dat._reply[element[choice]._index]._nextid;
 	}
 
 	return -1;
@@ -154,7 +154,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 	for (auto i = dat._reply.begin(); i != dat._reply.end() && reply_count < dat._reply.size(); ++i, ++reply_count) {
 		if (i->_unlock.evaluate(info)) {
 			element[element_count]._visible = true;
-			element[element_count].index = reply_count;
+			element[element_count]._index = reply_count;
 
 			tone.value[element_count] = dat._reply[reply_count]._tone;
 

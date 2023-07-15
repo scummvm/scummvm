@@ -39,55 +39,55 @@ using namespace pyrodactyl::image;
 
 void ReplyButton::load(rapidxml::xml_node<char> *node) {
 	Button::load(node);
-	orig = *this;
+	_orig = *this;
 
 	if (nodeValid("text", node)) {
 		rapidxml::xml_node<char> *tenode = node->first_node("text");
 
-		loadColor(col_b, tenode->first_node("col_b"));
-		loadColor(col_s, tenode->first_node("col_s"));
-		loadColor(col_h, tenode->first_node("col_h"));
-		loadNum(font, "font", tenode);
-		loadAlign(align, tenode);
+		loadColor(_colB, tenode->first_node("col_b"));
+		loadColor(_colS, tenode->first_node("col_s"));
+		loadColor(_colH, tenode->first_node("col_h"));
+		loadNum(_font, "font", tenode);
+		loadAlign(_replyAlign, tenode);
 
 		if (nodeValid("line_size", tenode))
-			line_size.load(tenode->first_node("line_size"));
+			_lineSize.load(tenode->first_node("line_size"));
 	}
 }
 
-void ReplyButton::draw(const int &XOffset, const int &YOffset) {
+void ReplyButton::draw(const int &xOffset, const int &yOffset) {
 	if (_visible) {
 		if (_mousePressed)
-			g_engine->_textManager->draw(x + XOffset, y + YOffset, text, col_s, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->draw(x + xOffset, y + yOffset, _text, _colS, _font, _replyAlign, _lineSize.x, _lineSize.y);
 		else if (_hoverMouse || _hoverKey)
-			g_engine->_textManager->draw(x + XOffset, y + YOffset, text, col_h, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->draw(x + xOffset, y + yOffset, _text, _colH, _font, _replyAlign, _lineSize.x, _lineSize.y);
 		else
-			g_engine->_textManager->draw(x + XOffset, y + YOffset, text, col_b, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->draw(x + xOffset, y + yOffset, _text, _colB, _font, _replyAlign, _lineSize.x, _lineSize.y);
 	}
 }
 
-void ReplyButton::Cache(const Common::String &val, const int &spacing, const int &bottom_edge, Rect *parent) {
-	text = val;
+void ReplyButton::Cache(const Common::String &val, const int &spacing, const int &bottomEdge, Rect *parent) {
+	_text = val;
 
 	// Find out about the font
 	int width = 0, height = 0;
 #if 0
 	TTF_SizeText(g_engine->_textManager->GetFont(font), val, &width, &height);
 #endif
-	width = g_engine->_textManager->GetFont(font)->getStringWidth(val);
-	height = g_engine->_textManager->GetFont(font)->getFontHeight();
+	width = g_engine->_textManager->GetFont(_font)->getStringWidth(val);
+	height = g_engine->_textManager->GetFont(_font)->getFontHeight();
 
 	// Find out how many line sizes will the text take
-	int lines = ((text.size() - 1) / line_size.x) + 1;
+	int lines = ((_text.size() - 1) / _lineSize.x) + 1;
 
-	x = orig.x;
-	y = orig.y;
+	x = _orig.x;
+	y = _orig.y;
 	w = width;
 	h = height * lines;
 	setUI(parent);
 
-	if (orig.y < bottom_edge)
-		y = bottom_edge + spacing;
+	if (_orig.y < bottomEdge)
+		y = bottomEdge + spacing;
 }
 
 } // End of namespace Crab

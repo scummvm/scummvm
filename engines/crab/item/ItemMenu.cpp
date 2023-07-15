@@ -77,7 +77,7 @@ void ItemMenu::handleEvents(const Common::Event &Event, const int &XOffset, cons
 	if (result != -1) {
 		select_index = result;
 		for (unsigned int i = 0; i < element.size(); ++i)
-			element[i].State(i == (unsigned int)select_index);
+			element[i].state(i == (unsigned int)select_index);
 	}
 }
 

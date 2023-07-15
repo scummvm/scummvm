@@ -37,32 +37,32 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
-void TraitButton::Init(const TraitButton &ref, const int &XOffset, const int &YOffset) {
-	StateButton::Init(ref, XOffset, YOffset);
-	offset = ref.offset;
+void TraitButton::init(const TraitButton &ref, const int &xOffset, const int &yOffset) {
+	StateButton::init(ref, xOffset, yOffset);
+	_offset = ref._offset;
 }
 
 void TraitButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	StateButton::load(node, echo);
 
 	if (nodeValid("offset", node))
-		offset.load(node->first_node("offset"), echo);
+		_offset.load(node->first_node("offset"), echo);
 }
 
-void TraitButton::draw(const int &XOffset, const int &YOffset, Rect *clip) {
-	if (trait_img != 0)
-		g_engine->_imageManager->draw(x + offset.x, y + offset.y, trait_img);
+void TraitButton::draw(const int &xOffset, const int &yOffset, Rect *clip) {
+	if (_traitImg != 0)
+		g_engine->_imageManager->draw(x + _offset.x, y + _offset.y, _traitImg);
 
-	StateButton::draw(XOffset, YOffset, clip);
+	StateButton::draw(xOffset, yOffset, clip);
 }
 
-void TraitButton::Cache(const pyrodactyl::people::Trait &trait) {
-	trait_img = trait.img;
+void TraitButton::cache(const pyrodactyl::people::Trait &trait) {
+	_traitImg = trait.img;
 	_caption.text = trait.name;
 }
 
-void TraitButton::Empty() {
-	trait_img = 0;
+void TraitButton::empty() {
+	_traitImg = 0;
 	_caption.text = "";
 }
 

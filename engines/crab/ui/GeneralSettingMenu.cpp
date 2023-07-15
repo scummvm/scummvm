@@ -65,7 +65,7 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 
 	// Sync popup text value with actual value
 	for (auto &i : text_speed.element)
-		i.state = (i.val == g_engine->_screenSettings->text_speed);
+		i._state = (i._val == g_engine->_screenSettings->text_speed);
 }
 
 //------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void GeneralSettingMenu::handleEvents(const Common::Event &Event) {
 
 	int result = text_speed.handleEvents(Event);
 	if (result >= 0)
-		g_engine->_screenSettings->text_speed = text_speed.element[result].val;
+		g_engine->_screenSettings->text_speed = text_speed.element[result]._val;
 }
 
 #if 0
@@ -122,8 +122,8 @@ void GeneralSettingMenu::handleEvents(const SDL_Event &Event) {
 // Purpose: Sync our buttons with screen settings
 //------------------------------------------------------------------------
 void GeneralSettingMenu::internalEvents() {
-	save_on_exit.state = g_engine->_screenSettings->save_on_exit;
-	mouse_trap.state = g_engine->_screenSettings->mouse_trap;
+	save_on_exit._state = g_engine->_screenSettings->save_on_exit;
+	mouse_trap._state = g_engine->_screenSettings->mouse_trap;
 }
 
 //------------------------------------------------------------------------
