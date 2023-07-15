@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-11 12:36+0000\n"
+"POT-Creation-Date: 2023-07-15 09:24+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -557,7 +557,7 @@ msgstr "פלטפורמה:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2197
 #: backends/graphics/atari/atari-graphics.cpp:787
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "תצוגה"
 
@@ -1428,7 +1428,7 @@ msgstr "עדכון סוככים"
 msgid "Check for updates of shader packs"
 msgstr "בדיקת עדכונים של חבילות סוככים"
 
-#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
 msgstr "מצב מסך מלא"
 
@@ -3480,7 +3480,7 @@ msgid "Choose a new folder"
 msgstr "בחירת תיקיה חדשה"
 
 #: backends/graphics/atari/atari-graphics.cpp:791
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr "מיתוג תיקון יחס ממדים"
 
@@ -3559,29 +3559,29 @@ msgstr "מצב מתיחה"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:362
+#: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "תצלום מסך נשמר '%s'"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:371
+#: backends/graphics/sdl/sdl-graphics.cpp:372
 msgid "Could not save screenshot"
 msgstr "שמירת תצלום מסך"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
 msgstr "מצב חלון"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:84
+#: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:84
 msgid "Toggle fullscreen"
 msgstr "מיתוג מסך מלא"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:97
+#: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:97
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "מיתוג לכידת עכבר"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3594,27 +3594,27 @@ msgstr "מיתוג לכידת עכבר"
 msgid "Save screenshot"
 msgstr "שמירת תצלום מסך"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:455
 msgid "Toggle linear filtered scaling"
 msgstr "מיתוג התאמת קנה מידה לינארית"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:462
 msgid "Cycle through stretch modes"
 msgstr "מעבר בין מצבי מתיחה"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:468
 msgid "Increase the scale factor"
 msgstr "הגדלת קנה מידה"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:474
 msgid "Decrease the scale factor"
 msgstr "הקטנת קנה מידה"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 msgid "Switch to the next scaler"
 msgstr "מעבר אל מתאם קנה המידה הבא"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:485
+#: backends/graphics/sdl/sdl-graphics.cpp:486
 msgid "Switch to the previous scaler"
 msgstr "מעבר אל מתאם קנה המידה הקודם"
 

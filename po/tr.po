@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-11 12:36+0000\n"
+"POT-Creation-Date: 2023-07-15 09:24+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -559,7 +559,7 @@ msgstr "Platform:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2197
 #: backends/graphics/atari/atari-graphics.cpp:787
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "Grafik Ayarları"
 
@@ -1463,7 +1463,7 @@ msgstr "Güncelleme kontrolü:"
 msgid "Check for updates of shader packs"
 msgstr ""
 
-#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
 msgstr "Tam ekran modu"
 
@@ -3510,7 +3510,7 @@ msgid "Choose a new folder"
 msgstr "Yükleme için dosyayı seçin"
 
 #: backends/graphics/atari/atari-graphics.cpp:791
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
@@ -3594,31 +3594,31 @@ msgstr "Çekiştirme modu:"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:362
+#: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:371
+#: backends/graphics/sdl/sdl-graphics.cpp:372
 #, fuzzy
 msgid "Could not save screenshot"
 msgstr "Tam ekran ayarı uygulanamadı."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:419
 #, fuzzy
 msgid "Windowed mode"
 msgstr "Render modu:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:84
+#: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:84
 msgid "Toggle fullscreen"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:97
+#: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:97
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3631,29 +3631,29 @@ msgstr ""
 msgid "Save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:455
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "Grafik orantılama yapılırken doğrusal filtreleme"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:462
 msgid "Cycle through stretch modes"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:468
 msgid "Increase the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:474
 msgid "Decrease the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 #, fuzzy
 msgid "Switch to the next scaler"
 msgstr "Oyunu seç"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:485
+#: backends/graphics/sdl/sdl-graphics.cpp:486
 msgid "Switch to the previous scaler"
 msgstr ""
 

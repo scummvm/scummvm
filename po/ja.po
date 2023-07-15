@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-11 12:36+0000\n"
+"POT-Creation-Date: 2023-07-15 09:24+0000\n"
 "PO-Revision-Date: 2023-07-02 08:55+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -546,7 +546,7 @@ msgstr "プラットフォーム："
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2197
 #: backends/graphics/atari/atari-graphics.cpp:787
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "画像"
 
@@ -1421,7 +1421,7 @@ msgstr "シェーダーの更新"
 msgid "Check for updates of shader packs"
 msgstr "シェーダーパックの更新を確認"
 
-#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
 msgstr "全面モード"
 
@@ -3462,7 +3462,7 @@ msgid "Choose a new folder"
 msgstr "新規フォルダー選択"
 
 #: backends/graphics/atari/atari-graphics.cpp:791
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr "縦横比修正の切替"
 
@@ -3541,29 +3541,29 @@ msgstr "ストレッチモード"
 msgid "SDL Surface"
 msgstr "SDLサーフェス"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:362
+#: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "スクリーンショット'%s'を保存しました"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:371
+#: backends/graphics/sdl/sdl-graphics.cpp:372
 msgid "Could not save screenshot"
 msgstr "スクリーンショットを保存できませんでした"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
 msgstr "ウインドーモード"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:84
+#: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:84
 msgid "Toggle fullscreen"
 msgstr "全面モードの切替"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:97
+#: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:97
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "マウスキャプチャーの切替"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3576,27 +3576,27 @@ msgstr "マウスキャプチャーの切替"
 msgid "Save screenshot"
 msgstr "スクショを保存する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:455
 msgid "Toggle linear filtered scaling"
 msgstr "線形フィルタースケーリングの切り替え"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:462
 msgid "Cycle through stretch modes"
 msgstr "ストレッチモードを繰り返し切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:468
 msgid "Increase the scale factor"
 msgstr "スケールを拡大する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:474
 msgid "Decrease the scale factor"
 msgstr "スケールを縮小する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 msgid "Switch to the next scaler"
 msgstr "次のスケーラーに切り替え"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:485
+#: backends/graphics/sdl/sdl-graphics.cpp:486
 msgid "Switch to the previous scaler"
 msgstr "前のスケーラーに切り替え"
 

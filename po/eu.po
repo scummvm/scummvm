@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-11 12:36+0000\n"
+"POT-Creation-Date: 2023-07-15 09:24+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -554,7 +554,7 @@ msgstr "Plataforma:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2197
 #: backends/graphics/atari/atari-graphics.cpp:787
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "Grafikoak"
 
@@ -1458,7 +1458,7 @@ msgstr ""
 msgid "Check for updates of shader packs"
 msgstr "Eguneraketak bilatzen..."
 
-#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1662 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
 msgstr "Pantaila osoa"
 
@@ -3512,7 +3512,7 @@ msgid "Choose a new folder"
 msgstr "Aukeratu kargatzeko fitxategia"
 
 #: backends/graphics/atari/atari-graphics.cpp:791
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Txandakatu fFormatu-ratioaren zuzenketa"
@@ -3596,30 +3596,30 @@ msgstr "Helio modua"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:362
+#: backends/graphics/sdl/sdl-graphics.cpp:363
 #, fuzzy, c-format
 msgid "Saved screenshot '%s'"
 msgstr "Heldutako korritze barra gaituta"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:371
+#: backends/graphics/sdl/sdl-graphics.cpp:372
 #, fuzzy
 msgid "Could not save screenshot"
 msgstr "Heldutako korritze barra gaituta"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
 msgstr "Leiho modua"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:84
+#: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:84
 msgid "Toggle fullscreen"
 msgstr "Txandakatu pantaila osoa"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:97
+#: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:97
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Saguaren kaptura"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3633,31 +3633,31 @@ msgstr "Saguaren kaptura"
 msgid "Save screenshot"
 msgstr "Heldutako korritze barra gaituta"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:455
 msgid "Toggle linear filtered scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:462
 #, fuzzy
 msgid "Cycle through stretch modes"
 msgstr "Ezin izan da aldatu bideo modura : '"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:468
 #, fuzzy
 msgid "Increase the scale factor"
 msgstr "Eskala faktorea handitu / txikitu"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:474
 #, fuzzy
 msgid "Decrease the scale factor"
 msgstr "Eskala faktorea handitu / txikitu"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480
+#: backends/graphics/sdl/sdl-graphics.cpp:481
 #, fuzzy
 msgid "Switch to the next scaler"
 msgstr "Aldatu jokora"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:485
+#: backends/graphics/sdl/sdl-graphics.cpp:486
 msgid "Switch to the previous scaler"
 msgstr ""
 
