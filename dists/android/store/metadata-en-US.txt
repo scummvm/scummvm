@@ -16,30 +16,16 @@ ScummVM provides a way to play many classic graphical point-and-click adventure 
 
 You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.7.0/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
+A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.7.1/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
 
 https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
 *** Current release:
-2.7.0.5
+2.7.1
 
 *** Release notes (limit is 500 characters):
-- Support secure file access for SD Cards
-- Improved controller support
-- Added a log view under Global Options
-- Synched up the support of 3d games with the desktop version
-- Toggle between joystick, touchpad or direct mouse control on-the-fly
-
-Full release notes: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
-
-*** Beta release name:
-
-2.7.0.4 (beta 4)
-
-*** Beta release notes:
-<en-US>
 - Fixed a number of reported app crashes
-- Added ScummVM log view in Global Options Paths Tab
-- Implemented basic support for some TV remotes
-- Full release notes for 2.7.0 are at: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
-</en-US>
+- Improved multi-finger touch gesture support
+- Includes all fixes and improvements of the desktop version
+
+Full release notes: https://scummvm.org/frs/scummvm/2.7.1/ReleaseNotes.html
