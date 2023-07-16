@@ -36,7 +36,7 @@ public:
 	Section9();
 	virtual ~Section9() {}
 
-	void daemon_code() override;
+	void daemon() override;
 };
 
 } // namespace Rooms

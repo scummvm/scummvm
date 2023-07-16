@@ -30,7 +30,7 @@ Section9::Section9() : Rooms::Section() {
 	add(&_room951);
 }
 
-void Section9::daemon_code() {
+void Section9::daemon() {
 	switch (_G(kernel).trigger) {
 	case 9002:
 		_G(game).new_room = 902;

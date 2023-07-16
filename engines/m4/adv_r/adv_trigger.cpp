@@ -121,7 +121,7 @@ static bool kernel_trigger_dispatchx(int32 trigger_num) {
 		break;
 
 	case KT_DAEMON:
-		g_engine->daemon_code();
+		g_engine->game_daemon_code();
 		result = true;
 		break;
 

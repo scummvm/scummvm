@@ -59,6 +59,27 @@ void Sections::section_room_constructor() {
 	assert(_activeRoom);
 }
 
+void Sections::game_daemon_code() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+	_G(kernel).continue_handling_trigger = false;
+
+	room_daemon();
+
+	if (_G(kernel).continue_handling_trigger) {
+		_G(kernel).continue_handling_trigger = false;
+		daemon();
+	}
+
+	if (_G(kernel).continue_handling_trigger)
+		global_daemon();
+
+	if (_G(kernel).trigger == 32001) {
+		_G(game).room_id = -1;
+		_G(game).section_id = -1;
+		_G(game).previous_room = -2;
+	}
+}
+
 void Sections::m4SceneLoad() {
 	_G(between_rooms) = true;
 	_cameraShiftAmount = 0;
