@@ -316,4 +316,15 @@ void mouse_show() {
 	vmng_screen_show(_G(mouseScreenSource));
 }
 
+void mouse_lock_sprite(int32 mouseNum) {
+	_G(mouseIsLocked) = false;
+	mouse_set_sprite(mouseNum);
+	_G(mouseIsLocked) = true;
+}
+
+void mouse_unlock_sprite() {
+	_G(mouseIsLocked) = false;
+	mouse_set_sprite(_G(newMouseNum));
+}
+
 } // End of namespace M4

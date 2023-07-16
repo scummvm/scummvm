@@ -365,7 +365,7 @@ void Sections::pal_game_task() {
 	_G(midi).loop();
 
 	gui_system_event_handler();
-#ifdef TODO
+
 	if (conv_is_event_ready()) {
 		_G(player).command_ready = true;
 		term_message("conv parse row");
@@ -374,12 +374,14 @@ void Sections::pal_game_task() {
 
 		(void)conv_get_event();
 	}
-#endif
 
 	f_stream_Process(2);
 
 	if (_G(kernel).call_daemon_every_loop)
 		tick();
+
+	if (_G(editors_in_use) && (_G(editors_in_use) & 1))
+		scale_editor_draw();
 
 	if (_G(showMousePos))
 		update_mouse_pos_dialog();
