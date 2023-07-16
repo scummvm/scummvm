@@ -1,17 +1,29 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  ftrender.h                                                             */
 /*                                                                         */
 /*    FreeType renderer modules public interface (specification).          */
-/*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -29,40 +41,16 @@ namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
-
-/*************************************************************************/
-/*                                                                       */
-/* <Section>                                                             */
-/*    module_management                                                  */
-/*                                                                       */
-/*************************************************************************/
-
-
 /* create a new glyph object */
-typedef FT_Error
-(*FT_Glyph_InitFunc)( FT_Glyph      glyph,
-					  FT_GlyphSlot  slot );
+typedef FT_Error (*FT_Glyph_InitFunc)(FT_Glyph glyph, FT_GlyphSlot slot);
 
 /* destroys a given glyph object */
-typedef void
-(*FT_Glyph_DoneFunc)( FT_Glyph  glyph );
+typedef void (*FT_Glyph_DoneFunc)(FT_Glyph glyph);
 
-typedef void
-(*FT_Glyph_TransformFunc)( FT_Glyph    glyph,
-						   FT_Matrix*  matrix,
-						   FT_Vector*  delta );
-
-typedef void
-(*FT_Glyph_GetBBoxFunc)( FT_Glyph  glyph,
-						 FT_BBox*  abbox );
-
-typedef FT_Error
-(*FT_Glyph_CopyFunc)( FT_Glyph   source,
-					  FT_Glyph   target );
-
-typedef FT_Error
-(*FT_Glyph_PrepareFunc)( FT_Glyph      glyph,
-						 FT_GlyphSlot  slot );
+typedef void (*FT_Glyph_TransformFunc)(FT_Glyph glyph, FT_Matrix *matrix, FT_Vector *delta);
+typedef void (*FT_Glyph_GetBBoxFunc)(FT_Glyph glyph, FT_BBox *abbox);
+typedef FT_Error (*FT_Glyph_CopyFunc)(FT_Glyph source, FT_Glyph target);
+typedef FT_Error (*FT_Glyph_PrepareFunc)(FT_Glyph glyph, FT_GlyphSlot slot);
 
 /* deprecated */
 #define FT_Glyph_Init_Func       FT_Glyph_InitFunc
@@ -71,7 +59,6 @@ typedef FT_Error
 #define FT_Glyph_BBox_Func       FT_Glyph_GetBBoxFunc
 #define FT_Glyph_Copy_Func       FT_Glyph_CopyFunc
 #define FT_Glyph_Prepare_Func    FT_Glyph_PrepareFunc
-
 
 struct  FT_Glyph_Class_ {
 	FT_Long                 glyph_size;
@@ -84,30 +71,10 @@ struct  FT_Glyph_Class_ {
 	FT_Glyph_PrepareFunc    glyph_prepare;
 };
 
-
-typedef FT_Error
-(*FT_Renderer_RenderFunc)( FT_Renderer   renderer,
-						   FT_GlyphSlot  slot,
-						   FT_UInt       mode,
-						   FT_Vector*    origin );
-
-typedef FT_Error
-(*FT_Renderer_TransformFunc)( FT_Renderer   renderer,
-							  FT_GlyphSlot  slot,
-							  FT_Matrix*    matrix,
-							  FT_Vector*    delta );
-
-
-typedef void
-(*FT_Renderer_GetCBoxFunc)( FT_Renderer   renderer,
-							FT_GlyphSlot  slot,
-							FT_BBox*      cbox );
-
-
-typedef FT_Error
-(*FT_Renderer_SetModeFunc)( FT_Renderer  renderer,
-							FT_ULong     mode_tag,
-							FT_Pointer   mode_ptr );
+typedef FT_Error (*FT_Renderer_RenderFunc)(FT_Renderer renderer, FT_GlyphSlot slot, FT_UInt mode, FT_Vector *origin);
+typedef FT_Error (*FT_Renderer_TransformFunc)(FT_Renderer renderer, FT_GlyphSlot slot, FT_Matrix *matrix, FT_Vector *delta);
+typedef void (*FT_Renderer_GetCBoxFunc)(FT_Renderer renderer, FT_GlyphSlot slot, FT_BBox *cbox);
+typedef FT_Error (*FT_Renderer_SetModeFunc)(FT_Renderer renderer, FT_ULong mode_tag, FT_Pointer mode_ptr);
 
 /* deprecated identifiers */
 #define FTRenderer_render  FT_Renderer_RenderFunc
@@ -115,110 +82,26 @@ typedef FT_Error
 #define FTRenderer_getCBox  FT_Renderer_GetCBoxFunc
 #define FTRenderer_setMode  FT_Renderer_SetModeFunc
 
+typedef struct FT_Renderer_Class_ {
+	FT_Module_Class root;
 
-/*************************************************************************/
-/*                                                                       */
-/* <Struct>                                                              */
-/*    FT_Renderer_Class                                                  */
-/*                                                                       */
-/* <Description>                                                         */
-/*    The renderer module class descriptor.                              */
-/*                                                                       */
-/* <Fields>                                                              */
-/*    root         :: The root FT_Module_Class fields.                   */
-/*                                                                       */
-/*    glyph_format :: The glyph image format this renderer handles.      */
-/*                                                                       */
-/*    render_glyph :: A method used to render the image that is in a     */
-/*                    given glyph slot into a bitmap.                    */
-/*                                                                       */
-/*    set_mode     :: A method used to pass additional parameters.       */
-/*                                                                       */
-/*    raster_class :: For `FT2_1_3_GLYPH_FORMAT_OUTLINE' renderers only, this */
-/*                    is a pointer to its raster's class.                */
-/*                                                                       */
-/*    raster       :: For `FT2_1_3_GLYPH_FORMAT_OUTLINE' renderers only. this */
-/*                    is a pointer to the corresponding raster object,   */
-/*                    if any.                                            */
-/*                                                                       */
-typedef struct  FT_Renderer_Class_ {
-	FT_Module_Class       root;
+	FT_Glyph_Format glyph_format;
 
-	FT_Glyph_Format       glyph_format;
+	FT_Renderer_RenderFunc	  render_glyph;
+	FT_Renderer_TransformFunc transform_glyph;
+	FT_Renderer_GetCBoxFunc   get_glyph_cbox;
+	FT_Renderer_SetModeFunc   set_mode;
 
-	FT_Renderer_RenderFunc     render_glyph;
-	FT_Renderer_TransformFunc  transform_glyph;
-	FT_Renderer_GetCBoxFunc    get_glyph_cbox;
-	FT_Renderer_SetModeFunc    set_mode;
-
-	FT_Raster_Funcs*           raster_class;
+	FT_Raster_Funcs *raster_class;
 
 } FT_Renderer_Class;
 
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_Get_Renderer                                                    */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Retrieves the current renderer for a given glyph format.           */
-/*                                                                       */
-/* <Input>                                                               */
-/*    library :: A handle to the library object.                         */
-/*                                                                       */
-/*    format  :: The glyph format.                                       */
-/*                                                                       */
-/* <Return>                                                              */
-/*    A renderer handle.  0 if none found.                               */
-/*                                                                       */
-/* <Note>                                                                */
-/*    An error will be returned if a module already exists by that name, */
-/*    or if the module requires a version of FreeType that is too great. */
-/*                                                                       */
-/*    To add a new renderer, simply use FT_Add_Module().  To retrieve a  */
-/*    renderer by its name, use FT_Get_Module().                         */
-/*                                                                       */
-FT2_1_3_EXPORT( FT_Renderer )
-FT_Get_Renderer( FT_Library       library,
-				 FT_Glyph_Format  format );
+FT2_1_3_EXPORT(FT_Renderer)
+FT_Get_Renderer(FT_Library library, FT_Glyph_Format format);
 
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_Set_Renderer                                                    */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Sets the current renderer to use, and set additional mode.         */
-/*                                                                       */
-/* <InOut>                                                               */
-/*    library    :: A handle to the library object.                      */
-/*                                                                       */
-/* <Input>                                                               */
-/*    renderer   :: A handle to the renderer object.                     */
-/*                                                                       */
-/*    num_params :: The number of additional parameters.                 */
-/*                                                                       */
-/*    parameters :: Additional parameters.                               */
-/*                                                                       */
-/* <Return>                                                              */
-/*    FreeType error code.  0 means success.                             */
-/*                                                                       */
-/* <Note>                                                                */
-/*    In case of success, the renderer will be used to convert glyph     */
-/*    images in the renderer's known format into bitmaps.                */
-/*                                                                       */
-/*    This doesn't change the current renderer for other formats.        */
-/*                                                                       */
-FT2_1_3_EXPORT( FT_Error )
-FT_Set_Renderer( FT_Library     library,
-				 FT_Renderer    renderer,
-				 FT_UInt        num_params,
-				 FT_Parameter*  parameters );
-
-
-/* */
+FT2_1_3_EXPORT(FT_Error)
+FT_Set_Renderer(FT_Library library, FT_Renderer renderer, FT_UInt num_params, FT_Parameter *parameters);
 
 
 FT2_1_3_END_HEADER
@@ -227,6 +110,3 @@ FT2_1_3_END_HEADER
 } // End of namespace AGS3
 
 #endif /* AGS_LIB_FREETYPE_FTRENDER_H */
-
-
-/* END */

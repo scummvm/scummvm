@@ -1,17 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  ftsystem.c                                                             */
-/*                                                                         */
 /*    ANSI-specific FreeType low-level system interface (body).            */
-/*                                                                         */
-/*  Copyright 1996-2001, 2002 by                                           */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -38,260 +49,121 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-/*************************************************************************/
-/*                                                                       */
-/*                       MEMORY MANAGEMENT INTERFACE                     */
-/*                                                                       */
-/*************************************************************************/
+/**** MEMORY MANAGEMENT INTERFACE ***/
 
-/*************************************************************************/
-/*                                                                       */
-/* It is not necessary to do any error checking for the                  */
-/* allocation-related functions.  This will be done by the higher level  */
-/* routines like FT_Alloc() or FT_Realloc().                             */
-/*                                                                       */
-/*************************************************************************/
+FT2_1_3_CALLBACK_DEF(void *)
+ft_alloc(FT_Memory memory, long size) {
+	FT2_1_3_UNUSED(memory);
 
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    ft_alloc                                                           */
-/*                                                                       */
-/* <Description>                                                         */
-/*    The memory allocation function.                                    */
-/*                                                                       */
-/* <Input>                                                               */
-/*    memory :: A pointer to the memory object.                          */
-/*                                                                       */
-/*    size   :: The requested size in bytes.                             */
-/*                                                                       */
-/* <Return>                                                              */
-/*    The address of newly allocated block.                              */
-/*                                                                       */
-FT2_1_3_CALLBACK_DEF( void* )
-ft_alloc( FT_Memory  memory,
-		  long       size ) {
-	FT2_1_3_UNUSED( memory );
-
-	return malloc( size );
+	return malloc(size);
 }
 
+FT2_1_3_CALLBACK_DEF(void *)
+ft_realloc(FT_Memory memory, long cur_size, long new_size, void *block) {
+	FT2_1_3_UNUSED(memory);
+	FT2_1_3_UNUSED(cur_size);
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    ft_realloc                                                         */
-/*                                                                       */
-/* <Description>                                                         */
-/*    The memory reallocation function.                                  */
-/*                                                                       */
-/* <Input>                                                               */
-/*    memory   :: A pointer to the memory object.                        */
-/*                                                                       */
-/*    cur_size :: The current size of the allocated memory block.        */
-/*                                                                       */
-/*    new_size :: The newly requested size in bytes.                     */
-/*                                                                       */
-/*    block    :: The current address of the block in memory.            */
-/*                                                                       */
-/* <Return>                                                              */
-/*    The address of the reallocated memory block.                       */
-/*                                                                       */
-FT2_1_3_CALLBACK_DEF( void* )
-ft_realloc( FT_Memory  memory,
-			long       cur_size,
-			long       new_size,
-			void*      block ) {
-	FT2_1_3_UNUSED( memory );
-	FT2_1_3_UNUSED( cur_size );
-
-	return realloc( block, new_size );
+	return realloc(block, new_size);
 }
 
+FT2_1_3_CALLBACK_DEF(void)
+ft_free(FT_Memory memory, void *block) {
+	FT2_1_3_UNUSED(memory);
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    ft_free                                                            */
-/*                                                                       */
-/* <Description>                                                         */
-/*    The memory release function.                                       */
-/*                                                                       */
-/* <Input>                                                               */
-/*    memory  :: A pointer to the memory object.                         */
-/*                                                                       */
-/*    block   :: The address of block in memory to be freed.             */
-/*                                                                       */
-FT2_1_3_CALLBACK_DEF( void )
-ft_free( FT_Memory  memory,
-		 void*      block ) {
-	FT2_1_3_UNUSED( memory );
-
-	free( block );
+	free(block);
 }
 
+/**** RESOURCE MANAGEMENT INTERFACE ****/
 
-/*************************************************************************/
-/*                                                                       */
-/*                     RESOURCE MANAGEMENT INTERFACE                     */
-/*                                                                       */
-/*************************************************************************/
-
-
-/*************************************************************************/
-/*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
-/* messages during execution.                                            */
-/*                                                                       */
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_io
 
 /* We use the macro STREAM_FILE for convenience to extract the       */
 /* system-specific stream handle from a given FreeType stream object */
-#define STREAM_FILE( stream )  ( (FILE*)stream->descriptor.pointer )
+#define STREAM_FILE(stream) ((FILE *)stream->descriptor.pointer)
 
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    ft_ansi_stream_close                                               */
-/*                                                                       */
-/* <Description>                                                         */
-/*    The function to close a stream.                                    */
-/*                                                                       */
-/* <Input>                                                               */
-/*    stream :: A pointer to the stream object.                          */
-/*                                                                       */
-FT2_1_3_CALLBACK_DEF( void )
-ft_ansi_stream_close( FT_Stream  stream ) {
-	fclose( STREAM_FILE( stream ) );
+FT2_1_3_CALLBACK_DEF(void)
+ft_ansi_stream_close(FT_Stream stream) {
+	fclose(STREAM_FILE(stream));
 
 	stream->descriptor.pointer = NULL;
-	stream->size               = 0;
-	stream->base               = 0;
+	stream->size = 0;
+	stream->base = 0;
 }
 
+FT2_1_3_CALLBACK_DEF(unsigned long)
+ft_ansi_stream_io(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count) {
+	FILE *file;
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    ft_ansi_stream_io                                                  */
-/*                                                                       */
-/* <Description>                                                         */
-/*    The function to open a stream.                                     */
-/*                                                                       */
-/* <Input>                                                               */
-/*    stream :: A pointer to the stream object.                          */
-/*                                                                       */
-/*    offset :: The position in the data stream to start reading.        */
-/*                                                                       */
-/*    buffer :: The address of buffer to store the read data.            */
-/*                                                                       */
-/*    count  :: The number of bytes to read from the stream.             */
-/*                                                                       */
-/* <Return>                                                              */
-/*    The number of bytes actually read.                                 */
-/*                                                                       */
-FT2_1_3_CALLBACK_DEF( unsigned long )
-ft_ansi_stream_io( FT_Stream       stream,
-				   unsigned long   offset,
-				   unsigned char*  buffer,
-				   unsigned long   count ) {
-	FILE*  file;
+	file = STREAM_FILE(stream);
 
+	fseek(file, offset, SEEK_SET);
 
-	file = STREAM_FILE( stream );
-
-	fseek( file, offset, SEEK_SET );
-
-	return (unsigned long)fread( buffer, 1, count, file );
+	return (unsigned long)fread(buffer, 1, count, file);
 }
 
+FT2_1_3_EXPORT_DEF(FT_Error)
+FT_Stream_Open(FT_Stream stream, const char *filepathname) {
+	FILE *file;
 
-/* documentation is in ftobjs.h */
-
-FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Stream_Open( FT_Stream    stream,
-				const char*  filepathname ) {
-	FILE*  file;
-
-
-	if ( !stream )
+	if (!stream)
 		return FT2_1_3_Err_Invalid_Stream_Handle;
 
-	file = fopen( filepathname, "rb" );
-	if ( !file ) {
-		FT2_1_3_ERROR(( "FT_Stream_Open:" ));
-		FT2_1_3_ERROR(( " could not open `%s'\n", filepathname ));
+	file = fopen(filepathname, "rb");
+	if (!file) {
+		FT2_1_3_ERROR(("FT_Stream_Open:"));
+		FT2_1_3_ERROR((" could not open `%s'\n", filepathname));
 
 		return FT2_1_3_Err_Cannot_Open_Resource;
 	}
 
-	fseek( file, 0, SEEK_END );
-	stream->size = ftell( file );
-	fseek( file, 0, SEEK_SET );
+	fseek(file, 0, SEEK_END);
+	stream->size = ftell(file);
+	fseek(file, 0, SEEK_SET);
 
 	stream->descriptor.pointer = file;
 	stream->pathname.pointer = const_cast<char *>(filepathname);
-	stream->pos                = 0;
+	stream->pos = 0;
 
-	stream->read  = ft_ansi_stream_io;
+	stream->read = ft_ansi_stream_io;
 	stream->close = ft_ansi_stream_close;
 
-	FT2_1_3_TRACE1(( "FT_Stream_Open:" ));
-	FT2_1_3_TRACE1(( " opened `%s' (%d bytes) successfully\n",
-				filepathname, stream->size ));
+	FT2_1_3_TRACE1(("FT_Stream_Open:"));
+	FT2_1_3_TRACE1((" opened `%s' (%d bytes) successfully\n", filepathname, stream->size));
 
 	return FT2_1_3_Err_Ok;
 }
 
-
 #ifdef FT2_1_3_DEBUG_MEMORY
-
-extern FT_Int
-ft_mem_debug_init( FT_Memory  memory );
-
-extern void
-ft_mem_debug_done( FT_Memory  memory );
-
+extern FT_Int ft_mem_debug_init(FT_Memory memory);
+extern void ft_mem_debug_done(FT_Memory memory);
 #endif
 
+FT2_1_3_EXPORT_DEF(FT_Memory)
+FT_New_Memory(void) {
+	FT_Memory memory;
 
-/* documentation is in ftobjs.h */
-
-FT2_1_3_EXPORT_DEF( FT_Memory )
-FT_New_Memory( void ) {
-	FT_Memory  memory;
-
-
-	memory = (FT_Memory)malloc( sizeof ( *memory ) );
-	if ( memory ) {
-		memory->user    = 0;
-		memory->alloc   = ft_alloc;
+	memory = (FT_Memory)malloc(sizeof(*memory));
+	if (memory) {
+		memory->user = 0;
+		memory->alloc = ft_alloc;
 		memory->realloc = ft_realloc;
-		memory->free    = ft_free;
-#ifdef FT2_1_3_DEBUG_MEMORY
-		ft_mem_debug_init( memory );
-#endif
+		memory->free = ft_free;
+	#ifdef FT2_1_3_DEBUG_MEMORY
+		ft_mem_debug_init(memory);
+	#endif
 	}
 
 	return memory;
 }
 
-
-/* documentation is in ftobjs.h */
-
-FT2_1_3_EXPORT_DEF( void )
-FT_Done_Memory( FT_Memory  memory ) {
+FT2_1_3_EXPORT_DEF(void)
+FT_Done_Memory(FT_Memory memory) {
 #ifdef FT2_1_3_DEBUG_MEMORY
-	ft_mem_debug_done( memory );
+	ft_mem_debug_done(memory);
 #endif
-	memory->free( memory, memory );
+	memory->free(memory, memory);
 }
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */
