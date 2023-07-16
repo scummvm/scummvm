@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	he/script_v60he.o \
 	he/script_v70he.o \
 	he/sound_he.o \
+	he/mixer_he.o \
 	help.o \
 	imuse/imuse.o \
 	imuse/imuse_part.o \
