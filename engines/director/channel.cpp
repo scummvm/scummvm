@@ -366,7 +366,7 @@ void Channel::setCast(CastMemberID memberID) {
 	_height = _sprite->_height;
 	replaceWidget();
 
-	if (!_sprite->_puppet) {
+	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
 		// Based on Director in a Nutshell, page 15
 		_sprite->_autoPuppet = true;
 	}
