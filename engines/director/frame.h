@@ -43,15 +43,17 @@ class Sprite;
 class TextCastMember;
 
 enum {
-	kChannelDataSize = (25 * 50),
 	kMainChannelSizeD2 = 32,
 	kSprChannelSizeD2 = 16,
+
 	kMainChannelSizeD4 = 40,
 	kSprChannelSizeD4 = 20,
+
 	kMainChannelSizeD5 = 48,
 	kSprChannelSizeD5 = 24,
+
 	kMainChannelSizeD6 = 48,
-	kSprChannelSizeD6 = 24
+	kSprChannelSizeD6 = 24,
 };
 
 struct PaletteInfo {
