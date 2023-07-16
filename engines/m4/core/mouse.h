@@ -26,6 +26,10 @@
 
 namespace M4 {
 
+enum cursor_states {
+	kARROW, kLOOK, kTAKE, kUSE
+};
+
 struct MouseDriverInfo {
 	byte MajorVersion = 0;
 	byte MinorVersion = 0;

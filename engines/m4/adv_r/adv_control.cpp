@@ -22,6 +22,8 @@
 #include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_interface.h"
 #include "m4/core/errors.h"
+#include "m4/core/mouse.h"
+#include "m4/gui/hotkeys.h"
 #include "m4/mem/memman.h"
 #include "m4/wscript/ws_machine.h"
 #include "m4/vars.h"
@@ -79,5 +81,23 @@ void adv_kill_digi_between_rooms(bool true_or_false) {
 	_G(shut_down_digi_tracks_between_rooms) = true_or_false;
 }
 
+void toggle_through_cursors() {
+	switch (_G(cursor_state)) {
+	case kARROW:
+		Hotkeys::l_cb(NULL, NULL);
+		break;
+	case kLOOK:
+		Hotkeys::t_cb(NULL, NULL);
+		break;
+	case kTAKE:
+		Hotkeys::u_cb(NULL, NULL);
+		break;
+	case kUSE:
+		Hotkeys::a_cb(NULL, NULL);
+		break;
+	default:
+		break;
+	}
+}
 
 } // End of namespace M4

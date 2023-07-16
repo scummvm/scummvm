@@ -31,7 +31,7 @@ struct Hotkeys {
 private:
 	static void adv_enable_system_hot_keys();
 
-private:
+public:
 	static void exit_program(void *, void *);
 	static void cb_F2(void *, void *);
 	static void cb_F3(void *, void *);

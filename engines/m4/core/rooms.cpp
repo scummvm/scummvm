@@ -21,7 +21,9 @@
 
 #include "m4/core/rooms.h"
 #include "m4/core/errors.h"
+#include "m4/core/imath.h"
 #include "m4/adv_r/adv_been.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/adv_interface.h"
 #include "m4/adv_r/adv_scale.h"
@@ -31,6 +33,7 @@
 #include "m4/fileio/extensions.h"
 #include "m4/graphics/krn_pal.h"
 #include "m4/gui/gui_buffer.h"
+#include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/wscript/wst_regs.h"
 #include "m4/vars.h"
@@ -59,7 +62,7 @@ void Sections::section_room_constructor() {
 void Sections::m4SceneLoad() {
 	_G(between_rooms) = true;
 	_cameraShiftAmount = 0;
-	cameraShift_vert_Amount = 0;
+	_cameraShift_vert_Amount = 0;
 	_G(art_base_override) = nullptr;
 	_G(use_alternate_attribute_file) = true;
 	shut_down_digi_tracks_between_rooms = true;
@@ -302,6 +305,96 @@ void Sections::game_control_cycle() {
 void Sections::parse_player_command_now() {
 	// TODO: parse_player_command_now
 	error("TODO: parse_player_command_now");
+}
+
+void Sections::pal_game_task() {
+	int32 status;
+	bool updateVideo;
+	int delta = 0;
+	int convEvent = 0;
+	Common::String line;
+
+	if (!player_commands_allowed())
+		mouse_set_sprite(5);
+
+	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
+
+	if (!_G(kernel).pause) {
+		if (_G(please_hyperwalk)) {
+			_G(please_hyperwalk) = false;
+			toggle_through_cursors();
+		}
+
+		updateVideo = !_cameraShiftAmount && !_cameraShift_vert_Amount;
+
+		CycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
+			_G(screenCodeBuff), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), updateVideo);
+
+		_G(inverse_pal)->release();
+		_G(game_bgBuff)->release();
+
+		if (!game_buff_ptr)
+			error_show(FL, 'BUF!');
+
+		if (_cameraShiftAmount) {
+			if (_G(kernel)._val2) {
+				delta = _cameraShiftAmount;
+				_cameraShiftAmount = 0;
+			} else if (_cameraShiftAmount > 0) {
+				delta = imath_min(_cameraShiftAmount, camera_pan_step);
+			} else {
+				delta = imath_max(_cameraShiftAmount, camera_pan_step);
+			}
+
+			MoveScreenDelta(game_buff_ptr, delta, 0);
+		}
+
+		if (_cameraShift_vert_Amount) {
+			if (_G(kernel)._val2) {
+				delta = _cameraShift_vert_Amount;
+				_cameraShift_vert_Amount = 0;
+			} else if (_cameraShift_vert_Amount > 0) {
+				delta = imath_min(_cameraShift_vert_Amount, camera_pan_step);
+			} else {
+				delta = imath_max(_cameraShift_vert_Amount, camera_pan_step);
+			}
+		}
+	}
+
+	pal_fx_update();
+	_G(digi).read_another_chunk();
+	_G(midi).loop();
+
+	gui_system_event_handler();
+#ifdef TODO
+	if (conv_is_event_ready()) {
+		_G(player).command_ready = true;
+		term_message("conv parse row");
+		parse_player_command_now();
+		term_message("conv parse finish");
+
+		convEvent = conv_get_event();
+	}
+#endif
+
+	f_stream_Process(2);
+
+	if (_G(kernel).call_daemon_every_loop)
+		tick();
+
+	if (_G(editor_showStats)) {
+		if (_G(my_walker)) {
+			if (!_G(my_walker)->myAnim8)
+				error_show(FL, 'W:-(');
+
+			player_update_info(_G(my_walker), &_G(player_info));
+		}
+
+		line = Common::String::format("%ld  From: %ld", _G(game).previous_room, _G(game).new_room);
+		Dialog_Change_Item_Prompt(_G(mousePosDialog), line.c_str(), nullptr, 1);
+
+		// TODO: More stuff
+	}
 }
 
 /*------------------------------------------------------------------------*/

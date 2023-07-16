@@ -59,6 +59,8 @@ enum global_triggers {
 	// Wilbur specific triggers
 	gCHANGE_WILBUR_ANIMATION,
 
+	CALLED_EACH_LOOP = 32764,        
+
 	gLAST_GLOBAL_TRIGGER
 };
 

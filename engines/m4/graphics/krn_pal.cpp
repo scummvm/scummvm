@@ -30,6 +30,7 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/platform/keys.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
@@ -46,24 +47,7 @@ namespace M4 {
 #define NUM_FREE     FREE_END-(FREE_START)+1
 
 void krn_pal_game_task() {
-	int32 status;
-
-	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
-	if (!game_buff_ptr)
-		error_show(FL, 'BUF!');
-
-	CycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
-		_G(screenCodeBuff), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
-
-	_G(inverse_pal)->release();
-	_G(game_bgBuff)->release();
-
-	_G(digi).task();
-	_G(midi).task();
-
-	gui_system_event_handler();
-
-	f_stream_Process(2);
+	g_engine->pal_game_task();
 }
 
 static int32 screen_height(Buffer *grey_screen) {

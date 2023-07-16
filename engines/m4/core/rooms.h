@@ -79,12 +79,13 @@ public:
 
 	virtual void global_room_init() {}
 	virtual void daemon_code() {}
+	virtual void tick() {}
 };
 
 class Sections {
 private:
 	int32 _cameraShiftAmount = 0;
-	int32 cameraShift_vert_Amount = 0;
+	int32 _cameraShift_vert_Amount = 0;
 	bool shut_down_digi_tracks_between_rooms = true;
 	int32 camera_pan_step = 10;
 	bool _visited_room = false;
@@ -115,6 +116,9 @@ public:
 	}
 	void global_room_init() {
 		_activeSection->global_room_init();
+	}
+	void tick() {
+		_activeSection->tick();
 	}
 
 	void room_preload() {
@@ -148,6 +152,8 @@ public:
 	void m4SceneLoad();
 	void m4RunScene();
 	void m4EndScene();
+
+	void pal_game_task();
 };
 
 } // namespace M4
