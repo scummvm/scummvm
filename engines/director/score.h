@@ -103,6 +103,8 @@ public:
 	int getNextFrame() { return _nextFrame; }
 	uint16 getFramesNum() { return _numFrames; }
 
+	void setPuppetTempo(int16 puppetTempo);
+
 	CastMemberID getCurrentPalette();
 
 	Channel *getChannelById(uint16 id);
@@ -169,7 +171,6 @@ public:
 
 	byte _currentFrameRate;
 
-	byte _puppetTempo;
 	bool _puppetPalette;
 	int _paletteTransitionIndex;
 	byte _paletteSnapshotBuffer[768];
