@@ -1,32 +1,33 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  ftlist.h                                                               */
-/*                                                                         */
 /*    Generic list support for FreeType (specification).                   */
-/*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
-
-/*************************************************************************/
-/*                                                                       */
-/*  This file implements functions relative to list processing.  Its     */
-/*  data structures are defined in `freetype.h'.                         */
-/*                                                                       */
-/*************************************************************************/
-
-
 #ifndef AGS_LIB_FREETYPE_FTLIST_H
 #define AGS_LIB_FREETYPE_FTLIST_H
-
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/freetype.h"
@@ -37,229 +38,30 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 
-/*************************************************************************/
-/*                                                                       */
-/* <Section>                                                             */
-/*    list_processing                                                    */
-/*                                                                       */
-/* <Title>                                                               */
-/*    List Processing                                                    */
-/*                                                                       */
-/* <Abstract>                                                            */
-/*    Simple management of lists.                                        */
-/*                                                                       */
-/* <Description>                                                         */
-/*    This section contains various definitions related to list          */
-/*    processing using doubly-linked nodes.                              */
-/*                                                                       */
-/* <Order>                                                               */
-/*    FT_List                                                            */
-/*    FT_ListNode                                                        */
-/*    FT_ListRec                                                         */
-/*    FT_ListNodeRec                                                     */
-/*                                                                       */
-/*    FT_List_Add                                                        */
-/*    FT_List_Insert                                                     */
-/*    FT_List_Find                                                       */
-/*    FT_List_Remove                                                     */
-/*    FT_List_Up                                                         */
-/*    FT_List_Iterate                                                    */
-/*    FT_List_Iterator                                                   */
-/*    FT_List_Finalize                                                   */
-/*    FT_List_Destructor                                                 */
-/*                                                                       */
-/*************************************************************************/
+FT2_1_3_EXPORT(FT_ListNode)
+FT_List_Find(FT_List list, void *data);
 
+FT2_1_3_EXPORT(void)
+FT_List_Add(FT_List list, FT_ListNode node);
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_List_Find                                                       */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Finds the list node for a given listed object.                     */
-/*                                                                       */
-/* <Input>                                                               */
-/*    list :: A pointer to the parent list.                              */
-/*    data :: The address of the listed object.                          */
-/*                                                                       */
-/* <Return>                                                              */
-/*    List node.  NULL if it wasn't found.                               */
-/*                                                                       */
-FT2_1_3_EXPORT( FT_ListNode )
-FT_List_Find( FT_List  list,
-			  void*    data );
+FT2_1_3_EXPORT(void)
+FT_List_Insert(FT_List list, FT_ListNode node);
 
+FT2_1_3_EXPORT(void)
+FT_List_Remove(FT_List list, FT_ListNode node);
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_List_Add                                                        */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Appends an element to the end of a list.                           */
-/*                                                                       */
-/* <InOut>                                                               */
-/*    list :: A pointer to the parent list.                              */
-/*    node :: The node to append.                                        */
-/*                                                                       */
-FT2_1_3_EXPORT( void )
-FT_List_Add( FT_List      list,
-			 FT_ListNode  node );
+FT2_1_3_EXPORT(void)
+FT_List_Up(FT_List list, FT_ListNode node);
 
+typedef FT_Error (*FT_List_Iterator)(FT_ListNode node, void *user);
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_List_Insert                                                     */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Inserts an element at the head of a list.                          */
-/*                                                                       */
-/* <InOut>                                                               */
-/*    list :: A pointer to parent list.                                  */
-/*    node :: The node to insert.                                        */
-/*                                                                       */
-FT2_1_3_EXPORT( void )
-FT_List_Insert( FT_List      list,
-				FT_ListNode  node );
-
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_List_Remove                                                     */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Removes a node from a list.  This function doesn't check whether   */
-/*    the node is in the list!                                           */
-/*                                                                       */
-/* <Input>                                                               */
-/*    node :: The node to remove.                                        */
-/*                                                                       */
-/* <InOut>                                                               */
-/*    list :: A pointer to the parent list.                              */
-/*                                                                       */
-FT2_1_3_EXPORT( void )
-FT_List_Remove( FT_List      list,
-				FT_ListNode  node );
-
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_List_Up                                                         */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Moves a node to the head/top of a list.  Used to maintain LRU      */
-/*    lists.                                                             */
-/*                                                                       */
-/* <InOut>                                                               */
-/*    list :: A pointer to the parent list.                              */
-/*    node :: The node to move.                                          */
-/*                                                                       */
-FT2_1_3_EXPORT( void )
-FT_List_Up( FT_List      list,
-			FT_ListNode  node );
-
-
-/*************************************************************************/
-/*                                                                       */
-/* <FuncType>                                                            */
-/*    FT_List_Iterator                                                   */
-/*                                                                       */
-/* <Description>                                                         */
-/*    An FT_List iterator function which is called during a list parse   */
-/*    by FT_List_Iterate().                                              */
-/*                                                                       */
-/* <Input>                                                               */
-/*    node :: The current iteration list node.                           */
-/*                                                                       */
-/*    user :: A typeless pointer passed to FT_List_Iterate().            */
-/*            Can be used to point to the iteration's state.             */
-/*                                                                       */
-typedef FT_Error
-(*FT_List_Iterator)( FT_ListNode  node,
-					 void*        user );
-
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_List_Iterate                                                    */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Parses a list and calls a given iterator function on each element. */
-/*    Note that parsing is stopped as soon as one of the iterator calls  */
-/*    returns a non-zero value.                                          */
-/*                                                                       */
-/* <Input>                                                               */
-/*    list     :: A handle to the list.                                  */
-/*    iterator :: An interator function, called on each node of the      */
-/*                list.                                                  */
-/*    user     :: A user-supplied field which is passed as the second    */
-/*                argument to the iterator.                              */
-/*                                                                       */
-/* <Return>                                                              */
-/*    The result (a FreeType error code) of the last iterator call.      */
-/*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT_List_Iterate( FT_List           list,
-				 FT_List_Iterator  iterator,
-				 void*             user );
+FT_List_Iterate(FT_List list, FT_List_Iterator iterator, void *user);
 
+typedef void (*FT_List_Destructor)(FT_Memory memory, void *data, void *user);
 
-/*************************************************************************/
-/*                                                                       */
-/* <FuncType>                                                            */
-/*    FT_List_Destructor                                                 */
-/*                                                                       */
-/* <Description>                                                         */
-/*    An FT_List iterator function which is called during a list         */
-/*    finalization by FT_List_Finalize() to destroy all elements in a    */
-/*    given list.                                                        */
-/*                                                                       */
-/* <Input>                                                               */
-/*    system :: The current system object.                               */
-/*                                                                       */
-/*    data   :: The current object to destroy.                           */
-/*                                                                       */
-/*    user   :: A typeless pointer passed to FT_List_Iterate().  It can  */
-/*              be used to point to the iteration's state.               */
-/*                                                                       */
-typedef void
-(*FT_List_Destructor)( FT_Memory  memory,
-					   void*      data,
-					   void*      user );
-
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    FT_List_Finalize                                                   */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Destroys all elements in the list as well as the list itself.      */
-/*                                                                       */
-/* <Input>                                                               */
-/*    list    :: A handle to the list.                                   */
-/*                                                                       */
-/*    destroy :: A list destructor that will be applied to each element  */
-/*               of the list.                                            */
-/*                                                                       */
-/*    memory  :: The current memory object which handles deallocation.   */
-/*                                                                       */
-/*    user    :: A user-supplied field which is passed as the last       */
-/*               argument to the destructor.                             */
-/*                                                                       */
 FT2_1_3_EXPORT( void )
-FT_List_Finalize( FT_List             list,
-				  FT_List_Destructor  destroy,
-				  FT_Memory           memory,
-				  void*               user );
-
-
-/* */
+FT_List_Finalize(FT_List list, FT_List_Destructor destroy, FT_Memory memory, void *user);
 
 
 FT2_1_3_END_HEADER
@@ -268,6 +70,3 @@ FT2_1_3_END_HEADER
 } // End of namespace AGS3
 
 #endif /* AGS_LIB_FREETYPE_FTLIST_H */
-
-
-/* END */

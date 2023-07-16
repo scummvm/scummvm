@@ -1,17 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  ftmm.c                                                                 */
-/*                                                                         */
 /*    Multiple Master font support (body).                                 */
-/*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -20,99 +31,76 @@
 #include "engines/ags/lib/freetype-2.1.3/ftmm.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
-
-/*************************************************************************/
-/*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
-/* messages during execution.                                            */
-/*                                                                       */
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_mm
 
 namespace AGS3 {
 namespace FreeType213 {
 
-/* documentation is in ftmm.h */
+// TODO: Multiple Masters functions are aot used anywhere
 
-FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Get_Multi_Master( FT_Face           face,
-					 FT_Multi_Master  *amaster ) {
-	FT_Error  error;
+FT2_1_3_EXPORT_DEF(FT_Error)
+FT_Get_Multi_Master(FT_Face face, FT_Multi_Master *amaster) {
+	FT_Error error;
 
-
-	if ( !face )
+	if (!face)
 		return FT2_1_3_Err_Invalid_Face_Handle;
 
 	error = FT2_1_3_Err_Invalid_Argument;
 
-	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
-		FT_Driver       driver = face->driver;
-		FT_Get_MM_Func  func;
-
+	if (FT2_1_3_HAS_MULTIPLE_MASTERS(face)) {
+		FT_Driver driver = face->driver;
+		FT_Get_MM_Func func;
 
 		func = (FT_Get_MM_Func)driver->root.clazz->get_interface(
-				   FT2_1_3_MODULE( driver ), "get_mm" );
-		if ( func )
-			error = func( face, amaster );
+			FT2_1_3_MODULE(driver), "get_mm");
+		if (func)
+			error = func(face, amaster);
 	}
 
 	return error;
 }
 
+FT2_1_3_EXPORT_DEF(FT_Error)
+FT_Set_MM_Design_Coordinates(FT_Face face, FT_UInt num_coords, FT_Long *coords) {
+	FT_Error error;
 
-/* documentation is in ftmm.h */
-
-FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Set_MM_Design_Coordinates( FT_Face   face,
-							  FT_UInt   num_coords,
-							  FT_Long*  coords ) {
-	FT_Error  error;
-
-
-	if ( !face )
+	if (!face)
 		return FT2_1_3_Err_Invalid_Face_Handle;
 
 	error = FT2_1_3_Err_Invalid_Argument;
 
-	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
-		FT_Driver              driver = face->driver;
-		FT_Set_MM_Design_Func  func;
-
+	if (FT2_1_3_HAS_MULTIPLE_MASTERS(face)) {
+		FT_Driver driver = face->driver;
+		FT_Set_MM_Design_Func func;
 
 		func = (FT_Set_MM_Design_Func)driver->root.clazz->get_interface(
-				   FT2_1_3_MODULE( driver ), "set_mm_design" );
-		if ( func )
-			error = func( face, num_coords, coords );
+			FT2_1_3_MODULE(driver), "set_mm_design");
+		if (func)
+			error = func(face, num_coords, coords);
 	}
 
 	return error;
 }
 
 
-/* documentation is in ftmm.h */
+FT2_1_3_EXPORT_DEF(FT_Error)
+FT_Set_MM_Blend_Coordinates(FT_Face face, FT_UInt num_coords, FT_Fixed *coords) {
+	FT_Error error;
 
-FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Set_MM_Blend_Coordinates( FT_Face    face,
-							 FT_UInt    num_coords,
-							 FT_Fixed*  coords ) {
-	FT_Error  error;
-
-
-	if ( !face )
+	if (!face)
 		return FT2_1_3_Err_Invalid_Face_Handle;
 
 	error = FT2_1_3_Err_Invalid_Argument;
 
-	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
-		FT_Driver             driver = face->driver;
-		FT_Set_MM_Blend_Func  func;
-
+	if (FT2_1_3_HAS_MULTIPLE_MASTERS(face)) {
+		FT_Driver driver = face->driver;
+		FT_Set_MM_Blend_Func func;
 
 		func = (FT_Set_MM_Blend_Func)driver->root.clazz->get_interface(
-				   FT2_1_3_MODULE( driver ), "set_mm_blend" );
-		if ( func )
-			error = func( face, num_coords, coords );
+			FT2_1_3_MODULE(driver), "set_mm_blend");
+		if (func)
+			error = func(face, num_coords, coords);
 	}
 
 	return error;
@@ -120,5 +108,3 @@ FT_Set_MM_Blend_Coordinates( FT_Face    face,
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */
