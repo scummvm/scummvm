@@ -30,10 +30,10 @@
 namespace Scumm {
 
 #define HSND_DYN_SOUND_CHAN      -1
+#define HSND_TALKIE_SLOT          1
 #define HSND_SOUND_STOPPED        1
 #define HSND_SOUND_ENDED          2
 #define HSND_SOUND_TIMEOUT        3
-#define HSND_TALKIE_SLOT          4
 #define HSND_TIMER_SLOT           4
 #define HSND_MAX_CALLBACK_SCRIPTS 20
 #define HSND_MAX_CHANNELS         8
@@ -50,8 +50,12 @@ namespace Scumm {
 #define HSND_BASE_FREQ_FACTOR     1024
 #define HSND_SOUND_FREQ_BASE      1024
 #define HSND_MAX_VOLUME           255
+#define HSND_SOUND_PAN_LEFT       0
 #define HSND_SOUND_PAN_CENTER     64
+#define HSND_SOUND_PAN_RIGHT      127
 #define HSND_FIRST_SPOOLING_SOUND 4000
+#define HSND_MAX_FREQ_RATIO       4
+
 
 #define HSND_SBNG_TYPE_ALL 0xF8
 #define HSND_SBNG_DATA_ALL 0x07
@@ -71,6 +75,10 @@ namespace Scumm {
 #define HSND_SBNG_VARORVAL 0x03
 #define HSND_SBNG_VARVAL   0x02
 
+#define XSH2_FLAG_HAS_PRIORITY 0x01
+
+#define WAVE_FORMAT_PCM       1
+#define WAVE_FORMAT_IMA_ADPCM 17
 
 class ScummEngine_v60he;
 
@@ -95,8 +103,39 @@ protected:
 
 		char filename[128];
 	};
-
 	HESpoolingMusicItem *_heSpoolingMusicTable;
+
+	struct PCMWaveFormat {
+		uint16 wFormatTag;
+		uint16 wChannels;
+		uint32 dwSamplesPerSec;
+		uint32 dwAvgBytesPerSec;
+		uint16 wBlockAlign;
+		uint16 wBitsPerSample;
+	};
+
+	struct HESoundModifiers {
+		HESoundModifiers(int mFrequencyShift, int mPan, int mVolume) {
+			assert(mFrequencyShift >= HSND_SOUND_FREQ_BASE / HSND_MAX_FREQ_RATIO);
+			assert(mFrequencyShift <= HSND_SOUND_FREQ_BASE * HSND_MAX_FREQ_RATIO);
+			assert(mPan >= HSND_SOUND_PAN_LEFT && mPan <= HSND_SOUND_PAN_RIGHT);
+			assert(mVolume >= 0 && mVolume <= HSND_MAX_VOLUME);
+			frequencyShift = mFrequencyShift;
+			pan = mPan;
+			volume = mVolume;
+		}
+
+		HESoundModifiers() {
+			frequencyShift = HSND_SOUND_FREQ_BASE;
+			pan = HSND_SOUND_PAN_CENTER;
+			volume = HSND_MAX_VOLUME;
+		}
+
+		int frequencyShift;
+		int pan;
+		int volume;
+	};
+
 	int32 _heMusicTracks;
 
 	Audio::SoundHandle *_heSoundChannels;
@@ -148,11 +187,17 @@ public:
 	int getSoundPos(int sound);
 	int getSoundVar(int sound, int var);
 	void setSoundVar(int sound, int var, int val);
-	void triggerSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
-	void triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
+	void triggerSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
+	void triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
 	void triggerDigitalSound(int soundId, int heOffset, int heChannel, int heFlags);
-	void triggerRIFFSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
+	void triggerRIFFSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
 	void triggerXSOUSound(int soundId, int heOffset, int heChannel, int heFlags);
+
+	void hsStartDigitalSound(int sound, int offset, byte *addr, int sound_data, int globType, int globNum,
+							 int sampleCount, int frequency, int channel, int priority, int soundCode,
+							 int flags, int bitsPerSample, int soundChannelCount, HESoundModifiers modifiers);
+	void hsStopDigitalSound(int sound);
+
 	void handleSoundFrame();
 	void unqueueSoundCallbackScripts();
 	void checkSoundTimeouts();

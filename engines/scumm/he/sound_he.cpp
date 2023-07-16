@@ -117,11 +117,12 @@ void SoundHE::processSoundQueues() {
 			heOffset = _soundQueue[i].offset;
 			heChannel = _soundQueue[i].channel;
 			heFlags = _soundQueue[i].flags;
-			heFreq = _soundQueue[_soundQueuePos].freq;
-			hePan = _soundQueue[_soundQueuePos].pan;
-			heVol = _soundQueue[_soundQueuePos].vol;
+			heFreq = _soundQueue[i].freq;
+			hePan = _soundQueue[i].pan;
+			heVol = _soundQueue[i].vol;
+
 			if (snd)
-				triggerSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+				triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers(heFreq, hePan, heVol));
 		}
 		_soundQueuePos = 0;
 	} else {
@@ -134,8 +135,9 @@ void SoundHE::processSoundQueues() {
 			heFreq = _soundQueue[_soundQueuePos].freq;
 			hePan = _soundQueue[_soundQueuePos].pan;
 			heVol = _soundQueue[_soundQueuePos].vol;
+
 			if (snd)
-				triggerSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+				triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers(heFreq, hePan, heVol));
 		}
 	}
 
@@ -762,7 +764,7 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 	return nullptr;
 }
 
-void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers) {
 	if (_vm->_game.heversion >= 95) {
 		if (heChannel == HSND_DYN_SOUND_CHAN) {
 			heChannel = getNextDynamicChannel();
@@ -770,7 +772,7 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 	}
 
 	if (soundId >= _vm->_numSounds) {
-		triggerSpoolingSound(soundId, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+		triggerSpoolingSound(soundId, heOffset, heChannel, heFlags, modifiers);
 		return;
 	}
 
@@ -782,7 +784,7 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 		// Nothing happens in the original as well
 		return;
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('W', 'S', 'O', 'U')) {
-		triggerRIFFSound(soundId, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+		triggerRIFFSound(soundId, heOffset, heChannel, heFlags, modifiers);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('X', 'S', 'O', 'U')) {
 		triggerXSOUSound(soundId, heOffset, heChannel, heFlags);
 	} else {
@@ -790,16 +792,156 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 	}
 }
 
-void SoundHE::triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void SoundHE::triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers) {
 
 }
 
-void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void SoundHE::triggerRIFFSound(int sound, int offset, int channel, int flags, HESoundModifiers modifiers) {
+	PCMWaveFormat pFmt;
+	uint8 *soundDataPtr = nullptr;
+	int sampleCount = 0;
+	int soundPriority = 128;
+	int soundCodeOffset = -1;
+	bool parsedFmt = false;
 
+	// Let's begin by fetching the sound address...
+	uint8 *wsouPtr = (byte *)_vm->getResourceAddress(rtSound, sound);
+
+	// We only accept the WSOU format compliant files,
+	// which are WAV files with a WSOU header wrapped around.
+	// Still, let's not use an assertion like the original does,
+	// and let's bail out gracefully instead....
+	if (READ_BE_UINT32(wsouPtr) != MKTAG('W', 'S', 'O', 'U')) {
+		debug("SoundHE::triggerRIFFSound(): Couldn't find WSOU tag for sound %d, bailing out...", sound);
+		return;
+	}
+
+	// Skip over the WSOU header and hope to find a RIFF header...
+	uint8 *soundPtr = wsouPtr + 8;
+	if (READ_BE_UINT32(soundPtr) != MKTAG('R', 'I', 'F', 'F')) {
+		debug("SoundHE::triggerRIFFSound(): Couldn't find RIFF tag for sound %d, bailing out...", sound);
+		return;
+	}
+
+	// Since all sub-blocks must be padded to be even, we want the RIFF block length to be even...
+	int riffLength = READ_LE_UINT32(soundPtr + 4);
+	if ((riffLength & 1) != 0) {
+		debug("SoundHE::triggerRIFFSound(): RIFF block length not even (%d) for sound %d, bailing out...", riffLength, sound);
+		return;
+	}
+
+	uint8 *wavePtr = soundPtr + 8;
+	if (READ_BE_UINT32(wavePtr) != MKTAG('W', 'A', 'V', 'E')) {
+		debug("SoundHE::triggerRIFFSound(): Couldn't find WAVE tag for sound %d, bailing out...", sound);
+		return;
+	}
+
+	// Now that we've made all the safety checks needed, fetch the sound data...
+	wavePtr += 4;
+	riffLength -= 4;
+
+	// Parse the various blocks...
+	while (riffLength > 0) {
+		int chunkId = READ_BE_UINT32(wavePtr);
+		int chunkLength = READ_LE_UINT32(wavePtr + 4);
+		wavePtr += 8;
+		riffLength -= 8;
+
+		if (chunkLength < 0) {
+			debug("SoundHE::triggerRIFFSound(): Illegal chunk length - %d bytes, bailing out...", chunkLength);
+			return;
+		}
+
+		if (chunkLength > riffLength) {
+			debug("SoundHE::triggerRIFFSound(): Chunk extends beyond file end - %d versus %d, bailing out...", chunkLength, riffLength);
+			return;
+		}
+
+		switch (chunkId) {
+		case MKTAG('f', 'm', 't', ' '):
+		{
+			uint8 *tempPtr = wavePtr;
+			pFmt.wFormatTag = READ_LE_UINT16(tempPtr); tempPtr += 2;
+			pFmt.wChannels = READ_LE_UINT16(tempPtr); tempPtr += 2;
+			pFmt.dwSamplesPerSec = READ_LE_UINT32(tempPtr); tempPtr += 4;
+			pFmt.dwAvgBytesPerSec = READ_LE_UINT32(tempPtr); tempPtr += 4;
+			pFmt.wBlockAlign = READ_LE_UINT16(tempPtr); tempPtr += 2;
+			pFmt.wBitsPerSample = READ_LE_UINT16(tempPtr); tempPtr += 2;
+
+			if (pFmt.wFormatTag != WAVE_FORMAT_PCM && pFmt.wFormatTag != WAVE_FORMAT_IMA_ADPCM) {
+				debug("SoundHE::triggerRIFFSound(): Unsupported .wav sound type %d - only PCM and IMA ADPCM are supported.", pFmt.wFormatTag);
+				return;
+			}
+
+			parsedFmt = true;
+			break;
+		}
+		case MKTAG('d', 'a', 't', 'a'):
+			assert(parsedFmt);
+			soundDataPtr = wavePtr;
+			sampleCount = (chunkLength * 8) / (pFmt.wChannels * pFmt.wBitsPerSample);
+			break;
+
+		case MKTAG('X', 'S', 'H', '2'):
+		{
+			// Check for the optional sound flag block
+			int optionalBlockFlags = READ_BE_UINT32(wavePtr);
+			if (optionalBlockFlags & XSH2_FLAG_HAS_PRIORITY)
+				soundPriority = READ_BE_UINT32(wavePtr + 4);
+
+			break;
+		}
+
+		case MKTAG('S', 'B', 'N', 'G'):
+			soundCodeOffset = wavePtr - wsouPtr;
+			break;
+
+		default:
+			break;
+		}
+
+		// Round up to the next multiple of two
+		chunkLength = (chunkLength + 1) & ~1;
+		wavePtr += chunkLength;
+		riffLength -= chunkLength;
+	}
+
+	if (riffLength != 0 || !parsedFmt || soundDataPtr == nullptr)
+		return;
+
+	int sampleFrequency = pFmt.dwSamplesPerSec;
+	int bitsPerSample = pFmt.wBitsPerSample;
+	int sampleChannelCount = pFmt.wChannels;
+
+	int soundDataOffset = soundDataPtr - soundPtr;
+
+	// Make sure that the sound has a high enough priority to play
+	if (_heChannel[channel].sound && sound != HSND_TALKIE_SLOT && _heChannel[channel].sound != HSND_TALKIE_SLOT) {
+		if (soundPriority < _heChannel[channel].priority)
+			return;
+	}
+
+	// Finally start the sound
+	hsStartDigitalSound(sound, offset, soundPtr, soundDataOffset, rtSound, sound,
+						sampleCount, sampleFrequency, channel, soundPriority, soundCodeOffset,
+						flags, bitsPerSample, sampleChannelCount, modifiers);
+
+	return;
 }
 
 void SoundHE::triggerXSOUSound(int soundId, int heOffset, int heChannel, int heFlags) {
 	error("SoundHE::triggerXSOUSound(): unimplemented XSOU format for sound %d", soundId);
+}
+
+void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int sound_data,
+	int globType, int globNum, int sampleCount, int frequency, int channel, int priority,
+	int soundCode, int flags, int bitsPerSample, int soundChannelCount, HESoundModifiers modifiers) {
+
+	return;
+}
+
+void SoundHE::hsStopDigitalSound(int sound) {
+	return;
 }
 
 void SoundHE::triggerDigitalSound(int soundId, int heOffset, int heChannel, int heFlags) {

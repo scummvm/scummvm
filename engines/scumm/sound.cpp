@@ -1770,6 +1770,8 @@ int ScummEngine::readSoundResource(ResId idx) {
 			// Move the ptr forward for the actual data allocation,
 			// so that our new header doesn't get rewritten
 			ptr += 8;
+			_fileHandle->seek(-8, SEEK_CUR);
+			_fileHandle->read(ptr, total_size);
 		} else {
 			_fileHandle->seek(-12, SEEK_CUR);
 			total_size = _fileHandle->readUint32BE();
