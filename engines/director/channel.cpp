@@ -595,6 +595,7 @@ void Channel::setPosition(int x, int y, bool force) {
 		newPos.y = MIN(constraintBbox.bottom, MAX(constraintBbox.top, newPos.y));
 	}
 	_currentPoint = newPos;
+	_sprite->_startPoint = _currentPoint;
 
 	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
 		// Based on Director in a Nutshell, page 15
