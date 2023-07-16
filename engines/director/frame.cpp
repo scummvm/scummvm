@@ -210,6 +210,8 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 				} else {
 					_mainChannels.palette.paletteId = CastMemberID(paletteId, DEFAULT_CAST_LIB);
 				}
+				if (!_mainChannels.palette.paletteId.isNull())
+					_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			}
 			break;
 		case 18:
@@ -463,6 +465,8 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 				} else {
 					_mainChannels.palette.paletteId = CastMemberID(paletteId, DEFAULT_CAST_LIB);
 				}
+				if (!_mainChannels.palette.paletteId.isNull())
+					_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			}
 			break;
 		case 22:
@@ -740,6 +744,8 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 				int16 paletteCastLib = stream.readSint16();
 				int16 paletteId = stream.readSint16(); // 26
 				_mainChannels.palette.paletteId = CastMemberID(paletteId, paletteCastLib);
+				if (!_mainChannels.palette.paletteId.isNull())
+					_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			}
 			break;
 		case 28:
