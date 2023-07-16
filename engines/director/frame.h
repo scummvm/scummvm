@@ -42,10 +42,6 @@ class Score;
 class Sprite;
 class TextCastMember;
 
-enum {
-	kChannelDataSize = (25 * 50)
-};
-
 struct PaletteInfo {
 	CastMemberID paletteId;
 
@@ -124,7 +120,6 @@ private:
 
 public:
 	int _numChannels;
-	byte _channelData[kChannelDataSize];
 	CastMemberID _actionId;
 	uint16 _transDuration;
 	uint8 _transArea; // 1 - Whole Window, 0 - Changing Area
