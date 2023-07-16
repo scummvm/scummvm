@@ -395,6 +395,9 @@ void Score::update() {
 		return;
 	}
 
+	for (uint ch = 0; ch < _channels.size(); ch++)
+		*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
+
 	if (!_vm->_playbackPaused) {
 		if (_nextFrame) {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
@@ -516,13 +519,6 @@ void Score::update() {
 		// _movie->processEvent(kEventPrepareFrame);
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
-
-#if 0
-	// FIXME: TODO: This so far brings more problems than fixes
-	for (uint ch = 0; ch < _channels.size(); ch++)
-		if (_channels[ch]->_sprite->_puppet || _channels[ch]->_sprite->_autoPuppet)
-			*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
-#endif
 
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_curFrameNumber);
