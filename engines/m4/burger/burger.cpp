@@ -52,5 +52,9 @@ void BurgerEngine::showEngineInfo() {
 	debug("Orion Burger tastes great!\n");
 }
 
+void BurgerEngine::global_daemon() {
+	error("TODO: global_daemon_code");
+}
+
 } // namespace Burger
 } // namespace M4

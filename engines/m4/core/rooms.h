@@ -78,7 +78,7 @@ public:
 	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
 
 	virtual void global_room_init() {}
-	virtual void daemon_code() {}
+	virtual void daemon() {}
 	virtual void tick() {}
 };
 
@@ -107,12 +107,13 @@ public:
 
 	void global_section_constructor();
 	void section_room_constructor();
+	void game_daemon_code();
 
 	void section_init() {
 		_activeSection->init();
 	}
-	void daemon_code() {
-		_activeSection->daemon_code();
+	void daemon() {
+		_activeSection->daemon();
 	}
 	void global_room_init() {
 		_activeSection->global_room_init();
@@ -154,6 +155,8 @@ public:
 	void m4EndScene();
 
 	void pal_game_task();
+
+	virtual void global_daemon() = 0;
 };
 
 } // namespace M4

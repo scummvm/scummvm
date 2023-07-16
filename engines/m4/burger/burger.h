@@ -54,6 +54,8 @@ public:
 	 * Show the engine information
 	 */
 	void showEngineInfo() override;
+
+	void global_daemon() override;
 };
 
 } // namespace Burger
