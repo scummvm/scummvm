@@ -63,7 +63,6 @@ Score::Score(Movie *movie) {
 
 	_soundManager = _window->getSoundManager();
 
-	_puppetTempo = 0x00;
 	_puppetPalette = false;
 	_paletteTransitionIndex = 0;
 	memset(_paletteSnapshotBuffer, 0, 768);
@@ -107,6 +106,10 @@ Score::~Score() {
 	if (_currentFrame) {
 		delete _currentFrame;
 	}
+}
+
+void Score::setPuppetTempo(int16 puppetTempo) {
+	_currentFrame->_mainChannels.tempo = puppetTempo;
 }
 
 CastMemberID Score::getCurrentPalette() {
@@ -448,13 +451,7 @@ void Score::update() {
 
 	loadFrame(_curFrameNumber);
 
-	byte tempo = _currentFrame->_mainChannels.scoreCachedTempo;
-	// puppetTempo is overridden by changes in score tempo
-	if (_currentFrame->_mainChannels.tempo || tempo != _lastTempo) {
-		_puppetTempo = 0;
-	} else if (_puppetTempo) {
-		tempo = _puppetTempo;
-	}
+	byte tempo = _currentFrame->_mainChannels.tempo;
 
 	if (tempo) {
 		const bool waitForClickOnly = _vm->getVersion() < 300;
@@ -1531,12 +1528,6 @@ bool Score::readOneFrame() {
 			debugC(4, kDebugLoading, "%s", _currentFrame->formatChannelInfo().c_str());
 		}
 
-		// Precache the current FPS tempo, as this carries forward to frames to the right
-		// of the instruction
-		// Delay type tempos (e.g. wait commands, delays) apply to only a single frame, and are ignored here
-		if (_currentFrame->_mainChannels.tempo && _currentFrame->_mainChannels.tempo <= 120)
-			_currentTempo = _currentFrame->_mainChannels.tempo;
-		_currentFrame->_mainChannels.scoreCachedTempo = _currentFrame->_mainChannels.tempo ? _currentFrame->_mainChannels.tempo : _currentTempo;
 		// Precache the current palette ID, as this carries forward to frames to the right
 		// of the instruction
 		if (!_currentFrame->_mainChannels.palette.paletteId.isNull())
