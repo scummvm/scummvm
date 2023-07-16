@@ -42,6 +42,10 @@ class Score;
 class Sprite;
 class TextCastMember;
 
+enum {
+	kChannelDataSize = (25 * 50)
+};
+
 struct PaletteInfo {
 	CastMemberID paletteId;
 
