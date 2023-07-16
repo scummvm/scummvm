@@ -161,7 +161,7 @@ void Movie::queueFrameEvent(Common::Queue<LingoEvent> &queue, LEvent event, int 
 	// } else {
 
 	assert(_score->_currentFrame != nullptr);
-	CastMemberID scriptId = _score->_currentFrame->_actionId;
+	CastMemberID scriptId = _score->_currentFrame->_mainChannels.actionId;
 	if (!scriptId.member)
 		return;
 

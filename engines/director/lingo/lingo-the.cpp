@@ -466,7 +466,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.s = score->getFrameLabel(score->getCurrentFrameNum());
 		break;
 	case kTheFrameScript:
-		d = score->_currentFrame->_actionId.member;
+		d = score->_currentFrame->_mainChannels.actionId.member;
 		break;
 	case kTheFramePalette:
 		d = score->getCurrentPalette();
