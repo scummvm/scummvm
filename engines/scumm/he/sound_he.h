@@ -29,6 +29,7 @@
 
 namespace Scumm {
 
+#define HSND_DYN_SOUND_CHAN      -1
 #define HSND_SOUND_STOPPED        1
 #define HSND_SOUND_ENDED          2
 #define HSND_SOUND_TIMEOUT        3
@@ -87,17 +88,19 @@ protected:
 	};
 	HESoundCallbackItem _soundCallbackScripts[HSND_MAX_CALLBACK_SCRIPTS];
 
-	struct HEMusic {
-		int32 id;
+	struct HESpoolingMusicItem {
+		int32 song;
 		int32 offset;
 		int32 size;
 
 		char filename[128];
 	};
-	HEMusic *_heMusic;
-	int16 _heMusicTracks;
+
+	HESpoolingMusicItem *_heSpoolingMusicTable;
+	int32 _heMusicTracks;
 
 	Audio::SoundHandle *_heSoundChannels;
+	Common::File _spoolingMusicFile;
 
 public: // Used by createSound()
 	struct {
@@ -140,12 +143,16 @@ public:
 	void setupSound() override;
 
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
-	int findFreeSoundChannel();
+	int getNextDynamicChannel();
 	bool isSoundCodeUsed(int sound);
 	int getSoundPos(int sound);
 	int getSoundVar(int sound, int var);
 	void setSoundVar(int sound, int var, int val);
-	void triggerDigitalSound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
+	void triggerSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
+	void triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
+	void triggerDigitalSound(int soundId, int heOffset, int heChannel, int heFlags);
+	void triggerRIFFSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
+	void triggerXSOUSound(int soundId, int heOffset, int heChannel, int heFlags);
 	void handleSoundFrame();
 	void unqueueSoundCallbackScripts();
 	void checkSoundTimeouts();
