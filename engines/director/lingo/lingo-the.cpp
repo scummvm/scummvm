@@ -1446,6 +1446,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			if (newColor != sprite->_backColor) {
 				sprite->_backColor = newColor;
 				channel->_dirty = true;
+
+				if (!sprite->_puppet && g_director->getVersion() >= 600) {
+					// Based on Director in a Nutshell, page 15
+					sprite->setAutoPuppet(kAPBackColor, true);
+				}
 			}
 		}
 		break;
@@ -1456,6 +1461,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			if (blend != sprite->_blendAmount) {
 				sprite->_blendAmount = blend;
 				channel->_dirty = true;
+			}
+
+			if (!sprite->_puppet && g_director->getVersion() >= 600) {
+				// Based on Director in a Nutshell, page 15
+				sprite->setAutoPuppet(kAPBlend, true);
 			}
 		}
 		break;
@@ -1526,6 +1536,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				sprite->_foreColor = newColor;
 				channel->_dirty = true;
 			}
+
+			if (!sprite->_puppet && g_director->getVersion() >= 600) {
+				// Based on Director in a Nutshell, page 15
+				sprite->setAutoPuppet(kAPForeColor, true);
+			}
 		}
 		break;
 	case kTheHeight:
@@ -1534,6 +1549,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->setHeight(d.asInt());
 			channel->_dirty = true;
 		}
+
+		if (!sprite->_puppet && g_director->getVersion() >= 600) {
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPHeight, true);
+		}
+
 		break;
 	case kTheImmediate:
 		sprite->_immediate = (bool)d.asInt();
@@ -1543,6 +1564,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			sprite->_ink = static_cast<InkType>(d.asInt());
 			channel->_dirty = true;
 		}
+
+		if (!sprite->_puppet && g_director->getVersion() >= 600) {
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPInk, true);
+		}
+
 		break;
 	case kTheLineSize:
 		if (d.asInt() != sprite->_thickness) {
@@ -1567,6 +1594,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			}
 			channel->setPosition(d.asInt(), channel->_currentPoint.y);
 		}
+
+		if (!sprite->_puppet && g_director->getVersion() >= 600) {
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPLocH, true);
+		}
+
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->_currentPoint.y) {
@@ -1576,9 +1609,21 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			}
 			channel->setPosition(channel->_currentPoint.x, d.asInt());
 		}
+
+		if (!sprite->_puppet && g_director->getVersion() >= 600) {
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPLocV, true);
+		}
+
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = (bool)d.asInt();
+
+		if (!sprite->_puppet && g_director->getVersion() >= 600) {
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPMoveable, true);
+		}
+
 		break;
 	case kTheMovieRate:
 		channel->_movieRate = d.asFloat();
@@ -1616,6 +1661,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			);
 			channel->_dirty = true;
 		}
+
+		if (!sprite->_puppet && g_director->getVersion() >= 600) {
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPRect, true);
+		}
+
 		break;
 	case kTheStartTime:
 		channel->_startTime = d.asInt();
@@ -1668,6 +1719,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->setWidth(d.asInt());
 			channel->_dirty = true;
 		}
+
+		if (!sprite->_puppet && g_director->getVersion() >= 600) {
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPWidth, true);
+		}
+
 		break;
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));

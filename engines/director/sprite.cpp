@@ -62,7 +62,7 @@ Sprite::Sprite(Frame *frame) {
 	_moveable = false;
 	_editable = false;
 	_puppet = false;
-	_autoPuppet = false; // Based on Director in a Nutshell, page 15
+	_autoPuppet = kAPNone; // Based on Director in a Nutshell, page 15
 	_immediate = false;
 	_backColor = g_director->_wm->_colorWhite;
 	_foreColor = g_director->_wm->_colorBlack;
@@ -389,6 +389,17 @@ void Sprite::setPattern(uint16 pattern) {
 	default:
 		return;
 	}
+}
+
+void Sprite::setAutoPuppet(AutoPuppetProperty property, bool value) {
+	if (value)
+		_autoPuppet |= (1 << property);
+	else
+		_autoPuppet &= ~(1 << property);
+}
+
+bool Sprite::getAutoPuppet(AutoPuppetProperty property) {
+	return (_autoPuppet & (1 << property)) != 0;
 }
 
 bool Sprite::checkSpriteType() {
