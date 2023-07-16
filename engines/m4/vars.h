@@ -111,6 +111,7 @@ public:
 	Sound::Midi _midi;
 	KernelPal_Globals _krnPal;
 	ADVScale_Globals _scale;
+	ConvDisplayData _cdd;
 
 	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;
@@ -186,6 +187,7 @@ public:
 #define _GI() (*g_vars->getInterface())
 #define _GW() (*g_vars->getWalker())
 #define _GWS(X) _G(ws)._##X
+#define INTERFACE_VISIBLE g_vars->getInterface()->_visible
 
 } // namespace M4
 

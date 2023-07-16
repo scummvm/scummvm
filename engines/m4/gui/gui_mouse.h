@@ -72,6 +72,8 @@ extern bool mouse_set_sprite(int32 spriteNum);
 extern void gui_mouse_refresh();
 extern void mouse_hide();
 extern void mouse_show();
+extern void mouse_lock_sprite(int32 mouseNum);
+extern void mouse_unlock_sprite();
 
 } // End of namespace M4
 
