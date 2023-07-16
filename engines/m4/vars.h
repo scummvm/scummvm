@@ -176,7 +176,9 @@ public:
 	ScreenContext *_game_buff_ptr = nullptr;
 	machine *_my_walker = nullptr;
 	uint32 _editors_in_use = 0;
+	bool _editor_showStats = false;
 	bool _shut_down_digi_tracks_between_rooms = false;
+	cursor_states _cursor_state = kARROW;
 };
 
 #define _G(X) (g_vars->_##X)

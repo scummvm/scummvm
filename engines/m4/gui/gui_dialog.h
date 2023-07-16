@@ -121,7 +121,7 @@ extern bool Dialog_Remove_Key(Dialog *d, long myKey);
 
 //GENERAL ITEM SUPPORT
 extern Item *Dialog_Get_Item(Dialog *d, int32 tag);
-extern void Dialog_Change_Item_Prompt(Dialog *d, char *newPrompt, Item *myItem, int32 tag);
+extern void Dialog_Change_Item_Prompt(Dialog *d, const char *newPrompt, Item *myItem, int32 tag);
 extern bool Dialog_Remove_Item(Dialog *d, Item *myItem, int32 tag);
 extern void Dialog_Refresh_Item(Dialog *d, Item *myItem, int32 tag);
 extern void Dialog_KeyMouseCollision();

@@ -38,6 +38,7 @@ public:
 
 	void global_room_init() override;
 	void daemon_code() override;
+	void tick() override;
 };
 
 } // namespace Rooms

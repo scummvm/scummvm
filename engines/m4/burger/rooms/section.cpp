@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/burger/vars.h"
 
 namespace M4 {
@@ -130,6 +131,13 @@ void Section::init_series_players() {
 
 void Section::daemon_code() {
 	warning("TODO: global_daemon_code");
+}
+
+void Section::tick() {
+	int oldTrigger = _G(kernel).trigger;
+	_G(kernel).trigger = CALLED_EACH_LOOP;
+	daemon_code();
+	_G(kernel).trigger = oldTrigger;
 }
 
 } // namespace Rooms

@@ -1062,7 +1062,7 @@ bool ResetDefaultListBox(Item *myItem) {
 	return changed;
 }
 
-bool Item_change_prompt(Item *myItem, char *newPrompt) {
+bool Item_change_prompt(Item *myItem, const char *newPrompt) {
 	int32 fontHeight;
 	Font *currFont;
 	if (!strcmp(myItem->prompt, newPrompt)) return false;

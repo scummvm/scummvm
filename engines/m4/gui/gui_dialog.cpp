@@ -307,7 +307,7 @@ bool Dialog_Change_List_Item(Dialog *d, Item *myItem, int32 tag, ListItem *myLis
 	return retValue;
 }
 
-void Dialog_Change_Item_Prompt(Dialog *d, char *newPrompt, Item *myItem, int32 tag) {
+void Dialog_Change_Item_Prompt(Dialog *d, const char *newPrompt, Item *myItem, int32 tag) {
 	Buffer *tempBuffer;
 	ScreenContext *myScreen;
 	int32				status, tempWidth, tempHeight, itemType;

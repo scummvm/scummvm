@@ -69,6 +69,10 @@ struct Kernel {
 	bool track_open_close = false;
 	bool going = false;
 
+	// TODO: Find every use of these new fields
+	int _val1 = 0;
+	int _val2 = 0;
+
 	size_t mem_avail() const { return 7999999; }
 };
 

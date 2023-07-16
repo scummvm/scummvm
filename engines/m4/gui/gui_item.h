@@ -134,7 +134,7 @@ extern bool ListItemSearch(Item *myItem, int32 searchMode, char *searchStr, int3
 extern bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset);
 extern bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType);
 extern bool ResetDefaultListBox(Item *myItem);
-extern bool Item_change_prompt(Item *myItem, char *newPrompt);
+extern bool Item_change_prompt(Item *myItem, const char *newPrompt);
 extern void Item_ClearOrigPrompt(void);
 extern Item *Item_RestoreTextField(void);
 extern Item *Item_CheckTextField(void);
