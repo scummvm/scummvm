@@ -311,7 +311,6 @@ void Sections::pal_game_task() {
 	int32 status;
 	bool updateVideo;
 	int delta = 0;
-	int convEvent = 0;
 	Common::String line;
 
 	if (!player_commands_allowed())
@@ -373,7 +372,7 @@ void Sections::pal_game_task() {
 		parse_player_command_now();
 		term_message("conv parse finish");
 
-		convEvent = conv_get_event();
+		(void)conv_get_event();
 	}
 #endif
 
@@ -382,19 +381,8 @@ void Sections::pal_game_task() {
 	if (_G(kernel).call_daemon_every_loop)
 		tick();
 
-	if (_G(editor_showStats)) {
-		if (_G(my_walker)) {
-			if (!_G(my_walker)->myAnim8)
-				error_show(FL, 'W:-(');
-
-			player_update_info(_G(my_walker), &_G(player_info));
-		}
-
-		line = Common::String::format("%ld  From: %ld", _G(game).previous_room, _G(game).new_room);
-		Dialog_Change_Item_Prompt(_G(mousePosDialog), line.c_str(), nullptr, 1);
-
-		// TODO: More stuff
-	}
+	if (_G(showMousePos))
+		update_mouse_pos_dialog();
 }
 
 /*------------------------------------------------------------------------*/

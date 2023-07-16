@@ -24,6 +24,7 @@
 #include "m4/core/errors.h"
 #include "m4/core/mouse.h"
 #include "m4/gui/hotkeys.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/mem/memman.h"
 #include "m4/wscript/ws_machine.h"
 #include "m4/vars.h"
@@ -98,6 +99,132 @@ void toggle_through_cursors() {
 	default:
 		break;
 	}
+}
+
+bool this_is_a_walkcode(int32 x, int32 y) {
+	if (!_G(screenCodeBuff))
+		return false;
+
+	Buffer *walkCodes;
+	byte *ptr;
+	bool result;
+
+	walkCodes = _G(screenCodeBuff)->get_buffer();
+	if (!walkCodes)
+		return false;
+
+	// Verify params
+	if (x < 0 || y < 0 || x >= walkCodes->W || y >= walkCodes->h)
+		return false;
+
+	ptr = gr_buffer_pointer(walkCodes, x, y);
+	result = ((*ptr) & 0x10) ? true : false;
+
+	_G(screenCodeBuff)->release();
+	return result;
+}
+
+int32 get_screen_depth(int32 x, int32 y) {
+	Buffer *walkCodes;
+	byte *ptr;
+	int32 myDepth;
+
+	if (!_G(screenCodeBuff))
+		return 0;
+
+	walkCodes = _G(screenCodeBuff)->get_buffer();
+	if (!walkCodes) {
+		return 0;
+	}
+
+	// Verify params
+	if (x < 0 || y < 0 || x >= walkCodes->W || y >= walkCodes->h) {
+		return -1;
+	}
+
+	ptr = gr_buffer_pointer(walkCodes, x, y);
+	myDepth = (*ptr) & 0x0f;
+
+	_G(screenCodeBuff)->release();
+	return myDepth;
+}
+
+int32 get_screen_color(int32 x, int32 y) {
+	Buffer *game_buff;
+	byte *ptr;
+	int32 myColor;
+
+	game_buff = _G(gameDrawBuff)->get_buffer();
+	if (!game_buff) {
+		return -1;
+	}
+
+	//verify params
+	if (x < 0 || y < 0 || x >= game_buff->W || y >= game_buff->h) {
+		return -1;
+	}
+
+	ptr = gr_buffer_pointer(game_buff, x, y);
+	myColor = *ptr;
+
+	_G(gameDrawBuff)->release();
+	return myColor;
+}
+
+void update_mouse_pos_dialog() {
+	int32 status;
+
+	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
+	assert(game_buff_ptr);
+
+	if (_G(kernel).myWalker != NULL) {
+		if (((int32)_G(kernel).myWalker->myAnim8) < 0)
+			error_show(FL, 'W:-(');
+		player_get_info();
+	}
+
+	char tempStr1[MAX_STRING_LEN], tempStr2[MAX_STRING_LEN];
+
+	Common::sprintf_s(tempStr1, "%ld  From: %ld", _G(game).room_id, _G(game).previous_room);
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 1);
+
+	int32 xxx = _G(MouseState).CursorColumn;
+	int32 yyy = _G(MouseState).CursorRow;
+
+	int32 scrnDepth = get_screen_depth(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1);
+	int32 palColor = get_screen_color(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1);
+
+	if (this_is_a_walkcode(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1)) {
+		Common::sprintf_s(tempStr1, "WC %ld, %ld  PAL: %ld", xxx, yyy, palColor);
+		Common::sprintf_s(tempStr2, "WC %ld, %ld  D: %ld", xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1, scrnDepth);
+	} else {
+		Common::sprintf_s(tempStr1, "   %ld, %ld  PAL: %d", xxx, yyy, palColor);
+		Common::sprintf_s(tempStr2, "   %ld, %ld  D: %ld", xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1, scrnDepth);
+	}
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 2);
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr2, NULL, 3);
+
+	if (this_is_a_walkcode(_G(player_info).x, _G(player_info).y)) {
+		Common::sprintf_s(tempStr1, "WC %ld, %ld", _G(player_info).x + game_buff_ptr->x1, _G(player_info).y + game_buff_ptr->y1);
+		Common::sprintf_s(tempStr2, "WC %ld, %ld", _G(player_info).x, _G(player_info).y);
+	} else {
+		Common::sprintf_s(tempStr1, "  %ld, %ld", _G(player_info).x + game_buff_ptr->x1, _G(player_info).y + game_buff_ptr->y1);
+		Common::sprintf_s(tempStr2, "  %ld, %ld", _G(player_info).x, _G(player_info).y);
+	}
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 4);
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr2, NULL, 5);
+
+	Common::sprintf_s(tempStr1, "%ld", _G(player_info).scale);
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 6);
+
+	Common::sprintf_s(tempStr1, "%x", _G(player_info).depth);
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 7);
+
+	Common::sprintf_s(tempStr1, "%ld, %ld", game_buff_ptr->x1, game_buff_ptr->y1);
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 8);
+
+	Common::sprintf_s(tempStr1, "%d", _G(player_info).facing);
+	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 10);
 }
 
 } // End of namespace M4
