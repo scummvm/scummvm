@@ -1754,11 +1754,30 @@ int ScummEngine::readSoundResource(ResId idx) {
 	case MKTAG('D','I','G','I'):
 	case MKTAG('C','r','e','a'):
 	case 0x460e200d:	// WORKAROUND bug #2221
-		_fileHandle->seek(-12, SEEK_CUR);
-		total_size = _fileHandle->readUint32BE();
-		ptr = _res->createResource(rtSound, idx, total_size);
-		_fileHandle->read(ptr, total_size - 8);
-		//dumpResource("sound-", idx, ptr);
+		// Some HE games take WAV files and puts a WSOU header around it
+		if (_game.heversion > 0 && basetag == MKTAG('R','I','F','F')) {
+			_fileHandle->seek(-4, SEEK_CUR);
+
+			// The chunksize field in a RIFF header is a LE field
+			total_size = _fileHandle->readUint32LE();
+
+			// Make space for the WSOU tag and for the size field
+			ptr = _res->createResource(rtSound, idx, total_size + 8);
+
+			((uint32 *)ptr)[0] = TO_BE_32(MKTAG('W', 'S', 'O', 'U'));
+			((uint32 *)ptr)[1] = total_size + 8;
+
+			// Move the ptr forward for the actual data allocation,
+			// so that our new header doesn't get rewritten
+			ptr += 8;
+		} else {
+			_fileHandle->seek(-12, SEEK_CUR);
+			total_size = _fileHandle->readUint32BE();
+			ptr = _res->createResource(rtSound, idx, total_size);
+			_fileHandle->read(ptr, total_size - 8);
+			//dumpResource("sound-", idx, ptr);
+		}
+
 		return 1;
 
 	case MKTAG('H','S','H','D'):

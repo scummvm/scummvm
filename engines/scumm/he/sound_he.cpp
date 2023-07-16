@@ -49,7 +49,7 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 	Sound(parent, mixer, false),
 	_vm((ScummEngine_v60he *)parent),
 	_overrideFreq(0),
-	_heMusic(nullptr),
+	_heSpoolingMusicTable(nullptr),
 	_heMusicTracks(0),
 	_mutex(mutex) {
 
@@ -58,8 +58,11 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 }
 
 SoundHE::~SoundHE() {
-	free(_heMusic);
+	free(_heSpoolingMusicTable);
 	delete[] _heSoundChannels;
+
+	if (_spoolingMusicFile.isOpen())
+		_spoolingMusicFile.close();
 }
 
 void SoundHE::startSound(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
@@ -67,7 +70,7 @@ void SoundHE::startSound(int sound, int heOffset, int heChannel, int heFlags, in
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 
 	if (heFlags & ScummEngine_v70he::HESndFlags::HE_SND_QUICK_START) {
-		triggerDigitalSound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+		triggerDigitalSound(sound, heOffset, heChannel, heFlags);
 	} else {
 		Sound::startSound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	}
@@ -118,7 +121,7 @@ void SoundHE::processSoundQueues() {
 			hePan = _soundQueue[_soundQueuePos].pan;
 			heVol = _soundQueue[_soundQueuePos].vol;
 			if (snd)
-				triggerDigitalSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+				triggerSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
 		_soundQueuePos = 0;
 	} else {
@@ -132,7 +135,7 @@ void SoundHE::processSoundQueues() {
 			hePan = _soundQueue[_soundQueuePos].pan;
 			heVol = _soundQueue[_soundQueuePos].vol;
 			if (snd)
-				triggerDigitalSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+				triggerSound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
 	}
 
@@ -158,7 +161,7 @@ int SoundHE::isSoundRunning(int sound) const {
 	if (isSoundInQueue(sound))
 		return sound;
 
-	if (_vm->_musicEngine &&_vm->_musicEngine->getSoundStatus(sound))
+	if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound))
 		return sound;
 
 	return 0;
@@ -259,25 +262,42 @@ void SoundHE::stopSoundChannel(int chan) {
 	}
 }
 
-int SoundHE::findFreeSoundChannel() {
-	int chan, min;
+int SoundHE::getNextDynamicChannel() {
+	int firstChan, minAge, chosenChan;
 
-	min = _vm->VAR(_vm->VAR_START_DYN_SOUND_CHANNELS);
-	if (min == 0) {
-		_vm->VAR(_vm->VAR_START_DYN_SOUND_CHANNELS) = 8;
-		return 1;
+	firstChan = _vm->VAR(_vm->VAR_START_DYN_SOUND_CHANNELS);
+
+	if (firstChan < 0) {
+		_vm->VAR(_vm->VAR_START_DYN_SOUND_CHANNELS) = HSND_MAX_CHANNELS;
+		firstChan = HSND_MAX_CHANNELS;
 	}
 
-	if (min < 8) {
-		for (chan = min; chan < ARRAYSIZE(_heChannel); chan++) {
-			if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) == 0)
-				return chan;
+	if (firstChan < HSND_MAX_CHANNELS) {
+		for (int i = firstChan; i < HSND_MAX_CHANNELS; i++) {
+			if (!_heChannel[i].sound)
+				return i;
 		}
-	} else {
-		return 1;
+
+		minAge = INT_MAX;
+		chosenChan = -1;
+
+		for (int i = firstChan; i < HSND_MAX_CHANNELS; i++) {
+
+			if (_heChannel[i].age <= minAge) {
+				minAge = _heChannel[i].age;
+				chosenChan = i;
+			}
+		}
+
+		// Found it!
+		if (chosenChan != -1)
+			return chosenChan;
+
+		// ...just get the first one, then :-)
+		return firstChan;
 	}
 
-	return min;
+	return 1;
 }
 
 bool SoundHE::isSoundCodeUsed(int sound) {
@@ -350,34 +370,83 @@ void SoundHE::setOverrideFreq(int freq) {
 }
 
 void SoundHE::setupHEMusicFile() {
-	int i;
-	Common::File musicFile;
-	Common::String buf(_vm->generateFilename(-4));
+	uint32 id, len;
+	Common::String musicFilename(_vm->generateFilename(-4));
 
-	if (musicFile.open(buf) == true) {
-		musicFile.seek(4, SEEK_SET);
-		/*int total_size =*/ musicFile.readUint32BE();
-		musicFile.seek(16, SEEK_SET);
-		_heMusicTracks = musicFile.readUint32LE();
-		debug(5, "Total music tracks %d", _heMusicTracks);
+	if (_spoolingMusicFile.open(musicFilename)) {
 
-		int musicStart = (_vm->_game.heversion >= 80) ? 56 : 20;
-		musicFile.seek(musicStart, SEEK_SET);
+		id = _spoolingMusicFile.readUint32BE();
+		len = _spoolingMusicFile.readUint32BE();
+		if (id == MKTAG('S', 'O', 'N', 'G')) {
 
-		_heMusic = (HEMusic *)malloc((_heMusicTracks + 1) * sizeof(HEMusic));
-		for (i = 0; i < _heMusicTracks; i++) {
-			_heMusic[i].id = musicFile.readUint32LE();
-			_heMusic[i].offset = musicFile.readUint32LE();
-			_heMusic[i].size = musicFile.readUint32LE();
-
-			if (_vm->_game.heversion >= 80) {
-				musicFile.seek(+9, SEEK_CUR);
+			// Older versions had a much simpler file structure
+			if (_vm->_game.heversion < 80) {
+				// Skip header wrapping file
+				_spoolingMusicFile.seek(16, SEEK_SET);
+				_heMusicTracks = _spoolingMusicFile.readUint32LE();
 			} else {
-				musicFile.seek(+13, SEEK_CUR);
+				// HE 80 and above
+				id = _spoolingMusicFile.readUint32BE();
+				len = _spoolingMusicFile.readUint32BE();
+				if (id == MKTAG('S', 'G', 'H', 'D')) {
+					_heMusicTracks = _spoolingMusicFile.readUint32LE();
+					_spoolingMusicFile.seek(len - 8 - 4, SEEK_CUR);
+				} else {
+					_spoolingMusicFile.close();
+					debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGHD tag, found %s", musicFilename.c_str(), tag2str(id));
+					return;
+				}
 			}
-		}
 
-		musicFile.close();
+			debug(5, "setupHEMusicFile(): music files count = %d", _heMusicTracks);
+			_heSpoolingMusicTable = (HESpoolingMusicItem *)malloc(_heMusicTracks * sizeof(HESpoolingMusicItem));
+
+			if (_heSpoolingMusicTable != nullptr) {
+				for (int i = 0; i < _heMusicTracks; i++) {
+
+					// For later versions we check that we are actually reading a SGEN section...
+					if (_vm->_game.heversion >= 80) {
+						id = _spoolingMusicFile.readUint32BE();
+						len = _spoolingMusicFile.readUint32BE();
+						if (id != MKTAG('S', 'G', 'E', 'N')) {
+							_spoolingMusicFile.close();
+							debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGEN tag, found %s", musicFilename.c_str(), tag2str(id));
+							return;
+						}
+					}
+
+					_heSpoolingMusicTable[i].song = _spoolingMusicFile.readSint32LE();
+					_heSpoolingMusicTable[i].offset = _spoolingMusicFile.readSint32LE();
+					_heSpoolingMusicTable[i].size = _spoolingMusicFile.readSint32LE();
+
+					int amountToRead = _vm->_game.heversion >= 80 ? 9 : 13;
+					int readAmount = 0;
+					for (readAmount = 0; readAmount < amountToRead; readAmount++) {
+						_heSpoolingMusicTable[i].filename[readAmount] = _spoolingMusicFile.readByte();
+
+						// Early string termination
+						if (_heSpoolingMusicTable[i].filename[readAmount] == '\0')
+							break;
+					}
+					// Not all filenames have a string termination char, let's include it;
+					// we don't need to do that if we had an early string termination
+					if (readAmount == amountToRead)
+						_heSpoolingMusicTable[i].filename[amountToRead] = '\0';
+
+					debug(5, "setupHEMusicFile(): read music file '%s' song %d, offset %d, size %d",
+							_heSpoolingMusicTable[i].filename,
+							_heSpoolingMusicTable[i].song,
+							_heSpoolingMusicTable[i].offset,
+							_heSpoolingMusicTable[i].size);
+				}
+			} else {
+				debug(5, "setupHEMusicFile(): Can't allocate table for spooling music file '%s'", musicFilename.c_str());
+			}
+		} else {
+			debug(5, "setupHEMusicFile(): Invalid file '%s', couldn't find SONG tag, found %s", musicFilename.c_str(), tag2str(id));
+		}
+	} else {
+		debug(5, "setupHEMusicFile(): Can't open spooling music file '%s'", musicFilename.c_str());
 	}
 }
 
@@ -385,9 +454,9 @@ bool SoundHE::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 	int i;
 
 	for (i = 0; i < _heMusicTracks; i++) {
-		if (_heMusic[i].id == id) {
-			musicOffs = _heMusic[i].offset;
-			musicSize = _heMusic[i].size;
+		if (_heSpoolingMusicTable[i].song == id) {
+			musicOffs = _heSpoolingMusicTable[i].offset;
+			musicSize = _heSpoolingMusicTable[i].size;
 			return 1;
 		}
 	}
@@ -693,7 +762,47 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 	return nullptr;
 }
 
-void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+	if (_vm->_game.heversion >= 95) {
+		if (heChannel == HSND_DYN_SOUND_CHAN) {
+			heChannel = getNextDynamicChannel();
+		}
+	}
+
+	if (soundId >= _vm->_numSounds) {
+		triggerSpoolingSound(soundId, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+		return;
+	}
+
+	byte *soundAddr = (byte *)_vm->getResourceAddress(rtSound, soundId);
+
+	if ((READ_BE_UINT32(soundAddr) == MKTAG('D', 'I', 'G', 'I')) || (READ_BE_UINT32(soundAddr) == MKTAG('T', 'A', 'L', 'K'))) {
+		triggerDigitalSound(soundId, heOffset, heChannel, heFlags);
+	} else if (READ_BE_UINT32(soundAddr) == MKTAG('M', 'I', 'D', 'I')) {
+		// Nothing happens in the original as well
+		return;
+	} else if (READ_BE_UINT32(soundAddr) == MKTAG('W', 'S', 'O', 'U')) {
+		triggerRIFFSound(soundId, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+	} else if (READ_BE_UINT32(soundAddr) == MKTAG('X', 'S', 'O', 'U')) {
+		triggerXSOUSound(soundId, heOffset, heChannel, heFlags);
+	} else {
+		error("SoundHE::triggerSound(): Illegal sound %d type %s", soundId, tag2str(READ_BE_UINT32(soundAddr)));
+	}
+}
+
+void SoundHE::triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+
+}
+
+void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+
+}
+
+void SoundHE::triggerXSOUSound(int soundId, int heOffset, int heChannel, int heFlags) {
+	error("SoundHE::triggerXSOUSound(): unimplemented XSOU format for sound %d", soundId);
+}
+
+void SoundHE::triggerDigitalSound(int soundId, int heOffset, int heChannel, int heFlags) {
 	Audio::RewindableAudioStream *stream = nullptr;
 	byte *ptr, *spoolPtr;
 	int size = -1;
@@ -701,23 +810,23 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 	byte flags = Audio::FLAG_UNSIGNED;
 
 	Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType;
-	if (soundID > _vm->_numSounds)
+	if (soundId > _vm->_numSounds)
 		type = Audio::Mixer::kMusicSoundType;
-	else if (soundID == 1)
+	else if (soundId == 1)
 		type = Audio::Mixer::kSpeechSoundType;
 
 
 	if (heChannel == -1)
-		heChannel = (_vm->VAR_START_DYN_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
+		heChannel = (_vm->VAR_START_DYN_SOUND_CHANNELS != 0xFF) ? getNextDynamicChannel() : 1;
 
-	debug(5,"triggerDigitalSound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
+	debug(5,"triggerDigitalSound: soundId %d heOffset %d heChannel %d heFlags %d", soundId, heOffset, heChannel, heFlags);
 
-	if (soundID >= 10000) {
+	if (soundId >= 10000) {
 		// Special codes, used in pjgames
 		return;
 	}
 
-	if (soundID > _vm->_numSounds) {
+	if (soundId > _vm->_numSounds) {
 		int music_offs;
 		Common::File musicFile;
 		Common::String buf(_vm->generateFilename(-4));
@@ -726,8 +835,8 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 			warning("triggerDigitalSound: Can't open music file %s", buf.c_str());
 			return;
 		}
-		if (!getHEMusicDetails(soundID, music_offs, size)) {
-			debug(0, "triggerDigitalSound: musicID %d not found", soundID);
+		if (!getHEMusicDetails(soundId, music_offs, size)) {
+			debug(0, "triggerDigitalSound: musicID %d not found", soundId);
 			return;
 		}
 
@@ -741,21 +850,21 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 
 		if (_vm->_game.heversion == 70) {
 			// Try to load high quality audio file if found
-			stream = tryLoadAudioOverride(soundID);
+			stream = tryLoadAudioOverride(soundId);
 
 			if (!stream) {
 				stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
 			}
 
-			_mixer->playStream(type, &_heSoundChannels[heChannel], stream, soundID);
+			_mixer->playStream(type, &_heSoundChannels[heChannel], stream, soundId);
 			return;
 		}
 	}
 
-	if (soundID > _vm->_numSounds) {
+	if (soundId > _vm->_numSounds) {
 		ptr = _vm->getResourceAddress(rtSpoolBuffer, heChannel);
 	} else {
-		ptr = _vm->getResourceAddress(rtSound, soundID);
+		ptr = _vm->getResourceAddress(rtSound, soundId);
 	}
 
 	if (!ptr) {
@@ -769,7 +878,7 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 		int samplesPerBlock;
 		int codeOffs = -1;
 
-		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
+		priority = (soundId > _vm->_numSounds) ? 255 : *(ptr + 18);
 
 		byte *sbngPtr = findSoundTag(MKTAG('S','B','N','G'), ptr);
 		if (sbngPtr != nullptr) {
@@ -778,9 +887,9 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 
 		if (_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
-			if (curSnd == 1 && soundID != 1)
+			if (curSnd == 1 && soundId != 1)
 				return;
-			if (curSnd != 0 && curSnd != 1 && soundID != 1 && _heChannel[heChannel].priority > priority)
+			if (curSnd != 0 && curSnd != 1 && soundId != 1 && _heChannel[heChannel].priority > priority)
 				return;
 		}
 
@@ -791,7 +900,7 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 		Common::MemoryReadStream memStream(ptr, size);
 
 		if (!Audio::loadWAVFromStream(memStream, size, rate, flags, &compType, &blockAlign, &samplesPerBlock)) {
-			error("triggerDigitalSound: Not a valid WAV file (%d)", soundID);
+			error("triggerDigitalSound: Not a valid WAV file (%d)", soundId);
 		}
 
 		assert(heOffset >= 0 && heOffset < size);
@@ -800,7 +909,7 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 		heOffset = 0;
 
 		_vm->setHETimer(heChannel + 4);
-		_heChannel[heChannel].sound = soundID;
+		_heChannel[heChannel].sound = soundId;
 		_heChannel[heChannel].priority = priority;
 		_heChannel[heChannel].frequency = rate;
 		_heChannel[heChannel].hasSoundTokens = (codeOffs != -1);
@@ -845,14 +954,14 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 			stream = Audio::makeRawStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags, DisposeAfterUse::NO);
 		}
 		_mixer->playStream(type, &_heSoundChannels[heChannel],
-						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
+						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundId);
 	}
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKTAG('D','I','G','I') || READ_BE_UINT32(ptr) == MKTAG('T','A','L','K')) {
 		byte *sndPtr = ptr;
 		int codeOffs = -1;
 
-		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
+		priority = (soundId > _vm->_numSounds) ? 255 : *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
 
 		// Skip DIGI/TALK (8) and HSHD (24) blocks
@@ -860,9 +969,9 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 
 		if (_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
-			if (curSnd == 1 && soundID != 1)
+			if (curSnd == 1 && soundId != 1)
 				return;
-			if (curSnd != 0 && curSnd != 1 && soundID != 1 && _heChannel[heChannel].priority > priority)
+			if (curSnd != 0 && curSnd != 1 && soundId != 1 && _heChannel[heChannel].priority > priority)
 				return;
 		}
 
@@ -887,14 +996,14 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 
 		// Try to load high quality audio file if found
 		int newDuration;
-		stream = tryLoadAudioOverride(soundID, &newDuration);
-		if (stream != nullptr && soundID == 1) {
+		stream = tryLoadAudioOverride(soundId, &newDuration);
+		if (stream != nullptr && soundId == 1) {
 			// Disable lip sync if the speech audio was overriden
 			codeOffs = -1;
 		}
 
 		_vm->setHETimer(heChannel + 4);
-		_heChannel[heChannel].sound = soundID;
+		_heChannel[heChannel].sound = soundId;
 		_heChannel[heChannel].priority = priority;
 		_heChannel[heChannel].frequency = rate;
 		_heChannel[heChannel].hasSoundTokens = (codeOffs != -1);
@@ -918,7 +1027,7 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 			stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
 		}
 		_mixer->playStream(type, &_heSoundChannels[heChannel],
-						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
+						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundId);
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKTAG('M','R','A','W')) {
@@ -935,10 +1044,10 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 		memcpy(sound, ptr + 8, size);
 
 		_mixer->stopID(_currentMusic);
-		_currentMusic = soundID;
+		_currentMusic = soundId;
 
 		stream = Audio::makeRawStream(sound, size, rate, 0);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, nullptr, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, nullptr, stream, soundId);
 	}
 	else if (READ_BE_UINT32(ptr) == MKTAG('M','I','D','I')) {
 		if (_vm->_imuse) {
@@ -946,17 +1055,17 @@ void SoundHE::triggerDigitalSound(int soundID, int heOffset, int heChannel, int 
 			// Birthday Surprise to change the note on the piano
 			// when not using a digitized instrument.
 			_vm->_imuse->stopSound(_currentMusic);
-			_currentMusic = soundID;
-			_vm->_imuse->startSoundWithNoteOffset(soundID, heOffset);
+			_currentMusic = soundId;
+			_vm->_imuse->startSoundWithNoteOffset(soundId, heOffset);
 		} else if (_vm->_musicEngine) {
 			_vm->_musicEngine->stopSound(_currentMusic);
-			_currentMusic = soundID;
-			_vm->_musicEngine->startSoundWithTrackID(soundID, heOffset);
+			_currentMusic = soundId;
+			_vm->_musicEngine->startSoundWithTrackID(soundId, heOffset);
 		}
 	}
 }
 
-Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundID, int *duration) {
+Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundId, int *duration) {
 	if (!_vm->_enableAudioOverride) {
 		return nullptr;
 	}
@@ -993,20 +1102,20 @@ Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundID, int *du
 	);
 
 	const char *type;
-	if (soundID == 1) {
+	if (soundId == 1) {
 		// Speech audio doesn't have a unique ID,
 		// so we use the file offset instead.
 		// _heTalkOffset is set at startHETalkSound.
 		type = "speech";
-		soundID = _heTalkOffset;
+		soundId = _heTalkOffset;
 	} else {
 		// Music and sfx share the same prefix.
 		type = "sound";
 	}
 
 	for (int i = 0; i < ARRAYSIZE(formats); i++) {
-		Common::Path pathDir(Common::String::format("%s%d.%s", type, soundID, formats[i]));
-		Common::Path pathSub(Common::String::format("%s/%d.%s", type, soundID, formats[i]));
+		Common::Path pathDir(Common::String::format("%s%d.%s", type, soundId, formats[i]));
+		Common::Path pathSub(Common::String::format("%s/%d.%s", type, soundId, formats[i]));
 
 		debug(5, "tryLoadAudioOverride: %s or %s", pathSub.toString().c_str(), pathDir.toString().c_str());
 

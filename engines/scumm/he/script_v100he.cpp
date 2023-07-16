@@ -2474,9 +2474,19 @@ void ScummEngine_v100he::o100_getResourceSize() {
 		type = rtScript;
 		break;
 	case SO_SOUND:
-		push(getSoundResourceSize(resid));
-		// TODO: Implement the case in which resid < _numSounds
-		return;
+		if (resid >= _numSounds) {
+			push(getSoundResourceSize(resid));
+			return;
+		} else {
+			if (getResourceAddress(rtSound, resid) == nullptr) {
+				type = rtSound;
+			} else {
+				push(getSoundResourceSize(resid));
+				return;
+			}
+
+			break;
+		}
 	default:
 		error("o100_getResourceSize: default type %d", subOp);
 	}
@@ -2484,6 +2494,12 @@ void ScummEngine_v100he::o100_getResourceSize() {
 	ptr = getResourceAddress(type, resid);
 	assert(ptr);
 	size = READ_BE_UINT32(ptr + 4) - 8;
+
+	// Remove the size of the sound header
+	if (type == rtSound) {
+		size -= 40;
+	}
+
 	push(size);
 }
 
