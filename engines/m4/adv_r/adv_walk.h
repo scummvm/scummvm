@@ -71,7 +71,7 @@ extern void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 #define player_turn_to_face(dd, tt) (ws_turn_to_face(_G(kernel).myWalker, dd, tt))
 #define player_hide()                  (ws_hide_walker(_G(kernel).myWalker))
 #define player_unhide()                (ws_unhide_walker(_G(kernel).myWalker))
-#define player_get_info()              (player_update_info(_G(kernel).myWalker, &player_info))
+#define player_get_info()              (player_update_info(_G(kernel).myWalker, &_G(player_info)))
 #define player_nosepick(aa)            (ws_nosepick(_G(kernel).myWalker, aa))
 
 
