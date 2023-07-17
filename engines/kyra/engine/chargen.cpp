@@ -718,7 +718,7 @@ void CharacterGenerator::createPartyMember() {
 				_screen->printShadedText(_chargenStrings2[11], 149, 100, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 				if (!_vm->shouldQuit()) {
 					if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
-						_vm->_gui->getTextInput(_characters[_activeBox].name, 28, 100, 9,
+						_vm->_gui->getTextInput(_characters[_activeBox].name, 28, 100, 8,
 									_vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
 					} else {
 						Screen::FontId of = _screen->setFont(_vm->_invFont3);
@@ -2304,6 +2304,8 @@ void TransferPartyWiz::convertStats() {
 			cname = convertFromJISX0201(cname);
 			cname = makeTwoByteString(cname);
 			Common::strlcpy(c->name, cname.c_str(), sizeof(c->name));
+		} else if (_vm->_flags.lang == Common::ZH_TWN) {
+			c->name[8] = '\0';
 		}
 
 		for (int ii = 0; ii < 25; ii++) {
