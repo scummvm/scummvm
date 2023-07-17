@@ -38,7 +38,6 @@
 
 namespace M4 {
 
-static int32 extract_room_num(const char *name);
 static Common::String get_background_filename(const SceneDef *rdef);
 static Common::String get_attribute_filename(const SceneDef *rdef);
 static void recreate_animation_draw_screen(GrBuff **loadBuf);
@@ -289,8 +288,7 @@ bool kernel_load_game(int slot) {
 	return g_engine->loadGameState(slot).getCode() == Common::kNoError;
 }
 
-#if 0
-static int32 extract_room_num(const char *name) {
+int32 extract_room_num(const Common::String &name) {
 	if ((name[0] == 'C' || name[0] == 'c') &&
 		(name[1] == 'O' || name[1] == 'o') &&
 		(name[2] == 'M' || name[2] == 'm'))
@@ -301,7 +299,7 @@ static int32 extract_room_num(const char *name) {
 	} else
 		return _G(game).room_id;
 }
-#endif
+
 static Common::String get_background_filename(const SceneDef *rdef) {
 	if (_G(art_base_override) != nullptr) {
 		return _G(art_base_override);
