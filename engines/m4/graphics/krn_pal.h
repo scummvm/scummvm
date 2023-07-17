@@ -44,7 +44,7 @@ struct KernelPal_Globals {
 	int32 _myCycleEndDelayTime = 0;
 	int32 _myCycleStartIndex = 0;
 	int32 _myCycleEndIndex = 0;
-	uint32 _myCycleTrigger = 0;
+	int32 _myCycleTrigger = 0;
 	int32 _myCycleNeverStopCycling = false;
 
 	bool _myFadeReq = false;
@@ -56,7 +56,7 @@ struct KernelPal_Globals {
 	int32 _myFadeEndDelayTime = 0;
 	int32 _myFadeStartIndex = 0;
 	int32 _myFadeEndIndex = 0;
-	uint32 _myFadeTrigger = 0;
+	int32 _myFadeTrigger = 0;
 	frac16 _myFadeStartPercentFrac = 0x10000;
 	frac16 _myFadeCurrPercentFrac = 0x10000;
 	frac16 _myFadePercentFrac = 0;

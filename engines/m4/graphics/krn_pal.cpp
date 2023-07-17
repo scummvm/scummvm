@@ -565,7 +565,7 @@ void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry,
 	_GP(myFadeEndTime) = _GP(myFadeStartTime) + numTicks;
 	_GP(myFadeTrigger) = kernel_trigger_create(triggerNum);
 	_GP(myFadeStartPercentFrac) = _GP(myFadeCurrPercentFrac);
-	_GP(myFadePercentFrac) = DivSF16(targetPercent << 16, 0x640000);
+	_GP(myFadePercentFrac) = DivSF16(targetPercent << 16, 100 << 16);
 
 	// Disable_end_user_hot_keys();
 	_G(pal_fade_in_progress) = true;
@@ -582,8 +582,9 @@ static void pal_fade_update(RGB8 *origPalette) {
 			tempFrac2 = _GP(myFadePercentFrac);
 			_GP(myFadeStartPercentFrac) = _GP(myFadePercentFrac);
 			_GP(myFadeFinished) = true;
-		} else if (currTime <= _GP(myFadeStartTime)) return;
-		else {
+		} else if (currTime <= _GP(myFadeStartTime)) {
+			return;
+		} else {
 			tempFrac = DivSF16((currTime - _GP(myFadeStartTime)) << 16, (_GP(myFadeEndTime) - _GP(myFadeStartTime)) << 16);
 			tempFrac2 = MulSF16(tempFrac, _GP(myFadePercentFrac) - _GP(myFadeStartPercentFrac)) + _GP(myFadeStartPercentFrac);
 		}
@@ -597,7 +598,7 @@ static void pal_fade_update(RGB8 *origPalette) {
 		}
 
 		// Recalculate the end delay time again
-		_GP(myFadeEndDelayTime) = currTime + _GP(myFadeDelayTicks);	// Recalculate the end delay time again
+		_GP(myFadeEndDelayTime) = currTime + _GP(myFadeDelayTicks);		// Recalculate the end delay time again
 
 		// Must reresh the DAC
 		_GP(myFadeDACrefresh) = true;
@@ -744,9 +745,10 @@ void pal_fx_update() {
 		}
 	}
 
-	// Check ranges to perform minimum calls of gr_pal_set_range() (to minimize snow on monitor due to OUT instructions)
-	if (endA < startB || endB < startA) { // if A and B ranges don't overlap
-
+	// Check ranges to perform minimum calls of gr_pal_set_range().
+	// This was originally done to minimize snow on monitor due to repeated OUT instructions
+	if (endA < startB || endB < startA) {
+		// if A and B ranges don't overlap
 		if (!(startA == 0 && endA == 0))    // if this is not the degenerate case	(just the transparent color)
 			gr_pal_set_range(&_GP(myFXPalette)[0], startA, endA - startA + 1);	// set A range of the DAC
 

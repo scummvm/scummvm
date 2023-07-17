@@ -78,11 +78,14 @@ void gr_pal_set_RGB8(RGB8 *entry, int r, int g, int b) {
 }
 
 void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors) {
-	g_system->getPaletteManager()->setPalette((const byte *)pal, first_color, num_colors);
+	g_system->getPaletteManager()->setPalette((const byte *)pal + first_color * 3,
+		first_color, num_colors);
+	g_system->updateScreen();
 }
 
 void  gr_pal_set_entry(int32 index, RGB8 *entry) {
 	g_system->getPaletteManager()->setPalette((const byte *)entry, index, 1);
+	g_system->updateScreen();
 }
 
 void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color) {
