@@ -364,7 +364,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 			_screen->drawBox(3, 170, 290, 199, _vm->guiSettings()->colors.fill);
 
 		_screen->set16bitShadingLevel(4);
-		_screen->fillRect((sd->sx << 3) - wOffs, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, _textDimData[sdx].color2);
+		_screen->fillRect((sd->sx << 3) - wOffs, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, remapColor(sdx, _textDimData[sdx].color2));
 		_screen->set16bitShadingLevel(0);
 
 		if (_textDimData[sdx].line)
@@ -494,7 +494,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[s] = 0;
 
 	uint8 col1 = remapColor(sdx, _textDimData[sdx].color1);
-	uint8 col2 = _isChinese ? remapColor(sdx, _textDimData[sdx].color2) : _textDimData[sdx].color2;
+	uint8 col2 = remapColor(sdx, _textDimData[sdx].color2);
 	if (sjisTextMode && (sdx == 2 || sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) {
 		x1 &= ~3;
 		y = (y + 8) & ~7;
@@ -599,7 +599,7 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 int TextDisplayer_rpg::clearDim(int dim) {
 	int res = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
-	_textDimData[dim].color1= _screen->_curDim->col1;
+	_textDimData[dim].color1 = _screen->_curDim->col1;
 	_textDimData[dim].color2 = (_vm->game() == GI_LOL || _vm->gameFlags().platform == Common::kPlatformAmiga) ? _screen->_curDim->col2 : _vm->guiSettings()->colors.fill;
 
 	clearCurDim();
@@ -858,6 +858,11 @@ void TextDisplayer_rpg::applySetting(int sd, int ix, int val) {
 uint8 TextDisplayer_rpg::remapColor(int sd, uint8 color) const {
 	if (sd < -1 || sd >= _dimCount)
 		error("TextDisplayer_rpg::applySetting(): arg out of range");
+
+	// HACK: Apparently, this needs a better implementation (allowing to set
+	// mappings for col1 and col2 independently). But this will do for now...
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga && sd != 7 && color == _textDimData[sd].color2)
+		return color;
 
 	if (sd != -1 && _textDimData[sd].colorMap != nullptr)
 		return _textDimData[sd].colorMap[color];
