@@ -42,8 +42,8 @@ struct KernelPal_Globals {
 	int32 _myCycleStartTime = 0;
 	int32 _myCycleEndTime = 0;
 	int32 _myCycleEndDelayTime = 0;
-	int32 _myCycleStartIndex;
-	int32 _myCycleEndIndex;
+	int32 _myCycleStartIndex = 0;
+	int32 _myCycleEndIndex = 0;
 	uint32 _myCycleTrigger = 0;
 	int32 _myCycleNeverStopCycling = false;
 
@@ -87,10 +87,32 @@ extern void pal_fade_set_start(RGB8 *origPalette, int32 percent);
 extern void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
 
 extern void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks, int32 totalTicks, int32 triggerNum);
-extern bool pal_cycle_active();        // Returns true if color cycling is on
-extern void pal_cycle_stop();          // Stops color cycling
-extern void pal_cycle_resume();        // Starts color cycling
-extern void pal_fx_update();			// Handles fading and cycling  MattP
+
+/**
+ * Returns true if color cycling is on
+ */
+extern bool pal_cycle_active();
+
+/**
+ * Stops color cycling
+ */
+extern void pal_cycle_stop();
+
+/**
+ * Starts color cycling
+ */
+extern void pal_cycle_resume();
+
+/**
+ * Handles fading and cycling
+ */
+extern void pal_fx_update();
+
+/**
+ * This is used to effect the screen colours (not the master palette) temporarily
+ * until something else updates the DAC e.g. refresh_DAC()
+ */
+extern void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent);
 
 extern void kernel_examine_inventory_object(char *picName, RGB8 *pal, int steps, int delay,
 	int32 x, int32 y, int32 triggerNum, char *digi_name, int32 digi_trigger);
