@@ -51,13 +51,6 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/fttype1.o \
 	lib/freetype-2.1.3/ftutil.o \
 	lib/freetype-2.1.3/ftxf86.o \
-	lib/freetype-2.1.3/cache/ftlru.o \
-	lib/freetype-2.1.3/cache/ftcmanag.o \
-	lib/freetype-2.1.3/cache/ftccache.o \
-	lib/freetype-2.1.3/cache/ftcglyph.o \
-	lib/freetype-2.1.3/cache/ftcimage.o \
-	lib/freetype-2.1.3/cache/ftcsbits.o \
-	lib/freetype-2.1.3/cache/ftccmap.o \
 	lib/freetype-2.1.3/modules/psaux/psobjs.o \
 	lib/freetype-2.1.3/modules/psaux/psauxmod.o \
 	lib/freetype-2.1.3/modules/psaux/t1decode.o \
