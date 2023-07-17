@@ -546,7 +546,7 @@ void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
 
 static void pal_fade_callback(frac16 myMessage) {
 	_G(pal_fade_in_progress) = false;
-	kernel_trigger_dispatch((uint32)myMessage);
+	kernel_trigger_dispatchx((int32)myMessage);
 }
 
 void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry,
@@ -718,8 +718,6 @@ static void pal_cycle_update() {
 	}
 }
 
-// 	pal_fx_update() is called each game loop
-//
 void pal_fx_update() {
 	int32 startA = 0, endA = 0, startB = 0, endB = 0, startDAC = 0, endDAC = 0;
 
@@ -776,12 +774,6 @@ void pal_fx_update() {
 	}
 }
 
-//==========================================================================================
-//
-// DAC_tint_effect() is used to effect the screen colours (not the master palette) temporarily
-// until something else updates the DAC e.g. refresh_DAC()
-//
-
 void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent) {
 	int32 i;
 	int32 r, g, b, dr, dg, db;
@@ -789,13 +781,13 @@ void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 l
 	int32 percent_r, percent_g, percent_b;
 
 	if ((firstPalEntry < 0) || (lastPalEntry > 255) || (firstPalEntry > lastPalEntry)) {
-		// this should generate an error  (Nick debug plarg MattP)
+		// This should generate an error
 		term_message("*** palette index error");
 		return;
 	}
 
 	term_message("Colour tint DAC to: %d %d %d, %d percent, range (%d - %d)",
-		tintColor->r, tintColor->g, tintColor->b, percent, firstPalEntry, lastPalEntry); // debug
+		tintColor->r, tintColor->g, tintColor->b, percent, firstPalEntry, lastPalEntry);
 	percent = DivSF16(percent << 16, 100 << 16); // convert percent to frac16 format
 
 	targetColor.r = tintColor->r;
@@ -807,17 +799,17 @@ void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 l
 	if (!transparent) {
 		for (i = firstPalEntry; i <= lastPalEntry; ++i) {
 
-			// calculate deltas for RGB's  and put them in frac16 format
+			// Calculate deltas for RGB's  and put them in frac16 format
 			dr = (targetColor.r - _G(master_palette)[i].r) << 16;
 			dg = (targetColor.g - _G(master_palette)[i].g) << 16;
 			db = (targetColor.b - _G(master_palette)[i].b) << 16;
 
-			// new = orig + (delta * percent)
+			// New = orig + (delta * percent)
 			r = _G(master_palette)[i].r + (MulSF16(percent, dr) >> 16);
 			g = _G(master_palette)[i].g + (MulSF16(percent, dg) >> 16);
 			b = _G(master_palette)[i].b + (MulSF16(percent, db) >> 16);
 
-			// check for under/overflow
+			// Check for under/overflow
 			if (r > 255) r = 255;  if (r < 0) r = 0;
 			if (g > 255) g = 255;  if (g < 0) g = 0;
 			if (b > 255) b = 255;  if (b < 0) b = 0;
@@ -826,17 +818,15 @@ void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 l
 			color.g = (byte)g;
 			color.b = (byte)b;
 
-			gr_pal_set_entry(i, &color); // set the new colour to the DAC
+			gr_pal_set_entry(i, &color);	// Set the new colour to the DAC
 		}
 
 	} else {
-
 		// This is for filtering colors.  For example, a completely red filter
 		// (255, 0, 0) will block out the blue and green parts of the palette.
 		// 50% of the same filter will block out only 50% of the blue and
 		// green, but leaving all of the rest blue.
 		for (i = firstPalEntry; i <= lastPalEntry; ++i) {
-
 			// Converting rgb to a frac16 ( << 16) dividing by 256 ( >> 8) 
 			// (the range of the palette values)
 			percent_r = (targetColor.r) << 8;
@@ -859,7 +849,7 @@ void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 l
 			g = (_G(master_palette)[i].g - (dg >> 16));
 			b = (_G(master_palette)[i].b - (db >> 16));
 
-			// check for under/overflow
+			// Check for under/overflow
 			if (r > 255) r = 255;  if (r < 0) r = 0;
 			if (g > 255) g = 255;  if (g < 0) g = 0;
 			if (b > 255) b = 255;  if (b < 0) b = 0;

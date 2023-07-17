@@ -28,8 +28,6 @@ namespace M4 {
 
 #define _GT(X) _G(triggers)._##X
 
-static bool kernel_trigger_dispatchx(int32 trigger_num);
-
 int32 kernel_trigger_create(int32 trigger_num) {
 	int32 new_trigger;
 
@@ -72,13 +70,7 @@ void cisco_clear_triggers() {
 	_GT(q_end) = _GT(q_start) = 0;
 }
 
-/**
- * Dispatches a trigger.
- * @returns		Returns true if the trigger was handled. If the trigger is for
- * a different room that current room_id, returns false. If no trigger_mode was
- * attached to the trigger, returns false
- */
-static bool kernel_trigger_dispatchx(int32 trigger_num) {
+bool kernel_trigger_dispatchx(int32 trigger_num) {
 	if (_G(between_rooms))
 		return true;
 
