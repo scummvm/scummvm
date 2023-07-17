@@ -1,17 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  ttnameid.h                                                             */
-/*                                                                         */
 /*    TrueType name ID definitions (specification only).                   */
-/*                                                                         */
-/*  Copyright 1996-2002 by                                                 */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -26,56 +37,6 @@
 FT2_1_3_BEGIN_HEADER
 
 
-/*************************************************************************/
-/*                                                                       */
-/* Possible values for the `platform' identifier code in the name        */
-/* records of the TTF `name' table.                                      */
-/*                                                                       */
-/*************************************************************************/
-
-
-/***********************************************************************
- *
- * @enum:
- *   TT_PLATFORM_XXX
- *
- * @description:
- *   A list of valid values for the `platform_id' identifier code in
- *   @FT_CharmapRec and @FT_SfntName structures.
- *
- * @values:
- *   TT_PLATFORM_APPLE_UNICODE ::
- *     Used by Apple to indicate a Unicode character map and/or name entry.
- *     See @TT_APPLE_ID_XXX for corresponding `encoding_id' values.  Note
- *     that name entries in this format are coded as big-endian UCS-2
- *     character codes _only_.
- *
- *   TT_PLATFORM_MACINTOSH ::
- *     Used by Apple to indicate a MacOS-specific charmap and/or name entry.
- *     See @TT_MAC_ID_XXX for corresponding `encoding_id' values.  Note that
- *     most TrueType fonts contain an Apple roman charmap to be usable on
- *     MacOS systems (even if they contain a Microsoft charmap as well).
- *
- *   TT_PLATFORM_ISO ::
- *     This value was used to specify Unicode charmaps.  It is however
- *     now deprecated.  See @TT_ISO_ID_XXX for a list of corresponding
- *     `encoding_id' values.
- *
- *   TT_PLATFORM_MICROSOFT ::
- *     Used by Microsoft to indicate Windows-specific charmaps.  See
- *     @TT_MS_ID_XXX for a list of corresponding `encoding_id' values.
- *     Note that most fonts contain a Unicode charmap using
- *     (@TT_PLATFORM_MICROSOFT, @TT_MS_ID_UNICODE_CS).
- *
- *   TT_PLATFORM_CUSTOM ::
- *     Used to indicate application-specific charmaps.
- *
- *   TT_PLATFORM_ADOBE ::
- *     This value isn't part of any font format specification, but is used
- *     by FreeType to report Adobe-specific charmaps in an @FT_CharMapRec
- *     structure.  See @TT_ADOBE_ID_XXX.
- */
-
 #define TT_PLATFORM_APPLE_UNICODE  0
 #define TT_PLATFORM_MACINTOSH      1
 #define TT_PLATFORM_ISO            2 /* deprecated */
@@ -83,81 +44,11 @@ FT2_1_3_BEGIN_HEADER
 #define TT_PLATFORM_CUSTOM         4
 #define TT_PLATFORM_ADOBE          7 /* artificial */
 
-
-/***********************************************************************
- *
- * @enum:
- *   TT_APPLE_ID_XXX
- *
- * @description:
- *   A list of valid values for the `encoding_id' for
- *   @TT_PLATFORM_APPLE_UNICODE charmaps and name entries.
- *
- * @values:
- *   TT_APPLE_ID_DEFAULT ::
- *     Unicode version 1.0.
- *   TT_APPLE_ID_UNICODE_1_1 ::
- *     Unicode 1.1; specifies Hangul characters starting at U+34xx.
- *   TT_APPLE_ID_ISO_10646 ::
- *     Deprecated.
- *   TT_APPLE_ID_UNICODE_2_0 ::
- *     Unicode 2.0 and beyond (UTF-16 BMP only).
- *   TT_APPLE_ID_UNICODE_32 ::
- *     UTF-32 (Adobe proposal for OpenType).
- */
-
 #define TT_APPLE_ID_DEFAULT      0 /* Unicode 1.0 */
 #define TT_APPLE_ID_UNICODE_1_1  1 /* specify Hangul at U+34xx */
 #define TT_APPLE_ID_ISO_10646    2 /* deprecated */
 #define TT_APPLE_ID_UNICODE_2_0  3 /* or later */
 #define TT_APPLE_ID_UNICODE_32   4 /* Adobe proposal */
-
-
-/***********************************************************************
- *
- * @enum:
- *   TT_MAC_ID_XXX
- *
- * @description:
- *   A list of valid values for the `encoding_id' for
- *   @TT_PLATFORM_MACINTOSH charmaps and name entries.
- *
- * @values:
- *   TT_MAC_ID_ROMAN ::
- *   TT_MAC_ID_JAPANESE ::
- *   TT_MAC_ID_TRADITIONAL_CHINESE ::
- *   TT_MAC_ID_KOREAN ::
- *   TT_MAC_ID_ARABIC ::
- *   TT_MAC_ID_HEBREW ::
- *   TT_MAC_ID_GREEK ::
- *   TT_MAC_ID_RUSSIAN ::
- *   TT_MAC_ID_RSYMBOL ::
- *   TT_MAC_ID_DEVANAGARI ::
- *   TT_MAC_ID_GURMUKHI ::
- *   TT_MAC_ID_GUJARATI ::
- *   TT_MAC_ID_ORIYA ::
- *   TT_MAC_ID_BENGALI ::
- *   TT_MAC_ID_TAMIL ::
- *   TT_MAC_ID_TELUGU ::
- *   TT_MAC_ID_KANNADA ::
- *   TT_MAC_ID_MALAYALAM ::
- *   TT_MAC_ID_SINHALESE ::
- *   TT_MAC_ID_BURMESE ::
- *   TT_MAC_ID_KHMER ::
- *   TT_MAC_ID_THAI ::
- *   TT_MAC_ID_LAOTIAN ::
- *   TT_MAC_ID_GEORGIAN ::
- *   TT_MAC_ID_ARMENIAN ::
- *   TT_MAC_ID_MALDIVIAN ::
- *   TT_MAC_ID_SIMPLIFIED_CHINESE ::
- *   TT_MAC_ID_TIBETAN ::
- *   TT_MAC_ID_MONGOLIAN ::
- *   TT_MAC_ID_GEEZ ::
- *   TT_MAC_ID_SLAVIC ::
- *   TT_MAC_ID_VIETNAMESE ::
- *   TT_MAC_ID_SINDHI ::
- *   TT_MAC_ID_UNINTERP ::
- */
 
 #define TT_MAC_ID_ROMAN                 0
 #define TT_MAC_ID_JAPANESE              1
@@ -194,72 +85,9 @@ FT2_1_3_BEGIN_HEADER
 #define TT_MAC_ID_SINDHI               31
 #define TT_MAC_ID_UNINTERP             32
 
-
-/***********************************************************************
- *
- * @enum:
- *   TT_ISO_ID_XXX
- *
- * @description:
- *   A list of valid values for the `encoding_id' for
- *   @TT_PLATFORM_ISO charmaps and name entries.
- *
- *   Their use is now deprecated.
- *
- * @values:
- *   TT_ISO_ID_7BIT_ASCII ::
- *     ASCII.
- *   TT_ISO_ID_10646 ::
- *     ISO/10646.
- *   TT_ISO_ID_8859_1 ::
- *     Also known as Latin-1.
- */
-
 #define TT_ISO_ID_7BIT_ASCII  0
 #define TT_ISO_ID_10646       1
 #define TT_ISO_ID_8859_1      2
-
-
-/***********************************************************************
- *
- * @enum:
- *   TT_MS_ID_XXX
- *
- * @description:
- *   A list of valid values for the `encoding_id' for
- *   @TT_PLATFORM_MICROSOFT charmaps and name entries.
- *
- * @values:
- *   TT_MS_ID_SYMBOL_CS ::
- *     Corresponds to symbol encodings. see @FT2_1_3_ENCODING_MS_SYMBOL.
- *
- *   TT_MS_ID_UNICODE_CS ::
- *     Corresponds to a Microsoft WGL4 charmap, matching Unicode.  See
- *     @FT2_1_3_ENCODING_UNICODE.
- *
- *   TT_MS_ID_SJIS ::
- *     Corresponds to Microsoft SJIS Japanese encoding.
- *     See @FT2_1_3_ENCODING_MS_SJIS.
- *
- *   TT_MS_ID_GB2312 ::
- *     Corresponds to Microsoft Simplified Chinese as used in Mainland
- *     China.  See @FT2_1_3_ENCODING_MS_GB2312.
- *
- *   TT_MS_ID_BIG_5 ::
- *     Corresponds to Microsoft Traditional Chinese as used in Taiwan and
- *     Hong Kong.  See @FT2_1_3_ENCODING_MS_BIG5.
- *
- *   TT_MS_ID_WANSUNG ::
- *     Corresponds to Microsoft Korean Wansung encoding.  See
- *     @FT2_1_3_ENCODING_MS_WANSUNG.
- *
- *   TT_MS_ID_JOHAB ::
- *     Corresponds to Microsoft Johab encoding.  See @FT2_1_3_ENCODING_MS_JOHAB.
- *
- *   TT_MS_ID_UCS_4 ::
- *     Corresponds to UCS-4 or UTF-32 charmaps.  This is a recent Adobe
- *     proposal for OpenType.
- */
 
 #define TT_MS_ID_SYMBOL_CS    0
 #define TT_MS_ID_UNICODE_CS   1
@@ -270,40 +98,11 @@ FT2_1_3_BEGIN_HEADER
 #define TT_MS_ID_JOHAB        6
 #define TT_MS_ID_UCS_4       10
 
-
-/***********************************************************************
- *
- * @enum:
- *   TT_ADOBE_ID_XXX
- *
- * @description:
- *   A list of valid values for the `encoding_id' for
- *   @TT_PLATFORM_ADOBE charmaps.  This is a FreeType-specific extension!
- *
- * @values:
- *   TT_ADOBE_ID_STANDARD ::
- *     Adobe standard encoding.
- *   TT_ADOBE_ID_EXPERT ::
- *     Adobe expert encoding.
- *   TT_ADOBE_ID_CUSTOM ::
- *     Adobe custom encoding.
- */
-
 #define TT_ADOBE_ID_STANDARD  0
 #define TT_ADOBE_ID_EXPERT    1
 #define TT_ADOBE_ID_CUSTOM    2
 
 
-/*************************************************************************/
-/*                                                                       */
-/* Possible values of the language identifier field in the name records  */
-/* of the TTF `name' table if the `platform' identifier code is          */
-/* TT_PLATFORM_MACINTOSH.                                                */
-/*                                                                       */
-/* The canonical source for the Apple assigned Language ID's is at       */
-/*                                                                       */
-/*   http://fonts.apple.com/TTRefMan/RM06/Chap6name.html                 */
-/*                                                                       */
 #define TT_MAC_LANGID_ENGLISH                       0
 #define TT_MAC_LANGID_FRENCH                        1
 #define TT_MAC_LANGID_GERMAN                        2
@@ -414,14 +213,10 @@ FT2_1_3_BEGIN_HEADER
 #define TT_MAC_LANGID_JAVANESE                    138
 #define TT_MAC_LANGID_SUNDANESE                   139
 
-
 #if 0  /* these seem to be errors that have been dropped */
-
 #define TT_MAC_LANGID_SCOTTISH_GAELIC             140
 #define TT_MAC_LANGID_IRISH_GAELIC                141
-
 #endif
-
 
 /* The following codes are new as of 2000-03-10 */
 #define TT_MAC_LANGID_GALICIAN                    140
@@ -436,17 +231,6 @@ FT2_1_3_BEGIN_HEADER
 #define TT_MAC_LANGID_GREELANDIC                  149
 #define TT_MAC_LANGID_AZERBAIJANI_ROMAN_SCRIPT    150
 
-
-/*************************************************************************/
-/*                                                                       */
-/* Possible values of the language identifier field in the name records  */
-/* of the TTF `name' table if the `platform' identifier code is          */
-/* TT_PLATFORM_MICROSOFT.                                                */
-/*                                                                       */
-/* The canonical source for the MS assigned LCID's is at                 */
-/*                                                                       */
-/*   http://www.microsoft.com/typography/OTSPEC/lcid-cp.txt              */
-/*                                                                       */
 #define TT_MS_LANGID_ARABIC_SAUDI_ARABIA               0x0401
 #define TT_MS_LANGID_ARABIC_IRAQ                       0x0801
 #define TT_MS_LANGID_ARABIC_EGYPT                      0x0c01
@@ -727,11 +511,6 @@ FT2_1_3_BEGIN_HEADER
 #define TT_MS_LANGID_PAPIAMENTU_NETHERLANDS_ANTILLES   0x0479
 
 
-/*************************************************************************/
-/*                                                                       */
-/* Possible values of the `name' identifier field in the name records of */
-/* the TTF `name' table.  These values are platform independent.         */
-/*                                                                       */
 #define TT_NAME_ID_COPYRIGHT            0
 #define TT_NAME_ID_FONT_FAMILY          1
 #define TT_NAME_ID_FONT_SUBFAMILY       2
@@ -760,15 +539,6 @@ FT2_1_3_BEGIN_HEADER
 /* This is new in OpenType 1.3 */
 #define TT_NAME_ID_CID_FINDFONT_NAME    20
 
-
-/*************************************************************************/
-/*                                                                       */
-/* Bit mask values for the Unicode Ranges from the TTF `OS2 ' table.     */
-/*                                                                       */
-/* Updated 02-Jul-2000.                                                  */
-/*                                                                       */
-
-/* General Scripts Area */
 
 /* Bit  0   Basic Latin */
 #define TT_UCR_BASIC_LATIN                     (1L <<  0) /* U+0020-U+007E */
@@ -981,35 +751,17 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /* Some compilers have a very limited length of identifiers.             */
 /*                                                                       */
-#if defined( __TURBOC__ ) && __TURBOC__ < 0x0410 || defined( __PACIFIC__ )
+#if defined(__TURBOC__) && __TURBOC__ < 0x0410 || defined(__PACIFIC__)
 #define HAVE_LIMIT_ON_IDENTS
 #endif
 
-
 #ifndef HAVE_LIMIT_ON_IDENTS
 
+#define TT_UCR_ARABIC_PRESENTATION_FORMS_A TT_UCR_ARABIC_PRESENTATIONS_A
+#define TT_UCR_ARABIC_PRESENTATION_FORMS_B TT_UCR_ARABIC_PRESENTATIONS_B
 
-/*************************************************************************/
-/*                                                                       */
-/* Here some alias #defines in order to be clearer.                      */
-/*                                                                       */
-/* These are not always #defined to stay within the 31 character limit   */
-/* which some compilers have.                                            */
-/*                                                                       */
-/* Credits go to Dave Hoo <dhoo@flash.net> for pointing out that modern  */
-/* Borland compilers (read: from BC++ 3.1 on) can increase this limit.   */
-/* If you get a warning with such a compiler, use the -i40 switch.       */
-/*                                                                       */
-#define TT_UCR_ARABIC_PRESENTATION_FORMS_A      \
-			TT_UCR_ARABIC_PRESENTATIONS_A
-#define TT_UCR_ARABIC_PRESENTATION_FORMS_B      \
-			TT_UCR_ARABIC_PRESENTATIONS_B
-
-#define TT_UCR_COMBINING_DIACRITICAL_MARKS      \
-			TT_UCR_COMBINING_DIACRITICS
-#define TT_UCR_COMBINING_DIACRITICAL_MARKS_SYMB \
-			TT_UCR_COMBINING_DIACRITICS_SYMB
-
+#define TT_UCR_COMBINING_DIACRITICAL_MARKS TT_UCR_COMBINING_DIACRITICS
+#define TT_UCR_COMBINING_DIACRITICAL_MARKS_SYMB TT_UCR_COMBINING_DIACRITICS_SYMB
 
 #endif /* !HAVE_LIMIT_ON_IDENTS */
 
@@ -1017,6 +769,3 @@ FT2_1_3_BEGIN_HEADER
 FT2_1_3_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_TTNAMEID_H */
-
-
-/* END */

@@ -1,17 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  tttags.h                                                               */
-/*                                                                         */
 /*    Tags for TrueType tables (specification only).                       */
-/*                                                                         */
-/*  Copyright 1996-2001 by                                                 */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -27,48 +38,45 @@
 FT2_1_3_BEGIN_HEADER
 
 
-#define TTAG_cmap  FT2_1_3_MAKE_TAG( 'c', 'm', 'a', 'p' )
-#define TTAG_cvt   FT2_1_3_MAKE_TAG( 'c', 'v', 't', ' ' )
-#define TTAG_CFF   FT2_1_3_MAKE_TAG( 'C', 'F', 'F', ' ' )
-#define TTAG_DSIG  FT2_1_3_MAKE_TAG( 'D', 'S', 'I', 'G' )
-#define TTAG_bhed  FT2_1_3_MAKE_TAG( 'b', 'h', 'e', 'd' )
-#define TTAG_bdat  FT2_1_3_MAKE_TAG( 'b', 'd', 'a', 't' )
-#define TTAG_bloc  FT2_1_3_MAKE_TAG( 'b', 'l', 'o', 'c' )
-#define TTAG_EBDT  FT2_1_3_MAKE_TAG( 'E', 'B', 'D', 'T' )
-#define TTAG_EBLC  FT2_1_3_MAKE_TAG( 'E', 'B', 'L', 'C' )
-#define TTAG_EBSC  FT2_1_3_MAKE_TAG( 'E', 'B', 'S', 'C' )
-#define TTAG_fpgm  FT2_1_3_MAKE_TAG( 'f', 'p', 'g', 'm' )
-#define TTAG_fvar  FT2_1_3_MAKE_TAG( 'f', 'v', 'a', 'r' )
-#define TTAG_gasp  FT2_1_3_MAKE_TAG( 'g', 'a', 's', 'p' )
-#define TTAG_glyf  FT2_1_3_MAKE_TAG( 'g', 'l', 'y', 'f' )
-#define TTAG_GSUB  FT2_1_3_MAKE_TAG( 'G', 'S', 'U', 'B' )
-#define TTAG_hdmx  FT2_1_3_MAKE_TAG( 'h', 'd', 'm', 'x' )
-#define TTAG_head  FT2_1_3_MAKE_TAG( 'h', 'e', 'a', 'd' )
-#define TTAG_hhea  FT2_1_3_MAKE_TAG( 'h', 'h', 'e', 'a' )
-#define TTAG_hmtx  FT2_1_3_MAKE_TAG( 'h', 'm', 't', 'x' )
-#define TTAG_kern  FT2_1_3_MAKE_TAG( 'k', 'e', 'r', 'n' )
-#define TTAG_loca  FT2_1_3_MAKE_TAG( 'l', 'o', 'c', 'a' )
-#define TTAG_LTSH  FT2_1_3_MAKE_TAG( 'L', 'T', 'S', 'H' )
-#define TTAG_maxp  FT2_1_3_MAKE_TAG( 'm', 'a', 'x', 'p' )
-#define TTAG_MMSD  FT2_1_3_MAKE_TAG( 'M', 'M', 'S', 'D' )
-#define TTAG_MMFX  FT2_1_3_MAKE_TAG( 'M', 'M', 'F', 'X' )
-#define TTAG_name  FT2_1_3_MAKE_TAG( 'n', 'a', 'm', 'e' )
-#define TTAG_OS2   FT2_1_3_MAKE_TAG( 'O', 'S', '/', '2' )
-#define TTAG_OTTO  FT2_1_3_MAKE_TAG( 'O', 'T', 'T', 'O' )
-#define TTAG_PCLT  FT2_1_3_MAKE_TAG( 'P', 'C', 'L', 'T' )
-#define TTAG_post  FT2_1_3_MAKE_TAG( 'p', 'o', 's', 't' )
-#define TTAG_prep  FT2_1_3_MAKE_TAG( 'p', 'r', 'e', 'p' )
-#define TTAG_true  FT2_1_3_MAKE_TAG( 't', 'r', 'u', 'e' )
-#define TTAG_ttc   FT2_1_3_MAKE_TAG( 't', 't', 'c', ' ' )
-#define TTAG_ttcf  FT2_1_3_MAKE_TAG( 't', 't', 'c', 'f' )
-#define TTAG_VDMX  FT2_1_3_MAKE_TAG( 'V', 'D', 'M', 'X' )
-#define TTAG_vhea  FT2_1_3_MAKE_TAG( 'v', 'h', 'e', 'a' )
-#define TTAG_vmtx  FT2_1_3_MAKE_TAG( 'v', 'm', 't', 'x' )
+#define TTAG_cmap  FT2_1_3_MAKE_TAG('c', 'm', 'a', 'p')
+#define TTAG_cvt   FT2_1_3_MAKE_TAG('c', 'v', 't', ' ')
+#define TTAG_CFF   FT2_1_3_MAKE_TAG('C', 'F', 'F', ' ')
+#define TTAG_DSIG  FT2_1_3_MAKE_TAG('D', 'S', 'I', 'G')
+#define TTAG_bhed  FT2_1_3_MAKE_TAG('b', 'h', 'e', 'd')
+#define TTAG_bdat  FT2_1_3_MAKE_TAG('b', 'd', 'a', 't')
+#define TTAG_bloc  FT2_1_3_MAKE_TAG('b', 'l', 'o', 'c')
+#define TTAG_EBDT  FT2_1_3_MAKE_TAG('E', 'B', 'D', 'T')
+#define TTAG_EBLC  FT2_1_3_MAKE_TAG('E', 'B', 'L', 'C')
+#define TTAG_EBSC  FT2_1_3_MAKE_TAG('E', 'B', 'S', 'C')
+#define TTAG_fpgm  FT2_1_3_MAKE_TAG('f', 'p', 'g', 'm')
+#define TTAG_fvar  FT2_1_3_MAKE_TAG('f', 'v', 'a', 'r')
+#define TTAG_gasp  FT2_1_3_MAKE_TAG('g', 'a', 's', 'p')
+#define TTAG_glyf  FT2_1_3_MAKE_TAG('g', 'l', 'y', 'f')
+#define TTAG_GSUB  FT2_1_3_MAKE_TAG('G', 'S', 'U', 'B')
+#define TTAG_hdmx  FT2_1_3_MAKE_TAG('h', 'd', 'm', 'x')
+#define TTAG_head  FT2_1_3_MAKE_TAG('h', 'e', 'a', 'd')
+#define TTAG_hhea  FT2_1_3_MAKE_TAG('h', 'h', 'e', 'a')
+#define TTAG_hmtx  FT2_1_3_MAKE_TAG('h', 'm', 't', 'x')
+#define TTAG_kern  FT2_1_3_MAKE_TAG('k', 'e', 'r', 'n')
+#define TTAG_loca  FT2_1_3_MAKE_TAG('l', 'o', 'c', 'a')
+#define TTAG_LTSH  FT2_1_3_MAKE_TAG('L', 'T', 'S', 'H')
+#define TTAG_maxp  FT2_1_3_MAKE_TAG('m', 'a', 'x', 'p')
+#define TTAG_MMSD  FT2_1_3_MAKE_TAG('M', 'M', 'S', 'D')
+#define TTAG_MMFX  FT2_1_3_MAKE_TAG('M', 'M', 'F', 'X')
+#define TTAG_name  FT2_1_3_MAKE_TAG('n', 'a', 'm', 'e')
+#define TTAG_OS2   FT2_1_3_MAKE_TAG('O', 'S', '/', '2')
+#define TTAG_OTTO  FT2_1_3_MAKE_TAG('O', 'T', 'T', 'O')
+#define TTAG_PCLT  FT2_1_3_MAKE_TAG('P', 'C', 'L', 'T')
+#define TTAG_post  FT2_1_3_MAKE_TAG('p', 'o', 's', 't')
+#define TTAG_prep  FT2_1_3_MAKE_TAG('p', 'r', 'e', 'p')
+#define TTAG_true  FT2_1_3_MAKE_TAG('t', 'r', 'u', 'e')
+#define TTAG_ttc   FT2_1_3_MAKE_TAG('t', 't', 'c', ' ')
+#define TTAG_ttcf  FT2_1_3_MAKE_TAG('t', 't', 'c', 'f')
+#define TTAG_VDMX  FT2_1_3_MAKE_TAG('V', 'D', 'M', 'X')
+#define TTAG_vhea  FT2_1_3_MAKE_TAG('v', 'h', 'e', 'a')
+#define TTAG_vmtx  FT2_1_3_MAKE_TAG('v', 'm', 't', 'x')
 
 
 FT2_1_3_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_TTAGS_H */
-
-
-/* END */

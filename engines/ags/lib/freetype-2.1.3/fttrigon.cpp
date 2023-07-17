@@ -1,17 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  fttrigon.c                                                             */
-/*                                                                         */
 /*    FreeType trigonometric functions (body).                             */
-/*                                                                         */
-/*  Copyright 2001 by                                                      */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -21,6 +32,7 @@
 
 namespace AGS3 {
 namespace FreeType213 {
+
 
 /* the following is 0.2715717684432231 * 2^30 */
 #define FT2_1_3_TRIG_COSCALE  0x11616E8EUL
@@ -40,113 +52,99 @@ ft_trig_arctan_table[24] = {
 
 
 #ifdef FT2_1_3_CONFIG_HAS_INT64
-
 /* multiply a given value by the CORDIC shrink factor */
-static FT_Fixed
-ft_trig_downscale( FT_Fixed  val ) {
-	FT_Fixed  s;
-	FT_Int64  v;
+static FT_Fixed ft_trig_downscale(FT_Fixed val) {
+	FT_Fixed s;
+	FT_Int64 v;
 
+	s = val;
+	val = (val >= 0) ? val : -val;
 
-	s   = val;
-	val = ( val >= 0 ) ? val : -val;
+	v = (val * (FT_Int64)FT2_1_3_TRIG_SCALE) + 0x100000000UL;
+	val = (FT_Fixed)(v >> 32);
 
-	v   = ( val * (FT_Int64)FT2_1_3_TRIG_SCALE ) + 0x100000000UL;
-	val = (FT_Fixed)( v >> 32 );
-
-	return ( s >= 0 ) ? val : -val;
+	return (s >= 0) ? val : -val;
 }
 
 #else /* !FT2_1_3_CONFIG_HAS_INT64 */
-
 /* multiply a given value by the CORDIC shrink factor */
-static FT_Fixed
-ft_trig_downscale( FT_Fixed  val ) {
-	FT_Fixed   s;
-	FT_UInt32  v1, v2, k1, k2, hi, lo1, lo2, lo3;
+static FT_Fixed ft_trig_downscale(FT_Fixed val) {
+	FT_Fixed s;
+	FT_UInt32 v1, v2, k1, k2, hi, lo1, lo2, lo3;
 
-
-	s   = val;
-	val = ( val >= 0 ) ? val : -val;
+	s = val;
+	val = (val >= 0) ? val : -val;
 
 	v1 = (FT_UInt32)val >> 16;
 	v2 = (FT_UInt32)val & 0xFFFF;
 
-	k1 = FT2_1_3_TRIG_SCALE >> 16;       /* constant */
-	k2 = FT2_1_3_TRIG_SCALE & 0xFFFF;    /* constant */
+	k1 = FT2_1_3_TRIG_SCALE >> 16;    /* constant */
+	k2 = FT2_1_3_TRIG_SCALE & 0xFFFF; /* constant */
 
-	hi   = k1 * v1;
-	lo1  = k1 * v2 + k2 * v1;       /* can't overflow */
+	hi = k1 * v1;
+	lo1 = k1 * v2 + k2 * v1; /* can't overflow */
 
-	lo2  = ( k2 * v2 ) >> 16;
-	lo3  = ( lo1 >= lo2 ) ? lo1 : lo2;
+	lo2 = (k2 * v2) >> 16;
+	lo3 = (lo1 >= lo2) ? lo1 : lo2;
 	lo1 += lo2;
 
-	hi  += lo1 >> 16;
-	if ( lo1 < lo3 )
+	hi += lo1 >> 16;
+	if (lo1 < lo3)
 		hi += 0x10000UL;
 
-	val  = (FT_Fixed)hi;
+	val = (FT_Fixed)hi;
 
-	return ( s >= 0 ) ? val : -val;
+	return (s >= 0) ? val : -val;
 }
-
 #endif /* !FT2_1_3_CONFIG_HAS_INT64 */
 
-
-static FT_Int
-ft_trig_prenorm( FT_Vector*  vec ) {
-	FT_Fixed  x, y, z;
-	FT_Int    shift;
-
+static FT_Int ft_trig_prenorm(FT_Vector *vec) {
+	FT_Fixed x, y, z;
+	FT_Int shift;
 
 	x = vec->x;
 	y = vec->y;
 
-	z     = ( ( x >= 0 ) ? x : - x ) | ( (y >= 0) ? y : -y );
+	z = ((x >= 0) ? x : -x) | ((y >= 0) ? y : -y);
 	shift = 0;
 
-	if ( z < ( 1L << 27 ) ) {
+	if (z < (1L << 27)) {
 		do {
 			shift++;
 			z <<= 1;
-		} while ( z < ( 1L << 27 ) );
+		} while (z < (1L << 27));
 
 		vec->x = x << shift;
 		vec->y = y << shift;
-	} else if ( z > ( 1L << 28 ) ) {
+	} else if (z > (1L << 28)) {
 		do {
 			shift++;
 			z >>= 1;
-		} while ( z > ( 1L << 28 ) );
+		} while (z > (1L << 28));
 
 		vec->x = x >> shift;
 		vec->y = y >> shift;
-		shift  = -shift;
+		shift = -shift;
 	}
 	return shift;
 }
 
-
-static void
-ft_trig_pseudo_rotate( FT_Vector*  vec,
-					   FT_Angle    theta ) {
-	FT_Int           i;
-	FT_Fixed         x, y, xtemp;
-	const FT_Fixed  *arctanptr;
-
+static void ft_trig_pseudo_rotate(FT_Vector *vec, FT_Angle theta) {
+	FT_Int i;
+	FT_Fixed x, y, xtemp;
+	const FT_Fixed *arctanptr;
 
 	x = vec->x;
 	y = vec->y;
 
 	/* Get angle between -90 and 90 degrees */
-	while ( theta <= -FT2_1_3_ANGLE_PI2 ) {
+	while (theta <= -FT2_1_3_ANGLE_PI2) {
 		x = -x;
 		y = -y;
 		theta += FT2_1_3_ANGLE_PI;
 	}
 
-	while ( theta > FT2_1_3_ANGLE_PI2 ) {
+	while (theta > FT2_1_3_ANGLE_PI2) {
 		x = -x;
 		y = -y;
 		theta -= FT2_1_3_ANGLE_PI;
@@ -155,284 +153,238 @@ ft_trig_pseudo_rotate( FT_Vector*  vec,
 	/* Initial pseudorotation, with left shift */
 	arctanptr = ft_trig_arctan_table;
 
-	if ( theta < 0 ) {
-		xtemp  = x + ( y << 1 );
-		y      = y - ( x << 1 );
-		x      = xtemp;
+	if (theta < 0) {
+		xtemp = x + (y << 1);
+		y = y - (x << 1);
+		x = xtemp;
 		theta += *arctanptr++;
 	} else {
-		xtemp  = x - ( y << 1 );
-		y      = y + ( x << 1 );
-		x      = xtemp;
+		xtemp = x - (y << 1);
+		y = y + (x << 1);
+		x = xtemp;
 		theta -= *arctanptr++;
 	}
 
 	/* Subsequent pseudorotations, with right shifts */
 	i = 0;
 	do {
-		if ( theta < 0 ) {
-			xtemp  = x + ( y >> i );
-			y      = y - ( x >> i );
-			x      = xtemp;
+		if (theta < 0) {
+			xtemp = x + (y >> i);
+			y = y - (x >> i);
+			x = xtemp;
 			theta += *arctanptr++;
 		} else {
-			xtemp  = x - ( y >> i );
-			y      = y + ( x >> i );
-			x      = xtemp;
+			xtemp = x - (y >> i);
+			y = y + (x >> i);
+			x = xtemp;
 			theta -= *arctanptr++;
 		}
-	} while ( ++i < FT2_1_3_TRIG_MAX_ITERS );
+	} while (++i < FT2_1_3_TRIG_MAX_ITERS);
 
 	vec->x = x;
 	vec->y = y;
 }
 
-
-static void
-ft_trig_pseudo_polarize( FT_Vector*  vec ) {
-	FT_Fixed         theta;
-	FT_Fixed         yi, i;
-	FT_Fixed         x, y;
-	const FT_Fixed  *arctanptr;
-
+static void ft_trig_pseudo_polarize(FT_Vector *vec) {
+	FT_Fixed theta;
+	FT_Fixed yi, i;
+	FT_Fixed x, y;
+	const FT_Fixed *arctanptr;
 
 	x = vec->x;
 	y = vec->y;
 
 	/* Get the vector into the right half plane */
 	theta = 0;
-	if ( x < 0 ) {
+	if (x < 0) {
 		x = -x;
 		y = -y;
 		theta = 2 * FT2_1_3_ANGLE_PI2;
 	}
 
-	if ( y > 0 )
-		theta = - theta;
+	if (y > 0)
+		theta = -theta;
 
 	arctanptr = ft_trig_arctan_table;
 
-	if ( y < 0 ) {
+	if (y < 0) {
 		/* Rotate positive */
-		yi     = y + ( x << 1 );
-		x      = x - ( y << 1 );
-		y      = yi;
-		theta -= *arctanptr++;  /* Subtract angle */
+		yi = y + (x << 1);
+		x = x - (y << 1);
+		y = yi;
+		theta -= *arctanptr++; /* Subtract angle */
 	} else {
 		/* Rotate negative */
-		yi     = y - ( x << 1 );
-		x      = x + ( y << 1 );
-		y      = yi;
-		theta += *arctanptr++;  /* Add angle */
+		yi = y - (x << 1);
+		x = x + (y << 1);
+		y = yi;
+		theta += *arctanptr++; /* Add angle */
 	}
 
 	i = 0;
 	do {
-		if ( y < 0 ) {
+		if (y < 0) {
 			/* Rotate positive */
-			yi     = y + ( x >> i );
-			x      = x - ( y >> i );
-			y      = yi;
+			yi = y + (x >> i);
+			x = x - (y >> i);
+			y = yi;
 			theta -= *arctanptr++;
 		} else {
 			/* Rotate negative */
-			yi     = y - ( x >> i );
-			x      = x + ( y >> i );
-			y      = yi;
+			yi = y - (x >> i);
+			x = x + (y >> i);
+			y = yi;
 			theta += *arctanptr++;
 		}
-	} while ( ++i < FT2_1_3_TRIG_MAX_ITERS );
+	} while (++i < FT2_1_3_TRIG_MAX_ITERS);
 
 	/* round theta */
-	if ( theta >= 0 )
-		theta = ( theta + 16 ) & -32;
+	if (theta >= 0)
+		theta = (theta + 16) & -32;
 	else
-		theta = - (( -theta + 16 ) & -32);
+		theta = -((-theta + 16) & -32);
 
 	vec->x = x;
 	vec->y = theta;
 }
 
 
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( FT_Fixed )
-FT_Cos( FT_Angle  angle ) {
-	FT_Vector  v;
-
+FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_Cos(FT_Angle angle) {
+	FT_Vector v;
 
 	v.x = FT2_1_3_TRIG_COSCALE >> 2;
 	v.y = 0;
-	ft_trig_pseudo_rotate( &v, angle );
+	ft_trig_pseudo_rotate(&v, angle);
 
-	return v.x / ( 1 << 12 );
+	return v.x / (1 << 12);
 }
 
-
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( FT_Fixed )
-FT_Sin( FT_Angle  angle ) {
-	return FT_Cos( FT2_1_3_ANGLE_PI2 - angle );
+FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_Sin(FT_Angle angle) {
+	return FT_Cos(FT2_1_3_ANGLE_PI2 - angle);
 }
 
-
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( FT_Fixed )
-FT_Tan( FT_Angle  angle ) {
-	FT_Vector  v;
-
+FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_Tan(FT_Angle angle) {
+	FT_Vector v;
 
 	v.x = FT2_1_3_TRIG_COSCALE >> 2;
 	v.y = 0;
-	ft_trig_pseudo_rotate( &v, angle );
+	ft_trig_pseudo_rotate(&v, angle);
 
-	return FT2_1_3_DivFix( v.y, v.x );
+	return FT2_1_3_DivFix(v.y, v.x);
 }
 
+FT2_1_3_EXPORT_DEF(FT_Angle)
+FT_Atan2(FT_Fixed dx, FT_Fixed dy) {
+	FT_Vector v;
 
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( FT_Angle )
-FT_Atan2( FT_Fixed  dx,
-		  FT_Fixed  dy ) {
-	FT_Vector  v;
-
-
-	if ( dx == 0 && dy == 0 )
+	if (dx == 0 && dy == 0)
 		return 0;
 
 	v.x = dx;
 	v.y = dy;
-	ft_trig_prenorm( &v );
-	ft_trig_pseudo_polarize( &v );
+	ft_trig_prenorm(&v);
+	ft_trig_pseudo_polarize(&v);
 
 	return v.y;
 }
 
-
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( void )
-FT_Vector_Unit( FT_Vector*  vec,
-				FT_Angle    angle ) {
+FT2_1_3_EXPORT_DEF(void)
+FT_Vector_Unit(FT_Vector *vec, FT_Angle angle) {
 	vec->x = FT2_1_3_TRIG_COSCALE >> 2;
 	vec->y = 0;
-	ft_trig_pseudo_rotate( vec, angle );
+	ft_trig_pseudo_rotate(vec, angle);
 	vec->x >>= 12;
 	vec->y >>= 12;
 }
 
+FT2_1_3_EXPORT_DEF(void)
+FT_Vector_Rotate(FT_Vector *vec, FT_Angle angle) {
+	FT_Int shift;
+	FT_Vector v;
 
-/* documentation is in fttrigon.h */
+	v.x = vec->x;
+	v.y = vec->y;
 
-FT2_1_3_EXPORT_DEF( void )
-FT_Vector_Rotate( FT_Vector*  vec,
-				  FT_Angle    angle ) {
-	FT_Int     shift;
-	FT_Vector  v;
+	if (angle && (v.x != 0 || v.y != 0)) {
+		shift = ft_trig_prenorm(&v);
+		ft_trig_pseudo_rotate(&v, angle);
+		v.x = ft_trig_downscale(v.x);
+		v.y = ft_trig_downscale(v.y);
 
-
-	v.x   = vec->x;
-	v.y   = vec->y;
-
-	if ( angle && ( v.x != 0 || v.y != 0 ) ) {
-		shift = ft_trig_prenorm( &v );
-		ft_trig_pseudo_rotate( &v, angle );
-		v.x = ft_trig_downscale( v.x );
-		v.y = ft_trig_downscale( v.y );
-
-		if ( shift >= 0 ) {
+		if (shift >= 0) {
 			vec->x = v.x >> shift;
 			vec->y = v.y >> shift;
 		} else {
-			shift  = -shift;
+			shift = -shift;
 			vec->x = v.x << shift;
 			vec->y = v.y << shift;
 		}
 	}
 }
 
-
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( FT_Fixed )
-FT_Vector_Length( FT_Vector*  vec ) {
-	FT_Int     shift;
-	FT_Vector  v;
-
+FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_Vector_Length(FT_Vector *vec) {
+	FT_Int shift;
+	FT_Vector v;
 
 	v = *vec;
 
 	/* handle trivial cases */
-	if ( v.x == 0 ) {
-		return ( v.y >= 0 ) ? v.y : -v.y;
-	} else if ( v.y == 0 ) {
-		return ( v.x >= 0 ) ? v.x : -v.x;
+	if (v.x == 0) {
+		return (v.y >= 0) ? v.y : -v.y;
+	} else if (v.y == 0) {
+		return (v.x >= 0) ? v.x : -v.x;
 	}
 
 	/* general case */
-	shift = ft_trig_prenorm( &v );
-	ft_trig_pseudo_polarize( &v );
+	shift = ft_trig_prenorm(&v);
+	ft_trig_pseudo_polarize(&v);
 
-	v.x = ft_trig_downscale( v.x );
+	v.x = ft_trig_downscale(v.x);
 
-	if ( shift > 0 )
-		return ( v.x + ( 1 << ( shift - 1 ) ) ) >> shift;
+	if (shift > 0)
+		return (v.x + (1 << (shift - 1))) >> shift;
 
 	return v.x << -shift;
 }
 
-
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( void )
-FT_Vector_Polarize( FT_Vector*  vec,
-					FT_Fixed   *length,
-					FT_Angle   *angle ) {
-	FT_Int     shift;
-	FT_Vector  v;
-
+FT2_1_3_EXPORT_DEF(void)
+FT_Vector_Polarize(FT_Vector *vec, FT_Fixed *length, FT_Angle *angle) {
+	FT_Int shift;
+	FT_Vector v;
 
 	v = *vec;
 
-	if ( v.x == 0 && v.y == 0 )
+	if (v.x == 0 && v.y == 0)
 		return;
 
-	shift = ft_trig_prenorm( &v );
-	ft_trig_pseudo_polarize( &v );
+	shift = ft_trig_prenorm(&v);
+	ft_trig_pseudo_polarize(&v);
 
-	v.x = ft_trig_downscale( v.x );
+	v.x = ft_trig_downscale(v.x);
 
-	*length = ( shift >= 0 ) ? ( v.x >> shift ) : ( v.x << -shift );
-	*angle  = v.y;
+	*length = (shift >= 0) ? (v.x >> shift) : (v.x << -shift);
+	*angle = v.y;
 }
 
-
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( void )
-FT_Vector_From_Polar( FT_Vector*  vec,
-					  FT_Fixed    length,
-					  FT_Angle    angle ) {
+FT2_1_3_EXPORT_DEF(void)
+FT_Vector_From_Polar(FT_Vector *vec, FT_Fixed length, FT_Angle angle) {
 	vec->x = length;
 	vec->y = 0;
 
-	FT_Vector_Rotate( vec, angle );
+	FT_Vector_Rotate(vec, angle);
 }
 
-
-/* documentation is in fttrigon.h */
-
-FT2_1_3_EXPORT_DEF( FT_Angle )
-FT_Angle_Diff( FT_Angle  angle1,
-			   FT_Angle  angle2 ) {
-	FT_Angle  delta = angle2 - angle1;
+FT2_1_3_EXPORT_DEF(FT_Angle)
+FT_Angle_Diff(FT_Angle angle1, FT_Angle angle2) {
+	FT_Angle delta = angle2 - angle1;
 
 	delta %= FT2_1_3_ANGLE_2PI;
 
-	if ( delta > FT2_1_3_ANGLE_PI )
+	if (delta > FT2_1_3_ANGLE_PI)
 		delta -= FT2_1_3_ANGLE_2PI;
 
 	return delta;
@@ -440,5 +392,3 @@ FT_Angle_Diff( FT_Angle  angle1,
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */
