@@ -78,11 +78,13 @@ Common::Error M4Engine::run() {
 	return Common::kNoError;
 }
 
+#define KEEP_PLAYING (_G(kernel).going && !shouldQuit())
+
 void M4Engine::m4_inflight() {
 	Hotkeys::add_hot_keys();
 	_G(kernel).going = true;
 
-	while (_G(kernel).going && !shouldQuit()) {
+	while (KEEP_PLAYING) {
 		if (_G(game).previous_room == -2) {
 			midi_stop();
 			kernel_load_game(_G(kernel).restore_slot);
@@ -94,7 +96,7 @@ void M4Engine::m4_inflight() {
 		_G(kernel).going = kernel_section_startup();
 		section_init();
 
-		while (_G(game).new_section == _G(game).section_id) {
+		while (_G(game).new_section == _G(game).section_id && KEEP_PLAYING) {
 			m4SceneLoad();
 			m4RunScene();
 			m4EndScene();
