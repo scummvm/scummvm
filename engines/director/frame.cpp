@@ -272,7 +272,7 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
-	if (sprite._puppet || sprite._autoPuppet) {
+	if (sprite._puppet) {
 		stream.skip(size);
 		return;
 	}
@@ -549,7 +549,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
-	if (sprite._puppet || sprite._autoPuppet) {
+	if (sprite._puppet) {
 		stream.skip(size);
 		return;
 	}
@@ -809,7 +809,7 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
-	if (sprite._puppet || sprite._autoPuppet) {
+	if (sprite._puppet) {
 		stream.skip(size);
 		return;
 	}
@@ -967,7 +967,7 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
-	if (sprite._puppet || sprite._autoPuppet) {
+	if (sprite._puppet) {
 		stream.skip(size);
 		return;
 	}
@@ -994,25 +994,46 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		case 0:
 			sprite._spriteType = (SpriteType)stream.readByte();
 			break;
-		case 1:
-			sprite._inkData = stream.readByte();
+		case 1: {
+			byte inkData = stream.readByte();
+
+			if (sprite.getAutoPuppet(kAPInk))
+				continue;
+
+			sprite._inkData = inkData;
 
 			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 			if (sprite._inkData & 0x40)
 				sprite._trails = 1;
 			else
 				sprite._trails = 0;
+			}
+			break;
+		case 2: {
+			uint8 foreColor = stream.readByte();
 
+			if (sprite.getAutoPuppet(kAPForeColor))
+				continue;
+
+			sprite._foreColor = g_director->transformColor(foreColor);
+			}
 			break;
-		case 2:
-			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
-			break;
-		case 3:
-			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
+		case 3: {
+			uint8 backColor = stream.readByte();
+
+			if (sprite.getAutoPuppet(kAPBackColor))
+				continue;
+
+			sprite._backColor = g_director->transformColor(backColor);
+			}
 			break;
 		case 4: {
 				uint16 castLib = stream.readUint16();
 				uint16 memberID = stream.readUint16();
+
+				if (sprite.getAutoPuppet(kAPCast))
+					continue;
+
 				sprite._castId = CastMemberID(memberID, castLib);
 			}
 			break;
@@ -1022,17 +1043,41 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._scriptId = CastMemberID(scriptMemberID, scriptCastLib);
 			}
 			break;
-		case 12:
-			sprite._startPoint.y = (int16)stream.readUint16();
+		case 12: {
+			uint16 startPointY = stream.readUint16();
+
+			if (sprite.getAutoPuppet(kAPLocV) || sprite.getAutoPuppet(kAPLoc))
+				continue;
+
+			sprite._startPoint.y = startPointY;
 			break;
-		case 14:
-			sprite._startPoint.x = (int16)stream.readUint16();
+			}
+		case 14: {
+			uint16 startPointX = stream.readUint16();
+
+			if (sprite.getAutoPuppet(kAPLocH) || sprite.getAutoPuppet(kAPLoc))
+				continue;
+
+			sprite._startPoint.x = startPointX;
+			}
 			break;
-		case 16:
-			sprite._height = (int16)stream.readUint16();
+		case 16: {
+			uint16 height = stream.readUint16();
+
+			if (sprite.getAutoPuppet(kAPHeight))
+				continue;
+
+			sprite._height = height;
+			}
 			break;
-		case 18:
-			sprite._width = (int16)stream.readUint16();
+		case 18: {
+			uint16 width = stream.readUint16();
+
+			if (sprite.getAutoPuppet(kAPWidth))
+				continue;
+
+			sprite._width = width;
+			}
 			break;
 		case 20:
 			// & 0x0f scorecolor
@@ -1042,12 +1087,20 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			// 0x80 moveable
 			sprite._colorcode = stream.readByte();
 
+			if (sprite.getAutoPuppet(kAPMoveable))
+				continue;
+
 			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
-			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 			break;
-		case 21:
-			sprite._blendAmount = stream.readByte();
+		case 21: {
+			byte blendAmount = stream.readByte();
+
+			if (sprite.getAutoPuppet(kAPBlend))
+				continue;
+
+			sprite._blendAmount = blendAmount;
+			}
 			break;
 		case 22:
 			sprite._thickness = stream.readByte();
