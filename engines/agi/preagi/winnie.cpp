@@ -1081,7 +1081,9 @@ void WinnieEngine::drawPic(const char *szName) {
 	file.read(buffer, size);
 	file.close();
 
+	_picture->setOffset(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0);
 	_picture->decodePicture(buffer, size, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->setOffset(0, 0);
 	_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	free(buffer);
@@ -1116,7 +1118,9 @@ void WinnieEngine::drawRoomPic() {
 	readRoom(_room, buffer, roomhdr);
 
 	// draw room picture
+	_picture->setOffset(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0);
 	_picture->decodePicture(buffer + roomhdr.ofsPic - _roomOffset, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->setOffset(0, 0);
 	_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
