@@ -19,69 +19,111 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/vars.h"
 
 namespace M4 {
 namespace Sound {
 
+Digi::~Digi() {
+	unload_sounds();
+}
+
 void Digi::preload_sounds(const char **names) {
-	if (!_names.empty()) {
+	if (!_sounds.empty())
 		unload_sounds();
-		_names.clear();
-	}
 
 	if (names) {
-		for (; *names; ++names) {
-			_names.push_back(*names);
+		for (; *names; ++names)
 			preload(*names, NOWHERE);
-		}
 	}
 }
 
 void Digi::unload_sounds() {
-	for (uint i = 0; i < _names.size(); ++i)
-		unload(_names[i]);
+	_mixer->stopAll();
+
+	for (auto it = _sounds.begin(); it != _sounds.end(); ++it)
+		delete it->_value._data;
+
+	_sounds.clear();
 }
 
 bool Digi::preload(const Common::String &name, int roomNum) {
-	warning("TODO: Digi::preload - %s, %d", name.c_str(), roomNum);
+	MemHandle workHandle;
+	int32 assetSize;
+
+	if (_sounds.contains(name))
+		return true;
+
+	// Load in the sound
+	if ((workHandle = rget(name, &assetSize)) == nullptr)
+		error("Could not find sound - %s", name.c_str());
+
+	HLock(workHandle);
+	const byte *pSrc = (byte *)*workHandle;
+	byte *pDest = (byte *)malloc(assetSize);
+	Common::copy(pSrc, pSrc + assetSize, pDest);
+
+	HUnLock(workHandle);
+	DisposeHandle(workHandle);
+
+	_sounds[name] = DigiEntry(pDest, assetSize);
 	return false;
 }
 
 void Digi::unload(const Common::String &name) {
-	warning("TODO: Digi::unload");
+	if (_sounds.contains(name)) {
+		delete _sounds[name]._data;
+		_sounds.erase(name);
+	}
 }
 
 void Digi::task() {
-	warning("TODO: Digi::task");
+	// No implementation
 }
 
-int32 Digi::play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
-	error("TODO: Digi::play");
+int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num) {
+	return play(name, channel, vol, trigger, room_num, false);
+}
+
+int32 Digi::play_loop(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num) {
+	return play(name, channel, vol, trigger, room_num, true);
+}
+
+int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num, bool loop) {
+	assert(channel < 4);
+
+	digi_preload(name, room_num);
+	DigiEntry &entry = _sounds[name];
+
+	// Create new audio stream
+	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+			Audio::makeRawStream(entry._data, entry._size, 11025, Audio::FLAG_UNSIGNED),
+			loop ? 0 : 1);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_channels[channel], stream, -1, vol);
+
+	_sounds.erase(name);
 	return 0;
 }
 
-int32 Digi::play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
-	error("TODO: Digi::play_loop");
-	return 0;
-}
-
-void Digi::stop(int slot) {
-	error("TODO: Digi::stop");
+void Digi::stop(uint channel) {
+	assert(channel < 4);
+	_mixer->stopHandle(_channels[channel]);
 }
 
 void Digi::flush_mem() {
-	error("TODO: Digi::flush_mem");
+	// No implementation
 }
 
 void Digi::read_another_chunk() {
-	warning("TODO: Digi::read_another_chunk");
+	// No implementation
 }
 
 bool Digi::play_state(int channel) const {
-	warning("TODO: Digi::play_state");
-	return true;
+	return _mixer->isSoundHandleActive(_channels[channel]);
 }
 
 } // namespace Sound
@@ -94,11 +136,11 @@ void digi_unload(const Common::String &name) {
 	_G(digi).unload(name);
 }
 
-int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
+int32 digi_play(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num) {
 	return _G(digi).play(name, channel, vol, trigger, room_num);
 }
 
-int32 digi_play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
+int32 digi_play_loop(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num) {
 	return _G(digi).play_loop(name, channel, vol, trigger, room_num);
 }
 

@@ -23,19 +23,39 @@
 #ifndef M4_PLATFORM_SOUND_DIGI_H
 #define M4_PLATFORM_SOUND_DIGI_H
 
-#include "common/str-array.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "common/hashmap.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 namespace Sound {
 
+/**
+ * M4 Digital player digivolves to ScummVM-digital player
+ */
 class Digi {
+	/**
+	 * Digitital sound entry
+	 */
+	struct DigiEntry {
+		byte *_data = nullptr;
+		size_t _size = 0;
+		DigiEntry() {}
+		DigiEntry(byte *data, size_t size) : _data(data), _size(size) {}
+	};
 private:
-	Common::StringArray _names;
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _channels[4];
+	Common::HashMap<Common::String, DigiEntry> _sounds;
 
-private:
+	int32 play(const Common::String &name, uint channel, int32 vol, int32 trigger,
+		int32 room_num, bool loop);
 
 public:
+	Digi(Audio::Mixer *mixer) : _mixer(mixer) {}
+	~Digi();
+
 	/**
 	 * Preload a digi sample into memory buffer for play back later.
 	 */
@@ -53,9 +73,9 @@ public:
 	// If the sound has been preloaded it will be played from memory, otherwise it will
 	// be streamed from disk
 
-	int32 play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
-	int32 play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
-	void stop(int slot);
+	int32 play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
+	int32 play_loop(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
+	void stop(uint channel);
 	void flush_mem();
 
 	void read_another_chunk();
@@ -66,8 +86,8 @@ public:
 
 extern bool digi_preload(const Common::String &name, int roomNum = -1);
 extern void digi_unload(const Common::String &name);
-extern int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
-extern int32 digi_play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
+extern int32 digi_play(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
+extern int32 digi_play_loop(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
 extern void digi_read_another_chunk();
 extern void digi_stop(int channel);
 extern bool digi_play_state(int channel);
