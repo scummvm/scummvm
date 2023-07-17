@@ -265,7 +265,8 @@ ScreenContext *vmng_screen_find(void *scrnContent, int32 *status) {
 }
 
 void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2, Buffer *srcBuffer) {
-	g_system->copyRectToScreen(srcBuffer->data, srcBuffer->stride, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+	const byte *srcP = srcBuffer->data + (y1 * srcBuffer->stride) + x1;
+	g_system->copyRectToScreen(srcP, srcBuffer->stride, scrnX, scrnY, x2 - x1 + 1, y2 - y1 + 1);
 	g_system->updateScreen();
 }
 
