@@ -23,6 +23,8 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "m4/platform/sound/digi.h"
+#include "m4/adv_r/adv_file.h"
+#include "m4/fileio/extensions.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -55,12 +57,13 @@ bool Digi::preload(const Common::String &name, int roomNum) {
 	MemHandle workHandle;
 	int32 assetSize;
 
-	if (_sounds.contains(name))
+	Common::String fileName = expand_name_2_RAW(name, roomNum);
+	if (_sounds.contains(fileName))
 		return true;
 
 	// Load in the sound
-	if ((workHandle = rget(name, &assetSize)) == nullptr)
-		error("Could not find sound - %s", name.c_str());
+	if ((workHandle = rget(fileName, &assetSize)) == nullptr)
+		error("Could not find sound - %s", fileName.c_str());
 
 	HLock(workHandle);
 	const byte *pSrc = (byte *)*workHandle;
@@ -68,7 +71,6 @@ bool Digi::preload(const Common::String &name, int roomNum) {
 	Common::copy(pSrc, pSrc + assetSize, pDest);
 
 	HUnLock(workHandle);
-	DisposeHandle(workHandle);
 
 	_sounds[name] = DigiEntry(pDest, assetSize);
 	return false;
@@ -95,9 +97,10 @@ int32 Digi::play_loop(const Common::String &name, uint channel, int32 vol, int32
 
 int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num, bool loop) {
 	assert(channel < 4);
+	Common::String fileName = expand_name_2_RAW(name, room_num);
 
-	digi_preload(name, room_num);
-	DigiEntry &entry = _sounds[name];
+	digi_preload(fileName, room_num);
+	DigiEntry &entry = _sounds[fileName];
 
 	// Create new audio stream
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
@@ -105,9 +108,24 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 			loop ? 0 : 1);
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_channels[channel], stream, -1, vol);
 
-	_sounds.erase(name);
+	_sounds.erase(fileName);
 	return 0;
 }
+
+Common::String Digi::expand_name_2_RAW(const Common::String &name, int32 room_num) {
+	Common::String tempName = f_extension_new(name, "RAW");
+
+	if (!_G(kernel).hag_mode) {
+		if (room_num == -1)
+			room_num = extract_room_num(name);
+
+		return Common::String::format("%d\\%s", room_num, tempName.c_str());
+
+	} else {
+		return tempName;
+	}
+}
+
 
 void Digi::stop(uint channel) {
 	assert(channel < 4);

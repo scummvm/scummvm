@@ -41,6 +41,7 @@ extern void kernel_unload_room(SceneDef *rdef, GrBuff **code_data, GrBuff **load
 extern int kernel_save_game(int slot, const char *desc, int32 sizeofDesc, M4sprite *thumbNail, int32 sizeofThumbData);
 extern bool kernel_load_game(int slot);
 extern bool kernel_save_game_exists(int32 slot);
+extern int32 extract_room_num(const Common::String &name);
 
 extern bool kernel_load_variant(char *variant);
 extern GrBuff *load_codes(SysFile *code_file);
