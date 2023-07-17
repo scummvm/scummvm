@@ -1,27 +1,35 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  ahangles.h                                                             */
-/*                                                                         */
 /*    A routine used to compute vector angles with limited accuracy        */
 /*    and very high speed (body).                                          */
-/*                                                                         */
-/*  Copyright 2000-2001, 2002 Catharon Productions Inc.                    */
-/*  Author: David Turner                                                   */
-/*                                                                         */
-/*  This file is part of the Catharon Typography Project and shall only    */
-/*  be used, modified, and distributed under the terms of the Catharon     */
-/*  Open Source License that should come with this file under the name     */
-/*  `CatharonLicense.txt'.  By continuing to use, modify, or distribute    */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/*  Note that this license is compatible with the FreeType license.        */
 /*                                                                         */
 /***************************************************************************/
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "ahangles.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahangles.h"
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -29,7 +37,7 @@ namespace FreeType213 {
 /* the following table has been automatically generated with */
 /* the `mather.py' Python script                             */
 
-const AH_Angle  ah_arctan[1L << AH_ATAN_BITS] = {
+const AH_Angle ah_arctan[1L << AH_ATAN_BITS] = {
 	0,  0,  1,  1,  1,  2,  2,  2,
 	3,  3,  3,  3,  4,  4,  4,  5,
 	5,  5,  6,  6,  6,  7,  7,  7,
@@ -64,75 +72,69 @@ const AH_Angle  ah_arctan[1L << AH_ATAN_BITS] = {
 	63, 63, 63, 63, 63, 64, 64, 64
 };
 
-
-FT2_1_3_LOCAL_DEF( AH_Angle )
-ah_angle( FT_Vector*  v ) {
-	FT_Pos    dx, dy;
-	AH_Angle  angle;
-
+FT2_1_3_LOCAL_DEF(AH_Angle)
+ah_angle(FT_Vector *v) {
+	FT_Pos dx, dy;
+	AH_Angle angle;
 
 	dx = v->x;
 	dy = v->y;
 
 	/* check trivial cases */
-	if ( dy == 0 ) {
+	if (dy == 0) {
 		angle = 0;
-		if ( dx < 0 )
+		if (dx < 0)
 			angle = AH_PI;
 		return angle;
-	} else if ( dx == 0 ) {
+	} else if (dx == 0) {
 		angle = AH_HALF_PI;
-		if ( dy < 0 )
+		if (dy < 0)
 			angle = -AH_HALF_PI;
 		return angle;
 	}
 
 	angle = 0;
-	if ( dx < 0 ) {
+	if (dx < 0) {
 		dx = -v->x;
 		dy = -v->y;
 		angle = AH_PI;
 	}
 
-	if ( dy < 0 ) {
-		FT_Pos  tmp;
-
+	if (dy < 0) {
+		FT_Pos tmp;
 
 		tmp = dx;
-		dx  = -dy;
-		dy  = tmp;
+		dx = -dy;
+		dy = tmp;
 		angle -= AH_HALF_PI;
 	}
 
-	if ( dx == 0 && dy == 0 )
+	if (dx == 0 && dy == 0)
 		return 0;
 
-	if ( dx == dy )
+	if (dx == dy)
 		angle += AH_PI / 4;
-	else if ( dx > dy )
-		angle += ah_arctan[FT2_1_3_DivFix( dy, dx ) >> ( 16 - AH_ATAN_BITS )];
+	else if (dx > dy)
+		angle += ah_arctan[FT2_1_3_DivFix(dy, dx) >> (16 - AH_ATAN_BITS)];
 	else
-		angle += AH_HALF_PI -
-				 ah_arctan[FT2_1_3_DivFix( dx, dy ) >> ( 16 - AH_ATAN_BITS )];
+		angle += AH_HALF_PI - ah_arctan[FT2_1_3_DivFix(dx, dy) >> (16 - AH_ATAN_BITS)];
 
-	if ( angle > AH_PI )
+	if (angle > AH_PI)
 		angle -= AH_2PI;
 
 	return angle;
 }
 
 
-FT2_1_3_LOCAL_DEF( AH_Angle )
-ah_angle_diff( AH_Angle  angle1,
-			   AH_Angle  angle2 ) {
-	AH_Angle  delta;
+FT2_1_3_LOCAL_DEF(AH_Angle)
+ah_angle_diff(AH_Angle angle1, AH_Angle angle2) {
+	AH_Angle delta;
 
-
-	delta = ( angle2 - angle1 );
-	if ( delta < 0 )
+	delta = (angle2 - angle1);
+	if (delta < 0)
 		delta += AH_2PI;
 
-	if ( delta > AH_PI )
+	if (delta > AH_PI)
 		delta -= AH_2PI;
 
 	return delta;
@@ -140,5 +142,3 @@ ah_angle_diff( AH_Angle  angle1,
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */
