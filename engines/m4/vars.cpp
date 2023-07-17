@@ -34,12 +34,13 @@
 #include "m4/mem/mem.h"
 #include "m4/detection.h"
 #include "m4/core/param.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
 Vars *g_vars;
 
-Vars::Vars() {
+Vars::Vars() : _digi(g_engine->_mixer) {
 	g_vars = this;
 	_cheating_enabled = gDebugLevel > 0;
 }
