@@ -24516,12 +24516,42 @@ static const uint16 sq6NarratorLockupPatch[] = {
 	PATCH_END
 };
 
+// The SQ6 demo can crash the inventory screen because ego:put doesn't clear the
+//  highlighted icon when dropping an item. This was fixed in the real game.
+//
+// We fix this by clearing SQInventory:highlightedIcon when showing inventory.
+//
+// Applies to: Demo (all versions)
+// Responsible method: SQInventory:show
+// Fixes bug: #14547
+static const uint16 sq6DemoInventorySignature[] = {
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x02,                               // add
+	SIG_ADDTOOFFSET(+8),
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa invPlane
+	0x36,                               // push
+	SIG_END
+};
+
+static const uint16 sq6DemoInventoryPatch[] = {
+	0x76,                               // push0
+	0x69, 0x22,                         // sTop highlightedIcon [ highlightedIcon = 0 ]
+	0x78,                               // push1
+	0x02,                               // add
+	PATCH_GETORIGINALBYTES(+4, 8),
+	0x74, PATCH_GETORIGINALUINT16(+13), // lofss invPlane
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
 	{  true,    15, "fix english pc missing points",               3, sq6MissingPointsSignature,       sq6MissingPointsPatch },
 	{  true,    15, "fix staple/celery missing point",             2, sq6StapleCeleryPointSignature,   sq6StapleCeleryPointPatch },
 	{  true,    15, "fix hookah hose missing point",               1, sq6HookahHosePointSignature,     sq6HookahHosePointPatch },
+	{  false,   15, "demo: fix inventory crash",                   1, sq6DemoInventorySignature,       sq6DemoInventoryPatch },
 	{  true,    15, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    31, "fix ExitFeature breaking icons",              2, sq6ExitFeatureIconSignature,     sq6ExitFeatureIconPatch },
@@ -25595,6 +25625,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 
 				if (g_sci->isCD() && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 271))) {
 					enablePatch(signatureTable, "CD: disable timepod code for removed room");
+				}
+				break;
+			case GID_SQ6:
+				if (g_sci->isDemo()) {
+					enablePatch(signatureTable, "demo: fix inventory crash");
 				}
 				break;
 			default:
