@@ -308,7 +308,10 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
     }
 
     debugC(5, kDebugLingoExec, "parseMCICommand(): tableStart: %d, tableEnd: %d", tableStart, tableEnd);
-    assert(tableStart >= 0 && tableEnd > 0);
+    if (tableStart == -1 || tableEnd == -1) {
+        warning("parseMCICommand(): Verb %s not found in table", verb.c_str());
+		return MCIERR_UNRECOGNISED_COMMAND;
+	}
 
     auto cmd = table[tableStart];
     parsedCmd.id = (MCITokenType)cmd.flag;
