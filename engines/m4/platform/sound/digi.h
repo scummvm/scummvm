@@ -31,12 +31,14 @@
 namespace M4 {
 namespace Sound {
 
+#define MAX_CHANNELS 4
+
 /**
  * M4 Digital player digivolves to ScummVM-digital player
  */
 class Digi {
 	/**
-	 * Digitital sound entry
+	 * Digital sound entry
 	 */
 	struct DigiEntry {
 		byte *_data = nullptr;
@@ -44,9 +46,16 @@ class Digi {
 		DigiEntry() {}
 		DigiEntry(byte *data, size_t size) : _data(data), _size(size) {}
 	};
+	/**
+	 * Sound channel
+	 */
+	struct Channel {
+		Audio::SoundHandle _soundHandle;
+		int _trigger = -1;
+	};
 private:
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _channels[4];
+	Channel _channels[4];
 	Common::HashMap<Common::String, DigiEntry> _sounds;
 
 	int32 play(const Common::String &name, uint channel, int32 vol, int32 trigger,
