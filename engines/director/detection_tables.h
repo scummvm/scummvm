@@ -442,6 +442,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "totaldistortion",	"Total Distortion" },
 	{ "traitorsgate",		"Traitors Gate" },
 	{ "travelrama",			"Travelrama USA" },
+	{ "thetreasurehunt",	"The Treasure Hunt" },
 	{ "tweeniesrtp",		"Tweenies: Ready to Play" },
 	{ "vcop",				"Virtual Cop" },
 	{ "vcop1",				"Virtual Cop: Episode One: Good Cop / Bad Cop" },
@@ -5323,6 +5324,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("travelrama", "Tour", "Travelrama Tour", "e6833f1ce3b022f0128e4c80a55bcd46", 288518, 404),
 	WINGAME1t("travelrama", "", "TRAMAWIN/TRAMA.EXE", "52d68e3a8d54b2091dd58ddc464c850d", 698215, 404),
 	WINGAME1t("travelrama", "Tour", "TRAMAWIN/TOUR.EXE", "cf439eb7a102716908c4f7ef0bb09637", 697009, 404),
+
+	MACGAME1t("thetreasurehunt", "", "TREASURE", "4d587e5895d2f011142d9b63ba2bcf7e", 2276, 400),
+	WINGAME1t("thetreasurehunt", "", "TREASURE.EXE", "76921cff9ad20b9e4bf63ca9aad9ca15", 691027, 400),
 
 	MACGAME1("trekguideds9", "v1.0", "Omnipedia DS9 Episodes", "1c2e5371b835680e7c1ca8bcea008bef", 505317, 400),
 	WINGAME1("trekguideds9", "v1.0", "OMNI_DS9.EXE", "0058390ff77e527c7bb413081004c304", 805517, 400),
