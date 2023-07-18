@@ -1367,14 +1367,14 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 }
 
 
-void AGDSEngine::reactivate(const Common::String &name, const char *where, bool runNow) {
+void AGDSEngine::reactivate(const Common::String &name, const Common::String &where, bool runNow) {
 	if (name.empty())
 		return;
 
 	for(uint i = 0; i < _processes.size(); ++i) {
 		ProcessPtr &process = _processes[i];
 		if (process && process->getName() == name) {
-			debug("reactivate %s now: %d, %s", name.c_str(), runNow, where);
+			debug("reactivate %s now: %d, %s", name.c_str(), runNow, where.c_str());
 			process->activate();
 			if (runNow)
 				process->run();
