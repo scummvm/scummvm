@@ -45,43 +45,43 @@ namespace pyrodactyl {
 namespace people {
 struct Person {
 	// The id of the object
-	Common::String id;
+	Common::String _id;
 
 	// Opinion of the person towards the player
-	Opinion opinion;
+	Opinion _opinion;
 
 	// The state of the object, defines what behavior it is doing right now
-	PersonState state;
+	PersonState _state;
 
 	// The stats of the character
-	pyrodactyl::stat::StatGroup stat;
+	pyrodactyl::stat::StatGroup _stat;
 
 	// Name of object
-	Common::String name;
+	Common::String _name;
 
 	// Type of object
-	PersonType type;
+	PersonType _type;
 
 	// Sometimes a person's journal entry isn't the same as their name
-	Common::String journal_name;
+	Common::String _journalName;
 
 	// If this is true, use the alternate journal name instead
-	bool alt_journal_name;
+	bool _altJournalName;
 
 	// The picture of the object - DISABLED DUE TO LOW BUDGET
 	// ImageKey pic;
 
 	// The trigger areas the person is in right now
-	Common::Array<int> trig;
+	Common::Array<int> _trig;
 
 	// The traits of a person
-	Common::Array<Trait> trait;
+	Common::Array<Trait> _trait;
 
 	Person();
 	void load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem);
 
 	void reset();
-	void Validate();
+	void validate();
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);

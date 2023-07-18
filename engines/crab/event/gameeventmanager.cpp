@@ -110,10 +110,10 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 				if (_oh.HandleCommonEvents(Event)) {
 					if (info.personValid(_curEvent->_title)) {
 						Person &p = info.personGet(_curEvent->_title);
-						if (p.alt_journal_name)
-							info._journal.Open(playerId, JE_PEOPLE, p.journal_name);
+						if (p._altJournalName)
+							info._journal.Open(playerId, JE_PEOPLE, p._journalName);
 						else
-							info._journal.Open(playerId, JE_PEOPLE, p.name);
+							info._journal.Open(playerId, JE_PEOPLE, p._name);
 					}
 				}
 
@@ -138,7 +138,7 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (_oh.HandleCommonEvents(Event))
 					if (info.personValid(_curEvent->_title))
-						info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title).name);
+						info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
 
 				int choice = _reply.handleEvents(info, g_engine->_eventStore->_con[_curEvent->_special], _curEvent->_title, _oh, Event);
 				if (choice >= 0) {
@@ -151,7 +151,7 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 			// If journal button is select from within an event, go to the entry corresponding to that person's name
 			if (_oh.HandleCommonEvents(Event))
 				if (info.personValid(_curEvent->_title))
-					info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title).name);
+					info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
 
 			if (_textin.handleEvents(Event))
 				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);

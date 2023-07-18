@@ -92,12 +92,12 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 	}
 
 	if (info.personValid(person_id)) {
-		name.draw(info.personGet(person_id).name);
+		name.draw(info.personGet(person_id)._name);
 
 		if (!player) {
-			opinion[OPI_LIKE].draw(info.personGet(person_id).opinion.val[OPI_LIKE], OPINION_MAX);
-			opinion[OPI_RESPECT].draw(info.personGet(person_id).opinion.val[OPI_RESPECT], OPINION_MAX);
-			opinion[OPI_FEAR].draw(info.personGet(person_id).opinion.val[OPI_FEAR], OPINION_MAX);
+			opinion[OPI_LIKE].draw(info.personGet(person_id)._opinion._val[OPI_LIKE], OPINION_MAX);
+			opinion[OPI_RESPECT].draw(info.personGet(person_id)._opinion._val[OPI_RESPECT], OPINION_MAX);
+			opinion[OPI_FEAR].draw(info.personGet(person_id)._opinion._val[OPI_FEAR], OPINION_MAX);
 		}
 	}
 

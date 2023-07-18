@@ -40,32 +40,35 @@ namespace pyrodactyl {
 namespace people {
 struct Trait {
 	// The id of the trait
-	int id;
+	int _id;
 
 	// Used for achievements
-	Common::String id_str;
+	Common::String _idStr;
 
 	// The name of the trait
-	Common::String name;
+	Common::String _name;
 
 	// The description of the trait
-	Common::String desc;
+	Common::String _desc;
 
 	// The image used to draw the trait
-	ImageKey img;
+	ImageKey _img;
 
 	// Indicator for traits the player hasn't read before
-	bool unread;
+	bool _unread;
 
 	Trait() {
-		id = -1;
-		img = 0;
-		unread = true;
+		_id = -1;
+		_img = 0;
+		_unread = true;
 	}
-	Trait(rapidxml::xml_node<char> *node) { load(node); }
+	Trait(rapidxml::xml_node<char> *node) {
+		load(node);
+	}
+
 	~Trait() {}
 
-	void Clear();
+	void clear();
 	void load(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname);
 };

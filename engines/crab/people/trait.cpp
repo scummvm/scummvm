@@ -38,22 +38,22 @@ using namespace pyrodactyl::people;
 // Purpose: Load
 //------------------------------------------------------------------------
 void Trait::load(rapidxml::xml_node<char> *node) {
-	loadStr(id_str, "id", node);
-	id = StringToNumber<int>(id_str);
+	loadStr(_idStr, "id", node);
+	_id = StringToNumber<int>(_idStr);
 
-	loadStr(name, "name", node);
-	loadStr(desc, "desc", node);
-	loadImgKey(img, "img", node);
-	loadBool(unread, "unread", node);
+	loadStr(_name, "name", node);
+	loadStr(_desc, "desc", node);
+	loadImgKey(_img, "img", node);
+	loadBool(_unread, "unread", node);
 }
 
-void Trait::Clear() {
-	id = -1;
-	id_str = "";
-	name = "";
-	desc = "";
-	img = 0;
-	unread = false;
+void Trait::clear() {
+	_id = -1;
+	_idStr = "";
+	_name = "";
+	_desc = "";
+	_img = 0;
+	_unread = false;
 }
 
 //------------------------------------------------------------------------
@@ -61,12 +61,12 @@ void Trait::Clear() {
 //------------------------------------------------------------------------
 void Trait::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, rootname);
-	child->append_attribute(doc.allocate_attribute("id", gStrPool->Get(id)));
-	child->append_attribute(doc.allocate_attribute("name", name.c_str()));
-	child->append_attribute(doc.allocate_attribute("desc", desc.c_str()));
-	child->append_attribute(doc.allocate_attribute("img", gStrPool->Get(img)));
+	child->append_attribute(doc.allocate_attribute("id", gStrPool->Get(_id)));
+	child->append_attribute(doc.allocate_attribute("name", _name.c_str()));
+	child->append_attribute(doc.allocate_attribute("desc", _desc.c_str()));
+	child->append_attribute(doc.allocate_attribute("img", gStrPool->Get(_img)));
 
-	saveBool(unread, "unread", doc, child);
+	saveBool(_unread, "unread", doc, child);
 
 	root->append_node(child);
 }

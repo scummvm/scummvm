@@ -78,7 +78,7 @@ void StatDrawHelper::load(rapidxml::xml_node<char> *node) {
 
 void StatDrawHelper::DrawInfo(const Person &obj) {
 	for (int i = 0; i < STAT_TOTAL; i++)
-		info[i].draw(obj.stat.val[i].cur, obj.stat.val[i].max);
+		info[i].draw(obj._stat.val[i].cur, obj._stat.val[i].max);
 }
 
 } // End of namespace Crab

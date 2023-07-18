@@ -164,9 +164,9 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 
 		case EFF_OBJ:
 			if (_operation == "type")
-				info.type(_subject, pyrodactyl::people::StringToPersonType(_val));
+				info.type(_subject, pyrodactyl::people::stringToPersonType(_val));
 			else if (_operation == "state")
-				info.state(_subject, pyrodactyl::people::StringToPersonState(_val));
+				info.state(_subject, pyrodactyl::people::stringToPersonState(_val));
 			break;
 
 		case EFF_ITEM:

@@ -82,7 +82,7 @@ void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id)
 	bg.draw();
 
 	if (info.personValid(id)) {
-		name.draw(info.personGet(id).name);
+		name.draw(info.personGet(id)._name);
 		menu.draw(&info.personGet(id));
 	} else
 		menu.draw(nullptr);

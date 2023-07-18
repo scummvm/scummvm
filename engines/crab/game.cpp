@@ -738,7 +738,7 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	// Save player character name
 	Common::String char_name;
 	if (info.personValid(level.playerId()))
-		char_name = info.personGet(level.playerId()).name;
+		char_name = info.personGet(level.playerId())._name;
 	root->append_attribute(doc.allocate_attribute("char_name", char_name.c_str()));
 
 	// Difficulty
