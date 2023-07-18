@@ -115,7 +115,7 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 static void create_luminance_map(RGB8 *pal) {
 	for (int i = GREY_START; i <= FREE_END; i++) {
 		Byte luminance = (Byte)((pal[i].r + pal[i].g + pal[i].b) / 3);
-		_GP(fadeToMe)[i].g = (Byte)imath_min(255, luminance);		 // MattP new green screen!
+		_GP(fadeToMe)[i].g = (Byte)imath_min(255, luminance);		 // New green screen!
 		_GP(fadeToMe)[i].r = _GP(fadeToMe)[i].b = 0;
 	}
 }
@@ -139,7 +139,7 @@ static void make_translation_table(RGB8 *pal) {
 		}
 
 		// look for best match in the free indexes for the greys in GREY_START-GREY_END range (we need these available)
-		int32 matchGrey = pal[GREY_START + i].g;	  // MattP use green instead of red cause we're having a green screen
+		int32 matchGrey = pal[GREY_START + i].g;	  // Use green instead of red cause we're having a green screen
 
 		for (j = FREE_START; j <= FREE_END; j++) {
 			int32 tryGrey = pal[j].g;
@@ -219,12 +219,11 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
 
 	// make new trickPal with grey-scale ramp entries and load it into VGA registers
-	memcpy(_GP(trick), _GP(fadeToMe), sizeof(RGB8) * 256);	// MattP _GP(trick) pal is the greyed version plus the grey ramp overlayed on top
+	memcpy(_GP(trick), _GP(fadeToMe), sizeof(RGB8) * 256);	// trick pal is the greyed version plus the grey ramp overlayed on top
 	int8 grey_step = 256 / NUM_GREYS;
 	int8 grey_ramp = 0;
 	for (i = GREY_START; i <= GREY_END; i++) {
-		//	_GP(trick)[i].r = _GP(trick)[i].g = _GP(trick)[i].b = (Byte) (grey_ramp);   old grey ramp
-		_GP(trick)[i].g = (Byte)(grey_ramp);		  // MattP new green screen
+		_GP(trick)[i].g = (Byte)(grey_ramp);		  // New green screen
 		_GP(trick)[i].r = _GP(trick)[i].b = 0;
 		grey_ramp += grey_step;
 	}
@@ -248,9 +247,9 @@ void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 	Buffer *grey_screen = _G(gameDrawBuff)->get_buffer();
 
 	// load original faded greys into the free indexes (no pixels have these indexs yet)
-	gr_pal_set_range(_GP(fadeToMe), FREE_START, NUM_FREE);   // Load _GP(fadeToMe) colors into VGA
+	gr_pal_set_range(_GP(fadeToMe), FREE_START, NUM_FREE);   // Load fadeToMe colors into VGA
 
-	make_translation_table(_GP(trick)); // Mattp this is used in fade_to_grey too!
+	make_translation_table(_GP(trick)); // This is used in fade_to_grey too!
 
 	// for every pixel in the screen, move any pixel in the GREY_START-GREY_END range out in to the free range
 	tempPtr = grey_screen->data;
@@ -404,7 +403,7 @@ void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, 
 
 			// remap the greyed out pixel to the closest grey in GREY_START to GREY_END range
 			// shift right 3, takes a 255 value and makes it out of 32 (the number of greys in reduced grey ramp)
-			ptr[x] = (uint8)(GREY_START + (_GP(fadeToMe)[ptr[x]].g >> 3));	 // MattP  use green instead of red cause we're having a green screen 
+			ptr[x] = (uint8)(GREY_START + (_GP(fadeToMe)[ptr[x]].g >> 3));	 // Use green instead of red cause we're having a green screen 
 
 		if (!(y & 0xff)) {
 			_G(digi).task();
@@ -625,14 +624,11 @@ static void pal_cycle_callback(frac16 myMessage) {
 
 void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry,
 		int32 delayTicks, int32 totalTicks, int32 triggerNum) {
-	if ((firstPalEntry < 0) || (lastPalEntry > 255) || (firstPalEntry > lastPalEntry)) {
-		// This should generate an error
+	// Validation
+	if ((firstPalEntry < 0) || (lastPalEntry > 255) || (firstPalEntry > lastPalEntry))
 		return;
-	}
-	if (delayTicks <= 0) {
-		// This should generate an error  (Nick debug plarg MattP)
+	if (delayTicks <= 0)
 		return;
-	}
 
 	_GP(myCycleReq) = true;
 	_GP(myCycleFinished) = false;
@@ -641,7 +637,7 @@ void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry,
 	_GP(myCycleEndDelayTime) = timer_read_60();
 	_GP(myCycleStartIndex) = firstPalEntry;
 	_GP(myCycleEndIndex) = lastPalEntry;
-	_GP(myCycleTrigger) = kernel_trigger_create(triggerNum);		// Returned when _GP(myCycleEndTime) is reached
+	_GP(myCycleTrigger) = kernel_trigger_create(triggerNum);		// Returned when myCycleEndTime is reached
 
 	if (totalTicks > 0) {											// If totalTicks > 0, calculate end time
 		_GP(myCycleEndTime) = _GP(myCycleStartTime) + totalTicks;
@@ -863,11 +859,10 @@ void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 l
 			gr_pal_set_entry(i, &color); // Set new colors to DAC.
 		}
 	}
-
 }
 
 void DAC_restore() {
-	term_message("DAC restored");//debug
+	term_message("DAC restored");
 	gr_pal_set_range(&_G(master_palette)[0], 0, 256);
 }
 
