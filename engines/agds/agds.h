@@ -125,7 +125,7 @@ public:
 	void runProcess(const ObjectPtr &object, uint ip = 0);
 	void stopProcess(const Common::String & name);
 	void stopProcessForObject(const Common::String & name);
-	void reactivate(const Common::String &name, const char *where, bool runNow = false);
+	void reactivate(const Common::String &name, const Common::String &where, bool runNow = false);
 	bool hasActiveProcesses(const Common::String &name) const;
 
 	void resetCurrentScreen();
