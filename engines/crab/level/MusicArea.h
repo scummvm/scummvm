@@ -41,18 +41,18 @@ namespace pyrodactyl {
 namespace level {
 struct MusicInfo {
 	// Are we playing a sound effect or a music track
-	bool track;
+	bool _track;
 
 	// The id of the music track or sound effect being played
-	int id;
+	int _id;
 
 	// The amount of loops
-	int loops;
+	int _loops;
 
 	MusicInfo() {
-		track = false;
-		id = -1;
-		loops = -1;
+		_track = false;
+		_id = -1;
+		_loops = -1;
 	}
 	~MusicInfo() {}
 };

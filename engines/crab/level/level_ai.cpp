@@ -44,55 +44,55 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Let the level tick along and notify if we go into an exit
 //------------------------------------------------------------------------
-LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq, bool EventInProgress) {
-	LevelResult l_result;
+LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq, bool eventInProgress) {
+	LevelResult lResult;
 
 	// input.internalEvents();
-	CalcTrigCollide(info);
+	calcTrigCollide(info);
 
-	if (terrain.CollideWithExit(objects[player_index].boundRect(), l_result)) {
-		if (PlayerInCombat(info)) {
-			inside_exit = true;
-		} else if (inside_exit == false) {
-			l_result.type = LR_LEVEL;
-			return l_result;
+	if (_terrain.CollideWithExit(_objects[_playerIndex].boundRect(), lResult)) {
+		if (playerInCombat(info)) {
+			_insideExit = true;
+		} else if (_insideExit == false) {
+			lResult.type = LR_LEVEL;
+			return lResult;
 		}
 	} else {
-		inside_exit = false;
+		_insideExit = false;
 
-		if (PlayerInCombat(info))
-			showmap.current = false;
+		if (playerInCombat(info))
+			_showmap._current = false;
 		else
-			showmap.current = showmap.normal;
+			_showmap._current = _showmap._normal;
 	}
 
-	if (EventInProgress)
-		PlayerStop();
+	if (eventInProgress)
+		playerStop();
 	else
-		Think(info, result, end_seq, l_result.val);
+		think(info, result, endSeq, lResult.val);
 
-	if (l_result.val != "")
-		info.lastPerson(l_result.val);
-	else if (CollidingWithObject(info, l_result.val))
-		info.lastPerson(l_result.val);
+	if (lResult.val != "")
+		info.lastPerson(lResult.val);
+	else if (collidingWithObject(info, lResult.val))
+		info.lastPerson(lResult.val);
 	else
 		info.lastPerson("");
 
-	return l_result;
+	return lResult;
 }
 
 //------------------------------------------------------------------------
 // Purpose: Let the AI think and animate the level
 //------------------------------------------------------------------------
-void Level::Think(Info &info, Common::Array<EventResult> &result,
-				  Common::Array<EventSeqInfo> &end_seq, Common::String &id) {
+void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
+				  Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq, Common::String &id) {
 	unsigned int index = 0;
-	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
+	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index) {
 		// Only bother if the sprite is visible
 		if (i->visible()) {
 			// TODO: Find a place where this should be initialized... (SZ)
 			if (i->_pathing.grid == NULL)
-				i->_pathing.initialize(&pathfindingGrid);
+				i->_pathing.initialize(&_pathfindingGrid);
 
 			// If a sprite is dead, nothing else matters
 			if (info.state(i->id()) == PST_DYING) {
@@ -109,21 +109,21 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 				i->_pathing.Update(0);
 
 				// For the AI sprites
-				if (index != player_index) {
+				if (index != _playerIndex) {
 					switch (info.state(i->id())) {
 					case PST_FIGHT: {
 						// Only attack if the player is alive
-						if (info.state(objects[player_index].id()) < PST_KO)
-							i->attack(info, objects[player_index], sc_default);
+						if (info.state(_objects[_playerIndex].id()) < PST_KO)
+							i->attack(info, _objects[_playerIndex], _scDefault);
 					} break;
 					case PST_FLEE:
-						i->flee(info, terrain.area_exit, sc_default);
+						i->flee(info, _terrain.area_exit, _scDefault);
 						break;
 					case PST_NORMAL:
-						if (i->takingDamage(objects[player_index], sc_default)) {
-							if (first_hit) {
-								BattleAlert(info);
-								first_hit = false;
+						if (i->takingDamage(_objects[_playerIndex], _scDefault)) {
+							if (_firstHit) {
+								battleAlert(info);
+								_firstHit = false;
 							}
 						}
 						/*else
@@ -134,8 +134,8 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 					}
 
 					// Only do this if the player is alive
-					if (info.state(objects[player_index].id()) < PST_KO)
-						objects[player_index].exchangeDamage(info, *i, sc_default);
+					if (info.state(_objects[_playerIndex].id()) < PST_KO)
+						_objects[_playerIndex].exchangeDamage(info, *i, _scDefault);
 				} else {
 					// For the player sprite
 					boundRect = i->boundRect();
@@ -143,11 +143,11 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 					i->_pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
 					i->_pathing.Update(0);
 
-					i->moveToDestPathfinding(info, sc_default);
+					i->moveToDestPathfinding(info, _scDefault);
 				}
 
-				i->internalEvents(info, PlayerID(), result, end_seq);
-				MoveObject(info, *i);
+				i->internalEvents(info, playerId(), result, endSeq);
+				moveObject(info, *i);
 			}
 
 			i->animate(info);
@@ -155,13 +155,13 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 	}
 
 	// Background sprites don't move
-	for (auto &i : background)
+	for (auto &i : _background)
 		i.animate(PST_NORMAL);
 
 	// Flier sprites fly across the screen from left to right or vice versa
 	// The movement is semi-random
-	for (auto &i : fly) {
-		i.flyAround(camera, sc_default);
+	for (auto &i : _fly) {
+		i.flyAround(_camera, _scDefault);
 		i.animate(PST_NORMAL);
 	}
 }
@@ -169,10 +169,10 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 //------------------------------------------------------------------------
 // Purpose: Once a player provokes any sprite, call this function
 //------------------------------------------------------------------------
-void Level::BattleAlert(Info &info) {
+void Level::battleAlert(pyrodactyl::event::Info &info) {
 	unsigned int index = 0;
-	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
-		if (index != player_index && i->visible() && info.state(i->id()) != PST_KO) {
+	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index) {
+		if (index != _playerIndex && i->visible() && info.state(i->id()) != PST_KO) {
 			switch (info.type(i->id())) {
 			case PE_NEUTRAL:
 			case PE_HOSTILE:
@@ -191,26 +191,26 @@ void Level::BattleAlert(Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Move a sprite according to its velocity
 //------------------------------------------------------------------------
-void Level::MoveObject(Info &info, pyrodactyl::anim::Sprite &s) {
+void Level::moveObject(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s) {
 	// Update x,y coordinates according to velocity
-	s.move(sc_default);
+	s.move(_scDefault);
 
 	// First check collision with objects and forbidden areas inside a level
-	if (CollidingWithLevel(info, s))
+	if (collidingWithLevel(info, s))
 		s.resolveCollide();
 
 	// Finally see if we are inside the overall level bounds
-	if (!terrain.InsideWalk(s.boundRect()))
-		s.resolveInside(terrain.AreaWalk());
+	if (!_terrain.InsideWalk(s.boundRect()))
+		s.resolveInside(_terrain.AreaWalk());
 }
 
 //------------------------------------------------------------------------
 // Purpose: If any other object is trying to kill you, you are in combat
 //------------------------------------------------------------------------
-bool Level::PlayerInCombat(Info &info) {
+bool Level::playerInCombat(pyrodactyl::event::Info &info) {
 	unsigned int index = 0;
-	for (auto i = objects.begin(); i != objects.end(); ++i, ++index)
-		if (index != player_index && info.state(i->id()) == PST_FIGHT && i->visible())
+	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index)
+		if (index != _playerIndex && info.state(i->id()) == PST_FIGHT && i->visible())
 			return true;
 
 	return false;

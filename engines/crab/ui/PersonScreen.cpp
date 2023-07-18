@@ -94,7 +94,7 @@ void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id)
 }
 
 void PersonScreen::Cache(Info &info, const Common::String &id, pyrodactyl::level::Level &level) {
-	cur_sp = level.GetSprite(id);
+	cur_sp = level.getSprite(id);
 
 	if (info.personValid(id))
 		menu.Cache(info.personGet(id));

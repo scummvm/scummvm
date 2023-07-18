@@ -46,36 +46,36 @@ using namespace pyrodactyl::event;
 // this function cleans up everything to make it good as new (get it)
 //------------------------------------------------------------------------
 void Level::reset() {
-	if (player_index > 0 && objects.size() > player_index)
-		objects[player_index]._pathing.shutdown();
+	if (_playerIndex > 0 && _objects.size() > _playerIndex)
+		_objects[_playerIndex]._pathing.shutdown();
 
-	player_index = 0;
-	terrain.reset();
+	_playerIndex = 0;
+	_terrain.reset();
 
-	objects.clear();
-	obj_seq.clear();
-	background.clear();
-	fly.clear();
+	_objects.clear();
+	_objSeq.clear();
+	_background.clear();
+	_fly.clear();
 
 	Camera(0, 0, g_engine->_screenSettings->cur.w, g_engine->_screenSettings->cur.h);
 
-	showmap.Set(true);
-	inside_exit = false;
-	first_hit = true;
-	music.id = -1;
-	preview_path.clear();
+	_showmap.set(true);
+	_insideExit = false;
+	_firstHit = true;
+	_music._id = -1;
+	_previewPath.clear();
 
-	img.deleteImage();
+	_img.deleteImage();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get index of a sprite in the object array
 //------------------------------------------------------------------------
-pyrodactyl::anim::Sprite *Level::GetSprite(const Common::String &id) {
+pyrodactyl::anim::Sprite *Level::getSprite(const Common::String &id) {
 	int count = 0;
-	for (auto i = objects.begin(); i != objects.end(); ++i, ++count)
+	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++count)
 		if (i->id() == id)
-			return &objects[count];
+			return &_objects[count];
 
 	return NULL;
 }
@@ -83,8 +83,8 @@ pyrodactyl::anim::Sprite *Level::GetSprite(const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Figure visibility and let the AI see what moves are allowed
 //------------------------------------------------------------------------
-void Level::CalcProperties(Info &info) {
-	for (auto i = objects.begin(); i != objects.end(); ++i)
+void Level::calcProperties(pyrodactyl::event::Info &info) {
+	for (auto i = _objects.begin(); i != _objects.end(); ++i)
 		i->calcProperties(info);
 }
 
@@ -98,21 +98,21 @@ void Level::handleEvents(Info &info, const Common::Event &Event) {
 			if (!g_engine->_mouse->_hover) {
 				// The destination coordinate is set by adding camera position to click position
 				Vector2i dest = g_engine->_mouse->_button;
-				dest.x += camera.x;
-				dest.y += camera.y;
+				dest.x += _camera.x;
+				dest.y += _camera.y;
 
-				Rect b = objects[player_index].boundRect();
+				Rect b = _objects[_playerIndex].boundRect();
 				b.w /= 2;
 				b.h /= 2;
 				b.x = dest.x - b.w / 2;
 				b.y = dest.y - b.h / 2;
 
-				objects[player_index].setDestPathfinding(dest, !terrain.InsideNoWalk(dest));
+				_objects[_playerIndex].setDestPathfinding(dest, !_terrain.InsideNoWalk(dest));
 			}
 		}
 	}
 
-	objects[player_index].handleEvents(info, camera, sc_default, Event);
+	_objects[_playerIndex].handleEvents(info, _camera, _scDefault, Event);
 }
 
 #if 0
@@ -147,16 +147,16 @@ void Level::handleEvents(Info &info, const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Swap the player sprites
 //------------------------------------------------------------------------
-void Level::PlayerID(const Common::String &ID, const int &X, const int &Y) {
+void Level::playerId(const Common::String &ID, const int &x, const int &y) {
 	int index = 0;
-	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
+	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index) {
 		if (i->id() == ID) {
-			player_index = index;
+			_playerIndex = index;
 
-			if (X != -1)
-				i->x(X);
-			if (Y != -1)
-				i->y(Y);
+			if (x != -1)
+				i->x(x);
+			if (y != -1)
+				i->y(y);
 
 			break;
 		}
@@ -167,9 +167,9 @@ void Level::PlayerID(const Common::String &ID, const int &X, const int &Y) {
 // Purpose: Rearrange stuff after resolution change
 //------------------------------------------------------------------------
 void Level::setUI() {
-	camera.w = g_engine->_screenSettings->cur.w;
-	camera.h = g_engine->_screenSettings->cur.h;
-	SetCamera();
+	_camera.w = g_engine->_screenSettings->cur.w;
+	_camera.h = g_engine->_screenSettings->cur.h;
+	setCamera();
 }
 
 } // End of namespace Crab

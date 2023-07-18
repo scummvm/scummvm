@@ -37,10 +37,10 @@ using namespace pyrodactyl::level;
 using namespace pyrodactyl::image;
 
 void TalkNotify::load(rapidxml::xml_node<char> *node) {
-	offset.load(node);
-	loadNum(font, "font", node);
-	loadAlign(align, node);
-	loadNum(col, "col", node);
+	_offset.load(node);
+	loadNum(_font, "font", node);
+	loadAlign(_align, node);
+	loadNum(_col, "col", node);
 }
 
 void TalkNotify::draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s, const Rect &camera) {
@@ -48,13 +48,13 @@ void TalkNotify::draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s
 
 	// Find position to draw name (over the sprite's top edge)
 	Vector2i pos;
-	pos.x = rect.x + rect.w / 2 + offset.x;
-	pos.y = rect.y + offset.y;
+	pos.x = rect.x + rect.w / 2 + _offset.x;
+	pos.y = rect.y + _offset.y;
 
 	// Find the sprite name
 	Common::String text = info.getName(s.id());
 
-	g_engine->_textManager->draw(pos.x - camera.x, pos.y - camera.y, text, col, font, align, true);
+	g_engine->_textManager->draw(pos.x - camera.x, pos.y - camera.y, text, _col, _font, _align, true);
 }
 
 } // End of namespace Crab

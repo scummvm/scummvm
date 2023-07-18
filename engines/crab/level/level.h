@@ -51,153 +51,173 @@ namespace pyrodactyl {
 namespace level {
 class Level {
 	// The .tmx file to import terrain from
-	TMX::TMXMap terrain;
+	TMX::TMXMap _terrain;
 
 	// The pathfinding grid for the level
-	PathfindingGrid pathfindingGrid;
+	PathfindingGrid _pathfindingGrid;
 
 	// The area we display to the player
-	Rect camera;
+	Rect _camera;
 
 	// The player sprite location in the object list
-	unsigned int player_index;
+	unsigned int _playerIndex;
 
 	// The order in which to draw the sprites
-	Common::MultiMap<int, pyrodactyl::anim::Sprite *> obj_seq;
+	Common::MultiMap<int, pyrodactyl::anim::Sprite *> _objSeq;
 
 	// The file index which contains the fighting moves of all characters
-	Common::Array<Common::String> anim_set;
+	Common::Array<Common::String> _animSet;
 
 	// The movement sets for sprites in levels
-	Common::Array<pyrodactyl::ai::MovementSet> move_set;
+	Common::Array<pyrodactyl::ai::MovementSet> _moveSet;
 
 	// These sprites are only for animated objects and cannot be interacted with
-	Common::Array<pyrodactyl::anim::Sprite> background;
+	Common::Array<pyrodactyl::anim::Sprite> _background;
 
 	// These sprites fly across the screen randomly
-	Common::Array<pyrodactyl::anim::Sprite> fly;
+	Common::Array<pyrodactyl::anim::Sprite> _fly;
 
 	// The id of the music track being played
-	MusicInfo music;
+	MusicInfo _music;
 
 	// Is the world map accessible from this level?
-	MapVis showmap;
+	MapVis _showmap;
 
 	// We disable exits when player is fighting enemies - this is used to check if we are in an exit area WHILE fighting enemies
 	// If we are fighting inside exit area, the level switch is delayed until we walk out of exit and back in
 	// to prevent instant level switch as soon as you beat all enemies
-	bool inside_exit;
+	bool _insideExit;
 
-	bool first_hit;
+	bool _firstHit;
 
 	// Default sprite parameters
-	pyrodactyl::ai::SpriteConstant sc_default;
+	pyrodactyl::ai::SpriteConstant _scDefault;
 
 	// Protected level functions
-	bool CollidingWithObject(pyrodactyl::event::Info &info, Common::String &id);
-	bool CollidingWithLevel(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s);
-	bool PlayerInCombat(pyrodactyl::event::Info &info);
-	void BattleAlert(pyrodactyl::event::Info &info);
+	bool collidingWithObject(pyrodactyl::event::Info &info, Common::String &id);
+	bool collidingWithLevel(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s);
+	bool playerInCombat(pyrodactyl::event::Info &info);
+	void battleAlert(pyrodactyl::event::Info &info);
 
-	void SortObjectsToDraw();
-	void MoveObject(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s);
+	void sortObjectsToDraw();
+	void moveObject(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s);
 
-	void Think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
-			   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, Common::String &id);
+	void think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
+			   Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq, Common::String &id);
 
-	void DrawObjects(pyrodactyl::event::Info &info);
-	void SetCamera();
+	void drawObjects(pyrodactyl::event::Info &info);
+	void setCamera();
 
-	bool LayerVisible(pyrodactyl::anim::Sprite *obj);
+	bool layerVisible(pyrodactyl::anim::Sprite *obj);
 
 public:
 	// The objects in the level, and the player character
-	Common::Array<pyrodactyl::anim::Sprite> objects;
+	Common::Array<pyrodactyl::anim::Sprite> _objects;
 
 	// The notification text drawn if the player is able to talk to a sprite
-	TalkNotify talk_notify;
+	TalkNotify _talkNotify;
 
 	// Used for drawing the destination marker for point and click movement
-	PlayerDestMarker dest_marker;
+	PlayerDestMarker _destMarker;
 
 	// The location of this level on the world map
-	Vector2i map_loc;
+	Vector2i _mapLoc;
 
 	// The clip revealed by this level on the world map
 	struct MapClip {
 		// Which world map is this clip added to?
-		int id;
+		int _id;
 
 		// The clip itself
-		Rect rect;
+		Rect _rect;
 
-		MapClip() { id = 0; }
-	} map_clip;
+		MapClip() {
+			_id = 0;
+		}
+	} _mapClip;
 
 	// Used to draw ambient dialog
-	pyrodactyl::ui::ParagraphData pop;
+	pyrodactyl::ui::ParagraphData _pop;
 
 	// The path of the preview image
-	Common::String preview_path;
+	Common::String _previewPath;
 
 	// A full rendered image of the level
-	pyrodactyl::image::Image img;
+	pyrodactyl::image::Image _img;
 
-	Level() : player_index(0) { reset(); }
-	~Level() { reset(); }
+	Level() : _playerIndex(0) {
+		reset();
+	}
+
+	~Level() {
+		reset();
+	}
 
 	void reset();
 
 	void Camera(int x, int y, int w, int h) {
-		camera.x = x;
-		camera.y = y;
-		camera.w = w;
-		camera.h = h;
+		_camera.x = x;
+		_camera.y = y;
+		_camera.w = w;
+		_camera.h = h;
 	}
-	Rect Camera() { return camera; }
 
-	void PlayerStop() { objects[player_index].stop(); }
+	Rect camera() {
+		return _camera;
+	}
 
-	const Common::String &PlayerID() { return objects[player_index].id(); }
-	void PlayerID(const Common::String &ID, const int &X, const int &Y);
+	void playerStop() {
+		_objects[_playerIndex].stop();
+	}
 
-	void ShowMap(bool val) { showmap.normal = val; }
-	bool ShowMap() { return showmap.current; }
+	const Common::String &playerId() {
+		return _objects[_playerIndex].id();
+	}
+
+	void playerId(const Common::String &ID, const int &x, const int &y);
+
+	void showMap(bool val) {
+		_showmap._normal = val;
+	}
+
+	bool showMap() {
+		return _showmap._current;
+	}
 
 	bool operator()(int i, int j);
 
 	// This calculates the unlocked moves for each sprite in the level, and the visibility of objects
-	void CalcProperties(pyrodactyl::event::Info &info);
+	void calcProperties(pyrodactyl::event::Info &info);
 
 	// Loading function
-	void load(const Common::String &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &game_over,
-			  const int &player_x = -1, const int &player_y = -1);
+	void load(const Common::String &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &gameOver,
+			  const int &playerX = -1, const int &playerY = -1);
 
 	// One time load called first-time
-	void LoadMoves(const Common::String &filename);
-	void LoadConst(const Common::String &filename);
+	void loadMoves(const Common::String &filename);
+	void loadConst(const Common::String &filename);
 
 	// Used to see if a sprite collides with a rectangle
-	void CalcTrigCollide(pyrodactyl::event::Info &info);
+	void calcTrigCollide(pyrodactyl::event::Info &info);
 
 	// See if a player clicked on the sprite in contact
-	bool ContainsClick(const Common::String &id, const Common::Event &Event);
+	bool containsClick(const Common::String &id, const Common::Event &event);
 #if 0
 	bool ContainsClick(const Common::String &id, const SDL_Event &Event);
 #endif
 
 	// Get index of a sprite in the object array
-	pyrodactyl::anim::Sprite *GetSprite(const Common::String &id);
+	pyrodactyl::anim::Sprite *getSprite(const Common::String &id);
 
 	void handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
 #if 0
 	void handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
 	LevelResult internalEvents(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
-							   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, bool EventInProgress);
+							   Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq, bool eventInProgress);
 
-	void PreDraw();
-	void PreDrawObjects(Graphics::ManagedSurface *surf);
+	void preDraw();
+	void preDrawObjects(Graphics::ManagedSurface *surf);
 	void draw(pyrodactyl::event::Info &info);
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

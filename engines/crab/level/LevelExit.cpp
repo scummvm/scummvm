@@ -35,20 +35,20 @@ namespace Crab {
 using namespace pyrodactyl::level;
 
 void Exit::load(rapidxml::xml_node<char> *node) {
-	dim.load(node);
-	loadStr(name, "name", node);
+	_dim.load(node);
+	loadStr(_name, "name", node);
 
 	if (nodeValid("properties", node)) {
 		rapidxml::xml_node<char> *propertynode = node->first_node("properties");
 		for (auto n = propertynode->first_node("property"); n != NULL; n = n->next_sibling("property")) {
-			Common::String node_name;
-			loadStr(node_name, "name", n);
-			if (node_name == "entry_x") {
-				if (!loadNum(entry.x, "value", n))
-					entry.x = -1;
-			} else if (node_name == "entry_y") {
-				if (!loadNum(entry.y, "value", n))
-					entry.y = -1;
+			Common::String nodeName;
+			loadStr(nodeName, "name", n);
+			if (nodeName == "entry_x") {
+				if (!loadNum(_entry.x, "value", n))
+					_entry.x = -1;
+			} else if (nodeName == "entry_y") {
+				if (!loadNum(_entry.y, "value", n))
+					_entry.y = -1;
 			}
 		}
 	}

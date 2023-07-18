@@ -37,13 +37,13 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::level;
 
 void PlayerDestMarker::load(rapidxml::xml_node<char> *node) {
-	loadImgKey(img, "dest", node);
-	size.x = g_engine->_imageManager->getTexture(img).w();
-	size.y = g_engine->_imageManager->getTexture(img).h();
+	loadImgKey(_img, "dest", node);
+	_size.x = g_engine->_imageManager->getTexture(_img).w();
+	_size.y = g_engine->_imageManager->getTexture(_img).h();
 }
 
 void PlayerDestMarker::draw(const Vector2i &pos, const Rect &camera) {
-	g_engine->_imageManager->draw(pos.x - (size.x / 2) - camera.x, pos.y - (size.y / 2) - camera.y, img);
+	g_engine->_imageManager->draw(pos.x - (_size.x / 2) - camera.x, pos.y - (_size.y / 2) - camera.y, _img);
 }
 
 } // End of namespace Crab

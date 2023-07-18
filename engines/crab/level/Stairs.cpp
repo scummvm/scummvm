@@ -43,9 +43,9 @@ void Stairs::load(rapidxml::xml_node<char> *node, const bool &echo) {
 			Common::String name;
 			if (loadStr(name, "name", n, echo)) {
 				if (name == "x")
-					loadNum(modifier.x, "value", n, echo);
+					loadNum(_modifier.x, "value", n, echo);
 				else if (name == "y")
-					loadNum(modifier.y, "value", n, echo);
+					loadNum(_modifier.y, "value", n, echo);
 			}
 		}
 	}

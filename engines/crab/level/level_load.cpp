@@ -51,7 +51,7 @@ bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
 // Purpose: Load the level
 //------------------------------------------------------------------------
 void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
-				 pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y) {
+				 pyrodactyl::event::TriggerSet &gameOver, const int &playerX, const int &playerY) {
 	reset();
 	XMLDoc conf(filename);
 	if (conf.ready()) {
@@ -60,16 +60,16 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 			Common::String vis;
 			loadStr(vis, "map", node, false);
 			if (vis == "false")
-				showmap.Set(false);
+				_showmap.set(false);
 			else
-				showmap.Set(true);
+				_showmap.set(true);
 
 			if (nodeValid("preview", node))
-				loadStr(preview_path, "path", node->first_node("preview"));
+				loadStr(_previewPath, "path", node->first_node("preview"));
 
 			if (nodeValid("music", node)) {
-				loadNum(music.id, "id", node->first_node("music"));
-				g_engine->_musicManager->PlayMusic(music.id);
+				loadNum(_music._id, "id", node->first_node("music"));
+				g_engine->_musicManager->PlayMusic(_music._id);
 			}
 
 			if (nodeValid("map", node)) {
@@ -78,20 +78,20 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				loadStr(path, "path", mapnode);
 				loadStr(tmxfile, "file", mapnode);
 
-				terrain.load(path, tmxfile);
+				_terrain.load(path, tmxfile);
 
 				// Remember to load the terrain data before constructing the pathfinding grid
-				pathfindingGrid.SetupNodes(terrain);
+				_pathfindingGrid.SetupNodes(_terrain);
 
-				terrain.grid = &pathfindingGrid;
+				_terrain.grid = &_pathfindingGrid;
 
 				if (nodeValid("loc", mapnode))
-					map_loc.load(mapnode->first_node("loc"));
+					_mapLoc.load(mapnode->first_node("loc"));
 
 				if (nodeValid("clip", mapnode)) {
 					rapidxml::xml_node<char> *clipnode = mapnode->first_node("clip");
-					loadNum(map_clip.id, "id", clipnode);
-					map_clip.rect.load(clipnode);
+					loadNum(_mapClip._id, "id", clipnode);
+					_mapClip._rect.load(clipnode);
 				}
 			}
 
@@ -100,18 +100,18 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				int count = 0;
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling(), ++count) {
 					Sprite s;
-					s.load(n, anim_set);
+					s.load(n, _animSet);
 
 					Common::String str = n->name();
 					if (str == "player") {
-						player_index = objects.size();
-						if (player_x != -1 && player_y != -1) {
-							s.x(player_x);
-							s.y(player_y);
+						_playerIndex = _objects.size();
+						if (playerX != -1 && playerY != -1) {
+							s.x(playerX);
+							s.y(playerY);
 						}
 					}
 
-					objects.push_back(s);
+					_objects.push_back(s);
 				}
 			}
 
@@ -119,79 +119,79 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				rapidxml::xml_node<char> *spritenode = node->first_node("background");
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
-					s.load(n, anim_set);
-					background.push_back(s);
+					s.load(n, _animSet);
+					_background.push_back(s);
 				}
 
-				Common::sort(background.begin(), background.end(), CompSpriteLayer);
+				Common::sort(_background.begin(), _background.end(), CompSpriteLayer);
 			}
 
 			if (nodeValid("fly", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("fly");
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
-					s.load(n, anim_set);
+					s.load(n, _animSet);
 
 					// Set the timer target for the first time
 					//s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
-					s._aiData._walk._timer.Target(sc_default._fly._delayMax);
+					s._aiData._walk._timer.Target(_scDefault._fly._delayMax);
 
-					fly.push_back(s);
+					_fly.push_back(s);
 				}
 			}
 
 			if (nodeValid("movement", node)) {
 				rapidxml::xml_node<char> *movnode = node->first_node("movement");
 				for (auto n = movnode->first_node("set"); n != NULL; n = n->next_sibling("set"))
-					move_set.push_back(n);
+					_moveSet.push_back(n);
 			}
 
 			if (nodeValid("popup", node, false))
-				pop.load(node->first_node("popup"));
+				_pop.load(node->first_node("popup"));
 
-			game_over.clear();
+			gameOver.clear();
 			if (nodeValid("game_over", node, false))
-				game_over.load(node->first_node("game_over"));
-			else if (player_index < objects.size()) {
+				gameOver.load(node->first_node("game_over"));
+			else if (_playerIndex < _objects.size()) {
 				// The default lose condition is the death of the player
 				using namespace pyrodactyl::event;
 				Trigger t;
 				t._type = TRIG_STAT;
 				t._target = STATNAME_HEALTH;
-				t._subject = objects[player_index].id();
+				t._subject = _objects[_playerIndex].id();
 				t._operation = "<";
 				t._val = "1";
-				game_over.add(t);
+				gameOver.add(t);
 			}
 
-			CalcProperties(info);
+			calcProperties(info);
 		}
 	}
 
-	SetCamera();
+	setCamera();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Build an index of all animation files, called once at start
 //------------------------------------------------------------------------
-void Level::LoadMoves(const Common::String &filename) {
-	XMLDoc mov_list(filename);
-	if (mov_list.ready()) {
-		rapidxml::xml_node<char> *node = mov_list.doc()->first_node("movelist");
+void Level::loadMoves(const Common::String &filename) {
+	XMLDoc movList(filename);
+	if (movList.ready()) {
+		rapidxml::xml_node<char> *node = movList.doc()->first_node("movelist");
 		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set")) {
-			unsigned int pos = anim_set.size();
+			unsigned int pos = _animSet.size();
 
 			loadNum(pos, "id", n);
-			if (pos >= anim_set.size())
-				anim_set.resize(pos + 1);
+			if (pos >= _animSet.size())
+				_animSet.resize(pos + 1);
 
 			// See if there is an alternate moveset for low quality setting
 			// If no, just load the regular one
 			if (!g_engine->_screenSettings->quality) {
-				if (!loadStr(anim_set[pos], "path_low", n))
-					loadStr(anim_set[pos], "path", n);
+				if (!loadStr(_animSet[pos], "path_low", n))
+					loadStr(_animSet[pos], "path", n);
 			} else
-				loadStr(anim_set[pos], "path", n);
+				loadStr(_animSet[pos], "path", n);
 		}
 	}
 }
@@ -199,12 +199,12 @@ void Level::LoadMoves(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Load the default sprite constant parameters
 //------------------------------------------------------------------------
-void Level::LoadConst(const Common::String &filename) {
+void Level::loadConst(const Common::String &filename) {
 	XMLDoc doc(filename);
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.doc()->first_node("constant");
 		if (nodeValid(node))
-			sc_default.load(node);
+			_scDefault.load(node);
 	}
 }
 
@@ -212,9 +212,9 @@ void Level::LoadConst(const Common::String &filename) {
 // Purpose: Save all sprite positions to save file
 //------------------------------------------------------------------------
 void Level::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	root->append_attribute(doc.allocate_attribute("player_index", gStrPool->Get(player_index)));
+	root->append_attribute(doc.allocate_attribute("player_index", gStrPool->Get(_playerIndex)));
 
-	for (auto &i : objects) {
+	for (auto &i : _objects) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sprite");
 		i.saveState(doc, child);
 		root->append_node(child);
@@ -225,10 +225,10 @@ void Level::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *r
 // Purpose: Load all sprite positions from save file
 //------------------------------------------------------------------------
 void Level::loadState(rapidxml::xml_node<char> *node) {
-	loadNum(player_index, "player_index", node);
+	loadNum(_playerIndex, "player_index", node);
 
-	auto i = objects.begin();
-	for (auto *n = node->first_node("sprite"); n != NULL && i != objects.end(); n = n->next_sibling("sprite"), ++i)
+	auto i = _objects.begin();
+	for (auto *n = node->first_node("sprite"); n != NULL && i != _objects.end(); n = n->next_sibling("sprite"), ++i)
 		i->loadState(n);
 }
 
