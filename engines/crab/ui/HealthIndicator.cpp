@@ -37,35 +37,35 @@ using namespace pyrodactyl::ui;
 
 void HealthIndicator::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		loadXY(x, y, node);
+		loadXY(_x, _y, node);
 
 		for (auto n = node->first_node("img"); n != NULL; n = n->next_sibling("img")) {
 			HealthImage hi;
-			loadImgKey(hi.normal, "normal", n);
-			loadImgKey(hi.glow, "glow", n);
-			loadNum(hi.val, "val", n);
+			loadImgKey(hi._normal, "normal", n);
+			loadImgKey(hi._glow, "glow", n);
+			loadNum(hi._val, "val", n);
 
-			img.push_back(hi);
+			_img.push_back(hi);
 		}
 	}
 }
 
 void HealthIndicator::draw(int num) {
-	for (auto i = img.begin(); i != img.end(); ++i)
-		if (num == i->val) {
+	for (auto i = _img.begin(); i != _img.end(); ++i)
+		if (num == i->_val) {
 			using namespace pyrodactyl::image;
-			g_engine->_imageManager->draw(x, y, i->normal);
-			g_engine->_imageManager->getTexture(i->glow).alpha(alpha);
-			g_engine->_imageManager->draw(x, y, i->glow);
+			g_engine->_imageManager->draw(_x, _y, i->_normal);
+			g_engine->_imageManager->getTexture(i->_glow).alpha(_alpha);
+			g_engine->_imageManager->draw(_x, _y, i->_glow);
 
-			if (inc) {
-				alpha += 2;
-				if (alpha >= 250)
-					inc = false;
+			if (_inc) {
+				_alpha += 2;
+				if (_alpha >= 250)
+					_inc = false;
 			} else {
-				alpha -= 2;
-				if (alpha < 4)
-					inc = true;
+				_alpha -= 2;
+				if (_alpha < 4)
+					_inc = true;
 			}
 
 			break;

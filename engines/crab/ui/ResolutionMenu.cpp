@@ -65,9 +65,9 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 				dim.push_back(d);
 				Button b;
 				b.init(ref, inc.x * (count_slot % columns), inc.y * (count_slot / columns));
-				b._caption.text = NumberToString(d.w);
-				b._caption.text += " x ";
-				b._caption.text += NumberToString(d.h);
+				b._caption._text = NumberToString(d.w);
+				b._caption._text += " x ";
+				b._caption._text += NumberToString(d.h);
 				element.push_back(b);
 			}
 		}

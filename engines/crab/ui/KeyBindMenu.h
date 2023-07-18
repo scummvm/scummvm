@@ -90,9 +90,9 @@ class KeyBindMenu {
 		}
 
 		void Swap(Caption &c) {
-			col_prev = c.col;
-			c.text = text;
-			c.col = col;
+			col_prev = c._col;
+			c._text = text;
+			c._col = col;
 		}
 	} prompt;
 

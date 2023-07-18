@@ -47,8 +47,8 @@ void StateButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	Button::load(node, echo);
 
 	_imgSet._normal = _img;
-	_colNormal._col = _caption.col;
-	_colNormal._colS = _caption.col_s;
+	_colNormal._col = _caption._col;
+	_colNormal._colS = _caption._colS;
 
 	if (nodeValid("select", node, false)) {
 		rapidxml::xml_node<char> *selnode = node->first_node("select");
@@ -58,20 +58,20 @@ void StateButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 		loadNum(_colSelect._colS, "color_s", selnode);
 	} else {
 		_imgSet._select = _img;
-		_colSelect._col = _caption.col;
-		_colSelect._colS = _caption.col_s;
+		_colSelect._col = _caption._col;
+		_colSelect._colS = _caption._colS;
 	}
 }
 
 void StateButton::state(const bool val) {
 	if (val) {
 		_img = _imgSet._select;
-		_caption.col = _colSelect._col;
-		_caption.col_s = _colSelect._colS;
+		_caption._col = _colSelect._col;
+		_caption._colS = _colSelect._colS;
 	} else {
 		_img = _imgSet._normal;
-		_caption.col = _colNormal._col;
-		_caption.col_s = _colNormal._colS;
+		_caption._col = _colNormal._col;
+		_caption._colS = _colNormal._colS;
 	}
 
 	// Images might be different in size

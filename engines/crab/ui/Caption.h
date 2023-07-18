@@ -41,21 +41,21 @@ namespace ui {
 // Caption for buttons
 class Caption : public TextData {
 public:
-	bool enabled;
-	int col_s;
+	bool _enabled;
+	int _colS;
 
-	Common::String text;
+	Common::String _text;
 
 	Caption(void) {
-		col_s = 0;
-		enabled = false;
+		_colS = 0;
+		_enabled = false;
 	}
 	~Caption(void) {}
 
-	void Init(const Caption &c, const int &XOffset = 0, const int &YOffset = 0);
+	void init(const Caption &c, const int &xOffset = 0, const int &yOffset = 0);
 
 	void load(rapidxml::xml_node<char> *node, Rect *parent = NULL);
-	void draw(bool selected, const int &XOffset = 0, const int &YOffset = 0);
+	void draw(bool selected, const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

@@ -46,15 +46,15 @@ using namespace pyrodactyl::input;
 // Purpose: Load stuff
 //------------------------------------------------------------------------
 void GameDialogBox::load(rapidxml::xml_node<char> *node) {
-	loadImgKey(bg, "bg", node);
-	loadImgKey(bg_p, "bg_p", node);
-	pos.load(node, bg);
+	loadImgKey(_bg, "bg", node);
+	loadImgKey(_bgP, "bg_p", node);
+	_pos.load(node, _bg);
 
 	if (nodeValid("text", node))
-		text.load(node->first_node("text"), &pos);
+		_text.load(node->first_node("text"), &_pos);
 
 	if (nodeValid("button", node))
-		button.load(node->first_node("button"));
+		_button.load(node->first_node("button"));
 }
 
 //------------------------------------------------------------------------
@@ -62,9 +62,9 @@ void GameDialogBox::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void GameDialogBox::draw(const bool &player) {
 	if (player)
-		g_engine->_imageManager->draw(pos.x, pos.y, bg_p);
+		g_engine->_imageManager->draw(_pos.x, _pos.y, _bgP);
 	else
-		g_engine->_imageManager->draw(pos.x, pos.y, bg);
+		g_engine->_imageManager->draw(_pos.x, _pos.y, _bg);
 }
 
 //------------------------------------------------------------------------
@@ -75,15 +75,15 @@ void GameDialogBox::draw(pyrodactyl::event::Info &info, Common::String &message)
 	Common::String msg = message;
 	info.insertName(msg);
 
-	text.draw(message);
-	button.draw();
+	_text.draw(message);
+	_button.draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle input
 //------------------------------------------------------------------------
-bool GameDialogBox::handleEvents(const Common::Event &Event) {
-	return (button.handleEvents(Event) == BUAC_LCLICK);
+bool GameDialogBox::handleEvents(const Common::Event &event) {
+	return (_button.handleEvents(event) == BUAC_LCLICK);
 }
 
 #if 0
@@ -98,9 +98,9 @@ bool GameDialogBox::handleEvents(const SDL_Event &Event) {
 
 
 void GameDialogBox::setUI() {
-	pos.setUI();
-	text.setUI(&pos);
-	button.setUI();
+	_pos.setUI();
+	_text.setUI(&_pos);
+	_button.setUI();
 }
 
 } // End of namespace Crab

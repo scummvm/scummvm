@@ -40,35 +40,35 @@ using namespace pyrodactyl::image;
 void SectionHeader::load(rapidxml::xml_node<char> *node) {
 
 	if (TextData::load(node, NULL, false)) {
-		loadStr(text, "text", node);
-		text.insertChar(' ', 0);
-		text += " ";
+		loadStr(_text, "text", node);
+		_text.insertChar(' ', 0);
+		_text += " ";
 
-		loadImgKey(img, "img", node);
+		loadImgKey(_img, "img", node);
 
-		loadBool(draw_l, "left", node);
-		loadBool(draw_r, "right", node);
+		loadBool(_drawL, "left", node);
+		loadBool(_drawR, "right", node);
 
-		Graphics::ManagedSurface *surf = g_engine->_textManager->RenderTextBlended(font, text, col);
+		Graphics::ManagedSurface *surf = g_engine->_textManager->RenderTextBlended(_font, _text, _col);
 
-		if (align == ALIGN_CENTER) {
-			left.x = x - surf->w / 2 - g_engine->_imageManager->getTexture(img).w();
-			left.y = y - surf->h / 2 + g_engine->_imageManager->getTexture(img).h() / 2;
+		if (_align == ALIGN_CENTER) {
+			_left.x = x - surf->w / 2 - g_engine->_imageManager->getTexture(_img).w();
+			_left.y = y - surf->h / 2 + g_engine->_imageManager->getTexture(_img).h() / 2;
 
-			right.x = x + surf->w / 2;
-			right.y = y - surf->h / 2 + g_engine->_imageManager->getTexture(img).h() / 2;
-		} else if (align == ALIGN_LEFT) {
-			left.x = x - g_engine->_imageManager->getTexture(img).w();
-			left.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
+			_right.x = x + surf->w / 2;
+			_right.y = y - surf->h / 2 + g_engine->_imageManager->getTexture(_img).h() / 2;
+		} else if (_align == ALIGN_LEFT) {
+			_left.x = x - g_engine->_imageManager->getTexture(_img).w();
+			_left.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(_img).h() / 2;
 
-			right.x = x + surf->w;
-			right.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
+			_right.x = x + surf->w;
+			_right.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(_img).h() / 2;
 		} else {
-			left.x = x - surf->w - g_engine->_imageManager->getTexture(img).w();
-			left.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
+			_left.x = x - surf->w - g_engine->_imageManager->getTexture(_img).w();
+			_left.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(_img).h() / 2;
 
-			right.x = x;
-			right.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(img).h() / 2;
+			_right.x = x;
+			_right.y = y + surf->h / 2 - g_engine->_imageManager->getTexture(_img).h() / 2;
 		}
 
 		delete surf;
@@ -76,18 +76,18 @@ void SectionHeader::load(rapidxml::xml_node<char> *node) {
 
 }
 
-void SectionHeader::draw(const int &XOffset, const int &YOffset) {
-	draw(text, XOffset, YOffset);
+void SectionHeader::draw(const int &xOffset, const int &yOffset) {
+	draw(_text, xOffset, yOffset);
 }
 
-void SectionHeader::draw(const Common::String &str, const int &XOffset, const int &YOffset) {
-	if (draw_l)
-		g_engine->_imageManager->draw(left.x + XOffset, left.y + YOffset, img);
+void SectionHeader::draw(const Common::String &str, const int &xOffset, const int &yOffset) {
+	if (_drawL)
+		g_engine->_imageManager->draw(_left.x + xOffset, _left.y + yOffset, _img);
 
-	if (draw_r)
-		g_engine->_imageManager->draw(right.x + XOffset, right.y + YOffset, img, (Rect*)NULL, FLIP_X);
+	if (_drawR)
+		g_engine->_imageManager->draw(_right.x + xOffset, _right.y + yOffset, _img, (Rect*)NULL, FLIP_X);
 
-	TextData::draw(str, XOffset, YOffset);
+	TextData::draw(str, xOffset, yOffset);
 }
 
 } // End of namespace Crab

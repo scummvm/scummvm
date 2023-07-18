@@ -126,7 +126,7 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 
 			// Draw first entry in selected color, and older quest entries in standard color
 			if (i == 0)
-				g_engine->_textManager->draw(x, y, q._text[i], col_s, font, align, line.x, line.y);
+				g_engine->_textManager->draw(x, y, q._text[i], col_s, _font, _align, line.x, line.y);
 			else
 				ParagraphData::draw(q._text[i], inc.x * count, inc.y * count);
 

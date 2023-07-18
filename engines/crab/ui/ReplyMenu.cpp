@@ -51,7 +51,7 @@ void ReplyMenu::load(const Common::String &filename) {
 			if (nodeValid("reply", node)) {
 				rapidxml::xml_node<char> *replynode = node->first_node("reply");
 				Menu<ReplyButton>::load(replynode->first_node("menu"));
-				tone.value.resize(element.size());
+				tone._value.resize(element.size());
 
 				bg.load(replynode->first_node("bg"));
 				loadNum(spacing, "spacing", replynode);
@@ -156,7 +156,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 			element[element_count]._visible = true;
 			element[element_count]._index = reply_count;
 
-			tone.value[element_count] = dat._reply[reply_count]._tone;
+			tone._value[element_count] = dat._reply[reply_count]._tone;
 
 			const InputType type = static_cast<InputType>(IU_REPLY_0 + element_count);
 			Common::String text = g_engine->_inputManager->getAssociatedKey(type);

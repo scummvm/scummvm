@@ -36,20 +36,20 @@ using namespace pyrodactyl::image;
 
 void ChapterIntro::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("dialog", node))
-		dialog.load(node->first_node("dialog"));
+		_dialog.load(node->first_node("dialog"));
 
 	if (nodeValid("image", node))
-		pos.load(node->first_node("image"));
+		_pos.load(node->first_node("image"));
 
 	if (nodeValid("trait", node))
-		traits.load(node->first_node("trait"));
+		_traits.load(node->first_node("trait"));
 }
 
-bool ChapterIntro::handleEvents(Common::Event &Event) {
-	if (traits.handleEvents(Event))
-		show_traits = true;
+bool ChapterIntro::handleEvents(Common::Event &event) {
+	if (_traits.handleEvents(event))
+		_showTraits = true;
 
-	return dialog.handleEvents(Event);
+	return _dialog.handleEvents(event);
 }
 
 #if 0
@@ -62,15 +62,15 @@ bool ChapterIntro::handleEvents(SDL_Event &Event) {
 #endif
 
 void ChapterIntro::draw(pyrodactyl::event::Info &info, Common::String &text,
-						pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state) {
-	dialog.draw(false);
-	dialog.draw(info, text);
+						pyrodactyl::anim::Sprite *curSp, const pyrodactyl::people::PersonState &state) {
+	_dialog.draw(false);
+	_dialog.draw(info, text);
 
-	traits.draw();
+	_traits.draw();
 
-	if (cur_sp != nullptr) {
-		Rect clip = cur_sp->dialogClip(state);
-		g_engine->_imageManager->draw(pos.x, pos.y, cur_sp->img(), &clip);
+	if (curSp != nullptr) {
+		Rect clip = curSp->dialogClip(state);
+		g_engine->_imageManager->draw(_pos.x, _pos.y, curSp->img(), &clip);
 	}
 }
 

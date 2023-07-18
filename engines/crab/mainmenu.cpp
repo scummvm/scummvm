@@ -259,8 +259,8 @@ void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 
 	case STATE_SAVENAME:
 		if (save.handleEvents(Event) || accept.handleEvents(Event)) {
-			if (save.text != "") {
-				g_engine->_tempData->filename = save.text;
+			if (save._text != "") {
+				g_engine->_tempData->filename = save._text;
 				g_engine->_tempData->ironman = true;
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_NEW_GAME;

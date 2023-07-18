@@ -46,25 +46,26 @@ namespace pyrodactyl {
 namespace ui {
 class GameDialogBox {
 	// The position of the dialog box
-	Element pos;
+	Element _pos;
 
 	// The area you click to skip to the next dialog
-	Button button;
+	Button _button;
 
 	// Information related to drawing the dialog box
-	ParagraphData text;
+	ParagraphData _text;
 
 	// The usual background
-	ImageKey bg;
+	ImageKey _bg;
 
 	// The background drawn when we don't want to show the opinion bars
-	ImageKey bg_p;
+	ImageKey _bgP;
 
 public:
 	GameDialogBox() {
-		bg = 0;
-		bg_p = 0;
+		_bg = 0;
+		_bgP = 0;
 	}
+
 	~GameDialogBox() {}
 
 	void load(rapidxml::xml_node<char> *node);
@@ -72,7 +73,7 @@ public:
 	void draw(pyrodactyl::event::Info &info, Common::String &message);
 	void draw(const bool &player);
 
-	bool handleEvents(const Common::Event &Event);
+	bool handleEvents(const Common::Event &event);
 
 #if 0
 	bool handleEvents(const SDL_Event &Event);

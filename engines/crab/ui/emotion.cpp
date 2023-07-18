@@ -37,18 +37,18 @@ using namespace pyrodactyl::event;
 
 void EmotionIndicator::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("text", node))
-		text.load(node->first_node("text"));
+		_text.load(node->first_node("text"));
 }
 
 void EmotionIndicator::draw(const int &select) {
-	if (select >= 0 && (unsigned int)select < value.size())
-		if (value[select] < g_engine->_eventStore->_tone.size()) {
-			text.draw(g_engine->_eventStore->_tone[value[select]]._text);
+	if (select >= 0 && (unsigned int)select < _value.size())
+		if (_value[select] < g_engine->_eventStore->_tone.size()) {
+			_text.draw(g_engine->_eventStore->_tone[_value[select]]._text);
 		}
 }
 
 void EmotionIndicator::setUI() {
-	text.setUI();
+	_text.setUI();
 }
 
 } // End of namespace Crab

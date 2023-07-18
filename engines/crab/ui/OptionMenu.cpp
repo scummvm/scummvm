@@ -181,7 +181,7 @@ bool OptionMenu::handleEvents(Button &back, const Common::Event &Event) {
 		switch (state) {
 		case STATE_ENTER_W:
 			if (prompt_w.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->cur.w = StringToNumber<int>(prompt_w.text);
+				g_engine->_screenSettings->cur.w = StringToNumber<int>(prompt_w._text);
 				state = STATE_ENTER_H;
 			} else if (cancel.handleEvents(Event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->RestoreBackup();
@@ -191,7 +191,7 @@ bool OptionMenu::handleEvents(Button &back, const Common::Event &Event) {
 			break;
 		case STATE_ENTER_H:
 			if (prompt_h.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->cur.h = StringToNumber<int>(prompt_h.text);
+				g_engine->_screenSettings->cur.h = StringToNumber<int>(prompt_h._text);
 				state = STATE_CONFIRM;
 				timer.Start();
 				g_engine->_screenSettings->SetResolution();

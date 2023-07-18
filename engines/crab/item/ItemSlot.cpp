@@ -46,28 +46,28 @@ void ItemSlot::load(rapidxml::xml_node<char> *node) {
 	StateButton::load(node);
 
 	if (node->first_attribute("slot") == NULL)
-		no_type = true;
+		_noType = true;
 	else {
-		loadStr(item_type, "slot", node);
-		no_type = false;
+		loadStr(_itemType, "slot", node);
+		_noType = false;
 	}
 
 	Common::String name = node->name();
 	if (name == "equip")
-		category = SLOT_EQUIP;
+		_category = SLOT_EQUIP;
 	else
-		category = SLOT_STORAGE;
+		_category = SLOT_STORAGE;
 }
 
 //------------------------------------------------------------------------
 // Purpose: Initialize from reference item slot
 //------------------------------------------------------------------------
-void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset) {
-	StateButton::init(ref, XOffset, YOffset);
+void ItemSlot::init(const ItemSlot &ref, const int &xOffset, const int &YOffset) {
+	StateButton::init(ref, xOffset, YOffset);
 	_canmove = ref._canmove;
-	no_type = ref.no_type;
-	category = ref.category;
-	unread = ref.unread;
+	_noType = ref._noType;
+	_category = ref._category;
+	_unread = ref._unread;
 }
 
 //------------------------------------------------------------------------
@@ -76,13 +76,13 @@ void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset)
 void ItemSlot::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child;
 
-	if (category == SLOT_EQUIP)
+	if (_category == SLOT_EQUIP)
 		child = doc.allocate_node(rapidxml::node_element, "equip");
 	else
 		child = doc.allocate_node(rapidxml::node_element, "storage");
 
-	item.saveState(doc, child);
-	saveBool(unread, "unread", doc, child);
+	_item.saveState(doc, child);
+	saveBool(_unread, "unread", doc, child);
 
 	root->append_node(child);
 }
@@ -91,13 +91,13 @@ void ItemSlot::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 // Purpose: Load state from file
 //------------------------------------------------------------------------
 void ItemSlot::loadState(rapidxml::xml_node<char> *node) {
-	item.load(node);
-	loadBool(unread, "unread", node);
+	_item.load(node);
+	loadBool(_unread, "unread", node);
 
-	if (item._id == "")
-		empty = true;
+	if (_item._id == "")
+		_empty = true;
 	else
-		empty = false;
+		_empty = false;
 }
 
 //------------------------------------------------------------------------
@@ -106,20 +106,20 @@ void ItemSlot::loadState(rapidxml::xml_node<char> *node) {
 void ItemSlot::draw() {
 	StateButton::draw();
 
-	if (!empty)
-		item.draw(x, y);
+	if (!_empty)
+		_item.draw(x, y);
 
-	if (unread)
+	if (_unread)
 		g_engine->_imageManager->notifyDraw(x + w, y);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-ButtonAction ItemSlot::handleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction ac = StateButton::handleEvents(Event, XOffset, YOffset);
+ButtonAction ItemSlot::handleEvents(const Common::Event &event, const int &xOffset, const int &yOffset) {
+	ButtonAction ac = StateButton::handleEvents(event, xOffset, yOffset);
 	if (ac == BUAC_LCLICK || ac == BUAC_RCLICK)
-		unread = false;
+		_unread = false;
 
 	return ac;
 }
@@ -141,15 +141,15 @@ ButtonAction ItemSlot::handleEvents(const SDL_Event &Event, const int &XOffset, 
 // Purpose: Exchange items with another slot
 // this object is the current slot, parameter object is target slot
 //------------------------------------------------------------------------
-bool ItemSlot::Swap(ItemSlot &target) {
-	if (CanSwap(target)) {
-		Item temp = item;
-		item = target.item;
-		target.item = temp;
+bool ItemSlot::swap(ItemSlot &target) {
+	if (canSwap(target)) {
+		Item temp = _item;
+		_item = target._item;
+		target._item = temp;
 
-		bool val = empty;
-		empty = target.empty;
-		target.empty = val;
+		bool val = _empty;
+		_empty = target._empty;
+		target._empty = val;
 
 		return true;
 	}
@@ -160,11 +160,11 @@ bool ItemSlot::Swap(ItemSlot &target) {
 //------------------------------------------------------------------------
 // Purpose: Equip an item
 //------------------------------------------------------------------------
-bool ItemSlot::Equip(Item &i) {
-	if ((item_type == i._type || no_type) && empty) {
-		item = i;
-		empty = false;
-		unread = true;
+bool ItemSlot::equip(Item &i) {
+	if ((_itemType == i._type || _noType) && _empty) {
+		_item = i;
+		_empty = false;
+		_unread = true;
 		return true;
 	}
 
@@ -174,9 +174,9 @@ bool ItemSlot::Equip(Item &i) {
 //------------------------------------------------------------------------
 // Purpose: Change stats based on item
 //------------------------------------------------------------------------
-void ItemSlot::StatChange(Person &obj, bool increase) {
-	if (enabled)
-		item.statChange(obj, increase);
+void ItemSlot::statChange(pyrodactyl::people::Person &obj, bool increase) {
+	if (_enabled)
+		_item.statChange(obj, increase);
 }
 
 } // End of namespace Crab

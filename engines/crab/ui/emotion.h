@@ -42,10 +42,10 @@ namespace pyrodactyl {
 namespace ui {
 struct EmotionIndicator {
 	// The info for drawing the description
-	TextData text;
+	TextData _text;
 
 	// This array is used to store the corresponding tone values to a reply
-	Common::Array<unsigned int> value;
+	Common::Array<unsigned int> _value;
 
 	EmotionIndicator() {}
 

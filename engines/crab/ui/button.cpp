@@ -83,7 +83,7 @@ void Button::init(const Button &ref, const int &xOffset, const int &yOffset) {
 	_seClick = ref._seClick;
 	_seHover = ref._seHover;
 
-	_caption.Init(ref._caption, xOffset, yOffset);
+	_caption.init(ref._caption, xOffset, yOffset);
 	_tooltip.Init(ref._tooltip, xOffset, yOffset);
 
 	_visible = true;
