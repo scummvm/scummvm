@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-15 09:24+0000\n"
+"POT-Creation-Date: 2023-07-17 19:42+0000\n"
 "PO-Revision-Date: 2023-07-12 04:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -443,7 +443,7 @@ msgstr "Baixada completada, descarregats %d paquets, %s %S"
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:182 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -528,7 +528,7 @@ msgstr ""
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
-#: backends/platform/ios7/ios7_options.mm:101 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:110 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<per defecte>"
 
@@ -1351,7 +1351,7 @@ msgstr "no s'ha pogut canviar la configuració de sincronització vertical"
 msgid "the shader could not be changed"
 msgstr "no s'ha pogut canviar el shader"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:80
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:89
 msgid "Touchpad mouse mode"
 msgstr "Mode Panell Tàctil"
 
@@ -4220,7 +4220,7 @@ msgstr "Trieu el mode tàctil preferit:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:87
+#: backends/platform/ios7/ios7_options.mm:96
 msgid "In menus"
 msgstr "Als menús"
 
@@ -4251,33 +4251,33 @@ msgid "In 3D games"
 msgstr "En jocs 3D"
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:85
+#: backends/platform/ios7/ios7_options.mm:94
 msgid "Select the orientation:"
 msgstr "Seleccioneu l'orientació:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:89
-#: backends/platform/ios7/ios7_options.mm:104
+#: backends/platform/ios7/ios7_options.mm:98
+#: backends/platform/ios7/ios7_options.mm:113
 msgid "Automatic"
 msgstr "Automàtica"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:90
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:99
+#: backends/platform/ios7/ios7_options.mm:114
 msgid "Portrait"
 msgstr "Vertical"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:91
-#: backends/platform/ios7/ios7_options.mm:106
+#: backends/platform/ios7/ios7_options.mm:100
+#: backends/platform/ios7/ios7_options.mm:115
 msgid "Landscape"
 msgstr "Horitzontal"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:97
+#: backends/platform/ios7/ios7_options.mm:106
 msgid "In games"
 msgstr "En jocs"
 
@@ -4302,23 +4302,30 @@ msgstr "Escalat per hardware (ràpid, però de baixa qualitat)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Escalat per software (bona qualitat, però més lent)"
 
-#: backends/platform/ios7/ios7_options.mm:79
+#: backends/platform/ios7/ios7_options.mm:83
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "Mostra el control en pantalla (iOS 15 i posteriors)"
 
-#: backends/platform/ios7/ios7_options.mm:81
+#: backends/platform/ios7/ios7_options.mm:84
+#: backends/platform/ios7/ios7_options.mm:85
+#, fuzzy
+#| msgid "Control Mouse"
+msgid "Control opacity"
+msgstr "Controla el ratolí"
+
+#: backends/platform/ios7/ios7_options.mm:90
 msgid "Mouse-click-and-drag mode"
 msgstr "Mode de clic-i-arrossega amb el ratolí"
 
-#: backends/platform/ios7/ios7_options.mm:82
+#: backends/platform/ios7/ios7_options.mm:91
 msgid "Show keyboard function bar"
 msgstr "Mostra la barra de funcions del teclat"
 
-#: backends/platform/ios7/ios7_options.mm:109
+#: backends/platform/ios7/ios7_options.mm:118
 msgid "Controls Help"
 msgstr "Ajuda de controls"
 
-#: backends/platform/ios7/ios7_options.mm:156
+#: backends/platform/ios7/ios7_options.mm:171
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4335,7 +4342,7 @@ msgid ""
 "Keyboard spacebar: Pause"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:169
+#: backends/platform/ios7/ios7_options.mm:184
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
@@ -10447,9 +10454,6 @@ msgstr ""
 
 #~ msgid "Show Keypad"
 #~ msgstr "Mostra el teclat numèric"
-
-#~ msgid "Control Mouse"
-#~ msgstr "Controla el ratolí"
 
 #~ msgid "[ Shared ]"
 #~ msgstr "[ Compartit ]"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-15 09:24+0000\n"
+"POT-Creation-Date: 2023-07-17 19:42+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -456,7 +456,7 @@ msgstr "ההורדה הושלמה. ירדו %d חבילות, %s %S"
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:182 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -537,7 +537,7 @@ msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורק
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
-#: backends/platform/ios7/ios7_options.mm:101 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:110 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
@@ -1347,7 +1347,7 @@ msgstr "לא ניתן לשנות הגדרת סנכרון אנכי"
 msgid "the shader could not be changed"
 msgstr "לא ניתן לשנות את מצב המתיחה"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:80
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:89
 msgid "Touchpad mouse mode"
 msgstr "מצב משטח מגע"
 
@@ -4197,7 +4197,7 @@ msgstr "בחירת מצב מגע מועדף:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:87
+#: backends/platform/ios7/ios7_options.mm:96
 msgid "In menus"
 msgstr "בתפריטים"
 
@@ -4228,14 +4228,14 @@ msgid "In 3D games"
 msgstr "במשחקי תלת-ממד"
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:85
+#: backends/platform/ios7/ios7_options.mm:94
 msgid "Select the orientation:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:89
-#: backends/platform/ios7/ios7_options.mm:104
+#: backends/platform/ios7/ios7_options.mm:98
+#: backends/platform/ios7/ios7_options.mm:113
 #, fuzzy
 #| msgid "Automatic drilling"
 msgid "Automatic"
@@ -4243,22 +4243,22 @@ msgstr "קדיחה אוטומטית"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:90
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:99
+#: backends/platform/ios7/ios7_options.mm:114
 msgid "Portrait"
 msgstr ""
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:91
-#: backends/platform/ios7/ios7_options.mm:106
+#: backends/platform/ios7/ios7_options.mm:100
+#: backends/platform/ios7/ios7_options.mm:115
 #, fuzzy
 #| msgid "Escape"
 msgid "Landscape"
 msgstr "בריחה"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:97
+#: backends/platform/ios7/ios7_options.mm:106
 #, fuzzy
 #| msgid "In 2D games"
 msgid "In games"
@@ -4285,28 +4285,35 @@ msgstr "הגדלת חומרה (מהיר, אך באיכות נמוכה)"
 msgid "Software scale (good quality, but slower)"
 msgstr "הגדלת תוכנה (באיכות טובה, אך איטית יותר)"
 
-#: backends/platform/ios7/ios7_options.mm:79
+#: backends/platform/ios7/ios7_options.mm:83
 #, fuzzy
 #| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "הצגת בקרים על המסך"
 
-#: backends/platform/ios7/ios7_options.mm:81
+#: backends/platform/ios7/ios7_options.mm:84
+#: backends/platform/ios7/ios7_options.mm:85
+#, fuzzy
+#| msgid "Control Mouse"
+msgid "Control opacity"
+msgstr "עכבר שליטה"
+
+#: backends/platform/ios7/ios7_options.mm:90
 #, fuzzy
 #| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
 msgstr "מצב עכבר-לחיצה-וגרירה פעיל."
 
-#: backends/platform/ios7/ios7_options.mm:82
+#: backends/platform/ios7/ios7_options.mm:91
 msgid "Show keyboard function bar"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:109
+#: backends/platform/ios7/ios7_options.mm:118
 #, fuzzy
 msgid "Controls Help"
 msgstr "שליטה"
 
-#: backends/platform/ios7/ios7_options.mm:156
+#: backends/platform/ios7/ios7_options.mm:171
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4323,7 +4330,7 @@ msgid ""
 "Keyboard spacebar: Pause"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:169
+#: backends/platform/ios7/ios7_options.mm:184
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
@@ -10886,9 +10893,6 @@ msgstr ""
 
 #~ msgid "Show Keypad"
 #~ msgstr "הצג לוח מקשים"
-
-#~ msgid "Control Mouse"
-#~ msgstr "עכבר שליטה"
 
 #~ msgid "[ Data ]"
 #~ msgstr "[ נתונים ]"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-15 09:24+0000\n"
+"POT-Creation-Date: 2023-07-17 19:42+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -444,7 +444,7 @@ msgstr "Download klaar, %d packs gedownload, %s-%S"
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:182 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -527,7 +527,7 @@ msgstr ""
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
-#: backends/platform/ios7/ios7_options.mm:101 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:110 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<standaard>"
 
@@ -1349,7 +1349,7 @@ msgstr "de vsync instelling kon niet veranderd worden"
 msgid "the shader could not be changed"
 msgstr "de shader kon niet veranderd worden"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:80
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:89
 msgid "Touchpad mouse mode"
 msgstr "Touchpadmodus"
 
@@ -4237,7 +4237,7 @@ msgstr "Kies de geprefereerde aanraak modus:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:87
+#: backends/platform/ios7/ios7_options.mm:96
 msgid "In menus"
 msgstr "In menus"
 
@@ -4268,33 +4268,33 @@ msgid "In 3D games"
 msgstr "In 3D spellen"
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:85
+#: backends/platform/ios7/ios7_options.mm:94
 msgid "Select the orientation:"
 msgstr "Selecteerd de oriëntatie:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:89
-#: backends/platform/ios7/ios7_options.mm:104
+#: backends/platform/ios7/ios7_options.mm:98
+#: backends/platform/ios7/ios7_options.mm:113
 msgid "Automatic"
 msgstr "Automatisch"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:90
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:99
+#: backends/platform/ios7/ios7_options.mm:114
 msgid "Portrait"
 msgstr "Portret"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:91
-#: backends/platform/ios7/ios7_options.mm:106
+#: backends/platform/ios7/ios7_options.mm:100
+#: backends/platform/ios7/ios7_options.mm:115
 msgid "Landscape"
 msgstr "Landscape"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:97
+#: backends/platform/ios7/ios7_options.mm:106
 msgid "In games"
 msgstr "In spellen"
 
@@ -4319,23 +4319,30 @@ msgstr "Hardware schalen (snel, maar slechte kwaliteit)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Software schalen (langzamer, maar goede kwaliteit)"
 
-#: backends/platform/ios7/ios7_options.mm:79
+#: backends/platform/ios7/ios7_options.mm:83
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "Toon besturing (iOS 15 en later)"
 
-#: backends/platform/ios7/ios7_options.mm:81
+#: backends/platform/ios7/ios7_options.mm:84
+#: backends/platform/ios7/ios7_options.mm:85
+#, fuzzy
+#| msgid "Control Mouse"
+msgid "Control opacity"
+msgstr "Muis Besturing"
+
+#: backends/platform/ios7/ios7_options.mm:90
 msgid "Mouse-click-and-drag mode"
 msgstr "Muis-klik-en-sleepmodus"
 
-#: backends/platform/ios7/ios7_options.mm:82
+#: backends/platform/ios7/ios7_options.mm:91
 msgid "Show keyboard function bar"
 msgstr "Toon toetenbord functiebalk"
 
-#: backends/platform/ios7/ios7_options.mm:109
+#: backends/platform/ios7/ios7_options.mm:118
 msgid "Controls Help"
 msgstr "Besturing Help"
 
-#: backends/platform/ios7/ios7_options.mm:156
+#: backends/platform/ios7/ios7_options.mm:171
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4365,7 +4372,7 @@ msgstr ""
 "Knijp gebaar: Zet toetsenboard aan/uit\n"
 "Toetsenbord spatiebalk: Pauze"
 
-#: backends/platform/ios7/ios7_options.mm:169
+#: backends/platform/ios7/ios7_options.mm:184
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
@@ -11031,9 +11038,6 @@ msgstr ""
 
 #~ msgid "Show Keypad"
 #~ msgstr "Toon Toetsenblok"
-
-#~ msgid "Control Mouse"
-#~ msgstr "Muis Besturing"
 
 #~ msgid "[ Data ]"
 #~ msgstr "[ Data ]"
