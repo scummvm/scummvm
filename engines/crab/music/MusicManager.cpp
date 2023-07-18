@@ -40,8 +40,8 @@ using namespace pyrodactyl::music;
 //------------------------------------------------------------------------
 // Purpose: Clear stored data
 //------------------------------------------------------------------------
-void MusicManager::FreeMusic() {
-	warning("STUB: MusicManager::FreeMusic()");
+void MusicManager::freeMusic() {
+	warning("STUB: MusicManager::freeMusic()");
 
 #if 0
 	Mix_FreeMusic(bg.track);
@@ -49,8 +49,8 @@ void MusicManager::FreeMusic() {
 
 }
 
-void MusicManager::FreeChunk() {
-	warning("STUB: MusicManager::FreeChunk()");
+void MusicManager::freeChunk() {
+	warning("STUB: MusicManager::freeChunk()");
 
 #if 0
 	for (auto i = effect.begin(); i != effect.end(); ++i)
@@ -62,8 +62,8 @@ void MusicManager::FreeChunk() {
 //------------------------------------------------------------------------
 // Purpose: Play or queue music
 //------------------------------------------------------------------------
-void MusicManager::PlayMusic(const MusicKey &id) {
-	warning("STUB: MusicManager::PlayMusic()");
+void MusicManager::playMusic(const MusicKey &id) {
+	warning("STUB: MusicManager::playMusic()");
 
 #if 0
 	if (bg.id != id) {
@@ -89,8 +89,8 @@ void MusicManager::PlayMusic(const MusicKey &id) {
 //------------------------------------------------------------------------
 // Purpose: Play or queue sound effects
 //------------------------------------------------------------------------
-void MusicManager::PlayEffect(const ChunkKey &id, const int &loops) {
-	warning("STUB: MusicManager::PlayEffect()");
+void MusicManager::playEffect(const ChunkKey &id, const int &loops) {
+	warning("STUB: MusicManager::playEffect()");
 
 #if 0
 	if (effect.count(id) > 0)

@@ -173,9 +173,9 @@ bool Level::collidingWithLevel(pyrodactyl::event::Info &info, pyrodactyl::anim::
 
 	if (_terrain.CollideWithMusic(s.boundRect(), _music)) {
 		if (_music._track)
-			g_engine->_musicManager->PlayMusic(_music._id);
+			g_engine->_musicManager->playMusic(_music._id);
 		else
-			g_engine->_musicManager->PlayEffect(_music._id, _music._loops);
+			g_engine->_musicManager->playEffect(_music._id, _music._loops);
 	}
 
 	// If we are colliding with something, return true

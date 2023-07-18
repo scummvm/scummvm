@@ -210,15 +210,15 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 			if (_subject == "music") {
 				if (_operation == "play") {
 					MusicKey m = StringToNumber<MusicKey>(_val);
-					g_engine->_musicManager->PlayMusic(m);
+					g_engine->_musicManager->playMusic(m);
 				} else if (_operation == "stop")
-					g_engine->_musicManager->Stop();
+					g_engine->_musicManager->stop();
 				else if (_operation == "pause")
-					g_engine->_musicManager->Pause();
+					g_engine->_musicManager->pause();
 				else if (_operation == "resume")
-					g_engine->_musicManager->Resume();
+					g_engine->_musicManager->resume();
 			} else
-				g_engine->_musicManager->PlayEffect(StringToNumber<ChunkKey>(_val), 0);
+				g_engine->_musicManager->playEffect(StringToNumber<ChunkKey>(_val), 0);
 			break;
 
 		case EFF_MONEY:

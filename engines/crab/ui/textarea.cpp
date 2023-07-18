@@ -59,7 +59,7 @@ bool TextArea::handleEvents(const Common::Event &event, bool numbersOnly) {
 	warning("STUB: TextArea::handleEvents()");
 	if (event.type == Common::EVENT_KEYDOWN && event.kbd.ascii == Common::ASCII_BACKSPACE && _text.size() != 0) {
 		// Now play the text erase sound
-		g_engine->_musicManager->PlayEffect(_seErase, 0);
+		g_engine->_musicManager->playEffect(_seErase, 0);
 
 		// If backspace was pressed and the string isn't blank, remove a character from the end
 		_text.erase(_text.size() - 1);
@@ -75,14 +75,14 @@ bool TextArea::handleEvents(const Common::Event &event, bool numbersOnly) {
 				return false;
 
 			// Now play the text input sound
-			g_engine->_musicManager->PlayEffect(_seEntry, 0);
+			g_engine->_musicManager->playEffect(_seEntry, 0);
 
 			// Append the character to string
 			_text += event.kbd.ascii;
 		}
 	} else if (g_engine->_inputManager->state(IU_ACCEPT) && _text.size() != 0) {
 		// Now play the accept sound
-		g_engine->_musicManager->PlayEffect(_seAccept, 0);
+		g_engine->_musicManager->playEffect(_seAccept, 0);
 
 		return true;
 	}

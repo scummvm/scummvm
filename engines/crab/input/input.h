@@ -135,7 +135,7 @@ public:
 	KeyBindingMode getKeyBindingMode() const { return _keyMode; }
 
 	void quit() {
-		warning("STUB: InputManager::Quit()");
+		warning("STUB: InputManager::quit()");
 
 #if 0
 		if (controller != nullptr)

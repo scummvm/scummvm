@@ -80,11 +80,11 @@ void EventSequence::nextEvent(pyrodactyl::event::Info &info, const Common::Strin
 	using namespace pyrodactyl::music;
 
 	if (info._sound._repDec)
-		g_engine->_musicManager->PlayEffect(g_engine->_musicManager->rep_dec, 0);
+		g_engine->_musicManager->playEffect(g_engine->_musicManager->_repDec, 0);
 	else if (info._sound._repInc)
-		g_engine->_musicManager->PlayEffect(g_engine->_musicManager->rep_inc, 0);
+		g_engine->_musicManager->playEffect(g_engine->_musicManager->_repInc, 0);
 	else if (info._sound._notify)
-		g_engine->_musicManager->PlayEffect(g_engine->_musicManager->notify, 0);
+		g_engine->_musicManager->playEffect(g_engine->_musicManager->_notify, 0);
 
 	info._sound._notify = false;
 	info._sound._repDec = false;

@@ -156,7 +156,7 @@ ButtonAction Button::handleEvents(const Common::Event &Event, const int &xOffset
 
 			if (!_hoverPrev) {
 				_hoverPrev = true;
-				g_engine->_musicManager->PlayEffect(_seHover, 0);
+				g_engine->_musicManager->playEffect(_seHover, 0);
 			}
 		} else {
 			_hoverPrev = false;
@@ -178,13 +178,13 @@ ButtonAction Button::handleEvents(const Common::Event &Event, const int &xOffset
 			if (dim.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
 				_mousePressed = false;
 				if (Event.type == Common::EVENT_LBUTTONUP) {
-					g_engine->_musicManager->PlayEffect(_seClick, 0);
+					g_engine->_musicManager->playEffect(_seClick, 0);
 					return BUAC_LCLICK;
 				} else if (Event.type == Common::EVENT_RBUTTONUP)
 					return BUAC_RCLICK;
 			}
 		} else if (_hotkey.handleEvents(Event)) {
-			g_engine->_musicManager->PlayEffect(_seClick, 0);
+			g_engine->_musicManager->playEffect(_seClick, 0);
 			return BUAC_LCLICK;
 		}
 	}

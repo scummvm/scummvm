@@ -73,10 +73,10 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void GeneralSettingMenu::handleEvents(const Common::Event &Event) {
 	if (vol_music.handleEvents(Event))
-		g_engine->_musicManager->VolMusic(vol_music.Value());
+		g_engine->_musicManager->volMusic(vol_music.Value());
 
 	if (vol_effects.handleEvents(Event))
-		g_engine->_musicManager->VolEffects(vol_effects.Value());
+		g_engine->_musicManager->volEffects(vol_effects.Value());
 
 	// No need to change screen here
 	if (save_on_exit.handleEvents(Event))
@@ -148,10 +148,10 @@ void GeneralSettingMenu::draw() {
 //------------------------------------------------------------------------
 void GeneralSettingMenu::RestoreBackup() {
 	vol_music.RestoreBackup();
-	g_engine->_musicManager->VolMusic(vol_music.Value());
+	g_engine->_musicManager->volMusic(vol_music.Value());
 
 	vol_effects.RestoreBackup();
-	g_engine->_musicManager->VolEffects(vol_effects.Value());
+	g_engine->_musicManager->volEffects(vol_effects.Value());
 }
 
 //------------------------------------------------------------------------
