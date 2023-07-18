@@ -1547,9 +1547,11 @@ bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
 
 	switch (g_sci->getGameId()) {
 	case GID_SHIVERS:
+	case GID_SQ6:
 		// The SFX resource map patch in the Shivers interactive demo has
 		// broken offsets for some sounds; ignore it so that the correct map
 		// from RESSCI.000 will be used instead.
+		// This also occurs in an early SQ6 demo; the original ignored the patch.
 		return g_sci->isDemo() &&
 			resId.getType() == kResourceTypeMap &&
 			resId.getNumber() == 65535;

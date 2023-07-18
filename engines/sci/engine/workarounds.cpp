@@ -578,6 +578,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ4,            -1,   708, -1,                  ".", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "next" button... in Russian version - bug #5573
 	{ GID_SQ5,           201,   201,  0,        "buttonPanel", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // when looking at the orange or red button - bug #5112
 	{ GID_SQ6,            -1,     0,  0,                "SQ6", "init",                         nullptr,     2,     2, { WORKAROUND_FAKE,   0 } }, // Demo and full version: called when the game starts (demo: room 0, full: room 100)
+	{ GID_SQ6,           390,   666, -1,                   "", "export 0",                     nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // Demo: death dialog in room 390 (early version)
 	{ GID_SQ6,            -1, 64950, -1,            "Feature", "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // called when pressing "Start game" in the main menu, when entering the Orion's Belt bar (room 300), and perhaps other places
 	{ GID_SQ6,            -1, 64964,  0,              "DPath", "init",                         nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_SQ6,           210,   210,  0,       "buttonSecret", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // after winning the first round of stooge fighter 3

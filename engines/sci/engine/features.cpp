@@ -624,7 +624,6 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 	case GID_LSL7:
 	case GID_MOTHERGOOSEHIRES:
 	case GID_PHANTASMAGORIA:
-	case GID_SQ6:
 	case GID_TORIN:
 		return kMessageTypeSyncStrategyDefault;
 
@@ -633,6 +632,13 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 
 	case GID_SHIVERS:
 		return kMessageTypeSyncStrategyShivers;
+
+	case GID_SQ6:
+		// don't sync the early demos; they are speechless and
+		// require the message type global to remain unchanged.
+		return (g_sci->isDemo() && getSciVersion() < SCI_VERSION_2_1_MIDDLE) ?
+			kMessageTypeSyncStrategyNone :
+			kMessageTypeSyncStrategyDefault;
 
 	case GID_GK2:
 	case GID_PQSWAT:

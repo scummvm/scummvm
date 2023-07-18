@@ -141,7 +141,7 @@ enum SciVersion {
 	SCI_VERSION_1_LATE, // Dr. Brain 1, EcoQuest 1, Longbow, PQ3, SQ1, LSL5, KQ5 CD
 	SCI_VERSION_1_1, // Dr. Brain 2, EcoQuest 1 CD, EcoQuest 2, KQ6, QFG3, SQ4CD, XMAS 1992 and many more
 	SCI_VERSION_2, // GK1, PQ4 floppy, QFG4 floppy
-	SCI_VERSION_2_1_EARLY, // GK2 demo, KQ7 1.4/1.51, LSL6 hires, PQ4CD, QFG4CD
+	SCI_VERSION_2_1_EARLY, // GK2 demo, KQ7 1.4/1.51, LSL6 hires, PQ4CD, QFG4CD, SQ6 early demos
 	SCI_VERSION_2_1_MIDDLE, // GK2, Hoyle 5, KQ7 2.00b, MUMG Deluxe, Phantasmagoria 1, PQ:SWAT, Shivers 1, SQ6, Torin
 	SCI_VERSION_2_1_LATE, // Demos and Mac versions of LSL7, Lighthouse, RAMA
 	SCI_VERSION_3 // LSL7, Lighthouse, RAMA, Phantasmagoria 2, interactive Lighthouse demos

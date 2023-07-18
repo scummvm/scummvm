@@ -6017,15 +6017,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_SQ6 },
 
-	// Space Quest 6 - English Win3.11 Demo (from Sneak Peeks 2)
+	// Space Quest 6 - English Win3.11 Interactive Demo (from Sneak Peeks 2)
+	// This demo has no speech, unlike the later DOS/Win version.
 	// Executable scanning reports "2.100.002", VERSION file reports "1.000.000"
 	{"sq6", "Demo", {
 		{"resource.map", 0, "5cf3f0db76080a4ac327190bd027e355", 2164},
 		{"resource.000", 0, "ab12724e078dea34b624e0d2a38dcd7c", 2159708},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_SQ6_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO3(GUIO_NOSPEECH, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT) },
 
-	// Space Quest 6 - English Win3.1 Demo (from trembyle)
+	// Space Quest 6 - English Win3.11 Non-Interactive Demo (from trembyle)
 	// Found on Interactive Entertainment Episode 10 - Feb 1995
 	// Executable scanning reports "2.100.002"
 	{"sq6", "Demo", {
