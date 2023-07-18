@@ -70,10 +70,10 @@ typedef struct  FT_OutlineGlyphRec_ {
 
 
 FT2_1_3_EXPORT(FT_Error)
-FT_Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph);
+FT2_1_3_Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph);
 
 FT2_1_3_EXPORT(FT_Error)
-FT_Glyph_Copy(FT_Glyph source, FT_Glyph *target);
+FT2_1_3_Glyph_Copy(FT_Glyph source, FT_Glyph *target);
 
 FT2_1_3_EXPORT(FT_Error)
 FT_Glyph_Transform(FT_Glyph glyph, FT_Matrix *matrix, FT_Vector *delta);
@@ -92,10 +92,10 @@ FT2_1_3_EXPORT(void)
 FT_Glyph_Get_CBox(FT_Glyph glyph, FT_UInt bbox_mode, FT_BBox *acbox);
 
 FT2_1_3_EXPORT(FT_Error)
-FT_Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode, FT_Vector *origin, FT_Bool destroy);
+FT2_1_3_Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode, FT_Vector *origin, FT_Bool destroy);
 
 FT2_1_3_EXPORT(void)
-FT_Done_Glyph(FT_Glyph glyph);
+FT2_1_3_Done_Glyph(FT_Glyph glyph);
 
 
 /* other helpful functions */

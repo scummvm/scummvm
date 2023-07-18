@@ -47,20 +47,20 @@ FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
 }
 
 FT_Error Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph) {
-	return FT_Get_Glyph(slot, aglyph);
+	return FT2_1_3_Get_Glyph(slot, aglyph);
 }
 
 FT_Error Glyph_Copy(FT_Glyph source, FT_Glyph *target) {
-	return FT_Glyph_Copy(source, target);
+	return FT2_1_3_Glyph_Copy(source, target);
 }
 
 FT_Error Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode,
 		FT_Vector *origin, FT_Bool destroy) {
-	return FT_Glyph_To_Bitmap(the_glyph, render_mode, origin, destroy);
+	return FT2_1_3_Glyph_To_Bitmap(the_glyph, render_mode, origin, destroy);
 }
 
 void Done_Glyph(FT_Glyph glyph) {
-	return FT_Done_Glyph(glyph);
+	return FT2_1_3_Done_Glyph(glyph);
 }
 
 FT_Error Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width,

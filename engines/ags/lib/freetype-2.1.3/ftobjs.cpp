@@ -242,7 +242,7 @@ Exit:
 }
 
 FT2_1_3_BASE_DEF(void)
-FT_Done_GlyphSlot(FT_GlyphSlot slot) {
+FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot) {
 	if (slot) {
 		FT_Driver driver = slot->face->driver;
 		FT_Memory memory = driver->root.memory;
@@ -480,9 +480,9 @@ static void destroy_face(FT_Memory memory, FT_Face face, FT_Driver driver) {
 		face->autohint.finalizer(face->autohint.data);
 
 	/* Discard glyph slots for this face.                           */
-	/* Beware!  FT_Done_GlyphSlot() changes the field `face->glyph' */
+	/* Beware!  FT2_1_3_Done_GlyphSlot() changes the field `face->glyph' */
 	while (face->glyph)
-		FT_Done_GlyphSlot(face->glyph);
+		FT2_1_3_Done_GlyphSlot(face->glyph);
 
 	/* discard all sizes for this face */
 	FT_List_Finalize(&face->sizes_list, (FT_List_Destructor)destroy_size, memory, driver);
@@ -1275,7 +1275,7 @@ FT_Get_Name_Index(FT_Face face, FT_String *glyph_name) {
 }
 
 FT2_1_3_EXPORT_DEF(FT_Error)
-FT_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max) {
+FT2_1_3_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max) {
 	FT_Error error = FT2_1_3_Err_Invalid_Argument;
 
 	/* clean up buffer */
@@ -1325,16 +1325,16 @@ Exit:
 }
 
 FT2_1_3_EXPORT_DEF(void *)
-FT_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag) {
+FT2_1_3_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag) {
 	void *table = 0;
-	FT_Get_Sfnt_Table_Func func;
+	FT2_1_3_Get_Sfnt_Table_Func func;
 	FT_Driver driver;
 
 	if (!face || !FT2_1_3_IS_SFNT(face))
 		goto Exit;
 
 	driver = face->driver;
-	func = (FT_Get_Sfnt_Table_Func)driver->root.clazz->get_interface(FT2_1_3_MODULE(driver), "get_sfnt");
+	func = (FT2_1_3_Get_Sfnt_Table_Func)driver->root.clazz->get_interface(FT2_1_3_MODULE(driver), "get_sfnt");
 	if (func)
 		table = func(face, tag);
 

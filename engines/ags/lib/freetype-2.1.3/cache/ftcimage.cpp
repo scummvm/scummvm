@@ -76,7 +76,7 @@ FT2_1_3_CALLBACK_DEF( void )
 ftc_image_node_done( FTC_ImageNode  inode,
 					 FTC_Cache      cache ) {
 	if ( inode->glyph ) {
-		FT_Done_Glyph( inode->glyph );
+		FT2_1_3_Done_Glyph( inode->glyph );
 		inode->glyph = NULL;
 	}
 
@@ -116,7 +116,7 @@ ftc_image_node_init( FTC_ImageNode   inode,
 				FT_Glyph  glyph;
 
 
-				error = FT_Get_Glyph( face->glyph, &glyph );
+				error = FT2_1_3_Get_Glyph( face->glyph, &glyph );
 				if ( !error ) {
 					inode->glyph = glyph;
 					goto Exit;

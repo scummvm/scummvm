@@ -477,7 +477,7 @@ T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
 
 	while ( cur ) {
 		if ( cur == slot->ttslot ) {
-			FT_Done_GlyphSlot( slot->ttslot );
+			FT2_1_3_Done_GlyphSlot( slot->ttslot );
 			break;
 		}
 

@@ -160,7 +160,7 @@ const FT_Glyph_Class ft_bitmap_glyph_class = {
 
 	(FT_Glyph_InitFunc)ft_bitmap_glyph_init,
 	(FT_Glyph_DoneFunc)ft_bitmap_glyph_done,
-	(FT_Glyph_CopyFunc)ft_bitmap_glyph_copy,
+	(FT2_1_3_Glyph_CopyFunc)ft_bitmap_glyph_copy,
 	(FT_Glyph_TransformFunc)0,
 	(FT_Glyph_GetBBoxFunc)ft_bitmap_glyph_bbox,
 	(FT_Glyph_PrepareFunc)0};
@@ -242,7 +242,7 @@ const FT_Glyph_Class ft_outline_glyph_class = {
 
 	(FT_Glyph_InitFunc)ft_outline_glyph_init,
 	(FT_Glyph_DoneFunc)ft_outline_glyph_done,
-	(FT_Glyph_CopyFunc)ft_outline_glyph_copy,
+	(FT2_1_3_Glyph_CopyFunc)ft_outline_glyph_copy,
 	(FT_Glyph_TransformFunc)ft_outline_glyph_transform,
 	(FT_Glyph_GetBBoxFunc)ft_outline_glyph_bbox,
 	(FT_Glyph_PrepareFunc)ft_outline_glyph_prepare
@@ -269,7 +269,7 @@ static FT_Error ft_new_glyph(FT_Library library, const FT_Glyph_Class *clazz, FT
 
 
 FT2_1_3_EXPORT_DEF(FT_Error)
-FT_Glyph_Copy(FT_Glyph source, FT_Glyph *target) {
+FT2_1_3_Glyph_Copy(FT_Glyph source, FT_Glyph *target) {
 	FT_Glyph copy;
 	FT_Error error;
 	const FT_Glyph_Class *clazz;
@@ -294,7 +294,7 @@ FT_Glyph_Copy(FT_Glyph source, FT_Glyph *target) {
 		error = clazz->glyph_copy(source, copy);
 
 	if (error)
-		FT_Done_Glyph(copy);
+		FT2_1_3_Done_Glyph(copy);
 	else
 		*target = copy;
 
@@ -304,7 +304,7 @@ Exit:
 
 
 FT2_1_3_EXPORT_DEF(FT_Error)
-FT_Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph) {
+FT2_1_3_Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph) {
 	FT_Library library = slot->library;
 	FT_Error error;
 	FT_Glyph glyph;
@@ -352,7 +352,7 @@ FT_Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph) {
 
 	/* if an error occurred, destroy the glyph */
 	if (error)
-		FT_Done_Glyph(glyph);
+		FT2_1_3_Done_Glyph(glyph);
 	else
 		*aglyph = glyph;
 
@@ -425,7 +425,7 @@ FT_Glyph_Get_CBox(FT_Glyph glyph, FT_UInt bbox_mode, FT_BBox *acbox) {
 
 
 FT2_1_3_EXPORT_DEF(FT_Error)
-FT_Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode, FT_Vector *origin, FT_Bool destroy) {
+FT2_1_3_Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode, FT_Vector *origin, FT_Bool destroy) {
 	FT_GlyphSlotRec dummy;
 	FT_Error error = FT2_1_3_Err_Ok;
 	FT_Glyph glyph;
@@ -498,13 +498,13 @@ FT_Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode, FT_Vector *o
 	bitmap->root.advance = glyph->advance;
 
 	if (destroy)
-		FT_Done_Glyph(glyph);
+		FT2_1_3_Done_Glyph(glyph);
 
 	*the_glyph = FT2_1_3_GLYPH(bitmap);
 
 Exit:
 	if (error && bitmap)
-		FT_Done_Glyph(FT2_1_3_GLYPH(bitmap));
+		FT2_1_3_Done_Glyph(FT2_1_3_GLYPH(bitmap));
 
 	return error;
 
@@ -515,7 +515,7 @@ Bad:
 
 
 FT2_1_3_EXPORT_DEF(void)
-FT_Done_Glyph(FT_Glyph glyph) {
+FT2_1_3_Done_Glyph(FT_Glyph glyph) {
 	if (glyph) {
 		FT_Memory memory = glyph->library->memory;
 		const FT_Glyph_Class *clazz = glyph->clazz;

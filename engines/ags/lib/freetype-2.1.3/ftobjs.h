@@ -260,7 +260,7 @@ FT2_1_3_BASE(FT_Error)
 FT_New_GlyphSlot(FT_Face face, FT_GlyphSlot *aslot);
 
 FT2_1_3_BASE(void)
-FT_Done_GlyphSlot(FT_GlyphSlot slot);
+FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot);
 
 
 /**** RENDERERS ****/

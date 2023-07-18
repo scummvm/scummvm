@@ -446,7 +446,7 @@ FT2_1_3_EXPORT(FT_Error)
 FT2_1_3_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning);
 
 FT2_1_3_EXPORT(FT_Error)
-FT_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max);
+FT2_1_3_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max);
 
 FT2_1_3_EXPORT(const char *)
 FT_Get_Postscript_Name(FT_Face face);

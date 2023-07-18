@@ -235,10 +235,10 @@ typedef enum {
 
 
 /* internal use only */
-typedef void *(*FT_Get_Sfnt_Table_Func)(FT_Face face, FT_Sfnt_Tag tag);
+typedef void *(*FT2_1_3_Get_Sfnt_Table_Func)(FT_Face face, FT_Sfnt_Tag tag);
 
 FT2_1_3_EXPORT(void *)
-FT_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag);
+FT2_1_3_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag);
 
 
 FT2_1_3_END_HEADER

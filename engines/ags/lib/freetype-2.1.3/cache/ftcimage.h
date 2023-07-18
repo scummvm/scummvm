@@ -157,7 +157,7 @@ FTC_ImageCache_New( FTC_Manager      manager,
 /* <Note>                                                                */
 /*    The returned glyph is owned and managed by the glyph image cache.  */
 /*    Never try to transform or discard it manually!  You can however    */
-/*    create a copy with @FT_Glyph_Copy and modify the new one.          */
+/*    create a copy with @FT2_1_3_Glyph_Copy and modify the new one.          */
 /*                                                                       */
 /*    If "anode" is _not_ NULL, it receives the address of the cache     */
 /*    node containing the glyph image, after increasing its reference    */
@@ -286,7 +286,7 @@ FTC_Image_Cache_New( FTC_Manager       manager,
 /* <Note>                                                                */
 /*    The returned glyph is owned and managed by the glyph image cache.  */
 /*    Never try to transform or discard it manually!  You can however    */
-/*    create a copy with @FT_Glyph_Copy and modify the new one.          */
+/*    create a copy with @FT2_1_3_Glyph_Copy and modify the new one.          */
 /*                                                                       */
 /*    Because the glyph image cache limits the total amount of memory    */
 /*    taken by the glyphs it holds, the returned glyph might disappear   */
