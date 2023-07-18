@@ -108,7 +108,7 @@ void Sections::m4SceneLoad() {
 
 	term_message("Calling kernel_load_room");
 
-	_G(kernel).going = kernel_load_room(_G(kernel).minPalEntry, _G(kernel).maxPalEntry,
+	_G(kernel).going = kernel_load_room(MIN_PAL_ENTRY, MAX_PAL_ENTRY,
 		&_G(currentSceneDef), &_G(screenCodeBuff), &_G(game_bgBuff));
 	if (!_G(kernel).going)
 		error_show(FL, 'IMP!');	// this should never ever happen

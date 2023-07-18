@@ -26,6 +26,9 @@
 
 namespace M4 {
 
+constexpr int MIN_PAL_ENTRY = 1;
+constexpr int MAX_PAL_ENTRY = 255;
+
 #define __BLACK	    (gr_pal_get_ega_color(0))
 #define __BLUE		(gr_pal_get_ega_color(1))
 #define __GREEN		(gr_pal_get_ega_color(2))

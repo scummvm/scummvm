@@ -51,9 +51,6 @@ struct Kernel {
 	bool supress_fadeup = false;
 	bool force_restart = false;
 
-	int32 minPalEntry = 0;
-	int32 maxPalEntry = 0;
-
 	bool pause = false;
 
 	machine* myWalker = nullptr;
