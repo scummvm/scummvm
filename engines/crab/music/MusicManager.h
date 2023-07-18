@@ -41,7 +41,7 @@ namespace pyrodactyl {
 namespace music {
 class MusicManager {
 	// The background music for our current level
-	MusicData bg;
+	MusicData _bg;
 
 #if 0
 	// The sound effects in the game
@@ -49,36 +49,36 @@ class MusicManager {
 #endif
 
 	// Data about the audio
-	int freq, channels, chunksize;
+	int _freq, _channels, _chunksize;
 
 public:
 	// The notification sound
-	ChunkKey notify, rep_inc, rep_dec;
+	ChunkKey _notify, _repInc, _repDec;
 
 	MusicManager() {
 #if 0
 		freq = MIX_DEFAULT_FREQUENCY;
 		channels = MIX_DEFAULT_CHANNELS;
 #endif
-		chunksize = 1024;
+		_chunksize = 1024;
 
-		notify = -1;
-		rep_inc = -1;
-		rep_dec = -1;
+		_notify = -1;
+		_repInc = -1;
+		_repDec = -1;
 
-		(void)freq;
-		(void)channels;
-		(void)chunksize;
+		(void)_freq;
+		(void)_channels;
+		(void)_chunksize;
 	}
 	~MusicManager() {}
 
 	bool load(rapidxml::xml_node<char> *node);
 
-	void PlayMusic(const MusicKey &id);
-	void PlayEffect(const ChunkKey &id, const int &loops);
+	void playMusic(const MusicKey &id);
+	void playEffect(const ChunkKey &id, const int &loops);
 
-	static void Pause() {
-		warning("STUB: MusicManager::Pause()");
+	static void pause() {
+		warning("STUB: MusicManager::pause()");
 
 #if 0
 		Mix_PauseMusic();
@@ -86,8 +86,8 @@ public:
 
 	}
 
-	static void Resume() {
-		warning("STUB: MusicManager::Resume()");
+	static void resume() {
+		warning("STUB: MusicManager::resume()");
 
 #if 0
 		Mix_ResumeMusic();
@@ -95,8 +95,8 @@ public:
 
 	}
 
-	static void Stop() {
-		warning("STUB: MusicManager::Stop()");
+	static void stop() {
+		warning("STUB: MusicManager::stop()");
 
 #if 0
 		Mix_HaltMusic();
@@ -104,8 +104,8 @@ public:
 
 	}
 
-	static void VolEffects(const int &volume) {
-		warning("STUB: MusicManager::Stop()");
+	static void volEffects(const int &volume) {
+		warning("STUB: MusicManager::stop()");
 
 #if 0
 		Mix_Volume(-1, volume);
@@ -113,8 +113,8 @@ public:
 
 	}
 
-	static int VolEffects() {
-		warning("STUB: MusicManager::VolEffects()");
+	static int volEffects() {
+		warning("STUB: MusicManager::volEffects()");
 		return 0;
 #if 0
 		return Mix_Volume(0, -1);
@@ -122,8 +122,8 @@ public:
 
 	}
 
-	static void VolMusic(const int &volume) {
-		warning("STUB: MusicManager::VolMusic() %d", volume);
+	static void volMusic(const int &volume) {
+		warning("STUB: MusicManager::volMusic() %d", volume);
 
 #if 0
 		Mix_VolumeMusic(volume);
@@ -131,8 +131,8 @@ public:
 
 	}
 
-	static int VolMusic() {
-		warning("STUB: MusicManager::VolMusic()");
+	static int volMusic() {
+		warning("STUB: MusicManager::volMusic()");
 		return 0;
 
 #if 0
@@ -143,15 +143,15 @@ public:
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
-	void FreeMusic();
-	void FreeChunk();
-	void Quit() {
-		FreeMusic();
-		FreeChunk();
+	void freeMusic();
+	void freeChunk();
+
+	void quit() {
+		freeMusic();
+		freeChunk();
 	}
 };
 
-extern MusicManager gMusicManager;
 } // End of namespace music
 } // End of namespace pyrodactyl
 

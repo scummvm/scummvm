@@ -69,7 +69,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 			if (nodeValid("music", node)) {
 				loadNum(_music._id, "id", node->first_node("music"));
-				g_engine->_musicManager->PlayMusic(_music._id);
+				g_engine->_musicManager->playMusic(_music._id);
 			}
 
 			if (nodeValid("map", node)) {

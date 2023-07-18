@@ -48,7 +48,7 @@ typedef unsigned int ChunkKey;
 
 struct MusicData {
 	// The id of this track
-	MusicKey id;
+	MusicKey _id;
 
 #if 0
 	// The track data
@@ -56,14 +56,14 @@ struct MusicData {
 #endif
 
 	// Sound parameters
-	uint32 fade_in_duration;
+	uint32 _fadeInDuration;
 
 	MusicData() {
-		id = -1;
+		_id = -1;
 #if 0
 		track = nullptr;
 #endif
-		fade_in_duration = 100;
+		_fadeInDuration = 100;
 	}
 
 	void load(rapidxml::xml_node<char> *node) {

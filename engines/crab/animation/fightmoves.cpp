@@ -167,7 +167,7 @@ bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 
 			_timer.Start();
 			_start = true;
-			g_engine->_musicManager->PlayEffect(_move[_cur]._eff._activate, 0);
+			g_engine->_musicManager->playEffect(_move[_cur]._eff._activate, 0);
 			return true;
 		}
 	}
