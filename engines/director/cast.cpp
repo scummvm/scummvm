@@ -475,19 +475,6 @@ bool Cast::loadConfig() {
 }
 
 void Cast::loadCast() {
-	// Palette Information for D2; D3 and higher call this from the cast
-	if (_version < kFileVer300) {
-		Common::Array<uint16> clutList = _castArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
-		for (uint i = 0; i < clutList.size(); i++) {
-			Common::SeekableReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
-
-			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
-			PaletteV4 palData = loadPalette(*pal, clutList[i]);
-			CastMemberID cid(clutList[i], DEFAULT_CAST_LIB);
-			g_director->addPalette(cid, palData.palette, palData.length);
-			delete pal;
-		}
-	}
 	Common::SeekableReadStreamEndian *r = nullptr;
 
 	// Font Directory
@@ -797,6 +784,8 @@ void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {
 		case kCastPalette:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) PaletteCastMember", id, numToCastNum(id));
 			_loadedCast->setVal(id, new PaletteCastMember(this, id, stream, _version));
+			// load the palette now, as there are no CastInfo structs
+			_loadedCast->getVal(id)->load();
 			break;
 		case kCastFilmLoop:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) FilmLoopCastMember", id, numToCastNum(id));
