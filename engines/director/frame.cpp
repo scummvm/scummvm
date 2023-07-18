@@ -685,68 +685,57 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - initPos + offset) {
-		case 0: {
-				// Sound/Tempo/Transition
-				uint16 actionCastLib = stream.readUint16();
-				uint16 actionId = stream.readUint16();
-				_mainChannels.actionId = CastMemberID(actionId, actionCastLib);
-			}
+		case 0:
+			// Sound/Tempo/Transition
+			_mainChannels.actionId.castLib = stream.readUint16();
 			break;
-		case 2: {
-				uint16 actionId = stream.readUint16();
-				_mainChannels.actionId = CastMemberID(actionId, _mainChannels.actionId.castLib);  // Inherit castLinb from previous frame
-			}
+		case 2:
+			_mainChannels.actionId.member = stream.readUint16();
 			break;
-		case 4: {
-				uint16 sound1CastLib = stream.readUint16();
-				uint16 sound1Id = stream.readUint16();
-				_mainChannels.sound1 = CastMemberID(sound1Id, sound1CastLib);
-			}
+		case 4:
+			_mainChannels.sound1.castLib = stream.readUint16();
 			break;
-		case 6: {
-				uint16 sound1Id = stream.readUint16();
-				_mainChannels.sound1 = CastMemberID(sound1Id, _mainChannels.sound1.castLib);	// Inherit castLinb from previous frame
-			}
+		case 6:
+			_mainChannels.sound1.member = stream.readUint16();
 			break;
-		case 8: {
-				uint16 sound2CastLib = stream.readUint16();
-				uint16 sound2Id = stream.readUint16();
-				_mainChannels.sound2 = CastMemberID(sound2Id, sound2CastLib);
-			}
+		case 8:
+			_mainChannels.sound2.castLib = stream.readUint16();
 			break;
-		case 10: {
-				uint16 sound2Id = stream.readUint16();
-				_mainChannels.sound2 = CastMemberID(sound2Id, _mainChannels.sound2.castLib);	// Inherit castLinb from previous frame
-			}
+		case 10:
+			_mainChannels.sound2.member = stream.readUint16();
 			break;
-		case 12: {
-				uint16 transCastLib = stream.readUint16();
-				uint16 transId = stream.readUint16();
-				_mainChannels.trans = CastMemberID(transId, transCastLib);
-			}
+		case 12:
+			_mainChannels.trans.castLib = stream.readUint16();
+			break;
+		case 14:
+			_mainChannels.trans.member = stream.readUint16();
 			break;
 		case 16:
-			stream.read(unk, 4);
-			warning("Frame::readMainChannelsD5(): STUB: unk1: 0x%02x 0x%02x 0x%02x 0x%02x", unk[0], unk[1], unk[2], unk[3]);
+			stream.read(unk, 2);
+			warning("Frame::readMainChannelsD5(): STUB: unk1: 0x%02x 0x%02x", unk[0], unk[1]);
+			break;
+		case 18:
+			stream.read(unk, 2);
+			warning("Frame::readMainChannelsD5(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
 		case 20:
 			stream.read(unk, 1);
-			warning("Frame::readMainChannelsD5(): STUB: unk2: 0x%02x", unk[0]);
+			warning("Frame::readMainChannelsD5(): STUB: unk3: 0x%02x", unk[0]);
 			break;
 		case 21:
 			_mainChannels.tempo = stream.readByte();
 			break;
 		case 22:
 			stream.read(unk, 2);
-			warning("Frame::readMainChannelsD5(): STUB: unk3: 0x%02x 0x%02x", unk[0], unk[1]);
+			warning("Frame::readMainChannelsD5(): STUB: unk4: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
-		case 24: {
-				int16 paletteCastLib = stream.readSint16();
-				int16 paletteId = stream.readSint16(); // 26
-				_mainChannels.palette.paletteId = CastMemberID(paletteId, paletteCastLib);
-				if (!_mainChannels.palette.paletteId.isNull())
-					_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
-			}
+		case 24:
+			_mainChannels.palette.paletteId.castLib = stream.readSint16();
+			break;
+		case 26:
+			_mainChannels.palette.paletteId.member = stream.readSint16();
+			if (!_mainChannels.palette.paletteId.isNull())
+				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			break;
 		case 28:
 			_mainChannels.palette.speed = stream.readByte(); // 28
@@ -768,14 +757,22 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 34:
 			_mainChannels.palette.cycleCount = stream.readUint16(); // 34
 			break;
-		case 36: {
-				stream.read(unk, 12);
+		case 36:
+			stream.read(unk, 2);
+			warning("Frame::readMainChannelsD5(): STUB: unk5: 0x%02x 0x%02x", unk[0], unk[1]);
+			break;
+		case 38:
+			stream.read(unk, 2);
+			warning("Frame::readMainChannelsD5(): STUB: unk6: 0x%02x 0x%02x", unk[0], unk[1]);
+			break;
+		case 40: {
+				stream.read(unk, 8);
 
 				Common::String s;
-				for (int i = 0; i < 12; i++)
+				for (int i = 0; i < 8; i++)
 					s += Common::String::format("0x%02x ", unk[i]);
 
-				warning("Frame::readMainChannelsD5(): STUB: unk4: %s", s.c_str());
+				warning("Frame::readMainChannelsD5(): STUB: unk7: %s", s.c_str());
 			}
 			break;
 		default:
