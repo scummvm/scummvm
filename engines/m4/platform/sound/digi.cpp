@@ -106,7 +106,11 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 			Audio::makeRawStream(entry._data, entry._size, 11025, Audio::FLAG_UNSIGNED),
 			loop ? 0 : 1);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_channels[channel], stream, -1, vol);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_channels[channel]._soundHandle, stream, -1, vol);
+
+	if (trigger < 0 || trigger > 32767)
+		trigger = -1;
+	_channels[channel]._trigger = kernel_trigger_create(trigger);
 
 	_sounds.erase(fileName);
 	return 0;
@@ -129,7 +133,8 @@ Common::String Digi::expand_name_2_RAW(const Common::String &name, int32 room_nu
 
 void Digi::stop(uint channel) {
 	assert(channel < 4);
-	_mixer->stopHandle(_channels[channel]);
+	_mixer->stopHandle(_channels[channel]._soundHandle);
+	_channels[channel]._trigger = -1;
 }
 
 void Digi::flush_mem() {
@@ -137,11 +142,24 @@ void Digi::flush_mem() {
 }
 
 void Digi::read_another_chunk() {
-	// No implementation
+	// For ScummVM, the audio data is completely loaded for each sound. But we still
+	// need to check whether a sound has finished so it's trigger can be dispatched
+	for (int channel = 0; channel < MAX_CHANNELS; ++channel) {
+		Channel &c = _channels[channel];
+
+		// Check if the channel has a sound playing that finished
+		if (c._trigger != -1 && !_mixer->isSoundHandleActive(c._soundHandle)) {
+			int trigger = c._trigger;
+			c._trigger = -1;
+
+			// Dispatch the trigger
+			kernel_trigger_dispatchx(trigger);
+		}
+	}
 }
 
 bool Digi::play_state(int channel) const {
-	return _mixer->isSoundHandleActive(_channels[channel]);
+	return _mixer->isSoundHandleActive(_channels[channel]._soundHandle);
 }
 
 } // namespace Sound
