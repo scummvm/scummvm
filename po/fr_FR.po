@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-17 19:42+0000\n"
-"PO-Revision-Date: 2023-07-02 06:32+0000\n"
+"PO-Revision-Date: 2023-07-18 20:41+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4360,10 +4360,8 @@ msgstr "Afficher les contrôles sur l'écran (iOS 15 et supérieur)"
 
 #: backends/platform/ios7/ios7_options.mm:84
 #: backends/platform/ios7/ios7_options.mm:85
-#, fuzzy
-#| msgid "Control Mouse"
 msgid "Control opacity"
-msgstr "Contrôles la Souris"
+msgstr "Opacité des contrôles"
 
 #: backends/platform/ios7/ios7_options.mm:90
 msgid "Mouse-click-and-drag mode"
