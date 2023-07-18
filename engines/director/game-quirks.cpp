@@ -93,6 +93,15 @@ static void quirk640x480Desktop() {
     g_director->_wmHeight = 480;
 }
 
+static void quirkHollywoodHigh() {
+	// Hollywood High demo has a killswitch that stops playback
+	// if the year is after 1996.
+	g_director->_forceDate.tm_year = 1996 - 1900;
+	g_director->_forceDate.tm_mon = 0;
+	g_director->_forceDate.tm_mday = 1;
+	g_director->_forceDate.tm_wday = 0;
+}
+
 static void quirkLzone() {
 	SearchMan.addSubDirectoryMatching(g_director->_gameDataDir, "win_data", 0, 2);
 }
@@ -180,6 +189,7 @@ struct Quirk {
     // It runs in 640x480; clipping it to this size ensures the main
     // game window takes up the full screen, and only the splash is windowed.
     { "kidsbox", Common::kPlatformMacintosh, &quirk640x480Desktop },
+	{ "hollywoodhigh", Common::kPlatformWindows, &quirkHollywoodHigh },
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
 	{ "mamauta1", Common::kPlatformMacintosh, &quirk640x480Desktop },
 	{ "mamauta1", Common::kPlatformWindows, &quirk640x480Desktop },

@@ -98,6 +98,13 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_wmHeight = 768;
 
 	_fpsLimit = 0;
+	_forceDate.tm_sec = -1;
+	_forceDate.tm_min = -1;
+	_forceDate.tm_hour = -1;
+	_forceDate.tm_mday = -1;
+	_forceDate.tm_mon = -1;
+	_forceDate.tm_year = -1;
+	_forceDate.tm_wday = -1;
 
 	_wm = nullptr;
 

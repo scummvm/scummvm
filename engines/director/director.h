@@ -273,8 +273,11 @@ public:
 	uint32 _wmMode;
 	uint16 _wmWidth;
 	uint16 _wmHeight;
-	byte _fpsLimit;
 	CastMemberID _lastPalette;
+
+	// used for quirks
+	byte _fpsLimit;
+	TimeDate _forceDate;
 
 private:
 	byte _currentPalette[768];
