@@ -78,15 +78,15 @@ void Game::Init(const Common::String &filename) {
 
 		if (nodeValid("hud", node)) {
 			loadStr(path, "layout", node->first_node("hud"));
-			hud.load(path, level.talk_notify, level.dest_marker);
+			hud.load(path, level._talkNotify, level._destMarker);
 		}
 
 		if (nodeValid("sprite", node)) {
 			loadStr(path, "animation", node->first_node("sprite"));
-			level.LoadMoves(path);
+			level.loadMoves(path);
 
 			loadStr(path, "constant", node->first_node("sprite"));
-			level.LoadConst(path);
+			level.loadConst(path);
 		}
 
 		if (nodeValid("event", node)) {
@@ -125,28 +125,28 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 		}
 
 		// Load the level itself
-		level.pop = pop_default;
+		level._pop = pop_default;
 		level.load(g_engine->_filePath->level[id].layout, info, game_over, player_x, player_y);
 
 		// Set the current location
 		info.curLocID(id);
 		info.curLocName(g_engine->_filePath->level[id].name);
-		map.player_pos = level.map_loc;
+		map.player_pos = level._mapLoc;
 
 		// Update and center the world map to the player current position
 		map.Update(info);
 		map.Center(map.player_pos);
 
 		// If this is our first time visiting a level, reveal the associated area on the world map
-		map.RevealAdd(level.map_clip.id, level.map_clip.rect);
+		map.RevealAdd(level._mapClip._id, level._mapClip._rect);
 
 		// Initialize inventory
-		info._inv.Init(level.PlayerID());
+		info._inv.Init(level.playerId());
 
 		// Initialize journal
-		info._journal.Init(level.PlayerID());
+		info._journal.Init(level.playerId());
 
-		level.PreDraw();
+		level.preDraw();
 		return true;
 	}
 
@@ -194,7 +194,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					break;
 				case HS_CHAR:
 					ToggleState(STATE_CHARACTER);
-					gem._per.Cache(info, level.PlayerID(), level);
+					gem._per.Cache(info, level.playerId(), level);
 					break;
 				case HS_JOURNAL:
 					ToggleState(STATE_JOURNAL);
@@ -209,12 +209,12 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 
 			if (state == STATE_GAME) {
 				if (gem.eventInProgress()) {
-					gem.handleEvents(info, level.PlayerID(), Event, hud, level, event_res);
+					gem.handleEvents(info, level.playerId(), Event, hud, level, event_res);
 					if (ApplyResult())
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info._talkKeyDown = g_engine->_inputManager->state(IG_TALK) || level.ContainsClick(info.lastPerson(), Event);
+					info._talkKeyDown = g_engine->_inputManager->state(IG_TALK) || level.containsClick(info.lastPerson(), Event);
 
 					level.handleEvents(info, Event);
 
@@ -285,7 +285,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 					break;
 				case STATE_JOURNAL:
-					if (info._journal.handleEvents(level.PlayerID(), Event)) {
+					if (info._journal.handleEvents(level.playerId(), Event)) {
 						// This means we selected the "find on map" button, so we need to:
 						// switch to the world map, and highlight the appropriate quest marker
 						map.SelectDest(info._journal.marker_title);
@@ -293,10 +293,10 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 					break;
 				case STATE_CHARACTER:
-					gem._per.handleEvents(info, level.PlayerID(), Event);
+					gem._per.handleEvents(info, level.playerId(), Event);
 					break;
 				case STATE_INVENTORY:
-					info._inv.handleEvents(level.PlayerID(), Event);
+					info._inv.handleEvents(level.playerId(), Event);
 					break;
 				case STATE_HELP:
 					g_engine->_helpScreen->handleEvents(Event);
@@ -469,7 +469,7 @@ void Game::handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	switch (state) {
 	case STATE_GAME:
-		hud.internalEvents(level.ShowMap());
+		hud.internalEvents(level.showMap());
 		event_res.clear();
 
 		{
@@ -509,42 +509,42 @@ void Game::draw() {
 		if (gem.eventInProgress())
 			gem.draw(info, hud, level);
 		else
-			hud.draw(info, level.PlayerID());
+			hud.draw(info, level.playerId());
 		break;
 	case STATE_PAUSE:
 		g_engine->_imageManager->dimScreen();
 		hud.pause.draw(hud.back);
-		hud.draw(info, level.PlayerID());
+		hud.draw(info, level.playerId());
 		break;
 	case STATE_MAP:
 		g_engine->_imageManager->dimScreen();
 		map.draw(info);
-		hud.draw(info, level.PlayerID());
+		hud.draw(info, level.playerId());
 		hud.back.draw();
 		break;
 	case STATE_JOURNAL:
 		g_engine->_imageManager->dimScreen();
-		info._journal.draw(level.PlayerID());
-		hud.draw(info, level.PlayerID());
+		info._journal.draw(level.playerId());
+		hud.draw(info, level.playerId());
 		hud.back.draw();
 		break;
 	case STATE_CHARACTER:
 		g_engine->_imageManager->dimScreen();
-		gem._per.draw(info, level.PlayerID());
-		hud.draw(info, level.PlayerID());
+		gem._per.draw(info, level.playerId());
+		hud.draw(info, level.playerId());
 		hud.back.draw();
 		break;
 	case STATE_INVENTORY:
 		g_engine->_imageManager->dimScreen();
-		info.invDraw(level.PlayerID());
-		hud.draw(info, level.PlayerID());
+		info.invDraw(level.playerId());
+		hud.draw(info, level.playerId());
 		hud.back.draw();
 		break;
 	case STATE_HELP:
 		g_engine->_imageManager->dimScreen();
 		g_engine->_helpScreen->draw();
 		hud.back.draw();
-		hud.draw(info, level.PlayerID());
+		hud.draw(info, level.playerId());
 		break;
 	case STATE_LOSE_MENU:
 		hud.gom.draw();
@@ -580,11 +580,11 @@ bool Game::ApplyResult() {
 			break;
 		case ER_DEST:
 			if (i->_x < 0 || i->_y < 0) {
-				info._journal.Marker(level.PlayerID(), i->_val, false);
+				info._journal.Marker(level.playerId(), i->_val, false);
 				map.DestDel(i->_val);
 			} else {
 				map.DestAdd(i->_val, i->_x, i->_y);
-				info._journal.Marker(level.PlayerID(), i->_val, true);
+				info._journal.Marker(level.playerId(), i->_val, true);
 				info._unread._map = true;
 			}
 			break;
@@ -604,7 +604,7 @@ bool Game::ApplyResult() {
 				LoadLevel(i->_val, i->_x, i->_y);
 			break;
 		case ER_MOVE:
-			for (auto &o : level.objects) {
+			for (auto &o : level._objects) {
 				if (i->_val == o.id()) {
 					o.x(i->_x);
 					o.y(i->_y);
@@ -614,19 +614,19 @@ bool Game::ApplyResult() {
 			break;
 		case ER_PLAYER:
 			// First stop the movement of the current player sprite
-			level.PlayerStop();
+			level.playerStop();
 
 			// Then swap to the new id
-			level.PlayerID(i->_val, i->_x, i->_y);
+			level.playerId(i->_val, i->_x, i->_y);
 
 			// Stop the new player sprite's movement as well
-			level.PlayerStop();
+			level.playerStop();
 			break;
 		case ER_SAVE:
 			CreateSaveGame(SAVEGAME_EVENT);
 			break;
 		case ER_SYNC:
-			level.CalcProperties(info);
+			level.calcProperties(info);
 			map.Update(info);
 			break;
 		case ER_QUIT:
@@ -637,7 +637,7 @@ bool Game::ApplyResult() {
 		}
 	}
 
-	gem._per.Cache(info, level.PlayerID(), level);
+	gem._per.Cache(info, level.playerId(), level);
 	event_res.clear();
 	return false;
 }
@@ -703,7 +703,7 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 			if (nodeValid("level", node))
 				level.loadState(node->first_node("level"));
 
-			gem._per.Cache(info, level.PlayerID(), level);
+			gem._per.Cache(info, level.playerId(), level);
 
 			Common::String playtime;
 			loadStr(playtime, "time", node);
@@ -737,8 +737,8 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 
 	// Save player character name
 	Common::String char_name;
-	if (info.personValid(level.PlayerID()))
-		char_name = info.personGet(level.PlayerID()).name;
+	if (info.personValid(level.playerId()))
+		char_name = info.personGet(level.playerId()).name;
 	root->append_attribute(doc.allocate_attribute("char_name", char_name.c_str()));
 
 	// Difficulty
@@ -751,7 +751,7 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	root->append_attribute(doc.allocate_attribute("file", savefile.ironman.c_str()));
 
 	// Preview image used
-	root->append_attribute(doc.allocate_attribute("preview", level.preview_path.c_str()));
+	root->append_attribute(doc.allocate_attribute("preview", level._previewPath.c_str()));
 
 	// Time played
 	Common::String playtime = clock.GetTime();

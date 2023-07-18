@@ -108,13 +108,13 @@ xml_attribute&lt;&gt; *attr = doc.allocate_attribute(&quot;href&quot;, &quot;goo
 node-&gt;append_attribute(attr);
 </pre> One quirk is that nodes and attributes <i>do not own</i> the text of their names and values. This is because normally they only store pointers to the source text. So, when assigning a new name or value to the node, care must be taken to ensure proper lifetime of the string. The easiest way to achieve it is to allocate the string from the <a href="#classrapidxml_1_1xml__document" kindref="compound">xml_document</a> memory pool. In the above example this is not necessary, because we are only assigning character constants. But the code below uses <a href="#classrapidxml_1_1memory__pool_69729185bc59b0875192d667c47b8859_169729185bc59b0875192d667c47b8859" kindref="member">memory_pool::allocate_string()</a> function to allocate node name (which will have the same lifetime as the document), and assigns it to a new node: <pre>xml_document&lt;&gt; doc;
 char *node_name = doc.allocate_string(name);        // Allocate string and copy name into it
-xml_node&lt;&gt; *node = doc.allocate_node(node_element, node_name);  // Set node name to node_name
+xml_node&lt;&gt; *node = doc.allocate_node(node_element, node_name);  // set node name to node_name
 </pre> Check <a href="#namespacerapidxml_1reference" kindref="member">Reference</a>  section for description of the entire interface.</para></sect2><sect2><h3 id="namespacerapidxml_1printing">2.4 Printing XML</h3><para>You can print <code><a href="#classrapidxml_1_1xml__document" kindref="compound">xml_document</a></code> and <code><a href="#classrapidxml_1_1xml__node" kindref="compound">xml_node</a></code> objects into an XML string. Use <a href="#namespacerapidxml_b94d570fc4c4ab2423813cd0243326b1_1b94d570fc4c4ab2423813cd0243326b1" kindref="member">print()</a> function or operator &lt;&lt;, which are defined in <code><a href="#rapidxml__print_8hpp" kindref="compound">rapidxml_print.hpp</a></code> header. <pre>using namespace rapidxml;
 xml_document&lt;&gt; doc;    // character type defaults to char
 // ... some code to fill the document
 
 // Print to stream using operator &lt;&lt;
-std::cout &lt;&lt; doc;   
+std::cout &lt;&lt; doc;
 
 // Print to stream using print function, specifying printing flags
 print(std::cout, doc, 0);   // 0 means default printing flags

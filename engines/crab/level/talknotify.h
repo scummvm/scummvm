@@ -42,16 +42,16 @@ namespace pyrodactyl {
 namespace level {
 class TalkNotify {
 	// The offset to the sprite at which the name is drawn - along with alignment, font and color used to draw the name
-	Vector2i offset;
-	FontKey font;
-	int col;
-	Align align;
+	Vector2i _offset;
+	FontKey _font;
+	int _col;
+	Align _align;
 
 public:
 	TalkNotify() {
-		font = 0;
-		col = 0;
-		align = ALIGN_CENTER;
+		_font = 0;
+		_col = 0;
+		_align = ALIGN_CENTER;
 	}
 
 	void load(rapidxml::xml_node<char> *node);

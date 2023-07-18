@@ -41,12 +41,14 @@ namespace Crab {
 namespace pyrodactyl {
 namespace level {
 struct Exit {
-	Common::String name;
-	Shape dim;
-	Vector2i entry;
+	Common::String _name;
+	Shape _dim;
+	Vector2i _entry;
 
-	Exit() : entry(-1, -1) {}
-	Exit(rapidxml::xml_node<char> *node) { load(node); }
+	Exit() : _entry(-1, -1) {}
+	Exit(rapidxml::xml_node<char> *node) {
+		load(node);
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 };

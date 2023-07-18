@@ -255,7 +255,7 @@ void TMXMap::DrawDebug(const Rect &camera) {
 		i->draw(-camera.x, -camera.y, 0, 0, 254, 254);
 
 	for (auto i = area_exit.begin(); i != area_exit.end(); ++i)
-		i->dim.draw(-camera.x, -camera.y, 0, 254, 254, 254);
+		i->_dim.draw(-camera.x, -camera.y, 0, 254, 254, 254);
 
 	for (auto i = prop.begin(); i != prop.end(); ++i)
 		i->pos.draw(-camera.x, -camera.y, 254, 0, 254, 254);
@@ -365,10 +365,10 @@ void TMXMap::CollideWithTrigger(const Rect rect, Common::Array<int> &collision_t
 
 bool TMXMap::CollideWithExit(const Rect rect, LevelResult &res) {
 	for (auto i = area_exit.begin(); i != area_exit.end(); ++i)
-		if (i->dim.Collide(rect).intersect) {
-			res.val = i->name;
-			res.x = i->entry.x;
-			res.y = i->entry.y;
+		if (i->_dim.Collide(rect).intersect) {
+			res.val = i->_name;
+			res.x = i->_entry.x;
+			res.y = i->_entry.y;
 			return true;
 		}
 
@@ -378,7 +378,7 @@ bool TMXMap::CollideWithExit(const Rect rect, LevelResult &res) {
 bool TMXMap::CollideWithStairs(const Rect rect, Vector2f &vel_mod) {
 	for (auto i = area_stairs.begin(); i != area_stairs.end(); ++i) {
 		if (i->Collide(rect).intersect) {
-			vel_mod = i->modifier;
+			vel_mod = i->_modifier;
 			return true;
 		}
 	}
@@ -392,9 +392,9 @@ bool TMXMap::CollideWithStairs(const Rect rect, Vector2f &vel_mod) {
 bool TMXMap::CollideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music) {
 	for (auto i = area_music.begin(); i != area_music.end(); ++i) {
 		if (i->Collide(rect).intersect) {
-			music.id = i->id;
-			music.track = i->track;
-			music.loops = i->loops;
+			music._id = i->_id;
+			music._track = i->_track;
+			music._loops = i->_loops;
 			return true;
 		}
 	}

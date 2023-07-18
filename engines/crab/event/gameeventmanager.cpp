@@ -167,7 +167,7 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 
 				if (_intro._showTraits)
-					_per.Cache(info, level.PlayerID(), level);
+					_per.Cache(info, level.playerId(), level);
 			}
 			break;
 		default:
@@ -281,7 +281,7 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 
 				DrawType drawVal = DRAW_SAME;
 				if (g_engine->_eventStore->_anim[_curEvent->_special].internalEvents(drawVal))
-					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, level.PlayerID(), result, _endSeq);
+					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, level.playerId(), result, _endSeq);
 
 				if (drawVal == DRAW_STOP)
 					_drawGame = false;
@@ -289,7 +289,7 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 					_drawGame = true;
 			} break;
 			case EVENT_SILENT:
-				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, level.PlayerID(), result, _endSeq);
+				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, level.playerId(), result, _endSeq);
 				break;
 			case EVENT_REPLY:
 				updateDialogBox(info, level);
@@ -304,7 +304,7 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 			endSequence(info.curLocID());
 		} else {
 			_eventMap[info.curLocID()].internalEvents(info);
-			calcActiveSeq(info, level, level.Camera());
+			calcActiveSeq(info, level, level.camera());
 		}
 	}
 }
@@ -324,7 +324,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 		case EVENT_DIALOG:
 			g_engine->_imageManager->dimScreen();
 			if (_oh.show_journal) {
-				info._journal.draw(level.PlayerID());
+				info._journal.draw(level.playerId());
 				hud.back.draw();
 			} else
 				_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
@@ -332,7 +332,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 		case EVENT_REPLY:
 			g_engine->_imageManager->dimScreen();
 			if (_oh.show_journal) {
-				info._journal.draw(level.PlayerID());
+				info._journal.draw(level.playerId());
 				hud.back.draw();
 			} else {
 				_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
@@ -366,10 +366,10 @@ void Manager::calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const R
 		// Set all the pointers to the new values
 		_curEvent = _eventMap[info.curLocID()].curEvent(_activeSeq);
 		_oh.reset(_curEvent->_title);
-		_curSp = level.GetSprite(_curEvent->_title);
+		_curSp = level.getSprite(_curEvent->_title);
 
 		// The player character's dialog is drawn a bit differently compared to others
-		_player = (_curEvent->_title == level.PlayerID());
+		_player = (_curEvent->_title == level.playerId());
 
 		switch (_curEvent->_type) {
 		case EVENT_ANIM:

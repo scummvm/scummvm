@@ -43,11 +43,11 @@ void MusicArea::load(rapidxml::xml_node<char> *node, const bool &echo) {
 			Common::String name;
 			if (loadStr(name, "name", n, echo)) {
 				if (name == "music")
-					loadBool(track, "value", n, echo);
+					loadBool(_track, "value", n, echo);
 				else if (name == "id")
-					loadNum(id, "value", n, echo);
+					loadNum(_id, "value", n, echo);
 				else if (name == "loops")
-					loadNum(loops, "value", n, echo);
+					loadNum(_loops, "value", n, echo);
 			}
 		}
 	}

@@ -45,13 +45,13 @@ using namespace pyrodactyl::music;
 //------------------------------------------------------------------------
 // Purpose: See if player clicked on a sprite they are colliding with
 //------------------------------------------------------------------------
-bool Level::ContainsClick(const Common::String &id, const Common::Event &Event) {
+bool Level::containsClick(const Common::String &id, const Common::Event &event) {
 	// If mouse is moved and is hovering on the specified sprite (id), set hover = true
-	if (Event.type == Common::EVENT_MOUSEMOVE) {
-		for (auto &i : objects) {
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+		for (auto &i : _objects) {
 			Rect r = i.posRect();
 
-			if (r.Contains(g_engine->_mouse->_motion.x + camera.x, g_engine->_mouse->_motion.y + camera.y)) {
+			if (r.Contains(g_engine->_mouse->_motion.x + _camera.x, g_engine->_mouse->_motion.y + _camera.y)) {
 				// This is to show the sprite's name on top of their head
 				i._hover = true;
 
@@ -64,10 +64,10 @@ bool Level::ContainsClick(const Common::String &id, const Common::Event &Event) 
 
 		return false;
 	} else if (g_engine->_mouse->pressed()) {
-		for (auto &i : objects) {
+		for (auto &i : _objects) {
 			if (i.id() == id) {
 				Rect r = i.posRect();
-				if (r.Contains(g_engine->_mouse->_button.x + camera.x, g_engine->_mouse->_button.y + camera.y)) {
+				if (r.Contains(g_engine->_mouse->_button.x + _camera.x, g_engine->_mouse->_button.y + _camera.y)) {
 					g_engine->_mouse->_hover = true;
 					return true;
 				}
@@ -118,12 +118,12 @@ bool Level::ContainsClick(const Common::String &id, const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Find if a layer is visible (used only for objects with layers associated with them)
 //------------------------------------------------------------------------
-bool Level::LayerVisible(Sprite *obj) {
+bool Level::layerVisible(pyrodactyl::anim::Sprite *obj) {
 	if (obj->_layer < 0)
 		return true;
 
-	if ((unsigned int)obj->_layer < terrain.layer.size())
-		return terrain.layer[obj->_layer].collide;
+	if ((unsigned int)obj->_layer < _terrain.layer.size())
+		return _terrain.layer[obj->_layer].collide;
 
 	return false;
 }
@@ -132,27 +132,27 @@ bool Level::LayerVisible(Sprite *obj) {
 // Purpose: Check if a sprite is colliding with the trigger areas
 // Common::String &id is set to the id of colliding object
 //------------------------------------------------------------------------
-void Level::CalcTrigCollide(Info &info) {
-	for (auto i = objects.begin(); i != objects.end(); ++i)
+void Level::calcTrigCollide(pyrodactyl::event::Info &info) {
+	for (auto i = _objects.begin(); i != _objects.end(); ++i)
 		if (info.personValid(i->id()))
-			terrain.CollideWithTrigger(i->boundRect(), info.personGet(i->id()).trig);
+			_terrain.CollideWithTrigger(i->boundRect(), info.personGet(i->id()).trig);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Check if a sprite is colliding with interactive objects
 // Common::String &id is set to the id of colliding object
 //------------------------------------------------------------------------
-bool Level::CollidingWithObject(Info &info, Common::String &id) {
+bool Level::collidingWithObject(pyrodactyl::event::Info &info, Common::String &id) {
 	// Clip and Bounding rectangle of player
-	Rect p_pos = objects[player_index].posRect(), p_bound = objects[player_index].boundRect();
+	Rect pPos = _objects[_playerIndex].posRect(), pBound = _objects[_playerIndex].boundRect();
 
 	unsigned int index = 0;
-	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
-		if (i->visible() && player_index != index && info.state(i->id()) == PST_NORMAL) {
+	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index) {
+		if (i->visible() && _playerIndex != index && info.state(i->id()) == PST_NORMAL) {
 			// Clip and bounding rectangles for the NPC sprite
-			Rect i_pos = i->posRect(), i_bound = i->boundRect();
+			Rect iPos = i->posRect(), iBound = i->boundRect();
 
-			if (p_pos.Collide(i_pos) || i_pos.Contains(p_pos) || p_bound.Collide(i_bound) || i_bound.Contains(p_bound)) {
+			if (pPos.Collide(iPos) || iPos.Contains(pPos) || pBound.Collide(iBound) || iBound.Contains(pBound)) {
 				id = i->id();
 				return true;
 			}
@@ -166,16 +166,16 @@ bool Level::CollidingWithObject(Info &info, Common::String &id) {
 // Purpose: Check if a sprite is colliding with non-interactive stuff in the level
 // id is set to the id of colliding object
 //------------------------------------------------------------------------
-bool Level::CollidingWithLevel(Info &info, Sprite &s) {
-	terrain.CollideWithNoWalk(s.boundRect(), s._collideData);
+bool Level::collidingWithLevel(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s) {
+	_terrain.CollideWithNoWalk(s.boundRect(), s._collideData);
 
-	terrain.CollideWithStairs(s.boundRect(), s._velMod);
+	_terrain.CollideWithStairs(s.boundRect(), s._velMod);
 
-	if (terrain.CollideWithMusic(s.boundRect(), music)) {
-		if (music.track)
-			g_engine->_musicManager->PlayMusic(music.id);
+	if (_terrain.CollideWithMusic(s.boundRect(), _music)) {
+		if (_music._track)
+			g_engine->_musicManager->PlayMusic(_music._id);
 		else
-			g_engine->_musicManager->PlayEffect(music.id, music.loops);
+			g_engine->_musicManager->PlayEffect(_music._id, _music._loops);
 	}
 
 	// If we are colliding with something, return true
