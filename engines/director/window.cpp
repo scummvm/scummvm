@@ -369,6 +369,7 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 	// Clean up the previous sharedCast
 	if (previousSharedCast) {
 		g_director->_allSeenResFiles.erase(previousSharedCastPath);
+		g_director->_allOpenResFiles.remove(previousSharedCastPath);
 		delete previousSharedCast;
 	}
 
