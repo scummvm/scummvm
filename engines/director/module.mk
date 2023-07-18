@@ -86,6 +86,7 @@ MODULE_OBJS = \
 	lingo/xlibs/jitdraw3.o \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/labeldrvxobj.o \
+	lingo/xlibs/maniacbg.o \
 	lingo/xlibs/memoryxobj.o \
 	lingo/xlibs/miscx.o \
 	lingo/xlibs/moovxobj.o \

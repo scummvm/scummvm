@@ -66,6 +66,7 @@
 #include "director/lingo/xlibs/ispippin.h"
 #include "director/lingo/xlibs/jitdraw3.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
+#include "director/lingo/xlibs/maniacbg.h"
 #include "director/lingo/xlibs/memoryxobj.h"
 #include "director/lingo/xlibs/miscx.h"
 #include "director/lingo/xlibs/moovxobj.h"
@@ -196,6 +197,7 @@ static struct XLibProto {
 	{ JITDraw3XObj::fileNames,			JITDraw3XObj::open,			JITDraw3XObj::close,		kXObj,					400 },	// D4
 	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 },	// D4
 	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
+	{ ManiacBgXObj::fileNames,			ManiacBgXObj::open,			ManiacBgXObj::close,			kXObj,				300 },	// D3
 	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					300 },	// D3
 	{ MiscX::fileNames,					MiscX::open,				MiscX::close,				kXObj,					400 },	// D4
 	{ MoovXObj::fileNames, 				MoovXObj::open, 			MoovXObj::close,			kXObj,					300 },  // D3
