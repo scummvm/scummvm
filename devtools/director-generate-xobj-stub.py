@@ -6,7 +6,7 @@ import re
 import struct
 from typing import BinaryIO
 
-DIRECTOR_SRC_PATH = os.path.abspath(os.path.join(__file__, "..", "engines", "director"))
+DIRECTOR_SRC_PATH = os.path.abspath(os.path.join(__file__, "..", "..", "engines", "director"))
 MAKEFILE_PATH = os.path.join(DIRECTOR_SRC_PATH, "module.mk")
 LINGO_XLIBS_PATH = os.path.join(DIRECTOR_SRC_PATH, "lingo", "xlibs")
 LINGO_OBJECT_PATH = os.path.join(DIRECTOR_SRC_PATH, "lingo", "lingo-object.cpp")
