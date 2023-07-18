@@ -747,17 +747,6 @@ Common::Error AGDSEngine::run() {
 			mouseCursor = _defaultMouseCursor;
 
 		if (userEnabled()) {
-#if 0
-			//FIXME: fixes planet puzzle but breaks all other objects.
-			// maybe use this only when used in conjunction with attachInventoryObjectToMouse?
-			if (auto *cursor = _currentInventoryObject? _currentInventoryObject->getMouseCursor(): nullptr) {
-				cursor->tick();
-				auto pos = _mouse;
-				pos.x -= cursor->visibleCenter();
-				pos.y -= cursor->visibleHeight() / 2;
-				cursor->paint(*backbuffer, pos);
-			} else
-#endif
 			if (auto *picture = _currentInventoryObject? _currentInventoryObject->getPicture(): nullptr) {
 				Common::Rect srcRect = picture->getRect();
 				Common::Point dst = _mouse;
@@ -767,6 +756,12 @@ Common::Error AGDSEngine::run() {
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect())) {
 					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
+			} else if (auto *cursor = (_currentInventoryObject? _currentInventoryObject->getMouseCursor(): nullptr)) {
+				cursor->tick();
+				auto pos = _mouse;
+				pos.x -= cursor->visibleCenter();
+				pos.y -= cursor->visibleHeight() / 2;
+				cursor->paint(*backbuffer, pos);
 			} else if (mouseCursor) {
 				mouseCursor->tick();
 				mouseCursor->paint(*backbuffer, _mouse);
