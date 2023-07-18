@@ -2314,7 +2314,7 @@ static void ft_black_reset(TRaster_Instance *raster, const char *pool_base, long
 }
 
 
-static void ft_black_set_mode(TRaster_Instance *raster, unsigned long mode, const char *palette) {
+static int ft_black_set_mode(TRaster_Instance *raster, unsigned long mode, const char *palette) {
 #ifdef FT2_1_3_RASTER_OPTION_ANTI_ALIASING
 	if (mode == FT2_1_3_MAKE_TAG('p', 'a', 'l', '5')) {
 		/* set 5-levels gray palette */
@@ -2329,6 +2329,7 @@ static void ft_black_set_mode(TRaster_Instance *raster, unsigned long mode, cons
 	FT2_1_3_UNUSED(mode);
 	FT2_1_3_UNUSED(palette);
 #endif
+	return 0;
 }
 
 
