@@ -1158,11 +1158,11 @@ TextScrn *TextScrn_Create(int32 x1, int32 y1, int32 x2, int32 y2, int32 luminanc
 	myTextScrn->w = x2 - x1 + 1;
 	myTextScrn->h = y2 - y1 + 1;
 	myTextScrn->textColor = textColor;
-	myTextScrn->textColor_alt1 = textColorAlt1;		// MattP
-	myTextScrn->textColor_alt2 = textColorAlt2;		// MattP
+	myTextScrn->textColor_alt1 = textColorAlt1;
+	myTextScrn->textColor_alt2 = textColorAlt2;
 	myTextScrn->hiliteColor = hiliteColor;
-	myTextScrn->hiliteColor_alt1 = hiliteColorAlt1; // MattP
-	myTextScrn->hiliteColor_alt2 = hiliteColorAlt2; // MattP 
+	myTextScrn->hiliteColor_alt1 = hiliteColorAlt1;
+	myTextScrn->hiliteColor_alt2 = hiliteColorAlt2;
 	myTextScrn->luminance = luminance;
 	myTextScrn->myFont = gr_font_get();
 	myTextScrn->myTextItems = nullptr;
@@ -1206,7 +1206,7 @@ bool TextScrn_Add_TextItem(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
 		return false;
 	}
 	if ((myTextItem = (TextItem *)mem_alloc(sizeof(TextItem), "text item")) == nullptr) return false;
-	myTextItem->w = gr_font_string_width(prompt, 0); // MattP no auto spacing
+	myTextItem->w = gr_font_string_width(prompt, 0); // No auto spacing
 	myTextItem->h = gr_font_get_height() + 1;
 	myTextItem->y = y;
 	myTextItem->justification = justification;
@@ -1243,7 +1243,7 @@ bool TextScrn_Add_Message(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
 		return false;
 	}
 	if ((myTextItem = (TextItem *)mem_alloc(sizeof(TextItem), "textscrn msg")) == nullptr) return false;
-	myTextItem->w = gr_font_string_width(prompt, 0); // MattP no auto spacing
+	myTextItem->w = gr_font_string_width(prompt, 0); //No auto spacing
 	myTextItem->h = gr_font_get_height() + 1;
 	myTextItem->y = y;
 	myTextItem->justification = justification;

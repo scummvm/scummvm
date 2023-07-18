@@ -949,7 +949,7 @@ Conv *conv_load(char *filename, int x1, int y1, int32 myTrigger, bool want_box) 
 
 	term_message("conv_load");
 
-	_GC(playerCommAllowed) = _G(player).comm_allowed;	// Remember if player commands are on before we start the conversation MattP apr11
+	_GC(playerCommAllowed) = _G(player).comm_allowed;	// Remember if player commands are on before we start the conversation
 	_GC(interface_was_visible) = INTERFACE_VISIBLE;
 
 	term_message("conv load:   %s", filename);
@@ -957,7 +957,7 @@ Conv *conv_load(char *filename, int x1, int y1, int32 myTrigger, bool want_box) 
 	if (want_box) {
 		// If we want an interface box
 		conv_set_disp_default();
-		mouse_set_sprite(0);					// Also if we want a text box, lock the mouse into arrow mode  MattP apr11
+		mouse_set_sprite(0);					// Also if we want a text box, lock the mouse into arrow mode
 		mouse_lock_sprite(0);
 		player_set_commands_allowed(false);		// with commands off
 
@@ -1042,7 +1042,7 @@ done:
 void conv_unload(Conv *c) {
 	mouse_unlock_sprite();
 
-	if (_GC(interface_was_visible)) {	  // turn interface back on if it was on   MattP
+	if (_GC(interface_was_visible)) {	// Turn interface back on if it was on
 		interface_show();
 	}
 
