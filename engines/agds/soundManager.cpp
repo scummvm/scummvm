@@ -57,7 +57,7 @@ void SoundManager::tick() {
 			}
 			++it;
 		} else if (!active) {
-			_engine->reactivate(sound.process, "sound inactive");
+			_engine->reactivate(sound.process, "sound " + sound.resource + " inactive", true);
 			it = _sounds.erase(it);
 		} else
 			++it;
