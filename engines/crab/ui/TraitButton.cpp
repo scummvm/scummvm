@@ -57,8 +57,8 @@ void TraitButton::draw(const int &xOffset, const int &yOffset, Rect *clip) {
 }
 
 void TraitButton::cache(const pyrodactyl::people::Trait &trait) {
-	_traitImg = trait.img;
-	_caption._text = trait.name;
+	_traitImg = trait._img;
+	_caption._text = trait._name;
 }
 
 void TraitButton::empty() {

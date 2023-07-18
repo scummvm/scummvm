@@ -93,7 +93,7 @@ bool Inventory::HasItem(const Common::String &char_id, const Common::String &con
 void Inventory::draw(Person &obj, const int &money_val) {
 	bg.draw();
 	// helper.DrawInfo(obj);
-	collection.draw(obj.id /*, helper*/);
+	collection.draw(obj._id /*, helper*/);
 
 	money._caption._text = NumberToString(money_val);
 	money.draw();

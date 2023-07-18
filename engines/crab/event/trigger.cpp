@@ -114,13 +114,13 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 			else
 				return false;
 		} else if (_operation == "status") {
-			PersonType ty = StringToPersonType(_val);
+			PersonType ty = stringToPersonType(_val);
 			if (info.type(_subject) == ty)
 				return true;
 			else
 				return false;
 		} else if (_operation == "state") {
-			PersonState st = StringToPersonState(_val);
+			PersonState st = stringToPersonState(_val);
 			if (info.state(_subject) == st)
 				return true;
 			else
@@ -132,11 +132,11 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		Person p;
 		if (info.personGet(_subject, p)) {
 			if (_target == "like")
-				return evaluate(p.opinion.val[OPI_LIKE], StringToNumber<int>(_val));
+				return evaluate(p._opinion._val[OPI_LIKE], StringToNumber<int>(_val));
 			else if (_target == "fear")
-				return evaluate(p.opinion.val[OPI_FEAR], StringToNumber<int>(_val));
+				return evaluate(p._opinion._val[OPI_FEAR], StringToNumber<int>(_val));
 			else if (_target == "respect")
-				return evaluate(p.opinion.val[OPI_RESPECT], StringToNumber<int>(_val));
+				return evaluate(p._opinion._val[OPI_RESPECT], StringToNumber<int>(_val));
 		}
 	}
 	break;
@@ -174,8 +174,8 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		if (info.personValid(_target)) {
 			Person *p = &info.personGet(_target);
 
-			for (auto &i : p->trait)
-				if (i.name == _val)
+			for (auto &i : p->_trait)
+				if (i._name == _val)
 					return true;
 		}
 		break;

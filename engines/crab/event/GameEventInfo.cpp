@@ -99,12 +99,12 @@ void Info::loadPeople(const Common::String &filename) {
 //------------------------------------------------------------------------
 void Info::type(const Common::String &id, const PersonType &val) {
 	if (_people.contains(id) > 0)
-		_people[id].type = val;
+		_people[id]._type = val;
 }
 
 PersonType Info::type(const Common::String &id) {
 	if (_people.contains(id) > 0)
-		return _people[id].type;
+		return _people[id]._type;
 
 	return PE_NEUTRAL;
 }
@@ -114,12 +114,12 @@ PersonType Info::type(const Common::String &id) {
 //------------------------------------------------------------------------
 void Info::state(const Common::String &id, const PersonState &val) {
 	if (_people.contains(id) > 0)
-		_people[id].state = val;
+		_people[id]._state = val;
 }
 
 PersonState Info::state(const Common::String &id) {
 	if (_people.contains(id) > 0)
-		return _people[id].state;
+		return _people[id]._state;
 
 	return PST_NORMAL;
 }
@@ -190,13 +190,13 @@ void Info::traitAdd(const Common::String &perId, const int &traitId) {
 			// Check for duplicate traits, DONT award anything if duplicate found
 			Person *p = &personGet(perId);
 
-			for (auto i = p->trait.begin(); i != p->trait.end(); ++i)
-				if (i->id == traitId)
+			for (auto i = p->_trait.begin(); i != p->_trait.end(); ++i)
+				if (i->_id == traitId)
 					return;
 
-			p->trait.push_back(g_engine->_eventStore->_trait[traitId]);
+			p->_trait.push_back(g_engine->_eventStore->_trait[traitId]);
 
-			g_engine->_eventStore->setAchievement(g_engine->_eventStore->_trait[traitId].id);
+			g_engine->_eventStore->setAchievement(g_engine->_eventStore->_trait[traitId]._id);
 		}
 	}
 }
@@ -208,9 +208,9 @@ void Info::traitDel(const Common::String &perId, const int &traitId) {
 		{
 			Person *p = &personGet(perId);
 
-			for (auto j = p->trait.begin(); j != p->trait.end(); ++j) {
-				if (j->id == traitId) {
-					p->trait.erase(j);
+			for (auto j = p->_trait.begin(); j != p->_trait.end(); ++j) {
+				if (j->_id == traitId) {
+					p->_trait.erase(j);
 					break;
 				}
 			}
@@ -225,18 +225,18 @@ bool Info::opinionGet(const Common::String &name, const pyrodactyl::people::Opin
 	if (_people.contains(name) == 0)
 		return false;
 
-	val = _people[name].opinion.val[type];
+	val = _people[name]._opinion._val[type];
 	return true;
 }
 
 void Info::opinionChange(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
 	if (_people.contains(name) > 0)
-		_people[name].opinion.Change(type, val);
+		_people[name]._opinion.change(type, val);
 }
 
 void Info::opinionSet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
 	if (_people.contains(name) > 0)
-		_people[name].opinion.Set(type, val);
+		_people[name]._opinion.set(type, val);
 }
 
 //------------------------------------------------------------------------
@@ -246,18 +246,18 @@ bool Info::statGet(const Common::String &name, const pyrodactyl::stat::StatType 
 	if (_people.contains(name) == 0)
 		return false;
 
-	num = _people[name].stat.val[type].cur;
+	num = _people[name]._stat.val[type].cur;
 	return true;
 }
 
 void Info::statSet(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (_people.contains(name) > 0)
-		_people[name].stat.Set(type, num);
+		_people[name]._stat.Set(type, num);
 }
 
 void Info::statChange(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (_people.contains(name) > 0)
-		_people[name].stat.Change(type, num);
+		_people[name]._stat.Change(type, num);
 }
 
 //------------------------------------------------------------------------
@@ -283,7 +283,7 @@ pyrodactyl::people::Person &Info::personGet(const Common::String &id) {
 
 bool Info::collideWithTrigger(const Common::String &id, int rectIndex) {
 	if (_people.contains(id) > 0) {
-		for (auto i = _people[id].trig.begin(); i != _people[id].trig.end(); ++i)
+		for (auto i = _people[id]._trig.begin(); i != _people[id]._trig.end(); ++i)
 			if (*i == rectIndex)
 				return true;
 	}
@@ -314,7 +314,7 @@ void Info::insertName(Common::String &msg) {
 
 				// We use length+1 here because otherwise it lets the last character stay in dialog
 				if (personValid(s))
-					msg.replace(start, len + 1, personGet(s).name);
+					msg.replace(start, len + 1, personGet(s)._name);
 			}
 		}
 	}
@@ -322,7 +322,7 @@ void Info::insertName(Common::String &msg) {
 
 Common::String Info::getName(const Common::String &id) {
 	if (personValid(id))
-		return personGet(id).name;
+		return personGet(id)._name;
 
 	return id;
 }

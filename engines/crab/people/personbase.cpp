@@ -37,7 +37,7 @@ using namespace pyrodactyl::stat;
 
 namespace pyrodactyl {
 namespace people {
-PersonType StringToPersonType(const Common::String &val) {
+PersonType stringToPersonType(const Common::String &val) {
 	if (val == "neutral")
 		return PE_NEUTRAL;
 	else if (val == "hostile")
@@ -50,7 +50,7 @@ PersonType StringToPersonType(const Common::String &val) {
 	return PE_NEUTRAL;
 }
 
-PersonState StringToPersonState(const Common::String &val) {
+PersonState stringToPersonState(const Common::String &val) {
 	if (val == "ko")
 		return PST_KO;
 	else if (val == "fight")

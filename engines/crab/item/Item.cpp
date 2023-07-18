@@ -110,9 +110,9 @@ void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 void Item::statChange(pyrodactyl::people::Person &obj, bool increase) {
 	for (auto i = _bonus.begin(); i != _bonus.end(); ++i)
 		if (increase)
-			obj.stat.Change(i->type, i->val);
+			obj._stat.Change(i->type, i->val);
 		else
-			obj.stat.Change(i->type, -i->val);
+			obj._stat.Change(i->type, -i->val);
 }
 
 void Item::draw(const int &x, const int &y) {

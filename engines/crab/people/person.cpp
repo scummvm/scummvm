@@ -36,93 +36,93 @@ using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;
 
 Person::Person() {
-	type = PE_NEUTRAL;
-	state = PST_NORMAL;
-	alt_journal_name = false;
-	trig.clear();
+	_type = PE_NEUTRAL;
+	_state = PST_NORMAL;
+	_altJournalName = false;
+	_trig.clear();
 }
 
 void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem) {
 	if (nodeValid(node)) {
-		loadStr(id, "id", node);
-		loadStr(name, "name", node);
+		loadStr(_id, "id", node);
+		loadStr(_name, "name", node);
 		// loadImgKey(pic, "img", node);
 
 		if (nodeValid("opinion", node))
-			opinion.load(node->first_node("opinion"));
+			_opinion.load(node->first_node("opinion"));
 
 		if (node->first_attribute("type") != NULL) {
 			Common::String t;
 			loadStr(t, "type", node);
-			type = StringToPersonType(t);
+			_type = stringToPersonType(t);
 		} else
-			type = PE_NEUTRAL;
+			_type = PE_NEUTRAL;
 
 		if (node->first_attribute("state") != NULL) {
 			Common::String s;
 			loadStr(s, "state", node);
-			state = StringToPersonState(s);
+			_state = stringToPersonState(s);
 		} else
-			state = PST_NORMAL;
+			_state = PST_NORMAL;
 
 		if (node->first_attribute("journal_name") != NULL) {
-			loadStr(journal_name, "journal_name", node);
-			alt_journal_name = true;
+			loadStr(_journalName, "journal_name", node);
+			_altJournalName = true;
 		} else
-			alt_journal_name = false;
+			_altJournalName = false;
 
 		if (nodeValid("stats", node)) {
 			rapidxml::xml_node<char> *statnode = node->first_node("stats");
 			if (statnode->first_attribute("template") == NULL) {
-				stat.load(statnode);
+				_stat.load(statnode);
 			} else {
 				int index = 0;
 				loadNum(index, "template", statnode);
 				if (index >= 0 && (unsigned int)index < stem.collection.size())
 					for (int i = 0; i < STAT_TOTAL; i++)
-						stat.val[i] = stem.collection[index].val[i];
+						_stat.val[i] = stem.collection[index].val[i];
 			}
 		}
 
 		if (nodeValid("traits", node, false)) {
 			rapidxml::xml_node<char> *traitnode = node->first_node("traits");
 			for (auto n = traitnode->first_node("trait"); n != NULL; n = n->next_sibling("trait"))
-				trait.push_back(n);
+				_trait.push_back(n);
 		}
 	}
 }
 
 void Person::reset() {
 	for (auto i = 0; i < STAT_TOTAL; ++i)
-		stat.val[i].reset();
+		_stat.val[i].reset();
 }
 
-void Person::Validate() {
+void Person::validate() {
 	for (int i = 0; i < STAT_TOTAL; ++i)
-		stat.val[i].Validate();
+		_stat.val[i].Validate();
 }
 
 void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "object");
-	child->append_attribute(doc.allocate_attribute("id", id.c_str()));
-	child->append_attribute(doc.allocate_attribute("name", name.c_str()));
+	child->append_attribute(doc.allocate_attribute("id", _id.c_str()));
+	child->append_attribute(doc.allocate_attribute("name", _name.c_str()));
 
-	unsigned int val = static_cast<unsigned int>(state);
+	unsigned int val = static_cast<unsigned int>(_state);
 	child->append_attribute(doc.allocate_attribute("state", gStrPool->Get(val)));
 
-	opinion.saveState(doc, child);
+	_opinion.saveState(doc, child);
 
 	rapidxml::xml_node<char> *child_s = doc.allocate_node(rapidxml::node_element, "stats");
-	stat.val[STAT_HEALTH].saveState(doc, child_s, STATNAME_HEALTH);
-	stat.val[STAT_ATTACK].saveState(doc, child_s, STATNAME_ATTACK);
-	stat.val[STAT_DEFENSE].saveState(doc, child_s, STATNAME_DEFENSE);
-	stat.val[STAT_SPEED].saveState(doc, child_s, STATNAME_SPEED);
+	_stat.val[STAT_HEALTH].saveState(doc, child_s, STATNAME_HEALTH);
+	_stat.val[STAT_ATTACK].saveState(doc, child_s, STATNAME_ATTACK);
+	_stat.val[STAT_DEFENSE].saveState(doc, child_s, STATNAME_DEFENSE);
+	_stat.val[STAT_SPEED].saveState(doc, child_s, STATNAME_SPEED);
 	/*stat.val[STAT_CHARISMA].saveState(doc, child_s, STATNAME_CHARISMA);
 	stat.val[STAT_INTELLIGENCE].saveState(doc, child_s, STATNAME_INTELLIGENCE);*/
 	child->append_node(child_s);
 
 	rapidxml::xml_node<char> *child_t = doc.allocate_node(rapidxml::node_element, "traits");
-	for (auto &i : trait)
+	for (auto &i : _trait)
 		i.saveState(doc, child_t, "trait");
 	child->append_node(child_t);
 
@@ -130,22 +130,22 @@ void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 }
 
 void Person::loadState(rapidxml::xml_node<char> *node) {
-	loadStr(id, "id", node);
-	loadStr(name, "name", node);
-	loadEnum(state, "state", node);
+	loadStr(_id, "id", node);
+	loadStr(_name, "name", node);
+	loadEnum(_state, "state", node);
 
 	if (nodeValid("opinion", node))
-		opinion.load(node->first_node("opinion"));
+		_opinion.load(node->first_node("opinion"));
 
 	if (nodeValid("stats", node))
-		stat.load(node->first_node("stats"));
+		_stat.load(node->first_node("stats"));
 
 	if (nodeValid("traits", node, false)) {
 		rapidxml::xml_node<char> *traitnode = node->first_node("traits");
 
-		trait.clear();
+		_trait.clear();
 		for (auto n = traitnode->first_node("trait"); n != NULL; n = n->next_sibling("trait"))
-			trait.push_back(n);
+			_trait.push_back(n);
 	}
 }
 

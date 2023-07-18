@@ -135,7 +135,7 @@ bool Level::layerVisible(pyrodactyl::anim::Sprite *obj) {
 void Level::calcTrigCollide(pyrodactyl::event::Info &info) {
 	for (auto i = _objects.begin(); i != _objects.end(); ++i)
 		if (info.personValid(i->id()))
-			_terrain.CollideWithTrigger(i->boundRect(), info.personGet(i->id()).trig);
+			_terrain.CollideWithTrigger(i->boundRect(), info.personGet(i->id())._trig);
 }
 
 //------------------------------------------------------------------------

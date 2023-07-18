@@ -43,10 +43,12 @@ namespace people {
 // hostile - person who will attack you on sight
 // coward - person who will flee on being attacked
 // immobile - person who cannot move but can be killed
-enum PersonType { PE_NEUTRAL,
-				  PE_HOSTILE,
-				  PE_COWARD,
-				  PE_IMMOBILE };
+enum PersonType {
+	PE_NEUTRAL,
+	PE_HOSTILE,
+	PE_COWARD,
+	PE_IMMOBILE
+};
 
 // What each state is, and what it does
 // normal - person doing his default movement
@@ -54,14 +56,16 @@ enum PersonType { PE_NEUTRAL,
 // flee - person running away from you
 // ko - person is dead/knocked out
 // dying - play the dying animation
-enum PersonState { PST_NORMAL,
-				   PST_FIGHT,
-				   PST_FLEE,
-				   PST_KO,
-				   PST_DYING };
+enum PersonState {
+	PST_NORMAL,
+	PST_FIGHT,
+	PST_FLEE,
+	PST_KO,
+	PST_DYING
+};
 
-PersonType StringToPersonType(const Common::String &val);
-PersonState StringToPersonState(const Common::String &val);
+PersonType stringToPersonType(const Common::String &val);
+PersonState stringToPersonState(const Common::String &val);
 } // End of namespace people
 } // End of namespace pyrodactyl
 

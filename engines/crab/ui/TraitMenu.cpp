@@ -68,17 +68,17 @@ void TraitMenu::load(rapidxml::xml_node<char> *node) {
 void TraitMenu::draw(const pyrodactyl::people::Person *obj) {
 	if (obj != nullptr) {
 		auto i = menu.element.begin();
-		for (auto t = obj->trait.begin(); t != obj->trait.end() && i != menu.element.end(); ++t, ++i) {
+		for (auto t = obj->_trait.begin(); t != obj->_trait.end() && i != menu.element.end(); ++t, ++i) {
 			i->draw();
-			if (t->unread)
+			if (t->_unread)
 				g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 		}
 
 		for (; i != menu.element.end(); ++i)
 			i->draw();
 
-		if (select > -1 && (unsigned int)select < obj->trait.size())
-			desc.draw(obj->trait[select].desc);
+		if (select > -1 && (unsigned int)select < obj->_trait.size())
+			desc.draw(obj->_trait[select]._desc);
 	} else
 		for (auto &i : menu.element)
 			i.draw();
@@ -94,8 +94,8 @@ void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const Common::Even
 		select = choice;
 
 		if (obj != nullptr) {
-			if (select > -1 && (unsigned int)select < obj->trait.size())
-				obj->trait[select].unread = false;
+			if (select > -1 && (unsigned int)select < obj->_trait.size())
+				obj->_trait[select]._unread = false;
 		}
 	}
 }
@@ -121,7 +121,7 @@ void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &E
 void TraitMenu::Cache(const pyrodactyl::people::Person &obj) {
 	auto e = menu.element.begin();
 
-	for (auto i = obj.trait.begin(); i != obj.trait.end() && e != menu.element.end(); ++i, ++e)
+	for (auto i = obj._trait.begin(); i != obj._trait.end() && e != menu.element.end(); ++i, ++e)
 		e->cache(*i);
 
 	for (; e != menu.element.end(); ++e)
