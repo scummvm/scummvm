@@ -34,29 +34,7 @@
 
 namespace Graphics {
 
-static const int kBModShift = 8;//img->format.bShift;
-static const int kGModShift = 16;//img->format.gShift;
-static const int kRModShift = 24;//img->format.rShift;
-static const int kAModShift = 0;//img->format.aShift;
-
-static const uint32 kBModMask = 0x0000ff00;
-static const uint32 kGModMask = 0x00ff0000;
-static const uint32 kRModMask = 0xff000000;
-static const uint32 kAModMask = 0x000000ff;
-static const uint32 kRGBModMask = (kRModMask | kGModMask | kBModMask);
-
-#ifdef SCUMM_LITTLE_ENDIAN
-static const int kAIndex = 0;
-static const int kBIndex = 1;
-static const int kGIndex = 2;
-static const int kRIndex = 3;
-
-#else
-static const int kAIndex = 3;
-static const int kBIndex = 2;
-static const int kGIndex = 1;
-static const int kRIndex = 0;
-#endif
+static const int kAModShift = 0;
 
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
@@ -72,318 +50,6 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 		// always needs to be writable. 'surf' however is a constant Surface,
 		// thus getPixels will always return const pixel data.
 		pixels = const_cast<void *>(surf.getPixels());
-	}
-}
-
-/**
- * Optimized version of doBlit to be used w/opaque blitting (no alpha).
- */
-static void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
-
-	byte *in;
-	byte *out;
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		memcpy(out, in, width * 4);
-		for (uint32 j = 0; j < width; j++) {
-			out[kAIndex] = 0xFF;
-			out += 4;
-		}
-		outo += pitch;
-		ino += inoStep;
-	}
-}
-
-/**
- * Optimized version of doBlit to be used w/binary blitting (blit or no-blit, no blending).
- */
-static void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
-
-	byte *in;
-	byte *out;
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
-			uint32 pix = *(uint32 *)in;
-			int a = in[kAIndex];
-
-			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
-				*(uint32 *)out = pix;
-				out[kAIndex] = 0xFF;
-			}
-			out += 4;
-			in += inStep;
-		}
-		outo += pitch;
-		ino += inoStep;
-	}
-}
-
-/**
- * Optimized version of doBlit to be used with alpha blended blitting
- * @param ino a pointer to the input surface
- * @param outo a pointer to the output surface
- * @param width width of the input surface
- * @param height height of the input surface
- * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
- * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
- * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
- * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
- */
-template<bool rgbmod, bool alphamod>
-static void doBlitAlphaBlendImpl(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	byte *in;
-	byte *out;
-
-	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
-
-			uint32 ina = in[kAIndex] * ca >> 8;
-
-			if (ina != 0) {
-				uint outb = (out[kBIndex] * (255 - ina) >> 8);
-				uint outg = (out[kGIndex] * (255 - ina) >> 8);
-				uint outr = (out[kRIndex] * (255 - ina) >> 8);
-
-				out[kAIndex] = 255;
-				out[kBIndex] = outb + (in[kBIndex] * ina * cb >> 16);
-				out[kGIndex] = outg + (in[kGIndex] * ina * cg >> 16);
-				out[kRIndex] = outr + (in[kRIndex] * ina * cr >> 16);
-			}
-
-			in += inStep;
-			out += 4;
-		}
-		outo += pitch;
-		ino += inoStep;
-	}
-}
-
-static void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	bool rgbmod   = ((color & kRGBModMask) != kRGBModMask);
-	bool alphamod = ((color & kAModMask)   != kAModMask);
-
-	if (rgbmod) {
-		if (alphamod) {
-			doBlitAlphaBlendImpl<true, true>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		} else {
-			doBlitAlphaBlendImpl<true, false>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		}
-	} else {
-		if (alphamod) {
-			doBlitAlphaBlendImpl<false, true>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		} else {
-			doBlitAlphaBlendImpl<false, false>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		}
-	}
-}
-
-/**
- * Optimized version of doBlit to be used with additive blended blitting
- */
-template<bool rgbmod, bool alphamod>
-static void doBlitAdditiveBlendImpl(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	byte *in;
-	byte *out;
-
-	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
-
-			uint32 ina = in[kAIndex] * ca >> 8;
-
-			if (ina != 0) {
-				if (cb != 255) {
-					out[kBIndex] = MIN<uint>(out[kBIndex] + ((in[kBIndex] * cb * ina) >> 16), 255u);
-				} else {
-					out[kBIndex] = MIN<uint>(out[kBIndex] + (in[kBIndex] * ina >> 8), 255u);
-				}
-
-				if (cg != 255) {
-					out[kGIndex] = MIN<uint>(out[kGIndex] + ((in[kGIndex] * cg * ina) >> 16), 255u);
-				} else {
-					out[kGIndex] = MIN<uint>(out[kGIndex] + (in[kGIndex] * ina >> 8), 255u);
-				}
-
-				if (cr != 255) {
-					out[kRIndex] = MIN<uint>(out[kRIndex] + ((in[kRIndex] * cr * ina) >> 16), 255u);
-				} else {
-					out[kRIndex] = MIN<uint>(out[kRIndex] + (in[kRIndex] * ina >> 8), 255u);
-				}
-			}
-
-			in += inStep;
-			out += 4;
-		}
-
-		outo += pitch;
-		ino += inoStep;
-	}
-}
-
-static void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	bool rgbmod   = ((color & kRGBModMask) != kRGBModMask);
-	bool alphamod = ((color & kAModMask)   != kAModMask);
-
-	if (rgbmod) {
-		if (alphamod) {
-			doBlitAdditiveBlendImpl<true, true>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		} else {
-			doBlitAdditiveBlendImpl<true, false>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		}
-	} else {
-		if (alphamod) {
-			doBlitAdditiveBlendImpl<false, true>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		} else {
-			doBlitAdditiveBlendImpl<false, false>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		}
-	}
-}
-
-/**
- * Optimized version of doBlit to be used with subtractive blended blitting
- */
-template<bool rgbmod>
-static void doBlitSubtractiveBlendImpl(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	byte *in;
-	byte *out;
-
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
-
-			out[kAIndex] = 255;
-			if (cb != 255) {
-				out[kBIndex] = MAX(out[kBIndex] - ((in[kBIndex] * cb  * (out[kBIndex]) * in[kAIndex]) >> 24), 0);
-			} else {
-				out[kBIndex] = MAX(out[kBIndex] - (in[kBIndex] * (out[kBIndex]) * in[kAIndex] >> 16), 0);
-			}
-
-			if (cg != 255) {
-				out[kGIndex] = MAX(out[kGIndex] - ((in[kGIndex] * cg  * (out[kGIndex]) * in[kAIndex]) >> 24), 0);
-			} else {
-				out[kGIndex] = MAX(out[kGIndex] - (in[kGIndex] * (out[kGIndex]) * in[kAIndex] >> 16), 0);
-			}
-
-			if (cr != 255) {
-				out[kRIndex] = MAX(out[kRIndex] - ((in[kRIndex] * cr * (out[kRIndex]) * in[kAIndex]) >> 24), 0);
-			} else {
-				out[kRIndex] = MAX(out[kRIndex] - (in[kRIndex] * (out[kRIndex]) * in[kAIndex] >> 16), 0);
-			}
-
-			in += inStep;
-			out += 4;
-		}
-		outo += pitch;
-		ino += inoStep;
-	}
-}
-
-static void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	bool rgbmod   = ((color & kRGBModMask) != kRGBModMask);
-
-	if (rgbmod) {
-		doBlitSubtractiveBlendImpl<true>(ino, outo, width, height, pitch, inStep, inoStep, color);
-	} else {
-		doBlitSubtractiveBlendImpl<false>(ino, outo, width, height, pitch, inStep, inoStep, color);
-	}
-}
-
-/**
- * Optimized version of doBlit to be used with multiply blended blitting
- */
-template<bool rgbmod, bool alphamod>
-static void doBlitMultiplyBlendImpl(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	byte *in;
-	byte *out;
-
-	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
-
-			uint32 ina = in[kAIndex] * ca >> 8;
-
-			if (ina != 0) {
-				if (cb != 255) {
-					out[kBIndex] = MIN<uint>(out[kBIndex] * ((in[kBIndex] * cb * ina) >> 16) >> 8, 255u);
-				} else {
-					out[kBIndex] = MIN<uint>(out[kBIndex] * (in[kBIndex] * ina >> 8) >> 8, 255u);
-				}
-
-				if (cg != 255) {
-					out[kGIndex] = MIN<uint>(out[kGIndex] * ((in[kGIndex] * cg * ina) >> 16) >> 8, 255u);
-				} else {
-					out[kGIndex] = MIN<uint>(out[kGIndex] * (in[kGIndex] * ina >> 8) >> 8, 255u);
-				}
-
-				if (cr != 255) {
-					out[kRIndex] = MIN<uint>(out[kRIndex] * ((in[kRIndex] * cr * ina) >> 16) >> 8, 255u);
-				} else {
-					out[kRIndex] = MIN<uint>(out[kRIndex] * (in[kRIndex] * ina >> 8) >> 8, 255u);
-				}
-			}
-
-			in += inStep;
-			out += 4;
-		}
-		outo += pitch;
-		ino += inoStep;
-	}
-
-}
-
-static void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
-	bool rgbmod   = ((color & kRGBModMask) != kRGBModMask);
-	bool alphamod = ((color & kAModMask)   != kAModMask);
-
-	if (rgbmod) {
-		if (alphamod) {
-			doBlitMultiplyBlendImpl<true, true>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		} else {
-			doBlitMultiplyBlendImpl<true, false>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		}
-	} else {
-		if (alphamod) {
-			doBlitMultiplyBlendImpl<false, true>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		} else {
-			doBlitMultiplyBlendImpl<false, false>(ino, outo, width, height, pitch, inStep, inoStep, color);
-		}
 	}
 }
 
@@ -487,37 +153,44 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
-		int xp = 0, yp = 0;
-
-		int inStep = 4;
-		int inoStep = img->pitch;
-		if (flipping & FLIP_H) {
-			inStep = -inStep;
-			xp = img->w - 1;
-		}
-
-		if (flipping & FLIP_V) {
-			inoStep = -inoStep;
-			yp = img->h - 1;
-		}
-
-		byte *ino = (byte *)img->getBasePtr(xp, yp);
-		byte *outo = (byte *)target.getBasePtr(posX, posY);
-
 		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
-			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			Graphics::opaqueBlendBlit(
+				(byte *)target.getBasePtr(0, 0),
+				(byte *)img->getBasePtr(0, 0),
+				target.pitch, img->pitch,
+				posX, posY, img->w, img->h, color, flipping);
 		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
-			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			Graphics::binaryBlendBlit(
+				(byte *)target.getBasePtr(0, 0),
+				(byte *)img->getBasePtr(0, 0),
+				target.pitch, img->pitch,
+				posX, posY, img->w, img->h, color, flipping);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
-				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::additiveBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::subtractiveBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			} else if (blendMode == BLEND_MULTIPLY) {
-				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::multiplyBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
-				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::alphaBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			}
 		}
 
@@ -634,37 +307,44 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 
 	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
-		int xp = 0, yp = 0;
-
-		int inStep = 4;
-		int inoStep = img->pitch;
-		if (flipping & FLIP_H) {
-			inStep = -inStep;
-			xp = img->w - 1;
-		}
-
-		if (flipping & FLIP_V) {
-			inoStep = -inoStep;
-			yp = img->h - 1;
-		}
-
-		byte *ino = (byte *)img->getBasePtr(xp, yp);
-		byte *outo = (byte *)target.getBasePtr(posX, posY);
-
 		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
-			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			Graphics::opaqueBlendBlit(
+				(byte *)target.getBasePtr(0, 0),
+				(byte *)img->getBasePtr(0, 0),
+				target.pitch, img->pitch,
+				posX, posY, img->w, img->h, color, flipping);
 		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
-			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+			Graphics::binaryBlendBlit(
+				(byte *)target.getBasePtr(0, 0),
+				(byte *)img->getBasePtr(0, 0),
+				target.pitch, img->pitch,
+				posX, posY, img->w, img->h, color, flipping);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
-				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::additiveBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::subtractiveBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			} else if (blendMode == BLEND_MULTIPLY) {
-				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::multiplyBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
-				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				Graphics::alphaBlendBlit(
+					(byte *)target.getBasePtr(0, 0),
+					(byte *)img->getBasePtr(0, 0),
+					target.pitch, img->pitch,
+					posX, posY, img->w, img->h, color, flipping);
 			}
 		}
 
