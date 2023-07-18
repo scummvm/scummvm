@@ -41,26 +41,26 @@ namespace pyrodactyl {
 namespace ui {
 class TextData : public Element {
 public:
-	int col;
-	FontKey font;
-	Align align;
-	bool background;
+	int _col;
+	FontKey _font;
+	Align _align;
+	bool _background;
 
 	TextData(void) {
-		col = 0;
-		font = 0;
-		align = ALIGN_LEFT;
-		background = false;
+		_col = 0;
+		_font = 0;
+		_align = ALIGN_LEFT;
+		_background = false;
 	}
 	~TextData(void) {}
 
 	bool load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
 
 	// Plain drawing
-	void draw(const Common::String &val, const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const Common::String &val, const int &xOffset = 0, const int &yOffset = 0);
 
 	// Draw with a different color
-	void DrawColor(const Common::String &val, const int &color, const int &XOffset = 0, const int &YOffset = 0);
+	void drawColor(const Common::String &val, const int &color, const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

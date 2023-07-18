@@ -43,46 +43,46 @@ using namespace pyrodactyl::input;
 
 void TextArea::load(rapidxml::xml_node<char> *node) {
 	if (TextData::load(node)) {
-		loadStr(text, "text", node);
-		loadNum(size, "size", node);
+		loadStr(_text, "text", node);
+		loadNum(_size, "size", node);
 
-		loadNum(se_entry, "entry", node);
-		loadNum(se_erase, "erase", node);
-		loadNum(se_accept, "accept", node);
+		loadNum(_seEntry, "entry", node);
+		loadNum(_seErase, "erase", node);
+		loadNum(_seAccept, "accept", node);
 
 		if (nodeValid("caption", node))
-			title.load(node->first_node("caption"), this);
+			_title.load(node->first_node("caption"), this);
 	}
 }
 
-bool TextArea::handleEvents(const Common::Event &Event, bool numbers_only) {
+bool TextArea::handleEvents(const Common::Event &event, bool numbersOnly) {
 	warning("STUB: TextArea::handleEvents()");
-	if (Event.type == Common::EVENT_KEYDOWN && Event.kbd.ascii == Common::ASCII_BACKSPACE && text.size() != 0) {
+	if (event.type == Common::EVENT_KEYDOWN && event.kbd.ascii == Common::ASCII_BACKSPACE && _text.size() != 0) {
 		// Now play the text erase sound
-		g_engine->_musicManager->PlayEffect(se_erase, 0);
+		g_engine->_musicManager->PlayEffect(_seErase, 0);
 
 		// If backspace was pressed and the string isn't blank, remove a character from the end
-		text.erase(text.size() - 1);
-	} else if (Event.type == Common::EVENT_KEYDOWN) {
+		_text.erase(_text.size() - 1);
+	} else if (event.type == Common::EVENT_KEYDOWN) {
 		// If the string less than maximum size and does not contain invalid characters \ / : * ? " < > |
-		if (text.size() < size && Event.kbd.ascii != '\\' \
-			&& Event.kbd.ascii != '/' && Event.kbd.ascii != ':' \
-			&& Event.kbd.ascii != '*' && Event.kbd.ascii != '?' \
-			&& Event.kbd.ascii != '\"' && Event.kbd.ascii != '<' \
-			&& Event.kbd.ascii != '>' && Event.kbd.ascii != '|') {
+		if (_text.size() < _size && event.kbd.ascii != '\\' \
+			&& event.kbd.ascii != '/' && event.kbd.ascii != ':' \
+			&& event.kbd.ascii != '*' && event.kbd.ascii != '?' \
+			&& event.kbd.ascii != '\"' && event.kbd.ascii != '<' \
+			&& event.kbd.ascii != '>' && event.kbd.ascii != '|') {
 			// Should we only accept numbers?
-			if (numbers_only && (Event.kbd.ascii < '0' || Event.kbd.ascii > '9'))
+			if (numbersOnly && (event.kbd.ascii < '0' || event.kbd.ascii > '9'))
 				return false;
 
 			// Now play the text input sound
-			g_engine->_musicManager->PlayEffect(se_entry, 0);
+			g_engine->_musicManager->PlayEffect(_seEntry, 0);
 
 			// Append the character to string
-			text += Event.kbd.ascii;
+			_text += event.kbd.ascii;
 		}
-	} else if (g_engine->_inputManager->state(IU_ACCEPT) && text.size() != 0) {
+	} else if (g_engine->_inputManager->state(IU_ACCEPT) && _text.size() != 0) {
 		// Now play the accept sound
-		g_engine->_musicManager->PlayEffect(se_accept, 0);
+		g_engine->_musicManager->PlayEffect(_seAccept, 0);
 
 		return true;
 	}
@@ -128,8 +128,8 @@ bool TextArea::handleEvents(const SDL_Event &Event, bool numbers_only) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void TextArea::draw() {
-	title.draw();
-	TextData::draw(text + "_");
+	_title.draw();
+	TextData::draw(_text + "_");
 }
 
 } // End of namespace Crab

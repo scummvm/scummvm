@@ -157,16 +157,16 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 			break;
 		case EVENT_SPLASH:
-			if (_intro.show_traits) {
+			if (_intro._showTraits) {
 				_per.handleEvents(info, _curEvent->_title, Event);
 
 				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
-					_intro.show_traits = false;
+					_intro._showTraits = false;
 			} else {
 				if (_intro.handleEvents(Event))
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 
-				if (_intro.show_traits)
+				if (_intro._showTraits)
 					_per.Cache(info, level.PlayerID(), level);
 			}
 			break;
@@ -345,7 +345,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 			break;
 		case EVENT_SPLASH:
 			g_engine->_imageManager->dimScreen();
-			if (_intro.show_traits) {
+			if (_intro._showTraits) {
 				_per.draw(info, _curEvent->_title);
 				hud.back.draw();
 			} else

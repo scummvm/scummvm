@@ -79,9 +79,9 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 			index = menu.Index() + choice;
 
 			if (index != 0)
-				ta_name.text = slot_info[index].name;
+				ta_name._text = slot_info[index].name;
 			else
-				ta_name.text = "";
+				ta_name._text = "";
 
 			state = STATE_NAME;
 		}
@@ -94,7 +94,7 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 			if (index <= (int)slot_info.size() && index != 0)
 				g_engine->getSaveFileManager()->removeSavefile(slot_info[index].path);
 
-			selected = ta_name.text;
+			selected = ta_name._text;
 			state = STATE_NORMAL;
 			reset();
 			g_engine->_inputManager->setKeyBindingMode(KBM_GAME);
@@ -102,7 +102,7 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 		}
 
 		if (g_engine->_inputManager->state(IU_BACK)) {
-			ta_name.text = "New Save";
+			ta_name._text = "New Save";
 			state = STATE_NORMAL;
 		}
 	default:

@@ -96,8 +96,8 @@ template<typename T>
 void GetPoint(T &v, Common::String &coords) {
 	int comma = coords.findFirstOf(',');
 
-	v.x = StringToNumber<int>(coords.substr(0, comma));
-	v.y = StringToNumber<int>(coords.substr(comma + 1));
+	v._x = StringToNumber<int>(coords.substr(0, comma));
+	v._y = StringToNumber<int>(coords.substr(comma + 1));
 }
 
 } // End of namespace Crab

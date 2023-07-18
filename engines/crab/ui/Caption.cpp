@@ -36,26 +36,26 @@ namespace Crab {
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
-void Caption::Init(const Caption &c, const int &XOffset, const int &YOffset) {
+void Caption::init(const Caption &c, const int &xOffset, const int &yOffset) {
 	*this = c;
-	x += XOffset;
-	y += YOffset;
+	x += xOffset;
+	y += yOffset;
 }
 
 void Caption::load(rapidxml::xml_node<char> *node, Rect *parent) {
 	if (TextData::load(node, parent, false)) {
-		loadStr(text, "text", node);
-		loadNum(col_s, "color_s", node, false);
-		enabled = true;
+		loadStr(_text, "text", node);
+		loadNum(_colS, "color_s", node, false);
+		_enabled = true;
 	}
 }
 
-void Caption::draw(bool selected, const int &XOffset, const int &YOffset) {
-	if (enabled) {
+void Caption::draw(bool selected, const int &xOffset, const int &yOffset) {
+	if (_enabled) {
 		if (selected)
-			TextData::DrawColor(text, col_s, XOffset, YOffset);
+			TextData::drawColor(_text, _colS, xOffset, yOffset);
 		else
-			TextData::draw(text, XOffset, YOffset);
+			TextData::draw(_text, xOffset, yOffset);
 	}
 }
 

@@ -42,29 +42,30 @@ namespace pyrodactyl {
 namespace ui {
 class SectionHeader : public TextData {
 	// The content of the header
-	Common::String text;
+	Common::String _text;
 
 	// This image surrounds the text like <img> text <img>, with the right image being flipped horizontally
-	ImageKey img;
+	ImageKey _img;
 
 	// The coordinates for drawing image
-	Vector2i left, right;
+	Vector2i _left, _right;
 
 	// Should we draw one or both or none of the images
-	bool draw_l, draw_r;
+	bool _drawL, _drawR;
 
 public:
 	SectionHeader() {
-		img = 0;
-		draw_l = false;
-		draw_r = false;
+		_img = 0;
+		_drawL = false;
+		_drawR = false;
 	}
+
 	~SectionHeader() {}
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void draw(const int &XOffset = 0, const int &YOffset = 0);
-	void draw(const Common::String &str, const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &xOffset = 0, const int &yOffset = 0);
+	void draw(const Common::String &str, const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

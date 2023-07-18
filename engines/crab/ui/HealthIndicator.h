@@ -40,24 +40,25 @@ namespace pyrodactyl {
 namespace ui {
 class HealthIndicator {
 	struct HealthImage {
-		ImageKey normal, glow;
-		int val;
+		ImageKey _normal, _glow;
+		int _val;
 	};
 
-	int x, y;
-	Common::Array<HealthImage> img;
+	int _x, _y;
+	Common::Array<HealthImage> _img;
 
 	// Related to the pulse effect
-	uint8 alpha;
-	bool inc;
+	uint8 _alpha;
+	bool _inc;
 
 public:
 	HealthIndicator() {
-		x = 0;
-		y = 0;
-		alpha = 0;
-		inc = true;
+		_x = 0;
+		_y = 0;
+		_alpha = 0;
+		_inc = true;
 	}
+
 	~HealthIndicator() {}
 
 	void load(rapidxml::xml_node<char> *node);

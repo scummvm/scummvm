@@ -39,22 +39,22 @@ using namespace pyrodactyl::text;
 bool TextData::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
 	if (nodeValid(node, echo)) {
 		Element::load(node, parent, echo);
-		LoadFontKey(font, "font", node);
-		loadNum(col, "color", node);
-		loadAlign(align, node, false);
-		loadBool(background, "background", node, false);
+		LoadFontKey(_font, "font", node);
+		loadNum(_col, "color", node);
+		loadAlign(_align, node, false);
+		loadBool(_background, "background", node, false);
 		return true;
 	}
 
 	return false;
 }
 
-void TextData::draw(const Common::String &val, const int &XOffset, const int &YOffset) {
-	g_engine->_textManager->draw(x + XOffset, y + YOffset, val, col, font, align, background);
+void TextData::draw(const Common::String &val, const int &xOffset, const int &yOffset) {
+	g_engine->_textManager->draw(x + xOffset, y + yOffset, val, _col, _font, _align, _background);
 }
 
-void TextData::DrawColor(const Common::String &val, const int &color, const int &XOffset, const int &YOffset) {
-	g_engine->_textManager->draw(x + XOffset, y + YOffset, val, color, font, align, background);
+void TextData::drawColor(const Common::String &val, const int &color, const int &xOffset, const int &yOffset) {
+	g_engine->_textManager->draw(x + xOffset, y + yOffset, val, color, _font, _align, _background);
 }
 
 } // End of namespace Crab

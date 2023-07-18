@@ -40,56 +40,61 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace item {
-enum SlotType { SLOT_EQUIP,
-				SLOT_STORAGE };
+enum SlotType {
+	SLOT_EQUIP,
+	SLOT_STORAGE
+};
 
 class ItemSlot : public pyrodactyl::ui::StateButton {
 	// Ignore the type of item check
-	bool no_type;
+	bool _noType;
 
 public:
 	// The type of item allowed in this slot (can be overridden by item_type)
-	Common::String item_type;
+	Common::String _itemType;
 
 	// Is the slot empty?
-	bool empty;
+	bool _empty;
 
 	// Is the slot enabled? (used for stat calculation)
-	bool enabled;
+	bool _enabled;
 
 	// Is this a new item? Draw the unread notification icon if so
-	bool unread;
+	bool _unread;
 
 	// The type of the item slot
-	SlotType category;
+	SlotType _category;
 
 	// The item contained in the slot
-	Item item;
+	Item _item;
 
 	ItemSlot() {
-		empty = true;
-		enabled = true;
-		category = SLOT_STORAGE;
-		no_type = false;
-		unread = false;
+		_empty = true;
+		_enabled = true;
+		_category = SLOT_STORAGE;
+		_noType = false;
+		_unread = false;
 	}
 	~ItemSlot() {}
 
-	void Init(const ItemSlot &ref, const int &XOffset = 0, const int &YOffset = 0);
+	void init(const ItemSlot &ref, const int &xOffset = 0, const int &yOffset = 0);
 	void load(rapidxml::xml_node<char> *node);
 
 	void draw();
 
-	pyrodactyl::ui::ButtonAction handleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0);
+	pyrodactyl::ui::ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 #if 0
 	pyrodactyl::ui::ButtonAction handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #endif
 
-	bool CanSwap(ItemSlot &target) { return target.no_type || item._type == target.item_type; }
-	bool Swap(ItemSlot &target);
-	bool Equip(Item &i);
+	bool canSwap(ItemSlot &target) {
+		return target._noType || _item._type == target._itemType;
+	}
 
-	void StatChange(pyrodactyl::people::Person &obj, bool increase);
+	bool swap(ItemSlot &target);
+	bool equip(Item &i);
+
+	void statChange(pyrodactyl::people::Person &obj, bool increase);
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);

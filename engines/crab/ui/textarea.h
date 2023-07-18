@@ -47,28 +47,28 @@ namespace pyrodactyl {
 namespace ui {
 class TextArea : public TextData {
 	// The maximum number of characters allowed
-	unsigned int size;
+	unsigned int _size;
 
 	// The name of the text area is stored here
-	HoverInfo title;
+	HoverInfo _title;
 
 	// Sound effects
-	pyrodactyl::music::ChunkKey se_entry, se_erase, se_accept;
+	pyrodactyl::music::ChunkKey _seEntry, _seErase, _seAccept;
 
 public:
-	Common::String text;
+	Common::String _text;
 
-	TextArea(void) : text("") {
-		size = 20;
-		se_entry = -1;
-		se_erase = -1;
-		se_accept = -1;
+	TextArea(void) : _text("") {
+		_size = 20;
+		_seEntry = -1;
+		_seErase = -1;
+		_seAccept = -1;
 	}
 	~TextArea(void) {}
 
 	void load(rapidxml::xml_node<char> *node);
 
-	bool handleEvents(const Common::Event &Event, bool numbers_only = false);
+	bool handleEvents(const Common::Event &event, bool numbersOnly = false);
 #if 0
 	bool handleEvents(const SDL_Event &Event, bool numbers_only = false);
 #endif
@@ -76,7 +76,7 @@ public:
 	void draw();
 
 	void setUI() {
-		title.setUI();
+		_title.setUI();
 		TextData::setUI();
 	}
 };

@@ -43,7 +43,7 @@ bool ParagraphData::load(rapidxml::xml_node<char> *node, Rect *parent, const boo
 }
 
 void ParagraphData::draw(const Common::String &val, const int &XOffset, const int &YOffset) {
-	g_engine->_textManager->draw(x + XOffset, y + YOffset, val, col, font, align, line.x, line.y);
+	g_engine->_textManager->draw(x + XOffset, y + YOffset, val, _col, _font, _align, line.x, line.y);
 }
 
 } // End of namespace Crab

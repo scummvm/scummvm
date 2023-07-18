@@ -42,29 +42,31 @@ namespace pyrodactyl {
 namespace ui {
 class ChapterIntro {
 	// This contains the background image info and start button
-	GameDialogBox dialog;
+	GameDialogBox _dialog;
 
 	// This is where the sprite is drawn
-	Element pos;
+	Element _pos;
 
 	// The traits button
-	Button traits;
+	Button _traits;
 
 public:
 	// Should we show the traits screen
-	bool show_traits;
+	bool _showTraits;
 
-	ChapterIntro() { show_traits = false; }
+	ChapterIntro() {
+		_showTraits = false;
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 
-	bool handleEvents(Common::Event &Event);
+	bool handleEvents(Common::Event &event);
 #if 0
 	bool handleEvents(SDL_Event &Event);
 #endif
 
 	void draw(pyrodactyl::event::Info &info, Common::String &text,
-			  pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state);
+			  pyrodactyl::anim::Sprite *curSp, const pyrodactyl::people::PersonState &state);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

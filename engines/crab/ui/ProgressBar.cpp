@@ -61,7 +61,7 @@ void ProgressBar::draw(const int &value, const int &max) {
 	// Figure out which text to draw as caption
 	for (auto &i : ct)
 		if (value > i.val) {
-			_caption.text = i.text;
+			_caption._text = i.text;
 			break;
 		}
 

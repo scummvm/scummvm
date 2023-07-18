@@ -44,7 +44,7 @@ void ItemMenu::Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int
 	unsigned int size = rows * cols;
 	for (unsigned int i = 0; i < size; ++i) {
 		ItemSlot b;
-		b.Init(ref, inc.x * (i % cols), inc.y * (i / cols));
+		b.init(ref, inc.x * (i % cols), inc.y * (i / cols));
 		element.push_back(b);
 	}
 
@@ -100,7 +100,7 @@ void ItemMenu::handleEvents(const SDL_Event &Event, const int &XOffset, const in
 //------------------------------------------------------------------------
 void ItemMenu::draw(ItemDesc &item_info) {
 	if (select_index != -1)
-		item_info.draw(element[select_index].item);
+		item_info.draw(element[select_index]._item);
 
 	for (auto i = element.begin(); i != element.end(); ++i)
 		i->draw();
@@ -111,7 +111,7 @@ void ItemMenu::draw(ItemDesc &item_info) {
 //------------------------------------------------------------------------
 bool ItemMenu::Equip(Item &item) {
 	for (auto i = element.begin(); i != element.end(); ++i)
-		if (i->category == SLOT_STORAGE && i->Equip(item))
+		if (i->_category == SLOT_STORAGE && i->equip(item))
 			return true;
 
 	return false;
@@ -124,10 +124,10 @@ bool ItemMenu::Del(const Common::String &id) {
 	bool result = false;
 
 	for (auto &i : element)
-		if (i.item._id == id) {
-			i.empty = true;
-			i.item.clear();
-			i.unread = false;
+		if (i._item._id == id) {
+			i._empty = true;
+			i._item.clear();
+			i._unread = false;
 			result = true;
 			break;
 		}
@@ -140,12 +140,12 @@ bool ItemMenu::Del(const Common::String &id) {
 //------------------------------------------------------------------------
 bool ItemMenu::Has(const Common::String &container, const Common::String &id) {
 	for (auto i = element.begin(); i != element.end(); ++i)
-		if (i->item._id == id) {
+		if (i->_item._id == id) {
 			if (container == "equip") {
-				if (i->category == SLOT_EQUIP)
+				if (i->_category == SLOT_EQUIP)
 					return true;
 			} else if (container == "storage") {
-				if (i->category == SLOT_STORAGE)
+				if (i->_category == SLOT_STORAGE)
 					return true;
 			} else
 				return true;
@@ -164,16 +164,16 @@ bool ItemMenu::Swap(ItemMenu &target, int index) {
 	int found_index = -1, cur_index = 0;
 
 	for (auto i = element.begin(); i != element.end(); ++i, ++cur_index)
-		if (i->item_type == target.element[index].item_type) {
-			if (i->empty) {
-				i->Swap(target.element[index]);
+		if (i->_itemType == target.element[index]._itemType) {
+			if (i->_empty) {
+				i->swap(target.element[index]);
 				return true;
 			} else
 				found_index = cur_index;
 		}
 
 	if (found_index != -1) {
-		element[found_index].Swap(target.element[index]);
+		element[found_index].swap(target.element[index]);
 		return true;
 	}
 
