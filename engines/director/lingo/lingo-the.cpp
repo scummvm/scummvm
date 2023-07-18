@@ -2021,6 +2021,14 @@ Datum Lingo::getTheDate(int field) {
 	TimeDate t;
 	g_system->getTimeAndDate(t);
 
+	if (g_director->_forceDate.tm_year != -1) {
+		// Override date portion
+		t.tm_year = g_director->_forceDate.tm_year;
+		t.tm_mon = g_director->_forceDate.tm_mon;
+		t.tm_wday = g_director->_forceDate.tm_wday;
+		t.tm_mday = g_director->_forceDate.tm_mday;
+	}
+
 	Common::String s;
 
 	Datum d;
