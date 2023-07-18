@@ -411,6 +411,9 @@ CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* 
 	CastMember *result = nullptr;
 
 	if (_casts.contains(memberID.castLib)) {
+		// Delete existing cast member
+		_casts.getVal(memberID.castLib)->eraseCastMember(memberID);
+
 		_casts.getVal(memberID.castLib)->setCastMember(memberID, cast);
 	}
 
