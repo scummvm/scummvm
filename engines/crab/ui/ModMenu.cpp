@@ -40,29 +40,29 @@ void ModMenu::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("mod_menu");
 
 		if (nodeValid("bg", node))
-			bg.load(node->first_node("bg"));
+			_bg.load(node->first_node("bg"));
 
 		if (nodeValid("menu", node))
-			menu.load(node->first_node("menu"));
+			_menu.load(node->first_node("menu"));
 
 		if (nodeValid("preview", node)) {
 			auto prnode = node->first_node("preview");
-			img.pos.load(prnode);
-			loadStr(img.no_preview_path, "path", prnode);
+			_img._pos.load(prnode);
+			loadStr(_img._noPreviewPath, "path", prnode);
 		}
 
 		if (nodeValid("offset", node)) {
 			rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
 			// Stuff displayed on the slot button
-			td_b[DATA_SAVENAME].load(offnode->first_node("mod_name"));
-			td_b[DATA_LASTMODIFIED].load(offnode->first_node("last_modified"));
+			tdB[DATA_SAVENAME].load(offnode->first_node("mod_name"));
+			tdB[DATA_LASTMODIFIED].load(offnode->first_node("last_modified"));
 
 			// Stuff displayed when you hover over a slot button
-			td_h[DATA_AUTHOR].load(offnode->first_node("author"));
-			td_h[DATA_VERSION].load(offnode->first_node("version"));
-			td_h[DATA_INFO].load(offnode->first_node("info"));
-			td_h[DATA_WEBSITE].load(offnode->first_node("website"));
+			tdH[DATA_AUTHOR].load(offnode->first_node("author"));
+			tdH[DATA_VERSION].load(offnode->first_node("version"));
+			tdH[DATA_INFO].load(offnode->first_node("info"));
+			tdH[DATA_WEBSITE].load(offnode->first_node("website"));
 
 			// Titles for the stuff displayed when you hover over a slot button
 			hov[DATA_AUTHOR].load(offnode->first_node("author_title"));
@@ -71,16 +71,16 @@ void ModMenu::load(const Common::String &filename) {
 			hov[DATA_WEBSITE].load(offnode->first_node("website_title"));
 		}
 
-		extension = g_engine->_filePath->mod_ext;
-		directory = g_engine->_filePath->mod_path;
-		ScanDir();
+		_extension = g_engine->_filePath->mod_ext;
+		_directory = g_engine->_filePath->mod_path;
+		scanDir();
 	}
 }
 
 bool ModMenu::handleEvents(const Common::Event &Event) {
-	int choice = menu.handleEvents(Event);
+	int choice = _menu.handleEvents(Event);
 	if (choice >= 0) {
-		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path;
+		g_engine->_filePath->mod_cur = _slotInfo[_menu.Index() + choice]._path;
 		return true;
 	}
 
@@ -100,35 +100,35 @@ bool ModMenu::handleEvents(const SDL_Event &Event) {
 #endif
 
 void ModMenu::draw() {
-	bg.draw();
-	menu.draw();
-	for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < slot_info.size(); i++, count++) {
-		auto base_x = menu.BaseX(count), base_y = menu.BaseY(count);
-		td_b[DATA_SAVENAME].draw(slot_info[i].name, base_x, base_y);
-		td_b[DATA_LASTMODIFIED].draw(slot_info[i].last_modified, base_x, base_y);
+	_bg.draw();
+	_menu.draw();
+	for (auto i = _menu.Index(), count = 0u; i < _menu.IndexPlusOne() && i < _slotInfo.size(); i++, count++) {
+		auto base_x = _menu.BaseX(count), base_y = _menu.BaseY(count);
+		tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);
+		tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 	}
 
-	if (menu.HoverIndex() >= 0) {
-		int i = menu.HoverIndex();
+	if (_menu.HoverIndex() >= 0) {
+		int i = _menu.HoverIndex();
 
-		if (!img.loaded || prev_hover != i) {
-			img.loaded = true;
-			prev_hover = i;
-			if (!img.preview.load(slot_info[i].preview))
-				img.preview.load(img.no_preview_path);
+		if (!_img._loaded || _prevHover != i) {
+			_img._loaded = true;
+			_prevHover = i;
+			if (!_img._preview.load(_slotInfo[i]._preview))
+				_img._preview.load(_img._noPreviewPath);
 		}
 
-		hover = true;
-		img.preview.draw(img.pos.x, img.pos.y);
+		_hover = true;
+		_img._preview.draw(_img._pos.x, _img._pos.y);
 
-		td_h[DATA_AUTHOR].draw(slot_info[i].author);
-		td_h[DATA_VERSION].draw(slot_info[i].version);
-		td_h[DATA_INFO].draw(slot_info[i].info);
-		td_h[DATA_WEBSITE].draw(slot_info[i].website);
+		tdH[DATA_AUTHOR].draw(_slotInfo[i]._author);
+		tdH[DATA_VERSION].draw(_slotInfo[i]._version);
+		tdH[DATA_INFO].draw(_slotInfo[i]._info);
+		tdH[DATA_WEBSITE].draw(_slotInfo[i]._website);
 
 		for (int num = 0; num < DATA_HOVER_TOTAL; ++num)
 			hov[num].draw();
-	} else if (hover)
+	} else if (_hover)
 		reset();
 }
 

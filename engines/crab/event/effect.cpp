@@ -149,11 +149,11 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 
 		case EFF_JOURNAL:
 			if (_subject == "finish")
-				info._journal.Move(playerId, _operation, true);
+				info._journal.move(playerId, _operation, true);
 			else if (_subject == "start")
-				info._journal.Move(playerId, _operation, false);
+				info._journal.move(playerId, _operation, false);
 			else
-				info._journal.Add(playerId, _subject, _operation, _val);
+				info._journal.add(playerId, _subject, _operation, _val);
 
 			// Update unread status of journal
 			info._unread._journal = true;
@@ -171,9 +171,9 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 
 		case EFF_ITEM:
 			if (_operation == "del")
-				info._inv.DelItem(_subject, _val);
+				info._inv.delItem(_subject, _val);
 			else
-				info._inv.LoadItem(_subject, _val);
+				info._inv.loadItem(_subject, _val);
 
 			// Update unread status of inventory
 			info._unread._inventory = true;

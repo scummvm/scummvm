@@ -45,7 +45,7 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 		rapidxml::xml_node<char> *musnode = node->first_node("volume");
 
 		if (nodeValid("desc", musnode))
-			notice_volume.load(musnode->first_node("desc"));
+			_noticeVolume.load(musnode->first_node("desc"));
 
 	//	if (nodeValid("music", musnode))
 	//		vol_music.load(musnode->first_node("music"), 0, MIX_MAX_VOLUME, g_engine->_musicManager->VolMusic());
@@ -55,41 +55,41 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 	}
 
 	if (nodeValid("mouse_trap", node))
-		mouse_trap.load(node->first_node("mouse_trap"));
+		_mouseTrap.load(node->first_node("mouse_trap"));
 
 	if (nodeValid("save_on_exit", node))
-		save_on_exit.load(node->first_node("save_on_exit"));
+		_saveOnExit.load(node->first_node("save_on_exit"));
 
 	if (nodeValid("text_speed", node))
-		text_speed.load(node->first_node("text_speed"));
+		_textSpeed.load(node->first_node("text_speed"));
 
 	// Sync popup text value with actual value
-	for (auto &i : text_speed.element)
+	for (auto &i : _textSpeed.element)
 		i._state = (i._val == g_engine->_screenSettings->text_speed);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-void GeneralSettingMenu::handleEvents(const Common::Event &Event) {
-	if (vol_music.handleEvents(Event))
-		g_engine->_musicManager->volMusic(vol_music.Value());
+void GeneralSettingMenu::handleEvents(const Common::Event &event) {
+	if (_volMusic.handleEvents(event))
+		g_engine->_musicManager->volMusic(_volMusic.Value());
 
-	if (vol_effects.handleEvents(Event))
-		g_engine->_musicManager->volEffects(vol_effects.Value());
+	if (_volEffects.handleEvents(event))
+		g_engine->_musicManager->volEffects(_volEffects.Value());
 
 	// No need to change screen here
-	if (save_on_exit.handleEvents(Event))
+	if (_saveOnExit.handleEvents(event))
 		g_engine->_screenSettings->save_on_exit = !g_engine->_screenSettings->save_on_exit;
 
-	if (mouse_trap.handleEvents(Event)) {
+	if (_mouseTrap.handleEvents(event)) {
 		g_engine->_screenSettings->mouse_trap = !g_engine->_screenSettings->mouse_trap;
 		g_engine->_screenSettings->SetMouseTrap();
 	}
 
-	int result = text_speed.handleEvents(Event);
+	int result = _textSpeed.handleEvents(event);
 	if (result >= 0)
-		g_engine->_screenSettings->text_speed = text_speed.element[result]._val;
+		g_engine->_screenSettings->text_speed = _textSpeed.element[result]._val;
 }
 
 #if 0
@@ -122,8 +122,8 @@ void GeneralSettingMenu::handleEvents(const SDL_Event &Event) {
 // Purpose: Sync our buttons with screen settings
 //------------------------------------------------------------------------
 void GeneralSettingMenu::internalEvents() {
-	save_on_exit._state = g_engine->_screenSettings->save_on_exit;
-	mouse_trap._state = g_engine->_screenSettings->mouse_trap;
+	_saveOnExit._state = g_engine->_screenSettings->save_on_exit;
+	_mouseTrap._state = g_engine->_screenSettings->mouse_trap;
 }
 
 //------------------------------------------------------------------------
@@ -131,40 +131,40 @@ void GeneralSettingMenu::internalEvents() {
 //------------------------------------------------------------------------
 void GeneralSettingMenu::draw() {
 	// Draw volume sliders
-	notice_volume.draw();
-	vol_music.draw();
-	vol_effects.draw();
+	_noticeVolume.draw();
+	_volMusic.draw();
+	_volEffects.draw();
 
 	// Draw the auto-save on exit option
-	save_on_exit.draw();
-	mouse_trap.draw();
+	_saveOnExit.draw();
+	_mouseTrap.draw();
 
 	// Text speed radio button menu
-	text_speed.draw();
+	_textSpeed.draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Revert to previously backed up settings
 //------------------------------------------------------------------------
 void GeneralSettingMenu::RestoreBackup() {
-	vol_music.RestoreBackup();
-	g_engine->_musicManager->volMusic(vol_music.Value());
+	_volMusic.RestoreBackup();
+	g_engine->_musicManager->volMusic(_volMusic.Value());
 
-	vol_effects.RestoreBackup();
-	g_engine->_musicManager->volEffects(vol_effects.Value());
+	_volEffects.RestoreBackup();
+	g_engine->_musicManager->volEffects(_volEffects.Value());
 }
 
 //------------------------------------------------------------------------
 // Purpose: Set UI positioned on screen size change
 //------------------------------------------------------------------------
 void GeneralSettingMenu::setUI() {
-	save_on_exit.setUI();
-	mouse_trap.setUI();
+	_saveOnExit.setUI();
+	_mouseTrap.setUI();
 
-	vol_music.setUI();
-	vol_effects.setUI();
+	_volMusic.setUI();
+	_volEffects.setUI();
 
-	text_speed.setUI();
+	_textSpeed.setUI();
 }
 
 } // End of namespace Crab

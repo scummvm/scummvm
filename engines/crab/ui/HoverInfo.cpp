@@ -36,22 +36,22 @@ namespace Crab {
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
-void HoverInfo::Init(const HoverInfo &hInfo, const int &XOffset, const int &YOffset) {
+void HoverInfo::init(const HoverInfo &hInfo, const int &xOffset, const int &yOffset) {
 	*this = hInfo;
-	x += XOffset;
-	y += YOffset;
+	x += xOffset;
+	y += yOffset;
 }
 
 void HoverInfo::load(rapidxml::xml_node<char> *node, Rect *parent) {
 	if (TextData::load(node, parent, false)) {
-		loadStr(text, "text", node);
-		enabled = true;
+		loadStr(_text, "text", node);
+		_enabled = true;
 	}
 }
 
-void HoverInfo::draw(const int &XOffset, const int &YOffset) {
-	if (enabled)
-		TextData::draw(text, XOffset, YOffset);
+void HoverInfo::draw(const int &xOffset, const int &yOffset) {
+	if (_enabled)
+		TextData::draw(_text, xOffset, yOffset);
 }
 
 } // End of namespace Crab

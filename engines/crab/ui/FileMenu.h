@@ -49,85 +49,90 @@ template<typename FileType>
 class FileMenu {
 protected:
 	// The background of the menu
-	ImageData bg;
+	ImageData _bg;
 
 	// The collection of buttons
-	PageButtonMenu menu;
+	PageButtonMenu _menu;
 
 	// The final filename that is selected
-	Common::String selected;
+	Common::String _selected;
 
 	// The extension and directory used by this menu
-	Common::String extension, directory;
+	Common::String _extension, _directory;
 
 	// The save information for each slot
-	Common::Array<FileType> slot_info;
-	TextData td_b[DATA_BUTTON_TOTAL];
+	Common::Array<FileType> _slotInfo;
+	TextData tdB[DATA_BUTTON_TOTAL];
 
 	// The titles for loc_name, difficulty, time_played and player_name
 	HoverInfo hov[DATA_HOVER_TOTAL];
-	TextData td_h[DATA_HOVER_TOTAL];
+	TextData tdH[DATA_HOVER_TOTAL];
 
 	// The preview picture details
 	struct
 	{
 		// We load only the current preview image instead of all of them
-		pyrodactyl::image::Image preview;
+		pyrodactyl::image::Image _preview;
 
 		// Fallback path if there is no preview image or if we fail to load it
-		Common::String no_preview_path;
+		Common::String _noPreviewPath;
 
 		// Position of image
-		Element pos;
+		Element _pos;
 
 		// Is the image loaded
-		bool loaded;
-	} img;
+		bool _loaded;
+	} _img;
 
 	// Are we hovering over a button right now?
-	bool hover;
+	bool _hover;
 
 	// The previously hover button
-	int prev_hover;
+	int _prevHover;
 
 public:
 	FileMenu() {
-		img.loaded = false;
-		hover = false;
-		prev_hover = -1;
+		_img._loaded = false;
+		_hover = false;
+		_prevHover = -1;
 	}
 
 	~FileMenu() {
-		if (img.loaded)
-			img.preview.deleteImage();
+		if (_img._loaded)
+			_img._preview.deleteImage();
 	}
 	void reset() {
-		if (img.loaded)
-			img.preview.deleteImage();
-		img.loaded = false;
-		hover = false;
+		if (_img._loaded)
+			_img._preview.deleteImage();
+		_img._loaded = false;
+		_hover = false;
 	}
 
-	Common::String SelectedPath() { return selected; }
-	void SelectedPath(const Common::String &val) { selected = val; }
+	Common::String selectedPath() {
+		return _selected;
+	}
 
-	void ScanDir() {
-		warning("STUB: FileMenu::ScanDir()");
+	void selectedPath(const Common::String &val) {
+		_selected = val;
+	}
+
+	void scanDir() {
+		warning("STUB: FileMenu::scanDir()");
 
 		Common::String res = "CRAB_*";
 		res += g_engine->_filePath->save_ext;
 		Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
 
-		slot_info.clear();
-		menu.Clear();
+		_slotInfo.clear();
+		_menu.Clear();
 
-		unsigned int count_slot = 0, count_menu = 0;
+		unsigned int countSlot = 0, countMenu = 0;
 		for (const Common::String& save : saves) {
-			slot_info.push_back(FileType(save));
-			menu.Add(count_slot, count_menu);
+			_slotInfo.push_back(FileType(save));
+			_menu.Add(countSlot, countMenu);
 		}
 
-		menu.AssignPaths();
+		_menu.AssignPaths();
 
 #if 0
 		using namespace boost::filesystem;
@@ -159,29 +164,29 @@ public:
 
 	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid("bg", node))
-			bg.load(node->first_node("bg"));
+			_bg.load(node->first_node("bg"));
 
 		if (nodeValid("menu", node))
-			menu.load(node->first_node("menu"));
+			_menu.load(node->first_node("menu"));
 
 		if (nodeValid("preview", node)) {
 			auto prnode = node->first_node("preview");
-			img.pos.load(prnode);
-			loadStr(img.no_preview_path, "path", prnode);
+			_img._pos.load(prnode);
+			loadStr(_img._noPreviewPath, "path", prnode);
 		}
 
 		if (nodeValid("offset", node)) {
 			rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
 			// Stuff displayed on the slot button
-			td_b[DATA_SAVENAME].load(offnode->first_node("save_name"));
-			td_b[DATA_LASTMODIFIED].load(offnode->first_node("last_modified"));
+			tdB[DATA_SAVENAME].load(offnode->first_node("save_name"));
+			tdB[DATA_LASTMODIFIED].load(offnode->first_node("last_modified"));
 
 			// Stuff displayed when you hover over a slot button
-			td_h[DATA_LOCNAME].load(offnode->first_node("loc_name"));
-			td_h[DATA_DIFFICULTY].load(offnode->first_node("difficulty"));
-			td_h[DATA_TIMEPLAYED].load(offnode->first_node("time_played"));
-			td_h[DATA_PLAYERNAME].load(offnode->first_node("player_name"));
+			tdH[DATA_LOCNAME].load(offnode->first_node("loc_name"));
+			tdH[DATA_DIFFICULTY].load(offnode->first_node("difficulty"));
+			tdH[DATA_TIMEPLAYED].load(offnode->first_node("time_played"));
+			tdH[DATA_PLAYERNAME].load(offnode->first_node("player_name"));
 
 			// Titles for the stuff displayed when you hover over a slot button
 			hov[DATA_LOCNAME].load(offnode->first_node("loc_name_title"));
@@ -190,16 +195,16 @@ public:
 			hov[DATA_PLAYERNAME].load(offnode->first_node("player_name_title"));
 		}
 
-		extension = g_engine->_filePath->save_ext;
-		directory = (g_engine->_filePath->appdata + g_engine->_filePath->save_dir);
-		ScanDir();
+		_extension = g_engine->_filePath->save_ext;
+		_directory = (g_engine->_filePath->appdata + g_engine->_filePath->save_dir);
+		scanDir();
 	}
 
 	bool handleEvents(const Common::Event &Event) {
-		int choice = menu.handleEvents(Event);
+		int choice = _menu.handleEvents(Event);
 		if (choice >= 0) {
-			menu.reset();
-			selected = slot_info[menu.Index() + choice].path;
+			_menu.reset();
+			_selected = _slotInfo[_menu.Index() + choice]._path;
 			reset();
 			return true;
 		}
@@ -222,50 +227,50 @@ public:
 #endif
 
 	void draw() {
-		bg.draw();
-		menu.draw();
-		for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < slot_info.size(); i++, count++) {
-			auto base_x = menu.BaseX(count), base_y = menu.BaseY(count);
-			td_b[DATA_SAVENAME].draw(slot_info[i].name, base_x, base_y);
-			td_b[DATA_LASTMODIFIED].draw(slot_info[i].last_modified, base_x, base_y);
+		_bg.draw();
+		_menu.draw();
+		for (auto i = _menu.Index(), count = 0u; i < _menu.IndexPlusOne() && i < _slotInfo.size(); i++, count++) {
+			auto base_x = _menu.BaseX(count), base_y = _menu.BaseY(count);
+			tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);
+			tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 		}
 
 		DrawHover();
 	}
 
 	void DrawHover() {
-		if (menu.HoverIndex() >= 0) {
-			int i = menu.HoverIndex();
+		if (_menu.HoverIndex() >= 0) {
+			int i = _menu.HoverIndex();
 
-			if (!img.loaded || prev_hover != i) {
-				img.loaded = true;
-				prev_hover = i;
-				if (!img.preview.load(slot_info[i].preview))
-					img.preview.load(img.no_preview_path);
+			if (!_img._loaded || _prevHover != i) {
+				_img._loaded = true;
+				_prevHover = i;
+				if (!_img._preview.load(_slotInfo[i]._preview))
+					_img._preview.load(_img._noPreviewPath);
 			}
 
-			hover = true;
-			img.preview.draw(img.pos.x, img.pos.y);
+			_hover = true;
+			_img._preview.draw(_img._pos.x, _img._pos.y);
 
-			td_h[DATA_LOCNAME].draw(slot_info[i].loc_name);
-			td_h[DATA_DIFFICULTY].draw(slot_info[i].diff);
-			td_h[DATA_TIMEPLAYED].draw(slot_info[i].time);
-			td_h[DATA_PLAYERNAME].draw(slot_info[i].char_name);
+			tdH[DATA_LOCNAME].draw(_slotInfo[i]._locName);
+			tdH[DATA_DIFFICULTY].draw(_slotInfo[i]._diff);
+			tdH[DATA_TIMEPLAYED].draw(_slotInfo[i]._time);
+			tdH[DATA_PLAYERNAME].draw(_slotInfo[i]._charName);
 
 			for (int num = 0; num < DATA_HOVER_TOTAL; ++num)
 				hov[num].draw();
-		} else if (hover)
+		} else if (_hover)
 			reset();
 	}
 
-	bool Empty() {
-		ScanDir();
-		return slot_info.empty();
+	bool empty() {
+		scanDir();
+		return _slotInfo.empty();
 	}
 
-	bool SelectNewestFile() {
-		if (slot_info.size() > 0) {
-			selected = slot_info[0].path;
+	bool selectNewestFile() {
+		if (_slotInfo.size() > 0) {
+			_selected = _slotInfo[0]._path;
 			return true;
 		}
 
@@ -273,16 +278,16 @@ public:
 	}
 
 	void setUI() {
-		bg.setUI();
-		menu.setUI();
-		ScanDir();
-		img.pos.setUI();
+		_bg.setUI();
+		_menu.setUI();
+		scanDir();
+		_img._pos.setUI();
 
 		for (int i = 0; i < DATA_BUTTON_TOTAL; ++i)
-			td_b[i].setUI();
+			tdB[i].setUI();
 
 		for (int i = 0; i < DATA_HOVER_TOTAL; ++i) {
-			td_h[i].setUI();
+			tdH[i].setUI();
 			hov[i].setUI();
 		}
 	}

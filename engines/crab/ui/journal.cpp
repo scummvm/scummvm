@@ -45,18 +45,18 @@ void Journal::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("objectives");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.load(node->first_node("bg"));
+				_bg.load(node->first_node("bg"));
 
 			if (nodeValid("map", node))
-				bu_map.load(node->first_node("map"));
+				_bu_map.load(node->first_node("map"));
 
 			if (nodeValid("category", node))
-				category.load(node->first_node("category"));
+				_category.load(node->first_node("category"));
 
 			if (nodeValid("quest_list", node))
-				ref.load(node->first_node("quest_list"));
+				_ref.load(node->first_node("quest_list"));
 
-			category.UseKeyboard(true);
+			_category.UseKeyboard(true);
 		}
 	}
 }
@@ -64,41 +64,41 @@ void Journal::load(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Prepare a new character's journal
 //------------------------------------------------------------------------
-void Journal::Init(const Common::String &id) {
+void Journal::init(const Common::String &id) {
 	int found = false;
 
-	for (auto &i : journal)
-		if (i.id == id) {
+	for (auto &i : _journal)
+		if (i._id == id) {
 			found = true;
 			break;
 		}
 
 	if (!found) {
 		Group g;
-		g.id = id;
+		g._id = id;
 		for (int i = 0; i < JE_TOTAL; ++i) {
-			g.menu[i] = ref;
-			g.menu[i].UseKeyboard(true);
-			g.menu[i].AssignPaths();
+			g._menu[i] = _ref;
+			g._menu[i].UseKeyboard(true);
+			g._menu[i].AssignPaths();
 		}
-		journal.push_back(g);
+		_journal.push_back(g);
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Select a category
 //------------------------------------------------------------------------
-void Journal::Select(const Common::String &id, const int &choice) {
-	for (unsigned int i = 0; i < category.element.size(); ++i)
-		category.element[i].state(false);
+void Journal::select(const Common::String &id, const int &choice) {
+	for (unsigned int i = 0; i < _category.element.size(); ++i)
+		_category.element[i].state(false);
 
-	category.element[choice].state(true);
-	select = choice;
+	_category.element[choice].state(true);
+	_select = choice;
 
 	// Always find valid journal group first
-	for (auto &jo : journal)
-		if (jo.id == id) {
-			jo.menu[choice].unread = false;
+	for (auto &jo : _journal)
+		if (jo._id == id) {
+			jo._menu[choice].unread = false;
 			break;
 		}
 }
@@ -107,19 +107,19 @@ void Journal::Select(const Common::String &id, const int &choice) {
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
 void Journal::draw(const Common::String &id) {
-	bg.draw();
-	category.draw();
+	_bg.draw();
+	_category.draw();
 
 	// Always find valid journal group first
-	for (auto &jo : journal)
-		if (jo.id == id) {
+	for (auto &jo : _journal)
+		if (jo._id == id) {
 			int count = 0;
-			for (auto i = category.element.begin(); i != category.element.end() && count < JE_TOTAL; ++i, ++count)
-				if (jo.menu[count].unread)
+			for (auto i = _category.element.begin(); i != _category.element.end() && count < JE_TOTAL; ++i, ++count)
+				if (jo._menu[count].unread)
 					g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 
-			if (select >= 0 && select < JE_TOTAL)
-				jo.menu[select].draw(bu_map);
+			if (_select >= 0 && _select < JE_TOTAL)
+				jo._menu[_select].draw(_bu_map);
 
 			break;
 		}
@@ -128,17 +128,17 @@ void Journal::draw(const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool Journal::handleEvents(const Common::String &id, const Common::Event &Event) {
-	int choice = category.handleEvents(Event);
-	if (choice >= 0 && (unsigned int)choice < category.element.size())
-		Select(id, choice);
+bool Journal::handleEvents(const Common::String &id, const Common::Event &event) {
+	int choice = _category.handleEvents(event);
+	if (choice >= 0 && (unsigned int)choice < _category.element.size())
+		select(id, choice);
 
 	// Check if select is valid
-	if (select >= 0 && select < JE_TOTAL) {
+	if (_select >= 0 && _select < JE_TOTAL) {
 		// Always find valid journal group first
-		for (auto &jo : journal)
-			if (jo.id == id)
-				return jo.menu[select].handleEvents(bu_map, marker_title, Event);
+		for (auto &jo : _journal)
+			if (jo._id == id)
+				return jo._menu[_select].handleEvents(_bu_map, _markerTitle, event);
 	}
 
 	return false;
@@ -168,20 +168,20 @@ bool Journal::handleEvents(const Common::String &id, const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Add an entry to journal
 //------------------------------------------------------------------------
-void Journal::Add(const Common::String &id, const Common::String &Category, const Common::String &Title, const Common::String &Text) {
+void Journal::add(const Common::String &id, const Common::String &category, const Common::String &title, const Common::String &text) {
 	// Always find valid journal group first
-	for (auto &jo : journal)
-		if (jo.id == id) {
-			if (Category == JE_CUR_NAME) {
-				jo.menu[JE_CUR].Add(Title, Text);
-			} else if (Category == JE_DONE_NAME) {
-				jo.menu[JE_DONE].Add(Title, Text);
-			} else if (Category == JE_PEOPLE_NAME) {
-				jo.menu[JE_PEOPLE].Add(Title, Text);
-			} else if (Category == JE_LOCATION_NAME) {
-				jo.menu[JE_LOCATION].Add(Title, Text);
-			} else if (Category == JE_HISTORY_NAME) {
-				jo.menu[JE_HISTORY].Add(Title, Text);
+	for (auto &jo : _journal)
+		if (jo._id == id) {
+			if (category == JE_CUR_NAME) {
+				jo._menu[JE_CUR].Add(title, text);
+			} else if (category == JE_DONE_NAME) {
+				jo._menu[JE_DONE].Add(title, text);
+			} else if (category == JE_PEOPLE_NAME) {
+				jo._menu[JE_PEOPLE].Add(title, text);
+			} else if (category == JE_LOCATION_NAME) {
+				jo._menu[JE_LOCATION].Add(title, text);
+			} else if (category == JE_HISTORY_NAME) {
+				jo._menu[JE_HISTORY].Add(title, text);
 			}
 
 			break;
@@ -191,11 +191,11 @@ void Journal::Add(const Common::String &id, const Common::String &Category, cons
 //------------------------------------------------------------------------
 // Purpose: Set the marker of a quest
 //------------------------------------------------------------------------
-void Journal::Marker(const Common::String &id, const Common::String &Title, const bool &val) {
+void Journal::marker(const Common::String &id, const Common::String &title, const bool &val) {
 	// Always find valid journal group first
-	for (auto &jo : journal)
-		if (jo.id == id) {
-			jo.menu[JE_CUR].Marker(Title, val);
+	for (auto &jo : _journal)
+		if (jo._id == id) {
+			jo._menu[JE_CUR].Marker(title, val);
 			break;
 		}
 }
@@ -203,7 +203,7 @@ void Journal::Marker(const Common::String &id, const Common::String &Title, cons
 //------------------------------------------------------------------------
 // Purpose: Move an entry from one category to another
 //------------------------------------------------------------------------
-void Journal::Move(const Common::String &id, const Common::String &Title, const bool &completed) {
+void Journal::move(const Common::String &id, const Common::String &title, const bool &completed) {
 	JournalCategory source, destination;
 	if (completed) {
 		source = JE_CUR;
@@ -214,17 +214,17 @@ void Journal::Move(const Common::String &id, const Common::String &Title, const 
 	}
 
 	// Always find valid journal group first
-	for (auto &jo : journal)
-		if (jo.id == id) {
+	for (auto &jo : _journal)
+		if (jo._id == id) {
 			// Find the quest chain in the source menu
 			unsigned int index = 0;
-			for (auto i = jo.menu[source].quest.begin(); i != jo.menu[source].quest.end(); ++i, ++index)
-				if (i->_title == Title)
+			for (auto i = jo._menu[source].quest.begin(); i != jo._menu[source].quest.end(); ++i, ++index)
+				if (i->_title == title)
 					break;
 
-			if (index < jo.menu[source].quest.size()) {
-				jo.menu[destination].Add(jo.menu[source].quest[index]);
-				jo.menu[source].Erase(index);
+			if (index < jo._menu[source].quest.size()) {
+				jo._menu[destination].Add(jo._menu[source].quest[index]);
+				jo._menu[source].Erase(index);
 			}
 
 			break;
@@ -234,21 +234,21 @@ void Journal::Move(const Common::String &id, const Common::String &Title, const 
 //------------------------------------------------------------------------
 // Purpose: Open a specific entry in the journal
 //------------------------------------------------------------------------
-void Journal::Open(const Common::String &id, const JournalCategory &Category, const Common::String &Title) {
+void Journal::open(const Common::String &id, const JournalCategory &category, const Common::String &title) {
 	// Always find valid journal group first
-	for (auto &jo : journal)
-		if (jo.id == id) {
-			if (Category >= 0 && Category < category.element.size()) {
+	for (auto &jo : _journal)
+		if (jo._id == id) {
+			if (category >= 0 && category < _category.element.size()) {
 				// If category passes the valid check, select it
-				Select(id, Category);
+				select(id, category);
 
 				// Perform validity check on select, just in case
-				if (select > 0 && select < JE_TOTAL) {
+				if (_select > 0 && _select < JE_TOTAL) {
 					// Search for the title with same name
-					for (unsigned int num = 0; num < jo.menu[select].quest.size(); ++num)
-						if (jo.menu[select].quest[num]._title == Title) {
+					for (unsigned int num = 0; num < jo._menu[_select].quest.size(); ++num)
+						if (jo._menu[_select].quest[num]._title == title) {
 							// Found it, switch to this
-							jo.menu[select].Select(num);
+							jo._menu[_select].Select(num);
 							break;
 						}
 				}
@@ -262,15 +262,15 @@ void Journal::Open(const Common::String &id, const JournalCategory &Category, co
 // Purpose: Load save game stuff
 //------------------------------------------------------------------------
 void Journal::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto &m : journal) {
+	for (auto &m : _journal) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "journal");
-		child->append_attribute(doc.allocate_attribute("id", m.id.c_str()));
+		child->append_attribute(doc.allocate_attribute("id", m._id.c_str()));
 
-		m.menu[JE_CUR].saveState(doc, child, JE_CUR_NAME);
-		m.menu[JE_DONE].saveState(doc, child, JE_DONE_NAME);
-		m.menu[JE_PEOPLE].saveState(doc, child, JE_PEOPLE_NAME);
-		m.menu[JE_LOCATION].saveState(doc, child, JE_LOCATION_NAME);
-		m.menu[JE_HISTORY].saveState(doc, child, JE_HISTORY_NAME);
+		m._menu[JE_CUR].saveState(doc, child, JE_CUR_NAME);
+		m._menu[JE_DONE].saveState(doc, child, JE_DONE_NAME);
+		m._menu[JE_PEOPLE].saveState(doc, child, JE_PEOPLE_NAME);
+		m._menu[JE_LOCATION].saveState(doc, child, JE_LOCATION_NAME);
+		m._menu[JE_HISTORY].saveState(doc, child, JE_HISTORY_NAME);
 		root->append_node(child);
 	}
 }
@@ -280,15 +280,15 @@ void Journal::loadState(rapidxml::xml_node<char> *node) {
 		Common::String id;
 		loadStr(id, "id", n);
 
-		Init(id);
+		init(id);
 
-		for (auto &i : journal)
-			if (i.id == id) {
-				i.menu[JE_CUR].loadState(n->first_node(JE_CUR_NAME));
-				i.menu[JE_DONE].loadState(n->first_node(JE_DONE_NAME));
-				i.menu[JE_PEOPLE].loadState(n->first_node(JE_PEOPLE_NAME));
-				i.menu[JE_LOCATION].loadState(n->first_node(JE_LOCATION_NAME));
-				i.menu[JE_HISTORY].loadState(n->first_node(JE_HISTORY_NAME));
+		for (auto &i : _journal)
+			if (i._id == id) {
+				i._menu[JE_CUR].loadState(n->first_node(JE_CUR_NAME));
+				i._menu[JE_DONE].loadState(n->first_node(JE_DONE_NAME));
+				i._menu[JE_PEOPLE].loadState(n->first_node(JE_PEOPLE_NAME));
+				i._menu[JE_LOCATION].loadState(n->first_node(JE_LOCATION_NAME));
+				i._menu[JE_HISTORY].loadState(n->first_node(JE_HISTORY_NAME));
 			}
 	}
 }
@@ -297,13 +297,13 @@ void Journal::loadState(rapidxml::xml_node<char> *node) {
 // Purpose: Adjust UI elements
 //------------------------------------------------------------------------
 void Journal::setUI() {
-	bg.setUI();
-	category.setUI();
-	ref.setUI();
+	_bg.setUI();
+	_category.setUI();
+	_ref.setUI();
 
-	for (auto &m : journal)
+	for (auto &m : _journal)
 		for (auto i = 0; i < JE_TOTAL; ++i)
-			m.menu[i].setUI();
+			m._menu[i].setUI();
 }
 
 } // End of namespace Crab

@@ -43,7 +43,7 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 	custom.load(node->first_node("custom"));
 
 	info.load(node->first_node("info"));
-	def_info = info.text;
+	def_info = info._text;
 
 	if (nodeValid("reference", node))
 		ref.load(node->first_node("reference"));
@@ -157,10 +157,10 @@ int ResolutionMenu::handleEvents(const SDL_Event &Event) {
 #endif
 
 void ResolutionMenu::SetInfo() {
-	info.text = def_info;
-	info.text += NumberToString(g_engine->_screenSettings->cur.w);
-	info.text += " x ";
-	info.text += NumberToString(g_engine->_screenSettings->cur.h);
+	info._text = def_info;
+	info._text += NumberToString(g_engine->_screenSettings->cur.w);
+	info._text += " x ";
+	info._text += NumberToString(g_engine->_screenSettings->cur.h);
 }
 
 void ResolutionMenu::setUI() {

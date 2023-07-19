@@ -44,35 +44,37 @@ namespace pyrodactyl {
 namespace ui {
 class Inventory {
 	// The background image and location
-	ImageData bg;
+	ImageData _bg;
 
 	// The equipment and storage space, stored according to the player character id
-	pyrodactyl::item::ItemCollection collection;
+	pyrodactyl::item::ItemCollection _collection;
 
 	// To draw the player stats
 	// pyrodactyl::stat::StatDrawHelper helper;
 
 	// The file where all the item information is stored
-	Common::String itemfile;
+	Common::String _itemfile;
 
 	// Used to draw the money value
-	Button money;
+	Button _money;
 
 public:
 	Inventory() {}
 	~Inventory() {}
 
-	void Init(const Common::String &char_id) { collection.init(char_id); }
+	void init(const Common::String &charId) {
+		_collection.init(charId);
+	}
 
-	void LoadItem(const Common::String &char_id, const Common::String &name);
-	void AddItem(const Common::String &char_id, pyrodactyl::item::Item &item);
-	void DelItem(const Common::String &char_id, const Common::String &item_id);
-	bool HasItem(const Common::String &char_id, const Common::String &container, const Common::String &item_id);
+	void loadItem(const Common::String &charId, const Common::String &name);
+	void addItem(const Common::String &charId, pyrodactyl::item::Item &item);
+	void delItem(const Common::String &charId, const Common::String &itemId);
+	bool hasItem(const Common::String &charId, const Common::String &container, const Common::String &itemId);
 
 	void load(const Common::String &filename);
-	void draw(pyrodactyl::people::Person &obj, const int &money_val);
+	void draw(pyrodactyl::people::Person &obj, const int &moneyVal);
 
-	void handleEvents(const Common::String &char_id, const Common::Event &Event);
+	void handleEvents(const Common::String &string, const Common::Event &Event);
 #if 0
 	void handleEvents(const Common::String &char_id, const SDL_Event &Event);
 #endif
@@ -80,7 +82,9 @@ public:
 	void loadState(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
-	void ItemFile(const Common::String &filename) { itemfile = filename; }
+	void itemFile(const Common::String &filename) {
+		_itemfile = filename;
+	}
 
 	void setUI();
 };

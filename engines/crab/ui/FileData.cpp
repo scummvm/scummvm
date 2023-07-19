@@ -37,12 +37,12 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 SaveFileData::SaveFileData(const Common::String &file) {
-	path = file;
+	_path = file;
 
 	// Extract String between _ and . For eg., CRAB_Autosave 1.unr -> Autosave 1
 	// 4 => .unr
 	size_t pos = file.findFirstOf('_');
-	name = file.substr(pos + 1, file.size() - (pos + 1) - 4);
+	_name = file.substr(pos + 1, file.size() - (pos + 1) - 4);
 
 	if (g_engine->getSaveFileManager()->exists(file)) {
 		Common::InSaveFile *savefile = g_engine->getSaveFileManager()->openForLoading(file);
@@ -57,13 +57,13 @@ SaveFileData::SaveFileData(const Common::String &file) {
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
 			if (nodeValid(node)) {
-				loadStr(diff, "diff", node);
-				loadStr(loc_id, "loc_id", node);
-				loadStr(loc_name, "loc_name", node);
-				loadStr(char_name, "char_name", node);
-				loadStr(time, "time", node);
-				loadStr(preview, "preview", node);
-				blank = false;
+				loadStr(_diff, "diff", node);
+				loadStr(_locId, "loc_id", node);
+				loadStr(_locName, "loc_name", node);
+				loadStr(_charName, "char_name", node);
+				loadStr(_time, "time", node);
+				loadStr(_preview, "preview", node);
+				_blank = false;
 			}
 		}
 	}

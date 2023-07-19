@@ -40,47 +40,47 @@ void DebugConsole::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("debug");
 		if (nodeValid(node)) {
 			if (nodeValid("menu", node))
-				menu.load(node->first_node("menu"));
+				_menu.load(node->first_node("menu"));
 
 			if (nodeValid("variable", node)) {
 				rapidxml::xml_node<char> *varnode = node->first_node("variable");
 
 				if (nodeValid("bg", varnode))
-					bg.load(varnode->first_node("bg"));
+					_bg.load(varnode->first_node("bg"));
 
 				if (nodeValid("check", varnode))
-					check.load(varnode->first_node("check"));
+					_check.load(varnode->first_node("check"));
 
 				if (nodeValid("back", varnode))
-					back.load(varnode->first_node("back"));
+					_back.load(varnode->first_node("back"));
 
 				if (nodeValid("value", varnode))
-					value.load(varnode->first_node("value"));
+					_value.load(varnode->first_node("value"));
 
 				if (nodeValid("text", varnode))
-					text_field.load(varnode->first_node("text"));
+					_textField.load(varnode->first_node("text"));
 			}
 		}
 	}
 }
 
 void DebugConsole::draw(pyrodactyl::event::Info &info) {
-	switch (state) {
+	switch (_state) {
 	case STATE_NORMAL:
-		menu.draw();
+		_menu.draw();
 		break;
 	case STATE_VAR:
-		bg.draw();
-		check.draw();
-		back.draw();
-		text_field.draw();
+		_bg.draw();
+		_check.draw();
+		_back.draw();
+		_textField.draw();
 
 		{
 			int temp = 0;
-			if (info.varGet(var_name, temp))
-				value.draw(NumberToString(temp));
+			if (info.varGet(_varName, temp))
+				_value.draw(NumberToString(temp));
 			else
-				value.draw("Does not exist.");
+				_value.draw("Does not exist.");
 		}
 		break;
 

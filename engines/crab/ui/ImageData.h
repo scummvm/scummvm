@@ -41,23 +41,24 @@ namespace pyrodactyl {
 namespace ui {
 class ImageData : public Element {
 	// The image
-	ImageKey key;
+	ImageKey _key;
 
 	// Should we clip the image? (usually used for large background images)
-	bool crop;
+	bool _crop;
 
 	// The clip rectangle, used only when clip is true
-	Rect clip;
+	Rect _clip;
 
 public:
 	ImageData() {
-		key = 0;
-		crop = false;
+		_key = 0;
+		_crop = false;
 	}
+
 	~ImageData() {}
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
-	void draw(const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

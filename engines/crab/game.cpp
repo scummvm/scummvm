@@ -46,7 +46,7 @@ void Game::StartNewGame() {
 	info.ironMan(g_engine->_tempData->ironman);
 	savefile.ironman = g_engine->_tempData->filename;
 	clock.Start();
-	hud.pause.UpdateMode(info.ironMan());
+	hud._pause.UpdateMode(info.ironMan());
 
 	CreateSaveGame(SAVEGAME_EVENT);
 }
@@ -141,10 +141,10 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 		map.RevealAdd(level._mapClip._id, level._mapClip._rect);
 
 		// Initialize inventory
-		info._inv.Init(level.playerId());
+		info._inv.init(level.playerId());
 
 		// Initialize journal
-		info._journal.Init(level.playerId());
+		info._journal.init(level.playerId());
 
 		level.preDraw();
 		return true;
@@ -162,9 +162,9 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 	//	if (GameDebug)
 	//		debug_console.handleEvents(Event);
 
-	if (!debug_console.RestrictInput()) {
+	if (!debug_console.restrictInput()) {
 		if (state == STATE_LOSE_MENU) {
-			switch (hud.gom.handleEvents(Event)) {
+			switch (hud._gom.handleEvents(Event)) {
 			case 0:
 				state = STATE_LOSE_LOAD;
 				break;
@@ -181,10 +181,10 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 				return;
 			}
 
-			if (hud.pausekey.handleEvents(Event) || hud.back.handleEvents(Event) == BUAC_LCLICK)
+			if (hud._pausekey.handleEvents(Event) || hud._back.handleEvents(Event) == BUAC_LCLICK)
 				state = STATE_LOSE_MENU;
 		} else {
-			if (!gem.eventInProgress() && !hud.pause.DisableHotkeys()) {
+			if (!gem.eventInProgress() && !hud._pause.DisableHotkeys()) {
 				switch (hud.handleEvents(info, Event)) {
 				case HS_MAP:
 					ToggleState(STATE_MAP);
@@ -220,7 +220,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 
 					if (!game_over.empty() && game_over.evaluate(info)) {
 						state = STATE_LOSE_MENU;
-						hud.gom.reset();
+						hud._gom.reset();
 						return;
 					}
 
@@ -236,20 +236,20 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 #endif
 
-					if (hud.pausekey.handleEvents(Event))
+					if (hud._pausekey.handleEvents(Event))
 						ToggleState(STATE_PAUSE);
 				}
 			} else if (state == STATE_PAUSE) {
-				switch (hud.pause.handleEvents(Event, hud.back)) {
+				switch (hud._pause.handleEvents(Event, hud._back)) {
 				case PS_RESUME:
 					ToggleState(STATE_GAME);
-					hud.SetTooltip();
+					hud.setTooltip();
 					break;
 
 				case PS_SAVE:
 					CreateSaveGame(SAVEGAME_NORMAL);
 					ToggleState(STATE_GAME);
-					hud.SetTooltip();
+					hud.setTooltip();
 					break;
 				case PS_LOAD:
 					//ShouldChangeState = true;
@@ -273,7 +273,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					break;
 				}
 			} else {
-				if (hud.back.handleEvents(Event) == BUAC_LCLICK)
+				if (hud._back.handleEvents(Event) == BUAC_LCLICK)
 					ToggleState(STATE_GAME);
 
 				switch (state) {
@@ -288,7 +288,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					if (info._journal.handleEvents(level.playerId(), Event)) {
 						// This means we selected the "find on map" button, so we need to:
 						// switch to the world map, and highlight the appropriate quest marker
-						map.SelectDest(info._journal.marker_title);
+						map.SelectDest(info._journal._markerTitle);
 						ToggleState(STATE_MAP);
 					}
 					break;
@@ -513,45 +513,45 @@ void Game::draw() {
 		break;
 	case STATE_PAUSE:
 		g_engine->_imageManager->dimScreen();
-		hud.pause.draw(hud.back);
+		hud._pause.draw(hud._back);
 		hud.draw(info, level.playerId());
 		break;
 	case STATE_MAP:
 		g_engine->_imageManager->dimScreen();
 		map.draw(info);
 		hud.draw(info, level.playerId());
-		hud.back.draw();
+		hud._back.draw();
 		break;
 	case STATE_JOURNAL:
 		g_engine->_imageManager->dimScreen();
 		info._journal.draw(level.playerId());
 		hud.draw(info, level.playerId());
-		hud.back.draw();
+		hud._back.draw();
 		break;
 	case STATE_CHARACTER:
 		g_engine->_imageManager->dimScreen();
 		gem._per.draw(info, level.playerId());
 		hud.draw(info, level.playerId());
-		hud.back.draw();
+		hud._back.draw();
 		break;
 	case STATE_INVENTORY:
 		g_engine->_imageManager->dimScreen();
 		info.invDraw(level.playerId());
 		hud.draw(info, level.playerId());
-		hud.back.draw();
+		hud._back.draw();
 		break;
 	case STATE_HELP:
 		g_engine->_imageManager->dimScreen();
 		g_engine->_helpScreen->draw();
-		hud.back.draw();
+		hud._back.draw();
 		hud.draw(info, level.playerId());
 		break;
 	case STATE_LOSE_MENU:
-		hud.gom.draw();
+		hud._gom.draw();
 		break;
 	case STATE_LOSE_LOAD:
 		g_engine->_loadMenu->draw();
-		hud.back.draw();
+		hud._back.draw();
 		break;
 	default:
 		break;
@@ -580,11 +580,11 @@ bool Game::ApplyResult() {
 			break;
 		case ER_DEST:
 			if (i->_x < 0 || i->_y < 0) {
-				info._journal.Marker(level.playerId(), i->_val, false);
+				info._journal.marker(level.playerId(), i->_val, false);
 				map.DestDel(i->_val);
 			} else {
 				map.DestAdd(i->_val, i->_x, i->_y);
-				info._journal.Marker(level.playerId(), i->_val, true);
+				info._journal.marker(level.playerId(), i->_val, true);
 				info._unread._map = true;
 			}
 			break;
@@ -652,7 +652,7 @@ void Game::ApplyResult(LevelResult result) {
 		return;
 	case LR_GAMEOVER:
 		state = STATE_LOSE_MENU;
-		hud.gom.reset();
+		hud._gom.reset();
 		break;
 	default:
 		break;
@@ -683,7 +683,7 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 		if (nodeValid(node)) {
 			info.loadIronMan(node);
 			loadStr(savefile.ironman, "file", node);
-			hud.pause.UpdateMode(info.ironMan());
+			hud._pause.UpdateMode(info.ironMan());
 
 			if (nodeValid("events", node))
 				gem.loadState(node->first_node("events"));
@@ -830,7 +830,7 @@ void Game::ToggleState(const State &s) {
 
 	// This is because game is the first state, the rest are in order
 	hud.State(state - 1);
-	hud.pause.reset();
+	hud._pause.reset();
 
 	// Only load help screen image if we have to
 	if (state == STATE_HELP)

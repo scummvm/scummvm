@@ -146,7 +146,7 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		break;
 
 	case TRIG_ITEM:
-		return info._inv.HasItem(_target, _subject, _val);
+		return info._inv.hasItem(_target, _subject, _val);
 		break;
 
 	case TRIG_RECT:

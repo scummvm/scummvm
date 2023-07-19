@@ -41,16 +41,19 @@ namespace ui {
 // Tooltip for buttons
 class HoverInfo : public TextData {
 public:
-	bool enabled;
-	Common::String text;
+	bool _enabled;
+	Common::String _text;
 
-	HoverInfo(void) { enabled = false; }
+	HoverInfo(void) {
+		_enabled = false;
+	}
+
 	~HoverInfo(void) {}
 
-	void Init(const HoverInfo &h, const int &XOffset = 0, const int &YOffset = 0);
+	void init(const HoverInfo &h, const int &xOffset = 0, const int &yOffset = 0);
 
 	void load(rapidxml::xml_node<char> *node, Rect *parent = NULL);
-	void draw(const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

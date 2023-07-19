@@ -43,17 +43,17 @@ void GameSaveMenu::load(rapidxml::xml_node<char> *node) {
 }
 
 void GameSaveMenu::AddButton(const Common::String &p, unsigned int &slot_index, unsigned int &menu_index) {
-	slot_info.push_back(SaveFileData(p));
-	menu.Add(slot_index, menu_index);
+	_slotInfo.push_back(SaveFileData(p));
+	_menu.Add(slot_index, menu_index);
 }
 
-void GameSaveMenu::ScanDir() {
+void GameSaveMenu::scanDir() {
 	Common::String res = "CRAB_*";
 	res += g_engine->_filePath->save_ext;
 	Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
 
-	slot_info.clear();
-	menu.Clear();
+	_slotInfo.clear();
+	_menu.Clear();
 
 	unsigned int count_slot = 0, count_menu = 0;
 
@@ -64,22 +64,22 @@ void GameSaveMenu::ScanDir() {
 		AddButton(save, count_menu, count_slot);
 	}
 
-	menu.AssignPaths();
+	_menu.AssignPaths();
 }
 
 bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 	int choice = -1;
 	switch (state) {
 	case STATE_NORMAL:
-		choice = menu.handleEvents(Event);
+		choice = _menu.handleEvents(Event);
 		if (choice >= 0) {
-			ta_name.x = menu.CurX(choice) + td_b[DATA_SAVENAME].x;
-			ta_name.y = menu.CurY(choice) + td_b[DATA_SAVENAME].y;
+			ta_name.x = _menu.CurX(choice) + tdB[DATA_SAVENAME].x;
+			ta_name.y = _menu.CurY(choice) + tdB[DATA_SAVENAME].y;
 
-			index = menu.Index() + choice;
+			index = _menu.Index() + choice;
 
 			if (index != 0)
-				ta_name._text = slot_info[index].name;
+				ta_name._text = _slotInfo[index]._name;
 			else
 				ta_name._text = "";
 
@@ -91,10 +91,10 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 			g_engine->_inputManager->setKeyBindingMode(KBM_UI);
 
 		if (ta_name.handleEvents(Event)) {
-			if (index <= (int)slot_info.size() && index != 0)
-				g_engine->getSaveFileManager()->removeSavefile(slot_info[index].path);
+			if (index <= (int)_slotInfo.size() && index != 0)
+				g_engine->getSaveFileManager()->removeSavefile(_slotInfo[index]._path);
 
-			selected = ta_name._text;
+			_selected = ta_name._text;
 			state = STATE_NORMAL;
 			reset();
 			g_engine->_inputManager->setKeyBindingMode(KBM_GAME);
@@ -113,16 +113,16 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 }
 
 void GameSaveMenu::draw() {
-	bg.draw();
-	menu.draw();
-	for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < slot_info.size(); i++, count++) {
-		float base_x = menu.BaseX(count), base_y = menu.BaseY(count);
-		td_b[DATA_LASTMODIFIED].draw(slot_info[i].last_modified, base_x, base_y);
+	_bg.draw();
+	_menu.draw();
+	for (auto i = _menu.Index(), count = 0u; i < _menu.IndexPlusOne() && i < _slotInfo.size(); i++, count++) {
+		float base_x = _menu.BaseX(count), base_y = _menu.BaseY(count);
+		tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 
 		if (i == (unsigned int)index && state == STATE_NAME)
 			ta_name.draw();
 		else
-			td_b[DATA_SAVENAME].draw(slot_info[i].name, base_x, base_y);
+			tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);
 	}
 
 	DrawHover();

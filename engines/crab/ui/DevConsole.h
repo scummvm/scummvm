@@ -41,27 +41,34 @@ namespace pyrodactyl {
 namespace ui {
 class DebugConsole {
 	// The state of the menu
-	enum { STATE_NORMAL,
-		   STATE_VAR } state;
+	enum {
+		STATE_NORMAL,
+		STATE_VAR
+	} _state;
 
 	// The overarching menu that is the starting point for all functions
-	ButtonMenu menu;
+	ButtonMenu _menu;
 
 	// The dialog box UI - used to check value of a variable
-	ImageData bg;
-	Button check, back;
-	TextData value;
-	TextArea text_field;
+	ImageData _bg;
+	Button _check, _back;
+	TextData _value;
+	TextArea _textField;
 
 	// The variable name we're tracking
-	Common::String var_name;
+	Common::String _varName;
 
 public:
-	DebugConsole() { state = STATE_NORMAL; }
+	DebugConsole() {
+		_state = STATE_NORMAL;
+	}
+
 	~DebugConsole() {}
 
 	// Only restrict input when we're in variable state
-	bool RestrictInput() { return (state == STATE_VAR || menu.HoverIndex() != -1); }
+	bool restrictInput() {
+		return (_state == STATE_VAR || _menu.HoverIndex() != -1);
+	}
 
 	void load(const Common::String &filename);
 	void draw(pyrodactyl::event::Info &info);

@@ -39,25 +39,25 @@ using namespace pyrodactyl::image;
 void GameOverMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		if (nodeValid("bg", node))
-			bg.load(node->first_node("bg"));
+			_bg.load(node->first_node("bg"));
 
 		if (nodeValid("title", node)) {
 			rapidxml::xml_node<char> *tinode = node->first_node("title");
-			title.load(tinode);
+			_title.load(tinode);
 
 			for (auto n = tinode->first_node("quote"); n != NULL; n = n->next_sibling("quote")) {
 				Common::String str;
 				loadStr(str, "text", n);
-				quote.push_back(str);
+				_quote.push_back(str);
 			}
 		}
 
-		menu.load(node->first_node("menu"));
+		_menu.load(node->first_node("menu"));
 	}
 }
 
-int GameOverMenu::handleEvents(const Common::Event &Event) {
-	return menu.handleEvents(Event);
+int GameOverMenu::handleEvents(const Common::Event &event) {
+	return _menu.handleEvents(event);
 }
 
 #if 0
@@ -67,17 +67,17 @@ int GameOverMenu::handleEvents(const SDL_Event &Event) {
 #endif
 
 void GameOverMenu::draw() {
-	bg.draw();
-	if (cur < quote.size())
-		title.draw(quote[cur]);
+	_bg.draw();
+	if (_cur < _quote.size())
+		_title.draw(_quote[_cur]);
 
-	menu.draw();
+	_menu.draw();
 }
 
 void GameOverMenu::setUI() {
-	bg.setUI();
-	title.setUI();
-	menu.setUI();
+	_bg.setUI();
+	_title.setUI();
+	_menu.setUI();
 }
 
 } // End of namespace Crab

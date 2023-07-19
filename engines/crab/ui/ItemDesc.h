@@ -41,10 +41,10 @@ namespace pyrodactyl {
 namespace ui {
 class ItemDesc {
 	// The name of the item
-	TextData name;
+	TextData _name;
 
 	// The description of the item
-	ParagraphData desc;
+	ParagraphData _desc;
 
 public:
 	ItemDesc() {}
@@ -52,20 +52,20 @@ public:
 
 	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid("name", node))
-			name.load(node->first_node("name"));
+			_name.load(node->first_node("name"));
 
 		if (nodeValid("desc", node))
-			desc.load(node->first_node("desc"));
+			_desc.load(node->first_node("desc"));
 	}
 
 	void draw(pyrodactyl::item::Item &item) {
-		name.draw(item._name);
-		desc.draw(item._desc);
+		_name.draw(item._name);
+		_desc.draw(item._desc);
 	}
 
 	void setUI() {
-		name.setUI();
-		desc.setUI();
+		_name.setUI();
+		_desc.setUI();
 	}
 };
 } // End of namespace ui

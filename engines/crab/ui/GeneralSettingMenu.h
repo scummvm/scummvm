@@ -42,14 +42,14 @@ namespace pyrodactyl {
 namespace ui {
 class GeneralSettingMenu {
 	// The volume sliders and their caption
-	Slider vol_music, vol_effects;
-	HoverInfo notice_volume;
+	Slider _volMusic, _volEffects;
+	HoverInfo _noticeVolume;
 
 	// Other settings
-	ToggleButton save_on_exit, mouse_trap;
+	ToggleButton _saveOnExit, _mouseTrap;
 
 	// The menu for select pop-up text speed
-	RadioButtonMenu text_speed;
+	RadioButtonMenu _textSpeed;
 
 public:
 	GeneralSettingMenu() {}
@@ -57,7 +57,7 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void handleEvents(const Common::Event &Event);
+	void handleEvents(const Common::Event &event);
 #if 0
 	void handleEvents(const SDL_Event &Event);
 #endif
@@ -68,8 +68,8 @@ public:
 	void setUI();
 
 	void CreateBackup() {
-		vol_music.CreateBackup();
-		vol_effects.CreateBackup();
+		_volMusic.CreateBackup();
+		_volEffects.CreateBackup();
 	}
 
 	void RestoreBackup();

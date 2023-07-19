@@ -46,65 +46,65 @@ void Inventory::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("inventory");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.load(node->first_node("bg"));
+				_bg.load(node->first_node("bg"));
 
-			collection.load(node->first_node("items"));
+			_collection.load(node->first_node("items"));
 
 			/*if (nodeValid("stats", node))
 				helper.load(node->first_node("stats"));*/
 
 			if (nodeValid("money", node))
-				money.load(node->first_node("money"));
+				_money.load(node->first_node("money"));
 		}
 	}
 }
 
-void Inventory::LoadItem(const Common::String &char_id, const Common::String &id) {
+void Inventory::loadItem(const Common::String &charId, const Common::String &id) {
 	Item i;
-	XMLDoc item_list(itemfile);
-	if (item_list.ready()) {
-		rapidxml::xml_node<char> *node = item_list.doc()->first_node("items");
+	XMLDoc itemList(_itemfile);
+	if (itemList.ready()) {
+		rapidxml::xml_node<char> *node = itemList.doc()->first_node("items");
 		for (auto n = node->first_node("item"); n != NULL; n = n->next_sibling("item")) {
 			Common::String str = n->first_attribute("id")->value();
 			if (id == str) {
 				i.load(n);
-				AddItem(char_id, i);
+				addItem(charId, i);
 				break;
 			}
 		}
 	}
 }
 
-void Inventory::DelItem(const Common::String &char_id, const Common::String &item_id) {
-	collection.del(char_id, item_id);
+void Inventory::delItem(const Common::String &charId, const Common::String &itemId) {
+	_collection.del(charId, itemId);
 }
 
-void Inventory::AddItem(const Common::String &char_id, Item &item) {
-	collection.add(char_id, item);
+void Inventory::addItem(const Common::String &charId, pyrodactyl::item::Item &item) {
+	_collection.add(charId, item);
 }
 
-bool Inventory::HasItem(const Common::String &char_id, const Common::String &container, const Common::String &item_id) {
-	return collection.has(char_id, container, item_id);
+bool Inventory::hasItem(const Common::String &charId, const Common::String &container, const Common::String &itemId) {
+	return _collection.has(charId, container, itemId);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Inventory::draw(Person &obj, const int &money_val) {
-	bg.draw();
+void Inventory::draw(Person &obj, const int &moneyVal) {
+	_bg.draw();
 	// helper.DrawInfo(obj);
-	collection.draw(obj._id /*, helper*/);
+	_collection.draw(obj._id /*, helper*/);
 
-	money._caption._text = NumberToString(money_val);
-	money.draw();
+	_money._caption._text = NumberToString(moneyVal);
+	_money.draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Inventory::handleEvents(const Common::String &char_id, const Common::Event &Event) {
-	collection.handleEvents(char_id, Event);
-	money.handleEvents(Event);
+void Inventory::handleEvents(const Common::String &string, const Common::Event &Event) {
+	_collection.handleEvents(string, Event);
+	_money.handleEvents(Event);
 }
 
 #if 0
@@ -122,12 +122,12 @@ void Inventory::handleEvents(const Common::String &char_id, const SDL_Event &Eve
 //------------------------------------------------------------------------
 void Inventory::loadState(rapidxml::xml_node<char> *node) {
 	if (nodeValid("items", node))
-		collection.loadState(node->first_node("items"));
+		_collection.loadState(node->first_node("items"));
 }
 
 void Inventory::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "items");
-	collection.saveState(doc, child);
+	_collection.saveState(doc, child);
 	root->append_node(child);
 }
 
@@ -135,9 +135,9 @@ void Inventory::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char
 // Purpose: Set UI positions after screen size change
 //------------------------------------------------------------------------
 void Inventory::setUI() {
-	bg.setUI();
-	collection.setUI();
-	money.setUI();
+	_bg.setUI();
+	_collection.setUI();
+	_money.setUI();
 }
 
 } // End of namespace Crab

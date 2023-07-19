@@ -165,7 +165,7 @@ void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 
 			switch (choice) {
 			case 0:
-				if (g_engine->_loadMenu->SelectNewestFile()) {
+				if (g_engine->_loadMenu->selectNewestFile()) {
 					ChangeState(STATE_NORMAL);
 					ShouldChangeState = true;
 					NewStateID = GAMESTATE_LOAD_GAME;
@@ -176,7 +176,7 @@ void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 				break;
 			case 2:
 				ChangeState(STATE_LOAD);
-				g_engine->_loadMenu->ScanDir();
+				g_engine->_loadMenu->scanDir();
 				break;
 			case 3:
 				ChangeState(STATE_OPTIONS);
@@ -463,7 +463,7 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 	me_main.UseKeyboard((state == STATE_NORMAL));
 
 	// Continue button is only enabled if there is a save to load
-	me_main.element[0]._visible = !g_engine->_loadMenu->Empty();
+	me_main.element[0]._visible = !g_engine->_loadMenu->empty();
 
 	// Enable credits and quit button if outside all menus, otherwise disable it
 	me_main.element[6]._visible = (state == STATE_NORMAL);
