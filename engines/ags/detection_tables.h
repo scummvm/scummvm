@@ -1352,7 +1352,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "glitchquest", "Glitch Quest" },
 	{ "globalistagenda", "My Dear Globalist Agenda" },
 	{ "gloriouswolf2", "Glorious Wolf 2 - The Queens Gambit" },
-	{ "gloriouswolfcomics", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
+	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
+	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
 	{ "gnomeshomebrewingadventure", "Gnome's Homebrewing Adventure" },
 	{ "gnrblex", "GNRBLEX" },
 	{ "goatburn", "Goat Burn" },
@@ -2180,6 +2181,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "noactionjackson", "No-Action Jackson" },
 	{ "noahsquest", "Noah's Quest" },
 	{ "nobodycares", "Nobody Cares" },
+	{ "nocturnedream", "Nocturne and the Unseen Dream" },
 	{ "nodriver", "Welcome to Nod River" },
 	{ "nofear", "Where No Fear Was" },
 	{ "noiamspartacus", "No, I Am Spartacus!" },
@@ -3795,7 +3797,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 
 	// AGS4 games
-	UNSUPPORTED_GAME_ENTRY("gloriouswolfcomics", "Glorious Wolf.ags", "578f34ce108225b7b03091b424655f6e", 1592100251),
+	UNSUPPORTED_GAME_ENTRY("gloriouswolfcomicsep1", "Glorious Wolf.ags", "578f34ce108225b7b03091b424655f6e", 1592100251),
+	UNSUPPORTED_GAME_ENTRY("gloriouswolfcomicsep2", "Glorious Wolf 2.ags", "e22aacb6016af866f7b241db47a290f4", 1283086429),
+	UNSUPPORTED_GAME_ENTRY("gloriouswolfcomicsep2", "Glorious Wolf 2.ags", "92d78970f88789f12275970126aa83f2", 1279399200),
 
 	// Commercial games
 	GAME_ENTRY_EN_STEAM("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178),
@@ -4609,6 +4613,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("nightmareframes", "Nightmare Frames Prologue.exe", "046f9ddd1ebe44b01417ab1f55dd0f45", 894156266),  // Steam/itch.io Eng-Esp
 	DEMO_ENTRY("nightmareframes", "Nightmare Frames Prologue.exe", "1965ea84b883d67c781a7e9dc3427e6a", 894702132),  // Steam/itch.io Eng-Esp
 	DEMO_ENTRY_EN("nightoftheravingfeminist", "Prueba1.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 7015243),
+	DEMO_ENTRY_EN("nocturnedream", "Nocturne SHAREWARE EMULATOR.exe", "48f8924122df461dffa8232af153f9cd", 294829702),
 	DEMO_ENTRY_EN("notravellerreturns", "Test.exe", "f120690b506dd63cd7d1112ea6af2f77", 19656975),
 	DEMO_ENTRY_EN("nostalgik", "NOLGASTIK.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 143891265),
 	DEMO_ENTRY_EN("objectdreams", "The Object of Dreams.exe", "87f211ec30ea7f1d2ed6d223c3a06108", 25604789),
@@ -6451,7 +6456,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("lydianellreno", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
 	GAME_ENTRY_EN("lygophilous", "Lygophilous.exe", "0564de07d3fd5c16e6947a647061913c", 38762137),
 	GAME_ENTRY_EN("machinesdreams", "Machines Have Lucid Dreams v0.91.exe", "784c7fae35c6501eaa3673ea29391a7b", 653366138),
-	GAME_ENTRY_EN("madjack", "MadJackBrakeShake.ags", "25e4e7303bce8c521dcfc8056afeaa6e", 26312912),
+	GAME_ENTRY_EN_PLATFORM("madjack", "MadJackBrakeShake.ags", "25e4e7303bce8c521dcfc8056afeaa6e", 26312912, "MAGS"),
+	GAME_ENTRY_EN("madjack", "MadJackBrakeShake.ags", "56bf59ff32c9196fe86f9777885c8889", 26335215),  // Win/Linux v1.1
 	GAME_ENTRY_EN("mafaldawest", "realgame.exe", "be559b7205d41c3f3813cb8a7e8196f6", 16292195),
 	GAME_ENTRY_EN("mafiosooverkill", "Alien Shoot.exe", "0500aacb6c176d47ac0f8158f055db83", 4012551),
 	GAME_ENTRY_EN("magic8ball", "Magic-8-Ball.exe", "82da2565c456dcfb265ded6fe3189c0b", 4233735),
@@ -7439,6 +7445,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shapeshift", "Shafeshift for cheese by Adipson.exe", "0241777c2537fc5d077c05cde10bfa9f", 211164349),
 	GAME_ENTRY_EN("shapevillage", "Shape Village.exe", "7825fa980fcd058caadaf6d3377b1f78", 13575497),
 	GAME_ENTRY_EN("shapevillage", "Shape Land.ags", "deabadb4ecba9fb40b963c155d422628", 10539829),
+	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "4b94f022e290af3ddc181263001d71ee", 76895827),  // Win v1.0
+	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "26e733a242fec82194e1f6d0f0f3d0e8", 76895828),  // Linux v1.0 fixed
 	GAME_ENTRY_EN("sharethis", "shareme.exe", "208aac8aaca15de5482efa5b429f6718", 3837255),
 	GAME_ENTRY_EN("sharkysthree", "Sharky's 3.exe", "25976a689b0f4d73eac69b1728377ecb", 9249262),
 	GAME_ENTRY_EN("shawshank", "Shawshank.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2968469),
