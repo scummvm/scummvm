@@ -20,6 +20,7 @@ method callPerform
   set retval to me(mPerform, "callMe")
   me(mPerform, "callMe2")
   me(mPerform, "callMe3")
+  me(mPerform "callMe3")
   put "returned" && retval
 
   scummvmAssertEqual(retval, "a1")

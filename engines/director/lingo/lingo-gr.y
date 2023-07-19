@@ -462,6 +462,10 @@ cmdargs: /* empty */									{
 		// This matches `cmd(args, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
+	| '(' tVARID nonemptyexprlist[args] trailingcomma ')' {
+		// This matches `cmd(args ...)`
+		$args->insert_at(0, new VarNode($tVARID));
+		$$ = $args; }
 	;
 
 trailingcomma: /* empty */ | ',' ;
