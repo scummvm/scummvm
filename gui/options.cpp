@@ -2562,7 +2562,7 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 
 	_guiDisableBDFScaling = new CheckboxWidget(boss, prefix + "DisableBDFScaling",
 		_("Disable fixed font scaling"),
-		_("Do not upscale fixed fonts in the GUI. This reduces artefacts on low resolution screens")
+		_("Do not upscale fixed size fonts in the GUI. This reduces artefacts on low resolution screens")
 	);
 
 	_guiDisableBDFScaling->setState(ConfMan.getBool("gui_disable_fixed_font_scaling", _domain));
