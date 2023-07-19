@@ -323,7 +323,7 @@ Exit:
 		glyph->root.control_len  = 0;
 	}
 #endif
-
+	(void)glyph_data_loaded;
 	return error;
 }
 

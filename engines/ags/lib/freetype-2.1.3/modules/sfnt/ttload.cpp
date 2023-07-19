@@ -108,6 +108,7 @@ static FT_Error sfnt_dir_check(FT_Stream stream, FT_ULong offset, FT_UInt num_ta
 	/* if 'num_tables' is 0, read the table count from the file */
 	if (num_tables == 0) {
 		FT_ULong format_tag;
+		(void)format_tag;
 
 		if (FT2_1_3_STREAM_SEEK(offset) || FT2_1_3_READ_ULONG(format_tag) || FT2_1_3_READ_USHORT(num_tables) || FT2_1_3_STREAM_SKIP(6))
 			goto Bad_Format;
