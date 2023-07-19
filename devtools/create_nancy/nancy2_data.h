@@ -248,8 +248,8 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy2ConditionalDialog
 const Common::Array<Goodbye> _nancy2Goodbyes = {
     { "NDA29", { { { 890, 891, 892, 893 }, {}, NOFLAG } } }, // Dwayne
     { "NRD35", { { { 791, 792, 793, 794 }, {}, NOFLAG } } }, // Rick
-    { "NPR16", { { { 391, 392, 393 }, {}, NOFLAG } } },      // Millie
-    { "NLR18", { { { 590, 591, 592 }, {}, NOFLAG } } },      // Lillian
+    { "NPR16", { { { 391, 392, 394 }, {}, NOFLAG } } },      // Millie
+    { "NLR18", { { { 590, 591, 593 }, {}, NOFLAG } } },      // Lillian
     { "NPR16", { { { 3090, 3092, 3093 }, {}, NOFLAG } } },   // Ned
     { "NBES86", { { { 3190 }, {}, NOFLAG } } },              // Bess
     { "NGEO90", { { { 3290 }, {}, NOFLAG } } },              // George
