@@ -41,17 +41,17 @@ namespace pyrodactyl {
 namespace stat {
 struct StatInfo {
 	// Used to draw stat value and description
-	pyrodactyl::ui::TextData desc;
-	Common::String text;
+	pyrodactyl::ui::TextData _desc;
+	Common::String _text;
 
-	Rect dim;
-	ImageKey full, empty;
-	bool active;
+	Rect _dim;
+	ImageKey _full, _empty;
+	bool _active;
 
 	StatInfo() {
-		active = false;
-		full = 0;
-		empty = 0;
+		_active = false;
+		_full = 0;
+		_empty = 0;
 	}
 
 	void load(rapidxml::xml_node<char> *node);
@@ -59,16 +59,18 @@ struct StatInfo {
 };
 
 class StatDrawHelper {
-	StatInfo info[STAT_TOTAL];
+	StatInfo _info[STAT_TOTAL];
 
 public:
 	StatDrawHelper() {}
 	~StatDrawHelper() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void DrawInfo(const pyrodactyl::people::Person &obj);
+	void drawInfo(const pyrodactyl::people::Person &obj);
 
-	const Common::String &Name(const StatType &type) { return info[type].text; }
+	const Common::String &name(const StatType &type) {
+		return _info[type]._text;
+	}
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl

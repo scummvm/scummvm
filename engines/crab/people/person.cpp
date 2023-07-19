@@ -78,9 +78,9 @@ void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 			} else {
 				int index = 0;
 				loadNum(index, "template", statnode);
-				if (index >= 0 && (unsigned int)index < stem.collection.size())
+				if (index >= 0 && (unsigned int)index < stem._collection.size())
 					for (int i = 0; i < STAT_TOTAL; i++)
-						_stat.val[i] = stem.collection[index].val[i];
+						_stat._val[i] = stem._collection[index]._val[i];
 			}
 		}
 
@@ -94,12 +94,12 @@ void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 
 void Person::reset() {
 	for (auto i = 0; i < STAT_TOTAL; ++i)
-		_stat.val[i].reset();
+		_stat._val[i].reset();
 }
 
 void Person::validate() {
 	for (int i = 0; i < STAT_TOTAL; ++i)
-		_stat.val[i].Validate();
+		_stat._val[i].validate();
 }
 
 void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
@@ -113,10 +113,10 @@ void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 	_opinion.saveState(doc, child);
 
 	rapidxml::xml_node<char> *child_s = doc.allocate_node(rapidxml::node_element, "stats");
-	_stat.val[STAT_HEALTH].saveState(doc, child_s, STATNAME_HEALTH);
-	_stat.val[STAT_ATTACK].saveState(doc, child_s, STATNAME_ATTACK);
-	_stat.val[STAT_DEFENSE].saveState(doc, child_s, STATNAME_DEFENSE);
-	_stat.val[STAT_SPEED].saveState(doc, child_s, STATNAME_SPEED);
+	_stat._val[STAT_HEALTH].saveState(doc, child_s, STATNAME_HEALTH);
+	_stat._val[STAT_ATTACK].saveState(doc, child_s, STATNAME_ATTACK);
+	_stat._val[STAT_DEFENSE].saveState(doc, child_s, STATNAME_DEFENSE);
+	_stat._val[STAT_SPEED].saveState(doc, child_s, STATNAME_SPEED);
 	/*stat.val[STAT_CHARISMA].saveState(doc, child_s, STATNAME_CHARISMA);
 	stat.val[STAT_INTELLIGENCE].saveState(doc, child_s, STATNAME_INTELLIGENCE);*/
 	child->append_node(child_s);

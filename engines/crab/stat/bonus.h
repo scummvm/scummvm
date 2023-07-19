@@ -40,12 +40,12 @@ namespace pyrodactyl {
 namespace stat {
 // Stat bonuses for an item
 struct Bonus {
-	StatType type;
-	int val;
+	StatType _type;
+	int _val;
 
 	void load(rapidxml::xml_node<char> *node) {
-		loadStatType(type, node);
-		loadNum(val, "val", node);
+		loadStatType(_type, node);
+		loadNum(_val, "val", node);
 	}
 };
 } // End of namespace stat

@@ -35,7 +35,7 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace stat {
-StatType StringToStatType(const Common::String &val) {
+StatType stringToStatType(const Common::String &val) {
 	if (val == STATNAME_HEALTH)
 		return STAT_HEALTH;
 	else if (val == STATNAME_ATTACK)
@@ -50,7 +50,7 @@ StatType StringToStatType(const Common::String &val) {
 	return STAT_HEALTH;
 }
 
-const char *StatTypeToString(const StatType &val) {
+const char *statTypeToString(const StatType &val) {
 	if (val == STAT_HEALTH)
 		return STATNAME_HEALTH;
 	else if (val == STAT_ATTACK)
@@ -70,44 +70,44 @@ const char *StatTypeToString(const StatType &val) {
 using namespace pyrodactyl::stat;
 
 void Stat::load(rapidxml::xml_node<char> *node) {
-	loadNum(cur, "cur", node);
-	loadNum(def, "def", node);
-	loadNum(min, "min", node);
-	loadNum(max, "max", node);
+	loadNum(_cur, "cur", node);
+	loadNum(_def, "def", node);
+	loadNum(_min, "min", node);
+	loadNum(_max, "max", node);
 }
 
 void StatGroup::load(rapidxml::xml_node<char> *node) {
-	val[STAT_HEALTH].load(node->first_node(STATNAME_HEALTH));
-	val[STAT_ATTACK].load(node->first_node(STATNAME_ATTACK));
-	val[STAT_DEFENSE].load(node->first_node(STATNAME_DEFENSE));
-	val[STAT_SPEED].load(node->first_node(STATNAME_SPEED));
+	_val[STAT_HEALTH].load(node->first_node(STATNAME_HEALTH));
+	_val[STAT_ATTACK].load(node->first_node(STATNAME_ATTACK));
+	_val[STAT_DEFENSE].load(node->first_node(STATNAME_DEFENSE));
+	_val[STAT_SPEED].load(node->first_node(STATNAME_SPEED));
 	/*val[STAT_CHARISMA].load(node->first_node(STATNAME_CHARISMA));
 	val[STAT_INTELLIGENCE].load(node->first_node(STATNAME_INTELLIGENCE));*/
 }
 
-void StatGroup::Change(const StatType &type, const int &change) {
-	val[type].cur += change;
-	val[type].Validate();
+void StatGroup::change(const pyrodactyl::stat::StatType &type, const int &change) {
+	_val[type]._cur += change;
+	_val[type].validate();
 }
 
-void StatGroup::Set(const StatType &type, const int &num) {
-	val[type].cur = num;
-	val[type].Validate();
+void StatGroup::set(const pyrodactyl::stat::StatType &type, const int &num) {
+	_val[type]._cur = num;
+	_val[type].validate();
 }
 
-void Stat::Validate() {
-	if (cur < min)
-		cur = min;
-	else if (cur > max)
-		cur = max;
+void Stat::validate() {
+	if (_cur < _min)
+		_cur = _min;
+	else if (_cur > _max)
+		_cur = _max;
 }
 
 void Stat::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
-	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(cur)));
-	child->append_attribute(doc.allocate_attribute("def", gStrPool->Get(def)));
-	child->append_attribute(doc.allocate_attribute("min", gStrPool->Get(min)));
-	child->append_attribute(doc.allocate_attribute("max", gStrPool->Get(max)));
+	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(_cur)));
+	child->append_attribute(doc.allocate_attribute("def", gStrPool->Get(_def)));
+	child->append_attribute(doc.allocate_attribute("min", gStrPool->Get(_min)));
+	child->append_attribute(doc.allocate_attribute("max", gStrPool->Get(_max)));
 	root->append_node(child);
 }
 

@@ -665,7 +665,7 @@ void Sprite::takeDamage(Info &info, Sprite &s) {
 
 	FightMove f;
 	if (s._animSet._fight.curMove(f) && info.personValid(s.id()) && info.personValid(_id)) {
-		int dmg = -1 * (f._eff._dmg + info.personGet(s.id())._stat.val[STAT_ATTACK].cur - info.personGet(_id)._stat.val[STAT_DEFENSE].cur);
+		int dmg = -1 * (f._eff._dmg + info.personGet(s.id())._stat._val[STAT_ATTACK]._cur - info.personGet(_id)._stat._val[STAT_DEFENSE]._cur);
 		if (dmg >= 0)
 			dmg = -1;
 

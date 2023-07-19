@@ -246,18 +246,18 @@ bool Info::statGet(const Common::String &name, const pyrodactyl::stat::StatType 
 	if (_people.contains(name) == 0)
 		return false;
 
-	num = _people[name]._stat.val[type].cur;
+	num = _people[name]._stat._val[type]._cur;
 	return true;
 }
 
 void Info::statSet(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (_people.contains(name) > 0)
-		_people[name]._stat.Set(type, num);
+		_people[name]._stat.set(type, num);
 }
 
 void Info::statChange(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (_people.contains(name) > 0)
-		_people[name]._stat.Change(type, num);
+		_people[name]._stat.change(type, num);
 }
 
 //------------------------------------------------------------------------

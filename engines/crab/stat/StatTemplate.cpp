@@ -41,7 +41,7 @@ void StatTemplates::load(const Common::String &filename) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("templates");
 		for (auto n = node->first_node("stats"); n != NULL; n = n->next_sibling("stats"))
-			collection.push_back(n);
+			_collection.push_back(n);
 	}
 }
 

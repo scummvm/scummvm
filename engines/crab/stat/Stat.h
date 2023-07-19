@@ -41,17 +41,20 @@ namespace pyrodactyl {
 namespace stat {
 struct Stat {
 	// The current, default, minimum and maximum value of the stat
-	int cur, def, min, max;
+	int _cur, _def, _min, _max;
 
 	Stat() {
-		min = 0;
-		max = 1;
-		cur = 1;
-		def = 1;
+		_min = 0;
+		_max = 1;
+		_cur = 1;
+		_def = 1;
 	}
 
-	void reset() { cur = def; }
-	void Validate();
+	void reset() {
+		_cur = _def;
+	}
+
+	void validate();
 
 	void load(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
@@ -59,19 +62,21 @@ struct Stat {
 
 struct StatGroup {
 	// We group all stats a single person can have
-	Stat val[STAT_TOTAL];
+	Stat _val[STAT_TOTAL];
 
 	StatGroup() {}
-	StatGroup(rapidxml::xml_node<char> *node) { load(node); }
+	StatGroup(rapidxml::xml_node<char> *node) {
+		load(node);
+	}
 
-	void Change(const pyrodactyl::stat::StatType &type, const int &change);
-	void Set(const pyrodactyl::stat::StatType &type, const int &val);
+	void change(const pyrodactyl::stat::StatType &type, const int &change);
+	void set(const pyrodactyl::stat::StatType &type, const int &val);
 
 	void load(rapidxml::xml_node<char> *node);
 };
 
-StatType StringToStatType(const Common::String &val);
-const char *StatTypeToString(const StatType &val);
+StatType stringToStatType(const Common::String &val);
+const char *statTypeToString(const StatType &val);
 } // End of namespace stat
 } // End of namespace pyrodactyl
 
