@@ -392,6 +392,10 @@ void Sprite::setPattern(uint16 pattern) {
 }
 
 void Sprite::setAutoPuppet(AutoPuppetProperty property, bool value) {
+	// Skip this if we're not in D6 or above (auto-puppet is introduced in D6)
+	if (_puppet || g_director->getVersion() < 600)
+		return;
+
 	if (value)
 		_autoPuppet |= (1 << property);
 	else

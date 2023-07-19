@@ -1447,10 +1447,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				sprite->_backColor = newColor;
 				channel->_dirty = true;
 
-				if (!sprite->_puppet && g_director->getVersion() >= 600) {
-					// Based on Director in a Nutshell, page 15
-					sprite->setAutoPuppet(kAPBackColor, true);
-				}
+				// Based on Director in a Nutshell, page 15
+				sprite->setAutoPuppet(kAPBackColor, true);
 			}
 		}
 		break;
@@ -1463,10 +1461,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				channel->_dirty = true;
 			}
 
-			if (!sprite->_puppet && g_director->getVersion() >= 600) {
-				// Based on Director in a Nutshell, page 15
-				sprite->setAutoPuppet(kAPBlend, true);
-			}
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPBlend, true);
 		}
 		break;
 	case kTheCastNum:
@@ -1537,10 +1533,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				channel->_dirty = true;
 			}
 
-			if (!sprite->_puppet && g_director->getVersion() >= 600) {
-				// Based on Director in a Nutshell, page 15
-				sprite->setAutoPuppet(kAPForeColor, true);
-			}
+			// Based on Director in a Nutshell, page 15
+			sprite->setAutoPuppet(kAPForeColor, true);
 		}
 		break;
 	case kTheHeight:
@@ -1550,10 +1544,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->_dirty = true;
 		}
 
-		if (!sprite->_puppet && g_director->getVersion() >= 600) {
-			// Based on Director in a Nutshell, page 15
-			sprite->setAutoPuppet(kAPHeight, true);
-		}
+		// Based on Director in a Nutshell, page 15
+		sprite->setAutoPuppet(kAPHeight, true);
 
 		break;
 	case kTheImmediate:
@@ -1565,10 +1557,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->_dirty = true;
 		}
 
-		if (!sprite->_puppet && g_director->getVersion() >= 600) {
-			// Based on Director in a Nutshell, page 15
-			sprite->setAutoPuppet(kAPInk, true);
-		}
+		// Based on Director in a Nutshell, page 15
+		sprite->setAutoPuppet(kAPInk, true);
 
 		break;
 	case kTheLineSize:
@@ -1595,10 +1585,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->setPosition(d.asInt(), channel->_currentPoint.y);
 		}
 
-		if (!sprite->_puppet && g_director->getVersion() >= 600) {
-			// Based on Director in a Nutshell, page 15
-			sprite->setAutoPuppet(kAPLocH, true);
-		}
+		// Based on Director in a Nutshell, page 15
+		sprite->setAutoPuppet(kAPLocH, true);
 
 		break;
 	case kTheLocV:
@@ -1610,19 +1598,15 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->setPosition(channel->_currentPoint.x, d.asInt());
 		}
 
-		if (!sprite->_puppet && g_director->getVersion() >= 600) {
-			// Based on Director in a Nutshell, page 15
-			sprite->setAutoPuppet(kAPLocV, true);
-		}
+		// Based on Director in a Nutshell, page 15
+		sprite->setAutoPuppet(kAPLocV, true);
 
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = (bool)d.asInt();
 
-		if (!sprite->_puppet && g_director->getVersion() >= 600) {
-			// Based on Director in a Nutshell, page 15
-			sprite->setAutoPuppet(kAPMoveable, true);
-		}
+		// Based on Director in a Nutshell, page 15
+		sprite->setAutoPuppet(kAPMoveable, true);
 
 		break;
 	case kTheMovieRate:
@@ -1662,10 +1646,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->_dirty = true;
 		}
 
-		if (!sprite->_puppet && g_director->getVersion() >= 600) {
-			// Based on Director in a Nutshell, page 15
-			sprite->setAutoPuppet(kAPRect, true);
-		}
+		// Based on Director in a Nutshell, page 15
+		sprite->setAutoPuppet(kAPRect, true);
 
 		break;
 	case kTheStartTime:
@@ -1720,10 +1702,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			channel->_dirty = true;
 		}
 
-		if (!sprite->_puppet && g_director->getVersion() >= 600) {
-			// Based on Director in a Nutshell, page 15
-			sprite->setAutoPuppet(kAPWidth, true);
-		}
+		// Based on Director in a Nutshell, page 15
+		sprite->setAutoPuppet(kAPWidth, true);
 
 		break;
 	default:
