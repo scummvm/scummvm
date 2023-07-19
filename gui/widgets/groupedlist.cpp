@@ -135,7 +135,7 @@ void GroupedListWidget::sortGroups() {
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
-				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k].orig);
+				_list.push_back(_dataList[*k].orig);
 				_listIndex.push_back(*k);
 			}
 		}
@@ -331,6 +331,10 @@ void GroupedListWidget::drawWidget() {
 #endif
 			r.left += fontHeight + _leftPadding;
 			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight + _leftPadding, y + fontHeight), _groupExpanded[groupID]);
+			pad = 0;
+		} else if (_groupsVisible) {
+			r.left += fontHeight + _leftPadding;
+			r.right -= _rightPadding;
 			pad = 0;
 		}
 
