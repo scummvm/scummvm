@@ -44,7 +44,7 @@ Screen::Screen(AGDSEngine * engine, ObjectPtr object, ScreenLoadingType loadingT
 	_engine(engine), _object(object), _background(nullptr),
 	_name(object->getName()), _loadingType(loadingType), _previousScreen(prevScreen),
 	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false),
-	_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()) {
+	_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()), _fade(0) {
 	add(object);
 }
 
@@ -252,6 +252,22 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 				break;
 			default:
 				error("invalid logic in z-sort");
+		}
+	}
+	if (_fade != 0) {
+		auto alpha = (100 - _fade) * 256 / 100;
+		auto & format = backbuffer.format;
+		for(int y = 0; y < backbuffer.h; ++y) {
+			uint32 * line = (uint32 *)backbuffer.getBasePtr(0, y);
+			int w = backbuffer.w;
+			while(w--) {
+				uint8 r, g, b;
+				format.colorToRGB(*line, r, g, b);
+				r = (r * alpha) >> 8;
+				g = (g * alpha) >> 8;
+				b = (b * alpha) >> 8;
+				*line++ = format.RGBToColor(r, g, b);
+			}
 		}
 	}
 }

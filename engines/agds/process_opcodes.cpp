@@ -1765,7 +1765,7 @@ void Process::fadeScreen() {
 	int fadeSound = pop();
 	int fadeScreen = pop();
 	debug("fadeScreen screen: %d, sound: %d music: %d", fadeScreen, fadeSound, fadeMusic);
-	_engine->curtain(getName(), fadeScreen, fadeSound, fadeMusic);
+	_engine->curtain(getName(), fadeScreen, fadeSound, fadeMusic, true);
 	deactivate();
 	if (passive())
 		suspend();

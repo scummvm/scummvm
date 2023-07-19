@@ -64,6 +64,7 @@ class Screen {
 	RegionPtr		_region;
 	bool			_applyingPatch;
 	int				_characterNear, _characterFar;
+	int				_fade;
 
 public:
 	struct KeyHandler {
@@ -76,6 +77,14 @@ public:
 
 	Screen(AGDSEngine *engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen);
 	~Screen();
+
+	int fade() const {
+		return _fade;
+	}
+
+	void fade(int fade) {
+		_fade = fade;
+	}
 
 	void setCharacterNearFar(int near, int far) {
 		_characterNear = near;

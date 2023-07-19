@@ -273,7 +273,7 @@ public:
 	}
 	int getRandomNumber(int max);
 
-	void curtain(const Common::String &process, int screen, int sound, int music);
+	void curtain(const Common::String &process, int screen, int sound, int music, bool updateGlobals);
 
 private:
 	void stopAmbientSound();
@@ -346,6 +346,7 @@ private:
 
 	Common::String				_curtainProcess;
 	int							_curtainTimer;
+	int							_curtainScreen;
 
 	bool						_fastMode;
 	bool						_hintMode;
