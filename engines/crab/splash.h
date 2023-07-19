@@ -51,16 +51,16 @@ namespace Crab {
 // Purpose: Splash screen class
 //------------------------------------------------------------------------
 class Splash : public GameState {
-	pyrodactyl::image::Image background;
+	pyrodactyl::image::Image _background;
 
-	int x, y;
-	bool first_run, load_complete;
+	int _x, _y;
+	bool _firstRun, _loadComplete;
 
 public:
 	Splash();
 	~Splash();
-	void handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {}
-	void internalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
+	void handleEvents(Common::Event &event, bool &shouldChangeState, GameStateID &newStateId) {}
+	void internalEvents(bool &shouldChangeState, GameStateID &newStateId);
 	void draw();
 	void setUI();
 
