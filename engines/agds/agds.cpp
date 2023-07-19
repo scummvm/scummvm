@@ -68,6 +68,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 	_syncSoundId(-1),
 	_ambientSoundId(-1),
 	_curtainTimer(-1),
+	_curtainScreen(0),
 	_fastMode(true),
 	_hintMode(false) {
 }
@@ -426,14 +427,17 @@ void AGDSEngine::newGame() {
 	runObject(init);
 }
 
-void AGDSEngine::curtain(const Common::String &process, int screen, int sound, int music) {
+void AGDSEngine::curtain(const Common::String &process, int screen, int sound, int music, bool updateGlobals) {
 	assert(!process.empty());
+	if (updateGlobals) {
+		getSystemVariable("screen_curtain")->setInteger(screen >= 0? screen: -screen);
+		getSystemVariable("sound_curtain")->setInteger(sound >= 0? sound: -sound);
+		getSystemVariable("music_curtain")->setInteger(music >= 0? music: -music);
+	}
 	_curtainProcess = process;
 	_curtainTimer = 100;
+	_curtainScreen = screen;
 	enableSystemUser(false);
-	getSystemVariable("screen_curtain")->setInteger(screen);
-	getSystemVariable("sound_curtain")->setInteger(sound);
-	getSystemVariable("music_curtain")->setInteger(music);
 }
 
 void AGDSEngine::tick() {
@@ -787,6 +791,13 @@ Common::Error AGDSEngine::run() {
 
 		if (_textLayout.valid()) {
 			_textLayout.paint(*this, *backbuffer);
+		}
+
+		if (_curtainTimer != -1 && _currentScreen) {
+			if (_curtainScreen > 0)
+				_currentScreen->fade(100 - _curtainTimer);
+			else if (_curtainScreen < 0)
+				_currentScreen->fade(_curtainTimer);
 		}
 
 		_system->unlockScreen();
