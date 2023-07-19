@@ -43,20 +43,20 @@ namespace text {
 
 class ColorPool {
 
-	Common::Array<SDL_Color> pool;
+	Common::Array<SDL_Color> _pool;
 
 	// Default invalid color
-	SDL_Color invalid;
+	SDL_Color _invalid;
 
 public:
 	ColorPool() {
-		pool.clear();
-		invalid.r = 255;
-		invalid.g = 0;
-		invalid.b = 220;
+		_pool.clear();
+		_invalid.r = 255;
+		_invalid.g = 0;
+		_invalid.b = 220;
 	}
 
-	SDL_Color &Get(const int &num);
+	SDL_Color &get(const int &num);
 	void load(const Common::String &filename);
 };
 } // End of namespace text

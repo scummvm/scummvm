@@ -35,23 +35,23 @@ namespace Crab {
 using namespace pyrodactyl::text;
 
 void ColorPool::load(const Common::String &filename) {
-	pool.clear();
-	XMLDoc col_list(filename);
-	if (col_list.ready()) {
-		rapidxml::xml_node<char> *node = col_list.doc()->first_node("colors");
+	_pool.clear();
+	XMLDoc colList(filename);
+	if (colList.ready()) {
+		rapidxml::xml_node<char> *node = colList.doc()->first_node("colors");
 		for (rapidxml::xml_node<char> *n = node->first_node("color"); n != NULL; n = n->next_sibling("color")) {
 			SDL_Color c;
 			loadColor(c, n);
-			pool.push_back(c);
+			_pool.push_back(c);
 		}
 	}
 }
 
-SDL_Color &ColorPool::Get(const int &num) {
-	if (pool.size() <= static_cast<unsigned int>(num))
-		return invalid;
+SDL_Color &ColorPool::get(const int &num) {
+	if (_pool.size() <= static_cast<unsigned int>(num))
+		return _invalid;
 
-	return pool[num];
+	return _pool[num];
 }
 
 } // End of namespace Crab
