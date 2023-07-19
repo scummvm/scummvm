@@ -1168,8 +1168,9 @@ Exit:
 
 FT2_1_3_CALLBACK_DEF(int)
 tt_kern_pair_compare(const void *a, const void *b) {
-	TT_Kern0_Pair pair1 = (TT_Kern0_Pair)a;
-	TT_Kern0_Pair pair2 = (TT_Kern0_Pair)b;
+
+	TT_Kern0_Pair pair1 = const_cast<TT_Kern0_Pair>(static_cast<const TT_Kern0_PairRec_ *>(a));
+	TT_Kern0_Pair pair2 = const_cast<TT_Kern0_Pair>(static_cast<const TT_Kern0_PairRec_ *>(b));
 
 	FT_ULong index1 = TT_KERN_INDEX(pair1->left, pair1->right);
 	FT_ULong index2 = TT_KERN_INDEX(pair2->left, pair2->right);

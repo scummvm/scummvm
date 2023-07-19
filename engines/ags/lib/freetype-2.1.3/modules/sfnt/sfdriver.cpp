@@ -181,7 +181,7 @@ static const char *get_sfnt_postscript_name(TT_Face face) {
 				FT2_1_3_FREE(result);
 				goto Exit;
 			}
-			((char *)result)[len] = '\0';
+			const_cast<char *>(result)[len] = '\0';
 		}
 	}
 
