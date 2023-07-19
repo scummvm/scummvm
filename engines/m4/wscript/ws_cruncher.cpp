@@ -1378,7 +1378,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 	while (_GWS(keepProcessing)) {
 		dbg_SetCurrSequInstr(myAnim8, _GWS(compareCCR));
 
-		myPC = (uint32 *)((int32)*(myAnim8->sequHandle) + myAnim8->pcOffset);
+		myPC = (uint32 *)((byte *)*(myAnim8->sequHandle) + myAnim8->pcOffset);
 		oldPC = myPC;
 		_GWS(pcOffsetOld) = myAnim8->pcOffset;
 
@@ -1386,7 +1386,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025c, nullptr);
 		}
 
-		myAnim8->pcOffset += (int32)myPC - (int32)oldPC;
+		myAnim8->pcOffset += (byte *)myPC - (byte *)oldPC;
 		pCodeJmpTable[myInstruction](myAnim8);
 	}
 
