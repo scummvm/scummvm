@@ -102,6 +102,8 @@ void TowerPuzzle::execute() {
 		_numRings = _numRingsByDifficulty[NancySceneState.getDifficulty()];
 
 		if (!_puzzleState->playerHasTriedPuzzle) {
+			_puzzleState->order.clear();
+			_puzzleState->order.resize(3, Common::Array<int8>(6, -1));
 			for (uint i = 0; i < _numRings; ++i) {
 				_puzzleState->order[0][i] = i;
 			}
@@ -155,6 +157,8 @@ void TowerPuzzle::execute() {
 		case kWaitForSound:
 			_solveExitScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
+			_puzzleState->order.clear();
+			_puzzleState->order.resize(3, Common::Array<int8>(6, -1));
 			break;
 		}
 
