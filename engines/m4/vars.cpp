@@ -88,7 +88,7 @@ bool Vars::init() {
 	gr_font_set(_font_inter);
 
 	if (_cheat_keys_enabled) {
-		if (!dbg_ws_init(_kernel.start_up_with_dbg_ws, _font_tiny_prop, _globals))
+		if (!dbg_ws_init(_kernel.start_up_with_dbg_ws, _font_tiny_prop, _globals.getData()))
 			error(FL, 'DWIF');
 	}
 
@@ -229,7 +229,7 @@ void Vars::fire_up_gui() {
 bool Vars::woodscript_init() {
 	if (!InitWSAssets())
 		return false;
-	if (!ws_Initialize(_G(globals)))
+	if (!ws_Initialize(_G(globals).getData()))
 		return false;
 
 	return true;

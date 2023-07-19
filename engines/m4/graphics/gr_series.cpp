@@ -64,15 +64,14 @@ machine *series_play_xy(char *seriesName, int32 loopCount, uint32 flags,
 
 machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger) {
 	machine *m;
-	StreamFile *streamFil = new StreamFile(seriesName);
+	SysFile *sysFile = new SysFile(seriesName);
 
 	// Store the frameRate in g_temp1
 	// If it is < 0, the default frame rate for the ss will be used
 	_G(globals)[GLB_TEMP_1] = frameRate << 16;
 
-	// An unusual way to use global regs, but a FILE* is as good a value as any other...
-
-	_G(globals)[GLB_TEMP_4] = (frac16)(streamFil);
+	// Store the SysFile pointer
+	_G(globals)[GLB_TEMP_4] = sysFile;
 
 	// Set the callback trigger
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);

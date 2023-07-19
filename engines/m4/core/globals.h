@@ -28,12 +28,13 @@
 
 #include "common/array.h"
 #include "common/serializer.h"
+#include "m4/fileio/sys_file.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 
 /**
- * 
+ * Global entry constants
  */
 enum {
 	GLB_TIME = 0,
@@ -83,11 +84,69 @@ enum {
 
 constexpr int GLB_SHARED_VARS = 256;
 
-/*
-struct GlobalVars : public Common::Array<int32> {
-	//void syncGame(Common::Serializer &s);
+/**
+ * Globals array class.
+ * This design is complicated by the fact that the original sometimes used it
+ * to store pointers as well as numbers, assuming they were 32-bits. Because of this,
+ * the new Globals class has to support both
+ */
+class Globals {
+	struct Entry {
+	private:
+		uint32 &_numValue;
+		void *&_ptrValue;
+		bool &_isPtr;
+	public:
+		Entry(uint32 &numValue, void *&ptrValue, bool &isPtr) :
+			_numValue(numValue), _ptrValue(ptrValue), _isPtr(isPtr) {
+		}
+
+		operator uint32() const {
+			assert(!_isPtr);
+			return _numValue;
+		}
+		template<class T>
+		operator T *() const {
+			assert(_isPtr);
+			return (T *)_ptrValue;
+		}
+		Entry &operator=(uint32 val) {
+			_isPtr = false;
+			_numValue = val;
+			return *this;
+		}
+		template<class T>
+		Entry &operator=(T *val) {
+			_isPtr = true;
+			_ptrValue = val;
+			return *this;
+		}
+	};
+private:
+	frac16 _numData[GLB_SHARED_VARS];
+	void *_ptrData[GLB_SHARED_VARS];
+	bool _isPtr[GLB_SCRATCH_VARS];
+public:
+	Globals();
+
+	/**
+	 * Dummy operator to allow for original code that did !globals to see if
+	 * the globals array had been created
+	 */
+	bool operator!() const { return false; }
+
+	/**
+	 * Accesses the numeric array. Needed by several wscript methods
+	 */
+	frac16 *getData() {
+		return _numData;
+	}
+
+	Entry operator[](uint idx) {
+		assert(idx < GLB_SHARED_VARS);
+		return Entry(_numData[idx], _ptrData[idx], _isPtr[idx]);
+	}
 };
-*/
 
 } // namespace M4
 
