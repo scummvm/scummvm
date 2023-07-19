@@ -191,53 +191,41 @@ bool setAlpha(byte *dst, const byte *src,
               const Graphics::PixelFormat &format,
               const bool skipTransparent, const uint8 alpha);
 
-/**
- * Returns the pixel format all operations of TransparentSurface support.
- *
- * Unlike Surface TransparentSurface only works with a fixed pixel format.
- * This format can be queried using this static function.
- *
- * @return Supported pixel format.
- */
-inline PixelFormat getSupportedBlenderPixelFormat() {
-	return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-}
-
-void opaqueBlendBlit(byte *dst, byte *src,
+void opaqueBlendBlit(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
 					 const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
 
-void binaryBlendBlit(byte *dst, byte *src,
+void binaryBlendBlit(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
 					 const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
 
 // Only blits to and from 32bpp images
-void multiplyBlendBlit(byte *dst, byte *src,
+void multiplyBlendBlit(byte *dst, const byte *src,
 					   const uint dstPitch, const uint srcPitch,
 					   const int posX, const int posY,
 					   const uint width, const uint height,
 					   const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
 
 // Only blits to and from 32bpp images
-void subtractiveBlendBlit(byte *dst, byte *src,
+void subtractiveBlendBlit(byte *dst, const byte *src,
 						  const uint dstPitch, const uint srcPitch,
 						  const int posX, const int posY,
 						  const uint width, const uint height,
 						  const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
 
 // Only blits to and from 32bpp images
-void additiveBlendBlit(byte *dst, byte *src,
+void additiveBlendBlit(byte *dst, const byte *src,
 					   const uint dstPitch, const uint srcPitch,
 					   const int posX, const int posY,
 					   const uint width, const uint height,
 					   const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
 
 // Only blits to and from 32bpp images
-void alphaBlendBlit(byte *dst, byte *src,
+void alphaBlendBlit(byte *dst, const byte *src,
 					const uint dstPitch, const uint srcPitch,
 					const int posX, const int posY,
 					const uint width, const uint height,

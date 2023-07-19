@@ -24,10 +24,14 @@
 
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "common/rect.h"
+#include "graphics/transform_struct.h"
 #include "common/types.h"
+#include "graphics/transparent_surface.h"
 
 namespace Graphics {
+
+#define BLENDBLIT_RGB(R,G,B)       (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | 0xff)
+#define BLENDBLIT_ARGB(A,R,G,B)    (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
 
 /**
  * @defgroup graphics_managed_surface Managed surface
@@ -521,6 +525,55 @@ public:
 		blitFromInner(src._innerSurface, srcRect, Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(),
 			destPos.y + srcRect.height()), src._paletteSet ? src._palette : nullptr);
 	}
+	
+	/**
+	 * Returns the pixel format all operations of blendBlitFrom support.
+	 *
+	 * Unlike normal blit functions, blendBlitFrom only works with a fixed pixel
+	 * format. This format can be queried using this static function.
+	 *
+	 * @return Supported pixel format.
+	 */
+	static inline PixelFormat getSupportedBlendBlitPixelFormat() {
+		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	}
+
+	/**
+	 * @brief renders the surface to another surface
+	 * @note Most of this is wrong at the time being... Not sure whether or not to keep the old
+	 * arguments or just make the function like the rest here.
+	 * @param target a pointer to the target surface. In most cases this is the framebuffer.
+	 * @param posX the position on the X-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	 * The default value is 0.
+	 * @param posY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	 * The default value is 0.
+	 * @param flipping how the image should be flipped.<br>
+	 * The default value is Graphics::FLIP_NONE (no flipping)
+	 * @param pPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
+	 * This referes to the unflipped and unscaled image.<br>
+	 * The default value is NULL.
+	 * @param color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
+	 * The alpha component of the color determines the alpha blending parameter (0 = no covering, 255 = full covering).<br>
+	 * The color components determines the color for color modulation.<br>
+	 * The default value is TS_ARGB(255, 255, 255, 255) (full covering, no color modulation).
+	 * The macros TS_RGB and TS_ARGB can be used for the creation of the color value.
+	 * **Temporarily, these macros can also be replaced with blendBlitMakeARGB/RGB static members of
+	 *  Graphics::ManagedSurface
+	 * @param width the output width of the screen section.
+	 * The images will be scaled if the output width of the screen section differs from the image section.<br>
+	 * The value -1 determines that the image should not be scaled.<br>
+	 * The default value is -1.
+	 * @param height the output height of the screen section.
+	 * The images will be scaled if the output width of the screen section differs from the image section.<br>
+	 * The value -1 determines that the image should not be scaled.<br>
+	 * The default value is -1.
+	 * @return returns the size (not position) of what was drawn to this managed surface.
+	 */
+	Common::Rect blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+							   const Common::Rect &destRect, int flipping = FLIP_NONE,
+							   uint32 colorMod = BLENDBLIT_ARGB(255, 255, 255, 255),
+							   TSpriteBlendMode blend = BLEND_NORMAL,
+							   int alphaType = ALPHA_FULL);
 
 	/**
 	 * Clear the entire surface.
