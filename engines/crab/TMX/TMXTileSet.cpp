@@ -38,38 +38,38 @@ using namespace TMX;
 
 void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		loadNum(first_gid, "firstgid", node);
-		loadStr(name, "name", node);
-		loadNum(tile_w, "tilewidth", node);
-		loadNum(tile_h, "tileheight", node);
+		loadNum(_firstGid, "firstgid", node);
+		loadStr(_name, "name", node);
+		loadNum(_tileW, "tilewidth", node);
+		loadNum(_tileH, "tileheight", node);
 
-		clip.w = tile_w;
-		clip.h = tile_h;
+		_clip.w = _tileW;
+		_clip.h = _tileH;
 
 		if (nodeValid("image", node)) {
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 			Common::String filename;
 			loadStr(filename, "source", imgnode);
-			loc = path + filename;
+			_loc = path + filename;
 
-			img.load(loc);
-			total_rows = img.h() / tile_h;
-			total_cols = img.w() / tile_w;
-			warning("Total rows : %d Total cols: %d gid: %d", total_rows, total_cols, first_gid);
+			_img.load(_loc);
+			_totalRows = _img.h() / _tileH;
+			_totalCols = _img.w() / _tileW;
+			warning("Total rows : %d Total cols: %d gid: %d", _totalRows, _totalCols, _firstGid);
 
 		}
 	}
 
 	// Prevent divide by zero errors later
-	if (total_cols == 0)
-		total_cols = 1;
+	if (_totalCols == 0)
+		_totalCols = 1;
 }
 
 void TileSetGroup::reset() {
-	for (auto i = tileset.begin(); i != tileset.end(); ++i)
-		i->img.deleteImage();
+	for (auto i = _tileset.begin(); i != _tileset.end(); ++i)
+		i->_img.deleteImage();
 
-	tileset.clear();
+	_tileset.clear();
 }
 
 void TileSetGroup::load(const Common::String &path, rapidxml::xml_node<char> *node) {
@@ -77,179 +77,179 @@ void TileSetGroup::load(const Common::String &path, rapidxml::xml_node<char> *no
 	for (auto n = node->first_node("tileset"); n != NULL; n = n->next_sibling("tileset")) {
 		TileSet t;
 		t.load(path, n);
-		tileset.push_back(t);
+		_tileset.push_back(t);
 	}
 }
 
 void TileSet::draw(const Vector2i &pos, const TileInfo &tile) {
-	if (tile.gid != 0) {
-		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
-		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
+	if (tile._gid != 0) {
+		_clip.x = ((tile._gid - _firstGid) % _totalCols) * _tileW;
+		_clip.y = ((tile._gid - _firstGid) / _totalCols) * _tileH;
 
-		img.draw(pos.x, pos.y, &clip, tile.flip);
+		_img.draw(pos.x, pos.y, &_clip, tile._flip);
 	}
 }
 
-void TileSet::PreDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf) {
-	if (tile.gid != 0) {
-		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
-		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
+void TileSet::preDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf) {
+	if (tile._gid != 0) {
+		_clip.x = ((tile._gid - _firstGid) % _totalCols) * _tileW;
+		_clip.y = ((tile._gid - _firstGid) / _totalCols) * _tileH;
 
-		img.draw(pos.x, pos.y, &clip, tile.flip, surf);
+		_img.draw(pos.x, pos.y, &_clip, tile._flip, surf);
 	}
 }
 
-void TileSetGroup::PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics::ManagedSurface *surf) {
-	if (layer.type == LAYER_IMAGE)
+void TileSetGroup::preDraw(MapLayer &layer, const Vector2i &tileSize, Graphics::ManagedSurface *surf) {
+	if (layer._type == LAYER_IMAGE)
 		return;
 
-	start.x = 0;
-	start.y = 0;
+	_start.x = 0;
+	_start.y = 0;
 
-	finish.x = layer.tile.size();
-	finish.y = layer.tile[0].size();
+	_finish.x = layer._tile.size();
+	_finish.y = layer._tile[0].size();
 
-	v.x = start.y * tile_size.x;
-	v.y = start.x * tile_size.y;
+	_v.x = _start.y * tileSize.x;
+	_v.y = _start.x * tileSize.y;
 
-	for (int x = start.x; x < finish.x; ++x) {
-			for (int y = start.y; y < finish.y; ++y) {
-				for (int i = tileset.size() - 1; i >= 0; --i)
-					if (layer.tile[x][y].gid >= tileset[i].first_gid) {
-						tileset[i].PreDraw(v, layer.tile[x][y], surf);
-						layer.boundRect.push_back(Rect(v.x, v.y, tile_size.x, tile_size.y));
+	for (int x = _start.x; x < _finish.x; ++x) {
+			for (int y = _start.y; y < _finish.y; ++y) {
+				for (int i = _tileset.size() - 1; i >= 0; --i)
+					if (layer._tile[x][y]._gid >= _tileset[i]._firstGid) {
+						_tileset[i].preDraw(_v, layer._tile[x][y], surf);
+						layer._boundRect.push_back(Rect(_v.x, _v.y, tileSize.x, tileSize.y));
 						break;
 					}
 
-				v.x += tile_size.x;
+				_v.x += tileSize.x;
 			}
 
-			v.x = start.y * tile_size.x;
-			v.y += tile_size.y;
+			_v.x = _start.y * tileSize.x;
+			_v.y += tileSize.y;
 	}
 
 	Common::List<Rect>::iterator rOuter, rInner;
 
 	// Process the bound rect list to find any rects to merge
-	for (rOuter = layer.boundRect.begin(); rOuter != layer.boundRect.end(); ++rOuter) {
+	for (rOuter = layer._boundRect.begin(); rOuter != layer._boundRect.end(); ++rOuter) {
 		rInner = rOuter;
-		while (++rInner != layer.boundRect.end()) {
+		while (++rInner != layer._boundRect.end()) {
 			if ((*rOuter).Collide(*rInner)) {
 				rOuter->Extend(*rInner);
-				layer.boundRect.erase(rInner);
+				layer._boundRect.erase(rInner);
 				rInner = rOuter;
 			}
 		}
 	}
 }
 
-void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos) {
+void TileSetGroup::forceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tileSize, const Rect &playerPos) {
 
-	if (layer.type == LAYER_IMAGE)
+	if (layer._type == LAYER_IMAGE)
 		return;
 
-	layer.collide = layer.pos.Collide(player_pos);
+	layer._collide = layer._pos.Collide(playerPos);
 
 	// Normal and prop layers are drawn this way
 	// The row and column we start drawing at
-	start.x = player_pos.y / tile_size.y;
-	start.y = player_pos.x / tile_size.x;
+	_start.x = playerPos.y / tileSize.y;
+	_start.y = playerPos.x / tileSize.x;
 
-	if(start.x < 0 || start.y < 0)
+	if(_start.x < 0 || _start.y < 0)
 		return;
 
 	// The row and column we end drawing at
-	finish.x = (player_pos.y + player_pos.h) / tile_size.y + 1;
-	finish.y = (player_pos.x + player_pos.w) / tile_size.x + 1;
+	_finish.x = (playerPos.y + playerPos.h) / tileSize.y + 1;
+	_finish.y = (playerPos.x + playerPos.w) / tileSize.x + 1;
 
-	if (finish.x > (int)layer.tile.size())
-		finish.x = layer.tile.size();
-	if (finish.y > (int)layer.tile[0].size())
-		finish.y = layer.tile[0].size();
+	if (_finish.x > (int)layer._tile.size())
+		_finish.x = layer._tile.size();
+	if (_finish.y > (int)layer._tile[0].size())
+		_finish.y = layer._tile[0].size();
 
-	v.x = start.y * tile_size.x - camera.x;
-	v.y = start.x * tile_size.y - camera.y;
+	_v.x = _start.y * tileSize.x - camera.x;
+	_v.y = _start.x * tileSize.y - camera.y;
 
-	for (int x = start.x; x < finish.x; ++x) {
-		for (int y = start.y; y < finish.y; ++y) {
-			for (int i = tileset.size() - 1; i >= 0; --i)
-				if (layer.tile[x][y].gid >= tileset[i].first_gid) {
-					tileset[i].draw(v, layer.tile[x][y]);
+	for (int x = _start.x; x < _finish.x; ++x) {
+		for (int y = _start.y; y < _finish.y; ++y) {
+			for (int i = _tileset.size() - 1; i >= 0; --i)
+				if (layer._tile[x][y]._gid >= _tileset[i]._firstGid) {
+						_tileset[i].draw(_v, layer._tile[x][y]);
 					break;
 				}
 
-			v.x += tile_size.x;
+			_v.x += tileSize.x;
 		}
 
-		v.x = start.y * tile_size.x - camera.x;
-		v.y += tile_size.y;
+		_v.x = _start.y * tileSize.x - camera.x;
+		_v.y += tileSize.y;
 	}
 }
 
-void TileSetGroup::draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img) {
-	if (layer.type == LAYER_IMAGE)
-		layer.img.draw(-1.0f * camera.x * layer.rate.x, -1.0f * camera.y * layer.rate.y);
-	else if (layer.type == LAYER_PARALLAX) {
+void TileSetGroup::draw(MapLayer &layer, const Rect &camera, const Vector2i &tileSize, const Rect &playerPos, pyrodactyl::image::Image &img) {
+	if (layer._type == LAYER_IMAGE)
+		layer._img.draw(-1.0f * camera.x * layer._rate.x, -1.0f * camera.y * layer._rate.y);
+	else if (layer._type == LAYER_PARALLAX) {
 		// The row and column we start drawing at
-		start.x = 0;
-		start.y = 0;
+		_start.x = 0;
+		_start.y = 0;
 
 		// The row and column we end drawing at
-		finish.x = layer.tile.size() - 1;
-		finish.y = layer.tile[0].size() - 1;
+		_finish.x = layer._tile.size() - 1;
+		_finish.y = layer._tile[0].size() - 1;
 
-		v.x = (start.y * tile_size.x - camera.x) * layer.rate.x;
-		v.y = (start.x * tile_size.y - camera.y) * layer.rate.y;
+		_v.x = (_start.y * tileSize.x - camera.x) * layer._rate.x;
+		_v.y = (_start.x * tileSize.y - camera.y) * layer._rate.y;
 
-		for (int x = start.x; x < finish.x; ++x) {
-			for (int y = start.y; y < finish.y; ++y) {
-				for (int i = tileset.size() - 1; i >= 0; --i)
-					if (layer.tile[x][y].gid >= tileset[i].first_gid) {
-						tileset[i].draw(v, layer.tile[x][y]);
+		for (int x = _start.x; x < _finish.x; ++x) {
+			for (int y = _start.y; y < _finish.y; ++y) {
+				for (int i = _tileset.size() - 1; i >= 0; --i)
+					if (layer._tile[x][y]._gid >= _tileset[i]._firstGid) {
+						_tileset[i].draw(_v, layer._tile[x][y]);
 						break;
 					}
 
-				v.x += tile_size.x;
+				_v.x += tileSize.x;
 			}
 
-			v.x = (start.y * tile_size.x - camera.x) * layer.rate.x;
-			v.y += tile_size.y;
+			_v.x = (_start.y * tileSize.x - camera.x) * layer._rate.x;
+			_v.y += tileSize.y;
 		}
 	} else {
-		layer.collide = layer.pos.Collide(player_pos);
+		layer._collide = layer._pos.Collide(playerPos);
 
 		// If player is inside the layer bounds, draw normally - else skip drawing
-		if (layer.type == LAYER_AUTOHIDE && !layer.collide)
+		if (layer._type == LAYER_AUTOHIDE && !layer._collide)
 			return;
 
 		// If the player is outside the layer bounds, draw normally - else skip drawing
-		if (layer.type == LAYER_AUTOSHOW && layer.collide)
+		if (layer._type == LAYER_AUTOSHOW && layer._collide)
 			return;
 
 		// Normal and prop layers are drawn this way
 
 		// The row and column we start drawing at
-		start.x = camera.y / tile_size.y;
-		start.y = camera.x / tile_size.x;
+		_start.x = camera.y / tileSize.y;
+		_start.y = camera.x / tileSize.x;
 
 		// The row and column we end drawing at
-		finish.x = (camera.y + camera.h) / tile_size.y + 1;
-		finish.y = (camera.x + camera.w) / tile_size.x + 1;
+		_finish.x = (camera.y + camera.h) / tileSize.y + 1;
+		_finish.y = (camera.x + camera.w) / tileSize.x + 1;
 
-		if (finish.x > (int)layer.tile.size())
-			finish.x = layer.tile.size();
-		if (finish.y > (int)layer.tile[0].size())
-			finish.y = layer.tile[0].size();
+		if (_finish.x > (int)layer._tile.size())
+			_finish.x = layer._tile.size();
+		if (_finish.y > (int)layer._tile[0].size())
+			_finish.y = layer._tile[0].size();
 
-		v.x = camera.x;
-		v.y = camera.y;
+		_v.x = camera.x;
+		_v.y = camera.y;
 
 		Vector2i end;
 
 		end.x = camera.x + g_engine->_screen->w;
 		end.y = camera.y + g_engine->_screen->h;
 
-		Rect clip(v.x, v.y, end.x - v.x, end.y - v.y);
+		Rect clip(_v.x, _v.y, end.x - _v.x, end.y - _v.y);
 		img.fastDraw(0, 0, &clip);
 	}
 }

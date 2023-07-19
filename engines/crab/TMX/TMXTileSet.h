@@ -40,55 +40,58 @@ namespace Crab {
 namespace TMX {
 struct TileSet {
 	// The name of the tileset
-	Common::String name;
+	Common::String _name;
 
 	// The location of the tileset image on the disk
-	Common::String loc;
+	Common::String _loc;
 
 	// The first gid of the tileset
-	GidFormat first_gid;
+	GidFormat _firstGid;
 
 	// Dimensions of tiles
-	int tile_w, tile_h;
+	int _tileW, _tileH;
 
 	// Number of rows and columns of tiles
-	int total_rows, total_cols;
+	int _totalRows, _totalCols;
 
 	// The image used by the tileset
-	pyrodactyl::image::Image img;
+	pyrodactyl::image::Image _img;
 
 	// Stuff used to store temporary data
 
 	// The rectangle used to store clip info
-	Rect clip;
+	Rect _clip;
 
-	void Init() {
-		first_gid = 1;
-		tile_w = 1;
-		tile_h = 1;
-		total_rows = 1;
-		total_cols = 1;
+	void init() {
+		_firstGid = 1;
+		_tileW = 1;
+		_tileH = 1;
+		_totalRows = 1;
+		_totalCols = 1;
 	}
 
-	TileSet() { Init(); }
+	TileSet() {
+		init();
+	}
+
 	TileSet(const Common::String &path, rapidxml::xml_node<char> *node) {
-		Init();
+		init();
 		load(path, node);
 	}
 
 	void load(const Common::String &path, rapidxml::xml_node<char> *node);
 	void draw(const Vector2i &pos, const TileInfo &tile);
-	void PreDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf);
+	void preDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf);
 };
 
 class TileSetGroup {
-	Common::Array<TileSet> tileset;
+	Common::Array<TileSet> _tileset;
 
 	// The latest tile position
-	Vector2i v;
+	Vector2i _v;
 
 	// The area that we have to draw
-	Vector2i start, finish;
+	Vector2i _start, _finish;
 
 public:
 	TileSetGroup() {}
@@ -96,9 +99,9 @@ public:
 	void reset();
 
 	void load(const Common::String &path, rapidxml::xml_node<char> *node);
-	void draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img);
-	void PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics::ManagedSurface *surf);
-	void ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos);
+	void draw(MapLayer &layer, const Rect &camera, const Vector2i &tileSize, const Rect &playerPos, pyrodactyl::image::Image &img);
+	void preDraw(MapLayer &layer, const Vector2i &tileSize, Graphics::ManagedSurface *surf);
+	void forceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tileSize, const Rect &playerPos);
 };
 } // End of namespace TMX
 

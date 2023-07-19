@@ -122,8 +122,8 @@ bool Level::layerVisible(pyrodactyl::anim::Sprite *obj) {
 	if (obj->_layer < 0)
 		return true;
 
-	if ((unsigned int)obj->_layer < _terrain.layer.size())
-		return _terrain.layer[obj->_layer].collide;
+	if ((unsigned int)obj->_layer < _terrain._layer.size())
+		return _terrain._layer[obj->_layer]._collide;
 
 	return false;
 }
@@ -135,7 +135,7 @@ bool Level::layerVisible(pyrodactyl::anim::Sprite *obj) {
 void Level::calcTrigCollide(pyrodactyl::event::Info &info) {
 	for (auto i = _objects.begin(); i != _objects.end(); ++i)
 		if (info.personValid(i->id()))
-			_terrain.CollideWithTrigger(i->boundRect(), info.personGet(i->id())._trig);
+			_terrain.collideWithTrigger(i->boundRect(), info.personGet(i->id())._trig);
 }
 
 //------------------------------------------------------------------------
@@ -167,11 +167,11 @@ bool Level::collidingWithObject(pyrodactyl::event::Info &info, Common::String &i
 // id is set to the id of colliding object
 //------------------------------------------------------------------------
 bool Level::collidingWithLevel(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s) {
-	_terrain.CollideWithNoWalk(s.boundRect(), s._collideData);
+	_terrain.collideWithNoWalk(s.boundRect(), s._collideData);
 
-	_terrain.CollideWithStairs(s.boundRect(), s._velMod);
+	_terrain.collideWithStairs(s.boundRect(), s._velMod);
 
-	if (_terrain.CollideWithMusic(s.boundRect(), _music)) {
+	if (_terrain.collideWithMusic(s.boundRect(), _music)) {
 		if (_music._track)
 			g_engine->_musicManager->playMusic(_music._id);
 		else
