@@ -38,15 +38,15 @@
 namespace Crab {
 
 // Find if a line and a rectangle intersect
-bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect);
+bool collideLineRect(int p0X, int p0Y, int p1X, int p1Y, const Rect &rect);
 
 // Find if there is a clear line of sight between two rectangles
-bool LineOfSight(const Rect &a, const Rect &b, const Rect &obstacle);
+bool lineOfSight(const Rect &a, const Rect &b, const Rect &obstacle);
 
 // Find the distance between two points
 template<typename T>
-double Distance2D(const T &p0_x, const T &p0_y, const T &p1_x, const T &p1_y) {
-	return sqrt((p0_x - p1_x) * (p0_x - p1_x) + (p0_y - p1_y) * (p0_y - p1_y));
+double distance2D(const T &p0X, const T &p0Y, const T &p1X, const T &p1Y) {
+	return sqrt((p0X - p1X) * (p0X - p1X) + (p0Y - p1Y) * (p0Y - p1Y));
 }
 
 } // End of namespace Crab

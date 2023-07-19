@@ -168,7 +168,7 @@ void Sprite::flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 			// Find the nearest exit
 			for (auto &i : areaExit) {
 				// Compare distance to the rough center of each exit
-				int dist = Distance2D(_pos.x, _pos.y, i._dim.rect.x + i._dim.rect.w / 2, i._dim.rect.y + i._dim.rect.h / 2);
+				int dist = distance2D(_pos.x, _pos.y, i._dim.rect.x + i._dim.rect.w / 2, i._dim.rect.y + i._dim.rect.h / 2);
 				if (dist < min_dist) {
 					min_dist = dist;
 
