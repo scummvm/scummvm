@@ -39,46 +39,46 @@ using namespace pyrodactyl::people;
 
 void StatInfo::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		loadBool(active, "active", node);
-		desc.load(node->first_node("info"));
-		loadStr(text, "text", node->first_node("info"));
+		loadBool(_active, "active", node);
+		_desc.load(node->first_node("info"));
+		loadStr(_text, "text", node->first_node("info"));
 
 		if (nodeValid("value", node)) {
 			rapidxml::xml_node<char> *valuenode = node->first_node("value");
-			dim.load(valuenode);
-			loadImgKey(full, "full", valuenode);
-			loadImgKey(empty, "empty", valuenode);
+			_dim.load(valuenode);
+			loadImgKey(_full, "full", valuenode);
+			loadImgKey(_empty, "empty", valuenode);
 		}
 	}
 }
 
 void StatInfo::draw(const int &val, const int &max) {
-	if (active) {
+	if (_active) {
 		using namespace pyrodactyl::image;
-		desc.draw(text);
+		_desc.draw(_text);
 
 		int i = 0;
 		for (; i < val; ++i)
-			g_engine->_imageManager->draw(dim.x + i * dim.w, dim.y + i * dim.h, full);
+			g_engine->_imageManager->draw(_dim.x + i * _dim.w, _dim.y + i * _dim.h, _full);
 		for (; i < max; ++i)
-			g_engine->_imageManager->draw(dim.x + i * dim.w, dim.y + i * dim.h, empty);
+			g_engine->_imageManager->draw(_dim.x + i * _dim.w, _dim.y + i * _dim.h, _empty);
 	}
 }
 
 void StatDrawHelper::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		info[STAT_HEALTH].load(node->first_node(STATNAME_HEALTH));
-		info[STAT_ATTACK].load(node->first_node(STATNAME_ATTACK));
-		info[STAT_DEFENSE].load(node->first_node(STATNAME_DEFENSE));
-		info[STAT_SPEED].load(node->first_node(STATNAME_SPEED));
+		_info[STAT_HEALTH].load(node->first_node(STATNAME_HEALTH));
+		_info[STAT_ATTACK].load(node->first_node(STATNAME_ATTACK));
+		_info[STAT_DEFENSE].load(node->first_node(STATNAME_DEFENSE));
+		_info[STAT_SPEED].load(node->first_node(STATNAME_SPEED));
 		/*info[STAT_CHARISMA].load(node->first_node(STATNAME_CHARISMA));
 		info[STAT_INTELLIGENCE].load(node->first_node(STATNAME_INTELLIGENCE));*/
 	}
 }
 
-void StatDrawHelper::DrawInfo(const Person &obj) {
+void StatDrawHelper::drawInfo(const pyrodactyl::people::Person &obj) {
 	for (int i = 0; i < STAT_TOTAL; i++)
-		info[i].draw(obj._stat.val[i].cur, obj._stat.val[i].max);
+		_info[i].draw(obj._stat._val[i]._cur, obj._stat._val[i]._max);
 }
 
 } // End of namespace Crab

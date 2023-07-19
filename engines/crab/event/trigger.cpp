@@ -153,7 +153,7 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		return info.collideWithTrigger(_subject, StringToNumber<int>(_val));
 
 	case TRIG_STAT: {
-		StatType ty = StringToStatType(_target);
+		StatType ty = stringToStatType(_target);
 		int sub = 0, value = 0;
 		bool compareToVar = Common::find_if(_val.begin(), _val.end(), IsChar) != _val.end();
 
