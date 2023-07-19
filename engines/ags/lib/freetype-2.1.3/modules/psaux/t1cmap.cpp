@@ -207,8 +207,12 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec t1_cmap_custom_class_rec = {
 
 FT2_1_3_CALLBACK_DEF(FT_Int)
 t1_cmap_uni_pair_compare(const void *pair1, const void *pair2) {
-	FT_UInt32 u1 = ((T1_CMapUniPair)pair1)->unicode;
-	FT_UInt32 u2 = ((T1_CMapUniPair)pair2)->unicode;
+	T1_CMapUniPair pair_tmp;
+
+	pair_tmp = const_cast<T1_CMapUniPair>(static_cast<const T1_CMapUniPairRec_ *>(pair1));
+	const FT_UInt32 u1 = pair_tmp->unicode;
+	pair_tmp = const_cast<T1_CMapUniPair>(static_cast<const T1_CMapUniPairRec_ *>(pair2));
+	const FT_UInt32 u2 = pair_tmp->unicode;
 
 	if (u1 < u2)
 		return -1;
