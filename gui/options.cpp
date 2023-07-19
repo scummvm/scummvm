@@ -2128,6 +2128,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_useSystemDialogsCheckbox = nullptr;
 	_guiReturnToLauncherAtExit = nullptr;
 	_guiConfirmExit = nullptr;
+	_guiDisableBDFScaling = nullptr;
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = nullptr;
 	_updatesPopUp = nullptr;
@@ -2558,6 +2559,13 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 	);
 
 	_guiConfirmExit->setState(ConfMan.getBool("confirm_exit", _domain));
+
+	_guiDisableBDFScaling = new CheckboxWidget(boss, prefix + "DisableBDFScaling",
+		_("Disable fixed font scaling"),
+		_("Do not upscale fixed fonts in the GUI. This reduces artefacts on low resolution screens")
+	);
+
+	_guiDisableBDFScaling->setState(ConfMan.getBool("gui_disable_fixed_font_scaling", _domain));
 
 #ifdef USE_TRANSLATION
 	_guiLanguagePopUpDesc = new StaticTextWidget(boss, prefix + "GuiLanguagePopupDesc", _("GUI language:"), _("Language of ScummVM GUI"));
@@ -3014,6 +3022,12 @@ void GlobalOptionsDialog::apply() {
 	if (_guiConfirmExit) {
 		ConfMan.setBool("confirm_exit", _guiConfirmExit->getState(), _domain);
 	}
+
+	if (_guiDisableBDFScaling) {
+		ConfMan.setBool("gui_disable_fixed_font_scaling", _guiDisableBDFScaling->getState(), _domain);
+	}
+
+
 #ifdef USE_DISCORD
 	if (_discordRpcCheckbox) {
 		ConfMan.setBool("discord_rpc", _discordRpcCheckbox->getState(), _domain);

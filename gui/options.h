@@ -304,6 +304,7 @@ protected:
 	CheckboxWidget *_useSystemDialogsCheckbox;
 	CheckboxWidget *_guiReturnToLauncherAtExit;
 	CheckboxWidget *_guiConfirmExit;
+	CheckboxWidget *_guiDisableBDFScaling;
 
 	void addGUIControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 

@@ -822,6 +822,11 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
+				<widget name = 'DisableBDFScaling'
+						type = 'Checkbox'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'UseSystemDialogs'
 						type = 'Checkbox'
 				/>
@@ -1211,7 +1216,7 @@
 					height = 'Globals.Line.Height'
 			/>
 			<space size = '4' />
-			
+
 			<widget name = 'OpenLinkButton'
 					width = '160'
 					height = 'Globals.Line.Height'
