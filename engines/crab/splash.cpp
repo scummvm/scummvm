@@ -42,35 +42,35 @@ namespace Crab {
 //------------------------------------------------------------------------
 Splash::Splash() {
 	// Load the background
-	background.load("res/gfx/pyrodactyl.png");
+	_background.load("res/gfx/pyrodactyl.png");
 
 	setUI();
-	load_complete = false;
-	first_run = true;
+	_loadComplete = false;
+	_firstRun = true;
 }
 
 //------------------------------------------------------------------------
 // Purpose: Destructor
 //------------------------------------------------------------------------
 Splash::~Splash() {
-	background.deleteImage();
+	_background.deleteImage();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Event/Input Independent InternalEvents
 //------------------------------------------------------------------------
-void Splash::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
-	if (first_run == false) {
+void Splash::internalEvents(bool &shouldChangeState, GameStateID &newStateId) {
+	if (_firstRun == false) {
 		g_engine->_loadingScreen->load();
 		g_engine->_imageManager->init();
 		g_engine->_textManager->init();
-		load_complete = true;
+		_loadComplete = true;
 	}
 
 	// Have we loaded everything? If yes, time to exit
-	if (load_complete) {
-		ShouldChangeState = true;
-		NewStateID = GAMESTATE_MAIN_MENU;
+	if (_loadComplete) {
+		shouldChangeState = true;
+		newStateId = GAMESTATE_MAIN_MENU;
 		return;
 	}
 }
@@ -79,8 +79,8 @@ void Splash::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 // Purpose: Drawing function
 //------------------------------------------------------------------------
 void Splash::draw() {
-	background.draw(x, y);
-	first_run = false;
+	_background.draw(_x, _y);
+	_firstRun = false;
 }
 
 //------------------------------------------------------------------------
@@ -88,8 +88,8 @@ void Splash::draw() {
 //------------------------------------------------------------------------
 void Splash::setUI() {
 	warning("ScreenSettings cur w : %d h : %d", g_engine->_screenSettings->cur.w, g_engine->_screenSettings->cur.h);
-	x = (g_engine->_screenSettings->cur.w - background.w()) / 2;
-	y = (g_engine->_screenSettings->cur.h - background.h()) / 2;
+	_x = (g_engine->_screenSettings->cur.w - _background.w()) / 2;
+	_y = (g_engine->_screenSettings->cur.h - _background.h()) / 2;
 }
 
 }
