@@ -34,6 +34,12 @@ GlobalVars::GlobalVars() {
 	resize(MAX_APPS_GLOBAL_VARS);
 }
 
+void GlobalVars::sync(Common::Serializer &s) {
+	size_t count = size();
+	for (uint i = 0; i < count; ++i)
+		s.syncAsSint32LE((*this)[i]);
+}
+
 void GlobalVars::reset() {
 	Common::fill(&(*this)[0], &(*this)[0] + MAX_APPS_GLOBAL_VARS, 0);
 }

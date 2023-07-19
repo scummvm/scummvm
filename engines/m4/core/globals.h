@@ -19,6 +19,10 @@
  *
  */
 
+/**
+ * I know this is confusing, but the original game had two different Globals arrays
+ */
+
 #ifndef M4_CORE_GLOBALS_H
 #define M4_CORE_GLOBALS_H
 
@@ -28,7 +32,9 @@
 
 namespace M4 {
 
-
+/**
+ * 
+ */
 enum {
 	GLB_TIME = 0,
 	GLB_WATCH_DOG = 1,
@@ -77,9 +83,11 @@ enum {
 
 constexpr int GLB_SHARED_VARS = 256;
 
+/*
 struct GlobalVars : public Common::Array<int32> {
-	void syncGame(Common::Serializer &s);
+	//void syncGame(Common::Serializer &s);
 };
+*/
 
 } // namespace M4
 

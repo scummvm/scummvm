@@ -27,7 +27,6 @@ namespace Burger {
 namespace Rooms {
 
 void Room::shutdown() {
-	_GV()[298] = 0;
 }
 
 void Room::parser_code() {

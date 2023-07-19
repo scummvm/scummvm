@@ -22,11 +22,12 @@
 #include "m4/core/globals.h"
 
 namespace M4 {
-
+/*
 void GlobalVars::syncGame(Common::Serializer &s) {
 	size_t count = size();
 	for (uint i = 0; i < count; ++i)
 		s.syncAsSint32LE((*this)[i]);
 }
+*/
 
 } // namespace M4
