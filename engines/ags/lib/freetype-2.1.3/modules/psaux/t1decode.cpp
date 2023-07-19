@@ -979,8 +979,7 @@ t1_decoder_init(T1_Decoder decoder, FT_Face face, FT_Size size, FT_GlyphSlot slo
 	{
 		PSNames_Service psnames = 0;
 
-		psnames = (PSNames_Service)FT_Get_Module_Interface(
-			FT2_1_3_FACE_LIBRARY(face), "psnames");
+		psnames = const_cast<PSNames_Interface *>(static_cast<const PSNames_Interface *>(FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames")));
 		if (!psnames) {
 			FT2_1_3_ERROR(("t1_decoder_init: "));
 			FT2_1_3_ERROR(("the `psnames' module is not available\n"));
