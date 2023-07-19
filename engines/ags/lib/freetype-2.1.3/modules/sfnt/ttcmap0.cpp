@@ -64,7 +64,7 @@ tt_cmap_init(TT_CMap cmap, FT_Byte *table) {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_0
 
-FT2_1_3_CALLBACK_DEF(void)
+FT2_1_3_CALLBACK_DEF(FT_Error)
 tt_cmap0_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p = table + 2;
 	FT_UInt length = TT_NEXT_USHORT(p);
@@ -83,6 +83,7 @@ tt_cmap0_validate(FT_Byte *table, FT_Validator valid) {
 				FT2_1_3_INVALID_GLYPH_ID;
 		}
 	}
+	return 0;
 }
 
 FT2_1_3_CALLBACK_DEF(FT_UInt)
@@ -133,7 +134,7 @@ const TT_CMap_ClassRec tt_cmap0_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_2
 
-FT2_1_3_CALLBACK_DEF(void)
+FT2_1_3_CALLBACK_DEF(FT_Error)
 tt_cmap2_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p = table + 2; /* skip format */
 	FT_UInt length = TT_PEEK_USHORT(p);
@@ -209,6 +210,7 @@ tt_cmap2_validate(FT_Byte *table, FT_Validator valid) {
 			}
 		}
 	}
+	return 0;
 }
 
 /* return sub header corresponding to a given character code */
@@ -358,7 +360,7 @@ const TT_CMap_ClassRec tt_cmap2_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_4
 
-FT2_1_3_CALLBACK_DEF(void)
+FT2_1_3_CALLBACK_DEF(FT_Error)
 tt_cmap4_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p 	   = table + 2; /* skip format */
 	FT_UInt length = TT_NEXT_USHORT(p);
@@ -484,6 +486,7 @@ tt_cmap4_validate(FT_Byte *table, FT_Validator valid) {
 			last = end;
 		}
 	}
+	return 0;
 }
 
 FT2_1_3_CALLBACK_DEF(FT_UInt)
@@ -692,7 +695,7 @@ const TT_CMap_ClassRec tt_cmap4_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_6
 
-FT2_1_3_CALLBACK_DEF(void)
+FT2_1_3_CALLBACK_DEF(FT_Error)
 tt_cmap6_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p;
 	FT_UInt length, /*start,*/ count;
@@ -720,6 +723,7 @@ tt_cmap6_validate(FT_Byte *table, FT_Validator valid) {
 				FT2_1_3_INVALID_GLYPH_ID;
 		}
 	}
+	return 0;
 }
 
 FT2_1_3_CALLBACK_DEF(FT_UInt)
@@ -792,7 +796,7 @@ const TT_CMap_ClassRec tt_cmap6_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_8
 
-FT2_1_3_CALLBACK_DEF(void)
+FT2_1_3_CALLBACK_DEF(FT_Error)
 tt_cmap8_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte   *p = table + 4;
 	FT_Byte   *is32;
@@ -869,6 +873,7 @@ tt_cmap8_validate(FT_Byte *table, FT_Validator valid) {
 			last = end;
 		}
 	}
+	return 0;
 }
 
 FT2_1_3_CALLBACK_DEF(FT_UInt)
@@ -950,7 +955,7 @@ const TT_CMap_ClassRec tt_cmap8_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_10
 
-FT2_1_3_CALLBACK_DEF(void)
+FT2_1_3_CALLBACK_DEF(FT_Error)
 tt_cmap10_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte  *p = table + 4;
 	FT_ULong length, /*start,*/ count;
@@ -976,6 +981,7 @@ tt_cmap10_validate(FT_Byte *table, FT_Validator valid) {
 				FT2_1_3_INVALID_GLYPH_ID;
 		}
 	}
+	return 0;
 }
 
 FT2_1_3_CALLBACK_DEF(FT_UInt)
@@ -1045,7 +1051,7 @@ const TT_CMap_ClassRec tt_cmap10_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_12
 
-FT2_1_3_CALLBACK_DEF(void)
+FT2_1_3_CALLBACK_DEF(FT_Error)
 tt_cmap12_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte  *p;
 	FT_ULong length;
@@ -1086,6 +1092,7 @@ tt_cmap12_validate(FT_Byte *table, FT_Validator valid) {
 			last = end;
 		}
 	}
+	return 0;
 }
 
 FT2_1_3_CALLBACK_DEF(FT_UInt)
