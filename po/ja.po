@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 19:34+0000\n"
+"POT-Creation-Date: 2023-07-19 20:21+0000\n"
 "PO-Revision-Date: 2023-07-18 09:13+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -545,7 +545,7 @@ msgid "Platform:"
 msgstr "プラットフォーム："
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2198
-#: backends/graphics/atari/atari-graphics.cpp:787
+#: backends/graphics/atari/atari-graphics.cpp:852
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "画像"
@@ -3473,7 +3473,7 @@ msgstr "新規フォルダー作成"
 msgid "Choose a new folder"
 msgstr "新規フォルダー選択"
 
-#: backends/graphics/atari/atari-graphics.cpp:791
+#: backends/graphics/atari/atari-graphics.cpp:856
 #: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr "縦横比修正の切替"
