@@ -40,24 +40,24 @@ Graphics::Surface *gRendererSurface = nullptr;
 //SDL_Window *gWindow = nullptr;
 
 void ScreenSettings::load(rapidxml::xml_node<char> *node) {
-	loadNum(cur.w, "w", node);
-	loadNum(cur.h, "h", node);
-	loadNum(fps, "fps", node);
-	loadNum(gamma, "gamma", node);
-	loadNum(text_speed, "text_speed", node);
+	loadNum(_cur.w, "w", node);
+	loadNum(_cur.h, "h", node);
+	loadNum(_fps, "fps", node);
+	loadNum(_gamma, "gamma", node);
+	loadNum(_textSpeed, "text_speed", node);
 
-	loadBool(vsync, "vsync", node);
-	loadBool(border, "border", node);
-	loadBool(fullscreen, "fullscreen", node);
-	loadBool(save_on_exit, "save_on_exit", node);
-	loadBool(mouse_trap, "mouse_trap", node);
-	loadBool(quality, "quality", node);
+	loadBool(_vsync, "vsync", node);
+	loadBool(_border, "border", node);
+	loadBool(_fullscreen, "fullscreen", node);
+	loadBool(_saveOnExit, "save_on_exit", node);
+	loadBool(_mouseTrap, "mouse_trap", node);
+	loadBool(_quality, "quality", node);
 
-	SetVideoFlags();
-	CreateBackup();
+	setVideoFlags();
+	createBackup();
 }
 
-void ScreenSettings::SetVideoFlags() {
+void ScreenSettings::setVideoFlags() {
 #if 0
 	if (fullscreen) {
 		// Window border doesn't matter in fullscreen mode
@@ -71,25 +71,25 @@ void ScreenSettings::SetVideoFlags() {
 #endif
 }
 
-void ScreenSettings::CreateBackup() {
-	backup = *this;
+void ScreenSettings::createBackup() {
+	_backup = *this;
 }
 
-void ScreenSettings::RestoreBackup() {
-	fps = backup.fps;
-	cur = backup.cur;
-	fullscreen = backup.fullscreen;
-	border = backup.border;
-	vsync = backup.vsync;
-	gamma = backup.gamma;
-	videoflags = backup.videoflags;
-	save_on_exit = backup.save_on_exit;
-	quality = backup.quality;
-	mouse_trap = backup.mouse_trap;
-	text_speed = backup.text_speed;
+void ScreenSettings::restoreBackup() {
+	_fps = _backup._fps;
+	_cur = _backup._cur;
+	_fullscreen = _backup._fullscreen;
+	_border = _backup._border;
+	_vsync = _backup._vsync;
+	_gamma = _backup._gamma;
+	_videoflags = _backup._videoflags;
+	_saveOnExit = _backup._saveOnExit;
+	_quality = _backup._quality;
+	_mouseTrap = _backup._mouseTrap;
+	_textSpeed = _backup._textSpeed;
 }
 
-void ScreenSettings::SetResolution() {
+void ScreenSettings::setResolution() {
 #if 0
 	// Check the current window flags
 	Uint32 flags = SDL_GetWindowFlags(gWindow);
@@ -109,14 +109,14 @@ void ScreenSettings::SetResolution() {
 #endif
 }
 
-void ScreenSettings::SetFullscreen() {
-	SetVideoFlags();
+void ScreenSettings::setFullscreen() {
+	setVideoFlags();
 #if 0
 	SDL_SetWindowFullscreen(gWindow, videoflags);
 #endif
 }
 
-void ScreenSettings::SetWindowBorder() {
+void ScreenSettings::setWindowBorder() {
 #if 0
 	if (border)
 		SDL_SetWindowBordered(gWindow, SDL_TRUE);
@@ -125,7 +125,7 @@ void ScreenSettings::SetWindowBorder() {
 #endif
 }
 
-void ScreenSettings::SetVsync() {
+void ScreenSettings::setVsync() {
 #if 0
 	if (vsync)
 		SDL_SetHint("SDL_HINT_RENDER_VSYNC", "1");
@@ -134,7 +134,7 @@ void ScreenSettings::SetVsync() {
 #endif
 }
 
-void ScreenSettings::SetMouseTrap() {
+void ScreenSettings::setMouseTrap() {
 #if 0
 	if (mouse_trap)
 		SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -144,25 +144,25 @@ void ScreenSettings::SetMouseTrap() {
 }
 
 void ScreenSettings::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	root->append_attribute(doc.allocate_attribute("version", gStrPool->Get(version)));
+	root->append_attribute(doc.allocate_attribute("version", gStrPool->Get(_version)));
 
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "screen");
-	child->append_attribute(doc.allocate_attribute("w", gStrPool->Get(cur.w)));
-	child->append_attribute(doc.allocate_attribute("h", gStrPool->Get(cur.h)));
-	child->append_attribute(doc.allocate_attribute("fps", gStrPool->Get(fps)));
+	child->append_attribute(doc.allocate_attribute("w", gStrPool->Get(_cur.w)));
+	child->append_attribute(doc.allocate_attribute("h", gStrPool->Get(_cur.h)));
+	child->append_attribute(doc.allocate_attribute("fps", gStrPool->Get(_fps)));
 
-	child->append_attribute(doc.allocate_attribute("gamma", gStrPool->FGet(gamma)));
-	child->append_attribute(doc.allocate_attribute("text_speed", gStrPool->FGet(text_speed)));
+	child->append_attribute(doc.allocate_attribute("gamma", gStrPool->FGet(_gamma)));
+	child->append_attribute(doc.allocate_attribute("text_speed", gStrPool->FGet(_textSpeed)));
 
-	saveBool(vsync, "vsync", doc, child);
-	saveBool(border, "border", doc, child);
-	saveBool(fullscreen, "fullscreen", doc, child);
-	saveBool(save_on_exit, "save_on_exit", doc, child);
-	saveBool(quality, "quality", doc, child);
-	saveBool(mouse_trap, "mouse_trap", doc, child);
+	saveBool(_vsync, "vsync", doc, child);
+	saveBool(_border, "border", doc, child);
+	saveBool(_fullscreen, "fullscreen", doc, child);
+	saveBool(_saveOnExit, "save_on_exit", doc, child);
+	saveBool(_quality, "quality", doc, child);
+	saveBool(_mouseTrap, "mouse_trap", doc, child);
 
 	root->append_node(child);
-	CreateBackup();
+	createBackup();
 }
 
 } // End of namespace Crab

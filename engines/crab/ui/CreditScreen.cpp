@@ -37,8 +37,8 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
 void CreditScreen::reset() {
-	_start.x = g_engine->_screenSettings->cur.w / 2 - 150;
-	_start.y = g_engine->_screenSettings->cur.h + 20;
+	_start.x = g_engine->_screenSettings->_cur.w / 2 - 150;
+	_start.y = g_engine->_screenSettings->_cur.h + 20;
 	_cur.x = _start.x;
 	_speed._cur = _speed._slow;
 }
@@ -158,21 +158,21 @@ void CreditScreen::draw() {
 
 		if (i->_heading) {
 			_cur.y += _heading._inc;
-			if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->cur.h + 40) // Only draw text if it is actually visible on screen
+			if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->_cur.h + 40) // Only draw text if it is actually visible on screen
 				g_engine->_textManager->draw(_cur.x, _cur.y, i->_text, _heading._color, _heading._font, _heading._align);
-		} else if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->cur.h + 40)
+		} else if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->_cur.h + 40)
 			g_engine->_textManager->draw(_cur.x, _cur.y, i->_text, _paragraph._color, _paragraph._font, _paragraph._align);
 
 		// If our cur value has reached below the screen, simply exit the loop as we won't draw anything else
-		if (_cur.y > g_engine->_screenSettings->cur.h + 40)
+		if (_cur.y > g_engine->_screenSettings->_cur.h + 40)
 			break;
 	}
 
 	_start.y -= _speed._cur;
 
 	// Sanity check so that we don't scroll too high or low
-	if (_start.y > g_engine->_screenSettings->cur.h + 40)
-		_start.y = g_engine->_screenSettings->cur.h + 40;
+	if (_start.y > g_engine->_screenSettings->_cur.h + 40)
+		_start.y = g_engine->_screenSettings->_cur.h + 40;
 	else if (_start.y < INT_MIN + 10)
 		_start.y = INT_MIN + 10;
 }

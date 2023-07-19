@@ -40,84 +40,86 @@ namespace Crab {
 // The index for all levels in the game
 struct LevelPath {
 	// The file paths
-	Common::String layout, asset;
+	Common::String _layout, _asset;
 
 	// The name of the level
-	Common::String name;
+	Common::String _name;
 
-	LevelPath() : layout(""), asset(""), name("") {}
+	LevelPath() : _layout(""), _asset(""), _name("") {}
 
 	void load(rapidxml::xml_node<char> *node) {
-		loadStr(name, "name", node);
-		loadStr(layout, "layout", node);
-		loadStr(asset, "res", node);
+		loadStr(_name, "name", node);
+		loadStr(_layout, "layout", node);
+		loadStr(_asset, "res", node);
 	}
 };
 
 // Stores all layout paths for the game
 struct FilePaths {
 	// Resources common to all levels and states
-	Common::String common;
+	Common::String _common;
 
 	// Mod file location, current mod and their extension
-	Common::String mod_path, mod_ext, mod_cur;
+	Common::String _modPath, _modExt, _modCur;
 
 	// Main menu resources
-	Common::String mainmenu_l, mainmenu_r;
+	Common::String _mainmenuL, _mainmenuR;
 
 	// Sounds
-	Common::String sound_effect, sound_music;
+	Common::String _soundEffect, _soundMusic;
 
 	// Fonts and window icon file
-	Common::String font, icon;
+	Common::String _font, _icon;
 
 	// Save directory and extension
-	Common::String save_dir, save_ext;
+	Common::String _saveDir, _saveExt;
 
 	// The location of the shader index file
-	Common::String shaders;
+	Common::String _shaders;
 
 	// The location of the color index file
-	Common::String colors;
+	Common::String _colors;
 
 	// The list of levels in the game
-	Common::HashMap<Common::String, LevelPath> level;
+	Common::HashMap<Common::String, LevelPath> _level;
 
 	// The file path of the current resource file
-	Common::String current_r;
+	Common::String _currentR;
 
 	// The application data path (where saves and settings are stored)
-	Common::String appdata;
+	Common::String _appdata;
 
 	// Has this been loaded?
-	bool loaded;
+	bool _loaded;
 
 	FilePaths();
 	void load(const Common::String &filename);
-	void LoadLevel(const Common::String &filename);
+	void loadLevel(const Common::String &filename);
 };
 
 // Storage pool used for saving numbers as strings
 class StringPool {
 	// Store integer strings here
 	// std::unordered_map<int, Common::String> pool_i;
-	Common::HashMap<int, Common::String> pool_i;
+	Common::HashMap<int, Common::String> poolI;
 
 	// Store floating point strings here
 	struct FloatString {
-		float val;
-		Common::String str;
+		float _val;
+		Common::String _str;
 
-		FloatString() { val = 0.0f; }
+		FloatString() {
+			_val = 0.0f;
+		}
 	};
 
 	// std::list<FloatString> pool_f;
-	Common::List<FloatString> pool_f;
+	Common::List<FloatString> poolF;
 
 public:
 	StringPool() {
-		pool_i.clear();
-		pool_f.clear();
+		poolI.clear();
+		poolF.clear();
 	}
 
 	const char *Get(const int &num) {
@@ -127,24 +129,24 @@ public:
 
 		return pool_i[num].c_str();
 #endif
-		if (pool_i.contains(num) == false)
-			pool_i[num] = NumberToString<int>(num);
+		if (poolI.contains(num) == false)
+			poolI[num] = numberToString<int>(num);
 
-		return pool_i.getVal(num).c_str();
+		return poolI.getVal(num).c_str();
 	}
 
 	const char *FGet(const float &num) {
-		for (auto &i : pool_f)
-			if (i.val == num)
-				return i.str.c_str();
+		for (auto &i : poolF)
+			if (i._val == num)
+				return i._str.c_str();
 
 		FloatString fs;
-		fs.val = num;
+		fs._val = num;
 		//fs.str = NumberToString<float>(num);
-		pool_f.push_back(fs);
+		poolF.push_back(fs);
 
-		auto ret = pool_f.back();
-		return ret.str.c_str();
+		auto ret = poolF.back();
+		return ret._str.c_str();
 	}
 };
 
@@ -167,17 +169,17 @@ struct TempValue {
 	// load button - hidden in iron man
 	// exit - saves and exits in iron man
 	// quick save and quick load - operate on the iron man file in iron man mode
-	bool ironman;
+	bool _ironman;
 
 	// This is the filename a player chose when selecting "new game" + iron man mode
-	Common::String filename;
+	Common::String _filename;
 
 	// We use this to see whether the player is exiting to main menu or to credits
-	bool credits;
+	bool _credits;
 
-	TempValue() : filename("No IronMan") {
-		ironman = false;
-		credits = false;
+	TempValue() : _filename("No IronMan") {
+		_ironman = false;
+		_credits = false;
 	}
 };
 

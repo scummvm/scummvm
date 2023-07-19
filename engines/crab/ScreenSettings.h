@@ -59,93 +59,95 @@ struct Dimension {
 class ScreenAttributes {
 public:
 	// Frames per second
-	int fps;
+	int _fps;
 
 	// The current screen dimensions
-	Dimension cur;
+	Dimension _cur;
 
 	// The minimum dimension where we draw the image without scaling
 	// Any lower than this and we draw at the minimum resolution, then scale it down
 	// Dimension min;
 
 	// Is the window full-screen?
-	bool fullscreen;
+	bool _fullscreen;
 
 	// Does the window have a border?
-	bool border;
+	bool _border;
 
 	// Is vertical sync enabled?
-	bool vsync;
+	bool _vsync;
 
 	// The brightness of a window
-	float gamma;
+	float _gamma;
 
 	// The video flags
-	uint32 videoflags;
+	uint32 _videoflags;
 
 	// should we save on exit?
-	bool save_on_exit;
+	bool _saveOnExit;
 
 	// This flag is true if we want to load high quality images, false otherwise
-	bool quality;
+	bool _quality;
 
 	// Is the mouse trapped within the window
-	bool mouse_trap;
+	bool _mouseTrap;
 
 	// The text speed (used only for popup text)
-	float text_speed;
+	float _textSpeed;
 
 	ScreenAttributes() {
-		fps = 60;
-		fullscreen = false;
-		border = true;
-		vsync = true;
-		save_on_exit = true;
-		quality = true;
-		mouse_trap = false;
-		gamma = 1.0f;
-		text_speed = 1.0f;
-		videoflags = 0; //SDL_WINDOW_SHOWN;
+		_fps = 60;
+		_fullscreen = false;
+		_border = true;
+		_vsync = true;
+		_saveOnExit = true;
+		_quality = true;
+		_mouseTrap = false;
+		_gamma = 1.0f;
+		_textSpeed = 1.0f;
+		_videoflags = 0; //SDL_WINDOW_SHOWN;
 	}
 };
 
 // Screen attributes
 class ScreenSettings : public ScreenAttributes {
 	// A backup of the attributes
-	ScreenAttributes backup;
+	ScreenAttributes _backup;
 
 public:
 	// The desktop dimensions
-	Dimension desktop;
+	Dimension _desktop;
 
 	// True if we are in game, false otherwise
-	bool in_game;
+	bool _inGame;
 
 	// Set to true when we have to call setUI() for rearranging UI after a resolution change
-	bool change_interface;
+	bool _changeInterface;
 
 	// The version of the settings
-	unsigned int version;
+	unsigned int _version;
 
 	ScreenSettings() {
-		in_game = false;
-		version = 0;
-		change_interface = false;
+		_inGame = false;
+		_version = 0;
+		_changeInterface = false;
 	}
 	~ScreenSettings() {}
 
-	bool ValidDimension(Dimension d) { return d.w <= desktop.w && d.h <= desktop.h; }
+	bool validDimension(Dimension d) {
+		return d.w <= _desktop.w && d.h <= _desktop.h;
+	}
 
-	void SetVideoFlags();
-	void CreateBackup();
-	void RestoreBackup();
+	void setVideoFlags();
+	void createBackup();
+	void restoreBackup();
 
-	void SetResolution();
-	void SetFullscreen();
-	void SetWindowBorder();
-	void SetVsync();
-	void SetGamma() { }//SDL_SetWindowBrightness(gWindow, gamma); }
-	void SetMouseTrap();
+	void setResolution();
+	void setFullscreen();
+	void setWindowBorder();
+	void setVsync();
+	void setGamma() { }//SDL_SetWindowBrightness(gWindow, gamma); }
+	void setMouseTrap();
 
 	void load(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

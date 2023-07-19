@@ -58,9 +58,11 @@ enum StatType {
 
 } // End of namespace pyrodactyl
 
-enum Align { ALIGN_LEFT,
-			 ALIGN_CENTER,
-			 ALIGN_RIGHT };
+enum Align {
+	ALIGN_LEFT,
+	ALIGN_CENTER,
+	ALIGN_RIGHT
+};
 
 enum Direction {
 	// An invalid direction, used for collisions

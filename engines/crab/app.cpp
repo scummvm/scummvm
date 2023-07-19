@@ -120,7 +120,7 @@ bool App::init() {
 	// Initialize and load input
 
 	loadSettings("res/settings.xml");
-	g_engine->_screenSettings->in_game = false;
+	g_engine->_screenSettings->_inGame = false;
 	return true;
 }
 
@@ -158,30 +158,30 @@ void App::run() {
 			switch (nextStateId) {
 			case GAMESTATE_TITLE:
 				currentState = new Splash();
-				g_engine->_screenSettings->in_game = false;
+				g_engine->_screenSettings->_inGame = false;
 
 				// Now apply all settings - except resolution because that's already set at the start
-				g_engine->_screenSettings->SetFullscreen();
-				g_engine->_screenSettings->SetWindowBorder();
-				g_engine->_screenSettings->SetVsync();
-				g_engine->_screenSettings->SetGamma();
-				g_engine->_screenSettings->SetMouseTrap();
+				g_engine->_screenSettings->setFullscreen();
+				g_engine->_screenSettings->setWindowBorder();
+				g_engine->_screenSettings->setVsync();
+				g_engine->_screenSettings->setGamma();
+				g_engine->_screenSettings->setMouseTrap();
 				break;
 
 			case GAMESTATE_MAIN_MENU:
 				currentState = new MainMenu();
-				g_engine->_screenSettings->in_game = false;
+				g_engine->_screenSettings->_inGame = false;
 				break;
 
 			case GAMESTATE_NEW_GAME:
 				_game->startNewGame();
 				currentState = _game;
-				g_engine->_screenSettings->in_game = true;
+				g_engine->_screenSettings->_inGame = true;
 				break;
 
 			case GAMESTATE_LOAD_GAME:
 				currentState = _game;
-				g_engine->_screenSettings->in_game = true;
+				g_engine->_screenSettings->_inGame = true;
 				break;
 
 			default:
@@ -246,9 +246,9 @@ void App::run() {
 
 
 		// Do we have to reposition our interface?
-		if (g_engine->_screenSettings->change_interface) {
+		if (g_engine->_screenSettings->_changeInterface) {
 			currentState->setUI();
-			g_engine->_screenSettings->change_interface = false;
+			g_engine->_screenSettings->_changeInterface = false;
 		}
 
 		// Do state Drawing
@@ -275,7 +275,7 @@ void App::run() {
 				++fpscount;
 
 			if (currentStateId >= 0)
-				g_engine->_textManager->draw(0, 0, NumberToString(fpsval).c_str(), 0);
+				g_engine->_textManager->draw(0, 0, numberToString(fpsval).c_str(), 0);
 		//const Graphics::ManagedSurface *s = g_engine->_renderSurface;
 		//g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
 		g_engine->_screen->update();
@@ -286,11 +286,11 @@ void App::run() {
 #endif
 
 		// Cap the frame rate
-		if (fps.ticks() < 1000u / g_engine->_screenSettings->fps) {
+		if (fps.ticks() < 1000u / g_engine->_screenSettings->_fps) {
 #if 0
 			SDL_Delay((1000u / g_engine->_screenSettings->fps) - fps.Ticks());
 #endif
-			uint32 delay = (1000u / g_engine->_screenSettings->fps) - fps.ticks();
+			uint32 delay = (1000u / g_engine->_screenSettings->_fps) - fps.ticks();
 			//warning("Delay by %d ms", delay);
 			g_system->delayMillis(delay);
 		}
@@ -307,7 +307,7 @@ void App::loadSettings(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("settings");
 		if (nodeValid(node)) {
 			// Load the version
-			loadNum(g_engine->_screenSettings->version, "version", node);
+			loadNum(g_engine->_screenSettings->_version, "version", node);
 
 			// Load screen settings
 			if (nodeValid("screen", node))

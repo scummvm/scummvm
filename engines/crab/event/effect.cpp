@@ -112,11 +112,11 @@ void Effect::changeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::Op
 	// Only bother if the person exists and has a valid opinion
 	if (info.opinionGet(_subject, opType, oldOp)) {
 		if (_operation == "=")
-			info.opinionSet(_subject, opType, StringToNumber<int>(_val));
+			info.opinionSet(_subject, opType, stringToNumber<int>(_val));
 		else if (_operation == "+")
-			info.opinionChange(_subject, opType, StringToNumber<int>(_val));
+			info.opinionChange(_subject, opType, stringToNumber<int>(_val));
 		else if (_operation == "-")
-			info.opinionChange(_subject, opType, -1 * StringToNumber<int>(_val));
+			info.opinionChange(_subject, opType, -1 * stringToNumber<int>(_val));
 
 		int newOp = 0;
 		info.opinionGet(_subject, opType, newOp);
@@ -138,13 +138,13 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 			else if (_operation == "del")
 				info.varDel(_subject);
 			else if (_operation == "+")
-				info.varAdd(_subject, StringToNumber<int>(_val));
+				info.varAdd(_subject, stringToNumber<int>(_val));
 			else if (_operation == "-")
-				info.varSub(_subject, StringToNumber<int>(_val));
+				info.varSub(_subject, stringToNumber<int>(_val));
 			else if (_operation == "*")
-				info.varMul(_subject, StringToNumber<int>(_val));
+				info.varMul(_subject, stringToNumber<int>(_val));
 			else if (_operation == "/")
-				info.varDiv(_subject, StringToNumber<int>(_val));
+				info.varDiv(_subject, stringToNumber<int>(_val));
 			break;
 
 		case EFF_JOURNAL:
@@ -196,7 +196,7 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 
 		case EFF_HEALTH: {
 			using namespace pyrodactyl::stat;
-			int num = StringToNumber<int>(_val);
+			int num = stringToNumber<int>(_val);
 
 			if (_operation == "=")
 				info.statSet(_subject, STAT_HEALTH, num);
@@ -209,7 +209,7 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 		case EFF_SOUND:
 			if (_subject == "music") {
 				if (_operation == "play") {
-					MusicKey m = StringToNumber<MusicKey>(_val);
+					MusicKey m = stringToNumber<MusicKey>(_val);
 					g_engine->_musicManager->playMusic(m);
 				} else if (_operation == "stop")
 					g_engine->_musicManager->stop();
@@ -218,7 +218,7 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 				else if (_operation == "resume")
 					g_engine->_musicManager->resume();
 			} else
-				g_engine->_musicManager->playEffect(StringToNumber<ChunkKey>(_val), 0);
+				g_engine->_musicManager->playEffect(stringToNumber<ChunkKey>(_val), 0);
 			break;
 
 		case EFF_MONEY:
@@ -244,8 +244,8 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 	} else {
 		EventResult r;
 		r._val = _subject;
-		r._x = StringToNumber<int>(_operation);
-		r._y = StringToNumber<int>(_val);
+		r._x = stringToNumber<int>(_operation);
+		r._y = stringToNumber<int>(_val);
 
 		switch (_type) {
 		case EFF_MOVE:
@@ -259,7 +259,7 @@ bool Effect::execute(pyrodactyl::event::Info &info, const Common::String &player
 			break;
 		case EFF_IMG:
 			r._type = ER_IMG;
-			info.playerImg(StringToNumber<int>(_val));
+			info.playerImg(stringToNumber<int>(_val));
 			break;
 		case EFF_TRAIT:
 			r._type = ER_TRAIT;

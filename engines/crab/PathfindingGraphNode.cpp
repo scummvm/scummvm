@@ -33,58 +33,58 @@
 namespace Crab {
 
 PathfindingGraphNode::PathfindingGraphNode(void) {
-	id = -1;
-	movementCost = -1.0f;
+	_id = -1;
+	_movementCost = -1.0f;
 }
 
-PathfindingGraphNode::PathfindingGraphNode(Vector2f pos, int i) : position(pos) {
-	id = i;
-	movementCost = -1.0f;
+PathfindingGraphNode::PathfindingGraphNode(Vector2f pos, int i) : _position(pos) {
+	_id = i;
+	_movementCost = -1.0f;
 }
 
 PathfindingGraphNode::~PathfindingGraphNode(void) {
 }
 
-void PathfindingGraphNode::AddNeighbor(PathfindingGraphNode *node) {
-	AddNeighbor(node, false);
+void PathfindingGraphNode::addNeighbor(PathfindingGraphNode *node) {
+	addNeighbor(node, false);
 }
 
-void PathfindingGraphNode::AddNeighbor(PathfindingGraphNode *node, bool ignoreDistance) {
+void PathfindingGraphNode::addNeighbor(PathfindingGraphNode *node, bool ignoreDistance) {
 	// You can't be your own neighbor. Sorry.
-	if (node->id == this->id)
+	if (node->_id == this->_id)
 		return;
 
 	// Make sure that the node is not already a neighbor (SZ)
-	for (unsigned int i = 0; i < neighborNodes.size(); ++i) {
-		if (neighborNodes[i]->id == node->id) {
+	for (unsigned int i = 0; i < _neighborNodes.size(); ++i) {
+		if (_neighborNodes[i]->_id == node->_id) {
 			return;
 		}
 	}
 
-	neighborNodes.push_back(node);
+	_neighborNodes.push_back(node);
 
 	// Determine the cost.
 	if (ignoreDistance) {
-		neighborCosts.push_back(node->movementCost);
+		_neighborCosts.push_back(node->_movementCost);
 	} else {
-		Vector2f distVec = node->position - this->position;
+		Vector2f distVec = node->_position - this->_position;
 
-		neighborCosts.push_back(distVec.Magnitude() * node->movementCost);
+		_neighborCosts.push_back(distVec.Magnitude() * node->_movementCost);
 	}
 }
 
-bool PathfindingGraphNode::AdjacentToObstacle() const {
-	for (auto iter = neighborNodes.begin(); iter != neighborNodes.end(); ++iter) {
-		if ((*iter)->GetMovementCost() < 0)
+bool PathfindingGraphNode::adjacentToObstacle() const {
+	for (auto iter = _neighborNodes.begin(); iter != _neighborNodes.end(); ++iter) {
+		if ((*iter)->getMovementCost() < 0)
 			return true;
 	}
 
 	return false;
 }
 
-bool PathfindingGraphNode::AdjacentToNode(PathfindingGraphNode *otherNode) {
-	for (unsigned int i = 0; i < neighborNodes.size(); ++i) {
-		if (neighborNodes[i] == otherNode)
+bool PathfindingGraphNode::adjacentToNode(PathfindingGraphNode *otherNode) {
+	for (unsigned int i = 0; i < _neighborNodes.size(); ++i) {
+		if (_neighborNodes[i] == otherNode)
 			return true;
 	}
 

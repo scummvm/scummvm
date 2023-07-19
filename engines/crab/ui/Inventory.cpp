@@ -95,7 +95,7 @@ void Inventory::draw(Person &obj, const int &moneyVal) {
 	// helper.DrawInfo(obj);
 	_collection.draw(obj._id /*, helper*/);
 
-	_money._caption._text = NumberToString(moneyVal);
+	_money._caption._text = numberToString(moneyVal);
 	_money.draw();
 }
 

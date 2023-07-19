@@ -80,18 +80,18 @@ bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) 
 					else if (n == "autoshow" && v == "true")
 						_type = LAYER_AUTOSHOW;
 					else if (n == "x") {
-						_pos.x = StringToNumber<int>(v);
+						_pos.x = stringToNumber<int>(v);
 					} else if (n == "y") {
-						_pos.y = StringToNumber<int>(v);
+						_pos.y = stringToNumber<int>(v);
 					} else if (n == "w") {
-						_pos.w = StringToNumber<int>(v);
+						_pos.w = stringToNumber<int>(v);
 					} else if (n == "h") {
-						_pos.h = StringToNumber<int>(v);
+						_pos.h = stringToNumber<int>(v);
 					} else if (n == "scroll_rate_x") {
-						_rate.x = StringToNumber<float>(v);
+						_rate.x = stringToNumber<float>(v);
 						_type = LAYER_PARALLAX;
 					} else if (n == "scroll_rate_y") {
-						_rate.y = StringToNumber<float>(v);
+						_rate.y = stringToNumber<float>(v);
 						_type = LAYER_PARALLAX;
 					}
 				}

@@ -61,7 +61,7 @@ void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
 				bool valid = false;
 				Common::String path;
 
-				if (!g_engine->_screenSettings->quality)
+				if (!g_engine->_screenSettings->_quality)
 					valid = loadStr(path, "path_low", n, false);
 
 				if (!valid)
@@ -90,10 +90,10 @@ bool ImageManager::init() {
 	quit();
 
 	// Load common assets
-	loadMap(g_engine->_filePath->common, MAP_COMMON);
+	loadMap(g_engine->_filePath->_common, MAP_COMMON);
 
 	// Load main menu assets
-	loadMap(g_engine->_filePath->current_r, MAP_CURRENT);
+	loadMap(g_engine->_filePath->_currentR, MAP_CURRENT);
 
 	_invalidImg = _map[MAP_COMMON][0];
 

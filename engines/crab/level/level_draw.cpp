@@ -246,8 +246,8 @@ void Level::setCamera() {
 	Vector2i focus = _objects[_playerIndex].camFocus();
 
 	// Center the camera over the player
-	_camera.x = focus.x - (g_engine->_screenSettings->cur.w / 2);
-	_camera.y = focus.y - (g_engine->_screenSettings->cur.h / 2);
+	_camera.x = focus.x - (g_engine->_screenSettings->_cur.w / 2);
+	_camera.y = focus.y - (g_engine->_screenSettings->_cur.h / 2);
 
 	// Keep the camera in bounds
 	if (_camera.x > _terrain.w() - _camera.w)

@@ -71,8 +71,8 @@ void ModMenu::load(const Common::String &filename) {
 			hov[DATA_WEBSITE].load(offnode->first_node("website_title"));
 		}
 
-		_extension = g_engine->_filePath->mod_ext;
-		_directory = g_engine->_filePath->mod_path;
+		_extension = g_engine->_filePath->_modExt;
+		_directory = g_engine->_filePath->_modPath;
 		scanDir();
 	}
 }
@@ -80,7 +80,7 @@ void ModMenu::load(const Common::String &filename) {
 bool ModMenu::handleEvents(const Common::Event &event) {
 	int choice = _menu.handleEvents(event);
 	if (choice >= 0) {
-		g_engine->_filePath->mod_cur = _slotInfo[_menu.index() + choice]._path;
+		g_engine->_filePath->_modCur = _slotInfo[_menu.index() + choice]._path;
 		return true;
 	}
 

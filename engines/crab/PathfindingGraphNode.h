@@ -41,17 +41,17 @@ namespace Crab {
 class PathfindingGraphNode {
 	friend class PathfindingGrid;
 
-	int id; // Each ID will be assigned when the pathfinding graph is generated and will identify each node.
+	int _id; // Each ID will be assigned when the pathfinding graph is generated and will identify each node.
 
-	float movementCost; // 1 is open terrain, >1 is impeding terrain, <0 is completely obstructed
+	float _movementCost; // 1 is open terrain, >1 is impeding terrain, <0 is completely obstructed
 
-	Vector2f position; // Position of the node
+	Vector2f _position; // Position of the node
 
-	Rect collisionRect; // Represents spaced covered by the node.
+	Rect _collisionRect; // Represents spaced covered by the node.
 
 public:
-	Common::Array<PathfindingGraphNode *> neighborNodes;
-	Common::Array<float> neighborCosts; // The movement cost for the neighbor nodes (distance to the node X the nodes movement cost)
+	Common::Array<PathfindingGraphNode *> _neighborNodes;
+	Common::Array<float> _neighborCosts; // The movement cost for the neighbor nodes (distance to the node X the nodes movement cost)
 									  // This is stored to prevent having to recalculate each frame.
 
 	PathfindingGraphNode(void);
@@ -59,25 +59,32 @@ public:
 
 	~PathfindingGraphNode(void);
 
-	float GetMovementCost() { return movementCost; }
-	Vector2f GetPosition() const { return position; }
+	float getMovementCost() {
+		return _movementCost;
+	}
+
+	Vector2f getPosition() const {
+		return _position;
+	}
 
 	// Adds node to neighbor vector and cost to neighbor costs
-	void AddNeighbor(PathfindingGraphNode *node);
+	void addNeighbor(PathfindingGraphNode *node);
 
 	// Same as above, but does not calculate distance. Used when all nodes
 	// are equidistant
-	void AddNeighbor(PathfindingGraphNode *node, bool ignoreDistance);
+	void addNeighbor(PathfindingGraphNode *node, bool ignoreDistance);
 
 	// const Common::Array< PathfindingGraphNode*>& GetNeighbors() const;
 
-	Rect GetRect() const { return collisionRect; }
+	Rect getRect() const {
+		return _collisionRect;
+	}
 
 	// Return true if the node is adjacent to a blocked node
-	bool AdjacentToObstacle() const;
+	bool adjacentToObstacle() const;
 
 	// Return true if the node is adjacent to the otherNode
-	bool AdjacentToNode(PathfindingGraphNode *otherNode);
+	bool adjacentToNode(PathfindingGraphNode *otherNode);
 };
 
 } // End of namespace Crab

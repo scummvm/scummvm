@@ -35,24 +35,24 @@
 namespace Crab {
 
 template<typename T>
-Common::String NumberToString(T Number) {
+Common::String numberToString(T number) {
 	Common::String res;
-	const T Num = Number;
+	const T num = number;
 
-	if (Number == 0) {
+	if (number == 0) {
 		return "0";
 	}
 
-	if (Number < 0)
-		Number = -Number;
+	if (number < 0)
+		number = -number;
 
-	while (Number > 0) {
-		T d = Number % 10;
+	while (number > 0) {
+		T d = number % 10;
 		res += ('0' + d);
-		Number /= 10;
+		number /= 10;
 	}
 
-	if (Num < 0)
+	if (num < 0)
 		res += "-";
 
 	// reverse string
@@ -64,40 +64,40 @@ Common::String NumberToString(T Number) {
 }
 
 template<typename T>
-inline T StringToNumber(char *Text) {
+inline T stringToNumber(char *text) {
 	int res = 0;
-	if (sscanf(Text, "%d", &res) > 0)
+	if (sscanf(text, "%d", &res) > 0)
 		return static_cast<T>(res); // static cast to deal with signed to unsigned conversions
 	return 0;
 }
 
 template<>
-inline float StringToNumber<float>(char *Text) {
+inline float stringToNumber<float>(char *text) {
 	float res = 0.0f;
-	if (sscanf(Text, "%f", &res) > 0)
+	if (sscanf(text, "%f", &res) > 0)
 		return res;
 	return 0.0f;
 }
 
 template<>
-inline double StringToNumber<double>(char *Text) {
+inline double stringToNumber<double>(char *text) {
 	double res = 0.0;
-	if (sscanf(Text, "%lf", &res) > 0)
+	if (sscanf(text, "%lf", &res) > 0)
 		return res;
 	return 0.0;
 }
 
 template<typename T>
-T StringToNumber(const Common::String &Text) {
-	return StringToNumber<T>(const_cast<char *>(Text.c_str()));
+T stringToNumber(const Common::String &text) {
+	return stringToNumber<T>(const_cast<char *>(text.c_str()));
 }
 
 template<typename T>
-void GetPoint(T &v, Common::String &coords) {
+void getPoint(T &v, Common::String &coords) {
 	int comma = coords.findFirstOf(',');
 
-	v._x = StringToNumber<int>(coords.substr(0, comma));
-	v._y = StringToNumber<int>(coords.substr(comma + 1));
+	v._x = stringToNumber<int>(coords.substr(0, comma));
+	v._y = stringToNumber<int>(coords.substr(comma + 1));
 }
 
 } // End of namespace Crab

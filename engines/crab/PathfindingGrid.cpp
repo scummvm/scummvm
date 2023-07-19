@@ -36,16 +36,16 @@ namespace Crab {
 using namespace TMX;
 
 PathfindingGrid::PathfindingGrid(void) {
-	blockedCost = BLOCKED;
-	openCost = OPEN;
-	stairsCost = STAIRS;
-	nodes = nullptr;
+	_blockedCost = BLOCKED;
+	_openCost = OPEN;
+	_stairsCost = STAIRS;
+	_nodes = nullptr;
 
-	dimensions.x = 0;
-	dimensions.y = 0;
+	_dimensions.x = 0;
+	_dimensions.y = 0;
 
-	cellSize.x = 0.0;
-	cellSize.y = 0.0;
+	_cellSize.x = 0.0;
+	_cellSize.y = 0.0;
 }
 
 PathfindingGrid::~PathfindingGrid(void) {
@@ -53,48 +53,48 @@ PathfindingGrid::~PathfindingGrid(void) {
 }
 
 void PathfindingGrid::reset() {
-	for (int x = 0; x < dimensions.x; ++x) {
-		delete[] nodes[x];
+	for (int x = 0; x < _dimensions.x; ++x) {
+		delete[] _nodes[x];
 	}
 
-	delete[] nodes;
-	nodes = nullptr;
+	delete[] _nodes;
+	_nodes = nullptr;
 
-	dimensions.x = 0;
-	dimensions.y = 0;
+	_dimensions.x = 0;
+	_dimensions.y = 0;
 
-	cellSize.x = 0.0;
-	cellSize.y = 0.0;
+	_cellSize.x = 0.0;
+	_cellSize.y = 0.0;
 }
 
-void PathfindingGrid::SetupNodes(TMXMap map) {
+void PathfindingGrid::setupNodes(TMX::TMXMap map) {
 	// delete nodes if they exist
 	reset();
 
-	dimensions.x = map._pathRows; // Logically, this is incorrect but it matches the format of cols and rows used elsewhere (SZ)
-	dimensions.y = map._pathCols;
+	_dimensions.x = map._pathRows; // Logically, this is incorrect but it matches the format of cols and rows used elsewhere (SZ)
+	_dimensions.y = map._pathCols;
 
-	cellSize.x = (float)map._pathSize.x;
-	cellSize.y = (float)map._pathSize.y;
+	_cellSize.x = (float)map._pathSize.x;
+	_cellSize.y = (float)map._pathSize.y;
 
 	// Check to see if the costs have been loaded from the level file.
 	// If not, assign to defaults.
 	if (map._movementCosts._noWalk != 0) {
-		blockedCost = map._movementCosts._noWalk;
+		_blockedCost = map._movementCosts._noWalk;
 	}
 	if (map._movementCosts._open != 0) {
-		openCost = map._movementCosts._open;
+		_openCost = map._movementCosts._open;
 	}
 	if (map._movementCosts._stairs != 0) {
-		stairsCost = map._movementCosts._stairs;
+		_stairsCost = map._movementCosts._stairs;
 	}
 
-	nodes = new PathfindingGraphNode *[dimensions.x];
+	_nodes = new PathfindingGraphNode *[_dimensions.x];
 
 	// Allocate some nodes!
 	// TODO: probably want to change this to a one chunk allocation...
-	for (int i = 0; i < dimensions.x; ++i) {
-		nodes[i] = new PathfindingGraphNode[dimensions.y];
+	for (int i = 0; i < _dimensions.x; ++i) {
+		_nodes[i] = new PathfindingGraphNode[_dimensions.y];
 	}
 
 	// Fill up those nodes!
@@ -104,40 +104,40 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 	Vector2f topLeftPos = pos;
 
 	// Initialize the nodes
-	for (int x = 0; x < dimensions.x; ++x) {
-		for (int y = 0; y < dimensions.y; ++y) {
+	for (int x = 0; x < _dimensions.x; ++x) {
+		for (int y = 0; y < _dimensions.y; ++y) {
 			// PathfindingGraphNode* newNode = new PathfindingGraphNode(pos, idCounter++);
 
 			// nodes[x][y] = *newNode;
-			nodes[x][y].collisionRect = Rect(pos.x, pos.y, cellSize.x, cellSize.y);
+			_nodes[x][y]._collisionRect = Rect(pos.x, pos.y, _cellSize.x, _cellSize.y);
 
-			nodes[x][y].position.x = pos.x + cellSize.x / 2.0f;
-			nodes[x][y].position.y = pos.y + cellSize.y / 2.0f;
-			nodes[x][y].id = idCounter++;
+			_nodes[x][y]._position.x = pos.x + _cellSize.x / 2.0f;
+			_nodes[x][y]._position.y = pos.y + _cellSize.y / 2.0f;
+			_nodes[x][y]._id = idCounter++;
 
-			nodes[x][y].movementCost = openCost;
-			nodes[x][y].neighborCosts.reserve(4); // since its a square based grid, 4 is the greatest number of costs and nodes possible.
-			nodes[x][y].neighborNodes.reserve(4);
+			_nodes[x][y]._movementCost = _openCost;
+			_nodes[x][y]._neighborCosts.reserve(4); // since its a square based grid, 4 is the greatest number of costs and nodes possible.
+			_nodes[x][y]._neighborNodes.reserve(4);
 
-			pos.y += cellSize.y;
+			pos.y += _cellSize.y;
 
 			Common::Array<Shape> noWalk = map.areaNoWalk();
 
 			// Check if the square should count as blocked
 			for (auto i = noWalk.begin(); i != noWalk.end(); ++i) {
-				if (i->Collide(nodes[x][y].collisionRect).intersect) {
-					nodes[x][y].movementCost = (float)blockedCost;
+				if (i->Collide(_nodes[x][y]._collisionRect).intersect) {
+					_nodes[x][y]._movementCost = (float)_blockedCost;
 					break;
 				}
 			}
 
 			// Check for stairs if the cell isn't blocked
-			if (nodes[x][y].movementCost >= 0.0f) {
+			if (_nodes[x][y]._movementCost >= 0.0f) {
 				Common::Array<pyrodactyl::level::Stairs> stairs = map.areaStairs();
 
 				for (auto i = stairs.begin(); i != stairs.end(); ++i) {
-					if (i->Collide(nodes[x][y].collisionRect).intersect) {
-						nodes[x][y].movementCost = (float)stairsCost;
+					if (i->Collide(_nodes[x][y]._collisionRect).intersect) {
+						_nodes[x][y]._movementCost = (float)_stairsCost;
 						break;
 					}
 				}
@@ -147,16 +147,16 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 			// since the highest cost collider in any given tile would be used for the path cost. (SZ)
 		}
 
-		pos.x += cellSize.x;
+		pos.x += _cellSize.x;
 		pos.y = topLeftPos.y;
 	}
 
 	// Connect the nodes
-	for (int x = 0; x < dimensions.x; ++x) {
-		for (int y = 0; y < dimensions.y; ++y) {
+	for (int x = 0; x < _dimensions.x; ++x) {
+		for (int y = 0; y < _dimensions.y; ++y) {
 			// Check horizontal
-			if (x < dimensions.x - 1) {
-				ConnectNodes(&nodes[x][y], &nodes[x + 1][y]);
+			if (x < _dimensions.x - 1) {
+				connectNodes(&_nodes[x][y], &_nodes[x + 1][y]);
 
 				// Check diagonals
 				// This causes hangups since the collider has a greater width to take into account when traveling
@@ -178,8 +178,8 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 				}*/
 			}
 			// Check vertical
-			if (y < dimensions.y - 1) {
-				ConnectNodes(&nodes[x][y], &nodes[x][y + 1]);
+			if (y < _dimensions.y - 1) {
+				connectNodes(&_nodes[x][y], &_nodes[x][y + 1]);
 			}
 		}
 	}
@@ -202,26 +202,26 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 	// }
 }
 
-void PathfindingGrid::ConnectNodes(PathfindingGraphNode *node1, PathfindingGraphNode *node2) {
-	node1->AddNeighbor(node2, true);
-	node2->AddNeighbor(node1, true);
+void PathfindingGrid::connectNodes(PathfindingGraphNode *node1, PathfindingGraphNode *node2) {
+	node1->addNeighbor(node2, true);
+	node2->addNeighbor(node1, true);
 }
 
-PathfindingGraphNode *PathfindingGrid::GetNodeAtPoint(Vector2f point) {
-	int x = (int)floor(point.x / cellSize.x);
-	int y = (int)floor(point.y / cellSize.y);
+PathfindingGraphNode *PathfindingGrid::getNodeAtPoint(Vector2f point) {
+	int x = (int)floor(point.x / _cellSize.x);
+	int y = (int)floor(point.y / _cellSize.y);
 
-	return &nodes[x][y];
+	return &_nodes[x][y];
 }
 
-Common::Array<PathfindingGraphNode *> PathfindingGrid::CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2) {
+Common::Array<PathfindingGraphNode *> PathfindingGrid::cornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2) {
 	Common::Array<PathfindingGraphNode *> returnNodes;
 
 	// Iterat through both nodes neighbors. If a blocked neighbor is found that is shared between the two,
 	// It is a corner to them.
-	for (auto iter : node1->neighborNodes) {
-		for (auto iter2 : node2->neighborNodes) {
-			if (iter == iter2 && iter->movementCost < 0) {
+	for (auto iter : node1->_neighborNodes) {
+		for (auto iter2 : node2->_neighborNodes) {
+			if (iter == iter2 && iter->_movementCost < 0) {
 				if (returnNodes.size() == 0 || (*(Common::find(returnNodes.begin(), returnNodes.end(), iter))) == NULL)
 					returnNodes.push_back(iter);
 			}
@@ -231,10 +231,10 @@ Common::Array<PathfindingGraphNode *> PathfindingGrid::CornerCheck(const Pathfin
 	return returnNodes;
 }
 
-PathfindingGraphNode *PathfindingGrid::GetNearestOpenNode(Vector2f nodePos, Vector2f comparePos) {
-	PathfindingGraphNode *startNode = GetNodeAtPoint(nodePos);
+PathfindingGraphNode *PathfindingGrid::getNearestOpenNode(Vector2f nodePos, Vector2f comparePos) {
+	PathfindingGraphNode *startNode = getNodeAtPoint(nodePos);
 
-	if (startNode->GetMovementCost() > 0) // If the clicked node is open, we're done!
+	if (startNode->getMovementCost() > 0) // If the clicked node is open, we're done!
 		return startNode;
 
 	PathfindingGraphNode *returnNode = NULL;
@@ -249,8 +249,8 @@ PathfindingGraphNode *PathfindingGrid::GetNearestOpenNode(Vector2f nodePos, Vect
 
 	// Iterate through the nodes, check if they are open then check their distance from the compare point.
 	while (!checkNodes.empty()) {
-		if (checkNodes.front()->GetMovementCost() > 0) {
-			float distance = (comparePos - checkNodes.front()->GetPosition()).MagSqr();
+		if (checkNodes.front()->getMovementCost() > 0) {
+			float distance = (comparePos - checkNodes.front()->getPosition()).MagSqr();
 
 			if (shortestDistance == 0.0f || distance) // If this is the new shortest distance, this becomes the new return.
 			{
@@ -259,11 +259,11 @@ PathfindingGraphNode *PathfindingGrid::GetNearestOpenNode(Vector2f nodePos, Vect
 				returnNode = checkNodes.front();
 			}
 		} else {
-			for (unsigned int i = 0; i < checkNodes.front()->neighborNodes.size(); ++i) {
+			for (unsigned int i = 0; i < checkNodes.front()->_neighborNodes.size(); ++i) {
 				// If the neighbor hasn't been checked yet, add it to the list to check.
-				if (Common::find(allUsedNodes.begin(), allUsedNodes.end(), checkNodes.front()->neighborNodes[i]) == allUsedNodes.end()) {
-					allUsedNodes.push_back(checkNodes.front()->neighborNodes[i]);
-					checkNodes.push_back(checkNodes.front()->neighborNodes[i]);
+				if (Common::find(allUsedNodes.begin(), allUsedNodes.end(), checkNodes.front()->_neighborNodes[i]) == allUsedNodes.end()) {
+					allUsedNodes.push_back(checkNodes.front()->_neighborNodes[i]);
+					checkNodes.push_back(checkNodes.front()->_neighborNodes[i]);
 				}
 			}
 		}

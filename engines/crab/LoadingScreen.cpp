@@ -42,25 +42,25 @@ void LoadingScreen::load() {
 			if (nodeValid("screens", node)) {
 				rapidxml::xml_node<char> *scrnode = node->first_node("screens");
 				for (auto n = scrnode->first_node("screen"); n != NULL; n = n->next_sibling("screen"))
-					screen.push_back(n);
+					_screen.push_back(n);
 			}
 
 			if (nodeValid("text", node))
-				text.load(node->first_node("text"), "img");
+				_text.load(node->first_node("text"), "img");
 		}
 	}
 }
 
 void LoadingScreen::draw() {
 	// Change to a random screen
-	Change();
+	change();
 
 	// Draw the current screen
-	if (cur < screen.size())
-		screen[cur].draw();
+	if (_cur < _screen.size())
+		_screen[_cur].draw();
 
 	// Draw the loading text
-	text.draw((g_engine->_screenSettings->cur.w - text.w()) / 2, (g_engine->_screenSettings->cur.h - text.h()) / 2);
+	_text.draw((g_engine->_screenSettings->_cur.w - _text.w()) / 2, (g_engine->_screenSettings->_cur.h - _text.h()) / 2);
 
 	g_engine->_screen->update();
 
@@ -68,7 +68,7 @@ void LoadingScreen::draw() {
 	//SDL_RenderPresent(gRenderer);
 }
 
-void LoadingScreen::Dim() {
+void LoadingScreen::dim() {
 #if 0
 	// This is used when starting or loading a game from the main menu in order to dim the screen
 	// until an actual loading screen is drawn
@@ -82,10 +82,10 @@ void LoadingScreen::Dim() {
 }
 
 void LoadingScreen::Quit() {
-	text.deleteImage();
+	_text.deleteImage();
 
-	for (auto i = screen.begin(); i != screen.end(); ++i)
-		i->Delete();
+	for (auto i = _screen.begin(); i != _screen.end(); ++i)
+		i->clear();
 }
 
 } // End of namespace Crab

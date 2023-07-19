@@ -40,79 +40,118 @@ namespace Crab {
 // This class represents the actual pathfinding and following agent that utilizes
 // the pathfinding grid
 class PlannerNode {
-	PlannerNode *parent;
-	PlannerNode *child;
+	PlannerNode *_parent;
+	PlannerNode *_child;
 
-	double cost;      // Heuristic cost equivalent to cost to reach goal from planner node's position.
-	double finalCost; // Final cost of route through the planner node. Used to determine optimal path.
-	double givenCost; // The current distance of the route.
+	double _cost;      // Heuristic cost equivalent to cost to reach goal from planner node's position.
+	double _finalCost; // Final cost of route through the planner node. Used to determine optimal path.
+	double _givenCost; // The current distance of the route.
 
 public:
-	PathfindingGraphNode *location;
+	PathfindingGraphNode *_location;
 
 	PlannerNode() {
-		location = NULL;
-		parent = NULL;
-		child = NULL;
-		cost = 0;
-		finalCost = 0;
-		givenCost = 0;
+		_location = NULL;
+		_parent = NULL;
+		_child = NULL;
+		_cost = 0;
+		_finalCost = 0;
+		_givenCost = 0;
 	}
 	~PlannerNode() {}
 
-	PathfindingGraphNode *GetLocation(void) { return location; }
-	PlannerNode *GetParent(void) { return parent; }
-	PlannerNode *GetChild(void) { return child; }
-	double GetHCost(void) const { return cost; }
-	double GetFinalCost(void) const { return finalCost; }
-	double GetGivenCost(void) const { return givenCost; }
+	PathfindingGraphNode *getLocation(void) {
+		return _location;
+	}
 
-	void SetLocation(PathfindingGraphNode *loc) { location = loc; }
-	void SetParent(PlannerNode *p) { parent = p; }
-	void SetChild(PlannerNode *c) { child = c; }
-	void SetHCost(double c) { cost = c; }
-	void SetFinalCost(double c) { finalCost = c; }
-	void SetGivenCost(double c) { givenCost = c; }
+	PlannerNode *getParent(void) {
+		return _parent;
+	}
+
+	PlannerNode *getChild(void) {
+		return _child;
+	}
+
+	double getHCost(void) const {
+		return _cost;
+	}
+
+	double getFinalCost(void) const {
+		return _finalCost;
+	}
+
+	double getGivenCost(void) const {
+		return _givenCost;
+	}
+
+	void setLocation(PathfindingGraphNode *loc) {
+		_location = loc;
+	}
+
+	void setParent(PlannerNode *p) {
+		_parent = p;
+	}
+
+	void setChild(PlannerNode *c) {
+		_child = c;
+	}
+
+	void setHCost(double c) {
+		_cost = c;
+	}
+
+	void setFinalCost(double c) {
+		_finalCost = c;
+	}
+
+	void setGivenCost(double c) {
+		_givenCost = c;
+	}
 };
 
 class PathfindingAgent {
-	Vector2f position;
-	Vector2f prevPosition;  // Used to determine that we are making progress toward the goal
-	Vector2i immediateDest; // The next stop on the AI's path
+	Vector2f _position;
+	Vector2f _prevPosition;  // Used to determine that we are making progress toward the goal
+	Vector2i _immediateDest; // The next stop on the AI's path
 
-	bool destinationSet;       // Was a destination specified.
-	bool destinationReachable; // Can the agent actually get to the destination?
+	bool _destinationSet;       // Was a destination specified.
+	bool _destinationReachable; // Can the agent actually get to the destination?
 
-	float nodeBufferDistance; // How much leeway is there for reaching the destination
+	float _nodeBufferDistance; // How much leeway is there for reaching the destination
 
 public:
 	PathfindingAgent();
 	~PathfindingAgent();
 
-	PathfindingGrid *grid;
+	PathfindingGrid *_grid;
 
-	Vector2f destination;
+	Vector2f _destination;
 
-	PathfindingGraphNode *m_pStartTile;   // The system originally used tiles, but this one uses discreet points.
-	PathfindingGraphNode *m_pGoalTile;    // The tile we are trying to reach. May not be the tile that was clicked if the clicked tile is blocked.
-	PathfindingGraphNode *m_pClickedTile; // The tile that was clicked. If it is open, it will be the goal node.
+	PathfindingGraphNode *_startTile;   // The system originally used tiles, but this one uses discreet points.
+	PathfindingGraphNode *_goalTile;    // The tile we are trying to reach. May not be the tile that was clicked if the clicked tile is blocked.
+	PathfindingGraphNode *_clickedTile; // The tile that was clicked. If it is open, it will be the goal node.
 
-	bool solutionFound;
-	bool noSolution;
+	bool _solutionFound;
+	bool _noSolution;
 
 	Common::Array<PathfindingGraphNode const *> m_vSolution;
 
-	void SetNodeBufferDistance(float w) { nodeBufferDistance = w; }
-	float GetNodeBufferDistance() { return nodeBufferDistance; }
+	void setNodeBufferDistance(float w) {
+		_nodeBufferDistance = w;
+	}
+
+	float getNodeBufferDistance() {
+		return _nodeBufferDistance;
+	}
 
 	// Added for Greedy search
 	double distSquared(PathfindingGraphNode *tileA, PathfindingGraphNode *tileB);
 	// Added for A* search
 	double distExact(PathfindingGraphNode *tileA, PathfindingGraphNode *tileB);
 
-	PriorityQueue<PlannerNode> nodeQueue;
+	PriorityQueue<PlannerNode> _nodeQueue;
 
-	Common::StableMap<PathfindingGraphNode *, PlannerNode *> m_mCreatedList;
+	Common::StableMap<PathfindingGraphNode *, PlannerNode *> _createdList;
 
 	// void SetSprite(pyrodactyl::anim::Sprite* s){entitySprite = s;}
 
@@ -124,22 +163,34 @@ public:
 	//!                    to access each tile's location and weight data.
 	void initialize(PathfindingGrid *g);
 
-	void SetDestination(Vector2f d);
-	void SetDestination(Vector2f d, bool r);
-	void SetDestination(Vector2i d);
-	void SetDestination(Vector2i d, bool r);
+	void setDestination(Vector2f d);
+	void setDestination(Vector2f d, bool r);
+	void setDestination(Vector2i d);
+	void setDestination(Vector2i d, bool r);
 
-	void SetPosition(Vector2f p) { position = p; }
-	void SetPrevPosition(Vector2f p) { prevPosition = p; }
-	Vector2f GetPosition() { return position; }
+	void setPosition(Vector2f p) {
+		_position = p;
+	}
 
-	bool PositionChanged() { return position != prevPosition; }
+	void setPrevPosition(Vector2f p) {
+		_prevPosition = p;
+	}
 
-	Vector2i GetImmediateDest() { return immediateDest; }
+	Vector2f getPosition() {
+		return _position;
+	}
+
+	bool positionChanged() {
+		return _position != _prevPosition;
+	}
+
+	Vector2i getImmediateDest() {
+		return _immediateDest;
+	}
 
 	//! \brief Performs the main part of the algorithm until the specified time has elapsed or
 	//! no nodes are left open.
-	void Update(long timeslice);
+	void update(long timeslice);
 
 	//! \brief Returns <code>true</code> if and only if no nodes are left open.
 	//!
@@ -160,7 +211,7 @@ public:
 	void shutdown();
 
 	// Returns true if the node connects to the goal node
-	bool AdjacentToGoal(PathfindingGraphNode *node);
+	bool adjacentToGoal(PathfindingGraphNode *node);
 };
 
 bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB);

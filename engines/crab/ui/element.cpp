@@ -85,10 +85,10 @@ void Element::setUI(Rect *parent) {
 	if (parent == NULL) {
 		switch (_align.x) {
 		case ALIGN_CENTER:
-			x = g_engine->_screenSettings->cur.w / 2 - w / 2 + _raw.x;
+			x = g_engine->_screenSettings->_cur.w / 2 - w / 2 + _raw.x;
 			break;
 		case ALIGN_RIGHT:
-			x = g_engine->_screenSettings->cur.w - w + _raw.x;
+			x = g_engine->_screenSettings->_cur.w - w + _raw.x;
 			break;
 		default:
 			x = _raw.x;
@@ -97,10 +97,10 @@ void Element::setUI(Rect *parent) {
 
 		switch (_align.y) {
 		case ALIGN_CENTER:
-			y = g_engine->_screenSettings->cur.h / 2 - h / 2 + _raw.y;
+			y = g_engine->_screenSettings->_cur.h / 2 - h / 2 + _raw.y;
 			break;
 		case ALIGN_RIGHT:
-			y = g_engine->_screenSettings->cur.h - h + _raw.y;
+			y = g_engine->_screenSettings->_cur.h - h + _raw.y;
 			break;
 		default:
 			y = _raw.y;

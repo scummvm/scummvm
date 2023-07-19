@@ -57,7 +57,7 @@ void Level::reset() {
 	_background.clear();
 	_fly.clear();
 
-	Camera(0, 0, g_engine->_screenSettings->cur.w, g_engine->_screenSettings->cur.h);
+	Camera(0, 0, g_engine->_screenSettings->_cur.w, g_engine->_screenSettings->_cur.h);
 
 	_showmap.set(true);
 	_insideExit = false;
@@ -167,8 +167,8 @@ void Level::playerId(const Common::String &ID, const int &x, const int &y) {
 // Purpose: Rearrange stuff after resolution change
 //------------------------------------------------------------------------
 void Level::setUI() {
-	_camera.w = g_engine->_screenSettings->cur.w;
-	_camera.h = g_engine->_screenSettings->cur.h;
+	_camera.w = g_engine->_screenSettings->_cur.w;
+	_camera.h = g_engine->_screenSettings->_cur.h;
 	setCamera();
 }
 

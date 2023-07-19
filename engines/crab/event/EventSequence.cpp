@@ -134,11 +134,11 @@ void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 void EventSequence::loadState(rapidxml::xml_node<char> *node) {
 	rapidxml::xml_attribute<char> *curid = node->first_attribute("current");
 	if (curid != NULL)
-		_cur = StringToNumber<unsigned int>(curid->value());
+		_cur = stringToNumber<unsigned int>(curid->value());
 
 	_next.clear();
 	for (auto n = node->first_node("next"); n != NULL; n = n->next_sibling("next"))
-		_next.push_back(StringToNumber<unsigned int>(n->value()));
+		_next.push_back(stringToNumber<unsigned int>(n->value()));
 
 	if (_next.empty())
 		_next.push_back(0);

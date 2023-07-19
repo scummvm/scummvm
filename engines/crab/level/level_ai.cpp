@@ -54,7 +54,7 @@ LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result
 		if (playerInCombat(info)) {
 			_insideExit = true;
 		} else if (_insideExit == false) {
-			lResult.type = LR_LEVEL;
+			lResult._type = LR_LEVEL;
 			return lResult;
 		}
 	} else {
@@ -69,12 +69,12 @@ LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result
 	if (eventInProgress)
 		playerStop();
 	else
-		think(info, result, endSeq, lResult.val);
+		think(info, result, endSeq, lResult._val);
 
-	if (lResult.val != "")
-		info.lastPerson(lResult.val);
-	else if (collidingWithObject(info, lResult.val))
-		info.lastPerson(lResult.val);
+	if (lResult._val != "")
+		info.lastPerson(lResult._val);
+	else if (collidingWithObject(info, lResult._val))
+		info.lastPerson(lResult._val);
 	else
 		info.lastPerson("");
 
@@ -91,7 +91,7 @@ void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event
 		// Only bother if the sprite is visible
 		if (i->visible()) {
 			// TODO: Find a place where this should be initialized... (SZ)
-			if (i->_pathing.grid == NULL)
+			if (i->_pathing._grid == NULL)
 				i->_pathing.initialize(&_pathfindingGrid);
 
 			// If a sprite is dead, nothing else matters
@@ -105,8 +105,8 @@ void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event
 			} else if (info.state(i->id()) != PST_KO) {
 				Rect boundRect = i->boundRect();
 
-				i->_pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
-				i->_pathing.Update(0);
+				i->_pathing.setPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
+				i->_pathing.update(0);
 
 				// For the AI sprites
 				if (index != _playerIndex) {
@@ -140,8 +140,8 @@ void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event
 					// For the player sprite
 					boundRect = i->boundRect();
 
-					i->_pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
-					i->_pathing.Update(0);
+					i->_pathing.setPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
+					i->_pathing.update(0);
 
 					i->moveToDestPathfinding(info, _scDefault);
 				}

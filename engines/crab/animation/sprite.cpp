@@ -293,21 +293,21 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 		if (_pathing.m_vSolution.size() > 0) {
 			for (auto iter = _pathing.m_vSolution.begin(); iter != _pathing.m_vSolution.end(); ++iter) {
 				bool nextToWall = false;
-				for (auto neighbor = (*iter)->neighborNodes.begin(); neighbor != (*iter)->neighborNodes.end(); ++neighbor) {
-					if ((*neighbor)->GetMovementCost() < 0 || (*neighbor)->GetMovementCost() > 1) {
+				for (auto neighbor = (*iter)->_neighborNodes.begin(); neighbor != (*iter)->_neighborNodes.end(); ++neighbor) {
+					if ((*neighbor)->getMovementCost() < 0 || (*neighbor)->getMovementCost() > 1) {
 						nextToWall = true;
 						break;
 					}
 				}
 
 				if (nextToWall)
-					(*iter)->GetRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
+					(*iter)->getRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
 				else
-					(*iter)->GetRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
+					(*iter)->getRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
 			}
 
-			_pathing.m_pGoalTile->GetRect().draw(-camera.x, -camera.y, 0, 0, 200, 254);
-			_pathing.m_pStartTile->GetRect().draw(-camera.x, -camera.y, 0, 200, 0, 254);
+			_pathing._goalTile->getRect().draw(-camera.x, -camera.y, 0, 0, 200, 254);
+			_pathing._startTile->getRect().draw(-camera.x, -camera.y, 0, 200, 0, 254);
 
 			// Draw adjacencies to the goal tile.
 			/*	for(auto neighbor = _pathing.m_pGoalTile->neighborNodes.begin(); neighbor != _pathing.m_pGoalTile->neighborNodes.end(); ++neighbor)
@@ -315,8 +315,8 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 				(*neighbor)->GetRect().draw(-camera.x, -camera.y, 200, 0, 0, 254);
 				}*/
 		}
-		Rect destinationRect = Rect((int)_pathing.destination.x - 5,
-									(int)_pathing.destination.y - 5,
+		Rect destinationRect = Rect((int)_pathing._destination.x - 5,
+									(int)_pathing._destination.y - 5,
 									10,
 									10);
 		destinationRect.draw(-camera.x, -camera.y, 0, 200, 0, 254);
@@ -468,7 +468,7 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 //------------------------------------------------------------------------
 void Sprite::setDestPathfinding(const Vector2i &dest, bool reachable) {
 	_aiData.dest(dest, true);
-	_pathing.SetDestination(dest, reachable);
+	_pathing.setDestination(dest, reachable);
 }
 
 //------------------------------------------------------------------------
