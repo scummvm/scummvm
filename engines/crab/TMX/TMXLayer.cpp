@@ -36,7 +36,7 @@ using namespace TMX;
 
 bool Layer::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node))
-		return loadStr(name, "name", node) && loadNum(w, "width", node) && loadNum(h, "height", node);
+		return loadStr(_name, "name", node) && loadNum(_w, "width", node) && loadNum(_h, "height", node);
 
 	return false;
 }
@@ -44,13 +44,13 @@ bool Layer::load(rapidxml::xml_node<char> *node) {
 bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 	if (Layer::load(node)) {
 		if (nodeValid("image", node, false)) {
-			type = LAYER_IMAGE;
+			_type = LAYER_IMAGE;
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 
 			if (imgnode->first_attribute("source") != NULL)
-				img.load((path + imgnode->first_attribute("source")->value()));
+				_img.load((path + imgnode->first_attribute("source")->value()));
 		} else {
-			type = LAYER_NORMAL;
+			_type = LAYER_NORMAL;
 			int i = 0;
 			Common::Array<TileInfo> t;
 
@@ -58,8 +58,8 @@ bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) 
 			for (auto n = node->first_node("data")->first_node("tile"); n != NULL; n = n->next_sibling("tile")) {
 				t.push_back(n);
 
-				if (++i >= w) {
-					tile.push_back(t);
+				if (++i >= _w) {
+					_tile.push_back(t);
 					t.clear();
 					i = 0;
 				}
@@ -74,25 +74,25 @@ bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) 
 			for (auto p = node->first_node("properties")->first_node("property"); p != NULL; p = p->next_sibling("property")) {
 				if (loadStr(n, "name", p) && loadStr(v, "value", p)) {
 					if (n == "prop" && v == "true")
-						type = LAYER_PROP;
+						_type = LAYER_PROP;
 					else if (n == "autohide" && v == "true")
-						type = LAYER_AUTOHIDE;
+						_type = LAYER_AUTOHIDE;
 					else if (n == "autoshow" && v == "true")
-						type = LAYER_AUTOSHOW;
+						_type = LAYER_AUTOSHOW;
 					else if (n == "x") {
-						pos.x = StringToNumber<int>(v);
+						_pos.x = StringToNumber<int>(v);
 					} else if (n == "y") {
-						pos.y = StringToNumber<int>(v);
+						_pos.y = StringToNumber<int>(v);
 					} else if (n == "w") {
-						pos.w = StringToNumber<int>(v);
+						_pos.w = StringToNumber<int>(v);
 					} else if (n == "h") {
-						pos.h = StringToNumber<int>(v);
+						_pos.h = StringToNumber<int>(v);
 					} else if (n == "scroll_rate_x") {
-						rate.x = StringToNumber<float>(v);
-						type = LAYER_PARALLAX;
+						_rate.x = StringToNumber<float>(v);
+						_type = LAYER_PARALLAX;
 					} else if (n == "scroll_rate_y") {
-						rate.y = StringToNumber<float>(v);
-						type = LAYER_PARALLAX;
+						_rate.y = StringToNumber<float>(v);
+						_type = LAYER_PARALLAX;
 					}
 				}
 			}

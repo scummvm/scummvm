@@ -65,14 +65,14 @@ enum LayerType {
 class Layer {
 public:
 	// Name of the layer
-	Common::String name;
+	Common::String _name;
 
 	// Dimensions of the layer in terms of tiles
-	int w, h;
+	int _w, _h;
 
 	Layer() {
-		w = 0;
-		h = 0;
+		_w = 0;
+		_h = 0;
 	}
 	bool load(rapidxml::xml_node<char> *node);
 };
@@ -81,29 +81,29 @@ public:
 class MapLayer : public Layer {
 public:
 	// The tiles in the layer
-	Common::Array<Common::Array<TileInfo> > tile;
+	Common::Array<Common::Array<TileInfo>> _tile;
 
 	// The type of layer
-	LayerType type;
+	LayerType _type;
 
 	// The image in the layer
-	pyrodactyl::image::Image img;
+	pyrodactyl::image::Image _img;
 
 	// The coordinates to draw the prop in(x,y) and dimensions of the area(w,h) in terms of tiles
 	// This is also the collision rectangle of the prop and auto hide layer
-	Rect pos;
+	Rect _pos;
 
-	Common::List<Rect> boundRect;
+	Common::List<Rect> _boundRect;
 
 	// The rate of scrolling of image, used for parallax
-	Vector2f rate;
+	Vector2f _rate;
 
 	// Is the player colliding with the layer? (used for auto hide layer)
-	bool collide;
+	bool _collide;
 
-	MapLayer() : rate(1, 1) {
-		type = LAYER_NORMAL;
-		collide = false;
+	MapLayer() : _rate(1, 1) {
+		_type = LAYER_NORMAL;
+		_collide = false;
 	}
 	bool load(const Common::String &path, rapidxml::xml_node<char> *node);
 };

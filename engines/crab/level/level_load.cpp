@@ -83,7 +83,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				// Remember to load the terrain data before constructing the pathfinding grid
 				_pathfindingGrid.SetupNodes(_terrain);
 
-				_terrain.grid = &_pathfindingGrid;
+				_terrain._grid = &_pathfindingGrid;
 
 				if (nodeValid("loc", mapnode))
 					_mapLoc.load(mapnode->first_node("loc"));

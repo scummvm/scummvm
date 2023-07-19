@@ -107,7 +107,7 @@ void Level::handleEvents(Info &info, const Common::Event &Event) {
 				b.x = dest.x - b.w / 2;
 				b.y = dest.y - b.h / 2;
 
-				_objects[_playerIndex].setDestPathfinding(dest, !_terrain.InsideNoWalk(dest));
+				_objects[_playerIndex].setDestPathfinding(dest, !_terrain.insideNoWalk(dest));
 			}
 		}
 	}

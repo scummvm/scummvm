@@ -49,22 +49,22 @@ namespace TMX {
 class TMXMap {
 protected:
 	// The actual dimensions of the level
-	int w, h;
+	int _w, _h;
 
 	// The area you can move in
-	Rect area_walk;
+	Rect _areaWalk;
 
 	// The non-walk able areas in the level
-	Common::Array<Shape> area_nowalk;
+	Common::Array<Shape> _areaNowalk;
 
 	// The trigger rectangles in the level
-	Common::Array<Shape> area_trig;
+	Common::Array<Shape> _areaTrig;
 
 	// Stairs modify the player walking speed
-	Common::Array<pyrodactyl::level::Stairs> area_stairs;
+	Common::Array<pyrodactyl::level::Stairs> _areaStairs;
 
 	// Music areas change the music if player collides with them
-	Common::Array<pyrodactyl::level::MusicArea> area_music;
+	Common::Array<pyrodactyl::level::MusicArea> _areaMusic;
 
 	// Archived methods for loading poly lines in tiled
 	// void LoadPath(rapidxml::xml_node<char> *node);
@@ -72,35 +72,35 @@ protected:
 
 public:
 	// The exits to different levels
-	Common::Array<pyrodactyl::level::Exit> area_exit;
+	Common::Array<pyrodactyl::level::Exit> _areaExit;
 
 	// The layer on top of which objects walk
-	unsigned int sprite_layer;
+	unsigned int _spriteLayer;
 
 	// Dimensions of the level in terms of tiles
-	int tile_rows, tile_cols;
+	int _tileRows, _tileCols;
 
 	// Dimensions of the level in terms of pathfinding grid cells (SZ)
-	int path_rows, path_cols;
+	int _pathRows, _pathCols;
 
 	// The width and height of tiles
-	Vector2i tile_size;
+	Vector2i _tileSize;
 
 	// The width and height of pathfinding grid cells (SZ)
-	Vector2i path_size;
+	Vector2i _pathSize;
 
 	// The layers of tiles in the level
-	Common::Array<MapLayer> layer;
+	Common::Array<MapLayer> _layer;
 
 	// The props in the level
-	Common::Array<MapLayer> prop;
+	Common::Array<MapLayer> _prop;
 
-	PathfindingGrid *grid; // The grid of graph nodes used for navigating.
+	PathfindingGrid *_grid; // The grid of graph nodes used for navigating.
 
 	// Movement costs
 	struct {
-		int open, no_walk, stairs;
-	} movementCosts;
+		int _open, _noWalk, _stairs;
+	} _movementCosts;
 
 	TMXMap();
 	~TMXMap() {}
@@ -108,26 +108,40 @@ public:
 	void reset();
 	void load(const Common::String &path, Common::String filename);
 
-	void DrawDebug(const Rect &camera);
+	void drawDebug(const Rect &camera);
 
-	bool InsideWalk(const Rect bounding_box);
-	bool InsideWalk(const Vector2i &pos);
+	bool insideWalk(const Rect boundingBox);
+	bool insideWalk(const Vector2i &pos);
 
-	bool InsideNoWalk(const Vector2i &pos);
-	void CollideWithNoWalk(const Rect bounding_box, Common::List<CollisionData> &colliders);
+	bool insideNoWalk(const Vector2i &pos);
+	void collideWithNoWalk(const Rect boundingBox, Common::List<CollisionData> &colliders);
 
-	bool CollideWithExit(const Rect rect, LevelResult &res);
-	bool CollideWithStairs(const Rect rect, Vector2f &vel_mod);
-	bool CollideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music);
+	bool collideWithExit(const Rect rect, LevelResult &res);
+	bool collideWithStairs(const Rect rect, Vector2f &velMod);
+	bool collideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music);
 
-	bool CollideWithTrigger(const Rect rect, int index);
-	void CollideWithTrigger(const Rect rect, Common::Array<int> &collision_table);
+	bool collideWithTrigger(const Rect rect, int index);
+	void collideWithTrigger(const Rect rect, Common::Array<int> &collisionTable);
 
-	int W() { return w; }
-	int H() { return h; }
-	Rect AreaWalk() { return area_walk; }
-	Common::Array<Shape> AreaNoWalk() { return area_nowalk; }
-	Common::Array<pyrodactyl::level::Stairs> AreaStairs() { return area_stairs; }
+	int w() {
+		return _w;
+	}
+
+	int h() {
+		return _h;
+	}
+
+	Rect areaWalk() {
+		return _areaWalk;
+	}
+
+	Common::Array<Shape> areaNoWalk() {
+		return _areaNowalk;
+	}
+
+	Common::Array<pyrodactyl::level::Stairs> areaStairs() {
+		return _areaStairs;
+	}
 };
 } // End of namespace TMX
 

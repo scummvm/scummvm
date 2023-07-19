@@ -42,18 +42,18 @@ using namespace pyrodactyl::input;
 
 // Purpose: Pre render the terrain layer
 void Level::preDraw() {
-	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(_terrain.W(), _terrain.H(), *g_engine->_format);
+	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(_terrain.w(), _terrain.h(), *g_engine->_format);
 	unsigned int layerCount = 0u;
-	for (auto l = _terrain.layer.begin(); l != _terrain.layer.end(); ++l, ++layerCount) {
-		g_engine->_imageManager->_tileset.PreDraw(*l, _terrain.tile_size, surf);
+	for (auto l = _terrain._layer.begin(); l != _terrain._layer.end(); ++l, ++layerCount) {
+		g_engine->_imageManager->_tileset.preDraw(*l, _terrain._tileSize, surf);
 
 		// Draw the normal sprites if this is the layer for it
-		if (layerCount == _terrain.sprite_layer)
+		if (layerCount == _terrain._spriteLayer)
 			preDrawObjects(surf);
 	}
 
 	// This is to ensure we don't miss out on drawing sprites
-	if (layerCount <= _terrain.sprite_layer)
+	if (layerCount <= _terrain._spriteLayer)
 		preDrawObjects(surf);
 
 	_img.load(surf);
@@ -73,12 +73,12 @@ void Level::draw(pyrodactyl::event::Info &info) {
 	unsigned int layerCount = 0u;
 
 	// Draw the terrain layer
-	g_engine->_imageManager->_tileset.draw(_terrain.layer[0], _camera, _terrain.tile_size, _objects[_playerIndex].posRect(), _img);
+	g_engine->_imageManager->_tileset.draw(_terrain._layer[0], _camera, _terrain._tileSize, _objects[_playerIndex].posRect(), _img);
 
 	Vector2i pos = _objects[_playerIndex]._aiData._dest;
 	Rect newpos(pos.x - (_destMarker._size.x / 2), pos.y - (_destMarker._size.y / 2), _destMarker._size.x, _destMarker._size.y);
 
-	for (auto l = _terrain.layer.begin(); l != _terrain.layer.end(); ++l, ++layerCount) {
+	for (auto l = _terrain._layer.begin(); l != _terrain._layer.end(); ++l, ++layerCount) {
 
 		// Draw the background sprites
 		for (; b != _background.end(); ++b) {
@@ -89,11 +89,11 @@ void Level::draw(pyrodactyl::event::Info &info) {
 		}
 
 		// Draw the normal sprites if this is the layer for it
-		if (layerCount == _terrain.sprite_layer)
+		if (layerCount == _terrain._spriteLayer)
 			drawObjects(info);
 
 		// Draw the terrain layer
-		g_engine->_imageManager->_tileset.ForceDraw(*l, _camera, _terrain.tile_size, _objects[_playerIndex].posRect());
+		g_engine->_imageManager->_tileset.forceDraw(*l, _camera, _terrain._tileSize, _objects[_playerIndex].posRect());
 	}
 
 	// Draw the background sprites
@@ -105,7 +105,7 @@ void Level::draw(pyrodactyl::event::Info &info) {
 	}
 
 	// This is to ensure we don't miss out on drawing sprites
-	if (layerCount <= _terrain.sprite_layer)
+	if (layerCount <= _terrain._spriteLayer)
 		drawObjects(info);
 
 	// Fliers are drawn above every sprite but below popup text
@@ -132,7 +132,7 @@ void Level::draw(pyrodactyl::event::Info &info) {
 	}
 
 	if (GameDebug)
-		_terrain.DrawDebug(_camera);
+		_terrain.drawDebug(_camera);
 }
 
 //------------------------------------------------------------------------
@@ -146,26 +146,26 @@ void Level::drawObjects(pyrodactyl::event::Info &info) {
 	Vector2i pos = _objects[_playerIndex]._aiData._dest;
 	Rect newpos(pos.x - (_destMarker._size.x / 2), pos.y - (_destMarker._size.y / 2), _destMarker._size.x, _destMarker._size.y);
 
-	if (_terrain.prop.empty()) {
+	if (_terrain._prop.empty()) {
 		for (auto &entry : _objSeq) {
 			if (entry.second->visible() && layerVisible(entry.second))
 				entry.second->draw(info, _camera);
 		}
 	} else {
-		auto a = _terrain.prop.begin();
+		auto a = _terrain._prop.begin();
 		auto b = _objSeq.begin();
 
-		while (a != _terrain.prop.end() && b != _objSeq.end()) {
+		while (a != _terrain._prop.end() && b != _objSeq.end()) {
 			auto obj = b->second;
-			if (a->pos.y + a->pos.h < obj->y() + obj->h()) {
-				for (auto &i : a->boundRect) {
+			if (a->_pos.y + a->_pos.h < obj->y() + obj->h()) {
+				for (auto &i : a->_boundRect) {
 					i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
 					if (i.Collide(_objects[_playerIndex].posRect())) {
-						g_engine->_imageManager->_tileset.ForceDraw(*a, _camera, _terrain.tile_size, _objects[_playerIndex].posRect());
+						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, _objects[_playerIndex].posRect());
 					}
 
 					if (i.Contains(_objects[_playerIndex]._aiData._dest)) {
-						g_engine->_imageManager->_tileset.ForceDraw(*a, _camera, _terrain.tile_size, newpos);
+						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, newpos);
 					}
 				}
 				++a;
@@ -176,22 +176,22 @@ void Level::drawObjects(pyrodactyl::event::Info &info) {
 			}
 		}
 
-		if (a == _terrain.prop.end()) {
+		if (a == _terrain._prop.end()) {
 			for (; b != _objSeq.end(); ++b) {
 				auto obj = b->second;
 				if (obj->visible() && layerVisible(obj))
 					obj->draw(info, _camera);
 			}
 		} else if (b == _objSeq.end()) {
-			for (; a != _terrain.prop.end(); ++a) {
-				for (auto &i : a->boundRect) {
+			for (; a != _terrain._prop.end(); ++a) {
+				for (auto &i : a->_boundRect) {
 					i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
 					if (i.Collide(_objects[_playerIndex].posRect())) {
-						g_engine->_imageManager->_tileset.ForceDraw(*a, _camera, _terrain.tile_size, _objects[_playerIndex].posRect());
+						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, _objects[_playerIndex].posRect());
 					}
 
 					if (i.Contains(_objects[_playerIndex]._aiData._dest)) {
-						g_engine->_imageManager->_tileset.ForceDraw(*a, _camera, _terrain.tile_size, newpos);
+						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, newpos);
 					}
 				}
 			}
@@ -200,26 +200,26 @@ void Level::drawObjects(pyrodactyl::event::Info &info) {
 }
 
 void Level::preDrawObjects(Graphics::ManagedSurface *surf) {
-	if (_terrain.prop.empty()) {
+	if (_terrain._prop.empty()) {
 		return;
 	} else {
-		auto a = _terrain.prop.begin();
+		auto a = _terrain._prop.begin();
 		auto b = _objSeq.begin();
 
-		while (a != _terrain.prop.end() && b != _objSeq.end()) {
+		while (a != _terrain._prop.end() && b != _objSeq.end()) {
 			auto obj = b->second;
-			if (a->pos.y + a->pos.h < obj->y() + obj->h()) {
-				g_engine->_imageManager->_tileset.PreDraw(*a, _terrain.tile_size, surf);
+			if (a->_pos.y + a->_pos.h < obj->y() + obj->h()) {
+				g_engine->_imageManager->_tileset.preDraw(*a, _terrain._tileSize, surf);
 				++a;
 			} else {
 				++b;
 			}
 		}
 
-		if (a == _terrain.prop.end()) {
+		if (a == _terrain._prop.end()) {
 		} else if (b == _objSeq.end()) {
-			for (; a != _terrain.prop.end(); ++a)
-				g_engine->_imageManager->_tileset.PreDraw(*a, _terrain.tile_size, surf);
+			for (; a != _terrain._prop.end(); ++a)
+				g_engine->_imageManager->_tileset.preDraw(*a, _terrain._tileSize, surf);
 		}
 	}
 }
@@ -250,10 +250,10 @@ void Level::setCamera() {
 	_camera.y = focus.y - (g_engine->_screenSettings->cur.h / 2);
 
 	// Keep the camera in bounds
-	if (_camera.x > _terrain.W() - _camera.w)
-		_camera.x = _terrain.W() - _camera.w;
-	if (_camera.y > _terrain.H() - _camera.h)
-		_camera.y = _terrain.H() - _camera.h;
+	if (_camera.x > _terrain.w() - _camera.w)
+		_camera.x = _terrain.w() - _camera.w;
+	if (_camera.y > _terrain.h() - _camera.h)
+		_camera.y = _terrain.h() - _camera.h;
 	if (_camera.x < 0)
 		_camera.x = 0;
 	if (_camera.y < 0)

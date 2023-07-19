@@ -50,7 +50,7 @@ LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result
 	// input.internalEvents();
 	calcTrigCollide(info);
 
-	if (_terrain.CollideWithExit(_objects[_playerIndex].boundRect(), lResult)) {
+	if (_terrain.collideWithExit(_objects[_playerIndex].boundRect(), lResult)) {
 		if (playerInCombat(info)) {
 			_insideExit = true;
 		} else if (_insideExit == false) {
@@ -117,7 +117,7 @@ void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event
 							i->attack(info, _objects[_playerIndex], _scDefault);
 					} break;
 					case PST_FLEE:
-						i->flee(info, _terrain.area_exit, _scDefault);
+						i->flee(info, _terrain._areaExit, _scDefault);
 						break;
 					case PST_NORMAL:
 						if (i->takingDamage(_objects[_playerIndex], _scDefault)) {
@@ -200,8 +200,8 @@ void Level::moveObject(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &
 		s.resolveCollide();
 
 	// Finally see if we are inside the overall level bounds
-	if (!_terrain.InsideWalk(s.boundRect()))
-		s.resolveInside(_terrain.AreaWalk());
+	if (!_terrain.insideWalk(s.boundRect()))
+		s.resolveInside(_terrain.areaWalk());
 }
 
 //------------------------------------------------------------------------

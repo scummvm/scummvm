@@ -71,22 +71,22 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 	// delete nodes if they exist
 	reset();
 
-	dimensions.x = map.path_rows; // Logically, this is incorrect but it matches the format of cols and rows used elsewhere (SZ)
-	dimensions.y = map.path_cols;
+	dimensions.x = map._pathRows; // Logically, this is incorrect but it matches the format of cols and rows used elsewhere (SZ)
+	dimensions.y = map._pathCols;
 
-	cellSize.x = (float)map.path_size.x;
-	cellSize.y = (float)map.path_size.y;
+	cellSize.x = (float)map._pathSize.x;
+	cellSize.y = (float)map._pathSize.y;
 
 	// Check to see if the costs have been loaded from the level file.
 	// If not, assign to defaults.
-	if (map.movementCosts.no_walk != 0) {
-		blockedCost = map.movementCosts.no_walk;
+	if (map._movementCosts._noWalk != 0) {
+		blockedCost = map._movementCosts._noWalk;
 	}
-	if (map.movementCosts.open != 0) {
-		openCost = map.movementCosts.open;
+	if (map._movementCosts._open != 0) {
+		openCost = map._movementCosts._open;
 	}
-	if (map.movementCosts.stairs != 0) {
-		stairsCost = map.movementCosts.stairs;
+	if (map._movementCosts._stairs != 0) {
+		stairsCost = map._movementCosts._stairs;
 	}
 
 	nodes = new PathfindingGraphNode *[dimensions.x];
@@ -121,7 +121,7 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 
 			pos.y += cellSize.y;
 
-			Common::Array<Shape> noWalk = map.AreaNoWalk();
+			Common::Array<Shape> noWalk = map.areaNoWalk();
 
 			// Check if the square should count as blocked
 			for (auto i = noWalk.begin(); i != noWalk.end(); ++i) {
@@ -133,7 +133,7 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 
 			// Check for stairs if the cell isn't blocked
 			if (nodes[x][y].movementCost >= 0.0f) {
-				Common::Array<pyrodactyl::level::Stairs> stairs = map.AreaStairs();
+				Common::Array<pyrodactyl::level::Stairs> stairs = map.areaStairs();
 
 				for (auto i = stairs.begin(); i != stairs.end(); ++i) {
 					if (i->Collide(nodes[x][y].collisionRect).intersect) {

@@ -37,24 +37,24 @@ namespace Crab {
 using namespace TMX;
 using namespace pyrodactyl::image;
 
-bool PropCompare(const MapLayer &l1, const MapLayer &l2) {
-	return l1.pos.y + l1.pos.h < l2.pos.y + l2.pos.h;
+bool propCompare(const MapLayer &l1, const MapLayer &l2) {
+	return l1._pos.y + l1._pos.h < l2._pos.y + l2._pos.h;
 }
 
 TMXMap::TMXMap() {
-	tile_rows = 0;
-	tile_cols = 0;
-	path_rows = 0;
-	path_cols = 0;
+	_tileRows = 0;
+	_tileCols = 0;
+	_pathRows = 0;
+	_pathCols = 0;
 
-	w = 0;
-	h = 0;
-	sprite_layer = 0;
-	grid = nullptr;
+	_w = 0;
+	_h = 0;
+	_spriteLayer = 0;
+	_grid = nullptr;
 
-	movementCosts.no_walk = 0;
-	movementCosts.open = 0;
-	movementCosts.stairs = 0;
+	_movementCosts._noWalk = 0;
+	_movementCosts._open = 0;
+	_movementCosts._stairs = 0;
 }
 
 //------------------------------------------------------------------------
@@ -66,44 +66,44 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
 		if (nodeValid(node)) {
-			loadNum(tile_rows, "width", node);
-			loadNum(tile_cols, "height", node);
-			loadNum(tile_size.x, "tilewidth", node);
-			loadNum(tile_size.y, "tileheight", node);
+			loadNum(_tileRows, "width", node);
+			loadNum(_tileCols, "height", node);
+			loadNum(_tileSize.x, "tilewidth", node);
+			loadNum(_tileSize.y, "tileheight", node);
 
 			// Pathfinding info load
-			path_size.x = 0;
-			path_size.y = 0;
+			_pathSize.x = 0;
+			_pathSize.y = 0;
 
-			loadNum(path_size.x, "pathwidth", node);
-			loadNum(path_size.y, "pathheight", node);
+			loadNum(_pathSize.x, "pathwidth", node);
+			loadNum(_pathSize.y, "pathheight", node);
 
 			// Load costs...Not sure if this is right. (SZ)
-			loadNum(movementCosts.open, "opencost", node);
-			loadNum(movementCosts.no_walk, "nowalkcost", node);
-			loadNum(movementCosts.stairs, "stairscost", node);
+			loadNum(_movementCosts._open, "opencost", node);
+			loadNum(_movementCosts._noWalk, "nowalkcost", node);
+			loadNum(_movementCosts._stairs, "stairscost", node);
 
 			// if(path_size.x == 0)
 			//	path_size.x = tile_size.x;
 			// if(path_size.y == 0)
 			//	path_size.y = tile_size.y;
 			// Testing
-			if (path_size.x == 0)
-				path_size.x = 40;
-			if (path_size.y == 0)
-				path_size.y = 40;
+			if (_pathSize.x == 0)
+				_pathSize.x = 40;
+			if (_pathSize.y == 0)
+				_pathSize.y = 40;
 
-			w = tile_rows * tile_size.x;
-			h = tile_cols * tile_size.y;
+			_w = _tileRows * _tileSize.x;
+			_h = _tileCols * _tileSize.y;
 
-			path_rows = (int)ceil((float)w / (float)path_size.x + .5f); // Adding .5 before casting in order to round up (SZ)
-			path_cols = (int)ceil((float)h / (float)path_size.y + .5f);
+			_pathRows = (int)ceil((float)_w / (float)_pathSize.x + .5f); // Adding .5 before casting in order to round up (SZ)
+			_pathCols = (int)ceil((float)_h / (float)_pathSize.y + .5f);
 
 			g_engine->_imageManager->_tileset.load(path, node);
 
 			// Reset the layer at which sprites are drawn
-			sprite_layer = 0;
-			unsigned int layer_count = 0;
+			_spriteLayer = 0;
+			unsigned int layerCount = 0;
 
 			// We need to cycle through all tile and object layers in order to
 			// see the level at which the sprites will be drawn
@@ -115,68 +115,68 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 				{
 					MapLayer l;
 					l.load(path, groupnode);
-					l.pos.x *= tile_size.x;
-					l.pos.y *= tile_size.y;
-					l.pos.w *= tile_size.x;
-					l.pos.h *= tile_size.y;
+					l._pos.x *= _tileSize.x;
+					l._pos.y *= _tileSize.y;
+					l._pos.w *= _tileSize.x;
+					l._pos.h *= _tileSize.y;
 
-					if (l.type == LAYER_PROP)
-						prop.push_back(l);
+					if (l._type == LAYER_PROP)
+						_prop.push_back(l);
 					else
-						layer.push_back(l);
+						_layer.push_back(l);
 
-					layer_count++;
+					layerCount++;
 				} else if (name == "objectgroup") // Is this an object layer
 				{
-					Common::String group_name;
-					loadStr(group_name, "name", groupnode);
-					if (group_name == "exit") {
+					Common::String groupName;
+					loadStr(groupName, "name", groupnode);
+					if (groupName == "exit") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							pyrodactyl::level::Exit le(n);
-							area_exit.push_back(le);
+							_areaExit.push_back(le);
 						}
-					} else if (group_name == "walk") {
+					} else if (groupName == "walk") {
 						auto n = groupnode->first_node("object");
 						if (n != NULL)
-							area_walk.load(n, true, "x", "y", "width", "height");
-					} else if (group_name == "no_walk") {
+							_areaWalk.load(n, true, "x", "y", "width", "height");
+					} else if (groupName == "no_walk") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							Shape s;
 							s.load(n);
-							area_nowalk.push_back(s);
+							_areaNowalk.push_back(s);
 						}
-					} else if (group_name == "trigger") {
+					} else if (groupName == "trigger") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							Shape s;
 							s.load(n);
 
-							unsigned int pos = area_trig.size();
+							unsigned int pos = _areaTrig.size();
 							loadNum(pos, "name", n);
 
-							if (area_trig.size() <= pos)
-								area_trig.resize(pos + 1);
+							if (_areaTrig.size() <= pos)
+								_areaTrig.resize(pos + 1);
 
-							area_trig[pos] = s;
+							_areaTrig[pos] = s;
 						}
-					} else if (group_name == "stairs") {
+					} else if (groupName == "stairs") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							pyrodactyl::level::Stairs s;
 							s.load(n);
-							area_stairs.push_back(s);
+							_areaStairs.push_back(s);
 						}
-					} else if (group_name == "music") {
+					} else if (groupName == "music") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							pyrodactyl::level::MusicArea ma;
 							ma.load(n);
-							area_music.push_back(ma);
+							_areaMusic.push_back(ma);
 						}
-					} else if (group_name == "sprites")
-						sprite_layer = layer_count;
+					} else if (groupName == "sprites")
+						_spriteLayer = layerCount;
 				}
 			}
 
 			// Sort the props in the level according to y axis
-			Common::sort(prop.begin(), prop.end(), PropCompare);
+			Common::sort(_prop.begin(), _prop.end(), propCompare);
 		}
 	}
 }
@@ -233,40 +233,40 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 //------------------------------------------------------------------------
 void TMXMap::reset() {
 	g_engine->_imageManager->_tileset.reset();
-	layer.clear();
+	_layer.clear();
 
-	area_nowalk.clear();
-	area_exit.clear();
-	area_trig.clear();
-	area_stairs.clear();
-	area_music.clear();
+	_areaNowalk.clear();
+	_areaExit.clear();
+	_areaTrig.clear();
+	_areaStairs.clear();
+	_areaMusic.clear();
 
-	prop.clear();
-	sprite_layer = 0;
+	_prop.clear();
+	_spriteLayer = 0;
 }
 
 //------------------------------------------------------------------------
 // Purpose: Draw functions
 //------------------------------------------------------------------------
-void TMXMap::DrawDebug(const Rect &camera) {
+void TMXMap::drawDebug(const Rect &camera) {
 	using namespace pyrodactyl::text;
 
-	for (auto i = area_trig.begin(); i != area_trig.end(); ++i)
+	for (auto i = _areaTrig.begin(); i != _areaTrig.end(); ++i)
 		i->draw(-camera.x, -camera.y, 0, 0, 254, 254);
 
-	for (auto i = area_exit.begin(); i != area_exit.end(); ++i)
+	for (auto i = _areaExit.begin(); i != _areaExit.end(); ++i)
 		i->_dim.draw(-camera.x, -camera.y, 0, 254, 254, 254);
 
-	for (auto i = prop.begin(); i != prop.end(); ++i)
-		i->pos.draw(-camera.x, -camera.y, 254, 0, 254, 254);
+	for (auto i = _prop.begin(); i != _prop.end(); ++i)
+		i->_pos.draw(-camera.x, -camera.y, 254, 0, 254, 254);
 
-	for (auto i = area_nowalk.begin(); i != area_nowalk.end(); ++i)
+	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i)
 		i->draw(-camera.x, -camera.y, 254, 0, 0, 254);
 
-	for (auto i = area_music.begin(); i != area_music.end(); ++i)
+	for (auto i = _areaMusic.begin(); i != _areaMusic.end(); ++i)
 		i->draw(-camera.x, -camera.y, 254, 254, 0, 254);
 
-	for (auto i = area_stairs.begin(); i != area_stairs.end(); ++i) {
+	for (auto i = _areaStairs.begin(); i != _areaStairs.end(); ++i) {
 		i->draw(-camera.x, -camera.y, 0, 254, 0, 254);
 		//g_engine->_textManager->draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x), 0);
 		//g_engine->_textManager->draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y), 0);
@@ -284,10 +284,10 @@ void TMXMap::DrawDebug(const Rect &camera) {
 	}
 	}*/
 
-	for (auto i = layer.begin(); i != layer.end(); ++i)
-		i->pos.draw(-camera.x, -camera.y, 254, 216, 0);
+	for (auto i = _layer.begin(); i != _layer.end(); ++i)
+		i->_pos.draw(-camera.x, -camera.y, 254, 216, 0);
 
-	area_walk.draw(-camera.x, -camera.y, 254, 254, 254, 254);
+	_areaWalk.draw(-camera.x, -camera.y, 254, 254, 254, 254);
 	// g_engine->_textManager->draw(0, 200, NumberToString(sprite_layer), 0);
 
 	// Use this if you want to draw poly lines in debug
@@ -316,55 +316,55 @@ void TMXMap::DrawDebug(const Rect &camera) {
 //------------------------------------------------------------------------
 // Purpose: Collision functions
 //------------------------------------------------------------------------
-void TMXMap::CollideWithNoWalk(const Rect bounding_box, Common::List<CollisionData> &colliders) {
+void TMXMap::collideWithNoWalk(const Rect boundingBox, Common::List<CollisionData> &colliders) {
 	CollisionData res;
-	for (auto i = area_nowalk.begin(); i != area_nowalk.end(); ++i) {
-		res = i->Collide(bounding_box);
+	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i) {
+		res = i->Collide(boundingBox);
 		if (res.intersect)
 			colliders.push_back(res);
 	}
 }
 
-bool TMXMap::InsideNoWalk(const Vector2i &pos) {
-	for (auto i = area_nowalk.begin(); i != area_nowalk.end(); ++i)
+bool TMXMap::insideNoWalk(const Vector2i &pos) {
+	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i)
 		if (i->Contains(pos))
 			return true;
 
 	return false;
 }
 
-bool TMXMap::InsideWalk(const Rect bounding_box) {
-	if (area_walk.Contains(bounding_box))
+bool TMXMap::insideWalk(const Rect boundingBox) {
+	if (_areaWalk.Contains(boundingBox))
 		return true;
 
 	return false;
 }
 
-bool TMXMap::InsideWalk(const Vector2i &pos) {
-	if (area_walk.Contains(pos))
+bool TMXMap::insideWalk(const Vector2i &pos) {
+	if (_areaWalk.Contains(pos))
 		return true;
 
 	return false;
 }
 
-bool TMXMap::CollideWithTrigger(const Rect rect, int index) {
-	if (area_trig.size() > (unsigned int)index)
-		return area_trig[index].Collide(rect).intersect;
+bool TMXMap::collideWithTrigger(const Rect rect, int index) {
+	if (_areaTrig.size() > (unsigned int)index)
+		return _areaTrig[index].Collide(rect).intersect;
 
 	return false;
 }
 
-void TMXMap::CollideWithTrigger(const Rect rect, Common::Array<int> &collision_table) {
+void TMXMap::collideWithTrigger(const Rect rect, Common::Array<int> &collisionTable) {
 	int index = 0;
-	collision_table.clear();
+	collisionTable.clear();
 
-	for (auto i = area_trig.begin(); i != area_trig.end(); ++i, ++index)
+	for (auto i = _areaTrig.begin(); i != _areaTrig.end(); ++i, ++index)
 		if (i->Collide(rect).intersect)
-			collision_table.push_back(index);
+			collisionTable.push_back(index);
 }
 
-bool TMXMap::CollideWithExit(const Rect rect, LevelResult &res) {
-	for (auto i = area_exit.begin(); i != area_exit.end(); ++i)
+bool TMXMap::collideWithExit(const Rect rect, LevelResult &res) {
+	for (auto i = _areaExit.begin(); i != _areaExit.end(); ++i)
 		if (i->_dim.Collide(rect).intersect) {
 			res.val = i->_name;
 			res.x = i->_entry.x;
@@ -375,22 +375,22 @@ bool TMXMap::CollideWithExit(const Rect rect, LevelResult &res) {
 	return false;
 }
 
-bool TMXMap::CollideWithStairs(const Rect rect, Vector2f &vel_mod) {
-	for (auto i = area_stairs.begin(); i != area_stairs.end(); ++i) {
+bool TMXMap::collideWithStairs(const Rect rect, Vector2f &velMod) {
+	for (auto i = _areaStairs.begin(); i != _areaStairs.end(); ++i) {
 		if (i->Collide(rect).intersect) {
-			vel_mod = i->_modifier;
+			velMod = i->_modifier;
 			return true;
 		}
 	}
 
 	// We are not colliding with any stairs, reset the modifier
-	vel_mod.x = 1.0f;
-	vel_mod.y = 1.0f;
+	velMod.x = 1.0f;
+	velMod.y = 1.0f;
 	return false;
 }
 
-bool TMXMap::CollideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music) {
-	for (auto i = area_music.begin(); i != area_music.end(); ++i) {
+bool TMXMap::collideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music) {
+	for (auto i = _areaMusic.begin(); i != _areaMusic.end(); ++i) {
 		if (i->Collide(rect).intersect) {
 			music._id = i->_id;
 			music._track = i->_track;
