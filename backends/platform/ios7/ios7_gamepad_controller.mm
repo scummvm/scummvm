@@ -56,7 +56,7 @@
 	if (@available(iOS 15.0, *)) {
 		// Configure a simple game controller with dPad and A and B buttons
 		_config = [[GCVirtualControllerConfiguration alloc] init];
-		_config.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputButtonA, GCInputButtonB, nil];
+		_config.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
 		_virtualController = [[GCVirtualController alloc] initWithConfiguration:_config];
 	}
 #endif
