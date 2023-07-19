@@ -52,7 +52,7 @@ struct StreamBreak_Globals {
 	machine *_my_stream_viewer = nullptr;
 };
 
-extern void series_stream_with_breaks(const seriesStreamBreak list[], const char *name, int32 framerate, frac16 depth, int32 trigger);
+extern machine *series_stream_with_breaks(const seriesStreamBreak list[], const char *name, int32 framerate, frac16 depth, int32 trigger);
 extern void digi_preload_stream_breaks(const seriesStreamBreak list[]);
 extern void digi_unload_stream_breaks(const seriesStreamBreak list[]);
 extern void handle_series_stream_break();

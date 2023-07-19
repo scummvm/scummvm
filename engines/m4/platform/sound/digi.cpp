@@ -162,6 +162,10 @@ bool Digi::play_state(int channel) const {
 	return _mixer->isSoundHandleActive(_channels[channel]._soundHandle);
 }
 
+void Digi::change_volume(int channel, int vol) {
+	_mixer->setChannelVolume(_channels[channel]._soundHandle, vol);
+}
+
 } // namespace Sound
 
 bool digi_preload(const Common::String &name, int roomNum) {
@@ -190,6 +194,10 @@ void digi_stop(int slot) {
 
 bool digi_play_state(int channel) {
 	return _G(digi).play_state(channel);
+}
+
+void digi_change_volume(int channel, int vol) {
+	_G(digi).change_volume(channel, vol);
 }
 
 } // namespace M4
