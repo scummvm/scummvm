@@ -52,11 +52,11 @@ bool MovementSet::internalEvents(const Rect rect) {
 		// If we are at the current waypoint, get to the next waypoint
 		if (_path[_cur]._target.Collide(rect)) {
 			_cur = (_cur + 1) % _path.size();
-			_timer.Start();
+			_timer.start();
 		}
 
 		// Wait according to the delay value in the node
-		if (_timer.Ticks() >= _path[_cur]._delay)
+		if (_timer.ticks() >= _path[_cur]._delay)
 			return true;
 	}
 

@@ -46,7 +46,7 @@ public:
 
 	void Start(uint32 initial_time = 0) {
 		start = initial_time;
-		timer.Start();
+		timer.start();
 	}
 
 	void Start(const Common::String &str) {
@@ -73,7 +73,7 @@ public:
 	}
 
 	Common::String GetTime() {
-		uint32 ms = start + timer.Ticks();
+		uint32 ms = start + timer.ticks();
 
 		uint32 x = ms / 1000;
 		uint32 seconds = x % 60;

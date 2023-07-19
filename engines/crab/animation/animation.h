@@ -63,7 +63,7 @@ public:
 	bool internalEvents(DrawType &gameDraw);
 	void start() {
 		reset();
-		_timer.Start();
+		_timer.start();
 	}
 };
 } // End of namespace anim

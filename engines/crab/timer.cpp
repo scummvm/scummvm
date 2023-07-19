@@ -28,7 +28,6 @@
  *
  */
 
-
 //=============================================================================
 // Author:   Arvind
 // Purpose:  Timer functions
@@ -39,94 +38,94 @@ namespace Crab {
 
 Timer::Timer() {
 	// Initialize the variables
-	start_ticks = 0;
-	paused_ticks = 0;
-	target_ticks = 0;
-	target_valid = false;
-	paused = false;
-	started = false;
+	_startTicks = 0;
+	_pausedTicks = 0;
+	_targetTicks = 0;
+	_targetValid = false;
+	_paused = false;
+	_started = false;
 }
 
 void Timer::load(rapidxml::xml_node<char> *node, const Common::String &name, const bool &echo) {
-	target_valid = loadNum(target_ticks, name, node, echo);
+	_targetValid = loadNum(_targetTicks, name, node, echo);
 }
 
-void Timer::Start() {
+void Timer::start() {
 	// Start the timer
-	started = true;
+	_started = true;
 
 	// Resume the timer
-	paused = false;
+	_paused = false;
 
 	// Get the current clock time
 #if 0
 	start_ticks = SDL_GetTicks();
 #endif
-	start_ticks = g_system->getMillis();
+	_startTicks = g_system->getMillis();
 }
 
-void Timer::Stop() {
+void Timer::stop() {
 	// Stop the timer
-	started = false;
+	_started = false;
 
 	// Resume the timer
-	paused = false;
+	_paused = false;
 }
 
-uint32 Timer::Ticks() {
+uint32 Timer::ticks() {
 	// If the timer is running
-	if (started == true) {
+	if (_started == true) {
 		// If the timer is paused
-		if (paused == true) {
+		if (_paused == true) {
 			// Return the number of ticks when the timer was paused
-			return paused_ticks;
+			return _pausedTicks;
 		} else {
 			// Return the current time minus the start time
 #if 0
 			return SDL_GetTicks() - start_ticks;
 #endif
-			return g_system->getMillis() - start_ticks;
+			return g_system->getMillis() - _startTicks;
 		}
 	}
 	// If the timer isn't running
 	return 0;
 }
 
-void Timer::Pause() {
+void Timer::pause() {
 	// If the timer is running and isn't already paused
-	if ((started == true) && (paused == false)) {
+	if ((_started == true) && (_paused == false)) {
 		// Pause the timer
-		paused = true;
+		_paused = true;
 
 		// Calculate the paused ticks
 #if 0
 		paused_ticks = SDL_GetTicks() - start_ticks;
 #endif
-		paused_ticks = g_system->getMillis() - start_ticks;
+		_pausedTicks = g_system->getMillis() - _startTicks;
 	}
 }
 
-void Timer::Resume() {
+void Timer::resume() {
 	// If the timer is paused
-	if (paused == true) {
+	if (_paused == true) {
 		// Resume the timer
-		paused = false;
+		_paused = false;
 
 		// Reset the starting ticks
 #if 0
 		start_ticks = SDL_GetTicks() - paused_ticks;
 #endif
-		paused_ticks = g_system->getMillis() - start_ticks;
+		_pausedTicks = g_system->getMillis() - _startTicks;
 		// Reset the paused ticks
-		paused_ticks = 0;
+		_pausedTicks = 0;
 	}
 }
 
-bool Timer::TargetReached(const float &factor) {
-	if (!started)
-		Start();
+bool Timer::targetReached(const float &factor) {
+	if (!_started)
+		start();
 
-	if (target_valid && Ticks() >= (target_ticks / factor))
+	if (_targetValid && ticks() >= (_targetTicks / factor))
 		return true;
 
 	return false;

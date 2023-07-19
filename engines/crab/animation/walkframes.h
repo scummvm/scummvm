@@ -76,7 +76,7 @@ class WalkFrames {
 public:
 	WalkFrames() {
 		_cur = WT_STAND;
-		_timer.Start();
+		_timer.start();
 	}
 	~WalkFrames() {}
 
