@@ -107,8 +107,8 @@ public:
 		return _enabled && _visible && !_stopped;
 	}
 
-	void animate(const Common::String &processName, Common::Point pos, int direction, int speed);
-	void animate(int direction, int speed, bool jokes);
+	bool animate(const Common::String &processName, Common::Point pos, int direction, int speed);
+	bool animate(int direction, int speed, bool jokes);
 
 	void stop(const Common::String &processName);
 	void stop();
@@ -126,9 +126,9 @@ public:
 		return _pos;
 	}
 
-	void moveTo(const Common::String &processName, Common::Point dst, int direction);
+	bool moveTo(const Common::String &processName, Common::Point dst, int direction);
 
-	void direction(int dir);
+	bool direction(int dir);
 
 	int direction() const {
 		return _jokes? _jokesDirection: _direction;

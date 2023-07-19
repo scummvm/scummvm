@@ -138,27 +138,27 @@ void Character::saveState(Common::WriteStream* stream) const {
 }
 
 
-void Character::direction(int dir) {
+bool Character::direction(int dir) {
 	debug("setDirection %d", dir);
 	_direction = dir;
 
 	if (dir < 0)
-		return;
+		return false;
 
 	if (_jokes && _phase < _frames) {
 		debug("direction(%d) set during active animation, ignored", dir);
-		return;
+		return false;
 	}
 	_animationPos = Common::Point();
-	animate(dir, 100, false);
+	return animate(dir, 100, false);
 }
 
-void Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
+bool Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
 	debug("character move %d,%d %d", dst.x, dst.y, dir);
 	_processName = processName;
 	_pos = dst;
 	_visible = true;
-	direction(dir);
+	bool r = direction(dir);
 
 	auto *screen = _engine->getCurrentScreen();
 	if (screen) {
@@ -171,14 +171,15 @@ void Character::moveTo(const Common::String & processName, Common::Point dst, in
 			}
 		}
 	}
+	return r;
 }
 
-void Character::animate(int direction, int speed, bool jokes) {
+bool Character::animate(int direction, int speed, bool jokes) {
 	if (_stopped)
 		_stopped = false;
 
 	if (direction == -1 || !_enabled)
-		return;
+		return false;
 
 	_description = nullptr;
 	_visible = true;
@@ -188,7 +189,7 @@ void Character::animate(int direction, int speed, bool jokes) {
 	auto animation = _description? _engine->loadAnimation(_description->filename): nullptr;
 	if (!animation) {
 		warning("no %s animation %d", jokes? "jokes": "character", direction);
-		return;
+		return false;
 	}
 	_animation = animation;
 	_animation->speed(speed);
@@ -201,14 +202,15 @@ void Character::animate(int direction, int speed, bool jokes) {
 	else
 		_direction = direction;
 	debug("character animation frames: %d, enabled: %d, visible: %d", _frames, _enabled, _visible);
+	return true;
 }
 
-void Character::animate(const Common::String & processName, Common::Point pos, int direction, int speed) {
+bool Character::animate(const Common::String & processName, Common::Point pos, int direction, int speed) {
 	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
 	_processName = processName;
 	_animationPos = pos;
 
-	animate(direction, speed, true);
+	return animate(direction, speed, true);
 }
 
 void Character::stop(const Common::String &processName) {

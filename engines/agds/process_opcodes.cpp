@@ -1526,9 +1526,10 @@ void Process::moveCharacter(bool usermove) {
 	if (character) {
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
-			character->moveTo(_object->getName(), region->center, direction);
-			deactivate();
-			suspend();
+			if (character->moveTo(_object->getName(), region->center, direction)) {
+				deactivate();
+				suspend();
+			}
 		}
 	} else
 		warning("character %s could not be found", id.c_str());
