@@ -107,7 +107,7 @@ public:
 	 */
 	Common::Error syncGame(Common::Serializer &s);
 
-	virtual void syncGlobals(Common::Serializer &s) = 0;
+	virtual void syncFlags(Common::Serializer &s) = 0;
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
 		Common::Serializer s(nullptr, stream);

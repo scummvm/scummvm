@@ -26,8 +26,8 @@
 #include "m4/burger/core/release_trigger.h"
 #include "m4/burger/core/stream_break.h"
 #include "m4/burger/gui/interface.h"
+#include "m4/burger/flags.h"
 #include "m4/burger/inventory.h"
-#include "m4/burger/globals.h"
 #include "m4/burger/series_player.h"
 #include "m4/burger/walker.h"
 
@@ -76,7 +76,7 @@ protected:
 	void main_cold_data_init() override;
 
 public:
-	Burger::GlobalVars _globals;
+	Burger::Flags _flags;
 	GameMode _executing = WHOLE_GAME;
 	GUI::Interface _interface;
 	SeriesPlayers _seriesPlayers;
@@ -110,7 +110,6 @@ extern Vars *g_globals;
 #define _G(X) (::M4::Burger::g_globals->_##X)
 #define _GI(X) _G(interface)._##X
 #define _GINT() _G(interface)
-#define VAL(X) _G(_globals)[X]
 
 } // namespace Burger
 } // namespace M4

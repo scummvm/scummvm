@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_BURGER_GLOBALS_H
-#define M4_BURGER_GLOBALS_H
+#ifndef M4_BURGER_FLAGS_H
+#define M4_BURGER_FLAGS_H
 
 #include "common/array.h"
 #include "common/serializer.h"
@@ -549,11 +549,11 @@ enum {
 	V511 = 511
 };
 
-class GlobalVars : public Common::Array<uint32> {
+class Flags : public Common::Array<uint32> {
 private:
 	Common::Array<byte> _convSave;
 public:
-	GlobalVars();
+	Flags();
 
 	/**
 	 * Reset the variables back to initial game state

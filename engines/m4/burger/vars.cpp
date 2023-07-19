@@ -126,13 +126,13 @@ void Vars::initialize_game() {
 	inv_give_to_player("MONEY");
 
 	// Reset the global variables
-	_globals.reset();
-	_globals.reset1();
-	_globals.reset2();
-	_globals.reset3();
-	_globals.reset4();
-	_globals.reset5();
-	_globals.conv_reset_all();
+	_flags.reset();
+	_flags.reset1();
+	_flags.reset2();
+	_flags.reset3();
+	_flags.reset4();
+	_flags.reset5();
+	_flags.conv_reset_all();
 }
 
 void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {

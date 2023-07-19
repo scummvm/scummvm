@@ -86,7 +86,7 @@ MODULE_OBJS = \
 	burger/rooms/section9/section9.o \
 	burger/rooms/section9/room951.o \
 	burger/burger.o \
-	burger/globals.o \
+	burger/flags.o \
 	burger/hotkeys.o \
 	burger/inventory.o \
 	burger/series_player.o \

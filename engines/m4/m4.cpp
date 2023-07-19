@@ -109,7 +109,7 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(player).syncGame(s);
 	_G(player_info).syncGame(s);
 
-	syncGlobals(s);
+	syncFlags(s);
 
 	player_been_sync(s);
 	_G(conversations).syncGame(s);
