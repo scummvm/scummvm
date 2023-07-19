@@ -37,14 +37,14 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;
 
 QuestMenu::QuestMenu() {
-	sel_quest = -1;
-	sel_page = -1;
-	sel_bu = -1;
-	align = ALIGN_LEFT;
-	col_n = 0;
-	col_s = 0;
-	unread = false;
-	font = 0;
+	_selQuest = -1;
+	_selPage = -1;
+	_selBu = -1;
+	_align = ALIGN_LEFT;
+	_colN = 0;
+	_colS = 0;
+	_unread = false;
+	_font = 0;
 }
 
 //------------------------------------------------------------------------
@@ -53,38 +53,38 @@ QuestMenu::QuestMenu() {
 void QuestMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		if (nodeValid("menu", node))
-			menu.load(node->first_node("menu"));
+			_menu.load(node->first_node("menu"));
 
 		if (nodeValid("tab", node)) {
 			rapidxml::xml_node<char> *tabnode = node->first_node("tab");
-			loadNum(font, "font", tabnode);
-			loadAlign(align, tabnode);
-			off_title.load(tabnode);
-			off_unread.load(tabnode->first_node("unread"));
+			loadNum(_font, "font", tabnode);
+			loadAlign(_align, tabnode);
+			_offTitle.load(tabnode);
+			_offUnread.load(tabnode->first_node("unread"));
 
 			if (nodeValid("normal", tabnode)) {
 				rapidxml::xml_node<char> *nornode = tabnode->first_node("normal");
-				img_n.load(nornode);
+				_imgN.load(nornode);
 				//loadColor(col_n, nornode);
 			}
 
 			if (nodeValid("select", tabnode)) {
 				rapidxml::xml_node<char> *selnode = tabnode->first_node("select");
-				img_s.load(selnode);
+				_imgS.load(selnode);
 				//loadColor(col_s, selnode);
 			}
 		}
 
 		if (nodeValid("text", node))
-			text.load(node->first_node("text"));
+			_text.load(node->first_node("text"));
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Add an entry to the menu
 //------------------------------------------------------------------------
-void QuestMenu::Add(const Common::String &title, const Common::String &txt) {
-	for (auto i = quest.begin(); i != quest.end(); ++i)
+void QuestMenu::add(const Common::String &title, const Common::String &txt) {
+	for (auto i = _quest.begin(); i != _quest.end(); ++i)
 		if (i->_title == title) // We already have the quest entry
 		{
 			i->_text.insert_at(0, txt); // Just add the new string to the start of the quest messages and return
@@ -93,59 +93,59 @@ void QuestMenu::Add(const Common::String &title, const Common::String &txt) {
 		}
 
 	Quest q(title, txt, true, false);
-	quest.insert_at(0, q);
-	menu.add();
-	unread = true;
+	_quest.insert_at(0, q);
+	_menu.add();
+	_unread = true;
 }
 
-void QuestMenu::Add(const pyrodactyl::event::Quest &q) {
-	quest.insert_at(0, q);
-	menu.add();
+void QuestMenu::add(const pyrodactyl::event::Quest &q) {
+	_quest.insert_at(0, q);
+	_menu.add();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Remove an entry from the menu
 //------------------------------------------------------------------------
-void QuestMenu::Erase(const int &index) {
-	quest.erase(quest.begin() + index);
-	menu.erase();
+void QuestMenu::erase(const int &index) {
+	_quest.erase(_quest.begin() + index);
+	_menu.erase();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Indicate that this quest has an associated map marker in world map
 //------------------------------------------------------------------------
-void QuestMenu::Marker(const Common::String &title, const bool &val) {
-	for (auto i = quest.begin(); i != quest.end(); ++i)
+void QuestMenu::marker(const Common::String &title, const bool &val) {
+	for (auto i = _quest.begin(); i != _quest.end(); ++i)
 		if (i->_title == title)
 			i->_marker = val;
 }
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void QuestMenu::draw(Button &bu_map) {
-	menu.draw();
+void QuestMenu::draw(Button &buMap) {
+	_menu.draw();
 
 	using namespace pyrodactyl::text;
-	for (auto i = menu.index(), count = 0u; i < menu.indexPlusOne() && i < quest.size(); i++, count++) {
-		auto base_x = menu.baseX(count), base_y = menu.baseY(count);
+	for (auto i = _menu.index(), count = 0u; i < _menu.indexPlusOne() && i < _quest.size(); i++, count++) {
+		auto base_x = _menu.baseX(count), base_y = _menu.baseY(count);
 
 		// Only draw in _s color if we are on the same button and page
-		if ((unsigned int)sel_bu == count && (unsigned int)sel_page == menu.currentPage())
-			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i]._title, col_s, font, align);
+		if ((unsigned int)_selBu == count && (unsigned int)_selPage == _menu.currentPage())
+			g_engine->_textManager->draw(base_x + _offTitle.x, base_y + _offTitle.y, _quest[i]._title, _colS, _font, _align);
 		else
-			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i]._title, col_n, font, align);
+			g_engine->_textManager->draw(base_x + _offTitle.x, base_y + _offTitle.y, _quest[i]._title, _colN, _font, _align);
 
-		if (quest[i]._unread) {
+		if (_quest[i]._unread) {
 			using namespace pyrodactyl::image;
-			g_engine->_imageManager->draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->_notify);
+			g_engine->_imageManager->draw(base_x + _offUnread.x, base_y + _offUnread.y, g_engine->_imageManager->_notify);
 		}
 	}
 
-	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
-		text.draw(quest[sel_quest]);
+	if (_selQuest >= 0 && (unsigned int)_selQuest < _quest.size()) {
+		_text.draw(_quest[_selQuest]);
 
-		if (quest[sel_quest]._marker)
-			bu_map.draw();
+		if (_quest[_selQuest]._marker)
+			buMap.draw();
 	}
 }
 
@@ -153,30 +153,30 @@ void QuestMenu::draw(Button &bu_map) {
 // Purpose: Handle user input
 //------------------------------------------------------------------------
 bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event) {
-	int res = menu.handleEvents(Event);
+	int res = _menu.handleEvents(Event);
 	if (res != -1) {
-		if (sel_bu >= 0 && sel_page >= 0)
-			menu.image(sel_bu, sel_page, img_n);
+		if (_selBu >= 0 && _selPage >= 0)
+			_menu.image(_selBu, _selPage, _imgN);
 
-		sel_bu = res;
-		sel_page = menu.currentPage();
-		sel_quest = menu.index() + sel_bu;
+		_selBu = res;
+		_selPage = _menu.currentPage();
+		_selQuest = _menu.index() + _selBu;
 
-		quest[sel_quest]._unread = false;
-		text.reset();
+		_quest[_selQuest]._unread = false;
+		_text.reset();
 
-		menu.image(sel_bu, sel_page, img_s);
+		_menu.image(_selBu, _selPage, _imgS);
 	}
 
-	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
-		if (quest[sel_quest]._marker)
+	if (_selQuest >= 0 && (unsigned int)_selQuest < _quest.size()) {
+		if (_quest[_selQuest]._marker)
 			if (bu_map.handleEvents(Event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
-				map_title = quest[sel_quest]._title;
+				map_title = _quest[_selQuest]._title;
 				return true;
 			}
 
-		text.handleEvents(quest[sel_quest], Event);
+		_text.handleEvents(_quest[_selQuest], Event);
 	}
 
 	return false;
@@ -220,23 +220,23 @@ bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const SD
 //------------------------------------------------------------------------
 // Purpose: Select an entry
 //------------------------------------------------------------------------
-void QuestMenu::Select(const int &quest_index) {
-	if (quest_index >= 0 && (unsigned int)quest_index < quest.size()) {
-		if (sel_bu >= 0 && sel_page >= 0)
-			menu.image(sel_bu, sel_page, img_n);
+void QuestMenu::select(const int &questIndex) {
+	if (questIndex >= 0 && (unsigned int)questIndex < _quest.size()) {
+		if (_selBu >= 0 && _selPage >= 0)
+			_menu.image(_selBu, _selPage, _imgN);
 
-		sel_quest = quest_index;
+		_selQuest = questIndex;
 
-		sel_page = quest_index / menu.elementsPerPage();
-		menu.currentPage(sel_page);
-		menu.updateInfo();
+		_selPage = questIndex / _menu.elementsPerPage();
+		_menu.currentPage(_selPage);
+		_menu.updateInfo();
 
-		sel_bu = quest_index % menu.elementsPerPage();
+		_selBu = questIndex % _menu.elementsPerPage();
 
-		quest[quest_index]._unread = false;
-		text.reset();
+		_quest[questIndex]._unread = false;
+		_text.reset();
 
-		menu.image(sel_bu, sel_page, img_s);
+		_menu.image(_selBu, _selPage, _imgS);
 	}
 }
 
@@ -246,9 +246,9 @@ void QuestMenu::Select(const int &quest_index) {
 void QuestMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
 
-	saveBool(unread, "unread", doc, child);
+	saveBool(_unread, "unread", doc, child);
 
-	for (auto q = quest.begin(); q != quest.end(); ++q)
+	for (auto q = _quest.begin(); q != _quest.end(); ++q)
 		q->saveState(doc, child);
 
 	root->append_node(child);
@@ -258,14 +258,14 @@ void QuestMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char
 // Purpose: Load state from file
 //------------------------------------------------------------------------
 void QuestMenu::loadState(rapidxml::xml_node<char> *node) {
-	loadBool(unread, "unread", node);
+	loadBool(_unread, "unread", node);
 
-	quest.clear();
+	_quest.clear();
 	for (auto n = node->first_node("quest"); n != NULL; n = n->next_sibling("quest")) {
 		Quest q;
 		q.loadState(n);
-		quest.push_back(q);
-		menu.add();
+		_quest.push_back(q);
+		_menu.add();
 	}
 }
 
@@ -273,8 +273,8 @@ void QuestMenu::loadState(rapidxml::xml_node<char> *node) {
 // Purpose: Reposition UI elements
 //------------------------------------------------------------------------
 void QuestMenu::setUI() {
-	menu.setUI();
-	text.setUI();
+	_menu.setUI();
+	_text.setUI();
 }
 
 } // End of namespace Crab

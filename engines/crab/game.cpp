@@ -834,9 +834,9 @@ void Game::ToggleState(const State &s) {
 
 	// Only load help screen image if we have to
 	if (state == STATE_HELP)
-		g_engine->_helpScreen->Refresh();
+		g_engine->_helpScreen->refresh();
 	else
-		g_engine->_helpScreen->Clear();
+		g_engine->_helpScreen->clear();
 }
 
 //------------------------------------------------------------------------

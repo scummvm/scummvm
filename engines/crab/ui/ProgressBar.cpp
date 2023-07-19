@@ -37,19 +37,19 @@ using namespace pyrodactyl::image;
 
 void ProgressBar::load(rapidxml::xml_node<char> *node) {
 	ClipButton::load(node);
-	loadNum(notify_rate, "notify", node);
+	loadNum(_notifyRate, "notify", node);
 
 	if (nodeValid("effect", node)) {
 		rapidxml::xml_node<char> *effnode = node->first_node("effect");
-		loadImgKey(inc, "inc", effnode);
-		loadImgKey(dec, "dec", effnode);
-		offset.load(effnode);
+		loadImgKey(_inc, "inc", effnode);
+		loadImgKey(_dec, "dec", effnode);
+		_offset.load(effnode);
 	}
 
 	if (nodeValid("desc", node)) {
 		rapidxml::xml_node<char> *descnode = node->first_node("desc");
 		for (rapidxml::xml_node<char> *n = descnode->first_node("above"); n != NULL; n = n->next_sibling("above"))
-			ct.push_back(n);
+			_ct.push_back(n);
 	}
 }
 
@@ -59,59 +59,59 @@ void ProgressBar::draw(const int &value, const int &max) {
 		return;
 
 	// Figure out which text to draw as caption
-	for (auto &i : ct)
-		if (value > i.val) {
-			_caption._text = i.text;
+	for (auto &i : _ct)
+		if (value > i._val) {
+			_caption._text = i._text;
 			break;
 		}
 
 	// If we don't have to draw animations for changing value, just draw the bar
-	if (!changed) {
+	if (!_changed) {
 		_clip.w = (g_engine->_imageManager->getTexture(_img._normal).w() * value) / max;
 		ClipButton::draw();
 	} else {
-		_clip.w = (g_engine->_imageManager->getTexture(_img._normal).w() * cur) / max;
+		_clip.w = (g_engine->_imageManager->getTexture(_img._normal).w() * _cur) / max;
 		ClipButton::draw();
 
-		switch (type) {
+		switch (_type) {
 		case INCREASE:
-			g_engine->_imageManager->draw(x + _clip.w + offset.x, y + offset.y, inc);
-			if (timer.TargetReached()) {
-				cur++;
-				timer.Start();
+			g_engine->_imageManager->draw(x + _clip.w + _offset.x, y + _offset.y, _inc);
+			if (_timer.TargetReached()) {
+				_cur++;
+				_timer.Start();
 			}
 			break;
 		case DECREASE:
-			g_engine->_imageManager->draw(x + _clip.w + offset.x, y + offset.y, dec);
-			if (timer.TargetReached()) {
-				cur--;
-				timer.Start();
+			g_engine->_imageManager->draw(x + _clip.w + _offset.x, y + _offset.y, _dec);
+			if (_timer.TargetReached()) {
+				_cur--;
+				_timer.Start();
 			}
 			break;
 		default:
 			break;
 		}
 
-		if (cur == value)
-			changed = false;
+		if (_cur == value)
+			_changed = false;
 	}
 }
 
-void ProgressBar::Effect(const int &value, const int &prev) {
-	old = prev;
-	cur = prev;
+void ProgressBar::effect(const int &value, const int &prev) {
+	_old = prev;
+	_cur = prev;
 
 	if (value > prev) {
-		changed = true;
-		type = INCREASE;
-		timer.Target(notify_rate * (value - prev));
+		_changed = true;
+		_type = INCREASE;
+		_timer.Target(_notifyRate * (value - prev));
 	} else if (value < prev) {
-		changed = true;
-		type = DECREASE;
-		timer.Target(notify_rate * (prev - value));
+		_changed = true;
+		_type = DECREASE;
+		_timer.Target(_notifyRate * (prev - value));
 	} else {
-		changed = false;
-		type = NONE;
+		_changed = false;
+		_type = NONE;
 	}
 }
 

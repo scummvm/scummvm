@@ -38,64 +38,64 @@ using namespace pyrodactyl::ui;
 void TraitMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("dim", node)) {
 		rapidxml::xml_node<char> *dimnode = node->first_node("dim");
-		loadNum(rows, "rows", dimnode);
-		loadNum(cols, "cols", dimnode);
-		size = rows * cols;
+		loadNum(_rows, "rows", dimnode);
+		loadNum(_cols, "cols", dimnode);
+		_size = _rows * _cols;
 	}
 
 	if (nodeValid("ref", node))
-		ref.load(node->first_node("ref"));
+		_ref.load(node->first_node("ref"));
 
 	if (nodeValid("inc", node))
-		inc.load(node->first_node("inc"));
+		_inc.load(node->first_node("inc"));
 
 	if (nodeValid("desc", node))
-		desc.load(node->first_node("desc"));
+		_desc.load(node->first_node("desc"));
 
-	for (unsigned int i = 0; i < size; ++i) {
+	for (unsigned int i = 0; i < _size; ++i) {
 		TraitButton b;
-		b.init(ref, inc.x * (i % cols), inc.y * (i / cols));
-		menu._element.push_back(b);
+		b.init(_ref, _inc.x * (i % _cols), _inc.y * (i / _cols));
+		_menu._element.push_back(b);
 	}
 
 	bool usekey = false;
 	loadBool(usekey, "keyboard", node);
-	menu.useKeyboard(usekey);
+	_menu.useKeyboard(usekey);
 
-	menu.assignPaths();
+	_menu.assignPaths();
 }
 
 void TraitMenu::draw(const pyrodactyl::people::Person *obj) {
 	if (obj != nullptr) {
-		auto i = menu._element.begin();
-		for (auto t = obj->_trait.begin(); t != obj->_trait.end() && i != menu._element.end(); ++t, ++i) {
+		auto i = _menu._element.begin();
+		for (auto t = obj->_trait.begin(); t != obj->_trait.end() && i != _menu._element.end(); ++t, ++i) {
 			i->draw();
 			if (t->_unread)
 				g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 		}
 
-		for (; i != menu._element.end(); ++i)
+		for (; i != _menu._element.end(); ++i)
 			i->draw();
 
-		if (select > -1 && (unsigned int)select < obj->_trait.size())
-			desc.draw(obj->_trait[select]._desc);
+		if (_select > -1 && (unsigned int)_select < obj->_trait.size())
+			_desc.draw(obj->_trait[_select]._desc);
 	} else
-		for (auto &i : menu._element)
+		for (auto &i : _menu._element)
 			i.draw();
 }
 
-void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event) {
-	int choice = menu.handleEvents(Event);
+void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const Common::Event &event) {
+	int choice = _menu.handleEvents(event);
 	if (choice >= 0) {
-		for (auto i = menu._element.begin(); i != menu._element.end(); ++i)
+		for (auto i = _menu._element.begin(); i != _menu._element.end(); ++i)
 			i->state(false);
 
-		menu._element[choice].state(true);
-		select = choice;
+		_menu._element[choice].state(true);
+		_select = choice;
 
 		if (obj != nullptr) {
-			if (select > -1 && (unsigned int)select < obj->_trait.size())
-				obj->_trait[select]._unread = false;
+			if (_select > -1 && (unsigned int)_select < obj->_trait.size())
+				obj->_trait[_select]._unread = false;
 		}
 	}
 }
@@ -118,25 +118,25 @@ void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &E
 }
 #endif
 
-void TraitMenu::Cache(const pyrodactyl::people::Person &obj) {
-	auto e = menu._element.begin();
+void TraitMenu::cache(const pyrodactyl::people::Person &obj) {
+	auto e = _menu._element.begin();
 
-	for (auto i = obj._trait.begin(); i != obj._trait.end() && e != menu._element.end(); ++i, ++e)
+	for (auto i = obj._trait.begin(); i != obj._trait.end() && e != _menu._element.end(); ++i, ++e)
 		e->cache(*i);
 
-	for (; e != menu._element.end(); ++e)
+	for (; e != _menu._element.end(); ++e)
 		e->empty();
 }
 
-void TraitMenu::Clear() {
-	for (auto e = menu._element.begin(); e != menu._element.end(); ++e)
+void TraitMenu::clear() {
+	for (auto e = _menu._element.begin(); e != _menu._element.end(); ++e)
 		e->empty();
 }
 
 void TraitMenu::setUI() {
-	ref.setUI();
-	desc.setUI();
-	menu.setUI();
+	_ref.setUI();
+	_desc.setUI();
+	_menu.setUI();
 }
 
 } // End of namespace Crab

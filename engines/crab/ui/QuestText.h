@@ -44,45 +44,47 @@ namespace ui {
 class QuestText : public ParagraphData {
 protected:
 	// How much the text and bullet positions change per line
-	Vector2i inc;
+	Vector2i _inc;
 
 	// Color of the highlighted quest
-	int col_s;
+	int _colS;
 
 	// The coordinates for drawing image, which is like bullet points in the form of <Bullet> <Text>
-	ImageData img;
+	ImageData _img;
 
 	// The lines per page, we split the quest text into multiple pages if we have to draw more than that
-	unsigned int lines_per_page;
+	unsigned int _linesPerPage;
 
 	// Keep track of which page we are at, and total pages
-	unsigned int current_page, total_page;
+	unsigned int _currentPage, _totalPage;
 
 	// The quest entries we start and stop the drawing at
-	int start, stop;
+	int _start, _stop;
 
 	// The buttons for cycling between pages of the menu
-	Button prev, next;
+	Button _prev, _next;
 
 	// Display "Page 1 of 3" style information for the menu
-	HoverInfo status;
+	HoverInfo _status;
 
 public:
 	QuestText() {
-		col_s = 0;
-		current_page = 0;
-		start = 0;
-		stop = 0;
-		total_page = 1;
-		lines_per_page = 10;
+		_colS = 0;
+		_currentPage = 0;
+		_start = 0;
+		_stop = 0;
+		_totalPage = 1;
+		_linesPerPage = 10;
 	}
 
 	void load(rapidxml::xml_node<char> *node);
 
 	// Reset the value of current page
-	void reset() { current_page = 0; }
+	void reset() {
+		_currentPage = 0;
+	}
 
-	void handleEvents(pyrodactyl::event::Quest &q, const Common::Event &Event);
+	void handleEvents(pyrodactyl::event::Quest &q, const Common::Event &event);
 #if 0
 	void handleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event);
 #endif

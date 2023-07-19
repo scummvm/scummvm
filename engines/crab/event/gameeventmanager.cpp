@@ -376,7 +376,7 @@ void Manager::calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const R
 			g_engine->_eventStore->_anim[_curEvent->_special].start();
 			break;
 		case EVENT_REPLY:
-			_reply.Cache(info, g_engine->_eventStore->_con[_curEvent->_special]);
+			_reply.cache(info, g_engine->_eventStore->_con[_curEvent->_special]);
 			break;
 		default:
 			break;

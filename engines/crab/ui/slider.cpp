@@ -37,49 +37,49 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
-void Slider::load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val) {
+void Slider::load(rapidxml::xml_node<char> *node, const int &min, const int &max, const int &val) {
 	if (nodeValid(node)) {
-		knob.load(node->first_node("knob"), false);
-		bar.load(node->first_node("bar"));
+		_knob.load(node->first_node("knob"), false);
+		_bar.load(node->first_node("bar"));
 
-		knob.y = bar.y;
-		knob.w = g_engine->_imageManager->getTexture(knob._img._normal).w();
-		knob.h = g_engine->_imageManager->getTexture(knob._img._normal).h();
-		knob._canmove = true;
+		_knob.y = _bar.y;
+		_knob.w = g_engine->_imageManager->getTexture(_knob._img._normal).w();
+		_knob.h = g_engine->_imageManager->getTexture(_knob._img._normal).h();
+		_knob._canmove = true;
 
-		min = Min;
-		max = Max;
-		Value(Val);
+		_min = min;
+		_max = max;
+		_value = val;
 
-		caption.load(node->first_node("caption"), &bar);
+		_caption.load(node->first_node("caption"), &_bar);
 	}
 
-	CreateBackup();
+	createBackup();
 }
 
 bool Slider::handleEvents(const Common::Event &Event) {
 	// A person is moving the knob
-	if (knob.handleEvents(Event) == BUAC_GRABBED) {
-		int dx = g_engine->_mouse->_motion.x - bar.x;
+	if (_knob.handleEvents(Event) == BUAC_GRABBED) {
+		int dx = g_engine->_mouse->_motion.x - _bar.x;
 
 		if (dx < 0)
 			dx = 0;
-		else if (dx > (bar.w - knob.w))
-			dx = (bar.w - knob.w);
+		else if (dx > (_bar.w - _knob.w))
+			dx = (_bar.w - _knob.w);
 
-		knob.x = bar.x + dx;
-		knob.y = bar.y;
+		_knob.x = _bar.x + dx;
+		_knob.y = _bar.y;
 
-		value = min + (((max - min) * (knob.x - bar.x)) / (bar.w - knob.w));
+		_value = _min + (((_max - _min) * (_knob.x - _bar.x)) / (_bar.w - _knob.w));
 		return true;
 	}
 
 	// If a person clicks on the slider bar, the knob needs to travel there
-	if ((Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) && bar.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
-		knob.x = g_engine->_mouse->_button.x;
-		knob.y = bar.y;
+	if ((Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) && _bar.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
+		_knob.x = g_engine->_mouse->_button.x;
+		_knob.y = _bar.y;
 
-		value = min + (((max - min) * (knob.x - bar.x)) / (bar.w - knob.w));
+		_value = _min + (((_max - _min) * (_knob.x - _bar.x)) / (_bar.w - _knob.w));
 		return true;
 	}
 
@@ -118,31 +118,31 @@ bool Slider::handleEvents(const SDL_Event &Event) {
 #endif
 
 void Slider::draw() {
-	bar.draw();
-	caption.draw(false);
-	knob.draw();
+	_bar.draw();
+	_caption.draw(false);
+	_knob.draw();
 }
 
-void Slider::Value(const int val) {
-	value = val;
+void Slider::value(const int val) {
+	_value = val;
 
-	if (value < min)
-		value = min;
-	else if (value > max)
-		value = max;
+	if (_value < _min)
+		_value = _min;
+	else if (_value > _max)
+		_value = _max;
 
-	knob.x = bar.x + ((bar.w - knob.w) * (value - min)) / (max - min);
+	_knob.x = _bar.x + ((_bar.w - _knob.w) * (_value - _min)) / (_max - _min);
 }
 
 void Slider::setUI() {
-	bar.setUI();
-	knob.setUI();
-	caption.setUI(&bar);
+	_bar.setUI();
+	_knob.setUI();
+	_caption.setUI(&_bar);
 
-	knob.x = bar.x + ((bar.w - knob.w) * value / (max - min));
-	knob.y = bar.y;
-	knob.w = g_engine->_imageManager->getTexture(knob._img._normal).w();
-	knob.h = g_engine->_imageManager->getTexture(knob._img._normal).h();
+	_knob.x = _bar.x + ((_bar.w - _knob.w) * _value / (_max - _min));
+	_knob.y = _bar.y;
+	_knob.w = g_engine->_imageManager->getTexture(_knob._img._normal).w();
+	_knob.h = g_engine->_imageManager->getTexture(_knob._img._normal).h();
 }
 
 } // End of namespace Crab

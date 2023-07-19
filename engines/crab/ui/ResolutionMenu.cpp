@@ -38,33 +38,33 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
 void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
-	cancel.load(node->first_node("cancel"));
-	change.load(node->first_node("change"));
-	custom.load(node->first_node("custom"));
+	_cancel.load(node->first_node("cancel"));
+	_change.load(node->first_node("change"));
+	_custom.load(node->first_node("custom"));
 
-	info.load(node->first_node("info"));
-	def_info = info._text;
+	_info.load(node->first_node("info"));
+	_defInfo = _info._text;
 
 	if (nodeValid("reference", node))
-		ref.load(node->first_node("reference"));
+		_ref.load(node->first_node("reference"));
 
 	if (nodeValid("inc", node)) {
-		inc.load(node->first_node("inc"));
-		loadNum(columns, "columns", node->first_node("inc"));
+		_inc.load(node->first_node("inc"));
+		loadNum(_columns, "columns", node->first_node("inc"));
 	}
 
 	if (nodeValid("options", node)) {
-		int count_slot = 0;
+		int countSlot = 0;
 		rapidxml::xml_node<char> *resnode = node->first_node("options");
-		for (auto n = resnode->first_node("res"); n != NULL; n = n->next_sibling("res"), count_slot++) {
+		for (auto n = resnode->first_node("res"); n != NULL; n = n->next_sibling("res"), countSlot++) {
 			Dimension d;
 			loadNum(d.w, "x", n);
 			loadNum(d.h, "y", n);
 
 			if (g_engine->_screenSettings->ValidDimension(d)) {
-				dim.push_back(d);
+				_dim.push_back(d);
 				Button b;
-				b.init(ref, inc.x * (count_slot % columns), inc.y * (count_slot / columns));
+				b.init(_ref, _inc.x * (countSlot % _columns), _inc.y * (countSlot / _columns));
 				b._caption._text = NumberToString(d.w);
 				b._caption._text += " x ";
 				b._caption._text += NumberToString(d.h);
@@ -73,50 +73,50 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 		}
 	}
 
-	SetInfo();
+	setInfo();
 
 	loadBool(_useKeyboard, "keyboard", node, false);
 	assignPaths();
 }
 
 void ResolutionMenu::draw() {
-	info.draw();
+	_info.draw();
 
-	switch (state) {
+	switch (_state) {
 	case STATE_NORMAL:
-		change.draw();
+		_change.draw();
 		break;
 	case STATE_CHANGE:
 		Menu::draw();
-		cancel.draw();
-		custom.draw();
+		_cancel.draw();
+		_custom.draw();
 		break;
 	default:
 		break;
 	}
 }
 
-int ResolutionMenu::handleEvents(const Common::Event &Event) {
-	switch (state) {
+int ResolutionMenu::handleEvents(const Common::Event &event) {
+	switch (_state) {
 	case STATE_NORMAL:
-		if (change.handleEvents(Event) == BUAC_LCLICK)
-			state = STATE_CHANGE;
+		if (_change.handleEvents(event) == BUAC_LCLICK)
+			_state = STATE_CHANGE;
 		break;
 	case STATE_CHANGE: {
-		int choice = Menu::handleEvents(Event);
+		int choice = Menu::handleEvents(event);
 		if (choice >= 0) {
-			g_engine->_screenSettings->cur = dim[choice];
-			state = STATE_NORMAL;
+			g_engine->_screenSettings->cur = _dim[choice];
+			_state = STATE_NORMAL;
 			return 1;
 		}
 
-		if (custom.handleEvents(Event) == BUAC_LCLICK) {
-			state = STATE_NORMAL;
+		if (_custom.handleEvents(event) == BUAC_LCLICK) {
+			_state = STATE_NORMAL;
 			return 2;
 		}
 
-		if (cancel.handleEvents(Event) == BUAC_LCLICK)
-			state = STATE_NORMAL;
+		if (_cancel.handleEvents(event) == BUAC_LCLICK)
+			_state = STATE_NORMAL;
 	} break;
 	default:
 		break;
@@ -156,20 +156,20 @@ int ResolutionMenu::handleEvents(const SDL_Event &Event) {
 }
 #endif
 
-void ResolutionMenu::SetInfo() {
-	info._text = def_info;
-	info._text += NumberToString(g_engine->_screenSettings->cur.w);
-	info._text += " x ";
-	info._text += NumberToString(g_engine->_screenSettings->cur.h);
+void ResolutionMenu::setInfo() {
+	_info._text = _defInfo;
+	_info._text += NumberToString(g_engine->_screenSettings->cur.w);
+	_info._text += " x ";
+	_info._text += NumberToString(g_engine->_screenSettings->cur.h);
 }
 
 void ResolutionMenu::setUI() {
-	cancel.setUI();
-	change.setUI();
-	custom.setUI();
+	_cancel.setUI();
+	_change.setUI();
+	_custom.setUI();
 
-	info.setUI();
-	ref.setUI();
+	_info.setUI();
+	_ref.setUI();
 	ButtonMenu::setUI();
 }
 

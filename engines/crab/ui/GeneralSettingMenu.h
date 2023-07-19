@@ -68,8 +68,8 @@ public:
 	void setUI();
 
 	void CreateBackup() {
-		_volMusic.CreateBackup();
-		_volEffects.CreateBackup();
+		_volMusic.createBackup();
+		_volEffects.createBackup();
 	}
 
 	void RestoreBackup();

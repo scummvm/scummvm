@@ -43,30 +43,31 @@ namespace pyrodactyl {
 namespace ui {
 class Slider {
 	// The value of the slider and the backup
-	int value, backup;
+	int _value, _backup;
 
 	// The slider bar position and dimensions
-	ImageData bar;
+	ImageData _bar;
 
 	// The slider knob
-	Button knob;
+	Button _knob;
 
 	// Caption for the slider
-	Caption caption;
+	Caption _caption;
 
 	// The maximum and minimum values for the slider
-	int max, min;
+	int _max, _min;
 
 public:
 	Slider() {
-		max = 100;
-		min = 0;
-		Value((max - min) / 2);
-		backup = value;
+		_max = 100;
+		_min = 0;
+		_value = ((_max - _min) / 2);
+		_backup = _value;
 	}
+
 	~Slider() {}
 
-	void load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val);
+	void load(rapidxml::xml_node<char> *node, const int &min, const int &max, const int &val);
 
 	bool handleEvents(const Common::Event &Event);
 #if 0
@@ -76,11 +77,16 @@ public:
 
 	void draw();
 
-	int Value() { return value; }
-	void Value(const int val);
+	int Value() { return _value; }
+	void value(const int val);
 
-	void CreateBackup() { backup = value; }
-	void RestoreBackup() { Value(backup); }
+	void createBackup() {
+		_backup = _value;
+	}
+
+	void restoreBackup() {
+		_value = _backup;
+	}
 
 	void setUI();
 };

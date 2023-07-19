@@ -40,33 +40,36 @@ namespace pyrodactyl {
 namespace ui {
 class RadioButtonMenu : public Menu<RadioButton> {
 	// The description of the menu
-	HoverInfo desc;
+	HoverInfo _desc;
 
 	// The selected radio button
-	int select;
+	int _select;
 
 public:
-	RadioButtonMenu() { select = 0; }
+	RadioButtonMenu() {
+		_select = 0;
+	}
+
 	~RadioButtonMenu() {}
 
 	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid("desc", node))
-			desc.load(node->first_node("desc"));
+			_desc.load(node->first_node("desc"));
 
 		if (nodeValid("menu", node))
 			Menu::load(node->first_node("menu"));
 	}
 
-	void draw(const int &XOffset = 0, const int &YOffset = 0) {
-		desc.draw(XOffset, YOffset);
-		Menu::draw(XOffset, YOffset);
+	void draw(const int &xOffset = 0, const int &yOffset = 0) {
+		_desc.draw(xOffset, yOffset);
+		Menu::draw(xOffset, yOffset);
 	}
 
-	int handleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
-		int result = Menu::handleEvents(Event, XOffset, YOffset);
+	int handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0) {
+		int result = Menu::handleEvents(event, xOffset, yOffset);
 
 		if (result >= 0) {
-			select = result;
+			_select = result;
 
 			for (int i = 0; i < (int)_element.size(); ++i)
 				_element[i]._state = (i == result);
@@ -92,7 +95,7 @@ public:
 
 	void setUI() {
 		Menu::setUI();
-		desc.setUI();
+		_desc.setUI();
 	}
 };
 } // End of namespace ui

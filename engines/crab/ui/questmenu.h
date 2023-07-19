@@ -43,55 +43,60 @@ namespace pyrodactyl {
 namespace ui {
 class QuestMenu {
 	// The collection of quest pages
-	PageButtonMenu menu;
+	PageButtonMenu _menu;
 
 	// The currently selected quest for reading
-	int sel_quest;
+	int _selQuest;
 
 	// The currently selected page
-	int sel_page;
+	int _selPage;
 
 	// The currently selected button in the page menu
-	int sel_bu;
+	int _selBu;
 
 	// For drawing quest text
-	QuestText text;
+	QuestText _text;
 
 	// For drawing quest tabs
-	FontKey font;
-	Align align;
-	int col_n, col_s;
-	ButtonImage img_n, img_s;
-	Vector2i off_title, off_unread;
+	FontKey _font;
+	Align _align;
+	int _colN, _colS;
+	ButtonImage _imgN, _imgS;
+	Vector2i _offTitle, _offUnread;
 
 public:
 	// All the quests currently in this menu
-	Common::Array<pyrodactyl::event::Quest> quest;
+	Common::Array<pyrodactyl::event::Quest> _quest;
 
 	// Keep track of unread notifications for each category button
-	bool unread;
+	bool _unread;
 
 	QuestMenu();
 	~QuestMenu() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void draw(Button &bu_map);
+	void draw(Button &buMap);
 
 	bool handleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event);
 #if 0
 	bool handleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event);
 #endif
 
-	void UseKeyboard(const bool &val) { menu.useKeyboard(val); }
-	void AssignPaths() { menu.assignPaths(); }
+	void useKeyboard(const bool &val) {
+		_menu.useKeyboard(val);
+	}
 
-	void Marker(const Common::String &title, const bool &val);
+	void assignPaths() {
+		_menu.assignPaths();
+	}
 
-	void Add(const Common::String &title, const Common::String &txt);
-	void Add(const pyrodactyl::event::Quest &q);
-	void Erase(const int &index);
+	void marker(const Common::String &title, const bool &val);
 
-	void Select(const int &quest_index);
+	void add(const Common::String &title, const Common::String &txt);
+	void add(const pyrodactyl::event::Quest &q);
+	void erase(const int &index);
+
+	void select(const int &questIndex);
 
 	void saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name);
 	void loadState(rapidxml::xml_node<char> *node);

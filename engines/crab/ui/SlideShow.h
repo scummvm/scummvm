@@ -42,32 +42,37 @@ namespace pyrodactyl {
 namespace ui {
 class SlideShow {
 	// The list of images and where they are located, and the current image
-	Common::Array<Common::String> path;
+	Common::Array<Common::String> _path;
 
 	// We only load the current image in memory
-	pyrodactyl::image::Image img;
+	pyrodactyl::image::Image _img;
 
 	// The index of our current image
-	unsigned int index;
+	unsigned int _index;
 
 	// The position at which map image has to be drawn
-	Element pos;
+	Element _pos;
 
 	// Background image of the slide show
-	ImageData bg;
+	ImageData _bg;
 
-	Button prev, next;
-	bool usekeyboard;
+	Button _prev, _next;
+	bool _usekeyboard;
 
 public:
 	SlideShow() {
-		index = 0;
-		usekeyboard = false;
+		_index = 0;
+		_usekeyboard = false;
 	}
-	~SlideShow() { Clear(); }
 
-	void Refresh();
-	void Clear() { img.deleteImage(); }
+	~SlideShow() {
+		clear();
+	}
+
+	void refresh();
+	void clear() {
+		_img.deleteImage();
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 

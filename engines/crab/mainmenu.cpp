@@ -471,9 +471,9 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 
 	// If switching to help screen, load latest image otherwise remove it from memory
 	if (state == STATE_HELP)
-		g_engine->_helpScreen->Refresh();
+		g_engine->_helpScreen->refresh();
 	else
-		g_engine->_helpScreen->Clear();
+		g_engine->_helpScreen->clear();
 }
 
 //------------------------------------------------------------------------
