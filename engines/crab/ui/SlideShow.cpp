@@ -38,58 +38,58 @@ using namespace pyrodactyl::input;
 void SlideShow::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		if (nodeValid("pos", node))
-			pos.load(node->first_node("pos"));
+			_pos.load(node->first_node("pos"));
 
 		if (nodeValid("bg", node))
-			bg.load(node->first_node("bg"));
+			_bg.load(node->first_node("bg"));
 
 		if (nodeValid("prev", node)) {
-			prev.load(node->first_node("prev"));
-			prev._hotkey.set(IU_PREV);
+			_prev.load(node->first_node("prev"));
+			_prev._hotkey.set(IU_PREV);
 		}
 
 		if (nodeValid("next", node)) {
-			next.load(node->first_node("next"));
-			next._hotkey.set(IU_NEXT);
+			_next.load(node->first_node("next"));
+			_next._hotkey.set(IU_NEXT);
 		}
 
-		path.clear();
+		_path.clear();
 		for (auto n = node->first_node("slide"); n != NULL; n = n->next_sibling("slide")) {
 			Common::String p;
 			loadStr(p, "path", n);
-			path.push_back(p);
+			_path.push_back(p);
 		}
 
-		index = 0;
+		_index = 0;
 
-		loadBool(usekeyboard, "keyboard", node, false);
+		loadBool(_usekeyboard, "keyboard", node, false);
 	}
 }
 
 void SlideShow::draw() {
-	bg.draw();
-	img.draw(pos.x, pos.y);
+	_bg.draw();
+	_img.draw(_pos.x, _pos.y);
 
-	if (index > 0)
-		prev.draw();
+	if (_index > 0)
+		_prev.draw();
 
-	if (index < path.size() - 1)
-		next.draw();
+	if (_index < _path.size() - 1)
+		_next.draw();
 }
 
 void SlideShow::handleEvents(const Common::Event &Event) {
 	using namespace pyrodactyl::input;
 
-	if (index > 0)
-		if (prev.handleEvents(Event) == BUAC_LCLICK) {
-			index--;
-			Refresh();
+	if (_index > 0)
+		if (_prev.handleEvents(Event) == BUAC_LCLICK) {
+			_index--;
+			refresh();
 		}
 
-	if (index < path.size() - 1)
-		if (next.handleEvents(Event) == BUAC_LCLICK) {
-			index++;
-			Refresh();
+	if (_index < _path.size() - 1)
+		if (_next.handleEvents(Event) == BUAC_LCLICK) {
+			_index++;
+			refresh();
 		}
 }
 
@@ -111,8 +111,8 @@ void SlideShow::handleEvents(const SDL_Event &Event) {
 }
 #endif
 
-void SlideShow::Refresh() {
-	warning("SlideShow::Refresh()");
+void SlideShow::refresh() {
+	warning("SlideShow::refresh()");
 
 #if 0
 	img.Delete();
@@ -123,10 +123,10 @@ void SlideShow::Refresh() {
 }
 
 void SlideShow::setUI() {
-	pos.setUI();
-	bg.setUI();
-	prev.setUI();
-	next.setUI();
+	_pos.setUI();
+	_bg.setUI();
+	_prev.setUI();
+	_next.setUI();
 }
 
 } // End of namespace Crab

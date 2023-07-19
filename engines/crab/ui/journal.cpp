@@ -78,8 +78,8 @@ void Journal::init(const Common::String &id) {
 		g._id = id;
 		for (int i = 0; i < JE_TOTAL; ++i) {
 			g._menu[i] = _ref;
-			g._menu[i].UseKeyboard(true);
-			g._menu[i].AssignPaths();
+			g._menu[i].useKeyboard(true);
+			g._menu[i].assignPaths();
 		}
 		_journal.push_back(g);
 	}
@@ -98,7 +98,7 @@ void Journal::select(const Common::String &id, const int &choice) {
 	// Always find valid journal group first
 	for (auto &jo : _journal)
 		if (jo._id == id) {
-			jo._menu[choice].unread = false;
+			jo._menu[choice]._unread = false;
 			break;
 		}
 }
@@ -115,7 +115,7 @@ void Journal::draw(const Common::String &id) {
 		if (jo._id == id) {
 			int count = 0;
 			for (auto i = _category._element.begin(); i != _category._element.end() && count < JE_TOTAL; ++i, ++count)
-				if (jo._menu[count].unread)
+				if (jo._menu[count]._unread)
 					g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 
 			if (_select >= 0 && _select < JE_TOTAL)
@@ -173,15 +173,15 @@ void Journal::add(const Common::String &id, const Common::String &category, cons
 	for (auto &jo : _journal)
 		if (jo._id == id) {
 			if (category == JE_CUR_NAME) {
-				jo._menu[JE_CUR].Add(title, text);
+				jo._menu[JE_CUR].add(title, text);
 			} else if (category == JE_DONE_NAME) {
-				jo._menu[JE_DONE].Add(title, text);
+				jo._menu[JE_DONE].add(title, text);
 			} else if (category == JE_PEOPLE_NAME) {
-				jo._menu[JE_PEOPLE].Add(title, text);
+				jo._menu[JE_PEOPLE].add(title, text);
 			} else if (category == JE_LOCATION_NAME) {
-				jo._menu[JE_LOCATION].Add(title, text);
+				jo._menu[JE_LOCATION].add(title, text);
 			} else if (category == JE_HISTORY_NAME) {
-				jo._menu[JE_HISTORY].Add(title, text);
+				jo._menu[JE_HISTORY].add(title, text);
 			}
 
 			break;
@@ -195,7 +195,7 @@ void Journal::marker(const Common::String &id, const Common::String &title, cons
 	// Always find valid journal group first
 	for (auto &jo : _journal)
 		if (jo._id == id) {
-			jo._menu[JE_CUR].Marker(title, val);
+			jo._menu[JE_CUR].marker(title, val);
 			break;
 		}
 }
@@ -218,13 +218,13 @@ void Journal::move(const Common::String &id, const Common::String &title, const 
 		if (jo._id == id) {
 			// Find the quest chain in the source menu
 			unsigned int index = 0;
-			for (auto i = jo._menu[source].quest.begin(); i != jo._menu[source].quest.end(); ++i, ++index)
+			for (auto i = jo._menu[source]._quest.begin(); i != jo._menu[source]._quest.end(); ++i, ++index)
 				if (i->_title == title)
 					break;
 
-			if (index < jo._menu[source].quest.size()) {
-				jo._menu[destination].Add(jo._menu[source].quest[index]);
-				jo._menu[source].Erase(index);
+			if (index < jo._menu[source]._quest.size()) {
+				jo._menu[destination].add(jo._menu[source]._quest[index]);
+				jo._menu[source].erase(index);
 			}
 
 			break;
@@ -245,10 +245,10 @@ void Journal::open(const Common::String &id, const JournalCategory &category, co
 				// Perform validity check on select, just in case
 				if (_select > 0 && _select < JE_TOTAL) {
 					// Search for the title with same name
-					for (unsigned int num = 0; num < jo._menu[_select].quest.size(); ++num)
-						if (jo._menu[_select].quest[num]._title == title) {
+					for (unsigned int num = 0; num < jo._menu[_select]._quest.size(); ++num)
+						if (jo._menu[_select]._quest[num]._title == title) {
 							// Found it, switch to this
-							jo._menu[_select].Select(num);
+							jo._menu[_select].select(num);
 							break;
 						}
 				}

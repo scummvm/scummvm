@@ -43,28 +43,28 @@ class ResolutionMenu : public ButtonMenu {
 	enum State {
 		STATE_NORMAL,
 		STATE_CHANGE
-	} state;
+	} _state;
 
-	HoverInfo info;
-	Common::String def_info;
-	Button change, cancel, custom;
+	HoverInfo _info;
+	Common::String _defInfo;
+	Button _change, _cancel, _custom;
 
 	// Menu stores the button for each of the item in the dimension array
-	Common::Array<Dimension> dim;
+	Common::Array<Dimension> _dim;
 
 	// The reference button for resolution
-	Button ref;
+	Button _ref;
 
 	// How much the button is incremented by
-	Vector2i inc;
+	Vector2i _inc;
 
 	// The number of rows and columns
-	int columns;
+	int _columns;
 
 public:
 	ResolutionMenu(void) {
-		state = STATE_NORMAL;
-		columns = 1;
+		_state = STATE_NORMAL;
+		_columns = 1;
 	}
 	~ResolutionMenu(void) {}
 
@@ -72,12 +72,12 @@ public:
 	void draw();
 
 	// Return 1 if one of resolution buttons is pressed, 2 if custom button is pressed, 0 otherwise
-	int handleEvents(const Common::Event &Event);
+	int handleEvents(const Common::Event &event);
 #if 0
 	int handleEvents(const SDL_Event &Event);
 #endif
 
-	void SetInfo();
+	void setInfo();
 
 	void setUI();
 };

@@ -43,25 +43,28 @@ class GameSaveMenu : public FileMenu<SaveFileData> {
 	enum State {
 		STATE_NORMAL,
 		STATE_NAME
-	} state;
+	} _state;
 
 	// This stores the name of the save slot
-	TextArea ta_name;
+	TextArea _taName;
 
 	// The index of the selected button
-	int index;
+	int _index;
 
-	void AddButton(const Common::String &p, unsigned int &slot_index, unsigned int &menu_index);
+	void addButton(const Common::String &p, unsigned int &slotIndex, unsigned int &menuIndex);
 
 public:
 	GameSaveMenu() {
-		state = STATE_NORMAL;
-		index = 0;
+		_state = STATE_NORMAL;
+		_index = 0;
 	}
+
 	~GameSaveMenu() {}
 
 	void scanDir();
-	bool DisableHotkeys() { return state == STATE_NAME; }
+	bool disableHotkeys() {
+		return _state == STATE_NAME;
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 

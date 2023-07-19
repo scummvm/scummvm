@@ -46,43 +46,43 @@ void ReplyMenu::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("conversation");
 		if (nodeValid(node)) {
 			if (nodeValid("tone", node))
-				tone.load(node->first_node("tone"));
+				_tone.load(node->first_node("tone"));
 
 			if (nodeValid("reply", node)) {
 				rapidxml::xml_node<char> *replynode = node->first_node("reply");
 				Menu<ReplyButton>::load(replynode->first_node("menu"));
-				tone._value.resize(_element.size());
+				_tone._value.resize(_element.size());
 
-				bg.load(replynode->first_node("bg"));
-				loadNum(spacing, "spacing", replynode);
+				_bg.load(replynode->first_node("bg"));
+				loadNum(_spacing, "spacing", replynode);
 			}
 		}
 	}
 }
 
-int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event) {
+int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::String &curId, PersonHandler &oh, const Common::Event &Event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::handleEvents(Event);
 	if (choice >= 0 && (unsigned int)choice < dat._reply.size()) {
-		bool play_sound = false;
+		bool playSound = false;
 
 		// Loop through any opinion changes required
 		for (auto &i : dat._reply[_element[choice]._index]._change) {
-			if (i._id == cur_id) {
+			if (i._id == curId) {
 				// This is a special case because we also need to update the opinion bars
 				oh.opinionChange(info, i._id, OPI_LIKE, i._val[OPI_LIKE]);
 				oh.opinionChange(info, i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
 				oh.opinionChange(info, i._id, OPI_FEAR, i._val[OPI_FEAR]);
-				play_sound = true;
+				playSound = true;
 			} else {
 				info.opinionChange(i._id, OPI_LIKE, i._val[OPI_LIKE]);
 				info.opinionChange(i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
 				info.opinionChange(i._id, OPI_FEAR, i._val[OPI_FEAR]);
-				play_sound = true;
+				playSound = true;
 			}
 		}
 
-		(void)play_sound;
+		(void)playSound;
 
 #if 0
 		// Right now we play sound randomly
@@ -139,51 +139,51 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 #endif
 
 void ReplyMenu::draw() {
-	bg.draw();
-	tone.draw(_hoverIndex);
+	_bg.draw();
+	_tone.draw(_hoverIndex);
 
 	// Draw the reply options
 	Menu<ReplyButton>::draw();
 }
 
-void ReplyMenu::Cache(Info &info, ConversationData &dat) {
+void ReplyMenu::cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat) {
 	// Some replies are locked, which means the other replies move up and take their place -
 	// which is why we need two count variables
-	unsigned int reply_count = 0, element_count = 0;
+	unsigned int replyCount = 0, elementCount = 0;
 
-	for (auto i = dat._reply.begin(); i != dat._reply.end() && reply_count < dat._reply.size(); ++i, ++reply_count) {
+	for (auto i = dat._reply.begin(); i != dat._reply.end() && replyCount < dat._reply.size(); ++i, ++replyCount) {
 		if (i->_unlock.evaluate(info)) {
-			_element[element_count]._visible = true;
-			_element[element_count]._index = reply_count;
+			_element[elementCount]._visible = true;
+			_element[elementCount]._index = replyCount;
 
-			tone._value[element_count] = dat._reply[reply_count]._tone;
+			_tone._value[elementCount] = dat._reply[replyCount]._tone;
 
-			const InputType type = static_cast<InputType>(IU_REPLY_0 + element_count);
+			const InputType type = static_cast<InputType>(IU_REPLY_0 + elementCount);
 			Common::String text = g_engine->_inputManager->getAssociatedKey(type);
 			text += ". " + i->_text;
 			info.insertName(text);
 
-			if (element_count == 0)
-				_element[element_count].Cache(text, spacing, 0, &bg);
+			if (elementCount == 0)
+				_element[elementCount].cache(text, _spacing, 0, &_bg);
 			else
-				_element[element_count].Cache(text, spacing, _element[element_count - 1].y + _element[element_count - 1].h, &bg);
+				_element[elementCount].cache(text, _spacing, _element[elementCount - 1].y + _element[elementCount - 1].h, &_bg);
 
 			// Increment the element count only if the reply is unlocked
 			// This means we will keep checking against element 0 until we find an unlocked reply
 			// e.g. if replies 0,1,2 are locked, then element[0] will get reply[3]
-			element_count++;
+			elementCount++;
 		}
 	}
 
 	// Unused element buttons are hidden
-	for (; element_count < _element.size(); element_count++)
-		_element[element_count]._visible = false;
+	for (; elementCount < _element.size(); elementCount++)
+		_element[elementCount]._visible = false;
 }
 
 void ReplyMenu::setUI() {
 	Menu<ReplyButton>::setUI();
-	bg.setUI();
-	tone.setUI();
+	_bg.setUI();
+	_tone.setUI();
 }
 
 } // End of namespace Crab

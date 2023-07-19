@@ -97,9 +97,9 @@ void PersonScreen::Cache(Info &info, const Common::String &id, pyrodactyl::level
 	_curSp = level.getSprite(id);
 
 	if (info.personValid(id))
-		_menu.Cache(info.personGet(id));
+		_menu.cache(info.personGet(id));
 	else
-		_menu.Clear();
+		_menu.clear();
 }
 
 void PersonScreen::setUI() {

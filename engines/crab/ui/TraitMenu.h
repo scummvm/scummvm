@@ -43,44 +43,48 @@ namespace pyrodactyl {
 namespace ui {
 class TraitMenu {
 	// The menu for displaying all the traits
-	Menu<TraitButton> menu;
+	Menu<TraitButton> _menu;
 
 	// The reference button (from which all buttons are initialized)
-	TraitButton ref;
+	TraitButton _ref;
 
 	// This vector stores the increments in x,y for each new button
-	Vector2i inc;
+	Vector2i _inc;
 
 	// How to draw the selected trait description
-	ParagraphData desc;
+	ParagraphData _desc;
 
 	// The selected trait, and size of the menu
-	int select;
+	int _select;
 
 	// The size and dimensions of the menu
-	unsigned int size, rows, cols;
+	unsigned int _size, _rows, _cols;
 
 public:
 	TraitMenu() {
-		select = -1;
-		size = 1;
-		rows = 1;
-		cols = 1;
+		_select = -1;
+		_size = 1;
+		_rows = 1;
+		_cols = 1;
 	}
+
 	~TraitMenu() {}
 
-	void reset() { select = -1; }
-	void Clear();
+	void reset() {
+		_select = -1;
+	}
+
+	void clear();
 
 	void load(rapidxml::xml_node<char> *node);
 	void draw(const pyrodactyl::people::Person *obj);
 
-	void handleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event);
+	void handleEvents(pyrodactyl::people::Person *obj, const Common::Event &event);
 #if 0
 	void handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event);
 #endif
 
-	void Cache(const pyrodactyl::people::Person &obj);
+	void cache(const pyrodactyl::people::Person &obj);
 	void setUI();
 };
 } // End of namespace ui

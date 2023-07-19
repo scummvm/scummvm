@@ -147,10 +147,10 @@ void GeneralSettingMenu::draw() {
 // Purpose: Revert to previously backed up settings
 //------------------------------------------------------------------------
 void GeneralSettingMenu::RestoreBackup() {
-	_volMusic.RestoreBackup();
+	_volMusic.restoreBackup();
 	g_engine->_musicManager->volMusic(_volMusic.Value());
 
-	_volEffects.RestoreBackup();
+	_volEffects.restoreBackup();
 	g_engine->_musicManager->volEffects(_volEffects.Value());
 }
 

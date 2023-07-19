@@ -41,72 +41,77 @@ namespace pyrodactyl {
 namespace ui {
 class ProgressBar : public ClipButton {
 	// Whenever the progress bar value is changed, we display a glowing effect
-	Timer timer;
+	Timer _timer;
 
 	// The total time for which the change effect must be shown
-	uint32 notify_rate;
+	uint32 _notifyRate;
 
 	// Are we currently displaying the effect?
-	bool changed;
+	bool _changed;
 
 	// The effect also depends on if the change was positive or negative, so store the previous value
-	int old;
+	int _old;
 
 	// If we are drawing an animation, we need to smoothly transition from old->value
 	// This stores the current progress
-	int cur;
+	int _cur;
 
 	// The type of effect being drawn
-	enum { NONE,
-		   INCREASE,
-		   DECREASE } type;
+	enum {
+		NONE,
+		INCREASE,
+		DECREASE
+	} _type;
 
 	// We reuse the button images for the 2 types of effect
-	ImageKey inc, dec;
+	ImageKey _inc, _dec;
 
 	// Where to draw the effect
-	Vector2i offset;
+	Vector2i _offset;
 
 	// The caption text changes depending on the value of the progress bar - we store all possible text here
 	struct CaptionText {
 		// The text to be drawn
-		Common::String text;
+		Common::String _text;
 
 		// The above text is drawn only if the progress bar value is greater than this val
-		int val;
+		int _val;
 
-		CaptionText() { val = 0; }
+		CaptionText() {
+			_val = 0;
+		}
+
 		CaptionText(rapidxml::xml_node<char> *node) {
-			if (!loadNum(val, "val", node))
-				val = 0;
+			if (!loadNum(_val, "val", node))
+				_val = 0;
 
-			if (!loadStr(text, "text", node))
-				text = "";
+			if (!loadStr(_text, "text", node))
+				_text = "";
 		}
 	};
 
-	Common::Array<CaptionText> ct;
+	Common::Array<CaptionText> _ct;
 
 public:
 	ProgressBar() {
-		old = 0;
-		cur = 0;
-		inc = 0;
-		dec = 0;
-		notify_rate = 5;
+		_old = 0;
+		_cur = 0;
+		_inc = 0;
+		_dec = 0;
+		_notifyRate = 5;
 		reset();
 	}
 	~ProgressBar() {}
 
 	// Reset the effect
 	void reset() {
-		changed = false;
-		type = NONE;
+		_changed = false;
+		_type = NONE;
 	}
 	void load(rapidxml::xml_node<char> *node);
 
 	void draw(const int &value, const int &max);
-	void Effect(const int &value, const int &prev);
+	void effect(const int &value, const int &prev);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

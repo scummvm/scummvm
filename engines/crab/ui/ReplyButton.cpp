@@ -66,7 +66,7 @@ void ReplyButton::draw(const int &xOffset, const int &yOffset) {
 	}
 }
 
-void ReplyButton::Cache(const Common::String &val, const int &spacing, const int &bottomEdge, Rect *parent) {
+void ReplyButton::cache(const Common::String &val, const int &spacing, const int &bottomEdge, Rect *parent) {
 	_text = val;
 
 	// Find out about the font

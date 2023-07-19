@@ -37,14 +37,14 @@ using namespace pyrodactyl::input;
 
 void GameSaveMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("name", node))
-		ta_name.load(node->first_node("name"));
+		_taName.load(node->first_node("name"));
 
 	FileMenu<SaveFileData>::load(node);
 }
 
-void GameSaveMenu::AddButton(const Common::String &p, unsigned int &slot_index, unsigned int &menu_index) {
+void GameSaveMenu::addButton(const Common::String &p, unsigned int &slotIndex, unsigned int &menuIndex) {
 	_slotInfo.push_back(SaveFileData(p));
-	_menu.add(slot_index, menu_index);
+	_menu.add(slotIndex, menuIndex);
 }
 
 void GameSaveMenu::scanDir() {
@@ -55,13 +55,13 @@ void GameSaveMenu::scanDir() {
 	_slotInfo.clear();
 	_menu.clear();
 
-	unsigned int count_slot = 0, count_menu = 0;
+	unsigned int countSlot = 0, countMenu = 0;
 
 	// For the save menu, the first slot is a "blank" slot - to create a new save file
-	AddButton("CRAB_New Save" + g_engine->_filePath->save_ext, count_menu, count_slot);
+	addButton("CRAB_New Save" + g_engine->_filePath->save_ext, countMenu, countSlot);
 
 	for (const Common::String& save : saves) {
-		AddButton(save, count_menu, count_slot);
+		addButton(save, countMenu, countSlot);
 	}
 
 	_menu.assignPaths();
@@ -69,41 +69,41 @@ void GameSaveMenu::scanDir() {
 
 bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 	int choice = -1;
-	switch (state) {
+	switch (_state) {
 	case STATE_NORMAL:
 		choice = _menu.handleEvents(Event);
 		if (choice >= 0) {
-			ta_name.x = _menu.curX(choice) + tdB[DATA_SAVENAME].x;
-			ta_name.y = _menu.curY(choice) + tdB[DATA_SAVENAME].y;
+			_taName.x = _menu.curX(choice) + tdB[DATA_SAVENAME].x;
+			_taName.y = _menu.curY(choice) + tdB[DATA_SAVENAME].y;
 
-			index = _menu.index() + choice;
+			_index = _menu.index() + choice;
 
-			if (index != 0)
-				ta_name._text = _slotInfo[index]._name;
+			if (_index != 0)
+				_taName._text = _slotInfo[_index]._name;
 			else
-				ta_name._text = "";
+				_taName._text = "";
 
-			state = STATE_NAME;
+			_state = STATE_NAME;
 		}
 		break;
 	case STATE_NAME:
 		if (g_engine->_inputManager->getKeyBindingMode() != input::KBM_UI)
 			g_engine->_inputManager->setKeyBindingMode(KBM_UI);
 
-		if (ta_name.handleEvents(Event)) {
-			if (index <= (int)_slotInfo.size() && index != 0)
-				g_engine->getSaveFileManager()->removeSavefile(_slotInfo[index]._path);
+		if (_taName.handleEvents(Event)) {
+			if (_index <= (int)_slotInfo.size() && _index != 0)
+				g_engine->getSaveFileManager()->removeSavefile(_slotInfo[_index]._path);
 
-			_selected = ta_name._text;
-			state = STATE_NORMAL;
+			_selected = _taName._text;
+			_state = STATE_NORMAL;
 			reset();
 			g_engine->_inputManager->setKeyBindingMode(KBM_GAME);
 			return true;
 		}
 
 		if (g_engine->_inputManager->state(IU_BACK)) {
-			ta_name._text = "New Save";
-			state = STATE_NORMAL;
+			_taName._text = "New Save";
+			_state = STATE_NORMAL;
 		}
 	default:
 		break;
@@ -119,8 +119,8 @@ void GameSaveMenu::draw() {
 		float base_x = _menu.baseX(count), base_y = _menu.baseY(count);
 		tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 
-		if (i == (unsigned int)index && state == STATE_NAME)
-			ta_name.draw();
+		if (i == (unsigned int)_index && _state == STATE_NAME)
+			_taName.draw();
 		else
 			tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);
 	}
@@ -130,7 +130,7 @@ void GameSaveMenu::draw() {
 
 void GameSaveMenu::setUI() {
 	FileMenu<SaveFileData>::setUI();
-	ta_name.setUI();
+	_taName.setUI();
 }
 
 } // End of namespace Crab

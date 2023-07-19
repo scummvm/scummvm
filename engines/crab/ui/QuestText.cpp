@@ -39,96 +39,96 @@ using namespace pyrodactyl::input;
 
 void QuestText::load(rapidxml::xml_node<char> *node) {
 	ParagraphData::load(node);
-	loadNum(col_s, "color_s", node);
+	loadNum(_colS, "color_s", node);
 
 	if (nodeValid("line", node))
-		loadNum(lines_per_page, "page", node->first_node("line"));
+		loadNum(_linesPerPage, "page", node->first_node("line"));
 
 	if (nodeValid("inc", node))
-		inc.load(node->first_node("inc"));
+		_inc.load(node->first_node("inc"));
 
 	if (nodeValid("img", node))
-		img.load(node->first_node("img"));
+		_img.load(node->first_node("img"));
 
 	if (nodeValid("prev", node)) {
-		prev.load(node->first_node("prev"));
-		prev._hotkey.set(IU_PAGE_PREV);
+		_prev.load(node->first_node("prev"));
+		_prev._hotkey.set(IU_PAGE_PREV);
 	}
 
 	if (nodeValid("next", node)) {
-		next.load(node->first_node("next"));
-		next._hotkey.set(IU_PAGE_NEXT);
+		_next.load(node->first_node("next"));
+		_next._hotkey.set(IU_PAGE_NEXT);
 	}
 
 	if (nodeValid("status", node))
-		status.load(node->first_node("status"));
+		_status.load(node->first_node("status"));
 }
 
 void QuestText::draw(pyrodactyl::event::Quest &q) {
 	// First, we must scan and find the part of the quest text we should draw
 
 	// Assign default values to start and stop
-	start = 0;
-	stop = q._text.size();
+	_start = 0;
+	_stop = q._text.size();
 
 	// Keep count of lines and pages - remember a single entry can take more than one line
-	unsigned int page_count = 0, page_start = 0;
+	unsigned int pageCount = 0, pageStart = 0;
 
 	// Start from line 0, page 0 and scan the list of entries
-	for (unsigned int i = 0, line_count = 0; i < q._text.size(); ++i) {
+	for (unsigned int i = 0, lineCount = 0; i < q._text.size(); ++i) {
 		// Increment the number of lines by one text entry
-		line_count += (q._text[i].size() / _line.x) + 1;
+		lineCount += (q._text[i].size() / _line.x) + 1;
 
 		// If we go over the quota for lines per page, go to next page and reset line counter to 0
-		if (line_count > lines_per_page) {
+		if (lineCount > _linesPerPage) {
 			// We are about to go to next page, stop at this entry
-			if (page_count == current_page) {
-				start = page_start;
-				stop = i;
+			if (pageCount == _currentPage) {
+				_start = pageStart;
+				_stop = i;
 			}
 
-			page_count++;
-			line_count = 0;
+			pageCount++;
+			lineCount = 0;
 
 			// This is the start of the next page
-			page_start = i;
+			pageStart = i;
 		}
 	}
 
 	// Used for the final page, because the page count won't be incremented for the last one
-	if (page_count == current_page) {
-		start = page_start;
-		stop = q._text.size();
+	if (pageCount == _currentPage) {
+		_start = pageStart;
+		_stop = q._text.size();
 	}
 
 	// Find out how many pages the lines need
-	total_page = page_count + 1;
+	_totalPage = pageCount + 1;
 
 	// Update the text
-	status._text = (NumberToString(current_page + 1) + " of " + NumberToString(total_page));
+	_status._text = (NumberToString(_currentPage + 1) + " of " + NumberToString(_totalPage));
 
 	// Now, start drawing the quest
-	status.draw();
+	_status.draw();
 
-	if (current_page > 0)
-		prev.draw();
+	if (_currentPage > 0)
+		_prev.draw();
 
-	if (current_page < total_page - 1)
-		next.draw();
+	if (_currentPage < _totalPage - 1)
+		_next.draw();
 
 	// Draw the current page of quest text
 	if (!q._text.empty()) {
 		// Count the number of lines, because a single entry can take more than one line
 		int count = 0;
 
-		for (unsigned int i = start; i < (unsigned int)stop; ++i) {
-			img.draw(inc.x * count, inc.y * count);
+		for (unsigned int i = _start; i < (unsigned int)_stop; ++i) {
+			_img.draw(_inc.x * count, _inc.y * count);
 
 			// Draw first entry in selected color, and older quest entries in standard color
 			if (i == 0)
-				g_engine->_textManager->draw(x, y, q._text[i], col_s, _font, _align, _line.x, _line.y);
+				g_engine->_textManager->draw(x, y, q._text[i], _colS, _font, _align, _line.x, _line.y);
 			else
-				ParagraphData::draw(q._text[i], inc.x * count, inc.y * count);
+				ParagraphData::draw(q._text[i], _inc.x * count, _inc.y * count);
 
 			// Count is reduced extra by the amount of lines it takes for the message to be drawn
 			count += (q._text[i].size() / _line.x) + 1;
@@ -136,15 +136,15 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 	}
 }
 
-void QuestText::handleEvents(pyrodactyl::event::Quest &q, const Common::Event &Event) {
-	if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK)
-		current_page--;
+void QuestText::handleEvents(pyrodactyl::event::Quest &q, const Common::Event &event) {
+	if (_currentPage > 0 && _prev.handleEvents(event) == BUAC_LCLICK)
+		_currentPage--;
 
-	if (current_page < total_page - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
-		current_page++;
+	if (_currentPage < _totalPage - 1 && _next.handleEvents(event) == BUAC_LCLICK) {
+		_currentPage++;
 
-		if (current_page >= total_page)
-			current_page = total_page - 1;
+		if (_currentPage >= _totalPage)
+			_currentPage = _totalPage - 1;
 	}
 }
 
@@ -168,10 +168,10 @@ void QuestText::handleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event
 
 void QuestText::setUI() {
 	ParagraphData::setUI();
-	img.setUI();
-	prev.setUI();
-	next.setUI();
-	status.setUI();
+	_img.setUI();
+	_prev.setUI();
+	_next.setUI();
+	_status.setUI();
 }
 
 } // End of namespace Crab

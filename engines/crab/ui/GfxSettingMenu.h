@@ -70,7 +70,7 @@ public:
 	void draw();
 	void setUI();
 
-	void SetInfo() { _resolution.SetInfo(); }
+	void SetInfo() { _resolution.setInfo(); }
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

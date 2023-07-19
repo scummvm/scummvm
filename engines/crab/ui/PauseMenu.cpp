@@ -181,7 +181,7 @@ PauseSignal PauseMenu::handleEvents(const SDL_Event &Event, Button &back) {
 #endif
 
 bool PauseMenu::disableHotkeys() {
-	return (_state == STATE_SAVE && _save.DisableHotkeys()) || (_state == STATE_OPTION && g_engine->_optionMenu->disableHotkeys());
+	return (_state == STATE_SAVE && _save.disableHotkeys()) || (_state == STATE_OPTION && g_engine->_optionMenu->disableHotkeys());
 }
 
 void PauseMenu::setUI() {

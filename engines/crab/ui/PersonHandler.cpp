@@ -165,7 +165,7 @@ void PersonHandler::opinionChange(pyrodactyl::event::Info &info, const Common::S
 		info.opinionGet(id, type, value);
 
 		// Now, send the new and old value of the object's opinion for drawing the change effect
-		_opinion[type].Effect(value, old);
+		_opinion[type].effect(value, old);
 
 		_prev = id;
 	}

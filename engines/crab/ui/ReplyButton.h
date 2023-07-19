@@ -72,7 +72,7 @@ public:
 	// Used to calculate size and set the string
 	// Spacing is the minimum space between buttons added in case of overflow
 	// Bottom edge is the y+h value of the previous choice
-	void Cache(const Common::String &val, const int &spacing, const int &bottomEdge, Rect *parent);
+	void cache(const Common::String &val, const int &spacing, const int &bottomEdge, Rect *parent);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

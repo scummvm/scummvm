@@ -47,29 +47,32 @@ namespace pyrodactyl {
 namespace ui {
 class ReplyMenu : public Menu<ReplyButton> {
 	// Data about the background image
-	ImageData bg;
+	ImageData _bg;
 
 	// The minimum spacing between two reply choices
-	int spacing;
+	int _spacing;
 
 	// The emotion indicator used to indicate the type of reply selected
-	EmotionIndicator tone;
+	EmotionIndicator _tone;
 
 public:
-	ReplyMenu() { spacing = 20; }
+	ReplyMenu() {
+		_spacing = 20;
+	}
+
 	~ReplyMenu() {}
 
 	void load(const Common::String &filename);
 
 	int handleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
-					 const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event);
+					 const Common::String &curId, PersonHandler &oh, const Common::Event &Event);
 #if 0
 	int handleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
 					 const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event);
 #endif
 
 	void draw();
-	void Cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat);
+	void cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat);
 
 	void setUI();
 };
