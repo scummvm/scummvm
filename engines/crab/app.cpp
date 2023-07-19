@@ -174,7 +174,7 @@ void App::run() {
 				break;
 
 			case GAMESTATE_NEW_GAME:
-				_game->StartNewGame();
+				_game->startNewGame();
 				currentState = _game;
 				g_engine->_screenSettings->in_game = true;
 				break;

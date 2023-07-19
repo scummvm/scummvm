@@ -40,35 +40,35 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Loading stuff
 //------------------------------------------------------------------------
-void Game::StartNewGame() {
-	Init(g_engine->_filePath->mod_cur);
-	LoadLevel(info.curLocID());
-	info.ironMan(g_engine->_tempData->ironman);
-	savefile.ironman = g_engine->_tempData->filename;
-	clock.Start();
-	hud._pause.updateMode(info.ironMan());
+void Game::startNewGame() {
+	init(g_engine->_filePath->mod_cur);
+	loadLevel(_info.curLocID());
+	_info.ironMan(g_engine->_tempData->ironman);
+	_savefile._ironman = g_engine->_tempData->filename;
+	_clock.Start();
+	_hud._pause.updateMode(_info.ironMan());
 
-	CreateSaveGame(SAVEGAME_EVENT);
+	createSaveGame(SAVEGAME_EVENT);
 }
 
-void Game::LoadGame() {
-	Init(g_engine->_filePath->mod_cur);
+void Game::loadGame() {
+	init(g_engine->_filePath->mod_cur);
 }
 
-void Game::Init(const Common::String &filename) {
+void Game::init(const Common::String &filename) {
 	g_engine->_loadingScreen->Dim();
 	g_engine->_eventStore->clear();
-	game_over.clear(false);
-	state = STATE_GAME;
-	savefile.auto_slot = false;
-	gem.init();
-	info.Init();
+	_gameOver.clear(false);
+	_state = STATE_GAME;
+	_savefile._autoSlot = false;
+	_gem.init();
+	_info.Init();
 
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("config");
 
-		info.load(node);
+		_info.load(node);
 
 		Common::String path;
 		if (nodeValid("level", node)) {
@@ -78,19 +78,19 @@ void Game::Init(const Common::String &filename) {
 
 		if (nodeValid("hud", node)) {
 			loadStr(path, "layout", node->first_node("hud"));
-			hud.load(path, level._talkNotify, level._destMarker);
+			_hud.load(path, _level._talkNotify, _level._destMarker);
 		}
 
 		if (nodeValid("sprite", node)) {
 			loadStr(path, "animation", node->first_node("sprite"));
-			level.loadMoves(path);
+			_level.loadMoves(path);
 
 			loadStr(path, "constant", node->first_node("sprite"));
-			level.loadConst(path);
+			_level.loadConst(path);
 		}
 
 		if (nodeValid("event", node)) {
-			gem.load(node->first_node("event"), pop_default);
+			_gem.load(node->first_node("event"), _popDefault);
 
 			loadStr(path, "store", node->first_node("event"));
 			g_engine->_eventStore->load(path);
@@ -98,22 +98,22 @@ void Game::Init(const Common::String &filename) {
 
 		if (nodeValid("map", node)) {
 			loadStr(path, "layout", node->first_node("map"));
-			map.load(path, info);
+			_map.load(path, _info);
 		}
 
 		if (nodeValid("save", node))
-			savefile.load(node->first_node("save"));
+			_savefile.load(node->first_node("save"));
 
 		if (nodeValid("debug", node)) {
 			loadStr(path, "layout", node->first_node("debug"));
-			debug_console.load(path);
+			_debugConsole.load(path);
 		}
 	}
 
 	_isInited = true;
 }
 
-bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
+bool Game::loadLevel(const Common::String &id, int playerX, int playerY) {
 	if (g_engine->_filePath->level.contains(id)) {
 		g_engine->_loadingScreen->draw();
 
@@ -125,28 +125,28 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 		}
 
 		// Load the level itself
-		level._pop = pop_default;
-		level.load(g_engine->_filePath->level[id].layout, info, game_over, player_x, player_y);
+		_level._pop = _popDefault;
+		_level.load(g_engine->_filePath->level[id].layout, _info, _gameOver, playerX, playerY);
 
 		// Set the current location
-		info.curLocID(id);
-		info.curLocName(g_engine->_filePath->level[id].name);
-		map._playerPos = level._mapLoc;
+		_info.curLocID(id);
+		_info.curLocName(g_engine->_filePath->level[id].name);
+		_map._playerPos = _level._mapLoc;
 
 		// Update and center the world map to the player current position
-		map.update(info);
-		map.center(map._playerPos);
+		_map.update(_info);
+		_map.center(_map._playerPos);
 
 		// If this is our first time visiting a level, reveal the associated area on the world map
-		map.revealAdd(level._mapClip._id, level._mapClip._rect);
+		_map.revealAdd(_level._mapClip._id, _level._mapClip._rect);
 
 		// Initialize inventory
-		info._inv.init(level.playerId());
+		_info._inv.init(_level.playerId());
 
 		// Initialize journal
-		info._journal.init(level.playerId());
+		_info._journal.init(_level.playerId());
 
-		level.preDraw();
+		_level.preDraw();
 		return true;
 	}
 
@@ -156,71 +156,71 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	g_engine->_mouse->handleEvents(Event);
+void Game::handleEvents(Common::Event &event, bool &shouldChangeState, GameStateID &newStateId) {
+	g_engine->_mouse->handleEvents(event);
 
 	//	if (GameDebug)
 	//		debug_console.handleEvents(Event);
 
-	if (!debug_console.restrictInput()) {
-		if (state == STATE_LOSE_MENU) {
-			switch (hud._gom.handleEvents(Event)) {
+	if (!_debugConsole.restrictInput()) {
+		if (_state == STATE_LOSE_MENU) {
+			switch (_hud._gom.handleEvents(event)) {
 			case 0:
-				state = STATE_LOSE_LOAD;
+				_state = STATE_LOSE_LOAD;
 				break;
 			case 1:
-				Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
+				quit(shouldChangeState, newStateId, GAMESTATE_MAIN_MENU);
 				break;
 			default:
 				break;
 			}
-		} else if (state == STATE_LOSE_LOAD) {
-			if (g_engine->_loadMenu->handleEvents(Event)) {
-				ShouldChangeState = true;
-				NewStateID = GAMESTATE_LOAD_GAME;
+		} else if (_state == STATE_LOSE_LOAD) {
+			if (g_engine->_loadMenu->handleEvents(event)) {
+				shouldChangeState = true;
+				newStateId = GAMESTATE_LOAD_GAME;
 				return;
 			}
 
-			if (hud._pausekey.handleEvents(Event) || hud._back.handleEvents(Event) == BUAC_LCLICK)
-				state = STATE_LOSE_MENU;
+			if (_hud._pausekey.handleEvents(event) || _hud._back.handleEvents(event) == BUAC_LCLICK)
+				_state = STATE_LOSE_MENU;
 		} else {
-			if (!gem.eventInProgress() && !hud._pause.disableHotkeys()) {
-				switch (hud.handleEvents(info, Event)) {
+			if (!_gem.eventInProgress() && !_hud._pause.disableHotkeys()) {
+				switch (_hud.handleEvents(_info, event)) {
 				case HS_MAP:
-					ToggleState(STATE_MAP);
+					toggleState(STATE_MAP);
 					break;
 				case HS_PAUSE:
-					ToggleState(STATE_PAUSE);
+					toggleState(STATE_PAUSE);
 					break;
 				case HS_CHAR:
-					ToggleState(STATE_CHARACTER);
-					gem._per.Cache(info, level.playerId(), level);
+					toggleState(STATE_CHARACTER);
+					_gem._per.Cache(_info, _level.playerId(), _level);
 					break;
 				case HS_JOURNAL:
-					ToggleState(STATE_JOURNAL);
+					toggleState(STATE_JOURNAL);
 					break;
 				case HS_INV:
-					ToggleState(STATE_INVENTORY);
+					toggleState(STATE_INVENTORY);
 					break;
 				default:
 					break;
 				}
 			}
 
-			if (state == STATE_GAME) {
-				if (gem.eventInProgress()) {
-					gem.handleEvents(info, level.playerId(), Event, hud, level, event_res);
-					if (ApplyResult())
-						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
+			if (_state == STATE_GAME) {
+				if (_gem.eventInProgress()) {
+					_gem.handleEvents(_info, _level.playerId(), event, _hud, _level, _eventRes);
+					if (applyResult())
+						quit(shouldChangeState, newStateId, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info._talkKeyDown = g_engine->_inputManager->state(IG_TALK) || level.containsClick(info.lastPerson(), Event);
+					_info._talkKeyDown = g_engine->_inputManager->state(IG_TALK) || _level.containsClick(_info.lastPerson(), event);
 
-					level.handleEvents(info, Event);
+					_level.handleEvents(_info, event);
 
-					if (!game_over.empty() && game_over.evaluate(info)) {
-						state = STATE_LOSE_MENU;
-						hud._gom.reset();
+					if (!_gameOver.empty() && _gameOver.evaluate(_info)) {
+						_state = STATE_LOSE_MENU;
+						_hud._gom.reset();
 						return;
 					}
 
@@ -236,20 +236,20 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 #endif
 
-					if (hud._pausekey.handleEvents(Event))
-						ToggleState(STATE_PAUSE);
+					if (_hud._pausekey.handleEvents(event))
+						toggleState(STATE_PAUSE);
 				}
-			} else if (state == STATE_PAUSE) {
-				switch (hud._pause.handleEvents(Event, hud._back)) {
+			} else if (_state == STATE_PAUSE) {
+				switch (_hud._pause.handleEvents(event, _hud._back)) {
 				case PS_RESUME:
-					ToggleState(STATE_GAME);
-					hud.setTooltip();
+					toggleState(STATE_GAME);
+					_hud.setTooltip();
 					break;
 
 				case PS_SAVE:
-					CreateSaveGame(SAVEGAME_NORMAL);
-					ToggleState(STATE_GAME);
-					hud.setTooltip();
+					createSaveGame(SAVEGAME_NORMAL);
+					toggleState(STATE_GAME);
+					_hud.setTooltip();
 					break;
 				case PS_LOAD:
 					//ShouldChangeState = true;
@@ -257,49 +257,49 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					return;
 
 				case PS_HELP:
-					ToggleState(STATE_HELP);
+					toggleState(STATE_HELP);
 					break;
 
 				case PS_QUIT_MENU:
-					CreateSaveGame(SAVEGAME_EXIT);
-					Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
+					createSaveGame(SAVEGAME_EXIT);
+					quit(shouldChangeState, newStateId, GAMESTATE_MAIN_MENU);
 					break;
 
 				case PS_QUIT_GAME:
-					CreateSaveGame(SAVEGAME_EXIT);
-					Quit(ShouldChangeState, NewStateID, GAMESTATE_EXIT);
+					createSaveGame(SAVEGAME_EXIT);
+					quit(shouldChangeState, newStateId, GAMESTATE_EXIT);
 					break;
 				default:
 					break;
 				}
 			} else {
-				if (hud._back.handleEvents(Event) == BUAC_LCLICK)
-					ToggleState(STATE_GAME);
+				if (_hud._back.handleEvents(event) == BUAC_LCLICK)
+					toggleState(STATE_GAME);
 
-				switch (state) {
+				switch (_state) {
 				case STATE_MAP:
-					if (map.handleEvents(info, Event)) {
+					if (_map.handleEvents(_info, event)) {
 						// We need to load the new level
-						LoadLevel(map._curLoc);
-						ToggleState(STATE_GAME);
+						loadLevel(_map._curLoc);
+						toggleState(STATE_GAME);
 					}
 					break;
 				case STATE_JOURNAL:
-					if (info._journal.handleEvents(level.playerId(), Event)) {
+					if (_info._journal.handleEvents(_level.playerId(), event)) {
 						// This means we selected the "find on map" button, so we need to:
 						// switch to the world map, and highlight the appropriate quest marker
-						map.selectDest(info._journal._markerTitle);
-						ToggleState(STATE_MAP);
+						_map.selectDest(_info._journal._markerTitle);
+						toggleState(STATE_MAP);
 					}
 					break;
 				case STATE_CHARACTER:
-					gem._per.handleEvents(info, level.playerId(), Event);
+					_gem._per.handleEvents(_info, _level.playerId(), event);
 					break;
 				case STATE_INVENTORY:
-					info._inv.handleEvents(level.playerId(), Event);
+					_info._inv.handleEvents(_level.playerId(), event);
 					break;
 				case STATE_HELP:
-					g_engine->_helpScreen->handleEvents(Event);
+					g_engine->_helpScreen->handleEvents(event);
 				default:
 					break;
 				}
@@ -466,31 +466,31 @@ void Game::handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 //------------------------------------------------------------------------
 // Purpose: InternalEvents
 //------------------------------------------------------------------------
-void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
-	switch (state) {
+void Game::internalEvents(bool &shouldChangeState, GameStateID &newStateId) {
+	switch (_state) {
 	case STATE_GAME:
-		hud.internalEvents(level.showMap());
-		event_res.clear();
+		_hud.internalEvents(_level.showMap());
+		_eventRes.clear();
 
 		{
 			// HACK: Since sequences can only be ended in GameEventManager, we use this empty array
 			// to get effects to work for levels
-			Common::Array<pyrodactyl::event::EventSeqInfo> end_seq;
-			ApplyResult(level.internalEvents(info, event_res, end_seq, gem.eventInProgress()));
+			Common::Array<pyrodactyl::event::EventSeqInfo> endSeq;
+			applyResult(_level.internalEvents(_info, _eventRes, endSeq, _gem.eventInProgress()));
 		}
 
-		gem.internalEvents(info, level, event_res);
-		info._talkKeyDown = false;
+		_gem.internalEvents(_info, _level, _eventRes);
+		_info._talkKeyDown = false;
 
-		if (ApplyResult())
-			Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
+		if (applyResult())
+			quit(shouldChangeState, newStateId, GAMESTATE_MAIN_MENU);
 
 		break;
 	case STATE_MAP:
-		map.internalEvents(info);
+		_map.internalEvents(_info);
 		break;
 	case STATE_CHARACTER:
-		gem._per.internalEvents();
+		_gem._per.internalEvents();
 		break;
 	default:
 		break;
@@ -500,111 +500,111 @@ void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Game::draw() {
-	if (gem._drawGame)
-		level.draw(info);
+	if (_gem._drawGame)
+		_level.draw(_info);
 	else
 		g_engine->_imageManager->blackScreen();
-	switch (state) {
+	switch (_state) {
 	case STATE_GAME:
-		if (gem.eventInProgress())
-			gem.draw(info, hud, level);
+		if (_gem.eventInProgress())
+			_gem.draw(_info, _hud, _level);
 		else
-			hud.draw(info, level.playerId());
+			_hud.draw(_info, _level.playerId());
 		break;
 	case STATE_PAUSE:
 		g_engine->_imageManager->dimScreen();
-		hud._pause.draw(hud._back);
-		hud.draw(info, level.playerId());
+		_hud._pause.draw(_hud._back);
+		_hud.draw(_info, _level.playerId());
 		break;
 	case STATE_MAP:
 		g_engine->_imageManager->dimScreen();
-		map.draw(info);
-		hud.draw(info, level.playerId());
-		hud._back.draw();
+		_map.draw(_info);
+		_hud.draw(_info, _level.playerId());
+		_hud._back.draw();
 		break;
 	case STATE_JOURNAL:
 		g_engine->_imageManager->dimScreen();
-		info._journal.draw(level.playerId());
-		hud.draw(info, level.playerId());
-		hud._back.draw();
+		_info._journal.draw(_level.playerId());
+		_hud.draw(_info, _level.playerId());
+		_hud._back.draw();
 		break;
 	case STATE_CHARACTER:
 		g_engine->_imageManager->dimScreen();
-		gem._per.draw(info, level.playerId());
-		hud.draw(info, level.playerId());
-		hud._back.draw();
+		_gem._per.draw(_info, _level.playerId());
+		_hud.draw(_info, _level.playerId());
+		_hud._back.draw();
 		break;
 	case STATE_INVENTORY:
 		g_engine->_imageManager->dimScreen();
-		info.invDraw(level.playerId());
-		hud.draw(info, level.playerId());
-		hud._back.draw();
+		_info.invDraw(_level.playerId());
+		_hud.draw(_info, _level.playerId());
+		_hud._back.draw();
 		break;
 	case STATE_HELP:
 		g_engine->_imageManager->dimScreen();
 		g_engine->_helpScreen->draw();
-		hud._back.draw();
-		hud.draw(info, level.playerId());
+		_hud._back.draw();
+		_hud.draw(_info, _level.playerId());
 		break;
 	case STATE_LOSE_MENU:
-		hud._gom.draw();
+		_hud._gom.draw();
 		break;
 	case STATE_LOSE_LOAD:
 		g_engine->_loadMenu->draw();
-		hud._back.draw();
+		_hud._back.draw();
 		break;
 	default:
 		break;
 	}
 
 	if (GameDebug)
-		debug_console.draw(info);
+		_debugConsole.draw(_info);
 	g_engine->_mouse->draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Apply results of events and levels
 //------------------------------------------------------------------------
-bool Game::ApplyResult() {
+bool Game::applyResult() {
 	using namespace pyrodactyl::event;
 
-	for (auto i = event_res.begin(); i != event_res.end(); ++i) {
+	for (auto i = _eventRes.begin(); i != _eventRes.end(); ++i) {
 		switch (i->_type) {
 		case ER_MAP:
 			if (i->_val == "img")
-				map.setImage(i->_y);
+				_map.setImage(i->_y);
 			else if (i->_val == "pos") {
-				map._playerPos.x = i->_x;
-				map._playerPos.y = i->_y;
+				_map._playerPos.x = i->_x;
+				_map._playerPos.y = i->_y;
 			}
 			break;
 		case ER_DEST:
 			if (i->_x < 0 || i->_y < 0) {
-				info._journal.marker(level.playerId(), i->_val, false);
-				map.destDel(i->_val);
+				_info._journal.marker(_level.playerId(), i->_val, false);
+				_map.destDel(i->_val);
 			} else {
-				map.destAdd(i->_val, i->_x, i->_y);
-				info._journal.marker(level.playerId(), i->_val, true);
-				info._unread._map = true;
+				_map.destAdd(i->_val, i->_x, i->_y);
+				_info._journal.marker(_level.playerId(), i->_val, true);
+				_info._unread._map = true;
 			}
 			break;
 		case ER_IMG:
-			PlayerImg();
+			playerImg();
 			break;
 		case ER_TRAIT:
 			if (i->_x == 42)
-				info.traitDel(i->_val, i->_y);
+				_info.traitDel(i->_val, i->_y);
 			else
-				info.traitAdd(i->_val, i->_y);
+				_info.traitAdd(i->_val, i->_y);
 			break;
 		case ER_LEVEL:
 			if (i->_val == "Map")
-				ToggleState(STATE_MAP);
+				toggleState(STATE_MAP);
 			else
-				LoadLevel(i->_val, i->_x, i->_y);
+				loadLevel(i->_val, i->_x, i->_y);
 			break;
 		case ER_MOVE:
-			for (auto &o : level._objects) {
+			for (auto &o : _level._objects) {
 				if (i->_val == o.id()) {
 					o.x(i->_x);
 					o.y(i->_y);
@@ -614,20 +614,20 @@ bool Game::ApplyResult() {
 			break;
 		case ER_PLAYER:
 			// First stop the movement of the current player sprite
-			level.playerStop();
+			_level.playerStop();
 
 			// Then swap to the new id
-			level.playerId(i->_val, i->_x, i->_y);
+			_level.playerId(i->_val, i->_x, i->_y);
 
 			// Stop the new player sprite's movement as well
-			level.playerStop();
+			_level.playerStop();
 			break;
 		case ER_SAVE:
-			CreateSaveGame(SAVEGAME_EVENT);
+			createSaveGame(SAVEGAME_EVENT);
 			break;
 		case ER_SYNC:
-			level.calcProperties(info);
-			map.update(info);
+			_level.calcProperties(_info);
+			_map.update(_info);
 			break;
 		case ER_QUIT:
 			g_engine->_tempData->credits = (i->_val == "credits");
@@ -637,22 +637,22 @@ bool Game::ApplyResult() {
 		}
 	}
 
-	gem._per.Cache(info, level.playerId(), level);
-	event_res.clear();
+	_gem._per.Cache(_info, _level.playerId(), _level);
+	_eventRes.clear();
 	return false;
 }
 
-void Game::ApplyResult(LevelResult result) {
+void Game::applyResult(LevelResult result) {
 	switch (result.type) {
 	case LR_LEVEL:
 		if (result.val == "Map")
-			ToggleState(STATE_MAP);
+			toggleState(STATE_MAP);
 		else
-			LoadLevel(result.val, result.x, result.y);
+			loadLevel(result.val, result.x, result.y);
 		return;
 	case LR_GAMEOVER:
-		state = STATE_LOSE_MENU;
-		hud._gom.reset();
+		_state = STATE_LOSE_MENU;
+		_hud._gom.reset();
 		break;
 	default:
 		break;
@@ -664,7 +664,7 @@ void Game::ApplyResult(LevelResult result) {
 //------------------------------------------------------------------------
 void Game::loadState(Common::SeekableReadStream *stream) {
 	if (!_isInited)
-		LoadGame();
+		loadGame();
 
 	Common::String data = stream->readString();
 	// +1 to include > as well
@@ -681,33 +681,33 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
 		if (nodeValid(node)) {
-			info.loadIronMan(node);
-			loadStr(savefile.ironman, "file", node);
-			hud._pause.updateMode(info.ironMan());
+			_info.loadIronMan(node);
+			loadStr(_savefile._ironman, "file", node);
+			_hud._pause.updateMode(_info.ironMan());
 
 			if (nodeValid("events", node))
-				gem.loadState(node->first_node("events"));
+				_gem.loadState(node->first_node("events"));
 
 			if (nodeValid("info", node))
-				info.loadState(node->first_node("info"));
+				_info.loadState(node->first_node("info"));
 
 			if (nodeValid("map", node))
-				map.loadState(node->first_node("map"));
+				_map.loadState(node->first_node("map"));
 
-			PlayerImg();
+			playerImg();
 
 			Common::String loc;
 			loadStr(loc, "loc_id", node);
-			LoadLevel(loc);
+			loadLevel(loc);
 
 			if (nodeValid("level", node))
-				level.loadState(node->first_node("level"));
+				_level.loadState(node->first_node("level"));
 
-			gem._per.Cache(info, level.playerId(), level);
+			_gem._per.Cache(_info, _level.playerId(), _level);
 
 			Common::String playtime;
 			loadStr(playtime, "time", node);
-			clock.Start(playtime);
+			_clock.Start(playtime);
 		}
 	}
 }
@@ -728,49 +728,49 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	doc.append_node(root);
 
 	// Save location id
-	Common::String loc = info.curLocID();
+	Common::String loc = _info.curLocID();
 	root->append_attribute(doc.allocate_attribute("loc_id", loc.c_str()));
 
 	// Save location name
-	Common::String loc_name = info.curLocName();
+	Common::String loc_name = _info.curLocName();
 	root->append_attribute(doc.allocate_attribute("loc_name", loc_name.c_str()));
 
 	// Save player character name
 	Common::String char_name;
-	if (info.personValid(level.playerId()))
-		char_name = info.personGet(level.playerId())._name;
+	if (_info.personValid(_level.playerId()))
+		char_name = _info.personGet(_level.playerId())._name;
 	root->append_attribute(doc.allocate_attribute("char_name", char_name.c_str()));
 
 	// Difficulty
 	Common::String diff = "Normal";
-	if (info.ironMan())
+	if (_info.ironMan())
 		diff = "Iron Man";
 	root->append_attribute(doc.allocate_attribute("diff", diff.c_str()));
 
 	// Save file used if iron man
-	root->append_attribute(doc.allocate_attribute("file", savefile.ironman.c_str()));
+	root->append_attribute(doc.allocate_attribute("file", _savefile._ironman.c_str()));
 
 	// Preview image used
-	root->append_attribute(doc.allocate_attribute("preview", level._previewPath.c_str()));
+	root->append_attribute(doc.allocate_attribute("preview", _level._previewPath.c_str()));
 
 	// Time played
-	Common::String playtime = clock.GetTime();
+	Common::String playtime = _clock.GetTime();
 	root->append_attribute(doc.allocate_attribute("time", playtime.c_str()));
 
 	rapidxml::xml_node<char> *child_gem = doc.allocate_node(rapidxml::node_element, "events");
-	gem.saveState(doc, child_gem);
+	_gem.saveState(doc, child_gem);
 	root->append_node(child_gem);
 
 	rapidxml::xml_node<char> *child_info = doc.allocate_node(rapidxml::node_element, "info");
-	info.saveState(doc, child_info);
+	_info.saveState(doc, child_info);
 	root->append_node(child_info);
 
 	rapidxml::xml_node<char> *child_map = doc.allocate_node(rapidxml::node_element, "map");
-	map.saveState(doc, child_map);
+	_map.saveState(doc, child_map);
 	root->append_node(child_map);
 
 	rapidxml::xml_node<char> *child_level = doc.allocate_node(rapidxml::node_element, "level");
-	level.saveState(doc, child_level);
+	_level.saveState(doc, child_level);
 	root->append_node(child_level);
 
 	Common::String xml_as_string;
@@ -814,26 +814,26 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 //------------------------------------------------------------------------
 // Purpose: Quit the game
 //------------------------------------------------------------------------
-void Game::Quit(bool &ShouldChangeState, GameStateID &NewStateID, const GameStateID &NewStateVal) {
-	ShouldChangeState = true;
-	NewStateID = NewStateVal;
+void Game::quit(bool &shouldChangeState, GameStateID &newStateId, const GameStateID &newStateVal) {
+	shouldChangeState = true;
+	newStateId = newStateVal;
 	g_engine->_imageManager->loadMap(g_engine->_filePath->mainmenu_r);
 }
 //------------------------------------------------------------------------
 // Purpose: Change our internal state
 //------------------------------------------------------------------------
-void Game::ToggleState(const State &s) {
-	if (state != s)
-		state = s;
+void Game::toggleState(const State &s) {
+	if (_state != s)
+		_state = s;
 	else
-		state = STATE_GAME;
+		_state = STATE_GAME;
 
 	// This is because game is the first state, the rest are in order
-	hud.State(state - 1);
-	hud._pause.reset();
+	_hud.State(_state - 1);
+	_hud._pause.reset();
 
 	// Only load help screen image if we have to
-	if (state == STATE_HELP)
+	if (_state == STATE_HELP)
 		g_engine->_helpScreen->refresh();
 	else
 		g_engine->_helpScreen->clear();
@@ -842,7 +842,7 @@ void Game::ToggleState(const State &s) {
 //------------------------------------------------------------------------
 // Purpose: Use this function to actually save your games
 //------------------------------------------------------------------------
-void Game::CreateSaveGame(const SaveGameType &savetype) {
+void Game::createSaveGame(const SaveGameType &savetype) {
 #if 0
 	// Disregard type in iron man mode, we only save to one file
 	if (info.IronMan())
@@ -876,15 +876,15 @@ void Game::CreateSaveGame(const SaveGameType &savetype) {
 }
 
 void Game::setUI() {
-	map.setUI();
-	hud.setUI();
+	_map.setUI();
+	_hud.setUI();
 
 	g_engine->_loadMenu->setUI();
 	g_engine->_optionMenu->setUI();
 
-	gem.setUI();
-	info.setUI();
-	level.setUI();
+	_gem.setUI();
+	_info.setUI();
+	_level.setUI();
 }
 
 } // End of namespace Crab

@@ -32,7 +32,7 @@
 
 namespace Crab {
 
-bool FileOpen(const Common::Path &path, char *&data) {
+bool fileOpen(const Common::Path &path, char *&data) {
 	if (path.empty())
 		return false;
 
@@ -58,7 +58,7 @@ bool FileOpen(const Common::Path &path, char *&data) {
 	return true;
 }
 
-bool FileOpen(const Common::Path &path, Common::File *file) {
+bool fileOpen(const Common::Path &path, Common::File *file) {
 	if (path.empty())
 		return false;
 
