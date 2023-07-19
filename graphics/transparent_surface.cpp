@@ -32,6 +32,8 @@
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
 
+#include "graphics/managed_surface.h"
+
 namespace Graphics {
 
 static const int kAModShift = 0;
@@ -54,6 +56,29 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 }
 
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
+	// TESTING PURPOSES
+	// ManagedSurface s(&target, DisposeAfterUse::NO);
+	// ManagedSurface me(this, DisposeAfterUse::NO);
+	// Common::Rect srcRect(0, 0, me.w, me.h);
+	// if (pPartRect) {
+	// 	srcRect = *pPartRect;
+	// }
+	// if (width == -1) {
+	// 	width = srcRect.width();
+	// }
+	// if (height == -1) {
+	// 	height = srcRect.height();
+	// }
+	// auto rect =  s.blendBlitFrom(me,
+	// 	srcRect,
+	// 	Common::Rect(posX, posY, posX + width, posY + height),
+	// 	flipping,
+	// 	color,
+	// 	blendMode,
+	// 	_alphaMode
+	// );
+	// target.copyFrom(*s.surfacePtr());
+	// return rect;
 
 	Common::Rect retSize;
 	retSize.top = 0;
@@ -92,11 +117,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
+		debug("Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
 			  pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
+		debug("Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
 			  srcImage.w, srcImage.h, color, width, height);
 	}
 
@@ -158,39 +183,45 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 				(byte *)target.getBasePtr(0, 0),
 				(byte *)img->getBasePtr(0, 0),
 				target.pitch, img->pitch,
-				posX, posY, img->w, img->h, color, flipping);
+				posX, posY, img->w, img->h,
+				color, flipping);
 		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
 			Graphics::binaryBlendBlit(
 				(byte *)target.getBasePtr(0, 0),
 				(byte *)img->getBasePtr(0, 0),
 				target.pitch, img->pitch,
-				posX, posY, img->w, img->h, color, flipping);
+				posX, posY, img->w, img->h,
+				color, flipping);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
 				Graphics::additiveBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				Graphics::subtractiveBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			} else if (blendMode == BLEND_MULTIPLY) {
 				Graphics::multiplyBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				Graphics::alphaBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			}
 		}
 
@@ -312,39 +343,45 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 				(byte *)target.getBasePtr(0, 0),
 				(byte *)img->getBasePtr(0, 0),
 				target.pitch, img->pitch,
-				posX, posY, img->w, img->h, color, flipping);
+				posX, posY, img->w, img->h,
+				color, flipping);
 		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
 			Graphics::binaryBlendBlit(
 				(byte *)target.getBasePtr(0, 0),
 				(byte *)img->getBasePtr(0, 0),
 				target.pitch, img->pitch,
-				posX, posY, img->w, img->h, color, flipping);
+				posX, posY, img->w, img->h,
+				color, flipping);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
 				Graphics::additiveBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				Graphics::subtractiveBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			} else if (blendMode == BLEND_MULTIPLY) {
 				Graphics::multiplyBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				Graphics::alphaBlendBlit(
 					(byte *)target.getBasePtr(0, 0),
 					(byte *)img->getBasePtr(0, 0),
 					target.pitch, img->pitch,
-					posX, posY, img->w, img->h, color, flipping);
+					posX, posY, img->w, img->h,
+				color, flipping);
 			}
 		}
 

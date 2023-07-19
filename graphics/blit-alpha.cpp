@@ -194,12 +194,12 @@ bool setAlpha(byte *dst, const byte *src,
  * Optimized version of doBlit to be used with multiply blended blitting
  */
 template<bool rgbmod, bool alphamod>
-static void doBlitMultiplyBlendLogic(byte *ino, byte *outo,
+static void doBlitMultiplyBlendLogic(const byte *ino, byte *outo,
 									 uint32 width, uint32 height,
 									 uint32 outPitch, int32 inStep,
 									 int32 inoStep, uint32 color) {
 
-	byte *in;
+	const byte *in;
 	byte *out;
 
 	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
@@ -244,7 +244,7 @@ static void doBlitMultiplyBlendLogic(byte *ino, byte *outo,
 }
 
 // Only blits to and from 32bpp images
-void multiplyBlendBlit(byte *dst, byte *src,
+void multiplyBlendBlit(byte *dst, const byte *src,
 					   const uint dstPitch, const uint srcPitch,
 					   const int posX, const int posY,
 					   const uint width, const uint height,
@@ -266,7 +266,7 @@ void multiplyBlendBlit(byte *dst, byte *src,
 		yp = height - 1;
 	}
 
-	byte *ino = src + yp * srcPitch + xp * 4;
+	const byte *ino = src + yp * srcPitch + xp * 4;
 	byte *outo = dst + posY * dstPitch + posX * 4;
 
 	if (rgbmod) {
@@ -296,9 +296,9 @@ void multiplyBlendBlit(byte *dst, byte *src,
  * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
  */
 template<bool rgbmod, bool alphamod>
-static void doBlitAlphaBlendLogic(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+static void doBlitAlphaBlendLogic(const byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
 
-	byte *in;
+	const byte *in;
 	byte *out;
 
 	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
@@ -333,7 +333,7 @@ static void doBlitAlphaBlendLogic(byte *ino, byte *outo, uint32 width, uint32 he
 }
 
 // Only blits to and from 32bpp images
-void alphaBlendBlit(byte *dst, byte *src,
+void alphaBlendBlit(byte *dst, const byte *src,
 					const uint dstPitch, const uint srcPitch,
 					const int posX, const int posY,
 					const uint width, const uint height,
@@ -355,7 +355,7 @@ void alphaBlendBlit(byte *dst, byte *src,
 		yp = height - 1;
 	}
 
-	byte *ino = src + yp * srcPitch + xp * 4;
+	const byte *ino = src + yp * srcPitch + xp * 4;
 	byte *outo = dst + posY * dstPitch + posX * 4;
 
 	if (rgbmod) {
@@ -377,11 +377,11 @@ void alphaBlendBlit(byte *dst, byte *src,
  * Optimized version of doBlit to be used with subtractive blended blitting
  */
 template<bool rgbmod>
-static void doBlitSubtractiveBlendLogic(byte *ino, byte *outo,
+static void doBlitSubtractiveBlendLogic(const byte *ino, byte *outo,
 										uint32 width, uint32 height,
 										uint32 pitch, int32 inStep,
 										int32 inoStep, uint32 color) {
-	byte *in;
+	const byte *in;
 	byte *out;
 
 	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
@@ -421,7 +421,7 @@ static void doBlitSubtractiveBlendLogic(byte *ino, byte *outo,
 }
 
 // Only blits to and from 32bpp images
-void subtractiveBlendBlit(byte *dst, byte *src,
+void subtractiveBlendBlit(byte *dst, const byte *src,
 						  const uint dstPitch, const uint srcPitch,
 						  const int posX, const int posY,
 						  const uint width, const uint height,
@@ -442,7 +442,7 @@ void subtractiveBlendBlit(byte *dst, byte *src,
 		yp = height - 1;
 	}
 
-	byte *ino = src + yp * srcPitch + xp * 4;
+	const byte *ino = src + yp * srcPitch + xp * 4;
 	byte *outo = dst + posY * dstPitch + posX * 4;
 
 	if (rgbmod) {
@@ -456,11 +456,11 @@ void subtractiveBlendBlit(byte *dst, byte *src,
  * Optimized version of doBlit to be used with additive blended blitting
  */
 template<bool rgbmod, bool alphamod>
-static void doBlitAdditiveBlendLogic(byte *ino, byte *outo,
+static void doBlitAdditiveBlendLogic(const byte *ino, byte *outo,
 									 uint32 width, uint32 height, uint32 pitch,
 									 int32 inStep, int32 inoStep, uint32 color) {
 
-	byte *in;
+	const byte *in;
 	byte *out;
 
 	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
@@ -505,7 +505,7 @@ static void doBlitAdditiveBlendLogic(byte *ino, byte *outo,
 }
 
 // Only blits to and from 32bpp images
-void additiveBlendBlit(byte *dst, byte *src,
+void additiveBlendBlit(byte *dst, const byte *src,
 					   const uint dstPitch, const uint srcPitch,
 					   const int posX, const int posY,
 					   const uint width, const uint height,
@@ -527,7 +527,7 @@ void additiveBlendBlit(byte *dst, byte *src,
 		yp = height - 1;
 	}
 
-	byte *ino = src + yp * srcPitch + xp * 4;
+	const byte *ino = src + yp * srcPitch + xp * 4;
 	byte *outo = dst + posY * dstPitch + posX * 4;
 
 	if (rgbmod) {
@@ -545,7 +545,7 @@ void additiveBlendBlit(byte *dst, byte *src,
 	}
 }
 
-void opaqueBlendBlit(byte *dst, byte *src,
+void opaqueBlendBlit(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
@@ -564,10 +564,10 @@ void opaqueBlendBlit(byte *dst, byte *src,
 		yp = height - 1;
 	}
 
-	byte *ino = src + yp * srcPitch + xp * 4;
+	const byte *ino = src + yp * srcPitch + xp * 4;
 	byte *outo = dst + posY * dstPitch + posX * 4;
 	
-	byte *in;
+	const byte *in;
 	byte *out;
 
 	for (uint32 i = 0; i < height; i++) {
@@ -583,7 +583,7 @@ void opaqueBlendBlit(byte *dst, byte *src,
 	}
 }
 
-void binaryBlendBlit(byte *dst, byte *src,
+void binaryBlendBlit(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
@@ -602,17 +602,17 @@ void binaryBlendBlit(byte *dst, byte *src,
 		yp = height - 1;
 	}
 
-	byte *ino = src + yp * srcPitch + xp * 4;
+	const byte *ino = src + yp * srcPitch + xp * 4;
 	byte *outo = dst + posY * dstPitch + posX * 4;
 
-	byte *in;
+	const byte *in;
 	byte *out;
 
 	for (uint32 i = 0; i < height; i++) {
 		out = outo;
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
-			uint32 pix = *(uint32 *)in;
+			uint32 pix = *(const uint32 *)in;
 			int a = in[kAIndex];
 
 			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)

@@ -20,6 +20,7 @@
  */
 
 #include "graphics/managed_surface.h"
+#include "graphics/blit.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "common/endian.h"
@@ -727,6 +728,104 @@ void ManagedSurface::transBlitFromInner(const Surface &src, const Common::Rect &
 }
 
 #undef HANDLE_BLIT
+
+Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+										   const Common::Rect &destRect, int flipping,
+										   uint32 colorMod,
+										   TSpriteBlendMode blend, int alphaType) {
+	Common::Rect srcArea = srcRect, dstArea = destRect;
+	if (src.format != getSupportedBlendBlitPixelFormat() ||
+		format != getSupportedBlendBlitPixelFormat() ||
+		(colorMod & BLENDBLIT_RGB(0, 0, 0)) == 0) {
+		return Common::Rect(0, 0, 0, 0);
+	}
+
+	if (flipping & FLIP_H) {
+		srcArea.left = src.w - srcArea.right;
+	}
+
+	if (flipping & FLIP_V) {
+		srcArea.top = src.h - srcArea.bottom;
+	}
+
+	if (dstArea.left < 0) {
+		srcArea.left += -dstArea.left;
+		dstArea.left = 0;
+	}
+
+	if (dstArea.top < 0) {
+		srcArea.top += -dstArea.top;
+		dstArea.top = 0;
+	}
+
+	if (dstArea.right > w) {
+		srcArea.right -= dstArea.right - w;
+		dstArea.right = w;
+	}
+
+	if (dstArea.bottom > h) {
+		srcArea.bottom -= dstArea.bottom - h;
+		dstArea.bottom = h;
+	}
+
+	if (!dstArea.isEmpty() && !srcArea.isEmpty()) {
+		if (colorMod == 0xffffffff && blend == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
+			Graphics::opaqueBlendBlit(
+				(byte *)getBasePtr(0, 0),
+				(const byte *)src.getBasePtr(srcArea.left, srcArea.top),
+				pitch, src.pitch,
+				dstArea.left, dstArea.top,
+				dstArea.width(), dstArea.height(),
+				colorMod, flipping);
+		} else if (colorMod == 0xffffffff && blend == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
+			Graphics::binaryBlendBlit(
+				(byte *)getBasePtr(0, 0),
+				(const byte *)src.getBasePtr(srcArea.left, srcArea.top),
+				pitch, src.pitch,
+				dstArea.left, dstArea.top,
+				dstArea.width(), dstArea.height(),
+				colorMod, flipping);
+		} else {
+			if (blend == BLEND_ADDITIVE) {
+				Graphics::additiveBlendBlit(
+					(byte *)getBasePtr(0, 0),
+				(const byte *)src.getBasePtr(srcArea.left, srcArea.top),
+					pitch, src.pitch,
+					dstArea.left, dstArea.top,
+					dstArea.width(), dstArea.height(),
+					colorMod, flipping);
+			} else if (blend == BLEND_SUBTRACTIVE) {
+				Graphics::subtractiveBlendBlit(
+					(byte *)getBasePtr(0, 0),
+				(const byte *)src.getBasePtr(srcArea.left, srcArea.top),
+					pitch, src.pitch,
+					dstArea.left, dstArea.top,
+					dstArea.width(), dstArea.height(),
+					colorMod, flipping);
+			} else if (blend == BLEND_MULTIPLY) {
+				Graphics::multiplyBlendBlit(
+					(byte *)getBasePtr(0, 0),
+				(const byte *)src.getBasePtr(srcArea.left, srcArea.top),
+					pitch, src.pitch,
+					dstArea.left, dstArea.top,
+					dstArea.width(), dstArea.height(),
+					colorMod, flipping);
+			} else {
+				assert(blend == BLEND_NORMAL);
+				Graphics::alphaBlendBlit(
+					(byte *)getBasePtr(0, 0),
+				(const byte *)src.getBasePtr(srcArea.left, srcArea.top),
+					pitch, src.pitch,
+					dstArea.left, dstArea.top,
+					dstArea.width(), dstArea.height(),
+					colorMod, flipping);
+			}
+		}
+		return Common::Rect(0, 0, dstArea.width(), dstArea.height());
+	} else {
+		return Common::Rect(0, 0, 0, 0);
+	}
+}
 
 void ManagedSurface::markAllDirty() {
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
