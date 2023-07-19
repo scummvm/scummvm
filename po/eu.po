@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 13:30+0000\n"
+"POT-Creation-Date: 2023-07-19 16:51+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -6809,14 +6809,14 @@ msgid ""
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
 
-#: engines/mm/shared/utils/engine_data.cpp:277
-#: engines/ultima/shared/engine/data_archive.cpp:80
+#: engines/mm/shared/utils/engine_data.cpp:279
+#: engines/ultima/shared/engine/data_archive.cpp:83
 #, fuzzy, c-format
 msgid "Could not locate engine data %s"
 msgstr "Gordetako jokoa kargatu?"
 
-#: engines/mm/shared/utils/engine_data.cpp:295
-#: engines/ultima/shared/engine/data_archive.cpp:98
+#: engines/mm/shared/utils/engine_data.cpp:297
+#: engines/ultima/shared/engine/data_archive.cpp:101
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
