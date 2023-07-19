@@ -26,6 +26,7 @@
 #include "common/textconsole.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
+#include "common/debug.h"
 
 namespace Common {
 
@@ -88,9 +89,8 @@ void Archive::dumpArchive(String destPath) {
 	uint dataSize = 0;
 
 	for (auto &f : files) {
-		Common::String filename = Common::punycode_encodefilename(f->getName());
-		warning("File: %s", filename.c_str());
-
+		Common::Path filePath = f->getPathInArchive().punycodeEncode();
+		debug(1, "File: %s", filePath.toString().c_str());
 		Common::SeekableReadStream *stream = f->createReadStream();
 
 		uint32 len = stream->size();
@@ -103,9 +103,9 @@ void Archive::dumpArchive(String destPath) {
 		stream->read(data, len);
 
 		Common::DumpFile out;
-		Common::String outname = destPath + filename;
-		if (!out.open(outname, true)) {
-			warning("Archive::dumpArchive(): Can not open dump file %s", outname.c_str());
+		Common::Path outPath = Common::Path(destPath).join(filePath);
+		if (!out.open(outPath.toString(), true)) {
+			warning("Archive::dumpArchive(): Can not open dump file %s", outPath.toString().c_str());
 		} else {
 			out.write(data, len);
 			out.flush();
