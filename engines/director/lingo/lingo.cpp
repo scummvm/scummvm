@@ -1743,18 +1743,18 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 
 	switch (memberID.type) {
 	case STRING:
-		{
-			CastMember *member = movie->getCastMemberByNameAndType(memberID.asString(), castLib.asInt(), type);
-			if (member)
-				return CastMemberID(member->getID(), castLib.asInt());
-
-			warning("Lingo::resolveCastMember: reference to non-existent cast member: %s", memberID.asString().c_str());
-			return CastMemberID(-1, castLib.asInt());
-		}
+		return movie->getCastMemberIDByNameAndType(memberID.asString(), castLib.asInt(), type);
 		break;
 	case INT:
 	case FLOAT:
-		return CastMemberID(memberID.asInt(), castLib.asInt());
+		if (castLib.asInt() == 0) {
+			// When specifying 0 as the castlib, D5 will assume this
+			// means the default (i.e. first) cast library. It will not
+			// try other libraries for matches if the member is a number.
+			return CastMemberID(memberID.asInt(), DEFAULT_CAST_LIB);
+		} else {
+			return CastMemberID(memberID.asInt(), castLib.asInt());
+		}
 		break;
 	case VOID:
 		warning("Lingo::resolveCastMember: reference to VOID member ID");

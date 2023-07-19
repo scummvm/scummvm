@@ -738,6 +738,12 @@ void LC::cb_v4theentitypush() {
 		case kTEAItemId:
 			{
 				Datum id = g_lingo->pop();
+				if (entity == kTheCast && g_director->getVersion() >= 500) {
+					// For "the member", D5 and above have a lib ID followed by a member ID
+					// Pre-resolve them here.
+					CastMemberID resolved = g_lingo->resolveCastMember(g_lingo->pop(), id, kCastTypeAny);
+					id = Datum(resolved);
+				}
 				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
 				result = g_lingo->getTheEntity(entity, id, field);
 			}

@@ -33,6 +33,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/window.h"
+#include "director/castmember/castmember.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 
@@ -428,15 +429,38 @@ bool Movie::eraseCastMember(CastMemberID memberID) {
 	return false;
 }
 
-CastMember *Movie::getCastMemberByNameAndType(const Common::String &name, int castLib, CastType type) {
-	CastMember *result = nullptr;
+CastMemberID Movie::getCastMemberIDByNameAndType(const Common::String &name, int castLib, CastType type) {
+	CastMemberID result(-1, 0);
 	if (_casts.contains(castLib)) {
-		result = _casts.getVal(castLib)->getCastMemberByNameAndType(name, type);
-		if (result == nullptr && _sharedCast) {
-			result = _sharedCast->getCastMemberByNameAndType(name, type);
+		CastMember *member = _casts.getVal(castLib)->getCastMemberByNameAndType(name, type);
+		if (member) {
+			result = CastMemberID(member->getID(), castLib);
+		}
+		if (result.member == -1 && _sharedCast) {
+			member = _sharedCast->getCastMemberByNameAndType(name, type);
+			if (member) {
+				result = CastMemberID(member->getID(), castLib);
+			}
+		}
+	} else if (castLib == 0) {
+		// Search all cast libraries for a match
+		for (auto &cast : _casts) {
+			CastMember *member = cast._value->getCastMemberByNameAndType(name, type);
+			if (member) {
+				result = CastMemberID(member->getID(), cast._key);
+				break;
+			}
+		}
+		if (result.member == -1 && _sharedCast) {
+			CastMember *member = _sharedCast->getCastMemberByNameAndType(name, type);
+			if (member)
+				result = CastMemberID(member->getID(), DEFAULT_CAST_LIB);
 		}
 	} else {
-		warning("Movie::getCastMemberByNameAndType: Unknown castLib %d", castLib);
+		warning("Movie::getCastMemberIDByNameAndType: Unknown castLib %d", castLib);
+	}
+	if (result.member == -1) {
+		warning("Movie::getCastMemberIDByNameAndType: No match found for member name %s and lib %d", name.c_str(), castLib);
 	}
 	return result;
 }
