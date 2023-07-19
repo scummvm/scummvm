@@ -129,7 +129,12 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	_hadError = false;
 
 	// Preprocess the code for ease of the parser
-	Common::String codeNorm = codePreprocessor(code, archive, type, id, preprocFlags).encode(Common::kUtf8);
+	Common::U32String codePrep = codePreprocessor(code, archive, type, id, preprocFlags);
+
+	// Search the methods
+	mainContext->_methodNames = prescanMethods(codePrep);
+
+	Common::String codeNorm = codePrep.encode(Common::kUtf8);
 	const char *utf8Code = codeNorm.c_str();
 
 	// Parse the Lingo and build an AST

@@ -208,6 +208,7 @@ public:
 	Common::Array<Datum> _constants;
 	DatumHash _properties;
 	Common::HashMap<uint32, Datum> _objArray;
+	MethodHash _methodNames;
 
 private:
 	bool _onlyInLctxContexts = false;

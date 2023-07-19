@@ -130,6 +130,7 @@ private:
 public:
 	// lingo-preprocessor.cpp
 	Common::U32String codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, uint32 flags);
+	MethodHash prescanMethods(const Common::U32String &code);
 
 	// lingo-patcher.cpp
 	Common::U32String patchLingoCode(const Common::U32String &line, LingoArchive *archive, ScriptType type, CastMemberID id, int linenumber);

@@ -75,6 +75,8 @@ struct FuncDesc {
 
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
+typedef Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MethodHash;
+
 struct BuiltinProto {
 	const char *name;
 	void (*func)(int);
