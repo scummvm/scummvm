@@ -22,7 +22,9 @@
 #ifndef M4_BURGER_GLOBALS_H
 #define M4_BURGER_GLOBALS_H
 
-#include "m4/core/globals.h"
+#include "common/array.h"
+#include "common/serializer.h"
+#include "m4/m4_types.h"
 
 namespace M4 {
 namespace Burger {
@@ -547,7 +549,7 @@ enum {
 	V511 = 511
 };
 
-class GlobalVars : public M4::GlobalVars {
+class GlobalVars : public Common::Array<uint32> {
 private:
 	Common::Array<byte> _convSave;
 public:
@@ -571,6 +573,10 @@ public:
 	int32 get_boonsville_time_and_display(bool showTime = false);
 	void set_boonsville_time(int32 time);
 
+	/**
+	 * Save/load values to a save file
+	 */
+	void sync(Common::Serializer &s);
 };
 
 } // namespace Burger

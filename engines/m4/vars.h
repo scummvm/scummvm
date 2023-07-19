@@ -82,7 +82,6 @@ public:
 	virtual ~Vars();
 	bool init();
 
-	virtual GlobalVars *getGlobals() = 0;
 	virtual Interface *getInterface() = 0;
 	virtual Walker *getWalker() = 0;
 	virtual void global_menu_system_init() = 0;
@@ -183,7 +182,6 @@ public:
 };
 
 #define _G(X) (g_vars->_##X)
-#define _GV() (*g_vars->getGlobals())
 #define _GI() (*g_vars->getInterface())
 #define _GW() (*g_vars->getWalker())
 #define _GWS(X) _G(ws)._##X

@@ -52,6 +52,10 @@ void BurgerEngine::showEngineInfo() {
 	debug("Orion Burger tastes great!\n");
 }
 
+void BurgerEngine::syncGlobals(Common::Serializer &s) {
+	g_globals->_globals.sync(s);
+}
+
 void BurgerEngine::global_daemon() {
 	error("TODO: global_daemon_code");
 }

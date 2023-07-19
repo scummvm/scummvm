@@ -55,6 +55,8 @@ public:
 	 */
 	void showEngineInfo() override;
 
+	void syncGlobals(Common::Serializer &s) override;
+
 	void global_daemon() override;
 };
 

@@ -66,18 +66,18 @@ machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int
 	machine *m;
 	StreamFile *streamFil = new StreamFile(seriesName);
 
-	//store the frameRate in g_temp1
-	//if it is < 0, the default frame rate for the ss will be used
+	// Store the frameRate in g_temp1
+	// If it is < 0, the default frame rate for the ss will be used
 	_G(globals)[GLB_TEMP_1] = frameRate << 16;
 
-	//an unusual way to use global regs, but a FILE* is as good a value as any other...
+	// An unusual way to use global regs, but a FILE* is as good a value as any other...
 
-	_G(globals)[GLB_TEMP_4] = (frac16)(streamFil); //apr29
+	_G(globals)[GLB_TEMP_4] = (frac16)(streamFil);
 
-	//set the callback trigger
+	// Set the callback trigger
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
 
-	//set the layer
+	// Set the layer
 	_G(globals)[GLB_TEMP_6] = layer << 16;
 
 	m = kernel_spawn_machine(seriesName, HASH_STREAM_MACHINE, series_trigger_dispatch_callback);

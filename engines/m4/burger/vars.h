@@ -92,9 +92,6 @@ public:
 	Vars();
 	virtual ~Vars();
 
-	GlobalVars *getGlobals() override {
-		return &_globals;
-	}
 	M4::Interface *getInterface() override {
 		return &_interface;
 	}
