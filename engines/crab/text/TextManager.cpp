@@ -70,7 +70,7 @@ void TextManager::init() {
 				TTF_SetFontHinting(font[pos], TTF_HINTING_LIGHT);
 #endif
 				Common::File file;
-				FileOpen(path->value(), &file);
+				fileOpen(path->value(), &file);
 				_font[pos] = Graphics::loadTTFFont(file, StringToNumber<int>(size->value()));
 			}
 		}

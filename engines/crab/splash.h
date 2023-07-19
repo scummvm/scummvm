@@ -65,7 +65,7 @@ public:
 	void setUI();
 
 	// We don't need to save game state here
-	void AutoSave() {}
+	void autoSave() {}
 };
 
 }

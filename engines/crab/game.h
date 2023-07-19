@@ -59,7 +59,7 @@ private:
 		STATE_HELP,
 		STATE_LOSE_MENU,
 		STATE_LOSE_LOAD
-	} state;
+	} _state;
 
 	enum SaveGameType {
 		SAVEGAME_NORMAL, // Save the game normally when user uses the save menu
@@ -70,71 +70,73 @@ private:
 
 	// These things don't need to be saved
 	bool _isInited;
-	pyrodactyl::ui::HUD hud;
-	Common::Array<pyrodactyl::event::EventResult> event_res;
-	pyrodactyl::ui::ParagraphData pop_default;
-	pyrodactyl::ui::DebugConsole debug_console;
+	pyrodactyl::ui::HUD _hud;
+	Common::Array<pyrodactyl::event::EventResult> _eventRes;
+	pyrodactyl::ui::ParagraphData _popDefault;
+	pyrodactyl::ui::DebugConsole _debugConsole;
 
 	// These things need to be saved
-	pyrodactyl::ui::Map map;
-	pyrodactyl::event::Manager gem;
-	pyrodactyl::event::Info info;
-	pyrodactyl::level::Level level;
-	pyrodactyl::event::TriggerSet game_over;
+	pyrodactyl::ui::Map _map;
+	pyrodactyl::event::Manager _gem;
+	pyrodactyl::event::Info _info;
+	pyrodactyl::level::Level _level;
+	pyrodactyl::event::TriggerSet _gameOver;
 
 	// Keeps track of the time player has spent in the game
-	GameClock clock;
+	GameClock _clock;
 
 	// The name of the auto save and quick save files
 	struct SaveFile {
-		bool auto_slot;
-		Common::String auto_1, auto_2, auto_quit, quick, ironman;
+		bool _autoSlot;
+		Common::String _auto1, _auto2, _autoQuit, _quick, _ironman;
 
-		SaveFile() : auto_1("AutoSave 1"), auto_2("AutoSave 2"), auto_quit("AutoSave"), quick("Quick Save") { auto_slot = false; }
+		SaveFile() : _auto1("autoSave 1"), _auto2("autoSave 2"), _autoQuit("autoSave"), _quick("Quick Save") { _autoSlot = false; }
 
 		void load(rapidxml::xml_node<char> *node) {
-			loadStr(auto_1, "auto_1", node);
-			loadStr(auto_2, "auto_2", node);
-			loadStr(auto_quit, "quit", node);
-			loadStr(quick, "quick", node);
+			loadStr(_auto1, "auto_1", node);
+			loadStr(_auto2, "auto_2", node);
+			loadStr(_autoQuit, "quit", node);
+			loadStr(_quick, "quick", node);
 		}
-	} savefile;
+	} _savefile;
 
-	static void Quit(bool &ShouldChangeState, GameStateID &NewStateID, const GameStateID &NewStateVal);
+	static void quit(bool &shouldChangeState, GameStateID &newStateId, const GameStateID &newStateVal);
 
-	bool ApplyResult();
-	void ApplyResult(LevelResult result);
+	bool applyResult();
+	void applyResult(LevelResult result);
 
 	// Load a level
-	bool LoadLevel(const Common::String &id, int player_x = -1, int player_y = -1);
+	bool loadLevel(const Common::String &id, int playerX = -1, int playerY = -1);
 
-	void ToggleState(const State &s);
+	void toggleState(const State &s);
 
 	// A nice simple function for saving games
-	void CreateSaveGame(const SaveGameType &savetype);
+	void createSaveGame(const SaveGameType &savetype);
 
-	Common::String FullPath(const Common::String &filename) {
+	Common::String fullPath(const Common::String &filename) {
 		Common::String res = "CRAB_" + filename;
 		res += g_engine->_filePath->save_ext;
 		return res;
 	}
 
 	// Load the current player image
-	void PlayerImg() { hud.playerImg(g_engine->_eventStore->_img[info.playerImg()]); }
+	void playerImg() {
+		_hud.playerImg(g_engine->_eventStore->_img[_info.playerImg()]);
+	}
 
 public:
 	Game() : _isInited(false) {}
 
-	void Init(const Common::String &filename);
+	void init(const Common::String &filename);
 
-	void StartNewGame();
-	void LoadGame();
+	void startNewGame();
+	void loadGame();
 
-	void handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
+	void handleEvents(Common::Event &event, bool &shouldChangeState, GameStateID &newStateId);
 #if 0
 	void handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #endif
-	void internalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
+	void internalEvents(bool &shouldChangeState, GameStateID &newStateId);
 	void draw();
 
 	void loadState(Common::SeekableReadStream *stream);
@@ -142,7 +144,9 @@ public:
 	// Raw function to save game to file - generally, using the CreateSaveGame function is recommended
 	void saveState(Common::SeekableWriteStream *stream);
 
-	void AutoSave() { CreateSaveGame(SAVEGAME_EXIT); }
+	void autoSave() {
+		createSaveGame(SAVEGAME_EXIT);
+	}
 
 	void setUI();
 };

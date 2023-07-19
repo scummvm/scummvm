@@ -65,7 +65,7 @@ bool Image::load(const Common::String &path) {
 	Common::File file;
 	ImageDecoder decoder;
 
-	if (FileOpen(path, &file) && decoder.loadStream(file)) {
+	if (fileOpen(path, &file) && decoder.loadStream(file)) {
 		_texture = new Graphics::ManagedSurface(decoder.getSurface()->w, decoder.getSurface()->h, *g_engine->_format);
 		_texture->blitFrom(decoder.getSurface());
 		_w = _texture->w;

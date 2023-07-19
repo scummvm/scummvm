@@ -45,7 +45,7 @@ void XMLDoc::load(const Common::String &filename) {
 	if (ready())
 		_doc.clear();
 
-	if (FileOpen(path, _text) && _text)
+	if (fileOpen(path, _text) && _text)
 		_doc.parse<0>(_text);
 }
 

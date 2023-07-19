@@ -49,7 +49,7 @@ public:
 	virtual void internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) = 0;
 	virtual void draw() = 0;
 	virtual void setUI() = 0;
-	virtual void AutoSave() = 0;
+	virtual void autoSave() = 0;
 	virtual ~GameState(){};
 };
 
