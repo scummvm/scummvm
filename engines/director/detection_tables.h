@@ -307,6 +307,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mmiqtest",			"Multimedia IQ Test" },
 	{ "mmmath3",			"Mission Masters Math Grade 3: Defeat Dirty D!" },
 	{ "mode",				"MODE" },
+	{ "moominhide",			"Hide and Seek with Moomin"},
 	{ "moominparty",		"The Great Moomin Party" },
 	{ "mrsquack",			"Reading with Peter Cottontail: The Story of Mrs. Quack" },
 	{ "mummy",				"Mummy: Tomb of the Pharaoh" },
@@ -4683,6 +4684,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("monja", "", "monja", "cd6695c8488c2ad352336af5afdcf5bd", 481803, Common::JA_JPN, 404),
 	WINGAME1t_l("monja", "", "MONJA.EXE", "5bc2c8a824528ec4de0f8d8feb8f004e", 212008995, Common::JA_JPN, 404),
+
+	// Norwegian release: "Lek gjemsel med Mummitrollet"
+	WINGAME2t_l("moominhide", "Windows", "MUMIN.EXE", "c51444be1e70bb731d0c465d5bdd8ed2", 696095,
+				"01DALEN.DXR", "a100f801a8f0408a286d84c51e822182", 4016704, Common::NB_NOR, 404),
 
 	MACGAME1_l("moritaka", "", "WATARASE-BASHI", "c761bfe3a0865ca0f43cb5556230ed5b", 107527, Common::JA_JPN, 404),
 	PIPGAME1_l("moritaka", "", "Pippin Projector", "b708dcf9cdc19e6e186000ad93e41997", 73705, Common::JA_JPN, 404),
