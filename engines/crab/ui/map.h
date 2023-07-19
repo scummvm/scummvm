@@ -48,99 +48,100 @@ namespace pyrodactyl {
 namespace ui {
 class Map {
 	// We have multiple world maps, each with their own data
-	Common::Array<MapData> map;
+	Common::Array<MapData> _map;
 
 	// Index of the currently visible map
-	unsigned int cur;
+	unsigned int _cur;
 
 	// The currently loaded map background image
-	pyrodactyl::image::Image img_bg, img_overlay;
+	pyrodactyl::image::Image _imgBg, _imgOverlay;
 
 	// The position at which map image has to be drawn
-	Element pos;
+	Element _pos;
 
 	// Foreground image of the map
-	ImageData fg;
+	ImageData _fg;
 
 	// size = Dimensions of the map image
 	// mouse = The current coordinates of the mouse
 	// vel = The speed at which the map is moving
-	Vector2i size, mouse, vel;
+	Vector2i _size, _mouse, _vel;
 
 	// The reference speed of the camera movement
-	int speed;
+	int _speed;
 
 	// The pan toggle is used when the mouse is down and moving simultaneously
 	// overlay = true if we are showing a more detailed world map
-	bool pan, overlay;
+	bool _pan, _overlay;
 
 	// The camera size and position for the map
 	// Bounds is the area we draw the map elements for
-	Rect camera, bounds;
+	Rect _camera, _bounds;
 
 	// The button to toggle between showing the overlay or not
-	ToggleButton bu_overlay;
+	ToggleButton _buOverlay;
 
 	// All data for drawing map markers
-	MapMarkerMenu marker;
+	MapMarkerMenu _marker;
 
 	// The map name is drawn here
-	HoverInfo title;
+	HoverInfo _title;
 
 	// The buttons for scrolling the map (only visible if there is area to scroll)
-	ButtonMenu scroll;
+	ButtonMenu _scroll;
 
 	// The menu for fast travel locations
-	MapButtonMenu travel;
+	MapButtonMenu _travel;
 
-	void CalcBounds() {
-		bounds.x = pos.x;
-		bounds.y = pos.y;
-		bounds.w = camera.w;
-		bounds.h = camera.h;
+	void calcBounds() {
+		_bounds.x = _pos.x;
+		_bounds.y = _pos.y;
+		_bounds.w = _camera.w;
+		_bounds.h = _camera.h;
 	}
 
 public:
 	// The currently selected location
-	Common::String cur_loc;
+	Common::String _curLoc;
 
 	// The coordinates of the player's current location
-	Vector2i player_pos;
+	Vector2i _playerPos;
 
 	Map() {
-		speed = 1;
-		pan = false;
-		cur = 0;
-		overlay = true;
+		_speed = 1;
+		_pan = false;
+		_cur = 0;
+		_overlay = true;
 	}
+
 	~Map() {
-		img_bg.deleteImage();
-		img_overlay.deleteImage();
+		_imgBg.deleteImage();
+		_imgOverlay.deleteImage();
 	}
 
 	void load(const Common::String &filename, pyrodactyl::event::Info &info);
 
 	void draw(pyrodactyl::event::Info &info);
-	bool handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
+	bool handleEvents(pyrodactyl::event::Info &info, const Common::Event &event);
 #if 0
 	bool handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
 	void internalEvents(pyrodactyl::event::Info &info);
 
-	void Center(const Vector2i &pos);
-	void Move(const Common::Event &Event);
+	void center(const Vector2i &pos);
+	void move(const Common::Event &event);
 #if 0
 	void Move(const SDL_Event &Event);
 #endif
-	void Validate();
+	void validate();
 
-	void RevealAdd(const int &id, const Rect &area);
-	void DestAdd(const Common::String &name, const int &x, const int &y);
-	void DestDel(const Common::String &name);
-	void SelectDest(const Common::String &name);
+	void revealAdd(const int &id, const Rect &area);
+	void destAdd(const Common::String &name, const int &x, const int &y);
+	void destDel(const Common::String &name);
+	void selectDest(const Common::String &name);
 
-	void Update(pyrodactyl::event::Info &info);
-	void SetImage(const unsigned int &val, const bool &force = false);
+	void update(pyrodactyl::event::Info &info);
+	void setImage(const unsigned int &val, const bool &force = false);
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);

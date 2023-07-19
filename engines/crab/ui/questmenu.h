@@ -82,8 +82,8 @@ public:
 	bool handleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event);
 #endif
 
-	void UseKeyboard(const bool &val) { menu.UseKeyboard(val); }
-	void AssignPaths() { menu.AssignPaths(); }
+	void UseKeyboard(const bool &val) { menu.useKeyboard(val); }
+	void AssignPaths() { menu.assignPaths(); }
 
 	void Marker(const Common::String &title, const bool &val);
 

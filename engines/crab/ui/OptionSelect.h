@@ -40,26 +40,25 @@ namespace Crab {
 namespace pyrodactyl {
 namespace ui {
 class OptionSelect {
-	struct
-	{
-		Common::Array<Common::String> text;
-		TextData data;
+	struct {
+		Common::Array<Common::String> _text;
+		TextData _data;
 
 		void draw(const int &index) {
-			if (index >= 0 && (unsigned int)index < text.size())
-				data.draw(text[index]);
+			if (index >= 0 && (unsigned int)index < _text.size())
+				_data.draw(_text[index]);
 		}
 	} option;
 
-	Button prev, next;
-	bool usekeyboard;
+	Button _prev, _next;
+	bool _usekeyboard;
 
 public:
-	int cur;
+	int _cur;
 
 	OptionSelect() {
-		cur = 0;
-		usekeyboard = false;
+		_cur = 0;
+		_usekeyboard = false;
 	}
 	void load(rapidxml::xml_node<char> *node);
 

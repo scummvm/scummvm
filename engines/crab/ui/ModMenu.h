@@ -45,7 +45,7 @@ public:
 
 	void load(const Common::String &filename);
 
-	bool handleEvents(const Common::Event &Event);
+	bool handleEvents(const Common::Event &event);
 #if 0
 	bool handleEvents(const SDL_Event &Event);
 #endif

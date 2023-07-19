@@ -64,7 +64,7 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 		_textSpeed.load(node->first_node("text_speed"));
 
 	// Sync popup text value with actual value
-	for (auto &i : _textSpeed.element)
+	for (auto &i : _textSpeed._element)
 		i._state = (i._val == g_engine->_screenSettings->text_speed);
 }
 
@@ -89,7 +89,7 @@ void GeneralSettingMenu::handleEvents(const Common::Event &event) {
 
 	int result = _textSpeed.handleEvents(event);
 	if (result >= 0)
-		g_engine->_screenSettings->text_speed = _textSpeed.element[result]._val;
+		g_engine->_screenSettings->text_speed = _textSpeed._element[result]._val;
 }
 
 #if 0

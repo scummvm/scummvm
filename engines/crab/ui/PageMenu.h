@@ -43,183 +43,206 @@ namespace ui {
 template<typename T>
 class PageMenu {
 	// The buttons for cycling between pages of the menu
-	Button prev, next;
+	Button _prev, _next;
 
 	// Each page is stored separately in a menu object
-	Common::Array<Menu<T> > menu;
+	Common::Array<Menu<T>> _menu;
 
 	// Keep track of which page we are at, and how many elements we keep in a page
-	unsigned int current_page, elements_per_page, rows, cols;
+	unsigned int _currentPage, _elementsPerPage, _rows, _cols;
 
 	// The image used for the elements
-	Button ref;
+	Button _ref;
 
 	// This vector stores the increments in x,y for each new button
-	Vector2i inc;
+	Vector2i _inc;
 
 	// Display "Page 1 of 3" style information for the menu
-	TextData status;
-	Common::String info;
+	TextData _status;
+	Common::String _info;
 
 public:
 	PageMenu() {
-		current_page = 0;
-		elements_per_page = 1;
-		rows = 1;
-		cols = 1;
-		Clear();
+		_currentPage = 0;
+		_elementsPerPage = 1;
+		_rows = 1;
+		_cols = 1;
+		clear();
 	}
 	~PageMenu() {}
 
 	void reset() {
-		for (auto m = menu.begin(); m != menu.end(); ++m)
+		for (auto m = _menu.begin(); m != _menu.end(); ++m)
 			m->reset();
 	}
 
-	void Clear() {
-		menu.resize(1);
-		menu[0].Clear();
-		menu[0].UseKeyboard(true);
+	void clear() {
+		_menu.resize(1);
+		_menu[0].clear();
+		_menu[0].useKeyboard(true);
 	}
 
 	// Get the elements per page
-	unsigned int ElementsPerPage() { return elements_per_page; }
+	unsigned int elementsPerPage() {
+		return _elementsPerPage;
+	}
 
 	// This is added to the result from handleEvents to calculate the exact position
-	unsigned int Index() { return current_page * elements_per_page; }
+	unsigned int index() {
+		return _currentPage * _elementsPerPage;
+	}
 
 	// The end position of the elements
-	unsigned int IndexPlusOne() { return (current_page + 1) * elements_per_page; }
+	unsigned int indexPlusOne() {
+		return (_currentPage + 1) * _elementsPerPage;
+	}
 
 	// Get the current page of the menu
-	unsigned int CurrentPage() { return current_page; }
-	void CurrentPage(int &val) { current_page = val; }
+	unsigned int currentPage() {
+		return _currentPage;
+	}
+
+	void currentPage(int &val) {
+		_currentPage = val;
+	}
 
 	// Get the index of the hovered element in the menu
-	int HoverIndex() {
-		if (menu[current_page].HoverIndex() >= 0)
-			return (current_page * elements_per_page) + menu[current_page].HoverIndex();
+	int hoverIndex() {
+		if (_menu[_currentPage].hoverIndex() >= 0)
+			return (_currentPage * _elementsPerPage) + _menu[_currentPage].hoverIndex();
 
 		return -1;
 	}
 
 	// Get the base position of the elements
-	int BaseX(const int &count) { return ref.x + inc.x * (count % cols); }
-	int BaseY(const int &count) { return ref.y + inc.y * (count / cols); }
-
-	// This is used to get the coordinates of a button
-	const int &CurX(const int &count) { return menu[current_page].element[count].x; }
-	const int &CurY(const int &count) { return menu[current_page].element[count].y; }
-
-	void Image(const int &slot, const int &page, ButtonImage &bi) { menu[page].element[slot].img(bi); }
-
-	void AssignPaths() {
-		for (auto m = menu.begin(); m != menu.end(); ++m)
-			m->AssignPaths();
+	int baseX(const int &count) {
+		return _ref.x + _inc.x * (count % _cols);
 	}
 
-	void UseKeyboard(const bool &val) {
-		for (auto m = menu.begin(); m != menu.end(); ++m)
-			m->UseKeyboard(val);
+	int baseY(const int &count) {
+		return _ref.y + _inc.y * (count / _cols);
+	}
+
+	// This is used to get the coordinates of a button
+	const int &curX(const int &count) {
+		return _menu[_currentPage]._element[count].x;
+	}
+
+	const int &curY(const int &count) {
+		return _menu[_currentPage]._element[count].y;
+	}
+
+	void image(const int &slot, const int &page, ButtonImage &bi) {
+		_menu[page]._element[slot].img(bi);
+	}
+
+	void assignPaths() {
+		for (auto m = _menu.begin(); m != _menu.end(); ++m)
+			m->assignPaths();
+	}
+
+	void useKeyboard(const bool &val) {
+		for (auto m = _menu.begin(); m != _menu.end(); ++m)
+			m->useKeyboard(val);
 	}
 
 	void setUI() {
-		prev.setUI();
-		next.setUI();
-		ref.setUI();
-		status.setUI();
+		_prev.setUI();
+		_next.setUI();
+		_ref.setUI();
+		_status.setUI();
 
-		for (auto m = menu.begin(); m != menu.end(); ++m)
+		for (auto m = _menu.begin(); m != _menu.end(); ++m)
 			m->setUI();
 	}
 
-	void UpdateInfo() {
-		info = NumberToString(current_page + 1);
-		info += " of ";
-		info += NumberToString(menu.size());
+	void updateInfo() {
+		_info = NumberToString(_currentPage + 1);
+		_info += " of ";
+		_info += NumberToString(_menu.size());
 	}
 
 	void load(rapidxml::xml_node<char> *node) {
 		using namespace pyrodactyl::input;
 		if (nodeValid(node)) {
 			if (nodeValid("prev", node)) {
-				prev.load(node->first_node("prev"));
-				prev._hotkey.set(IU_PREV);
+				_prev.load(node->first_node("prev"));
+				_prev._hotkey.set(IU_PREV);
 			}
 
 			if (nodeValid("next", node)) {
-				next.load(node->first_node("next"));
-				next._hotkey.set(IU_NEXT);
+				_next.load(node->first_node("next"));
+				_next._hotkey.set(IU_NEXT);
 			}
 
 			if (nodeValid("reference", node))
-				ref.load(node->first_node("reference"));
+				_ref.load(node->first_node("reference"));
 
 			if (nodeValid("inc", node))
-				inc.load(node->first_node("inc"));
+				_inc.load(node->first_node("inc"));
 
 			if (nodeValid("status", node))
-				status.load(node->first_node("status"));
+				_status.load(node->first_node("status"));
 
 			if (nodeValid("dim", node)) {
 				rapidxml::xml_node<char> *dimnode = node->first_node("dim");
-				loadNum(rows, "rows", dimnode);
-				loadNum(cols, "cols", dimnode);
-				elements_per_page = rows * cols;
+				loadNum(_rows, "rows", dimnode);
+				loadNum(_cols, "cols", dimnode);
+				_elementsPerPage = _rows * _cols;
 			}
 		}
 	}
 
-	void Add(unsigned int &slot, unsigned int &page) {
-		if (slot >= elements_per_page) {
+	void add(unsigned int &slot, unsigned int &page) {
+		if (slot >= _elementsPerPage) {
 			++page;
 			slot = 0;
-			menu.resize(page + 1);
-			menu[page].UseKeyboard(true);
+			_menu.resize(page + 1);
+			_menu[page].useKeyboard(true);
 		}
 
 		T b;
-		b.init(ref, inc.x * (slot % cols), inc.y * (slot / cols));
-		menu[page].element.push_back(b);
+		b.init(_ref, _inc.x * (slot % _cols), _inc.y * (slot / _cols));
+		_menu[page]._element.push_back(b);
 		++slot;
 
-		AssignPaths();
-		UpdateInfo();
+		assignPaths();
+		updateInfo();
 	}
 
-	void Add() {
-		unsigned int page = menu.size() - 1;
-		unsigned int slot = menu[page].element.size();
-		Add(slot, page);
+	void add() {
+		unsigned int page = _menu.size() - 1;
+		unsigned int slot = _menu[page]._element.size();
+		add(slot, page);
 	}
 
-	void Erase() {
-		unsigned int page = menu.size() - 1;
-		menu[page].element.pop_back();
-		AssignPaths();
-		UpdateInfo();
+	void erase() {
+		unsigned int page = _menu.size() - 1;
+		_menu[page]._element.pop_back();
+		assignPaths();
+		updateInfo();
 	}
 
 	int handleEvents(const Common::Event &Event) {
 		using namespace pyrodactyl::input;
 
-		if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK) {
-			current_page--;
-			UpdateInfo();
+		if (_currentPage > 0 && _prev.handleEvents(Event) == BUAC_LCLICK) {
+			_currentPage--;
+			updateInfo();
 
-			if ((int)current_page < 0)
-				current_page = 0;
+			if ((int)_currentPage < 0)
+				_currentPage = 0;
 		}
 
-		if (current_page < menu.size() - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
-			current_page++;
-			UpdateInfo();
+		if (_currentPage < _menu.size() - 1 && _next.handleEvents(Event) == BUAC_LCLICK) {
+			_currentPage++;
+			updateInfo();
 
-			if (current_page >= menu.size())
-				current_page = menu.size() - 1;
+			if (_currentPage >= _menu.size())
+				_currentPage = _menu.size() - 1;
 		}
 
-		return menu[current_page].handleEvents(Event);
+		return _menu[_currentPage].handleEvents(Event);
 	}
 
 #if 0
@@ -247,14 +270,14 @@ public:
 #endif
 
 	void draw() {
-		status.draw(info);
-		menu[current_page].draw();
+		_status.draw(_info);
+		_menu[_currentPage].draw();
 
-		if (current_page > 0)
-			prev.draw();
+		if (_currentPage > 0)
+			_prev.draw();
 
-		if (current_page < menu.size() - 1)
-			next.draw();
+		if (_currentPage < _menu.size() - 1)
+			_next.draw();
 	}
 };
 

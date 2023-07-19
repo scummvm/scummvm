@@ -97,7 +97,7 @@ public:
 
 	void internalEvents(bool showMap);
 	void playerImg(const StateButtonImage &img) {
-		_menu.element[HS_CHAR].img(img);
+		_menu._element[HS_CHAR].img(img);
 	}
 
 	void State(const int &val);

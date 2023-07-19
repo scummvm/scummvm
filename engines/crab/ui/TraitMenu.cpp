@@ -55,42 +55,42 @@ void TraitMenu::load(rapidxml::xml_node<char> *node) {
 	for (unsigned int i = 0; i < size; ++i) {
 		TraitButton b;
 		b.init(ref, inc.x * (i % cols), inc.y * (i / cols));
-		menu.element.push_back(b);
+		menu._element.push_back(b);
 	}
 
 	bool usekey = false;
 	loadBool(usekey, "keyboard", node);
-	menu.UseKeyboard(usekey);
+	menu.useKeyboard(usekey);
 
-	menu.AssignPaths();
+	menu.assignPaths();
 }
 
 void TraitMenu::draw(const pyrodactyl::people::Person *obj) {
 	if (obj != nullptr) {
-		auto i = menu.element.begin();
-		for (auto t = obj->_trait.begin(); t != obj->_trait.end() && i != menu.element.end(); ++t, ++i) {
+		auto i = menu._element.begin();
+		for (auto t = obj->_trait.begin(); t != obj->_trait.end() && i != menu._element.end(); ++t, ++i) {
 			i->draw();
 			if (t->_unread)
 				g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 		}
 
-		for (; i != menu.element.end(); ++i)
+		for (; i != menu._element.end(); ++i)
 			i->draw();
 
 		if (select > -1 && (unsigned int)select < obj->_trait.size())
 			desc.draw(obj->_trait[select]._desc);
 	} else
-		for (auto &i : menu.element)
+		for (auto &i : menu._element)
 			i.draw();
 }
 
 void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event) {
 	int choice = menu.handleEvents(Event);
 	if (choice >= 0) {
-		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
+		for (auto i = menu._element.begin(); i != menu._element.end(); ++i)
 			i->state(false);
 
-		menu.element[choice].state(true);
+		menu._element[choice].state(true);
 		select = choice;
 
 		if (obj != nullptr) {
@@ -119,17 +119,17 @@ void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &E
 #endif
 
 void TraitMenu::Cache(const pyrodactyl::people::Person &obj) {
-	auto e = menu.element.begin();
+	auto e = menu._element.begin();
 
-	for (auto i = obj._trait.begin(); i != obj._trait.end() && e != menu.element.end(); ++i, ++e)
+	for (auto i = obj._trait.begin(); i != obj._trait.end() && e != menu._element.end(); ++i, ++e)
 		e->cache(*i);
 
-	for (; e != menu.element.end(); ++e)
+	for (; e != menu._element.end(); ++e)
 		e->empty();
 }
 
 void TraitMenu::Clear() {
-	for (auto e = menu.element.begin(); e != menu.element.end(); ++e)
+	for (auto e = menu._element.begin(); e != menu._element.end(); ++e)
 		e->empty();
 }
 

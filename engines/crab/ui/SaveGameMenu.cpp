@@ -44,7 +44,7 @@ void GameSaveMenu::load(rapidxml::xml_node<char> *node) {
 
 void GameSaveMenu::AddButton(const Common::String &p, unsigned int &slot_index, unsigned int &menu_index) {
 	_slotInfo.push_back(SaveFileData(p));
-	_menu.Add(slot_index, menu_index);
+	_menu.add(slot_index, menu_index);
 }
 
 void GameSaveMenu::scanDir() {
@@ -53,7 +53,7 @@ void GameSaveMenu::scanDir() {
 	Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
 
 	_slotInfo.clear();
-	_menu.Clear();
+	_menu.clear();
 
 	unsigned int count_slot = 0, count_menu = 0;
 
@@ -64,7 +64,7 @@ void GameSaveMenu::scanDir() {
 		AddButton(save, count_menu, count_slot);
 	}
 
-	_menu.AssignPaths();
+	_menu.assignPaths();
 }
 
 bool GameSaveMenu::handleEvents(const Common::Event &Event) {
@@ -73,10 +73,10 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 	case STATE_NORMAL:
 		choice = _menu.handleEvents(Event);
 		if (choice >= 0) {
-			ta_name.x = _menu.CurX(choice) + tdB[DATA_SAVENAME].x;
-			ta_name.y = _menu.CurY(choice) + tdB[DATA_SAVENAME].y;
+			ta_name.x = _menu.curX(choice) + tdB[DATA_SAVENAME].x;
+			ta_name.y = _menu.curY(choice) + tdB[DATA_SAVENAME].y;
 
-			index = _menu.Index() + choice;
+			index = _menu.index() + choice;
 
 			if (index != 0)
 				ta_name._text = _slotInfo[index]._name;
@@ -115,8 +115,8 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 void GameSaveMenu::draw() {
 	_bg.draw();
 	_menu.draw();
-	for (auto i = _menu.Index(), count = 0u; i < _menu.IndexPlusOne() && i < _slotInfo.size(); i++, count++) {
-		float base_x = _menu.BaseX(count), base_y = _menu.BaseY(count);
+	for (auto i = _menu.index(), count = 0u; i < _menu.indexPlusOne() && i < _slotInfo.size(); i++, count++) {
+		float base_x = _menu.baseX(count), base_y = _menu.baseY(count);
 		tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 
 		if (i == (unsigned int)index && state == STATE_NAME)

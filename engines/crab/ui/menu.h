@@ -49,42 +49,46 @@ template<typename T>
 class Menu {
 protected:
 	// The index of current selected option and highlighted option
-	int hover_index;
+	int _hoverIndex;
 
 	// The order in which a keyboard or gamepad traverses the menu
-	Common::Array<unsigned int> path;
+	Common::Array<unsigned int> _path;
 
 	// Are keyboard buttons enabled?
-	bool use_keyboard;
+	bool _useKeyboard;
 
 	// Has a key been pressed?
-	enum InputDevice { KEYBOARD,
-					   MOUSE } latest_input;
+	enum InputDevice {
+		KEYBOARD,
+		MOUSE
+	} _latestInput;
 
 	// Do the paths use horizontal, vertical or both types of input for keyboard traversal
-	enum PathType { PATH_DEFAULT,
-					PATH_HORIZONTAL,
-					PATH_VERTICAL } path_type;
+	enum PathType {
+		PATH_DEFAULT,
+		PATH_HORIZONTAL,
+		PATH_VERTICAL
+	} _pathType;
 
 	//------------------------------------------------------------------------
 	// Purpose: Find the next element in our path
 	//------------------------------------------------------------------------
-	void Next() {
-		if (hover_index == -1) {
-			for (unsigned int pos = 0; pos < path.size(); pos++)
-				if (element[path[pos]]._visible == true) {
-					hover_index = path[pos];
+	void next() {
+		if (_hoverIndex == -1) {
+			for (unsigned int pos = 0; pos < _path.size(); pos++)
+				if (_element[_path[pos]]._visible == true) {
+					_hoverIndex = _path[pos];
 					break;
 				}
 		} else {
 			unsigned int curpos = 0;
-			for (; curpos < path.size(); curpos++)
-				if ((int)path[curpos] == hover_index)
+			for (; curpos < _path.size(); curpos++)
+				if ((int)_path[curpos] == _hoverIndex)
 					break;
 
-			for (unsigned int nextloc = (curpos + 1) % element.size(); nextloc != curpos; nextloc = (nextloc + 1) % element.size())
-				if (element[nextloc]._visible == true) {
-					hover_index = path[nextloc];
+			for (unsigned int nextloc = (curpos + 1) % _element.size(); nextloc != curpos; nextloc = (nextloc + 1) % _element.size())
+				if (_element[nextloc]._visible == true) {
+					_hoverIndex = _path[nextloc];
 					break;
 				}
 		}
@@ -93,26 +97,26 @@ protected:
 	//------------------------------------------------------------------------
 	// Purpose: Find the previous element in our path
 	//------------------------------------------------------------------------
-	void Prev() {
-		if (hover_index == -1) {
-			for (unsigned int pos = 0; pos < path.size(); pos++)
-				if (element[path[pos]]._visible == true) {
-					hover_index = path[pos];
+	void prev() {
+		if (_hoverIndex == -1) {
+			for (unsigned int pos = 0; pos < _path.size(); pos++)
+				if (_element[_path[pos]]._visible == true) {
+					_hoverIndex = _path[pos];
 					break;
 				}
 		} else {
 			unsigned int curpos = 0;
-			for (; curpos < path.size(); curpos++)
-				if ((int)path[curpos] == hover_index)
+			for (; curpos < _path.size(); curpos++)
+				if ((int)_path[curpos] == _hoverIndex)
 					break;
 
 			int nextloc = curpos - 1;
 			while (nextloc != (int)curpos) {
 				if (nextloc < 0)
-					nextloc = element.size() - 1;
+					nextloc = _element.size() - 1;
 
-				if (element[nextloc]._visible == true) {
-					hover_index = path[nextloc];
+				if (_element[nextloc]._visible == true) {
+					_hoverIndex = _path[nextloc];
 					break;
 				}
 
@@ -124,43 +128,43 @@ protected:
 	//------------------------------------------------------------------------
 	// Purpose: Handle keyboard input
 	//------------------------------------------------------------------------
-	int HandleKeyboard(const Common::Event &Event) {
+	int handleKeyboard(const Common::Event &event) {
 		using namespace pyrodactyl::input;
 
 		if (g_engine->_inputManager->getKeyBindingMode() != KBM_UI) {
 			g_engine->_inputManager->setKeyBindingMode(KBM_UI);
 		}
 
-		if (!element.empty()) {
-			if (path_type != PATH_HORIZONTAL) {
+		if (!_element.empty()) {
+			if (_pathType != PATH_HORIZONTAL) {
 				if (g_engine->_inputManager->state(IU_DOWN)) {
-					Next();
-					latest_input = KEYBOARD;
+					next();
+					_latestInput = KEYBOARD;
 				} else if (g_engine->_inputManager->state(IU_UP)) {
-					Prev();
-					latest_input = KEYBOARD;
+					prev();
+					_latestInput = KEYBOARD;
 				}
 			}
 
-			if (path_type != PATH_VERTICAL) {
+			if (_pathType != PATH_VERTICAL) {
 				if (g_engine->_inputManager->state(IU_RIGHT)) {
-					Next();
-					latest_input = KEYBOARD;
+					next();
+					_latestInput = KEYBOARD;
 				} else if (g_engine->_inputManager->state(IU_LEFT)) {
-					Prev();
-					latest_input = KEYBOARD;
+					prev();
+					_latestInput = KEYBOARD;
 				}
 			}
 
-			if (g_engine->_inputManager->state(IU_ACCEPT) && hover_index != -1)
-				return hover_index;
+			if (g_engine->_inputManager->state(IU_ACCEPT) && _hoverIndex != -1)
+				return _hoverIndex;
 
 			// We pressed a key, which means we have to update the hovering status
-			if (latest_input == KEYBOARD) {
+			if (_latestInput == KEYBOARD) {
 				// Update hover status of keys according to the current index
 				int i = 0;
-				for (auto it = element.begin(); it != element.end(); ++it, ++i)
-					it->_hoverKey = (i == hover_index);
+				for (auto it = _element.begin(); it != _element.end(); ++it, ++i)
+					it->_hoverKey = (i == _hoverIndex);
 			}
 		}
 
@@ -213,25 +217,25 @@ protected:
 
 public:
 	// The collection of buttons in the menu
-	Common::Array<T> element;
+	Common::Array<T> _element;
 
 	Menu() {
-		hover_index = -1;
-		use_keyboard = false;
-		latest_input = MOUSE;
-		path_type = PATH_DEFAULT;
+		_hoverIndex = -1;
+		_useKeyboard = false;
+		_latestInput = MOUSE;
+		_pathType = PATH_DEFAULT;
 	}
 	~Menu() {}
 
 	void reset() {
-		latest_input = MOUSE;
-		hover_index = -1;
-		for (auto b = element.begin(); b != element.end(); ++b)
+		_latestInput = MOUSE;
+		_hoverIndex = -1;
+		for (auto b = _element.begin(); b != _element.end(); ++b)
 			b->reset();
 	}
 
 	void setUI() {
-		for (auto i = element.begin(); i != element.end(); ++i)
+		for (auto i = _element.begin(); i != _element.end(); ++i)
 			i->setUI();
 	}
 
@@ -243,11 +247,11 @@ public:
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				T b;
 				b.load(n);
-				element.push_back(b);
+				_element.push_back(b);
 			}
 
-			loadBool(use_keyboard, "keyboard", node, false);
-			AssignPaths();
+			loadBool(_useKeyboard, "keyboard", node, false);
+			assignPaths();
 		}
 	}
 
@@ -256,10 +260,10 @@ public:
 	// The reason this function doesn't declare its own Event object is because
 	// a menu might not be the only object in a game state
 	//------------------------------------------------------------------------
-	int handleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
+	int handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0) {
 		// The keyboard/joystick event handling bit
-		if (use_keyboard) {
-			int result = HandleKeyboard(Event);
+		if (_useKeyboard) {
+			int result = handleKeyboard(event);
 
 			// We have accepted a menu option using the keyboard
 			if (result != -1) {
@@ -271,17 +275,17 @@ public:
 		}
 
 		// Check if we have moved or clicked the mouse
-		if (Common::isMouseEvent(Event)) {
+		if (Common::isMouseEvent(event)) {
 			// Since the player is moving the mouse, we have to recalculate hover index at every opportunity
-			hover_index = -1;
-			latest_input = MOUSE;
+			_hoverIndex = -1;
+			_latestInput = MOUSE;
 		}
 
 		// The mouse and hotkey event handling bit
 		int i = 0;
-		for (auto it = element.begin(); it != element.end(); ++it, ++i) {
+		for (auto it = _element.begin(); it != _element.end(); ++it, ++i) {
 			// We clicked on a button using the mouse
-			if (it->handleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
+			if (it->handleEvents(event, xOffset, yOffset) == BUAC_LCLICK) {
 				// Reset the menu state
 				reset();
 				g_engine->_inputManager->setKeyBindingMode(pyrodactyl::input::KBM_GAME);
@@ -290,18 +294,18 @@ public:
 
 			// We did not click a button, however we did hover over the button
 			// However if we are use keyboard to browse through the menu, hovering is forgotten until we move the mouse again
-			if (it->_hoverMouse && latest_input == MOUSE) {
-				hover_index = i;
+			if (it->_hoverMouse && _latestInput == MOUSE) {
+				_hoverIndex = i;
 
 				// The latest input is the mouse, which means we have to forget the keyboard hover states
-				for (auto e = element.begin(); e != element.end(); ++e)
+				for (auto e = _element.begin(); e != _element.end(); ++e)
 					e->_hoverKey = false;
 			}
 		}
 
-		if (latest_input == KEYBOARD) {
+		if (_latestInput == KEYBOARD) {
 			// The latest input is the keyboard, which means we have to forget the mouse hover states
-			for (auto it = element.begin(); it != element.end(); ++it)
+			for (auto it = _element.begin(); it != _element.end(); ++it)
 				it->_hoverMouse = false;
 		}
 		return -1;
@@ -368,53 +372,61 @@ public:
 	// Purpose: Draw the menu
 	//------------------------------------------------------------------------
 	void draw(const int &XOffset = 0, const int &YOffset = 0) {
-		for (auto it = element.begin(); it != element.end(); ++it)
+		for (auto it = _element.begin(); it != _element.end(); ++it)
 			it->draw(XOffset, YOffset);
 	}
 
 	//------------------------------------------------------------------------
 	// Purpose: Get info about the menu
 	//------------------------------------------------------------------------
-	void UseKeyboard(const bool &val) { use_keyboard = val; }
-	void Clear() { element.clear(); }
-	int HoverIndex() { return hover_index; }
+	void useKeyboard(const bool &val) {
+		_useKeyboard = val;
+	}
+
+	void clear() {
+		_element.clear();
+	}
+
+	int hoverIndex() {
+		return _hoverIndex;
+	}
 
 	//------------------------------------------------------------------------
 	// Purpose: Assign traversal paths
 	//------------------------------------------------------------------------
-	void AssignPaths() {
-		path.clear();
+	void assignPaths() {
+		_path.clear();
 
 		// These variables are used to see if the X and Y values of buttons are the same or not
 		// Used to determine the path type of the menu
-		bool same_x = true, same_y = true;
+		bool sameX = true, sameY = true;
 
-		if (!element.empty()) {
-			path.push_back(0);
+		if (!_element.empty()) {
+			_path.push_back(0);
 
-			for (unsigned int i = 1; i < element.size(); i++) {
-				path.push_back(i);
+			for (unsigned int i = 1; i < _element.size(); i++) {
+				_path.push_back(i);
 
-				int prev_x = element[i - 1].x;
-				int prev_y = element[i - 1].y;
+				int prevX = _element[i - 1].x;
+				int prevY = _element[i - 1].y;
 
-				if (same_x && element[i].x != prev_x)
-					same_x = false;
+				if (sameX && _element[i].x != prevX)
+					sameX = false;
 
-				if (same_y && element[i].y != prev_y)
-					same_y = false;
+				if (sameY && _element[i].y != prevY)
+					sameY = false;
 			}
 		}
 
-		if (same_x) {
-			if (same_y)
-				path_type = PATH_DEFAULT;
+		if (sameX) {
+			if (sameY)
+				_pathType = PATH_DEFAULT;
 			else
-				path_type = PATH_VERTICAL;
-		} else if (same_y)
-			path_type = PATH_HORIZONTAL;
+				_pathType = PATH_VERTICAL;
+		} else if (sameY)
+			_pathType = PATH_HORIZONTAL;
 		else
-			path_type = PATH_DEFAULT;
+			_pathType = PATH_DEFAULT;
 	}
 };
 

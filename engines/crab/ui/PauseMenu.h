@@ -45,42 +45,47 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace ui {
-enum PauseSignal { PS_NONE,
-				   PS_RESUME,
-				   PS_SAVE,
-				   PS_LOAD,
-				   PS_HELP,
-				   PS_QUIT_MENU,
-				   PS_QUIT_GAME };
+enum PauseSignal {
+	PS_NONE,
+	PS_RESUME,
+	PS_SAVE,
+	PS_LOAD,
+	PS_HELP,
+	PS_QUIT_MENU,
+	PS_QUIT_GAME
+};
 
 class PauseMenu {
-	enum PauseState { STATE_NORMAL,
-					  STATE_SAVE,
-					  STATE_OPTION,
-					  STATE_LOAD } state;
+	enum PauseState {
+		STATE_NORMAL,
+		STATE_SAVE,
+		STATE_OPTION,
+		STATE_LOAD
+	} _state;
 
 	// The pause menu background
-	ImageData bg;
+	ImageData _bg;
 
 	// The buttons in the menu
-	ButtonMenu menu;
+	ButtonMenu _menu;
 
 	// Save game menu
-	GameSaveMenu save;
+	GameSaveMenu _save;
 
 	// The selected main menu button
-	int choice;
+	int _choice;
 
 public:
 	PauseMenu(void) {
-		state = STATE_NORMAL;
-		choice = -1;
+		_state = STATE_NORMAL;
+		_choice = -1;
 	}
+
 	~PauseMenu(void) {}
 
-	void UpdateMode(const bool &ironman) {
-		menu.element[PS_SAVE - 1]._visible = !ironman;
-		menu.element[PS_LOAD - 1]._visible = !ironman;
+	void updateMode(const bool &ironman) {
+		_menu._element[PS_SAVE - 1]._visible = !ironman;
+		_menu._element[PS_LOAD - 1]._visible = !ironman;
 	}
 
 	void load(rapidxml::xml_node<char> *node);
@@ -93,14 +98,25 @@ public:
 	// Returns true if inside options menu, false otherwise
 	bool draw(Button &back);
 
-	void reset() { state = STATE_NORMAL; }
-	void ScanDir() { save.scanDir(); }
-	Common::String SaveFile() { return save.selectedPath(); }
-	bool DisableHotkeys();
+	void reset() {
+		_state = STATE_NORMAL;
+	}
+
+	void scanDir() {
+		_save.scanDir();
+	}
+
+	Common::String saveFile() {
+		return _save.selectedPath();
+	}
+
+	bool disableHotkeys();
 
 	// Should we allow the pause key(default escape) to quit to main menu?
 	// This is done because esc is both the "go back on menu level" and the pause key
-	bool ShowLevel() { return state == STATE_NORMAL; }
+	bool showLevel() {
+		return _state == STATE_NORMAL;
+	}
 
 	void setUI();
 };

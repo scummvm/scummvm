@@ -46,28 +46,31 @@ namespace pyrodactyl {
 namespace ui {
 class PersonScreen {
 	// The background
-	ImageData bg;
+	ImageData _bg;
 
 	// The name of the character
-	TextData name;
+	TextData _name;
 
 	// The place where the sprite should be drawn
-	Element img;
+	Element _img;
 
 	// The buttons for drawing traits
-	TraitMenu menu;
+	TraitMenu _menu;
 
 	// Store the current person sprite temporarily
-	pyrodactyl::anim::Sprite *cur_sp;
+	pyrodactyl::anim::Sprite *_curSp;
 
 public:
-	PersonScreen() { cur_sp = nullptr; }
+	PersonScreen() {
+		_curSp = nullptr;
+	}
+
 	~PersonScreen() {}
 
 	void load(const Common::String &filename);
 	void Cache(pyrodactyl::event::Info &info, const Common::String &id, pyrodactyl::level::Level &level);
 
-	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &event);
 #if 0
 	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event);
 #endif

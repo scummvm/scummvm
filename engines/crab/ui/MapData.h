@@ -40,28 +40,30 @@ namespace pyrodactyl {
 namespace ui {
 struct MapData {
 	// The paths of set of map images - background and the fully revealed map overlay
-	Common::String path_bg, path_overlay;
+	Common::String _pathBg, _pathOverlay;
 
 	// The places the player has revealed in this world map
-	Common::Array<Rect> reveal;
+	Common::Array<Rect> _reveal;
 
 	struct MarkerData {
 		// The name of the marker, same name as the quest
-		Common::String name;
+		Common::String _name;
 
 		// Position of the marker
-		Vector2i pos;
+		Vector2i _pos;
 	};
 
 	// The set of destinations currently active
-	Common::Array<MarkerData> dest;
+	Common::Array<MarkerData> _dest;
 
 	MapData() {}
-	MapData(rapidxml::xml_node<char> *node) { load(node); }
+	MapData(rapidxml::xml_node<char> *node) {
+		load(node);
+	}
 	~MapData() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void DestAdd(const Common::String &name, const int &x, const int &y);
+	void destAdd(const Common::String &name, const int &x, const int &y);
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);

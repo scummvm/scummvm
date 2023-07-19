@@ -68,15 +68,15 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 				b._caption._text = NumberToString(d.w);
 				b._caption._text += " x ";
 				b._caption._text += NumberToString(d.h);
-				element.push_back(b);
+				_element.push_back(b);
 			}
 		}
 	}
 
 	SetInfo();
 
-	loadBool(use_keyboard, "keyboard", node, false);
-	AssignPaths();
+	loadBool(_useKeyboard, "keyboard", node, false);
+	assignPaths();
 }
 
 void ResolutionMenu::draw() {

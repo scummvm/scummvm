@@ -39,22 +39,22 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 void MapMarkerMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("ref", node))
-		ref.load(node->first_node("ref"));
+		_ref.load(node->first_node("ref"));
 
 	if (nodeValid("player", node))
-		player.load(node->first_node("player"));
+		_player.load(node->first_node("player"));
 
 	if (nodeValid("offset", node)) {
 		rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
 		if (nodeValid("marker", offnode))
-			offset.marker.load(offnode->first_node("marker"));
+			_offset._marker.load(offnode->first_node("marker"));
 
 		if (nodeValid("player", offnode))
-			offset.player.load(offnode->first_node("player"));
+			_offset._player.load(offnode->first_node("player"));
 	}
 
-	menu.UseKeyboard(true);
+	_menu.useKeyboard(true);
 }
 
 //------------------------------------------------------------------------
@@ -62,33 +62,33 @@ void MapMarkerMenu::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void MapMarkerMenu::draw(const Element &pos, const Vector2i &player_pos, const Rect &camera) {
 	// Calculate all offsets
-	Vector2i offset_p(pos.x + player_pos.x + offset.player.x - camera.x, pos.y + player_pos.y + offset.player.y - camera.y);
-	Vector2i offset_m(pos.x - camera.x + offset.marker.x, pos.y - camera.y + offset.marker.y);
+	Vector2i offsetP(pos.x + player_pos.x + _offset._player.x - camera.x, pos.y + player_pos.y + _offset._player.y - camera.y);
+	Vector2i offsetM(pos.x - camera.x + _offset._marker.x, pos.y - camera.y + _offset._marker.y);
 
 	// Only draw the image - captions drawn later to prevent drawing another button over caption
-	player.imageCaptionOnlyDraw(offset_p.x, offset_p.y);
+	_player.imageCaptionOnlyDraw(offsetP.x, offsetP.y);
 
-	for (auto &i : menu.element)
-		i.imageCaptionOnlyDraw(offset_m.x, offset_m.y);
+	for (auto &i : _menu._element)
+		i.imageCaptionOnlyDraw(offsetM.x, offsetM.y);
 
 	// Now draw the tool-tips for everything combined
-	player.hoverInfoOnlyDraw(offset_p.x, offset_p.y);
+	_player.hoverInfoOnlyDraw(offsetP.x, offsetP.y);
 
-	for (auto &i : menu.element)
-		i.hoverInfoOnlyDraw(offset_m.x, offset_m.y);
+	for (auto &i : _menu._element)
+		i.hoverInfoOnlyDraw(offsetM.x, offsetM.y);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
-void MapMarkerMenu::handleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const Common::Event &Event) {
-	if (player_pos.x >= camera.x && player_pos.y >= camera.y)
-		player.handleEvents(Event, pos.x + player_pos.x - camera.x + offset.player.x, pos.y + player_pos.y - camera.y + offset.player.y);
+void MapMarkerMenu::handleEvents(const Element &pos, const Vector2i &playerPos, const Rect &camera, const Common::Event &event) {
+	if (playerPos.x >= camera.x && playerPos.y >= camera.y)
+		_player.handleEvents(event, pos.x + playerPos.x - camera.x + _offset._player.x, pos.y + playerPos.y - camera.y + _offset._player.y);
 
-	int choice = menu.handleEvents(Event, pos.x - camera.x + offset.marker.x, pos.y - camera.y + offset.marker.y);
+	int choice = _menu.handleEvents(event, pos.x - camera.x + _offset._marker.x, pos.y - camera.y + _offset._marker.y);
 	if (choice != -1) {
 		int c = 0;
-		for (auto &i : menu.element) {
+		for (auto &i : _menu._element) {
 			if (c == choice) // For an already selected marker, clicking it toggles the selection state
 				i.state(!i.state());
 			else
@@ -125,24 +125,24 @@ void MapMarkerMenu::handleEvents(const Element &pos, const Vector2i &player_pos,
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds) {
+void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &playerPos, const Rect &camera, Rect bounds) {
 	// Find if the player marker is visible or not
 	{
-		Rect r(pos.x + player_pos.x - offset.marker.x - camera.x,
-			   pos.y + player_pos.y - offset.marker.y - camera.y,
-			   player.w + offset.marker.x,
-			   player.h + offset.marker.y);
+		Rect r(pos.x + playerPos.x - _offset._marker.x - camera.x,
+			   pos.y + playerPos.y - _offset._marker.y - camera.y,
+			   _player.w + _offset._marker.x,
+			   _player.h + _offset._marker.y);
 
-		player._visible = bounds.Contains(r);
+		_player._visible = bounds.Contains(r);
 	}
 
 	// Redefine p for marker buttons
-	Vector2i p(pos.x - camera.x + offset.marker.x, pos.y - camera.y + offset.marker.y);
+	Vector2i p(pos.x - camera.x + _offset._marker.x, pos.y - camera.y + _offset._marker.y);
 
 	// Calculate visibility for each marker
-	for (auto &i : menu.element) {
-		Rect r(i.x + p.x - offset.marker.x, i.y + p.y - offset.marker.y,
-			   i.w + offset.marker.x, i.h + offset.marker.y);
+	for (auto &i : _menu._element) {
+		Rect r(i.x + p.x - _offset._marker.x, i.y + p.y - _offset._marker.y,
+			   i.w + _offset._marker.x, i.h + _offset._marker.y);
 
 		i._visible = bounds.Contains(r);
 	}
@@ -152,8 +152,8 @@ void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &player_po
 // Purpose: Reposition UI
 //------------------------------------------------------------------------
 void MapMarkerMenu::setUI() {
-	player.setUI();
-	menu.setUI();
+	_player.setUI();
+	_menu.setUI();
 }
 
 } // End of namespace Crab

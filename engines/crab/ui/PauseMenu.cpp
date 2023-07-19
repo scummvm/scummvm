@@ -36,18 +36,18 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
 void PauseMenu::load(rapidxml::xml_node<char> *node) {
-	menu.load(node->first_node("menu"));
-	save.load(node->first_node("save"));
+	_menu.load(node->first_node("menu"));
+	_save.load(node->first_node("save"));
 
 	if (nodeValid("bg", node))
-		bg.load(node->first_node("bg"));
+		_bg.load(node->first_node("bg"));
 }
 
 bool PauseMenu::draw(Button &back) {
-	switch (state) {
+	switch (_state) {
 	case STATE_NORMAL:
-		bg.draw();
-		menu.draw();
+		_bg.draw();
+		_menu.draw();
 		break;
 	case STATE_OPTION:
 		g_engine->_optionMenu->draw(back);
@@ -60,33 +60,33 @@ bool PauseMenu::draw(Button &back) {
 }
 
 PauseSignal PauseMenu::handleEvents(const Common::Event &Event, Button &back) {
-	switch (state) {
+	switch (_state) {
 	case STATE_NORMAL:
-		choice = menu.handleEvents(Event);
-		if (choice == -1) {
+		_choice = _menu.handleEvents(Event);
+		if (_choice == -1) {
 			if (back._hotkey.handleEvents(Event))
 				return PS_RESUME;
 		} else {
-			switch (choice) {
+			switch (_choice) {
 			case 0:
-				state = STATE_NORMAL;
+				_state = STATE_NORMAL;
 				return PS_RESUME;
 			case 1:
 				if (g_engine->saveGameDialog()) {
-					state = STATE_NORMAL;
+					_state = STATE_NORMAL;
 					return PS_SAVE;
 				} else
-					state = STATE_NORMAL;
+					_state = STATE_NORMAL;
 				break;
 			case 2:
 				if (g_engine->loadGameDialog()) {
-					state = STATE_NORMAL;
+					_state = STATE_NORMAL;
 					return PS_LOAD;
 				} else
-					state = STATE_NORMAL;
+					_state = STATE_NORMAL;
 				break;
 			case 3:
-				state = STATE_OPTION;
+				_state = STATE_OPTION;
 				break;
 			case 4:
 				return PS_HELP;
@@ -102,14 +102,14 @@ PauseSignal PauseMenu::handleEvents(const Common::Event &Event, Button &back) {
 	case STATE_OPTION:
 		if (g_engine->_optionMenu->handleEvents(back, Event)) {
 			g_engine->_optionMenu->reset();
-			state = STATE_NORMAL;
+			_state = STATE_NORMAL;
 		}
 		break;
 	case STATE_LOAD:
 		if (g_engine->loadGameDialog())
 			return PS_LOAD;
 		else
-			state = STATE_NORMAL;
+			_state = STATE_NORMAL;
 		break;
 	default:
 		break;
@@ -180,14 +180,14 @@ PauseSignal PauseMenu::handleEvents(const SDL_Event &Event, Button &back) {
 }
 #endif
 
-bool PauseMenu::DisableHotkeys() {
-	return (state == STATE_SAVE && save.DisableHotkeys()) || (state == STATE_OPTION && g_engine->_optionMenu->DisableHotkeys());
+bool PauseMenu::disableHotkeys() {
+	return (_state == STATE_SAVE && _save.DisableHotkeys()) || (_state == STATE_OPTION && g_engine->_optionMenu->disableHotkeys());
 }
 
 void PauseMenu::setUI() {
-	bg.setUI();
-	menu.setUI();
-	save.setUI();
+	_bg.setUI();
+	_menu.setUI();
+	_save.setUI();
 }
 
 } // End of namespace Crab
