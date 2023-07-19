@@ -366,10 +366,8 @@ void Channel::setCast(CastMemberID memberID) {
 	_height = _sprite->_height;
 	replaceWidget();
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
-		// Based on Director in a Nutshell, page 15
-		_sprite->setAutoPuppet(kAPCast, true);
-	}
+	// Based on Director in a Nutshell, page 15
+	_sprite->setAutoPuppet(kAPCast, true);
 }
 
 void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
@@ -548,10 +546,8 @@ void Channel::setWidth(int w) {
 		return;
 	_width = MAX<int>(w, 0);
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
-		// Based on Director in a Nutshell, page 15
-		_sprite->setAutoPuppet(kAPWidth, true);
-	}
+	// Based on Director in a Nutshell, page 15
+	_sprite->setAutoPuppet(kAPWidth, true);
 }
 
 void Channel::setHeight(int h) {
@@ -559,10 +555,8 @@ void Channel::setHeight(int h) {
 		return;
 	_height = MAX<int>(h, 0);
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
-		// Based on Director in a Nutshell, page 15
-		_sprite->setAutoPuppet(kAPHeight, true);
-	}
+	// Based on Director in a Nutshell, page 15
+	_sprite->setAutoPuppet(kAPHeight, true);
 }
 
 void Channel::setBbox(int l, int t, int r, int b) {
@@ -581,10 +575,8 @@ void Channel::setBbox(int l, int t, int r, int b) {
 	if (_width <= 0 || _height <= 0)
 		_width = _height = 0;
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
-		// Based on Director in a Nutshell, page 15
-		_sprite->setAutoPuppet(kAPBbox, true);
-	}
+	// Based on Director in a Nutshell, page 15
+	_sprite->setAutoPuppet(kAPBbox, true);
 }
 
 void Channel::setPosition(int x, int y, bool force) {
@@ -597,10 +589,8 @@ void Channel::setPosition(int x, int y, bool force) {
 	_currentPoint = newPos;
 	_sprite->_startPoint = _currentPoint;
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
-		// Based on Director in a Nutshell, page 15
-		_sprite->setAutoPuppet(kAPLoc, true);
-	}
+	// Based on Director in a Nutshell, page 15
+	_sprite->setAutoPuppet(kAPLoc, true);
 }
 
 // here is the place for deciding whether the widget can be keep or not
