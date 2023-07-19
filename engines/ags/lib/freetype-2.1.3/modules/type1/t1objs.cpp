@@ -126,9 +126,8 @@ T1_GlyphSlot_Init(T1_GlyphSlot slot) {
 		module = FT_Get_Module(slot->root.face->driver->root.library, "pshinter");
 		if (module) {
 			T1_Hints_Funcs funcs;
-
 			funcs = pshinter->get_t1_funcs(module);
-			slot->root.internal->glyph_hints = (void *)funcs;
+			slot->root.internal->glyph_hints = (void *)const_cast<T1_Hints_FuncsRec_ *>(funcs);
 		}
 	}
 	return 0;
