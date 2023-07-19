@@ -49,7 +49,7 @@ class App {
 private:
 	Game *_game;
 
-	void LoadSettings(const Common::String &filename);
+	void loadSettings(const Common::String &filename);
 public:
 	App(void) {
 #if 0
@@ -61,9 +61,9 @@ public:
 	}
 	~App(void);
 
-	bool Init();
-	void Run();
-	Game *GetGame() const {
+	bool init();
+	void run();
+	Game *getGame() const {
 		return _game;
 	}
 };

@@ -33,7 +33,7 @@
 
 namespace Crab {
 
-bool App::Init() {
+bool App::init() {
 
 #if 0
 	// Load all SDL subsystems and the TrueType font subsystem
@@ -119,19 +119,19 @@ bool App::Init() {
 #endif
 	// Initialize and load input
 
-	LoadSettings("res/settings.xml");
+	loadSettings("res/settings.xml");
 	g_engine->_screenSettings->in_game = false;
 	return true;
 }
 
-void App::Run() {
-	Init();
+void App::run() {
+	init();
 	// State IDs
-	GameStateID CurrentStateID = GAMESTATE_NULL, NextStateID = GAMESTATE_TITLE;
-	bool ShouldChangeState = true;
+	GameStateID currentStateId = GAMESTATE_NULL, nextStateId = GAMESTATE_TITLE;
+	bool shouldChangeState = true;
 
 	// Set the current game state object
-	GameState *CurrentState = NULL;
+	GameState *currentState = NULL;
 	Timer fps;
 	Common::Event e;
 	int fpscount = 0, fpsval = 1, lasts = 0;
@@ -139,25 +139,25 @@ void App::Run() {
 	_game = new Game();
 
 	// While the user hasn't quit - This is the main game loop
-	while (CurrentStateID != GAMESTATE_EXIT && !SHOULD_QUIT) {
+	while (currentStateId != GAMESTATE_EXIT && !SHOULD_QUIT) {
 		// Start the frame timer
 		fps.Start();
 
 		// Change state if needed
-		if (ShouldChangeState) {
+		if (shouldChangeState) {
 			// Delete the current state
-			if (CurrentState != _game) {
-				delete CurrentState;
-				CurrentState = nullptr;
+			if (currentState != _game) {
+				delete currentState;
+				currentState = nullptr;
 			}
 
-			if (NextStateID == GAMESTATE_EXIT)
+			if (nextStateId == GAMESTATE_EXIT)
 				break;
 
 			// Change the state
-			switch (NextStateID) {
+			switch (nextStateId) {
 			case GAMESTATE_TITLE:
-				CurrentState = new Splash();
+				currentState = new Splash();
 				g_engine->_screenSettings->in_game = false;
 
 				// Now apply all settings - except resolution because that's already set at the start
@@ -169,18 +169,18 @@ void App::Run() {
 				break;
 
 			case GAMESTATE_MAIN_MENU:
-				CurrentState = new MainMenu();
+				currentState = new MainMenu();
 				g_engine->_screenSettings->in_game = false;
 				break;
 
 			case GAMESTATE_NEW_GAME:
 				_game->StartNewGame();
-				CurrentState = _game;
+				currentState = _game;
 				g_engine->_screenSettings->in_game = true;
 				break;
 
 			case GAMESTATE_LOAD_GAME:
-				CurrentState = _game;
+				currentState = _game;
 				g_engine->_screenSettings->in_game = true;
 				break;
 
@@ -190,17 +190,17 @@ void App::Run() {
 			}
 
 			// Change the current state ID
-			CurrentStateID = NextStateID;
+			currentStateId = nextStateId;
 
 			// NULL the next state ID
-			NextStateID = GAMESTATE_NULL;
+			nextStateId = GAMESTATE_NULL;
 
 			// No need to change state until further notice
-			ShouldChangeState = false;
+			shouldChangeState = false;
 		}
 
 		// Do state InternalEvents
-		CurrentState->internalEvents(ShouldChangeState, NextStateID);
+		currentState->internalEvents(shouldChangeState, nextStateId);
 
 #if 0
 		while (SDL_PollEvent(&Event)) {
@@ -241,18 +241,18 @@ void App::Run() {
 			}
 
 			// Do state Event handling
-			CurrentState->handleEvents(e, ShouldChangeState, NextStateID);
+			currentState->handleEvents(e, shouldChangeState, nextStateId);
 		}
 
 
 		// Do we have to reposition our interface?
 		if (g_engine->_screenSettings->change_interface) {
-			CurrentState->setUI();
+			currentState->setUI();
 			g_engine->_screenSettings->change_interface = false;
 		}
 
 		// Do state Drawing
-		CurrentState->draw();
+		currentState->draw();
 
 #if 0
 		if (GameDebug) {
@@ -274,7 +274,7 @@ void App::Run() {
 			} else
 				++fpscount;
 
-			if (CurrentStateID >= 0)
+			if (currentStateId >= 0)
 				g_engine->_textManager->draw(0, 0, NumberToString(fpsval).c_str(), 0);
 		//const Graphics::ManagedSurface *s = g_engine->_renderSurface;
 		//g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
@@ -296,12 +296,12 @@ void App::Run() {
 		}
 	}
 
-	if (CurrentState != _game)
-		delete CurrentState;
+	if (currentState != _game)
+		delete currentState;
 	delete _game;
 }
 
-void App::LoadSettings(const Common::String &filename) {
+void App::loadSettings(const Common::String &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("settings");
