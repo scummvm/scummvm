@@ -61,7 +61,7 @@ public:
 	void AddButton(const Common::String &name, const int &x, const int &y) {
 		StateButton b;
 		b.init(ref, x, y);
-		b._tooltip.text = name;
+		b._tooltip._text = name;
 		menu.element.push_back(b);
 	}
 
@@ -70,12 +70,12 @@ public:
 
 	void SelectDest(const Common::String &name) {
 		for (auto &i : menu.element)
-			i.state(i._tooltip.text == name);
+			i.state(i._tooltip._text == name);
 	}
 
 	void Erase(const Common::String &name) {
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i) {
-			if (i->_tooltip.text == name) {
+			if (i->_tooltip._text == name) {
 				menu.element.erase(i);
 				AssignPaths();
 				break;

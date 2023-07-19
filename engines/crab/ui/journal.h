@@ -59,59 +59,62 @@ enum JournalCategory {
 
 class Journal {
 	// The background image data
-	ImageData bg;
+	ImageData _bg;
 
 	// The menu to select the category to display
-	Menu<StateButton> category;
+	Menu<StateButton> _category;
 
 	// The selected category
-	int select;
+	int _select;
 
 	// A group contains the entire journal for a single character
 	struct Group {
 		// Id of the character who this journal belongs to
-		Common::String id;
+		Common::String _id;
 
 		// The set of menus containing all categories of journals
-		QuestMenu menu[JE_TOTAL];
+		QuestMenu _menu[JE_TOTAL];
 	};
 
 	// This contains journal entries for all characters
-	Common::Array<Group> journal;
+	Common::Array<Group> _journal;
 
 	// The reference quest menu, used to copy layouts
-	QuestMenu ref;
+	QuestMenu _ref;
 
 	// This button is the "go to map" button, shown if the quest has a corresponding map marker
-	Button bu_map;
+	Button _bu_map;
 
-	void Select(const Common::String &id, const int &choice);
+	void select(const Common::String &id, const int &choice);
 
 public:
 	// The title of the quest selected by the "show in map" button
-	Common::String marker_title;
+	Common::String _markerTitle;
 
-	Journal() { select = 0; }
+	Journal() {
+		_select = 0;
+	}
+
 	~Journal() {}
 
 	void load(const Common::String &filename);
 	void draw(const Common::String &id);
 
 	// Return true if "go to map" is selected
-	bool handleEvents(const Common::String &id, const Common::Event &Event);
+	bool handleEvents(const Common::String &id, const Common::Event &event);
 #if 0
 	bool handleEvents(const Common::String &id, const SDL_Event &Event);
 #endif
 
-	void Add(const Common::String &id, const Common::String &Category, const Common::String &Title, const Common::String &Text);
-	void Move(const Common::String &id, const Common::String &Title, const bool &completed);
-	void Marker(const Common::String &id, const Common::String &Title, const bool &val);
+	void add(const Common::String &id, const Common::String &category, const Common::String &title, const Common::String &text);
+	void move(const Common::String &id, const Common::String &title, const bool &completed);
+	void marker(const Common::String &id, const Common::String &title, const bool &val);
 
 	// Open a specific entry in the journal
-	void Open(const Common::String &id, const JournalCategory &Category, const Common::String &Title);
+	void open(const Common::String &id, const JournalCategory &category, const Common::String &title);
 
 	// Prepare a new character's journal
-	void Init(const Common::String &id);
+	void init(const Common::String &id);
 
 	void saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);

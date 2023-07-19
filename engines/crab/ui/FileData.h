@@ -41,15 +41,15 @@ namespace pyrodactyl {
 namespace ui {
 class FileData {
 public:
-	Common::String name, path, last_modified;
+	Common::String _name, _path, _lastModified;
 };
 
 class SaveFileData : public FileData {
 public:
-	Common::String loc_id, loc_name, char_name, diff, time, preview;
+	Common::String _locId, _locName, _charName, _diff, _time, _preview;
 
 	// This is to account for the first save slot, called "New Save", which doesn't actually have a file
-	bool blank;
+	bool _blank;
 
 	SaveFileData(const Common::String &filepath);
 	SaveFileData(const bool empty);
@@ -57,24 +57,31 @@ public:
 
 class ModFileData : public FileData {
 public:
-	Common::String author, version, info, website, preview;
+	Common::String _author, _version, _info, _website, _preview;
 	ModFileData(const Common::String &filepath);
 };
 
 // The types of data shown about the save file
-enum { DATA_SAVENAME,
-	   DATA_LASTMODIFIED,
-	   DATA_BUTTON_TOTAL };
+enum {
+	DATA_SAVENAME,
+	DATA_LASTMODIFIED,
+	DATA_BUTTON_TOTAL
+};
 
 // Both of these are capped at DATA_HOVER_TOTAL
-enum { DATA_LOCNAME,
-	   DATA_DIFFICULTY,
-	   DATA_TIMEPLAYED,
-	   DATA_PLAYERNAME };
-enum { DATA_AUTHOR,
-	   DATA_VERSION,
-	   DATA_INFO,
-	   DATA_WEBSITE };
+enum {
+	DATA_LOCNAME,
+	DATA_DIFFICULTY,
+	DATA_TIMEPLAYED,
+	DATA_PLAYERNAME
+};
+
+enum {
+	DATA_AUTHOR,
+	DATA_VERSION,
+	DATA_INFO,
+	DATA_WEBSITE
+};
 
 const int DATA_HOVER_TOTAL = 4;
 } // End of namespace ui

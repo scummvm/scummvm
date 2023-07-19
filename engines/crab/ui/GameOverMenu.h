@@ -42,22 +42,25 @@ namespace pyrodactyl {
 namespace ui {
 class GameOverMenu {
 	// Background image
-	ImageData bg;
+	ImageData _bg;
 
 	// The selection of quotes, we pick one out of these
-	Common::Array<Common::String> quote;
+	Common::Array<Common::String> _quote;
 
 	// The current picked quote
-	unsigned int cur;
+	unsigned int _cur;
 
 	// How to draw the quote
-	TextData title;
+	TextData _title;
 
 	// The menu for actions we can take
-	ButtonMenu menu;
+	ButtonMenu _menu;
 
 public:
-	GameOverMenu(void) { cur = 0; }
+	GameOverMenu(void) {
+		_cur = 0;
+	}
+
 	~GameOverMenu(void) {}
 
 	void reset() {
@@ -69,7 +72,7 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	int handleEvents(const Common::Event &Event);
+	int handleEvents(const Common::Event &event);
 #if 0
 	int handleEvents(const SDL_Event &Event);
 #endif

@@ -37,10 +37,10 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
 void CreditScreen::reset() {
-	start.x = g_engine->_screenSettings->cur.w / 2 - 150;
-	start.y = g_engine->_screenSettings->cur.h + 20;
-	cur.x = start.x;
-	speed.cur = speed.slow;
+	_start.x = g_engine->_screenSettings->cur.w / 2 - 150;
+	_start.y = g_engine->_screenSettings->cur.h + 20;
+	_cur.x = _start.x;
+	_speed._cur = _speed._slow;
 }
 
 void CreditScreen::load(const Common::String &filename) {
@@ -49,72 +49,72 @@ void CreditScreen::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("credits");
 
 		if (nodeValid("bg", node))
-			bg.load(node->first_node("bg"));
+			_bg.load(node->first_node("bg"));
 
 		if (nodeValid("h", node))
-			heading.load(node->first_node("h"));
+			_heading.load(node->first_node("h"));
 
 		if (nodeValid("p", node))
-			paragraph.load(node->first_node("p"));
+			_paragraph.load(node->first_node("p"));
 
 		if (nodeValid("logo", node))
-			logo.load(node->first_node("logo"));
+			_logo.load(node->first_node("logo"));
 
 		if (nodeValid("website", node))
-			website.load(node->first_node("website"), false);
+			_website.load(node->first_node("website"), false);
 
 		if (nodeValid("twitter", node))
-			twitter.load(node->first_node("twitter"), false);
+			_twitter.load(node->first_node("twitter"), false);
 
 		if (nodeValid("twitter", node))
-			back.load(node->first_node("back"));
+			_back.load(node->first_node("back"));
 
 		if (nodeValid("fast", node)) {
 			rapidxml::xml_node<char> *fnode = node->first_node("fast");
-			fast.load(fnode);
-			loadNum(speed.fast, "val", fnode);
+			_fast.load(fnode);
+			loadNum(_speed._fast, "val", fnode);
 		}
 
 		if (nodeValid("slow", node)) {
 			rapidxml::xml_node<char> *snode = node->first_node("slow");
-			slow.load(snode);
-			loadNum(speed.slow, "val", snode);
+			_slow.load(snode);
+			loadNum(_speed._slow, "val", snode);
 		}
 
 		if (nodeValid("reverse", node)) {
 			rapidxml::xml_node<char> *rnode = node->first_node("reverse");
-			reverse.load(rnode);
-			loadNum(speed.reverse, "val", rnode);
+			_reverse.load(rnode);
+			loadNum(_speed._reverse, "val", rnode);
 		}
 
-		speed.cur = speed.slow;
+		_speed._cur = _speed._slow;
 
 		if (nodeValid("pause", node))
-			pause.load(node->first_node("pause"));
+			_pause.load(node->first_node("pause"));
 
 		if (nodeValid("text", node)) {
 			rapidxml::xml_node<char> *tnode = node->first_node("text");
 			for (rapidxml::xml_node<char> *n = tnode->first_node(); n != NULL; n = n->next_sibling()) {
 				CreditText t;
-				t.text = n->value();
-				t.heading = (n->name()[0] == 'h');
-				list.push_back(t);
+				t._text = n->value();
+				t._heading = (n->name()[0] == 'h');
+				_list.push_back(t);
 			}
 		}
 	}
 }
 
 bool CreditScreen::handleEvents(Common::Event &Event) {
-	if (slow.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = speed.slow;
-	else if (fast.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = speed.fast;
-	else if (pause.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = 0.0f;
-	else if (reverse.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = speed.reverse;
+	if (_slow.handleEvents(Event) == BUAC_LCLICK)
+		_speed._cur = _speed._slow;
+	else if (_fast.handleEvents(Event) == BUAC_LCLICK)
+		_speed._cur = _speed._fast;
+	else if (_pause.handleEvents(Event) == BUAC_LCLICK)
+		_speed._cur = 0.0f;
+	else if (_reverse.handleEvents(Event) == BUAC_LCLICK)
+		_speed._cur = _speed._reverse;
 
-	return (back.handleEvents(Event) == BUAC_LCLICK);
+	return (_back.handleEvents(Event) == BUAC_LCLICK);
 }
 
 #if 0
@@ -138,57 +138,57 @@ bool CreditScreen::handleEvents(SDL_Event &Event) {
 #endif
 
 void CreditScreen::draw() {
-	bg.draw();
+	_bg.draw();
 
-	slow.draw();
-	fast.draw();
-	pause.draw();
-	reverse.draw();
+	_slow.draw();
+	_fast.draw();
+	_pause.draw();
+	_reverse.draw();
 
-	logo.draw();
-	twitter.draw();
-	website.draw();
+	_logo.draw();
+	_twitter.draw();
+	_website.draw();
 
-	back.draw();
+	_back.draw();
 
-	cur.y = start.y;
+	_cur.y = _start.y;
 
-	for (auto i = list.begin(); i != list.end(); ++i) {
-		cur.y += paragraph.inc;
+	for (auto i = _list.begin(); i != _list.end(); ++i) {
+		_cur.y += _paragraph._inc;
 
-		if (i->heading) {
-			cur.y += heading.inc;
-			if (cur.y > -30 && cur.y < g_engine->_screenSettings->cur.h + 40) // Only draw text if it is actually visible on screen
-				g_engine->_textManager->draw(cur.x, cur.y, i->text, heading.color, heading.font, heading.align);
-		} else if (cur.y > -30 && cur.y < g_engine->_screenSettings->cur.h + 40)
-			g_engine->_textManager->draw(cur.x, cur.y, i->text, paragraph.color, paragraph.font, paragraph.align);
+		if (i->_heading) {
+			_cur.y += _heading._inc;
+			if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->cur.h + 40) // Only draw text if it is actually visible on screen
+				g_engine->_textManager->draw(_cur.x, _cur.y, i->_text, _heading._color, _heading._font, _heading._align);
+		} else if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->cur.h + 40)
+			g_engine->_textManager->draw(_cur.x, _cur.y, i->_text, _paragraph._color, _paragraph._font, _paragraph._align);
 
 		// If our cur value has reached below the screen, simply exit the loop as we won't draw anything else
-		if (cur.y > g_engine->_screenSettings->cur.h + 40)
+		if (_cur.y > g_engine->_screenSettings->cur.h + 40)
 			break;
 	}
 
-	start.y -= speed.cur;
+	_start.y -= _speed._cur;
 
 	// Sanity check so that we don't scroll too high or low
-	if (start.y > g_engine->_screenSettings->cur.h + 40)
-		start.y = g_engine->_screenSettings->cur.h + 40;
-	else if (start.y < INT_MIN + 10)
-		start.y = INT_MIN + 10;
+	if (_start.y > g_engine->_screenSettings->cur.h + 40)
+		_start.y = g_engine->_screenSettings->cur.h + 40;
+	else if (_start.y < INT_MIN + 10)
+		_start.y = INT_MIN + 10;
 }
 
 void CreditScreen::setUI() {
-	bg.setUI();
-	back.setUI();
+	_bg.setUI();
+	_back.setUI();
 
-	slow.setUI();
-	fast.setUI();
-	pause.setUI();
-	reverse.setUI();
+	_slow.setUI();
+	_fast.setUI();
+	_pause.setUI();
+	_reverse.setUI();
 
-	logo.setUI();
-	twitter.setUI();
-	website.setUI();
+	_logo.setUI();
+	_twitter.setUI();
+	_website.setUI();
 }
 
 } // End of namespace Crab

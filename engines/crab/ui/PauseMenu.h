@@ -94,8 +94,8 @@ public:
 	bool draw(Button &back);
 
 	void reset() { state = STATE_NORMAL; }
-	void ScanDir() { save.ScanDir(); }
-	Common::String SaveFile() { return save.SelectedPath(); }
+	void ScanDir() { save.scanDir(); }
+	Common::String SaveFile() { return save.selectedPath(); }
 	bool DisableHotkeys();
 
 	// Should we allow the pause key(default escape) to quit to main menu?

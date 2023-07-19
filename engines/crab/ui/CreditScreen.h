@@ -46,69 +46,72 @@ class CreditScreen {
 	// Text and formatting information
 	struct CreditText {
 		// Title of the section (stuff like programmer, designer etc)
-		Common::String text;
+		Common::String _text;
 
 		// The style it should be drawn in
-		bool heading;
+		bool _heading;
 	};
 
 	// The background image and company logo
-	pyrodactyl::ui::ImageData bg, logo;
+	pyrodactyl::ui::ImageData _bg, _logo;
 
 	// The names displayed in the credits
-	Common::Array<CreditText> list;
+	Common::Array<CreditText> _list;
 
 	// The starting position
-	Vector2i start;
+	Vector2i _start;
 
 	// The current position
-	Vector2D<long> cur;
+	Vector2D<long> _cur;
 
 	// Text parameters
 	struct TextParam {
-		int inc, color;
-		FontKey font;
-		Align align;
+		int _inc, _color;
+		FontKey _font;
+		Align _align;
 
 		TextParam() {
-			inc = 30;
-			color = 0;
-			font = 1;
-			align = ALIGN_CENTER;
+			_inc = 30;
+			_color = 0;
+			_font = 1;
+			_align = ALIGN_CENTER;
 		}
 
 		void load(rapidxml::xml_node<char> *node) {
-			loadNum(inc, "inc", node);
-			loadNum(color, "color", node);
-			LoadFontKey(font, "font", node);
-			loadAlign(align, node);
+			loadNum(_inc, "inc", node);
+			loadNum(_color, "color", node);
+			LoadFontKey(_font, "font", node);
+			loadAlign(_align, node);
 		}
-	} heading, paragraph;
+	} _heading, _paragraph;
 
 	// All speed levels at which credits can scroll through
 	struct ScrollSpeed {
 		// The current speed
-		float cur;
+		float _cur;
 
 		// Various levels
-		float slow, fast, reverse;
+		float _slow, _fast, _reverse;
 
 		ScrollSpeed() {
-			slow = 1.0f;
-			fast = 4.0f;
-			reverse = -2.0f;
-			cur = slow;
+			_slow = 1.0f;
+			_fast = 4.0f;
+			_reverse = -2.0f;
+			_cur = _slow;
 		}
-	} speed;
+	} _speed;
 
 	// Speed controls for credits
-	Button fast, slow, reverse, pause;
+	Button _fast, _slow, _reverse, _pause;
 
 	// The back button, website and twitter buttons
-	Button back, website, twitter;
+	Button _back, _website, _twitter;
 
 public:
-	CreditScreen() { reset(); }
+	CreditScreen() {
+		reset();
+	}
+
 	~CreditScreen() {}
 
 	void load(const Common::String &filename);

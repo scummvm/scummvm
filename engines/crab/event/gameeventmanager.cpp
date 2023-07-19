@@ -103,7 +103,7 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 			if (_oh.show_journal) {
 				info._journal.handleEvents(playerId, Event);
 
-				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
+				if (hud._back.handleEvents(Event) == BUAC_LCLICK || hud._pausekey.handleEvents(Event))
 					_oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
@@ -111,9 +111,9 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 					if (info.personValid(_curEvent->_title)) {
 						Person &p = info.personGet(_curEvent->_title);
 						if (p._altJournalName)
-							info._journal.Open(playerId, JE_PEOPLE, p._journalName);
+							info._journal.open(playerId, JE_PEOPLE, p._journalName);
 						else
-							info._journal.Open(playerId, JE_PEOPLE, p._name);
+							info._journal.open(playerId, JE_PEOPLE, p._name);
 					}
 				}
 
@@ -132,13 +132,13 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 			if (_oh.show_journal) {
 				info._journal.handleEvents(playerId, Event);
 
-				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
+				if (hud._back.handleEvents(Event) == BUAC_LCLICK || hud._pausekey.handleEvents(Event))
 					_oh.show_journal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
 				if (_oh.HandleCommonEvents(Event))
 					if (info.personValid(_curEvent->_title))
-						info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
+						info._journal.open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
 
 				int choice = _reply.handleEvents(info, g_engine->_eventStore->_con[_curEvent->_special], _curEvent->_title, _oh, Event);
 				if (choice >= 0) {
@@ -151,7 +151,7 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 			// If journal button is select from within an event, go to the entry corresponding to that person's name
 			if (_oh.HandleCommonEvents(Event))
 				if (info.personValid(_curEvent->_title))
-					info._journal.Open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
+					info._journal.open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
 
 			if (_textin.handleEvents(Event))
 				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
@@ -160,7 +160,7 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 			if (_intro._showTraits) {
 				_per.handleEvents(info, _curEvent->_title, Event);
 
-				if (hud.back.handleEvents(Event) == BUAC_LCLICK || hud.pausekey.handleEvents(Event))
+				if (hud._back.handleEvents(Event) == BUAC_LCLICK || hud._pausekey.handleEvents(Event))
 					_intro._showTraits = false;
 			} else {
 				if (_intro.handleEvents(Event))
@@ -325,7 +325,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 			g_engine->_imageManager->dimScreen();
 			if (_oh.show_journal) {
 				info._journal.draw(level.playerId());
-				hud.back.draw();
+				hud._back.draw();
 			} else
 				_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
 			break;
@@ -333,7 +333,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 			g_engine->_imageManager->dimScreen();
 			if (_oh.show_journal) {
 				info._journal.draw(level.playerId());
-				hud.back.draw();
+				hud._back.draw();
 			} else {
 				_oh.draw(info, _curEvent, _curEvent->_title, _player, _curSp);
 				_reply.draw();
@@ -347,7 +347,7 @@ void Manager::draw(Info &info, HUD &hud, Level &level) {
 			g_engine->_imageManager->dimScreen();
 			if (_intro._showTraits) {
 				_per.draw(info, _curEvent->_title);
-				hud.back.draw();
+				hud._back.draw();
 			} else
 				_intro.draw(info, _curEvent->_dialog, _curSp, _curEvent->_state);
 

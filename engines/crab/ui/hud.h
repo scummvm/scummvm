@@ -51,56 +51,60 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace ui {
-enum HUDSignal { HS_NONE = -1,
-				 HS_MAP,
-				 HS_PAUSE,
-				 HS_CHAR,
-				 HS_JOURNAL,
-				 HS_INV };
+enum HUDSignal {
+	HS_NONE = -1,
+	HS_MAP,
+	HS_PAUSE,
+	HS_CHAR,
+	HS_JOURNAL,
+	HS_INV
+};
 
 // The world map, inventory and objective buttons are in the button menu
 class HUD {
 	// The background image
-	ImageData bg;
+	ImageData _bg;
 
 	// The launcher menu for stuff like inventory, character, pause etc
-	Menu<StateButton> menu;
+	Menu<StateButton> _menu;
 
 	// The health gem thingy
 	// HealthIndicator health;
 
 	// Sprite sheet for animated notify icon
-	ImageKey notify_anim;
+	ImageKey _notifyAnim;
 
 	// Animated notification icon needs a clip sign
-	Rect clip;
+	Rect _clip;
 
 	// The amount of time to wait before incrementing clip
-	Timer timer;
+	Timer _timer;
 
 	// The original tooltips as provided in the xml
-	Common::Array<Common::String> tooltip;
+	Common::Array<Common::String> _tooltip;
 
 public:
-	GameOverMenu gom;
-	PauseMenu pause;
-	pyrodactyl::input::HotKey pausekey;
-	Button back;
+	GameOverMenu _gom;
+	PauseMenu _pause;
+	pyrodactyl::input::HotKey _pausekey;
+	Button _back;
 
 	HUD() {
-		pausekey.set(pyrodactyl::input::IG_PAUSE);
-		notify_anim = 0;
+		_pausekey.set(pyrodactyl::input::IG_PAUSE);
+		_notifyAnim = 0;
 	}
 	~HUD() {}
 
-	void internalEvents(bool ShowMap);
-	void PlayerImg(const StateButtonImage &img) { menu.element[HS_CHAR].img(img); }
+	void internalEvents(bool showMap);
+	void playerImg(const StateButtonImage &img) {
+		_menu.element[HS_CHAR].img(img);
+	}
 
 	void State(const int &val);
 
 	void load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm);
 
-	HUDSignal handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
+	HUDSignal handleEvents(pyrodactyl::event::Info &info, const Common::Event &event);
 #if 0
 	HUDSignal handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
@@ -109,7 +113,7 @@ public:
 
 	// Set the tooltips for the buttons in the menu
 	// The tooltips are of the style <Name> (<Hotkey>), with Name being provided by the xml
-	void SetTooltip();
+	void setTooltip();
 
 	void setUI();
 };

@@ -44,16 +44,16 @@ namespace pyrodactyl {
 namespace ui {
 class GfxSettingMenu {
 	// The brightness slider
-	Slider brightness;
+	Slider _brightness;
 
 	// The button to toggle between full and windowed, and turn vsync on/off, window borders or not, game quality
-	ToggleButton fullscreen, vsync, border, quality;
+	ToggleButton _fullscreen, _vsync, _border, _quality;
 
 	// The buttons and menus for changing resolution
-	ResolutionMenu resolution;
+	ResolutionMenu _resolution;
 
 	// Notice that quality setting can only be changed outside the game
-	HoverInfo notice_quality;
+	HoverInfo _noticeQuality;
 
 public:
 	GfxSettingMenu() {}
@@ -61,7 +61,7 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	int handleEvents(const Common::Event &Event);
+	int handleEvents(const Common::Event &event);
 #if 0
 	int handleEvents(const SDL_Event &Event);
 #endif
@@ -70,7 +70,7 @@ public:
 	void draw();
 	void setUI();
 
-	void SetInfo() { resolution.SetInfo(); }
+	void SetInfo() { _resolution.SetInfo(); }
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

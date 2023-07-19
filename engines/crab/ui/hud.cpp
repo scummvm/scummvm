@@ -46,14 +46,14 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("hud");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.load(node->first_node("bg"));
+				_bg.load(node->first_node("bg"));
 
 			if (nodeValid("tray", node))
-				menu.load(node->first_node("tray"));
+				_menu.load(node->first_node("tray"));
 
-			pause.load(node->first_node("pause"));
-			gom.load(node->first_node("game_over"));
-			back.load(node->first_node("back"));
+			_pause.load(node->first_node("pause"));
+			_gom.load(node->first_node("game_over"));
+			_back.load(node->first_node("back"));
 			// health.load(node->first_node("health"));
 
 			if (nodeValid("notify", node)) {
@@ -65,66 +65,66 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 
 				if (nodeValid("anim", notifynode)) {
 					rapidxml::xml_node<char> *animnode = notifynode->first_node("anim");
-					loadImgKey(notify_anim, "img", animnode);
-					clip.load(animnode);
+					loadImgKey(_notifyAnim, "img", animnode);
+					_clip.load(animnode);
 
-					timer.load(animnode, "delay");
-					timer.Start();
+					_timer.load(animnode, "delay");
+					_timer.Start();
 				}
 			}
 		}
 
 		// Create a copy of all the tooltips
-		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
-			tooltip.push_back(i->_tooltip.text);
+		for (auto i = _menu.element.begin(); i != _menu.element.end(); ++i)
+			_tooltip.push_back(i->_tooltip._text);
 
-		SetTooltip();
+		setTooltip();
 	}
 }
 
 void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
-	bg.draw();
-	menu.draw();
+	_bg.draw();
+	_menu.draw();
 
 	if (info._unread._journal) {
-		g_engine->_imageManager->draw(menu.element[HS_JOURNAL].x + menu.element[HS_JOURNAL].w - clip.w / 2,
-						   menu.element[HS_JOURNAL].y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->draw(_menu.element[HS_JOURNAL].x + _menu.element[HS_JOURNAL].w - _clip.w / 2,
+									  _menu.element[HS_JOURNAL].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 
 	if (info._unread._inventory) {
-		g_engine->_imageManager->draw(menu.element[HS_INV].x + menu.element[HS_INV].w - clip.w / 2,
-						   menu.element[HS_INV].y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->draw(_menu.element[HS_INV].x + _menu.element[HS_INV].w - _clip.w / 2,
+									  _menu.element[HS_INV].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 
 	if (info._unread._trait) {
-		g_engine->_imageManager->draw(menu.element[HS_CHAR].x + menu.element[HS_CHAR].w - clip.w / 2,
-						   menu.element[HS_CHAR].y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->draw(_menu.element[HS_CHAR].x + _menu.element[HS_CHAR].w - _clip.w / 2,
+									  _menu.element[HS_CHAR].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 
 	if (info._unread._map) {
-		g_engine->_imageManager->draw(menu.element[HS_MAP].x + menu.element[HS_MAP].w - clip.w / 2,
-						   menu.element[HS_MAP].y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->draw(_menu.element[HS_MAP].x + _menu.element[HS_MAP].w - _clip.w / 2,
+									  _menu.element[HS_MAP].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 //#endif
 }
 
-void HUD::internalEvents(bool ShowMap) {
-	menu.element[HS_MAP]._visible = ShowMap;
+void HUD::internalEvents(bool showMap) {
+	_menu.element[HS_MAP]._visible = showMap;
 
-	if (timer.TargetReached()) {
-		clip.x += clip.w;
+	if (_timer.TargetReached()) {
+		_clip.x += _clip.w;
 
-		if (clip.x >= g_engine->_imageManager->getTexture(notify_anim).w())
-			clip.x = 0;
+		if (_clip.x >= g_engine->_imageManager->getTexture(_notifyAnim).w())
+			_clip.x = 0;
 
-		timer.Start();
+		_timer.Start();
 	}
 }
 
-HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
-	g_engine->_mouse->_insideHud = bg.Contains(g_engine->_mouse->_motion.x, g_engine->_mouse->_motion.y);
+HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const Common::Event &event) {
+	g_engine->_mouse->_insideHud = _bg.Contains(g_engine->_mouse->_motion.x, g_engine->_mouse->_motion.y);
 
-	int choice = menu.handleEvents(Event);
+	int choice = _menu.handleEvents(event);
 
 	if (choice == HS_JOURNAL)
 		info._unread._journal = false;
@@ -159,25 +159,25 @@ HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Even
 
 void HUD::State(const int &val) {
 	int count = 0;
-	for (auto i = menu.element.begin(); i != menu.element.end(); ++i, ++count)
+	for (auto i = _menu.element.begin(); i != _menu.element.end(); ++i, ++count)
 		i->state(val == count);
 }
 
-void HUD::SetTooltip() {
+void HUD::setTooltip() {
 	unsigned int count = 0;
-	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
-		i->_tooltip.text = tooltip[count] + " (" + i->_hotkey.name() + ")";
+	for (auto i = _menu.element.begin(); i != _menu.element.end() && count < _tooltip.size(); ++i, ++count)
+		i->_tooltip._text = _tooltip[count] + " (" + i->_hotkey.name() + ")";
 
-	menu.element[HS_PAUSE]._tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->getAssociatedKey(IG_PAUSE) + ")";
+	_menu.element[HS_PAUSE]._tooltip._text = _tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->getAssociatedKey(IG_PAUSE) + ")";
 }
 
 void HUD::setUI() {
-	bg.setUI();
-	menu.setUI();
+	_bg.setUI();
+	_menu.setUI();
 
-	gom.setUI();
-	pause.setUI();
-	back.setUI();
+	_gom.setUI();
+	_pause.setUI();
+	_back.setUI();
 }
 
 } // End of namespace Crab

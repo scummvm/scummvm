@@ -77,7 +77,7 @@ void Info::load(rapidxml::xml_node<char> *node) {
 	}
 
 	curLocID(node->first_node("level")->first_attribute("start")->value());
-	_inv.ItemFile(node->first_node("item")->first_attribute("list")->value());
+	_inv.itemFile(node->first_node("item")->first_attribute("list")->value());
 }
 
 void Info::loadPeople(const Common::String &filename) {

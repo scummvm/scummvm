@@ -60,7 +60,7 @@ public:
 	}
 	~GameSaveMenu() {}
 
-	void ScanDir();
+	void scanDir();
 	bool DisableHotkeys() { return state == STATE_NAME; }
 
 	void load(rapidxml::xml_node<char> *node);
