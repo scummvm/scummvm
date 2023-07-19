@@ -223,7 +223,7 @@ void ConversationSound::execute() {
 				// NPC has finished talking, we have responses
 				for (uint i = 0; i < 30; ++i) {
 					if (NancySceneState.getLogicCondition(i, g_nancy->_true)) {
-						int pickedOnScreenResponse = _pickedResponse = i;
+						_pickedResponse = i;
 
 						// Adjust to account for hidden responses
 						for (uint j = 0; j < _responses.size(); ++j) {
@@ -231,7 +231,7 @@ void ConversationSound::execute() {
 								++_pickedResponse;
 							}
 
-							if ((int)j == pickedOnScreenResponse) {
+							if ((int)j == _pickedResponse) {
 								break;
 							}
 						}
