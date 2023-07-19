@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-19 19:34+0000\n"
-"PO-Revision-Date: 2023-07-19 18:43+0000\n"
+"PO-Revision-Date: 2023-07-19 20:05+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1836,16 +1836,12 @@ msgid "Disable fixed font scaling"
 msgstr "Desactivar escalado de fuentes fijas"
 
 #: gui/options.cpp:2565
-#, fuzzy
-#| msgid ""
-#| "Do not upscale fixed fonts in the GUI. This reduces artefacts on low "
-#| "resolution screens"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
-"No se escalarán las fuentes fijas dentro de la interfaz, lo que reducirá los "
-"artefactos en pantallas de baja resolución"
+"No se escalarán las fuentes de ancho fijo dentro de la interfaz, lo que "
+"reducirá los artefactos en pantallas de baja resolución"
 
 #: gui/options.cpp:2571
 msgid "GUI language:"
