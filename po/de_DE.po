@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 16:51+0000\n"
+"POT-Creation-Date: 2023-07-19 19:34+0000\n"
 "PO-Revision-Date: 2023-07-01 15:07+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -1847,7 +1847,7 @@ msgstr "Fallen deaktivieren"
 
 #: gui/options.cpp:2565
 msgid ""
-"Do not upscale fixed fonts in the GUI. This reduces artefacts on low "
+"Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
 

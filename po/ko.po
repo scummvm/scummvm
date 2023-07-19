@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 16:51+0000\n"
+"POT-Creation-Date: 2023-07-19 19:34+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1844,7 +1844,7 @@ msgstr "저장 메뉴 비활성화"
 
 #: gui/options.cpp:2565
 msgid ""
-"Do not upscale fixed fonts in the GUI. This reduces artefacts on low "
+"Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
 

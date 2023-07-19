@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 16:51+0000\n"
+"POT-Creation-Date: 2023-07-19 19:34+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1821,7 +1821,7 @@ msgstr "כיבוי נפילה"
 
 #: gui/options.cpp:2565
 msgid ""
-"Do not upscale fixed fonts in the GUI. This reduces artefacts on low "
+"Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
 

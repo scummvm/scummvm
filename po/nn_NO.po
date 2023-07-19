@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 16:51+0000\n"
+"POT-Creation-Date: 2023-07-19 19:34+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -1859,7 +1859,7 @@ msgstr "Klarte ikkje lagre spel"
 
 #: gui/options.cpp:2565
 msgid ""
-"Do not upscale fixed fonts in the GUI. This reduces artefacts on low "
+"Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
 
