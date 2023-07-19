@@ -40,14 +40,14 @@ namespace pyrodactyl {
 namespace ui {
 class ParagraphData : public TextData {
 public:
-	Vector2i line;
+	Vector2i _line;
 
-	ParagraphData() : line(1, 1) {}
+	ParagraphData() : _line(1, 1) {}
 	~ParagraphData() {}
 
 	bool load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
 
-	void draw(const Common::String &val, const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const Common::String &val, const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

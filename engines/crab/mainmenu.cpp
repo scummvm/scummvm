@@ -52,9 +52,9 @@ MainMenu::MainMenu() {
 
 			back.load(node->first_node("back"));
 
-			if (!g_engine->_optionMenu->loaded) {
+			if (!g_engine->_optionMenu->_loaded) {
 				g_engine->_optionMenu->load(node->first_node("option")->first_attribute("path")->value());
-				g_engine->_optionMenu->loaded = true;
+				g_engine->_optionMenu->_loaded = true;
 			}
 
 			mod.load(node->first_node("mod")->first_attribute("path")->value());
@@ -160,8 +160,8 @@ void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 	if (state != STATE_CREDITS) {
 		int choice = me_main.handleEvents(Event);
 		if (choice >= 0) {
-			for (unsigned i = 0; i < me_main.element.size(); ++i)
-				me_main.element[i].state(i == (unsigned int)choice);
+			for (unsigned i = 0; i < me_main._element.size(); ++i)
+				me_main._element[i].state(i == (unsigned int)choice);
 
 			switch (choice) {
 			case 0:
@@ -455,19 +455,19 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 
 	// We are entering the normal state, i.e outside all menus - reset color of menu items
 	if (state == STATE_NORMAL) {
-		for (unsigned i = 0; i < me_main.element.size(); ++i)
-			me_main.element[i].state(false);
+		for (unsigned i = 0; i < me_main._element.size(); ++i)
+			me_main._element[i].state(false);
 	}
 
 	// Enable keyboard navigation if outside all menus, otherwise disable it
-	me_main.UseKeyboard((state == STATE_NORMAL));
+	me_main.useKeyboard((state == STATE_NORMAL));
 
 	// Continue button is only enabled if there is a save to load
-	me_main.element[0]._visible = !g_engine->_loadMenu->empty();
+	me_main._element[0]._visible = !g_engine->_loadMenu->empty();
 
 	// Enable credits and quit button if outside all menus, otherwise disable it
-	me_main.element[6]._visible = (state == STATE_NORMAL);
-	me_main.element[7]._visible = (state == STATE_NORMAL);
+	me_main._element[6]._visible = (state == STATE_NORMAL);
+	me_main._element[7]._visible = (state == STATE_NORMAL);
 
 	// If switching to help screen, load latest image otherwise remove it from memory
 	if (state == STATE_HELP)

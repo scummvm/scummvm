@@ -46,43 +46,46 @@ namespace ui {
 class PersonHandler {
 	// The positions of various elements
 	// img = player image position
-	Element img;
+	Element _img;
 
 	// How the individual sprite clips are drawn
 	struct ImageAnchor {
-		Align x, y;
+		Align _x, _y;
 
 		ImageAnchor() {
-			x = ALIGN_CENTER;
-			y = ALIGN_RIGHT;
+			_x = ALIGN_CENTER;
+			_y = ALIGN_RIGHT;
 		}
 
 		void load(rapidxml::xml_node<char> *node, const bool &echo = true) {
-			loadAlign(x, node, echo, "align_x");
-			loadAlign(y, node, echo, "align_y");
+			loadAlign(_x, node, echo, "align_x");
+			loadAlign(_y, node, echo, "align_y");
 		}
-	} sprite_align;
+	} _spriteAlign;
 
 	// For drawing the name
-	TextData name;
+	TextData _name;
 
 	// The dialog box used to draw dialog
-	pyrodactyl::ui::GameDialogBox dlbox;
+	pyrodactyl::ui::GameDialogBox _dlbox;
 
 	// The three opinion bars
-	pyrodactyl::ui::ProgressBar opinion[pyrodactyl::people::OPI_TOTAL];
+	pyrodactyl::ui::ProgressBar _opinion[pyrodactyl::people::OPI_TOTAL];
 
 	// The button for selecting the journal
-	Button jb;
+	Button _jb;
 
 	// The person id of the changed opinion, we use this to reset bar
-	Common::String prev;
+	Common::String _prev;
 
 public:
 	// Used by other objects to see if journal needs to be displayed or not
-	bool show_journal;
+	bool _showJournal;
 
-	PersonHandler() { show_journal = false; }
+	PersonHandler() {
+		_showJournal = false;
+	}
+
 	~PersonHandler() {}
 
 	void reset(const Common::String &id);
@@ -90,10 +93,10 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 
 	// Handle events for the three opinion bars and journal - used in both dialog box and reply events
-	bool HandleCommonEvents(const Common::Event &Event);
+	bool handleCommonEvents(const Common::Event &event);
 
 	// Handle events for the dialog box
-	bool HandleDlboxEvents(const Common::Event &Event);
+	bool handleDlboxEvents(const Common::Event &event);
 
 #if 0
 	bool HandleCommonEvents(const SDL_Event &Event);
@@ -102,10 +105,10 @@ public:
 
 	void internalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s);
 
-	void draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
+	void draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *event, const Common::String &personId,
 			  const bool &player, pyrodactyl::anim::Sprite *s = nullptr);
 
-	void OpinionChange(pyrodactyl::event::Info &info, const Common::String &id,
+	void opinionChange(pyrodactyl::event::Info &info, const Common::String &id,
 					   const pyrodactyl::people::OpinionType &type, const int &val);
 
 	void setUI();

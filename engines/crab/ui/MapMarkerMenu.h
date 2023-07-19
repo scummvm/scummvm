@@ -41,43 +41,48 @@ namespace pyrodactyl {
 namespace ui {
 class MapMarkerMenu {
 	// The reference map marker
-	StateButton ref;
+	StateButton _ref;
 
 	// The menu containing all the map markers
-	Menu<StateButton> menu;
+	Menu<StateButton> _menu;
 
 	// The offset at which every map marker is drawn (used to compensate for icon design width)
 	struct {
-		Vector2i marker, player;
-	} offset;
+		Vector2i _marker, _player;
+	} _offset;
 
 	// The button for the player's current position
-	Button player;
+	Button _player;
 
 public:
 	MapMarkerMenu() {}
 	~MapMarkerMenu() {}
 
-	void AddButton(const Common::String &name, const int &x, const int &y) {
+	void addButton(const Common::String &name, const int &x, const int &y) {
 		StateButton b;
-		b.init(ref, x, y);
+		b.init(_ref, x, y);
 		b._tooltip._text = name;
-		menu.element.push_back(b);
+		_menu._element.push_back(b);
 	}
 
-	void Clear() { menu.element.clear(); }
-	void AssignPaths() { menu.AssignPaths(); }
+	void clear() {
+		_menu._element.clear();
+	}
 
-	void SelectDest(const Common::String &name) {
-		for (auto &i : menu.element)
+	void assignPaths() {
+		_menu.assignPaths();
+	}
+
+	void selectDest(const Common::String &name) {
+		for (auto &i : _menu._element)
 			i.state(i._tooltip._text == name);
 	}
 
-	void Erase(const Common::String &name) {
-		for (auto i = menu.element.begin(); i != menu.element.end(); ++i) {
+	void erase(const Common::String &name) {
+		for (auto i = _menu._element.begin(); i != _menu._element.end(); ++i) {
 			if (i->_tooltip._text == name) {
-				menu.element.erase(i);
-				AssignPaths();
+				_menu._element.erase(i);
+				assignPaths();
 				break;
 			}
 		}
@@ -87,11 +92,11 @@ public:
 
 	void draw(const Element &pos, const Vector2i &player_pos, const Rect &camera);
 
-	void handleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const Common::Event &Event);
+	void handleEvents(const Element &pos, const Vector2i &playerPos, const Rect &camera, const Common::Event &event);
 #if 0
 	void handleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const SDL_Event &Event);
 #endif
-	void internalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds);
+	void internalEvents(const Element &pos, const Vector2i &playerPos, const Rect &camera, Rect bounds);
 
 	void setUI();
 };

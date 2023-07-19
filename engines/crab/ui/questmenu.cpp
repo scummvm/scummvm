@@ -94,13 +94,13 @@ void QuestMenu::Add(const Common::String &title, const Common::String &txt) {
 
 	Quest q(title, txt, true, false);
 	quest.insert_at(0, q);
-	menu.Add();
+	menu.add();
 	unread = true;
 }
 
 void QuestMenu::Add(const pyrodactyl::event::Quest &q) {
 	quest.insert_at(0, q);
-	menu.Add();
+	menu.add();
 }
 
 //------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void QuestMenu::Add(const pyrodactyl::event::Quest &q) {
 //------------------------------------------------------------------------
 void QuestMenu::Erase(const int &index) {
 	quest.erase(quest.begin() + index);
-	menu.Erase();
+	menu.erase();
 }
 
 //------------------------------------------------------------------------
@@ -126,11 +126,11 @@ void QuestMenu::draw(Button &bu_map) {
 	menu.draw();
 
 	using namespace pyrodactyl::text;
-	for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < quest.size(); i++, count++) {
-		auto base_x = menu.BaseX(count), base_y = menu.BaseY(count);
+	for (auto i = menu.index(), count = 0u; i < menu.indexPlusOne() && i < quest.size(); i++, count++) {
+		auto base_x = menu.baseX(count), base_y = menu.baseY(count);
 
 		// Only draw in _s color if we are on the same button and page
-		if ((unsigned int)sel_bu == count && (unsigned int)sel_page == menu.CurrentPage())
+		if ((unsigned int)sel_bu == count && (unsigned int)sel_page == menu.currentPage())
 			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i]._title, col_s, font, align);
 		else
 			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i]._title, col_n, font, align);
@@ -156,16 +156,16 @@ bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const Co
 	int res = menu.handleEvents(Event);
 	if (res != -1) {
 		if (sel_bu >= 0 && sel_page >= 0)
-			menu.Image(sel_bu, sel_page, img_n);
+			menu.image(sel_bu, sel_page, img_n);
 
 		sel_bu = res;
-		sel_page = menu.CurrentPage();
-		sel_quest = menu.Index() + sel_bu;
+		sel_page = menu.currentPage();
+		sel_quest = menu.index() + sel_bu;
 
 		quest[sel_quest]._unread = false;
 		text.reset();
 
-		menu.Image(sel_bu, sel_page, img_s);
+		menu.image(sel_bu, sel_page, img_s);
 	}
 
 	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
@@ -223,20 +223,20 @@ bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const SD
 void QuestMenu::Select(const int &quest_index) {
 	if (quest_index >= 0 && (unsigned int)quest_index < quest.size()) {
 		if (sel_bu >= 0 && sel_page >= 0)
-			menu.Image(sel_bu, sel_page, img_n);
+			menu.image(sel_bu, sel_page, img_n);
 
 		sel_quest = quest_index;
 
-		sel_page = quest_index / menu.ElementsPerPage();
-		menu.CurrentPage(sel_page);
-		menu.UpdateInfo();
+		sel_page = quest_index / menu.elementsPerPage();
+		menu.currentPage(sel_page);
+		menu.updateInfo();
 
-		sel_bu = quest_index % menu.ElementsPerPage();
+		sel_bu = quest_index % menu.elementsPerPage();
 
 		quest[quest_index]._unread = false;
 		text.reset();
 
-		menu.Image(sel_bu, sel_page, img_s);
+		menu.image(sel_bu, sel_page, img_s);
 	}
 }
 
@@ -265,7 +265,7 @@ void QuestMenu::loadState(rapidxml::xml_node<char> *node) {
 		Quest q;
 		q.loadState(n);
 		quest.push_back(q);
-		menu.Add();
+		menu.add();
 	}
 }
 

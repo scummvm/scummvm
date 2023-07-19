@@ -47,67 +47,71 @@ namespace pyrodactyl {
 namespace ui {
 class OptionMenu {
 	// What overall state the menu is in
-	enum { STATE_GENERAL,
-		   STATE_GRAPHICS,
-		   STATE_KEYBOARD,
-		   STATE_CONTROLLER,
-		   STATE_ENTER_W,
-		   STATE_ENTER_H,
-		   STATE_CONFIRM } state;
+	enum {
+		STATE_GENERAL,
+		STATE_GRAPHICS,
+		STATE_KEYBOARD,
+		STATE_CONTROLLER,
+		STATE_ENTER_W,
+		STATE_ENTER_H,
+		STATE_CONFIRM
+	} _state;
 
 	// The overall menu for switching between states
 	// The second last button is save, the last button is cancel
-	Menu<StateButton> menu;
+	Menu<StateButton> _menu;
 
 	// The background image
-	ImageData bg;
+	ImageData _bg;
 
 	// The graphical settings menu
-	GfxSettingMenu gfx;
+	GfxSettingMenu _gfx;
 
 	// The general settings menu
-	GeneralSettingMenu general;
+	GeneralSettingMenu _general;
 
 	// Keyboard controls menu
-	KeyBindMenu keybind;
+	KeyBindMenu _keybind;
 
 	// The controller controls are just drawn in a single image, no reassign options
-	ImageData conbind;
+	ImageData _conbind;
 
 	// The UI for accepting/rejecting change in resolution
-	HoverInfo notice_res;
-	ImageData questionbox;
-	Button accept, cancel;
+	HoverInfo _noticeRes;
+	ImageData _questionbox;
+	Button _accept, _cancel;
 
 	// If the user wants to input a custom resolution, these are used along with the question box
-	TextArea prompt_w, prompt_h;
+	TextArea _promptW, _promptH;
 
 	// The countdown until the timer resets
-	TextData countdown;
-	Timer timer;
+	TextData _countdown;
+	Timer _timer;
 
 	// Function to draw the main menu (controls, settings, save, cancel)
-	bool HandleTabs(Button &back, const Common::Event &Event);
+	bool handleTabs(Button &back, const Common::Event &event);
 #if 0
 	bool HandleTabs(Button &back, const SDL_Event &Event);
 #endif
 
 public:
-	bool loaded;
+	bool _loaded;
 
 	OptionMenu(void) {
-		loaded = false;
-		state = STATE_GENERAL;
-		menu.UseKeyboard(true);
+		_loaded = false;
+		_state = STATE_GENERAL;
+		_menu.useKeyboard(true);
 	}
 	~OptionMenu(void) {}
 
 	void reset();
-	bool DisableHotkeys() { return keybind.DisableHotkeys(); }
+	bool disableHotkeys() {
+		return _keybind.disableHotkeys();
+	}
 
 	void load(const Common::String &filename);
 	void draw(Button &back);
-	bool handleEvents(Button &back, const Common::Event &Event);
+	bool handleEvents(Button &back, const Common::Event &event);
 #if 0
 	bool handleEvents(Button &back, const SDL_Event &Event);
 #endif

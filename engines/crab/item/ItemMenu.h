@@ -62,7 +62,7 @@ public:
 	}
 	~ItemMenu() {}
 
-	int HoverIndex() { return hover_index; }
+	int hoverIndex() { return _hoverIndex; }
 
 	void draw(pyrodactyl::ui::ItemDesc &item_info);
 	/*pyrodactyl::people::Person &obj, pyrodactyl::stat::StatDrawHelper &helper*/

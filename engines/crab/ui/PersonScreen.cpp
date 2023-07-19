@@ -43,25 +43,25 @@ void PersonScreen::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("character");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.load(node->first_node("bg"));
+				_bg.load(node->first_node("bg"));
 
 			if (nodeValid("name", node))
-				name.load(node->first_node("name"));
+				_name.load(node->first_node("name"));
 
 			if (nodeValid("img", node))
-				img.load(node->first_node("img"));
+				_img.load(node->first_node("img"));
 
 			if (nodeValid("menu", node))
-				menu.load(node->first_node("menu"));
+				_menu.load(node->first_node("menu"));
 		}
 	}
 }
 
-void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event) {
+void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &event) {
 	if (info.personValid(id))
-		menu.handleEvents(&info.personGet(id), Event);
+		_menu.handleEvents(&info.personGet(id), event);
 	else
-		menu.handleEvents(nullptr, Event);
+		_menu.handleEvents(nullptr, event);
 }
 
 #if 0
@@ -74,39 +74,39 @@ void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::Str
 #endif
 
 void PersonScreen::internalEvents() {
-	if (cur_sp != nullptr)
-		cur_sp->dialogUpdateClip(PST_NORMAL);
+	if (_curSp != nullptr)
+		_curSp->dialogUpdateClip(PST_NORMAL);
 }
 
 void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id) {
-	bg.draw();
+	_bg.draw();
 
 	if (info.personValid(id)) {
-		name.draw(info.personGet(id)._name);
-		menu.draw(&info.personGet(id));
+		_name.draw(info.personGet(id)._name);
+		_menu.draw(&info.personGet(id));
 	} else
-		menu.draw(nullptr);
+		_menu.draw(nullptr);
 
-	if (cur_sp != nullptr) {
-		Rect clip = cur_sp->dialogClip(PST_NORMAL);
-		g_engine->_imageManager->draw(img.x, img.y, cur_sp->img(), &clip);
+	if (_curSp != nullptr) {
+		Rect clip = _curSp->dialogClip(PST_NORMAL);
+		g_engine->_imageManager->draw(_img.x, _img.y, _curSp->img(), &clip);
 	}
 }
 
 void PersonScreen::Cache(Info &info, const Common::String &id, pyrodactyl::level::Level &level) {
-	cur_sp = level.getSprite(id);
+	_curSp = level.getSprite(id);
 
 	if (info.personValid(id))
-		menu.Cache(info.personGet(id));
+		_menu.Cache(info.personGet(id));
 	else
-		menu.Clear();
+		_menu.Clear();
 }
 
 void PersonScreen::setUI() {
-	bg.setUI();
-	name.setUI();
-	img.setUI();
-	menu.setUI();
+	_bg.setUI();
+	_name.setUI();
+	_img.setUI();
+	_menu.setUI();
 }
 
 } // End of namespace Crab

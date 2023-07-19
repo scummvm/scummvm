@@ -42,10 +42,10 @@ namespace ui {
 class MapButton : public Button {
 public:
 	// The id of the location
-	Common::String loc;
+	Common::String _loc;
 
 	// Conditions needed for the location to be unlocked in world map
-	pyrodactyl::event::TriggerSet unlock;
+	pyrodactyl::event::TriggerSet _unlock;
 
 	MapButton() {}
 	~MapButton() {}
@@ -53,9 +53,9 @@ public:
 	void load(rapidxml::xml_node<char> *node) {
 		Button::load(node);
 
-		loadStr(loc, "id", node);
+		loadStr(_loc, "id", node);
 		if (nodeValid("unlock", node, false))
-			unlock.load(node->first_node("unlock"));
+			_unlock.load(node->first_node("unlock"));
 	}
 };
 

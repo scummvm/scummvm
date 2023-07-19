@@ -45,11 +45,11 @@ void ItemMenu::Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int
 	for (unsigned int i = 0; i < size; ++i) {
 		ItemSlot b;
 		b.init(ref, inc.x * (i % cols), inc.y * (i / cols));
-		element.push_back(b);
+		_element.push_back(b);
 	}
 
-	use_keyboard = keyboard;
-	AssignPaths();
+	_useKeyboard = keyboard;
+	assignPaths();
 }
 
 //------------------------------------------------------------------------
@@ -57,15 +57,15 @@ void ItemMenu::Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int
 //------------------------------------------------------------------------
 void ItemMenu::loadState(rapidxml::xml_node<char> *node) {
 	unsigned int count = 0;
-	for (auto n = node->first_node(); n != NULL && count < element.size(); n = n->next_sibling(), ++count)
-		element[count].loadState(n);
+	for (auto n = node->first_node(); n != NULL && count < _element.size(); n = n->next_sibling(), ++count)
+		_element[count].loadState(n);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Save to file
 //------------------------------------------------------------------------
 void ItemMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto i = element.begin(); i != element.end(); ++i)
+	for (auto i = _element.begin(); i != _element.end(); ++i)
 		i->saveState(doc, root);
 }
 
@@ -76,8 +76,8 @@ void ItemMenu::handleEvents(const Common::Event &Event, const int &XOffset, cons
 	int result = Menu<ItemSlot>::handleEvents(Event);
 	if (result != -1) {
 		select_index = result;
-		for (unsigned int i = 0; i < element.size(); ++i)
-			element[i].state(i == (unsigned int)select_index);
+		for (unsigned int i = 0; i < _element.size(); ++i)
+			_element[i].state(i == (unsigned int)select_index);
 	}
 }
 
@@ -100,9 +100,9 @@ void ItemMenu::handleEvents(const SDL_Event &Event, const int &XOffset, const in
 //------------------------------------------------------------------------
 void ItemMenu::draw(ItemDesc &item_info) {
 	if (select_index != -1)
-		item_info.draw(element[select_index]._item);
+		item_info.draw(_element[select_index]._item);
 
-	for (auto i = element.begin(); i != element.end(); ++i)
+	for (auto i = _element.begin(); i != _element.end(); ++i)
 		i->draw();
 }
 
@@ -110,7 +110,7 @@ void ItemMenu::draw(ItemDesc &item_info) {
 // Purpose: Equip an item at the first available location (used in events)
 //------------------------------------------------------------------------
 bool ItemMenu::Equip(Item &item) {
-	for (auto i = element.begin(); i != element.end(); ++i)
+	for (auto i = _element.begin(); i != _element.end(); ++i)
 		if (i->_category == SLOT_STORAGE && i->equip(item))
 			return true;
 
@@ -123,7 +123,7 @@ bool ItemMenu::Equip(Item &item) {
 bool ItemMenu::Del(const Common::String &id) {
 	bool result = false;
 
-	for (auto &i : element)
+	for (auto &i : _element)
 		if (i._item._id == id) {
 			i._empty = true;
 			i._item.clear();
@@ -139,7 +139,7 @@ bool ItemMenu::Del(const Common::String &id) {
 // Purpose: Find out if we have an item with a name
 //------------------------------------------------------------------------
 bool ItemMenu::Has(const Common::String &container, const Common::String &id) {
-	for (auto i = element.begin(); i != element.end(); ++i)
+	for (auto i = _element.begin(); i != _element.end(); ++i)
 		if (i->_item._id == id) {
 			if (container == "equip") {
 				if (i->_category == SLOT_EQUIP)
@@ -163,17 +163,17 @@ bool ItemMenu::Swap(ItemMenu &target, int index) {
 	// If no slot of type is found, don't swap items at all
 	int found_index = -1, cur_index = 0;
 
-	for (auto i = element.begin(); i != element.end(); ++i, ++cur_index)
-		if (i->_itemType == target.element[index]._itemType) {
+	for (auto i = _element.begin(); i != _element.end(); ++i, ++cur_index)
+		if (i->_itemType == target._element[index]._itemType) {
 			if (i->_empty) {
-				i->swap(target.element[index]);
+				i->swap(target._element[index]);
 				return true;
 			} else
 				found_index = cur_index;
 		}
 
 	if (found_index != -1) {
-		element[found_index].swap(target.element[index]);
+		_element[found_index].swap(target._element[index]);
 		return true;
 	}
 

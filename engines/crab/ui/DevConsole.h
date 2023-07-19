@@ -67,7 +67,7 @@ public:
 
 	// Only restrict input when we're in variable state
 	bool restrictInput() {
-		return (_state == STATE_VAR || _menu.HoverIndex() != -1);
+		return (_state == STATE_VAR || _menu.hoverIndex() != -1);
 	}
 
 	void load(const Common::String &filename);

@@ -47,43 +47,43 @@ void Map::load(const Common::String &filename, pyrodactyl::event::Info &info) {
 		if (nodeValid(node)) {
 			if (nodeValid("img", node)) {
 				rapidxml::xml_node<char> *imgnode = node->first_node("img");
-				loadNum(speed, "speed", imgnode);
+				loadNum(_speed, "speed", imgnode);
 
 				for (auto n = imgnode->first_node("map"); n != NULL; n = n->next_sibling("map"))
-					map.push_back(n);
+					_map.push_back(n);
 			}
 
 			if (nodeValid("fg", node))
-				fg.load(node->first_node("fg"));
+				_fg.load(node->first_node("fg"));
 
 			if (nodeValid("dim", node)) {
-				loadNum(camera.w, "x", node->first_node("dim"));
-				loadNum(camera.h, "y", node->first_node("dim"));
+				loadNum(_camera.w, "x", node->first_node("dim"));
+				loadNum(_camera.h, "y", node->first_node("dim"));
 			}
 
 			if (nodeValid("pos", node))
-				pos.load(node->first_node("pos"));
+				_pos.load(node->first_node("pos"));
 
 			if (nodeValid("scroll", node))
-				scroll.load(node->first_node("scroll"));
+				_scroll.load(node->first_node("scroll"));
 
 			if (nodeValid("marker", node))
-				marker.load(node->first_node("marker"));
+				_marker.load(node->first_node("marker"));
 
 			if (nodeValid("title", node))
-				title.load(node->first_node("title"));
+				_title.load(node->first_node("title"));
 
 			if (nodeValid("locations", node))
-				travel.load(node->first_node("locations"));
+				_travel.load(node->first_node("locations"));
 
 			if (nodeValid("overlay", node))
-				bu_overlay.load(node->first_node("overlay"));
+				_buOverlay.load(node->first_node("overlay"));
 		}
 	}
 
-	SetImage(cur, true);
-	Update(info);
-	CalcBounds();
+	setImage(_cur, true);
+	update(info);
+	calcBounds();
 }
 
 //------------------------------------------------------------------------
@@ -92,118 +92,118 @@ void Map::load(const Common::String &filename, pyrodactyl::event::Info &info) {
 void Map::draw(pyrodactyl::event::Info &info) {
 
 	// The map graphic is clipped to fit inside the UI
-	img_bg.draw(pos.x, pos.y, &camera);
+	_imgBg.draw(_pos.x, _pos.y, &_camera);
 
-	if (overlay) {
+	if (_overlay) {
 		// The overlay needs to be clipped as well, so we must find the intersection of the camera and the clip itself
-		for (auto &i : map[cur].reveal) {
+		for (auto &i : _map[_cur]._reveal) {
 			Rect r = i;
-			int X = pos.x + i.x - camera.x, Y = pos.y + i.y - camera.y;
+			int X = _pos.x + i.x - _camera.x, Y = _pos.y + i.y - _camera.y;
 
 			// Do not draw any area of the clip that is outside the camera bounds
 
 			// If we're outside the left edges, we need to cull the left point
-			if (X < pos.x) {
-				X += camera.x - i.x;
-				r.x += camera.x - i.x;
-				r.w -= camera.x - i.x;
+			if (X < _pos.x) {
+				X += _camera.x - i.x;
+				r.x += _camera.x - i.x;
+				r.w -= _camera.x - i.x;
 
 				if (r.w < 0)
 					r.w = 0;
 			}
 
-			if (Y < pos.y) {
-				Y += camera.y - i.y;
-				r.y += camera.y - i.y;
-				r.h -= camera.y - i.y;
+			if (Y < _pos.y) {
+				Y += _camera.y - i.y;
+				r.y += _camera.y - i.y;
+				r.h -= _camera.y - i.y;
 
 				if (r.h < 0)
 					r.h = 0;
 			}
 
 			// If we're outside the right edge, we need to cull the width and height
-			if (X + r.w > pos.x + camera.w)
-				r.w = pos.x + camera.w - X;
-			if (Y + r.h > pos.y + camera.h)
-				r.h = pos.y + camera.h - Y;
+			if (X + r.w > _pos.x + _camera.w)
+				r.w = _pos.x + _camera.w - X;
+			if (Y + r.h > _pos.y + _camera.h)
+				r.h = _pos.y + _camera.h - Y;
 
-			img_overlay.draw(X, Y, &r);
+			_imgOverlay.draw(X, Y, &r);
 		}
 	}
 
-	travel.draw(camera.x - pos.x, camera.y - pos.y);
+	_travel.draw(_camera.x - _pos.x, _camera.y - _pos.y);
 
-	fg.draw();
-	bu_overlay.draw();
+	_fg.draw();
+	_buOverlay.draw();
 
-	title._text = info.curLocName();
-	title.draw();
+	_title._text = info.curLocName();
+	_title.draw();
 
-	marker.draw(pos, player_pos, camera);
+	_marker.draw(_pos, _playerPos, _camera);
 
-	scroll.draw();
+	_scroll.draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Center the world map on a spot
 //------------------------------------------------------------------------
-void Map::Center(const Vector2i &vec) {
-	camera.x = vec.x - camera.w / 2;
-	camera.y = vec.y - camera.h / 2;
-	Validate();
+void Map::center(const Vector2i &vec) {
+	_camera.x = vec.x - _camera.w / 2;
+	_camera.y = vec.y - _camera.h / 2;
+	validate();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Keep the camera in bounds and decide marker visibility
 //------------------------------------------------------------------------
-void Map::Validate() {
+void Map::validate() {
 	// Make all scroll buttons visible first
-	for (auto &i : scroll.element)
+	for (auto &i : _scroll._element)
 		i._visible = true;
 
 	// Keep camera in bounds
-	if (camera.x + camera.w > size.x)
-		camera.x = size.x - camera.w;
-	if (camera.y + camera.h > size.y)
-		camera.y = size.y - camera.h;
-	if (camera.x < 0)
-		camera.x = 0;
-	if (camera.y < 0)
-		camera.y = 0;
+	if (_camera.x + _camera.w > _size.x)
+		_camera.x = _size.x - _camera.w;
+	if (_camera.y + _camera.h > _size.y)
+		_camera.y = _size.y - _camera.h;
+	if (_camera.x < 0)
+		_camera.x = 0;
+	if (_camera.y < 0)
+		_camera.y = 0;
 
 	// decide visibility of scroll buttons
-	scroll.element[DIRECTION_RIGHT]._visible = !(camera.x == size.x - camera.w);
-	scroll.element[DIRECTION_DOWN]._visible = !(camera.y == size.y - camera.h);
-	scroll.element[DIRECTION_LEFT]._visible = !(camera.x == 0);
-	scroll.element[DIRECTION_UP]._visible = !(camera.y == 0);
+	_scroll._element[DIRECTION_RIGHT]._visible = !(_camera.x == _size.x - _camera.w);
+	_scroll._element[DIRECTION_DOWN]._visible = !(_camera.y == _size.y - _camera.h);
+	_scroll._element[DIRECTION_LEFT]._visible = !(_camera.x == 0);
+	_scroll._element[DIRECTION_UP]._visible = !(_camera.y == 0);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Move
 //------------------------------------------------------------------------
-void Map::Move(const Common::Event &Event) {
+void Map::move(const Common::Event &event) {
 	// Reset the velocity to avoid weirdness
-	vel.x = 0;
-	vel.y = 0;
+	_vel.x = 0;
+	_vel.y = 0;
 
 	// We don't use the result, but this keeps the button states up to date
-	scroll.handleEvents(Event);
+	_scroll.handleEvents(event);
 
-	switch (Event.type) {
+	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN: {
 		bool click = false;
 		int count = 0;
-		for (auto &i : scroll.element) {
+		for (auto &i : _scroll._element) {
 			if (i.Contains(g_engine->_mouse->_button)) {
 				if (count == DIRECTION_UP)
-					vel.y = -1 * speed;
+					_vel.y = -1 * _speed;
 				else if (count == DIRECTION_DOWN)
-					vel.y = speed;
+					_vel.y = _speed;
 				else if (count == DIRECTION_RIGHT)
-					vel.x = speed;
+					_vel.x = _speed;
 				else if (count == DIRECTION_LEFT)
-					vel.x = -1 * speed;
+					_vel.x = -1 * _speed;
 
 				click = true;
 			}
@@ -211,23 +211,23 @@ void Map::Move(const Common::Event &Event) {
 		}
 
 		if (!click) {
-			pan = true;
-			vel.x = 0;
-			vel.y = 0;
+			_pan = true;
+			_vel.x = 0;
+			_vel.y = 0;
 		} else
-			pan = false;
+			_pan = false;
 	} break;
 
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
-		pan = false;
+		_pan = false;
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
-		if (pan) {
-			camera.x -= g_engine->_mouse->_rel.x;
-			camera.y -= g_engine->_mouse->_rel.y;
-			Validate();
+		if (_pan) {
+			_camera.x -= g_engine->_mouse->_rel.x;
+			_camera.y -= g_engine->_mouse->_rel.y;
+			validate();
 		}
 		break;
 	default:
@@ -328,34 +328,34 @@ void Map::Move(const SDL_Event &Event) {
 //------------------------------------------------------------------------
 void Map::internalEvents(pyrodactyl::event::Info &info) {
 	// The map overlay and button state should be in sync
-	bu_overlay._state = overlay;
+	_buOverlay._state = _overlay;
 
-	camera.x += vel.x;
-	camera.y += vel.y;
-	Validate();
+	_camera.x += _vel.x;
+	_camera.y += _vel.y;
+	validate();
 
-	for (auto &i : travel.element)
-		i._visible = i.x >= camera.x && i.y >= camera.y;
+	for (auto &i : _travel._element)
+		i._visible = i.x >= _camera.x && i.y >= _camera.y;
 
-	marker.internalEvents(pos, player_pos, camera, bounds);
+	_marker.internalEvents(_pos, _playerPos, _camera, _bounds);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
-bool Map::handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
-	int choice = travel.handleEvents(Event, -1 * camera.x, -1 * camera.y);
+bool Map::handleEvents(pyrodactyl::event::Info &info, const Common::Event &event) {
+	int choice = _travel.handleEvents(event, -1 * _camera.x, -1 * _camera.y);
 	if (choice >= 0) {
-		cur_loc = travel.element[choice].loc;
-		pan = false;
+		_curLoc = _travel._element[choice]._loc;
+		_pan = false;
 		return true;
 	}
 
-	marker.handleEvents(pos, player_pos, camera, Event);
+	_marker.handleEvents(_pos, _playerPos, _camera, event);
 
-	Move(Event);
-	if (bu_overlay.handleEvents(Event) == BUAC_LCLICK)
-		overlay = bu_overlay._state;
+	move(event);
+	if (_buOverlay.handleEvents(event) == BUAC_LCLICK)
+		_overlay = _buOverlay._state;
 
 	return false;
 }
@@ -382,86 +382,86 @@ bool Map::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
 }
 #endif
 
-void Map::SetImage(const unsigned int &val, const bool &force) {
-	if (force || (cur != val && val < map.size())) {
-		cur = val;
+void Map::setImage(const unsigned int &val, const bool &force) {
+	if (force || (_cur != val && val < _map.size())) {
+		_cur = val;
 
-		img_bg.deleteImage();
-		img_overlay.deleteImage();
+		_imgBg.deleteImage();
+		_imgOverlay.deleteImage();
 
-		img_bg.load(map[cur].path_bg);
-		img_overlay.load(map[cur].path_overlay);
+		_imgBg.load(_map[_cur]._pathBg);
+		_imgOverlay.load(_map[_cur]._pathOverlay);
 
-		size.x = img_bg.w();
-		size.y = img_bg.h();
+		_size.x = _imgBg.w();
+		_size.y = _imgBg.h();
 
-		marker.Clear();
-		for (auto &i : map[cur].dest)
-			marker.AddButton(i.name, i.pos.x, i.pos.y);
+		_marker.clear();
+		for (auto &i : _map[_cur]._dest)
+			_marker.addButton(i._name, i._pos.x, i._pos.y);
 
-		marker.AssignPaths();
+		_marker.assignPaths();
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Select the marker corresponding to a quest title
 //------------------------------------------------------------------------
-void Map::SelectDest(const Common::String &name) {
-	marker.SelectDest(name);
+void Map::selectDest(const Common::String &name) {
+	_marker.selectDest(name);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Update the status of the fast travel buttons
 //------------------------------------------------------------------------
-void Map::Update(pyrodactyl::event::Info &info) {
-	for (auto &i : travel.element) {
-		i.unlock.evaluate(info);
-		i._visible = i.unlock.result();
+void Map::update(pyrodactyl::event::Info &info) {
+	for (auto &i : _travel._element) {
+		i._unlock.evaluate(info);
+		i._visible = i._unlock.result();
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Add a rectangle to the revealed world map data
 //------------------------------------------------------------------------
-void Map::RevealAdd(const int &id, const Rect &area) {
-	if ((unsigned int)id < map.size()) {
-		for (auto i = map[id].reveal.begin(); i != map[id].reveal.end(); ++i)
+void Map::revealAdd(const int &id, const Rect &area) {
+	if ((unsigned int)id < _map.size()) {
+		for (auto i = _map[id]._reveal.begin(); i != _map[id]._reveal.end(); ++i)
 			if (*i == area)
 				return;
 
-		map[id].reveal.push_back(area);
+		_map[id]._reveal.push_back(area);
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Add or remove a destination marker from the world map
 //------------------------------------------------------------------------
-void Map::DestAdd(const Common::String &name, const int &x, const int &y) {
-	if (cur < map.size()) {
-		for (auto i = map[cur].dest.begin(); i != map[cur].dest.end(); ++i) {
-			if (i->name == name) {
-				i->pos.x = x;
-				i->pos.y = y;
+void Map::destAdd(const Common::String &name, const int &x, const int &y) {
+	if (_cur < _map.size()) {
+		for (auto i = _map[_cur]._dest.begin(); i != _map[_cur]._dest.end(); ++i) {
+			if (i->_name == name) {
+				i->_pos.x = x;
+				i->_pos.y = y;
 				return;
 			}
 		}
 
-		map[cur].DestAdd(name, x, y);
-		marker.AddButton(name, x, y);
-		marker.AssignPaths();
+		_map[_cur].destAdd(name, x, y);
+		_marker.addButton(name, x, y);
+		_marker.assignPaths();
 	}
 }
 
-void Map::DestDel(const Common::String &name) {
-	if (cur < map.size()) {
-		for (auto i = map[cur].dest.begin(); i != map[cur].dest.end(); ++i) {
-			if (i->name == name) {
-				map[cur].dest.erase(i);
+void Map::destDel(const Common::String &name) {
+	if (_cur < _map.size()) {
+		for (auto i = _map[_cur]._dest.begin(); i != _map[_cur]._dest.end(); ++i) {
+			if (i->_name == name) {
+				_map[_cur]._dest.erase(i);
 				break;
 			}
 		}
 
-		marker.Erase(name);
+		_marker.erase(name);
 	}
 }
 
@@ -471,10 +471,10 @@ void Map::DestDel(const Common::String &name) {
 void Map::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "map");
 
-	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(cur)));
-	saveBool(overlay, "overlay", doc, child);
+	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(_cur)));
+	saveBool(_overlay, "overlay", doc, child);
 
-	for (auto r = map.begin(); r != map.end(); ++r) {
+	for (auto r = _map.begin(); r != _map.end(); ++r) {
 		rapidxml::xml_node<char> *child_data = doc.allocate_node(rapidxml::node_element, "data");
 		r->saveState(doc, child_data);
 		child->append_node(child_data);
@@ -486,16 +486,16 @@ void Map::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *roo
 void Map::loadState(rapidxml::xml_node<char> *node) {
 	if (nodeValid("map", node)) {
 		rapidxml::xml_node<char> *mapnode = node->first_node("map");
-		loadBool(overlay, "overlay", mapnode);
+		loadBool(_overlay, "overlay", mapnode);
 
-		int val = cur;
+		int val = _cur;
 		loadNum(val, "cur", mapnode);
 
-		auto r = map.begin();
-		for (rapidxml::xml_node<char> *n = mapnode->first_node("data"); n != NULL && r != map.end(); n = n->next_sibling("data"), ++r)
+		auto r = _map.begin();
+		for (rapidxml::xml_node<char> *n = mapnode->first_node("data"); n != NULL && r != _map.end(); n = n->next_sibling("data"), ++r)
 			r->loadState(n);
 
-		SetImage(val, true);
+		setImage(val, true);
 	}
 }
 
@@ -503,17 +503,17 @@ void Map::loadState(rapidxml::xml_node<char> *node) {
 // Purpose: Reset the UI positions in response to change in resolution
 //------------------------------------------------------------------------
 void Map::setUI() {
-	pos.setUI();
-	fg.setUI();
+	_pos.setUI();
+	_fg.setUI();
 
-	travel.setUI();
-	marker.setUI();
+	_travel.setUI();
+	_marker.setUI();
 
-	bu_overlay.setUI();
-	scroll.setUI();
-	title.setUI();
+	_buOverlay.setUI();
+	_scroll.setUI();
+	_title.setUI();
 
-	CalcBounds();
+	calcBounds();
 }
 
 } // End of namespace Crab

@@ -38,48 +38,48 @@ using namespace pyrodactyl::ui;
 
 void OptionSelect::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		option.data.load(node);
-		prev.load(node->first_node("prev"));
-		next.load(node->first_node("next"));
-		cur = 0;
+		option._data.load(node);
+		_prev.load(node->first_node("prev"));
+		_next.load(node->first_node("next"));
+		_cur = 0;
 
-		option.text.clear();
+		option._text.clear();
 		for (auto n = node->first_node("option"); n != NULL; n = n->next_sibling("option")) {
 			Common::String s;
 			loadStr(s, "name", n);
-			option.text.push_back(s);
+			option._text.push_back(s);
 		}
 
-		loadBool(usekeyboard, "keyboard", node, false);
+		loadBool(_usekeyboard, "keyboard", node, false);
 	}
 }
 
 void OptionSelect::draw() {
-	option.draw(cur);
+	option.draw(_cur);
 
-	if (cur > 0)
-		prev.draw();
+	if (_cur > 0)
+		_prev.draw();
 
-	if ((unsigned int)cur < option.text.size() - 1)
-		next.draw();
+	if ((unsigned int)_cur < option._text.size() - 1)
+		_next.draw();
 }
 
 bool OptionSelect::handleEvents(const Common::Event &Event) {
 	using namespace pyrodactyl::input;
 
-	if (cur > 0) {
+	if (_cur > 0) {
 		// Don't check for keyboard inputs for now
-		if (prev.handleEvents(Event) == BUAC_LCLICK) {
-			cur--;
+		if (_prev.handleEvents(Event) == BUAC_LCLICK) {
+			_cur--;
 			return true;
 		}
 	}
 
-	if ((unsigned int)cur < option.text.size() - 1) {
+	if ((unsigned int)_cur < option._text.size() - 1) {
 
 		// Don't check for keyboard inputs for now
-		if (next.handleEvents(Event) == BUAC_LCLICK) {
-			cur++;
+		if (_next.handleEvents(Event) == BUAC_LCLICK) {
+			_cur++;
 			return true;
 		}
 	}
@@ -110,9 +110,9 @@ bool OptionSelect::handleEvents(const SDL_Event &Event) {
 #endif
 
 void OptionSelect::setUI() {
-	option.data.setUI();
-	prev.setUI();
-	next.setUI();
+	option._data.setUI();
+	_prev.setUI();
+	_next.setUI();
 }
 
 } // End of namespace Crab

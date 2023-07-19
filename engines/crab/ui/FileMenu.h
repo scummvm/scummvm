@@ -124,15 +124,15 @@ public:
 		Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
 
 		_slotInfo.clear();
-		_menu.Clear();
+		_menu.clear();
 
 		unsigned int countSlot = 0, countMenu = 0;
 		for (const Common::String& save : saves) {
 			_slotInfo.push_back(FileType(save));
-			_menu.Add(countSlot, countMenu);
+			_menu.add(countSlot, countMenu);
 		}
 
-		_menu.AssignPaths();
+		_menu.assignPaths();
 
 #if 0
 		using namespace boost::filesystem;
@@ -204,7 +204,7 @@ public:
 		int choice = _menu.handleEvents(Event);
 		if (choice >= 0) {
 			_menu.reset();
-			_selected = _slotInfo[_menu.Index() + choice]._path;
+			_selected = _slotInfo[_menu.index() + choice]._path;
 			reset();
 			return true;
 		}
@@ -229,8 +229,8 @@ public:
 	void draw() {
 		_bg.draw();
 		_menu.draw();
-		for (auto i = _menu.Index(), count = 0u; i < _menu.IndexPlusOne() && i < _slotInfo.size(); i++, count++) {
-			auto base_x = _menu.BaseX(count), base_y = _menu.BaseY(count);
+		for (auto i = _menu.index(), count = 0u; i < _menu.indexPlusOne() && i < _slotInfo.size(); i++, count++) {
+			auto base_x = _menu.baseX(count), base_y = _menu.baseY(count);
 			tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);
 			tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 		}
@@ -239,8 +239,8 @@ public:
 	}
 
 	void DrawHover() {
-		if (_menu.HoverIndex() >= 0) {
-			int i = _menu.HoverIndex();
+		if (_menu.hoverIndex() >= 0) {
+			int i = _menu.hoverIndex();
 
 			if (!_img._loaded || _prevHover != i) {
 				_img._loaded = true;

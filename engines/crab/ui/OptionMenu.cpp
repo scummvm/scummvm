@@ -43,190 +43,190 @@ void OptionMenu::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("option");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.load(node->first_node("bg"));
+				_bg.load(node->first_node("bg"));
 
 			if (nodeValid("state", node)) {
-				menu.load(node->first_node("state"));
+				_menu.load(node->first_node("state"));
 
-				if (!menu.element.empty())
-					menu.element[0].state(true);
+				if (!_menu._element.empty())
+					_menu._element[0].state(true);
 			}
 
 			if (nodeValid("keybind", node))
-				keybind.load(node->first_node("keybind"));
+				_keybind.load(node->first_node("keybind"));
 
 			if (nodeValid("controller", node))
-				conbind.load(node->first_node("controller"));
+				_conbind.load(node->first_node("controller"));
 
 			if (nodeValid("graphics", node))
-				gfx.load(node->first_node("graphics"));
+				_gfx.load(node->first_node("graphics"));
 
 			if (nodeValid("general", node))
-				general.load(node->first_node("general"));
+				_general.load(node->first_node("general"));
 
 			if (nodeValid("change", node)) {
 				rapidxml::xml_node<char> *chanode = node->first_node("change");
 
 				if (nodeValid("accept", chanode))
-					accept.load(chanode->first_node("accept"));
+					_accept.load(chanode->first_node("accept"));
 
 				if (nodeValid("cancel", chanode))
-					cancel.load(chanode->first_node("cancel"));
+					_cancel.load(chanode->first_node("cancel"));
 
 				if (nodeValid("message", chanode))
-					notice_res.load(chanode->first_node("message"));
+					_noticeRes.load(chanode->first_node("message"));
 
 				if (nodeValid("width", chanode))
-					prompt_w.load(chanode->first_node("width"));
+					_promptW.load(chanode->first_node("width"));
 
 				if (nodeValid("height", chanode))
-					prompt_h.load(chanode->first_node("height"));
+					_promptH.load(chanode->first_node("height"));
 
 				if (nodeValid("countdown", chanode)) {
 					rapidxml::xml_node<char> *counode = chanode->first_node("countdown");
-					countdown.load(counode);
-					timer.load(counode, "time");
+					_countdown.load(counode);
+					_timer.load(counode, "time");
 				}
 
 				if (nodeValid("bg", chanode))
-					questionbox.load(chanode->first_node("bg"));
+					_questionbox.load(chanode->first_node("bg"));
 			}
 		}
 	}
 }
 
 void OptionMenu::reset() {
-	keybind.reset();
-	state = STATE_GENERAL;
+	_keybind.reset();
+	_state = STATE_GENERAL;
 
-	for (unsigned i = 0; i < menu.element.size(); ++i)
-		menu.element[i].state(i == STATE_GENERAL);
+	for (unsigned i = 0; i < _menu._element.size(); ++i)
+		_menu._element[i].state(i == STATE_GENERAL);
 }
 
 void OptionMenu::draw(Button &back) {
-	if (state < STATE_ENTER_W) {
-		bg.draw();
+	if (_state < STATE_ENTER_W) {
+		_bg.draw();
 
-		switch (state) {
+		switch (_state) {
 		case STATE_GENERAL:
-			general.draw();
+			_general.draw();
 			break;
 		case STATE_GRAPHICS:
-			gfx.draw();
+			_gfx.draw();
 			break;
 		case STATE_KEYBOARD:
-			keybind.draw();
+			_keybind.draw();
 			break;
 		case STATE_CONTROLLER:
-			conbind.draw();
+			_conbind.draw();
 			break;
 		default:
 			break;
 		}
 
-		menu.draw();
+		_menu.draw();
 		back.draw();
 	} else {
-		questionbox.draw();
+		_questionbox.draw();
 
-		switch (state) {
+		switch (_state) {
 		case STATE_ENTER_W:
-			prompt_w.draw();
+			_promptW.draw();
 			break;
 		case STATE_ENTER_H:
-			prompt_h.draw();
+			_promptH.draw();
 			break;
 		case STATE_CONFIRM:
-			notice_res.draw();
-			countdown.draw(NumberToString(timer.RemainingTicks() / 1000));
+			_noticeRes.draw();
+			_countdown.draw(NumberToString(_timer.RemainingTicks() / 1000));
 			break;
 		default:
 			break;
 		}
 
-		accept.draw();
-		cancel.draw();
+		_accept.draw();
+		_cancel.draw();
 	}
 }
 
-bool OptionMenu::handleEvents(Button &back, const Common::Event &Event) {
-	if (state < STATE_ENTER_W) {
-		bg.draw();
+bool OptionMenu::handleEvents(Button &back, const Common::Event &event) {
+	if (_state < STATE_ENTER_W) {
+		_bg.draw();
 
-		switch (state) {
+		switch (_state) {
 		case STATE_GENERAL:
-			general.handleEvents(Event);
+			_general.handleEvents(event);
 			break;
 		case STATE_KEYBOARD:
-			keybind.handleEvents(Event);
+			_keybind.handleEvents(event);
 			break;
 		case STATE_GRAPHICS: {
-			int result = gfx.handleEvents(Event);
+			int result = _gfx.handleEvents(event);
 			if (result == 1) {
-				state = STATE_CONFIRM;
-				timer.Start();
+				_state = STATE_CONFIRM;
+				_timer.Start();
 				g_engine->_screenSettings->SetResolution();
-				gfx.SetInfo();
+				_gfx.SetInfo();
 			} else if (result == 2)
-				state = STATE_ENTER_W;
+				_state = STATE_ENTER_W;
 		} break;
 		default:
 			break;
 		}
 
-		return HandleTabs(back, Event);
+		return handleTabs(back, event);
 	} else {
-		questionbox.draw();
+		_questionbox.draw();
 
-		switch (state) {
+		switch (_state) {
 		case STATE_ENTER_W:
-			if (prompt_w.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->cur.w = StringToNumber<int>(prompt_w._text);
-				state = STATE_ENTER_H;
-			} else if (cancel.handleEvents(Event) == BUAC_LCLICK) {
+			if (_promptW.handleEvents(event, true) || _accept.handleEvents(event) == BUAC_LCLICK) {
+				g_engine->_screenSettings->cur.w = StringToNumber<int>(_promptW._text);
+				_state = STATE_ENTER_H;
+			} else if (_cancel.handleEvents(event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->RestoreBackup();
-				gfx.SetInfo();
-				state = STATE_GRAPHICS;
+				_gfx.SetInfo();
+				_state = STATE_GRAPHICS;
 			}
 			break;
 		case STATE_ENTER_H:
-			if (prompt_h.handleEvents(Event, true) || accept.handleEvents(Event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->cur.h = StringToNumber<int>(prompt_h._text);
-				state = STATE_CONFIRM;
-				timer.Start();
+			if (_promptH.handleEvents(event, true) || _accept.handleEvents(event) == BUAC_LCLICK) {
+				g_engine->_screenSettings->cur.h = StringToNumber<int>(_promptH._text);
+				_state = STATE_CONFIRM;
+				_timer.Start();
 				g_engine->_screenSettings->SetResolution();
-				gfx.SetInfo();
-			} else if (cancel.handleEvents(Event) == BUAC_LCLICK) {
+				_gfx.SetInfo();
+			} else if (_cancel.handleEvents(event) == BUAC_LCLICK) {
 				g_engine->_screenSettings->RestoreBackup();
-				gfx.SetInfo();
-				state = STATE_GRAPHICS;
+				_gfx.SetInfo();
+				_state = STATE_GRAPHICS;
 			}
 
 			break;
 		case STATE_CONFIRM:
-			if (accept.handleEvents(Event)) {
-				state = STATE_GRAPHICS;
-				timer.Stop();
-			} else if (cancel.handleEvents(Event)) {
+			if (_accept.handleEvents(event)) {
+				_state = STATE_GRAPHICS;
+				_timer.Stop();
+			} else if (_cancel.handleEvents(event)) {
 				g_engine->_screenSettings->RestoreBackup();
 				g_engine->_screenSettings->SetResolution();
-				gfx.SetInfo();
-				state = STATE_GRAPHICS;
+				_gfx.SetInfo();
+				_state = STATE_GRAPHICS;
 			}
 			break;
 		default:
 			break;
 		}
 
-		accept.draw();
-		cancel.draw();
+		_accept.draw();
+		_cancel.draw();
 	}
 
 	return false;
 }
 
-bool OptionMenu::HandleTabs(Button &back, const Common::Event &Event) {
-	warning("STUB: OptionMenu::HandleTabs()");
+bool OptionMenu::handleTabs(Button &back, const Common::Event &event) {
+	warning("STUB: OptionMenu::handleTabs()");
 
 	return false;
 }
@@ -369,14 +369,14 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 
 void OptionMenu::internalEvents() {
 	// Since these states can be changed at any time, we just update it regularly
-	gfx.internalEvents();
-	general.internalEvents();
+	_gfx.internalEvents();
+	_general.internalEvents();
 
-	if (state == STATE_CONFIRM && timer.TargetReached()) {
+	if (_state == STATE_CONFIRM && _timer.TargetReached()) {
 		g_engine->_screenSettings->RestoreBackup();
 		g_engine->_screenSettings->SetResolution();
-		gfx.SetInfo();
-		state = STATE_GRAPHICS;
+		_gfx.SetInfo();
+		_state = STATE_GRAPHICS;
 	}
 }
 
@@ -415,25 +415,25 @@ void OptionMenu::saveState() {
 }
 
 void OptionMenu::setUI() {
-	bg.setUI();
-	menu.setUI();
+	_bg.setUI();
+	_menu.setUI();
 
-	keybind.setUI();
-	conbind.setUI();
+	_keybind.setUI();
+	_conbind.setUI();
 
-	gfx.setUI();
-	general.setUI();
+	_gfx.setUI();
+	_general.setUI();
 
-	notice_res.setUI();
+	_noticeRes.setUI();
 
-	countdown.setUI();
-	questionbox.setUI();
+	_countdown.setUI();
+	_questionbox.setUI();
 
-	prompt_w.setUI();
-	prompt_h.setUI();
+	_promptW.setUI();
+	_promptH.setUI();
 
-	accept.setUI();
-	cancel.setUI();
+	_accept.setUI();
+	_cancel.setUI();
 }
 
 } // End of namespace Crab

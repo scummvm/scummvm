@@ -75,7 +75,7 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 		}
 
 		// Create a copy of all the tooltips
-		for (auto i = _menu.element.begin(); i != _menu.element.end(); ++i)
+		for (auto i = _menu._element.begin(); i != _menu._element.end(); ++i)
 			_tooltip.push_back(i->_tooltip._text);
 
 		setTooltip();
@@ -87,29 +87,29 @@ void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
 	_menu.draw();
 
 	if (info._unread._journal) {
-		g_engine->_imageManager->draw(_menu.element[HS_JOURNAL].x + _menu.element[HS_JOURNAL].w - _clip.w / 2,
-									  _menu.element[HS_JOURNAL].y - _clip.h / 2, _notifyAnim, &_clip);
+		g_engine->_imageManager->draw(_menu._element[HS_JOURNAL].x + _menu._element[HS_JOURNAL].w - _clip.w / 2,
+									  _menu._element[HS_JOURNAL].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 
 	if (info._unread._inventory) {
-		g_engine->_imageManager->draw(_menu.element[HS_INV].x + _menu.element[HS_INV].w - _clip.w / 2,
-									  _menu.element[HS_INV].y - _clip.h / 2, _notifyAnim, &_clip);
+		g_engine->_imageManager->draw(_menu._element[HS_INV].x + _menu._element[HS_INV].w - _clip.w / 2,
+									  _menu._element[HS_INV].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 
 	if (info._unread._trait) {
-		g_engine->_imageManager->draw(_menu.element[HS_CHAR].x + _menu.element[HS_CHAR].w - _clip.w / 2,
-									  _menu.element[HS_CHAR].y - _clip.h / 2, _notifyAnim, &_clip);
+		g_engine->_imageManager->draw(_menu._element[HS_CHAR].x + _menu._element[HS_CHAR].w - _clip.w / 2,
+									  _menu._element[HS_CHAR].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 
 	if (info._unread._map) {
-		g_engine->_imageManager->draw(_menu.element[HS_MAP].x + _menu.element[HS_MAP].w - _clip.w / 2,
-									  _menu.element[HS_MAP].y - _clip.h / 2, _notifyAnim, &_clip);
+		g_engine->_imageManager->draw(_menu._element[HS_MAP].x + _menu._element[HS_MAP].w - _clip.w / 2,
+									  _menu._element[HS_MAP].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
 //#endif
 }
 
 void HUD::internalEvents(bool showMap) {
-	_menu.element[HS_MAP]._visible = showMap;
+	_menu._element[HS_MAP]._visible = showMap;
 
 	if (_timer.TargetReached()) {
 		_clip.x += _clip.w;
@@ -159,16 +159,16 @@ HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Even
 
 void HUD::State(const int &val) {
 	int count = 0;
-	for (auto i = _menu.element.begin(); i != _menu.element.end(); ++i, ++count)
+	for (auto i = _menu._element.begin(); i != _menu._element.end(); ++i, ++count)
 		i->state(val == count);
 }
 
 void HUD::setTooltip() {
 	unsigned int count = 0;
-	for (auto i = _menu.element.begin(); i != _menu.element.end() && count < _tooltip.size(); ++i, ++count)
+	for (auto i = _menu._element.begin(); i != _menu._element.end() && count < _tooltip.size(); ++i, ++count)
 		i->_tooltip._text = _tooltip[count] + " (" + i->_hotkey.name() + ")";
 
-	_menu.element[HS_PAUSE]._tooltip._text = _tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->getAssociatedKey(IG_PAUSE) + ")";
+	_menu._element[HS_PAUSE]._tooltip._text = _tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->getAssociatedKey(IG_PAUSE) + ")";
 }
 
 void HUD::setUI() {

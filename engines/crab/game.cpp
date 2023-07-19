@@ -46,7 +46,7 @@ void Game::StartNewGame() {
 	info.ironMan(g_engine->_tempData->ironman);
 	savefile.ironman = g_engine->_tempData->filename;
 	clock.Start();
-	hud._pause.UpdateMode(info.ironMan());
+	hud._pause.updateMode(info.ironMan());
 
 	CreateSaveGame(SAVEGAME_EVENT);
 }
@@ -131,14 +131,14 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 		// Set the current location
 		info.curLocID(id);
 		info.curLocName(g_engine->_filePath->level[id].name);
-		map.player_pos = level._mapLoc;
+		map._playerPos = level._mapLoc;
 
 		// Update and center the world map to the player current position
-		map.Update(info);
-		map.Center(map.player_pos);
+		map.update(info);
+		map.center(map._playerPos);
 
 		// If this is our first time visiting a level, reveal the associated area on the world map
-		map.RevealAdd(level._mapClip._id, level._mapClip._rect);
+		map.revealAdd(level._mapClip._id, level._mapClip._rect);
 
 		// Initialize inventory
 		info._inv.init(level.playerId());
@@ -184,7 +184,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 			if (hud._pausekey.handleEvents(Event) || hud._back.handleEvents(Event) == BUAC_LCLICK)
 				state = STATE_LOSE_MENU;
 		} else {
-			if (!gem.eventInProgress() && !hud._pause.DisableHotkeys()) {
+			if (!gem.eventInProgress() && !hud._pause.disableHotkeys()) {
 				switch (hud.handleEvents(info, Event)) {
 				case HS_MAP:
 					ToggleState(STATE_MAP);
@@ -280,7 +280,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 				case STATE_MAP:
 					if (map.handleEvents(info, Event)) {
 						// We need to load the new level
-						LoadLevel(map.cur_loc);
+						LoadLevel(map._curLoc);
 						ToggleState(STATE_GAME);
 					}
 					break;
@@ -288,7 +288,7 @@ void Game::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					if (info._journal.handleEvents(level.playerId(), Event)) {
 						// This means we selected the "find on map" button, so we need to:
 						// switch to the world map, and highlight the appropriate quest marker
-						map.SelectDest(info._journal._markerTitle);
+						map.selectDest(info._journal._markerTitle);
 						ToggleState(STATE_MAP);
 					}
 					break;
@@ -572,18 +572,18 @@ bool Game::ApplyResult() {
 		switch (i->_type) {
 		case ER_MAP:
 			if (i->_val == "img")
-				map.SetImage(i->_y);
+				map.setImage(i->_y);
 			else if (i->_val == "pos") {
-				map.player_pos.x = i->_x;
-				map.player_pos.y = i->_y;
+				map._playerPos.x = i->_x;
+				map._playerPos.y = i->_y;
 			}
 			break;
 		case ER_DEST:
 			if (i->_x < 0 || i->_y < 0) {
 				info._journal.marker(level.playerId(), i->_val, false);
-				map.DestDel(i->_val);
+				map.destDel(i->_val);
 			} else {
-				map.DestAdd(i->_val, i->_x, i->_y);
+				map.destAdd(i->_val, i->_x, i->_y);
 				info._journal.marker(level.playerId(), i->_val, true);
 				info._unread._map = true;
 			}
@@ -627,7 +627,7 @@ bool Game::ApplyResult() {
 			break;
 		case ER_SYNC:
 			level.calcProperties(info);
-			map.Update(info);
+			map.update(info);
 			break;
 		case ER_QUIT:
 			g_engine->_tempData->credits = (i->_val == "credits");
@@ -683,7 +683,7 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 		if (nodeValid(node)) {
 			info.loadIronMan(node);
 			loadStr(savefile.ironman, "file", node);
-			hud._pause.UpdateMode(info.ironMan());
+			hud._pause.updateMode(info.ironMan());
 
 			if (nodeValid("events", node))
 				gem.loadState(node->first_node("events"));

@@ -51,7 +51,7 @@ void ReplyMenu::load(const Common::String &filename) {
 			if (nodeValid("reply", node)) {
 				rapidxml::xml_node<char> *replynode = node->first_node("reply");
 				Menu<ReplyButton>::load(replynode->first_node("menu"));
-				tone._value.resize(element.size());
+				tone._value.resize(_element.size());
 
 				bg.load(replynode->first_node("bg"));
 				loadNum(spacing, "spacing", replynode);
@@ -67,12 +67,12 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 		bool play_sound = false;
 
 		// Loop through any opinion changes required
-		for (auto &i : dat._reply[element[choice]._index]._change) {
+		for (auto &i : dat._reply[_element[choice]._index]._change) {
 			if (i._id == cur_id) {
 				// This is a special case because we also need to update the opinion bars
-				oh.OpinionChange(info, i._id, OPI_LIKE, i._val[OPI_LIKE]);
-				oh.OpinionChange(info, i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
-				oh.OpinionChange(info, i._id, OPI_FEAR, i._val[OPI_FEAR]);
+				oh.opinionChange(info, i._id, OPI_LIKE, i._val[OPI_LIKE]);
+				oh.opinionChange(info, i._id, OPI_RESPECT, i._val[OPI_RESPECT]);
+				oh.opinionChange(info, i._id, OPI_FEAR, i._val[OPI_FEAR]);
 				play_sound = true;
 			} else {
 				info.opinionChange(i._id, OPI_LIKE, i._val[OPI_LIKE]);
@@ -94,7 +94,7 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 		}
 #endif
 
-		return dat._reply[element[choice]._index]._nextid;
+		return dat._reply[_element[choice]._index]._nextid;
 	}
 
 	return -1;
@@ -140,7 +140,7 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 
 void ReplyMenu::draw() {
 	bg.draw();
-	tone.draw(hover_index);
+	tone.draw(_hoverIndex);
 
 	// Draw the reply options
 	Menu<ReplyButton>::draw();
@@ -153,8 +153,8 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 	for (auto i = dat._reply.begin(); i != dat._reply.end() && reply_count < dat._reply.size(); ++i, ++reply_count) {
 		if (i->_unlock.evaluate(info)) {
-			element[element_count]._visible = true;
-			element[element_count]._index = reply_count;
+			_element[element_count]._visible = true;
+			_element[element_count]._index = reply_count;
 
 			tone._value[element_count] = dat._reply[reply_count]._tone;
 
@@ -164,9 +164,9 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 			info.insertName(text);
 
 			if (element_count == 0)
-				element[element_count].Cache(text, spacing, 0, &bg);
+				_element[element_count].Cache(text, spacing, 0, &bg);
 			else
-				element[element_count].Cache(text, spacing, element[element_count - 1].y + element[element_count - 1].h, &bg);
+				_element[element_count].Cache(text, spacing, _element[element_count - 1].y + _element[element_count - 1].h, &bg);
 
 			// Increment the element count only if the reply is unlocked
 			// This means we will keep checking against element 0 until we find an unlocked reply
@@ -176,8 +176,8 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 	}
 
 	// Unused element buttons are hidden
-	for (; element_count < element.size(); element_count++)
-		element[element_count]._visible = false;
+	for (; element_count < _element.size(); element_count++)
+		_element[element_count]._visible = false;
 }
 
 void ReplyMenu::setUI() {

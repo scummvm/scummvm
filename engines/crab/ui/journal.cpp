@@ -56,7 +56,7 @@ void Journal::load(const Common::String &filename) {
 			if (nodeValid("quest_list", node))
 				_ref.load(node->first_node("quest_list"));
 
-			_category.UseKeyboard(true);
+			_category.useKeyboard(true);
 		}
 	}
 }
@@ -89,10 +89,10 @@ void Journal::init(const Common::String &id) {
 // Purpose: Select a category
 //------------------------------------------------------------------------
 void Journal::select(const Common::String &id, const int &choice) {
-	for (unsigned int i = 0; i < _category.element.size(); ++i)
-		_category.element[i].state(false);
+	for (unsigned int i = 0; i < _category._element.size(); ++i)
+		_category._element[i].state(false);
 
-	_category.element[choice].state(true);
+	_category._element[choice].state(true);
 	_select = choice;
 
 	// Always find valid journal group first
@@ -114,7 +114,7 @@ void Journal::draw(const Common::String &id) {
 	for (auto &jo : _journal)
 		if (jo._id == id) {
 			int count = 0;
-			for (auto i = _category.element.begin(); i != _category.element.end() && count < JE_TOTAL; ++i, ++count)
+			for (auto i = _category._element.begin(); i != _category._element.end() && count < JE_TOTAL; ++i, ++count)
 				if (jo._menu[count].unread)
 					g_engine->_imageManager->notifyDraw(i->x + i->w, i->y);
 
@@ -130,7 +130,7 @@ void Journal::draw(const Common::String &id) {
 //------------------------------------------------------------------------
 bool Journal::handleEvents(const Common::String &id, const Common::Event &event) {
 	int choice = _category.handleEvents(event);
-	if (choice >= 0 && (unsigned int)choice < _category.element.size())
+	if (choice >= 0 && (unsigned int)choice < _category._element.size())
 		select(id, choice);
 
 	// Check if select is valid
@@ -238,7 +238,7 @@ void Journal::open(const Common::String &id, const JournalCategory &category, co
 	// Always find valid journal group first
 	for (auto &jo : _journal)
 		if (jo._id == id) {
-			if (category >= 0 && category < _category.element.size()) {
+			if (category >= 0 && category < _category._element.size()) {
 				// If category passes the valid check, select it
 				select(id, category);
 

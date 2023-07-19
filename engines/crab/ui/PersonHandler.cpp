@@ -39,91 +39,91 @@ using namespace pyrodactyl::people;
 
 void PersonHandler::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("dialog", node))
-		dlbox.load(node->first_node("dialog"));
+		_dlbox.load(node->first_node("dialog"));
 
 	if (nodeValid("opinion", node)) {
 		rapidxml::xml_node<char> *opnode = node->first_node("opinion");
 
 		if (nodeValid("friendship", opnode))
-			opinion[OPI_LIKE].load(opnode->first_node("friendship"));
+			_opinion[OPI_LIKE].load(opnode->first_node("friendship"));
 
 		if (nodeValid("respect", opnode))
-			opinion[OPI_RESPECT].load(opnode->first_node("respect"));
+			_opinion[OPI_RESPECT].load(opnode->first_node("respect"));
 
 		if (nodeValid("fear", opnode))
-			opinion[OPI_FEAR].load(opnode->first_node("fear"));
+			_opinion[OPI_FEAR].load(opnode->first_node("fear"));
 	}
 
 	if (nodeValid("image", node)) {
 		rapidxml::xml_node<char> *imgnode = node->first_node("image");
-		img.load(imgnode);
+		_img.load(imgnode);
 
 		if (nodeValid("sprite_align", imgnode))
-			sprite_align.load(imgnode->first_node("sprite_align"));
+			_spriteAlign.load(imgnode->first_node("sprite_align"));
 	}
 
 	if (nodeValid("name", node))
-		name.load(node->first_node("name"));
+		_name.load(node->first_node("name"));
 
 	if (nodeValid("journal", node))
-		jb.load(node->first_node("journal"));
+		_jb.load(node->first_node("journal"));
 }
 
-void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
+void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *event, const Common::String &personId,
 						 const bool &player, pyrodactyl::anim::Sprite *s) {
 	// Draw the dialog box background
-	dlbox.draw(player);
+	_dlbox.draw(player);
 
 	if (s != NULL) {
-		Rect r = s->dialogClip(Event->_state);
-		int x = img.x, y = img.y;
+		Rect r = s->dialogClip(event->_state);
+		int x = _img.x, y = _img.y;
 
-		if (sprite_align.x == ALIGN_CENTER)
+		if (_spriteAlign._x == ALIGN_CENTER)
 			x -= r.w / 2;
-		else if (sprite_align.x == ALIGN_RIGHT)
+		else if (_spriteAlign._x == ALIGN_RIGHT)
 			x -= r.w;
 
-		if (sprite_align.y == ALIGN_CENTER)
+		if (_spriteAlign._y == ALIGN_CENTER)
 			y -= r.h / 2;
-		else if (sprite_align.y == ALIGN_RIGHT)
+		else if (_spriteAlign._y == ALIGN_RIGHT)
 			y -= r.h;
 
 		g_engine->_imageManager->draw(x, y, s->img(), &r);
 	}
 
-	if (info.personValid(person_id)) {
-		name.draw(info.personGet(person_id)._name);
+	if (info.personValid(personId)) {
+		_name.draw(info.personGet(personId)._name);
 
 		if (!player) {
-			opinion[OPI_LIKE].draw(info.personGet(person_id)._opinion._val[OPI_LIKE], OPINION_MAX);
-			opinion[OPI_RESPECT].draw(info.personGet(person_id)._opinion._val[OPI_RESPECT], OPINION_MAX);
-			opinion[OPI_FEAR].draw(info.personGet(person_id)._opinion._val[OPI_FEAR], OPINION_MAX);
+			_opinion[OPI_LIKE].draw(info.personGet(personId)._opinion._val[OPI_LIKE], OPINION_MAX);
+			_opinion[OPI_RESPECT].draw(info.personGet(personId)._opinion._val[OPI_RESPECT], OPINION_MAX);
+			_opinion[OPI_FEAR].draw(info.personGet(personId)._opinion._val[OPI_FEAR], OPINION_MAX);
 		}
 	}
 
 	// Draw the journal button
-	jb.draw();
+	_jb.draw();
 
 	// Draw the dialog box text
-	dlbox.draw(info, Event->_dialog);
+	_dlbox.draw(info, event->_dialog);
 }
 
-bool PersonHandler::HandleCommonEvents(const Common::Event &Event) {
-	opinion[OPI_LIKE].handleEvents(Event);
-	opinion[OPI_RESPECT].handleEvents(Event);
-	opinion[OPI_FEAR].handleEvents(Event);
+bool PersonHandler::handleCommonEvents(const Common::Event &event) {
+	_opinion[OPI_LIKE].handleEvents(event);
+	_opinion[OPI_RESPECT].handleEvents(event);
+	_opinion[OPI_FEAR].handleEvents(event);
 
-	if (jb.handleEvents(Event) == BUAC_LCLICK) {
+	if (_jb.handleEvents(event) == BUAC_LCLICK) {
 		// User wants to open their journal
-		show_journal = true;
+		_showJournal = true;
 		return true;
 	}
 
 	return false;
 }
 
-bool PersonHandler::HandleDlboxEvents(const Common::Event &Event) {
-	return dlbox.handleEvents(Event);
+bool PersonHandler::handleDlboxEvents(const Common::Event &event) {
+	return _dlbox.handleEvents(event);
 }
 
 #if 0
@@ -151,7 +151,7 @@ void PersonHandler::internalEvents(const pyrodactyl::people::PersonState &state,
 		s->dialogUpdateClip(state);
 }
 
-void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const Common::String &id, const pyrodactyl::people::OpinionType &type, const int &val) {
+void PersonHandler::opinionChange(pyrodactyl::event::Info &info, const Common::String &id, const pyrodactyl::people::OpinionType &type, const int &val) {
 	if (info.personValid(id)) {
 		// First, get the value of the object's opinion
 		int old = 0;
@@ -165,29 +165,29 @@ void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const Common::S
 		info.opinionGet(id, type, value);
 
 		// Now, send the new and old value of the object's opinion for drawing the change effect
-		opinion[type].Effect(value, old);
+		_opinion[type].Effect(value, old);
 
-		prev = id;
+		_prev = id;
 	}
 }
 
 void PersonHandler::reset(const Common::String &id) {
-	if (prev != id) {
+	if (_prev != id) {
 		using namespace pyrodactyl::people;
-		opinion[OPI_LIKE].reset();
-		opinion[OPI_RESPECT].reset();
-		opinion[OPI_FEAR].reset();
+		_opinion[OPI_LIKE].reset();
+		_opinion[OPI_RESPECT].reset();
+		_opinion[OPI_FEAR].reset();
 	}
 }
 
 void PersonHandler::setUI() {
-	img.setUI();
-	name.setUI();
-	dlbox.setUI();
-	jb.setUI();
+	_img.setUI();
+	_name.setUI();
+	_dlbox.setUI();
+	_jb.setUI();
 
 	for (auto i = 0; i < pyrodactyl::people::OPI_TOTAL; ++i)
-		opinion[i].setUI();
+		_opinion[i].setUI();
 }
 
 } // End of namespace Crab

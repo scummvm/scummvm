@@ -68,8 +68,8 @@ public:
 		if (result >= 0) {
 			select = result;
 
-			for (int i = 0; i < (int)element.size(); ++i)
-				element[i]._state = (i == result);
+			for (int i = 0; i < (int)_element.size(); ++i)
+				_element[i]._state = (i == result);
 		}
 
 		return result;

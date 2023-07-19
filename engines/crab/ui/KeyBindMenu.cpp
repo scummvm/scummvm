@@ -44,37 +44,37 @@ void KeyBindMenu::load(rapidxml::xml_node<char> *node) {
 			rapidxml::xml_node<char> *menode = node->first_node("menu");
 
 			if (nodeValid("primary", menode))
-				prim.load(menode->first_node("primary"));
+				_prim.load(menode->first_node("primary"));
 
 			if (nodeValid("alt", menode))
-				alt.load(menode->first_node("alt"));
+				_alt.load(menode->first_node("alt"));
 
 			if (nodeValid("prompt", menode))
-				prompt.load(menode->first_node("prompt"));
+				_prompt.load(menode->first_node("prompt"));
 
 			if (nodeValid("inc", menode))
-				inc.load(menode->first_node("inc"));
+				_inc.load(menode->first_node("inc"));
 
 			if (nodeValid("dim", menode))
-				dim.load(menode->first_node("dim"));
+				_dim.load(menode->first_node("dim"));
 
 			if (nodeValid("divide", menode))
-				divide.load(menode->first_node("divide"));
+				_divide.load(menode->first_node("divide"));
 
 			if (nodeValid("desc", menode))
-				desc.load(menode->first_node("desc"));
+				_desc.load(menode->first_node("desc"));
 		}
 
 		// Initialize the menus
-		InitMenu(CON_GAME);
-		InitMenu(CON_UI);
+		initMenu(CON_GAME);
+		initMenu(CON_UI);
 
 		if (nodeValid("controls", node))
-			sel_controls.load(node->first_node("controls"));
+			_selControls.load(node->first_node("controls"));
 	}
 }
 
-void KeyBindMenu::StartAndSize(const int &type, int &start, int &size) {
+void KeyBindMenu::startAndSize(const int &type, int &start, int &size) {
 	switch (type) {
 	case CON_GAME:
 		start = IG_START;
@@ -89,8 +89,8 @@ void KeyBindMenu::StartAndSize(const int &type, int &start, int &size) {
 	}
 }
 
-void KeyBindMenu::InitMenu(const int &type) {
-	warning("STUB: KeyBindMenu::InitMenu()");
+void KeyBindMenu::initMenu(const int &type) {
+	warning("STUB: KeyBindMenu::initMenu()");
 
 #if 0
 	int start = 0, size = 0;
@@ -111,27 +111,27 @@ void KeyBindMenu::InitMenu(const int &type) {
 #endif
 }
 
-void KeyBindMenu::DrawDesc(const int &type) {
+void KeyBindMenu::drawDesc(const int &type) {
 	int start = 0, size = 0;
-	StartAndSize(type, start, size);
+	startAndSize(type, start, size);
 
 	for (int i = 0; i < size; i++) {
-		int xoffset = inc.x * i + divide.x * (i / dim.x);
-		int yoffset = inc.y * (i % dim.x) + divide.y * (i / dim.x);
+		int xoffset = _inc.x * i + _divide.x * (i / _dim.x);
+		int yoffset = _inc.y * (i % _dim.x) + _divide.y * (i / _dim.x);
 
-		desc.draw(g_engine->_inputManager->_iv[i + start].name, xoffset, yoffset);
+		_desc.draw(g_engine->_inputManager->_iv[i + start].name, xoffset, yoffset);
 	}
 }
 
 void KeyBindMenu::draw() {
-	sel_controls.draw();
+	_selControls.draw();
 
-	menu[sel_controls.cur].draw();
-	DrawDesc(sel_controls.cur);
+	_menu[_selControls._cur].draw();
+	drawDesc(_selControls._cur);
 }
 
-void KeyBindMenu::SetCaption() {
-	warning("STUB: KeyBindMenu::SetCaption()");
+void KeyBindMenu::setCaption() {
+	warning("STUB: KeyBindMenu::setCaption()");
 
 #if 0
 	int start = 0, size = 0;
@@ -144,7 +144,7 @@ void KeyBindMenu::SetCaption() {
 #endif
 }
 
-void KeyBindMenu::handleEvents(const Common::Event &Event) {
+void KeyBindMenu::handleEvents(const Common::Event &event) {
 	warning("STUB: KeyBindMenu::handleEvents()");
 
 	/*
@@ -226,17 +226,17 @@ void KeyBindMenu::SwapKey(const SDL_Scancode &find) {
 #endif
 
 void KeyBindMenu::setUI() {
-	menu[CON_GAME].Clear();
-	menu[CON_UI].Clear();
+	_menu[CON_GAME].clear();
+	_menu[CON_UI].clear();
 
 	// Initialize the menus
-	prim.setUI();
-	alt.setUI();
-	InitMenu(CON_GAME);
-	InitMenu(CON_UI);
+	_prim.setUI();
+	_alt.setUI();
+	initMenu(CON_GAME);
+	initMenu(CON_UI);
 
-	desc.setUI();
-	sel_controls.setUI();
+	_desc.setUI();
+	_selControls.setUI();
 }
 
 } // End of namespace Crab

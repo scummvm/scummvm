@@ -42,85 +42,93 @@ namespace pyrodactyl {
 namespace ui {
 class KeyBindMenu {
 	// The keyboard controls menu has 2 types of inputs
-	enum Controls { CON_GAME,
-					CON_UI,
-					CON_TOTAL };
+	enum Controls {
+		CON_GAME,
+		CON_UI,
+		CON_TOTAL
+	};
 
 	// Each menu can be in these 2 states
-	enum States { STATE_NORMAL,
-				  STATE_KEY } state;
+	enum States {
+		STATE_NORMAL,
+		STATE_KEY
+	} _state;
 
 	// This button swaps between sub-sections "Gameplay" and "Interface"
-	OptionSelect sel_controls;
+	OptionSelect _selControls;
 
 	// These two buttons are the template buttons for the menu
-	Button prim, alt;
+	Button _prim, _alt;
 
 	// This is the template text info
-	TextData desc;
+	TextData _desc;
 
 	// inc tells us what to add to the reference buttons to get multiple buttons
 	// Divide is the space between two columns
-	Vector2i inc, divide;
+	Vector2i _inc, _divide;
 
 	// The number of rows and columns
-	Vector2i dim;
+	Vector2i _dim;
 
 	// The menu for the keyboard options in both sub categories
 	// all control types have equal entries so we just need to change the text displayed
-	ButtonMenu menu[CON_TOTAL];
+	ButtonMenu _menu[CON_TOTAL];
 
 	// The selected button in the current menu
-	int choice;
+	int _choice;
 
 	struct PromptInfo {
-		int col, col_prev;
-		Common::String text;
+		int _col, _colPrev;
+		Common::String _text;
 
 		PromptInfo() {
-			col = 0;
-			col_prev = 0;
+			_col = 0;
+			_colPrev = 0;
 		}
 
 		void load(rapidxml::xml_node<char> *node) {
 			if (nodeValid(node)) {
-				loadStr(text, "text", node);
-				loadNum(col, "color", node);
+				loadStr(_text, "text", node);
+				loadNum(_col, "color", node);
 			}
 		}
 
 		void Swap(Caption &c) {
-			col_prev = c._col;
-			c._text = text;
-			c._col = col;
+			_colPrev = c._col;
+			c._text = _text;
+			c._col = _col;
 		}
-	} prompt;
+	} _prompt;
 
-	void StartAndSize(const int &type, int &start, int &size);
-	void InitMenu(const int &type);
-	void DrawDesc(const int &type);
+	void startAndSize(const int &type, int &start, int &size);
+	void initMenu(const int &type);
+	void drawDesc(const int &type);
 
 public:
 	KeyBindMenu() {
 		reset();
-		choice = -1;
+		_choice = -1;
 	}
 	~KeyBindMenu() {}
 
-	void reset() { state = STATE_NORMAL; }
+	void reset() {
+		_state = STATE_NORMAL;
+	}
 
 #if 0
 	void SwapKey(const SDL_Scancode &find);
 #endif
-	bool DisableHotkeys() { return state != STATE_NORMAL; }
+	bool disableHotkeys() {
+		return _state != STATE_NORMAL;
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void handleEvents(const Common::Event &Event);
+	void handleEvents(const Common::Event &event);
 #if 0
 	void handleEvents(const SDL_Event &Event);
 #endif
-	void SetCaption();
+	void setCaption();
 
 	void draw();
 	void setUI();

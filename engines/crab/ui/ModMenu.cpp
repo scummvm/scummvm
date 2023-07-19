@@ -77,10 +77,10 @@ void ModMenu::load(const Common::String &filename) {
 	}
 }
 
-bool ModMenu::handleEvents(const Common::Event &Event) {
-	int choice = _menu.handleEvents(Event);
+bool ModMenu::handleEvents(const Common::Event &event) {
+	int choice = _menu.handleEvents(event);
 	if (choice >= 0) {
-		g_engine->_filePath->mod_cur = _slotInfo[_menu.Index() + choice]._path;
+		g_engine->_filePath->mod_cur = _slotInfo[_menu.index() + choice]._path;
 		return true;
 	}
 
@@ -102,14 +102,14 @@ bool ModMenu::handleEvents(const SDL_Event &Event) {
 void ModMenu::draw() {
 	_bg.draw();
 	_menu.draw();
-	for (auto i = _menu.Index(), count = 0u; i < _menu.IndexPlusOne() && i < _slotInfo.size(); i++, count++) {
-		auto base_x = _menu.BaseX(count), base_y = _menu.BaseY(count);
+	for (auto i = _menu.index(), count = 0u; i < _menu.indexPlusOne() && i < _slotInfo.size(); i++, count++) {
+		auto base_x = _menu.baseX(count), base_y = _menu.baseY(count);
 		tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);
 		tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 	}
 
-	if (_menu.HoverIndex() >= 0) {
-		int i = _menu.HoverIndex();
+	if (_menu.hoverIndex() >= 0) {
+		int i = _menu.hoverIndex();
 
 		if (!_img._loaded || _prevHover != i) {
 			_img._loaded = true;
