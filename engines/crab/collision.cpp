@@ -33,13 +33,13 @@
 namespace Crab {
 
 // Find if a line and a rectangle intersect
-bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect) {
+bool collideLineRect(int p0X, int p0Y, int p1X, int p1Y, const Rect &rect) {
 	int q0_x = rect.x;
 	int q0_y = rect.y;
 	int q1_x = rect.x + rect.w;
 	int q1_y = rect.y;
 
-	if (CollideLine<int>(p0_x, p0_y, p1_x, p1_y, q0_x, q0_y, q1_x, q1_y))
+	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	q0_x = rect.x;
@@ -47,7 +47,7 @@ bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect) {
 	q1_x = rect.x;
 	q1_y = rect.y + rect.h;
 
-	if (CollideLine<int>(p0_x, p0_y, p1_x, p1_y, q0_x, q0_y, q1_x, q1_y))
+	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	q0_x = rect.x + rect.w;
@@ -55,7 +55,7 @@ bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect) {
 	q1_x = rect.x + rect.w;
 	q1_y = rect.y + rect.h;
 
-	if (CollideLine<int>(p0_x, p0_y, p1_x, p1_y, q0_x, q0_y, q1_x, q1_y))
+	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	q0_x = rect.x;
@@ -63,20 +63,20 @@ bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect) {
 	q1_x = rect.x + rect.w;
 	q1_y = rect.y + rect.h;
 
-	if (CollideLine<int>(p0_x, p0_y, p1_x, p1_y, q0_x, q0_y, q1_x, q1_y))
+	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	return false;
 }
 
 // Find if there is a clear line of sight between two rectangles
-bool LineOfSight(const Rect &a, const Rect &b, const Rect &obstacle) {
+bool lineOfSight(const Rect &a, const Rect &b, const Rect &obstacle) {
 	int p0_x = a.x;
 	int p0_y = a.y;
 	int p1_x = b.x;
 	int p1_y = b.y;
 
-	if (CollideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
+	if (collideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
 		return false;
 
 	p0_x = a.x + a.w;
@@ -84,7 +84,7 @@ bool LineOfSight(const Rect &a, const Rect &b, const Rect &obstacle) {
 	p1_x = b.x + b.w;
 	p1_y = b.y;
 
-	if (CollideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
+	if (collideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
 		return false;
 
 	p0_x = a.x;
@@ -92,7 +92,7 @@ bool LineOfSight(const Rect &a, const Rect &b, const Rect &obstacle) {
 	p1_x = b.x;
 	p1_y = b.y + b.h;
 
-	if (CollideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
+	if (collideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
 		return false;
 
 	p0_x = a.x + a.w;
@@ -100,7 +100,7 @@ bool LineOfSight(const Rect &a, const Rect &b, const Rect &obstacle) {
 	p1_x = b.x + b.w;
 	p1_y = b.y + b.h;
 
-	if (CollideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
+	if (collideLineRect(p0_x, p0_y, p1_x, p1_y, obstacle))
 		return false;
 
 	return true;
