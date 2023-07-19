@@ -74,8 +74,8 @@ void ReplyButton::Cache(const Common::String &val, const int &spacing, const int
 #if 0
 	TTF_SizeText(g_engine->_textManager->GetFont(font), val, &width, &height);
 #endif
-	width = g_engine->_textManager->GetFont(_font)->getStringWidth(val);
-	height = g_engine->_textManager->GetFont(_font)->getFontHeight();
+	width = g_engine->_textManager->getFont(_font)->getStringWidth(val);
+	height = g_engine->_textManager->getFont(_font)->getFontHeight();
 
 	// Find out how many line sizes will the text take
 	int lines = ((_text.size() - 1) / _lineSize.x) + 1;

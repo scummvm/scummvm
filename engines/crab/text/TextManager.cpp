@@ -39,21 +39,21 @@ using namespace pyrodactyl::text;
 //------------------------------------------------------------------------
 // Purpose: Initialize, set cache etc
 //------------------------------------------------------------------------
-void TextManager::Init() {
+void TextManager::init() {
 	// First, delete everything that exists
-	Quit();
+	quit();
 
 	// Load the list of fonts
-	XMLDoc font_list(g_engine->_filePath->font);
-	if (font_list.ready()) {
-		rapidxml::xml_node<char> *node = font_list.doc()->first_node("fonts");
+	XMLDoc fontList(g_engine->_filePath->font);
+	if (fontList.ready()) {
+		rapidxml::xml_node<char> *node = fontList.doc()->first_node("fonts");
 
-		loadNum(cache_size, "cache_size", node);
-		cache.resize(cache_size);
-		oldest = 0;
+		loadNum(_cacheSize, "cache_size", node);
+		_cache.resize(_cacheSize);
+		_oldest = 0;
 
 		if (nodeValid(node->first_node("padding")))
-			pad_bg.load(node->first_node("padding"));
+			_padBg.load(node->first_node("padding"));
 
 		for (auto n = node->first_node("font"); n != NULL; n = n->next_sibling("font")) {
 			rapidxml::xml_attribute<char> *id, *path, *size;
@@ -63,47 +63,47 @@ void TextManager::Init() {
 
 			if (id != NULL && path != NULL && size != NULL) {
 				unsigned int pos = StringToNumber<unsigned int>(id->value());
-				if (font.size() <= pos)
-					font.resize(pos + 1);
+				if (_font.size() <= pos)
+					_font.resize(pos + 1);
 #if 0
 				font[pos] = TTF_OpenFont(path->value(), StringToNumber<int>(size->value()));
 				TTF_SetFontHinting(font[pos], TTF_HINTING_LIGHT);
 #endif
 				Common::File file;
 				FileOpen(path->value(), &file);
-				font[pos] = Graphics::loadTTFFont(file, StringToNumber<int>(size->value()));
+				_font[pos] = Graphics::loadTTFFont(file, StringToNumber<int>(size->value()));
 			}
 		}
 	}
 
-	colpool.load(g_engine->_filePath->colors);
+	_colpool.load(g_engine->_filePath->colors);
 }
 
 void TextManager::reset() {
-	cache.clear();
-	cache.resize(cache_size);
+	_cache.clear();
+	_cache.resize(_cacheSize);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Search cache for rendered text
 //------------------------------------------------------------------------
-int TextManager::Search(const Common::String &text, int col, FontKey fontid) {
+int TextManager::search(const Common::String &text, int col, FontKey fontid) {
 	int pos = 0;
-	for (auto i = cache.begin(); i != cache.end(); ++i, ++pos)
-		if (i->empty == false && i->text == text && i->EqualCol(col) && i->font == fontid)
+	for (auto i = _cache.begin(); i != _cache.end(); ++i, ++pos)
+		if (i->_empty == false && i->_text == text && i->EqualCol(col) && i->_font == fontid)
 			return pos;
 
 	return -1;
 }
 
-int TextManager::FindFreeSlot() {
+int TextManager::findFreeSlot() {
 	int pos = 0;
-	for (auto i = cache.begin(); i != cache.end(); ++i, ++pos)
-		if (i->empty)
+	for (auto i = _cache.begin(); i != _cache.end(); ++i, ++pos)
+		if (i->_empty)
 			return pos;
 
-	int ret = oldest;
-	oldest = (oldest + 1) % cache.size();
+	int ret = _oldest;
+	_oldest = (_oldest + 1) % _cache.size();
 	return ret;
 }
 
@@ -119,22 +119,22 @@ SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const Common::S
 }
 #endif
 
-Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &fKey, const Common::String &text, const int &color) {
-	SDL_Color sdlcolor = colpool.Get(color);
+Graphics::ManagedSurface *TextManager::renderTextBlended(const FontKey &fKey, const Common::String &text, const int &color) {
+	SDL_Color sdlcolor = _colpool.get(color);
 	uint32 col = g_engine->_format->ARGBToColor(255, sdlcolor.r, sdlcolor.g, sdlcolor.b);
 
 	Graphics::ManagedSurface *surf = nullptr;
 
 	if (text.empty()) {
-		Common::Rect rec = GetFont(fKey)->getBoundingBox(" ");
+		Common::Rect rec = getFont(fKey)->getBoundingBox(" ");
 		int h = rec.height();
 		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
-		GetFont(fKey)->drawString(surf, " ", 0, 0, rec.width(), col);
+		getFont(fKey)->drawString(surf, " ", 0, 0, rec.width(), col);
 	} else {
-		Common::Rect rec = GetFont(fKey)->getBoundingBox(text);
+		Common::Rect rec = getFont(fKey)->getBoundingBox(text);
 		int h = rec.height();
 		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
-		GetFont(fKey)->drawString(surf, text, 0, 0, rec.width(), col);
+		getFont(fKey)->drawString(surf, text, 0, 0, rec.width(), col);
 	}
 
 	return surf;
@@ -149,21 +149,21 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 
 	if (text == " ") return;
 
-	int pos = Search(text, color, fontk);
+	int pos = search(text, color, fontk);
 	if (pos == -1) {
-		pos = FindFreeSlot();
+		pos = findFreeSlot();
 #if 0
 		SDL_Surface *surf = RenderTextBlended(font, text, color);
 #endif
-		Graphics::ManagedSurface *surf = RenderTextBlended(fontk, text, color);
-		cache[pos].img.deleteImage();
-		cache[pos].empty = false;
+		Graphics::ManagedSurface *surf = renderTextBlended(fontk, text, color);
+		_cache[pos]._img.deleteImage();
+		_cache[pos]._empty = false;
 
-		cache[pos].text = text;
-		cache[pos].col = color;
-		cache[pos].font = fontk;
+		_cache[pos]._text = text;
+		_cache[pos]._col = color;
+		_cache[pos]._font = fontk;
 
-		cache[pos].img.load(surf);
+		_cache[pos]._img.load(surf);
 
 		delete surf;
 #if 0
@@ -172,13 +172,13 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 	}
 
 	if (background) {
-		rect.w = cache[pos].img.w() + (2 * pad_bg.x);
-		rect.h = cache[pos].img.h() + (2 * pad_bg.y);
+		_rect.w = _cache[pos]._img.w() + (2 * _padBg.x);
+		_rect.h = _cache[pos]._img.h() + (2 * _padBg.y);
 
 		uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
 		Graphics::Surface surf;
-		surf.create(rect.w, rect.h, *g_engine->_format);
-		surf.fillRect(Common::Rect(rect.w, rect.h), col);
+		surf.create(_rect.w, _rect.h, *g_engine->_format);
+		surf.fillRect(Common::Rect(_rect.w, _rect.h), col);
 
 #if 0
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
@@ -186,77 +186,77 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 #endif
 
 		if (align == ALIGN_LEFT) {
-			rect.x = x - pad_bg.x;
-			rect.y = y - pad_bg.y;
-			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
+			_rect.x = x - _padBg.x;
+			_rect.y = y - _padBg.y;
+			g_engine->_screen->blitFrom(surf, Common::Point(_rect.x, _rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.draw(x, y);
+			_cache[pos]._img.draw(x, y);
 		} else if (align == ALIGN_CENTER) {
-			rect.x = x - cache[pos].img.w() / 2 - pad_bg.x;
-			rect.y = y - cache[pos].img.h() / 2 - pad_bg.y;
-			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
+			_rect.x = x - _cache[pos]._img.w() / 2 - _padBg.x;
+			_rect.y = y - _cache[pos]._img.h() / 2 - _padBg.y;
+			g_engine->_screen->blitFrom(surf, Common::Point(_rect.x, _rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.draw(x - cache[pos].img.w() / 2, y - cache[pos].img.h() / 2);
+			_cache[pos]._img.draw(x - _cache[pos]._img.w() / 2, y - _cache[pos]._img.h() / 2);
 		} else {
-			rect.x = x - cache[pos].img.w() - pad_bg.x;
-			rect.y = y - pad_bg.y;
-			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
+			_rect.x = x - _cache[pos]._img.w() - _padBg.x;
+			_rect.y = y - _padBg.y;
+			g_engine->_screen->blitFrom(surf, Common::Point(_rect.x, _rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.draw(x - cache[pos].img.w(), y);
+			_cache[pos]._img.draw(x - _cache[pos]._img.w(), y);
 		}
 
 		surf.free();
 
 	} else {
 		if (align == ALIGN_LEFT)
-			cache[pos].img.draw(x, y);
+			_cache[pos]._img.draw(x, y);
 		else if (align == ALIGN_CENTER)
-			cache[pos].img.draw(x - cache[pos].img.w() / 2, y - cache[pos].img.h() / 2);
+			_cache[pos]._img.draw(x - _cache[pos]._img.w() / 2, y - _cache[pos]._img.h() / 2);
 		else
-			cache[pos].img.draw(x - cache[pos].img.w(), y);
+			_cache[pos]._img.draw(x - _cache[pos]._img.w(), y);
 	}
 }
 
 void TextManager::draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &fKey, const Align &align,
-					   const unsigned int &line_width, const unsigned int &line_height, const bool &background) {
-	for (unsigned int start_pos = 0, len = text.size(); start_pos < len; y += line_height) {
-		unsigned int end_pos = start_pos + 1;
-		int last_interrupt = -1;
+					   const unsigned int &lineWidth, const unsigned int &lineHeight, const bool &background) {
+	for (unsigned int startPos = 0, len = text.size(); startPos < len; y += lineHeight) {
+		unsigned int endPos = startPos + 1;
+		int lastInterrupt = -1;
 		Common::String word;
 
-		while (end_pos - start_pos <= line_width) {
-			if (end_pos == len || text[end_pos] == '`') {
-				last_interrupt = end_pos;
+		while (endPos - startPos <= lineWidth) {
+			if (endPos == len || text[endPos] == '`') {
+				lastInterrupt = endPos;
 				break;
 			}
 
-			if (text[end_pos] == ' ' || text[end_pos] == ',' || text[end_pos] == '.')
-				last_interrupt = end_pos;
+			if (text[endPos] == ' ' || text[endPos] == ',' || text[endPos] == '.')
+				lastInterrupt = endPos;
 
-			end_pos++;
+			endPos++;
 		}
 
-		if (last_interrupt >= 0) // wrap a word around
+		if (lastInterrupt >= 0) // wrap a word around
 		{
-			for (unsigned int i = 0; i < last_interrupt - start_pos; i++)
-				word += text[start_pos + i];
+			for (unsigned int i = 0; i < lastInterrupt - startPos; i++)
+				word += text[startPos + i];
 
-			start_pos = last_interrupt + 1;
+			startPos = lastInterrupt + 1;
 		} else // word bigger than line, just thunk
 		{
-			for (unsigned int i = 0; i < end_pos - start_pos; i++)
-				word += text[start_pos + i];
+			for (unsigned int i = 0; i < endPos - startPos; i++)
+				word += text[startPos + i];
 
-			start_pos += line_width;
+			startPos += lineWidth;
 		}
 
 		draw(x, y, word, color, fKey, align, background);
@@ -266,14 +266,14 @@ void TextManager::draw(const int &x, int y, const Common::String &text, const in
 //------------------------------------------------------------------------
 // Purpose: Quit
 //------------------------------------------------------------------------
-void TextManager::Quit() {
-	for (auto i = font.begin(); i != font.end(); ++i)
+void TextManager::quit() {
+	for (auto i = _font.begin(); i != _font.end(); ++i)
 		delete *i;
 
-	for (auto i = cache.begin(); i != cache.end(); ++i) {
-		if (i->empty == false) {
-			i->img.deleteImage();
-			i->empty = true;
+	for (auto i = _cache.begin(); i != _cache.end(); ++i) {
+		if (i->_empty == false) {
+			i->_img.deleteImage();
+			i->_empty = true;
 		}
 	}
 }

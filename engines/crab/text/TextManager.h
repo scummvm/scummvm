@@ -49,62 +49,69 @@ namespace pyrodactyl {
 namespace text {
 class TextManager {
 	// The collection of stored fonts
-	Common::Array<Graphics::Font *> font;
+	Common::Array<Graphics::Font *> _font;
 
 	// The size of the cache
-	int cache_size;
+	int _cacheSize;
 
 	// The padding at the end of the background - this needs to be loaded from file later
-	Vector2i pad_bg;
+	Vector2i _padBg;
 
 	// The data stored in our cache - text and texture
 	struct TextCacheUnit {
-		Common::String text;
-		int col;
-		FontKey font;
+		Common::String _text;
+		int _col;
+		FontKey _font;
 
-		pyrodactyl::image::Image img;
-		bool empty;
+		pyrodactyl::image::Image _img;
+		bool _empty;
 
 		TextCacheUnit() {
-			empty = true;
-			col = 0;
-			font = 0;
+			_empty = true;
+			_col = 0;
+			_font = 0;
 		}
-		~TextCacheUnit() { img.deleteImage(); }
+		~TextCacheUnit() {
+			_img.deleteImage();
+		}
 
-		bool EqualCol(int color) { return col == color; }
+		bool EqualCol(int color) {
+			return _col == color;
+		}
 	};
 
 	// Text Cache - done to avoid having to render a texture every time text is drawn
-	Common::Array<TextCacheUnit> cache;
+	Common::Array<TextCacheUnit> _cache;
 
 	// The oldest element in the text cache
-	int oldest;
+	int _oldest;
 
 	// The place to store all colors
-	ColorPool colpool;
+	ColorPool _colpool;
 
 	// The rectangle used to store the darkened rectangle coordinates
-	Rect rect;
+	Rect _rect;
 
-	int Search(const Common::String &text, int col, FontKey fontid);
-	int FindFreeSlot();
+	int search(const Common::String &text, int col, FontKey fontid);
+	int findFreeSlot();
 
 public:
 	TextManager(void) {
-		oldest = 0;
-		cache_size = 30;
+		_oldest = 0;
+		_cacheSize = 30;
 	}
+
 	~TextManager(void) {}
 
-	void Init();
-	void Quit();
+	void init();
+	void quit();
 	void reset();
 
+	Graphics::Font *getFont(const FontKey &fontid) {
+		return _font[fontid];
+	}
 
-	Graphics::Font *GetFont(const FontKey &fontid) { return font[fontid]; }
-	Graphics::ManagedSurface *RenderTextBlended(const FontKey &font, const Common::String &text, const int &color);
+	Graphics::ManagedSurface *renderTextBlended(const FontKey &font, const Common::String &text, const int &color);
 #if 0
 	SDL_Surface *RenderTextBlended(const FontKey &font, const Common::String &text, const int &color);
 #endif
@@ -113,7 +120,7 @@ public:
 			  const FontKey &font = 0, const Align &align = ALIGN_LEFT, const bool &background = false);
 
 	void draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &font, const Align &align,
-			  const unsigned int &line_width, const unsigned int &line_height, const bool &background = false);
+			  const unsigned int &lineWidth, const unsigned int &lineHeight, const bool &background = false);
 };
 
 } // End of namespace text

@@ -49,7 +49,7 @@ void SectionHeader::load(rapidxml::xml_node<char> *node) {
 		loadBool(_drawL, "left", node);
 		loadBool(_drawR, "right", node);
 
-		Graphics::ManagedSurface *surf = g_engine->_textManager->RenderTextBlended(_font, _text, _col);
+		Graphics::ManagedSurface *surf = g_engine->_textManager->renderTextBlended(_font, _text, _col);
 
 		if (_align == ALIGN_CENTER) {
 			_left.x = x - surf->w / 2 - g_engine->_imageManager->getTexture(_img).w();
