@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/globals.h"
+#include "m4/burger/flags.h"
 #include "m4/core/term.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_inv.h"
@@ -28,23 +28,23 @@
 namespace M4 {
 namespace Burger {
 
-#define MAX_APPS_GLOBAL_VARS 512
+#define FLAGS_COUNT 512
 
-GlobalVars::GlobalVars() {
-	resize(MAX_APPS_GLOBAL_VARS);
+Flags::Flags() {
+	resize(FLAGS_COUNT);
 }
 
-void GlobalVars::sync(Common::Serializer &s) {
+void Flags::sync(Common::Serializer &s) {
 	size_t count = size();
 	for (uint i = 0; i < count; ++i)
 		s.syncAsSint32LE((*this)[i]);
 }
 
-void GlobalVars::reset() {
-	Common::fill(&(*this)[0], &(*this)[0] + MAX_APPS_GLOBAL_VARS, 0);
+void Flags::reset() {
+	Common::fill(&(*this)[0], &(*this)[0] + FLAGS_COUNT, 0);
 }
 
-int32 GlobalVars::get_boonsville_time_and_display(bool showTime) {
+int32 Flags::get_boonsville_time_and_display(bool showTime) {
 	if (showTime) {
 		int time = (*this)[BOONSVILLE_TIME];
 		int seconds = time % 60;
@@ -58,12 +58,12 @@ int32 GlobalVars::get_boonsville_time_and_display(bool showTime) {
 	return (*this)[BOONSVILLE_TIME];
 }
 
-void GlobalVars::set_boonsville_time(int32 time) {
+void Flags::set_boonsville_time(int32 time) {
 	(*this)[BOONSVILLE_TIME] = time;
 	(*this)[BOONSVILLE_TIME2] = time - 1;
 }
 
-void GlobalVars::reset1() {
+void Flags::reset1() {
 	set_boonsville_time(0);
 	(*this)[V000] = 1000;
 	inv_give_to_player("money");
@@ -133,7 +133,7 @@ void GlobalVars::reset1() {
 	conv_reset_all();
 }
 
-void GlobalVars::reset2() {
+void Flags::reset2() {
 	if ((*this)[V245] != 10027)
 		inv_give_to_player("BLOCK OF ICE");
 	if ((*this)[V277] == 6003)
@@ -163,7 +163,7 @@ void GlobalVars::reset2() {
 	}
 }
 
-void GlobalVars::reset3() {
+void Flags::reset3() {
 	if (inv_player_has("BOTTLE")) {
 		inv_give_to_player("CARROT JUICE");
 		inv_move_object("BOTTLE", NOWHERE);
@@ -194,7 +194,7 @@ void GlobalVars::reset3() {
 	(*this)[V145] = 0;
 }
 
-void GlobalVars::reset4() {
+void Flags::reset4() {
 	(*this)[V186] = 0;
 	(*this)[V234] = 0;
 	(*this)[V196] = 0;
@@ -245,7 +245,7 @@ void GlobalVars::reset4() {
 	(*this)[V237] = 0;
 }
 
-void GlobalVars::reset5() {
+void Flags::reset5() {
 	if ((*this)[V159])
 		inv_give_to_player("DEED");
 
