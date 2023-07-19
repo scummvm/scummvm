@@ -254,7 +254,7 @@ void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
 
 	if (_description) {
 		auto &frames = _description->frames;
-		if (_phase < frames.size()) {
+		if (_phase >= 0 && _phase < static_cast<int>(frames.size())) {
 			auto &frame = frames[_phase];
 			pos.x += frame.x * _animation->scale();
 			pos.y += frame.y * _animation->scale();
