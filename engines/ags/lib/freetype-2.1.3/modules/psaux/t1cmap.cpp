@@ -103,7 +103,7 @@ Exit:
 }
 
 FT2_1_3_CALLBACK_DEF(FT_Error)
-t1_cmap_standard_init(T1_CMapStd cmap) {
+t1_cmap_standard_init(T1_CMapStd cmap, void *) {
 	t1_cmap_std_init(cmap, 0);
 	return 0;
 }
@@ -119,7 +119,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 	};
 
 FT2_1_3_CALLBACK_DEF(FT_Error)
-t1_cmap_expert_init(T1_CMapStd cmap) {
+t1_cmap_expert_init(T1_CMapStd cmap, void *) {
 	t1_cmap_std_init(cmap, 1);
 	return 0;
 }
@@ -138,7 +138,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 /**** TYPE1 CUSTOM ENCODING CMAP ****/
 
 FT2_1_3_CALLBACK_DEF(FT_Error)
-t1_cmap_custom_init(T1_CMapCustom cmap) {
+t1_cmap_custom_init(T1_CMapCustom cmap, void *) {
 	T1_Face face = (T1_Face)FT2_1_3_CMAP_FACE(cmap);
 	T1_Encoding encoding = &face->type1.encoding;
 
@@ -220,7 +220,7 @@ t1_cmap_uni_pair_compare(const void *pair1, const void *pair2) {
 }
 
 FT2_1_3_CALLBACK_DEF(FT_Error)
-t1_cmap_unicode_init(T1_CMapUnicode cmap) {
+t1_cmap_unicode_init(T1_CMapUnicode cmap, void *) {
 	FT_Error error;
 	FT_UInt  count;
 	T1_Face  face = (T1_Face)FT2_1_3_CMAP_FACE(cmap);
