@@ -174,7 +174,10 @@ void Character::moveTo(const Common::String & processName, Common::Point dst, in
 }
 
 void Character::animate(int direction, int speed, bool jokes) {
-	if (direction == -1)
+	if (_stopped)
+		_stopped = false;
+
+	if (direction == -1 || !_enabled)
 		return;
 
 	_description = nullptr;
@@ -211,6 +214,10 @@ void Character::animate(const Common::String & processName, Common::Point pos, i
 void Character::stop(const Common::String &processName) {
 	debug("character %s: stop, process: %s", _object->getName().c_str(), processName.c_str());
 	_processName = processName;
+	stop();
+}
+
+void Character::stop() {
 	_stopped = true;
 }
 

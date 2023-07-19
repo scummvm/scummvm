@@ -1674,7 +1674,10 @@ void Process::stopCharacter() {
 		if (direction != -1) {
 			character->direction(direction);
 			character->stop(getName());
+			deactivate();
 			suspend();
+		} else {
+			character->stop();
 		}
 	} else
 		warning("could not find character %s", name.c_str());

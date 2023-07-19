@@ -104,13 +104,14 @@ public:
 	}
 
 	bool active() const {
-		return _enabled && _visible;
+		return _enabled && _visible && !_stopped;
 	}
 
 	void animate(const Common::String &processName, Common::Point pos, int direction, int speed);
 	void animate(int direction, int speed, bool jokes);
 
 	void stop(const Common::String &processName);
+	void stop();
 	void leave(const Common::String &processName);
 
 	int getPhase() const {
