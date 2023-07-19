@@ -386,7 +386,7 @@ void AGDSEngine::resetCurrentScreen() {
 void AGDSEngine::runProcesses() {
 	for (uint i = 0; i < _processes.size(); ++i) {
 		ProcessPtr process = _processes[i];
-		if (!process)
+		if (!process || process->parentScreenName() != _currentScreenName)
 			continue;
 
 		if (process->active()) {
