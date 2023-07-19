@@ -141,7 +141,7 @@ void App::run() {
 	// While the user hasn't quit - This is the main game loop
 	while (currentStateId != GAMESTATE_EXIT && !SHOULD_QUIT) {
 		// Start the frame timer
-		fps.Start();
+		fps.start();
 
 		// Change state if needed
 		if (shouldChangeState) {
@@ -286,11 +286,11 @@ void App::run() {
 #endif
 
 		// Cap the frame rate
-		if (fps.Ticks() < 1000u / g_engine->_screenSettings->fps) {
+		if (fps.ticks() < 1000u / g_engine->_screenSettings->fps) {
 #if 0
 			SDL_Delay((1000u / g_engine->_screenSettings->fps) - fps.Ticks());
 #endif
-			uint32 delay = (1000u / g_engine->_screenSettings->fps) - fps.Ticks();
+			uint32 delay = (1000u / g_engine->_screenSettings->fps) - fps.ticks();
 			//warning("Delay by %d ms", delay);
 			g_system->delayMillis(delay);
 		}

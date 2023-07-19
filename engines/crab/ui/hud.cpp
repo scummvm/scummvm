@@ -69,7 +69,7 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 					_clip.load(animnode);
 
 					_timer.load(animnode, "delay");
-					_timer.Start();
+					_timer.start();
 				}
 			}
 		}
@@ -111,13 +111,13 @@ void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
 void HUD::internalEvents(bool showMap) {
 	_menu._element[HS_MAP]._visible = showMap;
 
-	if (_timer.TargetReached()) {
+	if (_timer.targetReached()) {
 		_clip.x += _clip.w;
 
 		if (_clip.x >= g_engine->_imageManager->getTexture(_notifyAnim).w())
 			_clip.x = 0;
 
-		_timer.Start();
+		_timer.start();
 	}
 }
 

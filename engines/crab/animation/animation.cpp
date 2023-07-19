@@ -42,20 +42,20 @@ Animation::Animation(rapidxml::xml_node<char> *node) {
 }
 
 void Animation::draw() {
-	uint32 timestamp = _timer.Ticks();
+	uint32 timestamp = _timer.ticks();
 	for (auto i = _frame.begin(); i != _frame.end(); ++i)
 		i->draw(timestamp);
 }
 
 bool Animation::internalEvents(DrawType &gameDraw) {
-	uint32 timestamp = _timer.Ticks();
+	uint32 timestamp = _timer.ticks();
 	for (auto i = _frame.begin(); i != _frame.end(); ++i) {
 		DrawType result = i->internalEvents(timestamp);
 		// if (result != DRAW_SAME)
 		gameDraw = result;
 	}
 
-	return _timer.Ticks() >= _length;
+	return _timer.ticks() >= _length;
 }
 
 void Animation::reset() {

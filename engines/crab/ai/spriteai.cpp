@@ -262,8 +262,8 @@ void Sprite::flyAround(const Rect &camera, const SpriteConstant &sc) {
 				_aiData._walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				_aiData._walk._timer.Target(sc._fly._delayMin + (g_engine->getRandomNumber(sc._fly._delayMax)));
-				_aiData._walk._timer.Start();
+				_aiData._walk._timer.target(sc._fly._delayMin + (g_engine->getRandomNumber(sc._fly._delayMax)));
+				_aiData._walk._timer.start();
 			}
 		}
 		// Flying towards the right edge
@@ -273,21 +273,21 @@ void Sprite::flyAround(const Rect &camera, const SpriteConstant &sc) {
 				_aiData._walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				_aiData._walk._timer.Target(sc._fly._delayMin + (g_engine->getRandomNumber(sc._fly._delayMax)));
-				_aiData._walk._timer.Start();
+				_aiData._walk._timer.target(sc._fly._delayMin + (g_engine->getRandomNumber(sc._fly._delayMax)));
+				_aiData._walk._timer.start();
 			}
 		}
 
 		move(sc);
 	} else {
 		// Safety condition in case timer isn't running
-		if (!_aiData._walk._timer.Started())
-			_aiData._walk._timer.Start();
+		if (!_aiData._walk._timer.started())
+			_aiData._walk._timer.start();
 
 		// Is it time to start flying?
-		if (_aiData._walk._timer.TargetReached()) {
+		if (_aiData._walk._timer.targetReached()) {
 			// Stop the timer
-			_aiData._walk._timer.Stop();
+			_aiData._walk._timer.stop();
 
 			// Decide if the sprite flies from the left or right of the camera
 			if (g_engine->getRandomNumber(1)) {

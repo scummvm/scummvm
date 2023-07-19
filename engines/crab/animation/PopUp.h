@@ -80,8 +80,8 @@ struct PopUp {
 	void reset() {
 		_show = false;
 		_startedShow = false;
-		_delay.Stop();
-		_duration.Stop();
+		_delay.stop();
+		_duration.stop();
 	}
 
 	void load(rapidxml::xml_node<char> *node);

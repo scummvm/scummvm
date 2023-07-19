@@ -76,16 +76,16 @@ void ProgressBar::draw(const int &value, const int &max) {
 		switch (_type) {
 		case INCREASE:
 			g_engine->_imageManager->draw(x + _clip.w + _offset.x, y + _offset.y, _inc);
-			if (_timer.TargetReached()) {
+			if (_timer.targetReached()) {
 				_cur++;
-				_timer.Start();
+				_timer.start();
 			}
 			break;
 		case DECREASE:
 			g_engine->_imageManager->draw(x + _clip.w + _offset.x, y + _offset.y, _dec);
-			if (_timer.TargetReached()) {
+			if (_timer.targetReached()) {
 				_cur--;
-				_timer.Start();
+				_timer.start();
 			}
 			break;
 		default:
@@ -104,11 +104,11 @@ void ProgressBar::effect(const int &value, const int &prev) {
 	if (value > prev) {
 		_changed = true;
 		_type = INCREASE;
-		_timer.Target(_notifyRate * (value - prev));
+		_timer.target(_notifyRate * (value - prev));
 	} else if (value < prev) {
 		_changed = true;
 		_type = DECREASE;
-		_timer.Target(_notifyRate * (prev - value));
+		_timer.target(_notifyRate * (prev - value));
 	} else {
 		_changed = false;
 		_type = NONE;

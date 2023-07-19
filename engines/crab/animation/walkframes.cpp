@@ -57,8 +57,8 @@ void WalkFrames::load(rapidxml::xml_node<char> *node) {
 // Purpose: Used for walking inside levels
 //------------------------------------------------------------------------
 bool WalkFrames::updateClip(Direction d, bool reset) {
-	if (_timer.Ticks() > _set[_cur].frames[d].currentFrame()._repeat || reset) {
-		_timer.Start();
+	if (_timer.ticks() > _set[_cur].frames[d].currentFrame()._repeat || reset) {
+		_timer.start();
 		return _set[_cur].frames[d].updateClip();
 	}
 
@@ -67,19 +67,19 @@ bool WalkFrames::updateClip(Direction d, bool reset) {
 
 void WalkFrames::resetClip(Direction d) {
 	_set[_cur].frames[d].reset();
-	_timer.Start();
+	_timer.start();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Used inside dialog box
 //------------------------------------------------------------------------
 void WalkFrames::updateClip(WalkAnimType type, Direction d) {
-	if (!_timer.Started())
-		_timer.Start();
+	if (!_timer.started())
+		_timer.start();
 
-	if (_timer.Ticks() > _set[type].frames[d].currentFrame()._repeat) {
+	if (_timer.ticks() > _set[type].frames[d].currentFrame()._repeat) {
 		_set[type].frames[d].updateClip();
-		_timer.Start();
+		_timer.start();
 	}
 }
 

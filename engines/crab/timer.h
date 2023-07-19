@@ -44,50 +44,61 @@ namespace Crab {
 class Timer {
 private:
 	// The clock time when the timer started
-	uint32 start_ticks;
+	uint32 _startTicks;
 
 	// The ticks stored when the timer was paused
-	uint32 paused_ticks;
+	uint32 _pausedTicks;
 
 	// Since most timers usually only check one value, we might as well as store it here
-	uint32 target_ticks;
+	uint32 _targetTicks;
 
 	// See if we have a target loaded or set
-	bool target_valid;
+	bool _targetValid;
 
 	// The timer status
-	bool paused;
-	bool started;
+	bool _paused;
+	bool _started;
 
 public:
 	// Initialize variables
 	Timer();
-	void Target(const uint32 &val) {
-		target_valid = true;
-		target_ticks = val;
+
+	void target(const uint32 &val) {
+		_targetValid = true;
+		_targetTicks = val;
 	}
 
 	void load(rapidxml::xml_node<char> *node, const Common::String &name, const bool &echo = true);
 
 	// The various clock actions
-	void Start();
-	void Stop();
-	void Pause();
-	void Resume();
+	void start();
+	void stop();
+	void pause();
+	void resume();
 
 	// Gets the timer's time
-	uint32 Ticks();
+	uint32 ticks();
 
 	// Get the time remaining
-	uint32 RemainingTicks() { return target_ticks - Ticks(); }
+	uint32 remainingTicks() {
+		return _targetTicks - ticks();
+	}
 
 	// Have we reached the target yet?
-	bool TargetReached(const float &factor = 1.0f);
+	bool targetReached(const float &factor = 1.0f);
 
 	// Checks the status of the timer
-	bool Started() { return started; }
-	bool Paused() { return paused; }
-	bool TargetValid() { return target_valid; }
+	bool started() {
+		return _started;
+	}
+
+	bool paused() {
+		return _paused;
+	}
+
+	bool targetValid() {
+		return _targetValid;
+	}
 };
 
 } // End of namespace Crab

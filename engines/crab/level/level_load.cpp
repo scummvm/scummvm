@@ -134,7 +134,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 					// Set the timer target for the first time
 					//s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
-					s._aiData._walk._timer.Target(_scDefault._fly._delayMax);
+					s._aiData._walk._timer.target(_scDefault._fly._delayMax);
 
 					_fly.push_back(s);
 				}

@@ -46,7 +46,7 @@ FightMoves::FightMoves() {
 	_frameTotal = 0;
 
 	_move.clear();
-	_timer.Start();
+	_timer.start();
 }
 
 //------------------------------------------------------------------------
@@ -107,9 +107,9 @@ FrameUpdateResult FightMoves::updateFrame(const Direction &d) {
 		if (_frameCur < _frameTotal && _frameCur < _move[_cur]._frames[d]._frame.size()) {
 			// Has the current frame finished playing?
 			// OR Is this the first frame of the move?
-			if (_timer.Ticks() >= _move[_cur]._frames[d]._frame[_frameCur]._repeat || _start) {
+			if (_timer.ticks() >= _move[_cur]._frames[d]._frame[_frameCur]._repeat || _start) {
 				_frameCur++;
-				_timer.Start();
+				_timer.start();
 				_start = false;
 
 				return FUR_SUCCESS;
@@ -165,7 +165,7 @@ bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 			} else
 				input.reset();
 
-			_timer.Start();
+			_timer.start();
 			_start = true;
 			g_engine->_musicManager->playEffect(_move[_cur]._eff._activate, 0);
 			return true;
