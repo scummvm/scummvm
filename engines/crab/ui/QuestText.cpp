@@ -105,7 +105,7 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 	_totalPage = pageCount + 1;
 
 	// Update the text
-	_status._text = (NumberToString(_currentPage + 1) + " of " + NumberToString(_totalPage));
+	_status._text = (numberToString(_currentPage + 1) + " of " + numberToString(_totalPage));
 
 	// Now, start drawing the quest
 	_status.draw();

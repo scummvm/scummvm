@@ -115,7 +115,7 @@ private:
 
 	Common::String fullPath(const Common::String &filename) {
 		Common::String res = "CRAB_" + filename;
-		res += g_engine->_filePath->save_ext;
+		res += g_engine->_filePath->_saveExt;
 		return res;
 	}
 

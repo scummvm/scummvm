@@ -138,7 +138,7 @@ void OptionMenu::draw(Button &back) {
 			break;
 		case STATE_CONFIRM:
 			_noticeRes.draw();
-			_countdown.draw(NumberToString(_timer.remainingTicks() / 1000));
+			_countdown.draw(numberToString(_timer.remainingTicks() / 1000));
 			break;
 		default:
 			break;
@@ -165,7 +165,7 @@ bool OptionMenu::handleEvents(Button &back, const Common::Event &event) {
 			if (result == 1) {
 				_state = STATE_CONFIRM;
 				_timer.start();
-				g_engine->_screenSettings->SetResolution();
+				g_engine->_screenSettings->setResolution();
 				_gfx.SetInfo();
 			} else if (result == 2)
 				_state = STATE_ENTER_W;
@@ -181,23 +181,23 @@ bool OptionMenu::handleEvents(Button &back, const Common::Event &event) {
 		switch (_state) {
 		case STATE_ENTER_W:
 			if (_promptW.handleEvents(event, true) || _accept.handleEvents(event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->cur.w = StringToNumber<int>(_promptW._text);
+				g_engine->_screenSettings->_cur.w = stringToNumber<int>(_promptW._text);
 				_state = STATE_ENTER_H;
 			} else if (_cancel.handleEvents(event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->RestoreBackup();
+				g_engine->_screenSettings->restoreBackup();
 				_gfx.SetInfo();
 				_state = STATE_GRAPHICS;
 			}
 			break;
 		case STATE_ENTER_H:
 			if (_promptH.handleEvents(event, true) || _accept.handleEvents(event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->cur.h = StringToNumber<int>(_promptH._text);
+				g_engine->_screenSettings->_cur.h = stringToNumber<int>(_promptH._text);
 				_state = STATE_CONFIRM;
 				_timer.start();
-				g_engine->_screenSettings->SetResolution();
+				g_engine->_screenSettings->setResolution();
 				_gfx.SetInfo();
 			} else if (_cancel.handleEvents(event) == BUAC_LCLICK) {
-				g_engine->_screenSettings->RestoreBackup();
+				g_engine->_screenSettings->restoreBackup();
 				_gfx.SetInfo();
 				_state = STATE_GRAPHICS;
 			}
@@ -208,8 +208,8 @@ bool OptionMenu::handleEvents(Button &back, const Common::Event &event) {
 				_state = STATE_GRAPHICS;
 				_timer.stop();
 			} else if (_cancel.handleEvents(event)) {
-				g_engine->_screenSettings->RestoreBackup();
-				g_engine->_screenSettings->SetResolution();
+				g_engine->_screenSettings->restoreBackup();
+				g_engine->_screenSettings->setResolution();
 				_gfx.SetInfo();
 				_state = STATE_GRAPHICS;
 			}
@@ -373,8 +373,8 @@ void OptionMenu::internalEvents() {
 	_general.internalEvents();
 
 	if (_state == STATE_CONFIRM && _timer.targetReached()) {
-		g_engine->_screenSettings->RestoreBackup();
-		g_engine->_screenSettings->SetResolution();
+		g_engine->_screenSettings->restoreBackup();
+		g_engine->_screenSettings->setResolution();
 		_gfx.SetInfo();
 		_state = STATE_GRAPHICS;
 	}

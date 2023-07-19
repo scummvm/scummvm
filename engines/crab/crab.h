@@ -129,7 +129,7 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently() override {
-		return _screenSettings->in_game;
+		return _screenSettings->_inGame;
 	}
 
 	/**

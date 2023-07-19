@@ -43,22 +43,22 @@ using namespace pyrodactyl::ui;
 // Purpose: Constructor
 //------------------------------------------------------------------------
 MainMenu::MainMenu() {
-	XMLDoc conf(g_engine->_filePath->mainmenu_l);
+	XMLDoc conf(g_engine->_filePath->_mainmenuL);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("main_menu");
 		if (nodeValid(node)) {
-			me_main.load(node->first_node("main"));
-			logo.load(node->first_node("logo"));
+			_meMain.load(node->first_node("main"));
+			_logo.load(node->first_node("logo"));
 
-			back.load(node->first_node("back"));
+			_back.load(node->first_node("back"));
 
 			if (!g_engine->_optionMenu->_loaded) {
 				g_engine->_optionMenu->load(node->first_node("option")->first_attribute("path")->value());
 				g_engine->_optionMenu->_loaded = true;
 			}
 
-			mod.load(node->first_node("mod")->first_attribute("path")->value());
-			credits.load(node->first_node("credits")->first_attribute("path")->value());
+			_mod.load(node->first_node("mod")->first_attribute("path")->value());
+			_credits.load(node->first_node("credits")->first_attribute("path")->value());
 
 			{
 				XMLDoc loadconf(node->first_node("load")->first_attribute("path")->value());
@@ -82,13 +82,13 @@ MainMenu::MainMenu() {
 				rapidxml::xml_node<char> *snode = node->first_node("scene");
 
 				if (nodeValid("bg", snode))
-					bg.load(snode->first_node("bg"));
+					_bg.load(snode->first_node("bg"));
 
 				if (nodeValid("lights", snode)) {
 					rapidxml::xml_node<char> *lnode = snode->first_node("lights");
 
 					for (rapidxml::xml_node<char> *n = lnode->first_node("img"); n != NULL; n = n->next_sibling("img"))
-						lights.push_back(n);
+						_lights.push_back(n);
 				}
 			}
 
@@ -96,36 +96,36 @@ MainMenu::MainMenu() {
 				rapidxml::xml_node<char> *dinode = node->first_node("difficulty");
 
 				if (nodeValid("bg", dinode))
-					diff.bg.load(dinode->first_node("bg"));
+					_diff._bg.load(dinode->first_node("bg"));
 
 				if (nodeValid("menu", dinode))
-					diff.menu.load(dinode->first_node("menu"));
+					_diff._menu.load(dinode->first_node("menu"));
 
 				if (nodeValid("heading", dinode))
-					diff.heading.load(dinode->first_node("heading"));
+					_diff._heading.load(dinode->first_node("heading"));
 			}
 
 			if (nodeValid("prompt", node)) {
 				rapidxml::xml_node<char> *prnode = node->first_node("prompt");
 
-				save.load(prnode);
+				_save.load(prnode);
 
 				if (nodeValid("warning", prnode))
-					warning.load(prnode->first_node("warning"));
+					_warning.load(prnode->first_node("warning"));
 
 				if (nodeValid("bg", prnode))
-					bg_save.load(prnode->first_node("bg"));
+					_bgSave.load(prnode->first_node("bg"));
 
 				if (nodeValid("accept", prnode))
-					accept.load(prnode->first_node("accept"));
+					_accept.load(prnode->first_node("accept"));
 
 				if (nodeValid("cancel", prnode))
-					cancel.load(prnode->first_node("cancel"));
+					_cancel.load(prnode->first_node("cancel"));
 			}
 
 			if (nodeValid("music", node)) {
-				loadNum(music_key.normal, "normal", node->first_node("music"));
-				loadNum(music_key.credits, "credits", node->first_node("music"));
+				loadNum(_musicKey._normal, "normal", node->first_node("music"));
+				loadNum(_musicKey._credits, "credits", node->first_node("music"));
 			}
 
 #ifdef UNREST_DEMO
@@ -142,58 +142,58 @@ MainMenu::MainMenu() {
 		}
 	}
 
-	if (g_engine->_tempData->credits)
-		ChangeState(STATE_CREDITS, true);
+	if (g_engine->_tempData->_credits)
+		changeState(STATE_CREDITS, true);
 	else
-		ChangeState(STATE_NORMAL, true);
+		changeState(STATE_NORMAL, true);
 
-	g_engine->_tempData->credits = false;
-	g_engine->_filePath->current_r = g_engine->_filePath->mainmenu_r;
+	g_engine->_tempData->_credits = false;
+	g_engine->_filePath->_currentR = g_engine->_filePath->_mainmenuR;
 }
 
 //------------------------------------------------------------------------
 // Purpose: Event/input handling Events
 //------------------------------------------------------------------------
-void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	g_engine->_mouse->handleEvents(Event);
+void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameStateID &newStateId) {
+	g_engine->_mouse->handleEvents(event);
 
-	if (state != STATE_CREDITS) {
-		int choice = me_main.handleEvents(Event);
+	if (_state != STATE_CREDITS) {
+		int choice = _meMain.handleEvents(event);
 		if (choice >= 0) {
-			for (unsigned i = 0; i < me_main._element.size(); ++i)
-				me_main._element[i].state(i == (unsigned int)choice);
+			for (unsigned i = 0; i < _meMain._element.size(); ++i)
+				_meMain._element[i].state(i == (unsigned int)choice);
 
 			switch (choice) {
 			case 0:
 				if (g_engine->_loadMenu->selectNewestFile()) {
-					ChangeState(STATE_NORMAL);
-					ShouldChangeState = true;
-					NewStateID = GAMESTATE_LOAD_GAME;
+					changeState(STATE_NORMAL);
+					shouldChangeState = true;
+					newStateId = GAMESTATE_LOAD_GAME;
 				}
 				break;
 			case 1:
-				ChangeState(STATE_DIFF);
+				changeState(STATE_DIFF);
 				break;
 			case 2:
-				ChangeState(STATE_LOAD);
+				changeState(STATE_LOAD);
 				g_engine->_loadMenu->scanDir();
 				break;
 			case 3:
-				ChangeState(STATE_OPTIONS);
+				changeState(STATE_OPTIONS);
 				break;
 			case 4:
-				ChangeState(STATE_MOD);
+				changeState(STATE_MOD);
 				break;
 			case 5:
-				ChangeState(STATE_HELP);
+				changeState(STATE_HELP);
 				break;
 			case 6:
-				ChangeState(STATE_CREDITS);
-				credits.reset();
+				changeState(STATE_CREDITS);
+				_credits.reset();
 				break;
 			case 7:
-				ShouldChangeState = true;
-				NewStateID = GAMESTATE_EXIT;
+				shouldChangeState = true;
+				newStateId = GAMESTATE_EXIT;
 				break;
 			default:
 				break;
@@ -210,7 +210,7 @@ void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 	}
 #endif
 
-	switch (state) {
+	switch (_state) {
 #ifdef UNREST_DEMO
 	case STATE_NORMAL:
 		if (steam.handleEvents(Event) == BUAC_LCLICK) {
@@ -225,59 +225,59 @@ void MainMenu::handleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		break;
 #endif
 	case STATE_OPTIONS:
-		if (g_engine->_optionMenu->handleEvents(back, Event))
-			ChangeState(STATE_NORMAL);
+		if (g_engine->_optionMenu->handleEvents(_back, event))
+			changeState(STATE_NORMAL);
 		break;
 
 	case STATE_CREDITS:
-		if (credits.handleEvents(Event))
-			ChangeState(STATE_NORMAL);
+		if (_credits.handleEvents(event))
+			changeState(STATE_NORMAL);
 		break;
 
 	case STATE_LOAD:
 		if (!g_engine->loadGameDialog())
-			ChangeState(STATE_NORMAL);
+			changeState(STATE_NORMAL);
 		else {
-			ShouldChangeState = true;
-			NewStateID = GAMESTATE_LOAD_GAME;
+			shouldChangeState = true;
+			newStateId = GAMESTATE_LOAD_GAME;
 			return;
 		}
 		break;
 
 	case STATE_DIFF: {
-		int choice = diff.menu.handleEvents(Event);
+		int choice = _diff._menu.handleEvents(event);
 
 		// First menu option is Non-iron man, second is iron man
 		// For the second choice, we must display a prompt to choose the name of the save game
 		if (choice == 0) {
-			g_engine->_tempData->ironman = false;
-			ShouldChangeState = true;
-			NewStateID = GAMESTATE_NEW_GAME;
+			g_engine->_tempData->_ironman = false;
+			shouldChangeState = true;
+			newStateId = GAMESTATE_NEW_GAME;
 		} else if (choice == 1)
-			ChangeState(STATE_SAVENAME);
+			changeState(STATE_SAVENAME);
 	} break;
 
 	case STATE_SAVENAME:
-		if (save.handleEvents(Event) || accept.handleEvents(Event)) {
-			if (save._text != "") {
-				g_engine->_tempData->filename = save._text;
-				g_engine->_tempData->ironman = true;
-				ShouldChangeState = true;
-				NewStateID = GAMESTATE_NEW_GAME;
+		if (_save.handleEvents(event) || _accept.handleEvents(event)) {
+			if (_save._text != "") {
+				g_engine->_tempData->_filename = _save._text;
+				g_engine->_tempData->_ironman = true;
+				shouldChangeState = true;
+				newStateId = GAMESTATE_NEW_GAME;
 			} else
 				debug("Please enter a valid filename for the iron man save.");
-		} else if (cancel.handleEvents(Event))
-			ChangeState(STATE_DIFF);
+		} else if (_cancel.handleEvents(event))
+			changeState(STATE_DIFF);
 
 		break;
 
 	case STATE_MOD:
-		if (mod.handleEvents(Event))
-			ChangeState(STATE_NORMAL);
+		if (_mod.handleEvents(event))
+			changeState(STATE_NORMAL);
 		break;
 
 	case STATE_HELP:
-		g_engine->_helpScreen->handleEvents(Event);
+		g_engine->_helpScreen->handleEvents(event);
 		break;
 
 	default:
@@ -420,12 +420,12 @@ void MainMenu::handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void MainMenu::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
+void MainMenu::internalEvents(bool &shouldChangeState, GameStateID &newStateId) {
 	// Make the lights flicker
-	for (auto &i : lights)
+	for (auto &i : _lights)
 		i.internalEvents();
 
-	if (state == STATE_OPTIONS)
+	if (_state == STATE_OPTIONS)
 		g_engine->_optionMenu->internalEvents();
 }
 
@@ -433,44 +433,44 @@ void MainMenu::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) 
 // Purpose: We need to toggle button visibility
 // and enable/disable keyboard for each state change
 //------------------------------------------------------------------------
-void MainMenu::ChangeState(MenuState ms, const bool &start) {
+void MainMenu::changeState(MenuState ms, const bool &start) {
 	// Start = true means this is the first run, and no music is playing
 	// Just play the appropriate music
 	if (start) {
 		if (ms == STATE_CREDITS)
-			g_engine->_musicManager->playMusic(music_key.credits);
+			g_engine->_musicManager->playMusic(_musicKey._credits);
 		else
-			g_engine->_musicManager->playMusic(music_key.normal);
+			g_engine->_musicManager->playMusic(_musicKey._normal);
 	} else {
 		// This is not our first run, which means some music track is already playing
 		// Only change tracks when going from main menu->credits or credits->main menu
-		if (state == STATE_CREDITS && ms != STATE_CREDITS)
-			g_engine->_musicManager->playMusic(music_key.normal);
-		else if (state != STATE_CREDITS && ms == STATE_CREDITS)
-			g_engine->_musicManager->playMusic(music_key.credits);
+		if (_state == STATE_CREDITS && ms != STATE_CREDITS)
+			g_engine->_musicManager->playMusic(_musicKey._normal);
+		else if (_state != STATE_CREDITS && ms == STATE_CREDITS)
+			g_engine->_musicManager->playMusic(_musicKey._credits);
 	}
 
 	// Set current state
-	state = ms;
+	_state = ms;
 
 	// We are entering the normal state, i.e outside all menus - reset color of menu items
-	if (state == STATE_NORMAL) {
-		for (unsigned i = 0; i < me_main._element.size(); ++i)
-			me_main._element[i].state(false);
+	if (_state == STATE_NORMAL) {
+		for (unsigned i = 0; i < _meMain._element.size(); ++i)
+			_meMain._element[i].state(false);
 	}
 
 	// Enable keyboard navigation if outside all menus, otherwise disable it
-	me_main.useKeyboard((state == STATE_NORMAL));
+	_meMain.useKeyboard((_state == STATE_NORMAL));
 
 	// Continue button is only enabled if there is a save to load
-	me_main._element[0]._visible = !g_engine->_loadMenu->empty();
+	_meMain._element[0]._visible = !g_engine->_loadMenu->empty();
 
 	// Enable credits and quit button if outside all menus, otherwise disable it
-	me_main._element[6]._visible = (state == STATE_NORMAL);
-	me_main._element[7]._visible = (state == STATE_NORMAL);
+	_meMain._element[6]._visible = (_state == STATE_NORMAL);
+	_meMain._element[7]._visible = (_state == STATE_NORMAL);
 
 	// If switching to help screen, load latest image otherwise remove it from memory
-	if (state == STATE_HELP)
+	if (_state == STATE_HELP)
 		g_engine->_helpScreen->refresh();
 	else
 		g_engine->_helpScreen->clear();
@@ -480,23 +480,23 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 // Purpose: Drawing function
 //------------------------------------------------------------------------
 void MainMenu::draw() {
-	bg.draw();
+	_bg.draw();
 
-	for (auto &i : lights)
+	for (auto &i : _lights)
 		i.draw();
 
-	switch (state) {
+	switch (_state) {
 	case STATE_NORMAL:
 		// Draw the logo
-		logo.draw();
+		_logo.draw();
 
 		// Draw the game name and mod path if a mod is loaded
-		if (g_engine->_filePath->mod_cur != "res/default.xml") {
-			g_engine->_textManager->draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2, "Unrest", 0, 0, ALIGN_CENTER);
+		if (g_engine->_filePath->_modCur != "res/default.xml") {
+			g_engine->_textManager->draw(g_engine->_screenSettings->_cur.w / 2, g_engine->_screenSettings->_cur.h / 2, "Unrest", 0, 0, ALIGN_CENTER);
 			//g_engine->_textManager->draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2 + 50, g_engine->_filePath->mod_cur, 5, 1, ALIGN_CENTER);
 		}
 
-		me_main.draw();
+		_meMain.draw();
 
 #ifdef UNREST_DEMO
 		g_engine->_textManager->draw(logo.x + logo.w, logo.y + logo.h / 2, "Demo", 0, 0, ALIGN_CENTER);
@@ -506,41 +506,41 @@ void MainMenu::draw() {
 		break;
 
 	case STATE_OPTIONS:
-		g_engine->_optionMenu->draw(back);
-		me_main.draw();
+		g_engine->_optionMenu->draw(_back);
+		_meMain.draw();
 		break;
 
 	case STATE_CREDITS:
-		credits.draw();
+		_credits.draw();
 		break;
 
 	case STATE_DIFF:
-		diff.bg.draw();
-		diff.heading.draw();
-		diff.menu.draw();
-		back.draw();
-		me_main.draw();
+		_diff._bg.draw();
+		_diff._heading.draw();
+		_diff._menu.draw();
+		_back.draw();
+		_meMain.draw();
 		break;
 
 	case STATE_SAVENAME:
-		bg_save.draw();
-		warning.draw();
-		save.draw();
-		accept.draw();
-		cancel.draw();
-		me_main.draw();
+		_bgSave.draw();
+		_warning.draw();
+		_save.draw();
+		_accept.draw();
+		_cancel.draw();
+		_meMain.draw();
 		break;
 
 	case STATE_MOD:
-		mod.draw();
-		back.draw();
-		me_main.draw();
+		_mod.draw();
+		_back.draw();
+		_meMain.draw();
 		break;
 
 	case STATE_HELP:
 		g_engine->_helpScreen->draw();
-		back.draw();
-		me_main.draw();
+		_back.draw();
+		_meMain.draw();
 		break;
 
 	default:
@@ -551,30 +551,30 @@ void MainMenu::draw() {
 }
 
 void MainMenu::setUI() {
-	me_main.setUI();
-	logo.setUI();
+	_meMain.setUI();
+	_logo.setUI();
 
-	back.setUI();
+	_back.setUI();
 	g_engine->_optionMenu->setUI();
-	mod.setUI();
+	_mod.setUI();
 	g_engine->_loadMenu->setUI();
 	g_engine->_helpScreen->setUI();
-	credits.setUI();
+	_credits.setUI();
 
-	accept.setUI();
-	cancel.setUI();
+	_accept.setUI();
+	_cancel.setUI();
 
-	bg.setUI();
-	for (auto &i : lights)
+	_bg.setUI();
+	for (auto &i : _lights)
 		i.setUI();
 
-	diff.menu.setUI();
-	diff.bg.setUI();
-	diff.heading.setUI();
+	_diff._menu.setUI();
+	_diff._bg.setUI();
+	_diff._heading.setUI();
 
-	save.setUI();
-	warning.setUI();
-	bg_save.setUI();
+	_save.setUI();
+	_warning.setUI();
+	_bgSave.setUI();
 
 #ifdef UNREST_DEMO
 	steam.setUI();

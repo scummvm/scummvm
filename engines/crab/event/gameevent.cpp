@@ -78,7 +78,7 @@ void GameEvent::load(rapidxml::xml_node<char> *node) {
 	_next.clear();
 	for (rapidxml::xml_node<char> *i = node->first_node("next"); i != NULL; i = i->next_sibling("next"))
 		if (i->first_attribute("id") != NULL)
-			_next.push_back(StringToNumber<EventID>(i->first_attribute("id")->value()));
+			_next.push_back(stringToNumber<EventID>(i->first_attribute("id")->value()));
 
 	_effect.clear();
 	for (rapidxml::xml_node<char> *it = node->first_node("effect"); it != NULL; it = it->next_sibling("effect")) {

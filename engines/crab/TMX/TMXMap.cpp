@@ -366,9 +366,9 @@ void TMXMap::collideWithTrigger(const Rect rect, Common::Array<int> &collisionTa
 bool TMXMap::collideWithExit(const Rect rect, LevelResult &res) {
 	for (auto i = _areaExit.begin(); i != _areaExit.end(); ++i)
 		if (i->_dim.Collide(rect).intersect) {
-			res.val = i->_name;
-			res.x = i->_entry.x;
-			res.y = i->_entry.y;
+			res._val = i->_name;
+			res._x = i->_entry.x;
+			res._y = i->_entry.y;
 			return true;
 		}
 

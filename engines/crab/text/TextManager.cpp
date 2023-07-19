@@ -44,7 +44,7 @@ void TextManager::init() {
 	quit();
 
 	// Load the list of fonts
-	XMLDoc fontList(g_engine->_filePath->font);
+	XMLDoc fontList(g_engine->_filePath->_font);
 	if (fontList.ready()) {
 		rapidxml::xml_node<char> *node = fontList.doc()->first_node("fonts");
 
@@ -62,7 +62,7 @@ void TextManager::init() {
 			size = n->first_attribute("size");
 
 			if (id != NULL && path != NULL && size != NULL) {
-				unsigned int pos = StringToNumber<unsigned int>(id->value());
+				unsigned int pos = stringToNumber<unsigned int>(id->value());
 				if (_font.size() <= pos)
 					_font.resize(pos + 1);
 #if 0
@@ -71,12 +71,12 @@ void TextManager::init() {
 #endif
 				Common::File file;
 				fileOpen(path->value(), &file);
-				_font[pos] = Graphics::loadTTFFont(file, StringToNumber<int>(size->value()));
+				_font[pos] = Graphics::loadTTFFont(file, stringToNumber<int>(size->value()));
 			}
 		}
 	}
 
-	_colpool.load(g_engine->_filePath->colors);
+	_colpool.load(g_engine->_filePath->_colors);
 }
 
 void TextManager::reset() {

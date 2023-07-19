@@ -120,7 +120,7 @@ public:
 		warning("STUB: FileMenu::scanDir()");
 
 		Common::String res = "CRAB_*";
-		res += g_engine->_filePath->save_ext;
+		res += g_engine->_filePath->_saveExt;
 		Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
 
 		_slotInfo.clear();
@@ -195,8 +195,8 @@ public:
 			hov[DATA_PLAYERNAME].load(offnode->first_node("player_name_title"));
 		}
 
-		_extension = g_engine->_filePath->save_ext;
-		_directory = (g_engine->_filePath->appdata + g_engine->_filePath->save_dir);
+		_extension = g_engine->_filePath->_saveExt;
+		_directory = (g_engine->_filePath->_appdata + g_engine->_filePath->_saveDir);
 		scanDir();
 	}
 

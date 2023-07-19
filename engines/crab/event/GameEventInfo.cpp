@@ -142,7 +142,7 @@ void Info::varSet(const Common::String &name, const Common::String &val) {
 	if (assignToVar)
 		varGet(val, varVal);
 	else
-		varVal = StringToNumber<int>(val);
+		varVal = stringToNumber<int>(val);
 
 	_var[name] = varVal;
 }
@@ -368,7 +368,7 @@ void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 
 void Info::loadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *v = node->first_node("var"); v != NULL; v = v->next_sibling("var"))
-		_var[v->first_attribute("id")->value()] = StringToNumber<int>(v->first_attribute("val")->value());
+		_var[v->first_attribute("id")->value()] = stringToNumber<int>(v->first_attribute("val")->value());
 
 	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object")) {
 		Common::String id;

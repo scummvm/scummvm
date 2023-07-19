@@ -40,23 +40,23 @@ StringPool *gStrPool;
 // Generate random numbers using this
 //RandomNumberGen gRandom;
 
-FilePaths::FilePaths() : common("res/levels/common.xml"),
-						 mod_path("mods/"),
-						 mod_ext(".unrmod"),
-						 mod_cur("res/default.xml"),
-						 mainmenu_l("res/layout/main_menu_l.xml"),
-						 mainmenu_r("res/layout/main_menu_r.xml"),
-						 sound_effect("res/sounds/effects.xml"),
-						 sound_music("res/sounds/music.xml"),
-						 font("res/fonts/fonts.xml"),
-						 icon("res/gfx/icon.bmp"),
-						 save_dir("save/"),
-						 save_ext(".unr"),
-						 shaders("res/shaders/list.xml"),
-						 colors("res/gfx/colors.xml"),
-						 current_r("res/layout/main_menu_r.xml") {
-	level.clear();
-	loaded = false;
+FilePaths::FilePaths() : _common("res/levels/common.xml"),
+						 _modPath("mods/"),
+						 _modExt(".unrmod"),
+						 _modCur("res/default.xml"),
+						 _mainmenuL("res/layout/main_menu_l.xml"),
+						 _mainmenuR("res/layout/main_menu_r.xml"),
+						 _soundEffect("res/sounds/effects.xml"),
+						 _soundMusic("res/sounds/music.xml"),
+						 _font("res/fonts/fonts.xml"),
+						 _icon("res/gfx/icon.bmp"),
+						 _saveDir("save/"),
+						 _saveExt(".unr"),
+						 _shaders("res/shaders/list.xml"),
+						 _colors("res/gfx/colors.xml"),
+						 _currentR("res/layout/main_menu_r.xml") {
+	_level.clear();
+	_loaded = false;
 
 #if 0
 	char *path = SDL_GetPrefPath("Pyrodactyl", "Unrest");
@@ -64,11 +64,11 @@ FilePaths::FilePaths() : common("res/levels/common.xml"),
 	SDL_free(path);
 #endif
 	warning("FilePaths::FilePaths() setting appdata directory to game dir");
-	appdata = "./";
+	_appdata = "./";
 }
 
-void FilePaths::LoadLevel(const Common::String &filename) {
-	level.clear();
+void FilePaths::loadLevel(const Common::String &filename) {
+	_level.clear();
 	XMLDoc lev_list(filename);
 	if (lev_list.ready()) {
 		rapidxml::xml_node<char> *node = lev_list.doc()->first_node("world");
@@ -80,7 +80,7 @@ void FilePaths::LoadLevel(const Common::String &filename) {
 			Common::String id;
 			loadStr(id, "id", n);
 
-			level[id] = l;
+			_level[id] = l;
 		}
 	}
 }
@@ -90,56 +90,56 @@ void FilePaths::load(const Common::String &filename) {
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("paths");
 
-		if (nodeValid(node) && !loaded) {
+		if (nodeValid(node) && !_loaded) {
 			if (nodeValid("icon", node)) {
 				rapidxml::xml_node<char> *iconode = node->first_node("icon");
-				icon = iconode->value();
+				_icon = iconode->value();
 			}
 
 			if (nodeValid("common", node)) {
 				rapidxml::xml_node<char> *commonnode = node->first_node("common");
-				common = commonnode->value();
+				_common = commonnode->value();
 			}
 
 			if (nodeValid("font", node)) {
 				rapidxml::xml_node<char> *fontnode = node->first_node("font");
-				font = fontnode->value();
+				_font = fontnode->value();
 			}
 
 			if (nodeValid("shader", node)) {
 				rapidxml::xml_node<char> *shadnode = node->first_node("shader");
-				shaders = shadnode->value();
+				_shaders = shadnode->value();
 			}
 
 			if (nodeValid("color", node)) {
 				rapidxml::xml_node<char> *colnode = node->first_node("color");
-				colors = colnode->value();
+				_colors = colnode->value();
 			}
 
 			if (nodeValid("mod", node)) {
 				rapidxml::xml_node<char> *modnode = node->first_node("mod");
-				loadStr(mod_path, "path", modnode);
-				loadStr(mod_ext, "ext", modnode);
-				loadStr(mod_cur, "cur", modnode);
+				loadStr(_modPath, "path", modnode);
+				loadStr(_modExt, "ext", modnode);
+				loadStr(_modCur, "cur", modnode);
 			}
 
 			if (nodeValid("main_menu", node)) {
 				rapidxml::xml_node<char> *menunode = node->first_node("main_menu");
-				loadStr(mainmenu_l, "l", menunode);
-				loadStr(mainmenu_r, "r", menunode);
-				current_r = mainmenu_r;
+				loadStr(_mainmenuL, "l", menunode);
+				loadStr(_mainmenuR, "r", menunode);
+				_currentR = _mainmenuR;
 			}
 
 			if (nodeValid("sound", node)) {
 				rapidxml::xml_node<char> *soundnode = node->first_node("sound");
-				loadStr(sound_effect, "effect", soundnode);
-				loadStr(sound_music, "music", soundnode);
+				loadStr(_soundEffect, "effect", soundnode);
+				loadStr(_soundMusic, "music", soundnode);
 			}
 
 			if (nodeValid("save", node)) {
 				rapidxml::xml_node<char> *savenode = node->first_node("save");
-				loadStr(save_dir, "dir", savenode);
-				loadStr(save_ext, "ext", savenode);
+				loadStr(_saveDir, "dir", savenode);
+				loadStr(_saveExt, "ext", savenode);
 
 				Common::String custom_path;
 				if (loadStr(custom_path, "custom", savenode)) {
@@ -155,7 +155,7 @@ void FilePaths::load(const Common::String &filename) {
 				}
 			}
 
-			loaded = true;
+			_loaded = true;
 		}
 	}
 }

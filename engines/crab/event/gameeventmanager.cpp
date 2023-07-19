@@ -393,7 +393,7 @@ void Manager::endSequence(const Common::String &curloc) {
 			if (i->_cur)
 				_eventMap[curloc].endSeq(_activeSeq);
 			else if (_eventMap.contains(i->_loc) > 0)
-				_eventMap[i->_loc].endSeq(StringToNumber<unsigned int>(i->_val));
+				_eventMap[i->_loc].endSeq(stringToNumber<unsigned int>(i->_val));
 
 		_activeSeq = UINT_MAX;
 		_endSeq.clear();

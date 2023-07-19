@@ -61,13 +61,13 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 			loadNum(d.w, "x", n);
 			loadNum(d.h, "y", n);
 
-			if (g_engine->_screenSettings->ValidDimension(d)) {
+			if (g_engine->_screenSettings->validDimension(d)) {
 				_dim.push_back(d);
 				Button b;
 				b.init(_ref, _inc.x * (countSlot % _columns), _inc.y * (countSlot / _columns));
-				b._caption._text = NumberToString(d.w);
+				b._caption._text = numberToString(d.w);
 				b._caption._text += " x ";
-				b._caption._text += NumberToString(d.h);
+				b._caption._text += numberToString(d.h);
 				_element.push_back(b);
 			}
 		}
@@ -105,7 +105,7 @@ int ResolutionMenu::handleEvents(const Common::Event &event) {
 	case STATE_CHANGE: {
 		int choice = Menu::handleEvents(event);
 		if (choice >= 0) {
-			g_engine->_screenSettings->cur = _dim[choice];
+			g_engine->_screenSettings->_cur = _dim[choice];
 			_state = STATE_NORMAL;
 			return 1;
 		}
@@ -158,9 +158,9 @@ int ResolutionMenu::handleEvents(const SDL_Event &Event) {
 
 void ResolutionMenu::setInfo() {
 	_info._text = _defInfo;
-	_info._text += NumberToString(g_engine->_screenSettings->cur.w);
+	_info._text += numberToString(g_engine->_screenSettings->_cur.w);
 	_info._text += " x ";
-	_info._text += NumberToString(g_engine->_screenSettings->cur.h);
+	_info._text += numberToString(g_engine->_screenSettings->_cur.h);
 }
 
 void ResolutionMenu::setUI() {

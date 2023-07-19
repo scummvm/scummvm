@@ -157,9 +157,9 @@ public:
 	}
 
 	void updateInfo() {
-		_info = NumberToString(_currentPage + 1);
+		_info = numberToString(_currentPage + 1);
 		_info += " of ";
-		_info += NumberToString(_menu.size());
+		_info += numberToString(_menu.size());
 	}
 
 	void load(rapidxml::xml_node<char> *node) {

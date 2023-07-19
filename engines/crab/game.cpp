@@ -41,22 +41,22 @@ using namespace pyrodactyl::input;
 // Purpose: Loading stuff
 //------------------------------------------------------------------------
 void Game::startNewGame() {
-	init(g_engine->_filePath->mod_cur);
+	init(g_engine->_filePath->_modCur);
 	loadLevel(_info.curLocID());
-	_info.ironMan(g_engine->_tempData->ironman);
-	_savefile._ironman = g_engine->_tempData->filename;
-	_clock.Start();
+	_info.ironMan(g_engine->_tempData->_ironman);
+	_savefile._ironman = g_engine->_tempData->_filename;
+	_clock.start();
 	_hud._pause.updateMode(_info.ironMan());
 
 	createSaveGame(SAVEGAME_EVENT);
 }
 
 void Game::loadGame() {
-	init(g_engine->_filePath->mod_cur);
+	init(g_engine->_filePath->_modCur);
 }
 
 void Game::init(const Common::String &filename) {
-	g_engine->_loadingScreen->Dim();
+	g_engine->_loadingScreen->dim();
 	g_engine->_eventStore->clear();
 	_gameOver.clear(false);
 	_state = STATE_GAME;
@@ -73,7 +73,7 @@ void Game::init(const Common::String &filename) {
 		Common::String path;
 		if (nodeValid("level", node)) {
 			loadStr(path, "list", node->first_node("level"));
-			g_engine->_filePath->LoadLevel(path);
+			g_engine->_filePath->loadLevel(path);
 		}
 
 		if (nodeValid("hud", node)) {
@@ -114,23 +114,23 @@ void Game::init(const Common::String &filename) {
 }
 
 bool Game::loadLevel(const Common::String &id, int playerX, int playerY) {
-	if (g_engine->_filePath->level.contains(id)) {
+	if (g_engine->_filePath->_level.contains(id)) {
 		g_engine->_loadingScreen->draw();
 
 		// Load the assets local to this level
 		// If the filename is same as the previous one, skip loading
-		if (g_engine->_filePath->current_r != g_engine->_filePath->level[id].asset) {
-			g_engine->_filePath->current_r = g_engine->_filePath->level[id].asset;
-			g_engine->_imageManager->loadMap(g_engine->_filePath->level[id].asset);
+		if (g_engine->_filePath->_currentR != g_engine->_filePath->_level[id]._asset) {
+			g_engine->_filePath->_currentR = g_engine->_filePath->_level[id]._asset;
+			g_engine->_imageManager->loadMap(g_engine->_filePath->_level[id]._asset);
 		}
 
 		// Load the level itself
 		_level._pop = _popDefault;
-		_level.load(g_engine->_filePath->level[id].layout, _info, _gameOver, playerX, playerY);
+		_level.load(g_engine->_filePath->_level[id]._layout, _info, _gameOver, playerX, playerY);
 
 		// Set the current location
 		_info.curLocID(id);
-		_info.curLocName(g_engine->_filePath->level[id].name);
+		_info.curLocName(g_engine->_filePath->_level[id]._name);
 		_map._playerPos = _level._mapLoc;
 
 		// Update and center the world map to the player current position
@@ -630,7 +630,7 @@ bool Game::applyResult() {
 			_map.update(_info);
 			break;
 		case ER_QUIT:
-			g_engine->_tempData->credits = (i->_val == "credits");
+			g_engine->_tempData->_credits = (i->_val == "credits");
 			return true;
 		default:
 			break;
@@ -643,12 +643,12 @@ bool Game::applyResult() {
 }
 
 void Game::applyResult(LevelResult result) {
-	switch (result.type) {
+	switch (result._type) {
 	case LR_LEVEL:
-		if (result.val == "Map")
+		if (result._val == "Map")
 			toggleState(STATE_MAP);
 		else
-			loadLevel(result.val, result.x, result.y);
+			loadLevel(result._val, result._x, result._y);
 		return;
 	case LR_GAMEOVER:
 		_state = STATE_LOSE_MENU;
@@ -707,7 +707,7 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 
 			Common::String playtime;
 			loadStr(playtime, "time", node);
-			_clock.Start(playtime);
+			_clock.start(playtime);
 		}
 	}
 }
@@ -754,7 +754,7 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	root->append_attribute(doc.allocate_attribute("preview", _level._previewPath.c_str()));
 
 	// Time played
-	Common::String playtime = _clock.GetTime();
+	Common::String playtime = _clock.getTime();
 	root->append_attribute(doc.allocate_attribute("time", playtime.c_str()));
 
 	rapidxml::xml_node<char> *child_gem = doc.allocate_node(rapidxml::node_element, "events");
@@ -817,7 +817,7 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 void Game::quit(bool &shouldChangeState, GameStateID &newStateId, const GameStateID &newStateVal) {
 	shouldChangeState = true;
 	newStateId = newStateVal;
-	g_engine->_imageManager->loadMap(g_engine->_filePath->mainmenu_r);
+	g_engine->_imageManager->loadMap(g_engine->_filePath->_mainmenuR);
 }
 //------------------------------------------------------------------------
 // Purpose: Change our internal state

@@ -49,7 +49,7 @@ void GameSaveMenu::addButton(const Common::String &p, unsigned int &slotIndex, u
 
 void GameSaveMenu::scanDir() {
 	Common::String res = "CRAB_*";
-	res += g_engine->_filePath->save_ext;
+	res += g_engine->_filePath->_saveExt;
 	Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
 
 	_slotInfo.clear();
@@ -58,7 +58,7 @@ void GameSaveMenu::scanDir() {
 	unsigned int countSlot = 0, countMenu = 0;
 
 	// For the save menu, the first slot is a "blank" slot - to create a new save file
-	addButton("CRAB_New Save" + g_engine->_filePath->save_ext, countMenu, countSlot);
+	addButton("CRAB_New Save" + g_engine->_filePath->_saveExt, countMenu, countSlot);
 
 	for (const Common::String& save : saves) {
 		addButton(save, countMenu, countSlot);

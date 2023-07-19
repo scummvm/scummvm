@@ -86,11 +86,11 @@ void EventSeqGroup::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<
 
 void EventSeqGroup::loadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *i = node->first_node("end"); i != NULL; i = i->next_sibling("end"))
-		endSeq(StringToNumber<unsigned int>(i->value()));
+		endSeq(stringToNumber<unsigned int>(i->value()));
 
 	for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set"))
 		if (n->first_attribute("name") != NULL) {
-			unsigned int id = StringToNumber<unsigned int>(n->first_attribute("name")->value());
+			unsigned int id = stringToNumber<unsigned int>(n->first_attribute("name")->value());
 			if (_seq.contains(id) > 0)
 				_seq[id].loadState(n);
 		}

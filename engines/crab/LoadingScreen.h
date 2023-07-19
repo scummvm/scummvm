@@ -41,33 +41,41 @@ namespace Crab {
 class LoadingScreen {
 	struct Screen {
 		// The background image
-		pyrodactyl::image::Image bg;
+		pyrodactyl::image::Image _bg;
 
-		Screen(rapidxml::xml_node<char> *node) { bg.load(node, "bg"); }
-		void Delete() { bg.deleteImage(); }
-		void draw() { bg.draw((g_engine->_screenSettings->cur.w - bg.w()) / 2, (g_engine->_screenSettings->cur.h - bg.h()) / 2); }
+		Screen(rapidxml::xml_node<char> *node) {
+			_bg.load(node, "bg");
+		}
+
+		void clear() {
+			_bg.deleteImage();
+		}
+
+		void draw() {
+			_bg.draw((g_engine->_screenSettings->_cur.w - _bg.w()) / 2, (g_engine->_screenSettings->_cur.h - _bg.h()) / 2);
+		}
 	};
 
 	// The different loading screens
-	Common::Array<Screen> screen;
+	Common::Array<Screen> _screen;
 
 	// The current loading screen
-	unsigned int cur;
+	unsigned int _cur;
 
 	// The text image (says loading)
-	pyrodactyl::image::Image text;
+	pyrodactyl::image::Image _text;
 
 public:
-	LoadingScreen() { cur = 0; };
+	LoadingScreen() { _cur = 0; };
 	~LoadingScreen(){};
 
-	void Change() {
-		cur = g_engine->getRandomNumber(screen.size() - 1);
+	void change() {
+		_cur = g_engine->getRandomNumber(_screen.size() - 1);
 	}
 
 	void load();
 	void draw();
-	void Dim();
+	void dim();
 	void Quit();
 };
 

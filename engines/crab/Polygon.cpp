@@ -42,8 +42,8 @@ float IntervalDistance(float minA, float maxA, float minB, float maxB) {
 
 void Polygon2D::AddPoint(const Vector2f &ref, const Common::String &x, const Common::String &y, Vector2f &min, Vector2f &max) {
 	Vector2f p;
-	p.x = ref.x + StringToNumber<float>(x);
-	p.y = ref.y + StringToNumber<float>(y);
+	p.x = ref.x + stringToNumber<float>(x);
+	p.y = ref.y + stringToNumber<float>(y);
 
 	if (p.x < min.x)
 		min.x = p.x;

@@ -65,55 +65,55 @@ class MainMenu : public GameState {
 		STATE_SAVENAME,
 		STATE_MOD,
 		STATE_HELP
-	} state;
+	} _state;
 
 	// This image covers the whole screen and is drawn centered on screen
-	pyrodactyl::ui::ImageData bg;
+	pyrodactyl::ui::ImageData _bg;
 
 	// The lights on the background image
-	Common::Array<pyrodactyl::ui::AlphaImage> lights;
+	Common::Array<pyrodactyl::ui::AlphaImage> _lights;
 
 	// The game logo
-	pyrodactyl::ui::ImageData logo;
+	pyrodactyl::ui::ImageData _logo;
 
 	// Data for the difficulty menu
 	struct
 	{
-		pyrodactyl::ui::ImageData bg;
-		pyrodactyl::ui::HoverInfo heading;
-		pyrodactyl::ui::ButtonMenu menu;
-	} diff;
+		pyrodactyl::ui::ImageData _bg;
+		pyrodactyl::ui::HoverInfo _heading;
+		pyrodactyl::ui::ButtonMenu _menu;
+	} _diff;
 
 	// Main menu
-	pyrodactyl::ui::Menu<pyrodactyl::ui::StateButton> me_main;
+	pyrodactyl::ui::Menu<pyrodactyl::ui::StateButton> _meMain;
 
 	// The back button is common and is used for all menus here (except credits and main menu)
-	pyrodactyl::ui::Button back;
+	pyrodactyl::ui::Button _back;
 
 	// Mod menu
-	pyrodactyl::ui::ModMenu mod;
+	pyrodactyl::ui::ModMenu _mod;
 
 	// Game credits
-	pyrodactyl::ui::CreditScreen credits;
+	pyrodactyl::ui::CreditScreen _credits;
 
 	// The save game name prompt for iron man
-	pyrodactyl::ui::TextArea save;
+	pyrodactyl::ui::TextArea _save;
 
 	// The background image and position of the prompt, along with the warning message displayed
 	// and buttons for accept and cancel
-	pyrodactyl::ui::ImageData bg_save;
-	pyrodactyl::ui::HoverInfo warning;
-	pyrodactyl::ui::Button accept, cancel;
+	pyrodactyl::ui::ImageData _bgSave;
+	pyrodactyl::ui::HoverInfo _warning;
+	pyrodactyl::ui::Button _accept, _cancel;
 
 	// Music for the main menu
 	struct MainMenuMusic {
-		pyrodactyl::music::MusicKey normal, credits;
+		pyrodactyl::music::MusicKey _normal, _credits;
 
 		MainMenuMusic() {
-			normal = -1;
-			credits = -1;
+			_normal = -1;
+			_credits = -1;
 		}
-	} music_key;
+	} _musicKey;
 
 #ifdef UNREST_DEMO
 	// UI elements related to the demo
@@ -124,15 +124,15 @@ public:
 	MainMenu();
 	~MainMenu() {}
 
-	void handleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
+	void handleEvents(Common::Event &event, bool &shouldChangeState, GameStateID &newStateId);
 #if 0
 	void handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #endif
-	void internalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
+	void internalEvents(bool &shouldChangeState, GameStateID &newStateId);
 
 	void draw();
 
-	void ChangeState(MenuState ms, const bool &start = false);
+	void changeState(MenuState ms, const bool &start = false);
 	void setUI();
 
 	// We don't need to save game state here

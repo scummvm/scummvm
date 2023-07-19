@@ -37,43 +37,43 @@
 namespace Crab {
 
 class GameClock {
-	Timer timer;
-	uint32 start;
-	Common::String seperator;
+	Timer _timer;
+	uint32 _start;
+	Common::String _seperator;
 
 public:
-	GameClock() : seperator(" : ") { start = 0; }
+	GameClock() : _seperator(" : ") { _start = 0; }
 
-	void Start(uint32 initial_time = 0) {
-		start = initial_time;
-		timer.start();
+	void start(uint32 initialTime = 0) {
+		_start = initialTime;
+		_timer.start();
 	}
 
-	void Start(const Common::String &str) {
+	void start(const Common::String &str) {
 		uint32 ms = 0, hr = 0, min = 0, sec = 0;
-		Common::String str_hrs, str_min, str_sec;
+		Common::String strHrs, strMin, strSec;
 
-		size_t found_1 = str.findFirstOf(seperator);
-		if (found_1 > 0 && found_1 != Common::String::npos) {
-			str_hrs = str.substr(0, found_1);
-			hr = StringToNumber<uint32>(str_hrs);
+		size_t found1 = str.findFirstOf(_seperator);
+		if (found1 > 0 && found1 != Common::String::npos) {
+			strHrs = str.substr(0, found1);
+			hr = stringToNumber<uint32>(strHrs);
 
-			size_t found_2 = str.findFirstOf(seperator);
-			if (found_2 > 0 && found_2 != Common::String::npos) {
-				str_sec = str.substr(found_2 + 1, Common::String::npos);
-				sec = StringToNumber<uint32>(str_sec);
+			size_t found2 = str.findFirstOf(_seperator);
+			if (found2 > 0 && found2 != Common::String::npos) {
+				strSec = str.substr(found2 + 1, Common::String::npos);
+				sec = stringToNumber<uint32>(strSec);
 
-				str_min = str.substr(found_1 + seperator.size(), found_2 - (2 * seperator.size()));
-				min = StringToNumber<uint32>(str_min);
+				strMin = str.substr(found1 + _seperator.size(), found2 - (2 * _seperator.size()));
+				min = stringToNumber<uint32>(strMin);
 			}
 		}
 
 		ms = 3600000 * hr + 60000 * min + 1000 * sec;
-		Start(ms);
+		start(ms);
 	}
 
-	Common::String GetTime() {
-		uint32 ms = start + timer.ticks();
+	Common::String getTime() {
+		uint32 ms = _start + _timer.ticks();
 
 		uint32 x = ms / 1000;
 		uint32 seconds = x % 60;
@@ -81,13 +81,13 @@ public:
 		uint32 minutes = x % 60;
 		uint32 hours = x / 60;
 
-	Common::String time_str = NumberToString(hours);
-		time_str += seperator;
-		time_str += NumberToString(minutes);
-		time_str += seperator;
-		time_str += NumberToString(seconds);
+		Common::String timeStr = numberToString(hours);
+		timeStr += _seperator;
+		timeStr += numberToString(minutes);
+		timeStr += _seperator;
+		timeStr += numberToString(seconds);
 
-		return time_str;
+		return timeStr;
 	}
 };
 

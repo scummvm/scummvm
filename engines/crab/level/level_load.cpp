@@ -81,7 +81,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				_terrain.load(path, tmxfile);
 
 				// Remember to load the terrain data before constructing the pathfinding grid
-				_pathfindingGrid.SetupNodes(_terrain);
+				_pathfindingGrid.setupNodes(_terrain);
 
 				_terrain._grid = &_pathfindingGrid;
 
@@ -187,7 +187,7 @@ void Level::loadMoves(const Common::String &filename) {
 
 			// See if there is an alternate moveset for low quality setting
 			// If no, just load the regular one
-			if (!g_engine->_screenSettings->quality) {
+			if (!g_engine->_screenSettings->_quality) {
 				if (!loadStr(_animSet[pos], "path_low", n))
 					loadStr(_animSet[pos], "path", n);
 			} else

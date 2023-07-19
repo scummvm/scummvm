@@ -132,11 +132,11 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		Person p;
 		if (info.personGet(_subject, p)) {
 			if (_target == "like")
-				return evaluate(p._opinion._val[OPI_LIKE], StringToNumber<int>(_val));
+				return evaluate(p._opinion._val[OPI_LIKE], stringToNumber<int>(_val));
 			else if (_target == "fear")
-				return evaluate(p._opinion._val[OPI_FEAR], StringToNumber<int>(_val));
+				return evaluate(p._opinion._val[OPI_FEAR], stringToNumber<int>(_val));
 			else if (_target == "respect")
-				return evaluate(p._opinion._val[OPI_RESPECT], StringToNumber<int>(_val));
+				return evaluate(p._opinion._val[OPI_RESPECT], stringToNumber<int>(_val));
 		}
 	}
 	break;
@@ -150,7 +150,7 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		break;
 
 	case TRIG_RECT:
-		return info.collideWithTrigger(_subject, StringToNumber<int>(_val));
+		return info.collideWithTrigger(_subject, stringToNumber<int>(_val));
 
 	case TRIG_STAT: {
 		StatType ty = stringToStatType(_target);
@@ -161,14 +161,14 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		if (compareToVar)
 			info.statGet(_val, ty, value);
 		else
-			value = StringToNumber<int>(_val);
+			value = stringToNumber<int>(_val);
 
 		return evaluate(sub, value);
 	}
 		break;
 
 	case TRIG_DIFF:
-		return evaluate(info.ironMan(), StringToNumber<int>(_val));
+		return evaluate(info.ironMan(), stringToNumber<int>(_val));
 
 	case TRIG_TRAIT:
 		if (info.personValid(_target)) {
@@ -188,7 +188,7 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		if (compare_to_var)
 			info.varGet(_val, var_val);
 		else
-			var_val = StringToNumber<int>(_val);
+			var_val = stringToNumber<int>(_val);
 
 		return evaluate(var_sub, var_val);
 	}

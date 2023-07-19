@@ -36,19 +36,21 @@
 
 namespace Crab {
 
-enum LevelResultType { LR_NONE,
-					   LR_LEVEL,
-					   LR_GAMEOVER };
+enum LevelResultType {
+	LR_NONE,
+	LR_LEVEL,
+	LR_GAMEOVER
+};
 
 struct LevelResult {
-	LevelResultType type;
-	Common::String val;
-	int x, y;
+	LevelResultType _type;
+	Common::String _val;
+	int _x, _y;
 
-	LevelResult() : val("") {
-		type = LR_NONE;
-		x = -1;
-		y = -1;
+	LevelResult() : _val("") {
+		_type = LR_NONE;
+		_x = -1;
+		_y = -1;
 	}
 };
 

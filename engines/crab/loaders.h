@@ -51,7 +51,7 @@ bool loadStr(Common::String &val, const Common::String &name, rapidxml::xml_node
 template<typename T>
 bool loadNum(T &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true) {
 	if (node->first_attribute(name.c_str()) != NULL)
-		val = StringToNumber<T>(node->first_attribute(name.c_str())->value());
+		val = stringToNumber<T>(node->first_attribute(name.c_str())->value());
 	else {
 		/*if (echo)
 		{
@@ -68,7 +68,7 @@ bool loadNum(T &val, const Common::String &name, rapidxml::xml_node<char> *node,
 template<typename T>
 bool loadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true) {
 	if (node->first_attribute(name.c_str()) != NULL)
-		val = static_cast<T>(StringToNumber<int>(node->first_attribute(name.c_str())->value()));
+		val = static_cast<T>(stringToNumber<int>(node->first_attribute(name.c_str())->value()));
 	else {
 		/*if (echo)
 		{

@@ -44,13 +44,13 @@ class TMXMap;
 class PathfindingGrid {
 	friend class PathfindingGraphNode;
 
-	PathfindingGraphNode **nodes; // 2D array of nodes (size is [dimensions.x][dimensions.y]
+	PathfindingGraphNode **_nodes; // 2D array of nodes (size is [dimensions.x][dimensions.y]
 
-	Vector2i dimensions; // rows and columns of nodes.
-	Vector2f cellSize;   // size of a cell in width and height
+	Vector2i _dimensions; // rows and columns of nodes.
+	Vector2f _cellSize;   // size of a cell in width and height
 
 	// Neighbor node1 to node2.
-	void ConnectNodes(PathfindingGraphNode *node1, PathfindingGraphNode *node2);
+	void connectNodes(PathfindingGraphNode *node1, PathfindingGraphNode *node2);
 
 public:
 	// these are the default graph node costs.
@@ -60,33 +60,39 @@ public:
 	static const int STAIRS = 5;
 
 	// These are the actual data members used to assign costs. (SZ)
-	int blockedCost;
-	int openCost;
-	int stairsCost;
+	int _blockedCost;
+	int _openCost;
+	int _stairsCost;
 
 	PathfindingGrid(void);
 	~PathfindingGrid(void);
 
 	void reset();
 
-	void SetupNodes(TMX::TMXMap map);
+	void setupNodes(TMX::TMXMap map);
 
 	// Return the node at the given point (SZ)
-	PathfindingGraphNode *GetNodeAtPoint(Vector2f point);
+	PathfindingGraphNode *getNodeAtPoint(Vector2f point);
 	// Return the node at the given coordinates (SZ)
-	PathfindingGraphNode *GetNodeAtCoords(int x, int y) { return &nodes[x][y]; }
+	PathfindingGraphNode *getNodeAtCoords(int x, int y) {
+		return &_nodes[x][y];
+	}
 
-	Vector2i GetDimensions() { return dimensions; }
+	Vector2i getDimensions() {
+		return _dimensions;
+	}
 
-	Vector2f GetCellSize() { return cellSize; }
+	Vector2f getCellSize() {
+		return _cellSize;
+	}
 
 	// Returns the nearest open node to the compare spot, starting with the given nodePos
 	// and iterating through its neighbors. (SZ)
-	PathfindingGraphNode *GetNearestOpenNode(Vector2f nodePos, Vector2f comparePos);
+	PathfindingGraphNode *getNearestOpenNode(Vector2f nodePos, Vector2f comparePos);
 
 	// Return true if two nodes share and adjacency to the same blocked node.
 	// Can be used to find corners that shouldn't be cut.
-	Common::Array<PathfindingGraphNode *> CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2);
+	Common::Array<PathfindingGraphNode *> cornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2);
 };
 
 } // End of namespace Crab

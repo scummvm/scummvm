@@ -72,15 +72,15 @@ void Sprite::moveToDestPathfinding(pyrodactyl::event::Info &info, const SpriteCo
 		Rect b = boundRect();
 
 		// Use to provide a bit of leeway with reaching the goal.
-		_pathing.SetNodeBufferDistance((b.w * b.w) / 2.0f);
+		_pathing.setNodeBufferDistance((b.w * b.w) / 2.0f);
 
 		// IF we either have a solution, have reached our destination, and it was our final destination OR
 		// IF there is no solution OR
 		// IF we haven't yet found a solution
 		// THEN stop.
-		if ((moveToLocPathfinding(_aiData._dest, playerSpeed, sc) && _pathing.solutionFound &&
-			_pathing.GetImmediateDest() == Vector2i(_pathing.destination.x, _pathing.destination.y)) ||
-			_pathing.noSolution || !_pathing.solutionFound) {
+		if ((moveToLocPathfinding(_aiData._dest, playerSpeed, sc) && _pathing._solutionFound &&
+			 _pathing.getImmediateDest() == Vector2i(_pathing._destination.x, _pathing._destination.y)) ||
+			_pathing._noSolution || !_pathing._solutionFound) {
 			_aiData._dest._active = false;
 			xVel(0.0f);
 			yVel(0.0f);
@@ -118,14 +118,14 @@ bool Sprite::moveToLoc(Vector2i &dest, const float &velocity, const SpriteConsta
 bool Sprite::moveToLocPathfinding(Vector2i &dest, const float &velocity, const SpriteConstant &sc) {
 	// Rect b = BoundRect();
 
-	Vector2i immediateDest = _pathing.GetImmediateDest();
+	Vector2i immediateDest = _pathing.getImmediateDest();
 
-	Vector2f vecTo = Vector2f((float)immediateDest.x, (float)immediateDest.y) - _pathing.GetPosition();
+	Vector2f vecTo = Vector2f((float)immediateDest.x, (float)immediateDest.y) - _pathing.getPosition();
 
 	// If the destination is not the pathing goal, we must reach it exactly before moving on.
-	if (immediateDest != Vector2i(_pathing.destination.x, _pathing.destination.y)) {
+	if (immediateDest != Vector2i(_pathing._destination.x, _pathing._destination.y)) {
 		Timer fps;
-		float deltaTime = 1.0f / (float)g_engine->_screenSettings->fps;
+		float deltaTime = 1.0f / (float)g_engine->_screenSettings->_fps;
 
 		// Project how far we will travel next frame.
 		Vector2f velVec = Vector2f(sc._walkVelMod.x * velocity * deltaTime, sc._walkVelMod.y * velocity * deltaTime);
@@ -140,7 +140,7 @@ bool Sprite::moveToLocPathfinding(Vector2i &dest, const float &velocity, const S
 			yVel(0.0f);
 		}
 	} else {
-		Vector2i loc = _pathing.GetImmediateDest();
+		Vector2i loc = _pathing.getImmediateDest();
 		moveToLoc(loc, velocity, sc);
 	}
 
@@ -175,7 +175,7 @@ void Sprite::flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 					// Set the destination of sprite to this exit
 					_aiData.dest(i._dim.rect.x + i._dim.rect.w / 2, i._dim.rect.y + i._dim.rect.h / 2);
 
-					_pathing.SetDestination(Vector2f((float)_aiData._dest.x, (float)_aiData._dest.y));
+					_pathing.setDestination(Vector2f((float)_aiData._dest.x, (float)_aiData._dest.y));
 				}
 			}
 		}

@@ -72,7 +72,7 @@ bool PopUp::internalEvents(pyrodactyl::event::Info &info, const Common::String &
 						   Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq) {
 	if (_visible.evaluate(info) || _startedShow) {
 		if (_delay.targetReached()) {
-			if (_duration.targetReached(g_engine->_screenSettings->text_speed)) {
+			if (_duration.targetReached(g_engine->_screenSettings->_textSpeed)) {
 				_show = false;
 
 				for (auto &i : _effect)
