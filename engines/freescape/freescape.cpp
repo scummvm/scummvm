@@ -484,7 +484,7 @@ void FreescapeEngine::processInput() {
 			{
 				bool touchedScreenControls = false;
 
-				Common::Point resolution = _gfx->nativeResolution();
+				Common::Point resolution(g_system->getWidth(), g_system->getHeight());
 				mousePos.x = _screenW * mousePos.x / resolution.x;
 				mousePos.y = _screenH * mousePos.y / resolution.y;
 				touchedScreenControls = onScreenControls(mousePos);
