@@ -1420,7 +1420,7 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 	*stateTableOffset = (byte *)(&machPtr[MACH_OFFSETS]) - (byte *)(*_GWS(globalMACHHandles)[hash]);
 	*machInstrOffset = ((byte *)machPtr + ((*numStates + 1) << 2)) - (byte *)(*_GWS(globalMACHHandles)[hash]);
 
-	//unlock and return the handle
+	// Unlock and return the handle
 	HUnLock(_GWS(globalMACHHandles)[hash]);
 	return _GWS(globalMACHHandles)[hash];
 }
