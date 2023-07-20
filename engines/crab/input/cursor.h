@@ -73,7 +73,7 @@ public:
 	}
 	~Cursor() {}
 
-	void Quit() {
+	void quit() {
 		_img.deleteImage();
 		_imgS.deleteImage();
 		_imgHover.deleteImage();

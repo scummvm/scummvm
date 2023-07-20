@@ -81,7 +81,7 @@ void LoadingScreen::dim() {
 #endif
 }
 
-void LoadingScreen::Quit() {
+void LoadingScreen::quit() {
 	_text.deleteImage();
 
 	for (auto i = _screen.begin(); i != _screen.end(); ++i)

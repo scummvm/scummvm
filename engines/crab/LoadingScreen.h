@@ -76,7 +76,7 @@ public:
 	void load();
 	void draw();
 	void dim();
-	void Quit();
+	void quit();
 };
 
 } // End of namespace Crab
