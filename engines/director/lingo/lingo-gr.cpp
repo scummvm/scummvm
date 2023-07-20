@@ -3192,7 +3192,7 @@ yyreduce:
   case 124: /* cmdargs: expr ',' nonemptyexprlist trailingcomma  */
 #line 432 "engines/director/lingo/lingo-gr.y"
                                                                 {
-		// This matches `cmd args, ...)
+		// This matches `cmd arg, ...)
 		(yyvsp[-1].nodelist)->insert_at(0, (yyvsp[-3].node));
 		(yyval.nodelist) = (yyvsp[-1].nodelist); }
 #line 3199 "engines/director/lingo/lingo-gr.cpp"
@@ -3230,7 +3230,7 @@ yyreduce:
   case 128: /* cmdargs: '(' expr ',' ')'  */
 #line 450 "engines/director/lingo/lingo-gr.y"
                            {
-		// This matches `cmd(args,)`
+		// This matches `cmd(arg,)`
 		NodeList *args = new NodeList;
 		args->push_back((yyvsp[-2].node));
 		(yyval.nodelist) = args; }
@@ -3240,7 +3240,7 @@ yyreduce:
   case 129: /* cmdargs: '(' expr ',' nonemptyexprlist trailingcomma ')'  */
 #line 455 "engines/director/lingo/lingo-gr.y"
                                                                 {
-		// This matches `cmd(args, ...)`
+		// This matches `cmd(arg, ...)`
 		(yyvsp[-2].nodelist)->insert_at(0, (yyvsp[-4].node));
 		(yyval.nodelist) = (yyvsp[-2].nodelist); }
 #line 3247 "engines/director/lingo/lingo-gr.cpp"
@@ -3701,7 +3701,7 @@ yyreduce:
   case 210: /* refargs: '(' expr ',' ')'  */
 #line 671 "engines/director/lingo/lingo-gr.y"
                            {
-		// This matches `ref(args,)`
+		// This matches `ref(arg,)`
 		NodeList *args = new NodeList;
 		args->push_back((yyvsp[-2].node));
 		(yyval.nodelist) = args; }
@@ -3711,7 +3711,7 @@ yyreduce:
   case 211: /* refargs: '(' expr ',' nonemptyexprlist trailingcomma ')'  */
 #line 676 "engines/director/lingo/lingo-gr.y"
                                                                 {
-		// This matches `ref(args, ...)`
+		// This matches `ref(arg, ...)`
 		(yyvsp[-2].nodelist)->insert_at(0, (yyvsp[-4].node));
 		(yyval.nodelist) = (yyvsp[-2].nodelist); }
 #line 3718 "engines/director/lingo/lingo-gr.cpp"
