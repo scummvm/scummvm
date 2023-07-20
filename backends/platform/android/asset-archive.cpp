@@ -153,8 +153,7 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 }
 
 const Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const Common::Path &path) const {
