@@ -126,21 +126,21 @@ void Sprite::resolveCollide() {
 	// NOTE: we don't check i->intersect here because we do that in the level functions
 	for (auto i = _collideData.begin(); i != _collideData.end(); ++i) {
 		Rect bounds = boundRect();
-		if (i->type == SHAPE_POLYGON) {
-			_pos.x -= i->data.x;
-			_pos.y -= i->data.y;
+		if (i->_type == SHAPE_POLYGON) {
+			_pos.x -= i->_data.x;
+			_pos.y -= i->_data.y;
 		} else {
-			Direction d = bounds.ResolveY(i->data);
+			Direction d = bounds.resolveY(i->_data);
 			if (d == DIRECTION_UP)
-				_pos.y -= i->data.y + i->data.h - _animSet._bounds.y + _animSet.anchorY(_dir) + 1;
+				_pos.y -= i->_data.y + i->_data.h - _animSet._bounds.y + _animSet.anchorY(_dir) + 1;
 			else if (d == DIRECTION_DOWN)
-				_pos.y -= i->data.y - bounds.h - _animSet._bounds.y + _animSet.anchorY(_dir) - 1;
+				_pos.y -= i->_data.y - bounds.h - _animSet._bounds.y + _animSet.anchorY(_dir) - 1;
 
-			d = bounds.ResolveX(i->data);
+			d = bounds.resolveX(i->_data);
 			if (d == DIRECTION_LEFT)
-				_pos.x -= i->data.x + i->data.w - _animSet._bounds.x + _animSet.anchorX(_dir) + 1;
+				_pos.x -= i->_data.x + i->_data.w - _animSet._bounds.x + _animSet.anchorX(_dir) + 1;
 			else if (d == DIRECTION_RIGHT)
-				_pos.x -= i->data.x - bounds.w - _animSet._bounds.x + _animSet.anchorX(_dir) - 1;
+				_pos.x -= i->_data.x - bounds.w - _animSet._bounds.x + _animSet.anchorX(_dir) - 1;
 		}
 	}
 
@@ -153,7 +153,7 @@ void Sprite::resolveCollide() {
 //------------------------------------------------------------------------
 void Sprite::resolveInside(Rect collider) {
 	Rect bounds = boundRect();
-	Direction d = bounds.ResolveX(collider);
+	Direction d = bounds.resolveX(collider);
 
 	if (d == DIRECTION_RIGHT)
 		_pos.x = collider.x - _animSet._bounds.x + _animSet.anchorX(_dir) + 1;
@@ -161,7 +161,7 @@ void Sprite::resolveInside(Rect collider) {
 		_pos.x = collider.x + collider.w - _animSet._bounds.x - bounds.w + _animSet.anchorX(_dir) - 1;
 
 	bounds = boundRect();
-	d = bounds.ResolveY(collider);
+	d = bounds.resolveY(collider);
 
 	if (d == DIRECTION_DOWN)
 		_pos.y = collider.y - _animSet._bounds.y + _animSet.anchorY(_dir) + 1;
@@ -290,8 +290,8 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 
 		g_engine->_textManager->draw(x + 120.0f, y - 60.0f, NumberToString(_aiData.dest.y), 0);*/
 
-		if (_pathing.m_vSolution.size() > 0) {
-			for (auto iter = _pathing.m_vSolution.begin(); iter != _pathing.m_vSolution.end(); ++iter) {
+		if (_pathing._vSolution.size() > 0) {
+			for (auto iter = _pathing._vSolution.begin(); iter != _pathing._vSolution.end(); ++iter) {
 				bool nextToWall = false;
 				for (auto neighbor = (*iter)->_neighborNodes.begin(); neighbor != (*iter)->_neighborNodes.end(); ++neighbor) {
 					if ((*neighbor)->getMovementCost() < 0 || (*neighbor)->getMovementCost() > 1) {
@@ -525,10 +525,10 @@ bool Sprite::fightCollide(Rect hitbox, Rect enemyBounds, Range &range, const Spr
 		Rect actualRange = rangeRect(bounds, range);
 
 		// The second part is a sanity check so the stray hitbox of a sprite 1000 pixels below does not cause damage
-		if (hitbox.Collide(actualRange) && abs(bounds.y + bounds.h - enemyBounds.y - enemyBounds.h) < sc._planeW)
+		if (hitbox.collide(actualRange) && abs(bounds.y + bounds.h - enemyBounds.y - enemyBounds.h) < sc._planeW)
 			return true;
 	} else {
-		if (hitbox.Collide(bounds) && abs(bounds.y + bounds.h - enemyBounds.y - enemyBounds.h) < sc._planeW)
+		if (hitbox.collide(bounds) && abs(bounds.y + bounds.h - enemyBounds.y - enemyBounds.h) < sc._planeW)
 			return true;
 	}
 
@@ -645,7 +645,7 @@ void Sprite::calcProperties(Info &info) {
 bool Sprite::takingDamage(Sprite &sp, const SpriteConstant &sc) {
 	if (damageValid(sp, sc))
 		if (boxV().w > 0 && boxV().h > 0 && sp.boxD().w > 0 && sp.boxD().h > 0)
-			if (boxV().Collide(sp.boxD()))
+			if (boxV().collide(sp.boxD()))
 				return true;
 
 	/*Common::String words = NumberToString(BoxV().x) + " " + NumberToString(BoxV().y)+ " " + NumberToString(BoxV().w)

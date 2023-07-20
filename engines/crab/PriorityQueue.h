@@ -41,7 +41,7 @@ namespace Crab {
 //! class template and the <a href="http://www.sgi.com/tech/stl/">STL</a> heap operations.
 template<typename Node>
 class PriorityQueue {
-	Common::Array<Node *> open;
+	Common::Array<Node *> _open;
 	bool (*compare)(Node const *, Node const *);
 
 public:
@@ -99,48 +99,48 @@ public:
 };
 
 template<typename Node>
-PriorityQueue<Node>::PriorityQueue(bool (*c)(Node const *, Node const *)) : open(), compare(c) {
+PriorityQueue<Node>::PriorityQueue(bool (*c)(Node const *, Node const *)) : _open(), compare(c) {
 }
 
 template<typename Node>
 bool PriorityQueue<Node>::empty() const {
-	return open.empty();
+	return _open.empty();
 }
 
 template<typename Node>
 void PriorityQueue<Node>::clear() {
-	open.clear();
+	_open.clear();
 }
 
 template<typename Node>
 size_t PriorityQueue<Node>::size() const {
-	return open.size();
+	return _open.size();
 }
 
 template<typename Node>
 void PriorityQueue<Node>::push(Node *node) {
-	open.insert(Common::upperBound(open.begin(), open.end(), node, compare), node);
+	_open.insert(Common::upperBound(_open.begin(), _open.end(), node, compare), node);
 }
 
 template<typename Node>
 Node *PriorityQueue<Node>::front() const {
-	return open.back();
+	return _open.back();
 }
 
 template<typename Node>
 void PriorityQueue<Node>::pop() {
-	open.pop_back();
+	_open.pop_back();
 }
 
 template<typename Node>
 void PriorityQueue<Node>::remove(Node const *node) {
-	open.erase(Common::remove(open.begin(), open.end(), node), open.end());
+	_open.erase(Common::remove(_open.begin(), _open.end(), node), _open.end());
 }
 
 template<typename Node>
 void PriorityQueue<Node>::enumerate(Common::Array<Node const *> &sorted) const {
-	sorted.resize(open.size());
-	Common::copy(open.begin(), open.end(), sorted.begin());
+	sorted.resize(_open.size());
+	Common::copy(_open.begin(), _open.end(), sorted.begin());
 }
 
 } // End of namespace Crab

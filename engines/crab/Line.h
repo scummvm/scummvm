@@ -39,7 +39,7 @@ namespace Crab {
 
 // Find if 2 lines intersect and store the point of intersection
 template<typename T>
-bool CollideLine(const T &p0X, const T &p0Y, const T &p1X, const T &p1Y,
+bool collideLine(const T &p0X, const T &p0Y, const T &p1X, const T &p1Y,
 				 const T &p2X, const T &p2Y, const T &p3X, const T &p3Y,
 				 T *x = NULL, T *y = NULL) {
 	Vector2D<T> s1, s2;
@@ -70,7 +70,7 @@ bool CollideLine(const T &p0X, const T &p0Y, const T &p1X, const T &p1Y,
 }
 
 // Draw a line OpenGL style
-void DrawLine(const int &x1, const int &y1, const int &x2, const int &y2,
+void drawLine(const int &x1, const int &y1, const int &x2, const int &y2,
 			  const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a);
 
 } // End of namespace Crab

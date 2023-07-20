@@ -75,7 +75,7 @@ bool Slider::handleEvents(const Common::Event &Event) {
 	}
 
 	// If a person clicks on the slider bar, the knob needs to travel there
-	if ((Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) && _bar.Contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
+	if ((Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) && _bar.contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
 		_knob.x = g_engine->_mouse->_button.x;
 		_knob.y = _bar.y;
 

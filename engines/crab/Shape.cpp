@@ -34,40 +34,40 @@ namespace Crab {
 
 void Shape::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	if (nodeValid("polygon", node, echo)) {
-		type = SHAPE_POLYGON;
-		poly.load(node, rect);
+		_type = SHAPE_POLYGON;
+		_poly.load(node, _rect);
 	} else {
-		rect.load(node, echo, "x", "y", "width", "height");
+		_rect.load(node, echo, "x", "y", "width", "height");
 		if (nodeValid("ellipse", node, echo))
-			type = SHAPE_ELLIPSE;
+			_type = SHAPE_ELLIPSE;
 		else
-			type = SHAPE_RECT;
+			_type = SHAPE_RECT;
 	}
 }
 
-CollisionData Shape::Collide(Rect box) {
+CollisionData Shape::collide(Rect box) {
 	CollisionData res;
-	res.intersect = rect.Collide(box);
+	res._intersect = _rect.collide(box);
 
-	if (res.intersect) {
-		res.type = type;
-		if (type == SHAPE_POLYGON) {
-			PolygonCollisionResult pcr = poly.Collide(box);
-			res.intersect = pcr.intersect;
-			res.data.x = pcr.mtv.x;
-			res.data.y = pcr.mtv.y;
+	if (res._intersect) {
+		res._type = _type;
+		if (_type == SHAPE_POLYGON) {
+			PolygonCollisionResult pcr = _poly.collide(box);
+			res._intersect = pcr._intersect;
+			res._data.x = pcr._mtv.x;
+			res._data.y = pcr._mtv.y;
 			return res;
 		} else
-			res.data = rect;
+			res._data = _rect;
 	}
 
 	return res;
 }
 
-bool Shape::Contains(const Vector2i &pos) {
-	if (rect.Contains(pos)) {
-		if (type == SHAPE_POLYGON)
-			return poly.Contains(pos.x, pos.y);
+bool Shape::contains(const Vector2i &pos) {
+	if (_rect.contains(pos)) {
+		if (_type == SHAPE_POLYGON)
+			return _poly.contains(pos.x, pos.y);
 		else
 			return true;
 	}
@@ -75,11 +75,11 @@ bool Shape::Contains(const Vector2i &pos) {
 	return false;
 }
 
-void Shape::draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
-	if (type == SHAPE_POLYGON)
-		poly.draw(XOffset, YOffset, r, g, b, a);
+void Shape::draw(const int &xOffset, const int &yOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
+	if (_type == SHAPE_POLYGON)
+		_poly.draw(xOffset, yOffset, r, g, b, a);
 	else
-		rect.draw(XOffset, YOffset, r, g, b, a);
+		_rect.draw(xOffset, yOffset, r, g, b, a);
 }
 
 } // End of namespace Crab

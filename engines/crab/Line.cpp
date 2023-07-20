@@ -36,7 +36,7 @@ namespace Crab {
 //------------------------------------------------------------------------
 // Purpose: Draw a line from start to end
 //------------------------------------------------------------------------
-void DrawLine(const int &x1, const int &y1, const int &x2, const int &y2,
+void drawLine(const int &x1, const int &y1, const int &x2, const int &y2,
 			  const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	g_engine->_screen->drawLine(x1, y1, x2, y2, g_engine->_format->ARGBToColor(a, r, g, b));
 

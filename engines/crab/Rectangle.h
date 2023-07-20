@@ -58,32 +58,39 @@ struct Rect {
 			  const Common::String &y_name = "y", const Common::String &w_name = "w", const Common::String &h_name = "h");
 
 	// Is this rectangle colliding with another rectangle?
-	bool Collide(Rect box);
+	bool collide(Rect box);
 
 	// Extend this rectangle to fully contain another rectangle
-	void Extend(Rect box);
+	void extend(Rect box);
 
 	// Resolving a collision means we need to correct the position of the target rectangle to just outside of the reference rectangle
 	// To do this, first we need to determine which edges of the rectangles are colliding
 
 	// Resolve a collision in the X plane
-	Direction ResolveX(Rect collider);
+	Direction resolveX(Rect collider);
 
 	// Resolve a collision in the Y plane
-	Direction ResolveY(Rect collider);
+	Direction resolveY(Rect collider);
 
 	// Does this rectangle contain a point?
-	bool Contains(int X, int Y) { return (X > x && X < x + w && Y > y && Y < y + h); }
-	bool Contains(Vector2i v) { return Contains(v.x, v.y); }
+	bool contains(int x1, int y1) {
+		return (x1 > x && x1 < x + w && y1 > y && y1 < y + h);
+	}
+
+	bool contains(Vector2i v) {
+		return contains(v.x, v.y);
+	}
 
 	// Does this rectangle contain another rectangle?
-	bool Contains(Rect box) { return (x < box.x && x + w > box.x + box.w && y < box.y && y + h > box.y + box.h); }
+	bool contains(Rect box) {
+		return (x < box.x && x + w > box.x + box.w && y < box.y && y + h > box.y + box.h);
+	}
 
 	// Flip a rectangle with respect to an axis
-	void Flip(const TextureFlipType &flip, const Vector2i &axis);
+	void flip(const TextureFlipType &flip, const Vector2i &axis);
 
 	// Draw the borders of the rectangle
-	void draw(const int &XOffset = 0, const int &YOffset = 0, const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0, const uint8 &a = 255);
+	void draw(const int &xOffset = 0, const int &yOffset = 0, const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0, const uint8 &a = 255);
 
 	// Check if a rectangle is the same as another
 	bool operator==(const Rect &r) { return r.x == x && r.y == y && r.w == w && r.h == h; }

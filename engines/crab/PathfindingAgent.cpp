@@ -111,15 +111,15 @@ void PathfindingAgent::update(long timeslice) {
 	double dTempCost;
 
 	if (_solutionFound) {
-		if (m_vSolution.size() > 0) {
-			float distSqr = (_position - m_vSolution.back()->getPosition()).MagSqr();
+		if (_vSolution.size() > 0) {
+			float distSqr = (_position - _vSolution.back()->getPosition()).MagSqr();
 			if (distSqr < _nodeBufferDistance) // Have to find the right deadzone buffer
 			{
-				m_vSolution.pop_back();
+				_vSolution.pop_back();
 			}
 		}
-		if (m_vSolution.size() > 0) {
-			_immediateDest = Vector2i(m_vSolution.back()->getPosition().x, m_vSolution.back()->getPosition().y);
+		if (_vSolution.size() > 0) {
+			_immediateDest = Vector2i(_vSolution.back()->getPosition().x, _vSolution.back()->getPosition().y);
 		} else {
 			if (_destinationReachable)
 				_immediateDest = Vector2i((int)_destination.x, (int)_destination.y);
@@ -145,11 +145,11 @@ void PathfindingAgent::update(long timeslice) {
 		//|| //We're done.
 		{
 			// m_vSolution = getSolution();
-			m_vSolution = getPrunedSolution(NULL);
+			_vSolution = getPrunedSolution(NULL);
 			_solutionFound = true;
 			return;
 		} else if (current->getLocation()->getMovementCost() > 0 && current->getLocation()->adjacentToNode(_clickedTile) && _clickedTile->getMovementCost() < 0) {
-			m_vSolution = getPrunedSolution(current->getLocation());
+			_vSolution = getPrunedSolution(current->getLocation());
 			_solutionFound = true;
 			return;
 		}
@@ -240,7 +240,7 @@ void PathfindingAgent::reset() {
 
 	_nodeQueue.clear();
 	_createdList.clear();
-	m_vSolution.clear();
+	_vSolution.clear();
 
 	_solutionFound = false;
 

@@ -39,7 +39,7 @@ bool collideLineRect(int p0X, int p0Y, int p1X, int p1Y, const Rect &rect) {
 	int q1_x = rect.x + rect.w;
 	int q1_y = rect.y;
 
-	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
+	if (collideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	q0_x = rect.x;
@@ -47,7 +47,7 @@ bool collideLineRect(int p0X, int p0Y, int p1X, int p1Y, const Rect &rect) {
 	q1_x = rect.x;
 	q1_y = rect.y + rect.h;
 
-	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
+	if (collideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	q0_x = rect.x + rect.w;
@@ -55,7 +55,7 @@ bool collideLineRect(int p0X, int p0Y, int p1X, int p1Y, const Rect &rect) {
 	q1_x = rect.x + rect.w;
 	q1_y = rect.y + rect.h;
 
-	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
+	if (collideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	q0_x = rect.x;
@@ -63,7 +63,7 @@ bool collideLineRect(int p0X, int p0Y, int p1X, int p1Y, const Rect &rect) {
 	q1_x = rect.x + rect.w;
 	q1_y = rect.y + rect.h;
 
-	if (CollideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
+	if (collideLine<int>(p0X, p0Y, p1X, p1Y, q0_x, q0_y, q1_x, q1_y))
 		return true;
 
 	return false;

@@ -160,11 +160,11 @@ void Level::drawObjects(pyrodactyl::event::Info &info) {
 			if (a->_pos.y + a->_pos.h < obj->y() + obj->h()) {
 				for (auto &i : a->_boundRect) {
 					i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
-					if (i.Collide(_objects[_playerIndex].posRect())) {
+					if (i.collide(_objects[_playerIndex].posRect())) {
 						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, _objects[_playerIndex].posRect());
 					}
 
-					if (i.Contains(_objects[_playerIndex]._aiData._dest)) {
+					if (i.contains(_objects[_playerIndex]._aiData._dest)) {
 						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, newpos);
 					}
 				}
@@ -186,11 +186,11 @@ void Level::drawObjects(pyrodactyl::event::Info &info) {
 			for (; a != _terrain._prop.end(); ++a) {
 				for (auto &i : a->_boundRect) {
 					i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
-					if (i.Collide(_objects[_playerIndex].posRect())) {
+					if (i.collide(_objects[_playerIndex].posRect())) {
 						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, _objects[_playerIndex].posRect());
 					}
 
-					if (i.Contains(_objects[_playerIndex]._aiData._dest)) {
+					if (i.contains(_objects[_playerIndex]._aiData._dest)) {
 						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, newpos);
 					}
 				}

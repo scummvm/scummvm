@@ -50,7 +50,7 @@ void MovementSet::load(rapidxml::xml_node<char> *node) {
 bool MovementSet::internalEvents(const Rect rect) {
 	if (_enabled) {
 		// If we are at the current waypoint, get to the next waypoint
-		if (_path[_cur]._target.Collide(rect)) {
+		if (_path[_cur]._target.collide(rect)) {
 			_cur = (_cur + 1) % _path.size();
 			_timer.start();
 		}

@@ -133,7 +133,7 @@ void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &playerPos
 			   _player.w + _offset._marker.x,
 			   _player.h + _offset._marker.y);
 
-		_player._visible = bounds.Contains(r);
+		_player._visible = bounds.contains(r);
 	}
 
 	// Redefine p for marker buttons
@@ -144,7 +144,7 @@ void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &playerPos
 		Rect r(i.x + p.x - _offset._marker.x, i.y + p.y - _offset._marker.y,
 			   i.w + _offset._marker.x, i.h + _offset._marker.y);
 
-		i._visible = bounds.Contains(r);
+		i._visible = bounds.contains(r);
 	}
 }
 
