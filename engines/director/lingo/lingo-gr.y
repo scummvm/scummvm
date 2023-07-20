@@ -456,6 +456,17 @@ cmdargs: /* empty */									{
 		// This matches `cmd(arg, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
+	| '(' var[method] expr_nounarymath trailingcomma ')'	{
+		// This matches `obj(method arg)`
+		NodeList *args = new NodeList;
+		args->push_back($method);
+		args->push_back($expr_nounarymath);
+		$$ = args; }
+	| '(' var[method] expr_nounarymath ',' nonemptyexprlist[args] trailingcomma ')'	{
+		// This matches `obj(method arg, ...)`
+		$args->insert_at(0, $expr_nounarymath);
+		$args->insert_at(0, $method);
+		$$ = $args; }
 	;
 
 trailingcomma: /* empty */ | ',' ;
@@ -611,6 +622,17 @@ simpleexpr_nounarymath:
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
 	| ID '(' ')'					{ $$ = new FuncNode($ID, new NodeList); }
 	| ID '(' nonemptyexprlist[args] trailingcomma ')'	{ $$ = new FuncNode($ID, $args); }
+	| ID '(' var[method] expr_nounarymath trailingcomma ')'	{
+		// This matches `obj(method arg)`
+		NodeList *args = new NodeList;
+		args->push_back($method);
+		args->push_back($expr_nounarymath);
+		$$ = new FuncNode($ID, args); }
+	| ID '(' var[method] expr_nounarymath ',' nonemptyexprlist[args] trailingcomma ')'	{
+		// This matches `obj(method arg, ...)`
+		$args->insert_at(0, $expr_nounarymath);
+		$args->insert_at(0, $method);
+		$$ = new FuncNode($ID, $args); }
 	| '(' expr ')'					{ $$ = $expr; } ;
 	| var
 	| chunk
