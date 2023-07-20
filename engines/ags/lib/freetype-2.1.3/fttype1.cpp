@@ -1,17 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  fttype1.c                                                              */
-/*                                                                         */
 /*    FreeType utility file for PS names support (body).                   */
-/*                                                                         */
-/*  Copyright 2002 by                                                      */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -24,26 +35,23 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-/* documentation is in t1tables.h */
 
-FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Get_PS_Font_Info( FT_Face          face,
-					 PS_FontInfoRec*  afont_info ) {
-	PS_FontInfo  font_info = NULL;
-	FT_Error     error     = FT2_1_3_Err_Invalid_Argument;
-	const char*  driver_name;
+FT2_1_3_EXPORT_DEF(FT_Error)
+FT_Get_PS_Font_Info(FT_Face face, PS_FontInfoRec *afont_info) {
+	PS_FontInfo font_info = NULL;
+	FT_Error error = FT2_1_3_Err_Invalid_Argument;
+	const char *driver_name;
 
-
-	if ( face && face->driver && face->driver->root.clazz ) {
+	if (face && face->driver && face->driver->root.clazz) {
 		driver_name = face->driver->root.clazz->module_name;
-		if ( ft_strcmp( driver_name, "type1" ) == 0 )
+		if (ft_strcmp(driver_name, "type1") == 0)
 			font_info = &((T1_Face)face)->type1.font_info;
-		else if ( ft_strcmp( driver_name, "t1cid" ) == 0 )
+		else if (ft_strcmp(driver_name, "t1cid") == 0)
 			font_info = &((CID_Face)face)->cid.font_info;
-		else if ( ft_strcmp( driver_name, "type42" ) == 0 )
+		else if (ft_strcmp(driver_name, "type42") == 0)
 			font_info = &((T42_Face)face)->type1.font_info;
 	}
-	if ( font_info != NULL ) {
+	if (font_info != NULL) {
 		*afont_info = *font_info;
 		error = FT2_1_3_Err_Ok;
 	}
@@ -52,17 +60,12 @@ FT_Get_PS_Font_Info( FT_Face          face,
 }
 
 
-/* XXX: Bad hack, but I didn't want to change several drivers here. */
+FT2_1_3_EXPORT_DEF(FT_Int)
+FT_Has_PS_Glyph_Names(FT_Face face) {
+	FT_Int result = 0;
+	const char *driver_name;
 
-/* documentation is in t1tables.h */
-
-FT2_1_3_EXPORT_DEF( FT_Int )
-FT_Has_PS_Glyph_Names( FT_Face  face ) {
-	FT_Int       result = 0;
-	const char*  driver_name;
-
-
-	if ( face && face->driver && face->driver->root.clazz ) {
+	if (face && face->driver && face->driver->root.clazz) {
 		/* Currently, only the type1, type42, and cff drivers provide */
 		/* reliable glyph names...                                    */
 
@@ -72,15 +75,14 @@ FT_Has_PS_Glyph_Names( FT_Face  face ) {
 		/* this will probably happen later...                         */
 
 		driver_name = face->driver->root.clazz->module_name;
-		result      = ( ft_strcmp( driver_name, "type1"  ) == 0 ||
-						ft_strcmp( driver_name, "type42" ) == 0 ||
-						ft_strcmp( driver_name, "cff"    ) == 0 );
+		result = (ft_strcmp(driver_name, "type1") == 0 ||
+				  ft_strcmp(driver_name, "type42") == 0 ||
+				  ft_strcmp(driver_name, "cff") == 0);
 	}
 
 	return result;
 }
 
+
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */
