@@ -423,7 +423,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 				}
 				return false;
 			}
-			*argPtr = (frac16 *)((uint32)parentAnim8->myRegs + (myIndex << 2));
+			*argPtr = &parentAnim8->myRegs[myIndex];
 			break;
 
 		case LOCAL_FMT_REG:
@@ -433,7 +433,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 					IDX_COUNT + myAnim8->numLocalVars, myIndex);
 				return false;
 			}
-			*argPtr = (frac16 *)((uint32)myAnim8->myRegs + (myIndex << 2));
+			*argPtr = &myAnim8->myRegs[myIndex];
 			break;
 
 		case LOCAL_FMT_DATA:
