@@ -1,117 +1,119 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  psmodule.c                                                             */
-/*                                                                         */
 /*    PSNames module implementation (body).                                */
-/*                                                                         */
-/*  Copyright 1996-2001, 2002 by                                           */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/psnames.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
+#include "engines/ags/lib/freetype-2.1.3/psnames.h"
 
-#include "psmodule.h"
-#include "pstables.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/psnames/psmodule.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/psnames/pstables.h"
 
-#include "psnamerr.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/psnames/psnamerr.h"
 
 namespace AGS3 {
 namespace FreeType213 {
 
+
 #ifndef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 
-
 #ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
-
 
 /* return the Unicode value corresponding to a given glyph.  Note that */
 /* we do deal with glyph variants by detecting a non-initial dot in    */
 /* the name, as in `A.swash' or `e.final', etc.                        */
 /*                                                                     */
-static FT_UInt32
-ps_unicode_value( const char*  glyph_name ) {
-	FT_Int  n;
-	char    first = glyph_name[0];
-	char    temp[64];
-
+static FT_UInt32 ps_unicode_value(const char *glyph_name) {
+	FT_Int n;
+	char first = glyph_name[0];
+	char temp[64];
 
 	/* if the name begins with `uni', then the glyph name may be a */
 	/* hard-coded unicode character code.                          */
-	if ( glyph_name[0] == 'u' &&
-			glyph_name[1] == 'n' &&
-			glyph_name[2] == 'i' ) {
+	if (glyph_name[0] == 'u' && glyph_name[1] == 'n' && glyph_name[2] == 'i') {
 		/* determine whether the next four characters following are */
 		/* hexadecimal.                                             */
 
 		/* XXX: Add code to deal with ligatures, i.e. glyph names like */
 		/*      `uniXXXXYYYYZZZZ'...                                   */
 
-		FT_Int       count;
-		FT_ULong     value = 0;
-		const char*  p     = glyph_name + 3;
+		FT_Int count;
+		FT_ULong value = 0;
+		const char *p = glyph_name + 3;
 
-
-		for ( count = 4; count > 0; count--, p++ ) {
-			char          c = *p;
-			unsigned int  d;
-
+		for (count = 4; count > 0; count--, p++) {
+			char c = *p;
+			unsigned int d;
 
 			d = (unsigned char)c - '0';
-			if ( d >= 10 ) {
+			if (d >= 10) {
 				d = (unsigned char)c - 'A';
-				if ( d >= 6 )
+				if (d >= 6)
 					d = 16;
 				else
 					d += 10;
 			}
 
 			/* exit if a non-uppercase hexadecimal character was found */
-			if ( d >= 16 )
+			if (d >= 16)
 				break;
 
-			value = ( value << 4 ) + d;
+			value = (value << 4) + d;
 		}
-		if ( count == 0 )
+		if (count == 0)
 			return value;
 	}
 
 	/* look for a non-initial dot in the glyph name in order to */
 	/* sort-out variants like `A.swash', `e.final', etc.        */
 	{
-		const char*  p;
-		int          len;
-
+		const char *p;
+		int len;
 
 		p = glyph_name;
 
-		while ( *p && *p != '.' )
+		while (*p && *p != '.')
 			p++;
 
-		len = (int)( p - glyph_name );
+		len = (int)(p - glyph_name);
 
-		if ( *p && len < 64 ) {
-			ft_strncpy( temp, glyph_name, len );
-			temp[len]  = 0;
+		if (*p && len < 64) {
+			ft_strncpy(temp, glyph_name, len);
+			temp[len] = 0;
 			glyph_name = temp;
 		}
 	}
 
 	/* now, look up the glyph in the Adobe Glyph List */
-	for ( n = 0; n < NUM_ADOBE_GLYPHS; n++ ) {
-		const char*  name = sid_standard_names[n];
+	for (n = 0; n < NUM_ADOBE_GLYPHS; n++) {
+		const char *name = sid_standard_names[n];
 
-
-		if ( first == name[0] && ft_strcmp( glyph_name, name ) == 0 )
+		if (first == name[0] && ft_strcmp(glyph_name, name) == 0)
 			return ps_names_to_unicode[n];
 	}
 
@@ -121,47 +123,38 @@ ps_unicode_value( const char*  glyph_name ) {
 
 
 /* ft_qsort callback to sort the unicode map */
-FT2_1_3_CALLBACK_DEF( int )
-compare_uni_maps( const void*  a,
-				  const void*  b ) {
+FT2_1_3_CALLBACK_DEF(int)
+compare_uni_maps(const void *a, const void *b) {
 	PS_UniMap *map1 = const_cast<PS_UniMap *>(static_cast<const PS_UniMap *>(a));
 	PS_UniMap *map2 = const_cast<PS_UniMap *>(static_cast<const PS_UniMap *>(b));
 
-	return ( map1->unicode - map2->unicode );
+	return (map1->unicode - map2->unicode);
 }
 
-
 /* Builds a table that maps Unicode values to glyph indices */
-static FT_Error
-ps_build_unicode_table( FT_Memory     memory,
-						FT_UInt       num_glyphs,
-						const char**  glyph_names,
-						PS_Unicodes*  table ) {
-	FT_Error  error;
-
+static FT_Error ps_build_unicode_table(FT_Memory memory, FT_UInt num_glyphs, const char **glyph_names, PS_Unicodes *table) {
+	FT_Error error;
 
 	/* we first allocate the table */
 	table->num_maps = 0;
 	table->maps     = 0;
 
-	if ( !FT2_1_3_NEW_ARRAY( table->maps, num_glyphs ) ) {
-		FT_UInt     n;
-		FT_UInt     count;
-		PS_UniMap*  map;
-		FT_UInt32   uni_char;
-
+	if (!FT2_1_3_NEW_ARRAY(table->maps, num_glyphs)) {
+		FT_UInt   n;
+		FT_UInt   count;
+		PS_UniMap *map;
+		FT_UInt32 uni_char;
 
 		map = table->maps;
 
-		for ( n = 0; n < num_glyphs; n++ ) {
-			const char*  gname = glyph_names[n];
+		for (n = 0; n < num_glyphs; n++) {
+			const char *gname = glyph_names[n];
 
+			if (gname) {
+				uni_char = ps_unicode_value(gname);
 
-			if ( gname ) {
-				uni_char = ps_unicode_value( gname );
-
-				if ( uni_char != 0 && uni_char != 0xFFFF ) {
-					map->unicode     = uni_char;
+				if (uni_char != 0 && uni_char != 0xFFFF) {
+					map->unicode = uni_char;
 					map->glyph_index = n;
 					map++;
 				}
@@ -169,20 +162,18 @@ ps_build_unicode_table( FT_Memory     memory,
 		}
 
 		/* now, compress the table a bit */
-		count = (FT_UInt)( map - table->maps );
+		count = (FT_UInt)(map - table->maps);
 
-		if ( count > 0 && FT2_1_3_REALLOC( table->maps,
-									  num_glyphs * sizeof ( PS_UniMap ),
-									  count * sizeof ( PS_UniMap ) ) )
+		if (count > 0 && FT2_1_3_REALLOC(table->maps, num_glyphs * sizeof(PS_UniMap), count * sizeof(PS_UniMap)))
 			count = 0;
 
-		if ( count == 0 ) {
-			FT2_1_3_FREE( table->maps );
-			if ( !error )
-				error = FT2_1_3_Err_Invalid_Argument;  /* no unicode chars here! */
+		if (count == 0) {
+			FT2_1_3_FREE(table->maps);
+			if (!error)
+				error = FT2_1_3_Err_Invalid_Argument; /* no unicode chars here! */
 		} else
 			/* sort the table in increasing order of unicode values */
-			ft_qsort( table->maps, count, sizeof ( PS_UniMap ), compare_uni_maps );
+			ft_qsort(table->maps, count, sizeof(PS_UniMap), compare_uni_maps);
 
 		table->num_maps = count;
 	}
@@ -191,26 +182,23 @@ ps_build_unicode_table( FT_Memory     memory,
 }
 
 
-static FT_UInt
-ps_lookup_unicode( PS_Unicodes*  table,
-				   FT_ULong      unicode ) {
-	PS_UniMap  *min, *max, *mid;
-
+static FT_UInt ps_lookup_unicode(PS_Unicodes *table, FT_ULong unicode) {
+	PS_UniMap *min, *max, *mid;
 
 	/* perform a binary search on the table */
 
 	min = table->maps;
 	max = min + table->num_maps - 1;
 
-	while ( min <= max ) {
-		mid = min + ( max - min ) / 2;
-		if ( mid->unicode == unicode )
+	while (min <= max) {
+		mid = min + (max - min) / 2;
+		if (mid->unicode == unicode)
 			return mid->glyph_index;
 
-		if ( min == max )
+		if (min == max)
 			break;
 
-		if ( mid->unicode < unicode )
+		if (mid->unicode < unicode)
 			min = mid + 1;
 		else
 			max = mid - 1;
@@ -220,11 +208,8 @@ ps_lookup_unicode( PS_Unicodes*  table,
 }
 
 
-static FT_ULong
-ps_next_unicode( PS_Unicodes*  table,
-				 FT_ULong      unicode ) {
-	PS_UniMap  *min, *max, *mid;
-
+static FT_ULong ps_next_unicode(PS_Unicodes *table, FT_ULong unicode) {
+	PS_UniMap *min, *max, *mid;
 
 	unicode++;
 	/* perform a binary search on the table */
@@ -232,25 +217,25 @@ ps_next_unicode( PS_Unicodes*  table,
 	min = table->maps;
 	max = min + table->num_maps - 1;
 
-	while ( min <= max ) {
-		mid = min + ( max - min ) / 2;
-		if ( mid->unicode == unicode )
+	while (min <= max) {
+		mid = min + (max - min) / 2;
+		if (mid->unicode == unicode)
 			return unicode;
 
-		if ( min == max )
+		if (min == max)
 			break;
 
-		if ( mid->unicode < unicode )
+		if (mid->unicode < unicode)
 			min = mid + 1;
 		else
 			max = mid - 1;
 	}
 
-	if ( max < table->maps )
+	if (max < table->maps)
 		max = table->maps;
 
-	while ( max < table->maps + table->num_maps ) {
-		if ( unicode < max->unicode )
+	while (max < table->maps + table->num_maps) {
+		if (unicode < max->unicode)
 			return max->unicode;
 		max++;
 	}
@@ -258,32 +243,25 @@ ps_next_unicode( PS_Unicodes*  table,
 	return 0;
 }
 
-
 #endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
-
-static const char*
-ps_get_macintosh_name( FT_UInt  name_index ) {
-	if ( name_index >= 258 )
+static const char *ps_get_macintosh_name(FT_UInt name_index) {
+	if (name_index >= 258)
 		name_index = 0;
 
 	return ps_glyph_names[mac_standard_names[name_index]];
 }
 
-
-static const char*
-ps_get_standard_strings( FT_UInt  sid ) {
-	return ( sid < NUM_SID_GLYPHS ? sid_standard_names[sid] : 0 );
+static const char *ps_get_standard_strings(FT_UInt sid) {
+	return (sid < NUM_SID_GLYPHS ? sid_standard_names[sid] : 0);
 }
 
-
-static
-const PSNames_Interface  psnames_interface = {
+static const PSNames_Interface  psnames_interface = {
 #ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
-	(PS_Unicode_Value_Func)    ps_unicode_value,
-	(PS_Build_Unicodes_Func)   ps_build_unicode_table,
-	(PS_Lookup_Unicode_Func)   ps_lookup_unicode,
+	(PS_Unicode_Value_Func)   ps_unicode_value,
+	(PS_Build_Unicodes_Func)  ps_build_unicode_table,
+	(PS_Lookup_Unicode_Func)  ps_lookup_unicode,
 
 #else
 
@@ -312,9 +290,9 @@ const PSNames_Interface  psnames_interface = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT_Module_Class  psnames_module_class = {
+const FT_Module_Class psnames_module_class = {
 	0,  /* this is not a font driver, nor a renderer */
-	sizeof ( FT_ModuleRec ),
+	sizeof (FT_ModuleRec),
 
 	"psnames",  /* driver name                         */
 	0x10000L,   /* driver version                      */
@@ -326,12 +304,11 @@ const FT_Module_Class  psnames_module_class = {
 	(void *)const_cast<PSNames_Interface *>(&psnames_interface), /* module specific interface */
 #endif
 
-	(FT_Module_Constructor)0,
-	(FT_Module_Destructor) 0,
-	(FT_Module_Requester)  0
+	(FT_Module_Constructor) 0,
+	(FT_Module_Destructor)  0,
+	(FT_Module_Requester)   0
 };
+
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */
