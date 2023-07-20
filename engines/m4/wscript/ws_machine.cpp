@@ -529,7 +529,7 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 	}
 
 	// Now find the new pcOffset
-	*pcOffset += (int32)myPC - (int32)oldPC;
+	*pcOffset += (byte *)myPC - (byte *)oldPC;
 
 	if (!_GWS(myArg1)) {
 		ws_Error(m, ERR_MACH, 0x0263, "trig_w instruction requires a data hash specified by a second pCode.");
@@ -852,7 +852,7 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 	}
 
 	// Now find the new pcOffset
-	*pcOffset += (int32)myPC - (int32)oldPC;
+	*pcOffset += (byte *)myPC - (byte *)oldPC;
 
 	if (myInstruction >= 64) {
 		condOpTable[myInstruction - 64](m, pcOffset);

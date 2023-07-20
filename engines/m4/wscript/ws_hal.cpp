@@ -167,7 +167,7 @@ void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCo
 		}
 		// Lock the sprite handle
 		HLock(source->sourceHandle);
-		source->data = (uint8 *)((int32) * (source->sourceHandle) + source->sourceOffset);
+		source->data = (uint8 *)((byte *)*(source->sourceHandle) + source->sourceOffset);
 	}
 
 	RendGrBuff Destination;

@@ -245,7 +245,7 @@ static bool UnwrapStream(strmRequest *myStream) {
 	if (myStream->strmHead > myStream->strmBuff) {
 
 		// Calculate how many bytes to store and copy to a temporary buffer
-		bytesToMove = (int32)myStream->strmHead - (int32)myStream->strmBuff;
+		bytesToMove = (byte *)myStream->strmHead - (byte *)myStream->strmBuff;
 
 		if ((tempBuff = (uint8 *)mem_alloc(bytesToMove, "stream temp buff")) == nullptr)
 			error_show(FL, 'OOM!', "UnwrapStream() failed - temp buff avail: %ld", bytesToMove);
@@ -254,10 +254,10 @@ static bool UnwrapStream(strmRequest *myStream) {
 	}
 
 	// Move the data at the end of the buffer to the beginning and reset the strmWrap pointer
-	bytesAvail = (int32)myStream->strmWrap - (int32)myStream->strmTail;
+	bytesAvail = (byte *)myStream->strmWrap - (byte *)myStream->strmTail;
 	memmove(myStream->strmBuff, myStream->strmTail, bytesAvail);
 	myStream->strmTail = myStream->strmBuff;
-	myStream->strmHead = (uint8 *)((int32)(myStream->strmTail) + bytesAvail);
+	myStream->strmHead = (uint8 *)((byte *)(myStream->strmTail) + bytesAvail);
 	myStream->strmWrap = myStream->endStrmBuff;
 
 	// Now check if we temporarily store data. if so, copy it back to the stream and turf the temp buffer
@@ -297,7 +297,7 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 
 	// If the stream tail is > the stream head, and the number of bytes at the end of the buffer is < numBytes
 	// we must unwrap the stream, moving the data at the end of the buffer to the beginning, and slide the beginning down
-	if ((myStream->strmTail > myStream->strmHead) && (((int32)myStream->strmWrap - (int32)myStream->strmTail) < numBytes)) {
+	if ((myStream->strmTail > myStream->strmHead) && (((byte *)myStream->strmWrap - (byte *)myStream->strmTail) < numBytes)) {
 		UnwrapStream(myStream);
 	}
 
@@ -342,7 +342,7 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 			// Move the data to the beginning of the stream buffer, and reset the head and tail pointers
 			memmove((void *)myStream->strmBuff, myStream->strmTail, bytesAvail);
 			myStream->strmTail = myStream->strmBuff;
-			myStream->strmHead = (uint8 *)((int32)myStream->strmTail + bytesAvail);
+			myStream->strmHead = (uint8 *)((byte *)myStream->strmTail + bytesAvail);
 		}
 
 		// If the client is using a blockSizeArray, hopefully bytesNeeded will be equal to the next blockSize
@@ -435,7 +435,7 @@ void f_stream_Process(int32 numToProcess) {
 			// Calculate the amount of empty space in the stream buff
 			// If all the empty space in the stream buff is between the head and the lastRead...
 			if (myStream->strmLastRead >= myStream->strmHead) {
-				bytesAvail = (int32)myStream->strmLastRead - (int32)myStream->strmHead;
+				bytesAvail = (byte *)myStream->strmLastRead - (byte *)myStream->strmHead;
 
 				// strmTail and strmHead can never equal unless the buffer is completely empty, therefore,
 				// make sure the amout of bytes available won't cause strmHead to become equal to strmTail
@@ -447,8 +447,8 @@ void f_stream_Process(int32 numToProcess) {
 				buffWrap = true;
 
 				// Calculate how much space is available at the start and at the end of the buffer
-				buffEndBytesAvail = (int32)myStream->endStrmBuff - (int32)myStream->strmHead;
-				buffStartBytesAvail = (int32)myStream->strmLastRead - (int32)myStream->strmBuff;
+				buffEndBytesAvail = (byte *)myStream->endStrmBuff - (byte *)myStream->strmHead;
+				buffStartBytesAvail = (byte *)myStream->strmLastRead - (byte *)myStream->strmBuff;
 
 				// As above, ensure strmHead won't become equal to strmTail
 				if ((buffStartBytesAvail > 0) && (myStream->strmLastRead == myStream->strmTail)) {
@@ -513,7 +513,7 @@ void f_stream_Process(int32 numToProcess) {
 						}
 
 						// Update the stream head
-						myStream->strmHead = (uint8 *)((int32)myStream->strmBuff + bytesRead);
+						myStream->strmHead = (uint8 *)((byte *)myStream->strmBuff + bytesRead);
 
 						// Update the blockSizeArray pointer if necessary
 						if (useBlockSizeArray) {
@@ -553,7 +553,7 @@ void f_stream_Process(int32 numToProcess) {
 						}
 
 						// Update the head pointer
-						myStream->strmHead = (uint8 *)((int32)myStream->strmBuff + bytesRead);
+						myStream->strmHead = (uint8 *)((byte *)myStream->strmBuff + bytesRead);
 
 						// Update the blockSizeArray pointer if necessary
 						if (useBlockSizeArray) {
