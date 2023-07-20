@@ -101,9 +101,9 @@ void Effect::load(rapidxml::xml_node<char> *node) {
 	} else
 		_type = EFF_VAR;
 
-	loadStr(_subject, "_subject", node, echoSub);
+	loadStr(_subject, "subject", node, echoSub);
 	loadStr(_operation, "operation", node, echoOp);
-	loadStr(_val, "_val", node, echoVal);
+	loadStr(_val, "val", node, echoVal);
 }
 
 void Effect::changeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType opType) {
