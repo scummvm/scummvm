@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-19 20:21+0000\n"
-"PO-Revision-Date: 2023-07-12 04:40+0000\n"
+"PO-Revision-Date: 2023-07-21 07:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1830,10 +1830,8 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "Demana permís en tancar ScummVM o sortir d'un joc."
 
 #: gui/options.cpp:2564
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Desactiva la caiguda"
+msgstr "Desactiva l'escalat de tipus de lletra fixa"
 
 #: gui/options.cpp:2565
 msgid ""
@@ -4320,10 +4318,8 @@ msgstr "Mostra el control en pantalla (iOS 15 i posteriors)"
 
 #: backends/platform/ios7/ios7_options.mm:84
 #: backends/platform/ios7/ios7_options.mm:85
-#, fuzzy
-#| msgid "Control Mouse"
 msgid "Control opacity"
-msgstr "Controla el ratolí"
+msgstr "Controla l'opacitat"
 
 #: backends/platform/ios7/ios7_options.mm:90
 msgid "Mouse-click-and-drag mode"
