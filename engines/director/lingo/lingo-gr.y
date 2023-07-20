@@ -430,7 +430,7 @@ cmdargs: /* empty */									{
 		args->push_back($expr);
 		$$ = args; }
 	| expr ',' nonemptyexprlist[args] trailingcomma		{
-		// This matches `cmd args, ...)
+		// This matches `cmd arg, ...)
 		$args->insert_at(0, $expr);
 		$$ = $args; }
 	| expr expr_nounarymath trailingcomma				{
@@ -448,12 +448,12 @@ cmdargs: /* empty */									{
 		// This matches `cmd()`
 		$$ = new NodeList; }
 	| '(' expr ',' ')' {
-		// This matches `cmd(args,)`
+		// This matches `cmd(arg,)`
 		NodeList *args = new NodeList;
 		args->push_back($expr);
 		$$ = args; }
 	| '(' expr ',' nonemptyexprlist[args] trailingcomma ')' {
-		// This matches `cmd(args, ...)`
+		// This matches `cmd(arg, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
 	;
@@ -669,12 +669,12 @@ refargs: simpleexpr								{
 		// This matches `ref()`
 		$$ = new NodeList; }
 	| '(' expr ',' ')' {
-		// This matches `ref(args,)`
+		// This matches `ref(arg,)`
 		NodeList *args = new NodeList;
 		args->push_back($expr);
 		$$ = args; }
 	| '(' expr ',' nonemptyexprlist[args] trailingcomma ')'	{
-		// This matches `ref(args, ...)`
+		// This matches `ref(arg, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
 	;
