@@ -470,7 +470,7 @@ void FreescapeEngine::processInput() {
 				g_system->warpMouse(mousePos.x, mousePos.y);
 
 			if (_shootMode) {
-				Common::Point resolution = _gfx->nativeResolution();
+				Common::Point resolution(g_system->getWidth(), g_system->getHeight());
 				_crossairPosition.x = _screenW * mousePos.x / resolution.x;
 				_crossairPosition.y = _screenH * mousePos.y / resolution.y;
 				break;
