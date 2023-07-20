@@ -351,7 +351,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Store the resource name, and the offset into the resource block
 			_GWS(globalSEQUnames)[*chunkHash] = mem_strdup(wsAssetName);
 			_GWS(globalSEQUHandles)[*chunkHash] = workHandle;
-			_GWS(globalSEQUoffsets)[*chunkHash] = (int32)parseAssetPtr - (int32)mainAssetPtr;
+			_GWS(globalSEQUoffsets)[*chunkHash] = (byte *)parseAssetPtr - (byte *)mainAssetPtr;
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
@@ -390,7 +390,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Store the resource name, and the offset into the resource block
 			_GWS(globalDATAnames)[*chunkHash] = mem_strdup(wsAssetName);
 			_GWS(globalDATAHandles)[*chunkHash] = workHandle;
-			_GWS(globalDATAoffsets)[*chunkHash] = (int32)parseAssetPtr - (int32)mainAssetPtr;
+			_GWS(globalDATAoffsets)[*chunkHash] = (byte *)parseAssetPtr - (byte *)mainAssetPtr;
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
@@ -437,12 +437,12 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Store the Handle, and calculate the offsets
 			_GWS(globalCELSHandles)[*chunkHash] = workHandle;
 			if (celsPtr) {
-				_GWS(globalCELSoffsets)[*chunkHash] = (int32)celsPtr - (int32)mainAssetPtr;
+				_GWS(globalCELSoffsets)[*chunkHash] = (byte *)celsPtr - (byte *)mainAssetPtr;
 			} else {
 				_GWS(globalCELSoffsets)[*chunkHash] = -1;
 			}
 			if (palPtr) {
-				_GWS(globalCELSPaloffsets)[*chunkHash] = (int32)palPtr - (int32)mainAssetPtr;
+				_GWS(globalCELSPaloffsets)[*chunkHash] = (byte *)palPtr - (byte *)mainAssetPtr;
 			} else {
 				_GWS(globalCELSPaloffsets)[*chunkHash] = -1;
 			}
@@ -485,7 +485,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 
 	// Find the cels source  from the asset block
 	HLock(resourceHandle);
-	celsPtr = (uint32 *)((int32)*resourceHandle + handleOffset);
+	celsPtr = (uint32 *)((byte *)*resourceHandle + handleOffset);
 
 	// Check that the index into the series requested is within a valid range
 	numCels = celsPtr[CELS_COUNT];
@@ -519,7 +519,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
 
 	if ((mySprite->w > 0) && (mySprite->h > 0)) {
-		mySprite->sourceOffset = (int32)((int32)(mySprite->data) - (int32)*resourceHandle);
+		mySprite->sourceOffset = (int32)((byte *)(mySprite->data) - (byte *)*resourceHandle);
 	} else {
 		mySprite->sourceOffset = 0;
 	}
@@ -559,8 +559,8 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (int32)celsPtr - (int32)mainAssetPtr;
-	*palOffset = (int32)palPtr - (int32)mainAssetPtr;
+	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
+	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
 
 	HUnLock(workHandle);
 
@@ -608,8 +608,8 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (int32)celsPtr - (int32)mainAssetPtr;
-	*palOffset = (int32)palPtr - (int32)mainAssetPtr;
+	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
+	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
 	HUnLock(workHandle);
 
 	return celsSize;
@@ -626,7 +626,7 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 	// Lock the handle, and get the cels source
 	HLock(ssHandle);
-	celsPtr = (int32 *)((int32)*ssHandle + ssOffset);
+	celsPtr = (int32 *)((byte *)*ssHandle + ssOffset);
 
 	// Return the values
 	if (maxW) {
@@ -682,7 +682,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 				// Get the pointer to the pal data
 #ifdef TODO
 				workHandle = _GWS(globalCELSHandles)[hash];
-				palPtr = (int32 *)((int32)*workHandle + _GWS(globalCELSPaloffsets)[hash]);
+				palPtr = (int32 *)((byte *)*workHandle + _GWS(globalCELSPaloffsets)[hash]);
 #else
 				error("TODO: Figure out dereferencing");
 #endif
@@ -730,12 +730,12 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		// Store the Handle, and calculate the offsets
 		_GWS(globalCELSHandles)[emptySlot] = workHandle;
 		if (celsPtr) {
-			_GWS(globalCELSoffsets)[emptySlot] = (int32)celsPtr - (int32)mainAssetPtr;
+			_GWS(globalCELSoffsets)[emptySlot] = (byte *)celsPtr - (byte *)mainAssetPtr;
 		} else {
 			_GWS(globalCELSoffsets)[emptySlot] = -1;
 		}
 		if (palPtr) {
-			_GWS(globalCELSPaloffsets)[emptySlot] = (int32)palPtr - (int32)mainAssetPtr;
+			_GWS(globalCELSPaloffsets)[emptySlot] = (byte *)palPtr - (byte *)mainAssetPtr;
 		} else {
 			_GWS(globalCELSPaloffsets)[emptySlot] = -1;
 		}
@@ -751,7 +751,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 #ifdef TODO
 			workHandle = _GWS(globalCELSHandles)[i];
 			HLock(workHandle);
-			palPtr = (int32 *)((int32)*workHandle + _GWS(globalCELSPaloffsets)[i]);
+			palPtr = (int32 *)((byte *)*workHandle + _GWS(globalCELSPaloffsets)[i]);
 #else
 			error("TODO: Figure out dereferencing");
 #endif
@@ -925,7 +925,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		return -1;
 	}
 
-	if (((int32)endOfAssetBlock - (int32)data) < (int32)*celsSize) {
+	if (((byte *)endOfAssetBlock - (byte *)data) < (int32)*celsSize) {
 		ws_LogErrorMsg(FL, "SS info is larger than asset block.");
 		return -1;
 	}
@@ -1066,8 +1066,8 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (int32)celsPtr - (int32)mainAssetPtr;
-	*palOffset = (int32)palPtr - (int32)mainAssetPtr;
+	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
+	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
 
 	HUnLock(workHandle);
 
@@ -1119,8 +1119,8 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (int32)celsPtr - (int32)mainAssetPtr;
-	*palOffset = (int32)palPtr - (int32)mainAssetPtr;
+	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
+	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
 	HUnLock(workHandle);
 
 	return celsSize;
@@ -1380,7 +1380,7 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 	sequPtr = (uint32 *)((uint32)*(_GWS(globalSEQUHandles)[hash]) + (uint32)(_GWS(globalSEQUoffsets)[hash]));
 
 	// Return the offset into the resource chunk, and the number of local vars used by the sequence
-	*offset = (int32)(&sequPtr[SEQU_SEQU_START]) - (int32) * (_GWS(globalSEQUHandles)[hash]);
+	*offset = (byte *)(&sequPtr[SEQU_SEQU_START]) - (byte *)*(_GWS(globalSEQUHandles)[hash]);
 	*numLocalVars = sequPtr[SEQU_NUM_VARS];
 
 	// Return the resource handle
@@ -1417,8 +1417,8 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 
 	// Set the number of states, the state offset table, the start of the mach instructions
 	*numStates = (int32)machPtr[MACH_NUM_STATES];
-	*stateTableOffset = (int32)(&machPtr[MACH_OFFSETS]) - (int32)(*_GWS(globalMACHHandles)[hash]);
-	*machInstrOffset = (int32)((int32)machPtr + ((*numStates + 1) << 2)) - (int32)(*_GWS(globalMACHHandles)[hash]);
+	*stateTableOffset = (byte *)(&machPtr[MACH_OFFSETS]) - (byte *)(*_GWS(globalMACHHandles)[hash]);
+	*machInstrOffset = ((byte *)machPtr + ((*numStates + 1) << 2)) - (byte *)(*_GWS(globalMACHHandles)[hash]);
 
 	//unlock and return the handle
 	HUnLock(_GWS(globalMACHHandles)[hash]);
@@ -1457,8 +1457,8 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 		return nullptr;
 	}
 
-	*rowOffset = (int32)((uint32)(&dataPtr[DATA_REC_START]) + ((index * dataPtr[DATA_REC_SIZE]) << 2) -
-		(int32)(*_GWS(globalDATAHandles)[hash]));
+	*rowOffset = (int32)((byte *)(&dataPtr[DATA_REC_START]) + ((index * dataPtr[DATA_REC_SIZE]) << 2)
+		- (byte *)(*_GWS(globalDATAHandles)[hash]));
 	// Return the data handle
 	return _GWS(globalDATAHandles)[hash];
 }

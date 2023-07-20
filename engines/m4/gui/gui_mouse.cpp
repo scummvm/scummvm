@@ -192,7 +192,7 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 
 		if (mySprite->sourceHandle) {
 			HLock(mySprite->sourceHandle);
-			mySprite->data = (uint8 *)((int32) * (mySprite->sourceHandle) + mySprite->sourceOffset);
+			mySprite->data = (uint8 *)((byte *)*(mySprite->sourceHandle) + mySprite->sourceOffset);
 
 			drawSpriteBuff.W = mySprite->w;
 			drawSpriteBuff.stride = mySprite->w;
