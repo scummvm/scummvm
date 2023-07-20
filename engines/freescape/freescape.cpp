@@ -341,7 +341,9 @@ void FreescapeEngine::processInput() {
 
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (_demoMode) {
-			if (event.customType != 0xde00)
+			if (event.type == Common::EVENT_SCREEN_CHANGED)
+				; // Allow event
+			else if (event.customType != 0xde00)
 				continue;
 		}
 
