@@ -79,7 +79,7 @@ void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
 
 		if (nodeValid("mouse", node, false)) {
 			using namespace pyrodactyl::input;
-			g_engine->_mouse->Quit();
+			g_engine->_mouse->quit();
 			g_engine->_mouse->load(node->first_node("mouse"));
 		}
 	}
