@@ -300,12 +300,10 @@ CMDID: tVARID
 	| tABBREV		{ $$ = new Common::String("abbrev"); }
 	| tABBR			{ $$ = new Common::String("abbr"); }
 	| tAFTER		{ $$ = new Common::String("after"); }
-	| tAND			{ $$ = new Common::String("and"); }
 	| tBEFORE		{ $$ = new Common::String("before"); }
 	| tCAST			{ $$ = new Common::String("cast"); }
 	| tCHAR			{ $$ = new Common::String("char"); }
 	| tCHARS		{ $$ = new Common::String("chars"); }
-	| tCONTAINS		{ $$ = new Common::String("contains"); }
 	| tDATE			{ $$ = new Common::String("date"); }
 	| tDELETE		{ $$ = new Common::String("delete"); }
 	| tDOWN			{ $$ = new Common::String("down"); }
@@ -324,13 +322,10 @@ CMDID: tVARID
 	| tMENU			{ $$ = new Common::String("menu"); }
 	| tMENUITEM		{ $$ = new Common::String("menuItem"); }
 	| tMENUITEMS	{ $$ = new Common::String("menuItems"); }
-	| tMOD			{ $$ = new Common::String("mod"); }
 	| tMOVIE		{ $$ = new Common::String("movie"); }
 	| tNEXT			{ $$ = new Common::String("next"); }
-	| tNOT			{ $$ = new Common::String("not"); }
 	| tNUMBER		{ $$ = new Common::String("number"); }
 	| tOF			{ $$ = new Common::String("of"); }
-	| tOR			{ $$ = new Common::String("or"); }
 	| tPREVIOUS		{ $$ = new Common::String("previous"); }
 	| tREPEAT		{ $$ = new Common::String("repeat"); }
 	| tSCRIPT		{ $$ = new Common::String("script"); }
@@ -338,7 +333,6 @@ CMDID: tVARID
 	| tSHORT		{ $$ = new Common::String("short"); }
 	| tSOUND		{ $$ = new Common::String("sound"); }
 	| tSPRITE		{ $$ = new Common::String("sprite"); }
-	| tSTARTS		{ $$ = new Common::String("starts"); }
 	| tTHE			{ $$ = new Common::String("the"); }
 	| tTIME			{ $$ = new Common::String("time"); }
 	| tTO			{ $$ = new Common::String("to"); }
