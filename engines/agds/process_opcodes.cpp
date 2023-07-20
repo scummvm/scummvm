@@ -781,7 +781,7 @@ void Process::screenObjectPatchIncRef() {
 	debug("screenObjectPatchIncRef: %s %s", screenName.c_str(), objectName.c_str());
 	if (!screenName.empty() && screenName != _engine->getCurrentScreenName()) {
 		if (_engine->getCurrentScreen()->applyingPatch()) {
-			debug("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
+			warning("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
 		} else {
 			//fixme: add non-existent screen check?
 			auto patch = _engine->createPatch(screenName);
@@ -800,7 +800,7 @@ void Process::screenObjectPatchDecRef() {
 	if (!screenName.empty() && screenName != _engine->getCurrentScreenName()) {
 		debug("screenObjectPatchDecRef %s %s", screenName.c_str(), objectName.c_str());
 		if (_engine->getCurrentScreen()->applyingPatch()) {
-			debug("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
+			warning("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
 		} else {
 			//fixme: add non-existent screen check?
 			auto patch = _engine->getPatch(screenName);
