@@ -51,7 +51,7 @@ bool Level::containsClick(const Common::String &id, const Common::Event &event) 
 		for (auto &i : _objects) {
 			Rect r = i.posRect();
 
-			if (r.Contains(g_engine->_mouse->_motion.x + _camera.x, g_engine->_mouse->_motion.y + _camera.y)) {
+			if (r.contains(g_engine->_mouse->_motion.x + _camera.x, g_engine->_mouse->_motion.y + _camera.y)) {
 				// This is to show the sprite's name on top of their head
 				i._hover = true;
 
@@ -67,7 +67,7 @@ bool Level::containsClick(const Common::String &id, const Common::Event &event) 
 		for (auto &i : _objects) {
 			if (i.id() == id) {
 				Rect r = i.posRect();
-				if (r.Contains(g_engine->_mouse->_button.x + _camera.x, g_engine->_mouse->_button.y + _camera.y)) {
+				if (r.contains(g_engine->_mouse->_button.x + _camera.x, g_engine->_mouse->_button.y + _camera.y)) {
 					g_engine->_mouse->_hover = true;
 					return true;
 				}
@@ -152,7 +152,7 @@ bool Level::collidingWithObject(pyrodactyl::event::Info &info, Common::String &i
 			// Clip and bounding rectangles for the NPC sprite
 			Rect iPos = i->posRect(), iBound = i->boundRect();
 
-			if (pPos.Collide(iPos) || iPos.Contains(pPos) || pBound.Collide(iBound) || iBound.Contains(pBound)) {
+			if (pPos.collide(iPos) || iPos.contains(pPos) || pBound.collide(iBound) || iBound.contains(pBound)) {
 				id = i->id();
 				return true;
 			}

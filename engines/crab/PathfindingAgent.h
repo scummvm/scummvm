@@ -134,7 +134,7 @@ public:
 	bool _solutionFound;
 	bool _noSolution;
 
-	Common::Array<PathfindingGraphNode const *> m_vSolution;
+	Common::Array<PathfindingGraphNode const *> _vSolution;
 
 	void setNodeBufferDistance(float w) {
 		_nodeBufferDistance = w;

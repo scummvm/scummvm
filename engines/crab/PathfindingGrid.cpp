@@ -125,7 +125,7 @@ void PathfindingGrid::setupNodes(TMX::TMXMap map) {
 
 			// Check if the square should count as blocked
 			for (auto i = noWalk.begin(); i != noWalk.end(); ++i) {
-				if (i->Collide(_nodes[x][y]._collisionRect).intersect) {
+				if (i->collide(_nodes[x][y]._collisionRect)._intersect) {
 					_nodes[x][y]._movementCost = (float)_blockedCost;
 					break;
 				}
@@ -136,7 +136,7 @@ void PathfindingGrid::setupNodes(TMX::TMXMap map) {
 				Common::Array<pyrodactyl::level::Stairs> stairs = map.areaStairs();
 
 				for (auto i = stairs.begin(); i != stairs.end(); ++i) {
-					if (i->Collide(_nodes[x][y]._collisionRect).intersect) {
+					if (i->collide(_nodes[x][y]._collisionRect)._intersect) {
 						_nodes[x][y]._movementCost = (float)_stairsCost;
 						break;
 					}

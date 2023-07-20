@@ -134,8 +134,8 @@ void TileSetGroup::preDraw(MapLayer &layer, const Vector2i &tileSize, Graphics::
 	for (rOuter = layer._boundRect.begin(); rOuter != layer._boundRect.end(); ++rOuter) {
 		rInner = rOuter;
 		while (++rInner != layer._boundRect.end()) {
-			if ((*rOuter).Collide(*rInner)) {
-				rOuter->Extend(*rInner);
+			if ((*rOuter).collide(*rInner)) {
+					rOuter->extend(*rInner);
 				layer._boundRect.erase(rInner);
 				rInner = rOuter;
 			}
@@ -148,7 +148,7 @@ void TileSetGroup::forceDraw(MapLayer &layer, const Rect &camera, const Vector2i
 	if (layer._type == LAYER_IMAGE)
 		return;
 
-	layer._collide = layer._pos.Collide(playerPos);
+	layer._collide = layer._pos.collide(playerPos);
 
 	// Normal and prop layers are drawn this way
 	// The row and column we start drawing at
@@ -216,7 +216,7 @@ void TileSetGroup::draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 			_v.y += tileSize.y;
 		}
 	} else {
-		layer._collide = layer._pos.Collide(playerPos);
+		layer._collide = layer._pos.collide(playerPos);
 
 		// If player is inside the layer bounds, draw normally - else skip drawing
 		if (layer._type == LAYER_AUTOHIDE && !layer._collide)

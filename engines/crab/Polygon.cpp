@@ -40,7 +40,7 @@ float IntervalDistance(float minA, float maxA, float minB, float maxB) {
 	return minA - maxB;
 }
 
-void Polygon2D::AddPoint(const Vector2f &ref, const Common::String &x, const Common::String &y, Vector2f &min, Vector2f &max) {
+void Polygon2D::addPoint(const Vector2f &ref, const Common::String &x, const Common::String &y, Vector2f &min, Vector2f &max) {
 	Vector2f p;
 	p.x = ref.x + stringToNumber<float>(x);
 	p.y = ref.y + stringToNumber<float>(y);
@@ -55,7 +55,7 @@ void Polygon2D::AddPoint(const Vector2f &ref, const Common::String &x, const Com
 	if (p.y > max.y)
 		max.y = p.y;
 
-	point.push_back(p);
+	_point.push_back(p);
 }
 
 void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
@@ -67,7 +67,7 @@ void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
 	Vector2f min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
 	Vector2f max(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
 
-	point.clear();
+	_point.clear();
 	rapidxml::xml_node<char> *polynode = node->first_node("polygon");
 	if (polynode != NULL) {
 		Common::String points, x, y;
@@ -78,7 +78,7 @@ void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
 			if (*i == ',')
 				comma = true;
 			else if (*i == ' ') {
-				AddPoint(ref, x, y, min, max);
+				addPoint(ref, x, y, min, max);
 				comma = false;
 				x.clear();
 				y.clear();
@@ -88,7 +88,7 @@ void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
 				x += *i;
 		}
 
-		AddPoint(ref, x, y, min, max);
+		addPoint(ref, x, y, min, max);
 
 		bounds.x = min.x;
 		bounds.y = min.y;
@@ -96,54 +96,54 @@ void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
 		bounds.h = max.y - min.y;
 	}
 
-	SetEdge();
+	setEdge();
 }
 
-void Polygon2D::SetEdge() {
-	edge.clear();
+void Polygon2D::setEdge() {
+	_edge.clear();
 	Vector2f p1, p2, res;
-	for (unsigned int i = 0; i < point.size(); i++) {
-		p1 = point[i];
-		if (i + 1 >= point.size())
-			p2 = point[0];
+	for (unsigned int i = 0; i < _point.size(); i++) {
+		p1 = _point[i];
+		if (i + 1 >= _point.size())
+			p2 = _point[0];
 		else
-			p2 = point[i + 1];
+			p2 = _point[i + 1];
 
 		res.x = p2.x - p1.x;
 		res.y = p2.y - p1.y;
-		edge.push_back(res);
+		_edge.push_back(res);
 	}
 }
 
-Vector2f Polygon2D::Center() const {
+Vector2f Polygon2D::center() const {
 	Vector2f total;
-	for (unsigned int i = 0; i < point.size(); i++) {
-		total.x += point[i].x;
-		total.y += point[i].y;
+	for (unsigned int i = 0; i < _point.size(); i++) {
+		total.x += _point[i].x;
+		total.y += _point[i].y;
 	}
 
 	Vector2f ret;
-	if (point.size() > 0) {
-		ret.x = total.x / point.size();
-		ret.y = total.y / point.size();
+	if (_point.size() > 0) {
+		ret.x = total.x / _point.size();
+		ret.y = total.y / _point.size();
 	}
 	return ret;
 }
 
-void Polygon2D::Offset(const float &x, const float &y) {
-	for (auto i = point.begin(); i != point.end(); ++i) {
+void Polygon2D::offset(const float &x, const float &y) {
+	for (auto i = _point.begin(); i != _point.end(); ++i) {
 		i->x += x;
 		i->y += y;
 	}
 }
 
-void Polygon2D::Project(const Vector2f &axis, float &min, float &max) const {
+void Polygon2D::project(const Vector2f &axis, float &min, float &max) const {
 	// To project a point on an axis use the dot product
-	float d = axis.DotProduct(point[0]);
+	float d = axis.DotProduct(_point[0]);
 	min = d;
 	max = d;
 
-	for (auto i = point.begin(); i != point.end(); ++i) {
+	for (auto i = _point.begin(); i != _point.end(); ++i) {
 		d = i->DotProduct(axis);
 
 		if (d < min)
@@ -153,32 +153,32 @@ void Polygon2D::Project(const Vector2f &axis, float &min, float &max) const {
 	}
 }
 
-PolygonCollisionResult Polygon2D::Collide(const Rect &rect) {
+PolygonCollisionResult Polygon2D::collide(const Rect &rect) {
 	Polygon2D polyB;
 	Vector2f p;
 	p.x = rect.x;
 	p.y = rect.y;
-	polyB.point.push_back(p);
+	polyB._point.push_back(p);
 	p.x = rect.x + rect.w;
 	p.y = rect.y;
-	polyB.point.push_back(p);
+	polyB._point.push_back(p);
 	p.x = rect.x + rect.w;
 	p.y = rect.y + rect.h;
-	polyB.point.push_back(p);
+	polyB._point.push_back(p);
 	p.x = rect.x;
 	p.y = rect.y + rect.h;
-	polyB.point.push_back(p);
-	polyB.SetEdge();
+	polyB._point.push_back(p);
+	polyB.setEdge();
 
-	return Collide(polyB);
+	return collide(polyB);
 }
 
-PolygonCollisionResult Polygon2D::Collide(const Polygon2D &polyB) {
+PolygonCollisionResult Polygon2D::collide(const Polygon2D &polyB) {
 	PolygonCollisionResult result;
-	result.intersect = true;
+	result._intersect = true;
 
-	int edgeCountA = edge.size();
-	int edgeCountB = polyB.edge.size();
+	int edgeCountA = _edge.size();
+	int edgeCountB = polyB._edge.size();
 	float minIntervalDistance = std::numeric_limits<float>::max();
 	Vector2f translationAxis;
 	Vector2f e;
@@ -186,9 +186,9 @@ PolygonCollisionResult Polygon2D::Collide(const Polygon2D &polyB) {
 	// Loop through all the edges of both polygons
 	for (int edgeIndex = 0; edgeIndex < edgeCountA + edgeCountB; edgeIndex++) {
 		if (edgeIndex < edgeCountA)
-			e = edge[edgeIndex];
+			e = _edge[edgeIndex];
 		else
-			e = polyB.edge[edgeIndex - edgeCountA];
+			e = polyB._edge[edgeIndex - edgeCountA];
 
 		// ===== 1. Find if the Polygon2Ds are currently intersecting =====
 
@@ -201,14 +201,14 @@ PolygonCollisionResult Polygon2D::Collide(const Polygon2D &polyB) {
 		float minB = 0;
 		float maxA = 0;
 		float maxB = 0;
-		Project(axis, minA, maxA);
-		polyB.Project(axis, minB, maxB);
+		project(axis, minA, maxA);
+		polyB.project(axis, minB, maxB);
 
 		// Check if the Polygon2D projections are currently intersecting
 		float intervalDistance = IntervalDistance(minA, maxA, minB, maxB);
 		if (intervalDistance > 0) {
 			// If the Polygon2Ds are not intersecting and won't intersect, exit the loop
-			result.intersect = false;
+			result._intersect = false;
 			break;
 		}
 
@@ -221,8 +221,8 @@ PolygonCollisionResult Polygon2D::Collide(const Polygon2D &polyB) {
 			translationAxis = axis;
 
 			Vector2f d, ca, cb;
-			ca = Center();
-			cb = polyB.Center();
+			ca = center();
+			cb = polyB.center();
 
 			d.x = ca.x - cb.x;
 			d.y = ca.y - cb.y;
@@ -237,36 +237,36 @@ PolygonCollisionResult Polygon2D::Collide(const Polygon2D &polyB) {
 	// The minimum translation vector can be used to push the Polygon2Ds apart.
 	// First moves the Polygon2Ds by their velocity
 	// then move polyA by MinimumTranslationVector.
-	if (result.intersect) {
-		result.mtv.x = translationAxis.x * minIntervalDistance;
-		result.mtv.y = translationAxis.y * minIntervalDistance;
+	if (result._intersect) {
+		result._mtv.x = translationAxis.x * minIntervalDistance;
+		result._mtv.y = translationAxis.y * minIntervalDistance;
 	}
 
 	return result;
 }
 
-bool Polygon2D::Contains(const float &X, const float &Y) {
+bool Polygon2D::contains(const float &x, const float &y) {
 	bool result = false;
 
-	for (unsigned int i = 0, j = point.size() - 1; i < point.size(); j = i++) {
-		if (((point[i].y > Y) != (point[j].y > Y)) &&
-			(X < (point[j].x - point[i].x) * (Y - point[i].y) / (point[j].y - point[i].y) + point[i].x))
+	for (unsigned int i = 0, j = _point.size() - 1; i < _point.size(); j = i++) {
+		if (((_point[i].y > y) != (_point[j].y > y)) &&
+			(x < (_point[j].x - _point[i].x) * (y - _point[i].y) / (_point[j].y - _point[i].y) + _point[i].x))
 			result = !result;
 	}
 
 	return result;
 }
 
-void Polygon2D::draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
+void Polygon2D::draw(const int &xOffset, const int &yOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	Vector2f p1, p2;
-	for (unsigned int i = 0; i < point.size(); i++) {
-		p1 = point[i];
-		if (i + 1 >= point.size())
-			p2 = point[0];
+	for (unsigned int i = 0; i < _point.size(); i++) {
+		p1 = _point[i];
+		if (i + 1 >= _point.size())
+			p2 = _point[0];
 		else
-			p2 = point[i + 1];
+			p2 = _point[i + 1];
 
-		DrawLine(p1.x + XOffset, p1.y + YOffset, p2.x + XOffset, p2.y + YOffset, r, g, b, a);
+		drawLine(p1.x + xOffset, p1.y + yOffset, p2.x + xOffset, p2.y + yOffset, r, g, b, a);
 	}
 }
 

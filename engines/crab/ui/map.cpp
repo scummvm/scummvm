@@ -195,7 +195,7 @@ void Map::move(const Common::Event &event) {
 		bool click = false;
 		int count = 0;
 		for (auto &i : _scroll._element) {
-			if (i.Contains(g_engine->_mouse->_button)) {
+			if (i.contains(g_engine->_mouse->_button)) {
 				if (count == DIRECTION_UP)
 					_vel.y = -1 * _speed;
 				else if (count == DIRECTION_DOWN)

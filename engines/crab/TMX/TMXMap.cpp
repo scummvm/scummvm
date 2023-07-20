@@ -319,29 +319,29 @@ void TMXMap::drawDebug(const Rect &camera) {
 void TMXMap::collideWithNoWalk(const Rect boundingBox, Common::List<CollisionData> &colliders) {
 	CollisionData res;
 	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i) {
-		res = i->Collide(boundingBox);
-		if (res.intersect)
+		res = i->collide(boundingBox);
+		if (res._intersect)
 			colliders.push_back(res);
 	}
 }
 
 bool TMXMap::insideNoWalk(const Vector2i &pos) {
 	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i)
-		if (i->Contains(pos))
+		if (i->contains(pos))
 			return true;
 
 	return false;
 }
 
 bool TMXMap::insideWalk(const Rect boundingBox) {
-	if (_areaWalk.Contains(boundingBox))
+	if (_areaWalk.contains(boundingBox))
 		return true;
 
 	return false;
 }
 
 bool TMXMap::insideWalk(const Vector2i &pos) {
-	if (_areaWalk.Contains(pos))
+	if (_areaWalk.contains(pos))
 		return true;
 
 	return false;
@@ -349,7 +349,7 @@ bool TMXMap::insideWalk(const Vector2i &pos) {
 
 bool TMXMap::collideWithTrigger(const Rect rect, int index) {
 	if (_areaTrig.size() > (unsigned int)index)
-		return _areaTrig[index].Collide(rect).intersect;
+		return _areaTrig[index].collide(rect)._intersect;
 
 	return false;
 }
@@ -359,13 +359,13 @@ void TMXMap::collideWithTrigger(const Rect rect, Common::Array<int> &collisionTa
 	collisionTable.clear();
 
 	for (auto i = _areaTrig.begin(); i != _areaTrig.end(); ++i, ++index)
-		if (i->Collide(rect).intersect)
+		if (i->collide(rect)._intersect)
 			collisionTable.push_back(index);
 }
 
 bool TMXMap::collideWithExit(const Rect rect, LevelResult &res) {
 	for (auto i = _areaExit.begin(); i != _areaExit.end(); ++i)
-		if (i->_dim.Collide(rect).intersect) {
+		if (i->_dim.collide(rect)._intersect) {
 			res._val = i->_name;
 			res._x = i->_entry.x;
 			res._y = i->_entry.y;
@@ -377,7 +377,7 @@ bool TMXMap::collideWithExit(const Rect rect, LevelResult &res) {
 
 bool TMXMap::collideWithStairs(const Rect rect, Vector2f &velMod) {
 	for (auto i = _areaStairs.begin(); i != _areaStairs.end(); ++i) {
-		if (i->Collide(rect).intersect) {
+		if (i->collide(rect)._intersect) {
 			velMod = i->_modifier;
 			return true;
 		}
@@ -391,7 +391,7 @@ bool TMXMap::collideWithStairs(const Rect rect, Vector2f &velMod) {
 
 bool TMXMap::collideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music) {
 	for (auto i = _areaMusic.begin(); i != _areaMusic.end(); ++i) {
-		if (i->Collide(rect).intersect) {
+		if (i->collide(rect)._intersect) {
 			music._id = i->_id;
 			music._track = i->_track;
 			music._loops = i->_loops;

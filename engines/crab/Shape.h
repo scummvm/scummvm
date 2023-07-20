@@ -37,47 +37,52 @@
 namespace Crab {
 
 // The kind of shape
-enum ShapeType { SHAPE_RECT,
-				 SHAPE_POLYGON,
-				 SHAPE_ELLIPSE };
+enum ShapeType {
+	SHAPE_RECT,
+	SHAPE_POLYGON,
+	SHAPE_ELLIPSE
+};
 
 struct CollisionData {
 	// Store the type of shape
-	ShapeType type;
+	ShapeType _type;
 
 	// Do the two shapes intersect?
-	bool intersect;
+	bool _intersect;
 
 	// If Shape is Polygon, the .x and .y of this rectangle contain the minimum translation vector
 	// If Shape is Rectangle, this contains the colliding rectangle
-	Rect data;
+	Rect _data;
 
 	CollisionData() {
-		type = SHAPE_RECT;
-		intersect = false;
+		_type = SHAPE_RECT;
+		_intersect = false;
 	}
 };
 
 class Shape {
 public:
 	// The type of shape
-	ShapeType type;
+	ShapeType _type;
 
 	// This stores both the ellipse and rectangle data
-	Rect rect;
+	Rect _rect;
 
 	// This stores the polygon data
-	Polygon2D poly;
+	Polygon2D _poly;
 
-	Shape() { type = SHAPE_RECT; }
+	Shape() {
+		_type = SHAPE_RECT;
+	}
+
 	~Shape() {}
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
-	CollisionData Collide(Rect box);
+	CollisionData collide(Rect box);
 
-	bool Contains(const Vector2i &pos);
+	bool contains(const Vector2i &pos);
 
-	void draw(const int &XOffset = 0, const int &YOffset = 0,
+	void draw(const int &xOffset = 0, const int &yOffset = 0,
 			  const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0, const uint8 &a = 255);
 };
 

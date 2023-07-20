@@ -42,54 +42,60 @@ namespace Crab {
 //------------------------------------------------------------------------
 struct PolygonCollisionResult {
 	// Are the Polygons currently intersecting?
-	bool intersect;
+	bool _intersect;
 
 	// The translation to apply to polygon A to push the polygons apart
 	// Also known as the minimum translation vector
-	Vector2f mtv;
+	Vector2f _mtv;
 
-	PolygonCollisionResult() { intersect = false; }
+	PolygonCollisionResult() {
+		_intersect = false;
+	}
 };
 
 //------------------------------------------------------------------------
 // Purpose: A simple 2D Polygon class
 //------------------------------------------------------------------------
 class Polygon2D {
-	void AddPoint(const Vector2f &ref, const Common::String &x, const Common::String &y, Vector2f &min, Vector2f &max);
+	void addPoint(const Vector2f &ref, const Common::String &x, const Common::String &y, Vector2f &min, Vector2f &max);
 
 public:
 	// A list of all points
-	Common::Array<Vector2f> point;
+	Common::Array<Vector2f> _point;
 
 	// A list of all edges
-	Common::Array<Vector2f> edge;
+	Common::Array<Vector2f> _edge;
 
 	Polygon2D() {}
-	Polygon2D(rapidxml::xml_node<char> *node, Rect &bounds) { load(node, bounds); }
+	Polygon2D(rapidxml::xml_node<char> *node, Rect &bounds) {
+		load(node, bounds);
+	}
 
 	// Returns the approximate axis aligned bounding box of the polygon
 	void load(rapidxml::xml_node<char> *node, Rect &bounds);
 
-	void SetEdge();
+	void setEdge();
 
-	Vector2f Center() const;
-	void Offset(const float &x, const float &y);
-	void Offset(const Vector2f &v) { Offset(v.x, v.y); }
+	Vector2f center() const;
+	void offset(const float &x, const float &y);
+	void offset(const Vector2f &v) {
+		offset(v.x, v.y);
+	}
 
 	// Check if Polygon2D A is going to collide with Polygon2D B for the given velocity
 	// PolyA is this polygon
-	PolygonCollisionResult Collide(const Polygon2D &polyB);
+	PolygonCollisionResult collide(const Polygon2D &polyB);
 
 	// Code for collision with a rectangle
-	PolygonCollisionResult Collide(const Rect &rect);
+	PolygonCollisionResult collide(const Rect &rect);
 
 	// Find if a point is inside this polygon
-	bool Contains(const float &X, const float &Y);
+	bool contains(const float &x, const float &y);
 
 	// Calculate the projection of a polygon on an axis and returns it as a [min, max] interval
-	void Project(const Vector2f &axis, float &min, float &max) const;
+	void project(const Vector2f &axis, float &min, float &max) const;
 
-	void draw(const int &XOffset = 0, const int &YOffset = 0,
+	void draw(const int &xOffset = 0, const int &yOffset = 0,
 			  const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0.0f, const uint8 &a = 255);
 };
 

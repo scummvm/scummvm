@@ -37,7 +37,7 @@ bool Rect::load(rapidxml::xml_node<char> *node, const bool &echo, const Common::
 	return loadNum(x, x_name, node, echo) && loadNum(y, y_name, node, echo) && loadNum(w, w_name, node, echo) && loadNum(h, h_name, node, echo);
 }
 
-bool Rect::Collide(Rect box) {
+bool Rect::collide(Rect box) {
 	if (box.x + box.w < x)
 		return false; // just checking if their
 	if (box.x > x + w)
@@ -50,7 +50,7 @@ bool Rect::Collide(Rect box) {
 	return true; // bounding boxes intersect
 }
 
-void Rect::Extend(Rect box) {
+void Rect::extend(Rect box) {
 	int left1 = x;
 	int right1 = x + w;
 	int top1 = y;
@@ -72,7 +72,7 @@ void Rect::Extend(Rect box) {
 	h = bottom1 - top1;
 }
 
-Direction Rect::ResolveX(Rect collider) {
+Direction Rect::resolveX(Rect collider) {
 	// Check left edge of collider
 	if (x < collider.x && collider.x < x + w)
 		return DIRECTION_RIGHT;
@@ -84,7 +84,7 @@ Direction Rect::ResolveX(Rect collider) {
 	return DIRECTION_NONE;
 }
 
-Direction Rect::ResolveY(Rect collider) {
+Direction Rect::resolveY(Rect collider) {
 	// Check top edge of collider
 	if (y < collider.y && collider.y < y + h)
 		return DIRECTION_DOWN;
@@ -96,7 +96,7 @@ Direction Rect::ResolveY(Rect collider) {
 	return DIRECTION_NONE;
 }
 
-void Rect::Flip(const TextureFlipType &flip, const Vector2i &axis) {
+void Rect::flip(const TextureFlipType &flip, const Vector2i &axis) {
 	if (flip == FLIP_NONE)
 		return;
 
@@ -107,13 +107,13 @@ void Rect::Flip(const TextureFlipType &flip, const Vector2i &axis) {
 		y = 2 * axis.y - y - h;
 }
 
-void Rect::draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
-	int X = x + XOffset, Y = y + YOffset;
+void Rect::draw(const int &xOffset, const int &yOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
+	int X = x + xOffset, Y = y + yOffset;
 
-	DrawLine(X, Y, X + w, Y, r, g, b, a);
-	DrawLine(X, Y, X, Y + h, r, g, b, a);
-	DrawLine(X + w, Y, X + w, Y + h, r, g, b, a);
-	DrawLine(X, Y + h, X + w, Y + h, r, g, b, a);
+	drawLine(X, Y, X + w, Y, r, g, b, a);
+	drawLine(X, Y, X, Y + h, r, g, b, a);
+	drawLine(X + w, Y, X + w, Y + h, r, g, b, a);
+	drawLine(X, Y + h, X + w, Y + h, r, g, b, a);
 }
 
 void Rect::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
