@@ -191,7 +191,7 @@ void OSystem_DS::initGraphics() {
 	_overlay.create(256, 192, _pfABGR1555);
 	_overlayScreen = new DS::Background(&_overlay, 2, false, 0, false);
 	_screen = nullptr;
-#ifndef DISABLE_TEXT_CONSOLE
+#ifdef DISABLE_TEXT_CONSOLE
 	_subScreen = nullptr;
 	_banner = nullptr;
 #endif
