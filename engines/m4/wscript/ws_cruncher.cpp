@@ -389,7 +389,7 @@ bool ws_ResumeAnim8(Anim8 *myAnim8) {
 }
 
 static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **argPtr, frac16 *argValue) {
-	int32	myIndex;
+	int32 myIndex;
 	Anim8 *parentAnim8;
 	frac16 *dataArray;
 
@@ -446,13 +446,13 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			// Dereferrence the dataHandle, add the offset to find the array of data for this anim8
 			dataArray = (frac16 *)((int32) * (myAnim8->dataHandle) + myAnim8->dataOffset);
 
-			// Copy the data field into _GWS(dataArg1), and set _GWS(myArg1) to point to this location
+			// Copy the data field into dataArg1, and set myArg1 to point to this location
 			*argValue = dataArray[myIndex];
 			*argPtr = argValue;
 			break;
 		}
 	} else if (myFormat == FMT_GLOBAL_SRC) {
-		// Else if the format indicates the argument is from the _GWS(ws_globals) register set
+		// Else if the format indicates the argument is from the ws_globals register set
 		// Find out if the index has been previously stored in a special index register
 		if (myData & REG_SET_IDX_REG) {
 			myIndex = _GWS(indexReg);
@@ -461,36 +461,29 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			myIndex = myData & REG_SET_IDX;
 		}
 
-		// Finally, set _GWS(myArg1) to point to the location in the _GWS(ws_globals) array, whichever index
+		// Finally, set myArg1 to point to the location in the ws_globals array, whichever index
 		*argPtr = &(_GWS(ws_globals)[myIndex]);
 	} else {
 		// Else the argument is not a variable, but an actual value
 
 		// The top bit of the data segment is a negative flag, the format determines how far the other
 		// 15 bits of the data segment are shifted left, so the value requested is in frac16 format.
-		// The value is stored in a static frac16 (_GWS(dataArg1)), and...
+		// The value is stored in the frac16 (dataArg1), and...
 		if (myData & OP_DATA_SIGN) {
 			*argValue = -(myData & OP_DATA_VALUE) << (dataFormats[myFormat - 3]);
 		} else {
 			*argValue = (myData & OP_DATA_VALUE) << (dataFormats[myFormat - 3]);
 		}
 
-		//_GWS(myArg1) will point to this location
+		// myArg1 will point to this location
 		*argPtr = argValue;
 	}
 
 	return true;
 }
 
-// The instruction number is returned by this function, and the arguments are pointed to by these externable globals
-// Frac16				*_GWS(myArg1);
-// Frac16				*_GWS(myArg2);
-// Frac16				*_GWS(myArg3);
-//
-//
-
 int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8) {
-	int32		myInstruction, myFormat, myData; // myIndex;
+	int32 myInstruction, myFormat, myData; // myIndex;
 	uint32 *myPC, opCode, word2;
 
 	if (!PC) {
@@ -1253,11 +1246,16 @@ static void op_OPEN_STREAM_SS(Anim8 *myAnim8) {
 	myCCB = myAnim8->myCCB;
 	ShowCCB(myCCB);
 	myCCB->flags |= CCB_SKIP;
+
 	if (!ws_OpenSSstream((StreamFile *)(*_GWS(myArg1)), myAnim8)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0258, "open_ss_stream() failed.");
 	}
-	if (myAnim8->myRegs[IDX_W] < 0) myAnim8->myRegs[IDX_W] = -myCCB->source->w << 16;
-	else myAnim8->myRegs[IDX_W] = myCCB->source->w << 16;
+
+	if (myAnim8->myRegs[IDX_W] < 0)
+		myAnim8->myRegs[IDX_W] = -myCCB->source->w << 16;
+	else
+		myAnim8->myRegs[IDX_W] = myCCB->source->w << 16;
+
 	myAnim8->myRegs[IDX_H] = myCCB->source->h << 16;
 	_GWS(mapTheCel) = true;
 }
@@ -1582,9 +1580,7 @@ bool ws_OnEndSeqRequest(Anim8 *myAnim8, int32 pcOffset, int32 pcCount) {
 	return true;
 }
 
-
 void ws_CancelOnEndSeq(Anim8 *myAnim8) {
-
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_CancelOnEndSeq()");
 

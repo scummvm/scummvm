@@ -119,7 +119,17 @@ extern void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8);
 
 extern bool ws_PauseAnim8(Anim8 *myAnim8);
 extern bool ws_ResumeAnim8(Anim8 *myAnim8);
+
+/**
+ * Pre-processes a pcode instruction parameters.
+ * The instruction number is returned by this function, and the arguments are
+ * pointed to by these external globals:
+ * Frac16 *myArg1
+ * Frac16 *myArg2
+ * Frac16 *myArg3
+ */
 extern int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8);
+
 extern void ws_CrunchAnim8s(int16 *depth_table);
 extern void ws_CrunchEOSreqs();
 extern bool ws_OnEndSeqRequest(Anim8 *myAnim8, int32 pcOffset, int32 pcCount);
