@@ -1694,7 +1694,7 @@ bool ws_OpenSSstream(StreamFile *streamFile, Anim8 *anim8) {
 	uint32 maxFrameSize;
 
 	// Verify the parameters
-	if ((!streamFile) || (!anim8) || (!anim8->myCCB)) {
+	if (!streamFile || !anim8 || !anim8->myCCB) {
 		ws_LogErrorMsg(FL, "SysFile* streamFile invalid.");
 		return false;
 	}

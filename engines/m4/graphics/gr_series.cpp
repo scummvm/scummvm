@@ -30,7 +30,7 @@ namespace M4 {
 
 #define CHECK_SERIES if (!_G(globals)) error_show(FL, 'SERI');
 
-static void series_trigger_dispatch_callback(frac16 myMessage, struct machine * /*sender*/) {
+static void series_trigger_dispatch_callback(frac16 myMessage, machine * /*sender*/) {
 	kernel_trigger_dispatch(myMessage);
 }
 

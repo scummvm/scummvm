@@ -649,7 +649,7 @@ void AddPauseTime(int32 myTime) {
 	_GWS(pauseTime) += myTime;
 }
 
-void CycleEngines(Buffer * cleanBackground, int16 * depth_table, GrBuff * screenCodes, uint8 * myPalette, uint8 * ICT, bool updateVideo) {
+void CycleEngines(Buffer *cleanBackground, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT, bool updateVideo) {
 	int32 clockTime;
 
 	dbg_DebugNextCycle();
@@ -678,7 +678,7 @@ void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table, GrB
 		screenCodes, myPalette, ICT);
 }
 
-static void CancelAllEngineReqs(machine * m) {
+static void CancelAllEngineReqs(machine *m) {
 	globalMsgReq *myGMsg, *tempGMsg;
 
 	//---- CANCEL CRUNCHER REQS
@@ -709,7 +709,7 @@ static void CancelAllEngineReqs(machine * m) {
 }
 
 
-static void ShutdownMachine(machine * m) {
+static void ShutdownMachine(machine *m) {
 	dbg_RemoveWSMach(m);
 
 	if (m->myAnim8) {
@@ -766,7 +766,7 @@ void TerminateMachinesByHash(uint32 machHash) {
 	}
 }
 
-void TerminateMachine(machine * myMachine) {
+void TerminateMachine(machine *myMachine) {
 	if ((!myMachine) || (!VerifyMachineExists(myMachine))) {
 		return;
 	}
@@ -776,7 +776,7 @@ void TerminateMachine(machine * myMachine) {
 }
 
 
-bool VerifyMachineExists(machine * m) {
+bool VerifyMachineExists(machine *m) {
 	machine *tempM;
 
 	// Parameter verification
@@ -831,7 +831,7 @@ int32 ws_KillMachines() {
 
 // This is the proc designed to evaluate the instructions of the state machine
 
-static int32 StepAt(int32 * pcOffset, machine * m) {
+static int32 StepAt(int32 *pcOffset, machine *m) {
 	bool keepProcessing;
 	int32 myInstruction;
 	Anim8 *myAnim8;
@@ -876,7 +876,7 @@ static int32 StepAt(int32 * pcOffset, machine * m) {
 }
 
 
-void ws_StepWhile(machine * m, int32 pcOffset, int32 pcCount) {
+void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount) {
 	int32 myInstruction, oldPC;
 	uint32 machID, recurseLevel;
 
@@ -915,7 +915,7 @@ void ws_StepWhile(machine * m, int32 pcOffset, int32 pcCount) {
 // When a state machine enters a new state, every request and command is
 // evaluated immediately.
 
-void IntoTheState(machine * m) {
+void IntoTheState(machine *m) {
 	int32 myInstruction;
 	uint32 *stateTable, machID, recurseLevel;
 	int32 pcOffset;
@@ -1020,7 +1020,7 @@ enum {
 };
 
 
-static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine * recvM, int32 whichList, machine * sendM) {
+static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine *recvM, int32 whichList, machine *sendM) {
 	bool found;
 	msgRequest *myMsg = nullptr, *prevMsg;
 	int32 pcOffset, pcCount;
@@ -1104,8 +1104,8 @@ static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine * recvM, int3
 
 // This proc is what allows a machine to send a message to another machine(s)
 
-void SendWSMessage(uint32 msgHash, frac16 msgValue, machine * recvM,
-	uint32 machHash, machine * sendM, int32 msgCount) {
+void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
+	uint32 machHash, machine *sendM, int32 msgCount) {
 
 	bool found, more_to_send;
 	machine *currMachine;
