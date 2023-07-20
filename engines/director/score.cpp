@@ -405,8 +405,7 @@ void Score::update() {
 		if (_nextFrame) {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
 			// when jumping.
-			if (_nextFrame != _curFrameNumber)
-				rebuildChannelData(_nextFrame);
+			rebuildChannelData(_nextFrame);
 			_curFrameNumber = _nextFrame;
 		}
 		else if (!_window->_newMovieStarted)
