@@ -52,7 +52,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 	_shadowIntensity(0),
 	_processes(MaxProcesses),
 	_mjpgPlayer(), _filmStarted(0),
-	_currentScreen(), _loadingScreen(false),
+	_currentScreen(),
 	_currentCharacter(),
 	_defaultMouseCursor(),
 	_nextScreenType(ScreenLoadingType::Normal),
@@ -330,7 +330,6 @@ void AGDSEngine::saveScreenPatch() {
 
 
 void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadingType, bool savePatch) {
-	_loadingScreen = true;
 	debug("loadScreen %s [type: %d, save patch: %d, previous: %s]", name.c_str(), static_cast<int>(loadingType), savePatch, _currentScreenName.c_str());
 	if (savePatch)
 		saveScreenPatch();
@@ -368,7 +367,6 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 		if (!patch->defaultMouseCursor.empty())
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}
-	_loadingScreen = false;
 }
 
 void AGDSEngine::resetCurrentScreen() {
