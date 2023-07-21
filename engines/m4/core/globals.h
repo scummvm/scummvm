@@ -78,75 +78,11 @@ enum {
 	GLB_TEMP_31 = 37,
 	GLB_TEMP_32 = 38,
 
-	GLB_SCRATCH_VARS = 7,		// 19-16 globals reserved for the compiler
+	GLB_SCRATCH_VARS = 7,	// 19-16 globals reserved for the compiler
 	GLB_USER_VARS = 17		// 17+ globals for the applications programmer
 };
 
 constexpr int GLB_SHARED_VARS = 256;
-
-/**
- * Globals array class.
- * This design is complicated by the fact that the original sometimes used it
- * to store pointers as well as numbers, assuming they were 32-bits. Because of this,
- * the new Globals class has to support both
- */
-class Globals {
-	struct Entry {
-	private:
-		uint32 &_numValue;
-		void *&_ptrValue;
-		bool &_isPtr;
-	public:
-		Entry(uint32 &numValue, void *&ptrValue, bool &isPtr) :
-			_numValue(numValue), _ptrValue(ptrValue), _isPtr(isPtr) {
-		}
-
-		operator uint32() const {
-			assert(!_isPtr);
-			return _numValue;
-		}
-		template<class T>
-		operator T *() const {
-			assert(_isPtr);
-			return (T *)_ptrValue;
-		}
-		Entry &operator=(uint32 val) {
-			_isPtr = false;
-			_numValue = val;
-			return *this;
-		}
-		template<class T>
-		Entry &operator=(T *val) {
-			_isPtr = true;
-			_ptrValue = val;
-			return *this;
-		}
-	};
-private:
-	frac16 _numData[GLB_SHARED_VARS];
-	void *_ptrData[GLB_SHARED_VARS];
-	bool _isPtr[GLB_SCRATCH_VARS];
-public:
-	Globals();
-
-	/**
-	 * Dummy operator to allow for original code that did !globals to see if
-	 * the globals array had been created
-	 */
-	bool operator!() const { return false; }
-
-	/**
-	 * Accesses the numeric array. Needed by several wscript methods
-	 */
-	frac16 *getData() {
-		return _numData;
-	}
-
-	Entry operator[](uint idx) {
-		assert(idx < GLB_SHARED_VARS);
-		return Entry(_numData[idx], _ptrData[idx], _isPtr[idx]);
-	}
-};
 
 } // namespace M4
 

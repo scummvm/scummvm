@@ -24,7 +24,7 @@
 #define M4_WSCRIPT_WS_LOAD_H
 
 #include "m4/m4_types.h"
-#include "m4/fileio/fstream.h"
+#include "m4/fileio/sys_file.h"
 #include "m4/mem/reloc.h"
 #include "m4/wscript/ws_machine.h"
 #include "m4/wscript/ws_univ.h"
@@ -104,7 +104,7 @@ extern int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHand
 extern M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index, M4sprite *mySprite, bool *streamSeries);
 
 // WOODSCRIPT STREAMING API
-extern bool ws_OpenSSstream(StreamFile *streamFile, Anim8 *anim8);
+extern bool ws_OpenSSstream(SysFile *streamFile, Anim8 *anim8);
 extern bool ws_GetNextSSstreamCel(Anim8 *anim8);
 extern void ws_CloseSSstream(CCB *myCCB);
 

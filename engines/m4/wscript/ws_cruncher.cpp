@@ -1247,7 +1247,7 @@ static void op_OPEN_STREAM_SS(Anim8 *myAnim8) {
 	ShowCCB(myCCB);
 	myCCB->flags |= CCB_SKIP;
 
-	if (!ws_OpenSSstream((StreamFile *)(*_GWS(myArg1)), myAnim8)) {
+	if (!ws_OpenSSstream((SysFile *)(*_GWS(myArg1)), myAnim8)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0258, "open_ss_stream() failed.");
 	}
 

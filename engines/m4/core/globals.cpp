@@ -23,10 +23,4 @@
 
 namespace M4 {
 
-Globals::Globals() {
-	Common::fill(&_numData[0], &_numData[GLB_SCRATCH_VARS], 0);
-	Common::fill(&_ptrData[0], &_ptrData[GLB_SCRATCH_VARS], (void *)nullptr);
-	Common::fill(&_isPtr[0], &_isPtr[GLB_SHARED_VARS], false);
-}
-
 } // namespace M4

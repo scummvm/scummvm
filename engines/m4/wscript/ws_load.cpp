@@ -1494,26 +1494,26 @@ int32 ws_GetDATACount(uint32 hash) {
 }
 
 
-static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette) {
+static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	uint32 celsType, celsSize, numColors, *myColors;
 	uint32 *tempPtr, i, j, header, format;
 	int32 numCels, dataOffset;
 	bool byteSwap;
 	void *handlebuffer;
 
-	if (!stream) {
+	if (!sysFile) {
 		ws_LogErrorMsg(FL, "nullptr FILE POINTER given.");
 		return -1;
 	}
 
 	// Read in the series header and the format number
 	handlebuffer = &header;
-	if (!(*stream).read((Handle)&handlebuffer, 4)) {
+	if (!(*sysFile).read(&handlebuffer, 4)) {
 		ws_LogErrorMsg(FL, "Unable to read series header.");
 		return -1;
 	}
 	handlebuffer = &format;
-	if (!(*stream).read((Handle)&handlebuffer, 4)) {
+	if (!(*sysFile).read(&handlebuffer, 4)) {
 		ws_LogErrorMsg(FL, "Unable to read series format.");
 		return -1;
 	}
@@ -1532,23 +1532,22 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 
 	// Read in the SS chunk type - either PAL or SS info
 	handlebuffer = &celsType;
-	if (!(*stream).read((Handle)&handlebuffer, 4)) {
+	if (!(*sysFile).read(&handlebuffer, 4)) {
 		ws_LogErrorMsg(FL, "Unable to read series chunk type.");
 		return -1;
 	}
 
 	if ((celsType == CELS__PAL) || (celsType == CELS_LAP_)) {
-
-		//PAL info, read in the size of the PAL chunk
+		// PAL info, read in the size of the PAL chunk
 		handlebuffer = &celsSize;
-		if (!(*stream).read((Handle)&handlebuffer, 4)) {
+		if (!(*sysFile).read(&handlebuffer, 4)) {
 			ws_LogErrorMsg(FL, "Unable to read series chunk size.");
 			return -1;
 		}
 
 		// Now read in the number of colors to be inserted into the PAL
 		handlebuffer = &numColors;
-		if (!(*stream).read((Handle)&handlebuffer, 4)) {
+		if (!(*sysFile).read(&handlebuffer, 4)) {
 			ws_LogErrorMsg(FL, "Unable to read number of colors in PAL chunk.");
 			return -1;
 		}
@@ -1571,7 +1570,7 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 
 			// Read in the color info into a temp buffer
 			handlebuffer = myColors;
-			if (!(*stream).read((Handle)&handlebuffer, numColors << 2)) {
+			if (!(*sysFile).read(&handlebuffer, numColors << 2)) {
 				ws_LogErrorMsg(FL, "Failed to read in the PAL color info.");
 				return -1;
 			}
@@ -1587,7 +1586,7 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 				}
 			}
 
-			//If we have a place to store the color info
+			// If we have a place to store the color info
 			if (myPalette) {
 				tempPtr = (uint32 *)(&myColors[0]);
 				for (i = 0; i < numColors; i++) {
@@ -1605,7 +1604,7 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 
 		// Read in the next chunk type
 		handlebuffer = &celsType;
-		if (!(*stream).read((Handle)&handlebuffer, 4)) {
+		if (!(*sysFile).read(&handlebuffer, 4)) {
 			ws_LogErrorMsg(FL, "Failed to read in series chunk type.");
 			return -1;
 		}
@@ -1619,7 +1618,7 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 
 	// Read in the size of the entire chunk
 	handlebuffer = &celsSize;
-	if (!(*stream).read((Handle)&handlebuffer, 4)) {
+	if (!(*sysFile).read(&handlebuffer, 4)) {
 		ws_LogErrorMsg(FL, "Failed to read in series chunk size.");
 		return -1;
 	}
@@ -1631,14 +1630,14 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 
 	// *data contains header + offsets, therefore, we must scan ahead
 	// and find out how many cels are here...
-	if (!(*stream).seek_ahead((CELS_COUNT - CELS_SRC_SIZE - 1) << 2)) {
+	if (!(*sysFile).seek_ahead((CELS_COUNT - CELS_SRC_SIZE - 1) << 2)) {
 		ws_LogErrorMsg(FL, "Failed to seek ahead in the stream.");
 		return -1;
 	}
 
 	// Read how many sprites are in the series
 	handlebuffer = &numCels;
-	if (!(*stream).read((Handle)&handlebuffer, 4)) {
+	if (!(*sysFile).read(&handlebuffer, 4)) {
 		ws_LogErrorMsg(FL, "Failed to read the number of sprites in the series.");
 		return -1;
 	}
@@ -1649,7 +1648,7 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 	}
 
 	// Now, seek backwards to where we left off
-	if (!(*stream).seek_ahead((CELS_SRC_SIZE - CELS_COUNT) * 4)) {
+	if (!(*sysFile).seek_ahead((CELS_SRC_SIZE - CELS_COUNT) * 4)) {
 		ws_LogErrorMsg(FL, "Failed to seek backwards in the stream.");
 		return -1;
 	}
@@ -1663,7 +1662,7 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 	// Read in the series header and the sprite offset table
 	// Since we already read in celsType and celsSize, SS_HEAD_SIZE-2
 	handlebuffer = &((*data)[2]);
-	if (!(*stream).read((Handle)&handlebuffer, (SS_HEAD_SIZE + numCels - 2) << 2)) {
+	if (!(*sysFile).read(&handlebuffer, (SS_HEAD_SIZE + numCels - 2) << 2)) {
 		ws_LogErrorMsg(FL, "Failed to read the series header and the sprite offset table.");
 		return -1;
 	}
@@ -1681,11 +1680,11 @@ static int32 GetSSHeaderInfo(StreamFile *stream, uint32 **data, RGB8 *myPalette)
 	}
 
 	// Find out how far into the stream we are, and return that value
-	dataOffset = (*stream).get_pos();
+	dataOffset = (*sysFile).get_pos();
 	return dataOffset;
 }
 
-bool ws_OpenSSstream(StreamFile *streamFile, Anim8 *anim8) {
+bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	CCB *myCCB;
 	frac16 *myRegs;
 	uint32 *celsPtr, *offsets;
@@ -1694,7 +1693,7 @@ bool ws_OpenSSstream(StreamFile *streamFile, Anim8 *anim8) {
 	uint32 maxFrameSize;
 
 	// Verify the parameters
-	if (!streamFile || !anim8 || !anim8->myCCB) {
+	if (!sysFile || !anim8 || !anim8->myCCB) {
 		ws_LogErrorMsg(FL, "SysFile* streamFile invalid.");
 		return false;
 	}
@@ -1704,7 +1703,7 @@ bool ws_OpenSSstream(StreamFile *streamFile, Anim8 *anim8) {
 	ssDataOffset = 0;
 
 	// Read in the SS stream header
-	if ((ssDataOffset = GetSSHeaderInfo(streamFile, &(myCCB->streamSSHeader), &_G(master_palette)[0])) <= 0) {
+	if ((ssDataOffset = GetSSHeaderInfo(sysFile, &(myCCB->streamSSHeader), &_G(master_palette)[0])) <= 0) {
 		return false;
 	}
 
@@ -1751,7 +1750,7 @@ bool ws_OpenSSstream(StreamFile *streamFile, Anim8 *anim8) {
 	term_message("Biggest frame was: %ld, size: %ld bytes (compressed)", obesest_frame, maxFrameSize);
 
 	// Access the streamer to recognize the new client
-	if ((myCCB->myStream = (void *)f_stream_Open(streamFile, ssDataOffset, maxFrameSize, maxFrameSize << 4, numSprites, (int32 *)offsets, 4, false)) == nullptr) {
+	if ((myCCB->myStream = (void *)f_stream_Open(sysFile, ssDataOffset, maxFrameSize, maxFrameSize << 4, numSprites, (int32 *)offsets, 4, false)) == nullptr) {
 		ws_LogErrorMsg(FL, "Failed to open a stream.");
 		return false;
 	}

@@ -71,7 +71,7 @@ machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int
 	_G(globals)[GLB_TEMP_1] = frameRate << 16;
 
 	// Store the SysFile pointer
-	_G(globals)[GLB_TEMP_4] = sysFile;
+	_G(globals)[GLB_TEMP_4] = (intptr_t)sysFile;
 
 	// Set the callback trigger
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);

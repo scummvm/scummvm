@@ -551,7 +551,7 @@ bool SysFile::seek(uint32 pos) {
 				term_message("fail to fseek");
 			last_head_pos = rs->pos();
 
-			curr_hag_record->hag_pos = curr_hash_record.offset + pos;   // change file position
+			curr_hag_record->hag_pos = curr_hash_record.offset + pos;	// Change file position
 			return true;
 
 		} else {
@@ -559,6 +559,29 @@ bool SysFile::seek(uint32 pos) {
 		}
 	}
 }
+
+bool SysFile::seek_ahead(int32 amount) {
+	if (!_G(hag).hag_flag) {
+		return rs()->seek(amount, SEEK_CUR);
+
+	} else {
+		if (hag_success) {
+			Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(curr_hag_record->hag_fp);
+			assert(rs);
+
+			if (!rs->seek(amount, SEEK_CUR))
+				term_message("fail to fseek");
+
+			last_head_pos = rs->pos();
+			curr_hag_record->hag_pos += amount;		// Change file position
+			return true;
+
+		} else {
+			return false;
+		}
+	}
+}
+
 
 uint32 SysFile::read(MemHandle bufferHandle) {
 	int32 bytesToRead;

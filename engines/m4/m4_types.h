@@ -39,7 +39,12 @@ namespace M4 {
 typedef void *Ptr;
 typedef void *Handle;
 
-typedef uint32 frac16;
+/**
+ * This needs to be intptr_t in ScummVM because series_stream in gr_series.cpp stores
+ * a pointer as a global. On some systems size(ptr) > sizeof(int)
+ */
+typedef intptr_t frac16;
+
 typedef uint32 ulong;
 typedef uint32 quadchar;
 typedef uint32 trigraph;
