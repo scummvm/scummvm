@@ -1819,7 +1819,9 @@ msgstr "フォントの固定倍率を無効化"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
-msgstr "GUIで固定サイズのフォントをアップスケールしません。低解像度でのアーティファクトが減少します"
+msgstr ""
+"GUIで固定サイズのフォントをアップスケールしません。低解像度でのアーティファク"
+"トが減少します"
 
 #: gui/options.cpp:2571
 msgid "GUI language:"
