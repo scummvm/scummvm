@@ -29,16 +29,13 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/builds/win32/ftdebug.o \
 	lib/freetype-2.1.3/freetype213.o \
 	lib/freetype-2.1.3/ftbbox.o \
-	lib/freetype-2.1.3/ftbdf.o \
 	lib/freetype-2.1.3/ftcalc.o \
 	lib/freetype-2.1.3/ftgloadr.o \
 	lib/freetype-2.1.3/ftglyph.o \
 	lib/freetype-2.1.3/ftinit.o \
-	lib/freetype-2.1.3/ftmm.o \
 	lib/freetype-2.1.3/ftnames.o \
 	lib/freetype-2.1.3/ftobjs.o \
 	lib/freetype-2.1.3/ftoutln.o \
-	lib/freetype-2.1.3/ftpfr.o \
 	lib/freetype-2.1.3/ftstream.o \
 	lib/freetype-2.1.3/ftsystem.o \
 	lib/freetype-2.1.3/fttrigon.o \
