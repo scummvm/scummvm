@@ -151,20 +151,20 @@ machine *kernel_timer_callback(int32 ticks, int16 trigger, MessageCB callMe) {
 	return (TriggerMachineByHash(1, nullptr, -1, -1, callMe, false, "timer callback"));
 }
 
-void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCodeBuff, uint8 *myPalette, uint8 *ICT,
-	M4Rect *clipRect, M4Rect *updateRect) {
-#ifdef TODO
+static void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCodeBuff,
+		uint8 *myPalette, uint8 *ICT, M4Rect *clipRect, M4Rect *updateRect) {
 	M4sprite *source;
 
 	// Temporary var to prevent excessive dereferences
 	source = myCCB->source;
 
 	if (!(myCCB->flags & CCB_DISC_STREAM)) {
-		//make sure the sprite is still in memory
+		// Make sure the sprite is still in memory
 		if (!source->sourceHandle || !*(source->sourceHandle)) {
 			ws_LogErrorMsg(FL, "Sprite series is no longer in memory.");
 			ws_Error(myAnim8->myMachine, ERR_INTERNAL, 0x02ff, "Error during ws_DoDisplay()");
 		}
+
 		// Lock the sprite handle
 		HLock(source->sourceHandle);
 		source->data = (uint8 *)((byte *)*(source->sourceHandle) + source->sourceOffset);
@@ -174,15 +174,17 @@ void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCo
 	DrawRequestX dr;
 	RendCell Frame;
 
-	Destination.Width = halScrnBuf->stride;
-	Destination.Height = halScrnBuf->h;
-	Destination.PixMap = (void *)halScrnBuf->data;
+	Destination.Width = source->w;
+	Destination.Height = source->h;
+	Destination.Pitch = source->w;
+	Destination.encoding = (myPalette && ICT) ? source->encoding : source->encoding & 0x7f;
+	Destination.PixMap = source->data;
 
 	dr.x = myAnim8->myRegs[IDX_X] >> 16;
 	dr.y = myAnim8->myRegs[IDX_Y] >> 16;
 	dr.scale_x = myCCB->scaleX;
 	dr.scale_y = myCCB->scaleY;
-	dr.depth_map = screenCodeBuff->data;
+	dr.depth_map = screenCodeBuff->get_pixmap();		// TODO: Confirm this
 	dr.Pal = (RGBcolor *)myPalette;
 	dr.ICT = ICT;
 	dr.depth = myCCB->layer >> 8;
@@ -191,6 +193,7 @@ void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCo
 	Frame.hot_y = myCCB->source->yOffset;
 	Frame.Width = source->w;
 	Frame.Height = source->h;
+
 	if ((!myPalette) || (!ICT)) {
 		Frame.Comp = (uint32)(source->encoding & 0x7f);
 	} else {
@@ -203,13 +206,9 @@ void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCo
 	myCCB->flags &= ~CCB_REDRAW;
 
 	if (!(myCCB->flags & CCB_DISC_STREAM)) {
-		//unlock the sprite's handle
+		// Unlock the sprite's handle
 		HUnLock(source->sourceHandle);
 	}
-
-#else
-	error("TODO: DrawSprite");
-#endif
 }
 
 void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff,
@@ -223,14 +222,6 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff
 	Anim8 *myAnim8;
 	M4Rect *currRect, intersectRect, noClipRect, dummyRect;
 	bool greyMode;
-#ifdef TODO
-	Buffer drawSpriteBuff;
-	bool finished;
-	M4sprite *source;
-	uint8 myDepth;
-	M4Rect *newRect;
-	DrawRequest spriteDrawReq;
-#endif
 
 	if (((myScreen = vmng_screen_find(_G(gameDrawBuff), &status)) == nullptr) || (status != SCRN_ACTIVE)) {
 		return;
@@ -271,19 +262,16 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff
 	// or simply draw the sprite if it has been marked for redraw
 	myAnim8 = _GWS(myCruncher)->backLayerAnim8;
 	while (myAnim8) {
-
 		myCCB = myAnim8->myCCB;
 		currRect = myCCB->currLocation;
 		if (myCCB && myCCB->source && (!(myCCB->flags & CCB_NO_DRAW))) {
 			if (myCCB->flags & CCB_REDRAW) {
-
 				// Draw the sprite
 				DrawSprite(myCCB, myAnim8, halScrnBuf, screenCodeBuff, myPalette, ICT, &noClipRect, currRect);
 
 				// Add it's new location to the update list
 				vmng_AddRectToRectList(&drawRectList, currRect->x1, currRect->y1, currRect->x2, currRect->y2);
 			} else {
-
 				// Loop through the update list, intersect each rect with the sprites
 				// current location, and update redraw all overlapping areas
 				myRect = drawRectList;

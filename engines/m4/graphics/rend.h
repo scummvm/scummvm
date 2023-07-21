@@ -32,9 +32,11 @@ struct RGBcolor {
 };
 
 struct RendGrBuff {
-	uint32 Width;
-	uint32 Height;
-	void *PixMap;
+	uint32 Width = 0;
+	uint32 Height = 0;
+	void *PixMap = nullptr;
+	byte encoding = 0;
+	uint32 Pitch = 0;
 };
 
 struct DrawRequestX {
