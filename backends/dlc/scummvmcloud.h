@@ -56,6 +56,10 @@ public:
 
 	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) override;
 
+	virtual void removeCacheFile(Common::Path file) override;
+
+	void extractZip(Common::Path file);
+
 	// callback functions
 	void jsonCallbackGetAllDLCs(Networking::JsonResponse response);
 
