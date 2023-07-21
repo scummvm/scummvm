@@ -492,7 +492,7 @@ protected:
 
 class ScummEngine_v80he : public ScummEngine_v72he {
 protected:
-	int32 _heSndResId, _curSndId, _sndPtrOffs, _sndTmrOffs, _sndDataSize;
+	int32 _heSndResId;
 	enum SubOpType {
 		SO_CURSOR_IMAGE = 19,
 		SO_CURSOR_COLOR_IMAGE = 20,
@@ -515,8 +515,6 @@ protected:
 	void initCharset(int charset) override;
 
 	void clearDrawQueues() override;
-
-	void createSound(int snd1id, int snd2id);
 
 	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void drawPixel(int x, int y, int flags);

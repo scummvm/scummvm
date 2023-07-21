@@ -214,6 +214,7 @@ void ScummEngine_v70he::setupScummVars() {
 	VAR_CURRENTDRIVE = 0xFF;
 	VAR_MUSIC_TIMER = 0xFF;
 
+	VAR_ERROR_FLAG = 8; // Alias of VAR_GAME_LOADED for now, which will get removed later
 	VAR_NUM_SOUND_CHANNELS = 9;
 	VAR_TALK_CHANNEL = 10;
 	VAR_SOUND_CHANNEL = 14;
@@ -272,6 +273,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_SOUND_CHANNEL = 52;
 	VAR_EARLY_CHAN_0_CALLBACK = 53;
 	VAR_EARLY_CHAN_1_CALLBACK = 54;
+	VAR_EARLY_TALKIE_CALLBACK = 55;
 	VAR_EARLY_CHAN_2_CALLBACK = 55;
 	VAR_EARLY_CHAN_3_CALLBACK = 56;
 	VAR_MEMORY_PERFORMANCE = 57;
@@ -333,6 +335,7 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_U32_VERSION = 107;
 		VAR_U32_ARRAY_UNK = 116;
 		VAR_WIZ_TCOLOR = 117;
+		VAR_OPERATION_FAILURE = 119;
 		VAR_START_DYN_SOUND_CHANNELS = 120;
 	}
 	if (_game.heversion >= 98) {

@@ -202,7 +202,7 @@ void Sound::updateMusicTimer() {
 		_musicTimer = 277;
 }
 
-void Sound::startSound(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void Sound::startSound(int sound, int offset, int channel, int flags, int freq, int pan, int volume) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	_lastSound = sound;
@@ -211,18 +211,18 @@ void Sound::startSound(int sound, int heOffset, int heChannel, int heFlags, int 
 	if (sound <= _vm->_numSounds)
 		_vm->ensureResourceLoaded(rtSound, sound);
 
-	addSoundToQueue(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+	addSoundToQueue(sound, offset, channel, flags, freq, pan, volume);
 }
 
-void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
+void Sound::addSoundToQueue(int sound, int offset, int channel, int flags, int freq, int pan, int volume) {
 	assert(_soundQueuePos < ARRAYSIZE(_soundQueue));
 	_soundQueue[_soundQueuePos].sound = sound;
-	_soundQueue[_soundQueuePos].offset = heOffset;
-	_soundQueue[_soundQueuePos].channel = heChannel;
-	_soundQueue[_soundQueuePos].flags = heFlags;
-	_soundQueue[_soundQueuePos].freq = heFreq;
-	_soundQueue[_soundQueuePos].pan = hePan;
-	_soundQueue[_soundQueuePos].vol = heVol;
+	_soundQueue[_soundQueuePos].offset = offset;
+	_soundQueue[_soundQueuePos].channel = channel;
+	_soundQueue[_soundQueuePos].flags = flags;
+	_soundQueue[_soundQueuePos].freq = freq;
+	_soundQueue[_soundQueuePos].pan = pan;
+	_soundQueue[_soundQueuePos].vol = volume;
 	_soundQueuePos++;
 }
 
@@ -1765,7 +1765,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 			ptr = _res->createResource(rtSound, idx, total_size + 8);
 
 			((uint32 *)ptr)[0] = TO_BE_32(MKTAG('W', 'S', 'O', 'U'));
-			((uint32 *)ptr)[1] = total_size + 8;
+			((uint32 *)ptr)[1] = TO_BE_32(total_size + 8);
 
 			// Move the ptr forward for the actual data allocation,
 			// so that our new header doesn't get rewritten

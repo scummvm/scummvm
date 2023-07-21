@@ -25,6 +25,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/he/sound_he.h"
+#include "scumm/he/mixer_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/util.h"
 
@@ -50,19 +51,26 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 	_vm((ScummEngine_v60he *)parent),
 	_overrideFreq(0),
 	_heSpoolingMusicTable(nullptr),
-	_heMusicTracks(0),
+	_heSpoolingMusicCount(0),
 	_mutex(mutex) {
+
+	_createSndId = 0;
+	_createSndLastAppend = 0;
+	_createSndLastPos = 0;
+	_baseSndSize = 0;
 
 	memset(_heChannel, 0, sizeof(_heChannel));
 	_heSoundChannels = new Audio::SoundHandle[8]();
+	_useMilesSoundSystem = parent->_game.id == GID_MOONBASE;
+	_heMixer = new HEMixer(_mixer, _useMilesSoundSystem);
 }
 
 SoundHE::~SoundHE() {
 	free(_heSpoolingMusicTable);
 	delete[] _heSoundChannels;
 
-	if (_spoolingMusicFile.isOpen())
-		_spoolingMusicFile.close();
+	if (_heSpoolingMusicFile.isOpen())
+		_heSpoolingMusicFile.close();
 }
 
 void SoundHE::startSound(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
@@ -88,24 +96,13 @@ void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlag
 }
 
 void SoundHE::modifySound(int sound, int offset, int frequencyShift, int pan, int volume, int flags) {
-	int chan = findSoundChannel(sound);
-	if (chan >= 0 && _heChannel[chan].sound) {
-		// Modify the current playing sound
-		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_VOL)
-			_mixer->setChannelVolume(_heSoundChannels[chan], volume);
-
-		// Convert the pan range from (0, 127) to (-127, 127)
-		int scaledPan = (pan != 64) ? 2 * pan - 127 : 0;
-		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_PAN)
-			_mixer->setChannelBalance(_heSoundChannels[chan], scaledPan);
-
-		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_FREQUENCY) {
-			int newFrequency = (_heChannel[chan].frequency * frequencyShift) / HSND_SOUND_FREQ_BASE;
-			if (newFrequency)
-				_mixer->setChannelRate(_heSoundChannels[chan], newFrequency);
+	int channel = hsFindSoundChannel(sound);
+	if (channel >= 0 && _heChannel[channel].sound) {
+		// The implementation for this is only available for the Miles mixer
+		if (_useMilesSoundSystem) {
+			_heMixer->milesModifySound(channel, offset, HESoundModifiers(frequencyShift, pan, volume), flags);
 		}
 	}
-	// TODO: Implement spooled sound case
 }
 
 void SoundHE::processSoundQueues() {
@@ -121,8 +118,13 @@ void SoundHE::processSoundQueues() {
 			hePan = _soundQueue[i].pan;
 			heVol = _soundQueue[i].vol;
 
-			if (snd)
-				triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers(heFreq, hePan, heVol));
+			if (snd) {
+				if (_vm->_game.heversion < 99) {
+					triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers());
+				} else {
+					triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers(heFreq, hePan, heVol));
+				}
+			}
 		}
 		_soundQueuePos = 0;
 	} else {
@@ -132,12 +134,10 @@ void SoundHE::processSoundQueues() {
 			heOffset = _soundQueue[_soundQueuePos].offset;
 			heChannel = _soundQueue[_soundQueuePos].channel;
 			heFlags = _soundQueue[_soundQueuePos].flags;
-			heFreq = _soundQueue[_soundQueuePos].freq;
-			hePan = _soundQueue[_soundQueuePos].pan;
-			heVol = _soundQueue[_soundQueuePos].vol;
 
-			if (snd)
-				triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers(heFreq, hePan, heVol));
+			if (snd) {
+				triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers());
+			}
 		}
 	}
 
@@ -189,9 +189,9 @@ void SoundHE::stopSound(int sound) {
 			_heChannel[i].sound = 0;
 			_heChannel[i].priority = 0;
 			_heChannel[i].frequency = 0;
-			_heChannel[i].timer = 0;
+			_heChannel[i].timeout = 0;
 			_heChannel[i].hasSoundTokens = false;
-			_heChannel[i].codeOffs = 0;
+			_heChannel[i].codeOffset = 0;
 			memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
 		}
 	}
@@ -209,12 +209,12 @@ void SoundHE::stopAllSounds() {
 	Sound::stopAllSounds();
 }
 
-int SoundHE::findSoundChannel(int sound) {
+int SoundHE::hsFindSoundChannel(int sound) {
 	if (sound >= HSND_CHANNEL_0) {
 		int channel = sound - HSND_CHANNEL_0;
 
 		if (channel < 0 || channel > HSND_MAX_CHANNELS - 1) {
-			error("SoundHE::findSoundChannel(): ERROR: Channel %d out of range (%d-%d)",
+			error("SoundHE::hsFindSoundChannel(): ERROR: Channel %d out of range (%d-%d)",
 				channel, 0, HSND_MAX_CHANNELS - 1);
 		}
 
@@ -249,9 +249,9 @@ void SoundHE::stopSoundChannel(int chan) {
 	_heChannel[chan].sound = 0;
 	_heChannel[chan].priority = 0;
 	_heChannel[chan].frequency = 0;
-	_heChannel[chan].timer = 0;
+	_heChannel[chan].timeout = 0;
 	_heChannel[chan].hasSoundTokens = false;
-	_heChannel[chan].codeOffs = 0;
+	_heChannel[chan].codeOffset = 0;
 	memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
 
 	for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
@@ -375,56 +375,56 @@ void SoundHE::setupHEMusicFile() {
 	uint32 id, len;
 	Common::String musicFilename(_vm->generateFilename(-4));
 
-	if (_spoolingMusicFile.open(musicFilename)) {
+	if (_heSpoolingMusicFile.open(musicFilename)) {
 
-		id = _spoolingMusicFile.readUint32BE();
-		len = _spoolingMusicFile.readUint32BE();
+		id = _heSpoolingMusicFile.readUint32BE();
+		len = _heSpoolingMusicFile.readUint32BE();
 		if (id == MKTAG('S', 'O', 'N', 'G')) {
 
 			// Older versions had a much simpler file structure
 			if (_vm->_game.heversion < 80) {
 				// Skip header wrapping file
-				_spoolingMusicFile.seek(16, SEEK_SET);
-				_heMusicTracks = _spoolingMusicFile.readUint32LE();
+				_heSpoolingMusicFile.seek(16, SEEK_SET);
+				_heSpoolingMusicCount = _heSpoolingMusicFile.readUint32LE();
 			} else {
 				// HE 80 and above
-				id = _spoolingMusicFile.readUint32BE();
-				len = _spoolingMusicFile.readUint32BE();
+				id = _heSpoolingMusicFile.readUint32BE();
+				len = _heSpoolingMusicFile.readUint32BE();
 				if (id == MKTAG('S', 'G', 'H', 'D')) {
-					_heMusicTracks = _spoolingMusicFile.readUint32LE();
-					_spoolingMusicFile.seek(len - 8 - 4, SEEK_CUR);
+					_heSpoolingMusicCount = _heSpoolingMusicFile.readUint32LE();
+					_heSpoolingMusicFile.seek(len - 8 - 4, SEEK_CUR);
 				} else {
-					_spoolingMusicFile.close();
+					_heSpoolingMusicFile.close();
 					debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGHD tag, found %s", musicFilename.c_str(), tag2str(id));
 					return;
 				}
 			}
 
-			debug(5, "setupHEMusicFile(): music files count = %d", _heMusicTracks);
-			_heSpoolingMusicTable = (HESpoolingMusicItem *)malloc(_heMusicTracks * sizeof(HESpoolingMusicItem));
+			debug(5, "setupHEMusicFile(): music files count = %d", _heSpoolingMusicCount);
+			_heSpoolingMusicTable = (HESpoolingMusicItem *)malloc(_heSpoolingMusicCount * sizeof(HESpoolingMusicItem));
 
 			if (_heSpoolingMusicTable != nullptr) {
-				for (int i = 0; i < _heMusicTracks; i++) {
+				for (int i = 0; i < _heSpoolingMusicCount; i++) {
 
 					// For later versions we check that we are actually reading a SGEN section...
 					if (_vm->_game.heversion >= 80) {
-						id = _spoolingMusicFile.readUint32BE();
-						len = _spoolingMusicFile.readUint32BE();
+						id = _heSpoolingMusicFile.readUint32BE();
+						len = _heSpoolingMusicFile.readUint32BE();
 						if (id != MKTAG('S', 'G', 'E', 'N')) {
-							_spoolingMusicFile.close();
+							_heSpoolingMusicFile.close();
 							debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGEN tag, found %s", musicFilename.c_str(), tag2str(id));
 							return;
 						}
 					}
 
-					_heSpoolingMusicTable[i].song = _spoolingMusicFile.readSint32LE();
-					_heSpoolingMusicTable[i].offset = _spoolingMusicFile.readSint32LE();
-					_heSpoolingMusicTable[i].size = _spoolingMusicFile.readSint32LE();
+					_heSpoolingMusicTable[i].song = _heSpoolingMusicFile.readSint32LE();
+					_heSpoolingMusicTable[i].offset = _heSpoolingMusicFile.readSint32LE();
+					_heSpoolingMusicTable[i].size = _heSpoolingMusicFile.readSint32LE();
 
 					int amountToRead = _vm->_game.heversion >= 80 ? 9 : 13;
 					int readAmount = 0;
 					for (readAmount = 0; readAmount < amountToRead; readAmount++) {
-						_heSpoolingMusicTable[i].filename[readAmount] = _spoolingMusicFile.readByte();
+						_heSpoolingMusicTable[i].filename[readAmount] = _heSpoolingMusicFile.readByte();
 
 						// Early string termination
 						if (_heSpoolingMusicTable[i].filename[readAmount] == '\0')
@@ -453,17 +453,15 @@ void SoundHE::setupHEMusicFile() {
 }
 
 bool SoundHE::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
-	int i;
-
-	for (i = 0; i < _heMusicTracks; i++) {
+	for (int i = 0; i < _heSpoolingMusicCount; i++) {
 		if (_heSpoolingMusicTable[i].song == id) {
 			musicOffs = _heSpoolingMusicTable[i].offset;
 			musicSize = _heSpoolingMusicTable[i].size;
-			return 1;
+			return true;
 		}
 	}
 
-	return 0;
+	return false;
 }
 
 void SoundHE::handleSoundFrame() {
@@ -507,10 +505,10 @@ void SoundHE::unqueueSoundCallbackScripts() {
 
 void SoundHE::checkSoundTimeouts() {
 	for (int chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
-		if (_heChannel[chan].sound == 0 || _heChannel[chan].timer == 0)
+		if (_heChannel[chan].sound == 0 || _heChannel[chan].timeout == 0)
 			continue;
 
-		if (_vm->getHETimer(chan + HSND_TIMER_SLOT) > _heChannel[chan].timer) {
+		if (_vm->getHETimer(chan + HSND_TIMER_SLOT) > _heChannel[chan].timeout) {
 			digitalSoundCallback(HSND_SOUND_TIMEOUT, chan);
 		}
 	}
@@ -606,7 +604,7 @@ void SoundHE::runSoundCode() {
 			continue;
 		}
 
-		if (_heChannel[chan].codeOffs == -1) {
+		if (_heChannel[chan].codeOffset == -1) {
 			continue;
 		}
 
@@ -624,7 +622,7 @@ void SoundHE::runSoundCode() {
 
 		assert(soundPtr);
 
-		soundPtr += _heChannel[chan].codeOffs;
+		soundPtr += _heChannel[chan].codeOffset;
 
 		len = READ_LE_UINT16(soundPtr);
 		freq = READ_LE_UINT32(soundPtr + sizeof(uint16));
@@ -634,7 +632,7 @@ void SoundHE::runSoundCode() {
 
 			processSoundOpcodes(_heChannel[chan].sound, soundPtr + sizeof(uint16) + sizeof(uint32), _heChannel[chan].soundVars);
 
-			_heChannel[chan].codeOffs += len;
+			_heChannel[chan].codeOffset += len;
 
 			soundPtr += len;
 
@@ -642,7 +640,7 @@ void SoundHE::runSoundCode() {
 			freq = READ_LE_UINT32(soundPtr + sizeof(uint16));
 
 			if (len == 0) {
-				_heChannel[chan].codeOffs = -1;
+				_heChannel[chan].codeOffset = -1;
 				break;
 			}
 		}
@@ -781,8 +779,18 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 	if ((READ_BE_UINT32(soundAddr) == MKTAG('D', 'I', 'G', 'I')) || (READ_BE_UINT32(soundAddr) == MKTAG('T', 'A', 'L', 'K'))) {
 		triggerDigitalSound(soundId, heOffset, heChannel, heFlags);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('M', 'I', 'D', 'I')) {
-		// Nothing happens in the original as well
-		return;
+		if (_vm->_imuse) {
+			// This is used in the DOS version of Fatty Bear's
+			// Birthday Surprise to change the note on the piano
+			// when not using a digitized instrument.
+			_vm->_imuse->stopSound(_currentMusic);
+			_currentMusic = soundId;
+			_vm->_imuse->startSoundWithNoteOffset(soundId, heOffset);
+		} else if (_vm->_musicEngine) {
+			_vm->_musicEngine->stopSound(_currentMusic);
+			_currentMusic = soundId;
+			_vm->_musicEngine->startSoundWithTrackID(soundId, heOffset);
+		}
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('W', 'S', 'O', 'U')) {
 		triggerRIFFSound(soundId, heOffset, heChannel, heFlags, modifiers);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('X', 'S', 'O', 'U')) {
@@ -792,8 +800,209 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 	}
 }
 
-void SoundHE::triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers) {
+void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags, HESoundModifiers modifiers) {
+	if (_heSpoolingMusicCount != 0) {
+		for (int i = 0; i < _heSpoolingMusicCount; i++) {
+			if (_heSpoolingMusicTable[i].song == song) {
+				Common::String filename(_vm->generateFilename(-4));
+				int fileOffset = 0;
+				int songsize = 0;
+				int id, len;
 
+				hsStopDigitalSound(_heChannel[channel].sound);
+
+				if (_heSpoolingMusicTable[i].offset != 0) {
+					fileOffset = _heSpoolingMusicTable[i].offset;
+
+					if (_vm->_game.heversion < 80)
+						fileOffset += HSND_RES_OFFSET_SOUND_DATA;
+
+					_heSpoolingMusicFile.seek(fileOffset, SEEK_SET);
+					songsize = _heSpoolingMusicTable[i].size;
+
+					if (_vm->_game.heversion < 80)
+						songsize -= HSND_RES_OFFSET_SOUND_DATA;
+				} else {
+					_heSpoolingMusicFile.close();
+
+					filename = _heSpoolingMusicTable[i].filename;
+
+					if (!_heSpoolingMusicFile.open(filename)) {
+						debug("SoundHE::triggerSpoolingSound(): Can't open music file '%s'", filename.c_str());
+						if (_vm->_game.heversion < 95) {
+							_vm->VAR(_vm->VAR_ERROR_FLAG) = -1;
+						} else {
+							_vm->VAR(_vm->VAR_OPERATION_FAILURE) = -1;
+						}
+
+						return;
+					} else if (_vm->_game.heversion < 80) {
+						_heSpoolingMusicFile.seek(HSND_RES_OFFSET_SOUND_DATA, SEEK_SET);
+						songsize = _heSpoolingMusicFile.size() - HSND_RES_OFFSET_SOUND_DATA;
+					}
+				}
+
+				// Old spooled music format (raw audio)
+				if (_vm->_game.heversion < 80) {
+					_heMixer->startSpoolingChannel(
+						channel, _heSpoolingMusicFile, songsize,
+						HSND_DEFAULT_FREQUENCY, HSND_MAX_VOLUME, channel,
+						CHANNEL_ACTIVE);
+
+					_heChannel[channel].sound = song;
+					_heChannel[channel].priority = 255;
+
+					_vm->VAR(_vm->VAR_ERROR_FLAG) = 0;
+					return;
+				}
+
+				_heChannel[channel].codeOffset = -1;
+				_heChannel[channel].codeBuffer = nullptr;
+				_heChannel[channel].hasSoundTokens = false;
+
+				id = _heSpoolingMusicFile.readUint32BE();
+
+				if (id == MKTAG('R', 'I', 'F', 'F')) {
+					len = _heSpoolingMusicFile.readUint32LE();
+					id = _heSpoolingMusicFile.readUint32BE();
+
+					if (id != MKTAG('W', 'A', 'V', 'E'))
+						error("SoundHE::triggerSpoolingSound(): Illegal music .wav file %d", song);
+
+					while (true) {
+						id = _heSpoolingMusicFile.readUint32BE();
+						len = _heSpoolingMusicFile.readUint32LE();
+
+						if (id == MKTAG('d', 'a', 't', 'a')) {
+							id = MKTAG('S', 'D', 'A', 'T'); // Convert it to a SDAT tag
+							len += 8; // Compensate the length of the header
+
+							break;
+						} else if (id == MKTAG('S', 'B', 'N', 'G')) {
+							if (len > ARRAYSIZE(_heSpoolingCodeBuffer)) {
+								error("SoundHE::triggerSpoolingSound(): Spooling sound %d code too large", song);
+							}
+
+							_heSpoolingMusicFile.read(_heSpoolingCodeBuffer, len);
+
+							_heChannel[channel].codeOffset = 0;
+							_heChannel[channel].codeBuffer = _heSpoolingCodeBuffer;
+							_heChannel[channel].hasSoundTokens = true;
+						} else if (id == MKTAG('f', 'm', 't', ' ')) {
+							PCMWaveFormat pcm;
+
+							if (len < sizeof(pcm))
+								error("SoundHE::triggerSpoolingSound(): Illegal .wav format length in song %d", song);
+
+							pcm.wFormatTag = _heSpoolingMusicFile.readUint16LE();
+							pcm.wChannels = _heSpoolingMusicFile.readUint16LE();
+							pcm.dwSamplesPerSec = _heSpoolingMusicFile.readUint32LE();
+							pcm.dwAvgBytesPerSec = _heSpoolingMusicFile.readUint32LE();
+							pcm.wBlockAlign = _heSpoolingMusicFile.readUint16LE();
+							pcm.wBitsPerSample = _heSpoolingMusicFile.readUint16LE();
+
+							if (_useMilesSoundSystem) {
+								if (pcm.wFormatTag != WAVE_FORMAT_PCM && pcm.wFormatTag != WAVE_FORMAT_IMA_ADPCM) {
+									error("SoundHE::triggerSpoolingSound(): Illegal .wav format for Miles mixer, song %d - %d",
+										  song, pcm.wFormatTag);
+								}
+							} else {
+								if (pcm.wFormatTag != WAVE_FORMAT_PCM ||
+									pcm.wChannels != 1 ||
+									pcm.dwSamplesPerSec != HSND_DEFAULT_FREQUENCY ||
+									pcm.wBitsPerSample != 8) {
+									error("SoundHE::triggerSpoolingSound(): Illegal .wav format for software mixer, song %d - %d, %d, %d, %d",
+											   song, pcm.wFormatTag, pcm.wChannels, pcm.dwSamplesPerSec, pcm.wBitsPerSample);
+								}
+							}
+
+							// Skip over the rest of this block.
+							_heSpoolingMusicFile.seek(len - sizeof(pcm), SEEK_CUR);
+						} else {
+							_heSpoolingMusicFile.seek(len, SEEK_CUR);
+						}
+					}
+				} else if (id == MKTAG('D', 'I', 'G', 'I')) {
+					len = _heSpoolingMusicFile.readUint32BE();
+					id = _heSpoolingMusicFile.readUint32BE();
+					len = _heSpoolingMusicFile.readUint32BE();
+
+					if (id == MKTAG('H', 'S', 'H', 'D')) {
+						_heSpoolingMusicFile.seek(len - 8, SEEK_CUR);
+					} else {
+						error("SoundHE::triggerSpoolingSound(): Illegal spooling sound %d, id %s", song, tag2str(id));
+					}
+
+					id = _heSpoolingMusicFile.readUint32BE();
+					len = _heSpoolingMusicFile.readUint32BE();
+
+					if (id == MKTAG('S', 'B', 'N', 'G')) {
+						if (len > sizeof(_heSpoolingCodeBuffer)) {
+							error("SoundHE::triggerSpoolingSound(): Spooling sound %d code too large", song);
+						}
+
+						_heSpoolingMusicFile.read(_heSpoolingCodeBuffer, len - 8);
+						_heChannel[channel].codeOffset = 0;
+						_heChannel[channel].codeBuffer = _heSpoolingCodeBuffer;
+						_heChannel[channel].hasSoundTokens = true;
+
+						id = _heSpoolingMusicFile.readUint32BE();
+						len = _heSpoolingMusicFile.readUint32BE();
+					}
+				} else {
+					error("SoundHE::triggerSpoolingSound(): Illegal spooling sound %d, id %s", song, tag2str(id));
+				}
+
+				if (id == MKTAG('S', 'D', 'A', 'T')) {
+					songsize = len - 8;
+				} else {
+					error("SoundHE::triggerSpoolingSound(): Illegal spooling sound %d, id %s", song, tag2str(id));
+				}
+
+				if (_useMilesSoundSystem) {
+					if (offset)
+						debug("SoundHE::triggerSpoolingSound(): Starting offsets into music files not supported with Miles currently");
+
+					_heMixer->milesStartSpoolingChannel(channel, filename.c_str(), fileOffset, flags, modifiers);
+				} else {
+					// Start the music track at a specified offset
+					if (offset) {
+						_heSpoolingMusicFile.seek(offset, SEEK_CUR);
+
+						if (offset >= songsize || offset < 0) {
+							error("SoundHE::triggerSpoolingSound(): Invalid offset %d for sound %d (song size %d)", offset, song, songsize);
+						}
+
+						songsize -= offset;
+					}
+
+					_heMixer->startSpoolingChannel(channel, _heSpoolingMusicFile, songsize,
+											HSND_DEFAULT_FREQUENCY, HSND_MAX_VOLUME, channel, CHANNEL_ACTIVE);
+				}
+
+				_vm->setHETimer(channel + HSND_TIMER_SLOT);
+
+				_heChannel[channel].sound = song;
+				_heChannel[channel].priority = 255;
+				_heChannel[channel].frequency = HSND_DEFAULT_FREQUENCY;
+
+				if (_vm->_game.heversion < 95) {
+					_vm->VAR(_vm->VAR_ERROR_FLAG) = 0;
+				} else {
+					_vm->VAR(_vm->VAR_OPERATION_FAILURE) = 0;
+				}
+
+				return;
+			}
+		}
+	}
+
+	// Error situation
+	if (_vm->_game.heversion < 95) {
+		_vm->VAR(_vm->VAR_ERROR_FLAG) = -1;
+	} else {
+		_vm->VAR(_vm->VAR_OPERATION_FAILURE) = -1;
+	}
 }
 
 void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers) {
@@ -803,6 +1012,15 @@ void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heF
 	int soundPriority = 128;
 	int soundCodeOffset = -1;
 	bool parsedFmt = false;
+
+	// For uninit var warning...
+	pFmt.wFormatTag = 0;
+	pFmt.wChannels = 0;
+	pFmt.dwSamplesPerSec = 0;
+	pFmt.dwAvgBytesPerSec = 0;
+	pFmt.wBlockAlign = 0;
+	pFmt.wBitsPerSample = 0;
+
 
 	// Let's begin by fetching the sound address...
 	uint8 *wsouPtr = (byte *)_vm->getResourceAddress(rtSound, soundId);
@@ -874,14 +1092,15 @@ void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heF
 			}
 
 			parsedFmt = true;
+
 			break;
 		}
 		case MKTAG('d', 'a', 't', 'a'):
 			assert(parsedFmt);
 			soundDataPtr = wavePtr;
 			sampleCount = (chunkLength * 8) / (pFmt.wChannels * pFmt.wBitsPerSample);
-			break;
 
+			break;
 		case MKTAG('X', 'S', 'H', '2'):
 		{
 			// Check for the optional sound flag block
@@ -891,11 +1110,9 @@ void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heF
 
 			break;
 		}
-
 		case MKTAG('S', 'B', 'N', 'G'):
 			soundCodeOffset = wavePtr - wsouPtr;
 			break;
-
 		default:
 			break;
 		}
@@ -986,278 +1203,162 @@ void SoundHE::triggerXSOUSound(int heSound, int heOffset, int heChannel, int heF
 		heFlags, bitsPerSample, sampleChannelCount, HESoundModifiers());
 }
 
-void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int sound_data,
+void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundData,
 	int globType, int globNum, int sampleCount, int frequency, int channel, int priority,
 	int soundCode, int flags, int bitsPerSample, int soundChannelCount, HESoundModifiers modifiers) {
+	int earlyCallbackByteCount = 0;
+	int index;
+	uint32 hflags;
 
-	return;
+	hflags = (flags & ScummEngine_v70he::HESndFlags::HE_SND_LOOP) ? CHANNEL_LOOPING : 0;
+	hflags |= (flags & ScummEngine_v70he::HESndFlags::HE_SND_SOFT_SOUND) ? CHANNEL_SOFT_REMIX : 0;
+
+	// If there's an early channel callback value, fetch it...
+	if (_vm->_game.heversion >= 95) {
+		index = _vm->VAR_EARLY_CHAN_1_CALLBACK + channel;
+
+		if ((_vm->VAR_EARLY_CHAN_1_CALLBACK <= index) && (_vm->VAR_EARLY_CHAN_3_CALLBACK >= index)) {
+			earlyCallbackByteCount = _vm->VAR(index);
+		} else {
+			earlyCallbackByteCount = 0;
+		}
+	}
+
+	if (_vm->_game.heversion >= 95) {
+		_heMixer->startChannelNew(
+			channel, globType, globNum, soundData, offset,
+			(sampleCount - offset), frequency, bitsPerSample, soundChannelCount,
+			modifiers, channel, CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags,
+			earlyCallbackByteCount);
+	} else if (_vm->_game.heversion >= 80) {
+		_heMixer->startChannel(
+			channel, globType, globNum, soundData + offset,
+			(sampleCount - offset), HSND_DEFAULT_FREQUENCY, HSND_MAX_VOLUME, channel,
+			CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags,
+			_vm->VAR(_vm->VAR_EARLY_CHAN_1_CALLBACK + channel));
+	} else {
+		if (channel != _vm->VAR(_vm->VAR_TALK_CHANNEL)) {
+			_heMixer->startChannel(
+				channel, globType, globNum, HSND_RES_OFFSET_SOUND_DATA + offset,
+				sampleCount - offset, frequency, HSND_MAX_VOLUME, channel, CHANNEL_ACTIVE | hflags);
+		} else {
+			if (_vm->_game.heversion >= 72) {
+				earlyCallbackByteCount = ((_vm->VAR(_vm->VAR_TIMER_NEXT) * frequency) / 60);
+				earlyCallbackByteCount *= _vm->VAR(_vm->VAR_EARLY_TALKIE_CALLBACK);
+
+				_heMixer->startChannel(
+					channel, globType, globNum, HSND_RES_OFFSET_SOUND_DATA + offset,
+					sampleCount - offset, frequency, HSND_MAX_VOLUME, channel,
+					CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags,
+					earlyCallbackByteCount);
+			} else {
+				_heMixer->startChannel(
+					channel, globType, globNum, HSND_RES_OFFSET_SOUND_DATA + offset,
+					sampleCount - offset, frequency, HSND_MAX_VOLUME, channel,
+					CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags);
+			}
+		}
+
+		_heChannel[channel].sound = sound;
+		_heChannel[channel].priority = priority;
+
+		return;
+	}
+
+	_vm->setHETimer(channel + HSND_TIMER_SLOT);
+
+	_heChannel[channel].sound = sound;
+	_heChannel[channel].priority = priority;
+	_heChannel[channel].codeOffset = soundCode;
+	_heChannel[channel].hasSoundTokens = (soundCode != -1);
+	_heChannel[channel].frequency = frequency;
+
+	if (flags & ScummEngine_v70he::HESndFlags::HE_SND_LOOP) {
+		_heChannel[channel].timeout = 0;
+	} else {
+		if (_vm->_game.heversion >= 95) {
+			uint64 timeOut;
+			timeOut = (uint64)(sampleCount - offset) * (uint64)1000;
+			_heChannel[channel].timeout = (int)(timeOut / frequency) + 2000;
+		} else {
+			uint32 timeOut;
+			timeOut = (uint32)(sampleCount - offset) * (uint32)1000;
+			_heChannel[channel].timeout = (int)(timeOut / frequency) + 2000;
+		}
+	}
+
+	for (int i = 0; i < HSND_MAX_SOUND_VARS; i++) {
+		_heChannel[channel].soundVars[i] = 0;
+	}
 }
 
 void SoundHE::hsStopDigitalSound(int sound) {
-	return;
+	int channel;
+	if ((channel = hsFindSoundChannel(sound)) != -1) {
+		_heMixer->stopChannel(channel);
+		_heChannel[channel].sound = 0;
+		memset(&_heChannel[channel], 0, sizeof(_heChannel[channel]));
+	}
 }
 
-void SoundHE::triggerDigitalSound(int soundId, int heOffset, int heChannel, int heFlags) {
-	Audio::RewindableAudioStream *stream = nullptr;
-	byte *ptr, *spoolPtr;
-	int size = -1;
-	int priority, rate;
-	byte flags = Audio::FLAG_UNSIGNED;
+void SoundHE::triggerDigitalSound(int sound, int offset, int channel, int flags) {
+	byte *soundAddr;
+	int soundCode, soundData, bitsPerSample, sampleChannels;
+	byte *soundResPtr;
+	uint32 soundLength, soundFrequency;
+	int soundPriority;
 
-	Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType;
-	if (soundId > _vm->_numSounds)
-		type = Audio::Mixer::kMusicSoundType;
-	else if (soundId == 1)
-		type = Audio::Mixer::kSpeechSoundType;
+	debug(5, "SoundHE::triggerDigitalSound(sound=%d, offset=%d, channel=%d, flags=%08x)", sound, offset, channel, flags);
 
-
-	if (heChannel == -1)
-		heChannel = (_vm->VAR_START_DYN_SOUND_CHANNELS != 0xFF) ? getNextDynamicChannel() : 1;
-
-	debug(5,"triggerDigitalSound: soundId %d heOffset %d heChannel %d heFlags %d", soundId, heOffset, heChannel, heFlags);
-
-	if (soundId >= 10000) {
-		// Special codes, used in pjgames
+	// Don't let digital sounds interrupt speech...
+	if (_heChannel[channel].sound == HSND_TALKIE_SLOT && sound != HSND_TALKIE_SLOT) {
 		return;
 	}
 
-	if (soundId > _vm->_numSounds) {
-		int music_offs;
-		Common::File musicFile;
-		Common::String buf(_vm->generateFilename(-4));
+	soundAddr = (byte *)_vm->getResourceAddress(rtSound, sound);
+	soundPriority = soundAddr[HSND_RES_OFFSET_KILL_PRIO];
 
-		if (musicFile.open(buf) == false) {
-			warning("triggerDigitalSound: Can't open music file %s", buf.c_str());
-			return;
-		}
-		if (!getHEMusicDetails(soundId, music_offs, size)) {
-			debug(0, "triggerDigitalSound: musicID %d not found", soundId);
-			return;
-		}
-
-		musicFile.seek(music_offs, SEEK_SET);
-
-		_mixer->stopHandle(_heSoundChannels[heChannel]);
-		spoolPtr = _vm->_res->createResource(rtSpoolBuffer, heChannel, size);
-		assert(spoolPtr);
-		musicFile.read(spoolPtr, size);
-		musicFile.close();
-
-		if (_vm->_game.heversion == 70) {
-			// Try to load high quality audio file if found
-			stream = tryLoadAudioOverride(soundId);
-
-			if (!stream) {
-				stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
-			}
-
-			_mixer->playStream(type, &_heSoundChannels[heChannel], stream, soundId);
-			return;
-		}
-	}
-
-	if (soundId > _vm->_numSounds) {
-		ptr = _vm->getResourceAddress(rtSpoolBuffer, heChannel);
+	if (_vm->_game.heversion < 95 && _overrideFreq) {
+		soundFrequency = _overrideFreq;
+		_overrideFreq = 0;
 	} else {
-		ptr = _vm->getResourceAddress(rtSound, soundId);
+		soundFrequency = READ_LE_UINT16(&soundAddr[HSND_RES_OFFSET_FREQUENCY]);
 	}
 
-	if (!ptr) {
-		return;
-	}
+	bitsPerSample = 8;
+	sampleChannels = 1;
 
-	// Support for sound in later HE games
-	if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F') || READ_BE_UINT32(ptr) == MKTAG('W','S','O','U')) {
-		uint16 compType;
-		int blockAlign;
-		int samplesPerBlock;
-		int codeOffs = -1;
-
-		priority = (soundId > _vm->_numSounds) ? 255 : *(ptr + 18);
-
-		byte *sbngPtr = findSoundTag(MKTAG('S','B','N','G'), ptr);
-		if (sbngPtr != nullptr) {
-			codeOffs = sbngPtr - ptr + 8;
-		}
-
-		if (_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
-			int curSnd = _heChannel[heChannel].sound;
-			if (curSnd == 1 && soundId != 1)
-				return;
-			if (curSnd != 0 && curSnd != 1 && soundId != 1 && _heChannel[heChannel].priority > priority)
-				return;
-		}
-
-		if (READ_BE_UINT32(ptr) == MKTAG('W','S','O','U'))
-			ptr += 8;
-
-		size = READ_LE_UINT32(ptr + 4);
-		Common::MemoryReadStream memStream(ptr, size);
-
-		if (!Audio::loadWAVFromStream(memStream, size, rate, flags, &compType, &blockAlign, &samplesPerBlock)) {
-			error("triggerDigitalSound: Not a valid WAV file (%d)", soundId);
-		}
-
-		assert(heOffset >= 0 && heOffset < size);
-
-		// FIXME: Disabled sound offsets, due to asserts been triggered
-		heOffset = 0;
-
-		_vm->setHETimer(heChannel + 4);
-		_heChannel[heChannel].sound = soundId;
-		_heChannel[heChannel].priority = priority;
-		_heChannel[heChannel].frequency = rate;
-		_heChannel[heChannel].hasSoundTokens = (codeOffs != -1);
-		_heChannel[heChannel].codeOffs = codeOffs;
-		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
-
-		// TODO: Extra sound flags
-		if (heFlags & 1) {
-			_heChannel[heChannel].timer = 0;
-		} else {
-			_heChannel[heChannel].timer = size * 1000 / (rate * blockAlign);
-		}
-
-		_mixer->stopHandle(_heSoundChannels[heChannel]);
-		if (compType == 17) {
-			int nChan = (flags & Audio::FLAG_STEREO) ? 2 : 1;
-			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, size, Audio::kADPCMMSIma, rate, nChan, blockAlign);
-
-			// FIXME: Get rid of this crude hack to turn a ADPCM stream into a raw stream.
-			// It seems it is only there to allow looping -- if that is true, we certainly
-			// can do without it, using a LoopingAudioStream.
-
-			if (_heChannel[heChannel].timer)
-				_heChannel[heChannel].timer = (int)(((int64)size * samplesPerBlock * 1000) / ((int64)rate * blockAlign * nChan));
-
-			byte *sound = (byte *)malloc(size * 4);
-			/* On systems where it matters, malloc will return
-			 * even addresses, so the use of (void *) in the
-			 * following cast shuts the compiler from warning
-			 * unnecessarily. */
-			size = voxStream->readBuffer((int16 *)(void *)sound, size * 2);
-			size *= 2; // 16bits.
-			delete voxStream;
-
-			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
-			// defaults to big endian. If we're on a little endian system, set the LE flag.
-#ifdef SCUMM_LITTLE_ENDIAN
-			flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
-			stream = Audio::makeRawStream(sound + heOffset, size - heOffset, rate, flags);
-		} else {
-			stream = Audio::makeRawStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags, DisposeAfterUse::NO);
-		}
-		_mixer->playStream(type, &_heSoundChannels[heChannel],
-						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundId);
-	}
-	// Support for sound in Humongous Entertainment games
-	else if (READ_BE_UINT32(ptr) == MKTAG('D','I','G','I') || READ_BE_UINT32(ptr) == MKTAG('T','A','L','K')) {
-		byte *sndPtr = ptr;
-		int codeOffs = -1;
-
-		priority = (soundId > _vm->_numSounds) ? 255 : *(ptr + 18);
-		rate = READ_LE_UINT16(ptr + 22);
-
-		// Skip DIGI/TALK (8) and HSHD (24) blocks
-		ptr += 32;
-
-		if (_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
-			int curSnd = _heChannel[heChannel].sound;
-			if (curSnd == 1 && soundId != 1)
-				return;
-			if (curSnd != 0 && curSnd != 1 && soundId != 1 && _heChannel[heChannel].priority > priority)
-				return;
-		}
-
-		if (READ_BE_UINT32(ptr) == MKTAG('S','B','N','G')) {
-			codeOffs = ptr - sndPtr + 8;
-			ptr += READ_BE_UINT32(ptr + 4);
-		}
-
-		assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
-		size = READ_BE_UINT32(ptr + 4) - 8;
-		if (heOffset < 0 || heOffset > size) {
-			// Occurs when making fireworks in puttmoon
-			heOffset = 0;
-		}
-		size -= heOffset;
-
-		if (_overrideFreq) {
-			// Used by the piano in Fatty Bear's Birthday Surprise
-			rate = _overrideFreq;
-			_overrideFreq = 0;
-		}
-
-		// Try to load high quality audio file if found
-		int newDuration;
-		stream = tryLoadAudioOverride(soundId, &newDuration);
-		if (stream != nullptr && soundId == 1) {
-			// Disable lip sync if the speech audio was overriden
-			codeOffs = -1;
-		}
-
-		_vm->setHETimer(heChannel + 4);
-		_heChannel[heChannel].sound = soundId;
-		_heChannel[heChannel].priority = priority;
-		_heChannel[heChannel].frequency = rate;
-		_heChannel[heChannel].hasSoundTokens = (codeOffs != -1);
-		_heChannel[heChannel].codeOffs = codeOffs;
-		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
-
-		// TODO: Extra sound flags
-		if (heFlags & 1) {
-			_heChannel[heChannel].timer = 0;
-		} else {
-			if (stream != nullptr) {
-				_heChannel[heChannel].timer = newDuration;
-			} else {
-				_heChannel[heChannel].timer = size * 1000 / rate;
-			}
-		}
-
-		_mixer->stopHandle(_heSoundChannels[heChannel]);
-
-		if (!stream) {
-			stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
-		}
-		_mixer->playStream(type, &_heSoundChannels[heChannel],
-						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundId);
-	}
-	// Support for PCM music in 3DO versions of Humongous Entertainment games
-	else if (READ_BE_UINT32(ptr) == MKTAG('M','R','A','W')) {
-		priority = *(ptr + 18);
-		rate = READ_LE_UINT16(ptr + 22);
-
-		// Skip DIGI (8) and HSHD (24) blocks
-		ptr += 32;
-
-		assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
-		size = READ_BE_UINT32(ptr + 4) - 8;
-
-		byte *sound = (byte *)malloc(size);
-		memcpy(sound, ptr + 8, size);
-
-		_mixer->stopID(_currentMusic);
-		_currentMusic = soundId;
-
-		stream = Audio::makeRawStream(sound, size, rate, 0);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, nullptr, stream, soundId);
-	}
-	else if (READ_BE_UINT32(ptr) == MKTAG('M','I','D','I')) {
-		if (_vm->_imuse) {
-			// This is used in the DOS version of Fatty Bear's
-			// Birthday Surprise to change the note on the piano
-			// when not using a digitized instrument.
-			_vm->_imuse->stopSound(_currentMusic);
-			_currentMusic = soundId;
-			_vm->_imuse->startSoundWithNoteOffset(soundId, heOffset);
-		} else if (_vm->_musicEngine) {
-			_vm->_musicEngine->stopSound(_currentMusic);
-			_currentMusic = soundId;
-			_vm->_musicEngine->startSoundWithTrackID(soundId, heOffset);
+	// Check sound priority
+	if (_heChannel[channel].sound && (_heChannel[channel].sound != HSND_TALKIE_SLOT) && (sound != HSND_TALKIE_SLOT)) {
+		if (soundPriority < _heChannel[channel].priority) {
+			return; // Don't start new sound, prio too low
 		}
 	}
+
+	soundResPtr = (byte *)_vm->findResource(MKTAG('S', 'B', 'N', 'G'), soundAddr);
+	if (soundResPtr == nullptr) {
+		soundCode = -1;
+	} else {
+		soundCode = soundResPtr - soundAddr + 8;
+	}
+
+	soundResPtr = (byte *)_vm->findResource(MKTAG('S', 'D', 'A', 'T'), soundAddr);
+	if (soundResPtr == nullptr)
+		error("SoundHE::triggerDigitalSound(): Can't find SDAT section in sound %d", sound);
+
+	soundData = soundResPtr - soundAddr + 8;
+	soundLength = READ_BE_UINT32(soundResPtr + 4) - 8;
+
+	// Check for a valid offset...
+	if ((uint32)offset >= soundLength) {
+		debug(5, "SoundHE::triggerDigitalSound(): WARNING: Sound %d started past end offset %d size %d", sound, offset, soundLength);
+		offset = 0;
+	}
+
+	hsStartDigitalSound(
+		sound, offset, soundAddr, soundData, rtSound, sound,
+		soundLength, soundFrequency, channel, soundPriority, soundCode, flags,
+		bitsPerSample, sampleChannels, HESoundModifiers());
 }
 
 Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundId, int *duration) {
@@ -1379,151 +1480,185 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	file.read(ptr, size);
 
 	int channel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
-	addSoundToQueue(1, 0, channel, 0);
+	addSoundToQueue(HSND_TALKIE_SLOT, 0, channel, 0, HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v80he::createSound(int baseSound, int sound) {
-	byte *baseSoundPtr, *soundPtr;
-	byte *sbng1Ptr, *sbng2Ptr;
-	byte *sdat1Ptr, *sdat2Ptr;
-	byte *src, *dst;
-	int len, offs, size;
-	int sdat1size, sdat2size;
-
-	sbng1Ptr = NULL;
-	sbng2Ptr = NULL;
+void SoundHE::createSound(int baseSound, int sound) {
+	byte *baseSndPtr, *sndPtr, *baseSndSbngPtr, *sndSbngPtr, *dep, *sep;
+	int baseSndLeft, sndSize, channel;
 
 	if (sound == -1) {
-		_sndPtrOffs = 0;
-		_sndTmrOffs = 0;
-		_sndDataSize = 0;
+		_createSndLastAppend = 0;
+		_createSndLastPos = 0;
+		_baseSndSize = 0;
 		return;
 	}
 
-	if (baseSound != _curSndId) {
-		_curSndId = baseSound;
-		_sndPtrOffs = 0;
-		_sndTmrOffs = 0;
-		_sndDataSize = 0;
+	if (baseSound != _createSndId) {
+		_createSndId = baseSound;
+		_createSndLastAppend = 0;
+		_createSndLastPos = 0;
+		_baseSndSize = 0;
 	}
 
-	baseSoundPtr = getResourceAddress(rtSound, baseSound);
-	assert(baseSoundPtr);
-	soundPtr = getResourceAddress(rtSound, sound);
-	assert(soundPtr);
+	_vm->ensureResourceLoaded(rtSound, baseSound);
+	_vm->ensureResourceLoaded(rtSound, sound);
 
-	int chan = ((SoundHE *)_sound)->findSoundChannel(baseSound);
+	baseSndPtr = (byte *)_vm->getResourceAddress(rtSound, baseSound);
+	sndPtr = (byte *)_vm->getResourceAddress(rtSound, sound);
 
-	if (!findSoundTag(MKTAG('d','a','t','a'), baseSoundPtr)) {
-		sbng1Ptr = heFindResource(MKTAG('S','B','N','G'), baseSoundPtr);
-		sbng2Ptr = heFindResource(MKTAG('S','B','N','G'), soundPtr);
+	channel = hsFindSoundChannel(baseSound);
+
+	//Check for a RIFF block here and set a flag.
+
+	bool fIsWav = false;
+
+	if (findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtr)) {
+		fIsWav = true;
 	}
 
-	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
-		if (chan != -1 && ((SoundHE *)_sound)->_heChannel[chan].codeOffs > 0) {
-			// Copy any code left over to the beginning of the code block
-			int curOffs = ((SoundHE *)_sound)->_heChannel[chan].codeOffs;
+	if (!fIsWav) {
+		// For non-WAV files we have to deals with sound variables (i.e. skip them :-) )
+		baseSndSbngPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'B', 'N', 'G'), baseSndPtr);
 
-			src = baseSoundPtr + curOffs;
-			dst = sbng1Ptr + 8;
-			size = READ_BE_UINT32(sbng1Ptr + 4);
-			len = sbng1Ptr - baseSoundPtr + size - curOffs;
+		if (baseSndSbngPtr != nullptr) {
+			sndSbngPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'B', 'N', 'G'), sndPtr);
 
-			memmove(dst, src, len);
+			if (sndSbngPtr != nullptr) {
+				if (channel != -1 && (_heChannel[channel].codeOffset > 0)) {
+					memcpy(baseSndSbngPtr + 8,
+						baseSndPtr + _heChannel[channel].codeOffset,
+						(READ_BE_UINT32(baseSndSbngPtr + 4) - 8) - (_heChannel[channel].codeOffset - (baseSndSbngPtr - baseSndPtr + 8)));
 
-			// Now seek to the end of this code block
-			dst = sbng1Ptr + 8;
-			while ((size = READ_LE_UINT16(dst)) != 0)
-				dst += size;
-		} else {
-			// We're going to overwrite the code block completely
-			dst = sbng1Ptr + 8;
-		}
+					_heChannel[channel].codeOffset = baseSndSbngPtr + 8 - baseSndPtr;
+					dep = baseSndSbngPtr + 8;
 
-		// Reset the current code offset to the beginning of the code block
-		((SoundHE *)_sound)->_heChannel[chan].codeOffs = sbng1Ptr - baseSoundPtr + 8;
+					while (READ_LE_UINT16(dep) != 0)
+						dep += READ_LE_UINT16(dep);
+				} else {
+					_heChannel[channel].codeOffset = baseSndSbngPtr + 8 - baseSndPtr;
+					dep = baseSndSbngPtr + 8;
+				}
 
-		// Seek to the end of the code block for sound 2
-		byte *tmp = sbng2Ptr + 8;
-		while ((offs = READ_LE_UINT16(tmp)) != 0) {
-			tmp += offs;
-		}
+				sep = sndSbngPtr + 8;
+				while (READ_LE_UINT16(sep) != 0)
+					sep += READ_LE_UINT16(sep);
 
-		// Copy the code block for sound 2 to the code block for sound 1
-		src = sbng2Ptr + 8;
-		len = tmp - sbng2Ptr - 6;
-		memcpy(dst, src, len);
+				memcpy(dep, sndSbngPtr + 8, sep - sndSbngPtr - 8 + 2);
 
-		// Rewrite the time for this new code block to be after the sound 1 code block
-		int32 time;
-		while ((size = READ_LE_UINT16(dst)) != 0) {
-			time = READ_LE_UINT32(dst + 2);
-			time += _sndTmrOffs;
-			WRITE_LE_UINT32(dst + 2, time);
-			dst += size;
+				while (READ_LE_UINT16(dep)) {
+					WRITE_LE_UINT32(dep + 2, READ_LE_UINT32(dep + 2) + _createSndLastPos);
+					dep += READ_LE_UINT16(dep);
+				}
+			}
 		}
 	}
 
-	// Find the data pointers and sizes
-	if (findSoundTag(MKTAG('d','a','t','a'), baseSoundPtr)) {
-		sdat1Ptr = findSoundTag(MKTAG('d','a','t','a'), baseSoundPtr);
-		assert(sdat1Ptr);
-		sdat2Ptr = findSoundTag(MKTAG('d','a','t','a'), soundPtr);
-		assert(sdat2Ptr);
 
-		if (!_sndDataSize)
-			_sndDataSize = READ_LE_UINT32(sdat1Ptr + 4) - 8;
+	byte *pRiff = nullptr;
+	byte *pData = nullptr;
 
-		sdat2size = READ_LE_UINT32(sdat2Ptr + 4) - 8;
+	// Find where the actual sound data is located...
+	if (fIsWav) {
+		baseSndPtr = (byte *)findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtr);
+		if (baseSndPtr == nullptr)
+			error("SoundHE::createSound(): Bad format for sound %d, couldn't find data tag", baseSound);
+
+		sndPtr = (byte *)findWavBlock(MKTAG('d', 'a', 't', 'a'), sndPtr);
+		if (sndPtr == nullptr)
+			error("SoundHE::createSound(): Bad format for sound %d, couldn't find data tag", sound);
+
+		pData = baseSndPtr;
+		pRiff = baseSndPtr + 8;
+
+		if (_baseSndSize == 0) {
+			_baseSndSize = READ_LE_UINT32(baseSndPtr + sizeof(uint32)) - 8;
+		}
+
+		sndSize = READ_LE_UINT32(sndPtr + sizeof(uint32)) - 8;
 	} else {
-		sdat1Ptr = heFindResource(MKTAG('S','D','A','T'), baseSoundPtr);
-		assert(sdat1Ptr);
-		sdat2Ptr = heFindResource(MKTAG('S','D','A','T'), soundPtr);
-		assert(sdat2Ptr);
+		baseSndPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'D', 'A', 'T'), baseSndPtr);
+		if (baseSndPtr == nullptr)
+			error("SoundHE::createSound(): Bad format for sound %d, couldn't find SDAT tag", baseSound);
 
-		_sndDataSize = READ_BE_UINT32(sdat1Ptr + 4) - 8;
+		sndPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'D', 'A', 'T'), sndPtr);
+		if (sndPtr == nullptr)
+			error("SoundHE::createSound(): Bad format for sound %d, couldn't find SDAT tag", sound);
 
-		sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
+		_baseSndSize = READ_BE_UINT32(baseSndPtr + sizeof(uint32)) - 8;
+		sndSize = READ_BE_UINT32(sndPtr + sizeof(uint32)) - 8;
 	}
 
-	sdat1size = _sndDataSize - _sndPtrOffs;
-	if (sdat2size < sdat1size) {
-		// We have space leftover at the end of sound 1
-		// -> Just append sound 2
-		src = sdat2Ptr + 8;
-		dst = sdat1Ptr + 8 + _sndPtrOffs;
-		len = sdat2size;
+	// Finally perform the merging of the sound data
+	baseSndLeft = _baseSndSize - _createSndLastAppend;
 
-		memcpy(dst, src, len);
+	baseSndPtr += 8;
+	sndPtr += 8;
 
-		_sndPtrOffs += sdat2size;
-		_sndTmrOffs += sdat2size;
+	if (sndSize < baseSndLeft) {
+		memcpy(baseSndPtr + _createSndLastAppend, sndPtr, sndSize);
+		_createSndLastAppend += sndSize;
 	} else {
-		// We might not have enough space leftover at the end of sound 1
-		// -> Append as much of possible of sound 2 to sound 1
-		src = sdat2Ptr + 8;
-		dst = sdat1Ptr + 8 + _sndPtrOffs;
-		len = sdat1size;
-
-		memcpy(dst, src, len);
-
-		if (sdat2size != sdat1size) {
-			// We don't have enough space
-			// -> Start overwriting the beginning of the sound again
-			src = sdat2Ptr + 8 + sdat1size;
-			dst = sdat1Ptr + 8;
-			len = sdat2size - sdat1size;
-
-			memcpy(dst, src, len);
+		memcpy(baseSndPtr + _createSndLastAppend, sndPtr, baseSndLeft);
+		if (sndSize - baseSndLeft) {
+			memcpy(baseSndPtr, sndPtr + baseSndLeft, sndSize - baseSndLeft);
 		}
-
-		_sndPtrOffs = sdat2size - sdat1size;
-		_sndTmrOffs += sdat2size;
+		_createSndLastAppend = sndSize - baseSndLeft;
 	}
 
-	// TODO: PX_SoftRemixAllChannels()
+	_createSndLastPos += sndSize;
+
+	_heMixer->softRemixAllChannels();
 }
+
+byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
+	byte *wsouPtr = (byte *)block;
+
+	// For compatibility reason with old sound formats this
+	// doesn't error out, and instead gracefully returns a nullptr.
+	if (READ_BE_UINT32(wsouPtr) != MKTAG('W', 'S', 'O', 'U'))
+		return nullptr;
+
+	// Skip over the WSOU header...
+	byte *soundPtr = wsouPtr + 8;
+	if (READ_BE_UINT32(soundPtr) != MKTAG('R', 'I', 'F', 'F'))
+		error("SoundHE::findWavBlock(): Expected RIFF block");
+
+	int riffLength = READ_LE_UINT32(soundPtr + 4);
+	assert((riffLength & 1) == 0); // It must be even, since all sub-blocks must be padded to even.
+
+	// Skip over RIFF and length and go to the actual sound data...
+	byte *wavePtr = soundPtr + 8;
+	assert(READ_BE_UINT32(wavePtr) == MKTAG('W', 'A', 'V', 'E'));
+	wavePtr += 4; // Skip over the WAVE tag
+	riffLength -= 4;
+
+	// Walk the nested blocks of the .wav file...
+	while (riffLength > 0) {
+		int chunkID = READ_BE_UINT32(wavePtr);
+		int chunkLength = READ_LE_UINT32(wavePtr + 4);
+		if (chunkLength < 0)
+			error("SoundHE::findWavBlock(): Illegal chunk length - %d bytes", chunkLength);
+		if (chunkLength > riffLength)
+			error("SoundHE::findWavBlock(): Chunk extends beyond file end - %d versus %d", chunkLength, riffLength);
+
+		riffLength -= 8;
+
+		if ((uint32)chunkID == tag)
+			return wavePtr;
+
+		wavePtr += 8;
+
+		// Round up to the next multiple of two.
+		chunkLength = (chunkLength + 1) & ~1;
+		wavePtr += chunkLength;
+		riffLength -= chunkLength;
+	}
+
+	return nullptr;
+}
+
 #endif
 
 } // End of namespace Scumm

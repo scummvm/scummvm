@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 #include "scumm/sound.h"
+#include "scumm/he/mixer_he.h"
 #include "audio/audiostream.h"
 
 namespace Scumm {
@@ -56,6 +57,7 @@ namespace Scumm {
 #define HSND_FIRST_SPOOLING_SOUND 4000
 #define HSND_MAX_FREQ_RATIO       4
 
+#define HSND_MAX_SPOOLING_CODE_SIZE 16384
 
 #define HSND_SBNG_TYPE_ALL 0xF8
 #define HSND_SBNG_DATA_ALL 0x07
@@ -80,7 +82,51 @@ namespace Scumm {
 #define WAVE_FORMAT_PCM       1
 #define WAVE_FORMAT_IMA_ADPCM 17
 
+#define HSND_RES_OFFSET_ID1              0 // uint32, DIGI or MIDI header
+#define HSND_RES_OFFSET_LEN1             4 // uint32
+#define HSND_RES_OFFSET_ID               8 // uint32, HSHD header
+#define HSND_RES_OFFSET_LEN2            12 // uint32
+#define HSND_RES_OFFSET_COMPRESSED      16 // uint8, header data
+#define HSND_RES_OFFSET_FORMATTED       17 // uint8
+#define HSND_RES_OFFSET_KILL_PRIO       18 // uint8
+#define HSND_RES_OFFSET_DEAD_PRIO       19 // uint8
+#define HSND_RES_OFFSET_LEFT_VOLUME     20 // uint8
+#define HSND_RES_OFFSET_RIGHT_VOLUME    21 // uint8
+#define HSND_RES_OFFSET_FREQUENCY       22 // uint16
+#define HSND_RES_OFFSET_MONDO_OFFSET    24 // uint32
+#define HSND_RES_OFFSET_BITS_PER_SAMPLE 28 // uint8
+#define HSND_RES_OFFSET_SAMPLE_CHANNELS 29 // uint8
+#define HSND_RES_OFFSET_UNUSED3         30 // uint8
+#define HSND_RES_OFFSET_UNUSED4         31 // uint8
+#define HSND_RES_OFFSET_ID3             32 // uint32, SDAT header
+#define HSND_RES_OFFSET_LEN3            36 // uint32
+#define HSND_RES_OFFSET_SOUND_DATA      40
+
+// Used both in SoundHE and HEMixer
+struct HESoundModifiers {
+	HESoundModifiers(int mFrequencyShift, int mPan, int mVolume) {
+		assert(mFrequencyShift >= HSND_SOUND_FREQ_BASE / HSND_MAX_FREQ_RATIO);
+		assert(mFrequencyShift <= HSND_SOUND_FREQ_BASE * HSND_MAX_FREQ_RATIO);
+		assert(mPan >= HSND_SOUND_PAN_LEFT && mPan <= HSND_SOUND_PAN_RIGHT);
+		assert(mVolume >= 0 && mVolume <= HSND_MAX_VOLUME);
+		frequencyShift = mFrequencyShift;
+		pan = mPan;
+		volume = mVolume;
+	}
+
+	HESoundModifiers() {
+		frequencyShift = HSND_SOUND_FREQ_BASE;
+		pan = HSND_SOUND_PAN_CENTER;
+		volume = HSND_MAX_VOLUME;
+	}
+
+	int frequencyShift;
+	int pan;
+	int volume;
+};
+
 class ScummEngine_v60he;
+class HEMixer;
 
 class SoundHE : public Sound {
 protected:
@@ -88,6 +134,7 @@ protected:
 
 	int _overrideFreq;
 	Common::Mutex *_mutex;
+	HEMixer *_heMixer;
 
 	struct HESoundCallbackItem {
 		int32 sound;
@@ -114,58 +161,45 @@ protected:
 		uint16 wBitsPerSample;
 	};
 
-	struct HESoundModifiers {
-		HESoundModifiers(int mFrequencyShift, int mPan, int mVolume) {
-			assert(mFrequencyShift >= HSND_SOUND_FREQ_BASE / HSND_MAX_FREQ_RATIO);
-			assert(mFrequencyShift <= HSND_SOUND_FREQ_BASE * HSND_MAX_FREQ_RATIO);
-			assert(mPan >= HSND_SOUND_PAN_LEFT && mPan <= HSND_SOUND_PAN_RIGHT);
-			assert(mVolume >= 0 && mVolume <= HSND_MAX_VOLUME);
-			frequencyShift = mFrequencyShift;
-			pan = mPan;
-			volume = mVolume;
-		}
-
-		HESoundModifiers() {
-			frequencyShift = HSND_SOUND_FREQ_BASE;
-			pan = HSND_SOUND_PAN_CENTER;
-			volume = HSND_MAX_VOLUME;
-		}
-
-		int frequencyShift;
-		int pan;
-		int volume;
-	};
-
-	int32 _heMusicTracks;
+	int32 _heSpoolingMusicCount;
 
 	Audio::SoundHandle *_heSoundChannels;
-	Common::File _spoolingMusicFile;
+	Common::File _heSpoolingMusicFile;
+	byte _heSpoolingCodeBuffer[HSND_MAX_SPOOLING_CODE_SIZE];
 
 public: // Used by createSound()
 	struct {
 		int sound;
-		int codeOffs;
+		int codeOffset;
 		byte *codeBuffer;
 		int priority;
 		int frequency;
-		int timer;
+		int timeout;
 		bool hasSoundTokens;
 		int soundVars[HSND_MAX_SOUND_VARS];
 		int age;
 
 		void clearChannel() {
 			sound = 0;
-			codeOffs = 0;
+			codeOffset = 0;
 			codeBuffer = nullptr;
 			priority = 0;
 			frequency = 0;
-			timer = 0;
+			timeout = 0;
 			hasSoundTokens = false;
 			memset(soundVars, 0, sizeof(soundVars));
 			age = 0;
 		}
 
 	} _heChannel[HSND_MAX_CHANNELS];
+
+	bool _useMilesSoundSystem = false;
+
+	// Used throughout script functions
+	int32 _createSndId;
+	int32 _createSndLastAppend;
+	int32 _createSndLastPos;
+	int32 _baseSndSize;
 
 public:
 	SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex);
@@ -178,7 +212,7 @@ public:
 	int isSoundRunning(int sound) const override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int findSoundChannel(int sound);
+	int hsFindSoundChannel(int sound);
 	void setupSound() override;
 
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
@@ -209,6 +243,9 @@ public:
 	void setupHEMusicFile();
 	void startHETalkSound(uint32 offset);
 	void stopSoundChannel(int chan);
+	void createSound(int snd1id, int snd2id);
+
+	byte *findWavBlock(uint32 tag, const byte *block);
 
 protected:
 	void processSoundQueues() override;
@@ -220,6 +257,8 @@ private:
 	int _soundCallbacksQueueSize = 0;
 	int _soundAlreadyInQueueCount = 0;
 	int _soundsDebugFrameCounter = 0;
+	int _scummOverrideFrequency = 0;
+
 
 	Audio::RewindableAudioStream *tryLoadAudioOverride(int soundID, int *duration = nullptr);
 };
