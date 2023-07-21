@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/ftgzip.h"
+//#include "engines/ags/lib/freetype-2.1.3/ftgzip.h"
 #include "engines/ags/lib/freetype-2.1.3/fterrors.h"
 
 #include "pcf.h"
@@ -224,23 +224,23 @@ PCF_Face_Init( FT_Stream      stream,
 
 	error = pcf_load_font( stream, face );
 	if ( error ) {
-		FT_Error  error2;
+		// FT_Error  error2;
 
-		/* this didn't work, try gzip support !! */
-		error2 = FT_Stream_OpenGzip( &face->gzip_stream, stream );
-		if ( error2 == FT2_1_3_Err_Unimplemented_Feature )
-			goto Fail;
+		// /* this didn't work, try gzip support !! */
+		// error2 = FT_Stream_OpenGzip( &face->gzip_stream, stream );
+		// if ( error2 == FT2_1_3_Err_Unimplemented_Feature )
+		// 	goto Fail;
 
-		error = error2;
-		if ( error )
-			goto Fail;
+		// error = error2;
+		// if ( error )
+		// 	goto Fail;
 
-		face->gzip_source = stream;
-		face->root.stream = &face->gzip_stream;
+		// face->gzip_source = stream;
+		// face->root.stream = &face->gzip_stream;
 
-		stream = face->root.stream;
+		// stream = face->root.stream;
 
-		error = pcf_load_font( stream, face );
+		// error = pcf_load_font( stream, face );
 		if ( error )
 			goto Fail;
 	}

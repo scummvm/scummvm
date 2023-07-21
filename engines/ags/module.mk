@@ -44,7 +44,6 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/fttrigon.o \
 	lib/freetype-2.1.3/fttype1.o \
 	lib/freetype-2.1.3/ftutil.o \
-	lib/freetype-2.1.3/ftxf86.o \
 	lib/freetype-2.1.3/modules/autohint/ahangles.o \
 	lib/freetype-2.1.3/modules/autohint/ahglyph.o \
 	lib/freetype-2.1.3/modules/autohint/ahglobal.o \
