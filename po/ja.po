@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-19 20:21+0000\n"
-"PO-Revision-Date: 2023-07-18 09:13+0000\n"
+"PO-Revision-Date: 2023-07-21 07:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1812,16 +1812,14 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "ゲーム、またはScummVMの終了前に確認します。"
 
 #: gui/options.cpp:2564
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "落下を無効化"
+msgstr "フォントの固定倍率を無効化"
 
 #: gui/options.cpp:2565
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
-msgstr ""
+msgstr "GUIで固定サイズのフォントをアップスケールしません。低解像度でのアーティファクトが減少します"
 
 #: gui/options.cpp:2571
 msgid "GUI language:"
