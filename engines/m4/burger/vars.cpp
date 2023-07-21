@@ -75,6 +75,8 @@ Vars::Vars() {
 
 	Inventory *inv = new Inventory();
 	_inventory = inv;
+
+	Common::fill(&_globals[0], &_globals[GLB_SHARED_VARS], 0);
 }
 
 Vars::~Vars() {

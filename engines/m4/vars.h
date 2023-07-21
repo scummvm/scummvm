@@ -95,7 +95,7 @@ public:
 	Hag_Statics _hag;
 	SceneDef _currentSceneDef;
 	Scene_list _scene_list;
-	Globals _globals;
+	frac16 _globals[GLB_SHARED_VARS];
 	Player _player;
 	PlayerInfo _player_info;
 	Resources _resources;

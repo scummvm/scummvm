@@ -23,6 +23,7 @@
 #define M4_FILEIO_FSTREAM_H
 
 #include "common/file.h"
+#include "m4/fileio/sys_file.h"
 #include "m4/mem/reloc.h"
 #include "m4/m4_types.h"
 
@@ -44,7 +45,7 @@ public:
 struct strmRequest {
 	strmRequest *next;
 	strmRequest *prev;
-	StreamFile *srcFile;
+	SysFile *srcFile;
 	int32 strmSize;
 	MemHandle strmHandle;
 	uint8 *strmBuff;
@@ -62,7 +63,7 @@ struct strmRequest {
 extern bool f_stream_Init();
 extern void f_stream_Shutdown();
 
-extern strmRequest *f_stream_Open(StreamFile *srcFile, int32 fileOffset, int32 strmMinBuffSize, int32 strmBuffSize,
+extern strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuffSize, int32 strmBuffSize,
 	int32 numBlocksToRead, int32 *blockSizeArray, int32 initialRead, bool wrapStream);
 extern int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes);
 extern void f_stream_Close(strmRequest *myStream);

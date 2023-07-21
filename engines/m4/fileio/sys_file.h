@@ -113,6 +113,11 @@ public:
 	bool seek(uint32 pos);
 
 	/**
+	 * Seek ahaead by a given amount
+	 */
+	bool seek_ahead(int32 amount);
+
+	/**
 	 * Read data
 	 */
 	uint32 read(MemHandle bufferHandle);

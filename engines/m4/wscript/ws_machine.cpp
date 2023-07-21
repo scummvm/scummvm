@@ -1045,7 +1045,7 @@ static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine *recvM, int32
 	// Search through the message list
 	while (myMsg && (!found)) {
 		// Check if we've found the msg we're looking for
-		if ((myMsg->msgHash == msgHash) && (myMsg->msgValue == msgValue)) {
+		if ((myMsg->msgHash == msgHash) && ((uint32)myMsg->msgValue == msgValue)) {
 
 			// Set found bool
 			found = true;
