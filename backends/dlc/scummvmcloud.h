@@ -34,7 +34,7 @@ namespace ScummVMCloud {
 
 class ScummVMCloud: public DLC::Store {
 
-Networking::Session session;
+Networking::SessionRequest *_rq;
 
 public:	
 	ScummVMCloud() {}

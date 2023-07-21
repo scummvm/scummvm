@@ -80,6 +80,7 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 	if (response->eos) {
 		warning("downloaded");
+		_rq->close(); // delete request
 		Common::Path relativeFilePath = Common::Path(DLCMan._queuedDownloadTasks.front()->id);
 		// extract the downloaded zip
 		extractZip(relativeFilePath);
@@ -103,11 +104,11 @@ void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::St
 	// TODO: Change it to dlcpath
 	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + id, '/');
 
-	Networking::SessionRequest *rq = session.get(url, localFile,
+	_rq = new Networking::SessionRequest(url, localFile,
 		new Common::Callback<ScummVMCloud, Networking::DataResponse>(this, &ScummVMCloud::downloadFileCallback),
 		new Common::Callback<ScummVMCloud, Networking::ErrorResponse>(this, &ScummVMCloud::errorCallback));
 
-	rq->start();
+	_rq->start();
 }
 
 void ScummVMCloud::extractZip(Common::Path file) {
