@@ -596,6 +596,8 @@ int main(int argc, char *argv[]) {
 		// 4610 (object 'class' can never be instantiated - user-defined constructor required)
 		//   "correct" but harmless (as is 4510)
 		//
+		// 4324 (structure was padded due to alignment specifier)
+		//
 		////////////////////////////////////////////////////////////////////////////
 
 		globalWarnings.push_back("4068");
@@ -605,6 +607,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4244");
 		globalWarnings.push_back("4250");
 		globalWarnings.push_back("4310");
+		globalWarnings.push_back("4324");
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
 		globalWarnings.push_back("4512");
