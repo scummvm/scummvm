@@ -308,7 +308,9 @@ void Screen::load(const PatchPtr &patch) {
 	for(uint i = 0; i < patch->objects.size(); ++i) {
 		const Patch::Object &object = patch->objects[i];
 		debug("patch object %s %d", object.name.c_str(), object.flag);
-		if (object.flag <= 0)
+		if (object.name == _name)
+			continue;
+		else if (object.flag <= 0)
 			remove(object.name);
 		else
 			_engine->runObject(object.name, Common::String(), false);
@@ -326,7 +328,7 @@ void Screen::save(const PatchPtr &patch) {
 	patch->objects.clear();
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (!object->persistent() || !object->alive())
+		if (!object->persistent() || !object->alive() || object->getName() == _name)
 			continue;
 		debug("saving patch object %s %d", object->getName().c_str(), object->alive());
 		patch->objects.push_back(Patch::Object(object->getName(), 1));
