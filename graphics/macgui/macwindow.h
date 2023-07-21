@@ -334,7 +334,7 @@ public:
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
 	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets);
 	void disableBorder();
-	void loadWin95Border(const Common::String &filename, uint32 flags);
+	void loadInternalBorder(uint32 flags);
 	/**
 	 * we better set this before we load the border
 	 * @param scrollbar state
