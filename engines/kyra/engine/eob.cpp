@@ -173,8 +173,7 @@ Common::Error EoBEngine::init() {
 }
 
 #define loadSpritesAndEncodeToShapes(resID, resOffset, shapeBuffer, numShapes, width, height) \
-	shapeBuffer = new const uint8 *[numShapes]; \
-	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
+	shapeBuffer = new const uint8*[numShapes](); \
 	in = _sres->resData(resID); \
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numShapes, width, height, 3); \
 	delete[] in
@@ -182,7 +181,7 @@ Common::Error EoBEngine::init() {
 #define loadSpritesAndMergeToSingleShape(resID, resOffset, singleShape, numSprites, spriteWidth, spriteHeight) \
 	in = _sres->resData(resID); \
 	{ \
-	const uint8 **shapeBuffer = new const uint8 *[numSprites]; \
+	const uint8 **shapeBuffer = new const uint8*[numSprites]; \
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numSprites, spriteWidth, spriteHeight, 3, false); \
 	releaseShpArr(shapeBuffer, numSprites); \
 	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true); \
@@ -195,8 +194,7 @@ Common::Error EoBEngine::init() {
 	delete[] in
 
 #define loadAndConvertShapes(resID, resOffset, shapeBuffer, numShapes, width, height, size) \
-	shapeBuffer = new const uint8 *[numShapes]; \
-	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
+	shapeBuffer = new const uint8*[numShapes](); \
 	in = _sres->resData(resID); \
 	for (int ii = 0; ii < numShapes; ++ii) \
 		shapeBuffer[ii] = _screen->sega_convertShape(in + (resOffset) + ii * size, width, height, 3); \
@@ -206,7 +204,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		EoBCoreEngine::loadItemsAndDecorationsShapes();
 		if (_flags.platform == Common::kPlatformPC98) {
-			_blueItemIconShapes = new const uint8 * [_numItemIconShapes];
+			_blueItemIconShapes = new const uint8*[_numItemIconShapes];
 			_screen->loadShapeSetBitmap("DETECT", 5, 3);
 			for (int i = 0; i < _numItemIconShapes; i++)
 				_blueItemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10);

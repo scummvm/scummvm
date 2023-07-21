@@ -211,6 +211,30 @@ struct KyraRpgGUISettings {
 		uint8 statsValues;
 		uint8 expLvl[3];
 	} statsPageColors;
+
+	struct SpellbookCoords {
+		uint8 totalHeight;
+		uint8 numTabs;
+		uint8 tabStartX;
+		uint8 tabStartY;
+		uint8 tabWidth;
+		uint8 tabHeight;
+		uint8 tabStrOffsX;
+		uint8 tabStrOffsY;
+		uint8 listSize;
+		uint8 listStartX;
+		uint8 listStartY;
+		uint8 listTotalH;
+		uint8 abortBtnX;
+		uint8 abortBtnY;
+		uint8 abortBtnW;
+		uint8 abortBtnH;
+		uint8 abortStrX;
+		uint8 abortStrY;
+		uint8 scrollButtonY;
+		uint8 gridCoordsX[4];
+		uint8 gridCoordsY[3];
+	} spellbookCoords;
 };
 
 class KyraRpgEngine : public KyraEngine_v1 {

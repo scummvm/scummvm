@@ -762,7 +762,6 @@ protected:
 	void gui_setCastOnWhomButtons();
 	void gui_initButton(int index, int x = -1, int y = -1, int val = -1) override;
 	Button *gui_getButton(Button *buttonList, int index);
-	void printStatsPageString(const char *str, int x, int y, int col);
 
 	int clickedInventoryNextPage(Button *button);
 	int clickedPortraitRestore(Button *button);
@@ -1284,6 +1283,10 @@ protected:
 
 	// keymap
 	static const char *const kKeymapName;
+
+private:
+	void printStringIntern_statsPage(const char *str, int x, int y, int col);
+	void printStringIntern_spellBook(const char *str, int x, int y, int col1, int col2);
 };
 
 } // End of namespace Kyra

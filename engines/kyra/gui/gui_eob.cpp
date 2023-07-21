@@ -601,27 +601,27 @@ void EoBCoreEngine::gui_drawCharacterStatsPage() {
 
 	_screen->printShadedText(_characterGuiStringsIn[0], cd.headlineX, cd.headlineY, cl.headLine, g->colors.sfill, g->colors.guiColorBlack);
 	if (_flags.lang != Common::ZH_TWN)
-		printStatsPageString(_chargenClassStrings[c->cClass], cd.descStartX, cd.descStartY , cl.cls[0]);
-	printStatsPageString(_chargenAlignmentStrings[c->alignment], cd.descStartX, cd.descStartY + cd.descYInc, cl.alignment);
-	printStatsPageString(_chargenRaceSexStrings[c->raceSex], cd.descStartX, cd.descStartY + 2 * cd.descYInc, cl.race);
+		printStringIntern_statsPage(_chargenClassStrings[c->cClass], cd.descStartX, cd.descStartY , cl.cls[0]);
+	printStringIntern_statsPage(_chargenAlignmentStrings[c->alignment], cd.descStartX, cd.descStartY + cd.descYInc, cl.alignment);
+	printStringIntern_statsPage(_chargenRaceSexStrings[c->raceSex], cd.descStartX, cd.descStartY + 2 * cd.descYInc, cl.race);
 
 	for (int i = 0; i < 3; i++) {
-		printStatsPageString(_chargenStatStrings[6 + i], cd.statsGroup1StringsX, cd.statsGroup1StringsY + i * cd.statsStringsYInc, cl.statsStrings);
-		printStatsPageString(_chargenStatStrings[9 + i], cd.statsGroup2StringsX, cd.statsGroup2StringsY + i * cd.statsStringsYInc, cl.statsStrings);
+		printStringIntern_statsPage(_chargenStatStrings[6 + i], cd.statsGroup1StringsX, cd.statsGroup1StringsY + i * cd.statsStringsYInc, cl.statsStrings);
+		printStringIntern_statsPage(_chargenStatStrings[9 + i], cd.statsGroup2StringsX, cd.statsGroup2StringsY + i * cd.statsStringsYInc, cl.statsStrings);
 	}
 
-	printStatsPageString(_characterGuiStringsIn[1], cd.acStringX, cd.acStringY, cl.acString);
-	printStatsPageString(_characterGuiStringsIn[2], cd.expStringX, cd.expStringY, cl.statsStrings);
-	printStatsPageString(_characterGuiStringsIn[3], cd.lvlStringX, cd.lvlStringY, cl.statsStrings);
+	printStringIntern_statsPage(_characterGuiStringsIn[1], cd.acStringX, cd.acStringY, cl.acString);
+	printStringIntern_statsPage(_characterGuiStringsIn[2], cd.expStringX, cd.expStringY, cl.statsStrings);
+	printStringIntern_statsPage(_characterGuiStringsIn[3], cd.lvlStringX, cd.lvlStringY, cl.statsStrings);
 
 	Screen::FontId of = _screen->setFont(_invFont5);
-	printStatsPageString(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY, cl.statsValues);
-	printStatsPageString(Common::String::format("%d", c->intelligenceCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY + cd.statsStatsYInc, cl.statsValues);
-	printStatsPageString(Common::String::format("%d", c->wisdomCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY + 2 * cd.statsStatsYInc, cl.statsValues);
-	printStatsPageString(Common::String::format("%d", c->dexterityCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY, cl.statsValues);
-	printStatsPageString(Common::String::format("%d", c->constitutionCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY + cd.statsStatsYInc, cl.statsValues);
-	printStatsPageString(Common::String::format("%d", c->charismaCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY + 2 * cd.statsStatsYInc, cl.statsValues);
-	printStatsPageString(Common::String::format("%d", c->armorClass).c_str(), cd.acStatsX, cd.acStatsY, cl.statsValues);
+	printStringIntern_statsPage(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY, cl.statsValues);
+	printStringIntern_statsPage(Common::String::format("%d", c->intelligenceCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY + cd.statsStatsYInc, cl.statsValues);
+	printStringIntern_statsPage(Common::String::format("%d", c->wisdomCur).c_str(), cd.statsGroup1StatsX, cd.statsGroup1StatsY + 2 * cd.statsStatsYInc, cl.statsValues);
+	printStringIntern_statsPage(Common::String::format("%d", c->dexterityCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY, cl.statsValues);
+	printStringIntern_statsPage(Common::String::format("%d", c->constitutionCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY + cd.statsStatsYInc, cl.statsValues);
+	printStringIntern_statsPage(Common::String::format("%d", c->charismaCur).c_str(), cd.statsGroup2StatsX, cd.statsGroup2StatsY + 2 * cd.statsStatsYInc, cl.statsValues);
+	printStringIntern_statsPage(Common::String::format("%d", c->armorClass).c_str(), cd.acStatsX, cd.acStatsY, cl.statsValues);
 	_screen->setFont(of);
 
 	for (int i = 0; i < 3; i++) {
@@ -629,15 +629,15 @@ void EoBCoreEngine::gui_drawCharacterStatsPage() {
 		if (t == -1)
 			continue;
 
-		printStatsPageString(_chargenClassStrings[t + 15], cd.classStringsX + cd.classStringsXInc * i, cd.classStringsY + cd.classStringsYInc * i, cl.cls[i]);
+		printStringIntern_statsPage(_chargenClassStrings[t + 15], cd.classStringsX + cd.classStringsXInc * i, cd.classStringsY + cd.classStringsYInc * i, cl.cls[i]);
 		if (_flags.lang == Common::ZH_TWN && i < 2 && getCharacterClassType(c->cClass, i + 1) != -1)
 			_screen->printShadedText("/", 182 + i * 8 + (i + 1) * 30, 148, g->colors.guiColorWhite, 0, g->colors.guiColorBlack);
 
 		of = _screen->setFont(_invFont6);
 		Common::String tmpStr = Common::String::format("%d", c->experience[i]);
-		printStatsPageString(tmpStr.c_str(), cd.expStatsX - (_screen->getTextWidth(tmpStr.c_str()) >> 1) + cd.expStatsXInc * i, cd.expStatsY + cd.expStatsYInc * i, cl.expLvl[i]);
+		printStringIntern_statsPage(tmpStr.c_str(), cd.expStatsX - (_screen->getTextWidth(tmpStr.c_str()) >> 1) + cd.expStatsXInc * i, cd.expStatsY + cd.expStatsYInc * i, cl.expLvl[i]);
 		tmpStr = Common::String::format("%d", c->level[i]);
-		printStatsPageString(tmpStr.c_str(), cd.lvlStatsX - (_screen->getTextWidth(tmpStr.c_str()) >> 1) + cd.lvlStatsXInc * i, cd.lvlStatsY + cd.lvlStatsYInc * i, cl.expLvl[i]);
+		printStringIntern_statsPage(tmpStr.c_str(), cd.lvlStatsX - (_screen->getTextWidth(tmpStr.c_str()) >> 1) + cd.lvlStatsXInc * i, cd.lvlStatsY + cd.lvlStatsYInc * i, cl.expLvl[i]);
 		_screen->setFont(of);
 	}
 }
@@ -666,13 +666,13 @@ void EoBCoreEngine::gui_drawDialogueBox() {
 }
 
 void EoBCoreEngine::gui_drawSpellbook() {
+	const KyraRpgGUISettings::SpellbookCoords &crd = guiSettings()->spellbookCoords;
 	_screen->setCurPage(2);
-	int numTab = (_flags.gameID == GI_EOB1) ? 5 : 6;
-	_screen->copyRegion(64, 121, 64, 121, 112, 56, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(64, 121, 64, 121, 112, crd.totalHeight, 0, 2, Screen::CR_NO_P_CHECK);
 
 	Screen::FontId of = _screen->setFont(_bookFont);
 
-	for (int i = 0; i < numTab; i++) {
+	for (int i = 0; i < crd.numTabs; i++) {
 		int col1 = 0;
 		int col2 = 1;
 		int col3 = 2;
@@ -690,89 +690,93 @@ void EoBCoreEngine::gui_drawSpellbook() {
 
 			if (i == _openBookSpellLevel) {
 				col1 = guiSettings()->colors.frame1;
-				col2 = _flags.platform == Common::kPlatformAmiga ? 31 : guiSettings()->colors.frame2;
+				col2 = _flags.platform == Common::kPlatformAmiga ? guiSettings()->colors.guiColorWhite : guiSettings()->colors.frame2;
 				col3 = _flags.platform == Common::kPlatformAmiga ? guiSettings()->colors.frame2 : guiSettings()->colors.fill;
 			}
 		}
 
-		if (_flags.gameID == GI_EOB1) {
-			gui_drawBox(i * 21 + 71, 122, 21, 9, col1, col2, col3);
-			_screen->printText(_magicStrings7[i], i * 21 + 73, 123, guiSettings()->colors.guiColorBlack, 0);
-		} else {
-			_screen->set16bitShadingLevel(4);
-			gui_drawBox(i * 18 + 68, 121, 18, 9, col1, col2, col3);
-			_screen->set16bitShadingLevel(0);
-			_screen->printText(Common::String::format("%d", i + 1).c_str(), i * 18 + 75, 123, guiSettings()->colors.guiColorBlack, 0);
-		}
+		_screen->set16bitShadingLevel(4);
+		gui_drawBox(i * crd.tabWidth + crd.tabStartX, crd.tabStartY, crd.tabWidth, crd.tabHeight, col1, col2, col3);
+		_screen->set16bitShadingLevel(0);
+		_screen->printText(_flags.gameID == GI_EOB1 ? _magicStrings7[i] : Common::String::format("%d", i + 1).c_str(), i * crd.tabWidth + crd.tabStartX + crd.tabStrOffsX, crd.tabStartY + crd.tabStrOffsY, guiSettings()->colors.guiColorBlack, 0);
 	}
 
-	if (_flags.gameID == GI_EOB1)
-		gui_drawBox(71, 131, 105, 44, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
-	else {
-		_screen->set16bitShadingLevel(4);
-		gui_drawBox(68, 130, 108, 47, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
-		_screen->set16bitShadingLevel(0);
-		gui_drawBox(68, 168, 78, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
-		gui_drawBox(146, 168, 14, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
-		gui_drawBox(160, 168, 16, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
-		gui_drawSpellbookScrollArrow(150, 169, 0);
-		gui_drawSpellbookScrollArrow(165, 169, 1);
+	_screen->set16bitShadingLevel(4);
+	gui_drawBox(crd.tabStartX, crd.tabStartY + crd.tabHeight, crd.numTabs * crd.tabWidth, crd.listTotalH, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+	_screen->set16bitShadingLevel(0);
+
+	if (_flags.gameID == GI_EOB2) {
+		gui_drawBox(crd.abortBtnX, crd.abortBtnY, crd.abortBtnW, crd.abortBtnH, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
+		gui_drawBox(146, guiSettings()->spellbookCoords.scrollButtonY, 14, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
+		gui_drawBox(160, guiSettings()->spellbookCoords.scrollButtonY, 16, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
+		gui_drawSpellbookScrollArrow(150, guiSettings()->spellbookCoords.scrollButtonY + 1, 0);
+		gui_drawSpellbookScrollArrow(165, guiSettings()->spellbookCoords.scrollButtonY + 1, 1);
 	}
 
 	int textCol1 = (_configRenderMode == Common::kRenderCGA) ? 3 : guiSettings()->colors.guiColorWhite;
 	int textCol2 = guiSettings()->colors.guiColorDarkRed;
-	int textXa = 74;
-	int textXs = 71;
-	int textY = 170;
+	int textXa = crd.abortStrX;
+	int textXs = crd.listStartX;
+	int textYa = crd.abortStrY;
+	int textYs = crd.listStartY;
 	int col3 = (_configRenderMode == Common::kRenderCGA) ? 2 : guiSettings()->colors.fill;
 	int col4 = guiSettings()->colors.extraFill;
 	int col5 = 12;
+	int avl = _openBookAvailableSpells[_openBookSpellLevel * 10];
 
 	if (_flags.gameID == GI_EOB1) {
-		textCol2 = (_configRenderMode == Common::kRenderCGA) ? 12 : (_flags.platform == Common::kPlatformAmiga ? 16 : 11);
-		textXa = textXs = 73;
-		textY = 168;
+		textCol2 = (_configRenderMode == Common::kRenderCGA) ? 12 : guiSettings()->colors.guiColorDarkBlue;
 		col4 = col3;
 		col5 = textCol1;
+	} else if (_flags.lang == Common::ZH_TWN) {
+		col5 = avl > 0 ? guiSettings()->colors.guiColorBlack : guiSettings()->colors.guiColorLightRed;
+		col4 = avl > 0 ? guiSettings()->colors.extraFill : 0;
 	}
 
 	int textCol3 = _flags.use16ColorMode ? 0 : textCol2;
 	int textCol4 = _flags.use16ColorMode ? 0 : col3;
 
-	for (int i = 0; i < 7; i++) {
+	int lineH = _screen->getFontHeight();
+	if (_flags.lang == Common::ZH_TWN) {
+		printStringIntern_spellBook(_magicStrings1[0], textXa, textYa, col5, col4);
+		Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
+		_screen->printText(Common::String::format("P.%d", avl > 0 ? _openBookSpellListOffset / 3 + 1 : 0).c_str(), 152, 154, col5, guiSettings()->colors.extraFill);
+		_screen->setFont(cf);
+	}
+
+	for (int i = 0; i < crd.listSize + 1; i++) {
 		int d = _openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset + i];
 		if (_openBookSpellSelectedItem == i) {
-			if (d >= 0 && i < 6 && (i + _openBookSpellListOffset) < 9) {
-				_screen->fillRect(textXs, 132 + 6 * i, textXs + _screen->getTextWidth(_openBookSpellList[d]) - 1, 137 + 6 * i, textCol2);
-				_screen->printText(_openBookSpellList[d], textXs, 132 + 6 * i, textCol1, textCol3);
+			if (d >= 0 && i < crd.listSize && (i + _openBookSpellListOffset) < 9) {
+				if (_flags.lang != Common::ZH_TWN)
+					_screen->fillRect(textXs, textYs + lineH * i, textXs + _screen->getTextWidth(_openBookSpellList[d]) - 1, 137 + lineH * i, textCol2);
+				printStringIntern_spellBook(_openBookSpellList[d], textXs, textYs + lineH * i, textCol1, textCol3);
 			} else if (i == 6) {
 				if (_flags.gameID == GI_EOB2)
 					_screen->fillRect(69, 169, 144, 175, textCol2);
-				_screen->printText(_magicStrings1[0], textXa, textY, textCol1, textCol2);
+				_screen->printText(_magicStrings1[0], textXa, textYa, textCol1, textCol2);
 			}
 		} else {
-			if (d >= 0 && i < 6 && (i + _openBookSpellListOffset) < 9)
-				_screen->printText(_openBookSpellList[d], textXs, 132 + 6 * i, textCol1, textCol4);
+			if (d >= 0 && i < crd.listSize && (i + _openBookSpellListOffset) < 9)
+				printStringIntern_spellBook(_openBookSpellList[d], textXs, textYs + lineH * i, textCol1, textCol4);
 			else
-				_screen->printText(_magicStrings1[0], textXa, textY, col5, col4);
+				_screen->printText(_magicStrings1[0], textXa, textYa, col5, col4);
 		}
 	}
 
 	if (_characters[_openBookChar].disabledSlots & 4) {
-		static const uint8 xpos[] = { 0x44, 0x62, 0x80, 0x90 };
-		static const uint8 ypos[] = { 0x82, 0x92, 0x98 };
 		for (int yc = 0; yc < 3; yc++) {
 			for (int xc = 0; xc < 4; xc++)
-				_screen->drawShape(_screen->_curPage, _weaponSlotGrid, xpos[xc], ypos[yc], 0);
+				_screen->drawShape(_screen->_curPage, _weaponSlotGrid, crd.gridCoordsX[xc], crd.gridCoordsY[yc], 0);
 		}
 	}
 
-	if (_openBookAvailableSpells[_openBookSpellLevel * 10 + 6] <= 0)
-		_screen->drawShape(2, _blackBoxWideGrid, 146, 168, 0);
+	if (_openBookAvailableSpells[_openBookSpellLevel * 10 + crd.listSize] <= 0)
+		_screen->drawShape(2, _blackBoxWideGrid, 146, guiSettings()->spellbookCoords.scrollButtonY, 0);
 
 	_screen->setFont(of);
 	_screen->setCurPage(0);
-	_screen->copyRegion(64, 121, 64, 121, 112, 56, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(64, 121, 64, 121, 112, guiSettings()->spellbookCoords.totalHeight, 2, 0, Screen::CR_NO_P_CHECK);
 	if (!_loading)
 		_screen->updateScreen();
 }
@@ -885,13 +889,6 @@ void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	b->keyCode = d->keyCode;
 	b->keyCode2 = d->keyCode2;
 	b->arg = d->arg;
-}
-
-void EoBCoreEngine::printStatsPageString(const char *str, int x, int y, int col) {
-	if (_flags.lang == Common::ZH_TWN)
-		_screen->printShadedText(str, x, y, col, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
-	else
-		_screen->printText(str, x, y, col, guiSettings()->colors.sfill);
 }
 
 int EoBCoreEngine::clickedCharPortraitDefault(Button *button) {
@@ -1107,7 +1104,7 @@ int EoBCoreEngine::clickedSpellbookTab(Button *button) {
 	_openBookSpellLevel = button->arg;
 	_openBookSpellListOffset = 0;
 
-	for (_openBookSpellSelectedItem = 0; _openBookSpellSelectedItem < 6; _openBookSpellSelectedItem++) {
+	for (_openBookSpellSelectedItem = 0; _openBookSpellSelectedItem < guiSettings()->spellbookCoords.listSize; _openBookSpellSelectedItem++) {
 		if (_openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellSelectedItem] > 0)
 			break;
 	}
@@ -1124,7 +1121,8 @@ int EoBCoreEngine::clickedSpellbookTab(Button *button) {
 int EoBCoreEngine::clickedSpellbookList(Button *button) {
 	int listIndex = button->arg;
 	bool spellLevelAvailable = false;
-	int bbrk = _flags.platform == Common::kPlatformSegaCD ? 6 : 9;
+	int listSize = guiSettings()->spellbookCoords.listSize;
+	int bbrk = (_flags.platform == Common::kPlatformSegaCD) ? 6 : (_flags.lang == Common::ZH_TWN ? 8 : 9);
 
 	if (listIndex == 6) {
 		for (int i = 0; i < 10; i++) {
@@ -1139,7 +1137,7 @@ int EoBCoreEngine::clickedSpellbookList(Button *button) {
 		int v = (_gui->_progress == 1) ? -1 : ((_gui->_progress == 2) ? 1 : 0);
 
 		_openBookSpellSelectedItem += _openBookSpellListOffset;
-		if (_openBookSpellSelectedItem == 12 || (_openBookSpellSelectedItem == 6 && _openBookSpellListOffset == 0))
+		if (_openBookSpellSelectedItem == 12 || (_openBookSpellSelectedItem == listSize && _openBookSpellListOffset == 0))
 			_openBookSpellSelectedItem = 9;
 
 		do {
@@ -1148,18 +1146,17 @@ int EoBCoreEngine::clickedSpellbookList(Button *button) {
 			_openBookSpellSelectedItem = (s <= bbrk) ? s : 0;
 		} while (_openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellSelectedItem] <= 0 && _openBookSpellSelectedItem != 9);
 
-		if (_openBookSpellSelectedItem >= 6) {
-			_openBookSpellListOffset = 6;
+		_openBookSpellListOffset = 0;
+		while ((_openBookSpellSelectedItem >= listSize) && (_openBookSpellListOffset + listSize < 9)) {
+			_openBookSpellListOffset += listSize;
 			if (_openBookSpellSelectedItem == 9)
-				_openBookSpellSelectedItem = 6;
+				_openBookSpellSelectedItem = listSize;
 			else
-				_openBookSpellSelectedItem -= 6;
-		} else {
-			_openBookSpellListOffset = 0;
+				_openBookSpellSelectedItem -= listSize;
 		}
 
-		if (_openBookSpellListOffset == 6 && _openBookAvailableSpells[_openBookSpellLevel * 10 + 6] <= 0)
-			_openBookSpellListOffset = 0;
+		if (_openBookSpellListOffset + listSize >= 9 && _openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset] <= 0)
+			_openBookSpellListOffset -= listSize;
 
 		gui_drawSpellbook();
 
@@ -1186,7 +1183,7 @@ int EoBCoreEngine::clickedSpellbookList(Button *button) {
 
 				castSpell(s, 0);
 
-			} else if ((_openBookSpellSelectedItem == 6 && listIndex == 7) || (_openBookSpellSelectedItem != 6 && listIndex == 6)) {
+			} else if ((_openBookSpellSelectedItem == listSize && listIndex == 7) || (_openBookSpellSelectedItem != listSize && listIndex == listSize)) {
 				Button b;
 				clickedSpellbookAbort(&b);
 			}
@@ -1353,11 +1350,28 @@ int EoBCoreEngine::clickedSpellbookAbort(Button *button) {
 }
 
 int EoBCoreEngine::clickedSpellbookScroll(Button *button) {
+	int listSize = (_flags.lang == Common::ZH_TWN) ? 3 : 6;
+
 	if (_openBookAvailableSpells[_openBookSpellLevel * 10] > 0) {
-		_openBookSpellListOffset ^= 6;
+		int dir = (_mouseX < button->x + (button->width >> 1)) ? -1 : 1;
+		_openBookSpellListOffset = (_openBookSpellListOffset + dir * listSize);
+		if (_openBookSpellListOffset >= 9)
+			_openBookSpellListOffset = 0;
+		else if (_openBookSpellListOffset < 0)
+			_openBookSpellListOffset = 9 - 9 % listSize;
+		for (bool spellAvailable = false; spellAvailable == false; ) {
+			for (int i = _openBookSpellListOffset; i < MIN<int>(_openBookSpellListOffset + listSize, 10); i++) {
+				if (_openBookAvailableSpells[_openBookSpellLevel * 10 + i] > 0) {
+					spellAvailable = true;
+					break;
+				}
+			}
+			if (!spellAvailable)
+				_openBookSpellListOffset = (dir == 1) ? 0 : _openBookSpellListOffset - listSize;
+		}
 		_openBookSpellSelectedItem = 0;
 	} else {
-		_openBookSpellListOffset = 6;
+		_openBookSpellListOffset = listSize;
 	}
 
 	_characters[_openBookChar].slotStatus[2] = _openBookSpellSelectedItem;
@@ -1505,6 +1519,20 @@ void EoBCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 	_lastUsedItem = itm;
 	runLevelScript(calcNewBlockPosition(_currentBlock, _currentDirection), 0x100);
 	_lastUsedItem = 0;
+}
+
+void EoBCoreEngine::printStringIntern_statsPage(const char *str, int x, int y, int col) {
+	if (_flags.lang == Common::ZH_TWN)
+		_screen->printShadedText(str, x, y, col, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+	else
+		_screen->printText(str, x, y, col, guiSettings()->colors.sfill);
+}
+
+void EoBCoreEngine::printStringIntern_spellBook(const char *str, int x, int y, int col1, int col2) {
+	if (_flags.lang == Common::ZH_TWN)
+		_screen->printShadedText(str, x, y, col1, 0, col2);
+	else
+		_screen->printText(str, x, y, col1, col2);
 }
 
 void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
