@@ -68,10 +68,10 @@ void ScummEngine_v80he::o80_createSound() {
 
 	switch (subOp) {
 	case SO_ADD:
-		createSound(_heSndResId, pop());
+		((SoundHE *)_sound)->createSound(_heSndResId, pop());
 		break;
 	case SO_NEW:
-		createSound(_heSndResId, -1);
+		((SoundHE *)_sound)->createSound(_heSndResId, -1);
 		break;
 	case SO_SOUND_START:
 		_heSndResId = pop();

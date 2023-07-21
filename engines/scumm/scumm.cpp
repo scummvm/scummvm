@@ -712,11 +712,6 @@ ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v72he(syst, dr) {
-	_heSndResId = 0;
-	_curSndId = 0;
-	_sndPtrOffs = 0;
-	_sndTmrOffs = 0;
-	_sndDataSize = 0;
 
 	VAR_PLATFORM_VERSION = 0xFF;
 	VAR_CURRENT_CHARSET = 0xFF;
@@ -3548,7 +3543,7 @@ int ScummEngine_v60he::getHETimer(int timer) {
 }
 
 void ScummEngine_v60he::setHETimer(int timer) {
-	assertRange(1, timer, 15, "setHETimer: Timer");
+	assertRange(1, timer, ARRAYSIZE(_heTimers) - 1, "setHETimer: Timer");
 	_heTimers[timer] = _system->getMillis();
 }
 

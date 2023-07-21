@@ -1799,6 +1799,7 @@ public:
 	byte VAR_START_DYN_SOUND_CHANNELS = 0xFF;	// Used in getNextDynamicChannel()
 	byte VAR_SOUND_CALLBACK_SCRIPT = 0xFF;
 
+	byte VAR_EARLY_TALKIE_CALLBACK = 0xFF;
 	byte VAR_EARLY_CHAN_0_CALLBACK = 0xFF;
 	byte VAR_EARLY_CHAN_1_CALLBACK = 0xFF;
 	byte VAR_EARLY_CHAN_2_CALLBACK = 0xFF;
@@ -1810,6 +1811,8 @@ public:
 	byte VAR_LAST_SCRIPT_PRIORITY = 0xFF;    // Used in runAllScripts()
 
 	byte VAR_QUIT_SCRIPT = 0xFF; // Used in confirmExitDialog()
+	byte VAR_ERROR_FLAG = 0xFF; // HE70-90
+	byte VAR_OPERATION_FAILURE = 0xFF; // HE99+
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS = 0xFF;

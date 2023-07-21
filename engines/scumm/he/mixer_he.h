@@ -19,8 +19,88 @@
  *
  */
 
+#if !defined(SCUMM_HE_MIXER_HE_H)
+#define SCUMM_HE_MIXER_HE_H
+
+#include "scumm/he/sound_he.h"
 #include "common/util.h"
+#include "common/file.h"
+#include "common/debug.h"
+
+namespace Audio {
+class AudioStream;
+class Mixer;
+class QueuingAudioStream;
+} // namespace Audio
 
 namespace Scumm {
 
+#define CHANNEL_EMPTY_FLAGS        0x00000000
+#define CHANNEL_ACTIVE             0x00000001
+#define CHANNEL_FINISHED           0x00000002
+#define CHANNEL_LOOPING            0x00000004
+#define CHANNEL_LAST_CHUNK         0x00000008
+#define CHANNEL_SPOOLING           0x00000010
+#define CHANNEL_SPOOL_READ         0x00000020
+#define CHANNEL_SPOOL_CRITICAL     0x00000040
+#define CHANNEL_CALLBACK_EARLY     0x00000080
+#define CHANNEL_SOFT_REMIX         0x00000100
+
+struct HESoundModifiers;
+
+class HEMixer {
+protected:
+	Audio::Mixer *_mixer;
+	bool _useMilesSoundSystem;
+
+public:
+	HEMixer(Audio::Mixer *mixer, bool useMiles);
+	~HEMixer();
+
+	void *getMilesSoundSystemObject();
+	bool initSoftMixerSubSystem();
+	void deinitSoftMixerSubSystem();
+	void endNeglectProcess();
+	void startLongNeglectProcess();
+	bool forceMusicBufferFill();
+	bool isMixerDisabled();
+	bool stopChannel(int channel);
+	void stopAllChannels();
+	bool changeChannelVolume(int channel, int volume, bool soft);
+	void softRemixAllChannels();
+	void premixUntilCritical();
+	bool pauseMixerSubSystem(bool paused);
+	void feedMixer();
+
+	bool startChannelNew(
+		int channel, int globType, int globNum, uint32 soundData, uint32 offset,
+		int sampleLen, int frequency, int bitsPerSample, int sampleChannels,
+		const HESoundModifiers &modifiers, int callbackId, int32 flags, ...);
+
+	bool startChannel(
+		int channel, int globType, int globNum, uint32 sampleDataOffset,
+		int sampleLen, int frequency, int volume, int callbackId, int32 flags, ...);
+
+	bool startSpoolingChannel(
+		int channel, Common::File &spoolingFile, int sampleLen, int frequency,
+		int volume, int callbackID, int32 flags, ...);
+
+	bool isMilesActive();
+	bool changeChannelVolume(int channel, int newVolume, int soft_flag);
+	void milesStartSpoolingChannel(int channel, const char *filename, long offset, int flags, HESoundModifiers modifiers);
+	int  hsFindSoundQueue(int sound);
+	bool mixerStartChannel(
+		int channel, int globType, int globNum, uint32 sampleDataOffset,
+		int sampleLen, int frequency, int volume, int callbackID, uint32 flags, ...);
+
+	bool milesStartChannel(
+		int channel, int globType, int globNum, uint32 sound_data, uint32 offset,
+		int sampleLen, int bitsPerSample, int sampleChannels,
+		int frequency, HESoundModifiers modifiers, int callbackID, uint32 flags, ...);
+
+	void milesModifySound(int channel, int offset, HESoundModifiers modifiers, int flags);
+};
+
 } // End of namespace Scumm
+
+#endif

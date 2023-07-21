@@ -751,10 +751,10 @@ void ScummEngine_v100he::o100_createSound() {
 		_heSndResId = pop();
 		break;
 	case SO_NEW:
-		createSound(_heSndResId, -1);
+		((SoundHE *)_sound)->createSound(_heSndResId, -1);
 		break;
 	case SO_SOUND_ADD:
-		createSound(_heSndResId, pop());
+		((SoundHE *)_sound)->createSound(_heSndResId, pop());
 		break;
 	case SO_END:
 		break;
