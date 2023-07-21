@@ -45,19 +45,6 @@ FT2_1_3_BEGIN_HEADER
 #define FT2_1_3_SET_ERROR(expression) ((error = (expression)) != 0)
 
 
-#ifdef FT2_1_3_DEBUG_MEMORY
-
-FT2_1_3_BASE(FT_Error)
-FT_Alloc_Debug(FT_Memory memory, FT_Long size, void **P, const char *file_name, FT_Long line_no);
-
-FT2_1_3_BASE(FT_Error)
-FT_Realloc_Debug(FT_Memory memory, FT_Long current, FT_Long size, void **P, const char *file_name, FT_Long line_no);
-
-FT2_1_3_BASE(void)
-FT_Free_Debug(FT_Memory memory, FT_Pointer block, const char *file_name, FT_Long line_no);
-
-#endif
-
 FT2_1_3_BASE(FT_Error)
 FT_Alloc(FT_Memory memory, FT_Long size, void **P);
 
@@ -74,19 +61,10 @@ FT_Free(FT_Memory memory, void **P);
 #define FT2_1_3_MEM_ZERO(dest, count) FT2_1_3_MEM_SET(dest, 0, count)
 #define FT2_1_3_ZERO(p) FT2_1_3_MEM_ZERO(p, sizeof(*(p)))
 
-#ifdef FT2_1_3_DEBUG_MEMORY
-
-#define FT2_1_3_MEM_ALLOC(_pointer_, _size_) FT_Alloc_Debug(memory, _size_, (void **)&(_pointer_), __FILE__, __LINE__)
-#define FT2_1_3_MEM_REALLOC(_pointer_, _current_, _size_) FT_Realloc_Debug(memory, _current_, _size_, (void **)&(_pointer_), __FILE__, __LINE__)
-#define FT2_1_3_MEM_FREE(_pointer_) FT_Free_Debug(memory, (void **)&(_pointer_), __FILE__, __LINE__)
-
-#else /* !FT2_1_3_DEBUG_MEMORY */
-
 #define FT2_1_3_MEM_ALLOC(_pointer_, _size_) FT_Alloc(memory, _size_, (void **)&(_pointer_))
 #define FT2_1_3_MEM_FREE(_pointer_) FT_Free(memory, (void **)&(_pointer_))
 #define FT2_1_3_MEM_REALLOC(_pointer_, _current_, _size_) FT_Realloc(memory, _current_, _size_, (void **)&(_pointer_))
 
-#endif /* !FT2_1_3_DEBUG_MEMORY */
 
 /*************************************************************************/
 /*                                                                       */

@@ -31,7 +31,6 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/ftbbox.o \
 	lib/freetype-2.1.3/ftbdf.o \
 	lib/freetype-2.1.3/ftcalc.o \
-	lib/freetype-2.1.3/ftdbgmem.o \
 	lib/freetype-2.1.3/ftgloadr.o \
 	lib/freetype-2.1.3/ftglyph.o \
 	lib/freetype-2.1.3/ftinit.o \

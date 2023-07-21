@@ -134,10 +134,6 @@ FT_Stream_Open(FT_Stream stream, const char *filepathname) {
 	return FT2_1_3_Err_Ok;
 }
 
-#ifdef FT2_1_3_DEBUG_MEMORY
-extern FT_Int ft_mem_debug_init(FT_Memory memory);
-extern void ft_mem_debug_done(FT_Memory memory);
-#endif
 
 FT2_1_3_EXPORT_DEF(FT_Memory)
 FT_New_Memory(void) {
@@ -149,9 +145,6 @@ FT_New_Memory(void) {
 		memory->alloc = ft_alloc;
 		memory->realloc = ft_realloc;
 		memory->free = ft_free;
-	#ifdef FT2_1_3_DEBUG_MEMORY
-		ft_mem_debug_init(memory);
-	#endif
 	}
 
 	return memory;
@@ -159,9 +152,6 @@ FT_New_Memory(void) {
 
 FT2_1_3_EXPORT_DEF(void)
 FT_Done_Memory(FT_Memory memory) {
-#ifdef FT2_1_3_DEBUG_MEMORY
-	ft_mem_debug_done(memory);
-#endif
 	memory->free(memory, memory);
 }
 

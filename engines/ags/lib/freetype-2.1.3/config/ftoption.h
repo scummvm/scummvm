@@ -262,22 +262,6 @@ FT2_1_3_BEGIN_HEADER
 
 /*************************************************************************/
 /*                                                                       */
-/* Memory Debugging                                                      */
-/*                                                                       */
-/*   FreeType now comes with an integrated memory debugger that is       */
-/*   capable of detecting simple errors like memory leaks or double      */
-/*   deletes.  To compile it within your build of the library, you       */
-/*   should define FT2_1_3_DEBUG_MEMORY here.                                 */
-/*                                                                       */
-/*   Note that the memory debugger is only activated at runtime when     */
-/*   when the _environment_ variable "FT2_1_3_DEBUG_MEMORY" is also defined!  */
-/*                                                                       */
-/* #define  FT2_1_3_DEBUG_MEMORY */
-
-
-
-/*************************************************************************/
-/*                                                                       */
 /* Module errors                                                         */
 /*                                                                       */
 /*   If this macro is set (which is _not_ the default), the higher byte  */
