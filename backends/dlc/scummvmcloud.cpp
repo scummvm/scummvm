@@ -129,9 +129,13 @@ void ScummVMCloud::extractZip(Common::Path file) {
 void ScummVMCloud::removeCacheFile(Common::Path file) {
 	Common::Path dlcPath = Common::Path(ConfMan.get("iconspath"));
 	Common::Path fileToDelete = dlcPath.join(file);
-	#if defined(POSIX)
+#if defined(POSIX)
 	unlink(fileToDelete.toString().c_str());
-	#endif
+#elif defined(WIN32)
+	_unlink(fileToDelete.toString().c_str());
+#else
+	warning("ScummVMCloud::removeCacheFile(): Removing is unimplemented");
+#endif
 }
 
 } // End of namespace ScummVMCloud
