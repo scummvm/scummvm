@@ -352,6 +352,7 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	}
 
 	_currentScreenName = name;
+	_currentScreen = nullptr;
 	auto screenObject = loadObject(name, Common::String(), !hasScreenPatch);
 	_currentScreen = new Screen(this, screenObject, loadingType, previousScreenName);
 
