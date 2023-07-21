@@ -44,6 +44,7 @@
 #include "m4/graphics/gr_color.h"
 #include "m4/graphics/gr_font.h"
 #include "m4/graphics/krn_pal.h"
+#include "m4/graphics/rend.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_item.h"
 #include "m4/gui/gui_mouse.h"
@@ -111,6 +112,7 @@ public:
 	KernelPal_Globals _krnPal;
 	ADVScale_Globals _scale;
 	ConvDisplayData _cdd;
+	Rend_Globals _rend;
 
 	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;
