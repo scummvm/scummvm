@@ -127,6 +127,7 @@ public:
 	void stopProcessForObject(const Common::String & name);
 	void reactivate(const Common::String &name, const Common::String &where, bool runNow = false);
 	bool hasActiveProcesses(const Common::String &name) const;
+	void runPendingReactivatedProcesses();
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name, ScreenLoadingType type, bool savePatch = true);
@@ -298,6 +299,7 @@ private:
 	int							_pictureCacheId;
 	FontsType					_fonts;
 	ProcessListType				_processes;
+	ProcessListType				_pendingReactivatedProcesses;
 	PatchesType					_patches;
 	ObjectPatchesType			_objectPatches;
 	int							_sharedStorageIndex;

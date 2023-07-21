@@ -62,6 +62,7 @@ void SoundManager::tick() {
 		} else
 			++it;
 	}
+	_engine->runPendingReactivatedProcesses();
 }
 
 const Sound *SoundManager::find(int id) const {
