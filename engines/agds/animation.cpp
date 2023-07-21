@@ -216,10 +216,13 @@ bool Animation::tick() {
 	}
 
 	if (eov && !_loop && --_cycles <= 0) {
-		if (!_phaseVar.empty())
+		if (!_phaseVar.empty()) {
 			_engine->setGlobal(_phaseVar, _phase - 1);
-		else
+		} else {
 			_engine->reactivate(_process, "animation end", true);
+			_engine->runPendingReactivatedProcesses();
+		}
+
 		return false;
 	}
 

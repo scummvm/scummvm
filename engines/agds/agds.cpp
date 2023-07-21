@@ -1381,7 +1381,17 @@ void AGDSEngine::reactivate(const Common::String &name, const Common::String &wh
 			debug("reactivate %s now: %d, %s", name.c_str(), runNow, where.c_str());
 			process->activate();
 			if (runNow)
-				process->run();
+				_pendingReactivatedProcesses.push_back(process);
+		}
+	}
+}
+
+void AGDSEngine::runPendingReactivatedProcesses() {
+	while(!_pendingReactivatedProcesses.empty()) {
+		ProcessListType processes;
+		_pendingReactivatedProcesses.swap(processes);
+		for(auto & process : processes) {
+			process->run();
 		}
 	}
 }
