@@ -45,6 +45,12 @@ enum {
 	kWindowBorderMaxFlag   = 1 << 3
 };
 
+enum {
+	kWinBorderWin95Scrollbar = 0x7F,
+	kWindowBorderWin95NoBorderScrollbar,
+	kWindowBorderMacOSNoBorderScrollbar
+};
+
 struct BorderOffsets {
 	int left;
 	int right;

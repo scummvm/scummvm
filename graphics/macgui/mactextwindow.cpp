@@ -94,8 +94,8 @@ void MacTextWindow::init(bool cursorHandler) {
 	if (_wm->_mode & kWMModeWin95) {
 		// in win95 mode, we set scrollbar as default
 		_hasScrollBar = true;
-		loadWin95Border("Win95BorderScrollbar.bmp", kWindowBorderScrollbar | kWindowBorderActive);
-		loadWin95Border("Win95BorderScrollbar.bmp",kWindowBorderScrollbar);
+		setBorderType(kWinBorderWin95Scrollbar);
+		loadInternalBorder(kWindowBorderScrollbar | kWindowBorderActive);
 	}
 }
 
