@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/array.h"
 #include "common/queue.h"
+#include "common/path.h"
 #include "backends/dlc/dlcdesc.h"
 
 namespace DLC {
@@ -51,6 +52,7 @@ public:
 
 	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) = 0;
 
+	virtual void removeCacheFile(Common::Path file) = 0;
 };
 
 } // End of namespace DLC

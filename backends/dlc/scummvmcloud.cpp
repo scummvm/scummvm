@@ -19,6 +19,15 @@
  *
  */
 
+#if defined(POSIX)
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+
+#include <unistd.h>
+#endif
+
+#include "common/archive.h"
+#include "common/compression/unzip.h"
+#include "common/file.h"
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/dlcmanager.h"
 #include "common/config-manager.h"
@@ -71,6 +80,12 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 	if (response->eos) {
 		warning("downloaded");
+		Common::Path relativeFilePath = Common::Path(DLCMan._queuedDownloadTasks.front()->id);
+		// extract the downloaded zip
+		extractZip(relativeFilePath);
+		// remove cache (the downloaded .zip)
+		removeCacheFile(relativeFilePath);
+		// handle next download
 		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
 		DLCMan._queuedDownloadTasks.pop();
 		DLCMan.processDownloadQueue();
@@ -93,6 +108,29 @@ void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::St
 		new Common::Callback<ScummVMCloud, Networking::ErrorResponse>(this, &ScummVMCloud::errorCallback));
 
 	rq->start();
+}
+
+void ScummVMCloud::extractZip(Common::Path file) {
+	Common::Archive *dataArchive = nullptr;
+	Common::Path dlcPath = Common::Path(ConfMan.get("iconspath"));
+	Common::FSNode *fs = new Common::FSNode(dlcPath.join(file));
+	if (fs->exists()) {
+		dataArchive = Common::makeZipArchive(*fs);
+		// dataArchive is nullptr if zip file is incomplete
+		if (dataArchive != nullptr) {
+			dataArchive->dumpArchive(dlcPath.toString());
+		}
+	}
+	delete fs;
+	delete dataArchive;
+}
+
+void ScummVMCloud::removeCacheFile(Common::Path file) {
+	Common::Path dlcPath = Common::Path(ConfMan.get("iconspath"));
+	Common::Path fileToDelete = dlcPath.join(file);
+	#if defined(POSIX)
+	unlink(fileToDelete.toString().c_str());
+	#endif
 }
 
 } // End of namespace ScummVMCloud
