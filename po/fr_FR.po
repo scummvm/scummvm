@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-19 20:21+0000\n"
-"PO-Revision-Date: 2023-07-18 20:41+0000\n"
+"PO-Revision-Date: 2023-07-21 20:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1844,16 +1844,16 @@ msgstr ""
 "jeu."
 
 #: gui/options.cpp:2564
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Désactiver les chutes"
+msgstr "Désactiver le redimensionnement des polices fixes"
 
 #: gui/options.cpp:2565
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"N'agrandit pas les polices de largeur fixe dans l'interface graphique. Cela "
+"permet de réduire les artefacts sur les écrans à faible résolution"
 
 #: gui/options.cpp:2571
 msgid "GUI language:"
