@@ -109,14 +109,14 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	if (drawReq->scaleY <= 0)
 		return 0;
 
-	if ((!drawReq->Src->W) || (!drawReq->Src->h))
+	if (!drawReq->Src->W || !drawReq->Src->h)
 		return 1;
 
-	// copy DrawReq->Src to  source buffer
+	// Copy DrawReq->Src to source buffer
 	source = *drawReq->Src;
 
-	/* check for RLE encoding in case of shadows */
-	// there is no RLE shadow draw routine, so we have to decode shadows ahead of time.
+	// Check for RLE encoding in case of shadows
+	// There is no RLE shadow draw routine, so we have to decode shadows ahead of time.
 	if ((source.encoding & RLE8) && (source.encoding & SHADOW)) {
 		if (!(shadowBuff = (uint8 *)mem_alloc(source.stride * source.h, "shadow buff")))
 			error_show(FL, 'OOM!', "buffer w:%uld, h:%uld", source.W, source.h);
@@ -126,14 +126,12 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		source.encoding &= ~RLE8;
 	}
 
-	/* check for scaling */
-	// we scale before we draw
-	if (Scaled)
-	{
-		/* check if input is RLE8 encoded */
-		// if it's scaled we decode it first
-		if (Rle)
-		{
+	// Check for scaling
+	// We scale before we draw
+	if (Scaled) {
+		// Check if input is RLE8 encoded
+		// If it's scaled we decode it first
+		if (Rle) {
 			if (!(scaledBuff = (uint8 *)mem_alloc(source.stride * source.h, "scaled buffer")))
 				error_show(FL, 'OOM!', "no mem: buffer w:%ld, h:%ld", source.W, source.h);
 
@@ -141,26 +139,25 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 			source.data = scaledBuff;
 			source.encoding &= ~RLE8;
 		}
-		if (scale_sprite(&source, &afterScaled, imath_abs(drawReq->scaleX), imath_abs(drawReq->scaleY)))
-		{
+
+		if (scale_sprite(&source, &afterScaled, imath_abs(drawReq->scaleX), imath_abs(drawReq->scaleY))) {
 			if (shadowBuff) mem_free(shadowBuff);
 			if (scaledBuff) mem_free(scaledBuff);
 			error_show(FL, 'SPSF', "gr_sprite_draw");
 		}
 
-		/* preserve encoding */
+		// Preserve encoding
 		afterScaled.encoding = source.encoding;
 
-		/* copy AfterScaled to	source buffer */
+		// Copy AfterScaled to source buffer
 		memcpy(&source, &afterScaled, sizeof(Buffer));
 	}
 
 	YPos = drawReq->y;
 
-	/* check for clipping */
-	// if sprite is off edge of destination buffer, do something special
-	if (Clipped)
-	{
+	// Check for clipping
+	// If sprite is off edge of destination buffer, do something special
+	if (Clipped) {
 		if (-YPos >= source.h)
 			goto truly_done;
 
@@ -174,32 +171,31 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 			goto truly_done;
 
 		// if clipped off top, scan into sprite
-		if (YPos < 0)
-		{
+		if (YPos < 0) {
 			if (Rle)
 				source.data = SkipRLE_Lines(-YPos, source.data);
 			else
 				source.data += -YPos * source.stride;
+
 			source.h += YPos;
 			YPos = 0;
 		}
 
-		// find out if we're losing pixels on left or right
+		// Find out if we're losing pixels on left or right
 		if (drawReq->x < 0)
 			leftOffset = -drawReq->x;
 
 		if (drawReq->x + source.W > drawReq->Dest->W)
 			rightOffset = drawReq->x + source.W - drawReq->Dest->W;
 
-		if (YPos + source.h > drawReq->Dest->h)
-		{
+		if (YPos + source.h > drawReq->Dest->h) {
 			source.h -= YPos + source.h - drawReq->Dest->h;
 			bottomCut = 1;
 		}
 	}
 
-	/* after all the necessary changes (scaling/shadow RLE expansion) */
-	if (Rle)					/* will be RLE_Draw */
+	// After all the necessary changes (scaling/shadow RLE expansion)
+	if (Rle)					// Will be RLE_Draw
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
@@ -222,7 +218,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 					RLE_Draw(&source, drawReq->Dest, drawReq->x, YPos);
 				else
 					RLE_DrawRev(&source, drawReq->Dest, drawReq->x, YPos);
-	else if (Shadow)                            /* will be Raw_SDraw */
+	else if (Shadow)                            // Will be Raw_SDraw
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
@@ -245,7 +241,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 					Raw_SDraw(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
 				else
 					Raw_SDrawRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
-	else                                        /* will be Raw_Draw */
+	else                                        // Will be Raw_Draw
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
