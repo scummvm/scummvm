@@ -98,8 +98,13 @@ Channel& Channel::operator=(const Channel &channel) {
 
 
 Channel::~Channel() {
-	if (_widget)
-		delete _widget;
+	if (_widget) {
+		if(dynamic_cast<Graphics::MacWindow *>(_widget))
+			g_director->_wm->removeWindow((Graphics::MacWindow *)_widget);
+		else
+			delete _widget;
+	}
+
 	if (_mask)
 		delete _mask;
 	if (_sprite)
@@ -618,7 +623,11 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 	}
 
 	if (_widget) {
-		delete _widget;
+		// Check if _widget is of type window, in which case we need to remove it from the window manager
+		if(dynamic_cast<Graphics::MacWindow *>(_widget))
+			g_director->_wm->removeWindow((Graphics::MacWindow *)_widget);
+		else
+			delete _widget;
 		_widget = nullptr;
 	}
 
