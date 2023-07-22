@@ -217,6 +217,14 @@ Common::Error DirectorEngine::run() {
 		_wmMode |= Graphics::kWMMode32bpp;
 #endif
 
+	if (getGameFlags() & GF_DESKTOP)
+		_wmMode &= ~Graphics::kWMModeNoDesktop;
+
+	if (getGameFlags() & GF_640x480) {
+		_wmWidth = 640;
+		_wmHeight = 480;
+	}
+
 	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
 	_wm->setEngine(this);
 

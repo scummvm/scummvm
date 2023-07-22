@@ -92,6 +92,12 @@ enum {
 	kDebugXObj			= 1 << 21,
 };
 
+enum {
+	GF_DESKTOP = 1 << 0,
+	GF_640x480 = 1 << 1,
+	GF_32BPP   = 1 << 2,
+};
+
 struct MovieReference {
 	Common::String movie;
 	Common::String frameS;
@@ -157,6 +163,7 @@ public:
 	void setVersion(uint16 version);
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
+	uint32 getGameFlags() const;
 	Common::String getTargetName() { return _targetName; }
 	const char *getExtra();
 	Common::String getRawEXEName() const;
