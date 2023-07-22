@@ -69,7 +69,7 @@ void ScummEngine_v70he::o70_soundOps() {
 	case SO_SOUND_VOLUME:
 		value = pop();
 		_heSndSoundId = pop();
-		_sound->startSound(_heSndSoundId, 0, 0, HE_SND_VOL, 0, 0, value);
+		_sound->startSound(_heSndSoundId, 0, 0, HE_SND_VOL, HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, value);
 		break;
 	case SO_NOW:
 		_heSndFlags |= HE_SND_QUICK_START;
@@ -81,7 +81,7 @@ void ScummEngine_v70he::o70_soundOps() {
 		// WORKAROUND: For errors in room script 240 (room 4) of maze
 		break;
 	case SO_SOUND_FREQUENCY:
-		_heSndFrequencyShift = pop();
+		_heSndFrequency = pop();
 		break;
 	case SO_SOUND_CHANNEL:
 		_heSndChannel = pop();
@@ -92,14 +92,15 @@ void ScummEngine_v70he::o70_soundOps() {
 	case SO_SOUND_START:
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
-		_heSndFrequencyShift = 11025;
+		_heSndFrequency = 11025; // This is set but apparently is not used?
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		break;
 	case SO_SOUND_LOOPING:
 		_heSndFlags |= HE_SND_LOOP;
 		break;
 	case SO_END:
-		_sound->startSound(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift);
+		_sound->startSound(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags,
+			HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
 		_heSndFlags = 0;
 		break;
 

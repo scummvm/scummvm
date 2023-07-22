@@ -465,6 +465,9 @@ bool SoundHE::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 }
 
 void SoundHE::handleSoundFrame() {
+	if (_vm->_game.heversion < 80)
+		return;
+
 	_soundsDebugFrameCounter++;
 
 	if (_stopActorTalkingFlag) {
@@ -472,7 +475,8 @@ void SoundHE::handleSoundFrame() {
 		_stopActorTalkingFlag = false;
 	}
 
-	unqueueSoundCallbackScripts();
+	if (_vm->_game.heversion >= 95)
+		unqueueSoundCallbackScripts();
 
 	runSoundCode();
 	checkSoundTimeouts();
@@ -628,13 +632,22 @@ void SoundHE::runSoundCode() {
 		freq = READ_LE_UINT32(soundPtr + sizeof(uint16));
 
 		while (soundPos > freq) {
-			debug(5, "Channel %d Timer %d Time %d", chan, soundPos, freq);
+			debug(5, "SoundHE::runSoundCode(): Channel %d Timer %d Time %d", chan, soundPos, freq);
 
 			processSoundOpcodes(_heChannel[chan].sound, soundPtr + sizeof(uint16) + sizeof(uint32), _heChannel[chan].soundVars);
 
 			_heChannel[chan].codeOffset += len;
 
-			soundPtr += len;
+			// The original runs the following section again on purpose
+			if (_heChannel[chan].codeBuffer == nullptr) {
+				soundPtr = _vm->getResourceAddress(rtSound, _heChannel[chan].sound);
+			} else {
+				soundPtr = _heChannel[chan].codeBuffer;
+			}
+
+			assert(soundPtr);
+
+			soundPtr += _heChannel[chan].codeOffset;
 
 			len = READ_LE_UINT16(soundPtr);
 			freq = READ_LE_UINT32(soundPtr + sizeof(uint16));
@@ -657,7 +670,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 		arg = opcode & HSND_SBNG_VARORVAL;
 		opcode &= ~HSND_SBNG_VARORVAL;
 
-		debug(5, "processSoundOpcodes: sound %d opcode %d", sound, opcode);
+		debug(5, "SoundHE::processSoundOpcodes(): sound %d opcode %d", sound, opcode);
 
 		switch (opcode) {
 		case HSND_SBNG_END: // Continue
@@ -709,7 +722,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			}
 			if (!val) {
 				val = 1; // Safeguard for division by zero
-				warning("Incorrect value 0 for processSoundOpcodes() kludge DIV");
+				warning("SoundHE::processSoundOpcodes(): Incorrect value 0 for processSoundOpcodes() kludge DIV");
 			}
 			val = getSoundVar(sound, var) / val;
 			setSoundVar(sound, var, val);
@@ -725,41 +738,9 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			setSoundVar(sound, var, val);
 			break;
 		default:
-			error("Illegal sound %d opcode %d", sound, opcode);
+			error("SoundHE::processSoundOpcodes(): Illegal sound %d opcode %d", sound, opcode);
 		}
 	}
-}
-
-byte *findSoundTag(uint32 tag, byte *ptr) {
-	byte *endPtr;
-	uint32 offset, size;
-
-	if (READ_BE_UINT32(ptr) == MKTAG('W','S','O','U')) {
-		ptr += 8;
-	}
-
-	if (READ_BE_UINT32(ptr) != MKTAG('R','I','F','F'))
-		return nullptr;
-
-	endPtr = (ptr + 12);
-	size = READ_LE_UINT32(ptr + 4);
-
-	while (endPtr < ptr + size) {
-		offset = READ_LE_UINT32(endPtr + 4);
-
-		if (offset <= 0)
-			error("Illegal chunk length - %d bytes.", offset);
-
-		if (offset > size)
-			error("Chunk extends beyond file end - %d versus %d.", offset, size);
-
-		if (READ_BE_UINT32(endPtr) == tag)
-			return endPtr;
-
-		endPtr = endPtr + offset + 8;
-	}
-
-	return nullptr;
 }
 
 void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers) {
@@ -779,18 +760,7 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 	if ((READ_BE_UINT32(soundAddr) == MKTAG('D', 'I', 'G', 'I')) || (READ_BE_UINT32(soundAddr) == MKTAG('T', 'A', 'L', 'K'))) {
 		triggerDigitalSound(soundId, heOffset, heChannel, heFlags);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('M', 'I', 'D', 'I')) {
-		if (_vm->_imuse) {
-			// This is used in the DOS version of Fatty Bear's
-			// Birthday Surprise to change the note on the piano
-			// when not using a digitized instrument.
-			_vm->_imuse->stopSound(_currentMusic);
-			_currentMusic = soundId;
-			_vm->_imuse->startSoundWithNoteOffset(soundId, heOffset);
-		} else if (_vm->_musicEngine) {
-			_vm->_musicEngine->stopSound(_currentMusic);
-			_currentMusic = soundId;
-			_vm->_musicEngine->startSoundWithTrackID(soundId, heOffset);
-		}
+		triggerMidiSound(soundId, heOffset);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('W', 'S', 'O', 'U')) {
 		triggerRIFFSound(soundId, heOffset, heChannel, heFlags, modifiers);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('X', 'S', 'O', 'U')) {
@@ -1217,7 +1187,7 @@ void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundDa
 	if (_vm->_game.heversion >= 95) {
 		index = _vm->VAR_EARLY_CHAN_1_CALLBACK + channel;
 
-		if ((_vm->VAR_EARLY_CHAN_1_CALLBACK <= index) && (_vm->VAR_EARLY_CHAN_3_CALLBACK >= index)) {
+		if ((index >= _vm->VAR_EARLY_CHAN_1_CALLBACK) && (index <= _vm->VAR_EARLY_CHAN_3_CALLBACK)) {
 			earlyCallbackByteCount = _vm->VAR(index);
 		} else {
 			earlyCallbackByteCount = 0;
@@ -1231,32 +1201,29 @@ void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundDa
 			modifiers, channel, CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags,
 			earlyCallbackByteCount);
 	} else if (_vm->_game.heversion >= 80) {
+		// HE 80 doesn't make checks on the range for the early callback channel
 		_heMixer->startChannel(
 			channel, globType, globNum, soundData + offset,
 			(sampleCount - offset), HSND_DEFAULT_FREQUENCY, HSND_MAX_VOLUME, channel,
 			CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags,
 			_vm->VAR(_vm->VAR_EARLY_CHAN_1_CALLBACK + channel));
 	} else {
-		if (channel != _vm->VAR(_vm->VAR_TALK_CHANNEL)) {
+		// Sub HE 80 codepath, simpler than the newer versions
+
+		// If we're trying to start a speech sound, we have to signal an early callback
+		if (_vm->_game.heversion >= 70 && channel == _vm->VAR(_vm->VAR_TALK_CHANNEL)) {
+			earlyCallbackByteCount = ((_vm->VAR(_vm->VAR_TIMER_NEXT) * frequency) / 60);
+			earlyCallbackByteCount *= _vm->VAR(_vm->VAR_EARLY_TALKIE_CALLBACK);
+
+			_heMixer->startChannel(
+				channel, globType, globNum, HSND_RES_OFFSET_SOUND_DATA + offset,
+				sampleCount - offset, frequency, HSND_MAX_VOLUME, channel,
+				CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags,
+				earlyCallbackByteCount);
+		} else {
 			_heMixer->startChannel(
 				channel, globType, globNum, HSND_RES_OFFSET_SOUND_DATA + offset,
 				sampleCount - offset, frequency, HSND_MAX_VOLUME, channel, CHANNEL_ACTIVE | hflags);
-		} else {
-			if (_vm->_game.heversion >= 72) {
-				earlyCallbackByteCount = ((_vm->VAR(_vm->VAR_TIMER_NEXT) * frequency) / 60);
-				earlyCallbackByteCount *= _vm->VAR(_vm->VAR_EARLY_TALKIE_CALLBACK);
-
-				_heMixer->startChannel(
-					channel, globType, globNum, HSND_RES_OFFSET_SOUND_DATA + offset,
-					sampleCount - offset, frequency, HSND_MAX_VOLUME, channel,
-					CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags,
-					earlyCallbackByteCount);
-			} else {
-				_heMixer->startChannel(
-					channel, globType, globNum, HSND_RES_OFFSET_SOUND_DATA + offset,
-					sampleCount - offset, frequency, HSND_MAX_VOLUME, channel,
-					CHANNEL_ACTIVE | CHANNEL_CALLBACK_EARLY | hflags);
-			}
 		}
 
 		_heChannel[channel].sound = sound;
@@ -1359,6 +1326,21 @@ void SoundHE::triggerDigitalSound(int sound, int offset, int channel, int flags)
 		sound, offset, soundAddr, soundData, rtSound, sound,
 		soundLength, soundFrequency, channel, soundPriority, soundCode, flags,
 		bitsPerSample, sampleChannels, HESoundModifiers());
+}
+
+void SoundHE::triggerMidiSound(int soundId, int heOffset) {
+	if (_vm->_imuse) {
+		// This is used in the DOS version of Fatty Bear's
+		// Birthday Surprise to change the note on the piano
+		// when not using a digitized instrument.
+		_vm->_imuse->stopSound(_currentMusic);
+		_currentMusic = soundId;
+		_vm->_imuse->startSoundWithNoteOffset(soundId, heOffset);
+	} else if (_vm->_musicEngine) {
+		_vm->_musicEngine->stopSound(_currentMusic);
+		_currentMusic = soundId;
+		_vm->_musicEngine->startSoundWithTrackID(soundId, heOffset);
+	}
 }
 
 Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundId, int *duration) {

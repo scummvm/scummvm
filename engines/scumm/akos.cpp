@@ -25,6 +25,7 @@
 #include "scumm/bomp.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
@@ -1647,7 +1648,15 @@ void ScummEngine_v6::akos_processQueue() {
 			a->putActor(0, 0, 0);
 			break;
 		case AKQC_StartSound:
-			_sound->startSound(param1, 0, -1, 0);
+			if (_game.heversion < 95) {
+				_sound->addSoundToQueue(param1, 0, -1, 0,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			} else {
+				// Later games also set VAR_LAST_SOUND variable
+				_sound->startSound(param1, 0, -1, 0,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			}
+
 			break;
 		case AKQC_StartAnimation:
 			a->startAnimActor(param1);
@@ -1678,7 +1687,15 @@ void ScummEngine_v6::akos_processQueue() {
 
 			break;
 		case AKQC_SoftStartSound:
-			_sound->startSound(param1, 0, -1, 4);
+			if (_game.heversion < 95) {
+				_sound->addSoundToQueue(param1, 0, -1, ScummEngine_v70he::HESndFlags::HE_SND_SOFT_SOUND,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			} else {
+				// Later games also set VAR_LAST_SOUND variable
+				_sound->startSound(param1, 0, -1, ScummEngine_v70he::HESndFlags::HE_SND_SOFT_SOUND,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			}
+
 			break;
 		default:
 			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param1, param2);

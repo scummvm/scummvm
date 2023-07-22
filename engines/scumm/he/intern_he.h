@@ -137,7 +137,8 @@ class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
 	friend class SoundHE;
 
-protected:
+public:
+	// Used in akos.cpp
 	enum HESndFlags {
 		HE_SND_LOOP = 1,
 		HE_SND_APPEND = 2,
@@ -149,6 +150,8 @@ protected:
 		HE_SND_PAN = 128
 	};
 
+
+protected:
 	enum SubOpType {
 		SO_SOFT = 9,
 		SO_IMAGE_LOADED = 18,
@@ -193,7 +196,8 @@ protected:
 	byte *_heV7RoomOffsets;
 	uint32 *_heV7RoomIntOffsets;
 
-	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift, _heSndPan, _heSndVol;
+	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags,
+		_heSndFrequency, _heSndFrequencyShift, _heSndPan, _heSndVol;
 	bool _heSndStartNewSoundFlag;
 
 	int _numStoredFlObjects;
