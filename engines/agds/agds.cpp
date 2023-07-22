@@ -1217,7 +1217,6 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 			_systemVars[name]->read(agds_d.get());
 		}
 	}
-	_mouseMap.clear();
 
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	runObject(initVar->getString());
