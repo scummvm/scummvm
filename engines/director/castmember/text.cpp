@@ -365,7 +365,7 @@ Common::String TextCastMember::formatInfo() {
 		_boundingRect.width(), _boundingRect.height(),
 		_boundingRect.left, _boundingRect.top,
 		getForeColor(), getBackColor(),
-		_editable, format.c_str()
+		_editable, formatStringForDump(format).c_str()
 	);
 }
 
