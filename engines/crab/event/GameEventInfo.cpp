@@ -183,10 +183,8 @@ void Info::varDel(const Common::String &name) {
 // Purpose: Get/Set person traits
 //------------------------------------------------------------------------
 void Info::traitAdd(const Common::String &perId, const int &traitId) {
-	if (personValid(perId)) // Valid person id
-	{
-		if (traitId >= 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) // Valid trait id
-		{
+	if (personValid(perId)) { // Valid person id
+		if (traitId >= 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) { // Valid trait id
 			// Check for duplicate traits, DONT award anything if duplicate found
 			Person *p = &personGet(perId);
 
@@ -202,10 +200,8 @@ void Info::traitAdd(const Common::String &perId, const int &traitId) {
 }
 
 void Info::traitDel(const Common::String &perId, const int &traitId) {
-	if (personValid(perId)) // Valid person id
-	{
-		if (traitId > 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) // Valid trait id
-		{
+	if (personValid(perId)) { // Valid person id
+		if (traitId > 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) { // Valid trait id
 			Person *p = &personGet(perId);
 
 			for (auto j = p->_trait.begin(); j != p->_trait.end(); ++j) {
