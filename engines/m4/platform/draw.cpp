@@ -19,13 +19,55 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "m4/platform/draw.h"
 
 namespace M4 {
 
+#define EOL_CODE 3
+#define END_CODE 2
+
 void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
-	error("TODO: RLE");
+	byte val, count;
+	int line = 0, numY = 0;
+	byte *destP = outBuff;
+
+	for (;;) {
+		count = *inBuff++;
+
+		if (count != 0xff) {
+			// Basic run length
+			val = *inBuff++;
+			Common::fill(destP, destP + count, val);
+			destP += count;
+
+		} else {
+			count = *inBuff++;
+
+			if (count > EOL_CODE) {
+				// Block of uncompressed pixels to copy
+				Common::copy(inBuff, inBuff + count, destP);
+				inBuff += count;
+				destP += count;
+
+			} else if (count == EOL_CODE) {
+				// End of Line code
+				++line;
+				destP = outBuff + line * pitch;
+
+			} else if (count == END_CODE) {
+				break;
+
+			} else {
+				// Move down by X, Y amount
+				destP += *inBuff++;		// x amount
+				numY = *inBuff++;		// y amount
+				line += numY;
+				destP += numY * pitch;
+			}
+		}
+	}
 }
 
 uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *RLE_Data) {
