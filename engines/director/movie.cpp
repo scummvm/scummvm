@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/substream.h"
 
 #include "director/types.h"
@@ -38,6 +39,8 @@
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
+
+#include "director/blank-score.h"
 
 Movie::Movie(Window *window) {
 	_window = window;
@@ -236,8 +239,14 @@ bool Movie::loadArchive() {
 
 	// Score
 	if (!(r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'S', 'C')))) {
-		warning("Movie::loadArchive(): Wrong movie format. VWSC resource missing");
-		return false;
+		warning("Movie::loadArchive(): No VWSC resource, injecting a blank score with 1 frame");
+		if (_version < kFileVer400) {
+			r = new Common::MemoryReadStreamEndian(kBlankScoreD2, sizeof(kBlankScoreD2), true);
+		} else if (_version < kFileVer600) {
+			r = new Common::MemoryReadStreamEndian(kBlankScoreD4, sizeof(kBlankScoreD4), true);
+		} else {
+			error("Movie::loadArchive(): score format not yet supported for version %d", _version);
+		}
 	}
 
 	_score->loadFrames(*r, _version);

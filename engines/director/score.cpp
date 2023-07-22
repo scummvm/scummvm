@@ -1390,9 +1390,11 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			_framesStream->readUint16(); // Skip
 		}
 
-		warning("STUB: Score::loadFrames(): frame1Offset: %x, version: %x, spriteRecordSize: %x, numChannels: %x, numChannelsDisplayed: %x",
+		warning("STUB: Score::loadFrames(): frame1Offset: 0x%x, version: %d, spriteRecordSize: 0x%x, numChannels: %d, numChannelsDisplayed: %d",
 			frame1Offset, _framesVersion, spriteRecordSize, _numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
+	} else {
+		error("STUB: Score::loadFrames(): score not yet supported for version %d", version);
 	}
 
 	// partically by channels, hence we keep it and read the score from left to right
@@ -1503,7 +1505,7 @@ bool Score::readOneFrame() {
 
 	debugC(3, kDebugLoading, "++++++++++ score load frame %d (frameSize %d) saveOffset", _curFrameNumber, frameSize);
 	if (debugChannelSet(8, kDebugLoading)) {
-		_framesStream->hexdump(frameSize);
+		_framesStream->hexdump(MAX(0, frameSize - 2));
 	}
 	if (frameSize > 0) {
 		frameSize -= 2;
