@@ -46,6 +46,7 @@ MODULE_OBJS = \
 	graphics/gr_line.o \
 	graphics/gr_pal.o \
 	graphics/gr_series.o \
+	graphics/gr_sprite.o \
 	graphics/graphics.o \
 	graphics/krn_pal.o \
 	graphics/rend.o \
@@ -62,6 +63,7 @@ MODULE_OBJS = \
 	mem/memman.o \
 	mem/reloc.o \
 	mem/res.o \
+	platform/draw.o \
 	platform/events.o \
 	platform/sound.o \
 	platform/timer.o \
