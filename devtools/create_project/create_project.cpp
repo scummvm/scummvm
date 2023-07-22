@@ -1769,7 +1769,7 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 	}
 
 	// Hash project name
-	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), name.length(), 0)) {
+	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), (DWORD)name.length(), 0)) {
 		CryptDestroyHash(hHash);
 		CryptReleaseContext(hProv, 0);
 		error("CryptHashData failed");
