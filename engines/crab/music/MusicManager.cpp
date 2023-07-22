@@ -32,6 +32,7 @@
 #include "crab/music/MusicManager.h"
 #include "crab/ScreenSettings.h"
 #include "crab/XMLDoc.h"
+#include "crab/crab.h"
 
 namespace Crab {
 
@@ -41,116 +42,103 @@ using namespace pyrodactyl::music;
 // Purpose: Clear stored data
 //------------------------------------------------------------------------
 void MusicManager::freeMusic() {
-	warning("STUB: MusicManager::freeMusic()");
-
-#if 0
-	Mix_FreeMusic(bg.track);
-#endif
-
+	delete _musicHandle;
 }
 
 void MusicManager::freeChunk() {
-	warning("STUB: MusicManager::freeChunk()");
+	for (auto i = _effects.begin(); i != _effects.end(); ++i) {
+		i->_value->_file.close();
+		delete i->_value->_handle;
+		delete i->_value->_stream;
+		delete i->_value;
+	}
 
-#if 0
-	for (auto i = effect.begin(); i != effect.end(); ++i)
-		Mix_FreeChunk(i->second);
-#endif
-
+	_effects.clear();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Play or queue music
 //------------------------------------------------------------------------
 void MusicManager::playMusic(const MusicKey &id) {
-	warning("STUB: MusicManager::playMusic()");
-
-#if 0
-	if (bg.id != id) {
-		XMLDoc track_list(g_engine->_filePath->sound_music);
-		if (track_list.ready()) {
-			rapidxml::xml_node<char> *node = track_list.doc()->first_node("music");
+	if (_bg._id != id) {
+		XMLDoc trackList(g_engine->_filePath->_soundMusic);
+		if (trackList.ready()) {
+			rapidxml::xml_node<char> *node = trackList.doc()->first_node("music");
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				rapidxml::xml_attribute<char> *att = n->first_attribute("id");
-				if (att != NULL && id == StringToNumber<MusicKey>(att->value())) {
-					bg.load(n);
+				if (att != NULL && id == stringToNumber<MusicKey>(att->value())) {
+					if (g_system->getMixer()->isSoundHandleActive(*_musicHandle))
+						g_system->getMixer()->stopHandle(*_musicHandle);
+					_bg.reset();
+					_bg.load(n);
 					break;
 				}
 			}
 		}
 
-		if (bg.track != NULL)
-			Mix_FadeInMusic(bg.track, -1, bg.fade_in_duration);
+		if (_bg._track != NULL)
+			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, _musicHandle, _bg._track, (int)_bg._id);
 	}
-#endif
-
 }
 
 //------------------------------------------------------------------------
 // Purpose: Play or queue sound effects
 //------------------------------------------------------------------------
 void MusicManager::playEffect(const ChunkKey &id, const int &loops) {
-	warning("STUB: MusicManager::playEffect()");
+	// I am not sure if the game uses a value of more than 0 anywhere.
+	// For now error out in case loops > 0.
+	assert(loops == 0);
 
-#if 0
-	if (effect.count(id) > 0)
-		Mix_PlayChannel(-1, effect[id], loops);
-#endif
-
+	if (_effects.contains((id))) {
+		EffectAudio *audio = _effects[id];
+		audio->_stream->rewind();
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, audio->_handle, audio->_stream, id, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Initialize the music subsystem (currently SDL_mixer) and load sound effects
 //------------------------------------------------------------------------
 bool MusicManager::load(rapidxml::xml_node<char> *node) {
-	warning("STUB: MusicManager::load()");
+	_musicHandle = new Audio::SoundHandle();
 
-#if 0
 	// Initialize music parameters
-	int volume_mus = 100, volume_eff = 100;
+	int volumeMus = 100, volumeEff = 100;
 
 	if (nodeValid("sound", node)) {
 		rapidxml::xml_node<char> *volnode = node->first_node("sound");
-		loadNum(volume_mus, "music", volnode);
-		loadNum(volume_eff, "effects", volnode);
-		loadNum(freq, "frequency", volnode);
-		loadNum(channels, "channels", volnode);
-		loadNum(chunksize, "chunk_size", volnode);
-	}
-
-	// Start up audio
-	const int audioflags = MIX_INIT_OGG;
-	if ((Mix_Init(audioflags) & audioflags) != audioflags) {
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Unable to initialize audio mixer", "Please install libsdl2_mixer", NULL);
-		return false;
-	}
-
-	if (Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, channels, chunksize) == -1) {
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Unable to open audio channels", "Please check settings", NULL);
-		return false;
+		loadNum(volumeMus, "music", volnode);
+		loadNum(volumeEff, "effects", volnode);
+		loadNum(_freq, "frequency", volnode);
+		loadNum(_channels, "channels", volnode);
+		loadNum(_chunksize, "chunk_size", volnode);
 	}
 
 	// Set the volume from the settings
-	VolEffects(volume_eff);
-	VolMusic(volume_mus);
+	volEffects(volumeEff);
+	volMusic(volumeMus);
 
 	// Load sound effects
-	XMLDoc track_list(g_engine->_filePath->sound_effect);
-	if (track_list.ready()) {
-		rapidxml::xml_node<char> *tnode = track_list.doc()->first_node("effects");
+	XMLDoc trackList(g_engine->_filePath->_soundEffect);
+	if (trackList.ready()) {
+		rapidxml::xml_node<char> *tnode = trackList.doc()->first_node("effects");
 		if (nodeValid(tnode)) {
-			loadNum(notify, "notify", tnode);
-			loadNum(rep_inc, "rep_inc", tnode);
-			loadNum(rep_dec, "rep_dec", tnode);
+			loadNum(_notify, "notify", tnode);
+			loadNum(_repInc, "rep_inc", tnode);
+			loadNum(_repDec, "rep_dec", tnode);
 
 			for (auto n = tnode->first_node(); n != NULL; n = n->next_sibling()) {
 				rapidxml::xml_attribute<char> *id = n->first_attribute("id"), *path = n->first_attribute("path");
-				if (id != NULL && path != NULL)
-					effect[StringToNumber<ChunkKey>(id->value())] = Mix_LoadWAV(path->value());
+				if (id != NULL && path != NULL) {
+					EffectAudio *audio = new EffectAudio();
+					audio->_file.open(path->value());
+					audio->_handle = new Audio::SoundHandle();
+					audio->_stream = Audio::makeWAVStream(&audio->_file, DisposeAfterUse::NO);
+					_effects[stringToNumber<ChunkKey>(id->value())] = audio;
+				}
 			}
 		}
 	}
-#endif
 
 	return true;
 }

@@ -30,8 +30,9 @@
 
 #ifndef CRAB_MUSICPARAM_H
 #define CRAB_MUSICPARAM_H
+#include "audio/audiostream.h"
+#include "audio/decoders/vorbis.h"
 #include "crab/common_header.h"
-
 #include "crab/loaders.h"
 
 namespace Crab {
@@ -49,33 +50,34 @@ typedef unsigned int ChunkKey;
 struct MusicData {
 	// The id of this track
 	MusicKey _id;
-
-#if 0
-	// The track data
-	Mix_Music *track;
-#endif
+	Audio::AudioStream *_track;
+	Common::File _file;
 
 	// Sound parameters
 	uint32 _fadeInDuration;
 
 	MusicData() {
+		reset();
+	}
+
+	void reset() {
 		_id = -1;
-#if 0
-		track = nullptr;
-#endif
+		_track = nullptr;
 		_fadeInDuration = 100;
+
+		if (_file.isOpen()) {
+			_file.close();
+		}
 	}
 
 	void load(rapidxml::xml_node<char> *node) {
-#if 0
-		loadNum(id, "id", node);
-		loadNum(fade_in_duration, "fade_in", node);
+		loadNum(_id, "id", node);
+		loadNum(_fadeInDuration, "fade_in", node);
 
-		if (track != nullptr)
-			Mix_FreeMusic(track);
-
-		track = Mix_LoadMUS(node->first_attribute("path")->value());
-#endif
+		_file.open(node->first_attribute("path")->value());
+		Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(&_file, DisposeAfterUse::NO);
+		// loops=0 means infinite here.
+		_track = Audio::makeLoopingAudioStream(stream, 0, 0, 0);
 	}
 };
 } // End of namespace music
