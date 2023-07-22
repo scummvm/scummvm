@@ -85,15 +85,13 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	return 0;
 }
 
-#define Scaled	((DrawReq -> scaleY != 100) || (DrawReq -> scaleX != 100 && DrawReq -> scaleX != -100))
+#define Scaled	((DrawReq->scaleY != 100) || (DrawReq->scaleX != 100 && DrawReq->scaleX != -100))
 #define Rle	(Source.encoding == RLE8)
-#define Clipped ((DrawReq -> x < 0) || (DrawReq -> y < 0) || (DrawReq -> x + Source.W > DrawReq -> Dest->W) || (DrawReq -> y + Source.h > DrawReq -> Dest -> h))
-#define Forward (DrawReq -> scaleX > 0)
-#define Depthed (DrawReq -> srcDepth)
+#define Clipped ((DrawReq->x < 0) || (DrawReq->y < 0) || (DrawReq->x + Source.W > DrawReq->Dest->W) || (DrawReq->y + Source.h > DrawReq->Dest->h))
+#define Forward (DrawReq->scaleX > 0)
+#define Depthed (DrawReq->srcDepth)
 #define Shadow	(Source.encoding & 0x80)
-
 #define ClipD	(LeftOffset || RightOffset || BottomCut)
-#ifndef __MAC
 
 uint8 gr_sprite_draw(DrawRequest *DrawReq) {
 	Buffer Source;
@@ -292,164 +290,6 @@ truly_done:
 	if (AfterScaled.data)
 		mem_free(AfterScaled.data);
 	return 0;
-}
-#endif
-//----------------------------------------------------------------------------------------
-//Q 'n' D c version - soon to become obselete...
-// NOT USED!!!!!!
-/*
-void gr_sprite_draw_scaled(M4sprite *srcSprite, Buffer *destBuf, int32 destX, int32 destY, int32 scale)
-{
-	int32		errX, errY, x, y, scanX, scanY;
-	uint8		*srcPtr, *destPtr, *destRowPtr, *srcRowPtr;
-
-	if ((! srcSprite) || (! destBuf))
-		return;
-
-	if ((destX >= destBuf->W) || (destY >= destBuf->h))
-		return;
-
-	srcPtr = srcSprite->data;
-
-	if (destY <= 0) {
-		if (destX <= 0)
-			destRowPtr = destBuf->data;
-		else
-			destRowPtr = (uint8*)((long)destBuf->data + destX);
-	}
-	else {
-		if (destX <= 0)
-			destRowPtr = (uint8*)((long)destBuf->data + (destBuf->stride * destY));
-		else
-			destRowPtr = (uint8*)((long)destBuf->data + (destBuf->stride * destY) + destX);
-	}
-	scanY = destY;
-	destPtr = destRowPtr;
-	errY = 50;
-
-	for (y=0; y<srcSprite->h; y++)
-	{
-		errY += scale;
-		if ((errY >= 100) && (scanY >= 0))
-		{
-			srcRowPtr = srcPtr;
-			while (errY >= 100) {
-				scanX = destX;
-				errX = 50;
-				srcPtr = srcRowPtr;
-				for (x=0; x<srcSprite->w; x++) {
-					errX += scale;
-					while (errX >= 100) {
-						if ((scanX >= 0) && (scanX < destBuf->W)) {
-							if (*srcPtr) *destPtr = *srcPtr;
-							destPtr++;
-						}
-						scanX++;
-						errX -= 100;
-					}
-					srcPtr++;
-				}
-				destRowPtr += destBuf->stride;	// next line
-				destPtr = destRowPtr;
-				errY -= 100;
-				scanY++;
-				if (scanY >= destBuf->h) {
-					return;
-				}
-			}
-		}
-		else {
-			while ((errY >= 100) && (scanY < 0)) {
-				errY -= 100;
-				scanY++;
-			}
-			if (errY < 100) srcPtr += srcSprite->w;
-			else errY -= scale;
-		}
-	}
-}
-*/
-//----------------------------------------------------------------------------------------
-//RLE8 COMPRESSION CODE...
-
-#define ESC     ((uint8)0)
-#define EOL	((uint8)0)
-#define EOB	((uint8)1)
-#define DELTA	((uint8)2)
-
-#define OutBuffSize(x)	((x) + (((x) + 254) / 255 + 1) * 2 + 2)
-
-static uint16 EncodeScan(uint8 *pi, uint8 *po, uint16 scanlen, uint8 EndByte) {
-	uint8 *ps = pi + 1;
-	uint16 outlen = 0, limit, run;
-
-	while (scanlen)
-	{
-		limit = (scanlen < 255) ? scanlen : 255;
-		//imath_min(scanlen, 255);
-		for (run = 1; run < limit && *pi == *ps; ++run, ++ps)
-			;
-		if (run > 1)
-		{
-			scanlen -= run;
-			*po++ = run;
-			*po++ = *pi;
-			outlen += 2;
-			pi = ps++;
-		} else if (scanlen < 3)
-		{
-			for (; scanlen; --scanlen)
-			{
-				*po++ = 1;
-				*po++ = *pi++;
-				outlen += 2;
-			}
-		} else
-		{
-			--ps;
-			do
-			{
-				++ps;
-				while ((*ps != *(ps + 1) || *ps != *(ps + 2) || *ps != *(ps + 3)) && (ps - pi) < limit)
-					++ps;
-			} while ((run = ps - pi) < 3);
-			scanlen -= run;
-			*po++ = ESC;
-			*po++ = run;
-			outlen += (run + 2);
-			for (limit = 0; limit < run; ++limit)
-				*po++ = *pi++;
-			++ps;
-		}
-	}
-	*po++ = ESC;
-	*po = EndByte;
-	outlen += 2;
-	return outlen;
-}
-
-uint32 gr_sprite_RLE8_encode(Buffer *Source, Buffer *Dest);
-uint32 gr_sprite_RLE8_encode(Buffer *Source, Buffer *Dest) {
-	int i;
-	uint32 Offset = 0;
-
-	Dest->W = Source->W;
-	Dest->h = Source->h;
-	Dest->encoding = RLE8;
-	Dest->stride = Source->stride;
-
-	if (!(Dest->data = (uint8 *)mem_alloc(Source->h * OutBuffSize(Source->stride), "sprite data")))
-	{
-		return 0;
-	}
-	for (i = 0; i < Source->h - 1; ++i)
-		Offset += EncodeScan(Source->data + i * Source->stride, Dest->data + Offset, Source->W, EOL);
-
-	Offset += EncodeScan(Source->data + i * Source->stride, Dest->data + Offset, Source->W, EOB);
-
-	Dest->data = (uint8 *)mem_realloc(Dest->data, Offset, "rle8 sprite data");
-
-	return Offset;
 }
 
 } // namespace M4
