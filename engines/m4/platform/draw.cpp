@@ -36,7 +36,7 @@ void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
 	for (;;) {
 		count = *inBuff++;
 
-		if (count != 0xff) {
+		if (count) {
 			// Basic run length
 			val = *inBuff++;
 			Common::fill(destP, destP + count, val);
@@ -70,8 +70,23 @@ void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
 	}
 }
 
-uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *RLE_Data) {
-	error("TODO: RLE");
+uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData) {
+	byte val;
+
+	while (linesToSkip > 0) {
+		if (*rleData) {
+			// Simple RLE sequence, so skip over count and value
+			rleData += 2;
+
+		} else if (rleData[1] < EOL_CODE) {
+			rleData += 2;
+			--linesToSkip;
+		} else {
+			rleData += 2 + rleData[2];
+		}
+	}
+
+	return rleData;
 }
 
 void RLE_Draw(Buffer *src, Buffer *dest, int32 x, int32 y) {
