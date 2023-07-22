@@ -26,9 +26,15 @@
 
 namespace M4 {
 
+/**
+ * Decode an 8BPP RLE encoded image
+ */
 extern void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch);
 
-extern uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *RLE_Data);
+/**
+ * Given RLE data, skips over a given number of encoded lines
+ */
+extern uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData);
 
 extern void RLE_Draw(Buffer *src, Buffer *dest, int32 x, int32 y);
 extern void RLE_DrawRev(Buffer *src, Buffer *dest, int32 x, int32 y);
