@@ -89,6 +89,44 @@ uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData) {
 	return rleData;
 }
 
+size_t RLE8Decode_Size(byte *src, int pitch) {
+	size_t total = 0, numLines = 0, x, y;
+	byte count;
+
+	for (;;) {
+		count = *src++;
+
+		if (count) {
+			total += count;
+			++src;
+		} else {
+			count = *src++;
+
+			// TODO: This seems inconsistent with RLE8Decode. Verify the totals are correct sometime.
+			// Though, the method is only used for validation anyway, so minor issues won't hurt
+			if (count >= EOL_CODE) {
+				src += count;
+				count += count;
+
+			} else if (!(count & 3)) {
+				++numLines;
+				count = pitch * numLines;
+
+			} else if (!(count & 2)) {
+				break;
+
+			} else {
+				x = *src++;
+				y = *src++;
+				numLines += y;
+				count += x + y * pitch;
+			}
+		}
+	}
+
+	return total;
+}
+
 void RLE_Draw(Buffer *src, Buffer *dest, int32 x, int32 y) {
 	error("TODO: RLE");
 }

@@ -65,11 +65,11 @@ enum {
 };
 
 struct Buffer {
-	int32 W;
-	int32 h;
-	uint8 *data;
-	uint8 encoding;
-	int32 stride;
+	int32 W = 0;
+	int32 h = 0;
+	uint8 *data = nullptr;
+	uint8 encoding = 0;
+	int32 stride = 0;
 };
 
 struct token {
