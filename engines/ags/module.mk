@@ -26,10 +26,10 @@ MODULE_OBJS = \
 	lib/allegro/surface.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
-	lib/freetype-2.1.3/builds/win32/ftdebug.o \
 	lib/freetype-2.1.3/freetype213.o \
 	lib/freetype-2.1.3/ftbbox.o \
 	lib/freetype-2.1.3/ftcalc.o \
+	lib/freetype-2.1.3/ftdebug.o \
 	lib/freetype-2.1.3/ftgloadr.o \
 	lib/freetype-2.1.3/ftglyph.o \
 	lib/freetype-2.1.3/ftinit.o \
