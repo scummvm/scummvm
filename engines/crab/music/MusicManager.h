@@ -31,6 +31,8 @@
 #ifndef CRAB_MUSICMANAGER_H
 #define CRAB_MUSICMANAGER_H
 
+#include "audio/mixer.h"
+#include "audio/decoders/wave.h"
 #include "crab/GameParam.h"
 #include "crab/common_header.h"
 #include "crab/music/musicparam.h"
@@ -40,9 +42,16 @@ namespace Crab {
 namespace pyrodactyl {
 namespace music {
 class MusicManager {
+	struct EffectAudio {
+		Common::File _file;
+		Audio::SeekableAudioStream *_stream;
+		Audio::SoundHandle *_handle;
+	};
+
 	// The background music for our current level
 	MusicData _bg;
 
+	Common::HashMap<ChunkKey, EffectAudio *> _effects;
 #if 0
 	// The sound effects in the game
 	std::unordered_map<ChunkKey, Mix_Chunk *> effect;
@@ -50,6 +59,8 @@ class MusicManager {
 
 	// Data about the audio
 	int _freq, _channels, _chunksize;
+
+	Audio::SoundHandle *_musicHandle;
 
 public:
 	// The notification sound
@@ -69,6 +80,8 @@ public:
 		(void)_freq;
 		(void)_channels;
 		(void)_chunksize;
+
+		_musicHandle = nullptr;
 	}
 	~MusicManager() {}
 
