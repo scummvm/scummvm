@@ -295,7 +295,7 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 	uint16 src = instruction._source;
 	uint16 dst = instruction._destination;
 	if (isAmiga() || isAtariST()) {
-		int color;
+		/*int color;
 		if (src == 0 && dst >= 2 && dst <= 5) {
 			_currentArea->remapColor(dst, 1);
 			return;
@@ -315,11 +315,29 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 			default:
 				color = 0;
 			}
-		}
+		}*/
 
-		debugC(1, kFreescapeDebugCode, "Switching complete palette to color %d", dst);
-		for (int i = 1; i < 16; i++)
-			_currentArea->remapColor(i, color);
+		/*if (dst == 0) {
+			debugC(1, kFreescapeDebugCode, "Switching complete palette to color %d", dst);
+			for (int i = 1; i < 16; i++)
+				_currentArea->remapColor(i, src);
+		} else {
+			if (src == 1) {
+				_currentArea->remapColor(dst, 2);
+			} else if (src == 2)
+				_currentArea->remapColor(dst, 15 - src);
+		}*/
+		if (src == 0) {
+			_currentArea->remapColor(dst, 8);
+		} else if (src == 1) {
+			for (int i = 1; i < 16; i++)
+				_currentArea->remapColor(i, dst + 1);
+		} else if (src == 2) {
+			for (int i = 1; i < 16; i++)
+				_currentArea->remapColor(i, 0);
+
+			_currentArea->remapColor(dst, 15 - 2);
+		}
 	} else {
 		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
 		if (src == 0 && dst == 1)
@@ -329,6 +347,7 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 		else
 			_currentArea->remapColor(src, dst);
 	}
+	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 	executeRedraw(instruction);
 }
 

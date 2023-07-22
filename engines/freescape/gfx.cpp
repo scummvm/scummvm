@@ -215,6 +215,15 @@ uint8 Renderer::indexFromColor(uint8 r, uint8 g, uint8 b) {
 
 void Renderer::setColorRemaps(ColorReMap *colorRemaps) {
 	_colorRemaps = colorRemaps;
+
+	if (_renderMode == Common::kRenderZX) {
+		for (auto &it : *_colorRemaps) {
+			if (it._key == 1)
+				_paperColor = it._value;
+			else if (it._key == 3)
+				_inkColor = it._value;
+		}
+	}
 }
 
 bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *&stipple) {
@@ -330,6 +339,10 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 }
 
 void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1) {
+	if (_colorRemaps && _colorRemaps->contains(index)) {
+		index = (*_colorRemaps)[index];
+	}
+
 	if (index == 0) {
 		r1 = 0;
 		g1 = 0;
@@ -392,6 +405,11 @@ bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		readFromPalette(color, r2, g2, b2);
 	} else {
 		color = mapEGAColor(index);
+
+		if (_colorRemaps && _colorRemaps->contains(color)) {
+			color = (*_colorRemaps)[color];
+		}
+
 		readFromPalette(color, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
@@ -401,16 +419,6 @@ bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 }
 
 bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *&stipple) {
-
-	if (_colorRemaps && _colorRemaps->contains(index)) {
-		index = (*_colorRemaps)[index];
-		readFromPalette(index, r1, g1, b1);
-		r2 = r1;
-		g2 = g1;
-		b2 = b1;
-		return true;
-	}
-
 	if (index == _keyColor)
 		return false;
 
@@ -423,6 +431,9 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 	}
 
 	if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
+		if (_colorRemaps && _colorRemaps->contains(index))
+			index = (*_colorRemaps)[index];
+
 		readFromPalette(index, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;

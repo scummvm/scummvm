@@ -297,6 +297,10 @@ void FreescapeEngine::drawFrame() {
 				drawSensorShoot(sensor);
 		}
 		_underFireFrames--;
+		if (_underFireFrames == 0) {
+			_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
+			_currentArea->unremapColor(_currentArea->_skyColor);
+		}
 	}
 
 	if (_shootingFrames > 0) {
@@ -308,9 +312,6 @@ void FreescapeEngine::drawFrame() {
 
 	drawBorder();
 	drawUI();
-
-	_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
-	_currentArea->unremapColor(_currentArea->_skyColor);
 }
 
 void FreescapeEngine::pressedKey(const int keycode) {}
