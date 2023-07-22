@@ -82,17 +82,13 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 			}
 		}
 
-		(void)playSound;
-
-#if 0
 		// Right now we play sound randomly
-		if (play_sound) {
-			if (gRandom.Num() % 2 == 1)
-				info.sound.rep_dec = true;
+		if (playSound) {
+			if (g_engine->getRandomNumber(1))
+				info._sound._repDec = true;
 			else
-				info.sound.rep_inc = true;
+				info._sound._repInc = true;
 		}
-#endif
 
 		return dat._reply[_element[choice]._index]._nextid;
 	}
