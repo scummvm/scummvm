@@ -115,6 +115,12 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	// Copy DrawReq->Src to source buffer
 	source = *drawReq->Src;
 
+	// if it's RLE encoded, ensure the sprite will decode to match the expected size
+	if (source.encoding & RLE8) {
+		if (RLE8Decode_Size(source.data, source.stride) != (source.stride * source.h))
+			error_show(FL, 'RLE8', "RLE8 sprite suspected BAD!");
+	}
+
 	// Check for RLE encoding in case of shadows
 	// There is no RLE shadow draw routine, so we have to decode shadows ahead of time.
 	if ((source.encoding & RLE8) && (source.encoding & SHADOW)) {
@@ -141,8 +147,11 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		}
 
 		if (scale_sprite(&source, &afterScaled, imath_abs(drawReq->scaleX), imath_abs(drawReq->scaleY))) {
-			if (shadowBuff) mem_free(shadowBuff);
-			if (scaledBuff) mem_free(scaledBuff);
+			if (shadowBuff)
+				mem_free(shadowBuff);
+			if (scaledBuff)
+				mem_free(scaledBuff);
+
 			error_show(FL, 'SPSF', "gr_sprite_draw");
 		}
 
@@ -150,7 +159,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		afterScaled.encoding = source.encoding;
 
 		// Copy AfterScaled to source buffer
-		memcpy(&source, &afterScaled, sizeof(Buffer));
+		source = afterScaled;
 	}
 
 	YPos = drawReq->y;
@@ -195,7 +204,8 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	}
 
 	// After all the necessary changes (scaling/shadow RLE expansion)
-	if (Rle)					// Will be RLE_Draw
+	if (Rle) {
+		// Will be RLE_Draw
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
@@ -218,7 +228,8 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 					RLE_Draw(&source, drawReq->Dest, drawReq->x, YPos);
 				else
 					RLE_DrawRev(&source, drawReq->Dest, drawReq->x, YPos);
-	else if (Shadow)                            // Will be Raw_SDraw
+	} else if (Shadow) {
+		// Will be Raw_SDraw
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
@@ -241,7 +252,8 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 					Raw_SDraw(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
 				else
 					Raw_SDrawRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
-	else                                        // Will be Raw_Draw
+	} else {
+		// Will be Raw_Draw
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
@@ -264,6 +276,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 					Raw_Draw(&source, drawReq->Dest, drawReq->x, YPos);
 				else
 					Raw_DrawRev(&source, drawReq->Dest, drawReq->x, YPos);
+	}
 
 truly_done:
 	if (shadowBuff)
@@ -274,6 +287,7 @@ truly_done:
 
 	if (afterScaled.data)
 		mem_free(afterScaled.data);
+
 	return 0;
 }
 
