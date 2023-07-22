@@ -181,6 +181,7 @@ public:
 	bool _editor_showStats = false;
 	bool _shut_down_digi_tracks_between_rooms = false;
 	cursor_states _cursor_state = kARROW;
+	int _iPitch = 0;
 };
 
 #define _G(X) (g_vars->_##X)
