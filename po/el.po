@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-19 20:21+0000\n"
-"PO-Revision-Date: 2023-07-04 09:50+0000\n"
+"PO-Revision-Date: 2023-07-22 10:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1850,16 +1850,17 @@ msgstr ""
 "έξοδο από ένα παιχνίδι."
 
 #: gui/options.cpp:2564
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Απενεργοποίηση πτώσης"
+msgstr "Χωρίς κλιμάκωση των γραμματοσειρών σταθερών διαστάσεων"
 
 #: gui/options.cpp:2565
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Να μην γίνεται μεγέθυνση (upscale) των γραμματοσειρών σταθερού μεγέθους στο "
+"περιβάλλον διεπαφής (GUI). Έτσι περιορίζονται οι \"μουντζούρες\" (artefacts) "
+"σε οθόνες χαμηλής ανάλυσης"
 
 #: gui/options.cpp:2571
 msgid "GUI language:"
@@ -4410,10 +4411,8 @@ msgstr "Προβολή στοιχείων χειρισμού στην οθόνη
 
 #: backends/platform/ios7/ios7_options.mm:84
 #: backends/platform/ios7/ios7_options.mm:85
-#, fuzzy
-#| msgid "Control Mouse"
 msgid "Control opacity"
-msgstr "Έλεγχος Ποντικιού"
+msgstr "Επίπεδο αδιαφάνειας"
 
 #: backends/platform/ios7/ios7_options.mm:90
 msgid "Mouse-click-and-drag mode"
