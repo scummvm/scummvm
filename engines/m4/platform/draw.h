@@ -36,6 +36,15 @@ extern void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch);
  */
 extern uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData);
 
+/**
+ * Returns the size of an RLE encoded image
+ * @param data		RLE data
+ * @param pitch		Image pitch
+ * @returns			Decoded image's size in bytes
+ */
+extern size_t RLE8Decode_Size(byte *src, int pitch);
+
+
 extern void RLE_Draw(Buffer *src, Buffer *dest, int32 x, int32 y);
 extern void RLE_DrawRev(Buffer *src, Buffer *dest, int32 x, int32 y);
 extern void RLE_DrawDepth(Buffer *src, Buffer *dest, int32 x, int32 y, uint8 srcDepth, uint8 *depthCode);

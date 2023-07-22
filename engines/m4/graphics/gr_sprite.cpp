@@ -85,56 +85,45 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	return 0;
 }
 
-#define Scaled	((DrawReq->scaleY != 100) || (DrawReq->scaleX != 100 && DrawReq->scaleX != -100))
-#define Rle	(Source.encoding == RLE8)
-#define Clipped ((DrawReq->x < 0) || (DrawReq->y < 0) || (DrawReq->x + Source.W > DrawReq->Dest->W) || (DrawReq->y + Source.h > DrawReq->Dest->h))
-#define Forward (DrawReq->scaleX > 0)
-#define Depthed (DrawReq->srcDepth)
-#define Shadow	(Source.encoding & 0x80)
-#define ClipD	(LeftOffset || RightOffset || BottomCut)
+#define Scaled	((drawReq->scaleY != 100) || (drawReq->scaleX != 100 && drawReq->scaleX != -100))
+#define Rle	(source.encoding == RLE8)
+#define Clipped ((drawReq->x < 0) || (drawReq->y < 0) || (drawReq->x + source.W > drawReq->Dest->W) || (drawReq->y + source.h > drawReq->Dest->h))
+#define Forward (drawReq->scaleX > 0)
+#define Depthed (drawReq->srcDepth)
+#define Shadow	(source.encoding & 0x80)
+#define ClipD	(leftOffset || rightOffset || bottomCut)
 
-uint8 gr_sprite_draw(DrawRequest *DrawReq) {
-	Buffer Source;
-	int32 LeftOffset = 0, RightOffset = 0, YPos;
-	uint8 *ShadowBuff = NULL, *ScaledBuff = NULL;
-	Buffer AfterScaled;
-	uint8 BottomCut = 0;
+uint8 gr_sprite_draw(DrawRequest *drawReq) {
+	Buffer source;
+	int32 leftOffset = 0, rightOffset = 0, YPos;
+	uint8 *shadowBuff = nullptr, *scaledBuff = nullptr;
+	Buffer afterScaled;
+	uint8 bottomCut = 0;
 
-	if (!DrawReq->Src) {
-		term_message("NULL source data in sprite_draw");
-		//error_fatal_abort(0, "no source data", __FILE__, __LINE__, 0,0,0);
+	if (!drawReq->Src) {
+		term_message("nullptr source data in sprite_draw");
 		return 0;
 	}
 
-	// - scaleY means don't bother drawing this sprite
-
-	if (DrawReq->scaleY <= 0)
+	// Negative scaleY means don't bother drawing this sprite
+	if (drawReq->scaleY <= 0)
 		return 0;
 
-	if ((!DrawReq->Src->W) || (!DrawReq->Src->h)) {
-		//error_fatal_abort(0, "src->w, src->h zero", __FILE__, __LINE__, 0,0,0);
+	if ((!drawReq->Src->W) || (!drawReq->Src->h))
 		return 1;
-	}
 
-	AfterScaled.W = 0;
-	AfterScaled.h = 0;
-	AfterScaled.data = NULL;
-	AfterScaled.encoding = 0;
-	AfterScaled.stride = 0;
-
-	/* copy DrawReq -> Src to  Source buffer */
-	memcpy(&Source, DrawReq->Src, sizeof(Buffer));
+	// copy DrawReq->Src to  source buffer
+	source = *drawReq->Src;
 
 	/* check for RLE encoding in case of shadows */
 	// there is no RLE shadow draw routine, so we have to decode shadows ahead of time.
-	if ((Source.encoding & RLE8) && (Source.encoding & SHADOW))
-	{
-		if (!(ShadowBuff = (uint8 *)mem_alloc(Source.stride * Source.h, "shadow buff")))
-			error_show(FL, 'OOM!', "buffer w:%uld, h:%uld", Source.W, Source.h);
+	if ((source.encoding & RLE8) && (source.encoding & SHADOW)) {
+		if (!(shadowBuff = (uint8 *)mem_alloc(source.stride * source.h, "shadow buff")))
+			error_show(FL, 'OOM!', "buffer w:%uld, h:%uld", source.W, source.h);
 
-		RLE8Decode(Source.data, ShadowBuff, Source.stride);
-		Source.data = ShadowBuff;
-		Source.encoding &= ~RLE8;
+		RLE8Decode(source.data, shadowBuff, source.stride);
+		source.data = shadowBuff;
+		source.encoding &= ~RLE8;
 	}
 
 	/* check for scaling */
@@ -145,67 +134,67 @@ uint8 gr_sprite_draw(DrawRequest *DrawReq) {
 		// if it's scaled we decode it first
 		if (Rle)
 		{
-			if (!(ScaledBuff = (uint8 *)mem_alloc(Source.stride * Source.h, "scaled buffer")))
-				error_show(FL, 'OOM!', "no mem: buffer w:%ld, h:%ld", Source.W, Source.h);
+			if (!(scaledBuff = (uint8 *)mem_alloc(source.stride * source.h, "scaled buffer")))
+				error_show(FL, 'OOM!', "no mem: buffer w:%ld, h:%ld", source.W, source.h);
 
-			RLE8Decode(Source.data, ScaledBuff, Source.stride);
-			Source.data = ScaledBuff;
-			Source.encoding &= ~RLE8;
+			RLE8Decode(source.data, scaledBuff, source.stride);
+			source.data = scaledBuff;
+			source.encoding &= ~RLE8;
 		}
-		if (scale_sprite(&Source, &AfterScaled, imath_abs(DrawReq->scaleX), imath_abs(DrawReq->scaleY)))
+		if (scale_sprite(&source, &afterScaled, imath_abs(drawReq->scaleX), imath_abs(drawReq->scaleY)))
 		{
-			if (ShadowBuff) mem_free(ShadowBuff);
-			if (ScaledBuff) mem_free(ScaledBuff);
+			if (shadowBuff) mem_free(shadowBuff);
+			if (scaledBuff) mem_free(scaledBuff);
 			error_show(FL, 'SPSF', "gr_sprite_draw");
 		}
 
 		/* preserve encoding */
-		AfterScaled.encoding = Source.encoding;
+		afterScaled.encoding = source.encoding;
 
-		/* copy AfterScaled to	Source buffer */
-		memcpy(&Source, &AfterScaled, sizeof(Buffer));
+		/* copy AfterScaled to	source buffer */
+		memcpy(&source, &afterScaled, sizeof(Buffer));
 	}
 
-	YPos = DrawReq->y;
+	YPos = drawReq->y;
 
 	/* check for clipping */
 	// if sprite is off edge of destination buffer, do something special
 	if (Clipped)
 	{
-		if (-YPos >= Source.h)
+		if (-YPos >= source.h)
 			goto truly_done;
 
-		if (YPos >= DrawReq->Dest->h)
+		if (YPos >= drawReq->Dest->h)
 			goto truly_done;
 
-		if (-DrawReq->x >= Source.W)
+		if (-drawReq->x >= source.W)
 			goto truly_done;
 
-		if (DrawReq->x >= DrawReq->Dest->W)
+		if (drawReq->x >= drawReq->Dest->W)
 			goto truly_done;
 
 		// if clipped off top, scan into sprite
 		if (YPos < 0)
 		{
 			if (Rle)
-				Source.data = SkipRLE_Lines(-YPos, Source.data);
+				source.data = SkipRLE_Lines(-YPos, source.data);
 			else
-				Source.data += -YPos * Source.stride;
-			Source.h += YPos;
+				source.data += -YPos * source.stride;
+			source.h += YPos;
 			YPos = 0;
 		}
 
 		// find out if we're losing pixels on left or right
-		if (DrawReq->x < 0)
-			LeftOffset = -DrawReq->x;
+		if (drawReq->x < 0)
+			leftOffset = -drawReq->x;
 
-		if (DrawReq->x + Source.W > DrawReq->Dest->W)
-			RightOffset = DrawReq->x + Source.W - DrawReq->Dest->W;
+		if (drawReq->x + source.W > drawReq->Dest->W)
+			rightOffset = drawReq->x + source.W - drawReq->Dest->W;
 
-		if (YPos + Source.h > DrawReq->Dest->h)
+		if (YPos + source.h > drawReq->Dest->h)
 		{
-			Source.h -= YPos + Source.h - DrawReq->Dest->h;
-			BottomCut = 1;
+			source.h -= YPos + source.h - drawReq->Dest->h;
+			bottomCut = 1;
 		}
 	}
 
@@ -214,81 +203,81 @@ uint8 gr_sprite_draw(DrawRequest *DrawReq) {
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
-					RLE_DrawDepthOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, LeftOffset, RightOffset);
+					RLE_DrawDepthOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
 				else
-					RLE_DrawDepthRevOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, LeftOffset, RightOffset);
+					RLE_DrawDepthRevOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
 			else
 				if (Forward)
-					RLE_DrawOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, LeftOffset, RightOffset);
+					RLE_DrawOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
 				else
-					RLE_DrawRevOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, LeftOffset, RightOffset);
+					RLE_DrawRevOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
 		else
 			if (Depthed)
 				if (Forward)
-					RLE_DrawDepth(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode);
+					RLE_DrawDepth(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
 				else
-					RLE_DrawDepthRev(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode);
+					RLE_DrawDepthRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
 			else
 				if (Forward)
-					RLE_Draw(&Source, DrawReq->Dest, DrawReq->x, YPos);
+					RLE_Draw(&source, drawReq->Dest, drawReq->x, YPos);
 				else
-					RLE_DrawRev(&Source, DrawReq->Dest, DrawReq->x, YPos);
+					RLE_DrawRev(&source, drawReq->Dest, drawReq->x, YPos);
 	else if (Shadow)                            /* will be Raw_SDraw */
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
-					Raw_SDrawDepthOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, LeftOffset, RightOffset, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDrawDepthOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
 				else
-					Raw_SDrawDepthRevOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, LeftOffset, RightOffset, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDrawDepthRevOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
 			else
 				if (Forward)
-					Raw_SDrawOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, LeftOffset, RightOffset, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDrawOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
 				else
-					Raw_SDrawRevOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, LeftOffset, RightOffset, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDrawRevOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
 		else
 			if (Depthed)
 				if (Forward)
-					Raw_SDrawDepth(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDrawDepth(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, drawReq->Pal, drawReq->ICT);
 				else
-					Raw_SDrawDepthRev(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDrawDepthRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, drawReq->Pal, drawReq->ICT);
 			else
 				if (Forward)
-					Raw_SDraw(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDraw(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
 				else
-					Raw_SDrawRev(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->Pal, DrawReq->ICT);
+					Raw_SDrawRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
 	else                                        /* will be Raw_Draw */
 		if (ClipD)
 			if (Depthed)
 				if (Forward)
-					Raw_DrawDepthOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, LeftOffset, RightOffset);
+					Raw_DrawDepthOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
 				else
-					Raw_DrawDepthRevOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode, LeftOffset, RightOffset);
+					Raw_DrawDepthRevOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
 			else
 				if (Forward)
-					Raw_DrawOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, LeftOffset, RightOffset);
+					Raw_DrawOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
 				else
-					Raw_DrawRevOffs(&Source, DrawReq->Dest, DrawReq->x, YPos, LeftOffset, RightOffset);
+					Raw_DrawRevOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
 		else
 			if (Depthed)
 				if (Forward)
-					Raw_DrawDepth(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode);
+					Raw_DrawDepth(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
 				else
-					Raw_DrawDepthRev(&Source, DrawReq->Dest, DrawReq->x, YPos, DrawReq->srcDepth, DrawReq->depthCode);
+					Raw_DrawDepthRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
 			else
 				if (Forward)
-					Raw_Draw(&Source, DrawReq->Dest, DrawReq->x, YPos);
+					Raw_Draw(&source, drawReq->Dest, drawReq->x, YPos);
 				else
-					Raw_DrawRev(&Source, DrawReq->Dest, DrawReq->x, YPos);
+					Raw_DrawRev(&source, drawReq->Dest, drawReq->x, YPos);
 
 truly_done:
-	if (ShadowBuff)
-		mem_free(ShadowBuff);
+	if (shadowBuff)
+		mem_free(shadowBuff);
 
-	if (ScaledBuff)
-		mem_free(ScaledBuff);
+	if (scaledBuff)
+		mem_free(scaledBuff);
 
-	if (AfterScaled.data)
-		mem_free(AfterScaled.data);
+	if (afterScaled.data)
+		mem_free(afterScaled.data);
 	return 0;
 }
 
