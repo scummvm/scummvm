@@ -126,6 +126,12 @@ static MethodProto xlibMethods[] = {
 	{ "status",					FileIO::m_status,			 0, 0,	200 },	// D2
 	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	200 },	// D2
 	{ "writeString",			FileIO::m_writeString,		 1, 1,	200 },	// D2
+
+	// Non-standard extensions
+	// - Used by Maniac Sports
+	// II     +mSetOverrideDrive, driveLetter --Set override drive letter ('A' - 'Z') to use when loading linked castmembers.  Use 0x00 to clear override.
+	{ "setOverrideDrive",		FileIO::m_setOverrideDrive,	 1, 1,	300 },	// D3
+
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -525,5 +531,8 @@ void FileIO::m_delete(int nargs) {
 		g_lingo->push(Datum(kErrorFileNotOpen));
 	}
 }
+
+// Non-standard extensions
+XOBJSTUBNR(FileIO::m_setOverrideDrive)
 
 } // End of namespace Director
