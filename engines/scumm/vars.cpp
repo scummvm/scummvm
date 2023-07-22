@@ -218,6 +218,7 @@ void ScummEngine_v70he::setupScummVars() {
 	VAR_NUM_SOUND_CHANNELS = 9;
 	VAR_TALK_CHANNEL = 10;
 	VAR_SOUND_CHANNEL = 14;
+	VAR_EARLY_TALKIE_CALLBACK = 66;
 }
 
 #ifdef ENABLE_HE

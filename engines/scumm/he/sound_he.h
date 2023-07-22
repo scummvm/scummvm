@@ -224,6 +224,7 @@ public:
 	void triggerSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
 	void triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
 	void triggerDigitalSound(int soundId, int heOffset, int heChannel, int heFlags);
+	void triggerMidiSound(int soundId, int heOffset);
 	void triggerRIFFSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
 	void triggerXSOUSound(int soundId, int heOffset, int heChannel, int heFlags);
 
