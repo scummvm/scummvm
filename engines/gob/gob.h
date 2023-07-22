@@ -35,9 +35,11 @@
 /**
  * This is the namespace of the Gob engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Supported
  *
  * Games using this engine:
+ * - Adibou 1
+ * - Adibou 2
  * - Gobliiins
  * - Gobliins 2
  * - Goblins 3
