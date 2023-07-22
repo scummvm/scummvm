@@ -65,7 +65,7 @@ enum {
 };
 
 struct Buffer {
-	int32 W = 0;
+	int32 w = 0;
 	int32 h = 0;
 	uint8 *data = nullptr;
 	uint8 encoding = 0;

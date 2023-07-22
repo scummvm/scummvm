@@ -42,19 +42,19 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	uint8 *pScaled, *pData = S->data;
 
 	if (!D || !S)
-		error_show(FL, 'BUF!', "scale sprite h:%ld w:%ld sx:%uld sy:%uld", D->h, D->W, ScaleX, ScaleY);
+		error_show(FL, 'BUF!', "scale sprite h:%ld w:%ld sx:%uld sy:%uld", D->h, D->w, ScaleX, ScaleY);
 
 	/* calculate new x size */
-	D->W = S->W * ScaleX / 100;
-	if (S->W * ScaleX % 100 >= 50)
-		++D->W;
+	D->w = S->w * ScaleX / 100;
+	if (S->w * ScaleX % 100 >= 50)
+		++D->w;
 
 	/* calculate new y size */
 	D->h = S->h * ScaleY / 100;
 	if (S->h * ScaleY % 100 >= 50)
 		++D->h;
 
-	D->stride = D->W;
+	D->stride = D->w;
 
 	/* allocate 'scaled' buffer */
 	if (!(D->data = pScaled = (uint8 *)mem_alloc(D->h * D->stride, "scaled buffer")))
@@ -67,7 +67,7 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 		while (ErrY >= 100)
 		{
 			ErrX = 50;
-			for (j = 0; j < S->W; ++j)
+			for (j = 0; j < S->w; ++j)
 			{
 				ErrX += ScaleX;
 				while (ErrX >= 100)
@@ -78,16 +78,16 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 				++pData;
 			}
 			ErrY -= 100;
-			pData -= S->W;
+			pData -= S->w;
 		}
-		pData += S->W;
+		pData += S->w;
 	}
 	return 0;
 }
 
 #define Scaled	((drawReq->scaleY != 100) || (drawReq->scaleX != 100 && drawReq->scaleX != -100))
 #define Rle	(source.encoding == RLE8)
-#define Clipped ((drawReq->x < 0) || (drawReq->y < 0) || (drawReq->x + source.W > drawReq->Dest->W) || (drawReq->y + source.h > drawReq->Dest->h))
+#define Clipped ((drawReq->x < 0) || (drawReq->y < 0) || (drawReq->x + source.w > drawReq->Dest->w) || (drawReq->y + source.h > drawReq->Dest->h))
 #define Forward (drawReq->scaleX > 0)
 #define Depthed (drawReq->srcDepth)
 #define Shadow	(source.encoding & 0x80)
@@ -109,7 +109,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	if (drawReq->scaleY <= 0)
 		return 0;
 
-	if (!drawReq->Src->W || !drawReq->Src->h)
+	if (!drawReq->Src->w || !drawReq->Src->h)
 		return 1;
 
 	// Copy DrawReq->Src to source buffer
@@ -117,7 +117,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 
 	// if it's RLE encoded, ensure the sprite will decode to match the expected size
 	if (source.encoding & RLE8) {
-		if (RLE8Decode_Size(source.data, source.stride) != (source.stride * source.h))
+		if (RLE8Decode_Size(source.data, source.stride) != (size_t)(source.stride * source.h))
 			error_show(FL, 'RLE8', "RLE8 sprite suspected BAD!");
 	}
 
@@ -125,7 +125,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	// There is no RLE shadow draw routine, so we have to decode shadows ahead of time.
 	if ((source.encoding & RLE8) && (source.encoding & SHADOW)) {
 		if (!(shadowBuff = (uint8 *)mem_alloc(source.stride * source.h, "shadow buff")))
-			error_show(FL, 'OOM!', "buffer w:%uld, h:%uld", source.W, source.h);
+			error_show(FL, 'OOM!', "buffer w:%uld, h:%uld", source.w, source.h);
 
 		RLE8Decode(source.data, shadowBuff, source.stride);
 		source.data = shadowBuff;
@@ -139,7 +139,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		// If it's scaled we decode it first
 		if (Rle) {
 			if (!(scaledBuff = (uint8 *)mem_alloc(source.stride * source.h, "scaled buffer")))
-				error_show(FL, 'OOM!', "no mem: buffer w:%ld, h:%ld", source.W, source.h);
+				error_show(FL, 'OOM!', "no mem: buffer w:%ld, h:%ld", source.w, source.h);
 
 			RLE8Decode(source.data, scaledBuff, source.stride);
 			source.data = scaledBuff;
@@ -173,10 +173,10 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		if (YPos >= drawReq->Dest->h)
 			goto truly_done;
 
-		if (-drawReq->x >= source.W)
+		if (-drawReq->x >= source.w)
 			goto truly_done;
 
-		if (drawReq->x >= drawReq->Dest->W)
+		if (drawReq->x >= drawReq->Dest->w)
 			goto truly_done;
 
 		// if clipped off top, scan into sprite
@@ -194,8 +194,8 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		if (drawReq->x < 0)
 			leftOffset = -drawReq->x;
 
-		if (drawReq->x + source.W > drawReq->Dest->W)
-			rightOffset = drawReq->x + source.W - drawReq->Dest->W;
+		if (drawReq->x + source.w > drawReq->Dest->w)
+			rightOffset = drawReq->x + source.w - drawReq->Dest->w;
 
 		if (YPos + source.h > drawReq->Dest->h) {
 			source.h -= YPos + source.h - drawReq->Dest->h;

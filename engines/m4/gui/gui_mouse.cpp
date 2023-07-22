@@ -34,7 +34,7 @@ bool gui_mouse_init() {
 	if ((_G(mouseBuffer).data = (uint8 *)mem_alloc(32 * 32, "mouse graphic")) == NULL) {
 		return false;
 	}
-	_G(mouseBuffer).W = 32;
+	_G(mouseBuffer).w = 32;
 	_G(mouseBuffer).stride = 32;
 	_G(mouseBuffer).h = 32;
 

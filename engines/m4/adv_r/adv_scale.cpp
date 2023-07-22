@@ -48,14 +48,14 @@ static void scale_editor_undraw() {
 
 	if (_GS(old_back) != -1) {
 		gr_buffer_rect_copy_2(scr_orig, game_buff, 0, _GS(old_back) - LABEL_OFFSET, 0,
-			_GS(old_back) - LABEL_OFFSET, scr_orig->W, LABEL_OFFSET + 1);
-		RestoreScreensInContext(0, _GS(old_back) - LABEL_OFFSET, scr_orig->W, _GS(old_back) + 1, game_buff_ptr);
+			_GS(old_back) - LABEL_OFFSET, scr_orig->w, LABEL_OFFSET + 1);
+		RestoreScreensInContext(0, _GS(old_back) - LABEL_OFFSET, scr_orig->w, _GS(old_back) + 1, game_buff_ptr);
 		_GS(old_back) = -1;
 	}
 	if (_GS(old_front) != -1) {
 		gr_buffer_rect_copy_2(scr_orig, game_buff, 0, _GS(old_front) - LABEL_OFFSET, 0,
-			_GS(old_front) - LABEL_OFFSET, scr_orig->W, LABEL_OFFSET + 1);
-		RestoreScreensInContext(0, _GS(old_front) - LABEL_OFFSET, scr_orig->W, _GS(old_front) + 1, game_buff_ptr);
+			_GS(old_front) - LABEL_OFFSET, scr_orig->w, LABEL_OFFSET + 1);
+		RestoreScreensInContext(0, _GS(old_front) - LABEL_OFFSET, scr_orig->w, _GS(old_front) + 1, game_buff_ptr);
 		_GS(old_front) = -1;
 	}
 
@@ -96,8 +96,8 @@ void scale_editor_draw() {
 	_GS(myfront) = _GS(old_front) = _G(currentSceneDef).front_y;
 	_GS(mybs) = _G(currentSceneDef).back_scale;
 	_GS(myfs) = _G(currentSceneDef).front_scale;
-	gr_hline(game_buff, 0, scr_orig->W, _GS(old_back));
-	gr_hline(game_buff, 0, scr_orig->W, _GS(old_front));
+	gr_hline(game_buff, 0, scr_orig->w, _GS(old_back));
+	gr_hline(game_buff, 0, scr_orig->w, _GS(old_front));
 
 	char string[20];
 	gr_font_set_color(__WHITE);
@@ -105,15 +105,15 @@ void scale_editor_draw() {
 
 	Common::sprintf_s(string, "Front: %ld, %ld", _GS(old_front), _G(currentSceneDef).front_scale);
 	int x;
-	for (x = 10; x < scr_orig->W - 220; x += 400)
+	for (x = 10; x < scr_orig->w - 220; x += 400)
 		gr_font_write(game_buff, string, x, _GS(old_front) - LABEL_OFFSET, 0, 0);
 
 	Common::sprintf_s(string, "Back: %ld, %ld", _GS(old_back), _G(currentSceneDef).back_scale);
-	for (x = 110; x < scr_orig->W - 320; x += 400)
+	for (x = 110; x < scr_orig->w - 320; x += 400)
 		gr_font_write(game_buff, string, x, _GS(old_back) - LABEL_OFFSET, 0, 0);
 
-	RestoreScreensInContext(0, _GS(old_back) - LABEL_OFFSET, scr_orig->W, _GS(old_back) + 1, game_buff_ptr);
-	RestoreScreensInContext(0, _GS(old_front) - LABEL_OFFSET, scr_orig->W, _GS(old_front) + 1, game_buff_ptr);
+	RestoreScreensInContext(0, _GS(old_back) - LABEL_OFFSET, scr_orig->w, _GS(old_back) + 1, game_buff_ptr);
+	RestoreScreensInContext(0, _GS(old_front) - LABEL_OFFSET, scr_orig->w, _GS(old_front) + 1, game_buff_ptr);
 
 	_G(game_bgBuff)->release();
 	_G(gameDrawBuff)->release();

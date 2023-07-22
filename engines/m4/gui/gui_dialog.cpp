@@ -164,7 +164,7 @@ bool Dialog_Add_Message(Dialog *d, int32 x, int32 y, const char *prompt, int32 t
 bool Dialog_Add_Picture(Dialog *d, int32 x, int32 y, Buffer *myBuff, int32 tag) {
 	Item *myItem;
 	if ((myItem = ItemAdd(d->itemList, x, y,
-		myBuff->W, myBuff->h, (char *)myBuff->data, tag, PICTURE, nullptr, 0)) == nullptr) {
+		myBuff->w, myBuff->h, (char *)myBuff->data, tag, PICTURE, nullptr, 0)) == nullptr) {
 		return false;
 	}
 	if (!d->itemList) d->itemList = myItem;

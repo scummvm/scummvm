@@ -255,9 +255,9 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	int32 i, j;
 	int32 target_w;
 	if (w)
-		target_w = imath_min(target->W, x + w);
+		target_w = imath_min(target->w, x + w);
 	else
-		target_w = target->W;
+		target_w = target->w;
 
 	x += 1; y += 1;
 	int32 skipTop = 0;

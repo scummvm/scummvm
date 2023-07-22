@@ -114,7 +114,7 @@ bool this_is_a_walkcode(int32 x, int32 y) {
 		return false;
 
 	// Verify params
-	if (x < 0 || y < 0 || x >= walkCodes->W || y >= walkCodes->h)
+	if (x < 0 || y < 0 || x >= walkCodes->w || y >= walkCodes->h)
 		return false;
 
 	ptr = gr_buffer_pointer(walkCodes, x, y);
@@ -138,7 +138,7 @@ int32 get_screen_depth(int32 x, int32 y) {
 	}
 
 	// Verify params
-	if (x < 0 || y < 0 || x >= walkCodes->W || y >= walkCodes->h) {
+	if (x < 0 || y < 0 || x >= walkCodes->w || y >= walkCodes->h) {
 		return -1;
 	}
 
@@ -160,7 +160,7 @@ int32 get_screen_color(int32 x, int32 y) {
 	}
 
 	//verify params
-	if (x < 0 || y < 0 || x >= game_buff->W || y >= game_buff->h) {
+	if (x < 0 || y < 0 || x >= game_buff->w || y >= game_buff->h) {
 		return -1;
 	}
 
