@@ -102,8 +102,7 @@ size_t RLE8Decode_Size(byte *src, int pitch) {
 		} else {
 			count = *src++;
 
-			// TODO: This seems inconsistent with RLE8Decode. Verify the totals are correct sometime.
-			// Though, the method is only used for validation anyway, so minor issues won't hurt
+			// TODO: This seems inconsistent with RLE8Decode. Verify the totals are correct
 			if (count >= EOL_CODE) {
 				src += count;
 				count += count;
