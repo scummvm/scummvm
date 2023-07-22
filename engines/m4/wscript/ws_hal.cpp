@@ -26,6 +26,7 @@
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/dbg/debug.h"
+#include "m4/graphics/gr_sprite.h"
 #include "m4/graphics/rend.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/vars.h"
@@ -170,24 +171,26 @@ static void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *s
 		source->data = (uint8 *)((byte *)*(source->sourceHandle) + source->sourceOffset);
 	}
 
-	RendGrBuff Destination;
-	DrawRequestX dr;
+	Buffer Destination;
+	DrawRequest dr;
 	RendCell Frame;
 
-	Destination.Width = source->w;
-	Destination.Height = source->h;
-	Destination.Pitch = source->w;
+	Destination.w = source->w;
+	Destination.h = source->h;
+	Destination.stride = source->w;
 	Destination.encoding = (myPalette && ICT) ? source->encoding : source->encoding & 0x7f;
-	Destination.PixMap = source->data;
+	Destination.data = source->data;
 
+	dr.Src = &Destination;
+	dr.Dest = halScrnBuf;
 	dr.x = myAnim8->myRegs[IDX_X] >> 16;
 	dr.y = myAnim8->myRegs[IDX_Y] >> 16;
-	dr.scale_x = myCCB->scaleX;
-	dr.scale_y = myCCB->scaleY;
-	dr.depth_map = screenCodeBuff->get_pixmap();		// TODO: Confirm this
-	dr.Pal = (RGBcolor *)myPalette;
+	dr.scaleX = myCCB->scaleX;
+	dr.scaleY = myCCB->scaleY;
+	dr.depthCode = screenCodeBuff->get_pixmap();		// TODO: Confirm this
+	dr.Pal = myPalette;
 	dr.ICT = ICT;
-	dr.depth = myCCB->layer >> 8;
+	dr.srcDepth = myCCB->layer >> 8;
 
 	Frame.hot_x = myCCB->source->xOffset;
 	Frame.hot_y = myCCB->source->yOffset;
@@ -202,13 +205,12 @@ static void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *s
 	Frame.data = source->data;
 
 	// And draw the sprite
-	render_sprite_to_8BBM(&Destination, &dr, &Frame, clipRect, updateRect);
+	gr_sprite_draw(&dr);
 	myCCB->flags &= ~CCB_REDRAW;
 
-	if (!(myCCB->flags & CCB_DISC_STREAM)) {
+	if (!(myCCB->flags & CCB_DISC_STREAM))
 		// Unlock the sprite's handle
 		HUnLock(source->sourceHandle);
-	}
 }
 
 void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff,
@@ -230,7 +232,7 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff
 	Buffer *halScrnBuf = _G(gameDrawBuff)->get_buffer();
 	noClipRect.x1 = 0;
 	noClipRect.y1 = 0;
-	noClipRect.x2 = halScrnBuf->W - 1;
+	noClipRect.x2 = halScrnBuf->w - 1;
 	noClipRect.y2 = halScrnBuf->h - 1;
 
 	scrnX1 = myScreen->x1;
@@ -250,7 +252,7 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff
 		while (myRect) {
 			restoreBgndX1 = imath_max(myRect->x1, 0);
 			restoreBgndY1 = imath_max(myRect->y1, 0);
-			restoreBgndX2 = imath_min(myRect->x2, background->W - 1);
+			restoreBgndX2 = imath_min(myRect->x2, background->w - 1);
 			restoreBgndY2 = imath_min(myRect->y2, background->h - 1);
 			gr_buffer_rect_copy(background, halScrnBuf, restoreBgndX1, restoreBgndY1,
 				restoreBgndX2 - restoreBgndX1 + 1, restoreBgndY2 - restoreBgndY1 + 1);

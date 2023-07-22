@@ -114,7 +114,7 @@ Buffer *tt_read(SysFile *ifp, int index, long tile_x, long tile_y) {
 		error_show(FL, 'OOM!', "fail to allocate mem for buffer structure");
 
 	out->data = nullptr;
-	out->W = 0;
+	out->w = 0;
 	out->stride = 0;
 	out->h = 0;
 
@@ -136,14 +136,14 @@ Buffer *tt_read(SysFile *ifp, int index, long tile_x, long tile_y) {
 
 	gr_buffer_init(out, "back tile", tile_x, tile_y);
 	if (out->data == nullptr) {
-		out->W = 0;
+		out->w = 0;
 		out->stride = 0;
 		out->h = 0;
 		error_show(FL, 'OOM!', "fail to allocate mem for .TT buffer");
 		return out;
 	}
 
-	out->W = out->stride = tile_x;
+	out->w = out->stride = tile_x;
 	out->h = tile_y;
 
 	bufferHandle = out->data;

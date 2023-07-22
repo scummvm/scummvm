@@ -155,7 +155,7 @@ void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
 		if (ws_GetSSMaxWH(_mouseSeriesHandle, _mouseSeriesOffset, &maxW, &maxH)) {
 			if (maxW && maxH) {
 				_mouseBuffer.data = (byte *)mem_alloc(maxW * maxH, "mouse graphic");
-				_mouseBuffer.W = maxW;
+				_mouseBuffer.w = maxW;
 				_mouseBuffer.h = maxH;
 				_mouseBuffer.stride = maxW;
 

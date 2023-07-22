@@ -95,7 +95,7 @@ Buffer *GrBuff::get_buffer() {
 	{
 		lock();
 		dummy.data = (uint8 *)*pixmap;
-		dummy.W = w;
+		dummy.w = w;
 		dummy.h = h;
 		dummy.encoding = 0;
 		dummy.stride = pitch;
@@ -111,7 +111,7 @@ void GrBuff::refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x
 
 
 int32 gr_buffer_free(Buffer *buf) {
-	buf->W = buf->h = buf->stride = 0;
+	buf->w = buf->h = buf->stride = 0;
 
 	if (buf->data != NULL) {
 		mem_free((char *)buf->data);
@@ -145,7 +145,7 @@ int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 	if (buf->data)
 		error_show(FL, 'BUFR', "buffer_init %s", name);
 
-	buf->W = w;
+	buf->w = w;
 	buf->h = h;
 	buf->stride = w;
 
@@ -169,12 +169,12 @@ bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
 		h = from->h;
 
 	// if source x,y or dest x,y won't touch dest or source buffers, we're done
-	if ((sx > from->W) || (sy > from->h) || (dx > to->W) || (dy > to->h))
+	if ((sx > from->w) || (sy > from->h) || (dx > to->w) || (dy > to->h))
 		return true;
 
 	// if dest request intersects dest buffer, clip dest request
-	if ((dx + w) > to->W)
-		w = to->W - dx;
+	if ((dx + w) > to->w)
+		w = to->w - dx;
 	if ((dy + h) > to->h)
 		h = to->h - dy;
 
@@ -212,12 +212,12 @@ int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h) 
 		error_show(FL, 'BUF!', "buffer_rect_fill");
 
 	// if nothing to fill, we're done
-	if ((w < 1) || (h < 1) || (x1 > target->W) || (y1 > target->h))
+	if ((w < 1) || (h < 1) || (x1 > target->w) || (y1 > target->h))
 		return true;
 
 	// clip if rectangles too big
-	if ((x1 + w) > target->W)
-		w = target->W - x1;
+	if ((x1 + w) > target->w)
+		w = target->w - x1;
 	if ((y1 + h) > target->h)
 		h = target->h - y1;
 

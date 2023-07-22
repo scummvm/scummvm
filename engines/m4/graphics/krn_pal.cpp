@@ -229,7 +229,7 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 	}
 	gr_pal_set_range(_GP(trick), GREY_START, NUM_GREYS);   ///set pal GREY_START-GREY_END
 
-	remap_buffer_with_luminance_map(grey_screen, 0, 0, grey_screen->W - 1, screen_height(grey_screen) - 1);
+	remap_buffer_with_luminance_map(grey_screen, 0, 0, grey_screen->w - 1, screen_height(grey_screen) - 1);
 	_G(gameDrawBuff)->release();
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
 }
@@ -392,7 +392,7 @@ void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, 
 	int32 x, y;
 	if ((!src) || (!src->data)) return;
 	if ((x2 - x1 < 0) || (y2 - y1 < 0)) return;
-	if (x2 - x1 + 1 > src->W) x2 = src->W - 1;
+	if (x2 - x1 + 1 > src->w) x2 = src->w - 1;
 	if (y2 - y1 + 1 > src->h) y2 = src->h - 1;
 
 	x2 -= x1;
@@ -506,7 +506,7 @@ void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
 
 	if (percent == 0) {
 		gr_color_set(__BLACK);
-		gr_buffer_rect_fill(target, 0, 0, target->W, target->h);
+		gr_buffer_rect_fill(target, 0, 0, target->w, target->h);
 		return;
 	}
 

@@ -429,7 +429,7 @@ void CreateEdge(int32 node1, int32 node2, Buffer *walkCodes) {
 
 	if (walkCodes && walkCodes->data) {
 		// Initialize the buffer data pointer, the maximum dimensions of the buffer, and the scan x and y
-		width = walkCodes->W;
+		width = walkCodes->w;
 		stride = walkCodes->stride;
 		height = walkCodes->h;
 		scanX = x1;

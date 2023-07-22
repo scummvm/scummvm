@@ -336,7 +336,7 @@ static void recreate_animation_draw_screen(GrBuff **loadBuf) {
 	Buffer *theBuff = (**loadBuf).get_buffer();
 	Buffer *game_buff = (*_G(gameDrawBuff)).get_buffer();
 	gr_buffer_rect_copy_2(theBuff, game_buff, 0, 0, 0, 0,
-		imath_min((**loadBuf).w, game_buff->W), imath_min((**loadBuf).h, game_buff->h));
+		imath_min((**loadBuf).w, game_buff->w), imath_min((**loadBuf).h, game_buff->h));
 
 	(**loadBuf).release();
 	(*_G(gameDrawBuff)).release();

@@ -1402,7 +1402,7 @@ bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 	y1 = i->y;
 	x2 = x1 + i->w - 1;
 	y2 = y1 + i->h - 1;
-	if ((x1 < 0) || (y1 < 0) || (x2 >= scrBuf->W) || (y2 >= scrBuf->h)) return false;
+	if ((x1 < 0) || (y1 < 0) || (x2 >= scrBuf->w) || (y2 >= scrBuf->h)) return false;
 
 	currFont = gr_font_get();
 	if (i->myFont != currFont)
@@ -1438,11 +1438,11 @@ bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 		item_string_write(scrBuf, i->prompt, x1, y1, 0, 1, __BLACK, __BLUE);
 		break;
 	case PICTURE:
-		pictBuff.W = i->w;
+		pictBuff.w = i->w;
 		pictBuff.h = i->h;
 		pictBuff.stride = i->w;
 		pictBuff.data = (uint8 *)(i->aux);
-		gr_buffer_rect_copy_2(&pictBuff, scrBuf, 0, 0, x1, y1, pictBuff.W, pictBuff.h);
+		gr_buffer_rect_copy_2(&pictBuff, scrBuf, 0, 0, x1, y1, pictBuff.w, pictBuff.h);
 		break;
 	case TEXTFIELD:
 		if (itemType == ITEM_DEFAULT) {

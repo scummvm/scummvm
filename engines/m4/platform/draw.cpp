@@ -71,8 +71,6 @@ void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
 }
 
 uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData) {
-	byte val;
-
 	while (linesToSkip > 0) {
 		if (*rleData) {
 			// Simple RLE sequence, so skip over count and value

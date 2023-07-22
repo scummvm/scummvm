@@ -32,7 +32,7 @@ void gr_vline_xor(Buffer *buf, int32 x, int32 y1, int32 y2) {
 		i = y1; y1 = y2; y2 = i;
 	}
 
-	if ((x > buf->W) || (y1 > buf->h))
+	if ((x > buf->w) || (y1 > buf->h))
 		return;
 
 	if (y2 > buf->h)
@@ -52,7 +52,7 @@ void gr_hline_xor(Buffer *buf, int32 x1, int32 x2, int32 y) {
 		i = x1; x1 = x2; x2 = i;
 	}
 
-	if ((y > buf->h) || (x1 > buf->W))
+	if ((y > buf->h) || (x1 > buf->w))
 		return;
 
 	start = gr_buffer_pointer(buf, x1, y);
@@ -69,7 +69,7 @@ void gr_vline(Buffer *buf, int32 x, int32 y1, int32 y2) {
 		i = y1; y1 = y2; y2 = i;
 	}
 
-	if ((x > buf->W) || (y1 > buf->h))
+	if ((x > buf->w) || (y1 > buf->h))
 		return;
 
 	y2++;
@@ -90,14 +90,14 @@ void gr_hline(Buffer *buf, int32 x1, int32 x2, int32 y) {
 		i = x1; x1 = x2; x2 = i;
 	}
 
-	if ((y > buf->h) || (x1 > buf->W))
+	if ((y > buf->h) || (x1 > buf->w))
 		return;
 
 	start = gr_buffer_pointer(buf, x1, y);
 
 	x2++;
-	if (x2 > buf->W)
-		x2 = buf->W;
+	if (x2 > buf->w)
+		x2 = buf->w;
 
 	for (i = x1; i < x2; i++, start++)
 		*start = _G(color);
