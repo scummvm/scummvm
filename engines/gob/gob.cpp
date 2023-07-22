@@ -68,7 +68,9 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 	Common::KO_KOR,
 	Common::HE_ISR,
 	Common::PT_BRA,
-	Common::JA_JPN
+	Common::JA_JPN,
+	Common::NL_BEL,
+	Common::RU_RUS
 };
 
 
