@@ -1685,6 +1685,7 @@ namespace Director {
 
 #define MACGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define MACGAME1t(t,e,f,m,s,v)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
+#define MACGAME1tf(t,e,f,m,s,v,fl)	GENGAME1t_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(fl|ADGF_MACRESFORK),v)
 #define PIPGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define PIPGAME1f(t,e,f,m,s,v,fl)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,(fl|ADGF_MACRESFORK),v)
 #define WINGAME1(t,e,f,m,s,v)	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
@@ -2474,7 +2475,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is JOINT-net/DEMO
 	MACDEMO1_l("jointnet", "Demo", "JOINT-net-DEMO", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 895326, Common::JA_JPN, 300),
 
-	MACGAME1t("journey2source", "", "The Source Folder/Journey to the Source", "ea32bab5edb60ce30994f0e7e21bf5e6", 656387, 300),
+	MACGAME1tf("journey2source", "", "The Source Folder/Journey to the Source", "ea32bab5edb60ce30994f0e7e21bf5e6", 656387, 300, GF_32BPP),
 
 	// HyperCard game calls movie using external MacroMind Player
 	MACGAME2_l("jyajya", "", "MacroMind Player", "f5277c53bacd27936158dd3867e587e2", 390204,
