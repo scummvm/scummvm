@@ -113,8 +113,8 @@ bool Window::processEvent(Common::Event &event) {
 
 bool Movie::processEvent(Common::Event &event) {
 	Score *sc = getScore();
-	if (sc->getCurrentFrameNum() >= sc->getFramesNum()) {
-		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrameNum(), sc->getFramesNum() - 1);
+	if (sc->getCurrentFrameNum() > sc->getFramesNum()) {
+		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrameNum(), sc->getFramesNum());
 		return false;
 	}
 	uint16 spriteId = 0;
