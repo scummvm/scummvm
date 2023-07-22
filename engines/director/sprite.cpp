@@ -65,7 +65,7 @@ Sprite::Sprite(Frame *frame) {
 	_autoPuppet = kAPNone; // Based on Director in a Nutshell, page 15
 	_immediate = false;
 	_backColor = g_director->_wm->_colorWhite;
-	_foreColor = g_director->_wm->_colorBlack;
+	_foreColor = g_director->_wm->_colorWhite;
 
 	_volume = 0;
 	_stretch = 0;
