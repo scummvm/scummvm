@@ -2,45 +2,54 @@
 #include "agds/agds.h"
 #include "agds/region.h"
 #include "agds/object.h"
+#include <utility>
 
 namespace AGDS {
 
-int MouseMap::add(const MouseRegion & area) {
-	int id = _nextId++;
-	_mouseRegions.push_back(area);
-	_mouseRegions.back().id = id;
+int MouseMap::findFree() const {
+	for(int i = 0, n = _mouseRegions.size(); i != n; ++i) {
+		auto & region = _mouseRegions[i];
+		if (!region)
+			return i;
+	}
+	error("no mouse region available");
+}
+
+
+int MouseMap::add(MouseRegion area) {
+	auto id = findFree();
+	auto & region = _mouseRegions[id];
+	region.reset(new MouseRegion(std::move(area)));
+	region->id = id;
 	return id;
 }
 
 MouseRegion *MouseMap::find(Common::Point pos) {
 	if (_disabled)
-		return NULL;
-	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
-		MouseRegion &mouse = *i;
-		if (mouse.enabled && mouse.region->pointIn(pos))
-			return &mouse;
+		return nullptr;
+	for (auto & region : _mouseRegions) {
+		if (region && region->enabled && region->region->pointIn(pos))
+			return region.get();
 	}
-	return NULL;
+	return nullptr;
 }
 
 MouseRegion *MouseMap::find(int id) {
-	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
-		MouseRegion &mouse = *i;
-		if (mouse.id == id)
-			return &mouse;
+	for (auto & region : _mouseRegions) {
+		if (region && region->id == id)
+			return region.get();
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MouseMap::remove(AGDSEngine *engine, int id) {
-	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end();) {
-		MouseRegion &mouse = *i;
-		if (mouse.id == id) {
-			i->disable(engine);
-			i = _mouseRegions.erase(i);
-		} else
-			++i;
+	auto &region = _mouseRegions[id];
+	if (!region) {
+		warning("removing non-existent mouse region %d", id);
+		return;
 	}
+	region->disable(engine);
+	region.reset();
 }
 
 void MouseRegion::show(AGDSEngine *engine) {
@@ -62,8 +71,9 @@ void MouseRegion::hide(AGDSEngine *engine) {
 }
 
 void MouseMap::hideAll(AGDSEngine *engine) {
-	for (MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i)
-		i->hide(engine);
+	for (auto & region : _mouseRegions)
+		if (region)
+			region->hide(engine);
 }
 
 } // End of namespace AGDS

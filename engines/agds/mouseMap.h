@@ -23,7 +23,7 @@
 #ifndef AGDS_MOUSE_MAP_H
 #define AGDS_MOUSE_MAP_H
 
-#include "common/list.h"
+#include "common/array.h"
 #include "common/ptr.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -35,10 +35,10 @@ struct Region;
 typedef Common::SharedPtr<Region> RegionPtr;
 
 struct MouseRegion {
-	int			id;
-	RegionPtr	region;
-	bool		enabled;
-	bool		visible;
+	int			id 			= -1;
+	RegionPtr	region		= nullptr;
+	bool		enabled		= true;
+	bool		visible		= false;
 
 	Common::String onEnter;
 	Common::String onLeave;
@@ -52,22 +52,24 @@ struct MouseRegion {
 		hide(engine);
 	}
 
+	MouseRegion()
+	{ }
+
 	MouseRegion(RegionPtr reg, const Common::String &enter, const Common::String &leave):
-		id(-1), region(reg), enabled(1), visible(false), onEnter(enter), onLeave(leave) {
+		region(reg), onEnter(enter), onLeave(leave) {
 	}
 
 	void hide(AGDSEngine * engine);
 	void show(AGDSEngine * engine);
 };
+using MouseRegionPtr = Common::ScopedPtr<MouseRegion>;
 
 class MouseMap {
-	typedef Common::List<MouseRegion> MouseRegionsType;
-	MouseRegionsType	_mouseRegions;
-	int					_nextId;
-	bool				_disabled;
+	Common::Array<MouseRegionPtr>	_mouseRegions;
+	bool							_disabled;
 
 public:
-	MouseMap(): _nextId(0), _disabled(false) { }
+	MouseMap(): _mouseRegions(100), _disabled(false) { }
 
 	void disable(AGDSEngine * engine, bool disabled) {
 		_disabled = disabled;
@@ -79,14 +81,12 @@ public:
 		return _disabled;
 	}
 
-	int add(const MouseRegion & area);
+	int findFree() const;
+	int add(MouseRegion area);
 	void remove(AGDSEngine *engine, int id);
 
 	void hideAll(AGDSEngine *engine);
 
-	void clear() {
-		_mouseRegions.clear();
-	}
 	MouseRegion * find(Common::Point pos);
 	MouseRegion * find(int id);
 };
