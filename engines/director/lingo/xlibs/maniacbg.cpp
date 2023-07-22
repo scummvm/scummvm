@@ -23,6 +23,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/maniacbg.h"
@@ -44,7 +45,7 @@ I      mIsForeMost --Is this Application foremost. 1=Yes, 0=No.
 
 namespace Director {
 
-const char *ManiacBgXObj::xlibName = "maniacbg";
+const char *ManiacBgXObj::xlibName = "foremost";
 const char *ManiacBgXObj::fileNames[] = {
 	"maniacbg",
 	nullptr
@@ -89,6 +90,12 @@ void ManiacBgXObj::m_new(int nargs) {
 }
 
 XOBJSTUBNR(ManiacBgXObj::m_dispose)
-XOBJSTUB(ManiacBgXObj::m_isForeMost, 1)
+
+void ManiacBgXObj::m_isForeMost(int nargs) {
+	// process events
+	LB::b_updateStage(0);
+	g_lingo->push(Datum(1));
+	return;
+}
 
 }
