@@ -511,6 +511,9 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 			Common::String wrappedFilename = Common::String(regularFilename.c_str() + fileMask.size() - 1);
 
 			Common::SeekableReadStream *testfile = saveFileMan->openForLoading(regularFilename);
+			if (testfile == nullptr) {
+				continue;
+			}
 			int32 testfileSize = testfile->size();
 			delete testfile;
 			if (testfileSize > 1024) // check, if larger than 1k. in that case its a saved game.
