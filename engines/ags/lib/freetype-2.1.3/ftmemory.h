@@ -38,20 +38,20 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 #undef  FT2_1_3_SET_ERROR
 #define FT2_1_3_SET_ERROR(expression) ((error = (expression)) != 0)
 
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Alloc(FT_Memory memory, FT_Long size, void **P);
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P);
 
-FT2_1_3_BASE(void)
+FT_BASE(void)
 FT_Free(FT_Memory memory, void **P);
 
 
@@ -94,14 +94,14 @@ FT_Free(FT_Memory memory, void **P);
 #define FT2_1_3_ALLOC(_pointer_, _size_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_ALLOC(_pointer_, _size_))
 #define FT2_1_3_REALLOC(_pointer_, _current_, _size_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_REALLOC(_pointer_, _current_, _size_))
 #define FT2_1_3_FREE(_pointer_) FT2_1_3_MEM_FREE(_pointer_)
-#define FT2_1_3_NEW(_pointer_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_NEW(_pointer_))
-#define FT2_1_3_NEW_ARRAY(_pointer_, _count_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_NEW_ARRAY(_pointer_, _count_))
+#define FT_NEW(_pointer_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_NEW(_pointer_))
+#define FT_NEW_ARRAY(_pointer_, _count_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_NEW_ARRAY(_pointer_, _count_))
 #define FT2_1_3_RENEW_ARRAY(_pointer_, _old_, _new_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_RENEW_ARRAY(_pointer_, _old_, _new_))
 #define FT2_1_3_ALLOC_ARRAY(_pointer_, _count_, _type_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_ALLOC(_pointer_, (_count_) * sizeof(_type_)))
 #define FT2_1_3_REALLOC_ARRAY(_pointer_, _old_, _new_, _type_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_REALLOC(_pointer_, (_old_) * sizeof(_type_), (_new_) * sizeof(_type_)))
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

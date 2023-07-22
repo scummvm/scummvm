@@ -25,7 +25,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 typedef struct  T42_ParserRec_ {
 	PS_ParserRec  root;
@@ -53,34 +53,34 @@ typedef struct  T42_Loader_ {
 } T42_LoaderRec, *T42_Loader;
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 t42_parser_init( T42_Parser     parser,
 				 FT_Stream      stream,
 				 FT_Memory      memory,
 				 PSAux_Service  psaux );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 t42_parser_done( T42_Parser  parser );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 t42_parse_dict( T42_Face    face,
 				T42_Loader  loader,
 				FT_Byte*    base,
 				FT_Long     size );
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 t42_loader_init( T42_Loader  loader,
 				 T42_Face    face );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 t42_loader_done( T42_Loader  loader );
 
 
 /* */
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

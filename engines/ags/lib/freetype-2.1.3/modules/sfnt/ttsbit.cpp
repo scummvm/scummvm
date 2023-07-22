@@ -35,8 +35,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/modules/sfnt/sferrors.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT trace_ttsbit
+#undef  FT_COMPONENT
+#define FT_COMPONENT trace_ttsbit
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -184,7 +184,7 @@ static FT_Error Load_SBit_Range_Codes(TT_SBit_Range range, FT_Stream stream, FT_
 
 	/* Allocate glyph offsets table if needed */
 	if (load_offsets) {
-		if (FT2_1_3_NEW_ARRAY(range->glyph_offsets, count))
+		if (FT_NEW_ARRAY(range->glyph_offsets, count))
 			goto Exit;
 
 		size = count * 4L;
@@ -192,7 +192,7 @@ static FT_Error Load_SBit_Range_Codes(TT_SBit_Range range, FT_Stream stream, FT_
 		size = count * 2L;
 
 	/* Allocate glyph codes table and access frame */
-	if (FT2_1_3_NEW_ARRAY(range->glyph_codes, count) || FT2_1_3_FRAME_ENTER(size))
+	if (FT_NEW_ARRAY(range->glyph_codes, count) || FT2_1_3_FRAME_ENTER(size))
 		goto Exit;
 
 	for (n = 0; n < count; n++) {
@@ -225,7 +225,7 @@ static FT_Error Load_SBit_Range(TT_SBit_Range range, FT_Stream stream) {
 
 		size_elem = large ? 4 : 2;
 
-		if (FT2_1_3_NEW_ARRAY(range->glyph_offsets, num_glyphs) || FT2_1_3_FRAME_ENTER(num_glyphs * size_elem))
+		if (FT_NEW_ARRAY(range->glyph_offsets, num_glyphs) || FT2_1_3_FRAME_ENTER(num_glyphs * size_elem))
 			goto Exit;
 
 		for (n = 0; n < num_glyphs; n++)
@@ -253,7 +253,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_sbit_strikes(TT_Face face, FT_Stream stream) {
 	FT_Error   error  = 0;
 	FT_Memory  memory = stream->memory;
@@ -327,14 +327,14 @@ tt_face_load_sbit_strikes(TT_Face face, FT_Stream stream) {
 	/* check version number and strike count */
 	if (version != 0x00020000L ||
 		num_strikes >= 0x10000L) {
-		FT2_1_3_ERROR(("tt_face_load_sbit_strikes: invalid table version!\n"));
+		FT_ERROR(("tt_face_load_sbit_strikes: invalid table version!\n"));
 		error = FT2_1_3_Err_Invalid_File_Format;
 
 		goto Exit;
 	}
 
 	/* allocate the strikes table */
-	if (FT2_1_3_NEW_ARRAY(face->sbit_strikes, num_strikes))
+	if (FT_NEW_ARRAY(face->sbit_strikes, num_strikes))
 		goto Exit;
 
 	face->num_sbit_strikes = num_strikes;
@@ -368,7 +368,7 @@ tt_face_load_sbit_strikes(TT_Face face, FT_Stream stream) {
 			TT_SBit_Range range;
 			FT_ULong count2 = strike->num_ranges;
 
-			if (FT2_1_3_NEW_ARRAY(strike->sbit_ranges, strike->num_ranges))
+			if (FT_NEW_ARRAY(strike->sbit_ranges, strike->num_ranges))
 				goto Exit;
 
 			/* read each range */
@@ -417,7 +417,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_face_free_sbit_strikes(TT_Face face) {
 	FT_Memory memory = face->root.memory;
 	TT_SBit_Strike strike = face->sbit_strikes;
@@ -444,7 +444,7 @@ tt_face_free_sbit_strikes(TT_Face face) {
 	face->num_sbit_strikes = 0;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_set_sbit_strike(TT_Face face, FT_Int x_ppem, FT_Int y_ppem, FT_ULong *astrike_index) {
 	FT_ULong i;
 
@@ -764,7 +764,7 @@ Empty_Bitmap:
 	map->width = 0;
 	map->rows  = 0;
 	map->pitch = 0;
-	map->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
+	map->pixel_mode = FT_PIXEL_MODE_MONO;
 }
 
 static FT_Error Load_SBit_Single(FT_Bitmap *map, FT_Int x_offset, FT_Int y_offset, FT_Int pix_bits,
@@ -862,22 +862,22 @@ static FT_Error Load_SBit_Image(TT_SBit_Strike strike, TT_SBit_Range range, FT_U
 
 		switch (strike->bit_depth) {
 		case 1:
-			map->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
+			map->pixel_mode = FT_PIXEL_MODE_MONO;
 			map->pitch = (map->width + 7) >> 3;
 			break;
 
 		case 2:
-			map->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY2;
+			map->pixel_mode = FT_PIXEL_MODE_GRAY2;
 			map->pitch = (map->width + 3) >> 2;
 			break;
 
 		case 4:
-			map->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY4;
+			map->pixel_mode = FT_PIXEL_MODE_GRAY4;
 			map->pitch = (map->width + 1) >> 1;
 			break;
 
 		case 8:
-			map->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY;
+			map->pixel_mode = FT_PIXEL_MODE_GRAY;
 			map->pitch = map->width;
 			break;
 
@@ -921,7 +921,7 @@ static FT_Error Load_SBit_Image(TT_SBit_Strike strike, TT_SBit_Range range, FT_U
 		TT_SBit_Component comp;
 		FT_UShort num_components, count;
 
-		if (FT2_1_3_READ_USHORT(num_components) || FT2_1_3_NEW_ARRAY(components, num_components))
+		if (FT2_1_3_READ_USHORT(num_components) || FT_NEW_ARRAY(components, num_components))
 			goto Exit;
 
 		count = num_components;
@@ -965,7 +965,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 tt_face_load_sbit_image(TT_Face face, FT_ULong strike_index, FT_UInt glyph_index, FT_UInt load_flags,
 						FT_Stream stream, FT_Bitmap *map, TT_SBit_MetricsRec *metrics) {
 	FT_Error  error;
@@ -991,7 +991,7 @@ tt_face_load_sbit_image(TT_Face face, FT_ULong strike_index, FT_UInt glyph_index
 	ebdt_pos = FT2_1_3_STREAM_POS();
 
 	/* clear the bitmap & load the bitmap */
-	if (face->root.glyph->flags & FT2_1_3_GLYPH_OWN_BITMAP)
+	if (face->root.glyph->flags & FT_GLYPH_OWN_BITMAP)
 		FT2_1_3_FREE(map->buffer);
 
 	map->rows = map->pitch = map->width = 0;
@@ -1001,7 +1001,7 @@ tt_face_load_sbit_image(TT_Face face, FT_ULong strike_index, FT_UInt glyph_index
 		goto Exit;
 
 	/* the glyph slot owns this bitmap buffer */
-	face->root.glyph->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
+	face->root.glyph->flags |= FT_GLYPH_OWN_BITMAP;
 
 	/* setup vertical metrics if needed */
 	if (strike->flags & 1) {
@@ -1018,7 +1018,7 @@ tt_face_load_sbit_image(TT_Face face, FT_ULong strike_index, FT_UInt glyph_index
 	}
 
 	/* Crop the bitmap now, unless specified otherwise */
-	if (load_flags & FT2_1_3_LOAD_CROP_BITMAP)
+	if (load_flags & FT_LOAD_CROP_BITMAP)
 		crop_bitmap(map, metrics);
 
 Exit:

@@ -62,11 +62,11 @@ using FreeType213::FT_Glyph;
 using FreeType213::FT_Bitmap;
 using FreeType213::FT_BitmapGlyph;
 
-using FreeType213::FT2_1_3_GLYPH_FORMAT_BITMAP;
-using FreeType213::FT2_1_3_RENDER_MODE_MONO;
-using FreeType213::FT2_1_3_RENDER_MODE_NORMAL;
-using FreeType213::FT2_1_3_PIXEL_MODE_MONO;
-using FreeType213::FT2_1_3_PIXEL_MODE_GRAY;
+using FreeType213::FT_GLYPH_FORMAT_BITMAP;
+using FreeType213::FT_RENDER_MODE_MONO;
+using FreeType213::FT_RENDER_MODE_NORMAL;
+using FreeType213::FT_PIXEL_MODE_MONO;
+using FreeType213::FT_PIXEL_MODE_GRAY;
 
 using FreeType213::Init_FreeType;
 using FreeType213::Done_FreeType;
@@ -311,7 +311,7 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 	if (!f->cached_glyphs[glyph_number].is_cached) {
 		FT_Glyph new_glyph;
 		/* load the font glyph */
-		Load_Glyph(f->face, glyph_number, FT2_1_3_LOAD_DEFAULT);
+		Load_Glyph(f->face, glyph_number, FT_LOAD_DEFAULT);
 		Get_Glyph(f->face->glyph, &new_glyph);
 
 		/* ok, this glyph is now cached */
@@ -624,7 +624,7 @@ ALFONT_FONT *alfont_load_font(const char *filepathname) {
 	}
 
 	/* get if the font contains only fixed sizes */
-	if (!(font->face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE))
+	if (!(font->face->face_flags & FT_FACE_FLAG_SCALABLE))
 		font->num_fixed_sizes = font->face->num_fixed_sizes;
 	else
 		font->num_fixed_sizes = -1;
@@ -703,7 +703,7 @@ ALFONT_FONT *alfont_load_font_from_mem(const char *data, int data_len) {
 	}
 
 	/* get if the font contains only fixed sizes */
-	if (!(font->face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE))
+	if (!(font->face->face_flags & FT_FACE_FLAG_SCALABLE))
 		font->num_fixed_sizes = font->face->num_fixed_sizes;
 	else
 		font->num_fixed_sizes = -1;

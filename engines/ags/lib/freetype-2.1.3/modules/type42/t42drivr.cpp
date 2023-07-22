@@ -42,8 +42,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_t42
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_t42
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -100,7 +100,7 @@ t42_get_name_index( T42_Face    face,
 static FT_Module_Interface
 T42_Get_Interface( FT_Driver         driver,
 				   const FT_String*  t42_interface ) {
-	FT2_1_3_UNUSED( driver );
+	FT_UNUSED( driver );
 
 	/* Any additional interface are defined here */
 	if (ft_strcmp( (const char*)t42_interface, "glyph_name" ) == 0 )

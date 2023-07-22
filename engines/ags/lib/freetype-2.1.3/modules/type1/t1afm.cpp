@@ -32,14 +32,14 @@
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/t1types.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_t1afm
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_t1afm
 
 namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 T1_Done_AFM(FT_Memory memory, T1_AFM *afm) {
 	FT2_1_3_FREE(afm->kern_pairs);
 	afm->num_pairs = 0;
@@ -121,7 +121,7 @@ static int afm_atoi(FT_Byte **start, FT_Byte *limit) {
 #define KERN_INDEX(g1, g2) (((FT_ULong)g1 << 16) | g2)
 
 /* compare two kerning pairs */
-FT2_1_3_CALLBACK_DEF(int)
+FT_CALLBACK_DEF(int)
 compare_kern_pairs(const void *a, const void *b) {
 
 	T1_Kern_Pair *pair1 = const_cast<T1_Kern_Pair *>(reinterpret_cast<const T1_Kern_Pair *>(a));
@@ -135,7 +135,7 @@ compare_kern_pairs(const void *a, const void *b) {
 
 
 /* parse an AFM file -- for now, only read the kerning pairs */
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 T1_Read_AFM(FT_Face t1_face, FT_Stream stream) {
 	FT_Error       error;
 	FT_Memory      memory = stream->memory;
@@ -167,7 +167,7 @@ T1_Read_AFM(FT_Face t1_face, FT_Stream stream) {
 		goto Exit;
 
 	/* allocate the pairs */
-	if (FT2_1_3_NEW(afm) || FT2_1_3_NEW_ARRAY(afm->kern_pairs, count))
+	if (FT_NEW(afm) || FT_NEW_ARRAY(afm->kern_pairs, count))
 		goto Exit;
 
 	/* now, read each kern pair */
@@ -177,7 +177,7 @@ T1_Read_AFM(FT_Face t1_face, FT_Stream stream) {
 	/* save in face object */
 	((T1_Face)t1_face)->afm_data = afm;
 
-	t1_face->face_flags |= FT2_1_3_FACE_FLAG_KERNING;
+	t1_face->face_flags |= FT_FACE_FLAG_KERNING;
 
 	for (p = start; p < limit - 3; p++) {
 		if (IS_KERN_PAIR(p)) {
@@ -214,7 +214,7 @@ Exit:
 
 
 /* find the kerning for a given glyph pair */
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 T1_Get_Kerning(T1_AFM *afm, FT_UInt glyph1, FT_UInt glyph2, FT_Vector *kerning) {
 	T1_Kern_Pair *min, *mid, *max;
 	FT_ULong idx = KERN_INDEX(glyph1, glyph2);

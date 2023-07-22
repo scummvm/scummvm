@@ -57,9 +57,9 @@
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 
-#if defined(FT2_1_3_DEBUG_LEVEL_ERROR)
+#if defined(FT_DEBUG_LEVEL_ERROR)
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Message(const char *fmt, ...) {
 	va_list ap;
 
@@ -68,7 +68,7 @@ FT_Message(const char *fmt, ...) {
 	va_end(ap);
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Panic(const char *fmt, ...) {
 	va_list ap;
 
@@ -79,23 +79,23 @@ FT_Panic(const char *fmt, ...) {
 	exit(EXIT_FAILURE);
 }
 
-#endif /* FT2_1_3_DEBUG_LEVEL_ERROR */
+#endif /* FT_DEBUG_LEVEL_ERROR */
 
 
-#ifdef FT2_1_3_DEBUG_LEVEL_TRACE
+#ifdef FT_DEBUG_LEVEL_TRACE
 
 /* array of trace levels, initialized to 0 */
 int ft_trace_levels[trace_count];
 
 /* define array of trace toggle names */
-#define FT2_1_3_TRACE_DEF(x) #x,
+#define FT_TRACE_DEF(x) #x,
 
 static const char *ft_trace_toggles[trace_count + 1] = {
 #include "engines/ags/lib/freetype-2.1.3/fttrace.h"
 	NULL
 };
 
-#undef FT2_1_3_TRACE_DEF
+#undef FT_TRACE_DEF
 
 
 /*************************************************************************/
@@ -116,7 +116,7 @@ static const char *ft_trace_toggles[trace_count + 1] = {
 /* The level must be between 0 and 6; 0 means quiet (except for serious  */
 /* runtime errors), and 6 means _very_ verbose.                          */
 /*                                                                       */
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 ft_debug_init(void) {
 	const char *ft2_debug = getenv("FT2_DEBUG");
 
@@ -173,11 +173,11 @@ ft_debug_init(void) {
 	}
 }
 
-#else /* !FT2_1_3_DEBUG_LEVEL_TRACE */
+#else /* !FT_DEBUG_LEVEL_TRACE */
 
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 ft_debug_init(void) {
 	/* nothing */
 }
 
-#endif /* !FT2_1_3_DEBUG_LEVEL_TRACE */
+#endif /* !FT_DEBUG_LEVEL_TRACE */

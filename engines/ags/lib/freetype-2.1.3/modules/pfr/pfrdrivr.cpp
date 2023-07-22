@@ -109,7 +109,7 @@ pfr_get_metrics( PFR_Face   face,
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT2_1_3_PFR_ServiceRec  pfr_service_rec = {
 	(FT2_1_3_PFR_GetMetricsFunc)  pfr_get_metrics,
 	(FT2_1_3_PFR_GetKerningFunc)  pfr_get_kerning,
@@ -117,7 +117,7 @@ const FT2_1_3_PFR_ServiceRec  pfr_service_rec = {
 };
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec  pfr_driver_class = {
 	{
 		ft_module_font_driver      |

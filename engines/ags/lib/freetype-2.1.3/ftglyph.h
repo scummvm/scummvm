@@ -37,7 +37,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* forward declaration to a private type */
@@ -69,13 +69,13 @@ typedef struct  FT_OutlineGlyphRec_ {
 } FT_OutlineGlyphRec;
 
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Glyph_Copy(FT_Glyph source, FT_Glyph *target);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Glyph_Transform(FT_Glyph glyph, FT_Matrix *matrix, FT_Vector *delta);
 
 
@@ -88,26 +88,26 @@ enum {
 };
 
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Glyph_Get_CBox(FT_Glyph glyph, FT_UInt bbox_mode, FT_BBox *acbox);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode, FT_Vector *origin, FT_Bool destroy);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT2_1_3_Done_Glyph(FT_Glyph glyph);
 
 
 /* other helpful functions */
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Matrix_Multiply(FT_Matrix *a, FT_Matrix *b);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Matrix_Invert(FT_Matrix *matrix);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

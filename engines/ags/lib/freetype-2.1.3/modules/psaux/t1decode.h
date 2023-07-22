@@ -39,27 +39,27 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
-FT2_1_3_CALLBACK_TABLE
+FT_CALLBACK_TABLE
 const T1_Decoder_FuncsRec t1_decoder_funcs;
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 t1_decoder_parse_glyph(T1_Decoder decoder, FT_UInt glyph_index);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 t1_decoder_parse_charstrings(T1_Decoder decoder, FT_Byte *base, FT_UInt len);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 t1_decoder_init(T1_Decoder decoder, FT_Face face, FT_Size size, FT_GlyphSlot slot, FT_Byte **glyph_names,
 				PS_Blend blend, FT_Bool hinting, FT_Render_Mode hint_mode, T1_Decoder_Callback parse_glyph);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 t1_decoder_done(T1_Decoder decoder);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

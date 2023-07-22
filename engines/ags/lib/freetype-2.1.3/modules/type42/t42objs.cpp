@@ -23,8 +23,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ftlist.h"
 
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_t42
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_t42
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -65,7 +65,7 @@ T42_Open_Face( T42_Face  face ) {
 	type1->num_glyphs = loader.num_glyphs;
 
 	if ( !loader.charstrings.init ) {
-		FT2_1_3_ERROR(( "T42_Open_Face: no charstrings array in face!\n" ));
+		FT_ERROR(( "T42_Open_Face: no charstrings array in face!\n" ));
 		error = FT2_1_3_Err_Invalid_File_Format;
 	}
 
@@ -136,7 +136,7 @@ Exit:
 /***************** Driver Functions *************/
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 T42_Face_Init( FT_Stream      stream,
 			   T42_Face       face,
 			   FT_Int         face_index,
@@ -147,10 +147,10 @@ T42_Face_Init( FT_Stream      stream,
 	PSAux_Service     psaux;
 	FT_Face           root    = (FT_Face)&face->root;
 
-	FT2_1_3_UNUSED( num_params );
-	FT2_1_3_UNUSED( params );
-	FT2_1_3_UNUSED( face_index );
-	FT2_1_3_UNUSED( stream );
+	FT_UNUSED( num_params );
+	FT_UNUSED( params );
+	FT_UNUSED( face_index );
+	FT_UNUSED( stream );
 
 
 	face->ttf_face       = NULL;
@@ -173,7 +173,7 @@ T42_Face_Init( FT_Stream      stream,
 
 	/* check the face index */
 	if ( face_index != 0 ) {
-		FT2_1_3_ERROR(( "T42_Face_Init: invalid face index\n" ));
+		FT_ERROR(( "T42_Face_Init: invalid face index\n" ));
 		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
@@ -187,12 +187,12 @@ T42_Face_Init( FT_Stream      stream,
 	root->num_charmaps = 0;
 	root->face_index   = face_index;
 
-	root->face_flags  = FT2_1_3_FACE_FLAG_SCALABLE;
-	root->face_flags |= FT2_1_3_FACE_FLAG_HORIZONTAL;
-	root->face_flags |= FT2_1_3_FACE_FLAG_GLYPH_NAMES;
+	root->face_flags  = FT_FACE_FLAG_SCALABLE;
+	root->face_flags |= FT_FACE_FLAG_HORIZONTAL;
+	root->face_flags |= FT_FACE_FLAG_GLYPH_NAMES;
 
 	if ( face->type1.font_info.is_fixed_pitch )
-		root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+		root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
 	/* XXX: TODO -- add kerning with .afm support */
 
@@ -257,13 +257,13 @@ T42_Face_Init( FT_Stream      stream,
 	/* compute style flags */
 	root->style_flags = 0;
 	if ( face->type1.font_info.italic_angle )
-		root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
+		root->style_flags |= FT_STYLE_FLAG_ITALIC;
 
-	if ( face->ttf_face->style_flags & FT2_1_3_STYLE_FLAG_BOLD )
-		root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
+	if ( face->ttf_face->style_flags & FT_STYLE_FLAG_BOLD )
+		root->style_flags |= FT_STYLE_FLAG_BOLD;
 
-	if ( face->ttf_face->face_flags & FT2_1_3_FACE_FLAG_VERTICAL )
-		root->face_flags |= FT2_1_3_FACE_FLAG_VERTICAL;
+	if ( face->ttf_face->face_flags & FT_FACE_FLAG_VERTICAL )
+		root->face_flags |= FT_FACE_FLAG_VERTICAL;
 
 	{
 		if ( psnames && psaux ) {
@@ -277,7 +277,7 @@ T42_Face_Init( FT_Stream      stream,
 			/* first of all, try to synthetize a Unicode charmap */
 			charmap.platform_id = 3;
 			charmap.encoding_id = 1;
-			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
+			charmap.encoding    = FT_ENCODING_UNICODE;
 
 			FT_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
 
@@ -287,25 +287,25 @@ T42_Face_Init( FT_Stream      stream,
 
 			switch ( face->type1.encoding_type ) {
 			case T1_ENCODING_TYPE_STANDARD:
-				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_STANDARD;
+				charmap.encoding    = FT_ENCODING_ADOBE_STANDARD;
 				charmap.encoding_id = 0;
 				clazz               = cmap_classes->standard;
 				break;
 
 			case T1_ENCODING_TYPE_EXPERT:
-				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_EXPERT;
+				charmap.encoding    = FT_ENCODING_ADOBE_EXPERT;
 				charmap.encoding_id = 1;
 				clazz               = cmap_classes->expert;
 				break;
 
 			case T1_ENCODING_TYPE_ARRAY:
-				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_CUSTOM;
+				charmap.encoding    = FT_ENCODING_ADOBE_CUSTOM;
 				charmap.encoding_id = 2;
 				clazz               = cmap_classes->custom;
 				break;
 
 			case T1_ENCODING_TYPE_ISOLATIN1:
-				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_LATIN_1;
+				charmap.encoding    = FT_ENCODING_ADOBE_LATIN_1;
 				charmap.encoding_id = 3;
 				clazz               = cmap_classes->unicode;
 				break;
@@ -329,7 +329,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 T42_Face_Done( T42_Face  face ) {
 	T1_Font      type1;
 	PS_FontInfo  info;
@@ -396,7 +396,7 @@ T42_Face_Done( T42_Face  face ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 T42_Driver_Init( T42_Driver  driver ) {
 	FT_Module  ttmodule;
 
@@ -408,15 +408,15 @@ T42_Driver_Init( T42_Driver  driver ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 T42_Driver_Done( T42_Driver  driver ) {
-	FT2_1_3_UNUSED( driver );
+	FT_UNUSED( driver );
 }
 
 
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 T42_Size_Init( T42_Size  size ) {
 	FT_Face   face = size->root.face;
 	T42_Face  t42face = (T42_Face)face;
@@ -433,7 +433,7 @@ T42_Size_Init( T42_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 T42_Size_Done( T42_Size  size ) {
 	FT_Face      face    = size->root.face;
 	T42_Face     t42face = (T42_Face)face;
@@ -448,7 +448,7 @@ T42_Size_Done( T42_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 T42_GlyphSlot_Init( T42_GlyphSlot  slot ) {
 	FT_Face       face    = slot->root.face;
 	T42_Face      t42face = (T42_Face)face;
@@ -468,7 +468,7 @@ T42_GlyphSlot_Init( T42_GlyphSlot  slot ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
 	FT_Face       face    = slot->root.face;
 	T42_Face      t42face = (T42_Face)face;
@@ -487,7 +487,7 @@ T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
 
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 T42_Size_SetChars( T42_Size    size,
 				   FT_F26Dot6  char_width,
 				   FT_F26Dot6  char_height,
@@ -507,7 +507,7 @@ T42_Size_SetChars( T42_Size    size,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 T42_Size_SetPixels( T42_Size  size,
 					FT_UInt   pixel_width,
 					FT_UInt   pixel_height ) {
@@ -526,12 +526,12 @@ T42_Size_SetPixels( T42_Size  size,
 static void
 ft_glyphslot_clear( FT_GlyphSlot  slot ) {
 	/* free bitmap if needed */
-	if ( slot->flags & FT2_1_3_GLYPH_OWN_BITMAP ) {
+	if ( slot->flags & FT_GLYPH_OWN_BITMAP ) {
 		FT_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
 
 
 		FT2_1_3_FREE( slot->bitmap.buffer );
-		slot->flags &= ~FT2_1_3_GLYPH_OWN_BITMAP;
+		slot->flags &= ~FT_GLYPH_OWN_BITMAP;
 	}
 
 	/* clear all public fields in the glyph slot */
@@ -546,14 +546,14 @@ ft_glyphslot_clear( FT_GlyphSlot  slot ) {
 	slot->control_data  = 0;
 	slot->control_len   = 0;
 	slot->other         = 0;
-	slot->format        = FT2_1_3_GLYPH_FORMAT_NONE;
+	slot->format        = FT_GLYPH_FORMAT_NONE;
 
 	slot->linearHoriAdvance = 0;
 	slot->linearVertAdvance = 0;
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 T42_GlyphSlot_Load( FT_GlyphSlot  glyph,
 					FT_Size       size,
 					FT_Int        glyph_index,
@@ -568,7 +568,7 @@ T42_GlyphSlot_Load( FT_GlyphSlot  glyph,
 	error = ttclazz->load_glyph( t42slot->ttslot,
 								 t42size->ttsize,
 								 glyph_index,
-								 load_flags | FT2_1_3_LOAD_NO_BITMAP );
+								 load_flags | FT_LOAD_NO_BITMAP );
 
 	if ( !error ) {
 		glyph->metrics = t42slot->ttslot->metrics;

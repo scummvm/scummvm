@@ -38,7 +38,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* format of an 8-bit frame_op value:           */
@@ -238,39 +238,39 @@ typedef struct  FT_Frame_Field_ {
 #ifndef FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM
 
 /* initialize a stream for reading a regular system stream */
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Stream_Open(FT_Stream stream, const char *filepathname);
 
 #endif /* FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM */
 
 
 /* initialize a stream for reading in-memory data */
-FT2_1_3_BASE(void)
+FT_BASE(void)
 FT_Stream_OpenMemory(FT_Stream stream, const FT_Byte *base, FT_ULong size);
 
 /* close a stream (does not destroy the stream structure) */
-FT2_1_3_BASE(void)
+FT_BASE(void)
 FT_Stream_Close(FT_Stream stream);
 
 /* seek within a stream. position is relative to start of stream */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Stream_Seek(FT_Stream stream, FT_ULong pos);
 
 /* skip bytes in a stream */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Stream_Skip(FT_Stream stream, FT_Long distance);
 
 /* return current stream position */
-FT2_1_3_BASE(FT_Long)
+FT_BASE(FT_Long)
 FT_Stream_Pos(FT_Stream stream);
 
 /* read bytes from a stream into a user-allocated buffer, returns an */
 /* error if not all bytes could be read.                             */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Stream_Read(FT_Stream stream, FT_Byte *buffer, FT_ULong count);
 
 /* read bytes from a stream at a given position */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Stream_ReadAt(FT_Stream stream, FT_ULong pos, FT_Byte *buffer, FT_ULong count);
 
 /* Enter a frame of `count' consecutive bytes in a stream.  Returns an */
@@ -281,11 +281,11 @@ FT_Stream_ReadAt(FT_Stream stream, FT_ULong pos, FT_Byte *buffer, FT_ULong count
 /* You must _always_ call FT_Stream_ExitFrame() once you have entered  */
 /* a stream frame!                                                     */
 /*                                                                     */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Stream_EnterFrame(FT_Stream stream, FT_ULong count);
 
 /* exit a stream frame */
-FT2_1_3_BASE(void)
+FT_BASE(void)
 FT_Stream_ExitFrame(FT_Stream stream);
 
 /* Extract a stream frame.  If the stream is disk-based, a heap block */
@@ -297,64 +297,64 @@ FT_Stream_ExitFrame(FT_Stream stream);
 /* All extracted frames must be `freed` with a call to the function   */
 /* FT_Stream_ReleaseFrame().                                          */
 /*                                                                    */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Stream_ExtractFrame(FT_Stream stream, FT_ULong count, FT_Byte **pbytes);
 
 /* release an extract frame (see FT_Stream_ExtractFrame) */
-FT2_1_3_BASE(void)
+FT_BASE(void)
 FT_Stream_ReleaseFrame(FT_Stream stream, FT_Byte **pbytes);
 
 /* read a byte from an entered frame */
-FT2_1_3_BASE(FT_Char)
+FT_BASE(FT_Char)
 FT_Stream_GetChar(FT_Stream stream);
 
 /* read a 16-bit big-endian integer from an entered frame */
-FT2_1_3_BASE(FT_Short)
+FT_BASE(FT_Short)
 FT_Stream_GetShort(FT_Stream stream);
 
 /* read a 24-bit big-endian integer from an entered frame */
-FT2_1_3_BASE(FT_Long)
+FT_BASE(FT_Long)
 FT_Stream_GetOffset(FT_Stream stream);
 
 /* read a 32-bit big-endian integer from an entered frame */
-FT2_1_3_BASE(FT_Long)
+FT_BASE(FT_Long)
 FT_Stream_GetLong(FT_Stream stream);
 
 /* read a 16-bit little-endian integer from an entered frame */
-FT2_1_3_BASE(FT_Short)
+FT_BASE(FT_Short)
 FT_Stream_GetShortLE(FT_Stream stream);
 
 /* read a 32-bit little-endian integer from an entered frame */
-FT2_1_3_BASE(FT_Long)
+FT_BASE(FT_Long)
 FT_Stream_GetLongLE(FT_Stream stream);
 
 /* read a byte from a stream */
-FT2_1_3_BASE(FT_Char)
+FT_BASE(FT_Char)
 FT_Stream_ReadChar(FT_Stream stream, FT_Error *error);
 
 /* read a 16-bit big-endian integer from a stream */
-FT2_1_3_BASE(FT_Short)
+FT_BASE(FT_Short)
 FT_Stream_ReadShort(FT_Stream stream, FT_Error *error);
 
 /* read a 24-bit big-endian integer from a stream */
-FT2_1_3_BASE(FT_Long)
+FT_BASE(FT_Long)
 FT_Stream_ReadOffset(FT_Stream stream, FT_Error *error);
 
 /* read a 32-bit big-endian integer from a stream */
-FT2_1_3_BASE(FT_Long)
+FT_BASE(FT_Long)
 FT_Stream_ReadLong(FT_Stream stream, FT_Error *error);
 
 /* read a 16-bit little-endian integer from a stream */
-FT2_1_3_BASE(FT_Short)
+FT_BASE(FT_Short)
 FT_Stream_ReadShortLE(FT_Stream stream, FT_Error *error);
 
 /* read a 32-bit little-endian integer from a stream */
-FT2_1_3_BASE(FT_Long)
+FT_BASE(FT_Long)
 FT_Stream_ReadLongLE(FT_Stream stream, FT_Error *error);
 
 /* Read a structure from a stream.  The structure must be described */
 /* by an array of FT_Frame_Field records.                           */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Stream_ReadFields(FT_Stream stream, const FT_Frame_Field *fields, void *structure);
 
 #define FT2_1_3_STREAM_POS()				FT_Stream_Pos(stream)
@@ -371,7 +371,7 @@ FT_Stream_ReadFields(FT_Stream stream, const FT_Frame_Field *fields, void *struc
 #define FT2_1_3_FRAME_RELEASE(bytes) 		FT_Stream_ReleaseFrame(stream, (FT_Byte **)&(bytes))
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

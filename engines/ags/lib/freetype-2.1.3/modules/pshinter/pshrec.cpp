@@ -23,8 +23,8 @@
 #include "pshrec.h"
 #include "pshalgo.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pshrec
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pshrec
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -449,7 +449,7 @@ ps_mask_table_merge( PS_Mask_Table  table,
 
 		table->num_masks--;
 	} else
-		FT2_1_3_ERROR(( "ps_mask_table_merge: ignoring invalid indices (%d,%d)\n",
+		FT_ERROR(( "ps_mask_table_merge: ignoring invalid indices (%d,%d)\n",
 				   index1, index2 ));
 
 Exit:
@@ -727,7 +727,7 @@ ps_dimension_end( PS_Dimension  dim,
 
 
 /* destroy hints */
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 ps_hints_done( PS_Hints  hints ) {
 	FT_Memory  memory = hints->memory;
 
@@ -740,7 +740,7 @@ ps_hints_done( PS_Hints  hints ) {
 }
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 ps_hints_init( PS_Hints   hints,
 			   FT_Memory  memory ) {
 	FT2_1_3_MEM_ZERO( hints, sizeof ( *hints ) );
@@ -767,7 +767,7 @@ ps_hints_open( PS_Hints      hints,
 		hints->error     = FT2_1_3_Err_Invalid_Argument;
 		hints->hint_type = hint_type;
 
-		FT2_1_3_ERROR(( "ps_hints_open: invalid charstring type!\n" ));
+		FT_ERROR(( "ps_hints_open: invalid charstring type!\n" ));
 		break;
 	}
 }
@@ -782,7 +782,7 @@ ps_hints_stem( PS_Hints  hints,
 	if ( !hints->error ) {
 		/* limit "dimension" to 0..1 */
 		if ( dimension < 0 || dimension > 1 ) {
-			FT2_1_3_ERROR(( "ps_hints_stem: invalid dimension (%d) used\n",
+			FT_ERROR(( "ps_hints_stem: invalid dimension (%d) used\n",
 					   dimension ));
 			dimension = ( dimension != 0 );
 		}
@@ -802,7 +802,7 @@ ps_hints_stem( PS_Hints  hints,
 				error = ps_dimension_add_t1stem( dim, stems[0], stems[1],
 												 memory, NULL );
 				if ( error ) {
-					FT2_1_3_ERROR(( "ps_hints_stem: could not add stem"
+					FT_ERROR(( "ps_hints_stem: could not add stem"
 							   " (%d,%d) to hints table\n", stems[0], stems[1] ));
 
 					hints->error = error;
@@ -813,7 +813,7 @@ ps_hints_stem( PS_Hints  hints,
 		}
 
 		default:
-			FT2_1_3_ERROR(( "ps_hints_stem: called with invalid hint type (%d)\n",
+			FT_ERROR(( "ps_hints_stem: called with invalid hint type (%d)\n",
 					   hints->hint_type ));
 			break;
 		}
@@ -838,7 +838,7 @@ ps_hints_t1stem3( PS_Hints  hints,
 
 		/* limit "dimension" to 0..1 */
 		if ( dimension < 0 || dimension > 1 ) {
-			FT2_1_3_ERROR(( "ps_hints_t1stem3: invalid dimension (%d) used\n",
+			FT_ERROR(( "ps_hints_t1stem3: invalid dimension (%d) used\n",
 					   dimension ));
 			dimension = ( dimension != 0 );
 		}
@@ -861,7 +861,7 @@ ps_hints_t1stem3( PS_Hints  hints,
 			if ( error )
 				goto Fail;
 		} else {
-			FT2_1_3_ERROR(( "ps_hints_t1stem3: called with invalid hint type!\n" ));
+			FT_ERROR(( "ps_hints_t1stem3: called with invalid hint type!\n" ));
 			error = FT2_1_3_Err_Invalid_Argument;
 			goto Fail;
 		}
@@ -870,7 +870,7 @@ ps_hints_t1stem3( PS_Hints  hints,
 	return;
 
 Fail:
-	FT2_1_3_ERROR(( "ps_hints_t1stem3: could not add counter stems to table\n" ));
+	FT_ERROR(( "ps_hints_t1stem3: could not add counter stems to table\n" ));
 	hints->error = error;
 }
 
@@ -927,7 +927,7 @@ ps_hints_t2mask( PS_Hints        hints,
 
 		/* check bit count; must be equal to current total hint count */
 		if ( bit_count !=  count1 + count2 ) {
-			FT2_1_3_ERROR(( "ps_hints_t2mask: "
+			FT_ERROR(( "ps_hints_t2mask: "
 					   "called with invalid bitcount %d (instead of %d)\n",
 					   bit_count, count1 + count2 ));
 
@@ -969,7 +969,7 @@ ps_hints_t2counter( PS_Hints        hints,
 
 		/* check bit count, must be equal to current total hint count */
 		if ( bit_count !=  count1 + count2 ) {
-			FT2_1_3_ERROR(( "ps_hints_t2counter: "
+			FT_ERROR(( "ps_hints_t2counter: "
 					   "called with invalid bitcount %d (instead of %d)\n",
 					   bit_count, count1 + count2 ));
 
@@ -1043,7 +1043,7 @@ t1_hints_stem( T1_Hints  hints,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 t1_hints_funcs_init( T1_Hints_FuncsRec*  funcs ) {
 	FT2_1_3_MEM_ZERO( (char*)funcs, sizeof ( *funcs ) );
 
@@ -1103,7 +1103,7 @@ t2_hints_stems( T2_Hints   hints,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 t2_hints_funcs_init( T2_Hints_FuncsRec*  funcs ) {
 	FT2_1_3_MEM_ZERO( funcs, sizeof ( *funcs ) );
 

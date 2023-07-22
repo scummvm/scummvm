@@ -41,7 +41,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct T1_Loader_ {
@@ -62,27 +62,27 @@ typedef struct T1_Loader_ {
 } T1_LoaderRec, *T1_Loader;
 
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Open_Face(T1_Face face);
 
 #ifndef T1_CONFIG_OPTION_NO_MM_SUPPORT
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Get_Multi_Master(T1_Face face, FT_Multi_Master *master);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Set_MM_Blend(T1_Face face, FT_UInt num_coords, FT_Fixed *coords);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Set_MM_Design(T1_Face face, FT_UInt num_coords, FT_Long *coords);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_Done_Blend(T1_Face face);
 
 #endif /* !T1_CONFIG_OPTION_NO_MM_SUPPORT */
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

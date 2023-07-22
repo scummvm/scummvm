@@ -38,7 +38,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef enum  AH_UV_ {
@@ -53,40 +53,40 @@ typedef enum  AH_UV_ {
 } AH_UV;
 
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_setup_uv(AH_Outline outline, AH_UV source);
 
 /* AH_OutlineRec functions - they should be typically called in this order */
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 ah_outline_new(FT_Memory memory, AH_Outline *aoutline);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 ah_outline_load(AH_Outline outline, FT_Face face);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_outline_compute_segments(AH_Outline outline);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_outline_link_segments(AH_Outline outline);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_outline_detect_features(AH_Outline outline);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals globals);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_outline_scale_blue_edges(AH_Outline outline, AH_Face_Globals globals);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_outline_save(AH_Outline outline, AH_Loader loader);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 ah_outline_done(AH_Outline outline);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

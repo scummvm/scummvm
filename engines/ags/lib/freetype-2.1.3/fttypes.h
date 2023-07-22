@@ -41,7 +41,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /**** BASIC TYPES ****/
@@ -88,7 +88,7 @@ typedef struct FT_Generic_ {
 	FT_Generic_Finalizer finalizer;
 } FT_Generic;
 
-#define FT2_1_3_MAKE_TAG(_x1, _x2, _x3, _x4) \
+#define FT_MAKE_TAG(_x1, _x2, _x3, _x4) \
 	(((FT_ULong)_x1 << 24) | ((FT_ULong)_x2 << 16) | ((FT_ULong)_x3 << 8) | (FT_ULong)_x4)
 
 
@@ -109,18 +109,18 @@ typedef struct FT_ListRec_ {
 } FT_ListRec;
 
 
-#define FT2_1_3_IS_EMPTY(list) ((list).head == 0)
+#define FT_IS_EMPTY(list) ((list).head == 0)
 
 /* return base error code (without module-specific prefix) */
-#define FT2_1_3_ERROR_BASE(x) ((x)&0xFF)
+#define FT_ERROR_BASE(x) ((x)&0xFF)
 
 /* return module error code */
-#define FT2_1_3_ERROR_MODULE(x) ((x)&0xFF00U)
+#define FT_ERROR_MODULE(x) ((x)&0xFF00U)
 
 #define FT2_1_3_BOOL(x) ((FT_Bool)(x))
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

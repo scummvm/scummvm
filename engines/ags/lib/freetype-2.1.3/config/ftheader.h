@@ -23,36 +23,36 @@
 /*@***********************************************************************/
 /*                                                                       */
 /* <Macro>                                                               */
-/*    FT2_1_3_BEGIN_HEADER                                                    */
+/*    FT_BEGIN_HEADER                                                    */
 /*                                                                       */
 /* <Description>                                                         */
-/*    This macro is used in association with @FT2_1_3_END_HEADER in header    */
+/*    This macro is used in association with @FT_END_HEADER in header    */
 /*    files to ensure that the declarations within are properly          */
 /*    encapsulated in an `extern "C" { .. }' block when included from a  */
 /*    C++ compiler.                                                      */
 /*                                                                       */
 #ifdef __cplusplus
-#define FT2_1_3_BEGIN_HEADER  extern "C" {
+#define FT_BEGIN_HEADER  extern "C" {
 #else
-#define FT2_1_3_BEGIN_HEADER  /* nothing */
+#define FT_BEGIN_HEADER  /* nothing */
 #endif
 
 
 /*@***********************************************************************/
 /*                                                                       */
 /* <Macro>                                                               */
-/*    FT2_1_3_END_HEADER                                                      */
+/*    FT_END_HEADER                                                      */
 /*                                                                       */
 /* <Description>                                                         */
-/*    This macro is used in association with @FT2_1_3_BEGIN_HEADER in header  */
+/*    This macro is used in association with @FT_BEGIN_HEADER in header  */
 /*    files to ensure that the declarations within are properly          */
 /*    encapsulated in an `extern "C" { .. }' block when included from a  */
 /*    C++ compiler.                                                      */
 /*                                                                       */
 #ifdef __cplusplus
-#define FT2_1_3_END_HEADER  }
+#define FT_END_HEADER  }
 #else
-#define FT2_1_3_END_HEADER  /* nothing */
+#define FT_END_HEADER  /* nothing */
 #endif
 
 
@@ -81,7 +81,7 @@
 /*    {                                                                  */
 /*      #include FT2_1_3_FREETYPE_H                                           */
 /*      #include FT2_1_3_MULTIPLE_MASTERS_H                                   */
-/*      #include FT2_1_3_GLYPH_H                                              */
+/*      #include FT_GLYPH_H                                              */
 /*    }                                                                  */
 /*                                                                       */
 /*    There are several reasons why we are now using macros to name      */
@@ -169,7 +169,7 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_ERRORS_H                                                        */
+/*    FT_ERRORS_H                                                        */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
@@ -177,7 +177,7 @@
 /*                                                                       */
 /*    It is included by @FT2_1_3_FREETYPE_H.                                  */
 /*                                                                       */
-#define FT2_1_3_ERRORS_H  "engines/ags/lib/freetype-2.1.3/fterrors.h"
+#define FT_ERRORS_H  "engines/ags/lib/freetype-2.1.3/fterrors.h"
 
 
 /*************************************************************************/
@@ -253,13 +253,13 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_OUTLINE_H                                                       */
+/*    FT_OUTLINE_H                                                       */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the scalable outline management API of FreeType 2.                 */
 /*                                                                       */
-#define FT2_1_3_OUTLINE_H  "engines/ags/lib/freetype-2.1.3/ftoutln.h"
+#define FT_OUTLINE_H  "engines/ags/lib/freetype-2.1.3/ftoutln.h"
 
 
 /*************************************************************************/
@@ -289,13 +289,13 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_RENDER_H                                                        */
+/*    FT_RENDER_H                                                        */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the renderer module management API of FreeType 2.                  */
 /*                                                                       */
-#define FT2_1_3_RENDER_H  "engines/ags/lib/freetype-2.1.3/ftrender.h"
+#define FT_RENDER_H  "engines/ags/lib/freetype-2.1.3/ftrender.h"
 
 
 /*************************************************************************/
@@ -378,13 +378,13 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_GLYPH_H                                                         */
+/*    FT_GLYPH_H                                                         */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the API of the optional glyph management component.                */
 /*                                                                       */
-#define FT2_1_3_GLYPH_H  "engines/ags/lib/freetype-2.1.3/ftglyph.h"
+#define FT_GLYPH_H  "engines/ags/lib/freetype-2.1.3/ftglyph.h"
 
 
 /*************************************************************************/
@@ -502,7 +502,7 @@
 #define FT2_1_3_TRIGONOMETRY_H          "engines/ags/lib/freetype-2.1.3/fttrigon.h"
 #define FT2_1_3_STROKER_H               "engines/ags/lib/freetype-2.1.3/ftstroker.h"
 #define FT2_1_3_SYNTHESIS_H             "engines/ags/lib/freetype-2.1.3/include/freetype/ftsynth.h"
-#define FT2_1_3_ERROR_DEFINITIONS_H     "engines/ags/lib/freetype-2.1.3/fterrdef.h"
+#define FT_ERROR_DEFINITIONS_H     "engines/ags/lib/freetype-2.1.3/fterrdef.h"
 
 #define FT2_1_3_CACHE_MANAGER_H         "engines/ags/lib/freetype-2.1.3/cache/ftcmanag.h"
 

@@ -99,7 +99,7 @@ static FT_Error ft_raster1_render(FT_Renderer render, FT_GlyphSlot slot, FT_Rend
 	}
 
 	/* check rendering mode */
-	if (mode != FT2_1_3_RENDER_MODE_MONO) {
+	if (mode != FT_RENDER_MODE_MONO) {
 		/* raster1 is only capable of producing monochrome bitmaps */
 		if (render->clazz == &ft_raster1_renderer_class)
 			return FT2_1_3_Err_Cannot_Render_Glyph;
@@ -129,20 +129,20 @@ static FT_Error ft_raster1_render(FT_Renderer render, FT_GlyphSlot slot, FT_Rend
 	memory = render->root.memory;
 
 	/* release old bitmap buffer */
-	if (slot->flags & FT2_1_3_GLYPH_OWN_BITMAP) {
+	if (slot->flags & FT_GLYPH_OWN_BITMAP) {
 		FT2_1_3_FREE(bitmap->buffer);
-		slot->flags &= ~FT2_1_3_GLYPH_OWN_BITMAP;
+		slot->flags &= ~FT_GLYPH_OWN_BITMAP;
 	}
 
 	/* allocate new one, depends on pixel format */
-	if (!(mode & FT2_1_3_RENDER_MODE_MONO)) {
+	if (!(mode & FT_RENDER_MODE_MONO)) {
 		/* we pad to 32 bits, only for backwards compatibility with FT 1.x */
 		pitch = (width + 3) & -4;
-		bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY;
+		bitmap->pixel_mode = FT_PIXEL_MODE_GRAY;
 		bitmap->num_grays = 256;
 	} else {
 		pitch = ((width + 15) >> 4) << 1;
-		bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
+		bitmap->pixel_mode = FT_PIXEL_MODE_MONO;
 	}
 
 	bitmap->width = width;
@@ -152,7 +152,7 @@ static FT_Error ft_raster1_render(FT_Renderer render, FT_GlyphSlot slot, FT_Rend
 	if (FT2_1_3_ALLOC(bitmap->buffer, (FT_ULong)pitch * height))
 		goto Exit;
 
-	slot->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
+	slot->flags |= FT_GLYPH_OWN_BITMAP;
 
 	/* translate outline to render it into the bitmap */
 	FT_Outline_Translate(outline, -cbox.xMin, -cbox.yMin);
@@ -162,8 +162,8 @@ static FT_Error ft_raster1_render(FT_Renderer render, FT_GlyphSlot slot, FT_Rend
 	params.source = outline;
 	params.flags  = 0;
 
-	if (bitmap->pixel_mode == FT2_1_3_PIXEL_MODE_GRAY)
-		params.flags |= FT2_1_3_RASTER_FLAG_AA;
+	if (bitmap->pixel_mode == FT_PIXEL_MODE_GRAY)
+		params.flags |= FT_RASTER_FLAG_AA;
 
 	/* render outline into the bitmap */
 	error = render->raster_render(render->raster, &params);
@@ -173,7 +173,7 @@ static FT_Error ft_raster1_render(FT_Renderer render, FT_GlyphSlot slot, FT_Rend
 	if (error)
 		goto Exit;
 
-	slot->format = FT2_1_3_GLYPH_FORMAT_BITMAP;
+	slot->format = FT_GLYPH_FORMAT_BITMAP;
 	slot->bitmap_left = (FT_Int)(cbox.xMin >> 6);
 	slot->bitmap_top  = (FT_Int)(cbox.yMax >> 6);
 
@@ -182,7 +182,7 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Renderer_Class ft_raster1_renderer_class = {
 	{
 		ft_module_renderer,
@@ -199,7 +199,7 @@ const FT_Renderer_Class ft_raster1_renderer_class = {
 		(FT_Module_Requester)   0
 	},
 
-	FT2_1_3_GLYPH_FORMAT_OUTLINE,
+	FT_GLYPH_FORMAT_OUTLINE,
 
 	(FT_Renderer_RenderFunc)    ft_raster1_render,
 	(FT_Renderer_TransformFunc) ft_raster1_transform,
@@ -214,7 +214,7 @@ const FT_Renderer_Class ft_raster1_renderer_class = {
 /* to register it by hand in your application.  It should only be    */
 /* used for backwards-compatibility with FT 1.x anyway.              */
 /*                                                                   */
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Renderer_Class ft_raster5_renderer_class = {
 	{
 		ft_module_renderer,
@@ -231,7 +231,7 @@ const FT_Renderer_Class ft_raster5_renderer_class = {
 		(FT_Module_Requester)   0
 	},
 
-	FT2_1_3_GLYPH_FORMAT_OUTLINE,
+	FT_GLYPH_FORMAT_OUTLINE,
 
 	(FT_Renderer_RenderFunc)    ft_raster1_render,
 	(FT_Renderer_TransformFunc) ft_raster1_transform,

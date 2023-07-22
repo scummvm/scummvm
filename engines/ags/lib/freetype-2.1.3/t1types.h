@@ -40,7 +40,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /**** REQUIRED TYPE1/TYPE2 TABLES DEFINITIONS ****/
@@ -134,7 +134,7 @@ typedef struct  CID_FaceRec_ {
 } CID_FaceRec;
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

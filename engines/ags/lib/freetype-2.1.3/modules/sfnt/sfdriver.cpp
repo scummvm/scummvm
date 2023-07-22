@@ -193,9 +193,9 @@ Exit:
 #endif /* TT_CONFIG_OPTION_POSTSCRIPT_NAMES */
 
 
-FT2_1_3_CALLBACK_DEF(FT_Module_Interface)
+FT_CALLBACK_DEF(FT_Module_Interface)
 sfnt_get_interface(FT_Module module, const char *module_interface) {
-	FT2_1_3_UNUSED(module);
+	FT_UNUSED(module);
 
 	if (ft_strcmp(module_interface, "get_sfnt") == 0)
 		return (FT_Module_Interface)get_sfnt_table;
@@ -281,7 +281,7 @@ static const SFNT_Interface sfnt_interface = {
 };
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Module_Class sfnt_module_class = {
 	0, /* not a font driver or renderer */
 	sizeof(FT_ModuleRec),

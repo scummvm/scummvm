@@ -37,12 +37,12 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_STD_RASTER
 
-FT2_1_3_EXPORT_VAR(const FT_Renderer_Class)
+FT_EXPORT_VAR(const FT_Renderer_Class)
 ft_std_renderer_class;
 
 #endif
@@ -50,19 +50,19 @@ ft_std_renderer_class;
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_SMOOTH_RASTER
 
-FT2_1_3_EXPORT_VAR(const FT_Renderer_Class)
+FT_EXPORT_VAR(const FT_Renderer_Class)
 ft_smooth_renderer_class;
 
-FT2_1_3_EXPORT_VAR(const FT_Renderer_Class)
+FT_EXPORT_VAR(const FT_Renderer_Class)
 ft_smooth_lcd_renderer_class;
 
-FT2_1_3_EXPORT_VAR(const FT_Renderer_Class)
+FT_EXPORT_VAR(const FT_Renderer_Class)
 ft_smooth_lcd_v_renderer_class;
 
 #endif
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -24,7 +24,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -46,7 +46,7 @@ typedef struct  CFF_CMapStdRec_ {
 } CFF_CMapStdRec;
 
 
-FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
+FT_CALLBACK_TABLE const FT_CMap_ClassRec
 cff_cmap_encoding_class_rec;
 
 
@@ -76,11 +76,11 @@ typedef struct  CFF_CMapUnicodeRec_ {
 } CFF_CMapUnicodeRec;
 
 
-FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
+FT_CALLBACK_TABLE const FT_CMap_ClassRec
 cff_cmap_unicode_class_rec;
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

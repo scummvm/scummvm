@@ -38,8 +38,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/modules/sfnt/sferrors.h"
 
-#undef FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT trace_sfobjs
+#undef FT_COMPONENT
+#define FT_COMPONENT trace_sfobjs
 
 
 namespace AGS3 {
@@ -212,7 +212,7 @@ static FT_String *tt_face_get_name(TT_Face face, FT_UShort nameid) {
 			FT_Error error;
 			FT_Stream stream = face->name_table.stream;
 
-			if (FT2_1_3_NEW_ARRAY(rec->string, rec->stringLength) || FT2_1_3_STREAM_SEEK(rec->stringOffset) ||
+			if (FT_NEW_ARRAY(rec->string, rec->stringLength) || FT2_1_3_STREAM_SEEK(rec->stringOffset) ||
 				FT2_1_3_STREAM_READ(rec->string, rec->stringLength)) {
 				FT2_1_3_FREE(rec->string);
 				rec->stringLength = 0;
@@ -236,20 +236,20 @@ static FT_Encoding sfnt_find_encoding(int platform_id, int encoding_id) {
 	} TEncoding;
 
 	static const TEncoding tt_encodings[] = {
-		{TT_PLATFORM_ISO,           -1,                  FT2_1_3_ENCODING_UNICODE},
+		{TT_PLATFORM_ISO,           -1,                  FT_ENCODING_UNICODE},
 
-		{TT_PLATFORM_APPLE_UNICODE, -1,                  FT2_1_3_ENCODING_UNICODE},
+		{TT_PLATFORM_APPLE_UNICODE, -1,                  FT_ENCODING_UNICODE},
 
-		{TT_PLATFORM_MACINTOSH,     TT_MAC_ID_ROMAN,     FT2_1_3_ENCODING_APPLE_ROMAN},
+		{TT_PLATFORM_MACINTOSH,     TT_MAC_ID_ROMAN,     FT_ENCODING_APPLE_ROMAN},
 
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_SYMBOL_CS,  FT2_1_3_ENCODING_MS_SYMBOL},
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_UCS_4,      FT2_1_3_ENCODING_UNICODE},
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_UNICODE_CS, FT2_1_3_ENCODING_UNICODE},
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_SJIS,       FT2_1_3_ENCODING_MS_SJIS},
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_GB2312,     FT2_1_3_ENCODING_MS_GB2312},
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_BIG_5,      FT2_1_3_ENCODING_MS_BIG5},
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_WANSUNG,    FT2_1_3_ENCODING_MS_WANSUNG},
-		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_JOHAB,      FT2_1_3_ENCODING_MS_JOHAB}
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_SYMBOL_CS,  FT_ENCODING_MS_SYMBOL},
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_UCS_4,      FT_ENCODING_UNICODE},
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_UNICODE_CS, FT_ENCODING_UNICODE},
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_SJIS,       FT_ENCODING_MS_SJIS},
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_GB2312,     FT_ENCODING_MS_GB2312},
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_BIG_5,      FT_ENCODING_MS_BIG5},
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_WANSUNG,    FT_ENCODING_MS_WANSUNG},
+		{TT_PLATFORM_MICROSOFT,     TT_MS_ID_JOHAB,      FT_ENCODING_MS_JOHAB}
 	};
 
 	const TEncoding *cur, *limit;
@@ -265,11 +265,11 @@ static FT_Encoding sfnt_find_encoding(int platform_id, int encoding_id) {
 		}
 	}
 
-	return FT2_1_3_ENCODING_NONE;
+	return FT_ENCODING_NONE;
 }
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 sfnt_init_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params) {
 	FT_Error        error;
 	FT_Library      library = face->root.driver->root.library;
@@ -277,8 +277,8 @@ sfnt_init_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 	SFNT_HeaderRec  sfnt_header;
 
 	/* for now, parameters are unused */
-	FT2_1_3_UNUSED(num_params);
-	FT2_1_3_UNUSED(params);
+	FT_UNUSED(num_params);
+	FT_UNUSED(params);
 
 	sfnt = (SFNT_Service)face->sfnt;
 	const void *sfnt_tmp;
@@ -323,7 +323,7 @@ Exit:
 #undef LOAD_
 #define LOAD_(x) ((error = sfnt->load_##x(face, stream)) != FT2_1_3_Err_Ok)
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params) {
 	FT_Error  error;
 	FT_Bool   has_outline;
@@ -331,9 +331,9 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 
 	SFNT_Service sfnt = (SFNT_Service)face->sfnt;
 
-	FT2_1_3_UNUSED(face_index);
-	FT2_1_3_UNUSED(num_params);
-	FT2_1_3_UNUSED(params);
+	FT_UNUSED(face_index);
+	FT_UNUSED(num_params);
+	FT_UNUSED(params);
 
 	/* Load tables */
 
@@ -353,7 +353,7 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 	/*                                                             */
 
 	/* do we have outlines in there? */
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 	has_outline = FT2_1_3_BOOL(face->root.internal->incremental_interface != 0 ||
 							   tt_face_lookup_table(face, TTAG_glyf) != 0 ||
 							   tt_face_lookup_table(face, TTAG_CFF) != 0);
@@ -438,28 +438,28 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 		/* Compute face flags.                                               */
 		/*                                                                   */
 		if (has_outline == TRUE)
-			flags = FT2_1_3_FACE_FLAG_SCALABLE; /* scalable outlines */
+			flags = FT_FACE_FLAG_SCALABLE; /* scalable outlines */
 
-		flags |= FT2_1_3_FACE_FLAG_SFNT |      /* SFNT file format  */
-				 FT2_1_3_FACE_FLAG_HORIZONTAL; /* horizontal data   */
+		flags |= FT_FACE_FLAG_SFNT |      /* SFNT file format  */
+				 FT_FACE_FLAG_HORIZONTAL; /* horizontal data   */
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 		/* might need more polish to detect the presence of a Postscript */
 		/* name table in the font                                        */
-		flags |= FT2_1_3_FACE_FLAG_GLYPH_NAMES;
+		flags |= FT_FACE_FLAG_GLYPH_NAMES;
 #endif
 
 		/* fixed width font? */
 		if (face->postscript.isFixedPitch)
-			flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+			flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
 		/* vertical information? */
 		if (face->vertical_info)
-			flags |= FT2_1_3_FACE_FLAG_VERTICAL;
+			flags |= FT_FACE_FLAG_VERTICAL;
 
 		/* kerning available ? */
 		if (face->kern_pairs)
-			flags |= FT2_1_3_FACE_FLAG_KERNING;
+			flags |= FT_FACE_FLAG_KERNING;
 
 		root->face_flags = flags;
 
@@ -471,17 +471,17 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 		if (has_outline == TRUE && face->os2.version != 0xFFFF) {
 			/* we have an OS/2 table; use the `fsSelection' field */
 			if (face->os2.fsSelection & 1)
-				flags |= FT2_1_3_STYLE_FLAG_ITALIC;
+				flags |= FT_STYLE_FLAG_ITALIC;
 
 			if (face->os2.fsSelection & 32)
-				flags |= FT2_1_3_STYLE_FLAG_BOLD;
+				flags |= FT_STYLE_FLAG_BOLD;
 		} else {
 			/* this is an old Mac font, use the header field */
 			if (face->header.Mac_Style & 1)
-				flags |= FT2_1_3_STYLE_FLAG_BOLD;
+				flags |= FT_STYLE_FLAG_BOLD;
 
 			if (face->header.Mac_Style & 2)
-				flags |= FT2_1_3_STYLE_FLAG_ITALIC;
+				flags |= FT_STYLE_FLAG_ITALIC;
 		}
 
 		root->style_flags = flags;
@@ -506,7 +506,7 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 				charmap->encoding = sfnt_find_encoding(charmap->platform_id, charmap->encoding_id);
 
 #if 0
-				if (root->charmap == NULL && charmap->encoding == FT2_1_3_ENCODING_UNICODE) {
+				if (root->charmap == NULL && charmap->encoding == FT_ENCODING_UNICODE) {
 					/* set 'root->charmap' to the first Unicode encoding we find */
 					root->charmap = charmap;
 				}
@@ -519,19 +519,19 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 		if (face->num_sbit_strikes) {
 			FT_ULong n;
 
-			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_SIZES;
+			root->face_flags |= FT_FACE_FLAG_FIXED_SIZES;
 
 #if 0
 			/* XXX: I don't know criteria whether layout is horizontal */
 			/*      or vertical.                                       */
 			if ( has_outline.... ) {
 				...
-				root->face_flags |= FT2_1_3_FACE_FLAG_VERTICAL;
+				root->face_flags |= FT_FACE_FLAG_VERTICAL;
 			}
 #endif
 			root->num_fixed_sizes = face->num_sbit_strikes;
 
-			if (FT2_1_3_NEW_ARRAY(root->available_sizes, face->num_sbit_strikes))
+			if (FT_NEW_ARRAY(root->available_sizes, face->num_sbit_strikes))
 				goto Exit;
 
 			for (n = 0; n < face->num_sbit_strikes; n++) {
@@ -636,7 +636,7 @@ Exit:
 
 #undef LOAD_
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 sfnt_done_face(TT_Face face) {
 	FT_Memory memory  = face->root.memory;
 	SFNT_Service sfnt = (SFNT_Service)face->sfnt;

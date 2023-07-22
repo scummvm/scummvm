@@ -51,38 +51,38 @@ namespace FreeType213 {
 
 /**** MEMORY MANAGEMENT INTERFACE ***/
 
-FT2_1_3_CALLBACK_DEF(void *)
+FT_CALLBACK_DEF(void *)
 ft_alloc(FT_Memory memory, long size) {
-	FT2_1_3_UNUSED(memory);
+	FT_UNUSED(memory);
 
 	return malloc(size);
 }
 
-FT2_1_3_CALLBACK_DEF(void *)
+FT_CALLBACK_DEF(void *)
 ft_realloc(FT_Memory memory, long cur_size, long new_size, void *block) {
-	FT2_1_3_UNUSED(memory);
-	FT2_1_3_UNUSED(cur_size);
+	FT_UNUSED(memory);
+	FT_UNUSED(cur_size);
 
 	return realloc(block, new_size);
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 ft_free(FT_Memory memory, void *block) {
-	FT2_1_3_UNUSED(memory);
+	FT_UNUSED(memory);
 
 	free(block);
 }
 
 /**** RESOURCE MANAGEMENT INTERFACE ****/
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_io
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_io
 
 /* We use the macro STREAM_FILE for convenience to extract the       */
 /* system-specific stream handle from a given FreeType stream object */
 #define STREAM_FILE(stream) ((FILE *)stream->descriptor.pointer)
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 ft_ansi_stream_close(FT_Stream stream) {
 	fclose(STREAM_FILE(stream));
 
@@ -91,7 +91,7 @@ ft_ansi_stream_close(FT_Stream stream) {
 	stream->base = 0;
 }
 
-FT2_1_3_CALLBACK_DEF(unsigned long)
+FT_CALLBACK_DEF(unsigned long)
 ft_ansi_stream_io(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count) {
 	FILE *file;
 
@@ -102,7 +102,7 @@ ft_ansi_stream_io(FT_Stream stream, unsigned long offset, unsigned char *buffer,
 	return (unsigned long)fread(buffer, 1, count, file);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Stream_Open(FT_Stream stream, const char *filepathname) {
 	FILE *file;
 
@@ -111,8 +111,8 @@ FT_Stream_Open(FT_Stream stream, const char *filepathname) {
 
 	file = fopen(filepathname, "rb");
 	if (!file) {
-		FT2_1_3_ERROR(("FT_Stream_Open:"));
-		FT2_1_3_ERROR((" could not open `%s'\n", filepathname));
+		FT_ERROR(("FT_Stream_Open:"));
+		FT_ERROR((" could not open `%s'\n", filepathname));
 
 		return FT2_1_3_Err_Cannot_Open_Resource;
 	}
@@ -128,14 +128,14 @@ FT_Stream_Open(FT_Stream stream, const char *filepathname) {
 	stream->read = ft_ansi_stream_io;
 	stream->close = ft_ansi_stream_close;
 
-	FT2_1_3_TRACE1(("FT_Stream_Open:"));
-	FT2_1_3_TRACE1((" opened `%s' (%d bytes) successfully\n", filepathname, stream->size));
+	FT_TRACE1(("FT_Stream_Open:"));
+	FT_TRACE1((" opened `%s' (%d bytes) successfully\n", filepathname, stream->size));
 
 	return FT2_1_3_Err_Ok;
 }
 
 
-FT2_1_3_EXPORT_DEF(FT_Memory)
+FT_EXPORT_DEF(FT_Memory)
 FT_New_Memory(void) {
 	FT_Memory memory;
 
@@ -150,7 +150,7 @@ FT_New_Memory(void) {
 	return memory;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Done_Memory(FT_Memory memory) {
 	memory->free(memory, memory);
 }

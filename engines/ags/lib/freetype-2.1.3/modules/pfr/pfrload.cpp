@@ -22,8 +22,8 @@
 
 #include "pfrerror.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pfr
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pfr
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -37,14 +37,14 @@ namespace FreeType213 {
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_extra_items_skip( FT_Byte*  *pp,
 					  FT_Byte*   limit ) {
 	return pfr_extra_items_parse( pp, limit, NULL, NULL );
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_extra_items_parse( FT_Byte*       *pp,
 					   FT_Byte*        limit,
 					   PFR_ExtraItem   item_list,
@@ -86,7 +86,7 @@ Exit:
 	return error;
 
 Too_Short:
-	FT2_1_3_ERROR(( "pfr_extra_items_parse: invalid extra items table\n" ));
+	FT_ERROR(( "pfr_extra_items_parse: invalid extra items table\n" ));
 	error = FT2_1_3_Err_Invalid_Table;
 	goto Exit;
 }
@@ -144,7 +144,7 @@ static const FT_Frame_Field  pfr_header_fields[] = {
 };
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_header_load( PFR_Header  header,
 				 FT_Stream   stream ) {
 	FT_Error   error;
@@ -162,7 +162,7 @@ pfr_header_load( PFR_Header  header,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Bool )
+FT_LOCAL_DEF( FT_Bool )
 pfr_header_check( PFR_Header  header ) {
 	FT_Bool  result = 1;
 
@@ -187,7 +187,7 @@ pfr_header_check( PFR_Header  header ) {
 /***********************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_log_font_count( FT_Stream  stream,
 					FT_UInt32  section_offset,
 					FT_UInt   *acount ) {
@@ -207,7 +207,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_log_font_load( PFR_LogFont  log_font,
 				   FT_Stream    stream,
 				   FT_UInt      idx,
@@ -311,7 +311,7 @@ Exit:
 	return error;
 
 Too_Short:
-	FT2_1_3_ERROR(( "pfr_log_font_load: invalid logical font table\n" ));
+	FT_ERROR(( "pfr_log_font_load: invalid logical font table\n" ));
 	error = FT2_1_3_Err_Invalid_Table;
 	goto Fail;
 }
@@ -327,7 +327,7 @@ Too_Short:
 
 
 /* load bitmap strikes lists */
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 pfr_extra_item_load_bitmap_info( FT_Byte*     p,
 								 FT_Byte*     limit,
 								 PFR_PhyFont  phy_font ) {
@@ -407,13 +407,13 @@ Exit:
 
 Too_Short:
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_extra_item_load_bitmap_info: invalid bitmap info table\n" ));
+	FT_ERROR(( "pfr_extra_item_load_bitmap_info: invalid bitmap info table\n" ));
 	goto Exit;
 }
 
 
 /* load font ID, i.e. name */
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 pfr_extra_item_load_font_id( FT_Byte*     p,
 							 FT_Byte*     limit,
 							 PFR_PhyFont  phy_font ) {
@@ -438,7 +438,7 @@ Exit:
 
 
 /* load stem snap tables */
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 pfr_extra_item_load_stem_snaps( FT_Byte*     p,
 								FT_Byte*     limit,
 								PFR_PhyFont  phy_font ) {
@@ -460,7 +460,7 @@ pfr_extra_item_load_stem_snaps( FT_Byte*     p,
 
 	PFR_CHECK( count * 2 );
 
-	if ( FT2_1_3_NEW_ARRAY( snaps, count ) )
+	if ( FT_NEW_ARRAY( snaps, count ) )
 		goto Exit;
 
 	phy_font->vertical.stem_snaps = snaps;
@@ -474,7 +474,7 @@ Exit:
 
 Too_Short:
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_exta_item_load_stem_snaps: invalid stem snaps table\n" ));
+	FT_ERROR(( "pfr_exta_item_load_stem_snaps: invalid stem snaps table\n" ));
 	goto Exit;
 }
 
@@ -482,7 +482,7 @@ Too_Short:
 #if 0
 
 /* load kerning pair data */
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 								   FT_Byte*     limit,
 								   PFR_PhyFont  phy_font ) {
@@ -500,7 +500,7 @@ pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 	if ( phy_font->kern_pairs != NULL )
 		goto Exit;
 
-	FT2_1_3_TRACE2(( "pfr_extra_item_load_kerning_pairs()\n" ));
+	FT_TRACE2(( "pfr_extra_item_load_kerning_pairs()\n" ));
 
 	PFR_CHECK( 4 );
 
@@ -520,7 +520,7 @@ pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 	PFR_CHECK( num_pairs * count );
 #endif
 
-	if ( FT2_1_3_NEW_ARRAY( pairs, num_pairs ) )
+	if ( FT_NEW_ARRAY( pairs, num_pairs ) )
 		goto Exit;
 
 	phy_font->num_kern_pairs = num_pairs;
@@ -542,7 +542,7 @@ pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 
 		pairs->kerning.y = 0;
 
-		FT2_1_3_TRACE2(( "kerning %d <-> %d : %ld\n",
+		FT_TRACE2(( "kerning %d <-> %d : %ld\n",
 					pairs->glyph1, pairs->glyph2, pairs->kerning.x ));
 	}
 
@@ -551,7 +551,7 @@ Exit:
 
 Too_Short:
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_extra_item_load_kerning_pairs: "
+	FT_ERROR(( "pfr_extra_item_load_kerning_pairs: "
 			   "invalid kerning pairs table\n" ));
 	goto Exit;
 }
@@ -559,7 +559,7 @@ Too_Short:
 #else /* 0 */
 
 /* load kerning pair data */
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 								   FT_Byte*     limit,
 								   PFR_PhyFont  phy_font ) {
@@ -568,9 +568,9 @@ pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 	FT_Memory     memory = phy_font->memory;
 
 
-	FT2_1_3_TRACE2(( "pfr_extra_item_load_kerning_pairs()\n" ));
+	FT_TRACE2(( "pfr_extra_item_load_kerning_pairs()\n" ));
 
-	if ( FT2_1_3_NEW( item ) )
+	if ( FT_NEW( item ) )
 		goto Exit;
 
 	PFR_CHECK( 4 );
@@ -642,7 +642,7 @@ Too_Short:
 	FT2_1_3_FREE( item );
 
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_extra_item_load_kerning_pairs: "
+	FT_ERROR(( "pfr_extra_item_load_kerning_pairs: "
 			   "invalid kerning pairs table\n" ));
 	goto Exit;
 }
@@ -658,7 +658,7 @@ static const PFR_ExtraItemRec  pfr_phy_font_extra_items[] = {
 };
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 pfr_phy_font_done( PFR_PhyFont  phy_font,
 				   FT_Memory    memory ) {
 	if ( phy_font->font_id )
@@ -699,7 +699,7 @@ pfr_phy_font_done( PFR_PhyFont  phy_font,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_phy_font_load( PFR_PhyFont  phy_font,
 				   FT_Stream    stream,
 				   FT_UInt32    offset,
@@ -766,7 +766,7 @@ pfr_phy_font_load( PFR_PhyFont  phy_font,
 
 		PFR_CHECK( count * 2 );
 
-		if ( FT2_1_3_NEW_ARRAY( phy_font->blue_values, count ) )
+		if ( FT_NEW_ARRAY( phy_font->blue_values, count ) )
 			goto Fail;
 
 		for ( n = 0; n < count; n++ )
@@ -788,7 +788,7 @@ pfr_phy_font_load( PFR_PhyFont  phy_font,
 		phy_font->num_chars    = count = PFR_NEXT_USHORT( p );
 		phy_font->chars_offset = offset + ( p - stream->cursor );
 
-		if ( FT2_1_3_NEW_ARRAY( phy_font->chars, count ) )
+		if ( FT_NEW_ARRAY( phy_font->chars, count ) )
 			goto Fail;
 
 		Size = 1 + 1 + 2;
@@ -852,7 +852,7 @@ Exit:
 
 Too_Short:
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_phy_font_load: invalid physical font table\n" ));
+	FT_ERROR(( "pfr_phy_font_load: invalid physical font table\n" ));
 	goto Fail;
 }
 

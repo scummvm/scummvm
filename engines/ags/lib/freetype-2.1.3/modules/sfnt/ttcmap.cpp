@@ -35,51 +35,51 @@
 #include "engines/ags/lib/freetype-2.1.3/modules/sfnt/sferrors.h"
 
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttcmap
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttcmap
 
 namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index0(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next0(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index2(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next2(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index4(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next4(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index6(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next6(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index8_12(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next8_12(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index10(TT_CMapTable charmap, FT_ULong char_code);
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next10(TT_CMapTable charmap, FT_ULong char_code);
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 	FT_Error     error;
 	FT_Memory    memory;
@@ -124,7 +124,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		/* allocate subheader keys */
 
-		if (FT2_1_3_NEW_ARRAY(cmap2->subHeaderKeys, 256) || FT2_1_3_FRAME_ENTER(2L + 512L))
+		if (FT_NEW_ARRAY(cmap2->subHeaderKeys, 256) || FT2_1_3_FRAME_ENTER(2L + 512L))
 			goto Fail;
 
 		cmap2->language = FT2_1_3_GET_USHORT();
@@ -143,7 +143,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		cmap2->numGlyphId = l = (FT_UShort)(((cmap->length - 2L * (256 + 3) - num_SH * 8L) & 0xFFFFU) / 2);
 
-		if (FT2_1_3_NEW_ARRAY(cmap2->subHeaders, num_SH + 1) || FT2_1_3_FRAME_ENTER((num_SH + 1) * 8L)) {
+		if (FT_NEW_ARRAY(cmap2->subHeaders, num_SH + 1) || FT2_1_3_FRAME_ENTER((num_SH + 1) * 8L)) {
 			FT2_1_3_FREE(cmap2->subHeaderKeys);
 			goto Fail;
 		}
@@ -164,7 +164,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		/* load glyph IDs */
 
-		if (FT2_1_3_NEW_ARRAY(cmap2->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L)) {
+		if (FT_NEW_ARRAY(cmap2->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L)) {
 			FT2_1_3_FREE(cmap2->subHeaders);
 			FT2_1_3_FREE(cmap2->subHeaderKeys);
 			goto Fail;
@@ -199,7 +199,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		/* load segments */
 
-		if (FT2_1_3_NEW_ARRAY(cmap4->segments, num_Seg) || FT2_1_3_FRAME_ENTER((num_Seg * 4 + 1) * 2L))
+		if (FT_NEW_ARRAY(cmap4->segments, num_Seg) || FT2_1_3_FRAME_ENTER((num_Seg * 4 + 1) * 2L))
 			goto Fail;
 
 		segments = cmap4->segments;
@@ -224,7 +224,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		/* load IDs */
 
-		if (FT2_1_3_NEW_ARRAY(cmap4->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L)) {
+		if (FT_NEW_ARRAY(cmap4->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L)) {
 			FT2_1_3_FREE(cmap4->segments);
 			goto Fail;
 		}
@@ -254,7 +254,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		l = cmap6->entryCount;
 
-		if (FT2_1_3_NEW_ARRAY(cmap6->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L))
+		if (FT_NEW_ARRAY(cmap6->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L))
 			goto Fail;
 
 		for (i = 0; i < l; i++)
@@ -286,7 +286,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		n = cmap8_12->nGroups;
 
-		if (FT2_1_3_NEW_ARRAY(cmap8_12->groups, n) || FT2_1_3_FRAME_ENTER(n * 3 * 4L))
+		if (FT_NEW_ARRAY(cmap8_12->groups, n) || FT2_1_3_FRAME_ENTER(n * 3 * 4L))
 			goto Fail;
 
 		groups = cmap8_12->groups;
@@ -320,7 +320,7 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		n = cmap10->numChars;
 
-		if (FT2_1_3_NEW_ARRAY(cmap10->glyphs, n) || FT2_1_3_FRAME_ENTER(n * 2L))
+		if (FT_NEW_ARRAY(cmap10->glyphs, n) || FT2_1_3_FRAME_ENTER(n * 2L))
 			goto Fail;
 
 		for (j = 0; j < n; j++)
@@ -343,7 +343,7 @@ Fail:
 }
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_free_charmap(TT_Face face, TT_CMapTable cmap) {
 	FT_Memory memory;
 
@@ -395,7 +395,7 @@ tt_face_free_charmap(TT_Face face, TT_CMapTable cmap) {
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index0(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap0 cmap0 = &cmap->c.cmap0;
 
@@ -403,7 +403,7 @@ code_to_index0(TT_CMapTable cmap, FT_ULong charCode) {
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next0(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap0 cmap0 = &cmap->c.cmap0;
 
@@ -414,7 +414,7 @@ code_to_next0(TT_CMapTable cmap, FT_ULong charCode) {
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index2(TT_CMapTable cmap, FT_ULong charCode) {
 	FT_UInt            result, index1, offset;
 	FT_UInt            char_lo;
@@ -456,7 +456,7 @@ code_to_index2(TT_CMapTable cmap, FT_ULong charCode) {
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next2(TT_CMapTable cmap, FT_ULong charCode) {
 	FT_UInt            index1, offset;
 	FT_UInt            char_lo;
@@ -511,7 +511,7 @@ code_to_next2(TT_CMapTable cmap, FT_ULong charCode) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index4(TT_CMapTable cmap, FT_ULong charCode) {
 	FT_UInt             result, index1, segCount;
 	TT_CMap4            cmap4;
@@ -570,7 +570,7 @@ Found1:
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next4(TT_CMapTable cmap, FT_ULong charCode) {
 	FT_UInt             index1, segCount;
 	TT_CMap4            cmap4;
@@ -612,7 +612,7 @@ Found:
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index6(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap6  cmap6;
 	FT_UInt   result = 0;
@@ -627,7 +627,7 @@ code_to_index6(TT_CMapTable cmap, FT_ULong charCode) {
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next6(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap6 cmap6;
 
@@ -650,7 +650,7 @@ code_to_next6(TT_CMapTable cmap, FT_ULong charCode) {
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index8_12(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap8_12 	cmap8_12;
 	TT_CMapGroupRec *group, *limit;
@@ -694,7 +694,7 @@ Found1:
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next8_12(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap8_12 	cmap8_12;
 	TT_CMapGroupRec *group, *limit;
@@ -720,7 +720,7 @@ Found:
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 code_to_index10(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap10 cmap10;
 	FT_UInt   result = 0;
@@ -739,7 +739,7 @@ code_to_index10(TT_CMapTable cmap, FT_ULong charCode) {
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_ULong)
+FT_CALLBACK_DEF(FT_ULong)
 code_to_next10(TT_CMapTable cmap, FT_ULong charCode) {
 	TT_CMap10 cmap10;
 

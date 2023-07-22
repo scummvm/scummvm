@@ -37,23 +37,23 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_face_load_sbit_strikes(TT_Face face, FT_Stream stream);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 tt_face_free_sbit_strikes(TT_Face face);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_face_set_sbit_strike(TT_Face face, FT_Int x_ppem, FT_Int y_ppem, FT_ULong *astrike_index);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_face_load_sbit_image(TT_Face face, FT_ULong strike_index, FT_UInt glyph_index, FT_UInt load_flags, FT_Stream stream, FT_Bitmap *map, TT_SBit_MetricsRec *metrics);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

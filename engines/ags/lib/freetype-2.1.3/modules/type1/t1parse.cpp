@@ -36,8 +36,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/modules/type1/t1errors.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT trace_t1parse
+#undef  FT_COMPONENT
+#define FT_COMPONENT trace_t1parse
 
 
 namespace AGS3 {
@@ -81,7 +81,7 @@ static FT_Error read_pfb_tag(FT_Stream stream, FT_UShort *tag, FT_Long *size) {
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Service psaux) {
 	FT_Error  error;
 	FT_UShort tag;
@@ -155,7 +155,7 @@ T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Servic
 	/* or `%!FontType'                                       */
 	{
 		if (size <= 16 || (ft_strncmp((const char *)parser->base_dict, "%!PS-AdobeFont-1", 16) && ft_strncmp((const char *)parser->base_dict, "%!FontType", 10))) {
-			FT2_1_3_TRACE2(("[not a Type1 font]\n"));
+			FT_TRACE2(("[not a Type1 font]\n"));
 			error = FT2_1_3_Err_Unknown_File_Format;
 		} else {
 			parser->root.base = parser->base_dict;
@@ -172,7 +172,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 T1_Finalize_Parser(T1_Parser parser) {
 	FT_Memory memory = parser->root.memory;
 
@@ -207,7 +207,7 @@ static int hexa_value(char c) {
 }
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 	FT_Stream stream = parser->stream;
 	FT_Memory memory = parser->root.memory;
@@ -240,8 +240,8 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 		/* Check that we have a private dictionary there */
 		/* and allocate private dictionary buffer        */
 		if (parser->private_len == 0) {
-			FT2_1_3_ERROR(("T1_Get_Private_Dict:"));
-			FT2_1_3_ERROR((" invalid private dictionary section\n"));
+			FT_ERROR(("T1_Get_Private_Dict:"));
+			FT_ERROR((" invalid private dictionary section\n"));
 			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Fail;
 		}
@@ -291,8 +291,8 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 			}
 			cur++;
 			if (cur >= limit) {
-				FT2_1_3_ERROR(("T1_Get_Private_Dict:"));
-				FT2_1_3_ERROR((" could not find `eexec' keyword\n"));
+				FT_ERROR(("T1_Get_Private_Dict:"));
+				FT_ERROR((" could not find `eexec' keyword\n"));
 				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Exit;
 			}

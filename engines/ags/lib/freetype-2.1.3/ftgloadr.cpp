@@ -31,20 +31,20 @@
 #include "engines/ags/lib/freetype-2.1.3/ftgloadr.h"
 #include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_gloader
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_gloader
 
 namespace AGS3 {
 namespace FreeType213 {
 
 
 /* create a new glyph loader */
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader) {
 	FT_GlyphLoader loader;
 	FT_Error error;
 
-	if (!FT2_1_3_NEW(loader)) {
+	if (!FT_NEW(loader)) {
 		loader->memory = memory;
 		*aloader = loader;
 	}
@@ -53,7 +53,7 @@ FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader) {
 
 
 /* rewind the glyph loader - reset counters to 0 */
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_GlyphLoader_Rewind(FT_GlyphLoader loader) {
 	FT_GlyphLoad base = &loader->base;
 	FT_GlyphLoad current = &loader->current;
@@ -68,7 +68,7 @@ FT_GlyphLoader_Rewind(FT_GlyphLoader loader) {
 
 /* reset the glyph loader, frees all allocated tables */
 /* and starts from zero                               */
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_GlyphLoader_Reset(FT_GlyphLoader loader) {
 	FT_Memory memory = loader->memory;
 
@@ -87,7 +87,7 @@ FT_GlyphLoader_Reset(FT_GlyphLoader loader) {
 
 
 /* delete a glyph loader */
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_GlyphLoader_Done(FT_GlyphLoader loader) {
 	if (loader) {
 		FT_Memory memory = loader->memory;
@@ -113,12 +113,12 @@ static void FT_GlyphLoader_Adjust_Points(FT_GlyphLoader loader) {
 }
 
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_GlyphLoader_CreateExtra(FT_GlyphLoader loader) {
 	FT_Error error;
 	FT_Memory memory = loader->memory;
 
-	if (!FT2_1_3_NEW_ARRAY(loader->base.extra_points, loader->max_points)) {
+	if (!FT_NEW_ARRAY(loader->base.extra_points, loader->max_points)) {
 		loader->use_extra = 1;
 		FT_GlyphLoader_Adjust_Points(loader);
 	}
@@ -139,7 +139,7 @@ static void FT_GlyphLoader_Adjust_Subglyphs(FT_GlyphLoader loader) {
 /* function reallocates its outline tables if necessary.  Note that it   */
 /* DOESN'T change the number of points within the loader!                */
 /*                                                                       */
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_GlyphLoader_CheckPoints(FT_GlyphLoader loader, FT_UInt n_points, FT_UInt n_contours) {
 	FT_Memory memory = loader->memory;
 	FT_Error error = FT2_1_3_Err_Ok;
@@ -190,7 +190,7 @@ Exit:
 /* reallocates its subglyphs table if necessary.  Note that it DOES */
 /* NOT change the number of subglyphs within the loader!            */
 /*                                                                  */
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_GlyphLoader_CheckSubGlyphs(FT_GlyphLoader loader, FT_UInt n_subs) {
 	FT_Memory memory = loader->memory;
 	FT_Error error = FT2_1_3_Err_Ok;
@@ -217,7 +217,7 @@ Exit:
 
 
 /* prepare loader for the addition of a new glyph on top of the base one */
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_GlyphLoader_Prepare(FT_GlyphLoader loader) {
 	FT_GlyphLoad current = &loader->current;
 
@@ -231,7 +231,7 @@ FT_GlyphLoader_Prepare(FT_GlyphLoader loader) {
 
 
 /* add current glyph to the base image - and prepare for another */
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_GlyphLoader_Add(FT_GlyphLoader loader) {
 	FT_GlyphLoad base = &loader->base;
 	FT_GlyphLoad current = &loader->current;
@@ -255,7 +255,7 @@ FT_GlyphLoader_Add(FT_GlyphLoader loader) {
 }
 
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_GlyphLoader_CopyPoints(FT_GlyphLoader target, FT_GlyphLoader source) {
 	FT_Error error;
 	FT_UInt num_points = source->base.outline.n_points;

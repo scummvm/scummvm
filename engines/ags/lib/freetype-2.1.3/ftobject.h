@@ -29,7 +29,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct FT_ObjectRec_ *FT_Object;
@@ -93,16 +93,16 @@ typedef struct FT_TypeRec_ {
 // TODO: ftobject.cpp is not compiled - remove functions
 #define  FT2_1_3_TYPE(x)  ((FT_Type)(x))
 
-FT2_1_3_BASE(FT_Int)
+FT_BASE(FT_Int)
 ft_object_check(FT_Pointer obj);
 
-FT2_1_3_BASE(FT_Int)
+FT_BASE(FT_Int)
 ft_object_is_a(FT_Pointer obj, FT_Class clazz);
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 ft_object_create(FT_Object *aobject, FT_Class clazz, FT_Pointer init_data);
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 ft_object_create_from_type(FT_Object *aobject, FT_Type type, FT_Pointer init_data, FT_Library library);
 
 #define FT2_1_3_OBJ_CREATE(_obj, _clazz, _init) ft_object_create(FT2_1_3_OBJECT_P(&(_obj)), _clazz, _init)
@@ -113,7 +113,7 @@ ft_object_create_from_type(FT_Object *aobject, FT_Type type, FT_Pointer init_dat
 
 #define FT2_1_3_CREATE_FROM_TYPE(_obj, _type, _init, _lib) FT2_1_3_SET_ERROR(FT2_1_3_OBJ_CREATE_FROM_TYPE(_obj, _type, _init, _lib))
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 ft_class_from_type(FT_Class *aclass, FT_Type type, FT_Library library);
 
 typedef struct FT_ClassHNodeRec_ *FT_ClassHNode;
@@ -130,15 +130,15 @@ typedef struct FT_MetaClassRec_ {
 } FT_MetaClassRec, *FT_MetaClass;
 
 /* initialize meta class */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 ft_metaclass_init(FT_MetaClass meta, FT_Library library);
 
 /* finalize meta class - destroy all registered class objects */
-FT2_1_3_BASE(void)
+FT_BASE(void)
 ft_metaclass_done(FT_MetaClass meta);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 
 } // End of namespace FreeType213

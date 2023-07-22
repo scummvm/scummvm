@@ -36,7 +36,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Get_PS_Font_Info(FT_Face face, PS_FontInfoRec *afont_info) {
 	PS_FontInfo font_info = NULL;
 	FT_Error error = FT2_1_3_Err_Invalid_Argument;
@@ -60,7 +60,7 @@ FT_Get_PS_Font_Info(FT_Face face, PS_FontInfoRec *afont_info) {
 }
 
 
-FT2_1_3_EXPORT_DEF(FT_Int)
+FT_EXPORT_DEF(FT_Int)
 FT_Has_PS_Glyph_Names(FT_Face face) {
 	FT_Int result = 0;
 	const char *driver_name;

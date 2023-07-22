@@ -24,7 +24,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 typedef struct PFR_FaceRec_*  PFR_Face;
 
@@ -55,39 +55,39 @@ typedef struct  PFR_SlotRec_ {
 } PFR_SlotRec;
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 pfr_face_init( FT_Stream      stream,
 			   PFR_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
 			   FT_Parameter*  params );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 pfr_face_done( PFR_Face  face );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 pfr_face_get_kerning( PFR_Face   face,
 					  FT_UInt    glyph1,
 					  FT_UInt    glyph2,
 					  FT_Vector* kerning );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 pfr_slot_init( PFR_Slot  slot );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 pfr_slot_done( PFR_Slot  slot );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 pfr_slot_load( PFR_Slot  slot,
 			   PFR_Size  size,
 			   FT_UInt   gindex,
 			   FT_Int32  load_flags );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

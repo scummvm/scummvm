@@ -25,12 +25,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_t42
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_t42
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -136,7 +136,7 @@ T1_FieldRec  t42_keywords[] = {
 
 /********************* Parsing Functions ******************/
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 t42_parser_init( T42_Parser     parser,
 				 FT_Stream      stream,
 				 FT_Memory      memory,
@@ -211,7 +211,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 t42_parser_done( T42_Parser  parser ) {
 	FT_Memory  memory = parser->root.memory;
 
@@ -352,7 +352,7 @@ t42_parse_encoding( T42_Face    face,
 	while ( t42_is_space( *cur ) ) {
 		cur++;
 		if ( cur >= limit ) {
-			FT2_1_3_ERROR(( "t42_parse_encoding: out of bounds!\n" ));
+			FT_ERROR(( "t42_parse_encoding: out of bounds!\n" ));
 			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
 			return;
 		}
@@ -375,8 +375,8 @@ t42_parse_encoding( T42_Face    face,
 
 		/* we use a T1_Table to store our charnames */
 		loader->num_chars = encode->num_chars = count;
-		if ( FT2_1_3_NEW_ARRAY( encode->char_index, count ) ||
-				FT2_1_3_NEW_ARRAY( encode->char_name,  count ) ||
+		if ( FT_NEW_ARRAY( encode->char_index, count ) ||
+				FT_NEW_ARRAY( encode->char_name,  count ) ||
 				FT2_1_3_SET_ERROR( psaux->ps_table_funcs->init(
 								  char_table, count, memory ) ) ) {
 			parser->root.error = error;
@@ -420,7 +420,7 @@ t42_parse_encoding( T42_Face    face,
 						cur[2] == 'f'       &&
 						t42_is_space( cur[-1] ) &&
 						t42_is_space( cur[3] )  ) {
-					FT2_1_3_TRACE6(( "encoding end\n" ));
+					FT_TRACE6(( "encoding end\n" ));
 					break;
 				}
 			}
@@ -481,7 +481,7 @@ t42_parse_encoding( T42_Face    face,
 			face->type1.encoding_type = T1_ENCODING_TYPE_ISOLATIN1;
 
 		else {
-			FT2_1_3_ERROR(( "t42_parse_encoding: invalid token!\n" ));
+			FT_ERROR(( "t42_parse_encoding: invalid token!\n" ));
 			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
 		}
 	}
@@ -538,7 +538,7 @@ t42_parse_sfnts( T42_Face    face,
 		status = 0;
 		count = 0;
 	} else {
-		FT2_1_3_ERROR(( "t42_parse_sfnts: can't find begin of sfnts vector!\n" ));
+		FT_ERROR(( "t42_parse_sfnts: can't find begin of sfnts vector!\n" ));
 		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Fail;
 	}
@@ -560,7 +560,7 @@ t42_parse_sfnts( T42_Face    face,
 
 		case '>':
 			if ( !in_string ) {
-				FT2_1_3_ERROR(( "t42_parse_sfnts: found unpaired `>'!\n" ));
+				FT_ERROR(( "t42_parse_sfnts: found unpaired `>'!\n" ));
 				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Fail;
 			}
@@ -580,14 +580,14 @@ t42_parse_sfnts( T42_Face    face,
 					cur++;
 				continue;
 			} else {
-				FT2_1_3_ERROR(( "t42_parse_sfnts: found `%' in string!\n" ));
+				FT_ERROR(( "t42_parse_sfnts: found `%' in string!\n" ));
 				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Fail;
 			}
 
 		default:
 			if ( !ft_xdigit( *cur ) || !ft_xdigit( *(cur + 1) ) ) {
-				FT2_1_3_ERROR(( "t42_parse_sfnts: found non-hex characters in string" ));
+				FT_ERROR(( "t42_parse_sfnts: found non-hex characters in string" ));
 				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Fail;
 			}
@@ -751,7 +751,7 @@ t42_parse_charstrings( T42_Face    face,
 
 	/* Index 0 must be a .notdef element */
 	if ( ft_strcmp( (char *)name_table->elements[0], ".notdef" ) ) {
-		FT2_1_3_ERROR(( "t42_parse_charstrings: Index 0 is not `.notdef'!\n" ));
+		FT_ERROR(( "t42_parse_charstrings: Index 0 is not `.notdef'!\n" ));
 		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Fail;
 	}
@@ -807,7 +807,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 t42_parse_dict( T42_Face    face,
 				T42_Loader  loader,
 				FT_Byte*    base,
@@ -898,10 +898,10 @@ t42_parse_dict( T42_Face    face,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 t42_loader_init( T42_Loader  loader,
 				 T42_Face    face ) {
-	FT2_1_3_UNUSED( face );
+	FT_UNUSED( face );
 
 	FT2_1_3_MEM_ZERO( loader, sizeof ( *loader ) );
 	loader->num_glyphs = 0;
@@ -914,7 +914,7 @@ t42_loader_init( T42_Loader  loader,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 t42_loader_done( T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
 

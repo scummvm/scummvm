@@ -42,8 +42,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/psnames.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_t1driver
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_t1driver
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -89,8 +89,8 @@ static const char *t1_get_ps_name(T1_Face face) {
 
 
 static FT_Module_Interface Get_Interface(FT_Driver driver, const FT_String *t1_interface) {
-	FT2_1_3_UNUSED(driver);
-	FT2_1_3_UNUSED(t1_interface);
+	FT_UNUSED(driver);
+	FT_UNUSED(t1_interface);
 
 	if (ft_strcmp((const char *)t1_interface, "glyph_name") == 0)
 		return (FT_Module_Interface)t1_get_glyph_name;
@@ -133,7 +133,7 @@ static FT_Error Get_Kerning(T1_Face face, FT_UInt left_glyph, FT_UInt right_glyp
 #endif /* T1_CONFIG_OPTION_NO_AFM */
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec t1_driver_class = {
 	{
 		ft_module_font_driver | ft_module_driver_scalable | ft_module_driver_has_hinter,

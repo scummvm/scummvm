@@ -38,7 +38,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct  TT_Header_ {
@@ -237,11 +237,11 @@ typedef enum {
 /* internal use only */
 typedef void *(*FT2_1_3_Get_Sfnt_Table_Func)(FT_Face face, FT_Sfnt_Tag tag);
 
-FT2_1_3_EXPORT(void *)
+FT_EXPORT(void *)
 FT2_1_3_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -39,7 +39,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* PI expressed in ah_angles -- we don't really need an important */
@@ -55,14 +55,14 @@ FT2_1_3_BEGIN_HEADER
 
 extern const AH_Angle ah_arctan[1L << AH_ATAN_BITS];
 
-FT2_1_3_LOCAL(AH_Angle)
+FT_LOCAL(AH_Angle)
 ah_angle(FT_Vector *v);
 
-FT2_1_3_LOCAL(AH_Angle)
+FT_LOCAL(AH_Angle)
 ah_angle_diff(AH_Angle angle1, AH_Angle angle2);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

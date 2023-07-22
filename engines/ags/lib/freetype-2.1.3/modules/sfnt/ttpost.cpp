@@ -44,8 +44,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/modules/sfnt/sferrors.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttpost
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttpost
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -53,12 +53,12 @@ namespace FreeType213 {
 /* If this configuration macro is defined, we rely on the `PSNames' */
 /* module to grab the glyph names.                                  */
 
-#ifdef FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES
+#ifdef FT_CONFIG_OPTION_POSTSCRIPT_NAMES
 
 #include "engines/ags/lib/freetype-2.1.3/psnames.h"
 #define MAC_NAME(x) (const_cast<FT_String *>(psnames->macintosh_name(x)))
 
-#else /* FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES */
+#else /* FT_CONFIG_OPTION_POSTSCRIPT_NAMES */
 
 
 /* Otherwise, we ignore the `PSNames' module, and provide our own  */
@@ -150,7 +150,7 @@ static const FT_String* tt_post_default_names[258] = {
 	"Ccaron", "ccaron", "dmacron",
 };
 
-#endif /* FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES */
+#endif /* FT_CONFIG_OPTION_POSTSCRIPT_NAMES */
 
 
 static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
@@ -181,7 +181,7 @@ static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
 	{
 		FT_Int n;
 
-		if (FT2_1_3_NEW_ARRAY(glyph_indices, num_glyphs) || FT2_1_3_FRAME_ENTER(num_glyphs * 2L))
+		if (FT_NEW_ARRAY(glyph_indices, num_glyphs) || FT2_1_3_FRAME_ENTER(num_glyphs * 2L))
 			goto Fail;
 
 		for (n = 0; n < num_glyphs; n++)
@@ -212,13 +212,13 @@ static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
 	{
 		FT_UShort n;
 
-		if (FT2_1_3_NEW_ARRAY(name_strings, num_names))
+		if (FT_NEW_ARRAY(name_strings, num_names))
 			goto Fail;
 
 		for (n = 0; n < num_names; n++) {
 			FT_UInt len;
 
-			if (FT2_1_3_READ_BYTE(len) || FT2_1_3_NEW_ARRAY(name_strings[n], len + 1) || FT2_1_3_STREAM_READ(name_strings[n], len))
+			if (FT2_1_3_READ_BYTE(len) || FT_NEW_ARRAY(name_strings[n], len + 1) || FT2_1_3_STREAM_READ(name_strings[n], len))
 				goto Fail1;
 
 			name_strings[n][len] = '\0';
@@ -335,7 +335,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_face_free_ps_names(TT_Face face) {
 	FT_Memory 	  memory = face->root.memory;
 	TT_Post_Names names  = &face->postscript_names;
@@ -366,7 +366,7 @@ tt_face_free_ps_names(TT_Face face) {
 	names->loaded = 0;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_get_ps_name(TT_Face face, FT_UInt idx, FT_String **PSname) {
 	FT_Error 	  error;
 	TT_Post_Names names;
@@ -374,7 +374,7 @@ tt_face_get_ps_name(TT_Face face, FT_UInt idx, FT_String **PSname) {
 
 	using AGS3::FreeType213::PSNames_Service;
 
-#ifdef FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES
+#ifdef FT_CONFIG_OPTION_POSTSCRIPT_NAMES
 	PSNames_Service psnames;
 #endif
 
@@ -384,7 +384,7 @@ tt_face_get_ps_name(TT_Face face, FT_UInt idx, FT_String **PSname) {
 	if (idx >= (FT_UInt)face->root.num_glyphs)
 		return FT2_1_3_Err_Invalid_Glyph_Index;
 
-#ifdef FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES
+#ifdef FT_CONFIG_OPTION_POSTSCRIPT_NAMES
 	psnames = (PSNames_Service)face->psnames;
 	if (!psnames)
 		return FT2_1_3_Err_Unimplemented_Feature;

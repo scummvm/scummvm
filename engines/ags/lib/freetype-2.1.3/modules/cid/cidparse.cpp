@@ -29,12 +29,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cidparse
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cidparse
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -50,7 +50,7 @@ namespace FreeType213 {
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_parser_new( CID_Parser*    parser,
 				FT_Stream      stream,
 				FT_Memory      memory,
@@ -74,7 +74,7 @@ cid_parser_new( CID_Parser*    parser,
 
 	if ( ft_strncmp( (char *)stream->cursor,
 					 "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) ) {
-		FT2_1_3_TRACE2(( "[not a valid CID-keyed font]\n" ));
+		FT_TRACE2(( "[not a valid CID-keyed font]\n" ));
 		error = FT2_1_3_Err_Unknown_File_Format;
 	}
 
@@ -134,7 +134,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cid_parser_done( CID_Parser*  parser ) {
 	/* always free the private dictionary */
 	if ( parser->postscript ) {

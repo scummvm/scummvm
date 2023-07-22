@@ -28,12 +28,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ciddriver
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ciddriver
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -53,8 +53,8 @@ cid_get_postscript_name( CID_Face  face ) {
 static FT_Module_Interface
 cid_get_interface( FT_Driver         driver,
 				   const FT_String*  cid_interface ) {
-	FT2_1_3_UNUSED( driver );
-	FT2_1_3_UNUSED( cid_interface );
+	FT_UNUSED( driver );
+	FT_UNUSED( cid_interface );
 
 	if ( ft_strcmp( (const char*)cid_interface, "postscript_name" ) == 0 )
 		return (FT_Module_Interface)cid_get_postscript_name;
@@ -64,7 +64,7 @@ cid_get_interface( FT_Driver         driver,
 
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec  t1cid_driver_class = {
 	/* first of all, the FT_Module_Class fields */
 	{

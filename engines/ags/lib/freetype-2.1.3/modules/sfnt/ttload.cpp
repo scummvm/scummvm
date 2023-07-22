@@ -38,19 +38,19 @@
 #include "engines/ags/lib/freetype-2.1.3/modules/sfnt/sferrors.h"
 
 
-#undef FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT trace_ttload
+#undef FT_COMPONENT
+#define FT_COMPONENT trace_ttload
 
 namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_LOCAL_DEF(TT_Table)
+FT_LOCAL_DEF(TT_Table)
 tt_face_lookup_table(TT_Face face, FT_ULong tag) {
 	TT_Table entry;
 	TT_Table limit;
 
-	FT2_1_3_TRACE3(("tt_face_lookup_table: %08p, `%c%c%c%c' -- ", face, (FT_Char)(tag >> 24), (FT_Char)(tag >> 16), (FT_Char)(tag >> 8), (FT_Char)(tag)));
+	FT_TRACE3(("tt_face_lookup_table: %08p, `%c%c%c%c' -- ", face, (FT_Char)(tag >> 24), (FT_Char)(tag >> 16), (FT_Char)(tag >> 8), (FT_Char)(tag)));
 
 	entry = face->dir_tables;
 	limit = entry + face->num_tables;
@@ -59,16 +59,16 @@ tt_face_lookup_table(TT_Face face, FT_ULong tag) {
 		/* For compatibility with Windows, we consider 0-length */
 		/* tables the same as missing tables.                   */
 		if (entry->Tag == tag && entry->Length != 0) {
-			FT2_1_3_TRACE3(("found table.\n"));
+			FT_TRACE3(("found table.\n"));
 			return entry;
 		}
 	}
 
-	FT2_1_3_TRACE3(("could not find table!\n"));
+	FT_TRACE3(("could not find table!\n"));
 	return 0;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_goto_table(TT_Face face, FT_ULong tag, FT_Stream stream, FT_ULong *length) {
 	TT_Table table;
 	FT_Error error;
@@ -91,8 +91,8 @@ static FT_Error sfnt_dir_check(FT_Stream stream, FT_ULong offset, FT_UInt num_ta
 	FT_Error error;
 	FT_UInt  nn, has_head = 0;
 
-	const FT_ULong glyx_tag = FT2_1_3_MAKE_TAG('g', 'l', 'y', 'x');
-	const FT_ULong locx_tag = FT2_1_3_MAKE_TAG('l', 'o', 'c', 'x');
+	const FT_ULong glyx_tag = FT_MAKE_TAG('g', 'l', 'y', 'x');
+	const FT_ULong locx_tag = FT_MAKE_TAG('l', 'o', 'c', 'x');
 
 	static const FT_Frame_Field sfnt_dir_entry_fields[] = {
 #undef FT2_1_3_STRUCTURE
@@ -151,7 +151,7 @@ Bad_Format:
 	goto Exit;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFNT_Header sfnt) {
 	FT_Error  error;
 	FT_ULong  format_tag, offset;
@@ -177,7 +177,7 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 		FT2_1_3_FRAME_LONG(count),
 		FT2_1_3_FRAME_END};
 
-	FT2_1_3_TRACE2(("tt_face_load_sfnt_header: %08p, %ld\n", face, face_index));
+	FT_TRACE2(("tt_face_load_sfnt_header: %08p, %ld\n", face, face_index));
 
 	face->ttc_header.tag 	 = 0;
 	face->ttc_header.version = 0;
@@ -197,7 +197,7 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 	if (format_tag == TTAG_ttcf) {
 		FT_Int n;
 
-		FT2_1_3_TRACE3(("tt_face_load_sfnt_header: file is a collection\n"));
+		FT_TRACE3(("tt_face_load_sfnt_header: file is a collection\n"));
 
 		/* It is a TrueType collection, i.e. a file containing several */
 		/* font files.  Read the font directory now                    */
@@ -205,7 +205,7 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 			goto Exit;
 
 		/* now read the offsets of each font in the file */
-		if (FT2_1_3_NEW_ARRAY(face->ttc_header.offsets, face->ttc_header.count) || FT2_1_3_FRAME_ENTER(face->ttc_header.count * 4L))
+		if (FT_NEW_ARRAY(face->ttc_header.offsets, face->ttc_header.count) || FT2_1_3_FRAME_ENTER(face->ttc_header.count * 4L))
 			goto Exit;
 
 		for (n = 0; n < face->ttc_header.count; n++)
@@ -236,7 +236,7 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 	/* now check the sfnt directory */
 	error = sfnt_dir_check(stream, offset, sfnt->num_tables);
 	if (error) {
-		FT2_1_3_TRACE2(("tt_face_load_sfnt_header: file is not SFNT!\n"));
+		FT_TRACE2(("tt_face_load_sfnt_header: file is not SFNT!\n"));
 		error = FT2_1_3_Err_Unknown_File_Format;
 	}
 
@@ -244,21 +244,21 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_directory(TT_Face face, FT_Stream stream, SFNT_Header sfnt) {
 	FT_Error  error;
 	FT_Memory memory = stream->memory;
 
 	TT_TableRec *entry, *limit;
 
-	FT2_1_3_TRACE2(("tt_face_load_directory: %08p\n", face));
+	FT_TRACE2(("tt_face_load_directory: %08p\n", face));
 
-	FT2_1_3_TRACE2(("-- Tables count:   %12u\n", sfnt->num_tables));
-	FT2_1_3_TRACE2(("-- Format version: %08lx\n", sfnt->format_tag));
+	FT_TRACE2(("-- Tables count:   %12u\n", sfnt->num_tables));
+	FT_TRACE2(("-- Format version: %08lx\n", sfnt->format_tag));
 
 	face->num_tables = sfnt->num_tables;
 
-	if (FT2_1_3_NEW_ARRAY(face->dir_tables, face->num_tables))
+	if (FT_NEW_ARRAY(face->dir_tables, face->num_tables))
 		goto Exit;
 
 	if (FT2_1_3_STREAM_SEEK(sfnt->offset + 12) || FT2_1_3_FRAME_ENTER(face->num_tables * 16L))
@@ -274,19 +274,19 @@ tt_face_load_directory(TT_Face face, FT_Stream stream, SFNT_Header sfnt) {
 		entry->Offset   = FT2_1_3_GET_LONG();
 		entry->Length   = FT2_1_3_GET_LONG();
 
-		FT2_1_3_TRACE2(("  %c%c%c%c  -  %08lx  -  %08lx\n", (FT_Char)(entry->Tag >> 24), (FT_Char)(entry->Tag >> 16),
+		FT_TRACE2(("  %c%c%c%c  -  %08lx  -  %08lx\n", (FT_Char)(entry->Tag >> 24), (FT_Char)(entry->Tag >> 16),
 						(FT_Char)(entry->Tag >> 8), (FT_Char)(entry->Tag), entry->Offset, entry->Length));
 	}
 
 	FT2_1_3_FRAME_EXIT();
 
-	FT2_1_3_TRACE2(("Directory loaded\n\n"));
+	FT_TRACE2(("Directory loaded\n\n"));
 
 Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_any(TT_Face face, FT_ULong tag, FT_Long offset, FT_Byte *buffer, FT_ULong *length) {
 	FT_Error  error;
 	FT_Stream stream;
@@ -356,12 +356,12 @@ static FT_Error tt_face_load_generic_header(TT_Face face, FT_Stream stream, FT_U
 		FT2_1_3_FRAME_END
 	};
 
-	FT2_1_3_TRACE2(("tt_face_load_generic_header: %08p, looking up font table `%c%c%c%c'.\n", face,
+	FT_TRACE2(("tt_face_load_generic_header: %08p, looking up font table `%c%c%c%c'.\n", face,
 					(FT_Char)(tag >> 24), (FT_Char)(tag >> 16), (FT_Char)(tag >> 8), (FT_Char)(tag)));
 
 	error = face->goto_table(face, tag, stream, 0);
 	if (error) {
-		FT2_1_3_TRACE2(("tt_face_load_generic_header: Font table is missing!\n"));
+		FT_TRACE2(("tt_face_load_generic_header: Font table is missing!\n"));
 		goto Exit;
 	}
 
@@ -370,29 +370,29 @@ static FT_Error tt_face_load_generic_header(TT_Face face, FT_Stream stream, FT_U
 	if (FT2_1_3_STREAM_READ_FIELDS(header_fields, header))
 		goto Exit;
 
-	FT2_1_3_TRACE2(("    Units per EM: %8u\n", header->Units_Per_EM));
-	FT2_1_3_TRACE2(("    IndexToLoc:   %8d\n", header->Index_To_Loc_Format));
-	FT2_1_3_TRACE2(("tt_face_load_generic_header: Font table loaded.\n"));
+	FT_TRACE2(("    Units per EM: %8u\n", header->Units_Per_EM));
+	FT_TRACE2(("    IndexToLoc:   %8d\n", header->Index_To_Loc_Format));
+	FT_TRACE2(("tt_face_load_generic_header: Font table loaded.\n"));
 
 Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_header(TT_Face face, FT_Stream stream) {
 	return tt_face_load_generic_header(face, stream, TTAG_head);
 }
 
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_bitmap_header(TT_Face face, FT_Stream stream) {
 	return tt_face_load_generic_header(face, stream, TTAG_bhed);
 }
 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_max_profile(TT_Face face, FT_Stream stream) {
 	FT_Error 	  error;
 	TT_MaxProfile *maxProfile = &face->max_profile;
@@ -425,7 +425,7 @@ tt_face_load_max_profile(TT_Face face, FT_Stream stream) {
 		FT2_1_3_FRAME_END
 	};
 
-	FT2_1_3_TRACE2(("Load_TT_MaxProfile: %08p\n", face));
+	FT_TRACE2(("Load_TT_MaxProfile: %08p\n", face));
 
 	error = face->goto_table(face, TTAG_maxp, stream, 0);
 	if (error)
@@ -480,7 +480,7 @@ tt_face_load_max_profile(TT_Face face, FT_Stream stream) {
 		face->root.internal->max_contours += (FT_Short)4;
 	}
 
-	FT2_1_3_TRACE2(("MAXP loaded.\n"));
+	FT_TRACE2(("MAXP loaded.\n"));
 
 Exit:
 	return error;
@@ -496,7 +496,7 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 	TT_LongMetrics  *longs;
 	TT_ShortMetrics **shorts;
 
-	FT2_1_3_TRACE2(("TT_Load_%s_Metrics: %08p\n", vertical ? "Vertical" : "Horizontal", face));
+	FT_TRACE2(("TT_Load_%s_Metrics: %08p\n", vertical ? "Vertical" : "Horizontal", face));
 
 	if (vertical) {
 		/* The table is optional, quit silently if it wasn't found       */
@@ -510,7 +510,7 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 		error = face->goto_table(face, TTAG_vmtx, stream, &table_len);
 		if (error) {
 			/* Set number_Of_VMetrics to 0! */
-			FT2_1_3_TRACE2(("  no vertical header in file.\n"));
+			FT_TRACE2(("  no vertical header in file.\n"));
 			face->vertical.number_Of_VMetrics = 0;
 			error = FT2_1_3_Err_Ok;
 			goto Exit;
@@ -522,7 +522,7 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 	} else {
 		error = face->goto_table(face, TTAG_hmtx, stream, &table_len);
 		if (error) {
-			FT2_1_3_ERROR((" no horizontal metrics in file!\n"));
+			FT_ERROR((" no horizontal metrics in file!\n"));
 			error = FT2_1_3_Err_Hmtx_Table_Missing;
 			goto Exit;
 		}
@@ -538,13 +538,13 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 	num_shorts_checked = (table_len - num_longs * 4L) / 2;
 
 	if (num_shorts < 0) {
-		FT2_1_3_ERROR(("TT_Load_%s_Metrics: more metrics than glyphs!\n", vertical ? "Vertical" : "Horizontal"));
+		FT_ERROR(("TT_Load_%s_Metrics: more metrics than glyphs!\n", vertical ? "Vertical" : "Horizontal"));
 
 		error = vertical ? FT2_1_3_Err_Invalid_Vert_Metrics : FT2_1_3_Err_Invalid_Horiz_Metrics;
 		goto Exit;
 	}
 
-	if (FT2_1_3_NEW_ARRAY(*longs, num_longs) || FT2_1_3_NEW_ARRAY(*shorts, num_shorts))
+	if (FT_NEW_ARRAY(*longs, num_longs) || FT_NEW_ARRAY(*shorts, num_shorts))
 		goto Exit;
 
 	if (FT2_1_3_FRAME_ENTER(table_len))
@@ -582,13 +582,13 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 
 	FT2_1_3_FRAME_EXIT();
 
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_metrics_header(TT_Face face, FT_Stream stream, FT_Bool vertical) {
 	FT_Error 	  error;
 	TT_HoriHeader *header;
@@ -618,7 +618,7 @@ tt_face_load_metrics_header(TT_Face face, FT_Stream stream, FT_Bool vertical) {
 		FT2_1_3_FRAME_END
 	};
 
-	FT2_1_3_TRACE2((vertical ? "Vertical header " : "Horizontal header "));
+	FT_TRACE2((vertical ? "Vertical header " : "Horizontal header "));
 
 	if (vertical) {
 		face->vertical_info = 0;
@@ -651,7 +651,7 @@ tt_face_load_metrics_header(TT_Face face, FT_Stream stream, FT_Bool vertical) {
 	header->long_metrics = NULL;
 	header->short_metrics = NULL;
 
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 	/* Now try to load the corresponding metrics */
 
@@ -661,7 +661,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_names(TT_Face face, FT_Stream stream) {
 	FT_Error      error;
 	FT_Memory     memory = stream->memory;
@@ -698,12 +698,12 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 	table = &face->name_table;
 	table->stream = stream;
 
-	FT2_1_3_TRACE2(("Names "));
+	FT_TRACE2(("Names "));
 
 	error = face->goto_table(face, TTAG_name, stream, &table_len);
 	if (error) {
 		/* The name table is required so indicate failure. */
-		FT2_1_3_TRACE2(("is missing!\n"));
+		FT_TRACE2(("is missing!\n"));
 		error = FT2_1_3_Err_Name_Table_Missing;
 		goto Exit;
 	}
@@ -724,7 +724,7 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 	storage_limit = table_pos + table_len;
 
 	if (storage_start > storage_limit) {
-		FT2_1_3_ERROR(("tt_face_load_names: invalid `name' table\n"));
+		FT_ERROR(("tt_face_load_names: invalid `name' table\n"));
 		error = FT2_1_3_Err_Name_Table_Missing;
 		goto Exit;
 	}
@@ -733,7 +733,7 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 	count = table->numNameRecords;
 	table->numNameRecords = 0;
 
-	if (FT2_1_3_NEW_ARRAY(table->names, count) || FT2_1_3_FRAME_ENTER(count * 12))
+	if (FT_NEW_ARRAY(table->names, count) || FT2_1_3_FRAME_ENTER(count * 12))
 		goto Exit;
 
 	/* Load the name records and determine how much storage is needed */
@@ -766,7 +766,7 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 
 	FT2_1_3_FRAME_EXIT();
 
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 	/* everything went well, update face->num_names */
 	face->num_names = (FT_UShort)table->numNameRecords;
@@ -775,7 +775,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_face_free_names(TT_Face face) {
 	FT_Memory memory   = face->root.driver->root.memory;
 	TT_NameTable table = &face->name_table;
@@ -795,21 +795,21 @@ tt_face_free_names(TT_Face face) {
 	table->storageOffset = 0;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_cmap(TT_Face face, FT_Stream stream) {
 	FT_Error error;
 
 	error = face->goto_table(face, TTAG_cmap, stream, &face->cmap_size);
 	if (error) {
-		FT2_1_3_TRACE2(("No `cmap' table in font !\n"));
+		FT_TRACE2(("No `cmap' table in font !\n"));
 		error = FT2_1_3_Err_CMap_Table_Missing;
 		goto Exit;
 	}
 
 	if (!FT2_1_3_FRAME_EXTRACT(face->cmap_size, face->cmap_table))
-		FT2_1_3_TRACE2(("`cmap' table loaded\n"));
+		FT_TRACE2(("`cmap' table loaded\n"));
 	else {
-		FT2_1_3_ERROR(("`cmap' table is too short!\n"));
+		FT_ERROR(("`cmap' table is too short!\n"));
 		face->cmap_size = 0;
 	}
 
@@ -817,7 +817,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_os2(TT_Face face, FT_Stream stream) {
 	FT_Error error;
 	TT_OS2 *os2;
@@ -890,14 +890,14 @@ tt_face_load_os2(TT_Face face, FT_Stream stream) {
 		FT2_1_3_FRAME_END
 	};
 
-	FT2_1_3_TRACE2(("OS/2 Table "));
+	FT_TRACE2(("OS/2 Table "));
 
 	/* We now support old Mac fonts where the OS/2 table doesn't  */
 	/* exist.  Simply put, we set the `version' field to 0xFFFF   */
 	/* and test this value each time we need to access the table. */
 	error = face->goto_table(face, TTAG_OS2, stream, 0);
 	if (error) {
-		FT2_1_3_TRACE2(("is missing!\n"));
+		FT_TRACE2(("is missing!\n"));
 		face->os2.version = 0xFFFFU;
 		error = FT2_1_3_Err_Ok;
 		goto Exit;
@@ -928,13 +928,13 @@ tt_face_load_os2(TT_Face face, FT_Stream stream) {
 		}
 	}
 
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_postscript(TT_Face face, FT_Stream stream) {
 	FT_Error 	  error;
 	TT_Postscript *post = &face->postscript;
@@ -956,7 +956,7 @@ tt_face_load_postscript(TT_Face face, FT_Stream stream) {
 		FT2_1_3_FRAME_END
 	};
 
-	FT2_1_3_TRACE2(("PostScript "));
+	FT_TRACE2(("PostScript "));
 
 	error = face->goto_table(face, TTAG_post, stream, 0);
 	if (error)
@@ -967,12 +967,12 @@ tt_face_load_postscript(TT_Face face, FT_Stream stream) {
 
 	/* we don't load the glyph names, we do that in another */
 	/* module (ttpost).                                     */
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 	return FT2_1_3_Err_Ok;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_pclt(TT_Face face, FT_Stream stream) {
 	static const FT_Frame_Field  pclt_fields[] = {
 #undef  FT2_1_3_STRUCTURE
@@ -999,12 +999,12 @@ tt_face_load_pclt(TT_Face face, FT_Stream stream) {
 	FT_Error error;
 	TT_PCLT *pclt = &face->pclt;
 
-	FT2_1_3_TRACE2(("PCLT "));
+	FT_TRACE2(("PCLT "));
 
 	/* optional table */
 	error = face->goto_table(face, TTAG_PCLT, stream, 0);
 	if (error) {
-		FT2_1_3_TRACE2(("missing (optional)\n"));
+		FT_TRACE2(("missing (optional)\n"));
 		pclt->Version = 0;
 		return FT2_1_3_Err_Ok;
 	}
@@ -1012,13 +1012,13 @@ tt_face_load_pclt(TT_Face face, FT_Stream stream) {
 	if (FT2_1_3_STREAM_READ_FIELDS(pclt_fields, pclt))
 		goto Exit;
 
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_gasp(TT_Face face, FT_Stream stream) {
 	FT_Error  error;
 	FT_Memory memory = stream->memory;
@@ -1026,7 +1026,7 @@ tt_face_load_gasp(TT_Face face, FT_Stream stream) {
 	FT_UInt j, num_ranges;
 	TT_GaspRange gaspranges;
 
-	FT2_1_3_TRACE2(("tt_face_load_gasp: %08p\n", face));
+	FT_TRACE2(("tt_face_load_gasp: %08p\n", face));
 
 	/* the gasp table is optional */
 	error = face->goto_table(face, TTAG_gasp, stream, 0);
@@ -1042,9 +1042,9 @@ tt_face_load_gasp(TT_Face face, FT_Stream stream) {
 	FT2_1_3_FRAME_EXIT();
 
 	num_ranges = face->gasp.numRanges;
-	FT2_1_3_TRACE3(("number of ranges = %d\n", num_ranges));
+	FT_TRACE3(("number of ranges = %d\n", num_ranges));
 
-	if (FT2_1_3_NEW_ARRAY(gaspranges, num_ranges) || FT2_1_3_FRAME_ENTER(num_ranges * 4L))
+	if (FT_NEW_ARRAY(gaspranges, num_ranges) || FT2_1_3_FRAME_ENTER(num_ranges * 4L))
 		goto Exit;
 
 	face->gasp.gaspRanges = gaspranges;
@@ -1053,21 +1053,21 @@ tt_face_load_gasp(TT_Face face, FT_Stream stream) {
 		gaspranges[j].maxPPEM  = FT2_1_3_GET_USHORT();
 		gaspranges[j].gaspFlag = FT2_1_3_GET_USHORT();
 
-		FT2_1_3_TRACE3((" [max:%d flag:%d]", gaspranges[j].maxPPEM, gaspranges[j].gaspFlag));
+		FT_TRACE3((" [max:%d flag:%d]", gaspranges[j].maxPPEM, gaspranges[j].gaspFlag));
 	}
-	FT2_1_3_TRACE3(("\n"));
+	FT_TRACE3(("\n"));
 
 	FT2_1_3_FRAME_EXIT();
-	FT2_1_3_TRACE2(("GASP loaded\n"));
+	FT_TRACE2(("GASP loaded\n"));
 
 Exit:
 	return error;
 }
 
-FT2_1_3_CALLBACK_DEF(int)
+FT_CALLBACK_DEF(int)
 tt_kern_pair_compare(const void *a, const void *b);
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_kern(TT_Face face, FT_Stream stream) {
 	FT_Error  error;
 	FT_Memory memory = stream->memory;
@@ -1116,7 +1116,7 @@ tt_face_load_kern(TT_Face face, FT_Stream stream) {
 			FT2_1_3_FRAME_EXIT();
 
 			/* allocate array of kerning pairs */
-			if (FT2_1_3_NEW_ARRAY(face->kern_pairs, num_pairs) || FT2_1_3_FRAME_ENTER(6L * num_pairs))
+			if (FT_NEW_ARRAY(face->kern_pairs, num_pairs) || FT2_1_3_FRAME_ENTER(6L * num_pairs))
 				goto Exit;
 
 			pair  = face->kern_pairs;
@@ -1167,7 +1167,7 @@ Exit:
 #undef TT_KERN_INDEX
 #define TT_KERN_INDEX(g1, g2) (((FT_ULong)g1 << 16) | g2)
 
-FT2_1_3_CALLBACK_DEF(int)
+FT_CALLBACK_DEF(int)
 tt_kern_pair_compare(const void *a, const void *b) {
 
 	TT_Kern0_Pair pair1 = const_cast<TT_Kern0_Pair>(static_cast<const TT_Kern0_PairRec_ *>(a));
@@ -1181,7 +1181,7 @@ tt_kern_pair_compare(const void *a, const void *b) {
 
 #undef TT_KERN_INDEX
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_hdmx(TT_Face face, FT_Stream stream) {
 	FT_Error  error;
 	FT_Memory memory = stream->memory;
@@ -1212,7 +1212,7 @@ tt_face_load_hdmx(TT_Face face, FT_Stream stream) {
 	if (hdmx->version != 0)
 		goto Exit;
 
-	if (FT2_1_3_NEW_ARRAY(hdmx->records, hdmx->num_records))
+	if (FT_NEW_ARRAY(hdmx->records, hdmx->num_records))
 		goto Exit;
 
 	num_glyphs = face->root.num_glyphs;
@@ -1242,7 +1242,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_face_free_hdmx(TT_Face face) {
 	if (face) {
 		FT_Int    n;

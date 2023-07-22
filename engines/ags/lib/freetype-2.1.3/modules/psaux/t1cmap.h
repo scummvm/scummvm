@@ -38,7 +38,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /**** TYPE1 STANDARD (AND EXPERT) ENCODING CMAPS ****/
@@ -56,8 +56,8 @@ typedef struct T1_CMapStdRec_ {
 	const char *const *glyph_names;
 } T1_CMapStdRec;
 
-FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_standard_class_rec;
-FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_expert_class_rec;
+FT_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_standard_class_rec;
+FT_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_expert_class_rec;
 
 
 /**** TYPE1 CUSTOM ENCODING CMAP ****/
@@ -71,7 +71,7 @@ typedef struct T1_CMapCustomRec_ {
 	FT_UShort  *indices;
 } T1_CMapCustomRec;
 
-FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_custom_class_rec;
+FT_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_custom_class_rec;
 
 
 /**** TYPE1 SYNTHETIC UNICODE ENCODING CMAP ****/
@@ -90,10 +90,10 @@ typedef struct T1_CMapUnicodeRec_ {
 	T1_CMapUniPair pairs;
 } T1_CMapUnicodeRec;
 
-FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_unicode_class_rec;
+FT_CALLBACK_TABLE const FT_CMap_ClassRec t1_cmap_unicode_class_rec;
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -31,7 +31,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* Type42 size */
@@ -62,7 +62,7 @@ typedef struct  T42_DriverRec_ {
 /* */
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 T42_Face_Init( FT_Stream      stream,
 			   T42_Face       face,
 			   FT_Int         face_index,
@@ -70,53 +70,53 @@ T42_Face_Init( FT_Stream      stream,
 			   FT_Parameter*  params );
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 T42_Face_Done( T42_Face  face );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 T42_Size_Init( T42_Size  size );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 T42_Size_SetChars( T42_Size    size,
 				   FT_F26Dot6  char_width,
 				   FT_F26Dot6  char_height,
 				   FT_UInt     horz_resolution,
 				   FT_UInt     vert_resolution );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 T42_Size_SetPixels( T42_Size  size,
 					FT_UInt   pixel_width,
 					FT_UInt   pixel_height );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 T42_Size_Done( T42_Size  size );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 T42_GlyphSlot_Init( T42_GlyphSlot  slot );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 T42_GlyphSlot_Load( FT_GlyphSlot  glyph,
 					FT_Size       size,
 					FT_Int        glyph_index,
 					FT_Int32      load_flags );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 T42_GlyphSlot_Done( T42_GlyphSlot slot );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 T42_Driver_Init( T42_Driver  driver );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 T42_Driver_Done( T42_Driver  driver );
 
 /* */
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

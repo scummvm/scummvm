@@ -37,64 +37,64 @@
 
 #undef FT2_1_3_NEED_EXTERN_C
 
-#undef FT2_1_3_ERR_XCAT
-#undef FT2_1_3_ERR_CAT
+#undef FT_ERR_XCAT
+#undef FT_ERR_CAT
 
-#define FT2_1_3_ERR_XCAT(x, y) x##y
-#define FT2_1_3_ERR_CAT(x, y) FT2_1_3_ERR_XCAT(x, y)
+#define FT_ERR_XCAT(x, y) x##y
+#define FT_ERR_CAT(x, y) FT_ERR_XCAT(x, y)
 
-/* FT2_1_3_ERR_PREFIX is used as a prefix for error identifiers. */
+/* FT_ERR_PREFIX is used as a prefix for error identifiers. */
 /* By default, we use `FT2_1_3_Err_'.                            */
-#ifndef FT2_1_3_ERR_PREFIX
-#define FT2_1_3_ERR_PREFIX FT2_1_3_Err_
+#ifndef FT_ERR_PREFIX
+#define FT_ERR_PREFIX FT2_1_3_Err_
 #endif
 
-/* FT2_1_3_ERR_BASE is used as the base for module-specific errors. */
-#ifdef FT2_1_3_CONFIG_OPTION_USE_MODULE_ERRORS
+/* FT_ERR_BASE is used as the base for module-specific errors. */
+#ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
 
-#ifndef FT2_1_3_ERR_BASE
-#define FT2_1_3_ERR_BASE FT2_1_3_Mod_Err_Base
+#ifndef FT_ERR_BASE
+#define FT_ERR_BASE FT2_1_3_Mod_Err_Base
 #endif
 
 #else
 
-#undef FT2_1_3_ERR_BASE
-#define FT2_1_3_ERR_BASE 0
+#undef FT_ERR_BASE
+#define FT_ERR_BASE 0
 
-#endif /* FT2_1_3_CONFIG_OPTION_USE_MODULE_ERRORS */
+#endif /* FT_CONFIG_OPTION_USE_MODULE_ERRORS */
 
-/* If FT2_1_3_ERRORDEF is not defined, we need to define a simple */
-#ifndef FT2_1_3_ERRORDEF
+/* If FT_ERRORDEF is not defined, we need to define a simple */
+#ifndef FT_ERRORDEF
 
-#define FT2_1_3_ERRORDEF(e, v, s) e = v,
-#define FT2_1_3_ERROR_START_LIST enum {
+#define FT_ERRORDEF(e, v, s) e = v,
+#define FT_ERROR_START_LIST enum {
 
-#define FT2_1_3_ERROR_END_LIST       FT2_1_3_ERR_CAT( FT2_1_3_ERR_PREFIX, Max ) };
+#define FT_ERROR_END_LIST       FT_ERR_CAT( FT_ERR_PREFIX, Max ) };
 
 #ifdef __cplusplus
 #define FT2_1_3_NEED_EXTERN_C
 extern "C" {
 #endif
 
-#endif /* !FT2_1_3_ERRORDEF */
+#endif /* !FT_ERRORDEF */
 
 /* this macro is used to define an error */
-#define FT2_1_3_ERRORDEF_(e, v, s) \
-	FT2_1_3_ERRORDEF(FT2_1_3_ERR_CAT(FT2_1_3_ERR_PREFIX, e), v + FT2_1_3_ERR_BASE, s)
+#define FT_ERRORDEF_(e, v, s) \
+	FT_ERRORDEF(FT_ERR_CAT(FT_ERR_PREFIX, e), v + FT_ERR_BASE, s)
 
 /* this is only used for FT2_1_3_Err_Ok, which must be 0! */
 #define FT2_1_3_NOERRORDEF_(e, v, s) \
-	FT2_1_3_ERRORDEF(FT2_1_3_ERR_CAT(FT2_1_3_ERR_PREFIX, e), v, s)
+	FT_ERRORDEF(FT_ERR_CAT(FT_ERR_PREFIX, e), v, s)
 
-#ifdef FT2_1_3_ERROR_START_LIST
-FT2_1_3_ERROR_START_LIST
+#ifdef FT_ERROR_START_LIST
+FT_ERROR_START_LIST
 #endif
 
 /* now include the error codes */
 #include "engines/ags/lib/freetype-2.1.3/fterrdef.h"
 
-#ifdef FT2_1_3_ERROR_END_LIST
-FT2_1_3_ERROR_END_LIST
+#ifdef FT_ERROR_END_LIST
+FT_ERROR_END_LIST
 #endif
 
 
@@ -104,16 +104,16 @@ FT2_1_3_ERROR_END_LIST
 }
 #endif
 
-#undef FT2_1_3_ERROR_START_LIST
-#undef FT2_1_3_ERROR_END_LIST
+#undef FT_ERROR_START_LIST
+#undef FT_ERROR_END_LIST
 
-#undef FT2_1_3_ERRORDEF
-#undef FT2_1_3_ERRORDEF_
+#undef FT_ERRORDEF
+#undef FT_ERRORDEF_
 #undef FT2_1_3_NOERRORDEF_
 
 #undef FT2_1_3_NEED_EXTERN_C
-#undef FT2_1_3_ERR_PREFIX
-#undef FT2_1_3_ERR_BASE
-#undef FT2_1_3_ERR_CONCAT
+#undef FT_ERR_PREFIX
+#undef FT_ERR_BASE
+#undef FT_ERR_CONCAT
 
 #endif /* AGS_LIB_FREETYPE_FTERRORS_H */

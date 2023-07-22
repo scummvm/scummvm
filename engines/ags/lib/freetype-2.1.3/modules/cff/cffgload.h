@@ -27,7 +27,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 #define CFF_MAX_OPERANDS     48
@@ -172,7 +172,7 @@ typedef struct  CFF_Decoder_ {
 } CFF_Decoder;
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cff_decoder_init( CFF_Decoder*    decoder,
 				  TT_Face         face,
 				  CFF_Size        size,
@@ -180,32 +180,32 @@ cff_decoder_init( CFF_Decoder*    decoder,
 				  FT_Bool         hinting,
 				  FT_Render_Mode  hint_mode );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cff_decoder_prepare( CFF_Decoder*  decoder,
 					 FT_UInt       glyph_index );
 
 #if 0  /* unused until we support pure CFF fonts */
 
 /* Compute the maximum advance width of a font through quick parsing */
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_compute_max_advance( TT_Face  face,
 						 FT_Int*  max_advance );
 
 #endif /* 0 */
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 							   FT_Byte*      charstring_base,
 							   FT_ULong      charstring_len );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_slot_load( CFF_GlyphSlot  glyph,
 			   CFF_Size       size,
 			   FT_Int         glyph_index,
 			   FT_Int32       load_flags );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

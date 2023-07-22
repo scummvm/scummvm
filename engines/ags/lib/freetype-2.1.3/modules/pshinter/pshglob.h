@@ -26,7 +26,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -149,18 +149,18 @@ typedef struct  PSH_AlignmentRec_ {
 } PSH_AlignmentRec, *PSH_Alignment;
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 psh_globals_funcs_init( PSH_Globals_FuncsRec*  funcs );
 
 
 /* snap a stem width to fitter coordinates.  `org_width' is in font */
 /* units.  The result is in device pixels (26.6 format).            */
-FT2_1_3_LOCAL( FT_Pos )
+FT_LOCAL( FT_Pos )
 psh_dimension_snap_width( PSH_Dimension  dimension,
 						  FT_Int         org_width );
 
 /* snap a stem to one or two blue zones */
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 psh_blues_snap_stem( PSH_Blues      blues,
 					 FT_Int         stem_top,
 					 FT_Int         stem_bot,
@@ -172,7 +172,7 @@ extern PSH_Globals  ps_debug_globals;
 #endif
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

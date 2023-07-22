@@ -39,15 +39,15 @@ THE SOFTWARE.
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pcfread
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pcfread
 
 
-#if defined( FT2_1_3_DEBUG_LEVEL_TRACE )
+#if defined( FT_DEBUG_LEVEL_TRACE )
 static const char*  tableNames[] = {
 	"prop", "accl", "mtrcs", "bmps", "imtrcs",
 	"enc", "swidth", "names", "accel"
@@ -101,7 +101,7 @@ pcf_read_TOC( FT_Stream  stream,
 	if ( toc->version != PCF_FILE_VERSION )
 		return FT2_1_3_Err_Invalid_File_Format;
 
-	if ( FT2_1_3_NEW_ARRAY( face->toc.tables, toc->count ) )
+	if ( FT_NEW_ARRAY( face->toc.tables, toc->count ) )
 		return FT2_1_3_Err_Out_Of_Memory;
 
 	tables = face->toc.tables;
@@ -111,21 +111,21 @@ pcf_read_TOC( FT_Stream  stream,
 		tables++;
 	}
 
-#if defined( FT2_1_3_DEBUG_LEVEL_TRACE )
+#if defined( FT_DEBUG_LEVEL_TRACE )
 
 	{
 		FT_UInt      i, j;
 		const char*  name = "?";
 
 
-		FT2_1_3_TRACE4(( "Tables count: %ld\n", face->toc.count ));
+		FT_TRACE4(( "Tables count: %ld\n", face->toc.count ));
 		tables = face->toc.tables;
 		for ( i = 0; i < toc->count; i++ ) {
 			for( j = 0; j < sizeof ( tableNames ) / sizeof ( tableNames[0] ); j++ )
 				if ( tables[i].type == (FT_UInt)( 1 << j ) )
 					name = tableNames[j];
 
-			FT2_1_3_TRACE4(( "Table %d: type=%-6s format=0x%04lX "
+			FT_TRACE4(( "Table %d: type=%-6s format=0x%04lX "
 						"size=0x%06lX (%8ld) offset=0x%04lX\n",
 						i, name,
 						tables[i].format,
@@ -345,7 +345,7 @@ pcf_get_properties( FT_Stream  stream,
 	if ( FT2_1_3_READ_ULONG_LE( format ) )
 		goto Bail;
 
-	FT2_1_3_TRACE4(( "get_prop: format = %ld\n", format ));
+	FT_TRACE4(( "get_prop: format = %ld\n", format ));
 
 	if ( !PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT ) )
 		goto Bail;
@@ -357,9 +357,9 @@ pcf_get_properties( FT_Stream  stream,
 	if ( error )
 		goto Bail;
 
-	FT2_1_3_TRACE4(( "get_prop: nprop = %d\n", nprops ));
+	FT_TRACE4(( "get_prop: nprop = %d\n", nprops ));
 
-	if ( FT2_1_3_NEW_ARRAY( props, nprops ) )
+	if ( FT_NEW_ARRAY( props, nprops ) )
 		goto Bail;
 
 	for ( i = 0; i < nprops; i++ ) {
@@ -389,21 +389,21 @@ pcf_get_properties( FT_Stream  stream,
 	if ( error )
 		goto Bail;
 
-	FT2_1_3_TRACE4(( "get_prop: string_size = %ld\n", string_size ));
+	FT_TRACE4(( "get_prop: string_size = %ld\n", string_size ));
 
-	if ( FT2_1_3_NEW_ARRAY( strings, string_size ) )
+	if ( FT_NEW_ARRAY( strings, string_size ) )
 		goto Bail;
 
 	error = FT_Stream_Read( stream, (FT_Byte*)strings, string_size );
 	if ( error )
 		goto Bail;
 
-	if ( FT2_1_3_NEW_ARRAY( properties, nprops ) )
+	if ( FT_NEW_ARRAY( properties, nprops ) )
 		goto Bail;
 
 	for ( i = 0; i < nprops; i++ ) {
 		/* XXX: make atom */
-		if ( FT2_1_3_NEW_ARRAY( properties[i].name,
+		if ( FT_NEW_ARRAY( properties[i].name,
 						   ft_strlen( strings + props[i].name ) + 1 ) )
 			goto Bail;
 		ft_strcpy( properties[i].name,strings + props[i].name );
@@ -411,7 +411,7 @@ pcf_get_properties( FT_Stream  stream,
 		properties[i].isString = props[i].isString;
 
 		if ( props[i].isString ) {
-			if ( FT2_1_3_NEW_ARRAY( properties[i].value.atom,
+			if ( FT_NEW_ARRAY( properties[i].value.atom,
 							   ft_strlen( strings + props[i].value ) + 1 ) )
 				goto Bail;
 			ft_strcpy( properties[i].value.atom, strings + props[i].value );
@@ -478,7 +478,7 @@ pcf_get_metrics( FT_Stream  stream,
 
 	face->nmetrics = nmetrics;
 
-	if ( FT2_1_3_NEW_ARRAY( face->metrics, nmetrics ) )
+	if ( FT_NEW_ARRAY( face->metrics, nmetrics ) )
 		return FT2_1_3_Err_Out_Of_Memory;
 
 	metrics = face->metrics;
@@ -487,7 +487,7 @@ pcf_get_metrics( FT_Stream  stream,
 
 		metrics[i].bits = 0;
 
-		FT2_1_3_TRACE4(( "%d : width=%d, "
+		FT_TRACE4(( "%d : width=%d, "
 					"lsb=%d, rsb=%d, ascent=%d, descent=%d, swidth=%d\n",
 					i,
 					( metrics + i )->characterWidth,
@@ -546,7 +546,7 @@ pcf_get_bitmaps( FT_Stream  stream,
 	if ( nbitmaps != face->nmetrics )
 		return FT2_1_3_Err_Invalid_File_Format;
 
-	if ( FT2_1_3_NEW_ARRAY( offsets, nbitmaps ) )
+	if ( FT_NEW_ARRAY( offsets, nbitmaps ) )
 		return error;
 
 	for ( i = 0; i < nbitmaps; i++ ) {
@@ -555,7 +555,7 @@ pcf_get_bitmaps( FT_Stream  stream,
 		else
 			(void)FT2_1_3_READ_LONG_LE( offsets[i] );
 
-		FT2_1_3_TRACE4(( "bitmap %d is at offset %ld\n", i, offsets[i] ));
+		FT_TRACE4(( "bitmap %d is at offset %ld\n", i, offsets[i] ));
 	}
 	if ( error )
 		goto Bail;
@@ -570,15 +570,15 @@ pcf_get_bitmaps( FT_Stream  stream,
 
 		sizebitmaps = bitmapSizes[PCF_GLYPH_PAD_INDEX( format )];
 
-		FT2_1_3_TRACE4(( "padding %d implies a size of %ld\n", i, bitmapSizes[i] ));
+		FT_TRACE4(( "padding %d implies a size of %ld\n", i, bitmapSizes[i] ));
 	}
 
-	FT2_1_3_TRACE4(( "  %d bitmaps, padding index %ld\n",
+	FT_TRACE4(( "  %d bitmaps, padding index %ld\n",
 				nbitmaps,
 				PCF_GLYPH_PAD_INDEX( format ) ));
-	FT2_1_3_TRACE4(( "bitmap size = %d\n", sizebitmaps ));
+	FT_TRACE4(( "bitmap size = %d\n", sizebitmaps ));
 
-	FT2_1_3_UNUSED( sizebitmaps );       /* only used for debugging */
+	FT_UNUSED( sizebitmaps );       /* only used for debugging */
 
 	for ( i = 0; i < nbitmaps; i++ )
 		face->metrics[i].bits = stream->pos + offsets[i];
@@ -642,12 +642,12 @@ pcf_get_encodings( FT_Stream  stream,
 	if ( !PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT ) )
 		return FT2_1_3_Err_Invalid_File_Format;
 
-	FT2_1_3_TRACE4(( "enc: firstCol %d, lastCol %d, firstRow %d, lastRow %d\n",
+	FT_TRACE4(( "enc: firstCol %d, lastCol %d, firstRow %d, lastRow %d\n",
 				firstCol, lastCol, firstRow, lastRow ));
 
 	nencoding = ( lastCol - firstCol + 1 ) * ( lastRow - firstRow + 1 );
 
-	if ( FT2_1_3_NEW_ARRAY( tmpEncoding, nencoding ) )
+	if ( FT_NEW_ARRAY( tmpEncoding, nencoding ) )
 		return FT2_1_3_Err_Out_Of_Memory;
 
 	error = FT_Stream_EnterFrame( stream, 2 * nencoding );
@@ -670,12 +670,12 @@ pcf_get_encodings( FT_Stream  stream,
 			j++;
 		}
 
-		FT2_1_3_TRACE4(( "enc n. %d ; Uni %ld ; Glyph %d\n",
+		FT_TRACE4(( "enc n. %d ; Uni %ld ; Glyph %d\n",
 					i, tmpEncoding[j - 1].enc, encodingOffset ));
 	}
 	FT_Stream_ExitFrame( stream );
 
-	if ( FT2_1_3_NEW_ARRAY( encoding, j ) )
+	if ( FT_NEW_ARRAY( encoding, j ) )
 		goto Bail;
 
 	for ( i = 0; i < j; i++ ) {
@@ -805,7 +805,7 @@ Bail:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pcf_load_font( FT_Stream  stream,
 			   PCF_Face   face ) {
 	FT_Error   error  = FT2_1_3_Err_Ok;
@@ -864,12 +864,12 @@ pcf_load_font( FT_Stream  stream,
 
 		root->num_faces = 1;
 		root->face_index = 0;
-		root->face_flags = FT2_1_3_FACE_FLAG_FIXED_SIZES |
-						   FT2_1_3_FACE_FLAG_HORIZONTAL  |
-						   FT2_1_3_FACE_FLAG_FAST_GLYPHS;
+		root->face_flags = FT_FACE_FLAG_FIXED_SIZES |
+						   FT_FACE_FLAG_HORIZONTAL  |
+						   FT_FACE_FLAG_FAST_GLYPHS;
 
 		if ( face->accel.constantWidth )
-			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+			root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
 		root->style_flags = 0;
 		prop = pcf_find_property( face, "SLANT" );
@@ -877,22 +877,22 @@ pcf_load_font( FT_Stream  stream,
 			if ( prop->isString )
 				if ( ( *(prop->value.atom) == 'O' ) ||
 						( *(prop->value.atom) == 'I' ) )
-					root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
+					root->style_flags |= FT_STYLE_FLAG_ITALIC;
 
 		prop = pcf_find_property( face, "WEIGHT_NAME" );
 		if ( prop != NULL )
 			if ( prop->isString )
 				if ( *(prop->value.atom) == 'B' )
-					root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
+					root->style_flags |= FT_STYLE_FLAG_BOLD;
 
 		root->style_name = const_cast<char *>("Regular");
 
-		if ( root->style_flags & FT2_1_3_STYLE_FLAG_BOLD ) {
-			if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
+		if ( root->style_flags & FT_STYLE_FLAG_BOLD ) {
+			if ( root->style_flags & FT_STYLE_FLAG_ITALIC )
 				root->style_name = const_cast<char *>("Bold Italic");
 			else
 				root->style_name = const_cast<char *>("Bold");
-		} else if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
+		} else if ( root->style_flags & FT_STYLE_FLAG_ITALIC )
 			root->style_name = const_cast<char *>("Italic");
 
 		prop = pcf_find_property( face, "FAMILY_NAME" );
@@ -901,7 +901,7 @@ pcf_load_font( FT_Stream  stream,
 				int  l = ft_strlen( prop->value.atom ) + 1;
 
 
-				if ( FT2_1_3_NEW_ARRAY( root->family_name, l ) )
+				if ( FT_NEW_ARRAY( root->family_name, l ) )
 					goto Exit;
 				ft_strcpy( root->family_name, prop->value.atom );
 			}
@@ -911,7 +911,7 @@ pcf_load_font( FT_Stream  stream,
 		root->num_glyphs = face->nmetrics;
 
 		root->num_fixed_sizes = 1;
-		if ( FT2_1_3_NEW_ARRAY( root->available_sizes, 1 ) )
+		if ( FT_NEW_ARRAY( root->available_sizes, 1 ) )
 			goto Exit;
 
 		prop = pcf_find_property( face, "PIXEL_SIZE" );
@@ -961,11 +961,11 @@ pcf_load_font( FT_Stream  stream,
 					( charset_encoding != NULL ) ) {
 				if ( ( charset_registry->isString ) &&
 						( charset_encoding->isString ) ) {
-					if ( FT2_1_3_NEW_ARRAY( face->charset_encoding,
+					if ( FT_NEW_ARRAY( face->charset_encoding,
 									   ft_strlen( charset_encoding->value.atom ) + 1 ) )
 						goto Exit;
 
-					if ( FT2_1_3_NEW_ARRAY( face->charset_registry,
+					if ( FT_NEW_ARRAY( face->charset_registry,
 									   ft_strlen( charset_registry->value.atom ) + 1 ) )
 						goto Exit;
 

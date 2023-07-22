@@ -58,7 +58,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 typedef struct FT_Glyph_Metrics_ {
 	FT_Pos width;  /* glyph width  */
@@ -89,8 +89,8 @@ typedef struct FT_GlyphSlotRec_ *FT_GlyphSlot;
 typedef struct FT_CharMapRec_ *FT_CharMap;
 
 
-#ifndef FT2_1_3_ENC_TAG
-#define FT2_1_3_ENC_TAG(value, a, b, c, d) \
+#ifndef FT_ENC_TAG
+#define FT_ENC_TAG(value, a, b, c, d) \
 	value = (((FT_UInt32)(a) << 24) |      \
 			 ((FT_UInt32)(b) << 16) |      \
 			 ((FT_UInt32)(c) << 8) |       \
@@ -99,44 +99,44 @@ typedef struct FT_CharMapRec_ *FT_CharMap;
 
 
 typedef enum FT_Encoding_ {
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_NONE, 0, 0, 0, 0),
+	FT_ENC_TAG(FT_ENCODING_NONE, 0, 0, 0, 0),
 
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_MS_SYMBOL, 's', 'y', 'm', 'b'),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_UNICODE, 'u', 'n', 'i', 'c'),
+	FT_ENC_TAG(FT_ENCODING_MS_SYMBOL, 's', 'y', 'm', 'b'),
+	FT_ENC_TAG(FT_ENCODING_UNICODE, 'u', 'n', 'i', 'c'),
 
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_MS_SJIS, 's', 'j', 'i', 's'),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_MS_GB2312, 'g', 'b', ' ', ' '),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_MS_BIG5, 'b', 'i', 'g', '5'),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_MS_WANSUNG, 'w', 'a', 'n', 's'),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_MS_JOHAB, 'j', 'o', 'h', 'a'),
+	FT_ENC_TAG(FT_ENCODING_MS_SJIS, 's', 'j', 'i', 's'),
+	FT_ENC_TAG(FT_ENCODING_MS_GB2312, 'g', 'b', ' ', ' '),
+	FT_ENC_TAG(FT_ENCODING_MS_BIG5, 'b', 'i', 'g', '5'),
+	FT_ENC_TAG(FT_ENCODING_MS_WANSUNG, 'w', 'a', 'n', 's'),
+	FT_ENC_TAG(FT_ENCODING_MS_JOHAB, 'j', 'o', 'h', 'a'),
 
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_ADOBE_STANDARD, 'A', 'D', 'O', 'B'),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_ADOBE_EXPERT, 'A', 'D', 'B', 'E'),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_ADOBE_CUSTOM, 'A', 'D', 'B', 'C'),
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_ADOBE_LATIN_1, 'l', 'a', 't', '1'),
+	FT_ENC_TAG(FT_ENCODING_ADOBE_STANDARD, 'A', 'D', 'O', 'B'),
+	FT_ENC_TAG(FT_ENCODING_ADOBE_EXPERT, 'A', 'D', 'B', 'E'),
+	FT_ENC_TAG(FT_ENCODING_ADOBE_CUSTOM, 'A', 'D', 'B', 'C'),
+	FT_ENC_TAG(FT_ENCODING_ADOBE_LATIN_1, 'l', 'a', 't', '1'),
 
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_OLD_LATIN_2, 'l', 'a', 't', '2'),
+	FT_ENC_TAG(FT_ENCODING_OLD_LATIN_2, 'l', 'a', 't', '2'),
 
-	FT2_1_3_ENC_TAG(FT2_1_3_ENCODING_APPLE_ROMAN, 'a', 'r', 'm', 'n')
+	FT_ENC_TAG(FT_ENCODING_APPLE_ROMAN, 'a', 'r', 'm', 'n')
 } FT_Encoding;
 
 /*    These constants are deprecated; use the corresponding @FT_Encoding */
 /*    values instead.                                                    */
-#define  ft_encoding_none            FT2_1_3_ENCODING_NONE
-#define  ft_encoding_unicode         FT2_1_3_ENCODING_UNICODE
-#define  ft_encoding_symbol          FT2_1_3_ENCODING_MS_SYMBOL
-#define  ft_encoding_latin_1         FT2_1_3_ENCODING_ADOBE_LATIN_1
-#define  ft_encoding_latin_2         FT2_1_3_ENCODING_OLD_LATIN_2
-#define  ft_encoding_sjis            FT2_1_3_ENCODING_MS_SJIS
-#define  ft_encoding_gb2312          FT2_1_3_ENCODING_MS_GB2312
-#define  ft_encoding_big5            FT2_1_3_ENCODING_MS_BIG5
-#define  ft_encoding_wansung         FT2_1_3_ENCODING_MS_WANSUNG
-#define  ft_encoding_johab           FT2_1_3_ENCODING_MS_JOHAB
+#define  ft_encoding_none            FT_ENCODING_NONE
+#define  ft_encoding_unicode         FT_ENCODING_UNICODE
+#define  ft_encoding_symbol          FT_ENCODING_MS_SYMBOL
+#define  ft_encoding_latin_1         FT_ENCODING_ADOBE_LATIN_1
+#define  ft_encoding_latin_2         FT_ENCODING_OLD_LATIN_2
+#define  ft_encoding_sjis            FT_ENCODING_MS_SJIS
+#define  ft_encoding_gb2312          FT_ENCODING_MS_GB2312
+#define  ft_encoding_big5            FT_ENCODING_MS_BIG5
+#define  ft_encoding_wansung         FT_ENCODING_MS_WANSUNG
+#define  ft_encoding_johab           FT_ENCODING_MS_JOHAB
 
-#define  ft_encoding_adobe_standard  FT2_1_3_ENCODING_ADOBE_STANDARD
-#define  ft_encoding_adobe_expert    FT2_1_3_ENCODING_ADOBE_EXPERT
-#define  ft_encoding_adobe_custom    FT2_1_3_ENCODING_ADOBE_CUSTOM
-#define  ft_encoding_apple_roman     FT2_1_3_ENCODING_APPLE_ROMAN
+#define  ft_encoding_adobe_standard  FT_ENCODING_ADOBE_STANDARD
+#define  ft_encoding_adobe_expert    FT_ENCODING_ADOBE_EXPERT
+#define  ft_encoding_adobe_custom    FT_ENCODING_ADOBE_CUSTOM
+#define  ft_encoding_apple_roman     FT_ENCODING_APPLE_ROMAN
 
 
 typedef struct FT_CharMapRec_ {
@@ -204,50 +204,50 @@ typedef struct FT_FaceRec_ {
 } FT_FaceRec;
 
 
-#define FT2_1_3_FACE_FLAG_SCALABLE          ( 1L <<  0 )
-#define FT2_1_3_FACE_FLAG_FIXED_SIZES       ( 1L <<  1 )
-#define FT2_1_3_FACE_FLAG_FIXED_WIDTH       ( 1L <<  2 )
-#define FT2_1_3_FACE_FLAG_SFNT              ( 1L <<  3 )
-#define FT2_1_3_FACE_FLAG_HORIZONTAL        ( 1L <<  4 )
-#define FT2_1_3_FACE_FLAG_VERTICAL          ( 1L <<  5 )
-#define FT2_1_3_FACE_FLAG_KERNING           ( 1L <<  6 )
-#define FT2_1_3_FACE_FLAG_FAST_GLYPHS       ( 1L <<  7 )
-#define FT2_1_3_FACE_FLAG_MULTIPLE_MASTERS  ( 1L <<  8 )
-#define FT2_1_3_FACE_FLAG_GLYPH_NAMES       ( 1L <<  9 )
-#define FT2_1_3_FACE_FLAG_EXTERNAL_STREAM   ( 1L << 10 )
+#define FT_FACE_FLAG_SCALABLE          ( 1L <<  0 )
+#define FT_FACE_FLAG_FIXED_SIZES       ( 1L <<  1 )
+#define FT_FACE_FLAG_FIXED_WIDTH       ( 1L <<  2 )
+#define FT_FACE_FLAG_SFNT              ( 1L <<  3 )
+#define FT_FACE_FLAG_HORIZONTAL        ( 1L <<  4 )
+#define FT_FACE_FLAG_VERTICAL          ( 1L <<  5 )
+#define FT_FACE_FLAG_KERNING           ( 1L <<  6 )
+#define FT_FACE_FLAG_FAST_GLYPHS       ( 1L <<  7 )
+#define FT_FACE_FLAG_MULTIPLE_MASTERS  ( 1L <<  8 )
+#define FT_FACE_FLAG_GLYPH_NAMES       ( 1L <<  9 )
+#define FT_FACE_FLAG_EXTERNAL_STREAM   ( 1L << 10 )
 
-#define FT2_1_3_HAS_HORIZONTAL(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_HORIZONTAL)
+#define FT_HAS_HORIZONTAL(face) \
+	(face->face_flags & FT_FACE_FLAG_HORIZONTAL)
 
-#define FT2_1_3_HAS_VERTICAL(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_VERTICAL)
+#define FT_HAS_VERTICAL(face) \
+	(face->face_flags & FT_FACE_FLAG_VERTICAL)
 
-#define FT2_1_3_HAS_KERNING(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_KERNING)
+#define FT_HAS_KERNING(face) \
+	(face->face_flags & FT_FACE_FLAG_KERNING)
 
-#define FT2_1_3_IS_SCALABLE(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE)
+#define FT_IS_SCALABLE(face) \
+	(face->face_flags & FT_FACE_FLAG_SCALABLE)
 
-#define FT2_1_3_IS_SFNT(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_SFNT)
+#define FT_IS_SFNT(face) \
+	(face->face_flags & FT_FACE_FLAG_SFNT)
 
-#define FT2_1_3_IS_FIXED_WIDTH(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_FIXED_WIDTH)
+#define FT_IS_FIXED_WIDTH(face) \
+	(face->face_flags & FT_FACE_FLAG_FIXED_WIDTH)
 
-#define FT2_1_3_HAS_FIXED_SIZES(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_FIXED_SIZES)
+#define FT_HAS_FIXED_SIZES(face) \
+	(face->face_flags & FT_FACE_FLAG_FIXED_SIZES)
 
-#define FT2_1_3_HAS_FAST_GLYPHS(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_FAST_GLYPHS)
+#define FT_HAS_FAST_GLYPHS(face) \
+	(face->face_flags & FT_FACE_FLAG_FAST_GLYPHS)
 
-#define FT2_1_3_HAS_GLYPH_NAMES(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_GLYPH_NAMES)
+#define FT_HAS_GLYPH_NAMES(face) \
+	(face->face_flags & FT_FACE_FLAG_GLYPH_NAMES)
 
-#define FT2_1_3_HAS_MULTIPLE_MASTERS(face) \
-	(face->face_flags & FT2_1_3_FACE_FLAG_MULTIPLE_MASTERS)
+#define FT_HAS_MULTIPLE_MASTERS(face) \
+	(face->face_flags & FT_FACE_FLAG_MULTIPLE_MASTERS)
 
-#define FT2_1_3_STYLE_FLAG_ITALIC (1 << 0)
-#define FT2_1_3_STYLE_FLAG_BOLD   (1 << 1)
+#define FT_STYLE_FLAG_ITALIC (1 << 0)
+#define FT_STYLE_FLAG_BOLD   (1 << 1)
 
 
 typedef struct FT_Size_InternalRec_ *FT_Size_Internal;
@@ -312,29 +312,29 @@ typedef struct FT_GlyphSlotRec_ {
 /*                         F U N C T I O N S                             */
 /*************************************************************************/
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Init_FreeType(FT_Library *alibrary);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Library_Version(FT_Library library, FT_Int *amajor, FT_Int *aminor, FT_Int *apatch);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Done_FreeType(FT_Library library);
 
 
 typedef enum {
-	FT2_1_3_OPEN_MEMORY = 1,
-	FT2_1_3_OPEN_STREAM = 2,
-	FT2_1_3_OPEN_PATHNAME = 4,
-	FT2_1_3_OPEN_DRIVER = 8,
-	FT2_1_3_OPEN_PARAMS = 16
+	FT_OPEN_MEMORY = 1,
+	FT_OPEN_STREAM = 2,
+	FT_OPEN_PATHNAME = 4,
+	FT_OPEN_DRIVER = 8,
+	FT_OPEN_PARAMS = 16
 } FT_Open_Flags;
 
-#define  FT2_1_3_OPEN_MEMORY    FT2_1_3_OPEN_MEMORY
-#define  FT2_1_3_OPEN_STREAM    FT2_1_3_OPEN_STREAM
-#define  FT2_1_3_OPEN_PATHNAME  FT2_1_3_OPEN_PATHNAME
-#define  FT2_1_3_OPEN_DRIVER    FT2_1_3_OPEN_DRIVER
-#define  FT2_1_3_OPEN_PARAMS    FT2_1_3_OPEN_PARAMS
+#define  FT_OPEN_MEMORY    FT_OPEN_MEMORY
+#define  FT_OPEN_STREAM    FT_OPEN_STREAM
+#define  FT_OPEN_PATHNAME  FT_OPEN_PATHNAME
+#define  FT_OPEN_DRIVER    FT_OPEN_DRIVER
+#define  FT_OPEN_PARAMS    FT_OPEN_PARAMS
 
 typedef struct FT_Parameter_ {
 	FT_ULong tag;
@@ -352,149 +352,149 @@ typedef struct FT_Open_Args_ {
 	FT_Parameter *params;
 } FT_Open_Args;
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_New_Face(FT_Library library, const char *filepathname, FT_Long face_index, FT_Face *aface);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_New_Memory_Face(FT_Library library, const FT_Byte *file_base, FT_Long file_size, FT_Long face_index, FT_Face *aface);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, FT_Face *aface);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Attach_File(FT_Face face, const char *filepathname);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Attach_Stream(FT_Face face, FT_Open_Args *parameters);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Done_Face(FT_Face face);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 load_flags);
 
 
-#define FT2_1_3_LOAD_NO_SCALE                     0x1
-#define FT2_1_3_LOAD_NO_HINTING                   0x2
-#define FT2_1_3_LOAD_RENDER                       0x4
-#define FT2_1_3_LOAD_NO_BITMAP                    0x8
-#define FT2_1_3_LOAD_VERTICAL_LAYOUT              0x10
-#define FT2_1_3_LOAD_FORCE_AUTOHINT               0x20
-#define FT2_1_3_LOAD_CROP_BITMAP                  0x40
-#define FT2_1_3_LOAD_PEDANTIC                     0x80
-#define FT2_1_3_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH  0x200
-#define FT2_1_3_LOAD_NO_RECURSE                   0x400
-#define FT2_1_3_LOAD_IGNORE_TRANSFORM             0x800
-#define FT2_1_3_LOAD_MONOCHROME                   0x1000
-#define FT2_1_3_LOAD_LINEAR_DESIGN                0x2000
+#define FT_LOAD_NO_SCALE                     0x1
+#define FT_LOAD_NO_HINTING                   0x2
+#define FT_LOAD_RENDER                       0x4
+#define FT_LOAD_NO_BITMAP                    0x8
+#define FT_LOAD_VERTICAL_LAYOUT              0x10
+#define FT_LOAD_FORCE_AUTOHINT               0x20
+#define FT_LOAD_CROP_BITMAP                  0x40
+#define FT_LOAD_PEDANTIC                     0x80
+#define FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH  0x200
+#define FT_LOAD_NO_RECURSE                   0x400
+#define FT_LOAD_IGNORE_TRANSFORM             0x800
+#define FT_LOAD_MONOCHROME                   0x1000
+#define FT_LOAD_LINEAR_DESIGN                0x2000
 
 /* temporary hack! */
-#define FT2_1_3_LOAD_SBITS_ONLY                   0x4000
-#define FT2_1_3_LOAD_NO_AUTOHINT                  0x8000U
+#define FT_LOAD_SBITS_ONLY                   0x4000
+#define FT_LOAD_NO_AUTOHINT                  0x8000U
 
-#define FT2_1_3_LOAD_TARGET_(x)			((FT_Int32)((x) & 15) << 16)
-#define FT2_1_3_LOAD_TARGET_MODE(x)		((FT_Render_Mode)(((x) >> 16) & 15))
+#define FT_LOAD_TARGET_(x)			((FT_Int32)((x) & 15) << 16)
+#define FT_LOAD_TARGET_MODE(x)		((FT_Render_Mode)(((x) >> 16) & 15))
 
-#define FT2_1_3_LOAD_TARGET_NORMAL		FT2_1_3_LOAD_TARGET_(FT2_1_3_RENDER_MODE_NORMAL)
-#define FT2_1_3_LOAD_TARGET_LIGHT		FT2_1_3_LOAD_TARGET_(FT2_1_3_RENDER_MODE_LIGHT)
-#define FT2_1_3_LOAD_TARGET_MONO		FT2_1_3_LOAD_TARGET_(FT2_1_3_RENDER_MODE_MONO)
-#define FT2_1_3_LOAD_TARGET_LCD			FT2_1_3_LOAD_TARGET_(FT2_1_3_RENDER_MODE_LCD)
-#define FT2_1_3_LOAD_TARGET_LCD_V		FT2_1_3_LOAD_TARGET_(FT2_1_3_RENDER_MODE_LCD_V)
+#define FT_LOAD_TARGET_NORMAL		FT_LOAD_TARGET_(FT_RENDER_MODE_NORMAL)
+#define FT_LOAD_TARGET_LIGHT		FT_LOAD_TARGET_(FT_RENDER_MODE_LIGHT)
+#define FT_LOAD_TARGET_MONO			FT_LOAD_TARGET_(FT_RENDER_MODE_MONO)
+#define FT_LOAD_TARGET_LCD			FT_LOAD_TARGET_(FT_RENDER_MODE_LCD)
+#define FT_LOAD_TARGET_LCD_V		FT_LOAD_TARGET_(FT_RENDER_MODE_LCD_V)
 
-#define FT2_1_3_LOAD_DEFAULT			0x0
+#define FT_LOAD_DEFAULT			0x0
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT2_1_3_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta);
 
 typedef enum FT_Render_Mode_ {
-	FT2_1_3_RENDER_MODE_NORMAL = 0,
-	FT2_1_3_RENDER_MODE_LIGHT,
-	FT2_1_3_RENDER_MODE_MONO,
-	FT2_1_3_RENDER_MODE_LCD,
-	FT2_1_3_RENDER_MODE_LCD_V,
-	FT2_1_3_RENDER_MODE_MAX
+	FT_RENDER_MODE_NORMAL = 0,
+	FT_RENDER_MODE_LIGHT,
+	FT_RENDER_MODE_MONO,
+	FT_RENDER_MODE_LCD,
+	FT_RENDER_MODE_LCD_V,
+	FT_RENDER_MODE_MAX
 } FT_Render_Mode;
 
 /*    These constats are deprecated. */
-#define ft_render_mode_normal  FT2_1_3_RENDER_MODE_NORMAL
-#define ft_render_mode_mono    FT2_1_3_RENDER_MODE_MONO
+#define ft_render_mode_normal  FT_RENDER_MODE_NORMAL
+#define ft_render_mode_mono    FT_RENDER_MODE_MONO
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Render_Glyph(FT_GlyphSlot slot, FT_Render_Mode render_mode);
 
 typedef enum FT_Kerning_Mode_ {
-	FT2_1_3_KERNING_DEFAULT = 0,
-	FT2_1_3_KERNING_UNFITTED,
-	FT2_1_3_KERNING_UNSCALED
+	FT_KERNING_DEFAULT = 0,
+	FT_KERNING_UNFITTED,
+	FT_KERNING_UNSCALED
 } FT_Kerning_Mode;
 
 /*    These constats are deprecated. */
-#define ft_kerning_default	FT2_1_3_KERNING_DEFAULT
-#define ft_kerning_unfitted FT2_1_3_KERNING_UNFITTED
-#define ft_kerning_unscaled FT2_1_3_KERNING_UNSCALED
+#define ft_kerning_default	FT_KERNING_DEFAULT
+#define ft_kerning_unfitted FT_KERNING_UNFITTED
+#define ft_kerning_unscaled FT_KERNING_UNSCALED
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT2_1_3_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max);
 
-FT2_1_3_EXPORT(const char *)
+FT_EXPORT(const char *)
 FT_Get_Postscript_Name(FT_Face face);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Select_Charmap(FT_Face face, FT_Encoding encoding);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Set_Charmap(FT_Face face, FT_CharMap charmap);
 
-FT2_1_3_EXPORT(FT_UInt)
+FT_EXPORT(FT_UInt)
 FT2_1_3_Get_Char_Index(FT_Face face, FT_ULong charcode);
 
-FT2_1_3_EXPORT(FT_ULong)
+FT_EXPORT(FT_ULong)
 FT2_1_3_Get_First_Char(FT_Face face, FT_UInt *agindex);
 
-FT2_1_3_EXPORT(FT_ULong)
+FT_EXPORT(FT_ULong)
 FT2_1_3_Get_Next_Char(FT_Face face, FT_ULong char_code, FT_UInt *agindex);
 
-FT2_1_3_EXPORT(FT_UInt)
+FT_EXPORT(FT_UInt)
 FT_Get_Name_Index(FT_Face face, FT_String *glyph_name);
 
 
 /* COMPUTATIONS */
 
-FT2_1_3_EXPORT(FT_Long)
+FT_EXPORT(FT_Long)
 FT_MulDiv(FT_Long a, FT_Long b, FT_Long c);
 
-FT2_1_3_EXPORT(FT_Long)
+FT_EXPORT(FT_Long)
 FT2_1_3_MulFix(FT_Long a, FT_Long b);
 
-FT2_1_3_EXPORT(FT_Long)
+FT_EXPORT(FT_Long)
 FT2_1_3_DivFix(FT_Long a, FT_Long b);
 
-FT2_1_3_EXPORT(FT_Fixed)
+FT_EXPORT(FT_Fixed)
 FT2_1_3_RoundFix(FT_Fixed a);
 
-FT2_1_3_EXPORT(FT_Fixed)
+FT_EXPORT(FT_Fixed)
 FT2_1_3_CeilFix(FT_Fixed a);
 
-FT2_1_3_EXPORT(FT_Fixed)
+FT_EXPORT(FT_Fixed)
 FT2_1_3_FloorFix(FT_Fixed a);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT2_1_3_Vector_Transform(FT_Vector *vec, FT_Matrix *matrix);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

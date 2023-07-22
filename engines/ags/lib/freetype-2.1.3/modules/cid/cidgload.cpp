@@ -28,17 +28,17 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cidgload
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cidgload
 
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 cid_load_glyph( T1_Decoder  decoder,
 				FT_UInt     glyph_index ) {
 	CID_Face      face = (CID_Face)decoder->builder.face;
@@ -52,7 +52,7 @@ cid_load_glyph( T1_Decoder  decoder,
 	FT_UInt       glyph_length = 0;
 
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 
 	/* For incremental fonts get the character data using */
 	/* the callback function.                             */
@@ -154,7 +154,7 @@ cid_load_glyph( T1_Decoder  decoder,
 
 	FT2_1_3_FREE( charstring );
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 
 	/* Incremental fonts can optionally override the metrics. */
 	if ( !error                                       &&
@@ -203,7 +203,7 @@ Exit:
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_face_compute_max_advance( CID_Face  face,
 							  FT_Int*   max_advance ) {
 	FT_Error       error;
@@ -257,14 +257,14 @@ cid_face_compute_max_advance( CID_Face  face,
 /**********                                                      *********/
 /**********    The following code is in charge of loading a      *********/
 /**********    single outline.  It completely ignores hinting    *********/
-/**********    and is used when FT2_1_3_LOAD_NO_HINTING is set.       *********/
+/**********    and is used when FT_LOAD_NO_HINTING is set.       *********/
 /**********                                                      *********/
 /*************************************************************************/
 /*************************************************************************/
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_slot_load_glyph( CID_GlyphSlot  glyph,
 					 CID_Size       size,
 					 FT_Int         glyph_index,
@@ -279,8 +279,8 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 	FT_Vector      font_offset;
 
 
-	if ( load_flags & FT2_1_3_LOAD_NO_RECURSE )
-		load_flags |= FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_HINTING;
+	if ( load_flags & FT_LOAD_NO_RECURSE )
+		load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING;
 
 	glyph->x_scale = size->root.metrics.x_scale;
 	glyph->y_scale = size->root.metrics.y_scale;
@@ -288,10 +288,10 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 	glyph->root.outline.n_points   = 0;
 	glyph->root.outline.n_contours = 0;
 
-	hinting = FT2_1_3_BOOL( ( load_flags & FT2_1_3_LOAD_NO_SCALE   ) == 0 &&
-					   ( load_flags & FT2_1_3_LOAD_NO_HINTING ) == 0 );
+	hinting = FT2_1_3_BOOL( ( load_flags & FT_LOAD_NO_SCALE   ) == 0 &&
+					   ( load_flags & FT_LOAD_NO_HINTING ) == 0 );
 
-	glyph->root.format = FT2_1_3_GLYPH_FORMAT_OUTLINE;
+	glyph->root.format = FT_GLYPH_FORMAT_OUTLINE;
 
 	{
 		error = psaux->t1_decoder_funcs->init( &decoder,
@@ -301,12 +301,12 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 											   0, /* glyph names -- XXX */
 											   0, /* blend == 0 */
 											   hinting,
-											   FT2_1_3_LOAD_TARGET_MODE(load_flags),
+											   FT_LOAD_TARGET_MODE(load_flags),
 											   cid_load_glyph );
 
 		/* set up the decoder */
 		decoder.builder.no_recurse = FT2_1_3_BOOL(
-										 ( ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) != 0 ) );
+										 ( ( load_flags & FT_LOAD_NO_RECURSE ) != 0 ) );
 
 		error = cid_load_glyph( &decoder, glyph_index );
 
@@ -321,12 +321,12 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 	/* the left side bearing is the xMin, and the top side */
 	/* bearing the yMax                                    */
 	if ( !error ) {
-		glyph->root.outline.flags &= FT2_1_3_OUTLINE_OWNER;
-		glyph->root.outline.flags |= FT2_1_3_OUTLINE_REVERSE_FILL;
+		glyph->root.outline.flags &= FT_OUTLINE_OWNER;
+		glyph->root.outline.flags |= FT_OUTLINE_REVERSE_FILL;
 
 		/* for composite glyphs, return only left side bearing and */
 		/* advance width                                           */
-		if ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) {
+		if ( load_flags & FT_LOAD_NO_RECURSE ) {
 			FT_Slot_Internal  internal = glyph->root.internal;
 
 
@@ -352,10 +352,10 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 			metrics->vertAdvance  = 0;
 
 			glyph->root.linearVertAdvance = 0;
-			glyph->root.format = FT2_1_3_GLYPH_FORMAT_OUTLINE;
+			glyph->root.format = FT_GLYPH_FORMAT_OUTLINE;
 
 			if ( size && size->root.metrics.y_ppem < 24 )
-				glyph->root.outline.flags |= FT2_1_3_OUTLINE_HIGH_PRECISION;
+				glyph->root.outline.flags |= FT_OUTLINE_HIGH_PRECISION;
 
 			/* apply the font matrix */
 			FT_Outline_Transform( &glyph->root.outline, &font_matrix );
@@ -364,7 +364,7 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 								  font_offset.x,
 								  font_offset.y );
 
-			if ( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 ) {
+			if ( ( load_flags & FT_LOAD_NO_SCALE ) == 0 ) {
 				/* scale the outline and the metrics */
 				FT_Int       n;
 				FT_Outline*  cur = decoder.builder.base;

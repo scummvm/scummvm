@@ -36,7 +36,7 @@ THE SOFTWARE.
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct  BDF_encoding_el_ {
@@ -62,10 +62,10 @@ typedef struct  BDF_FaceRec_ {
 } BDF_FaceRec, *BDF_Face;
 
 
-FT2_1_3_EXPORT_VAR( const FT_Driver_ClassRec )  bdf_driver_class;
+FT_EXPORT_VAR( const FT_Driver_ClassRec )  bdf_driver_class;
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

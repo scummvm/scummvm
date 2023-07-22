@@ -29,12 +29,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_winfnt
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_winfnt
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -136,13 +136,13 @@ fnt_font_load( FNT_Font   font,
 	/* check header */
 	if ( header->version != 0x200 &&
 			header->version != 0x300 ) {
-		FT2_1_3_TRACE2(( "[not a valid FNT file]\n" ));
+		FT_TRACE2(( "[not a valid FNT file]\n" ));
 		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
 	if ( header->file_type & 1 ) {
-		FT2_1_3_TRACE2(( "[can't handle vector FNT fonts]\n" ));
+		FT_TRACE2(( "[can't handle vector FNT fonts]\n" ));
 		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
@@ -243,13 +243,13 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 			FT2_1_3_FRAME_EXIT();
 
 			if ( !font_count || !font_offset ) {
-				FT2_1_3_TRACE2(( "this file doesn't contain any FNT resources!\n" ));
+				FT_TRACE2(( "this file doesn't contain any FNT resources!\n" ));
 				error = FT2_1_3_Err_Unknown_File_Format;
 				goto Exit;
 			}
 
 			if ( FT2_1_3_STREAM_SEEK( font_offset )           ||
-					FT2_1_3_NEW_ARRAY( face->fonts, font_count ) )
+					FT_NEW_ARRAY( face->fonts, font_count ) )
 				goto Exit;
 
 			face->num_fonts = font_count;
@@ -390,9 +390,9 @@ FNT_Face_Init( FT_Stream      stream,
 	FT_Error   error;
 	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
-	FT2_1_3_UNUSED( num_params );
-	FT2_1_3_UNUSED( params );
-	FT2_1_3_UNUSED( face_index );
+	FT_UNUSED( num_params );
+	FT_UNUSED( params );
+	FT_UNUSED( face_index );
 
 
 	/* try to load several fonts from a DLL */
@@ -402,7 +402,7 @@ FNT_Face_Init( FT_Stream      stream,
 		FNT_Font  font;
 
 
-		if ( FT2_1_3_NEW( face->fonts ) )
+		if ( FT_NEW( face->fonts ) )
 			goto Exit;
 
 		face->num_fonts = 1;
@@ -426,20 +426,20 @@ FNT_Face_Init( FT_Stream      stream,
 
 
 		root->num_faces  = 1;
-		root->face_flags = FT2_1_3_FACE_FLAG_FIXED_SIZES |
-						   FT2_1_3_FACE_FLAG_HORIZONTAL;
+		root->face_flags = FT_FACE_FLAG_FIXED_SIZES |
+						   FT_FACE_FLAG_HORIZONTAL;
 
 		if ( fonts->header.avg_width == fonts->header.max_width )
-			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+			root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
 		if ( fonts->header.italic )
-			root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
+			root->style_flags |= FT_STYLE_FLAG_ITALIC;
 
 		if ( fonts->header.weight >= 800 )
-			root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
+			root->style_flags |= FT_STYLE_FLAG_BOLD;
 
 		/* Setup the `fixed_sizes' array */
-		if ( FT2_1_3_NEW_ARRAY( root->available_sizes, face->num_fonts ) )
+		if ( FT_NEW_ARRAY( root->available_sizes, face->num_fonts ) )
 			goto Fail;
 
 		root->num_fixed_sizes = face->num_fonts;
@@ -457,7 +457,7 @@ FNT_Face_Init( FT_Stream      stream,
 		{
 			FT_CharMapRec  charmap;
 
-			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
+			charmap.encoding    = FT_ENCODING_UNICODE;
 			charmap.platform_id = 3;
 			charmap.encoding_id = 1;
 			charmap.face        = root;
@@ -482,12 +482,12 @@ FNT_Face_Init( FT_Stream      stream,
 							fonts->header.face_name_offset;
 		root->style_name  = const_cast<char *>("Regular");
 
-		if ( root->style_flags & FT2_1_3_STYLE_FLAG_BOLD ) {
-			if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
+		if ( root->style_flags & FT_STYLE_FLAG_BOLD ) {
+			if ( root->style_flags & FT_STYLE_FLAG_ITALIC )
 				root->style_name = const_cast<char *>("Bold Italic");
 			else
 				root->style_name = const_cast<char *>("Bold");
-		} else if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
+		} else if ( root->style_flags & FT_STYLE_FLAG_ITALIC )
 			root->style_name = const_cast<char *>("Italic");
 	}
 
@@ -540,8 +540,8 @@ FNT_Load_Glyph( FT_GlyphSlot  slot,
 	FT_ULong    offset;
 	FT_Bool     new_format;
 
-	FT2_1_3_UNUSED( slot );
-	FT2_1_3_UNUSED( load_flags );
+	FT_UNUSED( slot );
+	FT_UNUSED( load_flags );
 
 
 	if ( !font ) {
@@ -580,7 +580,7 @@ FNT_Load_Glyph( FT_GlyphSlot  slot,
 
 		bitmap->pitch      = pitch;
 		bitmap->rows       = font->header.pixel_height;
-		bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
+		bitmap->pixel_mode = FT_PIXEL_MODE_MONO;
 
 		if ( FT2_1_3_ALLOC( bitmap->buffer, pitch * bitmap->rows ) )
 			goto Exit;
@@ -596,10 +596,10 @@ FNT_Load_Glyph( FT_GlyphSlot  slot,
 		}
 	}
 
-	slot->flags       = FT2_1_3_GLYPH_OWN_BITMAP;
+	slot->flags       = FT_GLYPH_OWN_BITMAP;
 	slot->bitmap_left = 0;
 	slot->bitmap_top  = font->header.ascent;
-	slot->format      = FT2_1_3_GLYPH_FORMAT_BITMAP;
+	slot->format      = FT_GLYPH_FORMAT_BITMAP;
 
 	/* now set up metrics */
 	slot->metrics.horiAdvance  = bitmap->width << 6;
@@ -607,14 +607,14 @@ FNT_Load_Glyph( FT_GlyphSlot  slot,
 	slot->metrics.horiBearingY = slot->bitmap_top << 6;
 
 	slot->linearHoriAdvance    = (FT_Fixed)bitmap->width << 16;
-	slot->format               = FT2_1_3_GLYPH_FORMAT_BITMAP;
+	slot->format               = FT_GLYPH_FORMAT_BITMAP;
 
 Exit:
 	return error;
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec  winfnt_driver_class = {
 	{
 		ft_module_font_driver,

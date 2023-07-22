@@ -28,7 +28,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* The following structures must be defined by the hinter */
@@ -111,26 +111,26 @@ typedef struct  CID_GlyphSlotRec_ {
 } CID_GlyphSlotRec;
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cid_slot_done( CID_GlyphSlot  slot );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cid_slot_init( CID_GlyphSlot   slot );
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cid_size_done( CID_Size  size );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cid_size_init( CID_Size  size );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cid_size_reset( CID_Size  size );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cid_face_init( FT_Stream      stream,
 			   CID_Face       face,
 			   FT_Int         face_index,
@@ -138,19 +138,19 @@ cid_face_init( FT_Stream      stream,
 			   FT_Parameter*  params );
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cid_face_done( CID_Face  face );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cid_driver_init( CID_Driver  driver );
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cid_driver_done( CID_Driver  driver );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

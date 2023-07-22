@@ -33,12 +33,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cffdriver
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cffdriver
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -185,9 +185,9 @@ Load_Glyph( CFF_GlyphSlot  slot,
 
 	/* check whether we want a scaled outline or bitmap */
 	if ( !size )
-		load_flags |= FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_HINTING;
+		load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING;
 
-	if ( load_flags & FT2_1_3_LOAD_NO_SCALE )
+	if ( load_flags & FT_LOAD_NO_SCALE )
 		size = NULL;
 
 	/* reset the size object if necessary */
@@ -235,10 +235,10 @@ cff_get_glyph_name( CFF_Face    face,
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
 
 	if ( !psnames ) {
-		FT2_1_3_ERROR(( "cff_get_glyph_name:" ));
-		FT2_1_3_ERROR(( " cannot open CFF & CEF fonts\n" ));
-		FT2_1_3_ERROR(( "                   " ));
-		FT2_1_3_ERROR(( " without the `PSNames' module\n" ));
+		FT_ERROR(( "cff_get_glyph_name:" ));
+		FT_ERROR(( " cannot open CFF & CEF fonts\n" ));
+		FT_ERROR(( "                   " ));
+		FT_ERROR(( " without the `PSNames' module\n" ));
 		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
@@ -363,7 +363,7 @@ cff_get_interface( CFF_Driver   driver,
 
 /* The FT_DriverInterface structure is defined in ftdriver.h. */
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec  cff_driver_class = {
 	/* begin with the FT_Module_Class fields */
 	{

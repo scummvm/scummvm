@@ -38,7 +38,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct  FT_SfntName_ {
@@ -52,14 +52,14 @@ typedef struct  FT_SfntName_ {
 } FT_SfntName;
 
 
-FT2_1_3_EXPORT(FT_UInt)
+FT_EXPORT(FT_UInt)
 FT_Get_Sfnt_Name_Count(FT_Face face);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Get_Sfnt_Name(FT_Face face, FT_UInt idx, FT_SfntName *aname);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

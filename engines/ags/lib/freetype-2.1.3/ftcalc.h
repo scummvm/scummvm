@@ -36,17 +36,17 @@
 #include "engines/ags/lib/freetype-2.1.3/freetype.h"
 
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 #define SQRT_32(x) FT_Sqrt32(x)
 
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_EXPORT(FT_Int32)
+FT_EXPORT(FT_Int32)
 FT_SqrtFixed(FT_Int32 x);
 
-FT2_1_3_EXPORT(FT_Int32)
+FT_EXPORT(FT_Int32)
 FT_Sqrt32(FT_Int32 x);
 
 } // End of namespace FreeType213
@@ -61,6 +61,6 @@ FT_Sqrt32(FT_Int32 x);
 #define ROUND_F26DOT6(x) 	 (x >= 0 ? (((x) + 32) & -64) \
 									 : (-((32 - (x)) & -64)))
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_FTCALC_H */

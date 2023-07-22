@@ -123,9 +123,9 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 	memory = render->root.memory;
 
 	/* release old bitmap buffer */
-	if (slot->flags & FT2_1_3_GLYPH_OWN_BITMAP) {
+	if (slot->flags & FT_GLYPH_OWN_BITMAP) {
 		FT2_1_3_FREE(bitmap->buffer);
-		slot->flags &= ~FT2_1_3_GLYPH_OWN_BITMAP;
+		slot->flags &= ~FT_GLYPH_OWN_BITMAP;
 	}
 
 	/* allocate new one, depends on pixel format */
@@ -138,7 +138,7 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 	if (vmul)
 		height *= vmul;
 
-	bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY;
+	bitmap->pixel_mode = FT_PIXEL_MODE_GRAY;
 	bitmap->num_grays  = 256;
 	bitmap->width 	   = width;
 	bitmap->rows 	   = height;
@@ -147,7 +147,7 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 	if (FT2_1_3_ALLOC(bitmap->buffer, (FT_ULong)pitch * height))
 		goto Exit;
 
-	slot->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
+	slot->flags |= FT_GLYPH_OWN_BITMAP;
 
 	/* translate outline to render it into the bitmap */
 	FT_Outline_Translate(outline, -cbox.xMin, -cbox.yMin);
@@ -155,7 +155,7 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 	/* set up parameters */
 	params.target = bitmap;
 	params.source = outline;
-	params.flags  = FT2_1_3_RASTER_FLAG_AA;
+	params.flags  = FT_RASTER_FLAG_AA;
 
 	/* implode outline if needed */
 	{
@@ -193,7 +193,7 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 	if (error)
 		goto Exit;
 
-	slot->format 	  = FT2_1_3_GLYPH_FORMAT_BITMAP;
+	slot->format 	  = FT_GLYPH_FORMAT_BITMAP;
 	slot->bitmap_left = (FT_Int)(cbox.xMin >> 6);
 	slot->bitmap_top  = (FT_Int)(cbox.yMax >> 6);
 
@@ -206,16 +206,16 @@ Exit:
 
 /* convert a slot's glyph image into a bitmap */
 static FT_Error ft_smooth_render(FT_Renderer render, FT_GlyphSlot slot, FT_Render_Mode mode, FT_Vector *origin) {
-	return ft_smooth_render_generic(render, slot, mode, origin, FT2_1_3_RENDER_MODE_NORMAL, 0, 0);
+	return ft_smooth_render_generic(render, slot, mode, origin, FT_RENDER_MODE_NORMAL, 0, 0);
 }
 
 /* convert a slot's glyph image into a horizontal LCD bitmap */
 static FT_Error ft_smooth_render_lcd(FT_Renderer render, FT_GlyphSlot slot, FT_Render_Mode mode, FT_Vector *origin) {
 	FT_Error error;
 
-	error = ft_smooth_render_generic(render, slot, mode, origin, FT2_1_3_RENDER_MODE_LCD, 3, 0);
+	error = ft_smooth_render_generic(render, slot, mode, origin, FT_RENDER_MODE_LCD, 3, 0);
 	if (!error)
-		slot->bitmap.pixel_mode = FT2_1_3_PIXEL_MODE_LCD;
+		slot->bitmap.pixel_mode = FT_PIXEL_MODE_LCD;
 
 	return error;
 }
@@ -224,15 +224,15 @@ static FT_Error ft_smooth_render_lcd(FT_Renderer render, FT_GlyphSlot slot, FT_R
 static FT_Error ft_smooth_render_lcd_v(FT_Renderer render, FT_GlyphSlot slot, FT_Render_Mode mode, FT_Vector *origin) {
 	FT_Error error;
 
-	error = ft_smooth_render_generic(render, slot, mode, origin, FT2_1_3_RENDER_MODE_LCD_V, 0, 3);
+	error = ft_smooth_render_generic(render, slot, mode, origin, FT_RENDER_MODE_LCD_V, 0, 3);
 	if (!error)
-		slot->bitmap.pixel_mode = FT2_1_3_PIXEL_MODE_LCD_V;
+		slot->bitmap.pixel_mode = FT_PIXEL_MODE_LCD_V;
 
 	return error;
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Renderer_Class ft_smooth_renderer_class = {
 	{
 		ft_module_renderer,
@@ -249,7 +249,7 @@ const FT_Renderer_Class ft_smooth_renderer_class = {
 		(FT_Module_Requester)   0
 	},
 
-	FT2_1_3_GLYPH_FORMAT_OUTLINE,
+	FT_GLYPH_FORMAT_OUTLINE,
 
 	(FT_Renderer_RenderFunc)    ft_smooth_render,
 	(FT_Renderer_TransformFunc) ft_smooth_transform,
@@ -259,7 +259,7 @@ const FT_Renderer_Class ft_smooth_renderer_class = {
 	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_grays_raster)
 };
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Renderer_Class ft_smooth_lcd_renderer_class = {
 	{
 		ft_module_renderer,
@@ -276,7 +276,7 @@ const FT_Renderer_Class ft_smooth_lcd_renderer_class = {
 		(FT_Module_Requester)   0
 	},
 
-	FT2_1_3_GLYPH_FORMAT_OUTLINE,
+	FT_GLYPH_FORMAT_OUTLINE,
 
 	(FT_Renderer_RenderFunc)    ft_smooth_render_lcd,
 	(FT_Renderer_TransformFunc) ft_smooth_transform,
@@ -287,7 +287,7 @@ const FT_Renderer_Class ft_smooth_lcd_renderer_class = {
 };
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Renderer_Class ft_smooth_lcdv_renderer_class = {
 	{
 		ft_module_renderer,
@@ -304,7 +304,7 @@ const FT_Renderer_Class ft_smooth_lcdv_renderer_class = {
 		(FT_Module_Requester)   0
 	},
 
-	FT2_1_3_GLYPH_FORMAT_OUTLINE,
+	FT_GLYPH_FORMAT_OUTLINE,
 
 	(FT_Renderer_RenderFunc)    ft_smooth_render_lcd_v,
 	(FT_Renderer_TransformFunc) ft_smooth_transform,

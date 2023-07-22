@@ -32,8 +32,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
 #include "engines/ags/lib/freetype-2.1.3/ftlist.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_memory
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_memory
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -41,15 +41,15 @@ namespace FreeType213 {
 
 /**** MEMORY  MANAGEMENT ****/
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Alloc(FT_Memory memory, FT_Long size, void **P) {
 	FT2_1_3_ASSERT(P != 0);
 
 	if (size > 0) {
 		*P = memory->alloc(memory, size);
 		if (!*P) {
-			FT2_1_3_ERROR(("FT_Alloc:"));
-			FT2_1_3_ERROR((" Out of memory? (%ld requested)\n", size));
+			FT_ERROR(("FT_Alloc:"));
+			FT_ERROR((" Out of memory? (%ld requested)\n", size));
 
 			return FT2_1_3_Err_Out_Of_Memory;
 		}
@@ -57,13 +57,13 @@ FT_Alloc(FT_Memory memory, FT_Long size, void **P) {
 	} else
 		*P = NULL;
 
-	FT2_1_3_TRACE7(("FT_Alloc:"));
-	FT2_1_3_TRACE7((" size = %ld, block = 0x%08p, ref = 0x%08p\n", size, *P, P));
+	FT_TRACE7(("FT_Alloc:"));
+	FT_TRACE7((" size = %ld, block = 0x%08p, ref = 0x%08p\n", size, *P, P));
 
 	return FT2_1_3_Err_Ok;
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P) {
 	void *Q;
 
@@ -90,15 +90,15 @@ FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P) {
 	return FT2_1_3_Err_Ok;
 
 Fail:
-	FT2_1_3_ERROR(("FT_Realloc:"));
-	FT2_1_3_ERROR((" Failed (current %ld, requested %ld)\n", current, size));
+	FT_ERROR(("FT_Realloc:"));
+	FT_ERROR((" Failed (current %ld, requested %ld)\n", current, size));
 	return FT2_1_3_Err_Out_Of_Memory;
 }
 
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_Free(FT_Memory memory, void **P) {
-	FT2_1_3_TRACE7(("FT_Free:"));
-	FT2_1_3_TRACE7((" Freeing block 0x%08p, ref 0x%08p\n", P, P ? *P : (void *)0));
+	FT_TRACE7(("FT_Free:"));
+	FT_TRACE7((" Freeing block 0x%08p, ref 0x%08p\n", P, P ? *P : (void *)0));
 
 	if (P && *P) {
 		memory->free(memory, *P);
@@ -109,10 +109,10 @@ FT_Free(FT_Memory memory, void **P) {
 
 /**** DOUBLE LINKED LISTS ****/
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_list
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_list
 
-FT2_1_3_EXPORT_DEF(FT_ListNode)
+FT_EXPORT_DEF(FT_ListNode)
 FT_List_Find(FT_List list, void *data) {
 	FT_ListNode cur;
 
@@ -127,7 +127,7 @@ FT_List_Find(FT_List list, void *data) {
 	return (FT_ListNode)0;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_List_Add(FT_List list, FT_ListNode node) {
 	FT_ListNode before = list->tail;
 
@@ -142,7 +142,7 @@ FT_List_Add(FT_List list, FT_ListNode node) {
 	list->tail = node;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_List_Insert(FT_List list, FT_ListNode node) {
 	FT_ListNode after = list->head;
 
@@ -157,7 +157,7 @@ FT_List_Insert(FT_List list, FT_ListNode node) {
 	list->head = node;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_List_Remove(FT_List list, FT_ListNode node) {
 	FT_ListNode before, after;
 
@@ -175,7 +175,7 @@ FT_List_Remove(FT_List list, FT_ListNode node) {
 		list->tail = before;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_List_Up(FT_List list, FT_ListNode node) {
 	FT_ListNode before, after;
 
@@ -199,7 +199,7 @@ FT_List_Up(FT_List list, FT_ListNode node) {
 	list->head = node;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_List_Iterate(FT_List list, FT_List_Iterator iterator, void *user) {
 	FT_ListNode cur = list->head;
 	FT_Error error = FT2_1_3_Err_Ok;
@@ -217,7 +217,7 @@ FT_List_Iterate(FT_List list, FT_List_Iterator iterator, void *user) {
 	return error;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_List_Finalize(FT_List list, FT_List_Destructor destroy, FT_Memory memory, void *user) {
 	FT_ListNode cur;
 

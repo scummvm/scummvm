@@ -258,12 +258,12 @@ Exit:
 	return n;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 ah_outline_new(FT_Memory memory, AH_Outline *aoutline) {
 	FT_Error error;
 	AH_Outline outline;
 
-	if (!FT2_1_3_NEW(outline)) {
+	if (!FT_NEW(outline)) {
 		outline->memory = memory;
 		*aoutline = outline;
 	}
@@ -271,7 +271,7 @@ ah_outline_new(FT_Memory memory, AH_Outline *aoutline) {
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_outline_done(AH_Outline outline) {
 	FT_Memory memory = outline->memory;
 
@@ -283,7 +283,7 @@ ah_outline_done(AH_Outline outline) {
 	FT2_1_3_FREE(outline);
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_outline_save(AH_Outline outline, AH_Loader gloader) {
 	AH_Point point = outline->points;
 	AH_Point point_limit = point + outline->num_points;
@@ -296,15 +296,15 @@ ah_outline_save(AH_Outline outline, AH_Loader gloader) {
 		vec->y = point->y;
 
 		if (point->flags & AH_FLAG_CONIC)
-			tag[0] = FT2_1_3_CURVE_TAG_CONIC;
+			tag[0] = FT_CURVE_TAG_CONIC;
 		else if (point->flags & AH_FLAG_CUBIC)
-			tag[0] = FT2_1_3_CURVE_TAG_CUBIC;
+			tag[0] = FT_CURVE_TAG_CUBIC;
 		else
-			tag[0] = FT2_1_3_CURVE_TAG_ON;
+			tag[0] = FT_CURVE_TAG_ON;
 	}
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 ah_outline_load(AH_Outline outline, FT_Face face) {
 	FT_Memory memory = outline->memory;
 	FT_Error error = FT2_1_3_Err_Ok;
@@ -316,7 +316,7 @@ ah_outline_load(AH_Outline outline, FT_Face face) {
 	/* check arguments */
 	if (!face ||
 		!face->size ||
-		face->glyph->format != FT2_1_3_GLYPH_FORMAT_OUTLINE)
+		face->glyph->format != FT_GLYPH_FORMAT_OUTLINE)
 		return FT2_1_3_Err_Invalid_Argument;
 
 	/* first of all, reallocate the contours array if necessary */
@@ -404,11 +404,11 @@ ah_outline_load(AH_Outline outline, FT_Face face) {
 			char *tag = source->tags;
 
 			for (point = points; point < point_limit; point++, tag++) {
-				switch (FT2_1_3_CURVE_TAG(*tag)) {
-				case FT2_1_3_CURVE_TAG_CONIC:
+				switch (FT_CURVE_TAG(*tag)) {
+				case FT_CURVE_TAG_CONIC:
 					point->flags = AH_FLAG_CONIC;
 					break;
-				case FT2_1_3_CURVE_TAG_CUBIC:
+				case FT_CURVE_TAG_CUBIC:
 					point->flags = AH_FLAG_CUBIC;
 					break;
 				default:;
@@ -511,7 +511,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_setup_uv(AH_Outline outline, AH_UV source) {
 	AH_Point point = outline->points;
 	AH_Point point_limit = point + outline->num_points;
@@ -659,7 +659,7 @@ static void ah_outline_compute_inflections(AH_Outline outline) {
 	}
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_outline_compute_segments(AH_Outline outline) {
 	int dimension;
 	AH_Segment segments;
@@ -875,7 +875,7 @@ ah_outline_compute_segments(AH_Outline outline) {
 	}
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_outline_link_segments(AH_Outline outline) {
 	AH_Segment segments;
 	AH_Segment segment_limit;
@@ -1191,7 +1191,7 @@ static void ah_outline_compute_edges(AH_Outline outline) {
 	}
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_outline_detect_features(AH_Outline outline) {
 	ah_outline_compute_segments(outline);
 	ah_outline_link_segments(outline);
@@ -1199,7 +1199,7 @@ ah_outline_detect_features(AH_Outline outline) {
 	ah_outline_compute_inflections(outline);
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals face_globals) {
 	AH_Edge edge = outline->horz_edges;
 	AH_Edge edge_limit = edge + outline->num_hedges;
@@ -1303,7 +1303,7 @@ ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals face_globals) 
 	}
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_outline_scale_blue_edges(AH_Outline outline, AH_Face_Globals globals) {
 	AH_Edge edge = outline->horz_edges;
 	AH_Edge edge_limit = edge + outline->num_hedges;

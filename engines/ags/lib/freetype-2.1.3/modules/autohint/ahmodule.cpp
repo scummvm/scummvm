@@ -46,7 +46,7 @@ typedef struct FT_AutoHinterRec_ {
 	AH_Hinter hinter;
 } FT_AutoHinterRec;
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 ft_autohinter_init(FT_AutoHinter module) {
 	FT_Error error;
 
@@ -58,7 +58,7 @@ ft_autohinter_init(FT_AutoHinter module) {
 	return error;
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 ft_autohinter_done(FT_AutoHinter module) {
 	ah_hinter_done(module->hinter);
 
@@ -67,37 +67,37 @@ ft_autohinter_done(FT_AutoHinter module) {
 #endif
 }
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 ft_autohinter_load_glyph(FT_AutoHinter module, FT_GlyphSlot slot, FT_Size size, FT_UInt glyph_index, FT_Int32 load_flags) {
 	return ah_hinter_load_glyph(module->hinter, slot, size, glyph_index, load_flags);
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 ft_autohinter_reset_globals(FT_AutoHinter module, FT_Face face) {
-	FT2_1_3_UNUSED(module);
+	FT_UNUSED(module);
 
 	if (face->autohint.data)
 		ah_hinter_done_face_globals((AH_Face_Globals)(face->autohint.data));
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 ft_autohinter_get_globals(FT_AutoHinter module, FT_Face face, void **global_hints, long *global_len) {
 	ah_hinter_get_global_hints(module->hinter, face, global_hints, global_len);
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 ft_autohinter_done_globals(FT_AutoHinter module, void *global_hints) {
 	ah_hinter_done_global_hints(module->hinter, global_hints);
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_AutoHinter_ServiceRec ft_autohinter_service = {
 	ft_autohinter_reset_globals,
 	ft_autohinter_get_globals,
 	ft_autohinter_done_globals,
 	ft_autohinter_load_glyph};
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Module_Class autohint_module_class = {
 	ft_module_hinter,
 	sizeof(FT_AutoHinterRec),

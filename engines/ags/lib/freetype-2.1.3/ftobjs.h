@@ -47,14 +47,14 @@
 #include "engines/ags/lib/freetype-2.1.3/modules/autohint/autohint.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobject.h"
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 #include "engines/ags/lib/freetype-2.1.3/ftincrem.h"
 #endif
 
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 #ifndef TRUE
@@ -105,17 +105,17 @@ typedef struct  FT_ValidatorRec_ {
 
 #define FT2_1_3_VALIDATOR(x) ((FT_Validator)(x))
 
-FT2_1_3_BASE(void)
+FT_BASE(void)
 ft_validator_init(FT_Validator valid, const FT_Byte *base, const FT_Byte *limit, FT_ValidationLevel level);
 
-FT2_1_3_BASE(FT_Int)
+FT_BASE(FT_Int)
 ft_validator_run(FT_Validator valid);
 
 /* Sets the error field in a validator, then calls `longjmp' to return */
 /* to high-level caller.  Using `setjmp/longjmp' avoids many stupid    */
 /* error checks within the validation routines.                        */
 /*                                                                     */
-FT2_1_3_BASE(void)
+FT_BASE(void)
 ft_validator_error(FT_Validator valid, FT_Error error);
 
 /* Calls ft_validate_error.  Assumes that the `valid' local variable */
@@ -177,11 +177,11 @@ typedef struct  FT_CMap_ClassRec_ {
 } FT_CMap_ClassRec;
 
 /* create a new charmap and add it to charmap->face */
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_CMap_New(FT_CMap_Class clazz, FT_Pointer init_data, FT_CharMap charmap, FT_CMap *acmap);
 
 /* destroy a charmap (don't remove it from face's list though) */
-FT2_1_3_BASE(void)
+FT_BASE(void)
 FT_CMap_Done(FT_CMap cmap);
 
 typedef struct  FT_Face_InternalRec_ {
@@ -196,7 +196,7 @@ typedef struct  FT_Face_InternalRec_ {
 
 	const char	 *postscript_name;
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 	FT_Incremental_InterfaceRec*  incremental_interface;
 #endif
 } FT_Face_InternalRec;
@@ -233,7 +233,7 @@ typedef struct  FT_ModuleRec_ {
 #define FT2_1_3_DRIVER_USES_OUTLINES(x)	!(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_driver_no_outlines)
 #define FT2_1_3_DRIVER_HAS_HINTER(x) 	(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_driver_has_hinter)
 
-FT2_1_3_BASE(const void *)
+FT_BASE(const void *)
 FT_Get_Module_Interface(FT_Library library, const char *mod_name);
 
 
@@ -256,19 +256,19 @@ FT_Get_Module_Interface(FT_Library library, const char *mod_name);
 #define FT2_1_3_FACE_SLOT(x) FT2_1_3_FACE(x)->glyph
 #define FT2_1_3_FACE_SIZE(x) FT2_1_3_FACE(x)->size
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_New_GlyphSlot(FT_Face face, FT_GlyphSlot *aslot);
 
-FT2_1_3_BASE(void)
+FT_BASE(void)
 FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot);
 
 
 /**** RENDERERS ****/
 
-#define FT2_1_3_RENDERER(x)		 ((FT_Renderer)(x))
-#define FT2_1_3_GLYPH(x)		 ((FT_Glyph)(x))
+#define FT_RENDERER(x)		 ((FT_Renderer)(x))
+#define FT_GLYPH(x)		 ((FT_Glyph)(x))
 #define FT2_1_3_BITMAP_GLYPH(x)	 ((FT_BitmapGlyph)(x))
-#define FT2_1_3_OUTLINE_GLYPH(x) ((FT_OutlineGlyph)(x))
+#define FT_OUTLINE_GLYPH(x) ((FT_OutlineGlyph)(x))
 
 typedef struct  FT_RendererRec_ {
 	FT_ModuleRec            root;
@@ -303,8 +303,8 @@ typedef struct  FT_DriverRec_ {
 
 /**** LIBRARIES ****/
 
-#define FT2_1_3_DEBUG_HOOK_TRUETYPE  0
-#define FT2_1_3_DEBUG_HOOK_TYPE1     1
+#define FT_DEBUG_HOOK_TRUETYPE  0
+#define FT_DEBUG_HOOK_TYPE1     1
 
 typedef struct  FT_LibraryRec_ {
 	FT_Memory          memory;           /* library's memory manager */
@@ -316,7 +316,7 @@ typedef struct  FT_LibraryRec_ {
 	FT_Int             version_patch;
 
 	FT_UInt            num_modules;
-	FT_Module          modules[FT2_1_3_MAX_MODULES];  /* module objects  */
+	FT_Module          modules[FT_MAX_MODULES];  /* module objects  */
 
 	FT_ListRec         renderers;        /* list of renderers        */
 	FT_Renderer        cur_renderer;     /* current outline renderer */
@@ -331,10 +331,10 @@ typedef struct  FT_LibraryRec_ {
 	FT_MetaClassRec    meta_class;
 } FT_LibraryRec;
 
-FT2_1_3_BASE(FT_Renderer)
+FT_BASE(FT_Renderer)
 FT_Lookup_Renderer(FT_Library library, FT_Glyph_Format format, FT_ListNode *node);
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 FT_Render_Glyph_Internal(FT_Library library, FT_GlyphSlot slot, FT_Render_Mode render_mode);
 
 typedef const char *(*FT_Face_GetPostscriptNameFunc)(FT_Face face);
@@ -344,10 +344,10 @@ typedef FT_UInt (*FT_Face_GetGlyphNameIndexFunc)(FT_Face face, FT_String *glyph_
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM
 
-FT2_1_3_EXPORT(FT_Memory)
+FT_EXPORT(FT_Memory)
 FT_New_Memory(void);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Done_Memory(FT_Memory memory);
 
 #endif /* !FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM */
@@ -360,12 +360,12 @@ FT_Done_Memory(FT_Memory memory);
 /* FT2_1_3_Set_Raster() API.                                             */
 
 #ifndef FT2_1_3_NO_DEFAULT_RASTER
-FT2_1_3_EXPORT_VAR(FT_Raster_Funcs)
+FT_EXPORT_VAR(FT_Raster_Funcs)
 ft_default_raster;
 #endif
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

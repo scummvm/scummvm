@@ -217,7 +217,7 @@ optim_compute_stems( AH_Optimizer*  optimizer ) {
 			AH_Stem*  stem;
 
 
-			if ( FT2_1_3_NEW_ARRAY( stems, num_stems ) )
+			if ( FT_NEW_ARRAY( stems, num_stems ) )
 				goto Exit;
 
 			stem = stems;
@@ -395,7 +395,7 @@ optim_compute_springs( AH_Optimizer*  optimizer ) {
 
 
 			/* allocate table of springs */
-			if ( FT2_1_3_NEW_ARRAY( springs, num_springs ) )
+			if ( FT_NEW_ARRAY( springs, num_springs ) )
 				goto Exit;
 
 			/* fill the springs table */
@@ -788,7 +788,7 @@ AH_Optimizer_Init( AH_Optimizer*  optimizer,
 		if ( max_stems < optimizer->num_vstems )
 			max_stems = optimizer->num_vstems;
 
-		if ( FT2_1_3_NEW_ARRAY( optimizer->positions, max_stems * AH_MAX_CONFIGS ) )
+		if ( FT_NEW_ARRAY( optimizer->positions, max_stems * AH_MAX_CONFIGS ) )
 			goto Fail;
 
 		optimizer->num_configs = 0;

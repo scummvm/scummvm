@@ -36,7 +36,7 @@
 
 #ifndef FT2_1_3_MODERRDEF
 
-#ifdef FT2_1_3_CONFIG_OPTION_USE_MODULE_ERRORS
+#ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
 #define FT2_1_3_MODERRDEF(e, v, s) FT2_1_3_Mod_Err_##e = v,
 #else
 #define FT2_1_3_MODERRDEF(e, v, s) FT2_1_3_Mod_Err_##e = 0,

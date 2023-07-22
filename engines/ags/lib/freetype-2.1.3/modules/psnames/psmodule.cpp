@@ -42,7 +42,7 @@ namespace FreeType213 {
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 
-#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 /* return the Unicode value corresponding to a given glyph.  Note that */
 /* we do deal with glyph variants by detecting a non-initial dot in    */
@@ -123,7 +123,7 @@ static FT_UInt32 ps_unicode_value(const char *glyph_name) {
 
 
 /* ft_qsort callback to sort the unicode map */
-FT2_1_3_CALLBACK_DEF(int)
+FT_CALLBACK_DEF(int)
 compare_uni_maps(const void *a, const void *b) {
 	PS_UniMap *map1 = const_cast<PS_UniMap *>(static_cast<const PS_UniMap *>(a));
 	PS_UniMap *map2 = const_cast<PS_UniMap *>(static_cast<const PS_UniMap *>(b));
@@ -139,7 +139,7 @@ static FT_Error ps_build_unicode_table(FT_Memory memory, FT_UInt num_glyphs, con
 	table->num_maps = 0;
 	table->maps     = 0;
 
-	if (!FT2_1_3_NEW_ARRAY(table->maps, num_glyphs)) {
+	if (!FT_NEW_ARRAY(table->maps, num_glyphs)) {
 		FT_UInt   n;
 		FT_UInt   count;
 		PS_UniMap *map;
@@ -243,7 +243,7 @@ static FT_ULong ps_next_unicode(PS_Unicodes *table, FT_ULong unicode) {
 	return 0;
 }
 
-#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 static const char *ps_get_macintosh_name(FT_UInt name_index) {
 	if (name_index >= 258)
@@ -257,7 +257,7 @@ static const char *ps_get_standard_strings(FT_UInt sid) {
 }
 
 static const PSNames_Interface  psnames_interface = {
-#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 	(PS_Unicode_Value_Func)   ps_unicode_value,
 	(PS_Build_Unicodes_Func)  ps_build_unicode_table,
@@ -269,7 +269,7 @@ static const PSNames_Interface  psnames_interface = {
 	0,
 	0,
 
-#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 	(PS_Macintosh_Name_Func)    ps_get_macintosh_name,
 	(PS_Adobe_Std_Strings_Func) ps_get_standard_strings,
@@ -277,11 +277,11 @@ static const PSNames_Interface  psnames_interface = {
 	t1_standard_encoding,
 	t1_expert_encoding,
 
-#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 	(PS_Next_Unicode_Func)     ps_next_unicode
 #else
 	0
-#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 };
 
@@ -289,7 +289,7 @@ static const PSNames_Interface  psnames_interface = {
 #endif /* !FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES */
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Module_Class psnames_module_class = {
 	0,  /* this is not a font driver, nor a renderer */
 	sizeof (FT_ModuleRec),

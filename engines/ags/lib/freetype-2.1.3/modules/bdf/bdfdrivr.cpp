@@ -38,12 +38,12 @@ THE SOFTWARE.
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_bdfdriver
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_bdfdriver
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -56,7 +56,7 @@ typedef struct  BDF_CMapRec_ {
 } BDF_CMapRec, *BDF_CMap;
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 bdf_cmap_init( BDF_CMap  cmap ) {
 	BDF_Face  face = (BDF_Face)FT2_1_3_CMAP_FACE( cmap );
 
@@ -68,14 +68,14 @@ bdf_cmap_init( BDF_CMap  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 bdf_cmap_done( BDF_CMap  cmap ) {
 	cmap->encodings     = NULL;
 	cmap->num_encodings = 0;
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_UInt )
+FT_CALLBACK_DEF( FT_UInt )
 bdf_cmap_char_index( BDF_CMap   cmap,
 					 FT_UInt32  charcode ) {
 	BDF_encoding_el*  encodings = cmap->encodings;
@@ -108,7 +108,7 @@ bdf_cmap_char_index( BDF_CMap   cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_UInt )
+FT_CALLBACK_DEF( FT_UInt )
 bdf_cmap_char_next( BDF_CMap    cmap,
 					FT_UInt32  *acharcode ) {
 	BDF_encoding_el*  encodings = cmap->encodings;
@@ -150,7 +150,7 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  bdf_cmap_class = {
+FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  bdf_cmap_class = {
 	sizeof( BDF_CMapRec ),
 	(FT_CMap_InitFunc)     bdf_cmap_init,
 	(FT_CMap_DoneFunc)     bdf_cmap_done,
@@ -161,7 +161,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  bdf_cmap_class = {
 
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 BDF_Face_Done( BDF_Face  face ) {
 	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
@@ -178,13 +178,13 @@ BDF_Face_Done( BDF_Face  face ) {
 
 	FT2_1_3_FREE( face->bdffont );
 
-	FT2_1_3_TRACE4(( "BDF_Face_Done: done face\n" ));
+	FT_TRACE4(( "BDF_Face_Done: done face\n" ));
 
 	return FT2_1_3_Err_Ok;
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 BDF_Face_Init( FT_Stream      stream,
 			   BDF_Face       face,
 			   FT_Int         face_index,
@@ -196,9 +196,9 @@ BDF_Face_Init( FT_Stream      stream,
 	bdf_font_t*    font;
 	bdf_options_t  options;
 
-	FT2_1_3_UNUSED( num_params );
-	FT2_1_3_UNUSED( params );
-	FT2_1_3_UNUSED( face_index );
+	FT_UNUSED( num_params );
+	FT_UNUSED( params );
+	FT_UNUSED( face_index );
 
 
 	if ( FT2_1_3_STREAM_SEEK( 0 ) )
@@ -211,7 +211,7 @@ BDF_Face_Init( FT_Stream      stream,
 
 	error = bdf_load_font( stream, memory, &options, &font );
 	if ( error == FT2_1_3_Err_Missing_Startfont_Field ) {
-		FT2_1_3_TRACE2(( "[not a valid BDF file]\n" ));
+		FT_TRACE2(( "[not a valid BDF file]\n" ));
 		goto Fail;
 	} else if ( error )
 		goto Exit;
@@ -223,18 +223,18 @@ BDF_Face_Init( FT_Stream      stream,
 		bdf_property_t*  prop = NULL;
 
 
-		FT2_1_3_TRACE4(( "number of glyphs: %d (%d)\n",
+		FT_TRACE4(( "number of glyphs: %d (%d)\n",
 					font->glyphs_size,
 					font->glyphs_used ));
-		FT2_1_3_TRACE4(( "number of unencoded glyphs: %d (%d)\n",
+		FT_TRACE4(( "number of unencoded glyphs: %d (%d)\n",
 					font->unencoded_size,
 					font->unencoded_used ));
 
 		root->num_faces  = 1;
 		root->face_index = 0;
-		root->face_flags = FT2_1_3_FACE_FLAG_FIXED_SIZES |
-						   FT2_1_3_FACE_FLAG_HORIZONTAL  |
-						   FT2_1_3_FACE_FLAG_FAST_GLYPHS;
+		root->face_flags = FT_FACE_FLAG_FIXED_SIZES |
+						   FT_FACE_FLAG_HORIZONTAL  |
+						   FT_FACE_FLAG_FAST_GLYPHS;
 
 		prop = bdf_get_font_property( font, const_cast<char *>("SPACING") );
 		if ( prop != NULL )
@@ -242,9 +242,9 @@ BDF_Face_Init( FT_Stream      stream,
 				if ( prop->value.atom != NULL )
 					if ( ( *(prop->value.atom) == 'M' ) ||
 							( *(prop->value.atom) == 'C' ) )
-						root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+						root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
-		/* FZ XXX: TO DO: FT2_1_3_FACE_FLAGS_VERTICAL   */
+		/* FZ XXX: TO DO: FT_FACE_FLAGS_VERTICAL   */
 		/* FZ XXX: I need a font to implement this */
 
 		root->style_flags = 0;
@@ -254,39 +254,39 @@ BDF_Face_Init( FT_Stream      stream,
 				if ( prop->value.atom != NULL )
 					if ( ( *(prop->value.atom) == 'O' ) ||
 							( *(prop->value.atom) == 'I' ) )
-						root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
+						root->style_flags |= FT_STYLE_FLAG_ITALIC;
 
 		prop = bdf_get_font_property( font, const_cast<char *>("WEIGHT_NAME") );
 		if ( prop != NULL )
 			if ( prop->format == BDF_ATOM )
 				if ( prop->value.atom != NULL )
 					if ( *(prop->value.atom) == 'B' )
-						root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
+						root->style_flags |= FT_STYLE_FLAG_BOLD;
 
 		prop = bdf_get_font_property( font, const_cast<char *>("FAMILY_NAME") );
 		if ( ( prop != NULL ) && ( prop->value.atom != NULL ) ) {
 			int  l = ft_strlen( prop->value.atom ) + 1;
 
 
-			if ( FT2_1_3_NEW_ARRAY( root->family_name, l ) )
+			if ( FT_NEW_ARRAY( root->family_name, l ) )
 				goto Exit;
 			ft_strcpy( root->family_name, prop->value.atom );
 		} else
 			root->family_name = 0;
 
 		root->style_name = const_cast<char *>("Regular");
-		if ( root->style_flags & FT2_1_3_STYLE_FLAG_BOLD ) {
-			if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
+		if ( root->style_flags & FT_STYLE_FLAG_BOLD ) {
+			if ( root->style_flags & FT_STYLE_FLAG_ITALIC )
 				root->style_name = const_cast<char *>("Bold Italic");
 			else
 				root->style_name = const_cast<char *>("Bold");
-		} else if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
+		} else if ( root->style_flags & FT_STYLE_FLAG_ITALIC )
 			root->style_name = const_cast<char *>("Italic");
 
 		root->num_glyphs = font->glyphs_size;     /* unencoded included */
 
 		root->num_fixed_sizes = 1;
-		if ( FT2_1_3_NEW_ARRAY( root->available_sizes, 1 ) )
+		if ( FT_NEW_ARRAY( root->available_sizes, 1 ) )
 			goto Exit;
 
 		prop = bdf_get_font_property( font, const_cast<char *>("AVERAGE_WIDTH") );
@@ -304,7 +304,7 @@ BDF_Face_Init( FT_Stream      stream,
 
 				yres = bdf_get_font_property( font, const_cast<char *>("RESOLUTION_Y") );
 				if ( yres != NULL ) {
-					FT2_1_3_TRACE4(( "POINT_SIZE: %d  RESOLUTION_Y: %d\n",
+					FT_TRACE4(( "POINT_SIZE: %d  RESOLUTION_Y: %d\n",
 								prop->value.int32, yres->value.int32 ));
 					root->available_sizes->height =
 						(FT_Short)( prop->value.int32 * yres->value.int32 / 720 );
@@ -315,7 +315,7 @@ BDF_Face_Init( FT_Stream      stream,
 		if ( root->available_sizes->width == 0 ) {
 			if ( root->available_sizes->height == 0 ) {
 				/* some fonts have broken SIZE declaration (jiskan24.bdf) */
-				FT2_1_3_ERROR(( "BDF_Face_Init: reading size\n" ));
+				FT_ERROR(( "BDF_Face_Init: reading size\n" ));
 				root->available_sizes->width = (FT_Short)font->point_size;
 			} else
 				root->available_sizes->width = root->available_sizes->height;
@@ -329,12 +329,12 @@ BDF_Face_Init( FT_Stream      stream,
 			unsigned long  n;
 
 
-			if ( FT2_1_3_NEW_ARRAY( face->en_table, font->glyphs_size ) )
+			if ( FT_NEW_ARRAY( face->en_table, font->glyphs_size ) )
 				goto Exit;
 
 			for ( n = 0; n < font->glyphs_size; n++ ) {
 				(face->en_table[n]).enc = cur[n].encoding;
-				FT2_1_3_TRACE4(( "idx %d, val 0x%lX\n", n, cur[n].encoding ));
+				FT_TRACE4(( "idx %d, val 0x%lX\n", n, cur[n].encoding ));
 				(face->en_table[n]).glyph = (FT_Short)n;
 			}
 		}
@@ -354,10 +354,10 @@ BDF_Face_Init( FT_Stream      stream,
 						( charset_encoding->format == BDF_ATOM ) &&
 						( charset_registry->value.atom != NULL ) &&
 						( charset_encoding->value.atom != NULL ) ) {
-					if ( FT2_1_3_NEW_ARRAY( face->charset_encoding,
+					if ( FT_NEW_ARRAY( face->charset_encoding,
 									   strlen( charset_encoding->value.atom ) + 1 ) )
 						goto Exit;
-					if ( FT2_1_3_NEW_ARRAY( face->charset_registry,
+					if ( FT_NEW_ARRAY( face->charset_registry,
 									   strlen( charset_registry->value.atom ) + 1 ) )
 						goto Exit;
 					ft_strcpy( face->charset_registry, charset_registry->value.atom );
@@ -372,12 +372,12 @@ BDF_Face_Init( FT_Stream      stream,
 
 
 						charmap.face        = FT2_1_3_FACE( face );
-						charmap.encoding    = FT2_1_3_ENCODING_NONE;
+						charmap.encoding    = FT_ENCODING_NONE;
 						charmap.platform_id = 0;
 						charmap.encoding_id = 0;
 
 						if ( unicode_charmap ) {
-							charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
+							charmap.encoding    = FT_ENCODING_UNICODE;
 							charmap.platform_id = 3;
 							charmap.encoding_id = 1;
 						}
@@ -402,7 +402,7 @@ BDF_Face_Init( FT_Stream      stream,
 
 
 				charmap.face        = FT2_1_3_FACE( face );
-				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_STANDARD;
+				charmap.encoding    = FT_ENCODING_ADOBE_STANDARD;
 				charmap.platform_id = 7;
 				charmap.encoding_id = 0;
 
@@ -430,7 +430,7 @@ BDF_Set_Pixel_Size( FT_Size  size ) {
 	FT_Face   root = FT2_1_3_FACE( face );
 
 
-	FT2_1_3_TRACE4(( "rec %d - pres %d\n",
+	FT_TRACE4(( "rec %d - pres %d\n",
 				size->metrics.y_ppem, root->available_sizes->height ));
 
 	if ( size->metrics.y_ppem == root->available_sizes->height ) {
@@ -459,7 +459,7 @@ BDF_Glyph_Load( FT_GlyphSlot  slot,
 
 	FT_Memory       memory = face->bdffont->memory;
 
-	FT2_1_3_UNUSED( load_flags );
+	FT_UNUSED( load_flags );
 
 
 	if ( !face ) {
@@ -477,18 +477,18 @@ BDF_Glyph_Load( FT_GlyphSlot  slot,
 	bitmap->width = glyph.bbx.width;
 
 	if ( bpp == 1 ) {
-		bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
+		bitmap->pixel_mode = FT_PIXEL_MODE_MONO;
 		bitmap->pitch      = glyph.bpr;
 
-		if ( FT2_1_3_NEW_ARRAY( bitmap->buffer, glyph.bytes ) )
+		if ( FT_NEW_ARRAY( bitmap->buffer, glyph.bytes ) )
 			goto Exit;
 		FT2_1_3_MEM_COPY( bitmap->buffer, glyph.bitmap, glyph.bytes );
 	} else {
 		/* blow up pixmap to have 8 bits per pixel */
-		bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY;
+		bitmap->pixel_mode = FT_PIXEL_MODE_GRAY;
 		bitmap->pitch      = bitmap->width;
 
-		if ( FT2_1_3_NEW_ARRAY( bitmap->buffer, bitmap->rows * bitmap->pitch ) )
+		if ( FT_NEW_ARRAY( bitmap->buffer, bitmap->rows * bitmap->pitch ) )
 			goto Exit;
 
 		switch ( bpp ) {
@@ -581,15 +581,15 @@ BDF_Glyph_Load( FT_GlyphSlot  slot,
 	slot->metrics.height       = bitmap->rows << 6;
 
 	slot->linearHoriAdvance = (FT_Fixed)glyph.dwidth << 16;
-	slot->format            = FT2_1_3_GLYPH_FORMAT_BITMAP;
-	slot->flags             = FT2_1_3_GLYPH_OWN_BITMAP;
+	slot->format            = FT_GLYPH_FORMAT_BITMAP;
+	slot->flags             = FT_GLYPH_OWN_BITMAP;
 
 Exit:
 	return error;
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec  bdf_driver_class = {
 	{
 		ft_module_font_driver,

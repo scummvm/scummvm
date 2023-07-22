@@ -36,7 +36,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct T1_Kern_Pair_ {
@@ -51,17 +51,17 @@ typedef struct T1_AFM_ {
 } T1_AFM;
 
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Read_AFM(FT_Face face, FT_Stream stream);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_Done_AFM(FT_Memory memory, T1_AFM *afm);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_Get_Kerning(T1_AFM *afm, FT_UInt glyph1, FT_UInt glyph2, FT_Vector *kerning);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -84,7 +84,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 	charmap = face->charmap;
 
 	/* do we have a Unicode charmap in there? */
-	error = FT_Select_Charmap(face, FT2_1_3_ENCODING_UNICODE);
+	error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 	if (error)
 		goto Exit;
 
@@ -124,7 +124,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 			if (glyph_index == 0)
 				continue;
 
-			error = FT2_1_3_Load_Glyph(face, glyph_index, FT2_1_3_LOAD_NO_SCALE);
+			error = FT2_1_3_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
 			if (error || glyph->outline.n_points <= 0)
 				continue;
 
@@ -204,8 +204,8 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 
 				/* now, set the `round' flag depending on the segment's kind */
 				round = FT2_1_3_BOOL(
-					FT2_1_3_CURVE_TAG(glyph->outline.tags[prev]) != FT2_1_3_CURVE_TAG_ON ||
-					FT2_1_3_CURVE_TAG(glyph->outline.tags[next]) != FT2_1_3_CURVE_TAG_ON);
+					FT_CURVE_TAG(glyph->outline.tags[prev]) != FT_CURVE_TAG_ON ||
+					FT_CURVE_TAG(glyph->outline.tags[next]) != FT_CURVE_TAG_ON);
 
 				AH_LOG(("%c ", round ? 'r' : 'f'));
 			}
@@ -287,7 +287,7 @@ static FT_Error ah_hinter_compute_widths(AH_Hinter hinter) {
 		if (glyph_index == 0)
 			return 0;
 
-		error = FT2_1_3_Load_Glyph(hinter->face, glyph_index, FT2_1_3_LOAD_NO_SCALE);
+		error = FT2_1_3_Load_Glyph(hinter->face, glyph_index, FT_LOAD_NO_SCALE);
 		if (error)
 			goto Exit;
 
@@ -349,7 +349,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 ah_hinter_compute_globals(AH_Hinter hinter) {
 	return ah_hinter_compute_widths(hinter) || ah_hinter_compute_blues(hinter);
 }

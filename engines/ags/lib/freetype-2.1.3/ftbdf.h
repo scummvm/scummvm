@@ -36,12 +36,12 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Get_BDF_Charset_ID(FT_Face face, const char **acharset_encoding, const char **acharset_registry);
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

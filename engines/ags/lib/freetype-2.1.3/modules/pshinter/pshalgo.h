@@ -19,7 +19,7 @@
 #ifndef AGS_LIB_FREETYPE_PSHALGO_H
 #define AGS_LIB_FREETYPE_PSHALGO_H
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 /* define to choose hinting algorithm */
 #define PSH_ALGORITHM_3
@@ -45,7 +45,7 @@ FT2_1_3_BEGIN_HEADER
 
 #endif
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_PSHALGO_H */
 

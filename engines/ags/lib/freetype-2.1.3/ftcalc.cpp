@@ -39,9 +39,9 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-#ifdef FT2_1_3_LONG64
+#ifdef FT_LONG64
 
-typedef FT2_1_3_INT64 FT_Int64;
+typedef FT_INT64 FT_Int64;
 
 #else
 
@@ -50,35 +50,35 @@ typedef struct FT_Int64_ {
 	FT_UInt32 hi;
 } FT_Int64;
 
-#endif /* FT2_1_3_LONG64 */
+#endif /* FT_LONG64 */
 
-/* The macro FT2_1_3_COMPONENT is used in trace mode. */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_calc
+/* The macro FT_COMPONENT is used in trace mode. */
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_calc
 
 
 /* The following three functions are available regardless of whether */
-/* FT2_1_3_LONG64 is defined.                                             */
+/* FT_LONG64 is defined.                                             */
 
-FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_EXPORT_DEF(FT_Fixed)
 FT2_1_3_RoundFix(FT_Fixed a) {
 	return (a >= 0) ? (a + 0x8000L) & -0x10000L
 					: -((-a + 0x8000L) & -0x10000L);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_EXPORT_DEF(FT_Fixed)
 FT2_1_3_CeilFix(FT_Fixed a) {
 	return (a >= 0) ? (a + 0xFFFFL) & -0x10000L
 					: -((-a + 0xFFFFL) & -0x10000L);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_EXPORT_DEF(FT_Fixed)
 FT2_1_3_FloorFix(FT_Fixed a) {
 	return (a >= 0) ? a & -0x10000L
 					: -((-a) & -0x10000L);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Int32)
+FT_EXPORT_DEF(FT_Int32)
 FT_Sqrt32(FT_Int32 x) {
 	FT_ULong val, root, newroot, mask;
 
@@ -102,9 +102,9 @@ FT_Sqrt32(FT_Int32 x) {
 }
 
 
-#ifdef FT2_1_3_LONG64
+#ifdef FT_LONG64
 
-FT2_1_3_EXPORT_DEF(FT_Long)
+FT_EXPORT_DEF(FT_Long)
 FT_MulDiv(FT_Long a, FT_Long b, FT_Long c) {
 	FT_Int s;
 	FT_Long d;
@@ -129,7 +129,7 @@ FT_MulDiv(FT_Long a, FT_Long b, FT_Long c) {
 	return (s > 0) ? d : -d;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Long)
+FT_EXPORT_DEF(FT_Long)
 FT2_1_3_MulFix(FT_Long a, FT_Long b) {
 	FT_Int s = 1;
 	FT_Long c;
@@ -147,7 +147,7 @@ FT2_1_3_MulFix(FT_Long a, FT_Long b) {
 	return (s > 0) ? c : -c;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Long)
+FT_EXPORT_DEF(FT_Long)
 FT2_1_3_DivFix(FT_Long a, FT_Long b) {
 	FT_Int32 s;
 	FT_UInt32 q;
@@ -172,7 +172,7 @@ FT2_1_3_DivFix(FT_Long a, FT_Long b) {
 	return (s < 0 ? -(FT_Long)q : (FT_Long)q);
 }
 
-#else /* FT2_1_3_LONG64 */
+#else /* FT_LONG64 */
 
 static void ft_multo64(FT_UInt32 x, FT_UInt32 y, FT_Int64 *z) {
 	FT_UInt32 lo1, hi1, lo2, hi2, lo, hi, i1, i2;
@@ -229,7 +229,7 @@ static FT_UInt32 ft_div64by32(FT_UInt32 hi, FT_UInt32 lo, FT_UInt32 y) {
 	return q;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT2_1_3_Add64(FT_Int64 *x, FT_Int64 *y, FT_Int64 *z) {
 	register FT_UInt32 lo, hi, max;
 
@@ -241,7 +241,7 @@ FT2_1_3_Add64(FT_Int64 *x, FT_Int64 *y, FT_Int64 *z) {
 	z->hi = hi;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Long)
+FT_EXPORT_DEF(FT_Long)
 FT_MulDiv(FT_Long a, FT_Long b, FT_Long c) {
 	long s;
 
@@ -272,7 +272,7 @@ FT_MulDiv(FT_Long a, FT_Long b, FT_Long c) {
 	return (s < 0 ? -a : a);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Long)
+FT_EXPORT_DEF(FT_Long)
 FT2_1_3_MulFix(FT_Long a, FT_Long b) {
 	FT_Long s;
 	FT_ULong ua, ub;
@@ -300,7 +300,7 @@ FT2_1_3_MulFix(FT_Long a, FT_Long b) {
 	return (s < 0 ? -(FT_Long)ua : (FT_Long)ua);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Long)
+FT_EXPORT_DEF(FT_Long)
 FT2_1_3_DivFix(FT_Long a, FT_Long b) {
 	FT_Int32 s;
 	FT_UInt32 q;
@@ -331,7 +331,7 @@ FT2_1_3_DivFix(FT_Long a, FT_Long b) {
 	return (s < 0 ? -(FT_Int32)q : (FT_Int32)q);
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT2_1_3_MulTo64(FT_Int32 x, FT_Int32 y, FT_Int64 *z) {
 	FT_Int32 s;
 
@@ -353,7 +353,7 @@ FT2_1_3_MulTo64(FT_Int32 x, FT_Int32 y, FT_Int64 *z) {
 
 #if 1
 
-FT2_1_3_EXPORT_DEF(FT_Int32)
+FT_EXPORT_DEF(FT_Int32)
 FT2_1_3_Div64by32(FT_Int64 *x, FT_Int32 y) {
 	FT_Int32 s;
 	FT_UInt32 q, r, i, lo;
@@ -401,7 +401,7 @@ FT2_1_3_Div64by32(FT_Int64 *x, FT_Int32 y) {
 
 #else /* 0 */
 
-FT2_1_3_EXPORT_DEF(FT_Int32)
+FT_EXPORT_DEF(FT_Int32)
 FT2_1_3_Div64by32(FT_Int64 *x, FT_Int32 y) {
 	FT_Int32 s;
 	FT_UInt32 q;
@@ -431,12 +431,12 @@ FT2_1_3_Div64by32(FT_Int64 *x, FT_Int32 y) {
 
 #endif /* 0 */
 
-#endif /* FT2_1_3_LONG64 */
+#endif /* FT_LONG64 */
 
 
 /* a not-so-fast but working 16.16 fixed point square root function */
 
-FT2_1_3_EXPORT_DEF(FT_Int32)
+FT_EXPORT_DEF(FT_Int32)
 FT_SqrtFixed(FT_Int32 x) {
 	FT_UInt32 root, rem_hi, rem_lo, test_div;
 	FT_Int count;

@@ -36,12 +36,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttinterp
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttinterp
 
 #undef  NO_APPLE_PATENT
 #define APPLE_THRESHOLD  0x4000000L
@@ -122,7 +122,7 @@ TT_ExecContextRec  cur;   /* static exec. context variable */
 /* This macro is used whenever `exec' is unused in a function, to avoid  */
 /* stupid warnings from pedantic compilers.                              */
 /*                                                                       */
-#define FT2_1_3_UNUSED_EXEC  FT2_1_3_UNUSED( CUR )
+#define FT_UNUSED_EXEC  FT_UNUSED( CUR )
 
 
 /*************************************************************************/
@@ -130,7 +130,7 @@ TT_ExecContextRec  cur;   /* static exec. context variable */
 /* This macro is used whenever `args' is unused in a function, to avoid  */
 /* stupid warnings from pedantic compilers.                              */
 /*                                                                       */
-#define FT2_1_3_UNUSED_ARG  FT2_1_3_UNUSED_EXEC; FT2_1_3_UNUSED( args )
+#define FT_UNUSED_ARG  FT_UNUSED_EXEC; FT_UNUSED( args )
 
 
 /*************************************************************************/
@@ -256,7 +256,7 @@ typedef void  (*TInstruction_Function)( INS_ARG );
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Goto_CodeRange( TT_ExecContext  exec,
                    FT_Int          range,
                    FT_Long         IP ) {
@@ -305,7 +305,7 @@ TT_Goto_CodeRange( TT_ExecContext  exec,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Set_CodeRange( TT_ExecContext  exec,
                   FT_Int          range,
                   void*           base,
@@ -339,7 +339,7 @@ TT_Set_CodeRange( TT_ExecContext  exec,
 /* <Note>                                                                */
 /*    Does not set the Error variable.                                   */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Clear_CodeRange( TT_ExecContext  exec,
                     FT_Int          range ) {
 	FT2_1_3_ASSERT( range >= 1 && range <= 3 );
@@ -377,7 +377,7 @@ TT_Clear_CodeRange( TT_ExecContext  exec,
 /* <Note>                                                                */
 /*    Only the glyph loader and debugger should call this function.      */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Destroy_Context( TT_ExecContext  exec,
                     FT_Memory       memory ) {
 	/* free composite load stack */
@@ -435,13 +435,13 @@ Init_Context( TT_ExecContext  exec,
 	FT_Error  error;
 
 
-	FT2_1_3_TRACE1(( "Init_Context: new object at 0x%08p, parent = 0x%08p\n",
+	FT_TRACE1(( "Init_Context: new object at 0x%08p, parent = 0x%08p\n",
 	            exec, face ));
 
 	exec->memory   = memory;
 	exec->callSize = 32;
 
-	if ( FT2_1_3_NEW_ARRAY( exec->callStack, exec->callSize ) )
+	if ( FT_NEW_ARRAY( exec->callStack, exec->callSize ) )
 		goto Fail_Memory;
 
 	/* all values in the context are set to 0 already, but this is */
@@ -463,7 +463,7 @@ Init_Context( TT_ExecContext  exec,
 	return TT_Err_Ok;
 
 Fail_Memory:
-	FT2_1_3_ERROR(( "Init_Context: not enough memory for 0x%08lx\n",
+	FT_ERROR(( "Init_Context: not enough memory for 0x%08lx\n",
 	           (FT_Long)exec ));
 	TT_Destroy_Context( exec, memory );
 
@@ -537,7 +537,7 @@ Update_Max( FT_Memory  memory,
 /* <Note>                                                                */
 /*    Only the glyph loader and debugger should call this function.      */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Load_Context( TT_ExecContext  exec,
                  TT_Face         face,
                  TT_Size         size ) {
@@ -638,7 +638,7 @@ TT_Load_Context( TT_ExecContext  exec,
 /* <Note>                                                                */
 /*    Only the glyph loader and debugger should call this function.      */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Save_Context( TT_ExecContext  exec,
                  TT_Size         size ) {
 	FT_Int  i;
@@ -684,7 +684,7 @@ TT_Save_Context( TT_ExecContext  exec,
 /* <Note>                                                                */
 /*    Only the glyph loader and debugger should call this function.      */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Run_Context( TT_ExecContext  exec,
                 FT_Bool         debug ) {
 	FT_Error  error;
@@ -717,7 +717,7 @@ TT_Run_Context( TT_ExecContext  exec,
 	exec->callTop = 0;
 
 #if 1
-	FT2_1_3_UNUSED( debug );
+	FT_UNUSED( debug );
 
 	return exec->face->interpreter( exec );
 #else
@@ -742,7 +742,7 @@ const TT_GraphicsState  tt_default_graphics_state = {
 
 /* documentation is in ttinterp.h */
 
-FT2_1_3_EXPORT_DEF( TT_ExecContext )
+FT_EXPORT_DEF( TT_ExecContext )
 TT_New_Context( TT_Face  face ) {
 	TT_Driver       driver;
 	TT_ExecContext  exec;
@@ -762,7 +762,7 @@ TT_New_Context( TT_Face  face ) {
 
 
 		/* allocate object */
-		if ( FT2_1_3_NEW( exec ) )
+		if ( FT_NEW( exec ) )
 			goto Exit;
 
 		/* initialize it */
@@ -801,10 +801,10 @@ Fail:
 /* <Note>                                                                */
 /*    Only the glyph loader and debugger should call this function.      */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 TT_Done_Context( TT_ExecContext  exec ) {
 	/* Nothing at all for now */
-	FT2_1_3_UNUSED( exec );
+	FT_UNUSED( exec );
 
 	return TT_Err_Ok;
 }
@@ -1354,40 +1354,40 @@ Current_Ppem( EXEC_OP ) {
 /*************************************************************************/
 
 
-FT2_1_3_CALLBACK_DEF( FT_F26Dot6 )
+FT_CALLBACK_DEF( FT_F26Dot6 )
 Read_CVT( EXEC_OP_ FT_ULong  idx ) {
 	return CUR.cvt[idx];
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_F26Dot6 )
+FT_CALLBACK_DEF( FT_F26Dot6 )
 Read_CVT_Stretched( EXEC_OP_ FT_ULong  idx ) {
 	return TT_MULFIX( CUR.cvt[idx], CURRENT_Ratio() );
 }
 
 
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 Write_CVT( EXEC_OP_ FT_ULong    idx,
            FT_F26Dot6  value ) {
 	CUR.cvt[idx] = value;
 }
 
 
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 Write_CVT_Stretched( EXEC_OP_ FT_ULong    idx,
                      FT_F26Dot6  value ) {
 	CUR.cvt[idx] = FT2_1_3_DivFix( value, CURRENT_Ratio() );
 }
 
 
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 Move_CVT( EXEC_OP_ FT_ULong    idx,
           FT_F26Dot6  value ) {
 	CUR.cvt[idx] += value;
 }
 
 
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 Move_CVT_Stretched( EXEC_OP_ FT_ULong    idx,
                     FT_F26Dot6  value ) {
 	CUR.cvt[idx] += FT2_1_3_DivFix( value, CURRENT_Ratio() );
@@ -1511,7 +1511,7 @@ Direct_Move( EXEC_OP_ TT_GlyphZone  zone,
 
 #endif
 
-		zone->tags[point] |= FT2_1_3_CURVE_TAG_TOUCH_X;
+		zone->tags[point] |= FT_CURVE_TAG_TOUCH_X;
 	}
 
 	v = CUR.GS.freeVector.y;
@@ -1531,7 +1531,7 @@ Direct_Move( EXEC_OP_ TT_GlyphZone  zone,
 
 #endif
 
-		zone->tags[point] |= FT2_1_3_CURVE_TAG_TOUCH_Y;
+		zone->tags[point] |= FT_CURVE_TAG_TOUCH_Y;
 	}
 }
 
@@ -1550,10 +1550,10 @@ static void
 Direct_Move_X( EXEC_OP_ TT_GlyphZone  zone,
                FT_UShort     point,
                FT_F26Dot6    distance ) {
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 	zone->cur[point].x += distance;
-	zone->tags[point]  |= FT2_1_3_CURVE_TAG_TOUCH_X;
+	zone->tags[point]  |= FT_CURVE_TAG_TOUCH_X;
 }
 
 
@@ -1561,10 +1561,10 @@ static void
 Direct_Move_Y( EXEC_OP_ TT_GlyphZone  zone,
                FT_UShort     point,
                FT_F26Dot6    distance ) {
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 	zone->cur[point].y += distance;
-	zone->tags[point]  |= FT2_1_3_CURVE_TAG_TOUCH_Y;
+	zone->tags[point]  |= FT_CURVE_TAG_TOUCH_Y;
 }
 
 
@@ -1595,7 +1595,7 @@ Round_None( EXEC_OP_ FT_F26Dot6  distance,
             FT_F26Dot6  compensation ) {
 	FT_F26Dot6  val;
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 
 	if ( distance >= 0 ) {
@@ -1632,7 +1632,7 @@ Round_To_Grid( EXEC_OP_ FT_F26Dot6  distance,
                FT_F26Dot6  compensation ) {
 	FT_F26Dot6  val;
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 
 	if ( distance >= 0 ) {
@@ -1672,7 +1672,7 @@ Round_To_Half_Grid( EXEC_OP_ FT_F26Dot6  distance,
                     FT_F26Dot6  compensation ) {
 	FT_F26Dot6  val;
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 
 	if ( distance >= 0 ) {
@@ -1710,7 +1710,7 @@ Round_Down_To_Grid( EXEC_OP_ FT_F26Dot6  distance,
                     FT_F26Dot6  compensation ) {
 	FT_F26Dot6  val;
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 
 	if ( distance >= 0 ) {
@@ -1751,7 +1751,7 @@ Round_Up_To_Grid( EXEC_OP_ FT_F26Dot6  distance,
 	FT_F26Dot6  val;
 
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 	if ( distance >= 0 ) {
 		val = distance + compensation + 63;
@@ -1790,7 +1790,7 @@ Round_To_Double_Grid( EXEC_OP_ FT_F26Dot6  distance,
                       FT_F26Dot6  compensation ) {
 	FT_F26Dot6 val;
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 
 	if ( distance >= 0 ) {
@@ -2109,7 +2109,7 @@ Free_Project( EXEC_OP_ FT_Vector*  v1,
 static FT_F26Dot6
 Project_x( EXEC_OP_ FT_Vector*  v1,
            FT_Vector*  v2 ) {
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 	return ( v1->x - v2->x );
 }
@@ -2134,7 +2134,7 @@ Project_x( EXEC_OP_ FT_Vector*  v1,
 static FT_F26Dot6
 Project_y( EXEC_OP_ FT_Vector*  v1,
            FT_Vector*  v2 ) {
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 	return ( v1->y - v2->y );
 }
@@ -2236,7 +2236,7 @@ Normalize( EXEC_OP_ FT_F26Dot6      Vx,
 	FT_F26Dot6  W;
 	FT_Bool     S1, S2;
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 
 	if ( ABS( Vx ) < 0x10000L && ABS( Vy ) < 0x10000L ) {
@@ -3792,7 +3792,7 @@ static void
 Ins_ROLL( INS_ARG ) {
 	FT_Long  A, B, C;
 
-	FT2_1_3_UNUSED_EXEC;
+	FT_UNUSED_EXEC;
 
 
 	A = args[2];
@@ -3888,7 +3888,7 @@ static void
 Ins_ELSE( INS_ARG ) {
 	FT_Int  nIfs;
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	nIfs = 1;
@@ -3988,7 +3988,7 @@ static void
 Ins_ENDF( INS_ARG ) {
 	TT_CallRec*  pRec;
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	if ( CUR.callTop <= 0 ) {   /* We encountered an ENDF without a call */
@@ -4744,7 +4744,7 @@ static void
 Ins_FLIPPT( INS_ARG ) {
 	FT_UShort  point;
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	if ( CUR.top < CUR.GS.loop ) {
@@ -4763,7 +4763,7 @@ Ins_FLIPPT( INS_ARG ) {
 				return;
 			}
 		} else
-			CUR.pts.tags[point] ^= FT2_1_3_CURVE_TAG_ON;
+			CUR.pts.tags[point] ^= FT_CURVE_TAG_ON;
 
 		CUR.GS.loop--;
 	}
@@ -4795,7 +4795,7 @@ Ins_FLIPRGON( INS_ARG ) {
 	}
 
 	for ( I = L; I <= K; I++ )
-		CUR.pts.tags[I] |= FT2_1_3_CURVE_TAG_ON;
+		CUR.pts.tags[I] |= FT_CURVE_TAG_ON;
 }
 
 
@@ -4821,7 +4821,7 @@ Ins_FLIPRGOFF( INS_ARG ) {
 	}
 
 	for ( I = L; I <= K; I++ )
-		CUR.pts.tags[I] &= ~FT2_1_3_CURVE_TAG_ON;
+		CUR.pts.tags[I] &= ~FT_CURVE_TAG_ON;
 }
 
 
@@ -4882,13 +4882,13 @@ Move_Zp2_Point( EXEC_OP_ FT_UShort   point,
 	if ( CUR.GS.freeVector.x != 0 ) {
 		CUR.zp2.cur[point].x += dx;
 		if ( touch )
-			CUR.zp2.tags[point] |= FT2_1_3_CURVE_TAG_TOUCH_X;
+			CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_X;
 	}
 
 	if ( CUR.GS.freeVector.y != 0 ) {
 		CUR.zp2.cur[point].y += dy;
 		if ( touch )
-			CUR.zp2.tags[point] |= FT2_1_3_CURVE_TAG_TOUCH_Y;
+			CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_Y;
 	}
 }
 
@@ -4908,7 +4908,7 @@ Ins_SHP( INS_ARG ) {
 	                 dy;
 	FT_UShort        point;
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	if ( CUR.top < CUR.GS.loop ) {
@@ -5415,7 +5415,7 @@ Ins_ALIGNRP( INS_ARG ) {
 	FT_UShort   point;
 	FT_F26Dot6  distance;
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	if ( CUR.top < CUR.GS.loop ||
@@ -5499,7 +5499,7 @@ Ins_ISECT( INS_ARG ) {
 	dx = CUR.zp0.cur[b0].x - CUR.zp1.cur[a0].x;
 	dy = CUR.zp0.cur[b0].y - CUR.zp1.cur[a0].y;
 
-	CUR.zp2.tags[point] |= FT2_1_3_CURVE_TAG_TOUCH_BOTH;
+	CUR.zp2.tags[point] |= FT_CURVE_TAG_TOUCH_BOTH;
 
 	discriminant = TT_MULDIV( dax, -dby, 0x40 ) +
 	               TT_MULDIV( day, dbx, 0x40 );
@@ -5570,7 +5570,7 @@ Ins_IP( INS_ARG ) {
 	            distance;
 	FT_UShort   point;
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	if ( CUR.top < CUR.GS.loop ) {
@@ -5660,10 +5660,10 @@ Ins_UTP( INS_ARG ) {
 	mask = 0xFF;
 
 	if ( CUR.GS.freeVector.x != 0 )
-		mask &= ~FT2_1_3_CURVE_TAG_TOUCH_X;
+		mask &= ~FT_CURVE_TAG_TOUCH_X;
 
 	if ( CUR.GS.freeVector.y != 0 )
-		mask &= ~FT2_1_3_CURVE_TAG_TOUCH_Y;
+		mask &= ~FT_CURVE_TAG_TOUCH_Y;
 
 	CUR.zp0.tags[point] &= mask;
 }
@@ -5787,15 +5787,15 @@ Ins_IUP( INS_ARG ) {
 	FT_UInt   point;         /* current point   */
 	FT_Short  contour;       /* current contour */
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	if ( CUR.opcode & 1 ) {
-		mask   = FT2_1_3_CURVE_TAG_TOUCH_X;
+		mask   = FT_CURVE_TAG_TOUCH_X;
 		V.orgs = CUR.pts.org;
 		V.curs = CUR.pts.cur;
 	} else {
-		mask   = FT2_1_3_CURVE_TAG_TOUCH_Y;
+		mask   = FT_CURVE_TAG_TOUCH_Y;
 		V.orgs = (FT_Vector*)( (FT_Pos*)CUR.pts.org + 1 );
 		V.curs = (FT_Vector*)( (FT_Pos*)CUR.pts.cur + 1 );
 	}
@@ -6028,7 +6028,7 @@ Ins_UNKNOWN( INS_ARG ) {
 	TT_DefRecord*  def   = CUR.IDefs;
 	TT_DefRecord*  limit = def + CUR.numIDefs;
 
-	FT2_1_3_UNUSED_ARG;
+	FT_UNUSED_ARG;
 
 
 	for ( ; def < limit; def++ ) {
@@ -6378,7 +6378,7 @@ TInstruction_Function  Instruct_Dispatch[256] = {
 
 /* documentation is in ttinterp.h */
 
-FT2_1_3_EXPORT_DEF( FT_Error )
+FT_EXPORT_DEF( FT_Error )
 TT_RunIns( TT_ExecContext  exc ) {
 	FT_Long  ins_counter = 0;  /* executed instructions counter */
 

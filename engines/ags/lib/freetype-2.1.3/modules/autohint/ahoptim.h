@@ -37,7 +37,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* the maximal number of stem configurations to record */
@@ -124,7 +124,7 @@ void AH_Optimizer_Compute(AH_Optimizer *optimizer);
 void AH_Optimizer_Done(AH_Optimizer *optimizer);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

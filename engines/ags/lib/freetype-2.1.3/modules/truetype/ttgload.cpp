@@ -39,8 +39,8 @@
 #include "engines/ags/lib/freetype-2.1.3/modules/truetype/tterrors.h"
 
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttgload
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttgload
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -61,7 +61,7 @@ namespace FreeType213 {
 #define SCALED_COMPONENT_OFFSET    0x0800
 #define UNSCALED_COMPONENT_OFFSET  0x1000
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 TT_Get_Metrics(TT_HoriHeader *header, FT_UInt idx, FT_Short *bearing, FT_UShort *advance) {
 	TT_LongMetrics longs_m;
 	FT_UShort k = header->number_Of_HMetrics;
@@ -124,18 +124,18 @@ static void tt_prepare_zone(TT_GlyphZone zone, FT_GlyphLoad load, FT_UInt start_
 }
 
 #undef IS_HINTED
-#define IS_HINTED(flags) ((flags & FT2_1_3_LOAD_NO_HINTING) == 0)
+#define IS_HINTED(flags) ((flags & FT_LOAD_NO_HINTING) == 0)
 
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 TT_Access_Glyph_Frame(TT_Loader loader, FT_UInt glyph_index, FT_ULong offset, FT_UInt byte_count) {
 	FT_Error error;
 	FT_Stream stream = loader->stream;
 
 	/* for non-debug mode */
-	FT2_1_3_UNUSED(glyph_index);
+	FT_UNUSED(glyph_index);
 
-	FT2_1_3_TRACE5(("Glyph %ld\n", glyph_index));
+	FT_TRACE5(("Glyph %ld\n", glyph_index));
 
 	/* the following line sets the `error' variable through macros! */
 	if (FT2_1_3_STREAM_SEEK(offset) || FT2_1_3_FRAME_ENTER(byte_count))
@@ -144,14 +144,14 @@ TT_Access_Glyph_Frame(TT_Loader loader, FT_UInt glyph_index, FT_ULong offset, FT
 	return FT2_1_3_Err_Ok;
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 TT_Forget_Glyph_Frame(TT_Loader loader) {
 	FT_Stream stream = loader->stream;
 
 	FT2_1_3_FRAME_EXIT();
 }
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 TT_Load_Glyph_Header(TT_Loader loader) {
 	FT_Stream stream = loader->stream;
 	FT_Int byte_len  = loader->byte_len - 10;
@@ -166,15 +166,15 @@ TT_Load_Glyph_Header(TT_Loader loader) {
 	loader->bbox.xMax = FT2_1_3_GET_SHORT();
 	loader->bbox.yMax = FT2_1_3_GET_SHORT();
 
-	FT2_1_3_TRACE5(("  # of contours: %d\n", loader->n_contours));
-	FT2_1_3_TRACE5(("  xMin: %4d  xMax: %4d\n", loader->bbox.xMin, loader->bbox.xMax));
-	FT2_1_3_TRACE5(("  yMin: %4d  yMax: %4d\n", loader->bbox.yMin, loader->bbox.yMax));
+	FT_TRACE5(("  # of contours: %d\n", loader->n_contours));
+	FT_TRACE5(("  xMin: %4d  xMax: %4d\n", loader->bbox.xMin, loader->bbox.xMax));
+	FT_TRACE5(("  yMin: %4d  yMax: %4d\n", loader->bbox.yMin, loader->bbox.yMax));
 	loader->byte_len = byte_len;
 
 	return FT2_1_3_Err_Ok;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 TT_Load_Simple_Glyph(TT_Loader  load) {
 	FT_Error        error;
 	FT_Stream       stream     = load->stream;
@@ -223,24 +223,24 @@ TT_Load_Simple_Glyph(TT_Loader  load) {
 
 	n_ins = FT2_1_3_GET_USHORT();
 
-	FT2_1_3_TRACE5(("  Instructions size: %d\n", n_ins));
+	FT_TRACE5(("  Instructions size: %d\n", n_ins));
 
 	if (n_ins > face->max_profile.maxSizeOfInstructions) {
-		FT2_1_3_TRACE0(("TT_Load_Simple_Glyph: Too many instructions!\n"));
+		FT_TRACE0(("TT_Load_Simple_Glyph: Too many instructions!\n"));
 		error = FT2_1_3_Err_Too_Many_Hints;
 		goto Fail;
 	}
 
 	byte_len -= n_ins;
 	if (byte_len < 0) {
-		FT2_1_3_TRACE0(("TT_Load_Simple_Glyph: Instruction count mismatch!\n"));
+		FT_TRACE0(("TT_Load_Simple_Glyph: Instruction count mismatch!\n"));
 		error = FT2_1_3_Err_Too_Many_Hints;
 		goto Fail;
 	}
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
-	if ((load->load_flags & (FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_HINTING)) == 0 && load->instructions) {
+	if ((load->load_flags & (FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING)) == 0 && load->instructions) {
 		slot->control_len = n_ins;
 		slot->control_data = load->instructions;
 
@@ -340,7 +340,7 @@ TT_Load_Simple_Glyph(TT_Loader  load) {
 
 	/* clear the touch tags */
 	for (n = 0; n < n_points; n++)
-		outline->tags[n] &= FT2_1_3_CURVE_TAG_ON;
+		outline->tags[n] &= FT_CURVE_TAG_ON;
 
 	outline->n_points = (FT_UShort)n_points;
 	outline->n_contours = (FT_Short)n_contours;
@@ -356,7 +356,7 @@ Invalid_Outline:
 }
 
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 TT_Load_Composite_Glyph(TT_Loader loader) {
 	FT_Error        error;
 	FT_Stream       stream  = loader->stream;
@@ -458,7 +458,7 @@ Invalid_Composite:
 	goto Fail;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 TT_Init_Glyph_Loading(TT_Face face) {
 	face->access_glyph_frame   = TT_Access_Glyph_Frame;
 	face->read_glyph_header    = TT_Load_Glyph_Header;
@@ -477,7 +477,7 @@ static FT_Error TT_Process_Simple_Glyph(TT_Loader load, FT_Bool debug) {
 	TT_GlyphZone    zone     = &load->zone;
 	FT_Error        error    = FT2_1_3_Err_Ok;
 
-	FT2_1_3_UNUSED(debug); /* used by truetype interpreter only */
+	FT_UNUSED(debug); /* used by truetype interpreter only */
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 	n_ins = load->glyph->control_len;
@@ -515,7 +515,7 @@ static FT_Error TT_Process_Simple_Glyph(TT_Loader load, FT_Bool debug) {
 	tt_prepare_zone(zone, &gloader->current, 0, 0);
 
 	/* eventually scale the glyph */
-	if (!(load->load_flags & FT2_1_3_LOAD_NO_SCALE)) {
+	if (!(load->load_flags & FT_LOAD_NO_SCALE)) {
 		FT_Vector *vec = zone->cur;
 		FT_Vector *limit = vec + n_points;
 		FT_Fixed x_scale = load->size->metrics.x_scale;
@@ -550,7 +550,7 @@ static FT_Error TT_Process_Simple_Glyph(TT_Loader load, FT_Bool debug) {
 				goto Exit;
 
 			load->exec->is_composite = FALSE;
-			load->exec->pedantic_hinting = (FT_Bool)(load->load_flags & FT2_1_3_LOAD_PEDANTIC);
+			load->exec->pedantic_hinting = (FT_Bool)(load->load_flags & FT_LOAD_PEDANTIC);
 			load->exec->pts = *zone;
 			load->exec->pts.n_points += 2;
 
@@ -592,7 +592,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 	FT_GlyphLoader  gloader = loader->gloader;
 	FT_Bool         opened_frame = 0;
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 	struct FT_StreamRec_  inc_stream;
 	FT_Data               glyph_data;
 	FT_Bool               glyph_data_loaded = 0;
@@ -610,7 +610,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 
 	x_scale = 0x10000L;
 	y_scale = 0x10000L;
-	if ((loader->load_flags & FT2_1_3_LOAD_NO_SCALE) == 0) {
+	if ((loader->load_flags & FT_LOAD_NO_SCALE) == 0) {
 		x_scale = loader->size->metrics.x_scale;
 		y_scale = loader->size->metrics.y_scale;
 	}
@@ -620,7 +620,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 		FT_Short   left_bearing = 0;
 		FT_UShort  advance_width = 0;
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 		FT_Bool metrics_found = FALSE;
 
 		/* If this is an incrementally loaded font see if there are */
@@ -637,15 +637,15 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 		}
 
 		if (!metrics_found)
-			Get_HMetrics(face, glyph_index, (FT_Bool) !(loader->load_flags & FT2_1_3_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH),
+			Get_HMetrics(face, glyph_index, (FT_Bool) !(loader->load_flags & FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH),
 						 &left_bearing, &advance_width);
 
 #else
 
-		Get_HMetrics(face, glyph_index, (FT_Bool) !(loader->load_flags & FT2_1_3_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH),
+		Get_HMetrics(face, glyph_index, (FT_Bool) !(loader->load_flags & FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH),
 					 &left_bearing, &advance_width);
 
-#endif /* FT2_1_3_CONFIG_OPTION_INCREMENTAL */
+#endif /* FT_CONFIG_OPTION_INCREMENTAL */
 
 		loader->left_bearing = left_bearing;
 		loader->advance = advance_width;
@@ -656,7 +656,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 		}
 	}
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 
 	/* Set `offset' to the start of the glyph program relative to the  */
 	/* start of the 'glyf' table, and `count' to the length of the     */
@@ -682,7 +682,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 		loader->stream = &inc_stream;
 	} else
 
-#endif /* FT2_1_3_CONFIG_OPTION_INCREMENTAL */
+#endif /* FT_CONFIG_OPTION_INCREMENTAL */
 
 	{
 		offset = face->glyph_locations[glyph_index];
@@ -703,7 +703,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 		loader->pp1.x = 0;
 		loader->pp2.x = loader->advance;
 
-		if ((loader->load_flags & FT2_1_3_LOAD_NO_SCALE) == 0)
+		if ((loader->load_flags & FT_LOAD_NO_SCALE) == 0)
 			loader->pp2.x = FT2_1_3_MulFix(loader->pp2.x, x_scale);
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
@@ -742,7 +742,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 	loader->pp2.x = loader->pp1.x + loader->advance;
 	loader->pp2.y = 0;
 
-	if ((loader->load_flags & FT2_1_3_LOAD_NO_SCALE) == 0) {
+	if ((loader->load_flags & FT_LOAD_NO_SCALE) == 0) {
 		loader->pp1.x = FT2_1_3_MulFix(loader->pp1.x, x_scale);
 		loader->pp2.x = FT2_1_3_MulFix(loader->pp2.x, x_scale);
 	}
@@ -807,16 +807,16 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 		face->forget_glyph_frame(loader);
 		opened_frame = 0;
 
-		/* if the flag FT2_1_3_LOAD_NO_RECURSE is set, we return the subglyph */
+		/* if the flag FT_LOAD_NO_RECURSE is set, we return the subglyph */
 		/* `as is' in the glyph slot (the client application will be     */
 		/* responsible for interpreting these data)...                   */
 		/*                                                               */
-		if (loader->load_flags & FT2_1_3_LOAD_NO_RECURSE) {
+		if (loader->load_flags & FT_LOAD_NO_RECURSE) {
 			/* set up remaining glyph fields */
 			FT_GlyphLoader_Add(gloader);
 
 			glyph->num_subglyphs = gloader->base.num_subglyphs;
-			glyph->format = FT2_1_3_GLYPH_FORMAT_COMPOSITE;
+			glyph->format = FT_GLYPH_FORMAT_COMPOSITE;
 			glyph->subglyphs = gloader->base.subglyphs;
 
 			goto Exit;
@@ -956,7 +956,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 #endif /* 0 */
 					}
 
-					if (!(loader->load_flags & FT2_1_3_LOAD_NO_SCALE)) {
+					if (!(loader->load_flags & FT_LOAD_NO_SCALE)) {
 						x = FT2_1_3_MulFix(x, x_scale);
 						y = FT2_1_3_MulFix(y, y_scale);
 
@@ -989,7 +989,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 				if (FT2_1_3_STREAM_SEEK(ins_pos) ||
 					FT2_1_3_READ_USHORT(n_ins))
 					goto Fail;
-				FT2_1_3_TRACE5(("  Instructions size = %d\n", n_ins));
+				FT_TRACE5(("  Instructions size = %d\n", n_ins));
 
 				/* in some fonts? */
 				if (n_ins == 0xFFFFU)
@@ -997,7 +997,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 
 				/* check it */
 				if (n_ins > face->max_profile.maxSizeOfInstructions) {
-					FT2_1_3_TRACE0(("Too many instructions (%d) in composite glyph %ld\n", n_ins, subglyph->index));
+					FT_TRACE0(("Too many instructions (%d) in composite glyph %ld\n", n_ins, subglyph->index));
 					error = FT2_1_3_Err_Too_Many_Hints;
 					goto Fail;
 				}
@@ -1038,7 +1038,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 					FT_UInt k;
 
 					for (k = 0; k < num_points; k++)
-						pts->tags[k] &= FT2_1_3_CURVE_TAG_ON;
+						pts->tags[k] &= FT_CURVE_TAG_ON;
 				}
 
 				cur_to_org(num_points + 2, pts);
@@ -1047,7 +1047,7 @@ static FT_Error load_truetype_glyph(TT_Loader loader, FT_UInt glyph_index) {
 				if (IS_HINTED(loader->load_flags) && n_ins > 0) {
 					exec->is_composite = TRUE;
 					exec->pedantic_hinting =
-						(FT_Bool)(loader->load_flags & FT2_1_3_LOAD_PEDANTIC);
+						(FT_Bool)(loader->load_flags & FT_LOAD_PEDANTIC);
 
 					error = TT_Run_Context(exec, ((TT_Size)loader->size)->debug);
 					if (error && exec->pedantic_hinting)
@@ -1070,7 +1070,7 @@ Fail:
 
 Exit:
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 	if (glyph_data_loaded)
 		face->root.internal->incremental_interface->funcs->free_glyph_data(face->root.internal->incremental_interface->object, &glyph_data);
 #endif
@@ -1086,11 +1086,11 @@ static FT_Error compute_glyph_metrics(TT_Loader loader, FT_UInt glyph_index) {
 	TT_Size       size = (TT_Size)loader->size;
 
 	y_scale = 0x10000L;
-	if ((loader->load_flags & FT2_1_3_LOAD_NO_SCALE) == 0)
+	if ((loader->load_flags & FT_LOAD_NO_SCALE) == 0)
 		y_scale = size->root.metrics.y_scale;
 
-	if (glyph->format != FT2_1_3_GLYPH_FORMAT_COMPOSITE) {
-		glyph->outline.flags &= ~FT2_1_3_OUTLINE_SINGLE_PASS;
+	if (glyph->format != FT_GLYPH_FORMAT_COMPOSITE) {
+		glyph->outline.flags &= ~FT_OUTLINE_SINGLE_PASS;
 
 		/* copy outline to our glyph slot */
 		FT_GlyphLoader_CopyPoints(glyph->internal->loader, loader->gloader);
@@ -1116,12 +1116,12 @@ static FT_Error compute_glyph_metrics(TT_Loader loader, FT_UInt glyph_index) {
 	{
 		FT_Pos advance = loader->linear;
 
-		/* the flag FT2_1_3_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH was introduced to */
+		/* the flag FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH was introduced to */
 		/* correctly support DynaLab fonts, which have an incorrect       */
 		/* `advance_Width_Max' field!  It is used, to my knowledge,       */
 		/* exclusively in the X-TrueType font server.                     */
 		/*                                                                */
-		if (face->postscript.isFixedPitch && (loader->load_flags & FT2_1_3_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH) == 0)
+		if (face->postscript.isFixedPitch && (loader->load_flags & FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH) == 0)
 			advance = face->horizontal.advance_Width_Max;
 
 		/* we need to return the advance in font units in linearHoriAdvance, */
@@ -1150,7 +1150,7 @@ static FT_Error compute_glyph_metrics(TT_Loader loader, FT_UInt glyph_index) {
 		FT_Pos     advance;  /* scaled vertical advance height    */
 		FT_Bool    metrics_found = FALSE;
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 
 		/* If this is an incrementally loaded font see if there are */
 		/* overriding metrics for this glyph.                       */
@@ -1165,7 +1165,7 @@ static FT_Error compute_glyph_metrics(TT_Loader loader, FT_UInt glyph_index) {
 			advance_height = (FT_UShort)m.advance;
 		}
 
-#endif /* FT2_1_3_CONFIG_OPTION_INCREMENTAL */
+#endif /* FT_CONFIG_OPTION_INCREMENTAL */
 
 		/* Get the unscaled top bearing and advance height. */
 		if (!metrics_found && face->vertical_info && face->vertical.number_Of_VMetrics > 0) {
@@ -1200,7 +1200,7 @@ static FT_Error compute_glyph_metrics(TT_Loader loader, FT_UInt glyph_index) {
 		/* FT2_1_3_Get_Outline_CBox().                                      */
 
 		/* scale the metrics */
-		if (!(loader->load_flags & FT2_1_3_LOAD_NO_SCALE)) {
+		if (!(loader->load_flags & FT_LOAD_NO_SCALE)) {
 			top = FT2_1_3_MulFix(top_bearing + loader->bbox.yMax, y_scale) - bbox.yMax;
 			advance = FT2_1_3_MulFix(advance_height, y_scale);
 		} else {
@@ -1244,7 +1244,7 @@ static FT_Error compute_glyph_metrics(TT_Loader loader, FT_UInt glyph_index) {
 	return 0;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 load_flags) {
 	SFNT_Service sfnt;
 	TT_Face face;
@@ -1257,9 +1257,9 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 	stream = face->root.stream;
 	error = 0;
 
-	if (!size || (load_flags & FT2_1_3_LOAD_NO_SCALE) || (load_flags & FT2_1_3_LOAD_NO_RECURSE)) {
+	if (!size || (load_flags & FT_LOAD_NO_SCALE) || (load_flags & FT_LOAD_NO_RECURSE)) {
 		size = NULL;
-		load_flags |= FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_HINTING | FT2_1_3_LOAD_NO_BITMAP;
+		load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING | FT_LOAD_NO_BITMAP;
 	}
 
 	glyph->num_subglyphs = 0;
@@ -1270,7 +1270,7 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 	/*                                                 */
 	/* XXX: The convention should be emphasized in     */
 	/*      the documents because it can be confusing. */
-	if (size && size->strike_index != 0xFFFFU && sfnt->load_sbits && (load_flags & FT2_1_3_LOAD_NO_BITMAP) == 0) {
+	if (size && size->strike_index != 0xFFFFU && sfnt->load_sbits && (load_flags & FT_LOAD_NO_BITMAP) == 0) {
 		TT_SBit_MetricsRec metrics;
 
 		error = sfnt->load_sbit_image(face, size->strike_index, glyph_index, load_flags, stream, &glyph->bitmap, &metrics);
@@ -1289,8 +1289,8 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 			glyph->metrics.vertBearingY = (FT_Pos)metrics.vertBearingY << 6;
 			glyph->metrics.vertAdvance = (FT_Pos)metrics.vertAdvance << 6;
 
-			glyph->format = FT2_1_3_GLYPH_FORMAT_BITMAP;
-			if (load_flags & FT2_1_3_LOAD_VERTICAL_LAYOUT) {
+			glyph->format = FT_GLYPH_FORMAT_BITMAP;
+			if (load_flags & FT_LOAD_VERTICAL_LAYOUT) {
 				glyph->bitmap_left = metrics.vertBearingX;
 				glyph->bitmap_top = metrics.vertBearingY;
 			} else {
@@ -1304,14 +1304,14 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
 	/* return immediately if we only want the embedded bitmaps */
-	if (load_flags & FT2_1_3_LOAD_SBITS_ONLY)
+	if (load_flags & FT_LOAD_SBITS_ONLY)
 		return FT2_1_3_Err_Invalid_Argument;
 
 		/* seek to the beginning of the glyph table.  For Type 42 fonts      */
 		/* the table might be accessed from a Postscript stream or something */
 		/* else...                                                           */
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 
 	/* Don't look for the glyph table if this is an incremental font. */
 	if (!face->root.internal->incremental_interface)
@@ -1321,7 +1321,7 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 	{
 		error = face->goto_table(face, TTAG_glyf, stream, 0);
 		if (error) {
-			FT2_1_3_ERROR(("TT_Load_Glyph: could not access glyph table\n"));
+			FT_ERROR(("TT_Load_Glyph: could not access glyph table\n"));
 			goto Exit;
 		}
 	}
@@ -1370,7 +1370,7 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 	loader.glyph = (FT_GlyphSlot)glyph;
 	loader.stream = stream;
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 
 	if (face->root.internal->incremental_interface)
 		loader.glyf_offset = 0;
@@ -1385,12 +1385,12 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 	/* if the cvt program has disabled hinting, the argument */
 	/* is ignored.                                           */
 	if (size && (size->GS.instruct_control & 1))
-		loader.load_flags |= FT2_1_3_LOAD_NO_HINTING;
+		loader.load_flags |= FT_LOAD_NO_HINTING;
 
 #endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 
 	/* Main loading loop */
-	glyph->format = FT2_1_3_GLYPH_FORMAT_OUTLINE;
+	glyph->format = FT_GLYPH_FORMAT_OUTLINE;
 	glyph->num_subglyphs = 0;
 
 	error = load_truetype_glyph(&loader, glyph_index);
@@ -1409,7 +1409,7 @@ TT_Load_Glyph(TT_Size size, TT_GlyphSlot glyph, FT_UShort glyph_index, FT_Int32 
 	/* TrueType glyphs at all sizes using the bytecode interpreter. */
 	/*                                                              */
 	if (size && size->root.metrics.y_ppem < 24)
-		glyph->outline.flags |= FT2_1_3_OUTLINE_HIGH_PRECISION;
+		glyph->outline.flags |= FT_OUTLINE_HIGH_PRECISION;
 
 Exit:
 	return error;

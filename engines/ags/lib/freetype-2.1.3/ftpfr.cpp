@@ -50,7 +50,7 @@ static FT_Error ft_pfr_check(FT_Face face, FT2_1_3_PFR_Service *aservice) {
 	return error;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Get_PFR_Metrics(FT_Face face, FT_UInt *aoutline_resolution, FT_UInt *ametrics_resolution,
 				   FT_Fixed *ametrics_x_scale, FT_Fixed *ametrics_y_scale) {
 	FT_Error error;
@@ -63,7 +63,7 @@ FT_Get_PFR_Metrics(FT_Face face, FT_UInt *aoutline_resolution, FT_UInt *ametrics
 	return error;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Get_PFR_Kerning(FT_Face face, FT_UInt left, FT_UInt right, FT_Vector *avector) {
 	FT_Error error;
 	FT2_1_3_PFR_Service service;
@@ -75,7 +75,7 @@ FT_Get_PFR_Kerning(FT_Face face, FT_UInt left, FT_UInt right, FT_Vector *avector
 	return error;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Get_PFR_Advance(FT_Face face, FT_UInt gindex, FT_Pos *aadvance) {
 	FT_Error error;
 	FT2_1_3_PFR_Service service;

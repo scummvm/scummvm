@@ -37,7 +37,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* module bit flags */
@@ -75,32 +75,32 @@ typedef struct  FT_Module_Class_ {
 } FT_Module_Class;
 
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Add_Module(FT_Library library, const FT_Module_Class *clazz);
 
-FT2_1_3_EXPORT(FT_Module)
+FT_EXPORT(FT_Module)
 FT_Get_Module(FT_Library library, const char *module_name);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Remove_Module(FT_Library library, FT_Module module);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_New_Library(FT_Memory memory, FT_Library *alibrary);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Done_Library(FT_Library library);
 
 
 typedef void (*FT_DebugHook_Func)(void *arg);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Set_Debug_Hook(FT_Library library, FT_UInt hook_index, FT_DebugHook_Func debug_hook);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Add_Default_Modules(FT_Library library);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

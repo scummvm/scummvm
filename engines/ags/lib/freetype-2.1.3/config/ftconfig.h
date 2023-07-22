@@ -52,7 +52,7 @@
 #include "engines/ags/lib/freetype-2.1.3/config/ftstdlib.h"
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -67,32 +67,32 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 
 /* The number of bytes in an `int' type.  */
-#if FT2_1_3_UINT_MAX == 0xFFFFFFFFUL
-#define FT2_1_3_SIZEOF_INT 4
-#elif FT2_1_3_UINT_MAX == 0xFFFFU
-#define FT2_1_3_SIZEOF_INT 2
-#elif FT2_1_3_UINT_MAX > 0xFFFFFFFFU && FT2_1_3_UINT_MAX == 0xFFFFFFFFFFFFFFFFU
-#define FT2_1_3_SIZEOF_INT 8
+#if FT_UINT_MAX == 0xFFFFFFFFUL
+#define FT_SIZEOF_INT 4
+#elif FT_UINT_MAX == 0xFFFFU
+#define FT_SIZEOF_INT 2
+#elif FT_UINT_MAX > 0xFFFFFFFFU && FT_UINT_MAX == 0xFFFFFFFFFFFFFFFFU
+#define FT_SIZEOF_INT 8
 #else
 #error "Unsupported number of bytes in `int' type!"
 #endif
 
 /* The number of bytes in a `long' type.  */
-#if FT2_1_3_ULONG_MAX == 0xFFFFFFFFUL
-#define FT2_1_3_SIZEOF_LONG 4
-#elif FT2_1_3_ULONG_MAX > 0xFFFFFFFFU && FT2_1_3_ULONG_MAX == 0xFFFFFFFFFFFFFFFFU
-#define FT2_1_3_SIZEOF_LONG 8
+#if FT_ULONG_MAX == 0xFFFFFFFFUL
+#define FT_SIZEOF_LONG 4
+#elif FT_ULONG_MAX > 0xFFFFFFFFU && FT_ULONG_MAX == 0xFFFFFFFFFFFFFFFFU
+#define FT_SIZEOF_LONG 8
 #else
 #error "Unsupported number of bytes in `long' type!"
 #endif
 
 /* Preferred alignment of data */
-#define FT2_1_3_ALIGNMENT 8
+#define FT_ALIGNMENT 8
 
-/* FT2_1_3_UNUSED is a macro used to indicate that a given parameter is not  */
+/* FT_UNUSED is a macro used to indicate that a given parameter is not  */
 /* used -- this is only used to get rid of unpleasant compiler warnings */
-#ifndef FT2_1_3_UNUSED
-#define FT2_1_3_UNUSED(arg) ((arg) = (arg))
+#ifndef FT_UNUSED
+#define FT_UNUSED(arg) ((arg) = (arg))
 #endif
 
 /*************************************************************************/
@@ -113,7 +113,7 @@ FT2_1_3_BEGIN_HEADER
 /*   providing a new configuration file.                                 */
 /*                                                                       */
 #if defined(__APPLE__) || (defined(__MWERKS__) && defined(macintosh))
-#define FT2_1_3_MACINTOSH 1
+#define FT_MACINTOSH 1
 #endif
 
 /*************************************************************************/
@@ -125,12 +125,12 @@ FT2_1_3_BEGIN_HEADER
 typedef signed short FT_Int16;
 typedef unsigned short FT_UInt16;
 
-#if FT2_1_3_SIZEOF_INT == 4
+#if FT_SIZEOF_INT == 4
 
 typedef signed int FT_Int32;
 typedef unsigned int FT_UInt32;
 
-#elif FT2_1_3_SIZEOF_LONG == 4
+#elif FT_SIZEOF_LONG == 4
 
 typedef signed long FT_Int32;
 typedef unsigned long FT_UInt32;
@@ -140,12 +140,12 @@ typedef unsigned long FT_UInt32;
 #endif
 
 /* now, lookup for an integer type that is at least 32 bits */
-#if FT2_1_3_SIZEOF_INT >= 4
+#if FT_SIZEOF_INT >= 4
 
 typedef int FT_Fast;
 typedef unsigned int FT_UFast;
 
-#elif FT2_1_3_SIZEOF_LONG >= 4
+#elif FT_SIZEOF_LONG >= 4
 
 typedef long FT_Fast;
 typedef unsigned long FT_UFast;
@@ -154,17 +154,17 @@ typedef unsigned long FT_UFast;
 
 /* determine whether we have a 64-bit int type for platforms without */
 /* Autoconf                                                          */
-#if FT2_1_3_SIZEOF_LONG == 8
+#if FT_SIZEOF_LONG == 8
 
-/* FT2_1_3_LONG64 must be defined if a 64-bit type is available */
-#define FT2_1_3_LONG64
-#define FT2_1_3_INT64 long
+/* FT_LONG64 must be defined if a 64-bit type is available */
+#define FT_LONG64
+#define FT_INT64 long
 
 #elif defined(_MSC_VER) && _MSC_VER >= 900 /* Visual C++ (and Intel C++) */
 
 /* this compiler provides the __int64 type */
-#define FT2_1_3_LONG64
-#define FT2_1_3_INT64 __int64
+#define FT_LONG64
+#define FT_INT64 __int64
 
 #elif defined(__BORLANDC__) /* Borland C++ */
 
@@ -172,8 +172,8 @@ typedef unsigned long FT_UFast;
 /*       to test the compiler version.                               */
 
 /* this compiler provides the __int64 type */
-#define FT2_1_3_LONG64
-#define FT2_1_3_INT64 __int64
+#define FT_LONG64
+#define FT_INT64 __int64
 
 #elif defined(__WATCOMC__) /* Watcom C++ */
 
@@ -187,96 +187,96 @@ typedef unsigned long FT_UFast;
 #elif defined(__GNUC__)
 
 /* GCC provides the "long long" type */
-#define FT2_1_3_LONG64
-#define FT2_1_3_INT64 long long int
+#define FT_LONG64
+#define FT_INT64 long long int
 
-#endif /* FT2_1_3_SIZEOF_LONG == 8 */
+#endif /* FT_SIZEOF_LONG == 8 */
 
 /*************************************************************************/
 /*                                                                       */
 /* A 64-bit data type will create compilation problems if you compile    */
 /* in strict ANSI mode.  To avoid them, we disable their use if          */
 /* __STDC__ is defined.  You can however ignore this rule by             */
-/* defining the FT2_1_3_CONFIG_OPTION_FORCE_INT64 configuration macro.   */
+/* defining the FT_CONFIG_OPTION_FORCE_INT64 configuration macro.        */
 /*                                                                       */
-#if defined(FT2_1_3_LONG64) && !defined(FT2_1_3_CONFIG_OPTION_FORCE_INT64)
+#if defined(FT_LONG64) && !defined(FT_CONFIG_OPTION_FORCE_INT64)
 
 #ifdef __STDC__
 
 /* undefine the 64-bit macros in strict ANSI compilation mode */
-#undef FT2_1_3_LONG64
-#undef FT2_1_3_INT64
+#undef FT_LONG64
+#undef FT_INT64
 
 #endif /* __STDC__ */
 
-#endif /* FT2_1_3_LONG64 && !FT2_1_3_CONFIG_OPTION_FORCE_INT64 */
+#endif /* FT_LONG64 && !FT_CONFIG_OPTION_FORCE_INT64 */
 
-#ifdef FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
+#ifdef FT_MAKE_OPTION_SINGLE_OBJECT
 
-#define FT2_1_3_LOCAL(x) static x
-#define FT2_1_3_LOCAL_DEF(x) static x
+#define FT_LOCAL(x) static x
+#define FT_LOCAL_DEF(x) static x
 
 #else
 
 #ifdef __cplusplus
-#define FT2_1_3_LOCAL(x) extern "C" x
-#define FT2_1_3_LOCAL_DEF(x) extern "C" x
+#define FT_LOCAL(x) extern "C" x
+#define FT_LOCAL_DEF(x) extern "C" x
 #else
-#define FT2_1_3_LOCAL(x) extern x
-#define FT2_1_3_LOCAL_DEF(x) x
+#define FT_LOCAL(x) extern x
+#define FT_LOCAL_DEF(x) x
 #endif
 
-#endif /* FT2_1_3_MAKE_OPTION_SINGLE_OBJECT */
+#endif /* FT_MAKE_OPTION_SINGLE_OBJECT */
 
-#ifndef FT2_1_3_BASE
+#ifndef FT_BASE
 
 #ifdef __cplusplus
-#define FT2_1_3_BASE(x) extern "C" x
+#define FT_BASE(x) extern "C" x
 #else
-#define FT2_1_3_BASE(x) extern x
+#define FT_BASE(x) extern x
 #endif
 
-#endif /* !FT2_1_3_BASE */
+#endif /* !FT_BASE */
 
-#ifndef FT2_1_3_BASE_DEF
+#ifndef FT_BASE_DEF
 
 #ifdef __cplusplus
-#define FT2_1_3_BASE_DEF(x) extern "C" x
+#define FT_BASE_DEF(x) extern "C" x
 #else
-#define FT2_1_3_BASE_DEF(x) extern x
+#define FT_BASE_DEF(x) extern x
 #endif
 
-#endif /* !FT2_1_3_BASE_DEF */
+#endif /* !FT_BASE_DEF */
 
-#ifndef FT2_1_3_EXPORT
+#ifndef FT_EXPORT
 
 #ifdef __cplusplus
-#define FT2_1_3_EXPORT(x) extern "C" x
+#define FT_EXPORT(x) extern "C" x
 #else
-#define FT2_1_3_EXPORT(x) extern x
+#define FT_EXPORT(x) extern x
 #endif
 
-#endif /* !FT2_1_3_EXPORT */
+#endif /* !FT_EXPORT */
 
-#ifndef FT2_1_3_EXPORT_DEF
+#ifndef FT_EXPORT_DEF
 
 #ifdef __cplusplus
-#define FT2_1_3_EXPORT_DEF(x) extern "C" x
+#define FT_EXPORT_DEF(x) extern "C" x
 #else
-#define FT2_1_3_EXPORT_DEF(x) extern x
+#define FT_EXPORT_DEF(x) extern x
 #endif
 
-#endif /* !FT2_1_3_EXPORT_DEF */
+#endif /* !FT_EXPORT_DEF */
 
-#ifndef FT2_1_3_EXPORT_VAR
+#ifndef FT_EXPORT_VAR
 
 #ifdef __cplusplus
-#define FT2_1_3_EXPORT_VAR(x) extern "C" x
+#define FT_EXPORT_VAR(x) extern "C" x
 #else
-#define FT2_1_3_EXPORT_VAR(x) extern x
+#define FT_EXPORT_VAR(x) extern x
 #endif
 
-#endif /* !FT2_1_3_EXPORT_VAR */
+#endif /* !FT_EXPORT_VAR */
 
 /* The following macros are needed to compile the library with a   */
 /* C++ compiler and with 16bit compilers.                          */
@@ -289,37 +289,37 @@ typedef unsigned long FT_UFast;
 /* functions which are accessed by (global) function pointers.     */
 /*                                                                 */
 /*                                                                 */
-/* FT2_1_3_CALLBACK_DEF is used to _define_ a callback function.   */
+/* FT_CALLBACK_DEF is used to _define_ a callback function.   */
 /*                                                                 */
-/* FT2_1_3_CALLBACK_TABLE is used to _declare_ a constant variable */
+/* FT_CALLBACK_TABLE is used to _declare_ a constant variable */
 /* that contains pointers to callback functions.                   */
 /*                                                                 */
-/* FT2_1_3_CALLBACK_TABLE_DEF is used to _define_ a constant       */
+/* FT_CALLBACK_TABLE_DEF is used to _define_ a constant       */
 /* variable that contains pointers to callback functions.          */
 /*                                                                 */
 /*                                                                 */
 /* Some 16bit compilers have to redefine these macros to insert    */
 /* the infamous `_cdecl' or `__fastcall' declarations.             */
 /*                                                                 */
-#ifndef FT2_1_3_CALLBACK_DEF
+#ifndef FT_CALLBACK_DEF
 #ifdef __cplusplus
-#define FT2_1_3_CALLBACK_DEF(x) extern "C" x
+#define FT_CALLBACK_DEF(x) extern "C" x
 #else
-#define FT2_1_3_CALLBACK_DEF(x) static x
+#define FT_CALLBACK_DEF(x) static x
 #endif
-#endif /* FT2_1_3_CALLBACK_DEF */
+#endif /* FT_CALLBACK_DEF */
 
-#ifndef FT2_1_3_CALLBACK_TABLE
+#ifndef FT_CALLBACK_TABLE
 #ifdef __cplusplus
-#define FT2_1_3_CALLBACK_TABLE extern "C"
-#define FT2_1_3_CALLBACK_TABLE_DEF extern "C"
+#define FT_CALLBACK_TABLE extern "C"
+#define FT_CALLBACK_TABLE_DEF extern "C"
 #else
-#define FT2_1_3_CALLBACK_TABLE extern
-#define FT2_1_3_CALLBACK_TABLE_DEF /* nothing */
+#define FT_CALLBACK_TABLE extern
+#define FT_CALLBACK_TABLE_DEF /* nothing */
 #endif
-#endif /* FT2_1_3_CALLBACK_TABLE */
+#endif /* FT_CALLBACK_TABLE */
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 #endif /* __FT2_1_3_CONFIG_H__ */

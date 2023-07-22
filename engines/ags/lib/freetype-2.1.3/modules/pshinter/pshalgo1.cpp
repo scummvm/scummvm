@@ -21,8 +21,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "pshalgo1.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pshalgo1
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pshalgo1
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -88,7 +88,7 @@ psh1_hint_table_record( PSH1_Hint_Table  table,
 
 
 	if ( idx >= table->max_hints ) {
-		FT2_1_3_ERROR(( "%s.activate: invalid hint index %d\n", idx ));
+		FT_ERROR(( "%s.activate: invalid hint index %d\n", idx ));
 		return;
 	}
 
@@ -120,7 +120,7 @@ psh1_hint_table_record( PSH1_Hint_Table  table,
 	if ( table->num_hints < table->max_hints )
 		table->sort_global[table->num_hints++] = hint;
 	else
-		FT2_1_3_ERROR(( "%s.activate: too many sorted hints!  BUG!\n",
+		FT_ERROR(( "%s.activate: too many sorted hints!  BUG!\n",
 				   "ps.fitter" ));
 }
 
@@ -136,7 +136,7 @@ psh1_hint_table_record_mask( PSH1_Hint_Table  table,
 	limit = hint_mask->num_bits;
 
 	if ( limit != table->max_hints )
-		FT2_1_3_ERROR(( "%s.activate_mask: invalid bit count (%d instead of %d)\n",
+		FT_ERROR(( "%s.activate_mask: invalid bit count (%d instead of %d)\n",
 				   "ps.fitter", hint_mask->num_bits, table->max_hints ));
 
 	for ( idx = 0; idx < limit; idx++ ) {
@@ -163,13 +163,13 @@ psh1_hint_table_init( PSH1_Hint_Table  table,
 	FT_UInt   count = hints->num_hints;
 	FT_Error  error;
 
-	FT2_1_3_UNUSED( counter_masks );
+	FT_UNUSED( counter_masks );
 
 
 	/* allocate our tables */
-	if ( FT2_1_3_NEW_ARRAY( table->sort,  2 * count     ) ||
-			FT2_1_3_NEW_ARRAY( table->hints,     count     ) ||
-			FT2_1_3_NEW_ARRAY( table->zones, 2 * count + 1 ) )
+	if ( FT_NEW_ARRAY( table->sort,  2 * count     ) ||
+			FT_NEW_ARRAY( table->hints,     count     ) ||
+			FT_NEW_ARRAY( table->zones, 2 * count + 1 ) )
 		goto Exit;
 
 	table->max_hints   = count;
@@ -209,7 +209,7 @@ psh1_hint_table_init( PSH1_Hint_Table  table,
 		FT_UInt   Index, Count;
 
 
-		FT2_1_3_ERROR(( "%s.init: missing/incorrect hint masks!\n" ));
+		FT_ERROR(( "%s.init: missing/incorrect hint masks!\n" ));
 		Count = table->max_hints;
 		for ( Index = 0; Index < Count; Index++ )
 			psh1_hint_table_record( table, Index );
@@ -252,7 +252,7 @@ psh1_hint_table_activate_mask( PSH1_Hint_Table  table,
 				for ( count2 = count; count2 > 0; count2--, sort++ ) {
 					hint2 = sort[0];
 					if ( psh1_hint_overlap( hint, hint2 ) ) {
-						FT2_1_3_ERROR(( "%s.activate_mask: found overlapping hints\n",
+						FT_ERROR(( "%s.activate_mask: found overlapping hints\n",
 								   "psf.hint" ));
 						break;
 					}
@@ -263,7 +263,7 @@ psh1_hint_table_activate_mask( PSH1_Hint_Table  table,
 					if ( count < table->max_hints )
 						table->sort[count++] = hint;
 					else
-						FT2_1_3_ERROR(( "%s.activate_mask: too many active hints\n",
+						FT_ERROR(( "%s.activate_mask: too many active hints\n",
 								   "psf.hint" ));
 				}
 			}
@@ -331,7 +331,7 @@ ps_simple_scale( PSH1_Hint_Table  table,
 #endif
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 psh1_hint_table_optimize( PSH1_Hint_Table  table,
 						  PSH_Globals      globals,
 						  FT_Outline*      outline,
@@ -340,7 +340,7 @@ psh1_hint_table_optimize( PSH1_Hint_Table  table,
 	FT_Fixed       scale = dim->scale_mult;
 	FT_Fixed       delta = dim->scale_delta;
 
-	FT2_1_3_UNUSED( outline );
+	FT_UNUSED( outline );
 
 
 #ifdef DEBUG_HINTER
@@ -696,7 +696,7 @@ ps1_hints_apply( PS_Hints        ps_hints,
 	FT_Int              dimension;
 
 
-	FT2_1_3_UNUSED( hint_mode );
+	FT_UNUSED( hint_mode );
 
 	for ( dimension = 1; dimension >= 0; dimension-- ) {
 		PS_Dimension  dim = &ps_hints->dimension[dimension];

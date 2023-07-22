@@ -24,7 +24,7 @@
 #include "ttobjs.h"
 
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 #ifndef TT_CONFIG_OPTION_STATIC_INTEPRETER  /* indirect implementation */
@@ -222,18 +222,18 @@ typedef struct  TT_ExecContextRec_ {
 extern const TT_GraphicsState  tt_default_graphics_state;
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Goto_CodeRange( TT_ExecContext  exec,
                    FT_Int          range,
                    FT_Long         IP );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Set_CodeRange( TT_ExecContext  exec,
                   FT_Int          range,
                   void*           base,
                   FT_Long         length );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Clear_CodeRange( TT_ExecContext  exec,
                     FT_Int          range );
 
@@ -257,27 +257,27 @@ TT_Clear_CodeRange( TT_ExecContext  exec,
 /* <Note>                                                                */
 /*    Only the glyph loader and debugger should call this function.      */
 /*                                                                       */
-FT2_1_3_EXPORT( TT_ExecContext )
+FT_EXPORT( TT_ExecContext )
 TT_New_Context( TT_Face  face );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Done_Context( TT_ExecContext  exec );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Destroy_Context( TT_ExecContext  exec,
                     FT_Memory       memory );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Load_Context( TT_ExecContext  exec,
                  TT_Face         face,
                  TT_Size         size );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Save_Context( TT_ExecContext  exec,
                  TT_Size         ins );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 TT_Run_Context( TT_ExecContext  exec,
                 FT_Bool         debug );
 
@@ -303,11 +303,11 @@ TT_Run_Context( TT_ExecContext  exec,
 /*    This function is publicly exported because it is directly          */
 /*    invoked by the TrueType debugger.                                  */
 /*                                                                       */
-FT2_1_3_EXPORT( FT_Error )
+FT_EXPORT( FT_Error )
 TT_RunIns( TT_ExecContext  exec );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 #endif /* __TTINTERP_H__ */
 

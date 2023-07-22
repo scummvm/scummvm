@@ -79,7 +79,7 @@ psh_globals_scale_widths( PSH_Globals  globals,
 
 
 /* org_width is is font units, result in device pixels, 26.6 format */
-FT2_1_3_LOCAL_DEF( FT_Pos )
+FT_LOCAL_DEF( FT_Pos )
 psh_dimension_snap_width( PSH_Dimension  dimension,
 						  FT_Int         org_width ) {
 	FT_UInt  n;
@@ -136,7 +136,7 @@ psh_blues_set_zones_0( PSH_Blues       target,
 	FT_UInt  count_bot = bot_table->count;
 	FT_Bool  first     = 1;
 
-	FT2_1_3_UNUSED( target );
+	FT_UNUSED( target );
 
 
 	for ( ; read_count > 0; read_count -= 2 ) {
@@ -470,7 +470,7 @@ psh_blues_scale_zones( PSH_Blues  blues,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 psh_blues_snap_stem( PSH_Blues      blues,
 					 FT_Int         stem_top,
 					 FT_Int         stem_bot,
@@ -566,7 +566,7 @@ psh_globals_new( FT_Memory     memory,
 	FT_Error     error;
 
 
-	if ( !FT2_1_3_NEW( globals ) ) {
+	if ( !FT_NEW( globals ) ) {
 		FT_UInt    count;
 		FT_Short*  read;
 
@@ -676,7 +676,7 @@ psh_globals_set_scale( PSH_Globals  globals,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 psh_globals_funcs_init( PSH_Globals_FuncsRec*  funcs ) {
 	funcs->create    = psh_globals_new;
 	funcs->set_scale = psh_globals_set_scale;

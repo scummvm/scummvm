@@ -40,8 +40,8 @@
 
 #undef AGS_LIB_FREETYPE_FTERRORS_H
 
-#define FT2_1_3_ERR_PREFIX T1_Err_
-#define FT2_1_3_ERR_BASE FT2_1_3_Mod_Err_Type1
+#define FT_ERR_PREFIX T1_Err_
+#define FT_ERR_BASE FT2_1_3_Mod_Err_Type1
 
 #include "engines/ags/lib/freetype-2.1.3/fterrors.h"
 

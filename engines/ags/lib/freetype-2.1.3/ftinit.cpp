@@ -35,20 +35,20 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-#undef FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT trace_init
+#undef FT_COMPONENT
+#define FT_COMPONENT trace_init
 
-#undef FT2_1_3_USE_MODULE
+#undef FT_USE_MODULE
 #ifdef __cplusplus
-#define FT2_1_3_USE_MODULE(x) extern "C" const FT_Module_Class *x;
+#define FT_USE_MODULE(x) extern "C" const FT_Module_Class *x;
 #else
-#define FT2_1_3_USE_MODULE(x) extern const FT_Module_Class *x;
+#define FT_USE_MODULE(x) extern const FT_Module_Class *x;
 #endif
 
 #include "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
 
-#undef FT2_1_3_USE_MODULE
-#define FT2_1_3_USE_MODULE(x) (const FT_Module_Class *)&x,
+#undef FT_USE_MODULE
+#define FT_USE_MODULE(x) (const FT_Module_Class *)&x,
 
 static const FT_Module_Class *const ft_default_modules[] = {
 	#include "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
@@ -56,7 +56,7 @@ static const FT_Module_Class *const ft_default_modules[] = {
 };
 
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Add_Default_Modules(FT_Library library) {
 	FT_Error error;
 	const FT_Module_Class *const *cur;
@@ -68,14 +68,14 @@ FT_Add_Default_Modules(FT_Library library) {
 		error = FT_Add_Module(library, *cur);
 		/* notify errors, but don't stop */
 		if (error) {
-			FT2_1_3_ERROR(("FT2_1_3_Add_Default_Module: Cannot install `%s', error = 0x%x\n", (*cur)->module_name, error));
+			FT_ERROR(("FT2_1_3_Add_Default_Module: Cannot install `%s', error = 0x%x\n", (*cur)->module_name, error));
 		}
 		cur++;
 	}
 }
 
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT2_1_3_Init_FreeType(FT_Library *alibrary) {
 	FT_Error error;
 	FT_Memory memory;
@@ -85,7 +85,7 @@ FT2_1_3_Init_FreeType(FT_Library *alibrary) {
 
 	memory = FT_New_Memory();
 	if (!memory) {
-		FT2_1_3_ERROR(("FT2_1_3_Init_FreeType: cannot find memory manager\n"));
+		FT_ERROR(("FT2_1_3_Init_FreeType: cannot find memory manager\n"));
 		return FT2_1_3_Err_Unimplemented_Feature;
 	}
 
@@ -105,7 +105,7 @@ FT2_1_3_Init_FreeType(FT_Library *alibrary) {
 }
 
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT2_1_3_Done_FreeType(FT_Library library) {
 	if (library) {
 		FT_Memory memory = library->memory;

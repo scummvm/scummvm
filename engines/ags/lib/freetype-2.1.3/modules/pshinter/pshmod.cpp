@@ -37,7 +37,7 @@ typedef struct  PS_Hinter_Module_Rec_ {
 
 
 /* finalize module */
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 ps_hinter_done( PS_Hinter_Module  module ) {
 	module->t1_funcs.hints = NULL;
 	module->t2_funcs.hints = NULL;
@@ -47,7 +47,7 @@ ps_hinter_done( PS_Hinter_Module  module ) {
 
 
 /* initialize module, create hints recorder and the interface */
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 ps_hinter_init( PS_Hinter_Module  module ) {
 	FT_Memory  memory = module->root.memory;
 
@@ -67,21 +67,21 @@ ps_hinter_init( PS_Hinter_Module  module ) {
 
 
 /* returns global hints interface */
-FT2_1_3_CALLBACK_DEF( PSH_Globals_Funcs )
+FT_CALLBACK_DEF( PSH_Globals_Funcs )
 pshinter_get_globals_funcs( FT_Module  module ) {
 	return &((PS_Hinter_Module)module)->globals_funcs;
 }
 
 
 /* return Type 1 hints interface */
-FT2_1_3_CALLBACK_DEF( T1_Hints_Funcs )
+FT_CALLBACK_DEF( T1_Hints_Funcs )
 pshinter_get_t1_funcs( FT_Module  module ) {
 	return &((PS_Hinter_Module)module)->t1_funcs;
 }
 
 
 /* return Type 2 hints interface */
-FT2_1_3_CALLBACK_DEF( T2_Hints_Funcs )
+FT_CALLBACK_DEF( T2_Hints_Funcs )
 pshinter_get_t2_funcs( FT_Module  module ) {
 	return &((PS_Hinter_Module)module)->t2_funcs;
 }
@@ -95,7 +95,7 @@ const PSHinter_Interface  pshinter_interface = {
 };
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Module_Class  pshinter_module_class = {
 	0,
 	sizeof ( PS_Hinter_ModuleRec ),

@@ -59,7 +59,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /**** COMPILE-TIME BUILD OPTIONS ****/
@@ -326,7 +326,7 @@ extern FT_Bool     ah_debug_disable_vert;
 #endif /* DEBUG_HINTER */
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

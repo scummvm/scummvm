@@ -39,7 +39,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -139,20 +139,20 @@ typedef struct  PS_HintsRec_ {
 /* */
 
 /* initialize hints recorder */
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 ps_hints_init( PS_Hints   hints,
 			   FT_Memory  memory );
 
 /* finalize hints recorder */
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 ps_hints_done( PS_Hints  hints );
 
 /* initialize Type1 hints recorder interface */
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 t1_hints_funcs_init( T1_Hints_FuncsRec*  funcs );
 
 /* initialize Type2 hints recorder interface */
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 t2_hints_funcs_init( T2_Hints_FuncsRec*  funcs );
 
 
@@ -165,7 +165,7 @@ extern  int      ps_debug_no_vert_hints;
 /* */
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

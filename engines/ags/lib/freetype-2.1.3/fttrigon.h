@@ -35,7 +35,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef FT_Fixed  FT_Angle;
@@ -46,41 +46,41 @@ typedef FT_Fixed  FT_Angle;
 #define FT2_1_3_ANGLE_PI4 (FT2_1_3_ANGLE_PI / 4)
 
 
-FT2_1_3_EXPORT(FT_Fixed)
+FT_EXPORT(FT_Fixed)
 FT_Sin(FT_Angle angle);
 
-FT2_1_3_EXPORT(FT_Fixed)
+FT_EXPORT(FT_Fixed)
 FT_Cos(FT_Angle angle);
 
-FT2_1_3_EXPORT(FT_Fixed)
+FT_EXPORT(FT_Fixed)
 FT_Tan(FT_Angle angle);
 
-FT2_1_3_EXPORT(FT_Angle)
+FT_EXPORT(FT_Angle)
 FT_Atan2(FT_Fixed x, FT_Fixed y);
 
-FT2_1_3_EXPORT(FT_Angle)
+FT_EXPORT(FT_Angle)
 FT_Angle_Diff(FT_Angle angle1, FT_Angle angle2);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Vector_Unit(FT_Vector *vec, FT_Angle angle);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Vector_Rotate(FT_Vector *vec, FT_Angle angle);
 
-FT2_1_3_EXPORT(FT_Fixed)
+FT_EXPORT(FT_Fixed)
 FT_Vector_Length(FT_Vector *vec);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Vector_Normalize(FT_Vector *vec);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Vector_Polarize(FT_Vector *vec, FT_Fixed *length, FT_Angle *angle);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Vector_From_Polar(FT_Vector *vec, FT_Fixed length, FT_Angle angle);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

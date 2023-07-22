@@ -160,7 +160,7 @@ static void test_cubic_extrema(FT_Pos y1, FT_Pos y2, FT_Pos y3, FT_Pos y4, FT_Fi
 	FT_Pos y;
 	FT_Fixed uu;
 
-	FT2_1_3_UNUSED(y4);
+	FT_UNUSED(y4);
 
 	/* The polynom is                       */
 	/*                                      */
@@ -353,7 +353,7 @@ static int BBox_Cubic_To(FT_Vector *control1, FT_Vector *control2, FT_Vector *to
 	return 0;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Outline_Get_BBox(FT_Outline *outline, FT_BBox *abbox) {
 	FT_BBox cbox;
 	FT_BBox bbox;
@@ -397,7 +397,7 @@ FT_Outline_Get_BBox(FT_Outline *outline, FT_BBox *abbox) {
 		if (y > cbox.yMax)
 			cbox.yMax = y;
 
-		if (FT2_1_3_CURVE_TAG(outline->tags[n]) == FT2_1_3_CURVE_TAG_ON) {
+		if (FT_CURVE_TAG(outline->tags[n]) == FT_CURVE_TAG_ON) {
 			/* update bbox for `on' points only */
 			if (x < bbox.xMin)
 				bbox.xMin = x;

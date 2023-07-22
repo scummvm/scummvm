@@ -38,50 +38,50 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_Decompose(FT_Outline *outline, const FT_Outline_Funcs *func_interface, void *user);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_New(FT_Library library, FT_UInt numPoints, FT_Int numContours, FT_Outline *anoutline);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_New_Internal(FT_Memory memory, FT_UInt numPoints, FT_Int numContours, FT_Outline *anoutline);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_Done(FT_Library library, FT_Outline *outline);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_Done_Internal(FT_Memory memory, FT_Outline *outline);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_Check(FT_Outline *outline);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Outline_Get_CBox(FT_Outline *outline, FT_BBox *acbox);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Outline_Translate(FT_Outline *outline, FT_Pos xOffset, FT_Pos yOffset);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_Copy(FT_Outline *source, FT_Outline *target);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Outline_Transform(FT_Outline *outline, FT_Matrix *matrix);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_Outline_Reverse(FT_Outline *outline);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_Get_Bitmap(FT_Library library, FT_Outline *outline, FT_Bitmap *abitmap);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Outline_Render(FT_Library library, FT_Outline *outline, FT_Raster_Params *params);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

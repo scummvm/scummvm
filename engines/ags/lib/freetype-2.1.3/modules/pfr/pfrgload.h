@@ -24,18 +24,18 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 pfr_glyph_init( PFR_Glyph       glyph,
 				FT_GlyphLoader  loader );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 pfr_glyph_done( PFR_Glyph  glyph );
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
 				FT_Stream  stream,
 				FT_ULong   gps_offset,
@@ -43,7 +43,7 @@ pfr_glyph_load( PFR_Glyph  glyph,
 				FT_ULong   size );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

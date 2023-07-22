@@ -27,7 +27,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct PSH2_HintRec_*  PSH2_Hint;
@@ -187,7 +187,7 @@ ps2_hints_apply( PS_Hints        ps_hints,
 				 FT_Render_Mode  hint_mode );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 
 #endif /* AGS_LIB_FREETYPE_PSHALGO2_H */

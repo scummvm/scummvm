@@ -45,11 +45,11 @@
 #include "engines/ags/lib/freetype-2.1.3/config/ftheader.h"
 
 #ifdef __cplusplus
-#define FT2_1_3_BEGIN_HEADER  extern "C" {
-#define FT2_1_3_END_HEADER  }
+#define FT_BEGIN_HEADER  extern "C" {
+#define FT_END_HEADER  }
 #else
-#define FT2_1_3_BEGIN_HEADER  /* nothing */
-#define FT2_1_3_END_HEADER
+#define FT_BEGIN_HEADER  /* nothing */
+#define FT_END_HEADER
 #endif
 
 #endif /* AGS_LIB_FREETYPE_FT213_BUILD_H */

@@ -35,7 +35,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct FT_HashRec_ *FT_Hash;
@@ -61,25 +61,25 @@ typedef struct FT_HashNodeRec_ {
 typedef void (*FT_Hash_ForeachFunc)(const FT_HashNode node, const FT_Pointer data);
 
 // TODO: These functions are only used in ftobject and should be removed
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 ft_hash_init(FT_Hash table, FT_Hash_EqualFunc compare, FT_Memory memory);
 
-FT2_1_3_BASE_DEF(FT_HashLookup)
+FT_BASE_DEF(FT_HashLookup)
 ft_hash_lookup(FT_Hash table, FT_HashNode keynode);
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 ft_hash_add(FT_Hash table, FT_HashLookup lookup, FT_HashNode new_node);
 
-FT2_1_3_BASE(FT_Error)
+FT_BASE(FT_Error)
 ft_hash_remove(FT_Hash table, FT_HashLookup lookup);
 
-FT2_1_3_BASE(FT_UInt)
+FT_BASE(FT_UInt)
 ft_hash_get_size(FT_Hash table);
 
-FT2_1_3_BASE(void)
+FT_BASE(void)
 ft_hash_foreach(FT_Hash table, FT_Hash_ForeachFunc foreach_func, const FT_Pointer foreach_data);
 
-FT2_1_3_BASE(void)
+FT_BASE(void)
 ft_hash_done(FT_Hash table, FT_Hash_ForeachFunc item_func, const FT_Pointer item_data);
 
 /* compute bucket index from hash value in a dynamic hash table */
@@ -88,7 +88,7 @@ ft_hash_done(FT_Hash table, FT_Hash_ForeachFunc item_func, const FT_Pointer item
 /*                                                              */
 
 // TODO: remove
-#define FT2_1_3_HASH_COMPUTE_INDEX(_table, _hash, _index)     \
+#define FT_HASH_COMPUTE_INDEX(_table, _hash, _index)     \
 	{                                                         \
 		FT_UInt _mask = (_table)->mask;                       \
 		FT_UInt _hash0 = (_hash);                             \
@@ -99,7 +99,7 @@ ft_hash_done(FT_Hash table, FT_Hash_ForeachFunc item_func, const FT_Pointer item
 	}
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

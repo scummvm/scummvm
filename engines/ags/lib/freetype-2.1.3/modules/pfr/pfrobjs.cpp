@@ -26,8 +26,8 @@
 
 #include "pfrerror.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pfr
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pfr
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -40,7 +40,7 @@ namespace FreeType213 {
 /*************************************************************************/
 /*************************************************************************/
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 pfr_face_done( PFR_Face  face ) {
 	/* finalize the physical font record */
 	pfr_phy_font_done( &face->phy_font, FT2_1_3_FACE_MEMORY( face ) );
@@ -49,7 +49,7 @@ pfr_face_done( PFR_Face  face ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_face_init( FT_Stream      stream,
 			   PFR_Face       face,
 			   FT_Int         face_index,
@@ -57,8 +57,8 @@ pfr_face_init( FT_Stream      stream,
 			   FT_Parameter*  params ) {
 	FT_Error  error;
 
-	FT2_1_3_UNUSED( num_params );
-	FT2_1_3_UNUSED( params );
+	FT_UNUSED( num_params );
+	FT_UNUSED( params );
 
 
 	/* load the header and check it */
@@ -67,7 +67,7 @@ pfr_face_init( FT_Stream      stream,
 		goto Exit;
 
 	if ( !pfr_header_check( &face->header ) ) {
-		FT2_1_3_TRACE4(( "pfr_face_init: not a valid PFR font\n" ));
+		FT_TRACE4(( "pfr_face_init: not a valid PFR font\n" ));
 		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
@@ -90,7 +90,7 @@ pfr_face_init( FT_Stream      stream,
 		goto Exit;
 
 	if ( face_index >= face->root.num_faces ) {
-		FT2_1_3_ERROR(( "pfr_face_init: invalid face index\n" ));
+		FT_ERROR(( "pfr_face_init: invalid face index\n" ));
 		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
@@ -118,21 +118,21 @@ pfr_face_init( FT_Stream      stream,
 
 		root->face_index = face_index;
 		root->num_glyphs = phy_font->num_chars;
-		root->face_flags = FT2_1_3_FACE_FLAG_SCALABLE;
+		root->face_flags = FT_FACE_FLAG_SCALABLE;
 
 		if ( (phy_font->flags & PFR_PHY_PROPORTIONAL) == 0 )
-			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+			root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
 		if ( phy_font->flags & PFR_PHY_VERTICAL )
-			root->face_flags |= FT2_1_3_FACE_FLAG_VERTICAL;
+			root->face_flags |= FT_FACE_FLAG_VERTICAL;
 		else
-			root->face_flags |= FT2_1_3_FACE_FLAG_HORIZONTAL;
+			root->face_flags |= FT_FACE_FLAG_HORIZONTAL;
 
 		if ( phy_font->num_strikes > 0 )
-			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_SIZES;
+			root->face_flags |= FT_FACE_FLAG_FIXED_SIZES;
 
 		if ( phy_font->num_kern_pairs > 0 )
-			root->face_flags |= FT2_1_3_FACE_FLAG_KERNING;
+			root->face_flags |= FT_FACE_FLAG_KERNING;
 
 		root->family_name = phy_font->font_id;
 		root->style_name  = NULL;  /* no style name in font file */
@@ -178,7 +178,7 @@ pfr_face_init( FT_Stream      stream,
 			charmap.face        = root;
 			charmap.platform_id = 3;
 			charmap.encoding_id = 1;
-			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
+			charmap.encoding    = FT_ENCODING_UNICODE;
 
 			FT_CMap_New( &pfr_cmap_class_rec, NULL, &charmap, NULL );
 
@@ -191,7 +191,7 @@ pfr_face_init( FT_Stream      stream,
 
 		/* check whether we've loaded any kerning pairs */
 		if ( phy_font->num_kern_pairs )
-			root->face_flags |= FT2_1_3_FACE_FLAG_KERNING;
+			root->face_flags |= FT_FACE_FLAG_KERNING;
 	}
 
 Exit:
@@ -207,7 +207,7 @@ Exit:
 /*************************************************************************/
 /*************************************************************************/
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_slot_init( PFR_Slot  slot ) {
 	FT_GlyphLoader  loader = slot->root.internal->loader;
 
@@ -217,13 +217,13 @@ pfr_slot_init( PFR_Slot  slot ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 pfr_slot_done( PFR_Slot  slot ) {
 	pfr_glyph_done( &slot->glyph );
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_slot_load( PFR_Slot  slot,
 			   PFR_Size  size,
 			   FT_UInt   gindex,
@@ -241,19 +241,19 @@ pfr_slot_load( PFR_Slot  slot,
 	FT2_1_3_ASSERT( gindex < face->phy_font.num_chars );
 
 	/* try to load an embedded bitmap */
-	if ( ( load_flags & ( FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_BITMAP ) ) == 0 ) {
+	if ( ( load_flags & ( FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP ) ) == 0 ) {
 		error = pfr_slot_load_bitmap( slot, size, gindex );
 		if ( error == 0 )
 			goto Exit;
 	}
 
 	gchar               = face->phy_font.chars + gindex;
-	slot->root.format   = FT2_1_3_GLYPH_FORMAT_OUTLINE;
+	slot->root.format   = FT_GLYPH_FORMAT_OUTLINE;
 	outline->n_points   = 0;
 	outline->n_contours = 0;
 	gps_offset          = face->header.gps_section_offset;
 
-	/* load the glyph outline (FT2_1_3_LOAD_NO_RECURSE isn't supported) */
+	/* load the glyph outline (FT_LOAD_NO_RECURSE isn't supported) */
 	error = pfr_glyph_load( &slot->glyph, face->root.stream,
 							gps_offset, gchar->gps_offset, gchar->gps_size );
 
@@ -265,16 +265,16 @@ pfr_slot_load( PFR_Slot  slot,
 		FT_Bool            scaling;
 
 
-		scaling = FT2_1_3_BOOL( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 );
+		scaling = FT2_1_3_BOOL( ( load_flags & FT_LOAD_NO_SCALE ) == 0 );
 
 		/* copy outline data */
 		*outline = slot->glyph.loader->base.outline;
 
-		outline->flags &= ~FT2_1_3_OUTLINE_OWNER;
-		outline->flags |= FT2_1_3_OUTLINE_REVERSE_FILL;
+		outline->flags &= ~FT_OUTLINE_OWNER;
+		outline->flags |= FT_OUTLINE_REVERSE_FILL;
 
 		if ( size && size->root.metrics.y_ppem < 24 )
-			outline->flags |= FT2_1_3_OUTLINE_HIGH_PRECISION;
+			outline->flags |= FT_OUTLINE_HIGH_PRECISION;
 
 		/* compute the advance vector */
 		metrics->horiAdvance = 0;
@@ -340,7 +340,7 @@ Exit:
 /*************************************************************************/
 /*************************************************************************/
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_face_get_kerning( PFR_Face    face,
 					  FT_UInt     glyph1,
 					  FT_UInt     glyph2,

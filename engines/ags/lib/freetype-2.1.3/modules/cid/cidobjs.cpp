@@ -30,12 +30,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cidobjs
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cidobjs
 
 
 namespace AGS3 {
@@ -47,13 +47,13 @@ namespace FreeType213 {
 /*                                                                       */
 /*************************************************************************/
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cid_slot_done( CID_GlyphSlot  slot ) {
 	slot->root.internal->glyph_hints = 0;
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_slot_init( CID_GlyphSlot  slot ) {
 	CID_Face          face;
 	PSHinter_Service  pshinter;
@@ -103,7 +103,7 @@ cid_size_get_globals_funcs( CID_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cid_size_done( CID_Size  size ) {
 	if ( size->root.internal ) {
 		PSH_Globals_Funcs  funcs;
@@ -118,7 +118,7 @@ cid_size_done( CID_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_size_init( CID_Size  size ) {
 	FT_Error           error = 0;
 	PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
@@ -140,7 +140,7 @@ cid_size_init( CID_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_size_reset( CID_Size  size ) {
 	PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
 	FT_Error           error = 0;
@@ -172,7 +172,7 @@ cid_size_reset( CID_Size  size ) {
 /* <Input>                                                               */
 /*    face :: A pointer to the face object to destroy.                   */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cid_face_done( CID_Face  face ) {
 	FT_Memory  memory;
 
@@ -247,7 +247,7 @@ cid_face_done( CID_Face  face ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_face_init( FT_Stream      stream,
 			   CID_Face       face,
 			   FT_Int         face_index,
@@ -258,10 +258,10 @@ cid_face_init( FT_Stream      stream,
 	PSAux_Service     psaux;
 	PSHinter_Service  pshinter;
 
-	FT2_1_3_UNUSED( num_params );
-	FT2_1_3_UNUSED( params );
-	FT2_1_3_UNUSED( face_index );
-	FT2_1_3_UNUSED( stream );
+	FT_UNUSED( num_params );
+	FT_UNUSED( params );
+	FT_UNUSED( face_index );
+	FT_UNUSED( stream );
 
 
 	face->root.num_faces = 1;
@@ -305,7 +305,7 @@ cid_face_init( FT_Stream      stream,
 
 	/* check the face index */
 	if ( face_index != 0 ) {
-		FT2_1_3_ERROR(( "cid_face_init: invalid face index\n" ));
+		FT_ERROR(( "cid_face_init: invalid face index\n" ));
 		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
@@ -322,12 +322,12 @@ cid_face_init( FT_Stream      stream,
 			root->num_charmaps = 0;
 
 			root->face_index = face_index;
-			root->face_flags = FT2_1_3_FACE_FLAG_SCALABLE;
+			root->face_flags = FT_FACE_FLAG_SCALABLE;
 
-			root->face_flags |= FT2_1_3_FACE_FLAG_HORIZONTAL;
+			root->face_flags |= FT_FACE_FLAG_HORIZONTAL;
 
 			if ( face->cid.font_info.is_fixed_pitch )
-				root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+				root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
 			/* XXX: TODO: add kerning with .afm support */
 
@@ -396,9 +396,9 @@ Exit:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_driver_init( CID_Driver  driver ) {
-	FT2_1_3_UNUSED( driver );
+	FT_UNUSED( driver );
 
 	return FT2_1_3_Err_Ok;
 }
@@ -415,9 +415,9 @@ cid_driver_init( CID_Driver  driver ) {
 /* <Input>                                                               */
 /*    driver :: A handle to the target CID driver.                       */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cid_driver_done( CID_Driver  driver ) {
-	FT2_1_3_UNUSED( driver );
+	FT_UNUSED( driver );
 }
 
 } // End of namespace FreeType213

@@ -28,7 +28,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -72,13 +72,13 @@ typedef struct  CID_Parser_ {
 } CID_Parser;
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cid_parser_new( CID_Parser*    parser,
 				FT_Stream      stream,
 				FT_Memory      memory,
 				PSAux_Service  psaux );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cid_parser_done( CID_Parser*  parser );
 
 
@@ -109,7 +109,7 @@ cid_parser_done( CID_Parser*  parser );
 		  (p)->root.funcs.load_field_table( &(p)->root, f, o, 0, 0 )
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

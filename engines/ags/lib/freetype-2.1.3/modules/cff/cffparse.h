@@ -27,7 +27,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 #define CFF_MAX_STACK_DEPTH  96
@@ -50,18 +50,18 @@ typedef struct  CFF_ParserRec_ {
 } CFF_ParserRec, *CFF_Parser;
 
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cff_parser_init( CFF_Parser  parser,
 				 FT_UInt     code,
 				 void*       object );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_parser_run( CFF_Parser  parser,
 				FT_Byte*    start,
 				FT_Byte*    limit );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

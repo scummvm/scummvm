@@ -38,7 +38,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct TT_DriverRec_ *TT_Driver;
@@ -78,10 +78,10 @@ typedef struct TT_GraphicsState_ {
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 tt_glyphzone_done(TT_GlyphZone zone);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_glyphzone_new(FT_Memory memory, FT_UShort maxPoints, FT_Short maxContours, TT_GlyphZone zone);
 
 #endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
@@ -219,35 +219,35 @@ typedef struct  TT_DriverRec_ {
 
 /* Face functions */
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_face_init(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 tt_face_done(TT_Face face);
 
 
 /* Size functions */
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_size_init(TT_Size size);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 tt_size_done(TT_Size size);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_size_reset(TT_Size size);
 
 
 /* Driver functions */
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_driver_init(TT_Driver driver);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 tt_driver_done(TT_Driver driver);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

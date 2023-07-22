@@ -25,7 +25,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 #ifdef PFR_CONFIG_NO_CHECKS
 #define PFR_CHECK( x )  do { } while ( 0 )
@@ -57,39 +57,39 @@ typedef struct  PFR_ExtraItemRec_ {
 
 typedef const struct PFR_ExtraItemRec_*  PFR_ExtraItem;
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 pfr_extra_items_skip(FT_Byte **pp, FT_Byte *limit);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 pfr_extra_items_parse(FT_Byte **pp, FT_Byte *limit, PFR_ExtraItem item_list, FT_Pointer item_data);
 
 /* load a PFR header */
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 pfr_header_load(PFR_Header header, FT_Stream stream);
 
 /* check a PFR header */
-FT2_1_3_LOCAL(FT_Bool)
+FT_LOCAL(FT_Bool)
 pfr_header_check(PFR_Header header);
 
 /* return number of logical fonts in this file */
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 pfr_log_font_count(FT_Stream stream, FT_UInt32 log_section_offset, FT_UInt *acount);
 
 /* load a pfr logical font entry */
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 pfr_log_font_load(PFR_LogFont log_font, FT_Stream stream, FT_UInt face_index, FT_UInt32 section_offset, FT_Bool size_increment);
 
 /* load a physical font entry */
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 pfr_phy_font_load(PFR_PhyFont phy_font, FT_Stream stream, FT_UInt32 offset, FT_UInt32 size);
 
 /* finalize a physical font */
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 pfr_phy_font_done(PFR_PhyFont phy_font, FT_Memory memory);
 
 /* */
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

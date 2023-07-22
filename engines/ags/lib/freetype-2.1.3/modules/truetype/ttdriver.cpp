@@ -39,8 +39,8 @@
 #include "engines/ags/lib/freetype-2.1.3/modules/truetype/tterrors.h"
 
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttdriver
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttdriver
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -135,8 +135,8 @@ static FT_Error Set_Char_Sizes(TT_Size size, FT_F26Dot6 char_width, FT_F26Dot6 c
 
 
 static FT_Error Set_Pixel_Sizes(TT_Size size, FT_UInt pixel_width, FT_UInt pixel_height) {
-	FT2_1_3_UNUSED(pixel_width);
-	FT2_1_3_UNUSED(pixel_height);
+	FT_UNUSED(pixel_width);
+	FT_UNUSED(pixel_height);
 
 	/* many things have been pre-computed by the base layer */
 
@@ -157,9 +157,9 @@ static FT_Error Load_Glyph(TT_GlyphSlot slot, TT_Size size, FT_UShort glyph_inde
 
 	/* check whether we want a scaled outline or bitmap */
 	if (!size)
-		load_flags |= FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_HINTING;
+		load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING;
 
-	if (load_flags & FT2_1_3_LOAD_NO_SCALE)
+	if (load_flags & FT_LOAD_NO_SCALE)
 		size = NULL;
 
 	/* reset the size object if necessary */
@@ -201,7 +201,7 @@ static FT_Module_Interface tt_get_interface(TT_Driver driver, const char *tt_int
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec tt_driver_class = {
 	{
 		ft_module_font_driver |

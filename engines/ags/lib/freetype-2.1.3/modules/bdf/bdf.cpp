@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
+#define FT_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "bdflib.cpp"

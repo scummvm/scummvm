@@ -38,7 +38,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct T1_ParserRec_ {
@@ -87,17 +87,17 @@ typedef struct T1_ParserRec_ {
 #define T1_Load_Field_Table(p, f, o, m, pf) (p)->root.funcs.load_field_table(&(p)->root, f, o, m, pf)
 
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Service psaux);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_Finalize_Parser(T1_Parser parser);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

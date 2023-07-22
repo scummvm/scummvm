@@ -37,7 +37,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* Imported from bdfP.h */
@@ -261,25 +261,25 @@ typedef struct  bdf_font_t_ {
 /*                                                                       */
 /*************************************************************************/
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 bdf_load_font( FT_Stream       stream,
 			   FT_Memory       memory,
 			   bdf_options_t*  opts,
 			   bdf_font_t*    *font );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 bdf_free_font( bdf_font_t*  font );
 
-FT2_1_3_LOCAL( bdf_property_t * )
+FT_LOCAL( bdf_property_t * )
 bdf_get_property( char*        name,
 				  bdf_font_t*  font );
 
-FT2_1_3_LOCAL( bdf_property_t * )
+FT_LOCAL( bdf_property_t * )
 bdf_get_font_property( bdf_font_t*  font,
 					   char*        name );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -29,7 +29,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -108,19 +108,19 @@ typedef struct  CFF_DriverRec_ {
 } CFF_DriverRec;
 
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_size_init( CFF_Size  size );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cff_size_done( CFF_Size  size );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_size_reset( CFF_Size  size );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cff_slot_done( CFF_GlyphSlot  slot );
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_slot_init( CFF_GlyphSlot   slot );
 
 
@@ -128,14 +128,14 @@ cff_slot_init( CFF_GlyphSlot   slot );
 /*                                                                       */
 /* Face functions                                                        */
 /*                                                                       */
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_face_init( FT_Stream      stream,
 			   CFF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
 			   FT_Parameter*  params );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cff_face_done( CFF_Face  face );
 
 
@@ -143,14 +143,14 @@ cff_face_done( CFF_Face  face );
 /*                                                                       */
 /* Driver functions                                                      */
 /*                                                                       */
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 cff_driver_init( CFF_Driver  driver );
 
-FT2_1_3_LOCAL( void )
+FT_LOCAL( void )
 cff_driver_done( CFF_Driver  driver );
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

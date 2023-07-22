@@ -38,7 +38,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct  FT_MM_Axis_ {
@@ -61,17 +61,17 @@ typedef FT_Error (*FT_Set_MM_Design_Func)(FT_Face face, FT_UInt num_coords, FT_L
 
 typedef FT_Error (*FT_Set_MM_Blend_Func)(FT_Face face, FT_UInt num_coords, FT_Long *coords);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Get_Multi_Master(FT_Face face, FT_Multi_Master *amaster);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Set_MM_Design_Coordinates(FT_Face face, FT_UInt num_coords, FT_Long *coords);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Set_MM_Blend_Coordinates(FT_Face face, FT_UInt num_coords, FT_Fixed *coords);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

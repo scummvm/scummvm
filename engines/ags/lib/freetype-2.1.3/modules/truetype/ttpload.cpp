@@ -37,21 +37,21 @@
 
 #include "engines/ags/lib/freetype-2.1.3/modules/truetype/tterrors.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttpload
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttpload
 
 namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_loca(TT_Face face, FT_Stream stream) {
 	FT_Error error;
 	FT_Memory memory = stream->memory;
 	FT_Short LongOffsets;
 	FT_ULong table_len;
 
-	FT2_1_3_TRACE2(("Locations "));
+	FT_TRACE2(("Locations "));
 	LongOffsets = face->header.Index_To_Loc_Format;
 
 	error = face->goto_table(face, TTAG_loca, stream, &table_len);
@@ -63,9 +63,9 @@ tt_face_load_loca(TT_Face face, FT_Stream stream) {
 	if (LongOffsets != 0) {
 		face->num_locations = (FT_UShort)(table_len >> 2);
 
-		FT2_1_3_TRACE2(("(32bit offsets): %12d ", face->num_locations));
+		FT_TRACE2(("(32bit offsets): %12d ", face->num_locations));
 
-		if (FT2_1_3_NEW_ARRAY(face->glyph_locations, face->num_locations))
+		if (FT_NEW_ARRAY(face->glyph_locations, face->num_locations))
 			goto Exit;
 
 		if (FT2_1_3_FRAME_ENTER(face->num_locations * 4L))
@@ -83,9 +83,9 @@ tt_face_load_loca(TT_Face face, FT_Stream stream) {
 	} else {
 		face->num_locations = (FT_UShort)(table_len >> 1);
 
-		FT2_1_3_TRACE2(("(16bit offsets): %12d ", face->num_locations));
+		FT_TRACE2(("(16bit offsets): %12d ", face->num_locations));
 
-		if (FT2_1_3_NEW_ARRAY(face->glyph_locations, face->num_locations))
+		if (FT_NEW_ARRAY(face->glyph_locations, face->num_locations))
 			goto Exit;
 
 		if (FT2_1_3_FRAME_ENTER(face->num_locations * 2L))
@@ -100,24 +100,24 @@ tt_face_load_loca(TT_Face face, FT_Stream stream) {
 		FT2_1_3_FRAME_EXIT();
 	}
 
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 Exit:
 	return error;
 }
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_cvt(TT_Face face, FT_Stream stream) {
 	FT_Error error;
 	FT_Memory memory = stream->memory;
 	FT_ULong table_len;
 
-	FT2_1_3_TRACE2(("CVT "));
+	FT_TRACE2(("CVT "));
 
 	error = face->goto_table(face, TTAG_cvt, stream, &table_len);
 	if (error) {
-		FT2_1_3_TRACE2(("is missing!\n"));
+		FT_TRACE2(("is missing!\n"));
 
 		face->cvt_size = 0;
 		face->cvt = NULL;
@@ -128,7 +128,7 @@ tt_face_load_cvt(TT_Face face, FT_Stream stream) {
 
 	face->cvt_size = table_len / 2;
 
-	if (FT2_1_3_NEW_ARRAY(face->cvt, face->cvt_size))
+	if (FT_NEW_ARRAY(face->cvt, face->cvt_size))
 		goto Exit;
 
 	if (FT2_1_3_FRAME_ENTER(face->cvt_size * 2L))
@@ -143,19 +143,19 @@ tt_face_load_cvt(TT_Face face, FT_Stream stream) {
 	}
 
 	FT2_1_3_FRAME_EXIT();
-	FT2_1_3_TRACE2(("loaded\n"));
+	FT_TRACE2(("loaded\n"));
 
 Exit:
 	return error;
 }
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_load_fpgm(TT_Face face, FT_Stream stream) {
 	FT_Error error;
 	FT_ULong table_len;
 
-	FT2_1_3_TRACE2(("Font program "));
+	FT_TRACE2(("Font program "));
 
 	/* The font program is optional */
 	error = face->goto_table(face, TTAG_fpgm, stream, &table_len);
@@ -163,16 +163,16 @@ tt_face_load_fpgm(TT_Face face, FT_Stream stream) {
 		face->font_program = NULL;
 		face->font_program_size = 0;
 
-		FT2_1_3_TRACE2(("is missing!\n"));
+		FT_TRACE2(("is missing!\n"));
 	} else {
 		face->font_program_size = table_len;
 		if (FT2_1_3_FRAME_EXTRACT(table_len, face->font_program))
 			goto Exit;
 
-		FT2_1_3_TRACE2(("loaded, %12d bytes\n", face->font_program_size));
+		FT_TRACE2(("loaded, %12d bytes\n", face->font_program_size));
 	}
 
-	FT2_1_3_TRACE2(("Prep program "));
+	FT_TRACE2(("Prep program "));
 
 	error = face->goto_table(face, TTAG_prep, stream, &table_len);
 	if (error) {
@@ -180,13 +180,13 @@ tt_face_load_fpgm(TT_Face face, FT_Stream stream) {
 		face->cvt_program_size = 0;
 		error = FT2_1_3_Err_Ok;
 
-		FT2_1_3_TRACE2(("is missing!\n"));
+		FT_TRACE2(("is missing!\n"));
 	} else {
 		face->cvt_program_size = table_len;
 		if (FT2_1_3_FRAME_EXTRACT(table_len, face->cvt_program))
 			goto Exit;
 
-		FT2_1_3_TRACE2(("loaded, %12d bytes\n", face->cvt_program_size));
+		FT_TRACE2(("loaded, %12d bytes\n", face->cvt_program_size));
 	}
 
 Exit:

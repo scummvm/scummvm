@@ -23,8 +23,8 @@
 
 #include "pfrerror.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pfr
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pfr
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -443,7 +443,7 @@ Exit:
 
 Too_Short:
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_load_bitmap_metrics: invalid glyph data\n" ));
+	FT_ERROR(( "pfr_load_bitmap_metrics: invalid glyph data\n" ));
 	goto Exit;
 }
 
@@ -475,7 +475,7 @@ pfr_load_bitmap_bits( FT_Byte*    p,
 			break;
 
 		default:
-			FT2_1_3_ERROR(( "pfr_read_bitmap_data: invalid image type\n" ));
+			FT_ERROR(( "pfr_read_bitmap_data: invalid image type\n" ));
 			error = FT2_1_3_Err_Invalid_File_Format;
 		}
 	}
@@ -492,7 +492,7 @@ pfr_load_bitmap_bits( FT_Byte*    p,
 /*************************************************************************/
 /*************************************************************************/
 
-FT2_1_3_LOCAL( FT_Error )
+FT_LOCAL( FT_Error )
 pfr_slot_load_bitmap( PFR_Slot  glyph,
 					  PFR_Size  size,
 					  FT_UInt   glyph_index ) {
@@ -586,13 +586,13 @@ Found_Strike:
 										 &xsize, &ysize,
 										 &advance, &format );
 		if ( !error ) {
-			glyph->root.format = FT2_1_3_GLYPH_FORMAT_BITMAP;
+			glyph->root.format = FT_GLYPH_FORMAT_BITMAP;
 
 			/* Set up glyph bitmap and metrics */
 			glyph->root.bitmap.width      = (FT_Int)xsize;
 			glyph->root.bitmap.rows       = (FT_Int)ysize;
 			glyph->root.bitmap.pitch      = (FT_Long)( xsize + 7 ) >> 3;
-			glyph->root.bitmap.pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
+			glyph->root.bitmap.pixel_mode = FT_PIXEL_MODE_MONO;
 
 			glyph->root.metrics.width        = (FT_Long)xsize << 6;
 			glyph->root.metrics.height       = (FT_Long)ysize << 6;

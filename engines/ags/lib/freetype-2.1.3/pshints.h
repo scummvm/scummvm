@@ -40,7 +40,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /**** INTERNAL REPRESENTATION OF GLOBALS ****/
@@ -116,7 +116,7 @@ typedef struct PSHinter_Interface_ {
 typedef PSHinter_Interface *PSHinter_Service;
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

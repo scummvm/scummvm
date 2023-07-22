@@ -416,7 +416,7 @@ static const char* const  ps_glyph_names[] = {
 	"Roman",
 	"Semibold",
 
-#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 	"AEacute",
 	"Abreve",
@@ -1086,7 +1086,7 @@ static const char* const  ps_glyph_names[] = {
 	"zdotaccent",
 	"zeta",
 
-#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 	NULL
 };
@@ -1097,7 +1097,7 @@ static const char* const * const  sid_standard_names = ps_glyph_names + 4;
 
 #define NUM_SID_GLYPHS 391
 
-#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 #define NUM_ADOBE_GLYPHS 1058
 #else
 #define NUM_ADOBE_GLYPHS 391
@@ -1761,7 +1761,7 @@ static const unsigned short  ps_names_to_unicode[1059] = {
 	0,
 	0,
 
-#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 	0x01FC,
 	0x0102,
@@ -2431,7 +2431,7 @@ static const unsigned short  ps_names_to_unicode[1059] = {
 	0x017C,
 	0x03B6,
 
-#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 	0
 };
 

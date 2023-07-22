@@ -61,8 +61,8 @@
 
 #include <limits.h>
 
-#define FT2_1_3_UINT_MAX   UINT_MAX
-#define FT2_1_3_ULONG_MAX  ULONG_MAX
+#define FT_UINT_MAX   UINT_MAX
+#define FT_ULONG_MAX  ULONG_MAX
 
 
 /**********************************************************************/
@@ -130,7 +130,7 @@
 
 
 /* the following is only used for debugging purposes, i.e. when */
-/* FT2_1_3_DEBUG_LEVEL_ERROR or FT2_1_3_DEBUG_LEVEL_TRACE are defined     */
+/* FT_DEBUG_LEVEL_ERROR or FT_DEBUG_LEVEL_TRACE are defined     */
 /*                                                              */
 #include <stdarg.h>
 

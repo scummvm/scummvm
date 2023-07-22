@@ -35,7 +35,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Get_BDF_Charset_ID(FT_Face face, const char **acharset_encoding, const char **acharset_registry) {
 	FT_Error error;
 	const char *encoding = NULL;

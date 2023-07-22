@@ -39,7 +39,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef struct TT_CMapRec_ {
@@ -64,11 +64,11 @@ typedef struct TT_ValidatorRec_ {
 #define TT_VALIDATOR(x) ((TT_Validator)(x))
 #define TT_VALID_GLYPH_COUNT(x) TT_VALIDATOR(x)->num_glyphs
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 tt_face_build_cmaps(TT_Face face);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -31,15 +31,15 @@
 #include "engines/ags/lib/freetype-2.1.3/ftmm.h"
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_mm
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_mm
 
 namespace AGS3 {
 namespace FreeType213 {
 
 // TODO: Multiple Masters functions are aot used anywhere
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Get_Multi_Master(FT_Face face, FT_Multi_Master *amaster) {
 	FT_Error error;
 
@@ -48,7 +48,7 @@ FT_Get_Multi_Master(FT_Face face, FT_Multi_Master *amaster) {
 
 	error = FT2_1_3_Err_Invalid_Argument;
 
-	if (FT2_1_3_HAS_MULTIPLE_MASTERS(face)) {
+	if (FT_HAS_MULTIPLE_MASTERS(face)) {
 		FT_Driver driver = face->driver;
 		FT_Get_MM_Func func;
 
@@ -61,7 +61,7 @@ FT_Get_Multi_Master(FT_Face face, FT_Multi_Master *amaster) {
 	return error;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Set_MM_Design_Coordinates(FT_Face face, FT_UInt num_coords, FT_Long *coords) {
 	FT_Error error;
 
@@ -70,7 +70,7 @@ FT_Set_MM_Design_Coordinates(FT_Face face, FT_UInt num_coords, FT_Long *coords) 
 
 	error = FT2_1_3_Err_Invalid_Argument;
 
-	if (FT2_1_3_HAS_MULTIPLE_MASTERS(face)) {
+	if (FT_HAS_MULTIPLE_MASTERS(face)) {
 		FT_Driver driver = face->driver;
 		FT_Set_MM_Design_Func func;
 
@@ -84,7 +84,7 @@ FT_Set_MM_Design_Coordinates(FT_Face face, FT_UInt num_coords, FT_Long *coords) 
 }
 
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Set_MM_Blend_Coordinates(FT_Face face, FT_UInt num_coords, FT_Fixed *coords) {
 	FT_Error error;
 
@@ -93,7 +93,7 @@ FT_Set_MM_Blend_Coordinates(FT_Face face, FT_UInt num_coords, FT_Fixed *coords) 
 
 	error = FT2_1_3_Err_Invalid_Argument;
 
-	if (FT2_1_3_HAS_MULTIPLE_MASTERS(face)) {
+	if (FT_HAS_MULTIPLE_MASTERS(face)) {
 		FT_Driver driver = face->driver;
 		FT_Set_MM_Blend_Func func;
 

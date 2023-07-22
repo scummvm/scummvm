@@ -183,7 +183,7 @@ static void ah_align_serif_edge(AH_Hinter hinter, AH_Edge base, AH_Edge serif, i
 	FT_Pos dist;
 	FT_Pos sign = 1;
 
-	FT2_1_3_UNUSED(hinter);
+	FT_UNUSED(hinter);
 
 	dist = serif->opos - base->opos;
 	if (dist < 0) {
@@ -364,7 +364,7 @@ static void ah_hint_edges_3(AH_Hinter hinter) {
 	}
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_hinter_hint_edges(AH_Hinter hinter) {
 	/* AH_Interpolate_Blue_Edges( hinter ); -- doesn't seem to help      */
 	/* reduce the problem of the disappearing eye in the `e' of Times... */
@@ -688,7 +688,7 @@ static void ah_hinter_align_weak_points(AH_Hinter hinter) {
 
 #endif /* !AH_OPTION_NO_WEAK_INTERPOLATION */
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_hinter_align_points(AH_Hinter hinter) {
 	ah_hinter_align_edge_points(hinter);
 
@@ -758,7 +758,7 @@ static void ah_hinter_align(AH_Hinter hinter) {
 }
 
 /* finalize a hinter object */
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_hinter_done(AH_Hinter hinter) {
 	if (hinter) {
 		FT_Memory memory = hinter->memory;
@@ -777,7 +777,7 @@ ah_hinter_done(AH_Hinter hinter) {
 }
 
 /* create a new empty hinter object */
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 ah_hinter_new(FT_Library library, AH_Hinter *ahinter) {
 	AH_Hinter hinter = 0;
 	FT_Memory memory = library->memory;
@@ -786,7 +786,7 @@ ah_hinter_new(FT_Library library, AH_Hinter *ahinter) {
 	*ahinter = 0;
 
 	/* allocate object */
-	if (FT2_1_3_NEW(hinter))
+	if (FT_NEW(hinter))
 		goto Exit;
 
 	hinter->memory = memory;
@@ -809,13 +809,13 @@ Exit:
 }
 
 /* create a face's autohint globals */
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 ah_hinter_new_face_globals(AH_Hinter hinter, FT_Face face, AH_Globals globals) {
 	FT_Error error;
 	FT_Memory memory = hinter->memory;
 	AH_Face_Globals face_globals;
 
-	if (FT2_1_3_NEW(face_globals))
+	if (FT_NEW(face_globals))
 		goto Exit;
 
 	hinter->face = face;
@@ -835,7 +835,7 @@ Exit:
 }
 
 /* discard a face's autohint globals */
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_hinter_done_face_globals(AH_Face_Globals globals) {
 	FT_Face face = globals->face;
 	FT_Memory memory = face->memory;
@@ -858,7 +858,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 	if (error)
 		goto Exit;
 
-	/* Set `hinter->transformed' after loading with FT2_1_3_LOAD_NO_RECURSE. */
+	/* Set `hinter->transformed' after loading with FT_LOAD_NO_RECURSE. */
 	hinter->transformed = internal->glyph_transformed;
 
 	if (hinter->transformed) {
@@ -877,7 +877,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 	slot->linearVertAdvance = slot->metrics.vertAdvance;
 
 	switch (slot->format) {
-	case FT2_1_3_GLYPH_FORMAT_OUTLINE:
+	case FT_GLYPH_FORMAT_OUTLINE:
 
 		/* translate glyph outline if we need to */
 		if (hinter->transformed) {
@@ -961,7 +961,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		ah_loader_add(gloader);
 		break;
 
-	case FT2_1_3_GLYPH_FORMAT_COMPOSITE: {
+	case FT_GLYPH_FORMAT_COMPOSITE: {
 		FT_UInt nn, num_subglyphs = slot->num_subglyphs;
 		FT_UInt num_base_subgs, start_point;
 		FT_SubGlyph subglyph;
@@ -1099,7 +1099,7 @@ Hint_Metrics:
 
 		/* for mono-width fonts (like Andale, Courier, etc.), we need */
 		/* to keep the original rounded advance width                 */
-		if (!FT2_1_3_IS_FIXED_WIDTH(slot->face))
+		if (!FT_IS_FIXED_WIDTH(slot->face))
 			slot->metrics.horiAdvance = hinter->pp2.x - hinter->pp1.x;
 		else
 			slot->metrics.horiAdvance = FT2_1_3_MulFix(slot->metrics.horiAdvance, x_scale);
@@ -1113,7 +1113,7 @@ Hint_Metrics:
 			goto Exit;
 
 		slot->outline = slot->internal->loader->base.outline;
-		slot->format = FT2_1_3_GLYPH_FORMAT_OUTLINE;
+		slot->format = FT_GLYPH_FORMAT_OUTLINE;
 	}
 
 #ifdef DEBUG_HINTER
@@ -1125,14 +1125,14 @@ Exit:
 }
 
 /* load and hint a given glyph */
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt glyph_index, FT_Int32 load_flags) {
 	FT_Face face = slot->face;
 	FT_Error error;
 	FT_Fixed x_scale = size->metrics.x_scale;
 	FT_Fixed y_scale = size->metrics.y_scale;
 	AH_Face_Globals face_globals = FACE_GLOBALS(face);
-	FT_Render_Mode hint_mode = FT2_1_3_LOAD_TARGET_MODE(load_flags);
+	FT_Render_Mode hint_mode = FT_LOAD_TARGET_MODE(load_flags);
 
 	/* first of all, we need to check that we're using the correct face and */
 	/* global hints to load the glyph                                       */
@@ -1155,8 +1155,8 @@ ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt 
 	ah_loader_rewind(hinter->loader);
 
 	/* reset hinting flags according to load flags and current render target */
-	hinter->do_horz_hints = !FT2_1_3_BOOL(load_flags & FT2_1_3_LOAD_NO_AUTOHINT);
-	hinter->do_vert_hints = !FT2_1_3_BOOL(load_flags & FT2_1_3_LOAD_NO_AUTOHINT);
+	hinter->do_horz_hints = !FT2_1_3_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
+	hinter->do_vert_hints = !FT2_1_3_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
 
 #ifdef DEBUG_HINTER
 	hinter->do_horz_hints = !ah_debug_disable_vert; /* not a bug, the meaning */
@@ -1165,16 +1165,16 @@ ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt 
 
 	/* we snap the width of vertical stems for the monochrome and         */
 	/* horizontal LCD rendering targets only.  Corresponds to X snapping. */
-	hinter->do_horz_snapping = FT2_1_3_BOOL(hint_mode == FT2_1_3_RENDER_MODE_MONO || hint_mode == FT2_1_3_RENDER_MODE_LCD);
+	hinter->do_horz_snapping = FT2_1_3_BOOL(hint_mode == FT_RENDER_MODE_MONO || hint_mode == FT_RENDER_MODE_LCD);
 
 	/* we snap the width of horizontal stems for the monochrome and     */
 	/* vertical LCD rendering targets only.  Corresponds to Y snapping. */
-	hinter->do_vert_snapping = FT2_1_3_BOOL(hint_mode == FT2_1_3_RENDER_MODE_MONO || hint_mode == FT2_1_3_RENDER_MODE_LCD_V);
+	hinter->do_vert_snapping = FT2_1_3_BOOL(hint_mode == FT_RENDER_MODE_MONO || hint_mode == FT_RENDER_MODE_LCD_V);
 
 #if 1
-	load_flags = FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_IGNORE_TRANSFORM;
+	load_flags = FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_TRANSFORM;
 #else
-	load_flags |= FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_RECURSE;
+	load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_RECURSE;
 #endif
 
 	error = ah_hinter_load(hinter, glyph_index, load_flags, 0);
@@ -1184,14 +1184,14 @@ Exit:
 }
 
 /* retrieve a face's autohint globals for client applications */
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_hinter_get_global_hints(AH_Hinter hinter, FT_Face face, void **global_hints, long *global_len) {
 	AH_Globals globals = 0;
 	FT_Memory memory = hinter->memory;
 	FT_Error error;
 
 	/* allocate new master globals */
-	if (FT2_1_3_NEW(globals))
+	if (FT_NEW(globals))
 		goto Fail;
 
 	/* compute face globals if needed */
@@ -1214,7 +1214,7 @@ Fail:
 	*global_len = 0;
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 ah_hinter_done_global_hints(AH_Hinter hinter, void *global_hints) {
 	FT_Memory memory = hinter->memory;
 

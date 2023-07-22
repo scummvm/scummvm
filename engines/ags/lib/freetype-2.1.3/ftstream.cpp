@@ -31,13 +31,13 @@
 #include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_stream
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_stream
 
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_Stream_OpenMemory(FT_Stream stream, const FT_Byte *base, FT_ULong size) {
 	stream->base = const_cast<FT_Byte *>(base);
 	stream->size = size;
@@ -47,7 +47,7 @@ FT_Stream_OpenMemory(FT_Stream stream, const FT_Byte *base, FT_ULong size) {
 	stream->close = 0;
 }
 
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_Stream_Close(FT_Stream stream) {
 	if (stream && stream->close) {
 		stream->close(stream);
@@ -55,7 +55,7 @@ FT_Stream_Close(FT_Stream stream) {
 	}
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Stream_Seek(FT_Stream stream, FT_ULong pos) {
 	FT_Error error = FT2_1_3_Err_Ok;
 
@@ -63,14 +63,14 @@ FT_Stream_Seek(FT_Stream stream, FT_ULong pos) {
 
 	if (stream->read) {
 		if (stream->read(stream, pos, 0, 0)) {
-			FT2_1_3_ERROR(("FT_Stream_Seek: invalid i/o; pos = 0x%lx, size = 0x%lx\n", pos, stream->size));
+			FT_ERROR(("FT_Stream_Seek: invalid i/o; pos = 0x%lx, size = 0x%lx\n", pos, stream->size));
 
 			error = FT2_1_3_Err_Invalid_Stream_Operation;
 		}
 	}
 	/* note that seeking to the first position after the file is valid */
 	else if (pos > stream->size) {
-		FT2_1_3_ERROR(("FT_Stream_Seek: invalid i/o; pos = 0x%lx, size = 0x%lx\n", pos, stream->size));
+		FT_ERROR(("FT_Stream_Seek: invalid i/o; pos = 0x%lx, size = 0x%lx\n", pos, stream->size));
 
 		error = FT2_1_3_Err_Invalid_Stream_Operation;
 	}
@@ -78,28 +78,28 @@ FT_Stream_Seek(FT_Stream stream, FT_ULong pos) {
 	return error;
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Stream_Skip(FT_Stream stream, FT_Long distance) {
 	return FT_Stream_Seek(stream, (FT_ULong)(stream->pos + distance));
 }
 
-FT2_1_3_BASE_DEF(FT_Long)
+FT_BASE_DEF(FT_Long)
 FT_Stream_Pos(FT_Stream stream) {
 	return stream->pos;
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Stream_Read(FT_Stream stream, FT_Byte *buffer, FT_ULong count) {
 	return FT_Stream_ReadAt(stream, stream->pos, buffer, count);
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Stream_ReadAt(FT_Stream stream, FT_ULong pos, FT_Byte *buffer, FT_ULong count) {
 	FT_Error error = FT2_1_3_Err_Ok;
 	FT_ULong read_bytes;
 
 	if (pos >= stream->size) {
-		FT2_1_3_ERROR(("FT_Stream_ReadAt: invalid i/o; pos = 0x%lx, size = 0x%lx\n", pos, stream->size));
+		FT_ERROR(("FT_Stream_ReadAt: invalid i/o; pos = 0x%lx, size = 0x%lx\n", pos, stream->size));
 
 		return FT2_1_3_Err_Invalid_Stream_Operation;
 	}
@@ -117,8 +117,8 @@ FT_Stream_ReadAt(FT_Stream stream, FT_ULong pos, FT_Byte *buffer, FT_ULong count
 	stream->pos = pos + read_bytes;
 
 	if (read_bytes < count) {
-		FT2_1_3_ERROR(("FT_Stream_ReadAt:"));
-		FT2_1_3_ERROR((" invalid read; expected %lu bytes, got %lu\n", count, read_bytes));
+		FT_ERROR(("FT_Stream_ReadAt:"));
+		FT_ERROR((" invalid read; expected %lu bytes, got %lu\n", count, read_bytes));
 
 		error = FT2_1_3_Err_Invalid_Stream_Operation;
 	}
@@ -126,7 +126,7 @@ FT_Stream_ReadAt(FT_Stream stream, FT_ULong pos, FT_Byte *buffer, FT_ULong count
 	return error;
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Stream_ExtractFrame(FT_Stream stream, FT_ULong count, FT_Byte **pbytes) {
 	FT_Error error;
 
@@ -142,7 +142,7 @@ FT_Stream_ExtractFrame(FT_Stream stream, FT_ULong count, FT_Byte **pbytes) {
 	return error;
 }
 
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_Stream_ReleaseFrame(FT_Stream stream, FT_Byte **pbytes) {
 	if (stream->read) {
 		FT_Memory memory = stream->memory;
@@ -152,7 +152,7 @@ FT_Stream_ReleaseFrame(FT_Stream stream, FT_Byte **pbytes) {
 	*pbytes = 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Stream_EnterFrame(FT_Stream stream, FT_ULong count) {
 	FT_Error error = FT2_1_3_Err_Ok;
 	FT_ULong read_bytes;
@@ -170,8 +170,8 @@ FT_Stream_EnterFrame(FT_Stream stream, FT_ULong count) {
 		/* read it */
 		read_bytes = stream->read(stream, stream->pos, stream->base, count);
 		if (read_bytes < count) {
-			FT2_1_3_ERROR(("FT_Stream_EnterFrame:"));
-			FT2_1_3_ERROR((" invalid read; expected %lu bytes, got %lu\n", count, read_bytes));
+			FT_ERROR(("FT_Stream_EnterFrame:"));
+			FT_ERROR((" invalid read; expected %lu bytes, got %lu\n", count, read_bytes));
 
 			FT2_1_3_FREE(stream->base);
 			error = FT2_1_3_Err_Invalid_Stream_Operation;
@@ -182,8 +182,8 @@ FT_Stream_EnterFrame(FT_Stream stream, FT_ULong count) {
 	} else {
 		/* check current and new position */
 		if (stream->pos >= stream->size || stream->pos + count > stream->size) {
-			FT2_1_3_ERROR(("FT_Stream_EnterFrame:"));
-			FT2_1_3_ERROR((" invalid i/o; pos = 0x%lx, count = %lu, size = 0x%lx\n", stream->pos, count, stream->size));
+			FT_ERROR(("FT_Stream_EnterFrame:"));
+			FT_ERROR((" invalid i/o; pos = 0x%lx, count = %lu, size = 0x%lx\n", stream->pos, count, stream->size));
 
 			error = FT2_1_3_Err_Invalid_Stream_Operation;
 			goto Exit;
@@ -199,7 +199,7 @@ Exit:
 	return error;
 }
 
-FT2_1_3_BASE_DEF(void)
+FT_BASE_DEF(void)
 FT_Stream_ExitFrame(FT_Stream stream) {
 	/* IMPORTANT: The assertion stream->cursor != 0 was removed, given    */
 	/*            that it is possible to access a frame of length 0 in    */
@@ -221,7 +221,7 @@ FT_Stream_ExitFrame(FT_Stream stream) {
 	stream->limit = 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Char)
+FT_BASE_DEF(FT_Char)
 FT_Stream_GetChar(FT_Stream stream) {
 	FT_Char result;
 
@@ -234,7 +234,7 @@ FT_Stream_GetChar(FT_Stream stream) {
 	return result;
 }
 
-FT2_1_3_BASE_DEF(FT_Short)
+FT_BASE_DEF(FT_Short)
 FT_Stream_GetShort(FT_Stream stream) {
 	FT_Byte *p;
 	FT_Short result;
@@ -250,7 +250,7 @@ FT_Stream_GetShort(FT_Stream stream) {
 	return result;
 }
 
-FT2_1_3_BASE_DEF(FT_Short)
+FT_BASE_DEF(FT_Short)
 FT_Stream_GetShortLE(FT_Stream stream) {
 	FT_Byte *p;
 	FT_Short result;
@@ -266,7 +266,7 @@ FT_Stream_GetShortLE(FT_Stream stream) {
 	return result;
 }
 
-FT2_1_3_BASE_DEF(FT_Long)
+FT_BASE_DEF(FT_Long)
 FT_Stream_GetOffset(FT_Stream stream) {
 	FT_Byte *p;
 	FT_Long result;
@@ -281,7 +281,7 @@ FT_Stream_GetOffset(FT_Stream stream) {
 	return result;
 }
 
-FT2_1_3_BASE_DEF(FT_Long)
+FT_BASE_DEF(FT_Long)
 FT_Stream_GetLong(FT_Stream stream) {
 	FT_Byte *p;
 	FT_Long result;
@@ -296,7 +296,7 @@ FT_Stream_GetLong(FT_Stream stream) {
 	return result;
 }
 
-FT2_1_3_BASE_DEF(FT_Long)
+FT_BASE_DEF(FT_Long)
 FT_Stream_GetLongLE(FT_Stream stream) {
 	FT_Byte *p;
 	FT_Long result;
@@ -311,7 +311,7 @@ FT_Stream_GetLongLE(FT_Stream stream) {
 	return result;
 }
 
-FT2_1_3_BASE_DEF(FT_Char)
+FT_BASE_DEF(FT_Char)
 FT_Stream_ReadChar(FT_Stream stream, FT_Error *error) {
 	FT_Byte result = 0;
 
@@ -334,12 +334,12 @@ FT_Stream_ReadChar(FT_Stream stream, FT_Error *error) {
 
 Fail:
 	*error = FT2_1_3_Err_Invalid_Stream_Operation;
-	FT2_1_3_ERROR(("FT_Stream_ReadChar: invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
+	FT_ERROR(("FT_Stream_ReadChar: invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
 
 	return 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Short)
+FT_BASE_DEF(FT_Short)
 FT_Stream_ReadShort(FT_Stream stream, FT_Error *error) {
 	FT_Byte reads[2];
 	FT_Byte *p = 0;
@@ -370,13 +370,13 @@ FT_Stream_ReadShort(FT_Stream stream, FT_Error *error) {
 
 Fail:
 	*error = FT2_1_3_Err_Invalid_Stream_Operation;
-	FT2_1_3_ERROR(("FT_Stream_ReadShort:"));
-	FT2_1_3_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
+	FT_ERROR(("FT_Stream_ReadShort:"));
+	FT_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
 
 	return 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Short)
+FT_BASE_DEF(FT_Short)
 FT_Stream_ReadShortLE(FT_Stream stream, FT_Error *error) {
 	FT_Byte reads[2];
 	FT_Byte *p = 0;
@@ -407,13 +407,13 @@ FT_Stream_ReadShortLE(FT_Stream stream, FT_Error *error) {
 
 Fail:
 	*error = FT2_1_3_Err_Invalid_Stream_Operation;
-	FT2_1_3_ERROR(("FT_Stream_ReadShortLE:"));
-	FT2_1_3_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
+	FT_ERROR(("FT_Stream_ReadShortLE:"));
+	FT_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
 
 	return 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Long)
+FT_BASE_DEF(FT_Long)
 FT_Stream_ReadOffset(FT_Stream stream, FT_Error *error) {
 	FT_Byte reads[3];
 	FT_Byte *p = 0;
@@ -444,13 +444,13 @@ FT_Stream_ReadOffset(FT_Stream stream, FT_Error *error) {
 
 Fail:
 	*error = FT2_1_3_Err_Invalid_Stream_Operation;
-	FT2_1_3_ERROR(("FT_Stream_ReadOffset:"));
-	FT2_1_3_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
+	FT_ERROR(("FT_Stream_ReadOffset:"));
+	FT_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
 
 	return 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Long)
+FT_BASE_DEF(FT_Long)
 FT_Stream_ReadLong(FT_Stream stream, FT_Error *error) {
 	FT_Byte reads[4];
 	FT_Byte *p = 0;
@@ -480,13 +480,13 @@ FT_Stream_ReadLong(FT_Stream stream, FT_Error *error) {
 	return result;
 
 Fail:
-	FT2_1_3_ERROR(("FT_Stream_ReadLong: invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
+	FT_ERROR(("FT_Stream_ReadLong: invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
 	*error = FT2_1_3_Err_Invalid_Stream_Operation;
 
 	return 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Long)
+FT_BASE_DEF(FT_Long)
 FT_Stream_ReadLongLE(FT_Stream stream, FT_Error *error) {
 	FT_Byte reads[4];
 	FT_Byte *p = 0;
@@ -516,14 +516,14 @@ FT_Stream_ReadLongLE(FT_Stream stream, FT_Error *error) {
 	return result;
 
 Fail:
-	FT2_1_3_ERROR(("FT_Stream_ReadLongLE:"));
-	FT2_1_3_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
+	FT_ERROR(("FT_Stream_ReadLongLE:"));
+	FT_ERROR((" invalid i/o; pos = 0x%lx, size = 0x%lx\n", stream->pos, stream->size));
 	*error = FT2_1_3_Err_Invalid_Stream_Operation;
 
 	return 0;
 }
 
-FT2_1_3_BASE_DEF(FT_Error)
+FT_BASE_DEF(FT_Error)
 FT_Stream_ReadFields(FT_Stream stream, const FT_Frame_Field *fields, void *structure) {
 	FT_Error error;
 	FT_Bool frame_accessed = 0;

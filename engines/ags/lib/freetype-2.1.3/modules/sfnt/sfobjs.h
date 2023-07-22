@@ -38,20 +38,20 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 sfnt_init_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 sfnt_done_face(TT_Face face);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

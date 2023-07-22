@@ -249,7 +249,7 @@ static void ft_trig_pseudo_polarize(FT_Vector *vec) {
 }
 
 
-FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_EXPORT_DEF(FT_Fixed)
 FT_Cos(FT_Angle angle) {
 	FT_Vector v;
 
@@ -260,12 +260,12 @@ FT_Cos(FT_Angle angle) {
 	return v.x / (1 << 12);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_EXPORT_DEF(FT_Fixed)
 FT_Sin(FT_Angle angle) {
 	return FT_Cos(FT2_1_3_ANGLE_PI2 - angle);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_EXPORT_DEF(FT_Fixed)
 FT_Tan(FT_Angle angle) {
 	FT_Vector v;
 
@@ -276,7 +276,7 @@ FT_Tan(FT_Angle angle) {
 	return FT2_1_3_DivFix(v.y, v.x);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Angle)
+FT_EXPORT_DEF(FT_Angle)
 FT_Atan2(FT_Fixed dx, FT_Fixed dy) {
 	FT_Vector v;
 
@@ -291,7 +291,7 @@ FT_Atan2(FT_Fixed dx, FT_Fixed dy) {
 	return v.y;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Vector_Unit(FT_Vector *vec, FT_Angle angle) {
 	vec->x = FT2_1_3_TRIG_COSCALE >> 2;
 	vec->y = 0;
@@ -300,7 +300,7 @@ FT_Vector_Unit(FT_Vector *vec, FT_Angle angle) {
 	vec->y >>= 12;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Vector_Rotate(FT_Vector *vec, FT_Angle angle) {
 	FT_Int shift;
 	FT_Vector v;
@@ -325,7 +325,7 @@ FT_Vector_Rotate(FT_Vector *vec, FT_Angle angle) {
 	}
 }
 
-FT2_1_3_EXPORT_DEF(FT_Fixed)
+FT_EXPORT_DEF(FT_Fixed)
 FT_Vector_Length(FT_Vector *vec) {
 	FT_Int shift;
 	FT_Vector v;
@@ -351,7 +351,7 @@ FT_Vector_Length(FT_Vector *vec) {
 	return v.x << -shift;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Vector_Polarize(FT_Vector *vec, FT_Fixed *length, FT_Angle *angle) {
 	FT_Int shift;
 	FT_Vector v;
@@ -370,7 +370,7 @@ FT_Vector_Polarize(FT_Vector *vec, FT_Fixed *length, FT_Angle *angle) {
 	*angle = v.y;
 }
 
-FT2_1_3_EXPORT_DEF(void)
+FT_EXPORT_DEF(void)
 FT_Vector_From_Polar(FT_Vector *vec, FT_Fixed length, FT_Angle angle) {
 	vec->x = length;
 	vec->y = 0;
@@ -378,7 +378,7 @@ FT_Vector_From_Polar(FT_Vector *vec, FT_Fixed length, FT_Angle angle) {
 	FT_Vector_Rotate(vec, angle);
 }
 
-FT2_1_3_EXPORT_DEF(FT_Angle)
+FT_EXPORT_DEF(FT_Angle)
 FT_Angle_Diff(FT_Angle angle1, FT_Angle angle2) {
 	FT_Angle delta = angle2 - angle1;
 

@@ -47,8 +47,8 @@
 #include "engines/ags/lib/freetype-2.1.3/modules/truetype/ttinterp.h"
 #endif
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttobjs
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttobjs
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -57,7 +57,7 @@ namespace FreeType213 {
 
 /* GLYPH ZONE FUNCTIONS */
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_glyphzone_done(TT_GlyphZone zone) {
 	FT_Memory memory = zone->memory;
 
@@ -70,7 +70,7 @@ tt_glyphzone_done(TT_GlyphZone zone) {
 	zone->max_contours = zone->n_contours = 0;
 }
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_glyphzone_new(FT_Memory memory, FT_UShort maxPoints, FT_Short maxContours, TT_GlyphZone zone) {
 	FT_Error error;
 
@@ -80,10 +80,10 @@ tt_glyphzone_new(FT_Memory memory, FT_UShort maxPoints, FT_Short maxContours, TT
 	FT2_1_3_MEM_ZERO(zone, sizeof(*zone));
 	zone->memory = memory;
 
-	if (FT2_1_3_NEW_ARRAY(zone->org, maxPoints * 2) ||
-		FT2_1_3_NEW_ARRAY(zone->cur, maxPoints * 2) ||
-		FT2_1_3_NEW_ARRAY(zone->tags, maxPoints) ||
-		FT2_1_3_NEW_ARRAY(zone->contours, maxContours)) {
+	if (FT_NEW_ARRAY(zone->org, maxPoints * 2) ||
+		FT_NEW_ARRAY(zone->cur, maxPoints * 2) ||
+		FT_NEW_ARRAY(zone->tags, maxPoints) ||
+		FT_NEW_ARRAY(zone->contours, maxContours)) {
 		tt_glyphzone_done(zone);
 	}
 
@@ -91,7 +91,7 @@ tt_glyphzone_new(FT_Memory memory, FT_UShort maxPoints, FT_Short maxContours, TT
 }
 #endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_init(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params) {
 	FT_Error error;
 	FT_Library library;
@@ -115,7 +115,7 @@ tt_face_init(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_param
 	/* We must also be able to accept Mac/GX fonts, as well as OT ones */
 	if (face->format_tag != 0x00010000L && /* MS fonts  */
 		face->format_tag != TTAG_true) {   /* Mac fonts */
-		FT2_1_3_TRACE2(("[not a valid TTF font]\n"));
+		FT_TRACE2(("[not a valid TTF font]\n"));
 		goto Bad_Format;
 	}
 
@@ -128,9 +128,9 @@ tt_face_init(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_param
 	if (error)
 		goto Exit;
 
-	if (face->root.face_flags & FT2_1_3_FACE_FLAG_SCALABLE) {
+	if (face->root.face_flags & FT_FACE_FLAG_SCALABLE) {
 
-#ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
 
 		if (!face->root.internal->incremental_interface)
 			error = tt_face_load_loca(face, stream);
@@ -157,7 +157,7 @@ Bad_Format:
 }
 
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_face_done(TT_Face face) {
 	FT_Memory memory = face->root.memory;
 	FT_Stream stream = face->root.stream;
@@ -189,7 +189,7 @@ tt_face_done(TT_Face face) {
 
 /* SIZE FUNCTIONS */
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_size_init(TT_Size size) {
 	FT_Error error = FT2_1_3_Err_Ok;
 
@@ -234,10 +234,10 @@ tt_size_init(TT_Size size) {
 	}
 
 	/* allocate function defs, instruction defs, cvt, and storage area */
-	if (FT2_1_3_NEW_ARRAY(size->function_defs, size->max_function_defs) ||
-		FT2_1_3_NEW_ARRAY(size->instruction_defs, size->max_instruction_defs) ||
-		FT2_1_3_NEW_ARRAY(size->cvt, size->cvt_size) ||
-		FT2_1_3_NEW_ARRAY(size->storage, size->storage_size))
+	if (FT_NEW_ARRAY(size->function_defs, size->max_function_defs) ||
+		FT_NEW_ARRAY(size->instruction_defs, size->max_instruction_defs) ||
+		FT_NEW_ARRAY(size->cvt, size->cvt_size) ||
+		FT_NEW_ARRAY(size->storage, size->storage_size))
 
 		goto Fail_Memory;
 
@@ -253,7 +253,7 @@ tt_size_init(TT_Size size) {
 	{
 		FT_Library library = face->root.driver->root.library;
 
-		face->interpreter = (TT_Interpreter)library->debug_hooks[FT2_1_3_DEBUG_HOOK_TRUETYPE];
+		face->interpreter = (TT_Interpreter)library->debug_hooks[FT_DEBUG_HOOK_TRUETYPE];
 		if (!face->interpreter)
 			face->interpreter = (TT_Interpreter)TT_RunIns;
 	}
@@ -341,7 +341,7 @@ Fail_Memory:
 #endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 }
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_size_done(TT_Size size) {
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
@@ -561,14 +561,14 @@ static FT_Error Reset_SBit_Size(TT_Size size) {
 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_size_reset(TT_Size size) {
 	FT_Face face;
 	FT_Error error = FT2_1_3_Err_Ok;
 
 	face = size->root.face;
 
-	if (face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE) {
+	if (face->face_flags & FT_FACE_FLAG_SCALABLE) {
 		if (!size->ttmetrics.valid)
 			error = Reset_Outline_Size(size);
 
@@ -578,24 +578,24 @@ tt_size_reset(TT_Size size) {
 
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
-	if (face->face_flags & FT2_1_3_FACE_FLAG_FIXED_SIZES) {
+	if (face->face_flags & FT_FACE_FLAG_FIXED_SIZES) {
 		if (size->strike_index == 0xFFFFU)
 			error = Reset_SBit_Size(size);
 
-		if (!error && !(face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE))
+		if (!error && !(face->face_flags & FT_FACE_FLAG_SCALABLE))
 			size->root.metrics = size->strike_metrics;
 	}
 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
-	if (face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE)
+	if (face->face_flags & FT_FACE_FLAG_SCALABLE)
 		return FT2_1_3_Err_Ok;
 	else
 		return error;
 }
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_driver_init(TT_Driver driver) {
 	FT_Error error;
 
@@ -606,7 +606,7 @@ tt_driver_init(TT_Driver driver) {
 }
 
 
-FT2_1_3_LOCAL_DEF(void)
+FT_LOCAL_DEF(void)
 tt_driver_done(TT_Driver driver) {
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
@@ -616,7 +616,7 @@ tt_driver_done(TT_Driver driver) {
 		driver->context = NULL;
 	}
 #else
-	FT2_1_3_UNUSED(driver);
+	FT_UNUSED(driver);
 #endif
 }
 

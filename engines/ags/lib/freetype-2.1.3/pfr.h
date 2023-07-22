@@ -28,7 +28,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef FT_Error (*FT2_1_3_PFR_GetMetricsFunc)(FT_Face face, FT_UInt *aoutline, FT_UInt *ametrics,
@@ -49,18 +49,18 @@ typedef struct FT2_1_3_PFR_ServiceRec_ {
 
 /**** FUNCTIONS ****/
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Get_PFR_Metrics(FT_Face face, FT_UInt *aoutline_resolution, FT_UInt *ametrics_resolution,
 				   FT_Fixed *ametrics_x_scale, FT_Fixed *ametrics_y_scale);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Get_PFR_Kerning(FT_Face face, FT_UInt left, FT_UInt right, FT_Vector *avector);
 
-FT2_1_3_EXPORT(FT_Error)
+FT_EXPORT(FT_Error)
 FT_Get_PFR_Advance(FT_Face face, FT_UInt gindex, FT_Pos *aadvance);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

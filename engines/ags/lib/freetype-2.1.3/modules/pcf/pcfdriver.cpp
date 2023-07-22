@@ -39,8 +39,8 @@ THE SOFTWARE.
 
 #include "pcferror.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pcfread
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pcfread
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -53,7 +53,7 @@ typedef struct  PCF_CMapRec_ {
 } PCF_CMapRec, *PCF_CMap;
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 pcf_cmap_init( PCF_CMap  cmap ) {
 	PCF_Face  face = (PCF_Face)FT2_1_3_CMAP_FACE( cmap );
 
@@ -65,14 +65,14 @@ pcf_cmap_init( PCF_CMap  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 pcf_cmap_done( PCF_CMap  cmap ) {
 	cmap->encodings     = NULL;
 	cmap->num_encodings = 0;
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_UInt )
+FT_CALLBACK_DEF( FT_UInt )
 pcf_cmap_char_index( PCF_CMap   cmap,
 					 FT_UInt32  charcode ) {
 	PCF_Encoding  encodings = cmap->encodings;
@@ -105,7 +105,7 @@ pcf_cmap_char_index( PCF_CMap   cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_UInt )
+FT_CALLBACK_DEF( FT_UInt )
 pcf_cmap_char_next( PCF_CMap    cmap,
 					FT_UInt32  *acharcode ) {
 	PCF_Encoding  encodings = cmap->encodings;
@@ -147,7 +147,7 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  pcf_cmap_class = {
+FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  pcf_cmap_class = {
 	sizeof( PCF_CMapRec ),
 	(FT_CMap_InitFunc)     pcf_cmap_init,
 	(FT_CMap_DoneFunc)     pcf_cmap_done,
@@ -158,15 +158,15 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  pcf_cmap_class = {
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pcfdriver
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pcfdriver
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 PCF_Face_Done( PCF_Face  face ) {
 	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
@@ -197,7 +197,7 @@ PCF_Face_Done( PCF_Face  face ) {
 	FT2_1_3_FREE( face->charset_encoding );
 	FT2_1_3_FREE( face->charset_registry );
 
-	FT2_1_3_TRACE4(( "PCF_Face_Done: done face\n" ));
+	FT_TRACE4(( "PCF_Face_Done: done face\n" ));
 
 	/* close gzip stream if any */
 	if ( face->root.stream == &face->gzip_stream ) {
@@ -209,7 +209,7 @@ PCF_Face_Done( PCF_Face  face ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 PCF_Face_Init( FT_Stream      stream,
 			   PCF_Face       face,
 			   FT_Int         face_index,
@@ -217,9 +217,9 @@ PCF_Face_Init( FT_Stream      stream,
 			   FT_Parameter*  params ) {
 	FT_Error  error = FT2_1_3_Err_Ok;
 
-	FT2_1_3_UNUSED( num_params );
-	FT2_1_3_UNUSED( params );
-	FT2_1_3_UNUSED( face_index );
+	FT_UNUSED( num_params );
+	FT_UNUSED( params );
+	FT_UNUSED( face_index );
 
 
 	error = pcf_load_font( stream, face );
@@ -267,12 +267,12 @@ PCF_Face_Init( FT_Stream      stream,
 
 
 			charmap.face        = FT2_1_3_FACE( face );
-			charmap.encoding    = FT2_1_3_ENCODING_NONE;
+			charmap.encoding    = FT_ENCODING_NONE;
 			charmap.platform_id = 0;
 			charmap.encoding_id = 0;
 
 			if ( unicode_charmap ) {
-				charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
+				charmap.encoding    = FT_ENCODING_UNICODE;
 				charmap.platform_id = 3;
 				charmap.encoding_id = 1;
 			}
@@ -291,7 +291,7 @@ Exit:
 	return error;
 
 Fail:
-	FT2_1_3_TRACE2(( "[not a valid PCF file]\n" ));
+	FT_TRACE2(( "[not a valid PCF file]\n" ));
 	error = FT2_1_3_Err_Unknown_File_Format;  /* error */
 	goto Exit;
 }
@@ -302,7 +302,7 @@ PCF_Set_Pixel_Size( FT_Size  size ) {
 	PCF_Face face = (PCF_Face)FT2_1_3_SIZE_FACE( size );
 
 
-	FT2_1_3_TRACE4(( "rec %d - pres %d\n", size->metrics.y_ppem,
+	FT_TRACE4(( "rec %d - pres %d\n", size->metrics.y_ppem,
 				face->root.available_sizes->height ));
 
 	if ( size->metrics.y_ppem == face->root.available_sizes->height ) {
@@ -318,7 +318,7 @@ PCF_Set_Pixel_Size( FT_Size  size ) {
 
 		return FT2_1_3_Err_Ok;
 	} else {
-		FT2_1_3_TRACE4(( "size WRONG\n" ));
+		FT_TRACE4(( "size WRONG\n" ));
 		return FT2_1_3_Err_Invalid_Pixel_Size;
 	}
 }
@@ -337,10 +337,10 @@ PCF_Glyph_Load( FT_GlyphSlot  slot,
 	PCF_Metric  metric;
 	int         bytes;
 
-	FT2_1_3_UNUSED( load_flags );
+	FT_UNUSED( load_flags );
 
 
-	FT2_1_3_TRACE4(( "load_glyph %d ---", glyph_index ));
+	FT_TRACE4(( "load_glyph %d ---", glyph_index ));
 
 	if ( !face ) {
 		error = FT2_1_3_Err_Invalid_Argument;
@@ -355,9 +355,9 @@ PCF_Glyph_Load( FT_GlyphSlot  slot,
 	bitmap->rows       = metric->ascent + metric->descent;
 	bitmap->width      = metric->rightSideBearing - metric->leftSideBearing;
 	bitmap->num_grays  = 1;
-	bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
+	bitmap->pixel_mode = FT_PIXEL_MODE_MONO;
 
-	FT2_1_3_TRACE6(( "BIT_ORDER %d ; BYTE_ORDER %d ; GLYPH_PAD %d\n",
+	FT_TRACE6(( "BIT_ORDER %d ; BYTE_ORDER %d ; GLYPH_PAD %d\n",
 				PCF_BIT_ORDER( face->bitmapsFormat ),
 				PCF_BYTE_ORDER( face->bitmapsFormat ),
 				PCF_GLYPH_PAD( face->bitmapsFormat ) ));
@@ -423,17 +423,17 @@ PCF_Glyph_Load( FT_GlyphSlot  slot,
 	slot->metrics.height       = bitmap->rows << 6;
 
 	slot->linearHoriAdvance = (FT_Fixed)bitmap->width << 16;
-	slot->format            = FT2_1_3_GLYPH_FORMAT_BITMAP;
-	slot->flags             = FT2_1_3_GLYPH_OWN_BITMAP;
+	slot->format            = FT_GLYPH_FORMAT_BITMAP;
+	slot->flags             = FT_GLYPH_OWN_BITMAP;
 
-	FT2_1_3_TRACE4(( " --- ok\n" ));
+	FT_TRACE4(( " --- ok\n" ));
 
 Exit:
 	return error;
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const FT_Driver_ClassRec  pcf_driver_class = {
 	{
 		ft_module_font_driver,

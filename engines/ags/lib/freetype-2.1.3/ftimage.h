@@ -47,7 +47,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /**** BASIC TYPES ****/
@@ -65,24 +65,24 @@ typedef struct FT_BBox_ {
 } FT_BBox;
 
 typedef enum FT_Pixel_Mode_ {
-	FT2_1_3_PIXEL_MODE_NONE = 0,
-	FT2_1_3_PIXEL_MODE_MONO,
-	FT2_1_3_PIXEL_MODE_GRAY,
-	FT2_1_3_PIXEL_MODE_GRAY2,
-	FT2_1_3_PIXEL_MODE_GRAY4,
-	FT2_1_3_PIXEL_MODE_LCD,
-	FT2_1_3_PIXEL_MODE_LCD_V,
+	FT_PIXEL_MODE_NONE = 0,
+	FT_PIXEL_MODE_MONO,
+	FT_PIXEL_MODE_GRAY,
+	FT_PIXEL_MODE_GRAY2,
+	FT_PIXEL_MODE_GRAY4,
+	FT_PIXEL_MODE_LCD,
+	FT_PIXEL_MODE_LCD_V,
 
-	FT2_1_3_PIXEL_MODE_MAX /* do not remove */
+	FT_PIXEL_MODE_MAX /* do not remove */
 } FT_Pixel_Mode;
 
 
 /*    A list of deprecated constants. */
-#define ft_pixel_mode_none   FT2_1_3_PIXEL_MODE_NONE
-#define ft_pixel_mode_mono   FT2_1_3_PIXEL_MODE_MONO
-#define ft_pixel_mode_grays  FT2_1_3_PIXEL_MODE_GRAY
-#define ft_pixel_mode_pal2   FT2_1_3_PIXEL_MODE_GRAY2
-#define ft_pixel_mode_pal4   FT2_1_3_PIXEL_MODE_GRAY4
+#define ft_pixel_mode_none   FT_PIXEL_MODE_NONE
+#define ft_pixel_mode_mono   FT_PIXEL_MODE_MONO
+#define ft_pixel_mode_grays  FT_PIXEL_MODE_GRAY
+#define ft_pixel_mode_pal2   FT_PIXEL_MODE_GRAY2
+#define ft_pixel_mode_pal4   FT_PIXEL_MODE_GRAY4
 
 
 #if 0
@@ -123,42 +123,42 @@ typedef struct  FT_Outline_ {
 } FT_Outline;
 
 typedef enum  FT_Outline_Flags_ {
-	FT2_1_3_OUTLINE_NONE            = 0,
-	FT2_1_3_OUTLINE_OWNER           = 1,
-	FT2_1_3_OUTLINE_EVEN_ODD_FILL   = 2,
-	FT2_1_3_OUTLINE_REVERSE_FILL    = 4,
-	FT2_1_3_OUTLINE_IGNORE_DROPOUTS = 8,
-	FT2_1_3_OUTLINE_HIGH_PRECISION  = 256,
-	FT2_1_3_OUTLINE_SINGLE_PASS     = 512
+	FT_OUTLINE_NONE            = 0,
+	FT_OUTLINE_OWNER           = 1,
+	FT_OUTLINE_EVEN_ODD_FILL   = 2,
+	FT_OUTLINE_REVERSE_FILL    = 4,
+	FT_OUTLINE_IGNORE_DROPOUTS = 8,
+	FT_OUTLINE_HIGH_PRECISION  = 256,
+	FT_OUTLINE_SINGLE_PASS     = 512
 } FT_Outline_Flags;
 
 
 /*   These constants are deprecated. */
-#define ft_outline_none             FT2_1_3_OUTLINE_NONE
-#define ft_outline_owner            FT2_1_3_OUTLINE_OWNER
-#define ft_outline_even_odd_fill    FT2_1_3_OUTLINE_EVEN_ODD_FILL
-#define ft_outline_reverse_fill     FT2_1_3_OUTLINE_REVERSE_FILL
-#define ft_outline_ignore_dropouts  FT2_1_3_OUTLINE_IGNORE_DROPOUTS
-#define ft_outline_high_precision   FT2_1_3_OUTLINE_HIGH_PRECISION
-#define ft_outline_single_pass      FT2_1_3_OUTLINE_SINGLE_PASS
+#define ft_outline_none             FT_OUTLINE_NONE
+#define ft_outline_owner            FT_OUTLINE_OWNER
+#define ft_outline_even_odd_fill    FT_OUTLINE_EVEN_ODD_FILL
+#define ft_outline_reverse_fill     FT_OUTLINE_REVERSE_FILL
+#define ft_outline_ignore_dropouts  FT_OUTLINE_IGNORE_DROPOUTS
+#define ft_outline_high_precision   FT_OUTLINE_HIGH_PRECISION
+#define ft_outline_single_pass      FT_OUTLINE_SINGLE_PASS
 
 
-#define FT2_1_3_CURVE_TAG(flag) (flag & 3)
+#define FT_CURVE_TAG(flag) (flag & 3)
 
-#define FT2_1_3_CURVE_TAG_ON           1
-#define FT2_1_3_CURVE_TAG_CONIC        0
-#define FT2_1_3_CURVE_TAG_CUBIC        2
+#define FT_CURVE_TAG_ON           1
+#define FT_CURVE_TAG_CONIC        0
+#define FT_CURVE_TAG_CUBIC        2
 
-#define FT2_1_3_CURVE_TAG_TOUCH_X      8  /* reserved for the TrueType hinter */
-#define FT2_1_3_CURVE_TAG_TOUCH_Y     16  /* reserved for the TrueType hinter */
+#define FT_CURVE_TAG_TOUCH_X      8  /* reserved for the TrueType hinter */
+#define FT_CURVE_TAG_TOUCH_Y     16  /* reserved for the TrueType hinter */
 
-#define FT2_1_3_CURVE_TAG_TOUCH_BOTH	(FT2_1_3_CURVE_TAG_TOUCH_X | FT2_1_3_CURVE_TAG_TOUCH_Y)
+#define FT_CURVE_TAG_TOUCH_BOTH	(FT_CURVE_TAG_TOUCH_X | FT_CURVE_TAG_TOUCH_Y)
 
-#define  FT2_1_3_Curve_Tag_On       FT2_1_3_CURVE_TAG_ON
-#define  FT2_1_3_Curve_Tag_Conic    FT2_1_3_CURVE_TAG_CONIC
-#define  FT2_1_3_Curve_Tag_Cubic    FT2_1_3_CURVE_TAG_CUBIC
-#define  FT2_1_3_Curve_Tag_Touch_X  FT2_1_3_CURVE_TAG_TOUCH_X
-#define  FT2_1_3_Curve_Tag_Touch_Y  FT2_1_3_CURVE_TAG_TOUCH_Y
+#define  FT_Curve_Tag_On       FT_CURVE_TAG_ON
+#define  FT_Curve_Tag_Conic    FT_CURVE_TAG_CONIC
+#define  FT_Curve_Tag_Cubic    FT_CURVE_TAG_CUBIC
+#define  FT_Curve_Tag_Touch_X  FT_CURVE_TAG_TOUCH_X
+#define  FT_Curve_Tag_Touch_Y  FT_CURVE_TAG_TOUCH_Y
 
 
 typedef int (*FT_Outline_MoveToFunc)(FT_Vector *to, void *user);
@@ -197,20 +197,20 @@ typedef struct  FT_Outline_Funcs_ {
 #endif /* FT_IMAGE_TAG */
 
 typedef enum  FT_Glyph_Format_ {
-	FT_IMAGE_TAG(FT2_1_3_GLYPH_FORMAT_NONE, 0, 0, 0, 0),
+	FT_IMAGE_TAG(FT_GLYPH_FORMAT_NONE, 0, 0, 0, 0),
 
-	FT_IMAGE_TAG(FT2_1_3_GLYPH_FORMAT_COMPOSITE, 'c', 'o', 'm', 'p'),
-	FT_IMAGE_TAG(FT2_1_3_GLYPH_FORMAT_BITMAP,    'b', 'i', 't', 's'),
-	FT_IMAGE_TAG(FT2_1_3_GLYPH_FORMAT_OUTLINE,   'o', 'u', 't', 'l'),
-	FT_IMAGE_TAG(FT2_1_3_GLYPH_FORMAT_PLOTTER,   'p', 'l', 'o', 't')
+	FT_IMAGE_TAG(FT_GLYPH_FORMAT_COMPOSITE, 'c', 'o', 'm', 'p'),
+	FT_IMAGE_TAG(FT_GLYPH_FORMAT_BITMAP,    'b', 'i', 't', 's'),
+	FT_IMAGE_TAG(FT_GLYPH_FORMAT_OUTLINE,   'o', 'u', 't', 'l'),
+	FT_IMAGE_TAG(FT_GLYPH_FORMAT_PLOTTER,   'p', 'l', 'o', 't')
 } FT_Glyph_Format;
 
 
-#define ft_glyph_format_none       FT2_1_3_GLYPH_FORMAT_NONE
-#define ft_glyph_format_composite  FT2_1_3_GLYPH_FORMAT_COMPOSITE
-#define ft_glyph_format_bitmap     FT2_1_3_GLYPH_FORMAT_BITMAP
-#define ft_glyph_format_outline    FT2_1_3_GLYPH_FORMAT_OUTLINE
-#define ft_glyph_format_plotter    FT2_1_3_GLYPH_FORMAT_PLOTTER
+#define ft_glyph_format_none       FT_GLYPH_FORMAT_NONE
+#define ft_glyph_format_composite  FT_GLYPH_FORMAT_COMPOSITE
+#define ft_glyph_format_bitmap     FT_GLYPH_FORMAT_BITMAP
+#define ft_glyph_format_outline    FT_GLYPH_FORMAT_OUTLINE
+#define ft_glyph_format_plotter    FT_GLYPH_FORMAT_PLOTTER
 
 
 /**** RASTER DEFINITIONS ****/
@@ -243,16 +243,16 @@ typedef int (*FT_Raster_BitTest_Func)(int y, int x, void *user);
 typedef void (*FT_Raster_BitSet_Func)(int y, int x, void *user);
 
 typedef  enum {
-	FT2_1_3_RASTER_FLAG_DEFAULT = 0,
-	FT2_1_3_RASTER_FLAG_AA      = 1,
-	FT2_1_3_RASTER_FLAG_DIRECT  = 2,
-	FT2_1_3_RASTER_FLAG_CLIP    = 4
+	FT_RASTER_FLAG_DEFAULT = 0,
+	FT_RASTER_FLAG_AA      = 1,
+	FT_RASTER_FLAG_DIRECT  = 2,
+	FT_RASTER_FLAG_CLIP    = 4
 } FT_Raster_Flag;
 
-#define ft_raster_flag_default  FT2_1_3_RASTER_FLAG_DEFAULT
-#define ft_raster_flag_aa       FT2_1_3_RASTER_FLAG_AA
-#define ft_raster_flag_direct   FT2_1_3_RASTER_FLAG_DIRECT
-#define ft_raster_flag_clip     FT2_1_3_RASTER_FLAG_CLIP
+#define ft_raster_flag_default  FT_RASTER_FLAG_DEFAULT
+#define ft_raster_flag_aa       FT_RASTER_FLAG_AA
+#define ft_raster_flag_direct   FT_RASTER_FLAG_DIRECT
+#define ft_raster_flag_clip     FT_RASTER_FLAG_CLIP
 
 typedef struct FT_Raster_Params_ {
 	FT_Bitmap 				*target;
@@ -296,7 +296,7 @@ typedef struct  FT_Raster_Funcs_ {
 } FT_Raster_Funcs;
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

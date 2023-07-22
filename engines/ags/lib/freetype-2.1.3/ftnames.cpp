@@ -38,16 +38,16 @@ namespace AGS3 {
 namespace FreeType213 {
 
 
-FT2_1_3_EXPORT_DEF(FT_UInt)
+FT_EXPORT_DEF(FT_UInt)
 FT_Get_Sfnt_Name_Count(FT_Face face) {
-	return (face && FT2_1_3_IS_SFNT(face)) ? ((TT_Face)face)->num_names : 0;
+	return (face && FT_IS_SFNT(face)) ? ((TT_Face)face)->num_names : 0;
 }
 
-FT2_1_3_EXPORT_DEF(FT_Error)
+FT_EXPORT_DEF(FT_Error)
 FT_Get_Sfnt_Name(FT_Face face, FT_UInt idx, FT_SfntName *aname) {
 	FT_Error error = FT2_1_3_Err_Invalid_Argument;
 
-	if (aname && face && FT2_1_3_IS_SFNT(face)) {
+	if (aname && face && FT_IS_SFNT(face)) {
 		TT_Face ttface = (TT_Face)face;
 
 		if (idx < (FT_UInt)ttface->num_names) {
@@ -58,7 +58,7 @@ FT_Get_Sfnt_Name(FT_Face face, FT_UInt idx, FT_SfntName *aname) {
 				FT_Memory memory = face->memory;
 				FT_Stream stream = face->stream;
 
-				if (FT2_1_3_NEW_ARRAY(entry->string, entry->stringLength) ||
+				if (FT_NEW_ARRAY(entry->string, entry->stringLength) ||
 					FT2_1_3_STREAM_SEEK(entry->stringOffset) ||
 					FT2_1_3_STREAM_READ(entry->string, entry->stringLength)) {
 					FT2_1_3_FREE(entry->string);

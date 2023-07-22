@@ -23,7 +23,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 pfr_cmap_init( PFR_CMap  cmap ) {
 	PFR_Face  face = (PFR_Face)FT2_1_3_CMAP_FACE( cmap );
 
@@ -47,14 +47,14 @@ pfr_cmap_init( PFR_CMap  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( void )
+FT_CALLBACK_DEF( void )
 pfr_cmap_done( PFR_CMap  cmap ) {
 	cmap->chars     = NULL;
 	cmap->num_chars = 0;
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_UInt )
+FT_CALLBACK_DEF( FT_UInt )
 pfr_cmap_char_index( PFR_CMap   cmap,
 					 FT_UInt32  char_code ) {
 	FT_UInt   min = 0;
@@ -79,7 +79,7 @@ pfr_cmap_char_index( PFR_CMap   cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_UInt )
+FT_CALLBACK_DEF( FT_UInt )
 pfr_cmap_char_next( PFR_CMap    cmap,
 					FT_UInt32  *pchar_code ) {
 	FT_UInt    result    = 0;
@@ -133,7 +133,7 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
+FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 pfr_cmap_class_rec = {
 	sizeof ( PFR_CMapRec ),
 

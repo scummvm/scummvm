@@ -35,36 +35,36 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
-FT2_1_3_EXPORT(FT_ListNode)
+FT_EXPORT(FT_ListNode)
 FT_List_Find(FT_List list, void *data);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_List_Add(FT_List list, FT_ListNode node);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_List_Insert(FT_List list, FT_ListNode node);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_List_Remove(FT_List list, FT_ListNode node);
 
-FT2_1_3_EXPORT(void)
+FT_EXPORT(void)
 FT_List_Up(FT_List list, FT_ListNode node);
 
 typedef FT_Error (*FT_List_Iterator)(FT_ListNode node, void *user);
 
-FT2_1_3_EXPORT( FT_Error )
+FT_EXPORT( FT_Error )
 FT_List_Iterate(FT_List list, FT_List_Iterator iterator, void *user);
 
 typedef void (*FT_List_Destructor)(FT_Memory memory, void *data, void *user);
 
-FT2_1_3_EXPORT( void )
+FT_EXPORT( void )
 FT_List_Finalize(FT_List list, FT_List_Destructor destroy, FT_Memory memory, void *user);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

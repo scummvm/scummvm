@@ -39,10 +39,10 @@
 /* The default render pool size in bytes */
 #define RASTER_RENDER_POOL 8192
 
-/* undefine FT2_1_3_RASTER_OPTION_ANTI_ALIASING if you do not want to */
+/* undefine FT_RASTER_OPTION_ANTI_ALIASING if you do not want to */
 /* support 5-levels anti-aliasing                                     */
 #ifdef FT2_1_3_CONFIG_OPTION_5_GRAY_LEVELS
-#define FT2_1_3_RASTER_OPTION_ANTI_ALIASING
+#define FT_RASTER_OPTION_ANTI_ALIASING
 #endif
 
 /* The size of the two-lines intermediate bitmap used */
@@ -51,8 +51,8 @@
 
 /****  OTHER MACROS (do not change) ****/
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_raster
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_raster
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -64,16 +64,16 @@ namespace FreeType213 {
 /* Its purpose is simply to reduce compiler warnings.  Note also that  */
 /* simply defining it as `(void)x' doesn't avoid warnings with certain */
 /* ANSI compilers (e.g. LCC).                                          */
-#define FT2_1_3_UNUSED(x)  (x) = (x)
+#define FT_UNUSED(x)  (x) = (x)
 
 /* Disable the tracing mechanism for simplicity -- developers can      */
 /* activate it easily by redefining these two macros.                  */
-#ifndef FT2_1_3_ERROR
-#define FT2_1_3_ERROR(x)  do ; while (0)     /* nothing */
+#ifndef FT_ERROR
+#define FT_ERROR(x)  do ; while (0)     /* nothing */
 #endif
 
-#ifndef FT2_1_3_TRACE
-#define FT2_1_3_TRACE(x)  do ; while (0)     /* nothing */
+#ifndef FT_TRACE
+#define FT_TRACE(x)  do ; while (0)     /* nothing */
 #endif
 
 #define Raster_Err_None          0
@@ -88,7 +88,7 @@ namespace FreeType213 {
 
 
 #include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"        /* for FT2_1_3_TRACE() and FT2_1_3_ERROR() */
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"        /* for FT_TRACE() and FT_ERROR() */
 
 #include "engines/ags/lib/freetype-2.1.3/modules/raster/rasterrs.h"
 
@@ -216,7 +216,7 @@ typedef struct TBand_ {
 #define RAS_ARG  /* void */
 #define RAS_VARS /* void */
 #define RAS_VAR  /* void */
-#define FT2_1_3_UNUSED_RASTER do ; while (0)
+#define FT_UNUSED_RASTER do ; while (0)
 
 #else /* TT_STATIC_RASTER */
 
@@ -225,7 +225,7 @@ typedef struct TBand_ {
 #define RAS_VARS raster,
 #define RAS_VAR raster
 
-#define FT2_1_3_UNUSED_RASTER FT2_1_3_UNUSED(raster)
+#define FT_UNUSED_RASTER FT_UNUSED(raster)
 
 #endif /* TT_STATIC_RASTER */
 
@@ -331,7 +331,7 @@ struct TRaster_Instance_ {
 	void      *memory;
 
 
-#ifdef FT2_1_3_RASTER_OPTION_ANTI_ALIASING
+#ifdef FT_RASTER_OPTION_ANTI_ALIASING
 
 	Byte      grays[5];             /* Palette of gray levels used for     */
 	/* render.                             */
@@ -349,7 +349,7 @@ struct TRaster_Instance_ {
 	/* The gray_lines must hold 2 lines, thus with size */
 	/* in bytes of at least `gray_width*2'.             */
 
-#endif /* FT2_1_3_RASTER_ANTI_ALIASING */
+#endif /* FT_RASTER_ANTI_ALIASING */
 
 #if 0
 	PByte       flags;              /* current flags table                 */
@@ -385,7 +385,7 @@ static void Set_High_Precision(RAS_ARGS Int High) {
 		ras.precision_jitter = 2;
 	}
 
-	FT2_1_3_TRACE6(("Set_High_Precision(%s)\n", High ? "true" : "false"));
+	FT_TRACE6(("Set_High_Precision(%s)\n", High ? "true" : "false"));
 
 	ras.precision = 1 << ras.precision_bits;
 	ras.precision_half = ras.precision / 2;
@@ -408,16 +408,16 @@ static Bool New_Profile(RAS_ARGS TStates aState) {
 	switch (aState) {
 	case Ascending_State:
 		ras.cProfile->flow = Flow_Up;
-		FT2_1_3_TRACE6(("New ascending profile = %lx\n", (long)ras.cProfile));
+		FT_TRACE6(("New ascending profile = %lx\n", (long)ras.cProfile));
 		break;
 
 	case Descending_State:
 		ras.cProfile->flow = Flow_Down;
-		FT2_1_3_TRACE6(("New descending profile = %lx\n", (long)ras.cProfile));
+		FT_TRACE6(("New descending profile = %lx\n", (long)ras.cProfile));
 		break;
 
 	default:
-		FT2_1_3_ERROR(("New_Profile: invalid profile direction!\n"));
+		FT_ERROR(("New_Profile: invalid profile direction!\n"));
 		ras.error = Raster_Err_Invalid;
 		return FAILURE;
 	}
@@ -446,13 +446,13 @@ static Bool End_Profile(RAS_ARG) {
 	h = (Long)(ras.top - ras.cProfile->offset);
 
 	if (h < 0) {
-		FT2_1_3_ERROR(("End_Profile: negative height encountered!\n"));
+		FT_ERROR(("End_Profile: negative height encountered!\n"));
 		ras.error = Raster_Err_Neg_Height;
 		return FAILURE;
 	}
 
 	if (h > 0) {
-		FT2_1_3_TRACE6(("Ending profile %lx, start = %ld, height = %ld\n", (long)ras.cProfile, ras.cProfile->start, h));
+		FT_TRACE6(("Ending profile %lx, start = %ld, height = %ld\n", (long)ras.cProfile, ras.cProfile->start, h));
 
 		oldProfile = ras.cProfile;
 		ras.cProfile->height = h;
@@ -467,7 +467,7 @@ static Bool End_Profile(RAS_ARG) {
 	}
 
 	if (ras.top >= ras.maxBuff) {
-		FT2_1_3_TRACE1(("overflow in End_Profile\n"));
+		FT_TRACE1(("overflow in End_Profile\n"));
 		ras.error = Raster_Err_Overflow;
 		return FAILURE;
 	}
@@ -1047,16 +1047,16 @@ static Bool Decompose_Curve(RAS_ARGS UShort first, UShort last, int flipped) {
 
 	point = points + first;
 	tags  = ras.outline.tags + first;
-	tag   = FT2_1_3_CURVE_TAG(tags[0]);
+	tag   = FT_CURVE_TAG(tags[0]);
 
 	/* A contour cannot start with a cubic control point! */
-	if (tag == FT2_1_3_CURVE_TAG_CUBIC)
+	if (tag == FT_CURVE_TAG_CUBIC)
 		goto Invalid_Outline;
 
 	/* check first point to determine origin */
-	if (tag == FT2_1_3_CURVE_TAG_CONIC) {
+	if (tag == FT_CURVE_TAG_CONIC) {
 		/* first point is conic control.  Yes, this happens. */
-		if (FT2_1_3_CURVE_TAG(ras.outline.tags[last]) == FT2_1_3_CURVE_TAG_ON) {
+		if (FT_CURVE_TAG(ras.outline.tags[last]) == FT_CURVE_TAG_ON) {
 			/* start at last point if it is on the curve */
 			v_start = v_last;
 			limit--;
@@ -1080,10 +1080,10 @@ static Bool Decompose_Curve(RAS_ARGS UShort first, UShort last, int flipped) {
 		point++;
 		tags++;
 
-		tag = FT2_1_3_CURVE_TAG(tags[0]);
+		tag = FT_CURVE_TAG(tags[0]);
 
 		switch (tag) {
-		case FT2_1_3_CURVE_TAG_ON: { /* emit a single line_to */
+		case FT_CURVE_TAG_ON: { /* emit a single line_to */
 			Long x, y;
 
 			x = SCALED(point->x);
@@ -1096,7 +1096,7 @@ static Bool Decompose_Curve(RAS_ARGS UShort first, UShort last, int flipped) {
 			continue;
 		}
 
-		case FT2_1_3_CURVE_TAG_CONIC: /* consume conic arcs */
+		case FT_CURVE_TAG_CONIC: /* consume conic arcs */
 			v_control.x = SCALED(point[0].x);
 			v_control.y = SCALED(point[0].y);
 
@@ -1110,7 +1110,7 @@ static Bool Decompose_Curve(RAS_ARGS UShort first, UShort last, int flipped) {
 
 				point++;
 				tags++;
-				tag = FT2_1_3_CURVE_TAG(tags[0]);
+				tag = FT_CURVE_TAG(tags[0]);
 
 				x = SCALED(point[0].x);
 				y = SCALED(point[0].y);
@@ -1118,13 +1118,13 @@ static Bool Decompose_Curve(RAS_ARGS UShort first, UShort last, int flipped) {
 				if (flipped)
 					SWAP_(x, y);
 
-				if (tag == FT2_1_3_CURVE_TAG_ON) {
+				if (tag == FT_CURVE_TAG_ON) {
 					if (Conic_To(RAS_VARS v_control.x, v_control.y, x, y))
 						goto Fail;
 					continue;
 				}
 
-				if (tag != FT2_1_3_CURVE_TAG_CONIC)
+				if (tag != FT_CURVE_TAG_CONIC)
 					goto Invalid_Outline;
 
 				v_middle.x = (v_control.x + x) / 2;
@@ -1144,11 +1144,11 @@ static Bool Decompose_Curve(RAS_ARGS UShort first, UShort last, int flipped) {
 
 			goto Close;
 
-		default: { /* FT2_1_3_CURVE_TAG_CUBIC */
+		default: { /* FT_CURVE_TAG_CUBIC */
 			Long x1, y1, x2, y2, x3, y3;
 
 			if (point + 1 > limit ||
-				FT2_1_3_CURVE_TAG(tags[1]) != FT2_1_3_CURVE_TAG_CUBIC)
+				FT_CURVE_TAG(tags[1]) != FT_CURVE_TAG_CUBIC)
 				goto Invalid_Outline;
 
 			point += 2;
@@ -1347,7 +1347,7 @@ static void Sort(PProfileList list) {
 static void Vertical_Sweep_Init(RAS_ARGS Short *min, Short *max) {
 	Long pitch = ras.target.pitch;
 
-	FT2_1_3_UNUSED(max);
+	FT_UNUSED(max);
 
 	ras.traceIncr = (Short)-pitch;
 	ras.traceOfs = -*min * pitch;
@@ -1364,9 +1364,9 @@ static void Vertical_Sweep_Span(RAS_ARGS Short y, FT_F26Dot6 x1, FT_F26Dot6 x2, 
 	Byte f1, f2;
 	Byte *target;
 
-	FT2_1_3_UNUSED(y);
-	FT2_1_3_UNUSED(left);
-	FT2_1_3_UNUSED(right);
+	FT_UNUSED(y);
+	FT_UNUSED(left);
+	FT_UNUSED(right);
 
 	/* Drop-out control */
 
@@ -1529,9 +1529,9 @@ static void Vertical_Sweep_Step(RAS_ARG) {
 
 static void Horizontal_Sweep_Init(RAS_ARGS Short *min, Short *max) {
 	/* nothing, really */
-	FT2_1_3_UNUSED(raster);
-	FT2_1_3_UNUSED(min);
-	FT2_1_3_UNUSED(max);
+	FT_UNUSED(raster);
+	FT_UNUSED(min);
+	FT_UNUSED(max);
 }
 
 static void Horizontal_Sweep_Span(RAS_ARGS Short y, FT_F26Dot6 x1, FT_F26Dot6 x2, PProfile left, PProfile right) {
@@ -1539,8 +1539,8 @@ static void Horizontal_Sweep_Span(RAS_ARGS Short y, FT_F26Dot6 x1, FT_F26Dot6 x2
 	PByte bits;
 	Byte  f1;
 
-	FT2_1_3_UNUSED(left);
-	FT2_1_3_UNUSED(right);
+	FT_UNUSED(left);
+	FT_UNUSED(right);
 
 	if (x2 - x1 < ras.precision) {
 		e1 = CEILING(x1);
@@ -1648,11 +1648,11 @@ static void Horizontal_Sweep_Drop(RAS_ARGS Short y, FT_F26Dot6 x1, FT_F26Dot6 x2
 
 static void Horizontal_Sweep_Step(RAS_ARG) {
 	/* Nothing, really */
-	FT2_1_3_UNUSED(raster);
+	FT_UNUSED(raster);
 }
 
 
-#ifdef FT2_1_3_RASTER_OPTION_ANTI_ALIASING
+#ifdef FT_RASTER_OPTION_ANTI_ALIASING
 
 /*************************************************************************/
 /*                                                                       */
@@ -1769,12 +1769,12 @@ static void Vertical_Gray_Sweep_Step(RAS_ARG) {
 
 static void Horizontal_Gray_Sweep_Span(RAS_ARGS Short y, FT_F26Dot6 x1, FT_F26Dot6 x2, PProfile left, PProfile right) {
 	/* nothing, really */
-	FT2_1_3_UNUSED(raster);
-	FT2_1_3_UNUSED(y);
-	FT2_1_3_UNUSED(x1);
-	FT2_1_3_UNUSED(x2);
-	FT2_1_3_UNUSED(left);
-	FT2_1_3_UNUSED(right);
+	FT_UNUSED(raster);
+	FT_UNUSED(y);
+	FT_UNUSED(x1);
+	FT_UNUSED(x2);
+	FT_UNUSED(left);
+	FT_UNUSED(right);
 }
 
 static void Horizontal_Gray_Sweep_Drop(RAS_ARGS Short y, FT_F26Dot6 x1, FT_F26Dot6 x2, PProfile left, PProfile right) {
@@ -1847,7 +1847,7 @@ static void Horizontal_Gray_Sweep_Drop(RAS_ARGS Short y, FT_F26Dot6 x1, FT_F26Do
 	}
 }
 
-#endif /* FT2_1_3_RASTER_OPTION_ANTI_ALIASING */
+#endif /* FT_RASTER_OPTION_ANTI_ALIASING */
 
 
 /* Generic Sweep Drawing routine */
@@ -2119,14 +2119,14 @@ static int Render_Single_Pass(RAS_ARGS Bool flipped) {
 }
 
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 Render_Glyph(RAS_ARG) {
 	FT_Error error;
 
-	Set_High_Precision(RAS_VARS ras.outline.flags & FT2_1_3_OUTLINE_HIGH_PRECISION);
+	Set_High_Precision(RAS_VARS ras.outline.flags & FT_OUTLINE_HIGH_PRECISION);
 	ras.scale_shift = ras.precision_shift;
 	ras.dropOutControl = 2;
-	ras.second_pass = (FT_Byte)(!(ras.outline.flags & FT2_1_3_OUTLINE_SINGLE_PASS));
+	ras.second_pass = (FT_Byte)(!(ras.outline.flags & FT_OUTLINE_SINGLE_PASS));
 
 	/* Vertical Sweep */
 	ras.Proc_Sweep_Init = Vertical_Sweep_Init;
@@ -2163,17 +2163,17 @@ Render_Glyph(RAS_ARG) {
 }
 
 
-#ifdef FT2_1_3_RASTER_OPTION_ANTI_ALIASING
+#ifdef FT_RASTER_OPTION_ANTI_ALIASING
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 Render_Gray_Glyph(RAS_ARG) {
 	Long pixel_width;
 	FT_Error error;
 
-	Set_High_Precision(RAS_VARS ras.outline.flags & FT2_1_3_OUTLINE_HIGH_PRECISION);
+	Set_High_Precision(RAS_VARS ras.outline.flags & FT_OUTLINE_HIGH_PRECISION);
 	ras.scale_shift = ras.precision_shift + 1;
 	ras.dropOutControl = 2;
-	ras.second_pass = !(ras.outline.flags & FT2_1_3_OUTLINE_SINGLE_PASS);
+	ras.second_pass = !(ras.outline.flags & FT_OUTLINE_SINGLE_PASS);
 
 	/* Vertical Sweep */
 
@@ -2219,16 +2219,16 @@ Render_Gray_Glyph(RAS_ARG) {
 	return FT2_1_3_Err_Ok;
 }
 
-#else /* !FT2_1_3_RASTER_OPTION_ANTI_ALIASING */
+#else /* !FT_RASTER_OPTION_ANTI_ALIASING */
 
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 Render_Gray_Glyph(RAS_ARG) {
-	FT2_1_3_UNUSED_RASTER;
+	FT_UNUSED_RASTER;
 
 	return FT2_1_3_Err_Cannot_Render_Glyph;
 }
 
-#endif /* !FT2_1_3_RASTER_OPTION_ANTI_ALIASING */
+#endif /* !FT_RASTER_OPTION_ANTI_ALIASING */
 
 
 static void ft_black_init(TRaster_Instance *raster) {
@@ -2244,7 +2244,7 @@ static void ft_black_init(TRaster_Instance *raster) {
 		raster->count_table[n] = (UInt)c;
 	}
 
-#ifdef FT2_1_3_RASTER_OPTION_ANTI_ALIASING
+#ifdef FT_RASTER_OPTION_ANTI_ALIASING
 
 	/* set default 5-levels gray palette */
 	for (n = 0; n < 5; n++)
@@ -2285,7 +2285,7 @@ static int ft_black_new(FT_Memory memory, TRaster_Instance **araster) {
 	using AGS3::FreeType213::FT_Alloc;
 
 	*araster = 0;
-	if (!FT2_1_3_NEW(raster)) {
+	if (!FT_NEW(raster)) {
 		raster->memory = memory;
 		ft_black_init(raster);
 
@@ -2315,8 +2315,8 @@ static void ft_black_reset(TRaster_Instance *raster, const char *pool_base, long
 
 
 static int ft_black_set_mode(TRaster_Instance *raster, unsigned long mode, const char *palette) {
-#ifdef FT2_1_3_RASTER_OPTION_ANTI_ALIASING
-	if (mode == FT2_1_3_MAKE_TAG('p', 'a', 'l', '5')) {
+#ifdef FT_RASTER_OPTION_ANTI_ALIASING
+	if (mode == FT_MAKE_TAG('p', 'a', 'l', '5')) {
 		/* set 5-levels gray palette */
 		raster->grays[0] = palette[0];
 		raster->grays[1] = palette[1];
@@ -2325,9 +2325,9 @@ static int ft_black_set_mode(TRaster_Instance *raster, unsigned long mode, const
 		raster->grays[4] = palette[4];
 	}
 #else
-	FT2_1_3_UNUSED(raster);
-	FT2_1_3_UNUSED(mode);
-	FT2_1_3_UNUSED(palette);
+	FT_UNUSED(raster);
+	FT_UNUSED(mode);
+	FT_UNUSED(palette);
 #endif
 	return 0;
 }
@@ -2351,7 +2351,7 @@ static int ft_black_render(TRaster_Instance *raster, FT_Raster_Params *params) {
 		return Raster_Err_Invalid;
 
 	/* this version of the raster does not support direct rendering, sorry */
-	if (params->flags & FT2_1_3_RASTER_FLAG_DIRECT)
+	if (params->flags & FT_RASTER_FLAG_DIRECT)
 		return Raster_Err_Unsupported;
 
 	if (!target_map || !target_map->buffer)
@@ -2360,11 +2360,11 @@ static int ft_black_render(TRaster_Instance *raster, FT_Raster_Params *params) {
 	ras.outline = *outline;
 	ras.target = *target_map;
 
-	return ((params->flags & FT2_1_3_RASTER_FLAG_AA) ? Render_Gray_Glyph(raster) : Render_Glyph(raster));
+	return ((params->flags & FT_RASTER_FLAG_AA) ? Render_Gray_Glyph(raster) : Render_Glyph(raster));
 }
 
 const FT_Raster_Funcs ft_standard_raster = {
-	FT2_1_3_GLYPH_FORMAT_OUTLINE,
+	FT_GLYPH_FORMAT_OUTLINE,
 	(FT_Raster_New_Func)	  ft_black_new,
 	(FT_Raster_Reset_Func)	  ft_black_reset,
 	(FT_Raster_Set_Mode_Func) ft_black_set_mode,

@@ -36,8 +36,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/modules/sfnt/sferrors.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_ttcmap
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_ttcmap
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -53,7 +53,7 @@ namespace FreeType213 {
 #define TT_NEXT_LONG    FT2_1_3_NEXT_LONG
 #define TT_NEXT_ULONG   FT2_1_3_NEXT_ULONG
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap_init(TT_CMap cmap, FT_Byte *table) {
 	cmap->data = table;
 	return 0;
@@ -64,7 +64,7 @@ tt_cmap_init(TT_CMap cmap, FT_Byte *table) {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_0
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap0_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p = table + 2;
 	FT_UInt length = TT_NEXT_USHORT(p);
@@ -86,14 +86,14 @@ tt_cmap0_validate(FT_Byte *table, FT_Validator valid) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap0_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	FT_Byte *table = cmap->data;
 
 	return char_code < 256 ? table[6 + char_code] : 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap0_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	FT_Byte   *table   = cmap->data;
 	FT_UInt32 charcode = *pchar_code;
@@ -113,7 +113,7 @@ tt_cmap0_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	return gindex;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const TT_CMap_ClassRec tt_cmap0_class_rec = {
 	{
 		sizeof(TT_CMapRec),
@@ -134,7 +134,7 @@ const TT_CMap_ClassRec tt_cmap0_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_2
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap2_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p = table + 2; /* skip format */
 	FT_UInt length = TT_PEEK_USHORT(p);
@@ -253,7 +253,7 @@ Exit:
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap2_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	FT_Byte *table = cmap->data;
 	FT_UInt result = 0;
@@ -284,7 +284,7 @@ tt_cmap2_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap2_char_next(TT_CMap cmap, FT_UInt32 *pcharcode) {
 	FT_Byte   *table   = cmap->data;
 	FT_UInt   gindex   = 0;
@@ -339,7 +339,7 @@ Exit:
 	return gindex;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const TT_CMap_ClassRec tt_cmap2_class_rec = {
 	{
 		sizeof(TT_CMapRec),
@@ -360,7 +360,7 @@ const TT_CMap_ClassRec tt_cmap2_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_4
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap4_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p 	   = table + 2; /* skip format */
 	FT_UInt length = TT_NEXT_USHORT(p);
@@ -489,7 +489,7 @@ tt_cmap4_validate(FT_Byte *table, FT_Validator valid) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap4_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	FT_Byte *table = cmap->data;
 	FT_UInt result = 0;
@@ -597,7 +597,7 @@ Exit:
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap4_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	FT_Byte   *table = cmap->data;
 	FT_UInt32 result = 0;
@@ -674,7 +674,7 @@ Exit:
 	return gindex;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const TT_CMap_ClassRec tt_cmap4_class_rec = {
 	{
 		sizeof (TT_CMapRec),
@@ -695,7 +695,7 @@ const TT_CMap_ClassRec tt_cmap4_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_6
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap6_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte *p;
 	FT_UInt length, /*start,*/ count;
@@ -726,7 +726,7 @@ tt_cmap6_validate(FT_Byte *table, FT_Validator valid) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap6_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	FT_Byte *table = cmap->data;
 	FT_UInt result = 0;
@@ -742,7 +742,7 @@ tt_cmap6_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap6_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	FT_Byte   *table = cmap->data;
 	FT_UInt32 result = 0;
@@ -777,7 +777,7 @@ Exit:
 	return gindex;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const TT_CMap_ClassRec tt_cmap6_class_rec = {
 	{
 		sizeof (TT_CMapRec),
@@ -796,7 +796,7 @@ const TT_CMap_ClassRec tt_cmap6_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_8
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap8_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte   *p = table + 4;
 	FT_Byte   *is32;
@@ -876,7 +876,7 @@ tt_cmap8_validate(FT_Byte *table, FT_Validator valid) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap8_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	FT_Byte   *table = cmap->data;
 	FT_UInt   result = 0;
@@ -900,7 +900,7 @@ tt_cmap8_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap8_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	FT_UInt32 result = 0;
 	FT_UInt32 char_code = *pchar_code + 1;
@@ -934,7 +934,7 @@ Exit:
 	return gindex;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const TT_CMap_ClassRec tt_cmap8_class_rec = {
 	{
 		sizeof (TT_CMapRec),
@@ -955,7 +955,7 @@ const TT_CMap_ClassRec tt_cmap8_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_10
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap10_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte  *p = table + 4;
 	FT_ULong length, /*start,*/ count;
@@ -984,7 +984,7 @@ tt_cmap10_validate(FT_Byte *table, FT_Validator valid) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap10_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	FT_Byte   *table = cmap->data;
 	FT_UInt   result = 0;
@@ -1000,7 +1000,7 @@ tt_cmap10_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap10_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	FT_Byte   *table = cmap->data;
 	// FT_UInt32  result    = 0;
@@ -1030,7 +1030,7 @@ tt_cmap10_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	return gindex;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const TT_CMap_ClassRec tt_cmap10_class_rec = {
 	{
 		sizeof (TT_CMapRec),
@@ -1051,7 +1051,7 @@ const TT_CMap_ClassRec tt_cmap10_class_rec = {
 
 #ifdef TT_CONFIG_CMAP_FORMAT_12
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 tt_cmap12_validate(FT_Byte *table, FT_Validator valid) {
 	FT_Byte  *p;
 	FT_ULong length;
@@ -1095,7 +1095,7 @@ tt_cmap12_validate(FT_Byte *table, FT_Validator valid) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap12_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	FT_UInt   result = 0;
 	FT_Byte   *table = cmap->data;
@@ -1119,7 +1119,7 @@ tt_cmap12_char_index(TT_CMap cmap, FT_UInt32 char_code) {
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 tt_cmap12_char_next(TT_CMap cmap, FT_UInt32 *pchar_code) {
 	FT_Byte    *table = cmap->data;
 	FT_UInt32  result = 0;
@@ -1153,7 +1153,7 @@ Exit:
 	return gindex;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF
+FT_CALLBACK_TABLE_DEF
 const TT_CMap_ClassRec tt_cmap12_class_rec = {
 	{
 		sizeof (TT_CMapRec),
@@ -1206,7 +1206,7 @@ static const TT_CMap_Class tt_cmap_classes[] = {
 /* parse the `cmap' table and build the corresponding TT_CMap objects */
 /* in the current face                                                */
 /*                                                                    */
-FT2_1_3_LOCAL_DEF(FT_Error)
+FT_LOCAL_DEF(FT_Error)
 tt_face_build_cmaps(TT_Face face) {
 	FT_Byte *table = face->cmap_table;
 	FT_Byte *limit = table + face->cmap_size;
@@ -1219,7 +1219,7 @@ tt_face_build_cmaps(TT_Face face) {
 	/* only recognize format 0 */
 	if (TT_NEXT_USHORT(p) != 0) {
 		p -= 2;
-		FT2_1_3_ERROR(("tt_face_build_cmaps: unsupported `cmap' table format = %d\n", TT_PEEK_USHORT(p)));
+		FT_ERROR(("tt_face_build_cmaps: unsupported `cmap' table format = %d\n", TT_PEEK_USHORT(p)));
 		return FT2_1_3_Err_Invalid_Table;
 	}
 
@@ -1232,7 +1232,7 @@ tt_face_build_cmaps(TT_Face face) {
 		charmap.platform_id = TT_NEXT_USHORT(p);
 		charmap.encoding_id = TT_NEXT_USHORT(p);
 		charmap.face = FT2_1_3_FACE(face);
-		charmap.encoding = FT2_1_3_ENCODING_NONE; /* will be filled later */
+		charmap.encoding = FT_ENCODING_NONE; /* will be filled later */
 		offset = TT_NEXT_ULONG(p);
 
 		if (offset && table + offset + 2 < limit) {
@@ -1258,8 +1258,8 @@ tt_face_build_cmaps(TT_Face face) {
 					if (valid.validator.error == 0)
 						(void)FT_CMap_New((FT_CMap_Class)clazz, cmap, &charmap, NULL);
 					else {
-						FT2_1_3_ERROR(("tt_face_build_cmaps:"));
-						FT2_1_3_ERROR((" broken cmap sub-table ignored!\n"));
+						FT_ERROR(("tt_face_build_cmaps:"));
+						FT_ERROR((" broken cmap sub-table ignored!\n"));
 					}
 				}
 			}

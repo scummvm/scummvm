@@ -25,12 +25,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cffparse
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cffparse
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -63,7 +63,7 @@ typedef struct  CFF_Field_Handler_ {
 } CFF_Field_Handler;
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cff_parser_init( CFF_Parser  parser,
 				 FT_UInt     code,
 				 void*       object ) {
@@ -443,7 +443,7 @@ static const CFF_Field_Handler  cff_field_handlers[] = {
 };
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_parser_run( CFF_Parser  parser,
 				FT_Byte*    start,
 				FT_Byte*    limit ) {

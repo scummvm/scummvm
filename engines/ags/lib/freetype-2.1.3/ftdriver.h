@@ -37,7 +37,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 typedef FT_Error (*FT_Face_InitFunc)(FT_Stream stream, FT_Face face, FT_Int typeface_index, FT_Int num_params, FT_Parameter *parameters);
@@ -97,7 +97,7 @@ typedef struct FT_Driver_ClassRec_ {
 } FT_Driver_ClassRec, *FT_Driver_Class;
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

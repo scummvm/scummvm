@@ -34,12 +34,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cffobjs
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cffobjs
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -70,7 +70,7 @@ cff_size_get_globals_funcs( CFF_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cff_size_done( CFF_Size  size ) {
 	if ( size->internal ) {
 		PSH_Globals_Funcs  funcs;
@@ -85,7 +85,7 @@ cff_size_done( CFF_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_size_init( CFF_Size  size ) {
 	FT_Error           error = 0;
 	PSH_Globals_Funcs  funcs = cff_size_get_globals_funcs( size );
@@ -156,7 +156,7 @@ cff_size_init( CFF_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_size_reset( CFF_Size  size ) {
 	PSH_Globals_Funcs  funcs = cff_size_get_globals_funcs( size );
 	FT_Error           error = 0;
@@ -177,13 +177,13 @@ cff_size_reset( CFF_Size  size ) {
 /*                                                                       */
 /*************************************************************************/
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cff_slot_done( CFF_GlyphSlot  slot ) {
 	slot->root.internal->glyph_hints = 0;
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_slot_init( CFF_GlyphSlot  slot ) {
 	CFF_Face          face     = (CFF_Face)slot->root.face;
 	CFF_Font          font     = (CFF_FontRec *)face->extra.data;
@@ -228,7 +228,7 @@ cff_strcpy( FT_Memory         memory,
 		result[len] = 0;
 	}
 
-	FT2_1_3_UNUSED( error );
+	FT_UNUSED( error );
 
 	return result;
 }
@@ -236,7 +236,7 @@ cff_strcpy( FT_Memory         memory,
 
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_face_init( FT_Stream      stream,
 			   CFF_Face       face,
 			   FT_Int         face_index,
@@ -268,7 +268,7 @@ cff_face_init( FT_Stream      stream,
 	error = sfnt->init_face( stream, face, face_index, num_params, params );
 	if ( !error ) {
 		if ( face->format_tag != 0x4F54544FL ) { /* `OTTO'; OpenType/CFF font */
-			FT2_1_3_TRACE2(( "[not a valid OpenType/CFF font]\n" ));
+			FT_TRACE2(( "[not a valid OpenType/CFF font]\n" ));
 			goto Bad_Format;
 		}
 
@@ -319,7 +319,7 @@ cff_face_init( FT_Stream      stream,
 		FT_Int32   flags;
 
 
-		if ( FT2_1_3_NEW( cff ) )
+		if ( FT_NEW( cff ) )
 			goto Exit;
 
 		face->extra.data = cff;
@@ -342,10 +342,10 @@ cff_face_init( FT_Stream      stream,
 
 			/* we need the `PSNames' module for pure-CFF and CEF formats */
 			if ( !psnames ) {
-				FT2_1_3_ERROR(( "cff_face_init:" ));
-				FT2_1_3_ERROR(( " cannot open CFF & CEF fonts\n" ));
-				FT2_1_3_ERROR(( "              " ));
-				FT2_1_3_ERROR(( " without the `PSNames' module\n" ));
+				FT_ERROR(( "cff_face_init:" ));
+				FT_ERROR(( " cannot open CFF & CEF fonts\n" ));
+				FT_ERROR(( "              " ));
+				FT_ERROR(( " without the `PSNames' module\n" ));
 				goto Bad_Format;
 			}
 
@@ -388,25 +388,25 @@ cff_face_init( FT_Stream      stream,
 			/*                                                                 */
 			/* Compute face flags.                                             */
 			/*                                                                 */
-			flags = FT2_1_3_FACE_FLAG_SCALABLE  |    /* scalable outlines */
-					FT2_1_3_FACE_FLAG_HORIZONTAL;    /* horizontal data   */
+			flags = FT_FACE_FLAG_SCALABLE  |    /* scalable outlines */
+					FT_FACE_FLAG_HORIZONTAL;    /* horizontal data   */
 
 			if ( sfnt_format )
-				flags |= FT2_1_3_FACE_FLAG_SFNT;
+				flags |= FT_FACE_FLAG_SFNT;
 
 			/* fixed width font? */
 			if ( dict->is_fixed_pitch )
-				flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
+				flags |= FT_FACE_FLAG_FIXED_WIDTH;
 
 			/* XXX: WE DO NOT SUPPORT KERNING METRICS IN THE GPOS TABLE FOR NOW */
 #if 0
 			/* kerning available? */
 			if ( face->kern_pairs )
-				flags |= FT2_1_3_FACE_FLAG_KERNING;
+				flags |= FT_FACE_FLAG_KERNING;
 #endif
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_GLYPH_NAMES
-			flags |= FT2_1_3_FACE_FLAG_GLYPH_NAMES;
+			flags |= FT_FACE_FLAG_GLYPH_NAMES;
 #endif
 
 			root->face_flags = flags;
@@ -418,11 +418,11 @@ cff_face_init( FT_Stream      stream,
 			flags = 0;
 
 			if ( dict->italic_angle )
-				flags |= FT2_1_3_STYLE_FLAG_ITALIC;
+				flags |= FT_STYLE_FLAG_ITALIC;
 
 			/* XXX: may not be correct */
 			if ( cff->top_font.private_dict.force_bold )
-				flags |= FT2_1_3_STYLE_FLAG_BOLD;
+				flags |= FT_STYLE_FLAG_BOLD;
 
 			root->style_flags = flags;
 		}
@@ -458,7 +458,7 @@ cff_face_init( FT_Stream      stream,
 			cmaprec.face        = root;
 			cmaprec.platform_id = 3;
 			cmaprec.encoding_id = 1;
-			cmaprec.encoding    = FT2_1_3_ENCODING_UNICODE;
+			cmaprec.encoding    = FT_ENCODING_UNICODE;
 
 			nn = (FT_UInt) root->num_charmaps;
 
@@ -478,15 +478,15 @@ Skip_Unicode:
 
 				if ( encoding->offset == 0 ) {
 					cmaprec.encoding_id = 0;
-					cmaprec.encoding    = FT2_1_3_ENCODING_ADOBE_STANDARD;
+					cmaprec.encoding    = FT_ENCODING_ADOBE_STANDARD;
 					clazz               = &cff_cmap_encoding_class_rec;
 				} else if ( encoding->offset == 1 ) {
 					cmaprec.encoding_id = 1;
-					cmaprec.encoding    = FT2_1_3_ENCODING_ADOBE_EXPERT;
+					cmaprec.encoding    = FT_ENCODING_ADOBE_EXPERT;
 					clazz               = &cff_cmap_encoding_class_rec;
 				} else {
 					cmaprec.encoding_id = 3;
-					cmaprec.encoding    = FT2_1_3_ENCODING_ADOBE_CUSTOM;
+					cmaprec.encoding    = FT_ENCODING_ADOBE_CUSTOM;
 					clazz               = &cff_cmap_encoding_class_rec;
 				}
 
@@ -505,7 +505,7 @@ Bad_Format:
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cff_face_done( CFF_Face  face ) {
 	FT_Memory     memory = face->root.memory;
 	SFNT_Service  sfnt   = (SFNT_Service)face->sfnt;
@@ -526,17 +526,17 @@ cff_face_done( CFF_Face  face ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_driver_init( CFF_Driver  driver ) {
-	FT2_1_3_UNUSED( driver );
+	FT_UNUSED( driver );
 
 	return FT2_1_3_Err_Ok;
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cff_driver_done( CFF_Driver  driver ) {
-	FT2_1_3_UNUSED( driver );
+	FT_UNUSED( driver );
 }
 
 } // End of namespace FreeType213

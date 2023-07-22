@@ -29,18 +29,18 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cidload
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cidload
 
 namespace AGS3 {
 namespace FreeType213 {
 
 /* read a single offset */
-FT2_1_3_LOCAL_DEF( FT_Long )
+FT_LOCAL_DEF( FT_Long )
 cid_get_offset( FT_Byte**  start,
 				FT_Byte    offsize ) {
 	FT_Long   result;
@@ -57,7 +57,7 @@ cid_get_offset( FT_Byte**  start,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cid_decrypt( FT_Byte*   buffer,
 			 FT_Offset  length,
 			 FT_UShort  seed ) {
@@ -115,7 +115,7 @@ cid_load_keyword( CID_Face        face,
 
 
 		if ( parser->num_dict < 0 ) {
-			FT2_1_3_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
+			FT_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
 					   keyword->ident ));
 			error = FT2_1_3_Err_Syntax_Error;
 			goto Exit;
@@ -147,7 +147,7 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 parse_font_bbox( CID_Face     face,
 				 CID_Parser*  parser ) {
 	FT_Fixed  temp[4];
@@ -165,7 +165,7 @@ parse_font_bbox( CID_Face     face,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 parse_font_matrix( CID_Face     face,
 				   CID_Parser*  parser ) {
 	FT_Matrix*    matrix;
@@ -216,7 +216,7 @@ parse_font_matrix( CID_Face     face,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT_Error )
+FT_CALLBACK_DEF( FT_Error )
 parse_fd_array( CID_Face     face,
 				CID_Parser*  parser ) {
 	CID_FaceInfo  cid    = &face->cid;
@@ -231,7 +231,7 @@ parse_fd_array( CID_Face     face,
 		FT_Int  n;
 
 
-		if ( FT2_1_3_NEW_ARRAY( cid->font_dicts, num_dicts ) )
+		if ( FT_NEW_ARRAY( cid->font_dicts, num_dicts ) )
 			goto Exit;
 
 		cid->num_dicts = (FT_UInt)num_dicts;
@@ -370,7 +370,7 @@ cid_read_subrs( CID_Face  face ) {
 	FT_ULong*     offsets = 0;
 
 
-	if ( FT2_1_3_NEW_ARRAY( face->subrs, cid->num_dicts ) )
+	if ( FT_NEW_ARRAY( face->subrs, cid->num_dicts ) )
 		goto Exit;
 
 	subr = face->subrs;
@@ -408,7 +408,7 @@ cid_read_subrs( CID_Face  face ) {
 		/* allocate, and read them                     */
 		data_len = offsets[num_subrs] - offsets[0];
 
-		if ( FT2_1_3_NEW_ARRAY( subr->code, num_subrs + 1 ) ||
+		if ( FT_NEW_ARRAY( subr->code, num_subrs + 1 ) ||
 				FT2_1_3_ALLOC( subr->code[0], data_len )   )
 			goto Fail;
 
@@ -460,7 +460,7 @@ Fail:
 static void
 t1_init_loader( CID_Loader*  loader,
 				CID_Face     face ) {
-	FT2_1_3_UNUSED( face );
+	FT_UNUSED( face );
 
 	FT2_1_3_MEM_ZERO( loader, sizeof ( *loader ) );
 }
@@ -476,7 +476,7 @@ t1_done_loader( CID_Loader*  loader ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cid_face_open( CID_Face  face ) {
 	CID_Loader   loader;
 	CID_Parser*  parser;

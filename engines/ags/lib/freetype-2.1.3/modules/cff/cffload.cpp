@@ -1043,7 +1043,7 @@ static const FT_UShort  cff_expert_encoding[256] = {
 #endif
 
 
-FT2_1_3_LOCAL_DEF( FT_UShort )
+FT_LOCAL_DEF( FT_UShort )
 cff_get_standard_encoding( FT_UInt  charcode ) {
 	return  (FT_UShort)(charcode < 256 ? cff_standard_encoding[charcode] : 0);
 }
@@ -1051,12 +1051,12 @@ cff_get_standard_encoding( FT_UInt  charcode ) {
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_cffload
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cffload
 
 
 /* read a CFF offset from memory */
@@ -1105,7 +1105,7 @@ cff_new_index( CFF_Index  idx,
 		idx->off_size = offsize;
 		data_size     = (FT_ULong)( count + 1 ) * offsize;
 
-		if ( FT2_1_3_NEW_ARRAY( idx->offsets, count + 1 ) ||
+		if ( FT_NEW_ARRAY( idx->offsets, count + 1 ) ||
 				FT2_1_3_FRAME_ENTER( data_size )             )
 			goto Exit;
 
@@ -1170,7 +1170,7 @@ cff_index_get_pointers( CFF_Index   idx,
 
 	*table = 0;
 
-	if ( idx->count > 0 && !FT2_1_3_NEW_ARRAY( t, idx->count + 1 ) ) {
+	if ( idx->count > 0 && !FT_NEW_ARRAY( t, idx->count + 1 ) ) {
 		old_offset = 1;
 		for ( n = 0; n <= idx->count; n++ ) {
 			offset = idx->offsets[n];
@@ -1188,7 +1188,7 @@ cff_index_get_pointers( CFF_Index   idx,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_index_access_element( CFF_Index  idx,
 						  FT_UInt    element,
 						  FT_Byte**  pbytes,
@@ -1242,7 +1242,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cff_index_forget_element( CFF_Index  idx,
 						  FT_Byte**  pbytes ) {
 	if ( idx->bytes == 0 ) {
@@ -1254,7 +1254,7 @@ cff_index_forget_element( CFF_Index  idx,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_String* )
+FT_LOCAL_DEF( FT_String* )
 cff_index_get_name( CFF_Index  idx,
 					FT_UInt    element ) {
 	FT_Memory   memory = idx->stream->memory;
@@ -1279,7 +1279,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_String* )
+FT_LOCAL_DEF( FT_String* )
 cff_index_get_sid_string( CFF_Index        idx,
 						  FT_UInt          sid,
 						  PSNames_Service  psnames_service ) {
@@ -1305,7 +1305,7 @@ cff_index_get_sid_string( CFF_Index        idx,
 				name[len] = 0;
 			}
 
-			FT2_1_3_UNUSED( error );
+			FT_UNUSED( error );
 		}
 
 		return name;
@@ -1376,7 +1376,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Byte )
+FT_LOCAL_DEF( FT_Byte )
 cff_fd_select_get( CFF_FDSelect  fdselect,
 				   FT_UInt       glyph_index ) {
 	FT_Byte  fd = 0;
@@ -1479,7 +1479,7 @@ cff_charset_load( CFF_Charset  charset,
 			goto Exit;
 
 		/* Allocate memory for sids. */
-		if ( FT2_1_3_NEW_ARRAY( charset->sids, num_glyphs ) )
+		if ( FT_NEW_ARRAY( charset->sids, num_glyphs ) )
 			goto Exit;
 
 		/* assign the .notdef glyph */
@@ -1529,7 +1529,7 @@ cff_charset_load( CFF_Charset  charset,
 		break;
 
 		default:
-			FT2_1_3_ERROR(( "cff_charset_load: invalid table format!\n" ));
+			FT_ERROR(( "cff_charset_load: invalid table format!\n" ));
 			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Exit;
 		}
@@ -1548,14 +1548,14 @@ cff_charset_load( CFF_Charset  charset,
 		switch ( (FT_UInt)offset ) {
 		case 0:
 			if ( num_glyphs != 229 ) {
-				FT2_1_3_ERROR(("cff_charset_load: implicit charset not equal to\n"
+				FT_ERROR(("cff_charset_load: implicit charset not equal to\n"
 						  "predefined charset (Adobe ISO-Latin)!\n" ));
 				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Exit;
 			}
 
 			/* Allocate memory for sids. */
-			if ( FT2_1_3_NEW_ARRAY( charset->sids, num_glyphs ) )
+			if ( FT_NEW_ARRAY( charset->sids, num_glyphs ) )
 				goto Exit;
 
 			/* Copy the predefined charset into the allocated memory. */
@@ -1566,14 +1566,14 @@ cff_charset_load( CFF_Charset  charset,
 
 		case 1:
 			if ( num_glyphs != 166 ) {
-				FT2_1_3_ERROR(( "cff_charset_load: implicit charset not equal to\n"
+				FT_ERROR(( "cff_charset_load: implicit charset not equal to\n"
 						   "predefined charset (Adobe Expert)!\n" ));
 				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Exit;
 			}
 
 			/* Allocate memory for sids. */
-			if ( FT2_1_3_NEW_ARRAY( charset->sids, num_glyphs ) )
+			if ( FT_NEW_ARRAY( charset->sids, num_glyphs ) )
 				goto Exit;
 
 			/* Copy the predefined charset into the allocated memory.     */
@@ -1584,14 +1584,14 @@ cff_charset_load( CFF_Charset  charset,
 
 		case 2:
 			if ( num_glyphs != 87 ) {
-				FT2_1_3_ERROR(( "cff_charset_load: implicit charset not equal to\n"
+				FT_ERROR(( "cff_charset_load: implicit charset not equal to\n"
 						   "predefined charset (Adobe Expert Subset)!\n" ));
 				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Exit;
 			}
 
 			/* Allocate memory for sids. */
-			if ( FT2_1_3_NEW_ARRAY( charset->sids, num_glyphs ) )
+			if ( FT_NEW_ARRAY( charset->sids, num_glyphs ) )
 				goto Exit;
 
 			/* Copy the predefined charset into the allocated memory.     */
@@ -1743,7 +1743,7 @@ cff_encoding_load( CFF_Encoding  encoding,
 		break;
 
 		default:
-			FT2_1_3_ERROR(( "cff_encoding_load: invalid table format!\n" ));
+			FT_ERROR(( "cff_encoding_load: invalid table format!\n" ));
 			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Exit;
 		}
@@ -1827,7 +1827,7 @@ Populate:
 			break;
 
 		default:
-			FT2_1_3_ERROR(( "cff_encoding_load: invalid table format!\n" ));
+			FT_ERROR(( "cff_encoding_load: invalid table format!\n" ));
 			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Exit;
 		}
@@ -1935,7 +1935,7 @@ cff_subfont_done( FT_Memory    memory,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 cff_font_load( FT_Stream  stream,
 			   FT_Int     face_index,
 			   CFF_Font   font ) {
@@ -1971,7 +1971,7 @@ cff_font_load( FT_Stream  stream,
 	if ( font->version_major   != 1 ||
 			font->header_size      < 4 ||
 			font->absolute_offsize > 4 ) {
-		FT2_1_3_TRACE2(( "[not a CFF font header!]\n" ));
+		FT_TRACE2(( "[not a CFF font header!]\n" ));
 		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
@@ -1990,7 +1990,7 @@ cff_font_load( FT_Stream  stream,
 	/* well, we don't really forget the `disabled' fonts... */
 	font->num_faces = font->name_index.count;
 	if ( face_index >= (FT_Int)font->num_faces ) {
-		FT2_1_3_ERROR(( "cff_font_load: incorrect face index = %d\n",
+		FT_ERROR(( "cff_font_load: incorrect face index = %d\n",
 				   face_index ));
 		error = FT2_1_3_Err_Invalid_Argument;
 	}
@@ -2025,13 +2025,13 @@ cff_font_load( FT_Stream  stream,
 			goto Exit;
 
 		if ( fd_index.count > CFF_MAX_CID_FONTS ) {
-			FT2_1_3_ERROR(( "cff_font_load: FD array too large in CID font\n" ));
+			FT_ERROR(( "cff_font_load: FD array too large in CID font\n" ));
 			goto Fail_CID;
 		}
 
 		/* allocate & read each font dict independently */
 		font->num_subfonts = fd_index.count;
-		if ( FT2_1_3_NEW_ARRAY( sub, fd_index.count ) )
+		if ( FT_NEW_ARRAY( sub, fd_index.count ) )
 			goto Fail_CID;
 
 		/* setup pointer table */
@@ -2063,7 +2063,7 @@ Fail_CID:
 
 	/* read the charstrings index now */
 	if ( dict->charstrings_offset == 0 ) {
-		FT2_1_3_ERROR(( "cff_font_load: no charstrings offset!\n" ));
+		FT_ERROR(( "cff_font_load: no charstrings offset!\n" ));
 		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
@@ -2110,7 +2110,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 cff_font_done( CFF_Font  font ) {
 	FT_Memory  memory = font->memory;
 	FT_UInt    idx;

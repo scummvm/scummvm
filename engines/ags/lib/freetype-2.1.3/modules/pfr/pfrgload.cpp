@@ -23,8 +23,8 @@
 
 #include "pfrerror.h"
 
-#undef  FT2_1_3_COMPONENT
-#define FT2_1_3_COMPONENT  trace_pfr
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_pfr
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -38,7 +38,7 @@ namespace FreeType213 {
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 pfr_glyph_init( PFR_Glyph       glyph,
 				FT_GlyphLoader  loader ) {
 	FT2_1_3_ZERO( glyph );
@@ -50,7 +50,7 @@ pfr_glyph_init( PFR_Glyph       glyph,
 }
 
 
-FT2_1_3_LOCAL_DEF( void )
+FT_LOCAL_DEF( void )
 pfr_glyph_done( PFR_Glyph  glyph ) {
 	FT_Memory  memory = glyph->loader->memory;
 
@@ -134,7 +134,7 @@ pfr_glyph_line_to( PFR_Glyph   glyph,
 
 
 		outline->points[n] = *to;
-		outline->tags  [n] = FT2_1_3_CURVE_TAG_ON;
+		outline->tags  [n] = FT_CURVE_TAG_ON;
 
 		outline->n_points++;
 	}
@@ -165,9 +165,9 @@ pfr_glyph_curve_to( PFR_Glyph   glyph,
 		vec[0] = *control1;
 		vec[1] = *control2;
 		vec[2] = *to;
-		tag[0] = FT2_1_3_CURVE_TAG_CUBIC;
-		tag[1] = FT2_1_3_CURVE_TAG_CUBIC;
-		tag[2] = FT2_1_3_CURVE_TAG_ON;
+		tag[0] = FT_CURVE_TAG_CUBIC;
+		tag[1] = FT_CURVE_TAG_CUBIC;
+		tag[2] = FT_CURVE_TAG_ON;
 
 		outline->n_points = (FT_Short)( outline->n_points + 3 );
 	}
@@ -326,27 +326,27 @@ pfr_glyph_load_simple( PFR_Glyph  glyph,
 
 			switch ( format >> 4 ) {
 			case 0:                             /* end glyph */
-				FT2_1_3_TRACE6(( "- end glyph" ));
+				FT_TRACE6(( "- end glyph" ));
 				args_count = 0;
 				break;
 
 			case 1:                             /* general line operation */
-				FT2_1_3_TRACE6(( "- general line" ));
+				FT_TRACE6(( "- general line" ));
 				goto Line1;
 
 			case 4:                             /* move to inside contour  */
-				FT2_1_3_TRACE6(( "- move to inside" ));
+				FT_TRACE6(( "- move to inside" ));
 				goto Line1;
 
 			case 5:                             /* move to outside contour */
-				FT2_1_3_TRACE6(( "- move to outside" ));
+				FT_TRACE6(( "- move to outside" ));
 Line1:
 				args_format = format & 15;
 				args_count  = 1;
 				break;
 
 			case 2:                             /* horizontal line to */
-				FT2_1_3_TRACE6(( "- horizontal line to cx.%d", format & 15 ));
+				FT_TRACE6(( "- horizontal line to cx.%d", format & 15 ));
 				pos[0].y   = pos[3].y;
 				pos[0].x   = glyph->x_control[format & 15];
 				pos[3]     = pos[0];
@@ -354,7 +354,7 @@ Line1:
 				break;
 
 			case 3:                             /* vertical line to */
-				FT2_1_3_TRACE6(( "- vertical line to cy.%d", format & 15 ));
+				FT_TRACE6(( "- vertical line to cy.%d", format & 15 ));
 				pos[0].x   = pos[3].x;
 				pos[0].y   = glyph->y_control[format & 15];
 				pos[3] = pos[0];
@@ -362,19 +362,19 @@ Line1:
 				break;
 
 			case 6:                             /* horizontal to vertical curve */
-				FT2_1_3_TRACE6(( "- hv curve " ));
+				FT_TRACE6(( "- hv curve " ));
 				args_format  = 0xB8E;
 				args_count   = 3;
 				break;
 
 			case 7:                             /* vertical to horizontal curve */
-				FT2_1_3_TRACE6(( "- vh curve" ));
+				FT_TRACE6(( "- vh curve" ));
 				args_format = 0xE2B;
 				args_count  = 3;
 				break;
 
 			default:                            /* general curve to */
-				FT2_1_3_TRACE6(( "- general curve" ));
+				FT_TRACE6(( "- general curve" ));
 				args_count  = 4;
 				args_format = format & 15;
 			}
@@ -393,24 +393,24 @@ Line1:
 					PFR_CHECK( 1 );
 					idx  = PFR_NEXT_BYTE( p );
 					cur->x = glyph->x_control[idx];
-					FT2_1_3_TRACE7(( " cx#%d", idx ));
+					FT_TRACE7(( " cx#%d", idx ));
 					break;
 
 				case 1:                           /* 16-bit value */
 					PFR_CHECK( 2 );
 					cur->x = PFR_NEXT_SHORT( p );
-					FT2_1_3_TRACE7(( " x.%d", cur->x ));
+					FT_TRACE7(( " x.%d", cur->x ));
 					break;
 
 				case 2:                           /* 8-bit delta */
 					PFR_CHECK( 1 );
 					delta  = PFR_NEXT_INT8( p );
 					cur->x = pos[3].x + delta;
-					FT2_1_3_TRACE7(( " dx.%d", delta ));
+					FT_TRACE7(( " dx.%d", delta ));
 					break;
 
 				default:
-					FT2_1_3_TRACE7(( " |" ));
+					FT_TRACE7(( " |" ));
 					cur->x = pos[3].x;
 				}
 
@@ -420,24 +420,24 @@ Line1:
 					PFR_CHECK( 1 );
 					idx  = PFR_NEXT_BYTE( p );
 					cur->y = glyph->y_control[idx];
-					FT2_1_3_TRACE7(( " cy#%d", idx ));
+					FT_TRACE7(( " cy#%d", idx ));
 					break;
 
 				case 1:                           /* 16-bit absolute value */
 					PFR_CHECK( 2 );
 					cur->y = PFR_NEXT_SHORT( p );
-					FT2_1_3_TRACE7(( " y.%d", cur->y ));
+					FT_TRACE7(( " y.%d", cur->y ));
 					break;
 
 				case 2:                           /* 8-bit delta */
 					PFR_CHECK( 1 );
 					delta  = PFR_NEXT_INT8( p );
 					cur->y = pos[3].y + delta;
-					FT2_1_3_TRACE7(( " dy.%d", delta ));
+					FT_TRACE7(( " dy.%d", delta ));
 					break;
 
 				default:
-					FT2_1_3_TRACE7(( " -" ));
+					FT_TRACE7(( " -" ));
 					cur->y = pos[3].y;
 				}
 
@@ -454,7 +454,7 @@ Line1:
 				cur++;
 			}
 
-			FT2_1_3_TRACE7(( "\n" ));
+			FT_TRACE7(( "\n" ));
 
 			/***********************************************************/
 			/*  finally, execute instruction                           */
@@ -490,7 +490,7 @@ Exit:
 
 Too_Short:
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_glyph_load_simple: invalid glyph data\n" ));
+	FT_ERROR(( "pfr_glyph_load_simple: invalid glyph data\n" ));
 	goto Exit;
 }
 
@@ -627,7 +627,7 @@ Exit:
 
 Too_Short:
 	error = FT2_1_3_Err_Invalid_Table;
-	FT2_1_3_ERROR(( "pfr_glyph_load_compound: invalid glyph data\n" ));
+	FT_ERROR(( "pfr_glyph_load_compound: invalid glyph data\n" ));
 	goto Exit;
 }
 
@@ -728,7 +728,7 @@ Exit:
 
 
 
-FT2_1_3_LOCAL_DEF( FT_Error )
+FT_LOCAL_DEF( FT_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
 				FT_Stream  stream,
 				FT_ULong   gps_offset,

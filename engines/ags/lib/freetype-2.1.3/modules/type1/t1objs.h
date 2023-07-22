@@ -39,7 +39,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_BEGIN_HEADER
+FT_BEGIN_HEADER
 
 
 /* The following structures must be defined by the hinter */
@@ -59,13 +59,13 @@ typedef struct T1_SizeRec_ {
 } T1_SizeRec;
 
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_Size_Done(T1_Size size);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Size_Reset(T1_Size size);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Size_Init(T1_Size size);
 
 
@@ -83,26 +83,26 @@ typedef struct T1_GlyphSlotRec_ {
 } T1_GlyphSlotRec;
 
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Face_Init(FT_Stream stream, T1_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_Face_Done(T1_Face face);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_GlyphSlot_Init(T1_GlyphSlot slot);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_GlyphSlot_Done(T1_GlyphSlot slot);
 
-FT2_1_3_LOCAL(FT_Error)
+FT_LOCAL(FT_Error)
 T1_Driver_Init(T1_Driver driver);
 
-FT2_1_3_LOCAL(void)
+FT_LOCAL(void)
 T1_Driver_Done(T1_Driver driver);
 
 
-FT2_1_3_END_HEADER
+FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

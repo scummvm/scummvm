@@ -49,7 +49,7 @@ static void t1_cmap_std_init(T1_CMapStd cmap, FT_Int is_expert) {
 	FT2_1_3_ASSERT(cmap->code_to_sid != NULL);
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 t1_cmap_std_done(T1_CMapStd cmap) {
 	cmap->num_glyphs    = 0;
 	cmap->glyph_names   = NULL;
@@ -57,7 +57,7 @@ t1_cmap_std_done(T1_CMapStd cmap) {
 	cmap->code_to_sid   = NULL;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 t1_cmap_std_char_index(T1_CMapStd cmap, FT_UInt32 char_code) {
 	FT_UInt result = 0;
 
@@ -83,7 +83,7 @@ t1_cmap_std_char_index(T1_CMapStd cmap, FT_UInt32 char_code) {
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 t1_cmap_std_char_next(T1_CMapStd cmap, FT_UInt32 *pchar_code) {
 	FT_UInt result = 0;
 	FT_UInt32 char_code = *pchar_code + 1;
@@ -102,13 +102,13 @@ Exit:
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 t1_cmap_standard_init(T1_CMapStd cmap, void *) {
 	t1_cmap_std_init(cmap, 0);
 	return 0;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
+FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 	t1_cmap_standard_class_rec = {
 		sizeof(T1_CMapStdRec),
 
@@ -118,13 +118,13 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 		(FT_CMap_CharNextFunc)  t1_cmap_std_char_next
 	};
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 t1_cmap_expert_init(T1_CMapStd cmap, void *) {
 	t1_cmap_std_init(cmap, 1);
 	return 0;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
+FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 	t1_cmap_expert_class_rec = {
 		sizeof(T1_CMapStdRec),
 
@@ -137,7 +137,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 
 /**** TYPE1 CUSTOM ENCODING CMAP ****/
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 t1_cmap_custom_init(T1_CMapCustom cmap, void *) {
 	T1_Face face = (T1_Face)FT2_1_3_CMAP_FACE(cmap);
 	T1_Encoding encoding = &face->type1.encoding;
@@ -152,14 +152,14 @@ t1_cmap_custom_init(T1_CMapCustom cmap, void *) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 t1_cmap_custom_done(T1_CMapCustom cmap) {
 	cmap->indices = NULL;
 	cmap->first   = 0;
 	cmap->count   = 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 t1_cmap_custom_char_index(T1_CMapCustom cmap, FT_UInt32 char_code) {
 	FT_UInt result = 0;
 
@@ -169,7 +169,7 @@ t1_cmap_custom_char_index(T1_CMapCustom cmap, FT_UInt32 char_code) {
 	return result;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 t1_cmap_custom_char_next(T1_CMapCustom cmap, FT_UInt32 *pchar_code) {
 	FT_UInt result = 0;
 	FT_UInt32 char_code = *pchar_code;
@@ -193,7 +193,7 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec t1_cmap_custom_class_rec = {
+FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec t1_cmap_custom_class_rec = {
 	sizeof(T1_CMapCustomRec),
 
 	(FT_CMap_InitFunc)		t1_cmap_custom_init,
@@ -205,7 +205,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec t1_cmap_custom_class_rec = {
 
 /**** TYPE1 SYNTHETIC UNICODE ENCODING CMAP ****/
 
-FT2_1_3_CALLBACK_DEF(FT_Int)
+FT_CALLBACK_DEF(FT_Int)
 t1_cmap_uni_pair_compare(const void *pair1, const void *pair2) {
 	T1_CMapUniPair pair_tmp;
 
@@ -223,7 +223,7 @@ t1_cmap_uni_pair_compare(const void *pair1, const void *pair2) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_Error)
+FT_CALLBACK_DEF(FT_Error)
 t1_cmap_unicode_init(T1_CMapUnicode cmap, void *) {
 	FT_Error error;
 	FT_UInt  count;
@@ -236,7 +236,7 @@ t1_cmap_unicode_init(T1_CMapUnicode cmap, void *) {
 
 	count = face->type1.num_glyphs;
 
-	if (!FT2_1_3_NEW_ARRAY(cmap->pairs, count)) {
+	if (!FT_NEW_ARRAY(cmap->pairs, count)) {
 		FT_UInt n, new_count;
 		T1_CMapUniPair pair;
 		FT_UInt32 uni_code;
@@ -280,7 +280,7 @@ t1_cmap_unicode_init(T1_CMapUnicode cmap, void *) {
 	return error;
 }
 
-FT2_1_3_CALLBACK_DEF(void)
+FT_CALLBACK_DEF(void)
 t1_cmap_unicode_done(T1_CMapUnicode cmap) {
 	FT_Face face 	 = FT2_1_3_CMAP_FACE(cmap);
 	FT_Memory memory = FT2_1_3_FACE_MEMORY(face);
@@ -289,7 +289,7 @@ t1_cmap_unicode_done(T1_CMapUnicode cmap) {
 	cmap->num_pairs = 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 t1_cmap_unicode_char_index(T1_CMapUnicode cmap, FT_UInt32 char_code) {
 	FT_UInt min = 0;
 	FT_UInt max = cmap->num_pairs;
@@ -311,7 +311,7 @@ t1_cmap_unicode_char_index(T1_CMapUnicode cmap, FT_UInt32 char_code) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_DEF(FT_UInt)
+FT_CALLBACK_DEF(FT_UInt)
 t1_cmap_unicode_char_next(T1_CMapUnicode cmap, FT_UInt32 *pchar_code) {
 	FT_UInt result = 0;
 	FT_UInt32 char_code = *pchar_code + 1;
@@ -357,7 +357,7 @@ Exit:
 	return result;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
+FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 	t1_cmap_unicode_class_rec = {
 		sizeof(T1_CMapUnicodeRec),
 
