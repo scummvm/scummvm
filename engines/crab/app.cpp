@@ -314,9 +314,7 @@ void App::loadSettings(const Common::String &filename) {
 				g_engine->_screenSettings->load(node->first_node("screen"));
 
 			// Start the sound subsystem
-#if 0
 			g_engine->_musicManager->load(node);
-#endif
 		}
 	}
 }
