@@ -88,6 +88,13 @@ cff_size_done(CFF_Size size);
 FT_LOCAL(FT_Error)
 cff_size_reset(CFF_Size size);
 
+// Conversion function to silence incompatible function pointer warnings
+FT_LOCAL(FT_Error)
+cff_pixels_size_reset(CFF_Size size, FT_UInt pixel_width, FT_UInt pixel_height);
+// Conversion function to silence incompatible function pointer warnings
+FT_LOCAL(FT_Error)
+cff_points_size_reset(CFF_Size size, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution);
+
 FT_LOCAL(void)
 cff_slot_done(CFF_GlyphSlot slot);
 

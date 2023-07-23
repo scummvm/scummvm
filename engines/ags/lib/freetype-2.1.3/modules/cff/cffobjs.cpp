@@ -153,6 +153,16 @@ cff_size_reset(CFF_Size size) {
 }
 
 
+FT_LOCAL(FT_Error)
+cff_pixels_size_reset(CFF_Size size, FT_UInt pixel_width, FT_UInt pixel_height) {
+	return cff_size_reset(size);
+}
+
+FT_LOCAL(FT_Error)
+cff_points_size_reset(CFF_Size size, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution) {
+	return cff_size_reset(size);
+}
+
 /**** SLOT FUNCTIONS ****/
 
 FT_LOCAL_DEF(void)
