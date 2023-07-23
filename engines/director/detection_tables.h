@@ -929,6 +929,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "chuckletime",		"チャックルタイム" },
 	{ "chuteng",			"中天" },
 	{ "cutie10",			"キューティ10" },
+	{ "classicalcats",		"ねこ古典ぱん" }, // Classical Cats
 	{ "cookie",				"Cookie's Bustle: 謎のボンボワールド"},					// Mysterious Bombo World
 	{ "cookieginger",		"Cookie & Ginger"},
 	{ "crouton",			"Croûton"},
@@ -3558,6 +3559,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 									   "PREVIEW.MOV", "7d33c9b1fa93092499e29305f9b3a414", 5698025, 403),
 	WINDEMO2t("circus", "Looping Demo", "PREVIEW.EXE", "edeb117e306c77f1496631ff9d6f1cbb", 686139,
 										"PREVIEW.MOV", "2975f81df0e3540567f6e9460ba831f1", 5698025, 400),
+
+	MACGAME1t_l("classicalcats", "", "CLSSCATS", "7156b03e18d1002bd1d214449e5301c1", 299156, Common::JA_JPN, 403),
 
 	// Product catalog - does not correspond to any single game
 	// Mac version found on Blockbuster Video Guide to Movies & Videos
