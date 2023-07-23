@@ -51,7 +51,15 @@
 // %glr-parser
 
 %{
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+#define FORBIDDEN_SYMBOL_EXCEPTION_fread
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_getc
 
 #include "common/endian.h"
 #include "common/hash-str.h"
