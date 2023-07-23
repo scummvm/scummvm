@@ -495,6 +495,10 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	}
 
 	if (click == kBorderInner) {
+		// Call callback for processing any events
+		if (_callback)
+			(*_callback)(click, event, _dataPtr);
+
 		if (!_selectable)
 			return false;
 
