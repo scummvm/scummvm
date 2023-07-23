@@ -363,6 +363,14 @@ Common::U32String MacTextWindow::cutSelection() {
 	return selection;
 }
 
+int MacTextWindow::getMouseLine(int x, int y) {
+	// TODO: Improve the algorithm here, since after long scrolling there is
+	// sometimes error of +2 rows
+	x -= getInnerDimensions().left;
+	y -= getInnerDimensions().top + kConScrollStep;
+	return _mactext->getMouseLine(x, y); 
+}
+
 void MacTextWindow::calcScrollBar() {
 	// since this function only able for the window which has scroll bar
 	// thus, if it doesn't has scrollbar, then we don't have to calc it
