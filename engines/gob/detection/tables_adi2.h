@@ -128,13 +128,13 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 {
-	{
+	{ // 1994 CD version
 		"adi2",
-		"Adi Deutsch Klasse 1+2",
+		"Adi Deutsch Klasse 1+2 (CD)",
 		AD_ENTRY1s("adi2.stk", "157a26943a021d92f5c76f6eb8f18f2a", 12960390),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
