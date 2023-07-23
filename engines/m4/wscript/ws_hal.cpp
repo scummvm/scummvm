@@ -171,6 +171,7 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 		source->data = (uint8 *)((byte *)*(source->sourceHandle) + source->sourceOffset);
 	}
 
+	assert(myCCB->currLocation);
 	Buffer Destination;
 	DrawRequest dr;
 	RendCell Frame;
@@ -183,8 +184,8 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 
 	dr.Src = &Destination;
 	dr.Dest = halScrnBuf;
-	dr.x = myAnim8->myRegs[IDX_X] >> 16;
-	dr.y = myAnim8->myRegs[IDX_Y] >> 16;
+	dr.x = myCCB->currLocation->x1;
+	dr.y = myCCB->currLocation->y1;
 	dr.scaleX = myCCB->scaleX;
 	dr.scaleY = myCCB->scaleY;
 	dr.depthCode = screenCodeBuff->data;
