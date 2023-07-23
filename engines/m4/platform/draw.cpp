@@ -124,7 +124,52 @@ size_t RLE8Decode_Size(byte *src, int pitch) {
 }
 
 void RLE_Draw(Buffer *src, Buffer *dest, int32 x, int32 y) {
-	error("TODO: RLE");
+	const byte *srcP = src->data;
+	byte *destData = dest->data + y * dest->w + x;
+	byte *destP = destData;
+	int destWidth = dest->w;
+	byte count, val;
+	int line = 0;
+
+	assert(x >= 0 && y >= 0 && x < dest->w && y < dest->h);
+
+	for (;;) {
+		count = *srcP++;
+
+		if (count) {
+			// Basic run length
+			val = *srcP++;
+
+			// 0 pixels are transparent, and are skipped. Otherwise, draw pixels
+			if (val != 0)
+				Common::fill(destP, destP + count, val);
+			destP += count;
+
+		} else {
+			count = *srcP++;
+
+			if (count >= 3) {
+				// Block of uncompressed pixels to copy
+				for (; count > 0; --count, ++destP) {
+					val = *srcP++;
+					if (val != 0)
+						*destP = val;
+				}
+
+			} else if (!(count & 3)) {
+				// End of line code
+				++line;
+				destP = destData + line * destWidth;
+
+			} else {
+				// Stop drawing image. Seems weird that it doesn't handle the X/Y offset
+				// form for count & 2, but the original explicitly doesn't implement it
+				break;
+			}
+		}
+	}
+
+	assert(destP <= (dest->data + dest->h * dest->stride));
 }
 
 void RLE_DrawRev(Buffer *src, Buffer *dest, int32 x, int32 y) {
