@@ -194,11 +194,13 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 13:
 			stream.read(unk, 1);
-			debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk1: 0x%02x", unk[0]);
+			if (unk[0])
+				debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk1: 0x%02x", unk[0]);
 			break;
 		case 14:
 			stream.read(unk, 2);
-			debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
+			if (unk[0] || unk[1])
+				debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
 		case 16: {
 				// palette
@@ -238,8 +240,9 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 26:
 			stream.read(unk, 6);
 
-			debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
-				unk[1], unk[2], unk[3], unk[4], unk[5]);
+			if (unk[0] || unk[1] || unk[2] || unk[3] || unk[4] || unk[5])
+				debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
+					unk[1], unk[2], unk[3], unk[4], unk[5]);
 			break;
 		default:
 			// This means that a `case` label has to be split at this position
@@ -397,9 +400,8 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 0:
 			// Sound/Tempo/Transition
 			unk1 = stream.readByte();
-			if (unk1) {
+			if (unk1)
 				warning("Frame::readMainChannelsD4(): STUB: unk1: %d 0x%x", unk1, unk1);
-			}
 			break;
 		case 1:
 			_mainChannels.soundType1 = stream.readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
@@ -712,22 +714,26 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 16:
 			stream.read(unk, 2);
-			warning("Frame::readMainChannelsD5(): STUB: unk1: 0x%02x 0x%02x", unk[0], unk[1]);
+			if (unk[0] || unk[1])
+				warning("Frame::readMainChannelsD5(): STUB: unk1: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
 		case 18:
 			stream.read(unk, 2);
-			warning("Frame::readMainChannelsD5(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
+			if (unk[0] || unk[1])
+				warning("Frame::readMainChannelsD5(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
 		case 20:
 			stream.read(unk, 1);
-			warning("Frame::readMainChannelsD5(): STUB: unk3: 0x%02x", unk[0]);
+			if (unk[0])
+				warning("Frame::readMainChannelsD5(): STUB: unk3: 0x%02x", unk[0]);
 			break;
 		case 21:
 			_mainChannels.tempo = stream.readByte();
 			break;
 		case 22:
 			stream.read(unk, 2);
-			warning("Frame::readMainChannelsD5(): STUB: unk4: 0x%02x 0x%02x", unk[0], unk[1]);
+			if (unk[0] || unk[1])
+				warning("Frame::readMainChannelsD5(): STUB: unk4: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
 		case 24:
 			_mainChannels.palette.paletteId.castLib = stream.readSint16();
@@ -759,11 +765,13 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 36:
 			stream.read(unk, 2);
-			warning("Frame::readMainChannelsD5(): STUB: unk5: 0x%02x 0x%02x", unk[0], unk[1]);
+			if (unk[0] || unk[1])
+				warning("Frame::readMainChannelsD5(): STUB: unk5: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
 		case 38:
 			stream.read(unk, 2);
-			warning("Frame::readMainChannelsD5(): STUB: unk6: 0x%02x 0x%02x", unk[0], unk[1]);
+			if (unk[0] || unk[1])
+				warning("Frame::readMainChannelsD5(): STUB: unk6: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
 		case 40: {
 				stream.read(unk, 8);
