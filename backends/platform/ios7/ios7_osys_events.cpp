@@ -249,6 +249,7 @@ bool OSystem_iOS7::handleEvent_touchSecondDown(Common::Event &event, int x, int 
 		handleEvent_mouseEvent(event, 0, 0);
 
 		_queuedInputEvent.type = Common::EVENT_RBUTTONDOWN;
+		_queuedEventTime = getMillis() + 250;
 		handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
 	} else
 		return false;
@@ -259,32 +260,20 @@ bool OSystem_iOS7::handleEvent_touchSecondDown(Common::Event &event, int x, int 
 bool OSystem_iOS7::handleEvent_touchSecondUp(Common::Event &event, int x, int y) {
 	int curTime = getMillis();
 
-	if (curTime - _lastSecondaryDown < 400) {
-		//printf("Right tap!\n");
-		if (curTime - _lastSecondaryTap < 400) {
-			//printf("Right escape!\n");
-			event.type = Common::EVENT_KEYDOWN;
-			_queuedInputEvent.type = Common::EVENT_KEYUP;
-
-			event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
-			_queuedEventTime = curTime + kQueuedInputEventDelay;
-			_lastSecondaryTap = 0;
-		} else if (!_mouseClickAndDragEnabled) {
-			//printf("Rightclick!\n");
-			event.type = Common::EVENT_RBUTTONDOWN;
-			handleEvent_mouseEvent(event, 0, 0);
-			_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
-			handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
-			_lastSecondaryTap = curTime;
-			_queuedEventTime = curTime + kQueuedInputEventDelay;
-		} else {
-			//printf("Right nothing!\n");
-			return false;
-		}
-	}
-	if (_mouseClickAndDragEnabled) {
+	if (!_mouseClickAndDragEnabled) {
+		//printf("Rightclick!\n");
+		event.type = Common::EVENT_RBUTTONDOWN;
+		handleEvent_mouseEvent(event, 0, 0);
+		_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
+		handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
+		_queuedEventTime = curTime + kQueuedInputEventDelay;
+	} else if (_queuedInputEvent.type == Common::EVENT_RBUTTONDOWN) {
+		// This has not been sent yet, send it right away
+		event = _queuedInputEvent;
+		_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
+		_queuedEventTime = curTime + kQueuedInputEventDelay;
+		handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
+	} else {
 		event.type = Common::EVENT_RBUTTONUP;
 		handleEvent_mouseEvent(event, 0, 0);
 	}
