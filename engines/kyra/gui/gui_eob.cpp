@@ -854,7 +854,7 @@ void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	Button *b = 0;
 	int cnt = 1;
 
-	if (_flags.gameID == GI_EOB1 && !(_flags.platform == Common::kPlatformSegaCD && index >= 95) && index > 92)
+	if ((_flags.gameID == GI_EOB1 && !(_flags.platform == Common::kPlatformSegaCD && index >= 95) && index > 92) || (_flags.gameID == GI_EOB2 && _buttonDefs[index].x == 0x7fff))
 		return;
 
 	if (_activeButtons) {

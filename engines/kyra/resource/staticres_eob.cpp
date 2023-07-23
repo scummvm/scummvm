@@ -780,6 +780,33 @@ void EoBCoreEngine::initButtonData() {
 				_buttonDefs[66 + i].h = 8;
 			}
 		}
+	} else if (_flags.lang == Common::ZH_TWN) {
+		// Due to its modified user interface, the Chinese version has some modified button dimensions.
+		for (int i = 0; i < 6; ++i)
+			_buttonDefs[9 + i].y += 7;
+		for (int i = 0; i < 2; ++i) {
+			_buttonDefs[15 + i].y += 6;
+			_buttonDefs[78 + i].y += 7;
+			_buttonDefs[80 + i].y += 4;
+			_buttonDefs[82 + i].h += 7;
+		}
+		for (int i = 0; i < 4; ++i)
+			_buttonDefs[17 + i].h += 7;
+		for (int i = 0; i < 5; ++i)
+			_buttonDefs[61 + i].h = 7;
+		for (int i = 0; i < 3; ++i) {
+			_buttonDefs[66 + i].x = 71;
+			_buttonDefs[66 + i].y = 129 + i * 14;
+			_buttonDefs[66 + i].w = 63;
+			_buttonDefs[66 + i].h = 14;
+			_buttonDefs[69 + i].x = 0x7fff;
+		}
+		_buttonDefs[93].h = 7;
+		_buttonDefs[88].x = 139;
+		_buttonDefs[88].y = 130;
+		_buttonDefs[88].w = 35;
+		_buttonDefs[88].h = 16;
+		_buttonDefs[94].y -= 7;
 	}
 
 	// Replace keycodes for EOB II FM-Towns
