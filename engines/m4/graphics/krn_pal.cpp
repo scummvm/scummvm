@@ -338,7 +338,7 @@ void kernel_examine_inventory_object(char *picName, RGB8 *pal, int steps, int de
 	player_set_commands_allowed(true);
 
 	CycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
-		_G(screenCodeBuff), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
+		_G(screenCodeBuff)->get_buffer(), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
 
 	game_pause(true);
 

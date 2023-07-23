@@ -152,7 +152,7 @@ machine *kernel_timer_callback(int32 ticks, int16 trigger, MessageCB callMe) {
 	return (TriggerMachineByHash(1, nullptr, -1, -1, callMe, false, "timer callback"));
 }
 
-static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCodeBuff,
+static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *screenCodeBuff,
 		uint8 *myPalette, uint8 *ICT) {
 	M4sprite *source;
 
@@ -187,7 +187,7 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *s
 	dr.y = myAnim8->myRegs[IDX_Y] >> 16;
 	dr.scaleX = myCCB->scaleX;
 	dr.scaleY = myCCB->scaleY;
-	dr.depthCode = screenCodeBuff->get_pixmap();		// TODO: Confirm this
+	dr.depthCode = screenCodeBuff->data;
 	dr.Pal = myPalette;
 	dr.ICT = ICT;
 	dr.srcDepth = myCCB->layer >> 8;
@@ -213,7 +213,7 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *s
 		HUnLock(source->sourceHandle);
 }
 
-void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff,
+void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff,
 		uint8 *myPalette, uint8 *ICT, bool updateVideo) {
 	CCB *myCCB;
 	ScreenContext *myScreen;

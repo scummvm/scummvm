@@ -47,7 +47,7 @@ struct WSHal_Globals {
 extern bool ws_InitHAL();
 extern void ws_KillHAL();
 
-extern void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff,
+extern void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff,
 	uint8 *myPalette, uint8 *ICT, bool updateVideo);
 extern void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT);
 extern void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs);
