@@ -242,7 +242,7 @@ bool myWindowCallback(Graphics::WindowClick click, Common::Event &event, void *p
 Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Channel *channel, Common::Rect dims, Graphics::MacFont *macFont) {
 	Graphics::MacWidget *widget = nullptr;
 
-	if (_textType == kTextTypeScrolling || true) {
+	if (_textType == kTextTypeScrolling) {
 		Graphics::MacTextWindow *window = (Graphics::MacTextWindow *)g_director->_wm->addTextWindow(macFont, getForeColor(), getBackColor(), _initialRect.width(),
 														  getAlignment(), nullptr, false);
 		// Set callback so that we can process events like mouse clicks
