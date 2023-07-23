@@ -146,70 +146,111 @@ void SoundHE::processSoundQueues() {
 
 int SoundHE::isSoundRunning(int sound) const {
 	if (_vm->_game.heversion >= 70) {
-		if (sound >= 10000) {
-			return _mixer->getSoundID(_heSoundChannels[sound - 10000]);
+		if (sound >= HSND_CHANNEL_0) {
+			sound = _heChannel[sound - HSND_CHANNEL_0].sound;
 		}
-	} else if (_vm->_game.heversion >= 60) {
+
+		if (hsFindSoundChannel(sound) != -1) {
+			return sound;
+		}
+
+		return 0;
+	} else {
 		if (sound == -2) {
 			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
 			sound = _currentMusic;
 		}
+
+		if (_mixer->isSoundIDActive(sound))
+			return sound;
+
+		if (isSoundInQueue(sound))
+			return sound;
+
+		if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound))
+			return sound;
+
+		return 0;
 	}
-
-	if (_mixer->isSoundIDActive(sound))
-		return sound;
-
-	if (isSoundInQueue(sound))
-		return sound;
-
-	if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound))
-		return sound;
-
-	return 0;
 }
 
 void SoundHE::stopSound(int sound) {
 	if (_vm->_game.heversion >= 70) {
-		if ( sound >= 10000) {
-			stopSoundChannel(sound - 10000);
+		int channel = -1;
+
+		if (sound >= HSND_CHANNEL_0 && sound <= HSND_CHANNEL_7) {
+			channel = sound - HSND_CHANNEL_0;
+
+			if (_heChannel[channel].sound) {
+				sound = _heChannel[channel].sound;
+				stopDigitalSound(sound);
+			}
+
+			for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
+				if (_soundQueue[i].channel == channel)
+					_soundQueue[i].sound = 0;
+			}
+		} else {
+			if (_vm->_game.heversion >= 95 && sound == HSND_DYN_SOUND_CHAN) {
+				for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
+					if (_soundQueue[i].channel == HSND_DYN_SOUND_CHAN) {
+						_soundQueue[i].sound = 0;
+					}
+				}
+			} else {
+				if (hsFindSoundChannel(sound) != -1) {
+					stopDigitalSound(sound);
+				}
+
+				for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
+					if (_soundQueue[i].sound == sound)
+						_soundQueue[i].sound = 0;
+				}
+			}
 		}
+
+		if ((sound == HSND_TALKIE_SLOT) || (channel == _vm->VAR(_vm->VAR_TALK_CHANNEL))) {
+			_vm->_talkDelay = 0;
+		}
+
 	} else if (_vm->_game.heversion >= 60) {
 		if (sound == -2) {
 			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
 			sound = _currentMusic;
 		}
-	}
 
-	Sound::stopSound(sound);
+		Sound::stopSound(sound);
 
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
-		if (_heChannel[i].sound == sound) {
-			_heChannel[i].sound = 0;
-			_heChannel[i].priority = 0;
-			_heChannel[i].frequency = 0;
-			_heChannel[i].timeout = 0;
-			_heChannel[i].hasSoundTokens = false;
-			_heChannel[i].codeOffset = 0;
-			memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
+		for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
+			if (_heChannel[i].sound == sound) {
+				_heChannel[i].sound = 0;
+				_heChannel[i].priority = 0;
+				_heChannel[i].frequency = 0;
+				_heChannel[i].timeout = 0;
+				_heChannel[i].hasSoundTokens = false;
+				_heChannel[i].codeOffset = 0;
+				memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
+			}
 		}
-	}
-
-	if (_vm->_game.heversion >= 70 && sound == 1) {
-		_vm->_haveMsg = 3;
-		_vm->_talkDelay = 0;
 	}
 }
 
 void SoundHE::stopAllSounds() {
-	// Clear sound channels for HE games
-	memset(_heChannel, 0, sizeof(_heChannel));
+	if (_vm->_game.heversion >= 95)
+		stopSound(HSND_DYN_SOUND_CHAN);
 
-	Sound::stopAllSounds();
+	for (int i = HSND_CHANNEL_0; i <= HSND_CHANNEL_7; i++) {
+		stopSound(i);
+	}
+
+	// Empty the sound queue
+	_soundQueuePos = 0;
+	memset(_soundQueue, 0, sizeof(_soundQueue));
 }
 
-int SoundHE::hsFindSoundChannel(int sound) {
+int SoundHE::hsFindSoundChannel(int sound) const {
 	if (sound >= HSND_CHANNEL_0) {
 		int channel = sound - HSND_CHANNEL_0;
 
@@ -238,30 +279,13 @@ void SoundHE::setupSound() {
 	}
 }
 
-void SoundHE::stopSoundChannel(int chan) {
-	if (_heChannel[chan].sound == HSND_TALKIE_SLOT || chan == _vm->VAR(_vm->VAR_TALK_CHANNEL)) {
+void SoundHE::stopDigitalSound(int sound) {
+	if (sound == HSND_TALKIE_SLOT) {
 		_vm->_haveMsg = 3;
 		_vm->_talkDelay = 0;
 	}
 
-	_mixer->stopHandle(_heSoundChannels[chan]);
-
-	_heChannel[chan].sound = 0;
-	_heChannel[chan].priority = 0;
-	_heChannel[chan].frequency = 0;
-	_heChannel[chan].timeout = 0;
-	_heChannel[chan].hasSoundTokens = false;
-	_heChannel[chan].codeOffset = 0;
-	memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
-
-	for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
-		if (_soundQueue[i].channel == chan) {
-			_soundQueue[i].sound = 0;
-			_soundQueue[i].offset = 0;
-			_soundQueue[i].channel = 0;
-			_soundQueue[i].flags = 0;
-		}
-	}
+	hsStopDigitalSound(sound);
 }
 
 int SoundHE::getNextDynamicChannel() {
@@ -316,16 +340,20 @@ bool SoundHE::isSoundCodeUsed(int sound) {
 	}
 }
 
-int SoundHE::getSoundPos(int sound) {
-	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
-		if (_heChannel[i].sound == sound)
-			chan = i;
+int SoundHE::getChannelPosition(int channel) {
+	if (_vm->_game.heversion >= 80) {
+		int frequency = _vm->_game.heversion >= 95 ? _heChannel[channel].frequency : HSND_DEFAULT_FREQUENCY;
+		return (_vm->getHETimer(HSND_TIMER_SLOT + channel) * frequency) / 1000;
+	} else {
+		return _heMixer->getChannelCurrentPosition(channel);
 	}
+}
 
-	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
-		int time = _vm->getHETimer(chan + 4) * _heChannel[chan].frequency / 1000;
-		return time;
+int SoundHE::getSoundPosition(int sound) {
+	int channel = hsFindSoundChannel(sound);
+
+	if (channel != -1) {
+		return getChannelPosition(channel);
 	} else {
 		return 0;
 	}
@@ -353,7 +381,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 }
 
 void SoundHE::setSoundVar(int sound, int var, int val) {
-	assertRange(0, var, 25, "sound variable");
+	assertRange(0, var, HSND_MAX_SOUND_VARS - 1, "sound variable");
 
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
@@ -362,7 +390,7 @@ void SoundHE::setSoundVar(int sound, int var, int val) {
 	}
 
 	if (chan != -1) {
-		debug(5, "setSoundVar: sound %d var %d val %d", sound, var, val);
+		debug(5, " SoundHE::setSoundVar(): sound %d var %d val %d", sound, var, val);
 		_heChannel[chan].soundVars[var] = val;
 	}
 }
@@ -483,7 +511,10 @@ void SoundHE::handleSoundFrame() {
 }
 
 void SoundHE::unqueueSoundCallbackScripts() {
-	Common::StackLock lock(*_mutex);
+	if (_inUnqueueCallbackScripts)
+		return;
+
+	_inUnqueueCallbackScripts++;
 
 	for (int i = 0; i < _soundCallbacksQueueSize; i++) {
 
@@ -505,6 +536,7 @@ void SoundHE::unqueueSoundCallbackScripts() {
 	}
 
 	_soundCallbacksQueueSize = 0;
+	_inUnqueueCallbackScripts--;
 }
 
 void SoundHE::checkSoundTimeouts() {
@@ -1074,9 +1106,9 @@ void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heF
 		case MKTAG('X', 'S', 'H', '2'):
 		{
 			// Check for the optional sound flag block
-			int optionalBlockFlags = READ_BE_UINT32(wavePtr);
+			int optionalBlockFlags = READ_LE_UINT32(wavePtr);
 			if (optionalBlockFlags & XSH2_FLAG_HAS_PRIORITY)
-				soundPriority = READ_BE_UINT32(wavePtr + 4);
+				soundPriority = READ_LE_UINT32(wavePtr + 4);
 
 			break;
 		}
@@ -1127,10 +1159,10 @@ void SoundHE::triggerXSOUSound(int heSound, int heOffset, int heChannel, int heF
 	soundHeaderBlock = (byte *)((ScummEngine_v71he *)_vm)->findWrappedBlock(MKTAG('X', 'S', 'H', 'D'), soundPtr, 0, true);
 	soundHeaderBlock += 8;
 
-	sampleCount = READ_BE_UINT32(soundHeaderBlock + 0);
-	sampleFrequency = READ_BE_UINT32(soundHeaderBlock + 4);
-	bitsPerSample = READ_BE_UINT32(soundHeaderBlock + 8);
-	sampleChannelCount = READ_BE_UINT32(soundHeaderBlock + 12);
+	sampleCount = READ_LE_UINT32(soundHeaderBlock + 0);
+	sampleFrequency = READ_LE_UINT32(soundHeaderBlock + 4);
+	bitsPerSample = READ_LE_UINT32(soundHeaderBlock + 8);
+	sampleChannelCount = READ_LE_UINT32(soundHeaderBlock + 12);
 
 	soundDataPtr = (byte *)((ScummEngine_v71he *)_vm)->findWrappedBlock(MKTAG('X', 'D', 'A', 'T'), soundPtr, 0, true);
 	soundDataOffset = ((soundDataPtr - soundPtr) + 8);
@@ -1142,11 +1174,11 @@ void SoundHE::triggerXSOUSound(int heSound, int heOffset, int heChannel, int heF
 
 	if (optionalHeaderBlock) {
 		optionalHeaderBlock += 8;
-		optionalBlockFlags = READ_BE_UINT32(optionalHeaderBlock);
+		optionalBlockFlags = READ_LE_UINT32(optionalHeaderBlock);
 		optionalHeaderBlock += 4;
 
 		if (optionalBlockFlags & XSH2_FLAG_HAS_PRIORITY) {
-			soundPriority = READ_BE_UINT32(optionalHeaderBlock);
+			soundPriority = READ_LE_UINT32(optionalHeaderBlock);
 			optionalHeaderBlock += 4;
 		}
 	}
@@ -1383,7 +1415,7 @@ Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundId, int *du
 	if (soundId == 1) {
 		// Speech audio doesn't have a unique ID,
 		// so we use the file offset instead.
-		// _heTalkOffset is set at startHETalkSound.
+		// _heTalkOffset is set at playVoice.
 		type = "speech";
 		soundId = _heTalkOffset;
 	} else {
@@ -1424,9 +1456,9 @@ Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundId, int *du
 	return nullptr;
 }
 
-void SoundHE::startHETalkSound(uint32 offset) {
+void SoundHE::playVoice(uint32 offset, uint32 length) {
 	byte *ptr;
-	int32 size;
+	int talkieChannel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
 
 	if (ConfMan.getBool("speech_mute"))
 		return;
@@ -1434,15 +1466,16 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	if (_sfxFilename.empty()) {
 		// This happens in the Pajama Sam's Lost & Found demo, on the
 		// main menu screen, so don't make it a fatal error.
-		warning("startHETalkSound: Speech file is not found");
+		warning("SoundHE::playVoice(): Speech file is not found");
 		return;
 	}
 
 	ScummFile file(_vm);
 	if (!_vm->openFile(file, _sfxFilename)) {
-		warning("startHETalkSound: Could not open speech file %s", _sfxFilename.c_str());
+		warning("SoundHE::playVoice(): Could not open speech file %s", _sfxFilename.c_str());
 		return;
 	}
+
 	file.setEnc(_sfxFileEncByte);
 
 	// Speech audio doesn't have a unique ID,
@@ -1451,18 +1484,29 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	_heTalkOffset = offset;
 
 	_digiSndMode |= DIGI_SND_MODE_TALKIE;
-	_vm->_res->nukeResource(rtSound, 1);
+	_heMixer->stopChannel(talkieChannel);
+	_vm->_res->nukeResource(rtSound, HSND_TALKIE_SLOT);
 
-	file.seek(offset + 4, SEEK_SET);
-	size = file.readUint32BE();
 	file.seek(offset, SEEK_SET);
 
-	_vm->_res->createResource(rtSound, 1, size);
+	_vm->_res->createResource(rtSound, 1, length);
 	ptr = _vm->getResourceAddress(rtSound, 1);
-	file.read(ptr, size);
+	file.read(ptr, length);
 
-	int channel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
-	addSoundToQueue(HSND_TALKIE_SLOT, 0, channel, 0, HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+	addSoundToQueue(HSND_TALKIE_SLOT, 0, talkieChannel, 0, HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+}
+
+void SoundHE::playVoiceFile(char *filename) {
+	// This is unimplemented on purpose! I haven't found a game which uses this;
+	// after all, this is a development path and it doesn't seem to affect any game
+	// version I had the chance to test. Emphasis on "had the chance to test":
+	// I don't know if there's actually a game which uses this!
+	//
+	// Originally this served the purpose of fetching voice lines from separate files
+	// instead of using a single .HE2 bundle.
+	//
+	// Again, we should never end up in here, but IF WE DO we issue an error.
+	error("SoundHE::playVoiceFile(): Unimplemented development codepath, please file a ticket!");
 }
 
 #ifdef ENABLE_HE

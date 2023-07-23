@@ -3122,7 +3122,7 @@ void ScummEngine::stopTalk() {
 
 	_sound->stopTalkSound();
 
-	_haveMsg = 0;
+	_haveMsg = _game.heversion >= 70 ? 3 : 0;
 	_talkDelay = 0;
 	_sound->_digiSndMode = DIGI_SND_MODE_EMPTY;
 
@@ -3137,12 +3137,7 @@ void ScummEngine::stopTalk() {
 		if (_game.version <= 7 && _game.heversion == 0)
 			setTalkingActor(0xFF);
 		if (_game.heversion != 0) {
-			if (_game.heversion == 98 && _game.id == GID_FREDDI4) {
-				// Delay unsetting _heTalking to next sound frame. fixes bug #3533.
-				_actorShouldStopTalking = true;
-			} else {
-				((ActorHE *)a)->_heTalking = false;
-			}
+			((ActorHE *)a)->_heTalking = false;
 		}
 	}
 

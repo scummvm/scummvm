@@ -214,7 +214,7 @@ void ScummEngine_v70he::setupScummVars() {
 	VAR_CURRENTDRIVE = 0xFF;
 	VAR_MUSIC_TIMER = 0xFF;
 
-	VAR_ERROR_FLAG = 8; // Alias of VAR_GAME_LOADED for now, which will get removed later
+	VAR_ERROR_FLAG = 8;
 	VAR_NUM_SOUND_CHANNELS = 9;
 	VAR_TALK_CHANNEL = 10;
 	VAR_SOUND_CHANNEL = 14;
@@ -230,6 +230,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_WALKTO_OBJ = 4;
 	VAR_RANDOM_NR = 5;
 
+	VAR_ERROR_FLAG = 8; // Alias of VAR_GAME_LOADED for now, which will get removed later
 	VAR_GAME_LOADED = 8;
 	VAR_EGO = 9;
 	VAR_NUM_ACTOR = 10;
