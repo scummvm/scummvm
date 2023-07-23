@@ -123,7 +123,7 @@ uint8 Menu::execute() {
 	_surfaceMenu = nullptr;
 	_selectedIndex = 0;
 
-	while (mouse.lButton() || mouse.rButton()) {
+	while (mouse.lButton() || mouse.rButton() || g_system->hasFeature(OSystem::kFeatureTouchscreen)) {
 		while (events.pollEvent()) {
 			if (engine.shouldQuit()) return MENUITEM_NONE;
 
@@ -162,6 +162,16 @@ uint8 Menu::execute() {
 				if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
 				_selectedIndex = index;
 				if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
+			}
+		}
+
+		if (g_system->hasFeature(OSystem::kFeatureTouchscreen)) {
+			// Close menu only when a sub menu is shown and
+			// the user has either clicked on a selected index
+			// or no index (outside the sub menu == cancelled)
+			if (mouse.lButton() &&
+				_surfaceMenu != nullptr)  {
+				break;
 			}
 		}
 
