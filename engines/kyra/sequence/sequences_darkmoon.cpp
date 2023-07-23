@@ -66,6 +66,7 @@ public:
 private:
 	void init(Mode mode);
 	void setPaletteWithoutTextColor(int index);
+	void printStringIntern(const char *str, int x, int y, int col);
 
 	OSystem *_system;
 	DarkMoonEngine *_vm;
@@ -110,6 +111,7 @@ private:
 	uint32 _hScrollResumeTimeStamp;
 
 	uint8 _textColor[3];
+	int16 _shadowColor;
 
 	int _platformAnimOffset;
 
@@ -286,7 +288,10 @@ void DarkMoonEngine::seq_playIntro() {
 	removeInputTop();
 	sq.delay(18);
 
-	sq.animCommand(3, 18);
+	sq.animCommand(3);
+	if (_flags.lang == Common::ZH_TWN)
+		sq.printText(20, guiSettings()->colors.guiColorYellow);
+	sq.delay(18);
 	sq.animCommand(6, 18);
 	sq.animCommand(0);
 
@@ -295,6 +300,8 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(_flags.platform == Common::kPlatformPC98 ? (_configRenderMode == Common::kRenderEGA ? 43 : 42) : (_configRenderMode == Common::kRenderEGA ? 12 : 11));
 	sq.animCommand(7, 6);
 	sq.animCommand(2, 6);
+	if (_flags.lang == Common::ZH_TWN)
+		sq.fadeText();
 
 	sq.waitForSongNotifier(++songCurPos);
 
@@ -353,7 +360,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.waitForSongNotifier(++songCurPos);
 	uint32 endtime = _system->getMillis();
 
-	// intro scroll
+	// intro horizontal scroll
 	if (!skipFlag() && !shouldQuit()) {
 		for (int i = sq.hScroll(true); i != 279; i = sq.hScroll()) {
 			endtime += 18;
@@ -1394,7 +1401,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 				else
 					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, shapeWidth, shapeHeight, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
-				delay(s->delay /** 7*/);
+				delay(s->delay);
 			} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 				end = _system->getMillis() + s->delay * _vm->tickLength();
 
@@ -1498,11 +1505,12 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 	const ScreenDim *dm = _screen->_curDim;
 	int fontHeight = (_vm->gameFlags().platform == Common::kPlatformPC98) ? (_screen->getFontHeight() << 1) : (_screen->getFontHeight() + 1);
 	int xAlignFactor = (_vm->gameFlags().platform == Common::kPlatformPC98) ? 2 : 1;
+	const char *linebrkChars = (_vm->gameFlags().lang == Common::ZH_TWN) ? "\r " : "\r";
 
 	for (int yOffs = 0; !str.empty(); yOffs += fontHeight) {
-		uint linebrk = str.findFirstOf('\r');
+		uint linebrk = str.findFirstOf(linebrkChars);
 		Common::String str2 = (linebrk != Common::String::npos) ? str.substr(0, linebrk) : str;
-		_screen->printText(str2.c_str(), (dm->sx * xAlignFactor + ((dm->w * xAlignFactor - str2.size()) >> 1)) << (4 - xAlignFactor), dm->sy + yOffs, color, dm->col2);
+		printStringIntern(str2.c_str(), (dm->sx * xAlignFactor + ((dm->w * xAlignFactor - str2.size()) >> 1)) << (4 - xAlignFactor), dm->sy + yOffs, color);
 		str = (linebrk != Common::String::npos) ? str.substr(linebrk + 1) : "";
 	}
 
@@ -1525,7 +1533,12 @@ void DarkmoonSequenceHelper::fadeText() {
 		_screen->fadeTextColor(_palettes[0], col, 8);
 
 	memset(_textColor, 0, 3);
-	_screen->clearCurDim();
+	_screen->setClearScreenDim(17);
+
+	// The Chinese version uses a shadow color for the font which does not get faded.
+	// We clear the shadow as quick as possible after the fading, so it will look less weird.
+	if (_vm->gameFlags().lang == Common::ZH_TWN)
+		_screen->updateScreen();
 }
 
 void DarkmoonSequenceHelper::update(int srcPage) {
@@ -1541,186 +1554,6 @@ void DarkmoonSequenceHelper::update(int srcPage) {
 		setPaletteWithoutTextColor(0);
 
 	_screen->updateScreen();
-}
-
-void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
-	assert(mode == kIntro || mode == kFinale);
-
-	static const uint16 soundMarkersFMTowns[2][8] = {
-		{  229,  447,  670, 1380, 2037, 3000, 4475, 4825 },
-		{  475, 2030, 2200, 2752, 3475,    0,    0,    0 }
-	};
-
-	int size = 0;
-	_platformAnimOffset = 0;
-	_sndNextTrack = 1;
-	_sndNextTrackMarker = 0;
-	_sndMarkersFMTowns = soundMarkersFMTowns[mode];
-	_hScrollStartTimeStamp = _hScrollResumeTimeStamp = 0;
-
-	if (mode == kIntro) {
-		_config = new Config(
-			_vm->staticres()->loadStrings(kEoB2IntroStrings, size),
-			_vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
-			_vm->_flags.isTalkie ? "EOB%d" : nullptr,
-			new const uint8*[16],
-			_vm->_flags.platform == Common::kPlatformAmiga ? 0 : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA),
-			new const DarkMoonShapeDef*[16],
-			new const DarkMoonAnimCommand*[48],
-			false,
-			false,
-			true,
-			true,
-			_vm->_flags.platform == Common::kPlatformAmiga ? 1 : 0,
-			0,
-			false,
-			2
-		);
-
-
-		for (int i = 0; i < 48; i++)
-			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2IntroAnimData00 + i, size);
-
-		for (int i = 0; i < 16; i++)
-			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2IntroCpsDataStreet1 + i, size);
-
-		memset(_config->shapeDefs, 0, 16 * sizeof(DarkMoonShapeDef*));
-		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes00, size);
-		_config->shapeDefs[1] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes01, size);
-		_config->shapeDefs[4] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes04, size);
-		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes07, size);
-		_config->shapeDefs[13] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes13, size);
-		_config->shapeDefs[14] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes14, size);
-		_config->shapeDefs[15] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes15, size);
-
-	} else {
-		_config = new Config(
-			_vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
-			_vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
-			_vm->_flags.isTalkie ? "EOBF%d" : nullptr,
-			new const uint8*[13],
-			_vm->_flags.platform == Common::kPlatformAmiga ? _palFilesFinaleAmiga : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA),
-			new const DarkMoonShapeDef*[13],
-			new const DarkMoonAnimCommand *[21],
-			true,
-			true,
-			false,
-			false,
-			_vm->_flags.platform == Common::kPlatformAmiga ? 2 : 1,
-			18,
-			true,
-			6
-		);
-
-		for (int i = 0; i < 21; i++)
-			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, size);
-
-		for (int i = 0; i < 13; i++)
-			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2FinaleCpsDataDragon1 + i, size);
-
-		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
-		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes00, size);
-		_config->shapeDefs[3] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes03, size);
-		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes07, size);
-		_config->shapeDefs[9] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes09, size);
-		_config->shapeDefs[10] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes10, size);
-	}
-
-	_screen->enableHiColorMode(false);
-	_screen->disableDualPaletteMode();
-	int numColors = 256;
-
-	if (_vm->_flags.platform == Common::kPlatformAmiga) {
-		static const int8 palIndex[13] = { -1, -1, 3, 2, 4, 5, 6, 7, -1, -1, -1, -1, -1 };
-		for (int i = 0; i < 13; ++i)
-			_palettes[i] = &_screen->getPalette(i);
-		Common::SeekableReadStream *s = _config->palFiles ? _vm->resource()->createReadStream(_config->palFiles[0]) : 0;
-		numColors = 32;
-		for (int i = 0; i < 13; ++i) {
-			if (s && palIndex[i] != -1)
-				_palettes[palIndex[i]]->loadAmigaPalette(*s, 0, 32);
-		}
-		delete s;
-	} else {
-		for (int i = 0; _config->palFiles[i]; i++) {
-			if (i < 4)
-				_palettes[i] = &_screen->getPalette(i);
-			else
-				_palettes[i] = new Palette(256);
-			_screen->loadPalette(_config->palFiles[i], *_palettes[i]);
-		}
-
-		for (int i = 9; i < 13; ++i)
-			_palettes[i] = new Palette(256);
-	}
-
-	_palettes[9]->fill(0, numColors, 0);
-	_palettes[10]->fill(0, numColors, 63);
-	_palettes[11]->fill(0, numColors, 0);
-
-
-	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
-		_screen->loadPalette("PALETTE.COL", *_palettes[12]);
-
-	for (int i = 0; i < 7; i++)
-		_fadingTables[i] = 0;
-
-	uint8 *fadeData = (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) ? _vm->resource()->fileData("FADING.DAT", 0) : 0;
-
-	if (fadeData) {
-		for (int i = 0; i < 7; i++) {
-			_fadingTables[i] = new uint8[256];
-			memcpy(_fadingTables[i], fadeData + (i << 8), 256);
-		}
-	} else {
-		if (_vm->_flags.platform != Common::kPlatformAmiga && _vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
-			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
-			for (int i = 0; i < 7; i++)
-				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
-			delete[] pal;
-		}
-	}
-
-	delete[] fadeData;
-
-	_shapes = new const uint8*[54];
-	memset(_shapes, 0, 54 * sizeof(uint8*));
-
-	_fadePalTimer = 0;
-	_fadePalRate = 0;
-
-	memset(_textColor, 0, 3);
-
-	_screen->setScreenPalette(*_palettes[0]);
-	_prevFont = _screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
-				     _vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : (_vm->gameFlags().platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT));
-	_screen->hideMouse();
-
-	_vm->delay(150);
-	_vm->_eventList.clear();
-	_vm->_allowSkip = true;
-}
-
-void DarkmoonSequenceHelper::setPaletteWithoutTextColor(int index) {
-	if (_vm->_configRenderMode == Common::kRenderEGA || _vm->skipFlag() || _vm->shouldQuit())
-		return;
-
-	int numCol = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 31 : 255;
-
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
-		if (!memcmp(_palettes[11]->getData(), _palettes[index]->getData(), numCol * 3))
-			return;
-	}
-
-	_palettes[11]->copy(*_palettes[index], 0, numCol);
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		_palettes[11]->copy(_textColor, 0, 1, numCol);
-	else
-		_palettes[11]->copy(*_palettes[0], numCol, 1, numCol);
-	setPalette(11);
-
-	_screen->updateScreen();
-	_system->delayMillis(10);
 }
 
 void DarkmoonSequenceHelper::setPalette(int index) {
@@ -1853,6 +1686,199 @@ void DarkmoonSequenceHelper::updateAmigaSound() {
 
 	static const uint16 interval[4] = { 0, 1015, 4461, 1770 };
 	_sndNextTrackMarker = interval[_sndNextTrack];
+}
+
+void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
+	assert(mode == kIntro || mode == kFinale);
+
+	static const uint16 soundMarkersFMTowns[2][8] = {
+		{  229,  447,  670, 1380, 2037, 3000, 4475, 4825 },
+		{  475, 2030, 2200, 2752, 3475,    0,    0,    0 }
+	};
+
+	int size = 0;
+	_platformAnimOffset = 0;
+	_sndNextTrack = 1;
+	_sndNextTrackMarker = 0;
+	_sndMarkersFMTowns = soundMarkersFMTowns[mode];
+	_hScrollStartTimeStamp = _hScrollResumeTimeStamp = 0;
+	_shadowColor = -1;
+
+	if (mode == kIntro) {
+		_config = new Config(
+			_vm->staticres()->loadStrings(kEoB2IntroStrings, size),
+			_vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
+			_vm->_flags.isTalkie ? "EOB%d" : nullptr,
+			new const uint8*[16],
+			_vm->_flags.platform == Common::kPlatformAmiga ? 0 : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA),
+			new const DarkMoonShapeDef*[16],
+			new const DarkMoonAnimCommand*[48],
+			false,
+			false,
+			true,
+			true,
+			_vm->_flags.platform == Common::kPlatformAmiga ? 1 : 0,
+			0,
+			false,
+			2
+		);
+
+		if (_vm->_flags.lang == Common::ZH_TWN)
+			_shadowColor = _vm->guiSettings()->colors.guiColorBrown;
+
+		for (int i = 0; i < 48; i++)
+			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2IntroAnimData00 + i, size);
+
+		for (int i = 0; i < 16; i++)
+			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2IntroCpsDataStreet1 + i, size);
+
+		memset(_config->shapeDefs, 0, 16 * sizeof(DarkMoonShapeDef*));
+		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes00, size);
+		_config->shapeDefs[1] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes01, size);
+		_config->shapeDefs[4] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes04, size);
+		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes07, size);
+		_config->shapeDefs[13] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes13, size);
+		_config->shapeDefs[14] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes14, size);
+		_config->shapeDefs[15] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes15, size);
+
+	} else {
+		_config = new Config(
+			_vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
+			_vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
+			_vm->_flags.isTalkie ? "EOBF%d" : nullptr,
+			new const uint8*[13],
+			_vm->_flags.platform == Common::kPlatformAmiga ? _palFilesFinaleAmiga : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA),
+			new const DarkMoonShapeDef*[13],
+			new const DarkMoonAnimCommand *[21],
+			true,
+			true,
+			false,
+			false,
+			_vm->_flags.platform == Common::kPlatformAmiga ? 2 : 1,
+			18,
+			true,
+			6
+		);
+
+		if (_vm->_flags.lang == Common::ZH_TWN)
+			_shadowColor = _vm->guiSettings()->colors.fill;
+
+		for (int i = 0; i < 21; i++)
+			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, size);
+
+		for (int i = 0; i < 13; i++)
+			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2FinaleCpsDataDragon1 + i, size);
+
+		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
+		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes00, size);
+		_config->shapeDefs[3] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes03, size);
+		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes07, size);
+		_config->shapeDefs[9] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes09, size);
+		_config->shapeDefs[10] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes10, size);
+	}
+
+	_screen->enableHiColorMode(false);
+	_screen->disableDualPaletteMode();
+	int numColors = 256;
+
+	if (_vm->_flags.platform == Common::kPlatformAmiga) {
+		static const int8 palIndex[13] = { -1, -1, 3, 2, 4, 5, 6, 7, -1, -1, -1, -1, -1 };
+		for (int i = 0; i < 13; ++i)
+			_palettes[i] = &_screen->getPalette(i);
+		Common::SeekableReadStream *s = _config->palFiles ? _vm->resource()->createReadStream(_config->palFiles[0]) : 0;
+		numColors = 32;
+		for (int i = 0; i < 13; ++i) {
+			if (s && palIndex[i] != -1)
+				_palettes[palIndex[i]]->loadAmigaPalette(*s, 0, 32);
+		}
+		delete s;
+	} else {
+		for (int i = 0; _config->palFiles[i]; i++) {
+			if (i < 4)
+				_palettes[i] = &_screen->getPalette(i);
+			else
+				_palettes[i] = new Palette(256);
+			_screen->loadPalette(_config->palFiles[i], *_palettes[i]);
+		}
+
+		for (int i = 9; i < 13; ++i)
+			_palettes[i] = new Palette(256);
+	}
+
+	_palettes[9]->fill(0, numColors, 0);
+	_palettes[10]->fill(0, numColors, 63);
+	_palettes[11]->fill(0, numColors, 0);
+
+
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		_screen->loadPalette("PALETTE.COL", *_palettes[12]);
+
+	for (int i = 0; i < 7; i++)
+		_fadingTables[i] = 0;
+
+	uint8 *fadeData = (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) ? _vm->resource()->fileData("FADING.DAT", 0) : 0;
+
+	if (fadeData) {
+		for (int i = 0; i < 7; i++) {
+			_fadingTables[i] = new uint8[256];
+			memcpy(_fadingTables[i], fadeData + (i << 8), 256);
+		}
+	} else {
+		if (_vm->_flags.platform != Common::kPlatformAmiga && _vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
+			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
+			for (int i = 0; i < 7; i++)
+				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
+			delete[] pal;
+		}
+	}
+
+	delete[] fadeData;
+
+	_shapes = new const uint8*[54];
+	memset(_shapes, 0, 54 * sizeof(uint8*));
+
+	_fadePalTimer = 0;
+	_fadePalRate = 0;
+
+	memset(_textColor, 0, 3);
+
+	_screen->setScreenPalette(*_palettes[0]);
+	_prevFont = _screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+		_vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : (_vm->gameFlags().platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT));
+	_screen->hideMouse();
+
+	_vm->delay(150);
+	_vm->_eventList.clear();
+	_vm->_allowSkip = true;
+}
+
+void DarkmoonSequenceHelper::setPaletteWithoutTextColor(int index) {
+	if (_vm->_configRenderMode == Common::kRenderEGA || _vm->skipFlag() || _vm->shouldQuit())
+		return;
+
+	int numCol = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 31 : 255;
+
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
+		if (!memcmp(_palettes[11]->getData(), _palettes[index]->getData(), numCol * 3))
+			return;
+	}
+
+	_palettes[11]->copy(*_palettes[index], 0, numCol);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_palettes[11]->copy(_textColor, 0, 1, numCol);
+	else
+		_palettes[11]->copy(*_palettes[0], numCol, 1, numCol);
+	setPalette(11);
+
+	_screen->updateScreen();
+	_system->delayMillis(10);
+}
+
+void DarkmoonSequenceHelper::printStringIntern(const char *str, int x, int y, int col) {
+	if (_shadowColor != -1)
+		_screen->printShadedText(str, x, y, col, 0, _shadowColor);
+	else
+		_screen->printText(str, x, y, col, _screen->_curDim->col2);
 }
 
 const char *const DarkmoonSequenceHelper::_palFilesIntroVGA[] = {

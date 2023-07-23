@@ -930,7 +930,7 @@ static const char *const kEoB2TransferLabelsDOSChinese[2] = {
 
 static const StringListProvider kEoB2TransferLabelsDOSChineseProvider = { ARRAYSIZE(kEoB2TransferLabelsDOSChinese), kEoB2TransferLabelsDOSChinese };
 
-static const char *const kEoB2IntroStringsDOSChinese[20] = {
+static const char *const kEoB2IntroStringsDOSChinese[21] = {
 	"\xa6\x62\xa4\x40\xad\xd3\xad\xb7\xab\x42\xa5\xe6\xa5\x5b\xaa\xba\xb2\x4d\xb1\xe1", /* "在一個風雨交加的清晨"; "In a storm early morning" */
 	"\xa7\x41\xa6\xac\xa8\xec\xa4\x46\xa4\x40\xb1\x69\xab\x4b\xa8\xe7", /* "你收到了一張便函"; "You have received a note" */
 	"\xa5\xa6\xac\x4f\xa7\x41\xaa\xba\xa6\x6e\xa4\xcd\r\xc4\xb3\xaa\xf8\xab\xb4\xba\xb8\xaf\x5a\xbc\x67\xa8\xd3\xaa\xba.", /* "它是你的好友\r議長契爾班寫來的."; "It's from your friend Chancellor Khelben." */
@@ -951,6 +951,7 @@ static const char *const kEoB2IntroStringsDOSChinese[20] = {
 	"\xa8\xc6\xa4\xa3\xa9\x79\xbf\xf0,\xa7\x41\xa5\xb2\xb6\xb7\xbb\xb0\xa7\xd6\xb0\xca\xa8\xad.", /* "事不宜遲,你必須趕快動身."; "Without further delay, you must leave quickly."; */
 	"\xa7\xda\xb2\x7b\xa6\x62\xb1\x4e\xa7\x41\xad\xcc\xb6\xc7\xb0\x65\xa8\xec\xb1\xb5\xaa\xf1\xaf\xab\xbc\x71\xaa\xba\xaa\xfe\xaa\xf1.", /* "我現在將你們傳送到接近神廟的附近."; "I will now teleport you closer to the temple." */
 	"\xc4\x40\xa6\x6e\xb9\x42\xa6\xf1\xc0\x48\xb5\xdb\xa7\x41\xad\xcc.", /* "願好運伴隨著你們."; "May good luck be with you."; */
+	"(c)1992""\xb4\xbc\xab""a""\xac\xec\xa7\xde\xa6\xb3\xad\xad\xa4\xbd\xa5""q""\xbc\xf6\xb1\xa1\xb1\xc0\xa5""X ""\xb5""{""\xa6\xa1\xad\xd7\xa7\xef"":""\xa5\xdb\xc5\xe9\xb7\xbd" /* (c)1992智冠科技有限公司熱情推出 程式修改:石體源 */
 };
 
 static const StringListProvider kEoB2IntroStringsDOSChineseProvider = { ARRAYSIZE(kEoB2IntroStringsDOSChinese), kEoB2IntroStringsDOSChinese }; // OK
