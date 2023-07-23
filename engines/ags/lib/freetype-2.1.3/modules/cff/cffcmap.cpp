@@ -37,7 +37,7 @@ namespace FreeType213 {
 /*****           CFF STANDARD (AND EXPERT) ENCODING CMAPS            *****/
 
 FT_CALLBACK_DEF(FT_Error)
-cff_cmap_encoding_init(CFF_CMapStd cmap) {
+cff_cmap_encoding_init(CFF_CMapStd cmap, void *) {
 	TT_Face face = (TT_Face)FT_CMAP_FACE(cmap);
 	CFF_Font cff = (CFF_Font)face->extra.data;
 	CFF_Encoding encoding = &cff->encoding;
@@ -123,7 +123,7 @@ cff_cmap_uni_pair_compare(const void *pair1, const void *pair2) {
 }
 
 FT_CALLBACK_DEF(FT_Error)
-cff_cmap_unicode_init(CFF_CMapUnicode cmap) {
+cff_cmap_unicode_init(CFF_CMapUnicode cmap, void *) {
 	FT_Error         error;
 	FT_UInt          count;
 	TT_Face          face    = (TT_Face)FT_CMAP_FACE(cmap);
