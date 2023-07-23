@@ -361,7 +361,7 @@ psh_blues_scale_zones( PSH_Blues  blues,
 	/*                                                        */
 	/*      "scale < bluescale"                               */
 	/*                                                        */
-	blues->no_overshoots = FT2_1_3_BOOL( scale < blues->blue_scale );
+	blues->no_overshoots = FT_BOOL( scale < blues->blue_scale );
 
 	/*                                                        */
 	/*  The blue threshold is the font units distance under   */
@@ -549,7 +549,7 @@ psh_globals_destroy( PSH_Globals  globals ) {
 		globals->blues.family_top.count    = 0;
 		globals->blues.family_bottom.count = 0;
 
-		FT2_1_3_FREE( globals );
+		FT_FREE( globals );
 
 #ifdef DEBUG_HINTER
 		ps_debug_globals = 0;

@@ -32,7 +32,7 @@ namespace FreeType213 {
 
 FT_CALLBACK_DEF( FT_Error )
 cff_cmap_encoding_init( CFF_CMapStd  cmap ) {
-	TT_Face       face     = (TT_Face)FT2_1_3_CMAP_FACE( cmap );
+	TT_Face       face     = (TT_Face)FT_CMAP_FACE( cmap );
 	CFF_Font      cff      = (CFF_Font)face->extra.data;
 	CFF_Encoding  encoding = &cff->encoding;
 
@@ -134,8 +134,8 @@ FT_CALLBACK_DEF( FT_Error )
 cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 	FT_Error         error;
 	FT_UInt          count;
-	TT_Face          face    = (TT_Face)FT2_1_3_CMAP_FACE( cmap );
-	FT_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
+	TT_Face          face    = (TT_Face)FT_CMAP_FACE( cmap );
+	FT_Memory        memory  = FT_FACE_MEMORY( face );
 	CFF_Font         cff     = (CFF_Font)face->extra.data;
 	CFF_Charset      charset = &cff->charset;
 	PSNames_Service  psnames = (PSNames_Service)cff->psnames;
@@ -170,20 +170,20 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 					pair++;
 				}
 
-				FT2_1_3_FREE( gname );
+				FT_FREE( gname );
 			}
 		}
 
 		new_count = (FT_UInt)( pair - cmap->pairs );
 		if ( new_count == 0 ) {
 			/* there are no unicode characters in here! */
-			FT2_1_3_FREE( cmap->pairs );
-			error = FT2_1_3_Err_Invalid_Argument;
+			FT_FREE( cmap->pairs );
+			error = FT_Err_Invalid_Argument;
 		} else {
 			/* re-allocate if the new array is much smaller than the original */
 			/* one                                                            */
 			if ( new_count != count && new_count < count / 2 ) {
-				(void)FT2_1_3_RENEW_ARRAY( cmap->pairs, count, new_count );
+				(void)FT_RENEW_ARRAY( cmap->pairs, count, new_count );
 				error = 0;
 			}
 
@@ -203,11 +203,11 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 
 FT_CALLBACK_DEF( void )
 cff_cmap_unicode_done( CFF_CMapUnicode  cmap ) {
-	FT_Face    face   = FT2_1_3_CMAP_FACE( cmap );
-	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Face    face   = FT_CMAP_FACE( cmap );
+	FT_Memory  memory = FT_FACE_MEMORY( face );
 
 
-	FT2_1_3_FREE( cmap->pairs );
+	FT_FREE( cmap->pairs );
 	cmap->num_pairs = 0;
 }
 

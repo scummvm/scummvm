@@ -100,7 +100,7 @@ static FT_Error get_sfnt_glyph_name(TT_Face face, FT_UInt glyph_index, FT_Pointe
 		if (len >= buffer_max)
 			len = buffer_max - 1;
 
-		FT2_1_3_MEM_COPY(buffer, gname, len);
+		FT_MEM_COPY(buffer, gname, len);
 		((FT_Byte *)buffer)[len] = 0;
 	}
 
@@ -138,16 +138,16 @@ static const char *get_sfnt_postscript_name(TT_Face face) {
 		FT_UInt len = name->stringLength / 2;
 		FT_Error error;
 
-		if (!FT2_1_3_ALLOC(result, name->stringLength + 1)) {
+		if (!FT_ALLOC(result, name->stringLength + 1)) {
 			FT_Stream stream = face->name_table.stream;
 			FT_String *r = const_cast<FT_String *>(result);
 			FT_Byte *p = (FT_Byte *)name->string;
 
-			if (FT2_1_3_STREAM_SEEK(name->stringOffset) || FT2_1_3_FRAME_ENTER(name->stringLength)) {
-				FT2_1_3_FREE(result);
+			if (FT_STREAM_SEEK(name->stringOffset) || FT_FRAME_ENTER(name->stringLength)) {
+				FT_FREE(result);
 				name->stringLength = 0;
 				name->stringOffset = 0;
-				FT2_1_3_FREE(name->string);
+				FT_FREE(name->string);
 
 				goto Exit;
 			}
@@ -160,7 +160,7 @@ static const char *get_sfnt_postscript_name(TT_Face face) {
 			}
 			*r = '\0';
 
-			FT2_1_3_FRAME_EXIT();
+			FT_FRAME_EXIT();
 		}
 		goto Exit;
 	}
@@ -171,14 +171,14 @@ static const char *get_sfnt_postscript_name(TT_Face face) {
 		FT_UInt len = name->stringLength;
 		FT_Error error;
 
-		if (!FT2_1_3_ALLOC(result, len + 1)) {
+		if (!FT_ALLOC(result, len + 1)) {
 			FT_Stream stream = face->name_table.stream;
 
-			if (FT2_1_3_STREAM_SEEK(name->stringOffset) || FT2_1_3_STREAM_READ(result, len)) {
+			if (FT_STREAM_SEEK(name->stringOffset) || FT_STREAM_READ(result, len)) {
 				name->stringOffset = 0;
 				name->stringLength = 0;
-				FT2_1_3_FREE(name->string);
-				FT2_1_3_FREE(result);
+				FT_FREE(name->string);
+				FT_FREE(result);
 				goto Exit;
 			}
 			const_cast<char *>(result)[len] = '\0';

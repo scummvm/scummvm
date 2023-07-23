@@ -56,7 +56,7 @@ static FT_Error
 pfr_get_advance( PFR_Face   face,
 				 FT_UInt    gindex,
 				 FT_Pos    *aadvance ) {
-	FT_Error     error = FT2_1_3_Err_Bad_Argument;
+	FT_Error     error = FT_Err_Bad_Argument;
 
 	*aadvance = 0;
 	if ( face ) {

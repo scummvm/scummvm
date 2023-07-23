@@ -88,9 +88,9 @@ FT_BEGIN_HEADER
 typedef struct FT_ValidatorRec_ *FT_Validator;
 
 typedef enum  FT_ValidationLevel_ {
-	FT2_1_3_VALIDATE_DEFAULT = 0,
-	FT2_1_3_VALIDATE_TIGHT,
-	FT2_1_3_VALIDATE_PARANOID
+	FT_VALIDATE_DEFAULT = 0,
+	FT_VALIDATE_TIGHT,
+	FT_VALIDATE_PARANOID
 } FT_ValidationLevel;
 
 /* validator structure */
@@ -103,7 +103,7 @@ typedef struct  FT_ValidatorRec_ {
 	ft_jmp_buf          jump_buffer; /* used for exception handling      */
 } FT_ValidatorRec;
 
-#define FT2_1_3_VALIDATOR(x) ((FT_Validator)(x))
+#define FT_VALIDATOR(x) ((FT_Validator)(x))
 
 FT_BASE(void)
 ft_validator_init(FT_Validator valid, const FT_Byte *base, const FT_Byte *limit, FT_ValidationLevel level);
@@ -121,22 +121,22 @@ ft_validator_error(FT_Validator valid, FT_Error error);
 /* Calls ft_validate_error.  Assumes that the `valid' local variable */
 /* holds a pointer to the current validator object.                  */
 /*                                                                   */
-#define FT2_1_3_INVALID(_error) ft_validator_error(valid, _error)
+#define FT_INVALID(_error) ft_validator_error(valid, _error)
 
 /* called when a broken table is detected */
-#define FT2_1_3_INVALID_TOO_SHORT FT2_1_3_INVALID(FT2_1_3_Err_Invalid_Table)
+#define FT_INVALID_TOO_SHORT FT_INVALID(FT_Err_Invalid_Table)
 
 /* called when an invalid offset is detected */
-#define FT2_1_3_INVALID_OFFSET FT2_1_3_INVALID(FT2_1_3_Err_Invalid_Offset)
+#define FT_INVALID_OFFSET FT_INVALID(FT_Err_Invalid_Offset)
 
 /* called when an invalid format/value is detected */
-#define FT2_1_3_INVALID_FORMAT FT2_1_3_INVALID(FT2_1_3_Err_Invalid_Table)
+#define FT_INVALID_FORMAT FT_INVALID(FT_Err_Invalid_Table)
 
 /* called when an invalid glyph index is detected */
-#define FT2_1_3_INVALID_GLYPH_ID FT2_1_3_INVALID(FT2_1_3_Err_Invalid_Glyph_Index)
+#define FT_INVALID_GLYPH_ID FT_INVALID(FT_Err_Invalid_Glyph_Index)
 
 /* called when an invalid field value is detected */
-#define FT2_1_3_INVALID_DATA FT2_1_3_INVALID(FT2_1_3_Err_Invalid_Table)
+#define FT_INVALID_DATA FT_INVALID(FT_Err_Invalid_Table)
 
 
 /**** CHARMAPS ****/
@@ -154,13 +154,13 @@ typedef struct  FT_CMapRec_ {
 } FT_CMapRec;
 
 /* typecase any pointer to a charmap handle */
-#define FT2_1_3_CMAP(x) ((FT_CMap)(x))
+#define FT_CMAP(x) ((FT_CMap)(x))
 
 /* obvious macros */
-#define FT2_1_3_CMAP_PLATFORM_ID(x)	 FT2_1_3_CMAP(x)->charmap.platform_id
-#define FT2_1_3_CMAP_ENCODING_ID(x)  FT2_1_3_CMAP(x)->charmap.encoding_id
-#define FT2_1_3_CMAP_ENCODING(x)	 FT2_1_3_CMAP(x)->charmap.encoding
-#define FT2_1_3_CMAP_FACE(x)		 FT2_1_3_CMAP(x)->charmap.face
+#define FT_CMAP_PLATFORM_ID(x)	 FT_CMAP(x)->charmap.platform_id
+#define FT_CMAP_ENCODING_ID(x)  FT_CMAP(x)->charmap.encoding_id
+#define FT_CMAP_ENCODING(x)	 FT_CMAP(x)->charmap.encoding
+#define FT_CMAP_FACE(x)		 FT_CMAP(x)->charmap.face
 
 /* class method definitions */
 typedef FT_Error (*FT_CMap_InitFunc)(FT_CMap cmap, FT_Pointer init_data);
@@ -220,18 +220,18 @@ typedef struct  FT_ModuleRec_ {
 } FT_ModuleRec;
 
 /* typecast an object to a FT_Module */
-#define FT2_1_3_MODULE(x)			((FT_Module)(x))
-#define FT2_1_3_MODULE_CLASS(x)		FT2_1_3_MODULE(x)->clazz
-#define FT2_1_3_MODULE_LIBRARY(x)	FT2_1_3_MODULE(x)->library
-#define FT2_1_3_MODULE_MEMORY(x)	FT2_1_3_MODULE(x)->memory
+#define FT_MODULE(x)			((FT_Module)(x))
+#define FT_MODULE_CLASS(x)		FT_MODULE(x)->clazz
+#define FT_MODULE_LIBRARY(x)	FT_MODULE(x)->library
+#define FT_MODULE_MEMORY(x)	FT_MODULE(x)->memory
 
-#define FT2_1_3_MODULE_IS_DRIVER(x) 	(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_font_driver)
-#define FT2_1_3_MODULE_IS_RENDERER(x) 	(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_renderer)
-#define FT2_1_3_MODULE_IS_HINTER(x) 	(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_hinter)
-#define FT2_1_3_MODULE_IS_STYLER(x) 	(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_styler)
-#define FT2_1_3_DRIVER_IS_SCALABLE(x) 	(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_driver_scalable)
-#define FT2_1_3_DRIVER_USES_OUTLINES(x)	!(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_driver_no_outlines)
-#define FT2_1_3_DRIVER_HAS_HINTER(x) 	(FT2_1_3_MODULE_CLASS(x)->module_flags & ft_module_driver_has_hinter)
+#define FT_MODULE_IS_DRIVER(x) 	(FT_MODULE_CLASS(x)->module_flags & ft_module_font_driver)
+#define FT_MODULE_IS_RENDERER(x) 	(FT_MODULE_CLASS(x)->module_flags & ft_module_renderer)
+#define FT_MODULE_IS_HINTER(x) 	(FT_MODULE_CLASS(x)->module_flags & ft_module_hinter)
+#define FT_MODULE_IS_STYLER(x) 	(FT_MODULE_CLASS(x)->module_flags & ft_module_styler)
+#define FT_DRIVER_IS_SCALABLE(x) 	(FT_MODULE_CLASS(x)->module_flags & ft_module_driver_scalable)
+#define FT_DRIVER_USES_OUTLINES(x)	!(FT_MODULE_CLASS(x)->module_flags & ft_module_driver_no_outlines)
+#define FT_DRIVER_HAS_HINTER(x) 	(FT_MODULE_CLASS(x)->module_flags & ft_module_driver_has_hinter)
 
 FT_BASE(const void *)
 FT_Get_Module_Interface(FT_Library library, const char *mod_name);
@@ -241,20 +241,20 @@ FT_Get_Module_Interface(FT_Library library, const char *mod_name);
 
 /* a few macros used to perform easy typecasts with minimal brain damage */
 
-#define FT2_1_3_FACE(x)	((FT_Face)(x))
-#define FT2_1_3_SIZE(x) ((FT_Size)(x))
-#define FT2_1_3_SLOT(x) ((FT_GlyphSlot)(x))
+#define FT_FACE(x)	((FT_Face)(x))
+#define FT_SIZE(x) ((FT_Size)(x))
+#define FT_SLOT(x) ((FT_GlyphSlot)(x))
 
-#define FT2_1_3_FACE_DRIVER(x) 	FT2_1_3_FACE(x)->driver
-#define FT2_1_3_FACE_LIBRARY(x) FT2_1_3_FACE_DRIVER(x)->root.library
-#define FT2_1_3_FACE_MEMORY(x) 	FT2_1_3_FACE(x)->memory
-#define FT2_1_3_FACE_STREAM(x) 	FT2_1_3_FACE(x)->stream
+#define FT_FACE_DRIVER(x) 	FT_FACE(x)->driver
+#define FT_FACE_LIBRARY(x) FT_FACE_DRIVER(x)->root.library
+#define FT_FACE_MEMORY(x) 	FT_FACE(x)->memory
+#define FT_FACE_STREAM(x) 	FT_FACE(x)->stream
 
-#define FT2_1_3_SIZE_FACE(x) FT2_1_3_SIZE(x)->face
-#define FT2_1_3_SLOT_FACE(x) FT2_1_3_SLOT(x)->face
+#define FT_SIZE_FACE(x) FT_SIZE(x)->face
+#define FT_SLOT_FACE(x) FT_SLOT(x)->face
 
-#define FT2_1_3_FACE_SLOT(x) FT2_1_3_FACE(x)->glyph
-#define FT2_1_3_FACE_SIZE(x) FT2_1_3_FACE(x)->size
+#define FT_FACE_SLOT(x) FT_FACE(x)->glyph
+#define FT_FACE_SIZE(x) FT_FACE(x)->size
 
 FT_BASE(FT_Error)
 FT_New_GlyphSlot(FT_Face face, FT_GlyphSlot *aslot);
@@ -267,7 +267,7 @@ FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot);
 
 #define FT_RENDERER(x)		 ((FT_Renderer)(x))
 #define FT_GLYPH(x)		 ((FT_Glyph)(x))
-#define FT2_1_3_BITMAP_GLYPH(x)	 ((FT_BitmapGlyph)(x))
+#define FT_BITMAP_GLYPH(x)	 ((FT_BitmapGlyph)(x))
 #define FT_OUTLINE_GLYPH(x) ((FT_OutlineGlyph)(x))
 
 typedef struct  FT_RendererRec_ {
@@ -285,10 +285,10 @@ typedef struct  FT_RendererRec_ {
 /**** FONT DRIVERS ****/
 
 /* typecast a module into a driver easily */
-#define FT2_1_3_DRIVER(x) ((FT_Driver)(x))
+#define FT_DRIVER(x) ((FT_Driver)(x))
 
 /* typecast a module as a driver, and get its driver class */
-#define FT2_1_3_DRIVER_CLASS(x) FT2_1_3_DRIVER(x)->clazz
+#define FT_DRIVER_CLASS(x) FT_DRIVER(x)->clazz
 
 typedef struct  FT_DriverRec_ {
 	FT_ModuleRec     root;
@@ -342,7 +342,7 @@ typedef FT_Error (*FT_Face_GetGlyphNameFunc)(FT_Face face, FT_UInt glyph_index, 
 typedef FT_UInt (*FT_Face_GetGlyphNameIndexFunc)(FT_Face face, FT_String *glyph_name);
 
 
-#ifndef FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM
+#ifndef FT_CONFIG_OPTION_NO_DEFAULT_SYSTEM
 
 FT_EXPORT(FT_Memory)
 FT_New_Memory(void);
@@ -350,7 +350,7 @@ FT_New_Memory(void);
 FT_EXPORT(void)
 FT_Done_Memory(FT_Memory memory);
 
-#endif /* !FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM */
+#endif /* !FT_CONFIG_OPTION_NO_DEFAULT_SYSTEM */
 
 
 /* Define default raster's interface.  The default raster is located in  */

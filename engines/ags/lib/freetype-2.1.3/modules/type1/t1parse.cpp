@@ -56,14 +56,14 @@ typedef struct PFB_Tag_ {
 	FT_Long   size;
 } PFB_Tag;
 
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE PFB_Tag
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE PFB_Tag
 
 static const FT_Frame_Field pfb_tag_fields[] = {
-	FT2_1_3_FRAME_START(6),
-	FT2_1_3_FRAME_USHORT(tag),
-	FT2_1_3_FRAME_LONG_LE(size),
-	FT2_1_3_FRAME_END
+	FT_FRAME_START(6),
+	FT_FRAME_USHORT(tag),
+	FT_FRAME_LONG_LE(size),
+	FT_FRAME_END
 };
 
 static FT_Error read_pfb_tag(FT_Stream stream, FT_UShort *tag, FT_Long *size) {
@@ -72,7 +72,7 @@ static FT_Error read_pfb_tag(FT_Stream stream, FT_UShort *tag, FT_Long *size) {
 
 	*tag  = 0;
 	*size = 0;
-	if (!FT2_1_3_STREAM_READ_FIELDS(pfb_tag_fields, &head)) {
+	if (!FT_STREAM_READ_FIELDS(pfb_tag_fields, &head)) {
 		if (head.tag == 0x8001U || head.tag == 0x8002U) {
 			*tag  = head.tag;
 			*size = head.size;
@@ -116,7 +116,7 @@ T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Servic
 
 	/* try to compute the size of the base dictionary;   */
 	/* look for a Postscript binary file tag, i.e 0x8001 */
-	if (FT2_1_3_STREAM_SEEK(0L))
+	if (FT_STREAM_SEEK(0L))
 		goto Exit;
 
 	error = read_pfb_tag(stream, &tag, &size);
@@ -126,7 +126,7 @@ T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Servic
 	if (tag != 0x8001U) {
 		/* assume that this is a PFA file for now; an error will */
 		/* be produced later when more things are checked        */
-		if (FT2_1_3_STREAM_SEEK(0L))
+		if (FT_STREAM_SEEK(0L))
 			goto Exit;
 		size = stream->size;
 	} else
@@ -142,11 +142,11 @@ T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Servic
 		parser->in_memory = 1;
 
 		/* check that the `size' field is valid */
-		if (FT2_1_3_STREAM_SKIP(size))
+		if (FT_STREAM_SKIP(size))
 			goto Exit;
 	} else {
 		/* read segment in memory */
-		if (FT2_1_3_ALLOC(parser->base_dict, size) || FT2_1_3_STREAM_READ(parser->base_dict, size))
+		if (FT_ALLOC(parser->base_dict, size) || FT_STREAM_READ(parser->base_dict, size))
 			goto Exit;
 		parser->base_len = size;
 	}
@@ -156,7 +156,7 @@ T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Servic
 	{
 		if (size <= 16 || (ft_strncmp((const char *)parser->base_dict, "%!PS-AdobeFont-1", 16) && ft_strncmp((const char *)parser->base_dict, "%!FontType", 10))) {
 			FT_TRACE2(("[not a Type1 font]\n"));
-			error = FT2_1_3_Err_Unknown_File_Format;
+			error = FT_Err_Unknown_File_Format;
 		} else {
 			parser->root.base = parser->base_dict;
 			parser->root.cursor = parser->base_dict;
@@ -166,7 +166,7 @@ T1_New_Parser(T1_Parser parser, FT_Stream stream, FT_Memory memory, PSAux_Servic
 
 Exit:
 	if (error && !parser->in_memory)
-		FT2_1_3_FREE(parser->base_dict);
+		FT_FREE(parser->base_dict);
 
 	return error;
 }
@@ -177,11 +177,11 @@ T1_Finalize_Parser(T1_Parser parser) {
 	FT_Memory memory = parser->root.memory;
 
 	/* always free the private dictionary */
-	FT2_1_3_FREE(parser->private_dict);
+	FT_FREE(parser->private_dict);
 
 	/* free the base dictionary only when we have a disk stream */
 	if (!parser->in_memory)
-		FT2_1_3_FREE(parser->base_dict);
+		FT_FREE(parser->base_dict);
 
 	parser->root.funcs.done(&parser->root);
 }
@@ -219,7 +219,7 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 		/* made of several segments.  We thus first read the number of   */
 		/* segments to compute the total size of the private dictionary  */
 		/* then re-read them into memory.                                */
-		FT_Long start_pos = FT2_1_3_STREAM_POS();
+		FT_Long start_pos = FT_STREAM_POS();
 		FT_UShort tag;
 
 		parser->private_len = 0;
@@ -233,7 +233,7 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 
 			parser->private_len += size;
 
-			if (FT2_1_3_STREAM_SKIP(size))
+			if (FT_STREAM_SKIP(size))
 				goto Fail;
 		}
 
@@ -242,22 +242,22 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 		if (parser->private_len == 0) {
 			FT_ERROR(("T1_Get_Private_Dict:"));
 			FT_ERROR((" invalid private dictionary section\n"));
-			error = FT2_1_3_Err_Invalid_File_Format;
+			error = FT_Err_Invalid_File_Format;
 			goto Fail;
 		}
 
-		if (FT2_1_3_STREAM_SEEK(start_pos) || FT2_1_3_ALLOC(parser->private_dict, parser->private_len))
+		if (FT_STREAM_SEEK(start_pos) || FT_ALLOC(parser->private_dict, parser->private_len))
 			goto Fail;
 
 		parser->private_len = 0;
 		for (;;) {
 			error = read_pfb_tag(stream, &tag, &size);
 			if (error || tag != 0x8002U) {
-				error = FT2_1_3_Err_Ok;
+				error = FT_Err_Ok;
 				break;
 			}
 
-			if (FT2_1_3_STREAM_READ(parser->private_dict + parser->private_len, size))
+			if (FT_STREAM_READ(parser->private_dict + parser->private_len, size))
 				goto Fail;
 
 			parser->private_len += size;
@@ -293,7 +293,7 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 			if (cur >= limit) {
 				FT_ERROR(("T1_Get_Private_Dict:"));
 				FT_ERROR((" could not find `eexec' keyword\n"));
-				error = FT2_1_3_Err_Invalid_File_Format;
+				error = FT_Err_Invalid_File_Format;
 				goto Exit;
 			}
 		}
@@ -306,7 +306,7 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 
 		if (parser->in_memory) {
 			/* note that we allocate one more byte to put a terminating `0' */
-			if (FT2_1_3_ALLOC(parser->private_dict, size + 1))
+			if (FT_ALLOC(parser->private_dict, size + 1))
 				goto Fail;
 			parser->private_len = size;
 		} else {
@@ -327,7 +327,7 @@ T1_Get_Private_Dict(T1_Parser parser, PSAux_Service psaux) {
 		if ((hexa_value(cur[0]) | hexa_value(cur[1]) | hexa_value(cur[2]) | hexa_value(cur[3])) < 0)
 
 			/* binary encoding -- `simply' copy the private dict */
-			FT2_1_3_MEM_COPY(parser->private_dict, cur, size);
+			FT_MEM_COPY(parser->private_dict, cur, size);
 
 		else {
 			/* ASCII hexadecimal encoding */

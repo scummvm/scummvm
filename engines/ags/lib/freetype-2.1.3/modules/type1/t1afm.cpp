@@ -41,9 +41,9 @@ namespace FreeType213 {
 
 FT_LOCAL_DEF(void)
 T1_Done_AFM(FT_Memory memory, T1_AFM *afm) {
-	FT2_1_3_FREE(afm->kern_pairs);
+	FT_FREE(afm->kern_pairs);
 	afm->num_pairs = 0;
-	FT2_1_3_FREE(afm);
+	FT_FREE(afm);
 }
 
 #undef  IS_KERN_PAIR
@@ -74,7 +74,7 @@ static FT_UInt afm_atoindex(FT_Byte **start, FT_Byte *limit, T1_Font type1) {
 		FT_Int n;
 
 		/* copy glyph name to intermediate array */
-		FT2_1_3_MEM_COPY(temp, *start, len);
+		FT_MEM_COPY(temp, *start, len);
 		temp[len] = 0;
 
 		/* lookup glyph name in face array */
@@ -147,7 +147,7 @@ T1_Read_AFM(FT_Face t1_face, FT_Stream stream) {
 	T1_Font        type1 = &((T1_Face)t1_face)->type1;
 	T1_AFM         *afm = 0;
 
-	if (FT2_1_3_FRAME_ENTER(stream->size))
+	if (FT_FRAME_ENTER(stream->size))
 		return error;
 
 	start = (FT_Byte *)stream->cursor;
@@ -205,9 +205,9 @@ T1_Read_AFM(FT_Face t1_face, FT_Stream stream) {
 
 Exit:
 	if (error)
-		FT2_1_3_FREE(afm);
+		FT_FREE(afm);
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 
 	return error;
 }

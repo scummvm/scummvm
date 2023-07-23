@@ -28,7 +28,7 @@
 
 /* generic errors */
 
-FT2_1_3_NOERRORDEF_( Ok,                                        0x00, \
+FT_NOERRORDEF_( Ok,                                        0x00, \
 				"no error" )
 
 FT_ERRORDEF_( Cannot_Open_Resource,                        0x01, \

@@ -85,20 +85,20 @@
 
 #include "engines/ags/lib/freetype-2.1.3/modules/smooth/ftsmerrs.h"
 
-#define ErrRaster_Invalid_Mode    FT2_1_3_Err_Cannot_Render_Glyph
-#define ErrRaster_Invalid_Outline FT2_1_3_Err_Invalid_Outline
+#define ErrRaster_Invalid_Mode    FT_Err_Cannot_Render_Glyph
+#define ErrRaster_Invalid_Outline FT_Err_Invalid_Outline
 
 #endif /* _STANDALONE_ */
 
 namespace AGS3 {
 namespace FreeType213 {
 
-#ifndef FT2_1_3_MEM_SET
-#define FT2_1_3_MEM_SET(d, s, c) ft_memset(d, s, c)
+#ifndef FT_MEM_SET
+#define FT_MEM_SET(d, s, c) ft_memset(d, s, c)
 #endif
 
-#ifndef FT2_1_3_MEM_ZERO
-#define FT2_1_3_MEM_ZERO(dest, count) FT2_1_3_MEM_SET(dest, 0, count)
+#ifndef FT_MEM_ZERO
+#define FT_MEM_ZERO(dest, count) FT_MEM_SET(dest, 0, count)
 #endif
 
 /* define this to dump debugging information */
@@ -106,7 +106,7 @@ namespace FreeType213 {
 
 /* as usual, for the speed hungry :-) */
 
-#ifndef FT2_1_3_STATIC_RASTER
+#ifndef FT_STATIC_RASTER
 
 #define RAS_ARG  PRaster raster
 #define RAS_ARG_ PRaster raster,
@@ -116,7 +116,7 @@ namespace FreeType213 {
 
 #define ras (*raster)
 
-#else /* FT2_1_3_STATIC_RASTER */
+#else /* FT_STATIC_RASTER */
 
 #define RAS_ARG   /* empty */
 #define RAS_ARG_  /* empty */
@@ -125,7 +125,7 @@ namespace FreeType213 {
 
 static TRaster ras;
 
-#endif /* FT2_1_3_STATIC_RASTER */
+#endif /* FT_STATIC_RASTER */
 
 /* must be at least 6 bits! */
 #define PIXEL_BITS  8
@@ -183,7 +183,7 @@ typedef int TArea;
 #endif /* PIXEL_BITS >= 8 */
 
 /* maximal number of gray spans in a call to the span callback */
-#define FT2_1_3_MAX_GRAY_SPANS  32
+#define FT_MAX_GRAY_SPANS  32
 
 
 #ifdef GRAYS_COMPACT
@@ -232,7 +232,7 @@ typedef struct TRaster_ {
 	FT_Bitmap   target;
 	FT_BBox     clip_box;
 
-	FT_Span     gray_spans[FT2_1_3_MAX_GRAY_SPANS];
+	FT_Span     gray_spans[FT_MAX_GRAY_SPANS];
 	int         num_gray_spans;
 
 	FT_Raster_Span_Func  render_span;
@@ -1091,7 +1091,7 @@ static void gray_render_span(int y, int count, FT_Span *spans, PRaster raster) {
 
 		if (coverage)
 #if 1
-			FT2_1_3_MEM_SET(p + spans->x, (unsigned char)coverage, spans->len);
+			FT_MEM_SET(p + spans->x, (unsigned char)coverage, spans->len);
 #else  /* 1 */
 		{
 			q = p + spans->x;
@@ -1169,7 +1169,7 @@ static void gray_hline(RAS_ARG_ TCoord x, TCoord y, TPos area, int acount) {
 			return;
 		}
 
-		if (ras.span_y != y || count >= FT2_1_3_MAX_GRAY_SPANS) {
+		if (ras.span_y != y || count >= FT_MAX_GRAY_SPANS) {
 			if (ras.render_span && count > 0)
 				ras.render_span(ras.span_y, count, ras.gray_spans,
 								ras.render_span_data);
@@ -1739,7 +1739,7 @@ static int gray_raster_new(void *memory, FT_Raster *araster) {
 	FT_UNUSED(memory);
 
 	*araster = (FT_Raster)&the_raster;
-	FT2_1_3_MEM_ZERO(&the_raster, sizeof(the_raster));
+	FT_MEM_ZERO(&the_raster, sizeof(the_raster));
 
 #ifdef GRAYS_USE_GAMMA
 	grays_init_gamma((PRaster)*araster);
@@ -1760,7 +1760,7 @@ static int gray_raster_new(FT_Memory memory, FT_Raster *araster) {
 	PRaster raster;
 
 	*araster = 0;
-	if (!FT2_1_3_ALLOC(raster, sizeof(TRaster))) {
+	if (!FT_ALLOC(raster, sizeof(TRaster))) {
 		raster->memory = memory;
 		*araster = (FT_Raster)raster;
 
@@ -1775,7 +1775,7 @@ static int gray_raster_new(FT_Memory memory, FT_Raster *araster) {
 static void gray_raster_done(FT_Raster raster) {
 	FT_Memory memory = (FT_Memory)((PRaster)raster)->memory;
 
-	FT2_1_3_FREE(raster);
+	FT_FREE(raster);
 }
 
 #endif /* _STANDALONE_ */

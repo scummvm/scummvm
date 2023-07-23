@@ -48,7 +48,7 @@ int       ps_debug_no_vert_hints = 0;
 static void
 ps_hint_table_done( PS_Hint_Table  table,
 					FT_Memory      memory ) {
-	FT2_1_3_FREE( table->hints );
+	FT_FREE( table->hints );
 	table->num_hints = 0;
 	table->max_hints = 0;
 }
@@ -67,7 +67,7 @@ ps_hint_table_ensure( PS_Hint_Table  table,
 	if ( new_max > old_max ) {
 		/* try to grow the table */
 		new_max = ( new_max + 7 ) & -8;
-		if ( !FT2_1_3_RENEW_ARRAY( table->hints, old_max, new_max ) )
+		if ( !FT_RENEW_ARRAY( table->hints, old_max, new_max ) )
 			table->max_hints = new_max;
 	}
 	return error;
@@ -117,7 +117,7 @@ Exit:
 static void
 ps_mask_done( PS_Mask    mask,
 			  FT_Memory  memory ) {
-	FT2_1_3_FREE( mask->bytes );
+	FT_FREE( mask->bytes );
 	mask->num_bits  = 0;
 	mask->max_bits  = 0;
 	mask->end_point = 0;
@@ -136,7 +136,7 @@ ps_mask_ensure( PS_Mask    mask,
 
 	if ( new_max > old_max ) {
 		new_max = ( new_max + 7 ) & -8;
-		if ( !FT2_1_3_RENEW_ARRAY( mask->bytes, old_max, new_max ) )
+		if ( !FT_RENEW_ARRAY( mask->bytes, old_max, new_max ) )
 			mask->max_bits = new_max * 8;
 	}
 	return error;
@@ -208,7 +208,7 @@ ps_mask_table_done( PS_Mask_Table  table,
 	for ( ; count > 0; count--, mask++ )
 		ps_mask_done( mask, memory );
 
-	FT2_1_3_FREE( table->masks );
+	FT_FREE( table->masks );
 	table->num_masks = 0;
 	table->max_masks = 0;
 }
@@ -226,7 +226,7 @@ ps_mask_table_ensure( PS_Mask_Table  table,
 
 	if ( new_max > old_max ) {
 		new_max = ( new_max + 7 ) & -8;
-		if ( !FT2_1_3_RENEW_ARRAY( table->masks, old_max, new_max ) )
+		if ( !FT_RENEW_ARRAY( table->masks, old_max, new_max ) )
 			table->max_masks = new_max;
 	}
 	return error;
@@ -743,7 +743,7 @@ ps_hints_done( PS_Hints  hints ) {
 FT_LOCAL( FT_Error )
 ps_hints_init( PS_Hints   hints,
 			   FT_Memory  memory ) {
-	FT2_1_3_MEM_ZERO( hints, sizeof ( *hints ) );
+	FT_MEM_ZERO( hints, sizeof ( *hints ) );
 	hints->memory = memory;
 	return 0;
 }
@@ -764,7 +764,7 @@ ps_hints_open( PS_Hints      hints,
 		break;
 
 	default:
-		hints->error     = FT2_1_3_Err_Invalid_Argument;
+		hints->error     = FT_Err_Invalid_Argument;
 		hints->hint_type = hint_type;
 
 		FT_ERROR(( "ps_hints_open: invalid charstring type!\n" ));
@@ -862,7 +862,7 @@ ps_hints_t1stem3( PS_Hints  hints,
 				goto Fail;
 		} else {
 			FT_ERROR(( "ps_hints_t1stem3: called with invalid hint type!\n" ));
-			error = FT2_1_3_Err_Invalid_Argument;
+			error = FT_Err_Invalid_Argument;
 			goto Fail;
 		}
 	}
@@ -898,7 +898,7 @@ ps_hints_t1reset( PS_Hints  hints,
 				goto Fail;
 		} else {
 			/* invalid hint type */
-			error = FT2_1_3_Err_Invalid_Argument;
+			error = FT_Err_Invalid_Argument;
 			goto Fail;
 		}
 	}
@@ -1045,7 +1045,7 @@ t1_hints_stem( T1_Hints  hints,
 
 FT_LOCAL_DEF( void )
 t1_hints_funcs_init( T1_Hints_FuncsRec*  funcs ) {
-	FT2_1_3_MEM_ZERO( (char*)funcs, sizeof ( *funcs ) );
+	FT_MEM_ZERO( (char*)funcs, sizeof ( *funcs ) );
 
 	funcs->open  = (T1_Hints_OpenFunc)    t1_hints_open;
 	funcs->close = (T1_Hints_CloseFunc)   ps_hints_close;
@@ -1105,7 +1105,7 @@ t2_hints_stems( T2_Hints   hints,
 
 FT_LOCAL_DEF( void )
 t2_hints_funcs_init( T2_Hints_FuncsRec*  funcs ) {
-	FT2_1_3_MEM_ZERO( funcs, sizeof ( *funcs ) );
+	FT_MEM_ZERO( funcs, sizeof ( *funcs ) );
 
 	funcs->open    = (T2_Hints_OpenFunc)   t2_hints_open;
 	funcs->close   = (T2_Hints_CloseFunc)  ps_hints_close;

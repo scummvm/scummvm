@@ -244,7 +244,7 @@ cff_builder_init( CFF_Builder*   builder,
 		builder->current = &loader->current.outline;
 		FT_GlyphLoader_Rewind( loader );
 
-		builder->hint_flags    = FT2_1_3_FACE(face)->internal->hint_flags;
+		builder->hint_flags    = FT_FACE(face)->internal->hint_flags;
 		builder->hints_globals = 0;
 		builder->hints_funcs   = 0;
 
@@ -351,7 +351,7 @@ cff_decoder_init( CFF_Decoder*    decoder,
 
 
 	/* clear everything */
-	FT2_1_3_MEM_ZERO( decoder, sizeof ( *decoder ) );
+	FT_MEM_ZERO( decoder, sizeof ( *decoder ) );
 
 	/* initialize builder */
 	cff_builder_init( &decoder->builder, face, size, slot, hinting );
@@ -448,7 +448,7 @@ cff_builder_add_contour( CFF_Builder*  builder ) {
 
 	if ( !builder->load_points ) {
 		outline->n_contours++;
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	}
 
 	error = FT_GlyphLoader_CheckPoints( builder->loader, 0, 1 );
@@ -639,7 +639,7 @@ cff_operator_seac( CFF_Decoder*  decoder,
 	if ( bchar_index < 0 || achar_index < 0 ) {
 		FT_ERROR(( "cff_operator_seac:" ));
 		FT_ERROR(( " invalid seac character code arguments\n" ));
-		return FT2_1_3_Err_Syntax_Error;
+		return FT_Err_Syntax_Error;
 	}
 
 	/* If we are trying to load a composite glyph, do not load the */
@@ -659,15 +659,15 @@ cff_operator_seac( CFF_Decoder*  decoder,
 
 		/* subglyph 0 = base character */
 		subg->index = bchar_index;
-		subg->flags = FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES |
-					  FT2_1_3_SUBGLYPH_FLAG_USE_MY_METRICS;
+		subg->flags = FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES |
+					  FT_SUBGLYPH_FLAG_USE_MY_METRICS;
 		subg->arg1  = 0;
 		subg->arg2  = 0;
 		subg++;
 
 		/* subglyph 1 = accent character */
 		subg->index = achar_index;
-		subg->flags = FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES;
+		subg->flags = FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES;
 		subg->arg1  = (FT_Int)adx;
 		subg->arg2  = (FT_Int)ady;
 
@@ -799,7 +799,7 @@ cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 	limit = zone->limit  = charstring_base + charstring_len;
 	ip    = zone->cursor = zone->base;
 
-	error = FT2_1_3_Err_Ok;
+	error = FT_Err_Ok;
 
 	x = builder->pos_x;
 	y = builder->pos_y;
@@ -1670,7 +1670,7 @@ cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 				}
 
 				if ( !error )
-					error = FT2_1_3_Err_Ok;
+					error = FT_Err_Ok;
 
 				cff_builder_close_contour( builder );
 
@@ -2043,7 +2043,7 @@ Unimplemented:
 					FT_ERROR(( " %d", ip[0] ));
 				FT_ERROR(( "\n" ));
 
-				return FT2_1_3_Err_Unimplemented_Feature;
+				return FT_Err_Unimplemented_Feature;
 			}
 
 			decoder->top = args;
@@ -2058,15 +2058,15 @@ Unimplemented:
 
 Syntax_Error:
 	FT_TRACE4(( "cff_decoder_parse_charstrings: syntax error!" ));
-	return FT2_1_3_Err_Invalid_File_Format;
+	return FT_Err_Invalid_File_Format;
 
 Stack_Underflow:
 	FT_TRACE4(( "cff_decoder_parse_charstrings: stack underflow!" ));
-	return FT2_1_3_Err_Too_Few_Arguments;
+	return FT_Err_Too_Few_Arguments;
 
 Stack_Overflow:
 	FT_TRACE4(( "cff_decoder_parse_charstrings: stack overflow!" ));
-	return FT2_1_3_Err_Stack_Overflow;
+	return FT_Err_Stack_Overflow;
 
 Memory_Error:
 	return builder->error;
@@ -2136,7 +2136,7 @@ cff_compute_max_advance( TT_Face  face,
 
 	*max_advance = decoder.builder.advance.x;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -2187,7 +2187,7 @@ cff_slot_load( CFF_GlyphSlot  glyph,
 	glyph->root.outline.n_points   = 0;
 	glyph->root.outline.n_contours = 0;
 
-	hinting = FT2_1_3_BOOL( ( load_flags & FT_LOAD_NO_SCALE   ) == 0 &&
+	hinting = FT_BOOL( ( load_flags & FT_LOAD_NO_SCALE   ) == 0 &&
 					   ( load_flags & FT_LOAD_NO_HINTING ) == 0 );
 
 	glyph->root.format = FT_GLYPH_FORMAT_OUTLINE;  /* by default */

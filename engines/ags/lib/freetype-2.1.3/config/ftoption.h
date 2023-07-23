@@ -47,17 +47,17 @@ FT_BEGIN_HEADER
 /*    that for your own projects.                                        */
 /*                                                                       */
 /*  - Copy the file <ft2build.h> to "$BUILD/ft2build.h" and modify it    */
-/*    slightly to pre-define the macro FT2_1_3_CONFIG_OPTIONS_H used to       */
+/*    slightly to pre-define the macro FT_CONFIG_OPTIONS_H used to       */
 /*    locate this file during the build.  For example,                   */
 /*                                                                       */
-/*      #define FT2_1_3_CONFIG_OPTIONS_H  <myftoptions.h>                     */
+/*      #define FT_CONFIG_OPTIONS_H  <myftoptions.h>                     */
 /*      #include <freetype/config/ftheader.h>                            */
 /*                                                                       */
 /*    will use "$BUILD/myftoptions.h" instead of this file for macro     */
 /*    definitions.                                                       */
 /*                                                                       */
 /*    Note also that you can similarly pre-define the macro              */
-/*    FT2_1_3_CONFIG_MODULES_H used to locate the file listing of the modules */
+/*    FT_CONFIG_MODULES_H used to locate the file listing of the modules */
 /*    that are statically linked to the library at compile time.  By     */
 /*    default, this file is <freetype/config/ftmodule.h>.                */
 /*                                                                       */
@@ -108,13 +108,13 @@ FT_BEGIN_HEADER
 /*   this will however force you to link the zlib to any program that    */
 /*   also uses FreeType.                                                 */
 /*                                                                       */
-// #define FT2_1_3_CONFIG_OPTION_USE_ZLIB
+// #define FT_CONFIG_OPTION_USE_ZLIB
 
 /*************************************************************************/
 /*                                                                       */
 /* ZLib library selection                                                */
 /*                                                                       */
-/*   This macro is only used when FT2_1_3_CONFIG_OPTION_USE_ZLIB is defined.  */
+/*   This macro is only used when FT_CONFIG_OPTION_USE_ZLIB is defined.  */
 /*   It allows FreeType's "ftgzip" component to link to the system's     */
 /*   installation of the ZLib library. This is useful on systems like    */
 /*   Unix or VMS where it generally is already available.                */
@@ -128,7 +128,7 @@ FT_BEGIN_HEADER
 /*   do not #undef this macro here, since the build system might         */
 /*   define for certain configurations                                   */
 /*                                                                       */
-//	#define  FT2_1_3_CONFIG_OPTION_SYSTEM_ZLIB
+//	#define  FT_CONFIG_OPTION_SYSTEM_ZLIB
 
 /*************************************************************************/
 /*                                                                       */
@@ -157,7 +157,7 @@ FT_BEGIN_HEADER
 /*         FT2_1_3_Init_FreeType( FT_Library*  alibrary )                     */
 /*         {                                                             */
 /*           ... some code ...                                           */
-/*           return FT2_1_3_Err_Ok;                                           */
+/*           return FT_Err_Ok;                                           */
 /*         }                                                             */
 /*                                                                       */
 /*   You can provide your own implementation of FT_EXPORT and            */

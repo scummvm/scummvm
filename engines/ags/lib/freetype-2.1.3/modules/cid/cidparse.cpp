@@ -61,24 +61,24 @@ cid_parser_new( CID_Parser*    parser,
 	FT_Int    buff_len;
 
 
-	FT2_1_3_MEM_ZERO( parser, sizeof ( *parser ) );
+	FT_MEM_ZERO( parser, sizeof ( *parser ) );
 	psaux->ps_parser_funcs->init( &parser->root, 0, 0, memory );
 
 	parser->stream = stream;
 
-	base_offset = FT2_1_3_STREAM_POS();
+	base_offset = FT_STREAM_POS();
 
 	/* first of all, check the font format in the  header */
-	if ( FT2_1_3_FRAME_ENTER( 31 ) )
+	if ( FT_FRAME_ENTER( 31 ) )
 		goto Exit;
 
 	if ( ft_strncmp( (char *)stream->cursor,
 					 "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) ) {
 		FT_TRACE2(( "[not a valid CID-keyed font]\n" ));
-		error = FT2_1_3_Err_Unknown_File_Format;
+		error = FT_Err_Unknown_File_Format;
 	}
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 	if ( error )
 		goto Exit;
 
@@ -92,14 +92,14 @@ cid_parser_new( CID_Parser*    parser,
 		/* fill input buffer */
 		buff_len -= 256;
 		if ( buff_len > 0 )
-			FT2_1_3_MEM_MOVE( buffer, limit, buff_len );
+			FT_MEM_MOVE( buffer, limit, buff_len );
 
 		p = buffer + buff_len;
 
-		if ( FT2_1_3_STREAM_READ( p, 256 + 10 - buff_len ) )
+		if ( FT_STREAM_READ( p, 256 + 10 - buff_len ) )
 			goto Exit;
 
-		top_position = FT2_1_3_STREAM_POS() - buff_len;
+		top_position = FT_STREAM_POS() - buff_len;
 		buff_len = 256 + 10;
 
 		/* look for `StartData' */
@@ -118,8 +118,8 @@ Found:
 	/* section                                                         */
 
 	ps_len = offset - base_offset;
-	if ( FT2_1_3_STREAM_SEEK( base_offset )                    ||
-			FT2_1_3_FRAME_EXTRACT( ps_len, parser->postscript ) )
+	if ( FT_STREAM_SEEK( base_offset )                    ||
+			FT_FRAME_EXTRACT( ps_len, parser->postscript ) )
 		goto Exit;
 
 	parser->data_offset    = offset;
@@ -141,7 +141,7 @@ cid_parser_done( CID_Parser*  parser ) {
 		FT_Stream  stream = parser->stream;
 
 
-		FT2_1_3_FRAME_RELEASE( parser->postscript );
+		FT_FRAME_RELEASE( parser->postscript );
 	}
 	parser->root.funcs.done( &parser->root );
 }

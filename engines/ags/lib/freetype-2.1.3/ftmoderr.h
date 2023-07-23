@@ -32,64 +32,64 @@
 
 /* SETUP MACROS */
 
-#undef FT2_1_3_NEED_EXTERN_C
+#undef FT_NEED_EXTERN_C
 
-#ifndef FT2_1_3_MODERRDEF
+#ifndef FT_MODERRDEF
 
 #ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
-#define FT2_1_3_MODERRDEF(e, v, s) FT2_1_3_Mod_Err_##e = v,
+#define FT_MODERRDEF(e, v, s) FT_Mod_Err_##e = v,
 #else
-#define FT2_1_3_MODERRDEF(e, v, s) FT2_1_3_Mod_Err_##e = 0,
+#define FT_MODERRDEF(e, v, s) FT_Mod_Err_##e = 0,
 #endif
 
-#define FT2_1_3_MODERR_START_LIST  enum {
-#define FT2_1_3_MODERR_END_LIST    FT_Mod_Err_Max };
+#define FT_MODERR_START_LIST  enum {
+#define FT_MODERR_END_LIST    FT_Mod_Err_Max };
 
 #ifdef __cplusplus
-#define FT2_1_3_NEED_EXTERN_C
+#define FT_NEED_EXTERN_C
 extern "C" {
 #endif
 
-#endif /* !FT2_1_3_MODERRDEF */
+#endif /* !FT_MODERRDEF */
 
 
 /* LIST MODULE ERROR BASES */
 
-#ifdef FT2_1_3_MODERR_START_LIST
-FT2_1_3_MODERR_START_LIST
+#ifdef FT_MODERR_START_LIST
+FT_MODERR_START_LIST
 #endif
 
-FT2_1_3_MODERRDEF(Base,     0x000, "base module")
-FT2_1_3_MODERRDEF(Autohint, 0x100, "autohinter module")
-FT2_1_3_MODERRDEF(Cache,    0x200, "cache module")
-FT2_1_3_MODERRDEF(CFF,      0x300, "CFF module")
-FT2_1_3_MODERRDEF(CID,      0x400, "CID module")
-FT2_1_3_MODERRDEF(PCF,      0x500, "PCF module")
-FT2_1_3_MODERRDEF(PSaux,    0x600, "PS auxiliary module")
-FT2_1_3_MODERRDEF(PSnames,  0x700, "PS names module")
-FT2_1_3_MODERRDEF(Raster,   0x800, "raster module")
-FT2_1_3_MODERRDEF(SFNT,     0x900, "SFNT module")
-FT2_1_3_MODERRDEF(Smooth,   0xA00, "smooth raster module")
-FT2_1_3_MODERRDEF(TrueType, 0xB00, "TrueType module")
-FT2_1_3_MODERRDEF(Type1,    0xC00, "Type 1 module")
-FT2_1_3_MODERRDEF(Winfonts, 0xD00, "Windows FON/FNT module")
-FT2_1_3_MODERRDEF(PFR,      0xE00, "PFR module")
+FT_MODERRDEF(Base,     0x000, "base module")
+FT_MODERRDEF(Autohint, 0x100, "autohinter module")
+FT_MODERRDEF(Cache,    0x200, "cache module")
+FT_MODERRDEF(CFF,      0x300, "CFF module")
+FT_MODERRDEF(CID,      0x400, "CID module")
+FT_MODERRDEF(PCF,      0x500, "PCF module")
+FT_MODERRDEF(PSaux,    0x600, "PS auxiliary module")
+FT_MODERRDEF(PSnames,  0x700, "PS names module")
+FT_MODERRDEF(Raster,   0x800, "raster module")
+FT_MODERRDEF(SFNT,     0x900, "SFNT module")
+FT_MODERRDEF(Smooth,   0xA00, "smooth raster module")
+FT_MODERRDEF(TrueType, 0xB00, "TrueType module")
+FT_MODERRDEF(Type1,    0xC00, "Type 1 module")
+FT_MODERRDEF(Winfonts, 0xD00, "Windows FON/FNT module")
+FT_MODERRDEF(PFR,      0xE00, "PFR module")
 
-#ifdef FT2_1_3_MODERR_END_LIST
-FT2_1_3_MODERR_END_LIST
+#ifdef FT_MODERR_END_LIST
+FT_MODERR_END_LIST
 #endif
 
 
 /* CLEANUP */
 
-#ifdef FT2_1_3_NEED_EXTERN_C
+#ifdef FT_NEED_EXTERN_C
 }
 #endif
 
-#undef FT2_1_3_MODERR_START_LIST
-#undef FT2_1_3_MODERR_END_LIST
-#undef FT2_1_3_MODERRDEF
-#undef FT2_1_3_NEED_EXTERN_C
+#undef FT_MODERR_START_LIST
+#undef FT_MODERR_END_LIST
+#undef FT_MODERRDEF
+#undef FT_NEED_EXTERN_C
 
 
 #endif /* AGS_LIB_FREETYPE_FTMODERR_H */

@@ -145,7 +145,7 @@ static FT_Error t1operator_seac(T1_Decoder decoder, FT_Pos asb, FT_Pos adx, FT_P
 	if (decoder->glyph_names == 0) {
 		FT_ERROR(("t1operator_seac:"));
 		FT_ERROR((" glyph names table not available in this font!\n"));
-		return FT2_1_3_Err_Syntax_Error;
+		return FT_Err_Syntax_Error;
 	}
 
 	bchar_index = t1_lookup_glyph_by_stdcharcode(decoder, bchar);
@@ -154,7 +154,7 @@ static FT_Error t1operator_seac(T1_Decoder decoder, FT_Pos asb, FT_Pos adx, FT_P
 	if (bchar_index < 0 || achar_index < 0) {
 		FT_ERROR(("t1operator_seac:"));
 		FT_ERROR((" invalid seac character code arguments\n"));
-		return FT2_1_3_Err_Syntax_Error;
+		return FT_Err_Syntax_Error;
 	}
 
 	/* if we are trying to load a composite glyph, do not load the */
@@ -173,14 +173,14 @@ static FT_Error t1operator_seac(T1_Decoder decoder, FT_Pos asb, FT_Pos adx, FT_P
 
 		/* subglyph 0 = base character */
 		subg->index = bchar_index;
-		subg->flags = FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES | FT2_1_3_SUBGLYPH_FLAG_USE_MY_METRICS;
+		subg->flags = FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES | FT_SUBGLYPH_FLAG_USE_MY_METRICS;
 		subg->arg1 = 0;
 		subg->arg2 = 0;
 		subg++;
 
 		/* subglyph 1 = accent character */
 		subg->index = achar_index;
-		subg->flags = FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES;
+		subg->flags = FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES;
 		subg->arg1  = adx - asb;
 		subg->arg2  = ady;
 
@@ -283,7 +283,7 @@ t1_decoder_parse_charstrings(T1_Decoder decoder, FT_Byte *charstring_base, FT_UI
 	limit = zone->limit = charstring_base + charstring_len;
 	ip = zone->cursor = zone->base;
 
-	error = FT2_1_3_Err_Ok;
+	error = FT_Err_Ok;
 
 	x = orig_x = builder->pos_x;
 	y = orig_y = builder->pos_y;
@@ -636,7 +636,7 @@ t1_decoder_parse_charstrings(T1_Decoder decoder, FT_Byte *charstring_base, FT_UI
 
 				/* return now! */
 				FT_TRACE4(("\n\n"));
-				return FT2_1_3_Err_Ok;
+				return FT_Err_Ok;
 
 			case op_hsbw:
 				FT_TRACE4((" hsbw"));
@@ -654,7 +654,7 @@ t1_decoder_parse_charstrings(T1_Decoder decoder, FT_Byte *charstring_base, FT_UI
 				/* the glyph's metrics (lsb + advance width), not load the   */
 				/* rest of it; so exit immediately                           */
 				if (builder->metrics_only)
-					return FT2_1_3_Err_Ok;
+					return FT_Err_Ok;
 
 				break;
 
@@ -677,7 +677,7 @@ t1_decoder_parse_charstrings(T1_Decoder decoder, FT_Byte *charstring_base, FT_UI
 				/* the glyph's metrics (lsb + advance width), not load the   */
 				/* rest of it; so exit immediately                           */
 				if (builder->metrics_only)
-					return FT2_1_3_Err_Ok;
+					return FT_Err_Ok;
 
 				break;
 
@@ -954,10 +954,10 @@ t1_decoder_parse_charstrings(T1_Decoder decoder, FT_Byte *charstring_base, FT_UI
 	return error;
 
 Syntax_Error:
-	return FT2_1_3_Err_Syntax_Error;
+	return FT_Err_Syntax_Error;
 
 Stack_Underflow:
-	return FT2_1_3_Err_Stack_Underflow;
+	return FT_Err_Stack_Underflow;
 
 Memory_Error:
 	return builder->error;
@@ -973,17 +973,17 @@ t1_decoder_parse_glyph(T1_Decoder decoder, FT_UInt glyph) {
 FT_LOCAL_DEF(FT_Error)
 t1_decoder_init(T1_Decoder decoder, FT_Face face, FT_Size size, FT_GlyphSlot slot, FT_Byte **glyph_names,
 				PS_Blend blend, FT_Bool hinting, FT_Render_Mode hint_mode, T1_Decoder_Callback parse_callback) {
-	FT2_1_3_MEM_ZERO(decoder, sizeof(*decoder));
+	FT_MEM_ZERO(decoder, sizeof(*decoder));
 
 	/* retrieve PSNames interface from list of current modules */
 	{
 		PSNames_Service psnames = 0;
 
-		psnames = const_cast<PSNames_Interface *>(static_cast<const PSNames_Interface *>(FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames")));
+		psnames = const_cast<PSNames_Interface *>(static_cast<const PSNames_Interface *>(FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "psnames")));
 		if (!psnames) {
 			FT_ERROR(("t1_decoder_init: "));
 			FT_ERROR(("the `psnames' module is not available\n"));
-			return FT2_1_3_Err_Unimplemented_Feature;
+			return FT_Err_Unimplemented_Feature;
 		}
 
 		decoder->psnames = psnames;

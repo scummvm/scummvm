@@ -41,8 +41,8 @@ namespace FreeType213 {
 FT_BEGIN_HEADER
 
 
-#undef  FT2_1_3_SET_ERROR
-#define FT2_1_3_SET_ERROR(expression) ((error = (expression)) != 0)
+#undef  FT_SET_ERROR
+#define FT_SET_ERROR(expression) ((error = (expression)) != 0)
 
 
 FT_BASE(FT_Error)
@@ -55,15 +55,15 @@ FT_BASE(void)
 FT_Free(FT_Memory memory, void **P);
 
 
-#define FT2_1_3_MEM_SET(dest, byte, count) ft_memset(dest, byte, count)
-#define FT2_1_3_MEM_COPY(dest, source, count) ft_memcpy(dest, source, count)
-#define FT2_1_3_MEM_MOVE(dest, source, count) ft_memmove(dest, source, count)
-#define FT2_1_3_MEM_ZERO(dest, count) FT2_1_3_MEM_SET(dest, 0, count)
-#define FT2_1_3_ZERO(p) FT2_1_3_MEM_ZERO(p, sizeof(*(p)))
+#define FT_MEM_SET(dest, byte, count) ft_memset(dest, byte, count)
+#define FT_MEM_COPY(dest, source, count) ft_memcpy(dest, source, count)
+#define FT_MEM_MOVE(dest, source, count) ft_memmove(dest, source, count)
+#define FT_MEM_ZERO(dest, count) FT_MEM_SET(dest, 0, count)
+#define FT_ZERO(p) FT_MEM_ZERO(p, sizeof(*(p)))
 
-#define FT2_1_3_MEM_ALLOC(_pointer_, _size_) FT_Alloc(memory, _size_, (void **)&(_pointer_))
-#define FT2_1_3_MEM_FREE(_pointer_) FT_Free(memory, (void **)&(_pointer_))
-#define FT2_1_3_MEM_REALLOC(_pointer_, _current_, _size_) FT_Realloc(memory, _current_, _size_, (void **)&(_pointer_))
+#define FT_MEM_ALLOC(_pointer_, _size_) FT_Alloc(memory, _size_, (void **)&(_pointer_))
+#define FT_MEM_FREE(_pointer_) FT_Free(memory, (void **)&(_pointer_))
+#define FT_MEM_REALLOC(_pointer_, _current_, _size_) FT_Realloc(memory, _current_, _size_, (void **)&(_pointer_))
 
 
 /*************************************************************************/
@@ -72,33 +72,33 @@ FT_Free(FT_Memory memory, void **P);
 /* _typed_ in order to automatically compute array element sizes.        */
 /*                                                                       */
 
-#define FT2_1_3_MEM_NEW(_pointer_) FT2_1_3_MEM_ALLOC(_pointer_, sizeof(*(_pointer_)))
-#define FT2_1_3_MEM_NEW_ARRAY(_pointer_, _count_) FT2_1_3_MEM_ALLOC(_pointer_, (_count_) * sizeof(*(_pointer_)))
-#define FT2_1_3_MEM_RENEW_ARRAY(_pointer_, _old_, _new_) FT2_1_3_MEM_REALLOC(_pointer_, (_old_) * sizeof(*(_pointer_)), (_new_) * sizeof(*(_pointer_)))
+#define FT_MEM_NEW(_pointer_) FT_MEM_ALLOC(_pointer_, sizeof(*(_pointer_)))
+#define FT_MEM_NEW_ARRAY(_pointer_, _count_) FT_MEM_ALLOC(_pointer_, (_count_) * sizeof(*(_pointer_)))
+#define FT_MEM_RENEW_ARRAY(_pointer_, _old_, _new_) FT_MEM_REALLOC(_pointer_, (_old_) * sizeof(*(_pointer_)), (_new_) * sizeof(*(_pointer_)))
 
 /*************************************************************************/
 /*                                                                       */
 /* the following macros are obsolete but kept for compatibility reasons  */
 /*                                                                       */
 
-#define FT2_1_3_MEM_ALLOC_ARRAY(_pointer_, _count_, _type_) FT2_1_3_MEM_ALLOC(_pointer_, (_count_) * sizeof(_type_))
-#define FT2_1_3_MEM_REALLOC_ARRAY(_pointer_, _old_, _new_, _type_) FT2_1_3_MEM_REALLOC(_pointer_, (_old_) * sizeof(_type), (_new_) * sizeof(_type_))
+#define FT_MEM_ALLOC_ARRAY(_pointer_, _count_, _type_) FT_MEM_ALLOC(_pointer_, (_count_) * sizeof(_type_))
+#define FT_MEM_REALLOC_ARRAY(_pointer_, _old_, _new_, _type_) FT_MEM_REALLOC(_pointer_, (_old_) * sizeof(_type), (_new_) * sizeof(_type_))
 
 /*************************************************************************/
 /*                                                                       */
-/* The following macros are variants of their FT2_1_3_MEM_XXXX equivalents;   */
+/* The following macros are variants of their FT_MEM_XXXX equivalents;   */
 /* they are used to set an _implicit_ `error' variable and return TRUE   */
 /* if an error occured (i.e. if 'error != 0').                           */
 /*                                                                       */
 
-#define FT2_1_3_ALLOC(_pointer_, _size_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_ALLOC(_pointer_, _size_))
-#define FT2_1_3_REALLOC(_pointer_, _current_, _size_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_REALLOC(_pointer_, _current_, _size_))
-#define FT2_1_3_FREE(_pointer_) FT2_1_3_MEM_FREE(_pointer_)
-#define FT_NEW(_pointer_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_NEW(_pointer_))
-#define FT_NEW_ARRAY(_pointer_, _count_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_NEW_ARRAY(_pointer_, _count_))
-#define FT2_1_3_RENEW_ARRAY(_pointer_, _old_, _new_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_RENEW_ARRAY(_pointer_, _old_, _new_))
-#define FT2_1_3_ALLOC_ARRAY(_pointer_, _count_, _type_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_ALLOC(_pointer_, (_count_) * sizeof(_type_)))
-#define FT2_1_3_REALLOC_ARRAY(_pointer_, _old_, _new_, _type_) FT2_1_3_SET_ERROR(FT2_1_3_MEM_REALLOC(_pointer_, (_old_) * sizeof(_type_), (_new_) * sizeof(_type_)))
+#define FT_ALLOC(_pointer_, _size_) FT_SET_ERROR(FT_MEM_ALLOC(_pointer_, _size_))
+#define FT_REALLOC(_pointer_, _current_, _size_) FT_SET_ERROR(FT_MEM_REALLOC(_pointer_, _current_, _size_))
+#define FT_FREE(_pointer_) FT_MEM_FREE(_pointer_)
+#define FT_NEW(_pointer_) FT_SET_ERROR(FT_MEM_NEW(_pointer_))
+#define FT_NEW_ARRAY(_pointer_, _count_) FT_SET_ERROR(FT_MEM_NEW_ARRAY(_pointer_, _count_))
+#define FT_RENEW_ARRAY(_pointer_, _old_, _new_) FT_SET_ERROR(FT_MEM_RENEW_ARRAY(_pointer_, _old_, _new_))
+#define FT_ALLOC_ARRAY(_pointer_, _count_, _type_) FT_SET_ERROR(FT_MEM_ALLOC(_pointer_, (_count_) * sizeof(_type_)))
+#define FT_REALLOC_ARRAY(_pointer_, _old_, _new_, _type_) FT_SET_ERROR(FT_MEM_REALLOC(_pointer_, (_old_) * sizeof(_type_), (_new_) * sizeof(_type_)))
 
 
 FT_END_HEADER

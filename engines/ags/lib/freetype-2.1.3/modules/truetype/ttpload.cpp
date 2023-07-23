@@ -56,7 +56,7 @@ tt_face_load_loca(TT_Face face, FT_Stream stream) {
 
 	error = face->goto_table(face, TTAG_loca, stream, &table_len);
 	if (error) {
-		error = FT2_1_3_Err_Locations_Missing;
+		error = FT_Err_Locations_Missing;
 		goto Exit;
 	}
 
@@ -68,7 +68,7 @@ tt_face_load_loca(TT_Face face, FT_Stream stream) {
 		if (FT_NEW_ARRAY(face->glyph_locations, face->num_locations))
 			goto Exit;
 
-		if (FT2_1_3_FRAME_ENTER(face->num_locations * 4L))
+		if (FT_FRAME_ENTER(face->num_locations * 4L))
 			goto Exit;
 
 		{
@@ -76,10 +76,10 @@ tt_face_load_loca(TT_Face face, FT_Stream stream) {
 			FT_Long *limit = loc + face->num_locations;
 
 			for (; loc < limit; loc++)
-				*loc = FT2_1_3_GET_LONG();
+				*loc = FT_GET_LONG();
 		}
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 	} else {
 		face->num_locations = (FT_UShort)(table_len >> 1);
 
@@ -88,16 +88,16 @@ tt_face_load_loca(TT_Face face, FT_Stream stream) {
 		if (FT_NEW_ARRAY(face->glyph_locations, face->num_locations))
 			goto Exit;
 
-		if (FT2_1_3_FRAME_ENTER(face->num_locations * 2L))
+		if (FT_FRAME_ENTER(face->num_locations * 2L))
 			goto Exit;
 		{
 			FT_Long *loc = face->glyph_locations;
 			FT_Long *limit = loc + face->num_locations;
 
 			for (; loc < limit; loc++)
-				*loc = (FT_Long)((FT_ULong)FT2_1_3_GET_USHORT() * 2);
+				*loc = (FT_Long)((FT_ULong)FT_GET_USHORT() * 2);
 		}
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 	}
 
 	FT_TRACE2(("loaded\n"));
@@ -121,7 +121,7 @@ tt_face_load_cvt(TT_Face face, FT_Stream stream) {
 
 		face->cvt_size = 0;
 		face->cvt = NULL;
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 
 		goto Exit;
 	}
@@ -131,7 +131,7 @@ tt_face_load_cvt(TT_Face face, FT_Stream stream) {
 	if (FT_NEW_ARRAY(face->cvt, face->cvt_size))
 		goto Exit;
 
-	if (FT2_1_3_FRAME_ENTER(face->cvt_size * 2L))
+	if (FT_FRAME_ENTER(face->cvt_size * 2L))
 		goto Exit;
 
 	{
@@ -139,10 +139,10 @@ tt_face_load_cvt(TT_Face face, FT_Stream stream) {
 		FT_Short *limit = cur + face->cvt_size;
 
 		for (; cur < limit; cur++)
-			*cur = FT2_1_3_GET_SHORT();
+			*cur = FT_GET_SHORT();
 	}
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 	FT_TRACE2(("loaded\n"));
 
 Exit:
@@ -166,7 +166,7 @@ tt_face_load_fpgm(TT_Face face, FT_Stream stream) {
 		FT_TRACE2(("is missing!\n"));
 	} else {
 		face->font_program_size = table_len;
-		if (FT2_1_3_FRAME_EXTRACT(table_len, face->font_program))
+		if (FT_FRAME_EXTRACT(table_len, face->font_program))
 			goto Exit;
 
 		FT_TRACE2(("loaded, %12d bytes\n", face->font_program_size));
@@ -178,12 +178,12 @@ tt_face_load_fpgm(TT_Face face, FT_Stream stream) {
 	if (error) {
 		face->cvt_program = NULL;
 		face->cvt_program_size = 0;
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 
 		FT_TRACE2(("is missing!\n"));
 	} else {
 		face->cvt_program_size = table_len;
-		if (FT2_1_3_FRAME_EXTRACT(table_len, face->cvt_program))
+		if (FT_FRAME_EXTRACT(table_len, face->cvt_program))
 			goto Exit;
 
 		FT_TRACE2(("loaded, %12d bytes\n", face->cvt_program_size));

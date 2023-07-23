@@ -194,29 +194,29 @@ cid_face_done( CID_Face  face ) {
 
 
 				if ( subr->code ) {
-					FT2_1_3_FREE( subr->code[0] );
-					FT2_1_3_FREE( subr->code );
+					FT_FREE( subr->code[0] );
+					FT_FREE( subr->code );
 				}
 			}
 
-			FT2_1_3_FREE( face->subrs );
+			FT_FREE( face->subrs );
 		}
 
 		/* release FontInfo strings */
-		FT2_1_3_FREE( info->version );
-		FT2_1_3_FREE( info->notice );
-		FT2_1_3_FREE( info->full_name );
-		FT2_1_3_FREE( info->family_name );
-		FT2_1_3_FREE( info->weight );
+		FT_FREE( info->version );
+		FT_FREE( info->notice );
+		FT_FREE( info->full_name );
+		FT_FREE( info->family_name );
+		FT_FREE( info->weight );
 
 		/* release font dictionaries */
-		FT2_1_3_FREE( cid->font_dicts );
+		FT_FREE( cid->font_dicts );
 		cid->num_dicts = 0;
 
 		/* release other strings */
-		FT2_1_3_FREE( cid->cid_font_name );
-		FT2_1_3_FREE( cid->registry );
-		FT2_1_3_FREE( cid->ordering );
+		FT_FREE( cid->cid_font_name );
+		FT_FREE( cid->registry );
+		FT_FREE( cid->ordering );
 
 		face->root.family_name = 0;
 		face->root.style_name  = 0;
@@ -269,7 +269,7 @@ cid_face_init( FT_Stream      stream,
 	psnames = (PSNames_Service)face->psnames;
 	const void *ps_tmp;
 	if ( !psnames ) {
-		ps_tmp = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+		ps_tmp = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "psnames");
 		psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(ps_tmp));
 
 		face->psnames = psnames;
@@ -277,7 +277,7 @@ cid_face_init( FT_Stream      stream,
 
 	psaux = (PSAux_Service)face->psaux;
 	if ( !psaux ) {
-		ps_tmp = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+		ps_tmp = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "psaux");
 		psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(ps_tmp));
 
 		face->psaux = psaux;
@@ -285,14 +285,14 @@ cid_face_init( FT_Stream      stream,
 
 	pshinter = (PSHinter_Service)face->pshinter;
 	if ( !pshinter ) {
-		ps_tmp = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
+		ps_tmp = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "pshinter");
 		pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(ps_tmp));
 
 		face->pshinter = pshinter;
 	}
 
 	/* open the tokenizer; this will also check the font format */
-	if ( FT2_1_3_STREAM_SEEK( 0 ) )
+	if ( FT_STREAM_SEEK( 0 ) )
 		goto Exit;
 
 	error = cid_face_open( face );
@@ -306,7 +306,7 @@ cid_face_init( FT_Stream      stream,
 	/* check the face index */
 	if ( face_index != 0 ) {
 		FT_ERROR(( "cid_face_init: invalid face index\n" ));
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -400,7 +400,7 @@ FT_LOCAL_DEF( FT_Error )
 cid_driver_init( CID_Driver  driver ) {
 	FT_UNUSED( driver );
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 

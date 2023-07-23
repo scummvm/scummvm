@@ -141,8 +141,8 @@ typedef struct  T1_FieldRec_ {
 	{                                              \
 		_ident, T1CODE, _type,                     \
 		0,                                         \
-		FT2_1_3_FIELD_OFFSET(_fname),              \
-		FT2_1_3_FIELD_SIZE(_fname),                \
+		FT_FIELD_OFFSET(_fname),              \
+		FT_FIELD_SIZE(_fname),                \
 		0, 0									   \
 	},
 
@@ -158,18 +158,18 @@ typedef struct  T1_FieldRec_ {
 	{                                                   \
 		_ident, T1CODE, _type,                          \
 		0,                                              \
-		FT2_1_3_FIELD_OFFSET(_fname),                   \
-		FT2_1_3_FIELD_SIZE_DELTA(_fname),               \
+		FT_FIELD_OFFSET(_fname),                   \
+		FT_FIELD_SIZE_DELTA(_fname),               \
 		_max,                                           \
-		FT2_1_3_FIELD_OFFSET(num_##_fname)				\
+		FT_FIELD_OFFSET(num_##_fname)				\
 	},
 
 #define T1_NEW_TABLE_FIELD2(_ident, _type, _fname, _max) \
 	{                                                    \
 		_ident, T1CODE, _type,                           \
 		0,                                               \
-		FT2_1_3_FIELD_OFFSET(_fname),                    \
-		FT2_1_3_FIELD_SIZE_DELTA(_fname),                \
+		FT_FIELD_OFFSET(_fname),                    \
+		FT_FIELD_SIZE_DELTA(_fname),                \
 		_max, 0											 \
 	},
 

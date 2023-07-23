@@ -117,7 +117,7 @@ typedef struct FT_ListRec_ {
 /* return module error code */
 #define FT_ERROR_MODULE(x) ((x)&0xFF00U)
 
-#define FT2_1_3_BOOL(x) ((FT_Bool)(x))
+#define FT_BOOL(x) ((FT_Bool)(x))
 
 
 FT_END_HEADER

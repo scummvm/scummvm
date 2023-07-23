@@ -40,10 +40,10 @@ FT_BEGIN_HEADER
 
 typedef FT_Fixed  FT_Angle;
 
-#define FT2_1_3_ANGLE_PI  (180L << 16)
-#define FT2_1_3_ANGLE_2PI (FT2_1_3_ANGLE_PI * 2)
-#define FT2_1_3_ANGLE_PI2 (FT2_1_3_ANGLE_PI / 2)
-#define FT2_1_3_ANGLE_PI4 (FT2_1_3_ANGLE_PI / 4)
+#define FT_ANGLE_PI  (180L << 16)
+#define FT_ANGLE_2PI (FT_ANGLE_PI * 2)
+#define FT_ANGLE_PI2 (FT_ANGLE_PI / 2)
+#define FT_ANGLE_PI4 (FT_ANGLE_PI / 4)
 
 
 FT_EXPORT(FT_Fixed)

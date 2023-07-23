@@ -41,12 +41,12 @@ typedef struct FT_ObjectRec_ {
 	FT_Int    ref_count;
 } FT_ObjectRec;
 
-#define FT2_1_3_OBJECT(x) ((FT_Object)(x))
-#define FT2_1_3_OBJECT_P(x) ((FT_Object *)(x))
-#define FT2_1_3_OBJECT__CLASS(x) FT2_1_3_OBJECT(x)->clazz
-#define FT2_1_3_OBJECT__REF_COUNT(x) FT2_1_3_OBJECT(x)->ref_count
-#define FT2_1_3_OBJECT__MEMORY(x) FT2_1_3_CLASS__MEMORY(FT2_1_3_OBJECT(x)->clazz)
-#define FT2_1_3_OBJECT__LIBRARY(x) FT2_1_3_CLASS__LIBRARY(FT2_1_3_OBJECT(x)->clazz)
+#define FT_OBJECT(x) ((FT_Object)(x))
+#define FT_OBJECT_P(x) ((FT_Object *)(x))
+#define FT_OBJECT__CLASS(x) FT_OBJECT(x)->clazz
+#define FT_OBJECT__REF_COUNT(x) FT_OBJECT(x)->ref_count
+#define FT_OBJECT__MEMORY(x) FT_CLASS__MEMORY(FT_OBJECT(x)->clazz)
+#define FT_OBJECT__LIBRARY(x) FT_CLASS__LIBRARY(FT_OBJECT(x)->clazz)
 
 typedef FT_Error (*FT_Object_InitFunc)(FT_Object object, FT_Pointer init_data);
 
@@ -69,13 +69,13 @@ typedef struct FT_ClassRec_ {
 } FT_ClassRec;
 
 
-#define  FT2_1_3_CLASS(x)    ((FT_Class)(x))
-#define  FT2_1_3_CLASS_P(x)  ((FT_Class*)(x))
-#define  FT2_1_3_CLASS__MEMORY(x)   FT2_1_3_CLASS(x)->memory
-#define  FT2_1_3_CLASS__LIBRARY(x)  FT2_1_3_CLASS(x)->library
-#define  FT2_1_3_CLASS__TYPE(x)     FT2_1_3_CLASS(x)->type
-#define  FT2_1_3_CLASS__INFO(x)     FT2_1_3_CLASS(x)->info
-#define  FT2_1_3_CLASS__MAGIC(x)    FT2_1_3_CLASS(x)->magic
+#define  FT_CLASS(x)    ((FT_Class)(x))
+#define  FT_CLASS_P(x)  ((FT_Class*)(x))
+#define  FT_CLASS__MEMORY(x)   FT_CLASS(x)->memory
+#define  FT_CLASS__LIBRARY(x)  FT_CLASS(x)->library
+#define  FT_CLASS__TYPE(x)     FT_CLASS(x)->type
+#define  FT_CLASS__INFO(x)     FT_CLASS(x)->info
+#define  FT_CLASS__MAGIC(x)    FT_CLASS(x)->magic
 
 typedef struct FT_TypeRec_ {
 	const char*         name;
@@ -91,7 +91,7 @@ typedef struct FT_TypeRec_ {
 } FT_TypeRec;
 
 // TODO: ftobject.cpp is not compiled - remove functions
-#define  FT2_1_3_TYPE(x)  ((FT_Type)(x))
+#define  FT_TYPE(x)  ((FT_Type)(x))
 
 FT_BASE(FT_Int)
 ft_object_check(FT_Pointer obj);
@@ -105,13 +105,13 @@ ft_object_create(FT_Object *aobject, FT_Class clazz, FT_Pointer init_data);
 FT_BASE(FT_Error)
 ft_object_create_from_type(FT_Object *aobject, FT_Type type, FT_Pointer init_data, FT_Library library);
 
-#define FT2_1_3_OBJ_CREATE(_obj, _clazz, _init) ft_object_create(FT2_1_3_OBJECT_P(&(_obj)), _clazz, _init)
+#define FT_OBJ_CREATE(_obj, _clazz, _init) ft_object_create(FT_OBJECT_P(&(_obj)), _clazz, _init)
 
-#define FT2_1_3_CREATE(_obj, _clazz, _init) FT2_1_3_SET_ERROR(FT2_1_3_OBJ_CREATE(_obj, _clazz, _init))
+#define FT_CREATE(_obj, _clazz, _init) FT_SET_ERROR(FT_OBJ_CREATE(_obj, _clazz, _init))
 
-#define FT2_1_3_OBJ_CREATE_FROM_TYPE(_obj, _type, _init, _lib) ft_object_create_from_type(FT2_1_3_OBJECT_P(&(_obj)), _type, _init, _lib)
+#define FT_OBJ_CREATE_FROM_TYPE(_obj, _type, _init, _lib) ft_object_create_from_type(FT_OBJECT_P(&(_obj)), _type, _init, _lib)
 
-#define FT2_1_3_CREATE_FROM_TYPE(_obj, _type, _init, _lib) FT2_1_3_SET_ERROR(FT2_1_3_OBJ_CREATE_FROM_TYPE(_obj, _type, _init, _lib))
+#define FT_CREATE_FROM_TYPE(_obj, _type, _init, _lib) FT_SET_ERROR(FT_OBJ_CREATE_FROM_TYPE(_obj, _type, _init, _lib))
 
 FT_BASE(FT_Error)
 ft_class_from_type(FT_Class *aclass, FT_Type type, FT_Library library);

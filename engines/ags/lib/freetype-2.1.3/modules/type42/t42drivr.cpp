@@ -65,11 +65,11 @@ t42_get_glyph_name( T42_Face    face,
 		if ( len >= buffer_max )
 			len = buffer_max - 1;
 
-		FT2_1_3_MEM_COPY( buffer, gname, len );
+		FT_MEM_COPY( buffer, gname, len );
 		((FT_Byte*)buffer)[len] = 0;
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 

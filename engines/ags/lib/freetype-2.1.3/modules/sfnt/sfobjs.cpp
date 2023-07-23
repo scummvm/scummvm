@@ -53,11 +53,11 @@ static FT_String *tt_name_entry_ascii_from_utf16(TT_NameEntry entry, FT_Memory m
 
 	len = (FT_UInt)entry->stringLength / 2;
 
-	if (FT2_1_3_MEM_NEW_ARRAY(string, len + 1))
+	if (FT_MEM_NEW_ARRAY(string, len + 1))
 		return NULL;
 
 	for (n = 0; n < len; n++) {
-		code = FT2_1_3_NEXT_USHORT(read);
+		code = FT_NEXT_USHORT(read);
 		if (code < 32 || code > 127)
 			code = '?';
 
@@ -77,11 +77,11 @@ static FT_String *tt_name_entry_ascii_from_ucs4(TT_NameEntry entry, FT_Memory me
 
 	len = (FT_UInt)entry->stringLength / 4;
 
-	if (FT2_1_3_MEM_NEW_ARRAY(string, len + 1))
+	if (FT_MEM_NEW_ARRAY(string, len + 1))
 		return NULL;
 
 	for (n = 0; n < len; n++) {
-		code = (FT_UInt)FT2_1_3_NEXT_ULONG(read);
+		code = (FT_UInt)FT_NEXT_ULONG(read);
 		if (code < 32 || code > 127)
 			code = '?';
 
@@ -101,7 +101,7 @@ static FT_String *tt_name_entry_ascii_from_other(TT_NameEntry entry, FT_Memory m
 
 	len = (FT_UInt)entry->stringLength;
 
-	if (FT2_1_3_MEM_NEW_ARRAY(string, len + 1))
+	if (FT_MEM_NEW_ARRAY(string, len + 1))
 		return NULL;
 
 	for (n = 0; n < len; n++) {
@@ -212,9 +212,9 @@ static FT_String *tt_face_get_name(TT_Face face, FT_UShort nameid) {
 			FT_Error error;
 			FT_Stream stream = face->name_table.stream;
 
-			if (FT_NEW_ARRAY(rec->string, rec->stringLength) || FT2_1_3_STREAM_SEEK(rec->stringOffset) ||
-				FT2_1_3_STREAM_READ(rec->string, rec->stringLength)) {
-				FT2_1_3_FREE(rec->string);
+			if (FT_NEW_ARRAY(rec->string, rec->stringLength) || FT_STREAM_SEEK(rec->stringOffset) ||
+				FT_STREAM_READ(rec->string, rec->stringLength)) {
+				FT_FREE(rec->string);
 				rec->stringLength = 0;
 				result = NULL;
 				goto Exit;
@@ -286,7 +286,7 @@ sfnt_init_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 		sfnt_tmp = FT_Get_Module_Interface(library, "sfnt");
 		sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfnt_tmp));
 		if (!sfnt) {
-			error = FT2_1_3_Err_Invalid_File_Format;
+			error = FT_Err_Invalid_File_Format;
 			goto Exit;
 		}
 
@@ -321,7 +321,7 @@ Exit:
 }
 
 #undef LOAD_
-#define LOAD_(x) ((error = sfnt->load_##x(face, stream)) != FT2_1_3_Err_Ok)
+#define LOAD_(x) ((error = sfnt->load_##x(face, stream)) != FT_Err_Ok)
 
 FT_LOCAL_DEF(FT_Error)
 sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params) {
@@ -354,11 +354,11 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 
 	/* do we have outlines in there? */
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
-	has_outline = FT2_1_3_BOOL(face->root.internal->incremental_interface != 0 ||
+	has_outline = FT_BOOL(face->root.internal->incremental_interface != 0 ||
 							   tt_face_lookup_table(face, TTAG_glyf) != 0 ||
 							   tt_face_lookup_table(face, TTAG_CFF) != 0);
 #else
-	has_outline = FT2_1_3_BOOL(tt_face_lookup_table(face, TTAG_glyf) != 0 || tt_face_lookup_table(face, TTAG_CFF) != 0);
+	has_outline = FT_BOOL(tt_face_lookup_table(face, TTAG_glyf) != 0 || tt_face_lookup_table(face, TTAG_CFF) != 0);
 #endif
 
 	is_apple_sbit = 0;
@@ -368,7 +368,7 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 	/* if this font doesn't contain outlines, we try to load */
 	/* a `bhed' table                                        */
 	if (!has_outline)
-		is_apple_sbit = FT2_1_3_BOOL(!LOAD_(bitmap_header));
+		is_apple_sbit = FT_BOOL(!LOAD_(bitmap_header));
 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
@@ -411,8 +411,8 @@ sfnt_load_face(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_par
 	/* embedded bitmap support. */
 	if (sfnt->load_sbits && LOAD_(sbits)) {
 		/* return an error if this font file has no outlines */
-		if (error == FT2_1_3_Err_Table_Missing && has_outline)
-			error = FT2_1_3_Err_Ok;
+		if (error == FT_Err_Table_Missing && has_outline)
+			error = FT_Err_Ok;
 		else
 			goto Exit;
 	}
@@ -652,38 +652,38 @@ sfnt_done_face(TT_Face face) {
 	}
 
 	/* freeing the kerning table */
-	FT2_1_3_FREE(face->kern_pairs);
+	FT_FREE(face->kern_pairs);
 	face->num_kern_pairs = 0;
 
 	/* freeing the collection table */
-	FT2_1_3_FREE(face->ttc_header.offsets);
+	FT_FREE(face->ttc_header.offsets);
 	face->ttc_header.count = 0;
 
 	/* freeing table directory */
-	FT2_1_3_FREE(face->dir_tables);
+	FT_FREE(face->dir_tables);
 	face->num_tables = 0;
 
 	{
-		FT_Stream stream = FT2_1_3_FACE_STREAM(face);
+		FT_Stream stream = FT_FACE_STREAM(face);
 
 		/* simply release the 'cmap' table frame */
-		FT2_1_3_FRAME_RELEASE(face->cmap_table);
+		FT_FRAME_RELEASE(face->cmap_table);
 		face->cmap_size = 0;
 	}
 
 	/* freeing the horizontal metrics */
-	FT2_1_3_FREE(face->horizontal.long_metrics);
-	FT2_1_3_FREE(face->horizontal.short_metrics);
+	FT_FREE(face->horizontal.long_metrics);
+	FT_FREE(face->horizontal.short_metrics);
 
 	/* freeing the vertical ones, if any */
 	if (face->vertical_info) {
-		FT2_1_3_FREE(face->vertical.long_metrics);
-		FT2_1_3_FREE(face->vertical.short_metrics);
+		FT_FREE(face->vertical.long_metrics);
+		FT_FREE(face->vertical.short_metrics);
 		face->vertical_info = 0;
 	}
 
 	/* freeing the gasp table */
-	FT2_1_3_FREE(face->gasp.gaspRanges);
+	FT_FREE(face->gasp.gaspRanges);
 	face->gasp.numRanges = 0;
 
 	/* freeing the name table */
@@ -693,13 +693,13 @@ sfnt_done_face(TT_Face face) {
 	sfnt->free_hdmx(face);
 
 	/* freeing family and style name */
-	FT2_1_3_FREE(face->root.family_name);
-	FT2_1_3_FREE(face->root.style_name);
+	FT_FREE(face->root.family_name);
+	FT_FREE(face->root.style_name);
 
 	/* freeing sbit size table */
 	face->root.num_fixed_sizes = 0;
 	if (face->root.available_sizes)
-		FT2_1_3_FREE(face->root.available_sizes);
+		FT_FREE(face->root.available_sizes);
 
 	face->sfnt = 0;
 }

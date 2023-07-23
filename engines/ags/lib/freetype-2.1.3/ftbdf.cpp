@@ -41,7 +41,7 @@ FT_Get_BDF_Charset_ID(FT_Face face, const char **acharset_encoding, const char *
 	const char *encoding = NULL;
 	const char *registry = NULL;
 
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 
 	if (face != NULL && face->driver != NULL) {
 		FT_Module driver = (FT_Module)face->driver;

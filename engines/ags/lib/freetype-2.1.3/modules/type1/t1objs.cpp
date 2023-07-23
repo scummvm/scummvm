@@ -154,28 +154,28 @@ T1_Face_Done(T1_Face face) {
 		{
 			PS_FontInfo info = &type1->font_info;
 
-			FT2_1_3_FREE(info->version);
-			FT2_1_3_FREE(info->notice);
-			FT2_1_3_FREE(info->full_name);
-			FT2_1_3_FREE(info->family_name);
-			FT2_1_3_FREE(info->weight);
+			FT_FREE(info->version);
+			FT_FREE(info->notice);
+			FT_FREE(info->full_name);
+			FT_FREE(info->family_name);
+			FT_FREE(info->weight);
 		}
 
 		/* release top dictionary */
-		FT2_1_3_FREE(type1->charstrings_len);
-		FT2_1_3_FREE(type1->charstrings);
-		FT2_1_3_FREE(type1->glyph_names);
+		FT_FREE(type1->charstrings_len);
+		FT_FREE(type1->charstrings);
+		FT_FREE(type1->glyph_names);
 
-		FT2_1_3_FREE(type1->subrs);
-		FT2_1_3_FREE(type1->subrs_len);
+		FT_FREE(type1->subrs);
+		FT_FREE(type1->subrs_len);
 
-		FT2_1_3_FREE(type1->subrs_block);
-		FT2_1_3_FREE(type1->charstrings_block);
-		FT2_1_3_FREE(type1->glyph_names_block);
+		FT_FREE(type1->subrs_block);
+		FT_FREE(type1->charstrings_block);
+		FT_FREE(type1->glyph_names_block);
 
-		FT2_1_3_FREE(type1->encoding.char_index);
-		FT2_1_3_FREE(type1->encoding.char_name);
-		FT2_1_3_FREE(type1->font_name);
+		FT_FREE(type1->encoding.char_index);
+		FT_FREE(type1->encoding.char_name);
+		FT_FREE(type1->font_name);
 
 #ifndef T1_CONFIG_OPTION_NO_AFM
 		/* release afm data if present */
@@ -184,7 +184,7 @@ T1_Face_Done(T1_Face face) {
 #endif
 
 		/* release unicode map, if any */
-		FT2_1_3_FREE(face->unicode_map.maps);
+		FT_FREE(face->unicode_map.maps);
 		face->unicode_map.num_maps = 0;
 
 		face->root.family_name = 0;
@@ -207,13 +207,13 @@ T1_Face_Init(FT_Stream stream, T1_Face face, FT_Int face_index, FT_Int num_param
 
 	face->root.num_faces = 1;
 
-	face->psnames = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+	face->psnames = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
-	face->psaux = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+	face->psaux = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "psaux");
 	psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(face->psaux));
 
-	face->pshinter = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
+	face->pshinter = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "pshinter");
 	// 	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
 
 	/* open the tokenizer, this will also check the font format */
@@ -228,7 +228,7 @@ T1_Face_Init(FT_Stream stream, T1_Face face, FT_Int face_index, FT_Int num_param
 	/* check the face index */
 	if (face_index != 0) {
 		FT_ERROR(("T1_Face_Init: invalid face index\n"));
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -397,7 +397,7 @@ FT_LOCAL_DEF(FT_Error)
 T1_Driver_Init(T1_Driver driver) {
 	FT_UNUSED(driver);
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 FT_LOCAL_DEF(void)

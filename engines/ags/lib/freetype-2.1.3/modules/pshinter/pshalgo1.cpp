@@ -54,12 +54,12 @@ psh1_hint_overlap( PSH1_Hint  hint1,
 static void
 psh1_hint_table_done( PSH1_Hint_Table  table,
 					  FT_Memory        memory ) {
-	FT2_1_3_FREE( table->zones );
+	FT_FREE( table->zones );
 	table->num_zones = 0;
 	table->zone      = 0;
 
-	FT2_1_3_FREE( table->sort );
-	FT2_1_3_FREE( table->hints );
+	FT_FREE( table->sort );
+	FT_FREE( table->hints );
 	table->num_hints   = 0;
 	table->max_hints   = 0;
 	table->sort_global = 0;
@@ -703,7 +703,7 @@ ps1_hints_apply( PS_Hints        ps_hints,
 
 
 		/* initialize hints table */
-		FT2_1_3_MEM_ZERO( &hints, sizeof ( hints ) );
+		FT_MEM_ZERO( &hints, sizeof ( hints ) );
 		error = psh1_hint_table_init( &hints,
 									  &dim->hints,
 									  &dim->masks,

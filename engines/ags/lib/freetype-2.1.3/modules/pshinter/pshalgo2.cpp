@@ -55,12 +55,12 @@ psh2_hint_overlap( PSH2_Hint  hint1,
 static void
 psh2_hint_table_done( PSH2_Hint_Table  table,
 					  FT_Memory        memory ) {
-	FT2_1_3_FREE( table->zones );
+	FT_FREE( table->zones );
 	table->num_zones = 0;
 	table->zone      = 0;
 
-	FT2_1_3_FREE( table->sort );
-	FT2_1_3_FREE( table->hints );
+	FT_FREE( table->sort );
+	FT_FREE( table->hints );
 	table->num_hints   = 0;
 	table->max_hints   = 0;
 	table->sort_global = 0;
@@ -755,8 +755,8 @@ psh2_glyph_done( PSH2_Glyph  glyph ) {
 	psh2_hint_table_done( &glyph->hint_tables[1], memory );
 	psh2_hint_table_done( &glyph->hint_tables[0], memory );
 
-	FT2_1_3_FREE( glyph->points );
-	FT2_1_3_FREE( glyph->contours );
+	FT_FREE( glyph->points );
+	FT_FREE( glyph->contours );
 
 	glyph->num_points   = 0;
 	glyph->num_contours = 0;
@@ -797,7 +797,7 @@ psh2_glyph_init( PSH2_Glyph   glyph,
 
 
 	/* clear all fields */
-	FT2_1_3_MEM_ZERO( glyph, sizeof ( *glyph ) );
+	FT_MEM_ZERO( glyph, sizeof ( *glyph ) );
 
 	memory = globals->memory;
 
@@ -890,10 +890,10 @@ psh2_glyph_init( PSH2_Glyph   glyph,
 				if ( diff < 0 )
 					diff = -diff;
 
-				if ( diff > FT2_1_3_ANGLE_PI )
-					diff = FT2_1_3_ANGLE_2PI - diff;
+				if ( diff > FT_ANGLE_PI )
+					diff = FT_ANGLE_2PI - diff;
 
-				if ( diff < FT2_1_3_ANGLE_PI / 16 )
+				if ( diff < FT_ANGLE_PI / 16 )
 					point->flags |= PSH2_POINT_SMOOTH;
 			}
 		}
@@ -1388,7 +1388,7 @@ ps2_hints_apply( PS_Hints        ps_hints,
 
 	if ( ps2_debug_glyph ) {
 		psh2_glyph_done( ps2_debug_glyph );
-		FT2_1_3_FREE( ps2_debug_glyph );
+		FT_FREE( ps2_debug_glyph );
 	}
 
 	if ( FT_NEW( glyph ) )

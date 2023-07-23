@@ -37,12 +37,12 @@ FT_BEGIN_HEADER
 	} while (0)
 #endif
 
-#define PFR_NEXT_BYTE( p )    FT2_1_3_NEXT_BYTE( p )
-#define PFR_NEXT_INT8( p )    FT2_1_3_NEXT_CHAR( p )
-#define PFR_NEXT_SHORT( p )   FT2_1_3_NEXT_SHORT( p )
-#define PFR_NEXT_USHORT( p )  FT2_1_3_NEXT_USHORT( p )
-#define PFR_NEXT_LONG( p )    FT2_1_3_NEXT_OFF3( p )
-#define PFR_NEXT_ULONG( p )   FT2_1_3_NEXT_UOFF3( p )
+#define PFR_NEXT_BYTE( p )    FT_NEXT_BYTE( p )
+#define PFR_NEXT_INT8( p )    FT_NEXT_CHAR( p )
+#define PFR_NEXT_SHORT( p )   FT_NEXT_SHORT( p )
+#define PFR_NEXT_USHORT( p )  FT_NEXT_USHORT( p )
+#define PFR_NEXT_LONG( p )    FT_NEXT_OFF3( p )
+#define PFR_NEXT_ULONG( p )   FT_NEXT_UOFF3( p )
 
 
 /* handling extra items */

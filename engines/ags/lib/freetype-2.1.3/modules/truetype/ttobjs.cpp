@@ -61,10 +61,10 @@ FT_LOCAL_DEF(void)
 tt_glyphzone_done(TT_GlyphZone zone) {
 	FT_Memory memory = zone->memory;
 
-	FT2_1_3_FREE(zone->contours);
-	FT2_1_3_FREE(zone->tags);
-	FT2_1_3_FREE(zone->cur);
-	FT2_1_3_FREE(zone->org);
+	FT_FREE(zone->contours);
+	FT_FREE(zone->tags);
+	FT_FREE(zone->cur);
+	FT_FREE(zone->org);
 
 	zone->max_points = zone->n_points = 0;
 	zone->max_contours = zone->n_contours = 0;
@@ -77,7 +77,7 @@ tt_glyphzone_new(FT_Memory memory, FT_UShort maxPoints, FT_Short maxContours, TT
 	if (maxPoints > 0)
 		maxPoints += 2;
 
-	FT2_1_3_MEM_ZERO(zone, sizeof(*zone));
+	FT_MEM_ZERO(zone, sizeof(*zone));
 	zone->memory = memory;
 
 	if (FT_NEW_ARRAY(zone->org, maxPoints * 2) ||
@@ -104,7 +104,7 @@ tt_face_init(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_param
 		goto Bad_Format;
 
 	/* create input stream from resource */
-	if (FT2_1_3_STREAM_SEEK(0))
+	if (FT_STREAM_SEEK(0))
 		goto Exit;
 
 	/* check that we have a valid TrueType file */
@@ -121,7 +121,7 @@ tt_face_init(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_param
 
 	/* If we are performing a simple font format check, exit immediately */
 	if (face_index < 0)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
 	/* Load font directory */
 	error = sfnt->load_face(stream, face, face_index, num_params, params);
@@ -152,7 +152,7 @@ Exit:
 	return error;
 
 Bad_Format:
-	error = FT2_1_3_Err_Unknown_File_Format;
+	error = FT_Err_Unknown_File_Format;
 	goto Exit;
 }
 
@@ -172,16 +172,16 @@ tt_face_done(TT_Face face) {
 		sfnt->done_face(face);
 
 	/* freeing the locations table */
-	FT2_1_3_FREE(face->glyph_locations);
+	FT_FREE(face->glyph_locations);
 	face->num_locations = 0;
 
 	/* freeing the CVT */
-	FT2_1_3_FREE(face->cvt);
+	FT_FREE(face->cvt);
 	face->cvt_size = 0;
 
 	/* freeing the programs */
-	FT2_1_3_FRAME_RELEASE(face->font_program);
-	FT2_1_3_FRAME_RELEASE(face->cvt_program);
+	FT_FRAME_RELEASE(face->font_program);
+	FT_FRAME_RELEASE(face->cvt_program);
 	face->font_program_size = 0;
 	face->cvt_program_size = 0;
 }
@@ -191,7 +191,7 @@ tt_face_done(TT_Face face) {
 
 FT_LOCAL_DEF(FT_Error)
 tt_size_init(TT_Size size) {
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
@@ -265,7 +265,7 @@ tt_size_init(TT_Size size) {
 		exec = TT_New_Context(face);
 
 	if (!exec) {
-		error = FT2_1_3_Err_Could_Not_Find_Context;
+		error = FT_Err_Could_Not_Find_Context;
 		goto Fail_Memory;
 	}
 
@@ -315,7 +315,7 @@ tt_size_init(TT_Size size) {
 		if (error)
 			goto Fail_Exec;
 	} else
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 
 	TT_Save_Context(exec, size);
 
@@ -354,18 +354,18 @@ tt_size_done(TT_Size size) {
 		size->debug = FALSE;
 	}
 
-	FT2_1_3_FREE(size->cvt);
+	FT_FREE(size->cvt);
 	size->cvt_size = 0;
 
 	/* free storage area */
-	FT2_1_3_FREE(size->storage);
+	FT_FREE(size->storage);
 	size->storage_size = 0;
 
 	/* twilight zone */
 	tt_glyphzone_done(&size->twilight);
 
-	FT2_1_3_FREE(size->function_defs);
-	FT2_1_3_FREE(size->instruction_defs);
+	FT_FREE(size->function_defs);
+	FT_FREE(size->instruction_defs);
 
 	size->num_function_defs = 0;
 	size->max_function_defs = 0;
@@ -383,19 +383,19 @@ tt_size_done(TT_Size size) {
 
 static FT_Error Reset_Outline_Size(TT_Size size) {
 	TT_Face face;
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 
 	FT_Size_Metrics *metrics;
 
 	if (size->ttmetrics.valid)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
 	face = (TT_Face)size->root.face;
 
 	metrics = &size->root.metrics;
 
 	if (metrics->x_ppem < 1 || metrics->y_ppem < 1)
-		return FT2_1_3_Err_Invalid_PPem;
+		return FT_Err_Invalid_PPem;
 
 	/* compute new transformation */
 	if (metrics->x_ppem >= metrics->y_ppem) {
@@ -454,7 +454,7 @@ static FT_Error Reset_Outline_Size(TT_Size size) {
 		/* debugging instances have their own context */
 
 		if (!exec)
-			return FT2_1_3_Err_Could_Not_Find_Context;
+			return FT_Err_Could_Not_Find_Context;
 
 		TT_Load_Context(exec, face, size);
 
@@ -475,7 +475,7 @@ static FT_Error Reset_Outline_Size(TT_Size size) {
 			if (!size->debug)
 				error = face->interpreter(exec);
 		} else
-			error = FT2_1_3_Err_Ok;
+			error = FT_Err_Ok;
 
 		size->GS = exec->GS;
 		/* save default graphics state */
@@ -501,7 +501,7 @@ static FT_Error Reset_Outline_Size(TT_Size size) {
 
 static FT_Error Reset_SBit_Size(TT_Size size) {
 	TT_Face           face;
-	FT_Error          error = FT2_1_3_Err_Ok;
+	FT_Error          error = FT_Err_Ok;
 
 	FT_ULong          strike_index;
 	FT_Size_Metrics   *metrics;
@@ -511,7 +511,7 @@ static FT_Error Reset_SBit_Size(TT_Size size) {
 	metrics = &size->root.metrics;
 
 	if (size->strike_index != 0xFFFFU)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
 	face = (TT_Face)size->root.face;
 	sfnt = (SFNT_Service)face->sfnt;
@@ -564,7 +564,7 @@ static FT_Error Reset_SBit_Size(TT_Size size) {
 FT_LOCAL_DEF(FT_Error)
 tt_size_reset(TT_Size size) {
 	FT_Face face;
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 
 	face = size->root.face;
 
@@ -589,7 +589,7 @@ tt_size_reset(TT_Size size) {
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
 	if (face->face_flags & FT_FACE_FLAG_SCALABLE)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	else
 		return error;
 }
@@ -600,7 +600,7 @@ tt_driver_init(TT_Driver driver) {
 	FT_Error error;
 
 	/* set `extra' in glyph loader */
-	error = FT_GlyphLoader_CreateExtra(FT2_1_3_DRIVER(driver)->glyph_loader);
+	error = FT_GlyphLoader_CreateExtra(FT_DRIVER(driver)->glyph_loader);
 
 	return error;
 }

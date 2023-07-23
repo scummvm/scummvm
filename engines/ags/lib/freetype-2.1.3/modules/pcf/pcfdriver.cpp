@@ -55,13 +55,13 @@ typedef struct  PCF_CMapRec_ {
 
 FT_CALLBACK_DEF( FT_Error )
 pcf_cmap_init( PCF_CMap  cmap ) {
-	PCF_Face  face = (PCF_Face)FT2_1_3_CMAP_FACE( cmap );
+	PCF_Face  face = (PCF_Face)FT_CMAP_FACE( cmap );
 
 
 	cmap->num_encodings = (FT_UInt)face->nencodings;
 	cmap->encodings     = face->encodings;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -168,11 +168,11 @@ FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  pcf_cmap_class = {
 
 FT_CALLBACK_DEF( FT_Error )
 PCF_Face_Done( PCF_Face  face ) {
-	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory  memory = FT_FACE_MEMORY( face );
 
 
-	FT2_1_3_FREE( face->encodings );
-	FT2_1_3_FREE( face->metrics );
+	FT_FREE( face->encodings );
+	FT_FREE( face->metrics );
 
 	/* free properties */
 	{
@@ -183,19 +183,19 @@ PCF_Face_Done( PCF_Face  face ) {
 		for ( i = 0; i < face->nprops; i++ ) {
 			prop = &face->properties[i];
 
-			FT2_1_3_FREE( prop->name );
+			FT_FREE( prop->name );
 			if ( prop->isString )
-				FT2_1_3_FREE( prop->value );
+				FT_FREE( prop->value );
 		}
 
-		FT2_1_3_FREE( face->properties );
+		FT_FREE( face->properties );
 	}
 
-	FT2_1_3_FREE( face->toc.tables );
-	FT2_1_3_FREE( face->root.family_name );
-	FT2_1_3_FREE( face->root.available_sizes );
-	FT2_1_3_FREE( face->charset_encoding );
-	FT2_1_3_FREE( face->charset_registry );
+	FT_FREE( face->toc.tables );
+	FT_FREE( face->root.family_name );
+	FT_FREE( face->root.available_sizes );
+	FT_FREE( face->charset_encoding );
+	FT_FREE( face->charset_registry );
 
 	FT_TRACE4(( "PCF_Face_Done: done face\n" ));
 
@@ -205,7 +205,7 @@ PCF_Face_Done( PCF_Face  face ) {
 		face->root.stream = face->gzip_source;
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -215,7 +215,7 @@ PCF_Face_Init( FT_Stream      stream,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
 			   FT_Parameter*  params ) {
-	FT_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT_Err_Ok;
 
 	FT_UNUSED( num_params );
 	FT_UNUSED( params );
@@ -228,7 +228,7 @@ PCF_Face_Init( FT_Stream      stream,
 
 		// /* this didn't work, try gzip support !! */
 		// error2 = FT_Stream_OpenGzip( &face->gzip_stream, stream );
-		// if ( error2 == FT2_1_3_Err_Unimplemented_Feature )
+		// if ( error2 == FT_Err_Unimplemented_Feature )
 		// 	goto Fail;
 
 		// error = error2;
@@ -266,7 +266,7 @@ PCF_Face_Init( FT_Stream      stream,
 			FT_CharMapRec  charmap;
 
 
-			charmap.face        = FT2_1_3_FACE( face );
+			charmap.face        = FT_FACE( face );
 			charmap.encoding    = FT_ENCODING_NONE;
 			charmap.platform_id = 0;
 			charmap.encoding_id = 0;
@@ -292,14 +292,14 @@ Exit:
 
 Fail:
 	FT_TRACE2(( "[not a valid PCF file]\n" ));
-	error = FT2_1_3_Err_Unknown_File_Format;  /* error */
+	error = FT_Err_Unknown_File_Format;  /* error */
 	goto Exit;
 }
 
 
 static FT_Error
 PCF_Set_Pixel_Size( FT_Size  size ) {
-	PCF_Face face = (PCF_Face)FT2_1_3_SIZE_FACE( size );
+	PCF_Face face = (PCF_Face)FT_SIZE_FACE( size );
 
 
 	FT_TRACE4(( "rec %d - pres %d\n", size->metrics.y_ppem,
@@ -316,10 +316,10 @@ PCF_Set_Pixel_Size( FT_Size  size ) {
 
 		size->metrics.max_advance = face->accel.maxbounds.characterWidth << 6;
 
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	} else {
 		FT_TRACE4(( "size WRONG\n" ));
-		return FT2_1_3_Err_Invalid_Pixel_Size;
+		return FT_Err_Invalid_Pixel_Size;
 	}
 }
 
@@ -329,10 +329,10 @@ PCF_Glyph_Load( FT_GlyphSlot  slot,
 				FT_Size       size,
 				FT_UInt       glyph_index,
 				FT_Int32      load_flags ) {
-	PCF_Face    face   = (PCF_Face)FT2_1_3_SIZE_FACE( size );
+	PCF_Face    face   = (PCF_Face)FT_SIZE_FACE( size );
 	FT_Stream   stream = face->root.stream;
-	FT_Error    error  = FT2_1_3_Err_Ok;
-	FT_Memory   memory = FT2_1_3_FACE( face )->memory;
+	FT_Error    error  = FT_Err_Ok;
+	FT_Memory   memory = FT_FACE( face )->memory;
 	FT_Bitmap*  bitmap = &slot->bitmap;
 	PCF_Metric  metric;
 	int         bytes;
@@ -343,7 +343,7 @@ PCF_Glyph_Load( FT_GlyphSlot  slot,
 	FT_TRACE4(( "load_glyph %d ---", glyph_index ));
 
 	if ( !face ) {
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -380,17 +380,17 @@ PCF_Glyph_Load( FT_GlyphSlot  slot,
 		break;
 
 	default:
-		return FT2_1_3_Err_Invalid_File_Format;
+		return FT_Err_Invalid_File_Format;
 	}
 
 	/* XXX: to do: are there cases that need repadding the bitmap? */
 	bytes = bitmap->pitch * bitmap->rows;
 
-	if ( FT2_1_3_ALLOC( bitmap->buffer, bytes ) )
+	if ( FT_ALLOC( bitmap->buffer, bytes ) )
 		goto Exit;
 
-	if ( FT2_1_3_STREAM_SEEK( metric->bits )          ||
-			FT2_1_3_STREAM_READ( bitmap->buffer, bytes ) )
+	if ( FT_STREAM_SEEK( metric->bits )          ||
+			FT_STREAM_READ( bitmap->buffer, bytes ) )
 		goto Exit;
 
 	if ( PCF_BIT_ORDER( face->bitmapsFormat ) != MSBFirst )

@@ -38,7 +38,7 @@ namespace FreeType213 {
 /**** TYPE1 STANDARD (AND EXPERT) ENCODING CMAPS ****/
 
 static void t1_cmap_std_init(T1_CMapStd cmap, FT_Int is_expert) {
-	T1_Face 		face    = (T1_Face)FT2_1_3_CMAP_FACE(cmap);
+	T1_Face 		face    = (T1_Face)FT_CMAP_FACE(cmap);
 	PSNames_Service psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
 	cmap->num_glyphs  = face->type1.num_glyphs;
@@ -46,7 +46,7 @@ static void t1_cmap_std_init(T1_CMapStd cmap, FT_Int is_expert) {
 	cmap->sid_to_string = psnames->adobe_std_strings;
 	cmap->code_to_sid   = is_expert ? psnames->adobe_expert_encoding : psnames->adobe_std_encoding;
 
-	FT2_1_3_ASSERT(cmap->code_to_sid != NULL);
+	FT_ASSERT(cmap->code_to_sid != NULL);
 }
 
 FT_CALLBACK_DEF(void)
@@ -139,15 +139,15 @@ FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 
 FT_CALLBACK_DEF(FT_Error)
 t1_cmap_custom_init(T1_CMapCustom cmap, void *) {
-	T1_Face face = (T1_Face)FT2_1_3_CMAP_FACE(cmap);
+	T1_Face face = (T1_Face)FT_CMAP_FACE(cmap);
 	T1_Encoding encoding = &face->type1.encoding;
 
 	cmap->first = encoding->code_first;
 	cmap->count = (FT_UInt)(encoding->code_last - cmap->first + 1);
 	cmap->indices = encoding->char_index;
 
-	FT2_1_3_ASSERT(cmap->indices != NULL);
-	FT2_1_3_ASSERT(encoding->code_first <= encoding->code_last);
+	FT_ASSERT(cmap->indices != NULL);
+	FT_ASSERT(encoding->code_first <= encoding->code_last);
 
 	return 0;
 }
@@ -227,8 +227,8 @@ FT_CALLBACK_DEF(FT_Error)
 t1_cmap_unicode_init(T1_CMapUnicode cmap, void *) {
 	FT_Error error;
 	FT_UInt  count;
-	T1_Face  face = (T1_Face)FT2_1_3_CMAP_FACE(cmap);
-	FT_Memory memory = FT2_1_3_FACE_MEMORY(face);
+	T1_Face  face = (T1_Face)FT_CMAP_FACE(cmap);
+	FT_Memory memory = FT_FACE_MEMORY(face);
 	PSNames_Service psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
 	cmap->num_pairs = 0;
@@ -260,13 +260,13 @@ t1_cmap_unicode_init(T1_CMapUnicode cmap, void *) {
 		new_count = (FT_UInt)(pair - cmap->pairs);
 		if (new_count == 0) {
 			/* there are no unicode characters in here! */
-			FT2_1_3_FREE(cmap->pairs);
-			error = FT2_1_3_Err_Invalid_Argument;
+			FT_FREE(cmap->pairs);
+			error = FT_Err_Invalid_Argument;
 		} else {
 			/* re-allocate if the new array is much smaller than the original */
 			/* one                                                            */
 			if (new_count != count && new_count < count / 2) {
-				(void)FT2_1_3_RENEW_ARRAY(cmap->pairs, count, new_count);
+				(void)FT_RENEW_ARRAY(cmap->pairs, count, new_count);
 				error = 0;
 			}
 
@@ -282,10 +282,10 @@ t1_cmap_unicode_init(T1_CMapUnicode cmap, void *) {
 
 FT_CALLBACK_DEF(void)
 t1_cmap_unicode_done(T1_CMapUnicode cmap) {
-	FT_Face face 	 = FT2_1_3_CMAP_FACE(cmap);
-	FT_Memory memory = FT2_1_3_FACE_MEMORY(face);
+	FT_Face face 	 = FT_CMAP_FACE(cmap);
+	FT_Memory memory = FT_FACE_MEMORY(face);
 
-	FT2_1_3_FREE(cmap->pairs);
+	FT_FREE(cmap->pairs);
 	cmap->num_pairs = 0;
 }
 

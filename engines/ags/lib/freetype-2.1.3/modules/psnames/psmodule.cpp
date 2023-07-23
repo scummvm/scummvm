@@ -40,7 +40,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 
-#ifndef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
+#ifndef FT_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 
 #ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
@@ -164,13 +164,13 @@ static FT_Error ps_build_unicode_table(FT_Memory memory, FT_UInt num_glyphs, con
 		/* now, compress the table a bit */
 		count = (FT_UInt)(map - table->maps);
 
-		if (count > 0 && FT2_1_3_REALLOC(table->maps, num_glyphs * sizeof(PS_UniMap), count * sizeof(PS_UniMap)))
+		if (count > 0 && FT_REALLOC(table->maps, num_glyphs * sizeof(PS_UniMap), count * sizeof(PS_UniMap)))
 			count = 0;
 
 		if (count == 0) {
-			FT2_1_3_FREE(table->maps);
+			FT_FREE(table->maps);
 			if (!error)
-				error = FT2_1_3_Err_Invalid_Argument; /* no unicode chars here! */
+				error = FT_Err_Invalid_Argument; /* no unicode chars here! */
 		} else
 			/* sort the table in increasing order of unicode values */
 			ft_qsort(table->maps, count, sizeof(PS_UniMap), compare_uni_maps);
@@ -286,7 +286,7 @@ static const PSNames_Interface  psnames_interface = {
 };
 
 
-#endif /* !FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES */
+#endif /* !FT_CONFIG_OPTION_NO_POSTSCRIPT_NAMES */
 
 
 FT_CALLBACK_TABLE_DEF
@@ -298,7 +298,7 @@ const FT_Module_Class psnames_module_class = {
 	0x10000L,   /* driver version                      */
 	0x20000L,   /* driver requires FreeType 2 or above */
 
-#ifdef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
+#ifdef FT_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 	0,
 #else
 	(void *)const_cast<PSNames_Interface *>(&psnames_interface), /* module specific interface */

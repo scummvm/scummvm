@@ -43,7 +43,7 @@ namespace FreeType213 {
 FT_LOCAL_DEF( void )
 pfr_face_done( PFR_Face  face ) {
 	/* finalize the physical font record */
-	pfr_phy_font_done( &face->phy_font, FT2_1_3_FACE_MEMORY( face ) );
+	pfr_phy_font_done( &face->phy_font, FT_FACE_MEMORY( face ) );
 
 	/* no need to finalize the logical font or the header */
 }
@@ -68,7 +68,7 @@ pfr_face_init( FT_Stream      stream,
 
 	if ( !pfr_header_check( &face->header ) ) {
 		FT_TRACE4(( "pfr_face_init: not a valid PFR font\n" ));
-		error = FT2_1_3_Err_Unknown_File_Format;
+		error = FT_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
@@ -91,7 +91,7 @@ pfr_face_init( FT_Stream      stream,
 
 	if ( face_index >= face->root.num_faces ) {
 		FT_ERROR(( "pfr_face_init: invalid face index\n" ));
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -99,7 +99,7 @@ pfr_face_init( FT_Stream      stream,
 	error = pfr_log_font_load(
 				&face->log_font, stream, face_index,
 				face->header.log_dir_offset,
-				FT2_1_3_BOOL( face->header.phy_font_max_size_high != 0 ) );
+				FT_BOOL( face->header.phy_font_max_size_high != 0 ) );
 	if ( error )
 		goto Exit;
 
@@ -112,7 +112,7 @@ pfr_face_init( FT_Stream      stream,
 
 	/* now, set-up all root face fields */
 	{
-		FT_Face      root     = FT2_1_3_FACE( face );
+		FT_Face      root     = FT_FACE( face );
 		PFR_PhyFont  phy_font = &face->phy_font;
 
 
@@ -238,7 +238,7 @@ pfr_slot_load( PFR_Slot  slot,
 		gindex--;
 
 	/* check that the glyph index is correct */
-	FT2_1_3_ASSERT( gindex < face->phy_font.num_chars );
+	FT_ASSERT( gindex < face->phy_font.num_chars );
 
 	/* try to load an embedded bitmap */
 	if ( ( load_flags & ( FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP ) ) == 0 ) {
@@ -265,7 +265,7 @@ pfr_slot_load( PFR_Slot  slot,
 		FT_Bool            scaling;
 
 
-		scaling = FT2_1_3_BOOL( ( load_flags & FT_LOAD_NO_SCALE ) == 0 );
+		scaling = FT_BOOL( ( load_flags & FT_LOAD_NO_SCALE ) == 0 );
 
 		/* copy outline data */
 		*outline = slot->glyph.loader->base.outline;
@@ -372,8 +372,8 @@ Found_Item: {
 		FT_Byte*   p;
 
 
-		if ( FT2_1_3_STREAM_SEEK( item->offset )                       ||
-				FT2_1_3_FRAME_ENTER( item->pair_count * item->pair_size ) )
+		if ( FT_STREAM_SEEK( item->offset )                       ||
+				FT_FRAME_ENTER( item->pair_count * item->pair_size ) )
 			goto Exit;
 
 		min = 0;
@@ -386,19 +386,19 @@ Found_Item: {
 			p   = stream->cursor + mid*item->pair_size;
 
 			if ( item->flags & PFR_KERN_2BYTE_CHAR ) {
-				char1 = FT2_1_3_NEXT_USHORT( p );
-				char2 = FT2_1_3_NEXT_USHORT( p );
+				char1 = FT_NEXT_USHORT( p );
+				char2 = FT_NEXT_USHORT( p );
 			} else {
-				char1 = FT2_1_3_NEXT_USHORT( p );
-				char2 = FT2_1_3_NEXT_USHORT( p );
+				char1 = FT_NEXT_USHORT( p );
+				char2 = FT_NEXT_USHORT( p );
 			}
 			charcode = PFR_KERN_INDEX( char1, char2 );
 
 			if ( idx == charcode ) {
 				if ( item->flags & PFR_KERN_2BYTE_ADJ )
-					kerning->x = item->base_adj + FT2_1_3_NEXT_SHORT( p );
+					kerning->x = item->base_adj + FT_NEXT_SHORT( p );
 				else
-					kerning->x = item->base_adj + FT2_1_3_NEXT_CHAR( p );
+					kerning->x = item->base_adj + FT_NEXT_CHAR( p );
 
 				break;
 			}
@@ -408,7 +408,7 @@ Found_Item: {
 				max = mid;
 		}
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 	}
 
 Exit:

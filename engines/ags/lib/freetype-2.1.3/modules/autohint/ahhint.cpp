@@ -772,7 +772,7 @@ ah_hinter_done(AH_Hinter hinter) {
 		hinter->globals = 0;
 		hinter->face = 0;
 
-		FT2_1_3_FREE(hinter);
+		FT_FREE(hinter);
 	}
 }
 
@@ -840,7 +840,7 @@ ah_hinter_done_face_globals(AH_Face_Globals globals) {
 	FT_Face face = globals->face;
 	FT_Memory memory = face->memory;
 
-	FT2_1_3_FREE(globals);
+	FT_FREE(globals);
 }
 
 static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 load_flags, FT_UInt depth) {
@@ -896,11 +896,11 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		if (error)
 			goto Exit;
 
-		FT2_1_3_MEM_COPY(gloader->current.extra_points, slot->outline.points, slot->outline.n_points * sizeof(FT_Vector));
+		FT_MEM_COPY(gloader->current.extra_points, slot->outline.points, slot->outline.n_points * sizeof(FT_Vector));
 
-		FT2_1_3_MEM_COPY(gloader->current.outline.contours, slot->outline.contours, slot->outline.n_contours * sizeof(short));
+		FT_MEM_COPY(gloader->current.outline.contours, slot->outline.contours, slot->outline.n_contours * sizeof(short));
 
-		FT2_1_3_MEM_COPY(gloader->current.outline.tags, slot->outline.tags, slot->outline.n_points * sizeof(char));
+		FT_MEM_COPY(gloader->current.outline.tags, slot->outline.tags, slot->outline.n_points * sizeof(char));
 
 		gloader->current.outline.n_points = slot->outline.n_points;
 		gloader->current.outline.n_contours = slot->outline.n_contours;
@@ -973,7 +973,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		if (error)
 			goto Exit;
 
-		FT2_1_3_MEM_COPY(gloader->current.subglyphs, slot->subglyphs,
+		FT_MEM_COPY(gloader->current.subglyphs, slot->subglyphs,
 						 num_subglyphs * sizeof(FT_SubGlyph));
 
 		gloader->current.num_subglyphs = num_subglyphs;
@@ -1002,7 +1002,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 			/* recompute subglyph pointer */
 			subglyph = gloader->base.subglyphs + num_base_subgs + nn;
 
-			if (subglyph->flags & FT2_1_3_SUBGLYPH_FLAG_USE_MY_METRICS) {
+			if (subglyph->flags & FT_SUBGLYPH_FLAG_USE_MY_METRICS) {
 				pp1 = hinter->pp1;
 				pp2 = hinter->pp2;
 			} else {
@@ -1015,7 +1015,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 
 			/* now perform the transform required for this subglyph */
 
-			if (subglyph->flags & (FT2_1_3_SUBGLYPH_FLAG_SCALE | FT2_1_3_SUBGLYPH_FLAG_XY_SCALE | FT2_1_3_SUBGLYPH_FLAG_2X2)) {
+			if (subglyph->flags & (FT_SUBGLYPH_FLAG_SCALE | FT_SUBGLYPH_FLAG_XY_SCALE | FT_SUBGLYPH_FLAG_2X2)) {
 				FT_Vector *cur = gloader->base.outline.points + num_base_points;
 				FT_Vector *org = gloader->base.extra_points + num_base_points;
 				FT_Vector *limit = cur + num_new_points;
@@ -1028,7 +1028,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 
 			/* apply offset */
 
-			if (!(subglyph->flags & FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES)) {
+			if (!(subglyph->flags & FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES)) {
 				FT_Int k = subglyph->arg1;
 				FT_UInt l = subglyph->arg2;
 				FT_Vector *p1;
@@ -1036,7 +1036,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 
 				if (start_point + k >= num_base_points ||
 					l >= (FT_UInt)num_new_points) {
-					error = FT2_1_3_Err_Invalid_Composite;
+					error = FT_Err_Invalid_Composite;
 					goto Exit;
 				}
 
@@ -1070,7 +1070,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 
 	default:
 		/* we don't support other formats (yet?) */
-		error = FT2_1_3_Err_Unimplemented_Feature;
+		error = FT_Err_Unimplemented_Feature;
 	}
 
 Hint_Metrics:
@@ -1155,8 +1155,8 @@ ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt 
 	ah_loader_rewind(hinter->loader);
 
 	/* reset hinting flags according to load flags and current render target */
-	hinter->do_horz_hints = !FT2_1_3_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
-	hinter->do_vert_hints = !FT2_1_3_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
+	hinter->do_horz_hints = !FT_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
+	hinter->do_vert_hints = !FT_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
 
 #ifdef DEBUG_HINTER
 	hinter->do_horz_hints = !ah_debug_disable_vert; /* not a bug, the meaning */
@@ -1165,11 +1165,11 @@ ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt 
 
 	/* we snap the width of vertical stems for the monochrome and         */
 	/* horizontal LCD rendering targets only.  Corresponds to X snapping. */
-	hinter->do_horz_snapping = FT2_1_3_BOOL(hint_mode == FT_RENDER_MODE_MONO || hint_mode == FT_RENDER_MODE_LCD);
+	hinter->do_horz_snapping = FT_BOOL(hint_mode == FT_RENDER_MODE_MONO || hint_mode == FT_RENDER_MODE_LCD);
 
 	/* we snap the width of horizontal stems for the monochrome and     */
 	/* vertical LCD rendering targets only.  Corresponds to Y snapping. */
-	hinter->do_vert_snapping = FT2_1_3_BOOL(hint_mode == FT_RENDER_MODE_MONO || hint_mode == FT_RENDER_MODE_LCD_V);
+	hinter->do_vert_snapping = FT_BOOL(hint_mode == FT_RENDER_MODE_MONO || hint_mode == FT_RENDER_MODE_LCD_V);
 
 #if 1
 	load_flags = FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_TRANSFORM;
@@ -1208,7 +1208,7 @@ ah_hinter_get_global_hints(AH_Hinter hinter, FT_Face face, void **global_hints, 
 	return;
 
 Fail:
-	FT2_1_3_FREE(globals);
+	FT_FREE(globals);
 
 	*global_hints = 0;
 	*global_len = 0;
@@ -1218,7 +1218,7 @@ FT_LOCAL_DEF(void)
 ah_hinter_done_global_hints(AH_Hinter hinter, void *global_hints) {
 	FT_Memory memory = hinter->memory;
 
-	FT2_1_3_FREE(global_hints);
+	FT_FREE(global_hints);
 }
 
 

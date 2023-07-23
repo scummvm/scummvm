@@ -60,11 +60,11 @@ static FT_Error t1_get_glyph_name(T1_Face face, FT_UInt glyph_index, FT_Pointer 
 		if (len >= buffer_max)
 			len = buffer_max - 1;
 
-		FT2_1_3_MEM_COPY(buffer, gname, len);
+		FT_MEM_COPY(buffer, gname, len);
 		((FT_Byte *)buffer)[len] = 0;
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -127,7 +127,7 @@ static FT_Error Get_Kerning(T1_Face face, FT_UInt left_glyph, FT_UInt right_glyp
 	if (afm)
 		T1_Get_Kerning(afm, left_glyph, right_glyph, kerning);
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 #endif /* T1_CONFIG_OPTION_NO_AFM */

@@ -100,18 +100,18 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 	TT_CMapGroup       groups;
 
 	if (cmap->loaded)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
 	memory = stream->memory;
 
-	if (FT2_1_3_STREAM_SEEK(cmap->offset))
+	if (FT_STREAM_SEEK(cmap->offset))
 		return error;
 
 	switch (cmap->format) {
 	case 0:
 		cmap0 = &cmap->c.cmap0;
 
-		if (FT2_1_3_READ_USHORT(cmap0->language) || FT2_1_3_ALLOC(cmap0->glyphIdArray, 256L) || FT2_1_3_STREAM_READ(cmap0->glyphIdArray, 256L))
+		if (FT_READ_USHORT(cmap0->language) || FT_ALLOC(cmap0->glyphIdArray, 256L) || FT_STREAM_READ(cmap0->glyphIdArray, 256L))
 			goto Fail;
 
 		cmap->get_index = code_to_index0;
@@ -124,56 +124,56 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		/* allocate subheader keys */
 
-		if (FT_NEW_ARRAY(cmap2->subHeaderKeys, 256) || FT2_1_3_FRAME_ENTER(2L + 512L))
+		if (FT_NEW_ARRAY(cmap2->subHeaderKeys, 256) || FT_FRAME_ENTER(2L + 512L))
 			goto Fail;
 
-		cmap2->language = FT2_1_3_GET_USHORT();
+		cmap2->language = FT_GET_USHORT();
 
 		for (i = 0; i < 256; i++) {
-			u = (FT_UShort)(FT2_1_3_GET_USHORT() / 8);
+			u = (FT_UShort)(FT_GET_USHORT() / 8);
 			cmap2->subHeaderKeys[i] = u;
 
 			if (num_SH < u)
 				num_SH = u;
 		}
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		/* load subheaders */
 
 		cmap2->numGlyphId = l = (FT_UShort)(((cmap->length - 2L * (256 + 3) - num_SH * 8L) & 0xFFFFU) / 2);
 
-		if (FT_NEW_ARRAY(cmap2->subHeaders, num_SH + 1) || FT2_1_3_FRAME_ENTER((num_SH + 1) * 8L)) {
-			FT2_1_3_FREE(cmap2->subHeaderKeys);
+		if (FT_NEW_ARRAY(cmap2->subHeaders, num_SH + 1) || FT_FRAME_ENTER((num_SH + 1) * 8L)) {
+			FT_FREE(cmap2->subHeaderKeys);
 			goto Fail;
 		}
 
 		cmap2sub = cmap2->subHeaders;
 
 		for (i = 0; i <= num_SH; i++) {
-			cmap2sub->firstCode = FT2_1_3_GET_USHORT();
-			cmap2sub->entryCount = FT2_1_3_GET_USHORT();
-			cmap2sub->idDelta = FT2_1_3_GET_SHORT();
+			cmap2sub->firstCode = FT_GET_USHORT();
+			cmap2sub->entryCount = FT_GET_USHORT();
+			cmap2sub->idDelta = FT_GET_SHORT();
 			/* we apply the location offset immediately */
-			cmap2sub->idRangeOffset = (FT_UShort)(FT2_1_3_GET_USHORT() - (num_SH - i) * 8 - 2);
+			cmap2sub->idRangeOffset = (FT_UShort)(FT_GET_USHORT() - (num_SH - i) * 8 - 2);
 
 			cmap2sub++;
 		}
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		/* load glyph IDs */
 
-		if (FT_NEW_ARRAY(cmap2->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L)) {
-			FT2_1_3_FREE(cmap2->subHeaders);
-			FT2_1_3_FREE(cmap2->subHeaderKeys);
+		if (FT_NEW_ARRAY(cmap2->glyphIdArray, l) || FT_FRAME_ENTER(l * 2L)) {
+			FT_FREE(cmap2->subHeaders);
+			FT_FREE(cmap2->subHeaderKeys);
 			goto Fail;
 		}
 
 		for (i = 0; i < l; i++)
-			cmap2->glyphIdArray[i] = FT2_1_3_GET_USHORT();
+			cmap2->glyphIdArray[i] = FT_GET_USHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		cmap->get_index = code_to_index2;
 		cmap->get_next_char = code_to_next2;
@@ -184,55 +184,55 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 
 		/* load header */
 
-		if (FT2_1_3_FRAME_ENTER(10L))
+		if (FT_FRAME_ENTER(10L))
 			goto Fail;
 
-		cmap4->language 	 = FT2_1_3_GET_USHORT();
-		cmap4->segCountX2 	 = FT2_1_3_GET_USHORT();
-		cmap4->searchRange 	 = FT2_1_3_GET_USHORT();
-		cmap4->entrySelector = FT2_1_3_GET_USHORT();
-		cmap4->rangeShift	 = FT2_1_3_GET_USHORT();
+		cmap4->language 	 = FT_GET_USHORT();
+		cmap4->segCountX2 	 = FT_GET_USHORT();
+		cmap4->searchRange 	 = FT_GET_USHORT();
+		cmap4->entrySelector = FT_GET_USHORT();
+		cmap4->rangeShift	 = FT_GET_USHORT();
 
 		num_Seg = (FT_UShort)(cmap4->segCountX2 / 2);
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		/* load segments */
 
-		if (FT_NEW_ARRAY(cmap4->segments, num_Seg) || FT2_1_3_FRAME_ENTER((num_Seg * 4 + 1) * 2L))
+		if (FT_NEW_ARRAY(cmap4->segments, num_Seg) || FT_FRAME_ENTER((num_Seg * 4 + 1) * 2L))
 			goto Fail;
 
 		segments = cmap4->segments;
 
 		for (i = 0; i < num_Seg; i++)
-			segments[i].endCount = FT2_1_3_GET_USHORT();
+			segments[i].endCount = FT_GET_USHORT();
 
-		(void)FT2_1_3_GET_USHORT();
-
-		for (i = 0; i < num_Seg; i++)
-			segments[i].startCount = FT2_1_3_GET_USHORT();
+		(void)FT_GET_USHORT();
 
 		for (i = 0; i < num_Seg; i++)
-			segments[i].idDelta = FT2_1_3_GET_SHORT();
+			segments[i].startCount = FT_GET_USHORT();
 
 		for (i = 0; i < num_Seg; i++)
-			segments[i].idRangeOffset = FT2_1_3_GET_USHORT();
+			segments[i].idDelta = FT_GET_SHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		for (i = 0; i < num_Seg; i++)
+			segments[i].idRangeOffset = FT_GET_USHORT();
+
+		FT_FRAME_EXIT();
 
 		cmap4->numGlyphId = l = (FT_UShort)(((cmap->length - (16L + 8L * num_Seg)) & 0xFFFFU) / 2);
 
 		/* load IDs */
 
-		if (FT_NEW_ARRAY(cmap4->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L)) {
-			FT2_1_3_FREE(cmap4->segments);
+		if (FT_NEW_ARRAY(cmap4->glyphIdArray, l) || FT_FRAME_ENTER(l * 2L)) {
+			FT_FREE(cmap4->segments);
 			goto Fail;
 		}
 
 		for (i = 0; i < l; i++)
-			cmap4->glyphIdArray[i] = FT2_1_3_GET_USHORT();
+			cmap4->glyphIdArray[i] = FT_GET_USHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		cmap4->last_segment = cmap4->segments;
 
@@ -243,24 +243,24 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 	case 6:
 		cmap6 = &cmap->c.cmap6;
 
-		if (FT2_1_3_FRAME_ENTER(6L))
+		if (FT_FRAME_ENTER(6L))
 			goto Fail;
 
-		cmap6->language   = FT2_1_3_GET_USHORT();
-		cmap6->firstCode  = FT2_1_3_GET_USHORT();
-		cmap6->entryCount = FT2_1_3_GET_USHORT();
+		cmap6->language   = FT_GET_USHORT();
+		cmap6->firstCode  = FT_GET_USHORT();
+		cmap6->entryCount = FT_GET_USHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		l = cmap6->entryCount;
 
-		if (FT_NEW_ARRAY(cmap6->glyphIdArray, l) || FT2_1_3_FRAME_ENTER(l * 2L))
+		if (FT_NEW_ARRAY(cmap6->glyphIdArray, l) || FT_FRAME_ENTER(l * 2L))
 			goto Fail;
 
 		for (i = 0; i < l; i++)
-			cmap6->glyphIdArray[i] = FT2_1_3_GET_USHORT();
+			cmap6->glyphIdArray[i] = FT_GET_USHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 		cmap->get_index 	= code_to_index6;
 		cmap->get_next_char = code_to_next6;
 		break;
@@ -269,35 +269,35 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 	case 12:
 		cmap8_12 = &cmap->c.cmap8_12;
 
-		if (FT2_1_3_FRAME_ENTER(8L))
+		if (FT_FRAME_ENTER(8L))
 			goto Fail;
 
-		cmap->length 	   = FT2_1_3_GET_ULONG();
-		cmap8_12->language = FT2_1_3_GET_ULONG();
+		cmap->length 	   = FT_GET_ULONG();
+		cmap8_12->language = FT_GET_ULONG();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		if (cmap->format == 8)
-			if (FT2_1_3_STREAM_SKIP(8192L))
+			if (FT_STREAM_SKIP(8192L))
 				goto Fail;
 
-		if (FT2_1_3_READ_ULONG(cmap8_12->nGroups))
+		if (FT_READ_ULONG(cmap8_12->nGroups))
 			goto Fail;
 
 		n = cmap8_12->nGroups;
 
-		if (FT_NEW_ARRAY(cmap8_12->groups, n) || FT2_1_3_FRAME_ENTER(n * 3 * 4L))
+		if (FT_NEW_ARRAY(cmap8_12->groups, n) || FT_FRAME_ENTER(n * 3 * 4L))
 			goto Fail;
 
 		groups = cmap8_12->groups;
 
 		for (j = 0; j < n; j++) {
-			groups[j].startCharCode = FT2_1_3_GET_ULONG();
-			groups[j].endCharCode 	= FT2_1_3_GET_ULONG();
-			groups[j].startGlyphID  = FT2_1_3_GET_ULONG();
+			groups[j].startCharCode = FT_GET_ULONG();
+			groups[j].endCharCode 	= FT_GET_ULONG();
+			groups[j].startGlyphID  = FT_GET_ULONG();
 		}
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		cmap8_12->last_group = cmap8_12->groups;
 
@@ -308,34 +308,34 @@ tt_face_load_charmap(TT_Face face, TT_CMapTable cmap, FT_Stream stream) {
 	case 10:
 		cmap10 = &cmap->c.cmap10;
 
-		if (FT2_1_3_FRAME_ENTER(16L))
+		if (FT_FRAME_ENTER(16L))
 			goto Fail;
 
-		cmap->length 	 = FT2_1_3_GET_ULONG();
-		cmap10->language = FT2_1_3_GET_ULONG();
-		cmap10->startCharCode = FT2_1_3_GET_ULONG();
-		cmap10->numChars = FT2_1_3_GET_ULONG();
+		cmap->length 	 = FT_GET_ULONG();
+		cmap10->language = FT_GET_ULONG();
+		cmap10->startCharCode = FT_GET_ULONG();
+		cmap10->numChars = FT_GET_ULONG();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		n = cmap10->numChars;
 
-		if (FT_NEW_ARRAY(cmap10->glyphs, n) || FT2_1_3_FRAME_ENTER(n * 2L))
+		if (FT_NEW_ARRAY(cmap10->glyphs, n) || FT_FRAME_ENTER(n * 2L))
 			goto Fail;
 
 		for (j = 0; j < n; j++)
-			cmap10->glyphs[j] = FT2_1_3_GET_USHORT();
+			cmap10->glyphs[j] = FT_GET_USHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 		cmap->get_index = code_to_index10;
 		cmap->get_next_char = code_to_next10;
 		break;
 
 	default: /* corrupt character mapping table */
-		return FT2_1_3_Err_Invalid_CharMap_Format;
+		return FT_Err_Invalid_CharMap_Format;
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Fail:
 	tt_face_free_charmap(face, cmap);
@@ -348,40 +348,40 @@ tt_face_free_charmap(TT_Face face, TT_CMapTable cmap) {
 	FT_Memory memory;
 
 	if (!cmap)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
 	memory = face->root.driver->root.memory;
 
 	switch (cmap->format) {
 	case 0:
-		FT2_1_3_FREE(cmap->c.cmap0.glyphIdArray);
+		FT_FREE(cmap->c.cmap0.glyphIdArray);
 		break;
 
 	case 2:
-		FT2_1_3_FREE(cmap->c.cmap2.subHeaderKeys);
-		FT2_1_3_FREE(cmap->c.cmap2.subHeaders);
-		FT2_1_3_FREE(cmap->c.cmap2.glyphIdArray);
+		FT_FREE(cmap->c.cmap2.subHeaderKeys);
+		FT_FREE(cmap->c.cmap2.subHeaders);
+		FT_FREE(cmap->c.cmap2.glyphIdArray);
 		break;
 
 	case 4:
-		FT2_1_3_FREE(cmap->c.cmap4.segments);
-		FT2_1_3_FREE(cmap->c.cmap4.glyphIdArray);
+		FT_FREE(cmap->c.cmap4.segments);
+		FT_FREE(cmap->c.cmap4.glyphIdArray);
 		cmap->c.cmap4.segCountX2 = 0;
 		break;
 
 	case 6:
-		FT2_1_3_FREE(cmap->c.cmap6.glyphIdArray);
+		FT_FREE(cmap->c.cmap6.glyphIdArray);
 		cmap->c.cmap6.entryCount = 0;
 		break;
 
 	case 8:
 	case 12:
-		FT2_1_3_FREE(cmap->c.cmap8_12.groups);
+		FT_FREE(cmap->c.cmap8_12.groups);
 		cmap->c.cmap8_12.nGroups = 0;
 		break;
 
 	case 10:
-		FT2_1_3_FREE(cmap->c.cmap10.glyphs);
+		FT_FREE(cmap->c.cmap10.glyphs);
 		cmap->c.cmap10.numChars = 0;
 		break;
 
@@ -391,7 +391,7 @@ tt_face_free_charmap(TT_Face face, TT_CMapTable cmap) {
 	}
 
 	cmap->loaded = FALSE;
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 

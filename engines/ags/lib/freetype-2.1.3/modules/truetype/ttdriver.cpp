@@ -56,7 +56,7 @@ static FT_Error Get_Kerning(TT_Face face, FT_UInt left_glyph, FT_UInt right_glyp
 	TT_Kern0_Pair pair;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	kerning->x = 0;
 	kerning->y = 0;
@@ -87,7 +87,7 @@ static FT_Error Get_Kerning(TT_Face face, FT_UInt left_glyph, FT_UInt right_glyp
 	}
 
 Exit:
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Found:
 	kerning->x = pair->value;
@@ -153,7 +153,7 @@ static FT_Error Load_Glyph(TT_GlyphSlot slot, TT_Size size, FT_UShort glyph_inde
 	FT_Error error;
 
 	if (!slot)
-		return FT2_1_3_Err_Invalid_Slot_Handle;
+		return FT_Err_Invalid_Slot_Handle;
 
 	/* check whether we want a scaled outline or bitmap */
 	if (!size)
@@ -166,10 +166,10 @@ static FT_Error Load_Glyph(TT_GlyphSlot slot, TT_Size size, FT_UShort glyph_inde
 	if (size) {
 		/* these two object must have the same parent */
 		if (size->root.face != slot->face)
-			return FT2_1_3_Err_Invalid_Face_Handle;
+			return FT_Err_Invalid_Face_Handle;
 
 		if (!size->ttmetrics.valid) {
-			if (FT2_1_3_SET_ERROR(tt_size_reset(size)))
+			if (FT_SET_ERROR(tt_size_reset(size)))
 				return error;
 		}
 	}
@@ -194,7 +194,7 @@ static FT_Module_Interface tt_get_interface(TT_Driver driver, const char *tt_int
 	if (sfntd) {
 		sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfntd->clazz->module_interface));
 		if (sfnt)
-			return sfnt->get_interface(FT2_1_3_MODULE(driver), tt_interface);
+			return sfnt->get_interface(FT_MODULE(driver), tt_interface);
 	}
 
 	return 0;

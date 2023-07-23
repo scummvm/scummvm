@@ -35,7 +35,7 @@
 
 /**** SETUP MACROS ****/
 
-#undef FT2_1_3_NEED_EXTERN_C
+#undef FT_NEED_EXTERN_C
 
 #undef FT_ERR_XCAT
 #undef FT_ERR_CAT
@@ -44,16 +44,16 @@
 #define FT_ERR_CAT(x, y) FT_ERR_XCAT(x, y)
 
 /* FT_ERR_PREFIX is used as a prefix for error identifiers. */
-/* By default, we use `FT2_1_3_Err_'.                            */
+/* By default, we use `FT_Err_'.                            */
 #ifndef FT_ERR_PREFIX
-#define FT_ERR_PREFIX FT2_1_3_Err_
+#define FT_ERR_PREFIX FT_Err_
 #endif
 
 /* FT_ERR_BASE is used as the base for module-specific errors. */
 #ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
 
 #ifndef FT_ERR_BASE
-#define FT_ERR_BASE FT2_1_3_Mod_Err_Base
+#define FT_ERR_BASE FT_Mod_Err_Base
 #endif
 
 #else
@@ -72,7 +72,7 @@
 #define FT_ERROR_END_LIST       FT_ERR_CAT( FT_ERR_PREFIX, Max ) };
 
 #ifdef __cplusplus
-#define FT2_1_3_NEED_EXTERN_C
+#define FT_NEED_EXTERN_C
 extern "C" {
 #endif
 
@@ -82,8 +82,8 @@ extern "C" {
 #define FT_ERRORDEF_(e, v, s) \
 	FT_ERRORDEF(FT_ERR_CAT(FT_ERR_PREFIX, e), v + FT_ERR_BASE, s)
 
-/* this is only used for FT2_1_3_Err_Ok, which must be 0! */
-#define FT2_1_3_NOERRORDEF_(e, v, s) \
+/* this is only used for FT_Err_Ok, which must be 0! */
+#define FT_NOERRORDEF_(e, v, s) \
 	FT_ERRORDEF(FT_ERR_CAT(FT_ERR_PREFIX, e), v, s)
 
 #ifdef FT_ERROR_START_LIST
@@ -100,7 +100,7 @@ FT_ERROR_END_LIST
 
 /* SIMPLE CLEANUP */
 
-#ifdef FT2_1_3_NEED_EXTERN_C
+#ifdef FT_NEED_EXTERN_C
 }
 #endif
 
@@ -109,9 +109,9 @@ FT_ERROR_END_LIST
 
 #undef FT_ERRORDEF
 #undef FT_ERRORDEF_
-#undef FT2_1_3_NOERRORDEF_
+#undef FT_NOERRORDEF_
 
-#undef FT2_1_3_NEED_EXTERN_C
+#undef FT_NEED_EXTERN_C
 #undef FT_ERR_PREFIX
 #undef FT_ERR_BASE
 #undef FT_ERR_CONCAT

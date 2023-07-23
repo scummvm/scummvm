@@ -45,8 +45,8 @@
 /*                                                                       */
 /*************************************************************************/
 
-#ifndef __FT2_1_3_CONFIG_H__
-#define __FT2_1_3_CONFIG_H__
+#ifndef __FT_CONFIG_H__
+#define __FT_CONFIG_H__
 
 #include "engines/ags/lib/freetype-2.1.3/config/ftoption.h"
 #include "engines/ags/lib/freetype-2.1.3/config/ftstdlib.h"
@@ -322,4 +322,4 @@ typedef unsigned long FT_UFast;
 
 FT_END_HEADER
 
-#endif /* __FT2_1_3_CONFIG_H__ */
+#endif /* __FT_CONFIG_H__ */

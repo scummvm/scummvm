@@ -78,10 +78,10 @@ tt_face_goto_table(TT_Face face, FT_ULong tag, FT_Stream stream, FT_ULong *lengt
 		if (length)
 			*length = table->Length;
 
-		if (FT2_1_3_STREAM_SEEK(table->Offset))
+		if (FT_STREAM_SEEK(table->Offset))
 			goto Exit;
 	} else
-		error = FT2_1_3_Err_Table_Missing;
+		error = FT_Err_Table_Missing;
 
 Exit:
 	return error;
@@ -95,33 +95,33 @@ static FT_Error sfnt_dir_check(FT_Stream stream, FT_ULong offset, FT_UInt num_ta
 	const FT_ULong locx_tag = FT_MAKE_TAG('l', 'o', 'c', 'x');
 
 	static const FT_Frame_Field sfnt_dir_entry_fields[] = {
-#undef FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TT_TableRec
+#undef FT_STRUCTURE
+#define FT_STRUCTURE TT_TableRec
 
-		FT2_1_3_FRAME_START(16),
-		FT2_1_3_FRAME_ULONG(Tag),
-		FT2_1_3_FRAME_ULONG(CheckSum),
-		FT2_1_3_FRAME_ULONG(Offset),
-		FT2_1_3_FRAME_ULONG(Length),
-		FT2_1_3_FRAME_END};
+		FT_FRAME_START(16),
+		FT_FRAME_ULONG(Tag),
+		FT_FRAME_ULONG(CheckSum),
+		FT_FRAME_ULONG(Offset),
+		FT_FRAME_ULONG(Length),
+		FT_FRAME_END};
 
 	/* if 'num_tables' is 0, read the table count from the file */
 	if (num_tables == 0) {
 		FT_ULong format_tag;
 		(void)format_tag;
 
-		if (FT2_1_3_STREAM_SEEK(offset) || FT2_1_3_READ_ULONG(format_tag) || FT2_1_3_READ_USHORT(num_tables) || FT2_1_3_STREAM_SKIP(6))
+		if (FT_STREAM_SEEK(offset) || FT_READ_ULONG(format_tag) || FT_READ_USHORT(num_tables) || FT_STREAM_SKIP(6))
 			goto Bad_Format;
 
 		if (offset + 12 + num_tables * 16 > stream->size)
 			goto Bad_Format;
-	} else if (FT2_1_3_STREAM_SEEK(offset + 12))
+	} else if (FT_STREAM_SEEK(offset + 12))
 		goto Bad_Format;
 
 	for (nn = 0; nn < num_tables; nn++) {
 		TT_TableRec table;
 
-		if (FT2_1_3_STREAM_READ_FIELDS(sfnt_dir_entry_fields, &table))
+		if (FT_STREAM_READ_FIELDS(sfnt_dir_entry_fields, &table))
 			goto Bad_Format;
 
 		if (table.Offset + table.Length > stream->size && table.Tag != glyx_tag && table.Tag != locx_tag)
@@ -132,10 +132,10 @@ static FT_Error sfnt_dir_check(FT_Stream stream, FT_ULong offset, FT_UInt num_ta
 
 			has_head = 1;
 
-			if (table.Length != 0x36 || FT2_1_3_STREAM_SEEK(table.Offset + 12) || FT2_1_3_READ_ULONG(magic) || magic != 0x5F0F3CF5UL)
+			if (table.Length != 0x36 || FT_STREAM_SEEK(table.Offset + 12) || FT_READ_ULONG(magic) || magic != 0x5F0F3CF5UL)
 				goto Bad_Format;
 
-			if (FT2_1_3_STREAM_SEEK(offset + 28 + 16 * nn))
+			if (FT_STREAM_SEEK(offset + 28 + 16 * nn))
 				goto Bad_Format;
 		}
 	}
@@ -147,7 +147,7 @@ Exit:
 	return error;
 
 Bad_Format:
-	error = FT2_1_3_Err_Unknown_File_Format;
+	error = FT_Err_Unknown_File_Format;
 	goto Exit;
 }
 
@@ -158,24 +158,24 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 	FT_Memory memory = stream->memory;
 
 	static const FT_Frame_Field sfnt_header_fields[] = {
-#undef FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE SFNT_HeaderRec
+#undef FT_STRUCTURE
+#define FT_STRUCTURE SFNT_HeaderRec
 
-		FT2_1_3_FRAME_START(8),
-		FT2_1_3_FRAME_USHORT(num_tables),
-		FT2_1_3_FRAME_USHORT(search_range),
-		FT2_1_3_FRAME_USHORT(entry_selector),
-		FT2_1_3_FRAME_USHORT(range_shift),
-		FT2_1_3_FRAME_END};
+		FT_FRAME_START(8),
+		FT_FRAME_USHORT(num_tables),
+		FT_FRAME_USHORT(search_range),
+		FT_FRAME_USHORT(entry_selector),
+		FT_FRAME_USHORT(range_shift),
+		FT_FRAME_END};
 
 	static const FT_Frame_Field ttc_header_fields[] = {
-#undef FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TTC_HeaderRec
+#undef FT_STRUCTURE
+#define FT_STRUCTURE TTC_HeaderRec
 
-		FT2_1_3_FRAME_START(8),
-		FT2_1_3_FRAME_LONG(version),
-		FT2_1_3_FRAME_LONG(count),
-		FT2_1_3_FRAME_END};
+		FT_FRAME_START(8),
+		FT_FRAME_LONG(version),
+		FT_FRAME_LONG(count),
+		FT_FRAME_END};
 
 	FT_TRACE2(("tt_face_load_sfnt_header: %08p, %ld\n", face, face_index));
 
@@ -189,9 +189,9 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 	/* file is a TrueType collection, otherwise it can be any other     */
 	/* kind of font.                                                    */
 	/*                                                                  */
-	offset = FT2_1_3_STREAM_POS();
+	offset = FT_STREAM_POS();
 
-	if (FT2_1_3_READ_ULONG(format_tag))
+	if (FT_READ_ULONG(format_tag))
 		goto Exit;
 
 	if (format_tag == TTAG_ttcf) {
@@ -201,28 +201,28 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 
 		/* It is a TrueType collection, i.e. a file containing several */
 		/* font files.  Read the font directory now                    */
-		if (FT2_1_3_STREAM_READ_FIELDS(ttc_header_fields, &face->ttc_header))
+		if (FT_STREAM_READ_FIELDS(ttc_header_fields, &face->ttc_header))
 			goto Exit;
 
 		/* now read the offsets of each font in the file */
-		if (FT_NEW_ARRAY(face->ttc_header.offsets, face->ttc_header.count) || FT2_1_3_FRAME_ENTER(face->ttc_header.count * 4L))
+		if (FT_NEW_ARRAY(face->ttc_header.offsets, face->ttc_header.count) || FT_FRAME_ENTER(face->ttc_header.count * 4L))
 			goto Exit;
 
 		for (n = 0; n < face->ttc_header.count; n++)
-			face->ttc_header.offsets[n] = FT2_1_3_GET_ULONG();
+			face->ttc_header.offsets[n] = FT_GET_ULONG();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		/* check face index */
 		if (face_index >= face->ttc_header.count) {
-			error = FT2_1_3_Err_Bad_Argument;
+			error = FT_Err_Bad_Argument;
 			goto Exit;
 		}
 
 		/* seek to the appropriate TrueType file, then read tag */
 		offset = face->ttc_header.offsets[face_index];
 
-		if (FT2_1_3_STREAM_SEEK(offset) || FT2_1_3_READ_LONG(format_tag))
+		if (FT_STREAM_SEEK(offset) || FT_READ_LONG(format_tag))
 			goto Exit;
 	}
 
@@ -230,14 +230,14 @@ tt_face_load_sfnt_header(TT_Face face, FT_Stream stream, FT_Long face_index, SFN
 	sfnt->format_tag = format_tag;
 	sfnt->offset = offset;
 
-	if (FT2_1_3_STREAM_READ_FIELDS(sfnt_header_fields, sfnt))
+	if (FT_STREAM_READ_FIELDS(sfnt_header_fields, sfnt))
 		goto Exit;
 
 	/* now check the sfnt directory */
 	error = sfnt_dir_check(stream, offset, sfnt->num_tables);
 	if (error) {
 		FT_TRACE2(("tt_face_load_sfnt_header: file is not SFNT!\n"));
-		error = FT2_1_3_Err_Unknown_File_Format;
+		error = FT_Err_Unknown_File_Format;
 	}
 
 Exit:
@@ -261,7 +261,7 @@ tt_face_load_directory(TT_Face face, FT_Stream stream, SFNT_Header sfnt) {
 	if (FT_NEW_ARRAY(face->dir_tables, face->num_tables))
 		goto Exit;
 
-	if (FT2_1_3_STREAM_SEEK(sfnt->offset + 12) || FT2_1_3_FRAME_ENTER(face->num_tables * 16L))
+	if (FT_STREAM_SEEK(sfnt->offset + 12) || FT_FRAME_ENTER(face->num_tables * 16L))
 		goto Exit;
 
 	entry = face->dir_tables;
@@ -269,16 +269,16 @@ tt_face_load_directory(TT_Face face, FT_Stream stream, SFNT_Header sfnt) {
 
 	for (; entry < limit; entry++) {
 		/* loop through the tables and get all entries */
-		entry->Tag 		= FT2_1_3_GET_TAG4();
-		entry->CheckSum = FT2_1_3_GET_ULONG();
-		entry->Offset   = FT2_1_3_GET_LONG();
-		entry->Length   = FT2_1_3_GET_LONG();
+		entry->Tag 		= FT_GET_TAG4();
+		entry->CheckSum = FT_GET_ULONG();
+		entry->Offset   = FT_GET_LONG();
+		entry->Length   = FT_GET_LONG();
 
 		FT_TRACE2(("  %c%c%c%c  -  %08lx  -  %08lx\n", (FT_Char)(entry->Tag >> 24), (FT_Char)(entry->Tag >> 16),
 						(FT_Char)(entry->Tag >> 8), (FT_Char)(entry->Tag), entry->Offset, entry->Length));
 	}
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 
 	FT_TRACE2(("Directory loaded\n\n"));
 
@@ -297,7 +297,7 @@ tt_face_load_any(TT_Face face, FT_ULong tag, FT_Long offset, FT_Byte *buffer, FT
 		/* look for tag in font directory */
 		table = tt_face_lookup_table(face, tag);
 		if (!table) {
-			error = FT2_1_3_Err_Table_Missing;
+			error = FT_Err_Table_Missing;
 			goto Exit;
 		}
 
@@ -310,7 +310,7 @@ tt_face_load_any(TT_Face face, FT_ULong tag, FT_Long offset, FT_Byte *buffer, FT
 	if (length && *length == 0) {
 		*length = size;
 
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	}
 
 	if (length)
@@ -318,7 +318,7 @@ tt_face_load_any(TT_Face face, FT_ULong tag, FT_Long offset, FT_Byte *buffer, FT
 
 	stream = face->root.stream;
 	/* the `if' is syntactic sugar for picky compilers */
-	if (FT2_1_3_STREAM_READ_AT(offset, buffer, size))
+	if (FT_STREAM_READ_AT(offset, buffer, size))
 		goto Exit;
 
 Exit:
@@ -330,30 +330,30 @@ static FT_Error tt_face_load_generic_header(TT_Face face, FT_Stream stream, FT_U
 	TT_Header *header;
 
 	static const FT_Frame_Field  header_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE  TT_Header
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE  TT_Header
 
-		FT2_1_3_FRAME_START (54),
-		FT2_1_3_FRAME_ULONG (Table_Version),
-		FT2_1_3_FRAME_ULONG (Font_Revision),
-		FT2_1_3_FRAME_LONG  (CheckSum_Adjust),
-		FT2_1_3_FRAME_LONG  (Magic_Number),
-		FT2_1_3_FRAME_USHORT(Flags),
-		FT2_1_3_FRAME_USHORT(Units_Per_EM),
-		FT2_1_3_FRAME_LONG  (Created[0]),
-		FT2_1_3_FRAME_LONG  (Created[1]),
-		FT2_1_3_FRAME_LONG  (Modified[0]),
-		FT2_1_3_FRAME_LONG  (Modified[1]),
-		FT2_1_3_FRAME_SHORT (xMin),
-		FT2_1_3_FRAME_SHORT (yMin),
-		FT2_1_3_FRAME_SHORT (xMax),
-		FT2_1_3_FRAME_SHORT (yMax),
-		FT2_1_3_FRAME_USHORT(Mac_Style),
-		FT2_1_3_FRAME_USHORT(Lowest_Rec_PPEM),
-		FT2_1_3_FRAME_SHORT (Font_Direction),
-		FT2_1_3_FRAME_SHORT (Index_To_Loc_Format),
-		FT2_1_3_FRAME_SHORT (Glyph_Data_Format),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START (54),
+		FT_FRAME_ULONG (Table_Version),
+		FT_FRAME_ULONG (Font_Revision),
+		FT_FRAME_LONG  (CheckSum_Adjust),
+		FT_FRAME_LONG  (Magic_Number),
+		FT_FRAME_USHORT(Flags),
+		FT_FRAME_USHORT(Units_Per_EM),
+		FT_FRAME_LONG  (Created[0]),
+		FT_FRAME_LONG  (Created[1]),
+		FT_FRAME_LONG  (Modified[0]),
+		FT_FRAME_LONG  (Modified[1]),
+		FT_FRAME_SHORT (xMin),
+		FT_FRAME_SHORT (yMin),
+		FT_FRAME_SHORT (xMax),
+		FT_FRAME_SHORT (yMax),
+		FT_FRAME_USHORT(Mac_Style),
+		FT_FRAME_USHORT(Lowest_Rec_PPEM),
+		FT_FRAME_SHORT (Font_Direction),
+		FT_FRAME_SHORT (Index_To_Loc_Format),
+		FT_FRAME_SHORT (Glyph_Data_Format),
+		FT_FRAME_END
 	};
 
 	FT_TRACE2(("tt_face_load_generic_header: %08p, looking up font table `%c%c%c%c'.\n", face,
@@ -367,7 +367,7 @@ static FT_Error tt_face_load_generic_header(TT_Face face, FT_Stream stream, FT_U
 
 	header = &face->header;
 
-	if (FT2_1_3_STREAM_READ_FIELDS(header_fields, header))
+	if (FT_STREAM_READ_FIELDS(header_fields, header))
 		goto Exit;
 
 	FT_TRACE2(("    Units per EM: %8u\n", header->Units_Per_EM));
@@ -398,31 +398,31 @@ tt_face_load_max_profile(TT_Face face, FT_Stream stream) {
 	TT_MaxProfile *maxProfile = &face->max_profile;
 
 	const FT_Frame_Field  maxp_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TT_MaxProfile
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE TT_MaxProfile
 
-		FT2_1_3_FRAME_START (6),
-		FT2_1_3_FRAME_LONG  (version),
-		FT2_1_3_FRAME_USHORT(numGlyphs),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START (6),
+		FT_FRAME_LONG  (version),
+		FT_FRAME_USHORT(numGlyphs),
+		FT_FRAME_END
 	};
 
 	const FT_Frame_Field  maxp_fields_extra[] = {
-		FT2_1_3_FRAME_START (26),
-		FT2_1_3_FRAME_USHORT(maxPoints),
-		FT2_1_3_FRAME_USHORT(maxContours),
-		FT2_1_3_FRAME_USHORT(maxCompositePoints),
-		FT2_1_3_FRAME_USHORT(maxCompositeContours),
-		FT2_1_3_FRAME_USHORT(maxZones),
-		FT2_1_3_FRAME_USHORT(maxTwilightPoints),
-		FT2_1_3_FRAME_USHORT(maxStorage),
-		FT2_1_3_FRAME_USHORT(maxFunctionDefs),
-		FT2_1_3_FRAME_USHORT(maxInstructionDefs),
-		FT2_1_3_FRAME_USHORT(maxStackElements),
-		FT2_1_3_FRAME_USHORT(maxSizeOfInstructions),
-		FT2_1_3_FRAME_USHORT(maxComponentElements),
-		FT2_1_3_FRAME_USHORT(maxComponentDepth),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START (26),
+		FT_FRAME_USHORT(maxPoints),
+		FT_FRAME_USHORT(maxContours),
+		FT_FRAME_USHORT(maxCompositePoints),
+		FT_FRAME_USHORT(maxCompositeContours),
+		FT_FRAME_USHORT(maxZones),
+		FT_FRAME_USHORT(maxTwilightPoints),
+		FT_FRAME_USHORT(maxStorage),
+		FT_FRAME_USHORT(maxFunctionDefs),
+		FT_FRAME_USHORT(maxInstructionDefs),
+		FT_FRAME_USHORT(maxStackElements),
+		FT_FRAME_USHORT(maxSizeOfInstructions),
+		FT_FRAME_USHORT(maxComponentElements),
+		FT_FRAME_USHORT(maxComponentDepth),
+		FT_FRAME_END
 	};
 
 	FT_TRACE2(("Load_TT_MaxProfile: %08p\n", face));
@@ -431,7 +431,7 @@ tt_face_load_max_profile(TT_Face face, FT_Stream stream) {
 	if (error)
 		goto Exit;
 
-	if (FT2_1_3_STREAM_READ_FIELDS(maxp_fields, maxProfile))
+	if (FT_STREAM_READ_FIELDS(maxp_fields, maxProfile))
 		goto Exit;
 
 	maxProfile->maxPoints             = 0;
@@ -449,7 +449,7 @@ tt_face_load_max_profile(TT_Face face, FT_Stream stream) {
 	maxProfile->maxComponentDepth     = 0;
 
 	if (maxProfile->version >= 0x10000L) {
-		if (FT2_1_3_STREAM_READ_FIELDS(maxp_fields_extra, maxProfile))
+		if (FT_STREAM_READ_FIELDS(maxp_fields_extra, maxProfile))
 			goto Exit;
 
 		/* XXX: an adjustment that is necessary to load certain */
@@ -512,7 +512,7 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 			/* Set number_Of_VMetrics to 0! */
 			FT_TRACE2(("  no vertical header in file.\n"));
 			face->vertical.number_Of_VMetrics = 0;
-			error = FT2_1_3_Err_Ok;
+			error = FT_Err_Ok;
 			goto Exit;
 		}
 
@@ -523,7 +523,7 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 		error = face->goto_table(face, TTAG_hmtx, stream, &table_len);
 		if (error) {
 			FT_ERROR((" no horizontal metrics in file!\n"));
-			error = FT2_1_3_Err_Hmtx_Table_Missing;
+			error = FT_Err_Hmtx_Table_Missing;
 			goto Exit;
 		}
 
@@ -540,14 +540,14 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 	if (num_shorts < 0) {
 		FT_ERROR(("TT_Load_%s_Metrics: more metrics than glyphs!\n", vertical ? "Vertical" : "Horizontal"));
 
-		error = vertical ? FT2_1_3_Err_Invalid_Vert_Metrics : FT2_1_3_Err_Invalid_Horiz_Metrics;
+		error = vertical ? FT_Err_Invalid_Vert_Metrics : FT_Err_Invalid_Horiz_Metrics;
 		goto Exit;
 	}
 
 	if (FT_NEW_ARRAY(*longs, num_longs) || FT_NEW_ARRAY(*shorts, num_shorts))
 		goto Exit;
 
-	if (FT2_1_3_FRAME_ENTER(table_len))
+	if (FT_FRAME_ENTER(table_len))
 		goto Exit;
 
 	{
@@ -555,8 +555,8 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 		TT_LongMetrics limit = cur + num_longs;
 
 		for (; cur < limit; cur++) {
-			cur->advance = FT2_1_3_GET_USHORT();
-			cur->bearing = FT2_1_3_GET_SHORT();
+			cur->advance = FT_GET_USHORT();
+			cur->bearing = FT_GET_SHORT();
 		}
 	}
 
@@ -566,7 +566,7 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 		TT_ShortMetrics *limit = cur + MIN(num_shorts, num_shorts_checked);
 
 		for (; cur < limit; cur++)
-			*cur = FT2_1_3_GET_SHORT();
+			*cur = FT_GET_SHORT();
 
 		/* we fill up the missing left side bearings with the     */
 		/* last valid value.  Since this will occur for buggy CJK */
@@ -580,7 +580,7 @@ static FT_Error tt_face_load_metrics(TT_Face face, FT_Stream stream, FT_Bool ver
 		}
 	}
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 
 	FT_TRACE2(("loaded\n"));
 
@@ -594,28 +594,28 @@ tt_face_load_metrics_header(TT_Face face, FT_Stream stream, FT_Bool vertical) {
 	TT_HoriHeader *header;
 
 	const FT_Frame_Field  metrics_header_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TT_HoriHeader
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE TT_HoriHeader
 
-		FT2_1_3_FRAME_START (36),
-		FT2_1_3_FRAME_ULONG (Version),
-		FT2_1_3_FRAME_SHORT (Ascender),
-		FT2_1_3_FRAME_SHORT (Descender),
-		FT2_1_3_FRAME_SHORT (Line_Gap),
-		FT2_1_3_FRAME_USHORT(advance_Width_Max),
-		FT2_1_3_FRAME_SHORT (min_Left_Side_Bearing),
-		FT2_1_3_FRAME_SHORT (min_Right_Side_Bearing),
-		FT2_1_3_FRAME_SHORT (xMax_Extent),
-		FT2_1_3_FRAME_SHORT (caret_Slope_Rise),
-		FT2_1_3_FRAME_SHORT (caret_Slope_Run),
-		FT2_1_3_FRAME_SHORT (caret_Offset),
-		FT2_1_3_FRAME_SHORT (Reserved[0]),
-		FT2_1_3_FRAME_SHORT (Reserved[1]),
-		FT2_1_3_FRAME_SHORT (Reserved[2]),
-		FT2_1_3_FRAME_SHORT (Reserved[3]),
-		FT2_1_3_FRAME_SHORT (metric_Data_Format),
-		FT2_1_3_FRAME_USHORT(number_Of_HMetrics),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START (36),
+		FT_FRAME_ULONG (Version),
+		FT_FRAME_SHORT (Ascender),
+		FT_FRAME_SHORT (Descender),
+		FT_FRAME_SHORT (Line_Gap),
+		FT_FRAME_USHORT(advance_Width_Max),
+		FT_FRAME_SHORT (min_Left_Side_Bearing),
+		FT_FRAME_SHORT (min_Right_Side_Bearing),
+		FT_FRAME_SHORT (xMax_Extent),
+		FT_FRAME_SHORT (caret_Slope_Rise),
+		FT_FRAME_SHORT (caret_Slope_Run),
+		FT_FRAME_SHORT (caret_Offset),
+		FT_FRAME_SHORT (Reserved[0]),
+		FT_FRAME_SHORT (Reserved[1]),
+		FT_FRAME_SHORT (Reserved[2]),
+		FT_FRAME_SHORT (Reserved[3]),
+		FT_FRAME_SHORT (metric_Data_Format),
+		FT_FRAME_USHORT(number_Of_HMetrics),
+		FT_FRAME_END
 	};
 
 	FT_TRACE2((vertical ? "Vertical header " : "Horizontal header "));
@@ -627,7 +627,7 @@ tt_face_load_metrics_header(TT_Face face, FT_Stream stream, FT_Bool vertical) {
 		/* we don't find it.                                           */
 		error = face->goto_table(face, TTAG_vhea, stream, 0);
 		if (error) {
-			error = FT2_1_3_Err_Ok;
+			error = FT_Err_Ok;
 			goto Exit;
 		}
 
@@ -638,14 +638,14 @@ tt_face_load_metrics_header(TT_Face face, FT_Stream stream, FT_Bool vertical) {
 		/* don't find it.                                            */
 		error = face->goto_table(face, TTAG_hhea, stream, 0);
 		if (error) {
-			error = FT2_1_3_Err_Horiz_Header_Missing;
+			error = FT_Err_Horiz_Header_Missing;
 			goto Exit;
 		}
 
 		header = &face->horizontal;
 	}
 
-	if (FT2_1_3_STREAM_READ_FIELDS(metrics_header_fields, header))
+	if (FT_STREAM_READ_FIELDS(metrics_header_fields, header))
 		goto Exit;
 
 	header->long_metrics = NULL;
@@ -671,28 +671,28 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 	TT_NameTable  table;
 
 	static const FT_Frame_Field name_table_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TT_NameTableRec
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE TT_NameTableRec
 
-		FT2_1_3_FRAME_START (6),
-		FT2_1_3_FRAME_USHORT(format),
-		FT2_1_3_FRAME_USHORT(numNameRecords),
-		FT2_1_3_FRAME_USHORT(storageOffset),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START (6),
+		FT_FRAME_USHORT(format),
+		FT_FRAME_USHORT(numNameRecords),
+		FT_FRAME_USHORT(storageOffset),
+		FT_FRAME_END
 	};
 
 	static const FT_Frame_Field name_record_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TT_NameEntryRec
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE TT_NameEntryRec
 
-		/* no FT2_1_3_FRAME_START */
-		FT2_1_3_FRAME_USHORT(platformID),
-		FT2_1_3_FRAME_USHORT(encodingID),
-		FT2_1_3_FRAME_USHORT(languageID),
-		FT2_1_3_FRAME_USHORT(nameID),
-		FT2_1_3_FRAME_USHORT(stringLength),
-		FT2_1_3_FRAME_USHORT(stringOffset),
-		FT2_1_3_FRAME_END
+		/* no FT_FRAME_START */
+		FT_FRAME_USHORT(platformID),
+		FT_FRAME_USHORT(encodingID),
+		FT_FRAME_USHORT(languageID),
+		FT_FRAME_USHORT(nameID),
+		FT_FRAME_USHORT(stringLength),
+		FT_FRAME_USHORT(stringOffset),
+		FT_FRAME_END
 	};
 
 	table = &face->name_table;
@@ -704,13 +704,13 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 	if (error) {
 		/* The name table is required so indicate failure. */
 		FT_TRACE2(("is missing!\n"));
-		error = FT2_1_3_Err_Name_Table_Missing;
+		error = FT_Err_Name_Table_Missing;
 		goto Exit;
 	}
 
-	table_pos = FT2_1_3_STREAM_POS();
+	table_pos = FT_STREAM_POS();
 
-	if (FT2_1_3_STREAM_READ_FIELDS(name_table_fields, table))
+	if (FT_STREAM_READ_FIELDS(name_table_fields, table))
 		goto Exit;
 
 	/* Some popular asian fonts have an invalid `storageOffset' value   */
@@ -725,7 +725,7 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 
 	if (storage_start > storage_limit) {
 		FT_ERROR(("tt_face_load_names: invalid `name' table\n"));
-		error = FT2_1_3_Err_Name_Table_Missing;
+		error = FT_Err_Name_Table_Missing;
 		goto Exit;
 	}
 
@@ -733,7 +733,7 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 	count = table->numNameRecords;
 	table->numNameRecords = 0;
 
-	if (FT_NEW_ARRAY(table->names, count) || FT2_1_3_FRAME_ENTER(count * 12))
+	if (FT_NEW_ARRAY(table->names, count) || FT_FRAME_ENTER(count * 12))
 		goto Exit;
 
 	/* Load the name records and determine how much storage is needed */
@@ -742,7 +742,7 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 		TT_NameEntryRec *entry = table->names;
 
 		for (; count > 0; count--) {
-			if (FT2_1_3_STREAM_READ_FIELDS(name_record_fields, entry))
+			if (FT_STREAM_READ_FIELDS(name_record_fields, entry))
 				continue;
 
 			/* check that the name is not empty */
@@ -764,7 +764,7 @@ tt_face_load_names(TT_Face face, FT_Stream stream) {
 		table->numNameRecords = (FT_UInt)(entry - table->names);
 	}
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 
 	FT_TRACE2(("loaded\n"));
 
@@ -783,12 +783,12 @@ tt_face_free_names(TT_Face face) {
 	FT_UInt count = table->numNameRecords;
 
 	for (; count > 0; count--, entry++) {
-		FT2_1_3_FREE(entry->string);
+		FT_FREE(entry->string);
 		entry->stringLength = 0;
 	}
 
 	/* free strings table */
-	FT2_1_3_FREE(table->names);
+	FT_FREE(table->names);
 
 	table->numNameRecords = 0;
 	table->format = 0;
@@ -802,11 +802,11 @@ tt_face_load_cmap(TT_Face face, FT_Stream stream) {
 	error = face->goto_table(face, TTAG_cmap, stream, &face->cmap_size);
 	if (error) {
 		FT_TRACE2(("No `cmap' table in font !\n"));
-		error = FT2_1_3_Err_CMap_Table_Missing;
+		error = FT_Err_CMap_Table_Missing;
 		goto Exit;
 	}
 
-	if (!FT2_1_3_FRAME_EXTRACT(face->cmap_size, face->cmap_table))
+	if (!FT_FRAME_EXTRACT(face->cmap_size, face->cmap_table))
 		FT_TRACE2(("`cmap' table loaded\n"));
 	else {
 		FT_ERROR(("`cmap' table is too short!\n"));
@@ -823,71 +823,71 @@ tt_face_load_os2(TT_Face face, FT_Stream stream) {
 	TT_OS2 *os2;
 
 	const FT_Frame_Field  os2_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE  TT_OS2
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE  TT_OS2
 
-		FT2_1_3_FRAME_START (78),
-		FT2_1_3_FRAME_USHORT(version),
-		FT2_1_3_FRAME_SHORT (xAvgCharWidth),
-		FT2_1_3_FRAME_USHORT(usWeightClass),
-		FT2_1_3_FRAME_USHORT(usWidthClass),
-		FT2_1_3_FRAME_SHORT (fsType),
-		FT2_1_3_FRAME_SHORT (ySubscriptXSize),
-		FT2_1_3_FRAME_SHORT (ySubscriptYSize),
-		FT2_1_3_FRAME_SHORT (ySubscriptXOffset),
-		FT2_1_3_FRAME_SHORT (ySubscriptYOffset),
-		FT2_1_3_FRAME_SHORT (ySuperscriptXSize),
-		FT2_1_3_FRAME_SHORT (ySuperscriptYSize),
-		FT2_1_3_FRAME_SHORT (ySuperscriptXOffset),
-		FT2_1_3_FRAME_SHORT (ySuperscriptYOffset),
-		FT2_1_3_FRAME_SHORT (yStrikeoutSize),
-		FT2_1_3_FRAME_SHORT (yStrikeoutPosition),
-		FT2_1_3_FRAME_SHORT (sFamilyClass),
-		FT2_1_3_FRAME_BYTE  (panose[0]),
-		FT2_1_3_FRAME_BYTE  (panose[1]),
-		FT2_1_3_FRAME_BYTE  (panose[2]),
-		FT2_1_3_FRAME_BYTE  (panose[3]),
-		FT2_1_3_FRAME_BYTE  (panose[4]),
-		FT2_1_3_FRAME_BYTE  (panose[5]),
-		FT2_1_3_FRAME_BYTE  (panose[6]),
-		FT2_1_3_FRAME_BYTE  (panose[7]),
-		FT2_1_3_FRAME_BYTE  (panose[8]),
-		FT2_1_3_FRAME_BYTE  (panose[9]),
-		FT2_1_3_FRAME_ULONG (ulUnicodeRange1),
-		FT2_1_3_FRAME_ULONG (ulUnicodeRange2),
-		FT2_1_3_FRAME_ULONG (ulUnicodeRange3),
-		FT2_1_3_FRAME_ULONG (ulUnicodeRange4),
-		FT2_1_3_FRAME_BYTE  (achVendID[0]),
-		FT2_1_3_FRAME_BYTE  (achVendID[1]),
-		FT2_1_3_FRAME_BYTE  (achVendID[2]),
-		FT2_1_3_FRAME_BYTE  (achVendID[3]),
+		FT_FRAME_START (78),
+		FT_FRAME_USHORT(version),
+		FT_FRAME_SHORT (xAvgCharWidth),
+		FT_FRAME_USHORT(usWeightClass),
+		FT_FRAME_USHORT(usWidthClass),
+		FT_FRAME_SHORT (fsType),
+		FT_FRAME_SHORT (ySubscriptXSize),
+		FT_FRAME_SHORT (ySubscriptYSize),
+		FT_FRAME_SHORT (ySubscriptXOffset),
+		FT_FRAME_SHORT (ySubscriptYOffset),
+		FT_FRAME_SHORT (ySuperscriptXSize),
+		FT_FRAME_SHORT (ySuperscriptYSize),
+		FT_FRAME_SHORT (ySuperscriptXOffset),
+		FT_FRAME_SHORT (ySuperscriptYOffset),
+		FT_FRAME_SHORT (yStrikeoutSize),
+		FT_FRAME_SHORT (yStrikeoutPosition),
+		FT_FRAME_SHORT (sFamilyClass),
+		FT_FRAME_BYTE  (panose[0]),
+		FT_FRAME_BYTE  (panose[1]),
+		FT_FRAME_BYTE  (panose[2]),
+		FT_FRAME_BYTE  (panose[3]),
+		FT_FRAME_BYTE  (panose[4]),
+		FT_FRAME_BYTE  (panose[5]),
+		FT_FRAME_BYTE  (panose[6]),
+		FT_FRAME_BYTE  (panose[7]),
+		FT_FRAME_BYTE  (panose[8]),
+		FT_FRAME_BYTE  (panose[9]),
+		FT_FRAME_ULONG (ulUnicodeRange1),
+		FT_FRAME_ULONG (ulUnicodeRange2),
+		FT_FRAME_ULONG (ulUnicodeRange3),
+		FT_FRAME_ULONG (ulUnicodeRange4),
+		FT_FRAME_BYTE  (achVendID[0]),
+		FT_FRAME_BYTE  (achVendID[1]),
+		FT_FRAME_BYTE  (achVendID[2]),
+		FT_FRAME_BYTE  (achVendID[3]),
 
-		FT2_1_3_FRAME_USHORT(fsSelection),
-		FT2_1_3_FRAME_USHORT(usFirstCharIndex),
-		FT2_1_3_FRAME_USHORT(usLastCharIndex),
-		FT2_1_3_FRAME_SHORT (sTypoAscender),
-		FT2_1_3_FRAME_SHORT (sTypoDescender),
-		FT2_1_3_FRAME_SHORT (sTypoLineGap),
-		FT2_1_3_FRAME_USHORT(usWinAscent),
-		FT2_1_3_FRAME_USHORT(usWinDescent),
-		FT2_1_3_FRAME_END
+		FT_FRAME_USHORT(fsSelection),
+		FT_FRAME_USHORT(usFirstCharIndex),
+		FT_FRAME_USHORT(usLastCharIndex),
+		FT_FRAME_SHORT (sTypoAscender),
+		FT_FRAME_SHORT (sTypoDescender),
+		FT_FRAME_SHORT (sTypoLineGap),
+		FT_FRAME_USHORT(usWinAscent),
+		FT_FRAME_USHORT(usWinDescent),
+		FT_FRAME_END
 	};
 
 	const FT_Frame_Field os2_fields_extra[] = {
-		FT2_1_3_FRAME_START(8),
-		FT2_1_3_FRAME_ULONG(ulCodePageRange1),
-		FT2_1_3_FRAME_ULONG(ulCodePageRange2),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START(8),
+		FT_FRAME_ULONG(ulCodePageRange1),
+		FT_FRAME_ULONG(ulCodePageRange2),
+		FT_FRAME_END
 	};
 
 	const FT_Frame_Field os2_fields_extra2[] = {
-		FT2_1_3_FRAME_START (10),
-		FT2_1_3_FRAME_SHORT (sxHeight),
-		FT2_1_3_FRAME_SHORT (sCapHeight),
-		FT2_1_3_FRAME_USHORT(usDefaultChar),
-		FT2_1_3_FRAME_USHORT(usBreakChar),
-		FT2_1_3_FRAME_USHORT(usMaxContext),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START (10),
+		FT_FRAME_SHORT (sxHeight),
+		FT_FRAME_SHORT (sCapHeight),
+		FT_FRAME_USHORT(usDefaultChar),
+		FT_FRAME_USHORT(usBreakChar),
+		FT_FRAME_USHORT(usMaxContext),
+		FT_FRAME_END
 	};
 
 	FT_TRACE2(("OS/2 Table "));
@@ -899,13 +899,13 @@ tt_face_load_os2(TT_Face face, FT_Stream stream) {
 	if (error) {
 		FT_TRACE2(("is missing!\n"));
 		face->os2.version = 0xFFFFU;
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 		goto Exit;
 	}
 
 	os2 = &face->os2;
 
-	if (FT2_1_3_STREAM_READ_FIELDS(os2_fields, os2))
+	if (FT_STREAM_READ_FIELDS(os2_fields, os2))
 		goto Exit;
 
 	os2->ulCodePageRange1 = 0;
@@ -918,12 +918,12 @@ tt_face_load_os2(TT_Face face, FT_Stream stream) {
 
 	if (os2->version >= 0x0001) {
 		/* only version 1 tables */
-		if (FT2_1_3_STREAM_READ_FIELDS(os2_fields_extra, os2))
+		if (FT_STREAM_READ_FIELDS(os2_fields_extra, os2))
 			goto Exit;
 
 		if (os2->version >= 0x0002) {
 			/* only version 2 tables */
-			if (FT2_1_3_STREAM_READ_FIELDS(os2_fields_extra2, os2))
+			if (FT_STREAM_READ_FIELDS(os2_fields_extra2, os2))
 				goto Exit;
 		}
 	}
@@ -940,60 +940,60 @@ tt_face_load_postscript(TT_Face face, FT_Stream stream) {
 	TT_Postscript *post = &face->postscript;
 
 	static const FT_Frame_Field post_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TT_Postscript
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE TT_Postscript
 
-		FT2_1_3_FRAME_START(32),
-		FT2_1_3_FRAME_ULONG(FormatType),
-		FT2_1_3_FRAME_ULONG(italicAngle),
-		FT2_1_3_FRAME_SHORT(underlinePosition),
-		FT2_1_3_FRAME_SHORT(underlineThickness),
-		FT2_1_3_FRAME_ULONG(isFixedPitch),
-		FT2_1_3_FRAME_ULONG(minMemType42),
-		FT2_1_3_FRAME_ULONG(maxMemType42),
-		FT2_1_3_FRAME_ULONG(minMemType1),
-		FT2_1_3_FRAME_ULONG(maxMemType1),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START(32),
+		FT_FRAME_ULONG(FormatType),
+		FT_FRAME_ULONG(italicAngle),
+		FT_FRAME_SHORT(underlinePosition),
+		FT_FRAME_SHORT(underlineThickness),
+		FT_FRAME_ULONG(isFixedPitch),
+		FT_FRAME_ULONG(minMemType42),
+		FT_FRAME_ULONG(maxMemType42),
+		FT_FRAME_ULONG(minMemType1),
+		FT_FRAME_ULONG(maxMemType1),
+		FT_FRAME_END
 	};
 
 	FT_TRACE2(("PostScript "));
 
 	error = face->goto_table(face, TTAG_post, stream, 0);
 	if (error)
-		return FT2_1_3_Err_Post_Table_Missing;
+		return FT_Err_Post_Table_Missing;
 
-	if (FT2_1_3_STREAM_READ_FIELDS(post_fields, post))
+	if (FT_STREAM_READ_FIELDS(post_fields, post))
 		return error;
 
 	/* we don't load the glyph names, we do that in another */
 	/* module (ttpost).                                     */
 	FT_TRACE2(("loaded\n"));
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 FT_LOCAL_DEF(FT_Error)
 tt_face_load_pclt(TT_Face face, FT_Stream stream) {
 	static const FT_Frame_Field  pclt_fields[] = {
-#undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE TT_PCLT
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE TT_PCLT
 
-		FT2_1_3_FRAME_START (54),
-		FT2_1_3_FRAME_ULONG (Version),
-		FT2_1_3_FRAME_ULONG (FontNumber),
-		FT2_1_3_FRAME_USHORT(Pitch),
-		FT2_1_3_FRAME_USHORT(xHeight),
-		FT2_1_3_FRAME_USHORT(Style),
-		FT2_1_3_FRAME_USHORT(TypeFamily),
-		FT2_1_3_FRAME_USHORT(CapHeight),
-		FT2_1_3_FRAME_BYTES (TypeFace, 16),
-		FT2_1_3_FRAME_BYTES (CharacterComplement, 8),
-		FT2_1_3_FRAME_BYTES (FileName, 6),
-		FT2_1_3_FRAME_CHAR  (StrokeWeight),
-		FT2_1_3_FRAME_CHAR  (WidthType),
-		FT2_1_3_FRAME_BYTE  (SerifStyle),
-		FT2_1_3_FRAME_BYTE  (Reserved),
-		FT2_1_3_FRAME_END
+		FT_FRAME_START (54),
+		FT_FRAME_ULONG (Version),
+		FT_FRAME_ULONG (FontNumber),
+		FT_FRAME_USHORT(Pitch),
+		FT_FRAME_USHORT(xHeight),
+		FT_FRAME_USHORT(Style),
+		FT_FRAME_USHORT(TypeFamily),
+		FT_FRAME_USHORT(CapHeight),
+		FT_FRAME_BYTES (TypeFace, 16),
+		FT_FRAME_BYTES (CharacterComplement, 8),
+		FT_FRAME_BYTES (FileName, 6),
+		FT_FRAME_CHAR  (StrokeWeight),
+		FT_FRAME_CHAR  (WidthType),
+		FT_FRAME_BYTE  (SerifStyle),
+		FT_FRAME_BYTE  (Reserved),
+		FT_FRAME_END
 	};
 
 	FT_Error error;
@@ -1006,10 +1006,10 @@ tt_face_load_pclt(TT_Face face, FT_Stream stream) {
 	if (error) {
 		FT_TRACE2(("missing (optional)\n"));
 		pclt->Version = 0;
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	}
 
-	if (FT2_1_3_STREAM_READ_FIELDS(pclt_fields, pclt))
+	if (FT_STREAM_READ_FIELDS(pclt_fields, pclt))
 		goto Exit;
 
 	FT_TRACE2(("loaded\n"));
@@ -1031,33 +1031,33 @@ tt_face_load_gasp(TT_Face face, FT_Stream stream) {
 	/* the gasp table is optional */
 	error = face->goto_table(face, TTAG_gasp, stream, 0);
 	if (error)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
-	if (FT2_1_3_FRAME_ENTER(4L))
+	if (FT_FRAME_ENTER(4L))
 		goto Exit;
 
-	face->gasp.version   = FT2_1_3_GET_USHORT();
-	face->gasp.numRanges = FT2_1_3_GET_USHORT();
+	face->gasp.version   = FT_GET_USHORT();
+	face->gasp.numRanges = FT_GET_USHORT();
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 
 	num_ranges = face->gasp.numRanges;
 	FT_TRACE3(("number of ranges = %d\n", num_ranges));
 
-	if (FT_NEW_ARRAY(gaspranges, num_ranges) || FT2_1_3_FRAME_ENTER(num_ranges * 4L))
+	if (FT_NEW_ARRAY(gaspranges, num_ranges) || FT_FRAME_ENTER(num_ranges * 4L))
 		goto Exit;
 
 	face->gasp.gaspRanges = gaspranges;
 
 	for (j = 0; j < num_ranges; j++) {
-		gaspranges[j].maxPPEM  = FT2_1_3_GET_USHORT();
-		gaspranges[j].gaspFlag = FT2_1_3_GET_USHORT();
+		gaspranges[j].maxPPEM  = FT_GET_USHORT();
+		gaspranges[j].gaspFlag = FT_GET_USHORT();
 
 		FT_TRACE3((" [max:%d flag:%d]", gaspranges[j].maxPPEM, gaspranges[j].gaspFlag));
 	}
 	FT_TRACE3(("\n"));
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 	FT_TRACE2(("GASP loaded\n"));
 
 Exit:
@@ -1077,28 +1077,28 @@ tt_face_load_kern(TT_Face face, FT_Stream stream) {
 	/* the kern table is optional; exit silently if it is missing */
 	error = face->goto_table(face, TTAG_kern, stream, 0);
 	if (error)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
-	if (FT2_1_3_FRAME_ENTER(4L))
+	if (FT_FRAME_ENTER(4L))
 		goto Exit;
 
-	(void)FT2_1_3_GET_USHORT(); /* version */
-	num_tables = FT2_1_3_GET_USHORT();
+	(void)FT_GET_USHORT(); /* version */
+	num_tables = FT_GET_USHORT();
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 
 	for (n = 0; n < num_tables; n++) {
 		FT_UInt coverage;
 		FT_UInt length;
 
-		if (FT2_1_3_FRAME_ENTER(6L))
+		if (FT_FRAME_ENTER(6L))
 			goto Exit;
 
-		(void)FT2_1_3_GET_USHORT();        /* version                 */
-		length   = FT2_1_3_GET_USHORT() - 6; /* substract header length */
-		coverage = FT2_1_3_GET_USHORT();
+		(void)FT_GET_USHORT();        /* version                 */
+		length   = FT_GET_USHORT() - 6; /* substract header length */
+		coverage = FT_GET_USHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		if (coverage == 0x0001) {
 			FT_UInt 	  num_pairs;
@@ -1106,28 +1106,28 @@ tt_face_load_kern(TT_Face face, FT_Stream stream) {
 			TT_Kern0_Pair limit;
 
 			/* found a horizontal format 0 kerning table! */
-			if (FT2_1_3_FRAME_ENTER(8L))
+			if (FT_FRAME_ENTER(8L))
 				goto Exit;
 
-			num_pairs = FT2_1_3_GET_USHORT();
+			num_pairs = FT_GET_USHORT();
 
 			/* skip the rest */
 
-			FT2_1_3_FRAME_EXIT();
+			FT_FRAME_EXIT();
 
 			/* allocate array of kerning pairs */
-			if (FT_NEW_ARRAY(face->kern_pairs, num_pairs) || FT2_1_3_FRAME_ENTER(6L * num_pairs))
+			if (FT_NEW_ARRAY(face->kern_pairs, num_pairs) || FT_FRAME_ENTER(6L * num_pairs))
 				goto Exit;
 
 			pair  = face->kern_pairs;
 			limit = pair + num_pairs;
 			for (; pair < limit; pair++) {
-				pair->left = FT2_1_3_GET_USHORT();
-				pair->right = FT2_1_3_GET_USHORT();
-				pair->value = FT2_1_3_GET_USHORT();
+				pair->left = FT_GET_USHORT();
+				pair->right = FT_GET_USHORT();
+				pair->value = FT_GET_USHORT();
 			}
 
-			FT2_1_3_FRAME_EXIT();
+			FT_FRAME_EXIT();
 
 			face->num_kern_pairs   = num_pairs;
 			face->kern_table_index = n;
@@ -1151,7 +1151,7 @@ tt_face_load_kern(TT_Face face, FT_Stream stream) {
 			goto Exit;
 		}
 
-		if (FT2_1_3_STREAM_SKIP(length))
+		if (FT_STREAM_SKIP(length))
 			goto Exit;
 	}
 
@@ -1197,16 +1197,16 @@ tt_face_load_hdmx(TT_Face face, FT_Stream stream) {
 	/* this table is optional */
 	error = face->goto_table(face, TTAG_hdmx, stream, 0);
 	if (error)
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 
-	if (FT2_1_3_FRAME_ENTER(8L))
+	if (FT_FRAME_ENTER(8L))
 		goto Exit;
 
-	hdmx->version = FT2_1_3_GET_USHORT();
-	hdmx->num_records = FT2_1_3_GET_SHORT();
-	record_size = FT2_1_3_GET_LONG();
+	hdmx->version = FT_GET_USHORT();
+	hdmx->num_records = FT_GET_SHORT();
+	record_size = FT_GET_LONG();
 
-	FT2_1_3_FRAME_EXIT();
+	FT_FRAME_EXIT();
 
 	/* Only recognize format 0 */
 	if (hdmx->version != 0)
@@ -1224,16 +1224,16 @@ tt_face_load_hdmx(TT_Face face, FT_Stream stream) {
 
 		for (; cur < limit; cur++) {
 			/* read record */
-			if (FT2_1_3_READ_BYTE(cur->ppem) ||
-				FT2_1_3_READ_BYTE(cur->max_width))
+			if (FT_READ_BYTE(cur->ppem) ||
+				FT_READ_BYTE(cur->max_width))
 				goto Exit;
 
-			if (FT2_1_3_ALLOC(cur->widths, num_glyphs) ||
-				FT2_1_3_STREAM_READ(cur->widths, num_glyphs))
+			if (FT_ALLOC(cur->widths, num_glyphs) ||
+				FT_STREAM_READ(cur->widths, num_glyphs))
 				goto Exit;
 
 			/* skip padding bytes */
-			if (record_size > 0 && FT2_1_3_STREAM_SKIP(record_size))
+			if (record_size > 0 && FT_STREAM_SKIP(record_size))
 				goto Exit;
 		}
 	}
@@ -1249,9 +1249,9 @@ tt_face_free_hdmx(TT_Face face) {
 		FT_Memory memory = face->root.driver->root.memory;
 
 		for (n = 0; n < face->hdmx.num_records; n++)
-			FT2_1_3_FREE(face->hdmx.records[n].widths);
+			FT_FREE(face->hdmx.records[n].widths);
 
-		FT2_1_3_FREE(face->hdmx.records);
+		FT_FREE(face->hdmx.records);
 		face->hdmx.num_records = 0;
 	}
 }

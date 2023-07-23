@@ -36,7 +36,7 @@ namespace FreeType213 {
 
 /* check the format */
 static FT_Error ft_pfr_check(FT_Face face, FT2_1_3_PFR_Service *aservice) {
-	FT_Error error = FT2_1_3_Err_Bad_Argument;
+	FT_Error error = FT_Err_Bad_Argument;
 
 	if (face && face->driver) {
 		FT_Module module = (FT_Module)face->driver;

@@ -275,12 +275,12 @@ FT_LOCAL_DEF(void)
 ah_outline_done(AH_Outline outline) {
 	FT_Memory memory = outline->memory;
 
-	FT2_1_3_FREE(outline->horz_edges);
-	FT2_1_3_FREE(outline->horz_segments);
-	FT2_1_3_FREE(outline->contours);
-	FT2_1_3_FREE(outline->points);
+	FT_FREE(outline->horz_edges);
+	FT_FREE(outline->horz_segments);
+	FT_FREE(outline->contours);
+	FT_FREE(outline->points);
 
-	FT2_1_3_FREE(outline);
+	FT_FREE(outline);
 }
 
 FT_LOCAL_DEF(void)
@@ -307,7 +307,7 @@ ah_outline_save(AH_Outline outline, AH_Loader gloader) {
 FT_LOCAL_DEF(FT_Error)
 ah_outline_load(AH_Outline outline, FT_Face face) {
 	FT_Memory memory = outline->memory;
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 	FT_Outline *source = &face->glyph->outline;
 	FT_Int num_points = source->n_points;
 	FT_Int num_contours = source->n_contours;
@@ -317,13 +317,13 @@ ah_outline_load(AH_Outline outline, FT_Face face) {
 	if (!face ||
 		!face->size ||
 		face->glyph->format != FT_GLYPH_FORMAT_OUTLINE)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	/* first of all, reallocate the contours array if necessary */
 	if (num_contours > outline->max_contours) {
 		FT_Int new_contours = (num_contours + 3) & -4;
 
-		if (FT2_1_3_RENEW_ARRAY(outline->contours,
+		if (FT_RENEW_ARRAY(outline->contours,
 								outline->max_contours,
 								new_contours))
 			goto Exit;
@@ -339,9 +339,9 @@ ah_outline_load(AH_Outline outline, FT_Face face) {
 		FT_Int news = (num_points + 2 + 7) & -8;
 		FT_Int max = outline->max_points;
 
-		if (FT2_1_3_RENEW_ARRAY(outline->points, max, news) ||
-			FT2_1_3_RENEW_ARRAY(outline->horz_edges, max * 2, news * 2) ||
-			FT2_1_3_RENEW_ARRAY(outline->horz_segments, max * 2, news * 2))
+		if (FT_RENEW_ARRAY(outline->points, max, news) ||
+			FT_RENEW_ARRAY(outline->horz_edges, max * 2, news * 2) ||
+			FT_RENEW_ARRAY(outline->horz_segments, max * 2, news * 2))
 			goto Exit;
 
 		/* readjust some pointers */
@@ -782,7 +782,7 @@ ah_outline_compute_segments(AH_Outline outline) {
 					segment_dir = point->out_dir;
 
 					/* clear all segment fields */
-					FT2_1_3_ZERO(segment);
+					FT_ZERO(segment);
 
 					segment->dir = segment_dir;
 					segment->flags = AH_EDGE_NORMAL;
@@ -837,7 +837,7 @@ ah_outline_compute_segments(AH_Outline outline) {
 			/* insert minimum segment */
 			if (min_point) {
 				/* clear all segment fields */
-				FT2_1_3_ZERO(segment);
+				FT_ZERO(segment);
 
 				segment->dir = segment_dir;
 				segment->flags = AH_EDGE_NORMAL;
@@ -852,7 +852,7 @@ ah_outline_compute_segments(AH_Outline outline) {
 			/* insert maximum segment */
 			if (max_point) {
 				/* clear all segment fields */
-				FT2_1_3_ZERO(segment);
+				FT_ZERO(segment);
 
 				segment->dir = segment_dir;
 				segment->flags = AH_EDGE_NORMAL;
@@ -1047,7 +1047,7 @@ static void ah_outline_compute_edges(AH_Outline outline) {
 				edge_limit++;
 
 				/* clear all edge fields */
-				FT2_1_3_MEM_ZERO(edge, sizeof(*edge));
+				FT_MEM_ZERO(edge, sizeof(*edge));
 
 				/* add the segment to the new edge's list */
 				edge->first = seg;
@@ -1252,8 +1252,8 @@ ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals face_globals) 
 			/* zone, check for left edges                                      */
 			/*                                                                 */
 			/* of course, that's for TrueType XXX                              */
-			FT_Bool is_top_blue = FT2_1_3_BOOL(AH_IS_TOP_BLUE(blue));
-			FT_Bool is_major_dir = FT2_1_3_BOOL(edge->dir == outline->horz_major_dir);
+			FT_Bool is_top_blue = FT_BOOL(AH_IS_TOP_BLUE(blue));
+			FT_Bool is_major_dir = FT_BOOL(edge->dir == outline->horz_major_dir);
 
 			if (!blue_active[blue])
 				continue;
@@ -1280,7 +1280,7 @@ ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals face_globals) 
 				/* rounded, and if the edge is over the reference position of a */
 				/* top zone, or under the reference position of a bottom zone   */
 				if (edge->flags & AH_EDGE_ROUND && dist != 0) {
-					FT_Bool is_under_ref = FT2_1_3_BOOL(edge->fpos < *blue_pos);
+					FT_Bool is_under_ref = FT_BOOL(edge->fpos < *blue_pos);
 
 					if (is_top_blue ^ is_under_ref) {
 						blue_pos = globals->blue_shoots + blue;

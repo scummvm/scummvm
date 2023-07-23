@@ -25,7 +25,7 @@ namespace FreeType213 {
 
 FT_CALLBACK_DEF( FT_Error )
 pfr_cmap_init( PFR_CMap  cmap ) {
-	PFR_Face  face = (PFR_Face)FT2_1_3_CMAP_FACE( cmap );
+	PFR_Face  face = (PFR_Face)FT_CMAP_FACE( cmap );
 
 
 	cmap->num_chars = face->phy_font.num_chars;
@@ -39,7 +39,7 @@ pfr_cmap_init( PFR_CMap  cmap ) {
 
 		for ( n = 1; n < cmap->num_chars; n++ ) {
 			if ( cmap->chars[n - 1].char_code >= cmap->chars[n].char_code )
-				FT2_1_3_ASSERT( 0 );
+				FT_ASSERT( 0 );
 		}
 	}
 

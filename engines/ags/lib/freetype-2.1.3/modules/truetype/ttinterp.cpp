@@ -263,17 +263,17 @@ TT_Goto_CodeRange( TT_ExecContext  exec,
 	TT_CodeRange*  coderange;
 
 
-	FT2_1_3_ASSERT( range >= 1 && range <= 3 );
+	FT_ASSERT( range >= 1 && range <= 3 );
 
 	coderange = &exec->codeRangeTable[range - 1];
 
-	FT2_1_3_ASSERT( coderange->base != NULL );
+	FT_ASSERT( coderange->base != NULL );
 
 	/* NOTE: Because the last instruction of a program may be a CALL */
 	/*       which will return to the first byte *after* the code    */
 	/*       range, we test for IP <= Size instead of IP < Size.     */
 	/*                                                               */
-	FT2_1_3_ASSERT( (FT_ULong)IP <= coderange->size );
+	FT_ASSERT( (FT_ULong)IP <= coderange->size );
 
 	exec->code     = coderange->base;
 	exec->codeSize = coderange->size;
@@ -310,7 +310,7 @@ TT_Set_CodeRange( TT_ExecContext  exec,
                   FT_Int          range,
                   void*           base,
                   FT_Long         length ) {
-	FT2_1_3_ASSERT( range >= 1 && range <= 3 );
+	FT_ASSERT( range >= 1 && range <= 3 );
 
 	exec->codeRangeTable[range - 1].base = (FT_Byte*)base;
 	exec->codeRangeTable[range - 1].size = length;
@@ -342,7 +342,7 @@ TT_Set_CodeRange( TT_ExecContext  exec,
 FT_LOCAL_DEF( FT_Error )
 TT_Clear_CodeRange( TT_ExecContext  exec,
                     FT_Int          range ) {
-	FT2_1_3_ASSERT( range >= 1 && range <= 3 );
+	FT_ASSERT( range >= 1 && range <= 3 );
 
 	exec->codeRangeTable[range - 1].base = NULL;
 	exec->codeRangeTable[range - 1].size = 0;
@@ -381,7 +381,7 @@ FT_LOCAL_DEF( FT_Error )
 TT_Destroy_Context( TT_ExecContext  exec,
                     FT_Memory       memory ) {
 	/* free composite load stack */
-	FT2_1_3_FREE( exec->loadStack );
+	FT_FREE( exec->loadStack );
 	exec->loadSize = 0;
 
 	/* points zone */
@@ -389,22 +389,22 @@ TT_Destroy_Context( TT_ExecContext  exec,
 	exec->maxContours = 0;
 
 	/* free stack */
-	FT2_1_3_FREE( exec->stack );
+	FT_FREE( exec->stack );
 	exec->stackSize = 0;
 
 	/* free call stack */
-	FT2_1_3_FREE( exec->callStack );
+	FT_FREE( exec->callStack );
 	exec->callSize = 0;
 	exec->callTop  = 0;
 
 	/* free glyph code range */
-	FT2_1_3_FREE( exec->glyphIns );
+	FT_FREE( exec->glyphIns );
 	exec->glyphSize = 0;
 
 	exec->size = NULL;
 	exec->face = NULL;
 
-	FT2_1_3_FREE( exec );
+	FT_FREE( exec );
 	return TT_Err_Ok;
 }
 
@@ -505,8 +505,8 @@ Update_Max( FT_Memory  memory,
 
 
 	if ( *size < new_max ) {
-		FT2_1_3_FREE( *buff );
-		if ( FT2_1_3_ALLOC( *buff, new_max * multiplier ) )
+		FT_FREE( *buff );
+		if ( FT_ALLOC( *buff, new_max * multiplier ) )
 			return error;
 		*size = new_max;
 	}
@@ -778,7 +778,7 @@ Exit:
 	return driver->context;
 
 Fail:
-	FT2_1_3_FREE( exec );
+	FT_FREE( exec );
 
 	return 0;
 }
@@ -3774,7 +3774,7 @@ Ins_MINDEX( INS_ARG ) {
 
 	K = CUR.stack[CUR.args - L];
 
-	FT2_1_3_MEM_MOVE( &CUR.stack[CUR.args - L    ],
+	FT_MEM_MOVE( &CUR.stack[CUR.args - L    ],
 	             &CUR.stack[CUR.args - L + 1],
 	             ( L - 1 ) * sizeof ( FT_Long ) );
 
@@ -3866,12 +3866,12 @@ Ins_IF( INS_ARG ) {
 			break;
 
 		case 0x1B:      /* ELSE */
-			Out = FT2_1_3_BOOL( nIfs == 1 );
+			Out = FT_BOOL( nIfs == 1 );
 			break;
 
 		case 0x59:      /* EIF */
 			nIfs--;
-			Out = FT2_1_3_BOOL( nIfs == 0 );
+			Out = FT_BOOL( nIfs == 0 );
 			break;
 		}
 	} while ( Out == 0 );
@@ -4652,7 +4652,7 @@ Ins_INSTCTRL( INS_ARG ) {
 	if ( L != 0 )
 		L = K;
 
-	CUR.GS.instruct_control = FT2_1_3_BOOL(
+	CUR.GS.instruct_control = FT_BOOL(
 	                              ( (FT_Byte)CUR.GS.instruct_control & ~(FT_Byte)K ) | (FT_Byte)L );
 }
 

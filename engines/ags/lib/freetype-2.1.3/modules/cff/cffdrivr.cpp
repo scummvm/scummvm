@@ -102,7 +102,7 @@ Get_Kerning( TT_Face     face,
 
 
 	if ( !face )
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	kerning->x = 0;
 	kerning->y = 0;
@@ -135,7 +135,7 @@ Get_Kerning( TT_Face     face,
 	}
 
 Exit:
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Found:
 	kerning->x = pair->value;
@@ -181,7 +181,7 @@ Load_Glyph( CFF_GlyphSlot  slot,
 
 
 	if ( !slot )
-		return FT2_1_3_Err_Invalid_Slot_Handle;
+		return FT_Err_Invalid_Slot_Handle;
 
 	/* check whether we want a scaled outline or bitmap */
 	if ( !size )
@@ -194,7 +194,7 @@ Load_Glyph( CFF_GlyphSlot  slot,
 	if ( size ) {
 		/* these two object must have the same parent */
 		if ( size->face != slot->root.face )
-			return FT2_1_3_Err_Invalid_Face_Handle;
+			return FT_Err_Invalid_Face_Handle;
 	}
 
 	/* now load the glyph outline if necessary */
@@ -225,7 +225,7 @@ cff_get_glyph_name( CFF_Face    face,
 					FT_Pointer  buffer,
 					FT_UInt     buffer_max ) {
 	CFF_Font         font   = (CFF_Font)face->extra.data;
-	FT_Memory        memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory        memory = FT_FACE_MEMORY( face );
 	FT_String*       gname;
 	FT_UShort        sid;
 	PSNames_Service  psnames;
@@ -239,7 +239,7 @@ cff_get_glyph_name( CFF_Face    face,
 		FT_ERROR(( " cannot open CFF & CEF fonts\n" ));
 		FT_ERROR(( "                   " ));
 		FT_ERROR(( " without the `PSNames' module\n" ));
-		error = FT2_1_3_Err_Unknown_File_Format;
+		error = FT_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
@@ -256,12 +256,12 @@ cff_get_glyph_name( CFF_Face    face,
 		if ( len >= buffer_max )
 			len = buffer_max - 1;
 
-		FT2_1_3_MEM_COPY( buffer, gname, len );
+		FT_MEM_COPY( buffer, gname, len );
 		((FT_Byte*)buffer)[len] = 0;
 	}
 
-	FT2_1_3_FREE ( gname );
-	error = FT2_1_3_Err_Ok;
+	FT_FREE ( gname );
+	error = FT_Err_Ok;
 
 Exit:
 	return error;
@@ -292,7 +292,7 @@ cff_get_name_index( CFF_Face    face,
 	CFF_Font         cff;
 	CFF_Charset      charset;
 	PSNames_Service  psnames;
-	FT_Memory        memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory        memory = FT_FACE_MEMORY( face );
 	FT_String*       name;
 	FT_UShort        sid;
 	FT_UInt          i;
@@ -316,7 +316,7 @@ cff_get_name_index( CFF_Face    face,
 		result = ft_strcmp( glyph_name, name );
 
 		if ( sid > 390 )
-			FT2_1_3_FREE( name );
+			FT_FREE( name );
 
 		if ( !result )
 			return i;
@@ -344,7 +344,7 @@ cff_get_interface( CFF_Driver   driver,
 	FT_Module  sfnt;
 
 
-#ifndef FT2_1_3_CONFIG_OPTION_NO_GLYPH_NAMES
+#ifndef FT_CONFIG_OPTION_NO_GLYPH_NAMES
 
 	if ( ft_strcmp( (const char*)module_interface, "glyph_name" ) == 0 )
 		return (FT_Module_Interface)cff_get_glyph_name;

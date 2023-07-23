@@ -163,7 +163,7 @@ static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
 	FT_UShort   *glyph_indices = 0;
 	FT_Char     **name_strings  = 0;
 
-	if (FT2_1_3_READ_USHORT(num_glyphs))
+	if (FT_READ_USHORT(num_glyphs))
 		goto Exit;
 
 	/* UNDOCUMENTED!  The number of glyphs in this table can be smaller */
@@ -173,7 +173,7 @@ static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
 	/* in this table, so the test for this threshold has been dropped.  */
 
 	if (num_glyphs > face->root.num_glyphs) {
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -181,13 +181,13 @@ static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
 	{
 		FT_Int n;
 
-		if (FT_NEW_ARRAY(glyph_indices, num_glyphs) || FT2_1_3_FRAME_ENTER(num_glyphs * 2L))
+		if (FT_NEW_ARRAY(glyph_indices, num_glyphs) || FT_FRAME_ENTER(num_glyphs * 2L))
 			goto Fail;
 
 		for (n = 0; n < num_glyphs; n++)
-			glyph_indices[n] = FT2_1_3_GET_USHORT();
+			glyph_indices[n] = FT_GET_USHORT();
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 	}
 
 	/* compute number of names stored in table */
@@ -218,7 +218,7 @@ static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
 		for (n = 0; n < num_names; n++) {
 			FT_UInt len;
 
-			if (FT2_1_3_READ_BYTE(len) || FT_NEW_ARRAY(name_strings[n], len + 1) || FT2_1_3_STREAM_READ(name_strings[n], len))
+			if (FT_READ_BYTE(len) || FT_NEW_ARRAY(name_strings[n], len + 1) || FT_STREAM_READ(name_strings[n], len))
 				goto Fail1;
 
 			name_strings[n][len] = '\0';
@@ -234,18 +234,18 @@ static FT_Error load_format_20(TT_Face face, FT_Stream stream) {
 		table->glyph_indices = glyph_indices;
 		table->glyph_names   = name_strings;
 	}
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Fail1 : {
 	FT_UShort n;
 
 	for (n = 0; n < num_names; n++)
-		FT2_1_3_FREE(name_strings[n]);
+		FT_FREE(name_strings[n]);
 }
 
 Fail:
-	FT2_1_3_FREE(name_strings);
-	FT2_1_3_FREE(glyph_indices);
+	FT_FREE(name_strings);
+	FT_FREE(glyph_indices);
 
 Exit:
 	return error;
@@ -259,16 +259,16 @@ static FT_Error load_format_25(TT_Face face, FT_Stream stream) {
 	FT_Char    *offset_table = 0;
 
 	/* UNDOCUMENTED!  This value appears only in the Apple TT specs. */
-	if (FT2_1_3_READ_USHORT(num_glyphs))
+	if (FT_READ_USHORT(num_glyphs))
 		goto Exit;
 
 	/* check the number of glyphs */
 	if (num_glyphs > face->root.num_glyphs || num_glyphs > 258) {
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
-	if (FT2_1_3_ALLOC(offset_table, num_glyphs) || FT2_1_3_STREAM_READ(offset_table, num_glyphs))
+	if (FT_ALLOC(offset_table, num_glyphs) || FT_STREAM_READ(offset_table, num_glyphs))
 		goto Fail;
 
 	/* now check the offset table */
@@ -279,7 +279,7 @@ static FT_Error load_format_25(TT_Face face, FT_Stream stream) {
 			FT_Long idx = (FT_Long)n + offset_table[n];
 
 			if (idx < 0 || idx > num_glyphs) {
-				error = FT2_1_3_Err_Invalid_File_Format;
+				error = FT_Err_Invalid_File_Format;
 				goto Fail;
 			}
 		}
@@ -293,10 +293,10 @@ static FT_Error load_format_25(TT_Face face, FT_Stream stream) {
 		table->offsets 	  = offset_table;
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Fail:
-	FT2_1_3_FREE(offset_table);
+	FT_FREE(offset_table);
 
 Exit:
 	return error;
@@ -318,7 +318,7 @@ static FT_Error load_post_names(TT_Face face) {
 	format = face->postscript.FormatType;
 
 	/* go to beginning of subtable */
-	if (FT2_1_3_STREAM_SKIP(32))
+	if (FT_STREAM_SKIP(32))
 		goto Exit;
 
 	/* now read postscript table */
@@ -327,7 +327,7 @@ static FT_Error load_post_names(TT_Face face) {
 	else if (format == 0x00028000L)
 		error = load_format_25(face, stream);
 	else
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 
 	face->postscript_names.loaded = 1;
 
@@ -348,18 +348,18 @@ tt_face_free_ps_names(TT_Face face) {
 			TT_Post_20 table = &names->names.format_20;
 			FT_UShort n;
 
-			FT2_1_3_FREE(table->glyph_indices);
+			FT_FREE(table->glyph_indices);
 			table->num_glyphs = 0;
 
 			for (n = 0; n < table->num_names; n++)
-				FT2_1_3_FREE(table->glyph_names[n]);
+				FT_FREE(table->glyph_names[n]);
 
-			FT2_1_3_FREE(table->glyph_names);
+			FT_FREE(table->glyph_names);
 			table->num_names = 0;
 		} else if (format == 0x00028000L) {
 			TT_Post_25 table = &names->names.format_25;
 
-			FT2_1_3_FREE(table->offsets);
+			FT_FREE(table->offsets);
 			table->num_glyphs = 0;
 		}
 	}
@@ -379,15 +379,15 @@ tt_face_get_ps_name(TT_Face face, FT_UInt idx, FT_String **PSname) {
 #endif
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	if (idx >= (FT_UInt)face->root.num_glyphs)
-		return FT2_1_3_Err_Invalid_Glyph_Index;
+		return FT_Err_Invalid_Glyph_Index;
 
 #ifdef FT_CONFIG_OPTION_POSTSCRIPT_NAMES
 	psnames = (PSNames_Service)face->psnames;
 	if (!psnames)
-		return FT2_1_3_Err_Unimplemented_Feature;
+		return FT_Err_Unimplemented_Feature;
 #endif
 
 	names = &face->postscript_names;
@@ -435,7 +435,7 @@ tt_face_get_ps_name(TT_Face face, FT_UInt idx, FT_String **PSname) {
 	/* nothing to do for format == 0x00030000L */
 
 End:
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 } // End of namespace FreeType213

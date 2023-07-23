@@ -43,7 +43,7 @@ namespace FreeType213 {
 
 FT_BASE_DEF(FT_Error)
 FT_Alloc(FT_Memory memory, FT_Long size, void **P) {
-	FT2_1_3_ASSERT(P != 0);
+	FT_ASSERT(P != 0);
 
 	if (size > 0) {
 		*P = memory->alloc(memory, size);
@@ -51,23 +51,23 @@ FT_Alloc(FT_Memory memory, FT_Long size, void **P) {
 			FT_ERROR(("FT_Alloc:"));
 			FT_ERROR((" Out of memory? (%ld requested)\n", size));
 
-			return FT2_1_3_Err_Out_Of_Memory;
+			return FT_Err_Out_Of_Memory;
 		}
-		FT2_1_3_MEM_ZERO(*P, size);
+		FT_MEM_ZERO(*P, size);
 	} else
 		*P = NULL;
 
 	FT_TRACE7(("FT_Alloc:"));
 	FT_TRACE7((" size = %ld, block = 0x%08p, ref = 0x%08p\n", size, *P, P));
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 FT_BASE_DEF(FT_Error)
 FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P) {
 	void *Q;
 
-	FT2_1_3_ASSERT(P != 0);
+	FT_ASSERT(P != 0);
 
 	/* if the original pointer is NULL, call FT_Alloc() */
 	if (!*P)
@@ -76,7 +76,7 @@ FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P) {
 	/* if the new block if zero-sized, clear the current one */
 	if (size <= 0) {
 		FT_Free(memory, P);
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	}
 
 	Q = memory->realloc(memory, current, size, *P);
@@ -84,15 +84,15 @@ FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P) {
 		goto Fail;
 
 	if (size > current)
-		FT2_1_3_MEM_ZERO((char *)Q + current, size - current);
+		FT_MEM_ZERO((char *)Q + current, size - current);
 
 	*P = Q;
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Fail:
 	FT_ERROR(("FT_Realloc:"));
 	FT_ERROR((" Failed (current %ld, requested %ld)\n", current, size));
-	return FT2_1_3_Err_Out_Of_Memory;
+	return FT_Err_Out_Of_Memory;
 }
 
 FT_BASE_DEF(void)
@@ -202,7 +202,7 @@ FT_List_Up(FT_List list, FT_ListNode node) {
 FT_EXPORT_DEF(FT_Error)
 FT_List_Iterate(FT_List list, FT_List_Iterator iterator, void *user) {
 	FT_ListNode cur = list->head;
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 
 	while (cur) {
 		FT_ListNode next = cur->next;
@@ -229,7 +229,7 @@ FT_List_Finalize(FT_List list, FT_List_Destructor destroy, FT_Memory memory, voi
 		if (destroy)
 			destroy(memory, data, user);
 
-		FT2_1_3_FREE(cur);
+		FT_FREE(cur);
 		cur = next;
 	}
 

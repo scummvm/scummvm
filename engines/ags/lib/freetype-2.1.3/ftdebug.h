@@ -58,10 +58,10 @@ FT_BEGIN_HEADER
 typedef enum {
 #include "engines/ags/lib/freetype-2.1.3/fttrace.h"
 	trace_count
-} FT2_1_3_Trace;
+} FT_Trace;
 
 /* defining the array of trace levels, provided by `src/base/ftdebug.c' */
-extern int FT2_1_3_trace_levels[trace_count];
+extern int FT_trace_levels[trace_count];
 
 #undef FT_TRACE_DEF
 
@@ -74,7 +74,7 @@ extern int FT2_1_3_trace_levels[trace_count];
 /* IMPORTANT!                                                            */
 /*                                                                       */
 /* Each component must define the macro FT_COMPONENT to a valid     */
-/* FT2_1_3_Trace value before using any TRACE macro.                     */
+/* FT_Trace value before using any TRACE macro.                     */
 /*                                                                       */
 /*************************************************************************/
 
@@ -82,7 +82,7 @@ extern int FT2_1_3_trace_levels[trace_count];
 
 #define FT_TRACE(level, varformat)                       \
 	do {                                                      \
-		if (FT2_1_3_trace_levels[FT_COMPONENT] >= level) \
+		if (FT_trace_levels[FT_COMPONENT] >= level) \
 			FT_Message varformat;                             \
 	} while (0)
 
@@ -127,13 +127,13 @@ extern int FT2_1_3_trace_levels[trace_count];
 
 /*************************************************************************/
 /*                                                                       */
-/* Define the FT2_1_3_ASSERT macro                                            */
+/* Define the FT_ASSERT macro                                            */
 /*                                                                       */
 /*************************************************************************/
 
 #ifdef FT_DEBUG_LEVEL_ERROR
 
-#define FT2_1_3_ASSERT(condition)                                \
+#define FT_ASSERT(condition)                                \
 	do {                                                         \
 		if (!(condition))                                        \
 			FT_Panic("assertion failed on line %d of file %s\n", \
@@ -142,7 +142,7 @@ extern int FT2_1_3_trace_levels[trace_count];
 
 #else /* !FT_DEBUG_LEVEL_ERROR */
 
-#define FT2_1_3_ASSERT( condition )  do ; while (0)
+#define FT_ASSERT( condition )  do ; while (0)
 
 #endif /* !FT_DEBUG_LEVEL_ERROR */
 

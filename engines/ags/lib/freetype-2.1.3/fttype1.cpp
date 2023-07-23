@@ -39,7 +39,7 @@ namespace FreeType213 {
 FT_EXPORT_DEF(FT_Error)
 FT_Get_PS_Font_Info(FT_Face face, PS_FontInfoRec *afont_info) {
 	PS_FontInfo font_info = NULL;
-	FT_Error error = FT2_1_3_Err_Invalid_Argument;
+	FT_Error error = FT_Err_Invalid_Argument;
 	const char *driver_name;
 
 	if (face && face->driver && face->driver->root.clazz) {
@@ -53,7 +53,7 @@ FT_Get_PS_Font_Info(FT_Face face, PS_FontInfoRec *afont_info) {
 	}
 	if (font_info != NULL) {
 		*afont_info = *font_info;
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 	}
 
 	return error;

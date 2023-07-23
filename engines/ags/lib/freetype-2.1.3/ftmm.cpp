@@ -44,16 +44,16 @@ FT_Get_Multi_Master(FT_Face face, FT_Multi_Master *amaster) {
 	FT_Error error;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 
 	if (FT_HAS_MULTIPLE_MASTERS(face)) {
 		FT_Driver driver = face->driver;
 		FT_Get_MM_Func func;
 
 		func = (FT_Get_MM_Func)driver->root.clazz->get_interface(
-			FT2_1_3_MODULE(driver), "get_mm");
+			FT_MODULE(driver), "get_mm");
 		if (func)
 			error = func(face, amaster);
 	}
@@ -66,16 +66,16 @@ FT_Set_MM_Design_Coordinates(FT_Face face, FT_UInt num_coords, FT_Long *coords) 
 	FT_Error error;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 
 	if (FT_HAS_MULTIPLE_MASTERS(face)) {
 		FT_Driver driver = face->driver;
 		FT_Set_MM_Design_Func func;
 
 		func = (FT_Set_MM_Design_Func)driver->root.clazz->get_interface(
-			FT2_1_3_MODULE(driver), "set_mm_design");
+			FT_MODULE(driver), "set_mm_design");
 		if (func)
 			error = func(face, num_coords, coords);
 	}
@@ -89,16 +89,16 @@ FT_Set_MM_Blend_Coordinates(FT_Face face, FT_UInt num_coords, FT_Fixed *coords) 
 	FT_Error error;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 
 	if (FT_HAS_MULTIPLE_MASTERS(face)) {
 		FT_Driver driver = face->driver;
 		FT_Set_MM_Blend_Func func;
 
 		func = (FT_Set_MM_Blend_Func)driver->root.clazz->get_interface(
-			FT2_1_3_MODULE(driver), "set_mm_blend");
+			FT_MODULE(driver), "set_mm_blend");
 		if (func)
 			error = func(face, num_coords, coords);
 	}

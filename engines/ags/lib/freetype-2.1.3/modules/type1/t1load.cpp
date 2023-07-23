@@ -124,7 +124,7 @@ T1_Get_Multi_Master(T1_Face face, FT_Multi_Master *master) {
 	FT_UInt  n;
 	FT_Error error;
 
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 
 	if (blend) {
 		master->num_axis = blend->num_axis;
@@ -150,11 +150,11 @@ T1_Set_MM_Blend(T1_Face face, FT_UInt num_coords, FT_Fixed *coords) {
 	FT_Error error;
 	FT_UInt n, m;
 
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 
 	if (blend && blend->num_axis == num_coords) {
 		/* recompute the weight vector from the blend coordinates */
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 
 		for (n = 0; n < blend->num_designs; n++) {
 			FT_Fixed result = 0x10000L; /* 1.0 fixed */
@@ -177,7 +177,7 @@ T1_Set_MM_Blend(T1_Face face, FT_UInt num_coords, FT_Fixed *coords) {
 			blend->weight_vector[n] = result;
 		}
 
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 	}
 	return error;
 }
@@ -189,7 +189,7 @@ T1_Set_MM_Design(T1_Face face, FT_UInt num_coords, FT_Long *coords) {
 	FT_Error error;
 	FT_UInt  n, p;
 
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 	if (blend && blend->num_axis == num_coords) {
 		/* compute the blend coordinates through the blend design map */
 		FT_Fixed final_blends[T1_MAX_MM_DESIGNS];
@@ -251,14 +251,14 @@ T1_Done_Blend(T1_Face face) {
 		FT_UInt n;
 
 		/* release design pos table */
-		FT2_1_3_FREE(blend->design_pos[0]);
+		FT_FREE(blend->design_pos[0]);
 		for (n = 1; n < num_designs; n++)
 			blend->design_pos[n] = 0;
 
 		/* release blend `private' and `font info' dictionaries */
-		FT2_1_3_FREE(blend->privates[1]);
-		FT2_1_3_FREE(blend->font_infos[1]);
-		FT2_1_3_FREE(blend->bboxes[1]);
+		FT_FREE(blend->privates[1]);
+		FT_FREE(blend->font_infos[1]);
+		FT_FREE(blend->bboxes[1]);
 
 		for (n = 0; n < num_designs; n++) {
 			blend->privates[n] = 0;
@@ -267,22 +267,22 @@ T1_Done_Blend(T1_Face face) {
 		}
 
 		/* release weight vectors */
-		FT2_1_3_FREE(blend->weight_vector);
+		FT_FREE(blend->weight_vector);
 		blend->default_weight_vector = 0;
 
 		/* release axis names */
 		for (n = 0; n < num_axis; n++)
-			FT2_1_3_FREE(blend->axis_names[n]);
+			FT_FREE(blend->axis_names[n]);
 
 		/* release design map */
 		for (n = 0; n < num_axis; n++) {
 			PS_DesignMap dmap = blend->design_map + n;
 
-			FT2_1_3_FREE(dmap->design_points);
+			FT_FREE(dmap->design_points);
 			dmap->num_points = 0;
 		}
 
-		FT2_1_3_FREE(face->blend);
+		FT_FREE(face->blend);
 	}
 }
 
@@ -298,7 +298,7 @@ static void parse_blend_axis_types(T1_Face face, T1_Loader loader) {
 	T1_ToTokenArray(&loader->parser, axis_tokens, T1_MAX_MM_AXIS, &num_axis);
 	if (num_axis <= 0 || num_axis > T1_MAX_MM_AXIS) {
 		FT_ERROR(("parse_blend_axis_types: incorrect number of axes: %d\n", num_axis));
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -322,15 +322,15 @@ static void parse_blend_axis_types(T1_Face face, T1_Loader loader) {
 
 		len = token->limit - token->start;
 		if (len <= 0) {
-			error = FT2_1_3_Err_Invalid_File_Format;
+			error = FT_Err_Invalid_File_Format;
 			goto Exit;
 		}
 
-		if (FT2_1_3_ALLOC(blend->axis_names[n], len + 1))
+		if (FT_ALLOC(blend->axis_names[n], len + 1))
 			goto Exit;
 
 		name = (FT_Byte *)blend->axis_names[n];
-		FT2_1_3_MEM_COPY(name, token->start, len);
+		FT_MEM_COPY(name, token->start, len);
 		name[len] = 0;
 	}
 
@@ -353,7 +353,7 @@ static void parse_blend_design_positions(T1_Face face, T1_Loader loader) {
 	if (num_designs <= 0 || num_designs > T1_MAX_MM_DESIGNS) {
 		FT_ERROR(("parse_blend_design_positions:"));
 		FT_ERROR((" incorrect number of designs: %d\n", num_designs));
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -384,7 +384,7 @@ static void parse_blend_design_positions(T1_Face face, T1_Loader loader) {
 				blend = face->blend;
 			} else if (n_axis != num_axis) {
 				FT_ERROR(("parse_blend_design_positions: incorrect table\n"));
-				error = FT2_1_3_Err_Invalid_File_Format;
+				error = FT_Err_Invalid_File_Format;
 				goto Exit;
 			}
 
@@ -419,7 +419,7 @@ static void parse_blend_design_map(T1_Face face, T1_Loader loader) {
 	T1_ToTokenArray(parser, axis_tokens, T1_MAX_MM_AXIS, &num_axis);
 	if (num_axis <= 0 || num_axis > T1_MAX_MM_AXIS) {
 		FT_ERROR(("parse_blend_design_map: incorrect number of axes: %d\n", num_axis));
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 		goto Exit;
 	}
 	old_cursor = parser->root.cursor;
@@ -452,7 +452,7 @@ static void parse_blend_design_map(T1_Face face, T1_Loader loader) {
 		}
 		if (num_points <= 0 || num_points > T1_MAX_MM_MAP_POINTS) {
 			FT_ERROR(("parse_blend_design_map: incorrect table\n"));
-			error = FT2_1_3_Err_Invalid_File_Format;
+			error = FT_Err_Invalid_File_Format;
 			goto Exit;
 		}
 
@@ -487,14 +487,14 @@ static void parse_weight_vector(T1_Face face, T1_Loader loader) {
 
 	if (!blend || blend->num_designs == 0) {
 		FT_ERROR(("parse_weight_vector: too early!\n"));
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
 	T1_ToToken(parser, &master);
 	if (master.type != T1_TOKEN_TYPE_ARRAY) {
 		FT_ERROR(("parse_weight_vector: incorrect format!\n"));
-		error = FT2_1_3_Err_Invalid_File_Format;
+		error = FT_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -640,7 +640,7 @@ static int read_binary_data(T1_Parser parser, FT_Long *size, FT_Byte **base) {
 	}
 
 	FT_ERROR(("read_binary_data: invalid size field\n"));
-	parser->root.error = FT2_1_3_Err_Invalid_File_Format;
+	parser->root.error = FT_Err_Invalid_File_Format;
 	return 0;
 }
 
@@ -677,12 +677,12 @@ static void parse_font_name(T1_Face face, T1_Loader loader) {
 
 	len = cur2 - cur;
 	if (len > 0) {
-		if (FT2_1_3_ALLOC(face->type1.font_name, len + 1)) {
+		if (FT_ALLOC(face->type1.font_name, len + 1)) {
 			parser->root.error = error;
 			return;
 		}
 
-		FT2_1_3_MEM_COPY(face->type1.font_name, cur, len);
+		FT_MEM_COPY(face->type1.font_name, cur, len);
 		face->type1.font_name[len] = '\0';
 	}
 	parser->root.cursor = cur2;
@@ -757,7 +757,7 @@ static void parse_encoding(T1_Face face, T1_Loader loader) {
 		cur++;
 		if (cur >= limit) {
 			FT_ERROR(("parse_encoding: out of bounds!\n"));
-			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
+			parser->root.error = FT_Err_Invalid_File_Format;
 			return;
 		}
 	}
@@ -783,7 +783,7 @@ static void parse_encoding(T1_Face face, T1_Loader loader) {
 		/* we use a T1_Table to store our charnames */
 		loader->num_chars = encode->num_chars = count;
 		if (FT_NEW_ARRAY(encode->char_index, count) || FT_NEW_ARRAY(encode->char_name, count) ||
-			FT2_1_3_SET_ERROR(psaux->ps_table_funcs->init(char_table, count, memory))) {
+			FT_SET_ERROR(psaux->ps_table_funcs->init(char_table, count, memory))) {
 			parser->root.error = error;
 			return;
 		}
@@ -876,7 +876,7 @@ static void parse_encoding(T1_Face face, T1_Loader loader) {
 
 		else {
 			FT_ERROR(("parse_encoding: invalid token!\n"));
-			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
+			parser->root.error = FT_Err_Invalid_File_Format;
 		}
 	}
 }
@@ -949,13 +949,13 @@ static void parse_subrs(T1_Face face, T1_Loader loader) {
 			FT_Byte *temp;
 
 			/* t1_decrypt() shouldn't write to base -- make temporary copy */
-			if (FT2_1_3_ALLOC(temp, size))
+			if (FT_ALLOC(temp, size))
 				goto Fail;
-			FT2_1_3_MEM_COPY(temp, base, size);
+			FT_MEM_COPY(temp, base, size);
 			psaux->t1_decrypt(temp, size, 4330);
 			size -= face->type1.private_dict.lenIV;
 			error = T1_Add_Table(table, idx, temp + face->type1.private_dict.lenIV, size);
-			FT2_1_3_FREE(temp);
+			FT_FREE(temp);
 		} else
 			error = T1_Add_Table(table, idx, base, size);
 		if (error)
@@ -1067,13 +1067,13 @@ static void parse_charstrings(T1_Face face, T1_Loader loader) {
 				FT_Byte *temp;
 
 				/* t1_decrypt() shouldn't write to base -- make temporary copy */
-				if (FT2_1_3_ALLOC(temp, size))
+				if (FT_ALLOC(temp, size))
 					goto Fail;
-				FT2_1_3_MEM_COPY(temp, base, size);
+				FT_MEM_COPY(temp, base, size);
 				psaux->t1_decrypt(temp, size, 4330);
 				size -= face->type1.private_dict.lenIV;
 				error = T1_Add_Table(code_table, n, temp + face->type1.private_dict.lenIV, size);
-				FT2_1_3_FREE(temp);
+				FT_FREE(temp);
 			} else
 				error = T1_Add_Table(code_table, n, base, size);
 			if (error)
@@ -1300,7 +1300,7 @@ static FT_Error parse_dict(T1_Face face, T1_Loader loader, FT_Byte *base, FT_Lon
 static void t1_init_loader(T1_Loader loader, T1_Face face) {
 	FT_UNUSED(face);
 
-	FT2_1_3_MEM_ZERO(loader, sizeof(*loader));
+	FT_MEM_ZERO(loader, sizeof(*loader));
 	loader->num_glyphs = 0;
 	loader->num_chars  = 0;
 
@@ -1380,7 +1380,7 @@ T1_Open_Face(T1_Face face) {
 #endif
 		if (!loader.charstrings.init) {
 			FT_ERROR(("T1_Open_Face: no charstrings array in face!\n"));
-			error = FT2_1_3_Err_Invalid_File_Format;
+			error = FT_Err_Invalid_File_Format;
 		}
 
 	loader.charstrings.init = 0;

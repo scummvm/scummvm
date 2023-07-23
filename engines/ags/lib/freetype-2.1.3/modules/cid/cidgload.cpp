@@ -72,7 +72,7 @@ cid_load_glyph( T1_Decoder  decoder,
 
 		if ( glyph_data.length != 0 ) {
 			glyph_length = glyph_data.length - cid->fd_bytes;
-			FT2_1_3_ALLOC( charstring, glyph_length );
+			FT_ALLOC( charstring, glyph_length );
 			if ( !error )
 				ft_memcpy( charstring, glyph_data.pointer + cid->fd_bytes,
 						   glyph_length );
@@ -97,9 +97,9 @@ cid_load_glyph( T1_Decoder  decoder,
 		FT_ULong  off1;
 
 
-		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + cid->cidmap_offset +
+		if ( FT_STREAM_SEEK( cid->data_offset + cid->cidmap_offset +
 							 glyph_index * entry_len )               ||
-				FT2_1_3_FRAME_ENTER( 2 * entry_len )                         )
+				FT_FRAME_ENTER( 2 * entry_len )                         )
 			goto Exit;
 
 		p            = (FT_Byte*)stream->cursor;
@@ -108,13 +108,13 @@ cid_load_glyph( T1_Decoder  decoder,
 		p           += cid->fd_bytes;
 		glyph_length = (FT_UInt) cid_get_offset(
 						   &p, (FT_Byte)cid->gd_bytes ) - off1;
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		if ( glyph_length == 0 )
 			goto Exit;
-		if ( FT2_1_3_ALLOC( charstring, glyph_length ) )
+		if ( FT_ALLOC( charstring, glyph_length ) )
 			goto Exit;
-		if ( FT2_1_3_STREAM_READ_AT( cid->data_offset + off1,
+		if ( FT_STREAM_READ_AT( cid->data_offset + off1,
 								charstring, glyph_length ) )
 			goto Exit;
 	}
@@ -152,7 +152,7 @@ cid_load_glyph( T1_Decoder  decoder,
 				glyph_length - cs_offset  );
 	}
 
-	FT2_1_3_FREE( charstring );
+	FT_FREE( charstring );
 
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
 
@@ -241,7 +241,7 @@ cid_face_compute_max_advance( CID_Face  face,
 
 	*max_advance = decoder.builder.advance.x;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -288,7 +288,7 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 	glyph->root.outline.n_points   = 0;
 	glyph->root.outline.n_contours = 0;
 
-	hinting = FT2_1_3_BOOL( ( load_flags & FT_LOAD_NO_SCALE   ) == 0 &&
+	hinting = FT_BOOL( ( load_flags & FT_LOAD_NO_SCALE   ) == 0 &&
 					   ( load_flags & FT_LOAD_NO_HINTING ) == 0 );
 
 	glyph->root.format = FT_GLYPH_FORMAT_OUTLINE;
@@ -305,7 +305,7 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 											   cid_load_glyph );
 
 		/* set up the decoder */
-		decoder.builder.no_recurse = FT2_1_3_BOOL(
+		decoder.builder.no_recurse = FT_BOOL(
 										 ( ( load_flags & FT_LOAD_NO_RECURSE ) != 0 ) );
 
 		error = cid_load_glyph( &decoder, glyph_index );

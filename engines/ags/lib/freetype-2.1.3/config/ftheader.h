@@ -79,7 +79,7 @@
 /*    statements as in:                                                  */
 /*                                                                       */
 /*    {                                                                  */
-/*      #include FT2_1_3_FREETYPE_H                                           */
+/*      #include FT_FREETYPE_H                                           */
 /*      #include FT2_1_3_MULTIPLE_MASTERS_H                                   */
 /*      #include FT_GLYPH_H                                              */
 /*    }                                                                  */
@@ -99,57 +99,57 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_CONFIG_CONFIG_H                                                 */
+/*    FT_CONFIG_CONFIG_H                                                 */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    FreeType 2 configuration data.                                     */
 /*                                                                       */
-#ifndef FT2_1_3_CONFIG_CONFIG_H
-#define FT2_1_3_CONFIG_CONFIG_H  "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
+#ifndef FT_CONFIG_CONFIG_H
+#define FT_CONFIG_CONFIG_H  "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
 #endif
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_CONFIG_STANDARD_LIBRARY_H                                       */
+/*    FT_CONFIG_STANDARD_LIBRARY_H                                       */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    FreeType 2 configuration data.                                     */
 /*                                                                       */
-#ifndef FT2_1_3_CONFIG_STANDARD_LIBRARY_H
-#define FT2_1_3_CONFIG_STANDARD_LIBRARY_H  "engines/ags/lib/freetype-2.1.3/config/ftstdlib.h"
+#ifndef FT_CONFIG_STANDARD_LIBRARY_H
+#define FT_CONFIG_STANDARD_LIBRARY_H  "engines/ags/lib/freetype-2.1.3/config/ftstdlib.h"
 #endif
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_CONFIG_OPTIONS_H                                                */
+/*    FT_CONFIG_OPTIONS_H                                                */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    FreeType 2 project-specific configuration options.                 */
 /*                                                                       */
-#ifndef FT2_1_3_CONFIG_OPTIONS_H
-#define FT2_1_3_CONFIG_OPTIONS_H  "engines/ags/lib/freetype-2.1.3/config/ftoption.h"
+#ifndef FT_CONFIG_OPTIONS_H
+#define FT_CONFIG_OPTIONS_H  "engines/ags/lib/freetype-2.1.3/config/ftoption.h"
 #endif
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_CONFIG_MODULES_H                                                */
+/*    FT_CONFIG_MODULES_H                                                */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the list of FreeType 2 modules that are statically linked to new   */
 /*    library instances in @FT2_1_3_Init_FreeType.                            */
 /*                                                                       */
-#ifndef FT2_1_3_CONFIG_MODULES_H
-#define FT2_1_3_CONFIG_MODULES_H  "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
+#ifndef FT_CONFIG_MODULES_H
+#define FT_CONFIG_MODULES_H  "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
 #endif
 
 /* public headers */
@@ -157,13 +157,13 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_FREETYPE_H                                                      */
+/*    FT_FREETYPE_H                                                      */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the base FreeType 2 API.                                           */
 /*                                                                       */
-#define FT2_1_3_FREETYPE_H  "engines/ags/lib/freetype-2.1.3/freetype.h"
+#define FT_FREETYPE_H  "engines/ags/lib/freetype-2.1.3/freetype.h"
 
 
 /*************************************************************************/
@@ -175,7 +175,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the list of FreeType 2 error codes (and messages).                 */
 /*                                                                       */
-/*    It is included by @FT2_1_3_FREETYPE_H.                                  */
+/*    It is included by @FT_FREETYPE_H.                                  */
 /*                                                                       */
 #define FT_ERRORS_H  "engines/ags/lib/freetype-2.1.3/fterrors.h"
 
@@ -183,13 +183,13 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_MODULE_ERRORS_H                                                 */
+/*    FT_MODULE_ERRORS_H                                                 */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the list of FreeType 2 module error offsets (and messages).        */
 /*                                                                       */
-#define FT2_1_3_MODULE_ERRORS_H  "engines/ags/lib/freetype-2.1.3/ftmoderr.h"
+#define FT_MODULE_ERRORS_H  "engines/ags/lib/freetype-2.1.3/ftmoderr.h"
 
 
 /*************************************************************************/
@@ -202,7 +202,7 @@
 /*    the FreeType 2 interface to low-level operations (i.e. memory      */
 /*    management and stream i/o).                                        */
 /*                                                                       */
-/*    It is included by @FT2_1_3_FREETYPE_H.                                  */
+/*    It is included by @FT_FREETYPE_H.                                  */
 /*                                                                       */
 #define FT2_1_3_SYSTEM_H  "engines/ags/lib/freetype-2.1.3/ftsystem.h"
 
@@ -217,7 +217,7 @@
 /*    types definitions related to glyph images (i.e. bitmaps, outlines, */
 /*    scan-converter parameters).                                        */
 /*                                                                       */
-/*    It is included by @FT2_1_3_FREETYPE_H.                                  */
+/*    It is included by @FT_FREETYPE_H.                                  */
 /*                                                                       */
 #define FT2_1_3_IMAGE_H  "engines/ags/lib/freetype-2.1.3/ftimage.h"
 
@@ -225,15 +225,15 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_TYPES_H                                                         */
+/*    FT_TYPES_H                                                         */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the basic data types defined by FreeType 2.                        */
 /*                                                                       */
-/*    It is included by @FT2_1_3_FREETYPE_H.                                  */
+/*    It is included by @FT_FREETYPE_H.                                  */
 /*                                                                       */
-#define FT2_1_3_TYPES_H  "engines/ags/lib/freetype-2.1.3/fttypes.h"
+#define FT_TYPES_H  "engines/ags/lib/freetype-2.1.3/fttypes.h"
 
 
 /*************************************************************************/
@@ -265,25 +265,25 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_SIZES_H                                                         */
+/*    FT_SIZES_H                                                         */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the API used to manage multiple @FT_Size objects per face.         */
 /*                                                                       */
-#define FT2_1_3_SIZES_H  "engines/ags/lib/freetype-2.1.3/ftsizes.h"
+#define FT_SIZES_H  "engines/ags/lib/freetype-2.1.3/ftsizes.h"
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_MODULE_H                                                        */
+/*    FT_MODULE_H                                                        */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the module management API of FreeType 2.                           */
 /*                                                                       */
-#define FT2_1_3_MODULE_H  "engines/ags/lib/freetype-2.1.3/ftmodule.h"
+#define FT_MODULE_H  "engines/ags/lib/freetype-2.1.3/ftmodule.h"
 
 
 /*************************************************************************/
@@ -301,13 +301,13 @@
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT2_1_3_TYPE1_TABLES_H                                                  */
+/*    FT_TYPE1_TABLES_H                                                  */
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
 /*    the types and API specific to the Type 1 format.                   */
 /*                                                                       */
-#define FT2_1_3_TYPE1_TABLES_H  "engines/ags/lib/freetype-2.1.3/t1tables.h"
+#define FT_TYPE1_TABLES_H  "engines/ags/lib/freetype-2.1.3/t1tables.h"
 
 
 /*************************************************************************/
@@ -499,7 +499,7 @@
 
 /* */
 
-#define FT2_1_3_TRIGONOMETRY_H          "engines/ags/lib/freetype-2.1.3/fttrigon.h"
+#define FT_TRIGONOMETRY_H          "engines/ags/lib/freetype-2.1.3/fttrigon.h"
 #define FT2_1_3_STROKER_H               "engines/ags/lib/freetype-2.1.3/ftstroker.h"
 #define FT2_1_3_SYNTHESIS_H             "engines/ags/lib/freetype-2.1.3/include/freetype/ftsynth.h"
 #define FT_ERROR_DEFINITIONS_H     "engines/ags/lib/freetype-2.1.3/fterrdef.h"
@@ -516,8 +516,8 @@
 
 /* now include internal headers definitions from <freetype/internal/...> */
 
-#define  FT2_1_3_INTERNAL_INTERNAL_H    "engines/ags/lib/freetype-2.1.3/include/freetype/internal/internal.h"
-#include FT2_1_3_INTERNAL_INTERNAL_H
+#define  FT_INTERNAL_INTERNAL_H    "engines/ags/lib/freetype-2.1.3/include/freetype/internal/internal.h"
+#include FT_INTERNAL_INTERNAL_H
 
 
 #endif /* __FT2_BUILD_H__ */

@@ -70,10 +70,10 @@ static FT_Error ft_input_stream_new(FT_Library library, const FT_Open_Args *args
 	FT_Stream stream;
 
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	if (!args)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	*astream = 0;
 	memory = library->memory;
@@ -95,13 +95,13 @@ static FT_Error ft_input_stream_new(FT_Library library, const FT_Open_Args *args
 
 		/* in this case, we do not need to allocate a new stream object */
 		/* since the caller is responsible for closing it himself       */
-		FT2_1_3_FREE(stream);
+		FT_FREE(stream);
 		stream = args->stream;
 	} else
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 
 	if (error)
-		FT2_1_3_FREE(stream);
+		FT_FREE(stream);
 	else
 		stream->memory = memory; /* just to be certain */
 
@@ -118,7 +118,7 @@ static void ft_input_stream_free(FT_Stream stream, FT_Int external) {
 		FT_Stream_Close(stream);
 
 		if (!external)
-			FT2_1_3_FREE(stream);
+			FT_FREE(stream);
 	}
 }
 
@@ -132,7 +132,7 @@ static FT_Error ft_glyphslot_init(FT_GlyphSlot slot) {
 	FT_Driver 		  driver = slot->face->driver;
 	FT_Driver_Class   clazz  = driver->clazz;
 	FT_Memory         memory = driver->root.memory;
-	FT_Error          error  = FT2_1_3_Err_Ok;
+	FT_Error          error  = FT_Err_Ok;
 	FT_Slot_Internal  internal;
 
 	slot->library = driver->root.library;
@@ -142,7 +142,7 @@ static FT_Error ft_glyphslot_init(FT_GlyphSlot slot) {
 
 	slot->internal = internal;
 
-	if (FT2_1_3_DRIVER_USES_OUTLINES(driver))
+	if (FT_DRIVER_USES_OUTLINES(driver))
 		error = FT_GlyphLoader_New(memory, &internal->loader);
 
 	if (!error && clazz->init_slot)
@@ -155,15 +155,15 @@ Exit:
 static void ft_glyphslot_clear(FT_GlyphSlot slot) {
 	/* free bitmap if needed */
 	if (slot->flags & FT_GLYPH_OWN_BITMAP) {
-		FT_Memory memory = FT2_1_3_FACE_MEMORY(slot->face);
+		FT_Memory memory = FT_FACE_MEMORY(slot->face);
 
-		FT2_1_3_FREE(slot->bitmap.buffer);
+		FT_FREE(slot->bitmap.buffer);
 		slot->flags &= ~FT_GLYPH_OWN_BITMAP;
 	}
 
 	/* clear all public fields in the glyph slot */
-	FT2_1_3_ZERO(&slot->metrics);
-	FT2_1_3_ZERO(&slot->outline);
+	FT_ZERO(&slot->metrics);
+	FT_ZERO(&slot->outline);
 
 	slot->bitmap.width = 0;
 	slot->bitmap.rows = 0;
@@ -194,15 +194,15 @@ static void ft_glyphslot_done(FT_GlyphSlot slot) {
 
 	/* free bitmap buffer if needed */
 	if (slot->flags & FT_GLYPH_OWN_BITMAP)
-		FT2_1_3_FREE(slot->bitmap.buffer);
+		FT_FREE(slot->bitmap.buffer);
 
 	/* free glyph loader */
-	if (FT2_1_3_DRIVER_USES_OUTLINES(driver)) {
+	if (FT_DRIVER_USES_OUTLINES(driver)) {
 		FT_GlyphLoader_Done(slot->internal->loader);
 		slot->internal->loader = 0;
 	}
 
-	FT2_1_3_FREE(slot->internal);
+	FT_FREE(slot->internal);
 }
 
 FT_BASE_DEF(FT_Error)
@@ -214,7 +214,7 @@ FT_New_GlyphSlot(FT_Face face, FT_GlyphSlot *aslot) {
 	FT_GlyphSlot 	slot;
 
 	if (!face || !aslot || !face->driver)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	*aslot = 0;
 
@@ -223,13 +223,13 @@ FT_New_GlyphSlot(FT_Face face, FT_GlyphSlot *aslot) {
 	memory = driver->root.memory;
 
 	FT_TRACE4(("FT_New_GlyphSlot: Creating new slot object\n"));
-	if (!FT2_1_3_ALLOC(slot, clazz->slot_object_size)) {
+	if (!FT_ALLOC(slot, clazz->slot_object_size)) {
 		slot->face = face;
 
 		error = ft_glyphslot_init(slot);
 		if (error) {
 			ft_glyphslot_done(slot);
-			FT2_1_3_FREE(slot);
+			FT_FREE(slot);
 			goto Exit;
 		}
 
@@ -257,7 +257,7 @@ FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot) {
 			if (cur == slot) {
 				*parent = cur->next;
 				ft_glyphslot_done(slot);
-				FT2_1_3_FREE(slot);
+				FT_FREE(slot);
 				break;
 			}
 			cur = cur->next;
@@ -327,10 +327,10 @@ FT2_1_3_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
 	FT_Module hinter;
 
 	if (!face || !face->size || !face->glyph)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	if (glyph_index > (FT_UInt)face->num_glyphs)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	slot = face->glyph;
 	ft_glyphslot_clear(slot);
@@ -353,14 +353,14 @@ FT2_1_3_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
 	library = driver->root.library;
 	hinter = library->auto_hinter;
 	autohint =
-		FT2_1_3_BOOL(hinter &&
+		FT_BOOL(hinter &&
 					 !(load_flags & (FT_LOAD_NO_SCALE |
 									 FT_LOAD_NO_HINTING |
 									 FT_LOAD_NO_AUTOHINT)) &&
-					 FT2_1_3_DRIVER_IS_SCALABLE(driver) &&
-					 FT2_1_3_DRIVER_USES_OUTLINES(driver));
+					 FT_DRIVER_IS_SCALABLE(driver) &&
+					 FT_DRIVER_USES_OUTLINES(driver));
 	if (autohint) {
-		if (FT2_1_3_DRIVER_HAS_HINTER(driver) && !(load_flags & FT_LOAD_FORCE_AUTOHINT))
+		if (FT_DRIVER_HAS_HINTER(driver) && !(load_flags & FT_LOAD_FORCE_AUTOHINT))
 			autohint = 0;
 	}
 
@@ -448,7 +448,7 @@ FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 load_flags) {
 	FT_UInt glyph_index;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	glyph_index = (FT_UInt)char_code;
 	if (face->charmap)
@@ -467,8 +467,8 @@ static void destroy_size(FT_Memory memory, FT_Size size, FT_Driver driver) {
 	if (driver->clazz->done_size)
 		driver->clazz->done_size(size);
 
-	FT2_1_3_FREE(size->internal);
-	FT2_1_3_FREE(size);
+	FT_FREE(size->internal);
+	FT_FREE(size);
 }
 
 /* destructor for faces list */
@@ -497,14 +497,14 @@ static void destroy_face(FT_Memory memory, FT_Face face, FT_Driver driver) {
 		FT_Int n;
 
 		for (n = 0; n < face->num_charmaps; n++) {
-			FT_CMap cmap = FT2_1_3_CMAP(face->charmaps[n]);
+			FT_CMap cmap = FT_CMAP(face->charmaps[n]);
 
 			FT_CMap_Done(cmap);
 
 			face->charmaps[n] = NULL;
 		}
 
-		FT2_1_3_FREE(face->charmaps);
+		FT_FREE(face->charmaps);
 		face->num_charmaps = 0;
 	}
 
@@ -519,17 +519,17 @@ static void destroy_face(FT_Memory memory, FT_Face face, FT_Driver driver) {
 
 	/* get rid of it */
 	if (face->internal) {
-		FT2_1_3_FREE(face->internal->postscript_name);
-		FT2_1_3_FREE(face->internal);
+		FT_FREE(face->internal->postscript_name);
+		FT_FREE(face->internal);
 	}
-	FT2_1_3_FREE(face);
+	FT_FREE(face);
 }
 
 static void Destroy_Driver(FT_Driver driver) {
 	FT_List_Finalize(&driver->faces_list, (FT_List_Destructor)destroy_face, driver->root.memory, driver);
 
 	/* check whether we need to drop the driver's glyph loader */
-	if (FT2_1_3_DRIVER_USES_OUTLINES(driver))
+	if (FT_DRIVER_USES_OUTLINES(driver))
 		FT_GlyphLoader_Done(driver->glyph_loader);
 }
 
@@ -544,7 +544,7 @@ static FT_Error open_face(FT_Driver driver, FT_Stream stream, FT_Long face_index
 	memory = driver->root.memory;
 
 	/* allocate the face object and perform basic initialization */
-	if (FT2_1_3_ALLOC(face, clazz->face_object_size))
+	if (FT_ALLOC(face, clazz->face_object_size))
 		goto Fail;
 
 	if (FT_NEW(internal))
@@ -594,8 +594,8 @@ static FT_Error open_face(FT_Driver driver, FT_Stream stream, FT_Long face_index
 Fail:
 	if (error) {
 		clazz->done_face(face);
-		FT2_1_3_FREE(face->internal);
-		FT2_1_3_FREE(face);
+		FT_FREE(face->internal);
+		FT_FREE(face);
 		*aface = 0;
 	}
 
@@ -613,7 +613,7 @@ FT2_1_3_New_Face(FT_Library library, const char *pathname, FT_Long face_index, F
 
 	/* test for valid `library' and `aface' delayed to FT_Open_Face() */
 	if (!pathname)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	args.flags = FT_OPEN_PATHNAME;
 	args.pathname = const_cast<char *>(pathname);
@@ -629,7 +629,7 @@ FT2_1_3_New_Memory_Face(FT_Library library, const FT_Byte *file_base, FT_Long fi
 
 	/* test for valid `library' and `face' delayed to FT_Open_Face() */
 	if (!file_base)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	args.flags = FT_OPEN_MEMORY;
 	args.memory_base = file_base;
@@ -652,11 +652,11 @@ FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, F
 	/* ft_input_stream_new()               */
 
 	if (!aface || !args)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	*aface = 0;
 
-	external_stream = FT2_1_3_BOOL((args->flags & FT_OPEN_STREAM) && args->stream);
+	external_stream = FT_BOOL((args->flags & FT_OPEN_STREAM) && args->stream);
 
 	/* create input stream */
 	error = ft_input_stream_new(library, args, &stream);
@@ -668,10 +668,10 @@ FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, F
 	/* If the font driver is specified in the `args' structure, use */
 	/* it.  Otherwise, we scan the list of registered drivers.      */
 	if ((args->flags & FT_OPEN_DRIVER) && args->driver) {
-		driver = FT2_1_3_DRIVER(args->driver);
+		driver = FT_DRIVER(args->driver);
 
 		/* not all modules are drivers, so check... */
-		if (FT2_1_3_MODULE_IS_DRIVER(driver)) {
+		if (FT_MODULE_IS_DRIVER(driver)) {
 			FT_Int num_params = 0;
 			FT_Parameter *params = 0;
 
@@ -684,7 +684,7 @@ FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, F
 			if (!error)
 				goto Success;
 		} else
-			error = FT2_1_3_Err_Invalid_Handle;
+			error = FT_Err_Invalid_Handle;
 
 		ft_input_stream_free(stream, external_stream);
 		goto Fail;
@@ -695,11 +695,11 @@ FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, F
 
 		for (; cur < limit; cur++) {
 			/* not all modules are font drivers, so check... */
-			if (FT2_1_3_MODULE_IS_DRIVER(cur[0])) {
+			if (FT_MODULE_IS_DRIVER(cur[0])) {
 				FT_Int num_params = 0;
 				FT_Parameter *params = 0;
 
-				driver = FT2_1_3_DRIVER(cur[0]);
+				driver = FT_DRIVER(cur[0]);
 
 				if (args->flags & FT_OPEN_PARAMS) {
 					num_params = args->num_params;
@@ -710,13 +710,13 @@ FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, F
 				if (!error)
 					goto Success;
 
-				if (FT_ERROR_BASE(error) != FT2_1_3_Err_Unknown_File_Format)
+				if (FT_ERROR_BASE(error) != FT_Err_Unknown_File_Format)
 					goto Fail2;
 			}
 		}
 
 		/* no driver is able to handle this format */
-		error = FT2_1_3_Err_Unknown_File_Format;
+		error = FT_Err_Unknown_File_Format;
 
 	Fail2:
 		ft_input_stream_free(stream, external_stream);
@@ -797,7 +797,7 @@ FT_Attach_File(FT_Face face, const char *filepathname) {
 	/* test for valid `face' delayed to FT_Attach_Stream() */
 
 	if (!filepathname)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	open.flags = FT_OPEN_PATHNAME;
 	open.pathname = const_cast<char *>(filepathname);
@@ -816,11 +816,11 @@ FT_Attach_Stream(FT_Face face, FT_Open_Args *parameters) {
 	/* test for valid `parameters' delayed to ft_input_stream_new() */
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	driver = face->driver;
 	if (!driver)
-		return FT2_1_3_Err_Invalid_Driver_Handle;
+		return FT_Err_Invalid_Driver_Handle;
 
 	error = ft_input_stream_new(driver->root.library, parameters, &stream);
 	if (error)
@@ -829,7 +829,7 @@ FT_Attach_Stream(FT_Face face, FT_Open_Args *parameters) {
 	/* we implement FT_Attach_Stream in each driver through the */
 	/* `attach_file' interface                                  */
 
-	error = FT2_1_3_Err_Unimplemented_Feature;
+	error = FT_Err_Unimplemented_Feature;
 	clazz = driver->clazz;
 	if (clazz->attach_file)
 		error = clazz->attach_file(face, stream);
@@ -848,7 +848,7 @@ FT2_1_3_Done_Face(FT_Face face) {
 	FT_Memory memory;
 	FT_ListNode node;
 
-	error = FT2_1_3_Err_Invalid_Face_Handle;
+	error = FT_Err_Invalid_Face_Handle;
 	if (face && face->driver) {
 		driver = face->driver;
 		memory = driver->root.memory;
@@ -858,11 +858,11 @@ FT2_1_3_Done_Face(FT_Face face) {
 		if (node) {
 			/* remove face object from the driver's list */
 			FT_List_Remove(&driver->faces_list, node);
-			FT2_1_3_FREE(node);
+			FT_FREE(node);
 
 			/* now destroy the object proper */
 			destroy_face(memory, face, driver);
-			error = FT2_1_3_Err_Ok;
+			error = FT_Err_Ok;
 		}
 	}
 	return error;
@@ -879,13 +879,13 @@ FT_New_Size(FT_Face face, FT_Size *asize) {
 	FT_ListNode node = 0;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	if (!asize)
-		return FT2_1_3_Err_Invalid_Size_Handle;
+		return FT_Err_Invalid_Size_Handle;
 
 	if (!face->driver)
-		return FT2_1_3_Err_Invalid_Driver_Handle;
+		return FT_Err_Invalid_Driver_Handle;
 
 	*asize = 0;
 
@@ -894,7 +894,7 @@ FT_New_Size(FT_Face face, FT_Size *asize) {
 	memory = face->memory;
 
 	/* Allocate new size object and perform basic initialisation */
-	if (FT2_1_3_ALLOC(size, clazz->size_object_size) || FT_NEW(node))
+	if (FT_ALLOC(size, clazz->size_object_size) || FT_NEW(node))
 		goto Exit;
 
 	size->face = face;
@@ -914,8 +914,8 @@ FT_New_Size(FT_Face face, FT_Size *asize) {
 
 Exit:
 	if (error) {
-		FT2_1_3_FREE(node);
-		FT2_1_3_FREE(size);
+		FT_FREE(node);
+		FT_FREE(size);
 	}
 
 	return error;
@@ -930,23 +930,23 @@ FT_Done_Size(FT_Size size) {
 	FT_ListNode node;
 
 	if (!size)
-		return FT2_1_3_Err_Invalid_Size_Handle;
+		return FT_Err_Invalid_Size_Handle;
 
 	face = size->face;
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	driver = face->driver;
 	if (!driver)
-		return FT2_1_3_Err_Invalid_Driver_Handle;
+		return FT_Err_Invalid_Driver_Handle;
 
 	memory = driver->root.memory;
 
-	error = FT2_1_3_Err_Ok;
+	error = FT_Err_Ok;
 	node = FT_List_Find(&face->sizes_list, size);
 	if (node) {
 		FT_List_Remove(&face->sizes_list, node);
-		FT2_1_3_FREE(node);
+		FT_FREE(node);
 
 		if (face->size == size) {
 			face->size = 0;
@@ -956,7 +956,7 @@ FT_Done_Size(FT_Size size) {
 
 		destroy_size(memory, size, driver);
 	} else
-		error = FT2_1_3_Err_Invalid_Size_Handle;
+		error = FT_Err_Invalid_Size_Handle;
 
 	return error;
 }
@@ -972,14 +972,14 @@ static void ft_recompute_scaled_metrics(FT_Face face, FT_Size_Metrics *metrics) 
 
 FT_EXPORT_DEF(FT_Error)
 FT2_1_3_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution) {
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 	FT_Driver driver;
 	FT_Driver_Class clazz;
 	FT_Size_Metrics *metrics;
 	FT_Long dim_x, dim_y;
 
 	if (!face || !face->size || !face->driver)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	driver = face->driver;
 	metrics = &face->size->metrics;
@@ -1029,13 +1029,13 @@ FT2_1_3_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_heigh
 
 FT_EXPORT_DEF(FT_Error)
 FT2_1_3_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height) {
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 	FT_Driver driver;
 	FT_Driver_Class clazz;
 	FT_Size_Metrics *metrics = &face->size->metrics;
 
 	if (!face || !face->size || !face->driver)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	driver = face->driver;
 	clazz = driver->clazz;
@@ -1070,14 +1070,14 @@ FT2_1_3_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height)
 
 FT_EXPORT_DEF(FT_Error)
 FT2_1_3_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning) {
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 	FT_Driver driver;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	if (!akerning)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	driver = face->driver;
 
@@ -1108,11 +1108,11 @@ FT_Select_Charmap(FT_Face face, FT_Encoding encoding) {
 	FT_CharMap *limit;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	cur = face->charmaps;
 	if (!cur)
-		return FT2_1_3_Err_Invalid_CharMap_Handle;
+		return FT_Err_Invalid_CharMap_Handle;
 
 	limit = cur + face->num_charmaps;
 
@@ -1123,7 +1123,7 @@ FT_Select_Charmap(FT_Face face, FT_Encoding encoding) {
 		}
 	}
 
-	return FT2_1_3_Err_Invalid_Argument;
+	return FT_Err_Invalid_Argument;
 }
 
 FT_EXPORT_DEF(FT_Error)
@@ -1132,11 +1132,11 @@ FT_Set_Charmap(FT_Face face, FT_CharMap charmap) {
 	FT_CharMap *limit;
 
 	if (!face)
-		return FT2_1_3_Err_Invalid_Face_Handle;
+		return FT_Err_Invalid_Face_Handle;
 
 	cur = face->charmaps;
 	if (!cur)
-		return FT2_1_3_Err_Invalid_CharMap_Handle;
+		return FT_Err_Invalid_CharMap_Handle;
 
 	limit = cur + face->num_charmaps;
 
@@ -1146,7 +1146,7 @@ FT_Set_Charmap(FT_Face face, FT_CharMap charmap) {
 			return 0;
 		}
 	}
-	return FT2_1_3_Err_Invalid_Argument;
+	return FT_Err_Invalid_Argument;
 }
 
 FT_BASE_DEF(void)
@@ -1154,12 +1154,12 @@ FT_CMap_Done(FT_CMap cmap) {
 	if (cmap) {
 		FT_CMap_Class clazz = cmap->clazz;
 		FT_Face face = cmap->charmap.face;
-		FT_Memory memory = FT2_1_3_FACE_MEMORY(face);
+		FT_Memory memory = FT_FACE_MEMORY(face);
 
 		if (clazz->done)
 			clazz->done(cmap);
 
-		FT2_1_3_FREE(cmap);
+		FT_FREE(cmap);
 	}
 }
 
@@ -1171,12 +1171,12 @@ FT_CMap_New(FT_CMap_Class clazz, FT_Pointer init_data, FT_CharMap charmap, FT_CM
 	FT_CMap cmap;
 
 	if (clazz == NULL || charmap == NULL || charmap->face == NULL)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	face = charmap->face;
-	memory = FT2_1_3_FACE_MEMORY(face);
+	memory = FT_FACE_MEMORY(face);
 
-	if (!FT2_1_3_ALLOC(cmap, clazz->size)) {
+	if (!FT_ALLOC(cmap, clazz->size)) {
 		cmap->charmap = *charmap;
 		cmap->clazz = clazz;
 
@@ -1187,7 +1187,7 @@ FT_CMap_New(FT_CMap_Class clazz, FT_Pointer init_data, FT_CharMap charmap, FT_CM
 		}
 
 		/* add it to our list of charmaps */
-		if (FT2_1_3_RENEW_ARRAY(face->charmaps, face->num_charmaps, face->num_charmaps + 1))
+		if (FT_RENEW_ARRAY(face->charmaps, face->num_charmaps, face->num_charmaps + 1))
 			goto Fail;
 
 		face->charmaps[face->num_charmaps++] = (FT_CharMap)cmap;
@@ -1210,7 +1210,7 @@ FT2_1_3_Get_Char_Index(FT_Face face, FT_ULong charcode) {
 	FT_UInt result = 0;
 
 	if (face && face->charmap) {
-		FT_CMap cmap = FT2_1_3_CMAP(face->charmap);
+		FT_CMap cmap = FT_CMAP(face->charmap);
 
 		result = cmap->clazz->char_index(cmap, charcode);
 	}
@@ -1241,7 +1241,7 @@ FT2_1_3_Get_Next_Char(FT_Face face, FT_ULong charcode, FT_UInt *agindex) {
 
 	if (face && face->charmap) {
 		FT_UInt32 code = (FT_UInt32)charcode;
-		FT_CMap cmap = FT2_1_3_CMAP(face->charmap);
+		FT_CMap cmap = FT_CMAP(face->charmap);
 
 		gindex = cmap->clazz->char_next(cmap, &code);
 		result = (gindex == 0) ? 0 : code;
@@ -1260,12 +1260,12 @@ FT_Get_Name_Index(FT_Face face, FT_String *glyph_name) {
 	if (face && FT_HAS_GLYPH_NAMES(face)) {
 		/* now, lookup for glyph name */
 		FT_Driver driver = face->driver;
-		FT_Module_Class *clazz = FT2_1_3_MODULE_CLASS(driver);
+		FT_Module_Class *clazz = FT_MODULE_CLASS(driver);
 
 		if (clazz->get_interface) {
 			FT_Face_GetGlyphNameIndexFunc requester;
 
-			requester = (FT_Face_GetGlyphNameIndexFunc)clazz->get_interface(FT2_1_3_MODULE(driver), "name_index");
+			requester = (FT_Face_GetGlyphNameIndexFunc)clazz->get_interface(FT_MODULE(driver), "name_index");
 			if (requester)
 				result = requester(face, glyph_name);
 		}
@@ -1276,7 +1276,7 @@ FT_Get_Name_Index(FT_Face face, FT_String *glyph_name) {
 
 FT_EXPORT_DEF(FT_Error)
 FT2_1_3_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max) {
-	FT_Error error = FT2_1_3_Err_Invalid_Argument;
+	FT_Error error = FT_Err_Invalid_Argument;
 
 	/* clean up buffer */
 	if (buffer && buffer_max > 0)
@@ -1285,12 +1285,12 @@ FT2_1_3_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_
 	if (face && glyph_index <= (FT_UInt)face->num_glyphs && FT_HAS_GLYPH_NAMES(face)) {
 		/* now, lookup for glyph name */
 		FT_Driver driver = face->driver;
-		FT_Module_Class *clazz = FT2_1_3_MODULE_CLASS(driver);
+		FT_Module_Class *clazz = FT_MODULE_CLASS(driver);
 
 		if (clazz->get_interface) {
 			FT_Face_GetGlyphNameFunc requester;
 
-			requester = (FT_Face_GetGlyphNameFunc)clazz->get_interface(FT2_1_3_MODULE(driver), "glyph_name");
+			requester = (FT_Face_GetGlyphNameFunc)clazz->get_interface(FT_MODULE(driver), "glyph_name");
 			if (requester)
 				error = requester(face, glyph_index, buffer, buffer_max);
 		}
@@ -1310,12 +1310,12 @@ FT_Get_Postscript_Name(FT_Face face) {
 	if (!result) {
 		/* now, look up glyph name */
 		FT_Driver driver = face->driver;
-		FT_Module_Class *clazz = FT2_1_3_MODULE_CLASS(driver);
+		FT_Module_Class *clazz = FT_MODULE_CLASS(driver);
 
 		if (clazz->get_interface) {
 			FT_Face_GetPostscriptNameFunc requester;
 
-			requester = (FT_Face_GetPostscriptNameFunc)clazz->get_interface(FT2_1_3_MODULE(driver), "postscript_name");
+			requester = (FT_Face_GetPostscriptNameFunc)clazz->get_interface(FT_MODULE(driver), "postscript_name");
 			if (requester)
 				result = requester(face);
 		}
@@ -1334,7 +1334,7 @@ FT2_1_3_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag) {
 		goto Exit;
 
 	driver = face->driver;
-	func = (FT2_1_3_Get_Sfnt_Table_Func)driver->root.clazz->get_interface(FT2_1_3_MODULE(driver), "get_sfnt");
+	func = (FT2_1_3_Get_Sfnt_Table_Func)driver->root.clazz->get_interface(FT_MODULE(driver), "get_sfnt");
 	if (func)
 		table = func(face, tag);
 
@@ -1347,17 +1347,17 @@ FT_Activate_Size(FT_Size size) {
 	FT_Face face;
 
 	if (size == NULL)
-		return FT2_1_3_Err_Bad_Argument;
+		return FT_Err_Bad_Argument;
 
 	face = size->face;
 	if (face == NULL || face->driver == NULL)
-		return FT2_1_3_Err_Bad_Argument;
+		return FT_Err_Bad_Argument;
 
 	/* we don't need anything more complex than that; all size objects */
 	/* are already listed by the face                                  */
 	face->size = size;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -1399,7 +1399,7 @@ Exit:
 
 static FT_Renderer ft_lookup_glyph_renderer(FT_GlyphSlot slot) {
 	FT_Face 	face    = slot->face;
-	FT_Library 	library = FT2_1_3_FACE_LIBRARY(face);
+	FT_Library 	library = FT_FACE_LIBRARY(face);
 	FT_Renderer result  = library->cur_renderer;
 
 	if (!result || result->glyph_format != slot->format)
@@ -1450,7 +1450,7 @@ static FT_Error ft_add_renderer(FT_Module module) {
 
 Fail:
 	if (error)
-		FT2_1_3_FREE(node);
+		FT_FREE(node);
 
 Exit:
 	return error;
@@ -1471,7 +1471,7 @@ static void ft_remove_renderer(FT_Module module) {
 
 		/* remove from list */
 		FT_List_Remove(&library->renderers, node);
-		FT2_1_3_FREE(node);
+		FT_FREE(node);
 
 		ft_set_current_renderer(library);
 	}
@@ -1487,17 +1487,17 @@ FT_Get_Renderer(FT_Library library, FT_Glyph_Format format) {
 FT_EXPORT_DEF(FT_Error)
 FT_Set_Renderer(FT_Library library, FT_Renderer renderer, FT_UInt num_params, FT_Parameter *parameters) {
 	FT_ListNode node;
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	if (!renderer)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	node = FT_List_Find(&library->renderers, renderer);
 	if (!node) {
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -1522,7 +1522,7 @@ Exit:
 
 FT_BASE_DEF(FT_Error)
 FT_Render_Glyph_Internal(FT_Library library, FT_GlyphSlot slot, FT_Render_Mode render_mode) {
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 	FT_Renderer renderer;
 
 	/* if it is already a bitmap, no need to do anything */
@@ -1541,14 +1541,14 @@ FT_Render_Glyph_Internal(FT_Library library, FT_GlyphSlot slot, FT_Render_Mode r
 		} else
 			renderer = FT_Lookup_Renderer(library, slot->format, &node);
 
-		error = FT2_1_3_Err_Unimplemented_Feature;
+		error = FT_Err_Unimplemented_Feature;
 		while (renderer) {
 			error = renderer->render(renderer, slot, render_mode, NULL);
 			if (!error ||
-				FT_ERROR_BASE(error) != FT2_1_3_Err_Cannot_Render_Glyph)
+				FT_ERROR_BASE(error) != FT_Err_Cannot_Render_Glyph)
 				break;
 
-			/* FT2_1_3_Err_Cannot_Render_Glyph is returned if the render mode   */
+			/* FT_Err_Cannot_Render_Glyph is returned if the render mode   */
 			/* is unsupported by the current renderer for this glyph image */
 			/* format.                                                     */
 
@@ -1573,9 +1573,9 @@ FT2_1_3_Render_Glyph(FT_GlyphSlot slot, FT_Render_Mode render_mode) {
 	FT_Library library;
 
 	if (!slot)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
-	library = FT2_1_3_FACE_LIBRARY(slot->face);
+	library = FT_FACE_LIBRARY(slot->face);
 
 	return FT_Render_Glyph_Internal(library, slot, render_mode);
 }
@@ -1596,19 +1596,19 @@ static void Destroy_Module( FT_Module  module ) {
 		library->auto_hinter = 0;
 
 	/* if the module is a renderer */
-	if (FT2_1_3_MODULE_IS_RENDERER(module))
+	if (FT_MODULE_IS_RENDERER(module))
 		ft_remove_renderer(module);
 
 	/* if the module is a font driver, add some steps */
-	if (FT2_1_3_MODULE_IS_DRIVER(module))
-		Destroy_Driver(FT2_1_3_DRIVER(module));
+	if (FT_MODULE_IS_DRIVER(module))
+		Destroy_Driver(FT_DRIVER(module));
 
 	/* finalize the module object */
 	if (clazz->module_done)
 		clazz->module_done(module);
 
 	/* discard it */
-	FT2_1_3_FREE(module);
+	FT_FREE(module);
 }
 
 FT_EXPORT_DEF(FT_Error)
@@ -1621,14 +1621,14 @@ FT_Add_Module(FT_Library library, const FT_Module_Class *clazz) {
 #define FREETYPE_VER_FIXED (((FT_Long)FREETYPE213_MAJOR << 16) | FREETYPE213_MINOR)
 
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	if (!clazz)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	/* check freetype version */
 	if (clazz->module_requires > FREETYPE_VER_FIXED)
-		return FT2_1_3_Err_Invalid_Version;
+		return FT_Err_Invalid_Version;
 
 	/* look for a module with the same name in the library's table */
 	for (nn = 0; nn < library->num_modules; nn++) {
@@ -1636,7 +1636,7 @@ FT_Add_Module(FT_Library library, const FT_Module_Class *clazz) {
 		if (ft_strcmp(module->clazz->module_name, clazz->module_name) == 0) {
 			/* this installed module has the same name, compare their versions */
 			if (clazz->module_version <= module->clazz->module_version)
-				return FT2_1_3_Err_Lower_Module_Version;
+				return FT_Err_Lower_Module_Version;
 
 			/* remove the module from our list, then exit the loop to replace */
 			/* it by our new version..                                        */
@@ -1646,15 +1646,15 @@ FT_Add_Module(FT_Library library, const FT_Module_Class *clazz) {
 	}
 
 	memory = library->memory;
-	error = FT2_1_3_Err_Ok;
+	error = FT_Err_Ok;
 
 	if (library->num_modules >= FT_MAX_MODULES) {
-		error = FT2_1_3_Err_Too_Many_Drivers;
+		error = FT_Err_Too_Many_Drivers;
 		goto Exit;
 	}
 
 	/* allocate module object */
-	if (FT2_1_3_ALLOC(module, clazz->module_size))
+	if (FT_ALLOC(module, clazz->module_size))
 		goto Exit;
 
 	/* base initialization */
@@ -1664,7 +1664,7 @@ FT_Add_Module(FT_Library library, const FT_Module_Class *clazz) {
 
 	/* check whether the module is a renderer - this must be performed */
 	/* before the normal module initialization                         */
-	if (FT2_1_3_MODULE_IS_RENDERER(module)) {
+	if (FT_MODULE_IS_RENDERER(module)) {
 		/* add to the renderers list */
 		error = ft_add_renderer(module);
 		if (error)
@@ -1672,16 +1672,16 @@ FT_Add_Module(FT_Library library, const FT_Module_Class *clazz) {
 	}
 
 	/* is the module a auto-hinter? */
-	if (FT2_1_3_MODULE_IS_HINTER(module))
+	if (FT_MODULE_IS_HINTER(module))
 		library->auto_hinter = module;
 
 	/* if the module is a font driver */
-	if (FT2_1_3_MODULE_IS_DRIVER(module)) {
+	if (FT_MODULE_IS_DRIVER(module)) {
 		/* allocate glyph loader if needed */
-		FT_Driver driver = FT2_1_3_DRIVER(module);
+		FT_Driver driver = FT_DRIVER(module);
 
 		driver->clazz = (FT_Driver_Class)module->clazz;
-		if (FT2_1_3_DRIVER_USES_OUTLINES(driver)) {
+		if (FT_DRIVER_USES_OUTLINES(driver)) {
 			error = FT_GlyphLoader_New(memory, &driver->glyph_loader);
 			if (error)
 				goto Fail;
@@ -1701,21 +1701,21 @@ Exit:
 	return error;
 
 Fail:
-	if (FT2_1_3_MODULE_IS_DRIVER(module)) {
-		FT_Driver driver = FT2_1_3_DRIVER(module);
+	if (FT_MODULE_IS_DRIVER(module)) {
+		FT_Driver driver = FT_DRIVER(module);
 
-		if (FT2_1_3_DRIVER_USES_OUTLINES(driver))
+		if (FT_DRIVER_USES_OUTLINES(driver))
 			FT_GlyphLoader_Done(driver->glyph_loader);
 	}
 
-	if (FT2_1_3_MODULE_IS_RENDERER(module)) {
+	if (FT_MODULE_IS_RENDERER(module)) {
 		FT_Renderer renderer = FT_RENDERER(module);
 
 		if (renderer->raster)
 			renderer->clazz->raster_class->raster_done(renderer->raster);
 	}
 
-	FT2_1_3_FREE(module);
+	FT_FREE(module);
 	goto Exit;
 }
 
@@ -1756,7 +1756,7 @@ FT_Remove_Module(FT_Library library, FT_Module module) {
 	/* try to find the module from the table, then remove it from there */
 
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	if (module) {
 		FT_Module *cur = library->modules;
@@ -1776,11 +1776,11 @@ FT_Remove_Module(FT_Library library, FT_Module module) {
 				/* destroy the module */
 				Destroy_Module(module);
 
-				return FT2_1_3_Err_Ok;
+				return FT_Err_Ok;
 			}
 		}
 	}
-	return FT2_1_3_Err_Invalid_Driver_Handle;
+	return FT_Err_Invalid_Driver_Handle;
 }
 
 
@@ -1792,7 +1792,7 @@ FT_New_Library(FT_Memory memory, FT_Library *alibrary) {
 	FT_Error error;
 
 	if (!memory)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 #ifdef FT_DEBUG_LEVEL_ERROR
 	/* init debugging support */
@@ -1807,16 +1807,16 @@ FT_New_Library(FT_Memory memory, FT_Library *alibrary) {
 
 	/* allocate the render pool */
 	library->raster_pool_size = FT_RENDER_POOL_SIZE;
-	if (FT2_1_3_ALLOC(library->raster_pool, FT_RENDER_POOL_SIZE))
+	if (FT_ALLOC(library->raster_pool, FT_RENDER_POOL_SIZE))
 		goto Fail;
 
 	/* That's ok now */
 	*alibrary = library;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Fail:
-	FT2_1_3_FREE(library);
+	FT_FREE(library);
 	return error;
 }
 
@@ -1847,7 +1847,7 @@ FT_Done_Library(FT_Library library) {
 	FT_Memory memory;
 
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	memory = library->memory;
 
@@ -1875,11 +1875,11 @@ FT_Done_Library(FT_Library library) {
 #endif
 
 	/* Destroy raster objects */
-	FT2_1_3_FREE(library->raster_pool);
+	FT_FREE(library->raster_pool);
 	library->raster_pool_size = 0;
 
-	FT2_1_3_FREE(library);
-	return FT2_1_3_Err_Ok;
+	FT_FREE(library);
+	return FT_Err_Ok;
 }
 
 FT_EXPORT_DEF(void)

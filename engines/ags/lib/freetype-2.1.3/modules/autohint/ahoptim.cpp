@@ -40,7 +40,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"       /* for FT2_1_3_ALLOC_ARRAY() and FT2_1_3_FREE() */
+#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"       /* for FT_ALLOC_ARRAY() and FT_FREE() */
 #include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahoptim.h"
 
 
@@ -751,11 +751,11 @@ AH_Optimizer_Done( AH_Optimizer*  optimizer ) {
 		FT_Memory  memory = optimizer->memory;
 
 
-		FT2_1_3_FREE( optimizer->horz_stems );
-		FT2_1_3_FREE( optimizer->vert_stems );
-		FT2_1_3_FREE( optimizer->horz_springs );
-		FT2_1_3_FREE( optimizer->vert_springs );
-		FT2_1_3_FREE( optimizer->positions );
+		FT_FREE( optimizer->horz_stems );
+		FT_FREE( optimizer->vert_stems );
+		FT_FREE( optimizer->horz_springs );
+		FT_FREE( optimizer->vert_springs );
+		FT_FREE( optimizer->positions );
 	}
 }
 
@@ -768,7 +768,7 @@ AH_Optimizer_Init( AH_Optimizer*  optimizer,
 	FT_Error  error;
 
 
-	FT2_1_3_MEM_ZERO( optimizer, sizeof ( *optimizer ) );
+	FT_MEM_ZERO( optimizer, sizeof ( *optimizer ) );
 	optimizer->outline = outline;
 	optimizer->memory  = memory;
 

@@ -109,7 +109,7 @@ cff_size_init( CFF_Size  size ) {
 			FT_UInt  n, count;
 
 
-			FT2_1_3_MEM_ZERO( &priv, sizeof ( priv ) );
+			FT_MEM_ZERO( &priv, sizeof ( priv ) );
 
 			count = priv.num_blue_values = cpriv->num_blue_values;
 			for ( n = 0; n < count; n++ )
@@ -223,8 +223,8 @@ cff_strcpy( FT_Memory         memory,
 	FT_Int      len = (FT_Int)ft_strlen( source );
 
 
-	if ( !FT2_1_3_ALLOC( result, len + 1 ) ) {
-		FT2_1_3_MEM_COPY( result, source, len );
+	if ( !FT_ALLOC( result, len + 1 ) ) {
+		FT_MEM_COPY( result, source, len );
 		result[len] = 0;
 	}
 
@@ -261,7 +261,7 @@ cff_face_init( FT_Stream      stream,
 	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(tmp_ptr));
 
 	/* create input stream from resource */
-	if ( FT2_1_3_STREAM_SEEK( 0 ) )
+	if ( FT_STREAM_SEEK( 0 ) )
 		goto Exit;
 
 	/* check that we have a valid OpenType file */
@@ -274,7 +274,7 @@ cff_face_init( FT_Stream      stream,
 
 		/* if we are performing a simple font format check, exit immediately */
 		if ( face_index < 0 )
-			return FT2_1_3_Err_Ok;
+			return FT_Err_Ok;
 
 		sfnt_format = 1;
 
@@ -306,9 +306,9 @@ cff_face_init( FT_Stream      stream,
 			goto Exit;
 	} else {
 		/* rewind to start of file; we are going to load a pure-CFF font */
-		if ( FT2_1_3_STREAM_SEEK( 0 ) )
+		if ( FT_STREAM_SEEK( 0 ) )
 			goto Exit;
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 	}
 
 	/* now load and parse the CFF table in the file */
@@ -405,7 +405,7 @@ cff_face_init( FT_Stream      stream,
 				flags |= FT_FACE_FLAG_KERNING;
 #endif
 
-#ifndef FT2_1_3_CONFIG_OPTION_NO_GLYPH_NAMES
+#ifndef FT_CONFIG_OPTION_NO_GLYPH_NAMES
 			flags |= FT_FACE_FLAG_GLYPH_NAMES;
 #endif
 
@@ -500,7 +500,7 @@ Exit:
 	return error;
 
 Bad_Format:
-	error = FT2_1_3_Err_Unknown_File_Format;
+	error = FT_Err_Unknown_File_Format;
 	goto Exit;
 }
 
@@ -520,7 +520,7 @@ cff_face_done( CFF_Face  face ) {
 
 		if ( cff ) {
 			cff_font_done( cff );
-			FT2_1_3_FREE( face->extra.data );
+			FT_FREE( face->extra.data );
 		}
 	}
 }
@@ -530,7 +530,7 @@ FT_LOCAL_DEF( FT_Error )
 cff_driver_init( CFF_Driver  driver ) {
 	FT_UNUSED( driver );
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 

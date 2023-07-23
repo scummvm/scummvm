@@ -107,14 +107,14 @@ FT_Stream_Open(FT_Stream stream, const char *filepathname) {
 	FILE *file;
 
 	if (!stream)
-		return FT2_1_3_Err_Invalid_Stream_Handle;
+		return FT_Err_Invalid_Stream_Handle;
 
 	file = fopen(filepathname, "rb");
 	if (!file) {
 		FT_ERROR(("FT_Stream_Open:"));
 		FT_ERROR((" could not open `%s'\n", filepathname));
 
-		return FT2_1_3_Err_Cannot_Open_Resource;
+		return FT_Err_Cannot_Open_Resource;
 	}
 
 	fseek(file, 0, SEEK_END);
@@ -131,7 +131,7 @@ FT_Stream_Open(FT_Stream stream, const char *filepathname) {
 	FT_TRACE1(("FT_Stream_Open:"));
 	FT_TRACE1((" opened `%s' (%d bytes) successfully\n", filepathname, stream->size));
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 

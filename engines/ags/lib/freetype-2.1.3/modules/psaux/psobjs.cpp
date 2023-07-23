@@ -60,7 +60,7 @@ ps_table_new(PS_Table table, FT_Int count, FT_Memory memory) {
 
 Exit:
 	if (error)
-		FT2_1_3_FREE(table->elements);
+		FT_FREE(table->elements);
 
 	return error;
 }
@@ -82,26 +82,26 @@ static FT_Error reallocate_t1_table(PS_Table table, FT_Long new_size) {
 	FT_Error  error;
 
 	/* allocate new base block */
-	if (FT2_1_3_ALLOC(table->block, new_size))
+	if (FT_ALLOC(table->block, new_size))
 		return error;
 
 	/* copy elements and shift offsets */
 	if (old_base) {
-		FT2_1_3_MEM_COPY(table->block, old_base, table->capacity);
+		FT_MEM_COPY(table->block, old_base, table->capacity);
 		shift_elements(table, old_base);
-		FT2_1_3_FREE(old_base);
+		FT_FREE(old_base);
 	}
 
 	table->capacity = new_size;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 FT_LOCAL_DEF(FT_Error)
 ps_table_add(PS_Table table, FT_Int idx, void *object, FT_Int length) {
 	if (idx < 0 || idx > table->max_elems) {
 		FT_ERROR(("ps_table_add: invalid index\n"));
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 	}
 
 	/* grow the base block if needed */
@@ -131,10 +131,10 @@ ps_table_add(PS_Table table, FT_Int idx, void *object, FT_Int length) {
 	/* add the object to the base block and adjust offset */
 	table->elements[idx] = table->block + table->cursor;
 	table->lengths[idx]  = length;
-	FT2_1_3_MEM_COPY(table->block + table->cursor, object, length);
+	FT_MEM_COPY(table->block + table->cursor, object, length);
 
 	table->cursor += length;
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 FT_LOCAL_DEF(void)
@@ -147,13 +147,13 @@ ps_table_done(PS_Table table) {
 	if (!old_base)
 		return;
 
-	if (FT2_1_3_ALLOC(table->block, table->cursor))
+	if (FT_ALLOC(table->block, table->cursor))
 		return;
-	FT2_1_3_MEM_COPY(table->block, old_base, table->cursor);
+	FT_MEM_COPY(table->block, old_base, table->cursor);
 	shift_elements(table, old_base);
 
 	table->capacity = table->cursor;
-	FT2_1_3_FREE(old_base);
+	FT_FREE(old_base);
 
 	FT_UNUSED(error);
 }
@@ -163,9 +163,9 @@ ps_table_release(PS_Table table) {
 	FT_Memory memory = table->memory;
 
 	if ((FT_ULong)table->init == 0xDEADBEEFUL) {
-		FT2_1_3_FREE(table->block);
-		FT2_1_3_FREE(table->elements);
-		FT2_1_3_FREE(table->lengths);
+		FT_FREE(table->block);
+		FT_FREE(table->elements);
+		FT_FREE(table->lengths);
 		table->init = 0;
 	}
 }
@@ -602,11 +602,11 @@ static FT_String *t1_tostring(FT_Byte **cursor, FT_Byte *limit, FT_Memory memory
 	}
 
 	len = cur - *cursor;
-	if (cur >= limit || FT2_1_3_ALLOC(result, len + 1))
+	if (cur >= limit || FT_ALLOC(result, len + 1))
 		return 0;
 
 	/* now copy the string */
-	FT2_1_3_MEM_COPY(result, *cursor, len);
+	FT_MEM_COPY(result, *cursor, len);
 	result[len] = '\0';
 	*cursor = cur;
 	return result;
@@ -719,10 +719,10 @@ ps_parser_load_field(PS_Parser parser, const T1_Field field, void **objects, FT_
 				/* with synthetic fonts, it's possible to find a field twice */
 				break;
 
-			if (FT2_1_3_ALLOC(string, len + 1))
+			if (FT_ALLOC(string, len + 1))
 				goto Exit;
 
-			FT2_1_3_MEM_COPY(string, cur, len);
+			FT_MEM_COPY(string, cur, len);
 			string[len] = 0;
 
 			*(FT_String **)q = string;
@@ -756,13 +756,13 @@ ps_parser_load_field(PS_Parser parser, const T1_Field field, void **objects, FT_
 	FT_UNUSED(pflags);
 #endif
 
-	error = FT2_1_3_Err_Ok;
+	error = FT_Err_Ok;
 
 Exit:
 	return error;
 
 Fail:
-	error = FT2_1_3_Err_Invalid_File_Format;
+	error = FT_Err_Invalid_File_Format;
 	goto Exit;
 }
 
@@ -821,7 +821,7 @@ Exit:
 	return error;
 
 Fail:
-	error = FT2_1_3_Err_Invalid_File_Format;
+	error = FT_Err_Invalid_File_Format;
 	goto Exit;
 }
 
@@ -973,7 +973,7 @@ t1_builder_add_contour(T1_Builder builder) {
 
 	if (!builder->load_points) {
 		outline->n_contours++;
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	}
 
 	error = FT_GlyphLoader_CheckPoints(builder->loader, 0, 1);

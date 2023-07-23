@@ -442,7 +442,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = FT2_1_3_Err_Invalid_Table;
+	error = FT_Err_Invalid_Table;
 	FT_ERROR(( "pfr_load_bitmap_metrics: invalid glyph data\n" ));
 	goto Exit;
 }
@@ -476,7 +476,7 @@ pfr_load_bitmap_bits( FT_Byte*    p,
 
 		default:
 			FT_ERROR(( "pfr_read_bitmap_data: invalid image type\n" ));
-			error = FT2_1_3_Err_Invalid_File_Format;
+			error = FT_Err_Invalid_File_Format;
 		}
 	}
 
@@ -525,7 +525,7 @@ pfr_slot_load_bitmap( PFR_Slot  glyph,
 		}
 
 		/* couldn't find it */
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 	}
 
 Found_Strike:
@@ -541,8 +541,8 @@ Found_Strike:
 		if ( strike->flags & 4 ) char_len += 1;
 
 		/* Access data directly in the frame to speed lookups */
-		if ( FT2_1_3_STREAM_SEEK( phys->bct_offset + strike->bct_offset ) ||
-				FT2_1_3_FRAME_ENTER( char_len * strike->num_bitmaps )        )
+		if ( FT_STREAM_SEEK( phys->bct_offset + strike->bct_offset ) ||
+				FT_FRAME_ENTER( char_len * strike->num_bitmaps )        )
 			goto Exit;
 
 		pfr_lookup_bitmap_data( stream->cursor,
@@ -553,11 +553,11 @@ Found_Strike:
 								&gps_offset,
 								&gps_size );
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		if ( gps_size == 0 ) {
 			/* Could not find a bitmap program string for this glyph */
-			error = FT2_1_3_Err_Invalid_Argument;
+			error = FT_Err_Invalid_Argument;
 			goto Exit;
 		}
 	}
@@ -575,8 +575,8 @@ Found_Strike:
 
 		/* XXX: handle linearHoriAdvance correctly! */
 
-		if ( FT2_1_3_STREAM_SEEK( face->header.gps_section_offset + gps_offset ) ||
-				FT2_1_3_FRAME_ENTER( gps_size )                                     )
+		if ( FT_STREAM_SEEK( face->header.gps_section_offset + gps_offset ) ||
+				FT_FRAME_ENTER( gps_size )                                     )
 			goto Exit;
 
 		p     = stream->cursor;
@@ -612,7 +612,7 @@ Found_Strike:
 				FT_Long    len    = glyph->root.bitmap.pitch * ysize;
 
 
-				if ( !FT2_1_3_ALLOC( glyph->root.bitmap.buffer, len ) ) {
+				if ( !FT_ALLOC( glyph->root.bitmap.buffer, len ) ) {
 					error = pfr_load_bitmap_bits( p,
 												  stream->limit,
 												  format,
@@ -622,7 +622,7 @@ Found_Strike:
 			}
 		}
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 	}
 
 Exit:

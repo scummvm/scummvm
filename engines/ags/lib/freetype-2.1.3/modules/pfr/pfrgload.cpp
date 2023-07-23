@@ -41,7 +41,7 @@ namespace FreeType213 {
 FT_LOCAL_DEF( void )
 pfr_glyph_init( PFR_Glyph       glyph,
 				FT_GlyphLoader  loader ) {
-	FT2_1_3_ZERO( glyph );
+	FT_ZERO( glyph );
 
 	glyph->loader     = loader;
 	glyph->path_begun = 0;
@@ -55,14 +55,14 @@ pfr_glyph_done( PFR_Glyph  glyph ) {
 	FT_Memory  memory = glyph->loader->memory;
 
 
-	FT2_1_3_FREE( glyph->x_control );
+	FT_FREE( glyph->x_control );
 	glyph->y_control = NULL;
 
 	glyph->max_xy_control = 0;
 	glyph->num_x_control  = 0;
 	glyph->num_y_control  = 0;
 
-	FT2_1_3_FREE( glyph->subs );
+	FT_FREE( glyph->subs );
 
 	glyph->max_subs = 0;
 	glyph->num_subs = 0;
@@ -126,7 +126,7 @@ pfr_glyph_line_to( PFR_Glyph   glyph,
 
 
 	/* check that we have begun a new path */
-	FT2_1_3_ASSERT( glyph->path_begun != 0 );
+	FT_ASSERT( glyph->path_begun != 0 );
 
 	error = FT_GlyphLoader_CheckPoints( loader, 1, 0 );
 	if ( !error ) {
@@ -154,7 +154,7 @@ pfr_glyph_curve_to( PFR_Glyph   glyph,
 
 
 	/* check that we have begun a new path */
-	FT2_1_3_ASSERT( glyph->path_begun != 0 );
+	FT_ASSERT( glyph->path_begun != 0 );
 
 	error = FT_GlyphLoader_CheckPoints( loader, 3, 0 );
 	if ( !error ) {
@@ -233,7 +233,7 @@ pfr_glyph_load_simple( PFR_Glyph  glyph,
 	flags = PFR_NEXT_BYTE( p );
 
 	/* test for composite glyphs */
-	FT2_1_3_ASSERT( ( flags & PFR_GLYPH_IS_COMPOUND ) == 0 );
+	FT_ASSERT( ( flags & PFR_GLYPH_IS_COMPOUND ) == 0 );
 
 	x_count = 0;
 	y_count = 0;
@@ -262,7 +262,7 @@ pfr_glyph_load_simple( PFR_Glyph  glyph,
 		FT_UInt  new_max = ( count + 7 ) & -8;
 
 
-		if ( FT2_1_3_RENEW_ARRAY( glyph->x_control,
+		if ( FT_RENEW_ARRAY( glyph->x_control,
 							 glyph->max_xy_control,
 							 new_max ) )
 			goto Exit;
@@ -489,7 +489,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = FT2_1_3_Err_Invalid_Table;
+	error = FT_Err_Invalid_Table;
 	FT_ERROR(( "pfr_glyph_load_simple: invalid glyph data\n" ));
 	goto Exit;
 }
@@ -512,7 +512,7 @@ pfr_glyph_load_compound( PFR_Glyph  glyph,
 	flags = PFR_NEXT_BYTE( p );
 
 	/* test for composite glyphs */
-	FT2_1_3_ASSERT( ( flags & PFR_GLYPH_IS_COMPOUND ) != 0 );
+	FT_ASSERT( ( flags & PFR_GLYPH_IS_COMPOUND ) != 0 );
 
 	count = flags & 0x3F;
 
@@ -537,7 +537,7 @@ pfr_glyph_load_compound( PFR_Glyph  glyph,
 		FT_UInt  new_max = ( org_count + count + 3 ) & -4;
 
 
-		if ( FT2_1_3_RENEW_ARRAY( glyph->subs, glyph->max_subs, new_max ) )
+		if ( FT_RENEW_ARRAY( glyph->subs, glyph->max_subs, new_max ) )
 			goto Exit;
 
 		glyph->max_subs = new_max;
@@ -626,7 +626,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = FT2_1_3_Err_Invalid_Table;
+	error = FT_Err_Invalid_Table;
 	FT_ERROR(( "pfr_glyph_load_compound: invalid glyph data\n" ));
 	goto Exit;
 }
@@ -646,8 +646,8 @@ pfr_glyph_load_rec( PFR_Glyph  glyph,
 	FT_Byte*  limit;
 
 
-	if ( FT2_1_3_STREAM_SEEK( gps_offset + offset ) ||
-			FT2_1_3_FRAME_ENTER( size )                )
+	if ( FT_STREAM_SEEK( gps_offset + offset ) ||
+			FT_FRAME_ENTER( size )                )
 		goto Exit;
 
 	p     = (FT_Byte*)stream->cursor;
@@ -664,7 +664,7 @@ pfr_glyph_load_rec( PFR_Glyph  glyph,
 		/* this is a compound glyph - load it */
 		error = pfr_glyph_load_compound( glyph, p, limit );
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		if ( error )
 			goto Exit;
@@ -717,7 +717,7 @@ pfr_glyph_load_rec( PFR_Glyph  glyph,
 		/* load a simple glyph */
 		error = pfr_glyph_load_simple( glyph, p, limit );
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 	}
 
 Exit:

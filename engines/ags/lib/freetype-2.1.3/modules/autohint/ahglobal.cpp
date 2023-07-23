@@ -203,7 +203,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 				} while (next != idx);
 
 				/* now, set the `round' flag depending on the segment's kind */
-				round = FT2_1_3_BOOL(
+				round = FT_BOOL(
 					FT_CURVE_TAG(glyph->outline.tags[prev]) != FT_CURVE_TAG_ON ||
 					FT_CURVE_TAG(glyph->outline.tags[next]) != FT_CURVE_TAG_ON);
 
@@ -244,7 +244,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 		if (*blue_shoot != *blue_ref) {
 			FT_Pos ref = *blue_ref;
 			FT_Pos shoot = *blue_shoot;
-			FT_Bool over_ref = FT2_1_3_BOOL(shoot > ref);
+			FT_Bool over_ref = FT_BOOL(shoot > ref);
 
 			if (AH_IS_TOP_BLUE(blue) ^ over_ref)
 				*blue_shoot = *blue_ref = (shoot + ref) / 2;

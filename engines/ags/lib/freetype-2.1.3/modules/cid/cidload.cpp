@@ -117,7 +117,7 @@ cid_load_keyword( CID_Face        face,
 		if ( parser->num_dict < 0 ) {
 			FT_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
 					   keyword->ident ));
-			error = FT2_1_3_Err_Syntax_Error;
+			error = FT_Err_Syntax_Error;
 			goto Exit;
 		}
 
@@ -160,7 +160,7 @@ parse_font_bbox( CID_Face     face,
 	bbox->xMax = FT2_1_3_RoundFix( temp[2] );
 	bbox->yMax = FT2_1_3_RoundFix( temp[3] );
 
-	return FT2_1_3_Err_Ok;       /* this is a callback function; */
+	return FT_Err_Ok;       /* this is a callback function; */
 	/* we must return an error code */
 }
 
@@ -211,7 +211,7 @@ parse_font_matrix( CID_Face     face,
 		offset->y  = temp[5] >> 16;
 	}
 
-	return FT2_1_3_Err_Ok;       /* this is a callback function; */
+	return FT_Err_Ok;       /* this is a callback function; */
 	/* we must return an error code */
 }
 
@@ -221,7 +221,7 @@ parse_fd_array( CID_Face     face,
 				CID_Parser*  parser ) {
 	CID_FaceInfo  cid    = &face->cid;
 	FT_Memory     memory = face->root.memory;
-	FT_Error      error  = FT2_1_3_Err_Ok;
+	FT_Error      error  = FT_Err_Ok;
 	FT_Long       num_dicts;
 
 
@@ -387,33 +387,33 @@ cid_read_subrs( CID_Face  face ) {
 			FT_UInt  new_max = ( num_subrs + 1 + 3 ) & -4;
 
 
-			if ( FT2_1_3_RENEW_ARRAY( offsets, max_offsets, new_max ) )
+			if ( FT_RENEW_ARRAY( offsets, max_offsets, new_max ) )
 				goto Fail;
 
 			max_offsets = new_max;
 		}
 
 		/* read the subrmap's offsets */
-		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + dict->subrmap_offset ) ||
-				FT2_1_3_FRAME_ENTER( ( num_subrs + 1 ) * dict->sd_bytes )   )
+		if ( FT_STREAM_SEEK( cid->data_offset + dict->subrmap_offset ) ||
+				FT_FRAME_ENTER( ( num_subrs + 1 ) * dict->sd_bytes )   )
 			goto Fail;
 
 		p = (FT_Byte*)stream->cursor;
 		for ( count = 0; count <= num_subrs; count++ )
 			offsets[count] = cid_get_offset( &p, (FT_Byte)dict->sd_bytes );
 
-		FT2_1_3_FRAME_EXIT();
+		FT_FRAME_EXIT();
 
 		/* now, compute the size of subrs charstrings, */
 		/* allocate, and read them                     */
 		data_len = offsets[num_subrs] - offsets[0];
 
 		if ( FT_NEW_ARRAY( subr->code, num_subrs + 1 ) ||
-				FT2_1_3_ALLOC( subr->code[0], data_len )   )
+				FT_ALLOC( subr->code[0], data_len )   )
 			goto Fail;
 
-		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + offsets[0] ) ||
-				FT2_1_3_STREAM_READ( subr->code[0], data_len )  )
+		if ( FT_STREAM_SEEK( cid->data_offset + offsets[0] ) ||
+				FT_STREAM_READ( subr->code[0], data_len )  )
 			goto Fail;
 
 		/* set up pointers */
@@ -440,18 +440,18 @@ cid_read_subrs( CID_Face  face ) {
 	}
 
 Exit:
-	FT2_1_3_FREE( offsets );
+	FT_FREE( offsets );
 	return error;
 
 Fail:
 	if ( face->subrs ) {
 		for ( n = 0; n < cid->num_dicts; n++ ) {
 			if ( face->subrs[n].code )
-				FT2_1_3_FREE( face->subrs[n].code[0] );
+				FT_FREE( face->subrs[n].code[0] );
 
-			FT2_1_3_FREE( face->subrs[n].code );
+			FT_FREE( face->subrs[n].code );
 		}
-		FT2_1_3_FREE( face->subrs );
+		FT_FREE( face->subrs );
 	}
 	goto Exit;
 }
@@ -462,7 +462,7 @@ t1_init_loader( CID_Loader*  loader,
 				CID_Face     face ) {
 	FT_UNUSED( face );
 
-	FT2_1_3_MEM_ZERO( loader, sizeof ( *loader ) );
+	FT_MEM_ZERO( loader, sizeof ( *loader ) );
 }
 
 

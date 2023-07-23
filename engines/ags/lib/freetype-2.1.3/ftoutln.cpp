@@ -62,7 +62,7 @@ FT_Outline_Decompose(FT_Outline *outline, const FT_Outline_Funcs *func_interface
 	FT_Pos delta;
 
 	if (!outline || !func_interface)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	shift = func_interface->shift;
 	delta = func_interface->delta;
@@ -222,7 +222,7 @@ Exit:
 	return error;
 
 Invalid_Outline:
-	return FT2_1_3_Err_Invalid_Outline;
+	return FT_Err_Invalid_Outline;
 }
 
 FT_EXPORT_DEF(FT_Error)
@@ -230,7 +230,7 @@ FT_Outline_New_Internal(FT_Memory memory, FT_UInt numPoints, FT_Int numContours,
 	FT_Error error;
 
 	if (!anoutline || !memory)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	*anoutline = null_outline;
 
@@ -241,7 +241,7 @@ FT_Outline_New_Internal(FT_Memory memory, FT_UInt numPoints, FT_Int numContours,
 	anoutline->n_contours = (FT_Short)numContours;
 	anoutline->flags |= FT_OUTLINE_OWNER;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 
 Fail:
 	anoutline->flags |= FT_OUTLINE_OWNER;
@@ -253,7 +253,7 @@ Fail:
 FT_EXPORT_DEF(FT_Error)
 FT_Outline_New(FT_Library library, FT_UInt numPoints, FT_Int numContours, FT_Outline *anoutline) {
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	return FT_Outline_New_Internal(library->memory, numPoints, numContours, anoutline);
 }
@@ -293,7 +293,7 @@ FT_Outline_Check(FT_Outline *outline) {
 	}
 
 Bad:
-	return FT2_1_3_Err_Invalid_Argument;
+	return FT_Err_Invalid_Argument;
 }
 
 FT_EXPORT_DEF(FT_Error)
@@ -301,11 +301,11 @@ FT_Outline_Copy(FT_Outline *source, FT_Outline *target) {
 	FT_Int is_owner;
 
 	if (!source || !target || source->n_points != target->n_points || source->n_contours != target->n_contours)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
-	FT2_1_3_MEM_COPY(target->points, source->points, source->n_points * sizeof(FT_Vector));
-	FT2_1_3_MEM_COPY(target->tags, source->tags, source->n_points * sizeof(FT_Byte));
-	FT2_1_3_MEM_COPY(target->contours, source->contours, source->n_contours * sizeof(FT_Short));
+	FT_MEM_COPY(target->points, source->points, source->n_points * sizeof(FT_Vector));
+	FT_MEM_COPY(target->tags, source->tags, source->n_points * sizeof(FT_Byte));
+	FT_MEM_COPY(target->contours, source->contours, source->n_contours * sizeof(FT_Short));
 
 	/* copy all flags, except the `FT_OUTLINE_OWNER' one */
 	is_owner = target->flags & FT_OUTLINE_OWNER;
@@ -314,22 +314,22 @@ FT_Outline_Copy(FT_Outline *source, FT_Outline *target) {
 	target->flags &= ~FT_OUTLINE_OWNER;
 	target->flags |= is_owner;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 FT_EXPORT_DEF(FT_Error)
 FT_Outline_Done_Internal(FT_Memory memory, FT_Outline *outline) {
 	if (outline) {
 		if (outline->flags & FT_OUTLINE_OWNER) {
-			FT2_1_3_FREE(outline->points);
-			FT2_1_3_FREE(outline->tags);
-			FT2_1_3_FREE(outline->contours);
+			FT_FREE(outline->points);
+			FT_FREE(outline->tags);
+			FT_FREE(outline->contours);
 		}
 		*outline = null_outline;
 
-		return FT2_1_3_Err_Ok;
+		return FT_Err_Ok;
 	} else
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 }
 
 FT_EXPORT_DEF(FT_Error)
@@ -337,7 +337,7 @@ FT_Outline_Done(FT_Library library, FT_Outline *outline) {
 	/* check for valid `outline' in FT_Outline_Done_Internal() */
 
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	return FT_Outline_Done_Internal(library->memory, outline);
 }
@@ -449,23 +449,23 @@ FT_Outline_Render(FT_Library library, FT_Outline *outline, FT_Raster_Params *par
 	FT_ListNode node;
 
 	if (!library)
-		return FT2_1_3_Err_Invalid_Library_Handle;
+		return FT_Err_Invalid_Library_Handle;
 
 	if (!params)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	renderer = library->cur_renderer;
 	node = library->renderers.head;
 
 	params->source = (void *)outline;
 
-	error = FT2_1_3_Err_Cannot_Render_Glyph;
+	error = FT_Err_Cannot_Render_Glyph;
 	while (renderer) {
 		error = renderer->raster_render(renderer->raster, params);
-		if (!error || FT_ERROR_BASE(error) != FT2_1_3_Err_Cannot_Render_Glyph)
+		if (!error || FT_ERROR_BASE(error) != FT_Err_Cannot_Render_Glyph)
 			break;
 
-		/* FT2_1_3_Err_Cannot_Render_Glyph is returned if the render mode   */
+		/* FT_Err_Cannot_Render_Glyph is returned if the render mode   */
 		/* is unsupported by the current renderer for this glyph image */
 		/* format                                                      */
 
@@ -488,7 +488,7 @@ FT_Outline_Get_Bitmap(FT_Library library, FT_Outline *outline, FT_Bitmap *abitma
 	FT_Raster_Params params;
 
 	if (!abitmap)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	/* other checks are delayed to FT_Outline_Render() */
 

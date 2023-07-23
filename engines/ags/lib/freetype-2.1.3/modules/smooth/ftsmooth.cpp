@@ -41,7 +41,7 @@ namespace FreeType213 {
 
 /* initialize renderer -- init its raster */
 static FT_Error ft_smooth_init(FT_Renderer render) {
-	FT_Library library = FT2_1_3_MODULE_LIBRARY(render);
+	FT_Library library = FT_MODULE_LIBRARY(render);
 
 	render->clazz->raster_class->raster_reset(render->raster, library->raster_pool, library->raster_pool_size);
 
@@ -56,10 +56,10 @@ static FT_Error ft_smooth_set_mode(FT_Renderer render, FT_ULong mode_tag, FT_Poi
 
 /* transform a given glyph image */
 static FT_Error ft_smooth_transform(FT_Renderer render, FT_GlyphSlot slot, FT_Matrix *matrix, FT_Vector *delta) {
-	FT_Error error = FT2_1_3_Err_Ok;
+	FT_Error error = FT_Err_Ok;
 
 	if (slot->format != render->glyph_format) {
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -75,7 +75,7 @@ Exit:
 
 /* return the glyph's control box */
 static void ft_smooth_get_cbox(FT_Renderer render, FT_GlyphSlot slot, FT_BBox *cbox) {
-	FT2_1_3_MEM_ZERO(cbox, sizeof(*cbox));
+	FT_MEM_ZERO(cbox, sizeof(*cbox));
 
 	if (slot->format == render->glyph_format)
 		FT_Outline_Get_CBox(&slot->outline, cbox);
@@ -95,13 +95,13 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 
 	/* check glyph image format */
 	if (slot->format != render->glyph_format) {
-		error = FT2_1_3_Err_Invalid_Argument;
+		error = FT_Err_Invalid_Argument;
 		goto Exit;
 	}
 
 	/* check mode */
 	if (mode != required_mode)
-		return FT2_1_3_Err_Cannot_Render_Glyph;
+		return FT_Err_Cannot_Render_Glyph;
 
 	outline = &slot->outline;
 
@@ -124,7 +124,7 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 
 	/* release old bitmap buffer */
 	if (slot->flags & FT_GLYPH_OWN_BITMAP) {
-		FT2_1_3_FREE(bitmap->buffer);
+		FT_FREE(bitmap->buffer);
 		slot->flags &= ~FT_GLYPH_OWN_BITMAP;
 	}
 
@@ -144,7 +144,7 @@ static FT_Error ft_smooth_render_generic(FT_Renderer render, FT_GlyphSlot slot, 
 	bitmap->rows 	   = height;
 	bitmap->pitch 	   = pitch;
 
-	if (FT2_1_3_ALLOC(bitmap->buffer, (FT_ULong)pitch * height))
+	if (FT_ALLOC(bitmap->buffer, (FT_ULong)pitch * height))
 		goto Exit;
 
 	slot->flags |= FT_GLYPH_OWN_BITMAP;

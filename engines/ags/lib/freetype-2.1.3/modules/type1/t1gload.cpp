@@ -151,7 +151,7 @@ T1_Compute_Max_Advance(T1_Face face, FT_Int *max_advance) {
 		/* ignore the error if one occured - skip to next glyph */
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -182,16 +182,16 @@ T1_Load_Glyph(T1_GlyphSlot glyph, T1_Size size, FT_UInt glyph_index, FT_Int32 lo
 	glyph->root.outline.n_points = 0;
 	glyph->root.outline.n_contours = 0;
 
-	hinting = FT2_1_3_BOOL((load_flags & FT_LOAD_NO_SCALE) == 0 && (load_flags & FT_LOAD_NO_HINTING) == 0);
+	hinting = FT_BOOL((load_flags & FT_LOAD_NO_SCALE) == 0 && (load_flags & FT_LOAD_NO_HINTING) == 0);
 
 	glyph->root.format = FT_GLYPH_FORMAT_OUTLINE;
 
 	error = decoder_funcs->init(&decoder, (FT_Face)face, (FT_Size)size, (FT_GlyphSlot)glyph, (FT_Byte **)type1->glyph_names,
-								face->blend, FT2_1_3_BOOL(hinting), FT_LOAD_TARGET_MODE(load_flags), T1_Parse_Glyph);
+								face->blend, FT_BOOL(hinting), FT_LOAD_TARGET_MODE(load_flags), T1_Parse_Glyph);
 	if (error)
 		goto Exit;
 
-	decoder.builder.no_recurse = FT2_1_3_BOOL((load_flags & FT_LOAD_NO_RECURSE) != 0);
+	decoder.builder.no_recurse = FT_BOOL((load_flags & FT_LOAD_NO_RECURSE) != 0);
 
 	decoder.num_subrs = type1->num_subrs;
 	decoder.subrs 	  = type1->subrs;

@@ -59,12 +59,12 @@ psh3_hint_overlap( PSH3_Hint  hint1,
 static void
 psh3_hint_table_done( PSH3_Hint_Table  table,
 					  FT_Memory        memory ) {
-	FT2_1_3_FREE( table->zones );
+	FT_FREE( table->zones );
 	table->num_zones = 0;
 	table->zone      = 0;
 
-	FT2_1_3_FREE( table->sort );
-	FT2_1_3_FREE( table->hints );
+	FT_FREE( table->sort );
+	FT_FREE( table->hints );
 	table->num_hints   = 0;
 	table->max_hints   = 0;
 	table->sort_global = 0;
@@ -724,8 +724,8 @@ psh3_glyph_done( PSH3_Glyph  glyph ) {
 	psh3_hint_table_done( &glyph->hint_tables[1], memory );
 	psh3_hint_table_done( &glyph->hint_tables[0], memory );
 
-	FT2_1_3_FREE( glyph->points );
-	FT2_1_3_FREE( glyph->contours );
+	FT_FREE( glyph->points );
+	FT_FREE( glyph->contours );
 
 	glyph->num_points   = 0;
 	glyph->num_contours = 0;
@@ -831,7 +831,7 @@ psh3_glyph_init( PSH3_Glyph   glyph,
 
 
 	/* clear all fields */
-	FT2_1_3_MEM_ZERO( glyph, sizeof ( *glyph ) );
+	FT_MEM_ZERO( glyph, sizeof ( *glyph ) );
 
 	memory = globals->memory;
 
@@ -924,10 +924,10 @@ psh3_glyph_init( PSH3_Glyph   glyph,
 				if ( diff < 0 )
 					diff = -diff;
 
-				if ( diff > FT2_1_3_ANGLE_PI )
-					diff = FT2_1_3_ANGLE_2PI - diff;
+				if ( diff > FT_ANGLE_PI )
+					diff = FT_ANGLE_2PI - diff;
 
-				if ( diff < FT2_1_3_ANGLE_PI / 16 )
+				if ( diff < FT_ANGLE_PI / 16 )
 					point->flags |= PSH3_POINT_SMOOTH;
 			}
 		}
@@ -1536,7 +1536,7 @@ ps3_hints_apply( PS_Hints        ps_hints,
 
 	if ( ps3_debug_glyph ) {
 		psh3_glyph_done( ps3_debug_glyph );
-		FT2_1_3_FREE( ps3_debug_glyph );
+		FT_FREE( ps3_debug_glyph );
 	}
 
 	if ( FT_NEW( glyph ) )
@@ -1553,10 +1553,10 @@ ps3_hints_apply( PS_Hints        ps_hints,
 	glyph->do_horz_hints = 1;
 	glyph->do_vert_hints = 1;
 
-	glyph->do_horz_snapping = FT2_1_3_BOOL( hint_mode == FT_RENDER_MODE_MONO ||
+	glyph->do_horz_snapping = FT_BOOL( hint_mode == FT_RENDER_MODE_MONO ||
 									   hint_mode == FT_RENDER_MODE_LCD  );
 
-	glyph->do_vert_snapping = FT2_1_3_BOOL( hint_mode == FT_RENDER_MODE_MONO  ||
+	glyph->do_vert_snapping = FT_BOOL( hint_mode == FT_RENDER_MODE_MONO  ||
 									   hint_mode == FT_RENDER_MODE_LCD_V );
 
 	for ( dimension = 0; dimension < 2; dimension++ ) {

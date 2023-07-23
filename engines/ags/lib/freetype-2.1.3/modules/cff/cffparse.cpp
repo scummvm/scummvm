@@ -67,7 +67,7 @@ FT_LOCAL_DEF( void )
 cff_parser_init( CFF_Parser  parser,
 				 FT_UInt     code,
 				 void*       object ) {
-	FT2_1_3_MEM_ZERO( parser, sizeof ( *parser ) );
+	FT_MEM_ZERO( parser, sizeof ( *parser ) );
 
 	parser->top         = parser->stack;
 	parser->object_code = code;
@@ -295,7 +295,7 @@ cff_parse_font_matrix( CFF_Parser  parser ) {
 	FT_Fixed         temp;
 
 
-	error = FT2_1_3_Err_Stack_Underflow;
+	error = FT_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 6 ) {
 		matrix->xx = cff_parse_fixed_thousand( data++ );
@@ -322,7 +322,7 @@ cff_parse_font_matrix( CFF_Parser  parser ) {
 		offset->x >>= 16;
 		offset->y >>= 16;
 
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 	}
 
 	return error;
@@ -337,14 +337,14 @@ cff_parse_font_bbox( CFF_Parser  parser ) {
 	FT_Error         error;
 
 
-	error = FT2_1_3_Err_Stack_Underflow;
+	error = FT_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 4 ) {
 		bbox->xMin = FT2_1_3_RoundFix( cff_parse_fixed( data++ ) );
 		bbox->yMin = FT2_1_3_RoundFix( cff_parse_fixed( data++ ) );
 		bbox->xMax = FT2_1_3_RoundFix( cff_parse_fixed( data++ ) );
 		bbox->yMax = FT2_1_3_RoundFix( cff_parse_fixed( data   ) );
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 	}
 
 	return error;
@@ -358,12 +358,12 @@ cff_parse_private_dict( CFF_Parser  parser ) {
 	FT_Error         error;
 
 
-	error = FT2_1_3_Err_Stack_Underflow;
+	error = FT_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 2 ) {
 		dict->private_size   = cff_parse_num( data++ );
 		dict->private_offset = cff_parse_num( data   );
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 	}
 
 	return error;
@@ -377,13 +377,13 @@ cff_parse_cid_ros( CFF_Parser  parser ) {
 	FT_Error         error;
 
 
-	error = FT2_1_3_Err_Stack_Underflow;
+	error = FT_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 3 ) {
 		dict->cid_registry   = (FT_UInt)cff_parse_num ( data++ );
 		dict->cid_ordering   = (FT_UInt)cff_parse_num ( data++ );
 		dict->cid_supplement = (FT_ULong)cff_parse_num( data );
-		error = FT2_1_3_Err_Ok;
+		error = FT_Err_Ok;
 	}
 
 	return error;
@@ -415,8 +415,8 @@ cff_parse_cid_ros( CFF_Parser  parser ) {
 		  {                          \
 			kind,                    \
 			code | CFFCODE,          \
-			FT2_1_3_FIELD_OFFSET( name ), \
-			FT2_1_3_FIELD_SIZE( name ),   \
+			FT_FIELD_OFFSET( name ), \
+			FT_FIELD_SIZE( name ),   \
 			0, 0, 0                  \
 		  },
 
@@ -425,11 +425,11 @@ cff_parse_cid_ros( CFF_Parser  parser ) {
 		{                                  \
 		  cff_kind_delta,                  \
 		  code | CFFCODE,                  \
-		  FT2_1_3_FIELD_OFFSET( name ),         \
-		  FT2_1_3_FIELD_SIZE_DELTA( name ),     \
+		  FT_FIELD_OFFSET( name ),         \
+		  FT_FIELD_SIZE_DELTA( name ),     \
 		  0,                               \
 		  max,                             \
-		  FT2_1_3_FIELD_OFFSET( num_ ## name )  \
+		  FT_FIELD_OFFSET( num_ ## name )  \
 		},
 
 #define CFFCODE_TOPDICT  0x1000
@@ -448,7 +448,7 @@ cff_parser_run( CFF_Parser  parser,
 				FT_Byte*    start,
 				FT_Byte*    limit ) {
 	FT_Byte*  p     = start;
-	FT_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT_Err_Ok;
 
 
 	parser->top    = parser->stack;
@@ -613,15 +613,15 @@ Exit:
 	return error;
 
 Stack_Overflow:
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 	goto Exit;
 
 Stack_Underflow:
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 	goto Exit;
 
 Syntax_Error:
-	error = FT2_1_3_Err_Invalid_Argument;
+	error = FT_Err_Invalid_Argument;
 	goto Exit;
 }
 

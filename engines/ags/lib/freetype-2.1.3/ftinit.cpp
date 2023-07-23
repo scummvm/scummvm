@@ -86,7 +86,7 @@ FT2_1_3_Init_FreeType(FT_Library *alibrary) {
 	memory = FT_New_Memory();
 	if (!memory) {
 		FT_ERROR(("FT2_1_3_Init_FreeType: cannot find memory manager\n"));
-		return FT2_1_3_Err_Unimplemented_Feature;
+		return FT_Err_Unimplemented_Feature;
 	}
 
 	/* build a library out of it, then fill it with the set of */
@@ -117,7 +117,7 @@ FT2_1_3_Done_FreeType(FT_Library library) {
 		FT_Done_Memory(memory);
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 } // End of namespace FreeType213

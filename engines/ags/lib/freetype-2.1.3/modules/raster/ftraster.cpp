@@ -41,7 +41,7 @@
 
 /* undefine FT_RASTER_OPTION_ANTI_ALIASING if you do not want to */
 /* support 5-levels anti-aliasing                                     */
-#ifdef FT2_1_3_CONFIG_OPTION_5_GRAY_LEVELS
+#ifdef FT_CONFIG_OPTION_5_GRAY_LEVELS
 #define FT_RASTER_OPTION_ANTI_ALIASING
 #endif
 
@@ -92,19 +92,19 @@ namespace FreeType213 {
 
 #include "engines/ags/lib/freetype-2.1.3/modules/raster/rasterrs.h"
 
-#define Raster_Err_None         FT2_1_3_Err_Ok
-#define Raster_Err_Not_Ini      FT2_1_3_Err_Raster_Uninitialized
-#define Raster_Err_Overflow     FT2_1_3_Err_Raster_Overflow
-#define Raster_Err_Neg_Height   FT2_1_3_Err_Raster_Negative_Height
-#define Raster_Err_Invalid      FT2_1_3_Err_Invalid_Outline
-#define Raster_Err_Unsupported  FT2_1_3_Err_Cannot_Render_Glyph
+#define Raster_Err_None         FT_Err_Ok
+#define Raster_Err_Not_Ini      FT_Err_Raster_Uninitialized
+#define Raster_Err_Overflow     FT_Err_Raster_Overflow
+#define Raster_Err_Neg_Height   FT_Err_Raster_Negative_Height
+#define Raster_Err_Invalid      FT_Err_Invalid_Outline
+#define Raster_Err_Unsupported  FT_Err_Cannot_Render_Glyph
 
 
 #endif /* _STANDALONE_ */
 
 
-#ifndef FT2_1_3_MEM_SET
-#define FT2_1_3_MEM_SET(d, s, c) ft_memset(d, s, c)
+#ifndef FT_MEM_SET
+#define FT_MEM_SET(d, s, c) ft_memset(d, s, c)
 #endif
 
 /* FMulDiv means `Fast MulDiv'; it is used in case where `b' is       */
@@ -363,13 +363,13 @@ struct TRaster_Instance_ {
 };
 
 
-#ifdef FT2_1_3_CONFIG_OPTION_STATIC_RASTER
+#ifdef FT_CONFIG_OPTION_STATIC_RASTER
 static TRaster_Instance cur_ras;
 #define ras cur_ras
 
 #else
 #define ras (*raster)
-#endif /* FT2_1_3_CONFIG_OPTION_STATIC_RASTER */
+#endif /* FT_CONFIG_OPTION_STATIC_RASTER */
 
 
 /**** PROFILES COMPUTATION ****/
@@ -2159,7 +2159,7 @@ Render_Glyph(RAS_ARG) {
 			return error;
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 
@@ -2216,7 +2216,7 @@ Render_Gray_Glyph(RAS_ARG) {
 			return error;
 	}
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 #else /* !FT_RASTER_OPTION_ANTI_ALIASING */
@@ -2225,7 +2225,7 @@ FT_LOCAL_DEF(FT_Error)
 Render_Gray_Glyph(RAS_ARG) {
 	FT_UNUSED_RASTER;
 
-	return FT2_1_3_Err_Cannot_Render_Glyph;
+	return FT_Err_Cannot_Render_Glyph;
 }
 
 #endif /* !FT_RASTER_OPTION_ANTI_ALIASING */
@@ -2265,7 +2265,7 @@ static int ft_black_new(void *memory, FT_Raster *araster) {
 	static FT_RasterRec_ the_raster;
 
 	*araster = &the_raster;
-	FT2_1_3_MEM_ZERO(&the_raster, sizeof(the_raster));
+	FT_MEM_ZERO(&the_raster, sizeof(the_raster));
 	ft_black_init(&the_raster);
 
 	return 0;
@@ -2299,7 +2299,7 @@ static void ft_black_done(TRaster_Instance *raster) {
 	using AGS3::FreeType213::FT_Free;
 
 	FT_Memory memory = (FT_Memory)raster->memory;
-	FT2_1_3_FREE(raster);
+	FT_FREE(raster);
 }
 
 #endif /* _STANDALONE_ */

@@ -35,10 +35,10 @@ namespace FreeType213 {
 
 
 /* the following is 0.2715717684432231 * 2^30 */
-#define FT2_1_3_TRIG_COSCALE  0x11616E8EUL
+#define FT_TRIG_COSCALE  0x11616E8EUL
 
 /* this table was generated for FT2_1_3_PI = 180L << 16, i.e. degrees */
-#define FT2_1_3_TRIG_MAX_ITERS  23
+#define FT_TRIG_MAX_ITERS  23
 
 static const FT_Fixed
 ft_trig_arctan_table[24] = {
@@ -48,10 +48,10 @@ ft_trig_arctan_table[24] = {
 };
 
 /* the Cordic shrink factor, multiplied by 2^32 */
-#define FT2_1_3_TRIG_SCALE    1166391785UL  /* 0x4585BA38UL */
+#define FT_TRIG_SCALE    1166391785UL  /* 0x4585BA38UL */
 
 
-#ifdef FT2_1_3_CONFIG_HAS_INT64
+#ifdef FT_CONFIG_HAS_INT64
 /* multiply a given value by the CORDIC shrink factor */
 static FT_Fixed ft_trig_downscale(FT_Fixed val) {
 	FT_Fixed s;
@@ -60,13 +60,13 @@ static FT_Fixed ft_trig_downscale(FT_Fixed val) {
 	s = val;
 	val = (val >= 0) ? val : -val;
 
-	v = (val * (FT_Int64)FT2_1_3_TRIG_SCALE) + 0x100000000UL;
+	v = (val * (FT_Int64)FT_TRIG_SCALE) + 0x100000000UL;
 	val = (FT_Fixed)(v >> 32);
 
 	return (s >= 0) ? val : -val;
 }
 
-#else /* !FT2_1_3_CONFIG_HAS_INT64 */
+#else /* !FT_CONFIG_HAS_INT64 */
 /* multiply a given value by the CORDIC shrink factor */
 static FT_Fixed ft_trig_downscale(FT_Fixed val) {
 	FT_Fixed s;
@@ -78,8 +78,8 @@ static FT_Fixed ft_trig_downscale(FT_Fixed val) {
 	v1 = (FT_UInt32)val >> 16;
 	v2 = (FT_UInt32)val & 0xFFFF;
 
-	k1 = FT2_1_3_TRIG_SCALE >> 16;    /* constant */
-	k2 = FT2_1_3_TRIG_SCALE & 0xFFFF; /* constant */
+	k1 = FT_TRIG_SCALE >> 16;    /* constant */
+	k2 = FT_TRIG_SCALE & 0xFFFF; /* constant */
 
 	hi = k1 * v1;
 	lo1 = k1 * v2 + k2 * v1; /* can't overflow */
@@ -96,7 +96,7 @@ static FT_Fixed ft_trig_downscale(FT_Fixed val) {
 
 	return (s >= 0) ? val : -val;
 }
-#endif /* !FT2_1_3_CONFIG_HAS_INT64 */
+#endif /* !FT_CONFIG_HAS_INT64 */
 
 static FT_Int ft_trig_prenorm(FT_Vector *vec) {
 	FT_Fixed x, y, z;
@@ -138,16 +138,16 @@ static void ft_trig_pseudo_rotate(FT_Vector *vec, FT_Angle theta) {
 	y = vec->y;
 
 	/* Get angle between -90 and 90 degrees */
-	while (theta <= -FT2_1_3_ANGLE_PI2) {
+	while (theta <= -FT_ANGLE_PI2) {
 		x = -x;
 		y = -y;
-		theta += FT2_1_3_ANGLE_PI;
+		theta += FT_ANGLE_PI;
 	}
 
-	while (theta > FT2_1_3_ANGLE_PI2) {
+	while (theta > FT_ANGLE_PI2) {
 		x = -x;
 		y = -y;
-		theta -= FT2_1_3_ANGLE_PI;
+		theta -= FT_ANGLE_PI;
 	}
 
 	/* Initial pseudorotation, with left shift */
@@ -179,7 +179,7 @@ static void ft_trig_pseudo_rotate(FT_Vector *vec, FT_Angle theta) {
 			x = xtemp;
 			theta -= *arctanptr++;
 		}
-	} while (++i < FT2_1_3_TRIG_MAX_ITERS);
+	} while (++i < FT_TRIG_MAX_ITERS);
 
 	vec->x = x;
 	vec->y = y;
@@ -199,7 +199,7 @@ static void ft_trig_pseudo_polarize(FT_Vector *vec) {
 	if (x < 0) {
 		x = -x;
 		y = -y;
-		theta = 2 * FT2_1_3_ANGLE_PI2;
+		theta = 2 * FT_ANGLE_PI2;
 	}
 
 	if (y > 0)
@@ -236,7 +236,7 @@ static void ft_trig_pseudo_polarize(FT_Vector *vec) {
 			y = yi;
 			theta += *arctanptr++;
 		}
-	} while (++i < FT2_1_3_TRIG_MAX_ITERS);
+	} while (++i < FT_TRIG_MAX_ITERS);
 
 	/* round theta */
 	if (theta >= 0)
@@ -253,7 +253,7 @@ FT_EXPORT_DEF(FT_Fixed)
 FT_Cos(FT_Angle angle) {
 	FT_Vector v;
 
-	v.x = FT2_1_3_TRIG_COSCALE >> 2;
+	v.x = FT_TRIG_COSCALE >> 2;
 	v.y = 0;
 	ft_trig_pseudo_rotate(&v, angle);
 
@@ -262,14 +262,14 @@ FT_Cos(FT_Angle angle) {
 
 FT_EXPORT_DEF(FT_Fixed)
 FT_Sin(FT_Angle angle) {
-	return FT_Cos(FT2_1_3_ANGLE_PI2 - angle);
+	return FT_Cos(FT_ANGLE_PI2 - angle);
 }
 
 FT_EXPORT_DEF(FT_Fixed)
 FT_Tan(FT_Angle angle) {
 	FT_Vector v;
 
-	v.x = FT2_1_3_TRIG_COSCALE >> 2;
+	v.x = FT_TRIG_COSCALE >> 2;
 	v.y = 0;
 	ft_trig_pseudo_rotate(&v, angle);
 
@@ -293,7 +293,7 @@ FT_Atan2(FT_Fixed dx, FT_Fixed dy) {
 
 FT_EXPORT_DEF(void)
 FT_Vector_Unit(FT_Vector *vec, FT_Angle angle) {
-	vec->x = FT2_1_3_TRIG_COSCALE >> 2;
+	vec->x = FT_TRIG_COSCALE >> 2;
 	vec->y = 0;
 	ft_trig_pseudo_rotate(vec, angle);
 	vec->x >>= 12;
@@ -382,10 +382,10 @@ FT_EXPORT_DEF(FT_Angle)
 FT_Angle_Diff(FT_Angle angle1, FT_Angle angle2) {
 	FT_Angle delta = angle2 - angle1;
 
-	delta %= FT2_1_3_ANGLE_2PI;
+	delta %= FT_ANGLE_2PI;
 
-	if (delta > FT2_1_3_ANGLE_PI)
-		delta -= FT2_1_3_ANGLE_2PI;
+	if (delta > FT_ANGLE_PI)
+		delta -= FT_ANGLE_2PI;
 
 	return delta;
 }

@@ -361,10 +361,10 @@ FT_Outline_Get_BBox(FT_Outline *outline, FT_BBox *abbox) {
 	FT_UShort n;
 
 	if (!abbox)
-		return FT2_1_3_Err_Invalid_Argument;
+		return FT_Err_Invalid_Argument;
 
 	if (!outline)
-		return FT2_1_3_Err_Invalid_Outline;
+		return FT_Err_Invalid_Outline;
 
 	/* if outline is empty, return (0,0,0,0) */
 	if (outline->n_points == 0 || outline->n_contours <= 0) {
@@ -439,7 +439,7 @@ FT_Outline_Get_BBox(FT_Outline *outline, FT_BBox *abbox) {
 	} else
 		*abbox = bbox;
 
-	return FT2_1_3_Err_Ok;
+	return FT_Err_Ok;
 }
 
 } // End of namespace FreeType213
