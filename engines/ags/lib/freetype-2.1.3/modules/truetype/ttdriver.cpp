@@ -149,7 +149,7 @@ static FT_Error Set_Pixel_Sizes(TT_Size size, FT_UInt pixel_width, FT_UInt pixel
 }
 
 
-static FT_Error Load_Glyph(TT_GlyphSlot slot, TT_Size size, FT_UShort glyph_index, FT_Int32 load_flags) {
+static FT_Error Load_Glyph(TT_GlyphSlot slot, TT_Size size, FT_UInt glyph_index, FT_Int32 load_flags) {
 	FT_Error error;
 
 	if (!slot)
