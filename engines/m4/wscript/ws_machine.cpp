@@ -404,6 +404,7 @@ static bool op_STORE_VAL(machine *m, int32 *pcOffset) {
 	} else {
 		*_GWS(myArg1) = *_GWS(myArg2);
 	}
+
 	return true;
 }
 
@@ -844,10 +845,11 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 	dbg_SetCurrMachInstr(m, *pcOffset);
 
 	// Find the current PC and process it to get the current instruction
-	machInstr = (uint32 *)((uint32)(*(m->machHandle)) + (uint32)m->machInstrOffset);
-	myPC = (uint32 *)((uint32)(machInstr)+*pcOffset);
+	machInstr = (uint32 *)((intptr_t)(*(m->machHandle)) + m->machInstrOffset);
+	myPC = (uint32 *)((intptr_t)(machInstr) + *pcOffset);
 	oldPC = myPC;
 	_GWS(pcOffsetOld) = *pcOffset;
+
 	if ((myInstruction = ws_PreProcessPcode(&myPC, myAnim8)) < 0) {
 		ws_Error(m, ERR_MACH, 0x0266, nullptr);
 	}
@@ -859,11 +861,10 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 		condOpTable[myInstruction - 64](m, pcOffset);
 	} else if (myInstruction > 0) {
 		keepProcessing = immOpTable[myInstruction](m, pcOffset);
-		if (!keepProcessing) {
 
+		if (!keepProcessing) {
 			// Does the machine still exist
 			if (m->machID == machID) {
-
 				CancelAllEngineReqs(m);
 				if (m->curState == -1) {
 					ShutdownMachine(m);
@@ -873,6 +874,7 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 			}
 		}
 	}
+
 	return myInstruction;
 }
 
@@ -1041,13 +1043,15 @@ static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine *recvM, int32
 	case PERSISTENT_MSG:
 		myMsg = recvM->myPersistentMsgs;
 		break;
+
+	default:
+		break;
 	}
 
 	// Search through the message list
 	while (myMsg && (!found)) {
 		// Check if we've found the msg we're looking for
 		if ((myMsg->msgHash == msgHash) && ((uint32)myMsg->msgValue == msgValue)) {
-
 			// Set found bool
 			found = true;
 
@@ -1085,6 +1089,9 @@ static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine *recvM, int32
 				myMsg->nextMsg = recvM->usedPersistentMsgs;
 				recvM->usedPersistentMsgs = myMsg;
 				break;
+
+			default:
+				break;
 			}
 
 			// Set up so the recv machine can reply to this message
@@ -1106,11 +1113,10 @@ static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine *recvM, int32
 // This proc is what allows a machine to send a message to another machine(s)
 
 void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
-	uint32 machHash, machine *sendM, int32 msgCount) {
-
+		uint32 machHash, machine *sendM, int32 msgCount) {
 	bool found, more_to_send;
 	machine *currMachine;
-	int32 myCount;	// ,i;
+	int32 myCount;
 	bool sendToAll;
 	globalMsgReq *myGlobalMsgs, *tempGlobalMsg;
 
@@ -1157,14 +1163,13 @@ void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 
 	// Check to see if we are already in the middle of processing global messages
 	if (_GWS(myGlobalMessages)) {
-
 		// Find the end of the global list
 		myGlobalMsgs = _GWS(myGlobalMessages);
 		while (myGlobalMsgs->next) {
 			myGlobalMsgs = myGlobalMsgs->next;
 		}
 
-		//myGlobalMsgs is the last element, now tempGlobalMsg is.
+		// myGlobalMsgs is the last element, now tempGlobalMsg is.
 		myGlobalMsgs->next = tempGlobalMsg;
 
 		// Since we are already processing a global message, this one is now queued, and we return
@@ -1211,6 +1216,7 @@ void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 					}
 				}
 			}
+
 			currMachine = _GWS(nextXM);
 		}
 
@@ -1218,7 +1224,7 @@ void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 		// Discard a global message and queue up the next one:
 		tempGlobalMsg = _GWS(myGlobalMessages);
 		_GWS(myGlobalMessages) = _GWS(myGlobalMessages)->next;
-		mem_free((void *)tempGlobalMsg);
+		mem_free(tempGlobalMsg);
 	}
 }
 

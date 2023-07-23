@@ -146,7 +146,7 @@ struct machine {
 };
 
 struct globalMsgReq {
-	struct globalMsgReq *next = nullptr;
+	globalMsgReq *next = nullptr;
 	ulong msgHash = 0;
 	frac16 msgValue = 0;
 	ulong machHash = 0;
