@@ -184,7 +184,7 @@ cff_slot_init(CFF_GlyphSlot slot) {
 			T2_Hints_Funcs funcs;
 
 			funcs = pshinter->get_t2_funcs(module);
-			slot->root.internal->glyph_hints = (void *)funcs;
+			slot->root.internal->glyph_hints = (void *)const_cast<T2_Hints_FuncsRec_ *>(funcs);
 		}
 	}
 

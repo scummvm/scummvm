@@ -105,8 +105,13 @@ FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 
 FT_CALLBACK_DEF(FT_Int)
 cff_cmap_uni_pair_compare(const void *pair1, const void *pair2) {
-	FT_UInt32 u1 = ((CFF_CMapUniPair)pair1)->unicode;
-	FT_UInt32 u2 = ((CFF_CMapUniPair)pair2)->unicode;
+	CFF_CMapUniPair pair_tmp;
+
+	pair_tmp = const_cast<CFF_CMapUniPair>(static_cast<const CFF_CMapUniPairRec_ *>(pair1));
+	FT_UInt32 u1 = pair_tmp->unicode;
+
+	pair_tmp = const_cast<CFF_CMapUniPair>(static_cast<const CFF_CMapUniPairRec_ *>(pair2));
+	FT_UInt32 u2 = pair_tmp->unicode;
 
 	if (u1 < u2)
 		return -1;
