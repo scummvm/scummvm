@@ -140,7 +140,7 @@ void QuickTimeParser::init() {
 void QuickTimeParser::initParseTable() {
 	static const ParseTable p[] = {
 		{ &QuickTimeParser::readDefault, MKTAG('d', 'i', 'n', 'f') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('d', 'r', 'e', 'f') },
+		{ &QuickTimeParser::readDREF,    MKTAG('d', 'r', 'e', 'f') },
 		{ &QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's') },
 		{ &QuickTimeParser::readELST,    MKTAG('e', 'l', 's', 't') },
 		{ &QuickTimeParser::readHDLR,    MKTAG('h', 'd', 'l', 'r') },
@@ -797,6 +797,77 @@ int QuickTimeParser::readSMI(Atom atom) {
 	return 0;
 }
 
+int QuickTimeParser::readDREF(Atom atom) {
+	if (atom.size > 1) {
+		Track *track = _tracks.back();
+
+		_fd->hexdump(atom.size);
+		uint32 endPos = _fd->pos() + atom.size;
+		_fd->readUint32BE(); // version + flags
+		uint32 entries = _fd->readUint32BE();
+		for (uint32 i = 0; i < entries && _fd->pos() < endPos; i++) {
+			uint32 size = _fd->readUint32BE();
+			uint32 next = _fd->pos() + size - 4;
+			if (next > endPos) {
+				warning("DREF chunk overflows atom bounds");
+				return 1;
+			}
+			uint32 type = _fd->readUint32BE();
+			_fd->readUint32BE(); // version + flags
+			if (type == MKTAG('a', 'l', 'i', 's')) {
+				if (size < 150) {
+					_fd->seek(next, SEEK_SET);
+					continue;
+				}
+
+				// Macintosh alias record
+				_fd->seek(10, SEEK_CUR);
+
+				uint8 volumeSize = MIN((uint8)27, _fd->readByte());
+				track->volume = _fd->readString('\0', volumeSize);
+				_fd->seek(27 - volumeSize, SEEK_CUR);
+				_fd->seek(12, SEEK_CUR);
+
+				uint8 filenameSize = MIN((uint8)63, _fd->readByte());
+				track->filename = _fd->readString('\0', filenameSize);
+				_fd->seek(63 - filenameSize, SEEK_CUR);
+				_fd->seek(16, SEEK_CUR);
+				debug(5, "volume: %s, filename: %s", track->volume.c_str(), track->filename.c_str());
+
+				track->nlvlFrom = _fd->readSint16BE();
+				track->nlvlTo = _fd->readSint16BE();
+				_fd->seek(16, SEEK_CUR);
+				debug(5, "nlvlFrom: %d, nlvlTo: %d", track->nlvlFrom, track->nlvlTo);
+
+				for (int16 subType = 0; subType != -1 && _fd->pos() < endPos;) {
+					subType = _fd->readSint16BE();
+					uint16 subTypeSize = _fd->readUint16BE();
+					subTypeSize += subTypeSize & 1 ? 1 : 0;
+					if (subType == 2) { // Absolute path
+						track->path = _fd->readString('\0', subTypeSize);
+						if (track->path.substr(0, volumeSize) == track->volume) {
+							track->path = track->path.substr(volumeSize);
+						}
+						debug(5, "path: %s", track->path.c_str());
+					} else if (subType == 0) {
+						track->directory = _fd->readString('\0', subTypeSize);
+						debug(5, "directory: %s", track->directory.c_str());
+					} else {
+						_fd->seek(subTypeSize, SEEK_CUR);
+					}
+				}
+			} else {
+				warning("Unknown DREF type %s", tag2str(type));
+				_fd->seek(next, SEEK_SET);
+			}
+		}
+
+		_fd->seek(endPos, SEEK_SET);
+	}
+
+	return 0;
+}
+
 void QuickTimeParser::close() {
 	for (uint32 i = 0; i < _tracks.size(); i++)
 		delete _tracks[i];
@@ -867,6 +938,8 @@ QuickTimeParser::Track::Track() {
 	frameCount = 0;
 	duration = 0;
 	mediaDuration = 0;
+	nlvlFrom = -1;
+	nlvlTo = -1;
 }
 
 QuickTimeParser::Track::~Track() {

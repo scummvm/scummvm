@@ -174,6 +174,13 @@ protected:
 		uint32 mediaDuration; // media time
 		Rational scaleFactorX;
 		Rational scaleFactorY;
+
+		Common::String volume;
+		Common::String filename;
+		Common::String path;
+		Common::String directory;
+		int16 nlvlFrom;
+		int16 nlvlTo;
 	};
 
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
@@ -208,6 +215,7 @@ private:
 
 	int readDefault(Atom atom);
 	int readLeaf(Atom atom);
+	int readDREF(Atom atom);
 	int readELST(Atom atom);
 	int readHDLR(Atom atom);
 	int readMDHD(Atom atom);

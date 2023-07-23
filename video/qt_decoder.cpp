@@ -512,7 +512,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 			}
 
 			enterNewEditListEntry(false);
-			
+
 			if (isEmptyEdit()) {
 				return 0;
 			}
@@ -585,6 +585,15 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	}
 
 	return frame;
+}
+
+Common::String QuickTimeDecoder::getAliasPath() {
+	const Common::Array<Common::QuickTimeParser::Track *> &tracks = Common::QuickTimeParser::_tracks;
+	for (uint32 i = 0; i < tracks.size(); i++) {
+		if (!tracks[i]->path.empty())
+			return tracks[i]->path;
+	}
+	return Common::String();
 }
 
 Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) const {
