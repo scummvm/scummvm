@@ -29,6 +29,8 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "video/qt_decoder.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
@@ -657,7 +659,13 @@ Common::String Cast::getVideoPath(int castId) {
 
 		res = directory + g_director->_dirSeparator + filename;
 	} else {
-		warning("STUB: Cast::getVideoPath(%d): unsupported non-zero MooV block", castId);
+		Video::QuickTimeDecoder qt;
+		qt.loadStream(videoData);
+		videoData = nullptr;
+		res = qt.getAliasPath();
+		if (res.empty()) {
+			warning("STUB: Cast::getVideoPath(%d): unsupported non-alias MooV block found", castId);
+		}
 	}
 	if (videoData)
 		delete videoData;
