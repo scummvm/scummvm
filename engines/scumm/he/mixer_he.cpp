@@ -80,6 +80,10 @@ bool HEMixer::pauseMixerSubSystem(bool paused) {
 void HEMixer::feedMixer() {
 }
 
+int HEMixer::getChannelCurrentPosition(int channel) {
+	return 0;
+}
+
 bool HEMixer::startChannelNew(
 	int channel, int globType, int globNum, uint32 soundData, uint32 offset,
 	int sampleLen, int frequency, int bitsPerSample, int sampleChannels,
@@ -89,7 +93,7 @@ bool HEMixer::startChannelNew(
 
 	if (!_useMilesSoundSystem) {
 		if (bitsPerSample != 8) {
-			debug(5, "HEMixer::PX_StartChannel(): Glob(%d, %d) is %d bits per channel, must be 8 for software mixer", globType, globNum, bitsPerSample);
+			debug(5, "HEMixer::startChannelNew(): Glob(%d, %d) is %d bits per channel, must be 8 for software mixer", globType, globNum, bitsPerSample);
 			return false;
 		}
 

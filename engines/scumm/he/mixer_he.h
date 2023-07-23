@@ -71,6 +71,7 @@ public:
 	void premixUntilCritical();
 	bool pauseMixerSubSystem(bool paused);
 	void feedMixer();
+	int getChannelCurrentPosition(int channel);
 
 	bool startChannelNew(
 		int channel, int globType, int globNum, uint32 soundData, uint32 offset,

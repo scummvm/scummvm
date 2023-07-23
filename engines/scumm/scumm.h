@@ -1794,7 +1794,7 @@ public:
 	byte VAR_SKIP_RESET_TALK_ACTOR = 0xFF;	// Used in setActorCostume()
 
 	byte VAR_SOUND_CHANNEL = 0xFF;				// Used in o_startSound()
-	byte VAR_TALK_CHANNEL = 0xFF;				// Used in startHETalkSound()
+	byte VAR_TALK_CHANNEL = 0xFF;				// Used in playVoice()
 	byte VAR_SOUND_TOKEN_OFFSET = 0xFF;			// Used in handleSoundFrame()
 	byte VAR_START_DYN_SOUND_CHANNELS = 0xFF;	// Used in getNextDynamicChannel()
 	byte VAR_SOUND_CALLBACK_SCRIPT = 0xFF;

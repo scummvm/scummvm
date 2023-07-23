@@ -554,7 +554,7 @@ void ScummEngine_v72he::o72_setTimer() {
 
 void ScummEngine_v72he::o72_getSoundPosition() {
 	int snd = pop();
-	push(((SoundHE *)_sound)->getSoundPos(snd));
+	push(((SoundHE *)_sound)->getSoundPosition(snd));
 }
 
 void ScummEngine_v72he::o72_startScript() {

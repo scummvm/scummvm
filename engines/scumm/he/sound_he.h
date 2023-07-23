@@ -212,13 +212,13 @@ public:
 	int isSoundRunning(int sound) const override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int hsFindSoundChannel(int sound);
+	int hsFindSoundChannel(int sound) const;
 	void setupSound() override;
 
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 	int getNextDynamicChannel();
 	bool isSoundCodeUsed(int sound);
-	int getSoundPos(int sound);
+	int getSoundPosition(int sound);
 	int getSoundVar(int sound, int var);
 	void setSoundVar(int sound, int var, int val);
 	void triggerSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
@@ -242,9 +242,11 @@ public:
 	void processSoundOpcodes(int sound, byte *codePtr, int *soundVars);
 	void setOverrideFreq(int freq);
 	void setupHEMusicFile();
-	void startHETalkSound(uint32 offset);
-	void stopSoundChannel(int chan);
+	void playVoice(uint32 offset, uint32 length);
+	void playVoiceFile(char *filename);
+	void stopDigitalSound(int sound);
 	void createSound(int snd1id, int snd2id);
+	int getChannelPosition(int channel);
 
 	byte *findWavBlock(uint32 tag, const byte *block);
 
@@ -257,6 +259,7 @@ private:
 	bool _inSoundCallbackFlag = false;
 	int _soundCallbacksQueueSize = 0;
 	int _soundAlreadyInQueueCount = 0;
+	int _inUnqueueCallbackScripts = 0;
 	int _soundsDebugFrameCounter = 0;
 	int _scummOverrideFrequency = 0;
 
