@@ -1,88 +1,85 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  cffcmap.c                                                              */
-/*                                                                         */
 /*    CFF character mapping table (cmap) support (body).                   */
-/*                                                                         */
-/*  Copyright 2002 by                                                      */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
 
-#include "cffcmap.h"
-#include "cffload.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cffcmap.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cffload.h"
 
 namespace AGS3 {
 namespace FreeType213 {
 
-/*************************************************************************/
-/*************************************************************************/
-/*****                                                               *****/
+
 /*****           CFF STANDARD (AND EXPERT) ENCODING CMAPS            *****/
-/*****                                                               *****/
-/*************************************************************************/
-/*************************************************************************/
 
-FT_CALLBACK_DEF( FT_Error )
-cff_cmap_encoding_init( CFF_CMapStd  cmap ) {
-	TT_Face       face     = (TT_Face)FT_CMAP_FACE( cmap );
-	CFF_Font      cff      = (CFF_Font)face->extra.data;
-	CFF_Encoding  encoding = &cff->encoding;
-
+FT_CALLBACK_DEF(FT_Error)
+cff_cmap_encoding_init(CFF_CMapStd cmap) {
+	TT_Face face = (TT_Face)FT_CMAP_FACE(cmap);
+	CFF_Font cff = (CFF_Font)face->extra.data;
+	CFF_Encoding encoding = &cff->encoding;
 
 	cmap->count = encoding->count;
-	cmap->gids  = encoding->codes;
+	cmap->gids = encoding->codes;
 
 	return 0;
 }
 
-
-FT_CALLBACK_DEF( void )
-cff_cmap_encoding_done( CFF_CMapStd  cmap ) {
+FT_CALLBACK_DEF(void)
+cff_cmap_encoding_done(CFF_CMapStd cmap) {
 	cmap->count = 0;
-	cmap->gids  = NULL;
+	cmap->gids = NULL;
 }
 
+FT_CALLBACK_DEF(FT_UInt)
+cff_cmap_encoding_char_index(CFF_CMapStd cmap, FT_UInt32 char_code) {
+	FT_UInt result = 0;
 
-FT_CALLBACK_DEF( FT_UInt )
-cff_cmap_encoding_char_index( CFF_CMapStd  cmap,
-							  FT_UInt32    char_code ) {
-	FT_UInt  result = 0;
-
-
-	if ( char_code < cmap->count )
+	if (char_code < cmap->count)
 		result = cmap->gids[char_code];
 
 	return result;
 }
 
-
-FT_CALLBACK_DEF( FT_UInt )
-cff_cmap_encoding_char_next( CFF_CMapStd   cmap,
-							 FT_UInt32    *pchar_code ) {
-	FT_UInt    result    = 0;
-	FT_UInt32  char_code = *pchar_code;
-
+FT_CALLBACK_DEF(FT_UInt)
+cff_cmap_encoding_char_next(CFF_CMapStd cmap, FT_UInt32 *pchar_code) {
+	FT_UInt result = 0;
+	FT_UInt32 char_code = *pchar_code;
 
 	*pchar_code = 0;
 
-	if ( char_code < cmap->count ) {
-		FT_UInt  code = (FT_UInt)(char_code + 1);
-
+	if (char_code < cmap->count) {
+		FT_UInt code = (FT_UInt)(char_code + 1);
 
 		for (;;) {
-			if ( code >= cmap->count )
+			if (code >= cmap->count)
 				break;
 
 			result = cmap->gids[code];
-			if ( result != 0 ) {
+			if (result != 0) {
 				*pchar_code = code;
 				break;
 			}
@@ -93,49 +90,39 @@ cff_cmap_encoding_char_next( CFF_CMapStd   cmap,
 	return result;
 }
 
-
 FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
-cff_cmap_encoding_class_rec = {
-	sizeof ( CFF_CMapStdRec ),
+	cff_cmap_encoding_class_rec = {
+		sizeof(CFF_CMapStdRec),
 
-	(FT_CMap_InitFunc)     cff_cmap_encoding_init,
-	(FT_CMap_DoneFunc)     cff_cmap_encoding_done,
-	(FT_CMap_CharIndexFunc)cff_cmap_encoding_char_index,
-	(FT_CMap_CharNextFunc) cff_cmap_encoding_char_next
-};
+		(FT_CMap_InitFunc) cff_cmap_encoding_init,
+		(FT_CMap_DoneFunc) cff_cmap_encoding_done,
+		(FT_CMap_CharIndexFunc) cff_cmap_encoding_char_index,
+		(FT_CMap_CharNextFunc)  cff_cmap_encoding_char_next
+	};
 
 
-/*************************************************************************/
-/*************************************************************************/
-/*****                                                               *****/
 /*****              CFF SYNTHETIC UNICODE ENCODING CMAP              *****/
-/*****                                                               *****/
-/*************************************************************************/
-/*************************************************************************/
 
-FT_CALLBACK_DEF( FT_Int )
-cff_cmap_uni_pair_compare( const void*  pair1,
-						   const void*  pair2 ) {
-	FT_UInt32  u1 = ((CFF_CMapUniPair)pair1)->unicode;
-	FT_UInt32  u2 = ((CFF_CMapUniPair)pair2)->unicode;
+FT_CALLBACK_DEF(FT_Int)
+cff_cmap_uni_pair_compare(const void *pair1, const void *pair2) {
+	FT_UInt32 u1 = ((CFF_CMapUniPair)pair1)->unicode;
+	FT_UInt32 u2 = ((CFF_CMapUniPair)pair2)->unicode;
 
-
-	if ( u1 < u2 )
+	if (u1 < u2)
 		return -1;
 
-	if ( u1 > u2 )
+	if (u1 > u2)
 		return +1;
 
 	return 0;
 }
 
-
-FT_CALLBACK_DEF( FT_Error )
-cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
+FT_CALLBACK_DEF(FT_Error)
+cff_cmap_unicode_init(CFF_CMapUnicode cmap) {
 	FT_Error         error;
 	FT_UInt          count;
-	TT_Face          face    = (TT_Face)FT_CMAP_FACE( cmap );
-	FT_Memory        memory  = FT_FACE_MEMORY( face );
+	TT_Face          face    = (TT_Face)FT_CMAP_FACE(cmap);
+	FT_Memory        memory  = FT_FACE_MEMORY(face);
 	CFF_Font         cff     = (CFF_Font)face->extra.data;
 	CFF_Charset      charset = &cff->charset;
 	PSNames_Service  psnames = (PSNames_Service)cff->psnames;
@@ -146,52 +133,47 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 
 	count = (FT_UInt)face->root.num_glyphs;
 
-	if ( !FT_NEW_ARRAY( cmap->pairs, count ) ) {
-		FT_UInt          n, new_count;
-		CFF_CMapUniPair  pair;
-		FT_UInt32        uni_code;
-
+	if (!FT_NEW_ARRAY(cmap->pairs, count)) {
+		FT_UInt n, new_count;
+		CFF_CMapUniPair pair;
+		FT_UInt32 uni_code;
 
 		pair = cmap->pairs;
-		for ( n = 0; n < count; n++ ) {
-			FT_UInt      sid   = charset->sids[n];
-			const char*  gname;
+		for (n = 0; n < count; n++) {
+			FT_UInt sid = charset->sids[n];
+			const char *gname;
 
-
-			gname = cff_index_get_sid_string( &cff->string_index, sid, psnames );
+			gname = cff_index_get_sid_string(&cff->string_index, sid, psnames);
 
 			/* build unsorted pair table by matching glyph names */
-			if ( gname ) {
-				uni_code = psnames->unicode_value( gname );
+			if (gname) {
+				uni_code = psnames->unicode_value(gname);
 
-				if ( uni_code != 0 ) {
+				if (uni_code != 0) {
 					pair->unicode = uni_code;
-					pair->gindex  = n;
+					pair->gindex = n;
 					pair++;
 				}
 
-				FT_FREE( gname );
+				FT_FREE(gname);
 			}
 		}
 
-		new_count = (FT_UInt)( pair - cmap->pairs );
-		if ( new_count == 0 ) {
+		new_count = (FT_UInt)(pair - cmap->pairs);
+		if (new_count == 0) {
 			/* there are no unicode characters in here! */
-			FT_FREE( cmap->pairs );
+			FT_FREE(cmap->pairs);
 			error = FT_Err_Invalid_Argument;
 		} else {
 			/* re-allocate if the new array is much smaller than the original */
 			/* one                                                            */
-			if ( new_count != count && new_count < count / 2 ) {
-				(void)FT_RENEW_ARRAY( cmap->pairs, count, new_count );
+			if (new_count != count && new_count < count / 2) {
+				(void)FT_RENEW_ARRAY(cmap->pairs, count, new_count);
 				error = 0;
 			}
 
 			/* sort the pairs table to allow efficient binary searches */
-			ft_qsort( cmap->pairs,
-					  new_count,
-					  sizeof ( CFF_CMapUniPairRec ),
-					  cff_cmap_uni_pair_compare );
+			ft_qsort(cmap->pairs, new_count, sizeof(CFF_CMapUniPairRec), cff_cmap_uni_pair_compare);
 
 			cmap->num_pairs = new_count;
 		}
@@ -200,35 +182,30 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 	return error;
 }
 
+FT_CALLBACK_DEF(void)
+cff_cmap_unicode_done(CFF_CMapUnicode cmap) {
+	FT_Face face = FT_CMAP_FACE(cmap);
+	FT_Memory memory = FT_FACE_MEMORY(face);
 
-FT_CALLBACK_DEF( void )
-cff_cmap_unicode_done( CFF_CMapUnicode  cmap ) {
-	FT_Face    face   = FT_CMAP_FACE( cmap );
-	FT_Memory  memory = FT_FACE_MEMORY( face );
-
-
-	FT_FREE( cmap->pairs );
+	FT_FREE(cmap->pairs);
 	cmap->num_pairs = 0;
 }
 
+FT_CALLBACK_DEF(FT_UInt)
+cff_cmap_unicode_char_index(CFF_CMapUnicode cmap, FT_UInt32 char_code) {
+	FT_UInt min = 0;
+	FT_UInt max = cmap->num_pairs;
+	FT_UInt mid;
+	CFF_CMapUniPair pair;
 
-FT_CALLBACK_DEF( FT_UInt )
-cff_cmap_unicode_char_index( CFF_CMapUnicode  cmap,
-							 FT_UInt32        char_code ) {
-	FT_UInt          min = 0;
-	FT_UInt          max = cmap->num_pairs;
-	FT_UInt          mid;
-	CFF_CMapUniPair  pair;
-
-
-	while ( min < max ) {
-		mid  = min + ( max - min ) / 2;
+	while (min < max) {
+		mid = min + (max - min) / 2;
 		pair = cmap->pairs + mid;
 
-		if ( pair->unicode == char_code )
+		if (pair->unicode == char_code)
 			return pair->gindex;
 
-		if ( pair->unicode < char_code )
+		if (pair->unicode < char_code)
 			min = mid + 1;
 		else
 			max = mid;
@@ -236,68 +213,62 @@ cff_cmap_unicode_char_index( CFF_CMapUnicode  cmap,
 	return 0;
 }
 
+FT_CALLBACK_DEF(FT_UInt)
+cff_cmap_unicode_char_next(CFF_CMapUnicode cmap, FT_UInt32 *pchar_code) {
+	FT_UInt result = 0;
+	FT_UInt32 char_code = *pchar_code + 1;
 
-FT_CALLBACK_DEF( FT_UInt )
-cff_cmap_unicode_char_next( CFF_CMapUnicode  cmap,
-							FT_UInt32       *pchar_code ) {
-	FT_UInt    result    = 0;
-	FT_UInt32  char_code = *pchar_code + 1;
+Restart : {
+	FT_UInt min = 0;
+	FT_UInt max = cmap->num_pairs;
+	FT_UInt mid;
+	CFF_CMapUniPair pair;
 
+	while (min < max) {
+		mid = min + ((max - min) >> 1);
+		pair = cmap->pairs + mid;
 
-Restart: {
-		FT_UInt          min = 0;
-		FT_UInt          max = cmap->num_pairs;
-		FT_UInt          mid;
-		CFF_CMapUniPair  pair;
-
-
-		while ( min < max ) {
-			mid  = min + ( ( max - min ) >> 1 );
-			pair = cmap->pairs + mid;
-
-			if ( pair->unicode == char_code ) {
-				result = pair->gindex;
-				if ( result != 0 )
-					goto Exit;
-
-				char_code++;
-				goto Restart;
-			}
-
-			if ( pair->unicode < char_code )
-				min = mid+1;
-			else
-				max = mid;
-		}
-
-		/* we didn't find it, but we have a pair just above it */
-		char_code = 0;
-
-		if ( min < cmap->num_pairs ) {
-			pair   = cmap->pairs + min;
+		if (pair->unicode == char_code) {
 			result = pair->gindex;
-			if ( result != 0 )
-				char_code = pair->unicode;
+			if (result != 0)
+				goto Exit;
+
+			char_code++;
+			goto Restart;
 		}
+
+		if (pair->unicode < char_code)
+			min = mid + 1;
+		else
+			max = mid;
 	}
+
+	/* we didn't find it, but we have a pair just above it */
+	char_code = 0;
+
+	if (min < cmap->num_pairs) {
+		pair = cmap->pairs + min;
+		result = pair->gindex;
+		if (result != 0)
+			char_code = pair->unicode;
+	}
+}
 
 Exit:
 	*pchar_code = char_code;
 	return result;
 }
 
-
 FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
-cff_cmap_unicode_class_rec = {
-	sizeof ( CFF_CMapUnicodeRec ),
+	cff_cmap_unicode_class_rec = {
+		sizeof(CFF_CMapUnicodeRec),
 
-	(FT_CMap_InitFunc)     cff_cmap_unicode_init,
-	(FT_CMap_DoneFunc)     cff_cmap_unicode_done,
-	(FT_CMap_CharIndexFunc)cff_cmap_unicode_char_index,
-	(FT_CMap_CharNextFunc) cff_cmap_unicode_char_next
-};
+		(FT_CMap_InitFunc)cff_cmap_unicode_init,
+		(FT_CMap_DoneFunc)cff_cmap_unicode_done,
+		(FT_CMap_CharIndexFunc)cff_cmap_unicode_char_index,
+		(FT_CMap_CharNextFunc) cff_cmap_unicode_char_next
+	};
+
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */

@@ -1,17 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /*  cffdrivr.c                                                             */
-/*                                                                         */
 /*    OpenType font driver implementation (body).                          */
-/*                                                                         */
-/*  Copyright 1996-2001, 2002 by                                           */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -24,110 +35,52 @@
 #include "engines/ags/lib/freetype-2.1.3/ttnameid.h"
 #include "engines/ags/lib/freetype-2.1.3/psnames.h"
 
-#include "cffdrivr.h"
-#include "cffgload.h"
-#include "cffload.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cffdrivr.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cffgload.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cffload.h"
 
-#include "cfferrs.h"
+#include "engines/ags/lib/freetype-2.1.3/modules/cff/cfferrs.h"
 
-
-/*************************************************************************/
-/*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
-/* messages during execution.                                            */
-/*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_cffdriver
+#undef FT_COMPONENT
+#define FT_COMPONENT trace_cffdriver
 
 namespace AGS3 {
 namespace FreeType213 {
 
-/*************************************************************************/
-/*************************************************************************/
-/*************************************************************************/
-/****                                                                 ****/
-/****                                                                 ****/
-/****                          F A C E S                              ****/
-/****                                                                 ****/
-/****                                                                 ****/
-/*************************************************************************/
-/*************************************************************************/
-/*************************************************************************/
 
+/**** FACES ****/
 
-#undef  PAIR_TAG
-#define PAIR_TAG( left, right )  ( ( (FT_ULong)left << 16 ) | \
-									 (FT_ULong)right        )
+#undef PAIR_TAG
+#define PAIR_TAG(left, right) (((FT_ULong)left << 16) | (FT_ULong)right)
 
+static FT_Error Get_Kerning(TT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_Vector *kerning) {
+	TT_Kern0_Pair pair;
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    Get_Kerning                                                        */
-/*                                                                       */
-/* <Description>                                                         */
-/*    A driver method used to return the kerning vector between two      */
-/*    glyphs of the same face.                                           */
-/*                                                                       */
-/* <Input>                                                               */
-/*    face        :: A handle to the source face object.                 */
-/*                                                                       */
-/*    left_glyph  :: The index of the left glyph in the kern pair.       */
-/*                                                                       */
-/*    right_glyph :: The index of the right glyph in the kern pair.      */
-/*                                                                       */
-/* <Output>                                                              */
-/*    kerning     :: The kerning vector.  This is in font units for      */
-/*                   scalable formats, and in pixels for fixed-sizes     */
-/*                   formats.                                            */
-/*                                                                       */
-/* <Return>                                                              */
-/*    FreeType error code.  0 means success.                             */
-/*                                                                       */
-/* <Note>                                                                */
-/*    Only horizontal layouts (left-to-right & right-to-left) are        */
-/*    supported by this function.  Other layouts, or more sophisticated  */
-/*    kernings, are out of scope of this method (the basic driver        */
-/*    interface is meant to be simple).                                  */
-/*                                                                       */
-/*    They can be implemented by format-specific interfaces.             */
-/*                                                                       */
-static FT_Error
-Get_Kerning( TT_Face     face,
-			 FT_UInt     left_glyph,
-			 FT_UInt     right_glyph,
-			 FT_Vector*  kerning ) {
-	TT_Kern0_Pair  pair;
-
-
-	if ( !face )
+	if (!face)
 		return FT_Err_Invalid_Face_Handle;
 
 	kerning->x = 0;
 	kerning->y = 0;
 
-	if ( face->kern_pairs ) {
+	if (face->kern_pairs) {
 		/* there are some kerning pairs in this font file! */
-		FT_ULong  search_tag = PAIR_TAG( left_glyph, right_glyph );
-		FT_Long   left, right;
+		FT_ULong search_tag = PAIR_TAG(left_glyph, right_glyph);
+		FT_Long left, right;
 
-
-		left  = 0;
+		left = 0;
 		right = face->num_kern_pairs - 1;
 
-		while ( left <= right ) {
-			FT_Long   middle = left + ( ( right - left ) >> 1 );
-			FT_ULong  cur_pair;
+		while (left <= right) {
+			FT_Long middle = left + ((right - left) >> 1);
+			FT_ULong cur_pair;
 
+			pair = face->kern_pairs + middle;
+			cur_pair = PAIR_TAG(pair->left, pair->right);
 
-			pair     = face->kern_pairs + middle;
-			cur_pair = PAIR_TAG( pair->left, pair->right );
-
-			if ( cur_pair == search_tag )
+			if (cur_pair == search_tag)
 				goto Found;
 
-			if ( cur_pair < search_tag )
+			if (cur_pair < search_tag)
 				left = middle + 1;
 			else
 				right = middle - 1;
@@ -142,63 +95,31 @@ Found:
 	goto Exit;
 }
 
-
 #undef PAIR_TAG
 
 
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    Load_Glyph                                                         */
-/*                                                                       */
-/* <Description>                                                         */
-/*    A driver method used to load a glyph within a given glyph slot.    */
-/*                                                                       */
-/* <Input>                                                               */
-/*    slot        :: A handle to the target slot object where the glyph  */
-/*                   will be loaded.                                     */
-/*                                                                       */
-/*    size        :: A handle to the source face size at which the glyph */
-/*                   must be scaled, loaded, etc.                        */
-/*                                                                       */
-/*    glyph_index :: The index of the glyph in the font file.            */
-/*                                                                       */
-/*    load_flags  :: A flag indicating what to load for this glyph.  The */
-/*                   FTLOAD_??? constants can be used to control the     */
-/*                   glyph loading process (e.g., whether the outline    */
-/*                   should be scaled, whether to load bitmaps or not,   */
-/*                   whether to hint the outline, etc).                  */
-/*                                                                       */
-/* <Return>                                                              */
-/*    FreeType error code.  0 means success.                             */
-/*                                                                       */
-static FT_Error
-Load_Glyph( CFF_GlyphSlot  slot,
-			CFF_Size       size,
-			FT_UShort      glyph_index,
-			FT_Int32       load_flags ) {
-	FT_Error  error;
+static FT_Error Load_Glyph(CFF_GlyphSlot slot, CFF_Size size, FT_UShort glyph_index, FT_Int32 load_flags) {
+	FT_Error error;
 
-
-	if ( !slot )
+	if (!slot)
 		return FT_Err_Invalid_Slot_Handle;
 
 	/* check whether we want a scaled outline or bitmap */
-	if ( !size )
+	if (!size)
 		load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING;
 
-	if ( load_flags & FT_LOAD_NO_SCALE )
+	if (load_flags & FT_LOAD_NO_SCALE)
 		size = NULL;
 
 	/* reset the size object if necessary */
-	if ( size ) {
+	if (size) {
 		/* these two object must have the same parent */
-		if ( size->face != slot->root.face )
+		if (size->face != slot->root.face)
 			return FT_Err_Invalid_Face_Handle;
 	}
 
 	/* now load the glyph outline if necessary */
-	error = cff_slot_load( slot, size, glyph_index, load_flags );
+	error = cff_slot_load(slot, size, glyph_index, load_flags);
 
 	/* force drop-out mode to 2 - irrelevant now */
 	/* slot->outline.dropout_mode = 2; */
@@ -207,26 +128,12 @@ Load_Glyph( CFF_GlyphSlot  slot,
 }
 
 
-/*************************************************************************/
-/*************************************************************************/
-/*************************************************************************/
-/****                                                                 ****/
-/****                                                                 ****/
-/****             C H A R A C T E R   M A P P I N G S                 ****/
-/****                                                                 ****/
-/****                                                                 ****/
-/*************************************************************************/
-/*************************************************************************/
-/*************************************************************************/
+/**** CHARACTER MAPPINGS ****/
 
-static FT_Error
-cff_get_glyph_name( CFF_Face    face,
-					FT_UInt     glyph_index,
-					FT_Pointer  buffer,
-					FT_UInt     buffer_max ) {
-	CFF_Font         font   = (CFF_Font)face->extra.data;
-	FT_Memory        memory = FT_FACE_MEMORY( face );
-	FT_String*       gname;
+static FT_Error cff_get_glyph_name(CFF_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max) {
+	CFF_Font font =  (CFF_Font)face->extra.data;
+	FT_Memory        memory = FT_FACE_MEMORY(face);
+	FT_String        *gname;
 	FT_UShort        sid;
 	PSNames_Service  psnames;
 	FT_Error         error;
@@ -234,11 +141,11 @@ cff_get_glyph_name( CFF_Face    face,
 	const void *psnames_tmp = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
 
-	if ( !psnames ) {
-		FT_ERROR(( "cff_get_glyph_name:" ));
-		FT_ERROR(( " cannot open CFF & CEF fonts\n" ));
-		FT_ERROR(( "                   " ));
-		FT_ERROR(( " without the `PSNames' module\n" ));
+	if (!psnames) {
+		FT_ERROR(("cff_get_glyph_name:"));
+		FT_ERROR((" cannot open CFF & CEF fonts\n"));
+		FT_ERROR(("                   "));
+		FT_ERROR((" without the `PSNames' module\n"));
 		error = FT_Err_Unknown_File_Format;
 		goto Exit;
 	}
@@ -247,78 +154,55 @@ cff_get_glyph_name( CFF_Face    face,
 	sid = font->charset.sids[glyph_index];
 
 	/* now, lookup the name itself */
-	gname = cff_index_get_sid_string( &font->string_index, sid, psnames );
+	gname = cff_index_get_sid_string(&font->string_index, sid, psnames);
 
-	if ( buffer_max > 0 ) {
-		FT_UInt  len = (FT_UInt)ft_strlen( gname );
+	if (buffer_max > 0) {
+		FT_UInt len = (FT_UInt)ft_strlen(gname);
 
-
-		if ( len >= buffer_max )
+		if (len >= buffer_max)
 			len = buffer_max - 1;
 
-		FT_MEM_COPY( buffer, gname, len );
-		((FT_Byte*)buffer)[len] = 0;
+		FT_MEM_COPY(buffer, gname, len);
+		((FT_Byte *)buffer)[len] = 0;
 	}
 
-	FT_FREE ( gname );
+	FT_FREE(gname);
 	error = FT_Err_Ok;
 
 Exit:
 	return error;
 }
 
-
-
-/*************************************************************************/
-/*                                                                       */
-/* <Function>                                                            */
-/*    cff_get_name_index                                                 */
-/*                                                                       */
-/* <Description>                                                         */
-/*    Uses the psnames module and the CFF font's charset to to return a  */
-/*    a given glyph name's glyph index.                                  */
-/*                                                                       */
-/* <Input>                                                               */
-/*    face       :: A handle to the source face object.                  */
-/*                                                                       */
-/*    glyph_name :: The glyph name.                                      */
-/*                                                                       */
-/* <Return>                                                              */
-/*    Glyph index.  0 means `undefined character code'.                  */
-/*                                                                       */
-static FT_UInt
-cff_get_name_index( CFF_Face    face,
-					FT_String*  glyph_name ) {
-	CFF_Font         cff;
+static FT_UInt cff_get_name_index(CFF_Face face, FT_String *glyph_name) {
+	CFF_Font 		 cff;
 	CFF_Charset      charset;
 	PSNames_Service  psnames;
-	FT_Memory        memory = FT_FACE_MEMORY( face );
-	FT_String*       name;
+	FT_Memory        memory = FT_FACE_MEMORY(face);
+	FT_String        *name;
 	FT_UShort        sid;
 	FT_UInt          i;
 	FT_Int           result;
 
-
-	cff     = (CFF_FontRec *)face->extra.data;
+	cff = (CFF_FontRec *)face->extra.data;
 	charset = &cff->charset;
 
 	const void *psnames_tmp = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
 
-	for ( i = 0; i < cff->num_glyphs; i++ ) {
+	for (i = 0; i < cff->num_glyphs; i++) {
 		sid = charset->sids[i];
 
-		if ( sid > 390 )
-			name = cff_index_get_name( &cff->string_index, sid - 391 );
+		if (sid > 390)
+			name = cff_index_get_name(&cff->string_index, sid - 391);
 		else
 			name = const_cast<FT_String *>(psnames->adobe_std_strings(sid));
 
-		result = ft_strcmp( glyph_name, name );
+		result = ft_strcmp(glyph_name, name);
 
-		if ( sid > 390 )
-			FT_FREE( name );
+		if (sid > 390)
+			FT_FREE(name);
 
-		if ( !result )
+		if (!result)
 			return i;
 	}
 
@@ -326,86 +210,70 @@ cff_get_name_index( CFF_Face    face,
 }
 
 
-/*************************************************************************/
-/*************************************************************************/
-/*************************************************************************/
-/****                                                                 ****/
-/****                                                                 ****/
-/****                D R I V E R  I N T E R F A C E                   ****/
-/****                                                                 ****/
-/****                                                                 ****/
-/*************************************************************************/
-/*************************************************************************/
-/*************************************************************************/
+/**** DRIVER INTERFACE ****/
 
-static FT_Module_Interface
-cff_get_interface( CFF_Driver   driver,
-				   const char*  module_interface ) {
-	FT_Module  sfnt;
-
+static FT_Module_Interface cff_get_interface(CFF_Driver driver, const char *module_interface) {
+	FT_Module sfnt;
 
 #ifndef FT_CONFIG_OPTION_NO_GLYPH_NAMES
 
-	if ( ft_strcmp( (const char*)module_interface, "glyph_name" ) == 0 )
+	if (ft_strcmp((const char *)module_interface, "glyph_name") == 0)
 		return (FT_Module_Interface)cff_get_glyph_name;
 
-	if ( ft_strcmp( (const char*)module_interface, "name_index" ) == 0 )
+	if (ft_strcmp((const char *)module_interface, "name_index") == 0)
 		return (FT_Module_Interface)cff_get_name_index;
 
 #endif
 
 	/* we simply pass our request to the `sfnt' module */
-	sfnt = FT_Get_Module( driver->root.root.library, "sfnt" );
+	sfnt = FT_Get_Module(driver->root.root.library, "sfnt");
 
-	return sfnt ? sfnt->clazz->get_interface( sfnt, module_interface ) : 0;
+	return sfnt ? sfnt->clazz->get_interface(sfnt, module_interface) : 0;
 }
 
 
-/* The FT_DriverInterface structure is defined in ftdriver.h. */
-
 FT_CALLBACK_TABLE_DEF
-const FT_Driver_ClassRec  cff_driver_class = {
+const FT_Driver_ClassRec cff_driver_class = {
 	/* begin with the FT_Module_Class fields */
 	{
 		ft_module_font_driver       |
 		ft_module_driver_scalable   |
 		ft_module_driver_has_hinter,
 
-		sizeof( CFF_DriverRec ),
+		sizeof(CFF_DriverRec),
 		"cff",
 		0x10000L,
 		0x20000L,
 
 		0,   /* module-specific interface */
 
-		(FT_Module_Constructor)cff_driver_init,
-		(FT_Module_Destructor) cff_driver_done,
-		(FT_Module_Requester)  cff_get_interface,
+		(FT_Module_Constructor) cff_driver_init,
+		(FT_Module_Destructor)  cff_driver_done,
+		(FT_Module_Requester)   cff_get_interface,
 	},
 
 	/* now the specific driver fields */
-	sizeof( TT_FaceRec ),
-	sizeof( FT_SizeRec ),
-	sizeof( CFF_GlyphSlotRec ),
+	sizeof(TT_FaceRec),
+	sizeof(FT_SizeRec),
+	sizeof(CFF_GlyphSlotRec),
 
-	(FT_Face_InitFunc)       cff_face_init,
-	(FT_Face_DoneFunc)       cff_face_done,
-	(FT_Size_InitFunc)       cff_size_init,
-	(FT_Size_DoneFunc)       cff_size_done,
-	(FT_Slot_InitFunc)       cff_slot_init,
-	(FT_Slot_DoneFunc)       cff_slot_done,
+	(FT_Face_InitFunc) cff_face_init,
+	(FT_Face_DoneFunc) cff_face_done,
+	(FT_Size_InitFunc) cff_size_init,
+	(FT_Size_DoneFunc) cff_size_done,
+	(FT_Slot_InitFunc) cff_slot_init,
+	(FT_Slot_DoneFunc) cff_slot_done,
 
-	(FT_Size_ResetPointsFunc)cff_size_reset,
-	(FT_Size_ResetPixelsFunc)cff_size_reset,
+	(FT_Size_ResetPointsFunc) cff_size_reset,
+	(FT_Size_ResetPixelsFunc) cff_size_reset,
 
-	(FT_Slot_LoadFunc)       Load_Glyph,
+	(FT_Slot_LoadFunc) Load_Glyph,
 
-	(FT_Face_GetKerningFunc) Get_Kerning,
-	(FT_Face_AttachFunc)     0,
-	(FT_Face_GetAdvancesFunc)0,
+	(FT_Face_GetKerningFunc)  Get_Kerning,
+	(FT_Face_AttachFunc)      0,
+	(FT_Face_GetAdvancesFunc) 0,
 };
+
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
-
-/* END */

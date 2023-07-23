@@ -46,6 +46,12 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/modules/autohint/ahglobal.o \
 	lib/freetype-2.1.3/modules/autohint/ahhint.o \
 	lib/freetype-2.1.3/modules/autohint/ahmodule.o \
+	lib/freetype-2.1.3/modules/cff/cffdrivr.o \
+	lib/freetype-2.1.3/modules/cff/cffparse.o \
+	lib/freetype-2.1.3/modules/cff/cffload.o \
+	lib/freetype-2.1.3/modules/cff/cffobjs.o \
+	lib/freetype-2.1.3/modules/cff/cffgload.o \
+	lib/freetype-2.1.3/modules/cff/cffcmap.o \
 	lib/freetype-2.1.3/modules/psaux/psobjs.o \
 	lib/freetype-2.1.3/modules/psaux/psauxmod.o \
 	lib/freetype-2.1.3/modules/psaux/t1decode.o \

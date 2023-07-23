@@ -1,5 +1,5 @@
 FT_USE_MODULE(autohint_module_class)
-//FT_USE_MODULE(cff_driver_class)
+FT_USE_MODULE(cff_driver_class)
 //FT_USE_MODULE(t1cid_driver_class)
 //FT_USE_MODULE(pcf_driver_class)
 //FT_USE_MODULE(bdf_driver_class)
