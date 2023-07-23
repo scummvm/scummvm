@@ -801,7 +801,6 @@ int QuickTimeParser::readDREF(Atom atom) {
 	if (atom.size > 1) {
 		Track *track = _tracks.back();
 
-		_fd->hexdump(atom.size);
 		uint32 endPos = _fd->pos() + atom.size;
 		_fd->readUint32BE(); // version + flags
 		uint32 entries = _fd->readUint32BE();
