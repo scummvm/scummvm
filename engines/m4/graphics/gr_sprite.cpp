@@ -117,7 +117,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 
 	// if it's RLE encoded, ensure the sprite will decode to match the expected size
 	if (source.encoding & RLE8) {
-		if (RLE8Decode_Size(source.data, source.stride) != (size_t)(source.stride * source.h))
+		if (RLE8Decode_Size(source.data, source.stride) != (source.stride * source.h))
 			error_show(FL, 'RLE8', "RLE8 sprite suspected BAD!");
 	}
 
