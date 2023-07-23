@@ -152,8 +152,8 @@ machine *kernel_timer_callback(int32 ticks, int16 trigger, MessageCB callMe) {
 	return (TriggerMachineByHash(1, nullptr, -1, -1, callMe, false, "timer callback"));
 }
 
-static void DrawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCodeBuff,
-		uint8 *myPalette, uint8 *ICT, M4Rect *clipRect, M4Rect *updateRect) {
+static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, GrBuff *screenCodeBuff,
+		uint8 *myPalette, uint8 *ICT) {
 	M4sprite *source;
 
 	// Temporary var to prevent excessive dereferences
@@ -222,18 +222,14 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff
 	int32 status, scrnX1, scrnY1;
 	int32 restoreBgndX1, restoreBgndY1, restoreBgndX2, restoreBgndY2;
 	Anim8 *myAnim8;
-	M4Rect *currRect, intersectRect, noClipRect, dummyRect;
-	bool greyMode;
+	M4Rect *currRect, *newRect;
+	bool greyMode, breakFlag;
 
 	if (((myScreen = vmng_screen_find(_G(gameDrawBuff), &status)) == nullptr) || (status != SCRN_ACTIVE)) {
 		return;
 	}
 
 	Buffer *halScrnBuf = _G(gameDrawBuff)->get_buffer();
-	noClipRect.x1 = 0;
-	noClipRect.y1 = 0;
-	noClipRect.x2 = halScrnBuf->w - 1;
-	noClipRect.y2 = halScrnBuf->h - 1;
 
 	scrnX1 = myScreen->x1;
 	scrnY1 = myScreen->y1;
@@ -244,18 +240,118 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff
 	drawRectList = _GWS(deadRectList);
 	_GWS(deadRectList) = nullptr;
 
-	// The drawRectList already contains all the areas of the screen that need the
-	// background updated
+	// Now we loop back to front and set up a list of drawing areas
+	myAnim8 = _GWS(myCruncher)->backLayerAnim8;
+	while (myAnim8) {
+		myCCB = myAnim8->myCCB;
+
+		if (myCCB && myCCB->source && (!(myCCB->flags & CCB_NO_DRAW)) && (myCCB->flags & CCB_REDRAW)) {
+			currRect = myCCB->currLocation;
+			newRect = myCCB->newLocation;
+
+			if (!(myCCB->flags & CCB_STREAM) && (!greyMode || !(myCCB->source->encoding & 0x80))) {
+				vmng_AddRectToRectList(&drawRectList, currRect->x1, currRect->y1,
+					currRect->x2, currRect->y2);
+
+				if ((!greyMode && (myCCB->source->encoding & 0x80)) ||
+						(greyMode && !(myCCB->source->encoding & 0x80))) {
+					vmng_AddRectToRectList(&drawRectList, newRect->x1, newRect->y1,
+						newRect->x2, newRect->y2);
+				}
+			}
+
+			// Copy over rect
+			*currRect = *newRect;
+		}
+
+		myAnim8 = myAnim8->infront;
+	}
+
+	// The drawRectList now contains all the areas of the screen that need the background updated
 	// Update the background behind the current rect list - if we are in greyMode, we do this later
-	if (background && background->data) {
+	if (!greyMode && background && background->data) {
 		myRect = drawRectList;
+
 		while (myRect) {
 			restoreBgndX1 = imath_max(myRect->x1, 0);
 			restoreBgndY1 = imath_max(myRect->y1, 0);
 			restoreBgndX2 = imath_min(myRect->x2, background->w - 1);
 			restoreBgndY2 = imath_min(myRect->y2, background->h - 1);
+
 			gr_buffer_rect_copy(background, halScrnBuf, restoreBgndX1, restoreBgndY1,
 				restoreBgndX2 - restoreBgndX1 + 1, restoreBgndY2 - restoreBgndY1 + 1);
+
+			myRect = myRect->next;
+		}
+	}
+
+	// Further iteration to set up drawing rects
+	myAnim8 = _GWS(myCruncher)->backLayerAnim8;
+	while (myAnim8) {
+		myCCB = myAnim8->myCCB;
+
+		if (myCCB && myCCB->source && !(myCCB->flags & CCB_NO_DRAW) && (myCCB->flags & CCB_REDRAW)) {
+			if (!(myCCB->source->encoding & 0x80) || (myCCB->flags & CCB_STREAM)) {
+				currRect = myCCB->currLocation;
+				vmng_AddRectToRectList(&drawRectList, currRect->x1, currRect->y1,
+					currRect->x2, currRect->y2);
+			}
+		}
+
+		myAnim8 = myAnim8->infront;
+	}
+
+	// Handle merging intersecting draw rects
+	do {
+		// Presume we'll be able to break
+		breakFlag = true;
+
+		// Iterate through the rects
+		myAnim8 = _GWS(myCruncher)->backLayerAnim8;
+		while (myAnim8) {
+			myCCB = myAnim8->myCCB;
+
+			if (myCCB && myCCB->source && !(myCCB->flags & (CCB_NO_DRAW | CCB_REDRAW))) {
+				currRect = myCCB->currLocation;
+
+				if (vmng_RectIntersectsRectList(drawRectList, currRect->x1, currRect->y1,
+						currRect->x2, currRect->y2)) {
+					vmng_AddRectToRectList(&drawRectList, currRect->x1, currRect->y1,
+						currRect->x2, currRect->y2);
+					myCCB->flags |= CCB_REDRAW;
+
+					if (greyMode || (myCCB->source->encoding & 0x80))
+						breakFlag = false;
+
+					if (!greyMode && (myCCB->source->encoding & 0x80)) {
+						restoreBgndX1 = imath_max(currRect->x1, 0);
+						restoreBgndY1 = imath_max(currRect->y1, 0);
+						restoreBgndX2 = imath_min(currRect->x2, background->w - 1);
+						restoreBgndY2 = imath_min(currRect->y2, background->h - 1);
+
+						gr_buffer_rect_copy(background, halScrnBuf, restoreBgndX1, restoreBgndY1,
+							restoreBgndX2 - restoreBgndX1 + 1, restoreBgndY2 - restoreBgndY1 + 1);
+					}
+				}
+			}
+
+			myAnim8 = myAnim8->infront;
+		}
+	} while (!breakFlag);
+
+	// Handle update background rect area
+	if (greyMode && background && background->data) {
+		myRect = drawRectList;
+
+		while (myRect) {
+			restoreBgndX1 = imath_max(myRect->x1, 0);
+			restoreBgndY1 = imath_max(myRect->y1, 0);
+			restoreBgndX2 = imath_min(myRect->x2, background->w - 1);
+			restoreBgndY2 = imath_min(myRect->y2, background->h - 1);
+
+			gr_buffer_rect_copy(background, halScrnBuf, restoreBgndX1, restoreBgndY1,
+				restoreBgndX2 - restoreBgndX1 + 1, restoreBgndY2 - restoreBgndY1 + 1);
+
 			myRect = myRect->next;
 		}
 	}
@@ -265,36 +361,17 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff
 	myAnim8 = _GWS(myCruncher)->backLayerAnim8;
 	while (myAnim8) {
 		myCCB = myAnim8->myCCB;
-		currRect = myCCB->currLocation;
+
 		if (myCCB && myCCB->source && (!(myCCB->flags & CCB_NO_DRAW))) {
-			if (myCCB->flags & CCB_REDRAW) {
-				// Draw the sprite
-				DrawSprite(myCCB, myAnim8, halScrnBuf, screenCodeBuff, myPalette, ICT, &noClipRect, currRect);
-
-				// Add it's new location to the update list
-				vmng_AddRectToRectList(&drawRectList, currRect->x1, currRect->y1, currRect->x2, currRect->y2);
-			} else {
-				// Loop through the update list, intersect each rect with the sprites
-				// current location, and update redraw all overlapping areas
-				myRect = drawRectList;
-				while (myRect) {
-					intersectRect.x1 = imath_max(myRect->x1, currRect->x1);
-					intersectRect.y1 = imath_max(myRect->y1, currRect->y1);
-					intersectRect.x2 = imath_min(myRect->x2, currRect->x2);
-					intersectRect.y2 = imath_min(myRect->y2, currRect->y2);
-
-					// Now see if there was an intersection
-					if ((intersectRect.x1 <= intersectRect.x2) && (intersectRect.y1 <= intersectRect.y2)) {
-						// Draw just the intersected region
-						DrawSprite(myCCB, myAnim8, halScrnBuf, screenCodeBuff, myPalette, ICT, &intersectRect, &dummyRect);
-					}
-
-					// Next rect
-					myRect = myRect->next;
+			if ((myCCB->flags & CCB_REDRAW) && greyMode) {
+				if (!greyMode || !(myCCB->source->encoding & 0x80)) {
+					// Draw the sprite
+					drawSprite(myCCB, myAnim8, halScrnBuf, screenCodeBuff, myPalette, ICT);
 				}
 			}
+
+			myAnim8 = myAnim8->infront;
 		}
-		myAnim8 = myAnim8->infront;
 	}
 
 	myRect = drawRectList;
