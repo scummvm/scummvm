@@ -649,7 +649,8 @@ void AddPauseTime(int32 myTime) {
 	_GWS(pauseTime) += myTime;
 }
 
-void CycleEngines(Buffer *cleanBackground, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT, bool updateVideo) {
+void CycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
+		uint8 *myPalette, uint8 *ICT, bool updateVideo) {
 	int32 clockTime;
 
 	dbg_DebugNextCycle();

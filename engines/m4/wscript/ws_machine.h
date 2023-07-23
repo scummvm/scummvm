@@ -177,7 +177,7 @@ extern void PauseEngines();
 extern void UnpauseEngines();
 extern void AddPauseTime(int32 myTime);
 
-void CycleEngines(Buffer *cleanBackground, int16 *depth_table, GrBuff *screenCodes,
+void CycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
 	uint8 *myPalette, uint8 *ICT, bool updateVideo);
 void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT);
 
