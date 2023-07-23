@@ -104,6 +104,16 @@ T1_Size_Reset(T1_Size size) {
 	return error;
 }
 
+FT_LOCAL(FT_Error)
+T1_Pixels_Size_Reset(T1_Size size, FT_UInt pixel_width, FT_UInt pixel_height) {
+	return T1_Size_Reset(size);
+}
+
+FT_LOCAL(FT_Error)
+T1_Points_Size_Reset(T1_Size size, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution) {
+	return T1_Size_Reset(size);
+}
+
 
 /* SLOT FUNCTIONS */
 
