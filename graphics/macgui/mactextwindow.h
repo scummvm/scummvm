@@ -64,6 +64,7 @@ public:
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 	int getTextHeight() { return _mactext->getTextHeight(); }
+	int getMouseLine(int x, int y);
 
 	/**
 	 * if we want to draw the text which color is not black, then we need to set _textColorRGB

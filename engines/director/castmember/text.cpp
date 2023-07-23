@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/events.h"
+
 #include "graphics/macgui/macbutton.h"
 #include "graphics/macgui/mactextwindow.h"
 
@@ -233,20 +235,25 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_fontId = macFont.getId();
 }
 
+bool myWindowCallback(Graphics::WindowClick click, Common::Event &event, void *ptr) {
+	return g_director->getCurrentMovie()->processEvent(event);
+}
+
 Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Channel *channel, Common::Rect dims, Graphics::MacFont *macFont) {
 	Graphics::MacWidget *widget = nullptr;
 
-	if (_textType == kTextTypeScrolling) {
+	if (_textType == kTextTypeScrolling || true) {
 		Graphics::MacTextWindow *window = (Graphics::MacTextWindow *)g_director->_wm->addTextWindow(macFont, getForeColor(), getBackColor(), _initialRect.width(),
 														  getAlignment(), nullptr, false);
-
+		// Set callback so that we can process events like mouse clicks
+		window->setCallback(myWindowCallback, window);
 		// Set widget to this window!
 		widget = window;
 
 		// Set configuration
 		window->setBorderType(Graphics::kWindowBorderMacOSNoBorderScrollbar);
 		window->enableScrollbar(true);
-		window->setMode(Graphics::kWindowModeDynamicScrollbar);
+		// window->setMode(Graphics::kWindowModeDynamicScrollbar);
 		window->move(bbox.left, bbox.top);
 		window->resize(dims.width(), dims.height());
 		window->setEditable(false);
