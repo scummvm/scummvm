@@ -33,7 +33,7 @@ uint8 k8bitMaxVariable = 64;
 uint8 k8bitMaxShield = 64;
 uint8 k8bitMaxEnergy = 64;
 
-Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions, bool multipleConditionals) {
+Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
@@ -365,8 +365,13 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			// this should toggle border colour or the room palette
 			detokenisedStream += "SPFX (";
 			currentInstruction = FCLInstruction(Token::SPFX);
-			currentInstruction.setSource(tokenisedCondition[bytePointer] >> 4);
-			currentInstruction.setDestination(tokenisedCondition[bytePointer] & 0xf);
+			if (isAmigaAtari) {
+				currentInstruction.setSource(tokenisedCondition[bytePointer] >> 8);
+				currentInstruction.setDestination(tokenisedCondition[bytePointer] & 0xff);
+			} else {
+				currentInstruction.setSource(tokenisedCondition[bytePointer] >> 4);
+				currentInstruction.setDestination(tokenisedCondition[bytePointer] & 0xf);
+			}
 			detokenisedStream += Common::String::format("%d, %d)", currentInstruction._source, currentInstruction._destination);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);

@@ -47,7 +47,7 @@ extern uint8 k8bitMaxVariable;
 extern uint8 k8bitMaxShield;
 extern uint8 k8bitMaxEnergy;
 
-Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions, bool enableActivated);
+Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool enableActivated);
 
 } // End of namespace Freescape
 

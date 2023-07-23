@@ -204,7 +204,7 @@ void DrillerEngine::loadAssetsFullGame() {
 	*/
 
 	FCLInstructionVector instructions;
-	Common::Array<uint8> conditionArray;
+	Common::Array<uint16> conditionArray;
 
 	conditionArray.push_back(0xb);
 	conditionArray.push_back(0x20);

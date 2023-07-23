@@ -62,13 +62,16 @@ uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
 	return value;
 }
 
-Common::Array<uint8> FreescapeEngine::readArray(Common::SeekableReadStream *file, int size) {
-	byte *data = (byte *)malloc(size);
+Common::Array<uint16> FreescapeEngine::readArray(Common::SeekableReadStream *file, int size) {
+	Common::Array<uint16> array;
+
 	for (int i = 0; i < size; i++) {
-		data[i] = readField(file, 8);
+		if (isAmiga() || isAtariST()) {
+			uint16 value = file->readUint16BE();
+			array.push_back(value);
+		} else
+			array.push_back(readField(file, 8));
 	}
-	Common::Array<uint8> array(data, size);
-	free(data);
 	return array;
 }
 
@@ -193,8 +196,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		FCLInstructionVector instructions;
 		Common::String conditionSource;
 		if (byteSizeOfObject) {
-			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
-			conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
+			Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
+			conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			// instructions = getInstructions(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
@@ -263,8 +266,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		byteSizeOfObject = byteSizeOfObject - 5;
 		// grab the object condition, if there is one
 		if (byteSizeOfObject) {
-			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
-			conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
+			Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
+			conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", long(file->pos()));
@@ -563,8 +566,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debugC(1, kFreescapeDebugParser, "length of condition: %d", lengthOfCondition);
 		// get the condition
 		if (lengthOfCondition > 0) {
-			Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
+			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
+			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			area->_conditions.push_back(instructions);
 			area->_conditionSources.push_back(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
@@ -661,8 +664,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "length of condition: %d at %lx", lengthOfCondition, long(file->pos()));
 		// get the condition
 		if (lengthOfCondition > 0) {
-			Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
+			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
+			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
 			_conditions.push_back(instructions);
 			_conditionSources.push_back(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
