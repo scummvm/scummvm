@@ -64,12 +64,9 @@ protected:
 	int _runningTasks;
 
 	long _lastMouseDown;
-	long _lastMouseTap;
 	long _queuedEventTime;
 	Common::Event _queuedInputEvent;
 	bool _secondaryTapped;
-	long _lastSecondaryDown;
-	long _lastSecondaryTap;
 	bool _mouseClickAndDragEnabled;
 	bool _touchpadModeEnabled;
 	int _lastPadX;
