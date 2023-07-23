@@ -232,8 +232,7 @@ bool OSystem_iOS7::handleEvent_touchFirstUp(Common::Event &event, int x, int y) 
 
 			_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
 			handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
-			_lastMouseTap = getMillis();
-			_queuedEventTime = _lastMouseTap + kQueuedInputEventDelay;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 		} else
 			return false;
 	}
@@ -242,7 +241,6 @@ bool OSystem_iOS7::handleEvent_touchFirstUp(Common::Event &event, int x, int y) 
 }
 
 bool OSystem_iOS7::handleEvent_touchSecondDown(Common::Event &event, int x, int y) {
-	_lastSecondaryDown = getMillis();
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONUP;
