@@ -36,29 +36,29 @@ namespace Crab {
 using namespace pyrodactyl::item;
 
 void StatPreview::load(rapidxml::xml_node<char> *node) {
-	loadBool(enabled, "enabled", node);
+	loadBool(_enabled, "enabled", node);
 
 	if (nodeValid("stat", node)) {
 		rapidxml::xml_node<char> *snode = node->first_node("stat");
 		stat.load(snode);
-		loadNum(inc_s.x, "w", snode);
-		loadNum(inc_s.y, "h", snode);
+		loadNum(_incS.x, "w", snode);
+		loadNum(_incS.y, "h", snode);
 	}
 
 	if (nodeValid("unit", node)) {
 		rapidxml::xml_node<char> *snode = node->first_node("unit");
 		unit.load(snode);
-		loadNum(inc_u.x, "w", snode);
-		loadNum(inc_u.y, "h", snode);
+		loadNum(_incU.x, "w", snode);
+		loadNum(_incU.y, "h", snode);
 	}
 }
 
 void StatPreview::draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper) {
-	if (enabled) {
+	if (_enabled) {
 		int count = 0;
 		for (auto i = item._bonus.begin(); i != item._bonus.end(); ++i, ++count) {
-			stat.draw(helper.Name(i->type), inc_s.x * count, inc_s.y * count);
-			unit.draw(gStrPool->Get(i->val), inc_u.x * count, inc_u.y * count);
+			stat.draw(helper.Name(i->type), _incS.x * count, _incS.y * count);
+			unit.draw(gStrPool->Get(i->val), _incU.x * count, _incU.y * count);
 		}
 	}
 }

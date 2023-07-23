@@ -44,11 +44,13 @@ struct StatPreview {
 	pyrodactyl::ui::SectionHeader stat, unit;
 
 	// We increment stat draw position by this much for every new item bonus
-	Vector2i inc_s, inc_u;
+	Vector2i _incS, _incU;
 
-	bool enabled;
+	bool _enabled;
 
-	StatPreview() { enabled = false; }
+	StatPreview() {
+		_enabled = false;
+	}
 
 	void load(rapidxml::xml_node<char> *node);
 	void draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper);
