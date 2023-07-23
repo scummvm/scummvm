@@ -109,6 +109,7 @@ private:
 
 	uint32 _hScrollStartTimeStamp;
 	uint32 _hScrollResumeTimeStamp;
+	int _hScrollState;
 
 	uint8 _textColor[3];
 	int16 _shadowColor;
@@ -1576,10 +1577,12 @@ void DarkmoonSequenceHelper::copyPalette(int srcIndex, int destIndex) {
 }
 
 int DarkmoonSequenceHelper::hScroll(bool restart) {
-	if (restart)
+	if (restart) {
 		_hScrollStartTimeStamp = _system->getMillis();
-	else if (!_hScrollStartTimeStamp)
+		_hScrollState = -1;
+	} else if (!_hScrollStartTimeStamp) {
 		return 0;
+	}
 
 	uint32 ct = _system->getMillis();
 	int state = (ct - _hScrollStartTimeStamp) / 18;
@@ -1591,13 +1594,19 @@ int DarkmoonSequenceHelper::hScroll(bool restart) {
 	}
 
 	_hScrollResumeTimeStamp = ct;
+	
+	if (state != _hScrollState) {
+		_screen->copyRegion(9, 8, 8, 8, 303, 128, 0, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(state, 0, 311, 8, 1, 128, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	}
 
-	_screen->copyRegion(9, 8, 8, 8, 303, 128, 0, 0, Screen::CR_NO_P_CHECK);
-	_screen->copyRegion(state, 0, 311, 8, 1, 128, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
+	_hScrollState = state;
 
-	if (state == 279)
+	if (state == 279) {
 		_hScrollStartTimeStamp = 0;
+		_hScrollState = -1;
+	}
 
 	return state;
 }
@@ -1702,7 +1711,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	_sndNextTrackMarker = 0;
 	_sndMarkersFMTowns = soundMarkersFMTowns[mode];
 	_hScrollStartTimeStamp = _hScrollResumeTimeStamp = 0;
-	_shadowColor = -1;
+	_hScrollState = _shadowColor = -1;
 
 	if (mode == kIntro) {
 		_config = new Config(
@@ -1870,8 +1879,10 @@ void DarkmoonSequenceHelper::setPaletteWithoutTextColor(int index) {
 		_palettes[11]->copy(*_palettes[0], numCol, 1, numCol);
 	setPalette(11);
 
-	_screen->updateScreen();
-	_system->delayMillis(10);
+	if (_hScrollState == -1) {
+		_screen->updateScreen();
+		_system->delayMillis(10);
+	}
 }
 
 void DarkmoonSequenceHelper::printStringIntern(const char *str, int x, int y, int col) {
