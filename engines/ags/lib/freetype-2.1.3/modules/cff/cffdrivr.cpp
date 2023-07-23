@@ -98,7 +98,7 @@ Found:
 #undef PAIR_TAG
 
 
-static FT_Error Load_Glyph(CFF_GlyphSlot slot, CFF_Size size, FT_UShort glyph_index, FT_Int32 load_flags) {
+static FT_Error Load_Glyph(CFF_GlyphSlot slot, CFF_Size size, FT_UInt glyph_index, FT_Int32 load_flags) {
 	FT_Error error;
 
 	if (!slot)
