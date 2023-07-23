@@ -78,6 +78,7 @@ static const MenuButton kMenuButtonsRu[] = {
 };
 
 MainMenu::MainMenu(BbvsEngine *vm) : Dialog(0, 0, 1, 1), _vm(vm) {
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundNone;
 	init();
 }
 
