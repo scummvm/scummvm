@@ -25,9 +25,6 @@
 
 namespace M4 {
 
-#define EOL_CODE 3
-#define END_CODE 2
-
 void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
 	byte val, count;
 	int line = 0, numY = 0;
@@ -45,18 +42,18 @@ void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
 		} else {
 			count = *inBuff++;
 
-			if (count > EOL_CODE) {
+			if (count >= 3) {
 				// Block of uncompressed pixels to copy
 				Common::copy(inBuff, inBuff + count, destP);
 				inBuff += count;
 				destP += count;
 
-			} else if (count == EOL_CODE) {
+			} else if (!(count & 3)) {
 				// End of Line code
 				++line;
 				destP = outBuff + line * pitch;
 
-			} else if (count == END_CODE) {
+			} else if (!(count & 2)) {
 				break;
 
 			} else {
@@ -76,11 +73,11 @@ uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData) {
 			// Simple RLE sequence, so skip over count and value
 			rleData += 2;
 
-		} else if (rleData[1] < EOL_CODE) {
+		} else if (rleData[1] >= 3) {
+			rleData += 2 + rleData[2];
+		} else {
 			rleData += 2;
 			--linesToSkip;
-		} else {
-			rleData += 2 + rleData[2];
 		}
 	}
 
@@ -88,7 +85,7 @@ uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData) {
 }
 
 size_t RLE8Decode_Size(byte *src, int pitch) {
-	size_t total = 0, numLines = 0, x, y;
+	size_t total = 0, line = 0, y;
 	byte count;
 
 	for (;;) {
@@ -100,23 +97,25 @@ size_t RLE8Decode_Size(byte *src, int pitch) {
 		} else {
 			count = *src++;
 
-			// TODO: This seems inconsistent with RLE8Decode. Verify the totals are correct
-			if (count >= EOL_CODE) {
+			if (count >= 3) {
+				// Block of uncompressed pixels to copy
+				total += count;
 				src += count;
-				count += count;
 
 			} else if (!(count & 3)) {
-				++numLines;
-				count = pitch * numLines;
+				// End of Line code
+				++line;
+				total = line * pitch;
 
 			} else if (!(count & 2)) {
 				break;
 
 			} else {
-				x = *src++;
-				y = *src++;
-				numLines += y;
-				count += x + y * pitch;
+				// Move down by X, Y amount
+				total += *src++;	// x amount
+				y = *src++;			// y amount
+				line += y;
+				total += y * pitch;
 			}
 		}
 	}
