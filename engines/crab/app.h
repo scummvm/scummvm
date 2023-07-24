@@ -48,17 +48,8 @@ namespace Crab {
 class App {
 private:
 	Game *_game;
-
 	void loadSettings(const Common::String &filename);
 public:
-	App(void) {
-#if 0
-		// OS X .app files need to set the working directory
-		char *working_directory = SDL_GetBasePath();
-		chdir(working_directory);
-		SDL_free(working_directory);
-#endif
-	}
 	~App(void);
 
 	void run();
