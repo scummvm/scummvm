@@ -845,8 +845,8 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 	dbg_SetCurrMachInstr(m, *pcOffset);
 
 	// Find the current PC and process it to get the current instruction
-	machInstr = (uint32 *)((intptr_t)(*(m->machHandle)) + m->machInstrOffset);
-	myPC = (uint32 *)((intptr_t)(machInstr) + *pcOffset);
+	machInstr = (uint32 *)((intptr)(*(m->machHandle)) + m->machInstrOffset);
+	myPC = (uint32 *)((intptr)(machInstr) + *pcOffset);
 	oldPC = myPC;
 	_GWS(pcOffsetOld) = *pcOffset;
 

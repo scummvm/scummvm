@@ -40,10 +40,10 @@ typedef void *Ptr;
 typedef void *Handle;
 
 /**
- * This needs to be intptr_t in ScummVM because series_stream in gr_series.cpp stores
+ * This needs to be intptr in ScummVM because series_stream in gr_series.cpp stores
  * a pointer as a global. On some systems size(ptr) > sizeof(int)
  */
-typedef intptr_t frac16;
+typedef intptr frac16;
 
 typedef uint32 ulong;
 typedef uint32 quadchar;
