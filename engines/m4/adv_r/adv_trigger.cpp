@@ -129,29 +129,26 @@ bool kernel_trigger_dispatchx(int32 trigger_num) {
 	return result;
 }
 
-void kernel_timing_trigger(int32 ticks, int16 trigger, char * /*name*/) {
-	if (ticks < 0)
-		error_show(FL, 'TICK');
+static void timer_callback(frac16 myMessage, struct machine *sender) {
+	kernel_trigger_dispatchx(myMessage);
+}
 
-	int32 done_time = ticks + timer_read_60();
-	_GT(time_q)[_GT(time_q_end)] = done_time;
-	_GT(time_trigger_q)[_GT(time_q_end)] = kernel_trigger_create(trigger);
-	++_GT(time_q_end);
-	if (_GT(time_q_end) == MAX_TIMERS)
-		error_show(FL, 'QOVF');
+void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name) {
+	if (ticks <= 0) {
+		// Trigger immediately
+		kernel_trigger_dispatchx(kernel_trigger_create(trigger));
+		return;
+	}
 
-	// bubble the new entry up in the q to its proper place
+	_G(globals)[GLB_TEMP_1] = ticks << 16;
+	_G(globals)[GLB_TEMP_2] = kernel_trigger_create(trigger);
 
-	for (int32 iter = _GT(time_q_end) - 1; iter > 0; iter--) {
-		if (_GT(time_q)[iter] < _GT(time_q)[iter - 1]) {
-			int32 temp = _GT(time_q)[iter];
-			_GT(time_q)[iter] = _GT(time_q)[iter - 1];
-			_GT(time_q)[iter - 1] = temp;
+	if (name) {
+		Common::String machName = Common::String::format("timer - %s", name);
+		TriggerMachineByHash(2, nullptr, -1, -1, timer_callback, false, machName.c_str());
 
-			temp = _GT(time_trigger_q)[iter];
-			_GT(time_trigger_q)[iter] = _GT(time_trigger_q)[iter - 1];
-			_GT(time_trigger_q)[iter - 1] = temp;
-		}
+	} else {
+		TriggerMachineByHash(2, nullptr, -1, -1, timer_callback, false, "timer trigger");
 	}
 }
 
