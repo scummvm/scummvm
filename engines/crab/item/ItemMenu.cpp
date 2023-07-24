@@ -39,7 +39,7 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load the layout and items
 //------------------------------------------------------------------------
-void ItemMenu::Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows, const unsigned int &cols,
+void ItemMenu::init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows, const unsigned int &cols,
 					const bool &keyboard) {
 	unsigned int size = rows * cols;
 	for (unsigned int i = 0; i < size; ++i) {
@@ -72,21 +72,21 @@ void ItemMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 //------------------------------------------------------------------------
 // Purpose: Handles drag n' drop - return type is Boolean because we only need to communicate stat changes
 //------------------------------------------------------------------------
-void ItemMenu::handleEvents(const Common::Event &event, const int &XOffset, const int &YOffset) {
+void ItemMenu::handleEvents(const Common::Event &event, const int &xOffset, const int &yOffset) {
 	int result = Menu<ItemSlot>::handleEvents(event);
 	if (result != -1) {
-		select_index = result;
+		_selectIndex = result;
 		for (unsigned int i = 0; i < _element.size(); ++i)
-			_element[i].state(i == (unsigned int)select_index);
+			_element[i].state(i == (unsigned int)_selectIndex);
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Draw the slot backgrounds first, then the items
 //------------------------------------------------------------------------
-void ItemMenu::draw(ItemDesc &item_info) {
-	if (select_index != -1)
-		item_info.draw(_element[select_index]._item);
+void ItemMenu::draw(ItemDesc &itemInfo) {
+	if (_selectIndex != -1)
+		itemInfo.draw(_element[_selectIndex]._item);
 
 	for (auto i = _element.begin(); i != _element.end(); ++i)
 		i->draw();
@@ -95,7 +95,7 @@ void ItemMenu::draw(ItemDesc &item_info) {
 //------------------------------------------------------------------------
 // Purpose: Equip an item at the first available location (used in events)
 //------------------------------------------------------------------------
-bool ItemMenu::Equip(Item &item) {
+bool ItemMenu::equip(Item &item) {
 	for (auto i = _element.begin(); i != _element.end(); ++i)
 		if (i->_category == SLOT_STORAGE && i->equip(item))
 			return true;
@@ -106,7 +106,7 @@ bool ItemMenu::Equip(Item &item) {
 //------------------------------------------------------------------------
 // Purpose: Remove all instances of an item
 //------------------------------------------------------------------------
-bool ItemMenu::Del(const Common::String &id) {
+bool ItemMenu::del(const Common::String &id) {
 	bool result = false;
 
 	for (auto &i : _element)
@@ -124,7 +124,7 @@ bool ItemMenu::Del(const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Find out if we have an item with a name
 //------------------------------------------------------------------------
-bool ItemMenu::Has(const Common::String &container, const Common::String &id) {
+bool ItemMenu::has(const Common::String &container, const Common::String &id) {
 	for (auto i = _element.begin(); i != _element.end(); ++i)
 		if (i->_item._id == id) {
 			if (container == "equip") {
@@ -143,23 +143,23 @@ bool ItemMenu::Has(const Common::String &container, const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Swap an item with another item menu
 //------------------------------------------------------------------------
-bool ItemMenu::Swap(ItemMenu &target, int index) {
+bool ItemMenu::swap(ItemMenu &target, int index) {
 	// We need to scan the slots first for an empty slot to store the item.
 	// If no empty slot is found, then swap with a filled slot of same type
 	// If no slot of type is found, don't swap items at all
-	int found_index = -1, cur_index = 0;
+	int foundIndex = -1, curIndex = 0;
 
-	for (auto i = _element.begin(); i != _element.end(); ++i, ++cur_index)
+	for (auto i = _element.begin(); i != _element.end(); ++i, ++curIndex)
 		if (i->_itemType == target._element[index]._itemType) {
 			if (i->_empty) {
 				i->swap(target._element[index]);
 				return true;
 			} else
-				found_index = cur_index;
+				foundIndex = curIndex;
 		}
 
-	if (found_index != -1) {
-		_element[found_index].swap(target._element[index]);
+	if (foundIndex != -1) {
+		_element[foundIndex].swap(target._element[index]);
 		return true;
 	}
 
