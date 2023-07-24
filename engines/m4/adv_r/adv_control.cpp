@@ -185,7 +185,7 @@ void update_mouse_pos_dialog() {
 
 	char tempStr1[MAX_STRING_LEN], tempStr2[MAX_STRING_LEN];
 
-	Common::sprintf_s(tempStr1, "%ld  From: %ld", _G(game).room_id, _G(game).previous_room);
+	Common::sprintf_s(tempStr1, "%d  From: %d", _G(game).room_id, _G(game).previous_room);
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 1);
 
 	int32 xxx = _G(MouseState).CursorColumn;
@@ -195,32 +195,32 @@ void update_mouse_pos_dialog() {
 	int32 palColor = get_screen_color(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1);
 
 	if (this_is_a_walkcode(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1)) {
-		Common::sprintf_s(tempStr1, "WC %ld, %ld  PAL: %ld", xxx, yyy, palColor);
-		Common::sprintf_s(tempStr2, "WC %ld, %ld  D: %ld", xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1, scrnDepth);
+		Common::sprintf_s(tempStr1, "WC %d, %d  PAL: %d", xxx, yyy, palColor);
+		Common::sprintf_s(tempStr2, "WC %d, %d  D: %d", xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1, scrnDepth);
 	} else {
-		Common::sprintf_s(tempStr1, "   %ld, %ld  PAL: %d", xxx, yyy, palColor);
-		Common::sprintf_s(tempStr2, "   %ld, %ld  D: %ld", xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1, scrnDepth);
+		Common::sprintf_s(tempStr1, "   %d, %d  PAL: %d", xxx, yyy, palColor);
+		Common::sprintf_s(tempStr2, "   %d, %d  D: %d", xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1, scrnDepth);
 	}
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 2);
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr2, NULL, 3);
 
 	if (this_is_a_walkcode(_G(player_info).x, _G(player_info).y)) {
-		Common::sprintf_s(tempStr1, "WC %ld, %ld", _G(player_info).x + game_buff_ptr->x1, _G(player_info).y + game_buff_ptr->y1);
-		Common::sprintf_s(tempStr2, "WC %ld, %ld", _G(player_info).x, _G(player_info).y);
+		Common::sprintf_s(tempStr1, "WC %d, %d", _G(player_info).x + game_buff_ptr->x1, _G(player_info).y + game_buff_ptr->y1);
+		Common::sprintf_s(tempStr2, "WC %d, %d", _G(player_info).x, _G(player_info).y);
 	} else {
-		Common::sprintf_s(tempStr1, "  %ld, %ld", _G(player_info).x + game_buff_ptr->x1, _G(player_info).y + game_buff_ptr->y1);
-		Common::sprintf_s(tempStr2, "  %ld, %ld", _G(player_info).x, _G(player_info).y);
+		Common::sprintf_s(tempStr1, "  %d, %d", _G(player_info).x + game_buff_ptr->x1, _G(player_info).y + game_buff_ptr->y1);
+		Common::sprintf_s(tempStr2, "  %d, %d", _G(player_info).x, _G(player_info).y);
 	}
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 4);
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr2, NULL, 5);
 
-	Common::sprintf_s(tempStr1, "%ld", _G(player_info).scale);
+	Common::sprintf_s(tempStr1, "%d", _G(player_info).scale);
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 6);
 
 	Common::sprintf_s(tempStr1, "%x", _G(player_info).depth);
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 7);
 
-	Common::sprintf_s(tempStr1, "%ld, %ld", game_buff_ptr->x1, game_buff_ptr->y1);
+	Common::sprintf_s(tempStr1, "%d, %d", game_buff_ptr->x1, game_buff_ptr->y1);
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, NULL, 8);
 
 	Common::sprintf_s(tempStr1, "%d", _G(player_info).facing);
