@@ -89,7 +89,7 @@ void MusicManager::playEffect(const ChunkKey &id, const int &loops) {
 	// For now error out in case loops > 0.
 	assert(loops == 0);
 
-	if (_effects.contains((id))) {
+	if (_effects.contains(id)) {
 		EffectAudio *audio = _effects[id];
 		audio->_stream->rewind();
 		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, audio->_handle, audio->_stream, id, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
