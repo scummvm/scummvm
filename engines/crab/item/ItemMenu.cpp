@@ -72,8 +72,8 @@ void ItemMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 //------------------------------------------------------------------------
 // Purpose: Handles drag n' drop - return type is Boolean because we only need to communicate stat changes
 //------------------------------------------------------------------------
-void ItemMenu::handleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
-	int result = Menu<ItemSlot>::handleEvents(Event);
+void ItemMenu::handleEvents(const Common::Event &event, const int &XOffset, const int &YOffset) {
+	int result = Menu<ItemSlot>::handleEvents(event);
 	if (result != -1) {
 		select_index = result;
 		for (unsigned int i = 0; i < _element.size(); ++i)

@@ -223,10 +223,10 @@ public:
 		updateInfo();
 	}
 
-	int handleEvents(const Common::Event &Event) {
+	int handleEvents(const Common::Event &event) {
 		using namespace pyrodactyl::input;
 
-		if (_currentPage > 0 && _prev.handleEvents(Event) == BUAC_LCLICK) {
+		if (_currentPage > 0 && _prev.handleEvents(event) == BUAC_LCLICK) {
 			_currentPage--;
 			updateInfo();
 
@@ -234,7 +234,7 @@ public:
 				_currentPage = 0;
 		}
 
-		if (_currentPage < _menu.size() - 1 && _next.handleEvents(Event) == BUAC_LCLICK) {
+		if (_currentPage < _menu.size() - 1 && _next.handleEvents(event) == BUAC_LCLICK) {
 			_currentPage++;
 			updateInfo();
 
@@ -242,7 +242,7 @@ public:
 				_currentPage = _menu.size() - 1;
 		}
 
-		return _menu[_currentPage].handleEvents(Event);
+		return _menu[_currentPage].handleEvents(event);
 	}
 
 	void draw() {

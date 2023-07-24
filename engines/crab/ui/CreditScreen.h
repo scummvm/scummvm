@@ -117,7 +117,7 @@ public:
 	void load(const Common::String &filename);
 	void reset();
 
-	bool handleEvents(Common::Event &Event);
+	bool handleEvents(Common::Event &event);
 
 	void draw();
 

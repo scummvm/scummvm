@@ -64,7 +64,7 @@ public:
 
 	void draw();
 
-	bool handleEvents(const Common::Event &Event);
+	bool handleEvents(const Common::Event &event);
 
 	void setUI();
 };

@@ -102,9 +102,9 @@ void Inventory::draw(Person &obj, const int &moneyVal) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Inventory::handleEvents(const Common::String &string, const Common::Event &Event) {
-	_collection.handleEvents(string, Event);
-	_money.handleEvents(Event);
+void Inventory::handleEvents(const Common::String &string, const Common::Event &event) {
+	_collection.handleEvents(string, event);
+	_money.handleEvents(event);
 }
 
 //------------------------------------------------------------------------

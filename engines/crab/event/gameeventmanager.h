@@ -98,7 +98,7 @@ public:
 	// cur_per is also updated here
 	void internalEvents(Info &info, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 
-	void handleEvents(Info &info, const Common::String &playerId, Common::Event &Event,
+	void handleEvents(Info &info, const Common::String &playerId, Common::Event &event,
 					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 
 	void calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const Rect &camera);

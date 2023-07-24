@@ -90,7 +90,7 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	PauseSignal handleEvents(const Common::Event &Event, Button &back);
+	PauseSignal handleEvents(const Common::Event &event, Button &back);
 
 	// Returns true if inside options menu, false otherwise
 	bool draw(Button &back);

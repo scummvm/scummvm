@@ -145,7 +145,7 @@ void Button::hoverInfoOnlyDraw(const int &xOffset, const int &yOffset, Rect *cli
 //------------------------------------------------------------------------
 // Purpose: Handle input and stuff
 //------------------------------------------------------------------------
-ButtonAction Button::handleEvents(const Common::Event &Event, const int &xOffset, const int &yOffset) {
+ButtonAction Button::handleEvents(const Common::Event &event, const int &xOffset, const int &yOffset) {
 	Rect dim = *this;
 	dim.x += xOffset;
 	dim.y += yOffset;
@@ -163,27 +163,27 @@ ButtonAction Button::handleEvents(const Common::Event &Event, const int &xOffset
 			_hoverMouse = false;
 		}
 
-		if (Event.type == Common::EVENT_MOUSEMOVE) {
+		if (event.type == Common::EVENT_MOUSEMOVE) {
 			if (_canmove && _mousePressed) {
 				x += g_engine->_mouse->_rel.x;
 				y += g_engine->_mouse->_rel.y;
 				return BUAC_GRABBED;
 			}
-		} else if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
+		} else if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 			// The g_engine->_mouse button pressed, then released, comprises of a click action
 			if (dim.contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y))
 				_mousePressed = true;
-		} else if ((Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP) && _mousePressed) {
+		} else if ((event.type == Common::EVENT_LBUTTONUP || event.type == Common::EVENT_RBUTTONUP) && _mousePressed) {
 			reset();
 			if (dim.contains(g_engine->_mouse->_button.x, g_engine->_mouse->_button.y)) {
 				_mousePressed = false;
-				if (Event.type == Common::EVENT_LBUTTONUP) {
+				if (event.type == Common::EVENT_LBUTTONUP) {
 					g_engine->_musicManager->playEffect(_seClick, 0);
 					return BUAC_LCLICK;
-				} else if (Event.type == Common::EVENT_RBUTTONUP)
+				} else if (event.type == Common::EVENT_RBUTTONUP)
 					return BUAC_RCLICK;
 			}
-		} else if (_hotkey.handleEvents(Event)) {
+		} else if (_hotkey.handleEvents(event)) {
 			g_engine->_musicManager->playEffect(_seClick, 0);
 			return BUAC_LCLICK;
 		}

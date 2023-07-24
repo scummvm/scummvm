@@ -59,12 +59,12 @@ bool PauseMenu::draw(Button &back) {
 	return false;
 }
 
-PauseSignal PauseMenu::handleEvents(const Common::Event &Event, Button &back) {
+PauseSignal PauseMenu::handleEvents(const Common::Event &event, Button &back) {
 	switch (_state) {
 	case STATE_NORMAL:
-		_choice = _menu.handleEvents(Event);
+		_choice = _menu.handleEvents(event);
 		if (_choice == -1) {
-			if (back._hotkey.handleEvents(Event))
+			if (back._hotkey.handleEvents(event))
 				return PS_RESUME;
 		} else {
 			switch (_choice) {
@@ -100,7 +100,7 @@ PauseSignal PauseMenu::handleEvents(const Common::Event &Event, Button &back) {
 		}
 		break;
 	case STATE_OPTION:
-		if (g_engine->_optionMenu->handleEvents(back, Event)) {
+		if (g_engine->_optionMenu->handleEvents(back, event)) {
 			g_engine->_optionMenu->reset();
 			_state = STATE_NORMAL;
 		}

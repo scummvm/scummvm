@@ -73,9 +73,6 @@ public:
 
 	// Return 1 if one of resolution buttons is pressed, 2 if custom button is pressed, 0 otherwise
 	int handleEvents(const Common::Event &event);
-#if 0
-	int handleEvents(const SDL_Event &Event);
-#endif
 
 	void setInfo();
 

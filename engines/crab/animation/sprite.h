@@ -264,7 +264,7 @@ public:
 	void setDestPathfinding(const Vector2i &dest, bool reachable = true);
 
 	// Used for sprite movement controlled by player input (usually the player sprite)
-	void handleEvents(pyrodactyl::event::Info &info, const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc, const Common::Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc, const Common::Event &event);
 
 	// This is for sprites with valid object ids
 	void animate(pyrodactyl::event::Info &info);

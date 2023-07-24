@@ -152,8 +152,8 @@ void QuestMenu::draw(Button &buMap) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event) {
-	int res = _menu.handleEvents(Event);
+bool QuestMenu::handleEvents(Button &buMap, Common::String &mapTitle, const Common::Event &event) {
+	int res = _menu.handleEvents(event);
 	if (res != -1) {
 		if (_selBu >= 0 && _selPage >= 0)
 			_menu.image(_selBu, _selPage, _imgN);
@@ -170,13 +170,13 @@ bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const Co
 
 	if (_selQuest >= 0 && (unsigned int)_selQuest < _quest.size()) {
 		if (_quest[_selQuest]._marker)
-			if (bu_map.handleEvents(Event) == BUAC_LCLICK) {
+			if (buMap.handleEvents(event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
-				map_title = _quest[_selQuest]._title;
+				mapTitle = _quest[_selQuest]._title;
 				return true;
 			}
 
-		_text.handleEvents(_quest[_selQuest], Event);
+		_text.handleEvents(_quest[_selQuest], event);
 	}
 
 	return false;

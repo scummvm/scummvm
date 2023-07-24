@@ -64,12 +64,12 @@ void OptionSelect::draw() {
 		_next.draw();
 }
 
-bool OptionSelect::handleEvents(const Common::Event &Event) {
+bool OptionSelect::handleEvents(const Common::Event &event) {
 	using namespace pyrodactyl::input;
 
 	if (_cur > 0) {
 		// Don't check for keyboard inputs for now
-		if (_prev.handleEvents(Event) == BUAC_LCLICK) {
+		if (_prev.handleEvents(event) == BUAC_LCLICK) {
 			_cur--;
 			return true;
 		}
@@ -78,7 +78,7 @@ bool OptionSelect::handleEvents(const Common::Event &Event) {
 	if ((unsigned int)_cur < option._text.size() - 1) {
 
 		// Don't check for keyboard inputs for now
-		if (_next.handleEvents(Event) == BUAC_LCLICK) {
+		if (_next.handleEvents(event) == BUAC_LCLICK) {
 			_cur++;
 			return true;
 		}

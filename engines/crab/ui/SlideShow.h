@@ -76,7 +76,7 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void handleEvents(const Common::Event &Event);
+	void handleEvents(const Common::Event &event);
 
 	void draw();
 

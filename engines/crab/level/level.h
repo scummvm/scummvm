@@ -206,7 +206,7 @@ public:
 	// Get index of a sprite in the object array
 	pyrodactyl::anim::Sprite *getSprite(const Common::String &id);
 
-	void handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const Common::Event &event);
 	LevelResult internalEvents(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
 							   Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq, bool eventInProgress);
 

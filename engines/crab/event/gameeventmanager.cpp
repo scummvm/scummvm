@@ -95,19 +95,19 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::handleEvents(Info &info, const Common::String &playerId, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
+void Manager::handleEvents(Info &info, const Common::String &playerId, Common::Event &event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (_eventMap.contains(info.curLocID()) > 0 && _eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
 		switch (_curEvent->_type) {
 		case EVENT_DIALOG:
 			if (_oh._showJournal) {
-				info._journal.handleEvents(playerId, Event);
+				info._journal.handleEvents(playerId, event);
 
-				if (hud._back.handleEvents(Event) == BUAC_LCLICK || hud._pausekey.handleEvents(Event))
+				if (hud._back.handleEvents(event) == BUAC_LCLICK || hud._pausekey.handleEvents(event))
 					_oh._showJournal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
-				if (_oh.handleCommonEvents(Event)) {
+				if (_oh.handleCommonEvents(event)) {
 					if (info.personValid(_curEvent->_title)) {
 						Person &p = info.personGet(_curEvent->_title);
 						if (p._altJournalName)
@@ -117,7 +117,7 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 					}
 				}
 
-				if (_oh.handleDlboxEvents(Event)) {
+				if (_oh.handleDlboxEvents(event)) {
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 					_oh._showJournal = false;
 				}
@@ -125,22 +125,22 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 			break;
 		case EVENT_ANIM:
 			// Skip animation if key pressed or mouse pressed
-			if (Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP)
+			if (event.type == Common::EVENT_LBUTTONUP || event.type == Common::EVENT_RBUTTONUP)
 				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 			break;
 		case EVENT_REPLY:
 			if (_oh._showJournal) {
-				info._journal.handleEvents(playerId, Event);
+				info._journal.handleEvents(playerId, event);
 
-				if (hud._back.handleEvents(Event) == BUAC_LCLICK || hud._pausekey.handleEvents(Event))
+				if (hud._back.handleEvents(event) == BUAC_LCLICK || hud._pausekey.handleEvents(event))
 					_oh._showJournal = false;
 			} else {
 				// If journal button is select from within an event, go to the entry corresponding to that person's name
-				if (_oh.handleCommonEvents(Event))
+				if (_oh.handleCommonEvents(event))
 					if (info.personValid(_curEvent->_title))
 						info._journal.open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
 
-				int choice = _reply.handleEvents(info, g_engine->_eventStore->_con[_curEvent->_special], _curEvent->_title, _oh, Event);
+				int choice = _reply.handleEvents(info, g_engine->_eventStore->_con[_curEvent->_special], _curEvent->_title, _oh, event);
 				if (choice >= 0) {
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq, choice);
 					_oh._showJournal = false;
@@ -149,21 +149,21 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 			break;
 		case EVENT_TEXT:
 			// If journal button is select from within an event, go to the entry corresponding to that person's name
-			if (_oh.handleCommonEvents(Event))
+			if (_oh.handleCommonEvents(event))
 				if (info.personValid(_curEvent->_title))
 					info._journal.open(playerId, JE_PEOPLE, info.personGet(_curEvent->_title)._name);
 
-			if (_textin.handleEvents(Event))
+			if (_textin.handleEvents(event))
 				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 			break;
 		case EVENT_SPLASH:
 			if (_intro._showTraits) {
-				_per.handleEvents(info, _curEvent->_title, Event);
+				_per.handleEvents(info, _curEvent->_title, event);
 
-				if (hud._back.handleEvents(Event) == BUAC_LCLICK || hud._pausekey.handleEvents(Event))
+				if (hud._back.handleEvents(event) == BUAC_LCLICK || hud._pausekey.handleEvents(event))
 					_intro._showTraits = false;
 			} else {
-				if (_intro.handleEvents(Event))
+				if (_intro.handleEvents(event))
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
 
 				if (_intro._showTraits)

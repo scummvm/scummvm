@@ -77,17 +77,17 @@ void SlideShow::draw() {
 		_next.draw();
 }
 
-void SlideShow::handleEvents(const Common::Event &Event) {
+void SlideShow::handleEvents(const Common::Event &event) {
 	using namespace pyrodactyl::input;
 
 	if (_index > 0)
-		if (_prev.handleEvents(Event) == BUAC_LCLICK) {
+		if (_prev.handleEvents(event) == BUAC_LCLICK) {
 			_index--;
 			refresh();
 		}
 
 	if (_index < _path.size() - 1)
-		if (_next.handleEvents(Event) == BUAC_LCLICK) {
+		if (_next.handleEvents(event) == BUAC_LCLICK) {
 			_index++;
 			refresh();
 		}
