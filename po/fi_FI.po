@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-19 20:21+0000\n"
-"PO-Revision-Date: 2023-07-02 16:40+0000\n"
+"PO-Revision-Date: 2023-07-24 21:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1824,16 +1824,16 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "Kysy lupaa sulkea ScummVM peliä sulkiessa."
 
 #: gui/options.cpp:2564
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Estä putoaminen"
+msgstr "Älä skaalaa vakiokokoisia fontteja"
 
 #: gui/options.cpp:2565
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Älä kasvata vakiokokoisia fontteja käyttöliittymässä. Tämä vähentää "
+"artefakteja matalaresoluutiosilla ruuduilla"
 
 #: gui/options.cpp:2571
 msgid "GUI language:"
@@ -4311,10 +4311,8 @@ msgstr "Näytä virtuaalikontrollit (iOS 15 tai myöhempi)"
 
 #: backends/platform/ios7/ios7_options.mm:84
 #: backends/platform/ios7/ios7_options.mm:85
-#, fuzzy
-#| msgid "Control Mouse"
 msgid "Control opacity"
-msgstr "Ohjaa hiirtä"
+msgstr "Hallinnoi läpinäkyvyyttä"
 
 #: backends/platform/ios7/ios7_options.mm:90
 msgid "Mouse-click-and-drag mode"
