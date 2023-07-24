@@ -66,10 +66,6 @@ public:
 
 	int handleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
 					 const Common::String &curId, PersonHandler &oh, const Common::Event &Event);
-#if 0
-	int handleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
-					 const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event);
-#endif
 
 	void draw();
 	void cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat);

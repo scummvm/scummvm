@@ -69,7 +69,7 @@ public:
 
 	void load(rapidxml::xml_node<char> *node, const int &min, const int &max, const int &val);
 
-	bool handleEvents(const Common::Event &Event);
+	bool handleEvents(const Common::Event &event);
 
 	void draw();
 

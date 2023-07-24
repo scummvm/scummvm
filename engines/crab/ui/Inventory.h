@@ -75,9 +75,6 @@ public:
 	void draw(pyrodactyl::people::Person &obj, const int &moneyVal);
 
 	void handleEvents(const Common::String &string, const Common::Event &Event);
-#if 0
-	void handleEvents(const Common::String &char_id, const SDL_Event &Event);
-#endif
 
 	void loadState(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

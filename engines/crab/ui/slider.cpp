@@ -86,36 +86,6 @@ bool Slider::handleEvents(const Common::Event &Event) {
 	return false;
 }
 
-#if 0
-bool Slider::handleEvents(const SDL_Event &Event) {
-	// A person is moving the knob
-	if (knob.handleEvents(Event) == BUAC_GRABBED) {
-		int dx = g_engine->_mouse->motion.x - bar.x;
-
-		if (dx < 0)
-			dx = 0;
-		else if (dx > (bar.w - knob.w))
-			dx = (bar.w - knob.w);
-
-		knob.x = bar.x + dx;
-		knob.y = bar.y;
-
-		value = min + (((max - min) * (knob.x - bar.x)) / (bar.w - knob.w));
-		return true;
-	}
-
-	// If a person clicks on the slider bar, the knob needs to travel there
-	if (Event.type == SDL_MOUSEBUTTONDOWN && bar.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y)) {
-		knob.x = g_engine->_mouse->button.x;
-		knob.y = bar.y;
-
-		value = min + (((max - min) * (knob.x - bar.x)) / (bar.w - knob.w));
-		return true;
-	}
-
-	return false;
-}
-#endif
 
 void Slider::draw() {
 	_bar.draw();

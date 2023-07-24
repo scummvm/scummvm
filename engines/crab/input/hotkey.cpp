@@ -58,7 +58,7 @@ bool HotKey::handleEvents(const SDL_Event &Event) {
 }
 #endif
 
-bool HotKey::handleEvents(const Common::Event &Event) {
+bool HotKey::handleEvents(const Common::Event &event) {
 	//warning("STUB: HotKey::handleEvents()");
 
 	if (_input > IT_NONE && _input < IT_TOTAL) {

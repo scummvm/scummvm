@@ -200,8 +200,8 @@ public:
 		scanDir();
 	}
 
-	bool handleEvents(const Common::Event &Event) {
-		int choice = _menu.handleEvents(Event);
+	bool handleEvents(const Common::Event &event) {
+		int choice = _menu.handleEvents(event);
 		if (choice >= 0) {
 			_menu.reset();
 			_selected = _slotInfo[_menu.index() + choice]._path;

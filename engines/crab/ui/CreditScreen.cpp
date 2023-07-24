@@ -104,17 +104,17 @@ void CreditScreen::load(const Common::String &filename) {
 	}
 }
 
-bool CreditScreen::handleEvents(Common::Event &Event) {
-	if (_slow.handleEvents(Event) == BUAC_LCLICK)
+bool CreditScreen::handleEvents(Common::Event &event) {
+	if (_slow.handleEvents(event) == BUAC_LCLICK)
 		_speed._cur = _speed._slow;
-	else if (_fast.handleEvents(Event) == BUAC_LCLICK)
+	else if (_fast.handleEvents(event) == BUAC_LCLICK)
 		_speed._cur = _speed._fast;
-	else if (_pause.handleEvents(Event) == BUAC_LCLICK)
+	else if (_pause.handleEvents(event) == BUAC_LCLICK)
 		_speed._cur = 0.0f;
-	else if (_reverse.handleEvents(Event) == BUAC_LCLICK)
+	else if (_reverse.handleEvents(event) == BUAC_LCLICK)
 		_speed._cur = _speed._reverse;
 
-	return (_back.handleEvents(Event) == BUAC_LCLICK);
+	return (_back.handleEvents(event) == BUAC_LCLICK);
 }
 
 #if 0

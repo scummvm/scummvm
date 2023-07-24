@@ -77,7 +77,7 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 	void draw(Button &buMap);
 
-	bool handleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event);
+	bool handleEvents(Button &buMap, Common::String &mapTitle, const Common::Event &event);
 
 	void useKeyboard(const bool &val) {
 		_menu.useKeyboard(val);

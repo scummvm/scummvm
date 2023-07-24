@@ -67,11 +67,11 @@ void GameSaveMenu::scanDir() {
 	_menu.assignPaths();
 }
 
-bool GameSaveMenu::handleEvents(const Common::Event &Event) {
+bool GameSaveMenu::handleEvents(const Common::Event &event) {
 	int choice = -1;
 	switch (_state) {
 	case STATE_NORMAL:
-		choice = _menu.handleEvents(Event);
+		choice = _menu.handleEvents(event);
 		if (choice >= 0) {
 			_taName.x = _menu.curX(choice) + tdB[DATA_SAVENAME].x;
 			_taName.y = _menu.curY(choice) + tdB[DATA_SAVENAME].y;
@@ -90,7 +90,7 @@ bool GameSaveMenu::handleEvents(const Common::Event &Event) {
 		if (g_engine->_inputManager->getKeyBindingMode() != input::KBM_UI)
 			g_engine->_inputManager->setKeyBindingMode(KBM_UI);
 
-		if (_taName.handleEvents(Event)) {
+		if (_taName.handleEvents(event)) {
 			if (_index <= (int)_slotInfo.size() && _index != 0)
 				g_engine->getSaveFileManager()->removeSavefile(_slotInfo[_index]._path);
 

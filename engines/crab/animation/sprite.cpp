@@ -334,7 +334,7 @@ void Sprite::drawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 //------------------------------------------------------------------------
 // Purpose: Handle the movement in a level for the player only
 //------------------------------------------------------------------------
-void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const Common::Event &Event) {
+void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const Common::Event &event) {
 
 	int num = 0;
 	info.statGet(_id, pyrodactyl::stat::STAT_SPEED, num);
@@ -391,7 +391,7 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	}
 
-	updateMove(_input.handleEvents(Event));
+	updateMove(_input.handleEvents(event));
 
 	// This is to prevent one frame of drawing with incorrect parameters
 	animate(info);

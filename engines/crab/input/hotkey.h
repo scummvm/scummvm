@@ -65,7 +65,7 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	bool handleEvents(const Common::Event &Event);
+	bool handleEvents(const Common::Event &event);
 
 };
 } // End of namespace input

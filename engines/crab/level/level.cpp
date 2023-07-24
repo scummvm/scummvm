@@ -91,9 +91,9 @@ void Level::calcProperties(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Handle the level movement
 //------------------------------------------------------------------------
-void Level::handleEvents(Info &info, const Common::Event &Event) {
+void Level::handleEvents(Info &info, const Common::Event &event) {
 	if (!g_engine->_mouse->_insideHud) {
-		if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
+		if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 			// Only go to path if our mouse is a normal walking cursor
 			if (!g_engine->_mouse->_hover) {
 				// The destination coordinate is set by adding camera position to click position
@@ -112,7 +112,7 @@ void Level::handleEvents(Info &info, const Common::Event &Event) {
 		}
 	}
 
-	_objects[_playerIndex].handleEvents(info, _camera, _scDefault, Event);
+	_objects[_playerIndex].handleEvents(info, _camera, _scDefault, event);
 }
 
 //------------------------------------------------------------------------
