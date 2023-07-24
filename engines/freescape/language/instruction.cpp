@@ -295,17 +295,45 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 	uint16 src = instruction._source;
 	uint16 dst = instruction._destination;
 	if (isAmiga() || isAtariST()) {
-		if (src & (1 << 7)) {
-			_currentArea->remapColor(dst & 0x0f, src & 0x70); // src & 0x77, dst & 0x0f
-		} else if (src == 1) {
-			for (int i = 1; i < 16; i++)
-				_currentArea->remapColor(i, dst);
-		} /*else if (src == 2) {
-			for (int i = 1; i < 16; i++)
-				_currentArea->remapColor(i, 0);
+		uint8 r = 0;
+		uint8 g = 0;
+		uint8 b = 0;
+		uint32 color = 0;
 
-			_currentArea->remapColor(dst, 15 - 2);
-		}*/
+		if (src & (1 << 7)) {
+			uint16 v = 0;
+			color = 0;
+			// Extract the color to replace from the src/dst values
+			v = (src & 0x77) << 8;
+			v = v | (dst & 0x70);
+			v = v >> 4;
+
+			// Convert the color to RGB
+			r = (v & 0xf00) >> 8;
+			r = r << 4 | r;
+			r = r & 0xff;
+
+			g = (v & 0xf0) >> 4;
+			g = g << 4 | g;
+			g = g & 0xff;
+
+			b = v & 0xf;
+			b = b << 4 | b;
+			b = b & 0xff;
+
+			color = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+			_currentArea->remapColor(dst & 0x0f, color); // src & 0x77, dst & 0x0f
+		} else if ((src & 0xf0) >> 4 == 1) {
+			_gfx->readFromPalette(src & 0x0f, r, g, b);
+			color = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+			for (int i = 1; i < 16; i++)
+				_currentArea->remapColor(i, color);
+		} else if ((src & 0x0f) == 1) {
+			_gfx->readFromPalette(dst & 0x0f, r, g, b);
+			color = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+			for (int i = 1; i < 16; i++)
+				_currentArea->remapColor(i, color);
+		}
 	} else {
 		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
 		if (src == 0 && dst == 1)

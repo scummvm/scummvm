@@ -100,6 +100,7 @@ public:
 
 	// palette
 	void readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b);
+	void setPaletteValue(uint8 index, uint8 r, uint8 g, uint8 b);
 	uint8 indexFromColor(uint8 r, uint8 g, uint8 b);
 	uint8 mapEGAColor(uint8 index);
 
