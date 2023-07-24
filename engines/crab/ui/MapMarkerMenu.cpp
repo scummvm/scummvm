@@ -99,29 +99,6 @@ void MapMarkerMenu::handleEvents(const Element &pos, const Vector2i &playerPos, 
 	}
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle Events
-//------------------------------------------------------------------------
-void MapMarkerMenu::handleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const SDL_Event &Event) {
-	if (player_pos.x >= camera.x && player_pos.y >= camera.y)
-		player.handleEvents(Event, pos.x + player_pos.x - camera.x + offset.player.x, pos.y + player_pos.y - camera.y + offset.player.y);
-
-	int choice = menu.handleEvents(Event, pos.x - camera.x + offset.marker.x, pos.y - camera.y + offset.marker.y);
-	if (choice != -1) {
-		int c = 0;
-		for (auto &i : menu.element) {
-			if (c == choice) // For an already selected marker, clicking it toggles the selection state
-				i.State(!i.State());
-			else
-				i.State(false);
-
-			++c;
-		}
-	}
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------

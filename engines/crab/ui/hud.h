@@ -105,9 +105,6 @@ public:
 	void load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm);
 
 	HUDSignal handleEvents(pyrodactyl::event::Info &info, const Common::Event &event);
-#if 0
-	HUDSignal handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
-#endif
 
 	void draw(pyrodactyl::event::Info &info, const Common::String &id);
 

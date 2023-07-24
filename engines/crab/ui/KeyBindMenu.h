@@ -115,9 +115,6 @@ public:
 		_state = STATE_NORMAL;
 	}
 
-#if 0
-	void SwapKey(const SDL_Scancode &find);
-#endif
 	bool disableHotkeys() {
 		return _state != STATE_NORMAL;
 	}
@@ -125,9 +122,7 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 
 	void handleEvents(const Common::Event &event);
-#if 0
-	void handleEvents(const SDL_Event &Event);
-#endif
+
 	void setCaption();
 
 	void draw();

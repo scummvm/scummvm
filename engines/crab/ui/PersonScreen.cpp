@@ -64,15 +64,6 @@ void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::Str
 		_menu.handleEvents(nullptr, event);
 }
 
-#if 0
-void PersonScreen::handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event) {
-	if (info.PersonValid(id))
-		menu.handleEvents(&info.PersonGet(id), Event);
-	else
-		menu.handleEvents(nullptr, Event);
-}
-#endif
-
 void PersonScreen::internalEvents() {
 	if (_curSp != nullptr)
 		_curSp->dialogUpdateClip(PST_NORMAL);

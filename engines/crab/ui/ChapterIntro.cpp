@@ -52,15 +52,6 @@ bool ChapterIntro::handleEvents(Common::Event &event) {
 	return _dialog.handleEvents(event);
 }
 
-#if 0
-bool ChapterIntro::handleEvents(SDL_Event &Event) {
-	if (traits.handleEvents(Event))
-		show_traits = true;
-
-	return dialog.handleEvents(Event);
-}
-#endif
-
 void ChapterIntro::draw(pyrodactyl::event::Info &info, Common::String &text,
 						pyrodactyl::anim::Sprite *curSp, const pyrodactyl::people::PersonState &state) {
 	_dialog.draw(false);

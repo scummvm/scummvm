@@ -49,15 +49,4 @@ FightAnimationType FightInput::handleEvents(const Common::Event &event) {
 	return FA_IDLE;
 }
 
-#if 0
-FightAnimationType FightInput::handleEvents(const SDL_Event &Event) {
-	if (g_engine->_inputManager->State(IG_ATTACK))
-		return FA_ATTACK;
-	else if (g_engine->_inputManager->State(IG_BLOCK))
-		return FA_BLOCK;
-
-	return FA_IDLE;
-}
-#endif
-
 } // End of namespace Crab

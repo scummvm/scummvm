@@ -125,9 +125,6 @@ public:
 	~MainMenu() {}
 
 	void handleEvents(Common::Event &event, bool &shouldChangeState, GameStateID &newStateId);
-#if 0
-	void handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
-#endif
 	void internalEvents(bool &shouldChangeState, GameStateID &newStateId);
 
 	void draw();

@@ -138,25 +138,6 @@ HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const Common::Event &
 	return static_cast<HUDSignal>(choice);
 }
 
-#if 0
-HUDSignal HUD::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
-	g_engine->_mouse->_insideHud = bg.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y);
-
-	int choice = menu.handleEvents(Event);
-
-	if (choice == HS_JOURNAL)
-		info.unread.journal = false;
-	else if (choice == HS_INV)
-		info.unread.inventory = false;
-	else if (choice == HS_CHAR)
-		info.unread.trait = false;
-	else if (choice == HS_MAP)
-		info.unread.map = false;
-
-	return static_cast<HUDSignal>(choice);
-}
-#endif
-
 void HUD::State(const int &val) {
 	int count = 0;
 	for (auto i = _menu._element.begin(); i != _menu._element.end(); ++i, ++count)

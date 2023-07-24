@@ -144,27 +144,6 @@ bool Journal::handleEvents(const Common::String &id, const Common::Event &event)
 	return false;
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle user input
-//------------------------------------------------------------------------
-bool Journal::handleEvents(const Common::String &id, const SDL_Event &Event) {
-	int choice = category.handleEvents(Event);
-	if (choice >= 0 && choice < category.element.size())
-		Select(id, choice);
-
-	// Check if select is valid
-	if (select >= 0 && select < JE_TOTAL) {
-		// Always find valid journal group first
-		for (auto &jo : journal)
-			if (jo.id == id)
-				return jo.menu[select].handleEvents(bu_map, marker_title, Event);
-	}
-
-	return false;
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Add an entry to journal
 //------------------------------------------------------------------------

@@ -81,24 +81,6 @@ void Cursor::load(rapidxml::xml_node<char> *node) {
 void Cursor::handleEvents(const Common::Event &event) {
 	g_engine->_mouse->_hover = false;
 
-#if 0
-	if (event.type == SDL_MOUSEMOTION) {
-		motion.x = Event.motion.x;
-		motion.y = Event.motion.y;
-
-		rel.x = Event.motion.xrel;
-		rel.y = Event.motion.yrel;
-	} else if (Event.type == SDL_MOUSEBUTTONDOWN) {
-		pressed = true;
-		button.x = Event.button.x;
-		button.y = Event.button.y;
-	} else if (Event.type == SDL_MOUSEBUTTONUP) {
-		pressed = false;
-		button.x = Event.button.x;
-		button.y = Event.button.y;
-	}
-#endif
-
 	if (event.type == Common::EVENT_MOUSEMOVE) {
 		_motion.x = event.mouse.x;
 		_motion.y = event.mouse.y;

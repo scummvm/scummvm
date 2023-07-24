@@ -182,41 +182,6 @@ bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const Co
 	return false;
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle user input
-//------------------------------------------------------------------------
-bool QuestMenu::handleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event) {
-	int res = menu.handleEvents(Event);
-	if (res != -1) {
-		if (sel_bu >= 0 && sel_page >= 0)
-			menu.Image(sel_bu, sel_page, img_n);
-
-		sel_bu = res;
-		sel_page = menu.CurrentPage();
-		sel_quest = menu.Index() + sel_bu;
-
-		quest[sel_quest].unread = false;
-		text.reset();
-
-		menu.Image(sel_bu, sel_page, img_s);
-	}
-
-	if (sel_quest >= 0 && sel_quest < quest.size()) {
-		if (quest[sel_quest].marker)
-			if (bu_map.handleEvents(Event) == BUAC_LCLICK) {
-				// The title of the quest selected by the "show in map" button
-				map_title = quest[sel_quest].title;
-				return true;
-			}
-
-		text.handleEvents(quest[sel_quest], Event);
-	}
-
-	return false;
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Select an entry
 //------------------------------------------------------------------------

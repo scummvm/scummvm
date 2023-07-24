@@ -100,10 +100,6 @@ public:
 
 	void handleEvents(Info &info, const Common::String &playerId, Common::Event &Event,
 					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
-#if 0
-	void handleEvents(Info &info, const Common::String &player_id, SDL_Event &Event,
-					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
-#endif
 
 	void calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const Rect &camera);
 

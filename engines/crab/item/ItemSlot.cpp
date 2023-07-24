@@ -124,19 +124,6 @@ ButtonAction ItemSlot::handleEvents(const Common::Event &event, const int &xOffs
 	return ac;
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle user input
-//------------------------------------------------------------------------
-ButtonAction ItemSlot::handleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction ac = StateButton::handleEvents(Event, XOffset, YOffset);
-	if (ac == BUAC_LCLICK || ac == BUAC_RCLICK)
-		unread = false;
-
-	return ac;
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Exchange items with another slot
 // this object is the current slot, parameter object is target slot

@@ -118,9 +118,7 @@ public:
 	void reset();
 
 	bool handleEvents(Common::Event &Event);
-#if 0
-	bool handleEvents(SDL_Event &Event);
-#endif
+
 	void draw();
 
 	void setUI();

@@ -125,37 +125,6 @@ int ResolutionMenu::handleEvents(const Common::Event &event) {
 	return 0;
 }
 
-#if 0
-int ResolutionMenu::handleEvents(const SDL_Event &Event) {
-	switch (state) {
-	case STATE_NORMAL:
-		if (change.handleEvents(Event) == BUAC_LCLICK)
-			state = STATE_CHANGE;
-		break;
-	case STATE_CHANGE: {
-		int choice = Menu::handleEvents(Event);
-		if (choice >= 0) {
-			g_engine->_screenSettings->cur = dim[choice];
-			state = STATE_NORMAL;
-			return 1;
-		}
-
-		if (custom.handleEvents(Event) == BUAC_LCLICK) {
-			state = STATE_NORMAL;
-			return 2;
-		}
-
-		if (cancel.handleEvents(Event) == BUAC_LCLICK)
-			state = STATE_NORMAL;
-	} break;
-	default:
-		break;
-	}
-
-	return 0;
-}
-#endif
-
 void ResolutionMenu::setInfo() {
 	_info._text = _defInfo;
 	_info._text += numberToString(g_engine->_screenSettings->_cur.w);

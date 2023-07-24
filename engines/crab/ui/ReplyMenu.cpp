@@ -96,44 +96,6 @@ int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::Str
 	return -1;
 }
 
-#if 0
-int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event) {
-	// After that, check if the user has clicked on any reply option
-	int choice = Menu<ReplyButton>::handleEvents(Event);
-	if (choice >= 0 && choice < dat._reply.size()) {
-		bool play_sound = false;
-
-		// Loop through any opinion changes required
-		for (auto &i : dat._reply[element[choice].index].change) {
-			if (i.id == cur_id) {
-				// This is a special case because we also need to update the opinion bars
-				oh.OpinionChange(info, i.id, OPI_LIKE, i.val[OPI_LIKE]);
-				oh.OpinionChange(info, i.id, OPI_RESPECT, i.val[OPI_RESPECT]);
-				oh.OpinionChange(info, i.id, OPI_FEAR, i.val[OPI_FEAR]);
-				play_sound = true;
-			} else {
-				info.OpinionChange(i.id, OPI_LIKE, i.val[OPI_LIKE]);
-				info.OpinionChange(i.id, OPI_RESPECT, i.val[OPI_RESPECT]);
-				info.OpinionChange(i.id, OPI_FEAR, i.val[OPI_FEAR]);
-				play_sound = true;
-			}
-		}
-
-		// Right now we play sound randomly
-		if (play_sound) {
-			if (gRandom.Num() % 2 == 1)
-				info.sound.rep_dec = true;
-			else
-				info.sound.rep_inc = true;
-		}
-
-		return dat._reply[element[choice].index].nextid;
-	}
-
-	return -1;
-}
-#endif
-
 void ReplyMenu::draw() {
 	_bg.draw();
 	_tone.draw(_hoverIndex);

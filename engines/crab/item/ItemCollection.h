@@ -73,9 +73,6 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 
 	void handleEvents(const Common::String &charId, const Common::Event &event);
-#if 0
-	void handleEvents(const Common::String &char_id, const SDL_Event &Event);
-#endif
 
 	void init(const Common::String &charId);
 	void draw(const Common::String &charId);

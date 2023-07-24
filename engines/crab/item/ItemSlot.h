@@ -83,9 +83,6 @@ public:
 	void draw();
 
 	pyrodactyl::ui::ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
-#if 0
-	pyrodactyl::ui::ButtonAction handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
-#endif
 
 	bool canSwap(ItemSlot &target) {
 		return target._noType || _item._type == target._itemType;

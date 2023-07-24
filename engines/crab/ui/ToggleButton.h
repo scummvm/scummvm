@@ -62,9 +62,6 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
 
-#if 0
-	ButtonAction handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
-#endif
 	ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 };
 } // End of namespace ui

@@ -78,43 +78,6 @@ bool Level::containsClick(const Common::String &id, const Common::Event &event) 
 	return false;
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: See if player clicked on a sprite they are colliding with
-//------------------------------------------------------------------------
-bool Level::ContainsClick(const Common::String &id, const SDL_Event &Event) {
-	// If mouse is moved and is hovering on the specified sprite (id), set hover = true
-	if (Event.type == SDL_MOUSEMOTION) {
-		for (auto &i : objects) {
-			Rect r = i.posRect();
-
-			if (r.Contains(g_engine->_mouse->motion.x + camera.x, g_engine->_mouse->motion.y + camera.y)) {
-				// This is to show the sprite's name on top of their head
-				i.hover = true;
-
-				// This is to update the mouse cursor only if we're in talking range of a sprite
-				if (i.ID() == id)
-					g_engine->_mouse->hover = true;
-			} else
-				i.hover = false;
-		}
-
-		return false;
-	} else if (g_engine->_mouse->Pressed()) {
-		for (auto &i : objects) {
-			if (i.ID() == id) {
-				Rect r = i.posRect();
-				if (r.Contains(g_engine->_mouse->button.x + camera.x, g_engine->_mouse->button.y + camera.y)) {
-					g_engine->_mouse->hover = true;
-					return true;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-#endif
 //------------------------------------------------------------------------
 // Purpose: Find if a layer is visible (used only for objects with layers associated with them)
 //------------------------------------------------------------------------

@@ -87,18 +87,6 @@ bool ModMenu::handleEvents(const Common::Event &event) {
 	return false;
 }
 
-#if 0
-bool ModMenu::handleEvents(const SDL_Event &Event) {
-	int choice = menu.handleEvents(Event);
-	if (choice >= 0) {
-		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path;
-		return true;
-	}
-
-	return false;
-}
-#endif
-
 void ModMenu::draw() {
 	_bg.draw();
 	_menu.draw();

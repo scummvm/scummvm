@@ -123,16 +123,10 @@ public:
 
 	void draw(pyrodactyl::event::Info &info);
 	bool handleEvents(pyrodactyl::event::Info &info, const Common::Event &event);
-#if 0
-	bool handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
-#endif
 	void internalEvents(pyrodactyl::event::Info &info);
 
 	void center(const Vector2i &pos);
 	void move(const Common::Event &event);
-#if 0
-	void Move(const SDL_Event &Event);
-#endif
 	void validate();
 
 	void revealAdd(const int &id, const Rect &area);

@@ -107,16 +107,6 @@ void Inventory::handleEvents(const Common::String &string, const Common::Event &
 	_money.handleEvents(Event);
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle events
-//------------------------------------------------------------------------
-void Inventory::handleEvents(const Common::String &char_id, const SDL_Event &Event) {
-	collection.handleEvents(char_id, Event);
-	money.handleEvents(Event);
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Load and save items
 //------------------------------------------------------------------------

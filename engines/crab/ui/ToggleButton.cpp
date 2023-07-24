@@ -63,17 +63,4 @@ ButtonAction ToggleButton::handleEvents(const Common::Event &event, const int &x
 	return action;
 }
 
-#if 0
-ButtonAction ToggleButton::handleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
-	ButtonAction action = Button::handleEvents(Event, XOffset, YOffset);
-
-	if (action == BUAC_LCLICK)
-		state = !state;
-
-	return action;
-}
-#endif
-
-
-
 } // End of namespace Crab

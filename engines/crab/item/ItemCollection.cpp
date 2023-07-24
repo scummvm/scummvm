@@ -74,16 +74,6 @@ void ItemCollection::handleEvents(const Common::String &charId, const Common::Ev
 		_item[charId].handleEvents(event);
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle events
-//------------------------------------------------------------------------
-void ItemCollection::handleEvents(const Common::String &char_id, const SDL_Event &Event) {
-	if (item.contains(char_id) > 0)
-		item[char_id].handleEvents(Event);
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------

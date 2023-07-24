@@ -171,50 +171,6 @@ protected:
 		return -1;
 	}
 
-#if 0
-	//------------------------------------------------------------------------
-	// Purpose: Handle keyboard input
-	//------------------------------------------------------------------------
-	int HandleKeyboard(const SDL_Event &Event) {
-		using namespace pyrodactyl::input;
-
-		if (!element.empty()) {
-			if (path_type != PATH_HORIZONTAL) {
-				if (g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_PRESSED) {
-					Next();
-					latest_input = KEYBOARD;
-				} else if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_PRESSED) {
-					Prev();
-					latest_input = KEYBOARD;
-				}
-			}
-
-			if (path_type != PATH_VERTICAL) {
-				if (g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED) {
-					Next();
-					latest_input = KEYBOARD;
-				} else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED) {
-					Prev();
-					latest_input = KEYBOARD;
-				}
-			}
-
-			if (g_engine->_inputManager->Equals(IU_ACCEPT, Event) == SDL_PRESSED && hover_index != -1)
-				return hover_index;
-
-			// We pressed a key, which means we have to update the hovering status
-			if (latest_input == KEYBOARD) {
-				// Update hover status of keys according to the current index
-				unsigned int i = 0;
-				for (auto it = element.begin(); it != element.end(); ++it, ++i)
-					it->hover_key = (i == hover_index);
-			}
-		}
-
-		return -1;
-	}
-#endif
-
 public:
 	// The collection of buttons in the menu
 	Common::Array<T> _element;
@@ -310,63 +266,6 @@ public:
 		}
 		return -1;
 	}
-
-	#if 0
-	//------------------------------------------------------------------------
-	// Purpose: Event Handling
-	// The reason this function doesn't declare its own Event object is because
-	// a menu might not be the only object in a game state
-	//------------------------------------------------------------------------
-	int handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
-		// The keyboard/joystick event handling bit
-		if (use_keyboard) {
-			int result = HandleKeyboard(Event);
-
-			// We have accepted a menu option using the keyboard
-			if (result != -1) {
-				// Reset the menu state
-				reset();
-				return result;
-			}
-		}
-
-		// Check if we have moved or clicked the mouse
-		if (Event.type == SDL_MOUSEMOTION || Event.type == SDL_MOUSEBUTTONDOWN || Event.type == SDL_MOUSEBUTTONUP) {
-			// Since the player is moving the mouse, we have to recalculate hover index at every opportunity
-			hover_index = -1;
-			latest_input = MOUSE;
-		}
-
-		// The mouse and hotkey event handling bit
-		int i = 0;
-		for (auto it = element.begin(); it != element.end(); ++it, ++i) {
-			// We clicked on a button using the mouse
-			if (it->handleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
-				// Reset the menu state
-				reset();
-				return i;
-			}
-
-			// We did not click a button, however we did hover over the button
-			// However if we are use keyboard to browse through the menu, hovering is forgotten until we move the mouse again
-			if (it->hover_mouse && latest_input == MOUSE) {
-				hover_index = i;
-
-				// The latest input is the mouse, which means we have to forget the keyboard hover states
-				for (auto e = element.begin(); e != element.end(); ++e)
-					e->hover_key = false;
-			}
-		}
-
-		if (latest_input == KEYBOARD) {
-			// The latest input is the keyboard, which means we have to forget the mouse hover states
-			for (auto it = element.begin(); it != element.end(); ++it)
-				it->hover_mouse = false;
-		}
-
-		return -1;
-	}
-	#endif
 
 	//------------------------------------------------------------------------
 	// Purpose: Draw the menu

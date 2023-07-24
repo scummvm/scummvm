@@ -78,9 +78,6 @@ public:
 	void draw(Button &buMap);
 
 	bool handleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event);
-#if 0
-	bool handleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event);
-#endif
 
 	void useKeyboard(const bool &val) {
 		_menu.useKeyboard(val);

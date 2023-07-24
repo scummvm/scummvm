@@ -202,17 +202,11 @@ public:
 
 	// See if a player clicked on the sprite in contact
 	bool containsClick(const Common::String &id, const Common::Event &event);
-#if 0
-	bool ContainsClick(const Common::String &id, const SDL_Event &Event);
-#endif
 
 	// Get index of a sprite in the object array
 	pyrodactyl::anim::Sprite *getSprite(const Common::String &id);
 
 	void handleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
-#if 0
-	void handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
-#endif
 	LevelResult internalEvents(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
 							   Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq, bool eventInProgress);
 

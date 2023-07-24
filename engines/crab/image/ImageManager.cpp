@@ -71,9 +71,6 @@ void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
 					_map[mapid][key].load(path);
 				else
 					error("ImageManager::loadMap : Unable to load image id %u from %s!", key, path.c_str());
-#if 0
-					fprintf(stderr, "Unable to load image id %u from %s! SDL Error: %s\n", key, path.c_str(), SDL_GetError());
-#endif
 			}
 		}
 

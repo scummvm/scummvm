@@ -71,9 +71,6 @@ public:
 	void Cache(pyrodactyl::event::Info &info, const Common::String &id, pyrodactyl::level::Level &level);
 
 	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &event);
-#if 0
-	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event);
-#endif
 
 	void internalEvents();
 	void draw(pyrodactyl::event::Info &info, const Common::String &id);
