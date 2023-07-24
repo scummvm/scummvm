@@ -362,6 +362,18 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 				}
 			} else {
 				_fileCache[name] = *it;
+
+#ifdef MACOSX
+				// On Mac, check for native resource fork
+				String rsrcName = it->getPath() + "/..namedfork/rsrc";
+				FSNode rsrc = FSNode(rsrcName);
+
+				Path cacheName = prefix.join(it->getRealName() + "/..namedfork/rsrc");
+
+				if (rsrc.exists()) {
+					_fileCache[cacheName] = rsrc;
+				}
+#endif
 			}
 		}
 	}

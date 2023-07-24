@@ -274,8 +274,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	// Check the actual fork on a Mac computer. It's even worse than __MACOSX as
 	// it's present on any HFS(+) and appears even after copying macbin on HFS(+).
 	const ArchiveMemberPtr archiveMember = archive.getMember(fileName);
-	const Common::FSNode *plainFsNode = dynamic_cast<const Common::FSNode *>(archiveMember.get());
-	if (plainFsNode) {
+	if (archiveMember.get()) {
 		// This could be a MacBinary file that still has a
 		// resource fork; if it is, it needs to get opened as MacBinary
 		// and not treated as raw.
@@ -286,9 +285,8 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		}
 		delete stream;
 
-		String fullPath = plainFsNode->getPath() + "/..namedfork/rsrc";
-		FSNode resFsNode = FSNode(fullPath);
-		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
+		Path fullPath = archiveMember.get()->getPathInArchive().join("/..namedfork/rsrc");
+		SeekableReadStream *macResForkRawStream = archive.createReadStreamForMember(fullPath);
 		if (!isMacBinaryFile && macResForkRawStream && loadFromRawFork(macResForkRawStream)) {
 			_baseFileName = fileName;
 			return true;
