@@ -52,6 +52,7 @@ class Digi {
 	struct Channel {
 		Audio::SoundHandle _soundHandle;
 		int _trigger = -1;
+		Common::String _name;
 	};
 private:
 	Audio::Mixer *_mixer;

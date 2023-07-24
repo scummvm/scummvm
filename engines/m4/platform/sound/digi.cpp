@@ -78,6 +78,12 @@ bool Digi::preload(const Common::String &name, int roomNum) {
 
 void Digi::unload(const Common::String &name) {
 	if (_sounds.contains(name)) {
+		// Stop it if it's playing
+		for (int channel = 0; channel < MAX_CHANNELS; ++channel) {
+			if (_channels[channel]._name == name)
+				stop(channel);
+		}
+
 		delete _sounds[name]._data;
 		_sounds.erase(name);
 	}
@@ -97,22 +103,27 @@ int32 Digi::play_loop(const Common::String &name, uint channel, int32 vol, int32
 
 int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num, bool loop) {
 	assert(channel < 4);
-	Common::String fileName = expand_name_2_RAW(name, room_num);
 
-	digi_preload(fileName, room_num);
-	DigiEntry &entry = _sounds[fileName];
+	// Assure no prior sound for the channel is playing
+	stop(channel);
+
+	// Load in the new sound
+	preload(name, room_num);
+	DigiEntry &entry = _sounds[name];
+	Channel &c = _channels[channel];
 
 	// Create new audio stream
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-			Audio::makeRawStream(entry._data, entry._size, 11025, Audio::FLAG_UNSIGNED),
+			Audio::makeRawStream(entry._data, entry._size, 11025, Audio::FLAG_UNSIGNED,
+				DisposeAfterUse::NO),
 			loop ? 0 : 1);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_channels[channel]._soundHandle, stream, -1, vol);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &c._soundHandle, stream, -1, vol);
 
 	if (trigger < 0 || trigger > 32767)
 		trigger = -1;
-	_channels[channel]._trigger = kernel_trigger_create(trigger);
+	c._trigger = kernel_trigger_create(trigger);
+	c._name = name;
 
-	_sounds.erase(fileName);
 	return 0;
 }
 
@@ -130,11 +141,19 @@ Common::String Digi::expand_name_2_RAW(const Common::String &name, int32 room_nu
 	}
 }
 
-
 void Digi::stop(uint channel) {
 	assert(channel < 4);
-	_mixer->stopHandle(_channels[channel]._soundHandle);
-	_channels[channel]._trigger = -1;
+
+	Channel &c = _channels[channel];
+	if (!c._name.empty()) {
+		Common::String name = c._name;
+
+		_mixer->stopHandle(c._soundHandle);
+		c._trigger = -1;
+		c._name.clear();
+
+		digi_unload(name);
+	}
 }
 
 void Digi::flush_mem() {
@@ -154,6 +173,8 @@ void Digi::read_another_chunk() {
 
 			// Dispatch the trigger
 			kernel_trigger_dispatchx(trigger);
+
+			stop(channel);
 		}
 	}
 }
