@@ -1,5 +1,5 @@
 // TetiSoft: replaced vprintf() with KVPrintF() and commented out exit()
-extern void __stdargs KVPrintF( const char *formatString, const void *values );
+extern void __stdargs KVPrintF(const char *formatString, const void *values);
 
 /***************************************************************************/
 /*                                                                         */
@@ -17,7 +17,6 @@ extern void __stdargs KVPrintF( const char *formatString, const void *values );
 /*  understand and accept it fully.                                        */
 /*                                                                         */
 /***************************************************************************/
-
 
 /*************************************************************************/
 /*                                                                       */
@@ -43,49 +42,39 @@ extern void __stdargs KVPrintF( const char *formatString, const void *values );
 /*                                                                       */
 /*************************************************************************/
 
-
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include FT_INTERNAL_DEBUG_H
-
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 #ifdef FT_DEBUG_LEVEL_TRACE
-char  ft_trace_levels[trace_max];
+char ft_trace_levels[trace_max];
 #endif
 
-
-#if defined( FT_DEBUG_LEVEL_ERROR ) || defined( FT_DEBUG_LEVEL_TRACE )
-
+#if defined(FT_DEBUG_LEVEL_ERROR) || defined(FT_DEBUG_LEVEL_TRACE)
 
 #include <stdarg.h>
 #include <stdlib.h>
 
+FT_EXPORT_DEF(void)
+FT_Message(const char *fmt, ...) {
+	va_list ap;
 
-FT_EXPORT_DEF( void )
-FT_Message( const char*  fmt, ... ) {
-	va_list  ap;
-
-
-	va_start( ap, fmt );
-//  vprintf( fmt, ap );
-	KVPrintF( fmt, ap );
-	va_end( ap );
+	va_start(ap, fmt);
+	//  vprintf( fmt, ap );
+	KVPrintF(fmt, ap);
+	va_end(ap);
 }
 
+FT_EXPORT_DEF(void)
+FT_Panic(const char *fmt, ...) {
+	va_list ap;
 
-FT_EXPORT_DEF( void )
-FT_Panic( const char*  fmt, ... ) {
-	va_list  ap;
+	va_start(ap, fmt);
+	//  vprintf( fmt, ap );
+	KVPrintF(fmt, ap);
+	va_end(ap);
 
-
-	va_start( ap, fmt );
-//  vprintf( fmt, ap );
-	KVPrintF( fmt, ap );
-	va_end( ap );
-
-//  exit( EXIT_FAILURE );
+	//  exit( EXIT_FAILURE );
 }
-
-
 
 /* since I don't know wether "getenv" is available on the Amiga */
 /* I prefer to simply disable this code for now in all builds   */
@@ -155,17 +144,11 @@ ft_debug_init( void ) {
 	}
 }
 
+#else /* !FT_DEBUG_LEVEL_TRACE */
 
-#else  /* !FT_DEBUG_LEVEL_TRACE */
-
-
-FT_BASE_DEF( void )
-ft_debug_init( void ) {
+FT_BASE_DEF(void)
+ft_debug_init(void) {
 	/* nothing */
 }
 
-
 #endif /* !FT_DEBUG_LEVEL_TRACE */
-
-
-/* END */

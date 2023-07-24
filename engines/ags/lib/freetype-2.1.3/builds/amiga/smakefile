@@ -9,14 +9,14 @@
 # Your programs source code should start with this
 # (uncomment the parts you do not need to keep the program small):
 # ---8<---
-#define FT_USE_AUTOHINT // autohinter
-#define FT_USE_RASTER   // monochrome rasterizer
-#define FT_USE_SMOOTH   // anti-aliasing rasterizer
-#define FT_USE_TT       // truetype font driver
-#define FT_USE_T1       // type1 font driver
+define FT_USE_AUTOHINT // autohinter
+define FT_USE_RASTER   // monochrome rasterizer
+define FT_USE_SMOOTH   // anti-aliasing rasterizer
+define FT_USE_TT       // truetype font driver
+define FT_USE_T1       // type1 font driver
 #define FT_USE_T42      // type42 font driver
 #define FT_USE_T1CID    // cid-keyed type1 font driver
-#define FT_USE_CFF      // opentype font driver
+define FT_USE_CFF      // opentype font driver
 #define FT_USE_BDF      // bdf bitmap font driver
 #define FT_USE_PCF      // pcf bitmap font driver
 #define FT_USE_PFR      // pfr font driver
