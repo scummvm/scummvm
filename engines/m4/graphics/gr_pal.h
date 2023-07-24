@@ -46,7 +46,7 @@ constexpr int MAX_PAL_ENTRY = 255;
 #define __YELLOW	(gr_pal_get_ega_color(14))
 #define __WHITE	    (gr_pal_get_ega_color(15))
 
-extern constexpr uint8 gr_pal_get_ega_color(uint8 myColor);
+extern uint8 gr_pal_get_ega_color(uint8 myColor);
 
 extern void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num);
 extern uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors);
