@@ -174,7 +174,8 @@ static const char *get_sfnt_postscript_name(TT_Face face) {
 		if (!FT_ALLOC(result, len + 1)) {
 			FT_Stream stream = face->name_table.stream;
 
-			if (FT_STREAM_SEEK(name->stringOffset) || FT_STREAM_READ(result, len)) {
+			if (FT_STREAM_SEEK(name->stringOffset) ||
+				((error = (FT_Stream_Read(stream, (FT_Byte *)const_cast<char *>(result), len))) != 0)) {
 				name->stringOffset = 0;
 				name->stringLength = 0;
 				FT_FREE(name->string);
