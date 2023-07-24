@@ -58,9 +58,6 @@ void Timer::start() {
 	_paused = false;
 
 	// Get the current clock time
-#if 0
-	start_ticks = SDL_GetTicks();
-#endif
 	_startTicks = g_system->getMillis();
 }
 
@@ -81,9 +78,6 @@ uint32 Timer::ticks() {
 			return _pausedTicks;
 		} else {
 			// Return the current time minus the start time
-#if 0
-			return SDL_GetTicks() - start_ticks;
-#endif
 			return g_system->getMillis() - _startTicks;
 		}
 	}
@@ -98,9 +92,6 @@ void Timer::pause() {
 		_paused = true;
 
 		// Calculate the paused ticks
-#if 0
-		paused_ticks = SDL_GetTicks() - start_ticks;
-#endif
 		_pausedTicks = g_system->getMillis() - _startTicks;
 	}
 }
@@ -112,9 +103,6 @@ void Timer::resume() {
 		_paused = false;
 
 		// Reset the starting ticks
-#if 0
-		start_ticks = SDL_GetTicks() - paused_ticks;
-#endif
 		_pausedTicks = g_system->getMillis() - _startTicks;
 		// Reset the paused ticks
 		_pausedTicks = 0;
