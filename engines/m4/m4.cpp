@@ -104,6 +104,14 @@ void M4Engine::m4_inflight() {
 	}
 }
 
+bool M4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return g_vars && g_vars->getInterface() && g_vars->getInterface()->_visible;
+}
+
+bool M4Engine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return g_vars && g_vars->getInterface() && g_vars->getInterface()->_visible;
+}
+
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(game).syncGame(s);
 	_G(player).syncGame(s);

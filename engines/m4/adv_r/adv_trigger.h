@@ -68,7 +68,7 @@ extern bool kernel_trigger_dispatchx(int32 trigger_num);
 
 extern bool kernel_trigger_dispatch_now(int32 trigger_num);
 
-extern void kernel_timing_trigger(int32 ticks, int16 trigger, char *name = NULL);
+extern void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name = nullptr);
 
 extern void cisco_dispatch_triggers();
 extern void cisco_clear_triggers();
