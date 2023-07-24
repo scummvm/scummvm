@@ -192,7 +192,7 @@ static FT_Module_Interface tt_get_interface(TT_Driver driver, const char *tt_int
 
 	/* only return the default interface from the SFNT module */
 	if (sfntd) {
-		sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfntd->clazz->module_interface));
+		sfnt = const_cast<SFNT_Service>(static_cast<const SFNT_Interface *>(sfntd->clazz->module_interface));
 		if (sfnt)
 			return sfnt->get_interface(FT_MODULE(driver), tt_interface);
 	}

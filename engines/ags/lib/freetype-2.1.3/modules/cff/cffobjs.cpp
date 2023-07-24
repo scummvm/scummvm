@@ -219,15 +219,15 @@ cff_face_init(FT_Stream stream, CFF_Face face, FT_Int face_index, FT_Int num_par
 	FT_Bool           sfnt_format = 0;
 
 	const void *tmp_ptr = FT_Get_Module_Interface(face->root.driver->root.library, "sfnt");
-	sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(tmp_ptr));
+	sfnt = const_cast<SFNT_Service>(static_cast<const SFNT_Interface *>(tmp_ptr));
 	if (!sfnt)
 		goto Bad_Format;
 
 	tmp_ptr = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
-	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(tmp_ptr));
+	psnames = const_cast<PSNames_Service>(static_cast<const PSNames_Interface *>(tmp_ptr));
 
 	tmp_ptr = FT_Get_Module_Interface(face->root.driver->root.library, "pshinter");
-	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(tmp_ptr));
+	pshinter = const_cast<PSHinter_Service>(static_cast<const PSHinter_Interface *>(tmp_ptr));
 
 	/* create input stream from resource */
 	if (FT_STREAM_SEEK(0))

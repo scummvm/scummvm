@@ -139,7 +139,7 @@ static FT_Error cff_get_glyph_name(CFF_Face face, FT_UInt glyph_index, FT_Pointe
 	FT_Error         error;
 
 	const void *psnames_tmp = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
-	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
+	psnames = const_cast<PSNames_Service>(static_cast<const PSNames_Interface *>(psnames_tmp));
 
 	if (!psnames) {
 		FT_ERROR(("cff_get_glyph_name:"));
@@ -187,7 +187,7 @@ static FT_UInt cff_get_name_index(CFF_Face face, FT_String *glyph_name) {
 	charset = &cff->charset;
 
 	const void *psnames_tmp = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
-	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
+	psnames = const_cast<PSNames_Service>(static_cast<const PSNames_Interface *>(psnames_tmp));
 
 	for (i = 0; i < cff->num_glyphs; i++) {
 		sid = charset->sids[i];

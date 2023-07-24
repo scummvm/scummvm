@@ -380,7 +380,7 @@ FT2_1_3_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
 		}
 
 		/* load auto-hinted outline */
-		hinting = const_cast<FT_AutoHinter_Service>(reinterpret_cast<const FT_AutoHinter_ServiceRec_ *>(hinter->clazz->module_interface));
+		hinting = const_cast<FT_AutoHinter_Service>(static_cast<const FT_AutoHinter_ServiceRec_ *>(hinter->clazz->module_interface));
 
 		error = hinting->load_glyph((FT_AutoHinter)hinter, slot, face->size, glyph_index, load_flags);
 	} else {

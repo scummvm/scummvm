@@ -750,7 +750,7 @@ static void parse_encoding(T1_Face face, T1_Loader loader) {
 	FT_Byte   *cur   = parser->root.cursor;
 	FT_Byte   *limit = parser->root.limit;
 
-	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
+	PSAux_Service psaux = const_cast<PSAux_Service>(static_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	/* skip whitespace */
 	while (is_space(*cur)) {
@@ -889,7 +889,7 @@ static void parse_subrs(T1_Face face, T1_Loader loader) {
 	FT_Error  error;
 	FT_Int    n;
 
-	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
+	PSAux_Service psaux = const_cast<PSAux_Service>(static_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	if (loader->num_subrs)
 		/*  with synthetic fonts, it's possible we get here twice  */
@@ -976,7 +976,7 @@ static void parse_charstrings(T1_Face face, T1_Loader loader) {
 	FT_Memory memory 	 = parser->root.memory;
 	FT_Error  error;
 
-	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
+	PSAux_Service psaux = const_cast<PSAux_Service>(static_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	FT_Byte *cur;
 	FT_Byte *limit = parser->root.limit;
@@ -1336,7 +1336,7 @@ T1_Open_Face(T1_Face face) {
 	T1_Font 	 type1 = &face->type1;
 	FT_Error 	 error;
 
-	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
+	PSAux_Service psaux = const_cast<PSAux_Service>(static_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	t1_init_loader(&loader, face);
 

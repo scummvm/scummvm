@@ -121,7 +121,7 @@ T1_Compute_Max_Advance(T1_Face face, FT_Int *max_advance) {
 	T1_DecoderRec  decoder;
 	FT_Int 		   glyph_index;
 	T1_Font 	   type1 = &face->type1;
-	PSAux_Service  psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
+	PSAux_Service  psaux = const_cast<PSAux_Service>(static_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	*max_advance = 0;
 
@@ -165,7 +165,7 @@ T1_Load_Glyph(T1_GlyphSlot glyph, T1_Size size, FT_UInt glyph_index, FT_Int32 lo
 	FT_Bool 	   hinting;
 	T1_Font 	   type1 = &face->type1;
 
-	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
+	PSAux_Service psaux = const_cast<PSAux_Service>(static_cast<const PSAux_ServiceRec_ *>(face->psaux));
 	const T1_Decoder_Funcs decoder_funcs = psaux->t1_decoder_funcs;
 
 	FT_Matrix  font_matrix;

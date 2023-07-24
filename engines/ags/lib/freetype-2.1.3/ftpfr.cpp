@@ -43,7 +43,7 @@ static FT_Error ft_pfr_check(FT_Face face, FT2_1_3_PFR_Service *aservice) {
 		const char *name = module->clazz->module_name;
 
 		if (name[0] == 'p' && name[1] == 'f' && name[2] == 'r' && name[4] == 0) {
-			*aservice = const_cast<FT2_1_3_PFR_Service>(reinterpret_cast<const FT2_1_3_PFR_ServiceRec_ *>(module->clazz->module_interface));
+			*aservice = const_cast<FT2_1_3_PFR_Service>(static_cast<const FT2_1_3_PFR_ServiceRec_ *>(module->clazz->module_interface));
 			error = 0;
 		}
 	}

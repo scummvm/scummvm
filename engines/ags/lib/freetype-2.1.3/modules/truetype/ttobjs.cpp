@@ -99,7 +99,7 @@ tt_face_init(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_param
 
 	library = face->root.driver->root.library;
 	const void *sfnt_tmp = FT_Get_Module_Interface(library, "sfnt");
-	sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfnt_tmp));
+	sfnt = const_cast<SFNT_Service>(static_cast<const SFNT_Interface *>(sfnt_tmp));
 	if (!sfnt)
 		goto Bad_Format;
 

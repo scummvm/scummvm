@@ -54,7 +54,7 @@ namespace FreeType213 {
 
 static PSH_Globals_Funcs T1_Size_Get_Globals_Funcs(T1_Size size) {
 	T1_Face 		 face = (T1_Face)size->root.face;
-	PSHinter_Service pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
+	PSHinter_Service pshinter = const_cast<PSHinter_Service>(static_cast<const PSHinter_Interface *>(face->pshinter));
 	FT_Module 		 module;
 
 	module = FT_Get_Module(size->root.face->driver->root.library, "pshinter");
@@ -128,7 +128,7 @@ T1_GlyphSlot_Init(T1_GlyphSlot slot) {
 	PSHinter_Service pshinter;
 
 	face = (T1_Face)slot->root.face;
-	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
+	pshinter = const_cast<PSHinter_Service>(static_cast<const PSHinter_Interface *>(face->pshinter));
 
 	if (pshinter) {
 		FT_Module module;
@@ -190,7 +190,7 @@ T1_Face_Done(T1_Face face) {
 #ifndef T1_CONFIG_OPTION_NO_AFM
 		/* release afm data if present */
 		if (face->afm_data)
-			T1_Done_AFM(memory, const_cast<T1_AFM *>(reinterpret_cast<const T1_AFM *>(face->afm_data)));
+			T1_Done_AFM(memory, const_cast<T1_AFM *>(static_cast<const T1_AFM *>(face->afm_data)));
 #endif
 
 		/* release unicode map, if any */
@@ -218,13 +218,13 @@ T1_Face_Init(FT_Stream stream, T1_Face face, FT_Int face_index, FT_Int num_param
 	face->root.num_faces = 1;
 
 	face->psnames = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "psnames");
-	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
+	psnames = const_cast<PSNames_Service>(static_cast<const PSNames_Interface *>(face->psnames));
 
 	face->psaux = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "psaux");
-	psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(face->psaux));
+	psaux = const_cast<PSAux_Service>(static_cast<const PSAux_Interface *>(face->psaux));
 
 	face->pshinter = FT_Get_Module_Interface(FT_FACE_LIBRARY(face), "pshinter");
-	// 	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
+	// 	pshinter = const_cast<PSHinter_Service>(static_cast<const PSHinter_Interface *>(face->pshinter));
 
 	/* open the tokenizer, this will also check the font format */
 	error = T1_Open_Face(face);
