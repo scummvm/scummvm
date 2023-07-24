@@ -27,9 +27,9 @@
 
 namespace M4 {
 
-static constexpr uint8 EGAcolors[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+static const uint8 EGAcolors[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
-constexpr uint8 gr_pal_get_ega_color(uint8 myColor) {
+uint8 gr_pal_get_ega_color(uint8 myColor) {
 	return EGAcolors[myColor];
 }
 
