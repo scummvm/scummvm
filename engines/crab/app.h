@@ -61,7 +61,6 @@ public:
 	}
 	~App(void);
 
-	bool init();
 	void run();
 	Game *getGame() const {
 		return _game;
