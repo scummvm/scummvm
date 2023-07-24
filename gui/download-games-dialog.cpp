@@ -51,10 +51,10 @@ DownloadGamesDialog::DownloadGamesDialog()
 	// Gray out already downloaded packages
 	for (Common::ConfigManager::DomainMap::iterator domain = ConfMan.beginGameDomains(); domain != ConfMan.endGameDomains(); ++domain) {
 		if (domain->_value.contains("download")) {
-			Common::String val(domain->_value.getVal("download"));
-			uint64 id = val.asUint64();
-			if (id < games.size()) {
-				games[id] = "\001C{alternate}" + games[id];
+			Common::String id = domain->_value.getVal("download");
+			int idx = DLCMan.getDLCIdxFromId(id);
+			if (idx != -1 && idx < games.size()) {
+				games[idx] = "\001C{alternate}" + games[idx];
 			}
 		}
 	}

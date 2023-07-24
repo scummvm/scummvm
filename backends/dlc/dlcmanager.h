@@ -63,6 +63,8 @@ public:
 
 	Common::String getCurrentDownloadingDLC();
 
+	int getDLCIdxFromId(const Common::String &id);
+
 	void startDownloadAsync(const Common::String &id, const Common::String &url);
 
 	void errorCallback(Networking::ErrorResponse error);
