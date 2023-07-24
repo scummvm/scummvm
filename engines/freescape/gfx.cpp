@@ -433,9 +433,7 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 	if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
 		if (_colorRemaps && _colorRemaps->contains(index)) {
 			int color = (*_colorRemaps)[index];
-			r1 = (color >> 16) & 0xff;
-			g1 = (color >> 8) & 0xff;
-			b1 = color & 0xff;
+			_texturePixelFormat.colorToRGB(color, r1, g1, b1);
 		} else
 			readFromPalette(index, r1, g1, b1);
 
