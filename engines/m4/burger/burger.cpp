@@ -57,7 +57,20 @@ void BurgerEngine::syncFlags(Common::Serializer &s) {
 }
 
 void BurgerEngine::global_daemon() {
-	error("TODO: global_daemon_code");
+	switch (_G(kernel).trigger) {
+	case gSERIES_STREAM_BREAK:
+		handle_series_stream_break();
+		break;
+
+	case gRELEASE_TRIGGER_DIGI_CHECK:
+		release_trigger_digi_check();
+		break;
+
+	// TODO: Other cases
+
+	default:
+		break;
+	}
 }
 
 } // namespace Burger
