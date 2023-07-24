@@ -85,7 +85,7 @@ static RenderResult r_0() {
 				to += runLength;
 			else {
 				if (runLength > EMPIRICALLY_FOUND) {
-					while ((uint32)to & 3) {
+					while ((uintptr)to & 3) {
 						*to++ = data;
 						--runLength;
 					}
@@ -140,7 +140,7 @@ static RenderResult r_0_5() {
 				to -= runLength;
 			else {
 				if (runLength > EMPIRICALLY_FOUND) {
-					while (((uint32)to & 3) != 3) {
+					while (((uintptr)to & 3) != 3) {
 						*to-- = data;
 						--runLength;
 					}
