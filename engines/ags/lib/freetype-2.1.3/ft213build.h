@@ -42,7 +42,6 @@
 #ifndef AGS_LIB_FREETYPE_FT213_BUILD_H
 #define AGS_LIB_FREETYPE_FT213_BUILD_H
 
-#include "engines/ags/lib/freetype-2.1.3/config/ftheader.h"
 
 #ifdef __cplusplus
 #define FT_BEGIN_HEADER  extern "C" {
