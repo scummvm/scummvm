@@ -56,7 +56,7 @@ void release_trigger_digi_check() {
 
 	// Compare this with the match values 
 	if (digi_state == _GT(match_value)) {
-		kernel_trigger_dispatch(_GT(released_digi_trigger));
+		kernel_trigger_dispatchx(_GT(released_digi_trigger));
 	} else {
 		kernel_timing_trigger(TENTH_SECOND, gRELEASE_TRIGGER_DIGI_CHECK);
 	}
