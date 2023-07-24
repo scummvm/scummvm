@@ -1245,14 +1245,15 @@ tt_face_build_cmaps(TT_Face face) {
 				clazz = *pclazz;
 				if (clazz->format == format) {
 					volatile TT_ValidatorRec valid;
+					FT_ValidatorRec *valid_tmp = (FT_ValidatorRec *)const_cast<TT_ValidatorRec_ *>(&valid);
 
-					ft_validator_init(FT_VALIDATOR(&valid), cmap, limit, FT_VALIDATE_DEFAULT);
+					ft_validator_init(valid_tmp, cmap, limit, FT_VALIDATE_DEFAULT);
 
 					valid.num_glyphs = (FT_UInt)face->root.num_glyphs;
 
-					if (ft_setjmp(FT_VALIDATOR(&valid)->jump_buffer) == 0) {
+					if (ft_setjmp(valid_tmp->jump_buffer) == 0) {
 						/* validate this cmap sub-table */
-						clazz->validate(cmap, FT_VALIDATOR(&valid));
+						clazz->validate(cmap, valid_tmp);
 					}
 
 					if (valid.validator.error == 0)
