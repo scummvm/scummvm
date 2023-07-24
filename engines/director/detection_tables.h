@@ -552,6 +552,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "futureview",			"FutureView: The 1990s and Beyond" },
 	{ "ghetto",				"Stories from the Warsaw Ghetto" },
 	{ "golfcd",				"The Great Golf CD: Links, Legends & Lore" },
+	{ "gondwana",			"We're Not On The Internet - So What!" }, // Gondwana Project 1996 disc
 	{ "gp2006",				"Grand Prix 2006 & Auto Directory" },
 	{ "guns",				"Multimedia Guns" },
 	{ "haight",				"Haight-Ashbury in the Sixties" },
@@ -6096,6 +6097,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "DATA/TAMURA.Dxr", "401a9dcb7a3d874bc3798bdef929ead2", 155168, Common::JA_JPN, 501),
 	WINGAME2t_l("glassyocean", "", "START.EXE",		  "c5dcc03aca7e0bed95844afdd86f866c", 1410529,
 								   "DATA/TAMURA.DXR", "a7bd15f6f42162fed7f32e0a739617ec", 155168, Common::JA_JPN, 501),
+
+	WINGAME1t("gondwana",  "", "MOVIE.EXE", "dfce572624ed9816e7268ac8f5ef7d2b", 5647741,  505),
 
 	WINGAME1("gothos", "", "gothos.exe", "6199bb7cabc7f636394cacffd6a71fa9", 1788333, 501),
 	MACGAME1("gothos", "", "MACINST/GOTHOS", "1d08e56a4c7ba60a67417c7988cd3ffe", 718097, 501),
