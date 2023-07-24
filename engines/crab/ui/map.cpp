@@ -360,28 +360,6 @@ bool Map::handleEvents(pyrodactyl::event::Info &info, const Common::Event &event
 	return false;
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle Events
-//------------------------------------------------------------------------
-bool Map::handleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
-	int choice = travel.handleEvents(Event, -1 * camera.x, -1 * camera.y);
-	if (choice >= 0) {
-		cur_loc = travel.element[choice].loc;
-		pan = false;
-		return true;
-	}
-
-	marker.handleEvents(pos, player_pos, camera, Event);
-
-	Move(Event);
-	if (bu_overlay.handleEvents(Event) == BUAC_LCLICK)
-		overlay = bu_overlay.state;
-
-	return false;
-}
-#endif
-
 void Map::setImage(const unsigned int &val, const bool &force) {
 	if (force || (_cur != val && val < _map.size())) {
 		_cur = val;

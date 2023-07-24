@@ -126,26 +126,6 @@ bool PersonHandler::handleDlboxEvents(const Common::Event &event) {
 	return _dlbox.handleEvents(event);
 }
 
-#if 0
-bool PersonHandler::HandleCommonEvents(const SDL_Event &Event) {
-	opinion[OPI_LIKE].handleEvents(Event);
-	opinion[OPI_RESPECT].handleEvents(Event);
-	opinion[OPI_FEAR].handleEvents(Event);
-
-	if (jb.handleEvents(Event) == BUAC_LCLICK) {
-		// User wants to open their journal
-		show_journal = true;
-		return true;
-	}
-
-	return false;
-}
-
-bool PersonHandler::HandleDlboxEvents(const SDL_Event &Event) {
-	return dlbox.handleEvents(Event);
-}
-#endif
-
 void PersonHandler::internalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s) {
 	if (s != NULL)
 		s->dialogUpdateClip(state);

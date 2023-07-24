@@ -123,12 +123,6 @@ public:
 	}
 
 	const char *Get(const int &num) {
-#if 0
-		if (pool_i.count(num) == 0)
-			pool_i[num] = NumberToString<int>(num);
-
-		return pool_i[num].c_str();
-#endif
 		if (poolI.contains(num) == false)
 			poolI[num] = numberToString<int>(num);
 
@@ -149,19 +143,6 @@ public:
 		return ret._str.c_str();
 	}
 };
-
-// Our source of random numbers
-#if 0
-class RandomNumberGen {
-	std::random_device rd;
-	std::default_random_engine dre;
-
-public:
-	RandomNumberGen() : rd(), dre(rd()) {}
-
-	int Num() { return dre(); }
-};
-#endif
 
 struct TempValue {
 	// Differences between normal mode and iron man mode

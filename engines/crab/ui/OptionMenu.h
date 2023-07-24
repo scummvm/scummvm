@@ -90,9 +90,6 @@ class OptionMenu {
 
 	// Function to draw the main menu (controls, settings, save, cancel)
 	bool handleTabs(Button &back, const Common::Event &event);
-#if 0
-	bool HandleTabs(Button &back, const SDL_Event &Event);
-#endif
 
 public:
 	bool _loaded;
@@ -112,9 +109,6 @@ public:
 	void load(const Common::String &filename);
 	void draw(Button &back);
 	bool handleEvents(Button &back, const Common::Event &event);
-#if 0
-	bool handleEvents(Button &back, const SDL_Event &Event);
-#endif
 	void internalEvents();
 
 	void setUI();

@@ -38,14 +38,6 @@
 
 namespace Crab {
 
-#if 0
-// Our rendering context
-extern SDL_Renderer *gRenderer;
-
-// Our window
-extern SDL_Window *gWindow;
-#endif
-
 struct Dimension {
 	int w, h;
 	Dimension() {

@@ -102,9 +102,6 @@ public:
 
 	// Return true if "go to map" is selected
 	bool handleEvents(const Common::String &id, const Common::Event &event);
-#if 0
-	bool handleEvents(const Common::String &id, const SDL_Event &Event);
-#endif
 
 	void add(const Common::String &id, const Common::String &category, const Common::String &title, const Common::String &text);
 	void move(const Common::String &id, const Common::String &title, const bool &completed);

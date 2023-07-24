@@ -65,9 +65,6 @@ public:
 	void draw();
 
 	bool handleEvents(const Common::Event &Event);
-#if 0
-	bool handleEvents(const SDL_Event &Event);
-#endif
 
 	void setUI();
 };

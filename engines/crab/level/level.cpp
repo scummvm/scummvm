@@ -115,35 +115,6 @@ void Level::handleEvents(Info &info, const Common::Event &Event) {
 	_objects[_playerIndex].handleEvents(info, _camera, _scDefault, Event);
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle the level movement
-//------------------------------------------------------------------------
-void Level::handleEvents(Info &info, const SDL_Event &Event) {
-	if (!g_engine->_mouse->_insideHud) {
-		if (Event.type == SDL_MOUSEBUTTONDOWN) {
-			// Only go to path if our mouse is a normal walking cursor
-			if (!g_engine->_mouse->hover) {
-				// The destination coordinate is set by adding camera position to click position
-				Vector2i dest = g_engine->_mouse->button;
-				dest.x += camera.x;
-				dest.y += camera.y;
-
-				Rect b = objects[player_index].BoundRect();
-				b.w /= 2;
-				b.h /= 2;
-				b.x = dest.x - b.w / 2;
-				b.y = dest.y - b.h / 2;
-
-				objects[player_index].SetDestPathfinding(dest, !terrain.InsideNoWalk(dest));
-			}
-		}
-	}
-
-	objects[player_index].handleEvents(info, camera, sc_default, Event);
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Swap the player sprites
 //------------------------------------------------------------------------

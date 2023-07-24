@@ -148,24 +148,6 @@ void QuestText::handleEvents(pyrodactyl::event::Quest &q, const Common::Event &e
 	}
 }
 
-#if 0
-void QuestText::handleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event) {
-	if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK) {
-		current_page--;
-
-		if (current_page < 0)
-			current_page = 0;
-	}
-
-	if (current_page < total_page - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
-		current_page++;
-
-		if (current_page >= total_page)
-			current_page = total_page - 1;
-	}
-}
-#endif
-
 void QuestText::setUI() {
 	ParagraphData::setUI();
 	_img.setUI();

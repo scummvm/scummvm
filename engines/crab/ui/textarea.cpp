@@ -90,40 +90,6 @@ bool TextArea::handleEvents(const Common::Event &event, bool numbersOnly) {
 	return false;
 }
 
-
-#if 0
-bool TextArea::handleEvents(const SDL_Event &Event, bool numbers_only) {
-	// If a key was pressed
-	if (Event.type == SDL_TEXTINPUT) {
-		// If the string less than maximum size and does not contain invalid characters \ / : * ? " < > |
-		if (text.length() < size && Event.kbd.ascii != '\\' && Event.kbd.ascii != '/' && Event.kbd.ascii != ':' && Event.kbd.ascii != '*' && Event.kbd.ascii != '?' && Event.kbd.ascii != '\"' && Event.kbd.ascii != '<' && Event.kbd.ascii != '>' && Event.kbd.ascii != '|') {
-			// Should we only accept numbers?
-			if (numbers_only && !isdigit(Event.kbd.ascii))
-				return false;
-
-			// Now play the text input sound
-			g_engine->_musicManager->PlayEffect(se_entry, 0);
-
-			// Append the character to string
-			text += Event.text.text;
-		}
-	} else if (Event.type == SDL_KEYDOWN && Event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE && text.length() != 0) {
-		// Now play the text erase sound
-		g_engine->_musicManager->PlayEffect(se_erase, 0);
-
-		// If backspace was pressed and the string isn't blank, remove a character from the end
-		text.erase(text.length() - 1);
-	} else if (g_engine->_inputManager->Equals(IU_ACCEPT, Event) == SDL_RELEASED && text.length() != 0) {
-		// Now play the accept sound
-		g_engine->_musicManager->PlayEffect(se_accept, 0);
-
-		return true;
-	}
-
-	return false;
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------

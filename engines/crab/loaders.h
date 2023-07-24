@@ -81,14 +81,6 @@ bool loadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node
 	return true;
 }
 
-#if 0
-
-//Load Rectangle
-bool LoadRect(SDL_Rect &rect, rapidxml::xml_node<char> *node, const bool &echo = true,
-	const Common::String &x_name = "x", const Common::String &y_name = "y", const Common::String &w_name = "w", const Common::String &h_name = "h");
-
-#endif
-
 // Make linker happy by temporarily defining SDL_COLOR
 struct SDL_Color {
 	uint32 r;

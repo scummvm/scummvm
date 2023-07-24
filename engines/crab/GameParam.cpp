@@ -58,11 +58,6 @@ FilePaths::FilePaths() : _common("res/levels/common.xml"),
 	_level.clear();
 	_loaded = false;
 
-#if 0
-	char *path = SDL_GetPrefPath("Pyrodactyl", "Unrest");
-	appdata = path;
-	SDL_free(path);
-#endif
 	warning("FilePaths::FilePaths() setting appdata directory to game dir");
 	_appdata = "./";
 }
@@ -143,14 +138,6 @@ void FilePaths::load(const Common::String &filename) {
 
 				Common::String custom_path;
 				if (loadStr(custom_path, "custom", savenode)) {
-#if 0
-					using namespace boost::filesystem;
-
-					path customdir(custom_path);
-					if (exists(customdir) && is_directory(customdir)) {
-						appdata = custom_path;
-					}
-#endif
 					warning("In FilePaths::load(), customPath : %s", custom_path.c_str());
 				}
 			}

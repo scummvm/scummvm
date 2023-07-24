@@ -71,9 +71,6 @@ void ReplyButton::cache(const Common::String &val, const int &spacing, const int
 
 	// Find out about the font
 	int width = 0, height = 0;
-#if 0
-	TTF_SizeText(g_engine->_textManager->GetFont(font), val, &width, &height);
-#endif
 	width = g_engine->_textManager->getFont(_font)->getStringWidth(val);
 	height = g_engine->_textManager->getFont(_font)->getFontHeight();
 

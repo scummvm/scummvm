@@ -245,30 +245,6 @@ public:
 		return _menu[_currentPage].handleEvents(Event);
 	}
 
-#if 0
-	int handleEvents(const SDL_Event &Event) {
-		using namespace pyrodactyl::input;
-
-		if (current_page > 0 && prev.handleEvents(Event) == BUAC_LCLICK) {
-			current_page--;
-			UpdateInfo();
-
-			if (current_page < 0)
-				current_page = 0;
-		}
-
-		if (current_page < menu.size() - 1 && next.handleEvents(Event) == BUAC_LCLICK) {
-			current_page++;
-			UpdateInfo();
-
-			if (current_page >= menu.size())
-				current_page = menu.size() - 1;
-		}
-
-		return menu[current_page].handleEvents(Event);
-	}
-#endif
-
 	void draw() {
 		_status.draw(_info);
 		_menu[_currentPage].draw();

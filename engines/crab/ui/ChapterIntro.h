@@ -61,9 +61,6 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 
 	bool handleEvents(Common::Event &event);
-#if 0
-	bool handleEvents(SDL_Event &Event);
-#endif
 
 	void draw(pyrodactyl::event::Info &info, Common::String &text,
 			  pyrodactyl::anim::Sprite *curSp, const pyrodactyl::people::PersonState &state);

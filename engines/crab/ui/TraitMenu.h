@@ -80,9 +80,6 @@ public:
 	void draw(const pyrodactyl::people::Person *obj);
 
 	void handleEvents(pyrodactyl::people::Person *obj, const Common::Event &event);
-#if 0
-	void handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event);
-#endif
 
 	void cache(const pyrodactyl::people::Person &obj);
 	void setUI();

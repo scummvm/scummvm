@@ -81,20 +81,6 @@ void ItemMenu::handleEvents(const Common::Event &Event, const int &XOffset, cons
 	}
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handles drag n' drop - return type is Boolean because we only need to communicate stat changes
-//------------------------------------------------------------------------
-void ItemMenu::handleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
-	int result = Menu<ItemSlot>::handleEvents(Event);
-	if (result != -1) {
-		select_index = result;
-		for (unsigned int i = 0; i < element.size(); ++i)
-			element[i].State(i == select_index);
-	}
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Draw the slot backgrounds first, then the items
 //------------------------------------------------------------------------

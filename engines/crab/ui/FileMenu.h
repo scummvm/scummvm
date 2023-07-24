@@ -212,20 +212,6 @@ public:
 		return false;
 	}
 
-#if 0
-	bool handleEvents(const SDL_Event &Event) {
-		int choice = menu.handleEvents(Event);
-		if (choice >= 0) {
-			menu.reset();
-			selected = slot_info[menu.Index() + choice].path;
-			reset();
-			return true;
-		}
-
-		return false;
-	}
-#endif
-
 	void draw() {
 		_bg.draw();
 		_menu.draw();

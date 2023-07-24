@@ -132,9 +132,6 @@ public:
 	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
 
 	ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
-#if 0
-	ButtonAction handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
-#endif
 
 	// Special functions to only draw parts of a button (used in special situations like world map)
 	void imageCaptionOnlyDraw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);

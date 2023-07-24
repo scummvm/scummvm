@@ -86,17 +86,6 @@ bool GameDialogBox::handleEvents(const Common::Event &event) {
 	return (_button.handleEvents(event) == BUAC_LCLICK);
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle input
-//------------------------------------------------------------------------
-bool GameDialogBox::handleEvents(const SDL_Event &Event) {
-	return (button.handleEvents(Event) == BUAC_LCLICK);
-}
-#endif
-
-
-
 void GameDialogBox::setUI() {
 	_pos.setUI();
 	_text.setUI(&_pos);

@@ -93,9 +93,7 @@ public:
 	void draw(const Element &pos, const Vector2i &player_pos, const Rect &camera);
 
 	void handleEvents(const Element &pos, const Vector2i &playerPos, const Rect &camera, const Common::Event &event);
-#if 0
-	void handleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const SDL_Event &Event);
-#endif
+
 	void internalEvents(const Element &pos, const Vector2i &playerPos, const Rect &camera, Rect bounds);
 
 	void setUI();

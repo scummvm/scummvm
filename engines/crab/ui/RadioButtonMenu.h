@@ -78,21 +78,6 @@ public:
 		return result;
 	}
 
-#if 0
-	int handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
-		int result = Menu::handleEvents(Event, XOffset, YOffset);
-
-		if (result >= 0) {
-			select = result;
-
-			for (int i = 0; i < element.size(); ++i)
-				element[i].state = (i == result);
-		}
-
-		return result;
-	}
-#endif
-
 	void setUI() {
 		Menu::setUI();
 		_desc.setUI();

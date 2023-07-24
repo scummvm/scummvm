@@ -75,10 +75,6 @@ public:
 
 	bool handleEvents(const Common::Event &event);
 
-#if 0
-	bool handleEvents(const SDL_Event &Event);
-#endif
-
 	void setUI();
 };
 } // End of namespace ui

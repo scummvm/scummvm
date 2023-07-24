@@ -92,32 +92,6 @@ void GeneralSettingMenu::handleEvents(const Common::Event &event) {
 		g_engine->_screenSettings->_textSpeed = _textSpeed._element[result]._val;
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle user input
-//------------------------------------------------------------------------
-void GeneralSettingMenu::handleEvents(const SDL_Event &Event) {
-	if (vol_music.handleEvents(Event))
-		g_engine->_musicManager->VolMusic(vol_music.Value());
-
-	if (vol_effects.handleEvents(Event))
-		g_engine->_musicManager->VolEffects(vol_effects.Value());
-
-	// No need to change screen here
-	if (save_on_exit.handleEvents(Event))
-		g_engine->_screenSettings->save_on_exit = !g_engine->_screenSettings->save_on_exit;
-
-	if (mouse_trap.handleEvents(Event)) {
-		g_engine->_screenSettings->mouse_trap = !g_engine->_screenSettings->mouse_trap;
-		g_engine->_screenSettings->SetMouseTrap();
-	}
-
-	int result = text_speed.handleEvents(Event);
-	if (result >= 0)
-		g_engine->_screenSettings->text_speed = text_speed.element[result].val;
-}
-#endif
-
 //------------------------------------------------------------------------
 // Purpose: Sync our buttons with screen settings
 //------------------------------------------------------------------------

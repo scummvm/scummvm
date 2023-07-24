@@ -100,24 +100,6 @@ void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const Common::Even
 	}
 }
 
-#if 0
-void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event) {
-	int choice = menu.handleEvents(Event);
-	if (choice >= 0) {
-		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
-			i->State(false);
-
-		menu.element[choice].State(true);
-		select = choice;
-
-		if (obj != nullptr) {
-			if (select > -1 && select < obj->trait.size())
-				obj->trait[select].unread = false;
-		}
-	}
-}
-#endif
-
 void TraitMenu::cache(const pyrodactyl::people::Person &obj) {
 	auto e = _menu._element.begin();
 
