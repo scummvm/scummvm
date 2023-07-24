@@ -30,6 +30,8 @@ inline static bool quadchar_equals_string(uint32 code, const Common::String &str
 }
 
 void error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...) {
+	assert(fmt);
+
 	va_list va;
 	va_start(va, fmt);
 	Common::String msg = Common::String::vformat(fmt, va);

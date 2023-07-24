@@ -86,7 +86,7 @@ void mem_free_to_stash(void *mem, int32 memType) {
 	int32 index = ((long)mem - (long)_G(memBlock)[memType]) / (_G(sizeMem)[memType] + 1);
 
 	if (index < 0 || index > _G(requests)[memType])
-		error_show(FL, 'MSGF', nullptr);
+		error_show(FL, 'MSGF');
 
 	b_ptr += index * (_G(sizeMem)[memType] + 1);
 	*b_ptr = 0;
