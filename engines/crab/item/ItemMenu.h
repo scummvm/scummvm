@@ -46,40 +46,40 @@ namespace item {
 // The menu is used to handle interactions like the player clicking on an item to equip it
 class ItemMenu : public pyrodactyl::ui::Menu<ItemSlot> {
 protected:
-	int preview_index, select_index;
+	int _previewIndex, _selectIndex;
 
 	// Variable to determine if stats of object need updating
-	bool update;
+	bool _update;
 
 public:
 	// The preview for selected item and hovered item
 	// StatPreview select, hover;
 
 	ItemMenu() {
-		preview_index = -1;
-		select_index = -1;
-		update = false;
+		_previewIndex = -1;
+		_selectIndex = -1;
+		_update = false;
 	}
 	~ItemMenu() {}
 
 	int hoverIndex() { return _hoverIndex; }
 
-	void draw(pyrodactyl::ui::ItemDesc &item_info);
+	void draw(pyrodactyl::ui::ItemDesc &itemInfo);
 	/*pyrodactyl::people::Person &obj, pyrodactyl::stat::StatDrawHelper &helper*/
 
-	void Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows,
+	void init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows,
 			  const unsigned int &cols, const bool &keyboard);
 
-	void handleEvents(const Common::Event &event, const int &XOffset = 0, const int &YOffset = 0);
+	void handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 #if 0
 	void handleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #endif
 	/* pyrodactyl::people::Person &obj,*/
 
-	bool Swap(ItemMenu &target, int index);
-	bool Equip(Item &item);
-	bool Del(const Common::String &id);
-	bool Has(const Common::String &container, const Common::String &id);
+	bool swap(ItemMenu &target, int index);
+	bool equip(Item &item);
+	bool del(const Common::String &id);
+	bool has(const Common::String &container, const Common::String &id);
 
 	// Used to calculate enabled slots
 	// void SetEnable();

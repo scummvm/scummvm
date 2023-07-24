@@ -63,7 +63,7 @@ void ItemCollection::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void ItemCollection::init(const Common::String &charId) {
 	if (_item.contains(charId) == 0)
-		_item[charId].Init(_ref, _inc, _rows, _cols, _useKeyboard);
+		_item[charId].init(_ref, _inc, _rows, _cols, _useKeyboard);
 }
 
 //------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void ItemCollection::draw(const Common::String &charId) {
 //------------------------------------------------------------------------
 void ItemCollection::del(const Common::String &charId, const Common::String &itemId) {
 	if (_item.contains(charId) > 0)
-		_item[charId].Del(itemId);
+		_item[charId].del(itemId);
 }
 
 //------------------------------------------------------------------------
@@ -98,7 +98,7 @@ void ItemCollection::add(const Common::String &charId, Item &itemData) {
 	// Which is why we add a new inventory in case the character inventory does not exist yet
 	init(charId);
 
-	_item[charId].Equip(itemData);
+	_item[charId].equip(itemData);
 }
 
 //------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void ItemCollection::add(const Common::String &charId, Item &itemData) {
 //------------------------------------------------------------------------
 bool ItemCollection::has(const Common::String &charId, const Common::String &container, const Common::String &itemId) {
 	if (_item.contains(charId) > 0)
-		return _item[charId].Has(container, itemId);
+		return _item[charId].has(container, itemId);
 
 	return false;
 }
