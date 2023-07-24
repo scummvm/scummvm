@@ -27,7 +27,7 @@
 
 namespace M4 {
 
-#define _GC(X) _G(conversations).##X
+#define _GC(X) _G(conversations).X
 
 #define CONV_WAIT_FOR_INPUT		1
 #define CONV_HALT_FOREVER		2
