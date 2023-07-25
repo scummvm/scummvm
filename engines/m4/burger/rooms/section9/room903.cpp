@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section9/room903.h"
 #include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_trigger.h"
+#include "m4/graphics/gr_series.h"
 #include "m4/burger/vars.h"
 #include "m4/m4.h"
 
@@ -40,9 +41,9 @@ void Room903::init() {
 	_val3 = -1;
 	_val4 = -1;
 	_val5 = -1;
-#ifdef TODO
+
 	series_show_("903logo", 0, 0, -1, -1, 0, 100, 386, 20);
-#endif
+
 	if (_G(game).previous_room <= 0 || _G(game).previous_room == 951) {
 		kernel_trigger_dispatch_now(11);
 

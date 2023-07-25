@@ -27,6 +27,17 @@
 
 namespace M4 {
 
+constexpr uint32 SERIES_FORWARD = 0;
+constexpr uint32 SERIES_PINGPONG = 1;
+constexpr uint32 SERIES_BACKWARD = 2;
+constexpr uint32 SERIES_RANDOM = 4;			// series is played in random order, trigger after number of frames in range played
+constexpr uint32 SERIES_NO_TOSS = 8;		// series is not tossed at the end of playing
+constexpr uint32 SERIES_STICK = 16;			// series sticks on last frame, then sends trigger
+constexpr uint32 SERIES_LOOP_TRIGGER = 32;	// get trigger back every loop
+constexpr uint32 SERIES_LOAD_PALETTE = 64;	// load master_palette with colours?
+constexpr uint32 SERIES_HORZ_FLIP = 128;	// horizontal flip
+
+// Old constants
 constexpr uint32 FORWARD = 0;
 constexpr uint32 PINGPONG = 1;
 constexpr uint32 BACKWARD = 2;
@@ -73,6 +84,9 @@ machine *series_ranged_play_xy(char *seriesName, int32 loopCount, uint32 flags,
 machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger);
 bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger);
 void series_set_frame_rate(machine *m, int32 newFrameRate);
+
+extern machine *series_show_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
+	int32 duration, int32 index, int32 s, int32 x, int32 y);
 
 } // namespace M4
 

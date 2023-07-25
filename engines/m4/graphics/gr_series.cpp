@@ -94,7 +94,7 @@ bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
 	_G(globals)[GLB_TEMP_3] = kernel_trigger_create(trigger);
 
 	// Send the message to the machine to accept the new callback frame num and trigger
-	SendWSMessage(0x10000, 0, m, 0, NULL, 1);
+	SendWSMessage(0x10000, 0, m, 0, nullptr, 1);
 
 	return true;
 }
@@ -106,6 +106,44 @@ void series_set_frame_rate(machine *m, int32 newFrameRate) {
 		error_show(FL, 'SSFR');
 
 	m->myAnim8->myRegs[IDX_CELS_FRAME_RATE] = newFrameRate << 16;
+}
+
+machine *series_show_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
+	int32 duration, int32 index, int32 s, int32 x, int32 y) {
+	CHECK_SERIES
+
+	int32 myAssetIndex;
+	RGB8 *tempPalettePtr = nullptr;
+
+	term_message(seriesName);
+
+	if (flags & SERIES_LOAD_PALETTE)
+		tempPalettePtr = &_G(master_palette)[0];
+
+	if ((myAssetIndex = AddWSAssetCELS(seriesName, -1, tempPalettePtr)) < 0)
+		error_show(FL, 'SPNF', seriesName);
+
+	_G(globals)[GLB_TEMP_1] = (frac16)myAssetIndex << 24;			// cels hash
+	_G(globals)[GLB_TEMP_2] = layer << 16;							// layer
+
+	_G(globals)[GLB_TEMP_3] = kernel_trigger_create(triggerNum);	// trigger
+
+	_G(globals)[GLB_TEMP_4] = duration << 16;						// frame duration (-1=forever, 0=default)
+	_G(globals)[GLB_TEMP_5] = index << 16;							// index of series to show
+
+	_G(globals)[GLB_TEMP_6] = (s << 16) / 100;						// scale
+	_G(globals)[GLB_TEMP_7] = x << 16;														// x
+	_G(globals)[GLB_TEMP_8] = y << 16;														// y
+
+	_G(globals)[GLB_TEMP_14] = (flags & SERIES_STICK) ? 0x10000 : 0;	// stick to screen after trigger?
+	_G(globals)[GLB_TEMP_16] = (flags & SERIES_HORZ_FLIP) ? 0x10000 : 0;// horizontal flip
+
+	machine *m = kernel_spawn_machine(seriesName, HASH_SERIES_SHOW_MACHINE, series_trigger_dispatch_callback);
+
+	if (!m)
+		error_show(FL, 'WSMF', seriesName);
+
+	return m;
 }
 
 } // namespace M4
