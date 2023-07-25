@@ -803,7 +803,21 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 void TattooScene::synchronize(Serializer &s) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	uint numSceneTripCounters = 0;
 	Scene::synchronize(s);
+
+	// Since save version 5: sync _sceneTripCounters
+	if (s.isSaving())
+		numSceneTripCounters = _sceneTripCounters.size();
+	s.syncAsUint32LE(numSceneTripCounters, 5);
+	if (s.isLoading())
+		_sceneTripCounters.resize(numSceneTripCounters);
+
+	for (auto &tripCounter : _sceneTripCounters) {
+		s.syncAsSint32LE(tripCounter._flag, 5);
+		s.syncAsSint32LE(tripCounter._sceneNumber, 5);
+		s.syncAsSint32LE(tripCounter._numTimes, 5);
+	}
 
 	if (s.isLoading()) {
 		// In case we were showing the intro prologue or the ending credits, stop them
