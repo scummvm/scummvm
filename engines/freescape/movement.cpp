@@ -360,9 +360,10 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
 	}
 
-	/*if ((lastPosition - newPosition).length() >= 1) { // Step up
+	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
+		setGameBit(31);
 		playSound(4, false);
-	}*/
+	}
 
 	lastPosition = newPosition;
 	newPosition.y() = -8192;
