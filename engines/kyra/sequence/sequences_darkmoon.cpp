@@ -1500,7 +1500,9 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 	Common::String str = _config->strings[index];
 
 	if (_config->voicePattern) {
-		_vm->_sound->voicePlay(Common::String::format(_config->voicePattern, index + 1).c_str(), &_vm->_speechHandle);
+		Common::String file(Common::String::format(_config->voicePattern, index + 1));
+		if (_vm->_sound->isVoicePresent(file.c_str()))
+			_vm->_sound->voicePlay(file.c_str(), &_vm->_speechHandle);
 	}
 
 	const ScreenDim *dm = _screen->_curDim;
