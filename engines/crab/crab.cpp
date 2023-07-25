@@ -44,7 +44,7 @@ CrabEngine::~CrabEngine() {
 	delete _app;
 
 	delete _screenSettings;
-	delete gStrPool;
+	delete _stringPool;
 	delete _tempData;
 	delete _filePath;
 
@@ -95,7 +95,7 @@ Common::Error CrabEngine::run() {
 
 	_filePath = new FilePaths();
 	_tempData = new TempValue();
-	gStrPool = new StringPool();
+	_stringPool = new StringPool();
 	_screenSettings = new ScreenSettings();
 
 	CursorMan.showMouse(true);

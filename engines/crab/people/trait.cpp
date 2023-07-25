@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/people/trait.h"
 
 namespace Crab {
@@ -61,10 +62,10 @@ void Trait::clear() {
 //------------------------------------------------------------------------
 void Trait::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, rootname);
-	child->append_attribute(doc.allocate_attribute("id", gStrPool->Get(_id)));
+	child->append_attribute(doc.allocate_attribute("id", g_engine->_stringPool->Get(_id)));
 	child->append_attribute(doc.allocate_attribute("name", _name.c_str()));
 	child->append_attribute(doc.allocate_attribute("desc", _desc.c_str()));
-	child->append_attribute(doc.allocate_attribute("img", gStrPool->Get(_img)));
+	child->append_attribute(doc.allocate_attribute("img", g_engine->_stringPool->Get(_img)));
 
 	saveBool(_unread, "unread", doc, child);
 

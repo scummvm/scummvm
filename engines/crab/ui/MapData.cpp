@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/ui/MapData.h"
 
 namespace Crab {
@@ -57,8 +58,8 @@ void MapData::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 	for (auto d = _dest.begin(); d != _dest.end(); ++d) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "pos");
 		child->append_attribute(doc.allocate_attribute("name", d->_name.c_str()));
-		child->append_attribute(doc.allocate_attribute("x", gStrPool->Get(d->_pos.x)));
-		child->append_attribute(doc.allocate_attribute("y", gStrPool->Get(d->_pos.y)));
+		child->append_attribute(doc.allocate_attribute("x", g_engine->_stringPool->Get(d->_pos.x)));
+		child->append_attribute(doc.allocate_attribute("y", g_engine->_stringPool->Get(d->_pos.y)));
 		child_dest->append_node(child);
 	}
 	root->append_node(child_dest);
