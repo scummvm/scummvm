@@ -408,6 +408,9 @@ const char *emid_voice[] = {
 	"7f9867d48b5e0af5cb3fbd8d79741f5d", // english patched
 };
 
+// FIXME: We should check the MD5 of the resource and data forks, not of the
+// particular dump.
+
 // EMI Macintosh
 const char *emi_installer[] = {
 	"93a639e3221405862dc46e9706216c00", // German (EFMI Installer)
@@ -523,7 +526,11 @@ void MD5Check::init() {
 			MD5SUM("artMel.m4b", emi_artMel)
 			MD5SUM("artMon.m4b", emi_artMon)
 			MD5SUM("lip.m4b", emi_lip)
-			MD5SUM("local.m4b", emi_local)
+			// At least in the English version, this appears to be part of the
+			// installer.
+			if (g_grim->getGameLanguage() != Common::EN_ANY) {
+				MD5SUM("local.m4b", emi_local)
+			}
 			MD5SUM("sfx.m4b", emi_sfx)
 			MD5SUM("voiceAll.m4b", emi_voiceAll)
 			MD5SUM("voiceJam.m4b", emi_voiceJam)

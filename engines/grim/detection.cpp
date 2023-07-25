@@ -512,6 +512,20 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_MONKEY4
 	},
 	{
+		// Escape from Monkey Island English (Mac)
+		{
+			"monkey4",
+			"",
+			AD_ENTRY2s("artAll.m4b",	 "61959da91d864bf5f4588daa4a5a3019", 18515664,
+					   "Monkey Island 4 Installer", "r:8230927789935674546c4b3f9b1368ea", 560139),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island German (Mac)
 		{
 			"monkey4",
