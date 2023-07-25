@@ -78,7 +78,6 @@ enum scene_triggers {
 	START_46,
 	START_47,
 	START_48,
-	START_49,
 	START_50,
 	START_51,
 	START_52,
@@ -655,7 +654,6 @@ void Room951::daemon() {
 		}
 		break;
 
-	case START_49:
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;
