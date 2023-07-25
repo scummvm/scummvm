@@ -139,7 +139,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 		byteSizeOfObject++;
 		while(--byteSizeOfObject > 0)
-			connectionsArray.push_back(file->readByte());
+			connectionsArray.push_back(readField(file, 8));
 		return new AreaConnections(connectionsArray);
 	}
 

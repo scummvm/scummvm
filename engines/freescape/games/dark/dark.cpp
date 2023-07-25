@@ -175,18 +175,15 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (entranceID > 0 || areaID == 127) {
 		traverseEntrance(entranceID);
 	} else if (entranceID == 0) {
-		Math::Vector3d diff = _lastPosition - _position;
-		// debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
-		//  diff should be used to determinate which entrance to use
 		int newPos = -1;
-		if (ABS(diff.x()) < ABS(diff.z())) {
-			if (diff.z() > 0)
+		if (_position.z() < 200 || _position.z() >= 3800) {
+			if (_position.z() < 200)
 				newPos = 4000;
 			else
 				newPos = 100;
 			_position.setValue(2, newPos);
-		} else {
-			if (diff.x() > 0)
+		} else if(_position.x() < 200 || _position.x() >= 3800)  {
+			if (_position.x() < 200)
 				newPos = 4000;
 			else
 				newPos = 100;
