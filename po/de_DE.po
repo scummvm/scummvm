@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-19 20:21+0000\n"
-"PO-Revision-Date: 2023-07-01 15:07+0000\n"
+"PO-Revision-Date: 2023-07-25 20:35+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1840,16 +1840,17 @@ msgstr ""
 "Bestätigung."
 
 #: gui/options.cpp:2564
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Fallen deaktivieren"
+msgstr "Schrift-Skalierung deaktivieren"
 
 #: gui/options.cpp:2565
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Dicktengleiche Schriften werden in der Benutzeroberfläche nicht skaliert. "
+"Diese Einstellung reduziert Darstellungs-Artefakte auf niedrig auflösenden "
+"Bildschirmen"
 
 #: gui/options.cpp:2571
 msgid "GUI language:"
@@ -4348,10 +4349,8 @@ msgstr "Virtuelle Bedienelemente anzeigen (iOS 15 und neuer)"
 
 #: backends/platform/ios7/ios7_options.mm:84
 #: backends/platform/ios7/ios7_options.mm:85
-#, fuzzy
-#| msgid "Control Mouse"
 msgid "Control opacity"
-msgstr "Maus steuern"
+msgstr "Deckkraft der Steuerung"
 
 #: backends/platform/ios7/ios7_options.mm:90
 msgid "Mouse-click-and-drag mode"
