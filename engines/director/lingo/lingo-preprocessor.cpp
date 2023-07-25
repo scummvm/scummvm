@@ -117,6 +117,9 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 		if (*s == '"')
 			inString = !inString;
 
+		if (*s == '\r' || *s == '\n') // Lingo does not allow multiline strings
+			inString = false;
+
 		if (!inString && *s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
 			while (*s && *s != '\r' && *s != '\n')
 				s++;
