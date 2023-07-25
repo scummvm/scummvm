@@ -36,7 +36,7 @@
 #include "backends/keymapper/standard-actions.h"
 
 #include "crab/common_header.h"
-#include "crab/input/inputval.h"
+//#include "crab/input/inputval.h"
 
 namespace Crab {
 
@@ -95,7 +95,7 @@ const int IU_START = IU_UP, IU_SIZE = IT_TOTAL - IU_START;
 
 class InputManager {
 	// The backups used to restore in case of the user pressing cancel
-	InputVal _backup[IT_TOTAL];
+	Common::String _backup[IT_TOTAL];
 
 	// Load key configuration from file
 	void load(const Common::String &filename);
@@ -147,7 +147,7 @@ public:
 	// Ex. UI and Fight can have buttons in common, but not two keys within UI
 
 	// Inputs used in the game
-	InputVal _iv[IT_TOTAL];
+	Common::String _iv[IT_TOTAL];
 	bool _ivState[IT_TOTAL];
 
 	// Our controller object

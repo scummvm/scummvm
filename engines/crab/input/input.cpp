@@ -160,9 +160,9 @@ void InputManager::load(const Common::String &filename) {
 		if (nodeValid(node)) {
 			loadNum(_version, "version", node);
 
-			int i = 0;
-			for (auto n = node->first_node(); n != NULL && i < IT_TOTAL; n = n->next_sibling(), ++i)
-				_iv[i].loadState(n);
+			// int i = 0;
+			// for (auto n = node->first_node(); n != NULL && i < IT_TOTAL; n = n->next_sibling(), ++i)
+			// 	_iv[i].loadState(n);
 		}
 	}
 }

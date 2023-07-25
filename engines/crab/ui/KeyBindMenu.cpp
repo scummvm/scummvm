@@ -119,7 +119,7 @@ void KeyBindMenu::drawDesc(const int &type) {
 		int xoffset = _inc.x * i + _divide.x * (i / _dim.x);
 		int yoffset = _inc.y * (i % _dim.x) + _divide.y * (i / _dim.x);
 
-		_desc.draw(g_engine->_inputManager->_iv[i + start].name, xoffset, yoffset);
+		_desc.draw(g_engine->_inputManager->_iv[i + start], xoffset, yoffset);
 	}
 }
 

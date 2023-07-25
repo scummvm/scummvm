@@ -43,7 +43,6 @@ MODULE_OBJS = \
 	input/fightinput.o \
 	input/hotkey.o \
 	input/input.o \
-	input/inputval.o \
 	item/Item.o \
 	item/ItemCollection.o \
 	item/ItemMenu.o \
