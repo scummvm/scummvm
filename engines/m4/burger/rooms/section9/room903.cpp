@@ -36,11 +36,11 @@ void Room903::preload() {
 
 void Room903::init() {
 	player_set_commands_allowed(false);
-	_val1 = 0;
-	_val2 = 0;
+	_num1 = 0;
+	_num2 = 0;
+	_val1 = -1;
+	_val2 = -1;
 	_val3 = -1;
-	_val4 = -1;
-	_val5 = -1;
 
 	series_show_("903logo", 0, 0, -1, -1, 0, 100, 386, 20);
 
@@ -58,8 +58,24 @@ void Room903::init() {
 }
 
 void Room903::daemon() {
+	if (!_G(menu).menuSystemInitialized)
+		return;
+
 	switch (_G(kernel).trigger) {
 	case 1:
+		digi_preload("903music");
+		digi_play("903music", 3, 100, -1);
+		break;
+
+	case 2:
+		if (!_val1) {
+			digi_preload("901click");
+
+			for (int i = 0; i < _val2; ++i) {
+
+			}
+		}
+
 		// TODO
 		break;
 
