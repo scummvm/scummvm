@@ -102,13 +102,22 @@ void MusicManager::playEffect(const ChunkKey &id, const int &loops) {
 bool MusicManager::load(rapidxml::xml_node<char> *node) {
 	_musicHandle = new Audio::SoundHandle();
 
-	// Initialize music parameters
-	int volumeMus = 100, volumeEff = 100;
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	int volumeEff = mute ? 0 : ConfMan.getInt("sfx_volume");
+	int volumeMus = mute ? 0 : ConfMan.getInt("music_volume");
 
 	if (nodeValid("sound", node)) {
 		rapidxml::xml_node<char> *volnode = node->first_node("sound");
-		loadNum(volumeMus, "music", volnode);
-		loadNum(volumeEff, "effects", volnode);
+		/* Originally the game loads the music and sound effect at the default value of 100 from the settings file.
+			However, we get these values from the ConfMan, so skip reading these values from settings
+		*/
+
+		//loadNum(_volumeMus, "music", volnode);
+		//loadNum(_volumeEff, "effects", volnode);
+
 		loadNum(_freq, "frequency", volnode);
 		loadNum(_channels, "channels", volnode);
 		loadNum(_chunksize, "chunk_size", volnode);
