@@ -27,14 +27,21 @@
 
 namespace GUI {
 
+enum {
+	kDownloadSelectedCmd = 'DWNS',
+	kRefreshDLCList = 'RDLC',
+};
+
 class DownloadGamesDialog : public Dialog {
 public:
 	DownloadGamesDialog();
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
+	void refreshDLCList();
+
 private:
-	ListWidget		*_gamesList;
+	ListWidget *_gamesList;
 };
 
 } // End of namespace GUI
