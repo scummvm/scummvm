@@ -52,6 +52,15 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) const override;
 
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
+		static const OSystem::GraphicsMode graphicsModes[] = {
+			{ "direct", "Direct rendering", (int)GraphicsMode::DirectRendering },
+			{ "single", "Single buffering", (int)GraphicsMode::SingleBuffering },
+			{ "triple", "Triple buffering", (int)GraphicsMode::TripleBuffering },
+			{ nullptr, nullptr, 0 }
+		};
+		return graphicsModes;
+	}
 	int getDefaultGraphicsMode() const override { return (int)GraphicsMode::TripleBuffering; }
 	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
 	int getGraphicsMode() const override { return (int)_currentState.mode; }
@@ -105,9 +114,6 @@ protected:
 
 	void allocateSurfaces();
 	void freeSurfaces();
-	void convertRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &srcSurface,
-									 int destX, int destY, const Common::Rect &subRect, uint32 key,
-									 const byte srcPalette[256*3]) const;
 
 	enum class GraphicsMode : int {
 		DirectRendering = 0,
@@ -151,7 +157,12 @@ private:
 	template <bool directRendering>
 	bool updateScreenInternal(const Graphics::Surface &srcSurface);
 
-	inline int getBitsPerPixel(const Graphics::PixelFormat &format) const;
+	void copyRectToScreenInternal(const void *buf, int pitch, int x, int y, int w, int h,
+								  const Graphics::PixelFormat &format, bool directRendering, bool tripleBuffer);
+
+	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
+
+	bool isOverlayDirectRendering() const;
 
 	virtual AtariMemAlloc getStRamAllocFunc() const {
 		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
@@ -165,14 +176,17 @@ private:
 								   const Common::Rect &subRect) const {
 		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
 	}
-	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
-										  int destX, int destY,
-										  const Common::Rect &subRect, uint32 key,
-										  const Graphics::Surface &bgSurface, const byte srcPalette[256*3]) const {
-		convertRectToSurfaceWithKey(dstSurface, srcSurface, destX, destY, subRect, key, srcPalette);
-	}
+
+	virtual void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+								  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+								  int destX, int destY,
+								  const Common::Rect &subRect) = 0;
 
 	virtual Common::Rect alignRect(int x, int y, int w, int h) const = 0;
+
+	Common::Rect alignRect(const Common::Rect &rect) const {
+		return alignRect(rect.left, rect.top, rect.width(), rect.height());
+	}
 
 	void cursorPositionChanged() {
 		if (_overlayVisible) {
@@ -219,6 +233,7 @@ private:
 	bool _tt = false;
 	bool _aspectRatioCorrection = false;
 	bool _oldAspectRatioCorrection = false;
+	bool _checkUnalignedPitch = false;
 
 	GraphicsState _currentState{ (GraphicsMode)getDefaultGraphicsMode() };
 
@@ -257,17 +272,20 @@ private:
 
 		void reset(int width, int height, int bitsPerPixel);
 		// must be called before any rectangle drawing
-		void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect);
+		void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
 
 		void clearDirtyRects() {
 			dirtyRects.clear();
 			fullRedraw = false;
 		}
 
+		void storeBackground(const Common::Rect &rect);
+		void restoreBackground(const Common::Rect &rect);
+
 		Graphics::Surface surf;
 		const Palette *palette;
 		bool cursorPositionChanged = true;
-		bool cursorSurfaceChanged = false;
+		bool cursorSurfaceChanged = true;
 		bool cursorVisibilityChanged = false;
 		DirtyRects dirtyRects;
 		bool fullRedraw = false;
@@ -279,8 +297,11 @@ private:
 	private:
 		static constexpr size_t ALIGN = 16;	// 16 bytes
 
-		AtariGraphicsManager *_manager;
+		const AtariGraphicsManager *_manager;
+
 		Graphics::Surface _offsettedSurf;
+		// used by direct rendering
+		Graphics::Surface _cursorBackgroundSurf;
 	};
 	Screen *_screen[BUFFER_COUNT] = {};
 	Screen *_workScreen = nullptr;
@@ -291,8 +312,6 @@ private:
 	bool _overlayVisible = false;
 	Graphics::Surface _overlaySurface;
 
-	bool _checkUnalignedPitch = false;
-
 	struct Cursor {
 		void update(const Graphics::Surface &screen, bool isModified);
 
@@ -300,30 +319,35 @@ private:
 
 		// position
 		Common::Point getPosition() const {
-			return Common::Point(x, y);
+			return Common::Point(_x, _y);
 		}
-		void setPosition(int x_, int y_) {
-			x = x_;
-			y = y_;
+		void setPosition(int x, int y) {
+			_x = x;
+			_y = y;
 		}
 		void updatePosition(int deltaX, int deltaY, const Graphics::Surface &screen);
 		void swap() {
-			const int tmpX = oldX;
-			const int tmpY = oldY;
+			const int tmpX = _oldX;
+			const int tmpY = _oldY;
 
-			oldX = x;
-			oldY = y;
+			_oldX = _x;
+			_oldY = _y;
 
-			x = tmpX;
-			y = tmpY;
+			_x = tmpX;
+			_y = tmpY;
 		}
 
 		// surface
-		void setSurface(const void *buf, int w, int h, int _hotspotX, int _hotspotY, uint32 _keycolor, const Graphics::PixelFormat &format);
+		void setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor);
+		template <bool isClut8>
+		void convertTo(const Graphics::PixelFormat &format);
 		Graphics::Surface surface;
-		uint32 keycolor;
+		Graphics::Surface surfaceMask;
 
 		// rects (valid only if !outOfScreen)
+		bool isClipped() const {
+			return outOfScreen ? false : _width != srcRect.width();
+		}
 		bool outOfScreen = true;
 		Common::Rect srcRect;
 		Common::Rect dstRect;
@@ -332,12 +356,21 @@ private:
 		byte palette[256*3] = {};
 
 	private:
-		int x = -1, y = -1;
-		int oldX = -1, oldY = -1;
+		int _x = -1, _y = -1;
+		int _oldX = -1, _oldY = -1;
 
-		int hotspotX;
-		int hotspotY;
-	} _cursor;
+		// related to 'surface'
+		const byte *_buf = nullptr;
+		int _width;
+		int _height;
+		int _hotspotX;
+		int _hotspotY;
+		uint32 _keycolor;
+
+		int _rShift, _gShift, _bShift;
+		int _rMask, _gMask, _bMask;
+	};
+	Cursor _cursor;
 
 	Palette _palette;
 	Palette _overlayPalette;

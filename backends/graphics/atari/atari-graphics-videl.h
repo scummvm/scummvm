@@ -24,6 +24,7 @@
 
 #include "backends/graphics/atari/atari-graphics.h"
 
+#include "backends/graphics/atari/atari-graphics-asm.h"
 #include "backends/graphics/atari/atari_c2p-asm.h"
 #include "common/system.h"
 
@@ -37,30 +38,6 @@ public:
 	~AtariVidelManager() {
 		// using virtual methods so must be done here
 		freeSurfaces();
-	}
-
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
-		static const OSystem::GraphicsMode graphicsModes[] = {
-			{"single", "Single buffering", (int)GraphicsMode::SingleBuffering},
-			{"triple", "Triple buffering", (int)GraphicsMode::TripleBuffering},
-			{nullptr, nullptr, 0 }
-		};
-		return graphicsModes;
-	}
-
-	OSystem::TransactionError endGFXTransaction() override {
-		int error = OSystem::TransactionError::kTransactionSuccess;
-
-		if (_pendingState.mode == GraphicsMode::DirectRendering)
-			error |= OSystem::TransactionError::kTransactionModeSwitchFailed;
-
-		if (error != OSystem::TransactionError::kTransactionSuccess) {
-			// all our errors are fatal but engine.cpp takes only this one seriously
-			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
-			return static_cast<OSystem::TransactionError>(error);
-		}
-
-		return AtariGraphicsManager::endGFXTransaction();
 	}
 
 private:
@@ -108,37 +85,27 @@ private:
 		}
 	}
 
-	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
-								  int destX, int destY,
-								  const Common::Rect &subRect, uint32 key,
-								  const Graphics::Surface &bgSurface, const byte srcPalette[256*3]) const override {
-		const Common::Rect backgroundRect = alignRect(destX, destY, subRect.width(), subRect.height());
-
-		static Graphics::Surface cachedSurface;
-
-		if (cachedSurface.w != backgroundRect.width()
-				|| cachedSurface.h != backgroundRect.height()
-				|| cachedSurface.format != bgSurface.format) {
-			cachedSurface.create(
-				backgroundRect.width(),
-				backgroundRect.height(),
-				bgSurface.format);
+	void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+						  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+						  int destX, int destY,
+						  const Common::Rect &subRect) override {
+		if (dstBitsPerPixel == 4) {
+			asm_draw_4bpl_sprite(
+				(uint16 *)dstSurface.getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
+				(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
+				destX, destY,
+				dstSurface.pitch, subRect.width(), subRect.height());
+		} else if (dstBitsPerPixel == 8) {
+			asm_draw_8bpl_sprite(
+				(uint16 *)dstSurface.getPixels(), (const uint16 *)srcSurface.getBasePtr(subRect.left, subRect.top),
+				(const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top),
+				destX, destY,
+				dstSurface.pitch, subRect.width(), subRect.height());
 		}
-
-		// copy background
-		cachedSurface.copyRectToSurface(bgSurface, 0, 0, backgroundRect);
-
-		// copy cursor
-		convertRectToSurfaceWithKey(cachedSurface, srcSurface, destX - backgroundRect.left, 0, subRect, key, srcPalette);
-
-		copyRectToSurface(
-			dstSurface, dstBitsPerPixel, cachedSurface,
-			backgroundRect.left, backgroundRect.top,
-			Common::Rect(cachedSurface.w, cachedSurface.h));
 	}
 
 	Common::Rect alignRect(int x, int y, int w, int h) const override {
-		return Common::Rect(x & 0xfff0, y, (x + w + 15) & 0xfff0, y + h);
+		return Common::Rect(x & (-16), y, (x + w + 15) & (-16), y + h);
 	}
 };
 

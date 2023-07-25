@@ -44,6 +44,35 @@ void asm_screen_tt_restore(void);
  */
 void asm_screen_falcon_restore(void);
 
+/**
+ * Copy 4bpl sprite into 4bpl buffer. Sprite's width must be multiply of 16.
+ *
+ * @param dstBuffer destination buffer (four bitplanes)
+ * @param srcBuffer source buffer (four bitplanes)
+ * @param srcMask source mask (one bitplane)
+ * @param destX sprite's X position (in pixels)
+ * @param destY sprite's Y position (in pixels)
+ * @param dstPitch destination buffer's pitch (in bytes)
+ * @param w sprite's width (in pixels)
+ * @param h sprite's height (in pixels)
+ */
+void asm_draw_4bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
+						  uint destX, uint destY, uint dstPitch, uint w, uint h);
+/**
+ * Copy 8bpl sprite into 8bpl buffer. Sprite's width must be multiply of 16.
+ *
+ * @param dstBuffer destination buffer (eight bitplanes)
+ * @param srcBuffer source buffer (eight bitplanes)
+ * @param srcMask source mask (one bitplane)
+ * @param destX sprite's X position (in pixels)
+ * @param destY sprite's Y position (in pixels)
+ * @param dstPitch destination buffer's pitch (in bytes)
+ * @param w sprite's width (in pixels)
+ * @param h sprite's height (in pixels)
+ */
+void asm_draw_8bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
+						  uint destX, uint destY, uint dstPitch, uint w, uint h);
+
 }
 
 #endif

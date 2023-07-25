@@ -55,16 +55,6 @@ public:
 		freeSurfaces();
 	}
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
-		static const OSystem::GraphicsMode graphicsModes[] = {
-			{"direct", "Direct rendering", (int)GraphicsMode::DirectRendering},
-			{"single", "Single buffering", (int)GraphicsMode::SingleBuffering},
-			{"triple", "Triple buffering", (int)GraphicsMode::TripleBuffering},
-			{nullptr, nullptr, 0 }
-		};
-		return graphicsModes;
-	}
-
 private:
 	AtariMemAlloc getStRamAllocFunc() const override {
 		return [](size_t bytes) {
@@ -78,6 +68,50 @@ private:
 	}
 	AtariMemFree getStRamFreeFunc() const override {
 		return [](void *ptr) { Mfree((uintptr)ptr & 0x00FFFFFF); };
+	}
+
+	void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+						  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+						  int destX, int destY,
+						  const Common::Rect &subRect) override {
+		assert(dstBitsPerPixel == 8);
+		assert(subRect.width() % 16 == 0);
+		assert(subRect.width() == srcSurface.w);
+
+		const byte *src = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
+		const uint16 *mask = (const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top);
+		byte *dst = (byte *)dstSurface.getBasePtr(destX, destY);
+
+		const int h = subRect.height();
+		const int w = subRect.width();
+		const int dstOffset = dstSurface.pitch - w;
+
+		for (int j = 0; j < h; ++j) {
+			for (int i = 0; i < w; i += 16, mask++) {
+				const uint16 m = *mask;
+
+				if (m == 0xFFFF) {
+					// all 16 pixels transparentm6
+					src += 16;
+					dst += 16;
+					continue;
+				}
+
+				for (int k = 0; k < 16; ++k) {
+					const uint16 bit = 1 << (15 - k);
+
+					if (m & bit) {
+						// transparent
+						src++;
+						dst++;
+					} else {
+						*dst++ = *src++;
+					}
+				}
+			}
+
+			dst += dstOffset;
+		}
 	}
 
 	Common::Rect alignRect(int x, int y, int w, int h) const override {
