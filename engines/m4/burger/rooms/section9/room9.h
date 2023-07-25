@@ -19,29 +19,23 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_ROOM903_H
-#define M4_BURGER_ROOMS_SECTION9_ROOM903_H
+#ifndef M4_BURGER_ROOMS_SECTION9_ROOM9_H
+#define M4_BURGER_ROOMS_SECTION9_ROOM9_H
 
-#include "m4/burger/rooms/section9/room9.h"
+#include "m4/burger/rooms/room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room903 : public Room9 {
-private:
-	int _num1 = 0, _num2 = 0;
-	void *_ptr1 = nullptr;
-	const char *_ptr2 = nullptr;
-	const char *_pt3 = nullptr;
-
+class Room9 : public Rooms::Room {
+protected:
+	int _val1 = -1;
+	int _val2 = -1;
+	int _val3 = -1;
 public:
-	Room903() : Room9(903) {}
-
-	void preload() override;
-	void init() override;
-	void pre_parser() override {}
-	void daemon() override;
+	Room9(int roomNum) : Rooms::Room(roomNum) {}
+	virtual ~Room9() {}
 };
 
 } // namespace Rooms

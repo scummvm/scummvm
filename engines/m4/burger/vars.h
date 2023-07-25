@@ -25,6 +25,7 @@
 #include "m4/vars.h"
 #include "m4/burger/core/release_trigger.h"
 #include "m4/burger/core/stream_break.h"
+#include "m4/burger/gui/game_menu.h"
 #include "m4/burger/gui/interface.h"
 #include "m4/burger/flags.h"
 #include "m4/burger/inventory.h"
@@ -79,6 +80,7 @@ public:
 	Burger::Flags _flags;
 	GameMode _executing = WHOLE_GAME;
 	GUI::Interface _interface;
+	GUI::MenuGlobals _menu;
 	SeriesPlayers _seriesPlayers;
 	ReleaseTrigger_Globals _releaseTrigger;
 	StreamBreak_Globals _streamBreak;
