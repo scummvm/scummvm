@@ -75,7 +75,7 @@ void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	root->append_attribute(doc.allocate_attribute("id", _id.c_str()));
 	root->append_attribute(doc.allocate_attribute("name", _name.c_str()));
 	root->append_attribute(doc.allocate_attribute("type", _type.c_str()));
-	root->append_attribute(doc.allocate_attribute("img", gStrPool->Get(_img)));
+	root->append_attribute(doc.allocate_attribute("img", g_engine->_stringPool->Get(_img)));
 	root->append_attribute(doc.allocate_attribute("desc", _desc.c_str()));
 
 	for (auto i = _bonus.begin(); i != _bonus.end(); ++i) {
@@ -99,7 +99,7 @@ void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 			break;
 		}
 
-		n->append_attribute(doc.allocate_attribute("val", gStrPool->Get(i->_val)));
+		n->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(i->_val)));
 		root->append_node(n);
 	}
 }

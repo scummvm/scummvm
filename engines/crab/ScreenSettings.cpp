@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/ScreenSettings.h"
 
 namespace Crab {
@@ -144,15 +145,15 @@ void ScreenSettings::setMouseTrap() {
 }
 
 void ScreenSettings::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	root->append_attribute(doc.allocate_attribute("version", gStrPool->Get(_version)));
+	root->append_attribute(doc.allocate_attribute("version", g_engine->_stringPool->Get(_version)));
 
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "screen");
-	child->append_attribute(doc.allocate_attribute("w", gStrPool->Get(_cur.w)));
-	child->append_attribute(doc.allocate_attribute("h", gStrPool->Get(_cur.h)));
-	child->append_attribute(doc.allocate_attribute("fps", gStrPool->Get(_fps)));
+	child->append_attribute(doc.allocate_attribute("w", g_engine->_stringPool->Get(_cur.w)));
+	child->append_attribute(doc.allocate_attribute("h", g_engine->_stringPool->Get(_cur.h)));
+	child->append_attribute(doc.allocate_attribute("fps", g_engine->_stringPool->Get(_fps)));
 
-	child->append_attribute(doc.allocate_attribute("gamma", gStrPool->FGet(_gamma)));
-	child->append_attribute(doc.allocate_attribute("text_speed", gStrPool->FGet(_textSpeed)));
+	child->append_attribute(doc.allocate_attribute("gamma", g_engine->_stringPool->FGet(_gamma)));
+	child->append_attribute(doc.allocate_attribute("text_speed", g_engine->_stringPool->FGet(_textSpeed)));
 
 	saveBool(_vsync, "vsync", doc, child);
 	saveBool(_border, "border", doc, child);

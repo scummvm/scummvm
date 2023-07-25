@@ -28,7 +28,7 @@
  *
  */
 
-
+#include "crab/crab.h"
 #include "crab/people/opinion.h"
 
 namespace Crab {
@@ -72,9 +72,9 @@ void Opinion::validate(const OpinionType &type) {
 
 void Opinion::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "opinion");
-	child->append_attribute(doc.allocate_attribute("like", gStrPool->Get(_val[OPI_LIKE])));
-	child->append_attribute(doc.allocate_attribute("fear", gStrPool->Get(_val[OPI_FEAR])));
-	child->append_attribute(doc.allocate_attribute("respect", gStrPool->Get(_val[OPI_RESPECT])));
+	child->append_attribute(doc.allocate_attribute("like", g_engine->_stringPool->Get(_val[OPI_LIKE])));
+	child->append_attribute(doc.allocate_attribute("fear", g_engine->_stringPool->Get(_val[OPI_FEAR])));
+	child->append_attribute(doc.allocate_attribute("respect", g_engine->_stringPool->Get(_val[OPI_RESPECT])));
 	root->append_node(child);
 }
 

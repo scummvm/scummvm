@@ -50,6 +50,8 @@ struct CrabGameDescription;
 
 class LoadingScreen;
 
+class StringPool;
+
 namespace pyrodactyl {
 namespace event {
 struct GameEventStore;
@@ -97,6 +99,7 @@ public:
 
 	FilePaths *_filePath = nullptr;
 	TempValue *_tempData = nullptr;
+	StringPool *_stringPool = nullptr;
 	ScreenSettings *_screenSettings = nullptr;
 
 	Common::FSNode _gameDataDir;

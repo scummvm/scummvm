@@ -665,8 +665,8 @@ void Sprite::internalEvents(Info &info, const Common::String &player_id, Common:
 //------------------------------------------------------------------------
 void Sprite::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	root->append_attribute(doc.allocate_attribute("id", _id.c_str()));
-	root->append_attribute(doc.allocate_attribute("x", gStrPool->Get(_pos.x)));
-	root->append_attribute(doc.allocate_attribute("y", gStrPool->Get(_pos.y)));
+	root->append_attribute(doc.allocate_attribute("x", g_engine->_stringPool->Get(_pos.x)));
+	root->append_attribute(doc.allocate_attribute("y", g_engine->_stringPool->Get(_pos.y)));
 }
 
 //------------------------------------------------------------------------

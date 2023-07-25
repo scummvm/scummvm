@@ -34,12 +34,6 @@ namespace Crab {
 // Are we in debug mode or not?
 bool GameDebug = false;
 
-// A temporary list of strings we use when storing numbers in a file
-StringPool *gStrPool;
-
-// Generate random numbers using this
-//RandomNumberGen gRandom;
-
 FilePaths::FilePaths() : _common("res/levels/common.xml"),
 						 _modPath("mods/"),
 						 _modExt(".unrmod"),

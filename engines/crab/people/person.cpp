@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/people/person.h"
 
 namespace Crab {
@@ -108,7 +109,7 @@ void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 	child->append_attribute(doc.allocate_attribute("name", _name.c_str()));
 
 	unsigned int val = static_cast<unsigned int>(_state);
-	child->append_attribute(doc.allocate_attribute("state", gStrPool->Get(val)));
+	child->append_attribute(doc.allocate_attribute("state", g_engine->_stringPool->Get(val)));
 
 	_opinion.saveState(doc, child);
 

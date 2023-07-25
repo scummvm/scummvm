@@ -333,7 +333,7 @@ void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	for (auto v = _var.begin(); v != _var.end(); ++v) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "var");
 		child->append_attribute(doc.allocate_attribute("id", v->first.c_str()));
-		child->append_attribute(doc.allocate_attribute("val", gStrPool->Get(v->second)));
+		child->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(v->second)));
 		root->append_node(child);
 	}
 
@@ -350,7 +350,7 @@ void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	root->append_node(child_unr);
 
 	rapidxml::xml_node<char> *child_img = doc.allocate_node(rapidxml::node_element, "img");
-	child_img->append_attribute(doc.allocate_attribute("index", gStrPool->Get(player_img)));
+	child_img->append_attribute(doc.allocate_attribute("index", g_engine->_stringPool->Get(player_img)));
 	root->append_node(child_img);
 
 	rapidxml::xml_node<char> *child_money = doc.allocate_node(rapidxml::node_element, "money");
