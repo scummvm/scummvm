@@ -91,67 +91,31 @@ public:
 	void playEffect(const ChunkKey &id, const int &loops);
 
 	static void pause() {
-		warning("STUB: MusicManager::pause()");
-
-#if 0
-		Mix_PauseMusic();
-#endif
-
+		g_system->getMixer()->pauseAll(true);
 	}
 
 	static void resume() {
-		warning("STUB: MusicManager::resume()");
-
-#if 0
-		Mix_ResumeMusic();
-#endif
-
+		g_system->getMixer()->pauseAll(false);
 	}
 
 	static void stop() {
-		warning("STUB: MusicManager::stop()");
-
-#if 0
-		Mix_HaltMusic();
-#endif
-
+		g_system->getMixer()->stopAll();
 	}
 
 	static void volEffects(const int &volume) {
-		warning("STUB: MusicManager::stop()");
-
-#if 0
-		Mix_Volume(-1, volume);
-#endif
-
+		g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 	}
 
 	static int volEffects() {
-		warning("STUB: MusicManager::volEffects()");
-		return 0;
-#if 0
-		return Mix_Volume(0, -1);
-#endif
-
+		return g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 	}
 
 	static void volMusic(const int &volume) {
-		warning("STUB: MusicManager::volMusic() %d", volume);
-
-#if 0
-		Mix_VolumeMusic(volume);
-#endif
-
+		g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 	}
 
 	static int volMusic() {
-		warning("STUB: MusicManager::volMusic()");
-		return 0;
-
-#if 0
-		return Mix_VolumeMusic(-1);
-#endif
-
+		return g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 	}
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
