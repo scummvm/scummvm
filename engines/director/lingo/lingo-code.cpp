@@ -247,7 +247,11 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 
 	_state->script = funcSym.u.defn;
 
-	_state->me = funcSym.target;
+	// Do not set the context for anonymous functions that are called from factory
+	// ie something like b_do(), which is called from mNew() should have access to instance
+	// variables, thus it is in same context as the caller.
+	if (!(funcSym.anonymous && _state->me.type == OBJECT && _state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)))
+		_state->me = funcSym.target;
 
 	if (funcSym.ctx) {
 		_state->context = funcSym.ctx;
