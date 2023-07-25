@@ -928,6 +928,7 @@ static const char *grayList[] = {
 	"data3.cab",
 	"data4.cab",
 	"data5.cab",
+	"Double-click me",
 	"engine.exe",
 	"install.exe",
 	"play.exe",
