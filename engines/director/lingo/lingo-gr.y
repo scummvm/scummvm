@@ -553,7 +553,13 @@ ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
 		$$ = new IfElseStmtNode($expr, $stmtlist1, $stmtlist2); }
 	;
 
-endif: /* empty */	{ warning("LingoCompiler::parse: no end if"); }
+endif: /* empty */	{
+		LingoCompiler *compiler = g_lingo->_compiler;
+		warning("LingoCompiler::parse: no end if at line %d col %d in %s id: %d",
+			compiler->_linenumber, compiler->_colnumber, scriptType2str(compiler->_assemblyContext->_scriptType),
+			compiler->_assemblyContext->_id);
+
+		}
 	| tENDIF '\n' ;
 
 loop: tREPEAT tWHILE expr '\n' stmtlist tENDREPEAT '\n' {
