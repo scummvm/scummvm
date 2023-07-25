@@ -332,6 +332,9 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 
 		if (result)
 			result->setPathName(movie.toString(g_director->_dirSeparator));
+		else {
+			delete exeStream;
+		}
 
 		return result;
 	}
