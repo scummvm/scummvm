@@ -25,6 +25,7 @@
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/android/playstore.h"
 #include "common/system.h"
+#include "gui/download-games-dialog.h"
 
 namespace Common {
 
@@ -34,18 +35,20 @@ DECLARE_SINGLETON(DLC::DLCManager);
 
 namespace DLC {
 
-DLCManager::DLCManager() {
+DLCManager::DLCManager(): CommandSender(nullptr) {
 	// _store = g_system->getDLCStore();
 	// TODO: Handle creation through getDLCStore()
 	_store = new DLC::ScummVMCloud::ScummVMCloud();
 }
 
-void DLCManager::init() {
-	DLCManager::getAllDLCs(_dlcs);
+void DLCManager::init() {}
+
+void DLCManager::getAllDLCs() {
+	_store->getAllDLCs();
 }
 
-void DLCManager::getAllDLCs(Common::Array<DLCDesc*> &dlcs) {
-	_store->getAllDLCs(dlcs);
+void DLCManager::refreshDLCList() {
+	sendCommand(GUI::kRefreshDLCList, 0);
 }
 
 void DLCManager::addDownload(uint32 idx) {

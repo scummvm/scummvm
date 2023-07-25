@@ -60,13 +60,15 @@ void ScummVMCloud::jsonCallbackGetAllDLCs(Networking::JsonResponse response) {
 			DLCMan._dlcs.push_back(new DLCDesc{name, id, url, size, i, DLCDesc::kAvailable});
 		}
 	}
+	// send refresh DLC list command to GUI
+	DLCMan.refreshDLCList();
 }
 
 void ScummVMCloud::errorCallbackGetAllDLCs(Networking::ErrorResponse error) {
 	warning("JsonRequest Error - getAllDLCs");
 }
 
-void ScummVMCloud::getAllDLCs(Common::Array<DLCDesc*> &dlcs) {
+void ScummVMCloud::getAllDLCs() {
 	Common::String url("https://mocki.io/v1/0d86064d-1c04-41c8-a7b0-7e7e044b9b58"); // temporary mock api
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(
 		new Common::Callback<ScummVMCloud, Networking::JsonResponse>(this, &ScummVMCloud::jsonCallbackGetAllDLCs), 

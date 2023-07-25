@@ -23,17 +23,17 @@
 #include "gui/message.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
+#include "gui/gui-manager.h"
 #include "common/translation.h"
 #include "backends/dlc/dlcmanager.h"
 
 namespace GUI {
 
-enum {
-	kDownloadSelectedCmd = 'DWNS',
-};
-
 DownloadGamesDialog::DownloadGamesDialog()
 	: Dialog("DownloadGames") {
+	
+	// Set target (Command Receiver) for Command Sender
+	DLCMan.setTarget(this);
 
 	new StaticTextWidget(this, "DownloadGames.Headline", _("Download Freeware Games"));
 
@@ -42,6 +42,22 @@ DownloadGamesDialog::DownloadGamesDialog()
 	_gamesList->setNumberingMode(kListNumberingOff);
 	_gamesList->setEditable(false);
 
+	if (!DLCMan._fetchDLCs) {
+		DLCMan.getAllDLCs();
+		DLCMan._fetchDLCs = true;
+		Common::U32StringArray fetchingText = {
+			_("Fetching DLCs..."),
+		};
+		_gamesList->setList(fetchingText);
+	} else {
+		refreshDLCList();
+	}
+
+	new ButtonWidget(this, "DownloadGames.Back", _("Back"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
+}
+
+void DownloadGamesDialog::refreshDLCList() {
 	// Populate the ListWidget
 	Common::U32StringArray games;
 	for (int i = 0; i < DLCMan._dlcs.size(); ++i) {
@@ -60,18 +76,19 @@ DownloadGamesDialog::DownloadGamesDialog()
 	}
 
 	_gamesList->setList(games);
-
-	new ButtonWidget(this, "DownloadGames.Back", _("Back"), Common::U32String(), kCloseCmd);
-	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void DownloadGamesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	//Search for typed-in directory
 	case kDownloadSelectedCmd: {
 		MessageDialog dialog("Downloading: " + _gamesList->getSelectedString());
 		dialog.runModal();
 		DLCMan.addDownload(_gamesList->getSelected());
+		}
+		break;
+	case kRefreshDLCList: {
+		refreshDLCList();
 		}
 		break;
 	default:

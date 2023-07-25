@@ -29,10 +29,11 @@
 #include "backends/dlc/store.h"
 #include "backends/dlc/dlcdesc.h"
 #include "backends/networking/curl/request.h"
+#include "gui/object.h"
 
 namespace DLC {
 
-class DLCManager : public Common::Singleton<DLCManager> {
+class DLCManager : public Common::Singleton<DLCManager>, public GUI::CommandSender {
 
 	Store *_store;
 
@@ -40,6 +41,7 @@ class DLCManager : public Common::Singleton<DLCManager> {
 	Common::String _currentDownloadingDLC;
 
 public:
+	bool _fetchDLCs = false;
 	Common::Array<DLCDesc*> _dlcs;
 	Common::Queue<DLCDesc*> _queuedDownloadTasks;
 	
@@ -48,8 +50,10 @@ public:
 
 	void init();
 
-	// Runs only once in init()
-	void getAllDLCs(Common::Array<DLCDesc*> &dlcs);
+	// Runs only once
+	void getAllDLCs();
+
+	void refreshDLCList();
 
 	// Add download task to queue, runs on click download button, 
 	void addDownload(uint32 idx);
