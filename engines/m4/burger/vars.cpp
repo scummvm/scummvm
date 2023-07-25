@@ -29,6 +29,7 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/detection.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Burger {
@@ -103,7 +104,7 @@ void Vars::main_cold_data_init() {
 		_game.new_room = 901;		// Burger Demo starts at the demo menu screen
 		break;
 	case WHOLE_GAME:
-		_game.new_room = kernel_save_game_exists(0) ? 903 : 951;
+		_game.new_room = g_engine->autosaveExists() ? 903 : 951;
 		break;
 	}
 	_game.new_section = _game.new_room / 100;	// ... in this section!
