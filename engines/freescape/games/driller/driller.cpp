@@ -89,31 +89,6 @@ DrillerEngine::~DrillerEngine() {
 	delete _drillBase;
 }
 
-void DrillerEngine::titleScreen() {
-	if (isAmiga() || isAtariST()) // TODO: implement these with their own animations
-		return;
-
-	if (_title) {
-		drawTitle();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(3000);
-		_gfx->clear(0, 0, 0, true);
-	}
-}
-void DrillerEngine::borderScreen() {
-	if (isAmiga() || isAtariST()) // TODO: implement these with their own animations
-		return;
-
-	if (_border) {
-		drawBorder();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(3000);
-		_gfx->clear(0, 0, 0, true);
-	}
-}
-
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	int prevAreaID = _currentArea ? _currentArea->getAreaID(): -1;
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);

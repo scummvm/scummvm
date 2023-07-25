@@ -306,18 +306,6 @@ void CastleEngine::loadAssetsAmigaDemo() {
 }
 
 
-void CastleEngine::titleScreen() {
-	if (isAmiga() || isAtariST()) // These releases has their own screens
-		return;
-
-	if (_title) {
-		drawTitle();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(3000);
-	}
-}
-
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))

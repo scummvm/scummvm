@@ -54,18 +54,6 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_initialShield = 15;
 }
 
-void DarkEngine::titleScreen() {
-	if (isAmiga() || isAtariST()) // These releases has their own screens
-		return;
-
-	if (_title) {
-		drawTitle();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(3000);
-	}
-}
-
 void DarkEngine::addECDs(Area *area) {
 	if (!area->entranceWithID(255))
 		return;
@@ -260,9 +248,7 @@ void DarkEngine::borderScreen() {
 			drawFullscreenMessage(_messagesList[28]);
 			drawFullscreenMessage(_messagesList[29]);
 		} else {
-			_gfx->flipBuffer();
-			g_system->updateScreen();
-			g_system->delayMillis(3000);
+			FreescapeEngine::borderScreen();
 		}
 	}
 }

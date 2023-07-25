@@ -23,6 +23,80 @@
 
 namespace Freescape {
 
+void FreescapeEngine::titleScreen() {
+	int maxWait = 60 * 6;
+	for (int i = 0; i < maxWait; i++ ) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				quitGame();
+				return;
+
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				_gfx->clear(0, 0, 0, true);
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_SPACE:
+					i = maxWait;
+					break;
+				default:
+					break;
+				}
+			break;
+			default:
+				break;
+			}
+		}
+
+		drawTitle();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+	_gfx->clear(0, 0, 0, true);
+}
+
+void FreescapeEngine::borderScreen() {
+	int maxWait = 6 * 60;
+	for (int i = 0; i < maxWait; i++ ) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				quitGame();
+				return;
+
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				_gfx->clear(0, 0, 0, true);
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_SPACE:
+					i = maxWait;
+					break;
+				default:
+					break;
+				}
+			default:
+				break;
+			}
+		}
+
+		drawBorder();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+
+	_gfx->clear(0, 0, 0, true);
+}
+
 void FreescapeEngine::drawUI() {
 	Graphics::Surface *surface = nullptr;
 	if (_border) { // This can be removed when all the borders are loaded

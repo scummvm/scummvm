@@ -454,9 +454,6 @@ public:
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
-	void borderScreen() override;
-	void titleScreen() override;
-
 	void processBorder() override;
 	void drawInfoMenu() override;
 
@@ -525,7 +522,6 @@ public:
 
 	void initGameState() override;
 	void borderScreen() override;
-	void titleScreen() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	void pressedKey(const int keycode) override;
@@ -561,7 +557,6 @@ class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
 
-	void titleScreen() override;
 	void gotoArea(uint16 areaID, int entranceID) override;
 
 	void loadAssetsDOSFullGame() override;
@@ -578,7 +573,6 @@ public:
 
 	Graphics::ManagedSurface *_option;
 	void initGameState() override;
-	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;

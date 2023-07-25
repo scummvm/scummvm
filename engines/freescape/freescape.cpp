@@ -555,7 +555,8 @@ Common::Error FreescapeEngine::run() {
 	initGameState();
 	loadColorPalette();
 
-	g_system->lockMouse(true);
+	g_system->showMouse(true);
+	g_system->lockMouse(false);
 
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -575,6 +576,7 @@ Common::Error FreescapeEngine::run() {
 	bool endGame = false;
 	// Draw first frame
 
+	g_system->lockMouse(true);
 	resetInput();
 	_gfx->computeScreenViewport();
 	_gfx->clear(0, 0, 0, true);
@@ -606,9 +608,6 @@ Common::Error FreescapeEngine::run() {
 
 	return Common::kNoError;
 }
-
-void FreescapeEngine::titleScreen() {}
-void FreescapeEngine::borderScreen() {}
 
 void FreescapeEngine::loadBorder() {
 	if (_border) {

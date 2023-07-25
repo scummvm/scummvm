@@ -99,18 +99,6 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	}
 }
 
-void EclipseEngine::titleScreen() {
-	if (isAmiga() || isAtariST()) // These releases has their own screens
-		return;
-
-	if (_title) {
-		drawTitle();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(3000);
-	}
-}
-
 extern byte kEGADefaultPaletteData[16][3];
 
 void EclipseEngine::loadAssetsDOSFullGame() {
