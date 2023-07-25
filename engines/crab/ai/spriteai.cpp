@@ -192,7 +192,7 @@ void Sprite::flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 			++num;
 			float velocity = static_cast<float>(num);
 
-			// MoveToLoc(aiData.dest, vel, sc);
+			// MoveToLoc(_aiData.dest, vel, sc);
 			moveToLocPathfinding(_aiData._dest, velocity, sc);
 		}
 	} break;
@@ -207,49 +207,47 @@ void Sprite::flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 //------------------------------------------------------------------------
 // Purpose: AI routine for fighting the player
 //------------------------------------------------------------------------
-void Sprite::attack(pyrodactyl::event::Info &info, Sprite &target_sp, const SpriteConstant &sc) {
-	warning("STUB: Sprite::attack()");
-
-#if 0
-	switch (aiData.fight._state) {
+void Sprite::attack(pyrodactyl::event::Info &info, Sprite &targetSp, const SpriteConstant &sc) {
+	switch (_aiData._fight._state) {
 	case FIGHTSTATE_GETNEXTMOVE: {
-		aiData.fight._state = FIGHTSTATE_GETINRANGE;
-		aiData.fight.delay.Start();
+		_aiData._fight._state = FIGHTSTATE_GETINRANGE;
+		_aiData._fight._delay.start();
 
-		unsigned int size = aiData.fight.attack.size();
+		unsigned int size = _aiData._fight._attack.size();
 		if (size > 1)
-			anim_set.fight.Next(aiData.fight.attack[gRandom.Num() % aiData.fight.attack.size()]);
+			_animSet._fight.next(_aiData._fight._attack[g_engine->getRandomNumber(_aiData._fight._attack.size())]);
 		else if (size <= 0)
-			aiData.fight._state = FIGHTSTATE_CANTFIGHT;
+			_aiData._fight._state = FIGHTSTATE_CANTFIGHT;
 		else
-			anim_set.fight.Next(aiData.fight.attack[0]);
-	} break;
+			_animSet._fight.next(_aiData._fight._attack[0]);
+	}
+		break;
 	case FIGHTSTATE_GETINRANGE: {
 		// Set destination path to the player location
-		Rect b = target_sp.BoundRect();
+		Rect b = targetSp.boundRect();
 		Vector2i dest(b.x + b.w / 2, b.y + b.h / 2);
-		SetDestPathfinding(dest);
+		setDestPathfinding(dest);
 
-		Rect p = BoundRect();
-		pathing.SetPosition(Vector2f((float)(p.x + p.w / 2), (float)p.y + p.h / 2));
-		pathing.Update(0);
+		Rect p = boundRect();
+		_pathing.setPosition(Vector2f((float)(p.x + p.w / 2), (float)p.y + p.h / 2));
+		_pathing.update(0);
 
 		FightMove f;
-		if (anim_set.fight.NextMove(f) && FightCollide(target_sp.BoxV(), target_sp.BoundRect(), f.ai.range, sc)) {
-			if (aiData.fight.delay.Ticks() > f.ai.delay)
-				aiData.fight._state = FIGHTSTATE_EXECUTEMOVE;
-		} else if (input.Idle())
-			MoveToDestPathfinding(info, sc);
-	} break;
+		if (_animSet._fight.nextMove(f) && fightCollide(targetSp.boxV(), targetSp.boundRect(), f._ai._range, sc)) {
+			if (_aiData._fight._delay.ticks() > f._ai._delay)
+				_aiData._fight._state = FIGHTSTATE_EXECUTEMOVE;
+		} else if (_input.idle())
+			moveToDestPathfinding(info, sc);
+	}
+		break;
 	case FIGHTSTATE_EXECUTEMOVE:
-		UpdateMove(anim_set.fight.Next());
-		aiData.fight._state = FIGHTSTATE_GETNEXTMOVE;
-		aiData.fight.delay.Stop();
+		updateMove(_animSet._fight.next());
+		_aiData._fight._state = FIGHTSTATE_GETNEXTMOVE;
+		_aiData._fight._delay.stop();
 		break;
 	default:
 		break;
 	}
-#endif
 }
 
 void Sprite::flyAround(const Rect &camera, const SpriteConstant &sc) {
