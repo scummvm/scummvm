@@ -28,10 +28,12 @@
 #endif // USE_SDL_NET
 
 #include "common/formats/json.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
+#include "gui/browser.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
@@ -49,6 +51,7 @@ enum {
 	kCloudConnectionWizardOpenUrlStorageCmd = 'WOUb',
 	kCloudConnectionWizardReflowCmd = 'WRFb',
 	kCloudConnectionWizardPasteCodeCmd = 'WPCb',
+	kCloudConnectionWizardLoadCodeCmd = 'WLCd',
 };
 
 CloudConnectionWizard::CloudConnectionWizard() :
@@ -66,6 +69,7 @@ CloudConnectionWizard::CloudConnectionWizard() :
 	_label2 = nullptr;
 	_label3 = nullptr;
 	_button0 = nullptr;
+	_button1 = nullptr;
 
 	_container = nullptr;
 	_quickModeButton = nullptr;
@@ -355,6 +359,7 @@ void CloudConnectionWizard::showStepManualMode2() {
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line1", _("Copy the JSON code from the browser here and press Next:"));
 	_codeBox = new EditTextWidget(_container, "ConnectionWizard_ManualModeStep2.CodeBox", Common::U32String(), Common::U32String(), 0, 0, ThemeEngine::kFontStyleConsole);
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep2.PasteButton", _("Paste"), _("Paste code from clipboard"), kCloudConnectionWizardPasteCodeCmd);
+	_button1 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep2.LoadButton", _("Load"), _("Load code from file"), kCloudConnectionWizardLoadCodeCmd);
 	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line2", Common::U32String());
 }
 
@@ -366,6 +371,7 @@ void CloudConnectionWizard::hideStepManualMode2() {
 	removeWidgetChecked(_label0);
 	removeWidgetChecked(_codeBox);
 	removeWidgetChecked(_button0);
+	removeWidgetChecked(_button1);
 	removeWidgetChecked(_label1);
 }
 
@@ -619,6 +625,24 @@ void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uin
 			}
 		}
 		break;
+
+	case kCloudConnectionWizardLoadCodeCmd: {
+		// I18N: JSON is a file format name
+		BrowserDialog browser(_("Select JSON file copied from scummvm.org site"), false);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::File codeFile;
+			if (!codeFile.open(browser.getResult())) {
+				// I18N: JSON is a file format name
+				MessageDialog alert(_("Failed to load JSON file"));
+				alert.runModal();
+				break;
+			}
+			Common::String json = codeFile.readString();
+			_codeBox->setEditString(json);
+		}
+		break;
+	}
 
 	case kCloudConnectionWizardNextButtonCmd:
 		switch (_currentStep) {
