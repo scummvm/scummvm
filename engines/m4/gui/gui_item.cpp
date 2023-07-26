@@ -60,7 +60,7 @@ static const byte scrollUpData[] = {
 	_LB_LTGREY, _LB_LTGREY, _LB_LTGREY,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY,
 	_LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY
 };
-static const Buffer scrollUpBuff = { scrollUpWidth, scrollUpHeight, (uint8 *)&scrollUpData[0], 0 };
+static const Buffer scrollUpBuff = { scrollUpWidth, scrollUpHeight, (uint8 *)&scrollUpData[0], 0, 0 };
 
 static const byte scrollUpPressedData[] = {
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY,
@@ -76,7 +76,7 @@ static const byte scrollUpPressedData[] = {
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY,
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY,
 };
-static const Buffer scrollUpPressedBuff = { scrollUpWidth, scrollUpHeight, (uint8 *)&scrollUpPressedData[0], 0 };
+static const Buffer scrollUpPressedBuff = { scrollUpWidth, scrollUpHeight, (uint8 *)&scrollUpPressedData[0], 0, 0 };
 
 #define scrollDownWidth		11
 #define scrollDownHeight	12
@@ -94,7 +94,7 @@ static const byte scrollDownData[] = {
 	_LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY,  _LB_WHITE, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY,
 	_LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY
 };
-static const Buffer scrollDownBuff = { scrollDownWidth, scrollDownHeight, (uint8 *)&scrollDownData[0], 0 };
+static const Buffer scrollDownBuff = { scrollDownWidth, scrollDownHeight, (uint8 *)&scrollDownData[0], 0, 0 };
 
 static const byte scrollDownPressedData[] = {
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY,
@@ -110,7 +110,7 @@ static const byte scrollDownPressedData[] = {
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY,  _LB_WHITE, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY,
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY
 };
-static const Buffer scrollDownPressedBuff = { scrollDownWidth, scrollDownHeight, (uint8 *)&scrollDownPressedData[0], 0 };
+static const Buffer scrollDownPressedBuff = { scrollDownWidth, scrollDownHeight, (uint8 *)&scrollDownPressedData[0], 0, 0 };
 
 #define thumbWidth			11
 #define thumbHeight			11
@@ -127,7 +127,7 @@ static const byte thumbData[] = {
 	_LB_LTGREY, _LB_LTGREY, _LB_LTGREY,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE,  _LB_WHITE, _LB_LTGREY, _LB_LTGREY,
 	_LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY, _LB_LTGREY
 };
-static const Buffer thumbBuff = { thumbWidth, thumbHeight, (uint8 *)&thumbData[0], 0 };
+static const Buffer thumbBuff = { thumbWidth, thumbHeight, (uint8 *)&thumbData[0], 0, 0 };
 
 static const byte thumbPressedData[] = {
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY,
@@ -142,7 +142,7 @@ static const byte thumbPressedData[] = {
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY,  _LB_BLACK,  _LB_BLACK,  _LB_BLACK,  _LB_BLACK,  _LB_BLACK,  _LB_BLACK, _LB_DKGREY, _LB_DKGREY,
 	_LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY, _LB_DKGREY
 };
-static const Buffer thumbPressedBuff = { thumbWidth, thumbHeight, (uint8 *)&thumbPressedData[0], 0 };
+static const Buffer thumbPressedBuff = { thumbWidth, thumbHeight, (uint8 *)&thumbPressedData[0], 0, 0 };
 
 #define minThumbY (scrollUpHeight + _G(items).buttonHeight)
 #define maxThumbY (scrollDownHeight + thumbHeight + (_G(items).buttonHeight<<1))
