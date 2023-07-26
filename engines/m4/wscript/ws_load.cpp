@@ -680,12 +680,8 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		if (_GWS(globalCELSnames)[hash] && (!strcmp(_GWS(globalCELSnames)[hash], wsAssetName))) {
 			if (_GWS(globalCELSPaloffsets)[hash] >= 0) {
 				// Get the pointer to the pal data
-#ifdef TODO
 				workHandle = _GWS(globalCELSHandles)[hash];
-				palPtr = (int32 *)((byte *)*workHandle + _GWS(globalCELSPaloffsets)[hash]);
-#else
-				error("TODO: Figure out dereferencing");
-#endif
+				palPtr = (int32 *)((intptr)*workHandle + _GWS(globalCELSPaloffsets)[hash]);
 
 				// Restore the palette and unlock the handle
 				RestoreSSPaletteInfo(myPalette, palPtr);
@@ -748,13 +744,10 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		// Else if we found the SS already loaded
 		if (_GWS(globalCELSPaloffsets)[i] >= 0) {
 			// Get the pointer to the pal data
-#ifdef TODO
 			workHandle = _GWS(globalCELSHandles)[i];
 			HLock(workHandle);
-			palPtr = (int32 *)((byte *)*workHandle + _GWS(globalCELSPaloffsets)[i]);
-#else
-			error("TODO: Figure out dereferencing");
-#endif
+			palPtr = (int32 *)((intptr)*workHandle + _GWS(globalCELSPaloffsets)[i]);
+
 			// Restore the palette and unlock the handle
 			RestoreSSPaletteInfo(myPalette, palPtr);
 			HUnLock(workHandle);
