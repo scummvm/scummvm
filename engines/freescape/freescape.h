@@ -454,7 +454,6 @@ public:
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
-	void processBorder() override;
 	void drawInfoMenu() override;
 
 	void pressedKey(const int keycode) override;

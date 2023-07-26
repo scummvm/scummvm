@@ -194,10 +194,6 @@ void DrillerEngine::loadAssetsFullGame() {
 	_areaMap[18]->_conditionSources.push_back(conditionSource);
 }
 
-void DrillerEngine::processBorder() {
-	FreescapeEngine::processBorder();
-}
-
 void DrillerEngine::drawInfoMenu() {
 	_savedScreen = _gfx->getScreenshot();
 
