@@ -58,7 +58,8 @@ public:
 
 	virtual void removeCacheFile(Common::Path file) override;
 
-	void extractZip(Common::Path file);
+	// extracts the provided zip in the provided destination path
+	void extractZip(const Common::Path &file, const Common::Path &destPath);
 
 	// callback functions
 	void jsonCallbackGetAllDLCs(Networking::JsonResponse response);
