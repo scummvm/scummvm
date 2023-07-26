@@ -26,7 +26,6 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4

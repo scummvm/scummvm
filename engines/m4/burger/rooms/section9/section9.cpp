@@ -27,6 +27,8 @@ namespace Burger {
 namespace Rooms {
 
 Section9::Section9() : Rooms::Section() {
+	add(&_room901);
+	add(&_room903);
 	add(&_room951);
 }
 

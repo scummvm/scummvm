@@ -31,12 +31,10 @@ namespace Rooms {
 class Room903 : public Room9 {
 private:
 	int _num1 = 0, _num2 = 0;
-	void *_ptr1 = nullptr;
-	const char *_ptr2 = nullptr;
-	const char *_pt3 = nullptr;
 
 public:
-	Room903() : Room9(903) {}
+	Room903() : Room9(903, "903menu", "903click") {}
+	~Room903() override {}
 
 	void preload() override;
 	void init() override;

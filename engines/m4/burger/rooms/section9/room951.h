@@ -31,6 +31,7 @@ namespace Rooms {
 class Room951 : public Room9 {
 public:
 	Room951() : Room9(951) {}
+	~Room951() override {}
 
 	void preload() override;
 	void init() override;
