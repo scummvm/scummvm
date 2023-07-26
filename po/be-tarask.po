@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 20:21+0000\n"
+"POT-Creation-Date: 2023-07-25 18:25+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5828,7 +5828,7 @@ msgstr "Памылка: ня выйшла захаваць гульню."
 msgid "Input text"
 msgstr "Увядзіце тэкст"
 
-#: engines/grim/md5check.cpp:594
+#: engines/grim/md5check.cpp:601
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5843,7 +5843,7 @@ msgstr ""
 "dvd-box ці jewelcase):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:603
+#: engines/grim/md5check.cpp:610
 #, fuzzy, c-format
 msgid ""
 "Could not open the file %s for checking.\n"

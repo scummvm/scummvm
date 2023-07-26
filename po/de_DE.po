@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 20:21+0000\n"
+"POT-Creation-Date: 2023-07-25 18:25+0000\n"
 "PO-Revision-Date: 2023-07-25 20:35+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5876,7 +5876,7 @@ msgstr "Fehler: Das Spiel konnte nicht gespeichert werden."
 msgid "Input text"
 msgstr "Text eingeben"
 
-#: engines/grim/md5check.cpp:594
+#: engines/grim/md5check.cpp:601
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5891,7 +5891,7 @@ msgstr ""
 "einer Beschreibung Ihrer Spiele-Version (z.B. DVD-Box oder Jewelcase):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:603
+#: engines/grim/md5check.cpp:610
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-19 20:21+0000\n"
+"POT-Creation-Date: 2023-07-25 18:25+0000\n"
 "PO-Revision-Date: 2023-07-19 20:05+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -5894,7 +5894,7 @@ msgstr "Error: no se pudo guardar la partida."
 msgid "Input text"
 msgstr "Introducir texto"
 
-#: engines/grim/md5check.cpp:594
+#: engines/grim/md5check.cpp:601
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5910,7 +5910,7 @@ msgstr ""
 "CD):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:603
+#: engines/grim/md5check.cpp:610
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
