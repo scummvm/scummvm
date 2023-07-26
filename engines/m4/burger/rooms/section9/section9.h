@@ -23,6 +23,7 @@
 #define M4_BURGER_ROOMS_SECTION9_H
 
 #include "m4/burger/rooms/section.h"
+#include "m4/burger/rooms/section9/room901.h"
 #include "m4/burger/rooms/section9/room903.h"
 #include "m4/burger/rooms/section9/room951.h"
 
@@ -32,6 +33,7 @@ namespace Rooms {
 
 class Section9 : public Rooms::Section {
 private:
+	Room901 _room901;
 	Room903 _room903;
 	Room951 _room951;
 public:

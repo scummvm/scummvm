@@ -19,27 +19,23 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_ROOM9_H
-#define M4_BURGER_ROOMS_SECTION9_ROOM9_H
+#ifndef M4_BURGER_ROOMS_SECTION9_ROOM901_H
+#define M4_BURGER_ROOMS_SECTION9_ROOM901_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section9/room9.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room9 : public Rooms::Room {
-protected:
-	const void *_ptr1 = nullptr;
-	const char *_menuName;
-	const char *_clickName;
-	int _val1 = -1;
-	int _val2 = -1;
-	int _val3 = -1;
+class Room901 : public Room9 {
 public:
-	Room9(int roomNum, const char *menuName = nullptr, const char *clickName = nullptr) :
-		Rooms::Room(roomNum), _menuName(menuName), _clickName(clickName) {}
-	virtual ~Room9() {}
+	Room901() : Room9(901, "901menu", "901click") {}
+	~Room901() override {}
+
+	void preload() override;
+	void init() override;
+	void daemon() override;
 };
 
 } // namespace Rooms
