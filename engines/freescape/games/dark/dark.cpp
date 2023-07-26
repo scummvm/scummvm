@@ -288,13 +288,13 @@ void DarkEngine::drawFullscreenMessage(Common::String message) {
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int x, y;
-	x = 42;
-	y = 30;
-	for (int i = 0; i < 8; i++) {
+	x = 50;
+	y = 32;
+	for (int i = 0; i < 10; i++) {
 		Common::String line = message.substr(28 * i, 28);
 		debug("'%s' %d", line.c_str(), line.size());
 		drawStringInSurface(line, x, y, front, black, surface);
-		y = y + 12;
+		y = y + 8;
 	}
 
 	if (!_uiTexture)

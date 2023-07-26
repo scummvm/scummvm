@@ -49,7 +49,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		if (!file.isOpen())
 			error("Failed to open DSIDEE.EXE");
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
-		loadMessagesFixedSize(&file, 0x9959, 307, 5);
+		loadMessagesFixedSize(&file, 0x993f - 2, 308, 5);
 		loadFonts(&file, 0xa598);
 		loadGlobalObjects(&file, 0x3d04, 23);
 		load8bitBinary(&file, 0xa700, 16);
