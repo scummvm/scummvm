@@ -64,8 +64,8 @@ static const PlainGameDescriptor gobGames[] = {
 	{"geisha", "Geisha"},
 	{"adi2", "ADI 2"},
 	{"adi4", "ADI 4"},
-	{"adibou2", "Adibou 2"},
 	{"adibou1", "Adibou 1"},
+	{"adibou2", "Adibou 2"},
 	{"adibou3", "Adibou 3"},
 	{0, 0}
 };
@@ -91,10 +91,10 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_playtoons.h" // The Playtoons series
 	#include "gob/detection/tables_adi2.h"      // The ADI / Addy 2 series
 	#include "gob/detection/tables_adi4.h"      // The ADI / Addy 4 series
-	#include "gob/detection/tables_adibou2.h"   // The Adibou 2 / Addy Junior series
 	#include "gob/detection/tables_adibou1.h"   // Adibou 1 / A.J.'s World of Discovery / ADI Jr.
-	#include "gob/detection/tables_crousti.h"   // Croustibat
+	#include "gob/detection/tables_adibou2.h"   // The Adibou 2 / Addy Junior series
 	#include "gob/detection/tables_adibou3.h"	// Adibou 3 / Adiboo 3 series
+	#include "gob/detection/tables_crousti.h"   // Croustibat
 
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
 };
