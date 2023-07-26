@@ -316,7 +316,11 @@ void DarkEngine::drawFullscreenMessage(Common::String message, uint32 front, Gra
 
 	surface->fillRect(_fullscreenViewArea, color);
 	surface->fillRect(_viewArea, black);
-	int x, y, letterPerLine, numberOfLines;
+	int x = 0;
+	int y = 0;
+	int letterPerLine = 0;
+	int numberOfLines = 0;
+
 	if (isDOS()) {
 		x = 50;
 		y = 32;
