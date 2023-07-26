@@ -28,6 +28,7 @@
 #include "common/archive.h"
 #include "common/compression/unzip.h"
 #include "common/file.h"
+#include "common/punycode.h"
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/dlcmanager.h"
 #include "common/config-manager.h"
@@ -85,7 +86,9 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		_rq->close(); // delete request
 		Common::Path relativeFilePath = Common::Path(DLCMan._queuedDownloadTasks.front()->id);
 		// extract the downloaded zip
-		extractZip(relativeFilePath);
+		Common::String gameDir = Common::punycode_encodefilename(DLCMan._queuedDownloadTasks.front()->name);
+		Common::Path destPath = Common::Path(ConfMan.get("iconspath")).appendComponent(gameDir);
+		extractZip(relativeFilePath, destPath);
 		// remove cache (the downloaded .zip)
 		removeCacheFile(relativeFilePath);
 		// handle next download
@@ -113,7 +116,7 @@ void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::St
 	_rq->start();
 }
 
-void ScummVMCloud::extractZip(Common::Path file) {
+void ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &destPath) {
 	Common::Archive *dataArchive = nullptr;
 	Common::Path dlcPath = Common::Path(ConfMan.get("iconspath"));
 	Common::FSNode *fs = new Common::FSNode(dlcPath.join(file));
@@ -121,7 +124,7 @@ void ScummVMCloud::extractZip(Common::Path file) {
 		dataArchive = Common::makeZipArchive(*fs);
 		// dataArchive is nullptr if zip file is incomplete
 		if (dataArchive != nullptr) {
-			dataArchive->dumpArchive(dlcPath.toString());
+			dataArchive->dumpArchive(destPath.toString());
 		}
 	}
 	delete fs;
