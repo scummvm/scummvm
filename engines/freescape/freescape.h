@@ -521,6 +521,7 @@ public:
 
 	void initGameState() override;
 	void borderScreen() override;
+	bool checkIfGameEnded() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	void pressedKey(const int keycode) override;

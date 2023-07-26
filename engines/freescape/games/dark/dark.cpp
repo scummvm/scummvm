@@ -150,6 +150,54 @@ void DarkEngine::initGameState() {
 	_demoEvents.clear();
 }
 
+bool DarkEngine::checkIfGameEnded() {
+	if (_gameStateVars[k8bitVariableShield] == 0) {
+		insertTemporaryMessage(_messagesList[15], _countdown - 2);
+		_gameStateVars[28] = 1; // ??
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
+		gotoArea(1, 26);
+	}
+
+	if (_gameStateVars[k8bitVariableEnergy] == 0) {
+		insertTemporaryMessage(_messagesList[16], _countdown - 2);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
+		gotoArea(1, 26);
+	}
+
+	if (_forceEndGame) {
+		_forceEndGame = false;
+		if (isDemo())
+			return true;
+		else {
+			drawFrame();
+			_gfx->flipBuffer();
+			g_system->updateScreen();
+			g_system->delayMillis(2000);
+			gotoArea(1, 26);
+		}
+	}
+
+	if (_currentArea->getAreaID() == 1) {
+		rotate(0, 10);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(20);
+		executeLocalGlobalConditions(false, true, false);
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(200);
+		return true;
+	}
+	return false;
+}
+
 void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))
