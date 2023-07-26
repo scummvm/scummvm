@@ -1416,6 +1416,10 @@
 					height = '24'
 			/>
 			<space size = '8' />
+			<widget name = 'LoadButton'
+					height = '24'
+			/>
+			<space size = '8' />
 
 			<widget name = 'Line2'
 					height = 'Globals.Line.Height'

@@ -66,6 +66,7 @@ class CloudConnectionWizard : public Dialog {
 	StaticTextWidget *_label2;
 	StaticTextWidget *_label3;
 	ButtonWidget *_button0;
+	ButtonWidget *_button1;
 
 	// specific widgets
 	ScrollContainerWidget *_container;
