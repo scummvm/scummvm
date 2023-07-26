@@ -97,7 +97,7 @@ void Sections::m4SceneLoad() {
 	// -------------------- SECTION CONSTRUCTOR and ROOM PRELOAD ------------------
 
 	section_room_constructor();
-	_G(kernel).supress_fadeup = false;
+	_G(kernel).suppress_fadeup = false;
 
 	room_preload();
 
@@ -155,7 +155,7 @@ void Sections::m4SceneLoad() {
 	}
 
 	// Init for fade up screen
-	if (!_G(kernel).supress_fadeup) {
+	if (!_G(kernel).suppress_fadeup) {
 		pal_fade_set_start(&_G(master_palette)[0], 0);	// Set fade to black instantly (0 ticks)
 		pal_fade_init(&_G(master_palette)[0], _G(kernel).first_fade, 255, 100,
 			_G(kernel).fade_up_time, 32765);      // 30 ticks

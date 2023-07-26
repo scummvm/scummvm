@@ -44,6 +44,14 @@ struct GameControl {
 	int32 midi_overall_volume_percent = 100;
 	bool camera_pan_instant = false;
 
+	/**
+	 * Shortcut for setting new room and section
+	 */
+	void setRoom(int newRoom) {
+		new_room = newRoom;
+		new_section = newRoom / 100;
+	}
+
 	void syncGame(Common::Serializer &s);
 };
 

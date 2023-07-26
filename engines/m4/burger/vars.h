@@ -89,6 +89,7 @@ public:
 	const Common::String _wilbur = "WILBUR";
 	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
+	bool _room902Flag = false;
 
 public:
 	Vars();

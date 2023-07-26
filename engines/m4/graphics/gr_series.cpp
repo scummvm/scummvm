@@ -146,4 +146,50 @@ machine *series_show_(const char *seriesName, frac16 layer, uint32 flags, int16 
 	return m;
 }
 
+machine *series_play_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
+		int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
+		int32 firstFrame, int32 lastFrame) {
+	CHECK_SERIES
+
+	int32 myAssetIndex;
+	RGB8 *tempPalettePtr = NULL;
+
+	term_message(seriesName);
+
+	if (flags & SERIES_LOAD_PALETTE)
+		tempPalettePtr = &_G(master_palette)[0];
+
+	if ((myAssetIndex = AddWSAssetCELS(seriesName, -1, tempPalettePtr)) < 0)
+		error_show(FL, 'SPNF', seriesName);
+
+	_G(globals)[GLB_TEMP_1] = (frac16)myAssetIndex << 24;			// cels hash
+	_G(globals)[GLB_TEMP_2] = layer << 16;							// layer
+
+	_G(globals)[GLB_TEMP_3] = kernel_trigger_create(triggerNum);	// trigger
+
+	_G(globals)[GLB_TEMP_4] = frameRate << 16;						// framerate
+	_G(globals)[GLB_TEMP_5] = loopCount << 16;						// loop count
+
+	_G(globals)[GLB_TEMP_6] = (s << 16) / 100;						// scale
+	_G(globals)[GLB_TEMP_7] = x << 16;								// x
+	_G(globals)[GLB_TEMP_8] = y << 16;								// y
+
+	_G(globals)[GLB_TEMP_9] = firstFrame << 16;						// first frame
+	_G(globals)[GLB_TEMP_10] = lastFrame << 16;						// last frame
+
+	_G(globals)[GLB_TEMP_11] = (flags & SERIES_PINGPONG) ? 0x10000 : 0;	// ping pong
+	_G(globals)[GLB_TEMP_12] = (flags & SERIES_BACKWARD) ? 0x10000 : 0;	// backwards
+	_G(globals)[GLB_TEMP_13] = (flags & SERIES_RANDOM) ? 0x10000 : 0;	// random
+	_G(globals)[GLB_TEMP_14] = (flags & SERIES_STICK) ? 0x10000 : 0;	// stick to screen
+	_G(globals)[GLB_TEMP_15] = (flags & SERIES_LOOP_TRIGGER) ? 0x10000 : 0;	// trigger back every loop?
+	_G(globals)[GLB_TEMP_16] = (flags & SERIES_HORZ_FLIP) ? 0x10000 : 0;	// horizontal flip
+
+	machine *m = kernel_spawn_machine(seriesName, HASH_SERIES_PLAY_MACHINE, series_trigger_dispatch_callback);
+
+	if (!m)
+		error_show(FL, 'WSMF', seriesName);
+
+	return m;
+}
+
 } // namespace M4
