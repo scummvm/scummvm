@@ -261,9 +261,12 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		byte color = readField(file, 8) & 0xf;
 		assert(color > 0);
 		byte firingInterval = readField(file, 8);
-		uint16 firingRange = readField(file, 16);
+		uint16 firingRange = readField(file, 16) / 2;
+		if (isDark())
+			firingRange = firingRange / 2;
 		byte sensorAxis = readField(file, 8);
 		byteSizeOfObject = byteSizeOfObject - 5;
+		debugC(1, kFreescapeDebugParser, "Sensor detected with firing interval %d, firing range %d and axis %d", firingInterval, firingRange, sensorAxis);
 		// grab the object condition, if there is one
 		if (byteSizeOfObject) {
 			Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
