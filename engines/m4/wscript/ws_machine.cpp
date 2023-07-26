@@ -777,6 +777,10 @@ void TerminateMachine(machine *myMachine) {
 	ShutdownMachine(myMachine);
 }
 
+void TerminateMachineAndNull(machine *&m) {
+	TerminateMachine(m);
+	m = nullptr;
+}
 
 bool VerifyMachineExists(machine *m) {
 	machine *tempM;

@@ -322,7 +322,7 @@ void Room951::preload() {
 }
 
 void Room951::init() {
-	_G(kernel).supress_fadeup = true;
+	_G(kernel).suppress_fadeup = true;
 	pal_fade_set_start(_G(master_palette), 0);
 	pal_fade_init(_G(master_palette), 0, 255, 100, 40, START_ORION_BURGER_POSTER);
 }

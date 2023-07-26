@@ -87,6 +87,9 @@ void series_set_frame_rate(machine *m, int32 newFrameRate);
 
 extern machine *series_show_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
 	int32 duration, int32 index, int32 s, int32 x, int32 y);
+extern machine *series_play_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
+	int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
+	int32 firstFrame, int32 lastFrame);
 
 } // namespace M4
 

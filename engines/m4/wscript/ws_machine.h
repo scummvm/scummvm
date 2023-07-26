@@ -183,6 +183,7 @@ void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table, GrB
 
 void TerminateMachine(machine *m);
 void TerminateMachinesByHash(uint32 machHash);
+void TerminateMachineAndNull(machine *&m);
 bool VerifyMachineExists(machine *m);
 int32 ws_KillMachines();
 void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount);

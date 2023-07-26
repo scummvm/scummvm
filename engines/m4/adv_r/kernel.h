@@ -48,7 +48,7 @@ struct Kernel {
 	int32 fade_up_time = 0;
 	int16 first_fade = 0;
 	bool fading_to_grey = false;
-	bool supress_fadeup = false;
+	bool suppress_fadeup = false;
 	bool force_restart = false;
 
 	bool pause = false;

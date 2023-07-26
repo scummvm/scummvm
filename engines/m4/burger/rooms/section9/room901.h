@@ -22,15 +22,15 @@
 #ifndef M4_BURGER_ROOMS_SECTION9_ROOM901_H
 #define M4_BURGER_ROOMS_SECTION9_ROOM901_H
 
-#include "m4/burger/rooms/section9/room9.h"
+#include "m4/burger/rooms/section9/menu_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room901 : public Room9 {
+class Room901 : public MenuRoom {
 public:
-	Room901() : Room9(901, "901menu", "901click") {}
+	Room901() : MenuRoom(901, "901menu", "901click") {}
 	~Room901() override {}
 
 	void preload() override;

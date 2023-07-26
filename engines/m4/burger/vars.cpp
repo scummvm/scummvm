@@ -97,17 +97,18 @@ void Vars::main_cold_data_init() {
 
 	switch (_executing) {
 	case JUST_OVERVIEW:
-		_game.new_room = 971;		// Burger overview starts right in at 971
+		_game.setRoom(971);		// Burger overview starts right in at 971
 		break;
 	case INTERACTIVE_DEMO:
 	case MAGAZINE_DEMO:
-		_game.new_room = 901;		// Burger Demo starts at the demo menu screen
+		_game.setRoom(901);		// Burger Demo starts at the demo menu screen
 		break;
 	case WHOLE_GAME:
-		_game.new_room = g_engine->autosaveExists() ? 903 : 951;
+		_game.setRoom(g_engine->autosaveExists() ? 903 : 951);
 		break;
 	}
-	_game.new_section = _game.new_room / 100;	// ... in this section!
+
+	_game.setRoom(901);		/*****DEBUG*****/
 
 	font_set_colors(2, 1, 3);
 }

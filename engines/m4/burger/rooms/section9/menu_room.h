@@ -19,27 +19,74 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_ROOM9_H
-#define M4_BURGER_ROOMS_SECTION9_ROOM9_H
+#ifndef M4_BURGER_ROOMS_SECTION9_MENU_ROOM_H
+#define M4_BURGER_ROOMS_SECTION9_MENU_ROOM_H
 
+#include "common/array.h"
+#include "m4/wscript/ws_machine.h"
 #include "m4/burger/rooms/room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room9 : public Rooms::Room {
+constexpr int NO_BUTTONS_HILITED = -1;
+
+enum ButtonState { BTNSTATE_0 = 0, BTNSTATE_1 = 1, BTNSTATE_2 = 2, BTNSTATE_3 = 3 };
+
+struct MenuButtonDef {
+	int32 _x1;
+	int32 _y1;
+	int32 _x2;
+	int32 _y2;
+	int32 _frame0;
+	int32 _frame1;
+	int32 _frame2;
+	int32 _frame3;
+	ButtonState _state;
+	int32 _val10;
+};
+
+struct MenuButton : public MenuButtonDef {
+	machine *_machine = nullptr;
+
+	MenuButton() : MenuButtonDef() {}
+	MenuButton(const MenuButtonDef &def) : MenuButtonDef(def) {}
+};
+
+class MenuRoom : public Rooms::Room {
 protected:
-	const void *_ptr1 = nullptr;
+	Common::Array<MenuButton> _buttons;
 	const char *_menuName;
 	const char *_clickName;
-	int _val1 = -1;
 	int _val2 = -1;
 	int _val3 = -1;
+	int _val4 = -1;
+
+	/**
+	 * Set the display buttons
+	 */
+	void setButtons(const MenuButtonDef *btns, int count);
+
+	/**
+	 * Draws a button
+	 */
+	void drawButton(int index);
+
+	/**
+	 * Changes a button's state
+	 */
+	void setButtonState(int index, ButtonState newState);
+
+	/**
+	 * Returns the index of the button currently under the mouse, if any
+	 */
+	int32 is_mouse_over_a_button() const;
+
 public:
-	Room9(int roomNum, const char *menuName = nullptr, const char *clickName = nullptr) :
+	MenuRoom(int roomNum, const char *menuName, const char *clickName) :
 		Rooms::Room(roomNum), _menuName(menuName), _clickName(clickName) {}
-	virtual ~Room9() {}
+	virtual ~MenuRoom() {}
 };
 
 } // namespace Rooms
