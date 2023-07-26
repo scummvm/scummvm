@@ -33,6 +33,16 @@
 #include "backends/plugins/ds/ds-provider.h"
 #include "backends/plugins/elf/arm-loader.h"
 
+// HACK: This is needed so that standard library functions that are only
+// used in plugins can be found in the main executable.
+void pluginHack() {
+	volatile double d = 0.0;
+	double d1 = 0.0;
+
+	d = atan2(d, d);
+	d = modf(d, &d1);
+}
+
 class DSDLObject : public ARMDLObject {
 protected:
 	virtual void flushDataCache(void *ptr, uint32 len) const {
