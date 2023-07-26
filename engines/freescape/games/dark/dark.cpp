@@ -157,7 +157,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (isDemo()) {
 		if (!_areaMap.contains(areaID)) {
-			drawFullscreenMessage(_messagesList[30]);
+			drawFullscreenMessageAndWait(_messagesList[30]);
 			return;
 		}
 	}
@@ -241,9 +241,9 @@ void DarkEngine::borderScreen() {
 	if (_border) {
 		drawBorder();
 		if (isDemo() && isDOS()) {
-			drawFullscreenMessage(_messagesList[27]);
-			drawFullscreenMessage(_messagesList[28]);
-			drawFullscreenMessage(_messagesList[29]);
+			drawFullscreenMessageAndWait(_messagesList[27]);
+			drawFullscreenMessageAndWait(_messagesList[28]);
+			drawFullscreenMessageAndWait(_messagesList[29]);
 		} else {
 			FreescapeEngine::borderScreen();
 		}
@@ -256,23 +256,42 @@ void DarkEngine::executePrint(FCLInstruction &instruction) {
 	_currentAreaMessages.clear();
 	if (index > 127) {
 		index = _messagesList.size() - (index - 254) - 2;
-		drawFullscreenMessage(_messagesList[index]);
+		drawFullscreenMessageAndWait(_messagesList[index]);
 		return;
 	}
 	_currentAreaMessages.push_back(_messagesList[index]);
 }
 
-void DarkEngine::drawFullscreenMessage(Common::String message) {
-	_savedScreen = _gfx->getScreenshot();
-
-	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-	surface->fillRect(_fullscreenViewArea, color);
-
+void DarkEngine::drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	surface->fillRect(_viewArea, black);
+	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
+	surface->fillRect(_fullscreenViewArea, color);
+	surface->fillRect(_viewArea, black);
+	int x, y;
+	x = 50;
+	y = 32;
+
+	for (int i = 0; i < 10; i++) {
+		Common::String line = message.substr(28 * i, 28);
+		//debug("'%s' %d", line.c_str(), line.size());
+		drawStringInSurface(line, x, y, front, black, surface);
+		y = y + 8;
+	}
+
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
+
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+	_gfx->setViewport(_viewArea);
+}
+
+void DarkEngine::drawFullscreenMessageAndWait(Common::String message) {
+	_savedScreen = _gfx->getScreenshot();
+	uint32 color = 0;
 	switch (_renderMode) {
 		case Common::kRenderCGA:
 			color = 1;
@@ -287,27 +306,8 @@ void DarkEngine::drawFullscreenMessage(Common::String message) {
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	int x, y;
-	x = 50;
-	y = 32;
-	for (int i = 0; i < 10; i++) {
-		Common::String line = message.substr(28 * i, 28);
-		debug("'%s' %d", line.c_str(), line.size());
-		drawStringInSurface(line, x, y, front, black, surface);
-		y = y + 8;
-	}
-
-	if (!_uiTexture)
-		_uiTexture = _gfx->createTexture(surface);
-	else
-		_uiTexture->update(surface);
-
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-	_gfx->setViewport(_viewArea);
-
-	_gfx->flipBuffer();
-	g_system->updateScreen();
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 
 	Common::Event event;
 	bool cont = true;
@@ -323,14 +323,17 @@ void DarkEngine::drawFullscreenMessage(Common::String message) {
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
 				_gfx->computeScreenViewport();
-				// TODO: properly refresh screen
 				break;
 
 			default:
 				break;
 			}
 		}
-		g_system->delayMillis(10);
+		drawBorder();
+		drawFullscreenMessage(message, front, surface);
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
 	}
 
 	_savedScreen->free();

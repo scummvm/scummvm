@@ -542,7 +542,9 @@ public:
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
 
-	void drawFullscreenMessage(Common::String message);
+	void drawFullscreenMessageAndWait(Common::String message);
+	void drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface);
+
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 
