@@ -273,7 +273,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 				segSize -= needSize;
 				channel += 1;
 				channelOffset = 0;
-				nextStart += kSprChannelSizeD2;
+				nextStart += kSprChannelSizeD4;
 			}
 
 			frameSize -= msgWidth;
