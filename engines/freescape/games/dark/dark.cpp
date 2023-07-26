@@ -288,7 +288,7 @@ void DarkEngine::updateTimeVariables() {
 void DarkEngine::borderScreen() {
 	if (_border) {
 		drawBorder();
-		if (isDemo() && isDOS()) {
+		if (isDemo()) {
 			drawFullscreenMessageAndWait(_messagesList[27]);
 			drawFullscreenMessageAndWait(_messagesList[28]);
 			drawFullscreenMessageAndWait(_messagesList[29]);
@@ -316,12 +316,21 @@ void DarkEngine::drawFullscreenMessage(Common::String message, uint32 front, Gra
 
 	surface->fillRect(_fullscreenViewArea, color);
 	surface->fillRect(_viewArea, black);
-	int x, y;
-	x = 50;
-	y = 32;
+	int x, y, letterPerLine, numberOfLines;
+	if (isDOS()) {
+		x = 50;
+		y = 32;
+		letterPerLine = 28;
+		numberOfLines = 10;
+	} else if (isSpectrum()) {
+		x = 58;
+		y = 32;
+		letterPerLine = 24;
+		numberOfLines = 12;
+	}
 
-	for (int i = 0; i < 10; i++) {
-		Common::String line = message.substr(28 * i, 28);
+	for (int i = 0; i < numberOfLines; i++) {
+		Common::String line = message.substr(letterPerLine * i, letterPerLine);
 		//debug("'%s' %d", line.c_str(), line.size());
 		drawStringInSurface(line, x, y, front, black, surface);
 		y = y + 8;

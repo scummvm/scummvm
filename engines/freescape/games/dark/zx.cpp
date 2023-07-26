@@ -47,22 +47,20 @@ void DarkEngine::loadAssetsZXDemo() {
 		error("Unable to find driller.zx.border");
 	file.close();
 
-
 	file.open("darkside.zx.data");
-
 	if (!file.isOpen())
 		error("Failed to open darksize.zx.data");
 
-	loadMessagesFixedSize(&file, 0x56c, 19, 24);
+	loadMessagesFixedSize(&file, 0x56b, 16, 27);
 	loadMessagesFixedSize(&file, 0x5761, 264, 5);
 
 	loadFonts(&file, 0x6164);
-	//loadGlobalObjects(&file, 0x1d13, 8);
+	loadGlobalObjects(&file, 0x20, 23);
 	load8bitBinary(&file, 0x62c6, 4);
-	/*for (auto &it : _areaMap) {
+	for (auto &it : _areaMap) {
 		addWalls(it._value);
 		addECDs(it._value);
-	}*/
+	}
 }
 
 void DarkEngine::drawZXUI(Graphics::Surface *surface) {
