@@ -145,6 +145,7 @@ private:
 	void playQueuedSound();
 
 	void screenShot();
+	bool checkShotSimilarity(const Graphics::Surface *surface1, const Graphics::Surface *surface2);
 
 	bool processImmediateFrameScript(Common::String s, int id);
 	bool processFrozenScripts();

@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/rational.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
 #include "common/substream.h"
@@ -1138,10 +1139,51 @@ void Score::invalidateRectsForMember(CastMember *member) {
 	}
 }
 
-static Common::String computeSurfaceMd5(const Graphics::Surface *surf) {
-	Common::MemoryReadStream stream((const byte *)surf->getPixels(), surf->pitch * surf->h);
+bool Score::checkShotSimilarity(const Graphics::Surface *oldSurface, const Graphics::Surface *newSurface) {
+	if (oldSurface->w != newSurface->w || oldSurface->h != newSurface->h || oldSurface->format != newSurface->format) {
+		warning("BUILDBOT: Score::checkShotSimilarity(): Dimensions or format do not match");
+		return false;
+	}
 
-	return Common::computeStreamMD5AsString(stream);
+	uint32 absolute_pixel_differences = 0;
+	uint32 different_pixel_count = 0;
+	uint32 total_pixel_count = oldSurface->w * oldSurface->h;
+
+	for (int y = 0; y < oldSurface->h; y++) {
+		const uint32 *oldPtr = (const uint32 *)oldSurface->getBasePtr(0, y);
+		const uint32 *newPtr = (const uint32 *)newSurface->getBasePtr(0, y);
+
+		for (int x = 0; x < oldSurface->w; x++) {
+			uint32 newColor = *newPtr++;
+      		uint32 oldColor = *oldPtr++;
+
+			if (newColor != oldColor) {
+				absolute_pixel_differences++;
+
+				for (int c = 0; c < 4; c++) {
+					if (ABS((newColor & 0xFF) - (oldColor & 0xFF)) > kShotColorDiffThreshold) {
+						different_pixel_count++;
+						break;
+					}
+
+					newColor >>= 8;
+					oldColor >>= 8;
+				}
+			}
+		}
+	}
+
+	// Check 1: If two images are absolutely same, we don't need to check further
+	if (absolute_pixel_differences == 0) {
+		return true;
+	}
+
+	// Check 2: Images are different, but the difference can be small enough to be in threshold
+	Common::Rational difference_percentage = Common::Rational(different_pixel_count, total_pixel_count);
+	if (difference_percentage > kShotPercentPixelThreshold)
+		warning("BUILDBOT: Score::checkShotSimilarity(): Screenshot is %d%% different from previous one, threshold is %d percent", difference_percentage.getNumerator() * 100 / difference_percentage.getDenominator(), kShotPercentPixelThreshold);
+
+	return false;
 }
 
 void Score::screenShot() {
@@ -1201,15 +1243,11 @@ void Score::screenShot() {
 			Common::SeekableReadStream *stream = fs.createReadStream();
 
 			if (stream && decoder.loadStream(*stream)) {
-				Common::String oldMd5 = computeSurfaceMd5(decoder.getSurface());
-				Common::String newMd5 = computeSurfaceMd5(newSurface);
-
-				if (oldMd5 == newMd5) {
+				if (checkShotSimilarity(decoder.getSurface(), newSurface)) {
 					warning("Screenshot is equal to previous one, skipping: %s", filename.c_str());
 					newSurface->free();
 					delete newSurface;
 					delete stream;
-
 					return;
 				}
 			} else {

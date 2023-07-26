@@ -32,6 +32,11 @@ enum {
 	kFewFamesMaxCounter = 19,
 };
 
+enum {
+	kShotColorDiffThreshold = 2,
+	kShotPercentPixelThreshold = 1
+};
+
 #define kQuirksCacheArchive "quirks"
 
 enum MovieFlag {
