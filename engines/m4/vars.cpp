@@ -54,6 +54,7 @@ Vars::~Vars() {
 	gui_system_shutdown();
 	gui_buffer_system_shutdown();
 	gui_dialog_shutdown();
+	gui_mouse_shutdown();
 	mem_stash_shutdown();
 	param_shutdown();
 	woodscript_shutdown();

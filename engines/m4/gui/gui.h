@@ -29,23 +29,23 @@
 namespace M4 {
 
 struct M4sprite {
-	M4sprite *next;
-	M4sprite *prev;
-	int32 x;
-	int32 y;
-	int32 w;
-	int32 h;
-	int32 xOffset;	// the "hotspot" of the sprite, ie: the registration point
-	int32 yOffset;
-	uint8 encoding;
-	uint8 *data;
-	MemHandle sourceHandle;
-	int32 sourceOffset;
+	M4sprite *next = nullptr;
+	M4sprite *prev = nullptr;
+	int32 x = 0;
+	int32 y = 0;
+	int32 w = 0;
+	int32 h = 0;
+	int32 xOffset = 0;	// the "hotspot" of the sprite, ie: the registration point
+	int32 yOffset = 0;
+	uint8 encoding = 0;
+	uint8 *data = nullptr;
+	MemHandle sourceHandle = nullptr;
+	int32 sourceOffset = 0;
 };
 
 struct transSprite {
-	M4sprite *srcSprite;
-	Buffer *scrnBuffer;
+	M4sprite *srcSprite = nullptr;
+	Buffer *scrnBuffer = nullptr;
 };
 
 

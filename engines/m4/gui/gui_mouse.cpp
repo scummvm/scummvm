@@ -261,7 +261,7 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 
 bool mouse_set_sprite(int32 spriteNum) {
 	M4sprite *tempSprite;
-	int32	 minX, minY, maxX, maxY;
+	int32 minX, minY, maxX, maxY;
 
 	if (_G(mouseIsLocked)) {
 		_G(newMouseNum) = spriteNum;
@@ -305,7 +305,8 @@ bool mouse_set_sprite(int32 spriteNum) {
 }
 
 void gui_mouse_refresh() {
-	warning("TODO: gui_mouse_refresh");
+	MoveScreenAbs(_G(mouseScreen), _G(mouseX) - _G(mouseX1offset),
+		_G(mouseY) - _G(mouseY1offset));
 }
 
 void mouse_hide() {
