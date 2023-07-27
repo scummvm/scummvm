@@ -39,6 +39,13 @@ public:
 	Common::String name;
 	Common::String id;
 	Common::String url;
+	Common::String platform;
+	Common::String gameid;
+	Common::String description;
+	Common::String language;
+	Common::String extra;
+	Common::String engineid;
+	Common::String guioptions;
 	uint32 size;
 	uint32 idx;
 	State state;
