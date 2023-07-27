@@ -97,7 +97,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	Buffer source;
 	int32 leftOffset = 0, rightOffset = 0, YPos;
 	uint8 *shadowBuff = nullptr, *scaledBuff = nullptr;
-	Buffer afterScaled;
+	Buffer afterScaled = { 0, 0, nullptr, 0, 0 };
 	uint8 bottomCut = 0;
 
 	if (!drawReq->Src) {
