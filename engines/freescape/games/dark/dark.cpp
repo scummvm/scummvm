@@ -28,6 +28,16 @@
 
 namespace Freescape {
 
+enum {
+	kVariableDarkEnding = 28,
+	kVariableDarkECD = 29,
+};
+
+enum {
+	kDarkEndingEvathDestroyed = 1,
+	kDarkEndingECDsDestroyed = 2,
+};
+
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	if (isDOS())
 		initDOS();
@@ -175,18 +185,18 @@ bool DarkEngine::checkECD(int index) {
 }
 
 bool DarkEngine::checkIfGameEnded() {
-	if (_gameStateVars[29] > 0) {
-		bool destroyed = checkECD(_gameStateVars[29] - 1);
+	if (_gameStateVars[kVariableDarkECD] > 0) {
+		bool destroyed = checkECD(_gameStateVars[kVariableDarkECD] - 1);
 		if (destroyed)
 			insertTemporaryMessage(_messagesList[2], _countdown - 2);
 		else
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
-		_gameStateVars[29] = 0;
+		_gameStateVars[kVariableDarkECD] = 0;
 	}
 
 	if (_playerWasCrushed) {
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
-		_gameStateVars[28] = 1; // ??
+		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
 		drawFrame();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
@@ -195,7 +205,7 @@ bool DarkEngine::checkIfGameEnded() {
 		gotoArea(1, 26);
 	} else if (_gameStateVars[k8bitVariableShield] == 0) {
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
-		_gameStateVars[28] = 1; // ??
+		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
 		drawFrame();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
@@ -203,6 +213,7 @@ bool DarkEngine::checkIfGameEnded() {
 		gotoArea(1, 26);
 	} else if (_gameStateVars[k8bitVariableEnergy] == 0) {
 		insertTemporaryMessage(_messagesList[16], _countdown - 2);
+		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
 		drawFrame();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
@@ -210,15 +221,12 @@ bool DarkEngine::checkIfGameEnded() {
 		gotoArea(1, 26);
 	} else if (_forceEndGame) {
 		_forceEndGame = false;
-		if (isDemo())
-			return true;
-		else {
-			drawFrame();
-			_gfx->flipBuffer();
-			g_system->updateScreen();
-			g_system->delayMillis(2000);
-			gotoArea(1, 26);
-		}
+		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
+		gotoArea(1, 26);
 	}
 
 	if (_currentArea->getAreaID() == 1) {
