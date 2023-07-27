@@ -24,17 +24,19 @@
 
 #include "gui/dialog.h"
 #include "gui/widgets/list.h"
+#include "gui/launcher.h"
 
 namespace GUI {
 
 enum {
 	kDownloadSelectedCmd = 'DWNS',
 	kRefreshDLCList = 'RDLC',
+	kRefreshLauncher = 'RFLR'
 };
 
 class DownloadGamesDialog : public Dialog {
 public:
-	DownloadGamesDialog();
+	DownloadGamesDialog(LauncherDialog *launcher);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
@@ -42,6 +44,7 @@ public:
 
 private:
 	ListWidget *_gamesList;
+	LauncherDialog *_launcher;
 };
 
 } // End of namespace GUI

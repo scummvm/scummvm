@@ -735,7 +735,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		massAddGame();
 		break;
 	case kDownloadGameCmd: {
-		DownloadGamesDialog downloader;
+		DownloadGamesDialog downloader(this);
 		downloader.runModal();
 		}
 		break;
