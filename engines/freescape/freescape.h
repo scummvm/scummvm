@@ -277,10 +277,10 @@ public:
 	Common::Array<Common::String> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;
 
-	void runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition);
+	bool runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition);
 	Math::Vector3d _objExecutingCodeSize;
 	virtual void executeMovementConditions();
-	void executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
+	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
 	void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
 

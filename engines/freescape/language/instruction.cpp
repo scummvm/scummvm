@@ -89,22 +89,26 @@ Token::Type FCLInstruction::getType() {
 	return _type;
 }
 
-void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) {
+bool FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) {
+	bool executed = false;;
 	assert(obj != nullptr);
 	if (!obj->_conditionSource.empty()) {
 		_firstSound = true;
 		_syncSound = false;
 		_objExecutingCodeSize = collided ? obj->getSize() : Math::Vector3d();
-		if (collided)
+		if (collided) {
+			clearGameBit(31); // We collided with something that has code
 			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
-		else if (shot)
+		} else if (shot)
 			debugC(1, kFreescapeDebugCode, "Executing with shot flag: %s", obj->_conditionSource.c_str());
 		else if (activated)
 			debugC(1, kFreescapeDebugCode, "Executing with activated flag: %s", obj->_conditionSource.c_str());
 		else
 			error("Neither shot or collided flag is set!");
 		executeCode(obj->_condition, shot, collided, false, activated); // TODO: check this last parameter
+		executed = true;
 	}
+	return executed;
 }
 
 void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, bool timer) {

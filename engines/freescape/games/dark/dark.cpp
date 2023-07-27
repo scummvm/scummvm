@@ -265,6 +265,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 void DarkEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
+		insertTemporaryMessage(_messagesList[_flyMode ? 11 : 12], _countdown - 2);
 	}
 }
 

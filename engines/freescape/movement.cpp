@@ -247,78 +247,6 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	if (!_flyMode)
 		destination.y() = positionY;
 	resolveCollisions(destination);
-	/*
-	// restore y coordinate
-	if (!_flyMode)
-		_position.set(_position.x(), positionY, _position.z());
-
-	checkIfStillInArea();
-	if (_currentArea->getAreaID() != previousAreaID)
-		return;
-
-	bool collided = checkCollisions(false);
-
-	if (!collided) {
-		bool hasFloor = checkFloor(_position);
-		if (!hasFloor && !_flyMode) {
-			int fallen;
-			for (fallen = 1; fallen < 65 + 1; fallen++) {
-				_position.set(_position.x(), positionY - fallen , _position.z());
-				if (tryStepDown(_position))
-					break;
-			}
-			fallen++;
-			fallen++;
-			if (fallen >= 67) {
-				_position = _lastPosition;
-				_hasFallen = !_disableFalling && true;
-				return;
-			}
-			_position.set(_position.x(), positionY - fallen, _position.z());
-			if (!isPlayingSound())
-				playSound(3, false);
-		}
-		debugC(1, kFreescapeDebugCode, "Runing effects:");
-		if (_flyMode)
-			setGameBit(31);
-		checkCollisions(true); // run the effects
-	} else {
-		debugC(1, kFreescapeDebugCode, "Runing effects: at: %f, %f, %f", _position.x(), _position.y(), _position.z());
-		setGameBit(31);
-		checkCollisions(true); // run the effects
-		if (_currentArea->getAreaID() == previousAreaID) {
-			if (_flyMode)
-				_position = _lastPosition;
-			else {
-				bool stepUp = tryStepUp(_position);
-				if (stepUp) {
-					if (!isPlayingSound())
-						playSound(4, false);
-
-					positionY = _position.y();
-					int fallen;
-					for (fallen = 1; fallen < 64; fallen++) {
-						_position.set(_position.x(), positionY - fallen , _position.z());
-						if (tryStepDown(_position))
-							break;
-					}
-					assert(fallen < 64);
-					fallen++;
-					fallen++;
-					_position.set(_position.x(), positionY - fallen, _position.z());
-
-					debugC(1, kFreescapeDebugCode, "Runing effects:");
-					checkCollisions(true); // run the effects (again)
-				} else {
-					if (!isPlayingSound())
-						playSound(2, false);
-					_position = _lastPosition;
-				}
-			}
-		}
-	}
-	*/
-
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	//debugC(1, kFreescapeDebugMove, "player height: %f", _position.y() - areaScale * _playerHeight);
@@ -337,7 +265,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	Math::Vector3d lastPosition = _lastPosition;
 
 	int previousAreaID = _currentArea->getAreaID();
-	runCollisionConditions(lastPosition, newPosition);
+	bool executed = runCollisionConditions(lastPosition, newPosition);
 	if (_currentArea->getAreaID() != previousAreaID) {
 		return;
 	}
@@ -345,6 +273,11 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
 
 	if (_flyMode) {
+		if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
+			if (!executed)
+				setGameBit(31);
+			playSound(4, false);
+		}
 		_position = newPosition;
 		return;
 	}
@@ -361,7 +294,8 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	}
 
 	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
-		setGameBit(31);
+		if (!executed)
+			setGameBit(31);
 		playSound(4, false);
 	}
 
@@ -380,7 +314,8 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	_position = newPosition;
 }
 
-void FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
+bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
+	bool executed = false;
 	// We need to make sure the bounding box touches the floor so we will expand it and run the collision checking
 	uint tolerance = isCastle() ? 1 : 3;
 	Math::Vector3d v(newPosition.x() - 1, newPosition.y() - _playerHeight - tolerance, newPosition.z() - 1);
@@ -411,11 +346,12 @@ void FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 			largeObjectWasBlocking = true;
 		}
 
-		executeObjectConditions(gobj, false, true, false);
+		executed |= executeObjectConditions(gobj, false, true, false);
 
 		if (areaID != _currentArea->getAreaID())
 			break;
 	}
+	return executed;
 }
 
 } // namespace Freescape
