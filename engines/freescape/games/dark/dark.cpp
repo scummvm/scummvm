@@ -284,6 +284,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 			_position.setValue(0, newPos);
 		}
 		assert(newPos != -1);
+		_sensors = _currentArea->getSensors();
 	}
 
 	_lastPosition = _position;
