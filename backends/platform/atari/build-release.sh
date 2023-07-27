@@ -27,12 +27,16 @@ then
 	--disable-bink \
 	--opengl-mode=none \
 	--enable-verbose-build \
-	--enable-text-console
+	--enable-text-console \
+	--disable-engine=director
 fi
 
 make -j 16
 rm -rf dist-generic
 make dist-generic
+
+# remove unused files; absent gui-icons.dat massively speeds up startup time (used for the grid mode)
+rm -f dist-generic/scummvm/data/{gui-icons,achievements,macgui,shaders}.dat
 
 # move themes into 'themes' folder (with compression level zero for faster depacking)
 mkdir -p dist-generic/scummvm/themes
@@ -43,8 +47,6 @@ do
 	unzip -d tmp "$f" && cd tmp && zip -0 ../$(basename "$f") * && cd .. && rm -r tmp && rm "$f"
 done
 )
-# absent gui-icons.dat massively speeds up startup time (used for the grid mode)
-rm ../data/gui-icons.dat
 cd -
 
 # readme.txt

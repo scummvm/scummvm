@@ -29,15 +29,15 @@ then
 	--opengl-mode=none \
 	--enable-verbose-build \
 	--enable-text-console \
-	--disable-engine=hugo
+	--disable-engine=hugo,director
 fi
 
 make -j 16
 rm -rf dist-generic
 make dist-generic
 
-# remove themes
-rm -f dist-generic/scummvm/data/*.zip dist-generic/scummvm/data/gui-icons.dat
+# remove unused files
+rm -f dist-generic/scummvm/data/*.zip dist-generic/scummvm/data/{gui-icons,achievements,macgui,shaders}.dat
 
 # readme.txt
 cp ../backends/platform/atari/readme.txt dist-generic/scummvm
