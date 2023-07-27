@@ -122,6 +122,18 @@ void DarkEngine::addECD(Area *area, const Math::Vector3d position, int index) {
 	}
 }
 
+void DarkEngine::restoreECD(Area *area, int index) {
+	Object *obj = nullptr;
+	int16 id = 227 + index * 6;
+	for (int i = 0; i < 4; i++) {
+		debugC(1, kFreescapeDebugParser, "Restoring object %d to from ECD %d", id, index);
+		obj = (GeometricObject *)area->objectWithID(id);
+		obj->restore();
+		obj->makeVisible();
+		id--;
+	}
+}
+
 void DarkEngine::initGameState() {
 	_flyMode = false;
 	_noClipMode = false;
@@ -151,7 +163,27 @@ void DarkEngine::initGameState() {
 	_demoEvents.clear();
 }
 
+bool DarkEngine::checkECD(int index) {
+	if (isDemo()) {
+		if (index == 1) {
+			restoreECD(_currentArea, index);
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
 bool DarkEngine::checkIfGameEnded() {
+	if (_gameStateVars[29] > 0) {
+		bool destroyed = checkECD(_gameStateVars[29] - 1);
+		if (destroyed)
+			insertTemporaryMessage(_messagesList[2], _countdown - 2);
+		else
+			insertTemporaryMessage(_messagesList[1], _countdown - 2);
+		_gameStateVars[29] = 0;
+	}
+
 	if (_playerWasCrushed) {
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
 		_gameStateVars[28] = 1; // ??

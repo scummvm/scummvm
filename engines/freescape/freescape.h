@@ -552,6 +552,8 @@ public:
 private:
 	void addECDs(Area *area);
 	void addECD(Area *area, const Math::Vector3d position, int index);
+	void restoreECD(Area *area, int index);
+	bool checkECD(int index);
 	void addWalls(Area *area);
 	Common::SeekableReadStream *decryptFile(const Common::String filename);
 };
