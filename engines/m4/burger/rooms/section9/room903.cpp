@@ -35,11 +35,9 @@ void Room903::preload() {
 }
 
 void Room903::init() {
+	MenuRoom::init();
 	player_set_commands_allowed(false);
 	_num1 = 0;
-	_val2 = -1;
-	_val3 = -1;
-	_val4 = -1;
 
 	series_show_("903logo", 0, 0, -1, -1, 0, 100, 386, 20);
 
@@ -70,7 +68,7 @@ void Room903::daemon() {
 		if (!_num1) {
 			digi_preload("901click");
 
-			for (int i = 0; i < _val2; ++i) {
+			for (uint i = 0; i < _buttons.size(); ++i) {
 
 			}
 		}
@@ -79,11 +77,10 @@ void Room903::daemon() {
 		break;
 
 	default:
-		_G(kernel).continue_handling_trigger = true;
+		MenuRoom::daemon();
 		break;
 	}
 }
-
 
 } // namespace Rooms
 } // namespace Burger

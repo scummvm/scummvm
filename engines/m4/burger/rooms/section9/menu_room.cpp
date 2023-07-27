@@ -28,6 +28,24 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+void MenuRoom::init() {
+	_buttonNum = -1;
+	_highlightedButton = -1;
+	_activeButton = -1;
+	_flag = false;
+}
+
+
+void MenuRoom::daemon() {
+	if (_G(kernel).trigger == CALLED_EACH_LOOP) {
+		if (player_commands_allowed())
+			buttonsFrame();
+
+	} else {
+		_G(kernel).continue_handling_trigger = true;
+	}
+}
+
 void MenuRoom::setButtons(const MenuButtonDef *btns, int count) {
 	_buttons.resize(count);
 	for (int i = 0; i < count; ++i)
@@ -55,6 +73,53 @@ void MenuRoom::setButtonState(int index, ButtonState newState) {
 	} else if (index != -1) {
 		// LOL: A fine example of original authors sense of humour
 		term_message("ooga booga %d", index);
+	}
+}
+
+void MenuRoom::buttonsFrame() {
+	bool newFlag = false;
+
+	_highlightedButton = is_mouse_over_a_button();
+
+	if (_buttonNum == -1) {
+		if (_highlightedButton == -1) {
+			setButtonState(_activeButton, BTNSTATE_1);
+		} else if (_highlightedButton != _activeButton) {
+			setButtonState(_activeButton, BTNSTATE_1);
+			setButtonState(_highlightedButton, BTNSTATE_2);
+		}
+	} else {
+		setButtonState(_buttonNum, _buttonNum == _highlightedButton ? BTNSTATE_3 : BTNSTATE_1);
+	}
+
+	if (_G(MouseState).ButtonState) {
+		_flag = true;
+		if (_buttonNum == -1)
+			_buttonNum = _highlightedButton;
+
+		if (_buttonNum != -1) {
+			setButtonState(_buttonNum, _buttonNum == _highlightedButton ? BTNSTATE_3 : BTNSTATE_1);
+		}
+	} else if (_flag) {
+		_flag = false;
+		newFlag = true;
+	}
+
+	if (newFlag) {
+		_G(events).clearMouseStateEvent();
+
+		if (_highlightedButton == _buttonNum && _buttonNum != -1) {
+			term_message("Button pressed: %d", _highlightedButton);
+
+			const MenuButton &btn = _buttons[_highlightedButton];
+			if (btn._state != BTNSTATE_0) {
+				digi_play(_clickName, 2, 255, -1);
+				kernel_trigger_dispatch_now(btn._trigger);
+				setButtonState(_buttonNum, BTNSTATE_2);
+			}
+		}
+
+		_buttonNum = -1;
 	}
 }
 
