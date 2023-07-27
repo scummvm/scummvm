@@ -21,7 +21,9 @@
 
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/core/imath.h"
 #include "m4/core/mouse.h"
+#include "m4/graphics/gr_sprite.h"
 #include "m4/mem/res.h"
 #include "m4/vars.h"
 
@@ -91,7 +93,6 @@ void gui_mouse_shutdown() {
 }
 
 void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
-#ifdef TODO
 	ScreenContext *myScreen = (ScreenContext *)s;
 	matte *myRectList = (matte *)r;
 	Buffer *destBuffer = (Buffer *)b;
@@ -99,79 +100,80 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 	transSprite *mySource;
 	M4sprite *mySprite;
 	Buffer *myBuff;
-	Buffer				drawSpriteBuff;
-	DrawRequest			spriteDrawReq;
+	Buffer drawSpriteBuff;
+	DrawRequest spriteDrawReq;
 	matte *myMatte, tempMatte;
 	RectList *updateList, *updateRect;
 	RectList *newUpdateList;
 	uint8 *rowPtr, *destPtr;
-	int32					i, j;
+	int32 i, j;
 
-	//parameter verification
-	if (!myScreen) return;
+	// Parameter verification
+	if (!myScreen)
+		return;
 
 	mySource = (transSprite *)(myScreen->scrnContent);
-	if (!mySource) return;
+	if (!mySource)
+		return;
 
 	myBuff = (Buffer *)(mySource->scrnBuffer);
-	if (!myBuff) return;
+	if (!myBuff)
+		return;
 
 	mySprite = mySource->srcSprite;
-	if (!mySprite) return;
+	if (!mySprite)
+		return;
 
-	//if no destBuffer, then draw directly to video
+	// If no destBuffer, then draw directly to video
 	if (!destBuffer) {
-
 		tempMatte.nextMatte = NULL;
 
-		//loopthrough the dirty matte list
+		// Loop through the dirty matte list
 		myMatte = myRectList;
 		while (myMatte) {
 
-			//create an updateRectList to catch the black areas afterwards
+			// Create an updateRectList to catch the black areas afterwards
 			updateList = vmng_CreateNewRect(myMatte->x1, myMatte->y1, myMatte->x2, myMatte->y2);
 			updateList->prev = NULL;
 			updateList->next = NULL;
 
-			//now loop through all the screens behind myScreen
+			// Now loop through all the screens behind myScreen
 			tempScreen = myScreen->behind;
 			while (tempScreen && updateList) {
-
-				//duplicate the updateList
+				// Duplicate the updateList
 				newUpdateList = vmng_DuplicateRectList(updateList);
 
-				//loop through the updateList
+				// Loop through the updateList
 				updateRect = updateList;
 				while (updateRect) {
-
-					//see if it intersects
+					// See if it intersects
 					tempMatte.x1 = imath_max(updateRect->x1, tempScreen->x1);
 					tempMatte.y1 = imath_max(updateRect->y1, tempScreen->y1);
 					tempMatte.x2 = imath_min(updateRect->x2, tempScreen->x2);
 					tempMatte.y2 = imath_min(updateRect->y2, tempScreen->y2);
 
 					if (tempScreen->redraw && (tempMatte.x1 <= tempMatte.x2) && (tempMatte.y1 <= tempMatte.y2)) {
-						//draw the intersected part of tempScreen onto myBuffer
+						// Draw the intersected part of tempScreen onto myBuffer
 						(tempScreen->redraw)(tempScreen, (void *)&tempMatte, myBuff, tempMatte.x1 - myScreen->x1, tempMatte.y1 - myScreen->y1);
 
-						//remove that rectangle from the update list
+						// Remove that rectangle from the update list
 						vmng_RemoveRectFromRectList(&newUpdateList, tempMatte.x1, tempMatte.y1, tempMatte.x2, tempMatte.y2);
 					}
 
-					//get the next updateRect
+					// Get the next updateRect
 					updateRect = updateRect->next;
 				}
 
-				//the newUpdateList now contains all the pieces not covered by tempScreen;
-				//turf the update list, and replace it with the newupdateList
+				// The newUpdateList now contains all the pieces not covered by tempScreen;
+				// turf the update list, and replace it with the newupdateList
 				vmng_DisposeRectList(&updateList);
 				updateList = newUpdateList;
 
-				//now get the next screen
+				// Now get the next screen
 				tempScreen = tempScreen->behind;
 			}
 
-			//now we've gone through all the screens, whatever is left in the updateList should be filled in with black
+			// Now we've gone through all the screens, whatever is left in the updateList should be filled in with black
 			gr_color_set(__BLACK);
 			updateRect = updateList;
 			while (updateRect) {
@@ -180,21 +182,20 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 				updateRect = updateRect->next;
 			}
 
-			//now dispose of the updateList
+			// Now dispose of the updateList
 			vmng_DisposeRectList(&updateList);
 
-			//and finally, get the next matte
+			// And finally, get the next matte
 			myMatte = myMatte->nextMatte;
 		}
 
-		//now myBuff should contain a copy of everything on the screen, except the actual contents of this transparent screen
-		//now would be the time to draw the contents
-
+		// Now myBuff should contain a copy of everything on the screen, except the actual contents of this transparent screen
+		// Now would be the time to draw the contents
 		if (mySprite->sourceHandle) {
 			HLock(mySprite->sourceHandle);
-			mySprite->data = (uint8 *)((byte *)*(mySprite->sourceHandle) + mySprite->sourceOffset);
+			mySprite->data = (uint8 *)((intptr)*(mySprite->sourceHandle) + mySprite->sourceOffset);
 
-			drawSpriteBuff.W = mySprite->w;
+			drawSpriteBuff.w = mySprite->w;
 			drawSpriteBuff.stride = mySprite->w;
 			drawSpriteBuff.h = mySprite->h;
 			drawSpriteBuff.encoding = (mySprite->encoding) & (uint8)0x7f;
@@ -213,42 +214,38 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 
 			gr_sprite_draw(&spriteDrawReq);
 
-			//unlock the handle
+			// Unlock the handle
 			HUnLock(mySprite->sourceHandle);
-		}
+		} else if (mySprite->data) {
+			// Else the data for the transparent sprite is stored directly in mySprite->data
 
-		//else the data for the transparent sprite is stored directly in mySprite->data
-		else if (mySprite->data) {
-
-			//loop through the rows
+			// Loop through the rows
 			for (j = 0; (j < mySprite->h) && (j < myBuff->h); j++) {
-
-				//set the rowPtr and the destPtr
+				// Set the rowPtr and the destPtr
 				rowPtr = mySprite->data + (j * mySprite->w);
 				destPtr = myBuff->data + (j * myBuff->stride);
 
-				//loop through the columns
-				for (i = 0; (i < mySprite->w) && (i < myBuff->W); i++) {
+				// Loop through the columns
+				for (i = 0; (i < mySprite->w) && (i < myBuff->w); i++) {
 					if (*rowPtr) {
 						*destPtr = *rowPtr;
 					}
+
 					destPtr++;
 					rowPtr++;
 				}
 			}
 		}
 
-		//now dump the matte list out to video
+		// Now dump the matte list out to video
 		myMatte = myRectList;
 		while (myMatte) {
 			vmng_refresh_video(myMatte->x1, myMatte->y1, myMatte->x1 - myScreen->x1, myMatte->y1 - myScreen->y1,
 				myMatte->x2 - myScreen->x1, myMatte->y2 - myScreen->y1, myBuff);
 			myMatte = myMatte->nextMatte;
 		}
-	}
-
-	//else draw to the dest buffer
-	else {
+	} else {
+		// Else draw to the dest buffer
 		myMatte = myRectList;
 		while (myMatte) {
 			gr_buffer_rect_copy_2(myBuff, destBuffer, myMatte->x1 - myScreen->x1, myMatte->y1 - myScreen->y1,
@@ -256,7 +253,6 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 			myMatte = myMatte->nextMatte;
 		}
 	}
-#endif
 }
 
 bool mouse_set_sprite(int32 spriteNum) {
