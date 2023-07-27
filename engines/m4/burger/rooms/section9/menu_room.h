@@ -44,7 +44,7 @@ struct MenuButtonDef {
 	int32 _frame2;
 	int32 _frame3;
 	ButtonState _state;
-	int32 _val10;
+	int32 _trigger;
 };
 
 struct MenuButton : public MenuButtonDef {
@@ -55,13 +55,26 @@ struct MenuButton : public MenuButtonDef {
 };
 
 class MenuRoom : public Rooms::Room {
-protected:
-	Common::Array<MenuButton> _buttons;
+private:
 	const char *_menuName;
 	const char *_clickName;
-	int _val2 = -1;
-	int _val3 = -1;
-	int _val4 = -1;
+	int _buttonNum = -1;
+	int _highlightedButton = -1;
+	bool _flag = false;
+
+	/**
+	 * Handles button processing once a frame
+	 */
+	void buttonsFrame();
+
+	/**
+	 * Returns the index of the button currently under the mouse, if any
+	 */
+	int32 is_mouse_over_a_button() const;
+
+protected:
+	Common::Array<MenuButton> _buttons;
+	int _activeButton = -1;
 
 	/**
 	 * Set the display buttons
@@ -78,15 +91,13 @@ protected:
 	 */
 	void setButtonState(int index, ButtonState newState);
 
-	/**
-	 * Returns the index of the button currently under the mouse, if any
-	 */
-	int32 is_mouse_over_a_button() const;
-
 public:
 	MenuRoom(int roomNum, const char *menuName, const char *clickName) :
 		Rooms::Room(roomNum), _menuName(menuName), _clickName(clickName) {}
 	virtual ~MenuRoom() {}
+
+	void init() override;
+	void daemon() override;
 };
 
 } // namespace Rooms

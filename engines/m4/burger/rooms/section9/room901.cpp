@@ -55,6 +55,8 @@ void Room901::preload() {
 }
 
 void Room901::init() {
+	MenuRoom::init();
+
 	switch (_G(executing)) {
 	case JUST_OVERVIEW:
 	case INTERACTIVE_DEMO:
@@ -75,10 +77,6 @@ void Room901::init() {
 
 	for (uint i = 0; i < _buttons.size(); ++i)
 		drawButton(i);
-
-	_val2 = -1;
-	_val3 = -1;
-	_val4 = -1;
 }
 
 void Room901::daemon() {
@@ -88,7 +86,7 @@ void Room901::daemon() {
 		if (_G(kernel).trigger == MENU_SHOW)
 			_G(kernel).call_daemon_every_loop = true;
 
-		_val4 = -1;
+		_activeButton = -1;
 		player_set_commands_allowed(true);
 
 		for (uint i = 0; i < _buttons.size(); ++i) {
@@ -128,7 +126,7 @@ void Room901::daemon() {
 		break;
 
 	default:
-		_G(kernel).continue_handling_trigger = true;
+		MenuRoom::daemon();
 		break;
 	}
 }

@@ -110,6 +110,10 @@ public:
 	 * Get the next pending keyboard event
 	 */
 	bool util_kbd_check(int32 *parm1);
+
+	void clearMouseStateEvent() {
+		_mouseStateEvent = 0;
+	}
 };
 
 extern Events *g_events;
