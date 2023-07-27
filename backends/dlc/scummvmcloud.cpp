@@ -52,13 +52,20 @@ void ScummVMCloud::jsonCallbackGetAllDLCs(Networking::JsonResponse response) {
 			Common::String id = item.getVal("id")->asString();
 			Common::String name = item.getVal("name")->asString();
 			Common::String url = item.getVal("url")->asString();
+			Common::String platform = item.getVal("platform")->asString();
+			Common::String gameid = item.getVal("gameid")->asString();
+			Common::String description = item.getVal("description")->asString();
+			Common::String language = item.getVal("language")->asString();
+			Common::String extra = item.getVal("extra")->asString();
+			Common::String engineid = item.getVal("engineid")->asString();
+			Common::String guioptions = item.getVal("guioptions")->asString();
 			uint32 size;
 			if (item.getVal("size")->isString()) {
 				size = item.getVal("size")->asString().asUint64();
 			} else {
 				size = item.getVal("size")->asIntegerNumber();
 			}
-			DLCMan._dlcs.push_back(new DLCDesc{name, id, url, size, i, DLCDesc::kAvailable});
+			DLCMan._dlcs.push_back(new DLCDesc{name, id, url, platform, gameid, description, language, extra, engineid, guioptions, size, i, DLCDesc::kAvailable});
 		}
 	}
 	// send refresh DLC list command to GUI
@@ -70,7 +77,7 @@ void ScummVMCloud::errorCallbackGetAllDLCs(Networking::ErrorResponse error) {
 }
 
 void ScummVMCloud::getAllDLCs() {
-	Common::String url("https://mocki.io/v1/0d86064d-1c04-41c8-a7b0-7e7e044b9b58"); // temporary mock api
+	Common::String url("https://scummvm-dlcs-default-rtdb.firebaseio.com/dlcs.json"); // temporary mock api
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(
 		new Common::Callback<ScummVMCloud, Networking::JsonResponse>(this, &ScummVMCloud::jsonCallbackGetAllDLCs), 
 		new Common::Callback<ScummVMCloud, Networking::ErrorResponse>(this, &ScummVMCloud::errorCallbackGetAllDLCs), 
