@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-25 18:25+0000\n"
+"POT-Creation-Date: 2023-07-27 07:13+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -57,7 +57,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Угару"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:61
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
@@ -97,173 +97,188 @@ msgstr "Скасаваць"
 msgid "Choose"
 msgstr "Выбраць"
 
-#: gui/cloudconnectionwizard.cpp:176
+#: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:179
+#: gui/cloudconnectionwizard.cpp:183
 #, fuzzy
 #| msgid "Quick load"
 msgid "Quick mode"
 msgstr "Хуткае заладаваньне"
 
-#: gui/cloudconnectionwizard.cpp:180
+#: gui/cloudconnectionwizard.cpp:184
 msgid "Manual mode"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:183
+#: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:185
+#: gui/cloudconnectionwizard.cpp:189
 #, fuzzy
 #| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
 msgstr "Запусьціць лякальны вэб-сэрвэр"
 
-#: gui/cloudconnectionwizard.cpp:201
+#: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:206
+#: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3676
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3676
 msgid "Stop server"
 msgstr "Спыніць сэрвэр"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2743
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2743
 msgid "Run server"
 msgstr "Запусьціць сэрвэр"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3677
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3677
 msgid "Stop local webserver"
 msgstr "Гэта спыніць лякальны вэб-сэрвэр"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2743
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2743
 msgid "Run local webserver"
 msgstr "Запусьціць лякальны вэб-сэрвэр"
 
-#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2744 gui/options.cpp:3684
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2744 gui/options.cpp:3684
 msgid "Not running"
 msgstr "Не запушчаны"
 
-#: gui/cloudconnectionwizard.cpp:259
+#: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:263
+#: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:264 gui/cloudconnectionwizard.cpp:319
+#: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
 msgid "Open URL"
 msgstr "Адкрыць URL"
 
-#: gui/cloudconnectionwizard.cpp:266
+#: gui/cloudconnectionwizard.cpp:270
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:279
+#: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:295
+#: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
+#: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 #, fuzzy
 #| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
 msgstr "Далучыць конт вашага воблачнага сховішча"
 
-#: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
+#: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:313
+#: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:318
+#: gui/cloudconnectionwizard.cpp:322
 #, fuzzy
 #| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
 msgstr "1. Адкрыйце спасылку:"
 
-#: gui/cloudconnectionwizard.cpp:321
+#: gui/cloudconnectionwizard.cpp:325
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:350
+#: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:355
+#: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:357
+#: gui/cloudconnectionwizard.cpp:361
 msgid "Paste"
 msgstr "Уставіць"
 
-#: gui/cloudconnectionwizard.cpp:357
+#: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
 msgstr "Уставіць код з кішэні"
 
-#: gui/cloudconnectionwizard.cpp:373
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:294
+#: engines/dialogs.cpp:98 engines/engine.cpp:909 engines/mm/xeen/saves.cpp:259
+#: engines/parallaction/metaengine.cpp:127
+#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
+#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
+#: engines/wage/saveload.cpp:741
+msgid "Load"
+msgstr "Заладаваць"
+
+#: gui/cloudconnectionwizard.cpp:362
+#, fuzzy
+#| msgid "Load file"
+msgid "Load code from file"
+msgstr "Заладаваць гульню"
+
+#: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:377
+#: gui/cloudconnectionwizard.cpp:383
 #, fuzzy
 #| msgid "Storage connected."
 msgid "Cloud storage was not connected."
 msgstr "Сховішча далучана."
 
-#: gui/cloudconnectionwizard.cpp:378
+#: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:379
+#: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:380
+#: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:394
+#: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:422
+#: gui/cloudconnectionwizard.cpp:428
 #, fuzzy
 #| msgid "Backend"
 msgid "Back"
 msgstr "Бэкэнд"
 
-#: gui/cloudconnectionwizard.cpp:430 gui/saveload-dialog.cpp:829
+#: gui/cloudconnectionwizard.cpp:436 gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Наступны"
 
-#: gui/cloudconnectionwizard.cpp:493
+#: gui/cloudconnectionwizard.cpp:499
 #, fuzzy
 #| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Іншае сховішча працуе цяпер. Ці хочаце вы адлучыць яго?"
 
-#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
@@ -277,7 +292,7 @@ msgstr "Іншае сховішча працуе цяпер. Ці хочаце �
 msgid "Yes"
 msgstr "Так"
 
-#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
@@ -290,7 +305,7 @@ msgstr "Так"
 msgid "No"
 msgstr "Не"
 
-#: gui/cloudconnectionwizard.cpp:502
+#: gui/cloudconnectionwizard.cpp:508
 #, fuzzy
 #| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
@@ -298,11 +313,11 @@ msgstr ""
 "Пачакайце, пакуль цяперашняе сховішча ня скончыць працу й паспрабуйце зноўку."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
-#: gui/cloudconnectionwizard.cpp:530
+#: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
+#: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:533 gui/launcher.cpp:537
 #: gui/massadd.cpp:90 gui/options.cpp:2351 gui/predictivedialog.cpp:69
@@ -329,26 +344,38 @@ msgstr ""
 msgid "OK"
 msgstr "ОК"
 
-#: gui/cloudconnectionwizard.cpp:552
+#: gui/cloudconnectionwizard.cpp:558
 #, fuzzy
 #| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
 msgstr "Няпэўны rs файл."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
-#: gui/cloudconnectionwizard.cpp:559
+#: gui/cloudconnectionwizard.cpp:565
 #, fuzzy
 #| msgid "Interact"
 msgid "Interrupted."
 msgstr "Інтэракцыя"
 
-#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3377
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3377
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
 "Ня выйшла адкрыць URL!\n"
 "Калі ласка, зайдзіце на гэтую старонку самі."
+
+#. I18N: JSON is a file format name
+#: gui/cloudconnectionwizard.cpp:631
+msgid "Select JSON file copied from scummvm.org site"
+msgstr ""
+
+#. I18N: JSON is a file format name
+#: gui/cloudconnectionwizard.cpp:637
+#, fuzzy
+#| msgid "Failed to upload the file!"
+msgid "Failed to load JSON file"
+msgstr "Ня выйшла заладаваць файл!"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
@@ -1102,14 +1129,6 @@ msgstr "Пошук:"
 #: engines/wage/saveload.cpp:741
 msgid "Load game:"
 msgstr "Заладаваць гульню:"
-
-#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:909
-#: engines/mm/xeen/saves.cpp:259 engines/parallaction/metaengine.cpp:127
-#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
-#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
-#: engines/wage/saveload.cpp:741
-msgid "Load"
-msgstr "Заладаваць"
 
 #: gui/launcher.cpp:393
 msgid "This directory cannot be used yet, it is being downloaded into!"

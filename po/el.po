@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-25 18:25+0000\n"
+"POT-Creation-Date: 2023-07-27 07:13+0000\n"
 "PO-Revision-Date: 2023-07-22 10:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -55,7 +55,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Μετάβαση πάνω"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:61
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
@@ -95,31 +95,31 @@ msgstr "Ακύρωση"
 msgid "Choose"
 msgstr "Επιλογή"
 
-#: gui/cloudconnectionwizard.cpp:176
+#: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
 msgstr "Βοηθός Σύνδεσης στο Νέφος"
 
-#: gui/cloudconnectionwizard.cpp:179
+#: gui/cloudconnectionwizard.cpp:183
 msgid "Quick mode"
 msgstr "Γρήγορη ρύθμιση"
 
-#: gui/cloudconnectionwizard.cpp:180
+#: gui/cloudconnectionwizard.cpp:184
 msgid "Manual mode"
 msgstr "Χειροκίνητη ρύθμιση"
 
-#: gui/cloudconnectionwizard.cpp:183
+#: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
 msgstr "Θα σας ζητηθεί να εκτελέσετε Τοπικό Διακομιστή Ιστού"
 
-#: gui/cloudconnectionwizard.cpp:185
+#: gui/cloudconnectionwizard.cpp:189
 msgid "Requires the Local Webserver feature"
 msgstr "Απαιτεί τη λειτουργία Τοπικού Διακομιστή Ιστού"
 
-#: gui/cloudconnectionwizard.cpp:201
+#: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
 msgstr "Γρήγορη Ρύθμιση: 1ο Βήμα"
 
-#: gui/cloudconnectionwizard.cpp:206
+#: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
@@ -127,40 +127,40 @@ msgstr ""
 "Σε αυτή τη λειτουργία, ένας Τοπικός Διακομιστής Ιστού πρέπει να εκτελείται,\n"
 "ώστε ο πλοηγητής σας να μπορεί να προωθεί δεδομένα στο ScummVM"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3676
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3676
 msgid "Stop server"
 msgstr "Διακοπή διακομιστή"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2743
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2743
 msgid "Run server"
 msgstr "Εκτέλεση διακομιστή"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3677
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3677
 msgid "Stop local webserver"
 msgstr "Διακοπή Τοπικού Διακομιστή Ιστού"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2743
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2743
 msgid "Run local webserver"
 msgstr "Εκτέλεση Τοπικού Διακομιστή Ιστού"
 
-#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2744 gui/options.cpp:3684
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2744 gui/options.cpp:3684
 msgid "Not running"
 msgstr "Δεν εκτελείται"
 
-#: gui/cloudconnectionwizard.cpp:259
+#: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
 msgstr "Γρήγορη Ρύθμιση: 2ο Βήμα"
 
-#: gui/cloudconnectionwizard.cpp:263
+#: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
 msgstr "Τώρα, ανοίξτε αυτόν τον σύνδεσμο στον browser σας:"
 
-#: gui/cloudconnectionwizard.cpp:264 gui/cloudconnectionwizard.cpp:319
+#: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
 msgid "Open URL"
 msgstr "Άνοιγμα διεύθυνσης URL"
 
-#: gui/cloudconnectionwizard.cpp:266
+#: gui/cloudconnectionwizard.cpp:270
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
@@ -168,31 +168,31 @@ msgstr ""
 "Θα περάσει αυτόματα τα δεδομένα στο ScummVM,\n"
 "και θα σας ειδοποιήσει αν προκύψουν τυχόντα σφάλματα."
 
-#: gui/cloudconnectionwizard.cpp:279
+#: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
 msgstr "Διεύθυνση Τοπικού Διακομιστή Ιστού: "
 
-#: gui/cloudconnectionwizard.cpp:295
+#: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
 msgstr "Γρήγορη Ρύθμιση: Επιτυχία"
 
-#: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
+#: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
 msgstr "Η αποθήκη Νέφους σας συνδέθηκε!"
 
-#: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
+#: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
 msgstr "Ολοκλήρωση"
 
-#: gui/cloudconnectionwizard.cpp:313
+#: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
 msgstr "Χειροκίνητη Ρύθμιση: 1ο Βήμα"
 
-#: gui/cloudconnectionwizard.cpp:318
+#: gui/cloudconnectionwizard.cpp:322
 msgid "Open this link in your browser:"
 msgstr "Ανοίξτε αυτόν τον σύνδεσμο στον browser σας:"
 
-#: gui/cloudconnectionwizard.cpp:321
+#: gui/cloudconnectionwizard.cpp:325
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
@@ -202,63 +202,78 @@ msgstr ""
 "βρείτε τον στην ενότητα Επιδιόρθωσης Προβλημάτων (Troubleshooting)\n"
 "της σελίδας, και μεταβείτε στο επόμενο βήμα εδώ."
 
-#: gui/cloudconnectionwizard.cpp:350
+#: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
 msgstr "Χειροκίνητη Ρύθμιση: 2ο Βήμα"
 
-#: gui/cloudconnectionwizard.cpp:355
+#: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
 "Αντιγράψτε τον κώδικα JSON από τον πλοηγητή σας εδώ και πατήστε Επόμενο:"
 
-#: gui/cloudconnectionwizard.cpp:357
+#: gui/cloudconnectionwizard.cpp:361
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: gui/cloudconnectionwizard.cpp:357
+#: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
 msgstr "Επικόλληση κωδικού από το πρόχειρο"
 
-#: gui/cloudconnectionwizard.cpp:373
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:294
+#: engines/dialogs.cpp:98 engines/engine.cpp:909 engines/mm/xeen/saves.cpp:259
+#: engines/parallaction/metaengine.cpp:127
+#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
+#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
+#: engines/wage/saveload.cpp:741
+msgid "Load"
+msgstr "Φόρτωση"
+
+#: gui/cloudconnectionwizard.cpp:362
+#, fuzzy
+#| msgid "Load file"
+msgid "Load code from file"
+msgstr "Φόρτωση αρχείου"
+
+#: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
 msgstr "Χειροκίνητη Ρύθμιση: Κάτι πήγε στραβά"
 
-#: gui/cloudconnectionwizard.cpp:377
+#: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
 msgstr "Η αποθήκη Νέφους σας δεν συνδέθηκε."
 
-#: gui/cloudconnectionwizard.cpp:378
+#: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr ""
 "Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
 
-#: gui/cloudconnectionwizard.cpp:379
+#: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
 msgstr "Αν δεν λειτουργήσει αυτό, δοκιμάστε ξανά από την αρχή."
 
-#: gui/cloudconnectionwizard.cpp:380
+#: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
 msgstr "Μήνυμα σφάλματος: "
 
-#: gui/cloudconnectionwizard.cpp:394
+#: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
 msgstr "Χειροκίνητη Ρύθμιση: Επιτυχία"
 
-#: gui/cloudconnectionwizard.cpp:422
+#: gui/cloudconnectionwizard.cpp:428
 msgid "Back"
 msgstr "Πίσω"
 
-#: gui/cloudconnectionwizard.cpp:430 gui/saveload-dialog.cpp:829
+#: gui/cloudconnectionwizard.cpp:436 gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Επόμενο"
 
-#: gui/cloudconnectionwizard.cpp:493
+#: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr ""
 "Μια άλλη Αποθήκη έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να τη "
 "διακόψετε;"
 
-#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
@@ -272,7 +287,7 @@ msgstr ""
 msgid "Yes"
 msgstr "Ναι"
 
-#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
@@ -285,16 +300,16 @@ msgstr "Ναι"
 msgid "No"
 msgstr "Όχι"
 
-#: gui/cloudconnectionwizard.cpp:502
+#: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
 msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
-#: gui/cloudconnectionwizard.cpp:530
+#: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
 msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν σωστή μορφή."
 
-#: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
+#: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:533 gui/launcher.cpp:537
 #: gui/massadd.cpp:90 gui/options.cpp:2351 gui/predictivedialog.cpp:69
@@ -321,22 +336,34 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 msgid "OK"
 msgstr "OK"
 
-#: gui/cloudconnectionwizard.cpp:552
+#: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
 msgstr "Εσφαλμένο JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
-#: gui/cloudconnectionwizard.cpp:559
+#: gui/cloudconnectionwizard.cpp:565
 msgid "Interrupted."
 msgstr "Διακόπηκε."
 
-#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3377
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3377
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
 "Αποτυχία ανοίγματος του URL!\n"
 "Παρακαλούμε, μεταφερθείτε σε αυτή τη σελίδα χειροκίνητα."
+
+#. I18N: JSON is a file format name
+#: gui/cloudconnectionwizard.cpp:631
+msgid "Select JSON file copied from scummvm.org site"
+msgstr ""
+
+#. I18N: JSON is a file format name
+#: gui/cloudconnectionwizard.cpp:637
+#, fuzzy
+#| msgid "Failed to upload the file!"
+msgid "Failed to load JSON file"
+msgstr "Αποτυχία μεταφοράς του αρχείου!"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
@@ -1104,14 +1131,6 @@ msgstr "Αναζήτηση:"
 #: engines/wage/saveload.cpp:741
 msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
-
-#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:909
-#: engines/mm/xeen/saves.cpp:259 engines/parallaction/metaengine.cpp:127
-#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
-#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
-#: engines/wage/saveload.cpp:741
-msgid "Load"
-msgstr "Φόρτωση"
 
 #: gui/launcher.cpp:393
 msgid "This directory cannot be used yet, it is being downloaded into!"

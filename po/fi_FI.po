@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-25 18:25+0000\n"
+"POT-Creation-Date: 2023-07-27 07:13+0000\n"
 "PO-Revision-Date: 2023-07-24 21:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -56,7 +56,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Siirry ylös"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:61
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
@@ -96,31 +96,31 @@ msgstr "Peruuta"
 msgid "Choose"
 msgstr "Valitse"
 
-#: gui/cloudconnectionwizard.cpp:176
+#: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
 msgstr "Pilvitallennusvelho"
 
-#: gui/cloudconnectionwizard.cpp:179
+#: gui/cloudconnectionwizard.cpp:183
 msgid "Quick mode"
 msgstr "Pikatila"
 
-#: gui/cloudconnectionwizard.cpp:180
+#: gui/cloudconnectionwizard.cpp:184
 msgid "Manual mode"
 msgstr "Manuaalinen tila"
 
-#: gui/cloudconnectionwizard.cpp:183
+#: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
 msgstr "Pyytää sinua käynnistämään paikallisen webpalvelimen"
 
-#: gui/cloudconnectionwizard.cpp:185
+#: gui/cloudconnectionwizard.cpp:189
 msgid "Requires the Local Webserver feature"
 msgstr "Tarvitsee paikallisen webpalvelimen"
 
-#: gui/cloudconnectionwizard.cpp:201
+#: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
 msgstr "Pikatila: Vaihe 1"
 
-#: gui/cloudconnectionwizard.cpp:206
+#: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
@@ -128,40 +128,40 @@ msgstr ""
 "Tässä tilassa paikallisen webpalvelimen täytyy olla käynnissä,\n"
 "jotta selaimesi voi välittää dataa ScummVM:lle"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3676
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3676
 msgid "Stop server"
 msgstr "Pysäytä palvelin"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2743
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2743
 msgid "Run server"
 msgstr "Käynnistä palvelin"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3677
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3677
 msgid "Stop local webserver"
 msgstr "Pysäytä paikallinen webpalvelin"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2743
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2743
 msgid "Run local webserver"
 msgstr "Käynnistä paikallinen webpalvelin"
 
-#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2744 gui/options.cpp:3684
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2744 gui/options.cpp:3684
 msgid "Not running"
 msgstr "Ei käynnissä"
 
-#: gui/cloudconnectionwizard.cpp:259
+#: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
 msgstr "Pikatila: Vaihe 2"
 
-#: gui/cloudconnectionwizard.cpp:263
+#: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
 msgstr "Avaa tämä linkki selaimessasi:"
 
-#: gui/cloudconnectionwizard.cpp:264 gui/cloudconnectionwizard.cpp:319
+#: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
 msgid "Open URL"
 msgstr "Avaa osoite"
 
-#: gui/cloudconnectionwizard.cpp:266
+#: gui/cloudconnectionwizard.cpp:270
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
@@ -169,31 +169,31 @@ msgstr ""
 "Se välittää automaattisesti dataa ScummVM:lle\n"
 "ja varoittaa sinua mahdollisista virheistä."
 
-#: gui/cloudconnectionwizard.cpp:279
+#: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
 msgstr "Paikallisen webpalvelimen osoite: "
 
-#: gui/cloudconnectionwizard.cpp:295
+#: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
 msgstr "Pikatila: Onnistui"
 
-#: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
+#: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
 msgstr "Yhteys pilvitallennustilisi on luotu!"
 
-#: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
+#: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
 msgstr "Lopeta"
 
-#: gui/cloudconnectionwizard.cpp:313
+#: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
 msgstr "Manuaalinen tila: Vaihe 1"
 
-#: gui/cloudconnectionwizard.cpp:318
+#: gui/cloudconnectionwizard.cpp:322
 msgid "Open this link in your browser:"
 msgstr "Avaa tämä linkki selaimessasi:"
 
-#: gui/cloudconnectionwizard.cpp:321
+#: gui/cloudconnectionwizard.cpp:325
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
@@ -203,59 +203,74 @@ msgstr ""
 "tutki sivun Troubleshooting-kohtaa,\n"
 "ja siirry täällä seuraavaan vaiheeseen."
 
-#: gui/cloudconnectionwizard.cpp:350
+#: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
 msgstr "Manuaalinen tila: Vaihe 2"
 
-#: gui/cloudconnectionwizard.cpp:355
+#: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Kopioi JSON-koodi selaimesta tähän ja paina 'Seuraava':"
 
-#: gui/cloudconnectionwizard.cpp:357
+#: gui/cloudconnectionwizard.cpp:361
 msgid "Paste"
 msgstr "Liitä"
 
-#: gui/cloudconnectionwizard.cpp:357
+#: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
 msgstr "Liitä koodi leikepöydältä"
 
-#: gui/cloudconnectionwizard.cpp:373
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:294
+#: engines/dialogs.cpp:98 engines/engine.cpp:909 engines/mm/xeen/saves.cpp:259
+#: engines/parallaction/metaengine.cpp:127
+#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
+#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
+#: engines/wage/saveload.cpp:741
+msgid "Load"
+msgstr "Lataa"
+
+#: gui/cloudconnectionwizard.cpp:362
+#, fuzzy
+#| msgid "Load file"
+msgid "Load code from file"
+msgstr "Lataa tiedosto"
+
+#: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
 msgstr "Manuaalinen tila: Jotain meni pieleen"
 
-#: gui/cloudconnectionwizard.cpp:377
+#: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
 msgstr "Yhteyttä tallennustilaan ei avattu."
 
-#: gui/cloudconnectionwizard.cpp:378
+#: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "Varmista että JSON-koodi kopioitiin oikein ja yritä uudestaan."
 
-#: gui/cloudconnectionwizard.cpp:379
+#: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
 msgstr "Jos se ei toimi, yritä alusta uudestaan."
 
-#: gui/cloudconnectionwizard.cpp:380
+#: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
 msgstr "Virheilmoitus: "
 
-#: gui/cloudconnectionwizard.cpp:394
+#: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
 msgstr "Manuaalinen tila: Onnistui"
 
-#: gui/cloudconnectionwizard.cpp:422
+#: gui/cloudconnectionwizard.cpp:428
 msgid "Back"
 msgstr "Takaisin"
 
-#: gui/cloudconnectionwizard.cpp:430 gui/saveload-dialog.cpp:829
+#: gui/cloudconnectionwizard.cpp:436 gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Seuraava"
 
-#: gui/cloudconnectionwizard.cpp:493
+#: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeyttää sen?"
 
-#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
@@ -269,7 +284,7 @@ msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeyttää sen?"
 msgid "Yes"
 msgstr "Kyllä"
 
-#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
@@ -282,16 +297,16 @@ msgstr "Kyllä"
 msgid "No"
 msgstr "Ei"
 
-#: gui/cloudconnectionwizard.cpp:502
+#: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
 msgstr "Odota kunnes aktiivinen Tallennus on valmis ja yritä sitten uudestaan."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
-#: gui/cloudconnectionwizard.cpp:530
+#: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
 msgstr "JSON-koodin sisältö on epämuodostunutta."
 
-#: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
+#: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:533 gui/launcher.cpp:537
 #: gui/massadd.cpp:90 gui/options.cpp:2351 gui/predictivedialog.cpp:69
@@ -318,22 +333,34 @@ msgstr "JSON-koodin sisältö on epämuodostunutta."
 msgid "OK"
 msgstr "OK"
 
-#: gui/cloudconnectionwizard.cpp:552
+#: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
 msgstr "Viallinen JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
-#: gui/cloudconnectionwizard.cpp:559
+#: gui/cloudconnectionwizard.cpp:565
 msgid "Interrupted."
 msgstr "Keskeytetty."
 
-#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3377
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3377
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
 "Osoitteen avaaminen epäonnistui!\n"
 "Ole hyvä ja siirry osoitteeseen käsin."
+
+#. I18N: JSON is a file format name
+#: gui/cloudconnectionwizard.cpp:631
+msgid "Select JSON file copied from scummvm.org site"
+msgstr ""
+
+#. I18N: JSON is a file format name
+#: gui/cloudconnectionwizard.cpp:637
+#, fuzzy
+#| msgid "Failed to upload the file!"
+msgid "Failed to load JSON file"
+msgstr "Tiedoston lähettäminen ei onnistunut!"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
@@ -1089,14 +1116,6 @@ msgstr "Etsi:"
 #: engines/wage/saveload.cpp:741
 msgid "Load game:"
 msgstr "Lataa peli:"
-
-#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:909
-#: engines/mm/xeen/saves.cpp:259 engines/parallaction/metaengine.cpp:127
-#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
-#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
-#: engines/wage/saveload.cpp:741
-msgid "Load"
-msgstr "Lataa"
 
 #: gui/launcher.cpp:393
 msgid "This directory cannot be used yet, it is being downloaded into!"
