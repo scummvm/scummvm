@@ -38,8 +38,12 @@
  * Status of this engine: Supported
  *
  * Games using this engine:
+ * - Adi 2
+ * - Adi 4
+ * - Adi 5
  * - Adibou 1
  * - Adibou 2
+ * - Adibou 3
  * - Gobliiins
  * - Gobliins 2
  * - Goblins 3
