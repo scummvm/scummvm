@@ -125,6 +125,7 @@ void DarkEngine::addECD(Area *area, const Math::Vector3d position, int index) {
 void DarkEngine::initGameState() {
 	_flyMode = false;
 	_noClipMode = false;
+	_playerWasCrushed = false;
 	_shootingFrames = 0;
 	_underFireFrames = 0;
 	_yaw = 0;
@@ -151,7 +152,16 @@ void DarkEngine::initGameState() {
 }
 
 bool DarkEngine::checkIfGameEnded() {
-	if (_gameStateVars[k8bitVariableShield] == 0) {
+	if (_playerWasCrushed) {
+		insertTemporaryMessage(_messagesList[10], _countdown - 2);
+		_gameStateVars[28] = 1; // ??
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
+		_playerWasCrushed = false;
+		gotoArea(1, 26);
+	} else if (_gameStateVars[k8bitVariableShield] == 0) {
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
 		_gameStateVars[28] = 1; // ??
 		drawFrame();
@@ -159,18 +169,14 @@ bool DarkEngine::checkIfGameEnded() {
 		g_system->updateScreen();
 		g_system->delayMillis(2000);
 		gotoArea(1, 26);
-	}
-
-	if (_gameStateVars[k8bitVariableEnergy] == 0) {
+	} else if (_gameStateVars[k8bitVariableEnergy] == 0) {
 		insertTemporaryMessage(_messagesList[16], _countdown - 2);
 		drawFrame();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(2000);
 		gotoArea(1, 26);
-	}
-
-	if (_forceEndGame) {
+	} else if (_forceEndGame) {
 		_forceEndGame = false;
 		if (isDemo())
 			return true;

@@ -503,6 +503,8 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 
 }
 
+extern Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight);
+
 void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
@@ -519,6 +521,13 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 		Object *obj = _areaMap[areaID]->objectWithID(objectID);
 		assert(obj); // We assume an object should be there
 		obj->makeVisible();
+		if (!isDriller()) {
+			Math::AABB boundingBox = createPlayerAABB(_position, _playerHeight);
+			if (obj->_boundingBox.collides(boundingBox)) {
+				_playerWasCrushed = true;
+				_shootingFrames = 0;
+			}
+		}
 	} else {
 		assert(isDOS() && isDemo()); // Should only happen in the DOS demo
 	}
@@ -551,6 +560,15 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 		obj = _areaMap[areaID]->objectWithID(objectID);
 		assert(obj); // We know that an object should be there
 		obj->makeVisible();
+	}
+	if (!obj->isInvisible()) {
+		if (!isDriller()) {
+			Math::AABB boundingBox = createPlayerAABB(_position, _playerHeight);
+			if (obj->_boundingBox.collides(boundingBox)) {
+				_playerWasCrushed = true;
+				_shootingFrames = 0;
+			}
+		}
 	}
 }
 

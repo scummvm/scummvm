@@ -99,6 +99,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_currentDemoMousePosition = _crossairPosition;
 	_flyMode = false;
 	_noClipMode = false;
+	_playerWasCrushed = false;
 	_forceEndGame = false;
 	_syncSound = false;
 	_firstSound = false;
@@ -288,7 +289,8 @@ void FreescapeEngine::drawFrame() {
 	}
 
 	drawBackground();
-	_currentArea->draw(_gfx, _ticks);
+	if (!_playerWasCrushed) // Avoid rendering inside objects
+		_currentArea->draw(_gfx, _ticks);
 
 	if (_underFireFrames > 0) {
 		for (auto &it : _sensors) {

@@ -379,6 +379,7 @@ public:
 	StateBits _gameStateBits;
 	virtual bool checkIfGameEnded();
 	bool _forceEndGame;
+	bool _playerWasCrushed;
 	ObjectArray _sensors;
 	void checkSensors();
 	void drawSensorShoot(Sensor *sensor);

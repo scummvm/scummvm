@@ -682,6 +682,7 @@ void DrillerEngine::removeDrill(Area *area) {
 void DrillerEngine::initGameState() {
 	_flyMode = false;
 	_noClipMode = false;
+	_playerWasCrushed = false;
 	_shootingFrames = 0;
 	_underFireFrames = 0;
 	_yaw = 0;
