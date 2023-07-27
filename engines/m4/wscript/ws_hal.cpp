@@ -123,26 +123,14 @@ void ws_Error(machine *m, int32 errorType, trigraph errorCode, const char *errMs
 	error_show(FL, errorCode, errMsg);
 }
 
-void ws_LogErrorMsg(char *sourceFile, int32 lineNum, const char *fmt, ...) {
-	Common::OutSaveFile *logFile;
-	Common::String msgBuff;
-	va_list ap;
+void ws_LogErrorMsg(const char *filename, uint32 line, const char *fmt, ...) {
+	va_list	argPtr;
+	va_start(argPtr, fmt);
 
-	va_start(ap, fmt);
-	msgBuff == Common::String::vformat(fmt, ap);
-	va_end(ap);
+	Common::String msg = Common::String::vformat(fmt, argPtr);
+	va_end(argPtr);
 
-	logFile = g_system->getSavefileManager()->openForSaving("ws_mach.log");
-	if (logFile) {
-		logFile->writeString(Common::String::format("Source Code Index: %s:%ld\n", sourceFile, lineNum));
-		logFile->writeString(Common::String::format("%s\n\n", msgBuff.c_str()));
-
-		logFile->finalize();
-		delete logFile;
-	}
-
-	term_message("Source Code Index: %s:%ld", sourceFile, lineNum);
-	term_message("%s", msgBuff.c_str());
+	error("%s", msg.c_str());
 }
 
 machine *kernel_timer_callback(int32 ticks, int16 trigger, MessageCB callMe) {

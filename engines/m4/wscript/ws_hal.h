@@ -64,7 +64,7 @@ extern void ws_OverrideCrunchTime(machine *m);
 extern bool CheckAddr();
 extern void ws_Error(machine *m, int32 errorType, quadchar errorCode, const char *errMsg);
 extern void ws_DumpMachine(machine *m);
-extern void ws_LogErrorMsg(char *sourceFile, int32 lineNum, char *fmt, ...);
+extern void ws_LogErrorMsg(const char *sourceFile, uint32 lineNum, const char *fmt, ...);
 
 } // End of namespace M4
 

@@ -54,12 +54,16 @@ struct MenuButton : public MenuButtonDef {
 	MenuButton(const MenuButtonDef &def) : MenuButtonDef(def) {}
 };
 
+/**
+ * Base class used for the menu rooms 901 and 903
+ */
 class MenuRoom : public Rooms::Room {
 private:
 	const char *_menuName;
 	const char *_clickName;
 	int _buttonNum = -1;
 	int _highlightedButton = -1;
+	int _activeButton = -1;
 	bool _flag = false;
 
 	/**
@@ -74,7 +78,6 @@ private:
 
 protected:
 	Common::Array<MenuButton> _buttons;
-	int _activeButton = -1;
 
 	/**
 	 * Set the display buttons
@@ -91,6 +94,12 @@ protected:
 	 */
 	void setButtonState(int index, ButtonState newState);
 
+	/**
+	 * Resets the selected button
+	 */
+	void resetSelectedButton() {
+		_activeButton = -1;
+	}
 public:
 	MenuRoom(int roomNum, const char *menuName, const char *clickName) :
 		Rooms::Room(roomNum), _menuName(menuName), _clickName(clickName) {}
