@@ -20,7 +20,7 @@
  */
 
 #include "m4/wscript/ws_cruncher.h"
-#include "m4/wscript/ws_hal.h"
+#include "m4/wscript/wscript.h"
 #include "m4/wscript/wst_regs.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"

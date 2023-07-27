@@ -86,7 +86,7 @@ void Room901::daemon() {
 		if (_G(kernel).trigger == MENU_SHOW)
 			_G(kernel).call_daemon_every_loop = true;
 
-		_activeButton = -1;
+		resetSelectedButton();
 		player_set_commands_allowed(true);
 
 		for (uint i = 0; i < _buttons.size(); ++i) {

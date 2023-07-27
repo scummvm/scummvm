@@ -35,8 +35,6 @@ struct WS_Globals : public WSCruncher_Globals, public WSHal_Globals,
 		public WSLoad_Globals, public WSMachine_Globals, public WSTimer_Globals {
 };
 
-extern void ws_LogErrorMsg(const char *filename, uint32 line, const char *fmt, ...);
-
 } // End of namespace M4
 
 #endif
