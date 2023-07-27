@@ -485,7 +485,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 
 	// Find the cels source  from the asset block
 	HLock(resourceHandle);
-	celsPtr = (uint32 *)((byte *)*resourceHandle + handleOffset);
+	celsPtr = (uint32 *)((intptr)*resourceHandle + handleOffset);
 
 	// Check that the index into the series requested is within a valid range
 	numCels = celsPtr[CELS_COUNT];
@@ -499,7 +499,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((uint32)data + offsets[index]);
+	myCelSource = (uint32 *)((intptr)data + offsets[index]);
 
 	// Set the stream boolean
 	if (streamSeries) {
@@ -510,6 +510,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	}
 
 	// Initialize the sprite struct and return it
+	mySprite->next = mySprite->prev = nullptr;
 	mySprite->sourceHandle = resourceHandle;
 	mySprite->xOffset = (int32)myCelSource[CELS_X];
 	mySprite->yOffset = (int32)myCelSource[CELS_Y];
@@ -519,7 +520,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
 
 	if ((mySprite->w > 0) && (mySprite->h > 0)) {
-		mySprite->sourceOffset = (int32)((byte *)(mySprite->data) - (byte *)*resourceHandle);
+		mySprite->sourceOffset = (int32)((intptr)mySprite->data - (intptr)*resourceHandle);
 	} else {
 		mySprite->sourceOffset = 0;
 	}
