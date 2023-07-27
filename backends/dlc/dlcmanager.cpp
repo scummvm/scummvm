@@ -51,6 +51,10 @@ void DLCManager::refreshDLCList() {
 	sendCommand(GUI::kRefreshDLCList, 0);
 }
 
+void DLCManager::refreshLauncherGameList() {
+	sendCommand(GUI::kRefreshLauncher, 0);
+}
+
 void DLCManager::addDownload(uint32 idx) {
 	_dlcs[idx]->state = DLCDesc::kInProgress;
 	_queuedDownloadTasks.push(_dlcs[idx]);

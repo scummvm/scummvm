@@ -55,6 +55,8 @@ public:
 
 	void refreshDLCList();
 
+	void refreshLauncherGameList();
+
 	// Add download task to queue, runs on click download button, 
 	void addDownload(uint32 idx);
 

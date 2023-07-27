@@ -33,6 +33,8 @@
 #include "backends/dlc/dlcmanager.h"
 #include "common/config-manager.h"
 #include "common/formats/json.h"
+#include "engines/metaengine.h"
+#include "gui/gui-manager.h"
 
 namespace DLC {
 namespace ScummVMCloud {
@@ -98,6 +100,8 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		extractZip(relativeFilePath, destPath);
 		// remove cache (the downloaded .zip)
 		removeCacheFile(relativeFilePath);
+		// add downloaded game entry in scummvm configuration file
+		addEntryToConfig(destPath);
 		// handle next download
 		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
 		DLCMan._queuedDownloadTasks.pop();
@@ -148,6 +152,34 @@ void ScummVMCloud::removeCacheFile(Common::Path file) {
 #else
 	warning("ScummVMCloud::removeCacheFile(): Removing is unimplemented");
 #endif
+}
+
+void ScummVMCloud::addEntryToConfig(Common::Path gamePath) {
+	Common::FSNode dir(gamePath);
+	Common::FSList fsnodes;
+	if (!dir.getChildren(fsnodes, Common::FSNode::kListAll)) {
+		warning("ScummVMCloud::addEntryToConfig(): Game directory does not exists");
+		return;
+	}
+	if (fsnodes.size() == 1 && fsnodes[0].isDirectory()) {
+		// if extraction process created a new folder inside gamePath, set gamePath to that directory
+		gamePath = gamePath.appendComponent(fsnodes[0].getFileName());
+	}
+	// add a new entry in scummvm config file
+	Common::String domain = EngineMan.generateUniqueDomain(DLCMan._queuedDownloadTasks.front()->gameid);
+	ConfMan.addGameDomain(domain);
+	ConfMan.set("engineid", DLCMan._queuedDownloadTasks.front()->engineid, domain);
+	ConfMan.set("gameid", DLCMan._queuedDownloadTasks.front()->gameid, domain);
+	ConfMan.set("description", DLCMan._queuedDownloadTasks.front()->description, domain);
+	ConfMan.set("language", DLCMan._queuedDownloadTasks.front()->language, domain);
+	ConfMan.set("platform", DLCMan._queuedDownloadTasks.front()->platform, domain);
+	ConfMan.set("path", gamePath.toString(), domain);
+	ConfMan.set("extra", DLCMan._queuedDownloadTasks.front()->extra, domain);
+	ConfMan.set("guioptions", DLCMan._queuedDownloadTasks.front()->guioptions, domain);
+	ConfMan.set("download", DLCMan._queuedDownloadTasks.front()->id, domain);
+
+	// send refresh launcher command to GUI
+	DLCMan.refreshLauncherGameList();
 }
 
 } // End of namespace ScummVMCloud
