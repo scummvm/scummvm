@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-27 07:13+0000\n"
-"PO-Revision-Date: 2023-07-25 20:35+0000\n"
+"PO-Revision-Date: 2023-07-27 16:23+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -230,10 +230,8 @@ msgid "Load"
 msgstr "Laden"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Datei laden"
+msgstr "Code aus Datei laden"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
@@ -357,14 +355,12 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Wähle die JSON-Datei aus, die von der scummvm.org-Seite kopiert wurde"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "Datei konnte nicht hochgeladen werden!"
+msgstr "Fehler beim Laden der JSON-Datei"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
