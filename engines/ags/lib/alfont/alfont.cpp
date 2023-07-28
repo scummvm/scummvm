@@ -19,7 +19,10 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 #include "common/scummsys.h"
 
 #ifdef USE_FREETYPE2
