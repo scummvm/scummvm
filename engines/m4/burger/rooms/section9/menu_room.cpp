@@ -62,6 +62,11 @@ void MenuRoom::drawButton(int index) {
 	btn._machine = series_show_(_menuName, 0, 0, -1, -1, frame[btn._state], 100, btn._x1, btn._y1);
 }
 
+void MenuRoom::drawButtons() {
+	for (uint i = 0; i < _buttons.size(); ++i)
+		drawButton(i);
+}
+
 void MenuRoom::setButtonState(int index, ButtonState newState) {
 	if (index >= 0 && index < (int)_buttons.size()) {
 		MenuButton &btn = _buttons[index];

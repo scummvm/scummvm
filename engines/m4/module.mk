@@ -94,6 +94,7 @@ MODULE_OBJS = \
 	burger/flags.o \
 	burger/hotkeys.o \
 	burger/inventory.o \
+	burger/other.o \
 	burger/series_player.o \
 	burger/vars.o \
 	burger/walker.o

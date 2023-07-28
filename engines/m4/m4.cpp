@@ -35,6 +35,7 @@
 #include "m4/platform/sound.h"
 #include "m4/detection.h"
 #include "m4/console.h"
+#include "m4/metaengine.h"
 #include "m4/core/param.h"
 
 namespace M4 {
@@ -147,5 +148,8 @@ bool M4Engine::autosaveExists() const {
 	return result;
 }
 
+bool M4Engine::savesExist() const {
+	return getMetaEngine()->listSaves(_targetName.c_str()).empty();
+}
 
 } // End of namespace M4

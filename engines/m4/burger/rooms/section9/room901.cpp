@@ -75,8 +75,7 @@ void Room901::init() {
 	pal_fade_set_start(_G(master_palette), 0);
 	pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 100, 60, MENU_SHOW);
 
-	for (uint i = 0; i < _buttons.size(); ++i)
-		drawButton(i);
+	drawButtons();
 }
 
 void Room901::daemon() {

@@ -90,6 +90,11 @@ protected:
 	void drawButton(int index);
 
 	/**
+	 * Draws all the buttons
+	 */
+	void drawButtons();
+
+	/**
 	 * Changes a button's state
 	 */
 	void setButtonState(int index, ButtonState newState);

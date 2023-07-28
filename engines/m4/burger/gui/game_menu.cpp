@@ -26,9 +26,14 @@
 
 namespace M4 {
 namespace Burger {
+namespace GUI {
 
 void CreateGameMenuMain(RGB8 *myPalette) {
 	error("TODO: CreateGameMenuMain");
+}
+
+void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
+	error("TODO: CreateSaveLoadMenu");
 }
 
 void CreateGameMenu(RGB8 *myPalette) {
@@ -46,5 +51,16 @@ void CreateGameMenuFromMain(RGB8 *myPalette) {
 	}
 }
 
+void CreateLoadMenuFromMain(RGB8 *myPalette) {
+	if (_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
+		return;
+	}
+
+	_G(gui).saveLoadFromHotkey = true;
+	_G(gui).gameMenuFromMain = true;
+	CreateSaveLoadMenu(myPalette, false);
+}
+
+} // namespace GUI
 } // namespace Burger
 } // namespace M4
