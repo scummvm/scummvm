@@ -706,7 +706,7 @@ void Dialogs::displayText(Common::String text) {
 
 				if (_param == 0)
 					setBubbleStateNatural();
-				else if ((1 <= _param) && (_param <= 9)) {
+				else if (_param <= 9) {
 					assert(_param - 1 < _vm->_animation->kSpriteNumbMax);
 					AnimationType *spr = _vm->_animation->_sprites[_param - 1];
 					if ((_param > _vm->_animation->kSpriteNumbMax) || (!spr->_quick)) { // Not valid.
@@ -714,7 +714,7 @@ void Dialogs::displayText(Common::String text) {
 						setBubbleStateNatural();
 					} else
 						spr->chatter(); // Normal sprite talking routine.
-				} else if ((10 <= _param) && (_param <= 36)) {
+				} else if (_param <= 36) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)

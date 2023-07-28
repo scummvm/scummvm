@@ -91,8 +91,6 @@ public:
 	Help *_help;
 	HighScore *_highscore;
 
-	OSystem *_system;
-
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine() override;
 
