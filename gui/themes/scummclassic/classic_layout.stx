@@ -54,6 +54,7 @@
 		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
 		<def var = 'DropdownButton.Width' value = '17' scalable = 'yes'/>
+		<def var = 'VolumeSlider.Width' value = '275' scalable = 'yes'/>
 
 		<def var = 'Checkbox.Spacing' value = '15' scalable = 'yes'/>
 		<def var = 'Radiobutton.Spacing' value = '15' scalable = 'yes'/>
@@ -84,9 +85,6 @@
 		/>
 
 		<widget name = 'Slider'
-				size = '128, 18'
-		/>
-		<widget name = 'WideSlider'
 				size = '-1, 18'
 		/>
 		<widget name = 'PopUp'
@@ -497,6 +495,7 @@
 					/>
 					<widget name = 'vcMusicSlider'
 							type = 'Slider'
+							width = 'Globals.VolumeSlider.Width'
 							rtl = 'no'
 					/>
 					<widget name = 'vcMusicLabel'
@@ -509,6 +508,7 @@
 					/>
 					<widget name = 'vcSfxSlider'
 							type = 'Slider'
+							width = 'Globals.VolumeSlider.Width'
 							rtl = 'no'
 					/>
 					<widget name = 'vcSfxLabel'
@@ -521,6 +521,7 @@
 					/>
 					<widget name = 'vcSpeechSlider'
 							type = 'Slider'
+							width = 'Globals.VolumeSlider.Width'
 							rtl = 'no'
 					/>
 					<widget name = 'vcSpeechLabel'
@@ -1471,6 +1472,7 @@
 						/>
 						<widget name = 'vcMusicSlider'
 								type = 'Slider'
+								width = 'Globals.VolumeSlider.Width'
 								rtl = 'no'
 						/>
 						<widget name = 'vcMusicLabel'
@@ -1483,6 +1485,7 @@
 						/>
 						<widget name = 'vcSfxSlider'
 								type = 'Slider'
+								width = 'Globals.VolumeSlider.Width'
 								rtl = 'no'
 						/>
 						<widget name = 'vcSfxLabel'
@@ -1495,6 +1498,7 @@
 						/>
 						<widget name = 'vcSpeechSlider'
 								type = 'Slider'
+								width = 'Globals.VolumeSlider.Width'
 								rtl = 'no'
 						/>
 						<widget name = 'vcSpeechLabel'
