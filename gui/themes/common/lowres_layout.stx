@@ -93,9 +93,6 @@
 		/>
 
 		<widget name = 'Slider'
-				size = '85, 12'
-		/>
-		<widget name = 'WideSlider'
 				size = '-1, 12'
 		/>
 		<widget name = 'PopUp'
