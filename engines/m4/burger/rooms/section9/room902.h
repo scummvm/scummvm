@@ -19,33 +19,35 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_H
-#define M4_BURGER_ROOMS_SECTION9_H
+#ifndef M4_BURGER_ROOMS_SECTION9_ROOM902_H
+#define M4_BURGER_ROOMS_SECTION9_ROOM902_H
 
-#include "m4/burger/rooms/section.h"
-#include "m4/burger/rooms/section9/room901.h"
-#include "m4/burger/rooms/section9/room902.h"
-#include "m4/burger/rooms/section9/room903.h"
-#include "m4/burger/rooms/section9/room904.h"
-#include "m4/burger/rooms/section9/room951.h"
-#include "m4/burger/rooms/section9/room971.h"
+#include "m4/burger/rooms/room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Section9 : public Rooms::Section {
-private:
-	Room901 _room901;
-	Room902 _room902;
-	Room903 _room903;
-	Room904 _room904;
-	Room951 _room951;
-	Room971 _room971;
-public:
-	Section9();
-	virtual ~Section9() {}
+struct Entry {
+	const char *_name;
+	int _duration;
+};
 
+class Room902 : public Rooms::Room {
+private:
+	int _vol = 255;
+	const Entry *_entries = nullptr;
+	int _index = 0;
+	const char *_name = nullptr;
+	int _duration = 0;
+	int _seriesIndex = -1;
+
+public:
+	Room902() : Rooms::Room(902) {}
+	~Room902() override {}
+
+	void preload() override;
+	void init() override;
 	void daemon() override;
 };
 
