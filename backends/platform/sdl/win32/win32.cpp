@@ -274,6 +274,24 @@ Common::String OSystem_Win32::getDefaultIconsPath() {
 	return Win32::tcharToString(iconsPath);
 }
 
+Common::String OSystem_Win32::getDefaultDLCsPath() {
+	TCHAR dlcsPath[MAX_PATH];
+
+	if (_isPortable) {
+		Win32::getProcessDirectory(dlcsPath, MAX_PATH);
+		_tcscat(dlcsPath, TEXT("\\DLCs\\"));
+	} else {
+		// Use the Application Data directory of the user profile
+		if (!Win32::getApplicationDataDirectory(dlcsPath)) {
+			return Common::String();
+		}
+		_tcscat(dlcsPath, TEXT("\\DLCs\\"));
+		CreateDirectory(dlcsPath, nullptr);
+	}
+
+	return Win32::tcharToString(dlcsPath);
+}
+
 Common::String OSystem_Win32::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
 	Common::String screenshotsPath = ConfMan.get("screenshotpath");

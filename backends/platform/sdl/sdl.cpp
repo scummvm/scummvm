@@ -314,6 +314,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 	ConfMan.registerDefault("iconspath", this->getDefaultIconsPath());
+	ConfMan.registerDefault("dlcspath", this->getDefaultDLCsPath());
 
 	_inited = true;
 
@@ -783,6 +784,14 @@ uint32 OSystem_SDL::getDoubleClickTime() const {
 //Not specified in base class
 Common::String OSystem_SDL::getDefaultIconsPath() {
 	Common::String path = ConfMan.get("iconspath");
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
+}
+
+// Not specified in base class
+Common::String OSystem_SDL::getDefaultDLCsPath() {
+	Common::String path = ConfMan.get("dlcspath");
 	if (!path.empty() && !path.hasSuffix("/"))
 		path += "/";
 	return path;

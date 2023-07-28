@@ -37,6 +37,7 @@ public:
 
 	// Default paths
 	Common::String getDefaultIconsPath() override;
+	Common::String getDefaultDLCsPath() override;
 	Common::String getScreenshotsPath() override;
 
 protected:

@@ -260,6 +260,31 @@ Common::String OSystem_POSIX::getDefaultIconsPath() {
 	return Common::String::format("%s/%s", prefix, iconsPath.c_str());
 }
 
+Common::String OSystem_POSIX::getDefaultDLCsPath() {
+	Common::String dlcsPath;
+
+	// On POSIX systems we follow the XDG Base Directory Specification for
+	// where to store files. The version we based our code upon can be found
+	// over here: https://specifications.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+	const char *prefix = getenv("XDG_CACHE_HOME");
+	if (prefix == nullptr || !*prefix) {
+		prefix = getenv("HOME");
+		if (prefix == nullptr) {
+			return Common::String();
+		}
+
+		dlcsPath = ".cache/";
+	}
+
+	dlcsPath += "scummvm/dlcs";
+
+	if (!Posix::assureDirectoryExists(dlcsPath, prefix)) {
+		return Common::String();
+	}
+
+	return Common::String::format("%s/%s", prefix, dlcsPath.c_str());
+}
+
 Common::String OSystem_POSIX::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
 	const Common::String path = OSystem_SDL::getScreenshotsPath();

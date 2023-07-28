@@ -93,6 +93,7 @@ public:
 
 	// Default paths
 	virtual Common::String getDefaultIconsPath();
+	virtual Common::String getDefaultDLCsPath();
 	virtual Common::String getScreenshotsPath();
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
