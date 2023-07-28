@@ -25,8 +25,7 @@
 #include "m4/vars.h"
 #include "m4/burger/core/release_trigger.h"
 #include "m4/burger/core/stream_break.h"
-#include "m4/burger/gui/game_menu.h"
-#include "m4/burger/gui/interface.h"
+#include "m4/burger/gui/gui.h"
 #include "m4/burger/flags.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/series_player.h"
@@ -79,12 +78,14 @@ protected:
 public:
 	Burger::Flags _flags;
 	GameMode _executing = WHOLE_GAME;
+	GUI::GUI_Globals _gui;
 	GUI::Interface _interface;
 	GUI::MenuGlobals _menu;
 	SeriesPlayers _seriesPlayers;
 	ReleaseTrigger_Globals _releaseTrigger;
 	StreamBreak_Globals _streamBreak;
 	Burger::Walker _walker;
+
 	int _wilburTerm = 2;
 	const Common::String _wilbur = "WILBUR";
 	bool _menuSystemInitialized = false;

@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Room903 : public MenuRoom {
 private:
-	int _num1 = 0;
+	bool _buttonsDrawn = false;
 
 public:
 	Room903() : MenuRoom(903, "903menu", "903click") {}

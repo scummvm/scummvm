@@ -120,6 +120,11 @@ public:
 	bool autosaveExists() const;
 
 	/**
+	 * Returns true if any saves exist
+	 */
+	bool savesExist() const;
+
+	/**
 	 * Show the engine information
 	 */
 	virtual void showEngineInfo() = 0;
