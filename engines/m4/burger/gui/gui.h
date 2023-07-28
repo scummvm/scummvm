@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,37 +20,22 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_H
-#define M4_BURGER_ROOMS_SECTION9_H
+#ifndef M4_BURGER_GUI_H
+#define M4_BURGER_GUI_H
 
-#include "m4/burger/rooms/section.h"
-#include "m4/burger/rooms/section9/room901.h"
-#include "m4/burger/rooms/section9/room902.h"
-#include "m4/burger/rooms/section9/room903.h"
-#include "m4/burger/rooms/section9/room904.h"
-#include "m4/burger/rooms/section9/room951.h"
-#include "m4/burger/rooms/section9/room971.h"
+#include "m4/burger/gui/game_menu.h"
+#include "m4/burger/gui/interface.h"
 
 namespace M4 {
 namespace Burger {
-namespace Rooms {
+namespace GUI {
 
-class Section9 : public Rooms::Section {
-private:
-	Room901 _room901;
-	Room902 _room902;
-	Room903 _room903;
-	Room904 _room904;
-	Room951 _room951;
-	Room971 _room971;
-public:
-	Section9();
-	virtual ~Section9() {}
-
-	void daemon() override;
+struct GUI_Globals {
+	bool saveLoadFromHotkey = false;
+	bool gameMenuFromMain = false;
 };
 
-} // namespace Rooms
+} // namespace GUI
 } // namespace Burger
 } // namespace M4
 

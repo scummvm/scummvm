@@ -88,8 +88,11 @@ MODULE_OBJS = \
 	burger/rooms/section9/section9.o \
 	burger/rooms/section9/menu_room.o \
 	burger/rooms/section9/room901.o \
+	burger/rooms/section9/room902.o \
 	burger/rooms/section9/room903.o \
+	burger/rooms/section9/room904.o \
 	burger/rooms/section9/room951.o \
+	burger/rooms/section9/room971.o \
 	burger/burger.o \
 	burger/flags.o \
 	burger/hotkeys.o \

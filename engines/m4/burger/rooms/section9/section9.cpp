@@ -28,8 +28,11 @@ namespace Rooms {
 
 Section9::Section9() : Rooms::Section() {
 	add(&_room901);
+	add(&_room902);
 	add(&_room903);
+	add(&_room904);
 	add(&_room951);
+	add(&_room971);
 }
 
 void Section9::daemon() {

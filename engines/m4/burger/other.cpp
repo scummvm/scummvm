@@ -19,38 +19,33 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_H
-#define M4_BURGER_ROOMS_SECTION9_H
-
-#include "m4/burger/rooms/section.h"
-#include "m4/burger/rooms/section9/room901.h"
-#include "m4/burger/rooms/section9/room902.h"
-#include "m4/burger/rooms/section9/room903.h"
-#include "m4/burger/rooms/section9/room904.h"
-#include "m4/burger/rooms/section9/room951.h"
-#include "m4/burger/rooms/section9/room971.h"
+#include "m4/burger/other.h"
+#include "m4/core/errors.h"
+#include "m4/burger/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Burger {
-namespace Rooms {
 
-class Section9 : public Rooms::Section {
-private:
-	Room901 _room901;
-	Room902 _room902;
-	Room903 _room903;
-	Room904 _room904;
-	Room951 _room951;
-	Room971 _room971;
-public:
-	Section9();
-	virtual ~Section9() {}
+static void other_fade_me_out(int32 trigger) {
+	pal_fade_init(&_G(master_palette)[0], 0, 255, 0, 30, trigger);
+}
 
-	void daemon() override;
-};
+void other_resurrect_player() {
+	KernelTriggerType old_mode;
 
-} // namespace Rooms
+	if (!g_engine->autosaveExists())
+		error(FL, 'Burg', "Couldn't resume game");
+
+	_G(kernel).restore_slot = 0;
+	old_mode = _G(kernel).trigger_mode;
+
+	_G(kernel).trigger_mode = KT_DAEMON;
+	other_fade_me_out(255);
+
+	_G(kernel).trigger_mode = old_mode;
+	player_set_commands_allowed(false);
+}
+
 } // namespace Burger
 } // namespace M4
-
-#endif
