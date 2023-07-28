@@ -57,6 +57,10 @@ DownloadGamesDialog::DownloadGamesDialog(LauncherDialog *launcher)
 	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
 }
 
+DownloadGamesDialog::~DownloadGamesDialog() {
+	DLCMan.setTarget(nullptr);
+}
+
 void DownloadGamesDialog::refreshDLCList() {
 	// Populate the ListWidget
 	Common::U32StringArray games;

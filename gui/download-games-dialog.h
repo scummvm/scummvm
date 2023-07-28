@@ -37,6 +37,7 @@ enum {
 class DownloadGamesDialog : public Dialog {
 public:
 	DownloadGamesDialog(LauncherDialog *launcher);
+	~DownloadGamesDialog() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
