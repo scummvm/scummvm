@@ -575,7 +575,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "lionskin",          "In the Skin of a Lion Quest: Caravaggio's Journey" },
 	{ "livejoseph",        "LiveJoseph" },
 	{ "llr3",              "A Little Like Rogue" },
-	{ "lmstvg",            "LMS The Video Game" }
+	{ "lmstvg",            "LMS The Video Game" },
 	{ "lobsteronaplane",   "Lobsters on a Plane" },
 	{ "lockeddoor1",       "Locked Door I" },
 	{ "lockeddoor2",       "Locked Door II" },
@@ -909,7 +909,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "tower",             "Tower, A Surreal Trip" },
 	{ "towersofhanoi",     "Towers of Hanoi" },
 	{ "townmusicians",     "The Town Musicians" },
-	{ "toxinx",            "Toxin X" }
+	{ "toxinx",            "Toxin X" },
 	{ "trapped",           "Trapped" },
 	{ "tristamisland",     "Tristam Island (Demo)" },
 	{ "troll",             "Zork: A Troll's Eye View" },
@@ -1048,22 +1048,22 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sorcererclaycastlei5", "S.A.C.A. #13: Sorcerer of Claymorgue Castle" },
 	{ "returnpirteislei5", "S.A.C.A. #14A: Return to Pirate's Isle" },
 	{ "buckaroobanzaii5",  "S.A.C.A. #14B: Buckaroo Banzai" },
-	{ "adventurelandsmpleri5", "S.A.C.A.: Adventureland Sampler" }
+	{ "adventurelandsmpleri5", "S.A.C.A.: Adventureland Sampler" },
 	{ "marveladventurei5", "S.A.C.A.: The Hulk" },
 	{ "questprobe2i5",     "S.A.C.A.: Spiderman" },
 
 	// Mysterious Adventures by Brian Howarth
-	{ "10indiansi5", 		"Mysterious Adventures #10: Ten Little Indians" },
-	{ "akyrzi5", 			"Mysterious Adventures #08: The Wizard of Akyrz" },
-	{ "arrowofdeath1i5", 	"Mysterious Adventures #03: Arrow of Death Part 1" },
-	{ "arrowofdeath2i5", 	"Mysterious Adventures #04: Arrow of Death Part 2" },
-	{ "circusi5", 			"Mysterious Adventures #06: Circus" },
-	{ "feasibilityi5", 		"Mysterious Adventures #07: Feasibility Experiment" },
-	{ "goldenbatoni5", 		"Mysterious Adventures #01: The Golden Baton" },
-	{ "perseusi5", 			"Mysterious Adventures #09: Perseus and Andromeda" },
-	{ "pulsar7i5", 			"Mysterious Adventures #05: Escape from Pulsar 7" },
-	{ "timemachinei5", 		"Mysterious Adventures #02: The Time Machine" },
-	{ "waxworksi5", 		"Mysterious Adventures #11: Waxworks" },
+	{ "goldenbatoni5",     "Mysterious Adventures #01: The Golden Baton" },
+	{ "timemachinei5",     "Mysterious Adventures #02: The Time Machine" },
+	{ "arrowofdeath1i5",   "Mysterious Adventures #03: Arrow of Death Part 1" },
+	{ "arrowofdeath2i5",   "Mysterious Adventures #04: Arrow of Death Part 2" },
+	{ "pulsar7i5",         "Mysterious Adventures #05: Escape from Pulsar 7" },
+	{ "circusi5",          "Mysterious Adventures #06: Circus" },
+	{ "feasibilityi5",     "Mysterious Adventures #07: Feasibility Experiment" },
+	{ "akyrzi5",           "Mysterious Adventures #08: The Wizard of Akyrz" },
+	{ "perseusi5",         "Mysterious Adventures #09: Perseus and Andromeda" },
+	{ "10indiansi5",       "Mysterious Adventures #10: Ten Little Indians" },
+	{ "waxworksi5",        "Mysterious Adventures #11: Waxworks" },
 
 	// 1992 album Apollo 18+20, by They Might be Giants
 	{ "apollo1", "Apollo 18+20 #01: Dig My Grave" },
@@ -1106,12 +1106,12 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "apollo38", "Apollo 18+20 #38: Space Suit" },
 
 	// The 1995 Annual Interactive Fiction Competition
-	{ "if95_weather", "A Change in the Weather" },														//  1st Place
-	{ "if95_mindelectric", "The Mind Electric" },														//  2nd Place
-	{ "if95_magictoyshop", "The Magic Toyshop" },														//  3rd Place
-	{ "if95_mst3k1", "Detective, An Interactive MiSTing (Mystery Science Theater 3000)" },				//  4th Place
-	{ "if95_libraryfront", "All Quiet on the Library Front" },											//  5th Place
-	{ "if95_tubetrouble", "Tube Trouble" },																//  6th Place
+	{ "if95_weather", "A Change in the Weather" },                                                      //  1st Place
+	{ "if95_mindelectric", "The Mind Electric" },                                                       //  2nd Place
+	{ "if95_magictoyshop", "The Magic Toyshop" },                                                       //  3rd Place
+	{ "if95_mst3k1", "Detective, An Interactive MiSTing (Mystery Science Theater 3000)" },              //  4th Place
+	{ "if95_libraryfront", "All Quiet on the Library Front" },                                          //  5th Place
+	{ "if95_tubetrouble", "Tube Trouble" },                                                             //  6th Place
 
 	// The 1996 Annual Interactive Fiction Competition
 	{ "if96_sherbet", "The Meteor, the Stone and a Long Glass of Sherbet" },							//  1st Place
