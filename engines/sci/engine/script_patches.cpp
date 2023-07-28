@@ -24545,6 +24545,28 @@ static const uint16 sq6DemoInventoryPatch[] = {
 	PATCH_END
 };
 
+// The trash can in Roger's room (390) doesn't respond to clicks, even though it
+//  has messages. Instead, click events are sent to the kitchen because it has a
+//  higher priority. Feature priority is determined by the `y` property.
+//
+// We fix this by increasing trashCan:y to raise its priority over the kitchen.
+//  This does not affect the clickable area; that is defined by a polygon.
+//
+// Applies to: All versions
+// Responsible method: heap in script 390
+static const uint16 sq6TrashCanSignature[] = {
+	SIG_MAGICDWORD,                     // trashCan
+	SIG_UINT16(0x0092),                 // x: 146
+	SIG_UINT16(0x0031),                 // y: 49 (kitchen:y == 50)
+	SIG_END
+};
+
+static const uint16 sq6TrashCanPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	PATCH_UINT16(0x033),                // y: 51
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
@@ -24557,6 +24579,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,    31, "fix ExitFeature breaking icons",              2, sq6ExitFeatureIconSignature,     sq6ExitFeatureIconPatch },
 	{  true,    33, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	{  true,   330, "fix polysorbate lx music volume",             1, sq6PolysorbateVolumeSignature,   sq6PolysorbateVolumePatch },
+	{  true,   390, "fix trash can",                               1, sq6TrashCanSignature,            sq6TrashCanPatch },
 	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
 	{  true,   460, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   490, "fix invalid cockpit icon bar",                1, sq6CockpitIconBarSignature,      sq6CockpitIconBarPatch },
