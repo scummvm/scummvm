@@ -96,7 +96,7 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		Common::Path relativeFilePath = Common::Path(DLCMan._queuedDownloadTasks.front()->id);
 		// extract the downloaded zip
 		Common::String gameDir = Common::punycode_encodefilename(DLCMan._queuedDownloadTasks.front()->name);
-		Common::Path destPath = Common::Path(ConfMan.get("iconspath")).appendComponent(gameDir);
+		Common::Path destPath = Common::Path(ConfMan.get("dlcspath")).appendComponent(gameDir);
 		extractZip(relativeFilePath, destPath);
 		// remove cache (the downloaded .zip)
 		removeCacheFile(relativeFilePath);
@@ -117,8 +117,7 @@ void ScummVMCloud::errorCallback(Networking::ErrorResponse error) {
 }
 
 void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::String &url) {
-	// TODO: Change it to dlcpath
-	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + id, '/');
+	Common::String localFile = normalizePath(ConfMan.get("dlcspath") + "/" + id, '/');
 
 	_rq = new Networking::SessionRequest(url, localFile,
 		new Common::Callback<ScummVMCloud, Networking::DataResponse>(this, &ScummVMCloud::downloadFileCallback),
@@ -129,7 +128,7 @@ void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::St
 
 void ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &destPath) {
 	Common::Archive *dataArchive = nullptr;
-	Common::Path dlcPath = Common::Path(ConfMan.get("iconspath"));
+	Common::Path dlcPath = Common::Path(ConfMan.get("dlcspath"));
 	Common::FSNode *fs = new Common::FSNode(dlcPath.join(file));
 	if (fs->exists()) {
 		dataArchive = Common::makeZipArchive(*fs);
@@ -143,7 +142,7 @@ void ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &dest
 }
 
 void ScummVMCloud::removeCacheFile(Common::Path file) {
-	Common::Path dlcPath = Common::Path(ConfMan.get("iconspath"));
+	Common::Path dlcPath = Common::Path(ConfMan.get("dlcspath"));
 	Common::Path fileToDelete = dlcPath.join(file);
 #if defined(POSIX)
 	unlink(fileToDelete.toString().c_str());
