@@ -846,6 +846,28 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 	return false;
 }
 
+void DrillerEngine::drawSensorShoot(Sensor *sensor) {
+	Math::Vector3d target;
+	target = _position;
+	target.y() = target.y() - _playerHeight;
+	target.x() = target.x() - 5;
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+	target = _position;
+	target.y() = target.y() - _playerHeight;
+	target.x() = target.x() + 5;
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+	target = _position;
+	target.y() = target.y() + _playerHeight;
+	target.x() = target.x() - 5;
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+	target = _position;
+	target.y() = target.y() + _playerHeight;
+	target.x() = target.x() + 5;
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+}
 
 Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	for (auto &it : _areaMap) { // All but skip area 255

@@ -162,19 +162,27 @@ void OpenGLShaderRenderer::positionCamera(const Math::Vector3d &pos, const Math:
 	_mvpMatrix = proj * model;
 	_mvpMatrix.transpose();
 }
+void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect viewArea) {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+	glColor3ub(255, 255, 255);
 
-void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewArea) {
-	/*glColor3ub(255, 255, 255);
 	glLineWidth(20);
-	polygonOffset(true);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, sensor);
-	copyToVertexArray(1, player);
+	copyToVertexArray(1, target);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, 8 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+
 	glVertexPointer(3, GL_FLOAT, 0, _verts);
 	glDrawArrays(GL_LINES, 0, 2);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	polygonOffset(false);
-	glLineWidth(1);*/
+	glLineWidth(1);
+
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
 // TODO: move inside the shader?

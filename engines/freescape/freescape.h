@@ -382,7 +382,7 @@ public:
 	bool _playerWasCrushed;
 	ObjectArray _sensors;
 	void checkSensors();
-	void drawSensorShoot(Sensor *sensor);
+	virtual void drawSensorShoot(Sensor *sensor);
 	void takeDamageFromSensor();
 
 	bool hasFeature(EngineFeature f) const override;
@@ -456,6 +456,7 @@ public:
 	void gotoArea(uint16 areaID, int entranceID) override;
 
 	void drawInfoMenu() override;
+	void drawSensorShoot(Sensor *sensor) override;
 
 	void pressedKey(const int keycode) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
@@ -540,6 +541,7 @@ public:
 	int _lastTenSeconds;
 	void updateTimeVariables() override;
 
+	void drawSensorShoot(Sensor *sensor) override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
 

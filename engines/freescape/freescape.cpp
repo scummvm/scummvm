@@ -248,10 +248,7 @@ void FreescapeEngine::checkSensors() {
 	}
 }
 
-void FreescapeEngine::drawSensorShoot(Sensor *sensor) {
-	assert(sensor);
-	_gfx->renderSensorShoot(1, sensor->getOrigin(), _position, _viewArea);
-}
+void FreescapeEngine::drawSensorShoot(Sensor *sensor) {}
 
 void FreescapeEngine::flashScreen(int backgroundColor) {
 	if (backgroundColor >= 16)

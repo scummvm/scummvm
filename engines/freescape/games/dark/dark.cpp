@@ -451,6 +451,24 @@ void DarkEngine::drawFullscreenMessageAndWait(Common::String message) {
 	delete surface;
 }
 
+void DarkEngine::drawSensorShoot(Sensor *sensor) {
+	Math::Vector3d target;
+	target = _position;
+	target.y() = target.y() - _playerHeight;
+	target.x() = target.x() - 5;
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+	target = _position;
+	target.y() = target.y() - _playerHeight;
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+
+	target = _position;
+	target.y() = target.y() - _playerHeight;
+	target.x() = target.x() + 5;
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+}
+
+
 Common::Error DarkEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	return Common::kNoError;
 }
