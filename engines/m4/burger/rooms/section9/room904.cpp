@@ -204,7 +204,7 @@ static const char *const CREDITS[] = {
 	"Elgus  -  Peter Bieringer",
 	"Erz\xe4""hler  -  Ingo Abel",
 	"Eugene  -  Franz-Josef Steffens",
-	"Fernsehstimmen  -  Ulrike Herm, Robert Missler",
+	"Fernsehstimmen  -  Ulrike Herm, Robert Missler,",
 	"   Olaf Ritter, Thomas Stein, Angela Stresemann",
 	"Flumix  -  Wolfgang J\xfc""rgen",
 	"Harry  -  Hans Sievers",
@@ -215,7 +215,6 @@ static const char *const CREDITS[] = {
 	"Sheriff  -  Hans Sievers",
 	"Stolie  -  Hans Sievers",
 	"Tante Polly  -  Verena Wiet",
-	"Unseren Dank an Lynda Gran f\xfc""r unsere Gehaltsschecks,",
 	"Vera  -  Angela Stresemann",
 	"Vipe  -  Alexander Draeger",
 	"VP  -  Franz-Josef Steffens",
@@ -374,7 +373,7 @@ int Room904::getCreditsSectionLines(int sectionNum) const {
 	int sectionStart = getCreditsSectionLine(sectionNum);
 	int lineNum = sectionStart;
 
-	while (*CREDITS[lineNum])
+	while (CREDITS[lineNum])
 		++lineNum;
 
 	return lineNum - sectionStart;
@@ -433,7 +432,7 @@ void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
 		int sectionWidth = getCreditsSectionWidth(sectionNum) + 20;
 		int sectionHeight = linesCount * _fontHeight + 20;
 
-		int x1 = (_x2 - sectionWidth) / 2;
+		int x1 = (640 - _x2 - sectionWidth) / 2 + _x2;
 		int y1 = (480 - sectionHeight) / 2;
 		int x2 = x1 + sectionWidth;
 		int y2 = y1 + sectionHeight;
