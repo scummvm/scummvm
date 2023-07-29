@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-27 07:13+0000\n"
-"PO-Revision-Date: 2023-07-22 10:47+0000\n"
+"PO-Revision-Date: 2023-07-29 09:44+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -229,10 +229,8 @@ msgid "Load"
 msgstr "Φόρτωση"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Φόρτωση αρχείου"
+msgstr "Φόρτωση κωδικού από αρχείο"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
@@ -357,13 +355,12 @@ msgstr ""
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
 msgstr ""
+"Επιλέξτε το αρχείο JSON που έχει αντιγραφεί από τον ιστότοπο του scummvm.org"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "Αποτυχία μεταφοράς του αρχείου!"
+msgstr "Αποτυχία φόρτωσης του αρχείου JSON"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
