@@ -39,6 +39,7 @@ static const char *const CREDITS[] = {
 	"Originalidee:",
 	"                   Robert Aitken",
 	"                   Matthew Powell",
+	nullptr,
 	"Graphik",
 	"K\xfc""nstlerische Leitung:  Andrew Pratt",
 	" ",
@@ -159,8 +160,8 @@ static const char *const CREDITS[] = {
 	" ",
 	"Konversation:  Robert Aitken",
 	nullptr,
-	"Produktion"
-	"Produktionsleitung:"
+	"Produktion",
+	"Produktionsleitung:",
 	"            Fran\xe7""ois Robillard,",
 	"            Eidos Deutschland",
 	" ",
@@ -280,11 +281,40 @@ void Room904::daemon() {
 		break;
 
 	case 2:
-		// TODO
+		if (_currentSection < _numSections) {
+			playRandomSound(2, 1);
+			TextScrn_Add_TextItem(_screen1, 10, (_currentSection - 1) * _fontHeight + 10,
+				_currentSection, TS_CENTRE, getCreditsSectionString(_currentSection),
+				(M4CALLBACK)creditsCallback);
+			TextScrn_Activate(_screen1);
+		}
+		break;
+
+	case 3:
+		playRandomSound(-1, 2);
+		break;
+
+	case 4:
+		digi_play_loop("902music", 3, 155, -1);
+		break;
+
+	case 5:
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(master_palette), 0, 255, 0, 30, 6);
+		break;
+
+	case 6:
+		_G(game).setRoom(_G(executing) == WHOLE_GAME ? 903 : 901);
+		break;
 
 	default:
 		break;
 	}
+}
+
+void Room904::parser() {
+	if (player_said("go back"))
+		kernel_trigger_dispatch_now(5);
 }
 
 void Room904::creditsSetup() {
@@ -292,7 +322,7 @@ void Room904::creditsSetup() {
 
 	gr_font_set(_G(font_inter));
 	_fontHeight = gr_font_get_height();
-	_totalWidth = getMaxCreditsWidth() + 20;
+	_totalWidth = getMaxCreditsHeaderWidth() + 20;
 	_totalHeight = _fontHeight * _numSections + 20;
 
 	_x1 = 30;
@@ -311,7 +341,7 @@ void Room904::creditsSetup() {
 	TextScrn_Activate(_screen1);
 }
 
-size_t Room904::getCreditsSectionsCount() {
+size_t Room904::getCreditsSectionsCount() const {
 	size_t numSections = 0;
 
 	for (auto line = CREDITS; *line; ++line) {
@@ -323,12 +353,12 @@ size_t Room904::getCreditsSectionsCount() {
 	return numSections;
 }
 
-int Room904::getCreditsSectionLine(int sectionNum) {
-	if (sectionNum >= 1 && sectionNum <= 8)
+int Room904::getCreditsSectionLine(int sectionNum) const {
+	if (sectionNum < 1 || sectionNum > _numSections)
 		error_show(FL, 'Burg', "Bad index to credits");
 
 	int lineNum;
-	for (lineNum = 0; sectionNum > 0; --sectionNum, ++lineNum) {
+	for (lineNum = 0; sectionNum > 1; --sectionNum, ++lineNum) {
 		while (CREDITS[lineNum])
 			++lineNum;
 	}
@@ -336,11 +366,11 @@ int Room904::getCreditsSectionLine(int sectionNum) {
 	return lineNum;
 }
 
-const char *Room904::getCreditsSectionString(int sectionNum) {
+const char *Room904::getCreditsSectionString(int sectionNum) const {
 	return CREDITS[getCreditsSectionLine(sectionNum)];
 }
 
-int Room904::getCreditsSectionLines(int sectionNum) {
+int Room904::getCreditsSectionLines(int sectionNum) const {
 	int sectionStart = getCreditsSectionLine(sectionNum);
 	int lineNum = sectionStart;
 
@@ -350,17 +380,21 @@ int Room904::getCreditsSectionLines(int sectionNum) {
 	return lineNum - sectionStart;
 }
 
-size_t Room904::getMaxCreditsWidth() {
+size_t Room904::getMaxCreditsHeaderWidth() const {
 	int32 maxWidth = 0;
 
 	for (int sectionNum = 1; sectionNum <= _numSections; ++sectionNum) {
+		const char *tmp = getCreditsSectionString(sectionNum);
+		int w = gr_font_string_width(tmp);
+		debug("%d", w);
+
 		maxWidth = MAX(maxWidth, gr_font_string_width(getCreditsSectionString(sectionNum)));
 	}
 
 	return maxWidth;
 }
 
-size_t Room904::getCreditsSectionWidth(int sectionNum) {
+size_t Room904::getCreditsSectionWidth(int sectionNum) const {
 	int32 maxWidth = 0;
 
 	for (int lineNum = getCreditsSectionLine(sectionNum); CREDITS[lineNum]; ++lineNum) {
@@ -370,7 +404,7 @@ size_t Room904::getCreditsSectionWidth(int sectionNum) {
 	return maxWidth;
 }
 
-const char *Room904::getLineInCreditsSection(int sectionNum, int lineNum) {
+const char *Room904::getLineInCreditsSection(int sectionNum, int lineNum) const {
 	if (lineNum < 1 || lineNum > getCreditsSectionLines(sectionNum))
 		error_show(FL, 'Burg', "Bad index to names");
 
