@@ -23,6 +23,21 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
+
+// Following are pulled in for wchar.h header on XCode iOS-7
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fgetwc
+#define FORBIDDEN_SYMBOL_EXCEPTION_fgetws
+#define FORBIDDEN_SYMBOL_EXCEPTION_asctime
+#define FORBIDDEN_SYMBOL_EXCEPTION_clock
+#define FORBIDDEN_SYMBOL_EXCEPTION_ctime
+#define FORBIDDEN_SYMBOL_EXCEPTION_difftime
+#define FORBIDDEN_SYMBOL_EXCEPTION_getdate
+#define FORBIDDEN_SYMBOL_EXCEPTION_gmtime
+#define FORBIDDEN_SYMBOL_EXCEPTION_localtime
+#define FORBIDDEN_SYMBOL_EXCEPTION_mktime
+#define FORBIDDEN_SYMBOL_EXCEPTION_time
+
 #include "common/scummsys.h"
 
 #ifdef USE_FREETYPE2
