@@ -54,7 +54,7 @@ class Cursor {
 	// Mouse image changes slightly if left click button is pressed
 	bool _pressed;
 
-	uint8 _state;
+	int8 _state;
 
 public:
 	// Various coordinates
