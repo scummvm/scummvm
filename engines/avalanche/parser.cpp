@@ -54,6 +54,9 @@ Parser::Parser(AvalancheEngine *vm) {
 	_alcoholLevel = 0;
 
 	_boughtOnion = false;
+
+	for (int i = 0; i < kParserWordsNum; ++i)
+		_vocabulary[i].init(1, "");
 }
 
 void Parser::init() {
@@ -829,11 +832,7 @@ void Parser::parse() {
 		// Check Accis's own table (words[]) for "global" commands.
 		if (notfound) {
 			byte answer = wordNum(thisword);
-			if (answer == kPardon) {
-				notfound = true;
-				_thats = _thats + kPardon;
-			} else
-				_thats = _thats + answer;
+			_thats = _thats + answer;
 			n++;
 		}
 
@@ -1098,7 +1097,8 @@ void Parser::examine() {
 			else if ((50 <= _thing) && (_thing <= 100)) {
 				// Also _thing
 				int id = _thing - 50;
-				assert(id < 31);
+				if (id >= 31)
+					error("Parser::Examine - Unexpected _thing value %d (>80)", _thing);
 				openBox(true);
 				_vm->_dialogs->displayText(*_vm->_also[id][1]);
 				openBox(false);
