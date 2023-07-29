@@ -90,6 +90,7 @@ void Vars::main_cold_data_init() {
 	initMouseSeries("cursor", nullptr);
 
 	_kernel.first_fade = 32;
+	_G(custom_ascii_converter) = custom_ascii_converter_proc;
 	debugC(1, kDebugCore, "executing - %s", GAME_MODES[_executing]);
 
 	// Set up game mode and starting room
@@ -175,9 +176,9 @@ void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
 void Vars::custom_ascii_converter_proc(char *string) {
 	char *str;
 
-	for (const auto &entry : ASCII_CONVERTERS) {
-		while ((str = strstr(string, entry._find)) != nullptr)
-			*str = entry._replace;
+	for (const auto *entry = ASCII_CONVERTERS; entry->_find; entry++) {
+		while ((str = strstr(string, entry->_find)) != nullptr)
+			*str = entry->_replace;
 	}
 }
 

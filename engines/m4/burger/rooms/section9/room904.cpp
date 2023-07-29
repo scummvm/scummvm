@@ -333,7 +333,7 @@ void Room904::creditsSetup() {
 	_screen1 = TextScrn_Create(_x1, _y1, _x2, _y2, 100, 422, 3, 22, 1, 10, 2, 14);
 
 	for (_currentSection = 1; _currentSection <= _numSections; ++_currentSection) {
-		TextScrn_Add_TextItem(_screen1, 10, _currentSection * _fontHeight + 10,
+		TextScrn_Add_TextItem(_screen1, 10, (_currentSection - 1) * _fontHeight + 10,
 			_currentSection, TS_CENTRE, getCreditsSectionString(_currentSection),
 			(M4CALLBACK)creditsCallback);
 	}
