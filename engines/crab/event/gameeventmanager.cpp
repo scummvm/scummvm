@@ -97,7 +97,7 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 //------------------------------------------------------------------------
 void Manager::handleEvents(Info &info, const Common::String &playerId, Common::Event &event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
-	if (_eventMap.contains(info.curLocID()) > 0 && _eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
+	if (_eventMap.contains(info.curLocID()) && _eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
 		switch (_curEvent->_type) {
 		case EVENT_DIALOG:
 			if (_oh._showJournal) {
@@ -270,7 +270,7 @@ void Manager::handleEvents(Info &info, const Common::String &player_id, SDL_Even
 // Purpose: Internal Events
 //------------------------------------------------------------------------
 void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult> &result) {
-	if (_eventMap.contains(info.curLocID()) > 0) {
+	if (_eventMap.contains(info.curLocID())) {
 		if (_eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
 			switch (_curEvent->_type) {
 			case EVENT_DIALOG:
@@ -316,7 +316,7 @@ void Manager::updateDialogBox(Info &info, pyrodactyl::level::Level &level) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Manager::draw(Info &info, HUD &hud, Level &level) {
-	if (_eventMap.contains(info.curLocID()) > 0 && _eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
+	if (_eventMap.contains(info.curLocID()) && _eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
 		switch (_curEvent->_type) {
 		case EVENT_ANIM:
 			g_engine->_eventStore->_anim[_curEvent->_special].draw();
@@ -392,7 +392,7 @@ void Manager::endSequence(const Common::String &curloc) {
 		for (auto i = _endSeq.begin(); i != _endSeq.end(); ++i)
 			if (i->_cur)
 				_eventMap[curloc].endSeq(_activeSeq);
-			else if (_eventMap.contains(i->_loc) > 0)
+			else if (_eventMap.contains(i->_loc))
 				_eventMap[i->_loc].endSeq(stringToNumber<unsigned int>(i->_val));
 
 		_activeSeq = UINT_MAX;
@@ -425,7 +425,7 @@ void Manager::loadState(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
 		if (n->first_attribute("name") != NULL) {
 			Common::String name = n->first_attribute("name")->value();
-			if (_eventMap.contains(name) > 0)
+			if (_eventMap.contains(name))
 				_eventMap[name].loadState(n);
 		}
 	}
