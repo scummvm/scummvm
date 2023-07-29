@@ -41,11 +41,11 @@ namespace pyrodactyl {
 namespace music {
 // We use this object as key for music tracks
 // Empty sounds are represented by -1
-typedef unsigned int MusicKey;
+typedef int MusicKey;
 
 // We use this object as key for sound effects
 // Empty sounds are represented by -1
-typedef unsigned int ChunkKey;
+typedef int ChunkKey;
 
 struct MusicData {
 	// The id of this track
