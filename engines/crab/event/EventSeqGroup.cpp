@@ -45,7 +45,7 @@ void EventSeqGroup::addSeq(const unsigned int &id, Common::String &path) {
 }
 
 bool EventSeqGroup::eventInProgress(const unsigned int &id) {
-	return _seq.contains(id) > 0 && _seq[id].eventInProgress();
+	return _seq.contains(id) && _seq[id].eventInProgress();
 }
 
 GameEvent *EventSeqGroup::curEvent(const unsigned int &id) {
@@ -91,7 +91,7 @@ void EventSeqGroup::loadState(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set"))
 		if (n->first_attribute("name") != NULL) {
 			unsigned int id = stringToNumber<unsigned int>(n->first_attribute("name")->value());
-			if (_seq.contains(id) > 0)
+			if (_seq.contains(id))
 				_seq[id].loadState(n);
 		}
 }

@@ -62,7 +62,7 @@ void ItemCollection::load(rapidxml::xml_node<char> *node) {
 // Purpose: Add a character's inventory if not added already
 //------------------------------------------------------------------------
 void ItemCollection::init(const Common::String &charId) {
-	if (_item.contains(charId) == 0)
+	if (!_item.contains(charId))
 		_item[charId].init(_ref, _inc, _rows, _cols, _useKeyboard);
 }
 
@@ -70,7 +70,7 @@ void ItemCollection::init(const Common::String &charId) {
 // Purpose: Handle events
 //------------------------------------------------------------------------
 void ItemCollection::handleEvents(const Common::String &charId, const Common::Event &event) {
-	if (_item.contains(charId) > 0)
+	if (_item.contains(charId))
 		_item[charId].handleEvents(event);
 }
 
@@ -78,7 +78,7 @@ void ItemCollection::handleEvents(const Common::String &charId, const Common::Ev
 // Purpose: Draw
 //------------------------------------------------------------------------
 void ItemCollection::draw(const Common::String &charId) {
-	if (_item.contains(charId) > 0)
+	if (_item.contains(charId))
 		_item[charId].draw(_itemInfo);
 }
 
@@ -86,7 +86,7 @@ void ItemCollection::draw(const Common::String &charId) {
 // Purpose: Delete an item from a character's inventory
 //------------------------------------------------------------------------
 void ItemCollection::del(const Common::String &charId, const Common::String &itemId) {
-	if (_item.contains(charId) > 0)
+	if (_item.contains(charId))
 		_item[charId].del(itemId);
 }
 
@@ -105,7 +105,7 @@ void ItemCollection::add(const Common::String &charId, Item &itemData) {
 // Purpose: Find if a character has an item
 //------------------------------------------------------------------------
 bool ItemCollection::has(const Common::String &charId, const Common::String &container, const Common::String &itemId) {
-	if (_item.contains(charId) > 0)
+	if (_item.contains(charId))
 		return _item[charId].has(container, itemId);
 
 	return false;

@@ -98,12 +98,12 @@ void Info::loadPeople(const Common::String &filename) {
 // Purpose: Get/Set information about object type
 //------------------------------------------------------------------------
 void Info::type(const Common::String &id, const PersonType &val) {
-	if (_people.contains(id) > 0)
+	if (_people.contains(id))
 		_people[id]._type = val;
 }
 
 PersonType Info::type(const Common::String &id) {
-	if (_people.contains(id) > 0)
+	if (_people.contains(id))
 		return _people[id]._type;
 
 	return PE_NEUTRAL;
@@ -113,12 +113,12 @@ PersonType Info::type(const Common::String &id) {
 // Purpose: Get/Set information about object state
 //------------------------------------------------------------------------
 void Info::state(const Common::String &id, const PersonState &val) {
-	if (_people.contains(id) > 0)
+	if (_people.contains(id))
 		_people[id]._state = val;
 }
 
 PersonState Info::state(const Common::String &id) {
-	if (_people.contains(id) > 0)
+	if (_people.contains(id))
 		return _people[id]._state;
 
 	return PST_NORMAL;
@@ -128,7 +128,7 @@ PersonState Info::state(const Common::String &id) {
 // Purpose: Get/Set information about variables
 //------------------------------------------------------------------------
 bool Info::varGet(const Common::String &name, int &val) {
-	if (_var.contains(name) == 0)
+	if (!_var.contains(name))
 		return false;
 	else
 		val = _var[name];
@@ -148,28 +148,28 @@ void Info::varSet(const Common::String &name, const Common::String &val) {
 }
 
 void Info::varAdd(const Common::String &name, const int &val) {
-	if (_var.contains(name) == 0)
+	if (!_var.contains(name))
 		varSet(name, 0);
 
 	_var[name] += val;
 }
 
 void Info::varSub(const Common::String &name, const int &val) {
-	if (_var.contains(name) == 0)
+	if (!_var.contains(name))
 		varSet(name, 0);
 
 	_var[name] -= val;
 }
 
 void Info::varMul(const Common::String &name, const int &val) {
-	if (_var.contains(name) == 0)
+	if (!_var.contains(name))
 		varSet(name, 0);
 
 	_var[name] *= val;
 }
 
 void Info::varDiv(const Common::String &name, const int &val) {
-	if (_var.contains(name) == 0)
+	if (!_var.contains(name))
 		varSet(name, 0);
 
 	_var[name] /= val;
@@ -218,7 +218,7 @@ void Info::traitDel(const Common::String &perId, const int &traitId) {
 // Purpose: Get/Set information about object opinion
 //------------------------------------------------------------------------
 bool Info::opinionGet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int &val) {
-	if (_people.contains(name) == 0)
+	if (!_people.contains(name))
 		return false;
 
 	val = _people[name]._opinion._val[type];
@@ -226,12 +226,12 @@ bool Info::opinionGet(const Common::String &name, const pyrodactyl::people::Opin
 }
 
 void Info::opinionChange(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
-	if (_people.contains(name) > 0)
+	if (_people.contains(name))
 		_people[name]._opinion.change(type, val);
 }
 
 void Info::opinionSet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
-	if (_people.contains(name) > 0)
+	if (_people.contains(name))
 		_people[name]._opinion.set(type, val);
 }
 
@@ -239,7 +239,7 @@ void Info::opinionSet(const Common::String &name, const pyrodactyl::people::Opin
 // Purpose: Get/Set information about object stats
 //------------------------------------------------------------------------
 bool Info::statGet(const Common::String &name, const pyrodactyl::stat::StatType &type, int &num) {
-	if (_people.contains(name) == 0)
+	if (!_people.contains(name))
 		return false;
 
 	num = _people[name]._stat._val[type]._cur;
@@ -247,12 +247,12 @@ bool Info::statGet(const Common::String &name, const pyrodactyl::stat::StatType 
 }
 
 void Info::statSet(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
-	if (_people.contains(name) > 0)
+	if (_people.contains(name))
 		_people[name]._stat.set(type, num);
 }
 
 void Info::statChange(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
-	if (_people.contains(name) > 0)
+	if (_people.contains(name))
 		_people[name]._stat.change(type, num);
 }
 
@@ -260,7 +260,7 @@ void Info::statChange(const Common::String &name, const pyrodactyl::stat::StatTy
 // Purpose: Get person object
 //------------------------------------------------------------------------
 bool Info::personGet(const Common::String &id, pyrodactyl::people::Person &p) {
-	if (_people.contains(id) == 0)
+	if (!_people.contains(id))
 		return false;
 
 	p = _people[id];
@@ -268,7 +268,7 @@ bool Info::personGet(const Common::String &id, pyrodactyl::people::Person &p) {
 }
 
 bool Info::personValid(const Common::String &id) {
-	return _people.contains(id) > 0;
+	return _people.contains(id);
 }
 
 pyrodactyl::people::Person &Info::personGet(const Common::String &id) {
@@ -278,7 +278,7 @@ pyrodactyl::people::Person &Info::personGet(const Common::String &id) {
 }
 
 bool Info::collideWithTrigger(const Common::String &id, int rectIndex) {
-	if (_people.contains(id) > 0) {
+	if (_people.contains(id)) {
 		for (auto i = _people[id]._trig.begin(); i != _people[id]._trig.end(); ++i)
 			if (*i == rectIndex)
 				return true;
