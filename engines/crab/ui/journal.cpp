@@ -217,7 +217,7 @@ void Journal::open(const Common::String &id, const JournalCategory &category, co
 	// Always find valid journal group first
 	for (auto &jo : _journal)
 		if (jo._id == id) {
-			if (category >= 0 && category < _category._element.size()) {
+			if (category >= 0 && category < (int)_category._element.size()) {
 				// If category passes the valid check, select it
 				select(id, category);
 
