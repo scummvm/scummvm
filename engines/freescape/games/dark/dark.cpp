@@ -60,7 +60,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_angleRotations.push_back(45);
 	_angleRotations.push_back(90);
 
-	_initialFuel = 11;
+	_initialEnergy = 11;
 	_initialShield = 15;
 }
 
@@ -161,7 +161,7 @@ void DarkEngine::initGameState() {
 		_gameStateBits[it._key] = 0;
 	}
 
-	_gameStateVars[k8bitVariableEnergy] = _initialFuel;
+	_gameStateVars[k8bitVariableEnergy] = _initialEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialShield;
 
 	_playerHeightNumber = 1;

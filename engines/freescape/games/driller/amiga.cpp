@@ -194,25 +194,25 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(11, 178, 76 - (k8bitMaxShield - shield), 184);
+		shieldBar = Common::Rect(11, 178, 76 - (_maxShield - shield), 184);
 		surface->fillRect(shieldBar, brown);
 
-		shieldBar = Common::Rect(11, 179, 76 - (k8bitMaxShield - shield), 183);
+		shieldBar = Common::Rect(11, 179, 76 - (_maxShield - shield), 183);
 		surface->fillRect(shieldBar, brownish);
 
-		shieldBar = Common::Rect(11, 180, 76 - (k8bitMaxShield - shield), 182);
+		shieldBar = Common::Rect(11, 180, 76 - (_maxShield - shield), 182);
 		surface->fillRect(shieldBar, yellow);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(11, 186, 75 - (k8bitMaxEnergy - energy), 192);
+		energyBar = Common::Rect(11, 186, 75 - (_maxEnergy - energy), 192);
 		surface->fillRect(energyBar, brown);
 
-		energyBar = Common::Rect(11, 187, 75 - (k8bitMaxEnergy - energy), 191);
+		energyBar = Common::Rect(11, 187, 75 - (_maxEnergy - energy), 191);
 		surface->fillRect(energyBar, brownish);
 
-		energyBar = Common::Rect(11, 188, 75 - (k8bitMaxEnergy - energy), 190);
+		energyBar = Common::Rect(11, 188, 75 - (_maxEnergy - energy), 190);
 		surface->fillRect(energyBar, yellow);
 	}
 }

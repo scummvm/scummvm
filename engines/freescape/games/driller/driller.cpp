@@ -74,6 +74,9 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_initialJetEnergy = 29;
 	_initialJetShield = 34;
 
+	_maxEnergy = 63;
+	_maxShield = 63;
+
 	Math::Vector3d drillBaseOrigin = Math::Vector3d(0, 0, 0);
 	Math::Vector3d drillBaseSize = Math::Vector3d(3, 2, 3);
 	_drillBase = new GeometricObject(kCubeType, 0, 0, drillBaseOrigin, drillBaseSize, nullptr, nullptr, FCLInstructionVector(), "");

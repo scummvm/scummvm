@@ -152,6 +152,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_underFireFrames = 0;
 	_shootingFrames = 0;
+
+	_maxShield = 63;
+	_maxEnergy = 63;
 }
 
 FreescapeEngine::~FreescapeEngine() {
@@ -280,6 +283,8 @@ void FreescapeEngine::drawFrame() {
 
 		if (isDriller() && (isDOS() || isAmiga() || isAtariST()))
 			underFireColor = 1;
+		else if (isDark() && (isDOS() || isAmiga() || isAtariST()))
+			underFireColor = 4;
 
 		_currentArea->remapColor(_currentArea->_usualBackgroundColor, underFireColor);
 		_currentArea->remapColor(_currentArea->_skyColor, underFireColor);

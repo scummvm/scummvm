@@ -237,6 +237,8 @@ public:
 	bool tryStepUp(Math::Vector3d currentPosition);
 	bool tryStepDown(Math::Vector3d currentPosition);
 	bool _hasFallen;
+	int _maxShield;
+	int _maxEnergy;
 
 	void rotate(float xoffset, float yoffset);
 	// Input state
@@ -518,7 +520,7 @@ class DarkEngine : public FreescapeEngine {
 public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
 
-	uint32 _initialFuel;
+	uint32 _initialEnergy;
 	uint32 _initialShield;
 
 	void initGameState() override;

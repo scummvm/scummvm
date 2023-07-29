@@ -33,6 +33,9 @@ void DarkEngine::initDOS() {
 		_viewArea = Common::Rect(40, 24, 279, 124);
 	else
 		error("Invalid or unknown render mode");
+
+	_maxEnergy = 79;
+	_maxShield = 79;
 }
 
 void DarkEngine::loadAssetsDOSDemo() {
@@ -155,19 +158,19 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(72, 139, 151 - (k8bitMaxShield - shield), 146);
+		shieldBar = Common::Rect(72, 139, 151 - (_maxShield - shield), 146);
 		surface->fillRect(shieldBar, front);
 
-		shieldBar = Common::Rect(72, 140, 151 - (k8bitMaxShield - shield), 145);
+		shieldBar = Common::Rect(72, 140, 151 - (_maxShield - shield), 145);
 		surface->fillRect(shieldBar, blue);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(72, 147, 151 - (k8bitMaxEnergy - energy), 154);
+		energyBar = Common::Rect(72, 147, 151 - (_maxEnergy - energy), 154);
 		surface->fillRect(energyBar, front);
 
-		energyBar = Common::Rect(72, 148, 151 - (k8bitMaxEnergy - energy), 153);
+		energyBar = Common::Rect(72, 148, 151 - (_maxEnergy - energy), 153);
 		surface->fillRect(energyBar, blue);
 	}
 }
