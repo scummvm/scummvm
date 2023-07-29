@@ -19,10 +19,6 @@
  *
  */
 
-// Since FreeType2 includes files, which contain forbidden symbols, we need to
-// allow all symbols here.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_font3.h"
 #include "tetraedge/te/te_core.h"

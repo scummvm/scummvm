@@ -36,9 +36,6 @@
 #include "tetraedge/te/te_3d_texture.h"
 #include "tetraedge/te/te_i_font.h"
 
-struct FT_FaceRec_;
-struct FT_LibraryRec_;
-
 namespace Graphics {
 class Font;
 }
