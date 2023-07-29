@@ -48,12 +48,12 @@ private:
 	/**
 	 * Returns the number of sections in the credits array
 	 */
-	static size_t getCreditsSectionsCount();
+	size_t getCreditsSectionsCount() const;
 
 	/**
-	 * Returns the maximum width of any credits line
+	 * Returns the maximum width of any credits section header
 	 */
-	size_t getMaxCreditsWidth();
+	size_t getMaxCreditsHeaderWidth() const;
 
 	/**
 	 * Text items callback
@@ -63,27 +63,27 @@ private:
 	/**
 	 * Return the starting index in the credits of a given section
 	 */
-	static int getCreditsSectionLine(int sectionNum);
+	int getCreditsSectionLine(int sectionNum) const;
 
 	/**
 	 * Return the first string of a given section
 	 */
-	static const char *getCreditsSectionString(int sectionNum);
+	const char *getCreditsSectionString(int sectionNum) const;
 
 	/**
 	 * Returns the number of lines in a given section
 	 */
-	static int getCreditsSectionLines(int sectionNum);
+	int getCreditsSectionLines(int sectionNum) const;
 
 	/**
 	 * Return the maximum width of a specific credits section
 	 */
-	static size_t getCreditsSectionWidth(int sectionNum);
+	size_t getCreditsSectionWidth(int sectionNum) const;
 
 	/**
 	 * Returns a given text line within a credits section
 	 */
-	static const char *getLineInCreditsSection(int sectionNum, int lineNum);
+	const char *getLineInCreditsSection(int sectionNum, int lineNum) const;
 
 	/**
 	 * Text items callback
@@ -103,6 +103,7 @@ public:
 	void init() override;
 	void shutdown() override;
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms
