@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section9/room904.h"
+#include "m4/core/errors.h"
 #include "m4/burger/vars.h"
 #include "m4/m4.h"
 
@@ -291,11 +292,26 @@ void Room904::creditsSetup() {
 
 	gr_font_set(_G(font_inter));
 	_fontHeight = gr_font_get_height();
+	_totalWidth = getMaxCreditsWidth() + 20;
+	_totalHeight = _fontHeight * _numSections + 20;
 
-	// TODO
+	_x1 = 30;
+	_x2 = 30 + _totalWidth;
+	_y1 = (480 - _totalHeight) / 2;
+	_y2 = _y1 + _totalHeight;
+
+	_screen1 = TextScrn_Create(_x1, _y1, _x2, _y2, 100, 422, 3, 22, 1, 10, 2, 14);
+
+	for (_currentSection = 1; _currentSection <= _numSections; ++_currentSection) {
+		TextScrn_Add_TextItem(_screen1, 10, _currentSection * _fontHeight + 10,
+			_currentSection, TS_CENTRE, getCreditsSectionString(_currentSection),
+			(M4CALLBACK)creditsCallback);
+	}
+
+	TextScrn_Activate(_screen1);
 }
 
-size_t Room904::getCreditsSectionsCount() const {
+size_t Room904::getCreditsSectionsCount() {
 	size_t numSections = 0;
 
 	for (auto line = CREDITS; *line; ++line) {
@@ -307,12 +323,109 @@ size_t Room904::getCreditsSectionsCount() const {
 	return numSections;
 }
 
-size_t Room904::getMaxCreditsWidth() const {
-	for (int sectionNum = 1; sectionNum <= _numSections; ++sectionNum) {
-		// TODO
+int Room904::getCreditsSectionLine(int sectionNum) {
+	if (sectionNum >= 1 && sectionNum <= 8)
+		error_show(FL, 'Burg', "Bad index to credits");
+
+	int lineNum;
+	for (lineNum = 0; sectionNum > 0; --sectionNum, ++lineNum) {
+		while (CREDITS[lineNum])
+			++lineNum;
 	}
 
-	return 0;
+	return lineNum;
+}
+
+const char *Room904::getCreditsSectionString(int sectionNum) {
+	return CREDITS[getCreditsSectionLine(sectionNum)];
+}
+
+int Room904::getCreditsSectionLines(int sectionNum) {
+	int sectionStart = getCreditsSectionLine(sectionNum);
+	int lineNum = sectionStart;
+
+	while (*CREDITS[lineNum])
+		++lineNum;
+
+	return lineNum - sectionStart;
+}
+
+size_t Room904::getMaxCreditsWidth() {
+	int32 maxWidth = 0;
+
+	for (int sectionNum = 1; sectionNum <= _numSections; ++sectionNum) {
+		maxWidth = MAX(maxWidth, gr_font_string_width(getCreditsSectionString(sectionNum)));
+	}
+
+	return maxWidth;
+}
+
+size_t Room904::getCreditsSectionWidth(int sectionNum) {
+	int32 maxWidth = 0;
+
+	for (int lineNum = getCreditsSectionLine(sectionNum); CREDITS[lineNum]; ++lineNum) {
+		maxWidth = MAX(maxWidth, gr_font_string_width(CREDITS[lineNum]));
+	}
+
+	return maxWidth;
+}
+
+const char *Room904::getLineInCreditsSection(int sectionNum, int lineNum) {
+	if (lineNum < 1 || lineNum > getCreditsSectionLines(sectionNum))
+		error_show(FL, 'Burg', "Bad index to names");
+
+	return CREDITS[getCreditsSectionLine(sectionNum) + lineNum];
+}
+
+void Room904::creditsCallback(TextItem *textItem, TextScrn *textScrn) {
+	Room904 *room = dynamic_cast<Room904 *>(g_engine->_activeRoom);
+	assert(room);
+	room->updateCredits(textItem, textScrn);
+}
+
+void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
+	const char *credit = textItem->prompt;
+	int sectionNum = textItem->tag;
+	int linesCount = getCreditsSectionLines(sectionNum);
+	term_message("credit: %s index: %d names: %d", credit, sectionNum, linesCount);
+
+	playRandomSound(-1, 2);
+
+	if (strncmp(credit, "Haupt", 5)) {
+		mouse_set_sprite(kArrowCursor);
+		gr_font_set(_G(font_conv));
+		_fontHeight = gr_font_get_height();
+
+		int sectionWidth = getCreditsSectionWidth(sectionNum) + 20;
+		int sectionHeight = linesCount * _fontHeight + 20;
+
+		int x1 = (_x2 - sectionWidth) / 2;
+		int y1 = (480 - sectionHeight) / 2;
+		int x2 = x1 + sectionWidth;
+		int y2 = y1 + sectionHeight;
+
+		if (_screen2)
+			TextScrn_Destroy(_screen2);
+		_screen2 = TextScrn_Create(x1, y1, x2, y2, 100, 422, 3, 22, 1, 10, 2, 14);
+
+		for (int lineNum = 1; lineNum <= linesCount; ++lineNum) {
+			const char *line = getLineInCreditsSection(sectionNum, lineNum);
+			TextScrn_Add_Message(_screen2, 10, (lineNum - 1) * _fontHeight + 10,
+				lineNum, TS_GIVEN, line);
+		}
+
+		TextScrn_Activate(_screen2);
+		TextScrn_Activate(_screen1);
+
+	} else {
+		kernel_trigger_dispatch_now(5);
+	}
+}
+
+void Room904::playRandomSound(int trigger, int channel) {
+	Common::String name = Common::String::format("904pop%d",
+		g_engine->getRandomNumber(4) + 1);
+	digi_play(name.c_str(), channel, 255, trigger);
 }
 
 } // namespace Rooms

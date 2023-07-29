@@ -1199,7 +1199,7 @@ bool TextScrn_Add_Key(TextScrn *myTextScrn, long myKey, HotkeyCB cb) {
 }
 
 bool TextScrn_Add_TextItem(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
-	int32 justification, char *prompt, M4CALLBACK callback) {
+	int32 justification, const char *prompt, M4CALLBACK callback) {
 	TextItem *myTextItem;
 
 	if (!myTextScrn) {
@@ -1236,7 +1236,7 @@ bool TextScrn_Add_TextItem(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
 }
 
 bool TextScrn_Add_Message(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
-	int32 justification, char *prompt) {
+	int32 justification, const char *prompt) {
 	TextItem *myTextItem;
 
 	if (!myTextScrn) {

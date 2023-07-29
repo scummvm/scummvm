@@ -35,7 +35,10 @@ private:
 	TextScrn *_screen2 = nullptr;
 	int _numSections = 0;
 	int _fontHeight = 0;
+	int _totalWidth = 0;
+	int _totalHeight = 0;
 	int _x1 = 0, _y1 = 0, _x2 = 0, _y2 = 0;
+	int _currentSection = -1;
 
 	/**
 	 * Initial credits setup
@@ -45,12 +48,52 @@ private:
 	/**
 	 * Returns the number of sections in the credits array
 	 */
-	size_t getCreditsSectionsCount() const;
+	static size_t getCreditsSectionsCount();
 
 	/**
 	 * Returns the maximum width of any credits line
 	 */
-	size_t getMaxCreditsWidth() const;
+	size_t getMaxCreditsWidth();
+
+	/**
+	 * Text items callback
+	 */
+	void updateCredits(TextItem *textItem, TextScrn *textScrn);
+
+	/**
+	 * Return the starting index in the credits of a given section
+	 */
+	static int getCreditsSectionLine(int sectionNum);
+
+	/**
+	 * Return the first string of a given section
+	 */
+	static const char *getCreditsSectionString(int sectionNum);
+
+	/**
+	 * Returns the number of lines in a given section
+	 */
+	static int getCreditsSectionLines(int sectionNum);
+
+	/**
+	 * Return the maximum width of a specific credits section
+	 */
+	static size_t getCreditsSectionWidth(int sectionNum);
+
+	/**
+	 * Returns a given text line within a credits section
+	 */
+	static const char *getLineInCreditsSection(int sectionNum, int lineNum);
+
+	/**
+	 * Text items callback
+	 */
+	static void creditsCallback(TextItem *textItem, TextScrn *textScrn);
+
+	/**
+	 * Plays a random sound
+	 */
+	static void playRandomSound(int trigger, int channel);
 
 public:
 	Room904() : Rooms::Room(904) {}

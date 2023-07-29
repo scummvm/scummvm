@@ -147,9 +147,9 @@ void TextScrn_Destroy(TextScrn *myTextScrn);
 void TextScrn_Activate(TextScrn *myTextScrn);
 bool TextScrn_Add_Key(TextScrn *myTextScrn, long myKey, HotkeyCB cb);
 bool TextScrn_Add_TextItem(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
-	int32 justification, char *prompt, M4CALLBACK callback);
+	int32 justification, const char *prompt, M4CALLBACK callback);
 bool TextScrn_Add_Message(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
-	int32 justification, char *prompt);
+	int32 justification, const char *prompt);
 void TextScrn_Change_TextItem(TextScrn *myTextScrn, int32 tag, char *prompt, uint8 color);
 void TextScrn_Delete_TextItem(TextScrn *myTextScrn, int32 tag);
 
