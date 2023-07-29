@@ -306,6 +306,21 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"darkside",
+		"",
+		{
+			{"DARKSIDE.EXE", 0, "477c8249665c00e001a84f94911b5960", 21325},
+			{"DSIDEC.EXE", 0, "d4d443777411d6141e94bbf464914251", 49504},
+			{"DSIDEE.EXE", 0, "9d9ba99a8b7c1ae49f9cc328bfa862dd", 56800},
+			{"DSIDEH.EXE", 0, "7764dadc5a0baf0960e9323a8629e321", 53232},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+	},
+	{
+		"darkside",
 		"Demo",
 		{
 			{"DARKSIDE.EXE", 0, "5c69b7c5586031c153cbb58fc6d2bff8", 20905},
