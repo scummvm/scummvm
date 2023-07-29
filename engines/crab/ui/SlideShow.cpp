@@ -112,14 +112,10 @@ void SlideShow::handleEvents(const SDL_Event &Event) {
 #endif
 
 void SlideShow::refresh() {
-	warning("SlideShow::refresh()");
+	_img.deleteImage();
 
-#if 0
-	img.Delete();
-
-	if (index >= 0 && index < path.size())
-		img.load(path[index]);
-#endif
+	if (_index < _path.size())
+		_img.load(_path[_index]);
 }
 
 void SlideShow::setUI() {
