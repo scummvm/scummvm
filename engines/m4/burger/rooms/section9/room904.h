@@ -23,18 +23,42 @@
 #define M4_BURGER_ROOMS_SECTION9_ROOM904_H
 
 #include "m4/burger/rooms/room.h"
+#include "m4/gui/gui_dialog.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
 class Room904 : public Rooms::Room {
+private:
+	TextScrn *_screen1 = nullptr;
+	TextScrn *_screen2 = nullptr;
+	int _numSections = 0;
+	int _fontHeight = 0;
+	int _x1 = 0, _y1 = 0, _x2 = 0, _y2 = 0;
+
+	/**
+	 * Initial credits setup
+	 */
+	void creditsSetup();
+
+	/**
+	 * Returns the number of sections in the credits array
+	 */
+	size_t getCreditsSectionsCount() const;
+
+	/**
+	 * Returns the maximum width of any credits line
+	 */
+	size_t getMaxCreditsWidth() const;
+
 public:
 	Room904() : Rooms::Room(904) {}
 	~Room904() override {}
 
 	void preload() override;
 	void init() override;
+	void shutdown() override;
 	void daemon() override;
 };
 
