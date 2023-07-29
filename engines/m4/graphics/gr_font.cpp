@@ -236,6 +236,16 @@ int32 gr_font_string_width(char *out_string, int32 auto_spacing) {
 	return width;
 }
 
+int32 gr_font_string_width(const Common::String &str, int32 auto_spacing) {
+	char *tmp = new char[str.size() + 1];
+	Common::copy(str.c_str(), str.c_str() + str.size() + 1, tmp);
+	int32 result = gr_font_string_width(tmp, auto_spacing);
+	delete[] tmp;
+
+	return result;
+}
+
+
 int32 gr_font_get_height() {
 	if (!_G(font))
 		return -1;

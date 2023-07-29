@@ -22,6 +22,7 @@
 #ifndef M4_GRAPHICS_GR_FONT_H
 #define M4_GRAPHICS_GR_FONT_H
 
+#include "common/str.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -46,6 +47,8 @@ int32 gr_font_get_height();
 int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y,
 	int32 w, int32 auto_spacing = 1);
 int32 gr_font_string_width(char *out_string, int32 auto_spacing = 1);
+int32 gr_font_string_width(const Common::String &str, int32 auto_spacing = 1);
+
 //Font *gr_font_file_read(const char *fontName);
 Font *gr_font_load(const char *fontName);
 
