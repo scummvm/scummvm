@@ -52,7 +52,7 @@ void SceneScriptCT05::InitializeScene() {
 		Scene_Loop_Set_Default(0);
 	}
 	if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
-		Overlay_Play("ct05over", 0, true, false, 0);
+		Overlay_Play("CT05OVER", 0, true, false, 0);
 	}
 }
 
@@ -142,7 +142,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -128.42f, -109.91f, 112.83f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagCT05toCT12);
 			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
-				Overlay_Remove("ct05over");
+				Overlay_Remove("CT05OVER");
 			}
 			Set_Enter(kSetCT01_CT12, kSceneCT12);
 		}
@@ -153,7 +153,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagCT05toCT04);
 			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
-				Overlay_Remove("ct05over");
+				Overlay_Remove("CT05OVER");
 				Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12Leave);
 				Game_Flag_Set(kFlagMA01GaffApproachMcCoy);
 			}
@@ -172,7 +172,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_Off();
 			Game_Flag_Set(kFlagCT05toCT06);
 			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
-				Overlay_Remove("ct05over");
+				Overlay_Remove("CT05OVER");
 			}
 			Set_Enter(kSetCT06, kSceneCT06);
 		}

@@ -47,13 +47,13 @@ void SceneScriptDR06::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 60, 20, 20, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagDR06JesterActive)) {
-		Overlay_Play("DR06over", 1, true, false, 0);
+		Overlay_Play("DR06OVER", 1, true, false, 0);
 		Ambient_Sounds_Add_Looping_Sound(kSfxJESTMOV1, 47, -75, 0);
 	} else {
-		Overlay_Play("DR06over", 0, true, false, 0);
+		Overlay_Play("DR06OVER", 0, true, false, 0);
 	}
 	if (Game_Flag_Query(kFlagDR06MannequinHeadOpen)) {
-		Overlay_Play("DR06ovr2", 0, true, false, 0);
+		Overlay_Play("DR06OVR2", 0, true, false, 0);
 	}
 }
 
@@ -79,11 +79,11 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -743.0f, 136.6f, -1091.0f, 0, true, false, false);
 		Actor_Face_Object(kActorMcCoy, "BOX16", true);
 		if (!Game_Flag_Query(kFlagDR06JesterActive)) {
-			Overlay_Play("DR06over", 1, true, true, 0);
+			Overlay_Play("DR06OVER", 1, true, true, 0);
 			Ambient_Sounds_Add_Looping_Sound(kSfxJESTMOV1, 47, -75, 0);
 			Game_Flag_Set(kFlagDR06JesterActive);
 		} else {
-			Overlay_Play("DR06over", 0, true, true, 0);
+			Overlay_Play("DR06OVER", 0, true, true, 0);
 			Ambient_Sounds_Remove_Looping_Sound(kSfxJESTMOV1, 0u);
 			Game_Flag_Reset(kFlagDR06JesterActive);
 		}
@@ -167,7 +167,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 
 			if (!Game_Flag_Query(kFlagDR06MannequinHeadOpen)) {
-				Overlay_Play("DR06ovr2", 0, true, false, 0);
+				Overlay_Play("DR06OVR2", 0, true, false, 0);
 				Game_Flag_Set(kFlagDR06MannequinHeadOpen);
 				Sound_Play(kSfxCEMENTL1, 100, 0, 0, 50);
 				if (!Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
@@ -182,7 +182,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 					}
 				}
 			} else {
-				Overlay_Remove("DR06ovr2");
+				Overlay_Remove("DR06OVR2");
 				Game_Flag_Reset(kFlagDR06MannequinHeadOpen);
 				Sound_Play(kSfxCEMENTL2, 100, 0, 0, 50);
 			}
@@ -262,7 +262,7 @@ void SceneScriptDR06::PlayerWalkedIn() {
 }
 
 void SceneScriptDR06::PlayerWalkedOut() {
-	Overlay_Remove("DR06over");
+	Overlay_Remove("DR06OVER");
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
