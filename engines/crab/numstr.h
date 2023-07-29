@@ -36,31 +36,7 @@ namespace Crab {
 
 template<typename T>
 Common::String numberToString(T number) {
-	Common::String res;
-	const T num = number;
-
-	if (number == 0) {
-		return "0";
-	}
-
-	if (number < 0)
-		number = -number;
-
-	while (number > 0) {
-		T d = number % 10;
-		res += ('0' + d);
-		number /= 10;
-	}
-
-	if (num < 0)
-		res += "-";
-
-	// reverse string
-	Common::String revStr;
-	for (int i = res.size() - 1; i >= 0; i--)
-		revStr += res[i];
-
-	return revStr;
+	return Common::String::format("%d", number);
 }
 
 template<typename T>
