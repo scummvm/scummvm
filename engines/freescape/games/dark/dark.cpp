@@ -190,7 +190,19 @@ bool DarkEngine::checkIfGameEnded() {
 		_gameStateVars[kVariableDarkECD] = 0;
 	}
 
-	if (_playerWasCrushed) {
+	if (_hasFallen) {
+		_hasFallen = false;
+		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
+		playSound(14, false);
+		insertTemporaryMessage(_messagesList[17], _countdown - 4);
+		drawBackground();
+		drawBorder();
+		drawUI();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+		gotoArea(1, 26);
+	} else if (_playerWasCrushed) {
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
 		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
 		drawFrame();
@@ -313,7 +325,14 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 void DarkEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
-		insertTemporaryMessage(_messagesList[_flyMode ? 11 : 12], _countdown - 2);
+
+		if (_flyMode)
+			insertTemporaryMessage(_messagesList[11], _countdown - 2);
+		else {
+			resolveCollisions(_position);
+			if (!_hasFallen)
+				insertTemporaryMessage(_messagesList[12], _countdown - 2);
+		}
 	}
 }
 
