@@ -103,7 +103,7 @@ void Timer::resume() {
 		_paused = false;
 
 		// Reset the starting ticks
-		_pausedTicks = g_system->getMillis() - _startTicks;
+		_startTicks = g_system->getMillis() - _pausedTicks;
 		// Reset the paused ticks
 		_pausedTicks = 0;
 	}
