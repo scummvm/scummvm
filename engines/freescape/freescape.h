@@ -560,6 +560,7 @@ private:
 	bool checkECD(int index);
 	void addWalls(Area *area);
 	Common::SeekableReadStream *decryptFile(const Common::String filename);
+	Common::HashMap<uint16, bool> _exploredAreas;
 };
 
 class EclipseEngine : public FreescapeEngine {

@@ -171,6 +171,8 @@ void DarkEngine::initGameState() {
 	_lastMinute = 0;
 	_demoIndex = 0;
 	_demoEvents.clear();
+	_exploredAreas.clear();
+	_exploredAreas[_startArea] = true;
 }
 
 bool DarkEngine::checkECD(int index) {
@@ -187,9 +189,10 @@ bool DarkEngine::checkECD(int index) {
 bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		bool destroyed = checkECD(_gameStateVars[kVariableDarkECD] - 1);
-		if (destroyed)
+		if (destroyed) {
+			_gameStateVars[k8bitVariableScore] += 52750;
 			insertTemporaryMessage(_messagesList[2], _countdown - 2);
-		else
+		} else
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
 		_gameStateVars[kVariableDarkECD] = 0;
 	}
@@ -248,6 +251,11 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
+
+	if (!_exploredAreas.contains(areaID)) {
+		_gameStateVars[k8bitVariableScore] += 17500;
+		_exploredAreas[areaID] = true;
+	}
 
 	if (isDemo()) {
 		if (!_areaMap.contains(areaID)) {
@@ -470,10 +478,18 @@ void DarkEngine::drawSensorShoot(Sensor *sensor) {
 
 
 Common::Error DarkEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	for (auto &it : _areaMap) {
+		stream->writeUint16LE(it._key);
+		stream->writeUint32LE(_exploredAreas[it._key]);
+	}
 	return Common::kNoError;
 }
 
 Common::Error DarkEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	for (uint i = 0; i < _areaMap.size(); i++) {
+		uint16 key = stream->readUint16LE();
+		_exploredAreas[key] = stream->readUint32LE();
+	}
 	return Common::kNoError;
 }
 

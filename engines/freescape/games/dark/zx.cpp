@@ -108,19 +108,19 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(80, 141, 143 - (_maxShield - shield), 147);
+		shieldBar = Common::Rect(80, 140, 143 - (_maxShield - shield), 148);
 		surface->fillRect(shieldBar, back);
 
-		shieldBar = Common::Rect(80, 142, 143 - (_maxShield - shield), 146);
+		shieldBar = Common::Rect(80, 141, 143 - (_maxShield - shield), 147);
 		surface->fillRect(shieldBar, front);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(80, 147, 143 - (_maxEnergy - energy), 154);
+		energyBar = Common::Rect(80, 147, 143 - (_maxEnergy - energy), 155);
 		surface->fillRect(energyBar, back);
 
-		energyBar = Common::Rect(80, 148, 143 - (_maxEnergy - energy), 153);
+		energyBar = Common::Rect(80, 148, 143 - (_maxEnergy - energy), 154);
 		surface->fillRect(energyBar, front);
 	}
 }
