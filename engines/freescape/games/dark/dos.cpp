@@ -22,6 +22,7 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/dark/dark.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
@@ -128,6 +129,7 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
+	int ecds = _gameStateVars[kVariableActiveECDs];
 	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 199, 137, front, back, surface);
 	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 199, 145, front, back, surface);
 	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 199, 153, front, back, surface);
@@ -135,6 +137,7 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 71, 168, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 71, 177, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 95, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d%%", ecds), 192, 8, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);

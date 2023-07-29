@@ -22,21 +22,12 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/dark/dark.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/objects/global.h"
 #include "freescape/objects/connections.h"
 
 namespace Freescape {
-
-enum {
-	kVariableDarkEnding = 28,
-	kVariableDarkECD = 29,
-};
-
-enum {
-	kDarkEndingEvathDestroyed = 1,
-	kDarkEndingECDsDestroyed = 2,
-};
 
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	if (isDOS())
@@ -163,6 +154,7 @@ void DarkEngine::initGameState() {
 
 	_gameStateVars[k8bitVariableEnergy] = _initialEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialShield;
+	_gameStateVars[kVariableActiveECDs] = 100;
 
 	_playerHeightNumber = 1;
 	_playerHeight = _playerHeights[_playerHeightNumber];
@@ -190,6 +182,7 @@ bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		bool destroyed = checkECD(_gameStateVars[kVariableDarkECD] - 1);
 		if (destroyed) {
+			_gameStateVars[kVariableActiveECDs] -= 4;
 			_gameStateVars[k8bitVariableScore] += 52750;
 			insertTemporaryMessage(_messagesList[2], _countdown - 2);
 		} else
