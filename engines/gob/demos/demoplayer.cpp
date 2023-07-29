@@ -36,6 +36,7 @@ namespace Gob {
 
 DemoPlayer::Script DemoPlayer::_scripts[] = {
 	{kScriptSourceFile, "demo.scn"},
+	{kScriptSourceFile, "wdemo.scn"},
 	{kScriptSourceFile, "wdemo.s24"},
 	{kScriptSourceFile, "play123.scn"},
 	{kScriptSourceFile, "e.scn"},
