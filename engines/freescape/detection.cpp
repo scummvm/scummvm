@@ -289,6 +289,20 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
+	// Stampede Amiga, Issue 1, July 1990
+	{
+		"darkside",
+		"",
+		{
+			{"DARKSIDE", 0, "5cf22e88959284097790189cf05b1862", 84004},
+			{"1.DRK", 0, "49cc73a5ca7adb26065286a7afd4d0a4", 280704},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
 	{
 		"darkside",
 		"",
@@ -444,7 +458,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Stampede Amiga, Issue 1, July 1990
 	{
 		"castlemaster",
-		"Demo",
+		"",
 		{
 			{"cm", 0, "b7e713a0742fa09aa81c9606bbbba4af", 4068},
 			{"x", 0, "c8c811439da0cf8a193e35feb5b5c6dc", 353388},
@@ -452,7 +466,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE | ADGF_DEMO,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
