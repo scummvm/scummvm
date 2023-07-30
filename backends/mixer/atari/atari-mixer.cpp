@@ -33,8 +33,8 @@
 #define DEFAULT_OUTPUT_RATE 24585
 
 void AtariAudioShutdown() {
-	Buffoper(0x00);
 	Sndstatus(SND_RESET);
+	Soundcmd(ADDERIN, ADCIN);	// restore key click
 	Unlocksnd();
 }
 
