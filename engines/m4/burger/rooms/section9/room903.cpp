@@ -66,7 +66,7 @@ void Room903::init() {
 }
 
 void Room903::daemon() {
-	if (!_G(menu).menuSystemInitialized)
+	if (_G(menu).menuSystemInitialized)
 		return;
 
 	switch (_G(kernel).trigger) {
