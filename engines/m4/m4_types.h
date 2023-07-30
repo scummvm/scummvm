@@ -70,6 +70,13 @@ struct Buffer {
 	uint8 *data;
 	uint8 encoding;
 	int32 stride;
+
+	uint8 *getBasePtr(int x, int y) {
+		return data + y * w + x;
+	}
+	const uint8 *getBasePtr(int x, int y) const {
+		return data + y * w + x;
+	}
 };
 
 struct token {
