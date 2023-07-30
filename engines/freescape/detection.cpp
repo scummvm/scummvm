@@ -289,6 +289,20 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
+	// Cinemaware release
+	{
+		"darkside",
+		"",
+		{
+			{"0.DRK", 0, "e237ae052a85ff92e70bd3528442e1e4", 78298},
+			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
 	// Stampede Amiga, Issue 1, July 1990
 	{
 		"darkside",
