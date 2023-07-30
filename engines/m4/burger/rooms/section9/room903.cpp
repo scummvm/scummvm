@@ -32,12 +32,12 @@ namespace Burger {
 namespace Rooms {
 
 static const MenuButtonDef BUTTONS[6] = {
-	{ 295, 125, 615, 155, 0, 1, 2, 3, BTNSTATE_1, 5 },
-	{ 295, 165, 615, 195, 12, 13, 14, 15, BTNSTATE_1, 6 },
-	{ 295, 205, 615, 235, 4, 5, 6, 7, BTNSTATE_1, 7 },
-	{ 295, 245, 615, 275, 16, 17, 18, 19, BTNSTATE_1, 8 },
-	{ 295, 285, 615, 315, 8, 9, 10, 11, BTNSTATE_1, 9 },
-	{ 295, 325, 615, 355, 20, 21, 22, 23, BTNSTATE_1, 10 },
+	{ 295, 125, 615, 155, 0, 1, 2, 3, BTNSTATE_ENABLED, 5 },
+	{ 295, 165, 615, 195, 12, 13, 14, 15, BTNSTATE_ENABLED, 6 },
+	{ 295, 205, 615, 235, 4, 5, 6, 7, BTNSTATE_ENABLED, 7 },
+	{ 295, 245, 615, 275, 16, 17, 18, 19, BTNSTATE_ENABLED, 8 },
+	{ 295, 285, 615, 315, 8, 9, 10, 11, BTNSTATE_ENABLED, 9 },
+	{ 295, 325, 615, 355, 20, 21, 22, 23, BTNSTATE_ENABLED, 10 },
 };
 
 void Room903::preload() {
@@ -81,12 +81,12 @@ void Room903::daemon() {
 			drawButtons();
 
 			if (!g_engine->savesExist()) {
-				_buttons[2]._state = BTNSTATE_0;
+				_buttons[2]._state = BTNSTATE_DISABLED;
 				drawButton(2);
 			}
 
 			if (!g_engine->autosaveExists()) {
-				_buttons[3]._state = BTNSTATE_0;
+				_buttons[3]._state = BTNSTATE_DISABLED;
 				drawButton(3);
 			}
 
@@ -104,8 +104,8 @@ void Room903::daemon() {
 		player_set_commands_allowed(true);
 
 		for (uint i = 0; i < _buttons.size(); ++i) {
-			if (_buttons[i]._state != BTNSTATE_0)
-				setButtonState(i, BTNSTATE_1);
+			if (_buttons[i]._state != BTNSTATE_DISABLED)
+				setButtonState(i, BTNSTATE_ENABLED);
 		}
 		break;
 

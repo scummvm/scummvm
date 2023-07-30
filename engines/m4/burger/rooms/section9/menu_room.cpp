@@ -57,8 +57,11 @@ void MenuRoom::drawButton(int index) {
 		error_show(FL, 'Burg', "draw_button which?");
 
 	MenuButton &btn = _buttons[index];
-	assert(btn._state >= BTNSTATE_0 && btn._state <= BTNSTATE_3);
-	int frame[4] = { btn._frame0, btn._frame1, btn._frame2, btn._frame3 };
+	assert(btn._state >= BTNSTATE_DISABLED && btn._state <= BTNSTATE_PRESSED);
+	int frame[4] = {
+		btn._frame_disabled, btn._frame_enabled,
+		btn._frame_highlighted, btn._frame_pressed
+	};
 	btn._machine = series_show_(_menuName, 0, 0, -1, -1, frame[btn._state], 100, btn._x1, btn._y1);
 }
 
@@ -70,7 +73,7 @@ void MenuRoom::drawButtons() {
 void MenuRoom::setButtonState(int index, ButtonState newState) {
 	if (index >= 0 && index < (int)_buttons.size()) {
 		MenuButton &btn = _buttons[index];
-		if (btn._state != BTNSTATE_0 && newState != btn._state) {
+		if (btn._state != BTNSTATE_DISABLED && newState != btn._state) {
 			TerminateMachineAndNull(btn._machine);
 			btn._state = newState;
 			drawButton(index);
@@ -88,13 +91,15 @@ void MenuRoom::buttonsFrame() {
 
 	if (_buttonNum == -1) {
 		if (_highlightedButton == -1) {
-			setButtonState(_activeButton, BTNSTATE_1);
+			setButtonState(_activeButton, BTNSTATE_ENABLED);
 		} else if (_highlightedButton != _activeButton) {
-			setButtonState(_activeButton, BTNSTATE_1);
-			setButtonState(_highlightedButton, BTNSTATE_2);
+			setButtonState(_activeButton, BTNSTATE_ENABLED);
+			setButtonState(_highlightedButton, BTNSTATE_HIGHLIGHTED);
 		}
+
+		_activeButton = _highlightedButton;
 	} else {
-		setButtonState(_buttonNum, _buttonNum == _highlightedButton ? BTNSTATE_3 : BTNSTATE_1);
+		setButtonState(_buttonNum, _buttonNum == _highlightedButton ? BTNSTATE_PRESSED : BTNSTATE_ENABLED);
 	}
 
 	if (_G(MouseState).ButtonState) {
@@ -103,7 +108,7 @@ void MenuRoom::buttonsFrame() {
 			_buttonNum = _highlightedButton;
 
 		if (_buttonNum != -1) {
-			setButtonState(_buttonNum, _buttonNum == _highlightedButton ? BTNSTATE_3 : BTNSTATE_1);
+			setButtonState(_buttonNum, _buttonNum == _highlightedButton ? BTNSTATE_PRESSED : BTNSTATE_ENABLED);
 		}
 	} else if (_flag) {
 		_flag = false;
@@ -117,10 +122,10 @@ void MenuRoom::buttonsFrame() {
 			term_message("Button pressed: %d", _highlightedButton);
 
 			const MenuButton &btn = _buttons[_highlightedButton];
-			if (btn._state != BTNSTATE_0) {
+			if (btn._state != BTNSTATE_DISABLED) {
 				digi_play(_clickName, 2, 255, -1);
 				kernel_trigger_dispatch_now(btn._trigger);
-				setButtonState(_buttonNum, BTNSTATE_2);
+				setButtonState(_buttonNum, BTNSTATE_HIGHLIGHTED);
 			}
 		}
 
