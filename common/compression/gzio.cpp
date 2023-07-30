@@ -39,7 +39,7 @@
 #include "common/stream.h"
 #include "common/ptr.h"
 #include "common/memstream.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 
 
 /* Compression methods (see algorithm.doc) */
@@ -210,6 +210,107 @@ static ush mask_bits[] =
 
 #define NEEDBITS(n) do {while(k<(n)){b|=((ulg)parentGetByte())<<k;k+=8;}} while (0)
 #define DUMPBITS(n) do {b>>=(n);k-=(n);} while (0)
+
+/* The state stored in filesystem-specific data.  */
+class GzioReadStream : public Common::SeekableReadStream
+{
+public:
+	enum class Mode { ZLIB, CLICKTEAM } _mode;
+
+	GzioReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 uncompressedSize, Mode mode, const byte *dict = nullptr, uint32 dict_size = 0) :
+		_dataOffset(parent->pos()), _blockType(0), _blockLen(0),
+		_lastBlock(0), _codeState (0), _inflateN(0),
+		_inflateD(0), _bb(0), _bk(0), _wp(0), _tl(nullptr),
+		_td(nullptr), _bl(0),
+		_bd(0), _savedOffset(0), _err(false), _mode(mode), _input(parent, disposeParent),
+		_inbufD(0), _inbufSize(0), _uncompressedSize(uncompressedSize), _streamPos(0), _eos(false) {
+
+		if (dict && dict_size) {
+			dict_size = MIN<uint32>(dict_size, sizeof(_slide));
+			memcpy(_slide + sizeof(_slide) - dict_size, dict, dict_size);
+		}
+	}
+
+	uint32 read(void *dataPtr, uint32 dataSize) override;
+
+	bool eos() const override { return _eos; }
+	bool err() const override { return _err; }
+	void clearErr() override { _eos = false; _err = false; }
+
+	int64 pos() const override { return _streamPos; }
+	int64 size() const override { return _uncompressedSize; }
+
+	bool seek(int64 offs, int whence = SEEK_SET) override;
+
+	void initialize_tables();
+	bool test_zlib_header();
+	bool test_gzip_header();
+
+private:
+  /*
+   *  Window Size
+   *
+   *  This must be a power of two, and at least 32K for zip's deflate method
+   */
+
+	static const int WSIZE = 0x8000;
+	static const int INBUFSIZ = 0x2000;
+
+	/* If input is in memory following fields are used instead of file.  */
+	Common::DisposablePtr<Common::SeekableReadStream> _input;
+	/* The offset at which the data starts in the underlying file.  */
+	int64 _dataOffset;
+	/* The type of current block.  */
+	int _blockType;
+	/* The length of current block.  */
+	int _blockLen;
+	/* The flag of the last block.  */
+	int _lastBlock;
+	/* The flag of codes.  */
+	int _codeState;
+	/* The length of a copy.  */
+	unsigned _inflateN;
+	/* The index of a copy.  */
+	unsigned _inflateD;
+	/* The bit buffer.  */
+	unsigned long _bb;
+	/* The bits in the bit buffer.  */
+	unsigned _bk;
+	/* The sliding window in uncompressed data.  */
+	uint8 _slide[WSIZE];
+	/* Current position in the slide.  */
+	unsigned _wp;
+	/* The literal/length code table.  */
+	struct huft *_tl;
+	/* The distance code table.  */
+	struct huft *_td;
+	/* The lookup bits for the literal/length code table. */
+	int _bl;
+	/* The lookup bits for the distance code table.  */
+	int _bd;
+	/* The original offset value.  */
+	int64 _savedOffset;
+
+	bool _err;
+
+	/* The input buffer.  */
+	byte _inbuf[INBUFSIZ];
+	int _inbufD;
+	int _inbufSize;
+	uint64 _uncompressedSize;
+	uint64 _streamPos;
+	bool _eos;
+
+	void inflate_window();
+	void get_new_block();
+	byte parentGetByte();
+	void parentSeek(int64 off);
+	void init_fixed_block();
+	int inflate_codes_in_window();
+	void init_dynamic_block ();
+	void init_stored_block ();
+	int32 readAtOffset(int64 offset, byte *buf, uint32 len);
+};
 
 byte
 GzioReadStream::parentGetByte ()
@@ -932,6 +1033,13 @@ GzioReadStream::inflate_window ()
 	  if (_lastBlock)
 	    break;
 
+	  if (_inbufD == _inbufSize && _input->eos())
+	    {
+	      /* No buffer anymore on a block boundary */
+	      _lastBlock = true;
+	      break;
+	    }
+
 	  get_new_block ();
 	}
 
@@ -1043,8 +1151,87 @@ GzioReadStream::test_zlib_header ()
       return false;
     }
 
-  _dataOffset = 2;
+  _dataOffset += 2;
 
+  return true;
+}
+
+bool
+GzioReadStream::test_gzip_header ()
+{
+  uint8 hdr[2];
+  uint8 cm, flg;
+
+  hdr[0] = parentGetByte ();
+  hdr[1] = parentGetByte ();
+  if (hdr[0] != 0x1F || hdr[1] != 0x8B)
+    {
+      return false;
+    }
+
+  cm = parentGetByte ();
+  /* Check that compression method is DEFLATE.  */
+  if (cm != GZ_DEFLATED)
+    {
+      return false;
+    }
+
+  flg = parentGetByte ();
+
+  // time
+  parentGetByte ();
+  parentGetByte ();
+  parentGetByte ();
+  parentGetByte ();
+
+  // XFL & OS
+  parentGetByte ();
+  parentGetByte ();
+
+  _dataOffset += 10;
+
+  // Invalid flags set
+  if (flg & GZ_RESERVED)
+    {
+      return false;
+    }
+
+  // Extra field
+  if (flg & GZ_EXTRA_FIELD)
+    {
+      uint16 xlen = parentGetByte () << 8;
+      xlen |= parentGetByte ();
+      _dataOffset += 2;
+      while (xlen--)
+        {
+	  parentGetByte ();
+          _dataOffset++;
+	}
+    }
+
+  // File name
+  if (flg & GZ_ORIG_NAME)
+    {
+      while (parentGetByte ())
+        _dataOffset++;
+      _dataOffset++;
+    }
+
+  // Comment
+  if (flg & GZ_COMMENT)
+    {
+      while (parentGetByte ())
+        _dataOffset++;
+      _dataOffset++;
+    }
+
+  // CRC
+  if (flg & GZ_CRC)
+    {
+      parentGetByte ();
+      parentGetByte ();
+      _dataOffset += 2;
+    }
   return true;
 }
 
@@ -1055,7 +1242,7 @@ GzioReadStream::readAtOffset (int64 offset, byte *buf, uint32 len)
 
   /* Do we reset decompression to the beginning of the file?  */
   if (_savedOffset > offset + WSIZE)
-    initialize_tables ();
+    initialize_tables();
 
   /*
    *  This loop operates upon uncompressed data only.  The only
@@ -1098,13 +1285,6 @@ GzioReadStream::readAtOffset (int64 offset, byte *buf, uint32 len)
 }
 
 uint32 GzioReadStream::read(void *dataPtr, uint32 dataSize) {
-	bool maybeEos = false;
-	// Read at most as many bytes as are still available...
-	if (dataSize > _uncompressedSize - _streamPos) {
-		dataSize = _uncompressedSize - _streamPos;
-		maybeEos = true;
-	}
-
 	int32 actualRead = readAtOffset(_streamPos, (byte *)dataPtr, dataSize);
 	if (actualRead < 0) {
 		_err = true;
@@ -1113,7 +1293,7 @@ uint32 GzioReadStream::read(void *dataPtr, uint32 dataSize) {
 
 	_streamPos += actualRead;
 
-	if (maybeEos &&	actualRead == (int32)dataSize)
+	if (_lastBlock && (uint32)actualRead < dataSize)
 		_eos = true;
 
 	return actualRead;
@@ -1121,9 +1301,10 @@ uint32 GzioReadStream::read(void *dataPtr, uint32 dataSize) {
 
 bool GzioReadStream::seek(int64 offs, int whence) {
 	// Pre-Condition
-	assert(_streamPos <= _uncompressedSize);
+	assert(_uncompressedSize == 0 || _streamPos <= _uncompressedSize);
 	switch (whence) {
 	case SEEK_END:
+		assert(_uncompressedSize != 0);
 		_streamPos = _uncompressedSize + offs;
 		break;
 	case SEEK_SET:
@@ -1136,71 +1317,133 @@ bool GzioReadStream::seek(int64 offs, int whence) {
 		break;
 	}
 	// Post-Condition
-	assert(_streamPos <= _uncompressedSize);
+	assert(_uncompressedSize == 0 || _streamPos <= _uncompressedSize);
 
 	// Reset end-of-stream flag on a successful seek
 	_eos = false;
 	return true;
 }
 
-GzioReadStream* GzioReadStream::openDeflate(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
-{
-  GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::ZLIB);
+#ifndef USE_ZLIB
+SeekableReadStream* wrapCompressedReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 knownSize) {
+	if (!parent)
+		return nullptr;
 
-  gzio->initialize_tables ();
+	if (parent->eos() || parent->err() || parent->size() < 2) {
+		if (disposeParent == DisposeAfterUse::YES) {
+			delete parent;
+		}
+		return nullptr;
+	}
 
-  return gzio;
+	uint16 header = parent->readUint16BE();
+	bool isCompressed = (header == 0x1F8B ||
+			     ((header & 0x0F00) == 0x0800 &&
+			      header % 31 == 0));
+	parent->seek(-2, SEEK_CUR);
+	if (!isCompressed) {
+		return parent;
+	}
+
+	// Read gzip footer
+	if (header == 0x1F8B) {
+		uint64 pos = parent->pos();
+		// Retrieve the original file size
+		parent->seek(-4, SEEK_END);
+		knownSize = parent->readUint32LE();
+		parent->seek(pos, SEEK_SET);
+	}
+
+	GzioReadStream* gzio = new GzioReadStream(parent, disposeParent, knownSize, GzioReadStream::Mode::ZLIB);
+
+	if (header == 0x1F8B) {
+		if (!gzio->test_gzip_header()) {
+			delete gzio;
+			return nullptr;
+		}
+	} else {
+		if (!gzio->test_zlib_header()) {
+			delete gzio;
+			return nullptr;
+		}
+	}
+
+	gzio->initialize_tables();
+	return gzio;
 }
 
-GzioReadStream* GzioReadStream::openClickteam(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
-{
-  GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::CLICKTEAM);
+SeekableReadStream* wrapDeflateReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 knownSize, const byte *dict, uint dictLen) {
+	if (!parent)
+		return nullptr;
 
-  gzio->initialize_tables ();
+	GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, knownSize, GzioReadStream::Mode::ZLIB, dict, dictLen);
+	gzio->initialize_tables();
 
-  return gzio;
+	return gzio;
 }
 
-GzioReadStream* GzioReadStream::openZlib(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
-{
-  GzioReadStream* gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::ZLIB);
-
-  if (!gzio->test_zlib_header())
-    {
-      delete gzio;
-      return nullptr;
-    }
-
-  gzio->initialize_tables();
-
-  return gzio;
+WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
+	// Not supported, return stream itself to write uncompressed data
+	return toBeWrapped;
 }
 
-int32
-GzioReadStream::clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
-{
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openClickteam(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
-  if (!gzio)
-    return -1;
-  return gzio->readAtOffset(off, outbuf, outsize);
+bool inflateZlib(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen) {
+	Common::ScopedPtr<Common::SeekableReadStream> gzio(wrapCompressedReadStream(new Common::MemoryReadStream(src, srcLen, DisposeAfterUse::NO), DisposeAfterUse::YES, 0));
+	if (!gzio)
+		return false;
+	uint32 readLen = gzio->read(dst, *dstLen);
+	if (readLen == *dstLen && !gzio->eos()) {
+		// Make sure we are at the end by forcing EOS (simulate Z_BUF_ERROR)
+		byte chk;
+		gzio->read(&chk, sizeof(chk));
+	}
+	*dstLen = readLen;
+	return !gzio->err() && gzio->eos();
 }
 
-int32
-GzioReadStream::deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
-{
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
-  if (!gzio)
-    return -1;
-  return gzio->readAtOffset(off, outbuf, outsize);
+bool inflateZlibHeaderless(byte *dst, uint *dstLen, const byte *src, uint srcLen, const byte *dict, uint dictLen) {
+	Common::ScopedPtr<Common::SeekableReadStream> gzio(wrapDeflateReadStream(new Common::MemoryReadStream(src, srcLen, DisposeAfterUse::NO), DisposeAfterUse::YES, 0, dict, dictLen));
+	if (!gzio)
+	    return false;
+	*dstLen = gzio->read(dst, *dstLen);
+	// In zlib version we use Z_SYNC_FLUSH so no error is raised if buffer is not completely consumed
+	return !gzio->err();
 }
 
-int32
-GzioReadStream::zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
-{
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openZlib(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
-  if (!gzio)
-    return -1;
-  return gzio->readAtOffset(off, outbuf, outsize);
+bool inflateZlib(Common::WriteStream *dst, Common::SeekableReadStream *src) {
+	Common::ScopedPtr<Common::SeekableReadStream> gzio(wrapCompressedReadStream(src, DisposeAfterUse::NO, 0));
+	if (!gzio)
+		return false;
+
+	byte *buffer = new byte[65536];
+	while(!gzio->eos()) {
+		uint32 readBytes = gzio->read(buffer, 65536);
+		if (gzio->err()) {
+			return false;
+		}
+		dst->write(buffer, readBytes);
+	}
+	return true;
+}
+#endif
+
+SeekableReadStream* wrapClickteamReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 uncompressed_size) {
+	if (!parent)
+		return nullptr;
+
+	GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::CLICKTEAM);
+	gzio->initialize_tables();
+
+	return gzio;
+}
+
+bool inflateClickteam(byte *dst, uint *dstLen, const byte *src, uint srcLen) {
+	Common::ScopedPtr<Common::SeekableReadStream> gzio(wrapClickteamReadStream(new Common::MemoryReadStream(src, srcLen, DisposeAfterUse::NO), DisposeAfterUse::YES, 0));
+	if (!gzio)
+		return false;
+
+	*dstLen = gzio->read(dst, *dstLen);
+	return !gzio->err();
 }
 
 }

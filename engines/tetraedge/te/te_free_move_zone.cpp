@@ -22,7 +22,7 @@
 #include "tetraedge/tetraedge.h"
 
 #include "common/file.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "tetraedge/te/te_free_move_zone.h"
 #include "tetraedge/te/micropather.h"
@@ -202,7 +202,7 @@ bool TeFreeMoveZone::loadAStar(const Common::Path &path, const TeVector2s32 &siz
 	byte *buf = new byte[bytes];
 	byte *outBuf = new byte[decompBytes];
 	file.read(buf, bytes);
-	bool result = Common::uncompress(outBuf, &decompBytes, buf, bytes);
+	bool result = Common::inflateZlib(outBuf, &decompBytes, buf, bytes);
 	delete [] buf;
 	if (result) {
 		for (uint i = 0; i < decompBytes; i++)

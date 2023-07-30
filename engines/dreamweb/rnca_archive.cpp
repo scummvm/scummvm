@@ -20,7 +20,7 @@
  */
 
 #include "common/array.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/substream.h"

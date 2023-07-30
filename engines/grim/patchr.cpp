@@ -22,7 +22,7 @@
 #include "common/substream.h"
 #include "common/md5.h"
 #include "common/file.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 #include "common/bufferedstream.h"
 
 #include "engines/grim/patchr.h"

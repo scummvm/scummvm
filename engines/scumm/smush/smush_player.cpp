@@ -48,7 +48,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace Scumm {
 
@@ -800,7 +800,6 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	}
 }
 
-#ifdef USE_ZLIB
 void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	if (_skipNext) {
 		_skipNext = false;
@@ -814,7 +813,7 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	unsigned long decompressedSize = READ_BE_UINT32(chunkBuffer);
 	byte *fobjBuffer = (byte *)malloc(decompressedSize);
-	if (!Common::uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4))
+	if (!Common::inflateZlib(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4))
 		error("SmushPlayer::handleZlibFrameObject() Zlib uncompress error");
 	free(chunkBuffer);
 
@@ -829,7 +828,6 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	free(fobjBuffer);
 }
-#endif
 
 void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	assert(subSize >= 14);
@@ -877,11 +875,9 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		case MKTAG('F','O','B','J'):
 			handleFrameObject(subSize, b);
 			break;
-#ifdef USE_ZLIB
 		case MKTAG('Z','F','O','B'):
 			handleZlibFrameObject(subSize, b);
 			break;
-#endif
 		case MKTAG('P','S','A','D'):
 			if (!_compressedFileMode) {
 				audioChunk = (uint8 *)malloc(subSize + 8);

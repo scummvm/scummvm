@@ -26,7 +26,7 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/system.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 #include "graphics/palette.h"
 
 #include "composer/composer.h"

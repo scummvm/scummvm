@@ -27,7 +27,7 @@
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/util.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "wintermute/base/gfx/xfile_loader.h"
 
@@ -714,7 +714,6 @@ bool XFileLoader::getString(char *str, uint maxLen) {
 }
 
 bool XFileLoader::decompressMsZipData() {
-#ifdef USE_ZLIB
 	bool error = false;
 
 	byte *compressedBlock = new byte[kCabInputmax];
@@ -781,7 +780,6 @@ bool XFileLoader::decompressMsZipData() {
 	}
 
 	delete[] decompressedData;
-#endif
 
 	warning("XFileLoader: decompressMsZipData: Error decompressing data!");
 	return false;

@@ -65,11 +65,17 @@
    PkWare has also a specification at :
       ftp://ftp.pkware.com/probdesc.zip */
 
+// Disable symbol overrides so that we can use zlib.h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 
+#ifdef USE_ZLIB
+#include <zlib.h>
+#else  // !USE_ZLIB
+
 // Even when zlib is not linked in, we can still open ZIP archives and read
-// uncompressed files from them.  Attempted decompression of compressed files
-// will result in an error.
+// files from them.  Attempted decompression of compressed files will use GZio
 //
 // Define the constants and types used by zlib.
 #define Z_ERRNO -1
@@ -83,8 +89,10 @@ typedef unsigned char Byte;
 typedef Byte Bytef;
 
 #include "common/crc.h"
+#endif
+
 #include "common/fs.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 #include "common/compression/unzip.h"
 #include "common/memstream.h"
 
@@ -219,7 +227,11 @@ int unzGetCurrentFileInfo(unzFile file,
    from it, and close it (you can close it before reading all the file)
    */
 
-Common::SharedArchiveContents unzOpenCurrentFile(unzFile file, const Common::CRC32& crc);
+Common::SharedArchiveContents unzOpenCurrentFile(unzFile file
+#ifndef USE_ZLIB
+		, const Common::CRC32& crc
+#endif
+		);
 /*
   Open for reading data the current file in the zipfile.
   If there is no error, the return value is UNZ_OK.
@@ -909,7 +921,11 @@ static int unzlocal_CheckCurrentFileCoherencyHeader(unz_s *s, uInt *piSizeVar,
   Open for reading data the current file in the zipfile.
   If there is no error and the file is opened, the return value is UNZ_OK.
 */
-Common::SharedArchiveContents unzOpenCurrentFile (unzFile file, const Common::CRC32 &crc) {
+Common::SharedArchiveContents unzOpenCurrentFile (unzFile file
+#ifndef USE_ZLIB
+		, const Common::CRC32 &crc
+#endif
+		) {
 	uInt iSizeVar;
 	unz_s *s;
 	uLong offset_local_extrafield;  /* offset of the local extra field */
@@ -944,7 +960,7 @@ Common::SharedArchiveContents unzOpenCurrentFile (unzFile file, const Common::CR
 	case Z_DEFLATED:
 		uncompressedBuffer = new byte[s->cur_file_info.uncompressed_size];
 		assert(s->cur_file_info.uncompressed_size == 0 || uncompressedBuffer != nullptr);
-		Common::GzioReadStream::deflateDecompress(uncompressedBuffer, s->cur_file_info.uncompressed_size, compressedBuffer, s->cur_file_info.compressed_size);
+		Common::inflateZlibHeaderless(uncompressedBuffer, s->cur_file_info.uncompressed_size, compressedBuffer, s->cur_file_info.compressed_size);
 		delete[] compressedBuffer;
 		compressedBuffer = nullptr;
 		break;
@@ -953,8 +969,11 @@ Common::SharedArchiveContents unzOpenCurrentFile (unzFile file, const Common::CR
 		delete[] compressedBuffer;
 		return Common::SharedArchiveContents();
 	}
-
+#ifndef USE_ZLIB
 	uint32 crc32_data = crc.crcFast(uncompressedBuffer, s->cur_file_info.uncompressed_size);
+#else
+	uint32 crc32_data = crc32(0, uncompressedBuffer, s->cur_file_info.uncompressed_size);
+#endif
 	if (crc32_data != crc32_wait) {
 		delete[] uncompressedBuffer;
 		warning("CRC32 mismatch: %08x, %08x", crc32_data, crc32_wait);
@@ -970,7 +989,9 @@ namespace Common {
 
 class ZipArchive : public MemcachingCaseInsensitiveArchive {
 	unzFile _zipFile;
+#ifndef USE_ZLIB
 	Common::CRC32 _crc;
+#endif
 	bool _flattenTree;
 
 public:
@@ -1006,7 +1027,7 @@ public:
 };
 */
 
-ZipArchive::ZipArchive(unzFile zipFile, bool flattenTree) : _zipFile(zipFile), _crc(), _flattenTree(flattenTree) {
+ZipArchive::ZipArchive(unzFile zipFile, bool flattenTree) : _zipFile(zipFile), _flattenTree(flattenTree) {
 	assert(_zipFile);
 }
 
@@ -1043,8 +1064,11 @@ const ArchiveMemberPtr ZipArchive::getMember(const Path &path) const {
 Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::String& name) const {
 	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
 		return Common::SharedArchiveContents();
-
+#ifndef USE_ZLIB
 	return unzOpenCurrentFile(_zipFile, _crc);
+#else
+	return unzOpenCurrentFile(_zipFile);
+#endif
 }
 
 Archive *makeZipArchive(const String &name, bool flattenTree) {

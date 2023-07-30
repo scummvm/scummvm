@@ -22,7 +22,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/substream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_light.h"
@@ -453,7 +453,7 @@ Common::SeekableReadStream *TeModel::tryLoadZlibStream(Common::SeekableReadStrea
 	}
 	uint32 uncompressedSize = stream.readUint32LE();
 	Common::SeekableSubReadStream *substream = new Common::SeekableSubReadStream(&stream, stream.pos(), stream.size());
-	return Common::wrapCompressedReadStream(substream, uncompressedSize);
+	return Common::wrapCompressedReadStream(substream, DisposeAfterUse::YES, uncompressedSize);
 }
 
 bool TeModel::loadWeights(Common::ReadStream &stream, Common::Array<weightElement> &weights) {

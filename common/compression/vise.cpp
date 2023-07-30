@@ -23,7 +23,7 @@
 
 #include "common/macresman.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 // Installer VISE archive loader.
 //
@@ -188,14 +188,10 @@ Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStream() co
 	//
 	// If this turns out to be significant, then this will need to be updated to pass information to the deflate decompressor to
 	// handle the non-standard behavior.
-#if defined(USE_ZLIB)
 	if (!Common::inflateZlibHeaderless(decompressedData, uncompressedSize, &compressedData[0], compressedSize)) {
 		free(decompressedData);
 		return nullptr;
 	}
-#else
-	return nullptr;
-#endif
 
 	return new Common::MemoryReadStream(decompressedData, uncompressedSize, DisposeAfterUse::YES);
 }

@@ -32,7 +32,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/file.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 #include "common/archive.h"
 #include "common/tokenizer.h"
 #include "common/config-manager.h"
@@ -221,7 +221,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			file->seek(dataOffset + prefixSize, SEEK_SET);
 			file->read(compBuffer, compSize);
 
-			if (Common::uncompress(data, &uncompSize, compBuffer, compSize) != true) {
+			if (Common::inflateZlib(data, &uncompSize, compBuffer, compSize) != true) {
 				error("Error uncompressing file '%s'", filename.c_str());
 				delete[] compBuffer;
 				delete file;

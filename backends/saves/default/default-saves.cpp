@@ -36,7 +36,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include <errno.h>	// for removeSavefile()
 

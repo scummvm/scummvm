@@ -34,7 +34,7 @@
 #include "common/formats/quicktime.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace Common {
 
@@ -265,7 +265,6 @@ int QuickTimeParser::readMOOV(Atom atom) {
 }
 
 int QuickTimeParser::readCMOV(Atom atom) {
-#ifdef USE_ZLIB
 	// Read in the dcom atom
 	_fd->readUint32BE();
 	if (_fd->readUint32BE() != MKTAG('d', 'c', 'o', 'm'))
@@ -290,7 +289,7 @@ int QuickTimeParser::readCMOV(Atom atom) {
 
 	// Uncompress the data
 	unsigned long dstLen = uncompressedSize;
-	if (!uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
+	if (!inflateZlib(uncompressedData, &dstLen, compressedData, compressedSize)) {
 		warning ("Could not uncompress cmov chunk");
 		free(compressedData);
 		free(uncompressedData);
@@ -311,10 +310,6 @@ int QuickTimeParser::readCMOV(Atom atom) {
 	_fd = oldStream;
 
 	return err;
-#else
-	warning ("zlib not found, cannot read QuickTime cmov atom");
-	return -1;
-#endif
 }
 
 int QuickTimeParser::readMVHD(Atom atom) {

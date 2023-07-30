@@ -31,7 +31,7 @@
 
 #include "audio/decoders/wave.h"
 
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 
 namespace Video {
 
@@ -176,7 +176,7 @@ void DXADecoder::DXAVideoTrack::setFrameStartPos() {
 }
 
 void DXADecoder::DXAVideoTrack::decodeZlib(byte *data, int size, int totalSize) {
-	Common::GzioReadStream::zlibDecompress(data, totalSize, _inBuffer, size);
+	Common::inflateZlib(data, totalSize, _inBuffer, size);
 }
 
 #define BLOCKW 4

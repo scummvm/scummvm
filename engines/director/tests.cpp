@@ -21,7 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "common/memstream.h"
 #include "common/macresman.h"

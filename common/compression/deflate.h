@@ -23,22 +23,21 @@
 #define COMMON_ZLIB_H
 
 #include "common/scummsys.h"
+#include "common/types.h"
 
 namespace Common {
 
 /**
- * @defgroup common_zlib zlib
+ * @defgroup common_deflate deflate
  * @ingroup common
  *
- * @brief API for zlib operations.
+ * @brief API for deflate based operations.
  *
  * @{
  */
 
 class SeekableReadStream;
 class WriteStream;
-
-#if defined(USE_ZLIB)
 
 /**
  * Thin wrapper around zlib's uncompress() function. This wrapper makes
@@ -59,7 +58,10 @@ class WriteStream;
  *
  * @return true on success (i.e. Z_OK), false otherwise.
  */
-bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
+bool inflateZlib(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
+static inline bool inflateZlib(byte *dst, unsigned long  dstLen, const byte *src, unsigned long srcLen) {
+	return inflateZlib(dst, &dstLen, src, srcLen);
+}
 
 /**
  * Wrapper around zlib's inflate functions. This function will call the
@@ -83,12 +85,15 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
  *
  * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
  */
-bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict = nullptr, uint dictLen = 0);
+bool inflateZlibHeaderless(byte *dst, uint *dstLen, const byte *src, uint srcLen, const byte *dict = nullptr, uint dictLen = 0);
+static inline bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict = nullptr, uint dictLen = 0) {
+	return inflateZlibHeaderless(dst, &dstLen, src, srcLen, dict, dictLen);
+}
 
 /**
  * Wrapper around zlib's inflate functions. This function will call the
- * necessary inflate functions to uncompress data compressed for InstallShield
- * cabinet files.
+ * modified inflate functions to uncompress data compressed for Clickteam
+ * Installer files.
  *
  * Decompresses the src buffer into the dst buffer.
  * srcLen is the byte length of the source buffer, dstLen is the byte
@@ -102,7 +107,10 @@ bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen,
  *
  * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
  */
-bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcLen);
+bool inflateClickteam(byte *dst, uint *dstLen, const byte *src, uint srcLen);
+static inline bool inflateClickteam(byte *dst, uint  dstLen, const byte *src, uint srcLen) {
+	return inflateClickteam(dst, &dstLen, src, srcLen);
+}
 
 /**
  * Wrapper around zlib's inflate functions. This function is used by Glk to
@@ -115,8 +123,6 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
  * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
  */
 bool inflateZlib(Common::WriteStream *dst, Common::SeekableReadStream *src);
-
-#endif
 
 /**
  * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
@@ -137,9 +143,42 @@ bool inflateZlib(Common::WriteStream *dst, Common::SeekableReadStream *src);
  * returned).
  *
  * @param toBeWrapped	the stream to be wrapped (if it is in gzip-format)
- * @param knownSize		a supplied length of the compressed data (if not available directly)
+ * @param knownSize	a supplied length of the uncompressed data (if not available directly)
  */
-SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize = 0);
+SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped,
+		DisposeAfterUse::Flag disposeParent = DisposeAfterUse::YES, uint64 knownSize = 0);
+
+/**
+ * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
+ * provides transparent on-the-fly decompression. Assumes the data it
+ * retrieves from the wrapped stream is compressed with deflate algorithm.
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
+ *
+ * @param toBeWrapped	the stream to be wrapped (if it is in gzip-format)
+ * @param knownSize	a supplied length of the uncompressed data (if not available directly)
+ */
+SeekableReadStream *wrapDeflateReadStream(SeekableReadStream *toBeWrapped,
+		DisposeAfterUse::Flag disposeParent = DisposeAfterUse::YES, uint64 knownSize = 0,
+		const byte *dict = nullptr, uint dictLen = 0);
+
+/**
+ * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
+ * provides transparent on-the-fly decompression. Assumes the data it
+ * retrieves from the wrapped stream is compressed with the Clickteam deflate
+ * variant algorithm.
+ * The stream is returned wrapped, unless there is no ZLIB support,
+ * then NULL is returned and the old stream is destroyed.
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
+ *
+ * @param toBeWrapped	the stream to be wrapped (if it is in gzip-format)
+ * @param knownSize	a supplied length of the compressed data (if not available directly)
+ */
+SeekableReadStream *wrapClickteamReadStream(SeekableReadStream *toBeWrapped,
+		DisposeAfterUse::Flag disposeParent = DisposeAfterUse::YES, uint64 knownSize = 0);
 
 /**
  * Take an arbitrary WriteStream and wrap it in a custom stream which provides
