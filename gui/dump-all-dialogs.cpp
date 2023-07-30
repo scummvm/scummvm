@@ -44,6 +44,8 @@ void saveGUISnapshot(Graphics::Surface surf, const Common::String &filename) {
 		Image::writePNG(outFile, surf);
 		outFile.finalize();
 		outFile.close();
+
+		warning("Dumped %s", filename.c_str());
 	}
 }
 
@@ -65,15 +67,16 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 
 	// MessageDialog
 	GUI::MessageDialog messageDialog(message);
-	messageDialog.runModal();     // For rendering
+	messageDialog.open();     // For rendering
 	messageDialog.reflowLayout(); // For updating surface
 	g_gui.redrawFull();
 	g_system->grabOverlay(surf);
 	saveGUISnapshot(surf, "message-" + filename);
+	messageDialog.close();
 
 	// AboutDialog
 	GUI::AboutDialog aboutDialog;
-	aboutDialog.runModal();     // For rendering
+	aboutDialog.open();     // For rendering
 	aboutDialog.reflowLayout(); // For updating surface
 	g_gui.redrawFull();
 	g_system->grabOverlay(surf);
@@ -81,11 +84,14 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	aboutDialog.close();
 
 	// LauncherDialog
+#if 0
 	GUI::LauncherChooser chooser;
 	chooser.selectLauncher();
-	chooser.runModal();
+	chooser.open();
 	g_system->grabOverlay(surf);
 	saveGUISnapshot(surf, "launcher-" + filename);
+	chooser.close();
+#endif
 }
 
 void dumpAllDialogs(const Common::String &message) {
