@@ -3846,6 +3846,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "5b63e0d2bc117cc9d32b88bfb5de167c", 64199320),
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "6d17d5534a5c77a419117975053a1e90", 64199782), // Mac v2.3
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "7769be646afbdce6909e568a0d9bc857", 64204216), // Mac v2.4a
+	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "9f7e0d47caa495c98d8ea781fb52be49", 45246635), // Mac v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 19757071, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "blackwell1.exe", "e5a75b86a0ea8143e1784261f5f52e83", 67241529, AGSTEAM_WADJETEYE),
@@ -3870,6 +3871,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell2", "ac2game.dat", "82f8bf2635ea1b5bfb2e8693fa883f89", 57638596), // Mac
 	GAME_ENTRY_EN_GOG("blackwell2", "ac2game.dat", "c787c663b92cb3596a8e7219f0f9bb25", 57639048), // Mac v2.3
 	GAME_ENTRY_EN_GOG("blackwell2", "ac2game.dat", "53b931909fc86ede449eb371e5396c36", 57639192), // Mac v2.4
+	GAME_ENTRY_EN_GOG("blackwell2", "ac2game.dat", "67d4c87f7005084587f3c072be7279e5", 38329275), // Mac v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14496128, AGSTEAM_WADJETEYE), // Win
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14469500, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "00edc7b69ae377f6093ac567fd901849", 15683333, AGSTEAM_WADJETEYE),
@@ -3891,6 +3893,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell3", "ac2game.dat", "0b99002018dcf6d3db95925006da01bb", 170769466), // Mac
 	GAME_ENTRY_EN_GOG("blackwell3", "ac2game.dat", "0b6f9ba727ce934a515dcff9af9c3b9e", 170769945), // Mac v2.3
 	GAME_ENTRY_EN_GOG("blackwell3", "ac2game.dat", "613c49405b24b367a961a7e14a3849d0", 170769944), // Mac v2.3b
+	GAME_ENTRY_EN_GOG("blackwell3", "ac2game.dat", "c36dd508e650e798ccd4673df6f61a8f", 101541153), // Mac v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578803, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 171969680, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell3", "convergence.exe", "f261c2505f98503a1ec9f1dff7f13bda", 173873229, AGSTEAM_WADJETEYE),
@@ -3913,6 +3916,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell4", "deception.ags", "3c999468155295d3e0809c04b2e53cff", 216579565),  //Linux v3.0
 	GAME_ENTRY_EN_GOG("blackwell4", "agsgame.dat", "1c0bf79d9720d0a81219e8778fb7e231", 304040703), // Linux
 	GAME_ENTRY_EN_GOG("blackwell4", "ac2game.dat", "05a3a5ff709a5764d2b4a5dc301107d6", 302140480), // Mac
+	GAME_ENTRY_EN_GOG("blackwell4", "ac2game.dat", "3c999468155295d3e0809c04b2e53cff", 216579565), // Mac v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 304076138, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell4", "deception.exe", "499c3261a1f73c5b78125beeca1c2d08", 305215631, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell4", "deception.exe", "8f7335b030b38b610637b3033859f828", 305293936, AGSTEAM_WADJETEYE),
@@ -3925,6 +3929,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell5", "epiphany.ags", "de7d49da1a1c5e0cd5b01a3c3770921d", 243851319),  //Linux v3.0
 	GAME_ENTRY_EN_GOG("blackwell5", "agsgame.dat", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897), // Linux
 	GAME_ENTRY_EN_GOG("blackwell5", "ac2game.dat", "8acaa20eab5589cdc2fd81ef3d55eff3", 279928291), // Mac v2.3
+	GAME_ENTRY_EN_GOG("blackwell5", "ac2game.dat", "de7d49da1a1c5e0cd5b01a3c3770921d", 243851319), // Mac v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281856724, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell5", "epiphany.exe", "764f20abb335b94ab8ec6a4ef6db01ea", 283020359, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell5", "epiphany.exe", "c3f7a995bbea7ce4ba7a2a97995c677e", 283092455, AGSTEAM_WADJETEYE),
@@ -3985,6 +3990,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70356639), // Mac v2.1
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70375199), // Mac v2.2
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70412031), // Mac v2.3
+	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58212622), // Mac v3.0
 	GAME_ENTRY_GOG("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62069353), // Linux
 	GAME_ENTRY_GOG("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58212622),  // Linux v3.0
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
@@ -4100,6 +4106,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976474850), // Mac
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475347), // Mac v2.7a
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976476198), // Mac v3
+	GAME_ENTRY_GOG("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 977991488), // Mac v3.0a
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182),
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678),  // with Ita translation
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603766),
@@ -4128,6 +4135,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("resonance", "resonance.exe", "6cc23ce7cdf62de776c6b8ddb6b8a7ff", 850643390),  // v2.3
 	GAME_ENTRY_EN_GOG("resonance", "resonance.exe", "b6ce764bf83d025c7c0aa50ceb006e09", 732933098),  // v3.0
 	GAME_ENTRY_EN_GOG("resonance", "ac2game.dat", "1dd9f78fbd1947fdf66a820928baf8a4", 847433642), // Mac v2.3
+	GAME_ENTRY_EN_GOG("resonance", "ac2game.dat", "920f99ac1e32f07ccde5c960aac52d8c", 729663446), // Mac v3.0
 	GAME_ENTRY_EN_GOG("resonance", "agsgame.dat", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // Linux
 	GAME_ENTRY_PLUGIN_STEAM_EN("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915, AGSTEAM_WADJETEYE),  // Win original
 	GAME_ENTRY_PLUGIN_STEAM_EN("resonance", "resonance.exe", "6cc23ce7cdf62de776c6b8ddb6b8a7ff", 850642889, AGSTEAM_WADJETEYE),  // Win-Linux
@@ -4153,6 +4161,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("shardlight", "shardlight.exe", "400682c45fb6c0754ef545b96e7efc1d", 391410104), // Win v3.0
 	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640346706), // Mac v2.3a
 	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640348438), // Mac v2.4
+	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 388236708), // Mac v3.0
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642142591),
 	GAME_ENTRY_EN("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
@@ -4219,6 +4228,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420107616), // Win v3.0
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616), // Mac v2.2a
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445711980), // Mac v2.5a
+	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416922956), // Mac v3.0
 	GAME_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_EN_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
 	GAME_ENTRY_EN("theantidote", "The Antidote.exe", "4017d881af6467d6aad9183e6e38a261", 325819947),
