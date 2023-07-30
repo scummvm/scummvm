@@ -6,19 +6,19 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
-			<title>Version 2.7.0</title>
+			<title>Version 2.7.1</title>
 			<sparkle:releaseNotesLink>
-				https://www.scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
+				https://www.scummvm.org/frs/scummvm/2.7.1/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Sun, 26 Feb 2023 18:00:00 +0000</pubDate>
-			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2.7.0/scummvm-2.7.0-macosx.dmg"
-						sparkle:version="2.7.0" length="107482366" type="application/octet-stream"
-						sparkle:dsaSignature="MCwCFEwYaP3lLuAwxF70fw5gNUHiGeagAhQ9n7BvIeGO1/6Wj3Z9G+nMZOoVcw=="/>
+			<pubDate>Mon, 31 Jul 2023 18:00:00 +0000</pubDate>
+			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2.7.1/scummvm-2.7.1-macosx.dmg"
+						sparkle:version="2.7.1" length="106441245" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDjjWWCNulenOV4pLBflpMGHIKleAIUCWFN9yeJQYQymMZsjli928XXU54="/>
 
 			<enclosure sparkle:os="windows"
-						url="https://downloads.scummvm.org/frs/scummvm/2.7.0/scummvm-2.7.0-win32.exe"
-						sparkle:version="2.7.0" length="100086544" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFQC7aCgKmODZStr6cczzVCgVetsEbwIUdC0DITLUEAdJPq/TvYiJuLhLxGw="/>
+						url="https://downloads.scummvm.org/frs/scummvm/2.7.1/scummvm-2.7.1-win32.exe"
+						sparkle:version="2.7.1" length="101243936" type="application/octet-stream"
+						sparkle:dsaSignature="MCwCFE8d/efX65zGIzWy9c6/984/9DVdAhQ/thUr/x/NOy6ZUAJF+KH4Lp7yqg=="/>
 		</item>
 	</channel>
 </rss>
