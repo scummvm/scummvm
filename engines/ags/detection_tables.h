@@ -3854,6 +3854,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "ac2game.dat", "1051d3fa462b1e0cc8973a8775128307", 66679994, AGSTEAM_WADJETEYE), // Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48439274, AGSTEAM_WADJETEYE), // Win 3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.ags", "670f3eaa22243dc1742964b697108ee8", 45246422, AGSTEAM_WADJETEYE), // Linux 3.0
+	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.ags", "99f4ff1080509c856be96ba55e644380", 45277507, AGSTEAM_WADJETEYE), // Steamdeck
 	GAME_ENTRY_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824247), // Humble Bundle (Windows)
 	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "ca6edbac96264b2adf73ef10d5a0348d", 18800040), // v1.4 Wadjet Eye store (Win)
 	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "605e124cb7e0b56841c471e2d641c224", 68665467), // Android
@@ -3876,6 +3877,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "0c77a306c0604c46e8c3bdb1002e453b", 41517316, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "ac2game.dat", "87c0681f4eebafddc60533f799456d53", 57672335, AGSTEAM_WADJETEYE), // Linux & Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.ags", "e77c03d5033a498f918e7fa872f53309", 38329072, AGSTEAM_WADJETEYE),
+	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "Unbound.ags", "8851175e98d9d5867d4799f3955e563f", 38385837, AGSTEAM_WADJETEYE), // Steamdeck
 	GAME_ENTRY_EN("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14495742), // Humble Bunde (Windows)
 	GAME_ENTRY_EN("blackwell2", "ac2game.dat", "5c3a940514d91431e8e1c372018851ca", 69452991), // Android
 	GAME_ENTRY_EN("blackwell2", "ac2game.dat", "e28670a676a3e4e78eef76b9573e490a", 57670660), // Humble Bunde (Linux)
@@ -3898,6 +3900,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell3", "convergence.ags", "6aef643a63ffb0ab0bf2df290c19a971", 101540923, AGSTEAM_WADJETEYE),  // Linux
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell3", "ac2game.dat", "2844e3823d74652d282b8173bbde2b8b", 170703726, AGSTEAM_WADJETEYE), // Linux & Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell3", "ac2game.dat", "0b99002018dcf6d3db95925006da01bb", 170769466, AGSTEAM_WADJETEYE), // Mac
+	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell3", "Convergence.ags", "a20d1e625f1832f2282e7f595c1de70a", 101579536, AGSTEAM_WADJETEYE),  // Steamdeck
 	GAME_ENTRY_EN("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578032), // Humble Bundle (Windows, v1.1)
 	GAME_ENTRY_EN("blackwell3", "ac2game.dat", "c894f6005f479ba8f12e87223920aa6a", 170700456), // Humble Bundle (Linux)
 	GAME_ENTRY_EN("blackwell3", "ac2game.dat", "2260c1a21aba7ac00baf0100d4ca54f1", 173301005), // Android
