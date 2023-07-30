@@ -198,13 +198,15 @@ void FreescapeEngine::drawBorder() {
 
 void FreescapeEngine::drawTitle() {
 	_gfx->setViewport(_fullscreenViewArea);
-	if (!_titleTexture) {
-		Graphics::Surface *title = _gfx->convertImageFormatIfNecessary(_title);
-		_titleTexture = _gfx->createTexture(title);
-		title->free();
-		delete title;
+	if (_title) {
+		if (!_titleTexture) {
+			Graphics::Surface *title = _gfx->convertImageFormatIfNecessary(_title);
+			_titleTexture = _gfx->createTexture(title);
+			title->free();
+			delete title;
+		}
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _titleTexture);
 	}
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _titleTexture);
 	_gfx->setViewport(_viewArea);
 }
 

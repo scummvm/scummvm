@@ -130,10 +130,17 @@ void FreescapeEngine::loadColorPalette() {
 void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
 	int r, g, b;
-	// This loop will load all the available palettes, which are more
-	// the current areas. This indicates that more areas
-	// were originally planned, but they are not in the final game
-	for (uint i = 0; i < _areaMap.size() + 2; i++) {
+	uint numberOfAreas = _areaMap.size();
+
+	if (isDriller())
+		// This loop will load all the available palettes, which are more
+		// than the current areas in Driller. This indicates that more areas
+		// were originally planned, but they are not in the final game
+		numberOfAreas += 2;
+	else if (isDark())
+		numberOfAreas -= 2;
+
+	for (uint i = 0; i < numberOfAreas; i++) {
 		int label = readField(file, 8);
 		auto palette = new byte[16][3];
 		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d at %lx", label, file->pos());

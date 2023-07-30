@@ -24,6 +24,9 @@
 namespace Freescape {
 
 void FreescapeEngine::titleScreen() {
+	if (!_title)
+		return;
+
 	int maxWait = 60 * 6;
 	for (int i = 0; i < maxWait; i++ ) {
 		Common::Event event;
@@ -61,6 +64,9 @@ void FreescapeEngine::titleScreen() {
 }
 
 void FreescapeEngine::borderScreen() {
+	if (!_border)
+		return;
+
 	int maxWait = 6 * 60;
 	for (int i = 0; i < maxWait; i++ ) {
 		Common::Event event;

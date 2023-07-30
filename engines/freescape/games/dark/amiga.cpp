@@ -73,6 +73,7 @@ Common::SeekableReadStream *DarkEngine::decryptFile(const Common::String filenam
 void DarkEngine::loadAssetsAmigaFullGame() {
 	Common::SeekableReadStream *stream = decryptFile("1.drk");
 	load8bitBinary(stream, 0x2e96a, 16);
+	loadPalettes(stream, 0x2e638);
 }
 
 } // End of namespace Freescape
