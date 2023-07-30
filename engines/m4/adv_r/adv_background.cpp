@@ -20,23 +20,48 @@
  */
 
 #include "m4/adv_r/adv_background.h"
+#include "m4/adv_r/adv_file.h"
 #include "m4/vars.h"
 
 namespace M4 {
 
 void adv_freeCodes() {
-
+	if (_G(screenCodeBuff)) {
+		delete _G(screenCodeBuff);
+		_G(screenCodeBuff) = nullptr;
+	}
 }
 
 void adv_freeBackground() {
-
+	if (_G(game_bgBuff)) {
+		delete _G(game_bgBuff);
+		_G(game_bgBuff) = nullptr;
+	}
 }
 
 bool adv_restoreBackground() {
-	return true;
+	RGB8 myPalette[256];
+	SysFile sysFile(_G(currBackgroundFN));
+
+	if (load_background(&sysFile, &_G(game_bgBuff), myPalette)) {
+		sysFile.close();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool adv_restoreCodes() {
+	SysFile sysFile(_G(currCodeFN));
+
+	_G(screenCodeBuff) = load_codes(&sysFile);
+	if (_G(screenCodeBuff)) {
+		sysFile.close();
+		return true;
+	} else {
+		return false;
+	}
+
 	return true;
 }
 
