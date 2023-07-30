@@ -46,6 +46,8 @@ void  gr_font_set(Font *font);
 int32 gr_font_get_height();
 int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y,
 	int32 w, int32 auto_spacing = 1);
+int32 gr_font_write(Buffer *target, const char *out_string, int32 x, int32 y,
+	int32 w, int32 auto_spacing);
 int32 gr_font_string_width(char *out_string, int32 auto_spacing = 1);
 int32 gr_font_string_width(const Common::String &str, int32 auto_spacing = 1);
 

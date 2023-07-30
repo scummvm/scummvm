@@ -127,6 +127,8 @@ extern void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scr
 extern void krn_ChangeBufferLuminance(Buffer *target, int32 percent);
 
 extern void krn_pal_game_task();
+extern void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType);
+extern void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay);
 
 } // namespace M4
 

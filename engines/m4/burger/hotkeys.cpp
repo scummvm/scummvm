@@ -27,7 +27,7 @@
 namespace M4 {
 namespace Burger {
 
-void escape_key_pressed(void *, void *) {
+void Hotkeys::escape_key_pressed(void *, void *) {
 	// Decide what to do depending on what kind of game is playing
 	switch (_G(executing)) {
 	case JUST_OVERVIEW:
