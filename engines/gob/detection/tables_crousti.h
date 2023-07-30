@@ -44,7 +44,7 @@
 	{ // -- Fan Translation by BJNFNE --
 		"crousti", 
 		"",
-		AD_ENTRY1s("intro.stk", "df96be976e53cc7de9e2741c45c18a1f", 864746),
+		AD_ENTRY1s("intro.stk", "d71d49d89295b2f47182c0455a49bf6a", 864728),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
