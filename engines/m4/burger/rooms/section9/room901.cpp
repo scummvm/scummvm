@@ -39,15 +39,15 @@ enum {
 };
 
 static const MenuButtonDef DEMO_BUTTONS[4] = {
-	{ 337, 82, 622, 140, 0, 1, 2, 3, BTNSTATE_1, 3 },
-	{ 337, 138, 622, 197, 4, 5, 6, 7, BTNSTATE_1, 6 },
-	{ 337, 198, 622, 256, 8, 9, 10, 11, BTNSTATE_1, 5 },
-	{ 337, 260, 622, 317, 12, 13, 14, 15, BTNSTATE_1, 9 }
+	{ 337, 82, 622, 140, 0, 1, 2, 3, BTNSTATE_ENABLED, 3 },
+	{ 337, 138, 622, 197, 4, 5, 6, 7, BTNSTATE_ENABLED, 6 },
+	{ 337, 198, 622, 256, 8, 9, 10, 11, BTNSTATE_ENABLED, 5 },
+	{ 337, 260, 622, 317, 12, 13, 14, 15, BTNSTATE_ENABLED, 9 }
 };
 
 static const MenuButtonDef GAME_BUTTONS[2] = {
-	{ 337, 82, 622, 140, 4, 5, 6, 7, BTNSTATE_1, 6 },
-	{ 337, 138, 622, 197, 12, 13, 14, 15, BTNSTATE_1, 9 }
+	{ 337, 82, 622, 140, 4, 5, 6, 7, BTNSTATE_ENABLED, 6 },
+	{ 337, 138, 622, 197, 12, 13, 14, 15, BTNSTATE_ENABLED, 9 }
 };
 
 void Room901::preload() {
@@ -89,8 +89,8 @@ void Room901::daemon() {
 		player_set_commands_allowed(true);
 
 		for (uint i = 0; i < _buttons.size(); ++i) {
-			if (_buttons[i]._state != BTNSTATE_0)
-				setButtonState(i, BTNSTATE_1);
+			if (_buttons[i]._state != BTNSTATE_DISABLED)
+				setButtonState(i, BTNSTATE_ENABLED);
 		}
 		break;
 

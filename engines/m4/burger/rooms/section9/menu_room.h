@@ -32,17 +32,17 @@ namespace Rooms {
 
 constexpr int NO_BUTTONS_HILITED = -1;
 
-enum ButtonState { BTNSTATE_0 = 0, BTNSTATE_1 = 1, BTNSTATE_2 = 2, BTNSTATE_3 = 3 };
+enum ButtonState { BTNSTATE_DISABLED = 0, BTNSTATE_ENABLED = 1, BTNSTATE_HIGHLIGHTED = 2, BTNSTATE_PRESSED = 3 };
 
 struct MenuButtonDef {
 	int32 _x1;
 	int32 _y1;
 	int32 _x2;
 	int32 _y2;
-	int32 _frame0;
-	int32 _frame1;
-	int32 _frame2;
-	int32 _frame3;
+	int32 _frame_disabled;
+	int32 _frame_enabled;
+	int32 _frame_highlighted;
+	int32 _frame_pressed;
 	ButtonState _state;
 	int32 _trigger;
 };
