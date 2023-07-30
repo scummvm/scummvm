@@ -27,6 +27,12 @@
 
 namespace M4 {
 
+enum {
+	NO_COMPRESS     = 0x00,
+	RLE8            = 0x01,
+	SHADOW			= 0x80
+};
+
 struct DrawRequest {
 	Buffer *Src = nullptr;		// sprite source buffer
 	Buffer *Dest = nullptr;		// destination buffer

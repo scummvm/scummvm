@@ -20,18 +20,14 @@
  */
 
 #include "m4/graphics/gr_sprite.h"
+#include "m4/graphics/gr_surface.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/core/term.h"
 #include "m4/mem/memman.h"
 #include "m4/platform/draw.h"
-//include "m4/vars.h"
 
 namespace M4 {
-
-#define NO_COMPRESS     0x00
-#define RLE8            0x01
-#define SHADOW			0x80
 
 /**
  * ScaleX and ScaleY are supposed to be percents, where 100 means 100%
@@ -95,10 +91,12 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 
 uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	Buffer source;
+#if 0
 	int32 leftOffset = 0, rightOffset = 0, YPos;
+	uint8 bottomCut = 0;
+#endif
 	uint8 *shadowBuff = nullptr, *scaledBuff = nullptr;
 	Buffer afterScaled = { 0, 0, nullptr, 0, 0 };
-	uint8 bottomCut = 0;
 
 	if (!drawReq->Src) {
 		term_message("nullptr source data in sprite_draw");
@@ -117,7 +115,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 
 	// if it's RLE encoded, ensure the sprite will decode to match the expected size
 	if (source.encoding & RLE8) {
-		if (RLE8Decode_Size(source.data, source.stride) != (source.stride * source.h))
+		if (RLE8Decode_Size(source.data, source.stride) != (size_t)(source.stride * source.h))
 			error_show(FL, 'RLE8', "RLE8 sprite suspected BAD!");
 	}
 
@@ -162,6 +160,13 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		source = afterScaled;
 	}
 
+	assert((drawReq->Src->encoding & SHADOW) == 0);
+
+	M4Surface dst(*drawReq->Dest);
+	dst.draw(source, drawReq->x, drawReq->y, drawReq->scaleX > 0,
+		drawReq->srcDepth ? drawReq->depthCode : nullptr, drawReq->srcDepth);
+
+#if 0
 	YPos = drawReq->y;
 
 	// Check for clipping
@@ -279,6 +284,8 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	}
 
 truly_done:
+#endif
+
 	if (shadowBuff)
 		mem_free(shadowBuff);
 
