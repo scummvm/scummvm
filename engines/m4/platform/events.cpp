@@ -107,21 +107,27 @@ void Events::handleMouseEvent(const Common::Event &ev) {
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		_mouseStateEvent |= LBD;
+		ButtonState = 1;
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_mouseStateEvent |= LBU;
+		ButtonState = 0;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
 		_mouseStateEvent |= RBD;
+		ButtonState = 2;
 		break;
 	case Common::EVENT_RBUTTONUP:
 		_mouseStateEvent |= RBU;
+		ButtonState = 0;
 		break;
 	case Common::EVENT_MBUTTONDOWN:
 		_mouseStateEvent |= MBD;
+		ButtonState = 4;
 		break;
 	case Common::EVENT_MBUTTONUP:
 		_mouseStateEvent |= MBU;
+		ButtonState = 0;
 		break;
 	default:
 		break;

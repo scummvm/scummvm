@@ -33,7 +33,7 @@ private:
 	bool _buttonsDrawn = false;
 
 public:
-	Room903() : MenuRoom(903, "903menu", "903click") {}
+	Room903() : MenuRoom(903, "903menu", "901click") {}
 	~Room903() override {}
 
 	void preload() override;
