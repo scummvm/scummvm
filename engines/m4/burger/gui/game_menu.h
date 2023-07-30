@@ -34,10 +34,10 @@ namespace GUI {
 typedef bool (*ItemHandlerFunction)(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem);
 typedef void (*DrawFunction)(void *source, void *dest, int32 x1, int32 y1, int32 x2, int32 y2);
 typedef void (*DestroyFunction)(void *theItem);
-typedef void (*CALLBACK)();
+typedef M4CALLBACK CALLBACK;
 
-struct Sprite {
-};
+typedef M4sprite Sprite;
+//struct Sprite {};
 
 struct menuItem {
 	menuItem *next;
@@ -108,9 +108,6 @@ struct guiMenu {
 	CALLBACK cb_esc;
 	EventHandler menuEventHandler;
 };
-
-// The following var is true if'f one of the menus is active
-extern bool menuSystemInitialized;
 
 // GENERAL MENU FUNCTIONS
 extern bool menu_Initialize(RGB8 *myPalette);
@@ -480,7 +477,7 @@ struct MenuGlobals {
 
 	//menu sprite series vars
 	char *menuSeriesResource = nullptr;
-	Handle	menuSeriesHandle;
+	MemHandle menuSeriesHandle;
 	int32	menuSeriesOffset;
 	int32	menuSeriesPalOffset;
 

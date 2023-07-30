@@ -22,6 +22,7 @@
 #include "m4/graphics/gr_font.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/graphics/gr_pal.h"
+#include "m4/mem/mem.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/mem/memman.h"
@@ -296,8 +297,7 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	Byte *fontPixData = _G(font)->pixData;
 	short *offsetArray = _G(font)->offset;
 
-	while (*out_string)
-	{
+	while (*out_string) {
 		char c = (*out_string++) & (char)0x7f;
 		int32 wdth = widthArray[c];
 
@@ -347,6 +347,14 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	return(cursX);
 }
 
+int32 gr_font_write(Buffer *target, const char *out_string, int32 x, int32 y, int32 w, int32 auto_spacing) {
+	char *tmp = mem_strdup(out_string);
+	int32 result = gr_font_write(target, tmp, x, y, w, auto_spacing);
+	free(tmp);
+
+	return result;
+}
+
 Font *gr_font_load(const char *fontName) {
 	uint8 buffer[10];
 	uint32 tag;
@@ -381,7 +389,7 @@ Font *gr_font_load(const char *fontName) {
 	bumpf = (uint32 *)&buffer[0];
 	tag = convert_intel32(*bumpf);
 	if (tag != 'WIDT')
-		error_show(FL, 'FNTL', "_G(font): %s chkpnt: %d", (char *)fontName, 1);
+		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (char *)fontName, 1);
 
 	// width table
 	newFont->width = (byte *)mem_alloc(256, STR_FONTWIDTH);
@@ -397,12 +405,12 @@ Font *gr_font_load(const char *fontName) {
 	bumpf = (uint32 *)&buffer[0];
 	tag = convert_intel32(*bumpf);
 	if (tag != 'OFFS')
-		error_show(FL, 'FNTL', "_G(font): %s chkpnt: %d", (char *)fontName, 2);
+		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (char *)fontName, 2);
 
 	// offset table
 	newFont->offset = (short *)mem_alloc(256 * sizeof(short), STR_FONTOFF);
 	if (!newFont->offset)
-		error_show(FL, 'OOM!', "_G(font) offset table");
+		error_show(FL, 'OOM!', "font offset table");
 
 	bufferHandle = newFont->offset;
 	fontFile.read(&bufferHandle, 256 * sizeof(short));
@@ -416,12 +424,12 @@ Font *gr_font_load(const char *fontName) {
 	bumpf = (uint32 *)&buffer[0];
 	tag = convert_intel32(*bumpf);
 	if (tag != 'PIXS')
-		error_show(FL, 'FNTL', "_G(font): %s chkpnt: %d", (char *)fontName, 3);
+		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (char *)fontName, 3);
 
 	// pixData
 	newFont->pixData = (byte *)mem_alloc(newFont->dataSize, STR_FONTDATA);
 	if (!newFont->pixData)
-		error_show(FL, 'OOM!', "_G(font) pix data");
+		error_show(FL, 'OOM!', "font pix data");
 
 	bufferHandle = newFont->pixData;
 	fontFile.read(&bufferHandle, newFont->dataSize);

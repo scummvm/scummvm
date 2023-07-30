@@ -92,6 +92,9 @@ public:
 	void read_another_chunk();
 	bool play_state(int channel) const;
 	void change_volume(int channel, int vol);
+
+	void set_overall_volume(int vol);
+	int get_overall_volume();
 };
 
 } // namespace Sound
@@ -104,6 +107,8 @@ extern void digi_read_another_chunk();
 extern void digi_stop(int channel);
 extern bool digi_play_state(int channel);
 extern void digi_change_volume(int channel, int vol);
+extern void digi_set_overall_volume(int vol);
+extern int digi_get_overall_volume();
 
 } // namespace M4
 

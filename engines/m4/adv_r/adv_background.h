@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,38 +20,18 @@
  *
  */
 
-#ifndef M4_RELOC_H
-#define M4_RELOC_H
+#ifndef M4_ADV_R_ADV_BACKGROUND_H
+#define M4_ADV_R_ADV_BACKGROUND_H
 
-#include "common/str.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 
-typedef void **MemHandle;
-typedef int32 Size;
+extern void adv_freeCodes();
+extern void adv_freeBackground();
+extern bool adv_restoreBackground();
+extern bool adv_restoreCodes();
 
-inline void HLock(Handle h) {}
-inline void HUnLock(Handle h) {}
-inline void HPurge(Handle h) {}
-inline void HNoPurge(Handle h) {}
-
-inline bool MakeMem(size_t FreeBlockNeeded, const char *) {
-	return true;
-}
-
-extern MemHandle MakeNewHandle(size_t size, const Common::String &);
-extern bool mem_ReallocateHandle(MemHandle h, size_t size, const Common::String &name);
-extern MemHandle NewHandle(size_t size, const Common::String &);
-extern void DisposeHandle(MemHandle handle);
-extern uint32 MaxMem(Size *growBytes);
-
-inline void PurgeMem() {}
-inline void CompactMem() {}
-inline size_t mem_avail() { return 0; }
-inline void adv_GetCodeMemory() {}
-inline void adv_GetBackgroundMemory() {}
-
-} // namespace M4
+} // End of namespace M4
 
 #endif

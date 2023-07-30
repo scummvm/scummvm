@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	vars.o \
 	adv_db_r/db_catalog.o \
+	adv_r/adv_background.o \
 	adv_r/adv_been.o \
 	adv_r/adv_chk.o \
 	adv_r/adv_control.o \
