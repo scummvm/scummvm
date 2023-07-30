@@ -25,7 +25,7 @@
 #include "common/memstream.h"
 #include "common/punycode.h"
 #include "common/tokenizer.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -1132,12 +1132,11 @@ uint32 readVarInt(Common::SeekableReadStream &stream) {
 }
 
 Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian) {
-#ifdef USE_ZLIB
 	byte *in = (byte *)malloc(len);
 	byte *out = (byte *)malloc(*outLen);
 	stream.read(in, len);
 
-	if (!Common::uncompress(out, outLen, in, len)) {
+	if (!Common::inflateZlib(out, outLen, in, len)) {
 		free(in);
 		free(out);
 		return nullptr;
@@ -1145,9 +1144,6 @@ Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &strea
 
 	free(in);
 	return new Common::MemoryReadStreamEndian(out, *outLen, bigEndian, DisposeAfterUse::YES);
-# else
-	return nullptr;
-# endif
 }
 
 uint16 humanVersion(uint16 ver) {

@@ -24,7 +24,6 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/system.h"
-#include "common/compression/zlib.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"

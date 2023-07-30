@@ -19,41 +19,35 @@
  *
  */
 
-// Disable symbol overrides so that we can use zlib.h
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#ifdef __MORPHOS__
+  #define _NO_PPCINLINE
+  #include <zlib.h>
+  #undef _NO_PPCINLINE
+#else
+  #include <zlib.h>
+#endif
 
-#include "common/compression/zlib.h"
+#if ZLIB_VERNUM < 0x1204
+#error Version 1.2.0.4 or newer of zlib is required for this code
+#endif
+
+#include "common/compression/deflate.h"
+
 #include "common/ptr.h"
 #include "common/util.h"
 #include "common/stream.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 
-#if defined(USE_ZLIB)
-  #ifdef __MORPHOS__
-	#define _NO_PPCINLINE
-	#include <zlib.h>
-	#undef _NO_PPCINLINE
-  #else
-	#include <zlib.h>
-  #endif
-
-  #if ZLIB_VERNUM < 0x1204
-  #error Version 1.2.0.4 or newer of zlib is required for this code
-  #endif
-#endif
-
 
 namespace Common {
 
-#if defined(USE_ZLIB)
-
-bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen) {
-	return Z_OK == ::uncompress(dst, dstLen, src, srcLen);
+bool inflateZlib(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen) {
+	return Z_OK == uncompress(dst, dstLen, src, srcLen);
 }
 
-bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict, uint dictLen) {
-	if (!dst || !dstLen || !src || !srcLen)
+bool inflateZlibHeaderless(byte *dst, uint *dstLen, const byte *src, uint srcLen, const byte *dict, uint dictLen) {
+	if (!dst || !dstLen || !*dstLen || !src || !srcLen)
 		return false;
 
 	// Initialize zlib
@@ -61,7 +55,7 @@ bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen,
 	stream.next_in = const_cast<byte *>(src);
 	stream.avail_in = srcLen;
 	stream.next_out = dst;
-	stream.avail_out = dstLen;
+	stream.avail_out = *dstLen;
 	stream.zalloc = Z_NULL;
 	stream.zfree = Z_NULL;
 	stream.opaque = Z_NULL;
@@ -85,62 +79,13 @@ bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen,
 	}
 
 	inflateEnd(&stream);
+	*dstLen = *dstLen - stream.avail_out;
 	return true;
 }
 
 enum {
 	kTempBufSize = 65536
 };
-
-bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcLen) {
-	if (!dst || !dstLen || !src || !srcLen)
-		return false;
-
-	// See if we have sync bytes. If so, just use our function for that.
-	if (srcLen >= 4 && READ_BE_UINT32(src + srcLen - 4) == 0xFFFF)
-		return inflateZlibHeaderless(dst, dstLen, src, srcLen);
-
-	// Otherwise, we have some custom code we get to use here.
-
-	byte *temp = (byte *)malloc(kTempBufSize);
-
-	uint32 bytesRead = 0, bytesProcessed = 0;
-	while (bytesRead < srcLen) {
-		uint16 chunkSize = READ_LE_UINT16(src + bytesRead);
-		bytesRead += 2;
-
-		// Initialize zlib
-		z_stream stream;
-		stream.next_in = const_cast<byte *>(src + bytesRead);
-		stream.avail_in = chunkSize;
-		stream.next_out = temp;
-		stream.avail_out = kTempBufSize;
-		stream.zalloc = Z_NULL;
-		stream.zfree = Z_NULL;
-		stream.opaque = Z_NULL;
-
-		// Negative MAX_WBITS tells zlib there's no zlib header
-		int err = inflateInit2(&stream, -MAX_WBITS);
-		if (err != Z_OK)
-			return false;
-
-		err = inflate(&stream, Z_FINISH);
-		if (err != Z_OK && err != Z_STREAM_END) {
-			inflateEnd(&stream);
-			free(temp);
-			return false;
-		}
-
-		memcpy(dst + bytesProcessed, temp, stream.total_out);
-		bytesProcessed += stream.total_out;
-
-		inflateEnd(&stream);
-		bytesRead += chunkSize;
-	}
-
-	free(temp);
-	return true;
-}
 
 bool inflateZlib(Common::WriteStream *dst, Common::SeekableReadStream *src) {
 	byte *inBuffer, *outBuffer;
@@ -232,7 +177,7 @@ protected:
 
 	byte	_buf[BUFSIZE];
 
-	ScopedPtr<SeekableReadStream> _wrapped;
+	DisposablePtr<SeekableReadStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
 	uint64 _parentPos;
@@ -242,7 +187,7 @@ protected:
 
 public:
 
-	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream() {
+	GZipReadStream(SeekableReadStream *w, DisposeAfterUse::Flag disposeParent, uint32 knownSize) : _wrapped(w, disposeParent), _stream() {
 		assert(w != nullptr);
 
 		_parentPos = w->pos();
@@ -272,6 +217,33 @@ public:
 		_zlibErr = inflateInit2(&_stream, MAX_WBITS + 32);
 		if (_zlibErr != Z_OK)
 			return;
+
+		// Setup input buffer
+		_stream.next_in = _buf;
+		_stream.avail_in = 0;
+	}
+
+	GZipReadStream(SeekableReadStream *w, DisposeAfterUse::Flag disposeParent, uint32 knownSize, const byte *dict, uint dictLen) : _wrapped(w, disposeParent), _stream() {
+		assert(w != nullptr);
+
+		_parentPos = w->pos();
+		// This is headerless deflate
+		// Original size not available
+		// use an otherwise known size if supplied.
+		_origSize = knownSize;
+		_pos = 0;
+		_eos = false;
+
+		_zlibErr = inflateInit2(&_stream, -MAX_WBITS);
+		if (_zlibErr != Z_OK)
+			return;
+
+		// Set the dictionary, if provided
+		if (dict != nullptr && dictLen > 0) {
+			_zlibErr = inflateSetDictionary(&_stream, const_cast<byte *>(dict), dictLen);
+			if (_zlibErr != Z_OK)
+				return;
+		}
 
 		// Setup input buffer
 		_stream.next_in = _buf;
@@ -488,38 +460,47 @@ public:
 	int64 pos() const override { return _pos; }
 };
 
-#endif	// USE_ZLIB
+SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, DisposeAfterUse::Flag disposeParent, uint64 knownSize) {
+	if (!toBeWrapped) {
+		return nullptr;
+	}
 
-SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize) {
-	if (toBeWrapped) {
-		if (toBeWrapped->eos() || toBeWrapped->err() || toBeWrapped->size() < 2) {
+	if (toBeWrapped->eos() || toBeWrapped->err() || toBeWrapped->size() < 2) {
+		if (disposeParent == DisposeAfterUse::YES) {
 			delete toBeWrapped;
-			return nullptr;
 		}
-		uint16 header = toBeWrapped->readUint16BE();
-		bool isCompressed = (header == 0x1F8B ||
-				     ((header & 0x0F00) == 0x0800 &&
-				      header % 31 == 0));
-		toBeWrapped->seek(-2, SEEK_CUR);
-		if (isCompressed) {
-#if defined(USE_ZLIB)
-			return new GZipReadStream(toBeWrapped, knownSize);
-#else
-			delete toBeWrapped;
-			return nullptr;
-#endif
-		}
+		return nullptr;
+	}
+
+	uint16 header = toBeWrapped->readUint16BE();
+	bool isCompressed = (header == 0x1F8B ||
+			     ((header & 0x0F00) == 0x0800 &&
+			      header % 31 == 0));
+	toBeWrapped->seek(-2, SEEK_CUR);
+	if (isCompressed) {
+		return new GZipReadStream(toBeWrapped, disposeParent, knownSize);
 	}
 	return toBeWrapped;
 }
 
-WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
-#if defined(USE_ZLIB)
-	if (toBeWrapped)
-		return new GZipWriteStream(toBeWrapped);
-#endif
-	return toBeWrapped;
+SeekableReadStream *wrapDeflateReadStream(SeekableReadStream *toBeWrapped, DisposeAfterUse::Flag disposeParent, uint64 knownSize, const byte *dict, uint dictLen) {
+	if (!toBeWrapped) {
+		return nullptr;
+	}
+
+	if (toBeWrapped->eos() || toBeWrapped->err()) {
+		if (disposeParent == DisposeAfterUse::YES) {
+			delete toBeWrapped;
+		}
+		return nullptr;
+	}
+	return new GZipReadStream(toBeWrapped, disposeParent, knownSize, dict, dictLen);
 }
 
+WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
+	if (!toBeWrapped)
+		return nullptr;
+	return new GZipWriteStream(toBeWrapped);
+}
 
 } // End of namespace Common

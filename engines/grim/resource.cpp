@@ -46,7 +46,7 @@
 #include "engines/grim/update/update.h"
 
 #include "common/algorithm.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 #include "common/memstream.h"
 #include "common/file.h"
 #include "common/config-manager.h"

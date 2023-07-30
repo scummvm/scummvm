@@ -12,8 +12,13 @@ MODULE_OBJS := \
 	stuffit.o \
 	unarj.o \
 	unzip.o \
-	vise.o \
+	vise.o
+
+ifdef USE_ZLIB
+MODULE_OBJS += \
 	zlib.o
+endif
+
 
 # Include common rules
 include $(srcdir)/rules.mk

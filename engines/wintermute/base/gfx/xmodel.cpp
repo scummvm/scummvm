@@ -25,7 +25,7 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"

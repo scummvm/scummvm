@@ -21,7 +21,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
@@ -134,7 +134,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 	// Return buffer wrapped in a MemoryReadStream, automatically
 	// uncompressed if it is zlib-compressed
-	return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES), file->length);
+	return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES), DisposeAfterUse::YES, file->length);
 }
 
 int32 FileMan::getLength(const char *string, DataType type) {

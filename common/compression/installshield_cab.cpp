@@ -49,11 +49,38 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/ptr.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace Common {
 
 namespace {
+
+bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcLen) {
+	if (!dst || !dstLen || !src || !srcLen)
+		return false;
+
+	// See if we have sync bytes. If so, just use our function for that.
+	if (srcLen >= 4 && READ_BE_UINT32(src + srcLen - 4) == 0xFFFF)
+		return inflateZlibHeaderless(dst, &dstLen, src, srcLen);
+
+	// Otherwise, we have some custom code we get to use here.
+
+	uint32 bytesRead = 0, bytesProcessed = 0;
+	while (dstLen > 0 && bytesRead < srcLen) {
+		uint16 chunkSize = READ_LE_UINT16(src + bytesRead);
+		bytesRead += 2;
+
+		uint zlibLen = dstLen;
+		if (!inflateZlibHeaderless(dst + bytesProcessed, &zlibLen, src + bytesRead, chunkSize)) {
+			return false;
+		}
+
+		bytesProcessed += zlibLen;
+		dstLen -= zlibLen;
+		bytesRead += chunkSize;
+	}
+	return true;
+}
 
 class InstallShieldCabinet : public Archive {
 public:
@@ -336,7 +363,6 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 		}		
 	}
 
-#ifdef USE_ZLIB
 	byte *dst = (byte *)malloc(entry.uncompressedSize);
 
 	if (!src) {
@@ -355,11 +381,6 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 	}
 
 	return new MemoryReadStream(dst, entry.uncompressedSize, DisposeAfterUse::YES);
-#else
-	warning("zlib required to extract compressed CAB file '%s'", name.c_str());
-	free(src);
-	return 0;
-#endif
 }
 
 bool InstallShieldCabinet::readVolumeHeader(SeekableReadStream *volumeStream, InstallShieldCabinet::VolumeHeader &inVolumeHeader) {

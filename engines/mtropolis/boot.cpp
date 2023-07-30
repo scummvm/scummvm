@@ -27,7 +27,6 @@
 #include "common/compression/vise.h"
 #include "common/formats/winexe.h"
 #include "common/compression/installshieldv3_archive.h"
-#include "common/compression/zlib.h"
 
 #include "graphics/maccursor.h"
 #include "graphics/wincursor.h"

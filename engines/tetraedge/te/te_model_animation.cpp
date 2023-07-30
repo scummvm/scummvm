@@ -23,7 +23,7 @@
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/substream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_core.h"
