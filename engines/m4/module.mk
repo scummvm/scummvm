@@ -87,6 +87,7 @@ MODULE_OBJS = \
 	burger/rooms/room.o \
 	burger/rooms/section.o \
 	burger/rooms/section1/section1.o \
+	burger/rooms/section1/room101.o \
 	burger/rooms/section9/section9.o \
 	burger/rooms/section9/menu_room.o \
 	burger/rooms/section9/room901.o \

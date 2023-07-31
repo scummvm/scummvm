@@ -92,6 +92,7 @@ public:
 	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
+	int _roomVal1 = 0;
 
 public:
 	Vars();

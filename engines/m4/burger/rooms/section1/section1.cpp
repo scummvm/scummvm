@@ -25,7 +25,9 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-
+Section1::Section1() : Rooms::Section() {
+	add(&_room101);
+}
 
 } // namespace Rooms
 } // namespace Burger
