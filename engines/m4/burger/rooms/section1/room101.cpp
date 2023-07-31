@@ -29,6 +29,31 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const seriesStreamBreak STREAMS1[] = {
+	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{   5, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  14, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  16, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak STREAMS2[] = {
+	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{   6, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  17, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  24, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  26, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak STREAMS3[] = {
+	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{   5, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  14, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  16, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
 void Room101::init() {
 	_G(player).walker_in_this_scene = true;
 	_val1 = 255;
@@ -233,6 +258,114 @@ void Room101::daemon() {
 		}
 		break;
 
+	case 7:
+		loadSounds();
+		ws_hide_walker(_G(my_walker));
+
+		if (_G(flags)[ROOM101_FLAG4] || _G(flags)[ROOM101_FLAG16])
+			series_load("101wi13s", -1, nullptr);
+		if (_G(flags)[ROOM101_FLAG10])
+			series_load("101wi12s", -1, nullptr);
+		if (_G(flags)[ROOM101_FLAG20])
+			series_load("101wi11s", -1, nullptr);
+		break;
+
+	case 8:
+		kernel_timing_trigger(1, 9);
+		break;
+
+	case 9:
+		daemon9();
+
+		if (_G(flags)[ROOM101_FLAG4] || _G(flags)[ROOM101_FLAG22] ||
+				_G(flags)[ROOM101_FLAG23] || _G(flags)[V002]) {
+			TerminateMachineAndNull(_machine1);
+			TerminateMachineAndNull(_machine2);
+			kernel_trigger_dispatch_now(10);
+		}
+		break;
+
+	case 10:
+		_machine1 = series_play_("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAMS1, "101wi13", 6, 256, 2);
+		break;
+
+	case 11:
+		kernel_timing_trigger(1, 12);
+		break;
+
+	case 12:
+		daemon12();
+
+		if (_G(flags)[ROOM101_FLAG4]) {
+			if (_G(flags)[ROOM101_FLAG10] || _G(flags)[V112] ||
+					_G(flags)[V080] || _G(flags)[V126]) {
+				TerminateMachineAndNull(_machine1);
+				TerminateMachineAndNull(_machine2);
+				kernel_timing_trigger(1, 13);
+			}
+		}
+		break;
+
+	case 13:
+		_machine1 = series_play_("101wi12s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAMS2, "101wi12", 6, 256, 2);
+		break;
+
+	case 14:
+		kernel_timing_trigger(1, 15);
+		break;
+
+	case 15:
+		daemon15();
+
+		if (_G(flags)[ROOM101_FLAG10] && (_G(flags)[ROOM101_FLAG16] || _G(flags)[V220])) {
+			TerminateMachineAndNull(_machine1);
+			TerminateMachineAndNull(_machine2);
+			kernel_timing_trigger(1, 16);
+		}
+		break;
+
+	case 16:
+		_machine1 = series_play_("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAMS3, "101wi13", 6, 256, 2);
+		break;
+
+	case 17:
+		kernel_timing_trigger(1, 18);
+		break;
+
+	case 18:
+		daemon18();
+
+		if (_G(flags)[ROOM101_FLAG16]) {
+			if (_G(flags)[ROOM101_FLAG20] || _G(flags)[V220]) {
+				TerminateMachineAndNull(_machine1);
+				TerminateMachineAndNull(_machine2);
+				kernel_timing_trigger(1, 19);
+			}
+		}
+		break;
+
+	case 19:
+		_machine1 = series_play_("101wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAMS3, "101wi11", 6, 256, 2);
+		break;
+
+	case 20:
+		daemon20();
+		break;
+
+	case 21:
+		digi_play("101_002", 2, 255, -1);
+		_G(roomVal1) = 18;
+		series_play_("101ha01", 3840, 0, 10016, 6, 0, 100, 0, 0, 14, -1);
+		break;
+
+	case 23:
+		player_set_commands_allowed(true);
+		break;
+
 	// TODO: cases
 	default:
 		_G(kernel).continue_handling_trigger = true;
@@ -265,6 +398,17 @@ void Room101::door() {
 	_doorMachine = series_play_("101door", 3840, 0, -1, 10, -1, 100, 0, -53, 0, 0);
 }
 
+void Room101::loadSounds() {
+	digi_preload("101_010");
+	digi_preload("101_011");
+	digi_preload("101_012");
+	digi_preload("101_013");
+	digi_preload("101_014");
+	digi_preload("101_015");
+	digi_preload("101_016");
+	digi_preload("101_017");
+}
+
 void Room101::unloadSounds() {
 	digi_unload("101_010");
 	digi_unload("101_011");
@@ -274,6 +418,104 @@ void Room101::unloadSounds() {
 	digi_unload("101_015");
 	digi_unload("101_016");
 	digi_unload("101_017");
+}
+
+void Room101::daemon9() {
+	_G(flags)[V019] = 1;
+	_G(flags)[V017] = 1;
+
+	if (_G(flags)[V021] == 10032)
+		_G(flags)[V001] = 12;
+
+	if (_G(flags)[V021] == 10033)
+		_G(flags)[V013] = 1;
+
+	_G(flags).set_boonsville_time(600);
+}
+
+void Room101::daemon12() {
+	if (_G(flags)[ROOM101_FLAG22] || _G(flags)[ROOM101_FLAG4])
+		inv_give_to_player("BLOCK OF ICE");
+
+	if (_G(flags)[ROOM101_FLAG23] || _G(flags)[ROOM101_FLAG4])
+		inv_give_to_player("PANTYHOSE");
+
+	if (_G(flags)[V002]) {
+		inv_give_to_player("PHONE BILL");
+		inv_give_to_player("WHISTLE");
+		_G(flags)[V079] = 0;
+		_G(flags)[V080] = 1;
+	}
+
+	_G(flags).set_boonsville_time(2400);
+}
+
+void Room101::daemon15() {
+	if (_G(flags)[V002] || !_G(flags)[V126] || _G(flags)[ROOM101_FLAG10]) {
+		inv_give_to_player("PHONE BILL");
+		inv_give_to_player("WHISTLE");
+		_G(flags)[V079] = 0;
+		_G(flags)[V080] = 1;
+	} else {
+		_G(flags)[V079] = 1;
+		_G(flags)[V080] = 0;
+	}
+
+	if (_G(flags)[V126] || _G(flags)[ROOM101_FLAG10]) {
+		inv_give_to_player("CARROT JUICE");
+		_G(flags)[V088] = 1;
+		_G(flags)[V091] = 1;
+	} else {
+		_G(flags)[V088] = 0;
+		_G(flags)[V091] = 0;
+	}
+
+	if (_G(flags)[ROOM101_FLAG12] || _G(flags)[ROOM101_FLAG10]) {
+		_G(flags).set_boonsville_time(6001);
+		_G(flags)[V000] = 1002;
+		_G(flags)[V001] = 0;
+		inv_move_object("MONEY", NOWHERE);
+		_G(flags)[V039] = 1;
+		_G(flags)[V043] = 1;
+		inv_give_to_player("DEED");
+		_G(flags)[V112] = 1;
+	} else {
+		_G(flags)[V000] = 1000;
+		if (_G(flags)[V021] == 10032)
+			_G(flags)[V001] = 12;
+
+		_G(flags)[V039] = 0;
+		_G(flags)[V043] = 0;
+		_G(flags)[V058] = 0;
+	}
+
+	_G(flags)[V063] = 0;
+	_G(flags)[V092] = 0;
+
+	if (_G(flags)[ROOM101_FLAG10])
+		_G(flags).set_boonsville_time(6600);
+}
+
+void Room101::daemon18() {
+	if (_G(flags)[V220] || _G(flags)[ROOM101_FLAG16]) {
+		inv_give_to_player("laxative");
+		inv_give_to_player("amplifier");
+		_G(flags)[V067] = 1;
+		_G(flags)[V058] = 1;
+		_G(flags).set_boonsville_time(19200);
+	}
+}
+
+void Room101::daemon20() {
+	if (_G(flags)[V177] || _G(flags)[ROOM101_FLAG20]) {
+		inv_move_object("KEYS", 138);
+		inv_give_to_player("JAWZ O' LIFE");
+		_G(flags)[V046] = 0;
+	}
+
+	_G(flags)[V047] = 0;
+	_G(flags)[V048] = 0;
+	_G(flags).set_boonsville_time(22800);
 }
 
 } // namespace Rooms
