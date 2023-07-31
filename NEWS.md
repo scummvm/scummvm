@@ -71,7 +71,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added custom engine option to replace the health gems with HP/SP bars.
 
 
-#### 2.7.1 (2023-07-31)
+#### 2.7.1 "Stan's previously broken swords" (2023-07-31)
 
  General:
   - Fixed playback speed for Theora videos.
