@@ -191,7 +191,9 @@ protected:
 	 */
 	const Graphics::Surface* _currentFrame;
 
-
+	/**
+	 * Video SRT subtitles used by fan translation projects for phantasmagoria 1 & 2.
+	 */
 	mutable Video::Subtitles _subtitles;
 
 #ifdef USE_RGB_COLOR
