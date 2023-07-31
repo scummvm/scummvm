@@ -647,6 +647,8 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 		if (flags & kOpenFlagMute) {
 			_decoder->setVolume(0);
 		}
+
+		// Try load fan-made SRT subtitles for current video
 		Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
 		_subtitles.loadSRTFile(subtitlesName.c_str());
 
@@ -1216,6 +1218,7 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 		g_sci->_gfxFrameout->setPixelFormat(_decoder->getPixelFormat());
 	}
 
+	// Try load fan-made SRT subtitles for current video
 	Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
 	_subtitles.loadSRTFile(subtitlesName.c_str());
 
