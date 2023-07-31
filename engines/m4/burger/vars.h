@@ -31,6 +31,7 @@
 #include "m4/burger/inventory.h"
 #include "m4/burger/series_player.h"
 #include "m4/burger/walker.h"
+#include "m4/burger/wilbur.h"
 
 namespace M4 {
 namespace Burger {
@@ -45,7 +46,6 @@ enum global_triggers {
 	// System triggers 
 	gRESUME_CONVERSATION,			// Yep, that's what it does!
 	gSERIES_STREAM_BREAK = 10002,	// Used only by set_next_stream_break () in global.cpp
-	gWILBURS_SPEECH_FINISHED,		// digi_play trigger, used in talk.cpp
 	gNONPLAYERS_SPEECH_FINISHED,	// digi_play trigger, used in talk.cpp
 	gSERIES_PLAY_BREAK_0,			// Used only by set_next_play_break () in global.cpp
 /*
@@ -59,6 +59,8 @@ enum global_triggers {
 
 	// Wilbur specific triggers
 	gCHANGE_WILBUR_ANIMATION,
+	gWILBURS_SPEECH_FINISHED = 10014,
+	gWILBURS_SPEECH_START = 10015,
 
 	CALLED_EACH_LOOP = 32764,        
 
@@ -86,13 +88,15 @@ public:
 	ReleaseTrigger_Globals _releaseTrigger;
 	StreamBreak_Globals _streamBreak;
 	Burger::Walker _walker;
+	Wilbur_Globals _wilbur;
 
 	int _wilburTerm = 2;
-	const Common::String _wilbur = "WILBUR";
+	const Common::String _wilburName = "WILBUR";
 	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
 	int _roomVal1 = 0;
+	int _roomVal2 = 0;
 
 public:
 	Vars();
