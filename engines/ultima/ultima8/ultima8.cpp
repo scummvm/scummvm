@@ -21,6 +21,7 @@
 
 #include "common/rational.h"
 #include "common/translation.h"
+#include "common/compression/unzip.h"
 #include "gui/saveload.h"
 #include "image/png.h"
 #include "engines/dialogs.h"
@@ -94,8 +95,6 @@
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/metaengine.h"
-
-#include "ultima/shared/engine/data_archive.h"
 
 //#define PAINT_TIMING 1
 
@@ -175,23 +174,16 @@ Common::Error Ultima8Engine::run() {
 
 
 bool Ultima8Engine::initialize() {
-	Common::String folder;
-	int reqMajorVersion, reqMinorVersion;
-
 	// Call syncSoundSettings to get default volumes set
 	syncSoundSettings();
 
-	// Check if the game uses data from te ultima.dat archive
-	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
-		return true;
-
 	// Try and set up the data archive
-	// TODO: Refactor this to use a separate archive
-	Common::U32String errorMsg;
-	if (!Shared::UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
-		GUIErrorMessage(errorMsg);
+	Common::Archive *archive = Common::makeZipArchive("ultima8.dat");
+	if (!archive) {
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), "ultima8.dat");
 		return false;
 	}
+	SearchMan.add("data", archive);
 
 	return true;
 }
@@ -1598,15 +1590,6 @@ uint32 Ultima8Engine::I_moveKeyDownRecently(const uint8 *args, unsigned int /*ar
 	return g->moveKeyDownRecently() ? 1 : 0;
 }
 
-bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
-	folder = "ultima8";
-	// Version 1: Initial release
-	// Version 2: Add data for Crusader games
-	majorVersion = 2;
-	minorVersion = 0;
-	return true;
-}
-
 Graphics::Screen *Ultima8Engine::getScreen() const {
 	Graphics::Screen *scr = dynamic_cast<Graphics::Screen *>(_screen->getRawSurface());
 	assert(scr);
@@ -1618,7 +1601,7 @@ void Ultima8Engine::showSplashScreen() {
 	Common::File f;
 
 	// Get splash _screen image
-	if (!f.open("data/pentagram.png") || !png.loadStream(f))
+	if (!f.open("pentagram.png") || !png.loadStream(f))
 		return;
 
 	// Blit the splash image to the _screen

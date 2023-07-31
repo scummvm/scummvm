@@ -110,6 +110,9 @@ This file contains all the strings hardcoded in the original executables.
 ultima.dat:
 This file contains scripts and game data used by the Ultima engine.
 
+ultima8.dat:
+This file contains scripts and game data used by the Ultima 8 engine.
+
 wintermute.zip:
 This file contains additional graphics resources used by the Wintermute engine.
 
