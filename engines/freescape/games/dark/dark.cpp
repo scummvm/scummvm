@@ -395,8 +395,8 @@ void DarkEngine::drawFullscreenMessage(Common::String message, uint32 front, Gra
 		letterPerLine = 28;
 		numberOfLines = 10;
 	} else if (isSpectrum()) {
-		x = 58;
-		y = 32;
+		x = 60;
+		y = 35;
 		letterPerLine = 24;
 		numberOfLines = 12;
 	}
