@@ -98,9 +98,11 @@ public:
 	void blit(const Graphics::Surface *surface, int x, int y, uint width, uint height);
 	void blit(const Graphics::Surface *surface, const Common::Rect &srcRect, const Common::Rect &dstRect);
 	void fillRect(const Common::Rect &rect, uint32 color);
-	void opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc, int opacityValue, byte r, byte g, byte b);
+	void keyBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, uint xSrc, uint ySrc, uint32 transColor);
+	void keyBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, uint xSrc, uint ySrc, byte rTrans, byte gTrans, byte bTrans);
+	void opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, uint xSrc, uint ySrc, int opacityValue, byte r, byte g, byte b);
 	bool checkPointAgainstMaskedBitmap(const Graphics::Surface *bitmap, int x, int y, const Common::Point &point, byte rTrans, byte gTrans, byte bTrans);
-	void crossBlit(Graphics::Surface *dst, int xDst, int yDst, uint w, uint h, const Graphics::Surface *src, int xSrc, int ySrc);
+	void crossBlit(Graphics::Surface *dst, int xDst, int yDst, uint w, uint h, const Graphics::Surface *src, uint xSrc, uint ySrc);
 	void renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, int h, uint32 color, int lineHeight, TextAlign textAlign = kTextAlignLeft, bool centerVertically = false);
 	void renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::U32String &text, int x, int y, int w, int h, uint32 color, int lineHeight, TextAlign textAlign = kTextAlignLeft, bool centerVertically = false);
 	void drawEllipse(const Common::Rect &rect, uint32 color);
