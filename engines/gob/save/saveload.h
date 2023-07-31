@@ -1100,8 +1100,8 @@ protected:
 	FakeFileHandler             *_adibou2TestDobHandler;
 	FakeFileHandler             *_adibou2ExerciseListHandler;
 
-	FakeFileHandler             *_addy4BaseHandler[2];
-	FakeFileHandler             *_addy4GrundschuleHandler[11];
+	FakeFileHandler             *_adi4BaseHandler[2];
+	FakeFileHandler             *_adi4EcoleHandler[11];
 
 	SaveHandler *getHandler(const char *fileName) const override;
 	const char *getDescription(const char *fileName) const override;

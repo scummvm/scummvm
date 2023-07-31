@@ -1332,18 +1332,18 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[index++].handler = _adibou2ExerciseListHandler = new FakeFileHandler(_vm);
 
 	for (int i = 0; i < 2; i++)
-		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
+		_saveFiles[index++].handler = _adi4BaseHandler[i] = new FakeFileHandler(_vm);
 
 	for (int i = 0; i < 11; i++)
-		_saveFiles[index++].handler = _addy4GrundschuleHandler[i] = new FakeFileHandler(_vm);
+		_saveFiles[index++].handler = _adi4EcoleHandler[i] = new FakeFileHandler(_vm);
 }
 
 SaveLoad_v7::~SaveLoad_v7() {
 	for (int i = 0; i < 11; i++)
-		delete _addy4GrundschuleHandler[i];
+		delete _adi4EcoleHandler[i];
 
 	for (int i = 0; i < 2; i++)
-		delete _addy4BaseHandler[i];
+		delete _adi4BaseHandler[i];
 
 	delete _configHandler;
 	for (int i = 0; i < 4; i++)
