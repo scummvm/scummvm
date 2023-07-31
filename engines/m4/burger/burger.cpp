@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
+#include "m4/burger/wilbur.h"
 
 namespace M4 {
 namespace Burger {
@@ -64,6 +65,14 @@ void BurgerEngine::global_daemon() {
 
 	case gRELEASE_TRIGGER_DIGI_CHECK:
 		release_trigger_digi_check();
+		break;
+
+	case gWILBURS_SPEECH_START:
+		wilbur_say();
+		break;
+
+	case gWILBURS_SPEECH_FINISHED:
+		wilburs_speech_finished();
 		break;
 
 	// TODO: Other cases

@@ -103,7 +103,8 @@ MODULE_OBJS = \
 	burger/other.o \
 	burger/series_player.o \
 	burger/vars.o \
-	burger/walker.o
+	burger/walker.o \
+	burger/wilbur.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)
