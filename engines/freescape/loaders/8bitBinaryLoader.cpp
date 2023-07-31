@@ -510,6 +510,12 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		extraColor[1] = readField(file, 8);
 		extraColor[2] = readField(file, 8);
 		extraColor[3] = readField(file, 8);
+
+		if (isAmiga()) {
+			// TODO
+			groundColor = skyColor;
+			skyColor = 0;
+		}
 	}
 	debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());
 
