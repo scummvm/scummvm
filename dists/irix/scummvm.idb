@@ -44,6 +44,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/titanic.dat titanic.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/tony.dat tony.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/toon.dat toon.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/ultima.dat ultima.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/ultima8.dat ultima8.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/freescape.dat freescape.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/wintermute.zip wintermute.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/mm.dat mm.dat scummvm.sw.eoe

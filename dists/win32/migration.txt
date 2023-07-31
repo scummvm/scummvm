@@ -59,6 +59,7 @@ toon.dat
 tony.dat
 translations.dat
 ultima.dat
+ultima8.dat
 wintermute.zip
 unins000.dat
 unins000.exe

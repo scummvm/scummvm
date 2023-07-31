@@ -1052,6 +1052,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("dists/engine-data/tony.dat");
 		files.push_back("dists/engine-data/toon.dat");
 		files.push_back("dists/engine-data/ultima.dat");
+		files.push_back("dists/engine-data/ultima8.dat");
 		files.push_back("dists/engine-data/wintermute.zip");
 		files.push_back("dists/ios7/LaunchScreen_ios.storyboard");
 		files.push_back("dists/tvos/LaunchScreen_tvos.storyboard");
