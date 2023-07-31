@@ -309,7 +309,39 @@ void GraphicsManager::fillRect(const Common::Rect &rect, uint32 color) {
 	_screen->fillRect(rect, color);
 }
 
-void GraphicsManager::opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc, int opacityValue, byte rTrans, byte gTrans, byte bTrans) {
+void GraphicsManager::keyBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, uint xSrc, uint ySrc, uint32 transColor) {
+	assert(dst->format.bytesPerPixel == src->format.bytesPerPixel);
+
+	w = MIN<int>(src->w, w);
+	h = MIN<int>(src->h, h);
+
+	Common::Rect srcRect(xSrc, ySrc, xSrc + w, ySrc + h);
+	Common::Rect dstRect(xDst, yDst, xDst + w, yDst + h);
+
+	dst->clip(srcRect, dstRect);
+	dst->copyRectToSurfaceWithKey(*src, xDst, yDst, srcRect, transColor);
+}
+
+void GraphicsManager::keyBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, uint xSrc, uint ySrc, byte rTrans, byte gTrans, byte bTrans) {
+	if (_vm->isTrueColor()) {
+		keyBlit(dst, xDst, yDst, w, h, src, xSrc, ySrc, getColor(rTrans, gTrans, bTrans));
+	} else {
+		// Find the palette index of the color
+		int paletteIndex = -1;
+		for (int i = 0; i < 256; i++) {
+			if (_palette[i * 3] == rTrans && _palette[i * 3 + 1] == gTrans && _palette[i * 3 + 2] == bTrans) {
+				paletteIndex = i;
+				break;
+			}
+		}
+
+		assert(paletteIndex >= 0);
+
+		keyBlit(dst, xDst, yDst, w, h, src, xSrc, ySrc, paletteIndex);
+	}
+}
+
+void GraphicsManager::opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, uint xSrc, uint ySrc, int opacityValue, byte rTrans, byte gTrans, byte bTrans) {
 	if (_vm->isTrueColor()) {
 		uint32 transColor = getColor(rTrans, gTrans, bTrans);
 
@@ -369,31 +401,7 @@ void GraphicsManager::opaqueTransparentBlit(Graphics::Surface *dst, int xDst, in
 			}
 		}
 	} else {
-		// Find the palette index of the color
-		int paletteIndex = -1;
-		for (int i = 0; i < 256; i++) {
-			if (_palette[i * 3] == rTrans && _palette[i * 3 + 1] == gTrans && _palette[i * 3 + 2] == bTrans) {
-				paletteIndex = i;
-				break;
-			}
-		}
-
-		assert(paletteIndex >= 0);
-
-		for (int y = 0; y < h; y++) {
-			if (y + yDst < dst->h && y + yDst >= 0) {
-				for (int x = 0; x < w; x++) {
-					if (x + xDst < dst->w && x + xDst >= 0) {
-						byte color = *((const byte *)src->getBasePtr(x + xSrc, y + ySrc));
-
-						if (color == paletteIndex)
-							continue;
-
-						*((byte *)dst->getBasePtr(x + xDst, y + yDst)) = color;
-					}
-				}
-			}
-		}
+		keyBlit(dst, xDst, yDst, w, h, src, xSrc, ySrc, rTrans, gTrans, bTrans);
 	}
 }
 
@@ -546,7 +554,7 @@ int GraphicsManager::computeVPushOffset(int speed) {
 	return 189;
 }
 
-void GraphicsManager::crossBlit(Graphics::Surface *dst, int xDst, int yDst, uint w, uint h, const Graphics::Surface *src, int xSrc, int ySrc) {
+void GraphicsManager::crossBlit(Graphics::Surface *dst, int xDst, int yDst, uint w, uint h, const Graphics::Surface *src, uint xSrc, uint ySrc) {
 	assert(dst->format.bytesPerPixel == src->format.bytesPerPixel);
 
 	for (uint y = 0; y < h; y++)

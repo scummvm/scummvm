@@ -251,14 +251,9 @@ bool InventoryWindow::startDraggingNewItem(int itemID, const Common::Point &poin
 	_draggingItemSpriteData.height = _draggingItemSpriteData.image->h;
 
 	if (_vm->isTrueColor()) {
-		_draggingItemSpriteData.redTrans = 255;
-		_draggingItemSpriteData.greenTrans = 255;
-		_draggingItemSpriteData.blueTrans = 255;
+		_draggingItemSpriteData.transColor = _vm->_gfx->getColor(255, 255, 255);
 	} else {
-		byte firstPixel = *((byte *)_draggingItemSpriteData.image->getBasePtr(0, 0));
-		_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3];
-		_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 1];
-		_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 2];
+		_draggingItemSpriteData.transColor = _draggingItemSpriteData.image->getPixel(0, 0);
 	}
 
 	setCapture();
@@ -433,14 +428,9 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 			_draggingItemSpriteData.height = _draggingItemSpriteData.image->h;
 
 			if (_vm->isTrueColor()) {
-				_draggingItemSpriteData.redTrans = 255;
-				_draggingItemSpriteData.greenTrans = 255;
-				_draggingItemSpriteData.blueTrans = 255;
+				_draggingItemSpriteData.transColor = _vm->_gfx->getColor(255, 255, 255);
 			} else {
-				byte firstPixel = *((byte *)_draggingItemSpriteData.image->getBasePtr(0, 0));
-				_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3];
-				_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 1];
-				_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 2];
+				_draggingItemSpriteData.transColor = _draggingItemSpriteData.image->getPixel(0, 0);
 			}
 
 			setCapture();
@@ -673,14 +663,9 @@ void InventoryWindow::onMouseMove(const Common::Point &point, uint flags) {
 				_draggingIconIndex = newIcon;
 
 				if (_vm->isTrueColor()) {
-					_draggingItemSpriteData.redTrans = 255;
-					_draggingItemSpriteData.greenTrans = 255;
-					_draggingItemSpriteData.blueTrans = 255;
+					_draggingItemSpriteData.transColor = _vm->_gfx->getColor(255, 255, 255);
 				} else {
-					byte firstPixel = *((byte *)_draggingItemSpriteData.image->getBasePtr(0, 0));
-					_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3];
-					_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 1];
-					_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 2];
+					_draggingItemSpriteData.transColor = _draggingItemSpriteData.image->getPixel(0, 0);
 				}
 			}
 		}

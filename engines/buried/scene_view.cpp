@@ -2352,7 +2352,7 @@ void SceneViewWindow::onPaint() {
 
 		// If we have a sprite, update the prebuffer with it now
 		if (_currentSprite.image && _useSprite)
-			_vm->_gfx->opaqueTransparentBlit(_preBuffer, _currentSprite.xPos, _currentSprite.yPos, _currentSprite.width, _currentSprite.height, _currentSprite.image, 0, 0, 0, _currentSprite.redTrans, _currentSprite.greenTrans, _currentSprite.blueTrans);
+			_vm->_gfx->keyBlit(_preBuffer, _currentSprite.xPos, _currentSprite.yPos, _currentSprite.width, _currentSprite.height, _currentSprite.image, 0, 0, _currentSprite.transColor);
 
 		// Update the screen
 		_vm->_gfx->blit(_preBuffer, _rect.left, _rect.top);
