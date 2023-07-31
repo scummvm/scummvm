@@ -24,14 +24,17 @@
 
 #include "m4/burger/rooms/room.h"
 #include "m4/burger/rooms/section.h"
+#include "m4/burger/rooms/section1/room101.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
 class Section1 : public Rooms::Section {
+private:
+	Room101 _room101;
 public:
-	Section1() : Rooms::Section() {}
+	Section1();
 	virtual ~Section1() {}
 };
 
