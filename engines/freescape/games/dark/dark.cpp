@@ -459,6 +459,8 @@ void DarkEngine::drawFullscreenMessageAndWait(Common::String message) {
 			}
 		}
 		drawBorder();
+		if (_currentArea)
+			drawUI();
 		drawFullscreenMessage(message, front, surface);
 		_gfx->flipBuffer();
 		g_system->updateScreen();
