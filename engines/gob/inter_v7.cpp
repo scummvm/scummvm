@@ -869,7 +869,7 @@ void Inter_v7::o7_loadImage() {
 void Inter_v7::o7_setVolume() {
 	uint32 volume = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub: Set volume %d (0 - 100)", volume);
+	warning("Adi Stub: Set volume %d (0 - 100)", volume);
 }
 
 void Inter_v7::o7_zeroVar() {
