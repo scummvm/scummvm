@@ -33,9 +33,18 @@ private:
 	int _val1 = 0;
 	int _val2 = 0;
 	machine *_doorMachine = nullptr;
+	machine *_machine1 = nullptr;
+	machine *_machine2 = nullptr;
 
 	void door();
+	void loadSounds();
 	void unloadSounds();
+	void daemon9();
+	void daemon12();
+	void daemon15();
+	void daemon18();
+	void daemon20();
+
 public:
 	Room101() : Room(101) {}
 	~Room101() override {}
