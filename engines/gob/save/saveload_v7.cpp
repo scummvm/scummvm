@@ -27,7 +27,7 @@
 namespace Gob {
 
 SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
-	// Addy Junior Base
+	// Adibou 2 / Addy Junior Base
 	{"DATA/visage01.inf", kSaveModeSave, nullptr, "face"         }, // Child 01
 	{"DATA/visage02.inf", kSaveModeSave, nullptr, "face"         }, // Child 02
 	{"DATA/visage03.inf", kSaveModeSave, nullptr, "face"         }, // Child 03
@@ -89,7 +89,7 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA/temp15.csa"  , kSaveModeSave, nullptr, "weather" },
 	{"DATA/temp16.csa"  , kSaveModeSave, nullptr, "weather" },
 
-	// Adibou brekout game progress
+	// Adibou breakout game progress
 	{"DATA/brique01.inf"  , kSaveModeSave, nullptr, "breakout game progress" },
 	{"DATA/brique02.inf"  , kSaveModeSave, nullptr, "breakout game progress" },
 	{"DATA/brique03.inf"  , kSaveModeSave, nullptr, "breakout game progress" },
@@ -817,10 +817,10 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 
 	{"TEMP/liste.$$$", kSaveModeSave, nullptr, "exercise list" },
 
-    // Addy 4 Base
+    // Adi 4 / Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
 	{"statev00.inf", kSaveModeSave, nullptr, nullptr        },
-	// Addy 4 Grundschule
+	// Adi 4 / Addy 4 Grundschule
 	{ "premier.dep", kSaveModeSave, nullptr, nullptr        },
 	{ "quitter.dep", kSaveModeSave, nullptr, nullptr        },
 	{   "appel.dep", kSaveModeSave, nullptr, nullptr        },
