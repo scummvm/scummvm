@@ -56,9 +56,9 @@ extern void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigge
 
 extern bool ws_walk_init_system();
 
-extern bool ws_walk_load_series(int16 *dir_array, char *name_array[], bool shadow_flag, bool load_palette);
-extern bool ws_walk_load_walker_series(int16 *dir_array, char *name_array[], bool load_palette);
-extern bool ws_walk_load_shadow_series(int16 *dir_array, char *name_array[]);
+extern bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette);
+extern bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette);
+extern bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]);
 
 extern void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 #define ws_walk_dump_walker_series(xx, yy) (ws_walk_dump_series (xx, yy))

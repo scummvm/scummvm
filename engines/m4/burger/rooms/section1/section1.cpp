@@ -20,6 +20,9 @@
  */
 
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/vars.h"
+#include "m4/graphics/gr_series.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Burger {
@@ -27,6 +30,29 @@ namespace Rooms {
 
 Section1::Section1() : Rooms::Section() {
 	add(&_room101);
+}
+
+void Section1::updateWalker(int x, int y, int dir, int trigger, bool mode) {
+	Section1 *s = dynamic_cast<Section1 *>(g_engine->_activeSection);
+	assert(s);
+	s->updateWalker_(x, y, dir, trigger, mode);
+}
+
+void Section1::updateWalker_(int x, int y, int dir, int trigger, bool mode) {
+	_trigger = trigger;
+	player_set_commands_allowed(false);
+	ws_demand_location(_G(my_walker), x, y);
+	ws_demand_facing(_G(my_walker), dir);
+	ws_hide_walker(_G(my_walker));
+	_G(roomVal3) = 0;
+
+	gr_backup_palette();
+	pal_fade_set_start(_G(master_palette), 0);
+	_series = series_load("110", -1, _G(master_palette));
+	_play = series_play_("110", 0, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+
+	kernel_trigger_dispatch_now(mode ? 1032 : 1027);
+	kernel_timing_trigger(1, 1026);
 }
 
 } // namespace Rooms

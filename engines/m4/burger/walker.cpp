@@ -25,6 +25,22 @@
 namespace M4 {
 namespace Burger {
 
+// Starting hashes for walker machines/sequences/etc */
+#define WALKER_HASH 8			  // machine/data starting hash for wilbur
+#define WALKER_SERIES_HASH 0
+#define NUM_WALKER_SERIES  8
+#define SHADOW_SERIES_HASH 8
+#define NUM_SHADOW_SERIES  5
+
+// These are the walker types
+#define WALKER_WILBUR          0
+#define WALKER_FLUMIX          1
+
+// These are the shadow types
+#define SHADOW_WILBUR          0
+#define SHADOW_FLUMIX          1
+
+
 bool Walker::walk_load_walker_and_shadow_series() {
 	// TODO
 	warning("TODO: walk_load_walker_and_shadow_series");
@@ -32,9 +48,37 @@ bool Walker::walk_load_walker_and_shadow_series() {
 }
 
 machine *Walker::walk_initialize_walker() {
-	// TODO
-	warning("TODO: walk_initialize_walker");
-	return nullptr;
+#if 0
+	machine *m;
+	int32 s;
+
+	// Wilbur walker
+	_G(player).walker_type = WALKER_WILBUR;
+	_G(player).shadow_type = SHADOW_WILBUR;
+
+	_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
+	_G(globals)[GLB_TEMP_2] = WALKER_SERIES_HASH << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
+	_G(globals)[GLB_TEMP_3] = SHADOW_SERIES_HASH << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
+
+	// initialize with bogus data (this is for the real walker)
+	s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	_G(globals)[GLB_TEMP_4] = 320 << 16;
+	_G(globals)[GLB_TEMP_5] = 400 << 16;
+	_G(globals)[GLB_TEMP_6] = s;
+	_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
+
+	m = TriggerMachineByHash(WALKER_HASH, NULL, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "Wilbur Walker");
+
+	// we need to all init sequences to happen immediately (init coordinates)
+	CycleEngines(NULL, &(currentSceneDef.depth_table[0]),
+		NULL, (uint8 *)&master_palette[0], inverse_pal->get_ptr(), TRUE);
+
+	inverse_pal->release();
+
+	return m;
+#else
+	error("TODO: walk_initialize_walker");
+#endif
 }
 
 } // namespace Burger

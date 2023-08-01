@@ -413,7 +413,7 @@ bool ws_walk_init_system() {
 	return true;
 }
 
-bool ws_walk_load_series(int16 *dir_array, char *name_array[], bool shadow_flag, bool load_palette) {
+bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette) {
 	int32 i = 0;
 
 	while (dir_array[i] >= 0) {
@@ -429,11 +429,11 @@ bool ws_walk_load_series(int16 *dir_array, char *name_array[], bool shadow_flag,
 	return true;
 }
 
-bool ws_walk_load_walker_series(int16 *dir_array, char *name_array[], bool load_palette) {
+bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette) {
 	return (ws_walk_load_series(dir_array, name_array, false, load_palette));
 }
 
-bool ws_walk_load_shadow_series(int16 *dir_array, char *name_array[]) {
+bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]) {
 	return (ws_walk_load_series(dir_array, name_array, true, false));
 }
 

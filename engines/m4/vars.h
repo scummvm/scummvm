@@ -154,6 +154,7 @@ public:
 	int32 _requests[_MEMTYPE_LIMIT] = { 0 };
 	void *_memBlock[_MEMTYPE_LIMIT] = { nullptr };
 	RGB8 _master_palette[256];
+	RGB8 _backup_palette[256];
 	bool _pal_fade_in_progress = false;
 	strmRequest *_firstStream = nullptr;
 	strmRequest *_lastStream = nullptr;

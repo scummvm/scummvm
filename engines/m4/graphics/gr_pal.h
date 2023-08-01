@@ -62,6 +62,8 @@ extern void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color);
 extern uint8 gr_pal_find_best_match(RGB8 *pal, uint8 r, uint8 g, uint8 b);
 extern void gr_pal_interface(RGB8 *fixpal);
 extern void gr_pal_reset_ega_colors(RGB8 *pal);
+extern void gr_backup_palette();
+extern void gr_restore_palette();
 
 } // namespace M4
 

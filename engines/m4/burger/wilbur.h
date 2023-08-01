@@ -37,6 +37,9 @@ struct Wilbur_Globals {
 	bool _flag = false;
 };
 
+extern void reset_walker_sprites();
+extern bool load_walker_sprites();
+
 extern void wilbur_speech(const char *name, int trigger, int room = -1, byte flags = 0,
 	int vol = 256, int channel = 1);
 extern void wilbur_say();
