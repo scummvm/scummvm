@@ -87,7 +87,8 @@ void generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::S
 
 	for (Common::StringArray fileChecksum : fileChecksums) {
 		Common::JSONObject file;
-		file.setVal("name", new Common::JSONValue(fileChecksum[0]));
+		Common::Path relativePath = Common::Path(fileChecksum[0]).relativeTo(gamePath);
+		file.setVal("name", new Common::JSONValue(relativePath.toConfig()));
 
 		auto tempNode = Common::FSNode(Common::Path(fileChecksum[0]));
 		Common::File tempFile;
