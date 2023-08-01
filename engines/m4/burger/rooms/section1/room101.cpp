@@ -68,9 +68,36 @@ static const seriesStreamBreak STREAM_BREAKS5[] = {
 	STREAM_BREAK_END
 };
 
+static const seriesStreamBreak STREAM_BREAKS6[] = {
+	{   9, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  19, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  28, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  32, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
 static const seriesPlayBreak PLAY_BREAKS1[] = {
-	{   0, 10, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{  11, -1, "101_004", 2, 255, -1, 0, 0, 0, 0 },
+	{   0, 10, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{  11, -1, "101_004", 2, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY_BREAKS2[] = {
+	{   0,  2, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{   3, -1, "102_038", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY_BREAKS3[] = {
+	{   0,  8, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{   9, -1, "101_002", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY_BREAKS4[] = {
+	{   0,  6, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{   7,  9, "101w005", 1, 255, -1,    0, 0, nullptr, 0 },
+	{  10, -1, nullptr,   1, 255, 10016, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -290,6 +317,9 @@ void Room101::daemon() {
 			series_load("101wi12s", -1, nullptr);
 		if (_G(flags)[ROOM101_FLAG20])
 			series_load("101wi11s", -1, nullptr);
+
+		_machine1 = series_play_("101wi14s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS6, "101wi14", 6, 256, 2);
 		break;
 
 	case 8:
@@ -459,11 +489,109 @@ void Room101::daemon() {
 			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, 10016, 3, 6, 100, 0, -53);
 			break;
 
-		// TODO: More cases
+		case 7:
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+			break;
+
+		case 8:
+			_G(roomVal1) = 9;
+			TerminateMachineAndNull(_doorMachine);
+			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, 10016, 3, 6, 100, 0, 0);
+			break;
+
+		case 9:
+			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1002);
+			break;
+
+		case 10:
+			_G(roomVal1) = 11;
+			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 256, 10016, 3, 6, 100, 0, -53);
+			break;
+
+		case 11:
+			door();
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+			break;
+
+		case 14:
+			TerminateMachineAndNull(_doorMachine);
+			_G(roomVal1) = 15;
+			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, 10016, 3, 6, 100, 0, 0);
+			break;
+
+		case 15:
+			_G(roomVal1) = 16;
+			digi_play("101h001", 1, 255, 10016);
+			break;
+
+		case 16:
+			_G(roomVal1) = 17;
+			series_play_with_breaks(PLAY_BREAKS2, "101wi03", 3072, 10016, 3, 6, 100, 0, 0);
+			break;
+
+		case 17:
+			_G(roomVal1) = 19;
+			_val2 = 12;
+
+			if (_G(flags)[V005]) {
+				Common::String name = Common::String::format("101h003%c",
+					'a' + imath_ranged_rand(0, 5));
+				digi_play(name.c_str(), 1, 255, 10016);
+			} else {
+				digi_play("101h002", 1, 255, 10016);
+				_G(flags)[V005] = 1;
+			}
+
+			series_play_("101ha01", 3840, 0, 1, 6, 0, 100, 0, 0, 0, 7);
+			break;
+
+		case 18:
+			door();
+			ws_unhide_walker(_G(my_walker));
+			player_set_commands_allowed(true);
+			break;
+
+		case 19:
+			_val2 = 13;
+			break;
+
+		case 20:
+			_G(roomVal1) = 11;
+			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, 10016, 3, 6, 100, 0, -53);
+			break;
+
+		case 21:
+			_G(roomVal1) = 22;
+			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1003);
+			break;
+
+		case 22:
+			series_play_("101wi04", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
+			series_play_("101wi04s", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
+			break;
+
 		default:
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
+		break;
+
+	case 10028:
+		if (_G(flags)[V043]) {
+			_G(kernel).continue_handling_trigger = true;
+
+		} else if (player_commands_allowed() && _G(roomVal2) &&
+				INTERFACE_VISIBLE && !digi_play_state(1)) {
+			Section1::updateDisablePlayer();
+			digi_preload("100_013");
+			digi_play("100_013", 2, 255, -1);
+			kernel_timing_trigger(240, 24);
+		} else {
+			kernel_timing_trigger(60, 10028);
+		}
+		break;
 
 	// TODO: cases
 	default:
