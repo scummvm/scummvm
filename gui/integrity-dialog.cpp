@@ -54,16 +54,17 @@ Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Co
 			if (!file.open(entry))
 				continue;
 
-			Common::Array<Common::String> fileChecksum =
-				{filename.toString(), Common::String(file.size())};
+			Common::Array<Common::String> fileChecksum = {filename.toString()};
 			// Various checksizes
 			for (auto size : {0, 5000, 1024 * 1024}) {
 				fileChecksum.push_back(Common::computeStreamMD5AsString(file, size).c_str());
+				file.seek(0);
 			}
 			// Tail checksums with checksize 5000
 			file.seek(-5000, SEEK_END);
 			fileChecksum.push_back(Common::computeStreamMD5AsString(file).c_str());
 
+			file.close();
 			fileChecksums.push_back(fileChecksum);
 		}
 	}
@@ -87,17 +88,29 @@ void generateJSONRequest(Common::String gamePath, Common::String gameid, Common:
 	for (Common::StringArray fileChecksum : fileChecksums) {
 		Common::JSONObject file;
 		file.setVal("name", new Common::JSONValue(fileChecksum[0]));
-		file.setVal("size", new Common::JSONValue(fileChecksum[1]));
+
+		auto tempNode = Common::FSNode(fileChecksum[0]);
+		Common::File tempFile;
+		if (!tempFile.open(tempNode))
+			continue;
+		long long fileSize = tempFile.size();
+		tempFile.close();
+
+		file.setVal("size", new Common::JSONValue(fileSize));
 
 		Common::JSONArray checksums;
-		int index = 0;
+		Common::StringArray checkcodes = {"md5", "md5-5000", "md5-1M", "md5-t-5000"};
+
+		int index = -1;
 		for (Common::String val : fileChecksum) {
+			index++;
+
 			Common::JSONObject checksum;
-			if (index < 2) {
-				index++;
+			if (index < 1) {
 				continue;
 			}
-			checksum.setVal("type", new Common::JSONValue("md5"));
+
+			checksum.setVal("type", new Common::JSONValue(checkcodes[index - 1]));
 			checksum.setVal("checksum", new Common::JSONValue(val));
 
 			checksums.push_back(new Common::JSONValue(checksum));
@@ -110,7 +123,11 @@ void generateJSONRequest(Common::String gamePath, Common::String gameid, Common:
 	requestObject.setVal("files", new Common::JSONValue(filesObject));
 
 	Common::JSONValue request(requestObject);
-	debug(request.stringify().c_str());
+	Common::DumpFile outFile;
+	if (outFile.open("output.json"))
+		outFile.write(request.stringify().c_str(), request.stringify().size());
+
+	outFile.close();
 }
 
 } // End of namespace GUI
