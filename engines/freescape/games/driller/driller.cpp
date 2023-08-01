@@ -283,10 +283,7 @@ void DrillerEngine::drawInfoMenu() {
 	} else if (isAmiga() || isAtariST())
 		drawStringInSurface("press any key to continue", 66, 97, front, black, surface);
 
-	_uiTexture->update(surface);
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-	_gfx->setViewport(_viewArea);
+	drawFullscreenSurface(surface);
 
 	_gfx->flipBuffer();
 	g_system->updateScreen();

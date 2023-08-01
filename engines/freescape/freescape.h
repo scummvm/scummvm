@@ -118,6 +118,7 @@ public:
 	virtual void borderScreen();
 	virtual void titleScreen();
 
+	void drawFullscreenSurface(Graphics::Surface *surface);
 	virtual void loadBorder();
 	virtual void processBorder();
 	void drawBorder();

@@ -409,14 +409,7 @@ void DarkEngine::drawFullscreenMessage(Common::String message, uint32 front, Gra
 		y = y + 8;
 	}
 
-	if (!_uiTexture)
-		_uiTexture = _gfx->createTexture(surface);
-	else
-		_uiTexture->update(surface);
-
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-	_gfx->setViewport(_viewArea);
+	drawFullscreenSurface(surface);
 }
 
 void DarkEngine::drawFullscreenMessageAndWait(Common::String message) {
@@ -562,15 +555,7 @@ void DarkEngine::drawInfoMenu() {
 			}
 		}
 		drawFrame();
-
-		if (!_uiTexture)
-			_uiTexture = _gfx->createTexture(surface);
-		else
-			_uiTexture->update(surface);
-
-		_gfx->setViewport(_fullscreenViewArea);
-		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-		_gfx->setViewport(_viewArea);
+		drawFullscreenSurface(surface);
 
 		_gfx->flipBuffer();
 		g_system->updateScreen();

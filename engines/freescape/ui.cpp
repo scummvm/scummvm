@@ -103,6 +103,17 @@ void FreescapeEngine::borderScreen() {
 	_gfx->clear(0, 0, 0, true);
 }
 
+void FreescapeEngine::drawFullscreenSurface(Graphics::Surface *surface) {
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
+
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+	_gfx->setViewport(_viewArea);
+}
+
 void FreescapeEngine::drawUI() {
 	Graphics::Surface *surface = nullptr;
 	if (_border) { // This can be removed when all the borders are loaded
@@ -125,14 +136,7 @@ void FreescapeEngine::drawUI() {
 	else if (isAmiga() || isAtariST())
 		drawAmigaAtariSTUI(surface);
 
-	if (!_uiTexture)
-		_uiTexture = _gfx->createTexture(surface);
-	else
-		_uiTexture->update(surface);
-
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-	_gfx->setViewport(_viewArea);
+	drawFullscreenSurface(surface);
 
 	surface->free();
 	delete surface;
