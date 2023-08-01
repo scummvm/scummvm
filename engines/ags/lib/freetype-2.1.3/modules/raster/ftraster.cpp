@@ -40,6 +40,8 @@
 #include "engines/ags/lib/freetype-2.1.3/modules/raster/ftraster.h"
 #include "engines/ags/lib/freetype-2.1.3/ftcalc.h"   /* for FT_MulDiv only */
 
+#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
+
 
 /**** CONFIGURATION MACROS ****/
 
@@ -2292,7 +2294,6 @@ static int ft_black_new(FT_Memory memory, TRaster_Instance **araster) {
 	FT_Error error;
 	TRaster_Instance *raster;
 
-	using AGS3::FreeType213::FT_Alloc;
 
 	*araster = 0;
 	if (!FT_NEW(raster)) {
@@ -2306,7 +2307,6 @@ static int ft_black_new(FT_Memory memory, TRaster_Instance **araster) {
 }
 
 static void ft_black_done(TRaster_Instance *raster) {
-	using AGS3::FreeType213::FT_Free;
 
 	FT_Memory memory = (FT_Memory)raster->memory;
 	FT_FREE(raster);
