@@ -22,19 +22,35 @@
 #ifndef GUI_INTEGRITY_DIALOG_H
 #define GUI_INTEGRITY_DIALOG_H
 
+#include "backends/networking/curl/postrequest.h"
+
 #include "common/array.h"
+#include "common/formats/json.h"
 #include "common/str.h"
 
 #include "gui/dialog.h"
 
 namespace GUI {
 
-class IntegrityDialog : public Dialog {
+class IntegrityDialog : Dialog {
+	Common::String _endpoint;
+	Common::String _gamePath;
+	Common::String _gameid;
+	Common::String _engineid;
+	Common::String _extra;
+	Common::String _platform;
+	Common::String _language;
 
 public:
-	static void generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
+	IntegrityDialog(Common::String endpoint, Common::String gameConfig);
+	~IntegrityDialog();
+
+	void sendJSON();
+	static Common::JSONValue *generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
 
 private:
+	void checksumResponseCallback(Common::JSONValue *r);
+	void errorCallback(Networking::ErrorResponse error);
 	static Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums);
 };
 

@@ -607,12 +607,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 
 	case kCmdCheckIntegrity:
-		IntegrityDialog::generateJSONRequest(ConfMan.get("path", _domain),
-											 ConfMan.get("gameid", _domain),
-											 ConfMan.get("engineid", _domain),
-											 ConfMan.get("extra", _domain),
-											 ConfMan.get("platform", _domain),
-											 ConfMan.get("language", _domain));
+		IntegrityDialog("https://example.com/api", _domain).sendJSON();
 		break;
 
 	case kOKCmd:

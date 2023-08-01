@@ -22,12 +22,25 @@
 #include "gui/integrity-dialog.h"
 
 #include "common/array.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/formats/json.h"
 #include "common/md5.h"
 
 namespace GUI {
+
+IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String gameConfig) : Dialog("GameOptions_IntegrityDialog") {
+	_endpoint = endpoint;
+	_gamePath = ConfMan.get("path", gameConfig);
+	_gameid = ConfMan.get("gameid", gameConfig);
+	_engineid = ConfMan.get("engineid", gameConfig);
+	_extra = ConfMan.get("extra", gameConfig);
+	_platform = ConfMan.get("platform", gameConfig);
+	_language = ConfMan.get("language", gameConfig);
+}
+
+IntegrityDialog::~IntegrityDialog() {
+}
 
 Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums) {
 	const Common::FSNode dir(gamePath);
@@ -72,7 +85,7 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 	return fileChecksums;
 }
 
-void IntegrityDialog::generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language) {
+Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language) {
 	Common::Array<Common::StringArray> fileChecksums = {};
 	fileChecksums = generateChecksums(gamePath, fileChecksums);
 	Common::JSONObject requestObject;
@@ -123,12 +136,27 @@ void IntegrityDialog::generateJSONRequest(Common::String gamePath, Common::Strin
 
 	requestObject.setVal("files", new Common::JSONValue(filesObject));
 
-	Common::JSONValue request(requestObject);
-	Common::DumpFile outFile;
-	if (outFile.open("output.json"))
-		outFile.write(request.stringify().c_str(), request.stringify().size());
+	Common::JSONValue *request = new Common::JSONValue(requestObject);
+	return request;
+}
 
-	outFile.close();
+void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
+	debug("Response recieved!");
+}
+
+void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
+	debug("ERROR %ld: %s", error.httpResponseCode, error.response.c_str());
+}
+
+void IntegrityDialog::sendJSON() {
+	Networking::PostRequest conn(_endpoint,
+								 new Common::Callback<IntegrityDialog, Common::JSONValue *>(this, &IntegrityDialog::checksumResponseCallback),
+								 new Common::Callback<IntegrityDialog, Networking::ErrorResponse>(this, &IntegrityDialog::errorCallback));
+
+	Common::JSONValue *json = generateJSONRequest(_gamePath, _gameid, _engineid, _extra, _platform, _language);
+	conn.setJSONData(json);
+	conn.start();
+	delete json;
 }
 
 } // End of namespace GUI
