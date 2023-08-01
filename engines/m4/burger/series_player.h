@@ -25,34 +25,24 @@
 
 #include "m4/m4_types.h"
 #include "m4/wscript/ws_machine.h"
+#include "m4/burger/core/play_break.h"
 
 namespace M4 {
 namespace Burger {
 
-struct seriesPlayBreak {
-	int32 firstFrame = 0;
-	int32 lastFrame = 0;
-	char *sound = nullptr;
-	int32 channel = 0;
-	int32 volume = 0;
-	int32 trigger = 0;
-	uint32 flags = 0;
-	int32 loopCount = 0;
-	int32 *variable = nullptr;
-	int32 value = 0;
-};
-#define WITH_SHADOW     1       // Flag for seriesPlayBreak
-#define PRELOAD_SOUNDS  2       // Flag for seriesPlayBreak
+// Flags for series_stream_with_breaks and series_play_with_breaks
+#define DIGI_LOOP       1024 // these must be more than the series play flags
+#define DIGI_STOP       2048 
 
 struct seriesPlayer {
-	seriesPlayBreak *break_list = nullptr;	// Holds the list of breaks for digi plays
+	const seriesPlayBreak *break_list = nullptr;	// Holds the list of breaks for digi plays
 	seriesPlayBreak  current_break;			// Current play break
 	machine *series_machine = nullptr;		// Series' playback machine
 	machine *shadow_machine = nullptr;		// Shadow series' playback machine
 	int32  series = 0;						// Holds the series handle upon loading so it can be unloaded at the end
 	int32  shadow_series = 0;				// Holds the series handle for the shadow
 	int32  index = 0;						// Holds which line of the list currently waiting for a play break
-	char *name = nullptr;					// Name of series to play
+	const char *name = nullptr;				// Name of series to play
 	char   shadow_name[80] = { 0 };
 	int32  framerate = 0;
 	int32  trigger = 0;
