@@ -524,17 +524,7 @@ void FreescapeEngine::executeMovementConditions() {
 	executeLocalGlobalConditions(false, true, false);
 }
 
-void FreescapeEngine::updateTimeVariables() {
-	int seconds, minutes, hours;
-	getTimeFromCountdown(seconds, minutes, hours);
-
-	if (_lastMinute != minutes) {
-		_lastMinute = minutes;
-		_gameStateVars[0x1e] += 1;
-		_gameStateVars[0x1f] += 1;
-		executeLocalGlobalConditions(false, true, false); // Only execute "on collision" room/global conditions
-	}
-}
+void FreescapeEngine::updateTimeVariables() {}
 
 Common::Error FreescapeEngine::run() {
 	_vsyncEnabled = g_system->getFeatureState(OSystem::kFeatureVSync);

@@ -869,6 +869,18 @@ void DrillerEngine::drawSensorShoot(Sensor *sensor) {
 	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
 }
 
+void DrillerEngine::updateTimeVariables() {
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+
+	if (_lastMinute != minutes) {
+		_lastMinute = minutes;
+		_gameStateVars[0x1e] += 1;
+		_gameStateVars[0x1f] += 1;
+		executeLocalGlobalConditions(false, true, false); // Only execute "on collision" room/global conditions
+	}
+}
+
 Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	for (auto &it : _areaMap) { // All but skip area 255
 		if (it._key == 255)

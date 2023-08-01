@@ -342,14 +342,14 @@ void DarkEngine::updateTimeVariables() {
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	if (_lastTenSeconds != seconds / 10) {
+		_gameStateVars[0x1e] += 1;
+		_gameStateVars[0x1f] += 1;
 		_lastTenSeconds = seconds / 10;
 		executeLocalGlobalConditions(false, false, true);
 	}
 
 	if (_lastMinute != minutes) {
 		_lastMinute = minutes;
-		_gameStateVars[0x1e] += 1;
-		_gameStateVars[0x1f] += 1;
 		executeLocalGlobalConditions(false, true, false);
 	}
 }

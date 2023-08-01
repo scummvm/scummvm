@@ -497,6 +497,8 @@ private:
 	void initCPC();
 	void initC64();
 
+	void updateTimeVariables() override;
+
 	Common::Rect _moveFowardArea;
 	Common::Rect _moveLeftArea;
 	Common::Rect _moveRightArea;
