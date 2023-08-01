@@ -580,7 +580,7 @@ GzioReadStream::inflate_codes_in_window()
 
 	      if (w - d >= e)
 		{
-		  memmove (_slide + w, _slide + d, e);
+		  memcpy (_slide + w, _slide + d, e);
 		  w += e;
 		  d += e;
 		}
@@ -1083,7 +1083,7 @@ GzioReadStream::readAtOffset (int64 offset, byte *buf, uint32 len)
       if (size > len)
 	size = len;
 
-      memmove (buf, srcaddr, size);
+      memcpy (buf, srcaddr, size);
 
       buf += size;
       len -= size;
