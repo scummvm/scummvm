@@ -229,6 +229,7 @@ bool DarkEngine::checkIfGameEnded() {
 		gotoArea(1, 26);
 	} else if (_forceEndGame) {
 		_forceEndGame = false;
+		insertTemporaryMessage(_messagesList[18], _countdown - 2);
 		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
 		drawFrame();
 		_gfx->flipBuffer();
@@ -490,6 +491,97 @@ void DarkEngine::drawSensorShoot(Sensor *sensor) {
 	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
 }
 
+void DarkEngine::drawInfoMenu() {
+	_savedScreen = _gfx->getScreenshot();
+	uint32 color = 0;
+	switch (_renderMode) {
+		case Common::kRenderCGA:
+			color = 1;
+			break;
+		case Common::kRenderZX:
+			color = 6;
+			break;
+		default:
+			color = 14;
+	}
+	uint8 r, g, b;
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+
+	surface->fillRect(Common::Rect(88, 48, 231, 103), black);
+	surface->frameRect(Common::Rect(88, 48, 231, 103), front);
+
+	surface->frameRect(Common::Rect(90, 50, 229, 101), front);
+
+	drawStringInSurface("L-LOAD S-SAVE", 105, 56, front, black, surface);
+	if (isSpectrum())
+		drawStringInSurface("1-TERMINATE", 105, 64, front, black, surface);
+	else
+		drawStringInSurface("ESC-TERMINATE", 105, 64, front, black, surface);
+
+	drawStringInSurface("T-TOGGLE", 128, 81, front, black, surface);
+	drawStringInSurface("SOUND ON/OFF", 113, 88, front, black, surface);
+
+	Common::Event event;
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+
+			// Events
+			switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_l) {
+					_gfx->setViewport(_fullscreenViewArea);
+					loadGameDialog();
+					_gfx->setViewport(_viewArea);
+				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+					_gfx->setViewport(_fullscreenViewArea);
+					saveGameDialog();
+					_gfx->setViewport(_viewArea);
+				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
+					// TODO
+				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_forceEndGame = true;
+					cont = false;
+				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+					_forceEndGame = true;
+					cont = false;
+				} else
+					cont = false;
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				break;
+
+			default:
+				break;
+			}
+		}
+		drawFrame();
+
+		if (!_uiTexture)
+			_uiTexture = _gfx->createTexture(surface);
+		else
+			_uiTexture->update(surface);
+
+		_gfx->setViewport(_fullscreenViewArea);
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+		_gfx->setViewport(_viewArea);
+
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+
+	_savedScreen->free();
+	delete _savedScreen;
+	surface->free();
+	delete surface;
+}
 
 Common::Error DarkEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	for (auto &it : _areaMap) {
