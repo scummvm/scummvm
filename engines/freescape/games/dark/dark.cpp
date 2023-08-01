@@ -178,6 +178,39 @@ bool DarkEngine::checkECD(int index) {
 	return true;
 }
 
+void DarkEngine::addSkanner(Area *area) {
+	GeometricObject *obj = nullptr;
+	int16 id;
+
+	id = 248;
+	// If first object is already added, do not re-add any
+	if (area->objectWithID(id) != nullptr)
+		return;
+
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = (GeometricObject *)obj->duplicate();
+	obj->makeInvisible();
+	area->addObject(obj);
+
+	id = 249;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = (GeometricObject *)obj->duplicate();
+	obj->makeInvisible();
+	area->addObject(obj);
+
+	id = 250;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = (GeometricObject *)obj->duplicate();
+	obj->makeInvisible();
+	area->addObject(obj);
+}
+
 bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		bool destroyed = checkECD(_gameStateVars[kVariableDarkECD] - 1);

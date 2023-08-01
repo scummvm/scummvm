@@ -63,6 +63,7 @@ void DarkEngine::loadAssetsZXDemo() {
 	for (auto &it : _areaMap) {
 		addWalls(it._value);
 		addECDs(it._value);
+		addSkanner(it._value);
 	}
 }
 

@@ -525,6 +525,7 @@ public:
 
 	uint32 _initialEnergy;
 	uint32 _initialShield;
+	void addSkanner(Area *area);
 
 	void initGameState() override;
 	void borderScreen() override;

@@ -63,6 +63,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		for (auto &it : _areaMap) {
 			addWalls(it._value);
 			addECDs(it._value);
+			addSkanner(it._value);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
 		//loadBundledImages();
@@ -101,6 +102,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		for (auto &it : _areaMap) {
 			addWalls(it._value);
 			addECDs(it._value);
+			addSkanner(it._value);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
