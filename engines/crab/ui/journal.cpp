@@ -255,6 +255,8 @@ void Journal::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 }
 
 void Journal::loadState(rapidxml::xml_node<char> *node) {
+	_journal.clear();
+
 	for (rapidxml::xml_node<char> *n = node->first_node("journal"); n != NULL; n = n->next_sibling("journal")) {
 		Common::String id;
 		loadStr(id, "id", n);
