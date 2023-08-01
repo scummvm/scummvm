@@ -45,7 +45,7 @@ struct CinepakStrip {
 	uint16 length;
 	Common::Rect rect;
 	CinepakCodebook v1_codebook[256], v4_codebook[256];
-	byte v1_dither[256 * 4 * 4 * 4], v4_dither[256 * 4 * 4 * 4];
+	uint32 v1_dither[256 * 4 * 4], v4_dither[256 * 4 * 4];
 };
 
 struct CinepakFrame {
