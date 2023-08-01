@@ -98,6 +98,7 @@ public:
 	int _roomVal1 = 0;
 	int _roomVal2 = 0;
 	int _roomVal3 = 0;
+	int _walkTrigger = 0;
 
 public:
 	Vars();

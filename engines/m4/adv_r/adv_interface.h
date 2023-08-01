@@ -47,6 +47,8 @@ public:
 
 	virtual void cancel_sentence() = 0;
 
+	virtual void freshen_sentence() = 0;
+
 	virtual bool set_interface_palette(RGB8 *myPalette) = 0;
 
 	virtual bool eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) = 0;

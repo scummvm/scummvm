@@ -44,6 +44,8 @@ public:
 	virtual ~Section1() {}
 
 	static void updateWalker(int x, int y, int dir, int trigger, bool mode = false);
+	static void updateDisablePlayer();
+	static void walk(int facing, int trigger = -1);
 };
 
 } // namespace Rooms

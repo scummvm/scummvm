@@ -64,6 +64,8 @@ public:
 
 	void cancel_sentence() override;
 
+	void freshen_sentence() override;
+
 	bool set_interface_palette(RGB8 *myPalette) override;
 
 	void track_hotspots_refresh() override;

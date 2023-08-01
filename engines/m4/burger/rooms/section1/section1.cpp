@@ -55,6 +55,26 @@ void Section1::updateWalker_(int x, int y, int dir, int trigger, bool mode) {
 	kernel_timing_trigger(1, 1026);
 }
 
+void Section1::updateDisablePlayer() {
+	player_update_info(_G(my_walker), &_G(player_info));
+	player_set_commands_allowed(false);
+	g_vars->getInterface()->freshen_sentence();
+	walk(-1);
+
+	_G(flags)[V000] = _G(flags)[V043] ? 1002 : 1003;
+}
+
+void Section1::walk(int facing, int trigger) {
+	if (_G(my_walker) && _G(player).walker_in_this_scene) {
+		player_update_info(_G(my_walker), &_G(player_info));
+
+		if (facing == -1)
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, trigger, _G(walkTrigger));
+		else
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, trigger, facing, _G(completeWalk));
+	}
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4

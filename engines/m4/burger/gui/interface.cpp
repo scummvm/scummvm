@@ -118,6 +118,17 @@ void Interface::cancel_sentence() {
 	track_hotspots_refresh();
 }
 
+void Interface::freshen_sentence() {
+	_textField->set_string(" ");
+	_G(player).need_to_walk = false;
+	_G(player).ready_to_walk = _G(player).need_to_walk;
+	_G(player).command_ready = _G(player).ready_to_walk;
+	_pointer1 = nullptr;
+	_pointer2 = nullptr;
+
+	track_hotspots_refresh();
+}
+
 bool Interface::set_interface_palette(RGB8 *myPalette) {
 	gr_pal_set_RGB8(&myPalette[1], 0, 68, 0);
 	gr_pal_set_RGB8(&myPalette[2], 0, 134, 0);
