@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	dialog.o \
 	dump-all-dialogs.o \
 	editgamedialog.o \
+	integrity-dialog.o \
 	error.o \
 	EventRecorder.o \
 	filebrowser-dialog.o \
