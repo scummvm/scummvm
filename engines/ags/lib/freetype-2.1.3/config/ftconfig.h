@@ -228,6 +228,7 @@ typedef unsigned long FT_UFast;
 
 #else
 
+/*
 #ifdef __cplusplus
 #define FT_LOCAL(x) extern "C" x
 #define FT_LOCAL_DEF(x) extern "C" x
@@ -235,47 +236,62 @@ typedef unsigned long FT_UFast;
 #define FT_LOCAL(x) extern x
 #define FT_LOCAL_DEF(x) x
 #endif
+*/
+
+#define FT_LOCAL(x) x
+#define FT_LOCAL_DEF(x) x
 
 #endif /* FT_MAKE_OPTION_SINGLE_OBJECT */
 
 #ifndef FT_BASE
 
+/*
 #ifdef __cplusplus
 #define FT_BASE(x) extern "C" x
 #else
 #define FT_BASE(x) extern x
 #endif
+*/
 
+#define FT_BASE(x) x
 #endif /* !FT_BASE */
 
 #ifndef FT_BASE_DEF
 
+/*
 #ifdef __cplusplus
 #define FT_BASE_DEF(x) extern "C" x
 #else
 #define FT_BASE_DEF(x) extern x
 #endif
+*/
 
+#define FT_BASE_DEF(x) x
 #endif /* !FT_BASE_DEF */
 
 #ifndef FT_EXPORT
 
+/*
 #ifdef __cplusplus
 #define FT_EXPORT(x) extern "C" x
 #else
 #define FT_EXPORT(x) extern x
 #endif
-
+*/
+#define FT_EXPORT(x) x
 #endif /* !FT_EXPORT */
 
 #ifndef FT_EXPORT_DEF
 
+/*
 #ifdef __cplusplus
 #define FT_EXPORT_DEF(x) extern "C" x
 #else
 #define FT_EXPORT_DEF(x) extern x
 #endif
+*/
 
+#define FT_EXPORT_DEF(x) x
 #endif /* !FT_EXPORT_DEF */
 
 #ifndef FT_EXPORT_VAR
