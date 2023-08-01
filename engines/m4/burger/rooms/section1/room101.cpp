@@ -30,7 +30,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-static const seriesStreamBreak STREAMS1[] = {
+static const seriesStreamBreak STREAM_BREAKS1[] = {
 	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{   5, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{  14, nullptr, 2, 255, -1, 0, nullptr, 0 },
@@ -38,7 +38,7 @@ static const seriesStreamBreak STREAMS1[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS2[] = {
+static const seriesStreamBreak STREAM_BREAKS2[] = {
 	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{   6, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{  17, nullptr, 2, 255, -1, 0, nullptr, 0 },
@@ -47,7 +47,7 @@ static const seriesStreamBreak STREAMS2[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS3[] = {
+static const seriesStreamBreak STREAM_BREAKS3[] = {
 	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{   5, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{  14, nullptr, 2, 255, -1, 0, nullptr, 0 },
@@ -55,17 +55,23 @@ static const seriesStreamBreak STREAMS3[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS4[] = {
+static const seriesStreamBreak STREAM_BREAKS4[] = {
 	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{   7, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{  13, nullptr, 1, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS5[] = {
+static const seriesStreamBreak STREAM_BREAKS5[] = {
 	{   0, "100_010", 1, 255, -1, 0, nullptr, 0 },
 	{  19, "100_011", 1, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
+};
+
+static const seriesPlayBreak PLAY_BREAKS1[] = {
+	{   0, 10, nullptr,   1, 255, -1, 0, 0, 0, 0 },
+	{  11, -1, "101_004", 2, 255, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
 };
 
 void Room101::init() {
@@ -303,7 +309,7 @@ void Room101::daemon() {
 
 	case 10:
 		_machine1 = series_play_("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAMS1, "101wi13", 6, 256, 2);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS1, "101wi13", 6, 256, 2);
 		break;
 
 	case 11:
@@ -325,7 +331,7 @@ void Room101::daemon() {
 
 	case 13:
 		_machine1 = series_play_("101wi12s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAMS2, "101wi12", 6, 256, 2);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS2, "101wi12", 6, 256, 2);
 		break;
 
 	case 14:
@@ -344,7 +350,7 @@ void Room101::daemon() {
 
 	case 16:
 		_machine1 = series_play_("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAMS3, "101wi13", 6, 256, 2);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS3, "101wi13", 6, 256, 2);
 		break;
 
 	case 17:
@@ -365,7 +371,7 @@ void Room101::daemon() {
 
 	case 19:
 		_machine1 = series_play_("101wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAMS4, "101wi11", 6, 256, 2);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS4, "101wi11", 6, 256, 2);
 		break;
 
 	case 20:
@@ -386,8 +392,8 @@ void Room101::daemon() {
 		if (_G(player_info).x < 218 || (_G(player_info).x < 349 && _G(player_info).y > 277)) {
 			kernel_trigger_dispatch_now(27);
 		} else {
-			digi_preload_stream_breaks(STREAMS5);
-			series_stream_with_breaks(STREAMS5, "101dt01", 6, 1024, 25);
+			digi_preload_stream_breaks(STREAM_BREAKS5);
+			series_stream_with_breaks(STREAM_BREAKS5, "101dt01", 6, 1024, 25);
 		}
 		break;
 
@@ -398,7 +404,7 @@ void Room101::daemon() {
 			kernel_timing_trigger(3, 25);
 		} else {
 			digi_stop(1);
-			digi_unload_stream_breaks(STREAMS5);
+			digi_unload_stream_breaks(STREAM_BREAKS5);
 			digi_stop(2);
 			digi_unload("100_013");
 			player_set_commands_allowed(true);
@@ -409,8 +415,8 @@ void Room101::daemon() {
 	case 26:
 		door();
 		reset_walker_sprites();
-		digi_preload_stream_breaks(STREAMS5);
-		series_stream_with_breaks(STREAMS5, "101dt01", 6, 1, 25);
+		digi_preload_stream_breaks(STREAM_BREAKS5);
+		series_stream_with_breaks(STREAM_BREAKS5, "101dt01", 6, 1, 25);
 		break;
 
 	case 27:
@@ -446,6 +452,11 @@ void Room101::daemon() {
 			ws_demand_location(_G(my_walker), 0, 288);
 			ws_demand_facing(_G(my_walker), 3);
 			ws_walk(_G(my_walker), 30, 288, nullptr, -1, 3);
+			break;
+
+		case 6:
+			_G(roomVal1) = 7;
+			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, 10016, 3, 6, 100, 0, -53);
 			break;
 
 		// TODO: More cases

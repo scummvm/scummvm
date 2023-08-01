@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,29 +20,41 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_ROOM_H
-#define M4_BURGER_ROOMS_ROOM_H
+#ifndef M4_BURGER_PLAY_BREAK_H
+#define M4_BURGER_PLAY_BREAK_H
 
-#include "m4/core/rooms.h"
-#include "m4/burger/core/play_break.h"
-#include "m4/burger/core/stream_break.h"
+#include "m4/m4_types.h"
+#include "m4/adv_r/adv_trigger.h"
 
 namespace M4 {
 namespace Burger {
-namespace Rooms {
 
-class Room : public M4::Room {
-public:
-	Room(uint roomNum) : M4::Room(roomNum) {}
-	~Room() override {}
-
-	void shutdown() override;
-	void parser_code() override;
-
-	void compact_mem_and_report() {}
+struct seriesPlayBreak {
+	int32 firstFrame;
+	int32 lastFrame;
+	const char *sound;
+	int32 channel;
+	int32 volume;
+	int32 trigger;
+	uint32 flags;
+	int32 loopCount;
+	int32 *variable;
+	int32 value;
 };
 
-} // namespace Rooms
+enum {
+	WITH_SHADOW		= 1,
+	PRELOAD_SOUNDS	= 2
+};
+
+#define PLAY_BREAK_END { -1, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 }
+
+extern int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name,
+	frac16 depth = 0, int32 trigger = NO_TRIGGER, uint32 flags = 0, int32 framerate = 0,
+	int32 scale = 100, int32 x = 0, int32 y = 0);
+extern void digi_preload_play_breaks(const seriesPlayBreak list[]);
+extern void digi_unload_play_breaks(const seriesPlayBreak list[]);
+
 } // namespace Burger
 } // namespace M4
 
