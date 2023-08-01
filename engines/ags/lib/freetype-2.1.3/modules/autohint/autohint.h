@@ -54,7 +54,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct FT_AutoHinterRec_ *FT_AutoHinter;
@@ -71,7 +71,7 @@ typedef struct FT_AutoHinter_ServiceRec_ {
 } FT_AutoHinter_ServiceRec, *FT_AutoHinter_Service;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

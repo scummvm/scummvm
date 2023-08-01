@@ -48,7 +48,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 #include "engines/ags/lib/freetype-2.1.3/ftgloadr.h"
 
@@ -67,6 +67,6 @@ FT_BEGIN_HEADER
 #define ah_loader_copy_points      FT_GlyphLoader_CopyPoints
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_AHLOADER_H */

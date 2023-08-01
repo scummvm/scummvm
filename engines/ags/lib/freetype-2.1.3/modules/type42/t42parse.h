@@ -25,7 +25,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 typedef struct  T42_ParserRec_ {
 	PS_ParserRec  root;
@@ -80,7 +80,7 @@ t42_loader_done( T42_Loader  loader );
 
 /* */
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

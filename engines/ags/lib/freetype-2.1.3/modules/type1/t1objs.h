@@ -49,7 +49,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /* The following structures must be defined by the hinter */
@@ -119,7 +119,7 @@ FT_LOCAL(void)
 T1_Driver_Done(T1_Driver driver);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

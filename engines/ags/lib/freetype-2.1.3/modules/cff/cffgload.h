@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 #define CFF_MAX_OPERANDS     48
@@ -156,7 +156,7 @@ FT_LOCAL(FT_Error)
 cff_slot_load(CFF_GlyphSlot glyph, CFF_Size size, FT_Int glyph_index, FT_Int32 load_flags);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 
 } // End of namespace FreeType213

@@ -44,7 +44,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 #define TT_PLATFORM_APPLE_UNICODE  0
@@ -776,6 +776,6 @@ FT_BEGIN_HEADER
 #endif /* !HAVE_LIMIT_ON_IDENTS */
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_TTNAMEID_H */

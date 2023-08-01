@@ -45,7 +45,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef FT_Error (*FT2_1_3_PFR_GetMetricsFunc)(FT_Face face, FT_UInt *aoutline, FT_UInt *ametrics,
@@ -77,7 +77,7 @@ FT_EXPORT(FT_Error)
 FT_Get_PFR_Advance(FT_Face face, FT_UInt gindex, FT_Pos *aadvance);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

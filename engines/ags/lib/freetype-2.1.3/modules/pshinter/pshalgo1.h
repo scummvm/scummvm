@@ -24,7 +24,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 typedef struct PSH1_HintRec_*  PSH1_Hint;
 
@@ -101,7 +101,7 @@ typedef void
 extern PSH1_HintFunc  ps1_debug_hint_func;
 #endif
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

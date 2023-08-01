@@ -31,7 +31,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /* Type42 size */
@@ -116,7 +116,7 @@ T42_Driver_Done( T42_Driver  driver );
 
 /* */
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

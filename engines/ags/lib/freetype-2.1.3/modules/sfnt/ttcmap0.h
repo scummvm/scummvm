@@ -49,7 +49,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct TT_CMapRec_ {
@@ -78,7 +78,7 @@ FT_LOCAL(FT_Error)
 tt_face_build_cmaps(TT_Face face);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

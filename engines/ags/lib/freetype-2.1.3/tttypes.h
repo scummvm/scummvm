@@ -49,7 +49,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /**** REQUIRED TRUETYPE/OPENTYPE TABLES DEFINITIONS ****/
@@ -586,7 +586,7 @@ typedef struct  TT_LoaderRec_ {
 } TT_LoaderRec;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

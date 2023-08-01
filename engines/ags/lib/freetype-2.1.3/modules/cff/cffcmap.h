@@ -45,7 +45,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /*****          TYPE1 STANDARD (AND EXPERT) ENCODING CMAPS           *****/
@@ -83,7 +83,7 @@ FT_CALLBACK_TABLE const FT_CMap_ClassRec
 	cff_cmap_unicode_class_rec;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 
 } // End of namespace FreeType213

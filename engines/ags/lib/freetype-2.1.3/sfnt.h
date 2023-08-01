@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef FT_Error (*TT_Init_Face_Func)(FT_Stream stream, TT_Face face, FT_Int face_index, FT_Int num_params, FT_Parameter *params);
@@ -128,7 +128,7 @@ typedef struct  SFNT_Interface_ {
 typedef SFNT_Interface *SFNT_Service;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -47,7 +47,7 @@
 #include "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /* force the definition of FT_DEBUG_LEVEL_ERROR if FT_DEBUG_LEVEL_TRACE */
@@ -193,6 +193,6 @@ ft_debug_init(void);
 #endif /* _MSC_VER */
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_FTDEBUG_H */

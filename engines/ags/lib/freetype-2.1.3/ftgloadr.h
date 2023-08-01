@@ -47,7 +47,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct FT_GlyphLoaderRec_ *FT_GlyphLoader;
@@ -143,7 +143,7 @@ FT_BASE(FT_Error)
 FT_GlyphLoader_CopyPoints(FT_GlyphLoader target, FT_GlyphLoader source);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

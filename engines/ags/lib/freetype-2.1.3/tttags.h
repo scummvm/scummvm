@@ -45,7 +45,7 @@
 #include "engines/ags/lib/freetype-2.1.3/freetype.h"
 
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 #define TTAG_cmap  FT_MAKE_TAG('c', 'm', 'a', 'p')
@@ -87,6 +87,6 @@ FT_BEGIN_HEADER
 #define TTAG_vmtx  FT_MAKE_TAG('v', 'm', 't', 'x')
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 #endif /* AGS_LIB_FREETYPE_TTAGS_H */

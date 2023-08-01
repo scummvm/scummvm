@@ -47,7 +47,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_LOCAL(FT_Error)
@@ -57,7 +57,7 @@ FT_LOCAL(FT_Error)
 T1_Load_Glyph(T1_GlyphSlot glyph, T1_Size size, FT_UInt glyph_index, FT_Int32 load_flags);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 
 } // End of namespace FreeType213

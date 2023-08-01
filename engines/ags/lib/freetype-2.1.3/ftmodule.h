@@ -47,7 +47,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /* module bit flags */
@@ -110,7 +110,7 @@ FT_EXPORT(void)
 FT_Add_Default_Modules(FT_Library library);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -62,7 +62,7 @@
 #include "engines/ags/lib/freetype-2.1.3/config/ftstdlib.h"
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -330,6 +330,6 @@ typedef unsigned long FT_UFast;
 #endif /* FT_CALLBACK_TABLE */
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 #endif /* __FT_CONFIG_H__ */

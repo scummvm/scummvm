@@ -47,7 +47,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 #ifndef FT_CONFIG_OPTION_NO_STD_RASTER
@@ -72,7 +72,7 @@ ft_smooth_lcd_v_renderer_class;
 #endif
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

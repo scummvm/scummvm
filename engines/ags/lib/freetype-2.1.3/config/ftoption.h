@@ -44,7 +44,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 /*************************************************************************/
 /*                                                                       */
@@ -471,7 +471,7 @@ FT_BEGIN_HEADER
 #undef T1_CONFIG_OPTION_NO_MM_SUPPORT
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 
 #endif /* FT2_1_3_OPTION_H */

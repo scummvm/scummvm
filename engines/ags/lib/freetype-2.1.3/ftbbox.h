@@ -46,14 +46,14 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_EXPORT(FT_Error)
 FT_Outline_Get_BBox(FT_Outline *outline, FT_BBox *abbox);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

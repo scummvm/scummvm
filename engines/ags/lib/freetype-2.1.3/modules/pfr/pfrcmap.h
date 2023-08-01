@@ -26,7 +26,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 typedef struct  PFR_CMapRec_ {
 	FT_CMapRec  cmap;
@@ -38,7 +38,7 @@ typedef struct  PFR_CMapRec_ {
 
 FT_CALLBACK_TABLE const FT_CMap_ClassRec  pfr_cmap_class_rec;
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

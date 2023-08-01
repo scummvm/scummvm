@@ -45,7 +45,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef FT_Fixed  FT_Angle;
@@ -90,7 +90,7 @@ FT_EXPORT(void)
 FT_Vector_From_Polar(FT_Vector *vec, FT_Fixed length, FT_Angle angle);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

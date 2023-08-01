@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct TT_DriverRec_ *TT_Driver;
@@ -257,7 +257,7 @@ FT_LOCAL(void)
 tt_driver_done(TT_Driver driver);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

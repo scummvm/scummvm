@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_LOCAL(FT_UShort)
@@ -76,7 +76,7 @@ FT_LOCAL(FT_Byte)
 cff_fd_select_get(CFF_FDSelect select, FT_UInt glyph_index);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

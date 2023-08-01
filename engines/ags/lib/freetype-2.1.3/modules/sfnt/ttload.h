@@ -49,7 +49,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_LOCAL(TT_Table)
@@ -113,7 +113,7 @@ tt_face_load_bitmap_header(TT_Face face, FT_Stream stream);
 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

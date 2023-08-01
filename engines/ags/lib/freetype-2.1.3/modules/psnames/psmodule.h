@@ -47,14 +47,14 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_EXPORT_VAR(const FT_Module_Class)
 psnames_module_class;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 
 } // End of namespace FreeType213

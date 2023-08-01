@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct  CFF_IndexRec_ {
@@ -232,7 +232,7 @@ typedef struct CFF_FontRec_ {
 } CFF_FontRec, *CFF_Font;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

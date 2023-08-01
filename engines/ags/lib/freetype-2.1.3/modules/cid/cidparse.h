@@ -28,7 +28,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -109,7 +109,7 @@ cid_parser_done( CID_Parser*  parser );
 		  (p)->root.funcs.load_field_table( &(p)->root, f, o, 0, 0 )
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

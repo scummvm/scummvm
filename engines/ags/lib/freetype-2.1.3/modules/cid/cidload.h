@@ -27,7 +27,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct  CID_Loader_ {
@@ -50,7 +50,7 @@ FT_LOCAL( FT_Error )
 cid_face_open( CID_Face  face );
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

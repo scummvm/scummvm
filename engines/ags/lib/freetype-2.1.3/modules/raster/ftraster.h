@@ -46,7 +46,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -60,7 +60,7 @@ FT_EXPORT_VAR(const FT_Raster_Funcs)
 ft_standard_raster;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

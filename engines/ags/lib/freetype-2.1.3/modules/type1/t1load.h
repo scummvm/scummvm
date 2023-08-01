@@ -51,7 +51,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct T1_Loader_ {
@@ -92,7 +92,7 @@ T1_Done_Blend(T1_Face face);
 #endif /* !T1_CONFIG_OPTION_NO_MM_SUPPORT */
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

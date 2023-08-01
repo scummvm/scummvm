@@ -25,7 +25,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 #ifdef PFR_CONFIG_NO_CHECKS
 #define PFR_CHECK( x )  do { } while ( 0 )
@@ -89,7 +89,7 @@ pfr_phy_font_done(PFR_PhyFont phy_font, FT_Memory memory);
 
 /* */
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

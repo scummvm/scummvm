@@ -47,7 +47,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_LOCAL(FT_Error)
@@ -57,7 +57,7 @@ FT_LOCAL(FT_Error)
 tt_face_free_charmap(TT_Face face, TT_CMapTable cmap);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

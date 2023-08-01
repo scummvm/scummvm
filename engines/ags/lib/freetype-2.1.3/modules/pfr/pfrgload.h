@@ -24,7 +24,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_LOCAL( void )
@@ -43,7 +43,7 @@ pfr_glyph_load( PFR_Glyph  glyph,
 				FT_ULong   size );
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

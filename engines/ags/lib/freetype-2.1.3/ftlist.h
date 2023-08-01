@@ -45,7 +45,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 FT_EXPORT(FT_ListNode)
@@ -74,7 +74,7 @@ FT_EXPORT( void )
 FT_List_Finalize(FT_List list, FT_List_Destructor destroy, FT_Memory memory, void *user);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

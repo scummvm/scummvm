@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 #undef  FT_SET_ERROR
@@ -111,7 +111,7 @@ FT_Free(FT_Memory memory, void **P);
 #define FT_REALLOC_ARRAY(_pointer_, _old_, _new_, _type_) FT_SET_ERROR(FT_MEM_REALLOC(_pointer_, (_old_) * sizeof(_type_), (_new_) * sizeof(_type_)))
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

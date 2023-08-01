@@ -52,7 +52,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /* PI expressed in ah_angles -- we don't really need an important */
@@ -75,7 +75,7 @@ FT_LOCAL(AH_Angle)
 ah_angle_diff(AH_Angle angle1, AH_Angle angle2);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

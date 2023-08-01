@@ -54,7 +54,7 @@ THE SOFTWARE.
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 typedef struct BDF_Public_FaceRec_ {
 	FT_FaceRec root;
@@ -64,7 +64,7 @@ typedef struct BDF_Public_FaceRec_ {
 
 } BDF_Public_FaceRec, *BDF_Public_Face;
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

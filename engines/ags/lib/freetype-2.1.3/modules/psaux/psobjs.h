@@ -47,7 +47,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /**** T1_TABLE ****/
@@ -146,7 +146,7 @@ FT_LOCAL(void)
 t1_decrypt(FT_Byte *buffer, FT_Offset length, FT_UShort seed);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

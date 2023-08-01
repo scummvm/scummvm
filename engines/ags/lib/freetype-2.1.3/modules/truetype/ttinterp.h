@@ -24,7 +24,7 @@
 #include "ttobjs.h"
 
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 #ifndef TT_CONFIG_OPTION_STATIC_INTEPRETER  /* indirect implementation */
@@ -307,7 +307,7 @@ FT_EXPORT( FT_Error )
 TT_RunIns( TT_ExecContext  exec );
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 #endif /* __TTINTERP_H__ */
 

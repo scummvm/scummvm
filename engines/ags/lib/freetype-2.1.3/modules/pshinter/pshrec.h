@@ -39,7 +39,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -165,7 +165,7 @@ extern  int      ps_debug_no_vert_hints;
 /* */
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

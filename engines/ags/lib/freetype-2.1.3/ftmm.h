@@ -48,7 +48,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct  FT_MM_Axis_ {
@@ -81,7 +81,7 @@ FT_EXPORT(FT_Error)
 FT_Set_MM_Blend_Coordinates(FT_Face face, FT_UInt num_coords, FT_Fixed *coords);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct PS_FontInfoRec {
@@ -242,7 +242,7 @@ FT_EXPORT(FT_Error)
 FT_Get_PS_Font_Info(FT_Face face, PS_FontInfoRec *afont_info);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

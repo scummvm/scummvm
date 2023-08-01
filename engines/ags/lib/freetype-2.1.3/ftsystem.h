@@ -46,7 +46,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef struct FT_MemoryRec_ *FT_Memory;
@@ -90,7 +90,7 @@ typedef struct  FT_StreamRec_ {
 } FT_StreamRec;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

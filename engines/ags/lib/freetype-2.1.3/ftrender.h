@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 /* create a new glyph object */
 typedef FT_Error (*FT_Glyph_InitFunc)(FT_Glyph glyph, FT_GlyphSlot slot);
@@ -113,7 +113,7 @@ FT_EXPORT(FT_Error)
 FT_Set_Renderer(FT_Library library, FT_Renderer renderer, FT_UInt num_params, FT_Parameter *parameters);
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

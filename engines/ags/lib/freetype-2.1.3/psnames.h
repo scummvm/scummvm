@@ -48,7 +48,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 typedef FT_UInt32 (*PS_Unicode_Value_Func)(const char *glyph_name);
@@ -90,7 +90,7 @@ typedef struct PSNames_Interface_ {
 typedef PSNames_Interface *PSNames_Service;
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

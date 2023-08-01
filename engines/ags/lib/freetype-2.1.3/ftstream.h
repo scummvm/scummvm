@@ -49,7 +49,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /* format of an 8-bit frame_op value:           */
@@ -382,7 +382,7 @@ FT_Stream_ReadFields(FT_Stream stream, const FT_Frame_Field *fields, void *struc
 #define FT_FRAME_RELEASE(bytes) 		FT_Stream_ReleaseFrame(stream, (FT_Byte **)&(bytes))
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

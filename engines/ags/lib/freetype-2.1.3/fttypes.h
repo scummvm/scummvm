@@ -51,7 +51,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /**** BASIC TYPES ****/
@@ -130,7 +130,7 @@ typedef struct FT_ListRec_ {
 #define FT_BOOL(x) ((FT_Bool)(x))
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -27,7 +27,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_BEGIN_HEADER
+// FT_BEGIN_HEADER
 
 
 /* handle to Hint structure */
@@ -237,7 +237,7 @@ ps3_hints_apply( PS_Hints        ps_hints,
 				 FT_Render_Mode  hint_mode );
 
 
-FT_END_HEADER
+// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
