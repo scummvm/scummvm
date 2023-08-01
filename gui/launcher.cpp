@@ -91,7 +91,8 @@ enum {
 	kCmdExtraPathClear = 'PEXC',
 	kCmdGameBrowser = 'PGME',
 	kCmdSaveBrowser = 'PSAV',
-	kCmdSavePathClear = 'PSAC'
+	kCmdSavePathClear = 'PSAC',
+	kCmdCheckIntegrity = 'PCHI'
 };
 
 const GroupingMode groupingModes[] = {
@@ -1129,7 +1130,7 @@ void LauncherSimple::updateListing() {
 	// Update the filter settings, those are lost when "setList"
 	// is called.
 	_list->setFilter(_searchWidget->getEditString());
-	
+
 	// Close groups that the user closed earlier
 	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
@@ -1458,7 +1459,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		break;
 	case kSetGroupMethodCmd: {
 		_grid->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
-	
+
 		// Change the grouping criteria
 		GroupingMethod newGroupBy = (GroupingMethod)data;
 		if (_groupBy != newGroupBy) {
