@@ -327,39 +327,35 @@ Common::String Info::getName(const Common::String &id) {
 // Purpose: Save and load object state
 //------------------------------------------------------------------------
 void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	warning("Info::saveState()");
-
-#if 0
 	for (auto v = _var.begin(); v != _var.end(); ++v) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "var");
-		child->append_attribute(doc.allocate_attribute("id", v->first.c_str()));
-		child->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(v->second)));
+		child->append_attribute(doc.allocate_attribute("id", v->_key.c_str()));
+		child->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(v->_value)));
 		root->append_node(child);
 	}
 
 	for (auto p = _people.begin(); p != _people.end(); ++p)
-		p->second.saveState(doc, root);
+		p->_value.saveState(doc, root);
 
-	rapidxml::xml_node<char> *child_unr = doc.allocate_node(rapidxml::node_element, "unread");
+	rapidxml::xml_node<char> *childUnr = doc.allocate_node(rapidxml::node_element, "unread");
 
-	saveBool(unread.inventory, "inventory", doc, child_unr);
-	saveBool(unread.journal, "journal", doc, child_unr);
-	saveBool(unread.trait, "trait", doc, child_unr);
-	saveBool(unread.map, "map", doc, child_unr);
+	saveBool(_unread._inventory, "inventory", doc, childUnr);
+	saveBool(_unread._journal, "journal", doc, childUnr);
+	saveBool(_unread._trait, "trait", doc, childUnr);
+	saveBool(_unread._map, "map", doc, childUnr);
 
-	root->append_node(child_unr);
+	root->append_node(childUnr);
 
 	rapidxml::xml_node<char> *child_img = doc.allocate_node(rapidxml::node_element, "img");
-	child_img->append_attribute(doc.allocate_attribute("index", g_engine->_stringPool->Get(player_img)));
+	child_img->append_attribute(doc.allocate_attribute("index", g_engine->_stringPool->Get(_playerImg)));
 	root->append_node(child_img);
 
 	rapidxml::xml_node<char> *child_money = doc.allocate_node(rapidxml::node_element, "money");
-	child_money->append_attribute(doc.allocate_attribute("var", money_var.c_str()));
+	child_money->append_attribute(doc.allocate_attribute("var", _moneyVar.c_str()));
 	root->append_node(child_money);
 
 	_journal.saveState(doc, root);
 	_inv.saveState(doc, root);
-#endif
 }
 
 void Info::loadState(rapidxml::xml_node<char> *node) {
