@@ -38,6 +38,8 @@
 	GCVirtualControllerConfiguration *_config;
 #endif
 #endif
+	int _currentDpadXValue;
+	int _currentDpadYValue;
 }
 
 @dynamic view;
@@ -61,6 +63,8 @@
 	}
 #endif
 #endif
+	_currentDpadXValue = 0;
+	_currentDpadYValue = 0;
 	return self;
 }
 
@@ -162,10 +166,37 @@
 
 		_controller.extendedGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad * _Nonnull dpad, float xValue, float yValue) {
 			// Negative values are left/down, positive are right/up, 0 is no press
-			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_LEFT isPressed:(xValue < 0)];
-			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_RIGHT isPressed:(xValue > 0)];
-			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_UP isPressed:(yValue > 0)];
-			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_DOWN isPressed:(yValue < 0)];
+			// Change xValue to only be -1, 0, or 1
+			xValue = xValue < 0.f ? -1.f : xValue > 0.f ? 1.f : 0.f;
+			if (xValue != _currentDpadXValue) {
+				if (_currentDpadXValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_LEFT isPressed:false];
+				} else if (_currentDpadXValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_RIGHT isPressed:false];
+				}
+				if (xValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_LEFT isPressed:true];
+				} else if (xValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_RIGHT isPressed:true];
+				}
+				_currentDpadXValue = xValue;
+			}
+
+			// Change yValue to only be -1, 0, or 1
+			yValue = yValue < 0.f ? -1.f : yValue > 0.f ? 1.f : 0.f;
+			if (yValue != _currentDpadYValue) {
+				if (_currentDpadYValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_DOWN isPressed:false];
+				} else if (_currentDpadYValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_UP isPressed:false];
+				}
+				if (yValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_DOWN isPressed:true];
+				} else if (yValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_UP isPressed:true];
+				}
+				_currentDpadYValue = yValue;
+			}
 		};
 
 		_controller.extendedGamepad.buttonA.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
