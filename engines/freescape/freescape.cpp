@@ -582,6 +582,7 @@ Common::Error FreescapeEngine::run() {
 	bool endGame = false;
 	// Draw first frame
 
+	g_system->showMouse(false);
 	g_system->lockMouse(true);
 	resetInput();
 	_gfx->computeScreenViewport();
