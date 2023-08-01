@@ -243,7 +243,7 @@ void DrillerEngine::drawInfoMenu() {
 
 	switch (_drillStatusByArea[_currentArea->getAreaID()]) {
 		case kDrillerNoRig:
-			rigStatus = "Unpositioned";
+			rigStatus = _currentArea->_gasPocketRadius > 0 ? "Unpositioned" : "Not required";
 			gasFound = "-";
 			perTapped = "-";
 			gasTapped = "-";

@@ -303,7 +303,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		while(--byteSizeOfObject > 0)
 			if (isAmiga() || isAtariST()) {
 				uint16 field = file->readUint16BE();
-				groupDataArray.push_back(field >> 8);
+				assert((field >> 8) == 0);
 				groupDataArray.push_back(field & 0xff);
 			} else
 				groupDataArray.push_back(readField(file, 8));

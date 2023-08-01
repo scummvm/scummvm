@@ -10,7 +10,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Might and Magic Book One.
    - Added support for Muppet Treasure Island.
    - Added support for Primordia, Shardlight and Technobabylon.
-   - Added support for Adibou 1
+   - Added support for Adibou 1.
 
  New platforms:
    - Added libretro new shiny port.
@@ -71,7 +71,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added custom engine option to replace the health gems with HP/SP bars.
 
 
-#### 2.7.1 (2023-07-31)
+#### 2.7.1 "Stan's previously broken swords" (2023-07-31)
 
  General:
   - Fixed playback speed for Theora videos.

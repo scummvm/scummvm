@@ -547,6 +547,7 @@ public:
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
 
+	void drawInfoMenu() override;
 	void drawFullscreenMessageAndWait(Common::String message);
 	void drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface);
 
