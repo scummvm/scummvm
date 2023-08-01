@@ -97,6 +97,7 @@ public:
 	int _room902Flag = 0;
 	int _roomVal1 = 0;
 	int _roomVal2 = 0;
+	int _roomVal3 = 0;
 
 public:
 	Vars();

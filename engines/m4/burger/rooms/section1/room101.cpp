@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section1/room101.h"
+#include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/wilbur.h"
 #include "m4/burger/vars.h"
 #include "m4/graphics/gr_series.h"
@@ -51,6 +52,19 @@ static const seriesStreamBreak STREAMS3[] = {
 	{   5, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{  14, nullptr, 2, 255, -1, 0, nullptr, 0 },
 	{  16, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak STREAMS4[] = {
+	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{   7, nullptr, 2, 255, -1, 0, nullptr, 0 },
+	{  13, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak STREAMS5[] = {
+	{   0, "100_010", 1, 255, -1, 0, nullptr, 0 },
+	{  19, "100_011", 1, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -138,6 +152,8 @@ void Room101::init() {
 }
 
 void Room101::daemon() {
+	const int FIFTY_THREE = -53;
+
 	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
 		player_update_info(_G(my_walker), &_G(player_info));
 
@@ -349,7 +365,7 @@ void Room101::daemon() {
 
 	case 19:
 		_machine1 = series_play_("101wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAMS3, "101wi11", 6, 256, 2);
+		_machine2 = series_stream_with_breaks(STREAMS4, "101wi11", 6, 256, 2);
 		break;
 
 	case 20:
@@ -365,6 +381,78 @@ void Room101::daemon() {
 	case 23:
 		player_set_commands_allowed(true);
 		break;
+
+	case 24:
+		if (_G(player_info).x < 218 || (_G(player_info).x < 349 && _G(player_info).y > 277)) {
+			kernel_trigger_dispatch_now(27);
+		} else {
+			digi_preload_stream_breaks(STREAMS5);
+			series_stream_with_breaks(STREAMS5, "101dt01", 6, 1024, 25);
+		}
+		break;
+
+	case 25:
+		_val1 -= 10;
+		if (_val1 > 0) {
+			digi_change_volume(2, _val1);
+			kernel_timing_trigger(3, 25);
+		} else {
+			digi_stop(1);
+			digi_unload_stream_breaks(STREAMS5);
+			digi_stop(2);
+			digi_unload("100_013");
+			player_set_commands_allowed(true);
+			_val1 = 255;
+		}
+		break;
+
+	case 26:
+		door();
+		reset_walker_sprites();
+		digi_preload_stream_breaks(STREAMS5);
+		series_stream_with_breaks(STREAMS5, "101dt01", 6, 1, 25);
+		break;
+
+	case 27:
+		TerminateMachineAndNull(_doorMachine);
+		Section1::updateWalker(226, 281, 8, 26);
+		break;
+
+	case 10016:
+		switch (_G(roomVal1)) {
+		case 2:
+			player_set_commands_allowed(true);
+			ws_demand_location(_G(my_walker), 336, 184);
+			ws_demand_facing(_G(my_walker), 5);
+			ws_walk(_G(my_walker), 335, 195, nullptr, -1, 5);
+			break;
+
+		case 3:
+			player_set_commands_allowed(true);
+			ws_demand_location(_G(my_walker), 482, 208);
+			ws_demand_facing(_G(my_walker), 9);
+			ws_walk(_G(my_walker), 410, 218, nullptr, -1, 9);
+			break;
+
+		case 4:
+			player_set_commands_allowed(true);
+			ws_demand_location(_G(my_walker), 224, 373);
+			ws_demand_facing(_G(my_walker), 2);
+			ws_walk(_G(my_walker), 282, 342, nullptr, -1, 2);
+			break;
+
+		case 5:
+			player_set_commands_allowed(true);
+			ws_demand_location(_G(my_walker), 0, 288);
+			ws_demand_facing(_G(my_walker), 3);
+			ws_walk(_G(my_walker), 30, 288, nullptr, -1, 3);
+			break;
+
+		// TODO: More cases
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
 
 	// TODO: cases
 	default:

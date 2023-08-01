@@ -21,11 +21,45 @@
 
 #include "m4/burger/wilbur.h"
 #include "m4/burger/vars.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Burger {
 
 #define _WIL(X) _G(wilbur)._##X
+
+static const char *WILBUR_SERIES[8] = {
+	"WILBUR01", "WILBUR02", "WILBUR03", "WILBUR04", "WILBUR05",
+	"WILBUR07", "WILBUR08", "WILBUR09"
+};
+static const int16 WILBUR_SERIES_DIRS[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, -1
+};
+
+static const char *WILBUR_SHADOWS[5] = {
+	"WILBUR01_SHADOW", "WILBUR02_SHADOW", "WILBUR03_SHADOW",
+	"WILBUR04_SHADOW", "WILBUR05_SHADOW"
+};
+static const int16 WILBUR_SHADOWS_DIRS[6] = {
+	8, 9, 10, 11, 12, -1
+};
+
+bool load_walker_sprites() {
+	return ws_walk_load_walker_series(WILBUR_SERIES_DIRS, WILBUR_SERIES, true) &&
+		ws_walk_load_shadow_series(WILBUR_SHADOWS_DIRS, WILBUR_SHADOWS);
+}
+
+void reset_walker_sprites() {
+	if (_G(roomVal3)) {
+		for (int i = 0; WILBUR_SERIES_DIRS[i] != -1; ++i) {
+			series_load(WILBUR_SERIES[i], WILBUR_SERIES_DIRS[i]);
+		}
+	}
+
+	ws_unhide_walker(_G(my_walker));
+	gr_restore_palette();
+	kernel_timing_trigger(1, 1026);
+}
 
 void wilbur_speech(const char *name, int trigger, int room, byte flags, int vol, int channel) {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;

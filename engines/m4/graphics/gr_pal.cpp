@@ -169,4 +169,12 @@ void gr_pal_reset_ega_colors(RGB8 *pal) {
 #endif
 }
 
+void gr_backup_palette() {
+	Common::copy(_G(master_palette), _G(master_palette) + 768, _G(backup_palette));
+}
+
+void gr_restore_palette() {
+	Common::copy(_G(backup_palette), _G(backup_palette) + 768, _G(master_palette));
+}
+
 } // namespace M4

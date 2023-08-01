@@ -33,9 +33,17 @@ namespace Rooms {
 class Section1 : public Rooms::Section {
 private:
 	Room101 _room101;
+
+	int _trigger = 0;
+	int _series = -1;
+	machine *_play = nullptr;
+
+	void updateWalker_(int x, int y, int dir, int trigger, bool mode);
 public:
 	Section1();
 	virtual ~Section1() {}
+
+	static void updateWalker(int x, int y, int dir, int trigger, bool mode = false);
 };
 
 } // namespace Rooms
