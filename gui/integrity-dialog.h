@@ -25,9 +25,18 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "gui/dialog.h"
+
 namespace GUI {
 
-void generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
+class IntegrityDialog : public Dialog {
+
+public:
+	static void generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
+
+private:
+	static Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums);
+};
 
 } // End of namespace GUI
 

@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums) {
+Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums) {
 	const Common::FSNode dir(gamePath);
 
 	if (!dir.exists() || !dir.isDirectory())
@@ -72,7 +72,7 @@ Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Co
 	return fileChecksums;
 }
 
-void generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language) {
+void IntegrityDialog::generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language) {
 	Common::Array<Common::StringArray> fileChecksums = {};
 	fileChecksums = generateChecksums(gamePath, fileChecksums);
 	Common::JSONObject requestObject;
