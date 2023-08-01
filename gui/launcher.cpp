@@ -97,7 +97,8 @@ enum {
 	kCmdExtraPathClear = 'PEXC',
 	kCmdGameBrowser = 'PGME',
 	kCmdSaveBrowser = 'PSAV',
-	kCmdSavePathClear = 'PSAC'
+	kCmdSavePathClear = 'PSAC',
+	kCmdCheckIntegrity = 'PCHI'
 };
 
 const GroupingMode groupingModes[] = {
