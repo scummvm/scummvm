@@ -43,56 +43,56 @@ struct FrotzGameDescription {
  */
 const PlainGameDescriptor INFOCOM_GAME_LIST[] = {
 	// Infocom games
-	{ "abyss", "The Abyss" },
-	{ "amfv", "A Mind Forever Voyaging" },
-	{ "ballyhoo", "Ballyhoo" },
-	{ "beyondzork", "Beyond Zork" },
-	{ "borderzone", "Border Zone" },
-	{ "bureaucracy", "Bureaucracy" },
-	{ "cutthroats", "Cutthroats" },
-	{ "deadline", "Deadline" },
-	{ "enchanter", "Enchanter" },
-	{ "genericinfocom", "Infocom Template" },
-	{ "hhgttg", "The Hitchhiker's Guide to the Galaxy" },
-	{ "hollywoodhijinx", "Hollywood Hijinx" },
-	{ "hypochondriac", "Hypochondriac" },
-	{ "infidel", "Infidel" },
-	{ "infocomsampler1b", "Infocom Sampler 1B" },
-	{ "infocomsampler1z", "Infocom Sampler 1Z" },
-	{ "infocomsampler2zt", "Infocom Sampler 2ZT" },
+	{ "abyss",              "The Abyss" },
+	{ "amfv",               "A Mind Forever Voyaging" },
+	{ "ballyhoo",           "Ballyhoo" },
+	{ "beyondzork",         "Beyond Zork" },
+	{ "borderzone",         "Border Zone" },
+	{ "bureaucracy",        "Bureaucracy" },
+	{ "cutthroats",         "Cutthroats" },
+	{ "deadline",           "Deadline" },
+	{ "enchanter",          "Enchanter" },
+	{ "genericinfocom",     "Infocom Template" },
+	{ "hhgttg",             "The Hitchhiker's Guide to the Galaxy" },
+	{ "hollywoodhijinx",    "Hollywood Hijinx" },
+	{ "hypochondriac",      "Hypochondriac" },
+	{ "infidel",            "Infidel" },
+	{ "infocomsampler1b",   "Infocom Sampler 1B" },
+	{ "infocomsampler1z",   "Infocom Sampler 1Z" },
+	{ "infocomsampler2zt",  "Infocom Sampler 2ZT" },
 	{ "infocomsampler3zpi", "Infocom Sampler 3ZPI" },
 	{ "infocomsampler3ztl", "Infocom Sampler 3ZTL" },
 	{ "infocomsampler4zpiw", "Infocom Sampler 4ZPIW" },
-	{ "journey", "Journey" },
-	{ "lgop", "Leather Goddesses of Phobos" },
-	{ "lurkinghorror", "The Lurking Horror" },
-	{ "milliways", "Milliways" },
-	{ "minizork1", "Mini Zork I: The Great Underground Empire" },
-	{ "minizork2", "Mini Zork II: The Wizrd of Frobozz" },
-	{ "moonmist", "Moonmist" },
-	{ "nordbert", "Nord and Bert Couldn't Make Head or Tail of It" },
-	{ "planetfall", "Planetfall" },
-	{ "plunderedhearts", "Plundered Hearts" },
-	{ "questforexcalibur", "Arthur: The Quest for Excalibur" },
-	{ "restaurant", "Restaurant at the End of the Universe" },
-	{ "seastalker", "Seastalker" },
-	{ "sherlockriddle", "Sherlock: The Riddle of the Crown Jewels" },
-	{ "shogun", "James Clavell's Shogun" },
-	{ "sorcerer", "Sorcerer" },
-	{ "spellbreaker", "Spellbreaker" },
-	{ "starcross", "Starcross" },
-	{ "stationfall", "Stationfall" },
-	{ "suspect", "Suspect" },
-	{ "suspended", "Suspended" },
-	{ "thewitness", "The Witness" },
-	{ "trinity", "Trinity" },
-	{ "wishbringer", "Wishbringer" },
-	{ "ziptest", "ZipTest" },
-	{ "zork0", "Zork Zero: The Revenge of Megaboz" },
-	{ "zork1", "Zork I: The Great Underground Empire" },
-	{ "zork2", "Zork II: The Wizard of Frobozz" },
-	{ "zork3", "Zork III: The Dungeon Master" },
-	{ "ztuu", "Zork: The Undiscovered Underground" },
+	{ "journey",            "Journey" },
+	{ "lgop",               "Leather Goddesses of Phobos" },
+	{ "lurkinghorror",      "The Lurking Horror" },
+	{ "milliways",          "Milliways" },
+	{ "minizork1",          "Mini Zork I: The Great Underground Empire" },
+	{ "minizork2",          "Mini Zork II: The Wizrd of Frobozz" },
+	{ "moonmist",           "Moonmist" },
+	{ "nordbert",           "Nord and Bert Couldn't Make Head or Tail of It" },
+	{ "planetfall",         "Planetfall" },
+	{ "plunderedhearts",    "Plundered Hearts" },
+	{ "questforexcalibur",  "Arthur: The Quest for Excalibur" },
+	{ "restaurant",         "Restaurant at the End of the Universe" },
+	{ "seastalker",         "Seastalker" },
+	{ "sherlockriddle",     "Sherlock: The Riddle of the Crown Jewels" },
+	{ "shogun",             "James Clavell's Shogun" },
+	{ "sorcerer",           "Sorcerer" },
+	{ "spellbreaker",       "Spellbreaker" },
+	{ "starcross",          "Starcross" },
+	{ "stationfall",        "Stationfall" },
+	{ "suspect",            "Suspect" },
+	{ "suspended",          "Suspended" },
+	{ "thewitness",         "The Witness" },
+	{ "trinity",            "Trinity" },
+	{ "wishbringer",        "Wishbringer" },
+	{ "ziptest",            "ZipTest" },
+	{ "zork0",              "Zork Zero: The Revenge of Megaboz" },
+	{ "zork1",              "Zork I: The Great Underground Empire" },
+	{ "zork2",              "Zork II: The Wizard of Frobozz" },
+	{ "zork3",              "Zork III: The Dungeon Master" },
+	{ "ztuu",               "Zork: The Undiscovered Underground" },
 
 	{ nullptr, nullptr }
 };
@@ -101,1771 +101,1771 @@ const PlainGameDescriptor INFOCOM_GAME_LIST[] = {
  * All the other subsequent non-Infocom games using the format
  */
 const PlainGameDescriptor ZCODE_GAME_LIST[] = {
-	{ "zcode", "Unknown Z-code game" },
+	{ "zcode",              "Unknown Z-code game" },
 
 	// English games
-	{ "15minutes",         "Fifteen Minutes" },
-	{ "404life",           "404 - Life not found" },
-	{ "43",                "43" },
-	{ "5minutes",          "5 Minutes to Burn Something!" },
-	{ "69105keys",         "69,105 Keys" },
-	{ "7doctors",          "The Seven Doctors" },
-	{ "7kids",             "The Wolf and the Seven Kids" },
-	{ "905",               "9:05" },
-	{ "9dancers",          "The Nine Dancers (Larsoft Adventure number 4)" },
-	{ "a1rl0ck",           "A1RL0CK" },
-	{ "aasmasters",        "AAS Masters, In Which All Is Revealed" },
-	{ "aaaaaaaa",          "A AAAAA AAAAAAAAA" },
-	{ "accuse",            "Accuse" },
-	{ "acheton",           "Acheton" },
-	{ "acidrain",          "Acid Rain" },
-	{ "acorncourt",        "The Acorn Court" },
-	{ "acrobat",           "The Mysterious Case of the Acrobat and His Peers" },
-	{ "acrossstars",       "Across the Stars" },
-	{ "acrossstarsclues",  "Across the Stars: Invisiclues" },
-	{ "acrossthestarshints", "Across the Stars: InvisiHints" },
-	{ "addendum",          "Flawed Addendum" },
-	{ "adv",               "Adventure, Colossal Cave" },
-	{ "adv350",            "Adventure, 350 point Colossal Cave" },
-	{ "adv440",            "Adventure II, 440 point Colossal Cave" },
-	{ "adv550",            "Adventure 3, 550 point Colossal Cave" },
-	{ "adv551",            "Adventure 6, 551 point Colossal Cave" },
+	{ "15minutes",          "Fifteen Minutes" },
+	{ "404life",            "404 - Life Not Found" },
+	{ "43",                 "43" },
+	{ "5minutes",           "5 Minutes To Burn Something!" },
+	{ "69105keys",          "69,105 Keys" },
+	{ "7doctors",           "The Seven Doctors" },
+	{ "7kids",              "The Wolf and the Seven Kids" },
+	{ "905",                "9:05" },
+	{ "9dancers",           "The Nine Dancers" },
+	{ "a1rl0ck",            "A1RL0CK" },
+	{ "aasmasters",         "AAS Masters" },
+	{ "aaaaaaaa",           "A AAAAA AAAAAAAAA" },
+	{ "accuse",             "Accuse" },
+	{ "acheton",            "Acheton" },
+	{ "acidrain",           "Acid Rain" },
+	{ "acorncourt",         "The Acorn Court" },
+	{ "acrobat",            "The Mysterious Case of the Acrobat and His Peers" },
+	{ "acrossstars",        "Across the Stars" },
+	{ "acrossstarsclues",   "Across the Stars: InvisiClues" },
+	{ "acrossstarshints",   "Across the Stars: InvisiHints" },
+	{ "addendum",           "Flawed Addendum" },
+	{ "adv",                "Adventure, Colossal Cave" },
+	{ "adv350",             "Adventure, 350 Point Colossal Cave" },
+	{ "adv440",             "Adventure II, 440 Point Colossal Cave" },
+	{ "adv550",             "Adventure 3, 550 Point Colossal Cave" },
+	{ "adv551",             "Adventure 6, 551 Point Colossal Cave" },
 	{ "adventurelandzcode", "Adventureland" },
-	{ "adventurelobjan",   "Adventure (Lobjan translation)" },
-	{ "adventuretime",     "Adventure Time" },
-	{ "adverbum",          "Ad Verbum" },
-	{ "advhoudini",        "The Adventures of Houdini" },
-	{ "affront",           "Annoyotron IV: Affrontotron" },
-	{ "agreydayforalbert", "A Grey Day for Albert" },
-	{ "aisle",             "Aisle" },
-	{ "alienextraction",   "Alien Extraction" },
-	{ "alice",             "Alice Through the Looking Glass" },
-	{ "allroads",          "All Roads" },
-	{ "alongtheriver",     "Along the River" },
-	{ "alpha",             "Journey to Alpha Centauri (In Real Time)" },
-	{ "amazingmaze",       "The Amazing Maze" },
-	{ "ambassadorsdaughter", "The Ambassador''s Daughter, A Brief Romance" },
-	{ "amish",             "Amishville" },
-	{ "amiss",             "Amissville" },
-	{ "anchor",            "Anchorhead: An Interactive Tale of Lovecraftian Horror" },
-	{ "andrewplotkin",     "Being Andrew Plotkin" },
+	{ "adventurelobjan",    "Adventure (Lobjan translation)" },
+	{ "adventuretime",      "Adventure Time" },
+	{ "adverbum",           "Ad Verbum" },
+	{ "advhoudini",         "The Adventures of Houdini" },
+	{ "affront",            "Annoyotron IV: Affrontotron" },
+	{ "agreydayforalbert",  "A Grey Day for Albert" },
+	{ "aisle",              "Aisle" },
+	{ "alienextraction",    "Alien Extraction" },
+	{ "alice",              "Alice Through the Looking Glass" },
+	{ "allroads",           "All Roads" },
+	{ "alongtheriver",      "Along the River" },
+	{ "alpha",              "Journey to Alpha Centauri (In Real Time)" },
+	{ "amazingmaze",        "The Amazing Maze" },
+	{ "ambassadorsdaughter", "The Ambassador''s Daughter" },
+	{ "amish",              "Amishville" },
+	{ "amiss",              "Amissville" },
+	{ "anchor",             "Anchorhead" },
+	{ "andrewplotkin",      "Being Andrew Plotkin" },
 	{ "andromedaawakeningz", "Andromeda Awakening" },
-	{ "andromedagenesis",  "Andromeda Genesis" },
-	{ "anotherterminal",   "Another Terminal Beach" },
-	{ "animals",           "Animals 1.1" },
-	{ "annoy",             "Annoyotron" },
-	{ "aotyrz",            "Attack of the Yeti Robot Zombies" },
-	{ "aphasiaquest",      "Aphasia Quest" },
-	{ "apollo11zcode",     "Apollo 11" },
-	{ "appall",            "Appallatron: Annoyotron 3" },
-	{ "arc3h",             "Alien Research Centre 3: Footprints in the Snow" },
-	{ "argument",          "The Argument-Winner's Ghost" },
-	{ "aridandpale",       "Arid and Pale" },
-	{ "arthurdayout",      "Arthur's Day Out" },
-	{ "asylum",            "Asylum" },
-	{ "atrocitron",        "Atrocitron, An Interactive Puzzlebox" },
-	{ "ats",               "A Tight Spot" },
-	{ "atwork",            "Danger! Adventurer At Work!" },
-	{ "aug4",              "Augmented Fourth, An Interactive Performance" },
-	{ "avon",              "Avon" },
-	{ "awakening",         "The Awakening" },
-	{ "awakeningzcode",    "Awakening" },
-	{ "awitl",             "A Week in the Life" },
-	{ "ayac",              "Are You A Chef? An interactive ifMUD-saving" },
-	{ "azteca",            "Azteca: A Timeless Adventure" },
-	{ "b2demo",            "Pick up the Phone Booth and Die, Part 2" },
-	{ "b7snare",           "Snare, An Interactive Blake's 7 Adventure" },
-	{ "babytree",          "Baby Tree" },
-	{ "backtowakeup",      "Back to WakeUp, A Backpacker Tale" },
-	{ "backup",            "Backup, An Interactive System Failure" },
-	{ "badguys",           "Bad Guys" },
-	{ "bakingwithlizzie",  "Baking with Lizzie" },
-	{ "balances",          "Balances, An Interactive Short Story" },
-	{ "baldersdeath",      "Balder's Death" },
-	{ "ballerina102",      "Not Just an Ordinary Ballerina" },
-	{ "balt24",            "Baltimore:24, An Exercise in Interactive Fiction" },
-	{ "barber",            "The Barber of Sadville" },
-	{ "bathtub",           "There's a Snake in the Bathtub, A Test of Patience" },
-	{ "bazic",             "baZic version 0.1, Z-Machine BASIC implementation" },
-	{ "bcd9",              "Behind Closed Doors 9B" },
-	{ "beanstalker",       "The Bean Stalker" },
-	{ "bear",              "A Bear's Night Out, an Interactive Children's Story" },
-	{ "bedlam",            "Bedlam, An Interactive Preview" },
-	{ "bedtime",           "Bed Time" },
-	{ "beginning",         "A Beginning" },
-	{ "beingsteve",        "Being Steve" },
-	{ "beneathatransformation", "BENEATH: A Transformation" },
-	{ "beyond",            "Beyond" },
-	{ "bibleretoldbreadfishes", "The Bible Retold: The Bread and the Fishes" },
-	{ "bicon",             "BiCon, an Interactive Infatuation" },
-	{ "bignose",           "Big Nose on the Big Pyramid" },
-	{ "biscuit",           "Biscuit, An Interactive Funeral" },
-	{ "bishoes",           "Buried In Shoes" },
-	{ "bj",                "Blow Job Drifter, An Interactive You Kno What" },
-	{ "blacklily",         "The Black Lily" },
-	{ "blair",             "Tales From the College Presents a Breath of Fresh Blair" },
-	{ "bloodless",         "Bloodless on the Orient Express" },
-	{ "blorp",             "Blorp!" },
-	{ "bluechairs",        "Blue Chairs" },
-	{ "bodybargain",       "Body Bargain" },
-	{ "bofh",              "The Bastard Operator from Hell" },
-	{ "bomber",            "The Mad Bomber" },
-	{ "bookvol",           "Book and Volume" },
-	{ "booth",             "Pick up the Phone Booth and Die" },
-	{ "boothdye",          "Pick up the Phone Booth and Dye" },
-	{ "boxes",             "Boxes" },
-	{ "brandx",            "BrandX" },
-	{ "breakin",           "Break-In, An Interactive Burglary" },
-	{ "briantimmons",      "The Surprising Case of Brian Timmons" },
-	{ "bronze",            "Bronze, Inform 7 demonstration game" },
-	{ "bryantcollection",  "The Bryant Collection, an Interactive Anthology" },
-	{ "bse",               "BSE, An Interactive Epidemic" },
-	{ "buccaneerscache",   "Buccaneer's Cache" },
-	{ "building",          "Building" },
-	{ "bureaucrocy",       "Bureaucrocy, A Frustrating Tale About Paperwork" },
-	{ "burglar",           "Burglar! A Learning Experience" },
-	{ "burnkoran",         "Burn The Koran and Die" },
-	{ "burnsnightsupper",  "Burns Night Supper" },
-	{ "busted",            "Busted! A Game of High Cunning and Low Humor" },
-	{ "byod",              "BYOD" },
-	{ "byzantineperspective", "Byzantine Perspective" },
-	{ "cabal",             "The Cabal: The Interactive Illuminati" },
-	{ "cacharensdilemma",  "Cacharens Dilemma" },
-	{ "cacophony",         "Cacophony, An Interactive Stumbling" },
-	{ "calendar",          "Calendar, An Inform 7 Abuse" },
-	{ "calmmutemoving",    "Calm, Mute, Moving" },
-	{ "calypso",           "Calypso" },
-	{ "canamicah",         "Cana According to Micah" },
-	{ "candy",             "Candy, An Attempt at Reliving Childhood" },
-	{ "captaincutters",    "Captain Cutter's Treasure" },
-	{ "capturesanta",      "Capture Santa!" },
-	{ "carpathianvampire", "Carpathian Vampire" },
-	{ "cars",              "ASCII Cars!!! A game of Racing With the Imagination" },
-	{ "casting",           "Casting" },
-	{ "castleadventure",   "Castle Adventure!" },
-	{ "castleredprince",   "Castle of the Red Prince, An Interactive Land of Darkness" },
-	{ "catcherintherye",   "Catcher in the Rye" },
-	{ "catseye",           "Cat's Eye, Miniventure #2" },
-	{ "causality",         "Causality: The Search for Eternal Life" },
-	{ "caveadventure",     "Cave Adventure" },
-	{ "cavernofdoom",      "Zork: The Cavern of Doom" },
-	{ "cavernsofchaos",    "Caverns of Chaos" },
-	{ "cavetrip",          "The Spelunking Trip" },
-	{ "ccake",             "Arthur Yahtzee: The Curse of Hell's Cheesecake" },
-	{ "cco",               "Construction Cancellation Order" },
-	{ "cenricfamilycurse", "The Cenric Family Curse" },
-	{ "charactercreation", "Character Creator" },
-	{ "chaos",             "Chaos" },
-	{ "chaosgame",         "Chaos" },
-	{ "cheater",           "Cheater, An Annoying Adventure" },
-	{ "checkered",         "A Checkered Haunting" },
-	{ "cheesedoff",        "Cheesed Off!" },
-	{ "cheeseshop",        "Cheeseshop" },
-	{ "cheshirecat",       "Save the Cheshire Cat!" },
-	{ "chickenunder",      "The Chicken Under the Window" },
-	{ "chico",             "Chico and I Ran" },
-	{ "childsplay",        "Child's Play, A child, A Toy, and a Rival" },
-	{ "chix",              "Chicks Dig Jerks" },
-	{ "christminster",     "Christminster" },
-	{ "cia",               "CIA Adventure" },
-	{ "civil",             "Civil Seeming Drivel Dreaming" },
-	{ "civilmimic",        "Civil Mimic" },
-	{ "classchallenge",    "Class Challenge" },
-	{ "claw",              "Wearing the Claw" },
-	{ "clean",             "A Clean Getaway" },
-	{ "cleanair",          "Clean Air" },
-	{ "cliffedge",         "Edge of the Cliff" },
-	{ "cockandbull",       "A Cock and Bull Story" },
-	{ "clockwork",         "A Clockwork Noir" },
-	{ "codenamesilver",    "Code Name Silver Steel" },
-	{ "cogs",              "The Cogs of Westminster" },
-	{ "cointoss",          "Coin Toss" },
-	{ "coke",              "Coke Is It!" },
-	{ "coldiron",          "Cold Iron" },
-	{ "colonists",         "Colonists" },
-	{ "coloromc",          "Color of Milk Coffee" },
+	{ "andromedagenesis",   "Andromeda Genesis" },
+	{ "anotherterminal",    "Another Terminal Beach" },
+	{ "animals",            "Animals 1.1" },
+	{ "annoy",              "Annoyotron" },
+	{ "aotyrz",             "Attack of the Yeti Robot Zombies" },
+	{ "aphasiaquest",       "Aphasia Quest" },
+	{ "apollo11z",          "Apollo 11" },
+	{ "appall",             "Appallatron: Annoyotron 3" },
+	{ "arc3h",              "Alien Research Centre 3: Footprints in the Snow" },
+	{ "argument",           "The Argument-Winner's Ghost" },
+	{ "aridandpale",        "Arid and Pale" },
+	{ "arthurdayout",       "Arthur's Day Out" },
+	{ "asylum",             "Asylum" },
+	{ "atrocitron",         "Atrocitron" },
+	{ "ats",                "A Tight Spot" },
+	{ "atwork",             "Danger! Adventurer at Work!" },
+	{ "aug4",               "Augmented Fourth" },
+	{ "avon",               "Avon" },
+	{ "awakening",          "The Awakening" },
+	{ "awakeningzcode",     "Awakening" },
+	{ "awitl",              "A Week in the Life" },
+	{ "ayac",               "Are You a Chef?" },
+	{ "azteca",             "Azteca" },
+	{ "b2demo",             "Pick up the Phone Booth and Die, Part 2" },
+	{ "b7snare",            "Snare" },
+	{ "babytree",           "Baby Tree" },
+	{ "backtowakeup",       "Back to WakeUp" },
+	{ "backup",             "Backup" },
+	{ "badguys",            "Bad Guys" },
+	{ "bakingwithlizzie",   "Baking with Lizzie" },
+	{ "balances",           "Balances" },
+	{ "baldersdeath",       "Balder's Death" },
+	{ "ballerina102",       "Not Just an Ordinary Ballerina" },
+	{ "balt24",             "Baltimore:24" },
+	{ "barber",             "The Barber of Sadville" },
+	{ "bathtub",            "There's a Snake in the Bathtub" },
+	{ "bazic",              "baZic version 0.1" },
+	{ "bcd9",               "Behind Closed Doors 9B" },
+	{ "beanstalker",        "The Bean Stalker" },
+	{ "bear",               "A Bear's Night Out" },
+	{ "bedlam",             "Bedlam" },
+	{ "bedtime",            "Bed Time" },
+	{ "beginning",          "A Beginning" },
+	{ "beingsteve",         "Being Steve" },
+	{ "beneathtransform",   "BENEATH: A Transformation" },
+	{ "beyond",             "Beyond" },
+	{ "bibleretold1",       "The Bible Retold: The Bread and the Fishes" },
+	{ "bicon",              "BiCon" },
+	{ "bignose",            "Big Nose on the Big Pyramid" },
+	{ "biscuit",            "Biscuit" },
+	{ "bishoes",            "Buried In Shoes" },
+	{ "bj",                 "Blow Job Drifter" },
+	{ "blacklily",          "The Black Lily" },
+	{ "blair",              "Tales From the College Presents a Breath of Fresh Blair" },
+	{ "bloodless",          "Bloodless on the Orient Express" },
+	{ "blorp",              "Blorp!" },
+	{ "bluechairs",         "Blue Chairs" },
+	{ "bodybargain",        "Body Bargain" },
+	{ "bofh",               "The Bastard Operator from Hell" },
+	{ "bomber",             "The Mad Bomber" },
+	{ "bookvol",            "Book and Volume" },
+	{ "booth",              "Pick up the Phone Booth and Die" },
+	{ "boothdye",           "Pick up the Phone Booth and Dye" },
+	{ "boxes",              "Boxes" },
+	{ "brandx",             "BrandX" },
+	{ "breakin",            "Break-In" },
+	{ "briantimmons",       "The Surprising Case of Brian Timmons" },
+	{ "bronze",             "Bronze" },
+	{ "bryantcollection",   "The Bryant Collection" },
+	{ "bse",                "BSE" },
+	{ "buccaneerscache",    "Buccaneer's Cache" },
+	{ "building",           "Building" },
+	{ "bureaucrocy",        "Bureaucrocy" },                                                // Not Working (2.8.0git)
+	{ "burglar",            "Burglar!" },
+	{ "burnkoran",          "Burn The Koran and Die" },
+	{ "burnsnightsupper",   "Burns Night Supper" },
+	{ "busted",             "Busted" },
+	{ "byod",               "BYOD" },
+	{ "byzantineperspect",  "Byzantine Perspective" },
+	{ "cabal",              "The Cabal" },
+	{ "cacharensdilemma",   "Cacharens Dilemma" },
+	{ "cacophony",          "Cacophony" },
+	{ "calendar",           "Calendar, An Inform 7 Abuse" },
+	{ "calmmutemoving",     "Calm, Mute, Moving" },
+	{ "calypso",            "Calypso" },
+	{ "canamicah",          "Cana According to Micah" },
+	{ "candy",              "Candy" },
+	{ "captaincutters",     "Captain Cutter's Treasure" },
+	{ "capturesanta",       "Capture Santa!" },
+	{ "carpathianvampire",  "Carpathian Vampire" },
+	{ "cars",               "ASCII Cars!!!" },
+	{ "casting",            "Casting" },
+	{ "castleadventure",    "Castle Adventure!" },
+	{ "castleredprince",    "Castle of the Red Prince" },
+	{ "catcherintherye",    "Catcher in the Rye" },
+	{ "catseye",            "Miniventure #2: Cat's Eye" },
+	{ "causality",          "Causality" },
+	{ "caveadventure",      "Cave Adventure" },
+	{ "cavernofdoom",       "Zork: The Cavern of Doom" },
+	{ "cavernsofchaos",     "Caverns of Chaos" },
+	{ "cavetrip",           "The Spelunking Trip" },
+	{ "ccake",              "Arthur Yahtzee: The Curse of Hell's Cheesecake" },
+	{ "cco",                "Construction Cancellation Order" },
+	{ "cenriccurse",        "The Cenric Family Curse" },
+	{ "charactercreation",  "Character Creator" },
+	{ "chaos",              "Chaos" },
+	{ "chaosgame",          "Chaos (by Bloodbath)" },
+	{ "cheater",            "Cheater" },
+	{ "checkered",          "A Checkered Haunting" },
+	{ "cheesedoff",         "Cheesed Off!" },
+	{ "cheeseshop",         "Cheeseshop" },
+	{ "cheshirecat",        "Save the Cheshire Cat!" },
+	{ "chickenunder",       "The Chicken Under the Window" },
+	{ "chico",              "Chico and I Ran" },
+	{ "childsplay",         "Child’s Play, a Child, a Toy, and a Rival" },
+	{ "chix",               "Chicks Dig Jerks" },
+	{ "christminster",      "Christminster" },
+	{ "cia",                "CIA Adventure" },
+	{ "civil",              "Civil Seeming Drivel Dreaming" },
+	{ "civilmimic",         "Civil Mimic" },
+	{ "classchallenge",     "Class Challenge" },
+	{ "claw",               "Wearing the Claw" },
+	{ "clean",              "A Clean Getaway" },
+	{ "cleanair",           "Clean Air" },
+	{ "cliffedge",          "Edge of the Cliff" },
+	{ "cockandbull",        "A Cock and Bull Story" },
+	{ "clockwork",          "A Clockwork Noir" },
+	{ "codenamesilver",     "Code Name Silver Steel" },
+	{ "cogs",               "The Cogs of Westminster" },
+	{ "cointoss",           "Coin Toss" },
+	{ "coke",               "Coke Is It!" },
+	{ "coldiron",           "Cold Iron" },
+	{ "colonists",          "Colonists" },
+	{ "coloromc",           "Color of Milk Coffee" },
 	{ "coloursexploration", "An Exploration of Colour" },
-	{ "conankill",         "Conan Kill Everything" },
-	{ "conceptisproven",   "My Little Project Concept is Proven" },
-	{ "cottage",           "Cottage" },
-	{ "countdown1",        "Countdown 1 - The Body" },
-	{ "countdown2",        "Countdown 2 - The Soul" },
-	{ "countdown3",        "Countdown 3 - The Mind" },
-	{ "cove",              "The Cove" },
-	{ "crabhat",           "Oh No, Mr Crab Stole Your Hat!" },
-	{ "crazydiaper",       "The Tale of the Crazy Diaper Man" },
-	{ "craverlyheights",   "Craverly Heights" },
-	{ "creepydemo",        "A Day in the Creepy Life of Bob Demo" },
-	{ "crimescene",        "A Crime Scene, a Short Story" },
-	{ "criticalbreach",    "Critical Breach, an Escape Story" },
-	{ "crobe",             "Crobe" },
-	{ "cryptographer",     "Cryptographer" },
-	{ "csbb",              "Crystal and Stone Beetle and Bone" },
-	{ "ctdoom",            "Countdown to Doom" },
-	{ "cubicle",           "In the Cubicle" },
-	{ "curses",            "Curses, An Interactive Diversion" },
-	{ "curves",            "Dangerous Curves" },
-	{ "cycles",            "Vicious Cycles" },
-	{ "cyclops",           "The Land of the Cyclops" },
-	{ "damnatiomemoriae",  "Damnatio Memoriae" },
-	{ "dancebeat",         "Dance to the Beat of the Earth" },
-	{ "dannydipstick",     "Danny Dipstick" },
-	{ "darkiss1",          "Darkiss! Wrath of the Vampire - Chapter 1: The Awakening" },
-	{ "darkiss2",          "Darkiss! Wrath of the Vampire - Chapter 2: Journey to Hell" },
-	{ "dashslapney",       "Dash Slapney, Patrol Leader" },
-	{ "dayinlife",         "A Day in Life" },
-	{ "dayishothitler",    "The Day I Shot Hitler" },
-	{ "dd4",               "Dutch Dapper IV: The Final Voyage" },
-	{ "dday",              "D-Day" },
-	{ "deadmeat",          "Dead Meat in the Pit" },
-	{ "deadpavane",        "Dead Pavane for a Princess" },
-	{ "deadreckoning",     "Dead Reckoning" },
-	{ "deadsville",        "Deadsville" },
-	{ "death",             "Death to my Enemies" },
-	{ "debate",            "Debate" },
-	{ "deephome",          "Deephome" },
-	{ "deformuseum",       "Deformuseum" },
-	{ "degeneracy",        "Degeneracy" },
-	{ "dejavuz",           "Deja Vu" },
+	{ "conankill",          "Conan Kill Everything" },
+	{ "conceptisproven",    "My Little Project Concept is Proven" },
+	{ "cottage",            "Cottage" },
+	{ "countdown1",         "Countdown 1 - The Body" },
+	{ "countdown2",         "Countdown 2 - The Soul" },
+	{ "countdown3",         "Countdown 3 - The Mind" },
+	{ "cove",               "The Cove" },
+	{ "crabhat",            "Oh No, Mr Crab Stole Your Hat!" },
+	{ "crazydiaper",        "The Tale of the Crazy Diaper Man" },
+	{ "craverlyheights",    "Craverly Heights" },
+	{ "creepydemo",         "A Day in the Creepy Life of Bob" },
+	{ "crimescene",         "A Crime Scene" },
+	{ "criticalbreach",     "Critical Breach" },
+	{ "crobe",              "Crobe" },
+	{ "cryptographer",      "Cryptographer" },
+	{ "csbb",               "Crystal and Stone Beetle and Bone" },
+	{ "ctdoom",             "Countdown to Doom" },
+	{ "cubicle",            "In the Cubicle" },
+	{ "curses",             "Curses" },
+	{ "curves",             "Dangerous Curves" },
+	{ "cycles",             "Vicious Cycles" },
+	{ "cyclops",            "The Land of the Cyclops" },
+	{ "damnatiomemoriae",   "Damnatio Memoriae" },
+	{ "dancebeat",          "Dance to the Beat of the Earth" },
+	{ "dannydipstick",      "Danny Dipstick" },
+	{ "darkiss1",           "Darkiss! Wrath of the Vampire - Chapter 1: The Awakening" },
+	{ "darkiss2",           "Darkiss! Wrath of the Vampire - Chapter 2: Journey to Hell" },
+	{ "dashslapney",        "Dash Slapney, Patrol Leader" },
+	{ "dayinlife",          "A Day in Life" },
+	{ "dayishothitler",     "The Day I Shot Hitler" },
+	{ "dd4",                "Dutch Dapper IV: The Final Voyage" },
+	{ "dday",               "D-Day" },
+	{ "deadmeat",           "Dead Meat in the Pit" },
+	{ "deadpavane",         "Dead Pavane for a Princess" },
+	{ "deadreckoning",      "Dead Reckoning" },
+	{ "deadsville",         "Deadsville" },
+	{ "death",              "Death to my Enemies" },
+	{ "debate",             "Debate" },
+	{ "deephome",           "Deephome" },
+	{ "deformuseum",        "Deformuseum" },
+	{ "degeneracy",         "Degeneracy" },
+	{ "dejavuz",            "Deja Vu" },
 	{ "deliciousbreakfast", "Delicious Breakfast" },
-	{ "delusions",         "Delusions" },
-	{ "desertz",           "Desert Adventure" },
-	{ "detective",         "Detective" },
-	{ "detention",         "Detention, An Attempt to Escape From School" },
-	{ "devildoit",         "The Devil Made Me Do It" },
-	{ "devours",           "All Things Devours" },
-	{ "dewdrops",          "Within a Wreath of Dewdrops" },
-	{ "dirk",              "Dirk" },
-	{ "djinniotr",         "Djinn on the Rocks" },
-	{ "djinni",            "The Djinni Chronicles \"Undercurrents of Manipulation\"" },
-	{ "dogshow",           "Dog Show" },
-	{ "dogslife",          "It's a Dog's Life" },
-	{ "dontgo",            "Don't Go" },
-	{ "dontpeeyourself",   "Don't Pee Yourself!" },
+	{ "delusions",          "Delusions" },
+	{ "desertz",            "Desert Adventure" },
+	{ "detective",          "Detective" },
+	{ "detention",          "Detention" },
+	{ "devildoit",          "The Devil Made Me Do It" },
+	{ "devours",            "All Things Devours" },
+	{ "dewdrops",           "Within a Wreath of Dewdrops" },
+	{ "dirk",               "Dirk" },
+	{ "djinniotr",          "Djinn on the Rocks" },
+	{ "djinni",             "The Djinni Chronicles" },
+	{ "dogshow",            "Dog Show" },
+	{ "dogslife",           "It's a Dog's Life" },
+	{ "dontgo",             "Don't Go" },
+	{ "dontpeeyourself",    "Don't Pee Yourself!" },
 	{ "dontpushthemailbox", "Don't Push The Mailbox" },
-	{ "dorm",              "Dorm: Adventure at the 8-Bit Assembly" },
-	{ "dotd",              "Dawn of the Demon" },
-	{ "downthematrix",     "Down The Matrix" },
-	{ "downtowntokyo",     "Downtown Tokyo Present Day" },
-	{ "dpod",              "Dracula - Prince of Darkness" },
-	{ "dracula1",          "Dracula: Part 1, The First Night" },
-	{ "dracula2",          "Dracula: Part 2, The Arrival" },
-	{ "dragon",            "Dragon Adventure" },
-	{ "dragonflies",       "Dragon Flies Like Labradorite" },
-	{ "dragontroll",       "The Dragon and the Troll" },
-	{ "dreamcorruptor",    "Corrupter of Dreams" },
-	{ "dramaclass",        "Drama Class" },
-	{ "dreamhold",         "The Dreamhold" },
-	{ "dreamtooreal",      "A Dream Too Real" },
-	{ "dreamtrap",         "The Dream-Trap of Zzar" },
-	{ "dual",              "Dual Transform" },
-	{ "dumont",            "Dr. Dumont's Wild P.A.R.T.I" },
-	{ "eas",               "Earth And Sky: Episode 1" },
-	{ "edifice",           "The Edifice" },
-	{ "egcpc",             "EGC Paper Chase" },
+	{ "dorm",               "Dorm" },
+	{ "dotd",               "Dawn of the Demon" },
+	{ "downthematrix",      "Down The Matrix" },
+	{ "downtowntokyo",      "Downtown Tokyo Present Day" },
+	{ "dpod",               "Dracula - Prince of Darkness" },
+	{ "dracula1",           "Dracula: Part 1, The First Night" },
+	{ "dracula2",           "Dracula: Part 2, The Arrival" },
+	{ "dragon",             "Dragon Adventure" },
+	{ "dragonflies",        "Dragon Flies Like Labradorite" },
+	{ "dragontroll",        "The Dragon and the Troll" },
+	{ "dreamcorruptor",     "Corrupter of Dreams" },
+	{ "dramaclass",         "Drama Class" },
+	{ "dreamhold",          "The Dreamhold" },
+	{ "dreamtooreal",       "A Dream Too Real" },
+	{ "dreamtrap",          "The Dream-Trap of Zzar" },
+	{ "dual",               "Dual Transform" },
+	{ "dumont",             "Dr. Dumont's Wild P.A.R.T.I" },
+	{ "eas",                "Earth and Sky" },
+	{ "edifice",            "The Edifice" },
+	{ "egcpc",              "EGC Paper Chase" },
 	{ "elephantsafterlife", "Elephants and the Afterlife" },
-	{ "elephants1",        "When I Was Shot By Elephants" },
-	{ "elephants2",        "When I Was Shot By Elephants 2: Super Elephants" },
-	{ "elephants3",        "When I Was Shot By Elephants 3" },
-	{ "elephantsconclusion", "When I Was Shot By Elephants Conclusion: The Decision" },
-	{ "elephantsde",       "When I Was Shot By Elephants Definitive Edition" },
-	{ "eleven",            "Film at Eleven" },
-	{ "elfenmaiden",       "The Elfen Maiden: A Comedy of Error Messages" },
-	{ "eliza",             "Eliza" },
-	{ "emptyroom",         "The Empty Room" },
-	{ "endofearth",        "The End of Earth" },
-	{ "enemies",           "Enemies" },
-	{ "enigma",            "Enigma" },
-	{ "enigmasd",          "Enigma, By Simon Deimel" },
-	{ "enigmamanor",       "The Enigma of the Old Manor House" },
-	{ "enterprise",        "The Enterprise Incidents" },
-	{ "entropy",           "Entropy" },
-	{ "epyk",              "Eypk" },
-	{ "erden",             "Travels in the Land of Erden: In Quest of the Adventure" },
-	{ "eric",              "Eric The Power-Mad Dungeon Master" },
-	{ "escapade",          "Escapade!" },
-	{ "escape",            "Escape!" },
-	{ "escaperemember",    "An Escape To Remember" },
-	{ "eto",               "ETO" },
-	{ "eurydice",          "Eurydice" },
-	{ "everydaythesamedream", "Every Day the Same Dream" },
-	{ "extremeomnivore",   "Extreme Omnivore: Text Edition" },
-	{ "f209",              "Apartment 209" },
-	{ "fable",             "A Fable" },
-	{ "faculty",           "The Care and Feeding of Adjuncts" },
-	{ "fade",              "Fade to Black" },
-	{ "faetttiw",          "Fætt Tiw" },
-	{ "failsafe",          "FailSafe" },
-	{ "fairyland",         "Fairyland" },
-	{ "faithfulcompanion", "Faithful Companion" },
-	{ "fajfeta",           "Fajfeta Sur la Luno" },
-	{ "fallingpieces",     "Falling to Pieces" },
-	{ "fantasydimension",  "The Fantasy Dimension" },
-	{ "farm",              "The Farmer's Daughter" },
-	{ "fate",              "Fate" },
-	{ "fff",               "Fox, Fowl and Feed" },
-	{ "fifthcontinent",    "The Fifth Continent" },
-	{ "figaro",            "Figaro" },
-	{ "figueres",          "Figueres in My Basement" },
-	{ "finalselection",    "Final Selection" },
-	{ "finalexam",         "Final Exam" },
-	{ "findesick",         "Fin de sickleburg" },
-	{ "findthemouse",      "Finding the Mouse" },
-	{ "findthebed",        "Find the Bed" },
-	{ "finetuned",         "Fine-Tuned" },
-	{ "fingertipsfriend",  "Fingertips: I Found a New Friend" },
-	{ "fingertipsmilk",    "Fingertips: Please Pass the Milk Please" },
-	{ "firstday",          "The First Day of My New Life" },
-	{ "firstparish",       "Below the First Parish Cemetery" },
-	{ "flat",              "Flat" },
-	{ "flowers",           "Flowers for Algernon" },
-	{ "fmvpoker",          "Frobozz Magic Video Poker" },
-	{ "forachange",        "For a Change" },
-	{ "forestdemo",        "Forest Demo" },
-	{ "forgottengirls",    "The Forgotten Girls" },
-	{ "fork",              "Fork: The Great Underground Dining Room" },
-	{ "forms",             "Of Forms Unknown" },
-	{ "fractalz",          "Fractalz" },
-	{ "fracture",          "Fractured Metamorphoses" },
-	{ "fracturezcode",     "Fracture" },
-	{ "fragileshells",     "Fragile Shells" },
-	{ "frankie",           "Frankenstein Adventure" },
-	{ "freefall",          "Free Fall" },
-	{ "fridgetopia",       "Fridgetopia" },
-	{ "frobozzi",          "The Encyclopedia Frobozzica (Abridged Edition)" },
-	{ "frozen",            "Frozen: A Night at the Lab" },
-	{ "fugue",             "Fugue" },
-	{ "fyleet",            "Fyleet" },
-	{ "ga",                "Geocaching Adventure - GC3JJ9C - Cryptic Puzzle #6" },
-	{ "galatea",           "Galatea" },
-	{ "gamer",             "Gamer: Digital Limbo" },
-	{ "gamlet",            "Gamlet" },
-	{ "gardening",         "Gardening for Beginners" },
-	{ "garliccage",        "The Garlic Cage, Episode I" },
-	{ "gatoron",           "GATOR-ON, Friend to Wetlands!" },
-	{ "gaucho",            "Gaucho" },
-	{ "gbvb",              "Grandma Bethlinda's Variety Box" },
-	{ "gd",                "Goodbye Doggy" },
-	{ "geb",               "GOOSE, EGG, BADGER" },
-	{ "geist",             "Geist" },
-	{ "gerbilriot",        "Gerbil Riot" },
-	{ "ghandi",            "The Day I Hugged Ghandi" },
-	{ "ghost",             "The Ghost Train" },
-	{ "ghostmountain",     "Ghost Mountain" },
-	{ "glass",             "Glass, A Fractured Fairy Tale" },
-	{ "glik1",             "Glik Part 1: Undead Menace" },
-	{ "gnuzoo",            "Gnu in the Zoo" },
-	{ "godot",             "Looking For Godot" },
-	{ "goldilocks",        "Goldilocks is a Fox!" },
-	{ "golf",              "Textfire Golf" },
-	{ "gossip",            "Gossip" },
-	{ "gostak",            "The Gostak" },
-	{ "gourmet",           "Gourmet" },
-	{ "gourmetgaffe",      "Gourmet Gaffe" },
-	{ "gowest",            "Go West" },
-	{ "greaterthan",       "> by @" },
-	{ "greatpancake",      "The Great Pancake Detectives - Case #27" },
-	{ "greatxavio",        "The Great Xavio" },
-	{ "greenrain",         "A Green Rain" },
-	{ "greensboro",        "Greensboro Sit-In" },
-	{ "growingup",         "Growing Up" },
-	{ "guard",             "Guard Duty" },
-	{ "guess",             "Guess The Verb!" },
-	{ "guestreet",         "Life on Gue Street" },
-	{ "gumshoe",           "Gumshoe" },
-	{ "gussdeath",         "Guss's Death" },
-	{ "halloweve",         "Hallow Eve" },
-	{ "hamhouse",          "In the House of Professor Evil: The HAM HOUSE" },
-	{ "hamil",             "Hamil" },
-	{ "hangar22",          "Hangar 22" },
-	{ "happyeverafter",    "Happy Ever After" },
-	{ "hauntings",         "Hauntings" },
-	{ "headcase",          "Head Case" },
-	{ "heidi",             "Heidi" },
-	{ "heist",             "Heist: The Crime of the Century" },
-	{ "heliopause",        "Hoist Sail for the Heliopause and Home" },
-	{ "hellosword",        "Hello Sword: The journey" },
-	{ "hellsbasement",     "Hell's Basement" },
-	{ "henribeauchamp",    "The Gallery of Henri Beauchamp" },
-	{ "heroes",            "Heroes" },
-	{ "heroinesmantle",    "Heroine's Mantle" },
-	{ "hibernated1",       "Hibernated 1 - This Place is Death (Director's Cut)" },
-	{ "hiddennazi",        "The Game Formerly Known as Hidden Nazi Mode" },
-	{ "hiddenverbiage",    "Hidden Verbiage" },
-	{ "hidepachyderm",     "Hide a Pachyderm!" },
-	{ "hipponewyear",      "And A Hippo New Year" },
-	{ "hlainform",         "HLA Inform: A Classic Quest" },
-	{ "hobbittruestory",   "The Hobbit - The True Story" },
-	{ "homecoming",        "Homecoming" },
-	{ "home",              "Home" },
-	{ "hoosegow",          "Hoosegow, A Wild West Wreck" },
-	{ "horatio",           "Horatio’s Story" },
-	{ "horriblepyramid",   "The Horrible Pyramid" },
-	{ "hors",              "Hors Catégorie" },
-	{ "house",             "The House" },
-	{ "housedream",        "House of Dream of Moon" },
-	{ "housekey1",         "Housekey, Part I" },
-	{ "houseoffear",       "The House of Fear" },
-	{ "hummingbird",       "Flight of the Hummingbird" },
-	{ "humongouscave",     "Adventure in Humongous Cave" },
-	{ "humongouscavehints","Humongous Cave Hints" },
-	{ "hunterdark",        "Hunter, In Darkness" },
-	{ "hyperrpg",          "Hyper RPG Game!" },
-	{ "i0",                "I-0: the \"Jailbait on the Interstate\" Game" },
-	{ "ibo",               "Ibo" },
-	{ "icebreaker",        "Icebreaker" },
-	{ "iceprincess",       "The Ice Princess" },
-	{ "iceweb",            "Iceweb" },
-	{ "identity",          "Identity" },
-	{ "ifaquarium",        "IF Aquarium" },
-	{ "ifplayer",          "Interactive Fiction Player" },
-	{ "ifquake",           "Text Adventure Quake Level 1" },
-	{ "ifwhispers5",       "IF Whispers 5" },
-	{ "ill",               "I'll" },
-	{ "imiagination",      "Imiagination" },
-	{ "inamanor",          "In a Manor of Speaking" },
-	{ "inevita",           "Inevitable" },
-	{ "informatory",       "Informatory" },
-	{ "informschool",      "Inform School" },
-	{ "inhumane",          "Inhumane: An Infralogic Massacre" },
-	{ "insidewoman",       "Inside Woman" },
-	{ "insight",           "Insight" },
-	{ "intangible",        "Intangible" },
-	{ "interviewrockstar", "Interview with a Rock Star" },
-	{ "inthenavy",         "In the Navy" },
-	{ "intruder",          "Intruder - Interactive Fiction: A Burglary" },
-	{ "invisibleman",      "The Believable Adventures of an Invisible Man" },
-	{ "iraqiinvasion",     "Iraqi Invasion: A Text Misadventure" },
-	{ "island",            "The Island" },
-	{ "islandsfaraway",    "Islands Far Away" },
-	{ "jayisponies",       "Jay Is Ponies" },
-	{ "janitor",           "Janitor" },
-	{ "jetblue",           "Jet-Blue" },
-	{ "jewelalithia",      "The Jewel of Alithia" },
-	{ "jewelofknowledge",  "The Jewel of Knowledge" },
-	{ "jigsaw",            "Jigsaw, An Interactive History" },
-	{ "jigsawrules",       "Jigsaw: Rules and Footnotes" },
-	{ "juicehead",         "Juicehead, An Interactive Binge" },
-	{ "justanotherday",    "Just Another Day" },
-	{ "karn",              "Return to Karn" },
-	{ "kazooist",          "The Kazooist" },
-	{ "kennykoala",        "Kenny Koala's Bushfire Survival Plan" },
-	{ "kentishplover",     "Kentish Plover" },
-	{ "kidnapsea",         "Kidnapped - On the Sea" },
-	{ "kierkegaardsspider","Kierkegaard's Spider" },
-	{ "kiiwii",            "Kii!Wii! A Tiny Friend to Brighten Your Day" },
-	{ "killingthedoctor",  "Killing the Doctor" },
-	{ "kingsball",         "The King's Ball" },
-	{ "kirby",             "The X-Child, Kevin Johnson Residence Hall Saga 2" },
-	{ "kitten",            "robotfindskitten" },
-	{ "kooku",             "Kook U" },
-	{ "lackofvision",      "Lack of Vision" },
-	{ "lambs",             "Silence of the Lambs" },
-	{ "lambs2",            "Silence of the Lambs 2" },
-	{ "largemachine",      "Large Machine" },
-	{ "lash",              "Local Asynchronous Satellite Hookup" },
-	{ "ldodoom",           "Last Days of Doom" },
-	{ "leaptime",          "Leap Time" },
-	{ "lecture",           "Lecture Feature" },
-	{ "legacy",            "The Family Legacy" },
-	{ "lex",               "LeX" },
-	{ "librarian",         "Life of A Librarian" },
-	{ "libraryfront",      "All Quiet on the Library Front" },
-	{ "lifeordeath",       "Life or Death" },
-	{ "limp",              "Limp" },
-	{ "lionskin",          "In the Skin of a Lion Quest: Caravaggio's Journey" },
-	{ "livejoseph",        "LiveJoseph" },
-	{ "llr3",              "A Little Like Rogue" },
-	{ "lmstvg",            "LMS The Video Game" },
-	{ "lobsteronaplane",   "Lobsters on a Plane" },
-	{ "lockeddoor1",       "Locked Door I" },
-	{ "lockeddoor2",       "Locked Door II" },
-	{ "lockeddoor3",       "Locked Door III" },
-	{ "lockeddoor4",       "Locked Door IV" },
-	{ "lockeddoor5",       "Locked Door V" },
-	{ "lockeddoor6",       "Locked Door VI" },
-	{ "lockeddoor7",       "Locked Door VII" },
-	{ "lockeddoor8",       "Locked Door VIII" },
-	{ "lockeddoor9",       "Locked Door IX" },
-	{ "lookingtothesky",   "Looking to the Sky" },
-	{ "lostpigandplace",   "Lost Pig And Place Under Ground" },
-	{ "lostspellmaker",    "The Lost Spellmaker" },
-	{ "lucidnight",        "Lucid Night" },
-	{ "ludicorp",          "The Ludicorp Mystery" },
-	{ "magicmirror",       "Magic Mirror" },
-	{ "magicmuffin",       "Magic Muffin - The Desert" },
-	{ "magictoyshop",      "The Magic Toyshop" },
-	{ "makeitgood",        "Make it Good" },
-	{ "mansion",           "Mansion" },
-	{ "mariewaits",        "Marie Waits" },
-	{ "martyquest",        "Back to the Future - Marty Quest: An Adventure Through Time" },
-	{ "masquerade",        "Masquerade" },
-	{ "medusa",            "Medusa, NPC Conversations Example" },
-	{ "meetingrobb",       "Meeting Robb Sherwin" },
-	{ "memorylane",        "Memory Lane" },
-	{ "mercurytrucking",   "The Mercury Trucking Company" },
-	{ "mercy",             "Mercy" },
-	{ "metamorphoses",     "Metamorphoses" },
-	{ "mhpquest",          "Quest for the Magic Healing Plant" },
-	{ "micropuzzle",       "Micropuzzle" },
-	{ "midpoints",         "Midpoints" },
-	{ "mimesis",           "Sins Against Mimesis" },
-	{ "mindelectric",      "The Mind Electric" },
-	{ "mines",             "Mines" },
-	{ "minimalistgame",    "The Minimalist Game" },
-	{ "minimalistgame2",   "The Minimalist Game 2" },
-	{ "misdirection",      "The Act Of Misdirection" },
-	{ "missinggrandpa",    "Missing Grandpa: Lost in Time" },
-	{ "mite",              "Mite" },
-	{ "mobius",            "Möbius" },
-	{ "monstermaker",      "Monster Maker" },
-	{ "monzasphantom",     "Monza's Phantom" },
-	{ "moonglow",          "Moonglow, Miniventure #1" },
-	{ "moongoon",          "Moon Goon" },
-	{ "moonshaped",        "Moon-Shaped" },
-	{ "moonwrecked",       "Moonwrecked" },
-	{ "mornelune",         "Morne Lune" },
-	{ "more",              "More" },
-	{ "morris",            "Morris" },
-	{ "mortlakemanor",     "Mortlake Manor" },
-	{ "motelcalifornia",   "Motel California" },
-	{ "motherloose",       "Mother Loose" },
-	{ "mountain",          "Mountain, An Interactive Expedition" },
-	{ "mousequest",        "Mouse Quest Chapter 1 - The Arrival of Winter" },
-	{ "mrp",               "The Story of Mr. P." },
-	{ "mrscrabtreesgeographyclass", "Mrs. Crabtree's Geography Class" },
-	{ "mst3k1",            "Detective, An Interactive MiSTing (Mystery Science Theater 3000)" },
-	{ "mst3k2",            "A Fable, An Interactive MiSTing (Mystery Science Theater 3000)" },
-	{ "muffinquest",       "The Quest for the Magic Muffin" },
-	{ "muffinquest2",      "The Quest for the Magic Muffin 2" },
-	{ "muffinquest3",      "Quest for the Magic Bagel...Err Muffin 3" },
-	{ "mulldoon",          "The Mulldoon Legacy" },
-	{ "mulldoonmurders",   "The Mulldoon Murders" },
-	{ "murdac",            "Murdac" },
-	{ "murdererleft",      "What The Murderer Had Left" },
-	{ "muse",              "Muse: An Autumn Romance" },
-	{ "musician",          "The Musician" },
-	{ "myangel",           "My Angel" },
-	{ "mylastduchess",     "My Last Duchess" },
-	{ "mymagictirehoax",   "My Magic Tire Hoax" },
-	{ "myunclegeorge",     "My Uncle George" },
-	{ "nameless",          "Endless, Nameless" },
-	{ "nascarexperience",  "The Realistic Nascar eXperience" },
-	{ "navigatio",         "Navigatio" },
-	{ "nemeanlion",        "The Nemean Lion: another anonymous joke game" },
-	{ "nemesismacana",     "Nemesis Macana" },
-	{ "neverplayed",       "So, You've Never Played a Text Adventure Before, Huh?" },
-	{ "newday",            "A New Day" },
-	{ "nidus",             "Nidus" },
-	{ "nightbunnies",      "The Night of the Vampire Bunnies" },
-	{ "nightchristmas",    "An Abbreviated Night Before Christmas" },
-	{ "nightcomputer",     "Night at the Computer Center" },
-	{ "nihilism",          "The Abyss" },
-	{ "ninepoints",        "Nine Points" },
-	{ "niney",             "Niney" },
-	{ "ninjasfate",        "Ninja's Fate" },
-	{ "njag",              "Not Just a Game" },
-	{ "njag2",             "Not Just a Game 2" },
-	{ "noroom",            "No Room" },
-	{ "northnorth",        "The Northnorth Passage" },
-	{ "noseguard",         "I Never Promised You a Nose Guard" },
-	{ "nostrils",          "Nostrils of Flesh and Clay" },
-	{ "notinvenice",       "Not in Venice" },
-	{ "nudistsgonewild",   "Nudists Gone Wild" },
-	{ "oad",               "Only After Dark" },
-	{ "oceantower",        "Love, Hate and the Mysterious Ocean Tower" },
-	{ "odieus",            "Odieus's Quest for the Magic Flingshot (Beta)" },
-	{ "ogisoas",           "One Game in Search of a Story" },
-	{ "omniquest",         "Omniquest" },
-	{ "once",              "Once" },
-	{ "onceuponwinter",    "Once Upon a Winter Night, the Ragman Came Singing Under Your Window" },
-	{ "onegirl",           "One Girl" },
-	{ "onlywar",           "Only War - Warhammer 40.000: The Text Adventure" },
-	{ "onyourback",        "On Your Back" },
-	{ "openthatvein",      "Open That Vein" },
-	{ "orevore",           "Orevore Courier" },
-	{ "orion",             "The Orion Agenda" },
-	{ "ottumwa",           "PDFA Ottumwa" },
-	{ "out",               "Out" },
-	{ "outofthepit",       "Out of the Pit" },
-	{ "paddlingmania",     "Total Paddling Mania" },
-	{ "paint",             "Paint and Corners" },
-	{ "palimpsest",        "Palimpsest" },
-	{ "paperbagprincess",  "The Paper Bag Princess" },
-	{ "paperchase",        "Paper Chase" },
-	{ "parallel",          "Parallel" },
-	{ "paranoia",          "Paranoia" },
-	{ "parasites",         "Parasites" },
-	{ "parc",              "Parc" },
-	{ "pasdedeux",         "Pas De Deux" },
-	{ "pathway",           "Pathway to Destruction" },
-	{ "peacock",           "Not Made With Hands" },
-	{ "pentari",           "Pentari" },
-	{ "penury",            "The Algophilists' Penury" },
-	{ "perilousmagic",     "Perilous Magic" },
-	{ "perrysworld",       "Perry's World" },
-	{ "pfrank",            "PROFESSOR FRANK" },
-	{ "philosophersstone", "The Quest for the Philosopher's Stone" },
-	{ "phlegm",            "Phlegm" },
-	{ "phobias",           "Face Your Fears" },
-	{ "phoenix",           "Phoenix's Landing: Destiny" },
-	{ "photographportrait","Photograph, a Portrait of Reflection" },
-	{ "photopia",          "Photopia" },
-	{ "piece",             "Piece of Mind" },
-	{ "pigpancake",        "Pigpancake" },
-	{ "piracy2",           "Piracy 2.0 - A Text Adventure in Space" },
-	{ "piraterailroad",    "Pirate Railroad" },
-	{ "pleasehelpme",      "Please Help Me" },
-	{ "ponderances",       "Ponderances" },
-	{ "praser5",           "Praser 5" },
-	{ "pressedon",         "I Pressed On, Being Chased By a Stapler With My Name on It" },
-	{ "priceoffreedom",    "The Price of Freedom" },
-	{ "primer",            "Primer" },
-	{ "primrose",          "The Primrose Path" },
-	{ "prize",             "The Prize" },
-	{ "probing",           "Offensive Probing" },
-	{ "progressive1",      "IF Progressive One" },
-	{ "promoted",          "Promoted!" },
-	{ "psyops",            "Psyops, Yo" },
-	{ "pueblofantasma",    "Pueblo Fantasma" },
-	{ "puerto",            "The Board Game Puerto Rico" },
-	{ "punkpoints",        "Punk Points" },
-	{ "puppetman",         "The Puppet-Man (Larsoft Adventure number 5)" },
-	{ "putpbaa",           "Pick Up the Phone Booth and Aisle" },
-	{ "puzzle",            "Puzzle" },
-	{ "pytho",             "Pytho's Mask" },
-	{ "quidditch1954",     "The Quidditch Final of 1954" },
-	{ "quietevening",      "A Quiet Evening at Home" },
-	{ "quitequeer",        "Quite Queer Night Near" },
-	{ "rachaelbadday",     "Rachel Has a Bad Day" },
-	{ "ralph",             "Ralph, An Interactive Sniffing" },
-	{ "rameses",           "Rameses, a Tale of Heroes" },
-	{ "ranshints",         "RANS Hints" },
-	{ "rans",              "RANS, An Interworld Progress" },
-	{ "readinginmay",      "A Reading in May" },
-	{ "reddex",            "Reddex" },
-	{ "relief",            "The Hunt for Relief" },
-	{ "reorsbushcave",     "Reor's Bush-Cave (The Sprout Pouch pt 4)" },
-	{ "reser",             "Rock'Em Sock'Em Robots" },
-	{ "resident",          "The Resident" },
-	{ "returncastle",      "Return to the Castle" },
-	{ "revengebabes",      "Revenge of the Killer Surf Nazi Robot Babes from Hell" },
-	{ "revenger",          "Revenger" },
-	{ "reverb",            "Reverberations" },
-	{ "reverzi",           "Reverzi" },
-	{ "ribbons",           "Ribbons" },
-	{ "risenecropolis",    "Rise of the Necropolis" },
-	{ "risorg",            "Risorgimento Represso" },
-	{ "robodud",           "Robodud" },
-	{ "robotempire",       "Holy Robot Empire" },
-	{ "robotgardening",    "Robot Gardening" },
-	{ "robots",            "Robots - Another Abuse of the Z-Machine" },
-	{ "rogue",             "Rogue" },
-	{ "roomserial",        "Room Serial, An Escape Game" },
-	{ "roofed",            "Roofed" },
-	{ "robopuppyredux",    "Robopuppy Redux" },
-	{ "rota",              "The Reliques of Tolti-Aph" },
-	{ "rpn",               "RPN" },
-	{ "rtdoom",            "Return to Doom" },
-	{ "ruins",             "Ruins" },
-	{ "sabotage",          "Sabotage" },
-	{ "safezcode",         "Safe" },
-	{ "samegame",          "SameGame, Another Episode in the Z-Machine Abuse Saga" },
-	{ "samhain",           "Samhain: Pick Up the Pumpkin and KILL" },
-	{ "samurai",           "Samurai Tea Room" },
-	{ "sanddancer",        "Sand-dancer" },
-	{ "sangraal",          "Sangraal" },
-	{ "santassleighride",  "Santa's Sleigh Ride" },
-	{ "sauguslibrary",     "Late Night in the Saugus Public Library" },
-	{ "saveprinceton",     "Save Princeton" },
-	{ "savoirfaire",       "Savoir-Faire" },
-	{ "scald",             "Scald" },
-	{ "schooldays",        "Schooldays" },
-	{ "scopa",             "Scopa, A Graphical (Z-code V6) Card Game" },
-	{ "scurvy",            "A Scurvy of Wonders" },
-	{ "seacoral",          "Sea Coral" },
-	{ "seeksorrow",        "Starry Seeksorrow" },
-	{ "segapark",          "El SegaPark" },
-	{ "semid",             "Semi Intelligent Design" },
-	{ "sfiction",          "Speculative Fiction: Beginner's Lessons" },
-	{ "sgtguffysday",      "Sergeant Guffy's Day" },
-	{ "shade",             "Shade" },
-	{ "shadowgatez",       "Shadowgate" },
-	{ "shadowofmemories",  "Shadow of Memories" },
-	{ "shadowsoldiers",    "Shadow Soldiers" },
-	{ "shallow",           "Shallow" },
-	{ "shattmem",          "Shattered Memory" },
-	{ "sherbet",           "The Meteor, the Stone and a Long Glass of Sherbet" },
-	{ "sherlock1",         "Sherlock Gamebook #1: Murder at the Diogenes Club" },
-	{ "sherlock2",         "Sherlock Gamebook #2: The Black River Emerald" },
-	{ "sherlock3",         "Sherlock Gamebook #3: Death at Appledore Towers" },
-	{ "sherlock4",         "Sherlock Gamebook #4: The Crown vs Dr. Watson" },
-	{ "shrapnel",          "Shrapnel" },
-	{ "siliconcastles",    "Silicon Castles" },
-	{ "simpletheft2",      "A Simple Theft 2: A Simple Theftier" },
-	{ "sixgrayrats",       "Six Gray Rats Crawl Up the Pillow" },
-	{ "slackerx",          "Slacker X" },
-	{ "sleepcycle",        "Sleep Cycle" },
-	{ "smallroom",         "Trapped in a Small Room" },
-	{ "smallsimple",       "A Small & Simple Text Adventure" },
-	{ "snafufun",          "The Adventure" },
-	{ "snowedin",          "Snowed In" },
-	{ "snowquest",         "Snowquest" },
-	{ "sofar",             "So Far, An Interactive Catharsis" },
-	{ "softporn",          "Softporn Adventure" },
-	{ "solitary",          "Solitary" },
-	{ "somewhere",         "Somewhere" },
-	{ "soreality",         "So Reality" },
-	{ "spaceinvaderz",     "Space InvaderZ" },
-	{ "spacestation",      "Space Station: Based on Planetfall Example Transcript" },
-	{ "spadventure",       "SpAdventure" },
-	{ "spiderandweb",      "Spider and Web" },
-	{ "spiral",            "Spiral" },
-	{ "spiritwrak",        "SpiritWrak" },
-	{ "sporkery1",         "Sporkery 1: There Will Be Sporking" },
-	{ "spotlight",         "The Spotlight" },
-	{ "spot",              "The Spot" },
-	{ "spring",            "She's Got a Thing For a Spring" },
-	{ "spring2020",        "Spring 2020" },
-	{ "spycatcher",        "Spycatcher" },
-	{ "squeaky",           "Squeaky on the Moon" },
-	{ "stale",             "The Fox, The Dragon, and the Stale Loaf of Bread" },
-	{ "starborn",          "Starborn" },
-	{ "stargods",          "The Star Gods" },
-	{ "starlightz",        "Starlight" },
-	{ "starrydepths",      "Secret of the Starry Depths" },
-	{ "starshit",          "Starshit" },
-	{ "stealthy",          "Stealthy" },
-	{ "steine",            "Steine" },
-	{ "stewgoing",         "You've Got a Stew Going!" },
-	{ "stiffmst",          "Stiffy Makane: Mystery Science Theater 3000" },
-	{ "stiffy",            "The Incredible Erotic Adventures of Stiffy Makane!" },
-	{ "stinkorswim",       "Stink or Swim" },
-	{ "stonecave",         "The Stone Cave" },
-	{ "stormcellar",       "Storm Cellar" },
-	{ "strainedtea",       "Strained Tea" },
-	{ "strangeworld",      "Strange World" },
-	{ "strikeforce",       "Strike Force" },
-	{ "submarinesabotage", "Submarine Sabotage" },
-	{ "suicide",           "Suicide, A Self-Ordered Death Sentence" },
-	{ "summerland",        "Escape from Summerland" },
-	{ "sunburn",           "Sunburn" },
-	{ "sunburst",          "Sunburst: A C64 Science Fiction Adventure Game" },
-	{ "sundayafternoon",   "Sunday Afternoon" },
-	{ "surfboard",         "Surfboard" },
-	{ "survive",           "Survive" },
-	{ "sushi",             "A Day For Fresh Sushi" },
-	{ "sutwin",            "The Space Under the Window" },
-	{ "suvehnux",          "Suveh Nux" },
-	{ "swineback",         "Swineback Ridge" },
-	{ "sycamoratree",      "Sycamora Tree" },
-	{ "taipan",            "Taipan!" },
-	{ "takethedogout",     "Take the Dog Out" },
-	{ "talemorning",       "The Mundane Tale of the Morning After" },
-	{ "tatctae",           "Time: All Things Come To an End" },
-	{ "tauntingdonut",     "Taunting Donut" },
-	{ "tblw",              "The Blood Lust Warrior" },
-	{ "tcomremake",        "The Colour of Magic Remake" },
-	{ "tcoty",             "The Citizen of the Year" },
-	{ "teacherfeature",    "Teacher Feature" },
+	{ "elephants1",         "When I Was Shot By Elephants" },
+	{ "elephants2",         "When I Was Shot By Elephants 2: Super Elephants" },
+	{ "elephants3",         "When I Was Shot By Elephants 3" },
+	{ "elephantsdecision",  "When I Was Shot By Elephants Conclusion: The Decision" },
+	{ "elephantsde",        "When I Was Shot By Elephants Definitive Edition" },
+	{ "eleven",             "Film at Eleven" },
+	{ "elfenmaiden",        "The Elfen Maiden: A Comedy of Error Messages" },
+	{ "eliza",              "Eliza" },
+	{ "emptyroom",          "The Empty Room" },
+	{ "endofearth",         "The End of Earth" },
+	{ "enemies",            "Enemies" },
+	{ "enigma",             "Enigma" },
+	{ "enigmasd",           "Enigma (by Simon Deimel)" },
+	{ "enigmamanor",        "The Enigma of the Old Manor House" },
+	{ "enterprise",         "The Enterprise Incidents" },
+	{ "entropy",            "Entropy" },
+	{ "epyk",               "Eypk" },
+	{ "erden",              "Travels in the Land of Erden: In Quest of the Adventure" },
+	{ "eric",               "Eric The Power-Mad Dungeon Master" },
+	{ "escapade",           "Escapade!" },
+	{ "escape",             "Escape!" },
+	{ "escaperemember",     "An Escape To Remember" },
+	{ "eto",                "ETO" },
+	{ "eurydice",           "Eurydice" },
+	{ "everydaysamedream",  "Every Day the Same Dream" },
+	{ "extromnivore",       "Extreme Omnivore: Text Edition" },
+	{ "f209",               "Apartment 209" },
+	{ "fable",              "A Fable" },
+	{ "faculty",            "The Care and Feeding of Adjuncts" },
+	{ "fade",               "Fade to Black" },
+	{ "faetttiw",           "Fætt Tiw" },
+	{ "failsafe",           "FailSafe" },
+	{ "fairyland",          "Fairyland" },
+	{ "faithfulcomp",       "Faithful Companion" },
+	{ "fajfeta",            "Fajfeta Sur la Luno" },
+	{ "fallingpieces",      "Falling to Pieces" },
+	{ "fantasydimension",   "The Fantasy Dimension" },
+	{ "farm",               "The Farmer's Daughter" },
+	{ "fate",               "Fate" },
+	{ "fff",                "Fox, Fowl and Feed" },
+	{ "fifthcontinent",     "The Fifth Continent" },
+	{ "figaro",             "Figaro" },
+	{ "figueres",           "Figueres in My Basement" },
+	{ "finalselection",     "Final Selection" },
+	{ "finalexam",          "Final Exam" },
+	{ "findesick",          "Fin de sickleburg" },
+	{ "findthemouse",       "Finding the Mouse" },
+	{ "findthebed",         "Find the Bed" },
+	{ "finetuned",          "Fine-Tuned" },
+	{ "fingertipsfriend",   "Fingertips: I Found a New Friend" },
+	{ "fingertipsmilk",     "Fingertips: Please Pass the Milk Please" },
+	{ "firstday",           "The First Day of My New Life" },
+	{ "firstparish",        "Below the First Parish Cemetery" },
+	{ "flat",               "Flat" },
+	{ "flowers",            "Flowers for Algernon" },
+	{ "fmvpoker",           "Frobozz Magic Video Poker" },
+	{ "forachange",         "For a Change" },
+	{ "forestdemo",         "Forest" },
+	{ "forgottengirls",     "The Forgotten Girls" },
+	{ "fork",               "Fork: The Great Underground Dining Room" },
+	{ "forms",              "Of Forms Unknown" },
+	{ "fractalz",           "Fractalz" },
+	{ "fracture",           "Fractured Metamorphoses" },
+	{ "fracturezcode",      "Fracture" },
+	{ "fragileshells",      "Fragile Shells" },
+	{ "frankie",            "Frankenstein Adventure" },
+	{ "freefall",           "Free Fall" },
+	{ "fridgetopia",        "Fridgetopia" },
+	{ "frobozzi",           "The Encyclopedia Frobozzica (Abridged Edition)" },
+	{ "frozen",             "Frozen: A Night at the Lab" },
+	{ "fugue",              "Fugue" },
+	{ "fyleet",             "Fyleet" },
+	{ "ga",                 "Geocaching Adventure" },
+	{ "galatea",            "Galatea" },
+	{ "gamer",              "Gamer" },
+	{ "gamlet",             "Gamlet" },
+	{ "gardening",          "Gardening for Beginners" },
+	{ "garliccage",         "The Garlic Cage" },
+	{ "gatoron",            "GATOR-ON, Friend to Wetlands!" },
+	{ "gaucho",             "Gaucho" },
+	{ "gbvb",               "Grandma Bethlinda's Variety Box" },
+	{ "gd",                 "Goodbye Doggy" },
+	{ "geb",                "Goose, Egg, Badger" },
+	{ "geist",              "Geist" },
+	{ "gerbilriot",         "Gerbil Riot" },
+	{ "ghandi",             "The Day I Hugged Ghandi" },
+	{ "ghost",              "The Ghost Train" },
+	{ "ghostmountain",      "Ghost Mountain" },
+	{ "glass",              "Glass" },
+	{ "glik1",              "Glik I" },
+	{ "gnuzoo",             "Gnu in the Zoo" },
+	{ "godot",              "Looking For Godot" },
+	{ "goldilocks",         "Goldilocks is a Fox!" },
+	{ "golf",               "Textfire Golf" },
+	{ "gossip",             "Gossip" },
+	{ "gostak",             "The Gostak" },
+	{ "gourmet",            "Gourmet" },
+	{ "gourmetgaffe",       "Gourmet Gaffe" },
+	{ "gowest",             "Go West" },
+	{ "greaterthan",        "> by @" },
+	{ "greatpancake",       "The Great Pancake Detectives - Case #27" },
+	{ "greatxavio",         "The Great Xavio" },
+	{ "greenrain",          "A Green Rain" },
+	{ "greensboro",         "Greensboro Sit-In" },
+	{ "growingup",          "Growing Up" },
+	{ "guard",              "Guard Duty" },
+	{ "guess",              "Guess The Verb!" },
+	{ "guestreet",          "Life on Gue Street" },
+	{ "gumshoe",            "Gumshoe" },
+	{ "gussdeath",          "Guss's Death" },
+	{ "halloweve",          "Hallow Eve" },
+	{ "hamhouse",           "In the House of Professor Evil: The HAM HOUSE" },
+	{ "hamil",              "Hamil" },
+	{ "hangar22",           "Hangar 22" },
+	{ "happyeverafter",     "Happy Ever After" },
+	{ "hauntings",          "Hauntings" },
+	{ "headcase",           "Head Case" },
+	{ "heidi",              "Heidi" },
+	{ "heist",              "Heist: The Crime of the Century" },
+	{ "heliopause",         "Hoist Sail for the Heliopause and Home" },
+	{ "hellosword",         "Hello Sword: The journey" },
+	{ "hellsbasement",      "Hell's Basement" },
+	{ "henribeauchamp",     "The Gallery of Henri Beauchamp" },
+	{ "heroes",             "Heroes" },
+	{ "heroinesmantle",     "Heroine's Mantle" },
+	{ "hibernated1",        "Hibernated 1 - This Place is Death (Director's Cut)" },
+	{ "hiddennazi",         "The Game Formerly Known as Hidden Nazi Mode" },
+	{ "hiddenverbiage",     "Hidden Verbiage" },
+	{ "hidepachyderm",      "Hide a Pachyderm!" },
+	{ "hipponewyear",       "And A Hippo New Year" },
+	{ "hlainform",          "HLA Adventure" },
+	{ "hobbittruestory",    "The Hobbit - The True Story - Redux, Director's Cut" },
+	{ "homecoming",         "Homecoming" },
+	{ "home",               "Home" },
+	{ "hoosegow",           "Hoosegow" },
+	{ "horatio",            "Horatio’s Story" },
+	{ "horriblepyra",       "The Horrible Pyramid" },
+	{ "hors",               "Hors Catégorie" },
+	{ "house",              "The House" },
+	{ "housedream",         "House of Dream of Moon" },
+	{ "housekey1",          "Housekey, Part I" },
+	{ "houseoffear",        "The House of Fear" },
+	{ "hummingbird",        "Flight of the Hummingbird" },
+	{ "humongouscave",      "Adventure in Humongous Cave" },
+	{ "humongouscavehints", "Humongous Cave Hints" },
+	{ "hunterdark",         "Hunter, In Darkness" },
+	{ "hyperrpg",           "Hyper RPG Game!" },
+	{ "i0",                 "I-0" },
+	{ "ibo",                "Ibo" },
+	{ "icebreaker",         "Icebreaker" },
+	{ "iceprincess",        "The Ice Princess" },
+	{ "iceweb",             "Iceweb" },
+	{ "identity",           "Identity" },
+	{ "ifaquarium",         "IF Aquarium" },
+	{ "ifplayer",           "Interactive Fiction Player" },
+	{ "ifquake",            "Text Adventure Quake Level 1" },
+	{ "ifwhispers5",        "IF Whispers 5" },
+	{ "ill",                "I'll" },
+	{ "imiagination",       "Imiagination" },
+	{ "impossiblestairs",   "The Impossible Stairs" },
+	{ "inamanor",           "In a Manor of Speaking" },
+	{ "inevita",            "Inevitable" },
+	{ "informatory",        "Informatory" },
+	{ "informschool",       "Inform School" },
+	{ "inhumane",           "Inhumane: An Infralogic Massacre" },
+	{ "insidewoman",        "Inside Woman" },
+	{ "insight",            "Insight" },
+	{ "intangible",         "Intangible" },
+	{ "interviewrockstar",  "Interview with a Rock Star" },
+	{ "inthenavy",          "In the Navy" },
+	{ "intruder",           "Intruder" },
+	{ "invisibleman",       "The Believable Adventures of an Invisible Man" },
+	{ "iraqiinvasion",      "Iraqi Invasion: A Text Misadventure" },
+	{ "island",             "The Island" },
+	{ "islandsfaraway",     "Islands Far Away" },
+	{ "jayisponies",        "Jay Is Ponies" },
+	{ "janitor",            "Janitor" },
+	{ "jetblue",            "Jet-Blue" },
+	{ "jewelalithia",       "The Jewel of Alithia" },
+	{ "jewelofknowledge",   "The Jewel of Knowledge" },
+	{ "jigsaw",             "Jigsaw" },
+	{ "jigsawrules",        "Jigsaw: Rules and Footnotes" },
+	{ "juicehead",          "Juicehead" },
+	{ "justanotherday",     "Just Another Day" },
+	{ "karn",               "Return to Karn" },
+	{ "kazooist",           "The Kazooist" },
+	{ "kennykoala",         "Kenny Koala's Bushfire Survival Plan" },
+	{ "kentishplover",      "Kentish Plover" },
+	{ "kidnapsea",          "Kidnapped - On the Sea" },
+	{ "kierkegaardsspider", "Kierkegaard's Spider" },
+	{ "kiiwii",             "Kii!Wii! A Tiny Friend to Brighten Your Day" },
+	{ "killingthedoctor",   "Killing the Doctor" },
+	{ "kingsball",          "The King's Ball" },
+	{ "kirby",              "The X-Child, Kevin Johnson Residence Hall Saga 2" },
+	{ "kitten",             "robotfindskitten" },
+	{ "kooku",              "Kook U" },
+	{ "lackofvision",       "Lack of Vision" },
+	{ "lambs",              "Silence of the Lambs" },
+	{ "lambs2",             "Silence of the Lambs 2" },
+	{ "largemachine",       "Large Machine" },
+	{ "lash",               "Local Asynchronous Satellite Hookup" },
+	{ "ldodoom",            "Last Days of Doom" },
+	{ "leaptime",           "Leap Time" },
+	{ "lecture",            "Lecture Feature" },
+	{ "legacy",             "The Family Legacy" },
+	{ "lex",                "LeX" },
+	{ "librarian",          "Life of A Librarian" },
+	{ "libraryfront",       "All Quiet on the Library Front" },
+	{ "lifeordeath",        "Life or Death" },
+	{ "limp",               "Limp" },
+	{ "lionskin",           "In the Skin of a Lion Quest: Caravaggio's Journey" },
+	{ "livejoseph",         "LiveJoseph" },
+	{ "llr3",               "A Little Like Rogue" },
+	{ "lmstvg",             "LMS The Video Game" },
+	{ "lobsteronaplane",    "Lobsters on a Plane" },
+	{ "lockeddoor1",        "Locked Door I" },
+	{ "lockeddoor2",        "Locked Door II" },
+	{ "lockeddoor3",        "Locked Door III" },
+	{ "lockeddoor4",        "Locked Door IV" },
+	{ "lockeddoor5",        "Locked Door V" },
+	{ "lockeddoor6",        "Locked Door VI" },
+	{ "lockeddoor7",        "Locked Door VII" },
+	{ "lockeddoor8",        "Locked Door VIII" },
+	{ "lockeddoor9",        "Locked Door IX" },
+	{ "lookingtothesky",    "Looking to the Sky" },
+	{ "lostpigandplace",    "Lost Pig And Place Under Ground" },
+	{ "lostspellmaker",     "The Lost Spellmaker" },
+	{ "lucidnight",         "Lucid Night" },
+	{ "ludicorp",           "The Ludicorp Mystery" },
+	{ "magicmirror",        "Magic Mirror" },
+	{ "magicmuffin",        "Magic Muffin - The Desert" },
+	{ "magictoyshop",       "The Magic Toyshop" },
+	{ "makeitgood",         "Make it Good" },
+	{ "mansion",            "Mansion" },
+	{ "mariewaits",         "Marie Waits" },
+	{ "martyquest",         "Back to the Future - Marty Quest" },
+	{ "masquerade",         "Masquerade" },
+	{ "medusa",             "Medusa" },
+	{ "meetingrobb",        "Meeting Robb Sherwin" },
+	{ "memorylane",         "Memory Lane" },
+	{ "mercurytrucking",    "The Mercury Trucking Company" },
+	{ "mercy",              "Mercy" },
+	{ "metamorphoses",      "Metamorphoses" },
+	{ "mhpquest",           "Quest for the Magic Healing Plant" },
+	{ "micropuzzle",        "Micropuzzle" },
+	{ "midpoints",          "Midpoints" },
+	{ "mimesis",            "Sins Against Mimesis" },
+	{ "mindelectric",       "The Mind Electric" },
+	{ "mines",              "Mines" },
+	{ "minimalistgame",     "The Minimalist Game" },
+	{ "minimalistgame2",    "The Minimalist Game 2" },
+	{ "misdirection",       "The Act Of Misdirection" },
+	{ "missinggrandpa",     "Missing Grandpa: Lost in Time" },
+	{ "mite",               "Mite" },
+	{ "mobius",             "Möbius" },
+	{ "monstermaker",       "Monster Maker" },
+	{ "monzasphantom",      "Monza's Phantom" },
+	{ "moonglow",           "Miniventure #1: Moonglow" },
+	{ "moongoon",           "Moon Goon" },
+	{ "moonshaped",         "Moon-Shaped" },
+	{ "moonwrecked",        "Moonwrecked" },
+	{ "mornelune",          "Morne Lune" },
+	{ "more",               "More" },
+	{ "morris",             "Morris" },
+	{ "mortlakemanor",      "Mortlake Manor" },
+	{ "motelcalifornia",    "Motel California" },
+	{ "motherloose",        "Mother Loose" },
+	{ "mountain",           "Mountain" },
+	{ "mousequest",         "Mouse Quest Chapter 1 - The Arrival of Winter" },
+	{ "mrp",                "The Story of Mr. P." },
+	{ "mrscrabtree",        "Mrs. Crabtree's Geography Class" },
+	{ "mst3k1",             "Mystery Science Theater 3000 Presents 'Detective'" },
+	{ "mst3k2",             "Mystery Science Theater 3000 Presents 'A Fable'" },
+	{ "muffinquest",        "The Quest for the Magic Muffin" },
+	{ "muffinquest2",       "The Quest for the Magic Muffin 2" },
+	{ "muffinquest3",       "Quest for the Magic Bagel...Err Muffin 3" },
+	{ "mulldoon",           "The Mulldoon Legacy" },
+	{ "mulldoonmurders",    "The Mulldoon Murders" },
+	{ "murdac",             "Murdac" },
+	{ "murdererleft",       "What The Murderer Had Left" },
+	{ "muse",               "Muse: An Autumn Romance" },
+	{ "musician",           "The Musician" },
+	{ "myangel",            "My Angel" },
+	{ "mylastduchess",      "My Last Duchess" },
+	{ "mymagictirehoax",    "My Magic Tire Hoax" },
+	{ "myunclegeorge",      "My Uncle George" },
+	{ "nameless",           "Endless, Nameless" },
+	{ "nascarexperience",   "The Realistic Nascar eXperience" },
+	{ "navigatio",          "Navigatio" },
+	{ "nemeanlion",         "The Nemean Lion" },
+	{ "nemesismacana",      "Nemesis Macana" },
+	{ "neverplayed",        "So, You've Never Played a Text Adventure Before, Huh?" },
+	{ "newday",             "A New Day" },
+	{ "nidus",              "Nidus" },
+	{ "nightbunnies",       "The Night of the Vampire Bunnies" },
+	{ "nightchristmas",     "An Abbreviated Night Before Christmas" },
+	{ "nightcomputer",      "Night at the Computer Center" },
+	{ "nihilism",           "The Abyss" },
+	{ "ninepoints",         "Nine Points" },
+	{ "niney",              "Niney" },
+	{ "ninjasfate",         "Ninja's Fate" },
+	{ "njag",               "Not Just a Game" },
+	{ "njag2",              "Not Just a Game 2" },
+	{ "noroom",             "No Room" },
+	{ "northnorth",         "The Northnorth Passage" },
+	{ "noseguard",          "I Never Promised You a Nose Guard" },
+	{ "nostrils",           "Nostrils of Flesh and Clay" },
+	{ "notinvenice",        "Not in Venice" },
+	{ "nudistsgonewild",    "Nudists Gone Wild" },
+	{ "oad",                "Only After Dark" },
+	{ "oceantower",         "Love, Hate and the Mysterious Ocean Tower" },
+	{ "odieus",             "Odieus's Quest for the Magic Flingshot" },
+	{ "ogisoas",            "One Game in Search of a Story" },
+	{ "omniquest",          "Omniquest" },
+	{ "once",               "Once" },
+	{ "onceuponwinter",     "Once Upon a Winter Night, the Ragman Came Singing Under Your Window" },
+	{ "onegirl",            "One Girl" },
+	{ "onlywar",            "Only War - Warhammer 40.000" },
+	{ "onyourback",         "On Your Back" },
+	{ "openthatvein",       "Open That Vein" },
+	{ "orevore",            "Orevore Courier" },
+	{ "orion",              "The Orion Agenda" },
+	{ "ottumwa",            "PDFA Ottumwa" },
+	{ "out",                "Out" },
+	{ "outofthepit",        "Out of the Pit" },
+	{ "paddlingmania",      "Total Paddling Mania" },
+	{ "paint",              "Paint and Corners" },
+	{ "palimpsest",         "Palimpsest" },
+	{ "paperbagprincess",   "The Paper Bag Princess" },
+	{ "paperchase",         "Paper Chase" },
+	{ "parallel",           "Parallel" },
+	{ "paranoia",           "Paranoia" },
+	{ "parasites",          "Parasites" },
+	{ "parc",               "Parc" },
+	{ "pasdedeux",          "Pas De Deux" },
+	{ "pathway",            "Pathway to Destruction" },
+	{ "peacock",            "Not Made With Hands" },
+	{ "pentari",            "Pentari" },
+	{ "penury",             "The Algophilists' Penury" },
+	{ "perilousmagic",      "Perilous Magic" },
+	{ "perrysworld",        "Perry's World" },
+	{ "pfrank",             "PROFESSOR FRANK" },
+	{ "philosophersstone",  "The Quest for the Philosopher's Stone" },
+	{ "phlegm",             "Phlegm" },
+	{ "phobias",            "Face Your Fears" },
+	{ "phoenix",            "Phoenix's Landing: Destiny" },
+	{ "photograph",         "Photograph" },
+	{ "photopia",           "Photopia" },
+	{ "piece",              "Piece of Mind" },
+	{ "pigpancake",         "Pigpancake" },
+	{ "piracy2",            "Piracy 2.0 - A Text Adventure in Space" },
+	{ "piraterailroad",     "Pirate Railroad" },
+	{ "pleasehelpme",       "Please Help Me" },
+	{ "ponderances",        "Ponderances" },
+	{ "praser5",            "Praser 5" },
+	{ "pressedon",          "I Pressed On, Being Chased by a Stapler With My Name on It" },
+	{ "priceoffreedom",     "The Price of Freedom" },
+	{ "primer",             "Primer" },
+	{ "primrose",           "The Primrose Path" },
+	{ "prize",              "The Prize" },
+	{ "probing",            "Offensive Probing" },
+	{ "progressive1",       "IF Progressive One" },
+	{ "promoted",           "Promoted!" },
+	{ "psyops",             "Psyops, Yo" },
+	{ "pueblofantasma",     "Pueblo Fantasma" },
+	{ "puerto",             "The Board Game Puerto Rico" },
+	{ "punkpoints",         "Punk Points" },
+	{ "puppetman",          "The Puppet-Man" },
+	{ "putpbaa",            "Pick Up the Phone Booth and Aisle" },
+	{ "puzzle",             "Puzzle" },
+	{ "pytho",              "Pytho's Mask" },
+	{ "quidditch1954",      "The Quidditch Final of 1954" },
+	{ "quietevening",       "A Quiet Evening at Home" },
+	{ "quitequeer",         "Quite Queer Night Near" },
+	{ "rachaelbadday",      "Rachel Has a Bad Day" },
+	{ "ralph",              "Ralph" },
+	{ "rameses",            "Rameses, a Tale of Heroes" },
+	{ "ranshints",          "RANS Hints" },
+	{ "rans",               "RANS" },
+	{ "readinginmay",       "A Reading in May" },
+	{ "reddex",             "Reddex" },
+	{ "relief",             "The Hunt for Relief" },
+	{ "reorsbushcave",      "Reor's Bush-Cave (The Sprout Pouch pt 4)" },
+	{ "reser",              "Rock'Em Sock'Em Robots" },
+	{ "resident",           "The Resident" },
+	{ "returncastle",       "Return to the Castle" },
+	{ "revengebabes",       "Revenge of the Killer Surf Nazi Robot Babes from Hell" },
+	{ "revenger",           "Revenger" },
+	{ "reverb",             "Reverberations" },
+	{ "reverzi",            "Reverzi" },
+	{ "ribbons",            "Ribbons" },
+	{ "risenecropolis",     "Rise of the Necropolis" },
+	{ "risorg",             "Risorgimento Represso" },
+	{ "robodud",            "Robodud" },
+	{ "robotempire",        "Holy Robot Empire" },
+	{ "robotgardening",     "Robot Gardening" },
+	{ "robots",             "Robots - Another Abuse of the Z-Machine" },
+	{ "rogue",              "Rogue" },
+	{ "roomserial",         "Room Serial" },
+	{ "roofed",             "Roofed" },
+	{ "robopuppyredux",     "Robopuppy Redux" },
+	{ "rota",               "The Reliques of Tolti-Aph" },
+	{ "rpn",                "RPN" },
+	{ "rtdoom",             "Return to Doom" },
+	{ "ruins",              "Ruins" },
+	{ "sabotage",           "Sabotage" },
+	{ "safezcode",          "Safe" },
+	{ "samegame",           "SameGame, Another Episode in the Z-Machine Abuse Saga" },
+	{ "samhain",            "Samhain: Pick Up the Jack O' Lantern and Die" },
+	{ "samurai",            "Samurai Tea Room" },
+	{ "sanddancer",         "Sand-dancer" },
+	{ "sangraal",           "Sangraal" },
+	{ "santassleighride",   "Santa's Sleigh Ride" },
+	{ "sauguslibrary",      "Late Night in the Saugus Public Library" },
+	{ "saveprinceton",      "Save Princeton" },
+	{ "savoirfaire",        "Savoir-Faire" },
+	{ "scald",              "Scald" },
+	{ "schooldays",         "Schooldays" },
+	{ "scopa",              "Scopa" },                                                      // Not Working (2.8.0git)
+	{ "scurvy",             "A Scurvy of Wonders" },
+	{ "seacoral",           "Sea Coral" },
+	{ "seeksorrow",         "Starry Seeksorrow" },
+	{ "segapark",           "El SegaPark" },
+	{ "semid",              "Semi Intelligent Design" },
+	{ "sfiction",           "Speculative Fiction: Beginner's Lessons" },
+	{ "sgtguffysday",       "Sergeant Guffy's Day" },
+	{ "shade",              "Shade" },
+	{ "shadowgatez",        "Shadowgate" },
+	{ "shadowofmemories",   "Shadow of Memories" },
+	{ "shadowsoldiers",     "Shadow Soldiers" },
+	{ "shallow",            "Shallow" },
+	{ "shattmem",           "Shattered Memory" },
+	{ "sherbet",            "The Meteor, the Stone and a Long Glass of Sherbet" },
+	{ "sherlock1",          "Sherlock Gamebook #1: Murder at the Diogenes Club" },
+	{ "sherlock2",          "Sherlock Gamebook #2: The Black River Emerald" },
+	{ "sherlock3",          "Sherlock Gamebook #3: Death at Appledore Towers" },
+	{ "sherlock4",          "Sherlock Gamebook #4: The Crown vs Dr. Watson" },
+	{ "shrapnel",           "Shrapnel" },
+	{ "siliconcastle",      "Silicon Castles" },
+	{ "simpletheft2",       "A Simple Theft 2: A Simple Theftier" },
+	{ "sixgrayrats",        "Six Gray Rats Crawl Up the Pillow" },
+	{ "slackerx",           "Slacker X" },
+	{ "sleepcycle",         "Sleep Cycle" },
+	{ "smallroom",          "Trapped in a Small Room" },
+	{ "smallsimple",        "A Small & Simple Text Adventure" },
+	{ "snafufun",           "The Adventure" },
+	{ "snowedin",           "Snowed In" },
+	{ "snowquest",          "Snowquest" },
+	{ "sofar",              "So Far" },
+	{ "softporn",           "Softporn Adventure" },
+	{ "solitary",           "Solitary" },
+	{ "somewhere",          "Somewhere" },
+	{ "soreality",          "So Reality" },
+	{ "spaceinvaderz",      "Space InvaderZ" },
+	{ "spacestation",       "Space Station" },
+	{ "spadventure",        "SpAdventure" },
+	{ "spiderandweb",       "Spider and Web" },
+	{ "spiral",             "Spiral" },
+	{ "spiritwrak",         "SpiritWrak" },
+	{ "sporkery1",          "Sporkery 1: There Will Be Sporking" },
+	{ "spotlight",          "The Spotlight" },
+	{ "spot",               "The Spot" },
+	{ "spring",             "She's Got a Thing For a Spring" },
+	{ "spring2020",         "Spring 2020" },
+	{ "spycatcher",         "Spycatcher" },
+	{ "squeaky",            "Squeaky on the Moon" },
+	{ "stale",              "The Fox, The Dragon, and the Stale Loaf of Bread" },
+	{ "starborn",           "Starborn" },
+	{ "stargods",           "The Star Gods" },
+	{ "starlightz",         "Starlight" },
+	{ "starrydepths",       "Secret of the Starry Depths" },
+	{ "starshit",           "Starshit" },
+	{ "stealthy",           "Stealthy" },
+	{ "steine",             "Steine" },
+	{ "stewgoing",          "You've Got a Stew Going!" },
+	{ "stiffmst",           "Stiffy Makane: Mystery Science Theater 3000" },
+	{ "stiffy",             "The Incredible Erotic Adventures of Stiffy Makane!" },
+	{ "stinkorswim",        "Stink or Swim" },
+	{ "stonecave",          "The Stone Cave" },
+	{ "stormcellar",        "Storm Cellar" },
+	{ "strainedtea",        "Strained Tea" },
+	{ "strangeworld",       "Strange World" },
+	{ "strikeforce",        "Strike Force" },
+	{ "submarinesabotage",  "Submarine Sabotage" },
+	{ "suicide",            "Suicide" },
+	{ "summerland",         "Escape from Summerland" },
+	{ "sunburn",            "Sunburn" },
+	{ "sunburst",           "Sunburst: A C64 Science Fiction Adventure Game" },               // Not Working (2.8.0git)
+	{ "sundayafternoon",    "Sunday Afternoon" },
+	{ "surfboard",          "Surfboard" },
+	{ "survive",            "Survive" },
+	{ "sushi",              "A Day For Fresh Sushi" },
+	{ "sutwin",             "The Space Under the Window" },
+	{ "suvehnux",           "Suveh Nux" },
+	{ "swineback",          "Swineback Ridge" },
+	{ "sycamoratree",       "Sycamora Tree" },
+	{ "taipan",             "Taipan!" },
+	{ "takethedogout",      "Take the Dog Out" },
+	{ "talemorning",        "The Mundane Tale of the Morning After" },
+	{ "tatctae",            "Time: All Things Come to an End" },
+	{ "tauntingdonut",      "Taunting Donut" },
+	{ "tblw",               "The Blood Lust Warrior" },
+	{ "tcomremake",         "The Colour of Magic Remake" },
+	{ "tcoty",              "The Citizen of the Year" },
+	{ "teacherfeature",     "Teacher Feature" },
 	{ "teachinghertodance", "Teaching Her to Dance" },
-	{ "teaceremony",       "Tea Ceremony" },
-	{ "telling",           "Whom the Telling Changed" },
-	{ "terribleoldmanse",  "The Terrible Old Manse: 8bit Fun in 7bit ASCII" },
-	{ "terrortabby",       "Attack of the Terror Tabby!" },
-	{ "tesseract",         "Beyond the Tesseract" },
-	{ "testisready",       "The Test is Now READY" },
-	{ "tethered",          "Tethered" },
-	{ "tgm",               "The Great Machine - A Fragment" },
-	{ "thanet",            "From Thanet to New Romney" },
-	{ "thatdamnelevator",  "That Damn Elevator" },
-	{ "thatdamnremote",    "That Damn Remote" },
-	{ "the5continent",     "The Fifth Continent" },
-	{ "theatre",           "Theatre" },
-	{ "thebaron",          "The Baron" },
-	{ "thecomputerlady",   "The Computer Lady" },
-	{ "thecubecavern",     "The Cube in the Cavern" },
+	{ "teaceremony",        "Tea Ceremony" },
+	{ "telling",            "Whom the Telling Changed" },
+	{ "terribleoldmanse",   "The Terrible Old Manse: 8bit Fun in 7bit ASCII" },
+	{ "terrortabby",        "Attack of the Terror Tabby!" },
+	{ "tesseract",          "Beyond the Tesseract" },
+	{ "testisready",        "The Test is Now READY" },
+	{ "tethered",           "Tethered" },
+	{ "tgm",                "The Great Machine - A Fragment" },
+	{ "thanet",             "From Thanet to New Romney" },
+	{ "thatdamnelevator",   "That Damn Elevator" },
+	{ "thatdamnremote",     "That Damn Remote" },
+	{ "the5continent",      "The Fifth Continent" },
+	{ "theatre",            "Theatre" },
+	{ "thebaron",           "The Baron" },
+	{ "thecomputerlady",    "The Computer Lady" },
+	{ "thecubecavern",      "The Cube in the Cavern" },
 	{ "theenchantedcastle", "The Enchanted Castle" },
-	{ "thegrandquest",     "The Grand Quest" },
-	{ "thegrandtour",      "The Grand Tour" },
-	{ "thegreat",          "The Great, A Voyage to the Inner Self" },
-	{ "theguardian",       "The Guardian" },
-	{ "theimpossiblestairs", "The Impossible Stairs" },
-	{ "theinvestment",     "The Investment" },
-	{ "thejob",            "The Job" },
-	{ "thelighthousemm",   "The Lighthouse, By Marius Muller" },
-	{ "themall",           "The Mall" },
-	{ "thesproutpouch",    "Reor's Bush-Cave: The Sprout Pouch" },
-	{ "thetemple",         "The Temple" },
-	{ "thewedding",        "The Wedding" },
-	{ "thorn",             "The Thorn" },
-	{ "threecows",         "Three Cows and Two Doors" },
-	{ "threediopolis",     "Threediopolis" },
-	{ "threemore",         "Three More Visitors" },
-	{ "timefortea",        "Time For Tea: A Game of Tea, Cakes, and Deadly Secrets" },
-	{ "timezcode",         "Time and Dwarves" },
-	{ "tirehoax",          "My Magic Tire Hoax" },
-	{ "tk1",               "Time Killer #1: Claustrophobia" },
-	{ "tkatc",             "The King and the Crown, Special Edition" },
-	{ "toask",             "Treasures of a Slaver's Kingdom" },
-	{ "tok",               "ToK" },
-	{ "tower",             "Tower, A Surreal Trip" },
-	{ "towersofhanoi",     "Towers of Hanoi" },
-	{ "townmusicians",     "The Town Musicians" },
-	{ "toxinx",            "Toxin X" },
-	{ "trapped",           "Trapped" },
-	{ "tristamisland",     "Tristam Island (Demo)" },
-	{ "troll",             "Zork: A Troll's Eye View" },
-	{ "trunspecified",     "Treasures of an Unspecified Region or District" },
-	{ "trw",               "Tull Road Warrior" },
-	{ "trystoffate",       "Tryst of Fate" },
-	{ "tubetrouble",       "Tube Trouble" },
-	{ "tundra",            "Tundra" },
-	{ "tutorial",          "Tutorial" },
-	{ "tutorialhotel",     "Hotel Tutorial" },
-	{ "tuuli",             "Tuuli" },
-	{ "txtadv",            "Txt Adventure" },
-	{ "typo",              "Typo!" },
-	{ "uhohdemo",          "Uh-Oh! (Demo Version)" },
-	{ "umw",               "UMW" },
-	{ "uxmulbrufyuz",      "Uxmulbrufyuz" },
-	{ "underdoos",         "The Underoos That Ate New York!" },
-	{ "undergroundz",      "Underground" },
-	{ "underthebed",       "Under the Bed" },
-	{ "ungodlyhour",       "Ungodly Hour" },
-	{ "unicornpool",       "The Unicorn Pool" },
-	{ "uninvited",         "UNINVITED" },
-	{ "vacation",          "Vacation Gone Awry" },
-	{ "vagueness",         "What Happens in Vagueness" },
-	{ "vampiresun",        "House of the Midnight Sun - A Vampire's Tale" },
-	{ "varicella",         "Varicella" },
-	{ "varronismuseum",    "Varronis Museum" },
-	{ "vengeance",         "Vengeance" },
-	{ "vergingpaths",      "The Garden of Verging Paths" },
-	{ "veryvile",          "Very Vile Fairy File" },
-	{ "vespers",           "Vespers" },
-	{ "vestiges",          "Vestiges" },
-	{ "vigilance",         "Internal Vigilance" },
-	{ "vindaloo",          "Vindaloo" },
-	{ "violet",            "Violet" },
-	{ "virtuality",        "Virtuality" },
+	{ "thegrandquest",      "The Grand Quest" },
+	{ "thegrandtour",       "The Grand Tour" },
+	{ "thegreat",           "The Great" },
+	{ "theguardian",        "The Guardian" },
+	{ "theinvestment",      "The Investment" },
+	{ "thejob",             "The Job" },
+	{ "thelighthousemm",    "The Lighthouse (by Marius Muller)" },
+	{ "themall",            "The Mall" },
+	{ "thesproutpouch",     "Reor's Bush-Cave: The Sprout Pouch" },
+	{ "thetemple",          "The Temple" },
+	{ "thewedding",         "The Wedding" },
+	{ "thorn",              "The Thorn" },
+	{ "threecows",          "Three Cows and Two Doors" },
+	{ "threediopolis",      "Threediopolis" },
+	{ "threemore",          "Three More Visitors" },
+	{ "timefortea",         "Time For Tea: A Game of Tea, Cakes, and Deadly Secrets" },
+	{ "timezcode",          "Time and Dwarves" },
+	{ "tirehoax",           "My Magic Tire Hoax" },
+	{ "tk1",                "Time Killer #1: Claustrophobia" },
+	{ "tkatc",              "The King and the Crown, Special Edition" },
+	{ "toask",              "Treasures of a Slaver's Kingdom" },
+	{ "tok",                "ToK" },
+	{ "tower",              "Tower" },
+	{ "towersofhanoi",      "Towers of Hanoi" },
+	{ "townmusicians",      "The Town Musicians" },
+	{ "toxinx",             "Toxin X" },
+	{ "trapped",            "Trapped" },
+	{ "tristamisland",      "Tristam Island" },
+	{ "troll",              "Zork: A Troll's Eye View" },
+	{ "trunspecified",      "Treasures of an Unspecified Region or District" },
+	{ "trw",                "Tull Road Warrior" },
+	{ "trystoffate",        "Tryst of Fate" },
+	{ "tubetrouble",        "Tube Trouble" },
+	{ "tundra",             "Tundra" },
+	{ "tutorial",           "Tutorial" },
+	{ "tutorialhotel",      "Hotel Tutorial" },
+	{ "tuuli",              "Tuuli" },
+	{ "txtadv",             "Txt Adventure" },
+	{ "typo",               "Typo!" },
+	{ "uhohdemo",           "Uh-Oh!" },
+	{ "umw",                "UMW" },
+	{ "uxmulbrufyuz",       "Uxmulbrufyuz" },
+	{ "underdoos",          "The Underoos That Ate New York!" },
+	{ "undergroundz",       "Underground" },
+	{ "underthebed",        "Under the Bed" },
+	{ "ungodlyhour",        "Ungodly Hour" },
+	{ "unicornpool",        "The Unicorn Pool" },
+	{ "uninvited",          "Uninvited" },
+	{ "vacation",           "Vacation Gone Awry" },
+	{ "vagueness",          "What Happens in Vagueness" },
+	{ "vampiresun",         "House of the Midnight Sun" },
+	{ "varicella",          "Varicella" },
+	{ "varronismuseum",     "Varronis Museum" },
+	{ "vengeance",          "Vengeance" },
+	{ "vergingpaths",       "The Garden of Verging Paths" },
+	{ "veryvile",           "Very Vile Fairy File" },
+	{ "vespers",            "Vespers" },
+	{ "vestiges",           "Vestiges" },
+	{ "vigilance",          "Internal Vigilance" },
+	{ "vindaloo",           "Vindaloo" },
+	{ "violet",             "Violet" },
+	{ "virtuality",         "Virtuality" },
 	{ "virtualgrandnational", "The Virtual Grand National" },
-	{ "visualizing",       "Visualizing" },
-	{ "voices",            "Voices" },
-	{ "vosr",              "Voices of Spoon River" },
-	{ "wadewar3",          "The WadeWars Book III" },
-	{ "wakeup",            "Wake Up" },
-	{ "walkamongus",       "Walk Among Us" },
-	{ "walkinthepark",     "A Walk in the Park" },
-	{ "wallpaper",         "Delightful Wallpaper" },
-	{ "warblersnest",      "The Warbler's Nest" },
-	{ "warp",              "Warp!" },
-	{ "weapon",            "The Weapon" },
-	{ "weareunfinished",   "We Are Unfinished" },
-	{ "wearyeerieway",     "Weary Eerie Way" },
-	{ "weather",           "A Change in the Weather" },
-	{ "weirdcity",         "Weird City Interloper" },
-	{ "weirdness",         "Weirdness: Strange, Different, and Altogether Weird" },
-	{ "welcometohell",     "Welcome to Hell" },
-	{ "welcometopuerto",   "Welcome to Puerto Rico" },
-	{ "wernersquest1",     "Werner's Quest 1: The Black Ladder" },
-	{ "wernersquest2",     "Werner's Quest 2: Revenge of the Thing-Fish" },
-	{ "wernersquest3",     "Werner's Quest 3: Rance the Dungeonkeeper" },
-	{ "wernersquest4",     "Werner's Quest 4: Unchanter" },
-	{ "whenhelpcollides",  "When Help Collides" },
-	{ "whispers",          "The Corn Identity, An \"IF Whispers\" Collaborative Project" },
-	{ "whoahcubswoe",      "Whoah Cubs Woe" },
-	{ "wildflowers",       "Wildflowers" },
-	{ "williamtell",       "William Tell" },
-	{ "winchester",        "Winchester's Nightmare" },
-	{ "windhall",          "The Windhall Chronicles, Volume One" },
-	{ "winterwonderland",  "Winter Wonderland" },
-	{ "wir1",              "When in Rome 1: Accounting for Taste" },
-	{ "wir2",              "When in Rome 2: Far from Home" },
-	{ "wireless",          "Get Magazine. Open Magazine. Read Article" },
-	{ "wizardscastle",     "Wizard's Castle" },
-	{ "wizardsmagic",      "Wizards Magic" },
-	{ "worldupsidedown",   "The World Turned Upside Down" },
-	{ "wossname",          "Spodgeville Murphy and The Jewelled Eye of Wossname" },
-	{ "wsp",               "Weishaupt Scholars: Prologue" },
-	{ "wump2ka",           "Wumpus 2000, The Virulent Labyrinth Of Yob-Shuggoth" },
-	{ "wumpus",            "Hunt the Wumpus" },
-	{ "wurm",              "Wurm" },
-	{ "wwwanderer",        "Werewolves and Wanderer" },
-	{ "xenophobia",        "Xenophobia" },
-	{ "yagwad",            "YAGWAD: Yes, Another Game With a Dragon!" },
-	{ "yakshaving",        "Yak Shaving for Kicks and Giggles!" },
-	{ "yomomma",           "Raising the Flag on Mount Yo Momma" },
-	{ "zassball",          "ZassBall, Another Abuse of the Z-Machine" },
-	{ "zbefunge",          "ZBefunge 0.7 Beta" },
-	{ "zcamel",            "Camel" },
-	{ "zcatalog",          "The Z-Files, A Z-Code Catalog" },
-	{ "zchess",            "Z-Chess" },
-	{ "zdungeon",          "ZDungeon" },
-	{ "zedfunge",          "ZedFunge 0.7.3 Beta" },
-	{ "zedit",             "ZEdit, The World's Most Portable Text Editor" },
-	{ "zegro",             "Zegrothenus" },
-	{ "zenon",             "Escape From the Starship Zenon" },
-	{ "zenspeak",          "Zen Speaks!" },
-	{ "zigamus",           "Zigamus: Zombies at Vigamus" },
-	{ "zlife",             "Z-Life" },
-	{ "zokoban",           "Z-Machine Sokoban" },
-	{ "zombies",           "Zombies, Yet Another Abuse of the Z-Machine" },
-	{ "zork285",           "Zork 285 Points Replica" },
-	{ "zorkianstories1",   "Zorkian Stories 1: G.U.E" },
-	{ "zorklxix",          "Zork LXIX: The Great Underground Hot Dog" },
-	{ "zorknplus9",        "Zork N Plus 9" },
-	{ "zpegasus",          "Pegasus" },
-	{ "zracer",            "ZRacer" },
-	{ "zsnake",            "Z-Snake" },
-	{ "ztornado",          "Z-Tornado" },
-	{ "ztrek",             "Super Z Trek" },
-	{ "zugzwang",          "Zugzwang: The Interactive Life of a Chess Piece" },
-	{ "zunidoll",          "The Zuni Doll" },
+	{ "visualizing",        "Visualizing" },
+	{ "voices",             "Voices" },
+	{ "vosr",               "Voices of Spoon River" },
+	{ "wadewar3",           "The WadeWars Book III" },
+	{ "wakeup",             "Wake Up" },
+	{ "walkamongus",        "Walk Among Us" },
+	{ "walkinthepark",      "A Walk in the Park" },
+	{ "wallpaper",          "Delightful Wallpaper" },
+	{ "warblersnest",       "The Warbler's Nest" },
+	{ "warp",               "Warp!" },
+	{ "weapon",             "The Weapon" },
+	{ "weareunfinished",    "We Are Unfinished" },
+	{ "wearyeerieway",      "Weary Eerie Way" },
+	{ "weather",            "A Change in the Weather" },
+	{ "weirdcity",          "Weird City Interloper" },
+	{ "weirdness",          "Weirdness" },
+	{ "welcometohell",      "Welcome to Hell" },
+	{ "welcometopuerto",    "Welcome to Puerto Rico" },
+	{ "wernersquest1",      "Werner's Quest 1: The Black Ladder" },
+	{ "wernersquest2",      "Werner's Quest 2: Revenge of the Thing-Fish" },
+	{ "wernersquest3",      "Werner's Quest 3: Rance the Dungeonkeeper" },
+	{ "wernersquest4",      "Werner's Quest 4: Unchanter" },
+	{ "whenhelp",           "When Help Collides" },
+	{ "whispers",           "The Corn Identity" },
+	{ "whoahcubswoe",       "Whoah Cubs Woe" },
+	{ "wildflowers",        "Wildflowers" },
+	{ "williamtell",        "William Tell" },
+	{ "winchester",         "Winchester's Nightmare" },
+	{ "windhall",           "The Path to Fortune" },
+	{ "winterwonder",       "Winter Wonderland" },
+	{ "wir1",               "When in Rome 1: Accounting for Taste" },
+	{ "wir2",               "When in Rome 2: Far from Home" },
+	{ "wireless",           "Get Magazine. Open Magazine. Read Article" },
+	{ "wizardscastle",      "Wizard's Castle" },
+	{ "wizardsmagic",       "Wizards Magic" },
+	{ "worldupsidedown",    "The World Turned Upside Down" },
+	{ "wossname",           "Spodgeville Murphy and The Jewelled Eye of Wossname" },
+	{ "wsp",                "Weishaupt Scholars: Prologue" },
+	{ "wump2ka",            "Wumpus 2000, The Virulent Labyrinth Of Yob-Shuggoth" },
+	{ "wumpus",             "Hunt the Wumpus" },
+	{ "wurm",               "Wurm" },
+	{ "wwwanderer",         "Werewolves and Wanderer" },
+	{ "xenophobia",         "Xenophobia" },
+	{ "yagwad",             "YAGWAD: Yes, Another Game With a Dragon!" },
+	{ "yakshaving",         "Yak Shaving for Kicks and Giggles!" },
+	{ "yomomma",            "Raising the Flag on Mount Yo Momma" },
+	{ "zassball",           "ZassBall, Another Abuse of the Z-Machine" },
+	{ "zbefunge",           "ZBefunge 0.7" },
+	{ "zcamel",             "Camel" },
+	{ "zcatalog",           "The Z-Files, A Z-Code Catalog" },
+	{ "zchess",             "Z-Chess" },
+	{ "zdungeon",           "ZDungeon" },
+	{ "zedfunge",           "ZedFunge 0.7.3" },
+	{ "zedit",              "ZEdit" },
+	{ "zegro",              "Zegrothenus" },
+	{ "zenon",              "Escape From the Starship Zenon" },
+	{ "zenspeak",           "Zen Speaks!" },
+	{ "zigamus",            "Zigamus: Zombies at Vigamus" },
+	{ "zlife",              "Z-Life" },
+	{ "zokoban",            "Z-Machine Sokoban" },
+	{ "zombies",            "Zombies, Yet Another Abuse of the Z-Machine" },
+	{ "zork285",            "Zork 285 Points Replica" },
+	{ "zorkianstories1",    "Zorkian Stories 1: G.U.E" },
+	{ "zorklxix",           "Zork LXIX: The Great Underground Hot Dog" },
+	{ "zorknplus9",         "Zork N Plus 9" },
+	{ "zpegasus",           "Pegasus" },
+	{ "zracer",             "ZRacer" },
+	{ "zsnake",             "Z-Snake" },
+	{ "ztornado",           "Z-Tornado" },
+	{ "ztrek",              "Super Z Trek" },
+	{ "zugzwang",           "Zugzwang" },
+	{ "zunidoll",           "The Zuni Doll" },
 
 	// Painfull Little Stupid Games
-	{ "plsg1",             "Painless Little Stupid Games #1: Dinnertime" },
-	{ "plsg2",             "Painless Little Stupid Games #2: To Get To the Other Side" },
-	{ "plsg3",             "Painless Little Stupid Games #3: They're After You!" },
-	{ "plsg4",             "Painless Little Stupid Games #4: Mazemapper" },
-	{ "plsg5",             "Painless Little Stupid Games #5: The Mean Story" },
-	{ "plsg6",             "Painless Little Stupid Games #6: Mahadev" },
-	{ "plsg7",             "Painless Little Stupid Games #7: Sturdlint" },
-	{ "plsg8",             "Painless Little Stupid Games #8: The Last Dark Day" },
-	{ "plsg9",             "Painless Little Stupid Games #9: Zork LXIX" },
-	{ "plsg10",            "Painless Little Stupid Games #10: The Valley House" },
+	{ "plsg1",              "Painless Little Stupid Games #1: Dinnertime" },
+	{ "plsg2",              "Painless Little Stupid Games #2: To Get To the Other Side" },
+	{ "plsg3",              "Painless Little Stupid Games #3: They're After You!" },
+	{ "plsg4",              "Painless Little Stupid Games #4: Mazemapper" },
+	{ "plsg5",              "Painless Little Stupid Games #5: The Mean Story" },
+	{ "plsg6",              "Painless Little Stupid Games #6: Mahadev" },
+	{ "plsg7",              "Painless Little Stupid Games #7: Sturdlint" },
+	{ "plsg8",              "Painless Little Stupid Games #8: The Last Dark Day" },
+	{ "plsg9",              "Painless Little Stupid Games #9: Zork LXIX" },
+	{ "plsg10",             "Painless Little Stupid Games #10: The Valley House" },
 
 	// Converted Scott Adams Classic Adventures games
-	{ "adventurelandi5",   "S.A.C.A. #1: Adventureland" },
-	{ "pirateadventurei5", "S.A.C.A. #2: Pirate Adventure" },
+	{ "adventurelandi5",    "S.A.C.A. #1: Adventureland" },
+	{ "pirateadventurei5",  "S.A.C.A. #2: Pirate Adventure" },
 	{ "missionimpossiblei5", "S.A.C.A. #3: Mission Impossible" },
-	{ "voodoocastlei5",    "S.A.C.A. #4: Voodoo Castle" },
-	{ "thecounti5",        "S.A.C.A. #5: The Count" },
-	{ "strangeodysseyi5",  "S.A.C.A. #6: Strange Odyssey" },
-	{ "mysteryfunhousei5", "S.A.C.A. #7: Mystery Fun House" },
-	{ "pyramidofdoomi5",   "S.A.C.A. #8: Pyramid of Doom" },
-	{ "ghosttowni5",       "S.A.C.A. #9: Ghost Town" },
-	{ "savageisland1i5",   "S.A.C.A. #10: Savage Island, Part I" },
-	{ "savageisland2i5",   "S.A.C.A. #11: Savage Island, Part II" },
-	{ "goldenvoyagei5",    "S.A.C.A. #12: The Golden Voyage" },
+	{ "voodoocastlei5",     "S.A.C.A. #4: Voodoo Castle" },
+	{ "thecounti5",         "S.A.C.A. #5: The Count" },
+	{ "strangeodysseyi5",   "S.A.C.A. #6: Strange Odyssey" },
+	{ "mysteryfunhousei5",  "S.A.C.A. #7: Mystery Fun House" },
+	{ "pyramidofdoomi5",    "S.A.C.A. #8: Pyramid of Doom" },
+	{ "ghosttowni5",        "S.A.C.A. #9: Ghost Town" },
+	{ "savageisland1i5",    "S.A.C.A. #10: Savage Island, Part I" },
+	{ "savageisland2i5",    "S.A.C.A. #11: Savage Island, Part II" },
+	{ "goldenvoyagei5",     "S.A.C.A. #12: The Golden Voyage" },
 	{ "sorcererclaycastlei5", "S.A.C.A. #13: Sorcerer of Claymorgue Castle" },
-	{ "returnpirteislei5", "S.A.C.A. #14A: Return to Pirate's Isle" },
-	{ "buckaroobanzaii5",  "S.A.C.A. #14B: Buckaroo Banzai" },
+	{ "returnpirteislei5",  "S.A.C.A. #14A: Return to Pirate's Isle" },
+	{ "buckaroobanzaii5",   "S.A.C.A. #14B: Buckaroo Banzai" },
 	{ "adventurelandsmpleri5", "S.A.C.A.: Adventureland Sampler" },
-	{ "marveladventurei5", "S.A.C.A.: The Hulk" },
-	{ "questprobe2i5",     "S.A.C.A.: Spiderman" },
+	{ "marveladventurei5",  "S.A.C.A.: The Hulk" },
+	{ "questprobe2i5",      "S.A.C.A.: Spiderman" },
 
 	// Mysterious Adventures by Brian Howarth
-	{ "goldenbatoni5",     "Mysterious Adventures #01: The Golden Baton" },
-	{ "timemachinei5",     "Mysterious Adventures #02: The Time Machine" },
-	{ "arrowofdeath1i5",   "Mysterious Adventures #03: Arrow of Death Part 1" },
-	{ "arrowofdeath2i5",   "Mysterious Adventures #04: Arrow of Death Part 2" },
-	{ "pulsar7i5",         "Mysterious Adventures #05: Escape from Pulsar 7" },
-	{ "circusi5",          "Mysterious Adventures #06: Circus" },
-	{ "feasibilityi5",     "Mysterious Adventures #07: Feasibility Experiment" },
-	{ "akyrzi5",           "Mysterious Adventures #08: The Wizard of Akyrz" },
-	{ "perseusi5",         "Mysterious Adventures #09: Perseus and Andromeda" },
-	{ "10indiansi5",       "Mysterious Adventures #10: Ten Little Indians" },
-	{ "waxworksi5",        "Mysterious Adventures #11: Waxworks" },
+	{ "goldenbatoni5",      "Mysterious Adventures #01: The Golden Baton" },
+	{ "timemachinei5",      "Mysterious Adventures #02: The Time Machine" },
+	{ "arrowofdeath1i5",    "Mysterious Adventures #03: Arrow of Death Part 1" },
+	{ "arrowofdeath2i5",    "Mysterious Adventures #04: Arrow of Death Part 2" },
+	{ "pulsar7i5",          "Mysterious Adventures #05: Escape from Pulsar 7" },
+	{ "circusi5",           "Mysterious Adventures #06: Circus" },
+	{ "feasibilityi5",      "Mysterious Adventures #07: Feasibility Experiment" },
+	{ "akyrzi5",            "Mysterious Adventures #08: The Wizard of Akyrz" },
+	{ "perseusi5",          "Mysterious Adventures #09: Perseus and Andromeda" },
+	{ "10indiansi5",        "Mysterious Adventures #10: Ten Little Indians" },
+	{ "waxworksi5",         "Mysterious Adventures #11: Waxworks" },
 
 	// 1992 album Apollo 18+20, by They Might be Giants
-	{ "apollo1", "Apollo 18+20 #01: Dig My Grave" },
-	{ "apollo2", "Apollo 18+20 #02: I Palindrome I" },
-	{ "apollo3", "Apollo 18+20 #03: She's Actual Size" },
-	{ "apollo4", "Apollo 18+20 #04: My Evil Twin" },
-	{ "apollo5", "Apollo 18+20 #05: Mammal" },
-	{ "apollo6", "Apollo 18+20 #06: The Statue Got Me High" },
-	{ "apollo7", "Apollo 18+20 #07: Spider" },
-	{ "apollo8", "Apollo 18+20 #08: The Guitar(The Lion Sleeps Tonight)" },
-	{ "apollo9", "Apollo 18+20 #09: Dinner Bell" },
-	{ "apollo10", "Apollo 18+20 #10: Narrow Your Eyes" },
-	{ "apollo11", "Apollo 18+20 #11: Hall of Heads" },
-	{ "apollo12", "Apollo 18+20 #12: Which Describes How You're Feeling" },
-	{ "apollo13", "Apollo 18+20 #13: See the Constellation" },
-	{ "apollo14", "Apollo 18+20 #14: If I Wasn't Shy" },
-	{ "apollo15", "Apollo 18+20 #15: Turn Around" },
-	{ "apollo16", "Apollo 18+20 #16: Hypnotist of Ladies" },
-	{ "apollo17", "Apollo 18+20 #17: Fingertips - Everything Is Catching on Fire" },
-	{ "apollo18", "Apollo 18+20 #18: Fingertips - Fingertips" },
-	{ "apollo19", "Apollo 18+20 #19: Fingertips - I Hear the Wind Blow" },
-	{ "apollo20", "Apollo 18+20 #20: Fingertips - Hey Now, Everybody" },
-	{ "apollo21", "Apollo 18+20 #21: Fingertips - Who's That Standing Out the Window" },
-	{ "apollo22", "Apollo 18+20 #22: Fingertips - I Found a New Friend" },
-	{ "apollo23", "Apollo 18+20 #23: Fingertips - Come On and Wreck My Car" },
-	{ "apollo24", "Apollo 18+20 #24: Fingertips - Aren't You the Guy Who Hit Me in the Eye" },
-	{ "apollo25", "Apollo 18+20 #25: Fingertips - Please Pass the Milk Please" },
-	{ "apollo26", "Apollo 18+20 #26: Fingertips - Leave Me Alone" },
-	{ "apollo27", "Apollo 18+20 #27: Fingertips - Who's Knockin' on the Wall" },
-	{ "apollo28", "Apollo 18+20 #28: Fingertips - All Alone" },
-	{ "apollo29", "Apollo 18+20 #29: Fingertips - What's That Blue Thing Doing Here" },
-	{ "apollo30", "Apollo 18+20 #30: Fingertips - Something Grabbed Ahold of My Hand" },
-	{ "apollo31", "Apollo 18+20 #31: Fingertips - I Don't Understand You" },
-	{ "apollo32", "Apollo 18+20 #32: Fingertips - I Heard a Sound" },
-	{ "apollo33", "Apollo 18+20 #33: Fingertips - Mysterious Whisper" },
-	{ "apollo34", "Apollo 18+20 #34: Fingertips - The Day That Love Came to Play" },
-	{ "apollo35", "Apollo 18+20 #35: Fingertips - I'm Having a Heart Attack" },
-	{ "apollo36", "Apollo 18+20 #36: Fingertips - Fingertips(Reprise)" },
-	{ "apollo37", "Apollo 18+20 #37: Fingertips - I Walk Along Darkened Corridors" },
-	{ "apollo38", "Apollo 18+20 #38: Space Suit" },
+	{ "apollo1",            "Apollo 18+20 #01: Dig My Grave" },
+	{ "apollo2",            "Apollo 18+20 #02: I Palindrome I" },
+	{ "apollo3",            "Apollo 18+20 #03: She's Actual Size" },
+	{ "apollo4",            "Apollo 18+20 #04: My Evil Twin" },
+	{ "apollo5",            "Apollo 18+20 #05: Mammal" },
+	{ "apollo6",            "Apollo 18+20 #06: The Statue Got Me High" },
+	{ "apollo7",            "Apollo 18+20 #07: Spider" },
+	{ "apollo8",            "Apollo 18+20 #08: The Guitar(The Lion Sleeps Tonight)" },
+	{ "apollo9",            "Apollo 18+20 #09: Dinner Bell" },
+	{ "apollo10",           "Apollo 18+20 #10: Narrow Your Eyes" },
+	{ "apollo11",           "Apollo 18+20 #11: Hall of Heads" },
+	{ "apollo12",           "Apollo 18+20 #12: Which Describes How You're Feeling" },
+	{ "apollo13",           "Apollo 18+20 #13: See the Constellation" },
+	{ "apollo14",           "Apollo 18+20 #14: If I Wasn't Shy" },
+	{ "apollo15",           "Apollo 18+20 #15: Turn Around" },
+	{ "apollo16",           "Apollo 18+20 #16: Hypnotist of Ladies" },
+	{ "apollo17",           "Apollo 18+20 #17: Fingertips - Everything Is Catching on Fire" },
+	{ "apollo18",           "Apollo 18+20 #18: Fingertips - Fingertips" },
+	{ "apollo19",           "Apollo 18+20 #19: Fingertips - I Hear the Wind Blow" },
+	{ "apollo20",           "Apollo 18+20 #20: Fingertips - Hey Now, Everybody" },
+	{ "apollo21",           "Apollo 18+20 #21: Fingertips - Who's That Standing Out the Window" },
+	{ "apollo22",           "Apollo 18+20 #22: Fingertips - I Found a New Friend" },
+	{ "apollo23",           "Apollo 18+20 #23: Fingertips - Come On and Wreck My Car" },
+	{ "apollo24",           "Apollo 18+20 #24: Fingertips - Aren't You the Guy Who Hit Me in the Eye" },
+	{ "apollo25",           "Apollo 18+20 #25: Fingertips - Please Pass the Milk Please" },
+	{ "apollo26",           "Apollo 18+20 #26: Fingertips - Leave Me Alone" },
+	{ "apollo27",           "Apollo 18+20 #27: Fingertips - Who's Knockin' on the Wall" },
+	{ "apollo28",           "Apollo 18+20 #28: Fingertips - All Alone" },
+	{ "apollo29",           "Apollo 18+20 #29: Fingertips - What's That Blue Thing Doing Here" },
+	{ "apollo30",           "Apollo 18+20 #30: Fingertips - Something Grabbed Ahold of My Hand" },
+	{ "apollo31",           "Apollo 18+20 #31: Fingertips - I Don't Understand You" },
+	{ "apollo32",           "Apollo 18+20 #32: Fingertips - I Heard a Sound" },
+	{ "apollo33",           "Apollo 18+20 #33: Fingertips - Mysterious Whisper" },
+	{ "apollo34",           "Apollo 18+20 #34: Fingertips - The Day That Love Came to Play" },
+	{ "apollo35",           "Apollo 18+20 #35: Fingertips - I'm Having a Heart Attack" },
+	{ "apollo36",           "Apollo 18+20 #36: Fingertips - Fingertips(Reprise)" },
+	{ "apollo37",           "Apollo 18+20 #37: Fingertips - I Walk Along Darkened Corridors" },
+	{ "apollo38",           "Apollo 18+20 #38: Space Suit" },
 
 	// The 1995 Annual Interactive Fiction Competition
-	{ "if95_weather", "A Change in the Weather" },                                                      //  1st Place
-	{ "if95_mindelectric", "The Mind Electric" },                                                       //  2nd Place
-	{ "if95_magictoyshop", "The Magic Toyshop" },                                                       //  3rd Place
-	{ "if95_mst3k1", "Detective, An Interactive MiSTing (Mystery Science Theater 3000)" },              //  4th Place
-	{ "if95_libraryfront", "All Quiet on the Library Front" },                                          //  5th Place
-	{ "if95_tubetrouble", "Tube Trouble" },                                                             //  6th Place
+	{ "if95_weather",       "A Change in the Weather" },                                                //  1st Place
+	{ "if95_mindelectric",  "The Mind Electric" },                                                      //  2nd Place
+	{ "if95_magictoyshop",  "The Magic Toyshop" },                                                      //  3rd Place
+	{ "if95_mst3k1",        "Mystery Science Theater 3000 Presents 'Detective'" },                      //  4th Place
+	{ "if95_libraryfront",  "All Quiet on the Library Front" },                                         //  5th Place
+	{ "if95_tubetrouble",   "Tube Trouble" },                                                           //  6th Place
 
 	// The 1996 Annual Interactive Fiction Competition
-	{ "if96_sherbet", "The Meteor, the Stone and a Long Glass of Sherbet" },							//  1st Place
-	{ "if96_tapestry", "Tapestry" },																	//  2nd Place
-	{ "if96_delusions", "Delusions" },																	//  3rd Place
-	{ "if96_fear", "Fear" },																			//  6th Place
-	{ "if96_claw", "Wearing the Claw" },																//  8th Place
-	{ "if96_lists", "Lists and Lists" },																// 11th Place
-	{ "if96_ralph", "Ralph, An Interactive Sniffing" },													// 12th Place
-	{ "if96_reverb", "Reverberations" },																// 13th Place
-	{ "if96_intheend", "In the End" },																	// 15th Place
-	{ "if96_piece", "Piece of Mind" },																	// 16th Place
-	{ "if96_phlegm", "Phlegm" },																		// 17th Place
-	{ "if96_stargaze", "Stargazer" },																	// 19th Place
-	{ "if96_forms", "Of Forms Unknown" },																// 20th Place
-	{ "if96_stalkerzcode", "House of the Stalker" },													// 23rd Place
-	{ "if96_ripflesh", "Rippled Flesh" },																// 24th Place
-	{ "if96_liquid", "Punkirita Quest 1: Liquid" },														// 25th Place
-	{ "comp96", "IF Competition '96 Unofficial FE Game" },
+	{ "if96_sherbet",       "The Meteor, the Stone and a Long Glass of Sherbet" },                      //  1st Place
+	{ "if96_tapestry",      "Tapestry" },                                                               //  2nd Place
+	{ "if96_delusions",     "Delusions" },                                                              //  3rd Place
+	{ "if96_fear",          "Fear" },                                                                   //  6th Place
+	{ "if96_claw",          "Wearing the Claw" },                                                       //  8th Place
+	{ "if96_lists",         "Lists and Lists" },                                                        // 11th Place
+	{ "if96_ralph",         "Ralph" },                                                                  // 12th Place
+	{ "if96_reverb",        "Reverberations" },                                                         // 13th Place
+	{ "if96_intheend",      "In the End" },                                                             // 15th Place
+	{ "if96_piece",         "Piece of Mind" },                                                          // 16th Place
+	{ "if96_phlegm",        "Phlegm" },                                                                 // 17th Place
+	{ "if96_stargaze",      "Stargazer" },                                                              // 19th Place
+	{ "if96_forms",         "Of Forms Unknown" },                                                       // 20th Place
+	{ "if96_stalkerzcode",  "House of the Stalker" },                                                   // 23rd Place
+	{ "if96_ripflesh",      "Rippled Flesh" },                                                          // 24th Place
+	{ "if96_liquid",        "Punkirita Quest 1: Liquid" },                                              // 25th Place
+	{ "comp96",             "IF Competition '96 Unofficial FE Game" },
 
 	// The 1997 Annual Interactive Fiction Competition
-	{ "if97_edifice", "The Edifice" },																	// 	1st Place
-	{ "if97_spring", "She's Got a Thing For a Spring" },												// 	4th Place
-	{ "if97_bear", "A Bear's Night Out, An Interactive Children's Story" },								// 	5th Place
-	{ "if97_lostspellmaker", "The Lost Spellmaker" },													// 	8th Place
-	{ "if97_mimesis", "Sins Against Mimesis" },															//	9th Place
-	{ "if97_newday", "A New Day" },																		// 10th Place
-	{ "if97_erden", "Travels in the Land of Erden: In Quest of the Adventure" },						// 14th Place
-	{ "if97_friday", "Friday Afternoon" },																// 16th Place
-	{ "if97_estrange", "Madame L'Estrange and the Troubled Spirit" },									// 17th Place
-	{ "if97_sylenius", "Sylenius Mysterium" },															// 18th Place
-	{ "if97_pizza", "Phred Phontious and the Quest for Pizza" },										// 19th Place
-	{ "if97_agb", "A Good Breakfast" },																	// 23rd Place
-	{ "if97_tdragon", "Town Dragon" },																	// 24th Place
-	{ "if97_thetempest", "The Tempest" },																// 25th Place
-	{ "if97_pintown", "Pintown" },																		// 28th Place
-	{ "if97_congrats", "Congratulations!" },															// 30th Place
-	{ "if97_cask", "CASK" },																			// 31st Place
-	{ "if97_symetry", "Symetry" },																		// 32nd Place
-	{ "if97_auntnancy", "Aunt Nancy's House" },															// 33rd Place
-	{ "if97_cominghome", "Coming Home" },																// 34th Place
-	{ "comp97", "IF Competition '97 Unofficial FE Game" },
+	{ "if97_edifice",       "The Edifice" },                                                            // 	1st Place
+	{ "if97_spring",        "She's Got a Thing For a Spring" },                                         // 	4th Place
+	{ "if97_bear",          "A Bear's Night Out" },                                                     // 	5th Place
+	{ "if97_lostspellmaker", "The Lost Spellmaker" },                                                   // 	8th Place
+	{ "if97_mimesis",       "Sins Against Mimesis" },                                                   //	9th Place
+	{ "if97_newday",        "A New Day" },                                                              // 10th Place
+	{ "if97_erden",         "Travels in the Land of Erden: In Quest of the Adventure" },                // 14th Place
+	{ "if97_friday",        "Friday Afternoon" },                                                       // 16th Place
+	{ "if97_estrange",      "Madame L'Estrange and the Troubled Spirit" },                              // 17th Place
+	{ "if97_sylenius",      "Sylenius Mysterium" },                                                     // 18th Place
+	{ "if97_pizza",         "Phred Phontious and the Quest for Pizza" },                                // 19th Place
+	{ "if97_agb",           "A Good Breakfast" },                                                       // 23rd Place
+	{ "if97_tdragon",       "Town Dragon" },                                                            // 24th Place
+	{ "if97_thetempest",    "The Tempest" },                                                            // 25th Place
+	{ "if97_pintown",       "Pintown" },                                                                // 28th Place
+	{ "if97_congrats",      "Congratulations!" },                                                       // 30th Place
+	{ "if97_cask",          "Cask" },                                                                   // 31st Place
+	{ "if97_symetry",       "Symetry" },                                                                // 32nd Place
+	{ "if97_auntnancy",     "Aunt Nancy's House" },                                                     // 33rd Place
+	{ "if97_cominghome",    "Coming Home" },                                                            // 34th Place
+	{ "comp97",             "IF Competition '97 Unofficial FE Game" },
 
 	// The 1998 Annual Interactive Fiction Competition
-	{ "if98_photopia", "Photopia" },																	// 	1st Place
-	{ "if98_muse", "Muse: An Autumn Romance" },															//  2nd Place
-	{ "if98_enlighte", "Enlightenment" },																// 	5th Place
-	{ "if98_motherloose", "Mother Loose" },																// 	6th Place
-	{ "if98_bluemen", "Little Blue Men" },																// 	7th Place
-	{ "if98_dilly", "Trapped in a One-Room Dilly" },													// 	8th Place
-	{ "if98_downtowntokyo", "Downtown Tokyo Present Day" },												// 10th Place
-	{ "if98_informatory", "Informatory" },																// 11th Place
-	{ "if98_ritualpurification", "Ritual of Purification" },											// 12th Place
-	{ "if98_city", "The City" },																		// 13th Place
-	{ "if98_evildwells", "Where Evil Dwells" },															// 14th Place
-	{ "if98_purple", "Purple" },																		// 15th Place
-	{ "if98_research", "Research Dig" },																// 17th Place
-	{ "if98_spacestation", "Space Station: Based on Planetfall Example Transcript" },					// 19th Place
-	{ "if98_cattusatrox", "Cattus Atrox" },																// 20th Place
-	{ "if98_spotlite", "In the Spotlight" },															// 21st Place
-	{ "if98_acidwhiplash", "Acid Whiplash" },															// 23rd Place
-	{ "if98_fifteen", "Fifteen" },																		// 25th Place
-	{ "if98_hrs", "Human Resources Stories" },															// 27th Place
-	{ "comp98", "IF Competition '98 Unofficial FE Game" },
+	{ "if98_photopia",      "Photopia" },                                                               // 	1st Place
+	{ "if98_muse",          "Muse: An Autumn Romance" },                                                //  2nd Place
+	{ "if98_enlighte",      "Enlightenment" },                                                          // 	5th Place
+	{ "if98_motherloose",   "Mother Loose" },                                                           // 	6th Place
+	{ "if98_bluemen",       "Little Blue Men" },                                                        // 	7th Place
+	{ "if98_dilly",         "Trapped in a One-Room Dilly" },                                            // 	8th Place
+	{ "if98_downtowntokyo", "Downtown Tokyo Present Day" },                                             // 10th Place
+	{ "if98_informatory",   "Informatory" },                                                            // 11th Place
+	{ "if98_ritualpurification", "Ritual of Purification" },                                            // 12th Place
+	{ "if98_city",          "The City" },                                                               // 13th Place
+	{ "if98_evildwells",    "Where Evil Dwells" },                                                      // 14th Place
+	{ "if98_purple",        "Purple" },                                                                 // 15th Place
+	{ "if98_research",      "Research Dig" },                                                           // 17th Place
+	{ "if98_spacestation",  "Space Station: Based on Planetfall Example Transcript" },                  // 19th Place
+	{ "if98_cattusatrox",   "Cattus Atrox" },                                                           // 20th Place
+	{ "if98_spotlite",      "In the Spotlight" },                                                       // 21st Place
+	{ "if98_acidwhiplash",  "Acid Whiplash" },                                                          // 23rd Place
+	{ "if98_fifteen",       "Fifteen" },                                                                // 25th Place
+	{ "if98_hrs",           "Human Resources Stories" },                                                // 27th Place
+	{ "comp98",             "IF Competition '98 Unofficial FE Game" },
 
 	// The 1999 Annual Interactive Fiction Competition
-	{ "if99_winterwonderland", "Winter Wonderland" },													// 	1st Place
-	{ "if99_forachange", "For a Change" },																//  2nd Place
-	{ "if99_softfood", "A Day for Soft Food" },															// 	4th Place
-	{ "if99_halo", "Halothane" },																		//  5th Place
-	{ "if99_hunterdark", "Hunter, In Darkness" },														// 	8th Place
-	{ "if99_beatdevil", "Beat the Devil" },																//  9th Place
-	{ "if99_jacks", "Jacks or Better to Murder, Aces to Win" },											// 10th Place
-	{ "if99_oad", "Only After Dark" },																	// 17th Place
-	{ "if99_lomalow", "Lomalow" },																		// 21st Place
-	{ "if99_calliope", "Calliope" },																	// 23rd Place
-	{ "if99_museduction", "Music Education" },															// 24th Place
-	{ "if99_wossname", "Spodgeville Murphy and the Jewelled Eye of Wossname" },							// 25th Place
-	{ "if99_thorfinn", "Thorfinn's Realm" },															// 28th Place
-	{ "if99_death", "Death to my Enemies" },															// 29th Place
-	{ "if99_chix", "Chicks Dig Jerks" },																// 31st Place
-	{ "if99_passbanana", "Pass the Banana" },															// 33th Place
-	{ "if99_outsided", "Outsided" },																	// 34th Place
-	{ "if99_ludite", "Lurk. Unite. Die. Invent. Think. Expire." },										// 35th Place
-	{ "if99_guard", "Guard Duty" },																		// 36th Place
-	{ "comp99", "IF Competition '99 Unofficial FE Game" },
+	{ "if99_winterwonder",  "Winter Wonderland" },                                                      // 	1st Place
+	{ "if99_forachange",    "For a Change" },                                                           //  2nd Place
+	{ "if99_softfood",      "A Day for Soft Food" },                                                    // 	4th Place
+	{ "if99_halo",          "Halothane" },                                                              //  5th Place
+	{ "if99_hunterdark",    "Hunter, In Darkness" },                                                    // 	8th Place
+	{ "if99_beatdevil",     "Beat the Devil" },                                                         //  9th Place
+	{ "if99_jacks",         "Jacks or Better to Murder, Aces to Win" },                                 // 10th Place
+	{ "if99_oad",           "Only After Dark" },                                                        // 17th Place
+	{ "if99_lomalow",       "Lomalow" },                                                                // 21st Place
+	{ "if99_calliope",      "Calliope" },                                                               // 23rd Place
+	{ "if99_museduction",   "Music Education" },                                                        // 24th Place
+	{ "if99_wossname",      "Spodgeville Murphy and the Jewelled Eye of Wossname" },                    // 25th Place
+	{ "if99_thorfinn",      "Thorfinn's Realm" },                                                       // 28th Place
+	{ "if99_death",         "Death to my Enemies" },                                                    // 29th Place
+	{ "if99_chix",          "Chicks Dig Jerks" },                                                       // 31st Place
+	{ "if99_passbanana",    "Pass the Banana" },                                                        // 33th Place
+	{ "if99_outsided",      "Outsided" },                                                               // 34th Place
+	{ "if99_ludite",        "Lurk. Unite. Die. Invent. Think. Expire." },                               // 35th Place
+	{ "if99_guard",         "Guard Duty" },                                                             // 36th Place
+	{ "comp99",             "IF Competition '99 Unofficial FE Game" },
 
 	// The 2000 Annual Interactive Fiction Competition
-	{ "if00_metamorphoses", "Metamorphoses" },															//  2nd Place
-	{ "if00_andrewplotkin", "Being Andrew Plotkin" },													//  3rd Place
-	{ "if00_adverbum", "Ad Verbum" },																	//  4th Place
-	{ "if00_transfer", "Transfer" },																	//  5th Place
-	{ "if00_myangel", "My Angel" },																		// 	6th Place
-	{ "if00_nevermore", "Nevermore" },																	//  7th Place
-	{ "if00_masquerade", "Masquerade" },																//  8th Place
-	{ "if00_yagwad", "YAGWAD: Yes, Another Game With a Dragon!" },										//  9th Place
-	{ "if00_shade", "Shade" },																			// 10th Place
-	{ "if00_guess", "Guess The Verb!" },																// 11th Place
-	{ "if00_letters", "Letters From Home" },															// 12th Place
-	{ "if00_rameses", "Rameses, A Tale of Heroes" },													// 13th Place
-	{ "if00_djinni", "The Djinni Chronicles" },															// 14th Place
-	{ "if00_bestman", "The Best Man" },																	// 15th Place
-	{ "if00_atwctw", "And the Waves Choke the Wind" },													// 16th Place
-	{ "if00_dinner", "Dinner with Andre" },																// 18th Place
-	{ "if00_bigmama", "The Big Mama" },																	// 20th Place
-	{ "if00_punkpoints", "Punk Points" },																// 22th Place
-	{ "if00_enlisted", "Enlisted" },																	// 23rd Place
-	{ "if00_rtzas", "Return to Zork: Another Story" },													// 26rd Place
-	{ "if00_gotid", "Got ID?" },																		// 29th Place
-	{ "if00_castleamnos", "Castle Amnos" },																// 30th Place
-	{ "if00_masque", "Masque of the Last Faeries" },													// 31st Place
-	{ "if00_ppocket", "The Pickpocket" },																// 32nd Place
-	{ "if00_happyeverafter", "Happy Ever After" },														// 34th Place
-	{ "if00_prodly", "Prodly the Puffin" },																// 35th Place
-	{ "if00_withdraw", "Withdrawal Symptoms" },															// 36th Place
-	{ "if00_123", "1-2-3..." },																			// 42nd Place
-	{ "if00_kitty", "Stupid Kittens" },																	// 44th Place
-	{ "if00_comp00tr", "Comp00ter Game" },																// 49th Place
-	{ "if00_asendent", "Asendent" },																	// 51st Place
-	{ "if00_whatif", "What-IF?" },																		// 52nd Place
-	{ "comp00", "IF Competition '00 Unofficial FE Game" },
+	{ "if00_metamorphoses", "Metamorphoses" },                                                          //  2nd Place
+	{ "if00_andrewplotkin", "Being Andrew Plotkin" },                                                   //  3rd Place
+	{ "if00_adverbum",      "Ad Verbum" },                                                              //  4th Place
+	{ "if00_transfer",      "Transfer" },                                                               //  5th Place
+	{ "if00_myangel",       "My Angel" },                                                               // 	6th Place
+	{ "if00_nevermore",     "Nevermore" },                                                              //  7th Place
+	{ "if00_masquerade",    "Masquerade" },                                                             //  8th Place
+	{ "if00_yagwad",        "YAGWAD: Yes, Another Game With a Dragon!" },                               //  9th Place
+	{ "if00_shade",         "Shade" },                                                                  // 10th Place
+	{ "if00_guess",         "Guess The Verb!" },                                                        // 11th Place
+	{ "if00_letters",       "Letters From Home" },                                                      // 12th Place
+	{ "if00_rameses",       "Rameses, A Tale of Heroes" },                                              // 13th Place
+	{ "if00_djinni",        "The Djinni Chronicles" },                                                  // 14th Place
+	{ "if00_bestman",       "The Best Man" },                                                           // 15th Place
+	{ "if00_atwctw",        "And the Waves Choke the Wind" },                                           // 16th Place
+	{ "if00_dinner",        "Dinner with Andre" },                                                      // 18th Place
+	{ "if00_bigmama",       "The Big Mama" },                                                           // 20th Place
+	{ "if00_punkpoints",    "Punk Points" },                                                            // 22th Place
+	{ "if00_enlisted",      "Enlisted" },                                                               // 23rd Place
+	{ "if00_rtzas",         "Return to Zork: Another Story" },                                          // 26rd Place
+	{ "if00_gotid",         "Got ID?" },                                                                // 29th Place
+	{ "if00_castleamnos",   "Castle Amnos" },                                                           // 30th Place
+	{ "if00_masque",        "Masque of the Last Faeries" },                                             // 31st Place
+	{ "if00_ppocket",       "The Pickpocket" },                                                         // 32nd Place
+	{ "if00_happyeverafter", "Happy Ever After" },                                                      // 34th Place
+	{ "if00_prodly",        "Prodly the Puffin" },                                                      // 35th Place
+	{ "if00_withdraw",      "Withdrawal Symptoms" },                                                    // 36th Place
+	{ "if00_123",           "1-2-3..." },                                                               // 42nd Place
+	{ "if00_kitty",         "Stupid Kittens" },                                                         // 44th Place
+	{ "if00_comp00tr",      "Comp00ter Game" },                                                         // 49th Place
+	{ "if00_asendent",      "Asendent" },                                                               // 51st Place
+	{ "if00_whatif",        "What-IF?" },                                                               // 52nd Place
+	{ "comp00",             "IF Competition '00 Unofficial FE Game" },
 
 	// The 2001 Annual Interactive Fiction Competition
-	{ "if01_allroads", "All Roads" },																	//  1st Place
-	{ "if01_moments", "Moments Out of Time" },															//  2nd Place
-	{ "if01_heroes", "Heroes" },																		//  3rd Place
-	{ "if01_cycles", "Vicious Cycles" },																//  6th Place
-	{ "if01_eas", "Earth and Sky: Episode 1" },															//  8th Place
-	{ "if01_eleven", "Film at Eleven" },																// 10th Place
-	{ "if01_prized", "Prized Possession" },																// 11th Place
-	{ "if01_finetuned", "Fine-Tuned" },																	// 18th Place
-	{ "if01_evil", "The Evil Sorcerer" },																// 20th Place
-	{ "if01_gostak", "The Gostak" },																	// 21nd Place
-	{ "if01_crusadezcode", "Crusade" },																	// 23rd Place
-	{ "if01_urhere", "You Are Here" },																	// 25th Place
-	{ "if01_elements", "Elements" },																	// 26th Place
-	{ "if01_banebuilders", "Bane of the Builders" },													// 28th Place
-	{ "if01_colours", "Colours" },																		// 32nd Place
-	{ "if01_siliconcastles", "Silicon Castles" },														// 32nd Place
-	{ "if01_timeout", "Timeout" },																		// 35th Place
-	{ "if01_schroed", "Schroedinger's Cat" },															// 39th Place
-	{ "if01_jump", "Jump" },																			// 41th Place
-	{ "if01_newcomer", "The Newcomer" },																// 49th Place
-	{ "comp01", "IF Competition '01 Unofficial FE Game" },
+	{ "if01_allroads",      "All Roads" },                                                              //  1st Place
+	{ "if01_moments",       "Moments Out of Time" },                                                    //  2nd Place
+	{ "if01_heroes",        "Heroes" },                                                                 //  3rd Place
+	{ "if01_cycles",        "Vicious Cycles" },                                                         //  6th Place
+	{ "if01_eas",           "Earth and Sky" },                                                          //  8th Place
+	{ "if01_eleven",        "Film at Eleven" },                                                         // 10th Place
+	{ "if01_prized",        "Prized Possession" },                                                      // 11th Place
+	{ "if01_finetuned",     "Fine-Tuned" },                                                             // 18th Place
+	{ "if01_evil",          "The Evil Sorcerer" },                                                      // 20th Place
+	{ "if01_gostak",        "The Gostak" },                                                             // 21nd Place
+	{ "if01_crusadezcode",  "Crusade" },                                                                // 23rd Place
+	{ "if01_urhere",        "You Are Here" },                                                           // 25th Place
+	{ "if01_elements",      "Elements" },                                                               // 26th Place
+	{ "if01_banebuilders",  "Bane of the Builders" },                                                   // 28th Place
+	{ "if01_colours",       "Colours" },                                                                // 32nd Place
+	{ "if01_siliconcastle", "Silicon Castles" },                                                        // 32nd Place
+	{ "if01_timeout",       "Timeout" },                                                                // 35th Place
+	{ "if01_schroed",       "Schroedinger's Cat" },                                                     // 39th Place
+	{ "if01_jump",          "Jump" },                                                                   // 41th Place
+	{ "if01_newcomer",      "The Newcomer" },                                                           // 49th Place
+	{ "comp01",             "IF Competition '01 Unofficial FE Game" },
 
 	// The 2002 Annual Interactive Fiction Competition
-	{ "if02_photographportrait", "Photograph, A Portrait of Reflection" },								//  3rd Place
-	{ "if02_moonlittower", "The Moonlit Tower" },														//  4th Place
-	{ "if02_janitor", "Janitor" },																		//  5th Place
-	{ "if02_tookiessong", "TOOKiE'S SONG" },															//  7th Place
-	{ "if02_ftaegea", "Fort Aegea" },																	//  8th Place
-	{ "if02_thetemple", "The Temple" },																	//  9th Place
-	{ "if02_jane", "Jane" },																			// 10th Place
-	{ "if02_mythtale", "MythTale" },																	// 11th Place
-	{ "if02_idthief", "IDENTITY THIEF" },																// 13th Place
-	{ "if02_rentaspy", "Rent-A-Spy" },																	// 15th Place
-	{ "if02_whenhelpcollides", "When Help Collides" },													// 18th Place
-	{ "if02_constraints", "Constraints" },																// 19th Place
-	{ "if02_hell0", "Hell: A Comedy of Errors" },														// 23th Place
-	{ "if02_bofh", "The Bastard Operator from Hell" },													// 26th Place
-	{ "if02_samuelgregor", "The Case of Samuel Gregor" },												// 27th Place
-	{ "if02_screen", "Screen" },																		// 29th Place
-	{ "if02_shamulet", "Scary House Amulet" },															// 31st Place
-	{ "if02_koan", "KOAN" },																			// 35th Place
-	{ "if02_ramonandjonathan", "Ramón and Jonathan" },													// 36th Place
-	{ "comp02", "IF Competition '02 Unofficial FE Game" },
+	{ "if02_photograph",    "Photograph" },                                                             //  3rd Place
+	{ "if02_moonlittower",  "The Moonlit Tower" },                                                      //  4th Place
+	{ "if02_janitor",       "Janitor" },                                                                //  5th Place
+	{ "if02_tookiessong",   "TOOKiE'S SONG" },                                                          //  7th Place
+	{ "if02_ftaegea",       "Fort Aegea" },                                                             //  8th Place
+	{ "if02_thetemple",     "The Temple" },                                                             //  9th Place
+	{ "if02_jane",          "Jane" },                                                                   // 10th Place
+	{ "if02_mythtale",      "MythTale" },                                                               // 11th Place
+	{ "if02_idthief",       "Identity Thief" },                                                         // 13th Place
+	{ "if02_rentaspy",      "Rent-A-Spy" },                                                             // 15th Place
+	{ "if02_whenhelp",      "When Help Collides" },                                                     // 18th Place
+	{ "if02_constraints",   "Constraints" },                                                            // 19th Place
+	{ "if02_hell0",         "Hell: A Comedy of Errors" },                                               // 23th Place
+	{ "if02_bofh",          "The Bastard Operator from Hell" },                                         // 26th Place
+	{ "if02_samuelgregor",  "The Case of Samuel Gregor" },                                              // 27th Place
+	{ "if02_screen",        "Screen" },                                                                 // 29th Place
+	{ "if02_shamulet",      "Scary House Amulet" },                                                     // 31st Place
+	{ "if02_koan",          "KOAN" },                                                                   // 35th Place
+	{ "if02_ramandjona",    "Ramón and Jonathan" },                                                     // 36th Place
+	{ "comp02",             "IF Competition '02 Unofficial FE Game" },
 
 	// The 2003 Annual Interactive Fiction Competition
-	{ "if03_slouchingbedlam", "Slouching Towards Bedlam" },												//  1st Place
-	{ "if03_risorg", "Risorgimento Represso" },															//  2nd Place
-	{ "if03_gourmet", "Gourmet" },																		//  5th Place
-	{ "if03_baluthar", "BALUTHAR" },																	//  9th Place
-	{ "if03_atomicheart", "The Atomic Heart" },															// 10th Place
-	{ "if03_papermoon", "A Paper Moon" },																// 12th Place
-	{ "if03_caffeination", "Caffeination" },															// 14th Place
-	{ "if03_adoo", "ADOO'S STINKY STORY" },																// 17th Place
-	{ "if03_domicile", "Domicile" },																	// 18th Place
-	{ "if03_internaldocuments", "INTERNAL DOCUMENTS" },													// 19th Place
-	{ "if03_noroom", "No Room" },																		// 22th Place
-	{ "if03_lardo", "THE FAT LARDO AND THE RUBBER DUCKY" },												// 29th Place
-	{ "comp03", "IF Competition '03 Unofficial FE Game" },
+	{ "if03_slouchingbedlam", "Slouching Towards Bedlam" },                                             //  1st Place
+	{ "if03_risorg",        "Risorgimento Represso" },                                                  //  2nd Place
+	{ "if03_gourmet",       "Gourmet" },                                                                //  5th Place
+	{ "if03_baluthar",      "Baluthar" },                                                               //  9th Place
+	{ "if03_atomicheart",   "The Atomic Heart" },                                                       // 10th Place
+	{ "if03_papermoon",     "A Paper Moon" },                                                           // 12th Place
+	{ "if03_caffeination",  "Caffeination" },                                                           // 14th Place
+	{ "if03_adoo",          "Adoo's Stinky Story" },                                                    // 17th Place
+	{ "if03_domicile",      "Domicile" },                                                               // 18th Place
+	{ "if03_internaldocs",  "Internal Documents" },                                                     // 19th Place
+	{ "if03_noroom",        "No Room" },                                                                // 22th Place
+	{ "if03_lardo",         "The Fat Lardo and the Rubber Ducky" },                                     // 29th Place
+	{ "comp03",             "IF Competition '03 Unofficial FE Game" },
 
 	// The 2004 Annual Interactive Fiction Competition
-	{ "if04_bluechairs", "Blue Chairs" },																//  2nd Place
-	{ "if04_devours", "All Things Devours" },															//  3rd Place
-	{ "if04_stingwasp", "Sting of the Wasp" },															//  4th Place
-	{ "if04_orion", "The Orion Agenda" },																//  6th Place
-	{ "if04_mingsheng", "MingSheng" },																	//  7th Place
-	{ "if04_splashdown", "SPLASHDOWN" },																//  8th Place
-	{ "if04_gamlet", "Gamlet" },																		//  9th Place
-	{ "if04_greatxavio", "The Great Xavio" },															// 11th Place
-	{ "if04_geb", "GOOSE, EGG, BADGER" },																// 12th Place
-	{ "if04_bigscoop", "The Big Scoop" },																// 13th Place
-	{ "if04_identity", "Identity" },																	// 15th Place
-	{ "if04_murderaeroclub", "Murder at the Aero Club" },												// 16th Place
-	{ "if04_bellclap", "Bellclap" },																	// 17th Place
-	{ "if04_typo", "Typo!" },																			// 19th Place
-	{ "if04_blink", "Blink" },																			// 21nd Place
-	{ "if04_playtorn", "Chronicle Play Torn" },															// 22nd Place
-	{ "if04_order00", "Order" },																		// 24th Place
-	{ "if04_bluesky", "Blue Sky" },																		// 26th Place
-	{ "if04_stackoverflow", "STACK OVERFLOW" },															// 29th Place
-	{ "comp04", "IF Competition '04 Unofficial FE Game" },
+	{ "if04_bluechairs",    "Blue Chairs" },                                                            //  2nd Place
+	{ "if04_devours",       "All Things Devours" },                                                     //  3rd Place
+	{ "if04_stingwasp",     "Sting of the Wasp" },                                                      //  4th Place
+	{ "if04_orion",         "The Orion Agenda" },                                                       //  6th Place
+	{ "if04_mingsheng",     "MingSheng" },                                                              //  7th Place
+	{ "if04_splashdown",    "Splashdown" },                                                             //  8th Place
+	{ "if04_gamlet",        "Gamlet" },                                                                 //  9th Place
+	{ "if04_greatxavio",    "The Great Xavio" },                                                        // 11th Place
+	{ "if04_geb",           "Goose, Egg, Badger" },                                                     // 12th Place
+	{ "if04_bigscoop",      "The Big Scoop" },                                                          // 13th Place
+	{ "if04_identity",      "Identity" },                                                               // 15th Place
+	{ "if04_murderaeroclub", "Murder at the Aero Club" },                                               // 16th Place
+	{ "if04_bellclap",      "Bellclap" },                                                               // 17th Place
+	{ "if04_typo",          "Typo!" },                                                                  // 19th Place
+	{ "if04_blink",         "Blink" },                                                                  // 21nd Place
+	{ "if04_playtorn",      "Chronicle Play Torn" },                                                    // 22nd Place
+	{ "if04_order00",       "Order" },                                                                  // 24th Place
+	{ "if04_bluesky",       "Blue Sky" },                                                               // 26th Place
+	{ "if04_stackoverflow", "Stack Overflow" },                                                         // 29th Place
+	{ "comp04",             "IF Competition '04 Unofficial FE Game" },
 
 	// The 2005 Annual Interactive Fiction Competition
-	{ "if05_vespers", "Vespers" },																		//  1st Place
-	{ "if05_beyond", "Beyond" },																		//  2nd Place
-	{ "if05_anewlife", "A New Life" },																	//  3rd Place
-	{ "if05_toughbeans", "Tough Beans" },																//  5th Place
-	{ "if05_colourpink", "The Colour Pink" },															//  6th Place
-	{ "if05_unforgotten", "Unforgotten" },																//  7th Place
-	{ "if05_snatches", "SNATCHES" },																	//  8th Place
-	{ "if05_vigilance", "Internal Vigilance" },															// 10th Place
-	{ "if05_historyrepeating", "History Repeating" },													// 11th Place
-	{ "if05_soa", "Son of a..." },																		// 15th Place
-	{ "if05_psycheslament", "Psyche's Lament" },														// 21st Place
-	{ "if05_onoptimism", "On Optimism" },																// 24th Place
-	{ "if05_neonnirvana", "NEON NIRVANA" },																// 27th Place
-	{ "if05_swordofmalice", "The Sword of Malice" },													// 28th Place
-	{ "if05_drearylands", "Dreary Lands" },																// 29th Place
-	{ "if05_hellosword", "Hello Sword: The Journey" },													// 30th Place
-	{ "if05_phantomcaverns", "Phantom: Caverns of the killer" },										// 31st Place
-	{ "if05_futuregame", "FutureGame" },																// 33rd Place
-	{ "comp05", "IF Competition '05 Unofficial FE Game" },
+	{ "if05_vespers",       "Vespers" },                                                                //  1st Place
+	{ "if05_beyond",        "Beyond" },                                                                 //  2nd Place
+	{ "if05_anewlife",      "A New Life" },                                                             //  3rd Place
+	{ "if05_toughbeans",    "Tough Beans" },                                                            //  5th Place
+	{ "if05_colourpink",    "The Colour Pink" },                                                        //  6th Place
+	{ "if05_unforgotten",   "Unforgotten" },                                                            //  7th Place
+	{ "if05_snatches",      "Snatches" },                                                               //  8th Place
+	{ "if05_vigilance",     "Internal Vigilance" },                                                     // 10th Place
+	{ "if05_historyrepeating", "History Repeating" },                                                   // 11th Place
+	{ "if05_soa",           "Son of a..." },                                                            // 15th Place
+	{ "if05_psycheslament", "Psyche's Lament" },                                                        // 21st Place
+	{ "if05_onoptimism",    "On Optimism" },                                                            // 24th Place
+	{ "if05_neonnirvana",   "Neon Nirvana" },                                                           // 27th Place
+	{ "if05_swordofmalice", "The Sword of Malice" },                                                    // 28th Place
+	{ "if05_drearylands",   "Dreary Lands" },                                                           // 29th Place
+	{ "if05_hellosword",    "Hello Sword: The Journey" },                                               // 30th Place
+	{ "if05_phantomcaverns", "Phantom: Caverns of the killer" },                                        // 31st Place
+	{ "if05_futuregame",    "FutureGame" },                                                             // 33rd Place
+	{ "comp05",             "IF Competition '05 Unofficial FE Game" },
 
 	// The 2006 Annual Interactive Fiction Competition
-	{ "if06_floatpointzcode", "Floatpoint" },															//  1st Place
-	{ "if06_primrose", "The Primrose Path" },															//  2nd Place
-	{ "if06_moonshaped", "Moon-Shaped" },																//  5th Place
-	{ "if06_wallpaper", "Delightful Wallpaper" },														//  6th Place
-	{ "if06_legion", "Legion" },																		//  7th Place
-	{ "if06_madamspider", "Madam Spider's Web" },														//  8th Place
-	{ "if06_mobius", "Möbius" },																		//  9th Place
-	{ "if06_gameproducer", "Game Producer!" },															// 11th Place
-	{ "if06_starcity", "Star City" },																	// 13th Place
-	{ "if06_strangegeometries", "Strange Geometries" },													// 14th Place
-	{ "if06_towerofelephant", "The Tower of the Elephant" },											// 15th Place
-	{ "if06_labyrinth", "Labyrinth" },																	// 18th Place
-	{ "if06_cdst", "Carmen Devine: Supernatural Troubleshooter" },										// 20th Place
-	{ "if06_bibleretoldbreadfishes", "The Bible Retold: The Bread and the Fishes" },					// 21st Place
-	{ "if06_anothergoddamnescape", "Another Goddamn Escape the Locked Room Game" },						// 22nd Place
-	{ "if06_fightorflight", "Fight or Flight" },														// 23rd Place
-	{ "if06_manalive1", "MANALIVE I - ENIGMA" },														// 24th Place
-	{ "if06_hedge", "Hedge" },																			// 25th Place
-	{ "if06_polendina", "Polendina" },																	// 27th Place
-	{ "if06_manalive2", "MANALIVE II" },																// 29th Place
-	{ "if06_pathfinder", "PATHFINDER" },																// 30th Place
-	{ "if06_apocalypseclock", "The Apocalypse Clock" },													// 31st Place
-	{ "if06_sisyphus", "Sisyphus" },																	// 39th Place
-	{ "comp06", "IF Competition '06 Unofficial FE Game" },
+	{ "if06_floatpointz",   "Floatpoint" },                                                             //  1st Place
+	{ "if06_primrose",      "The Primrose Path" },                                                      //  2nd Place
+	{ "if06_moonshaped",    "Moon-Shaped" },                                                            //  5th Place
+	{ "if06_wallpaper",     "Delightful Wallpaper" },                                                   //  6th Place
+	{ "if06_legion",        "Legion" },                                                                 //  7th Place
+	{ "if06_madamspider",   "Madam Spider's Web" },                                                     //  8th Place
+	{ "if06_mobius",        "Möbius" },                                                                 //  9th Place
+	{ "if06_gameproducer",  "Game Producer!" },                                                         // 11th Place
+	{ "if06_starcity",      "Star City" },                                                              // 13th Place
+	{ "if06_strangegeometry", "Strange Geometries" },                                                   // 14th Place
+	{ "if06_towerofelephant", "The Tower of the Elephant" },                                            // 15th Place
+	{ "if06_labyrinth",     "Labyrinth" },                                                              // 18th Place
+	{ "if06_cdst",          "Carmen Devine: Supernatural Troubleshooter" },                             // 20th Place
+	{ "if06_bibleretold1",  "The Bible Retold: The Bread and the Fishes" },                             // 21st Place
+	{ "if06_anothergoddamn", "Another Goddamn Escape the Locked Room Game" },                           // 22nd Place
+	{ "if06_fightorflight", "Fight or Flight" },                                                        // 23rd Place
+	{ "if06_manalive1",     "Manlive I - Enigma" },                                                    // 24th Place
+	{ "if06_hedge",         "Hedge" },                                                                  // 25th Place
+	{ "if06_polendina",     "Polendina" },                                                              // 27th Place
+	{ "if06_manalive2",     "Manlive II" },                                                            // 29th Place
+	{ "if06_pathfinder",    "Pathfinder" },                                                             // 30th Place
+	{ "if06_apocalypseclock", "The Apocalypse Clock" },                                                 // 31st Place
+	{ "if06_sisyphus",      "Sisyphus" },                                                               // 39th Place
+	{ "comp06",             "IF Competition '06 Unofficial FE Game" },
 
 	// The 2007 Annual Interactive Fiction Competition
-	{ "if07_lostpig", "Lost Pig" },																		//  1st Place
-	{ "if07_actofmurder", "An Act of Murder" },															//  2nd Place
-	{ "if07_bellwater", "Lord Bellwater's Secret" },													//  3rd Place
-	{ "if07_acrossthestars", "Across the Stars" },														//  4th Place
-	{ "if07_orevore", "Orevore Courier" },																//  8th Place
-	{ "if07_jackmills", "My Name is Jack Mills" },														//  9th Place
-	{ "if07_deadlineenchanter", "Deadline Enchanter" },													// 12th Place
-	{ "if07_fff", "Fox, Fowl and Feed" },																// 16th Place
-	{ "if07_wish", "Wish" },																			// 17th Place
-	{ "if07_packrat", "Packrat" },																		// 18th Place
-	{ "if07_beneathatransformation", "BENEATH: A Transformation" },										// 21st Place
-	{ "if07_theimmortal", "The Immortal" },																// 22nd Place
-	{ "if07_eduardseminarist", "Eduard the Seminarist" },												// 23rd Place
-	{ "if07_pets", "Press [Escape] to Save" },															// 24th Place
-	{ "comp07", "IF Competition '07 Unofficial FE Game" },
+	{ "if07_lostpig",       "Lost Pig" },                                                               //  1st Place
+	{ "if07_actofmurder",   "An Act of Murder" },                                                       //  2nd Place
+	{ "if07_bellwater",     "Lord Bellwater's Secret" },                                                //  3rd Place
+	{ "if07_acrossthestars", "Across the Stars" },                                                      //  4th Place
+	{ "if07_orevore",       "Orevore Courier" },                                                        //  8th Place
+	{ "if07_jackmills",     "My Name is Jack Mills" },                                                  //  9th Place
+	{ "if07_deadlinenchanter", "Deadline Enchanter" },                                                  // 12th Place
+	{ "if07_fff",           "Fox, Fowl and Feed" },                                                     // 16th Place
+	{ "if07_wish",          "Wish" },                                                                   // 17th Place
+	{ "if07_packrat",       "Packrat" },                                                                // 18th Place
+	{ "if07_beneathtransform", "BENEATH: A Transformation" },                                           // 21st Place
+	{ "if07_theimmortal",   "The Immortal" },                                                           // 22nd Place
+	{ "if07_eduardseminarist", "Eduard the Seminarist" },                                               // 23rd Place
+	{ "if07_pets",          "Press [Escape] to Save" },                                                 // 24th Place
+	{ "comp07",             "IF Competition '07 Unofficial FE Game" },
 
 	// The 2008 Annual Interactive Fiction Competition
-	{ "if08_violet", "Violet" },																		//  1st Place
-	{ "if08_afflicted", "Afflicted" },																	//  2nd Place
-	{ "if08_piracy2", "Piracy 2.0 - A Text Adventure in Space" },										//  3rd Place
-	{ "if08_snacktime", "Snack Time!" },																//  6th Place
-	{ "if08_openingnight", "Opening Night" },															//  7th Place
-	{ "if08_minionunderworld", "Escape from the Underworld" },											// 12th Place
-	{ "if08_bishoes", "Buried in Shoes" },																// 13th Place
-	{ "if08_grief", "Grief" },																			// 16th Place
-	{ "if08_trein", "Trein" },																			// 17th Place
-	{ "if08_redmoonz", "Red Moon" },																	// 19th Place
-	{ "if08_draculascrypt", "Dracula's Underground Crypt" },											// 20th Place
-	{ "if08_anachronist", "Anachronist" },																// 22nd Place
-	{ "if08_whenmachinesattack", "wHen mAchines aTtack" },												// 23rd Place
-	{ "if08_thelucubrator", "The Lucubrator" },															// 23rd Place
-	{ "if08_freedom", "Freedom" },																		// 30th Place
-	{ "if08_riverside", "Riverside" },																	// 31st Place
-	{ "if08_thelighthouse", "The Lighthouse" },															// 34th Place
-	{ "if08_absoluteworstgame", "The Absolute Worst IF Game in History" },								// 35th Place
-	{ "comp08", "IF Competition '08 Unofficial FE Game" },
+	{ "if08_violet",        "Violet" },                                                                 //  1st Place
+	{ "if08_afflicted",     "Afflicted" },                                                              //  2nd Place
+	{ "if08_piracy2",       "Piracy 2.0 - A Text Adventure in Space" },                                 //  3rd Place
+	{ "if08_snacktime",     "Snack Time!" },                                                            //  6th Place
+	{ "if08_openingnight",  "Opening Night" },                                                          //  7th Place
+	{ "if08_minionunderworld", "Escape from the Underworld" },                                          // 12th Place
+	{ "if08_bishoes",       "Buried in Shoes" },                                                        // 13th Place
+	{ "if08_grief",         "Grief" },                                                                  // 16th Place
+	{ "if08_trein",         "Trein" },                                                                  // 17th Place
+	{ "if08_redmoonz",      "Red Moon" },                                                               // 19th Place
+	{ "if08_draculascrypt", "Dracula's Underground Crypt" },                                            // 20th Place
+	{ "if08_anachronist",   "Anachronist" },                                                            // 22nd Place
+	{ "if08_whenmachinesattack", "wHen mAchines aTtack" },                                              // 23rd Place
+	{ "if08_thelucubrator", "The Lucubrator" },                                                         // 23rd Place
+	{ "if08_freedom",       "Freedom" },                                                                // 30th Place
+	{ "if08_riverside",     "Riverside" },                                                              // 31st Place
+	{ "if08_thelighthouse", "The Lighthouse" },                                                         // 34th Place
+	{ "if08_absoluteworstgame", "The Absolute Worst IF Game in History" },                              // 35th Place
+	{ "comp08",             "IF Competition '08 Unofficial FE Game" },
 
 	// The 2009 Annual Interactive Fiction Competition
-	{ "if09_snowquest", "Snowquest" },																	//  3rd Place
-	{ "if09_duelthatspanned", "The Duel that Spanned the Ages" },										//  4th Place
-	{ "if09_duelinsnow", "The Duel in the Snow" },														//  6th Place
-	{ "if09_interface", "Interface" },																	//  8th Place
-	{ "if09_byzantineperspective", "Byzantine Perspective" },											//  9th Place
-	{ "if09_condemned", "Condemned" },																	// 12th Place
-	{ "if09_eruption", "Eruption" },																	// 13th Place
-	{ "if09_betatester", "Beta Tester" },																// 14th Place
-	{ "if09_spelunkersquest", "Spelunker's Quest" },													// 16th Place
-	{ "if09_invisibleman", "The Believable Adventures of an Invisible Man" },							// 17th Place
-	{ "if09_thegrandquest", "The Grand Quest" },														// 18th Place
-	{ "if09_starhunter", "Star Hunter" },																// 19th Place
-	{ "if09_gatoron", "GATOR-ON, Friend to Wetlands!" },												// 20th Place
-	{ "if09_gleamingtheverb", "Gleaming the Verb" },													// 21st Place
-	{ "if09_zorkburiedchaos", "Welcome to Zork, Buried Chaos" },										// 22nd Place
-	{ "comp09", "IF Competition '09 Unofficial FE Game" },
+	{ "if09_snowquest",     "Snowquest" },                                                              //  3rd Place
+	{ "if09_duelthatspanned", "The Duel that Spanned the Ages" },                                       //  4th Place
+	{ "if09_duelinsnow",    "The Duel in the Snow" },                                                   //  6th Place
+	{ "if09_interface",     "Interface" },                                                              //  8th Place
+	{ "if09_byzantineperspect", "Byzantine Perspective" },                                              //  9th Place
+	{ "if09_condemned",     "Condemned" },                                                              // 12th Place
+	{ "if09_eruption",      "Eruption" },                                                               // 13th Place
+	{ "if09_betatester",    "Beta Tester" },                                                            // 14th Place
+	{ "if09_spelunkersquest", "Spelunker's Quest" },                                                    // 16th Place
+	{ "if09_invisibleman",  "The Believable Adventures of an Invisible Man" },                          // 17th Place
+	{ "if09_thegrandquest", "The Grand Quest" },                                                        // 18th Place
+	{ "if09_starhunter",    "Star Hunter" },                                                            // 19th Place
+	{ "if09_gatoron",       "GATOR-ON, Friend to Wetlands!" },                                          // 20th Place
+	{ "if09_gleamingtheverb", "Gleaming the Verb" },                                                    // 21st Place
+	{ "if09_zorkburiedchaos", "Welcome to Zork, Buried Chaos" },                                        // 22nd Place
+	{ "comp09",             "IF Competition '09 Unofficial FE Game" },
 
 	// The 2010 Annual Interactive Fiction Competition
-	{ "if10_deathoffthecuffz", "Death Off The Cuff" },													//  5th Place
-	{ "if10_mite", "Mite" },																			//  6th Place
-	{ "if10_gloriousrevolution", "The People's Glorious Revolutionary Text Adventure Game" },			//  7th Place
-	{ "if10_hummingbird", "Flight of the Hummingbird" },												//  8th Place
-	{ "if10_warblersnest", "The Warbler's Nest" },														//  9th Place
-	{ "if10_asgard", "The 12:54 to Asgard" },															// 17th Place
-	{ "if10_penandpaint", "Pen and Paint" },															// 17th Place
-	{ "if10_bibleretoldlostsheep", "The Bible Retold: The Lost Sheep" },								// 19th Place
-	{ "if10_heated", "Heated" },																		// 20th Place
-	{ "if10_ninjasfate", "Ninja's Fate" },																// 21th Place
-	{ "if10_eastgrovehills", "East Grove Hills" },														// 23rd Place
-	{ "if10_quietevening", "A Quiet Evening at Home" },													// 25th Place
-	{ "if10_chronicler0", "The Chronicler" },															// 26th Place
-	{ "comp10", "IF Competition '10 Unofficial FE Game" },
+	{ "if10_deathoffthecuffz", "Death Off The Cuff" },                                                  //  5th Place
+	{ "if10_mite",          "Mite" },                                                                   //  6th Place
+	{ "if10_gloriousrevolution", "The People's Glorious Revolutionary Text Adventure Game" },           //  7th Place
+	{ "if10_hummingbird",   "Flight of the Hummingbird" },                                              //  8th Place
+	{ "if10_warblersnest",  "The Warbler's Nest" },                                                     //  9th Place
+	{ "if10_asgard",        "The 12:54 to Asgard" },                                                    // 17th Place
+	{ "if10_penandpaint",   "Pen and Paint" },                                                          // 17th Place
+	{ "if10_bibleretold2",  "The Bible Retold: The Lost Sheep" },                                       // 19th Place
+	{ "if10_heated",        "Heated" },                                                                 // 20th Place
+	{ "if10_ninjasfate",    "Ninja's Fate" },                                                           // 21th Place
+	{ "if10_eastgrovehills", "East Grove Hills" },                                                      // 23rd Place
+	{ "if10_quietevening",  "A Quiet Evening at Home" },                                                // 25th Place
+	{ "if10_chronicler0",   "The Chronicler" },                                                         // 26th Place
+	{ "comp10",             "IF Competition '10 Unofficial FE Game" },
 
 	// The 2011 Annual Interactive Fiction Competition
-	{ "if11_santaland", "Escape from Santaland" },														//  4th Place
-	{ "if11_canamicah", "Cana According To Micah" },													//  9th Place
-	{ "if11_comedyerrormessages", "A Comedy of Error Messages" },										// 10th Place
-	{ "if11_tenthplague", "Tenth Plague" },																// 12th Place
-	{ "if11_coldiron", "Cold Iron" },																	// 15th Place
-	{ "if11_andromedaawakeningz", "Andromeda Awakening" },												// 17th Place
-	{ "if11_keepsake", "Keepsake" },																	// 18th Place
-	{ "if11_theguardian", "The Guardian" },																// 21st Place
-	{ "if11_lastdayofsummer", "Last Day of Summer" },													// 25th Place
-	{ "if11_shipofwhimsy", "Ship of Whimsy" },															// 32th Place
-	{ "if11_pfrank", "PROFESSOR FRANK" },																// 34th Place
-	{ "if11_vestiges", "Vestiges" },																	// 38th Place
-	{ "comp11", "IF Competition '11 Unofficial FE Game" },
+	{ "if11_santaland",     "Escape from Santaland" },                                                  //  4th Place
+	{ "if11_canamicah",     "Cana According To Micah" },                                                //  9th Place
+	{ "if11_comedyerror",   "A Comedy of Error Messages" },                                             // 10th Place
+	{ "if11_tenthplague",   "Tenth Plague" },                                                           // 12th Place
+	{ "if11_coldiron",      "Cold Iron" },                                                              // 15th Place
+	{ "if11_andromedaawakeningz", "Andromeda Awakening" },                                              // 17th Place
+	{ "if11_keepsake",      "Keepsake" },                                                               // 18th Place
+	{ "if11_theguardian",   "The Guardian" },                                                           // 21st Place
+	{ "if11_lastdaysummer", "Last Day of Summer" },                                                     // 25th Place
+	{ "if11_shipofwhimsy",  "Ship of Whimsy" },                                                         // 32th Place
+	{ "if11_pfrank",        "Professor Frank" },                                                        // 34th Place
+	{ "if11_vestiges",      "Vestiges" },                                                               // 38th Place
+	{ "comp11",             "IF Competition '11 Unofficial FE Game" },
 
 	// The 2012 Annual Interactive Fiction Competition
-	{ "if12_eurydice", "Eurydice" },																	//  2nd Place
-	{ "if12_guildedyouth", "Guilded Youth" },															//  3rd Place
-	{ "if12_changes", "Changes" },																		//  4th Place
-	{ "if12_sundayafternoon", "Sunday Afternoon" },														//  5th Place
-	{ "if12_spiral", "Spiral" },																		//  6th Place
-	{ "if12_bodybargain", "Body Bargain" },																//  8th Place
-	{ "if12_fishbowl", "Fish Bowl" },																	// 12th Place
-	{ "if12_summerland", "Escape from Summerland" },													// 13th Place
-	{ "if12_lunarbase1", "Lunar Base 1" },																// 14th Place
-	{ "if12_murphyslaw", "Murphy's Law" },																// 15th Place
-	{ "if12_testisready", "The Test is Now READY" },													// 15th Place
-	{ "if12_castleadventure", "Castle Adventure!" },													// 23rd Place
-	{ "comp12", "IF Competition '12 Unofficial FE Game" },
+	{ "if12_eurydice",      "Eurydice" },                                                               //  2nd Place
+	{ "if12_guildedyouth",  "Guilded Youth" },                                                          //  3rd Place
+	{ "if12_changes",       "Changes" },                                                                //  4th Place
+	{ "if12_sundayafternoon", "Sunday Afternoon" },                                                     //  5th Place
+	{ "if12_spiral",        "Spiral" },                                                                 //  6th Place
+	{ "if12_bodybargain",   "Body Bargain" },                                                           //  8th Place
+	{ "if12_fishbowl",      "Fish Bowl" },                                                              // 12th Place
+	{ "if12_summerland",    "Escape from Summerland" },                                                 // 13th Place
+	{ "if12_lunarbase1",    "Lunar Base 1" },                                                           // 14th Place
+	{ "if12_murphyslaw",    "Murphy's Law" },                                                           // 15th Place
+	{ "if12_testisready",   "The Test is Now READY" },                                                  // 15th Place
+	{ "if12_castleadventure", "Castle Adventure!" },                                                    // 23rd Place
+	{ "comp12",             "IF Competition '12 Unofficial FE Game" },
 
 	// The 2013 Annual Interactive Fiction Competition
-	{ "if13_threediopolis", "Threediopolis" },															//  7th Place
-	{ "if13_paperbagprincess", "The Paper Bag Princess" },												// 17th Place
-	{ "if13_furtherz", "Further" },																		// 21st Place
-	{ "if13_9lives", "9Lives" },																		// 30th Place
+	{ "if13_threediopolis", "Threediopolis" },                                                          //  7th Place
+	{ "if13_paperbagprincess", "The Paper Bag Princess" },                                              // 17th Place
+	{ "if13_furtherz",      "Further" },                                                                // 21st Place
+	{ "if13_9lives",        "9Lives" },                                                                 // 30th Place
 
 	// The 2014 Annual Interactive Fiction Competition
-	{ "if14_15minutes", "Fifteen Minutes" },															//  6th Place
-	{ "if14_teaceremony", "Tea Ceremony" },																// 10th Place
-	{ "if14_enigmasd", "Enigma, By Simon Deimel" },														// 12th Place
-	{ "if14_blacklily", "The Black Lily" },																// 16th Place
-	{ "if14_tower", "Tower, A Surreal Trip" },															// 21th Place
-	{ "if14_excelsior", "Excelsior" },																	// 35th Place
+	{ "if14_15minutes",     "Fifteen Minutes" },                                                        //  6th Place
+	{ "if14_teaceremony",   "Tea Ceremony" },                                                           // 10th Place
+	{ "if14_enigmasd",      "Enigma (by Simon Deimel)" },                                                // 12th Place
+	{ "if14_blacklily",     "The Black Lily" },                                                         // 16th Place
+	{ "if14_tower",         "Tower" },                                                                  // 21th Place
+	{ "if14_excelsior",     "Excelsior" },                                                              // 35th Place
 
 	// The 2015 Annual Interactive Fiction Competition
-	{ "if15_finalexam", "Final Exam" },																	//  9th Place
-	{ "if15_darkiss1", "Darkiss! Wrath of the Vampire I: The Awakening" },								// 12th Place
-	{ "if15_lifeonmars", "Life on Mars?" },																// 13th Place
-	{ "if15_gbvb", "Grandma Bethlinda's Variety Box" },													// 21st Place
-	{ "if15_5minutes", "5 Minutes to Burn Something!" },												// 32nd Place
-	{ "if15_kingcrown", "The King and the Crown" },														// 42nd Place
-	{ "if15_pitcondemned", "Pit of the Condemned" },													// 45th Place
+	{ "if15_finalexam",     "Final Exam" },                                                             //  9th Place
+	{ "if15_darkiss1",      "Darkiss! Wrath of the Vampire I: The Awakening" },                         // 12th Place
+	{ "if15_lifeonmars",    "Life on Mars?" },                                                          // 13th Place
+	{ "if15_gbvb",          "Grandma Bethlinda's Variety Box" },                                        // 21st Place
+	{ "if15_5minutes",      "5 Minutes to Burn Something!" },                                           // 32nd Place
+	{ "if15_kingcrown",     "The King and the Crown" },                                                 // 42nd Place
+	{ "if15_pitcondemned",  "Pit of the Condemned" },                                                   // 45th Place
 
 	// The 2016 Annual Interactive Fiction Competition
-	{ "if16_insidefacility", "Inside the Facility" },													// 13th Place
-	{ "if16_darkiss2", "Darkiss! Wrath of the Vampire II: Journey to Hell" },							// 17th Place
-	{ "if16_zigamus", "Zigamus: Zombies at Vigamus" },													// 31th Place
-	{ "if16_slickercity", "Slicker City" },																// 39th Place
-	{ "if16_youarestanding", "You Are Standing in a Cave..." },											// 48th Place
-	{ "if16_toiletworld", "Toiletworld" },																// 58th Place
+	{ "if16_insidefacility", "Inside the Facility" },                                                   // 13th Place
+	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire II: Journey to Hell" },                      // 17th Place
+	{ "if16_zigamus",       "Zigamus: Zombies at Vigamus" },                                            // 31th Place
+	{ "if16_slickercity",   "Slicker City" },                                                           // 39th Place
+	{ "if16_youarestanding", "You Are Standing in a Cave..." },                                         // 48th Place
+	{ "if16_toiletworld",   "Toiletworld" },                                                            // 58th Place
 
 	// The 2017 Annual Interactive Fiction Competition
-	{ "if17_tuuli", "Tuuli" },																			// 16th Place
-	{ "if17_thecubecavern", "The Cube in the Cavern" },													// 39th Place
-	{ "if17_squirrel", "Goodbye Cruel Squirrel" },														// 42th Place
-	{ "if17_grue", "GRUE" },																			// 54th Place
-	{ "if17_richardmines", "The Richard Mines" },														// 55th Place
-	{ "if17_onewayout", "One Way Out" },																// 56th Place
-	{ "if17_inevitamp", "Inevitable, By Matthew Pfeiffer" },											// 60th Place
-	{ "if17_walkinthepark", "A Walk in the Park" },														// 68th Place
+	{ "if17_tuuli",         "Tuuli" },                                                                  // 16th Place
+	{ "if17_thecubecavern", "The Cube in the Cavern" },                                                 // 39th Place
+	{ "if17_squirrel",      "Goodbye Cruel Squirrel" },                                                 // 42th Place
+	{ "if17_grue",          "Grue" },                                                                   // 54th Place
+	{ "if17_richardmines",  "The Richard Mines" },                                                      // 55th Place
+	{ "if17_onewayout",     "One Way Out" },                                                            // 56th Place
+	{ "if17_inevitamp",     "Inevitable (by Matthew Pfeiffer)" },                                        // 60th Place
+	{ "if17_walkinthepark", "A Walk in the Park" },                                                     // 68th Place
 
 	// The 2018 Annual Interactive Fiction Competition
-	{ "if18_tethered", "Tethered" },																	// 23th Place
+	{ "if18_tethered",      "Tethered" },                                                               // 23th Place
 
 	// The 2019 Annual Interactive Fiction Competition
-	{ "if19_out", "Out" },																				// 25th Place
-	{ "if19_oldjim", "Old Jim's Convenience Store" },													// 34th Place
-	{ "if19_extremeomnivore", "Extreme Omnivore: Text Edition" },										// 74th Place
+	{ "if19_out",           "Out" },                                                                    // 25th Place
+	{ "if19_oldjim",        "Old Jim's Convenience Store" },                                            // 34th Place
+	{ "if19_extromnivore",  "Extreme Omnivore: Text Edition" },                                         // 74th Place
 
 	// The 2020 Annual Interactive Fiction Competition
-	{ "if20_theimpossiblebottle", "The Impossible Bottle" },											//  1st Place
-	{ "if20_entangled", "Entangled" },																	// 26th Place
-	{ "if20_drego", "Dr Ego and the Egg of ManToomba" },												// 44th Place
-	{ "if20_sheepcrossing", "Sheep Crossing" },															// 88th Place
+	{ "if20_impossiblebottle", "The Impossible Bottle" },                                               //  1st Place
+	{ "if20_entangled",     "Entangled" },                                                              // 26th Place
+	{ "if20_drego",         "Dr Ego and the Egg of ManToomba" },                                        // 44th Place
+	{ "if20_sheepcrossing", "Sheep Crossing" },                                                         // 88th Place
 
 	// The 2021 Annual Interactive Fiction Competition
-	{ "if21_darkun", "D'Arkun" },																		// 21st Place
-	{ "if21_codexsadistica", "Codex Sadistica: A Heavy-Metal Minigame" },								// 41st Place
-	{ "if21_fourbyfourianquarryin", "Fourbyfourian Quarryin'" },										// 45th Place
-	{ "if21_bravebear", "Brave Bear" },																	// 46th Place
+	{ "if21_darkun",        "D'Arkun" },                                                                // 21st Place
+	{ "if21_codexsadistica", "Codex Sadistica: A Heavy-Metal Minigame" },                               // 41st Place
+	{ "if21_fourbyfourian", "Fourbyfourian Quarryin'" },                                                // 45th Place
+	{ "if21_bravebear",     "Brave Bear" },                                                             // 46th Place
 
 	// The 2022 Annual Interactive Fiction Competition
-	{ "if22_intosun", "Into the Sun" },																	// 25th Place
-	{ "if22_lowkey", "Low-Key Learny Jokey Journey" },													// 41st Place
-	{ "if22_campusinvaders", "Campus Invaders" },														// 45th Place
-	{ "if22_zerochance", "Zero Chance of Recovery" },													// 52nd Place
+	{ "if22_intosun",       "Into the Sun" },                                                           // 25th Place
+	{ "if22_lowkey",        "Low-Key Learny Jokey Journey" },                                           // 41st Place
+	{ "if22_campusinvaders", "Campus Invaders" },                                                       // 45th Place
+	{ "if22_zerochance",    "Zero Chance of Recovery" },                                                // 52nd Place
 
 	// Marnie Parker's "Spring 1999 IF Art Show"
-	{ "ifas_tpold", "The Possibility of Life's Destruction" },
+	{ "ifas_tpold",         "The Possibility of Life's Destruction" },
 
 	// Marnie Parker's "Summer 1999 IF Art Show"
-	{ "ifas_statuedac", "Statue" },
-	{ "ifas_wheelzcode", "Wheel" },
+	{ "ifas_statuedac",     "Statue" },
+	{ "ifas_wheelzcode",    "Wheel" },
 
 	// Marnie Parker's "2000 IF Art Show"
-	{ "ifas_custard", "Custard" },
-	{ "ifas_galatea", "Galatea" },
-	{ "ifas_guitar", "Guitar of the Immortal Bard" },
-	{ "ifas_sparky", "Sparky and Boots" },
-	{ "ifas_cove", "The Cove" },
-	{ "ifas_statuette", "The Statuette" },
-	{ "ifas_visitor", "The Visitor" },
-	{ "ifas_words", "Words Get Twisted Round and Tumble Down" },
+	{ "ifas_custard",       "Custard" },
+	{ "ifas_galatea",       "Galatea" },
+	{ "ifas_guitar",        "Guitar of the Immortal Bard" },
+	{ "ifas_sparky",        "Sparky and Boots" },
+	{ "ifas_cove",          "The Cove" },
+	{ "ifas_statuette",     "The Statuette" },
+	{ "ifas_visitor",       "The Visitor" },
+	{ "ifas_words",         "Words Get Twisted Round and Tumble Down" },
 
 	// Marnie Parker's "2001 IF Art Show"
-	{ "ifas_esgarden", "English Suburban Garden" },
-	{ "ifas_lagoon", "La Lagune de Montaigne" },
-	{ "ifas_ribbons", "Ribbons" },
+	{ "ifas_esgarden",      "English Suburban Garden" },
+	{ "ifas_lagoon",        "La Lagune de Montaigne" },
+	{ "ifas_ribbons",       "Ribbons" },
 
 	// Marnie Parker's "2003 IF Art Show"
-	{ "ifas_stopnight", "A Stop for the Night" },
-	{ "ifas_queen", "Queen of Swords" },
-	{ "ifas_redeem", "Redemption" },
+	{ "ifas_stopnight",     "A Stop for the Night" },
+	{ "ifas_queen",         "Queen of Swords" },
+	{ "ifas_redeem",        "Redemption" },
 
 	// Marnie Parker's "2004 IF Art Show"
-	{ "ifas_flametop", "Flametop" },
-	{ "ifas_swanglass", "Swanglass" },
-	{ "ifas_firetower", "The Fire Tower" },
+	{ "ifas_flametop",      "Flametop" },
+	{ "ifas_swanglass",     "Swanglass" },
+	{ "ifas_firetower",     "The Fire Tower" },
 
 	// Marnie Parker's "2007 IF Art Show"
-	{ "ifas_rendition", "Rendition" },
-	{ "ifas_engine", "The Symbolic Engine" },
+	{ "ifas_rendition",     "Rendition" },
+	{ "ifas_engine",        "The Symbolic Engine" },
 	{ "ifas_varronismuseum", "Varronis Museum" },
 
 	// The Mystery House Taken Over project
-	{ "mhp", "Mystery House Possessed" },
-	{ "wherethere", "Where There's a Will" },
+	{ "mhp",                "Mystery House Possessed" },
+	{ "wherethere",         "Where There's a Will" },
 
 	// "IF Arcade" Competition
-	{ "ifa_rox", "Rox" },																				// Episode 1
-	{ "ifa_centipede", "Centipede" },																	// Episode 2
-	{ "ifa_donkeykong", "Donkey Kong" },																// Episode 4
-	{ "ifa_driver", "Night Driver" },																	// Episode 5
-	{ "ifa_galaxian", "Galaxian" },																		// Episode 6
-	{ "ifa_invaders", "Invaders" },																		// Episode 7
-	{ "ifa_joust", "Joust" },																			// Episode 9
-	{ "ifa_loderunner", "Lode Runner" },																// Episode 10
-	{ "ifa_marble", "Marble Madness" },																	// Episode 11
-	{ "ifa_pacman", "Pac-Man" },																		// Episode 12
+	{ "ifa_rox",            "Rox" },                                                                    // Episode 1
+	{ "ifa_centipede",      "Centipede" },                                                              // Episode 2
+	{ "ifa_donkeykong",     "Donkey Kong" },                                                            // Episode 4
+	{ "ifa_driver",         "Night Driver" },                                                           // Episode 5
+	{ "ifa_galaxian",       "Galaxian" },                                                               // Episode 6
+	{ "ifa_invaders",       "Invaders" },                                                               // Episode 7
+	{ "ifa_joust",          "Joust" },                                                                  // Episode 9
+	{ "ifa_loderunner",     "Lode Runner" },                                                            // Episode 10
+	{ "ifa_marble",         "Marble Madness" },                                                         // Episode 11
+	{ "ifa_pacman",         "Pac-Man" },                                                                // Episode 12
 
 	// Casual Gameplay Design Competition #7
-	{ "cgdc7_hoosegow", "Hoosegow, A Wild West Wreck" },												//  1st Place
-	{ "cgdc7_fragileshells", "Fragile Shells" },														//  2nd Place
-	{ "cgdc7_dual", "Dual Transform" },																	//  3rd Place
-	{ "cgdc7_partyfoul", "Party Foul" },																//  4th Place
-	{ "cgdc7_roofed", "Roofed" },																		//  5th Place
-	{ "cgdc7_ka", "Ka" },																				//  6th Place
-	{ "cgdc7_monday", "Monday, 16:30" },																//  7th Place
-	{ "cgdc7_theusher", "The Usher" },																	//  8th Place
-	{ "cgdc7_intotheppensky", "Into the Open Sky" },													//  9th Place
-	{ "cgdc7_luriddreams", "Lurid Dreaming" },															// 10th Place
-	{ "cgdc7_containment", "Containment" },																// 11th Place
-	{ "cgdc7_thecube", "The Cube" },																	// 12th Place
-	{ "cgdc7_blueprint", "The Blueprint" },																// 13th Place
-	{ "cgdc7_criticalbreach", "Critical Breach, An Escape Story" },										// 14th Place
-	{ "cgdc7_themanoratwhitby", "The Manor at Whitby" },												// 15th Place
-	{ "cgdc7_heavenly", "Heavenly" },																	// 16th Place
-	{ "cgdc7_iexpectyoutodie", "I Expect You to Die" },													// 17th Place
-	{ "cgdc7_virtuality", "Virtuality" },																// 18th Place
-	{ "cgdc7_dramaqueen", "Drama Queen 7 - Mother Knows Best" },										// 19th Place
-	{ "cgdc7_terminal", "Terminal" },																	// 20th Place
-	{ "cgdc7_couchofdoom", "Couch of Doom" },															// 21st Place
-	{ "cgdc7_basictraining", "Basic Train-ing" },														// 22nd Place
-	{ "cgdc7_paintzcode", "Paint" },																	// 23rd Place
-	{ "cgdc7_goldenshadow", "Golden Shadow" },															// 24th Place
-	{ "cgdc7_escapeinthedark", "Escape in the Dark" },													// 25th Place
-	{ "cgdc7_escapeintofiction", "Escape Into Fiction" },												// 26th Place
-	{ "cgdc7_zeroeth", "A Zeroeth Dimension" },															// 27th Place
-	{ "cgdc7_openfield", "An Open Field" },																// 28th Place
-	{ "cgdc7_survive", "Survive" },																		// 29th Place
-	{ "cgdc7_zegro", "Zegrothenus" },																	// 30th Place
+	{ "cgdc7_hoosegow",     "Hoosegow" },                                                               //  1st Place
+	{ "cgdc7_fragileshells", "Fragile Shells" },                                                        //  2nd Place
+	{ "cgdc7_dual",         "Dual Transform" },                                                         //  3rd Place
+	{ "cgdc7_partyfoul",    "Party Foul" },                                                             //  4th Place
+	{ "cgdc7_roofed",       "Roofed" },                                                                 //  5th Place
+	{ "cgdc7_ka",           "Ka" },                                                                     //  6th Place
+	{ "cgdc7_monday",       "Monday, 16:30" },                                                          //  7th Place
+	{ "cgdc7_theusher",     "The Usher" },                                                              //  8th Place
+	{ "cgdc7_intoopensky",  "Into the Open Sky" },                                                      //  9th Place
+	{ "cgdc7_luriddreams",  "Lurid Dreaming" },                                                         // 10th Place
+	{ "cgdc7_containment",  "Containment" },                                                            // 11th Place
+	{ "cgdc7_thecube",      "The Cube" },                                                               // 12th Place
+	{ "cgdc7_blueprint",    "The Blueprint" },                                                          // 13th Place
+	{ "cgdc7_criticalbreach", "Critical Breach" },                                                      // 14th Place
+	{ "cgdc7_themanorwhitby", "The Manor at Whitby" },                                                  // 15th Place
+	{ "cgdc7_heavenly",     "Heavenly" },                                                               // 16th Place
+	{ "cgdc7_iexpectyoutodie", "I Expect You to Die" },                                                 // 17th Place
+	{ "cgdc7_virtuality",   "Virtuality" },                                                             // 18th Place
+	{ "cgdc7_dramaqueen",   "Drama Queen 7 - Mother Knows Best" },                                      // 19th Place
+	{ "cgdc7_terminal",     "Terminal" },                                                               // 20th Place
+	{ "cgdc7_couchofdoom",  "Couch of Doom" },                                                          // 21st Place
+	{ "cgdc7_basictraining", "Basic Train-ing" },                                                       // 22nd Place
+	{ "cgdc7_paintzcode",   "Paint" },                                                                  // 23rd Place
+	{ "cgdc7_goldenshadow", "Golden Shadow" },                                                          // 24th Place
+	{ "cgdc7_escapeinthedark", "Escape in the Dark" },                                                  // 25th Place
+	{ "cgdc7_escapefiction", "Escape Into Fiction" },                                                   // 26th Place
+	{ "cgdc7_zeroeth",      "A Zeroeth Dimension" },                                                    // 27th Place
+	{ "cgdc7_openfield",    "An Open Field" },                                                          // 28th Place
+	{ "cgdc7_survive",      "Survive" },                                                                // 29th Place
+	{ "cgdc7_zegro",        "Zegrothenus" },                                                            // 30th Place
 
 	// Adam Cadre's "Chicken Competition"
-	{ "cc_chknmt", "Are you Too Chicken to Make a Deal?" },
-	{ "cc_behavior", "Behavior" },
-	{ "cc_chickenzcode", "Chicken!" },
-	{ "cc_chickenegg", "Chicken and Egg" },
-	{ "cc_chickenunder", "The Chicken Under the Window" },
-	{ "cc_chickendist", "Chickens of Distinction" },
-	{ "cc_freerange", "Hey, I'm Supposed to be Free Range" },
-	{ "cc_lessonchicken", "The Lesson of the Chicken" },
-	{ "cc_aboutchicken", "The One About the Chicken, the Lion and the Monkey?" },
-	{ "cc_orpington", "Orpington" },
-	{ "cc_pollocamino", "Pollo y Camino" },
-	{ "cc_saied", "Saied" },
-	{ "cc_xchicken", "The X Chicken" },
+	{ "cc_chknmt",          "Are you Too Chicken to Make a Deal?" },
+	{ "cc_behavior",        "Behavior" },
+	{ "cc_chickenzcode",    "Chicken!" },
+	{ "cc_chickenegg",      "Chicken and Egg" },
+	{ "cc_chickenunder",    "The Chicken Under the Window" },
+	{ "cc_chickendist",     "Chickens of Distinction" },
+	{ "cc_freerange",       "Hey, I'm Supposed to be Free Range" },
+	{ "cc_lessonchicken",   "The Lesson of the Chicken" },
+	{ "cc_aboutchicken",    "The One About the Chicken, the Lion and the Monkey?" },
+	{ "cc_orpington",       "Orpington" },
+	{ "cc_pollocamino",     "Pollo y Camino" },
+	{ "cc_saied",           "Saied" },
+	{ "cc_xchicken",        "The X Chicken" },
 
 	// Adam Cadre's "2002 Spring Comp"
-	{ "stc02_blues", "Tinseltown Blues: A Quest for Success in Hollyweird" },
+	{ "stc02_blues",        "Tinseltown Blues" },
 
 	// Adam Cadre's "2003 Spring Comp"
-	{ "stc03_inevita", "Inevitable" },
-	{ "stc03_cofire", "The Cross of Fire" },
+	{ "stc03_inevita",      "Inevitable" },
+	{ "stc03_cofire",       "The Cross of Fire" },
 
 	// Greg Boettcher's "2005 Interactive Fiction Spring Thing Competition"
-	{ "stc05_authority", "Authority" },
-	{ "stc05_flatfeet", "Flat Feet" },
-	{ "stc05_telling", "Whom the Telling Changed" },
+	{ "stc05_authority",    "Authority" },
+	{ "stc05_flatfeet",     "Flat Feet" },
+	{ "stc05_telling",      "Whom the Telling Changed" },
 
 	// Greg Boettcher's "2006 Interactive Fiction Spring Thing Competition"
-	{ "stc06_debaron", "De Baron" },
-	{ "stc06_thebaron", "The Baron" },
+	{ "stc06_debaron",      "De Baron" },
+	{ "stc06_thebaron",     "The Baron" },
 
 	// Greg Boettcher's "2007 Interactive Fiction Spring Thing Competition"
-	{ "stc07_fate", "Fate" },
+	{ "stc07_fate",         "Fate" },
 
 	// Greg Boettcher's "2008 Interactive Fiction Spring Thing Competition"
-	{ "stc08_pascal", "Pascal's Wager" },
+	{ "stc08_pascal",       "Pascal's Wager" },
 
 	// Greg Boettcher's "2009 Interactive Fiction Spring Thing Competition"
 	{ "stc09_milkparadise", "The Milk of Paradise" },
 
 	// Greg Boettcher's "2012 Interactive Fiction Spring Thing Competition"
-	{ "stc12_rocketman", "The Rocket Man from the Sea" },
+	{ "stc12_rocketman",    "The Rocket Man from the Sea" },
 
 	// Aaron Reed's "2014 Interactive Fiction Spring Thing Competition"
-	{ "stc14_mrp", "The Story of Mr. P." },
+	{ "stc14_mrp",          "The Story of Mr. P." },
 
 	// Aaron Reed's "2016 Interactive Fiction Spring Thing Competition"
-	{ "stc16_harmonic", "Harmonic Time-Bind Ritual Symphony" },
+	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },
 
 	// Aaron Reed's "2017 Interactive Fiction Spring Thing Competition"
-	{ "stc17_enlightened", "Enlightened Master" },
+	{ "stc17_enlightened",  "Enlightened Master" },
 
 	// Aaron Reed's "2018 Interactive Fiction Spring Thing Competition"
-	{ "stc18_gopher", "Best Gopher Ever" },
-	{ "stc18_murderbignothing", "Murder on the Big Nothing" },
+	{ "stc18_gopher",       "Best Gopher Ever" },
+	{ "stc18_murderbig",    "Murder on the Big Nothing" },
 
 	// Aaron Reed's "2019 Interactive Fiction Spring Thing Competition"
-	{ "stc19_69105keys", "69,105 Keys" },
-	{ "stc19_pca", "Porte Cave Adventure" },
+	{ "stc19_69105keys",    "69,105 Keys" },
+	{ "stc19_pca",          "Porte Cave Adventure" },
 
 	// Aaron Reed's "2021 Interactive Fiction Spring Thing Competition"
 	{ "stc21_takethedogout", "Take the Dog Out" },
 
 	// Aaron Reed's "2022 Interactive Fiction Spring Thing Competition"
-	{ "stc22_hypercubic", "Hypercubic Time Warp All-go-rhythmic Synchrony" },
-	{ "stc22_wry", "Wry" },
+	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },
+	{ "stc22_wry",          "Wry" },
 
 	// Dave Bernazzani's "Commodore 32 Z-Machine Competition"
-	{ "c32_endgame", "Endgame" },																		//  1st Place
-	{ "c32_turningpoint", "Turning Point" },															//  2nd Place
-	{ "c32_amusementpark", "Amusement Park" },															//  3rd Place
-	{ "c32_downtowntrain", "Downtown Train" },															//  4th Place
-	{ "c32_zombiescl", "Zombies!" },																	//  5th Place
-	{ "c32_paparazzi", "Paparazzi" },																	//  6th Place
-	{ "c32", "C32 Contest 2004" },
+	{ "c32_endgame",        "Endgame" },                                                                //  1st Place
+	{ "c32_turningpoint",   "Turning Point" },                                                          //  2nd Place
+	{ "c32_amusementpark",  "Amusement Park" },                                                         //  3rd Place
+	{ "c32_downtowntrain",  "Downtown Train" },                                                         //  4th Place
+	{ "c32_zombiescl",      "Zombies!" },                                                               //  5th Place
+	{ "c32_paparazzi",      "Paparazzi" },                                                              //  6th Place
+	{ "c32",                "C32 Contest 2004" },
 
 	// Sam Kabo Ashwell's "Cover Stories Game-Jam"
-	{ "cs_antifascista", "Antifascista" },
-	{ "cs_leaves", "Leaves" },
+	{ "cs_antifascista",    "Antifascista" },
+	{ "cs_leaves",          "Leaves" },
 	{ "cs_legendmissinghat", "The Legend of the Missing Hat" },
-	{ "cs_monkeybusiness", "Monkey Business" },
-	{ "cs_offering", "Offering" },
-	{ "cs_sloth", "Sloth on a Stroller" },
-	{ "cs_subtropicalserverroom", "The Subtropical Server Room" },
+	{ "cs_monkeybusiness",  "Monkey Business" },
+	{ "cs_offering",        "Offering" },
+	{ "cs_sloth",           "Sloth on a Stroller" },
+	{ "cs_subtropicservroom", "The Subtropical Server Room" },
 
 	// Dinosaur Mini-Competition
-	{ "dino_rowr", "Rowr!" },
-	{ "dino_dinoroad", "Why Did the Dino Cross the Road?" },
-	{ "dino_d2d", "d2d: A Dinosaur Minicom Game" },
-	{ "dino_dinohunt", "Dino Hunt" },
-	{ "dino_stegosaur", "A Stegosaur's Night Out" },
-	{ "dino_adno", "A Dino's Night Out" },
-	{ "dino_olddog", "Very Old Dog" },
-	{ "dino_revenger", "Revenger" },
-	{ "dino_dinnertimezcode", "Dinosaur Dinnertime!" },
-	{ "dino_appoint", "An Important Appointment" },
+	{ "dino_rowr",          "Rowr!" },
+	{ "dino_dinoroad",      "Why Did the Dino Cross the Road?" },
+	{ "dino_d2d",           "d2d: A Dinosaur Minicom Game" },
+	{ "dino_dinohunt",      "Dino Hunt" },
+	{ "dino_stegosaur",     "A Stegosaur's Night Out" },
+	{ "dino_adno",          "A Dino's Night Out" },
+	{ "dino_olddog",        "Very Old Dog" },
+	{ "dino_revenger",      "Revenger" },
+	{ "dino_dinnertimez",   "Dinosaur Dinnertime!" },
+	{ "dino_appoint",       "An Important Appointment" },
 
 	// Dragon Mini-Competition
-	{ "dr_atbottom", "At the Bottom of the Garden" },
-	{ "dr_damsel", "The Damsel and the Dragon" },
-	{ "dr_dragongeorge", "Dragon George and The Man" },
-	{ "dr_atdragon", "Dragon!" },
-	{ "dr_herebe", "Here Be Dragons!!!" },
-	{ "dr_lastlaugh", "The Last Laugh" },
+	{ "dr_atbottom",        "At the Bottom of the Garden" },
+	{ "dr_damsel",          "The Damsel and the Dragon" },
+	{ "dr_dragongeorge",    "Dragon George and The Man" },
+	{ "dr_atdragon",        "Dragon!" },
+	{ "dr_herebe",          "Here Be Dragons!!!" },
+	{ "dr_lastlaugh",       "The Last Laugh" },
 
 	// Duncan Bowsman's "2011 Ectocomp"
-	{ "ec11_bloodless", "Bloodless on the Orient Express" },											//  1st Place
-	{ "ec11_blue", "Blue" },																			//  3rd Place
-	{ "ec11_dashslapney", "Dash Slapney, Patrol Leader" },												//  5th Place
+	{ "ec11_bloodless",     "Bloodless on the Orient Express" },                                        //  1st Place
+	{ "ec11_blue",          "Blue" },                                                                   //  3rd Place
+	{ "ec11_dashslapney",   "Dash Slapney, Patrol Leader" },                                            //  5th Place
 
 	// Duncan Bowsman's "2012 Ectocomp"
-	{ "ec12_ghosteringtonnightzcode", "Ghosterington Night" },											//  1st Place
-	{ "ec12_littlegirls", "What Are Little Girls Made Of" },											//  2nd Place
-	{ "ec12_parasites", "Parasites" },																	//  4th Place
+	{ "ec12_ghosteringtonnightz", "Ghosterington Night" },                                              //  1st Place
+	{ "ec12_littlegirls",   "What Are Little Girls Made Of" },                                          //  2nd Place
+	{ "ec12_parasites",     "Parasites" },                                                              //  4th Place
 
 	// Duncan Bowsman's "2013 Ectocomp"
-	{ "ec13_horriblepyramid", "The Horrible Pyramid" },													//  1st Place
-	{ "ec13_headlesshapless", "Headless, Hapless" },													//  3rd Place
-	{ "ec13_faithfulcompanion", "Faithful Companion" },													//  4th Place
-	{ "ec13_deadpavane", "Dead Pavane for a Princess" },												//  5th Place
-	{ "ec13_icehouse", "Ice House of Horrors" },														//  6th Place
-	{ "ec13_blackness", "Blackness" },																	//  9th Place
-	{ "ec13_argument", "The Argument-Winner's Ghost" },													// 11th Place
-	{ "ec13_fishdreams","Fish Dreams" },																// 13th Place
-	{ "ec13_cursedeagle", "The Tale of the Cursed Eagle" },												// 14th Place
-	{ "ec13_cenricfamilycurse", "The Cenric Family Curse" },											// 15th Place
-	{ "ec13_nessaspringsslasher", "The Nessa Springs Slasher" },										// 18th Place
-	{ "ec13_cratercreek", "Crater Creek" },																// 19th Place
-	{ "ec13_hillofsouls", "Hill of Souls" },															// 22nd Place
-	{ "ec13_wisp", "Wisp" },																			// 23th Place
+	{ "ec13_horriblepyra",  "The Horrible Pyramid" },                                                   //  1st Place
+	{ "ec13_headlesshapless", "Headless, Hapless" },                                                    //  3rd Place
+	{ "ec13_faithfulcomp",  "Faithful Companion" },                                                     //  4th Place
+	{ "ec13_deadpavane",    "Dead Pavane for a Princess" },                                             //  5th Place
+	{ "ec13_icehouse",      "Ice House of Horrors" },                                                   //  6th Place
+	{ "ec13_blackness",     "Blackness" },                                                              //  9th Place
+	{ "ec13_argument",      "The Argument-Winner's Ghost" },                                            // 11th Place
+	{ "ec13_fishdreams",    "Fish Dreams" },                                                            // 13th Place
+	{ "ec13_cursedeagle",   "The Tale of the Cursed Eagle" },                                           // 14th Place
+	{ "ec13_cenriccurse",   "The Cenric Family Curse" },                                                // 15th Place
+	{ "ec13_nessaslasher",  "The Nessa Springs Slasher" },                                              // 18th Place
+	{ "ec13_cratercreek",   "Crater Creek" },                                                           // 19th Place
+	{ "ec13_hillofsouls",   "Hill of Souls" },                                                          // 22nd Place
+	{ "ec13_wisp",          "Wisp" },                                                                   // 23th Place
 
 	// Duncan Bowsman's "2014 Ectocomp"
-	{ "ec14_weddingday", "Wedding Day" },
-	{ "ec14_lime", "Lime Ergot" },
+	{ "ec14_weddingday",    "Wedding Day" },
+	{ "ec14_lime",          "Lime Ergot" },
 	{ "ec14_candyrushsaga", "Candy Rush Saga" },
-	{ "ec14_flywall", "A Fly on the Wall" },
-	{ "ec14_monstermaker", "Monster Maker" },
+	{ "ec14_flywall",       "A Fly on the Wall" },
+	{ "ec14_monstermaker",  "Monster Maker" },
 
 	// Duncan Bowsman's "2015 Ectocomp - La Petite Mort"
-	{ "ec15_openthatvein", "Open That Vein" },															//  1st Place
-	{ "ec15_oldesthangover", "The Oldest Hangover on Earth" },											//  2nd Place
-	{ "ec15_heezypark", "Heezy Park" },																	//  3rd Place
-	{ "ec15_storyshinoboo", "The Story of the Shinoboo" },												//  4th Place
-	{ "ec15_ghostship", "The Ghost Ship" },																//  7th Place
-	{ "ec15_physiognomist", "The Physiognomist's Office" },												//  8th Place
+	{ "ec15_openthatvein",  "Open That Vein" },                                                         //  1st Place
+	{ "ec15_oldesthangover", "The Oldest Hangover on Earth" },                                          //  2nd Place
+	{ "ec15_heezypark",     "Heezy Park" },                                                             //  3rd Place
+	{ "ec15_storyshinoboo", "The Story of the Shinoboo" },                                              //  4th Place
+	{ "ec15_ghostship",     "The Ghost Ship" },                                                         //  7th Place
+	{ "ec15_physiognomist", "The Physiognomist's Office" },                                             //  8th Place
 
 	// Duncan Bowsman's "2015 Ectocomp - Le Grand Guignol"
-	{ "ec15_ninelives", "Nine Lives" },																	//  3rd Place
+	{ "ec15_ninelives",     "Nine Lives" },                                                             //  3rd Place
 
 	// Duncan Bowsman's "2016 Ectocomp - La Petite Mort"
-	{ "ec16_lightdarkness", "Light into Darkness" },													//  4th Place
-	{ "ec16_bonesaw", "The Unstoppable Vengeance of Doctor Bonesaw" },									//  6th Place
-	{ "ec16_checkeredhaunting", "A Checkered Haunting" },												// 10th Place
+	{ "ec16_lightdarkness", "Light into Darkness" },                                                    //  4th Place
+	{ "ec16_bonesaw",       "The Unstoppable Vengeance of Doctor Bonesaw" },                            //  6th Place
+	{ "ec16_checkeredhaunting", "A Checkered Haunting" },                                               // 10th Place
 
 	// David Fisher's "EnvComp"
-	{ "ec_laseine", "La Seine" },
+	{ "ec_laseine",         "La Seine" },
 
 	// David Fisher's "GameplayComp 2009"
 	{ "gc_fantasticfinaleiv", "Fantastic Finale IV" },
 
 	// Stephen Granade's "1998 IF Fan Fest"
-	{ "ff_ite2", "In the End II" },
+	{ "ff_ite2",            "In the End II" },
 
 	// Scott Adams' Ghost Town Redux
 	{ "gtr_ghosttownzcode", "Ghost Town: The Lost Treasure" },
 
 	// Graeme Porter's "HighlandComp"
-	{ "hc_highland", "Highland Chef" },
-	{ "hc_roots", "Roots" },
+	{ "hc_highland",        "Highland Chef" },
+	{ "hc_roots",           "Roots" },
 
 	// "24 Hours of Inform" Comp
-	{ "24h_aesthetic", "Aesthetic Deletions" },
-	{ "24h_dastardly", "Dastardly" },
-	{ "24h_defra", "The Man from DEFRA" },
-	{ "24h_borgaris", "Escape From the SS Borgaris" },
-	{ "24h_ghostship", "Ghost Ship" },
+	{ "24h_aesthetic",      "Aesthetic Deletions" },
+	{ "24h_dastardly",      "Dastardly" },
+	{ "24h_defra",          "The Man from DEFRA" },
+	{ "24h_borgaris",       "Escape From the SS Borgaris" },
+	{ "24h_ghostship",      "Ghost Ship" },
 
 	// "2008 IFBeginnersComp"
-	{ "ifb_connect", "Connect" },
-	{ "ifb_limelight", "Limelight" },
+	{ "ifb_connect",        "Connect" },
+	{ "ifb_limelight",      "Limelight" },
 
 	// Jason Dyer's "Imaginary Games From Imaginary Universes Jam"
-	{ "ig_garbage", "Garbage Collection" },
+	{ "ig_garbage",         "Garbage Collection" },
 
 	// Neil deMause's "2002 IntroComp"
-	{ "ic02_timetrap", "TimeTrap" },
-	{ "ic02_waterhouse", "The Waterhouse Women" },
+	{ "ic02_timetrap",      "TimeTrap" },
+	{ "ic02_waterhouse",    "The Waterhouse Women" },
 
 	// Jacqueline Lott's "2003 IntroComp"
-	{ "ic03_agency", "Agency" },
-	{ "ic03_harlequin", "Harlequin Girl" },
+	{ "ic03_agency",        "Agency" },
+	{ "ic03_harlequin",     "Harlequin Girl" },
 	{ "ic03_harringtonhouse", "Harrington House" },
-	{ "ic03_realend", "Reality's End" },
-	{ "ic03_statue", "The Mage Wars: Statue" },
+	{ "ic03_realend",       "Reality's End" },
+	{ "ic03_statue",        "The Mage Wars: Statue" },
 
 	// Jacqueline Lott's "2004 IntroComp"
-	{ "ic04_auden", "Auden's Eden" },
-	{ "ic04_jbbrwkyi", "Intro to Jabberwocky" },
-	{ "ic04_cross", "On the Cross" },
-	{ "ic04_passenger", "Passenger" },
-	{ "ic04_runes", "Runes" },
+	{ "ic04_auden",         "Auden's Eden" },
+	{ "ic04_jbbrwkyi",      "Intro to Jabberwocky" },
+	{ "ic04_cross",         "On the Cross" },
+	{ "ic04_passenger",     "Passenger" },
+	{ "ic04_runes",         "Runes" },
 
 	// Jacqueline Lott's "2005 IntroComp"
-	{ "ic05_deadsville", "Deadsville" },
-	{ "ic05_stale", "The Fox, The Dragon, and the Stale Loaf of Bread" },
-	{ "ic05_hobbit", "The Hobbit" },
-	{ "ic05_somewhen", "Somewhen" },
-	{ "ic05_wscholars", "Weishaupt Scholars" },
+	{ "ic05_deadsville",    "Deadsville" },
+	{ "ic05_stale",         "The Fox, The Dragon, and the Stale Loaf of Bread" },
+	{ "ic05_hobbit",        "The Hobbit" },
+	{ "ic05_somewhen",      "Somewhen" },
+	{ "ic05_wscholars",     "Weishaupt Scholars" },
 
 	// Jacqueline Lott's "2006 IntroComp"
-	{ "ic06_artdeception", "The Art of Deception" },
-	{ "ic06_childsplay7", "Child's Play" },
-	{ "ic06_mechs", "Mechs" },
-	{ "ic06_sabotage", "Sabotage" },
+	{ "ic06_artdeception",  "The Art of Deception" },
+	{ "ic06_childsplay7",   "Child's Play" },
+	{ "ic06_mechs",         "Mechs" },
+	{ "ic06_sabotage",      "Sabotage" },
 	{ "ic06_southerngothic", "Southern Gothic" },
-	{ "ic06_ufury", "Unyielding Fury" },
+	{ "ic06_ufury",         "Unyielding Fury" },
 
 	// Jacqueline Lott's "2007 IntroComp"
-	{ "ic07_jackbox", "Jack in the Box" },
-	{ "ic07_jacobst", "Jacob's Travels" },
+	{ "ic07_jackbox",       "Jack in the Box" },
+	{ "ic07_jacobst",       "Jacob's Travels" },
 	{ "ic07_shredspatches", "The King of Shreds and Patches" },
 	{ "ic07_trainstopping", "Trainstopping" },
 
 	// Jacqueline Lott's "2008 IntroComp"
-	{ "ic08_fiendishzoo", "Fiendish Zoo" },
-	{ "ic08_stormcellar", "Storm Cellar" },
-	{ "ic08_bedtimestory", "Bedtime Story" },
-	{ "ic08_ninetenths", "Nine-tenths of the Law" },
+	{ "ic08_fiendishzoo",   "Fiendish Zoo" },
+	{ "ic08_stormcellar",   "Storm Cellar" },
+	{ "ic08_bedtimestory",  "Bedtime Story" },
+	{ "ic08_ninetenths",    "Nine-tenths of the Law" },
 
 	// Jacqueline Lott's "2009 IntroComp"
-	{ "ic09_gossip", "Gossip" },
-	{ "ic09_obituary", "Obituary" },
-	{ "ic09_selves", "Selves" },
+	{ "ic09_gossip",        "Gossip" },
+	{ "ic09_obituary",      "Obituary" },
+	{ "ic09_selves",        "Selves" },
 
 	// Jacqueline Lott's "2010 IntroComp"
-	{ "ic10_touristtrap", "Tourist Trap" },
-	{ "ic10_moratori", "A Fleeting Case of Self-Possession, or, Memento Moratori" },
-	{ "ic10_plan6", "Plan 6 from Inner Earth" },
-	{ "ic10_waker", "Waker" },
+	{ "ic10_touristtrap",   "Tourist Trap" },
+	{ "ic10_moratori",      "A Fleeting Case of Self-Possession, or, Memento Moratori" },
+	{ "ic10_plan6",         "Plan 6 from Inner Earth" },
+	{ "ic10_waker",         "Waker" },
 
 	// Jacqueline Lott's "2011 IntroComp"
-	{ "ic11_bender", "Bender" },
+	{ "ic11_bender",        "Bender" },
 	{ "ic11_despondencyindex", "The Despondency Index" },
-	{ "ic11_parthenon", "Parthenon" },
-	{ "ic11_sfiction", "Speculative Fiction: Beginner's Lessons" },
-	{ "ic11_stallingtime", "Stalling for Time" },
+	{ "ic11_parthenon",     "Parthenon" },
+	{ "ic11_sfiction",      "Speculative Fiction: Beginner's Lessons" },
+	{ "ic11_stallingtime",  "Stalling for Time" },
 
 	// Jacqueline Lott's "2013 IntroComp"
 	{ "ic13_thechickensexer", "The Example of the Chicken Sexer" },
@@ -1874,556 +1874,556 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ic14_talessoulthief", "Tales of the Soul Thief" },
 
 	// Jacqueline Lott's "2016 IntroComp"
-	{ "ic16_grubbyville", "Grubbyville" },
+	{ "ic16_grubbyville",   "Grubbyville" },
 
 	// Xalavier Nelson Jr's "2018 IntroComp"
-	{ "ic18_napier", "Napier’s Cache" },
+	{ "ic18_napier",        "Napier’s Cache" },
 
 	// Xalavier Nelson Jr's "2019 IntroComp"
-	{ "ic19_homeland", "Homeland" },
+	{ "ic19_homeland",      "Homeland" },
 
 	// David Cornelson's "2003 IF Library Competitions"
-	{ "lc_serve", "Serving Your Country" },
-	{ "lc_trappedschool", "Trapped in School" },
+	{ "lc_serve",           "Serving Your Country" },
+	{ "lc_trappedschool",   "Trapped in School" },
 
 	// David Cornelson's "MCDream Competition"
-	{ "mc_dreadwine", "Dreadwine" },
-	{ "mc_nofamous", "No Famous" },
-	{ "mc_retreat", "The Retreat" },
+	{ "mc_dreadwine",       "Dreadwine" },
+	{ "mc_nofamous",        "No Famous" },
+	{ "mc_retreat",         "The Retreat" },
 
 	// David Cornelson's "Segment Mini-Comp"
-	{ "snowmanzcode2", "Snowman Sextet Part II" },
-	{ "kaboot", "Kaboot's Story" },
-	{ "snowmanzcode", "Fran and Bart Want a Snowman!" },
+	{ "snowmanzcode2",      "Snowman Sextet Part II" },
+	{ "kaboot",             "Kaboot's Story" },
+	{ "snowmanzcode",       "Fran and Bart Want a Snowman!" },
 
 	// Andrew Plotkin's "IF Logic Puzzle Mini-Competition"
-	{ "lp_logicpuz", "Logic Puzzle Sampler" },
-	{ "lp_traffic", "The Traffic Light" },
+	{ "lp_logicpuz",        "Logic Puzzle Sampler" },
+	{ "lp_traffic",         "The Traffic Light" },
 
 	// Mark Silcox's "2001 LOTECH Competition"
-	{ "lo01_doghouse", "The Dog/House" },
+	{ "lo01_doghouse",      "The Dog/House" },
 
 	// Mark Silcox's "2005 LOTECH Competition"
-	{ "lo05_stormy", "A Dark and Stormy Entry" },														//  2nd Place
-	{ "lo05_knapsack", "The Knapsack Problem" },														//  6th Place
+	{ "lo05_stormy",        "A Dark and Stormy Entry" },                                                //  2nd Place
+	{ "lo05_knapsack",      "The Knapsack Problem" },                                                   //  6th Place
 
 	// Admiral Jota's "Manos Mini-Competition"
-	{ "ma_manoz", "ManoZ" },
+	{ "ma_manoz",           "ManoZ" },
 
 	// 2009 Metafilter IF Competition
-	{ "me09_bunt", "Bunt" },
-	{ "me09_downout", "Down and Out at the Big Creepy House on the Poison Lake" },
-	{ "me09_underpig", "Down With the Underpig" },
-	{ "me09_ericsbender", "Eric's Bender" },
-	{ "me09_jeffrey", "Jeffrey the Homicidal Mimic" },
-	{ "me09_burndown", "Let Us Burn Down Science" },
-	{ "me09_rockrider", "Rockrider" },
+	{ "me09_bunt",          "Bunt" },
+	{ "me09_downout",       "Down and Out at the Big Creepy House on the Poison Lake" },
+	{ "me09_underpig",      "Down With the Underpig" },
+	{ "me09_ericsbender",   "Eric's Bender" },
+	{ "me09_jeffrey",       "Jeffrey the Homicidal Mimic" },
+	{ "me09_burndown",      "Let Us Burn Down Science" },
+	{ "me09_rockrider",     "Rockrider" },
 
 	// 2010 Metafilter IF Competition
-	{ "me10_greatrent", "The Great Rent Money Adventure" },
+	{ "me10_greatrent",     "The Great Rent Money Adventure" },
 
 	// Lucian Smith's "1998 IF Mini-Competition"
-	{ "mc98_bloodline", "Bloodline" },
-	{ "mc98_inherit", "Inherit!" },
-	{ "mc98_sumbunny", "Something About the Bunny" },
+	{ "mc98_bloodline",     "Bloodline" },
+	{ "mc98_inherit",       "Inherit!" },
+	{ "mc98_sumbunny",      "Something About the Bunny" },
 
 	// Ben Caplan's "Minigames Minicomp"
-	{ "mm_hamhall", "Hamilton Hall" },
-	{ "mm_insider", "Insider Information" },
+	{ "mm_hamhall",         "Hamilton Hall" },
+	{ "mm_insider",         "Insider Information" },
 
 	// Marius Müller's "Neinth Annual New Year's Mincomp"
-	{ "ny09_egyptianwalking", "Egyptian Walking Simulator" },
+	{ "ny09_egyptianwalk",  "Egyptian Walking Simulator" },
 
 	// Marius Müller's "Eleventh Annual New Year's Mincomp"
-	{ "ny11_halflife", "Half-Life 3 Confirmed" },
+	{ "ny11_halflife",      "Half-Life 3 Confirmed" },
 
 	// Michael Gentry's "1999 No-Inventory-Competition"
-	{ "ni_annoyedundead", "Annoyed Undead" },
-	{ "ni_camping", "Camping" },
+	{ "ni_annoyedundead",   "Annoyed Undead" },
+	{ "ni_camping",         "Camping" },
 
 	// 2002 One Room Game Competition
-	{ "1r02_artif", "L'Artificiere" },
+	{ "1r02_artif",         "L'Artificiere" },
 	{ "1r02_sottomarinogiallo", "Il Sottomarino Giallo" },
 
 	// 2003 One Room Game Competition
-	{ "1r03_floppy", "Due Dischetti, Un Incubo" },
-	{ "1r03_successo", "Successo: Non Aprite Quella Porta!" },
+	{ "1r03_floppy",        "Due Dischetti, Un Incubo" },
+	{ "1r03_successo",      "Successo: Non Aprite Quella Porta!" },
 
 	// 2006 One Room Game Competition
 	{ "1r06_finalselection", "Final Selection" },
-	{ "1r06_sforacchiato", "Lo Sforacchiato Giallo" },
-	{ "1r06_venicezcode", "Il Diavolo a Venezia" },
-	{ "1r06_galeotto", "Galeotto Fu il Canotto" },
-	{ "1r06_easter", "It's Easter, Peeps!" },
+	{ "1r06_sforacchiato",  "Lo Sforacchiato Giallo" },
+	{ "1r06_venicezcode",   "Il Diavolo a Venezia" },
+	{ "1r06_galeotto",      "Galeotto Fu il Canotto" },
+	{ "1r06_easter",        "It's Easter, Peeps!" },
 	{ "1r06_lazyjonescrostata", "Lazy Jones e l’Ultima Crostata" },
-	{ "1r06_dereditu", "De Reditu" },
+	{ "1r06_dereditu",      "De Reditu" },
 	{ "1r06_frankenstein3", "Frankenstein III" },
 
 	// 2007 One Room Game Competition
-	{ "1r07_dreimp", "A Dream Imprint" },
-	{ "1r07_kinesis", "Kinesis" },
-	{ "1r07_necromante", "Il Necromante" },
-	{ "1r07_suvehnux", "Suveh Nux" },
+	{ "1r07_dreimp",        "A Dream Imprint" },
+	{ "1r07_kinesis",       "Kinesis" },
+	{ "1r07_necromante",    "Il Necromante" },
+	{ "1r07_suvehnux",      "Suveh Nux" },
 	{ "1r07_urbanconflict", "Urban Conflict" },
 
 	// Storme Winfield's "2002 RomanceNovelComp"
-	{ "rnc_chooseromance", "Choose Your Own Romance" },
+	{ "rnc_chooseromance",  "Choose Your Own Romance" },
 
 	// Sam Kabo Ashwell's "2014 Shufflecomp Competition"
-	{ "sh14_50shades", "50 Shades of Jilting" },
-	{ "sh14_flotsam", "Flotsam & Driftwood" },
-	{ "sh14_robotempire", "Holy Robot Empire" },
-	{ "sh14_illuminate", "Illuminate" },
+	{ "sh14_50shades",      "50 Shades of Jilting" },
+	{ "sh14_flotsam",       "Flotsam & Driftwood" },
+	{ "sh14_robotempire",   "Holy Robot Empire" },
+	{ "sh14_illuminate",    "Illuminate" },
 	{ "sh14_lobsterbucket", "Lobster Bucket" },
 	{ "sh14_monkeyandbear", "Monkey and Bear" },
-	{ "sh14_more", "More" },
-	{ "sh14_teaandtoast", "Tea and Toast" },
-	{ "sh14_truth", "Truth" },
-	{ "sh14_whitehouses", "White Houses" },
+	{ "sh14_more",          "More" },
+	{ "sh14_teaandtoast",   "Tea and Toast" },
+	{ "sh14_truth",         "Truth" },
+	{ "sh14_whitehouses",   "White Houses" },
 
 	// Neil Butters's "ShuffleComp: Disc 2 Competition"
 	{ "shd_everythinggame", "Everything We Do Is Games" },
-	{ "shd_headingeast", "Heading East" },
+	{ "shd_headingeast",    "Heading East" },
 	{ "shd_starryseeksorrow", "Starry Seeksorrow" },
 
 	// Emily Short's "SmoochieComp 2001"
-	{ "sc_1981", "1981" },
-	{ "sc_august", "August" },
-	{ "sc_deadofwinter", "Dead of Winter" },
-	{ "sc_pytho", "Pytho's Mask" },
-	{ "sc_sparrow", "Sparrow's Song" },
-	{ "sc_bandit", "The Tale of the Kissing Bandit" },
-	{ "sc_voices", "Voices" },
+	{ "sc_1981",            "1981" },
+	{ "sc_august",          "August" },
+	{ "sc_deadofwinter",    "Dead of Winter" },
+	{ "sc_pytho",           "Pytho's Mask" },
+	{ "sc_sparrow",         "Sparrow's Song" },
+	{ "sc_bandit",          "The Tale of the Kissing Bandit" },
+	{ "sc_voices",          "Voices" },
 
 	// SpeedIF 1 Competition
-	{ "sif_coffins", "Coffins" },
+	{ "sif_coffins",        "Coffins" },
 
 	// SpeedIF 2 Competition
-	{ "sif_speedif", "SpeedIF #2" },
-	{ "sif_hallhand", "The Hand That Rocks the Pumpkin" },
-	{ "sif_pumpkin", "The Pumpkin" },
+	{ "sif_speedif",        "SpeedIF #2" },
+	{ "sif_hallhand",       "The Hand That Rocks the Pumpkin" },
+	{ "sif_pumpkin",        "The Pumpkin" },
 
 	// SpeedIF 3 Competition
-	{ "sif_boygoat", "A Boy and His Goat" },
-	{ "sif_pryde", "Pryde and the Pink Flamingo" },
-	{ "sif_devildoit", "The Devil Made Me Do It" },
-	{ "sif_3steps", "Three Steps to the Left" },
+	{ "sif_boygoat",        "A Boy and His Goat" },
+	{ "sif_pryde",          "Pryde and the Pink Flamingo" },
+	{ "sif_devildoit",      "The Devil Made Me Do It" },
+	{ "sif_3steps",         "Three Steps to the Left" },
 
 	// SpeedIF 4 Competition
-	{ "sif_oniondig", "Digging for Onions" },
-	{ "sif_firstwave", "FIRST WAVE, Then Jump Up and Down Screaming" },
-	{ "sif_onion4", "Nostradamus’s Onion Sandwich" },
-	{ "sif_onnoef", "OnNoEf" },
-	{ "sif_tearsmayfall", "Tears May Fall" },
-	{ "sif_profesee", "The Profesee" },
+	{ "sif_oniondig",       "Digging for Onions" },
+	{ "sif_firstwave",      "FIRST WAVE, Then Jump Up and Down Screaming" },
+	{ "sif_onion4",         "Nostradamus’s Onion Sandwich" },
+	{ "sif_onnoef",         "OnNoEf" },
+	{ "sif_tearsmayfall",   "Tears May Fall" },
+	{ "sif_profesee",       "The Profesee" },
 
 	// SpeedIF 5 Competition
-	{ "sif_doomsday", "Doomsday" },
-	{ "sif_chalupa", "Revenge of the Chalupa" },
-	{ "sif_courier", "The Courier Who Missed Me" },
-	{ "sif_pspy5", "The Spy Who Always Wears Gloves Now" },
+	{ "sif_doomsday",       "Doomsday" },
+	{ "sif_chalupa",        "Revenge of the Chalupa" },
+	{ "sif_courier",        "The Courier Who Missed Me" },
+	{ "sif_pspy5",          "The Spy Who Always Wears Gloves Now" },
 
 	// SpeedIF 5.5 Competition
-	{ "sif_carnival", "Carnival" },
-	{ "sif_lake", "The Lake" },
+	{ "sif_carnival",       "Carnival" },
+	{ "sif_lake",           "The Lake" },
 
 	// SpeedIF 6 Competition
-	{ "sif_kids", "Kids Shouldn't Have to Save the World" },
-	{ "sif_atlantic", "One Night in the North Atlantic!" },
-	{ "sif_speedif6", "SpeedIF6: A Top Hat for Eddie" },
-	{ "sif_titanic", "Titanic: Leo's Revenge" },
-	{ "sif_whengrow", "When I Grow Up I Want to Be a Firetruck" },
+	{ "sif_kids",           "Kids Shouldn't Have to Save the World" },
+	{ "sif_atlantic",       "One Night in the North Atlantic!" },
+	{ "sif_speedif6",       "SpeedIF6: A Top Hat for Eddie" },
+	{ "sif_titanic",        "Titanic: Leo's Revenge" },
+	{ "sif_whengrow",       "When I Grow Up I Want to Be a Firetruck" },
 
 	// SpeedIF 7 Competition
-	{ "sif_lilyjane", "Sinking the Lily Jane" },
-	{ "sif_tankweb", "Tanker and Webb" },
-	{ "sif_tears", "Tears Keep Getting in My Dr. Pepper" },
-	{ "sif_oilydeeps", "The Oily Deeps" },
+	{ "sif_lilyjane",       "Sinking the Lily Jane" },
+	{ "sif_tankweb",        "Tanker and Webb" },
+	{ "sif_tears",          "Tears Keep Getting in My Dr. Pepper" },
+	{ "sif_oilydeeps",      "The Oily Deeps" },
 
 	// SpeedIF 8 Competition
-	{ "sif_hangers", "A Freak Accident Leaves Seattle Pantsless" },
-	{ "sif_seattle3", "A Freak Accident Leaves Seattle Pantsless III: Endgame" },
-	{ "sif_pantsless", "Pantsless in Seattle" },
+	{ "sif_hangers",        "A Freak Accident Leaves Seattle Pantsless" },
+	{ "sif_seattle3",       "A Freak Accident Leaves Seattle Pantsless III: Endgame" },
+	{ "sif_pantsless",      "Pantsless in Seattle" },
 
 	// SpeedIF 9 Competition
-	{ "sif_darknesszcode", "Under Cover of Darkness" },
+	{ "sif_darknesszcode",  "Under Cover of Darkness" },
 
 	// SpeedIF 10 Competition
-	{ "sif_deathx4", "DEATH DEATH DEATH DEATH" },
-	{ "sif_taxes", "Taxes" },
+	{ "sif_deathx4",        "Death Death Death Death" },
+	{ "sif_taxes",          "Taxes" },
 
 	// SpeedIF 10^-9 Competition
-	{ "sif_krakatoa", "Krakatoa Tuna Melt" },
+	{ "sif_krakatoa",       "Krakatoa Tuna Melt" },
 	{ "sif_roaddestruction", "The Road to Destruction (featuring Bob Hope)" },
 
 	// SpeedIF 11 Competition
-	{ "sif_spiders", "EPISODE 2: Revenge of the Mutant Spiders" },
-	{ "sif_fido", "Fido and the Dead Body" },
+	{ "sif_spiders",        "EPISODE 2: Revenge of the Mutant Spiders" },
+	{ "sif_fido",           "Fido and the Dead Body" },
 
 	// SpeedIF 12 Competition
-	{ "sif_pantheon", "Pantheon, Party On" },
-	{ "sif_plaque", "Plaque" },
+	{ "sif_pantheon",        "Pantheon, Party On" },
+	{ "sif_plaque",          "Plaque" },
 
 	// SpeedIF 13 Competition
 	{ "sif_elephantsafterlife", "Elephants and the Afterlife" },
-	{ "sif_garden", "Garden of the Dragon" },
-	{ "sif_inspector", "Health Inspector" },
-	{ "sif_potstick", "Potsticker" },
-	{ "sif_service", "Service with a Smile" },
+	{ "sif_garden",         "Garden of the Dragon" },
+	{ "sif_inspector",      "Health Inspector" },
+	{ "sif_potstick",       "Potsticker" },
+	{ "sif_service",        "Service with a Smile" },
 
 	// SpeedIF 14 Competition
 	{ "sif_halloweenzcode", "Hallowe'en" },
-	{ "sif_bbp", "The Blair Bee Project" },
-	{ "sif_pcontest", "The Pumpkin Contest" },
-	{ "sif_worm", "Worm" },
+	{ "sif_bbp",            "The Blair Bee Project" },
+	{ "sif_pcontest",       "The Pumpkin Contest" },
+	{ "sif_worm",           "Worm" },
 
 	// SpeedIF 15 Competition
-	{ "sif_assignment", "Assignment" },
-	{ "sif_basketdestiny", "Basket of Destiny" },
-	{ "sif_broken", "Help! My Vacuum Cleaner Is Broken" },
-	{ "sif_butler", "The Unfortunate Training of Frank Lee, Monkey Butler to Be" },
+	{ "sif_assignment",     "Assignment" },
+	{ "sif_basketdestiny",  "Basket of Destiny" },
+	{ "sif_broken",         "Help! My Vacuum Cleaner Is Broken" },
+	{ "sif_butler",         "The Unfortunate Training of Frank Lee, Monkey Butler to Be" },
 
 	// SpeedIF 16 Competition
-	{ "sif_agent", "Secret Agent" },
-	{ "sif_marie", "The Last Sonnet of Marie Antoinette" },
+	{ "sif_agent",          "Secret Agent" },
+	{ "sif_marie",          "The Last Sonnet of Marie Antoinette" },
 
 	// SpeedIF 17 Competition
-	{ "sif_2604", "2604" },
-	{ "sif_roof", "A Stroll on the Roof" },
-	{ "sif_123102", "December 31, 2002" },
-	{ "sif_speedif17", "Tooth Ow Zunden Too" },
+	{ "sif_2604",           "2604" },
+	{ "sif_roof",           "A Stroll on the Roof" },
+	{ "sif_123102",         "December 31, 2002" },
+	{ "sif_speedif17",      "Tooth Ow Zunden Too" },
 
 	// SpeedIF 18 Competition
 	{ "sif_fishspaceships", "Fish and Spaceships" },
-	{ "sif_glossary", "Glossary" },
+	{ "sif_glossary",       "Glossary" },
 
 	// SpeedIF 19 Competition
-	{ "sif_98769765", "98769765" },
-	{ "sif_cheerup", "Cheer Up" },
-	{ "sif_darksoul", "Dark Soul" },
-	{ "sif_falling", "Falling Angel" },
-	{ "sif_speedif19", "SpeedIF 19" },
-	{ "sif_angelcurse", "The Angel Curse" },
-	{ "sif_upon", "Upwards and Onwards" },
+	{ "sif_98769765",       "98769765" },
+	{ "sif_cheerup",        "Cheer Up" },
+	{ "sif_darksoul",       "Dark Soul" },
+	{ "sif_falling",        "Falling Angel" },
+	{ "sif_speedif19",      "SpeedIF 19" },
+	{ "sif_angelcurse",     "The Angel Curse" },
+	{ "sif_upon",           "Upwards and Onwards" },
 
 	// SpeedIF 20 Competition
-	{ "sif_lrc", "Llangollen Rock City" },
-	{ "sif_sellout", "Sell-Out" },
+	{ "sif_lrc",            "Llangollen Rock City" },
+	{ "sif_sellout",        "Sell-Out" },
 
 	// SpeedIF -1 Competition
-	{ "sif_discord", "Discord" },
-	{ "sif_generic", "Generic Title" },
-	{ "sif_hankbuzzcrack", "Hank Buzzcrack Has a Job to Do, God Damn It" },
-	{ "sif_literacy", "Literacy" },
-	{ "sif_woodencat", "WOODEN CAT vs. ROBOT MONKEY" },
+	{ "sif_discord",        "Discord" },
+	{ "sif_generic",        "Generic Title" },
+	{ "sif_hankbuzzcrack",  "Hank Buzzcrack Has a Job to Do, God Damn It" },
+	{ "sif_literacy",       "Literacy" },
+	{ "sif_woodencat",      "WOODEN CAT vs. ROBOT MONKEY" },
 
 	// David Cornelson's "18th Anniversary SpeedIF Competition"
-	{ "sif_farout", "Far-Out Space Freaks" },
+	{ "sif_farout",         "Far-Out Space Freaks" },
 
 	// SpeedIF 2000 Competition
-	{ "sif_ritual", "The Great Ritual" },
+	{ "sif_ritual",         "The Great Ritual" },
 
 	// SpeedIF 2001 Competition
-	{ "sif_battleplanets", "Battle of the Planets" },
+	{ "sif_battleplanets",  "Battle of the Planets" },
 	{ "sif_destinychihuahua", "Destiny of the Chihuahua" },
-	{ "sif_infiltrt", "Infiltration on Io" },
-	{ "sif_inspiration", "Inspiration" },
-	{ "sif_moonjupiter", "Moon Over Jupiter" },
-	{ "sif_crescent", "The Crescent City at the Edge of Disaster" },
-	{ "sif_crouton", "The Crouton Caper" },
-	{ "sif_speedif17v1", "Tooth Ow Zunden Too" },
+	{ "sif_infiltrt",       "Infiltration on Io" },
+	{ "sif_inspiration",    "Inspiration" },
+	{ "sif_moonjupiter",    "Moon Over Jupiter" },
+	{ "sif_crescent",       "The Crescent City at the Edge of Disaster" },
+	{ "sif_crouton",        "The Crouton Caper" },
+	{ "sif_speedif17v1",    "Tooth Ow Zunden Too" },
 
 	// Eleventh Anniversary SpeedIF Competition
-	{ "sif_nqaa", "Not Quite an Anniversary" },
-	{ "sif_reptile", "Reptile" },
+	{ "sif_nqaa",           "Not Quite an Anniversary" },
+	{ "sif_reptile",        "Reptile" },
 	{ "sif_teachinghertodance", "Teaching Her to Dance" },
 
 	// Third Anniversary SpeedIF Competition
-	{ "sif_henry", "Finding Henry" },
+	{ "sif_henry",          "Finding Henry" },
 
 	// Fifth Anniversary SpeedIF Competition
-	{ "sif_coughcough", "**COUGH COUGH**" },
+	{ "sif_coughcough",     "**COUGH COUGH**" },
 
 	// SpeedIF Argonaut Competition
-	{ "sif_asciargo", "ASCII and the Argonauts" },
-	{ "sif_fleece", "Jason Finds Fleece" },
-	{ "sif_invisargo", "The Invisible Argonaut" },
+	{ "sif_asciargo",       "ASCII and the Argonauts" },
+	{ "sif_fleece",         "Jason Finds Fleece" },
+	{ "sif_invisargo",      "The Invisible Argonaut" },
 
 	// SpeedIF Autocratic Competition
-	{ "sif_toeing", "Toeing the Line" },
+	{ "sif_toeing",         "Toeing the Line" },
 
 	// SpeedIF Century Competition
-	{ "sif_mission", "Mission From Short" },
-	{ "sif_yaygames", "Yay Games" },
+	{ "sif_mission",        "Mission From Short" },
+	{ "sif_yaygames",       "Yay Games" },
 
 	// SpeedIF Copyright Competition
 	{ "sif_piratescaribou", "Pirates of the Caribou" },
 	{ "sif_sharingalltheway", "Sharing All the Way to the Bank" },
 
 	// SpeedIF Crinkle Cut Competition
-	{ "sif_travels", "The Travels of Fitzwilliam Pound" },
+	{ "sif_travels",        "The Travels of Fitzwilliam Pound" },
 
 	// Douglas Adams Tribute SpeedIF Competition
 	{ "sif_nightmilliways", "A Night at Milliways" },
-	{ "sif_deadlinebda", "Deadline, or, Being Douglas Adams" },
-	{ "sif_howmany", "How Many Roads Must a Man Walk Down?" },
-	{ "sif_minds", "The Death of Two Great Minds" },
-	{ "sif_sofa", "The Sofa at the End of the Universe" },
+	{ "sif_deadlinebda",    "Deadline, or, Being Douglas Adams" },
+	{ "sif_howmany",        "How Many Roads Must a Man Walk Down?" },
+	{ "sif_minds",          "The Death of Two Great Minds" },
+	{ "sif_sofa",           "The Sofa at the End of the Universe" },
 
 	// SpeedIF EXTREME Competition
-	{ "sif_andthen", "And Then is Heard no More" },
-	{ "sif_oth", "Oth." },
-	{ "sif_rjd", "Romeo, Juliet and the Dog" },
-	{ "sif_tightest", "Tightest" },
+	{ "sif_andthen",        "And Then is Heard no More" },
+	{ "sif_oth",            "Oth." },
+	{ "sif_rjd",            "Romeo, Juliet and the Dog" },
+	{ "sif_tightest",       "Tightest" },
 
 	// SpeedIF Gruff Competition
-	{ "sif_bronze", "Bronze, Inform 7 Demonstration Game" },
-	{ "sif_breath", "Deep Breathing" },
-	{ "sif_green", "Little Green Robbing Hood" },
-	{ "sif_gameiwrote", "This Is the Game That I Wrote" },
+	{ "sif_bronze",         "Bronze" },
+	{ "sif_breath",         "Deep Breathing" },
+	{ "sif_green",          "Little Green Robbing Hood" },
+	{ "sif_gameiwrote",     "This Is the Game That I Wrote" },
 
 	// SpeedIF Halloween 2002 Competition
-	{ "sif_losing", "Losing Your Step" },
+	{ "sif_losing",         "Losing Your Step" },
 	{ "sif_oldsherwoodcemetary", "The Old Sherwood Cemetary" },
 
 	// Jacqueline Lott's "Indigo New Language Speed IF competition"
-	{ "sif_hauntedhouse", "Haunted House" },
+	{ "sif_hauntedhouse",    "Haunted House" },
 
 	// SpeedIF Introcomp
-	{ "sif_holygoat", "AFGNCAAP - IF Agent! Todays Adventure: Holy Goat!" },
-	{ "sif_alcohol", "Alcohol Solves Everything" },
-	{ "sif_djibouti", "Djibouti Dirigible Discombobulation" },
-	{ "sif_faetttiw", "Fætt Tiw" },
+	{ "sif_holygoat",       "AFGNCAAP - IF Agent! Todays Adventure: Holy Goat!" },
+	{ "sif_alcohol",        "Alcohol Solves Everything" },
+	{ "sif_djibouti",       "Djibouti Dirigible Discombobulation" },
+	{ "sif_faetttiw",       "Fætt Tiw" },
 	{ "sif_velocitasfictus", "In Search of Velocitas Fictus" },
-	{ "sif_baptist", "The Twelve Heads of St. John the Baptist" },
-	{ "sif_zefrench", "Ze French Countryside Is Full of Fresh Air" },
+	{ "sif_baptist",        "The Twelve Heads of St. John the Baptist" },
+	{ "sif_zefrench",       "Ze French Countryside Is Full of Fresh Air" },
 
 	// SpeedIF Jacket Competition
-	{ "sif_shangri", "Shangri La" },
-	{ "sif_soulsrch", "Soul-Searching" },
-	{ "sif_circussadness", "The Circus of Sadness" },
-	{ "sif_count", "The Count of Monte Cristo" },
-	{ "sif_sewage", "Toxic Sewage (A (Love) Story)" },
+	{ "sif_shangri",        "Shangri La" },
+	{ "sif_soulsrch",       "Soul-Searching" },
+	{ "sif_circussadness",  "The Circus of Sadness" },
+	{ "sif_count",          "The Count of Monte Cristo" },
+	{ "sif_sewage",         "Toxic Sewage (A (Love) Story)" },
 
 	// SpeedIF Jacket 2 Competition
 	{ "sif_beinglittleguy", "Being the Little Guy" },
-	{ "sif_pirateninja", "Pirates and Ninjas and Aliens, Oh My!" },
-	{ "sif_body", "The Body" },
-	{ "sif_gwdmpete", "The President, The Democrats, and Smelly Pete" },
-	{ "sif_towerofbeef", "The Tower of Beef" },
-	{ "sif_travel", "Vacationing in Scotland" },
-	{ "sif_whatdreams", "What Dreams May Come" },
-	{ "sif_wormwood", "Wormwood Days II: The Aftermath" },
+	{ "sif_pirateninja",    "Pirates and Ninjas and Aliens, Oh My!" },
+	{ "sif_body",           "The Body" },
+	{ "sif_gwdmpete",       "The President, The Democrats, and Smelly Pete" },
+	{ "sif_towerofbeef",    "The Tower of Beef" },
+	{ "sif_travel",         "Vacationing in Scotland" },
+	{ "sif_whatdreams",     "What Dreams May Come" },
+	{ "sif_wormwood",       "Wormwood Days II: The Aftermath" },
 
 	// SpeedIF Jacket 3 Competition
-	{ "sif_fluid", "The Fluid of Life" },
-	{ "sif_hentai", "The Hentai Adventures of Captain Cumshot" },
-	{ "sif_upwards", "Upwards" },
+	{ "sif_fluid",          "The Fluid of Life" },
+	{ "sif_hentai",         "The Hentai Adventures of Captain Cumshot" },
+	{ "sif_upwards",        "Upwards" },
 
 	// SpeedIF Jacket 4 Competition
-	{ "sif_moondarkling", "Moondarkling: Elfboon" },
-	{ "sif_lachryma", "The Forests of Lachryma" },
-	{ "sif_gorilla", "The Man-Eating, Halitosic Gorilla of Brazil" },
-	{ "sif_oceantower", "Love, Hate and the Mysterious Ocean Tower" },
-	{ "sif_dreamtrap", "The Dream-Trap of Zzar" },
-	{ "sif_spectrum", "Spectrum" },
+	{ "sif_moondarkling",   "Moondarkling: Elfboon" },
+	{ "sif_lachryma",       "The Forests of Lachryma" },
+	{ "sif_gorilla",        "The Man-Eating, Halitosic Gorilla of Brazil" },
+	{ "sif_oceantower",     "Love, Hate and the Mysterious Ocean Tower" },
+	{ "sif_dreamtrap",      "The Dream-Trap of Zzar" },
+	{ "sif_spectrum",       "Spectrum" },
 	{ "sif_smoochiepoodle", "Smoochiepoodle and the Bastion of Science" },
 
 	// SpeedIF Let's Make A Nightmare Competition
-	{ "sif_sdoor", "Schrödinger's Door" },
+	{ "sif_sdoor",          "Schrödinger's Door" },
 
 	// SpeedIF Late! Competition
-	{ "sif_canape", "The Canapés of Death" },
-	{ "sif_lonestar", "The Lone Star Menáçe" },
+	{ "sif_canape",         "The Canapés of Death" },
+	{ "sif_lonestar",       "The Lone Star Menáçe" },
 
 	// SpeedIF Neologism Competition
-	{ "sif_minimumwage", "A Minimum Wage Job" },
-	{ "sif_almamater", "AlmaMater" },
-	{ "sif_hentai2", "Captain Cumshot’s Second Adventure: The Rim Job" },
-	{ "sif_definefar", "Define Far" },
-	{ "sif_expedition", "Expedition" },
-	{ "sif_speedifnockle", "Revenge of the Nockle : A Speed IF" },
+	{ "sif_minimumwage",    "A Minimum Wage Job" },
+	{ "sif_almamater",      "AlmaMater" },
+	{ "sif_hentai2",        "Captain Cumshot’s Second Adventure: The Rim Job" },
+	{ "sif_definefar",      "Define Far" },
+	{ "sif_expedition",     "Expedition" },
+	{ "sif_speedifnockle",  "Revenge of the Nockle : A Speed IF" },
 
 	// 2007 SpeedIF New Year's Speed Competition
-	{ "sif_nazimice", "Nazi Mice" },
-	{ "sif_notsameols", "Not the Same Old Lang Syne" },
-	{ "sif_shothitler", "The Day I Shot Hitler" },
-	{ "sif_newyearswar", "The War on New Year’s" },
+	{ "sif_nazimice",       "Nazi Mice" },
+	{ "sif_notsameols",     "Not the Same Old Lang Syne" },
+	{ "sif_shothitler",     "The Day I Shot Hitler" },
+	{ "sif_newyearswar",    "The War on New Year’s" },
 
 	// 2008 SpeedIF New Year's Speed Competition
-	{ "sif_leaptime", "Leap Time" },
-	{ "sif_mauled", "The Day I Mauled Mao!" },
-	{ "sif_escapist", "The Escapist" },
+	{ "sif_leaptime",       "Leap Time" },
+	{ "sif_mauled",         "The Day I Mauled Mao!" },
+	{ "sif_escapist",       "The Escapist" },
 
 	// 2009 SpeedIF New Year's Speed Competition
-	{ "sif_dullegriet", "Dulle Griet and the Antenorian Icebox" },
-	{ "sif_stabbed", "The Day I Stabbed Stalin" },
+	{ "sif_dullegriet",     "Dulle Griet and the Antenorian Icebox" },
+	{ "sif_stabbed",        "The Day I Stabbed Stalin" },
 
 	// 2013 SpeedIF New Year's Speed Competition
-	{ "sif_faithfulcompanionv2", "Faithful Companion" },
-	{ "sif_talemorning", "The Mundane Tale of the Morning After" },
+	{ "sif_faithfulcompv2", "Faithful Companion" },
+	{ "sif_talemorning",    "The Mundane Tale of the Morning After" },
 	{ "sif_thedayicameback", "The Day I Came Back" },
 	{ "sif_youhavetoputthebaby", "You Have to Put the Baby New Year in the Champagne Bottle" },
 
 	// 2014 SpeedIF New Year's Speed Competition
-	{ "sif_youwerehere", "You Were Here" },
+	{ "sif_youwerehere",    "You Were Here" },
 
 	// SpeedIF O Competition
-	{ "sif_speedo", "A SpeedIF O Entry" },
-	{ "sif_eschew", "Eschew As If You Were She" },
-	{ "sif_getting", "Getting to Know the General" },
-	{ "sif_astrology", "Practical Astrology" },
+	{ "sif_speedo",         "A SpeedIF O Entry" },
+	{ "sif_eschew",         "Eschew As If You Were She" },
+	{ "sif_getting",        "Getting to Know the General" },
+	{ "sif_astrology",      "Practical Astrology" },
 
 	// David Cornelson's "SpeedIF PAX East 2010"
-	{ "sif_wizshop", "A Wizard Goes Shopping" },
-	{ "sif_apoptosis", "Apoptosis" },
-	{ "sif_foodmagic", "Food Magic" },
+	{ "sif_wizshop",        "A Wizard Goes Shopping" },
+	{ "sif_apoptosis",      "Apoptosis" },
+	{ "sif_foodmagic",      "Food Magic" },
 	{ "sif_lobsteronaplane", "Lobsters on a Plane" },
-	{ "sif_mango", "Mango" },
-	{ "sif_midairmadness", "Midair Madness" },
-	{ "sif_paxeast", "PAX East 2010 Speed-IF" },
-	{ "sif_queuelty", "Queuelty" },
-	{ "sif_safehouse", "Safehouse" },
-	{ "sif_vortex2305", "Vortex 2305" },
+	{ "sif_mango",          "Mango" },
+	{ "sif_midairmadness",  "Midair Madness" },
+	{ "sif_paxeast",        "PAX East 2010 Speed-IF" },
+	{ "sif_queuelty",       "Queuelty" },
+	{ "sif_safehouse",      "Safehouse" },
+	{ "sif_vortex2305",     "Vortex 2305" },
 
 	// David Cornelson's "SpeedIF PAX East 2011"
-	{ "sif_scurvy", "A Scurvy of Wonders" },
+	{ "sif_scurvy",         "A Scurvy of Wonders" },
 	{ "sif_helpfulmanzcode", "A Shadow of Helpfulman" },
-	{ "sif_boredladders", "Bored Ladders" },
+	{ "sif_boredladders",   "Bored Ladders" },
 	{ "sif_brainnightguest", "Brain of the Night Guest" },
 	{ "sif_delusionsagain", "Delusions Again" },
-	{ "sif_diggingzcode", "Digging Time!" },
-	{ "sif_merk", "Merk" },
-	{ "sif_therighttool", "The Right Tool" },
+	{ "sif_diggingzcode",   "Digging Time!" },
+	{ "sif_merk",           "Merk" },
+	{ "sif_therighttool",   "The Right Tool" },
 
 	// SpeedIF Orange Competition
-	{ "sif_appall", "Appallatron: Annoyotron 3" },
-	{ "sif_descent", "Descent of Man" },
+	{ "sif_appall",         "Appallatron: Annoyotron 3" },
+	{ "sif_descent",        "Descent of Man" },
 
 	// Pi-Theta-Aleph-Parallax SpeedIF Competition
-	{ "sif_parallaxdream", "A Parallax Dream" },
-	{ "sif_pethertheta", "Peter Theta Fixes the Holodeck" },
-	{ "sif_putiap", "Pick Up the IF-Archive and Pi" },
-	{ "sif_squeaky", "Squeaky on the Moon" },
-	{ "sif_ptap", "The Grade 3 Parallax" },
-	{ "sif_moonbar", "The Parallax Moon Bar Conspiracy" },
-	{ "sif_thpoint", "The Theta Point" },
+	{ "sif_parallaxdream",  "A Parallax Dream" },
+	{ "sif_pethertheta",    "Peter Theta Fixes the Holodeck" },
+	{ "sif_putiap",         "Pick Up the IF-Archive and Pi" },
+	{ "sif_squeaky",        "Squeaky on the Moon" },
+	{ "sif_ptap",           "The Grade 3 Parallax" },
+	{ "sif_moonbar",        "The Parallax Moon Bar Conspiracy" },
+	{ "sif_thpoint",        "The Theta Point" },
 
 	// 2011 New Year's Speed IF - The penultimate not numbered New Year's Speed IF Competition
-	{ "sif_beingendbeg", "Being the Ending of the Beginning" },
-	{ "sif_birthmind", "Birth of Mind" },
-	{ "sif_dashslapney", "Dash Slapney, Patrol Leader" },
-	{ "sif_postchrist", "Post-Christmas Letdown" },
-	{ "sif_ragnarok", "Ragnarok: Twilight of the Gods" },
-	{ "sif_stupidcreek", "Stupid Creek. Stupid Christmas" },
-	{ "sif_savedelvis", "The Day I Saved Elvis" },
-	{ "sif_silencegods", "The Silence of the Gods" },
-	{ "sif_threemore", "Three More Visitors" },
+	{ "sif_beingendbeg",    "Being the Ending of the Beginning" },
+	{ "sif_birthmind",      "Birth of Mind" },
+	{ "sif_dashslapney",    "Dash Slapney, Patrol Leader" },
+	{ "sif_postchrist",     "Post-Christmas Letdown" },
+	{ "sif_ragnarok",       "Ragnarok: Twilight of the Gods" },
+	{ "sif_stupidcreek",    "Stupid Creek. Stupid Christmas" },
+	{ "sif_savedelvis",     "The Day I Saved Elvis" },
+	{ "sif_silencegods",    "The Silence of the Gods" },
+	{ "sif_threemore",      "Three More Visitors" },
 
 	// `R*IF` Spam SpeedIF Competition
-	{ "sif_htp", "HTP" },
+	{ "sif_htp",            "HTP" },
 
 	// SpeedIF Scenario 1 Competition
-	{ "sif_stars", "The Stars Are Right" },
+	{ "sif_stars",          "The Stars Are Right" },
 
 	// SpeedIF SchmeedIF Competition
-	{ "sif_floyd", "Floyd" },
+	{ "sif_floyd",          "Floyd" },
 
 	// SpeedIF Spring Competition
-	{ "sif_exterminate", "Exterminate!" },
-	{ "sif_gardening", "Gardening for Beginners" },
-	{ "sif_springclean", "Spring Cleaning" },
+	{ "sif_exterminate",    "Exterminate!" },
+	{ "sif_gardening",      "Gardening for Beginners" },
+	{ "sif_springclean",    "Spring Cleaning" },
 
 	// SpeedIF That Dare Not Speak Its Number Competition
-	{ "sif_soitgoes", "And So It Goes" },
-	{ "sif_antioch", "Jobs for Antioch!" },
-	{ "sif_twilightzcode", "Twilight of the Dogs" },
+	{ "sif_soitgoes",       "And So It Goes" },
+	{ "sif_antioch",        "Jobs for Antioch!" },
+	{ "sif_twilightzcode",  "Twilight of the Dogs" },
 
 	// SpeedIF Thanksgiving Competition
-	{ "sif_dragonflies", "Dragon Flies Like Labradorite" },
-	{ "sif_crystalpalace", "The Crystal Palace" },
+	{ "sif_dragonflies",    "Dragon Flies Like Labradorite" },
+	{ "sif_crystalpalace",  "The Crystal Palace" },
 	{ "sif_extraordinaryevents", "The Extraordinary Events of the Last Day of Professor Mangleworth" },
-	{ "sif_youareaturkey", "You Are a Turkey!" },
+	{ "sif_youareaturkey",  "You Are a Turkey!" },
 
 	// SpeedIF ToasterComp II Competition
-	{ "sif_stolen", "A Monkey Stole Your Toast!" },
-	{ "sif_needmoretoast", "Need! More! Toast!" },
-	{ "sif_samurai", "Samurai Tea Room" },
-	{ "sif_toastless", "The Epitome of Toastlessness" },
+	{ "sif_stolen",         "A Monkey Stole Your Toast!" },
+	{ "sif_needmoretoast",  "Need! More! Toast!" },
+	{ "sif_samurai",        "Samurai Tea Room" },
+	{ "sif_toastless",      "The Epitome of Toastlessness" },
 
 	// SpeedIF U Competition
-	{ "sif_cheatingdeath", "Cheating Death" },
-	{ "sif_rrr", "Reality Railroad" },
+	{ "sif_cheatingdeath",  "Cheating Death" },
+	{ "sif_rrr",            "Reality Railroad" },
 
 	// Ultimate not numbered New Year's Speed IF Competition
-	{ "sif_shortof", "Short of Sushi" },
+	{ "sif_shortof",        "Short of Sushi" },
 	{ "sif_disenchantmentbay", "Disenchantment Bay" },
-	{ "sif_thedayidied", "The Day I Died" },
+	{ "sif_thedayidied",    "The Day I Died" },
 
 	// SpeedIF Without Number Competition
-	{ "sif_sushi", "A Day For Fresh Sushi" },
-	{ "sif_anotherday", "Another Day, Another Sea Monster" },
-	{ "sif_lobster", "The Lobster" },
-	{ "sif_grape", "Triumphant Return of the Evil Sea Grape" },
+	{ "sif_sushi",          "A Day For Fresh Sushi" },
+	{ "sif_anotherday",     "Another Day, Another Sea Monster" },
+	{ "sif_lobster",        "The Lobster" },
+	{ "sif_grape",          "Triumphant Return of the Evil Sea Grape" },
 
 	// SpeedIF XYZZY Competition
-	{ "sif_nightxyzzyes", "A Night at the XYZZYies" },
-	{ "sif_behold", "Behold!" },
-	{ "sif_tragedy", "Tragedy Strikes at the XYZZY Awards!" },
+	{ "sif_nightxyzzyes",   "A Night at the XYZZYies" },
+	{ "sif_behold",         "Behold!" },
+	{ "sif_tragedy",        "Tragedy Strikes at the XYZZY Awards!" },
 
 	// SpeedIF Y Competition
 	{ "sif_bananapocalaypse", "Banana Apocalypse and the Rocket Pants of Destiny" },
-	{ "sif_barton", "Barton" },
-	{ "sif_bearsx3", "Bears, Bears, Bears" },
-	{ "sif_flexible", "Flexible Pants" },
-	{ "sif_pantsrun", "Pants on the Run" },
-	{ "sif_tripbeer", "Triple Bear Beer" },
+	{ "sif_barton",         "Barton" },
+	{ "sif_bearsx3",        "Bears, Bears, Bears" },
+	{ "sif_flexible",       "Flexible Pants" },
+	{ "sif_pantsrun",       "Pants on the Run" },
+	{ "sif_tripbeer",       "Triple Bear Beer" },
 
 	// SpeedIF y=1/x Competition
-	{ "sif_perfectday", "A Perfect Day for Candiru" },
-	{ "sif_apocolyptica", "Apocolyptica" },
+	{ "sif_perfectday",     "A Perfect Day for Candiru" },
+	{ "sif_apocolyptica",   "Apocolyptica" },
 
 	// SpeedIF Zombie Competition
-	{ "sif_speedifzombie", "SpeedIF Zombie" },
+	{ "sif_speedifzombie",  "SpeedIF Zombie" },
 
 	// Bouchercomp SpeedIF Competition
-	{ "sif_lowellzcode", "Lowell’s Paradise" },
-	{ "sif_putpbad", "Pick Up the Pine Box and Die" },
-	{ "sif_seekingsolace", "Seeking Solace" },
-	{ "sif_wideopengate", "The Wide-Open Gate" },
+	{ "sif_lowellzcode",    "Lowell’s Paradise" },
+	{ "sif_putpbad",        "Pick Up the Pine Box and Die" },
+	{ "sif_seekingsolace",  "Seeking Solace" },
+	{ "sif_wideopengate",   "The Wide-Open Gate" },
 
 	// Emily Short's "Swash Comp"
-	{ "swa_seacaptains", "Sea Captains" },
+	{ "swa_seacaptains",    "Sea Captains" },
 
 	// Mark Musante's "Toaster Competition"
-	{ "toa_burnttoast", "Burnt Toast" },
+	{ "toa_burnttoast",     "Burnt Toast" },
 	{ "toa_friarbaconstreet", "Friar Bacon's Secret" },
-	{ "toa_gottoast", "Got Toast?" },
+	{ "toa_gottoast",       "Got Toast?" },
 	{ "toa_spittingcrumbs", "Spitting Crumbs" },
 	{ "toa_shrinkingwoman", "The Incredible Shrinking Woman, Too!" },
-	{ "toa_tommytoaster", "Tommy the Toaster" },
+	{ "toa_tommytoaster",   "Tommy the Toaster" },
 
 	// Jack Welch's "TWIFcomp"
-	{ "twif_putpbat", "Putpbat" },
-	{ "twif_sin1", "Sin 1" },
-	{ "twif_sin2", "Sin 2" },
-	{ "twif_sin3", "Sin 3" },
-	{ "twif_sin4", "Sin 4" },
-	{ "twif_sin5", "Sin 5" },
-	{ "twif_sin6", "Sin 6" },
-	{ "twif_sin7", "Sin 7" },
-	{ "twif_sin8", "Sin 8" },
-	{ "twif_war", "War" },
+	{ "twif_putpbat",       "Putpbat" },
+	{ "twif_sin1",          "Sin 1" },
+	{ "twif_sin2",          "Sin 2" },
+	{ "twif_sin3",          "Sin 3" },
+	{ "twif_sin4",          "Sin 4" },
+	{ "twif_sin5",          "Sin 5" },
+	{ "twif_sin6",          "Sin 6" },
+	{ "twif_sin7",          "Sin 7" },
+	{ "twif_sin8",          "Sin 8" },
+	{ "twif_war",           "War" },
 
 	// Emily Short's "Walkthrough Competition"
-	{ "wlk_wtf", "A Walk Through Forever" },
-	{ "wlk_dreams", "Dreams Run Solid" },
-	{ "wlk_fit", "Fit for a Queen" },
-	{ "wlk_jigsaw2", "Jigsaw 2" },
-	{ "wlk_exile", "Twilight in the Garden of Exile" },
+	{ "wlk_wtf",            "A Walk Through Forever" },
+	{ "wlk_dreams",         "Dreams Run Solid" },
+	{ "wlk_fit",            "Fit for a Queen" },
+	{ "wlk_jigsaw2",        "Jigsaw 2" },
+	{ "wlk_exile",          "Twilight in the Garden of Exile" },
 
 	//  David A. Cornelson's "1999 XComp"
-	{ "xco_sixfoot", "The Six-Foot-Tall Man-Eating Chicken" },
+	{ "xco_sixfoot",        "The Six-Foot-Tall Man-Eating Chicken" },
 
 	// Danish games
 	{ "nissen", "Pa Loftet Sidder Nissen" },
@@ -2586,8 +2586,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "aldila", "Beyond" },
 	{ "armando", "L'Armando" },
 	{ "ayon", "Nel Mondo di Ayon" },
-	{ "darkiss1ita", "Darkiss! Il bacio del Vampiro I: Il Risveglio" },
-	{ "darkiss2ita", "Darkiss! Il bacio del Vampiro II: Viaggio all'Inferno" },
+	{ "darkiss1ita", "Darkiss! Il bacio del Vampiro - Capitolo 1: Il Risveglio" },
+	{ "darkiss2ita", "Darkiss! Il bacio del Vampiro - Capitolo 2: Viaggio all'Inferno" },
 	{ "filamit", "Filaments" },
 	{ "flamel", "Flamel" },
 	{ "giardino", "Il Giardino Incantato" },
@@ -2722,7 +2722,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "olvido", "Olvido Mortal" },
 	{ "osito", "La Intrepida Noche del Osito" },
 	{ "paee", "Paee" },
-	{ "panajo", "Pan de Ajo, by Incanus" },
+	{ "panajo", "Pan de Ajo (by Incanus)" },
 	{ "panico", "Pánico a la Caída" },
 	{ "papi", "Papi, ¡Cómprame una PlayStation" },
 	{ "paraiso", "Llave Hacia el Paraíso" },
@@ -3721,7 +3721,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("acrobat", "090111", "adaf3516d405d7dc65cbff1986f41af2", 2068718),
 	ENTRY0("acrossstars", "100329", "ef910f930a01ac4d24051b8fce549180", 524288),
 	ENTRY0("acrossstarsclues", "100213", "d23e9bf6019f212ff324f4595f8b6177", 122880),
-	ENTRY0("acrossthestarshints", "070929", "32904e85480632a1764f4654b8f561f6", 121344),
+	ENTRY0("acrossstarshints", "070929", "32904e85480632a1764f4654b8f561f6", 121344),
 	ENTRY0("addendum", "080611", "e6ec3704b04d638f53aaf5f082efb424", 199420),
 	ENTRY0("adv", "150118", "c776a1a9a8122967160fb51a39485113", 431616),
 	ENTRY0("adv350", "011123", "5d4867b23e904d22453f031c87d6dcf0", 118272),
@@ -3762,7 +3762,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("anotherterminal", "110724", "4ecb1f83a4ba8b797488bc32025a5bde", 324588),
 	ENTRY0("aotyrz", "060825", "d9264cedc9cb438eedf67f611dbdbb3e", 159232),
 	ENTRY0("aphasiaquest", "150426", "ee480b0a0983e636649777a745a8f6f0", 233896),
-	ENTRY0("apollo11zcode", "080712", "00fa17987dec69c1b1a3927b23aeffd9", 150400),
+	ENTRY0("apollo11z", "080712", "00fa17987dec69c1b1a3927b23aeffd9", 150400),
 	ENTRY0("appall", "020422", "3c33d5639fa341829dde7c4b9b1875fd", 52736),
 	ENTRY0("arc3h", "201129", "b01104b86019675398ec40d44b24a3bb", 52224),
 	ENTRY0("argument", "170327", "7acb2206d9ca8afcc734e2c6dc7ef782", 330198),
@@ -3780,7 +3780,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("awitl", "980215", "8cf72be55d75137cc435ab25f479c123", 56320),
 	ENTRY0("ayac", "010107", "b503a9f2817ce97480160e454e470c58", 68608),
 	ENTRY0("azteca", "070117", "e30320818aa935f1bff66fcaa862fd9f", 123904),
-	ENTRY0("b2demo", "961017", "28d166262aa22fb55fdb9685a5a124ef", 65024),
+	ENTRY0("b2demo", "961017/Demo", "28d166262aa22fb55fdb9685a5a124ef", 65024),
 	ENTRY0("b7snare", "150118", "5e1057596f6fe7d0efb100f80ae65f27", 284672),
 	ENTRY0("babytree", "120512", "79e230657b07b2e8fa45ffbe4635d03f", 294352),
 	ENTRY0("backtowakeup", "080313", "73ada6a69651bea315206d7994164b95", 640246),
@@ -3801,10 +3801,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("bedtime", "120324", "2a39f06bdad42384b026059d690cd779", 260120),
 	ENTRY0("beginning", "200714", "557d3dccf7eb0bc223935f45a6d2f77a", 87552),
 	ENTRY0("beingsteve", "060519", "a446f37fcd5945428797573295acbe03", 124810),
-	ENTRY0("beneathatransformation", "080107", "8e53f4d65b0b68ef92fb2fbd3592dcc5", 176128),
+	ENTRY0("beneathtransform", "080107", "8e53f4d65b0b68ef92fb2fbd3592dcc5", 176128),
 	ENTRY0("beyond", "100115", "61bd0b7eae9e81c7d01496d623a497e1", 336982),
 	ENTRY0("beyond", "210810", "099c2b33efce521b811f3dc5287dc5e8", 336752),
-	ENTRY0("bibleretoldbreadfishes", "102283", "158f9c1818f7a80607a3b8281a9bc140", 169472),
+	ENTRY0("bibleretold1", "102283", "158f9c1818f7a80607a3b8281a9bc140", 169472),
 	ENTRY0("bicon", "101006", "2f2d993faf161318c4b4c5ee0957e288", 366836),
 	ENTRY0("bignose", "220405", "83c13edb932c08753e0ffc98c1ed47d0", 316392),
 	ENTRY0("biscuit", "010310", "e4d8262dbeeab8e340e522e5cef740a8", 137728),
@@ -3838,7 +3838,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("burnsnightsupper", "120124", "a1153aab71b7a3bc4bd1aa056f3145e8", 251342),
 	ENTRY0("busted", "941223", "e164cfeed308fd25bc102a18b3c8f15c", 82944),
 	ENTRY0("byod", "200928", "90b19dc00264bc1ae97c1338d5ea0bca", 549618),
-	ENTRY0("byzantineperspective", "091119", "61dcb1e79885f76f9f5f5c62ce2c7e8d", 1727208),
+	ENTRY0("byzantineperspect", "091119", "61dcb1e79885f76f9f5f5c62ce2c7e8d", 1727208),
 	ENTRY0("cabal", "041127", "b8f7f30bef898f4ed1814b0094c40b1e", 178176),
 	ENTRY0("cacharensdilemma", "090526", "dd1531291506c98fa2e3f6ab25314a67", 346112),
 	ENTRY0("cacophony", "091209", "a612e786ee256ecf14580bd7e922b27a", 364032),
@@ -3866,7 +3866,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cavetrip", "041225", "5f0668876d3f8b03e62bd53d3ab276f3", 117760),
 	ENTRY0("ccake", "000311", "2f0745fb253ef799472afb4e7e7f13a9", 80384),
 	ENTRY0("cco", "220331", "214207a5cbdf28bc45cb2de95c059d29", 51200),
-	ENTRY0("cenricfamilycurse", "131218", "4fa3db6430e3a54f88962a75857ebb2f", 289096),
+	ENTRY0("cenriccurse", "131218", "4fa3db6430e3a54f88962a75857ebb2f", 289096),
 	ENTRY0("chaos", "090801", "ede5478e9a87906205d784181b33e8aa", 96768),
 	ENTRY0("charactercreation", "141030", "a78d006b26941821fb9b2f8f32ebdf7c", 227840),
 	ENTRY0("chaosgame", "090526", "0b902ce73efd76e5c57230a25e27f364", 176004),
@@ -3914,7 +3914,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("crabhat", "130216", "c7ccd1b68fd860cbaec5ee721e0a06e4", 154112),
 	ENTRY0("craverlyheights", "140414", "91e0e3f0e2a6393c7674f5cd3ddf3c52", 264192),
 	ENTRY0("crazydiaper", "120430", "16f632238939474b22c96b3ec19b5f84", 220748),
-	ENTRY0("creepydemo", "100317", "e211ed2eef47d78f72330d98e0f9503f", 150016),
+	ENTRY0("creepydemo", "100317/Demo", "e211ed2eef47d78f72330d98e0f9503f", 150016),
 	ENTRY0("crimescene", "130123", "508196f1cd974f789fdc2af69767a1d1", 320916),
 	ENTRY0("criticalbreach", "130817", "348fc7ef47cab92d0b7f286da3c3ab90", 268800),
 	ENTRY0("crobe", "111115", "d8b138a87f6226b8283c33c50c6f254c", 92160),
@@ -4000,7 +4000,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("elephants1", "120407", "c2594ae4986d460f5f47ec38d3759a24", 151040),
 	ENTRY0("elephants2", "120407", "70263b9eee2e0c03111c3ebc529de760", 156672),
 	ENTRY0("elephants3", "120409", "6e9cbdf3128079d42abef931964ed835", 236032),
-	ENTRY0("elephantsconclusion", "120409", "7bd2a483fa9a0338260273b813266f68", 157696),
+	ENTRY0("elephantsdecision", "120409", "7bd2a483fa9a0338260273b813266f68", 157696),
 	ENTRY0("elephantsde", "120501", "3c939fe13cc217530fd1db46841d41c7", 152576),
 	ENTRY0("elephantsafterlife", "000729", "4de2b50d8f115693a1cfb3a17de51463", 53760),
 	ENTRY0("eleven", "001231", "a573abd0e05318d72502e2ff3b48f5fa", 214528),
@@ -4022,8 +4022,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("escape", "130210", "988b6899f8d3c9bc4bbd3153ce1ab31f", 275358),
 	ENTRY0("escaperemember", "060705", "57b062c6f3e42cac8cb0775265c33c42", 284810),
 	ENTRY0("eto", "040123", "3ac8b0a5ee2f69c86a34008f92da2c13", 74752),
-	ENTRY0("everydaythesamedream", "100619", "0c4486b71b7a19e2220c85e055caf43f", 163840),
-	ENTRY0("extremeomnivore", "190928", "e7a93522643ad1e1921fb13046ccc620", 428066),
+	ENTRY0("everydaysamedream", "100619", "0c4486b71b7a19e2220c85e055caf43f", 163840),
+	ENTRY0("extromnivore", "190928", "e7a93522643ad1e1921fb13046ccc620", 428066),
 	ENTRY0("eurydice", "121206", "1f4112cdff2e5c924e54bfe06181ff49", 845206),
 	ENTRY0("f209", "970806", "98d739b8f6f5df78cbdc338dd50f89c5", 56832),
 	ENTRY0("fable", "000715", "603d4573ad89adabb7bf8d0b031705c0", 95744),
@@ -4032,7 +4032,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("faetttiw", "070825", "2c4c1da83791e33977b6cd355a40001c", 149768),
 	ENTRY0("failsafe", "001218", "05293830576ae81e9a61f38cab731d38", 78336),
 	ENTRY0("fairyland", "190815", "b2dbb1186a00f46f7029df2278c7591a", 163328),
-	ENTRY0("faithfulcompanion", "131031", "eea6302f434a68e7951ced18b385e2a2", 311716),
+	ENTRY0("faithfulcomp", "131031", "eea6302f434a68e7951ced18b385e2a2", 311716),
 	ENTRY0("fajfeta", "020101", "284de92bd57df8398562dd2c659fef35", 51712),
 	ENTRY0("fallingpieces", "180713", "6493ae5c940165d185ac17e2efce4eaa", 45056),
 	ENTRY0("fantasydimension", "230313", "2281e7a74333a7730ac44fd233d4f9b3", 60416),
@@ -4062,7 +4062,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("fmvpoker", "000913", "3f4ee585aa91660d5483ef2f132fb1d3", 19456),
 	ENTRY0("fmvpoker", "001227", "0d7bec942838ba2d42af2f836e2a8fc5", 24064),
 	ENTRY0("forachange", "990930", "6cd6f17ea26ed42d56afc367b90de115", 91648),
-	ENTRY0("forestdemo", "121216", "f629bfa6755cd36f45dbc3fe12b97936", 243130),
+	ENTRY0("forestdemo", "121216/Demo", "f629bfa6755cd36f45dbc3fe12b97936", 243130),
 	ENTRY0("forgottengirls", "120817", "421e83ead89a7a0f2fd05791f9b87db7", 410034),
 	ENTRY0("fork", "071205", "cc07f97369a7f20da06eabf4fa8f2e4a", 201728),
 	ENTRY0("forms", "970206", "7de27dd6539ed6ef1c6176ab030510dd", 91136),
@@ -4155,7 +4155,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("homecoming", "140903", "b3987678e4d9fcc95fa9718c3f9ce7a8", 1089176),
 	ENTRY0("hoosegow", "130320", "5d8d2858bb803b227ac923a654dd367c", 2024678),
 	ENTRY0("horatio", "120430", "374c64e310683d236e050d9700a1cd16", 249942),
-	ENTRY0("horriblepyramid", "131201", "b3dfa0f543f7ca3343ca62cc5ec7847f", 365004),
+	ENTRY0("horriblepyra", "131201", "b3dfa0f543f7ca3343ca62cc5ec7847f", 365004),
 	ENTRY0("hors", "071125", "9f08fc42729ab3b74f82c0536605d5e6", 95232),
 	ENTRY0("house", "070714", "4b146b3d5b81a3b3359ed3f3059910ab", 468830),
 	ENTRY0("housedream", "071204", "64709099677209a81c9edd196ef3e266", 312320),
@@ -4179,6 +4179,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ifwhispers5", "120312", "ebdd62f2484dc87955055cb1093d9359", 326144),
 	ENTRY0("ill", "000218", "34f194a208f828c4c77d3954082d75a7", 73216),
 	ENTRY0("imiagination", "110608", "df766ac578a86f0b9d7231bddac5b09b", 252886),
+	ENTRY0("impossiblestairs", "220706", "ab5d27c9b35e52e34e2c5300680e7aa7", 243320),
 	ENTRY0("inamanor", "180117", "65b795d35855bb12e8914eeedd522c2c", 506996),
 	ENTRY0("inevita", "030428", "6152b19bbf3eb3dd4334004e7094dbe8", 213504),
 	ENTRY0("informatory", "981211", "c9eb276f103f83b8e7044c1f3930264b", 141312),
@@ -4303,7 +4304,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("mountain", "030317", "b84bb15597f7aa53ae407e2d996c0c6c", 103424),
 	ENTRY0("mousequest", "100509", "2993b235743e6a6a4d69063e80c187d9", 325062),
 	ENTRY0("mrp", "140620", "974627f05fc3e1c2260925a78171d73a", 175288),
-	ENTRY0("mrscrabtreesgeographyclass", "130225", "3ce7aebc7cdad846e1bdc8f46823f4b3", 235520),
+	ENTRY0("mrscrabtree", "130225", "3ce7aebc7cdad846e1bdc8f46823f4b3", 235520),
 	ENTRY0("mst3k1", "000715", "0a0748937d23bf380cd139de874df32d", 141312),
 	ENTRY0("mst3k1", "960831", "362107be49493f6ed1ca7664d7884a66", 105984),
 	ENTRY0("mst3k2", "000715", "cf16a0b763735b06cebef3cd5fdf2c78", 121344),
@@ -4346,7 +4347,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("nudistsgonewild", "120425", "5f98bc9a14ff9a8c2cabd78238fafcb3", 180224),
 	ENTRY0("oad", "000913", "c4d1e88c95803bb9ae0e669c575feb67", 78336),
 	ENTRY0("oceantower", "110510", "27e6ac7767ac9dfe5f0082765f6a21b7", 306962),
-	ENTRY0("odieus", "941021", "b75120eda34c37c87201405426329892", 50176),
+	ENTRY0("odieus", "941021/Beta", "b75120eda34c37c87201405426329892", 50176),
 	ENTRY0("ogisoas", "101102", "673a5bb3476d15e3d54ddba3176d9568", 155648),
 	ENTRY0("omniquest", "040127", "6d246b048e071dca1c2f47e64e76f10d", 95744),
 	ENTRY0("once", "980324", "4ef97819cbc6adab0487ca1256ee6ddf", 55296),
@@ -4385,7 +4386,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("phlegm", "970804", "2f6f7667a3c2782aa0f24eeef7c7fec0", 70656),
 	ENTRY0("phobias", "211121", "95e7a65e33211b7d4699740e5d35a470", 48640),
 	ENTRY0("phoenix", "080430", "d0c50e5cff1098009fbb9f893e7dc75e", 890884),
-	ENTRY0("photographportrait", "040827", "0949e8e4d3e1e035913fc75112f40459", 264012),
+	ENTRY0("photograph", "040827", "0949e8e4d3e1e035913fc75112f40459", 264012),
 	ENTRY0("photopia", "120416", "3e9ea30956eb3e9494e6e5d9881a1307", 239616),
 	ENTRY0("photopia", "981223", "7c86e1a9aa2cf27b16b7b60e30d5b584", 194048),
 	ENTRY0("photopia", "980914", "e07246e6a3961b7905e927dc5afe9601", 187904),
@@ -4488,7 +4489,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sherlock4", "021231", "7b231c7acafc9a4959c859b68578d528", 217600),
 	ENTRY0("dayishothitler", "081206", "2bb145727b016ab76c35acfae729293e", 175616),
 	ENTRY0("shrapnel", "000212", "cce4edfddaa7ce948cacdb0fde52fb2d", 98304),
-	ENTRY0("siliconcastles", "011119", "51d94f5e8684cae443e28c16e3e04fea", 211456),
+	ENTRY0("siliconcastle", "011119", "51d94f5e8684cae443e28c16e3e04fea", 211456),
 	ENTRY0("simpletheft2", "110601", "21c13d6583c2ce9714e9bdc31adcab82", 357818),
 	ENTRY0("sixgrayrats", "150331", "1a2b10729ebb83a08a38f0c80020a34d", 428544),
 	ENTRY0("sixgrayrats", "150214", "822ebf1958e10ee5a9ba779a1edb0842", 427520),
@@ -4591,8 +4592,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("thegrandquest", "091209", "3fd8b15a0282e9eb9ef642776bbd916e", 181760),
 	ENTRY0("thegrandtour", "190512", "d651655f0500e4f6997599d25bd23c2a", 159232),
 	ENTRY0("thegreat", "010902", "285ad766a386886e814e6c22ed990a7f", 91648),
-	ENTRY0("theimpossiblestairs", "220706", "ab5d27c9b35e52e34e2c5300680e7aa7", 243320),
-	ENTRY0("theimpossiblestairs", "220706", "ab5d27c9b35e52e34e2c5300680e7aa7", 243320),
 	ENTRY0("theinvestment", "200916", "d2375e3e699726214174dfe656894a02", 34664),
 	ENTRY0("thejob", "210608", "dc2167b524b00040e7540251b1eec08d", 44032),
 	ENTRY0("thejob", "210930/z5", "4714cd741c5f5be68f1dece71361e11e", 44032),
@@ -4622,8 +4621,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("toxinx", "110519", "2223181742216f1c1bb74bca88dda729", 200704),
 	ENTRY0("trampelviecher", "090611", "4d7871da10dd418a9b4ed3e00fab97c9", 207360),
 	ENTRY0("trapped", "110413", "b05f8909d1bbedb97f6c50eac19d6b2a", 254362),
-	ENTRY0("tristamisland", "Demo/200925", "6fc31da7d0afb034f05b12da56d075a8", 56320),
-	ENTRY0("tristamisland", "Demo/220107", "a0b1f6d3aa9167bb2c8039fe9e4c69c0", 56832),
+	ENTRY0("tristamisland", "200925/Demo", "6fc31da7d0afb034f05b12da56d075a8", 56320),
+	ENTRY0("tristamisland", "220107/Demo", "a0b1f6d3aa9167bb2c8039fe9e4c69c0", 56832),
 	ENTRY0("troll", "980518", "3e0f69e678dd289cd32bf41b2be58bd6", 64000),
 	ENTRY0("trunspecified", "101224", "cc1ee9ddc4b64f0e5a2b6b91bcf8f363", 273920),
 	ENTRY0("trw", "021229", "1fdb2baeefcabb635ddbbb3433b1b125", 126464),
@@ -4637,7 +4636,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("tuuli", "r3/180501", "0ee525701efafda124902b1b26f84bdf", 611734),
 	ENTRY0("txtadv", "051019", "c8bae5d42c33802db953d2ffb45216b0", 86016),
 	ENTRY0("typo", "041119", "549875ea83b4230896fa7d3fa18ba0a3", 100864),
-	ENTRY0("uhohdemo", "980218", "4e8b90354c96760f36bfbfa2ba4fc04c", 176640),
+	ENTRY0("uhohdemo", "980218/Demo", "4e8b90354c96760f36bfbfa2ba4fc04c", 176640),
 	ENTRY0("umw", "201215", "24c7e6f775b9c10d9579f2a77be872fd", 167936),
 	ENTRY0("uxmulbrufyuz", "171029", "85ee9e7844c6be74b26c1707255f110a", 236760),
 	ENTRY0("underdoos", "970329", "3ef9b348b4223b901bdfacb854fee16e", 58880),
@@ -4695,7 +4694,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("wernersquest3", "200213", "24dbc99bf6bc085ec6e91be050a3156a", 55368),
 	ENTRY0("wernersquest4", "020225", "2098db329eff1b0d1cad56f89bd38723", 52736),
 	ENTRY0("wernersquest4", "200213", "df9b7d3fba29b450fb4d666130693cdd", 56220),
-	ENTRY0("whenhelpcollides", "030208", "2185bd75e8cc26ac7773effc300ec210", 286720),
+	ENTRY0("whenhelp", "030208", "2185bd75e8cc26ac7773effc300ec210", 286720),
 	ENTRY0("whispers", "050905", "4cbba9cf2b5bce84ccef8e40482ef230", 205824),
 	ENTRY0("whispers", "050926", "360c24ec5c47ced2b03ce38c6e4e2e8d", 177152),
 	ENTRY0("whoahcubswoe", "181030", "fb9e91fc58040e4ec2871b35e3194746", 244006),
@@ -4703,7 +4702,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("williamtell", "021025", "4f098036ffdc7463000c4f81b6300123", 68096),
 	ENTRY0("winchester", "020131", "9abc235bc791a3f38ee81aa6496112d0", 293888),
 	ENTRY0("windhall", "960828", "eced9e2a38a5b694ceab8ffa4c120b90", 320000),
-	ENTRY0("winterwonderland", "030227", "0994f3c477e8e221d9c70df72fb936df", 194560),
+	ENTRY0("winterwonder", "030227", "0994f3c477e8e221d9c70df72fb936df", 194560),
 	ENTRY0("wir1", "060503", "f9b1425b5c55f1b3f3caa50a7963be17", 652866),
 	ENTRY0("wir1", "100530", "b74d7ef62857dda75b7f233d313bc734", 673026),
 	ENTRY0("wir2", "060503", "c64dfefbc7a320126342f6a522a3b8bd", 514520),
@@ -4724,13 +4723,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("yakshaving", "210311", "388cf2afe8648e481b292ef435b099c1", 688198),
 	ENTRY0("yomomma", "100228", "325cd63060b5509300c71af58902670c", 1081664),
 	ENTRY0("zassball", "980314", "ab906aa444b7fdd0a92119828616bb58", 12288),
-	ENTRY0("zbefunge", "021128", "6ae16ce61922211922edf777bb6113ce", 56320),
+	ENTRY0("zbefunge", "021128/Beta", "6ae16ce61922211922edf777bb6113ce", 56320),
 	ENTRY0("zcamel", "000918", "96b316f9b7e133eaccbec98a4fb0cf46", 6656),
 	ENTRY0("zcatalog", "980519", "f5ad7533e0d33ced32429a04473ec3d0", 126976),
 	ENTRY0("zchess", "040124", "456fe3c2d3d986e8652c4a439e738686", 6656),
 	ENTRY0("zdungeon", "040826", "ddcf45ee10cc5f42ac1b273eb9a0d1f8", 188928),
 	ENTRY0("zdungeon", "990126", "13575669a2cae1d13b3cb22e868d8929", 188416),
-	ENTRY0("zedfunge", "031111", "3198856622768685e17ffba6b8313e49", 108032),
+	ENTRY0("zedfunge", "031111/Beta", "3198856622768685e17ffba6b8313e49", 108032),
 	ENTRY0("zedit", "971103", "40a26af1581ebdbbd867b18229ce8187", 65024),
 	ENTRY0("zegro", "041112", "bb7a0ef8d23cfb88afb2dc1e40be9613", 261632),
 	ENTRY0("zenon", "100122", "2c82b81ac43fcfbf2abee4d8c4f98cad", 67584),
@@ -4925,7 +4924,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("comp98", "981002", "31cca005f642f01f741daba6e861df27", 122368),
 
 	// The 1999 Annual Interactive Fiction Competition
-	ENTRY0("if99_winterwonderland", "990928", "62ed5cae5f7957cd7174d0053cc0aeb7", 190976),
+	ENTRY0("if99_winterwonder", "990928", "62ed5cae5f7957cd7174d0053cc0aeb7", 190976),
 	ENTRY0("if99_forachange", "990925", "e5e67ba8c7db64b0a58cf57a4d220807", 91648),
 	ENTRY0("if99_softfood", "990930", "c45d8a94151e6f3016f238450995dba6", 128000),
 	ENTRY0("if99_halo", "990928", "4d6a77fa2f83e9292fc216273bf58bfa", 250368),
@@ -4997,7 +4996,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if01_elements", "010928", "cb2d89f904f8e4494e4b35561ca888be", 129024),
 	ENTRY0("if01_banebuilders", "010925", "fa7780e270430b2959b49f57d780efb1", 90624),
 	ENTRY0("if01_colours", "010928", "a2ac5c16802f1c0ed1dc5b32166f67d1", 123392),
-	ENTRY0("if01_siliconcastles", "010910", "56f506aab6fd10750a279f565f2c2696", 217600),
+	ENTRY0("if01_siliconcastle", "010910", "56f506aab6fd10750a279f565f2c2696", 217600),
 	ENTRY0("if01_timeout", "200108", "25fd8875971dd2ae460e63c2ba71e25d", 119296),
 	ENTRY0("if01_schroed", "010314", "48dc6a08ad6619d17dbf03b8dff0e2db", 59392),
 	ENTRY0("if01_jump", "010928", "6bdc74ee5fccace64e18580c8ba8eb82", 69120),
@@ -5005,7 +5004,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("comp01", "010930", "82c631364cedf25ab4e78bbdc4034327", 169472),
 
 	// The 2002 Annual Interactive Fiction Competition
-	ENTRY0("if02_photographportrait", "020926", "8b5edf2a02123aadbd28bff37a324a95", 196608),
+	ENTRY0("if02_photograph", "020926", "8b5edf2a02123aadbd28bff37a324a95", 196608),
 	ENTRY0("if02_moonlittower", "020927", "99126839757b62c48ddaaed723390f26", 138752),
 	ENTRY0("if02_janitor", "020927", "61035b376a21cafc434d8a5657e8804b", 146944),
 	ENTRY0("if02_tookiessong", "020927", "3e09bbcf92dfe6b72aab33ad9d0d572a", 187392),
@@ -5015,7 +5014,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if02_mythtale", "020830", "c3e89166105e986b6708ee470aa50b13", 212480),
 	ENTRY0("if02_idthief", "020928", "eb85f09482a328a548dd96368eac50cc", 140288),
 	ENTRY0("if02_rentaspy", "020923", "6bdaab7bdcac42ac5f150c3ed2600fdb", 143360),
-	ENTRY0("if02_whenhelpcollides", "020926", "07a8884764294f348784a615ad8ab69b", 285696),
+	ENTRY0("if02_whenhelp", "020926", "07a8884764294f348784a615ad8ab69b", 285696),
 	ENTRY0("if02_constraints", "020927", "fa88eccd76bd2e9e3108b70aafe537ba", 176128),
 	ENTRY0("if02_hell0", "050929", "63130fb3a0f3c62217ec99c14ebb4ed5", 111616),
 	ENTRY0("if02_bofh", "020927", "3da1806e505c38de29821f0e841248d3", 127488),
@@ -5023,7 +5022,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if02_screen", "020926", "74d0c7f54d1e9e387f91d88e889ec0bf", 83968),
 	ENTRY0("if02_shamulet", "020926", "7bfdd75a3287c7b7874964e8e2480776", 74240),
 	ENTRY0("if02_koan", "020904", "457eede8d32962bbf8e88938d3bf4685", 49152),
-	ENTRY0("if02_ramonandjonathan", "020926", "eea6527824140b1f6b0479e937ae3043", 64512),
+	ENTRY0("if02_ramandjona", "020926", "eea6527824140b1f6b0479e937ae3043", 64512),
 	ENTRY0("comp02", "020928", "db8ba8f1596fb801021c99a92d111b38", 114176),
 
 	// The 2003 Annual Interactive Fiction Competition
@@ -5036,7 +5035,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if03_caffeination", "030914", "90a60bdac3c6df759d37eccaa4563181", 197632),
 	ENTRY0("if03_adoo", "030731", "3f281cd7b79218c53c6aa2ad5886ce4b", 100352),
 	ENTRY0("if03_domicile", "030928", "8a83149cb039ce6ebbb161b6007ca2bc", 149504),
-	ENTRY0("if03_internaldocuments", "030926", "7c1a2afee4f358c873b50fc504f59a96", 159232),
+	ENTRY0("if03_internaldocs", "030926", "7c1a2afee4f358c873b50fc504f59a96", 159232),
 	ENTRY0("if03_noroom", "040117", "d3fd94d4560c15ff6bfb8327b56c97f4", 61952),
 	ENTRY0("if03_lardo", "030830", "8741a6ccd5cb8123a0cd37c23f1721c9", 66048),
 	ENTRY0("comp03", "030928", "55ee4ebe831b1f4dbc1c2865a6b59ef3", 112128),
@@ -5086,7 +5085,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("comp05", "051001", "05e1dac27091bce08cc61a28ba71afa2", 116224),
 
 	// The 2006 Annual Interactive Fiction Competition
-	ENTRY0("if06_floatpointzcode", "060930", "1350e61da647efffc0e36f705dbc90f4", 1377946),
+	ENTRY0("if06_floatpointz", "060930", "1350e61da647efffc0e36f705dbc90f4", 1377946),
 	ENTRY0("if06_primrose", "060929", "d4a2ee947d42598eaa8f09c23c4ef2a4", 428544),
 	ENTRY0("if06_moonshaped", "060929", "aa2bf7a42417827ac31ce7d8d3453a1f", 323584),
 	ENTRY0("if06_wallpaper", "060928", "4e0b9814068b066ff8a7703f59902f93", 342912),
@@ -5095,12 +5094,12 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if06_mobius", "060929", "8535e1058ea7bd3ccbe098a40ddbdbd5", 425828),
 	ENTRY0("if06_gameproducer", "060928", "b4e0ff39edec9d291e78bfa95d6dcf22", 179200),
 	ENTRY0("if06_starcity", "060928", "a7366438459f23661e8d178d8e690f49", 288256),
-	ENTRY0("if06_strangegeometries", "060929", "eead1528f100a3340167a909a9f5e97d", 308224),
+	ENTRY0("if06_strangegeometry", "060929", "eead1528f100a3340167a909a9f5e97d", 308224),
 	ENTRY0("if06_towerofelephant", "060922", "74fa5a6e7d9b654ca2805edf6a7b0330", 281048),
 	ENTRY0("if06_labyrinth", "060929", "abc2409764b3eee49a97ea90d58fc22d", 118272),
 	ENTRY0("if06_cdst", "060929", "c91836c10f543523cd61a6b24020eb3d", 348152),
-	ENTRY0("if06_bibleretoldbreadfishes", "100000", "e387804ec98ad477e6aa5911fbc74338", 191488),
-	ENTRY0("if06_anothergoddamnescape", "060927", "45a30649c871479e2060e95cc6bda3f4", 232448),
+	ENTRY0("if06_bibleretold1", "100000", "e387804ec98ad477e6aa5911fbc74338", 191488),
+	ENTRY0("if06_anothergoddamn", "060927", "45a30649c871479e2060e95cc6bda3f4", 232448),
 	ENTRY0("if06_fightorflight", "060929", "80db0fdf1d6b3951fc954b48de1e0c83", 270336),
 	ENTRY0("if06_manalive1", "000002", "27e3e2afffe206fca0f0f78f97c2f175", 175616),
 	ENTRY0("if06_hedge", "060929", "c7c17fffb437878b48990ed564960e5b", 216064),
@@ -5118,11 +5117,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if07_acrossthestars", "070929", "4dd6a382a08b2865ad22a99cff8746e4", 492544),
 	ENTRY0("if07_orevore", "070929", "aab0bd90d0a29605e8000590d0205c88", 410624),
 	ENTRY0("if07_jackmills", "070923", "26689533940170a64107b27adce69cef", 422776),
-	ENTRY0("if07_deadlineenchanter", "07????", "0abf2e1124bf4da63a7efbd6cb239e57", 219648),
+	ENTRY0("if07_deadlinenchanter", "07????", "0abf2e1124bf4da63a7efbd6cb239e57", 219648),
 	ENTRY0("if07_fff", "070927", "bf7ad79002812c5b08ef0c98a3f73053", 99840),
 	ENTRY0("if07_wish", "070928", "c32139de52463c844ed063e0b0e6a227", 92160),
 	ENTRY0("if07_packrat", "070928", "71ab8ff0a6ea40b11e5c0c4990358bc9", 120320),
-	ENTRY0("if07_beneathatransformation", "070927", "95b99d50b0c38cfd2907da023233ca82", 139776),
+	ENTRY0("if07_beneathtransform", "070927", "95b99d50b0c38cfd2907da023233ca82", 139776),
 	ENTRY0("if07_theimmortal", "070928", "2fee83a968aa436d25be899d3bdcc02e", 293376),
 	ENTRY0("if07_eduardseminarist", "070926", "b02853e34c156c8feee8895c9f749490", 71168),
 	ENTRY0("if07_pets", "070926", "c6a7ab54d9b9482cc459a9c975f48314", 146432),
@@ -5155,7 +5154,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if09_duelthatspanned", "090925", "e7808064e6569e31be830b07be97cbb5", 379904),
 	ENTRY0("if09_duelinsnow", "090930", "b669e90797eb4ce3adf37fba9f1447d8", 383488),
 	ENTRY0("if09_interface", "090929", "afae3500034d118e0fd732ccd0d858f6", 293286),
-	ENTRY0("if09_byzantineperspective", "090930", "dbb1fbf7245f6801d1a8619a95211340", 1690344),
+	ENTRY0("if09_byzantineperspect", "090930", "dbb1fbf7245f6801d1a8619a95211340", 1690344),
 	ENTRY0("if09_condemned", "090930", "1a73a405571a1413481c47d63392ee3c", 257024),
 	ENTRY0("if09_eruption", "090616", "a1136a2e48d40399bfa17200503dbd04", 113664),
 	ENTRY0("if09_betatester", "090929", "157045ea9339e149dc4686ad229a27ef", 391168),
@@ -5176,7 +5175,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if10_warblersnest", "100930", "526aaf64cec2fb85b63b2d329befc086", 799282),
 	ENTRY0("if10_asgard", "100928", "4b69b276e770d6ca6b0b7ff24c91bc13", 569460),
 	ENTRY0("if10_penandpaint", "100930", "9a243dabd2227b95c49284dac825c946", 253440),
-	ENTRY0("if10_bibleretoldlostsheep", "130000", "9559cb4601fbfe195b36cf5970f7619c", 190976),
+	ENTRY0("if10_bibleretold2", "130000", "9559cb4601fbfe195b36cf5970f7619c", 190976),
 	ENTRY0("if10_heated", "100930", "148d0e98c403af802c3c8108a2e60d2d", 231424),
 	ENTRY0("if10_ninjasfate", "100930", "a314c020fe002482c522c927d2012af1", 321024),
 	ENTRY0("if10_eastgrovehills", "100930", "e627884c529415399883702fb5abf43c", 417266),
@@ -5187,13 +5186,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// The 2011 Annual Interactive Fiction Competition
 	ENTRY0("if11_santaland", "110913", "e0e8181bbfe04b6cf55c3903153d5ae2", 410112),
 	ENTRY0("if11_canamicah", "110930", "309cde7bcb427088940ac701b7b18040", 363008),
-	ENTRY0("if11_comedyerrormessages", "111017", "9219e4a1ac32b67d508d661f0e00eb6c", 885682),
+	ENTRY0("if11_comedyerror", "111017", "9219e4a1ac32b67d508d661f0e00eb6c", 885682),
 	ENTRY0("if11_tenthplague", "??????", "358056bdf0d1df7dad3ebbfc46e4f4e0", 379176),
 	ENTRY0("if11_coldiron", "110909", "e917805948c99b02fdf1491542c2d8dc", 227328),
 	ENTRY0("if11_andromedaawakeningz", "110930", "1c38c3eba0c484048416cbff512b59ba", 512312),
 	ENTRY0("if11_keepsake", "110906", "293a92fcd66e8351a7062ed954df5d9e", 462088),
 	ENTRY0("if11_theguardian", "110929", "f707abfb7a69506d1d680a055abc21b3", 254976),
-	ENTRY0("if11_lastdayofsummer", "110930", "27a77f98d578a4ee5b0aadc6e81953e6", 372294),
+	ENTRY0("if11_lastdaysummer", "110930", "27a77f98d578a4ee5b0aadc6e81953e6", 372294),
 	ENTRY0("if11_shipofwhimsy", "110930", "7cdedbedccd81556e59b4b8bad9e6123", 266274),
 	ENTRY0("if11_pfrank", "110916", "f53fef42fe04091db9c901c41a926814", 398848),
 	ENTRY0("if11_vestiges", "110930", "ce7506d0fe65344e502c857018f21b68", 265660),
@@ -5262,10 +5261,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// The 2019 Annual Interactive Fiction Competition
 	ENTRY0("if19_out", "190929", "30a16ff0bf6ad33faa24c209edbe5bf8", 388608),
 	ENTRY0("if19_oldjim", "190928", "0e11c750f7490241a0e8c8286caf3b71", 413696),
-	ENTRY0("if19_extremeomnivore", "190928", "e7a93522643ad1e1921fb13046ccc620", 428066),
+	ENTRY0("if19_extromnivore", "190928", "e7a93522643ad1e1921fb13046ccc620", 428066),
 
 	// The 2020 Annual Interactive Fiction Competition
-	ENTRY0("if20_theimpossiblebottle", "200928", "ca6e77c892f34f602ea25277a8ac6a20", 759930),
+	ENTRY0("if20_impossiblebottle", "200928", "ca6e77c892f34f602ea25277a8ac6a20", 759930),
 	ENTRY0("if20_entangled", "200928", "773ad8d10e980531127a040679a4e3eb", 494080),
 	ENTRY0("if20_drego", "400410", "8a983690928e36c8a77ed50bdbe98bd9", 132096),
 	ENTRY0("if20_sheepcrossing", "200928", "22c2f8a7784272952125344f9e52ccd0", 411456),
@@ -5273,7 +5272,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// The 2021 Annual Interactive Fiction Competition
 	ENTRY0("if21_darkun", "210928", "1d86626167b93297f3d96cdf822d7594", 335512),
 	ENTRY0("if21_codexsadistica", "210928", "956d15d106c982d3a50ef7069b07b84f", 581378),
-	ENTRY0("if21_fourbyfourianquarryin", "210928", "593c4f5fb864cf5d43709f4028b37e15", 425190),
+	ENTRY0("if21_fourbyfourian", "210928", "593c4f5fb864cf5d43709f4028b37e15", 425190),
 	ENTRY0("if21_bravebear", "210928", "f6b245a25d510c871671097a158cf215", 72192),
 
 	// The 2022 Annual Interactive Fiction Competition
@@ -5347,13 +5346,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cgdc7_ka", "100212", "00401b846707deef82efb658be69dcc9", 321536),
 	ENTRY0("cgdc7_monday", "100201", "fe45e5cde6bbb883ca8fd65eeafabfe3", 377856),
 	ENTRY0("cgdc7_theusher", "100211", "d48b1b69a5beb07c62dfaf4fd2ba76a9", 354816),
-	ENTRY0("cgdc7_intotheppensky", "100208", "0d7771e5985fc17c09c78d881d529900", 438736),
+	ENTRY0("cgdc7_intoopensky", "100208", "0d7771e5985fc17c09c78d881d529900", 438736),
 	ENTRY0("cgdc7_luriddreams", "100211", "47d22333b821591bad87184c116541cf", 416256),
 	ENTRY0("cgdc7_containment", "100206", "069d65c43c2c70064ad660a8475209c8", 221184),
 	ENTRY0("cgdc7_thecube", "100130", "b37effeaf558c7d406db3efd2d4d68fe", 230400),
 	ENTRY0("cgdc7_blueprint", "100208", "1f63cdc8d96f7c5c0408aaed9b9ca620", 183296),
 	ENTRY0("cgdc7_criticalbreach", "100203", "e27b0ade8558173cd370d92f320be144", 267776),
-	ENTRY0("cgdc7_themanoratwhitby", "100201", "8a965849cb2ec58cc7c89df0e046206f", 370084),
+	ENTRY0("cgdc7_themanorwhitby", "100201", "8a965849cb2ec58cc7c89df0e046206f", 370084),
 	ENTRY0("cgdc7_heavenly", "091213", "e5c9c808c47510348bdf9bcb14ef1f9d", 284672),
 	ENTRY0("cgdc7_iexpectyoutodie", "100209", "242d660192fb79236647842f03ba1c12", 192000),
 	ENTRY0("cgdc7_virtuality", "100203", "6690eaf9869b53c49696030c072728bc", 397756),
@@ -5364,7 +5363,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cgdc7_paintzcode", "100209", "fbe7f5356d171e92f4011b33dff06625", 205312),
 	ENTRY0("cgdc7_goldenshadow", "100203", "a99de59ca4478ccc758aabc357931a36", 244682),
 	ENTRY0("cgdc7_escapeinthedark", "100203", "acb5cba872017ed4acf6a97cca18e12c", 165376),
-	ENTRY0("cgdc7_escapeintofiction", "100203", "4f61e28d71955057ff7f7660f6557740", 273860),
+	ENTRY0("cgdc7_escapefiction", "100203", "4f61e28d71955057ff7f7660f6557740", 273860),
 	ENTRY0("cgdc7_zeroeth", "100221", "bfa89880cfe414dfd743c36c3186207d", 194048),
 	ENTRY0("cgdc7_openfield", "100131", "e40d2c10d464ff2dfbf4090d2568bb9d", 247234),
 	ENTRY0("cgdc7_survive", "100208", "4cfdfa675947460bb5faf56d5d96bc06", 86016),
@@ -5424,7 +5423,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Aaron Reed's "2018 Interactive Fiction Spring Thing Competition"
 	ENTRY0("stc18_gopher", "180327", "1af73704d303624fcc88397bdd1cd4a4", 383488),
-	ENTRY0("stc18_murderbignothing", "180403", "45b044f05a4f5b6fbd54a913d33e9dfe", 740794),
+	ENTRY0("stc18_murderbig", "180403", "45b044f05a4f5b6fbd54a913d33e9dfe", 740794),
 
 	// Aaron Reed's "2019 Interactive Fiction Spring Thing Competition"
 	ENTRY0("stc19_69105keys", "190401", "4e8c195b1023319a0875ebec71d7a5f5", 318492),
@@ -5453,7 +5452,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cs_monkeybusiness", "120610", "da1805563d40cbed5d275e8438f108a4", 416856),
 	ENTRY0("cs_offering", "120610", "6dad4b91d08dc6536acd1f9f7687beac", 670832),
 	ENTRY0("cs_sloth", "120604", "55e327dcf77ca6d2217d008e71fc9613", 1365970),
-	ENTRY0("cs_subtropicalserverroom", "120611", "79a7fc6f52c2f6dfe5eb606f924f3b74", 797652),
+	ENTRY0("cs_subtropicservroom", "120611", "79a7fc6f52c2f6dfe5eb606f924f3b74", 797652),
 
 	// Dinosaur Mini-Competition
 	ENTRY0("dino_rowr", "000301", "41fce26b11af40f57cdedfe5e926eaf2", 52736),
@@ -5464,7 +5463,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("dino_adno", "000331", "1bcdfe28b95349c2c0e645d918bdde17", 55808),
 	ENTRY0("dino_olddog", "000331", "e88627fba490bd9a5897742d128392ee", 101888),
 	ENTRY0("dino_revenger", "000331", "e3eeab3757cf4b23583433f91ab42c55", 88064),
-	ENTRY0("dino_dinnertimezcode", "000331", "7da3b7d01c9d0098a0049968ed3ffae7", 82944),
+	ENTRY0("dino_dinnertimez", "000331", "7da3b7d01c9d0098a0049968ed3ffae7", 82944),
 	ENTRY0("dino_appoint", "000331", "3b0ab1f1eda430f5334778d4e6d0b724", 90624),
 
 	// Dragon Mini-Competition
@@ -5481,14 +5480,14 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ec11_dashslapney", "111001", "35215328fcc344c2dd932d4d1a09f15f", 281916),
 
 	// Duncan Bowsman's "2012 Ectocomp"
-	ENTRY0("ec12_ghosteringtonnightzcode", "121029", "c295d2c2dfe5f3feee2b833a32a2400d", 236544),
+	ENTRY0("ec12_ghosteringtonnightz", "121029", "c295d2c2dfe5f3feee2b833a32a2400d", 236544),
 	ENTRY0("ec12_littlegirls", "121031", "d96c3cd0a7609166f70e67cc1ac5f055", 232960),
 	ENTRY0("ec12_parasites", "121021", "bbdb3ff64bea5ab24b0c7dcc68f1f90a", 164864),
 
 	// Duncan Bowsman's "2013 Ectocomp"
-	ENTRY0("ec13_horriblepyramid", "131029", "d39833192d0c8e0c3872423a740683a5", 321958),
+	ENTRY0("ec13_horriblepyra", "131029", "d39833192d0c8e0c3872423a740683a5", 321958),
 	ENTRY0("ec13_headlesshapless", "131030", "046e0b958f9900a8733d04e52ab6631b", 262594),
-	ENTRY0("ec13_faithfulcompanion", "131030", "a9be7589b843ef43b326cfe477ade7d4", 311716),
+	ENTRY0("ec13_faithfulcomp", "131030", "a9be7589b843ef43b326cfe477ade7d4", 311716),
 	ENTRY0("ec13_deadpavane", "131031", "18e8bdfbbc704dbc582305b868a1216f", 269232),
 	ENTRY0("ec13_icehouse", "131029", "c85bfbce5eaa4e0db3621c5e6515e5a5", 214528),
 	ENTRY0("ec13_blackness", "131026/z5", "7b8ea77b533399adf669015b013ba4fb", 169472),
@@ -5496,8 +5495,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ec13_argument", "131031", "9fe440e44c9c37b68715afb42bb51043", 324566),
 	ENTRY0("ec13_fishdreams", "131030", "d9022595cff5bb6b3385680f09adfcf1", 259532),
 	ENTRY0("ec13_cursedeagle", "131030", "189a5f517d2e39046f5e9cc5c688c8fd", 314326),
-	ENTRY0("ec13_cenricfamilycurse", "131022", "f0496ff6c8bc01931f6034373fbf1d44", 281730),
-	ENTRY0("ec13_nessaspringsslasher", "131013", "b9e68911fc59d06880ef56775aa4bc65", 167424),
+	ENTRY0("ec13_cenriccurse", "131022", "f0496ff6c8bc01931f6034373fbf1d44", 281730),
+	ENTRY0("ec13_nessaslasher", "131013", "b9e68911fc59d06880ef56775aa4bc65", 167424),
 	ENTRY0("ec13_cratercreek", "131018", "44be72462d07e4faa347daf1b2b06955", 276388),
 	ENTRY0("ec13_hillofsouls", "131026", "ebffb813147946e416623c17e7b3ab86", 442546),
 	ENTRY0("ec13_wisp", "131030", "dc4b6d8674622873f5d6fb26aee1a227", 307598),
@@ -5683,7 +5682,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("mm_insider", "03????", "e38ce038ffd97c33cf9887cfef29d8f0", 42172),
 
 	// Marius Müller's "Neinth Annual New Year's Mincomp"
-	ENTRY0("ny09_egyptianwalking", "151231", "ef80dd50c700becf2b4b254ce3ad3c9f", 334848),
+	ENTRY0("ny09_egyptianwalk", "151231", "ef80dd50c700becf2b4b254ce3ad3c9f", 334848),
 
 	// Marius Müller's "Eleventh Annual New Year's Mincomp"
 	ENTRY0("ny11_halflife", "180102", "982d29c2516cf97ed2b9dd2cdd0d7ffb", 489416),
@@ -6014,7 +6013,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_stabbed", "091225", "33b36976ba3a34ccd4f73ce7b95ed468", 187392),
 
 	// 2013 SpeedIF New Year's Speed Competition
-	ENTRY0("sif_faithfulcompanionv2", "131231", "2aaed4f67468e3e269f211ba1caadd54", 343450),
+	ENTRY0("sif_faithfulcompv2", "131231", "2aaed4f67468e3e269f211ba1caadd54", 343450),
 	ENTRY0("sif_talemorning", "140103", "a189df712a5254487eb9a9d8cb8fffca", 253952),
 	ENTRY0("sif_thedayicameback", "140104", "c1abdfa44ae62d8194ce301f38f986c4", 356302),
 	ENTRY0("sif_youhavetoputthebaby", "140103", "ce8c2720fd4adab602737e31e3c15554", 152844),
