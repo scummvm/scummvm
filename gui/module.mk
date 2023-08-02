@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	debugger.o \
 	dialog.o \
 	download-games-dialog.o \
+	downloaddlcsdialog.o \
 	dump-all-dialogs.o \
 	editgamedialog.o \
 	error.o \
