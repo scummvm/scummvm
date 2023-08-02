@@ -729,10 +729,10 @@ static void ah_hinter_scale_globals(AH_Hinter hinter, FT_Fixed x_scale, FT_Fixed
 
 	/* scale the standard widths & heights */
 	for (n = 0; n < design->num_widths; n++)
-		scaled->widths[n] = FT2_1_3_MulFix(design->widths[n], x_scale);
+		scaled->widths[n] = FT_MulFix(design->widths[n], x_scale);
 
 	for (n = 0; n < design->num_heights; n++)
-		scaled->heights[n] = FT2_1_3_MulFix(design->heights[n], y_scale);
+		scaled->heights[n] = FT_MulFix(design->heights[n], y_scale);
 
 	scaled->stds[0] = (design->num_widths > 0) ? scaled->widths[0] : 32000;
 	scaled->stds[1] = (design->num_heights > 0) ? scaled->heights[0] : 32000;
@@ -745,7 +745,7 @@ static void ah_hinter_scale_globals(AH_Hinter hinter, FT_Fixed x_scale, FT_Fixed
 		delta2 = delta;
 		if (delta < 0)
 			delta2 = -delta2;
-		delta2 = FT2_1_3_MulFix(delta2, y_scale);
+		delta2 = FT_MulFix(delta2, y_scale);
 
 		if (delta2 < 32)
 			delta2 = 0;
@@ -757,7 +757,7 @@ static void ah_hinter_scale_globals(AH_Hinter hinter, FT_Fixed x_scale, FT_Fixed
 		if (delta < 0)
 			delta2 = -delta2;
 
-		scaled->blue_refs[n] = (FT2_1_3_MulFix(design->blue_refs[n], y_scale) + 32) & -64;
+		scaled->blue_refs[n] = (FT_MulFix(design->blue_refs[n], y_scale) + 32) & -64;
 		scaled->blue_shoots[n] = scaled->blue_refs[n] + delta2;
 	}
 
@@ -867,7 +867,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 	AH_Loader gloader = hinter->loader;
 
 	/* load the glyph */
-	error = FT2_1_3_Load_Glyph(face, glyph_index, load_flags);
+	error = FT_Load_Glyph(face, glyph_index, load_flags);
 	if (error)
 		goto Exit;
 
@@ -882,7 +882,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		hinter->trans_matrix = imatrix;
 
 		FT_Matrix_Invert(&imatrix);
-		FT2_1_3_Vector_Transform(&hinter->trans_delta, &imatrix);
+		FT_Vector_Transform(&hinter->trans_delta, &imatrix);
 	}
 
 	/* set linear horizontal metrics */
@@ -921,7 +921,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		/* compute original phantom points */
 		hinter->pp1.x = 0;
 		hinter->pp1.y = 0;
-		hinter->pp2.x = FT2_1_3_MulFix(slot->metrics.horiAdvance, x_scale);
+		hinter->pp2.x = FT_MulFix(slot->metrics.horiAdvance, x_scale);
 		hinter->pp2.y = 0;
 
 		/* be sure to check for spacing glyphs */
@@ -1034,8 +1034,8 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 				FT_Vector *limit = cur + num_new_points;
 
 				for (; cur < limit; cur++, org++) {
-					FT2_1_3_Vector_Transform(cur, &subglyph->transform);
-					FT2_1_3_Vector_Transform(org, &subglyph->transform);
+					FT_Vector_Transform(cur, &subglyph->transform);
+					FT_Vector_Transform(org, &subglyph->transform);
 				}
 			}
 
@@ -1063,8 +1063,8 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 				x = p1->x - p2->x;
 				y = p1->y - p2->y;
 			} else {
-				x = FT2_1_3_MulFix(subglyph->arg1, x_scale);
-				y = FT2_1_3_MulFix(subglyph->arg2, y_scale);
+				x = FT_MulFix(subglyph->arg1, x_scale);
+				y = FT_MulFix(subglyph->arg2, y_scale);
 
 				x = (x + 32) & -64;
 				y = (y + 32) & -64;
@@ -1115,7 +1115,7 @@ Hint_Metrics:
 		if (!FT_IS_FIXED_WIDTH(slot->face))
 			slot->metrics.horiAdvance = hinter->pp2.x - hinter->pp1.x;
 		else
-			slot->metrics.horiAdvance = FT2_1_3_MulFix(slot->metrics.horiAdvance, x_scale);
+			slot->metrics.horiAdvance = FT_MulFix(slot->metrics.horiAdvance, x_scale);
 
 		slot->metrics.horiAdvance = (slot->metrics.horiAdvance + 32) & -64;
 

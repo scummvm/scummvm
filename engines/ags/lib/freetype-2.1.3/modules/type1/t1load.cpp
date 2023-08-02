@@ -182,7 +182,7 @@ T1_Set_MM_Blend(T1_Face face, FT_UInt num_coords, FT_Fixed *coords) {
 				if ((n & (1 << m)) == 0)
 					factor = 0x10000L - factor;
 
-				result = FT2_1_3_MulFix(result, factor);
+				result = FT_MulFix(result, factor);
 			}
 			blend->weight_vector[n] = result;
 		}
@@ -705,10 +705,10 @@ static void parse_font_bbox(T1_Face face, T1_Loader loader) {
 	FT_BBox *bbox = &face->type1.font_bbox;
 
 	(void)T1_ToFixedArray(parser, 4, temp, 0);
-	bbox->xMin = FT2_1_3_RoundFix(temp[0]);
-	bbox->yMin = FT2_1_3_RoundFix(temp[1]);
-	bbox->xMax = FT2_1_3_RoundFix(temp[2]);
-	bbox->yMax = FT2_1_3_RoundFix(temp[3]);
+	bbox->xMin = FT_RoundFix(temp[0]);
+	bbox->yMin = FT_RoundFix(temp[1]);
+	bbox->xMax = FT_RoundFix(temp[2]);
+	bbox->yMax = FT_RoundFix(temp[3]);
 }
 #endif
 
@@ -732,15 +732,15 @@ static void parse_font_matrix(T1_Face face, T1_Loader loader) {
 	/* 1000 / temp_scale, because temp_scale was already multiplied by   */
 	/* 1000 (in t1_tofixed, from psobjs.c).                              */
 
-	root->units_per_EM = (FT_UShort)(FT2_1_3_DivFix(1000 * 0x10000L, temp_scale) >> 16);
+	root->units_per_EM = (FT_UShort)(FT_DivFix(1000 * 0x10000L, temp_scale) >> 16);
 
 	/* we need to scale the values by 1.0/temp_scale */
 	if (temp_scale != 0x10000L) {
-		temp[0] = FT2_1_3_DivFix(temp[0], temp_scale);
-		temp[1] = FT2_1_3_DivFix(temp[1], temp_scale);
-		temp[2] = FT2_1_3_DivFix(temp[2], temp_scale);
-		temp[4] = FT2_1_3_DivFix(temp[4], temp_scale);
-		temp[5] = FT2_1_3_DivFix(temp[5], temp_scale);
+		temp[0] = FT_DivFix(temp[0], temp_scale);
+		temp[1] = FT_DivFix(temp[1], temp_scale);
+		temp[2] = FT_DivFix(temp[2], temp_scale);
+		temp[4] = FT_DivFix(temp[4], temp_scale);
+		temp[5] = FT_DivFix(temp[5], temp_scale);
 		temp[3] = 0x10000L;
 	}
 

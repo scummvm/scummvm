@@ -47,7 +47,7 @@ namespace FreeType213 {
 /* the following is 0.2715717684432231 * 2^30 */
 #define FT_TRIG_COSCALE  0x11616E8EUL
 
-/* this table was generated for FT2_1_3_PI = 180L << 16, i.e. degrees */
+/* this table was generated for FT_PI = 180L << 16, i.e. degrees */
 #define FT_TRIG_MAX_ITERS  23
 
 static const FT_Fixed
@@ -283,7 +283,7 @@ FT_Tan(FT_Angle angle) {
 	v.y = 0;
 	ft_trig_pseudo_rotate(&v, angle);
 
-	return FT2_1_3_DivFix(v.y, v.x);
+	return FT_DivFix(v.y, v.x);
 }
 
 FT_EXPORT_DEF(FT_Angle)

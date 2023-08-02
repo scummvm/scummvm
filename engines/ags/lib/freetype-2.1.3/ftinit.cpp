@@ -86,7 +86,7 @@ FT_Add_Default_Modules(FT_Library library) {
 		error = FT_Add_Module(library, *cur);
 		/* notify errors, but don't stop */
 		if (error) {
-			FT_ERROR(("FT2_1_3_Add_Default_Module: Cannot install `%s', error = 0x%x\n", (*cur)->module_name, error));
+			FT_ERROR(("FT_Add_Default_Module: Cannot install `%s', error = 0x%x\n", (*cur)->module_name, error));
 		}
 		cur++;
 	}
@@ -94,7 +94,7 @@ FT_Add_Default_Modules(FT_Library library) {
 
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Init_FreeType(FT_Library *alibrary) {
+FT_Init_FreeType(FT_Library *alibrary) {
 	FT_Error error;
 	FT_Memory memory;
 
@@ -103,7 +103,7 @@ FT2_1_3_Init_FreeType(FT_Library *alibrary) {
 
 	memory = FT_New_Memory();
 	if (!memory) {
-		FT_ERROR(("FT2_1_3_Init_FreeType: cannot find memory manager\n"));
+		FT_ERROR(("FT_Init_FreeType: cannot find memory manager\n"));
 		return FT_Err_Unimplemented_Feature;
 	}
 
@@ -124,7 +124,7 @@ FT2_1_3_Init_FreeType(FT_Library *alibrary) {
 
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Done_FreeType(FT_Library library) {
+FT_Done_FreeType(FT_Library library) {
 	if (library) {
 		FT_Memory memory = library->memory;
 

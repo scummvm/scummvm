@@ -155,10 +155,10 @@ parse_font_bbox( CID_Face     face,
 
 
 	(void)cid_parser_to_fixed_array( parser, 4, temp, 0 );
-	bbox->xMin = FT2_1_3_RoundFix( temp[0] );
-	bbox->yMin = FT2_1_3_RoundFix( temp[1] );
-	bbox->xMax = FT2_1_3_RoundFix( temp[2] );
-	bbox->yMax = FT2_1_3_RoundFix( temp[3] );
+	bbox->xMin = FT_RoundFix( temp[0] );
+	bbox->yMin = FT_RoundFix( temp[1] );
+	bbox->xMax = FT_RoundFix( temp[2] );
+	bbox->yMax = FT_RoundFix( temp[3] );
 
 	return FT_Err_Ok;       /* this is a callback function; */
 	/* we must return an error code */
@@ -188,16 +188,16 @@ parse_font_matrix( CID_Face     face,
 		/* Set Units per EM based on FontMatrix values.  We set the value to */
 		/* `1000/temp_scale', because temp_scale was already multiplied by   */
 		/* 1000 (in t1_tofixed(), from psobjs.c).                            */
-		root->units_per_EM = (FT_UShort)( FT2_1_3_DivFix( 0x10000L,
-										  FT2_1_3_DivFix( temp_scale, 1000 ) ) );
+		root->units_per_EM = (FT_UShort)( FT_DivFix( 0x10000L,
+										  FT_DivFix( temp_scale, 1000 ) ) );
 
 		/* we need to scale the values by 1.0/temp[3] */
 		if ( temp_scale != 0x10000L ) {
-			temp[0] = FT2_1_3_DivFix( temp[0], temp_scale );
-			temp[1] = FT2_1_3_DivFix( temp[1], temp_scale );
-			temp[2] = FT2_1_3_DivFix( temp[2], temp_scale );
-			temp[4] = FT2_1_3_DivFix( temp[4], temp_scale );
-			temp[5] = FT2_1_3_DivFix( temp[5], temp_scale );
+			temp[0] = FT_DivFix( temp[0], temp_scale );
+			temp[1] = FT_DivFix( temp[1], temp_scale );
+			temp[2] = FT_DivFix( temp[2], temp_scale );
+			temp[4] = FT_DivFix( temp[4], temp_scale );
+			temp[5] = FT_DivFix( temp[5], temp_scale );
 			temp[3] = 0x10000L;
 		}
 

@@ -252,7 +252,7 @@ Exit:
 }
 
 FT_BASE_DEF(void)
-FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot) {
+FT_Done_GlyphSlot(FT_GlyphSlot slot) {
 	if (slot) {
 		FT_Driver driver = slot->face->driver;
 		FT_Memory memory = driver->root.memory;
@@ -276,7 +276,7 @@ FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot) {
 }
 
 FT_EXPORT_DEF(void)
-FT2_1_3_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta) {
+FT_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta) {
 	FT_Face_Internal internal;
 
 	if (!face)
@@ -314,7 +314,7 @@ FT2_1_3_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta) {
 }
 
 FT_EXPORT_DEF(void)
-FT2_1_3_Set_Hint_Flags(FT_Face face, FT_ULong flags) {
+FT_Set_Hint_Flags(FT_Face face, FT_ULong flags) {
 	FT_Face_Internal internal;
 
 	if (!face)
@@ -328,7 +328,7 @@ FT2_1_3_Set_Hint_Flags(FT_Face face, FT_ULong flags) {
 static FT_Renderer ft_lookup_glyph_renderer(FT_GlyphSlot slot);
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
+FT_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
 	FT_Error error;
 	FT_Driver driver;
 	FT_GlyphSlot slot;
@@ -435,7 +435,7 @@ Load_Ok:
 			if (renderer)
 				error = renderer->clazz->transform_glyph(renderer, slot, &internal->transform_matrix, &internal->transform_delta);
 			/* transform advance */
-			FT2_1_3_Vector_Transform(&slot->advance, &internal->transform_matrix);
+			FT_Vector_Transform(&slot->advance, &internal->transform_matrix);
 		}
 	}
 
@@ -446,7 +446,7 @@ Load_Ok:
 		if (mode == FT_RENDER_MODE_NORMAL && (load_flags & FT_LOAD_MONOCHROME))
 			mode = FT_RENDER_MODE_MONO;
 
-		error = FT2_1_3_Render_Glyph(slot, mode);
+		error = FT_Render_Glyph(slot, mode);
 	}
 
 Exit:
@@ -462,9 +462,9 @@ FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 load_flags) {
 
 	glyph_index = (FT_UInt)char_code;
 	if (face->charmap)
-		glyph_index = FT2_1_3_Get_Char_Index(face, char_code);
+		glyph_index = FT_Get_Char_Index(face, char_code);
 
-	return FT2_1_3_Load_Glyph(face, glyph_index, load_flags);
+	return FT_Load_Glyph(face, glyph_index, load_flags);
 }
 
 /* destructor for sizes list */
@@ -490,9 +490,9 @@ static void destroy_face(FT_Memory memory, FT_Face face, FT_Driver driver) {
 		face->autohint.finalizer(face->autohint.data);
 
 	/* Discard glyph slots for this face.                           */
-	/* Beware!  FT2_1_3_Done_GlyphSlot() changes the field `face->glyph' */
+	/* Beware!  FT_Done_GlyphSlot() changes the field `face->glyph' */
 	while (face->glyph)
-		FT2_1_3_Done_GlyphSlot(face->glyph);
+		FT_Done_GlyphSlot(face->glyph);
 
 	/* discard all sizes for this face */
 	FT_List_Finalize(&face->sizes_list, (FT_List_Destructor)destroy_size, memory, driver);
@@ -612,13 +612,13 @@ Fail:
 	return error;
 }
 
-/* there's a Mac-specific extended implementation of FT2_1_3_New_Face() */
+/* there's a Mac-specific extended implementation of FT_New_Face() */
 /* in src/base/ftmac.c                                             */
 
 //#ifndef FT_MACINTOSH
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_New_Face(FT_Library library, const char *pathname, FT_Long face_index, FT_Face *aface) {
+FT_New_Face(FT_Library library, const char *pathname, FT_Long face_index, FT_Face *aface) {
 	FT_Open_Args args;
 
 	/* test for valid `library' and `aface' delayed to FT_Open_Face() */
@@ -634,7 +634,7 @@ FT2_1_3_New_Face(FT_Library library, const char *pathname, FT_Long face_index, F
 //#endif  /* !FT_MACINTOSH */
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_New_Memory_Face(FT_Library library, const FT_Byte *file_base, FT_Long file_size, FT_Long face_index, FT_Face *aface) {
+FT_New_Memory_Face(FT_Library library, const FT_Byte *file_base, FT_Long file_size, FT_Long face_index, FT_Face *aface) {
 	FT_Open_Args args;
 
 	/* test for valid `library' and `face' delayed to FT_Open_Face() */
@@ -736,7 +736,7 @@ FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, F
 Success:
 	FT_TRACE4(("FT_Open_Face: New face object, adding to list\n"));
 
-	/* set the FT_FACE_FLAG_EXTERNAL_STREAM bit for FT2_1_3_Done_Face */
+	/* set the FT_FACE_FLAG_EXTERNAL_STREAM bit for FT_Done_Face */
 	if (external_stream)
 		face->face_flags |= FT_FACE_FLAG_EXTERNAL_STREAM;
 
@@ -792,7 +792,7 @@ Success:
 	goto Exit;
 
 Fail:
-	FT2_1_3_Done_Face(face);
+	FT_Done_Face(face);
 
 Exit:
 	FT_TRACE4(("FT_Open_Face: Return %d\n", error));
@@ -852,7 +852,7 @@ Exit:
 }
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Done_Face(FT_Face face) {
+FT_Done_Face(FT_Face face) {
 	FT_Error error;
 	FT_Driver driver;
 	FT_Memory memory;
@@ -974,14 +974,14 @@ FT_Done_Size(FT_Size size) {
 static void ft_recompute_scaled_metrics(FT_Face face, FT_Size_Metrics *metrics) {
 	/* Compute root ascender, descender, test height, and max_advance */
 
-	metrics->ascender = (FT2_1_3_MulFix(face->ascender, metrics->y_scale) + 32) & -64;
-	metrics->descender = (FT2_1_3_MulFix(face->descender, metrics->y_scale) + 32) & -64;
-	metrics->height = (FT2_1_3_MulFix(face->height, metrics->y_scale) + 32) & -64;
-	metrics->max_advance = (FT2_1_3_MulFix(face->max_advance_width, metrics->x_scale) + 32) & -64;
+	metrics->ascender = (FT_MulFix(face->ascender, metrics->y_scale) + 32) & -64;
+	metrics->descender = (FT_MulFix(face->descender, metrics->y_scale) + 32) & -64;
+	metrics->height = (FT_MulFix(face->height, metrics->y_scale) + 32) & -64;
+	metrics->max_advance = (FT_MulFix(face->max_advance_width, metrics->x_scale) + 32) & -64;
 }
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution) {
+FT_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution) {
 	FT_Error error = FT_Err_Ok;
 	FT_Driver driver;
 	FT_Driver_Class clazz;
@@ -1026,8 +1026,8 @@ FT2_1_3_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_heigh
 	metrics->y_scale = 0x10000L;
 
 	if (face->face_flags & FT_FACE_FLAG_SCALABLE) {
-		metrics->x_scale = FT2_1_3_DivFix(dim_x, face->units_per_EM);
-		metrics->y_scale = FT2_1_3_DivFix(dim_y, face->units_per_EM);
+		metrics->x_scale = FT_DivFix(dim_x, face->units_per_EM);
+		metrics->y_scale = FT_DivFix(dim_y, face->units_per_EM);
 
 		ft_recompute_scaled_metrics(face, metrics);
 	}
@@ -1038,7 +1038,7 @@ FT2_1_3_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_heigh
 }
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height) {
+FT_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height) {
 	FT_Error error = FT_Err_Ok;
 	FT_Driver driver;
 	FT_Driver_Class clazz;
@@ -1066,9 +1066,9 @@ FT2_1_3_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height)
 	metrics->y_ppem = (FT_UShort)pixel_height;
 
 	if (face->face_flags & FT_FACE_FLAG_SCALABLE) {
-		metrics->x_scale = FT2_1_3_DivFix(metrics->x_ppem << 6, face->units_per_EM);
+		metrics->x_scale = FT_DivFix(metrics->x_ppem << 6, face->units_per_EM);
 
-		metrics->y_scale = FT2_1_3_DivFix(metrics->y_ppem << 6, face->units_per_EM);
+		metrics->y_scale = FT_DivFix(metrics->y_ppem << 6, face->units_per_EM);
 
 		ft_recompute_scaled_metrics(face, metrics);
 	}
@@ -1079,7 +1079,7 @@ FT2_1_3_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height)
 }
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning) {
+FT_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning) {
 	FT_Error error = FT_Err_Ok;
 	FT_Driver driver;
 
@@ -1098,8 +1098,8 @@ FT2_1_3_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UI
 		error = driver->clazz->get_kerning(face, left_glyph, right_glyph, akerning);
 		if (!error) {
 			if (kern_mode != FT_KERNING_UNSCALED) {
-				akerning->x = FT2_1_3_MulFix(akerning->x, face->size->metrics.x_scale);
-				akerning->y = FT2_1_3_MulFix(akerning->y, face->size->metrics.y_scale);
+				akerning->x = FT_MulFix(akerning->x, face->size->metrics.x_scale);
+				akerning->y = FT_MulFix(akerning->y, face->size->metrics.y_scale);
 
 				if (kern_mode != FT_KERNING_UNFITTED) {
 					akerning->x = (akerning->x + 32) & -64;
@@ -1216,7 +1216,7 @@ Fail:
 }
 
 FT_EXPORT_DEF(FT_UInt)
-FT2_1_3_Get_Char_Index(FT_Face face, FT_ULong charcode) {
+FT_Get_Char_Index(FT_Face face, FT_ULong charcode) {
 	FT_UInt result = 0;
 
 	if (face && face->charmap) {
@@ -1228,14 +1228,14 @@ FT2_1_3_Get_Char_Index(FT_Face face, FT_ULong charcode) {
 }
 
 FT_EXPORT_DEF(FT_ULong)
-FT2_1_3_Get_First_Char(FT_Face face, FT_UInt *agindex) {
+FT_Get_First_Char(FT_Face face, FT_UInt *agindex) {
 	FT_ULong result = 0;
 	FT_UInt gindex = 0;
 
 	if (face && face->charmap) {
-		gindex = FT2_1_3_Get_Char_Index(face, 0);
+		gindex = FT_Get_Char_Index(face, 0);
 		if (gindex == 0)
-			result = FT2_1_3_Get_Next_Char(face, 0, &gindex);
+			result = FT_Get_Next_Char(face, 0, &gindex);
 	}
 
 	if (agindex)
@@ -1245,7 +1245,7 @@ FT2_1_3_Get_First_Char(FT_Face face, FT_UInt *agindex) {
 }
 
 FT_EXPORT_DEF(FT_ULong)
-FT2_1_3_Get_Next_Char(FT_Face face, FT_ULong charcode, FT_UInt *agindex) {
+FT_Get_Next_Char(FT_Face face, FT_ULong charcode, FT_UInt *agindex) {
 	FT_ULong result = 0;
 	FT_UInt gindex = 0;
 
@@ -1285,7 +1285,7 @@ FT_Get_Name_Index(FT_Face face, FT_String *glyph_name) {
 }
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max) {
+FT_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max) {
 	FT_Error error = FT_Err_Invalid_Argument;
 
 	/* clean up buffer */
@@ -1335,16 +1335,16 @@ Exit:
 }
 
 FT_EXPORT_DEF(void *)
-FT2_1_3_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag) {
+FT_Get_Sfnt_Table(FT_Face face, FT_Sfnt_Tag tag) {
 	void *table = 0;
-	FT2_1_3_Get_Sfnt_Table_Func func;
+	FT_Get_Sfnt_Table_Func func;
 	FT_Driver driver;
 
 	if (!face || !FT_IS_SFNT(face))
 		goto Exit;
 
 	driver = face->driver;
-	func = (FT2_1_3_Get_Sfnt_Table_Func)driver->root.clazz->get_interface(FT_MODULE(driver), "get_sfnt");
+	func = (FT_Get_Sfnt_Table_Func)driver->root.clazz->get_interface(FT_MODULE(driver), "get_sfnt");
 	if (func)
 		table = func(face, tag);
 
@@ -1579,7 +1579,7 @@ FT_Render_Glyph_Internal(FT_Library library, FT_GlyphSlot slot, FT_Render_Mode r
 }
 
 FT_EXPORT_DEF(FT_Error)
-FT2_1_3_Render_Glyph(FT_GlyphSlot slot, FT_Render_Mode render_mode) {
+FT_Render_Glyph(FT_GlyphSlot slot, FT_Render_Mode render_mode) {
 	FT_Library library;
 
 	if (!slot)

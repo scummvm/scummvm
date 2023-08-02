@@ -270,7 +270,7 @@ FT_BASE(FT_Error)
 FT_New_GlyphSlot(FT_Face face, FT_GlyphSlot *aslot);
 
 FT_BASE(void)
-FT2_1_3_Done_GlyphSlot(FT_GlyphSlot slot);
+FT_Done_GlyphSlot(FT_GlyphSlot slot);
 
 
 /**** RENDERERS ****/
@@ -367,9 +367,9 @@ FT_Done_Memory(FT_Memory memory);
 /* `src/base/ftraster.c'.                                                */
 /*                                                                       */
 /* Client applications can register new rasters through the              */
-/* FT2_1_3_Set_Raster() API.                                             */
+/* FT_Set_Raster() API.                                             */
 
-#ifndef FT2_1_3_NO_DEFAULT_RASTER
+#ifndef FT_NO_DEFAULT_RASTER
 FT_EXPORT_VAR(FT_Raster_Funcs)
 ft_default_raster;
 #endif

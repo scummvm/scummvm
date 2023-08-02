@@ -45,7 +45,7 @@ namespace FreeType213 {
 
 
 /* check the format */
-static FT_Error ft_pfr_check(FT_Face face, FT2_1_3_PFR_Service *aservice) {
+static FT_Error ft_pfr_check(FT_Face face, FT_PFR_Service *aservice) {
 	FT_Error error = FT_Err_Bad_Argument;
 
 	if (face && face->driver) {
@@ -53,7 +53,7 @@ static FT_Error ft_pfr_check(FT_Face face, FT2_1_3_PFR_Service *aservice) {
 		const char *name = module->clazz->module_name;
 
 		if (name[0] == 'p' && name[1] == 'f' && name[2] == 'r' && name[4] == 0) {
-			*aservice = const_cast<FT2_1_3_PFR_Service>(static_cast<const FT2_1_3_PFR_ServiceRec_ *>(module->clazz->module_interface));
+			*aservice = const_cast<FT_PFR_Service>(static_cast<const FT_PFR_ServiceRec_ *>(module->clazz->module_interface));
 			error = 0;
 		}
 	}
@@ -64,7 +64,7 @@ FT_EXPORT_DEF(FT_Error)
 FT_Get_PFR_Metrics(FT_Face face, FT_UInt *aoutline_resolution, FT_UInt *ametrics_resolution,
 				   FT_Fixed *ametrics_x_scale, FT_Fixed *ametrics_y_scale) {
 	FT_Error error;
-	FT2_1_3_PFR_Service service;
+	FT_PFR_Service service;
 
 	error = ft_pfr_check(face, &service);
 	if (!error) {
@@ -76,7 +76,7 @@ FT_Get_PFR_Metrics(FT_Face face, FT_UInt *aoutline_resolution, FT_UInt *ametrics
 FT_EXPORT_DEF(FT_Error)
 FT_Get_PFR_Kerning(FT_Face face, FT_UInt left, FT_UInt right, FT_Vector *avector) {
 	FT_Error error;
-	FT2_1_3_PFR_Service service;
+	FT_PFR_Service service;
 
 	error = ft_pfr_check(face, &service);
 	if (!error) {
@@ -88,7 +88,7 @@ FT_Get_PFR_Kerning(FT_Face face, FT_UInt left, FT_UInt right, FT_Vector *avector
 FT_EXPORT_DEF(FT_Error)
 FT_Get_PFR_Advance(FT_Face face, FT_UInt gindex, FT_Pos *aadvance) {
 	FT_Error error;
-	FT2_1_3_PFR_Service service;
+	FT_PFR_Service service;
 
 	error = ft_pfr_check(face, &service);
 	if (!error) {

@@ -128,8 +128,8 @@ static FT_Error Set_Char_Sizes(TT_Size size, FT_F26Dot6 char_width, FT_F26Dot6 c
 		dim_x = (char_width * horz_resolution + 36) / 72;
 		dim_y = (char_height * vert_resolution + 36) / 72;
 
-		metrics->x_scale = FT2_1_3_DivFix(dim_x, face->root.units_per_EM);
-		metrics->y_scale = FT2_1_3_DivFix(dim_y, face->root.units_per_EM);
+		metrics->x_scale = FT_DivFix(dim_x, face->root.units_per_EM);
+		metrics->y_scale = FT_DivFix(dim_y, face->root.units_per_EM);
 
 		metrics->x_ppem = (FT_UShort)(dim_x >> 6);
 		metrics->y_ppem = (FT_UShort)(dim_y >> 6);

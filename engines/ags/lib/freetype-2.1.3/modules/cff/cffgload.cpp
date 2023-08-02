@@ -1493,7 +1493,7 @@ cff_decoder_parse_charstrings(CFF_Decoder *decoder, FT_Byte *charstring_base, FT
 			case cff_op_div:
 				FT_TRACE4((" div"));
 
-				args[0] = FT2_1_3_DivFix(args[0], args[1]);
+				args[0] = FT_DivFix(args[0], args[1]);
 				args++;
 				break;
 
@@ -1514,7 +1514,7 @@ cff_decoder_parse_charstrings(CFF_Decoder *decoder, FT_Byte *charstring_base, FT
 					Rand++;
 
 				args[0] = Rand;
-				seed = FT2_1_3_MulFix(seed, 0x10000L - seed);
+				seed = FT_MulFix(seed, 0x10000L - seed);
 				if (seed == 0)
 					seed += 0x2873;
 				args++;
@@ -1523,7 +1523,7 @@ cff_decoder_parse_charstrings(CFF_Decoder *decoder, FT_Byte *charstring_base, FT
 			case cff_op_mul:
 				FT_TRACE4((" mul"));
 
-				args[0] = FT2_1_3_MulFix(args[0], args[1]);
+				args[0] = FT_MulFix(args[0], args[1]);
 				args++;
 				break;
 
@@ -1536,7 +1536,7 @@ cff_decoder_parse_charstrings(CFF_Decoder *decoder, FT_Byte *charstring_base, FT
 					FT_Fixed new_root;
 
 					for (;;) {
-						new_root = (root + FT2_1_3_DivFix(args[0], root) + 1) >> 1;
+						new_root = (root + FT_DivFix(args[0], root) + 1) >> 1;
 						if (new_root == root || count <= 0)
 							break;
 						root = new_root;
@@ -1988,18 +1988,18 @@ cff_slot_load(CFF_GlyphSlot glyph, CFF_Size size, FT_Int glyph_index, FT_Int32 l
 				/* First of all, scale the points */
 				if (!hinting)
 					for (n = cur->n_points; n > 0; n--, vec++) {
-						vec->x = FT2_1_3_MulFix(vec->x, x_scale);
-						vec->y = FT2_1_3_MulFix(vec->y, y_scale);
+						vec->x = FT_MulFix(vec->x, x_scale);
+						vec->y = FT_MulFix(vec->y, y_scale);
 					}
 
 				FT_Outline_Get_CBox(&glyph->root.outline, &cbox);
 
 				/* Then scale the metrics */
-				metrics->horiAdvance = FT2_1_3_MulFix(metrics->horiAdvance, x_scale);
-				metrics->vertAdvance = FT2_1_3_MulFix(metrics->vertAdvance, y_scale);
+				metrics->horiAdvance = FT_MulFix(metrics->horiAdvance, x_scale);
+				metrics->vertAdvance = FT_MulFix(metrics->vertAdvance, y_scale);
 
-				metrics->vertBearingX = FT2_1_3_MulFix(metrics->vertBearingX, x_scale);
-				metrics->vertBearingY = FT2_1_3_MulFix(metrics->vertBearingY, y_scale);
+				metrics->vertBearingX = FT_MulFix(metrics->vertBearingX, x_scale);
+				metrics->vertBearingY = FT_MulFix(metrics->vertBearingY, y_scale);
 
 				if (hinting) {
 					metrics->horiAdvance = (metrics->horiAdvance + 32) & -64;

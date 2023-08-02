@@ -322,13 +322,13 @@ typedef struct FT_GlyphSlotRec_ {
 /*************************************************************************/
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Init_FreeType(FT_Library *alibrary);
+FT_Init_FreeType(FT_Library *alibrary);
 
 FT_EXPORT(void)
 FT_Library_Version(FT_Library library, FT_Int *amajor, FT_Int *aminor, FT_Int *apatch);
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Done_FreeType(FT_Library library);
+FT_Done_FreeType(FT_Library library);
 
 
 typedef enum {
@@ -362,10 +362,10 @@ typedef struct FT_Open_Args_ {
 } FT_Open_Args;
 
 FT_EXPORT(FT_Error)
-FT2_1_3_New_Face(FT_Library library, const char *filepathname, FT_Long face_index, FT_Face *aface);
+FT_New_Face(FT_Library library, const char *filepathname, FT_Long face_index, FT_Face *aface);
 
 FT_EXPORT(FT_Error)
-FT2_1_3_New_Memory_Face(FT_Library library, const FT_Byte *file_base, FT_Long file_size, FT_Long face_index, FT_Face *aface);
+FT_New_Memory_Face(FT_Library library, const FT_Byte *file_base, FT_Long file_size, FT_Long face_index, FT_Face *aface);
 
 FT_EXPORT(FT_Error)
 FT_Open_Face(FT_Library library, const FT_Open_Args *args, FT_Long face_index, FT_Face *aface);
@@ -377,16 +377,16 @@ FT_EXPORT(FT_Error)
 FT_Attach_Stream(FT_Face face, FT_Open_Args *parameters);
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Done_Face(FT_Face face);
+FT_Done_Face(FT_Face face);
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution);
+FT_Set_Char_Size(FT_Face face, FT_F26Dot6 char_width, FT_F26Dot6 char_height, FT_UInt horz_resolution, FT_UInt vert_resolution);
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height);
+FT_Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width, FT_UInt pixel_height);
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags);
+FT_Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags);
 
 FT_EXPORT(FT_Error)
 FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 load_flags);
@@ -422,7 +422,7 @@ FT_Load_Char(FT_Face face, FT_ULong char_code, FT_Int32 load_flags);
 #define FT_LOAD_DEFAULT			0x0
 
 FT_EXPORT(void)
-FT2_1_3_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta);
+FT_Set_Transform(FT_Face face, FT_Matrix *matrix, FT_Vector *delta);
 
 typedef enum FT_Render_Mode_ {
 	FT_RENDER_MODE_NORMAL = 0,
@@ -438,7 +438,7 @@ typedef enum FT_Render_Mode_ {
 #define ft_render_mode_mono    FT_RENDER_MODE_MONO
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Render_Glyph(FT_GlyphSlot slot, FT_Render_Mode render_mode);
+FT_Render_Glyph(FT_GlyphSlot slot, FT_Render_Mode render_mode);
 
 typedef enum FT_Kerning_Mode_ {
 	FT_KERNING_DEFAULT = 0,
@@ -452,10 +452,10 @@ typedef enum FT_Kerning_Mode_ {
 #define ft_kerning_unscaled FT_KERNING_UNSCALED
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning);
+FT_Get_Kerning(FT_Face face, FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning);
 
 FT_EXPORT(FT_Error)
-FT2_1_3_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max);
+FT_Get_Glyph_Name(FT_Face face, FT_UInt glyph_index, FT_Pointer buffer, FT_UInt buffer_max);
 
 FT_EXPORT(const char *)
 FT_Get_Postscript_Name(FT_Face face);
@@ -467,13 +467,13 @@ FT_EXPORT(FT_Error)
 FT_Set_Charmap(FT_Face face, FT_CharMap charmap);
 
 FT_EXPORT(FT_UInt)
-FT2_1_3_Get_Char_Index(FT_Face face, FT_ULong charcode);
+FT_Get_Char_Index(FT_Face face, FT_ULong charcode);
 
 FT_EXPORT(FT_ULong)
-FT2_1_3_Get_First_Char(FT_Face face, FT_UInt *agindex);
+FT_Get_First_Char(FT_Face face, FT_UInt *agindex);
 
 FT_EXPORT(FT_ULong)
-FT2_1_3_Get_Next_Char(FT_Face face, FT_ULong char_code, FT_UInt *agindex);
+FT_Get_Next_Char(FT_Face face, FT_ULong char_code, FT_UInt *agindex);
 
 FT_EXPORT(FT_UInt)
 FT_Get_Name_Index(FT_Face face, FT_String *glyph_name);
@@ -485,22 +485,22 @@ FT_EXPORT(FT_Long)
 FT_MulDiv(FT_Long a, FT_Long b, FT_Long c);
 
 FT_EXPORT(FT_Long)
-FT2_1_3_MulFix(FT_Long a, FT_Long b);
+FT_MulFix(FT_Long a, FT_Long b);
 
 FT_EXPORT(FT_Long)
-FT2_1_3_DivFix(FT_Long a, FT_Long b);
+FT_DivFix(FT_Long a, FT_Long b);
 
 FT_EXPORT(FT_Fixed)
-FT2_1_3_RoundFix(FT_Fixed a);
+FT_RoundFix(FT_Fixed a);
 
 FT_EXPORT(FT_Fixed)
-FT2_1_3_CeilFix(FT_Fixed a);
+FT_CeilFix(FT_Fixed a);
 
 FT_EXPORT(FT_Fixed)
-FT2_1_3_FloorFix(FT_Fixed a);
+FT_FloorFix(FT_Fixed a);
 
 FT_EXPORT(void)
-FT2_1_3_Vector_Transform(FT_Vector *vec, FT_Matrix *matrix);
+FT_Vector_Transform(FT_Vector *vec, FT_Matrix *matrix);
 
 
 // FT_END_HEADER

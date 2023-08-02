@@ -128,9 +128,9 @@ ah_angle(FT_Vector *v) {
 	if (dx == dy)
 		angle += AH_PI / 4;
 	else if (dx > dy)
-		angle += ah_arctan[FT2_1_3_DivFix(dy, dx) >> (16 - AH_ATAN_BITS)];
+		angle += ah_arctan[FT_DivFix(dy, dx) >> (16 - AH_ATAN_BITS)];
 	else
-		angle += AH_HALF_PI - ah_arctan[FT2_1_3_DivFix(dx, dy) >> (16 - AH_ATAN_BITS)];
+		angle += AH_HALF_PI - ah_arctan[FT_DivFix(dx, dy) >> (16 - AH_ATAN_BITS)];
 
 	if (angle > AH_PI)
 		angle -= AH_2PI;

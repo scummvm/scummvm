@@ -461,7 +461,7 @@ Exit:
 	}
 
 	if (num)
-		result += FT2_1_3_DivFix(num, divider);
+		result += FT_DivFix(num, divider);
 
 	if (sign)
 		result = -result;
@@ -747,10 +747,10 @@ ps_parser_load_field(PS_Parser parser, const T1_Field field, void **objects, FT_
 			token.limit++;
 			(void)t1_tofixedarray(&token.start, token.limit, 4, temp, 0);
 
-			bbox->xMin = FT2_1_3_RoundFix(temp[0]);
-			bbox->yMin = FT2_1_3_RoundFix(temp[1]);
-			bbox->xMax = FT2_1_3_RoundFix(temp[2]);
-			bbox->yMax = FT2_1_3_RoundFix(temp[3]);
+			bbox->xMin = FT_RoundFix(temp[0]);
+			bbox->yMin = FT_RoundFix(temp[1]);
+			bbox->xMax = FT_RoundFix(temp[2]);
+			bbox->yMax = FT_RoundFix(temp[3]);
 		} break;
 
 		default:

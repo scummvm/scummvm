@@ -167,7 +167,7 @@
 /*       is used in a function declaration, as in                        */
 /*                                                                       */
 /*         FT_EXPORT( FT_Error )                                         */
-/*         FT2_1_3_Init_FreeType( FT_Library*  alibrary );                    */
+/*         FT_Init_FreeType( FT_Library*  alibrary );                    */
 /*                                                                       */
 /*                                                                       */
 /*     FT_EXPORT_DEF( return_type )                                      */
@@ -175,7 +175,7 @@
 /*       is used in a function definition, as in                         */
 /*                                                                       */
 /*         FT_EXPORT_DEF( FT_Error )                                     */
-/*         FT2_1_3_Init_FreeType( FT_Library*  alibrary )                     */
+/*         FT_Init_FreeType( FT_Library*  alibrary )                     */
 /*         {                                                             */
 /*           ... some code ...                                           */
 /*           return FT_Err_Ok;                                           */

@@ -275,18 +275,18 @@ T1_Load_Glyph(T1_GlyphSlot glyph, T1_Size size, FT_UInt glyph_index, FT_Int32 lo
 				/* First of all, scale the points, if we are not hinting */
 				if (!hinting)
 					for (n = cur->n_points; n > 0; n--, vec++) {
-						vec->x = FT2_1_3_MulFix(vec->x, x_scale);
-						vec->y = FT2_1_3_MulFix(vec->y, y_scale);
+						vec->x = FT_MulFix(vec->x, x_scale);
+						vec->y = FT_MulFix(vec->y, y_scale);
 					}
 
 				FT_Outline_Get_CBox(&glyph->root.outline, &cbox);
 
 				/* Then scale the metrics */
-				metrics->horiAdvance = FT2_1_3_MulFix(metrics->horiAdvance, x_scale);
-				metrics->vertAdvance = FT2_1_3_MulFix(metrics->vertAdvance, y_scale);
+				metrics->horiAdvance = FT_MulFix(metrics->horiAdvance, x_scale);
+				metrics->vertAdvance = FT_MulFix(metrics->vertAdvance, y_scale);
 
-				metrics->vertBearingX = FT2_1_3_MulFix(metrics->vertBearingX, x_scale);
-				metrics->vertBearingY = FT2_1_3_MulFix(metrics->vertBearingY, y_scale);
+				metrics->vertBearingX = FT_MulFix(metrics->vertBearingX, x_scale);
+				metrics->vertBearingY = FT_MulFix(metrics->vertBearingY, y_scale);
 
 				if (hinting) {
 					metrics->horiAdvance = (metrics->horiAdvance + 32) & -64;

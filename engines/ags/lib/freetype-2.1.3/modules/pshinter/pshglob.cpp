@@ -52,8 +52,8 @@ psh_globals_scale_widths( PSH_Globals  globals,
 
 
 	if ( count > 0 ) {
-		width->cur = FT2_1_3_MulFix( width->org, scale );
-		width->fit = FT2_1_3_RoundFix( width->cur );
+		width->cur = FT_MulFix( width->org, scale );
+		width->fit = FT_RoundFix( width->cur );
 
 		width++;
 		count--;
@@ -62,7 +62,7 @@ psh_globals_scale_widths( PSH_Globals  globals,
 			FT_Pos  w, dist;
 
 
-			w    = FT2_1_3_MulFix( width->org, scale );
+			w    = FT_MulFix( width->org, scale );
 			dist = w - stand->cur;
 
 			if ( dist < 0 )
@@ -72,7 +72,7 @@ psh_globals_scale_widths( PSH_Globals  globals,
 				w = stand->cur;
 
 			width->cur = w;
-			width->fit = FT2_1_3_RoundFix( w );
+			width->fit = FT_RoundFix( w );
 		}
 	}
 }
@@ -83,7 +83,7 @@ FT_LOCAL_DEF( FT_Pos )
 psh_dimension_snap_width( PSH_Dimension  dimension,
 						  FT_Int         org_width ) {
 	FT_UInt  n;
-	FT_Pos   width     = FT2_1_3_MulFix( org_width, dimension->scale_mult );
+	FT_Pos   width     = FT_MulFix( org_width, dimension->scale_mult );
 	FT_Pos   best      = 64 + 32 + 2;
 	FT_Pos   reference = width;
 
@@ -376,7 +376,7 @@ psh_blues_scale_zones( PSH_Blues  blues,
 		FT_Int  threshold = blues->blue_shift;
 
 
-		while ( threshold > 0 && FT2_1_3_MulFix( threshold, scale ) > 32 )
+		while ( threshold > 0 && FT_MulFix( threshold, scale ) > 32 )
 			threshold --;
 
 		blues->blue_threshold = threshold;
@@ -404,10 +404,10 @@ psh_blues_scale_zones( PSH_Blues  blues,
 		zone  = table->zones;
 		count = table->count;
 		for ( ; count > 0; count--, zone++ ) {
-			zone->cur_top    = FT2_1_3_MulFix( zone->org_top,    scale ) + delta;
-			zone->cur_bottom = FT2_1_3_MulFix( zone->org_bottom, scale ) + delta;
-			zone->cur_ref    = FT2_1_3_MulFix( zone->org_ref,    scale ) + delta;
-			zone->cur_delta  = FT2_1_3_MulFix( zone->org_delta,  scale );
+			zone->cur_top    = FT_MulFix( zone->org_top,    scale ) + delta;
+			zone->cur_bottom = FT_MulFix( zone->org_bottom, scale ) + delta;
+			zone->cur_ref    = FT_MulFix( zone->org_ref,    scale ) + delta;
+			zone->cur_delta  = FT_MulFix( zone->org_delta,  scale );
 
 			/* round scaled reference position */
 			zone->cur_ref = ( zone->cur_ref + 32 ) & -64;
@@ -457,7 +457,7 @@ psh_blues_scale_zones( PSH_Blues  blues,
 				if ( Delta < 0 )
 					Delta = -Delta;
 
-				if ( FT2_1_3_MulFix( Delta, scale ) < 64 ) {
+				if ( FT_MulFix( Delta, scale ) < 64 ) {
 					zone1->cur_top    = zone2->cur_top;
 					zone1->cur_bottom = zone2->cur_bottom;
 					zone1->cur_ref    = zone2->cur_ref;

@@ -30,7 +30,7 @@
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
 
-#define TT_MULFIX  FT2_1_3_MulFix
+#define TT_MULFIX  FT_MulFix
 #define TT_MULDIV  FT_MulDiv
 #define TT_INT64   FT_Int64
 
@@ -1376,7 +1376,7 @@ Write_CVT( EXEC_OP_ FT_ULong    idx,
 FT_CALLBACK_DEF( void )
 Write_CVT_Stretched( EXEC_OP_ FT_ULong    idx,
                      FT_F26Dot6  value ) {
-	CUR.cvt[idx] = FT2_1_3_DivFix( value, CURRENT_Ratio() );
+	CUR.cvt[idx] = FT_DivFix( value, CURRENT_Ratio() );
 }
 
 
@@ -1390,7 +1390,7 @@ Move_CVT( EXEC_OP_ FT_ULong    idx,
 FT_CALLBACK_DEF( void )
 Move_CVT_Stretched( EXEC_OP_ FT_ULong    idx,
                     FT_F26Dot6  value ) {
-	CUR.cvt[idx] += FT2_1_3_DivFix( value, CURRENT_Ratio() );
+	CUR.cvt[idx] += FT_DivFix( value, CURRENT_Ratio() );
 }
 
 

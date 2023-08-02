@@ -133,11 +133,11 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 			AH_LOG(("`%c'", *p));
 
 			/* load the character in the face -- skip unknown or empty ones */
-			glyph_index = FT2_1_3_Get_Char_Index(face, (FT_UInt)*p);
+			glyph_index = FT_Get_Char_Index(face, (FT_UInt)*p);
 			if (glyph_index == 0)
 				continue;
 
-			error = FT2_1_3_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
+			error = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
 			if (error || glyph->outline.n_points <= 0)
 				continue;
 
@@ -296,11 +296,11 @@ static FT_Error ah_hinter_compute_widths(AH_Hinter hinter) {
 	{
 		FT_UInt glyph_index;
 
-		glyph_index = FT2_1_3_Get_Char_Index(hinter->face, 'o');
+		glyph_index = FT_Get_Char_Index(hinter->face, 'o');
 		if (glyph_index == 0)
 			return 0;
 
-		error = FT2_1_3_Load_Glyph(hinter->face, glyph_index, FT_LOAD_NO_SCALE);
+		error = FT_Load_Glyph(hinter->face, glyph_index, FT_LOAD_NO_SCALE);
 		if (error)
 			goto Exit;
 

@@ -247,7 +247,7 @@ static FT_Fixed cff_parse_real(FT_Byte *start, FT_Byte *limit, FT_Int power_ten)
 
 	/* Place the decimal part into the low 16 bits. */
 	if (num)
-		result |= FT2_1_3_DivFix(num, divider);
+		result |= FT_DivFix(num, divider);
 
 	if (sign)
 		result = -result;
@@ -273,7 +273,7 @@ static FT_Fixed cff_parse_fixed(FT_Byte **d) {
 /* read a floating point number, either integer or real, */
 /* but return 1000 times the number read in.             */
 static FT_Fixed cff_parse_fixed_thousand(FT_Byte **d) {
-	return **d == 30 ? cff_parse_real(d[0], d[1], 3) : (FT_Fixed)FT2_1_3_MulFix(cff_parse_integer(d[0], d[1]) << 16, 1000);
+	return **d == 30 ? cff_parse_real(d[0], d[1], 3) : (FT_Fixed)FT_MulFix(cff_parse_integer(d[0], d[1]) << 16, 1000);
 }
 
 static FT_Error cff_parse_font_matrix(CFF_Parser parser) {
@@ -297,15 +297,15 @@ static FT_Error cff_parse_font_matrix(CFF_Parser parser) {
 
 		temp = ABS(matrix->yy);
 
-		*upm = (FT_UShort)FT2_1_3_DivFix(0x10000L, FT2_1_3_DivFix(temp, 1000));
+		*upm = (FT_UShort)FT_DivFix(0x10000L, FT_DivFix(temp, 1000));
 
 		if (temp != 0x10000L) {
-			matrix->xx = FT2_1_3_DivFix(matrix->xx, temp);
-			matrix->yx = FT2_1_3_DivFix(matrix->yx, temp);
-			matrix->xy = FT2_1_3_DivFix(matrix->xy, temp);
-			matrix->yy = FT2_1_3_DivFix(matrix->yy, temp);
-			offset->x  = FT2_1_3_DivFix(offset->x, temp);
-			offset->y  = FT2_1_3_DivFix(offset->y, temp);
+			matrix->xx = FT_DivFix(matrix->xx, temp);
+			matrix->yx = FT_DivFix(matrix->yx, temp);
+			matrix->xy = FT_DivFix(matrix->xy, temp);
+			matrix->yy = FT_DivFix(matrix->yy, temp);
+			offset->x  = FT_DivFix(offset->x, temp);
+			offset->y  = FT_DivFix(offset->y, temp);
 		}
 
 		/* note that the offsets must be expressed in integer font units */
@@ -327,10 +327,10 @@ static FT_Error cff_parse_font_bbox(CFF_Parser parser) {
 	error = FT_Err_Stack_Underflow;
 
 	if (parser->top >= parser->stack + 4) {
-		bbox->xMin = FT2_1_3_RoundFix(cff_parse_fixed(data++));
-		bbox->yMin = FT2_1_3_RoundFix(cff_parse_fixed(data++));
-		bbox->xMax = FT2_1_3_RoundFix(cff_parse_fixed(data++));
-		bbox->yMax = FT2_1_3_RoundFix(cff_parse_fixed(data));
+		bbox->xMin = FT_RoundFix(cff_parse_fixed(data++));
+		bbox->yMin = FT_RoundFix(cff_parse_fixed(data++));
+		bbox->xMax = FT_RoundFix(cff_parse_fixed(data++));
+		bbox->yMax = FT_RoundFix(cff_parse_fixed(data));
 		error = FT_Err_Ok;
 	}
 

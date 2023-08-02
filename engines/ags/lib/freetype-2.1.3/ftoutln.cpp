@@ -512,17 +512,17 @@ FT_Outline_Get_Bitmap(FT_Library library, FT_Outline *outline, FT_Bitmap *abitma
 }
 
 FT_EXPORT_DEF(void)
-FT2_1_3_Vector_Transform(FT_Vector *vector, FT_Matrix *matrix) {
+FT_Vector_Transform(FT_Vector *vector, FT_Matrix *matrix) {
 	FT_Pos xz, yz;
 
 	if (!vector || !matrix)
 		return;
 
-	xz = FT2_1_3_MulFix(vector->x, matrix->xx) +
-		 FT2_1_3_MulFix(vector->y, matrix->xy);
+	xz = FT_MulFix(vector->x, matrix->xx) +
+		 FT_MulFix(vector->y, matrix->xy);
 
-	yz = FT2_1_3_MulFix(vector->x, matrix->yx) +
-		 FT2_1_3_MulFix(vector->y, matrix->yy);
+	yz = FT_MulFix(vector->x, matrix->yx) +
+		 FT_MulFix(vector->y, matrix->yy);
 
 	vector->x = xz;
 	vector->y = yz;
@@ -534,7 +534,7 @@ FT_Outline_Transform(FT_Outline *outline, FT_Matrix *matrix) {
 	FT_Vector *limit = vec + outline->n_points;
 
 	for (; vec < limit; vec++)
-		FT2_1_3_Vector_Transform(vec, matrix);
+		FT_Vector_Transform(vec, matrix);
 }
 
 } // End of namespace FreeType213

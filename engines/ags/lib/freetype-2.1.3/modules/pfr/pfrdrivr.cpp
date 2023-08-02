@@ -92,10 +92,10 @@ pfr_get_metrics( PFR_Face   face,
 	y_scale = 0x10000L;
 
 	if ( size ) {
-		x_scale = FT2_1_3_DivFix( size->metrics.x_ppem << 6,
+		x_scale = FT_DivFix( size->metrics.x_ppem << 6,
 							 phys->metrics_resolution );
 
-		y_scale = FT2_1_3_DivFix( size->metrics.y_ppem << 6,
+		y_scale = FT_DivFix( size->metrics.y_ppem << 6,
 							 phys->metrics_resolution );
 	}
 
@@ -110,10 +110,10 @@ pfr_get_metrics( PFR_Face   face,
 
 
 FT_CALLBACK_TABLE_DEF
-const FT2_1_3_PFR_ServiceRec  pfr_service_rec = {
-	(FT2_1_3_PFR_GetMetricsFunc)  pfr_get_metrics,
-	(FT2_1_3_PFR_GetKerningFunc)  pfr_get_kerning,
-	(FT2_1_3_PFR_GetAdvanceFunc)  pfr_get_advance
+const FT_PFR_ServiceRec  pfr_service_rec = {
+	(FT_PFR_GetMetricsFunc)  pfr_get_metrics,
+	(FT_PFR_GetKerningFunc)  pfr_get_kerning,
+	(FT_PFR_GetAdvanceFunc)  pfr_get_advance
 };
 
 
@@ -129,7 +129,7 @@ const FT_Driver_ClassRec  pfr_driver_class = {
 		0x10000L,
 		0x20000L,
 
-		(FT2_1_3_PFR_Service)  &pfr_service_rec,   /* format interface */
+		(FT_PFR_Service)  &pfr_service_rec,   /* format interface */
 
 		(FT_Module_Constructor)NULL,
 		(FT_Module_Destructor) NULL,

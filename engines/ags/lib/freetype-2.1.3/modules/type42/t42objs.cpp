@@ -226,7 +226,7 @@ T42_Face_Init( FT_Stream      stream,
 	root->available_sizes = 0;
 
 	/* Load the TTF font embedded in the T42 font */
-	error = FT2_1_3_New_Memory_Face( FT_FACE_LIBRARY( face ),
+	error = FT_New_Memory_Face( FT_FACE_LIBRARY( face ),
 								face->ttf_data,
 								face->ttf_size,
 								0,
@@ -343,7 +343,7 @@ T42_Face_Done( T42_Face  face ) {
 
 		/* delete internal ttf face prior to freeing face->ttf_data */
 		if ( face->ttf_face )
-			FT2_1_3_Done_Face( face->ttf_face );
+			FT_Done_Face( face->ttf_face );
 
 		/* release font info strings */
 		FT_FREE( info->version );
@@ -477,7 +477,7 @@ T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
 
 	while ( cur ) {
 		if ( cur == slot->ttslot ) {
-			FT2_1_3_Done_GlyphSlot( slot->ttslot );
+			FT_Done_GlyphSlot( slot->ttslot );
 			break;
 		}
 
@@ -499,7 +499,7 @@ T42_Size_SetChars( T42_Size    size,
 
 	FT_Activate_Size(size->ttsize);
 
-	return FT2_1_3_Set_Char_Size( t42face->ttf_face,
+	return FT_Set_Char_Size( t42face->ttf_face,
 							 char_width,
 							 char_height,
 							 horz_resolution,
@@ -517,7 +517,7 @@ T42_Size_SetPixels( T42_Size  size,
 
 	FT_Activate_Size(size->ttsize);
 
-	return FT2_1_3_Set_Pixel_Sizes( t42face->ttf_face,
+	return FT_Set_Pixel_Sizes( t42face->ttf_face,
 							   pixel_width,
 							   pixel_height );
 }

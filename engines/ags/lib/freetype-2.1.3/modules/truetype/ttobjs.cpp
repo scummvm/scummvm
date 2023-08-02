@@ -421,10 +421,10 @@ static FT_Error Reset_Outline_Size(TT_Size size) {
 	}
 
 	/* Compute root ascender, descender, test height, and max_advance */
-	metrics->ascender = (FT2_1_3_MulFix(face->root.ascender, metrics->y_scale) + 32) & -64;
-	metrics->descender = (FT2_1_3_MulFix(face->root.descender, metrics->y_scale) + 32) & -64;
-	metrics->height = (FT2_1_3_MulFix(face->root.height, metrics->y_scale) + 32) & -64;
-	metrics->max_advance = (FT2_1_3_MulFix(face->root.max_advance_width, metrics->x_scale) + 32) & -64;
+	metrics->ascender = (FT_MulFix(face->root.ascender, metrics->y_scale) + 32) & -64;
+	metrics->descender = (FT_MulFix(face->root.descender, metrics->y_scale) + 32) & -64;
+	metrics->height = (FT_MulFix(face->root.height, metrics->y_scale) + 32) & -64;
+	metrics->max_advance = (FT_MulFix(face->root.max_advance_width, metrics->x_scale) + 32) & -64;
 
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 	/* set to `invalid' by default */
@@ -440,7 +440,7 @@ static FT_Error Reset_Outline_Size(TT_Size size) {
 		/* Scale the cvt values to the new ppem.          */
 		/* We use by default the y ppem to scale the CVT. */
 		for (i = 0; i < size->cvt_size; i++)
-			size->cvt[i] = FT2_1_3_MulFix(face->cvt[i], size->ttmetrics.scale);
+			size->cvt[i] = FT_MulFix(face->cvt[i], size->ttmetrics.scale);
 
 		/* All twilight points are originally zero */
 		for (j = 0; j < (FT_UInt)size->twilight.n_points; j++) {

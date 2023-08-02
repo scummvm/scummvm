@@ -602,7 +602,7 @@ t1_decoder_parse_charstrings(T1_Decoder decoder, FT_Byte *charstring_base, FT_UI
 					FT_Int tmp = values[0];
 
 					for (mm = 1; mm < blend->num_designs; mm++)
-						tmp += FT2_1_3_MulFix(*delta++, blend->weight_vector[mm]);
+						tmp += FT_MulFix(*delta++, blend->weight_vector[mm]);
 
 					*values++ = tmp;
 				}

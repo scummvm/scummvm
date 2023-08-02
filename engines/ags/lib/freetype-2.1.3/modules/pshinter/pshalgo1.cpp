@@ -320,8 +320,8 @@ ps_simple_scale( PSH1_Hint_Table  table,
 	for ( count = 0; count < table->num_hints; count++ ) {
 		hint = table->sort[count];
 		if ( psh1_hint_is_active( hint ) ) {
-			hint->cur_pos = FT2_1_3_MulFix( hint->org_pos, scale ) + delta;
-			hint->cur_len = FT2_1_3_MulFix( hint->org_len, scale );
+			hint->cur_pos = FT_MulFix( hint->org_pos, scale ) + delta;
+			hint->cur_len = FT_MulFix( hint->org_len, scale );
 
 			if ( ps1_debug_hint_func )
 				ps1_debug_hint_func( hint, vertical );
@@ -366,8 +366,8 @@ psh1_hint_table_optimize( PSH1_Hint_Table  table,
 			hint = table->sort[count];
 			if ( psh1_hint_is_active( hint ) ) {
 #if 1
-				FT_Pos  pos = FT2_1_3_MulFix( hint->org_pos, scale ) + delta;
-				FT_Pos  len = FT2_1_3_MulFix( hint->org_len, scale );
+				FT_Pos  pos = FT_MulFix( hint->org_pos, scale ) + delta;
+				FT_Pos  len = FT_MulFix( hint->org_len, scale );
 
 				FT_Pos  fit_center;
 				FT_Pos  fit_len;
@@ -426,9 +426,9 @@ psh1_hint_table_optimize( PSH1_Hint_Table  table,
 
 # else
 
-				hint->cur_pos = ( FT2_1_3_MulFix( hint->org_pos, scale ) + delta + 32 )
+				hint->cur_pos = ( FT_MulFix( hint->org_pos, scale ) + delta + 32 )
 								& -64;
-				hint->cur_len = FT2_1_3_MulFix( hint->org_len, scale );
+				hint->cur_len = FT_MulFix( hint->org_len, scale );
 
 # endif
 
@@ -507,7 +507,7 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 	hint = sort[0];
 
 	zone->scale = scale;
-	zone->delta = hint->cur_pos - FT2_1_3_MulFix( hint->org_pos, scale );
+	zone->delta = hint->cur_pos - FT_MulFix( hint->org_pos, scale );
 	zone->min   = PSH1_ZONE_MIN;
 	zone->max   = hint->org_pos;
 
@@ -524,11 +524,11 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 			/* (x' - x0') = (x - x0)*(x1'-x0')/(x1-x0)   */
 			/* x' = x*s2 + x0' - x0*s2                   */
 
-			scale2      = FT2_1_3_DivFix( hint->cur_len, hint->org_len );
+			scale2      = FT_DivFix( hint->cur_len, hint->org_len );
 			zone->scale = scale2;
 			zone->min   = hint->org_pos;
 			zone->max   = hint->org_pos + hint->org_len;
-			zone->delta = hint->cur_pos - FT2_1_3_MulFix( zone->min, scale2 );
+			zone->delta = hint->cur_pos - FT_MulFix( zone->min, scale2 );
 
 			psh1_print_zone( zone );
 
@@ -545,13 +545,13 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 		/* (x'-x1') = (x-x1)*(x2'-x1')/(x2-x1)     */
 		/* x' = x*s3 + x1' - x1*s3                 */
 
-		scale2 = FT2_1_3_DivFix( hint2->cur_pos - (hint->cur_pos + hint->cur_len),
+		scale2 = FT_DivFix( hint2->cur_pos - (hint->cur_pos + hint->cur_len),
 							hint2->org_pos - (hint->org_pos + hint->org_len) );
 		zone->scale = scale2;
 		zone->min   = hint->org_pos + hint->org_len;
 		zone->max   = hint2->org_pos;
 		zone->delta = hint->cur_pos + hint->cur_len -
-					  FT2_1_3_MulFix( zone->min, scale2 );
+					  FT_MulFix( zone->min, scale2 );
 
 		psh1_print_zone( zone );
 
@@ -565,7 +565,7 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 	zone->min   = hint->org_pos + hint->org_len;
 	zone->max   = PSH1_ZONE_MAX;
 	zone->delta = hint->cur_pos + hint->cur_len -
-				  FT2_1_3_MulFix( zone->min, scale );
+				  FT_MulFix( zone->min, scale );
 
 	psh1_print_zone( zone );
 
@@ -605,7 +605,7 @@ psh1_hint_table_tune_coord( PSH1_Hint_Table  table,
 		table->zone = zone;
 	}
 
-	return FT2_1_3_MulFix( coord, zone->scale ) + zone->delta;
+	return FT_MulFix( coord, zone->scale ) + zone->delta;
 }
 
 
@@ -669,10 +669,10 @@ psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
 
 		if ( vertical ) {
 			for ( ; count > 0; count--, vec++ )
-				vec->x = FT2_1_3_MulFix( vec->x, scale ) + delta;
+				vec->x = FT_MulFix( vec->x, scale ) + delta;
 		} else {
 			for ( ; count > 0; count--, vec++ )
-				vec->y = FT2_1_3_MulFix( vec->y, scale ) + delta;
+				vec->y = FT_MulFix( vec->y, scale ) + delta;
 		}
 	}
 }

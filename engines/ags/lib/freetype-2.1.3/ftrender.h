@@ -58,7 +58,7 @@ typedef void (*FT_Glyph_DoneFunc)(FT_Glyph glyph);
 
 typedef void (*FT_Glyph_TransformFunc)(FT_Glyph glyph, FT_Matrix *matrix, FT_Vector *delta);
 typedef void (*FT_Glyph_GetBBoxFunc)(FT_Glyph glyph, FT_BBox *abbox);
-typedef FT_Error (*FT2_1_3_Glyph_CopyFunc)(FT_Glyph source, FT_Glyph target);
+typedef FT_Error (*FT_Glyph_CopyFunc)(FT_Glyph source, FT_Glyph target);
 typedef FT_Error (*FT_Glyph_PrepareFunc)(FT_Glyph glyph, FT_GlyphSlot slot);
 
 /* deprecated */
@@ -66,7 +66,7 @@ typedef FT_Error (*FT_Glyph_PrepareFunc)(FT_Glyph glyph, FT_GlyphSlot slot);
 #define FT_Glyph_Done_Func       FT_Glyph_DoneFunc
 #define FT_Glyph_Transform_Func  FT_Glyph_TransformFunc
 #define FT_Glyph_BBox_Func       FT_Glyph_GetBBoxFunc
-#define FT2_1_3_Glyph_Copy_Func       FT2_1_3_Glyph_CopyFunc
+#define FT_Glyph_Copy_Func       FT_Glyph_CopyFunc
 #define FT_Glyph_Prepare_Func    FT_Glyph_PrepareFunc
 
 struct  FT_Glyph_Class_ {
@@ -74,7 +74,7 @@ struct  FT_Glyph_Class_ {
 	FT_Glyph_Format         glyph_format;
 	FT_Glyph_InitFunc       glyph_init;
 	FT_Glyph_DoneFunc       glyph_done;
-	FT2_1_3_Glyph_CopyFunc       glyph_copy;
+	FT_Glyph_CopyFunc       glyph_copy;
 	FT_Glyph_TransformFunc  glyph_transform;
 	FT_Glyph_GetBBoxFunc    glyph_bbox;
 	FT_Glyph_PrepareFunc    glyph_prepare;

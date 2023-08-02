@@ -70,19 +70,19 @@ typedef struct FT_Int64_ {
 /* FT_LONG64 is defined.                                             */
 
 FT_EXPORT_DEF(FT_Fixed)
-FT2_1_3_RoundFix(FT_Fixed a) {
+FT_RoundFix(FT_Fixed a) {
 	return (a >= 0) ? (a + 0x8000L) & -0x10000L
 					: -((-a + 0x8000L) & -0x10000L);
 }
 
 FT_EXPORT_DEF(FT_Fixed)
-FT2_1_3_CeilFix(FT_Fixed a) {
+FT_CeilFix(FT_Fixed a) {
 	return (a >= 0) ? (a + 0xFFFFL) & -0x10000L
 					: -((-a + 0xFFFFL) & -0x10000L);
 }
 
 FT_EXPORT_DEF(FT_Fixed)
-FT2_1_3_FloorFix(FT_Fixed a) {
+FT_FloorFix(FT_Fixed a) {
 	return (a >= 0) ? a & -0x10000L
 					: -((-a) & -0x10000L);
 }
@@ -139,7 +139,7 @@ FT_MulDiv(FT_Long a, FT_Long b, FT_Long c) {
 }
 
 FT_EXPORT_DEF(FT_Long)
-FT2_1_3_MulFix(FT_Long a, FT_Long b) {
+FT_MulFix(FT_Long a, FT_Long b) {
 	FT_Int s = 1;
 	FT_Long c;
 
@@ -157,7 +157,7 @@ FT2_1_3_MulFix(FT_Long a, FT_Long b) {
 }
 
 FT_EXPORT_DEF(FT_Long)
-FT2_1_3_DivFix(FT_Long a, FT_Long b) {
+FT_DivFix(FT_Long a, FT_Long b) {
 	FT_Int32 s;
 	FT_UInt32 q;
 
@@ -239,7 +239,7 @@ static FT_UInt32 ft_div64by32(FT_UInt32 hi, FT_UInt32 lo, FT_UInt32 y) {
 }
 
 FT_EXPORT_DEF(void)
-FT2_1_3_Add64(FT_Int64 *x, FT_Int64 *y, FT_Int64 *z) {
+FT_Add64(FT_Int64 *x, FT_Int64 *y, FT_Int64 *z) {
 	register FT_UInt32 lo, hi, max;
 
 	max = x->lo > y->lo ? x->lo : y->lo;
@@ -273,7 +273,7 @@ FT_MulDiv(FT_Long a, FT_Long b, FT_Long c) {
 
 		temp2.hi = 0;
 		temp2.lo = (FT_UInt32)(c >> 1);
-		FT2_1_3_Add64(&temp, &temp2, &temp);
+		FT_Add64(&temp, &temp2, &temp);
 		a = ft_div64by32(temp.hi, temp.lo, c);
 	} else
 		a = 0x7FFFFFFFL;
@@ -282,7 +282,7 @@ FT_MulDiv(FT_Long a, FT_Long b, FT_Long c) {
 }
 
 FT_EXPORT_DEF(FT_Long)
-FT2_1_3_MulFix(FT_Long a, FT_Long b) {
+FT_MulFix(FT_Long a, FT_Long b) {
 	FT_Long s;
 	FT_ULong ua, ub;
 
@@ -310,7 +310,7 @@ FT2_1_3_MulFix(FT_Long a, FT_Long b) {
 }
 
 FT_EXPORT_DEF(FT_Long)
-FT2_1_3_DivFix(FT_Long a, FT_Long b) {
+FT_DivFix(FT_Long a, FT_Long b) {
 	FT_Int32 s;
 	FT_UInt32 q;
 
@@ -333,7 +333,7 @@ FT2_1_3_DivFix(FT_Long a, FT_Long b) {
 		temp.lo = (FT_UInt32)(a << 16);
 		temp2.hi = 0;
 		temp2.lo = (FT_UInt32)(b >> 1);
-		FT2_1_3_Add64(&temp, &temp2, &temp);
+		FT_Add64(&temp, &temp2, &temp);
 		q = ft_div64by32(temp.hi, temp.lo, b);
 	}
 
@@ -341,7 +341,7 @@ FT2_1_3_DivFix(FT_Long a, FT_Long b) {
 }
 
 FT_EXPORT_DEF(void)
-FT2_1_3_MulTo64(FT_Int32 x, FT_Int32 y, FT_Int64 *z) {
+FT_MulTo64(FT_Int32 x, FT_Int32 y, FT_Int64 *z) {
 	FT_Int32 s;
 
 	s = x;
@@ -363,7 +363,7 @@ FT2_1_3_MulTo64(FT_Int32 x, FT_Int32 y, FT_Int64 *z) {
 #if 1
 
 FT_EXPORT_DEF(FT_Int32)
-FT2_1_3_Div64by32(FT_Int64 *x, FT_Int32 y) {
+FT_Div64by32(FT_Int64 *x, FT_Int32 y) {
 	FT_Int32 s;
 	FT_UInt32 q, r, i, lo;
 
@@ -411,7 +411,7 @@ FT2_1_3_Div64by32(FT_Int64 *x, FT_Int32 y) {
 #else /* 0 */
 
 FT_EXPORT_DEF(FT_Int32)
-FT2_1_3_Div64by32(FT_Int64 *x, FT_Int32 y) {
+FT_Div64by32(FT_Int64 *x, FT_Int32 y) {
 	FT_Int32 s;
 	FT_UInt32 q;
 

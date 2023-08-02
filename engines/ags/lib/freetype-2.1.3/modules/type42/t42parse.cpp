@@ -315,16 +315,16 @@ t42_parse_font_matrix( T42_Face    face,
 	/* 1000 / temp_scale, because temp_scale was already multiplied by   */
 	/* 1000 (in t1_tofixed, from psobjs.c).                              */
 
-	root->units_per_EM = (FT_UShort)( FT2_1_3_DivFix( 1000 * 0x10000L,
+	root->units_per_EM = (FT_UShort)( FT_DivFix( 1000 * 0x10000L,
 									  temp_scale ) >> 16 );
 
 	/* we need to scale the values by 1.0/temp_scale */
 	if ( temp_scale != 0x10000L ) {
-		temp[0] = FT2_1_3_DivFix( temp[0], temp_scale );
-		temp[1] = FT2_1_3_DivFix( temp[1], temp_scale );
-		temp[2] = FT2_1_3_DivFix( temp[2], temp_scale );
-		temp[4] = FT2_1_3_DivFix( temp[4], temp_scale );
-		temp[5] = FT2_1_3_DivFix( temp[5], temp_scale );
+		temp[0] = FT_DivFix( temp[0], temp_scale );
+		temp[1] = FT_DivFix( temp[1], temp_scale );
+		temp[2] = FT_DivFix( temp[2], temp_scale );
+		temp[4] = FT_DivFix( temp[4], temp_scale );
+		temp[5] = FT_DivFix( temp[5], temp_scale );
 		temp[3] = 0x10000L;
 	}
 
