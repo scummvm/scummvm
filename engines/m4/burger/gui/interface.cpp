@@ -53,7 +53,6 @@ void Interface::init(int arrow, int wait, int look, int grab, int use) {
 }
 
 Interface::~Interface() {
-	delete _G(gameInterfaceBuff);
 	delete _interfaceBox;
 	delete _inventory;
 	delete _textField;
