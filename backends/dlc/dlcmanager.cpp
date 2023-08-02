@@ -58,6 +58,7 @@ void DLCManager::refreshLauncherGameList() {
 void DLCManager::addDownload(uint32 idx) {
 	_dlcs[idx]->state = DLCDesc::kInProgress;
 	_queuedDownloadTasks.push(_dlcs[idx]);
+	_dlcsInProgress.push_back(_dlcs[idx]);
 	if (!_isDLCDownloading) {
 		// if queue is not already processing
 		DLCManager::processDownloadQueue();
@@ -74,6 +75,7 @@ void DLCManager::processDownloadQueue() {
 		} else {
 			// state is already cancelled/downloaded -> skip download
 			_queuedDownloadTasks.pop();
+			_dlcsInProgress.remove_at(0);
 			// process next download in the queue
 			processDownloadQueue();
 		}
@@ -89,8 +91,9 @@ void DLCManager::startDownloadAsync(const Common::String &id, const Common::Stri
 }
 
 bool DLCManager::cancelDownload(uint32 idx) {
-	if (_currentDownloadingDLC == _dlcs[idx]->id) {
+	if (_queuedDownloadTasks.front()->idx == idx) {
 		// if already downloading, interrupt startDownloadAsync
+		_interruptCurrentDownload = true;
 	} else {
 		// if not started, skip it in processDownload()
 		_dlcs[idx]->state = DLCDesc::kCancelled;

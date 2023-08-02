@@ -91,6 +91,18 @@ void ScummVMCloud::getAllDLCs() {
 void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 	DLCMan._currentDownloadedSize += response->len;
+	if (DLCMan._interruptCurrentDownload) {
+		_rq->close();
+		DLCMan._interruptCurrentDownload = false;
+		// delete the download cache (the incomplete .zip)
+		Common::Path relativeFilePath = Common::Path(DLCMan._queuedDownloadTasks.front()->id);
+		removeCacheFile(relativeFilePath);
+		// handle next download
+		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
+		DLCMan._queuedDownloadTasks.pop();
+		DLCMan._dlcsInProgress.remove_at(0);
+		DLCMan.processDownloadQueue();
+	}
 	if (response->eos) {
 		warning("downloaded");
 		_rq->close(); // delete request
@@ -106,6 +118,7 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		// handle next download
 		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
 		DLCMan._queuedDownloadTasks.pop();
+		DLCMan._dlcsInProgress.remove_at(0);
 		DLCMan.processDownloadQueue();
 	}
 }
@@ -114,6 +127,7 @@ void ScummVMCloud::errorCallback(Networking::ErrorResponse error) {
 	// error downloading - start next download in queue
 	DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kErrorDownloading;
 	DLCMan._queuedDownloadTasks.pop();
+	DLCMan._dlcsInProgress.remove_at(0);
 	DLCMan.processDownloadQueue();
 }
 
