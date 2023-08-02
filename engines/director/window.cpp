@@ -533,4 +533,23 @@ void Window::thawLingoState() {
 	_frozenLingoStates.pop_back();
 }
 
+// Check how many times previous enterFrame is called recursively, D4 will only process recursive enterFrame handlers to a depth of 2.
+// Therefore look into frozen lingo states and count previous pending enterFrame calls
+// eg. in a movie, frame 1 has an enterFrame handler that calls go(2), frame 2 has an enterFrame handler that calls go(3), now after
+// each frame is processed and it encounters a frame jump instruction (like go, open), it freezes the lingo state and then processes
+// the next frame. How do we know number of times enterFrame is called? Simple look into frozen lingo states for enterFrame calls.
+int Window::recursiveEnterFrameCount() {
+	int count = 0;
+
+	for (int i = _frozenLingoStates.size() - 1; i >= 0; i--) {
+		LingoState *state = _frozenLingoStates[i];
+		CFrame *frame = state->callstack.back();
+		if (frame->sp.name->equalsIgnoreCase("enterFrame")) {
+			count++;
+		}
+	}
+
+	return count;
+}
+
 } // End of namespace Director

@@ -158,6 +158,7 @@ public:
 	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
 	void freezeLingoState();
 	void thawLingoState();
+	int recursiveEnterFrameCount();
 
 	// events.cpp
 	bool processEvent(Common::Event &event) override;

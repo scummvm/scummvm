@@ -524,8 +524,12 @@ void Score::update() {
 		// Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
 		// D4 will only process recursive enterFrame handlers to a depth of 2.
 		// Any more will be ignored.
-		if ((_vm->getVersion() >= 400) && (count < 2)) {
-			_movie->processEvent(kEventEnterFrame);
+		if ((_vm->getVersion() >= 400)) {
+			if (count < 2 || _window->recursiveEnterFrameCount() < 2)
+				_movie->processEvent(kEventEnterFrame);
+			else {
+				warning("Score::update(): ignoring recursive enterFrame handler, frozenLingoStateCount: %d, enterFrames: %d", count, _window->recursiveEnterFrameCount());
+			}
 		} else if ((_vm->getVersion() < 400) || _movie->_allowOutdatedLingo) {
 			// Force a flush of any frozen scripts before raising enterFrame
 			if (!processFrozenScripts())
