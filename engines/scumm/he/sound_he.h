@@ -81,6 +81,7 @@ namespace Scumm {
 
 #define WAVE_FORMAT_PCM       1
 #define WAVE_FORMAT_IMA_ADPCM 17
+#define WAVE_RIFF_HEADER_LEN  44
 
 #define HSND_RES_OFFSET_ID1              0 // uint32, DIGI or MIDI header
 #define HSND_RES_OFFSET_LEN1             4 // uint32

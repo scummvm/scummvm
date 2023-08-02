@@ -23,9 +23,13 @@
 #define SCUMM_HE_MIXER_HE_H
 
 #include "scumm/he/sound_he.h"
+#include "scumm/he/intern_he.h"
+#include "scumm/resource.h"
 #include "common/util.h"
 #include "common/file.h"
 #include "common/debug.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 namespace Audio {
 class AudioStream;
@@ -46,15 +50,57 @@ namespace Scumm {
 #define CHANNEL_CALLBACK_EARLY     0x00000080
 #define CHANNEL_SOFT_REMIX         0x00000100
 
+#define MILES_MAX_CHANNELS         8
+
 struct HESoundModifiers;
+class ScummEngine_v60he;
+
+struct MyModifiers {
+	int frequencyShift;
+	int pan;
+	int volume;
+};
+
+class HEMilesChannel {
+protected:
+	Common::File *m_fileHandle;
+	byte *m_globPtr;
+
+public:
+	MyModifiers m_modifiers;
+	Audio::AudioStream *m_stream;
+	int m_baseFrequency;
+	Audio::SoundHandle audioHandle;
+	uint32 lastPlayPosition;
+	uint32 playFlags;
+	int dataOffset;
+	int globType;
+	int globNum;
+
+	HEMilesChannel() {
+		clearChannelData();
+	}
+
+	~HEMilesChannel() {
+		clearChannelData();
+	}
+
+	void startSpoolingChannel(const char *filename, long offset, int flags, HESoundModifiers modifiers);
+	void clearChannelData();
+	void closeFileHandle();
+};
 
 class HEMixer {
 protected:
+	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
-	bool _useMilesSoundSystem;
+	bool _useMilesSoundSystem = false;
+	bool _mixerPaused = false;
+
+	HEMilesChannel _milesChannels[MILES_MAX_CHANNELS];
 
 public:
-	HEMixer(Audio::Mixer *mixer, bool useMiles);
+	HEMixer(Audio::Mixer *mixer, ScummEngine_v60he *vm, bool useMiles);
 	~HEMixer();
 
 	void *getMilesSoundSystemObject();
@@ -99,7 +145,14 @@ public:
 		int sampleLen, int bitsPerSample, int sampleChannels,
 		int frequency, HESoundModifiers modifiers, int callbackID, uint32 flags, ...);
 
+	bool milesStopChannel(int channel);
+	void milesStopAllSounds();
 	void milesModifySound(int channel, int offset, HESoundModifiers modifiers, int flags);
+	void milesStopAndCallback(int channel, int messageId);
+	void milesRestoreChannel(int channel);
+	void milesFeedMixer();
+	bool milesPauseMixerSubSystem(bool paused);
+	byte *milesGetAudioDataFromResource(int globType, int globNum, int &riffLength, int &compType);
 };
 
 } // End of namespace Scumm

@@ -1049,6 +1049,12 @@ bool ResourceManager::isModified(ResType type, ResId idx) const {
 	return _types[type][idx].isModified();
 }
 
+bool ResourceManager::isOffHeap(ResType type, ResId idx) const {
+	if (!validateResource("isOffHeap", type, idx))
+		return false;
+	return _types[type][idx].isOffHeap();
+}
+
 bool ResourceManager::Resource::isModified() const {
 	return (_status & RS_MODIFIED) != 0;
 }
