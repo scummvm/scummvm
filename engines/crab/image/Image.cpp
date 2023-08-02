@@ -44,16 +44,21 @@ bool Image::load(Graphics::Surface *surface) {
 
 	_texture->create(surface->w, surface->h, surface->format);
 	_texture->copyFrom(*surface);
+
 	_w = surface->w;
 	_h = surface->h;
+
 	return true;
 }
 
 bool Image::load(Graphics::ManagedSurface *surface) {
 	deleteImage();
+
 	_texture = new Graphics::ManagedSurface(*surface);
+
 	_w = surface->w;
 	_h = surface->h;
+
 	return true;
 }
 
@@ -74,7 +79,6 @@ bool Image::load(const Common::String &path) {
 		file.close();
 
 		debugC(kDebugFilePath, "Image::load() Image Texture(%s): w: %d h: %d", path.c_str(), _w, _h);
-
 	}
 
 	return _texture != nullptr;
