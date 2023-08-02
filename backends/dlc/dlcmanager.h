@@ -30,12 +30,14 @@
 #include "backends/dlc/dlcdesc.h"
 #include "backends/networking/curl/request.h"
 #include "gui/object.h"
+#include "gui/launcher.h"
 
 namespace DLC {
 
 class DLCManager : public Common::Singleton<DLCManager>, public GUI::CommandSender {
 
 	Store *_store;
+	GUI::LauncherDialog *_launcher;
 
 	bool _isDLCDownloading = false;
 	Common::String _currentDownloadingDLC;
@@ -59,6 +61,8 @@ public:
 	void refreshDLCList();
 
 	void refreshLauncherGameList();
+
+	void setLauncher(GUI::LauncherDialog *launcher);
 
 	// Add download task to queue, runs on click download button, 
 	void addDownload(uint32 idx);

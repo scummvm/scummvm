@@ -58,6 +58,7 @@
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
+#include "backends/dlc/dlcmanager.h"
 
 namespace GUI {
 
@@ -203,6 +204,8 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 		_metadataParser.close();
 	}
 	g_gui.unlockIconsSet();
+
+	DLCMan.setLauncher(this);
 }
 
 LauncherDialog::~LauncherDialog() {
@@ -735,7 +738,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		massAddGame();
 		break;
 	case kDownloadGameCmd: {
-		DLCsDialog downloader(this);
+		DLCsDialog downloader;
 		downloader.runModal();
 		}
 		break;

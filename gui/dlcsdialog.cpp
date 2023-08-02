@@ -30,9 +30,7 @@
 
 namespace GUI {
 
-DLCsDialog::DLCsDialog(LauncherDialog *launcher)
-	: Dialog("DownloadGames"), _launcher(launcher) {
-	
+DLCsDialog::DLCsDialog() : Dialog("DownloadGames") {
 	// Set target (Command Receiver) for Command Sender
 	DLCMan.setTarget(this);
 
@@ -100,10 +98,6 @@ void DLCsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		break;
 	case kRefreshDLCList: {
 		refreshDLCList();
-		}
-		break;
-	case kRefreshLauncher: {
-		_launcher->rebuild();
 		}
 		break;
 	default:

@@ -31,13 +31,12 @@ namespace GUI {
 enum {
 	kDownloadSelectedCmd = 'DWNS',
 	kRefreshDLCList = 'RDLC',
-	kRefreshLauncher = 'RFLR',
 	kAllDownloadsCmd = 'ALLD'
 };
 
 class DLCsDialog : public Dialog {
 public:
-	DLCsDialog(LauncherDialog *launcher);
+	DLCsDialog();
 	~DLCsDialog() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
@@ -46,7 +45,6 @@ public:
 
 private:
 	ListWidget *_gamesList;
-	LauncherDialog *_launcher;
 };
 
 } // End of namespace GUI
