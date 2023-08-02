@@ -35,6 +35,12 @@ namespace GUI {
 struct Interface : public M4::Interface {
 private:
 	void setup();
+
+	void sub1();
+	void sub2();
+	ControlStatus track(int event, int x, int y);
+	void dispatch_command();
+
 public:
 	int _sprite = 22; // main_interface_sprite;
 	bool _visible = false;
@@ -50,11 +56,12 @@ public:
 	GUI::ButtonClass *_btnScrollLeft = nullptr;
 	GUI::ButtonClass *_btnScrollRight = nullptr;
 	void *_hotspot = nullptr;
-	uint32 _counter = 0;
+	int _savedX = 0, _savedY = 0;
 	void *_pointer1 = nullptr;
 	void *_pointer2 = nullptr;
 	void *_pointer3 = nullptr;
 	bool _flag1 = false;
+	int _state = 0;
 
 	Interface();
 	~Interface() override;
