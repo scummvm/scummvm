@@ -191,20 +191,101 @@ bool setAlpha(byte *dst, const byte *src,
               const Graphics::PixelFormat &format,
               const bool skipTransparent, const uint8 alpha);
 
-static const int BLEND_BLIT_SCALE_THRESHOLD = 0x100;
+// This is a class so that we can declare certain things as private
+class BlendBlit {
+private:
+	static const int kBModShift = 8;
+	static const int kGModShift = 16;
+	static const int kRModShift = 24;
+	static const int kAModShift = 0;
+	
+	static const uint32 kBModMask = 0x0000ff00;
+	static const uint32 kGModMask = 0x00ff0000;
+	static const uint32 kRModMask = 0xff000000;
+	static const uint32 kAModMask = 0x000000ff;
+	static const uint32 kRGBModMask = (kRModMask | kGModMask | kBModMask);
+	
+#ifdef SCUMM_LITTLE_ENDIAN
+	static const int kAIndex = 0;
+	static const int kBIndex = 1;
+	static const int kGIndex = 2;
+	static const int kRIndex = 3;
+#else
+	static const int kAIndex = 3;
+	static const int kBIndex = 2;
+	static const int kGIndex = 1;
+	static const int kRIndex = 0;
+#endif
 
-/**
- * Optimized version of doBlit to be used with alpha blended blitting
- * @param ino a pointer to the input surface
- * @param outo a pointer to the output surface
- * @param width width of the input surface
- * @param height height of the input surface
- * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
- * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
- * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
- * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
- */
-void blendBlitUnfiltered(byte *dst, const byte *src,
+	struct Args {
+		bool rgbmod, alphamod;
+		int xp, yp;
+		int inStep, inoStep;
+		const byte *ino;
+		byte *outo;
+	
+		int scaleX, scaleY;
+		uint dstPitch;
+		uint width, height;
+		uint32 color;
+		int flipping;
+	
+		Args(byte *dst, const byte *src,
+			 const uint dstPitch, const uint srcPitch,
+			 const int posX, const int posY,
+			 const uint width, const uint height,
+			 const int scaleX, const int scaleY,
+			 const uint32 colorMod, const uint flipping);
+	};
+
+#define LOGIC_FUNCS_EXT(ext) \
+	template<bool doscale> \
+	static void doBlitBinaryBlendLogic##ext(Args &args); \
+	template<bool doscale> \
+	static void doBlitOpaqueBlendLogic##ext(Args &args); \
+	template<bool doscale> \
+	static void doBlitMultiplyBlendLogic##ext(Args &args); \
+	template<bool doscale> \
+	static void doBlitSubtractiveBlendLogic##ext(Args &args); \
+	template<bool doscale> \
+	static void doBlitAdditiveBlendLogic##ext(Args &args); \
+	template<bool doscale> \
+	static void doBlitAlphaBlendLogic##ext(Args &args);
+LOGIC_FUNCS_EXT()
+LOGIC_FUNCS_EXT(Generic)
+#undef LOGIC_FUNCS_EXT
+
+public:
+	static const int SCALE_THRESHOLD = 0x100;
+
+	static inline int getScaleFactor(int srcSize, int dstSize) {
+		return SCALE_THRESHOLD * srcSize / dstSize;
+	}
+
+	/**
+	 * Returns the pixel format all operations of TransparentSurface support.
+	 *
+	 * Use TS_ARGB and TS_RGB to quickly make a color in this format.
+	 * TS_ARGB/RGB are found in graphics/transform_struct.h
+	 *
+	 * @return Supported pixel format.
+	 */
+	static inline PixelFormat getSupportedPixelFormat() {
+		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	}
+
+	/**
+	 * Optimized version of doBlit to be used with alpha blended blitting
+	 * @param ino a pointer to the input surface
+	 * @param outo a pointer to the output surface
+	 * @param width width of the input surface
+	 * @param height height of the input surface
+	 * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
+	 * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
+	 * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
+	 * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
+	 */
+	static void blit(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
@@ -212,6 +293,9 @@ void blendBlitUnfiltered(byte *dst, const byte *src,
 					 const uint32 colorMod = 0, const uint flipping = FLIP_NONE,
 					 const TSpriteBlendMode blendMode = BLEND_NORMAL,
 					 const AlphaType alphaType = ALPHA_FULL);
+
+	friend struct TransparentSurface;
+}; // End of class BlendBlit
 
 /** @} */
 } // End of namespace Graphics
