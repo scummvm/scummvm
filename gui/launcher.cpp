@@ -32,7 +32,7 @@
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
-#include "gui/download-games-dialog.h"
+#include "gui/dlcsdialog.h"
 #include "gui/editgamedialog.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
@@ -735,7 +735,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		massAddGame();
 		break;
 	case kDownloadGameCmd: {
-		DownloadGamesDialog downloader(this);
+		DLCsDialog downloader(this);
 		downloader.runModal();
 		}
 		break;

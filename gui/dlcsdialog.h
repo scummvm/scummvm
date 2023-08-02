@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef DOWNLOAD_GAMES_DIALOG_H
-#define DOWNLOAD_GAMES_DIALOG_H
+#ifndef DLCS_DIALOG_H
+#define DLCS_DIALOG_H
 
 #include "gui/dialog.h"
 #include "gui/widgets/list.h"
@@ -35,10 +35,10 @@ enum {
 	kAllDownloadsCmd = 'ALLD'
 };
 
-class DownloadGamesDialog : public Dialog {
+class DLCsDialog : public Dialog {
 public:
-	DownloadGamesDialog(LauncherDialog *launcher);
-	~DownloadGamesDialog() override;
+	DLCsDialog(LauncherDialog *launcher);
+	~DLCsDialog() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
