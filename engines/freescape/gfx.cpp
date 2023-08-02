@@ -813,9 +813,20 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 	}
 }
 
-void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
+void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3d &originalSize, Common::Array<uint8> *colours) {
 
-	assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
+	Math::Vector3d size = originalSize;
+	if (size.x() > 0 && size.y() > 0 && size.z() > 0) {
+		if (size.x() <= size.y() && size.x() <= size.z())
+			size.x() = 0;
+		else if (size.y() <= size.x() && size.y() <= size.z())
+			size.y() = 0;
+		else if (size.z() <= size.x() && size.z() <= size.y())
+			size.z() = 0;
+		else
+			error("Invalid size!");
+	}
+
 	polygonOffset(true);
 
 	float dx, dy, dz;
