@@ -87,7 +87,7 @@ void Splash::draw() {
 // Purpose: Reset UI position
 //------------------------------------------------------------------------
 void Splash::setUI() {
-	warning("ScreenSettings cur w : %d h : %d", g_engine->_screenSettings->_cur.w, g_engine->_screenSettings->_cur.h);
+	debugC(kDebugGraphics, "ScreenSettings cur w : %d h : %d", g_engine->_screenSettings->_cur.w, g_engine->_screenSettings->_cur.h);
 	_x = (g_engine->_screenSettings->_cur.w - _background.w()) / 2;
 	_y = (g_engine->_screenSettings->_cur.h - _background.h()) / 2;
 }
