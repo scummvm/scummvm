@@ -24,29 +24,6 @@
 
 namespace Graphics {
 
-static const int kBModShift = 8;
-static const int kGModShift = 16;
-static const int kRModShift = 24;
-static const int kAModShift = 0;
-
-static const uint32 kBModMask = 0x0000ff00;
-static const uint32 kGModMask = 0x00ff0000;
-static const uint32 kRModMask = 0xff000000;
-static const uint32 kAModMask = 0x000000ff;
-static const uint32 kRGBModMask = (kRModMask | kGModMask | kBModMask);
-
-#ifdef SCUMM_LITTLE_ENDIAN
-static const int kAIndex = 0;
-static const int kBIndex = 1;
-static const int kGIndex = 2;
-static const int kRIndex = 3;
-#else
-static const int kAIndex = 3;
-static const int kBIndex = 2;
-static const int kGIndex = 1;
-static const int kRIndex = 0;
-#endif
-
 namespace {
 
 template<typename Size, bool overwriteAlpha>
@@ -191,56 +168,42 @@ bool setAlpha(byte *dst, const byte *src,
 }
 
 
-struct BlendingSetupArgs {
-	bool rgbmod, alphamod;
-	int xp, yp;
-	int inStep, inoStep;
-	const byte *ino;
-	byte *outo;
-
-	int scaleX, scaleY;
-	uint dstPitch;
-	uint width, height;
-	uint32 color;
-	int flipping;
-
-	BlendingSetupArgs(byte *dst, const byte *src,
-					  const uint dstPitch, const uint srcPitch,
-					  const int posX, const int posY,
-					  const uint width, const uint height,
-					  const int scaleX, const int scaleY,
-					  const uint32 colorMod, const uint flipping) :
-			xp(0), yp(0), dstPitch(dstPitch),
-			width(width), height(height), color(colorMod),
-			scaleX(scaleX), scaleY(scaleY), flipping(flipping) {
-		bool doScale = scaleX != BLEND_BLIT_SCALE_THRESHOLD || scaleY != BLEND_BLIT_SCALE_THRESHOLD;
-		
-		rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
-		alphamod = ((colorMod & kAModMask)   != kAModMask);
-		inStep = 4;
-		inoStep = srcPitch;
-		if (flipping & FLIP_H) {
-			inStep = -inStep;
-			xp = width - 1;
-			if (doScale) xp = xp * scaleX / BLEND_BLIT_SCALE_THRESHOLD;
-		}
-
-		if (flipping & FLIP_V) {
-			inoStep = -inoStep;
-			yp = height - 1;
-			if (doScale) yp = yp * scaleY / BLEND_BLIT_SCALE_THRESHOLD;
-		}
-
-		ino = src + yp * srcPitch + xp * 4;
-		outo = dst + posY * dstPitch + posX * 4;
+BlendBlit::Args::Args(byte *dst, const byte *src,
+	const uint dstPitch, const uint srcPitch,
+	const int posX, const int posY,
+	const uint width, const uint height,
+	const int scaleX, const int scaleY,
+	const uint32 colorMod, const uint flipping) :
+		xp(0), yp(0), dstPitch(dstPitch),
+		width(width), height(height), color(colorMod),
+		scaleX(scaleX), scaleY(scaleY), flipping(flipping) {
+	bool doScale = scaleX != SCALE_THRESHOLD || scaleY != SCALE_THRESHOLD;
+	
+	rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
+	alphamod = ((colorMod & kAModMask)   != kAModMask);
+	inStep = 4;
+	inoStep = srcPitch;
+	if (flipping & FLIP_H) {
+		inStep = -inStep;
+		xp = width - 1;
+		if (doScale) xp = xp * scaleX / SCALE_THRESHOLD;
 	}
-};
+
+	if (flipping & FLIP_V) {
+		inoStep = -inoStep;
+		yp = height - 1;
+		if (doScale) yp = yp * scaleY / SCALE_THRESHOLD;
+	}
+
+	ino = src + yp * srcPitch + xp * 4;
+	outo = dst + posY * dstPitch + posX * 4;
+}
 
 /**
  * Optimized version of doBlit to be used with multiply blended blitting
  */
 template<bool doscale>
-static void doBlitMultiplyBlendLogic(BlendingSetupArgs &args) {
+void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
@@ -254,7 +217,7 @@ static void doBlitMultiplyBlendLogic(BlendingSetupArgs &args) {
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
-			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
 			scaleXCtr = 0;
 		} else {
 			in = args.ino;
@@ -262,7 +225,7 @@ static void doBlitMultiplyBlendLogic(BlendingSetupArgs &args) {
 		out = args.outo;
 		for (uint32 j = 0; j < args.width; j++) {
 			if (doscale) {
-				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
 			}
 
 			uint32 ina = in[kAIndex] * ca >> 8;
@@ -303,7 +266,7 @@ static void doBlitMultiplyBlendLogic(BlendingSetupArgs &args) {
 }
 
 template<bool doscale>
-static void doBlitAlphaBlendLogic(BlendingSetupArgs &args) {
+void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
@@ -317,7 +280,7 @@ static void doBlitAlphaBlendLogic(BlendingSetupArgs &args) {
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
-			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
 			scaleXCtr = 0;
 		} else {
 			in = args.ino;
@@ -325,7 +288,7 @@ static void doBlitAlphaBlendLogic(BlendingSetupArgs &args) {
 		out = args.outo;
 		for (uint32 j = 0; j < args.width; j++) {
 			if (doscale) {
-				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
 			}
 
 			uint32 ina = in[kAIndex] * ca >> 8;
@@ -360,7 +323,7 @@ static void doBlitAlphaBlendLogic(BlendingSetupArgs &args) {
  * Optimized version of doBlit to be used with subtractive blended blitting
  */
 template<bool doscale>
-static void doBlitSubtractiveBlendLogic(BlendingSetupArgs &args) {
+void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
@@ -373,7 +336,7 @@ static void doBlitSubtractiveBlendLogic(BlendingSetupArgs &args) {
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
-			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
 			scaleXCtr = 0;
 		} else {
 			in = args.ino;
@@ -381,7 +344,7 @@ static void doBlitSubtractiveBlendLogic(BlendingSetupArgs &args) {
 		out = args.outo;
 		for (uint32 j = 0; j < args.width; j++) {
 			if (doscale) {
-				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
 			}
 
 			out[kAIndex] = 255;
@@ -421,7 +384,7 @@ static void doBlitSubtractiveBlendLogic(BlendingSetupArgs &args) {
  * Optimized version of doBlit to be used with additive blended blitting
  */
 template<bool doscale>
-static void doBlitAdditiveBlendLogic(BlendingSetupArgs &args) {
+void BlendBlit::doBlitAdditiveBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
@@ -435,7 +398,7 @@ static void doBlitAdditiveBlendLogic(BlendingSetupArgs &args) {
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
-			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
 			scaleXCtr = 0;
 		} else {
 			in = args.ino;
@@ -443,7 +406,7 @@ static void doBlitAdditiveBlendLogic(BlendingSetupArgs &args) {
 		out = args.outo;
 		for (uint32 j = 0; j < args.width; j++) {
 			if (doscale) {
-				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
 			}
 
 			uint32 ina = in[kAIndex] * ca >> 8;
@@ -484,7 +447,7 @@ static void doBlitAdditiveBlendLogic(BlendingSetupArgs &args) {
 }
 
 template<bool doscale>
-void doBlitOpaqueBlendLogic(BlendingSetupArgs &args) {
+void BlendBlit::doBlitOpaqueBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
@@ -493,7 +456,7 @@ void doBlitOpaqueBlendLogic(BlendingSetupArgs &args) {
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
-			inBase = args.ino + (scaleYCtr + 1) / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			inBase = args.ino + (scaleYCtr + 1) / SCALE_THRESHOLD * args.inoStep;
 			scaleXCtr = 0;
 		} else {
 			in = args.ino;
@@ -502,7 +465,7 @@ void doBlitOpaqueBlendLogic(BlendingSetupArgs &args) {
 
 		if (doscale) {
 			for (uint32 j = 0; j < args.width; j++) {
-				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
 
 				memcpy(out, in, 4);
 				out[kAIndex] = 0xFF;
@@ -534,7 +497,7 @@ void doBlitOpaqueBlendLogic(BlendingSetupArgs &args) {
 }
 
 template<bool doscale>
-void doBlitBinaryBlendLogic(BlendingSetupArgs &args) {
+void BlendBlit::doBlitBinaryBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
@@ -543,7 +506,7 @@ void doBlitBinaryBlendLogic(BlendingSetupArgs &args) {
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
-			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
 			scaleXCtr = 0;
 		} else {
 			in = args.ino;
@@ -551,7 +514,7 @@ void doBlitBinaryBlendLogic(BlendingSetupArgs &args) {
 		out = args.outo;
 		for (uint32 j = 0; j < args.width; j++) {
 			if (doscale) {
-				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
 			}
 			uint32 pix = *(const uint32 *)in;
 			int a = in[kAIndex];
@@ -574,8 +537,33 @@ void doBlitBinaryBlendLogic(BlendingSetupArgs &args) {
 	}
 }
 
+template<bool doscale>
+void BlendBlit::doBlitBinaryBlendLogic(Args &args) {
+	doBlitBinaryBlendLogicGeneric<doscale>(args);
+}
+template<bool doscale>
+void BlendBlit::doBlitOpaqueBlendLogic(Args &args) {
+	doBlitOpaqueBlendLogicGeneric<doscale>(args);
+}
+template<bool doscale>
+void BlendBlit::doBlitMultiplyBlendLogic(Args &args) {
+	doBlitMultiplyBlendLogicGeneric<doscale>(args);
+}
+template<bool doscale>
+void BlendBlit::doBlitSubtractiveBlendLogic(Args &args) {
+	doBlitSubtractiveBlendLogicGeneric<doscale>(args);
+}
+template<bool doscale>
+void BlendBlit::doBlitAdditiveBlendLogic(Args &args) {
+	doBlitAdditiveBlendLogicGeneric<doscale>(args);
+}
+template<bool doscale>
+void BlendBlit::doBlitAlphaBlendLogic(Args &args) {
+	doBlitAlphaBlendLogicGeneric<doscale>(args);
+}
+
 // Only blits to and from 32bpp images
-void blendBlitUnfiltered(byte *dst, const byte *src,
+void BlendBlit::blit(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
@@ -584,8 +572,8 @@ void blendBlitUnfiltered(byte *dst, const byte *src,
 					 const TSpriteBlendMode blendMode,
 					 const AlphaType alphaType) {
 	if (width == 0 || height == 0) return;
-	BlendingSetupArgs args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, colorMod, flipping);
-	if (scaleX == BLEND_BLIT_SCALE_THRESHOLD && scaleY == BLEND_BLIT_SCALE_THRESHOLD) {
+	Args args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, colorMod, flipping);
+	if (scaleX == SCALE_THRESHOLD && scaleY == SCALE_THRESHOLD) {
 		if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
 			doBlitOpaqueBlendLogic<false>(args);
 		} else if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {

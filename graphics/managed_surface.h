@@ -27,6 +27,7 @@
 #include "graphics/transform_struct.h"
 #include "common/types.h"
 #include "graphics/transparent_surface.h"
+#include "graphics/blit.h"
 
 namespace Graphics {
 
@@ -532,7 +533,7 @@ public:
 	 * @return Supported pixel format.
 	 */
 	static inline PixelFormat getSupportedBlendBlitPixelFormat() {
-		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		return BlendBlit::getSupportedPixelFormat();
 	}
 
 	/**

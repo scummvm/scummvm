@@ -24,6 +24,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/transform_struct.h"
+#include "graphics/blit.h"
 
 /*
  * This code is based on Broken Sword 2.5 engine
@@ -61,7 +62,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @return Supported pixel format.
 	 */
 	static PixelFormat getSupportedPixelFormat() {
-		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		return BlendBlit::getSupportedPixelFormat();
 	}
 
 	/**

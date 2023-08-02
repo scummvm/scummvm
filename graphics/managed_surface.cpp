@@ -743,26 +743,26 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 	// Alpha is zero
 	if ((colorMod & TS_ARGB(255, 0, 0, 0)) == 0) return Common::Rect(0, 0, 0, 0);
 
-	const int scaleX = BLEND_BLIT_SCALE_THRESHOLD * srcArea.width() / dstArea.width();
-	const int scaleY = BLEND_BLIT_SCALE_THRESHOLD * srcArea.height() / dstArea.height();
+	const int scaleX = BlendBlit::getScaleFactor(srcArea.width(), dstArea.width());
+	const int scaleY = BlendBlit::getScaleFactor(srcArea.height(), dstArea.height());
 
 	if (dstArea.left < 0) {
-		srcArea.left += -dstArea.left * scaleX / BLEND_BLIT_SCALE_THRESHOLD;
+		srcArea.left += -dstArea.left * scaleX / BlendBlit::SCALE_THRESHOLD;
 		dstArea.left = 0;
 	}
 
 	if (dstArea.top < 0) {
-		srcArea.top += -dstArea.top * scaleY / BLEND_BLIT_SCALE_THRESHOLD;
+		srcArea.top += -dstArea.top * scaleY / BlendBlit::SCALE_THRESHOLD;
 		dstArea.top = 0;
 	}
 
 	if (dstArea.right > w) {
-		srcArea.right -= (dstArea.right - w) * scaleX / BLEND_BLIT_SCALE_THRESHOLD;
+		srcArea.right -= (dstArea.right - w) * scaleX / BlendBlit::SCALE_THRESHOLD;
 		dstArea.right = w;
 	}
 
 	if (dstArea.bottom > h) {
-		srcArea.bottom -= (dstArea.bottom - h) * scaleY / BLEND_BLIT_SCALE_THRESHOLD;
+		srcArea.bottom -= (dstArea.bottom - h) * scaleY / BlendBlit::SCALE_THRESHOLD;
 		dstArea.bottom = h;
 	}
 
@@ -779,7 +779,7 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 	}
 
 	if (!dstArea.isEmpty() && !srcArea.isEmpty()) {
-		blendBlitUnfiltered(
+		BlendBlit::blit(
 			(byte *)getBasePtr(0, 0),
 			(const byte *)src.getBasePtr(srcArea.left, srcArea.top),
 			pitch, src.pitch,

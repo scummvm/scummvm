@@ -34,8 +34,6 @@
 
 namespace Graphics {
 
-static const int kAModShift = 0;
-
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
 TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _alphaMode(ALPHA_FULL) {
@@ -60,7 +58,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	retSize.setWidth(0);
 	retSize.setHeight(0);
 	// Check if we need to draw anything at all
-	int ca = (color >> kAModShift) & 0xff;
+	int ca = (color >> BlendBlit::kAModShift) & 0xff;
 
 	if (ca == 0) {
 		return retSize;
@@ -145,11 +143,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
-		Graphics::blendBlitUnfiltered(
+		BlendBlit::blit(
 			(byte *)target.getBasePtr(0, 0),
 			(byte *)img->getBasePtr(0, 0),
 			target.pitch, img->pitch,
-			posX, posY, img->w, img->h, BLEND_BLIT_SCALE_THRESHOLD, BLEND_BLIT_SCALE_THRESHOLD,
+			posX, posY, img->w, img->h, BlendBlit::SCALE_THRESHOLD, BlendBlit::SCALE_THRESHOLD,
 			color, flipping,
 			blendMode, _alphaMode);
 	}
@@ -173,7 +171,7 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 	retSize.setWidth(0);
 	retSize.setHeight(0);
 	// Check if we need to draw anything at all
-	int ca = (color >> kAModShift) & 0xff;
+	int ca = (color >> BlendBlit::kAModShift) & 0xff;
 
 	if (ca == 0) {
 		return retSize;
@@ -258,11 +256,11 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 
 	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
-		Graphics::blendBlitUnfiltered(
+		BlendBlit::blit(
 			(byte *)target.getBasePtr(0, 0),
 			(byte *)img->getBasePtr(0, 0),
 			target.pitch, img->pitch,
-			posX, posY, img->w, img->h, BLEND_BLIT_SCALE_THRESHOLD, BLEND_BLIT_SCALE_THRESHOLD,
+			posX, posY, img->w, img->h, BlendBlit::SCALE_THRESHOLD, BlendBlit::SCALE_THRESHOLD,
 			color, flipping,
 			blendMode, _alphaMode);
 	}
