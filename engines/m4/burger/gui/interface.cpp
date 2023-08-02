@@ -46,14 +46,14 @@ void Interface::init(int arrow, int wait, int look, int grab, int use) {
 
 	mouse_set_sprite(wait);
 
-	_gameInterfaceBuff = new GrBuff(_x2 - _x1, _y2 - _y1);
+	_G(gameInterfaceBuff) = new GrBuff(_x2 - _x1, _y2 - _y1);
 	setup();
 
 	mouse_set_sprite(arrow);
 }
 
 Interface::~Interface() {
-	delete _gameInterfaceBuff;
+	delete _G(gameInterfaceBuff);
 	delete _interfaceBox;
 	delete _inventory;
 	delete _textField;

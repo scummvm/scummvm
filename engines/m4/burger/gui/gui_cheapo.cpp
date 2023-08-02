@@ -152,7 +152,7 @@ void TextField::draw(GrBuff *myBuffer) {
 	gr_font_write(myBuff, _string, _x1, _y1, 0, 1);
 	myBuffer->release();
 
-	ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
+	ScreenContext *iC = vmng_screen_find(_G(gameInterfaceBuff), nullptr);
 	RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
 	_must_redraw = false;
 }
@@ -349,7 +349,7 @@ void ButtonClass::draw(GrBuff *myBuffer) {
 	myBuffer->release();
 
 	_must_redraw = false;
-	ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
+	ScreenContext *iC = vmng_screen_find(_G(gameInterfaceBuff), nullptr);
 	RestoreScreensInContext(_x1, _y1 - 2, _x2, _y2, iC);
 }
 
@@ -515,7 +515,7 @@ void InterfaceBox::draw(GrBuff *myBuffer) {
 	}
 
 	if (_must_redraw_all) {
-		ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
+		ScreenContext *iC = vmng_screen_find(_G(gameInterfaceBuff), nullptr);
 		RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
 		kernel_trigger_dispatch(kernel_trigger_create(TRIG_INV_CLICK));
 	}
@@ -713,7 +713,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 		series_show_frame(_sprite, 68, myBuff, cell_iter * 39 + 188, 92);
 	}
 
-	ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
+	ScreenContext *iC = vmng_screen_find(_G(gameInterfaceBuff), nullptr);
 	RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
 	_must_redraw1 = _must_redraw2 = -1;
 	_must_redraw_all = false;
