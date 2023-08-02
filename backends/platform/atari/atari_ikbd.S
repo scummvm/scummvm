@@ -31,12 +31,39 @@
 	.extern	_g_atari_ikbd_scancodes_mask
 	.extern	_g_atari_ikbb_scancodes_head
 
+	.extern	_g_atari_old_kbdvec
+
 	.text
 
 _atari_kbdvec:
 	tst.w	(vkbderr_count,pc)
 	bne.b	kbdvec_end
 
+	lea	pressed_keys,a0
+	clr.l	d1
+	move.b	d0,d1
+	bpl.b	key_pressed				| bit 7 cleared
+
+key_released:
+	and.b	#0x7f,d1
+	tst.b	(a0,d1.l)				| pressed before?
+	bne.b	key_released_ok
+
+	| if we get a sudden release key event,
+	| let the original handler process it
+	move.l	_g_atari_old_kbdvec,a0
+	tst.l	a0
+	beq.b	kbdvec_end
+	jmp	(a0)
+
+key_released_ok:
+	clr.b	(a0,d1.l)				| mark as released
+	bra.b	kbdvec_process
+
+key_pressed:
+	addq.b	#1,(a0,d1.l)				| mark as pressed
+
+kbdvec_process:
 	lea	_g_atari_ikbd_scancodes,a0
 	move.w	_g_atari_ikbb_scancodes_head,d1
 
@@ -74,3 +101,9 @@ _atari_mousevec:
 // place it within reach of 32K (PC relative)
 vkbderr_count:
 	dc.w	0
+
+
+	.bss
+
+pressed_keys:
+	ds.b	128

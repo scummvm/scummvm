@@ -80,7 +80,7 @@ static int s_vdi_width, s_vdi_height;
 
 static bool s_tt = false;
 typedef void (*KBDVEC)(void *);
-static KBDVEC s_kbdvec = nullptr;
+KBDVEC g_atari_old_kbdvec = nullptr;
 static void (*s_vkbderr)(void) = nullptr;
 static KBDVEC s_mousevec = nullptr;
 
@@ -113,12 +113,12 @@ static void critical_restore() {
 		Supexec(asm_screen_falcon_restore);
 	Supexec(atari_200hz_shutdown);
 
-	if (s_kbdvec && s_vkbderr && s_mousevec) {
+	if (g_atari_old_kbdvec && s_vkbderr && s_mousevec) {
 		_KBDVECS *kbdvecs = Kbdvbase();
-		((uintptr *)kbdvecs)[-1] = (uintptr)s_kbdvec;
+		((uintptr *)kbdvecs)[-1] = (uintptr)g_atari_old_kbdvec;
 		kbdvecs->vkbderr = s_vkbderr;
 		kbdvecs->mousevec = s_mousevec;
-		s_kbdvec = s_mousevec = nullptr;
+		g_atari_old_kbdvec = s_mousevec = nullptr;
 	}
 
 	// don't call GEM cleanup in the critical handler: it seems that v_clsvwk()
@@ -184,7 +184,7 @@ OSystem_Atari::OSystem_Atari() {
 	}
 
 	_KBDVECS *kbdvecs = Kbdvbase();
-	s_kbdvec = (KBDVEC)(((uintptr *)kbdvecs)[-1]);
+	g_atari_old_kbdvec = (KBDVEC)(((uintptr *)kbdvecs)[-1]);
 	s_vkbderr = kbdvecs->vkbderr;
 	s_mousevec = kbdvecs->mousevec;
 
@@ -249,12 +249,12 @@ OSystem_Atari::~OSystem_Atari() {
 		_timerInitialized = false;
 	}
 
-	if (s_kbdvec && s_vkbderr && s_mousevec) {
+	if (g_atari_old_kbdvec && s_vkbderr && s_mousevec) {
 		_KBDVECS *kbdvecs = Kbdvbase();
-		((uintptr *)kbdvecs)[-1] = (uintptr)s_kbdvec;
+		((uintptr *)kbdvecs)[-1] = (uintptr)g_atari_old_kbdvec;
 		kbdvecs->vkbderr = s_vkbderr;
 		kbdvecs->mousevec = s_mousevec;
-		s_kbdvec = s_mousevec = nullptr;
+		g_atari_old_kbdvec = s_mousevec = nullptr;
 	}
 }
 
