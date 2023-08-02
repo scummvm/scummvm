@@ -62,7 +62,7 @@ void Info::load(rapidxml::xml_node<char> *node) {
 				loadNum(OPINION_MIN, "op_min", cnode);
 				loadNum(OPINION_MAX, "op_max", cnode);
 
-				for (auto n = cnode->first_node("group"); n != NULL; n = n->next_sibling("group"))
+				for (auto n = cnode->first_node("group"); n != nullptr; n = n->next_sibling("group"))
 					loadPeople(n->value());
 			}
 		}
@@ -85,7 +85,7 @@ void Info::loadPeople(const Common::String &filename) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("people");
 		if (nodeValid(node)) {
-			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
+			for (auto n = node->first_node(); n != nullptr; n = n->next_sibling()) {
 				Common::String str;
 				loadStr(str, "id", n);
 				_people[str].load(n, _stem);
@@ -359,10 +359,10 @@ void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 }
 
 void Info::loadState(rapidxml::xml_node<char> *node) {
-	for (rapidxml::xml_node<char> *v = node->first_node("var"); v != NULL; v = v->next_sibling("var"))
+	for (rapidxml::xml_node<char> *v = node->first_node("var"); v != nullptr; v = v->next_sibling("var"))
 		_var[v->first_attribute("id")->value()] = stringToNumber<int>(v->first_attribute("val")->value());
 
-	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object")) {
+	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != nullptr; p = p->next_sibling("object")) {
 		Common::String id;
 		loadStr(id, "id", p);
 		_people[id].loadState(p);

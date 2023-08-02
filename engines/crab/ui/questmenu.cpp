@@ -226,7 +226,7 @@ void QuestMenu::loadState(rapidxml::xml_node<char> *node) {
 	loadBool(_unread, "unread", node);
 
 	_quest.clear();
-	for (auto n = node->first_node("quest"); n != NULL; n = n->next_sibling("quest")) {
+	for (auto n = node->first_node("quest"); n != nullptr; n = n->next_sibling("quest")) {
 		Quest q;
 		q.loadState(n);
 		_quest.push_back(q);

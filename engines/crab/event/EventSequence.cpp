@@ -42,7 +42,7 @@ void EventSequence::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("events");
-		for (auto n = node->first_node("event"); n != NULL; n = n->next_sibling("event")) {
+		for (auto n = node->first_node("event"); n != nullptr; n = n->next_sibling("event")) {
 			GameEvent e(n);
 			_events.push_back(e);
 		}
@@ -133,11 +133,11 @@ void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 //------------------------------------------------------------------------
 void EventSequence::loadState(rapidxml::xml_node<char> *node) {
 	rapidxml::xml_attribute<char> *curid = node->first_attribute("current");
-	if (curid != NULL)
+	if (curid != nullptr)
 		_cur = stringToNumber<unsigned int>(curid->value());
 
 	_next.clear();
-	for (auto n = node->first_node("next"); n != NULL; n = n->next_sibling("next"))
+	for (auto n = node->first_node("next"); n != nullptr; n = n->next_sibling("next"))
 		_next.push_back(stringToNumber<unsigned int>(n->value()));
 
 	if (_next.empty())

@@ -57,7 +57,7 @@ void ItemMenu::init(const ItemSlot &ref, const Vector2i &inc, const unsigned int
 //------------------------------------------------------------------------
 void ItemMenu::loadState(rapidxml::xml_node<char> *node) {
 	unsigned int count = 0;
-	for (auto n = node->first_node(); n != NULL && count < _element.size(); n = n->next_sibling(), ++count)
+	for (auto n = node->first_node(); n != nullptr && count < _element.size(); n = n->next_sibling(), ++count)
 		_element[count].loadState(n);
 }
 

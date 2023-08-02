@@ -74,7 +74,7 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 	// Draw the dialog box background
 	_dlbox.draw(player);
 
-	if (s != NULL) {
+	if (s != nullptr) {
 		Rect r = s->dialogClip(event->_state);
 		int x = _img.x, y = _img.y;
 
@@ -127,7 +127,7 @@ bool PersonHandler::handleDlboxEvents(const Common::Event &event) {
 }
 
 void PersonHandler::internalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s) {
-	if (s != NULL)
+	if (s != nullptr)
 		s->dialogUpdateClip(state);
 }
 

@@ -54,7 +54,7 @@ public:
 	}
 	~TextData(void) {}
 
-	bool load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
+	bool load(rapidxml::xml_node<char> *node, Rect *parent = nullptr, const bool &echo = true);
 
 	// Plain drawing
 	void draw(const Common::String &val, const int &xOffset = 0, const int &yOffset = 0);

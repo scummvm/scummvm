@@ -75,7 +75,7 @@ void FightAnimFrames::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("frames", node)) {
 		_frame.clear();
 		rapidxml::xml_node<char> *framenode = node->first_node("frames");
-		for (auto n = framenode->first_node("frame"); n != NULL; n = n->next_sibling("frame")) {
+		for (auto n = framenode->first_node("frame"); n != nullptr; n = n->next_sibling("frame")) {
 			FightAnimFrame faf;
 			faf.load(n, _boxV, _repeat, _anchor.x, _anchor.y);
 			_frame.push_back(faf);

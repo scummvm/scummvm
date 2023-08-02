@@ -50,7 +50,7 @@ bool loadStr(Common::String &val, const Common::String &name, rapidxml::xml_node
 // Used for loading numerical types
 template<typename T>
 bool loadNum(T &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true) {
-	if (node->first_attribute(name.c_str()) != NULL)
+	if (node->first_attribute(name.c_str()) != nullptr)
 		val = stringToNumber<T>(node->first_attribute(name.c_str())->value());
 	else {
 		/*if (echo)
@@ -67,7 +67,7 @@ bool loadNum(T &val, const Common::String &name, rapidxml::xml_node<char> *node,
 // Used for loading enumerator types that are integers
 template<typename T>
 bool loadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true) {
-	if (node->first_attribute(name.c_str()) != NULL)
+	if (node->first_attribute(name.c_str()) != nullptr)
 		val = static_cast<T>(stringToNumber<int>(node->first_attribute(name.c_str())->value()));
 	else {
 		/*if (echo)

@@ -200,7 +200,7 @@ public:
 	//------------------------------------------------------------------------
 	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid(node)) {
-			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
+			for (auto n = node->first_node(); n != nullptr; n = n->next_sibling()) {
 				T b;
 				b.load(n);
 				_element.push_back(b);

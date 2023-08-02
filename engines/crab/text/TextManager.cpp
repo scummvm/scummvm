@@ -55,13 +55,13 @@ void TextManager::init() {
 		if (nodeValid(node->first_node("padding")))
 			_padBg.load(node->first_node("padding"));
 
-		for (auto n = node->first_node("font"); n != NULL; n = n->next_sibling("font")) {
+		for (auto n = node->first_node("font"); n != nullptr; n = n->next_sibling("font")) {
 			rapidxml::xml_attribute<char> *id, *path, *size;
 			id = n->first_attribute("id");
 			path = n->first_attribute("path");
 			size = n->first_attribute("size");
 
-			if (id != NULL && path != NULL && size != NULL) {
+			if (id != nullptr && path != nullptr && size != nullptr) {
 				unsigned int pos = stringToNumber<unsigned int>(id->value());
 				if (_font.size() <= pos)
 					_font.resize(pos + 1);

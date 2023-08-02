@@ -112,7 +112,7 @@ public:
 	~Button() {}
 	void reset();
 
-	void setUI(Rect *parent = NULL);
+	void setUI(Rect *parent = nullptr);
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 	void init(const Button &ref, const int &xOffset = 0, const int &yOffset = 0);
@@ -129,13 +129,13 @@ public:
 		return _img;
 	}
 
-	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
+	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = nullptr);
 
 	ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 
 	// Special functions to only draw parts of a button (used in special situations like world map)
-	void imageCaptionOnlyDraw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
-	void hoverInfoOnlyDraw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
+	void imageCaptionOnlyDraw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = nullptr);
+	void hoverInfoOnlyDraw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = nullptr);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

@@ -47,7 +47,7 @@ bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) 
 			_type = LAYER_IMAGE;
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 
-			if (imgnode->first_attribute("source") != NULL)
+			if (imgnode->first_attribute("source") != nullptr)
 				_img.load((path + imgnode->first_attribute("source")->value()));
 		} else {
 			_type = LAYER_NORMAL;
@@ -55,7 +55,7 @@ bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) 
 			Common::Array<TileInfo> t;
 
 			//.tmx stores tiles row-first
-			for (auto n = node->first_node("data")->first_node("tile"); n != NULL; n = n->next_sibling("tile")) {
+			for (auto n = node->first_node("data")->first_node("tile"); n != nullptr; n = n->next_sibling("tile")) {
 				t.push_back(n);
 
 				if (++i >= _w) {
@@ -71,7 +71,7 @@ bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) 
 		//  The rate of scrolling of the layer, used for parallax scrolling
 		if (nodeValid("properties", node, false)) {
 			Common::String n, v;
-			for (auto p = node->first_node("properties")->first_node("property"); p != NULL; p = p->next_sibling("property")) {
+			for (auto p = node->first_node("properties")->first_node("property"); p != nullptr; p = p->next_sibling("property")) {
 				if (loadStr(n, "name", p) && loadStr(v, "value", p)) {
 					if (n == "prop" && v == "true")
 						_type = LAYER_PROP;

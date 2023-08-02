@@ -69,7 +69,7 @@ void MapData::loadState(rapidxml::xml_node<char> *node) {
 	_reveal.clear();
 	if (nodeValid("clip", node)) {
 		rapidxml::xml_node<char> *clipnode = node->first_node("clip");
-		for (rapidxml::xml_node<char> *n = clipnode->first_node("rect"); n != NULL; n = n->next_sibling("rect")) {
+		for (rapidxml::xml_node<char> *n = clipnode->first_node("rect"); n != nullptr; n = n->next_sibling("rect")) {
 			Rect r;
 			r.load(n);
 			_reveal.push_back(r);
@@ -79,7 +79,7 @@ void MapData::loadState(rapidxml::xml_node<char> *node) {
 	_dest.clear();
 	if (nodeValid("dest", node)) {
 		rapidxml::xml_node<char> *destnode = node->first_node("dest");
-		for (rapidxml::xml_node<char> *n = destnode->first_node("pos"); n != NULL; n = n->next_sibling("pos")) {
+		for (rapidxml::xml_node<char> *n = destnode->first_node("pos"); n != nullptr; n = n->next_sibling("pos")) {
 			MarkerData md;
 			loadStr(md._name, "name", n);
 			md._pos.load(n);

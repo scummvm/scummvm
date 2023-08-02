@@ -34,7 +34,7 @@
 namespace Crab {
 
 PathfindingAgent::PathfindingAgent(void) : _nodeQueue(compareNodes) {
-	_grid = NULL;
+	_grid = nullptr;
 
 	_destinationSet = false;
 	_destinationReachable = false;
@@ -72,7 +72,7 @@ void PathfindingAgent::setDestination(Vector2f d) {
 }
 
 void PathfindingAgent::setDestination(Vector2f d, bool r) {
-	if (_grid == NULL)
+	if (_grid == nullptr)
 		return;
 
 	_destination = d;
@@ -244,20 +244,20 @@ void PathfindingAgent::reset() {
 
 	_solutionFound = false;
 
-	_goalTile = NULL;
-	_startTile = NULL;
+	_goalTile = nullptr;
+	_startTile = nullptr;
 }
 
 void PathfindingAgent::shutdown() {
 	reset();
 
-	_grid = NULL;
+	_grid = nullptr;
 }
 
 Common::Array<PathfindingGraphNode const *> const PathfindingAgent::getSolution(PathfindingGraphNode *destNode) const {
 	Common::Array<PathfindingGraphNode const *> temp;
 
-	PlannerNode *current = NULL;
+	PlannerNode *current = nullptr;
 
 	if (_createdList.find(_goalTile) != _createdList.end()) {
 		current = _createdList.find(_goalTile)->second;
@@ -265,7 +265,7 @@ Common::Array<PathfindingGraphNode const *> const PathfindingAgent::getSolution(
 
 	// If the dest node passed in is not null, that means we did not reach the goal but came close
 	// so we should start with that node instead when we are constructing our path
-	else if (destNode != NULL) {
+	else if (destNode != nullptr) {
 		current = _createdList.find(destNode)->second;
 	}
 

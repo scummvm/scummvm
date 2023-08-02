@@ -50,7 +50,7 @@ void XMLDoc::load(const Common::String &filename) {
 }
 
 const rapidxml::xml_document<> *XMLDoc::doc() const {
-	if (_text != NULL)
+	if (_text != nullptr)
 		return &_doc;
 	else
 		return NULL;

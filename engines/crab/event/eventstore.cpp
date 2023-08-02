@@ -57,13 +57,13 @@ void GameEventStore::load(const Common::String &filename) {
 
 		if (nodeValid("animations", node)) {
 			rapidxml::xml_node<char> *animnode = node->first_node("animations");
-			for (auto n = animnode->first_node("anim"); n != NULL; n = n->next_sibling("anim"))
+			for (auto n = animnode->first_node("anim"); n != nullptr; n = n->next_sibling("anim"))
 				_anim.push_back(n);
 		}
 
 		if (nodeValid("tones", node)) {
 			rapidxml::xml_node<char> *tonenode = node->first_node("tones");
-			for (auto n = tonenode->first_node("tone"); n != NULL; n = n->next_sibling("tone")) {
+			for (auto n = tonenode->first_node("tone"); n != nullptr; n = n->next_sibling("tone")) {
 				ToneData dat;
 				loadStr(dat._text, "text", n);
 				_tone.push_back(dat);
@@ -72,13 +72,13 @@ void GameEventStore::load(const Common::String &filename) {
 
 		if (nodeValid("images", node)) {
 			rapidxml::xml_node<char> *imgnode = node->first_node("images");
-			for (auto n = imgnode->first_node("img"); n != NULL; n = n->next_sibling("img"))
+			for (auto n = imgnode->first_node("img"); n != nullptr; n = n->next_sibling("img"))
 				_img.push_back(n);
 		}
 
 		if (nodeValid("traits", node)) {
 			rapidxml::xml_node<char> *traitnode = node->first_node("traits");
-			for (auto n = traitnode->first_node("trait"); n != NULL; n = n->next_sibling("trait"))
+			for (auto n = traitnode->first_node("trait"); n != nullptr; n = n->next_sibling("trait"))
 				_trait.push_back(n);
 		}
 	}

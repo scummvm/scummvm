@@ -98,7 +98,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 			if (nodeValid("sprites", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("sprites");
 				int count = 0;
-				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling(), ++count) {
+				for (auto n = spritenode->first_node(); n != nullptr; n = n->next_sibling(), ++count) {
 					Sprite s;
 					s.load(n, _animSet);
 
@@ -117,7 +117,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 			if (nodeValid("background", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("background");
-				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
+				for (auto n = spritenode->first_node(); n != nullptr; n = n->next_sibling()) {
 					Sprite s;
 					s.load(n, _animSet);
 					_background.push_back(s);
@@ -128,7 +128,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 			if (nodeValid("fly", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("fly");
-				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
+				for (auto n = spritenode->first_node(); n != nullptr; n = n->next_sibling()) {
 					Sprite s;
 					s.load(n, _animSet);
 
@@ -142,7 +142,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 			if (nodeValid("movement", node)) {
 				rapidxml::xml_node<char> *movnode = node->first_node("movement");
-				for (auto n = movnode->first_node("set"); n != NULL; n = n->next_sibling("set"))
+				for (auto n = movnode->first_node("set"); n != nullptr; n = n->next_sibling("set"))
 					_moveSet.push_back(n);
 			}
 
@@ -178,7 +178,7 @@ void Level::loadMoves(const Common::String &filename) {
 	XMLDoc movList(filename);
 	if (movList.ready()) {
 		rapidxml::xml_node<char> *node = movList.doc()->first_node("movelist");
-		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set")) {
+		for (auto n = node->first_node("set"); n != nullptr; n = n->next_sibling("set")) {
 			unsigned int pos = _animSet.size();
 
 			loadNum(pos, "id", n);
@@ -228,7 +228,7 @@ void Level::loadState(rapidxml::xml_node<char> *node) {
 	loadNum(_playerIndex, "player_index", node);
 
 	auto i = _objects.begin();
-	for (auto *n = node->first_node("sprite"); n != NULL && i != _objects.end(); n = n->next_sibling("sprite"), ++i)
+	for (auto *n = node->first_node("sprite"); n != nullptr && i != _objects.end(); n = n->next_sibling("sprite"), ++i)
 		i->loadState(n);
 }
 

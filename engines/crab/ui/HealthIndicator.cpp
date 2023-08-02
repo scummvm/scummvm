@@ -39,7 +39,7 @@ void HealthIndicator::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		loadXY(_x, _y, node);
 
-		for (auto n = node->first_node("img"); n != NULL; n = n->next_sibling("img")) {
+		for (auto n = node->first_node("img"); n != nullptr; n = n->next_sibling("img")) {
 			HealthImage hi;
 			loadImgKey(hi._normal, "normal", n);
 			loadImgKey(hi._glow, "glow", n);

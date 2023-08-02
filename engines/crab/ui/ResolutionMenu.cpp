@@ -56,7 +56,7 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("options", node)) {
 		int countSlot = 0;
 		rapidxml::xml_node<char> *resnode = node->first_node("options");
-		for (auto n = resnode->first_node("res"); n != NULL; n = n->next_sibling("res"), countSlot++) {
+		for (auto n = resnode->first_node("res"); n != nullptr; n = n->next_sibling("res"), countSlot++) {
 			Dimension d;
 			loadNum(d.w, "x", n);
 			loadNum(d.h, "y", n);

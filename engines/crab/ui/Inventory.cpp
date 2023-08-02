@@ -64,7 +64,7 @@ void Inventory::loadItem(const Common::String &charId, const Common::String &id)
 	XMLDoc itemList(_itemfile);
 	if (itemList.ready()) {
 		rapidxml::xml_node<char> *node = itemList.doc()->first_node("items");
-		for (auto n = node->first_node("item"); n != NULL; n = n->next_sibling("item")) {
+		for (auto n = node->first_node("item"); n != nullptr; n = n->next_sibling("item")) {
 			Common::String str = n->first_attribute("id")->value();
 			if (id == str) {
 				i.load(n);

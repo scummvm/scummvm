@@ -51,7 +51,7 @@ void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
 	XMLDoc imageList(filename);
 	if (imageList.ready()) {
 		rapidxml::xml_node<char> *node = imageList.doc()->first_node("res");
-		for (auto n = node->first_node("image"); n != NULL; n = n->next_sibling("image")) {
+		for (auto n = node->first_node("image"); n != nullptr; n = n->next_sibling("image")) {
 			ImageKey key;
 			if (loadImgKey(key, "name", n)) {
 				// Load different images depending on image quality setting

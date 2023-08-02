@@ -44,7 +44,7 @@ void OptionSelect::load(rapidxml::xml_node<char> *node) {
 		_cur = 0;
 
 		option._text.clear();
-		for (auto n = node->first_node("option"); n != NULL; n = n->next_sibling("option")) {
+		for (auto n = node->first_node("option"); n != nullptr; n = n->next_sibling("option")) {
 			Common::String s;
 			loadStr(s, "name", n);
 			option._text.push_back(s);

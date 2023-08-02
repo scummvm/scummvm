@@ -40,7 +40,7 @@ void StatTemplates::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("templates");
-		for (auto n = node->first_node("stats"); n != NULL; n = n->next_sibling("stats"))
+		for (auto n = node->first_node("stats"); n != nullptr; n = n->next_sibling("stats"))
 			_collection.push_back(n);
 	}
 }

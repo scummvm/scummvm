@@ -61,12 +61,12 @@ void Element::basicload(rapidxml::xml_node<char> *node, const bool &echo) {
 void Element::load(rapidxml::xml_node<char> *node, ImageKey img, const bool &echo) {
 	basicload(node, echo);
 
-	if (node->first_attribute("w") == NULL)
+	if (node->first_attribute("w") == nullptr)
 		w = g_engine->_imageManager->getTexture(img).w();
 	else
 		loadNum(w, "w", node);
 
-	if (node->first_attribute("h") == NULL)
+	if (node->first_attribute("h") == nullptr)
 		h = g_engine->_imageManager->getTexture(img).h();
 	else
 		loadNum(h, "h", node);
@@ -82,7 +82,7 @@ void Element::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &ech
 }
 
 void Element::setUI(Rect *parent) {
-	if (parent == NULL) {
+	if (parent == nullptr) {
 		switch (_align.x) {
 		case ALIGN_CENTER:
 			x = g_engine->_screenSettings->_cur.w / 2 - w / 2 + _raw.x;

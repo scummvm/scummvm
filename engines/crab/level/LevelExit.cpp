@@ -40,7 +40,7 @@ void Exit::load(rapidxml::xml_node<char> *node) {
 
 	if (nodeValid("properties", node)) {
 		rapidxml::xml_node<char> *propertynode = node->first_node("properties");
-		for (auto n = propertynode->first_node("property"); n != NULL; n = n->next_sibling("property")) {
+		for (auto n = propertynode->first_node("property"); n != nullptr; n = n->next_sibling("property")) {
 			Common::String nodeName;
 			loadStr(nodeName, "name", n);
 			if (nodeName == "entry_x") {

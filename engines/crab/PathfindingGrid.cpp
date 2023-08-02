@@ -222,7 +222,7 @@ Common::Array<PathfindingGraphNode *> PathfindingGrid::cornerCheck(const Pathfin
 	for (auto iter : node1->_neighborNodes) {
 		for (auto iter2 : node2->_neighborNodes) {
 			if (iter == iter2 && iter->_movementCost < 0) {
-				if (returnNodes.size() == 0 || (*(Common::find(returnNodes.begin(), returnNodes.end(), iter))) == NULL)
+				if (returnNodes.size() == 0 || (*(Common::find(returnNodes.begin(), returnNodes.end(), iter))) == nullptr)
 					returnNodes.push_back(iter);
 			}
 		}
@@ -237,7 +237,7 @@ PathfindingGraphNode *PathfindingGrid::getNearestOpenNode(Vector2f nodePos, Vect
 	if (startNode->getMovementCost() > 0) // If the clicked node is open, we're done!
 		return startNode;
 
-	PathfindingGraphNode *returnNode = NULL;
+	PathfindingGraphNode *returnNode = nullptr;
 
 	float shortestDistance = 0.0f;
 
@@ -268,7 +268,7 @@ PathfindingGraphNode *PathfindingGrid::getNearestOpenNode(Vector2f nodePos, Vect
 			}
 		}
 
-		if (returnNode != NULL) // If a node has been found, we are done. We don't want to continue iterating through neighbors since it would take us further from the clicked node.
+		if (returnNode != nullptr) // If a node has been found, we are done. We don't want to continue iterating through neighbors since it would take us further from the clicked node.
 			return returnNode;
 
 		checkNodes.pop_front();

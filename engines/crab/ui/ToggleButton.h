@@ -60,7 +60,7 @@ public:
 	~ToggleButton() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = NULL);
+	void draw(const int &xOffset = 0, const int &yOffset = 0, Rect *clip = nullptr);
 
 	ButtonAction handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 };

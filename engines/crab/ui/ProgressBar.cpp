@@ -48,7 +48,7 @@ void ProgressBar::load(rapidxml::xml_node<char> *node) {
 
 	if (nodeValid("desc", node)) {
 		rapidxml::xml_node<char> *descnode = node->first_node("desc");
-		for (rapidxml::xml_node<char> *n = descnode->first_node("above"); n != NULL; n = n->next_sibling("above"))
+		for (rapidxml::xml_node<char> *n = descnode->first_node("above"); n != nullptr; n = n->next_sibling("above"))
 			_ct.push_back(n);
 	}
 }

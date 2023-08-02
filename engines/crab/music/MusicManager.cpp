@@ -64,9 +64,9 @@ void MusicManager::playMusic(const MusicKey &id) {
 		XMLDoc trackList(g_engine->_filePath->_soundMusic);
 		if (trackList.ready()) {
 			rapidxml::xml_node<char> *node = trackList.doc()->first_node("music");
-			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
+			for (auto n = node->first_node(); n != nullptr; n = n->next_sibling()) {
 				rapidxml::xml_attribute<char> *att = n->first_attribute("id");
-				if (att != NULL && id == stringToNumber<MusicKey>(att->value())) {
+				if (att != nullptr && id == stringToNumber<MusicKey>(att->value())) {
 					if (g_system->getMixer()->isSoundHandleActive(*_musicHandle))
 						g_system->getMixer()->stopHandle(*_musicHandle);
 					_bg.reset();
@@ -76,7 +76,7 @@ void MusicManager::playMusic(const MusicKey &id) {
 			}
 		}
 
-		if (_bg._track != NULL)
+		if (_bg._track != nullptr)
 			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, _musicHandle, _bg._track, (int)_bg._id);
 	}
 }
@@ -136,9 +136,9 @@ bool MusicManager::load(rapidxml::xml_node<char> *node) {
 			loadNum(_repInc, "rep_inc", tnode);
 			loadNum(_repDec, "rep_dec", tnode);
 
-			for (auto n = tnode->first_node(); n != NULL; n = n->next_sibling()) {
+			for (auto n = tnode->first_node(); n != nullptr; n = n->next_sibling()) {
 				rapidxml::xml_attribute<char> *id = n->first_attribute("id"), *path = n->first_attribute("path");
-				if (id != NULL && path != NULL) {
+				if (id != nullptr && path != nullptr) {
 					EffectAudio *audio = new EffectAudio();
 					audio->_file.open(path->value());
 					audio->_handle = new Audio::SoundHandle();

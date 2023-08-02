@@ -94,7 +94,7 @@ void CreditScreen::load(const Common::String &filename) {
 
 		if (nodeValid("text", node)) {
 			rapidxml::xml_node<char> *tnode = node->first_node("text");
-			for (rapidxml::xml_node<char> *n = tnode->first_node(); n != NULL; n = n->next_sibling()) {
+			for (rapidxml::xml_node<char> *n = tnode->first_node(); n != nullptr; n = n->next_sibling()) {
 				CreditText t;
 				t._text = n->value();
 				t._heading = (n->name()[0] == 'h');

@@ -87,7 +87,7 @@ MainMenu::MainMenu() {
 				if (nodeValid("lights", snode)) {
 					rapidxml::xml_node<char> *lnode = snode->first_node("lights");
 
-					for (rapidxml::xml_node<char> *n = lnode->first_node("img"); n != NULL; n = n->next_sibling("img"))
+					for (rapidxml::xml_node<char> *n = lnode->first_node("img"); n != nullptr; n = n->next_sibling("img"))
 						_lights.push_back(n);
 				}
 			}

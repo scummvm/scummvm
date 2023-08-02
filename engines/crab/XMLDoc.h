@@ -42,11 +42,11 @@ class XMLDoc {
 
 public:
 	XMLDoc() {
-		_text = NULL;
+		_text = nullptr;
 	}
 
 	XMLDoc(const Common::String &filename) {
-		_text = NULL;
+		_text = nullptr;
 		load(filename);
 	}
 
@@ -65,7 +65,7 @@ public:
 
 	// Check if document is ready for parsing
 	bool ready() const {
-		return _text != NULL;
+		return _text != nullptr;
 	}
 
 	const rapidxml::xml_document<> *doc() const;

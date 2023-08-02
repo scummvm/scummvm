@@ -45,7 +45,7 @@ void Quest::loadState(rapidxml::xml_node<char> *node) {
 	loadBool(_unread, "unread", node);
 	loadBool(_marker, "marker", node);
 
-	for (rapidxml::xml_node<char> *n = node->first_node("info"); n != NULL; n = n->next_sibling("info"))
+	for (rapidxml::xml_node<char> *n = node->first_node("info"); n != nullptr; n = n->next_sibling("info"))
 		_text.push_back(n->value());
 }
 

@@ -115,7 +115,7 @@ bool ItemCollection::has(const Common::String &charId, const Common::String &con
 // Purpose: Load items from save file
 //------------------------------------------------------------------------
 void ItemCollection::loadState(rapidxml::xml_node<char> *node) {
-	for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
+	for (auto n = node->first_node(); n != nullptr; n = n->next_sibling()) {
 		// Add all characters in the save file, whether we have them in the inventory or not
 		init(n->name());
 		_item[n->name()].loadState(n);
