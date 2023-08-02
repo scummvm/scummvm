@@ -160,7 +160,6 @@ void App::run() {
 		// Cap the frame rate
 		if (fps.ticks() < 1000u / g_engine->_screenSettings->_fps) {
 			uint32 delay = (1000u / g_engine->_screenSettings->_fps) - fps.ticks();
-			//warning("Delay by %d ms", delay);
 			g_system->delayMillis(delay);
 		}
 	}
