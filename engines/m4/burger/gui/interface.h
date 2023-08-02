@@ -39,7 +39,6 @@ public:
 	int _sprite = 22; // main_interface_sprite;
 	bool _visible = false;
 	bool _shown = false;
-	GrBuff *_gameInterfaceBuff = nullptr;
 	GUI::InterfaceBox *_interfaceBox = nullptr;
 	GUI::Inventory *_inventory = nullptr;
 	GUI::TextField *_textField = nullptr;
