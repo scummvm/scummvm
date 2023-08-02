@@ -24,6 +24,7 @@
 #include "audio/decoders/raw.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/core/imath.h"
 #include "m4/fileio/extensions.h"
 #include "m4/vars.h"
 
@@ -125,6 +126,18 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 	c._name = name;
 
 	return 0;
+}
+
+void Digi::playRandom() {
+	if (!_sounds.empty()) {
+		int soundNum = imath_ranged_rand(0, (int)_sounds.size() - 1);
+
+		auto it = _sounds.begin();
+		for (int i = 0; i < soundNum; ++i, ++it) {
+		}
+
+		play(it->_key, 1, 100, NO_TRIGGER, GLOBAL_SCENE);
+	}
 }
 
 Common::String Digi::expand_name_2_RAW(const Common::String &name, int32 room_num) {
