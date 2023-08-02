@@ -141,7 +141,7 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::Path gamePath, C
 }
 
 void IntegrityDialog::checksumResponseCallback(const Common::JSONValue *r) {
-	debug("Response recieved!");
+	debug(r->stringify().c_str());
 }
 
 void IntegrityDialog::errorCallback(const Networking::ErrorResponse &error) {
@@ -149,13 +149,14 @@ void IntegrityDialog::errorCallback(const Networking::ErrorResponse &error) {
 }
 
 void IntegrityDialog::sendJSON() {
-	Networking::PostRequest conn(_endpoint,
+	auto conn = new Networking::PostRequest(_endpoint,
 		new Common::Callback<IntegrityDialog, const Common::JSONValue *>(this, &IntegrityDialog::checksumResponseCallback),
 		new Common::Callback<IntegrityDialog, const Networking::ErrorResponse &>(this, &IntegrityDialog::errorCallback));
 
 	Common::JSONValue *json = generateJSONRequest(Common::Path(_gamePath), _gameid, _engineid, _extra, _platform, _language);
-	conn.setJSONData(json);
-	conn.start();
+	conn->setJSONData(json);
+	conn->setContentType("application/json");
+	conn->start();
 	delete json;
 }
 
