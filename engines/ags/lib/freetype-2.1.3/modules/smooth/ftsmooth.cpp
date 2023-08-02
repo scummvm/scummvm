@@ -266,7 +266,7 @@ const FT_Renderer_Class ft_smooth_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)   ft_smooth_get_cbox,
 	(FT_Renderer_SetModeFunc)   ft_smooth_set_mode,
 
-	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_grays_raster)
+	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft213_grays_raster)
 };
 
 FT_CALLBACK_TABLE_DEF
@@ -293,7 +293,7 @@ const FT_Renderer_Class ft_smooth_lcd_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)   ft_smooth_get_cbox,
 	(FT_Renderer_SetModeFunc)   ft_smooth_set_mode,
 
-	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_grays_raster)
+	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft213_grays_raster)
 };
 
 
@@ -321,7 +321,7 @@ const FT_Renderer_Class ft_smooth_lcdv_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)   ft_smooth_get_cbox,
 	(FT_Renderer_SetModeFunc)   ft_smooth_set_mode,
 
-	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_grays_raster)
+	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft213_grays_raster)
 };
 
 

@@ -69,7 +69,7 @@ namespace FreeType213 {
 #endif
 
 FT_EXPORT_VAR(const FT_Raster_Funcs)
-ft_grays_raster;
+ft213_grays_raster;
 
 #ifdef __cplusplus
 }

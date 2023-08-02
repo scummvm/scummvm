@@ -1800,7 +1800,7 @@ static void gray_raster_reset(FT_Raster raster, const char *pool_base, long pool
 }
 
 
-const FT_Raster_Funcs ft_grays_raster = {
+const FT_Raster_Funcs ft213_grays_raster = {
 	FT_GLYPH_FORMAT_OUTLINE,
 
 	(FT_Raster_New_Func)	  gray_raster_new,
