@@ -53,6 +53,7 @@ enum {
 	BACKPACK = 998,
 	NOWHERE = 999
 };
+#define GLOBAL_SCENE     999
 
 enum KernelTriggerType {
 	KT_PARSE = 1,
