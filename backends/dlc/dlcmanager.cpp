@@ -52,7 +52,13 @@ void DLCManager::refreshDLCList() {
 }
 
 void DLCManager::refreshLauncherGameList() {
-	sendCommand(GUI::kRefreshLauncher, 0);
+	if (_launcher) {
+		_launcher->rebuild();
+	}
+}
+
+void DLCManager::setLauncher(GUI::LauncherDialog *launcher) {
+	_launcher = launcher;
 }
 
 void DLCManager::addDownload(uint32 idx) {
