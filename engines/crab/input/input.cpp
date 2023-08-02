@@ -245,12 +245,12 @@ Common::String InputManager::getAssociatedKey(const InputType &type) {
 	return _keyDescs[type];
 }
 
+
 //------------------------------------------------------------------------
 // Purpose: Save to file
+// Function is not needed as of now, keeping it incase its needed in future.
 //------------------------------------------------------------------------
 void InputManager::save() {
-	warning("STUB: InputManager::Save()");
-
 #if 0
 	rapidxml::xml_document<char> doc;
 
