@@ -22,20 +22,12 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
-#include "common/file.h"
-#include "common/hashmap.h"
 #include "common/hash-ptr.h"
-#include "common/hash-str.h"
-#include "common/rect.h"
-#include "common/str-array.h"
 
-#include "engines/engine.h"
-#include "graphics/pixelformat.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/types.h"
 #include "director/util.h"
-#include "director/debugger.h"
 #include "director/detection.h"
 
 namespace Common {
@@ -58,10 +50,12 @@ namespace Director {
 class Archive;
 class MacArchive;
 class Cast;
+class Debugger;
 class DirectorSound;
 class Lingo;
 class Movie;
 class Window;
+struct Picture;
 class Score;
 class Channel;
 class CastMember;

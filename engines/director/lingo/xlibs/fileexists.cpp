@@ -31,11 +31,13 @@
  * FileExists(pathname «, “noDialog”:errGlobal»)
  */
 
+#include "common/file.h"
+#include "common/savefile.h"
+
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xlibs/fileexists.h"
-#include "common/savefile.h"
 
 
 namespace Director {

@@ -29,6 +29,9 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 
+#include "common/file.h"
+
+#include "director/director.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/window.h"

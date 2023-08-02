@@ -21,8 +21,6 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/error.h"
-#include "common/punycode.h"
 #include "common/tokenizer.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -37,8 +35,6 @@
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/window.h"
-#include "director/lingo/lingo.h"
-#include "director/detection.h"
 
 /**
  * When detection is compiled dynamically, directory globs end up in detection plugin and

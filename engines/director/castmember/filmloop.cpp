@@ -31,6 +31,7 @@
 #include "director/channel.h"
 #include "director/frame.h"
 #include "director/movie.h"
+#include "director/sprite.h"
 #include "director/window.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/filmloop.h"

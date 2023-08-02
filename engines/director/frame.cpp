@@ -27,7 +27,6 @@
 #include "director/score.h"
 #include "director/movie.h"
 #include "director/sprite.h"
-#include "director/util.h"
 
 namespace Director {
 

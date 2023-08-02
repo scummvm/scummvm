@@ -24,10 +24,8 @@
 #include "engines/advancedDetector.h"
 
 #include "common/file.h"
-#include "common/config-manager.h"
 
 #include "director/director.h"
-#include "director/detection.h"
 
 namespace Director {
 

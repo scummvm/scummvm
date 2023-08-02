@@ -198,6 +198,51 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	return true;
 }
 
+Common::String Breakpoint::format() {
+	Common::String result = Common::String::format("Breakpoint %d, ", id);
+	switch (type) {
+	case kBreakpointFunction:
+		result += "Function ";
+		if (scriptId)
+			result += Common::String::format("%d:", scriptId);
+		result += funcName;
+		if (funcOffset)
+			result += Common::String::format(" [%5d]", funcOffset);
+		break;
+	case kBreakpointMovie:
+		result += "Movie " + moviePath;
+		break;
+	case kBreakpointMovieFrame:
+		result += Common::String::format("Movie %s:%d", moviePath.c_str(), frameOffset);
+		break;
+	case kBreakpointVariable:
+		result += "Variable "+ varName + ":";
+		result += varRead ? "r" : "";
+		result += varWrite ? "w" : "";
+		break;
+	case kBreakpointEntity:
+		result += "Entity ";
+		result += g_lingo->entity2str(entity);
+		result += field ? ":" : "";
+		result += field ? g_lingo->field2str(field) : "";
+		result += ":";
+		result += varRead ? "r" : "";
+		result += varWrite ? "w" : "";
+		break;
+	case kBreakpointEvent:
+		result += "Event ";
+		if (eventId == kEventNone) {
+			result += "none";
+		} else {
+			result += g_lingo->_eventHandlerTypes[eventId];
+		}
+		break;
+	default:
+		break;
+	}
+	return result;
+}
+
 bool Debugger::cmdVersion(int argc, const char **argv) {
 	debugPrintf("Director version: %d\n", g_director->getVersion());
 	debugPrintf("Director platform: %s\n", Common::getPlatformCode(g_director->getPlatform()));

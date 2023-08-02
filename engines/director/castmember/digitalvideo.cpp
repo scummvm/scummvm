@@ -31,7 +31,6 @@
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/castmember/digitalvideo.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {

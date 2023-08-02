@@ -22,10 +22,7 @@
 #ifndef DIRECTOR_SCORE_H
 #define DIRECTOR_SCORE_H
 
-//#include "graphics/macgui/macwindowmanager.h"
-
 #include "director/cursor.h"
-#include "director/frame.h"
 
 namespace Graphics {
 	struct Surface;

@@ -20,6 +20,7 @@
  */
 
 #include "director/director.h"
+#include "director/debugger.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"

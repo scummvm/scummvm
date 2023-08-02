@@ -46,18 +46,15 @@
 #include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
+#include "director/debugger.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/window.h"
-#include "director/cursor.h"
 #include "director/channel.h"
-#include "director/util.h"
 #include "director/castmember/castmember.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
-#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {

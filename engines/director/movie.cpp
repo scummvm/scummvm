@@ -35,8 +35,6 @@
 #include "director/score.h"
 #include "director/window.h"
 #include "director/castmember/castmember.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-object.h"
 
 namespace Director {
 

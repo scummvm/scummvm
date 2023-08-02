@@ -27,10 +27,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/castmember/castmember.h"
-#include "director/castmember/bitmap.h"
 #include "director/castmember/shape.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-object.h"
 
 namespace Director {
 

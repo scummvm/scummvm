@@ -89,6 +89,7 @@
 
 #include "gui/filebrowser-dialog.h"
 
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 

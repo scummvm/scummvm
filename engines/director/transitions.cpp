@@ -28,8 +28,6 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/window.h"
-#include "director/util.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 

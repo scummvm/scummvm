@@ -23,7 +23,6 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/md5.h"
 #include "common/rational.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
@@ -38,19 +37,17 @@
 #endif
 
 #include "director/director.h"
+#include "director/debugger.h"
 #include "director/cast.h"
+#include "director/frame.h"
 #include "director/score.h"
 #include "director/movie.h"
 #include "director/sound.h"
-#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/window.h"
-#include "director/util.h"
 #include "director/castmember/castmember.h"
-#include "director/castmember/palette.h"
 #include "director/castmember/transition.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 

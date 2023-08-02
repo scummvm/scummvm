@@ -20,7 +20,6 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/system.h"
@@ -34,9 +33,7 @@
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/window.h"
-#include "director/util.h"
 
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 
 

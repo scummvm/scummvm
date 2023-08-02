@@ -26,10 +26,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/window.h"
-#include "director/util.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
-#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 
 #include "director/lingo/xlibs/aiff.h"

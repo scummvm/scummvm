@@ -23,7 +23,6 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
-#include "common/stream.h"
 #include "common/substream.h"
 
 #include "graphics/macgui/macfontmanager.h"
@@ -36,8 +35,8 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
+#include "director/sprite.h"
 #include "director/stxt.h"
-#include "director/util.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/digitalvideo.h"
@@ -49,8 +48,6 @@
 #include "director/castmember/sound.h"
 #include "director/castmember/text.h"
 #include "director/castmember/transition.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-object.h"
 
 namespace Director {
 

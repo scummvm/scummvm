@@ -36,9 +36,7 @@
 #include "director/archive.h"
 #include "director/movie.h"
 #include "director/picture.h"
-#include "director/util.h"
 #include "director/window.h"
-#include "director/lingo/lingo.h"
 
 #include "image/pict.h"
 

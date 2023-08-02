@@ -23,7 +23,6 @@
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 #include "image/bmp.h"
-#include "image/image_decoder.h"
 #include "image/jpeg.h"
 #include "image/pict.h"
 
@@ -35,7 +34,6 @@
 #include "director/score.h"
 #include "director/window.h"
 #include "director/castmember/bitmap.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {

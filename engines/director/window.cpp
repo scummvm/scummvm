@@ -23,21 +23,19 @@
 #include "common/system.h"
 #include "common/macresman.h"
 
-#include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/cast.h"
+#include "director/debugger.h"
 #include "director/lingo/lingo.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/score.h"
-#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/sound.h"
 #include "director/sprite.h"
-#include "director/util.h"
 #include "director/castmember/castmember.h"
 
 namespace Director {

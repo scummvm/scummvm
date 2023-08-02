@@ -20,23 +20,19 @@
  */
 
 #include "common/file.h"
-#include "common/fs.h"
 #include "common/keyboard.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
-#include "common/str-array.h"
 #include "common/tokenizer.h"
 #include "common/compression/zlib.h"
 
 #include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macfontmanager.h"
 
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/lingo/lingo.h"
-#include "director/util.h"
 
 namespace Director {
 

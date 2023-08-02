@@ -22,8 +22,6 @@
 #ifndef DIRECTOR_TYPES_H
 #define DIRECTOR_TYPES_H
 
-#include "common/hashmap.h"
-
 namespace Director {
 
 #define CONTINUATION (0xAC)

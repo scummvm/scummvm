@@ -22,10 +22,7 @@
 #ifndef DIRECTOR_CASTMEMBER_CASTMEMBER_H
 #define DIRECTOR_CASTMEMBER_CASTMEMBER_H
 
-#include "graphics/font.h"
-
 #include "director/archive.h"
-#include "director/sprite.h"
 #include "director/stxt.h"
 
 #include "director/lingo/lingo-object.h"

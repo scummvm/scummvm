@@ -22,7 +22,6 @@
 #ifndef DIRECTOR_LINGO_LINGO_CODEGEN_H
 #define DIRECTOR_LINGO_LINGO_CODEGEN_H
 
-#include "director/types.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
 

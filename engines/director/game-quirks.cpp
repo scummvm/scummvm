@@ -23,7 +23,6 @@
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "director/director.h"
-#include "graphics/macgui/macfontmanager.h"
 
 namespace Director {
 

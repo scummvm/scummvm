@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_ARCHIVE_H
 #define DIRECTOR_ARCHIVE_H
 
+#include "common/file.h"
+
 namespace Common {
 class MacResManager;
 class SeekableMemoryWriteStream;

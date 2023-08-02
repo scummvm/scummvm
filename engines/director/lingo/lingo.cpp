@@ -20,29 +20,25 @@
  */
 
 #include "common/file.h"
-#include "common/config-manager.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/debugger.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/picture.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/window.h"
-#include "director/util.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/text.h"
 
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
-#include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
-#include "director/lingo/lingo-object.h"
 
 namespace Director {
 

@@ -22,7 +22,6 @@
 #ifndef DIRECTOR_STAGE_H
 #define DIRECTOR_STAGE_H
 
-#include "graphics/macgui/macwindow.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Common {

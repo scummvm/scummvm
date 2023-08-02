@@ -25,7 +25,6 @@
 #include "director/movie.h"
 #include "director/lingo/lingo-codegen.h"
 
-
 namespace Director {
 
 using namespace Common;

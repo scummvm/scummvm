@@ -20,36 +20,31 @@
  */
 
 #include "common/system.h"
-#include "common/tokenizer.h"
 #include "common/translation.h"
 
 #include "director/types.h"
 #include "gui/message.h"
 
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macmenu.h"
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/debugger.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
-#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/window.h"
 #include "director/stxt.h"
-#include "director/util.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/palette.h"
 #include "director/castmember/text.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
-#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 
 #include "image/pict.h"

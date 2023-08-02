@@ -23,7 +23,6 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/castmember.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {

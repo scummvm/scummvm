@@ -21,14 +21,13 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
-#include "common/util.h"
 #include "graphics/macgui/macbutton.h"
-#include "graphics/macgui/macmenu.h"
 
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/cursor.h"
 #include "director/channel.h"
+#include "director/debugger.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/sound.h"
@@ -38,11 +37,10 @@
 #include "director/castmember/castmember.h"
 #include "director/castmember/digitalvideo.h"
 #include "director/castmember/text.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
-#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
+
 namespace Director {
 
 class Sprite;

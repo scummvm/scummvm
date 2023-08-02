@@ -20,16 +20,15 @@
  */
 
 #include "graphics/macgui/macbutton.h"
-#include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/channel.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/sprite.h"
 #include "director/window.h"
 #include "director/castmember/text.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
