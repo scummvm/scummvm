@@ -29,11 +29,32 @@ namespace M4 {
 namespace Burger {
 
 class Walker : public M4::Walker {
+private:
+	static const char **myFootsteps;	// Handle to array of pointers to strings of the footstep sounds
+	static int32 numFootstepSounds;		// Number of footstep sounds to choose from   
+	const char *_name = nullptr;
+	int _channel = 0;
+	int _room = 0;
+	int _vol = 0;
+	int32 _trigger = 0;
+	bool _flag = false;
+
+	/**
+	 * This is called when PLAYER walker code sends system message back to C (used by MAIN PLAYER WALKER ONLY)
+	 */
+	static void player_walker_callback(frac16 myMessage, machine *sender);
+
 public:
 	~Walker() override {}
 
 	bool walk_load_walker_and_shadow_series() override;
 	machine *walk_initialize_walker() override;
+
+	void reset_walker_sprites();
+	void wilbur_speech(const char *name, int trigger, int room = -1, byte flags = 0,
+		int vol = 256, int channel = 1);
+	void wilbur_say();
+	void wilburs_speech_finished();
 };
 
 } // namespace Burger

@@ -21,7 +21,6 @@
 
 #include "m4/burger/rooms/section1/room101.h"
 #include "m4/burger/rooms/section1/section1.h"
-#include "m4/burger/wilbur.h"
 #include "m4/burger/vars.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/core/imath.h"
@@ -238,51 +237,51 @@ void Room101::daemon() {
 				"101w503", "101w504", "101w505", "101w506"
 			};
 
-			wilbur_speech(NAMES[idx], 23);
+			_G(walker).wilbur_speech(NAMES[idx], 23);
 
 		} else if (!_G(flags)[ROOM101_FLAG4]) {
 			if (_G(flags)[ROOM101_FLAG5] <= 1) {
-				wilbur_speech("101w520", 7);
+				_G(walker).wilbur_speech("101w520", 7);
 
 			} else if (_G(flags)[ROOM101_FLAG6] && !_G(flags)[ROOM101_FLAG7]) {
-				wilbur_speech("101w522", 7);
+				_G(walker).wilbur_speech("101w522", 7);
 				_G(flags)[ROOM101_FLAG7] = 1;
 
 			} else if (_G(flags)[ROOM101_FLAG8] && !_G(flags)[ROOM101_FLAG9]) {
-				wilbur_speech("101w521", 7);
+				_G(walker).wilbur_speech("101w521", 7);
 				_G(flags)[ROOM101_FLAG9] = 1;
 
 			} else {
-				wilbur_speech("101w524", 7);
+				_G(walker).wilbur_speech("101w524", 7);
 			}
 		} else if (!_G(flags)[ROOM101_FLAG10]) {
 			if (_G(flags)[ROOM101_FLAG11] <= 1) {
-				wilbur_speech("101w530", 7);
+				_G(walker).wilbur_speech("101w530", 7);
 			} else if (!_G(flags)[ROOM101_FLAG12] && !_G(flags)[ROOM101_FLAG13]) {
-				wilbur_speech("101w531", 7);
+				_G(walker).wilbur_speech("101w531", 7);
 				_G(flags)[ROOM101_FLAG13] = 1;
 			} else if (_G(flags)[ROOM101_FLAG12] && !_G(flags)[ROOM101_FLAG14]) {
-				wilbur_speech("101w533", 7);
+				_G(walker).wilbur_speech("101w533", 7);
 				_G(flags)[ROOM101_FLAG14] = 1;
 			} else if (_G(flags)[ROOM101_FLAG12] && _G(flags)[ROOM101_FLAG11] >= 5 &&
 					!_G(flags)[ROOM101_FLAG15]) {
-				wilbur_speech("101w534", 7);
+				_G(walker).wilbur_speech("101w534", 7);
 				_G(flags)[ROOM101_FLAG15] = 1;
 			} else {
-				wilbur_speech("101w532", 7);
+				_G(walker).wilbur_speech("101w532", 7);
 			}
 		} else if (!_G(flags)[ROOM101_FLAG16]) {
 			switch (_G(flags)[ROOM101_FLAG17]) {
 			case 0:
 			case 1:
-				wilbur_speech("101w550", 7);
+				_G(walker).wilbur_speech("101w550", 7);
 				break;
 			case 2:
-				wilbur_speech("101w552", 7);
+				_G(walker).wilbur_speech("101w552", 7);
 				break;
 			default:
 				if (_G(flags)[ROOM101_FLAG18] && !_G(flags)[ROOM101_FLAG19]) {
-					wilbur_speech("101w551", 7);
+					_G(walker).wilbur_speech("101w551", 7);
 					_G(flags)[ROOM101_FLAG19] = 1;
 				} else {
 					kernel_timing_trigger(60, 7);
@@ -293,10 +292,10 @@ void Room101::daemon() {
 			switch (_G(flags)[ROOM101_FLAG21]) {
 			case 0:
 			case 1:
-				wilbur_speech("101w570", 7);
+				_G(walker).wilbur_speech("101w570", 7);
 				break;
 			case 2:
-				wilbur_speech("101w571", 7);
+				_G(walker).wilbur_speech("101w571", 7);
 				break;
 			default:
 				kernel_timing_trigger(60, 7);
@@ -444,7 +443,7 @@ void Room101::daemon() {
 
 	case 26:
 		door();
-		reset_walker_sprites();
+		_G(walker).reset_walker_sprites();
 		digi_preload_stream_breaks(STREAM_BREAKS5);
 		series_stream_with_breaks(STREAM_BREAKS5, "101dt01", 6, 1, 25);
 		break;

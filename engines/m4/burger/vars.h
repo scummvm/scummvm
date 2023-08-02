@@ -31,7 +31,6 @@
 #include "m4/burger/inventory.h"
 #include "m4/burger/series_player.h"
 #include "m4/burger/walker.h"
-#include "m4/burger/wilbur.h"
 
 namespace M4 {
 namespace Burger {
@@ -88,7 +87,6 @@ public:
 	ReleaseTrigger_Globals _releaseTrigger;
 	StreamBreak_Globals _streamBreak;
 	Burger::Walker _walker;
-	Wilbur_Globals _wilbur;
 
 	int _wilburTerm = 2;
 	const Common::String _wilburName = "WILBUR";
