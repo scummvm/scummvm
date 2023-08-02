@@ -41,26 +41,7 @@ void HotKey::load(rapidxml::xml_node<char> *node) {
 	_name = g_engine->_inputManager->getAssociatedKey(_input);
 }
 
-#if 0
-bool HotKey::handleEvents(const SDL_Event &Event) {
-	if (input > IT_NONE && input < IT_TOTAL) {
-		int result = g_engine->_inputManager->Equals(input, Event);
-
-		if (result == SDL_PRESSED)
-			keydown = true;
-		else if ((keydown && result == SDL_RELEASED) || result == ANALOG_PRESSED) {
-			keydown = false;
-			return true;
-		}
-	}
-
-	return false;
-}
-#endif
-
 bool HotKey::handleEvents(const Common::Event &event) {
-	//warning("STUB: HotKey::handleEvents()");
-
 	if (_input > IT_NONE && _input < IT_TOTAL) {
 		return g_engine->_inputManager->state(_input);
 	}
@@ -70,13 +51,6 @@ bool HotKey::handleEvents(const Common::Event &event) {
 
 const char *HotKey::name() {
 	return _name.c_str();
-
-#if 0
-	if (input > IT_NONE && input < IT_TOTAL)
-		return SDL_GetScancodeName(g_engine->_inputManager->iv[input].key);
-#endif
-
-	return "";
 }
 
 } // End of namespace Crab
