@@ -297,7 +297,7 @@ typedef unsigned long FT_UFast;
 #ifndef FT_EXPORT_VAR
 
 #ifdef __cplusplus
-#define FT_EXPORT_VAR(x) extern "C" x
+#define FT_EXPORT_VAR(x) extern x
 #else
 #define FT_EXPORT_VAR(x) extern x
 #endif
@@ -329,7 +329,7 @@ typedef unsigned long FT_UFast;
 /*                                                                 */
 #ifndef FT_CALLBACK_DEF
 #ifdef __cplusplus
-#define FT_CALLBACK_DEF(x) extern "C" x
+#define FT_CALLBACK_DEF(x) extern x
 #else
 #define FT_CALLBACK_DEF(x) static x
 #endif
@@ -337,8 +337,8 @@ typedef unsigned long FT_UFast;
 
 #ifndef FT_CALLBACK_TABLE
 #ifdef __cplusplus
-#define FT_CALLBACK_TABLE extern "C"
-#define FT_CALLBACK_TABLE_DEF extern "C"
+#define FT_CALLBACK_TABLE extern
+#define FT_CALLBACK_TABLE_DEF extern
 #else
 #define FT_CALLBACK_TABLE extern
 #define FT_CALLBACK_TABLE_DEF /* nothing */

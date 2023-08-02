@@ -50,15 +50,23 @@ namespace FreeType213 {
 
 #undef FT_USE_MODULE
 #ifdef __cplusplus
-#define FT_USE_MODULE(x) extern "C" const FT_Module_Class *x;
+#define FT_USE_MODULE(x) extern const FT_Module_Class x;
+#define FT_USE_DRIVER(x) extern const FT_Driver_ClassRec x;
+#define FT_USE_RENDERER(x) extern const FT_Renderer_Class x;
 #else
 #define FT_USE_MODULE(x) extern const FT_Module_Class *x;
+#define FT_USE_DRIVER(x) extern const FT_Driver_ClassRec *x;
+#define FT_USE_RENDERER(x) extern const FT_Renderer_Class *x;
 #endif
 
 #include "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"
 
 #undef FT_USE_MODULE
-#define FT_USE_MODULE(x) (const FT_Module_Class *)&x,
+#undef FT_USE_DRIVER
+#undef FT_USE_RENDERER
+#define FT_USE_MODULE(x) &x,
+#define FT_USE_DRIVER(x) &x.root,
+#define FT_USE_RENDERER(x) &x.root,
 
 static const FT_Module_Class *const ft_default_modules[] = {
 	#include "engines/ags/lib/freetype-2.1.3/config/ftmodule.h"

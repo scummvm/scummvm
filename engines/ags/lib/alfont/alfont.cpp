@@ -40,6 +40,8 @@
 
 #include "common/scummsys.h"
 
+#define USE_FREETYPE2_213
+
 #ifdef USE_FREETYPE2
 
 #include <wchar.h>
@@ -48,11 +50,16 @@
 #include "ags/lib/allegro/draw.h"
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/unicode.h"
+
+#ifdef USE_FREETYPE2_213
 #include "ags/lib/freetype-2.1.3/freetype213.h"
-//#include "graphics/fonts/freetype.h"
+#else
+#include "graphics/fonts/freetype.h"
+#endif
 
 namespace AGS3 {
 
+#ifdef USE_FREETYPE2_213
 
 using FreeType213::FT_Byte;
 using FreeType213::FT_Face;
@@ -82,6 +89,23 @@ using FreeType213::Done_Face;
 using FreeType213::Get_Char_Index;
 using FreeType213::Get_Kerning;
 
+#else
+
+using Graphics::FreeType::Init_FreeType;
+using Graphics::FreeType::Done_FreeType;
+using Graphics::FreeType::Load_Glyph;
+using Graphics::FreeType::Get_Glyph;
+using Graphics::FreeType::Glyph_Copy;
+using Graphics::FreeType::Glyph_To_Bitmap;
+using Graphics::FreeType::Done_Glyph;
+using Graphics::FreeType::Set_Pixel_Sizes;
+using Graphics::FreeType::New_Face;
+using Graphics::FreeType::New_Memory_Face;
+using Graphics::FreeType::Done_Face;
+using Graphics::FreeType::Get_Char_Index;
+using Graphics::FreeType::Get_Kerning;
+
+#endif
 
 #undef TRUE
 #undef FALSE
