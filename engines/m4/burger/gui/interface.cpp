@@ -167,7 +167,7 @@ bool Interface::set_interface_palette(RGB8 *myPalette) {
 
 void Interface::track_hotspots_refresh() {
 	_hotspot = nullptr;
-	--_counter;
+	--_savedX;
 
 	bool z = false;
 	eventHandler(_G(gameInterfaceBuff), EVENT_MOUSE, 1,
@@ -175,8 +175,84 @@ void Interface::track_hotspots_refresh() {
 }
 
 bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
-	warning("TODO: Interface::eventHandler");
+	if (eventType != EVENT_MOUSE)
+		return false;
+
+	if (_G(kernel).fading_to_grey && event == 5) {
+		kernel_unexamine_inventory_object(_G(master_palette), 5, 1);
+		return true;
+	}
+
+	if (player_commands_allowed()) {
+		if (x == _savedX && y == _savedY && event != 2 && event != 5 &&
+				event != 3 && event != 4)
+			return true;
+
+		_savedX = x;
+		_savedY = y;
+
+		ControlStatus status = _interfaceBox->track(event, _x1, _y1);
+
+		switch (status) {
+		case NOTHING:
+			_state = 0;
+			break;
+		case SELECTED:
+			sub1();
+			break;
+		default:
+			_state = 1;
+			break;
+		}
+
+		if (_state == 0 || _state == 2) {
+			status = _inventory->track(event, _x1, _y1);
+			_state = (status == NOTHING) ? 0 : 2;
+		}
+
+		if (!_state) {
+			int32 scrStatus;
+			ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &scrStatus);
+
+			if (y >= _y1) {
+				if (!_flag1)
+					mouse_set_sprite(kArrowCursor);
+
+				_textField->set_string(" ");
+			}
+
+			if (track(event, x - screen->x1, y - screen->y1) == SELECTED)
+				dispatch_command();
+		}
+	}
+
+	if (_interfaceBox->_must_redraw_all) {
+		_textField->_must_redraw = true;
+		_inventory->_must_redraw_all = true;
+	}
+
+	_interfaceBox->draw(_G(gameInterfaceBuff));
+	_textField->draw(_G(gameInterfaceBuff));
+	_inventory->draw(_G(gameInterfaceBuff));
+
 	return true;
+}
+
+void Interface::sub1() {
+	warning("TODO: Interface::sub1");
+}
+
+void Interface::sub2() {
+	warning("TODO: Interface::sub2");
+}
+
+ControlStatus Interface::track(int event, int x, int y) {
+	warning("TODO: Interface::track");
+	return NOTHING;
+}
+
+void Interface::dispatch_command() {
+	warning("TODO: Interface::dispatch_command");
 }
 
 } // namespace GUI
