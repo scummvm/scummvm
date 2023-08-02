@@ -49,6 +49,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/system_properties.h>
+#include <cpu-features.h>
 #include <time.h>
 #include <unistd.h>
 #include <dlfcn.h>
@@ -444,6 +445,13 @@ void OSystem_Android::initBackend() {
 		}
 	}
 
+	// Quickly figure out if arm NEON is supported
+	if (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM) {
+		_neonSupport = android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON;
+	} else {
+		_neonSupport = android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM64;
+	}
+
 	// Warning: ConfMan.registerDefault() can be used for a Session of ScummVM
 	//          but:
 	//              1. The values will NOT persist to storage
@@ -637,6 +645,7 @@ bool OSystem_Android::hasFeature(Feature f) {
 	if (f == kFeatureOpenGLForGame) return true;
 	/* GLES2 always supports shaders */
 	if (f == kFeatureShadersForGame) return true;
+	if (f == kFeatureNEON) return _neonSupport;
 	return ModularGraphicsBackend::hasFeature(f);
 }
 

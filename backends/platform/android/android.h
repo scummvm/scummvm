@@ -177,6 +177,8 @@ private:
 	mutable void *_gles2DL;
 #endif
 
+	bool _neonSupport; // bool for whether or not arm NEON is supported
+
 	static void *timerThreadFunc(void *arg);
 	static void *audioThreadFunc(void *arg);
 	Common::String getSystemProperty(const char *name) const;
