@@ -235,7 +235,7 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_fontId = macFont.getId();
 }
 
-bool myWindowCallback(Graphics::WindowClick click, Common::Event &event, void *ptr) {
+bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void *ptr) {
 	return g_director->getCurrentMovie()->processEvent(event);
 }
 
@@ -246,7 +246,7 @@ Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Ch
 		Graphics::MacTextWindow *window = (Graphics::MacTextWindow *)g_director->_wm->addTextWindow(macFont, getForeColor(), getBackColor(), _initialRect.width(),
 														  getAlignment(), nullptr, false);
 		// Set callback so that we can process events like mouse clicks
-		window->setCallback(myWindowCallback, window);
+		window->setCallback(textWindowCallback, window);
 		// Set widget to this window!
 		widget = window;
 
