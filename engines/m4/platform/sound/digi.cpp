@@ -40,8 +40,10 @@ void Digi::preload_sounds(const char **names) {
 		unload_sounds();
 
 	if (names) {
-		for (; *names; ++names)
-			preload(*names, NOWHERE);
+		for (; *names; ++names) {
+			if (preload(*names, NOWHERE))
+				_sounds[*names]._preloaded = true;
+		}
 	}
 }
 
@@ -129,14 +131,18 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 }
 
 void Digi::playRandom() {
-	if (!_sounds.empty()) {
-		int soundNum = imath_ranged_rand(0, (int)_sounds.size() - 1);
+	// Get a list of any preloaded sounds, excluding individual sounds
+	// that were directly played
+	Common::Array<Common::String> names;
 
-		auto it = _sounds.begin();
-		for (int i = 0; i < soundNum; ++i, ++it) {
-		}
+	for (auto it = _sounds.begin(); it != _sounds.end(); ++it) {
+		if (it->_value._preloaded)
+			names.push_back(it->_key);
+	}
 
-		play(it->_key, 1, 100, NO_TRIGGER, GLOBAL_SCENE);
+	if (!names.empty()) {
+		play(names[imath_ranged_rand(0, (int)names.size() - 1)].c_str(),
+			1, 100, NO_TRIGGER, GLOBAL_SCENE);
 	}
 }
 
