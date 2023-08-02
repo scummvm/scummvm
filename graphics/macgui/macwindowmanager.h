@@ -359,8 +359,8 @@ public:
 	void cleanupDataBundle();
 	void cleanupDesktopBmp();
 
-	BorderOffsets getBorderOffsets(byte windowType);
-	Common::SeekableReadStream *getBorderFile(byte windowType, uint32 flags);
+	BorderOffsets getBorderOffsets(uint32 windowType);
+	Common::SeekableReadStream *getBorderFile(uint32 windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::String &filename);
 
 	void setTextInClipboard(const Common::U32String &str);
