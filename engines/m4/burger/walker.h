@@ -30,8 +30,6 @@ namespace Burger {
 
 class Walker : public M4::Walker {
 private:
-	static const char **myFootsteps;	// Handle to array of pointers to strings of the footstep sounds
-	static int32 numFootstepSounds;		// Number of footstep sounds to choose from   
 	const char *_name = nullptr;
 	int _channel = 0;
 	int _room = 0;

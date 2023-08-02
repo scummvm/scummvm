@@ -58,11 +58,7 @@ static const int16 WILBUR_SHADOWS_DIRS[6] = {
 	8, 9, 10, 11, 12, -1
 };
 
-const char **Walker::myFootsteps;
-int32 Walker::numFootstepSounds;
-
 void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
-#ifdef TODO
 	int32 triggerType, soundNumber;
 
 	triggerType = _G(globals)[GLB_TEMP_1] >> 16;
@@ -74,25 +70,28 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 
 	case 1:
 		// Specific action is finished
-		if (myMessage >> 16 >= 0) {				// If user trigger is desired, dispatch it
-			kernel_trigger_dispatch(myMessage);	// Trigger will go to where it was called from
-		}
+		// If user trigger is desired, dispatch it
+		if (myMessage >> 16 >= 0)
+			// Trigger will go to where it was called from
+			kernel_trigger_dispatchx(myMessage);
 		break;
 
 	case 2:
-		// walker has arrived at a node
+		// Walker has arrived at a node
 		if (walker_has_walk_finished(sender)) {
 			// Walks walker to next node if not at end of walk
-			SendMessage(ENDWALK << 16, 0, sender, 0, nullptr, 1);
+			SendWSMessage(ENDWALK << 16, 0, sender, 0, nullptr, 1);
 		}
 		break;
 
 	case 3:
 		// Walker has finished his walk and is facing final direction
 		_G(player).waiting_for_walk = false;
-		if (myMessage >> 16 >= 0) {              // if user trigger is desired, dispatch it
-			kernel_trigger_dispatch(myMessage);  // trigger will go to where it was called from
-		}
+
+		// if user trigger is desired, dispatch it
+		if (myMessage >> 16 >= 0)
+			// trigger will go to where it was called from
+			kernel_trigger_dispatchx(myMessage);
 		break;
 
 	case 20:
@@ -100,27 +99,34 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		soundNumber = myMessage >> 16;
 		switch (soundNumber) {
 		case 21:
-			if (myFootsteps) {
-				digi_play(myFootsteps[imath_ranged_rand(0, numFootstepSounds - 1)], 1, 50, NO_TRIGGER, GLOBAL_SCENE);
-			}
-			break;
 		case 22:
-			if (myFootsteps) {
-				digi_play(myFootsteps[imath_ranged_rand(0, numFootstepSounds - 1)], 1, 50, NO_TRIGGER, GLOBAL_SCENE);
-			}
-			break;
-		case 23:
-			term_message("Wilbur: crack");
-			digi_play("crack1", 1, 50, NO_TRIGGER, GLOBAL_SCENE);
-			break;
-		case 24:
-			term_message("Wilbur: hmmm");
-			digi_play("hmmm", 1, 60, NO_TRIGGER, GLOBAL_SCENE);
-			break;
 		case 25:
-			if (myFootsteps) {
-				digi_play(myFootsteps[imath_ranged_rand(0, numFootstepSounds - 1)], 1, 50, NO_TRIGGER, GLOBAL_SCENE);
+			if (!_G(flags)[V298])
+				_G(digi).playRandom();
+			break;
+
+		case 23:
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				digi_play("crack1", 1, 50, NO_TRIGGER, GLOBAL_SCENE);
+				break;
+			case 2:
+				digi_play("crack2", 1, 60, NO_TRIGGER, GLOBAL_SCENE);
+				break;
+			case 3:
+				digi_play("crack3", 1, 80, NO_TRIGGER, GLOBAL_SCENE);
+				break;
+			default:
+				break;
 			}
+			break;
+
+		case 24:
+			if (!_G(flags)[V298])
+				digi_play("hmmm", 1, 60, NO_TRIGGER, GLOBAL_SCENE);
+			break;
+
+		default:
 			break;
 		}
 		break;
@@ -129,9 +135,6 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		_G(player).waiting_for_walk = false;
 		break;
 	}
-#else
-	error("TODO: player_walker_callback");
-#endif
 }
 
 bool Walker::walk_load_walker_and_shadow_series() {
@@ -143,28 +146,36 @@ machine *Walker::walk_initialize_walker() {
 	machine *m;
 	int32 s;
 
-	// Wilbur walker
-	_G(player).walker_type = WALKER_WILBUR;
-	_G(player).shadow_type = SHADOW_WILBUR;
+	if (!_G(player).walker_in_this_scene) {
+		_G(roomVal2) = 0;
+		m = nullptr;
 
-	_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
-	_G(globals)[GLB_TEMP_2] = WALKER_SERIES_HASH << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
-	_G(globals)[GLB_TEMP_3] = SHADOW_SERIES_HASH << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
+	} else {
+		_G(roomVal2) = 1;
 
-	// initialize with bogus data (this is for the real walker)
-	s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
-	_G(globals)[GLB_TEMP_4] = 320 << 16;
-	_G(globals)[GLB_TEMP_5] = 400 << 16;
-	_G(globals)[GLB_TEMP_6] = s;
-	_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
+		// Wilbur walker
+		_G(player).walker_type = WALKER_WILBUR;
+		_G(player).shadow_type = SHADOW_WILBUR;
 
-	m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "Wilbur Walker");
+		_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
+		_G(globals)[GLB_TEMP_2] = WALKER_SERIES_HASH << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
+		_G(globals)[GLB_TEMP_3] = SHADOW_SERIES_HASH << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
 
-	// we need to all init sequences to happen immediately (init coordinates)
-	CycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
-		nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
+		// initialize with bogus data (this is for the real walker)
+		s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+		_G(globals)[GLB_TEMP_4] = 320 << 16;
+		_G(globals)[GLB_TEMP_5] = 400 << 16;
+		_G(globals)[GLB_TEMP_6] = s;
+		_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
 
-	_G(inverse_pal)->release();
+		m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "Wilbur Walker");
+
+		// we need to all init sequences to happen immediately (init coordinates)
+		CycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
+			nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
+
+		_G(inverse_pal)->release();
+	}
 
 	return m;
 }

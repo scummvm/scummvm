@@ -86,6 +86,7 @@ public:
 
 	int32 play(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
 	int32 play_loop(const Common::String &name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
+	void playRandom();
 	void stop(uint channel);
 	void flush_mem();
 
