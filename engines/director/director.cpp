@@ -241,6 +241,9 @@ Common::Error DirectorEngine::run() {
 	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
 	*_stage->_refCount += 1;
 
+	// Set this as background so it doesn't come to foreground when multiple windows present
+	_wm->setBackgroundWindow(_stage);
+
 	if (!desktopEnabled())
 		_stage->disableBorder();
 
