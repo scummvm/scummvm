@@ -40,7 +40,7 @@ using namespace pyrodactyl::ai;
 void MovementSet::load(rapidxml::xml_node<char> *node) {
 	_enabled = true;
 	loadBool(_repeat, "repeat", node);
-	for (auto n = node->first_node("walk"); n != NULL; n = n->next_sibling("walk"))
+	for (auto n = node->first_node("walk"); n != nullptr; n = n->next_sibling("walk"))
 		_path.push_back(n);
 }
 

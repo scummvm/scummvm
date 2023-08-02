@@ -52,21 +52,21 @@ void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 		if (nodeValid("opinion", node))
 			_opinion.load(node->first_node("opinion"));
 
-		if (node->first_attribute("type") != NULL) {
+		if (node->first_attribute("type") != nullptr) {
 			Common::String t;
 			loadStr(t, "type", node);
 			_type = stringToPersonType(t);
 		} else
 			_type = PE_NEUTRAL;
 
-		if (node->first_attribute("state") != NULL) {
+		if (node->first_attribute("state") != nullptr) {
 			Common::String s;
 			loadStr(s, "state", node);
 			_state = stringToPersonState(s);
 		} else
 			_state = PST_NORMAL;
 
-		if (node->first_attribute("journal_name") != NULL) {
+		if (node->first_attribute("journal_name") != nullptr) {
 			loadStr(_journalName, "journal_name", node);
 			_altJournalName = true;
 		} else
@@ -74,7 +74,7 @@ void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 
 		if (nodeValid("stats", node)) {
 			rapidxml::xml_node<char> *statnode = node->first_node("stats");
-			if (statnode->first_attribute("template") == NULL) {
+			if (statnode->first_attribute("template") == nullptr) {
 				_stat.load(statnode);
 			} else {
 				int index = 0;
@@ -87,7 +87,7 @@ void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 
 		if (nodeValid("traits", node, false)) {
 			rapidxml::xml_node<char> *traitnode = node->first_node("traits");
-			for (auto n = traitnode->first_node("trait"); n != NULL; n = n->next_sibling("trait"))
+			for (auto n = traitnode->first_node("trait"); n != nullptr; n = n->next_sibling("trait"))
 				_trait.push_back(n);
 		}
 	}
@@ -145,7 +145,7 @@ void Person::loadState(rapidxml::xml_node<char> *node) {
 		rapidxml::xml_node<char> *traitnode = node->first_node("traits");
 
 		_trait.clear();
-		for (auto n = traitnode->first_node("trait"); n != NULL; n = n->next_sibling("trait"))
+		for (auto n = traitnode->first_node("trait"); n != nullptr; n = n->next_sibling("trait"))
 			_trait.push_back(n);
 	}
 }

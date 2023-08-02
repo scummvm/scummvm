@@ -39,7 +39,7 @@ void Stairs::load(rapidxml::xml_node<char> *node, const bool &echo) {
 
 	if (nodeValid("properties", node, echo)) {
 		auto pnode = node->first_node("properties");
-		for (auto n = pnode->first_node("property"); n != NULL; n = n->next_sibling("property")) {
+		for (auto n = pnode->first_node("property"); n != nullptr; n = n->next_sibling("property")) {
 			Common::String name;
 			if (loadStr(name, "name", n, echo)) {
 				if (name == "x")

@@ -43,12 +43,12 @@ void ReplyChoice::load(rapidxml::xml_node<char> *node) {
 		_unlock.load(node->first_node("unlock"));
 
 	if (nodeValid("change", node, false))
-		for (auto n = node->first_node("change"); n != NULL; n = n->next_sibling("change"))
+		for (auto n = node->first_node("change"); n != nullptr; n = n->next_sibling("change"))
 			_change.push_back(n);
 }
 
 void ConversationData::load(rapidxml::xml_node<char> *node) {
-	for (auto n = node->first_node("reply"); n != NULL; n = n->next_sibling("reply"))
+	for (auto n = node->first_node("reply"); n != nullptr; n = n->next_sibling("reply"))
 		_reply.push_back(n);
 }
 

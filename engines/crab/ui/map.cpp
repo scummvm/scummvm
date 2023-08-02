@@ -49,7 +49,7 @@ void Map::load(const Common::String &filename, pyrodactyl::event::Info &info) {
 				rapidxml::xml_node<char> *imgnode = node->first_node("img");
 				loadNum(_speed, "speed", imgnode);
 
-				for (auto n = imgnode->first_node("map"); n != NULL; n = n->next_sibling("map"))
+				for (auto n = imgnode->first_node("map"); n != nullptr; n = n->next_sibling("map"))
 					_map.push_back(n);
 			}
 
@@ -470,7 +470,7 @@ void Map::loadState(rapidxml::xml_node<char> *node) {
 		loadNum(val, "cur", mapnode);
 
 		auto r = _map.begin();
-		for (rapidxml::xml_node<char> *n = mapnode->first_node("data"); n != NULL && r != _map.end(); n = n->next_sibling("data"), ++r)
+		for (rapidxml::xml_node<char> *n = mapnode->first_node("data"); n != nullptr && r != _map.end(); n = n->next_sibling("data"), ++r)
 			r->loadState(n);
 
 		setImage(val, true);

@@ -45,7 +45,7 @@ void GameOverMenu::load(rapidxml::xml_node<char> *node) {
 			rapidxml::xml_node<char> *tinode = node->first_node("title");
 			_title.load(tinode);
 
-			for (auto n = tinode->first_node("quote"); n != NULL; n = n->next_sibling("quote")) {
+			for (auto n = tinode->first_node("quote"); n != nullptr; n = n->next_sibling("quote")) {
 				Common::String str;
 				loadStr(str, "text", n);
 				_quote.push_back(str);

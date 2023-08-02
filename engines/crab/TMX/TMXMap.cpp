@@ -107,7 +107,7 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 
 			// We need to cycle through all tile and object layers in order to
 			// see the level at which the sprites will be drawn
-			for (auto groupnode = node->first_node(); groupnode != NULL; groupnode = groupnode->next_sibling()) {
+			for (auto groupnode = node->first_node(); groupnode != nullptr; groupnode = groupnode->next_sibling()) {
 				// Store the name for easy comparison
 				Common::String name = groupnode->name();
 
@@ -131,22 +131,22 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 					Common::String groupName;
 					loadStr(groupName, "name", groupnode);
 					if (groupName == "exit") {
-						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
+						for (auto n = groupnode->first_node("object"); n != nullptr; n = n->next_sibling("object")) {
 							pyrodactyl::level::Exit le(n);
 							_areaExit.push_back(le);
 						}
 					} else if (groupName == "walk") {
 						auto n = groupnode->first_node("object");
-						if (n != NULL)
+						if (n != nullptr)
 							_areaWalk.load(n, true, "x", "y", "width", "height");
 					} else if (groupName == "no_walk") {
-						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
+						for (auto n = groupnode->first_node("object"); n != nullptr; n = n->next_sibling("object")) {
 							Shape s;
 							s.load(n);
 							_areaNowalk.push_back(s);
 						}
 					} else if (groupName == "trigger") {
-						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
+						for (auto n = groupnode->first_node("object"); n != nullptr; n = n->next_sibling("object")) {
 							Shape s;
 							s.load(n);
 
@@ -159,13 +159,13 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 							_areaTrig[pos] = s;
 						}
 					} else if (groupName == "stairs") {
-						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
+						for (auto n = groupnode->first_node("object"); n != nullptr; n = n->next_sibling("object")) {
 							pyrodactyl::level::Stairs s;
 							s.load(n);
 							_areaStairs.push_back(s);
 						}
 					} else if (groupName == "music") {
-						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
+						for (auto n = groupnode->first_node("object"); n != nullptr; n = n->next_sibling("object")) {
 							pyrodactyl::level::MusicArea ma;
 							ma.load(n);
 							_areaMusic.push_back(ma);
@@ -187,13 +187,13 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 // void TMXMap::LoadPath(rapidxml::xml_node<char> *node)
 //{
 //	int pos = 0;
-//	for (auto n = node->first_node("object"); n != NULL; n = n->next_sibling("object"), ++pos)
+//	for (auto n = node->first_node("object"); n != nullptr; n = n->next_sibling("object"), ++pos)
 //	{
 //		Vector2i start;
 //		start.load(n);
 //
 //		rapidxml::xml_node<char> *linenode = n->first_node("polyline");
-//		if (linenode != NULL)
+//		if (linenode != nullptr)
 //		{
 //			Common::String points, x, y;
 //			loadStr(points, "points", linenode);

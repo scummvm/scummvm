@@ -55,11 +55,11 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 		XMLDoc conf(node->first_attribute("list")->value());
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *lnode = conf.doc()->first_node("event_list");
-			for (rapidxml::xml_node<char> *loc = lnode->first_node("loc"); loc != NULL; loc = loc->next_sibling("loc")) {
+			for (rapidxml::xml_node<char> *loc = lnode->first_node("loc"); loc != nullptr; loc = loc->next_sibling("loc")) {
 				Common::String locName;
 				loadStr(locName, "name", loc);
 
-				for (auto n = loc->first_node("file"); n != NULL; n = n->next_sibling("file")) {
+				for (auto n = loc->first_node("file"); n != nullptr; n = n->next_sibling("file")) {
 					unsigned int id;
 					Common::String path;
 					loadNum(id, "name", n);
@@ -422,8 +422,8 @@ void Manager::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 // Purpose: Load the state of the object
 //------------------------------------------------------------------------
 void Manager::loadState(rapidxml::xml_node<char> *node) {
-	for (auto n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
-		if (n->first_attribute("name") != NULL) {
+	for (auto n = node->first_node("loc"); n != nullptr; n = n->next_sibling("loc")) {
+		if (n->first_attribute("name") != nullptr) {
 			Common::String name = n->first_attribute("name")->value();
 			if (_eventMap.contains(name))
 				_eventMap[name].loadState(n);

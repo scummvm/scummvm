@@ -91,7 +91,7 @@ void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event
 		// Only bother if the sprite is visible
 		if (i->visible()) {
 			// TODO: Find a place where this should be initialized... (SZ)
-			if (i->_pathing._grid == NULL)
+			if (i->_pathing._grid == nullptr)
 				i->_pathing.initialize(&_pathfindingGrid);
 
 			// If a sprite is dead, nothing else matters

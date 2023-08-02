@@ -41,7 +41,7 @@ namespace Crab {
 template<typename T>
 bool collideLine(const T &p0X, const T &p0Y, const T &p1X, const T &p1Y,
 				 const T &p2X, const T &p2Y, const T &p3X, const T &p3Y,
-				 T *x = NULL, T *y = NULL) {
+				 T *x = nullptr, T *y = nullptr) {
 	Vector2D<T> s1, s2;
 	s1.x = p1X - p0X;
 	s1.y = p1Y - p0Y;
@@ -57,9 +57,9 @@ bool collideLine(const T &p0X, const T &p0Y, const T &p1X, const T &p1Y,
 
 		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
 			// Collision detected
-			if (x != NULL)
+			if (x != nullptr)
 				*x = p0X + (t * s1.x);
-			if (y != NULL)
+			if (y != nullptr)
 				*y = p0Y + (t * s1.y);
 
 			return true;

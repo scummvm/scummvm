@@ -74,7 +74,7 @@ void TileSetGroup::reset() {
 
 void TileSetGroup::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 	reset();
-	for (auto n = node->first_node("tileset"); n != NULL; n = n->next_sibling("tileset")) {
+	for (auto n = node->first_node("tileset"); n != nullptr; n = n->next_sibling("tileset")) {
 		TileSet t;
 		t.load(path, n);
 		_tileset.push_back(t);

@@ -39,7 +39,7 @@ void App::run() {
 	bool shouldChangeState = true;
 
 	// Set the current game state object
-	GameState *currentState = NULL;
+	GameState *currentState = nullptr;
 	Timer fps;
 	Common::Event e;
 	int fpscount = 0, fpsval = 1, lasts = 0;

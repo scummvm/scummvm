@@ -33,7 +33,7 @@
 namespace Crab {
 
 bool nodeValid(rapidxml::xml_node<char> *node, const bool &echo) {
-	if (node == NULL) {
+	if (node == nullptr) {
 		/*if (echo)
 			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", "node not found", NULL);*/
 
@@ -44,14 +44,14 @@ bool nodeValid(rapidxml::xml_node<char> *node, const bool &echo) {
 }
 
 bool nodeValid(const Common::String &name, rapidxml::xml_node<char> *parentNode, const bool &echo) {
-	if (parentNode == NULL) {
+	if (parentNode == nullptr) {
 		/*if (echo)
 		{
 		Common::String error_msg = "parent node of " + name + " not found \n";
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
 		}*/
 		return false;
-	} else if (parentNode->first_node(name.c_str()) == NULL) {
+	} else if (parentNode->first_node(name.c_str()) == nullptr) {
 		/*if (echo)
 		{
 		Common::String error_msg = "child node " + name + " of parent node " + parent_node->name() + " not found \n";
@@ -64,7 +64,7 @@ bool nodeValid(const Common::String &name, rapidxml::xml_node<char> *parentNode,
 }
 
 bool loadStr(Common::String &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo) {
-	if (node->first_attribute(name.c_str()) != NULL)
+	if (node->first_attribute(name.c_str()) != nullptr)
 		val = node->first_attribute(name.c_str())->value();
 	else {
 		/*if (echo)

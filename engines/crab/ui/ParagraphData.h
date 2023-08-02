@@ -45,7 +45,7 @@ public:
 	ParagraphData() : _line(1, 1) {}
 	~ParagraphData() {}
 
-	bool load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
+	bool load(rapidxml::xml_node<char> *node, Rect *parent = nullptr, const bool &echo = true);
 
 	void draw(const Common::String &val, const int &xOffset = 0, const int &yOffset = 0);
 };

@@ -52,7 +52,7 @@ void PopUp::load(rapidxml::xml_node<char> *node) {
 	_visible.load(node);
 
 	_effect.clear();
-	for (rapidxml::xml_node<char> *n = node->first_node("effect"); n != NULL; n = n->next_sibling("effect")) {
+	for (rapidxml::xml_node<char> *n = node->first_node("effect"); n != nullptr; n = n->next_sibling("effect")) {
 		Effect e;
 		e.load(n);
 		_effect.push_back(e);
@@ -61,7 +61,7 @@ void PopUp::load(rapidxml::xml_node<char> *node) {
 
 void PopUpCollection::load(rapidxml::xml_node<char> *node) {
 	loadBool(_loop, "loop", node);
-	for (auto n = node->first_node("dialog"); n != NULL; n = n->next_sibling("dialog"))
+	for (auto n = node->first_node("dialog"); n != nullptr; n = n->next_sibling("dialog"))
 		_element.push_back(n);
 }
 

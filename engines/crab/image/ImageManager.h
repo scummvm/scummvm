@@ -104,7 +104,7 @@ public:
 	bool validTexture(const ImageKey &id);
 
 	void draw(const int &x, const int &y, const ImageKey &id,
-			  Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
+			  Common::Rect *clip = nullptr, const TextureFlipType &flip = FLIP_NONE);
 	void draw(const int &x, const int &y, const ImageKey &id,
 			  Rect *clip, const TextureFlipType &flip = FLIP_NONE);
 

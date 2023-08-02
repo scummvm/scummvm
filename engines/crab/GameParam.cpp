@@ -62,7 +62,7 @@ void FilePaths::loadLevel(const Common::String &filename) {
 	if (lev_list.ready()) {
 		rapidxml::xml_node<char> *node = lev_list.doc()->first_node("world");
 
-		for (rapidxml::xml_node<char> *n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
+		for (rapidxml::xml_node<char> *n = node->first_node("loc"); n != nullptr; n = n->next_sibling("loc")) {
 			LevelPath l;
 			l.load(n);
 

@@ -36,13 +36,13 @@ bool fileOpen(const Common::Path &path, char *&data) {
 	if (path.empty())
 		return false;
 
-	if (data != NULL)
+	if (data != nullptr)
 		delete[] data;
 
 	Common::File file;
 	if (!file.open(path)) {
 		warning("Unable to open file %s", path.toString().c_str());
-		data = NULL;
+		data = nullptr;
 		return false;
 	}
 

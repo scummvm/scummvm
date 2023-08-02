@@ -51,9 +51,9 @@ public:
 	PathfindingGraphNode *_location;
 
 	PlannerNode() {
-		_location = NULL;
-		_parent = NULL;
-		_child = NULL;
+		_location = nullptr;
+		_parent = nullptr;
+		_child = nullptr;
 		_cost = 0;
 		_finalCost = 0;
 		_givenCost = 0;

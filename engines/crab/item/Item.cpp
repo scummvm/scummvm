@@ -50,7 +50,7 @@ void Item::load(rapidxml::xml_node<char> *node) {
 		loadImgKey(_img, "img", node);
 
 		_bonus.clear();
-		for (auto n = node->first_node("bonus"); n != NULL; n = n->next_sibling("bonus")) {
+		for (auto n = node->first_node("bonus"); n != nullptr; n = n->next_sibling("bonus")) {
 			Bonus b;
 			b.load(n);
 			_bonus.push_back(b);

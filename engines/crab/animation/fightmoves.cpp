@@ -53,7 +53,7 @@ FightMoves::FightMoves() {
 // Purpose: Load from file
 //------------------------------------------------------------------------
 void FightMoves::load(rapidxml::xml_node<char> *node) {
-	for (auto n = node->first_node("move"); n != NULL; n = n->next_sibling("move")) {
+	for (auto n = node->first_node("move"); n != nullptr; n = n->next_sibling("move")) {
 		FightMove fm;
 		fm.load(n);
 		_move.push_back(fm);

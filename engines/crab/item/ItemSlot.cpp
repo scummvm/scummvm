@@ -45,7 +45,7 @@ using namespace pyrodactyl::people;
 void ItemSlot::load(rapidxml::xml_node<char> *node) {
 	StateButton::load(node);
 
-	if (node->first_attribute("slot") == NULL)
+	if (node->first_attribute("slot") == nullptr)
 		_noType = true;
 	else {
 		loadStr(_itemType, "slot", node);

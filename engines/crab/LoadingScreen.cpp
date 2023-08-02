@@ -41,7 +41,7 @@ void LoadingScreen::load() {
 		if (nodeValid(node)) {
 			if (nodeValid("screens", node)) {
 				rapidxml::xml_node<char> *scrnode = node->first_node("screens");
-				for (auto n = scrnode->first_node("screen"); n != NULL; n = n->next_sibling("screen"))
+				for (auto n = scrnode->first_node("screen"); n != nullptr; n = n->next_sibling("screen"))
 					_screen.push_back(n);
 			}
 
