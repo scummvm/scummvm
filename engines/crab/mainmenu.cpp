@@ -29,7 +29,6 @@
  */
 
 #include "crab/mainmenu.h"
-#include "crab/url.h"
 
 namespace Crab {
 
