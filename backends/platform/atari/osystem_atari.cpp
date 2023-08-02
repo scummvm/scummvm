@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include <gem.h>
@@ -84,6 +85,7 @@ static void (*s_vkbderr)(void) = nullptr;
 static KBDVEC s_mousevec = nullptr;
 
 static void (*s_old_procterm)(void) = nullptr;
+static bool exit_already_called = false;
 
 static void exit_gem() {
 	if (s_app_id != -1) {
@@ -119,7 +121,25 @@ static void critical_restore() {
 		s_kbdvec = s_mousevec = nullptr;
 	}
 
-	exit_gem();
+	// don't call GEM cleanup in the critical handler: it seems that v_clsvwk()
+	// somehow manipulates the same memory area used for the critical handler's stack
+	// what causes v_clsvwk() never returning and leading to a bus error (and another
+	// critical_restore() called...)
+	//exit_gem();
+}
+
+// called on normal program termination (via exit() or returning from main())
+static void exit_restore() {
+	if (!exit_already_called) {
+		exit_already_called = true;
+
+		g_system->destroy();
+
+		// graceful exit
+		(void)Setexc(VEC_PROCTERM, s_old_procterm);
+
+		exit_gem();
+	}
 }
 
 OSystem_Atari::OSystem_Atari() {
@@ -182,6 +202,9 @@ OSystem_Atari::OSystem_Atari() {
 
 	_videoInitialized = true;
 
+	// protect against sudden exit()
+	atexit(exit_restore);
+	// protect against sudden crash
 	s_old_procterm = Setexc(VEC_PROCTERM, -1);
 	(void)Setexc(VEC_PROCTERM, critical_restore);
 }
@@ -332,6 +355,7 @@ void OSystem_Atari::quit() {
 	g_system->destroy();
 
 	// graceful exit
+	exit_already_called = true;
 	(void)Setexc(VEC_PROCTERM, s_old_procterm);
 
 	exit_gem();
@@ -449,6 +473,7 @@ int main(int argc, char *argv[]) {
 	g_system->destroy();
 
 	// graceful exit
+	exit_already_called = true;
 	(void)Setexc(VEC_PROCTERM, s_old_procterm);
 
 	exit_gem();
