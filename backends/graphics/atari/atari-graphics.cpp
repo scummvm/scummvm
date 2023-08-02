@@ -430,7 +430,11 @@ void AtariGraphicsManager::unlockScreen() {
 		_screen[FRONT_BUFFER]->addDirtyRect(dstSurface, rect, directRendering);
 	}
 
-	updateScreen();
+	// doc says:
+	// Unlock the screen framebuffer, and mark it as dirty, i.e. during the
+	// next updateScreen() call, the whole screen will be updated.
+	//
+	// ... so no updateScreen() from here (otherwise Eco Quest's intro is crawling!)
 }
 
 void AtariGraphicsManager::fillScreen(uint32 col) {
