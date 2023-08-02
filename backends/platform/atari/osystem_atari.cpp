@@ -74,31 +74,13 @@ extern "C" volatile uint32 counter_200hz;
 extern void nf_init(void);
 extern void nf_print(const char* msg);
 
-static int s_app_id = -1;
-static int16 s_vdi_handle;
-static int s_vdi_width, s_vdi_height;
-
 static bool s_tt = false;
 typedef void (*KBDVEC)(void *);
 KBDVEC g_atari_old_kbdvec = nullptr;
 static void (*s_vkbderr)(void) = nullptr;
 static KBDVEC s_mousevec = nullptr;
 
-static void (*s_old_procterm)(void) = nullptr;
 static bool exit_already_called = false;
-
-static void exit_gem() {
-	if (s_app_id != -1) {
-		//wind_update(END_UPDATE);
-
-		// redraw screen
-		form_dial(FMD_FINISH, 0, 0, 0, 0, 0, 0, s_vdi_width, s_vdi_height);
-		graf_mouse(M_ON, NULL);
-
-		v_clsvwk(s_vdi_handle);
-		appl_exit();
-	}
-}
 
 static void critical_restore() {
 	extern void AtariAudioShutdown();
@@ -125,21 +107,12 @@ static void critical_restore() {
 	// somehow manipulates the same memory area used for the critical handler's stack
 	// what causes v_clsvwk() never returning and leading to a bus error (and another
 	// critical_restore() called...)
-	//exit_gem();
 }
 
 // called on normal program termination (via exit() or returning from main())
 static void exit_restore() {
-	if (!exit_already_called) {
-		exit_already_called = true;
-
+	if (!exit_already_called)
 		g_system->destroy();
-
-		// graceful exit
-		(void)Setexc(VEC_PROCTERM, s_old_procterm);
-
-		exit_gem();
-	}
 }
 
 OSystem_Atari::OSystem_Atari() {
@@ -205,7 +178,7 @@ OSystem_Atari::OSystem_Atari() {
 	// protect against sudden exit()
 	atexit(exit_restore);
 	// protect against sudden crash
-	s_old_procterm = Setexc(VEC_PROCTERM, -1);
+	_old_procterm = Setexc(VEC_PROCTERM, -1);
 	(void)Setexc(VEC_PROCTERM, critical_restore);
 }
 
@@ -256,9 +229,53 @@ OSystem_Atari::~OSystem_Atari() {
 		kbdvecs->mousevec = s_mousevec;
 		g_atari_old_kbdvec = s_mousevec = nullptr;
 	}
+
+	if (_app_id != -1) {
+		//wind_update(END_UPDATE);
+
+		// redraw screen
+		form_dial(FMD_FINISH, 0, 0, 0, 0, 0, 0, _vdi_width, _vdi_height);
+		graf_mouse(M_ON, NULL);
+
+		v_clsvwk(_vdi_handle);
+		appl_exit();
+	}
+
+	// graceful exit
+	exit_already_called = true;
+	(void)Setexc(VEC_PROCTERM, _old_procterm);
 }
 
 void OSystem_Atari::initBackend() {
+	_app_id = appl_init();
+	if (_app_id != -1) {
+		// get the ID of the current physical screen workstation
+		int16 dummy;
+		_vdi_handle = graf_handle(&dummy, &dummy, &dummy, &dummy);
+		if (_vdi_handle < 1) {
+			appl_exit();
+			error("graf_handle() failed");
+		}
+
+		int16 work_in[16] = {};
+		int16 work_out[57] = {};
+
+		// open a virtual screen workstation
+		v_opnvwk(work_in, &_vdi_handle, work_out);
+
+		if (_vdi_handle == 0) {
+			appl_exit();
+			error("v_opnvwk() failed");
+		}
+
+		_vdi_width = work_out[0] + 1;
+		_vdi_height = work_out[1] + 1;
+
+		graf_mouse(M_OFF, NULL);
+		// see https://github.com/freemint/freemint/issues/312
+		//wind_update(BEG_UPDATE);
+	}
+
 	_timerManager = new DefaultTimerManager();
 	_savefileManager = new DefaultSaveFileManager("saves");
 
@@ -353,12 +370,6 @@ void OSystem_Atari::quit() {
 	debug("OSystem_Atari::quit()");
 
 	g_system->destroy();
-
-	// graceful exit
-	exit_already_called = true;
-	(void)Setexc(VEC_PROCTERM, s_old_procterm);
-
-	exit_gem();
 }
 
 void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
@@ -436,47 +447,12 @@ OSystem *OSystem_Atari_create() {
 }
 
 int main(int argc, char *argv[]) {
-	s_app_id = appl_init();
-	if (s_app_id != -1) {
-		// get the ID of the current physical screen workstation
-		int16 dummy;
-		s_vdi_handle = graf_handle(&dummy, &dummy, &dummy, &dummy);
-		if (s_vdi_handle < 1) {
-			appl_exit();
-			error("graf_handle() failed");
-		}
-
-		int16 work_in[16] = {};
-		int16 work_out[57] = {};
-
-		// open a virtual screen workstation
-		v_opnvwk(work_in, &s_vdi_handle, work_out);
-
-		if (s_vdi_handle == 0) {
-			appl_exit();
-			error("v_opnvwk() failed");
-		}
-
-		s_vdi_width = work_out[0] + 1;
-		s_vdi_height = work_out[1] + 1;
-
-		graf_mouse(M_OFF, NULL);
-		// see https://github.com/freemint/freemint/issues/312
-		//wind_update(BEG_UPDATE);
-	}
-
 	g_system = OSystem_Atari_create();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
 	g_system->destroy();
-
-	// graceful exit
-	exit_already_called = true;
-	(void)Setexc(VEC_PROCTERM, s_old_procterm);
-
-	exit_gem();
 
 	return res;
 }
