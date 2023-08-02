@@ -285,7 +285,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// in the small version of the GUI.
 
 	// GUI: Check integrity button
-	_checkIntegrityButton = new ButtonWidget(tab, 350, 350, 50, 50, _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
+	_checkIntegrityButton = new ButtonWidget(tab, "GameOptions_Paths.Checkintegrity", _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
 
 	// GUI:  Button + Label for the game path
 	if (!g_gui.useLowResGUI())
@@ -620,7 +620,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 
 	case kCmdCheckIntegrity:
-		IntegrityDialog("https://example.com/api", _domain).sendJSON();
+		IntegrityDialog("http://localhost:8000/api/validate", _domain).sendJSON();
 		break;
 
 	case kOKCmd:
