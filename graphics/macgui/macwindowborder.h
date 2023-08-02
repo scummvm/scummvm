@@ -46,7 +46,11 @@ enum {
 };
 
 enum {
-	kWinBorderWin95Scrollbar = 0x7F,
+	kBorderScroll = 1000
+};
+
+enum {
+	kWinBorderWin95Scrollbar = kBorderScroll + 0x00,
 	kWindowBorderWin95NoBorderScrollbar,
 	kWindowBorderMacOSNoBorderScrollbar
 };
