@@ -299,6 +299,13 @@ public:
 	 * @param widget Pointer to the widget to lock, nullptr for no widget
 	 */
 	void setLockedWidget(MacWidget *widget);
+
+	/**
+	 * Sets a background window, which is always active, this window cannot be
+	 * deactivated by clicking outside it, ie it is always in background.
+	 * @param window Pointer to the widget to background, nullptr for no widget
+	 */
+	void setBackgroundWindow(MacWindow *window);
 	
 	MacPatterns  &getBuiltinPatterns() { return _builtinPatterns; }
 
@@ -456,6 +463,7 @@ private:
 
 	MacWidget *_activeWidget;
 	MacWidget *_lockedWidget;
+	MacWindow *_backgroundWindow;
 
 	PauseToken *_screenCopyPauseToken;
 
