@@ -65,6 +65,7 @@ void DLCManager::addDownload(uint32 idx) {
 }
 
 void DLCManager::processDownloadQueue() {
+	_currentDownloadedSize = 0;
 	_isDLCDownloading = true;
 	if (!_queuedDownloadTasks.empty()) {
 		if (_queuedDownloadTasks.front()->state == DLCDesc::kInProgress) {

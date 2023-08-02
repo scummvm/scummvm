@@ -90,6 +90,7 @@ void ScummVMCloud::getAllDLCs() {
 
 void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
+	DLCMan._currentDownloadedSize += response->len;
 	if (response->eos) {
 		warning("downloaded");
 		_rq->close(); // delete request

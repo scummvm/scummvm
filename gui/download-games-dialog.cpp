@@ -24,6 +24,7 @@
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 #include "gui/gui-manager.h"
+#include "gui/downloaddlcsdialog.h"
 #include "common/translation.h"
 #include "backends/dlc/dlcmanager.h"
 
@@ -54,6 +55,7 @@ DownloadGamesDialog::DownloadGamesDialog(LauncherDialog *launcher)
 	}
 
 	new ButtonWidget(this, "DownloadGames.Back", _("Back"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "DownloadGames.AllDownloads", _("All Downloads"), Common::U32String(), kAllDownloadsCmd);
 	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
 }
 
@@ -85,6 +87,11 @@ void DownloadGamesDialog::refreshDLCList() {
 
 void DownloadGamesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kAllDownloadsCmd: {
+		DownloadDLCsDialog dialog;
+		dialog.runModal();
+		}
+		break;
 	case kDownloadSelectedCmd: {
 		MessageDialog dialog("Downloading: " + _gamesList->getSelectedString());
 		dialog.runModal();

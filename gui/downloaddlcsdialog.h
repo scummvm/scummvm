@@ -19,34 +19,39 @@
  *
  */
 
-#ifndef DOWNLOAD_GAMES_DIALOG_H
-#define DOWNLOAD_GAMES_DIALOG_H
+#ifndef DOWNLOAD_DLCS_DIALOG_H
+#define DOWNLOAD_DLCS_DIALOG_H
 
 #include "gui/dialog.h"
 #include "gui/widgets/list.h"
-#include "gui/launcher.h"
 
 namespace GUI {
 
 enum {
-	kDownloadSelectedCmd = 'DWNS',
-	kRefreshDLCList = 'RDLC',
-	kRefreshLauncher = 'RFLR',
-	kAllDownloadsCmd = 'ALLD'
+	kCancelSelectedCmd = 'CANS',
 };
 
-class DownloadGamesDialog : public Dialog {
+class DownloadDLCsDialog : public Dialog {
 public:
-	DownloadGamesDialog(LauncherDialog *launcher);
-	~DownloadGamesDialog() override;
+	DownloadDLCsDialog();
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-
-	void refreshDLCList();
+	void handleTickle() override;
+	uint32 getDownloadingProgress();
 
 private:
-	ListWidget *_gamesList;
-	LauncherDialog *_launcher;
+	StaticTextWidget *_currentDownloadLabel;
+	StaticTextWidget *_downloadedSizeLabel;
+	StaticTextWidget *_percentLabel;
+	SliderWidget *_progressBar;
+	ListWidget *_pendingDownloadsList;
+	ButtonWidget *_cancelButton;
+
+	int _selectedIdx = -1;
+
+	Common::U32String getSizeLabelText();
+
+	void refreshWidgets();
 };
 
 } // End of namespace GUI
