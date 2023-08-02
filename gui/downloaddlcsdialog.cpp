@@ -84,9 +84,11 @@ void DownloadDLCsDialog::refreshWidgets() {
 		_currentDownloadLabel->setLabel(DLCMan._queuedDownloadTasks.front()->name);
 		_downloadedSizeLabel->setLabel(getSizeLabelText());
 
-		for (auto it : DLCMan._dlcs) {
+		for (auto it : DLCMan._dlcsInProgress) {
 			if (it->state == DLC::DLCDesc::kInProgress) {
 				pendingList.push_back(it->name);
+			} else {
+				pendingList.push_back("[Cancelled] " + it->name);
 			}
 		}
 		_pendingDownloadsList->setList(pendingList);
@@ -127,7 +129,8 @@ void DownloadDLCsDialog::handleTickle() {
 void DownloadDLCsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kCancelSelectedCmd: {
-		// set state of selected DLC to kCancelled
+		uint32 idx = DLCMan._dlcsInProgress[_pendingDownloadsList->getSelected()]->idx;
+		DLCMan.cancelDownload(idx);
 		}
 		break;
 	default:

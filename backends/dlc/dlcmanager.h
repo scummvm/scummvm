@@ -42,8 +42,10 @@ class DLCManager : public Common::Singleton<DLCManager>, public GUI::CommandSend
 
 public:
 	bool _fetchDLCs = false;
+	bool _interruptCurrentDownload = false;
 	uint32 _currentDownloadedSize;
 	Common::Array<DLCDesc*> _dlcs;
+	Common::Array<DLCDesc*> _dlcsInProgress;
 	Common::Queue<DLCDesc*> _queuedDownloadTasks;
 	
 	DLCManager();
