@@ -235,6 +235,7 @@ public:
 	void hsStopDigitalSound(int sound);
 
 	void handleSoundFrame();
+	void feedMixer();
 	void unqueueSoundCallbackScripts();
 	void checkSoundTimeouts();
 	void digitalSoundCallback(int message, int channel);

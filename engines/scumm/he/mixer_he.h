@@ -76,6 +76,7 @@ public:
 	int dataOffset;
 	int globType;
 	int globNum;
+	bool audioHandleActive = false;
 
 	HEMilesChannel() {
 		clearChannelData();

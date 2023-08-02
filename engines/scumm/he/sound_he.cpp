@@ -510,6 +510,10 @@ void SoundHE::handleSoundFrame() {
 	checkSoundTimeouts();
 }
 
+void SoundHE::feedMixer() {
+	_heMixer->feedMixer();
+}
+
 void SoundHE::unqueueSoundCallbackScripts() {
 	if (_inUnqueueCallbackScripts)
 		return;
