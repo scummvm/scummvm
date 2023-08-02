@@ -2410,6 +2410,10 @@ Common::Error ScummEngine::go() {
 		// Run the main loop
 		scummLoop(delta);
 
+		if (_game.heversion >= 70) {
+			((SoundHE *)_sound)->feedMixer();
+		}
+
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
 			runQuitScript();

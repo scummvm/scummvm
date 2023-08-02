@@ -88,6 +88,11 @@ bool HEMixer::pauseMixerSubSystem(bool paused) {
 }
 
 void HEMixer::feedMixer() {
+	if (_useMilesSoundSystem) {
+		milesFeedMixer();
+	} else {
+		//mixerFeedMixer();
+	}
 }
 
 int HEMixer::getChannelCurrentPosition(int channel) {
@@ -194,6 +199,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 		_milesChannels[channel].lastPlayPosition = 0;
 		_milesChannels[channel].globType = globType;
 		_milesChannels[channel].globNum = globNum;
+		_milesChannels[channel].audioHandleActive = true;
 
 		// Actually play the sound
 		if (flags & CHANNEL_LOOPING) {
@@ -244,12 +250,10 @@ void HEMixer::milesStopAllSounds() {
 }
 
 void HEMixer::milesModifySound(int channel, int offset, HESoundModifiers modifiers, int flags) {
-	Audio::SoundHandle audioHandle = _milesChannels[channel].audioHandle;
-
 	debug(5, "HEMixer::milesModifySound(): modifying sound in channel %d, flags %d, vol %d, pan %d, freq %d",
 		channel, flags, modifiers.volume, modifiers.pan, modifiers.frequencyShift);
 
-	if (_mixer->isSoundHandleActive(audioHandle)) {
+	if (_milesChannels[channel].audioHandleActive) {
 		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_VOL)
 			_milesChannels[channel].m_modifiers.volume = modifiers.volume;
 
@@ -270,16 +274,21 @@ void HEMixer::milesModifySound(int channel, int offset, HESoundModifiers modifie
 				_mixer->setChannelRate(_milesChannels[channel].audioHandle, newFrequency);
 		}
 	}
+
+	if (_milesChannels[channel].m_stream) {
+		// TODO
+	}
 }
 
 void HEMixer::milesStopAndCallback(int channel, int messageId) {
-	if (!_mixer->isSoundHandleActive(_milesChannels[channel].audioHandle) &&
+	if (!_milesChannels[channel].audioHandleActive &&
 		!_milesChannels[channel].m_stream)
 		return;
 
-	if (_mixer->isSoundHandleActive(_milesChannels[channel].audioHandle)) {
+	if (_milesChannels[channel].audioHandleActive) {
 		// Stop the sound, and then unload it...
 		_mixer->stopHandle(_milesChannels[channel].audioHandle);
+
 		int globType = _milesChannels[channel].globType;
 		int globNum = _milesChannels[channel].globNum;
 
@@ -307,6 +316,32 @@ void HEMixer::milesRestoreChannel(int channel) {
 }
 
 void HEMixer::milesFeedMixer() {
+	if (_mixerPaused) {
+		return;
+	}
+
+	// TODO: service spooling streams?
+
+	for (int i = 0; i < MILES_MAX_CHANNELS; i++) {
+		bool soundDone = false;
+
+
+		if (_milesChannels[i].audioHandleActive) {
+			soundDone = !_mixer->isSoundHandleActive(_milesChannels[i].audioHandle);
+		}
+
+		// TODO: spooled case: if this is a streamed sound check if the stream has ended
+		if (_milesChannels[i].m_stream) {
+
+		}
+
+		if (soundDone)
+			milesStopAndCallback(i, HSND_SOUND_ENDED);
+	}
+
+	if (!_vm->_insideCreateResource) {
+		((SoundHE *)_vm->_sound)->unqueueSoundCallbackScripts();
+	}
 }
 
 bool HEMixer::milesPauseMixerSubSystem(bool paused) {
@@ -356,6 +391,7 @@ void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int
 }
 
 void HEMilesChannel::clearChannelData() {
+	audioHandleActive = false;
 	lastPlayPosition = 0;
 	playFlags = 0;
 	dataOffset = 0;
