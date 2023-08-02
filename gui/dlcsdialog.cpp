@@ -19,7 +19,7 @@
  *
  */
 
-#include "gui/download-games-dialog.h"
+#include "gui/dlcsdialog.h"
 #include "gui/message.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
@@ -30,7 +30,7 @@
 
 namespace GUI {
 
-DownloadGamesDialog::DownloadGamesDialog(LauncherDialog *launcher)
+DLCsDialog::DLCsDialog(LauncherDialog *launcher)
 	: Dialog("DownloadGames"), _launcher(launcher) {
 	
 	// Set target (Command Receiver) for Command Sender
@@ -59,11 +59,11 @@ DownloadGamesDialog::DownloadGamesDialog(LauncherDialog *launcher)
 	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
 }
 
-DownloadGamesDialog::~DownloadGamesDialog() {
+DLCsDialog::~DLCsDialog() {
 	DLCMan.setTarget(nullptr);
 }
 
-void DownloadGamesDialog::refreshDLCList() {
+void DLCsDialog::refreshDLCList() {
 	// Populate the ListWidget
 	Common::U32StringArray games;
 	for (int i = 0; i < DLCMan._dlcs.size(); ++i) {
@@ -85,7 +85,7 @@ void DownloadGamesDialog::refreshDLCList() {
 	g_gui.scheduleTopDialogRedraw();
 }
 
-void DownloadGamesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void DLCsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kAllDownloadsCmd: {
 		DownloadDLCsDialog dialog;
