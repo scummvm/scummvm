@@ -65,10 +65,6 @@ void TextManager::init() {
 				unsigned int pos = stringToNumber<unsigned int>(id->value());
 				if (_font.size() <= pos)
 					_font.resize(pos + 1);
-#if 0
-				font[pos] = TTF_OpenFont(path->value(), StringToNumber<int>(size->value()));
-				TTF_SetFontHinting(font[pos], TTF_HINTING_LIGHT);
-#endif
 				Common::File file;
 				fileOpen(path->value(), &file);
 				_font[pos] = Graphics::loadTTFFont(file, stringToNumber<int>(size->value()));
@@ -110,15 +106,6 @@ int TextManager::findFreeSlot() {
 //------------------------------------------------------------------------
 // Purpose: Render the SDL surface for text
 //------------------------------------------------------------------------
-#if 0
-SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const Common::String &text, const int &color) {
-	if (text.empty())
-		return TTF_RenderText_Blended(GetFont(font), " ", colpool.Get(color));
-
-	return TTF_RenderText_Blended(GetFont(font), text.c_str(), colpool.Get(color));
-}
-#endif
-
 Graphics::ManagedSurface *TextManager::renderTextBlended(const FontKey &fKey, const Common::String &text, const int &color) {
 	SDL_Color sdlcolor = _colpool.get(color);
 	uint32 col = g_engine->_format->ARGBToColor(255, sdlcolor.r, sdlcolor.g, sdlcolor.b);
@@ -145,16 +132,11 @@ Graphics::ManagedSurface *TextManager::renderTextBlended(const FontKey &fKey, co
 //------------------------------------------------------------------------
 void TextManager::draw(const int &x, const int &y, const Common::String &text, const int &color,
 					   const FontKey &fontk, const Align &align, const bool &background) {
-	//warning("STUB: TextManager::draw()");
-
 	if (text == " ") return;
 
 	int pos = search(text, color, fontk);
 	if (pos == -1) {
 		pos = findFreeSlot();
-#if 0
-		SDL_Surface *surf = RenderTextBlended(font, text, color);
-#endif
 		Graphics::ManagedSurface *surf = renderTextBlended(fontk, text, color);
 		_cache[pos]._img.deleteImage();
 		_cache[pos]._empty = false;
@@ -166,9 +148,6 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 		_cache[pos]._img.load(surf);
 
 		delete surf;
-#if 0
-		SDL_FreeSurface(surf);
-#endif
 	}
 
 	if (background) {
@@ -180,37 +159,26 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 		surf.create(_rect.w, _rect.h, *g_engine->_format);
 		surf.fillRect(Common::Rect(_rect.w, _rect.h), col);
 
-#if 0
-		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 128);
-#endif
-
 		if (align == ALIGN_LEFT) {
 			_rect.x = x - _padBg.x;
 			_rect.y = y - _padBg.y;
+
 			g_engine->_screen->blitFrom(surf, Common::Point(_rect.x, _rect.y));
 
-#if 0
-			SDL_RenderFillRect(gRenderer, &rect);
-#endif
 			_cache[pos]._img.draw(x, y);
 		} else if (align == ALIGN_CENTER) {
 			_rect.x = x - _cache[pos]._img.w() / 2 - _padBg.x;
 			_rect.y = y - _cache[pos]._img.h() / 2 - _padBg.y;
+
 			g_engine->_screen->blitFrom(surf, Common::Point(_rect.x, _rect.y));
 
-#if 0
-			SDL_RenderFillRect(gRenderer, &rect);
-#endif
 			_cache[pos]._img.draw(x - _cache[pos]._img.w() / 2, y - _cache[pos]._img.h() / 2);
 		} else {
 			_rect.x = x - _cache[pos]._img.w() - _padBg.x;
 			_rect.y = y - _padBg.y;
+
 			g_engine->_screen->blitFrom(surf, Common::Point(_rect.x, _rect.y));
 
-#if 0
-			SDL_RenderFillRect(gRenderer, &rect);
-#endif
 			_cache[pos]._img.draw(x - _cache[pos]._img.w(), y);
 		}
 
