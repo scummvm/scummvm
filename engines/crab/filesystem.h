@@ -33,11 +33,10 @@
 #include "crab/common_header.h"
 
 namespace Crab {
+
 bool fileOpen(const Common::Path &path, char *&data);
 bool fileOpen(const Common::Path &path, Common::File *file);
-#if 0
-    bool PathCompare(const boost::filesystem::path &p1, const boost::filesystem::path &p2);
-#endif
+
 } // End of namespace Crab
 
 #endif // CRAB_FILESYSTEM_H

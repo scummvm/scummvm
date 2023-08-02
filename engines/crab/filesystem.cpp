@@ -73,11 +73,4 @@ bool fileOpen(const Common::Path &path, Common::File *file) {
 	return true;
 }
 
-#if 0
-bool PathCompare(const path &p1, const path &p2)
-{
-	return last_write_time(p1) > last_write_time(p2);
-}
-#endif
-
 } // End of namespace Crab
