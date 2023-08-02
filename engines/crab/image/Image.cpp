@@ -73,7 +73,7 @@ bool Image::load(const Common::String &path) {
 
 		file.close();
 
-		warning("Image::load() Image Texture(%s): w: %d h: %d", path.c_str(), _w, _h);
+		debugC(kDebugFilePath, "Image::load() Image Texture(%s): w: %d h: %d", path.c_str(), _w, _h);
 
 	}
 
