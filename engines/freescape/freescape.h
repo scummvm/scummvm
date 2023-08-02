@@ -525,6 +525,7 @@ public:
 
 	uint32 _initialEnergy;
 	uint32 _initialShield;
+	uint32 _jetFuelSeconds;
 	void addSkanner(Area *area);
 
 	void initGameState() override;
@@ -545,6 +546,7 @@ public:
 	void loadAssetsZXDemo() override;
 
 	int _lastTenSeconds;
+	int _lastSecond;
 	void updateTimeVariables() override;
 
 	void drawSensorShoot(Sensor *sensor) override;

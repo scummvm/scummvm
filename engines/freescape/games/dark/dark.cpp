@@ -43,6 +43,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_playerWidth = 12;
 	_playerDepth = 32;
 	_lastTenSeconds = -1;
+	_lastSecond = -1;
 
 	_angleRotations.push_back(5);
 	_angleRotations.push_back(10);
@@ -53,6 +54,8 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 
 	_initialEnergy = 11;
 	_initialShield = 15;
+
+	_jetFuelSeconds = _initialEnergy * 6;
 }
 
 void DarkEngine::addECDs(Area *area) {
@@ -252,14 +255,6 @@ bool DarkEngine::checkIfGameEnded() {
 		g_system->updateScreen();
 		g_system->delayMillis(2000);
 		gotoArea(1, 26);
-	} else if (_gameStateVars[k8bitVariableEnergy] == 0) {
-		insertTemporaryMessage(_messagesList[16], _countdown - 2);
-		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
-		drawFrame();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(2000);
-		gotoArea(1, 26);
 	} else if (_forceEndGame) {
 		_forceEndGame = false;
 		insertTemporaryMessage(_messagesList[18], _countdown - 2);
@@ -360,7 +355,10 @@ void DarkEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
 
-		if (_flyMode)
+		if (_flyMode && _gameStateVars[k8bitVariableEnergy] == 0) {
+			_flyMode = false;
+			insertTemporaryMessage(_messagesList[13], _countdown - 2);
+		} else if (_flyMode)
 			insertTemporaryMessage(_messagesList[11], _countdown - 2);
 		else {
 			resolveCollisions(_position);
@@ -374,6 +372,18 @@ void DarkEngine::updateTimeVariables() {
 	// This function only executes "on collision" room/global conditions
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
+	if (_flyMode && seconds != _lastSecond) {
+		_jetFuelSeconds--;
+		_lastSecond = seconds;
+		if (seconds % 6 == 0)
+			if (_gameStateVars[k8bitVariableEnergy] > 0)
+				_gameStateVars[k8bitVariableEnergy]--;
+
+		if (_flyMode && _gameStateVars[k8bitVariableEnergy] == 0) {
+			_flyMode = false;
+			insertTemporaryMessage(_messagesList[13], _countdown - 2);
+		}
+	}
 	if (_lastTenSeconds != seconds / 10) {
 		_gameStateVars[0x1e] += 1;
 		_gameStateVars[0x1f] += 1;
