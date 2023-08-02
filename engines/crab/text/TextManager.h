@@ -112,9 +112,6 @@ public:
 	}
 
 	Graphics::ManagedSurface *renderTextBlended(const FontKey &font, const Common::String &text, const int &color);
-#if 0
-	SDL_Surface *RenderTextBlended(const FontKey &font, const Common::String &text, const int &color);
-#endif
 
 	void draw(const int &x, const int &y, const Common::String &text, const int &color,
 			  const FontKey &font = 0, const Align &align = ALIGN_LEFT, const bool &background = false);
