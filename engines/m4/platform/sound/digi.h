@@ -43,6 +43,7 @@ class Digi {
 	struct DigiEntry {
 		byte *_data = nullptr;
 		size_t _size = 0;
+		bool _preloaded = false;
 		DigiEntry() {}
 		DigiEntry(byte *data, size_t size) : _data(data), _size(size) {}
 	};
