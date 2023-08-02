@@ -31,11 +31,15 @@
  */
 class BaseBackend : public OSystem {
 public:
-	enum x86FeatureFlags {
-		kX86NoFeatures    = 0x00,
-		kX86NotX86        = 0x00,
-		kX86FeatureSSE2   = 0x01,
-		kX86FeatureAVX2   = 0x02,
+	enum CpuFeatureFlags {
+		kCpuNoFeatures     = 0x00, // Completely detected by BaseBackend
+		kCpuFeatureSSE2    = 0x01, // Completely detected by BaseBackend
+		kCpuFeatureAVX2    = 0x02, // Completely detected by BaseBackend
+		// Detected either by BaseBackend (if platform ONLY supports ARMv8+) or
+		// platform specific Backends if ARM is optional or not on all versions
+		// of the platform.
+		kCpuFeatureNEON    = 0x04,
+		kCpuFeatureAlitvec = 0x08, // Platform specific
 	};
 
 	void initBackend() override;
@@ -49,7 +53,7 @@ public:
 	void fillScreen(const Common::Rect &r, uint32 col) override;
 
 private:
-	uint32 _x86features;
+	uint32 _cpuFeatures;
 };
 
 class EventsBaseBackend : virtual public BaseBackend, Common::EventSource {

@@ -64,6 +64,7 @@ void BaseBackend::initBackend() {
 	if (!_audiocdManager)
 		_audiocdManager = new DefaultAudioCDManager();
 #endif
+	_cpuFeatures = kCpuNoFeatures;
 #if defined(__x86_64__) || defined(__i686__)
 	uint32 ext_edx1 = 0, ext_ebx7 = 0;
 #  ifdef __GNUC__
@@ -87,17 +88,19 @@ void BaseBackend::initBackend() {
 		mov ext_ebx7,ebx
 	}
 #  endif // __GNUC__ and _MSC_VER
-	_x86features = (ext_edx1 & (1 << 26)) ? kX86FeatureSSE2 : kX86NoFeatures;
-	_x86features |= (ext_ebx7 & (1 << 5)) ? kX86FeatureAVX2 : kX86NoFeatures;
-#else
-	_x86features = kX86NotX86;
+	_cpuFeatures |= (ext_edx1 & (1 << 26)) ? kCpuFeatureSSE2 : kCpuNoFeatures;
+	_cpuFeatures |= (ext_ebx7 & (1 << 5)) ? kCpuFeatureAVX2 : kCpuNoFeatures;
 #endif // __x86_64__ and __i686__
+#if defined(__ARM_NEON) || defined(__ARM_NEON__)
+	_cpuFeatures |= kCpuFeatureNEON;
+#endif
 	OSystem::initBackend();
 }
 
 bool BaseBackend::hasFeature(Feature f) {
-	if (f == kFeatureSSE2) return (_x86features & kX86FeatureSSE2) == kX86FeatureSSE2;
-	if (f == kFeatureAVX2) return (_x86features & kX86FeatureAVX2) == kX86FeatureAVX2;
+	if (f == kFeatureSSE2) return _cpuFeatures & kCpuFeatureSSE2;
+	if (f == kFeatureAVX2) return _cpuFeatures & kCpuFeatureAVX2;
+	if (f == kFeatureNEON) return _cpuFeatures & kCpuFeatureNEON;
 	return false;
 }
 
