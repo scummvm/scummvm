@@ -62,7 +62,7 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 	memset(_heChannel, 0, sizeof(_heChannel));
 	_heSoundChannels = new Audio::SoundHandle[8]();
 	_useMilesSoundSystem = parent->_game.id == GID_MOONBASE;
-	_heMixer = new HEMixer(_mixer, _useMilesSoundSystem);
+	_heMixer = new HEMixer(_mixer, _vm, _useMilesSoundSystem);
 }
 
 SoundHE::~SoundHE() {
@@ -570,13 +570,14 @@ void SoundHE::digitalSoundCallback(int message, int channel) {
 	}
 
 	_inSoundCallbackFlag = true;
+	int sound = _heChannel[channel].sound;
 
 	switch (message) {
 	case HSND_SOUND_TIMEOUT:
 	case HSND_SOUND_ENDED:
 	case HSND_SOUND_STOPPED:
 
-		if (_heChannel[channel].sound == HSND_TALKIE_SLOT) {
+		if (sound == HSND_TALKIE_SLOT) {
 			// In the original this was used to prevent an edge case bug
 			// which caused recursive resource accesses/allocations.
 			// I think there's no harm in doing that ourselves too...
@@ -589,7 +590,7 @@ void SoundHE::digitalSoundCallback(int message, int channel) {
 
 		_heChannel[channel].clearChannel();
 
-		queueSoundCallbackScript(_heChannel[channel].sound, channel, message);
+		queueSoundCallbackScript(sound, channel, message);
 		break;
 	}
 
@@ -1212,6 +1213,7 @@ void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundDa
 	int index;
 	uint32 hflags;
 
+	debug(5, "SoundHE::hsStartDigitalSound(): Starting sound %d with offset %d, on channel %d with flags %d", sound, offset, channel, flags);
 	hflags = (flags & ScummEngine_v70he::HESndFlags::HE_SND_LOOP) ? CHANNEL_LOOPING : 0;
 	hflags |= (flags & ScummEngine_v70he::HESndFlags::HE_SND_SOFT_SOUND) ? CHANNEL_SOFT_REMIX : 0;
 
