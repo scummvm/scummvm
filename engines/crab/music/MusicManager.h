@@ -124,6 +124,8 @@ public:
 	void freeChunk();
 
 	void quit() {
+		g_system->getMixer()->stopAll();
+
 		freeMusic();
 		freeChunk();
 	}
