@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-27 07:13+0000\n"
+"POT-Creation-Date: 2023-08-02 19:05+0000\n"
 "PO-Revision-Date: 2023-07-21 07:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -274,7 +274,7 @@ msgstr "Un altre Emmagatzematge està actiu ara mateix. Voleu interrompre'l?"
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
-#: engines/buried/buried.cpp:584 engines/director/events.cpp:91
+#: engines/buried/buried.cpp:584 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
@@ -287,7 +287,7 @@ msgstr "Sí"
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
-#: engines/buried/buried.cpp:584 engines/director/events.cpp:91
+#: engines/buried/buried.cpp:584 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
@@ -314,7 +314,7 @@ msgstr "El contingut del codi JSON està mal format."
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:69
-#: engines/director/lingo/lingo-builtins.cpp:1882
+#: engines/director/lingo/lingo-builtins.cpp:1877
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
@@ -2563,7 +2563,7 @@ msgid ""
 msgstr ""
 
 #: base/main.cpp:663 base/main.cpp:684
-#: engines/director/lingo/lingo-builtins.cpp:1266
+#: engines/director/lingo/lingo-builtins.cpp:1261
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/director/lingo/xlibs/jitdraw3.cpp:131
 msgid "Ok"
@@ -5486,7 +5486,7 @@ msgstr ""
 msgid "Versailles 1685 support is not compiled in"
 msgstr "No s'ha compilat el suport per a Versalles 1685"
 
-#: engines/director/events.cpp:90
+#: engines/director/events.cpp:88
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
