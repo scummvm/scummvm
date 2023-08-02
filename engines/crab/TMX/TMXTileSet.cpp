@@ -55,7 +55,7 @@ void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 			_img.load(_loc);
 			_totalRows = _img.h() / _tileH;
 			_totalCols = _img.w() / _tileW;
-			warning("Total rows : %d Total cols: %d gid: %d", _totalRows, _totalCols, _firstGid);
+			debugC(kDebugGraphics, "Total rows : %d Total cols: %d gid: %d", _totalRows, _totalCols, _firstGid);
 
 		}
 	}
