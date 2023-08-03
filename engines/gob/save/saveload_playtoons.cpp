@@ -29,11 +29,6 @@ SaveLoad_Playtoons::SaveFile SaveLoad_Playtoons::_saveFiles[] = {
 	{   "did.inf", kSaveModeSave,   nullptr, nullptr}, // Purpose ignored at the moment, intensively used to save things.
 	{   "dan.itk", kSaveModeNone,   nullptr, nullptr}, // Playtoons CK detection file
 	{   "cat.inf", kSaveModeNone,   nullptr, nullptr},
-	{   "PLAYTOON.INF", kSaveModeNone, nullptr, nullptr},
-	{ "titre.005", kSaveModeIgnore, nullptr, nullptr},
-	{ "titre.006", kSaveModeIgnore, nullptr, nullptr},
-	{ "titre.007", kSaveModeIgnore, nullptr, nullptr},
-	{ "titre.008", kSaveModeIgnore, nullptr, nullptr},
 	{ "titre.009", kSaveModeIgnore, nullptr, nullptr}, // Playtoons theoritical title files that are checked for nothing
 	{ "titre.010", kSaveModeIgnore, nullptr, nullptr},
 	{ "titre.011", kSaveModeIgnore, nullptr, nullptr},

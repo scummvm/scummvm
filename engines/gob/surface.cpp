@@ -46,9 +46,9 @@ static void plotPixel(int x, int y, int color, void *data) {
 Pixel::Pixel(byte *vidMem, uint8 bpp, byte *min, byte *max) :
 	_vidMem(vidMem), _bpp(bpp), _min(min), _max(max) {
 
-	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 8));
+	assert((_bpp == 1) || (_bpp == 2) || (_bpp == 4));
 	assert(_vidMem >= _min);
-	assert(_vidMem < _max);
+	assert(_vidMem <  _max);
 }
 
 Pixel &Pixel::operator++() {
