@@ -33,6 +33,14 @@
 
 namespace GUI {
 
+enum {
+	OK = 0,
+	MISSING = 1,
+	CHECKSUM_MISMATCH = 2,
+	SIZE_MISMATCH = 3,
+	UNKNOWN = 4
+};
+
 class IntegrityDialog : Dialog {
 	Common::String _endpoint;
 	Common::String _gamePath;
@@ -45,6 +53,9 @@ class IntegrityDialog : Dialog {
 	int _totalSize;
 	int _calculatedSize;
 	int _progressPercentage;
+
+	bool _error;
+	Common::Array<int> *_results;
 
 	SliderWidget *_progressBar;
 
@@ -61,6 +72,8 @@ private:
 	void errorCallback(Networking::ErrorResponse error);
 	Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums);
 	Common::JSONValue *generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
+
+	void parseJSON(Common::JSONValue *response);
 };
 
 } // End of namespace GUI

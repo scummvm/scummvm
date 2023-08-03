@@ -45,6 +45,9 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String gameCon
 	_calculatedSize = 0;
 	_progressPercentage = 0;
 
+	_error = false;
+	_results = new Common::Array<int>(5, 0);
+
 	MessageDialog alert(Common::U32String("Verifying file integrity may take a long time to complete.\nAre you sure you want to continue?"), "OK", "Cancel");
 	alert.runModal();
 
@@ -53,6 +56,8 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String gameCon
 	_progressBar->setMaxValue(100);
 	_progressBar->setValue(_progressPercentage);
 	_progressBar->setEnabled(false);
+
+	sendJSON();
 }
 
 IntegrityDialog::~IntegrityDialog() {
@@ -191,6 +196,7 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath,
 
 void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
 	debug(r->stringify().c_str());
+	parseJSON(r);
 }
 
 void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
@@ -207,6 +213,28 @@ void IntegrityDialog::sendJSON() {
 	conn->setContentType("application/json");
 	conn->start();
 	delete json;
+}
+
+void IntegrityDialog::parseJSON(Common::JSONValue *response) {
+	Common::JSONObject responseObject = response->asObject();
+	_error = (responseObject.getVal("error"));
+	debug("Error is %d", _error);
+
+	for (Common::JSONValue *fileJSON : responseObject.getVal("files")->asArray()) {
+		Common::String status = fileJSON->asObject().getVal("status")->asString();
+		debug(status.c_str());
+
+		if (status == "ok")
+			(*_results)[OK]++;
+		else if (status == "missing")
+			(*_results)[MISSING]++;
+		else if (status == "checksum_mismatch")
+			(*_results)[CHECKSUM_MISMATCH]++;
+		else if (status == "size_mismatch")
+			(*_results)[SIZE_MISMATCH]++;
+		else if (status == "unknown")
+			(*_results)[UNKNOWN]++;
+	}
 }
 
 } // End of namespace GUI
