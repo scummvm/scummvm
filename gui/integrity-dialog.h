@@ -29,29 +29,38 @@
 #include "common/str.h"
 
 #include "gui/dialog.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
 class IntegrityDialog : Dialog {
 	Common::String _endpoint;
-	Common::String _gamePath;
+	Common::Path _gamePath;
 	Common::String _gameid;
 	Common::String _engineid;
 	Common::String _extra;
 	Common::String _platform;
 	Common::String _language;
 
+	int _totalSize;
+	int _calculatedSize;
+	int _progressPercentage;
+
+	SliderWidget *_progressBar;
+
 public:
 	IntegrityDialog(Common::String endpoint, Common::String gameConfig);
 	~IntegrityDialog();
 
 	void sendJSON();
-	static Common::JSONValue *generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
 
 private:
+	void calculateTotalSize(Common::Path gamePath);
+
 	void checksumResponseCallback(const Common::JSONValue *r);
 	void errorCallback(const Networking::ErrorResponse &error);
-	static Common::Array<Common::StringArray> generateChecksums(Common::Path gamePath, Common::Array<Common::StringArray> &fileChecksums);
+	Common::Array<Common::StringArray> generateChecksums(Common::Path gamePath, Common::Array<Common::StringArray> &fileChecksums);
+	Common::JSONValue *generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
 };
 
 } // End of namespace GUI
