@@ -114,8 +114,6 @@ extern void pal_fx_update();
  */
 extern void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent);
 
-extern void kernel_examine_inventory_object(char *picName, RGB8 *pal, int steps, int delay,
-	int32 x, int32 y, int32 triggerNum, char *digi_name, int32 digi_trigger);
 extern void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay);
 
 extern void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2);

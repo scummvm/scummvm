@@ -48,18 +48,62 @@ void series_unload(int32 assetIndex) {
 }
 
 bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y) {
-	error("TODO: series_draw_sprite");
-	return false;
+	M4sprite srcSprite, *srcSpritePtr;
+	M4Rect clipRect, updateRect;
+
+	if (!destBuff) {
+		error_show(FL, 'BUF!');
+		return false;
+	}
+
+	srcSpritePtr = &srcSprite;
+	if ((srcSpritePtr = GetWSAssetSprite(nullptr, (uint32)spriteHash, (uint32)index, srcSpritePtr, nullptr)) == nullptr)
+		error_show(FL, 'SPNF', "hash: %ld, index: %ld", spriteHash, index);
+
+	HLock(srcSpritePtr->sourceHandle);
+	//gr_pal_interface(&master_palette[0]);
+	srcSpritePtr->data = (uint8 *)((int32) * (srcSpritePtr->sourceHandle) + srcSpritePtr->sourceOffset);
+
+	RendGrBuff Destination;
+	DrawRequestX dr;
+	RendCell Frame;
+
+	Destination.Width = destBuff->stride;
+	Destination.Height = destBuff->h;
+	Destination.PixMap = (void *)destBuff->data;
+
+	dr.x = x;
+	dr.y = y;
+	dr.scale_x = 100;
+	dr.scale_y = 100;
+	dr.depth_map = destBuff->data;
+	dr.Pal = nullptr;
+	dr.ICT = nullptr;
+	dr.depth = 0;
+
+	Frame.hot_x = srcSpritePtr->xOffset;
+	Frame.hot_y = srcSpritePtr->yOffset;
+
+	Frame.Width = srcSpritePtr->w;
+	Frame.Height = srcSpritePtr->h;
+	Frame.Comp = (uint32)srcSpritePtr->encoding;
+	Frame.data = srcSpritePtr->data;
+
+	clipRect.x1 = 0;
+	clipRect.y1 = 0;
+	clipRect.x2 = Destination.Width;
+	clipRect.y2 = Destination.Height;
+
+	// and draw the sprite
+	render_sprite_to_8BBM(&Destination, &dr, &Frame, &clipRect, &updateRect);
+
+	HUnLock(srcSpritePtr->sourceHandle);
+	return true;
+
 }
 
 bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y) {
 	return series_draw_sprite(spriteHash, index, destBuff, x, y);
-}
-
-machine *series_play_xy(char *seriesName, int32 loopCount, uint32 flags,
-		int32 x, int32 y, int32 s, int32 layer, int32 frameRate, int16 triggerNum) {
-	error("TODO: series_play_xy");
-	return nullptr;
 }
 
 machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger) {
@@ -152,7 +196,7 @@ machine *series_play_(const char *seriesName, frac16 layer, uint32 flags, int16 
 	CHECK_SERIES
 
 	int32 myAssetIndex;
-	RGB8 *tempPalettePtr = NULL;
+	RGB8 *tempPalettePtr = nullptr;
 
 	term_message(seriesName);
 

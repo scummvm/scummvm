@@ -116,7 +116,7 @@ public:
 	ButtonClass();
 	ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag);
 	ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag,
-		int16 unknown, int16 relaxed, int16 over, int16 picked);
+		int16 unknown, int16 relaxed, int16 over, int16 picked, int sprite);
 	~ButtonClass();
 
 	void draw(GrBuff *interface_buffer);

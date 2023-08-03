@@ -57,12 +57,8 @@ extern void series_unload(int32 assetIndex);
 extern bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);
 
 extern bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);
-extern machine *series_place_sprite(char *seriesName, int32 index, int32 x, int32 y, int32 s, int32 layer); // was series_show_sprite
-extern machine *series_show_sprite(char *seriesName, int32 index, int32 layer);	// was simple_show_sprite
-
-extern machine *series_play_xy(char *seriesName, int32 loopCount, uint32 flags,
-	int32 x, int32 y,
-	int32 s, int32 layer, int32 frameRate, int16 triggerNum);
+extern machine *series_place_sprite(const char *seriesName, int32 index, int32 x, int32 y, int32 s, int32 layer); // was series_show_sprite
+extern machine *series_show_sprite(const char *seriesName, int32 index, int32 layer);	// was simple_show_sprite
 
 extern machine *series_play(char *seriesName, int32 loopCount, uint32 flags,
 	int32 s, int32 layer, int32 frameRate, int16 triggerNum,

@@ -174,8 +174,8 @@ ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int1
 }
 
 ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag,
-	int16 unknown, int16 relaxed, int16 over, int16 picked) : RectClass(r),
-	_unknown(unknown), _relaxed(relaxed), _over(over), _picked(picked) {
+	int16 unknown, int16 relaxed, int16 over, int16 picked, int sprite) : RectClass(r),
+	_unknown(unknown), _relaxed(relaxed), _over(over), _picked(picked), _sprite(sprite) {
 }
 
 ButtonClass::ButtonClass() : RectClass() {
