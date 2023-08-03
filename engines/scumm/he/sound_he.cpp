@@ -341,12 +341,15 @@ bool SoundHE::isSoundCodeUsed(int sound) {
 }
 
 int SoundHE::getChannelPosition(int channel) {
+	int soundPos;
 	if (_vm->_game.heversion >= 80) {
 		int frequency = _vm->_game.heversion >= 95 ? _heChannel[channel].frequency : HSND_DEFAULT_FREQUENCY;
-		return (_vm->getHETimer(HSND_TIMER_SLOT + channel) * frequency) / 1000;
+		soundPos = (int)(((uint64)_vm->getHETimer(HSND_TIMER_SLOT + channel) * (uint64)frequency) / 1000);
 	} else {
-		return _heMixer->getChannelCurrentPosition(channel);
+		soundPos = _heMixer->getChannelCurrentPosition(channel);
 	}
+
+	return soundPos;
 }
 
 int SoundHE::getSoundPosition(int sound) {
@@ -1521,6 +1524,7 @@ void SoundHE::createSound(int baseSound, int sound) {
 	int baseSndLeft, sndSize, channel;
 
 	if (sound == -1) {
+		debug(5, "SoundHE::createSound(): Resetting append position...");
 		_createSndLastAppend = 0;
 		_createSndLastPos = 0;
 		_baseSndSize = 0;
@@ -1534,24 +1538,22 @@ void SoundHE::createSound(int baseSound, int sound) {
 		_baseSndSize = 0;
 	}
 
+	debug(5, "SoundHE::createSound(): Appending sound %d to base sound %d", sound, baseSound);
+
 	_vm->ensureResourceLoaded(rtSound, baseSound);
 	_vm->ensureResourceLoaded(rtSound, sound);
+	_vm->_res->lock(rtSound, baseSound);
+	_vm->_res->lock(rtSound, sound);
 
 	baseSndPtr = (byte *)_vm->getResourceAddress(rtSound, baseSound);
 	sndPtr = (byte *)_vm->getResourceAddress(rtSound, sound);
 
 	channel = hsFindSoundChannel(baseSound);
 
-	//Check for a RIFF block here and set a flag.
+	bool sndIsWav = findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtr) != nullptr;
 
-	bool fIsWav = false;
-
-	if (findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtr)) {
-		fIsWav = true;
-	}
-
-	if (!fIsWav) {
-		// For non-WAV files we have to deals with sound variables (i.e. skip them :-) )
+	if (!sndIsWav) {
+		// For non-WAV files we have to deal with sound variables (i.e. skip them :-) )
 		baseSndSbngPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'B', 'N', 'G'), baseSndPtr);
 
 		if (baseSndSbngPtr != nullptr) {
@@ -1587,12 +1589,11 @@ void SoundHE::createSound(int baseSound, int sound) {
 		}
 	}
 
-
 	byte *pRiff = nullptr;
 	byte *pData = nullptr;
 
 	// Find where the actual sound data is located...
-	if (fIsWav) {
+	if (sndIsWav) {
 		baseSndPtr = (byte *)findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtr);
 		if (baseSndPtr == nullptr)
 			error("SoundHE::createSound(): Bad format for sound %d, couldn't find data tag", baseSound);
@@ -1640,6 +1641,9 @@ void SoundHE::createSound(int baseSound, int sound) {
 	}
 
 	_createSndLastPos += sndSize;
+
+	_vm->_res->unlock(rtSound, baseSound);
+	_vm->_res->unlock(rtSound, sound);
 
 	_heMixer->softRemixAllChannels();
 }
