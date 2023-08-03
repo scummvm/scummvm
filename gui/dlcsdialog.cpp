@@ -54,7 +54,7 @@ DLCsDialog::DLCsDialog() : Dialog("DownloadGames") {
 
 	new ButtonWidget(this, "DownloadGames.Back", _("Back"), Common::U32String(), kCloseCmd);
 	new ButtonWidget(this, "DownloadGames.AllDownloads", _("All Downloads"), Common::U32String(), kAllDownloadsCmd);
-	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
+	_downloadButton = new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
 }
 
 DLCsDialog::~DLCsDialog() {
@@ -81,6 +81,23 @@ void DLCsDialog::refreshDLCList() {
 
 	_gamesList->setList(games);
 	g_gui.scheduleTopDialogRedraw();
+}
+
+void DLCsDialog::handleTickle() {
+	// enable download button only when a list item is selected
+	if (_gamesList->getSelected() == -1) {
+		if (_downloadButton->isEnabled()) {
+			_downloadButton->setEnabled(false);
+			g_gui.scheduleTopDialogRedraw();
+		}
+	} else {
+		if (!_downloadButton->isEnabled()) {
+			_downloadButton->setEnabled(true);
+			g_gui.scheduleTopDialogRedraw();
+		}
+	}
+
+	Dialog::handleTickle();
 }
 
 void DLCsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
