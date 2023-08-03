@@ -25,6 +25,7 @@
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/gui/hotkeys.h"
+#include "m4/burger/burger.h"
 #include "m4/burger/hotkeys.h"
 #include "m4/burger/vars.h"
 #include "m4/adv_r/other.h"
@@ -115,8 +116,8 @@ void Interface::cancel_sentence() {
 	_G(player).command_ready = false;
 
 	_pointer1 = nullptr;
-	_pointer2 = nullptr;
-	_pointer3 = nullptr;
+	_vocabText[0] = '\0';
+	_verbText[0] = '\0';
 	_flag1 = false;
 
 	track_hotspots_refresh();
@@ -128,7 +129,7 @@ void Interface::freshen_sentence() {
 	_G(player).ready_to_walk = _G(player).need_to_walk;
 	_G(player).command_ready = _G(player).ready_to_walk;
 	_pointer1 = nullptr;
-	_pointer2 = nullptr;
+	_vocabText[0] = '\0';
 
 	track_hotspots_refresh();
 }
@@ -211,8 +212,7 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 		}
 
 		if (_state == 0 || _state == 2) {
-			status = _inventory->track(event, _x1, _y1);
-			_state = (status == NOTHING) ? 0 : 2;
+			_state = _inventory->track(event, _x1, _y1) ? 2 : 0;
 		}
 
 		if (!_state) {
@@ -355,17 +355,62 @@ void Interface::trackIcons() {
 	_G(kernel).trigger_mode = oldMode;
 }
 
-void Interface::sub2() {
-	warning("TODO: Interface::sub2");
-}
-
 ControlStatus Interface::track(int event, int x, int y) {
-	warning("TODO: Interface::track");
-	return NOTHING;
+	const HotSpotRec *hotspot = g_engine->_activeRoom->custom_hotspot_which(x, y);
+	if (!hotspot)
+		hotspot = hotspot_which(_G(currentSceneDef).hotspots, x, y);
+
+	if (hotspot != _hotspot && !hotspot) {
+		_textField->set_string(" ");
+		_hotspot = nullptr;
+		return NOTHING;
+
+	} else {
+		if (hotspot != _hotspot) {
+			if (!_flag1) {
+				if (!mouse_set_sprite(hotspot->cursor_number))
+					mouse_set_sprite(kArrowCursor);
+
+				strncpy(_verbText, hotspot->verb, 40);
+			}
+
+			Common::String tmp = (g_engine->getLanguage() == Common::EN_ANY) ?
+				hotspot->vocab : hotspot->prep;
+			tmp.toUppercase();
+			_textField->set_string(tmp.c_str());
+
+			tmp = hotspot->vocab;
+			tmp.toUppercase();
+			strncpy(_vocabText, tmp.c_str(), 40);
+
+			_hotspot = hotspot;
+		}
+
+		if (event == 5 && hotspot) {
+			_G(player).walk_x = x;
+			_G(player).walk_y = y;
+			_G(hotspot_x) = x;
+			_G(hotspot_y) = y;
+
+			if (hotspot) {
+				if (hotspot->feet_x != 0x7fff)
+					_G(player).walk_x = hotspot->feet_x;
+				if (hotspot->feet_y != 0x7fff)
+					_G(player).walk_y = hotspot->feet_y;
+			}
+
+			_G(player).walk_facing = hotspot->facing;
+			_hotspot = nullptr;
+
+			return SELECTED;
+		} else {
+			return NOTHING;
+		}
+	}
 }
 
 void Interface::dispatch_command() {
-	warning("TODO: Interface::dispatch_command");
+	error("TODO: Interface::dispatch_command");
 }
 
 } // namespace GUI

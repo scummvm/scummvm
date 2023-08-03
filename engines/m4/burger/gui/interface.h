@@ -24,6 +24,7 @@
 #define M4_BURGER_INTERFACE_H
 
 #include "m4/adv_r/adv_interface.h"
+#include "m4/adv_r/adv_hotspot.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/burger/gui/gui_cheapo.h"
@@ -37,7 +38,6 @@ private:
 	void setup();
 
 	void trackIcons();
-	void sub2();
 	ControlStatus track(int event, int x, int y);
 	void dispatch_command();
 
@@ -55,11 +55,11 @@ public:
 	GUI::ButtonClass *_btnMenu = nullptr;
 	GUI::ButtonClass *_btnScrollLeft = nullptr;
 	GUI::ButtonClass *_btnScrollRight = nullptr;
-	void *_hotspot = nullptr;
+	const HotSpotRec *_hotspot = nullptr;
 	int _savedX = 0, _savedY = 0;
 	void *_pointer1 = nullptr;
-	void *_pointer2 = nullptr;
-	void *_pointer3 = nullptr;
+	char _vocabText[40] = { 0 };
+	char _verbText[40] = { 0 };
 	bool _flag1 = false;
 	int _state = 0;
 
