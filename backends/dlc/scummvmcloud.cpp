@@ -117,6 +117,7 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		addEntryToConfig(destPath);
 		// handle next download
 		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
+		DLCMan.refreshDLCList();
 		DLCMan._queuedDownloadTasks.pop();
 		DLCMan._dlcsInProgress.remove_at(0);
 		DLCMan.processDownloadQueue();

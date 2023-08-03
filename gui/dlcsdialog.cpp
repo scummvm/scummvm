@@ -65,7 +65,11 @@ void DLCsDialog::refreshDLCList() {
 	// Populate the ListWidget
 	Common::U32StringArray games;
 	for (int i = 0; i < DLCMan._dlcs.size(); ++i) {
-		games.push_back(DLCMan._dlcs[i]->name);
+		if (DLCMan._dlcs[i]->state == DLC::DLCDesc::kInProgress) {
+			games.push_back("[Downloading] " + DLCMan._dlcs[i]->name);
+		} else {
+			games.push_back(DLCMan._dlcs[i]->name);
+		}
 	}
 
 	// Gray out already downloaded packages
@@ -108,9 +112,8 @@ void DLCsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		}
 		break;
 	case kDownloadSelectedCmd: {
-		MessageDialog dialog("Downloading: " + _gamesList->getSelectedString());
-		dialog.runModal();
 		DLCMan.addDownload(_gamesList->getSelected());
+		refreshDLCList();
 		}
 		break;
 	case kRefreshDLCList: {
