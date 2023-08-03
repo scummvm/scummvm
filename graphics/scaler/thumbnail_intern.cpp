@@ -27,6 +27,7 @@
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
 #include "graphics/palette.h"
+#include "graphics/managed_surface.h"
 
 template<typename ColorMask>
 uint16 quadBlockInterpolate(const uint8 *src, uint32 srcPitch) {
@@ -255,6 +256,15 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 			*((uint16 *)screen.getBasePtr(x, y)) = screen.format.RGBToColor(r, g, b);
 		}
 	}
+
+	return createThumbnail(*surf, screen);
+}
+
+bool createThumbnail(Graphics::Surface *surf, Graphics::ManagedSurface *in) {
+	assert(surf);
+
+	Graphics::Surface screen;
+	screen.convertFrom(in->rawSurface(), Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	return createThumbnail(*surf, screen);
 }
