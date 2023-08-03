@@ -8193,6 +8193,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("upducted", "Upducted.exe", "4f50fc611da96a6d5453cdbefa971521", 6504712),  // Windows
 	GAME_ENTRY_EN("upducted", "Upducted.ags", "803a57bc967b6fa1293373fe203ae773", 3471092),  // Linux
 	GAME_ENTRY("urbanwitchstory", "Urban Witch Story.exe", "636950f50c877767bca7e2b1250632f7", 441430956),  //Eng-Esp Win
+	GAME_ENTRY("urbanwitchstory", "Urban Witch Story.ags", "92f7e6a4ffe81d40c1f20eb68dcb5ae7", 346573336),  //Eng-Esp Win 1.4
 	GAME_ENTRY("urbanwitchstory", "Urban Witch Story.ags", "ea3bede3ffc8904199e915274feddfe6", 438411774),  //Eng-Esp Lin
 	GAME_ENTRY_EN("uydearmyfriendsremake", "Urusei Yatsura.exe", "df94207a3720d4bb2404ca8be23e9d72", 4252149), // version R12b
 	GAME_ENTRY_EN("urgentquest", "urgent quest.exe", "655363c390c7ae7225c237108edf50b7", 6260710),
