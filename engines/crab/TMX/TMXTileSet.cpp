@@ -100,7 +100,7 @@ void TileSet::preDraw(const Vector2i &pos, const TileInfo &tile, Graphics::Manag
 }
 
 void TileSetGroup::preDraw(MapLayer &layer, const Vector2i &tileSize, Graphics::ManagedSurface *surf) {
-	if (layer._type == LAYER_IMAGE)
+	if (layer._type == LAYER_IMAGE || layer._type == LAYER_AUTOSHOW)
 		return;
 
 	_start.x = 0;
@@ -155,12 +155,24 @@ void TileSetGroup::forceDraw(MapLayer &layer, const Rect &camera, const Vector2i
 	_start.x = playerPos.y / tileSize.y;
 	_start.y = playerPos.x / tileSize.x;
 
-	if(_start.x < 0 || _start.y < 0)
+	if (_start.x < 0 || _start.y < 0)
 		return;
 
 	// The row and column we end drawing at
 	_finish.x = (playerPos.y + playerPos.h) / tileSize.y + 1;
 	_finish.y = (playerPos.x + playerPos.w) / tileSize.x + 1;
+
+	if (layer._type == LAYER_AUTOSHOW) {
+		if (layer._collide)
+			return;
+
+		_start.x = camera.y / tileSize.y;
+		_start.y = camera.x / tileSize.x;
+
+		//The row and column we end drawing at
+		_finish.x = (camera.y + camera.h) / tileSize.y + 1;
+		_finish.y = (camera.x + camera.w) / tileSize.x + 1;
+	}
 
 	if (_finish.x > (int)layer._tile.size())
 		_finish.x = layer._tile.size();
