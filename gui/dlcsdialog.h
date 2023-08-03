@@ -39,12 +39,14 @@ public:
 	DLCsDialog();
 	~DLCsDialog() override;
 
+	void handleTickle() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	void refreshDLCList();
 
 private:
 	ListWidget *_gamesList;
+	ButtonWidget *_downloadButton;
 };
 
 } // End of namespace GUI
