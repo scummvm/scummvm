@@ -84,12 +84,12 @@ static inline uint32x4_t drawPixelAlphaBlend(uint32x4_t src, uint32x4_t dst, con
         uint32x4_t dstG = vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask));
         uint32x4_t srcG = vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask));
 
-        dstRB = vshrq_n_u32(vmulq_u32(dstRB, vsubq_u32(vmovq_n_u32(255), ina)), 8);
+        dstRB = vmulq_u32(dstRB, vsubq_u32(vmovq_n_u32(255), ina));
         dstG = vshrq_n_u32(vmulq_u32(dstG, vsubq_u32(vmovq_n_u32(255), ina)), 8);
-        srcRB = vaddq_u32(dstRB, vshrq_n_u32(vmulq_u32(srcRB, ina), 8));
+        srcRB = vaddq_u32(dstRB, vmulq_u32(srcRB, ina));
         srcG = vaddq_u32(dstG, vshrq_n_u32(vmulq_u32(srcG, ina), 8));
         src = vorrq_u32(vandq_u32(srcG, vmovq_n_u32(BlendBlit::kGModMask)), vmovq_n_u32(BlendBlit::kAModMask));
-        src = vorrq_u32(vandq_u32(vshlq_n_u32(srcRB, 8), vmovq_n_u32(BlendBlit::kBModMask | BlendBlit::kRModMask)), src);
+        src = vorrq_u32(vandq_u32(srcRB, vmovq_n_u32(BlendBlit::kBModMask | BlendBlit::kRModMask)), src);
     }
 
     dst = vandq_u32(alphaMask, dst);

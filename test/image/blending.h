@@ -926,19 +926,20 @@ public:
 		const int iters = 2500;
 		
         for (int blendMode = Graphics::BLEND_NORMAL; blendMode < Graphics::BLEND_NORMAL + 1; blendMode++) {
-        for (int alphaType = 0; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
+        for (int alphaType = Graphics::ALPHA_FULL; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
         for (int flipping = 0; flipping <= 3; flipping++) {
+		for (uint32 color = 0xffffffff; color != 0; color = (color == 0xffffffff ? 0x7f7f7f7f : 0)) {
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(255, 255, 255, 255));
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(255, 255, 255, 255));
             oldSurf.setAlphaMode((Graphics::AlphaType)alphaType);
 			uint32 oldStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	oldSurf.blit(oldSurfDest, 0, 0, flipping, nullptr, TS_ARGB(255, 255, 255, 255), -1, -1, (Graphics::TSpriteBlendMode)blendMode);
+            	oldSurf.blit(oldSurfDest, 0, 0, flipping, nullptr, color, -1, -1, (Graphics::TSpriteBlendMode)blendMode);
 			}
 			oldTime += g_system->getMillis() - oldStart;
 			uint32 newStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurf.w, managedSurf.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, TS_ARGB(255, 255, 255, 255), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurf.w, managedSurf.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			newTime += g_system->getMillis() - newStart;
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(255, 255, 255, 255));
@@ -946,7 +947,7 @@ public:
 			Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 			uint32 genericStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurf.w, managedSurf.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, TS_ARGB(255, 255, 255, 255), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurf.w, managedSurf.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			Graphics::BlendBlit::blitFunc = oldFunc;
 			genericTime += g_system->getMillis() - genericStart;
@@ -958,12 +959,12 @@ public:
             oldSurf.setAlphaMode((Graphics::AlphaType)alphaType);
 			oldStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	oldSurf.blit(oldSurfDest, 0, 0, flipping, nullptr, TS_ARGB(255, 255, 255, 255), oldSurfDest.w, oldSurfDest.h, (Graphics::TSpriteBlendMode)blendMode);
+            	oldSurf.blit(oldSurfDest, 0, 0, flipping, nullptr, color, oldSurfDest.w, oldSurfDest.h, (Graphics::TSpriteBlendMode)blendMode);
 			}
 			oldTimeScaled += g_system->getMillis() - oldStart;
 			newStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, TS_ARGB(255, 255, 255, 255), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			newTimeScaled += g_system->getMillis() - newStart;
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(255, 255, 255, 255));
@@ -971,11 +972,12 @@ public:
 			Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 			genericStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, TS_ARGB(255, 255, 255, 255), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			Graphics::BlendBlit::blitFunc = oldFunc;
 			genericTimeScaled += g_system->getMillis() - genericStart;
 			numItersScaled++;
+		} // color
         } // flipping
         } // alpha
         } // blend
@@ -986,7 +988,6 @@ public:
 		debug("Old SCALING TransparentSurface::blit avg time per %d iters (in milliseconds): %f\n", iters, oldTimeScaled / numItersScaled);
 		debug("New SCALING ManagedSurface::blendBlitFrom (non SIMD) avg time per %d iters (in milliseconds): %f\n", iters, genericTimeScaled / numItersScaled);
 		debug("New SCALING ManagedSurface::blendBlitFrom avg time per %d iters (in milliseconds): %f\n", iters, newTimeScaled / numItersScaled);
-		debug("Note this speed test puts the old code in the best senario against the new code.");
 
 	    baseSurface.free();
 #endif
