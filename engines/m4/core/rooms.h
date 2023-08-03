@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "m4/adv_r/adv.h"
+#include "m4/adv_r/adv_hotspot.h"
 
 namespace M4 {
 
@@ -44,7 +45,9 @@ public:
 	virtual void parser_code() {}
 	virtual void error() {}
 	virtual void shutdown() {}
-	virtual void custom_hotspot_which() {}
+	virtual HotSpotRec *custom_hotspot_which(int x, int y) {
+		return nullptr;
+	}
 };
 
 class Section {
@@ -146,8 +149,8 @@ public:
 	void room_shutdown() {
 		_activeRoom->shutdown();
 	}
-	void custom_hotspot_which() {
-		_activeRoom->custom_hotspot_which();
+	HotSpotRec *custom_hotspot_which(int x, int y) {
+		return _activeRoom->custom_hotspot_which(x, y);
 	}
 
 	void m4SceneLoad();

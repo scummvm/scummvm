@@ -183,6 +183,7 @@ public:
 	bool _shut_down_digi_tracks_between_rooms = false;
 	cursor_states _cursor_state = kARROW;
 	int _iPitch = 0;
+	int _hotspot_x = 0, _hotspot_y = 0;
 };
 
 #define _G(X) (g_vars->_##X)
