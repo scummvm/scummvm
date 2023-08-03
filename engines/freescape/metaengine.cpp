@@ -110,6 +110,7 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -125,6 +126,10 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 		*engine = new Freescape::FreescapeEngine(syst, gd);
 
 	return Common::kNoError;
+}
+
+Common::KeymapArray FreescapeMetaEngine::initKeymaps(const char *target) const {
+	return Freescape::FreescapeEngine::initKeymaps(target);
 }
 
 void FreescapeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {

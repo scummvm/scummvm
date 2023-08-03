@@ -19,9 +19,80 @@
  *
  */
 
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "freescape/freescape.h"
 
 namespace Freescape {
+
+Common::Array<Common::Keymap *> FreescapeEngine::initKeymaps(const char *target) {
+	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "freescape", "Freescape game");
+	Common::Action *act;
+
+	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
+	act->setKeyEvent(Common::KEYCODE_UP);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveDown, _("Down"));
+	act->setKeyEvent(Common::KEYCODE_DOWN);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
+	act->setKeyEvent(Common::KEYCODE_LEFT);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
+	act->setKeyEvent(Common::KEYCODE_RIGHT);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SHOOT", _("Shoot"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_0, '0'));
+	act->allowKbdRepeats();
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("RISE", _("Rise/Fly up"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_r, 'r'));
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOWER", _("Lower/Fly down"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_f, 'f'));
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SWITCH", _("Change mode"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SPACE, Common::ASCII_SPACE));
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_q, 'q'));
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_w, 'w'));
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MENU", _("Info Menu"));
+	act->setKeyEvent(Common::KeyState(Common::KEYCODE_i, 'i'));
+	act->addDefaultInputMapping("JOY_GUIDE");
+	engineKeyMap->addAction(act);
+
+	return Common::Keymap::arrayOf(engineKeyMap);
+}
 
 Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight) {
 	Math::AABB boundingBox(position, position);

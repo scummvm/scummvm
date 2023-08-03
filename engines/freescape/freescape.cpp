@@ -394,6 +394,7 @@ void FreescapeEngine::processInput() {
 				break;
 			case Common::KEYCODE_KP5:
 			case Common::KEYCODE_KP0:
+			case Common::KEYCODE_0:
 				shoot();
 				break;
 			case Common::KEYCODE_p:
