@@ -640,9 +640,11 @@ int16 Inventory::cell_pos_x(int16 index) {
 }
 
 int16 Inventory::cell_pos_y(int16 index) {
-	if (_cells_h > _cells_v) {				// Horizontal orientation, fill left to right
+	if (_cells_h > _cells_v) {
+		// Horizontal orientation, fill left to right
 		return (int16)((index % _cells_v) * _cell_h);
-	} else {								// Vertical orientation, fill top to bottom
+	} else {
+		// Vertical orientation, fill top to bottom
 		return (int16)((index % _cells_h) * _cell_h);
 	}
 }
@@ -663,7 +665,6 @@ void Inventory::draw(GrBuff *myBuffer) {
 	if (!_must_redraw1 && !_must_redraw2 && !_must_redraw_all)
 		return;
 
-	int16 offx = 0, offy = 0;
 	int cell_iter;
 
 	Buffer *myBuff = myBuffer->get_buffer();
@@ -676,8 +677,8 @@ void Inventory::draw(GrBuff *myBuffer) {
 	_right_arrow_visible = false;
 
 	for (cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_INVENTORY); cell_iter++) {
-		int16 left = (int16)(_x1 + offx + cell_pos_x(cell_iter));
-		int16 top = (int16)(_y1 + offy + cell_pos_y(cell_iter));
+		int16 left = (int16)(_x1 + cell_pos_x(cell_iter));
+		int16 top = (int16)(_y1 + cell_pos_y(cell_iter));
 
 		if (_must_redraw1 == cell_iter || _must_redraw2 == cell_iter || _must_redraw_all) {
 			// This does the button update....
@@ -687,7 +688,8 @@ void Inventory::draw(GrBuff *myBuffer) {
 			// Draw icon here
 			gr_color_set(__BLACK);
 			gr_buffer_rect_fill(myBuff, left, top, _cell_w + 1, _cell_h + 1);
-			series_show_frame(_sprite, _items[cell_iter + _scroll]._cell, myBuff, left - 3, top - 3);
+			series_show_frame(_sprite, _items[cell_iter + _scroll]._cell, myBuff,
+				left + (_cell_w - 31) / 2, top + (_cell_h - 31) / 2);
 
 			// Draw box around icon
 			if (_highlight == cell_iter) {
