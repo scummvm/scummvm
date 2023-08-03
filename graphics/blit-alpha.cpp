@@ -21,6 +21,7 @@
 
 #include "graphics/blit.h"
 #include "graphics/pixelformat.h"
+#include "common/system.h"
 
 namespace Graphics {
 
@@ -537,30 +538,8 @@ void BlendBlit::doBlitBinaryBlendLogicGeneric(Args &args) {
 	}
 }
 
-template<bool doscale>
-void BlendBlit::doBlitBinaryBlendLogic(Args &args) {
-	doBlitBinaryBlendLogicGeneric<doscale>(args);
-}
-template<bool doscale>
-void BlendBlit::doBlitOpaqueBlendLogic(Args &args) {
-	doBlitOpaqueBlendLogicGeneric<doscale>(args);
-}
-template<bool doscale>
-void BlendBlit::doBlitMultiplyBlendLogic(Args &args) {
-	doBlitMultiplyBlendLogicGeneric<doscale>(args);
-}
-template<bool doscale>
-void BlendBlit::doBlitSubtractiveBlendLogic(Args &args) {
-	doBlitSubtractiveBlendLogicGeneric<doscale>(args);
-}
-template<bool doscale>
-void BlendBlit::doBlitAdditiveBlendLogic(Args &args) {
-	doBlitAdditiveBlendLogicGeneric<doscale>(args);
-}
-template<bool doscale>
-void BlendBlit::doBlitAlphaBlendLogic(Args &args) {
-	doBlitAlphaBlendLogicGeneric<doscale>(args);
-}
+// Initialize this to nullptr at the start
+BlendBlit::BlitFunc BlendBlit::blitFunc = nullptr;
 
 // Only blits to and from 32bpp images
 void BlendBlit::blit(byte *dst, const byte *src,
@@ -572,42 +551,61 @@ void BlendBlit::blit(byte *dst, const byte *src,
 					 const TSpriteBlendMode blendMode,
 					 const AlphaType alphaType) {
 	if (width == 0 || height == 0) return;
-	Args args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, colorMod, flipping);
-	if (scaleX == SCALE_THRESHOLD && scaleY == SCALE_THRESHOLD) {
-		if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			doBlitOpaqueBlendLogic<false>(args);
-		} else if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			doBlitBinaryBlendLogic<false>(args);
-		} else {
-			if (blendMode == BLEND_ADDITIVE) {
-				doBlitAdditiveBlendLogic<false>(args);
-			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				doBlitSubtractiveBlendLogic<false>(args);
-			} else if (blendMode == BLEND_MULTIPLY) {
-				doBlitMultiplyBlendLogic<false>(args);
-			} else {
-				assert(blendMode == BLEND_NORMAL);
-				doBlitAlphaBlendLogic<false>(args);
-			}
-		}
-	} else {
-		if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			doBlitOpaqueBlendLogic<true>(args);
-		} else if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			doBlitBinaryBlendLogic<true>(args);
-		} else {
-			if (blendMode == BLEND_ADDITIVE) {
-				doBlitAdditiveBlendLogic<true>(args);
-			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				doBlitSubtractiveBlendLogic<true>(args);
-			} else if (blendMode == BLEND_MULTIPLY) {
-				doBlitMultiplyBlendLogic<true>(args);
-			} else {
-				assert(blendMode == BLEND_NORMAL);
-				doBlitAlphaBlendLogic<true>(args);
-			}
-		}
+	if (!blitFunc) {
+		// Get the correct blit function
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+		if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
+		else blitFunc = blitGeneric;
+#else
+		blitFunc = blitGeneric;
+#endif
 	}
+	
+	Args args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, colorMod, flipping);
+	blitFunc(args, blendMode, alphaType);
 }
+
+#define BLIT_FUNC(ext) \
+	void BlendBlit::blit##ext(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType) { \
+		if (args.scaleX == SCALE_THRESHOLD && args.scaleY == SCALE_THRESHOLD) { \
+			if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) { \
+				doBlitOpaqueBlendLogic##ext<false>(args); \
+			} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) { \
+				doBlitBinaryBlendLogic##ext<false>(args); \
+			} else { \
+				if (blendMode == BLEND_ADDITIVE) { \
+					doBlitAdditiveBlendLogic##ext<false>(args); \
+				} else if (blendMode == BLEND_SUBTRACTIVE) { \
+					doBlitSubtractiveBlendLogic##ext<false>(args); \
+				} else if (blendMode == BLEND_MULTIPLY) { \
+					doBlitMultiplyBlendLogic##ext<false>(args); \
+				} else { \
+					assert(blendMode == BLEND_NORMAL); \
+					doBlitAlphaBlendLogic##ext<false>(args); \
+				} \
+			} \
+		} else { \
+			if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) { \
+				doBlitOpaqueBlendLogic##ext<true>(args); \
+			} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) { \
+				doBlitBinaryBlendLogic##ext<true>(args); \
+			} else { \
+				if (blendMode == BLEND_ADDITIVE) { \
+					doBlitAdditiveBlendLogic##ext<true>(args); \
+				} else if (blendMode == BLEND_SUBTRACTIVE) { \
+					doBlitSubtractiveBlendLogic##ext<true>(args); \
+				} else if (blendMode == BLEND_MULTIPLY) { \
+					doBlitMultiplyBlendLogic##ext<true>(args); \
+				} else { \
+					assert(blendMode == BLEND_NORMAL); \
+					doBlitAlphaBlendLogic##ext<true>(args); \
+				} \
+			} \
+		} \
+	}
+BLIT_FUNC(Generic)
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+BLIT_FUNC(NEON)
+#endif
 
 } // End of namespace Graphics
