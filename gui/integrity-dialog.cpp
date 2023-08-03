@@ -27,6 +27,9 @@
 #include "common/file.h"
 #include "common/md5.h"
 
+#include "gui/message.h"
+#include "gui/widget.h"
+
 namespace GUI {
 
 IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String gameConfig) : Dialog("GameOptions_IntegrityDialog") {
@@ -37,9 +40,52 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String gameCon
 	_extra = ConfMan.get("extra", gameConfig);
 	_platform = ConfMan.get("platform", gameConfig);
 	_language = ConfMan.get("language", gameConfig);
+
+	calculateTotalSize(_gamePath);
+	_calculatedSize = 0;
+	_progressPercentage = 0;
+
+	MessageDialog alert(Common::U32String("Verifying file integrity may take a long time to complete.\nAre you sure you want to continue?"), "OK", "Cancel");
+	alert.runModal();
+
+	_progressBar = new SliderWidget(this, "GameOptions_IntegrityDialog.ProgressBar");
+	_progressBar->setMinValue(0);
+	_progressBar->setMaxValue(100);
+	_progressBar->setValue(_progressPercentage);
+	_progressBar->setEnabled(false);
 }
 
 IntegrityDialog::~IntegrityDialog() {
+}
+
+void IntegrityDialog::calculateTotalSize(Common::String gamePath) {
+	const Common::FSNode dir(gamePath);
+
+	if (!dir.exists() || !dir.isDirectory())
+		return;
+
+	Common::FSList fileList;
+	if (!dir.getChildren(fileList, Common::FSNode::kListAll))
+		return;
+
+	if (fileList.empty())
+		return;
+
+	// Process the files and subdirectories in the current directory recursively
+	for (Common::FSList::const_iterator it = fileList.begin(); it != fileList.end(); it++) {
+		const Common::FSNode &entry = *it;
+
+		if (entry.isDirectory())
+			calculateTotalSize(entry.getPath());
+		else {
+			const Common::Path filename(entry.getPath());
+			Common::File file;
+			if (!file.open(entry))
+				continue;
+
+			_totalSize += file.size();
+		}
+	}
 }
 
 Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums) {
@@ -76,6 +122,9 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 			// Tail checksums with checksize 5000
 			file.seek(-5000, SEEK_END);
 			fileChecksum.push_back(Common::computeStreamMD5AsString(file).c_str());
+
+			_calculatedSize += file.size();
+			_progressPercentage = _calculatedSize / _totalSize;
 
 			file.close();
 			fileChecksums.push_back(fileChecksum);

@@ -29,6 +29,7 @@
 #include "common/str.h"
 
 #include "gui/dialog.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
@@ -41,17 +42,25 @@ class IntegrityDialog : Dialog {
 	Common::String _platform;
 	Common::String _language;
 
+	int _totalSize;
+	int _calculatedSize;
+	int _progressPercentage;
+
+	SliderWidget *_progressBar;
+
 public:
 	IntegrityDialog(Common::String endpoint, Common::String gameConfig);
 	~IntegrityDialog();
 
 	void sendJSON();
-	static Common::JSONValue *generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
 
 private:
+	void calculateTotalSize(Common::String gamePath);
+
 	void checksumResponseCallback(Common::JSONValue *r);
 	void errorCallback(Networking::ErrorResponse error);
-	static Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums);
+	Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums);
+	Common::JSONValue *generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
 };
 
 } // End of namespace GUI
