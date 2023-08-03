@@ -29,6 +29,8 @@ namespace Common {
 struct Point;
 }
 
+class BlendBlitUnfilteredTestSuite;
+
 namespace Graphics {
 
 /**
@@ -194,29 +196,6 @@ bool setAlpha(byte *dst, const byte *src,
 // This is a class so that we can declare certain things as private
 class BlendBlit {
 private:
-	static const int kBModShift = 8;
-	static const int kGModShift = 16;
-	static const int kRModShift = 24;
-	static const int kAModShift = 0;
-	
-	static const uint32 kBModMask = 0x0000ff00;
-	static const uint32 kGModMask = 0x00ff0000;
-	static const uint32 kRModMask = 0xff000000;
-	static const uint32 kAModMask = 0x000000ff;
-	static const uint32 kRGBModMask = (kRModMask | kGModMask | kBModMask);
-	
-#ifdef SCUMM_LITTLE_ENDIAN
-	static const int kAIndex = 0;
-	static const int kBIndex = 1;
-	static const int kGIndex = 2;
-	static const int kRIndex = 3;
-#else
-	static const int kAIndex = 3;
-	static const int kBIndex = 2;
-	static const int kGIndex = 1;
-	static const int kRIndex = 0;
-#endif
-
 	struct Args {
 		bool rgbmod, alphamod;
 		int xp, yp;
@@ -246,33 +225,56 @@ private:
 	static void doBlitBinaryBlendLogic##ext(Args &args); \
 	template<bool doscale> \
 	static void doBlitOpaqueBlendLogic##ext(Args &args); \
-	template<bool doscale> \
+	template<bool doscale, bool rgbmod, bool alphamod> \
 	static void doBlitMultiplyBlendLogic##ext(Args &args); \
-	template<bool doscale> \
+	template<bool doscale, bool rgbmod> \
 	static void doBlitSubtractiveBlendLogic##ext(Args &args); \
-	template<bool doscale> \
+	template<bool doscale, bool rgbmod, bool alphamod> \
 	static void doBlitAdditiveBlendLogic##ext(Args &args); \
-	template<bool doscale> \
+	template<bool doscale, bool rgbmod, bool alphamod> \
 	static void doBlitAlphaBlendLogic##ext(Args &args); \
 	static void blit##ext(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
-LOGIC_FUNCS_EXT(Generic)
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 LOGIC_FUNCS_EXT(NEON)
 #endif
+LOGIC_FUNCS_EXT(Generic)
 #undef LOGIC_FUNCS_EXT
 
 	typedef void(*BlitFunc)(Args &, const TSpriteBlendMode &, const AlphaType &);
 	static BlitFunc blitFunc;
+	friend class ::BlendBlitUnfilteredTestSuite;
 
 public:
 	static const int SCALE_THRESHOLD = 0x100;
+	static const int kBModShift = 8;
+	static const int kGModShift = 16;
+	static const int kRModShift = 24;
+	static const int kAModShift = 0;
+	
+	static const uint32 kBModMask = 0x0000ff00;
+	static const uint32 kGModMask = 0x00ff0000;
+	static const uint32 kRModMask = 0xff000000;
+	static const uint32 kAModMask = 0x000000ff;
+	static const uint32 kRGBModMask = (kRModMask | kGModMask | kBModMask);
+	
+#ifdef SCUMM_LITTLE_ENDIAN
+	static const int kAIndex = 0;
+	static const int kBIndex = 1;
+	static const int kGIndex = 2;
+	static const int kRIndex = 3;
+#else
+	static const int kAIndex = 3;
+	static const int kBIndex = 2;
+	static const int kGIndex = 1;
+	static const int kRIndex = 0;
+#endif
 
 	static inline int getScaleFactor(int srcSize, int dstSize) {
 		return SCALE_THRESHOLD * srcSize / dstSize;
 	}
 
 	/**
-	 * Returns the pixel format all operations of TransparentSurface support.
+	 * Returns the pixel format all operations of BlendBlit::blit support.
 	 *
 	 * Use TS_ARGB and TS_RGB to quickly make a color in this format.
 	 * TS_ARGB/RGB are found in graphics/transform_struct.h
@@ -303,7 +305,6 @@ public:
 			  const TSpriteBlendMode blendMode,
 			  const AlphaType alphaType);
 
-	friend struct TransparentSurface;
 }; // End of class BlendBlit
 
 /** @} */

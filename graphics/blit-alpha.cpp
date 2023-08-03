@@ -23,6 +23,8 @@
 #include "graphics/pixelformat.h"
 #include "common/system.h"
 
+#include "graphics/blit-neon.cpp"
+
 namespace Graphics {
 
 namespace {
@@ -203,7 +205,7 @@ BlendBlit::Args::Args(byte *dst, const byte *src,
 /**
  * Optimized version of doBlit to be used with multiply blended blitting
  */
-template<bool doscale>
+template<bool doscale, bool rgbmod, bool alphamod>
 void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
@@ -211,10 +213,10 @@ void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 	int scaleXCtr, scaleYCtr = 0;
 	const byte *inBase;
 
-	byte ca = args.alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
-	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
-	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
-	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+	const byte ca = alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
+	const byte cr = rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	const byte cg = rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	const byte cb = rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
@@ -266,7 +268,7 @@ void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 
 }
 
-template<bool doscale>
+template<bool doscale, bool rgbmod, bool alphamod>
 void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
@@ -274,10 +276,10 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 	int scaleXCtr, scaleYCtr = 0;
 	const byte *inBase;
 
-	byte ca = args.alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
-	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
-	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
-	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+	const byte ca = alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
+	const byte cr = rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	const byte cg = rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	const byte cb = rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
@@ -294,15 +296,37 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 
 			uint32 ina = in[kAIndex] * ca >> 8;
 
-			if (ina != 0) {
-				uint outb = (out[kBIndex] * (255 - ina) >> 8);
-				uint outg = (out[kGIndex] * (255 - ina) >> 8);
-				uint outr = (out[kRIndex] * (255 - ina) >> 8);
+			if (rgbmod) {
+				if (ina != 0) {
+					const uint outb = (out[kBIndex] * (255 - ina) >> 8);
+					const uint outg = (out[kGIndex] * (255 - ina) >> 8);
+					const uint outr = (out[kRIndex] * (255 - ina) >> 8);
 
-				out[kAIndex] = 255;
-				out[kBIndex] = outb + (in[kBIndex] * ina * cb >> 16);
-				out[kGIndex] = outg + (in[kGIndex] * ina * cg >> 16);
-				out[kRIndex] = outr + (in[kRIndex] * ina * cr >> 16);
+					out[kAIndex] = 255;
+					out[kBIndex] = outb + (in[kBIndex] * ina * cb >> 16);
+					out[kGIndex] = outg + (in[kGIndex] * ina * cg >> 16);
+					out[kRIndex] = outr + (in[kRIndex] * ina * cr >> 16);
+				}
+			} else {
+				if (ina != 0) {
+					// Runs faster on newer hardware (doesn't do single byte manip)
+					const uint32 in32 = *(const uint32 *)in;
+					const uint32 out32 = *(const uint32 *)out;
+					const uint32 rb = (in32 & (kRModMask | kBModMask)) >> 8;
+					const uint32 g = in32 & kGModMask;
+					const uint32 dstrb = (out32 & (kRModMask | kBModMask)) >> 8;
+					const uint32 dstg = out32 & kGModMask;
+					*(uint32 *)out = kAModMask |
+						((dstrb * (255 - ina) + rb * ina) & (kRModMask | kBModMask)) |
+						((dstg * (255 - ina) + g * ina) >> 8);
+
+					// I think this code will run faster on older hardware
+					// TODO maybe?: Put #ifdef to use on older hardware
+					//out[kAIndex] = 255;
+					//out[kBIndex] = (out[kBIndex] * (255 - ina) + in[kBIndex] * ina) >> 8;
+					//out[kGIndex] = (out[kGIndex] * (255 - ina) + in[kGIndex] * ina) >> 8;
+					//out[kRIndex] = (out[kRIndex] * (255 - ina) + in[kRIndex] * ina) >> 8;
+				}
 			}
 
 			if (doscale)
@@ -323,7 +347,7 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 /**
  * Optimized version of doBlit to be used with subtractive blended blitting
  */
-template<bool doscale>
+template<bool doscale, bool rgbmod>
 void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
@@ -331,9 +355,9 @@ void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 	int scaleXCtr, scaleYCtr = 0;
 	const byte *inBase;
 
-	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
-	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
-	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+	const byte cr = rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	const byte cg = rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	const byte cb = rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
@@ -384,7 +408,7 @@ void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 /**
  * Optimized version of doBlit to be used with additive blended blitting
  */
-template<bool doscale>
+template<bool doscale, bool rgbmod, bool alphamod>
 void BlendBlit::doBlitAdditiveBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
@@ -392,10 +416,10 @@ void BlendBlit::doBlitAdditiveBlendLogicGeneric(Args &args) {
 	int scaleXCtr, scaleYCtr = 0;
 	const byte *inBase;
 
-	byte ca = args.alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
-	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
-	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
-	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+	const byte ca = alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
+	const byte cr = rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	const byte cg = rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	const byte cb = rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
@@ -552,12 +576,12 @@ void BlendBlit::blit(byte *dst, const byte *src,
 					 const AlphaType alphaType) {
 	if (width == 0 || height == 0) return;
 	if (!blitFunc) {
-		// Get the correct blit function
+	// Get the correct blit function
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
-		if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
-		else blitFunc = blitGeneric;
+	if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
+	else blitFunc = blitGeneric;
 #else
-		blitFunc = blitGeneric;
+	blitFunc = blitGeneric;
 #endif
 	}
 	
@@ -565,8 +589,11 @@ void BlendBlit::blit(byte *dst, const byte *src,
 	blitFunc(args, blendMode, alphaType);
 }
 
+// Let me know if there is a way to do function pointer to templated functions
 #define BLIT_FUNC(ext) \
 	void BlendBlit::blit##ext(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType) { \
+		bool rgbmod   = ((args.color & kRGBModMask) != kRGBModMask); \
+		bool alphamod = ((args.color & kAModMask)   != kAModMask); \
 		if (args.scaleX == SCALE_THRESHOLD && args.scaleY == SCALE_THRESHOLD) { \
 			if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) { \
 				doBlitOpaqueBlendLogic##ext<false>(args); \
@@ -574,14 +601,54 @@ void BlendBlit::blit(byte *dst, const byte *src,
 				doBlitBinaryBlendLogic##ext<false>(args); \
 			} else { \
 				if (blendMode == BLEND_ADDITIVE) { \
-					doBlitAdditiveBlendLogic##ext<false>(args); \
+					if (rgbmod) { \
+						if (alphamod) { \
+							doBlitAdditiveBlendLogic##ext<false, true, true>(args); \
+						} else { \
+							doBlitAdditiveBlendLogic##ext<false, true, false>(args); \
+						} \
+					} else { \
+						if (alphamod) { \
+							doBlitAdditiveBlendLogic##ext<false, false, true>(args); \
+						} else { \
+							doBlitAdditiveBlendLogic##ext<false, false, false>(args); \
+						} \
+					} \
 				} else if (blendMode == BLEND_SUBTRACTIVE) { \
-					doBlitSubtractiveBlendLogic##ext<false>(args); \
+					if (rgbmod) { \
+						doBlitSubtractiveBlendLogic##ext<false, true>(args); \
+					} else { \
+						doBlitSubtractiveBlendLogic##ext<false, false>(args); \
+					} \
 				} else if (blendMode == BLEND_MULTIPLY) { \
-					doBlitMultiplyBlendLogic##ext<false>(args); \
+					if (rgbmod) { \
+						if (alphamod) { \
+							doBlitMultiplyBlendLogic##ext<false, true, true>(args); \
+						} else { \
+							doBlitMultiplyBlendLogic##ext<false, true, false>(args); \
+						} \
+					} else { \
+						if (alphamod) { \
+							doBlitMultiplyBlendLogic##ext<false, false, true>(args); \
+						} else { \
+							doBlitMultiplyBlendLogic##ext<false, false, false>(args); \
+						} \
+					} \
 				} else { \
 					assert(blendMode == BLEND_NORMAL); \
-					doBlitAlphaBlendLogic##ext<false>(args); \
+					if (rgbmod) { \
+						if (alphamod) { \
+							doBlitAlphaBlendLogic##ext<false, true, true>(args); \
+						} else { \
+							doBlitAlphaBlendLogic##ext<false, true, false>(args); \
+						} \
+					} else { \
+						if (alphamod) { \
+							doBlitAlphaBlendLogic##ext<false, false, true>(args); \
+						} else { \
+							doBlitAlphaBlendLogic##ext<false, false, false>(args); \
+						} \
+					} \
 				} \
 			} \
 		} else { \
@@ -591,14 +658,54 @@ void BlendBlit::blit(byte *dst, const byte *src,
 				doBlitBinaryBlendLogic##ext<true>(args); \
 			} else { \
 				if (blendMode == BLEND_ADDITIVE) { \
-					doBlitAdditiveBlendLogic##ext<true>(args); \
+					if (rgbmod) { \
+						if (alphamod) { \
+							doBlitAdditiveBlendLogic##ext<true, true, true>(args); \
+						} else { \
+							doBlitAdditiveBlendLogic##ext<true, true, false>(args); \
+						} \
+					} else { \
+						if (alphamod) { \
+							doBlitAdditiveBlendLogic##ext<true, false, true>(args); \
+						} else { \
+							doBlitAdditiveBlendLogic##ext<true, false, false>(args); \
+						} \
+					} \
 				} else if (blendMode == BLEND_SUBTRACTIVE) { \
-					doBlitSubtractiveBlendLogic##ext<true>(args); \
+					if (rgbmod) { \
+						doBlitSubtractiveBlendLogic##ext<true, true>(args); \
+					} else { \
+						doBlitSubtractiveBlendLogic##ext<true, false>(args); \
+					} \
 				} else if (blendMode == BLEND_MULTIPLY) { \
-					doBlitMultiplyBlendLogic##ext<true>(args); \
+					if (rgbmod) { \
+						if (alphamod) { \
+							doBlitMultiplyBlendLogic##ext<true, true, true>(args); \
+						} else { \
+							doBlitMultiplyBlendLogic##ext<true, true, false>(args); \
+						} \
+					} else { \
+						if (alphamod) { \
+							doBlitMultiplyBlendLogic##ext<true, false, true>(args); \
+						} else { \
+							doBlitMultiplyBlendLogic##ext<true, false, false>(args); \
+						} \
+					} \
 				} else { \
 					assert(blendMode == BLEND_NORMAL); \
-					doBlitAlphaBlendLogic##ext<true>(args); \
+					if (rgbmod) { \
+						if (alphamod) { \
+							doBlitAlphaBlendLogic##ext<true, true, true>(args); \
+						} else { \
+							doBlitAlphaBlendLogic##ext<true, true, false>(args); \
+						} \
+					} else { \
+						if (alphamod) { \
+							doBlitAlphaBlendLogic##ext<true, false, true>(args); \
+						} else { \
+							doBlitAlphaBlendLogic##ext<true, false, false>(args); \
+						} \
+					} \
 				} \
 			} \
 		} \
