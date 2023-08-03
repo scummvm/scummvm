@@ -722,14 +722,12 @@ void Inter_v7::o7_setActiveCD() {
 	Common::String str0 = _vm->_game->_script->evalString();
 	Common::String str1 = _vm->_game->_script->evalString();
 
-	Common::ArchiveMemberList files;
+	Common::ArchiveMemberDetailsList files;
 	SearchMan.listMatchingMembers(files, str0);
 	Common::String savedCDpath = _currentCDPath;
 
-	for (Common::ArchiveMemberPtr file : files) {
-		auto *node = dynamic_cast<Common::FSNode *>(file.get());
-		if (node != nullptr &&
-			setCurrentCDPath(node->getParent())) {
+	for (Common::ArchiveMemberDetails file : files) {
+		if (setCurrentCDPath(file.arcName)) {
 			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s", savedCDpath.c_str(),  _currentCDPath.c_str());
 			storeValue(1);
 			return;
@@ -1164,24 +1162,16 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 	_vm->_draw->_pattern = savedPattern;
 }
 
-bool Inter_v7::setCurrentCDPath(const Common::FSNode &newDir) {
-	Common::FSNode gameDataDir(ConfMan.get("path"));
-	bool newDirIsGameDir = (newDir.getPath() == gameDataDir.getPath());
-	Common::String newDirName = newDir.getName();
-
-	if (!newDirIsGameDir &&
-		(newDirName.equalsIgnoreCase("applis") || newDirName.equalsIgnoreCase("envir")))
+bool Inter_v7::setCurrentCDPath(const Common::String &newDirName) {
+	if (newDirName.equalsIgnoreCase("applis") || newDirName.equalsIgnoreCase("envir"))
 		return false;
 
 	if (!_currentCDPath.empty())
 		SearchMan.setPriority(_currentCDPath, 0);
 
-	if (newDirIsGameDir)
-		_currentCDPath = "";
-	else {
-		_currentCDPath = newDirName;
+	_currentCDPath = newDirName;
+	if (!_currentCDPath.empty())
 		SearchMan.setPriority(newDirName, 1);
-	}
 
 	return true;
 }
@@ -1247,17 +1237,16 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		int32 indexAppli = VAR_OFFSET(20196);
 		if (indexAppli == -1) {
 			// New appli, find the first directory containing an application still not installed, and set it as "current CD" path.
-			Common::ArchiveMemberList files;
+			Common::ArchiveMemberDetailsList files;
 			SearchMan.listMatchingMembers(files, file); // Search for CD.INF files
-			for (Common::ArchiveMemberPtr &cdInfFile : files) {
-				Common::SeekableReadStream *stream = cdInfFile->createReadStream();
+			for (Common::ArchiveMemberDetails &cdInfFile : files) {
+				Common::SeekableReadStream *stream = cdInfFile.arcMember->createReadStream();
 				while (stream->pos() + 4 <= stream->size()) {
 					// CD.INF contains a list of applications, as uint32 LE values
 					uint32 applicationNumber = stream->readUint32LE();
 					if (Common::find(installedApplications.begin(), installedApplications.end(), applicationNumber) == installedApplications.end()) {
 						// Application not installed yet, set it as current CD path
-						Common::FSNode cdInfFileNode(cdInfFile->getName());
-						setCurrentCDPath(cdInfFileNode.getParent());
+						setCurrentCDPath(cdInfFile.arcName);
 						break;
 					}
 				}
@@ -1266,14 +1255,11 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 			// Already installed appli, find its directory and set it as "current CD" path
 			int32 applicationNumber = installedApplications[indexAppli - 1];
 			Common::String appliVmdName = Common::String::format("appli_%02d.vmd", applicationNumber);
-			Common::ArchiveMemberList files;
-			SearchMan.listMatchingMembers(files, appliVmdName);
-			for (Common::ArchiveMemberPtr &member : files) {
-				auto *node = dynamic_cast<Common::FSNode *>(member.get());
-				if (node != nullptr) {
-					if (setCurrentCDPath(node->getParent()))
-						break;
-				}
+			Common::ArchiveMemberDetailsList matchingFiles;
+			SearchMan.listMatchingMembers(matchingFiles, appliVmdName);
+			for (Common::ArchiveMemberDetails &matchingFile : matchingFiles) {
+				if (setCurrentCDPath(matchingFile.arcName))
+					break;
 			}
 		}
 	}
