@@ -674,9 +674,6 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 	uint8 *dataC = new uint8[end + 1];
 	dataC[end] = '\0';
 	memcpy(dataC, data.c_str(), end);
-
-	warning("Output: %s", dataC);
-
 	XMLDoc conf(dataC);
 
 	if (conf.ready()) {
