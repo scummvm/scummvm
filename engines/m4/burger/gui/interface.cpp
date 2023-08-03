@@ -240,7 +240,34 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 	return true;
 }
 
+void Interface::refresh_right_arrow() {
+	if (_inventory->need_right() || _inventory->need_left()) {
+		_btnScrollRight->set_sprite_unknown(63);
+		_btnScrollRight->set_sprite_relaxed(64);
+		_btnScrollRight->set_sprite_picked(66);
+		_btnScrollRight->set_sprite_over(65);
+		_btnScrollRight->unhide();
+	} else {
+		_btnScrollRight->hide();
+		_btnScrollLeft->hide();
+	}
+}
+
+void Interface::refresh_left_arrow() {
+	if (_inventory->need_right() || _inventory->need_left()) {
+		_btnScrollLeft->set_sprite_unknown(59);
+		_btnScrollLeft->set_sprite_relaxed(60);
+		_btnScrollLeft->set_sprite_picked(62);
+		_btnScrollLeft->set_sprite_over(61);
+		_btnScrollLeft->unhide();
+	} else {
+		_btnScrollRight->hide();
+		_btnScrollLeft->hide();
+	}
+}
+
 void Interface::sub1() {
+
 	warning("TODO: Interface::sub1");
 }
 

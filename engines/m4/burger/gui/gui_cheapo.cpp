@@ -37,14 +37,6 @@ namespace M4 {
 namespace Burger {
 namespace GUI {
 
-static void refresh_right_arrow() {
-	error("TODO: refresh_right_arrow");
-}
-
-static void refresh_left_arrow() {
-	error("TODO: refresh_left_arrow");
-}
-
 RectClass::RectClass() {
 }
 
@@ -689,8 +681,8 @@ void Inventory::draw(GrBuff *myBuffer) {
 
 		if (_must_redraw1 == cell_iter || _must_redraw2 == cell_iter || _must_redraw_all) {
 			// This does the button update....
-			refresh_right_arrow();
-			refresh_left_arrow();
+			_G(interface).refresh_right_arrow();
+			_G(interface).refresh_left_arrow();
 
 			// Draw icon here
 			gr_color_set(__BLACK);
