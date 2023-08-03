@@ -30,6 +30,8 @@ namespace M4 {
 namespace Burger {
 namespace GUI {
 
+#define INTERFACE_SPRITES 22
+
 Interface::Interface() : M4::Interface() {
 	_x1 = 0;
 	_y1 = 374;
@@ -77,9 +79,9 @@ void Interface::setup() {
 	_interfaceBox = new InterfaceBox(RectClass(0, 0, SCREEN_WIDTH - 1, 105));
 	_inventory = new GUI::Inventory(RectClass(188, 22, 539, 97), _sprite, 9, 1, 39, 75, 3);
 	_textField = new TextField(200, 1, 450, 21);
-	_btnTake = new ButtonClass(RectClass(60, 35, 92, 66), "take", 4, 3, 3, 4, 5);
-	_btnManipulate = new ButtonClass(RectClass(105, 35, 137, 66), "manipulate", 7, 6, 6, 7, 8);
-	_btnHandle = new ButtonClass(RectClass(15, 35, 47, 66), "handle", 5, 0, 0, 1, 2);
+	_btnTake = new ButtonClass(RectClass(60, 35, 92, 66), "take", 4, 3, 3, 4, 5, INTERFACE_SPRITES);
+	_btnManipulate = new ButtonClass(RectClass(105, 35, 137, 66), "manipulate", 7, 6, 6, 7, 8, INTERFACE_SPRITES);
+	_btnHandle = new ButtonClass(RectClass(15, 35, 47, 66), "handle", 5, 0, 0, 1, 2, INTERFACE_SPRITES);
 
 	_interfaceBox->add(_btnTake);
 	_interfaceBox->add(_btnManipulate);
@@ -87,18 +89,18 @@ void Interface::setup() {
 
 
 	if (_G(executing) == WHOLE_GAME) {
-		_btnAbductFail = new ButtonClass(RectClass(580, 10, 620, 69), "abductfail", 10, 69, 69, 70, 71);
-		_btnMenu = new ButtonClass(RectClass(582, 70, 619, 105), "menu", 11, 76, 76, 77, 78);
+		_btnAbductFail = new ButtonClass(RectClass(580, 10, 620, 69), "abductfail", 10, 69, 69, 70, 71, INTERFACE_SPRITES);
+		_btnMenu = new ButtonClass(RectClass(582, 70, 619, 105), "menu", 11, 76, 76, 77, 78, INTERFACE_SPRITES);
 		_interfaceBox->add(_btnAbductFail);
 		_interfaceBox->add(_btnMenu);
 
 	} else {
-		_btnAbductFail = new ButtonClass(RectClass(580, 22, 620, 75), "abductfail", 10, 69, 69, 70, 71);
+		_btnAbductFail = new ButtonClass(RectClass(580, 22, 620, 75), "abductfail", 10, 69, 69, 70, 71, INTERFACE_SPRITES);
 		_interfaceBox->add(_btnAbductFail);
 	}
 
-	_btnScrollLeft = new ButtonClass(RectClass(168, 22, 188, 97), "scroll left", 8, 59, 60, 61, 62);
-	_btnScrollRight = new ButtonClass(RectClass(539, 22, 559, 97), "scroll right", 9, 63, 64, 65, 66);
+	_btnScrollLeft = new ButtonClass(RectClass(168, 22, 188, 97), "scroll left", 8, 59, 60, 61, 62, INTERFACE_SPRITES);
+	_btnScrollRight = new ButtonClass(RectClass(539, 22, 559, 97), "scroll right", 9, 63, 64, 65, 66, INTERFACE_SPRITES);
 	_interfaceBox->add(_btnScrollLeft);
 	_interfaceBox->add(_btnScrollRight);
 }

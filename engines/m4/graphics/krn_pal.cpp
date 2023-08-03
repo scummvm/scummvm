@@ -297,7 +297,7 @@ void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 
 bool examining_inventory_object = false;
 
-
+#ifdef UNUSED
 void kernel_examine_inventory_object(char *picName, RGB8 *pal, int steps, int delay,
 	int32 x, int32 y, int32 triggerNum, char *digi_name, int32 digi_trigger) {
 
@@ -347,6 +347,7 @@ void kernel_examine_inventory_object(char *picName, RGB8 *pal, int steps, int de
 
 	PauseEngines();
 }
+#endif
 
 void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 	if (!_GP(seriesAnim8) || _GP(seriesHash) < 0)
