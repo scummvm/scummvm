@@ -605,6 +605,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_STD16_SPEECH_GM	},
 
+	// Eco Quest 1 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS CD 1.1
+	{"ecoquest", "CD", {
+		{"resource.map", 0, "a4b73d5d2b55bdb6e44345e99c8fbdd0", 4804},
+		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
+		{"PATCHES/0.fon", 0, "256b6dde95d3c2442b9c75765b3a5b76", 3410},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
+
 	// Eco Quest - Korean fan translation, based on English DOS CD 1.1
 	// SCI interpreter version 1.001.064
 	// The checksums for the audio file have been removed, to also allow
