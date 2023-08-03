@@ -23,8 +23,11 @@
 #define GRAPHICS_SCALER_H
 
 #include "common/scummsys.h"
-#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
+
+namespace Graphics {
+class ManagedSurface;
+}
 
 // creates a 160x100 thumbnail for 320x200 games
 // and 160x120 thumbnail for 320x240 and 640x480 games
