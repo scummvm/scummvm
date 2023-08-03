@@ -102,6 +102,9 @@ public:
 	StringPool *_stringPool = nullptr;
 	ScreenSettings *_screenSettings = nullptr;
 
+	// Keeps a copy of latest screen for thumbnail
+	Graphics::ManagedSurface *_thumbnail;
+
 	Common::FSNode _gameDataDir;
 
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);

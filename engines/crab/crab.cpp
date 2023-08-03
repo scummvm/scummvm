@@ -62,6 +62,7 @@ CrabEngine::~CrabEngine() {
 	delete _textManager;
 	delete _imageManager;
 
+	delete _thumbnail;
 	delete _screen;
 	delete _format;
 }
@@ -78,6 +79,7 @@ Common::Error CrabEngine::run() {
 	_format = new Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	initGraphics(1280, 720, _format);
 	_screen = new Graphics::Screen(1280, 720, *_format);
+	_thumbnail = new Graphics::ManagedSurface(1280, 720, *_format);
 
 	_imageManager = new pyrodactyl::image::ImageManager();
 	_textManager = new pyrodactyl::text::TextManager();

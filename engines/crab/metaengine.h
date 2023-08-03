@@ -43,6 +43,8 @@ public:
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
 	virtual int getMaximumSaveSlot() const override;
+
+	virtual void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // CRAB_METAENGINE_H

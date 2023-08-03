@@ -190,6 +190,7 @@ void Game::handleEvents(Common::Event &event, bool &shouldChangeState, GameState
 					toggleState(STATE_MAP);
 					break;
 				case HS_PAUSE:
+					g_engine->_thumbnail->copyFrom(g_engine->_screen->rawSurface());
 					toggleState(STATE_PAUSE);
 					break;
 				case HS_CHAR:

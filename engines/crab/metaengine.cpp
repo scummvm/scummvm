@@ -29,6 +29,8 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "graphics/scaler.h"
+
 namespace Crab {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -78,6 +80,11 @@ bool CrabMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 int CrabMetaEngine::getMaximumSaveSlot() const {
 	return 999;
+}
+
+void CrabMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Graphics::ManagedSurface *surf = Crab::g_engine->_thumbnail;
+	createThumbnail(&thumb, surf);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRAB)
