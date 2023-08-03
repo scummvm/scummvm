@@ -23,6 +23,7 @@
 #define GRAPHICS_SCALER_H
 
 #include "common/scummsys.h"
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 
 // creates a 160x100 thumbnail for 320x200 games
@@ -52,5 +53,13 @@ extern bool createThumbnailFromScreen(Graphics::Surface *surf);
  * @param palette   palette in RGB format
  */
 extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
+
+/**
+ * Creates a thumbnail from a ManagedSurface.
+ *
+ * @param surf	destination surface (will always have 16 bpp after this for now)
+ * @param in	source surface to create thumbnail from
+ */
+extern bool createThumbnail(Graphics::Surface *surf, Graphics::ManagedSurface *in);
 
 #endif
