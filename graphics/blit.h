@@ -229,7 +229,7 @@ private:
 		uint width, height;
 		uint32 color;
 		int flipping;
-	
+		
 		Args(byte *dst, const byte *src,
 			 const uint dstPitch, const uint srcPitch,
 			 const int posX, const int posY,
@@ -238,6 +238,9 @@ private:
 			 const uint32 colorMod, const uint flipping);
 	};
 
+// Define logic functions for different architecture extensions.
+// These extensions would just be a template parameter if it weren't for the
+// fact that partial template specialization doesn't exist.
 #define LOGIC_FUNCS_EXT(ext) \
 	template<bool doscale> \
 	static void doBlitBinaryBlendLogic##ext(Args &args); \
@@ -250,10 +253,16 @@ private:
 	template<bool doscale> \
 	static void doBlitAdditiveBlendLogic##ext(Args &args); \
 	template<bool doscale> \
-	static void doBlitAlphaBlendLogic##ext(Args &args);
-LOGIC_FUNCS_EXT()
+	static void doBlitAlphaBlendLogic##ext(Args &args); \
+	static void blit##ext(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 LOGIC_FUNCS_EXT(Generic)
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+LOGIC_FUNCS_EXT(NEON)
+#endif
 #undef LOGIC_FUNCS_EXT
+
+	typedef void(*BlitFunc)(Args &, const TSpriteBlendMode &, const AlphaType &);
+	static BlitFunc blitFunc;
 
 public:
 	static const int SCALE_THRESHOLD = 0x100;
@@ -286,13 +295,13 @@ public:
 	 * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
 	 */
 	static void blit(byte *dst, const byte *src,
-					 const uint dstPitch, const uint srcPitch,
-					 const int posX, const int posY,
-					 const uint width, const uint height,
-					 const int scaleX, const int scaleY,
-					 const uint32 colorMod = 0, const uint flipping = FLIP_NONE,
-					 const TSpriteBlendMode blendMode = BLEND_NORMAL,
-					 const AlphaType alphaType = ALPHA_FULL);
+			  const uint dstPitch, const uint srcPitch,
+			  const int posX, const int posY,
+			  const uint width, const uint height,
+			  const int scaleX, const int scaleY,
+			  const uint32 colorMod, const uint flipping,
+			  const TSpriteBlendMode blendMode,
+			  const AlphaType alphaType);
 
 	friend struct TransparentSurface;
 }; // End of class BlendBlit

@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	blit.o \
 	blit-alpha.o \
 	blit-scale.o \
+	blit-neon.o \
 	cursorman.o \
 	font.o \
 	fontman.o \
