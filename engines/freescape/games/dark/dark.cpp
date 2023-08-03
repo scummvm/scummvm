@@ -413,13 +413,12 @@ void DarkEngine::borderScreen() {
 void DarkEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source - 1;
 	debugC(1, kFreescapeDebugCode, "Printing message %d", index);
-	_currentAreaMessages.clear();
 	if (index > 127) {
 		index = _messagesList.size() - (index - 254) - 2;
 		drawFullscreenMessageAndWait(_messagesList[index]);
 		return;
 	}
-	_currentAreaMessages.push_back(_messagesList[index]);
+	insertTemporaryMessage(_messagesList[index], _countdown - 2);
 }
 
 void DarkEngine::drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface) {
