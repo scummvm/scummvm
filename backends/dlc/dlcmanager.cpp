@@ -62,6 +62,10 @@ void DLCManager::setLauncher(GUI::LauncherDialog *launcher) {
 }
 
 void DLCManager::addDownload(uint32 idx) {
+	if (_dlcs[idx]->state == DLCDesc::kInProgress) {
+		// if DLC is already in queue, don't add again
+		return;
+	}
 	_dlcs[idx]->state = DLCDesc::kInProgress;
 	_queuedDownloadTasks.push(_dlcs[idx]);
 	_dlcsInProgress.push_back(_dlcs[idx]);
