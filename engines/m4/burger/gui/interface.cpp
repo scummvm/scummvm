@@ -24,7 +24,10 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/gui/hotkeys.h"
+#include "m4/burger/hotkeys.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/other.h"
 
 namespace M4 {
 namespace Burger {
@@ -200,7 +203,7 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 			_state = 0;
 			break;
 		case SELECTED:
-			sub1();
+			trackIcons();
 			break;
 		default:
 			_state = 1;
@@ -266,9 +269,90 @@ void Interface::refresh_left_arrow() {
 	}
 }
 
-void Interface::sub1() {
+void Interface::trackIcons() {
+	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	_G(kernel).trigger_mode = KT_DAEMON;
 
-	warning("TODO: Interface::sub1");
+	switch (_interfaceBox->_highlight_index) {
+	case 4:
+		M4::Hotkeys::t_cb(nullptr, nullptr);
+		break;
+
+	case 5:
+		M4::Hotkeys::l_cb(nullptr, nullptr);
+		break;
+
+	case 6:
+		mouse_set_sprite(_arrow);
+		_flag1 = false;
+
+		if (_btnScrollRight->is_hidden())
+			refresh_right_arrow();
+		else
+			_btnScrollRight->hide();
+
+		if (_btnScrollLeft->is_hidden())
+			refresh_left_arrow();
+		else
+			_btnScrollLeft->hide();
+		break;
+
+	case 7:
+		M4::Hotkeys::u_cb(nullptr, nullptr);
+		break;
+
+	case 8:
+		if (!_btnScrollLeft->is_hidden()) {
+			if (_inventory->need_left()) {
+				_inventory->_scroll = (_inventory->_scroll <= 0) ? 0 :
+					_inventory->_scroll - _inventory->_cells_v;
+			}
+
+			refresh_right_arrow();
+			refresh_left_arrow();
+			_inventory->_must_redraw_all = true;
+		} else {
+			return;
+		}
+		break;
+
+	case 9:
+		if (!_btnScrollRight->is_hidden()) {
+			if (_inventory->need_right())
+				_inventory->_scroll += _inventory->_cells_v;
+
+			refresh_right_arrow();
+			refresh_left_arrow();
+			_inventory->_must_redraw_all = true;
+		} else {
+			return;
+		}
+		break;
+
+	case 10:
+		term_message("Abduct/Fail Button Pressed");
+
+		if (_G(game).section_id == 1) {
+			term_message("Abduct me now!");
+			_G(roomVal1) = 10017;
+			kernel_trigger_dispatch_now(10016);
+		} else if (_G(game).section_id == 7) {
+			_G(walker).wilbur_speech("999w023");
+		} else {
+			term_message("Fail me now!");
+			_G(roomVal1) = 10015;
+			kernel_trigger_dispatch_now(10016);
+		}
+		break;
+
+	case 11:
+		other_save_game_for_resurrection();
+		CreateGameMenu(_G(master_palette));
+		break;
+
+	}
+
+	_G(kernel).trigger_mode = oldMode;
 }
 
 void Interface::sub2() {

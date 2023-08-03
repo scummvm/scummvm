@@ -36,7 +36,7 @@ struct Interface : public M4::Interface {
 private:
 	void setup();
 
-	void sub1();
+	void trackIcons();
 	void sub2();
 	ControlStatus track(int event, int x, int y);
 	void dispatch_command();

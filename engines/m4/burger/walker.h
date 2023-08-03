@@ -49,7 +49,7 @@ public:
 	machine *walk_initialize_walker() override;
 
 	void reset_walker_sprites();
-	void wilbur_speech(const char *name, int trigger, int room = -1, byte flags = 0,
+	void wilbur_speech(const char *name, int trigger = -1, int room = -1, byte flags = 0,
 		int vol = 256, int channel = 1);
 	void wilbur_say();
 	void wilburs_speech_finished();
