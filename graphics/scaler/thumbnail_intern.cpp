@@ -264,9 +264,15 @@ bool createThumbnail(Graphics::Surface *surf, Graphics::ManagedSurface *in) {
 	assert(surf);
 
 	Graphics::Surface screen;
-	screen.convertFrom(in->rawSurface(), Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
-	return createThumbnail(*surf, screen);
+	if (in->hasPalette()) {
+		uint8 palette[3 * 256];
+		in->grabPalette(palette, 0, 256);
+		return createThumbnail(surf, (const uint8 *)in->getPixels(), in->w, in->h, palette);
+	} else {
+		screen.convertFrom(in->rawSurface(), Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+		return createThumbnail(*surf, screen);
+	}
 }
 
 // this is somewhat awkward, but createScreenShot should logically be in graphics,
