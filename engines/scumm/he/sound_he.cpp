@@ -358,7 +358,7 @@ int SoundHE::getSoundPosition(int sound) {
 	if (channel != -1) {
 		return getChannelPosition(channel);
 	} else {
-		return 0;
+		return (_vm->_game.heversion > 72) ? 0 : channel;
 	}
 }
 
