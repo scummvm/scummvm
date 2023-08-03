@@ -38,7 +38,7 @@ private:
 	void setup();
 
 	void trackIcons();
-	ControlStatus track(int event, int x, int y);
+	ControlStatus trackHotspots(int event, int x, int y);
 	void dispatch_command();
 
 public:
@@ -57,8 +57,8 @@ public:
 	GUI::ButtonClass *_btnScrollRight = nullptr;
 	const HotSpotRec *_hotspot = nullptr;
 	int _savedX = 0, _savedY = 0;
-	void *_pointer1 = nullptr;
-	char _vocabText[40] = { 0 };
+	char _prepText[40] = { 0 };
+	char _nounText[40] = { 0 };
 	char _verbText[40] = { 0 };
 	bool _flag1 = false;
 	int _state = 0;

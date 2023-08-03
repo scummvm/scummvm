@@ -115,8 +115,8 @@ void Interface::cancel_sentence() {
 	_G(player).ready_to_walk = false;
 	_G(player).command_ready = false;
 
-	_pointer1 = nullptr;
-	_vocabText[0] = '\0';
+	_prepText[0] = '\0';
+	_nounText[0] = '\0';
 	_verbText[0] = '\0';
 	_flag1 = false;
 
@@ -128,8 +128,8 @@ void Interface::freshen_sentence() {
 	_G(player).need_to_walk = false;
 	_G(player).ready_to_walk = _G(player).need_to_walk;
 	_G(player).command_ready = _G(player).ready_to_walk;
-	_pointer1 = nullptr;
-	_vocabText[0] = '\0';
+	_prepText[0] = '\0';
+	_nounText[0] = '\0';
 
 	track_hotspots_refresh();
 }
@@ -226,7 +226,7 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 				_textField->set_string(" ");
 			}
 
-			if (track(event, x - screen->x1, y - screen->y1) == SELECTED)
+			if (trackHotspots(event, x - screen->x1, y - screen->y1) == SELECTED)
 				dispatch_command();
 		}
 	}
@@ -355,7 +355,7 @@ void Interface::trackIcons() {
 	_G(kernel).trigger_mode = oldMode;
 }
 
-ControlStatus Interface::track(int event, int x, int y) {
+ControlStatus Interface::trackHotspots(int event, int x, int y) {
 	const HotSpotRec *hotspot = g_engine->_activeRoom->custom_hotspot_which(x, y);
 	if (!hotspot)
 		hotspot = hotspot_which(_G(currentSceneDef).hotspots, x, y);
@@ -381,7 +381,7 @@ ControlStatus Interface::track(int event, int x, int y) {
 
 			tmp = hotspot->vocab;
 			tmp.toUppercase();
-			strncpy(_vocabText, tmp.c_str(), 40);
+			strncpy(_nounText, tmp.c_str(), 40);
 
 			_hotspot = hotspot;
 		}
