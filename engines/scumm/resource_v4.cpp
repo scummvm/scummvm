@@ -25,6 +25,7 @@
 #include "scumm/scumm_v4.h"
 #include "scumm/file.h"
 #include "scumm/resource.h"
+#include "scumm/sound.h"
 #include "scumm/util.h"
 
 namespace Scumm {
@@ -45,6 +46,28 @@ int ScummEngine_v4::readResTypeList(ResType type) {
 	for (ResId idx = 0; idx < num; idx++) {
 		_res->_types[type][idx]._roomno = _fileHandle->readByte();
 		_res->_types[type][idx]._roomoffs = _fileHandle->readUint32LE();
+	}
+
+	// WORKAROUND: The French floppy EGA had it own Roland MT-32 patch which is not available.
+	// This allows using the official Roland MT-32 patch available from LucasArts along with any EGA version
+	// by adjusting the sound directory offsets to match the available patch.
+	if (type == rtSound && _game.id == GID_MONKEY_EGA && _sound->_musicType == MDT_MIDI) {
+		Common::File rolandPatchFile;
+		if (rolandPatchFile.open("DISK09.LEC")) {
+			Common::String md5 = Common::computeStreamMD5AsString(rolandPatchFile);
+			if (md5 == "64ab9552f71dd3344767718eb01e5fd5") {
+				uint32 patchOffsets[19] = {
+					28957,	23427,	35913,	49919,	51918, 
+					53643,	55368,	57093,	58818,	62502,
+					73,		66844,	71991,	83107,	91566,
+					95614,	98650,	105020,	112519
+				};
+				for (ResId idx = 150; idx < 169; idx++) {
+					_res->_types[type][idx]._roomno = 94;
+					_res->_types[type][idx]._roomoffs = patchOffsets[idx - 150];
+				}
+			}
+		}
 	}
 
 	return num;
