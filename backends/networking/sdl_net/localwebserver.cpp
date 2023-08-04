@@ -143,13 +143,19 @@ void LocalWebserver::start(bool useMinimalMode) {
 	if (numused == -1) {
 		error("LocalWebserver: SDLNet_AddSocket: %s\n", SDLNet_GetError());
 	}
+
+	if (_timerStarted)
+		g_system->taskStarted(OSystem::kLocalServer);
+
 	_handleMutex.unlock();
 }
 
 void LocalWebserver::stop() {
 	_handleMutex.lock();
-	if (_timerStarted)
+	if (_timerStarted) {
 		stopTimer();
+		g_system->taskFinished(OSystem::kLocalServer);
+	}
 
 	if (_serverSocket) {
 		SDLNet_TCP_Close(_serverSocket);
