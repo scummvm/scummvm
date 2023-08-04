@@ -41,6 +41,7 @@ public:
 
 private:
 	StaticTextWidget *_currentDownloadLabel;
+	StaticTextWidget *_errorLabel;
 	StaticTextWidget *_downloadedSizeLabel;
 	StaticTextWidget *_percentLabel;
 	SliderWidget *_progressBar;

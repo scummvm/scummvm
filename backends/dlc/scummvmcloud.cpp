@@ -151,6 +151,9 @@ void ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &dest
 		// dataArchive is nullptr if zip file is incomplete
 		if (dataArchive != nullptr) {
 			dataArchive->dumpArchive(destPath.toString());
+			DLCMan._errorText = "";
+		} else {
+			DLCMan._errorText = "ERROR: " + DLCMan._queuedDownloadTasks.front()->name + ": Archive is broken, please re-download!";
 		}
 	}
 	delete fs;

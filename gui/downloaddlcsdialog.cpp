@@ -36,6 +36,7 @@ DownloadDLCsDialog::DownloadDLCsDialog()
 	new StaticTextWidget(this, "DLCDownloads.Headline", _("Currently Downloading Games"));
 
 	_currentDownloadLabel = new StaticTextWidget(this, "DLCDownloads.CurrentDownload", Common::U32String());
+	_errorLabel = new StaticTextWidget(this, "DLCDownloads.ErrorText", Common::U32String(DLCMan._errorText));
 
 	_progressBar = new SliderWidget(this, "DLCDownloads.ProgressBar");
 	_progressBar->setMinValue(0);
@@ -121,6 +122,11 @@ void DownloadDLCsDialog::handleTickle() {
 			_cancelButton->setEnabled(true);
 			g_gui.scheduleTopDialogRedraw();
 		}
+	}
+
+	if (_errorLabel->getLabel() != DLCMan._errorText) {
+		_errorLabel->setLabel(DLCMan._errorText);
+		g_gui.scheduleTopDialogRedraw();
 	}
 
 	Dialog::handleTickle();
