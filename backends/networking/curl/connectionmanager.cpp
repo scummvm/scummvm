@@ -45,6 +45,20 @@ ConnectionManager::ConnectionManager(): _multi(nullptr), _timerStarted(false), _
 ConnectionManager::~ConnectionManager() {
 	stopTimer();
 
+	//terminate all added requests which haven't been processed yet
+	_addedRequestsMutex.lock();
+	for (Common::Array<RequestWithCallback>::iterator i = _addedRequests.begin(); i != _addedRequests.end(); ++i) {
+		Request *request = i->request;
+		RequestCallback callback = i->onDeleteCallback;
+		if (request)
+			request->finish();
+		delete request;
+		if (callback)
+			(*callback)(request);
+	}
+	_addedRequests.clear();
+	_addedRequestsMutex.unlock();
+
 	//terminate all requests
 	_handleMutex.lock();
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
