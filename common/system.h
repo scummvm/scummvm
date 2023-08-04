@@ -327,6 +327,36 @@ public:
 	virtual void engineDone() { }
 
 	/**
+	 * Identify a task that ScummVM can perform.
+	 */
+	enum Task {
+		/**
+		 * The local server is running, allowing connections from other devices to transfer files.
+		 */
+		kLocalServer,
+
+		/**
+		 * ScummVM is downloading games or synchronizing savegames from the cloud.
+		 */
+		kCloudDownload,
+
+		/**
+		 * ScummVM is downloading an icons or shaders pack.
+		 */
+		kDataPackDownload
+	};
+
+	/**
+	 * Allow the backend to be notified when a task is started.
+	 */
+	virtual void taskStarted(Task) { }
+
+	/**
+	 * Allow the backend to be notified when a task is finished.
+	 */
+	virtual void taskFinished(Task) { }
+
+	/**
 	 * Allow the backend to customize the start settings, such as for example starting
 	 * automatically a game under certain circumstances.
 	 *
