@@ -1156,6 +1156,11 @@ public:
 	virtual void fillScreen(uint32 col) = 0;
 
 	/**
+	 * Fill the specified area of the screen with the given color value.
+	 */
+	virtual void fillScreen(const Common::Rect &r, uint32 col) = 0;
+
+	/**
 	 * Flush the whole screen, i.e. render the current content of the screen
 	 * framebuffer to the display.
 	 *

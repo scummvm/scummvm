@@ -21,6 +21,9 @@ void BaseBackend::initBackend() {
 void BaseBackend::fillScreen(uint32 col) {
 }
 
+void BaseBackend::fillScreen(const Common::Rect &r, uint32 col) {
+}
+
 void EventsBaseBackend::initBackend() {
 	BaseBackend::initBackend();
 }

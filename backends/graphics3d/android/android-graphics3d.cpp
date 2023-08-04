@@ -706,6 +706,11 @@ void AndroidGraphics3dManager::fillScreen(uint32 col) {
 	assert(false);
 }
 
+void AndroidGraphics3dManager::fillScreen(const Common::Rect &r, uint32 col) {
+	// We should never end up here in 3D
+	assert(false);
+}
+
 void AndroidGraphics3dManager::copyRectToScreen(const void *buf, int pitch,
         int x, int y, int w, int h) {
 	// We should never end up here in 3D

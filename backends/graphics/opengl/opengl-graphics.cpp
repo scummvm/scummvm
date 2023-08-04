@@ -592,6 +592,10 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 	_gameScreen->fill(col);
 }
 
+void OpenGLGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
+	_gameScreen->fill(r, col);
+}
+
 void OpenGLGraphicsManager::renderCursor() {
 	/*
 	Windows and Mac cursor XOR works by drawing the cursor to the screen with the formula (Destination AND Mask XOR Color)

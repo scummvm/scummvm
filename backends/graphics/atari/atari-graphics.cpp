@@ -453,6 +453,13 @@ void AtariGraphicsManager::fillScreen(uint32 col) {
 	unlockScreen();
 }
 
+void AtariGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
+	Graphics::Surface *screen = lockScreen();
+	if (screen)
+		screen->fillRect(r, col);
+	unlockScreen();
+}
+
 void AtariGraphicsManager::updateScreen() {
 	//debug("updateScreen");
 

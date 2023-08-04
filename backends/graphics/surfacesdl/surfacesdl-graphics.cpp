@@ -1685,6 +1685,13 @@ void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
 	unlockScreen();
 }
 
+void SurfaceSdlGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
+	Graphics::Surface *screen = lockScreen();
+	if (screen)
+		screen->fillRect(r, col);
+	unlockScreen();
+}
+
 void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool inOverlay, bool realCoordinates) {
 	if (_forceRedraw)
 		return;
