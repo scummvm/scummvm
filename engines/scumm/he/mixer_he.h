@@ -51,11 +51,13 @@ namespace Scumm {
 #define CHANNEL_SOFT_REMIX         0x00000100
 
 #define MILES_MAX_CHANNELS         8
+#define MILES_CHUNK_SIZE           4096
+#define MILES_MAX_QUEUED_STREAMS   16
 
 struct HESoundModifiers;
 class ScummEngine_v60he;
 
-struct MyModifiers {
+struct MilesModifiers {
 	int frequencyShift;
 	int pan;
 	int volume;
@@ -63,20 +65,32 @@ struct MyModifiers {
 
 class HEMilesChannel {
 protected:
-	Common::File *m_fileHandle;
-	byte *m_globPtr;
+	struct MilesStream {
+		Audio::QueuingAudioStream *streamObj = nullptr;
+		Audio::SoundHandle streamHandle;
+		bool loopFlag = false;
+		Common::File *fileHandle = nullptr;
+		uint32 dataLength = 0;
+		uint32 curDataPos = 0;
+		uint32 dataOffset = 0;
+	};
 
 public:
-	MyModifiers m_modifiers;
-	Audio::AudioStream *m_stream;
-	int m_baseFrequency;
-	Audio::SoundHandle audioHandle;
-	uint32 lastPlayPosition;
-	uint32 playFlags;
-	int dataOffset;
-	int globType;
-	int globNum;
-	bool audioHandleActive = false;
+	MilesModifiers _modifiers;
+	MilesStream _stream;
+	int _baseFrequency;
+	Audio::SoundHandle _audioHandle;
+	bool _audioHandleActive = false;
+	uint32 _lastPlayPosition;
+	uint32 _playFlags;
+	int _dataOffset;
+	int _globType;
+	int _globNum;
+
+	uint16 _blockAlign = 0;
+	uint16 _numChannels = 1;
+	uint16 _bitsPerSample = 8;
+	uint16 _dataFormat = 1;
 
 	HEMilesChannel() {
 		clearChannelData();
@@ -86,9 +100,11 @@ public:
 		clearChannelData();
 	}
 
-	void startSpoolingChannel(const char *filename, long offset, int flags, HESoundModifiers modifiers);
+	void startSpoolingChannel(const char *filename, long offset, int flags, HESoundModifiers modifiers, Audio::Mixer *mixer);
 	void clearChannelData();
 	void closeFileHandle();
+	void serviceStream();
+	byte getOutputFlags();
 };
 
 class HEMixer {
@@ -118,6 +134,7 @@ public:
 	void premixUntilCritical();
 	bool pauseMixerSubSystem(bool paused);
 	void feedMixer();
+	void serviceAllStreams();
 	int getChannelCurrentPosition(int channel);
 
 	bool startChannelNew(
