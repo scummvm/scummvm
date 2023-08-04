@@ -53,8 +53,10 @@ ConnectionManager::~ConnectionManager() {
 		if (request)
 			request->finish();
 		delete request;
-		if (callback)
+		if (callback) {
 			(*callback)(request);
+			delete callback;
+		}
 	}
 	_addedRequests.clear();
 	_addedRequestsMutex.unlock();
@@ -67,8 +69,10 @@ ConnectionManager::~ConnectionManager() {
 		if (request)
 			request->finish();
 		delete request;
-		if (callback)
+		if (callback) {
 			(*callback)(request);
+			delete callback;
+		}
 	}
 	_requests.clear();
 
@@ -209,8 +213,10 @@ void ConnectionManager::interateRequests() {
 
 		if (!request || request->state() == FINISHED) {
 			delete (i->request);
-			if (i->onDeleteCallback)
+			if (i->onDeleteCallback) {
 				(*i->onDeleteCallback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
+				delete i->onDeleteCallback;
+			}
 			_requests.erase(i);
 			continue;
 		}
