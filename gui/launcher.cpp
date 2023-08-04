@@ -58,7 +58,9 @@
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
 #include "backends/dlc/dlcmanager.h"
+#endif
 
 namespace GUI {
 
@@ -205,7 +207,9 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 	}
 	g_gui.unlockIconsSet();
 
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
 	DLCMan.setLauncher(this);
+#endif
 }
 
 LauncherDialog::~LauncherDialog() {
@@ -261,8 +265,10 @@ void LauncherDialog::build() {
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
 
 	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
-	// I18N: Button browse downloadable games (DLC)
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+		// I18N: Button browse downloadable games (DLC)
 		new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
+#endif
 	}
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
@@ -737,11 +743,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kMassAddGameCmd:
 		massAddGame();
 		break;
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
 	case kDownloadGameCmd: {
 		DLCsDialog downloader;
 		downloader.runModal();
 		}
 		break;
+#endif
 	case kRemoveGameCmd:
 		if (item < 0) return;
 		removeGame(item);
