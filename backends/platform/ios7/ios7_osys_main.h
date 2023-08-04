@@ -61,6 +61,8 @@ protected:
 	CFTimeInterval _startTime;
 	uint32 _timeSuspended;
 
+	int _runningTasks;
+
 	long _lastMouseDown;
 	long _lastMouseTap;
 	long _queuedEventTime;
@@ -90,6 +92,9 @@ public:
 
 	void engineInit() override;
 	void engineDone() override;
+
+	void taskStarted(Task) override;
+	void taskFinished(Task) override;
 
 	void updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &settings, Common::StringArray& additionalArgs) override;
 

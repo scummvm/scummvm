@@ -91,7 +91,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
 	_secondaryTapped(false), _lastSecondaryTap(0),
 	_screenOrientation(kScreenOrientationAuto),
-	_timeSuspended(0) {
+	_timeSuspended(0), _runningTasks(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
