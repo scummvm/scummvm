@@ -885,26 +885,17 @@ static int save_bitmap(const char *path, const Graphics::Surface *surf) {
 
 static bool areSurfacesEqual(const Graphics::Surface *a, const Graphics::Surface *b) {
     if (a->w != b->w || a->h != b->h) return false;
-
-    for (int y = 0; y < a->h; y++) {
-        for (int x = 0; x < a->w; x++) {
-            if (a->getPixel(x, y) != b->getPixel(x, y)) return false;
-        }
-    }
-
-    return true;
+	return memcmp(a->getPixels(), b->getPixels(), a->h * a->pitch) == 0;
 }
 
 class BlendBlitUnfilteredTestSuite : public CxxTest::TestSuite {
 public:
 	void test_blend_speed() {
-#ifdef TEST_BLEND_SPEED
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitNEON;
 #else
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 #endif
-	
 	    Graphics::Surface baseSurface, destSurface;
 	    baseSurface.create(128, 128, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
 	    destSurface.create(256, 256, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
@@ -990,11 +981,9 @@ public:
 		debug("New SCALING ManagedSurface::blendBlitFrom avg time per %d iters (in milliseconds): %f\n", iters, newTimeScaled / numItersScaled);
 
 	    baseSurface.free();
-#endif
 	}
 
     void test_blend_blit_unfiltered() {
-#ifdef TEST_BLEND_SPEED
         Common::Rect dsts[] = {
             Common::Rect(4, 4, 4+16, 4+16), // Case 0 (source clipping)
             Common::Rect(24, 20, 24+16, 20+16), // Case 1 (outside of destination)
@@ -1071,8 +1060,6 @@ public:
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(ba, br, bg, bb));
             managedSurfDest.blendBlitFrom(managedSurf, srcs[rect], dsts[rect], flipping, TS_ARGB(a, r, g, b), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 
-
-
             if (!areSurfacesEqual(&oldSurfDest, &newSurfDest)) {
                 warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
                     blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
@@ -1117,6 +1104,5 @@ public:
         } // blend
 
 	    baseSurface.free();
-#endif
     }
 };
