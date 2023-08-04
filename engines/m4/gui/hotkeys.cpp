@@ -108,23 +108,6 @@ void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_F2, cb_F2);
 	AddSystemHotkey(KEY_F3, cb_F3);
 
-	AddSystemHotkey('t', t_cb);
-	AddSystemHotkey('u', u_cb);
-	AddSystemHotkey('l', l_cb);
-
-	AddSystemHotkey('T', t_cb);
-	AddSystemHotkey('U', u_cb);
-	AddSystemHotkey('L', l_cb);
-
-	AddSystemHotkey('A', l_cb);
-	AddSystemHotkey('S', t_cb);
-	AddSystemHotkey('D', u_cb);
-	AddSystemHotkey('F', adv_hyperwalk_to_final_destination);
-	AddSystemHotkey('a', l_cb);
-	AddSystemHotkey('s', t_cb);
-	AddSystemHotkey('d', u_cb);
-	AddSystemHotkey('f', adv_hyperwalk_to_final_destination);
-
 	AddSystemHotkey(KEY_ALT_V, show_version);
 	AddSystemHotkey(KEY_CTRL_V, show_version);
 	AddSystemHotkey(KEY_ALT_X, exit_program);
@@ -138,7 +121,7 @@ void Hotkeys::add_hot_keys() {
 	}
 }
 
-void Hotkeys::adv_enable_system_hot_keys(void) {
+void Hotkeys::adv_enable_system_hot_keys() {
 	term_message("System Cheats On");
 
 	AddSystemHotkey(KEY_HOME, capture_wrap);
@@ -196,22 +179,6 @@ void Hotkeys::show_version(void *a, void *b) {
 }
 
 void Hotkeys::version_ok_button(void *a, void *b) {
-	warning("TODO: hotkey");
-}
-
-void Hotkeys::t_cb(void *, void *) {
-	warning("TODO: hotkey");
-}
-
-void Hotkeys::u_cb(void *, void *) {
-	warning("TODO: hotkey");
-}
-
-void Hotkeys::l_cb(void *, void *) {
-	warning("TODO: hotkey");
-}
-
-void Hotkeys::a_cb(void *, void *) {
 	warning("TODO: hotkey");
 }
 

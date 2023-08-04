@@ -26,7 +26,6 @@
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/burger/burger.h"
-#include "m4/burger/hotkeys.h"
 #include "m4/burger/vars.h"
 #include "m4/adv_r/other.h"
 
@@ -275,11 +274,11 @@ void Interface::trackIcons() {
 
 	switch (_interfaceBox->_highlight_index) {
 	case 4:
-		Hotkeys::t_cb(nullptr, nullptr);
+		t_cb();
 		break;
 
 	case 5:
-		Hotkeys::l_cb(nullptr, nullptr);
+		l_cb();
 		break;
 
 	case 6:
@@ -298,7 +297,7 @@ void Interface::trackIcons() {
 		break;
 
 	case 7:
-		M4::Hotkeys::u_cb(nullptr, nullptr);
+		u_cb();
 		break;
 
 	case 8:
@@ -429,6 +428,42 @@ void Interface::dispatch_command() {
 
 	g_engine->_activeRoom->pre_parser();
 	g_engine->global_pre_parser();
+}
+
+void Interface::l_cb() {
+	if (player_commands_allowed() && INTERFACE_VISIBLE) {
+		Common::strcpy_s(_verbText, "look at");
+		mouse_set_sprite(_look);
+		_flag1 = true;
+		_G(cursor_state) = kLOOK;
+	}
+}
+
+void Interface::u_cb() {
+	if (player_commands_allowed() && INTERFACE_VISIBLE) {
+		Common::strcpy_s(_verbText, "gear");
+		mouse_set_sprite(_use);
+		_flag1 = true;
+		_G(cursor_state) = kUSE;
+	}
+}
+
+void Interface::t_cb() {
+	if (player_commands_allowed() && INTERFACE_VISIBLE) {
+		Common::strcpy_s(_verbText, "take");
+		mouse_set_sprite(_grab);
+		_flag1 = true;
+		_G(cursor_state) = kTAKE;
+	}
+}
+
+void Interface::a_cb() {
+	if (player_commands_allowed() && INTERFACE_VISIBLE) {
+		Common::strcpy_s(_verbText, "<><><><><><><><>");
+		mouse_set_sprite(_arrow);
+		_flag1 = true;
+		_G(cursor_state) = kARROW;
+	}
 }
 
 } // namespace GUI

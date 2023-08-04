@@ -49,6 +49,7 @@
 #include "m4/gui/gui_item.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
+#include "m4/gui/hotkeys.h"
 #include "m4/mem/memman.h"
 #include "m4/mem/res.h"
 #include "m4/platform/events.h"
@@ -85,6 +86,7 @@ public:
 
 	virtual Interface *getInterface() = 0;
 	virtual Walker *getWalker() = 0;
+	virtual Hotkeys *getHotkeys() = 0;
 	virtual void global_menu_system_init() = 0;
 	virtual void initialize_game() = 0;
 
