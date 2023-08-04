@@ -197,6 +197,7 @@ _enable_tsan=no
 _enable_ubsan=no
 _bink=yes
 _cloud=auto
+_scummvmdlc=no
 _pandoc=no
 _curl=yes
 _lld=no
@@ -958,6 +959,7 @@ Optional Features:
   --disable-cloud          don't build cloud support
   --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
+  --enable-scummvmdlc      build scummvm dlc downloading support
   --enable-eventrecorder   enable event recording functionality
   --disable-eventrecorder  disable event recording functionality
   --enable-updates         build support for updates
@@ -1252,6 +1254,8 @@ for ac_option in $@; do
 	--disable-enet)               _enet=no               ;;
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
+	--enable-scummvmdlc)          _scummvmdlc=yes        ;;
+	--disable-scummvmdlc)         _scummvmdlc=no         ;;
 	--enable-lld)                 _lld=yes               ;;
 	--disable-lld)                _lld=no                ;;
 	--enable-mold)                _mold=yes              ;;
@@ -5832,6 +5836,8 @@ else
 fi
 define_in_config_if_yes $_cloud 'USE_CLOUD'
 
+define_in_config_if_yes $_scummvmdlc 'USE_SCUMMVMDLC'
+
 #
 # Check is NSDockTilePlugIn protocol is supported
 #
@@ -7030,6 +7036,11 @@ fi
 if test "$_cloud" = yes ; then
 	echo_n ", cloud"
 fi
+
+if test "$_scummvmdlc" = yes ; then
+	echo_n ", scummvmdlc"
+fi
+
 if test "$_enet" = yes ; then
 	echo ", ENet"
 else

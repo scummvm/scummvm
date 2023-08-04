@@ -7,8 +7,6 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
-	dlcsdialog.o \
-	downloaddlcsdialog.o \
 	dump-all-dialogs.o \
 	editgamedialog.o \
 	error.o \
@@ -55,6 +53,14 @@ MODULE_OBJS += \
 	downloaddialog.o \
 	downloadpacksdialog.o \
 	remotebrowser.o
+endif
+endif
+
+ifdef USE_SCUMMVMDLC
+ifdef USE_LIBCURL
+MODULE_OBJS += \
+	dlcsdialog.o \
+	downloaddlcsdialog.o
 endif
 endif
 
