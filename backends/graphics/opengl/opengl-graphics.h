@@ -101,6 +101,7 @@ public:
 
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	void fillScreen(uint32 col) override;
+	void fillScreen(const Common::Rect &r, uint32 col) override;
 
 	void updateScreen() override;
 

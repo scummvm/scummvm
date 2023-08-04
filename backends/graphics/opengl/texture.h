@@ -221,6 +221,7 @@ public:
 	 * @param color Color value in format returned by getFormat.
 	 */
 	void fill(uint32 color);
+	void fill(const Common::Rect &r, uint32 color);
 
 	void flagDirty() { _allDirty = true; }
 	virtual bool isDirty() const { return _allDirty || !_dirtyArea.isEmpty(); }
@@ -265,6 +266,7 @@ public:
 protected:
 	void clearDirty() { _allDirty = false; _dirtyArea = Common::Rect(); }
 
+	void addDirtyArea(const Common::Rect &r);
 	Common::Rect getDirtyArea() const;
 private:
 	bool _allDirty;

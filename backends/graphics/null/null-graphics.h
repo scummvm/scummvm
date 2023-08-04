@@ -68,6 +68,7 @@ public:
 	Graphics::Surface *lockScreen() override { return NULL; }
 	void unlockScreen() override {}
 	void fillScreen(uint32 col) override {}
+	void fillScreen(const Common::Rect &r, uint32 col) override {}
 	void updateScreen() override {}
 	void setShakePos(int shakeXOffset, int shakeYOffset) override {}
 	void setFocusRectangle(const Common::Rect& rect) override {}

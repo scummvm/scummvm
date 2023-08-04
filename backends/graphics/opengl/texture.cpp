@@ -234,15 +234,7 @@ void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcP
 	assert(x + w <= (uint)dstSurf->w);
 	assert(y + h <= (uint)dstSurf->h);
 
-	// *sigh* Common::Rect::extend behaves unexpected whenever one of the two
-	// parameters is an empty rect. Thus, we check whether the current dirty
-	// area is valid. In case it is not we simply use the parameters as new
-	// dirty area. Otherwise, we simply call extend.
-	if (_dirtyArea.isEmpty()) {
-		_dirtyArea = Common::Rect(x, y, x + w, y + h);
-	} else {
-		_dirtyArea.extend(Common::Rect(x, y, x + w, y + h));
-	}
+	addDirtyArea(Common::Rect(x, y, x + w, y + h));
 
 	const byte *src = (const byte *)srcPtr;
 	byte *dst = (byte *)dstSurf->getBasePtr(x, y);
@@ -265,6 +257,25 @@ void Surface::fill(uint32 color) {
 	dst->fillRect(Common::Rect(dst->w, dst->h), color);
 
 	flagDirty();
+}
+
+void Surface::fill(const Common::Rect &r, uint32 color) {
+	Graphics::Surface *dst = getSurface();
+	dst->fillRect(r, color);
+
+	addDirtyArea(r);
+}
+
+void Surface::addDirtyArea(const Common::Rect &r) {
+	// *sigh* Common::Rect::extend behaves unexpected whenever one of the two
+	// parameters is an empty rect. Thus, we check whether the current dirty
+	// area is valid. In case it is not we simply use the parameters as new
+	// dirty area. Otherwise, we simply call extend.
+	if (_dirtyArea.isEmpty()) {
+		_dirtyArea = r;
+	} else {
+		_dirtyArea.extend(r);
+	}
 }
 
 Common::Rect Surface::getDirtyArea() const {

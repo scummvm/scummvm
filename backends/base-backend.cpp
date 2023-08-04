@@ -75,6 +75,13 @@ void BaseBackend::fillScreen(uint32 col) {
 	unlockScreen();
 }
 
+void BaseBackend::fillScreen(const Common::Rect &r, uint32 col) {
+	Graphics::Surface *screen = lockScreen();
+	if (screen)
+		screen->fillRect(r, col);
+	unlockScreen();
+}
+
 void EventsBaseBackend::initBackend() {
 	// Init Event manager
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER
