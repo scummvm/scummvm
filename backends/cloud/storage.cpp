@@ -57,8 +57,10 @@ void Storage::printErrorResponse(Networking::ErrorResponse error) {
 Networking::Request *Storage::addRequest(Networking::Request *request) {
 	_runningRequestsMutex.lock();
 	++_runningRequestsCount;
-	if (_runningRequestsCount == 1)
+	if (_runningRequestsCount == 1) {
+		g_system->taskStarted(OSystem::kCloudDownload);
 		debug(9, "Storage is working now");
+	}
 	_runningRequestsMutex.unlock();
 	return ConnMan.addRequest(request, new Common::Callback<Storage, Networking::Request *>(this, &Storage::requestFinishedCallback));
 }
@@ -72,8 +74,10 @@ void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer
 	--_runningRequestsCount;
 	if (_syncRestartRequestsed)
 		restartSync = true;
-	if (_runningRequestsCount == 0 && !restartSync)
+	if (_runningRequestsCount == 0) {
+		g_system->taskFinished(OSystem::kCloudDownload);
 		debug(9, "Storage is not working now");
+	}
 	_runningRequestsMutex.unlock();
 
 	if (restartSync)
