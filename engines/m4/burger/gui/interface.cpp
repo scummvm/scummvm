@@ -25,7 +25,6 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
-#include "m4/gui/hotkeys.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/hotkeys.h"
 #include "m4/burger/vars.h"
@@ -185,20 +184,20 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 	if (eventType != EVENT_MOUSE)
 		return false;
 
-	if (_G(kernel).fading_to_grey && event == 5) {
+	if (_G(kernel).fading_to_grey && event == _ME_L_release) {
 		kernel_unexamine_inventory_object(_G(master_palette), 5, 1);
 		return true;
 	}
 
 	if (player_commands_allowed()) {
-		if (x == _savedX && y == _savedY && event != 2 && event != 5 &&
-				event != 3 && event != 4)
+		if (x == _savedX && y == _savedY && event != _ME_L_click &&
+				event != _ME_L_release && event != _ME_L_hold && event != _ME_L_drag)
 			return true;
 
 		_savedX = x;
 		_savedY = y;
 
-		ControlStatus status = _interfaceBox->track(event, _x1, _y1);
+		ControlStatus status = _interfaceBox->track(event, x - _x1, y - _y1);
 
 		switch (status) {
 		case NOTHING:
@@ -276,11 +275,11 @@ void Interface::trackIcons() {
 
 	switch (_interfaceBox->_highlight_index) {
 	case 4:
-		M4::Hotkeys::t_cb(nullptr, nullptr);
+		Hotkeys::t_cb(nullptr, nullptr);
 		break;
 
 	case 5:
-		M4::Hotkeys::l_cb(nullptr, nullptr);
+		Hotkeys::l_cb(nullptr, nullptr);
 		break;
 
 	case 6:
@@ -347,6 +346,7 @@ void Interface::trackIcons() {
 		break;
 
 	case 11:
+		// Abduct
 		other_save_game_for_resurrection();
 		CreateGameMenu(_G(master_palette));
 		break;

@@ -24,11 +24,12 @@
 #define M4_BURGER_HOTKEYS_H
 
 #include "m4/m4_types.h"
+#include "m4/gui/hotkeys.h"
 
 namespace M4 {
 namespace Burger {
 
-struct Hotkeys {
+struct Hotkeys : public M4::Hotkeys {
 	/**
 	 * Called when the Escape key is pressed
 	 */
