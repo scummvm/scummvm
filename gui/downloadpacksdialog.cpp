@@ -88,6 +88,7 @@ void DialogState::downloadList() {
 
 void DialogState::proceedDownload() {
 	startTime = lastUpdate = g_system->getMillis();
+	g_system->taskStarted(OSystem::kDataPackDownload);
 	takeOneFile();
 }
 
@@ -142,6 +143,7 @@ void DialogState::downloadFileCallback(Networking::DataResponse r) {
 	if (response->eos) {
 		if (!takeOneFile()) {
 			state = kDownloadComplete;
+			g_system->taskFinished(OSystem::kDataPackDownload);
 			if (dialog)
 				dialog->sendCommand(kDownloadEndedCmd, 0);
 			return;
@@ -157,6 +159,7 @@ void DialogState::downloadFileCallback(Networking::DataResponse r) {
 void DialogState::errorCallback(Networking::ErrorResponse error) {
 	Common::U32String message = Common::U32String::format(_("ERROR %d: %s"), error.httpResponseCode, error.response.c_str());
 
+	g_system->taskFinished(OSystem::kDataPackDownload);
 	if (dialog)
 		dialog->setError(message);
 }
