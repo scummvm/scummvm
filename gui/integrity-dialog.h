@@ -41,39 +41,47 @@ enum {
 	UNKNOWN = 4
 };
 
+enum IconProcessState {
+	kChecksumStateNone,
+	kChecksumStateCalculating,
+	kChecksumComplete
+};
+
 class IntegrityDialog : Dialog {
-	Common::String _endpoint;
-	Common::Path _gamePath;
-	Common::String _gameid;
-	Common::String _engineid;
-	Common::String _extra;
-	Common::String _platform;
-	Common::String _language;
-
-	int _totalSize;
-	int _calculatedSize;
-	int _progressPercentage;
-
-	bool _error;
-	Common::Array<int> *_results;
-
+	StaticTextWidget *_statusText;
+	StaticTextWidget *_errorText;
+	StaticTextWidget *_percentLabel;
 	SliderWidget *_progressBar;
+	ButtonWidget *_cancelButton;
+
+	bool _close;
+
+	void refreshWidgets();
 
 public:
 	IntegrityDialog(Common::String endpoint, Common::String gameConfig);
 	~IntegrityDialog();
 
 	void sendJSON();
-
-private:
-	void calculateTotalSize(Common::Path gamePath);
-
 	void checksumResponseCallback(const Common::JSONValue *r);
 	void errorCallback(const Networking::ErrorResponse &error);
-	Common::Array<Common::StringArray> generateChecksums(Common::Path gamePath, Common::Array<Common::StringArray> &fileChecksums);
-	Common::JSONValue *generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
 
-	void parseJSON(const Common::JSONValue *response);
+	void calculateTotalSize(Common::Path gamePath);
+
+	static Common::Array<Common::StringArray> generateChecksums(Common::Path gamePath, Common::Array<Common::StringArray> &fileChecksums);
+	static Common::JSONValue *generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
+	static Common::String parseJSON(const Common::JSONValue *response);
+
+	void open() override;
+	void close() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleTickle() override;
+	void reflowLayout() override;
+
+	void setError(Common::U32String &msg);
+
+private:
+	void setState(IconProcessState state);
 };
 
 } // End of namespace GUI
