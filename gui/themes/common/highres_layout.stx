@@ -542,6 +542,9 @@
 			<widget name = 'CurrentDownload'
 					height = 'Globals.Line.Height'
 			/>
+			<widget name = 'ErrorText'
+					height = 'Globals.Line.Height'
+			/>
 			<widget name = 'ProgressBar'
 					height = 'Globals.Button.Height'
 			/>

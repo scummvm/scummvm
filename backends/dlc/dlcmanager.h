@@ -46,6 +46,7 @@ public:
 	bool _fetchDLCs = false;
 	bool _interruptCurrentDownload = false;
 	uint32 _currentDownloadedSize;
+	Common::String _errorText;
 	Common::Array<DLCDesc*> _dlcs;
 	Common::Array<DLCDesc*> _dlcsInProgress;
 	Common::Queue<DLCDesc*> _queuedDownloadTasks;
