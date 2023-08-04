@@ -22,10 +22,51 @@
 #include "m4/burger/hotkeys.h"
 #include "m4/burger/vars.h"
 #include "m4/burger/gui/game_menu.h"
+#include "m4/gui/gui_sys.h"
 #include "m4/adv_r/other.h"
 
 namespace M4 {
 namespace Burger {
+
+void Hotkeys::add_hot_keys() {
+	M4::Hotkeys::add_hot_keys();
+
+	AddSystemHotkey('t', t_cb);
+	AddSystemHotkey('u', u_cb);
+	AddSystemHotkey('l', l_cb);
+	AddSystemHotkey('T', t_cb);
+	AddSystemHotkey('U', u_cb);
+	AddSystemHotkey('L', l_cb);
+
+	AddSystemHotkey('A', l_cb);
+	AddSystemHotkey('S', t_cb);
+	AddSystemHotkey('D', u_cb);
+	AddSystemHotkey('a', l_cb);
+	AddSystemHotkey('s', t_cb);
+	AddSystemHotkey('d', u_cb);
+
+	AddSystemHotkey('F', a_cb);
+	AddSystemHotkey('f', a_cb);
+}
+
+void Hotkeys::toggle_through_cursors() {
+	switch (_G(cursor_state)) {
+	case kARROW:
+		Hotkeys::l_cb(nullptr, nullptr);
+		break;
+	case kLOOK:
+		Hotkeys::t_cb(nullptr, nullptr);
+		break;
+	case kTAKE:
+		Hotkeys::u_cb(nullptr, nullptr);
+		break;
+	case kUSE:
+		Hotkeys::a_cb(nullptr, nullptr);
+		break;
+	default:
+		break;
+	}
+}
 
 void Hotkeys::escape_key_pressed(void *, void *) {
 	// Decide what to do depending on what kind of game is playing
@@ -74,6 +115,23 @@ void Hotkeys::escape_key_pressed(void *, void *) {
 		}
 		break;
 	}
+}
+
+
+void Hotkeys::t_cb(void *, void *) {
+	g_globals->_interface.t_cb();
+}
+
+void Hotkeys::u_cb(void *, void *) {
+	g_globals->_interface.u_cb();
+}
+
+void Hotkeys::l_cb(void *, void *) {
+	g_globals->_interface.l_cb();
+}
+
+void Hotkeys::a_cb(void *, void *) {
+	g_globals->_interface.a_cb();
 }
 
 } // namespace Burger

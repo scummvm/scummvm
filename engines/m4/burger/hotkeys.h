@@ -30,10 +30,19 @@ namespace M4 {
 namespace Burger {
 
 struct Hotkeys : public M4::Hotkeys {
+	static void t_cb(void *, void *);
+	static void u_cb(void *, void *);
+	static void l_cb(void *, void *);
+	static void a_cb(void *, void *);
+
 	/**
 	 * Called when the Escape key is pressed
 	 */
 	static void escape_key_pressed(void *, void *);
+
+	void add_hot_keys() override;
+
+	void toggle_through_cursors() override;
 };
 
 } // namespace Burger

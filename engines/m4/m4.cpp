@@ -82,7 +82,7 @@ Common::Error M4Engine::run() {
 #define KEEP_PLAYING (_G(kernel).going && !shouldQuit())
 
 void M4Engine::m4_inflight() {
-	Hotkeys::add_hot_keys();
+	g_vars->getHotkeys()->add_hot_keys();
 	_G(kernel).going = true;
 
 	while (KEEP_PLAYING) {

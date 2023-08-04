@@ -82,6 +82,11 @@ public:
 
 	void refresh_right_arrow();
 	void refresh_left_arrow();
+
+	void l_cb();
+	void u_cb();
+	void t_cb();
+	void a_cb();
 };
 
 } // namespace Interface

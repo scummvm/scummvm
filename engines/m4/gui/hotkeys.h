@@ -28,8 +28,8 @@
 namespace M4 {
 
 struct Hotkeys {
-private:
-	static void adv_enable_system_hot_keys();
+protected:
+	virtual void adv_enable_system_hot_keys();
 
 public:
 	static void exit_program(void *, void *);
@@ -37,10 +37,6 @@ public:
 	static void cb_F3(void *, void *);
 	static void show_version(void *a, void *b);
 	static void version_ok_button(void *a, void *b);
-	static void t_cb(void *, void *);
-	static void u_cb(void *, void *);
-	static void l_cb(void *, void *);
-	static void a_cb(void *, void *);
 	static void adv_hyperwalk_to_final_destination(void *a, void *b);
 	static void capture_wrap(void *, void *);
 	static void debug_memory_next_column(void *, void *);
@@ -80,9 +76,11 @@ public:
 	static void pal_override(void *, void *);
 
 public:
-	static void add_hot_keys();
-	static void disable_hot_keys();
-	static void restore_hot_keys();
+	virtual void add_hot_keys();
+	void disable_hot_keys();
+	void restore_hot_keys();
+
+	virtual void toggle_through_cursors() = 0;
 };
 
 } // End of namespace M4

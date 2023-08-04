@@ -83,22 +83,7 @@ void adv_kill_digi_between_rooms(bool true_or_false) {
 }
 
 void toggle_through_cursors() {
-	switch (_G(cursor_state)) {
-	case kARROW:
-		Hotkeys::l_cb(nullptr, nullptr);
-		break;
-	case kLOOK:
-		Hotkeys::t_cb(nullptr, nullptr);
-		break;
-	case kTAKE:
-		Hotkeys::u_cb(nullptr, nullptr);
-		break;
-	case kUSE:
-		Hotkeys::a_cb(nullptr, nullptr);
-		break;
-	default:
-		break;
-	}
+	g_vars->getHotkeys()->toggle_through_cursors();
 }
 
 bool this_is_a_walkcode(int32 x, int32 y) {

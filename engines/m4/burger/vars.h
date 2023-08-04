@@ -28,6 +28,7 @@
 #include "m4/burger/gui/gui.h"
 #include "m4/burger/gui/game_menu.h"
 #include "m4/burger/flags.h"
+#include "m4/burger/hotkeys.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/series_player.h"
 #include "m4/burger/walker.h"
@@ -82,6 +83,7 @@ public:
 	GameMode _executing = WHOLE_GAME;
 	GUI::GUI_Globals _gui;
 	GUI::Interface _interface;
+	Burger::Hotkeys _hotkeys;
 	GUI::MenuGlobals _menu;
 	SeriesPlayers _seriesPlayers;
 	ReleaseTrigger_Globals _releaseTrigger;
@@ -104,6 +106,9 @@ public:
 
 	M4::Interface *getInterface() override {
 		return &_interface;
+	}
+	Hotkeys *getHotkeys() override {
+		return &_hotkeys;
 	}
 	M4::Walker *getWalker() override {
 		return &_walker;
