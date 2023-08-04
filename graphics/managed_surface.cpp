@@ -789,7 +789,9 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 			colorMod, flipping,
 			blend, alphaType);
 	}
-	return Common::Rect(0, 0, dstArea.width(), dstArea.height());
+
+	if (dstArea.isEmpty()) return Common::Rect(0, 0, 0, 0);
+	else return Common::Rect(0, 0, dstArea.width(), dstArea.height());
 }
 
 void ManagedSurface::markAllDirty() {

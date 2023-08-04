@@ -243,6 +243,7 @@ LOGIC_FUNCS_EXT(Generic)
 	typedef void(*BlitFunc)(Args &, const TSpriteBlendMode &, const AlphaType &);
 	static BlitFunc blitFunc;
 	friend class ::BlendBlitUnfilteredTestSuite;
+	friend class BlendBlitImpl;
 
 public:
 	static const int SCALE_THRESHOLD = 0x100;

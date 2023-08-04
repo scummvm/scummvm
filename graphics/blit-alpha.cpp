@@ -174,12 +174,12 @@ bool setAlpha(byte *dst, const byte *src,
 BlendBlit::Args::Args(byte *dst, const byte *src,
 	const uint dstPitch, const uint srcPitch,
 	const int posX, const int posY,
-	const uint width, const uint height,
-	const int scaleX, const int scaleY,
-	const uint32 colorMod, const uint flipping) :
+	const uint _width, const uint _height,
+	const int _scaleX, const int _scaleY,
+	const uint32 colorMod, const uint _flipping) :
 		xp(0), yp(0), dstPitch(dstPitch),
-		width(width), height(height), color(colorMod),
-		scaleX(scaleX), scaleY(scaleY), flipping(flipping) {
+		width(_width), height(_height), color(colorMod),
+		scaleX(_scaleX), scaleY(_scaleY), flipping(_flipping) {
 	bool doScale = scaleX != SCALE_THRESHOLD || scaleY != SCALE_THRESHOLD;
 	
 	rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
@@ -213,10 +213,13 @@ void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 	int scaleXCtr, scaleYCtr = 0;
 	const byte *inBase;
 
+	const byte rawcr = (args.color >> kRModShift) & 0xFF;
+	const byte rawcg = (args.color >> kGModShift) & 0xFF;
+	const byte rawcb = (args.color >> kBModShift) & 0xFF;
 	const byte ca = alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
-	const byte cr = rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
-	const byte cg = rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
-	const byte cb = rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+	const uint32 cr = rgbmod   ? (rawcr == 255 ? 256 : rawcr) : 256;
+	const uint32 cg = rgbmod   ? (rawcg == 255 ? 256 : rawcg) : 256;
+	const uint32 cb = rgbmod   ? (rawcb == 255 ? 256 : rawcb) : 256;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
@@ -234,23 +237,9 @@ void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 			uint32 ina = in[kAIndex] * ca >> 8;
 
 			if (ina != 0) {
-				if (cb != 255) {
-					out[kBIndex] = MIN<uint>(out[kBIndex] * ((in[kBIndex] * cb * ina) >> 16) >> 8, 255u);
-				} else {
-					out[kBIndex] = MIN<uint>(out[kBIndex] * (in[kBIndex] * ina >> 8) >> 8, 255u);
-				}
-
-				if (cg != 255) {
-					out[kGIndex] = MIN<uint>(out[kGIndex] * ((in[kGIndex] * cg * ina) >> 16) >> 8, 255u);
-				} else {
-					out[kGIndex] = MIN<uint>(out[kGIndex] * (in[kGIndex] * ina >> 8) >> 8, 255u);
-				}
-
-				if (cr != 255) {
-					out[kRIndex] = MIN<uint>(out[kRIndex] * ((in[kRIndex] * cr * ina) >> 16) >> 8, 255u);
-				} else {
-					out[kRIndex] = MIN<uint>(out[kRIndex] * (in[kRIndex] * ina >> 8) >> 8, 255u);
-				}
+				out[kBIndex] = out[kBIndex] * ((in[kBIndex] * cb * ina) >> 16) >> 8;
+				out[kGIndex] = out[kGIndex] * ((in[kGIndex] * cg * ina) >> 16) >> 8;
+				out[kRIndex] = out[kRIndex] * ((in[kRIndex] * cr * ina) >> 16) >> 8;
 			}
 
 			if (doscale)
@@ -318,7 +307,7 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 					const uint32 dstg = out32 & kGModMask;
 					*(uint32 *)out = kAModMask |
 						((dstrb * (255 - ina) + rb * ina) & (kRModMask | kBModMask)) |
-						((dstg * (255 - ina) + g * ina) >> 8);
+						(((dstg * (255 - ina) + g * ina) >> 8) & kGModMask);
 
 					// I think this code will run faster on older hardware
 					// TODO maybe?: Put #ifdef to use on older hardware
@@ -355,9 +344,12 @@ void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 	int scaleXCtr, scaleYCtr = 0;
 	const byte *inBase;
 
-	const byte cr = rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
-	const byte cg = rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
-	const byte cb = rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+	const byte rawcr = (args.color >> kRModShift) & 0xFF;
+	const byte rawcg = (args.color >> kGModShift) & 0xFF;
+	const byte rawcb = (args.color >> kBModShift) & 0xFF;
+	const uint32 cr = rgbmod   ? (rawcr == 255 ? 256 : rawcr) : 256;
+	const uint32 cg = rgbmod   ? (rawcg == 255 ? 256 : rawcg) : 256;
+	const uint32 cb = rgbmod   ? (rawcb == 255 ? 256 : rawcb) : 256;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
@@ -373,23 +365,9 @@ void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 			}
 
 			out[kAIndex] = 255;
-			if (cb != 255) {
-				out[kBIndex] = MAX(out[kBIndex] - ((in[kBIndex] * cb  * (out[kBIndex]) * in[kAIndex]) >> 24), 0);
-			} else {
-				out[kBIndex] = MAX(out[kBIndex] - (in[kBIndex] * (out[kBIndex]) * in[kAIndex] >> 16), 0);
-			}
-
-			if (cg != 255) {
-				out[kGIndex] = MAX(out[kGIndex] - ((in[kGIndex] * cg  * (out[kGIndex]) * in[kAIndex]) >> 24), 0);
-			} else {
-				out[kGIndex] = MAX(out[kGIndex] - (in[kGIndex] * (out[kGIndex]) * in[kAIndex] >> 16), 0);
-			}
-
-			if (cr != 255) {
-				out[kRIndex] = MAX(out[kRIndex] - ((in[kRIndex] * cr * (out[kRIndex]) * in[kAIndex]) >> 24), 0);
-			} else {
-				out[kRIndex] = MAX(out[kRIndex] - (in[kRIndex] * (out[kRIndex]) * in[kAIndex] >> 16), 0);
-			}
+			out[kBIndex] = MAX<int32>(out[kBIndex] - ((in[kBIndex] * cb  * (out[kBIndex]) * in[kAIndex]) >> 24), 0);
+			out[kGIndex] = MAX<int32>(out[kGIndex] - ((in[kGIndex] * cg  * (out[kGIndex]) * in[kAIndex]) >> 24), 0);
+			out[kRIndex] = MAX<int32>(out[kRIndex] - ((in[kRIndex] * cr * (out[kRIndex]) * in[kAIndex]) >> 24), 0);
 
 			if (doscale)
 				scaleXCtr += args.scaleX;
@@ -416,10 +394,13 @@ void BlendBlit::doBlitAdditiveBlendLogicGeneric(Args &args) {
 	int scaleXCtr, scaleYCtr = 0;
 	const byte *inBase;
 
+	const byte rawcr = (args.color >> kRModShift) & 0xFF;
+	const byte rawcg = (args.color >> kGModShift) & 0xFF;
+	const byte rawcb = (args.color >> kBModShift) & 0xFF;
 	const byte ca = alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
-	const byte cr = rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
-	const byte cg = rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
-	const byte cb = rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+	const uint32 cr = rgbmod   ? (rawcr == 255 ? 256 : rawcr) : 256;
+	const uint32 cg = rgbmod   ? (rawcg == 255 ? 256 : rawcg) : 256;
+	const uint32 cb = rgbmod   ? (rawcb == 255 ? 256 : rawcb) : 256;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
@@ -437,23 +418,9 @@ void BlendBlit::doBlitAdditiveBlendLogicGeneric(Args &args) {
 			uint32 ina = in[kAIndex] * ca >> 8;
 
 			if (ina != 0) {
-				if (cb != 255) {
-					out[kBIndex] = MIN<uint>(out[kBIndex] + ((in[kBIndex] * cb * ina) >> 16), 255u);
-				} else {
-					out[kBIndex] = MIN<uint>(out[kBIndex] + (in[kBIndex] * ina >> 8), 255u);
-				}
-
-				if (cg != 255) {
-					out[kGIndex] = MIN<uint>(out[kGIndex] + ((in[kGIndex] * cg * ina) >> 16), 255u);
-				} else {
-					out[kGIndex] = MIN<uint>(out[kGIndex] + (in[kGIndex] * ina >> 8), 255u);
-				}
-
-				if (cr != 255) {
-					out[kRIndex] = MIN<uint>(out[kRIndex] + ((in[kRIndex] * cr * ina) >> 16), 255u);
-				} else {
-					out[kRIndex] = MIN<uint>(out[kRIndex] + (in[kRIndex] * ina >> 8), 255u);
-				}
+				out[kBIndex] = out[kBIndex] + ((in[kBIndex] * cb * ina) >> 16);
+				out[kGIndex] = out[kGIndex] + ((in[kGIndex] * cg * ina) >> 16);
+				out[kRIndex] = out[kRIndex] + ((in[kRIndex] * cr * ina) >> 16);
 			}
 
 			if (doscale)
@@ -498,17 +465,10 @@ void BlendBlit::doBlitOpaqueBlendLogicGeneric(Args &args) {
 				scaleXCtr += args.scaleX;
 				out += 4;
 			}
-		} else if (args.flipping & FLIP_H) {
-			for (uint32 j = 0; j < args.width; j++) {
-				memcpy(out, in, 4);
-				out[kAIndex] = 0xFF;
-				out += 4;
-				in += args.inStep;
-			}
 		} else {
-			memcpy(out, in, args.width * 4);
 			for (uint32 j = 0; j < args.width; j++) {
-				out[kAIndex] = 0xFF;
+				*(uint32 *)out = *(const uint32 *)in | kAModMask;
+				in += args.inStep;
 				out += 4;
 			}
 		}
