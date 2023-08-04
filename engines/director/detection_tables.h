@@ -80,6 +80,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "betterd",			"The Better Dead Ratification" },
 	{ "beyondthewall",		"Beyond the Wall of Stars" },
 	{ "biblechamps",		"Bible Champions: The Birth of Jesus" },
+	{ "bioscopia",			"Bioscopia: Where Science Conquers Evil" },
 	{ "birdlife",			"Shelley Duvall's It's a Bird's Life" },
 	{ "blinddate",			"National Lampoon's Blind Date" },
 	{ "blinkybill1",		"Blinky Bill's Ghost Cave" },
@@ -106,6 +107,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ceremony",			"Ceremony of Innocence" },
 	{ "chaos",				"The C.H.A.O.S. Continuum" },
 	{ "checkersvillage",	"Checkers' Village" },
+	{ "chemicus",			"Chemicus: Journey to the Other Side" },
 	{ "chopsuey",			"Chop Suey" },
 	{ "circus",				"Circus!" },
 	{ "connections",		"Connections" },
@@ -748,6 +750,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bobmambo5",			"Bob the Builder: Mambo No. 5" },
 	{ "chaquico1000",		"Craig Chaquico: A Thousand Pictures" },
 	{ "concentration",		"Solitudes: Natural Concentration" },
+	{ "custardloverama",	"Custard: Loverama" },
 	{ "doorswindows",		"The Cranberries: Doors and Windows" },
 	{ "freakshowost",		"The Residents: Freak Show: Multimedia Bonus Track" },
 	{ "gingerbreadman",		"The Residents: Gingerbread Man" },
@@ -859,6 +862,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
 	{ "frankiekaraoke",		"Frankie Tierwelt Karaoke" },
+	{ "geograficus",		"Geograficus ... und Geografie wird zum Abenteuer" },
 	{ "girlspack",			"Girl's Pack!" },
 	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
 	{ "globiabc",			"Globi's ABC" },
@@ -871,6 +875,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "loewe4",				"Löwenzahn 4" },
 	{ "loewe5",				"Löwenzahn 5" },
 	{ "loewe6",				"Löwenzahn 6" },
+	{ "mathica",			"Mathica ... und Mathematik wird zum Abenteuer" },
 	{ "mats3",				"Mats und das rätselhafte Tier" },
 	{ "maus2",				"Die CD-ROM mit der Maus 2" },
 	{ "max1",				"Max and the Secret Formula" },
@@ -7027,6 +7032,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("crusader2000", "", "Lancer Croisades", "398eb2cdf121feb490097c6323d52267", 1031745, Common::FR_FRA, 650),
 	WINGAME1_l("crusader2000", "", "Croisade.exe", "d62438566e44826960fc16c5c23dbe43", 1546312, Common::FR_FRA, 650),
 
+	// TRAC report #14548
+	WINGAME1("custardloverama", "", "CUSTARD.EXE", "t:89c0c1dc1cdd57e8d868e09f034f85ba", 1515663, 650),
+
 	// Doki Doki On-air Drama Series acts as a companion to a series of radio broadcasts
 	// It includes the audio episodes alongside sketches, interviews, and mini-games
 	// Original filenames are as follows:
@@ -7939,9 +7947,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pettsonjs", "", "Julpettson", "0944b962ebb00f4b5d5149d220f8449b", 115004, Common::SE_SWE, 702),
 	WINGAME1_l("pettsonjs", "", "Julstart.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2610931, Common::SE_SWE, 702),
 
+	// German title is Physikus - Das Abenteuer aus der Welt der Naturwissenschaften
+	MACGAME1("physicus", "",   "Physicus", "r:5d3f89e052320f8ce140451c730e232b", 114389, 702),
+	MACGAME1_l("physicus", "", "Physikus", "r:5d3f89e052320f8ce140451c730e232b", 114389, Common::DE_DEU, 702),
 	MACGAME1_l("physicus", "", "Physikus", "5d3f89e052320f8ce140451c730e232b", 114645, Common::FR_FRA, 702),
-
-	WINGAME1t_l("physicus", "", "Physikus.exe", "89be052460986358d7e4724ebc940af6", 1816828, Common::DE_DEU, 702),
+	WINGAME1("physicus", "",   "Physicus.exe", "t:d2a772b412a278bda68bd64a00af9b04", 2298279, 702),
+	WINGAME1_l("physicus", "", "Physikus.exe", "t:89be052460986358d7e4724ebc940af6", 1816828, Common::DE_DEU, 702),
 
 	WINDEMO1("planetstrass", "Demo", "Planet.exe", "88d4c24f6d4b78a73ce5b07693eddbc8", 15434606, 702),
 
@@ -8182,6 +8193,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// https://web.archive.org/web/20060208235824/http://billetrille.savannah.dk/dtpages.php3?page_id=208&lang=english
 	MACDEMO1_l("billetrille2", "Demo", "VilleLilli2Demo", "4ea5fc09f79eee6dded94dc40f303779", 196171, Common::FI_FIN, 800),
 
+	// German title is Biolab: Das Abenteuerspiel aus der Welt der Biologie
+	MACGAME1("bioscopia", "", "Bioscopia",	   "r:057ed568f65dd2cdf41afd8cb7f534fc", 193939, 800),
+	MACGAME1_l("bioscopia", "", "Biolab",	   "r:057ed568f65dd2cdf41afd8cb7f534fc", 193939, Common::DE_DEU, 800),
+	WINGAME1("bioscopia", "", "Bioscopia.exe", "t:5ecd9009618d6622dfb8a3dd5bedce1e", 2277226, 800),
+	WINGAME1_l("bioscopia", "", "Biolab.exe",  "t:3313b5e91dfc4c6c315a02ac6fd10b29", 2281667, Common::DE_DEU, 800),
+	// TRAC #14520 (Re-Release)
+	WINGAME1_l("bioscopia", "", "Biolab.exe",  "t:3313b5e91dfc4c6c315a02ac6fd10b29", 2281685, Common::DE_DEU, 800),
+
 	WINGAME2("bobmambo5", "ECD", "START.EXE", "e24d4bab978b1a5c2326d2c56cf4d781", 6980680,
 								 "MAMBO.MOV", "990db0c7187621250dfca0a55996538e", 39868175, 800),
 
@@ -8197,6 +8216,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("casino5p", "", "Casino.exe", 			"fb46241e501df6a96d5a3109f13d61b6", 3335762,
 							  "data/casino/Casino.DIR", "414d899657b09f133f0146af2a2aae3c", 3062219, 850), // Disc 1
 	WINGAME1t("casino5p", "", "Slots200.exe", "0f04a70712597a6bd001232b0913d514", 3011024, 850), // Disc 2
+
+	MACGAME1("chemicus", "", "Chemicus",	 "r:8c1b4ddb1adff89deaba119f7cf8df7b", 266213, 800),
+	WINGAME1("chemicus", "", "Chemicus.exe", "t:439dd9480e4383f267d951d2f0db6e0a", 57944, 800),
 
 	MACGAME1("cmi", "CM38/10/01", "CMi_38_Mac", "f065c75691d28120e9f630448c3b1b71", 1225735, 800),
 	WINGAME1("cmi", "CM38/10/01", "CMi_38_Win.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2514361, 800),
@@ -8856,6 +8878,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Installer & uninstaller also use Director
 	MACGAME1_l("garygadget5", "", "WillyRaumschiff OSX", "b7181d7af306a3d336e5cc70cc77c641", 318788, Common::DE_DEU, 1010),
 
+	MACGAME1_l("geograficus", "Classic", "Geograficus.classic", "r:dcd7467138d0aabbcef83d2337e1be62", 219361, Common::DE_DEU, 1010),
+	MACGAME1_l("geograficus", "OS X",	 "Geograficus.osx", 	"r:098b345655e60b22ba7ebe9c4a4093bb", 270277, Common::DE_DEU, 1010),
+	WINGAME1_l("geograficus", "",		 "Geograficus.exe", 	"t:b535f50e89741cfad169af318b7d6ef4", 2849657, Common::DE_DEU, 1010),
+
 	// CDs 03-05 are D8 for Mac and Windows
 	// CD02 and CD13 are D8 for Windows and D10 for Mac
 	// Several discs contain mini-games using Flash Player (v6,v7,v8)
@@ -8932,6 +8958,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("limit0", "", "Limit 0.exe", "827e5af88f4c096652a1523dc28c9bf4", 4664824, 1000),
 
 	WINGAME1t_l("loewe1", "", "Loewe1.exe", "854989b2e1f7b9d55988ca1387859da2", 96316, Common::DE_DEU, 1010),
+
+	MACGAME1_l("mathica", "Classic", "Mathica.classic",	"r:afc5296d3ffc3a638d32ccbe867e7465", 219361, Common::DE_DEU, 1010),
+	MACGAME1_l("mathica", "OS X", 	 "Mathica.osx",		"r:dd763caab8c8e5b61fafd6306f7c4f1f", 270277, Common::DE_DEU, 1010),
+	WINGAME1_l("mathica", "", 		 "Mathica.exe", 	"t:26b24ec92bd0971c4a9c59974101baaa", 2817544, Common::DE_DEU, 1010),
 
 	// Found on Bonjour تعليم الفرنسية
 	// Software catalogue for Middle East Software Company of Giza, Egypt
