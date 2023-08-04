@@ -34,6 +34,7 @@ CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url)
 	_bytesBufferSize(0), _uploading(false), _usingPatch(false), _keepAlive(false), _keepAliveIdle(120), _keepAliveInterval(60) {}
 
 CurlRequest::~CurlRequest() {
+	curl_slist_free_all(_headersList);
 	delete _stream;
 	delete[] _bytesBuffer;
 }
