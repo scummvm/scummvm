@@ -127,6 +127,24 @@ void OSystem_iOS7::engineDone() {
 #endif
 }
 
+void OSystem_iOS7::taskStarted(Task task) {
+	EventsBaseBackend::taskStarted(task);
+	if (_runningTasks++ == 0) {
+		// Prevent the device going to sleep while a task is running
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+		});
+	}
+}
+void OSystem_iOS7::taskFinished(Task task) {
+	EventsBaseBackend::taskFinished(task);
+	if (--_runningTasks == 0) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+		});
+	}
+}
+
 void OSystem_iOS7::updateOutputSurface() {
 	execute_on_main_thread(^ {
 		[[iOS7AppDelegate iPhoneView] initSurface];
