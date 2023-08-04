@@ -167,7 +167,7 @@ ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int1
 
 ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag,
 	int16 unknown, int16 relaxed, int16 over, int16 picked, int sprite) : RectClass(r),
-	_unknown(unknown), _relaxed(relaxed), _over(over), _picked(picked), _sprite(sprite) {
+	_tag(tag), _unknown(unknown), _relaxed(relaxed), _over(over), _picked(picked), _sprite(sprite) {
 }
 
 ButtonClass::ButtonClass() : RectClass() {
@@ -491,6 +491,7 @@ ControlStatus InterfaceBox::track(int32 eventType, int16 x, int16 y) {
 			_highlight_index = _button[iter]->get_tag();
 			term_message("selected button: %ld", iter);
 			result = SELECTED;
+			break;
 		}
 	}
 
