@@ -302,7 +302,7 @@ void ScummEngine_v100he::setupOpcodes() {
 	OPCODE(0xd7, o90_sin);
 	/* D8 */
 	OPCODE(0xd8, o72_getSoundPosition);
-	OPCODE(0xd9, o6_isSoundRunning);
+	OPCODE(0xd9, o60_isSoundRunning);
 	OPCODE(0xda, o80_getSoundVar);
 	OPCODE(0xdb, o100_getSpriteInfo);
 	/* DC */

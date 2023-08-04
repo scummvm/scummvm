@@ -127,6 +127,7 @@ protected:
 	void o60_rename();
 	void o60_writeFile();
 	void o60_soundOps();
+	void o60_isSoundRunning();
 	void o60_seekFilePos();
 	void o60_localizeArrayToScript();
 	void o60_redimArray();

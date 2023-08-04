@@ -211,6 +211,7 @@ public:
 	void modifySound(int sound, int offset, int frequencyShift, int pan, int volume, int flags) override;
 
 	int isSoundRunning(int sound) const override;
+	bool isSoundInUse(int sound) const override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
 	int hsFindSoundChannel(int sound) const;

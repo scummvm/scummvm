@@ -67,6 +67,7 @@ void ScummEngine_v60he::setupOpcodes() {
 	_opcodes[0x63].setProc(nullptr, nullptr);
 	_opcodes[0x64].setProc(nullptr, nullptr);
 	OPCODE(0x70, o60_setState);
+	OPCODE(0x98, o60_isSoundRunning);
 	_opcodes[0x9a].setProc(nullptr, nullptr);
 	OPCODE(0x9c, o60_roomOps);
 	OPCODE(0x9d, o60_actorOps);
@@ -1189,6 +1190,15 @@ void ScummEngine_v60he::decodeParseString(int m, int n) {
 	default:
 		error("decodeParseString: default case 0x%x", b);
 	}
+}
+
+void ScummEngine_v60he::o60_isSoundRunning() {
+	int snd = pop();
+
+	if (snd)
+		snd = _sound->isSoundInUse(snd);
+
+	push(snd);
 }
 
 } // End of namespace Scumm

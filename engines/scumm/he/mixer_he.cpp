@@ -220,7 +220,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_milesChannels[channel]._audioHandle,
 								   Audio::makeLoopingAudioStream(stream, 0), channel, 255, 0, DisposeAfterUse::NO);
 			} else {
-				error("HEMixer::milesStartChannel(): Looping ADPCM not yet implemented!");
+				warning("HEMixer::milesStartChannel(): Looping ADPCM not yet implemented!");
 			}
 		} else {
 			_milesChannels[channel]._playFlags = CHANNEL_EMPTY_FLAGS;
@@ -245,7 +245,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_milesChannels[channel]._audioHandle,
 								   stream, channel, _milesChannels[channel]._modifiers.volume, scaledPan, DisposeAfterUse::NO);
 			} else {
-				error("HEMixer::milesStartChannel(): ADPCM not yet implemented!");
+				warning("HEMixer::milesStartChannel(): ADPCM not yet implemented!");
 			}
 		}
 	}
@@ -555,7 +555,7 @@ void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int
 		for (int i = 0; i < MILES_MAX_QUEUED_STREAMS; i++)
 			serviceStream();
 	} else if (_dataFormat == WAVE_FORMAT_IMA_ADPCM) {
-		error("HEMixer::milesStartChannel(): ADPCM not yet implemented!");
+		warning("HEMixer::milesStartChannel(): ADPCM not yet implemented!");
 	} else {
 		debug(5, "HEMixer::milesStartChannel(): Unexpected sound format %d in sound file '%s' at offset %d",
 			  _dataFormat, filename, offset);
