@@ -160,6 +160,7 @@ public:
 	void pal_game_task();
 
 	virtual void global_daemon() = 0;
+	virtual void global_pre_parser() = 0;
 };
 
 } // namespace M4

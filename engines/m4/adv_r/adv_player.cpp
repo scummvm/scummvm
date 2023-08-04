@@ -201,4 +201,48 @@ PlayerInfo *player_update_info(machine *myWalker, PlayerInfo *player_info) {
 	return player_info;
 }
 
+void player_set_facing_hotspot(int trigger) {
+	player_set_facing_at(trigger, _G(hotspot_x), _G(hotspot_y));
+}
+
+void player_set_facing_at(int x, int y, int trigger) {
+	player_hotspot_walk_override_just_face(calc_facing(x, y), trigger);
+}
+
+int calc_facing(int x, int y) {
+	player_update_info(_G(my_walker), &_G(player_info));
+
+	if (!x) {
+		return -_G(player_info).y < -y;
+	} else {
+		double slope = (double)(y - _G(player_info).y) / (double)(x - _G(player_info).x);
+		term_message("click (%d,%d)  player (%d,%d)  slope = %f",
+			x, -y, _G(player_info).x, -_G(player_info).y);
+
+		if (_G(player_info).x < x) {
+			if (slope >= 1.25)
+				return 1;
+			else if (slope >= 0.1)
+				return 2;
+			else if (slope >= -0.1)
+				return 3;
+			else if (slope >= -0.4)
+				return 4;
+			else
+				return 5;
+		} else {
+			if (slope >= 0.4)
+				return 7;
+			else if (slope >= 0.1)
+				return 8;
+			else if (slope >= -0.1)
+				return 9;
+			else if (slope >= -1.25)
+				return 10;
+			else
+				return 11;
+		}
+	}
+}
+
 } // End of namespace M4
