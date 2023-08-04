@@ -26,41 +26,179 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/translation.h"
 
+#include "gui/gui-manager.h"
+#include "gui/launcher.h"
 #include "gui/message.h"
 #include "gui/widget.h"
 
 namespace GUI {
 
-IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String gameConfig) : Dialog("GameOptions_IntegrityDialog") {
-	_endpoint = endpoint;
-	_gamePath = ConfMan.get("path", gameConfig);
-	_gameid = ConfMan.get("gameid", gameConfig);
-	_engineid = ConfMan.get("engineid", gameConfig);
-	_extra = ConfMan.get("extra", gameConfig);
-	_platform = ConfMan.get("platform", gameConfig);
-	_language = ConfMan.get("language", gameConfig);
+enum {
+	kCleanupCmd = 'DlCL',
+};
 
-	calculateTotalSize(_gamePath);
-	_calculatedSize = 0;
-	_progressPercentage = 0;
+struct DialogState {
+	IntegrityDialog *dialog;
+	IconProcessState state;
 
-	_error = false;
-	_results = new Common::Array<int>(5, 0);
+	int totalSize;
+	int calculatedSize;
 
-	MessageDialog alert(Common::U32String("Verifying file integrity may take a long time to complete.\nAre you sure you want to continue?"), "OK", "Cancel");
-	alert.runModal();
+	Common::String endpoint;
+	Common::String gamePath;
+	Common::String gameid;
+	Common::String engineid;
+	Common::String extra;
+	Common::String platform;
+	Common::String language;
 
+	DialogState() {
+		state = kChecksumStateNone;
+		totalSize = calculatedSize = 0;
+		dialog = nullptr;
+	}
+} static *g_state;
+
+uint32 getDownloadingProgress() {
+	if (!g_state || g_state->totalSize == 0)
+		return 0;
+
+	uint32 progress = (uint32)(100 * ((double)g_state->calculatedSize / (double)g_state->totalSize));
+
+	return progress;
+}
+
+IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain) : Dialog("GameOptions_IntegrityDialog"), _close(false) {
+
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
+
+	_statusText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.StatusText", Common::U32String::format(_("Calculating file checksums...")));
+	_errorText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.ErrorText", Common::U32String(""));
+
+	uint32 progress = getDownloadingProgress();
 	_progressBar = new SliderWidget(this, "GameOptions_IntegrityDialog.ProgressBar");
 	_progressBar->setMinValue(0);
 	_progressBar->setMaxValue(100);
-	_progressBar->setValue(_progressPercentage);
+	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
+	_percentLabel = new StaticTextWidget(this, "GameOptions_IntegrityDialog.PercentText", Common::String::format("%u %%", progress));
+	_cancelButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.MainButton", _("Cancel"), Common::U32String(), kCleanupCmd);
 
-	sendJSON();
+	MessageDialog alert(Common::U32String("Verifying file integrity may take a long time to complete.\nAre you sure you want to continue?"), "OK", "Cancel");
+	int result = alert.runModal();
+	if (result == 1)
+		return;
+
+	if (!g_state) {
+		g_state = new DialogState();
+		g_state->dialog = this;
+
+		setState(kChecksumStateCalculating);
+		refreshWidgets();
+
+		g_state->endpoint = endpoint;
+		g_state->gamePath = ConfMan.get("path", domain);
+		g_state->gameid = ConfMan.get("gameid", domain);
+		g_state->engineid = ConfMan.get("engineid", domain);
+		g_state->extra = ConfMan.get("extra", domain);
+		g_state->platform = ConfMan.get("platform", domain);
+		g_state->language = ConfMan.get("language", domain);
+		calculateTotalSize(g_state->gamePath);
+
+		sendJSON();
+	} else {
+		g_state->dialog = this;
+
+		setState(g_state->state);
+		refreshWidgets();
+	}
 }
 
 IntegrityDialog::~IntegrityDialog() {
+}
+
+void IntegrityDialog::open() {
+	Dialog::open();
+	reflowLayout();
+	g_gui.scheduleTopDialogRedraw();
+}
+
+void IntegrityDialog::close() {
+	if (g_state)
+		g_state->dialog = nullptr;
+
+	Dialog::close();
+}
+
+void IntegrityDialog::setState(IconProcessState state) {
+	g_state->state = state;
+
+	switch (state) {
+	case kChecksumStateNone:
+	case kChecksumStateCalculating:
+		_statusText->setLabel(Common::U32String::format(_("Calculating file checksums...")));
+		_cancelButton->setLabel(_("Cancel"));
+		_cancelButton->setCmd(kCleanupCmd);
+		break;
+
+	case kChecksumComplete:
+		_statusText->setLabel(Common::U32String::format(_("Calculation complete")));
+		_cancelButton->setVisible(false);
+		_cancelButton->setLabel(_("Cancel"));
+		_cancelButton->setCmd(kCleanupCmd);
+
+		break;
+	}
+}
+
+void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kCleanupCmd: {
+		delete g_state;
+		g_state = nullptr;
+
+		close();
+		break;
+	}
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void IntegrityDialog::handleTickle() {
+	if (_close) {
+		close();
+		_close = false;
+		return;
+	}
+
+	int32 progress = getDownloadingProgress();
+	if (_progressBar->getValue() != progress) {
+		refreshWidgets();
+		g_gui.scheduleTopDialogRedraw();
+	}
+
+	Dialog::handleTickle();
+}
+
+void IntegrityDialog::reflowLayout() {
+	Dialog::reflowLayout();
+	refreshWidgets();
+}
+
+void IntegrityDialog::refreshWidgets() {
+	uint32 progress = getDownloadingProgress();
+	_percentLabel->setLabel(Common::String::format("%u %%", progress));
+	_progressBar->setValue(progress);
+}
+
+void IntegrityDialog::setError(Common::U32String &msg) {
+	_errorText->setLabel(msg);
+
+	_cancelButton->setLabel(_("Close"));
+	_cancelButton->setCmd(kCleanupCmd);
 }
 
 void IntegrityDialog::calculateTotalSize(Common::String gamePath) {
@@ -88,7 +226,7 @@ void IntegrityDialog::calculateTotalSize(Common::String gamePath) {
 			if (!file.open(entry))
 				continue;
 
-			_totalSize += file.size();
+			g_state->totalSize += file.size();
 		}
 	}
 }
@@ -128,8 +266,7 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 			file.seek(-5000, SEEK_END);
 			fileChecksum.push_back(Common::computeStreamMD5AsString(file).c_str());
 
-			_calculatedSize += file.size();
-			_progressPercentage = _calculatedSize / _totalSize;
+			g_state->calculatedSize += file.size();
 
 			file.close();
 			fileChecksums.push_back(fileChecksum);
@@ -196,7 +333,9 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath,
 
 void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
 	debug(r->stringify().c_str());
-	parseJSON(r);
+	Common::String messageText = IntegrityDialog::parseJSON(r);
+	MessageDialog result(messageText);
+	result.reflowLayout();
 }
 
 void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
@@ -204,36 +343,62 @@ void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
 }
 
 void IntegrityDialog::sendJSON() {
-	auto conn = new Networking::PostRequest(_endpoint,
+	auto conn = new Networking::PostRequest(g_state->endpoint,
 											new Common::Callback<IntegrityDialog, Common::JSONValue *>(this, &IntegrityDialog::checksumResponseCallback),
 											new Common::Callback<IntegrityDialog, Networking::ErrorResponse>(this, &IntegrityDialog::errorCallback));
 
-	Common::JSONValue *json = generateJSONRequest(_gamePath, _gameid, _engineid, _extra, _platform, _language);
+	Common::JSONValue *json = generateJSONRequest(
+		g_state->gamePath, g_state->gameid, g_state->engineid, g_state->extra, g_state->platform, g_state->language);
 	conn->setJSONData(json);
 	conn->setContentType("application/json");
 	conn->start();
 	delete json;
 }
 
-void IntegrityDialog::parseJSON(Common::JSONValue *response) {
+Common::String IntegrityDialog::parseJSON(Common::JSONValue *response) {
+	Common::String messageText;
+
 	Common::JSONObject responseObject = response->asObject();
-	_error = (responseObject.getVal("error"));
-	debug("Error is %d", _error);
+	int responeError = responseObject.getVal("error")->asIntegerNumber();
+
+	if (responeError == -1) { // Unknown variant
+		long long fileset = responseObject.getVal("fileset")->asIntegerNumber();
+		messageText =
+			Common::String::format("Your set of game files seems to be unknown to us. If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org \n\
+		The game of fileset %lld seems to be an unknown game variant. \n\
+		The details of the game : %s, %s, %s, %s, %s",
+								   fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str());
+
+		return messageText;
+	}
 
 	for (Common::JSONValue *fileJSON : responseObject.getVal("files")->asArray()) {
+		Common::String name = fileJSON->asObject().getVal("name")->asString();
 		Common::String status = fileJSON->asObject().getVal("status")->asString();
 		debug(status.c_str());
 
-		if (status == "ok")
-			(*_results)[OK]++;
-		else if (status == "missing")
-			(*_results)[MISSING]++;
-		else if (status == "checksum_mismatch")
-			(*_results)[CHECKSUM_MISMATCH]++;
-		else if (status == "size_mismatch")
-			(*_results)[SIZE_MISMATCH]++;
-		else if (status == "unknown")
-			(*_results)[UNKNOWN]++;
+		messageText += Common::String::format("%s %s\n", name.c_str(), status.c_str());
+	}
+	if (messageText == "")
+		messageText += "Files all OK";
+
+	return messageText;
+}
+
+void IntegrityDialog::open() {
+	Dialog::open();
+	reflowLayout();
+	g_gui.scheduleTopDialogRedraw();
+}
+
+void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kCleanupCmd:
+		close();
+		break;
+
+	default:
+		Dialog::handleCommand(sender, cmd, data);
 	}
 }
 

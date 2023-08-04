@@ -1650,6 +1650,31 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GameOptions_IntegrityDialog' overlays = 'Dialog.GameOptions' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 8' spacing = '8'>
+			<widget name = 'StatusText'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'ErrorText'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'ProgressBar'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '1'/>
+			<widget name = 'PercentText'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+			/>
+			<space/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+				<widget name = 'MainButton'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' align = 'center'>
 			<widget name = 'Logo'
