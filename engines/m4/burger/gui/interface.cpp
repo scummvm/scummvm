@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/gui/interface.h"
+#include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_event.h"
@@ -410,7 +411,24 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 }
 
 void Interface::dispatch_command() {
-	error("TODO: Interface::dispatch_command");
+	--_savedX;
+	cstrncpy(_G(player).verb, _verbText, 40);
+	cstrncpy(_G(player).noun, _nounText, 40);
+	cstrncpy(_G(player).prep, _prepText, 40);
+
+	_G(player).waiting_for_walk = true;
+	_G(player).ready_to_walk = true;
+	_G(player).need_to_walk = true;
+	_G(player).command_ready = true;
+	_G(kernel).trigger = -1;
+	_G(kernel).trigger_mode = KT_PREPARSE;
+	_flag1 = false;
+
+	mouse_set_sprite(_arrow);
+	_G(player).walker_trigger = -1;
+
+	g_engine->_activeRoom->pre_parser();
+	g_engine->global_pre_parser();
 }
 
 } // namespace GUI

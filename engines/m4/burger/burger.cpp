@@ -81,5 +81,16 @@ void BurgerEngine::global_daemon() {
 	}
 }
 
+void BurgerEngine::global_pre_parser() {
+	if (player_said("wilbur")) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+
+	if (player_said("SKY"))
+		player_set_facing_hotspot();
+}
+
 } // namespace Burger
 } // namespace M4

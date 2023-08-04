@@ -58,6 +58,7 @@ public:
 	void syncFlags(Common::Serializer &s) override;
 
 	void global_daemon() override;
+	void global_pre_parser() override;
 };
 
 } // namespace Burger

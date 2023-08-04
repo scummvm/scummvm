@@ -116,6 +116,10 @@ extern bool player_commands_allowed();
 extern PlayerInfo *player_update_info(machine *myWalker, PlayerInfo *player_info);
 extern void adv_kill_digi_between_rooms(bool true_or_false);
 
+extern void player_set_facing_hotspot(int trigger = -1);
+extern void player_set_facing_at(int x, int y, int trigger = -1);
+extern int calc_facing(int x, int y);
+
 } // End of namespace M4
 
 #endif
