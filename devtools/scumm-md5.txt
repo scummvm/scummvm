@@ -214,6 +214,7 @@ monkey	The Secret of Monkey Island
 	910e31cffb28226bd68c569668a0d6b4	8367	es	DOS	EGA	EGA	8 disk	Andrea Petrucci
 	1d05cd189e4908f79b57e78a4402f292	8357	en	DOS	EGA	EGA	4 disk	Andrea Petrucci
 	ce6a4cef315b20fef58a95bc40a2d8d3	8357	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II	Matthieu Milan
+	0541d37205344bf0992b57db8c1d1361	8357	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II (patched index for MT-32)
 	aa7a07d94ae853f6460be4ce0a1bf530	-1	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II	Parazythum
 	e98b982ceaf9d253d730bde8903233d6	8357	de	DOS	EGA	EGA	4 disk	Joachim Eberhard
 	477dbafbd66a53c98416dc01aef019ad	8357	it	DOS	EGA	EGA	4 disk	Andrea Petrucci
