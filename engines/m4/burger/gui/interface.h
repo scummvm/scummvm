@@ -43,7 +43,6 @@ private:
 
 public:
 	int _sprite = 22; // main_interface_sprite;
-	bool _visible = false;
 	bool _shown = false;
 	GUI::InterfaceBox *_interfaceBox = nullptr;
 	GUI::Inventory *_inventory = nullptr;

@@ -119,19 +119,19 @@ void Hotkeys::escape_key_pressed(void *, void *) {
 
 
 void Hotkeys::t_cb(void *, void *) {
-	g_globals->_interface.t_cb();
+	g_vars->_interface.t_cb();
 }
 
 void Hotkeys::u_cb(void *, void *) {
-	g_globals->_interface.u_cb();
+	g_vars->_interface.u_cb();
 }
 
 void Hotkeys::l_cb(void *, void *) {
-	g_globals->_interface.l_cb();
+	g_vars->_interface.l_cb();
 }
 
 void Hotkeys::a_cb(void *, void *) {
-	g_globals->_interface.a_cb();
+	g_vars->_interface.a_cb();
 }
 
 } // namespace Burger

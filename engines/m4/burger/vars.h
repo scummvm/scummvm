@@ -118,11 +118,11 @@ public:
 	void global_menu_system_init() override;
 };
 
-extern Vars *g_globals;
+extern Vars *g_vars;
 
 #undef _G
 #undef _GI
-#define _G(X) (::M4::Burger::g_globals->_##X)
+#define _G(X) (::M4::Burger::g_vars->_##X)
 #define _GI(X) _G(interface)._##X
 #define _GINT() _G(interface)
 
