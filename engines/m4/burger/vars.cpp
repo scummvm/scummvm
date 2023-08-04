@@ -34,7 +34,7 @@
 namespace M4 {
 namespace Burger {
 
-Vars *g_globals;
+Vars *g_vars;
 
 const char *GAME_MODES[4] = { "WHOLE_GAME", "INTERACTIVE_DEMO", "MAGAZINE_DEMO", "WHOLE_GAME" };
 
@@ -72,7 +72,7 @@ static const ConverterEntry ASCII_CONVERTERS[] = {
 };
 
 Vars::Vars() {
-	g_globals = this;
+	g_vars = this;
 
 	Inventory *inv = new Inventory();
 	_inventory = inv;
@@ -81,7 +81,7 @@ Vars::Vars() {
 }
 
 Vars::~Vars() {
-	g_globals = nullptr;
+	g_vars = nullptr;
 	delete _inventory;
 }
 

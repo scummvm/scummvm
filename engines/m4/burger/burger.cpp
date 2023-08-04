@@ -53,7 +53,7 @@ void BurgerEngine::showEngineInfo() {
 }
 
 void BurgerEngine::syncFlags(Common::Serializer &s) {
-	g_globals->_flags.sync(s);
+	g_vars->_flags.sync(s);
 }
 
 void BurgerEngine::global_daemon() {
