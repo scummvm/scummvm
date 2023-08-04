@@ -131,7 +131,7 @@ public:
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	virtual int isSoundRunning(int sound) const;
-	bool isSoundInUse(int sound) const;
+	virtual bool isSoundInUse(int sound) const;
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
 	void soundKludge(int *list, int num);

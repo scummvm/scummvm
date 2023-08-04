@@ -61,7 +61,13 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 
 	memset(_heChannel, 0, sizeof(_heChannel));
 	_heSoundChannels = new Audio::SoundHandle[8]();
-	_useMilesSoundSystem = parent->_game.id == GID_MOONBASE;
+
+	_useMilesSoundSystem =
+		parent->_game.id == GID_MOONBASE ||
+		parent->_game.id == GID_BASEBALL2003 ||
+		parent->_game.id == GID_BASKETBALL ||
+		parent->_game.id == GID_FOOTBALL2002;
+
 	_heMixer = new HEMixer(_mixer, _vm, _useMilesSoundSystem);
 }
 
@@ -173,6 +179,38 @@ int SoundHE::isSoundRunning(int sound) const {
 
 		return 0;
 	}
+}
+
+bool SoundHE::isSoundInUse(int sound) const {
+	// If our sound is a channel number, search for it
+	// between the currently playing sounds first, then
+	// search the sound queue...
+	if (sound >= HSND_CHANNEL_0) {
+		int channel = sound - HSND_CHANNEL_0;
+		sound = _heChannel[channel].sound;
+
+		if (sound)
+			return sound;
+
+		for (int i = 0; i < _soundQueuePos; i++) {
+			if (_soundQueue[i].channel == channel) {
+				return _soundQueue[i].sound;
+			}
+		}
+
+		return 0;
+	}
+
+	// ...otherwise the sound parameter is a proper
+	//  sound number, so search the queue
+	int i = _soundQueuePos;
+	while (i) {
+		if (sound == _soundQueue[--i].sound)
+			return sound;
+	}
+
+	// If it's not in the queue, look to see if it is actually playing
+	return (isSoundRunning(sound));
 }
 
 void SoundHE::stopSound(int sound) {
