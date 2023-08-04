@@ -138,6 +138,17 @@ void DarkEngine::restoreECD(Area *area, int index) {
 	}
 }
 
+bool DarkEngine::checkECD(uint16 areaID, int index) {
+	Area *area = _areaMap[areaID];
+	assert(area != nullptr);
+	int16 id = 227 + index * 6 - 2;
+	debugC(1, kFreescapeDebugParser, "Checking object %d to from ECD %d", id, index);
+	Object *obj = (GeometricObject *)area->objectWithID(id);
+	assert(obj != nullptr);
+	debugC(1, kFreescapeDebugParser, "Result: %d", !obj->isDestroyed());
+	return !obj->isDestroyed();
+}
+
 void DarkEngine::initGameState() {
 	_flyMode = false;
 	_noClipMode = false;
@@ -170,15 +181,140 @@ void DarkEngine::initGameState() {
 	_exploredAreas[_startArea] = true;
 }
 
-bool DarkEngine::checkECD(int index) {
+bool DarkEngine::tryDestroyECDFullGame(int index) {
+	switch (_currentArea->getAreaID()) {
+		case 1:
+			assert(index == 0);
+			return true;
+
+		case 4:
+			assert(index == 0);
+			return !(checkECD(1, 0) && checkECD(10, 0));
+
+		case 5:
+			assert(index == 0);
+			return !(checkECD(12, 0) && checkECD(12, 1)); // Check both
+
+		case 8:
+			assert(index <= 1);
+			if (index == 0)
+				return true;
+			else if (index == 1)
+				return !(checkECD(18, 0) && checkECD(10, 0)); // Check both
+			break;
+
+		case 10:
+			assert(index <= 2);
+			if (index == 0)
+				return !(checkECD(4, 0) && checkECD(18, 1));
+			else if (index == 1) {
+				int connections = 0;
+				connections += checkECD(16, 0);
+				connections += checkECD(8, 0);
+				connections += checkECD(11, 0);
+				return connections <= 1;
+			} else if (index == 2)
+				return true;
+			break;
+
+		case 11:
+			assert(index <= 1);
+			if (index == 0)
+				return true;
+			else if (index == 1)
+				return !(checkECD(10, 0) && checkECD(12, 0)); // TODO: verify
+			break;
+
+		case 12:
+			assert(index <= 2);
+			if (index == 0)
+				return !(checkECD(5, 0) && checkECD(11, 1)); // Check last one
+			else if (index == 1)
+				return !(checkECD(5, 0) && checkECD(13, 0)); // Check both
+			else if (index == 2)
+				return true;
+			else
+				assert(false);
+
+			break;
+
+		case 13:
+			assert(index <= 1);
+			if (index == 0)
+				return !(checkECD(13, 1) && checkECD(12, 1));
+			else if (index == 1)
+				return true;
+			else
+				assert(false);
+			break;
+
+		case 14:
+			if (index == 0)
+				return true;
+			else if (index == 1)
+				return !(checkECD(14, 0) && checkECD(14, 2));
+			else if (index == 2)
+				return !(checkECD(14, 1) && checkECD(18, 0));
+			else
+				assert(false);
+			break;
+		case 16:
+			assert(index <= 1);
+			if (index == 0)
+				return !(checkECD(10, 1) && checkECD(18, 0));
+			else if (index == 1)
+				return !(checkECD(10, 2) && checkECD(18, 1));
+			else
+				assert(false);
+			break;
+
+		case 17:
+			assert(index <= 2);
+			if (index == 0)
+				return !(checkECD(12, 2) && checkECD(18, 1));
+			else if (index == 1)
+				return true;
+			else if (index == 2)
+				return !(checkECD(17, 1) && checkECD(18, 1));
+			else
+				assert(0);
+			break;
+
+		case 18:
+			assert(index <= 1);
+			if (index == 0) {
+				int connections = 0;
+				connections += checkECD(16, 0);
+				connections += checkECD(8, 1);
+				connections += checkECD(14, 2);
+				return connections <= 1;
+			} else if (index == 1) {
+				int connections = 0;
+				connections += checkECD(10, 0);
+				connections += checkECD(16, 1);
+				connections += checkECD(17, 0);
+				connections += checkECD(17, 2);
+				return connections <= 1;
+			} else
+				assert(false);
+		default:
+			break;
+
+	}
+	error("Not implemented");
+}
+
+bool DarkEngine::tryDestroyECD(int index) {
 	if (isDemo()) {
 		if (index == 1) {
-			restoreECD(_currentArea, index);
 			return false;
 		}
 		return true;
+	} else {
+		return tryDestroyECDFullGame(index);
 	}
-	return true;
+	return true; // Unreachable
+
 }
 
 void DarkEngine::addSkanner(Area *area) {
@@ -216,13 +352,18 @@ void DarkEngine::addSkanner(Area *area) {
 
 bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
-		bool destroyed = checkECD(_gameStateVars[kVariableDarkECD] - 1);
+		int index = _gameStateVars[kVariableDarkECD] - 1;
+		//insertTemporaryMessage(Common::String::format("%-14d", _gameStateVars[kVariableDarkECD] - 1), _countdown - 2);
+		//restoreECD(_currentArea, _gameStateVars[kVariableDarkECD] - 1);
+		bool destroyed = tryDestroyECD(index);
 		if (destroyed) {
 			_gameStateVars[kVariableActiveECDs] -= 4;
 			_gameStateVars[k8bitVariableScore] += 52750;
 			insertTemporaryMessage(_messagesList[2], _countdown - 2);
-		} else
+		} else {
+			restoreECD(_currentArea, index);
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
+		}
 		_gameStateVars[kVariableDarkECD] = 0;
 	}
 

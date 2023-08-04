@@ -520,6 +520,11 @@ private:
 	Common::SeekableReadStream *decryptFileAtari(const Common::String filename);
 };
 
+struct ECD {
+	uint16 _area;
+	int _id;
+};
+
 class DarkEngine : public FreescapeEngine {
 public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
@@ -565,7 +570,9 @@ private:
 	void addECDs(Area *area);
 	void addECD(Area *area, const Math::Vector3d position, int index);
 	void restoreECD(Area *area, int index);
-	bool checkECD(int index);
+	bool checkECD(uint16 areaID, int index);
+	bool tryDestroyECD(int index);
+	bool tryDestroyECDFullGame(int index);
 	void addWalls(Area *area);
 	Common::SeekableReadStream *decryptFile(const Common::String filename);
 	Common::HashMap<uint16, bool> _exploredAreas;
