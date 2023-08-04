@@ -944,10 +944,10 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case SO_INIT:
+	case SO_INIT: // 0
 		_curSpriteGroupId = pop();
 		break;
-	case SO_AT:
+	case SO_AT: // 6
 		value2 = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -955,7 +955,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 		_sprite->setGroupPosition(_curSpriteGroupId, value1, value2);
 		break;
-	case SO_CLIPPED:
+	case SO_CLIPPED: // 18
 		value4 = pop();
 		value3 = pop();
 		value2 = pop();
@@ -965,7 +965,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 		_sprite->setGroupBounds(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
-	case SO_GROUP:
+	case SO_GROUP: // 38
 		type = pop() - 1;
 		switch (type) {
 		case 0: // SPRGRPOP_MOVE
@@ -1028,14 +1028,14 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 			error("o100_setSpriteGroupInfo subOp 38: Unknown case %d", subOp);
 		}
 		break;
-	case SO_IMAGE:
+	case SO_IMAGE: // 40
 		value1 = pop();
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->setGroupImage(_curSpriteGroupId, value1);
 		break;
-	case SO_MOVE:
+	case SO_MOVE: // 49
 		value2 = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -1043,28 +1043,28 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 		_sprite->moveGroup(_curSpriteGroupId, value1, value2);
 		break;
-	case SO_NAME:
+	case SO_NAME: // 52
 		copyScriptString(string, sizeof(string));
 		break;
-	case SO_NEW:
+	case SO_NEW: // 53
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->resetGroup(_curSpriteGroupId);
 		break;
-	case SO_NEW_GENERAL_PROPERTY:
+	case SO_NEW_GENERAL_PROPERTY: // 54
 		// dummy case
 		pop();
 		pop();
 		break;
-	case SO_PRIORITY:
+	case SO_PRIORITY: // 59
 		value1 = pop();
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->setGroupPriority(_curSpriteGroupId, value1);
 		break;
-	case SO_PROPERTY:
+	case SO_PROPERTY: // 60
 		type = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -1087,7 +1087,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 			error("o100_setSpriteGroupInfo subOp 60: Unknown case %d", subOp);
 		}
 		break;
-	case SO_NEVER_ZCLIP:
+	case SO_NEVER_ZCLIP: // 89
 		if (!_curSpriteGroupId)
 			break;
 
