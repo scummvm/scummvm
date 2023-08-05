@@ -111,10 +111,10 @@ void Rect::flip(const TextureFlipType &flip, const Vector2i &axis) {
 void Rect::draw(const int &xOffset, const int &yOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	int X = x + xOffset, Y = y + yOffset;
 
-	drawLine(X, Y, X + w, Y, r, g, b, a);
-	drawLine(X, Y, X, Y + h, r, g, b, a);
-	drawLine(X + w, Y, X + w, Y + h, r, g, b, a);
-	drawLine(X, Y + h, X + w, Y + h, r, g, b, a);
+	g_engine->_screen->drawLine(X, Y, X + w, Y, g_engine->_format->ARGBToColor(a, r, g, b));
+	g_engine->_screen->drawLine(X, Y, X, Y + h, g_engine->_format->ARGBToColor(a, r, g, b));
+	g_engine->_screen->drawLine(X + w, Y, X + w, Y + h, g_engine->_format->ARGBToColor(a, r, g, b));
+	g_engine->_screen->drawLine(X, Y + h, X + w, Y + h, g_engine->_format->ARGBToColor(a, r, g, b));
 }
 
 void Rect::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {

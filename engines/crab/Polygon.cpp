@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/Polygon.h"
 
 namespace Crab {
@@ -266,7 +267,7 @@ void Polygon2D::draw(const int &xOffset, const int &yOffset, const uint8 &r, con
 		else
 			p2 = _point[i + 1];
 
-		drawLine(p1.x + xOffset, p1.y + yOffset, p2.x + xOffset, p2.y + yOffset, r, g, b, a);
+		g_engine->_screen->drawLine(p1.x + xOffset, p1.y + yOffset, p2.x + xOffset, p2.y + yOffset, g_engine->_format->ARGBToColor(a, r, g, b));
 	}
 }
 

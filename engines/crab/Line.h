@@ -69,10 +69,6 @@ bool collideLine(const T &p0X, const T &p0Y, const T &p1X, const T &p1Y,
 	return false; // No collision
 }
 
-// Draw a line OpenGL style
-void drawLine(const int &x1, const int &y1, const int &x2, const int &y2,
-			  const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a);
-
 } // End of namespace Crab
 
 #endif // CRAB_LINE_H
