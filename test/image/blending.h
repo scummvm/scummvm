@@ -918,8 +918,8 @@ public:
 		double oldTimeScaled = 0.0, newTimeScaled = 0.0, genericTimeScaled = 0.0;
 		const int iters = 2500;
 
-        for (int blendMode = Graphics::BLEND_NORMAL; blendMode < Graphics::NUM_BLEND_MODES; blendMode++) {
-        for (int alphaType = Graphics::ALPHA_OPAQUE; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
+        for (int blendMode = 0; blendMode < Graphics::NUM_BLEND_MODES; blendMode++) {
+        for (int alphaType = 0; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
         for (int flipping = 0; flipping <= 3; flipping++) {
 		for (uint32 color = 0xffffffff; color != 0; color = (color == 0xffffffff ? 0x7f7f7f7f : 0)) {
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(255, 255, 255, 255));
