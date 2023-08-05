@@ -67,6 +67,8 @@ void LoadingScreen::draw() {
 }
 
 void LoadingScreen::dim() {
+	warning("STUB: LoadingScreen::dim()");
+
 #if 0
 	// This is used when starting or loading a game from the main menu in order to dim the screen
 	// until an actual loading screen is drawn
