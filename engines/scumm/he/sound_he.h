@@ -77,6 +77,8 @@ namespace Scumm {
 #define HSND_SBNG_VARORVAL 0x03
 #define HSND_SBNG_VARVAL   0x02
 
+#define HSND_SNDVAR_TOKENS 26
+
 #define XSH2_FLAG_HAS_PRIORITY 0x01
 
 #define WAVE_FORMAT_PCM       1
@@ -164,7 +166,6 @@ protected:
 
 	int32 _heSpoolingMusicCount;
 
-	Audio::SoundHandle *_heSoundChannels;
 	Common::File _heSpoolingMusicFile;
 	byte _heSpoolingCodeBuffer[HSND_MAX_SPOOLING_CODE_SIZE];
 

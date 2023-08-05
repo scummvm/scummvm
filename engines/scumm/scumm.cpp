@@ -2302,7 +2302,7 @@ void ScummEngine::syncSoundSettings() {
 
 	// Backyard Baseball 2003 uses a unique subtitle variable,
 	// rather than VAR_SUBTITLES
-	if (_game.id == GID_BASEBALL2003) {
+	if (_scummVars && _game.id == GID_BASEBALL2003) {
 		_scummVars[632] = ConfMan.getBool("subtitles");
 	}
 
