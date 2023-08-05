@@ -174,7 +174,7 @@ public:
 	void milesRestoreChannel(int channel);
 	void milesFeedMixer();
 	bool milesPauseMixerSubSystem(bool paused);
-	byte *milesGetAudioDataFromResource(int globType, int globNum, uint32 dataOffset, uint16 &compType, uint16 &blockAlign);
+	byte *milesGetAudioDataFromResource(int globType, int globNum, uint32 dataOffset, uint16 &compType, uint16 &blockAlign, uint32 &dataSize);
 };
 
 } // End of namespace Scumm
