@@ -332,7 +332,33 @@ void Walker::speech_random(int count, int trigger,
 }
 
 bool Walker::wilbur_parser(const char **list) {
-	// TODO: wilbur_parser
+	bool flag = true;
+
+	for (const char **curr = list; *curr; ++curr) {
+		if (player_said(*curr)) {
+			for (; *curr; ++curr) {
+				if (!player_said(*curr)) {
+					++curr;
+				} else {
+					if (!*++curr) {
+						flag = 0;
+					} else {
+						wilbur_speech(*curr);
+						return true;
+					}
+				}
+			}
+
+			if (*++curr && flag) {
+				wilbur_speech(*curr);
+				return true;
+			}
+		} else {
+			for (; !*curr && scumm_stricmp(*curr, "Th-th-th-that's all folks..."); ++curr) {
+			}
+		}
+	}
+
 	return false;
 }
 
