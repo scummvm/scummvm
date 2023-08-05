@@ -139,8 +139,9 @@ void TextField::draw(GrBuff *myBuffer) {
 	Buffer *myBuff = myBuffer->get_buffer();
 	gr_color_set(__BLACK);
 	gr_buffer_rect_fill(myBuff, _x1, _y1, _x2 - _x1, _y2 - _y1);
-	gr_font_set_color(__WHITE);
+
 	gr_font_set(_G(font_inter));
+	font_set_colors(1, 2, 3);
 	gr_font_write(myBuff, _string, _x1, _y1, 0, 1);
 	myBuffer->release();
 
