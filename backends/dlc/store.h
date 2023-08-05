@@ -19,13 +19,14 @@
  *
  */
 
-#ifndef DLC_STORE_H
-#define DLC_STORE_H
+#ifndef BACKENDS_DLC_STORE_H
+#define BACKENDS_DLC_STORE_H
 
 #include "common/str.h"
 #include "common/array.h"
 #include "common/queue.h"
 #include "common/path.h"
+
 #include "backends/dlc/dlcdesc.h"
 
 namespace DLC {

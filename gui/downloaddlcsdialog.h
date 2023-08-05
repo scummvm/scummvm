@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef DOWNLOAD_DLCS_DIALOG_H
-#define DOWNLOAD_DLCS_DIALOG_H
+#ifndef GUI_DOWNLOADDLCSDIALOG_H
+#define GUI_DOWNLOADDLCSDIALOG_H
 
 #include "gui/dialog.h"
 #include "gui/widgets/list.h"

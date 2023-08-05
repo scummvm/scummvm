@@ -29,12 +29,15 @@
 #include "common/compression/unzip.h"
 #include "common/file.h"
 #include "common/punycode.h"
-#include "backends/dlc/scummvmcloud.h"
-#include "backends/dlc/dlcmanager.h"
 #include "common/config-manager.h"
 #include "common/formats/json.h"
-#include "engines/metaengine.h"
+
 #include "gui/gui-manager.h"
+
+#include "backends/dlc/scummvmcloud.h"
+#include "backends/dlc/dlcmanager.h"
+
+#include "engines/metaengine.h"
 
 namespace DLC {
 namespace ScummVMCloud {

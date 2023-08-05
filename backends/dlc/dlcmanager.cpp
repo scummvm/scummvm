@@ -19,12 +19,13 @@
  *
  */
 
+#include "common/system.h"
 
 #include "backends/dlc/android/playstore.h"
 #include "backends/dlc/dlcmanager.h"
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/android/playstore.h"
-#include "common/system.h"
+
 #include "gui/dlcsdialog.h"
 
 namespace Common {
