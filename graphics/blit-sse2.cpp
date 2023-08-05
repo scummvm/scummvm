@@ -19,7 +19,7 @@
  *
  */
 
-#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+#ifdef SCUMMVM_SSE2
 #include <immintrin.h>
 
 #include "graphics/blit.h"
@@ -373,4 +373,4 @@ void BlendBlit::doBlitMultiplyBlendLogicSSE2(Args &args) {
 
 } // End of namespace Graphics
 
-#endif // __x86_64__
+#endif // SSE2

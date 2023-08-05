@@ -891,9 +891,9 @@ static bool areSurfacesEqual(const Graphics::Surface *a, const Graphics::Surface
 class BlendBlitUnfilteredTestSuite : public CxxTest::TestSuite {
 public:
 	void test_blend_speed() {
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#ifdef SCUMMVM_NEON
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitNEON;
-#elif defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+#elif SCUMMVM_SSE2
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitSSE2;
 #else
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
