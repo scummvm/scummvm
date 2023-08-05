@@ -175,6 +175,6 @@ extern StringPool *gStrPool;
 // Generate random numbers using this
 //extern RandomNumberGen gRandom;
 
-}
+} // End of namespace Crab
 
 #endif // CRAB_GAMEPARAM_H
