@@ -53,6 +53,7 @@ public:
 		int vol = 256, int channel = 1);
 	void wilbur_say();
 	void wilburs_speech_finished();
+	void wilbur_teleported();
 };
 
 extern void enable_player();
