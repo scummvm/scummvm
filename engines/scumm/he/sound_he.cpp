@@ -65,7 +65,9 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 		parent->_game.id == GID_MOONBASE ||
 		parent->_game.id == GID_BASEBALL2003 ||
 		parent->_game.id == GID_BASKETBALL ||
-		parent->_game.id == GID_FOOTBALL2002;
+		parent->_game.id == GID_FOOTBALL2002 ||
+		parent->_game.id == GID_SOCCER2004 ||
+		parent->_game.id == GID_PJGAMES;
 
 	_heMixer = new HEMixer(_mixer, _vm, _useMilesSoundSystem);
 }
