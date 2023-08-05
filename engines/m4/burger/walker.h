@@ -42,6 +42,15 @@ private:
 	 */
 	static void player_walker_callback(frac16 myMessage, machine *sender);
 
+	/**
+	 * Says speech randomly
+	 */
+	void speech_random(int count, int trigger, const char *name1,
+		const char *name2, const char *name3 = nullptr,
+		const char *name4 = nullptr, const char *name5 = nullptr,
+		const char *name6 = nullptr, const char *name7 = nullptr,
+		const char *name8 = nullptr, const char *name9 = nullptr);
+
 public:
 	~Walker() override {}
 
@@ -62,6 +71,34 @@ public:
 	 * to handle it
 	 */
 	bool wilbur_said(const char *list[][4]);
+
+	void wilbur_speech_random(const char *name1, const char *name2, int trigger = -1) {
+		speech_random(2, trigger, name1, name2);
+	}
+	void wilbur_speech_random(const char *name1, const char *name2,
+			const char *name3, int trigger = -1) {
+		speech_random(3, trigger, name1, name2, name3);
+	}
+	void wilbur_speech_random(const char *name1, const char *name2,
+		const char *name3, const char *name4, int trigger = -1) {
+		speech_random(4, trigger, name1, name2, name3, name4);
+	}
+	void wilbur_speech_random(const char *name1, const char *name2,
+		const char *name3, const char *name4, const char *name5, int trigger = -1) {
+		speech_random(5, trigger, name1, name2, name3, name4, name5);
+	}
+	void wilbur_speech_random(const char *name1, const char *name2,
+		const char *name3, const char *name4, const char *name5,
+		const char *name6, int trigger = -1) {
+		speech_random(6, trigger, name1, name2, name3, name4, name5, name6);
+	}
+	void wilbur_speech_random(const char *name1, const char *name2,
+		const char *name3, const char *name4, const char *name5,
+		const char *name6, const char *name7, int trigger = -1) {
+		speech_random(7, trigger, name1, name2, name3, name4, name5, name6, name7);
+	}
+
+	bool wilbur_parser(const char **list);
 };
 
 extern void enable_player();

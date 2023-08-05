@@ -23,6 +23,7 @@
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
 #include "m4/graphics/krn_pal.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -77,6 +78,167 @@ static const seriesPlayBreak PLAY_BREAKS6[] = {
 	{ 34, 34, nullptr,   0,   0, -1,    0, 0, 0, 0 },
 	{ 14,  0, nullptr,   0,   0, -1,    0, 0, 0, 0 },
 	{ -1, -1, nullptr,   0,   0, -1,    0, 0, 0, 0 }
+};
+
+static const char *SAID1[][4] = {
+	{ "WILBUR", "999w010", "999w011", "999w011" },
+	{ "BROKEN MOUSE TRAP", "405W016", nullptr, "400W001" },
+	{ "CARROT JUICE", "300w043", nullptr, nullptr },
+	{ "BOTTLE", "300w071", nullptr, nullptr },
+	{ "WHISTLE", "300w058", nullptr, nullptr },
+	{ "PANTYHOSE", "999w005", nullptr, nullptr },
+	{ "AMPLIFIER", "999w026", nullptr, nullptr },
+	{ "DEED", "999w101", nullptr, nullptr },
+	{ "JAWZ O' LIFE", "999w103", nullptr, nullptr },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const char *PARSER_LIST[] = {
+	"DEED",
+	"LOOK AT",
+	"999w101",
+	"WILBUR",
+	"400w001",
+	nullptr,
+	"999w102",
+	"Th-th-th-that's all folks...",
+	"JAWZ O' LIFE",
+	"LOOK AT",
+	"999w103",
+	"WILBUR",
+	"400w001",
+	nullptr,
+	"999w104",
+	"Th-th-th-that's all folks...",
+	"CARROT JUICE",
+	"JUG",
+	"300w046",
+	"JUG ",
+	"300w046",
+	"JUG",
+	"300w046",
+	"AUNT POLLY",
+	"999w225",
+	nullptr,
+	"300w057",
+	"Th-th-th-that's all folks...",
+	"SPRING",
+	"BROKEN MOUSE TRAP",
+	"405w018",
+	nullptr,
+	nullptr,
+	"Th-th-th-that's all folks...",
+	"BOTTLE",
+	"WATER",
+	"999w224",
+	"WILBUR",
+	"300w077",
+	nullptr,
+	"300w078",
+	"Th-th-th-that's all folks...",
+	"WHISTLE",
+	nullptr,
+	"300w070",
+	"Th-th-th-that's all folks...",
+	"BLOCK OF ICE",
+	"FLOOR",
+	"999w003",
+	"FLOOR ",
+	"999w003",
+	"MICROWAVE",
+	"999w222",
+	"WILBUR",
+	"999w003",
+	nullptr,
+	"999w004",
+	"Th-th-th-that's all folks...",
+	"PANTYHOSE",
+	"ENGINE",
+	"999w223",
+	nullptr,
+	"999w008",
+	"Th-th-th-that's all folks...",
+	"AMPLIFIER",
+	"WILBUR",
+	"999w027",
+	nullptr,
+	"999w029",
+	"Th-th-th-that's all folks...",
+	"MONEY",
+	"STOLIE",
+	"999w205",
+	nullptr,
+	"999w206",
+	",Th-th-th-that's all folks...",
+	",BROKEN PUZ DISPENSER",
+	"LOOK AT",
+	"999w207",
+	nullptr,
+	"999w209",
+	"Th-th-th-that's all folks...",
+	"PUZ DISPENSER",
+	"LOOK AT",
+	"999w207",
+	nullptr,
+	"999w209",
+	"Th-th-th-that's all folks...",
+	"SPRING",
+	"LOOK AT",
+	"999w210",
+	nullptr,
+	"999w211",
+	"Th-th-th-that's all folks...",
+	"PHONE BILL",
+	"LOOK AT",
+	"999w212",
+	"AUNT POLLY",
+	"999w213",
+	nullptr,
+	"999w206",
+	"Th-th-th-that's all folks...",
+	"LAXATIVE",
+	"LOOK AT",
+	"999w214",
+	"GEAR",
+	"999w215",
+	"WILBUR",
+	"999w215",
+	"PEGLEG",
+	"999w216",
+	"PEGLEG ",
+	"999w216",
+	"PEGLEG  ",
+	"999w216",
+	"TRUFFLES",
+	"999w217",
+	"GERBILS",
+	"999w218",
+	"BORK",
+	"999w219",
+	"BORK ",
+	"999w219",
+	"BORK  ",
+	"999w219",
+	"BORK   ",
+	"999w219",
+	"BORK    ",
+	"999w219",
+	nullptr,
+	nullptr,
+	"Th-th-th-that's all folks...",
+	"KEYS",
+	"LOOK AT",
+	"999w220",
+	"WILBUR",
+	"999w206",
+	nullptr,
+	"999w221",
+	"Th-th-th-that's all folks...",
+	"WILBUR",
+	nullptr,
+	"999w012",
+	"Th-th-th-that's all folks...",
+	nullptr
 };
 
 BurgerEngine::BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :
@@ -256,9 +418,127 @@ void BurgerEngine::global_pre_parser() {
 
 void BurgerEngine::global_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-//	_G(walker).wilbur_said(
 
-	// TODO: implement
+	if (_G(walker).wilbur_said(SAID1))
+		goto done;
+
+	if (player_said_any("WILBUR", "GEAR")) {
+		if (player_said("CARROT JUICE")) {
+			if (_G(flags)[V123] && !imath_rand_bool(3)) {
+				_G(walker).wilbur_speech("300w056");
+				goto done;
+
+			} else if (_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+				_G(flags)[V123] = 1;
+				_G(roomVal1) = 10004;
+				ws_turn_to_face(_G(my_walker), 3, gABDUCT);
+				goto done;
+			}
+		}
+	}
+
+	if (player_said("WHISTLE") && player_said_any("GEAR", "WILBUR") &&
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+		_G(roomVal1) = 10003;
+		ws_turn_to_face(_G(my_walker), 7, gABDUCT);
+		goto done;
+	}
+
+	if (player_said("kibble") && player_said_any("gear", "wilbur") &&
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+		_G(roomVal1) = 10005;
+		ws_turn_to_face(_G(my_walker), 9, gABDUCT);
+		goto done;
+	}
+
+	if (player_said("rubber ducky") && player_said_any("gear", "wilbur") &&
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+		_G(roomVal1) = 10006;
+		ws_turn_to_face(_G(my_walker), 9, gABDUCT);
+		goto done;
+	}
+
+	if (player_said("broken puz dispenser") && player_said_any("gear", "wilbur") &&
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+		_G(roomVal1) = 10007;
+		ws_turn_to_face(_G(my_walker), 5, 10016);
+		goto done;
+	}
+
+	if (player_said("puz dispenser") && player_said_any("gear", "wilbur") &&
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+		_G(roomVal1) = 10008;
+		ws_turn_to_face(_G(my_walker), 5, gABDUCT);
+		goto done;
+	}
+
+	if (player_said("spring", "broken puz dispenser")) {
+		inv_move_object("BROKEN PUZ DISPENSER", NOWHERE);
+		inv_move_object("SPRING", NOWHERE);
+		inv_give_to_player("PUZ DISPENSER");
+
+	} else if (player_said("LOOK AT", "BLOCK OF ICE")) {
+		_G(walker).wilbur_speech(_G(flags)[ROOM101_FLAG22] ? "999w002" : "999w001");
+
+	} else if (player_said("PANTYHOSE", "WILBUR")) {
+		if (_G(flags)[V297]) {
+			_G(walker).wilbur_speech("999w007");
+		} else {
+			_G(walker).wilbur_speech("999w006");
+			_G(flags)[V297] = 1;
+		}
+
+	} else if (player_said("TAKE")) {
+		_G(walker).wilbur_speech(saidofInterest() ? "999w021" : "999w016");
+
+	} else if (player_said("LOOK AT", "MONEY")) {
+		switch (_G(flags)[V001]) {
+		case 11:
+			_G(walker).wilbur_speech("999w204");
+			break;
+		case 12:
+			_G(walker).wilbur_speech("999w203");
+			break;
+		case 19:
+			_G(walker).wilbur_speech("999w202");
+			break;
+		case 20:
+			_G(walker).wilbur_speech("999w201");
+			break;
+		default:
+			break;
+		}
+
+	} else if (player_said("GEAR")) {
+		_G(walker).wilbur_speech_random("999w017", "999w018", "999w019", "999w020");
+
+	} else if (!_G(walker).wilbur_parser(PARSER_LIST)) {
+		if (player_said("LOOK AT")) {
+			_G(walker).wilbur_speech_random("999w013", "999w014", "999w015");
+		} else if (player_said("WALK") || player_said("WALK TO") ||
+				player_said("WALK ACROSS") || player_said("WALK ON")) {
+			term_message("Just a walk, no response needed.");
+		} else {
+			_G(walker).wilbur_speech_random("999w017", "999w018", "999w019", "999w020");
+		}
+	}
+
+done:
+	_G(player).command_ready = false;
+}
+
+bool BurgerEngine::saidofInterest() const {
+	return player_said_any("DISTILLED CARROT JUICE", "broken puz dispenser", "puz dispenser") ||
+		player_said_any("broken mouse trap", "mouse trap", "kindling", "burning kindling") ||
+		player_said_any("CHRISTMAS LIGHTS", "CHRISTMAS LIGHTS ", "bottle", "carrot juice") ||
+		player_said_any("soapy water", "iron filings", "waxed hair", "fish") ||
+		player_said_any("hook", "keys", "records", "DOG DOLLAR") ||
+		player_said_any("AMPLIFIER", "rubber gloves", "DIRTY SOCK", "JAWZ O' LIFE") ||
+		player_said_any("deed", "burger morsel", "whistle", "QUARTER") ||
+		player_said_any("matches", "phone cord", "kibble", "pantyhose") ||
+		player_said_any("fan belt", "spring", "mirror", "PHONE BILL") ||
+		player_said_any("ray gun", "BLOCK OF ICE", "rolling pin", "rubber duck") ||
+		player_said_any("LAXATIVE", "money", "crow bar", "Wilbur");
 }
 
 } // namespace Burger
