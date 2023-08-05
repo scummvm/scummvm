@@ -45,6 +45,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
+   - Added data to savegames whose lack could make savegames unwinnable.
 
  Sword2:
    - Added support for Chinese translation.
