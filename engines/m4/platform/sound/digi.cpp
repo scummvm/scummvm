@@ -120,7 +120,8 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 			Audio::makeRawStream(entry._data, entry._size, 11025, Audio::FLAG_UNSIGNED,
 				DisposeAfterUse::NO),
 			loop ? 0 : 1);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &c._soundHandle, stream, -1, vol);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &c._soundHandle, stream,
+		-1, MIN(vol, (int32)255));
 
 	if (trigger < 0 || trigger > 32767)
 		trigger = -1;
