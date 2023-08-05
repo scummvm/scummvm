@@ -85,6 +85,10 @@ frac16 imath_ranged_rand16(frac16 a, frac16 b) {
 	return result;
 }
 
+bool imath_rand_bool(int max) {
+	return imath_ranged_rand(1, max) == 1;
+}
+
 frac16 dist2d(int32 x1, int32 y1, int32 x2, int32 y2) {
 	if ((x2 -= x1) < 0) x2 = -x2;
 	if ((y2 -= y1) < 0) y2 = -y2;

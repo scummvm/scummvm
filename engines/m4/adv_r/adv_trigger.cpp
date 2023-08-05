@@ -152,6 +152,13 @@ void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name) {
 	}
 }
 
+void kernel_timing_trigger_daemon(int32 ticks, int16 trigger) {
+	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	_G(kernel).trigger_mode = KT_DAEMON;
+	kernel_timing_trigger(ticks, trigger);
+	_G(kernel).trigger_mode = oldMode;
+}
+
 void kernel_service_timing_trigger_q() {
 	// Dispatch pending timing triggers
 	int32 iter = 0;
