@@ -108,10 +108,14 @@ namespace Scumm {
 // Used both in SoundHE and HEMixer
 struct HESoundModifiers {
 	HESoundModifiers(int mFrequencyShift, int mPan, int mVolume) {
+		// Hey, turns out Moonbase Commander just LOVES to send out invalid modifiers :-)
+		/*
 		assert(mFrequencyShift >= HSND_SOUND_FREQ_BASE / HSND_MAX_FREQ_RATIO);
 		assert(mFrequencyShift <= HSND_SOUND_FREQ_BASE * HSND_MAX_FREQ_RATIO);
 		assert(mPan >= HSND_SOUND_PAN_LEFT && mPan <= HSND_SOUND_PAN_RIGHT);
 		assert(mVolume >= 0 && mVolume <= HSND_MAX_VOLUME);
+		*/
+
 		frequencyShift = mFrequencyShift;
 		pan = mPan;
 		volume = mVolume;
