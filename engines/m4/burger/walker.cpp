@@ -230,5 +230,67 @@ void Walker::wilburs_speech_finished() {
 	kernel_trigger_dispatchx(_trigger);
 }
 
+void enable_player() {
+	player_set_commands_allowed(true);
+	ws_unhide_walker(_G(my_walker));
+}
+
+void wilbur_abduct(int trigger) {
+	player_set_commands_allowed(false);
+	digi_stop(1);
+	digi_preload("999_004");
+
+	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+		player_update_info(_G(my_walker), &_G(player_info));
+
+		switch (_G(walkTrigger)) {
+		case 1:
+		case 2:
+			series_play_("999ab02", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			series_play_("999ab02s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			break;
+		case 3:
+		case 4:
+		case 5:
+			series_play_("999ab04", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			series_play_("999ab04s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			break;
+		case 7:
+		case 8:
+		case 9:
+			series_play_("999ab08", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			series_play_("999ab08s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			break;
+		case 10:
+		case 11:
+			series_play_("999ab10", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			series_play_("999ab10s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			break;
+		default:
+			series_play_("999ab02", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			series_play_("999ab02s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+				_G(player_info).x, _G(player_info).y);
+			break;
+		}
+	}
+
+	digi_play("999_04", 2, 255, -1);
+	kernel_timing_trigger_daemon(180, trigger);
+
+	if (!_G(flags)[V154] || imath_rand_bool(5)) {
+		digi_preload("402w005z");
+		digi_play("402w005z", 1, 255, -1);
+	}
+}
+
 } // namespace Burger
 } // namespace M4

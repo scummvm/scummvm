@@ -96,7 +96,7 @@ static const seriesPlayBreak PLAY_BREAKS3[] = {
 static const seriesPlayBreak PLAY_BREAKS4[] = {
 	{   0,  6, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
 	{   7,  9, "101w005", 1, 255, -1,    0, 0, nullptr, 0 },
-	{  10, -1, nullptr,   1, 255, 10016, 0, 0, nullptr, 0 },
+	{  10, -1, nullptr,   1, 255, gABDUCT, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -141,27 +141,27 @@ void Room101::init() {
 		ws_hide_walker(_G(my_walker));
 
 		_G(roomVal1) = 6;
-		kernel_trigger_dispatch_now(10016);
+		kernel_trigger_dispatch_now(gABDUCT);
 		break;
 
 	case 104:
 		_G(roomVal1) = 2;
-		kernel_trigger_dispatch_now(10016);
+		kernel_trigger_dispatch_now(gABDUCT);
 		break;
 
 	case 106:
 		_G(roomVal1) = 3;
-		kernel_trigger_dispatch_now(10016);
+		kernel_trigger_dispatch_now(gABDUCT);
 		break;
 
 	case 135:
 		_G(roomVal1) = 4;
-		kernel_trigger_dispatch_now(10016);
+		kernel_trigger_dispatch_now(gABDUCT);
 		break;
 
 	case 142:
 		_G(roomVal1) = 5;
-		kernel_trigger_dispatch_now(10016);
+		kernel_trigger_dispatch_now(gABDUCT);
 		break;
 
 	default:
@@ -410,7 +410,7 @@ void Room101::daemon() {
 	case 21:
 		digi_play("101_002", 2, 255, -1);
 		_G(roomVal1) = 18;
-		series_play_("101ha01", 3840, 0, 10016, 6, 0, 100, 0, 0, 14, -1);
+		series_play_("101ha01", 3840, 0, gABDUCT, 6, 0, 100, 0, 0, 14, -1);
 		break;
 
 	case 23:
@@ -453,7 +453,7 @@ void Room101::daemon() {
 		Section1::updateWalker(226, 281, 8, 26);
 		break;
 
-	case 10016:
+	case gABDUCT:
 		switch (_G(roomVal1)) {
 		case 2:
 			player_set_commands_allowed(true);
@@ -485,7 +485,7 @@ void Room101::daemon() {
 
 		case 6:
 			_G(roomVal1) = 7;
-			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, 10016, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, gABDUCT, 3, 6, 100, 0, -53);
 			break;
 
 		case 7:
@@ -496,7 +496,7 @@ void Room101::daemon() {
 		case 8:
 			_G(roomVal1) = 9;
 			TerminateMachineAndNull(_doorMachine);
-			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, 10016, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gABDUCT, 3, 6, 100, 0, 0);
 			break;
 
 		case 9:
@@ -505,7 +505,7 @@ void Room101::daemon() {
 
 		case 10:
 			_G(roomVal1) = 11;
-			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 256, 10016, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 256, gABDUCT, 3, 6, 100, 0, -53);
 			break;
 
 		case 11:
@@ -517,17 +517,17 @@ void Room101::daemon() {
 		case 14:
 			TerminateMachineAndNull(_doorMachine);
 			_G(roomVal1) = 15;
-			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, 10016, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gABDUCT, 3, 6, 100, 0, 0);
 			break;
 
 		case 15:
 			_G(roomVal1) = 16;
-			digi_play("101h001", 1, 255, 10016);
+			digi_play("101h001", 1, 255, gABDUCT);
 			break;
 
 		case 16:
 			_G(roomVal1) = 17;
-			series_play_with_breaks(PLAY_BREAKS2, "101wi03", 3072, 10016, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY_BREAKS2, "101wi03", 3072, gABDUCT, 3, 6, 100, 0, 0);
 			break;
 
 		case 17:
@@ -537,9 +537,9 @@ void Room101::daemon() {
 			if (_G(flags)[V005]) {
 				Common::String name = Common::String::format("101h003%c",
 					'a' + imath_ranged_rand(0, 5));
-				digi_play(name.c_str(), 1, 255, 10016);
+				digi_play(name.c_str(), 1, 255, gABDUCT);
 			} else {
-				digi_play("101h002", 1, 255, 10016);
+				digi_play("101h002", 1, 255, gABDUCT);
 				_G(flags)[V005] = 1;
 			}
 
@@ -558,7 +558,7 @@ void Room101::daemon() {
 
 		case 20:
 			_G(roomVal1) = 11;
-			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, 10016, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, gABDUCT, 3, 6, 100, 0, -53);
 			break;
 
 		case 21:

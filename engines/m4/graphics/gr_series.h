@@ -85,7 +85,7 @@ extern machine *series_show_(const char *seriesName, frac16 layer, uint32 flags,
 	int32 duration, int32 index, int32 s = 100, int32 x = 0, int32 y = 0);
 extern machine *series_play_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
 	int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
-	int32 firstFrame, int32 lastFrame);
+	int32 firstFrame = 0, int32 lastFrame = -1);
 
 } // namespace M4
 

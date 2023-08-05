@@ -55,6 +55,9 @@ public:
 	void wilburs_speech_finished();
 };
 
+extern void enable_player();
+extern void wilbur_abduct(int trigger);
+
 } // namespace Burger
 } // namespace M4
 

@@ -22,6 +22,7 @@
 #ifndef M4_BURGER_BURGER_VARS_H
 #define M4_BURGER_BURGER_VARS_H
 
+#include "common/textconsole.h"
 #include "m4/vars.h"
 #include "m4/burger/core/release_trigger.h"
 #include "m4/burger/core/stream_break.h"
@@ -61,6 +62,7 @@ enum global_triggers {
 	gCHANGE_WILBUR_ANIMATION,
 	gWILBURS_SPEECH_FINISHED = 10014,
 	gWILBURS_SPEECH_START = 10015,
+	gABDUCT = 10016,
 
 	CALLED_EACH_LOOP = 32764,        
 
@@ -125,6 +127,16 @@ extern Vars *g_vars;
 #define _G(X) (::M4::Burger::g_vars->_##X)
 #define _GI(X) _G(interface)._##X
 #define _GINT() _G(interface)
+
+
+inline int UNKNOWN_depth1() {
+	error("TODO: Uninitialized? depth UNKNOWN_1");
+}
+inline int UNKNOWN_scale1() {
+	error("TODO: Uninitialized? depth UNKNOWN_1");
+}
+#define UNKNOWN_DEPTH_1 UNKNOWN_depth1()
+#define UNKNOWN_SCALE_1 UNKNOWN_scale1()
 
 } // namespace Burger
 } // namespace M4

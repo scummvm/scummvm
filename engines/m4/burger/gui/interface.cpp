@@ -334,18 +334,18 @@ void Interface::trackIcons() {
 		if (_G(game).section_id == 1) {
 			term_message("Abduct me now!");
 			_G(roomVal1) = 10017;
-			kernel_trigger_dispatch_now(10016);
+			kernel_trigger_dispatch_now(gABDUCT);
 		} else if (_G(game).section_id == 7) {
 			_G(walker).wilbur_speech("999w023");
 		} else {
 			term_message("Fail me now!");
 			_G(roomVal1) = 10015;
-			kernel_trigger_dispatch_now(10016);
+			kernel_trigger_dispatch_now(gABDUCT);
 		}
 		break;
 
 	case 11:
-		// Abduct
+		// Game menu
 		other_save_game_for_resurrection();
 		CreateGameMenu(_G(master_palette));
 		break;

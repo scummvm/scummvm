@@ -53,6 +53,7 @@ void imath_seed(int32 seednum);
 uint32 imath_random();
 int32 imath_ranged_rand(int32 a, int32 b);
 frac16 imath_ranged_rand16(frac16 a, frac16 b);
+bool imath_rand_bool(int max);
 
 frac16 dist2d(int32 x1, int32 y1, int32 x2, int32 y2);
 frac16 SqrtF16(frac16 n);
