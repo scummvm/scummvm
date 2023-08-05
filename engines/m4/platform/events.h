@@ -114,6 +114,11 @@ public:
 	void clearMouseStateEvent() {
 		_mouseStateEvent = 0;
 	}
+
+	/**
+	 * Delays by a given number of milliseconds
+	 */
+	void delay(uint amount);
 };
 
 extern Events *g_events;

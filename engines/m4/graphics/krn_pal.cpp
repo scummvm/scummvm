@@ -55,10 +55,7 @@ static int32 screen_height(Buffer *grey_screen) {
 }
 
 static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32 steps, int32 delay) {
-	int i;
-#ifdef TODO
-	int j;
-	clock_t begin_time;
+	int i, j;
 	RGB8 *working = (RGB8 *)mem_alloc(sizeof(RGB8) * 256, STR_FADEPAL);
 
 	// perform the fade
@@ -82,13 +79,8 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 		gr_pal_set_range(working, from, to - from + 1);   ///set pal 21-255
 
 		// Time delay of "delay" milliseconds
-		begin_time = clock();
-		while ((((clock() - begin_time) * 1000) / CLOCKS_PER_SEC) < delay)
-			krn_pal_game_task();
+		g_events->delay(delay);
 	}
-#else
-	error("TODO: grey_fade");
-#endif
 
 	// Eliminate round off error
 	if (to_from_flag == TO_GREY) {
@@ -101,9 +93,8 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 		}
 		gr_pal_set_range(pal, from, to - from + 1);   ///set pal 21-255
 	}
-#ifdef TODO
+
 	mem_free(working);
-#endif
 }
 
 
