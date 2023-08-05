@@ -63,10 +63,82 @@ void FreescapeEngine::titleScreen() {
 	_gfx->clear(0, 0, 0, true);
 }
 
+Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Common::String> &lines) {
+	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, color);
+
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	surface->fillRect(_viewArea, black);
+
+	switch (_renderMode) {
+		case Common::kRenderCGA:
+			color = 1;
+			break;
+		case Common::kRenderZX:
+			color = 6;
+			break;
+		case Common::kRenderCPC:
+			color = _gfx->_underFireBackgroundColor;
+			if (color == uint32(-1))
+				color = 14;
+			break;
+		default:
+			color = 14;
+	}
+	uint8 r, g, b;
+
+	_gfx->readFromPalette(color, r, g, b);
+	if (isAmiga() || isAtariST()) {
+		r = 0xFF;
+		g = 0xFF;
+		b = 0x55;
+	}
+
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	int x = 50;
+	int y = 32;
+
+	for (int i = 0; i < int(lines.size()); i++) {
+		drawStringInSurface(lines[i], x, y, front, black, surface);
+		y = y + 9;
+	}
+	return surface;
+}
+
 void FreescapeEngine::borderScreen() {
 	if (!_border)
 		return;
 
+	if (isDriller()) {
+		drawBorderScreenAndWait(nullptr);
+
+		if (isAmiga())
+			return;
+	}
+
+	if (isDOS() || isSpectrum()) {
+		Common::Array<Common::String> lines;
+		lines.push_back("     CONFIGURATION MENU");
+		lines.push_back("");
+		lines.push_back("     1: KEYBOARD ONLY      ");
+		lines.push_back("     2: IBM JOYSTICK       ");
+		lines.push_back("     3: AMSTRAD JOYSTICK   ");
+		lines.push_back("");
+		lines.push_back("  SPACEBAR:  BEGIN MISSION");
+		lines.push_back("");
+		lines.push_back("  COPYRIGHT 1988 INCENTIVE");
+		lines.push_back("");
+		Graphics::Surface *surface = drawStringsInSurface(lines);
+		drawBorderScreenAndWait(surface);
+		surface->free();
+		delete surface;
+	}
+}
+
+void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
 	int maxWait = 6 * 60;
 	for (int i = 0; i < maxWait; i++ ) {
 		Common::Event event;
@@ -95,6 +167,8 @@ void FreescapeEngine::borderScreen() {
 		}
 
 		drawBorder();
+		if (surface)
+			drawFullscreenSurface(surface);
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS

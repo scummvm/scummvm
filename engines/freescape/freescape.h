@@ -126,6 +126,7 @@ public:
 	void drawBackground();
 	virtual void drawUI();
 	virtual void drawInfoMenu();
+	void drawBorderScreenAndWait(Graphics::Surface *surface);
 
 	virtual void drawCrossair(Graphics::Surface *surface);
 	Graphics::ManagedSurface *_border;
@@ -372,6 +373,7 @@ public:
 	Common::BitArray _font;
 	bool _fontLoaded;
 	void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0);
+	Graphics::Surface *drawStringsInSurface(const Common::Array<Common::String> &lines);
 
 	// Game state
 	virtual void initGameState();
