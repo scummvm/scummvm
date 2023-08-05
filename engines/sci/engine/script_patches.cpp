@@ -1895,17 +1895,17 @@ static const uint16 fangamePatchVolumeSlider2[] = {
 // Fan games based on the SCI Studio template reset their volume to 15 (max) in
 //  the init method of their game object in script 0. As with most SCI32 games,
 //  we patch this out so that the volume stored in ScummVM is used.
-// 
+//
 // Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
 // Responsible method: Template:init (the Game object in script 0)
 // Fixes bug: #13795
 static const uint16 fangameSignatureVolumeReset1[] = {
 	0x35, 0x0f,                      // ldi 0f
-	SIG_ADDTOOFFSET(+1), 0x1d,       // sag 1d   [ sag or sal depending on compiler ] 
+	SIG_ADDTOOFFSET(+1), 0x1d,       // sag 1d   [ sag or sal depending on compiler ]
 	SIG_ADDTOOFFSET(+1),             // push2    [ opcode 7b instead of 7a in some games ]
 	0x39, 0x08,                      // pushi 08 [ volume ]
 	SIG_ADDTOOFFSET(+1),             // lsg 1d   [ lsg or lsl depending on compiler ]
-	SIG_MAGICDWORD, 0x1d,      
+	SIG_MAGICDWORD, 0x1d,
 	0x43, 0x31, 0x04,                // callk DoSound 04
 	SIG_END
 };
@@ -4095,7 +4095,7 @@ static const uint16 gk1EndGameFontPatch[] = {
 //  one patch to work on all calls.
 //
 // Applies to: Italian fan translation, PC CD version
-// Responsible methods: DEdit:hilite, DText:dispose, DText:draw, DSelector:dispose, 
+// Responsible methods: DEdit:hilite, DText:dispose, DText:draw, DSelector:dispose,
 //                      SRDialog:update, BookButton:hilite, TapeButton:doit
 //                      TellerButton:hilite, TopicButton:hilite
 static const uint16 gk1ItalianTranslationSignature[] = {
@@ -8822,7 +8822,7 @@ static const uint16 larry5PatchUpdateStopGroopClient[] = {
 	0x89, 0x00,                         // lsg 00
 	0x81, 0x64,                         // lag 64
 	0x4a, 0x06,                         // send 06 [ stopGroop client: ego ]
-	0x33, 0x05,                         // jmp 05  [ toss, ret ] 
+	0x33, 0x05,                         // jmp 05  [ toss, ret ]
 	PATCH_END
 };
 
@@ -9112,7 +9112,7 @@ static const uint16 larry6HiresMacVolumeRestorePatch[] = {
 //  This shouldn't affect ScummVM since we don't use RESOURCE.CFG, but something
 //  about the way the collection was packaged causes players to continue to miss
 //  this directory and not realize until it's too late. The lockup occurs late
-//  in the game and adding the missing patch files invalidates all saves. 
+//  in the game and adding the missing patch files invalidates all saves.
 //
 // We don't generally fix "bugs" that are consequences of not providing all of
 //  the game's data files, but this is a severe case that keeps coming up.
@@ -11101,7 +11101,7 @@ static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
 //  itself doesn't work, instead the player has to click on the surrounding area
 //  to look at it or pick it up. bone:doVerb calls dinoBones:doVerb but doesn't
 //  pass the verb parameter. We fix this by increasing the &rest parameter.
-//  
+//
 // Applies to: All versions
 // Responsible method: bone:doVerb
 static const uint16 laurabow2SignatureFixDinosaurBone[] = {
@@ -15815,7 +15815,7 @@ static const uint16 qfg3PatchRingRopePrize[] = {
 //  events that they've met the preconditions for. Note that these changes are
 //  broken up into smaller patches to be compatible with the many different
 //  versions of these scripts, including the NRS fan patches that GOG includes,
-//  and the comprehensive QFG3 Unofficial Update fan patches. 
+//  and the comprehensive QFG3 Unofficial Update fan patches.
 //
 // Applies to: All versions
 // Responsible methods: rm450:init, rm420:init
@@ -15863,7 +15863,7 @@ static const uint16 qfg3SignatureLaibonHutEvents3[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x05,                         // ldi 05
 	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
-	0x33,                               // jmp [ exit cond ] 
+	0x33,                               // jmp [ exit cond ]
 	SIG_END
 };
 
@@ -15877,7 +15877,7 @@ static const uint16 qfg3PatchLaibonHutEvents3[] = {
 	0x31, 0x06,                         // bnt 06
 	0x35, 0x05,                         // ldi 05
 	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
-	0x33, 0x06,                         // jmp 06 [ exit cond ] 
+	0x33, 0x06,                         // jmp 06 [ exit cond ]
 	0x8a, PATCH_UINT16(0x000b),         // lsl 000b
 	0x35, 0x06,                         // ldi 06
 	0x1a,                               // eq? [ is room event 6? ]
@@ -15901,7 +15901,7 @@ static const uint16 qfg3SignatureNrsLaibonHutEvents3[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x05,                         // ldi 05
 	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
-	0x32,                               // jmp [ exit cond ] 
+	0x32,                               // jmp [ exit cond ]
 	SIG_END
 };
 
@@ -15915,7 +15915,7 @@ static const uint16 qfg3PatchNrsLaibonHutEvents3[] = {
 	0x30, PATCH_UINT16(0x0007),         // bnt 0007
 	0x35, 0x05,                         // ldi 05
 	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
-	0x32, PATCH_UINT16(0x0006),         // jmp 0006 [ exit cond ] 
+	0x32, PATCH_UINT16(0x0006),         // jmp 0006 [ exit cond ]
 	0x8a, PATCH_UINT16(0x000b),         // lsl 000b
 	0x35, 0x06,                         // ldi 06
 	0x1a,                               // eq? [ is room event 6? ]
@@ -23336,9 +23336,52 @@ static const uint16 sq1vgaSysLoggerHotKeyPatch[] = {
 	PATCH_END
 };
 
+// Whenever the amount of buckazoids is less than 3, any interaction with the money
+//  in the inventory will crash the game with "text.574 not found". The reason is
+//  that "view.574" is used in order to show the low amount of money, but the same
+//  resource id (574) is used to display the text messages associated with doVerb
+//  interactions.
+//  The fix will just use text.560 (which is also used if the money amount is > 3)
+//  in all cases, which is still missing some dialogs
+//  for interactions (sq1 is full of that), but it won't crash anymore.
+//
+//  The Amiga and MAC version are not affected because they properly set the view to
+//  560 before calling super doVerb.
+//
+// Applies to: PC VGA
+// Responsible method: buckazoid:doVerb
+static const uint16 sq1vgaSignatureMissingTextResources[] = {
+	0x30, SIG_UINT16(0x001f),          // bnt 1f
+	SIG_ADDTOOFFSET(+24),
+	0x47, 0xff, 0x04, 0x08,            // calle proc255_4 08 [ PrintF ]
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x000b),          // jmp 0b
+	0x38, SIG_SELECTOR16(doVerb),      // pushi 10a [ doVerb ]
+	0x7a,                              // push2
+	0x8f, 0x01,                        // lsp param1
+	0x8f, 0x02,                        // lsp param2
+	0x57, 0x81, 0x08,                  // super RInvItem 8
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchMissingTextResources[] = {
+	0x30, PATCH_UINT16(0x001e),        // bnt 1e
+	PATCH_ADDTOOFFSET(+28),
+	0x33, 0x0c,                        // jmp 0c
+	0x7a,                              // push2
+	0x38, PATCH_UINT16(0x0230),        // pushi 230
+	0x8f, 0x02,                        // lsp param2
+	0x46,
+	PATCH_UINT16(0x00ff),
+	PATCH_UINT16(0x0000),
+	0x04,                              // calle proc255_0 04 [ Print ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, sq1vgaSysLoggerHotKeySignature,             sq1vgaSysLoggerHotKeyPatch },
+	{  true,     0, "missing text resource",                       1, sq1vgaSignatureMissingTextResources,        sq1vgaPatchMissingTextResources },
 	{  true,    28, "orat sounds",                                 1, sq1vgaSignatureOratSounds,                  sq1vgaPatchOratSounds },
 	{  true,    40, "taste pink ship",                             1, sq1vgaSignatureTastePinkShip,               sq1vgaPatchTastePinkShip },
 	{  true,    40, "tiny's sign",                                 1, sq1vgaSignatureTinysSign,                   sq1vgaPatchTinysSign },
