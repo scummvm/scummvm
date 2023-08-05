@@ -25,9 +25,13 @@
 #include "scumm/he/sound_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
+
 #include "common/util.h"
 #include "common/file.h"
 #include "common/debug.h"
+#include "common/memstream.h"
+
+#include "audio/decoders/adpcm.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
@@ -170,7 +174,7 @@ public:
 	void milesRestoreChannel(int channel);
 	void milesFeedMixer();
 	bool milesPauseMixerSubSystem(bool paused);
-	byte *milesGetAudioDataFromResource(int globType, int globNum, int &riffLength, int &compType);
+	byte *milesGetAudioDataFromResource(int globType, int globNum, uint32 dataOffset, uint16 &compType, uint16 &blockAlign);
 };
 
 } // End of namespace Scumm

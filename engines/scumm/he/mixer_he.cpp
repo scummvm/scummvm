@@ -188,13 +188,17 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 
 	// Fetch the audio format for the target sound, and fill out
 	// the format fields on our milesChannel
-	int audioDataLen = 0;
-	int compType = WAVE_FORMAT_PCM;
-	byte *audioData = milesGetAudioDataFromResource(globType, globNum, audioDataLen, compType);
+	byte *audioData = milesGetAudioDataFromResource(globType, globNum, soundData,
+		_milesChannels[channel]._dataFormat, _milesChannels[channel]._blockAlign);
+
+	uint32 audioDataLen = 0;
+	if (_milesChannels[channel]._dataFormat == WAVE_FORMAT_IMA_ADPCM)
+		audioDataLen = sampleLen;
+	else
+		audioDataLen = sampleLen * _milesChannels[channel]._blockAlign;
 
 	_milesChannels[channel]._bitsPerSample = bitsPerSample;
 	_milesChannels[channel]._numChannels = sampleChannels;
-	_milesChannels[channel]._dataFormat = compType;
 
 	if (audioData) {
 		_vm->_res->lock((ResType)globType, globNum);
@@ -213,13 +217,13 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 			_milesChannels[channel]._playFlags = CHANNEL_LOOPING;
 
 			// Looping sounds don't care for modifiers!
-			if (compType == WAVE_FORMAT_PCM) {
+			if (_milesChannels[channel]._dataFormat == WAVE_FORMAT_PCM) {
 				Audio::RewindableAudioStream *stream =
 					Audio::makeRawStream(audioData, audioDataLen, frequency, _milesChannels[channel].getOutputFlags());
 
 				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_milesChannels[channel]._audioHandle,
 								   Audio::makeLoopingAudioStream(stream, 0), channel, 255, 0, DisposeAfterUse::NO);
-			} else {
+			} else if (_milesChannels[channel]._dataFormat == WAVE_FORMAT_IMA_ADPCM) {
 				warning("HEMixer::milesStartChannel(): Looping ADPCM not yet implemented!");
 			}
 		} else {
@@ -227,6 +231,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 
 			// Fill out the modifiers
 			int newFrequency = (frequency * modifiers.frequencyShift) / HSND_SOUND_FREQ_BASE;
+			int msOffset = (offset * 1000) / newFrequency;
 
 			_milesChannels[channel]._modifiers.frequencyShift = modifiers.frequencyShift;
 			_milesChannels[channel]._modifiers.volume = modifiers.volume;
@@ -239,13 +244,34 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 			int scaledPan = (_milesChannels[channel]._modifiers.pan != 64) ? 2 * _milesChannels[channel]._modifiers.pan - 127 : 0;
 
 			// Play the one-shot sound!
-			if (compType == WAVE_FORMAT_PCM) {
+			if (_milesChannels[channel]._dataFormat == WAVE_FORMAT_PCM) {
 				Audio::SeekableAudioStream *stream =
-					Audio::makeRawStream(audioData + offset, audioDataLen - offset, newFrequency, _milesChannels[channel].getOutputFlags());
+					Audio::makeRawStream(audioData, audioDataLen, newFrequency, _milesChannels[channel].getOutputFlags());
+
+				stream->seek(msOffset);
 				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_milesChannels[channel]._audioHandle,
 								   stream, channel, _milesChannels[channel]._modifiers.volume, scaledPan, DisposeAfterUse::NO);
-			} else {
-				warning("HEMixer::milesStartChannel(): ADPCM not yet implemented!");
+			} else if (_milesChannels[channel]._dataFormat == WAVE_FORMAT_IMA_ADPCM) {
+				Common::MemoryReadStream memStream(audioData, audioDataLen);
+				Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, audioDataLen, Audio::kADPCMMSIma,
+						_milesChannels[channel]._baseFrequency, _milesChannels[channel]._numChannels, _milesChannels[channel]._blockAlign);
+
+				byte *adpcmData = (byte *)malloc(audioDataLen * 4);
+				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, audioDataLen * 2);
+
+				byte outFlags = _milesChannels[channel].getOutputFlags();
+
+#ifdef SCUMM_LITTLE_ENDIAN
+				outFlags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+
+				Audio::SeekableAudioStream *stream =
+					Audio::makeRawStream(adpcmData, adpcmSize, newFrequency, outFlags);
+
+				stream->seek(msOffset);
+				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_milesChannels[channel]._audioHandle,
+								   stream, channel, _milesChannels[channel]._modifiers.volume, scaledPan, DisposeAfterUse::NO);
+
 			}
 		}
 	}
@@ -398,7 +424,7 @@ bool HEMixer::milesPauseMixerSubSystem(bool paused) {
 	return true;
 }
 
-byte *HEMixer::milesGetAudioDataFromResource(int globType, int globNum, int &dataLength, int &compType) {
+byte *HEMixer::milesGetAudioDataFromResource(int globType, int globNum, uint32 dataOffset, uint16 &compType, uint16 &blockAlign) {
 	// This function is used for non streamed sound effects and voice files,
 	// and fetches metadata for the target sound resource
 
@@ -425,14 +451,14 @@ byte *HEMixer::milesGetAudioDataFromResource(int globType, int globNum, int &dat
 	}
 
 	compType = READ_LE_UINT16(globPtr + 20); // Format type from the 'fmt ' block
-	dataLength = READ_LE_UINT32(globPtr + 40); // Length field of the 'data' block
+	blockAlign = READ_LE_UINT16(globPtr + 32); // Block align field
 
 	if (compType != WAVE_FORMAT_PCM && compType != WAVE_FORMAT_IMA_ADPCM) {
 		debug("HEMixer::milesGetAudioDataFromResource(): .wav files must be PCM or IMA ADPCM. Unsupported .wav sound type %d.", compType);
 		return nullptr;
 	}
 
-	return globPtr + WAVE_RIFF_HEADER_LEN;
+	return globPtr + dataOffset;
 }
 
 void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int flags, HESoundModifiers modifiers, Audio::Mixer *mixer) {

@@ -2491,9 +2491,13 @@ void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
 			int talkState = 0;
 
-			if (((SoundHE *)_vm->_sound)->isSoundCodeUsed(1))
-				talkState = ((SoundHE *)_vm->_sound)->getSoundVar(1, 19);
-			if (talkState == 0)
+			if (!((SoundHE *)_vm->_sound)->isSoundCodeUsed(HSND_TALKIE_SLOT))
+				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
+			else
+				talkState = ((SoundHE *)_vm->_sound)->getSoundVar(HSND_TALKIE_SLOT, 19);
+
+			// Allow a talkie with tokens to kick into random mouth mode
+			if (talkState == -1)
 				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
 
 			assertRange(1, talkState, 13, "Talk state");
@@ -3122,7 +3126,7 @@ void ScummEngine::stopTalk() {
 
 	_sound->stopTalkSound();
 
-	_haveMsg = _game.heversion >= 70 ? 3 : 0;
+	_haveMsg = 0;
 	_talkDelay = 0;
 	_sound->_digiSndMode = DIGI_SND_MODE_EMPTY;
 

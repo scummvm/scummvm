@@ -60,7 +60,6 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 	_baseSndSize = 0;
 
 	memset(_heChannel, 0, sizeof(_heChannel));
-	_heSoundChannels = new Audio::SoundHandle[8]();
 
 	_useMilesSoundSystem =
 		parent->_game.id == GID_MOONBASE ||
@@ -73,7 +72,6 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 
 SoundHE::~SoundHE() {
 	free(_heSpoolingMusicTable);
-	delete[] _heSoundChannels;
 
 	if (_heSpoolingMusicFile.isOpen())
 		_heSpoolingMusicFile.close();
@@ -365,17 +363,15 @@ int SoundHE::getNextDynamicChannel() {
 }
 
 bool SoundHE::isSoundCodeUsed(int sound) {
-	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
-		if (_heChannel[i].sound == sound)
-			chan = i;
+	int chan;
+
+	if ((chan = hsFindSoundChannel(sound)) != -1) {
+		if (_heChannel[chan].hasSoundTokens) {
+			return true;
+		}
 	}
 
-	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
-		return _heChannel[chan].hasSoundTokens;
-	} else {
-		return false;
-	}
+	return false;
 }
 
 int SoundHE::getChannelPosition(int channel) {
@@ -401,11 +397,11 @@ int SoundHE::getSoundPosition(int sound) {
 }
 
 int SoundHE::getSoundVar(int sound, int var) {
-	if (_vm->_game.heversion >= 90 && var == 26) {
+	if (_vm->_game.heversion >= 90 && var == HSND_SNDVAR_TOKENS) {
 		return isSoundCodeUsed(sound);
 	}
 
-	assertRange(0, var, 25, "sound variable");
+	assertRange(0, var, HSND_MAX_SOUND_VARS - 1, "sound variable");
 
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
@@ -413,8 +409,10 @@ int SoundHE::getSoundVar(int sound, int var) {
 			chan = i;
 	}
 
-	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
-		debug(5, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
+	chan = hsFindSoundChannel(sound);
+
+	if (chan != -1) {
+		debug(5, "SoundHE::getSoundVar(): sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {
 		return 0;
@@ -431,7 +429,7 @@ void SoundHE::setSoundVar(int sound, int var, int val) {
 	}
 
 	if (chan != -1) {
-		debug(5, " SoundHE::setSoundVar(): sound %d var %d val %d", sound, var, val);
+		debug(5, "SoundHE::setSoundVar(): sound %d var %d val %d", sound, var, val);
 		_heChannel[chan].soundVars[var] = val;
 	}
 }
@@ -541,6 +539,7 @@ void SoundHE::handleSoundFrame() {
 
 	if (_stopActorTalkingFlag) {
 		_vm->stopTalk();
+		_vm->_haveMsg = 3;
 		_stopActorTalkingFlag = false;
 	}
 
