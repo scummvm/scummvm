@@ -19,15 +19,16 @@
  *
  */
 
-#ifndef BACKENDS_DLC_ScummVMCloud_ScummVMCloud_H
-#define BACKENDS_DLC_ScummVMCloud_ScummVMCloud_H
+#ifndef BACKENDS_DLC_SCUMMVMCLOUD_SCUMMVMCLOUD_H
+#define BACKENDS_DLC_SCUMMVMCLOUD_SCUMMVMCLOUD_H
+
+#include "common/queue.h"
 
 #include "backends/dlc/store.h"
 #include "backends/dlc/dlcdesc.h"
 #include "backends/networking/curl/session.h"
 #include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
-#include "common/queue.h"
 
 namespace DLC {
 namespace ScummVMCloud {

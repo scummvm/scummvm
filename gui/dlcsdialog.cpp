@@ -19,13 +19,15 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "gui/dlcsdialog.h"
 #include "gui/message.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 #include "gui/gui-manager.h"
 #include "gui/downloaddlcsdialog.h"
-#include "common/translation.h"
+
 #include "backends/dlc/dlcmanager.h"
 
 namespace GUI {

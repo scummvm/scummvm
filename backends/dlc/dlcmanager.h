@@ -19,18 +19,20 @@
  *
  */
 
-#ifndef DLC_DLCMANAGER_H
-#define DLC_DLCMANAGER_H
+#ifndef BACKENDS_DLC_DLCMANAGER_H
+#define BACKENDS_DLC_DLCMANAGER_H
 
 #include "common/str.h"
 #include "common/str-array.h"
 #include "common/queue.h"
 #include "common/singleton.h"
+
+#include "gui/object.h"
+#include "gui/launcher.h"
+
 #include "backends/dlc/store.h"
 #include "backends/dlc/dlcdesc.h"
 #include "backends/networking/curl/request.h"
-#include "gui/object.h"
-#include "gui/launcher.h"
 
 namespace DLC {
 

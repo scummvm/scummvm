@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef DLC_DLCT_H
-#define DLC_DLCT_H
+#ifndef BACKENDS_DLC_DLCDESC_H
+#define BACKENDS_DLC_DLCDESC_H
 
 #include "common/str.h"
 
