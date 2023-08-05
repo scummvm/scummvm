@@ -110,7 +110,7 @@ public:
 
 	void drawDebug(const Rect &camera);
 
-	bool insideWalk(const Rect boundingBox);
+	bool insideWalk(const Rect &boundingBox);
 	bool insideWalk(const Vector2i &pos);
 
 	bool insideNoWalk(const Vector2i &pos);
@@ -131,15 +131,15 @@ public:
 		return _h;
 	}
 
-	Rect areaWalk() {
+	const Rect &areaWalk() {
 		return _areaWalk;
 	}
 
-	Common::Array<Shape> areaNoWalk() {
+	const Common::Array<Shape> &areaNoWalk() {
 		return _areaNowalk;
 	}
 
-	Common::Array<pyrodactyl::level::Stairs> areaStairs() {
+	const Common::Array<pyrodactyl::level::Stairs> &areaStairs() {
 		return _areaStairs;
 	}
 };

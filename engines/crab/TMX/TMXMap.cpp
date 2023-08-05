@@ -333,7 +333,7 @@ bool TMXMap::insideNoWalk(const Vector2i &pos) {
 	return false;
 }
 
-bool TMXMap::insideWalk(const Rect boundingBox) {
+bool TMXMap::insideWalk(const Rect &boundingBox) {
 	if (_areaWalk.contains(boundingBox))
 		return true;
 
