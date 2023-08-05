@@ -478,10 +478,17 @@ void FreescapeEngine::processInput() {
 				g_system->warpMouse(mousePos.x, mousePos.y);
 
 			if (_shootMode) {
-				Common::Point resolution(g_system->getWidth(), g_system->getHeight());
-				_crossairPosition.x = _screenW * mousePos.x / resolution.x;
-				_crossairPosition.y = _screenH * mousePos.y / resolution.y;
+				_crossairPosition.x = _screenW * mousePos.x / g_system->getWidth();
+				_crossairPosition.y = _screenH * mousePos.y / g_system->getHeight();
 				break;
+			} else {
+				// Mouse pointer is locked into the the middle of the screen
+				// since we only need the relative movements. This will not affect any touchscreen device
+				// so on-screen controls are still accesible
+				mousePos.x = g_system->getWidth() * ( _viewArea.left + _viewArea.width() / 2) / _screenW;
+				mousePos.y = g_system->getHeight() * (_viewArea.top + _viewArea.height() / 2) / _screenW;
+				g_system->warpMouse(mousePos.x, mousePos.y);
+				g_system->getEventManager()->purgeMouseEvents();
 			}
 
 			rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
@@ -499,8 +506,11 @@ void FreescapeEngine::processInput() {
 				mousePos.y = _screenH * mousePos.y / resolution.y;
 				touchedScreenControls = onScreenControls(mousePos);
 
-				if (!touchedScreenControls && _viewArea.contains(_crossairPosition))
-					shoot();
+				if (!touchedScreenControls) {
+					if (_viewArea.contains(_shootMode ? _crossairPosition : mousePos))
+						shoot();
+				}
+
 			}
 			break;
 
