@@ -255,6 +255,9 @@ void BurgerEngine::global_pre_parser() {
 }
 
 void BurgerEngine::global_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+//	_G(walker).wilbur_said(
+
 	// TODO: implement
 }
 

@@ -222,6 +222,33 @@ void Walker::wilbur_say() {
 	_G(kernel).trigger_mode = oldMode;
 }
 
+bool Walker::wilbur_said(const char *list[]) {
+	int index = 0;
+
+	if (!list)
+		return false;
+
+	while (list[index]) {
+		if (player_said(list[index])) {
+			if (player_said("look at") && list[index + 1]) {
+				wilbur_speech(list[index + 1]);
+				return true;
+			} else if (player_said("take") && list[index + 2]) {
+				wilbur_speech(list[index + 2]);
+				return true;
+			} else if (player_said("gear") && list[index + 3]) {
+				wilbur_speech(list[index + 3]);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		index += 4;
+	}
+
+	return false;
+}
+
 void Walker::wilburs_speech_finished() {
 	if (_flag && !_G(player).walker_in_this_scene && !_G(roomVal2))
 		SendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
