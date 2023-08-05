@@ -169,12 +169,6 @@ struct TempValue {
 // Whether to draw debug outlines on polygons
 extern bool GameDebug;
 
-// Strings are stored here to avoid duplicates and invalid values when writing to XML
-extern StringPool *gStrPool;
-
-// Generate random numbers using this
-//extern RandomNumberGen gRandom;
-
 } // End of namespace Crab
 
 #endif // CRAB_GAMEPARAM_H
