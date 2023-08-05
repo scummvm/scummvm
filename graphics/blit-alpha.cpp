@@ -538,14 +538,12 @@ void BlendBlit::blit(byte *dst, const byte *src,
 	if (width == 0 || height == 0) return;
 	if (!blitFunc) {
 	// Get the correct blit function
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
-	if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
-	else blitFunc = blitGeneric;
-#elif defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
-	if (g_system->hasFeature(OSystem::kFeatureSSE2)) blitFunc = blitSSE2;
-	else blitFunc = blitGeneric;
-#else
 	blitFunc = blitGeneric;
+#ifdef SCUMMVM_NEON
+	if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
+#endif
+#ifdef SCUMMVM_SSE2
+	if (g_system->hasFeature(OSystem::kFeatureSSE2)) blitFunc = blitSSE2;
 #endif
 	}
 	
@@ -675,10 +673,10 @@ void BlendBlit::blit(byte *dst, const byte *src,
 		} \
 	}
 BLIT_FUNC(Generic)
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#ifdef SCUMMVM_NEON
 BLIT_FUNC(NEON)
 #endif
-#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+#ifdef SCUMMVM_SSE2
 BLIT_FUNC(SSE2)
 #endif
 

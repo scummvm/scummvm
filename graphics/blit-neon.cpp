@@ -19,7 +19,7 @@
  *
  */
 
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#ifdef SCUMMVM_NEON
 #include <arm_neon.h>
 
 #include "graphics/blit.h"
@@ -369,4 +369,4 @@ void BlendBlit::doBlitMultiplyBlendLogicNEON(Args &args) {
 
 } // end of namespace Graphics
 
-#endif // __ARM_NEON__
+#endif // SCUMMVM_NEON

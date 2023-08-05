@@ -234,10 +234,10 @@ private:
 	template<bool doscale, bool rgbmod, bool alphamod> \
 	static void doBlitAlphaBlendLogic##ext(Args &args); \
 	static void blit##ext(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#ifdef SCUMMVM_NEON
 LOGIC_FUNCS_EXT(NEON)
 #endif
-#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+#ifdef SCUMMVM_SSE2
 LOGIC_FUNCS_EXT(SSE2)
 #endif
 LOGIC_FUNCS_EXT(Generic)
