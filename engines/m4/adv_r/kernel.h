@@ -53,8 +53,6 @@ struct Kernel {
 
 	bool pause = false;
 
-	machine* myWalker = nullptr;
-
 	KernelTriggerType trigger_mode = KT_DAEMON;	// trigger was/is invoked in this mode
 	bool call_daemon_every_loop = false;
 	bool continue_handling_trigger = true;	// set to True in apps code when trigger is to 
