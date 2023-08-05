@@ -320,5 +320,21 @@ void wilbur_abduct(int trigger) {
 	}
 }
 
+void Walker::speech_random(int count, int trigger,
+		const char *name1, const char *name2, const char *name3,
+		const char *name4, const char *name5, const char *name6,
+		const char *name7, const char *name8, const char *name9) {
+	const char *names[9] = {
+		name1, name2, name3, name4, name5, name6, name7, name8, name9
+	};
+
+	wilbur_speech(names[imath_ranged_rand(1, count) - 1], trigger);
+}
+
+bool Walker::wilbur_parser(const char **list) {
+	// TODO: wilbur_parser
+	return false;
+}
+
 } // namespace Burger
 } // namespace M4

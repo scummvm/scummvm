@@ -40,6 +40,12 @@ private:
 	Rooms::Section1 _section7;
 	Rooms::Section1 _section8;
 	Rooms::Section9 _section9;
+
+	/**
+	 * Tests for a bunch of words of interest during parsing
+	 */
+	bool saidofInterest() const;
+
 protected:
 	/**
 	 * Creates the structure that holds all the global variables
