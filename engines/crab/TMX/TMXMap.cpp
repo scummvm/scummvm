@@ -111,8 +111,7 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 				// Store the name for easy comparison
 				Common::String name = groupnode->name();
 
-				if (name == "layer" || name == "imagelayer") // Is this a tile or an image layer
-				{
+				if (name == "layer" || name == "imagelayer") { // Is this a tile or an image layer
 					MapLayer l;
 					l.load(path, groupnode);
 					l._pos.x *= _tileSize.x;
@@ -126,8 +125,7 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 						_layer.push_back(l);
 
 					layerCount++;
-				} else if (name == "objectgroup") // Is this an object layer
-				{
+				} else if (name == "objectgroup") { // Is this an object layer
 					Common::String groupName;
 					loadStr(groupName, "name", groupnode);
 					if (groupName == "exit") {
