@@ -78,7 +78,7 @@ public:
 	~Shape() {}
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
-	CollisionData collide(Rect box);
+	CollisionData collide(Rect box) const;
 
 	bool contains(const Vector2i &pos);
 

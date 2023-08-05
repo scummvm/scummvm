@@ -153,7 +153,7 @@ void Polygon2D::project(const Vector2f &axis, float &min, float &max) const {
 	}
 }
 
-PolygonCollisionResult Polygon2D::collide(const Rect &rect) {
+PolygonCollisionResult Polygon2D::collide(const Rect &rect) const {
 	Polygon2D polyB;
 	Vector2f p;
 	p.x = rect.x;
@@ -173,7 +173,7 @@ PolygonCollisionResult Polygon2D::collide(const Rect &rect) {
 	return collide(polyB);
 }
 
-PolygonCollisionResult Polygon2D::collide(const Polygon2D &polyB) {
+PolygonCollisionResult Polygon2D::collide(const Polygon2D &polyB) const {
 	PolygonCollisionResult result;
 	result._intersect = true;
 

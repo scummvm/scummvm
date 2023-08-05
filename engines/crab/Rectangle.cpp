@@ -38,7 +38,7 @@ bool Rect::load(rapidxml::xml_node<char> *node, const bool &echo, const Common::
 	return loadNum(x, x_name, node, echo) && loadNum(y, y_name, node, echo) && loadNum(w, w_name, node, echo) && loadNum(h, h_name, node, echo);
 }
 
-bool Rect::collide(Rect box) {
+bool Rect::collide(Rect box) const {
 	if (box.x + box.w < x)
 		return false; // just checking if their
 	if (box.x > x + w)

@@ -45,7 +45,7 @@ void Shape::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	}
 }
 
-CollisionData Shape::collide(Rect box) {
+CollisionData Shape::collide(Rect box) const {
 	CollisionData res;
 	res._intersect = _rect.collide(box);
 
