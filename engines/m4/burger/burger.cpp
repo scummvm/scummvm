@@ -254,5 +254,9 @@ void BurgerEngine::global_pre_parser() {
 		player_set_facing_hotspot();
 }
 
+void BurgerEngine::global_parser() {
+	// TODO: implement
+}
+
 } // namespace Burger
 } // namespace M4

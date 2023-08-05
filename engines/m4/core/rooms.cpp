@@ -330,6 +330,30 @@ void Sections::game_control_cycle() {
 }
 
 void Sections::parse_player_command_now() {
+	if (_G(player).command_ready) {
+		term_message("player: %s %s %s", _G(player).verb, _G(player).noun, _G(player).prep);
+		_G(cursor_state) = kARROW;
+		_G(kernel).trigger_mode = KT_PARSE;
+
+		room_parser();
+
+		if (_G(player).command_ready) {
+			section_parser();
+
+			if (_G(player).command_ready) {
+				global_parser();
+
+				if (_G(player).command_ready) {
+					room_error();
+
+					if (_G(player).command_ready)
+						global_error_code();
+				}
+			}
+		}
+
+	}
+
 	// TODO: parse_player_command_now
 	error("TODO: parse_player_command_now");
 }
