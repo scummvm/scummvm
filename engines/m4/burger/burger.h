@@ -59,6 +59,7 @@ public:
 
 	void global_daemon() override;
 	void global_pre_parser() override;
+	void global_parser() override;
 };
 
 } // namespace Burger

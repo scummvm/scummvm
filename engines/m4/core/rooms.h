@@ -83,6 +83,7 @@ public:
 	virtual void global_room_init() {}
 	virtual void daemon();
 	virtual void tick() {}
+	virtual void parser() {}
 };
 
 class Sections {
@@ -124,6 +125,9 @@ public:
 	void tick() {
 		_activeSection->tick();
 	}
+	void section_parser() {
+		_activeSection->parser();
+	}
 
 	void room_preload() {
 		_activeRoom->preload();
@@ -161,6 +165,11 @@ public:
 
 	virtual void global_daemon() = 0;
 	virtual void global_pre_parser() = 0;
+	virtual void global_parser() = 0;
+
+	void global_error_code() {
+		// No implementation
+	}
 };
 
 } // namespace M4

@@ -617,7 +617,7 @@ void Room101::pre_parser() {
 }
 
 void Room101::parser() {
-
+	// TODO: implement
 }
 
 void Room101::door() {
