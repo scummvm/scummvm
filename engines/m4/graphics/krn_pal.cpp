@@ -571,6 +571,11 @@ void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry,
 	_G(pal_fade_in_progress) = true;
 }
 
+void disable_player_commands_and_fade_init(int trigger) {
+	player_set_commands_allowed(false);
+	pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, trigger);
+}
+
 static void pal_fade_update(RGB8 *origPalette) {
 	int32 i, currTime;
 	frac16	tempFrac, tempFrac2;

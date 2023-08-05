@@ -81,7 +81,7 @@ public:
 	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
 
 	virtual void global_room_init() {}
-	virtual void daemon() {}
+	virtual void daemon();
 	virtual void tick() {}
 };
 

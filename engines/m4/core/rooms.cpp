@@ -46,6 +46,12 @@ HotSpotRec *Section::walker_spotter(int32 x, int32 y) {
 	return nullptr;
 }
 
+void Section::daemon() {
+	warning("TODO: section daemon");
+	_G(kernel).continue_handling_trigger = true;
+}
+
+
 void Sections::global_section_constructor() {
 	uint sectionNum = _G(game).new_section;
 	assert(sectionNum >= 1 && sectionNum <= 9);

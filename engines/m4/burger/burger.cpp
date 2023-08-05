@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
+#include "m4/graphics/krn_pal.h"
 
 namespace M4 {
 namespace Burger {
@@ -226,6 +227,14 @@ void BurgerEngine::global_daemon() {
 		default:
 			break;
 		}
+		break;
+
+	case gTELEPROTED1:
+		disable_player_commands_and_fade_init(gTELEPROTED2);
+		break;
+	case gTELEPROTED2:
+		_G(walker).wilbur_teleported();
+		break;
 
 	// TODO: Other cases
 

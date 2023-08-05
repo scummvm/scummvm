@@ -230,6 +230,10 @@ void Walker::wilburs_speech_finished() {
 	kernel_trigger_dispatchx(_trigger);
 }
 
+void Walker::wilbur_teleported() {
+	error("TODO: wilbur_teleported");
+}
+
 void enable_player() {
 	player_set_commands_allowed(true);
 	ws_unhide_walker(_G(my_walker));
@@ -283,7 +287,7 @@ void wilbur_abduct(int trigger) {
 		}
 	}
 
-	digi_play("999_04", 2, 255, -1);
+	digi_play("999_004", 2, 255, -1);
 	kernel_timing_trigger_daemon(180, trigger);
 
 	if (!_G(flags)[V154] || imath_rand_bool(5)) {
