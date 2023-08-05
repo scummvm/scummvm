@@ -123,7 +123,6 @@ MODULE_OBJS = \
 	app.o \
 	splash.o \
 	LoadingScreen.o \
-	Line.o \
 	mainmenu.o \
 	PathfindingAgent.o \
 	PathfindingGraphNode.o \
