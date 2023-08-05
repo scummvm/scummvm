@@ -352,10 +352,8 @@ void Sections::parse_player_command_now() {
 			}
 		}
 
+		term_message("...parsed");
 	}
-
-	// TODO: parse_player_command_now
-	error("TODO: parse_player_command_now");
 }
 
 void Sections::pal_game_task() {
