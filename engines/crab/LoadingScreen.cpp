@@ -62,10 +62,8 @@ void LoadingScreen::draw() {
 	// Draw the loading text
 	_text.draw((g_engine->_screenSettings->_cur.w - _text.w()) / 2, (g_engine->_screenSettings->_cur.h - _text.h()) / 2);
 
-	g_engine->_screen->update();
-
 	// Update the screen
-	//SDL_RenderPresent(gRenderer);
+	g_engine->_screen->update();
 }
 
 void LoadingScreen::dim() {
