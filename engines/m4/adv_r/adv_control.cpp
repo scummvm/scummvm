@@ -162,8 +162,8 @@ void update_mouse_pos_dialog() {
 	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
 	assert(game_buff_ptr);
 
-	if (_G(kernel).myWalker != nullptr) {
-		if (((int32)_G(kernel).myWalker->myAnim8) < 0)
+	if (_G(my_walker) != nullptr) {
+		if (((int32)_G(my_walker)->myAnim8) < 0)
 			error_show(FL, 'W:-(');
 		player_get_info();
 	}

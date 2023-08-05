@@ -404,9 +404,9 @@ bool ws_walk_init_system() {
 		_G(globals)[GLB_SCALER] = FixedDiv(_G(globals)[GLB_MAX_SCALE] - _G(globals)[GLB_MIN_SCALE], _G(globals)[GLB_MAX_Y] - _G(globals)[GLB_MIN_Y]);
 	}
 
-	_G(kernel).myWalker = _GW().walk_initialize_walker();
+	_G(my_walker) = _GW().walk_initialize_walker();
 
-	if (!_G(kernel).myWalker) {
+	if (!_G(my_walker)) {
 		error_show(FL, 'W:-(');
 		return false;
 	}
@@ -482,24 +482,24 @@ void adv_hyperwalk_to_final_destination(void *, void *) {
 	_G(i_just_hyperwalked) = true;
 
 	// Make sure we have a walker, that it can walk in this scene, and that we can hyperwalk
-	if ((!_G(kernel).myWalker) || (!_G(player).walker_in_this_scene) || _G(player).disable_hyperwalk) {
+	if ((!_G(my_walker)) || (!_G(player).walker_in_this_scene) || _G(player).disable_hyperwalk) {
 		return;
 	}
 
 	// If the walker is not currently walking anywhere, return
-	if (!_G(kernel).myWalker->walkPath) {
+	if (!_G(my_walker)->walkPath) {
 		return;
 	}
 
 	//get the final direction and facing
-	adv_get_walker_destination(_G(kernel).myWalker, &x, &y, &facing);
+	adv_get_walker_destination(_G(my_walker), &x, &y, &facing);
 
 	// Nuke the rail node path
-	DisposePath(_G(kernel).myWalker->walkPath);
-	_G(kernel).myWalker->walkPath = nullptr;
+	DisposePath(_G(my_walker)->walkPath);
+	_G(my_walker)->walkPath = nullptr;
 
 	// This will make player goto x,y,facing. when that happens, trigger will return
-	ws_demand_location_and_facing(_G(kernel).myWalker, x, y, facing);
+	ws_demand_location_and_facing(_G(my_walker), x, y, facing);
 }
 
 } // End of namespace M4

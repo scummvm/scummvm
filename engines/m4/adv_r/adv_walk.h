@@ -64,15 +64,15 @@ extern void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 #define ws_walk_dump_walker_series(xx, yy) (ws_walk_dump_series (xx, yy))
 #define ws_walk_dump_shadow_series(xx, yy) (ws_walk_dump_series (xx, yy))
 
-#define player_walk(xx, yy, ff, tt)    (ws_walk(_G(kernel).myWalker, xx, yy, NULL, tt, ff, true))
-#define player_walk_no_finish(xx, yy, ff, tt)      (ws_walk(_G(kernel).myWalker, xx, yy, NULL, tt, ff, FALSE))
-#define player_demand_facing(dd)       (ws_demand_facing(_G(kernel).myWalker, dd))
-#define player_demand_location(xx, yy) (ws_demand_location(_G(kernel).myWalker, xx, yy))
-#define player_turn_to_face(dd, tt) (ws_turn_to_face(_G(kernel).myWalker, dd, tt))
-#define player_hide()                  (ws_hide_walker(_G(kernel).myWalker))
-#define player_unhide()                (ws_unhide_walker(_G(kernel).myWalker))
-#define player_get_info()              (player_update_info(_G(kernel).myWalker, &_G(player_info)))
-#define player_nosepick(aa)            (ws_nosepick(_G(kernel).myWalker, aa))
+#define player_walk(xx, yy, ff, tt)    (ws_walk(_G(my_walker), xx, yy, NULL, tt, ff, true))
+#define player_walk_no_finish(xx, yy, ff, tt)      (ws_walk(_G(my_walker), xx, yy, NULL, tt, ff, FALSE))
+#define player_demand_facing(dd)       (ws_demand_facing(_G(my_walker), dd))
+#define player_demand_location(xx, yy) (ws_demand_location(_G(my_walker), xx, yy))
+#define player_turn_to_face(dd, tt) (ws_turn_to_face(_G(my_walker), dd, tt))
+#define player_hide()                  (ws_hide_walker(_G(my_walker)))
+#define player_unhide()                (ws_unhide_walker(_G(my_walker)))
+#define player_get_info()              (player_update_info(_G(my_walker), &_G(player_info)))
+#define player_nosepick(aa)            (ws_nosepick(_G(my_walker), aa))
 
 
 // New walking stuff
