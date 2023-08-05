@@ -32,6 +32,13 @@ HEMixer::HEMixer(Audio::Mixer *mixer, ScummEngine_v60he *vm, bool useMilesSoundS
 HEMixer::~HEMixer() {
 }
 
+uint32 calculateDeflatedADPCMBlockSize(uint32 numBlocks, uint32 blockAlign, uint32 numChannels, uint32 bitsPerSample) {
+	uint32 samplesPerBlock = (blockAlign - (4 * numChannels)) * (numChannels ^ 3) + 1;
+	uint32 totalSize = numBlocks * samplesPerBlock * (bitsPerSample / 8);
+
+	return totalSize;
+}
+
 void *HEMixer::getMilesSoundSystemObject() {
 	return nullptr;
 }
@@ -228,7 +235,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 				Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, audioDataLen, Audio::kADPCMMSIma,
 						frequency, _milesChannels[channel]._numChannels, _milesChannels[channel]._blockAlign);
 
-				byte *adpcmData = (byte *)malloc(audioDataLen * 4);
+				byte *adpcmData = (byte *)malloc(audioDataLen * 4 * sizeof(byte));
 				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, audioDataLen * 2);
 				delete adpcmStream;
 
@@ -268,7 +275,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 				Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, audioDataLen, Audio::kADPCMMSIma,
 						_milesChannels[channel]._baseFrequency, _milesChannels[channel]._numChannels, _milesChannels[channel]._blockAlign);
 
-				byte *adpcmData = (byte *)malloc(audioDataLen * 4);
+				byte *adpcmData = (byte *)malloc(audioDataLen * 4 * sizeof(byte));
 				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, audioDataLen * 2);
 				delete adpcmStream;
 
@@ -530,6 +537,8 @@ void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int
 	waveHeader.fmtTag = _stream.fileHandle->readUint32BE();
 	waveHeader.fmtSize = _stream.fileHandle->readUint32LE();
 
+	int fmtPos = _stream.fileHandle->pos();
+
 	waveHeader.wFormatTag = _stream.fileHandle->readUint16LE();
 	waveHeader.wChannels = _stream.fileHandle->readUint16LE();
 	waveHeader.dwSamplesPerSec = _stream.fileHandle->readUint32LE();
@@ -572,37 +581,57 @@ void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int
 
 	// Transform the range of the pan value from [0, 127] to [-127, 127]
 	int scaledPan = (_modifiers.pan != 64) ? 2 * _modifiers.pan - 127 : 0;
+	int newFrequency = (_baseFrequency * modifiers.frequencyShift) / HSND_SOUND_FREQ_BASE;
 
-	// Finally create our stream and play it!
+	// Create our stream and start it
 	_stream.streamObj = Audio::makeQueuingAudioStream(_baseFrequency, (waveHeader.wChannels > 1));
 	mixer->playStream(Audio::Mixer::kPlainSoundType, &_stream.streamHandle, _stream.streamObj, -1, 255, 0, DisposeAfterUse::NO);
 
-	// Apply the modifiers and the loop flag,if available
-	mixer->setChannelVolume(_stream.streamHandle, _modifiers.volume);
-	mixer->setChannelBalance(_stream.streamHandle, scaledPan);
-	int newFrequency = (_baseFrequency * modifiers.frequencyShift) / HSND_SOUND_FREQ_BASE;
-	if (newFrequency)
-		mixer->setChannelRate(_stream.streamHandle, newFrequency);
-
-	_stream.loopFlag = flags & ScummEngine_v70he::HESndFlags::HE_SND_LOOP;
-
-	// And now we help out the stream by feeding the first bytes of data to it
-	_stream.fileHandle->readUint32BE(); // Skip 'data' tag
-
-	_stream.dataLength = _stream.fileHandle->readUint32LE();
-	_stream.curDataPos = 0;
-	_stream.dataOffset = _stream.fileHandle->pos();
-
 	if (_dataFormat == WAVE_FORMAT_PCM) {
-		// Saturate the stream queue with the beginning audio data
-		for (int i = 0; i < MILES_MAX_QUEUED_STREAMS; i++)
-			serviceStream();
+		// Apply the modifiers and the loop flag, if available
+		mixer->setChannelVolume(_stream.streamHandle, _modifiers.volume);
+		mixer->setChannelBalance(_stream.streamHandle, scaledPan);
+		if (newFrequency)
+			mixer->setChannelRate(_stream.streamHandle, newFrequency);
+
+		_stream.loopFlag = flags & ScummEngine_v70he::HESndFlags::HE_SND_LOOP;
+
+		// And now we help out the stream by feeding the first bytes of data to it
+		_stream.fileHandle->readUint32BE(); // Skip 'data' tag
+
+		_stream.dataLength = _stream.fileHandle->readUint32LE();
+		_stream.curDataPos = 0;
+		_stream.dataOffset = _stream.fileHandle->pos();
 	} else if (_dataFormat == WAVE_FORMAT_IMA_ADPCM) {
-		error("HEMixer::milesStartChannel(): spooling ADPCM not yet implemented!");
+		// IMA ADPCM might have a longer header, so use the previously obtained
+		// information to jump through blocks and find the 'data' tag
+		_stream.fileHandle->seek(fmtPos, SEEK_SET);
+		_stream.fileHandle->seek(waveHeader.fmtSize, SEEK_CUR);
+
+		uint32 curTag = 0;
+		while ((curTag = _stream.fileHandle->readUint32BE()) != MKTAG('d', 'a', 't', 'a')) {
+			uint32 blockSize = _stream.fileHandle->readUint32LE();
+			_stream.fileHandle->seek(blockSize, SEEK_CUR);
+			debug(5, "HEMixer::milesStartChannel(): APDCM spooling sound, searching for 'data' tag, now on '%s' tag...",
+				tag2str(curTag));
+
+			if (_stream.fileHandle->eos()) {
+				debug(5, "HEMixer::milesStartChannel(): APDCM spooling sound, couldn't find 'data' block, bailing out...");
+				return;
+			}
+		}
+
+		_stream.dataLength = _stream.fileHandle->readUint32LE();
+		_stream.curDataPos = 0;
+		_stream.dataOffset = _stream.fileHandle->pos();
 	} else {
 		debug(5, "HEMixer::milesStartChannel(): Unexpected sound format %d in sound file '%s' at offset %d",
 			  _dataFormat, filename, offset);
 	}
+
+	// Saturate the stream queue with the beginning of the audio data
+	for (int i = 0; i < MILES_MAX_QUEUED_STREAMS; i++)
+		serviceStream();
 }
 
 void HEMilesChannel::clearChannelData() {
@@ -659,16 +688,58 @@ byte HEMilesChannel::getOutputFlags() {
 }
 
 void HEMilesChannel::serviceStream() {
+	bool reachedTheEnd = false;
+	uint32 sizeToRead = 0;
+
 	// This is called at each frame, to ensure that the target stream doesn't starve
 	if (_stream.streamObj->numQueuedStreams() < MILES_MAX_QUEUED_STREAMS) {
-		int sizeToRead = MIN<int>(MILES_CHUNK_SIZE * _blockAlign, _stream.dataLength - _stream.curDataPos);
-		bool reachedTheEnd = sizeToRead < MILES_CHUNK_SIZE * _blockAlign;
+		if (_dataFormat == WAVE_FORMAT_PCM) {
+			sizeToRead = MIN<uint32>(MILES_PCM_CHUNK_SIZE * _blockAlign, _stream.dataLength - _stream.curDataPos);
+			reachedTheEnd = sizeToRead < MILES_PCM_CHUNK_SIZE * _blockAlign;
 
-		byte *buffer = (byte *)malloc(sizeToRead);
-		if (sizeToRead > 0 && buffer != nullptr) {
-			int readBytes = _stream.fileHandle->read(buffer, sizeToRead);
-			_stream.curDataPos += readBytes;
-			_stream.streamObj->queueBuffer(buffer, readBytes, DisposeAfterUse::YES, getOutputFlags());
+			byte *buffer = (byte *)malloc(sizeToRead * sizeof(byte));
+			if (sizeToRead > 0 && buffer != nullptr) {
+				int readBytes = _stream.fileHandle->read(buffer, sizeToRead);
+				_stream.curDataPos += readBytes;
+				_stream.streamObj->queueBuffer(buffer, readBytes, DisposeAfterUse::YES, getOutputFlags());
+			}
+
+		} else if (_dataFormat == WAVE_FORMAT_IMA_ADPCM) {
+			// Look, I know: it's some of the ugliest code you've ever seen. Sorry.
+			// Unfortunately when it comes to streaming ADPCM audio from a file this is as
+			// clean as I can possibly make it (instead of loading and keeping the whole
+			// thing in memory, that is).
+
+			sizeToRead = MIN<uint32>(MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM * _blockAlign, _stream.dataLength - _stream.curDataPos);
+			reachedTheEnd = sizeToRead < MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM * _blockAlign;
+
+			// We allocate a buffer which is going to be filled with
+			// (MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM) compressed blocks or less
+			byte *compressedBuffer = (byte *)malloc(sizeToRead * sizeof(byte));
+			if (sizeToRead > 0 && compressedBuffer != nullptr) {
+				int readBytes = _stream.fileHandle->read(compressedBuffer, sizeToRead);
+				_stream.curDataPos += readBytes;
+
+				// Now, the ugly trick: use a MemoryReadStream containing our compressed data,
+				// to feed an ADPCM stream, and then use the latter to read uncompressed data,
+				// and then queue the latter in the output stream.
+				// Hey, it IS ugly! ...and it works :-)
+				Common::MemoryReadStream memStream(compressedBuffer, readBytes);
+				Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO,
+					readBytes, Audio::kADPCMMSIma, _baseFrequency, _numChannels, _blockAlign);
+
+				uint32 uncompSize =
+					calculateDeflatedADPCMBlockSize(MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM, _blockAlign, _numChannels, 16);
+
+				byte *adpcmData = (byte *)malloc(uncompSize * sizeof(byte));
+				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, uncompSize * 2);
+
+				adpcmSize *= 2;
+				_stream.streamObj->queueBuffer(adpcmData, adpcmSize, DisposeAfterUse::YES, getOutputFlags());
+
+				delete adpcmStream;
+				free(compressedBuffer);
+			}
 		}
 
 		if (reachedTheEnd) {

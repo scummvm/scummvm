@@ -54,9 +54,10 @@ namespace Scumm {
 #define CHANNEL_CALLBACK_EARLY     0x00000080
 #define CHANNEL_SOFT_REMIX         0x00000100
 
-#define MILES_MAX_CHANNELS         8
-#define MILES_CHUNK_SIZE           4096
-#define MILES_MAX_QUEUED_STREAMS   16
+#define MILES_MAX_CHANNELS                    8
+#define MILES_PCM_CHUNK_SIZE                  4096u
+#define MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM  4u
+#define MILES_MAX_QUEUED_STREAMS              16
 
 struct HESoundModifiers;
 class ScummEngine_v60he;
