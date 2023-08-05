@@ -84,10 +84,10 @@ public:
 
 	// Check if Polygon2D A is going to collide with Polygon2D B for the given velocity
 	// PolyA is this polygon
-	PolygonCollisionResult collide(const Polygon2D &polyB);
+	PolygonCollisionResult collide(const Polygon2D &polyB) const;
 
 	// Code for collision with a rectangle
-	PolygonCollisionResult collide(const Rect &rect);
+	PolygonCollisionResult collide(const Rect &rect) const;
 
 	// Find if a point is inside this polygon
 	bool contains(const float &x, const float &y);

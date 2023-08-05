@@ -58,7 +58,7 @@ struct Rect {
 			  const Common::String &y_name = "y", const Common::String &w_name = "w", const Common::String &h_name = "h");
 
 	// Is this rectangle colliding with another rectangle?
-	bool collide(Rect box);
+	bool collide(Rect box) const;
 
 	// Extend this rectangle to fully contain another rectangle
 	void extend(Rect box);
