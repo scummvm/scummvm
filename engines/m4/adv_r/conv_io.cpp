@@ -60,7 +60,8 @@ void Converstation_Globals::syncGame(Common::Serializer &s) {
 		conv_save_buff.resize(val);
 
 	// Read in the buffer
-	s.syncBytes(&conv_save_buff[0], conv_save_buff.size());
+	if (val)
+		s.syncBytes(&conv_save_buff[0], val);
 }
 
 void Converstation_Globals::conv_reset_all() {
