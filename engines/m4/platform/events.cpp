@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "m4/platform/events.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
@@ -221,6 +222,18 @@ bool Events::util_kbd_check(int32 *parm1) {
 	*parm1 = ks.keycode | (ks.flags << 16);
 
 	return true;
+}
+
+void Events::delay(uint amount) {
+	uint32 beginTime = g_system->getMillis(), newTime;
+
+	do {
+		krn_pal_game_task();
+		g_system->delayMillis(10);
+		process();
+
+		newTime = g_system->getMillis();
+	} while (!g_engine->shouldQuit() && newTime < (beginTime + amount));
 }
 
 MouseEvent mouse_get_event() {
