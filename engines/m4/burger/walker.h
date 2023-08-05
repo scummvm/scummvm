@@ -61,7 +61,7 @@ public:
 	 * Use NULL in place of a lookline, takeline, or useline if you don't want to this function
 	 * to handle it
 	 */
-	bool wilbur_said(const char *list[]);
+	bool wilbur_said(const char *list[][4]);
 };
 
 extern void enable_player();

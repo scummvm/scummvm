@@ -100,6 +100,25 @@ static const seriesPlayBreak PLAY_BREAKS4[] = {
 	PLAY_BREAK_END
 };
 
+static const char *SAID1[][4] = {
+	{ "BARBERSHOP", nullptr, "101W003", "101W003" },
+	{ "DOOR", "101W006", nullptr, nullptr },
+	{ "FIRE ESCAPE", "101W004", nullptr, nullptr },
+	{ "TOWN HALL", nullptr, "101W003", nullptr },
+	{ "ALLEY", nullptr, "101W003", nullptr },
+	{ "VERA'S DINER", nullptr, "101W003", nullptr },
+	{ "OLD BRIDGE", nullptr, "101W003", nullptr },
+	{ "HARDWARE STORE", "101W006b", "101W003", "101W003" },
+	{ "BANK", "101W007", "101W003", "101W003" },
+	{ "THEATRE", "101W008", "101W003", "101W003" },
+	{ "POLICE STATION", "101W009", "101W003", "101W003" },
+	{ "PET AND FEED STORE", "101W010", "101W003", "101W011" },
+	{ "FIRE STATION", "101W012", "101W003", "101W003" },
+	{ "FIRE HYDRANT", "101W013", "101W003", nullptr },
+	{ "PICKUP TRUCK", "101W015", "101W003", "101W016" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
 void Room101::init() {
 	_G(player).walker_in_this_scene = true;
 	_val1 = 255;
@@ -617,7 +636,72 @@ void Room101::pre_parser() {
 }
 
 void Room101::parser() {
-	// TODO: implement
+	bool lookFlag = player_said_any("look", "look at");
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_said(SAID1)) {
+		// Nothing
+	} else if (player_said("ENTER", "DOOR") || player_said("gear", "door"))   {
+		if (_G(flags)[V012] == 2) {
+			player_set_commands_allowed(false);
+			ws_hide_walker(_G(my_walker));
+			_G(roomVal1) = 8;
+			kernel_trigger_dispatch_now(gABDUCT);
+		} else if (_G(flags)[V013]) {
+			ws_demand_location(_G(my_walker), 338, 265);
+			ws_demand_facing(_G(my_walker), 10);
+			ws_hide_walker(_G(my_walker));
+			player_set_commands_allowed(false);
+			_G(roomVal1) = 14;
+			kernel_trigger_dispatch_now(gABDUCT);
+		} else {
+			player_set_commands_allowed(false);
+			ws_hide_walker(_G(my_walker));
+			_G(roomVal1) = 8;
+			kernel_trigger_dispatch_now(gABDUCT);
+		}
+
+	} else if (player_said("ENTER", "FIRE ESCAPE") || player_said("gear", "fire escape")) {
+		player_set_commands_allowed(false);
+		_G(roomVal1) = 20;
+		ws_hide_walker(_G(my_walker));
+		kernel_trigger_dispatch_now(gABDUCT);
+
+	} else if (player_said("ENTER", "TOWN HALL") || player_said("gear", "town hall") ||
+			(lookFlag && player_said("town hall"))) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1004);
+
+	} else if (player_said("ENTER", "ALLEY") || player_said("gear", "alley") ||
+			(lookFlag && player_said("alley"))) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1006);
+
+	} else if (player_said("ENTER", "OLD BRIDGE") || player_said("gear", "old bridge") ||
+			(lookFlag && player_said("old bridge"))) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1008);
+
+	} else if (player_said("ENTER", "VERA'S DINER") || player_said("gear", "vera's diner") ||
+			(lookFlag && player_said("vera's diner"))) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1014);
+
+	} else if (inv_player_has(_G(player).verb) &&
+			player_said_any("alley", "town hall", "vera's diner", "old bridge")) {
+		_G(walker).wilbur_speech("101w003");
+
+	} else if (inv_player_has(_G(player).verb) && player_said("fire hydrant")) {
+		_G(walker).wilbur_speech("101w014");
+
+	} else if (lookFlag && player_said("barbershop")) {
+		_G(walker).wilbur_speech(_G(flags)[V013] ? "101w002" : "101w001");
+
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room101::door() {
