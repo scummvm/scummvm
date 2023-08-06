@@ -1060,7 +1060,7 @@ void conv_unload(Conv *c) {
 
 	Common::strcpy_s(_G(player).verb, "");
 	Common::strcpy_s(_G(player).noun, "");
-	kernel_trigger_dispatch(_GC(myFinalTrigger));
+	kernel_trigger_dispatchx(_GC(myFinalTrigger));
 
 	if (c) {
 		if (c->conv)
