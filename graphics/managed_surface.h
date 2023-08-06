@@ -537,35 +537,15 @@ public:
 	}
 
 	/**
-	 * @brief renders the surface to another surface
-	 * @note Most of this is wrong at the time being... Not sure whether or not to keep the old
-	 * arguments or just make the function like the rest here.
-	 * @param target a pointer to the target surface. In most cases this is the framebuffer.
-	 * @param posX the position on the X-axis in the target image in pixels where the image is supposed to be rendered.<br>
-	 * The default value is 0.
-	 * @param posY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
-	 * The default value is 0.
-	 * @param flipping how the image should be flipped.<br>
-	 * The default value is Graphics::FLIP_NONE (no flipping)
-	 * @param pPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
-	 * This referes to the unflipped and unscaled image.<br>
-	 * The default value is NULL.
-	 * @param color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
-	 * The alpha component of the color determines the alpha blending parameter (0 = no covering, 255 = full covering).<br>
-	 * The color components determines the color for color modulation.<br>
-	 * The default value is TS_ARGB(255, 255, 255, 255) (full covering, no color modulation).
-	 * The macros TS_RGB and TS_ARGB can be used for the creation of the color value.
-	 * **Temporarily, these macros can also be replaced with blendBlitMakeARGB/RGB static members of
-	 *  Graphics::ManagedSurface
-	 * @param width the output width of the screen section.
-	 * The images will be scaled if the output width of the screen section differs from the image section.<br>
-	 * The value -1 determines that the image should not be scaled.<br>
-	 * The default value is -1.
-	 * @param height the output height of the screen section.
-	 * The images will be scaled if the output width of the screen section differs from the image section.<br>
-	 * The value -1 determines that the image should not be scaled.<br>
-	 * The default value is -1.
-	 * @return returns the size (not position) of what was drawn to this managed surface.
+	 * @brief renders src onto this managed surface
+	 * @param src source surface
+	 * @param srcRect source clipping rectangle (used for sprite sheets for example)
+	 * @param destRect the destination of source onto this managed surface
+	 * @param flipping flipping flags (use Graphics::FLIP_FLAGS)
+	 * @param colorMod what color to multiply by (0xffffffff does nothing)
+	 * @param blend the blending mode to use.
+	 * @param alphaType what alpha mode to use. FULL is default
+	 * @return returns the size of the rendered rectangle
 	 */
 	Common::Rect blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
 							   const Common::Rect &destRect, int flipping = FLIP_NONE,

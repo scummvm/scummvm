@@ -287,8 +287,8 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 
 			uint32 ina = in[kAIndex] * ca >> 8;
 
-			if (rgbmod) {
-				if (ina != 0) {
+			if (ina != 0) {
+				if (rgbmod) {
 					const uint outb = (out[kBIndex] * (255 - ina) >> 8);
 					const uint outg = (out[kGIndex] * (255 - ina) >> 8);
 					const uint outr = (out[kRIndex] * (255 - ina) >> 8);
@@ -297,26 +297,12 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 					out[kBIndex] = outb + (in[kBIndex] * ina * cb >> 16);
 					out[kGIndex] = outg + (in[kGIndex] * ina * cg >> 16);
 					out[kRIndex] = outr + (in[kRIndex] * ina * cr >> 16);
-				}
-			} else {
-				if (ina != 0) {
-					// Runs faster on newer hardware (doesn't do single byte manip)
-					const uint32 in32 = *(const uint32 *)in;
-					const uint32 out32 = *(const uint32 *)out;
-					const uint32 rb = (in32 & (kRModMask | kBModMask)) >> 8;
-					const uint32 g = in32 & kGModMask;
-					const uint32 dstrb = (out32 & (kRModMask | kBModMask)) >> 8;
-					const uint32 dstg = out32 & kGModMask;
-					*(uint32 *)out = kAModMask |
-						((dstrb * (255 - ina) + rb * ina) & (kRModMask | kBModMask)) |
-						(((dstg * (255 - ina) + g * ina) >> 8) & kGModMask);
-
-					// I think this code will run faster on older hardware
-					// TODO maybe?: Put #ifdef to use on older hardware
-					//out[kAIndex] = 255;
-					//out[kBIndex] = (out[kBIndex] * (255 - ina) + in[kBIndex] * ina) >> 8;
-					//out[kGIndex] = (out[kGIndex] * (255 - ina) + in[kGIndex] * ina) >> 8;
-					//out[kRIndex] = (out[kRIndex] * (255 - ina) + in[kRIndex] * ina) >> 8;
+				} else {
+					out[kAIndex] = 255;
+					out[kBIndex] = (out[kBIndex] * (255 - ina) + in[kBIndex] * ina) >> 8;
+					out[kGIndex] = (out[kGIndex] * (255 - ina) + in[kGIndex] * ina) >> 8;
+					out[kRIndex] = (out[kRIndex] * (255 - ina) + in[kRIndex] * ina) >> 8;
+					
 				}
 			}
 
@@ -460,10 +446,7 @@ void BlendBlit::doBlitOpaqueBlendLogicGeneric(Args &args) {
 		if (doscale) {
 			for (uint32 j = 0; j < args.width; j++) {
 				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
-
-				memcpy(out, in, 4);
-				out[kAIndex] = 0xFF;
-
+				*(uint32 *)out = *(const uint32 *)in | kAModMask;
 				scaleXCtr += args.scaleX;
 				out += 4;
 			}
@@ -503,13 +486,13 @@ void BlendBlit::doBlitBinaryBlendLogicGeneric(Args &args) {
 			if (doscale) {
 				in = inBase + scaleXCtr / SCALE_THRESHOLD * args.inStep;
 			}
-			uint32 pix = *(const uint32 *)in;
-			int a = in[kAIndex];
 
-			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
-				*(uint32 *)out = pix;
-				out[kAIndex] = 0xFF;
-			}
+			uint32 pix = *(const uint32 *)in, pixout = *(const uint32 *)out;
+			uint32 mask = (pix & kAModMask) ? 0xffffffff : 0;
+    		pixout &= ~mask;
+    		pix = (pix | kAModMask) & mask;
+    		*(uint32 *)out = pixout | pix;
+			
 			if (doscale)
 				scaleXCtr += args.scaleX;
 			else
@@ -528,6 +511,9 @@ void BlendBlit::doBlitBinaryBlendLogicGeneric(Args &args) {
 BlendBlit::BlitFunc BlendBlit::blitFunc = nullptr;
 
 // Only blits to and from 32bpp images
+// So this function is just here to jump to whatever function is in
+// BlendBlit::blitFunc. This way, we can detect at runtime whether or not
+// the cpu has certain SIMD feature enabled or not.
 void BlendBlit::blit(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
@@ -537,17 +523,19 @@ void BlendBlit::blit(byte *dst, const byte *src,
 					 const TSpriteBlendMode blendMode,
 					 const AlphaType alphaType) {
 	if (width == 0 || height == 0) return;
+
+	// If no function has been selected yet, detect and select
 	if (!blitFunc) {
-	// Get the correct blit function
-	blitFunc = blitGeneric;
+		// Get the correct blit function
+		blitFunc = blitGeneric;
 #ifdef SCUMMVM_NEON
-	if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
+		if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
 #endif
 #ifdef SCUMMVM_SSE2
-	if (g_system->hasFeature(OSystem::kFeatureSSE2)) blitFunc = blitSSE2;
+		if (g_system->hasFeature(OSystem::kFeatureSSE2)) blitFunc = blitSSE2;
 #endif
 #ifdef SCUMMVM_AVX2
-	if (g_system->hasFeature(OSystem::kFeatureAVX2)) blitFunc = blitAVX2;
+		if (g_system->hasFeature(OSystem::kFeatureAVX2)) blitFunc = blitAVX2;
 #endif
 	}
 	
@@ -555,7 +543,8 @@ void BlendBlit::blit(byte *dst, const byte *src,
 	blitFunc(args, blendMode, alphaType);
 }
 
-// Let me know if there is a way to do function pointer to templated functions
+// This is just a macro to expand it because its a pretty simple function where
+// readabiliy doesn't matter too much and macros tend to work faster better than functors
 #define BLIT_FUNC(ext) \
 	void BlendBlit::blit##ext(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType) { \
 		bool rgbmod   = ((args.color & kRGBModMask) != kRGBModMask); \
