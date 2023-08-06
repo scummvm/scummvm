@@ -45,8 +45,11 @@ enum global_triggers {
 	gFIRST_GLOBAL_TRIGGER = 10000,
 
 	// System triggers 
-	gRESUME_CONVERSATION,			// Yep, that's what it does!
+	gRESUME_CONVERSATION = 10001,	// Yep, that's what it does!
 	gSERIES_STREAM_BREAK = 10002,	// Used only by set_next_stream_break () in global.cpp
+	gSERIES_PLAY_BREAK0 = 10003,
+	gSERIES_PLAY_BREAK1 = 10004,
+	gSERIES_PLAY_BREAK2 = 10005,
 	gNONPLAYERS_SPEECH_FINISHED,	// digi_play trigger, used in talk.cpp
 	gSERIES_PLAY_BREAK_0,			// Used only by set_next_play_break () in global.cpp
 /*

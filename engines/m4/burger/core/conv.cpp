@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,43 +19,17 @@
  *
  */
 
-#ifndef M4_BURGER_PLAY_BREAK_H
-#define M4_BURGER_PLAY_BREAK_H
-
-#include "m4/m4_types.h"
-#include "m4/adv_r/adv_trigger.h"
+#include "m4/adv_r/conv_io.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
 
-struct seriesPlayBreak {
-	int32 firstFrame;
-	int32 lastFrame;
-	const char *sound;
-	int32 channel;
-	int32 volume;
-	int32 trigger;
-	uint32 flags;
-	int32 loopCount;
-	int32 *variable;
-	int32 value;
-};
-
-enum {
-	WITH_SHADOW		= 1,
-	PRELOAD_SOUNDS	= 2
-};
-
-#define PLAY_BREAK_END { -1, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 }
-
-extern int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name,
-	frac16 depth = 0, int32 trigger = NO_TRIGGER, uint32 flags = 0, int32 framerate = 0,
-	int32 scale = 100, int32 x = 0, int32 y = 0);
-extern void digi_preload_play_breaks(const seriesPlayBreak list[]);
-extern void digi_unload_play_breaks(const seriesPlayBreak list[]);
-extern void handle_series_play_break(int32 slot);
+void conv_resume() {
+	_G(flags)[V298] = 1;
+	_G(flags)[V299] = 1;
+	conv_resume(conv_get_handle());
+}
 
 } // namespace Burger
 } // namespace M4
-
-#endif

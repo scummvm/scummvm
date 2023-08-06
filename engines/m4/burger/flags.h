@@ -572,6 +572,9 @@ public:
 
 	int32 get_boonsville_time_and_display(bool showTime = false);
 	void set_boonsville_time(int32 time);
+	bool advance_boonsville_time_and_check_schedule(int32 time);
+	bool dispatch_scheduled_boonsville_time_trigger(int32 time);
+	void schedule_boonsville_time();
 
 	/**
 	 * Save/load values to a save file

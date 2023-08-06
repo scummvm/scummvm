@@ -613,7 +613,6 @@ void Room101::daemon() {
 		}
 		break;
 
-	// TODO: cases
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;
