@@ -841,8 +841,13 @@ void Combat::setOption(SelectedOption option) {
 }
 
 void Combat::displaySpellResult(const InfoMessage &msg) {
-	assert(msg._delaySeconds);
-	_spellResult = msg;
+	if (msg._delaySeconds) {
+		_spellResult = msg;
+	} else {
+		InfoMessage tmp = msg;
+		tmp._delaySeconds = 3;
+		_spellResult = tmp;
+	}
 
 	setMode(SPELL_RESULT);
 }
