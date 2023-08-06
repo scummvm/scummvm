@@ -43,14 +43,14 @@ Animation::Animation(rapidxml::xml_node<char> *node) {
 
 void Animation::draw() {
 	uint32 timestamp = _timer.ticks();
-	for (auto i = _frame.begin(); i != _frame.end(); ++i)
-		i->draw(timestamp);
+	for (auto &frame : _frame)
+		frame.draw(timestamp);
 }
 
 bool Animation::internalEvents(DrawType &gameDraw) {
 	uint32 timestamp = _timer.ticks();
-	for (auto i = _frame.begin(); i != _frame.end(); ++i) {
-		DrawType result = i->internalEvents(timestamp);
+	for (auto &frame : _frame) {
+		DrawType result = frame.internalEvents(timestamp);
 		// if (result != DRAW_SAME)
 		gameDraw = result;
 	}
@@ -59,8 +59,8 @@ bool Animation::internalEvents(DrawType &gameDraw) {
 }
 
 void Animation::reset() {
-	for (auto i = _frame.begin(); i != _frame.end(); ++i)
-		i->reset();
+	for (auto &frame : _frame)
+		frame.reset();
 }
 
 } // End of namespace Crab

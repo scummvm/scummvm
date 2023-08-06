@@ -124,23 +124,23 @@ void Sprite::move(const SpriteConstant &sc) {
 //------------------------------------------------------------------------
 void Sprite::resolveCollide() {
 	// NOTE: we don't check i->intersect here because we do that in the level functions
-	for (auto i = _collideData.begin(); i != _collideData.end(); ++i) {
+	for (const auto &i : _collideData) {
 		Rect bounds = boundRect();
-		if (i->_type == SHAPE_POLYGON) {
-			_pos.x -= i->_data.x;
-			_pos.y -= i->_data.y;
+		if (i._type == SHAPE_POLYGON) {
+			_pos.x -= i._data.x;
+			_pos.y -= i._data.y;
 		} else {
-			Direction d = bounds.resolveY(i->_data);
+			Direction d = bounds.resolveY(i._data);
 			if (d == DIRECTION_UP)
-				_pos.y -= i->_data.y + i->_data.h - _animSet._bounds.y + _animSet.anchorY(_dir) + 1;
+				_pos.y -= i._data.y + i._data.h - _animSet._bounds.y + _animSet.anchorY(_dir) + 1;
 			else if (d == DIRECTION_DOWN)
-				_pos.y -= i->_data.y - bounds.h - _animSet._bounds.y + _animSet.anchorY(_dir) - 1;
+				_pos.y -= i._data.y - bounds.h - _animSet._bounds.y + _animSet.anchorY(_dir) - 1;
 
-			d = bounds.resolveX(i->_data);
+			d = bounds.resolveX(i._data);
 			if (d == DIRECTION_LEFT)
-				_pos.x -= i->_data.x + i->_data.w - _animSet._bounds.x + _animSet.anchorX(_dir) + 1;
+				_pos.x -= i._data.x + i._data.w - _animSet._bounds.x + _animSet.anchorX(_dir) + 1;
 			else if (d == DIRECTION_RIGHT)
-				_pos.x -= i->_data.x - bounds.w - _animSet._bounds.x + _animSet.anchorX(_dir) - 1;
+				_pos.x -= i._data.x - bounds.w - _animSet._bounds.x + _animSet.anchorX(_dir) - 1;
 		}
 	}
 
@@ -290,31 +290,32 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 
 		g_engine->_textManager->draw(x + 120.0f, y - 60.0f, NumberToString(_aiData.dest.y), 0);*/
 
-		if (_pathing._vSolution.size() > 0) {
-			for (auto iter = _pathing._vSolution.begin(); iter != _pathing._vSolution.end(); ++iter) {
-				bool nextToWall = false;
-				for (auto neighbor = (*iter)->_neighborNodes.begin(); neighbor != (*iter)->_neighborNodes.end(); ++neighbor) {
-					if ((*neighbor)->getMovementCost() < 0 || (*neighbor)->getMovementCost() > 1) {
-						nextToWall = true;
-						break;
-					}
-				}
 
-				if (nextToWall)
-					(*iter)->getRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
-				else
-					(*iter)->getRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
+		for (const auto &iter : _pathing._vSolution) {
+			bool nextToWall = false;
+			for (const auto &neighbor : iter->_neighborNodes) {
+				if (neighbor->getMovementCost() < 0 || neighbor->getMovementCost() > 1) {
+					nextToWall = true;
+					break;
+				}
 			}
 
-			_pathing._goalTile->getRect().draw(-camera.x, -camera.y, 0, 0, 200, 254);
-			_pathing._startTile->getRect().draw(-camera.x, -camera.y, 0, 200, 0, 254);
-
-			// Draw adjacencies to the goal tile.
-			/*	for(auto neighbor = _pathing.m_pGoalTile->neighborNodes.begin(); neighbor != _pathing.m_pGoalTile->neighborNodes.end(); ++neighbor)
-				{
-				(*neighbor)->GetRect().draw(-camera.x, -camera.y, 200, 0, 0, 254);
-				}*/
+			if (nextToWall)
+				iter->getRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
+			else
+				iter->getRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
 		}
+
+		_pathing._goalTile->getRect().draw(-camera.x, -camera.y, 0, 0, 200, 254);
+		_pathing._startTile->getRect().draw(-camera.x, -camera.y, 0, 200, 0, 254);
+
+		// Draw adjacencies to the goal tile.
+		/*
+			for(auto neighbor = _pathing.m_pGoalTile->neighborNodes.begin(); neighbor != _pathing.m_pGoalTile->neighborNodes.end(); ++neighbor) {
+				(*neighbor)->GetRect().draw(-camera.x, -camera.y, 200, 0, 0, 254);
+			}
+		*/
+
 		Rect destinationRect = Rect((int)_pathing._destination.x - 5,
 									(int)_pathing._destination.y - 5,
 									10,
