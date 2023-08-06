@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-06 21:03+0000\n"
+"POT-Creation-Date: 2023-08-06 21:07+0000\n"
 "PO-Revision-Date: 2023-07-21 07:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgid "Go up"
 msgstr "Amunt"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
+#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:465
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:93 gui/options.cpp:2349 gui/predictivedialog.cpp:68
@@ -377,9 +377,9 @@ msgstr "Des de: "
 msgid "To: "
 msgstr "Fins: "
 
-#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:198
-#: gui/downloadpacksdialog.cpp:242 gui/downloadpacksdialog.cpp:252
-#: gui/downloadpacksdialog.cpp:274 gui/downloadpacksdialog.cpp:289
+#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
+#: gui/downloadpacksdialog.cpp:245 gui/downloadpacksdialog.cpp:255
+#: gui/downloadpacksdialog.cpp:277 gui/downloadpacksdialog.cpp:292
 msgid "Cancel download"
 msgstr "Cancel·la la baixada"
 
@@ -388,8 +388,8 @@ msgctxt "lowres"
 msgid "Cancel download"
 msgstr "Cancel·la la baixada"
 
-#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:199
-#: gui/downloadpacksdialog.cpp:278
+#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
+#: gui/downloadpacksdialog.cpp:281
 msgid "Hide"
 msgstr "Amaga"
 
@@ -422,52 +422,52 @@ msgstr ""
 "Ja existeix un directori %s a la ruta especificada.\n"
 "Esteu segur que voleu baixar els fitxers dins d'aquest directori?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:364
+#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:367
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Descarregat: %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
+#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:373
 #, c-format
 msgid "Download speed: %s %S/s"
 msgstr "Velocitat de baixada: %s %S/s"
 
-#: gui/downloadpacksdialog.cpp:158
+#: gui/downloadpacksdialog.cpp:160
 #, c-format
 msgid "ERROR %d: %s"
 msgstr "ERROR %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
-#: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
+#: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
 #, c-format
 msgid "Downloading %S list..."
 msgstr "S'està baixant la llista %S..."
 
-#: gui/downloadpacksdialog.cpp:200
+#: gui/downloadpacksdialog.cpp:203
 msgid "Clear Cache"
 msgstr "Neteja la memòria cau"
 
-#: gui/downloadpacksdialog.cpp:251
+#: gui/downloadpacksdialog.cpp:254
 #, c-format
 msgid "Downloading %S list... %d entries"
 msgstr "S'està baixant la llista %S... %d elements"
 
-#: gui/downloadpacksdialog.cpp:261
+#: gui/downloadpacksdialog.cpp:264
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "S'han detectat %d paquets nous, %s %S"
 
-#: gui/downloadpacksdialog.cpp:263
+#: gui/downloadpacksdialog.cpp:266
 msgid "Download"
 msgstr "Baixa"
 
-#: gui/downloadpacksdialog.cpp:287
+#: gui/downloadpacksdialog.cpp:290
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Baixada completada, descarregats %d paquets, %s %S"
 
 #. I18N: Close dialog button
-#: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
+#: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
 #: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:123
@@ -476,17 +476,17 @@ msgstr "Baixada completada, descarregats %d paquets, %s %S"
 msgid "Close"
 msgstr "Tanca"
 
-#: gui/downloadpacksdialog.cpp:391 gui/downloadpacksdialog.cpp:438
+#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:441
 msgid "ERROR: No icons path set"
 msgstr "ERROR: No s'ha definit cap camí per les icones"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:426
+#: gui/downloadpacksdialog.cpp:429
 #, c-format
 msgid "No new %S available"
 msgstr "No hi ha nou %S disponible"
 
-#: gui/downloadpacksdialog.cpp:462
+#: gui/downloadpacksdialog.cpp:465
 #, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
@@ -495,7 +495,7 @@ msgstr ""
 "Esteu a punt d'eliminar %s %S de dades, suprimint tots els fitxers %S "
 "baixats prèviament. Voleu continuar?"
 
-#: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Continua"
 
@@ -3405,11 +3405,11 @@ msgstr "Emulador de C64 Audio"
 msgid "<syncing...>"
 msgstr "<s'està sincronitzant...>"
 
-#: backends/cloud/storage.cpp:242
+#: backends/cloud/storage.cpp:246
 msgid "Saved games sync was cancelled."
 msgstr "S'ha cancel·lat la sincronització de les partides desades."
 
-#: backends/cloud/storage.cpp:244
+#: backends/cloud/storage.cpp:248
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -3417,7 +3417,7 @@ msgstr ""
 "La sincronització de les partides desades ha fallat.\n"
 "Comprova la connexió a Internet."
 
-#: backends/cloud/storage.cpp:348
+#: backends/cloud/storage.cpp:352
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -3426,11 +3426,11 @@ msgstr ""
 "La baixada s'ha completat.\n"
 "No s'han pogut descarregar %u fitxers."
 
-#: backends/cloud/storage.cpp:350
+#: backends/cloud/storage.cpp:354
 msgid "Download complete."
 msgstr "Descàrrega completada."
 
-#: backends/cloud/storage.cpp:360
+#: backends/cloud/storage.cpp:364
 msgid "Download failed."
 msgstr "La descàrrega ha fallat."
 

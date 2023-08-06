@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-06 21:03+0000\n"
+"POT-Creation-Date: 2023-08-06 21:07+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -57,7 +57,7 @@ msgid "Go up"
 msgstr "Subir"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
+#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:465
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:93 gui/options.cpp:2349 gui/predictivedialog.cpp:68
@@ -391,9 +391,9 @@ msgstr "De: "
 msgid "To: "
 msgstr "Para: "
 
-#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:198
-#: gui/downloadpacksdialog.cpp:242 gui/downloadpacksdialog.cpp:252
-#: gui/downloadpacksdialog.cpp:274 gui/downloadpacksdialog.cpp:289
+#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
+#: gui/downloadpacksdialog.cpp:245 gui/downloadpacksdialog.cpp:255
+#: gui/downloadpacksdialog.cpp:277 gui/downloadpacksdialog.cpp:292
 msgid "Cancel download"
 msgstr "Cancelar transferência"
 
@@ -402,8 +402,8 @@ msgctxt "lowres"
 msgid "Cancel download"
 msgstr "Cancelar"
 
-#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:199
-#: gui/downloadpacksdialog.cpp:278
+#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
+#: gui/downloadpacksdialog.cpp:281
 msgid "Hide"
 msgstr "Ocultar"
 
@@ -436,53 +436,53 @@ msgstr ""
 "O \"%s\" já existe na pasta especificada.\n"
 "Deseja mesmo transferir ficheiros para esta pasta?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:364
+#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:367
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Transferido %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
+#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:373
 #, fuzzy, c-format
 msgid "Download speed: %s %S/s"
 msgstr "Velocidade da transferência: %s %S"
 
-#: gui/downloadpacksdialog.cpp:158
+#: gui/downloadpacksdialog.cpp:160
 #, c-format
 msgid "ERROR %d: %s"
 msgstr "ERRO %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
-#: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
+#: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
 #, fuzzy, c-format
 msgid "Downloading %S list..."
 msgstr "A transferir lista de ícones..."
 
-#: gui/downloadpacksdialog.cpp:200
+#: gui/downloadpacksdialog.cpp:203
 #, fuzzy
 msgid "Clear Cache"
 msgstr "Apagar valor"
 
-#: gui/downloadpacksdialog.cpp:251
+#: gui/downloadpacksdialog.cpp:254
 #, fuzzy, c-format
 msgid "Downloading %S list... %d entries"
 msgstr "A transferir lista de ícones... %d entradas"
 
-#: gui/downloadpacksdialog.cpp:261
+#: gui/downloadpacksdialog.cpp:264
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "%d pacotes novos detectados, %s %S"
 
-#: gui/downloadpacksdialog.cpp:263
+#: gui/downloadpacksdialog.cpp:266
 msgid "Download"
 msgstr "Transferir"
 
-#: gui/downloadpacksdialog.cpp:287
+#: gui/downloadpacksdialog.cpp:290
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Transferência completa, %d pacotes transferidos, %s %S"
 
 #. I18N: Close dialog button
-#: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
+#: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
 #: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:123
@@ -491,24 +491,24 @@ msgstr "Transferência completa, %d pacotes transferidos, %s %S"
 msgid "Close"
 msgstr "Fechar"
 
-#: gui/downloadpacksdialog.cpp:391 gui/downloadpacksdialog.cpp:438
+#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:441
 msgid "ERROR: No icons path set"
 msgstr "ERRO: Não foi definida uma pasta de ícones"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:426
+#: gui/downloadpacksdialog.cpp:429
 #, fuzzy, c-format
 msgid "No new %S available"
 msgstr "Não há ícones novos disponíveis"
 
-#: gui/downloadpacksdialog.cpp:462
+#: gui/downloadpacksdialog.cpp:465
 #, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
 
-#: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Proceder"
 
@@ -3397,11 +3397,11 @@ msgstr "Emulador C64 Audio"
 msgid "<syncing...>"
 msgstr "<a sincronizar...>"
 
-#: backends/cloud/storage.cpp:242
+#: backends/cloud/storage.cpp:246
 msgid "Saved games sync was cancelled."
 msgstr "Sincronização de jogos guardados cancelada."
 
-#: backends/cloud/storage.cpp:244
+#: backends/cloud/storage.cpp:248
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -3409,7 +3409,7 @@ msgstr ""
 "Falha na sincronização.\n"
 "Verifique a sua ligação à Internet."
 
-#: backends/cloud/storage.cpp:348
+#: backends/cloud/storage.cpp:352
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -3418,11 +3418,11 @@ msgstr ""
 "Transferência completa.\n"
 "%u ficheiros não puderam ser transferidos."
 
-#: backends/cloud/storage.cpp:350
+#: backends/cloud/storage.cpp:354
 msgid "Download complete."
 msgstr "Transferência completa."
 
-#: backends/cloud/storage.cpp:360
+#: backends/cloud/storage.cpp:364
 msgid "Download failed."
 msgstr "Transferência falhou."
 
