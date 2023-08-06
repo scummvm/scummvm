@@ -131,7 +131,7 @@ void Level::draw(pyrodactyl::event::Info &info) {
 		}
 	}
 
-	if (GameDebug)
+	if (g_engine->_debugDraw & DRAW_TMX)
 		_terrain.drawDebug(_camera);
 }
 
@@ -159,7 +159,10 @@ void Level::drawObjects(pyrodactyl::event::Info &info) {
 			auto obj = b->second;
 			if (a->_pos.y + a->_pos.h < obj->y() + obj->h()) {
 				for (auto &i : a->_boundRect) {
-					i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
+					// draw prop bounds if requested
+					if (g_engine->_debugDraw & DRAW_PROP_BOUNDS)
+						i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
+
 					if (i.collide(_objects[_playerIndex].posRect())) {
 						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, _objects[_playerIndex].posRect());
 					}
@@ -185,7 +188,10 @@ void Level::drawObjects(pyrodactyl::event::Info &info) {
 		} else if (b == _objSeq.end()) {
 			for (; a != _terrain._prop.end(); ++a) {
 				for (auto &i : a->_boundRect) {
-					i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
+					// draw prop bounds if requested
+					if (g_engine->_debugDraw & DRAW_PROP_BOUNDS)
+						i.draw(-_camera.x, -_camera.y, 128, 128, 0, 255);
+
 					if (i.collide(_objects[_playerIndex].posRect())) {
 						g_engine->_imageManager->_tileset.forceDraw(*a, _camera, _terrain._tileSize, _objects[_playerIndex].posRect());
 					}

@@ -69,6 +69,11 @@ class SaveFileData;
 
 } // End of namespace pyrodactyl
 
+enum DebugDraw {
+	DRAW_TMX = 1 << 0,
+	DRAW_PROP_BOUNDS = 1 << 1
+};
+
 class CrabEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -104,6 +109,9 @@ public:
 
 	// Keeps a copy of latest screen for thumbnail
 	Graphics::ManagedSurface *_thumbnail;
+
+	// What components to draw lines for (if any)
+	uint32 _debugDraw;
 
 	Common::FSNode _gameDataDir;
 
