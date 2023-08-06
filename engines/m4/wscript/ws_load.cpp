@@ -1576,7 +1576,8 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 			if (byteSwap) {
 				tempPtr = (uint32 *)&myColors[0];
 				for (i = 0; i < numColors; i++) {
-					*tempPtr++ = SWAP_INT32(*tempPtr);
+					*tempPtr = SWAP_INT32(*tempPtr);
+					tempPtr++;
 				}
 			}
 
@@ -1669,7 +1670,8 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	if (celsType == CELS_SS__) {
 		tempPtr = &((*data)[2]);
 		for (i = 0; i < (uint)(SS_HEAD_SIZE + numCels - 2); i++) {
-			*tempPtr++ = SWAP_INT32(*tempPtr);
+			*tempPtr = SWAP_INT32(*tempPtr);
+			tempPtr++;
 		}
 	}
 
