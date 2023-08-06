@@ -19,19 +19,31 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/console.h"
 
 namespace Crab {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
+	registerCmd("draw", WRAP_METHOD(Console, cmdDraw));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+bool Console::cmdDraw(int argc, const char **argv) {
+	if (argc > 1) {
+		for (int i = 1; i < argc; i++) {
+			if (!scumm_stricmp(argv[i], "OFF"))
+				g_engine->_debugDraw = 0;
+			else if (!scumm_stricmp(argv[i], "TMX"))
+				g_engine->_debugDraw |= DRAW_TMX;
+			else if (!scumm_stricmp(argv[i], "PROPS"))
+				g_engine->_debugDraw |= DRAW_PROP_BOUNDS;
+			else if (!scumm_stricmp(argv[i], "ALL"))
+				g_engine->_debugDraw = DRAW_TMX | DRAW_PROP_BOUNDS;
+		}
+	}
 	return true;
 }
 

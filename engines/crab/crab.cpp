@@ -100,6 +100,8 @@ Common::Error CrabEngine::run() {
 	_stringPool = new StringPool();
 	_screenSettings = new ScreenSettings();
 
+	_debugDraw = 0;
+
 	CursorMan.showMouse(true);
 	_mouse->reset();
 
