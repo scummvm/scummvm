@@ -20,6 +20,8 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added optional dependency for libvpx.
   - Added optional dependency for libmikmod.
   - Added support for PC98 font ROM.
+  - Added optional dependency for libsonivox, implementing EAS (Embedded Audio
+    Synthesis) sound driver.
 
  AGS:
    - Synced with upstream AGS 3.6.0.48.
