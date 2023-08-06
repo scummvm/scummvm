@@ -141,4 +141,4 @@ void FilePaths::load(const Common::String &filename) {
 	}
 }
 
-}
+} // End of namespace Crab
