@@ -437,6 +437,8 @@ enum DrillerReleaseFlags {
 		GF_CPC_VIRTUALWORLDS = (1 << 8),
 		GF_ATARI_RETAIL = (1 << 9),
 		GF_ATARI_BUDGET = (1 << 10),
+		GF_AMIGA_MAGAZINE_DEMO = (1 << 11),
+		GF_ATARI_MAGAZINE_DEMO = (1 << 12),
 };
 
 class DrillerEngine : public FreescapeEngine {

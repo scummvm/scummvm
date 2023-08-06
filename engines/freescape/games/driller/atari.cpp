@@ -148,13 +148,26 @@ void DrillerEngine::loadAssetsAtariDemo() {
 	loadPalettes(&file, 0x0);
 
 	file.close();
-	file.open("x.prg");
-	if (!file.isOpen())
-		error("Failed to open 'x.prg' file");
+	if (_variant & GF_ATARI_MAGAZINE_DEMO) {
+		file.open("auto_x.prg");
+		if (!file.isOpen())
+			error("Failed to open 'auto_x.prg' file");
+		_demoMode = false;
+	} else {
+		file.open("x.prg");
+		if (!file.isOpen())
+			error("Failed to open 'x.prg' file");
+	}
 
-	loadFonts(&file, 0x7bc);
-	loadMessagesFixedSize(&file, 0x3b90, 14, 20);
-	loadGlobalObjects(&file, 0x3946, 8);
+	if (_variant & GF_ATARI_MAGAZINE_DEMO) {
+		loadFonts(&file, 0x7ee);
+		loadMessagesFixedSize(&file, 0x40d2, 14, 20);
+		loadGlobalObjects(&file, 0x3e88, 8);
+	} else {
+		loadFonts(&file, 0x7bc);
+		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
+		loadGlobalObjects(&file, 0x3946, 8);
+	}
 
 	file.close();
 	file.open("soundfx");
