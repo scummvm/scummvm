@@ -98,12 +98,12 @@ public:
 	bool load(Graphics::ManagedSurface *surface);
 
 
-	// Draw the openGL texture
+	// Draw the texture
 	void draw(const int &x, const int &y, Common::Rect *clip = nullptr, const TextureFlipType &flip = FLIP_NONE);
 	void draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip = FLIP_NONE, Graphics::ManagedSurface *surf = nullptr);
 	void fastDraw(const int &x, const int &y, Rect *clip = nullptr);
 
-	// Delete the openGL texture
+	// Delete the texture
 	void deleteImage();
 
 	int w() {
