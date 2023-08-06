@@ -166,6 +166,42 @@ void TinyGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	tglDepthMask(TGL_TRUE);
 }
 
+void TinyGLRenderer::renderCrossair(const Common::Point crossairPosition) {
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _screenW, _screenH, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
+
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	useColor(255, 255, 255);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(crossairPosition.x - 3, crossairPosition.y, 0));
+	copyToVertexArray(1, Math::Vector3d(crossairPosition.x - 1, crossairPosition.y, 0));
+
+	copyToVertexArray(2, Math::Vector3d(crossairPosition.x + 1, crossairPosition.y, 0));
+	copyToVertexArray(3, Math::Vector3d(crossairPosition.x + 3, crossairPosition.y, 0));
+
+	copyToVertexArray(4, Math::Vector3d(crossairPosition.x, crossairPosition.y - 3, 0));
+	copyToVertexArray(5, Math::Vector3d(crossairPosition.x, crossairPosition.y - 1, 0));
+
+	copyToVertexArray(6, Math::Vector3d(crossairPosition.x, crossairPosition.y + 1, 0));
+	copyToVertexArray(7, Math::Vector3d(crossairPosition.x, crossairPosition.y + 3, 0));
+
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_LINES, 0, 8);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	tglDisable(TGL_BLEND);
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);
+}
+
 void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	assert(vertices.size() >= 2);
 	const Math::Vector3d &v0 = vertices[0];

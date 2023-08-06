@@ -242,6 +242,56 @@ void OpenGLShaderRenderer::renderPlayerShoot(byte color, const Common::Point pos
 	glDepthMask(GL_TRUE);
 }
 
+void OpenGLShaderRenderer::renderCrossair(const Common::Point crossairPosition) {
+	Math::Matrix4 identity;
+	identity(0, 0) = 1.0;
+	identity(1, 1) = 1.0;
+	identity(2, 2) = 1.0;
+	identity(3, 3) = 1.0;
+
+	_triangleShader->use();
+	_triangleShader->setUniform("useStipple", false);
+	_triangleShader->setUniform("mvpMatrix", identity);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenW, _screenH, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	useColor(255, 255, 255);
+
+	glLineWidth(8); // It will not work in every OpenGL implementation since the
+					 // spec doesn't require support for line widths other than 1
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(remap(crossairPosition.x - 3, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
+	copyToVertexArray(1, Math::Vector3d(remap(crossairPosition.x - 1, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
+
+	copyToVertexArray(2, Math::Vector3d(remap(crossairPosition.x + 1, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
+	copyToVertexArray(3, Math::Vector3d(remap(crossairPosition.x + 3, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
+
+	copyToVertexArray(4, Math::Vector3d(remap(crossairPosition.x, _screenW), remap(_screenH - crossairPosition.y - 3, _screenH), 0));
+	copyToVertexArray(5, Math::Vector3d(remap(crossairPosition.x, _screenW), remap(_screenH - crossairPosition.y - 1, _screenH), 0));
+
+	copyToVertexArray(6, Math::Vector3d(remap(crossairPosition.x, _screenW), remap(_screenH - crossairPosition.y + 1, _screenH), 0));
+	copyToVertexArray(7, Math::Vector3d(remap(crossairPosition.x, _screenW), remap(_screenH - crossairPosition.y + 3, _screenH), 0));
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, 8 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glDrawArrays(GL_LINES, 0, 8);
+
+	glLineWidth(1);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
+
 void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	assert(vertices.size() >= 2);
 	const Math::Vector3d &v0 = vertices[0];

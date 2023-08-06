@@ -195,7 +195,6 @@ void FreescapeEngine::drawUI() {
 		surface = new Graphics::Surface();
 		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 		surface->fillRect(_fullscreenViewArea, gray);
-		drawCrossair(surface);
 	} else
 		return;
 
@@ -211,6 +210,9 @@ void FreescapeEngine::drawUI() {
 		drawAmigaAtariSTUI(surface);
 
 	drawFullscreenSurface(surface);
+
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->renderCrossair(_crossairPosition);
 
 	surface->free();
 	delete surface;
