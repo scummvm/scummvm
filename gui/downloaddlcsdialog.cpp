@@ -93,6 +93,10 @@ void DownloadDLCsDialog::refreshWidgets() {
 			}
 		}
 		_pendingDownloadsList->setList(pendingList);
+		if (_progressBar->getValue() >= 100) {
+			// if a game is downloaded i.e. the first item is removed from _dlcsInProgress
+			_selectedIdx--;
+		}
 		_pendingDownloadsList->setSelected(_selectedIdx);
 	}
 
