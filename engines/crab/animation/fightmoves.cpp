@@ -181,8 +181,8 @@ bool FightMoves::forceUpdate(const uint &index, pyrodactyl::input::FightInput &i
 // Purpose: Set unlock status
 //------------------------------------------------------------------------
 void FightMoves::evaluate(pyrodactyl::event::Info &info) {
-	for (auto i = _move.begin(); i != _move.end(); ++i)
-		i->_unlock.evaluate(info);
+	for (auto &i : _move)
+		i._unlock.evaluate(info);
 }
 
 //------------------------------------------------------------------------
