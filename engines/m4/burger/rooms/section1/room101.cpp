@@ -209,13 +209,15 @@ void Room101::daemon() {
 		player_update_info(_G(my_walker), &_G(player_info));
 
 		if (_G(player_info).y > 374 && player_said("old bridge")) {
+			// Changing to Old Bridge
 			player_set_commands_allowed(false);
-			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1008);
+			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, GOTO_OLD_BRIDGE);
 			_G(kernel).call_daemon_every_loop = false;
 
 		} else if (_G(player_info.y < 205) && player_said("town hall")) {
+			// Changing to Town Hall
 			player_set_commands_allowed(false);
-			pal_fade_init(_G(master_palette), 16, 255, 0, 30, 1001);
+			pal_fade_init(_G(master_palette), 16, 255, 0, 30, GOTO_TOWN_HALL);
 			_G(kernel).call_daemon_every_loop = false;
 		}
 	}

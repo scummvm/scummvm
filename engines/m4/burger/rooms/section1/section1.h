@@ -30,18 +30,27 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum Goto1 {
+	GOTO_TOWN_HALL = 1001,
+	GOTO_OLD_BRIDGE = 1008
+};
+
 class Section1 : public Rooms::Section {
 private:
 	Room101 _room101;
 
 	int _trigger = 0;
-	int _series = -1;
+	int _series1 = -1;
+	int _series2 = -1;
 	machine *_play = nullptr;
+	int _state1 = 0;
 
 	void updateWalker_(int x, int y, int dir, int trigger, bool mode);
 public:
 	Section1();
 	virtual ~Section1() {}
+
+	void daemon() override;
 
 	static void updateWalker(int x, int y, int dir, int trigger, bool mode = false);
 	static void updateDisablePlayer();
