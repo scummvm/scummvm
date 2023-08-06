@@ -362,5 +362,14 @@ bool Walker::wilbur_parser(const char **list) {
 	return false;
 }
 
+void Walker::wilbur_poof() {
+	error("TODO: Walker::wilbur_poof");
+}
+
+void Walker::wilbur_unpoof() {
+	series_unload(_wilburPoof);
+	_wilburPoof = -1;
+}
+
 } // namespace Burger
 } // namespace M4

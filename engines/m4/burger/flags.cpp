@@ -107,8 +107,8 @@ bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
 	bool result = false;
 
 	for (const BoonsvilleRec *rec = ARRAY; rec->_time; ++rec) {
-		if ((*this)[BOONSVILLE_TIME2] > rec->_time &&
-				rec->_time <= (*this)[BOONSVILLE_TIME]) {
+		if ((int32)(*this)[BOONSVILLE_TIME2] > rec->_time &&
+				rec->_time <= (int32)(*this)[BOONSVILLE_TIME]) {
 			result = true;
 			term_message("Time for: %s", rec->_text);
 			schedule_boonsville_time();

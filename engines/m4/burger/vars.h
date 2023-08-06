@@ -47,31 +47,29 @@ enum global_triggers {
 	// System triggers 
 	gRESUME_CONVERSATION = 10001,	// Yep, that's what it does!
 	gSERIES_STREAM_BREAK = 10002,	// Used only by set_next_stream_break () in global.cpp
-	gSERIES_PLAY_BREAK0 = 10003,
-	gSERIES_PLAY_BREAK1 = 10004,
-	gSERIES_PLAY_BREAK2 = 10005,
-	gNONPLAYERS_SPEECH_FINISHED,	// digi_play trigger, used in talk.cpp
-	gSERIES_PLAY_BREAK_0,			// Used only by set_next_play_break () in global.cpp
-/*
-	gSERIES_PLAY_BREAK_1,			// Used only by set_next_play_break () in global.cpp
-	gSERIES_PLAY_BREAK_2,			// Used only by set_next_play_break () in global.cpp
-*/
+	gSERIES_PLAY_BREAK_0 = 10003,
+	gSERIES_PLAY_BREAK_1 = 10004,
+	gSERIES_PLAY_BREAK_2 = 10005,
 	gRELEASE_TRIGGER_DIGI_CHECK = 10006,	// Used only by release_trigger_digi_check() in global.cpp
 
-	// General triggers
-	gREACT_TO_WHISTLE,				// For anything that reacts to the wistle being blown
-
-	// Wilbur specific triggers
-	gCHANGE_WILBUR_ANIMATION,
+	gNONPLAYERS_SPEECH_FINISHED = 10011,	// digi_play trigger, used in talk.cpp
 	gWILBURS_SPEECH_FINISHED = 10014,
 	gWILBURS_SPEECH_START = 10015,
 	gABDUCT = 10016,
+	gSET_FACING = 10018,
+	gSET_DEST = 10019,
+	gSET_COMMANDS_ALLOWED = 10020,
+	gUNPOOF = 10021,
 	gTELEPROTED1 = 10024,
 	gTELEPROTED2 = 10025,
 
-	CALLED_EACH_LOOP = 32764,        
+	CALLED_EACH_LOOP = 32764,
 
 	gLAST_GLOBAL_TRIGGER
+#if UNUSED
+	gREACT_TO_WHISTLE,				// For anything that reacts to the wistle being blown
+	gCHANGE_WILBUR_ANIMATION,
+#endif
 };
 
 class Vars : public M4::Vars {
@@ -106,6 +104,11 @@ public:
 	int _roomVal2 = 0;
 	int _roomVal3 = 0;
 	int _walkTrigger = 0;
+	machine *_npcSpeech1 = nullptr;
+	machine *_npcSpeech2 = nullptr;
+	int _npcTrigger = -1;
+	int _player_facing_x = 0, _player_facing_y = 0;
+	int _player_dest_x = 0, _player_dest_y = 0;
 
 public:
 	Vars();
