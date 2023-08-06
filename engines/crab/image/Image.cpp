@@ -91,35 +91,6 @@ bool Image::load(rapidxml::xml_node<char> *node, const char *name) {
 	return false;
 }
 
-bool Image::load(const Image &image, Rect *clip, const TextureFlipType &flip) {
-	deleteImage();
-
-	Common::Rect srcRect(0, 0, _w, _h);
-
-	if (clip)
-		srcRect = Common::Rect(clip->x, clip->y, clip->x + clip->w, clip->y + clip->h);
-
-	_texture = new Graphics::ManagedSurface();
-	_texture->copyFrom(image._texture->getSubArea(srcRect));
-
-	switch (flip) {
-	case FLIP_NONE:
-		break;
-
-	case FLIP_X:
-		_texture->surfacePtr()->flipHorizontal(Common::Rect(_texture->w, _texture->h));
-		break;
-
-	default:
-		warning("Flipped texture: %d", flip);
-	}
-
-	_w = _texture->w;
-	_h = _texture->h;
-
-	return true;
-}
-
 //------------------------------------------------------------------------
 // Purpose: Draw a texture to the screen without cropping
 //------------------------------------------------------------------------
