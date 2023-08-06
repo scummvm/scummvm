@@ -334,13 +334,13 @@ void Interface::trackIcons() {
 		if (_G(game).section_id == 1) {
 			term_message("Abduct me now!");
 			_G(roomVal1) = 10017;
-			kernel_trigger_dispatch_now(gABDUCT);
+			kernel_trigger_dispatch_now(gTELEPORT);
 		} else if (_G(game).section_id == 7) {
 			_G(walker).wilbur_speech("999w023");
 		} else {
 			term_message("Fail me now!");
 			_G(roomVal1) = 10015;
-			kernel_trigger_dispatch_now(gABDUCT);
+			kernel_trigger_dispatch_now(gTELEPORT);
 		}
 		break;
 

@@ -106,12 +106,16 @@ static void set_next_series_play_break(int32 slot) {
 		}
 	}
 
-	if (player->current_break.firstFrame < 0) {	 // there were no more breaks, so unload series/sounds and send off trigger
+	if (player->current_break.firstFrame < 0) {
+		// There were no more breaks, so unload series/sounds and send off trigger
 		player->in_use = false;
 		series_unload(player->series);
-		if (player->with_shadow) series_unload(player->shadow_series);
-		if (player->preload_sounds) digi_unload_play_breaks(player->break_list);
-		kernel_trigger_dispatch(player->trigger);
+		if (player->with_shadow)
+			series_unload(player->shadow_series);
+		if (player->preload_sounds)
+			digi_unload_play_breaks(player->break_list);
+
+		kernel_trigger_dispatchx(player->trigger);
 	}
 }
 

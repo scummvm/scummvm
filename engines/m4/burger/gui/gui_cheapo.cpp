@@ -511,7 +511,6 @@ void InterfaceBox::draw(GrBuff *myBuffer) {
 	if (_must_redraw_all) {
 		ScreenContext *iC = vmng_screen_find(_G(gameInterfaceBuff), nullptr);
 		RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
-		kernel_trigger_dispatch(kernel_trigger_create(TRIG_INV_CLICK));
 	}
 
 	_must_redraw_all = false;
