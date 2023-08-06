@@ -186,6 +186,21 @@
 	0, 0, 0
 },
 
+{
+	{
+		"adibou2",
+		"ADDY JR 2.13 Basisprogramm",
+		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	kGameTypeAdibou2,
+	kFeatures640x480,
+	0, 0, 0
+},
+
 // -- Italian: Adibù --
 {
 	{
