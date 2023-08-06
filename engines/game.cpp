@@ -166,32 +166,61 @@ Common::U32String DetectionResults::generateUnknownGameReport(bool translate, ui
 }
 
 const char *md5PropToCachePrefix(MD5Properties flags) {
-	switch (flags & kMD5MacMask) {
-	case kMD5MacDataFork: {
-		if (flags & kMD5Tail)
-			return "dt";
-		return "d";
-	}
+    if (flags & kMD5Archive) {
+        switch (flags & kMD5MacMask) {
+        case kMD5MacDataFork: {
+            if (flags & kMD5Tail)
+                return "dtA";
+            return "dA";
+        }
 
-	case kMD5MacResOrDataFork: {
-		if (flags & kMD5Tail)
-			return "mt";
-		return "m";
-	}
+        case kMD5MacResOrDataFork: {
+            if (flags & kMD5Tail)
+                return "mtA";
+            return "mA";
+        }
 
-	case kMD5MacResFork: {
-		if (flags & kMD5Tail)
-			return "rt";
-		return "r";
-	}
+        case kMD5MacResFork: {
+            if (flags & kMD5Tail)
+                return "rtA";
+            return "rA";
+        }
 
-	default: {
-		if (flags & kMD5Tail)
-			return "ft";
+        default: {
+            if (flags & kMD5Tail)
+                return "ftA";
 
-		return "f";
-	}
-	}
+            return "fA";
+        }
+        }
+    } else {
+        switch (flags & kMD5MacMask) {
+        case kMD5MacDataFork: {
+            if (flags & kMD5Tail)
+                return "dt";
+            return "d";
+        }
+
+        case kMD5MacResOrDataFork: {
+            if (flags & kMD5Tail)
+                return "mt";
+            return "m";
+        }
+
+        case kMD5MacResFork: {
+            if (flags & kMD5Tail)
+                return "rt";
+            return "r";
+        }
+
+        default: {
+            if (flags & kMD5Tail)
+                return "ft";
+
+            return "f";
+        }
+        }
+    }
 }
 
 Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt) {

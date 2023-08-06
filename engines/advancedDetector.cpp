@@ -32,6 +32,7 @@
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/compression/installshield_cab.h"
 #include "gui/EventRecorder.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
@@ -532,6 +533,8 @@ static MD5Properties gameFileToMD5Props(const ADGameFileDescription *fileEntry, 
 			case 't':
 				ret = (MD5Properties)(ret | kMD5Tail);
 				break;
+			case 'A':
+				ret = (MD5Properties)(ret | kMD5Archive);
 			}
 		return ret;
 	}
@@ -548,27 +551,52 @@ static MD5Properties gameFileToMD5Props(const ADGameFileDescription *fileEntry, 
 }
 
 const char *md5PropToGameFile(MD5Properties flags) {
-	switch (flags & kMD5MacMask)
-	case kMD5MacDataFork: {
-		if (flags & kMD5Tail)
-			return "dt";
-		return "d";
+	if (flags & kMD5Archive) {
+		switch (flags & kMD5MacMask)
+		case kMD5MacDataFork: {
+			if (flags & kMD5Tail)
+				return "dtA";
+			return "dA";
 
-	case kMD5MacResOrDataFork:
-		if (flags & kMD5Tail)
-			return "mt";
-		return "m";
+		case kMD5MacResOrDataFork:
+			if (flags & kMD5Tail)
+				return "mtA";
+			return "mA";
 
-	case kMD5MacResFork:
-		if (flags & kMD5Tail)
-			return "rt";
-		return "r";
+		case kMD5MacResFork:
+			if (flags & kMD5Tail)
+				return "rtA";
+			return "rA";
 
-	case kMD5Tail:
-		return "t";
+		case kMD5Tail:
+			return "tA";
 
-	default:
-		return "";
+		default:
+			return "A";
+		}
+	} else {
+		switch (flags & kMD5MacMask)
+		case kMD5MacDataFork: {
+			if (flags & kMD5Tail)
+				return "dt";
+			return "d";
+
+		case kMD5MacResOrDataFork:
+			if (flags & kMD5Tail)
+				return "mt";
+			return "m";
+
+		case kMD5MacResFork:
+			if (flags & kMD5Tail)
+				return "rt";
+			return "r";
+
+		case kMD5Tail:
+			return "t";
+
+		default:
+			return "";
+		}
 	}
 }
 
@@ -638,21 +666,50 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 			return false;
 	}
 
-	if (!allFiles.contains(fname))
-		return false;
+	Common::ScopedPtr<Common::SeekableReadStream> testFile;
 
-	Common::File testFile;
+	if (md5prop & kMD5Archive) {
+		// The desired file is inside an archive
 
-	if (!testFile.open(allFiles[fname]))
-		return false;
+		// First, check the type of archive
+		Common::StringTokenizer tok(fname, ":");
+		Common::String archiveType = tok.nextToken();
 
-	if (md5prop & kMD5Tail) {
-		if (testFile.size() > md5Bytes)
-			testFile.seek(-(int64)md5Bytes, SEEK_END);
+		if (archiveType.equals("is")) {
+			// InstallShield (v4 and up)
+			Common::String archiveName = tok.nextToken();
+
+			if (!allFiles.contains(archiveName))
+				return false;
+			
+			Common::ScopedPtr<Common::Archive> archive(Common::makeInstallShieldArchive(allFiles[archiveName]));
+			if (!archive)
+				return false;
+			
+			testFile.reset(archive->createReadStreamForMember(tok.nextToken()));
+			if (!testFile) {
+				return false;
+			}
+		} else {
+			debugC(3, kDebugGlobalDetection, "WARNING: Archive type string '%s' not recognized", archiveType.c_str());
+			return false;
+		}
+	} else {
+		if (!allFiles.contains(fname))
+			return false;
+
+		testFile.reset(new Common::File());
+		if (!((Common::File *)testFile.get())->open(allFiles[fname]))
+			return false;
 	}
 
-	fileProps.size = testFile.size();
-	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
+	if (md5prop & kMD5Tail) {
+		if (testFile->size() > md5Bytes)
+			testFile->seek(-(int64)md5Bytes, SEEK_END);
+	}
+
+	fileProps.size = testFile->size();
+	fileProps.md5 = Common::computeStreamMD5AsString(*testFile.get(), md5Bytes);
 	fileProps.md5prop = (MD5Properties) (md5prop & kMD5Tail);
 	return true;
 }
