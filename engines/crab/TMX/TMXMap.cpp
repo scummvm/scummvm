@@ -266,49 +266,20 @@ void TMXMap::drawDebug(const Rect &camera) {
 
 	for (auto i = _areaStairs.begin(); i != _areaStairs.end(); ++i) {
 		i->draw(-camera.x, -camera.y, 0, 254, 0, 254);
-		//g_engine->_textManager->draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x), 0);
-		//g_engine->_textManager->draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y), 0);
 	}
 
 	// Draw the pathfinding grid (SZ)
-	/*for(int x = 0; x < grid->GetDimensions().x; ++x)
-	{
-	for(int y = 0; y < grid->GetDimensions().y; ++y)
-	{
-	if(grid->GetNodeAtCoords(x, y)->GetMovementCost() < 0.0f)
-	grid->GetNodeAtCoords(x, y)->GetRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
-	else
-	grid->GetNodeAtCoords(x, y)->GetRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
+	for(int x = 0; x < _grid->getDimensions().x; ++x) {
+		for(int y = 0; y < _grid->getDimensions().y; ++y) {
+			if(_grid->getNodeAtCoords(x, y)->getMovementCost() < 0.0f)
+				_grid->getNodeAtCoords(x, y)->getRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
+		}
 	}
-	}*/
 
 	for (auto i = _layer.begin(); i != _layer.end(); ++i)
 		i->_pos.draw(-camera.x, -camera.y, 254, 216, 0);
 
 	_areaWalk.draw(-camera.x, -camera.y, 254, 254, 254, 254);
-	// g_engine->_textManager->draw(0, 200, NumberToString(sprite_layer), 0);
-
-	// Use this if you want to draw poly lines in debug
-	/*bool start = true;
-	Vector2i prev;
-	for (auto i = path.begin(); i != path.end(); ++i)
-	{
-	for (auto j = i->begin(); j != i->end(); ++j)
-	{
-	if (start)
-	{
-	prev = *j;
-	start = false;
-	}
-
-	DrawLine(prev.x - camera.x, prev.y - camera.y, j->x - camera.x, j->y - camera.y, 0, 0, 0, 254);
-
-	g_engine->_textManager->draw(j->x - camera.x + 100, j->y - camera.y, NumberToString(j->x), 0);
-	g_engine->_textManager->draw(j->x - camera.x + 200, j->y - camera.y, NumberToString(j->y), 0);
-
-	prev = *j;
-	}
-	}*/
 }
 
 //------------------------------------------------------------------------
