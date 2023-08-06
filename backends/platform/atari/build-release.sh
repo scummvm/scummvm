@@ -28,7 +28,7 @@ then
 	--opengl-mode=none \
 	--enable-verbose-build \
 	--enable-text-console \
-	--disable-engine=director
+	--disable-engine=director,cine
 fi
 
 make -j 16

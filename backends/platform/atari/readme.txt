@@ -45,14 +45,15 @@ Hardware requirements
 ---------------------
 
 This port requires an Atari computer with TT or Falcon compatible video modes
-with at least 4+32 MB of RAM. It runs fine also in Hatari and ARAnyM but in
+with at least 4+32 MB of RAM (this applies to the "slim" version, the "fat" one
+requires more due its file size). It runs fine also in Hatari and ARAnyM but in
 case of ARAnyM don't forget to disable fVDI to show Videl output.
 
 
 Main features
 -------------
 
-- Optimized for the Atari TT/Falcon: ideally the CT60/CT63/CT60e but some games
+- Optimised for the Atari TT/Falcon: ideally the CT60/CT63/CT60e but some games
   run fine on the AfterBurner040, CT2/DFB@50 MHz, Speedy@48 MHz or even less!
 
 - Full support for the SuperVidel, incl. the SuperBlitter (!)
@@ -76,7 +77,8 @@ Main features
 
 - Native MIDI output (if present).
 
-- AdLib emulation works nicely with many games without noticeable slow downs.
+- AdLib emulation works nicely with many games without noticeable slow downs
+  (on a poweful machine, ideally 68060/66 MHz).
 
 
 Platform-specific features outside the GUI
@@ -345,7 +347,7 @@ Known issues
   B interrupt.
 
 - horizontal screen shaking doesn't work on TT because TT Shifter doesn't
-  support fine scrolling.
+  support fine scrolling. However it is "emulated" via vertical shaking.
 
 - tooltips in overlay are sometimes drawn with corrupted background.
 
@@ -356,6 +358,20 @@ Known issues
   folder where *.wav files are located! For MI2 just use the DOS version,
   there are no CD tracks available. :(
 
+- following engines have been explicitly disabled:
+	- Cine (2 games)
+		- incompatible with other engines / prone to freezes
+		- https://wiki.scummvm.org/index.php?title=Cine
+	- Director (many games)
+		- huge game list slows detection for other games, and would require
+		  require (currently missing) localization support
+		- only small subset of games actually supported by upstream, but none
+		  of them detected on TOS 8+3 file system
+		- https://wiki.scummvm.org/index.php?title=Director
+	- Hugo (3 games)
+		- Uses (lot of) overlay dialogs which are problematic for Atari backend
+		- Engine GUI (for save/load/etc) does not support 8-bit screens
+		- https://wiki.scummvm.org/index.php?title=Hugo
 
 Future plans
 ------------
@@ -385,7 +401,10 @@ Closing words
 This backend is part of ScummVM 2.8.0 onwards. Let's see whether we can make it
 to the official website. :-)
 
-MiKRO / Mystic Bytes, XX.XX.2023
+Many optimisations and improvements wouldn't be possible without help of Eero
+Tamminen, so thank you for all the help.
+
+Miro Kropacek a.k.a. MiKRO / Mystic Bytes, XX.XX.2023
 Kosice / Slovakia
 miro.kropacek@gmail.com
 http://mikro.atari.org

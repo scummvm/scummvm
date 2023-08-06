@@ -428,12 +428,28 @@ Common::String OSystem_Atari::getDefaultConfigFileName() {
 }
 
 void OSystem_Atari::update() {
-	// FIXME: SCI MIDI calls delayMillis() from a timer leading to an infitite recursion loop here
-	const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
-	if (!activeDomain || activeDomain->getValOrDefault("engineid") != "sci" || !_inTimer) {
-		_inTimer = true;
+	// avoid a recursion loop if a timer callback decides to call OSystem::delayMillis()
+	static bool inTimer = false;
+	// flag to print the warning only once
+	static bool checkGameDomain = true;
+
+	if (!checkGameDomain) {
+		checkGameDomain = g_system->isOverlayVisible();
+	}
+
+	if (!inTimer) {
+		inTimer = true;
 		((DefaultTimerManager *)_timerManager)->checkTimers();
-		_inTimer = false;
+		inTimer = false;
+	} else if (checkGameDomain) {
+		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
+		if (activeDomain) {
+			warning("%s/%s calls update() from timer",
+				activeDomain->getValOrDefault("engineid").c_str(),
+				activeDomain->getValOrDefault("gameid").c_str());
+
+			checkGameDomain = false;
+		}
 	}
 
 	if (_useNullMixer)

@@ -29,7 +29,7 @@ then
 	--opengl-mode=none \
 	--enable-verbose-build \
 	--enable-text-console \
-	--disable-engine=hugo,director
+	--disable-engine=hugo,director,cine
 fi
 
 make -j 16
