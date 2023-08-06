@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-05 15:16+0000\n"
+"POT-Creation-Date: 2023-08-06 21:03+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -583,7 +583,7 @@ msgid "Platform:"
 msgstr "פלטפורמה:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2198
-#: backends/graphics/atari/atari-graphics.cpp:852
+#: backends/graphics/atari/atari-graphics.cpp:859
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "תצוגה"
@@ -3510,7 +3510,7 @@ msgstr "הוספת תיקיה חדשה"
 msgid "Choose a new folder"
 msgstr "בחירת תיקיה חדשה"
 
-#: backends/graphics/atari/atari-graphics.cpp:856
+#: backends/graphics/atari/atari-graphics.cpp:863
 #: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr "מיתוג תיקון יחס ממדים"
@@ -3557,32 +3557,32 @@ msgid "Resolution: %dx%d"
 msgstr "רזולוציה: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2622
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Active graphics filter:"
 msgstr "מסנן גרפי פעיל:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2656
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
 msgid "Enabled aspect ratio correction"
 msgstr "תיקון יחס ממדים מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2662
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2669
 msgid "Disabled aspect ratio correction"
 msgstr "תיקון יחס ממדים מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
 msgid "Filtering enabled"
 msgstr "סינון מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
 msgid "Filtering disabled"
 msgstr "הסינון מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2707
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2714
 msgid "Stretch mode"
 msgstr "מצב מתיחה"
 

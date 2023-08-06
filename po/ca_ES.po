@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-05 15:16+0000\n"
+"POT-Creation-Date: 2023-08-06 21:03+0000\n"
 "PO-Revision-Date: 2023-07-21 07:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -574,7 +574,7 @@ msgid "Platform:"
 msgstr "Platafor.:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2198
-#: backends/graphics/atari/atari-graphics.cpp:852
+#: backends/graphics/atari/atari-graphics.cpp:859
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "Gràfics"
@@ -3528,7 +3528,7 @@ msgstr "Afegeix una carpeta nova"
 msgid "Choose a new folder"
 msgstr "Trieu una carpeta nova"
 
-#: backends/graphics/atari/atari-graphics.cpp:856
+#: backends/graphics/atari/atari-graphics.cpp:863
 #: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr "Commuta la correcció de la relació d'aspecte"
@@ -3575,32 +3575,32 @@ msgid "Resolution: %dx%d"
 msgstr "Resolució: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2622
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Active graphics filter:"
 msgstr "Filtre de gràfics actiu:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2656
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
 msgid "Enabled aspect ratio correction"
 msgstr "S'ha activat la correcció de la relació d'aspecte"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2662
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2669
 msgid "Disabled aspect ratio correction"
 msgstr "S'ha desactivat la correcció de la relació d'aspecte"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
 msgid "Filtering enabled"
 msgstr "Filtratge activat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
 msgid "Filtering disabled"
 msgstr "Filtratge desactivat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2707
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2714
 msgid "Stretch mode"
 msgstr "Mode d'ajustament"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-05 15:16+0000\n"
+"POT-Creation-Date: 2023-08-06 21:03+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -573,7 +573,7 @@ msgid "Platform:"
 msgstr "Platform:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2022 gui/options.cpp:2198
-#: backends/graphics/atari/atari-graphics.cpp:852
+#: backends/graphics/atari/atari-graphics.cpp:859
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "Beeld"
@@ -3549,7 +3549,7 @@ msgstr "Voeg een nieuwe map toe"
 msgid "Choose a new folder"
 msgstr "Selecteer een nieuwe map"
 
-#: backends/graphics/atari/atari-graphics.cpp:856
+#: backends/graphics/atari/atari-graphics.cpp:863
 #: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Toggle aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie aan-/uitzetten"
@@ -3596,32 +3596,32 @@ msgid "Resolution: %dx%d"
 msgstr "Resolutie: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2622
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Active graphics filter:"
 msgstr "Actieve grafische filter:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2656
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
 msgid "Enabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie ingeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2662
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2669
 msgid "Disabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie uitgeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
 msgid "Filtering enabled"
 msgstr "Filteren aangezet"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
 msgid "Filtering disabled"
 msgstr "Filteren uitgeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2707
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2714
 msgid "Stretch mode"
 msgstr "Uitrekmodus"
 
