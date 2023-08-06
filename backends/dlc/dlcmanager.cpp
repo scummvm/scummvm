@@ -108,6 +108,7 @@ bool DLCManager::cancelDownload(uint32 idx) {
 	} else {
 		// if not started, skip it in processDownload()
 		_dlcs[idx]->state = DLCDesc::kCancelled;
+		DLCMan.refreshDLCList();
 	}
 	return true;
 }
