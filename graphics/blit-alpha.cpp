@@ -178,10 +178,12 @@ BlendBlit::Args::Args(byte *dst, const byte *src,
 	const int posX, const int posY,
 	const uint _width, const uint _height,
 	const int _scaleX, const int _scaleY,
+	const int scaleXsrcOff, const int scaleYsrcOff,
 	const uint32 colorMod, const uint _flipping) :
 		xp(0), yp(0), dstPitch(_dstPitch),
 		width(_width), height(_height), color(colorMod),
-		scaleX(_scaleX), scaleY(_scaleY), flipping(_flipping) {
+		scaleX(_scaleX), scaleY(_scaleY), flipping(_flipping),
+		scaleXoff(scaleXsrcOff), scaleYoff(scaleYsrcOff) {
 	bool doScale = scaleX != SCALE_THRESHOLD || scaleY != SCALE_THRESHOLD;
 	
 	rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
@@ -212,7 +214,7 @@ void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
-	int scaleXCtr, scaleYCtr = 0;
+	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
 	const byte rawcr = (args.color >> kRModShift) & 0xFF;
@@ -226,7 +228,7 @@ void BlendBlit::doBlitMultiplyBlendLogicGeneric(Args &args) {
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
 			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
-			scaleXCtr = 0;
+			scaleXCtr = args.scaleXoff;
 		} else {
 			in = args.ino;
 		}
@@ -264,7 +266,7 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
-	int scaleXCtr, scaleYCtr = 0;
+	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
 	const byte ca = alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
@@ -275,7 +277,7 @@ void BlendBlit::doBlitAlphaBlendLogicGeneric(Args &args) {
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
 			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
-			scaleXCtr = 0;
+			scaleXCtr = args.scaleXoff;
 		} else {
 			in = args.ino;
 		}
@@ -329,7 +331,7 @@ void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
-	int scaleXCtr, scaleYCtr = 0;
+	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
 	const byte rawcr = (args.color >> kRModShift) & 0xFF;
@@ -342,7 +344,7 @@ void BlendBlit::doBlitSubtractiveBlendLogicGeneric(Args &args) {
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
 			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
-			scaleXCtr = 0;
+			scaleXCtr = args.scaleXoff;
 		} else {
 			in = args.ino;
 		}
@@ -379,7 +381,7 @@ void BlendBlit::doBlitAdditiveBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
-	int scaleXCtr, scaleYCtr = 0;
+	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
 	const byte rawcr = (args.color >> kRModShift) & 0xFF;
@@ -393,7 +395,7 @@ void BlendBlit::doBlitAdditiveBlendLogicGeneric(Args &args) {
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
 			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
-			scaleXCtr = 0;
+			scaleXCtr = args.scaleXoff;
 		} else {
 			in = args.ino;
 		}
@@ -431,13 +433,13 @@ void BlendBlit::doBlitOpaqueBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
-	int scaleXCtr, scaleYCtr = 0;
+	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
 			inBase = args.ino + (scaleYCtr + 1) / SCALE_THRESHOLD * args.inoStep;
-			scaleXCtr = 0;
+			scaleXCtr = args.scaleXoff;
 		} else {
 			in = args.ino;
 		}
@@ -471,13 +473,13 @@ void BlendBlit::doBlitBinaryBlendLogicGeneric(Args &args) {
 	const byte *in;
 	byte *out;
 
-	int scaleXCtr, scaleYCtr = 0;
+	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
 			inBase = args.ino + scaleYCtr / SCALE_THRESHOLD * args.inoStep;
-			scaleXCtr = 0;
+			scaleXCtr = args.scaleXoff;
 		} else {
 			in = args.ino;
 		}
@@ -519,6 +521,7 @@ void BlendBlit::blit(byte *dst, const byte *src,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
 					 const int scaleX, const int scaleY,
+					 const int scaleXsrcOff, const int scaleYsrcOff,
 					 const uint32 colorMod, const uint flipping,
 					 const TSpriteBlendMode blendMode,
 					 const AlphaType alphaType) {
@@ -539,7 +542,7 @@ void BlendBlit::blit(byte *dst, const byte *src,
 #endif
 	}
 	
-	Args args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, colorMod, flipping);
+	Args args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, scaleXsrcOff, scaleYsrcOff, colorMod, flipping);
 	blitFunc(args, blendMode, alphaType);
 }
 

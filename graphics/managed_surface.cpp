@@ -745,13 +745,16 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 
 	const int scaleX = BlendBlit::getScaleFactor(srcArea.width(), dstArea.width());
 	const int scaleY = BlendBlit::getScaleFactor(srcArea.height(), dstArea.height());
+	int scaleXoff = 0, scaleYoff = 0;
 
 	if (dstArea.left < 0) {
+		scaleXoff = (-dstArea.left * scaleX) % BlendBlit::SCALE_THRESHOLD;
 		srcArea.left += -dstArea.left * scaleX / BlendBlit::SCALE_THRESHOLD;
 		dstArea.left = 0;
 	}
 
 	if (dstArea.top < 0) {
+		scaleYoff = (-dstArea.top * scaleY) % BlendBlit::SCALE_THRESHOLD;
 		srcArea.top += -dstArea.top * scaleY / BlendBlit::SCALE_THRESHOLD;
 		dstArea.top = 0;
 	}
@@ -770,12 +773,14 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 		int tmp_w = srcArea.width();
 		srcArea.left = src.w - srcArea.right;
 		srcArea.right = srcArea.left + tmp_w;
+		scaleXoff = (BlendBlit::SCALE_THRESHOLD - (scaleXoff + dstArea.width() * scaleX)) % BlendBlit::SCALE_THRESHOLD;
 	}
 
 	if (flipping & FLIP_V) {
 		int tmp_h = srcArea.height();
 		srcArea.top = src.h - srcArea.bottom;
 		srcArea.bottom = srcArea.top + tmp_h;
+		scaleYoff = (BlendBlit::SCALE_THRESHOLD - (scaleYoff + dstArea.height() * scaleY)) % BlendBlit::SCALE_THRESHOLD;
 	}
 
 	if (!dstArea.isEmpty() && !srcArea.isEmpty()) {
@@ -786,6 +791,7 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 			dstArea.left, dstArea.top,
 			dstArea.width(), dstArea.height(),
 			scaleX, scaleY,
+			scaleXoff, scaleYoff,
 			colorMod, flipping,
 			blend, alphaType);
 	}

@@ -72,22 +72,13 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		return retSize;
 	}
 
+	int xOffset = 0, yOffset = 0, srcW = srcImage.w, srcH = srcImage.h;
+
 	if (pPartRect) {
-
-		int xOffset = pPartRect->left;
-		int yOffset = pPartRect->top;
-
-		if (flipping & FLIP_V) {
-			yOffset = srcImage.h - pPartRect->bottom;
-		}
-
-		if (flipping & FLIP_H) {
-			xOffset = srcImage.w - pPartRect->right;
-		}
-
-		srcImage.pixels = getBasePtr(xOffset, yOffset);
-		srcImage.w = pPartRect->width();
-		srcImage.h = pPartRect->height();
+		xOffset = pPartRect->left;
+		yOffset = pPartRect->top;
+		srcW = pPartRect->width();
+		srcH = pPartRect->height();
 	}
 
 	if (width == -1) {
@@ -97,69 +88,65 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		height = srcImage.h;
 	}
 
+	int scaleX = BlendBlit::getScaleFactor(srcW, width), scaleXoff = 0;
+	int scaleY = BlendBlit::getScaleFactor(srcH, height), scaleYoff = 0;
+
 #ifdef SCALING_TESTING
 	// Hardcode scaling to 66% to test scaling
 	width = width * 2 / 3;
 	height = height * 2 / 3;
 #endif
 
-	Graphics::Surface *img = nullptr;
-	Graphics::Surface *imgScaled = nullptr;
-	byte *savedPixels = nullptr;
-	if ((width != srcImage.w) || (height != srcImage.h)) {
-		// Scale the image
-		img = imgScaled = srcImage.scale(width, height);
-		savedPixels = (byte *)img->getPixels();
-	} else {
-		img = &srcImage;
-	}
-
 	// Handle off-screen clipping
 	if (posY < 0) {
-		img->h = MAX(0, (int)img->h - -posY);
-		if (!(flipping & FLIP_V))
-			img->setPixels((byte *)img->getBasePtr(0, -posY));
+		height = MAX(0, (int)height + posY);
+		scaleYoff += (-posY * scaleY) % BlendBlit::SCALE_THRESHOLD;
+		yOffset += -posY * scaleY / BlendBlit::SCALE_THRESHOLD;
+		srcH = MAX(0, srcH + posY * scaleY / BlendBlit::SCALE_THRESHOLD);
 		posY = 0;
 	}
 
 	if (posX < 0) {
-		img->w = MAX(0, (int)img->w - -posX);
-		if (!(flipping & FLIP_H))
-			img->setPixels((byte *)img->getBasePtr(-posX, 0));
+		width = MAX(0, (int)width + posX);
+		scaleXoff += (-posX * scaleX) % BlendBlit::SCALE_THRESHOLD;
+		xOffset += -posX * scaleX / BlendBlit::SCALE_THRESHOLD;
+		srcW = MAX(0, srcW + posX * scaleX / BlendBlit::SCALE_THRESHOLD);
 		posX = 0;
 	}
 
-	if (img->w > target.w - posX) {
-		if (flipping & FLIP_H)
-			img->setPixels((byte *)img->getBasePtr(img->w - target.w + posX, 0));
-		img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
+	if (width + posX > target.w) {
+		srcW -= ((width + posX) - target.w) * scaleX / BlendBlit::SCALE_THRESHOLD;
+		width = target.w - posX;
 	}
 
-	if (img->h > target.h - posY) {
-		if (flipping & FLIP_V)
-			img->setPixels((byte *)img->getBasePtr(0, img->h - target.h + posY));
-		img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
+	if (height + posY > target.h) {
+		srcH -= ((height + posY) - target.h) * scaleY / BlendBlit::SCALE_THRESHOLD;
+		height = target.h - posY;
+	}
+	if (flipping & FLIP_H) {
+		scaleXoff = (BlendBlit::SCALE_THRESHOLD - (scaleXoff + width * scaleX)) % BlendBlit::SCALE_THRESHOLD;
+		xOffset = this->w - (xOffset + srcW);
+	}
+
+	if (flipping & FLIP_V) {
+		scaleYoff = (BlendBlit::SCALE_THRESHOLD - (scaleYoff + height * scaleY)) % BlendBlit::SCALE_THRESHOLD;
+		yOffset = this->h - (yOffset + srcH);
 	}
 
 	// Flip surface
-	if ((img->w > 0) && (img->h > 0)) {
+	if ((width > 0) && (height > 0)) {
 		BlendBlit::blit(
 			(byte *)target.getBasePtr(0, 0),
-			(byte *)img->getBasePtr(0, 0),
-			target.pitch, img->pitch,
-			posX, posY, img->w, img->h, BlendBlit::SCALE_THRESHOLD, BlendBlit::SCALE_THRESHOLD,
+			(byte *)srcImage.getBasePtr(xOffset, yOffset),
+			target.pitch, srcImage.pitch,
+			posX, posY, width, height, scaleX, scaleY,
+			scaleXoff, scaleYoff,
 			color, flipping,
 			blendMode, _alphaMode);
 	}
 
-	retSize.setWidth(img->w);
-	retSize.setHeight(img->h);
-
-	if (imgScaled) {
-		imgScaled->setPixels(savedPixels);
-		imgScaled->free();
-		delete imgScaled;
-	}
+	retSize.setWidth((int16)width);
+	retSize.setHeight((int16)height);
 
 	return retSize;
 }
@@ -185,22 +172,13 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 		return retSize;
 	}
 
+	int xOffset = 0, yOffset = 0, srcW = srcImage.w, srcH = srcImage.h;
+
 	if (pPartRect) {
-
-		int xOffset = pPartRect->left;
-		int yOffset = pPartRect->top;
-
-		if (flipping & FLIP_V) {
-			yOffset = srcImage.h - pPartRect->bottom;
-		}
-
-		if (flipping & FLIP_H) {
-			xOffset = srcImage.w - pPartRect->right;
-		}
-
-		srcImage.pixels = getBasePtr(xOffset, yOffset);
-		srcImage.w = pPartRect->width();
-		srcImage.h = pPartRect->height();
+		xOffset = pPartRect->left;
+		yOffset = pPartRect->top;
+		srcW = pPartRect->width();
+		srcH = pPartRect->height();
 	}
 
 	if (width == -1) {
@@ -210,69 +188,67 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 		height = srcImage.h;
 	}
 
+	int scaleX = BlendBlit::getScaleFactor(srcW, width), scaleXoff = 0;;
+	int scaleY = BlendBlit::getScaleFactor(srcH, height), scaleYoff = 0;;
+
 #ifdef SCALING_TESTING
 	// Hardcode scaling to 66% to test scaling
 	width = width * 2 / 3;
 	height = height * 2 / 3;
 #endif
 
-	Graphics::Surface *img = nullptr;
-	Graphics::Surface *imgScaled = nullptr;
-	byte *savedPixels = nullptr;
-	if ((width != srcImage.w) || (height != srcImage.h)) {
-		// Scale the image
-		img = imgScaled = srcImage.scale(width, height);
-		savedPixels = (byte *)img->getPixels();
-	} else {
-		img = &srcImage;
-	}
-
 	// Handle off-screen clipping
 	if (posY < clippingArea.top) {
-		img->h = MAX(0, (int)img->h - (clippingArea.top - posY));
-		if (!(flipping & FLIP_V))
-			img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
+		posY -= clippingArea.top;
+		scaleYoff += (-posY * scaleY) % BlendBlit::SCALE_THRESHOLD;
+		yOffset += -posY * scaleY / BlendBlit::SCALE_THRESHOLD;
+		height = MAX(0, (int)height + posY);
+		srcH = MAX(0, srcH + posY * scaleY / BlendBlit::SCALE_THRESHOLD);
 		posY = clippingArea.top;
 	}
 
 	if (posX < clippingArea.left) {
-		img->w = MAX(0, (int)img->w - (clippingArea.left - posX));
-		if (!(flipping & FLIP_H))
-			img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
+		posX -= clippingArea.left;
+		scaleXoff += (-posX * scaleX) % BlendBlit::SCALE_THRESHOLD;
+		xOffset += -posX * scaleX / BlendBlit::SCALE_THRESHOLD;
+		width = MAX(0, (int)width + posX);
+		srcW = MAX(0, srcW + posX * scaleX / BlendBlit::SCALE_THRESHOLD);
 		posX = clippingArea.left;
 	}
 
-	if (img->w > clippingArea.right - posX) {
-		if (flipping & FLIP_H)
-			img->setPixels((byte *)img->getBasePtr(img->w - clippingArea.right + posX, 0));
-		img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
+	if (width + posX > clippingArea.right) {
+		srcW -= ((width + posX) - clippingArea.right) * scaleX / BlendBlit::SCALE_THRESHOLD;
+		width = clippingArea.right - posX;
 	}
 
-	if (img->h > clippingArea.bottom - posY) {
-		if (flipping & FLIP_V)
-			img->setPixels((byte *)img->getBasePtr(0, img->h - clippingArea.bottom + posY));
-		img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+	if (height + posY > clippingArea.bottom) {
+		srcH -= ((height + posY) - clippingArea.bottom) * scaleY / BlendBlit::SCALE_THRESHOLD;
+		height = clippingArea.bottom - posY;
+	}
+	if (flipping & FLIP_H) {
+		scaleXoff = (BlendBlit::SCALE_THRESHOLD - (scaleXoff + width * scaleX)) % BlendBlit::SCALE_THRESHOLD;
+		xOffset = this->w - (xOffset + srcW);
+	}
+
+	if (flipping & FLIP_V) {
+		scaleYoff = (BlendBlit::SCALE_THRESHOLD - (scaleYoff + height * scaleY)) % BlendBlit::SCALE_THRESHOLD;
+		yOffset = this->h - (yOffset + srcH);
 	}
 
 	// Flip surface
-	if ((img->w > 0) && (img->h > 0)) {
+	if ((width > 0) && (height > 0)) {
 		BlendBlit::blit(
 			(byte *)target.getBasePtr(0, 0),
-			(byte *)img->getBasePtr(0, 0),
-			target.pitch, img->pitch,
-			posX, posY, img->w, img->h, BlendBlit::SCALE_THRESHOLD, BlendBlit::SCALE_THRESHOLD,
+			(byte *)srcImage.getBasePtr(xOffset, yOffset),
+			target.pitch, srcImage.pitch,
+			posX, posY, width, height, scaleX, scaleY,
+			scaleXoff, scaleYoff,
 			color, flipping,
 			blendMode, _alphaMode);
 	}
 
-	retSize.setWidth(img->w);
-	retSize.setHeight(img->h);
-
-	if (imgScaled) {
-		imgScaled->setPixels(savedPixels);
-		imgScaled->free();
-		delete imgScaled;
-	}
+	retSize.setWidth(width);
+	retSize.setHeight(height);
 
 	return retSize;
 }

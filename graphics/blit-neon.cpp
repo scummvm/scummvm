@@ -277,7 +277,7 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
 	const uint32 cg = coloradd1 ? (rgbmod   ? (rawcg == 255 ? 256 : rawcg) : 256) : (rgbmod   ? rawcg : 255);
 	const uint32 cb = coloradd1 ? (rgbmod   ? (rawcb == 255 ? 256 : rawcb) : 256) : (rgbmod   ? rawcb : 255);
 
-	int scaleXCtr, scaleYCtr = 0;
+	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
     if (!doscale && (args.flipping & FLIP_H)) args.ino -= 4 * 3;
@@ -285,7 +285,7 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
 			inBase = args.ino + scaleYCtr / BlendBlit::SCALE_THRESHOLD * args.inoStep;
-			scaleXCtr = 0;
+			scaleXCtr = args.scaleXoff;
 		} else {
 			in = args.ino;
 		}

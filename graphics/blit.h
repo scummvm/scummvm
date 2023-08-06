@@ -203,7 +203,7 @@ private:
 		const byte *ino;
 		byte *outo;
 	
-		int scaleX, scaleY;
+		int scaleX, scaleY, scaleXoff, scaleYoff;
 		uint dstPitch;
 		uint width, height;
 		uint32 color;
@@ -214,6 +214,7 @@ private:
 			 const int posX, const int posY,
 			 const uint width, const uint height,
 			 const int scaleX, const int scaleY,
+			 const int scaleXsrcOff, const int scaleYsrcOff,
 			 const uint32 colorMod, const uint flipping);
 	};
 
@@ -305,6 +306,10 @@ public:
 	 * @param height height of the input surface
 	 * @param scaleX scale factor to use when blitting (src / dst) (0.5 for 2x scale) use BlendBlit::SCALE_THRESHOLD
 	 * @param scaleY scale factor to use when blitting (src / dst) (0.5 for 2x scale) use BlendBlit::SCALE_THRESHOLD
+	 * @param scaleXsrcOff since you can only offset the *src pointer to effectivly
+	 *     get a different part of the source image rendered, it can only go in
+	 *     1 pixel chunks, so this fixes that by added a little offset
+	 * @param scaleYsrcOff same as the X one
 	 * @param colorMod the color to multiply by. (0xffffffff does no multiplication and has 0 overhead usually)
 	 * @param flipping flipping flags used with Graphics::FLIP_FLAGS
 	 * @param blendMode the blending mode to be used
@@ -315,6 +320,7 @@ public:
 			  const int posX, const int posY,
 			  const uint width, const uint height,
 			  const int scaleX, const int scaleY,
+			  const int scaleXsrcOff, const int scaleYsrcOff,
 			  const uint32 colorMod, const uint flipping,
 			  const TSpriteBlendMode blendMode,
 			  const AlphaType alphaType);
