@@ -118,9 +118,9 @@ void FreescapeEngine::loadColorPalette() {
 	} else if (_renderMode == Common::kRenderCPC) {
 		_gfx->_palette = (byte *)kDrillerCPCPalette;
 	} else if (_renderMode == Common::kRenderCGA) {
-		_gfx->_palette = nullptr; // palette depends on the area
+		// palette depends on the area
 	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
-		_gfx->_palette = nullptr; // palette depends on the area
+		// palette depends on the area
 	} else
 		error("Invalid render mode, no palette selected");
 

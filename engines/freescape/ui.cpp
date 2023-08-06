@@ -115,7 +115,7 @@ void FreescapeEngine::borderScreen() {
 	if (isDriller()) {
 		drawBorderScreenAndWait(nullptr);
 
-		if (isAmiga())
+		if (isAmiga() || isAtariST() || isDemo())
 			return;
 	}
 

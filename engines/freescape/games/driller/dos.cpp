@@ -314,6 +314,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		loadGlobalObjects(&file, 0x1fa2, 8);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+		swapPalette(1);
 	} else
 		error("Unsupported video mode for DOS");
 }
