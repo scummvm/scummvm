@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
+#include "m4/burger/core/conv.h"
 #include "m4/graphics/krn_pal.h"
 #include "m4/core/imath.h"
 
@@ -273,12 +274,33 @@ void BurgerEngine::syncFlags(Common::Serializer &s) {
 
 void BurgerEngine::global_daemon() {
 	switch (_G(kernel).trigger) {
+	case gRESUME_CONVERSATION:
+		conv_resume();
+		break;
+
 	case gSERIES_STREAM_BREAK:
 		handle_series_stream_break();
 		break;
 
+	case gSERIES_PLAY_BREAK0:
+		handle_series_play_break(0);
+		break;
+
+	case gSERIES_PLAY_BREAK1:
+		handle_series_play_break(1);
+		break;
+
+	case gSERIES_PLAY_BREAK2:
+		handle_series_play_break(2);
+		break;
+
 	case gRELEASE_TRIGGER_DIGI_CHECK:
 		release_trigger_digi_check();
+		break;
+
+	case 10007:
+		_G(flags).advance_boonsville_time_and_check_schedule(300);
+		kernel_timing_trigger(300, 10007);
 		break;
 
 	case gWILBURS_SPEECH_START:
@@ -389,6 +411,14 @@ void BurgerEngine::global_daemon() {
 		default:
 			break;
 		}
+		break;
+
+	case 10017:
+		if (!player_commands_allowed() && !_G(flags)[V299] && _G(my_walker) &&
+				_G(player).walker_in_this_scene && _G(roomVal2))
+			SendWSMessage(0, 0, _G(my_walker), 0, 0, 1);
+
+		kernel_timing_trigger(imath_ranged_rand(900, 1800), 10017);
 		break;
 
 	case gTELEPROTED1:

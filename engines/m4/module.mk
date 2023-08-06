@@ -79,8 +79,9 @@ MODULE_OBJS = \
 	wscript/ws_timer.o \
 	wscript/wscript.o \
 	wscript/wst_regs.o \
-	burger/core/release_trigger.o \
+	burger/core/conv.o \
 	burger/core/play_break.o \
+	burger/core/release_trigger.o \
 	burger/core/stream_break.o \
 	burger/gui/game_menu.o \
 	burger/gui/gui_cheapo.o \

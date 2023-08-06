@@ -20,41 +20,15 @@
  *
  */
 
-#ifndef M4_BURGER_PLAY_BREAK_H
-#define M4_BURGER_PLAY_BREAK_H
+#ifndef M4_BURGER_CORE_CONV_H
+#define M4_BURGER_CORE_CONV_H
 
 #include "m4/m4_types.h"
-#include "m4/adv_r/adv_trigger.h"
 
 namespace M4 {
 namespace Burger {
 
-struct seriesPlayBreak {
-	int32 firstFrame;
-	int32 lastFrame;
-	const char *sound;
-	int32 channel;
-	int32 volume;
-	int32 trigger;
-	uint32 flags;
-	int32 loopCount;
-	int32 *variable;
-	int32 value;
-};
-
-enum {
-	WITH_SHADOW		= 1,
-	PRELOAD_SOUNDS	= 2
-};
-
-#define PLAY_BREAK_END { -1, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 }
-
-extern int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name,
-	frac16 depth = 0, int32 trigger = NO_TRIGGER, uint32 flags = 0, int32 framerate = 0,
-	int32 scale = 100, int32 x = 0, int32 y = 0);
-extern void digi_preload_play_breaks(const seriesPlayBreak list[]);
-extern void digi_unload_play_breaks(const seriesPlayBreak list[]);
-extern void handle_series_play_break(int32 slot);
+extern void conv_resume();
 
 } // namespace Burger
 } // namespace M4

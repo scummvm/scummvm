@@ -85,8 +85,6 @@ extern void conv_reset(char *filename);
 extern void conv_reset_all();
 extern void conv_play(Conv *c);
 
-extern void conv_resume(Conv *c);
-
 extern void set_conv_name(char *s);
 extern char *get_conv_name();
 extern char *conv_sound_to_play();

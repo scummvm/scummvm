@@ -30,6 +30,33 @@ namespace Burger {
 
 #define FLAGS_COUNT 512
 
+struct BoonsvilleRec {
+	int32 _time;
+	int32 _trigger;
+	const char *_text;
+};
+
+static const BoonsvilleRec ARRAY[] = {
+	{ 600, -1, "After getting neuro stuff" },
+	{ 2400, -1, "After getting survival stuff" },
+	{ 6000, 10028, "Burl enters town" },
+	{ 6600, -1, "After getting sensory stuff" },
+	{ 9600, 10029, "Burl gets fed" },
+	{ 19200, -1, "After getting language stuff" },
+	{ 13200, 10030, "Burl stops eating" },
+	{ 22800, -1, "After getting logic stuff" },
+	{ 15000, 10031, "Burl leaves town" },
+	{ 18600, 10031, "Band enters town" },
+	{ 33600, 10022, "Abduction time" },
+	{ 55200, 10023, "Nero timeout" },
+	{ 166800, 10023, "Survival timeout" },
+	{ 278400, 10023, "Sensory timeout" },
+	{ 390000, 10023, "Language timeout" },
+	{ 501600, 10023, "Logic timeout" },
+	{ 505200, 10033, "Conclusion" },
+	{ 0, 0, nullptr }
+};
+
 Flags::Flags() {
 	resize(FLAGS_COUNT);
 }
@@ -61,6 +88,39 @@ int32 Flags::get_boonsville_time_and_display(bool showTime) {
 void Flags::set_boonsville_time(int32 time) {
 	(*this)[BOONSVILLE_TIME] = time;
 	(*this)[BOONSVILLE_TIME2] = time - 1;
+}
+
+bool Flags::advance_boonsville_time_and_check_schedule(int32 time) {
+	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		(*this)[BOONSVILLE_TIME2] = (*this)[BOONSVILLE_TIME];
+		(*this)[BOONSVILLE_TIME] = time;
+		return dispatch_scheduled_boonsville_time_trigger(
+			get_boonsville_time_and_display());
+	} else {
+		return false;
+	}
+}
+
+bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
+	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	_G(kernel).trigger_mode = KT_DAEMON;
+	bool result = false;
+
+	for (const BoonsvilleRec *rec = ARRAY; rec->_time; ++rec) {
+		if ((*this)[BOONSVILLE_TIME2] > rec->_time &&
+				rec->_time <= (*this)[BOONSVILLE_TIME]) {
+			result = true;
+			term_message("Time for: %s", rec->_text);
+			schedule_boonsville_time();
+			kernel_trigger_dispatch_now(rec->_trigger);
+		}
+	}
+
+	return result;
+}
+
+void Flags::schedule_boonsville_time() {
+	error("TODO: Flags::schedule_boonsville_time()");
 }
 
 void Flags::reset1() {
