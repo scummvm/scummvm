@@ -37,6 +37,7 @@
 #include "engines/nancy/action/bombpuzzle.h"
 #include "engines/nancy/action/soundequalizerpuzzle.h"
 #include "engines/nancy/action/setplayerclock.h"
+#include "engines/nancy/action/raycastpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -168,6 +169,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new OverrideLockPuzzle();
 	case 205:
 		return new RiddlePuzzle();
+	case 206:
+		return new RaycastPuzzle();
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;

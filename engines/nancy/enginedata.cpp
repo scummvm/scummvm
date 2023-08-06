@@ -427,6 +427,150 @@ SPEC::SPEC(Common::SeekableReadStream *chunkStream) {
 	crossDissolveNumFrames = chunkStream->readUint16LE();
 }
 
+RCLB::RCLB(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+
+	lightSwitchID = chunkStream->readUint16LE();
+	unk2 = chunkStream->readUint16LE();
+
+	char buf[100];
+
+	while (chunkStream->pos() < chunkStream->size()) {
+		themes.push_back(Theme());
+		Theme &theme = themes.back();
+
+		chunkStream->read(buf, 100);
+		theme.themeName = buf;
+
+		for (uint i = 0; i < 10; ++i) {
+			int32 val = chunkStream->readSint32LE();
+			if (val != -1) {
+				theme.wallIDs.push_back(val);
+			}
+		}
+
+		for (uint i = 0; i < 10; ++i) {
+			int16 val = chunkStream->readUint16LE();
+			if (val != -1) {
+				theme.floorIDs.push_back(val);
+			}
+		}
+
+		for (uint i = 0; i < 10; ++i) {
+			int16 val = chunkStream->readSint16LE();
+			if (val != -1) {
+				theme.exitFloorIDs.push_back(val);
+			}
+		}
+
+		for (uint i = 0; i < 10; ++i) {
+			int16 val = chunkStream->readSint16LE();
+			if (val != -1) {
+				theme.ceilingIDs.push_back(val);
+			}
+		}
+
+		for (uint i = 0; i < 10; ++i) {
+			int32 val = chunkStream->readSint32LE();
+			if (val != -1) {
+				theme.doorIDs.push_back(val);
+			}
+		}
+
+		for (uint i = 0; i < 10; ++i) {
+			int32 val = chunkStream->readSint32LE();
+			if (val != -1) {
+				theme.transparentwallIDs.push_back(val);
+			}
+		}
+
+		for (uint i = 0; i < 10; ++i) {
+			int32 val = chunkStream->readSint32LE();
+			if (val != -1) {
+				theme.objectwallIDs.push_back(val);
+			}
+		}
+
+		for (uint i = 0; i < 10; ++i) {
+			int16 val = chunkStream->readSint16LE();
+			if (val != -1) {
+				theme.objectWallHeights.push_back(val);
+			}
+		}
+
+		theme.generalLighting = chunkStream->readUint16LE();
+		theme.hasLightSwitch = chunkStream->readUint16LE();
+		theme.transparentWallDensity = chunkStream->readSint16LE();
+		theme.objectWallDensity = chunkStream->readSint16LE();
+		theme.doorDensity = chunkStream->readSint16LE();
+	}
+}
+
+RCPR::RCPR(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+
+	readRectArray(*chunkStream, screenViewportSizes, 6);
+	viewportSizeUsed = chunkStream->readUint16LE();
+
+	wallColor[0] = chunkStream->readByte();
+	wallColor[1] = chunkStream->readByte();
+	wallColor[2] = chunkStream->readByte();
+
+	playerColor[0] = chunkStream->readByte();
+	playerColor[1] = chunkStream->readByte();
+	playerColor[2] = chunkStream->readByte();
+
+	doorColor[0] = chunkStream->readByte();
+	doorColor[1] = chunkStream->readByte();
+	doorColor[2] = chunkStream->readByte();
+
+	lightSwitchColor[0] = chunkStream->readByte();
+	lightSwitchColor[1] = chunkStream->readByte();
+	lightSwitchColor[2] = chunkStream->readByte();
+
+	exitColor[0] = chunkStream->readByte();
+	exitColor[1] = chunkStream->readByte();
+	exitColor[2] = chunkStream->readByte();
+
+	uColor6[0] = chunkStream->readByte();
+	uColor6[1] = chunkStream->readByte();
+	uColor6[2] = chunkStream->readByte();
+
+	uColor7[0] = chunkStream->readByte();
+	uColor7[1] = chunkStream->readByte();
+	uColor7[2] = chunkStream->readByte();
+
+	uColor8[0] = chunkStream->readByte();
+	uColor8[1] = chunkStream->readByte();
+	uColor8[2] = chunkStream->readByte();
+
+	transparentWallColor[0] = chunkStream->readByte();
+	transparentWallColor[1] = chunkStream->readByte();
+	transparentWallColor[2] = chunkStream->readByte();
+
+	uColor10[0] = chunkStream->readByte();
+	uColor10[1] = chunkStream->readByte();
+	uColor10[2] = chunkStream->readByte();
+
+	Common::String tmp;
+	while (chunkStream->pos() < chunkStream->size()) {
+		readFilename(*chunkStream, tmp);
+		if (tmp.hasPrefix("Wall")) {
+			wallNames.push_back(tmp);
+		} else if (tmp.hasPrefix("SpW")) {
+			specialWallNames.push_back(tmp);
+		} else if (tmp.hasPrefix("Ceil")) {
+			ceilingNames.push_back(tmp);
+		} else if (tmp.hasPrefix("Floor")) {
+			floorNames.push_back(tmp);
+		}
+	}
+}
+
 ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

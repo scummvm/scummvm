@@ -11,10 +11,11 @@ MODULE_OBJS = \
   action/overlay.o \
   action/overridelockpuzzle.o \
   action/passwordpuzzle.o \
+  action/raycastpuzzle.o \
   action/recordtypes.o \
+  action/riddlepuzzle.o \
   action/rippedletterpuzzle.o \
   action/rotatinglockpuzzle.o \
-  action/riddlepuzzle.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
   action/setplayerclock.o \

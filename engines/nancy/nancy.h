@@ -127,6 +127,8 @@ public:
 	SPUZ *_sliderPuzzleData;
 	CLOK *_clockData;
 	SPEC *_specialEffectData;
+	RCPR *_raycastPuzzleData;
+	RCLB *_raycastPuzzleLevelBuilderData;
 
 	Common::HashMap<Common::String, ImageChunk> _imageChunks;
 

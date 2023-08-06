@@ -216,6 +216,59 @@ struct SPEC {
 	byte crossDissolveNumFrames;
 };
 
+struct RCLB {
+	struct Theme {
+		Common::String themeName;
+
+		Common::Array<uint32> wallIDs;
+
+		Common::Array<uint16> exitFloorIDs;
+		Common::Array<uint16> floorIDs;
+		Common::Array<uint16> ceilingIDs;
+		
+		Common::Array<uint32> doorIDs;
+		Common::Array<uint32> transparentwallIDs;
+		Common::Array<uint32> objectwallIDs;
+		Common::Array<uint16> objectWallHeights;
+
+		uint16 generalLighting;
+		uint16 hasLightSwitch;
+		
+		int16 transparentWallDensity;
+		int16 objectWallDensity;
+		int16 doorDensity;
+	};
+
+	RCLB(Common::SeekableReadStream *chunkStream);
+
+	uint16 lightSwitchID;
+	uint16 unk2;
+	Common::Array<Theme> themes;
+};
+
+struct RCPR {
+	RCPR(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Common::Rect> screenViewportSizes;
+	uint16 viewportSizeUsed;
+
+	byte wallColor[3];
+	byte playerColor[3];
+	byte doorColor[3];
+	byte lightSwitchColor[3];
+	byte exitColor[3];
+	byte uColor6[3];
+	byte uColor7[3];
+	byte uColor8[3];
+	byte transparentWallColor[3];
+	byte uColor10[3];
+
+	Common::Array<Common::String> wallNames;
+	Common::Array<Common::String> specialWallNames;
+	Common::Array<Common::String> ceilingNames;
+	Common::Array<Common::String> floorNames;
+};
+
 struct ImageChunk {
 	ImageChunk() : width(0), height(0) {}
 	ImageChunk(Common::SeekableReadStream *chunkStream);
