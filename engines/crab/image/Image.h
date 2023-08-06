@@ -96,7 +96,6 @@ public:
 	bool load(rapidxml::xml_node<char> *node, const char *name);
 	bool load(Graphics::Surface *surface);
 	bool load(Graphics::ManagedSurface *surface);
-	bool load(const Image &image, Rect *clip, const TextureFlipType &flip);
 
 
 	// Draw the openGL texture
