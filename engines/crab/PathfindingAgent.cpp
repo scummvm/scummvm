@@ -113,8 +113,7 @@ void PathfindingAgent::update(long timeslice) {
 	if (_solutionFound) {
 		if (_vSolution.size() > 0) {
 			float distSqr = (_position - _vSolution.back()->getPosition()).magSqr();
-			if (distSqr < _nodeBufferDistance) // Have to find the right deadzone buffer
-			{
+			if (distSqr < _nodeBufferDistance) { // Have to find the right deadzone buffer
 				_vSolution.pop_back();
 			}
 		}
@@ -141,9 +140,7 @@ void PathfindingAgent::update(long timeslice) {
 		PlannerNode *current = _nodeQueue.front();
 		_nodeQueue.pop();
 
-		if (current->getLocation() == _goalTile)
-		//|| //We're done.
-		{
+		if (current->getLocation() == _goalTile) { // We're done.
 			// m_vSolution = getSolution();
 			_vSolution = getPrunedSolution(NULL);
 			_solutionFound = true;
