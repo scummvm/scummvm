@@ -54,14 +54,14 @@ void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
 		return;
 
 	// Print out the machine name, hash, and physical address
-	logFile->writeString(Common::String::format("Machine Name: %s\n\tHash: %ld\n\tAddress: 0x%08lx\n\n", m->machName, m->myHash, (int32)m));
+	logFile->writeString(Common::String::format("Machine Name: %s\n\tHash: %d\n\tAddress: %p\n\n", m->machName, m->myHash, (void *)m));
 
 	// If we have an anim8 for this machine
 	if (m->myAnim8) {
 		myAnim8 = m->myAnim8;
 
 		// Print out the anim8 hash, and physical address
-		logFile->writeString(Common::String::format("Sequence Hash: %ld\n\tAddress: 0x%08lx\n\n", myAnim8->sequHash, (int32)myAnim8));
+		logFile->writeString(Common::String::format("Sequence Hash: %d\n\tAddress: %p\n\n", myAnim8->sequHash, (void *)myAnim8));
 
 		// And if this anim8 has registers
 		if (myAnim8->myRegs) {
@@ -71,14 +71,14 @@ void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
 			// Loop through the main set of registers, and dump out the contents
 			for (i = 0; i < IDX_COUNT; i++) {
 				tempFloat = (float)(myRegs[i] >> 16) + (float)((float)(myRegs[i] & 0xffff) / (float)65536);
-				logFile->writeString(Common::String::format("\t%ld\t%s:\t\t%.2f\t\t0x%08lx\n", i, myRegLabels[i], tempFloat, myRegs[i]));
+				logFile->writeString(Common::String::format("\t%d\t%s:\t\t%.2f\t\t0x%08lx\n", i, myRegLabels[i], tempFloat, myRegs[i]));
 			}
 
 			// If the anim8 has extra local regs
 			if (myAnim8->numLocalVars > 0) {
 				for (i = IDX_COUNT; i < IDX_COUNT + myAnim8->numLocalVars; i++) {
 					tempFloat = (float)(myRegs[i] >> 16) + (float)((float)(myRegs[i] & 0xffff) / (float)65536);
-					logFile->writeString(Common::String::format("\t%ld\tlocal.%ld:\t\t%.2f\t\t0x%08lx\n", i, i - IDX_COUNT, tempFloat, myRegs[i]));
+					logFile->writeString(Common::String::format("\t%d\tlocal.%d:\t\t%.2f\t\t0x%08lx\n", i, i - IDX_COUNT, tempFloat, myRegs[i]));
 				}
 			}
 			logFile->writeString(Common::String::format("\n"));
@@ -88,13 +88,13 @@ void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
 		if (myAnim8->myCCB) {
 			myCCB = myAnim8->myCCB;
 
-			logFile->writeString(Common::String::format("Sprite Series Name: %s\tAddress:0x%08lx\tFlags0x%08lx\n", myCCB->seriesName, (uint32)myCCB, myCCB->flags));
-			logFile->writeString(Common::String::format("\tCurrent Location: (%ld, %ld), (%ld, %ld)\n", myCCB->currLocation->x1, myCCB->currLocation->y1,
+			logFile->writeString(Common::String::format("Sprite Series Name: %s\tAddress:%p\tFlags0x%08x\n", myCCB->seriesName, (void *)myCCB, myCCB->flags));
+			logFile->writeString(Common::String::format("\tCurrent Location: (%d, %d), (%d, %d)\n", myCCB->currLocation->x1, myCCB->currLocation->y1,
 				myCCB->currLocation->x2, myCCB->currLocation->y2));
-			logFile->writeString(Common::String::format("\tNew Location: (%ld, %ld), (%ld, %ld)\n", myCCB->newLocation->x1, myCCB->newLocation->y1,
+			logFile->writeString(Common::String::format("\tNew Location: (%d, %d), (%d, %d)\n", myCCB->newLocation->x1, myCCB->newLocation->y1,
 				myCCB->newLocation->x2, myCCB->newLocation->y2));
-			logFile->writeString(Common::String::format("\tscale: %ld\n", myCCB->scaleX));
-			logFile->writeString(Common::String::format("\tlayer: %ld\n", myCCB->layer));
+			logFile->writeString(Common::String::format("\tscale: %d\n", myCCB->scaleX));
+			logFile->writeString(Common::String::format("\tlayer: %d\n", myCCB->layer));
 		}
 	}
 }
