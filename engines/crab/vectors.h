@@ -65,15 +65,23 @@ public:
 #endif
 	}
 
-	double Magnitude() { return sqrt(x * x + y * y); }
-	double MagSqr() { return (x * x + y * y); } // Added to avoid unnecessary sqrt calls (SZ)
-	void Normalize() {
-		double m = Magnitude();
+	double magnitude() {
+		return sqrt(x * x + y * y);
+	}
+
+	double magSqr() { // Added to avoid unnecessary sqrt calls (SZ)
+		return (x * x + y * y);
+	}
+
+	void normalize() {
+		double m = magnitude();
 		x = x / m;
 		y = y / m;
 	}
 
-	float DotProduct(const Vector2D<T> &v) const { return x * v.x + y * v.y; }
+	float dotProduct(const Vector2D<T> &v) const {
+		return x * v.x + y * v.y;
+	}
 
 	// operators
 	void operator+=(const Vector2D &v) {
@@ -102,15 +110,23 @@ class Vector3D {
 public:
 	T x, y, z;
 
-	Vector3D(T X = 0, T Y = 0, T Z = 0) { Set(X, Y, Z); }
-	Vector3D(rapidxml::xml_node<char> *node) { load(node); }
+	Vector3D(T X = 0, T Y = 0, T Z = 0) {
+		set(X, Y, Z);
+	}
 
-	void Set(T X = 0, T Y = 0, T Z = 0) {
+	Vector3D(rapidxml::xml_node<char> *node) {
+		load(node);
+	}
+
+	void set(T X = 0, T Y = 0, T Z = 0) {
 		x = X;
 		y = Y;
 		z = Z;
 	}
-	bool load(rapidxml::xml_node<char> *node) { return loadXYZ<T>(x, y, z, node); }
+
+	bool load(rapidxml::xml_node<char> *node) {
+		return loadXYZ<T>(x, y, z, node);
+	}
 
 	// operators
 	void operator+=(const Vector3D &v) {

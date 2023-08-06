@@ -250,7 +250,7 @@ PathfindingGraphNode *PathfindingGrid::getNearestOpenNode(Vector2f nodePos, Vect
 	// Iterate through the nodes, check if they are open then check their distance from the compare point.
 	while (!checkNodes.empty()) {
 		if (checkNodes.front()->getMovementCost() > 0) {
-			float distance = (comparePos - checkNodes.front()->getPosition()).MagSqr();
+			float distance = (comparePos - checkNodes.front()->getPosition()).magSqr();
 
 			if (shortestDistance == 0.0f || distance) // If this is the new shortest distance, this becomes the new return.
 			{
