@@ -53,6 +53,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword2:
    - Added support for Chinese translation.
 
+ Tinsel:
+   - Fix running out of soundreels error.
+
  TwinE:
    - Added support for Japanese translation.
 
