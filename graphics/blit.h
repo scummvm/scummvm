@@ -294,14 +294,21 @@ public:
 
 	/**
 	 * Optimized version of doBlit to be used with alpha blended blitting
-	 * @param ino a pointer to the input surface
-	 * @param outo a pointer to the output surface
+	 * NOTE: Can only be used with BlendBlit::getSupportedPixelFormat format
+	 * @param dst a pointer to the destination buffer (can be offseted by pixels)
+	 * @param src a pointer to the source buffer (can be offseted by pixels)
+	 * @param dstPitch destination pitch
+	 * @param srcPitch source pitch
+	 * @param posX where src will be blitted to (onto dest)
+	 * @param posY where src will be blitted to (onto dest)
 	 * @param width width of the input surface
 	 * @param height height of the input surface
-	 * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
-	 * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
-	 * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
-	 * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
+	 * @param scaleX scale factor to use when blitting (src / dst) (0.5 for 2x scale) use BlendBlit::SCALE_THRESHOLD
+	 * @param scaleY scale factor to use when blitting (src / dst) (0.5 for 2x scale) use BlendBlit::SCALE_THRESHOLD
+	 * @param colorMod the color to multiply by. (0xffffffff does no multiplication and has 0 overhead usually)
+	 * @param flipping flipping flags used with Graphics::FLIP_FLAGS
+	 * @param blendMode the blending mode to be used
+	 * @param alphaType the alpha mixing mode to be used
 	 */
 	static void blit(byte *dst, const byte *src,
 			  const uint dstPitch, const uint srcPitch,
