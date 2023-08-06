@@ -48,6 +48,7 @@ bool kernel_trigger_dispatch_now(int32 trigger_num) {
 }
 
 bool kernel_trigger_dispatch(int32 trigger) {
+#if 0
 	if (trigger == -1 || trigger == 65535 || _G(between_rooms))
 		return true;
 
@@ -56,6 +57,9 @@ bool kernel_trigger_dispatch(int32 trigger) {
 		error_show(FL, 'QOVF');
 
 	return true;
+#else
+	error("TODO: Probably meant to call dispatchx");
+#endif
 }
 
 void cisco_dispatch_triggers() {
