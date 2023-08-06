@@ -57,7 +57,7 @@ public:
 
 	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) override;
 
-	virtual void removeCacheFile(Common::Path file) override;
+	virtual void removeCacheFile(const Common::Path &file) override;
 
 	// extracts the provided zip in the provided destination path
 	void extractZip(const Common::Path &file, const Common::Path &destPath);

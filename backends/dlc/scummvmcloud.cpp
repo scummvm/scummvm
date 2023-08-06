@@ -163,7 +163,7 @@ void ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &dest
 	delete dataArchive;
 }
 
-void ScummVMCloud::removeCacheFile(Common::Path file) {
+void ScummVMCloud::removeCacheFile(const Common::Path &file) {
 	Common::Path dlcPath = Common::Path(ConfMan.get("dlcspath"));
 	Common::Path fileToDelete = dlcPath.join(file);
 #if defined(POSIX)

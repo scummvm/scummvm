@@ -85,7 +85,7 @@ void DownloadDLCsDialog::refreshWidgets() {
 		_currentDownloadLabel->setLabel(DLCMan._queuedDownloadTasks.front()->name);
 		_downloadedSizeLabel->setLabel(getSizeLabelText());
 
-		for (auto it : DLCMan._dlcsInProgress) {
+		for (const auto &it : DLCMan._dlcsInProgress) {
 			if (it->state == DLC::DLCDesc::kInProgress) {
 				pendingList.push_back(it->name);
 			} else {
@@ -108,7 +108,7 @@ void DownloadDLCsDialog::refreshWidgets() {
 }
 
 void DownloadDLCsDialog::handleTickle() {
-	int32 progress = getDownloadingProgress();
+	uint32 progress = getDownloadingProgress();
 
 	if (_progressBar->getValue() != progress) {
 		_selectedIdx = _pendingDownloadsList->getSelected();
