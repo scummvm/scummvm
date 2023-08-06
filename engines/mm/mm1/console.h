@@ -100,6 +100,11 @@ protected:
 	 */
 	bool cmdView(int argc, const char **argv);
 
+	/**
+	 * Dump the roster in the original roster.dat format
+	 */
+	bool cmdDumpRoster(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override {}

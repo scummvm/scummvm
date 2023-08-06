@@ -35,6 +35,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
 	registerCmd("dump_monsters", WRAP_METHOD(Console, cmdDumpMonsters));
 	registerCmd("dump_items", WRAP_METHOD(Console, cmdDumpItems));
+	registerCmd("dump_roster", WRAP_METHOD(Console, cmdDumpRoster));
 	registerCmd("map_string", WRAP_METHOD(Console, cmdMapString));
 	registerCmd("map", WRAP_METHOD(Console, cmdMap));
 	registerCmd("pos", WRAP_METHOD(Console, cmdPos));
@@ -196,6 +197,12 @@ bool Console::cmdDumpItems(int argc, const char **argv) {
 	}
 
 	debugPrintf("Could not create\n");
+	return true;
+}
+
+bool Console::cmdDumpRoster(int argc, const char **argv) {
+	g_globals->_roster.saveOriginal();
+	debugPrintf("Dumped roster\n");
 	return true;
 }
 

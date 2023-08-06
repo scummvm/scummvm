@@ -67,6 +67,11 @@ public:
 	void save();
 
 	/**
+	 * Save the roster in the original format
+	 */
+	void saveOriginal();
+
+	/**
 	 * Deletes a character
 	 */
 	void remove(Character *entry);
