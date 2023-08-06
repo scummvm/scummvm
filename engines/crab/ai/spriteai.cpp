@@ -130,8 +130,8 @@ bool Sprite::moveToLocPathfinding(Vector2i &dest, const float &velocity, const S
 		// Project how far we will travel next frame.
 		Vector2f velVec = Vector2f(sc._walkVelMod.x * velocity * deltaTime, sc._walkVelMod.y * velocity * deltaTime);
 
-		if (vecTo.Magnitude() > velVec.Magnitude()) {
-			vecTo.Normalize();
+		if (vecTo.magnitude() > velVec.magnitude()) {
+			vecTo.normalize();
 
 			xVel(vecTo.x * sc._walkVelMod.x * velocity);
 			yVel(vecTo.y * sc._walkVelMod.y * velocity);

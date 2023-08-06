@@ -90,8 +90,8 @@ void PathfindingAgent::setDestination(Vector2f d, bool r) {
 
 	PlannerNode *startingNode = new PlannerNode();
 	startingNode->setLocation(_startTile);
-	startingNode->setHCost((_position - _destination).Magnitude());
-	startingNode->setFinalCost((_position - _destination).Magnitude());
+	startingNode->setHCost((_position - _destination).magnitude());
+	startingNode->setFinalCost((_position - _destination).magnitude());
 	startingNode->setGivenCost(0.0);
 
 	_nodeQueue.push(startingNode);
@@ -112,7 +112,7 @@ void PathfindingAgent::update(long timeslice) {
 
 	if (_solutionFound) {
 		if (_vSolution.size() > 0) {
-			float distSqr = (_position - _vSolution.back()->getPosition()).MagSqr();
+			float distSqr = (_position - _vSolution.back()->getPosition()).magSqr();
 			if (distSqr < _nodeBufferDistance) // Have to find the right deadzone buffer
 			{
 				_vSolution.pop_back();
@@ -310,13 +310,13 @@ Common::Array<PathfindingGraphNode const *> const PathfindingAgent::getPrunedSol
 double PathfindingAgent::distSquared(PathfindingGraphNode *tileA, PathfindingGraphNode *tileB) {
 	Vector2f vecTo = tileA->getPosition() - tileB->getPosition();
 
-	return vecTo.MagSqr();
+	return vecTo.magSqr();
 }
 
 double PathfindingAgent::distExact(PathfindingGraphNode *tileA, PathfindingGraphNode *tileB) {
 	Vector2f vecTo = tileA->getPosition() - tileB->getPosition();
 
-	return vecTo.Magnitude();
+	return vecTo.magnitude();
 }
 
 // This keeps the PriorityQueue organized based on the cost of the paths.

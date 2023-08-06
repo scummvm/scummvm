@@ -69,7 +69,7 @@ void PathfindingGraphNode::addNeighbor(PathfindingGraphNode *node, bool ignoreDi
 	} else {
 		Vector2f distVec = node->_position - this->_position;
 
-		_neighborCosts.push_back(distVec.Magnitude() * node->_movementCost);
+		_neighborCosts.push_back(distVec.magnitude() * node->_movementCost);
 	}
 }
 

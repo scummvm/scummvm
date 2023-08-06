@@ -140,12 +140,12 @@ void Polygon2D::offset(const float &x, const float &y) {
 
 void Polygon2D::project(const Vector2f &axis, float &min, float &max) const {
 	// To project a point on an axis use the dot product
-	float d = axis.DotProduct(_point[0]);
+	float d = axis.dotProduct(_point[0]);
 	min = d;
 	max = d;
 
 	for (auto i = _point.begin(); i != _point.end(); ++i) {
-		d = i->DotProduct(axis);
+		d = i->dotProduct(axis);
 
 		if (d < min)
 			min = d;
@@ -195,7 +195,7 @@ PolygonCollisionResult Polygon2D::collide(const Polygon2D &polyB) const {
 
 		// Find the axis perpendicular to the current edge
 		Vector2f axis(-e.y, e.x);
-		axis.Normalize();
+		axis.normalize();
 
 		// Find the projection of the Polygon2D on the current axis
 		float minA = 0;
@@ -228,7 +228,7 @@ PolygonCollisionResult Polygon2D::collide(const Polygon2D &polyB) const {
 			d.x = ca.x - cb.x;
 			d.y = ca.y - cb.y;
 
-			if (d.DotProduct(translationAxis) < 0) {
+			if (d.dotProduct(translationAxis) < 0) {
 				translationAxis.x = -translationAxis.x;
 				translationAxis.y = -translationAxis.y;
 			}
