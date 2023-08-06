@@ -24,6 +24,7 @@
 #include "m4/burger/vars.h"
 #include "m4/burger/core/conv.h"
 #include "m4/graphics/krn_pal.h"
+#include "m4/core/errors.h"
 #include "m4/core/imath.h"
 
 namespace M4 {
@@ -282,15 +283,15 @@ void BurgerEngine::global_daemon() {
 		handle_series_stream_break();
 		break;
 
-	case gSERIES_PLAY_BREAK0:
+	case gSERIES_PLAY_BREAK_0:
 		handle_series_play_break(0);
 		break;
 
-	case gSERIES_PLAY_BREAK1:
+	case gSERIES_PLAY_BREAK_1:
 		handle_series_play_break(1);
 		break;
 
-	case gSERIES_PLAY_BREAK2:
+	case gSERIES_PLAY_BREAK_2:
 		handle_series_play_break(2);
 		break;
 
@@ -303,12 +304,21 @@ void BurgerEngine::global_daemon() {
 		kernel_timing_trigger(300, 10007);
 		break;
 
-	case gWILBURS_SPEECH_START:
-		_G(walker).wilbur_say();
+	case gNONPLAYERS_SPEECH_FINISHED:
+		if (_G(npcSpeech1))
+			TerminateMachineAndNull(_G(npcSpeech1));
+		if (_G(npcSpeech2))
+			TerminateMachineAndNull(_G(npcSpeech2));
+
+		kernel_trigger_dispatch_now(_G(npcTrigger));
 		break;
 
 	case gWILBURS_SPEECH_FINISHED:
 		_G(walker).wilburs_speech_finished();
+		break;
+
+	case gWILBURS_SPEECH_START:
+		_G(walker).wilbur_say();
 		break;
 
 	case gABDUCT:
@@ -421,14 +431,55 @@ void BurgerEngine::global_daemon() {
 		kernel_timing_trigger(imath_ranged_rand(900, 1800), 10017);
 		break;
 
+	case gSET_FACING:
+		player_set_facing_at(_G(player_facing_x), _G(player_facing_y));
+		break;
+
+	case gSET_DEST:
+		ws_demand_location(_G(my_walker), _G(player_dest_x), _G(player_dest_y));
+		_G(walker).wilbur_poof();
+		kernel_trigger_dispatch_now(gSET_COMMANDS_ALLOWED);
+
+	case gSET_COMMANDS_ALLOWED:
+		player_set_commands_allowed(true);
+		break;
+
+	case gUNPOOF:
+		_G(walker).wilbur_unpoof();
+		break;
+
+	case 10022:
+		if (_G(game).room_id < 200) {
+			_G(roomVal1) = 10017;
+			kernel_trigger_dispatch_now(gABDUCT);
+		} else {
+			error_show(FL, 'Burg', "Time to abduct Wilbur in space?");
+		}
+		break;
+
+	case 10023:
+		if (_G(game).room_id < 700) {
+			_G(roomVal1) = 10018;
+			kernel_trigger_dispatch_now(gABDUCT);
+		}
+		break;
+
 	case gTELEPROTED1:
 		disable_player_commands_and_fade_init(gTELEPROTED2);
 		break;
+
 	case gTELEPROTED2:
-		_G(walker).wilbur_teleported();
+		
 		break;
 
-	// TODO: Other cases
+	case 10027:
+		error("TODO: global_daemon 10027");
+		break;
+
+	case 10033:
+		player_set_commands_allowed(false);
+		_G(game).setRoom(701);
+		break;
 
 	default:
 		break;

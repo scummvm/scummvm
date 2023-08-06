@@ -36,6 +36,7 @@ private:
 	int _vol = 0;
 	int32 _trigger = 0;
 	bool _flag = false;
+	int _wilburPoof = -1;
 
 	/**
 	 * This is called when PLAYER walker code sends system message back to C (used by MAIN PLAYER WALKER ONLY)
@@ -99,6 +100,9 @@ public:
 	}
 
 	bool wilbur_parser(const char **list);
+
+	void wilbur_poof();
+	void wilbur_unpoof();
 };
 
 extern void enable_player();
