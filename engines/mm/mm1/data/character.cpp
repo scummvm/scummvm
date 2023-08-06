@@ -258,7 +258,7 @@ void Character::clear() {
 	_class = (CharacterClass)0;
 	_intelligence = _might = _personality = _endurance = 0;
 	_speed = _accuracy = _luck = 0;
-	_level = 0;
+	_level = 1;
 	_age = 0;
 	_exp = 0;
 	_sp = 0;
