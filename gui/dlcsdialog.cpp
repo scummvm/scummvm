@@ -66,7 +66,7 @@ DLCsDialog::~DLCsDialog() {
 void DLCsDialog::refreshDLCList() {
 	// Populate the ListWidget
 	Common::U32StringArray games;
-	for (int i = 0; i < DLCMan._dlcs.size(); ++i) {
+	for (uint32 i = 0; i < DLCMan._dlcs.size(); ++i) {
 		if (DLCMan._dlcs[i]->state == DLC::DLCDesc::kInProgress) {
 			games.push_back("[Downloading] " + DLCMan._dlcs[i]->name);
 		} else {

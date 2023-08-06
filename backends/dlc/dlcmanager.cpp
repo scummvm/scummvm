@@ -112,12 +112,12 @@ bool DLCManager::cancelDownload(uint32 idx) {
 	return true;
 }
 
-Common::String DLCManager::getCurrentDownloadingDLC() {
+Common::String DLCManager::getCurrentDownloadingDLC() const {
 	return _currentDownloadingDLC;
 }
 
-int DLCManager::getDLCIdxFromId(const Common::String &id) {
-	for (int i = 0; i < _dlcs.size(); ++i) {
+int DLCManager::getDLCIdxFromId(const Common::String &id) const {
+	for (uint32 i = 0; i < _dlcs.size(); ++i) {
 		if (_dlcs[i]->id == id) return i;
 	}
 	return -1;

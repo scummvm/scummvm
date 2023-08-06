@@ -53,7 +53,7 @@ public:
 
 	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) = 0;
 
-	virtual void removeCacheFile(Common::Path file) = 0;
+	virtual void removeCacheFile(const Common::Path &file) = 0;
 };
 
 } // End of namespace DLC
