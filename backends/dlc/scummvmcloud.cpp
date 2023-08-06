@@ -100,8 +100,11 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		// delete the download cache (the incomplete .zip)
 		Common::Path relativeFilePath = Common::Path(DLCMan._queuedDownloadTasks.front()->id);
 		removeCacheFile(relativeFilePath);
+
+		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kCancelled;
+		DLCMan.refreshDLCList();
+
 		// handle next download
-		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
 		DLCMan._queuedDownloadTasks.pop();
 		DLCMan._dlcsInProgress.remove_at(0);
 		DLCMan.processDownloadQueue();
