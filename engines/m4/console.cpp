@@ -20,11 +20,13 @@
  */
 
 #include "m4/console.h"
+#include "m4/vars.h"
 
 namespace M4 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("room",   WRAP_METHOD(Console, Cmd_room));
 }
 
 Console::~Console() {
@@ -34,5 +36,16 @@ bool Console::Cmd_test(int argc, const char **argv) {
 	debugPrintf("Test\n");
 	return true;
 }
+
+bool Console::Cmd_room(int argc, const char **argv) {
+	if (argc == 2) {
+		_G(game).setRoom(atol(argv[1]));
+		return false;
+	} else {
+		debugPrintf("room <room number>]\n");
+		return true;
+	}
+}
+
 
 } // End of namespace M4

@@ -71,6 +71,9 @@ Common::Error M4Engine::run() {
 	Vars *vars = createVars();
 
 	if (vars->init()) {
+		// Set the console
+		setDebugger(new Console());
+
 		// Run game here
 		m4_inflight();
 	}
