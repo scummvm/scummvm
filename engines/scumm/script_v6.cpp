@@ -1468,6 +1468,12 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 				rnd = readArray(749, 0, vm.localvar[_currentScript][1]);
 			}
 		}
+		// Mod for Backyard Football online competitive play: allow all 38 backyard kids and pros
+		// to be drafted in an online game. This controls how many kids are shown in the bleachers
+		// when drafting. Without this mod, a random selection of between 31 and 35 kids are shown.
+		if (_game.id == GID_FOOTBALL && readVar(465) == 1 && _currentRoom == 5 && vm.slot[_currentScript].number == 2107) {
+			rnd = 38;
+		}
 	}
 #endif
 	if (VAR_RANDOM_NR != 0xFF)
