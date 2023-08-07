@@ -63,7 +63,7 @@ void ReplyMenu::load(const Common::String &filename) {
 int ReplyMenu::handleEvents(Info &info, ConversationData &dat, const Common::String &curId, PersonHandler &oh, const Common::Event &event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::handleEvents(event);
-	if (choice >= 0 && (unsigned int)choice < dat._reply.size()) {
+	if (choice >= 0 && (uint)choice < dat._reply.size()) {
 		bool playSound = false;
 
 		// Loop through any opinion changes required
@@ -107,7 +107,7 @@ void ReplyMenu::draw() {
 void ReplyMenu::cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat) {
 	// Some replies are locked, which means the other replies move up and take their place -
 	// which is why we need two count variables
-	unsigned int replyCount = 0, elementCount = 0;
+	uint replyCount = 0, elementCount = 0;
 
 	for (auto i = dat._reply.begin(); i != dat._reply.end() && replyCount < dat._reply.size(); ++i, ++replyCount) {
 		if (i->_unlock.evaluate(info)) {

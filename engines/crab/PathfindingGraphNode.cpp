@@ -55,7 +55,7 @@ void PathfindingGraphNode::addNeighbor(PathfindingGraphNode *node, bool ignoreDi
 		return;
 
 	// Make sure that the node is not already a neighbor (SZ)
-	for (unsigned int i = 0; i < _neighborNodes.size(); ++i) {
+	for (uint i = 0; i < _neighborNodes.size(); ++i) {
 		if (_neighborNodes[i]->_id == node->_id) {
 			return;
 		}
@@ -83,7 +83,7 @@ bool PathfindingGraphNode::adjacentToObstacle() const {
 }
 
 bool PathfindingGraphNode::adjacentToNode(PathfindingGraphNode *otherNode) {
-	for (unsigned int i = 0; i < _neighborNodes.size(); ++i) {
+	for (uint i = 0; i < _neighborNodes.size(); ++i) {
 		if (_neighborNodes[i] == otherNode)
 			return true;
 	}

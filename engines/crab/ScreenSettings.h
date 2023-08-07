@@ -117,7 +117,7 @@ public:
 	bool _changeInterface;
 
 	// The version of the settings
-	unsigned int _version;
+	uint _version;
 
 	ScreenSettings() {
 		_inGame = false;

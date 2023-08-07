@@ -52,7 +52,7 @@ protected:
 	int _hoverIndex;
 
 	// The order in which a keyboard or gamepad traverses the menu
-	Common::Array<unsigned int> _path;
+	Common::Array<uint> _path;
 
 	// Are keyboard buttons enabled?
 	bool _useKeyboard;
@@ -75,18 +75,18 @@ protected:
 	//------------------------------------------------------------------------
 	void next() {
 		if (_hoverIndex == -1) {
-			for (unsigned int pos = 0; pos < _path.size(); pos++)
+			for (uint pos = 0; pos < _path.size(); pos++)
 				if (_element[_path[pos]]._visible == true) {
 					_hoverIndex = _path[pos];
 					break;
 				}
 		} else {
-			unsigned int curpos = 0;
+			uint curpos = 0;
 			for (; curpos < _path.size(); curpos++)
 				if ((int)_path[curpos] == _hoverIndex)
 					break;
 
-			for (unsigned int nextloc = (curpos + 1) % _element.size(); nextloc != curpos; nextloc = (nextloc + 1) % _element.size())
+			for (uint nextloc = (curpos + 1) % _element.size(); nextloc != curpos; nextloc = (nextloc + 1) % _element.size())
 				if (_element[nextloc]._visible == true) {
 					_hoverIndex = _path[nextloc];
 					break;
@@ -99,13 +99,13 @@ protected:
 	//------------------------------------------------------------------------
 	void prev() {
 		if (_hoverIndex == -1) {
-			for (unsigned int pos = 0; pos < _path.size(); pos++)
+			for (uint pos = 0; pos < _path.size(); pos++)
 				if (_element[_path[pos]]._visible == true) {
 					_hoverIndex = _path[pos];
 					break;
 				}
 		} else {
-			unsigned int curpos = 0;
+			uint curpos = 0;
 			for (; curpos < _path.size(); curpos++)
 				if ((int)_path[curpos] == _hoverIndex)
 					break;
@@ -303,7 +303,7 @@ public:
 		if (!_element.empty()) {
 			_path.push_back(0);
 
-			for (unsigned int i = 1; i < _element.size(); i++) {
+			for (uint i = 1; i < _element.size(); i++) {
 				_path.push_back(i);
 
 				int prevX = _element[i - 1].x;

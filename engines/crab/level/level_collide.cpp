@@ -85,7 +85,7 @@ bool Level::layerVisible(pyrodactyl::anim::Sprite *obj) {
 	if (obj->_layer < 0)
 		return true;
 
-	if ((unsigned int)obj->_layer < _terrain._layer.size())
+	if ((uint)obj->_layer < _terrain._layer.size())
 		return _terrain._layer[obj->_layer]._collide;
 
 	return false;
@@ -109,7 +109,7 @@ bool Level::collidingWithObject(pyrodactyl::event::Info &info, Common::String &i
 	// Clip and Bounding rectangle of player
 	Rect pPos = _objects[_playerIndex].posRect(), pBound = _objects[_playerIndex].boundRect();
 
-	unsigned int index = 0;
+	uint index = 0;
 	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index) {
 		if (i->visible() && _playerIndex != index && info.state(i->id()) == PST_NORMAL) {
 			// Clip and bounding rectangles for the NPC sprite

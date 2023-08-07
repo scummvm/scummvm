@@ -53,7 +53,7 @@ struct FightAnimFrame : public AnimFrame {
 	Vector2i _delta;
 
 	// The sprite state for the duration of the frame
-	unsigned int _state;
+	uint _state;
 
 	// Can we cancel/branch to another move from this frame?
 	bool _branch;
@@ -78,7 +78,7 @@ public:
 	Common::Array<FightAnimFrame> _frame;
 
 	// The currentClip
-	unsigned int _currentClip;
+	uint _currentClip;
 
 	// Should we flip the images in the frame rectangle?
 	TextureFlipType _flip;

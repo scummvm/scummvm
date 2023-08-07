@@ -61,7 +61,7 @@ struct MovementSet {
 	bool _repeat;
 
 	// The current path node we are traveling to
-	unsigned int _cur;
+	uint _cur;
 
 	// The time the sprite has spent waiting is calculated here
 	Timer _timer;

@@ -64,7 +64,7 @@ void FightMoves::load(rapidxml::xml_node<char> *node) {
 // Purpose: Return current or next move
 //------------------------------------------------------------------------
 bool FightMoves::curMove(FightMove &fm) {
-	if (_cur >= 0 && (unsigned int)_cur < _move.size()) {
+	if (_cur >= 0 && (uint)_cur < _move.size()) {
 		fm = _move[_cur];
 		return true;
 	}
@@ -73,7 +73,7 @@ bool FightMoves::curMove(FightMove &fm) {
 }
 
 bool FightMoves::nextMove(FightMove &fm) {
-	if (_next >= 0 && (unsigned int)_next < _move.size()) {
+	if (_next >= 0 && (uint)_next < _move.size()) {
 		fm = _move[_next];
 		return true;
 	}
@@ -86,7 +86,7 @@ bool FightMoves::nextMove(FightMove &fm) {
 //------------------------------------------------------------------------
 bool FightMoves::curFrame(FightAnimFrame &faf, const Direction &d) {
 	// Check validity of current move
-	if (_cur >= 0 && (unsigned int)_cur < _move.size()) {
+	if (_cur >= 0 && (uint)_cur < _move.size()) {
 		// Check validity of current frame
 		if (_frameCur < _frameTotal && _frameCur < _move[_cur]._frames[d]._frame.size()) {
 			faf = _move[_cur]._frames[d]._frame[_frameCur];
@@ -102,7 +102,7 @@ bool FightMoves::curFrame(FightAnimFrame &faf, const Direction &d) {
 //------------------------------------------------------------------------
 FrameUpdateResult FightMoves::updateFrame(const Direction &d) {
 	// Check validity of current move
-	if (_cur >= 0 && (unsigned int)_cur < _move.size()) {
+	if (_cur >= 0 && (uint)_cur < _move.size()) {
 		// Check validity of current frame
 		if (_frameCur < _frameTotal && _frameCur < _move[_cur]._frames[d]._frame.size()) {
 			// Has the current frame finished playing?
@@ -124,10 +124,10 @@ FrameUpdateResult FightMoves::updateFrame(const Direction &d) {
 //------------------------------------------------------------------------
 // Purpose: Find a move corresponding to the input and sprite state
 //------------------------------------------------------------------------
-unsigned int FightMoves::findMove(const pyrodactyl::input::FightAnimationType &type, const int &state) {
-	unsigned int pos = 0;
+uint FightMoves::findMove(const pyrodactyl::input::FightAnimationType &type, const int &state) {
+	uint pos = 0;
 	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
-		if (i->_input._type == type && i->_input._state == (unsigned int)state)
+		if (i->_input._type == type && i->_input._state == (uint)state)
 			return pos;
 
 	pos = 0;
@@ -141,9 +141,9 @@ unsigned int FightMoves::findMove(const pyrodactyl::input::FightAnimationType &t
 //------------------------------------------------------------------------
 // Purpose: Function for AI
 //------------------------------------------------------------------------
-void FightMoves::listAttackMoves(Common::Array<unsigned int> &list) {
+void FightMoves::listAttackMoves(Common::Array<uint> &list) {
 	list.clear();
-	unsigned int pos = 0;
+	uint pos = 0;
 	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
 		if (i->_ai._type == MOVE_ATTACK)
 			list.push_back(pos);
@@ -152,11 +152,11 @@ void FightMoves::listAttackMoves(Common::Array<unsigned int> &list) {
 //------------------------------------------------------------------------
 // Purpose: Force update to a new move
 //------------------------------------------------------------------------
-bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::FightInput &input, const Direction &d) {
+bool FightMoves::forceUpdate(const uint &index, pyrodactyl::input::FightInput &input, const Direction &d) {
 	_frameCur = 0;
 	_cur = index;
 
-	if ((unsigned int)_cur < _move.size()) {
+	if ((uint)_cur < _move.size()) {
 		if (_move[_cur]._unlock.result()) {
 			_frameTotal = _move[_cur]._frames[d]._frame.size();
 			if (_frameTotal > 0) {

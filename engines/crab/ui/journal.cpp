@@ -89,7 +89,7 @@ void Journal::init(const Common::String &id) {
 // Purpose: Select a category
 //------------------------------------------------------------------------
 void Journal::select(const Common::String &id, const int &choice) {
-	for (unsigned int i = 0; i < _category._element.size(); ++i)
+	for (uint i = 0; i < _category._element.size(); ++i)
 		_category._element[i].state(false);
 
 	_category._element[choice].state(true);
@@ -130,7 +130,7 @@ void Journal::draw(const Common::String &id) {
 //------------------------------------------------------------------------
 bool Journal::handleEvents(const Common::String &id, const Common::Event &event) {
 	int choice = _category.handleEvents(event);
-	if (choice >= 0 && (unsigned int)choice < _category._element.size())
+	if (choice >= 0 && (uint)choice < _category._element.size())
 		select(id, choice);
 
 	// Check if select is valid
@@ -196,7 +196,7 @@ void Journal::move(const Common::String &id, const Common::String &title, const 
 	for (auto &jo : _journal)
 		if (jo._id == id) {
 			// Find the quest chain in the source menu
-			unsigned int index = 0;
+			uint index = 0;
 			for (auto i = jo._menu[source]._quest.begin(); i != jo._menu[source]._quest.end(); ++i, ++index)
 				if (i->_title == title)
 					break;
@@ -224,7 +224,7 @@ void Journal::open(const Common::String &id, const JournalCategory &category, co
 				// Perform validity check on select, just in case
 				if (_select > 0 && _select < JE_TOTAL) {
 					// Search for the title with same name
-					for (unsigned int num = 0; num < jo._menu[_select]._quest.size(); ++num)
+					for (uint num = 0; num < jo._menu[_select]._quest.size(); ++num)
 						if (jo._menu[_select]._quest[num]._title == title) {
 							// Found it, switch to this
 							jo._menu[_select].select(num);

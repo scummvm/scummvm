@@ -42,7 +42,7 @@ void GameSaveMenu::load(rapidxml::xml_node<char> *node) {
 	FileMenu<SaveFileData>::load(node);
 }
 
-void GameSaveMenu::addButton(const Common::String &p, unsigned int &slotIndex, unsigned int &menuIndex) {
+void GameSaveMenu::addButton(const Common::String &p, uint &slotIndex, uint &menuIndex) {
 	_slotInfo.push_back(SaveFileData(p));
 	_menu.add(slotIndex, menuIndex);
 }
@@ -55,7 +55,7 @@ void GameSaveMenu::scanDir() {
 	_slotInfo.clear();
 	_menu.clear();
 
-	unsigned int countSlot = 0, countMenu = 0;
+	uint countSlot = 0, countMenu = 0;
 
 	// For the save menu, the first slot is a "blank" slot - to create a new save file
 	addButton("CRAB_New Save" + g_engine->_filePath->_saveExt, countMenu, countSlot);
@@ -119,7 +119,7 @@ void GameSaveMenu::draw() {
 		float base_x = _menu.baseX(count), base_y = _menu.baseY(count);
 		tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 
-		if (i == (unsigned int)_index && _state == STATE_NAME)
+		if (i == (uint)_index && _state == STATE_NAME)
 			_taName.draw();
 		else
 			tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);

@@ -159,8 +159,8 @@ void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameS
 	if (_state != STATE_CREDITS) {
 		int choice = _meMain.handleEvents(event);
 		if (choice >= 0) {
-			for (unsigned i = 0; i < _meMain._element.size(); ++i)
-				_meMain._element[i].state(i == (unsigned int)choice);
+			for (uint i = 0; i < _meMain._element.size(); ++i)
+				_meMain._element[i].state(i == (uint)choice);
 
 			switch (choice) {
 			case 0:
@@ -294,7 +294,7 @@ void MainMenu::handleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 	if (state != STATE_CREDITS) {
 		int choice = me_main.handleEvents(Event);
 		if (choice >= 0) {
-			for (unsigned i = 0; i < me_main.element.size(); ++i)
+			for (uint i = 0; i < me_main.element.size(); ++i)
 				me_main.element[i].State(i == choice);
 
 			switch (choice) {
@@ -454,7 +454,7 @@ void MainMenu::changeState(MenuState ms, const bool &start) {
 
 	// We are entering the normal state, i.e outside all menus - reset color of menu items
 	if (_state == STATE_NORMAL) {
-		for (unsigned i = 0; i < _meMain._element.size(); ++i)
+		for (uint i = 0; i < _meMain._element.size(); ++i)
 			_meMain._element[i].state(false);
 	}
 

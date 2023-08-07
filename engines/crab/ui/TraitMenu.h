@@ -58,7 +58,7 @@ class TraitMenu {
 	int _select;
 
 	// The size and dimensions of the menu
-	unsigned int _size, _rows, _cols;
+	uint _size, _rows, _cols;
 
 public:
 	TraitMenu() {

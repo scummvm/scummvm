@@ -52,7 +52,7 @@ protected:
 	Common::HashMap<Common::String, EventSeqGroup> _eventMap;
 
 	// The currently happening or active sequence
-	unsigned int _activeSeq;
+	uint _activeSeq;
 
 	// THIS IS NOT THE DEFINITIVE LIST OF ENDED SEQUENCES
 	// JUST A TEMPORARY LIST OF EVENT SEQUENCES TO PASS AROUND

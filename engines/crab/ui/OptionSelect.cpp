@@ -60,7 +60,7 @@ void OptionSelect::draw() {
 	if (_cur > 0)
 		_prev.draw();
 
-	if ((unsigned int)_cur < option._text.size() - 1)
+	if ((uint)_cur < option._text.size() - 1)
 		_next.draw();
 }
 
@@ -75,7 +75,7 @@ bool OptionSelect::handleEvents(const Common::Event &event) {
 		}
 	}
 
-	if ((unsigned int)_cur < option._text.size() - 1) {
+	if ((uint)_cur < option._text.size() - 1) {
 
 		// Don't check for keyboard inputs for now
 		if (_next.handleEvents(event) == BUAC_LCLICK) {

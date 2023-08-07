@@ -93,9 +93,9 @@ bool PopUp::internalEvents(pyrodactyl::event::Info &info, const Common::String &
 
 void PopUpCollection::internalEvents(pyrodactyl::event::Info &info, const Common::String &playerId,
 									 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq) {
-	if (_cur >= 0 && (unsigned int)_cur < _element.size()) {
+	if (_cur >= 0 && (uint)_cur < _element.size()) {
 		if (_element[_cur].internalEvents(info, playerId, result, endSeq)) {
-			if (_element[_cur]._next <= 0 || (unsigned int)_element[_cur]._next >= _element.size()) {
+			if (_element[_cur]._next <= 0 || (uint)_element[_cur]._next >= _element.size()) {
 				// This means that this popup is the "end" node, we must loop back to start or end this
 				if (_loop) {
 					_cur = 0;
@@ -125,7 +125,7 @@ void PopUp::draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop,
 }
 
 void PopUpCollection::draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
-	if (_cur >= 0 && (unsigned int)_cur < _element.size())
+	if (_cur >= 0 && (uint)_cur < _element.size())
 		_element[_cur].draw(x, y, pop, camera);
 }
 

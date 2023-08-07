@@ -56,7 +56,7 @@ struct FightMoveEffect {
 	int _death;
 
 	// The stun time for the enemy if this move hits a sprite
-	unsigned int _stun;
+	uint _stun;
 
 	// The base damage of the move if it hits a sprite
 	int _dmg;

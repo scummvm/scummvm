@@ -49,7 +49,7 @@ class PageMenu {
 	Common::Array<Menu<T>> _menu;
 
 	// Keep track of which page we are at, and how many elements we keep in a page
-	unsigned int _currentPage, _elementsPerPage, _rows, _cols;
+	uint _currentPage, _elementsPerPage, _rows, _cols;
 
 	// The image used for the elements
 	Button _ref;
@@ -83,22 +83,22 @@ public:
 	}
 
 	// Get the elements per page
-	unsigned int elementsPerPage() {
+	uint elementsPerPage() {
 		return _elementsPerPage;
 	}
 
 	// This is added to the result from handleEvents to calculate the exact position
-	unsigned int index() {
+	uint index() {
 		return _currentPage * _elementsPerPage;
 	}
 
 	// The end position of the elements
-	unsigned int indexPlusOne() {
+	uint indexPlusOne() {
 		return (_currentPage + 1) * _elementsPerPage;
 	}
 
 	// Get the current page of the menu
-	unsigned int currentPage() {
+	uint currentPage() {
 		return _currentPage;
 	}
 
@@ -193,7 +193,7 @@ public:
 		}
 	}
 
-	void add(unsigned int &slot, unsigned int &page) {
+	void add(uint &slot, uint &page) {
 		if (slot >= _elementsPerPage) {
 			++page;
 			slot = 0;
@@ -211,13 +211,13 @@ public:
 	}
 
 	void add() {
-		unsigned int page = _menu.size() - 1;
-		unsigned int slot = _menu[page]._element.size();
+		uint page = _menu.size() - 1;
+		uint slot = _menu[page]._element.size();
 		add(slot, page);
 	}
 
 	void erase() {
-		unsigned int page = _menu.size() - 1;
+		uint page = _menu.size() - 1;
 		_menu[page]._element.pop_back();
 		assignPaths();
 		updateInfo();

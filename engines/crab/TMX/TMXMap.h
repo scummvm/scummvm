@@ -75,7 +75,7 @@ public:
 	Common::Array<pyrodactyl::level::Exit> _areaExit;
 
 	// The layer on top of which objects walk
-	unsigned int _spriteLayer;
+	uint _spriteLayer;
 
 	// Dimensions of the level in terms of tiles
 	int _tileRows, _tileCols;

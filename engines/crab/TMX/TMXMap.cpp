@@ -103,7 +103,7 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 
 			// Reset the layer at which sprites are drawn
 			_spriteLayer = 0;
-			unsigned int layerCount = 0;
+			uint layerCount = 0;
 
 			// We need to cycle through all tile and object layers in order to
 			// see the level at which the sprites will be drawn
@@ -148,7 +148,7 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 							Shape s;
 							s.load(n);
 
-							unsigned int pos = _areaTrig.size();
+							uint pos = _areaTrig.size();
 							loadNum(pos, "name", n);
 
 							if (_areaTrig.size() <= pos)
@@ -317,7 +317,7 @@ bool TMXMap::insideWalk(const Vector2i &pos) {
 }
 
 bool TMXMap::collideWithTrigger(const Rect rect, int index) {
-	if (_areaTrig.size() > (unsigned int)index)
+	if (_areaTrig.size() > (uint)index)
 		return _areaTrig[index].collide(rect)._intersect;
 
 	return false;

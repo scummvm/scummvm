@@ -53,7 +53,7 @@ class ItemCollection {
 	Vector2i _inc;
 
 	// The dimensions of the menu
-	unsigned int _rows, _cols;
+	uint _rows, _cols;
 
 	// Draw item description when user clicks an item to select it
 	pyrodactyl::ui::ItemDesc _itemInfo;

@@ -41,8 +41,8 @@
 
 namespace Crab {
 
-// An unsigned integer is our event id format
-typedef unsigned int EventID;
+// An uinteger is our event id format
+typedef uint EventID;
 
 // Just map loading function to number load
 #define LoadEventID loadNum
@@ -73,7 +73,7 @@ struct GameEvent {
 
 	// Event type and related data index
 	EventType _type;
-	unsigned int _special;
+	uint _special;
 
 	// The variables changed/added in the event
 	Common::Array<Effect> _effect;

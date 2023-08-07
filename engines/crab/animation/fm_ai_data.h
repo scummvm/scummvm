@@ -52,7 +52,7 @@ struct FightMoveAIData {
 	Range _range;
 
 	// The AI delays executing the move by this long
-	unsigned int _delay;
+	uint _delay;
 
 	FightMoveAIData() {
 		_type = MOVE_NONE;

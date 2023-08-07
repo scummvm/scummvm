@@ -101,7 +101,7 @@ class InputManager {
 	void load(const Common::String &filename);
 
 	// The current version of the input scheme
-	unsigned int _version;
+	uint _version;
 
 	// The current mode of keymap applied
 	KeyBindingMode _keyMode;

@@ -60,7 +60,7 @@ class LoadingScreen {
 	Common::Array<Screen> _screen;
 
 	// The current loading screen
-	unsigned int _cur;
+	uint _cur;
 
 	// The text image (says loading)
 	pyrodactyl::image::Image _text;

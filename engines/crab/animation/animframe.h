@@ -71,7 +71,7 @@ public:
 	Common::Array<AnimFrame> _frame;
 
 	// The currentClip
-	unsigned int _currentClip;
+	uint _currentClip;
 
 	// Should we flip the images in the frame rectangle?
 	TextureFlipType _flip;

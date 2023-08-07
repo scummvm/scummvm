@@ -103,7 +103,7 @@ void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
 void Polygon2D::setEdge() {
 	_edge.clear();
 	Vector2f p1, p2, res;
-	for (unsigned int i = 0; i < _point.size(); i++) {
+	for (uint i = 0; i < _point.size(); i++) {
 		p1 = _point[i];
 		if (i + 1 >= _point.size())
 			p2 = _point[0];
@@ -118,7 +118,7 @@ void Polygon2D::setEdge() {
 
 Vector2f Polygon2D::center() const {
 	Vector2f total;
-	for (unsigned int i = 0; i < _point.size(); i++) {
+	for (uint i = 0; i < _point.size(); i++) {
 		total.x += _point[i].x;
 		total.y += _point[i].y;
 	}
@@ -249,7 +249,7 @@ PolygonCollisionResult Polygon2D::collide(const Polygon2D &polyB) const {
 bool Polygon2D::contains(const float &x, const float &y) {
 	bool result = false;
 
-	for (unsigned int i = 0, j = _point.size() - 1; i < _point.size(); j = i++) {
+	for (uint i = 0, j = _point.size() - 1; i < _point.size(); j = i++) {
 		if (((_point[i].y > y) != (_point[j].y > y)) &&
 			(x < (_point[j].x - _point[i].x) * (y - _point[i].y) / (_point[j].y - _point[i].y) + _point[i].x))
 			result = !result;
@@ -260,7 +260,7 @@ bool Polygon2D::contains(const float &x, const float &y) {
 
 void Polygon2D::draw(const int &xOffset, const int &yOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	Vector2f p1, p2;
-	for (unsigned int i = 0; i < _point.size(); i++) {
+	for (uint i = 0; i < _point.size(); i++) {
 		p1 = _point[i];
 		if (i + 1 >= _point.size())
 			p2 = _point[0];

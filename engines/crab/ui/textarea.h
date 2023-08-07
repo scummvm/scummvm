@@ -47,7 +47,7 @@ namespace pyrodactyl {
 namespace ui {
 class TextArea : public TextData {
 	// The maximum number of characters allowed
-	unsigned int _size;
+	uint _size;
 
 	// The name of the text area is stored here
 	HoverInfo _title;

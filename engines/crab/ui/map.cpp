@@ -360,7 +360,7 @@ bool Map::handleEvents(pyrodactyl::event::Info &info, const Common::Event &event
 	return false;
 }
 
-void Map::setImage(const unsigned int &val, const bool &force) {
+void Map::setImage(const uint &val, const bool &force) {
 	if (force || (_cur != val && val < _map.size())) {
 		_cur = val;
 
@@ -402,7 +402,7 @@ void Map::update(pyrodactyl::event::Info &info) {
 // Purpose: Add a rectangle to the revealed world map data
 //------------------------------------------------------------------------
 void Map::revealAdd(const int &id, const Rect &area) {
-	if ((unsigned int)id < _map.size()) {
+	if ((uint)id < _map.size()) {
 		for (auto i = _map[id]._reveal.begin(); i != _map[id]._reveal.end(); ++i)
 			if (*i == area)
 				return;

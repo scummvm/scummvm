@@ -34,7 +34,7 @@ namespace Crab {
 
 using namespace pyrodactyl::event;
 
-void GameEventStore::addConv(rapidxml::xml_node<char> *node, unsigned int &index) {
+void GameEventStore::addConv(rapidxml::xml_node<char> *node, uint &index) {
 	ConversationData c;
 	if (nodeValid("talk", node))
 		c.load(node->first_node("talk"));

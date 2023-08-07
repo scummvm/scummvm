@@ -60,7 +60,7 @@ class Level {
 	Rect _camera;
 
 	// The player sprite location in the object list
-	unsigned int _playerIndex;
+	uint _playerIndex;
 
 	// The order in which to draw the sprites
 	Common::MultiMap<int, pyrodactyl::anim::Sprite *> _objSeq;
