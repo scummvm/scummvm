@@ -43,7 +43,7 @@ private:
 	int _seriesIndex = -1;
 
 public:
-	Room902() : Rooms::Room(902) {}
+	Room902() : Rooms::Room() {}
 	~Room902() override {}
 
 	void preload() override;

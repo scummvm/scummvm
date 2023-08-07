@@ -19,23 +19,24 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_ROOM901_H
-#define M4_BURGER_ROOMS_SECTION9_ROOM901_H
+#ifndef M4_BURGER_ROOMS_SECTION1_ROOM144_H
+#define M4_BURGER_ROOMS_SECTION1_ROOM144_H
 
-#include "m4/burger/rooms/section9/menu_room.h"
+#include "m4/burger/rooms/room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room901 : public MenuRoom {
+class Room144 : public Room {
 public:
-	Room901() : MenuRoom("901menu", "901click") {}
-	~Room901() override {}
+	Room144() : Room() {}
+	~Room144() override {}
 
-	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

@@ -106,8 +106,8 @@ protected:
 		_activeButton = -1;
 	}
 public:
-	MenuRoom(int roomNum, const char *menuName, const char *clickName) :
-		Rooms::Room(roomNum), _menuName(menuName), _clickName(clickName) {}
+	MenuRoom(const char *menuName, const char *clickName) : Rooms::Room(),
+		_menuName(menuName), _clickName(clickName) {}
 	virtual ~MenuRoom() {}
 
 	void init() override;

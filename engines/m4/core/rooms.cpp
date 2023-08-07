@@ -439,13 +439,11 @@ void Sections::pal_game_task() {
 /*------------------------------------------------------------------------*/
 
 Room *Section::operator[](uint roomNum) {
-	for (uint i = 0; i < _rooms.size(); ++i) {
-		if (_rooms[i]->_roomNum == roomNum)
-			return _rooms[i];
-	}
+	Room *room = _rooms[roomNum];
+	if (!room)
+		error("Unknown room number - %d", roomNum);
 
-	error("Unknown room number - %d", roomNum);
+	return room;
 }
-
 
 } // namespace M4

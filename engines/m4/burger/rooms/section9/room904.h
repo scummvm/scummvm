@@ -96,7 +96,7 @@ private:
 	static void playRandomSound(int trigger, int channel);
 
 public:
-	Room904() : Rooms::Room(904) {}
+	Room904() : Rooms::Room() {}
 	~Room904() override {}
 
 	void preload() override;
