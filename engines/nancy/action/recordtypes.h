@@ -47,6 +47,9 @@ protected:
 
 class HotMultiframeSceneChange : public SceneChange {
 public:
+	HotMultiframeSceneChange(CursorManager::CursorType hoverCursor) : _hoverCursor(hoverCursor) {}
+	virtual ~HotMultiframeSceneChange() {}
+
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
@@ -54,26 +57,58 @@ public:
 
 protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return "HotMultiframeSceneChange"; }
+	Common::String getRecordTypeName() const override {
+		switch (_hoverCursor) {
+		case CursorManager::kMoveForward:
+			return "HotMultiframeForwardSceneChange";
+		case CursorManager::kMoveUp:
+			return "HotMultiframeUpSceneChange";
+		case CursorManager::kMoveDown:
+			return "HotMultiframeDownSceneChange";
+		default:
+			return "HotMultiframeSceneChange";
+		}
+	}
+
+	CursorManager::CursorType _hoverCursor;
 };
 
 class Hot1FrSceneChange : public SceneChange {
 public:
+	Hot1FrSceneChange(CursorManager::CursorType hoverCursor) : _hoverCursor(hoverCursor) {}
+	virtual ~Hot1FrSceneChange() {}
+
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+	
+	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
 
 	HotspotDescription _hotspotDesc;
 
 protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return "Hot1FrSceneChange"; }
-};
+	Common::String getRecordTypeName() const override {
+		switch (_hoverCursor) {
+		case CursorManager::kExit:
+			return "Hot1FrExitSceneChange";
+		case CursorManager::kMoveForward:
+			return "Hot1FrForwardSceneChange";
+		case CursorManager::kMoveBackward:
+			return "Hot1FrBackSceneChange";
+		case CursorManager::kMoveUp:
+			return "Hot1FrUpSceneChange";
+		case CursorManager::kMoveDown:
+			return "Hot1FrDownSceneChange";
+		case CursorManager::kTurnLeft:
+			return "Hot1FrLeftSceneChange";
+		case CursorManager::kTurnRight:
+			return "Hot1FrUpSceneChange";
+		default:
+			return "Hot1FrSceneChange";
+		}
+	}
 
-class Hot1FrExitSceneChange : public Hot1FrSceneChange {
-	CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExit; }
-
-protected:
-	Common::String getRecordTypeName() const override { return "Hot1FrExitSceneChange"; }
+	CursorManager::CursorType _hoverCursor;
 };
 
 class HotMultiframeMultisceneChange : public ActionRecord {
