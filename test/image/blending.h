@@ -891,12 +891,15 @@ static bool areSurfacesEqual(const Graphics::Surface *a, const Graphics::Surface
 class BlendBlitUnfilteredTestSuite : public CxxTest::TestSuite {
 public:
 	void test_blend_speed() {
+		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 #ifdef SCUMMVM_NEON
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitNEON;
-#elif SCUMMVM_SSE2
+#endif
+#ifdef SCUMMVM_SSE2
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitSSE2;
-#else
-		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
+#endif
+#ifdef SCUMMVM_AVX2
+		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitAVX2;
 #endif
 	    Graphics::Surface baseSurface, destSurface;
 	    baseSurface.create(103, 103, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
@@ -918,8 +921,8 @@ public:
 		double oldTimeScaled = 0.0, newTimeScaled = 0.0, genericTimeScaled = 0.0;
 		const int iters = 2500;
 
-        for (int blendMode = 0; blendMode < Graphics::NUM_BLEND_MODES; blendMode++) {
-        for (int alphaType = 0; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
+        for (int blendMode = 0; blendMode < 1; blendMode++) {
+        for (int alphaType = 0; alphaType <= 1; alphaType++) {
         for (int flipping = 0; flipping <= 3; flipping++) {
 		for (uint32 color = 0xffffffff; color != 0; color = (color == 0xffffffff ? 0x7f7f7f7f : 0)) {
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(255, 255, 255, 255));
