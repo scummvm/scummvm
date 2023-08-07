@@ -424,6 +424,26 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			ev0.kbdRepeat = true;
 		}
 
+		// Special case for when the arrow keys on the virtual keyboard are pressed and held down
+		// This emulates what happens when the arrow keys on a physical keyboard are pressed and held down
+		// In the case of the physical keyboard Android keeps sending successive EVENT_KEYDOWN, EVENT_KEYUP events, non-"repeated"
+		if (ev0.kbdRepeat
+		    && ev0.type == Common::EVENT_KEYDOWN
+		    && (ev0.kbd.keycode == Common::KEYCODE_UP
+		        || ev0.kbd.keycode == Common::KEYCODE_DOWN
+		        || ev0.kbd.keycode == Common::KEYCODE_LEFT
+		        || ev0.kbd.keycode == Common::KEYCODE_RIGHT)) {
+			ev0.kbd.ascii = 0;
+			// TODO Maybe only handle 1 every X such events to lower the spam on the queue of these very fast up/down events?
+			ev0.kbdRepeat = false;
+			Common::Event ev1 = ev0;
+			ev1.type = Common::EVENT_KEYUP;
+//			LOGD("JE_KEY pushing rep event type: %d kbdcode: %d ascii: %d flags: %d repeats: %d", ev1.type, ev1.kbd.keycode, ev1.kbd.ascii, ev1.kbd.flags, ev1.kbdRepeat? 1: 0);
+//			LOGD("JE_KEY pushing rep event type: %d kbdcode: %d ascii: %d flags: %d repeats: %d", ev0.type, ev0.kbd.keycode, ev0.kbd.ascii, ev0.kbd.flags, ev0.kbdRepeat? 1: 0);
+			pushEvent(ev1, ev0);
+			return;
+		}
+
 		// map special keys to 'our' ascii codes
 		switch (ev0.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:

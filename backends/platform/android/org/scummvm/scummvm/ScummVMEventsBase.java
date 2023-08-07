@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.content.Context;
-//import android.util.Log;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -209,7 +209,7 @@ public class ScummVMEventsBase implements
 	}
 
 	public boolean onTrackballEvent(MotionEvent e) {
-		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTrackballEvent");
+//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTrackballEvent");
 		_scummvm.pushEvent(JE_BALL, e.getAction(),
 			(int)(e.getX() * e.getXPrecision() * 100),
 			(int)(e.getY() * e.getYPrecision() * 100),
@@ -398,6 +398,8 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 		case KeyEvent.KEYCODE_DPAD_CENTER:
 			// NOTE 1 For now, we're handling DPAD keys as JE_GAMEPAD events, regardless the source InputDevice
+			//        EXCEPT for the case where the event comes from our virtual keyboard (currently applicable for UP/DOWN/LEFT/RIGHT arrows, not CENTER)
+			//
 			//        We delegate these keypresses to ScummVM's keymapper as JOYSTICK_BUTTON_DPAD presses.
 			//        (JOYSTICK_BUTTON_DPAD_UP, JOYSTICK_BUTTON_DPAD_DOWN, JOYSTICK_BUTTON_DPAD_LEFT, JOYSTICK_BUTTON_DPAD_RIGHT and JOYSTICK_BUTTON_DPAD_CENTER)
 			//        By default mapped to virtual mouse (VMOUSE).
@@ -408,7 +410,13 @@ public class ScummVMEventsBase implements
 			// and *not* DPAD_UP/DOWN/LEFT/RIGHT button press events. Hence, for those controllers these DPAD key events won't be triggered.
 			// Those are handled in ScummVMEventsModern class within its onGenericMotionEvent() implementation.
 			//
-			// fall-through
+			if ((e.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
+				type = JE_KEY;
+			} else {
+				type = JE_GAMEPAD;
+			}
+			break;
+
 		case KeyEvent.KEYCODE_BUTTON_A:
 		case KeyEvent.KEYCODE_BUTTON_B:
 		case KeyEvent.KEYCODE_BUTTON_C:
@@ -448,6 +456,7 @@ public class ScummVMEventsBase implements
 		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK) + " meta: " + e.getMetaState());
 		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " type=" + type + " source=" + e.getSource() + " action= " + action + " arg5= " + e.getRepeatCount());
 		//Log.d(ScummVM.LOG_TAG,"GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK) + " meta: " + e.getMetaState());
+		//Log.d(ScummVM.LOG_TAG,"GetKey: " + keyCode + " type=" + type + " source=" + e.getSource() + " flags=" + e.getFlags() + " action= " + action + " arg5= " + e.getRepeatCount());
 
 		// look in events.cpp for how this is handled
 		_scummvm.pushEvent(type,

@@ -412,7 +412,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										KeyEvent.ACTION_UP,
 										key,
 										builtinKeyboard.mKeyRepeatedCount,
-										compiledMetaState);
+										compiledMetaState, 0, 0, KeyEvent.FLAG_SOFT_KEYBOARD);
 
 									_main_surface.dispatchKeyEvent(compiledKeyEvent);
 									builtinKeyboard.resetEventAndTimestamps();
@@ -476,7 +476,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										KeyEvent.ACTION_DOWN,
 										key,
 										builtinKeyboard.mKeyRepeatedCount,
-										compiledMetaState);
+										compiledMetaState, 0, 0, KeyEvent.FLAG_SOFT_KEYBOARD);
 
 									_main_surface.dispatchKeyEvent(compiledKeyEvent);
 								}
