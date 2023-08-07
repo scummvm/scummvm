@@ -32,9 +32,9 @@
 #define CRAB_ANIMATIONFRAME_H
 
 #include "crab/animation/AnimationEffect.h"
-#include "crab/ui/HoverInfo.h"
 #include "crab/image/ImageManager.h"
 #include "crab/text/TextManager.h"
+#include "crab/ui/HoverInfo.h"
 
 namespace Crab {
 

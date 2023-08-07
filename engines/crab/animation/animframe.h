@@ -32,8 +32,8 @@
 #define CRAB_ANIMFRAME_H
 
 #include "crab/Rectangle.h"
-#include "crab/animation/shadow.h"
 #include "crab/vectors.h"
+#include "crab/animation/shadow.h"
 
 namespace Crab {
 
