@@ -75,18 +75,18 @@ void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
 		loadStr(points, "points", polynode);
 
 		bool comma = false;
-		for (auto i = points.begin(); i != points.end(); ++i) {
-			if (*i == ',')
+		for (const auto &i : points) {
+			if (i == ',')
 				comma = true;
-			else if (*i == ' ') {
+			else if (i == ' ') {
 				addPoint(ref, x, y, min, max);
 				comma = false;
 				x.clear();
 				y.clear();
 			} else if (comma)
-				y += *i;
+				y += i;
 			else
-				x += *i;
+				x += i;
 		}
 
 		addPoint(ref, x, y, min, max);
@@ -132,9 +132,9 @@ Vector2f Polygon2D::center() const {
 }
 
 void Polygon2D::offset(const float &x, const float &y) {
-	for (auto i = _point.begin(); i != _point.end(); ++i) {
-		i->x += x;
-		i->y += y;
+	for (auto &i : _point) {
+		i.x += x;
+		i.y += y;
 	}
 }
 

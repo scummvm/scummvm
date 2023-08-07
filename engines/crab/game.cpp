@@ -569,23 +569,23 @@ void Game::draw() {
 bool Game::applyResult() {
 	using namespace pyrodactyl::event;
 
-	for (auto i = _eventRes.begin(); i != _eventRes.end(); ++i) {
-		switch (i->_type) {
+	for (const auto &i : _eventRes) {
+		switch (i._type) {
 		case ER_MAP:
-			if (i->_val == "img")
-				_map.setImage(i->_y);
-			else if (i->_val == "pos") {
-				_map._playerPos.x = i->_x;
-				_map._playerPos.y = i->_y;
+			if (i._val == "img")
+				_map.setImage(i._y);
+			else if (i._val == "pos") {
+				_map._playerPos.x = i._x;
+				_map._playerPos.y = i._y;
 			}
 			break;
 		case ER_DEST:
-			if (i->_x < 0 || i->_y < 0) {
-				_info._journal.marker(_level.playerId(), i->_val, false);
-				_map.destDel(i->_val);
+			if (i._x < 0 || i._y < 0) {
+				_info._journal.marker(_level.playerId(), i._val, false);
+				_map.destDel(i._val);
 			} else {
-				_map.destAdd(i->_val, i->_x, i->_y);
-				_info._journal.marker(_level.playerId(), i->_val, true);
+				_map.destAdd(i._val, i._x, i._y);
+				_info._journal.marker(_level.playerId(), i._val, true);
 				_info._unread._map = true;
 			}
 			break;
@@ -593,22 +593,22 @@ bool Game::applyResult() {
 			playerImg();
 			break;
 		case ER_TRAIT:
-			if (i->_x == 42)
-				_info.traitDel(i->_val, i->_y);
+			if (i._x == 42)
+				_info.traitDel(i._val, i._y);
 			else
-				_info.traitAdd(i->_val, i->_y);
+				_info.traitAdd(i._val, i._y);
 			break;
 		case ER_LEVEL:
-			if (i->_val == "Map")
+			if (i._val == "Map")
 				toggleState(STATE_MAP);
 			else
-				loadLevel(i->_val, i->_x, i->_y);
+				loadLevel(i._val, i._x, i._y);
 			break;
 		case ER_MOVE:
 			for (auto &o : _level._objects) {
-				if (i->_val == o.id()) {
-					o.x(i->_x);
-					o.y(i->_y);
+				if (i._val == o.id()) {
+					o.x(i._x);
+					o.y(i._y);
 					break;
 				}
 			}
@@ -618,7 +618,7 @@ bool Game::applyResult() {
 			_level.playerStop();
 
 			// Then swap to the new id
-			_level.playerId(i->_val, i->_x, i->_y);
+			_level.playerId(i._val, i._x, i._y);
 
 			// Stop the new player sprite's movement as well
 			_level.playerStop();
@@ -631,7 +631,7 @@ bool Game::applyResult() {
 			_map.update(_info);
 			break;
 		case ER_QUIT:
-			g_engine->_tempData->_credits = (i->_val == "credits");
+			g_engine->_tempData->_credits = (i._val == "credits");
 			return true;
 		default:
 			break;

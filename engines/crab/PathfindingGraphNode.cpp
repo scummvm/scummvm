@@ -74,8 +74,8 @@ void PathfindingGraphNode::addNeighbor(PathfindingGraphNode *node, bool ignoreDi
 }
 
 bool PathfindingGraphNode::adjacentToObstacle() const {
-	for (auto iter = _neighborNodes.begin(); iter != _neighborNodes.end(); ++iter) {
-		if ((*iter)->getMovementCost() < 0)
+	for (const auto &iter : _neighborNodes) {
+		if (iter->getMovementCost() < 0)
 			return true;
 	}
 
