@@ -116,6 +116,7 @@ bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
 		}
 	}
 
+	_G(kernel).trigger_mode = oldMode;
 	return result;
 }
 

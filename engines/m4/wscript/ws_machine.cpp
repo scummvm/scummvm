@@ -675,7 +675,8 @@ void CycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCod
 	}
 }
 
-void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT) {
+void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table,
+		Buffer *screenCodes, uint8 *myPalette, uint8 *ICT) {
 	ws_hal_RefreshWoodscriptBuffer(_GWS(myCruncher), cleanBackground, depth_table,
 		screenCodes, myPalette, ICT);
 }

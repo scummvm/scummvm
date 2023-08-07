@@ -103,7 +103,7 @@ void M4Surface::rleDraw(const byte *src, int x, int y) {
 
 void M4Surface::draw(const Buffer &src, int x, int y, bool forwards,
 		const byte *depthCodes, int srcDepth) {
-	if (src.encoding == RLE8) {
+	if ((src.encoding & 0x7f) == RLE8) {
 		// The standard case of RLE sprite drawing onto screen can directly
 		// use RLE decompression for performance
 		if (forwards && !depthCodes && !depthCodes && x >= 0 && y >= 0 &&
@@ -124,7 +124,7 @@ void M4Surface::draw(const Buffer &src, int x, int y, bool forwards,
 
 void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
 		int x, int y, bool forwards, int srcDepth) {
-	assert(src.encoding == NO_COMPRESS);
+	assert((src.encoding & 0x7f) == NO_COMPRESS);
 
 	for (int srcY = 0; srcY < src.h; ++srcY, ++y) {
 		if (y >= h)
