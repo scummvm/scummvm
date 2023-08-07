@@ -43,8 +43,11 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	case kGameTypeNancy2:
 		_numCursorTypes = 5;
 		break;
-	default:
+	case kGameTypeNancy3:
 		_numCursorTypes = 8;
+		break;
+	default:
+		_numCursorTypes = 12;
 	}
 
 	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * _numCursorTypes;
@@ -101,8 +104,10 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = 4;
 		} else if (gameType == kGameTypeNancy2) {
 			_curCursorID = 5;
-		} else {
+		} else if (gameType ==  kGameTypeNancy3) {
 			_curCursorID = 8;
+		} else {
+			_curCursorID = 12;
 		}
 
 		return;
@@ -111,8 +116,10 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = 5;
 		} else if (gameType == kGameTypeNancy2) {
 			_curCursorID = 6;
-		} else {
+		} else if (gameType ==  kGameTypeNancy3) {
 			_curCursorID = 9;
+		} else {
+			_curCursorID = 13;
 		}
 
 		return;
@@ -130,6 +137,26 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		// Only valid for nancy3 and up
 		if (gameType >= kGameTypeNancy3) {
 			_curCursorID = kTurnRight;
+			return;
+		} else {
+			type = kMove;
+		}
+
+		break;
+	case kMoveUp:
+		// Only valid for nancy4 and up
+		if (gameType >= kGameTypeNancy4) {
+			_curCursorID = kMoveUp;
+			return;
+		} else {
+			type = kMove;
+		}
+
+		break;
+	case kMoveDown:
+		// Only valid for nancy4 and up
+		if (gameType >= kGameTypeNancy4) {
+			_curCursorID = kMoveDown;
 			return;
 		} else {
 			type = kMove;

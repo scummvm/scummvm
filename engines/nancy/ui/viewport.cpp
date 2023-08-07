@@ -118,8 +118,10 @@ void Viewport::handleInput(NancyInput &input) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kTurnLeft);
 		} else if (direction & kRight) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kTurnRight);
-		} else {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kMove);
+		} else if (direction & kUp) {
+			g_nancy->_cursorManager->setCursorType(CursorManager::kMoveUp);
+		} else if (direction & kDown) {
+			g_nancy->_cursorManager->setCursorType(CursorManager::kMoveDown);
 		}
 
 		if (input.input & NancyInput::kRightMouseButton) {
