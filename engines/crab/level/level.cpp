@@ -84,8 +84,8 @@ pyrodactyl::anim::Sprite *Level::getSprite(const Common::String &id) {
 // Purpose: Figure visibility and let the AI see what moves are allowed
 //------------------------------------------------------------------------
 void Level::calcProperties(pyrodactyl::event::Info &info) {
-	for (auto i = _objects.begin(); i != _objects.end(); ++i)
-		i->calcProperties(info);
+	for (auto &i : _objects)
+		i.calcProperties(info);
 }
 
 //------------------------------------------------------------------------

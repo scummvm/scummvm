@@ -96,9 +96,9 @@ bool Level::layerVisible(pyrodactyl::anim::Sprite *obj) {
 // Common::String &id is set to the id of colliding object
 //------------------------------------------------------------------------
 void Level::calcTrigCollide(pyrodactyl::event::Info &info) {
-	for (auto i = _objects.begin(); i != _objects.end(); ++i)
-		if (info.personValid(i->id()))
-			_terrain.collideWithTrigger(i->boundRect(), info.personGet(i->id())._trig);
+	for (auto &i : _objects)
+		if (info.personValid(i.id()))
+			_terrain.collideWithTrigger(i.boundRect(), info.personGet(i.id())._trig);
 }
 
 //------------------------------------------------------------------------
