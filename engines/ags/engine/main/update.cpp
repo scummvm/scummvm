@@ -378,10 +378,11 @@ void update_sierra_speech() {
 		// _G(is_text_overlay) might be 0 if it was only just destroyed this loop
 		if ((updatedFrame) && (_GP(play).text_overlay_on > 0)) {
 
+			const int frame_vol = GetCharacterFrameVolume(_G(facetalkchar));
 			if (updatedFrame & 1)
-				CheckViewFrame(_G(facetalkview), _G(facetalkloop), _G(facetalkframe));
+				CheckViewFrame(_G(facetalkview), _G(facetalkloop), _G(facetalkframe), frame_vol);
 			if (updatedFrame & 2)
-				CheckViewFrame(_G(facetalkchar)->blinkview, _G(facetalkBlinkLoop), _G(facetalkchar)->blinkframe);
+				CheckViewFrame(_G(facetalkchar)->blinkview, _G(facetalkBlinkLoop), _G(facetalkchar)->blinkframe, frame_vol);
 
 			int thisPic = _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)].pic;
 			int view_frame_x = 0;

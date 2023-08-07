@@ -2063,7 +2063,11 @@ void stop_character_anim(CharacterInfo *chap) { // TODO: may expand with resetti
 	_GP(charextra)[chap->index_id].cur_anim_volume = 100;
 }
 
-void CheckViewFrameForCharacter(CharacterInfo * chi) {
+void CheckViewFrameForCharacter(CharacterInfo *chi) {
+	CheckViewFrame(chi->view, chi->loop, chi->frame, GetCharacterFrameVolume(chi));
+}
+
+int GetCharacterFrameVolume(CharacterInfo * chi) {
 	// We view the audio property relation as the relation of the entities:
 	// system -> audio type -> audio emitter (character) -> animation's audio
 	// therefore the sound volume is a multiplication of factors.
@@ -2084,8 +2088,7 @@ void CheckViewFrameForCharacter(CharacterInfo * chi) {
 			zoom_level = std::min(zoom_level, 100);
 		frame_vol = frame_vol * zoom_level / 100;
 	}
-
-	CheckViewFrame(chi->view, chi->loop, chi->frame, frame_vol);
+	return frame_vol;
 }
 
 Bitmap *GetCharacterImage(int charid, int *isFlipped) {
@@ -2610,10 +2613,10 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3)
 				overlay_x = 0;
 			_G(face_talking) = add_screen_overlay(false, overlay_x, ovr_yp, ovr_type, closeupface, closeupface_has_alpha);
+			_G(facetalkview) = useview;
+			_G(facetalkloop) = 0;
 			_G(facetalkframe) = 0;
 			_G(facetalkwait) = viptr->loops[0].frames[0].speed + GetCharacterSpeechAnimationDelay(speakingChar);
-			_G(facetalkloop) = 0;
-			_G(facetalkview) = useview;
 			_G(facetalkrepeat) = (isThought) ? 0 : 1;
 			_G(facetalkBlinkLoop) = 0;
 			_G(facetalkAllowBlink) = 1;
@@ -2624,6 +2627,9 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 				_G(facetalkchar)->blinktimer = _G(facetalkchar)->blinkinterval;
 			textcol = -textcol;
 			overlayPositionFixed = true;
+			// Process the first portrait view frame
+			const int frame_vol = GetCharacterFrameVolume(_G(facetalkchar));
+			CheckViewFrame(_G(facetalkview), _G(facetalkloop), _G(facetalkframe), frame_vol);
 		} else if (useview >= 0) {
 			// Lucasarts-style speech
 			_G(our_eip) = 154;
