@@ -37,6 +37,7 @@
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/main/engine.h"
+#include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/globals.h"
 
@@ -121,7 +122,7 @@ bool init_voicepak(const String &name) {
 			!_GP(ResPaths).VoiceDir2.IsEmpty() && Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
 		// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
 		speech_subdir = name.IsEmpty() ? _GP(ResPaths).VoiceDir2 : Path::ConcatPaths(_GP(ResPaths).VoiceDir2, name);
-		if (File::IsDirectory(speech_subdir)) {
+		if (File::IsDirectory(speech_subdir) && !FindFile::OpenFiles(speech_subdir).AtEnd()) {
 			Debug::Printf(kDbgMsg_Info, "Optional voice directory is defined: %s", speech_subdir.GetCStr());
 			_GP(play).voice_avail = true;
 		}
