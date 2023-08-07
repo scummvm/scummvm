@@ -151,19 +151,9 @@ void PathfindingAgent::update(uint32 timeslice) {
 			return;
 		}
 
-		// PathfindingGraphNode* _checkTile;
-
-		// Find the successors
-		// for(int x = -1; x < 2; ++x)
-		//{
-		//	for(int y = -1; y < 2; ++y)
-		//	{
 		Common::Array<PathfindingGraphNode *>::iterator i;
 
 		for (i = current->_location->_neighborNodes.begin(); i != current->_location->_neighborNodes.end(); ++i) {
-			// Get the new tile to check
-			//_checkTile = m_pTileMap->getTile(current->GetLocation()->getRow() + x, current->GetLocation()->getColumn() + y);
-
 			if ((*i)->getMovementCost() > 0) {
 				// Compute the temp given cost
 				dTempCost = current->getGivenCost() + ((*i)->getMovementCost() * distExact((*i), current->getLocation()));
