@@ -223,12 +223,8 @@ bool PathfindingAgent::isDone() const {
 
 // Clear everything.
 void PathfindingAgent::reset() {
-	Common::StableMap<PathfindingGraphNode *, PlannerNode *>::iterator iter;
-	if (!_createdList.empty()) {
-		for (iter = _createdList.begin(); iter != _createdList.end(); ++iter) {
-			delete (*iter).second;
-		}
-	}
+	for (auto &iter : _createdList)
+		delete iter.second;
 
 	_nodeQueue.clear();
 	_createdList.clear();
@@ -317,7 +313,7 @@ bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB) {
 }
 
 bool PathfindingAgent::adjacentToGoal(PathfindingGraphNode *node) {
-	for (auto iter : node->_neighborNodes) {
+	for (const auto &iter : node->_neighborNodes) {
 		if (iter == _goalTile) {
 			return true;
 		}
