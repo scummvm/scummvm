@@ -200,7 +200,7 @@ struct AdditiveBlend {
 			srcr = _mm_and_si128(_mm_add_epi32(dstr, _mm_srli_epi32(sse2_mul32(srcr, sse2_mul32(_mm_set1_epi32(cr), ina)), BlendBlit::kRModShift - 16)), _mm_set1_epi32(BlendBlit::kRModMask));
 
     	    src = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
-    	    src = _mm_or_si128(src, _mm_or_si128(srcb, _mm_or_si128(srcg, srcb)));
+    	    src = _mm_or_si128(src, _mm_or_si128(srcb, _mm_or_si128(srcg, srcr)));
     	} else if (alphamod) {
     	    __m128i srcg = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask));
     	    __m128i srcrb = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
@@ -270,6 +270,11 @@ struct SubtractiveBlend {
 class BlendBlitImpl {
 
 public:
+#ifdef SCUMMVM_AVX2
+template<template <bool DOSCALE, bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod, bool coloradd1, bool loaddst>
+static inline void blitInnerLoopAVX2(BlendBlit::Args &args);
+#endif
+
 template<template <bool DOSCALE, bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod, bool coloradd1, bool loaddst>
 static inline void blitInnerLoop(BlendBlit::Args &args) {
 	const byte *in;
