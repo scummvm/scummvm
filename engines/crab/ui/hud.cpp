@@ -75,8 +75,8 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 		}
 
 		// Create a copy of all the tooltips
-		for (auto i = _menu._element.begin(); i != _menu._element.end(); ++i)
-			_tooltip.push_back(i->_tooltip._text);
+		for (const auto &i : _menu._element)
+			_tooltip.push_back(i._tooltip._text);
 
 		setTooltip();
 	}

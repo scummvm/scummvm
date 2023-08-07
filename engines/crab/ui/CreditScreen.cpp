@@ -153,15 +153,15 @@ void CreditScreen::draw() {
 
 	_cur.y = _start.y;
 
-	for (auto i = _list.begin(); i != _list.end(); ++i) {
+	for (const auto &i : _list) {
 		_cur.y += _paragraph._inc;
 
-		if (i->_heading) {
+		if (i._heading) {
 			_cur.y += _heading._inc;
 			if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->_cur.h + 40) // Only draw text if it is actually visible on screen
-				g_engine->_textManager->draw(_cur.x, _cur.y, i->_text, _heading._color, _heading._font, _heading._align);
+				g_engine->_textManager->draw(_cur.x, _cur.y, i._text, _heading._color, _heading._font, _heading._align);
 		} else if (_cur.y > -30 && _cur.y < g_engine->_screenSettings->_cur.h + 40)
-			g_engine->_textManager->draw(_cur.x, _cur.y, i->_text, _paragraph._color, _paragraph._font, _paragraph._align);
+			g_engine->_textManager->draw(_cur.x, _cur.y, i._text, _paragraph._color, _paragraph._font, _paragraph._align);
 
 		// If our cur value has reached below the screen, simply exit the loop as we won't draw anything else
 		if (_cur.y > g_engine->_screenSettings->_cur.h + 40)

@@ -111,8 +111,8 @@ void TraitMenu::cache(const pyrodactyl::people::Person &obj) {
 }
 
 void TraitMenu::clear() {
-	for (auto e = _menu._element.begin(); e != _menu._element.end(); ++e)
-		e->empty();
+	for (auto &e : _menu._element)
+		e.empty();
 }
 
 void TraitMenu::setUI() {

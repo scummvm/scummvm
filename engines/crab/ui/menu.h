@@ -186,13 +186,13 @@ public:
 	void reset() {
 		_latestInput = MOUSE;
 		_hoverIndex = -1;
-		for (auto b = _element.begin(); b != _element.end(); ++b)
-			b->reset();
+		for (auto &b : _element)
+			b.reset();
 	}
 
 	void setUI() {
-		for (auto i = _element.begin(); i != _element.end(); ++i)
-			i->setUI();
+		for (auto &i : _element)
+			i.setUI();
 	}
 
 	//------------------------------------------------------------------------
@@ -254,15 +254,15 @@ public:
 				_hoverIndex = i;
 
 				// The latest input is the mouse, which means we have to forget the keyboard hover states
-				for (auto e = _element.begin(); e != _element.end(); ++e)
-					e->_hoverKey = false;
+				for (auto &e : _element)
+					e._hoverKey = false;
 			}
 		}
 
 		if (_latestInput == KEYBOARD) {
 			// The latest input is the keyboard, which means we have to forget the mouse hover states
-			for (auto it = _element.begin(); it != _element.end(); ++it)
-				it->_hoverMouse = false;
+			for (auto &it : _element)
+				it._hoverMouse = false;
 		}
 		return -1;
 	}
@@ -271,8 +271,8 @@ public:
 	// Purpose: Draw the menu
 	//------------------------------------------------------------------------
 	void draw(const int &XOffset = 0, const int &YOffset = 0) {
-		for (auto it = _element.begin(); it != _element.end(); ++it)
-			it->draw(XOffset, YOffset);
+		for (auto &it : _element)
+			it.draw(XOffset, YOffset);
 	}
 
 	//------------------------------------------------------------------------

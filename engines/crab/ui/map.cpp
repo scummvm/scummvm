@@ -403,8 +403,8 @@ void Map::update(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 void Map::revealAdd(const int &id, const Rect &area) {
 	if ((uint)id < _map.size()) {
-		for (auto i = _map[id]._reveal.begin(); i != _map[id]._reveal.end(); ++i)
-			if (*i == area)
+		for (auto &i : _map[id]._reveal)
+			if (i == area)
 				return;
 
 		_map[id]._reveal.push_back(area);
@@ -416,10 +416,10 @@ void Map::revealAdd(const int &id, const Rect &area) {
 //------------------------------------------------------------------------
 void Map::destAdd(const Common::String &name, const int &x, const int &y) {
 	if (_cur < _map.size()) {
-		for (auto i = _map[_cur]._dest.begin(); i != _map[_cur]._dest.end(); ++i) {
-			if (i->_name == name) {
-				i->_pos.x = x;
-				i->_pos.y = y;
+		for (auto &i : _map[_cur]._dest) {
+			if (i._name == name) {
+				i._pos.x = x;
+				i._pos.y = y;
 				return;
 			}
 		}
@@ -452,9 +452,9 @@ void Map::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *roo
 	child->append_attribute(doc.allocate_attribute("cur", g_engine->_stringPool->Get(_cur)));
 	saveBool(_overlay, "overlay", doc, child);
 
-	for (auto r = _map.begin(); r != _map.end(); ++r) {
+	for (auto &r : _map) {
 		rapidxml::xml_node<char> *child_data = doc.allocate_node(rapidxml::node_element, "data");
-		r->saveState(doc, child_data);
+		r.saveState(doc, child_data);
 		child->append_node(child_data);
 	}
 

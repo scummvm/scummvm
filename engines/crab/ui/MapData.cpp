@@ -50,16 +50,16 @@ void MapData::destAdd(const Common::String &name, const int &x, const int &y) {
 
 void MapData::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child_clip = doc.allocate_node(rapidxml::node_element, "clip");
-	for (auto c = _reveal.begin(); c != _reveal.end(); ++c)
-		c->saveState(doc, child_clip, "rect");
+	for (auto &c : _reveal)
+		c.saveState(doc, child_clip, "rect");
 	root->append_node(child_clip);
 
 	rapidxml::xml_node<char> *child_dest = doc.allocate_node(rapidxml::node_element, "dest");
-	for (auto d = _dest.begin(); d != _dest.end(); ++d) {
+	for (auto &d : _dest) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "pos");
-		child->append_attribute(doc.allocate_attribute("name", d->_name.c_str()));
-		child->append_attribute(doc.allocate_attribute("x", g_engine->_stringPool->Get(d->_pos.x)));
-		child->append_attribute(doc.allocate_attribute("y", g_engine->_stringPool->Get(d->_pos.y)));
+		child->append_attribute(doc.allocate_attribute("name", d._name.c_str()));
+		child->append_attribute(doc.allocate_attribute("x", g_engine->_stringPool->Get(d._pos.x)));
+		child->append_attribute(doc.allocate_attribute("y", g_engine->_stringPool->Get(d._pos.y)));
 		child_dest->append_node(child);
 	}
 	root->append_node(child_dest);
