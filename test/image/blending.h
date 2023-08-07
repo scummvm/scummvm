@@ -893,11 +893,13 @@ public:
 	void test_blend_speed() {
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitNEON;
+#elif defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitSSE2;
 #else
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 #endif
 	    Graphics::Surface baseSurface, destSurface;
-	    baseSurface.create(128, 128, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
+	    baseSurface.create(103, 103, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
 	    destSurface.create(256, 256, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
 	    for (int y = 0; y < baseSurface.h; y++) {
 	    	for (int x = 0; x < baseSurface.w; x++) {
@@ -915,9 +917,9 @@ public:
 		double oldTime = 0.0, newTime = 0.0, genericTime = 0.0;
 		double oldTimeScaled = 0.0, newTimeScaled = 0.0, genericTimeScaled = 0.0;
 		const int iters = 2500;
-		
-        for (int blendMode = Graphics::BLEND_NORMAL; blendMode < Graphics::BLEND_NORMAL + 1; blendMode++) {
-        for (int alphaType = Graphics::ALPHA_FULL; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
+
+        for (int blendMode = Graphics::BLEND_NORMAL; blendMode < Graphics::NUM_BLEND_MODES; blendMode++) {
+        for (int alphaType = Graphics::ALPHA_OPAQUE; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
         for (int flipping = 0; flipping <= 3; flipping++) {
 		for (uint32 color = 0xffffffff; color != 0; color = (color == 0xffffffff ? 0x7f7f7f7f : 0)) {
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(255, 255, 255, 255));
@@ -1050,7 +1052,7 @@ public:
         for (int g = 255; g >= 0; g = (g == 255 ? 128 : (g == 128 ? 0 : -1))) {
         for (int b = 255; b >= 0; b = (b == 255 ? 128 : (b == 128 ? 0 : -1))) {
         for (int flipping = 0; flipping <= 3; flipping++) {
-        for (int rect = 0; rect < sizeof(srcs)/sizeof(srcs[0]); rect++) {
+        for (int rect = 0; rect < (int)(sizeof(srcs)/sizeof(srcs[0])); rect++) {
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(ba, br, bg, bb));
             oldSurf.setAlphaMode((Graphics::AlphaType)alphaType);
             oldSurf.blit(oldSurfDest, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], TS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
