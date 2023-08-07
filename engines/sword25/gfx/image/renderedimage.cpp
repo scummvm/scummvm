@@ -126,9 +126,9 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 
 	// Uncompress the image
 	if (isPNG)
-		result = ImgLoader::decodePNGImage(pFileData, fileSize, &_surface);
+		result = ImgLoader::decodePNGImage(pFileData, fileSize, _surface.surfacePtr());
 	else
-		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, &_surface);
+		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, _surface.surfacePtr());
 
 	if (!result) {
 		error("Could not decode image.");
@@ -233,7 +233,16 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	int cg = (color >> BS_GSHIFT) & 0xff;
 	int cb = (color >> BS_BSHIFT) & 0xff;
 
-	_surface.blit(*_backSurface, posX, posY, newFlipping, pPartRect, _surface.format.ARGBToColor(ca, cr, cg, cb), width, height);
+	if (width == -1) width = _surface.w;
+	if (height == -1) height = _surface.h;
+	//_surface.blit(*_backSurface, posX, posY, newFlipping, pPartRect, _surface.format.ARGBToColor(ca, cr, cg, cb), width, height);
+	_backSurface->blendBlitFrom(
+		_surface,
+		pPartRect ? *pPartRect : Common::Rect(0, 0, _surface.w, _surface.h),
+		Common::Rect(posX, posY, posX + width, posY + height),
+		newFlipping,
+		_surface.format.ARGBToColor(ca, cr, cg, cb)
+	);
 
 	return true;
 }
