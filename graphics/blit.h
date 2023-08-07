@@ -191,45 +191,27 @@ bool setAlpha(byte *dst, const byte *src,
               const Graphics::PixelFormat &format,
               const bool skipTransparent, const uint8 alpha);
 
-void opaqueBlendBlit(byte *dst, const byte *src,
+static const int BLEND_BLIT_SCALE_THRESHOLD = 0x100;
+
+/**
+ * Optimized version of doBlit to be used with alpha blended blitting
+ * @param ino a pointer to the input surface
+ * @param outo a pointer to the output surface
+ * @param width width of the input surface
+ * @param height height of the input surface
+ * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
+ * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
+ * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
+ * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
+ */
+void blendBlitUnfiltered(byte *dst, const byte *src,
 					 const uint dstPitch, const uint srcPitch,
 					 const int posX, const int posY,
 					 const uint width, const uint height,
-					 const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
-
-void binaryBlendBlit(byte *dst, const byte *src,
-					 const uint dstPitch, const uint srcPitch,
-					 const int posX, const int posY,
-					 const uint width, const uint height,
-					 const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
-
-// Only blits to and from 32bpp images
-void multiplyBlendBlit(byte *dst, const byte *src,
-					   const uint dstPitch, const uint srcPitch,
-					   const int posX, const int posY,
-					   const uint width, const uint height,
-					   const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
-
-// Only blits to and from 32bpp images
-void subtractiveBlendBlit(byte *dst, const byte *src,
-						  const uint dstPitch, const uint srcPitch,
-						  const int posX, const int posY,
-						  const uint width, const uint height,
-						  const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
-
-// Only blits to and from 32bpp images
-void additiveBlendBlit(byte *dst, const byte *src,
-					   const uint dstPitch, const uint srcPitch,
-					   const int posX, const int posY,
-					   const uint width, const uint height,
-					   const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
-
-// Only blits to and from 32bpp images
-void alphaBlendBlit(byte *dst, const byte *src,
-					const uint dstPitch, const uint srcPitch,
-					const int posX, const int posY,
-					const uint width, const uint height,
-					const uint32 colorMod = 0, const uint flipping = FLIP_NONE);
+					 const int scaleX, const int scaleY,
+					 const uint32 colorMod = 0, const uint flipping = FLIP_NONE,
+					 const TSpriteBlendMode blendMode = BLEND_NORMAL,
+					 const AlphaType alphaType = ALPHA_FULL);
 
 /** @} */
 } // End of namespace Graphics

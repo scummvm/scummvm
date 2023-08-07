@@ -34,9 +34,6 @@
  *
  */
 
-#define TS_RGB(R,G,B)       (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | 0xff)
-#define TS_ARGB(A,R,G,B)    (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
-
 namespace Graphics {
 
 /**
@@ -47,13 +44,6 @@ namespace Graphics {
  *
  * @{
  */
-
-// Enums
-enum AlphaType {
-	ALPHA_OPAQUE = 0,
-	ALPHA_BINARY = 1,
-	ALPHA_FULL = 2
-};
 
 /**
  * A transparent graphics surface, which implements alpha blitting.
