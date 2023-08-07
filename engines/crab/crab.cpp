@@ -29,6 +29,7 @@
 #include "crab/crab.h"
 #include "crab/app.h"
 #include "crab/console.h"
+#include "crab/game.h"
 
 namespace Crab {
 

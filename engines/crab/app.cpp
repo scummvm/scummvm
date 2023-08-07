@@ -28,9 +28,13 @@
  *
  */
 
+#include "crab/app.h"
 #include "common/events.h"
 #include "graphics/screen.h"
-#include "crab/app.h"
+#include "crab/crab.h"
+#include "crab/game.h"
+#include "crab/mainmenu.h"
+#include "crab/splash.h"
 
 namespace Crab {
 
