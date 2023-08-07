@@ -30,7 +30,11 @@
 
 #ifndef CRAB_FILESYSTEM_H
 #define CRAB_FILESYSTEM_H
-#include "crab/common_header.h"
+#include "common/path.h"
+
+namespace Common {
+class File;
+} // End of namespace Common
 
 namespace Crab {
 

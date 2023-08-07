@@ -28,6 +28,7 @@
  *
  */
 
+#include "image/png.h"
 #include "crab/crab.h"
 #include "crab/image/Image.h"
 

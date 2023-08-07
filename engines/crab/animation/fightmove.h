@@ -31,7 +31,6 @@
 #ifndef CRAB_FIGHTMOVE_H
 #define CRAB_FIGHTMOVE_H
 
-#include "crab/common_header.h"
 #include "crab/animation/fightanim.h"
 
 namespace Crab {

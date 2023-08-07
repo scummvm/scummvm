@@ -31,11 +31,17 @@
 #ifndef CRAB_IMAGE_H
 #define CRAB_IMAGE_H
 
-#include "image/png.h"
-#include "crab/ScreenSettings.h"
-#include "crab/filesystem.h"
+#include "crab/rapidxml/rapidxml.hpp"
 #include "crab/Rectangle.h"
-#include "crab/common_header.h"
+
+namespace Graphics {
+class ManagedSurface;
+class Surface;
+} // End of namespace Graphics
+
+namespace Common {
+class Rect;
+} // End of namespace Common
 
 namespace Crab {
 

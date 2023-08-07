@@ -31,7 +31,6 @@
 #ifndef CRAB_FIGHTINPUT_H
 #define CRAB_FIGHTINPUT_H
 
-#include "crab/common_header.h"
 #include "crab/input/input.h"
 #include "crab/loaders.h"
 

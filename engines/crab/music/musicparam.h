@@ -32,7 +32,7 @@
 #define CRAB_MUSICPARAM_H
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
-#include "crab/common_header.h"
+#include "common/file.h"
 #include "crab/loaders.h"
 
 namespace Crab {

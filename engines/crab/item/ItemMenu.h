@@ -35,7 +35,6 @@
 #include "crab/item/ItemSlot.h"
 #include "crab/stat/StatDrawHelper.h"
 #include "crab/item/StatPreview.h"
-#include "crab/common_header.h"
 #include "crab/ui/menu.h"
 #include "crab/people/person.h"
 

@@ -38,7 +38,6 @@
 #include "crab/event/GameEventInfo.h"
 #include "crab/ui/ParagraphData.h"
 #include "crab/ui/button.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

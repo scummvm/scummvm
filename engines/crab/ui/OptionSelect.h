@@ -30,7 +30,6 @@
 
 #ifndef CRAB_OPTIONSELECT_H
 #define CRAB_OPTIONSELECT_H
-#include "crab/common_header.h"
 
 #include "crab/ui/TextData.h"
 #include "crab/ui/button.h"

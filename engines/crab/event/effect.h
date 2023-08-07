@@ -33,7 +33,6 @@
 
 #include "crab/event/GameEventInfo.h"
 #include "crab/XMLDoc.h"
-#include "crab/common_header.h"
 #include "crab/loaders.h"
 #include "crab/people/person.h"
 

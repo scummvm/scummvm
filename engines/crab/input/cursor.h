@@ -35,8 +35,8 @@
 #ifndef CRAB_CURSOR_H
 #define CRAB_CURSOR_H
 
+#include "common/events.h"
 #include "crab/image/Image.h"
-#include "crab/common_header.h"
 #include "crab/loaders.h"
 #include "crab/vectors.h"
 

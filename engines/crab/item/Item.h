@@ -33,7 +33,6 @@
 
 #include "crab/image/ImageManager.h"
 #include "crab/stat/bonus.h"
-#include "crab/common_header.h"
 #include "crab/people/person.h"
 
 namespace Crab {

@@ -31,7 +31,6 @@
 #ifndef CRAB_BONUS_H
 #define CRAB_BONUS_H
 
-#include "crab/common_header.h"
 #include "crab/loaders.h"
 
 namespace Crab {

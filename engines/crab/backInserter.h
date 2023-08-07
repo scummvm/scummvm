@@ -1,7 +1,8 @@
-#include "crab/common_header.h"
 
 #ifndef CRAB_BACKINSERTER_H
 #define CRAB_BACKINSERTER_H
+
+#include "common/util.h"
 
 namespace Crab {
 

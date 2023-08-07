@@ -32,7 +32,6 @@
 #define CRAB_CONVERSATIONDATA_H
 
 #include "crab/event/changeval.h"
-#include "crab/common_header.h"
 #include "crab/event/triggerset.h"
 
 namespace Crab {

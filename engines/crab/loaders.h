@@ -32,7 +32,6 @@
 #define CRAB_LOADERS_H
 
 #include "crab/XMLDoc.h"
-#include "crab/common_header.h"
 #include "crab/gametype.h"
 #include "crab/numstr.h"
 

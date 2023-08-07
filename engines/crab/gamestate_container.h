@@ -35,7 +35,6 @@
 #ifndef CRAB_GAMESTATE_CONTAINER_H
 #define CRAB_GAMESTATE_CONTAINER_H
 
-#include "crab/common_header.h"
 #include "crab/gamestates.h"
 
 namespace Crab {

@@ -31,8 +31,8 @@
 #ifndef CRAB_XMLDOC_H
 #define CRAB_XMLDOC_H
 
-#include "crab/common_header.h"
 #include "crab/filesystem.h"
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Crab {
 

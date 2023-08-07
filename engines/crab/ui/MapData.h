@@ -32,7 +32,6 @@
 #define CRAB_MAPDATA_H
 
 #include "crab/Rectangle.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

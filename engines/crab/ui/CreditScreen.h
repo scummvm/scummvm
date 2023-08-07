@@ -35,7 +35,6 @@
 #include "crab/ui/TextData.h"
 #include "crab/text/TextManager.h"
 #include "crab/ui/button.h"
-#include "crab/common_header.h"
 #include "crab/timer.h"
 
 namespace Crab {

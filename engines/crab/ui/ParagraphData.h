@@ -32,7 +32,6 @@
 #define CRAB_PARAGRAPHDATA_H
 
 #include "crab/ui/TextData.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

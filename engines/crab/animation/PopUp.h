@@ -34,7 +34,6 @@
 #include "crab/event/GameEventInfo.h"
 #include "crab/ui/ParagraphData.h"
 #include "crab/text/TextManager.h"
-#include "crab/common_header.h"
 #include "crab/event/effect.h"
 #include "crab/event/triggerset.h"
 #include "crab/timer.h"

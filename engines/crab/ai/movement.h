@@ -32,7 +32,6 @@
 #define CRAB_MOVEMENT_H
 
 #include "crab/Rectangle.h"
-#include "crab/common_header.h"
 #include "crab/timer.h"
 #include "crab/vectors.h"
 

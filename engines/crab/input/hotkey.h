@@ -32,7 +32,6 @@
 #define CRAB_HOTKEY_H
 
 #include "crab/crab.h"
-#include "crab/common_header.h"
 #include "crab/input/input.h"
 
 namespace Crab {

@@ -30,7 +30,6 @@
 
 #ifndef CRAB_HOVERINFO_H
 #define CRAB_HOVERINFO_H
-#include "crab/common_header.h"
 
 #include "crab/ui/TextData.h"
 

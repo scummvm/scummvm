@@ -31,7 +31,6 @@
 #ifndef CRAB_QUEST_H
 #define CRAB_QUEST_H
 
-#include "crab/common_header.h"
 #include "crab/loaders.h"
 
 namespace Crab {

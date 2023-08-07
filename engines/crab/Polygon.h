@@ -32,7 +32,6 @@
 #define CRAB_POLYGON_H
 
 #include "crab/Rectangle.h"
-#include "crab/common_header.h"
 #include "crab/vectors.h"
 
 namespace Crab {

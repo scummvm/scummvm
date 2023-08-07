@@ -33,7 +33,6 @@
 
 #include "crab/ui/RadioButtonMenu.h"
 #include "crab/ui/ToggleButton.h"
-#include "crab/common_header.h"
 #include "crab/ui/slider.h"
 
 namespace Crab {

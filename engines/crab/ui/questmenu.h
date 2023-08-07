@@ -34,7 +34,6 @@
 #include "crab/ui/PageMenu.h"
 #include "crab/ui/QuestText.h"
 #include "crab/ui/StateButton.h"
-#include "crab/common_header.h"
 #include "crab/event/quest.h"
 
 namespace Crab {

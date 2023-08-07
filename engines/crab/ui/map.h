@@ -38,7 +38,6 @@
 #include "crab/ui/MapMarkerMenu.h"
 #include "crab/ui/StateButton.h"
 #include "crab/ui/ToggleButton.h"
-#include "crab/common_header.h"
 #include "crab/ui/mapbutton.h"
 #include "crab/event/triggerset.h"
 

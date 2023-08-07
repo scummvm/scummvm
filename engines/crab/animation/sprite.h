@@ -40,7 +40,6 @@
 #include "crab/ai/SpriteConstant.h"
 #include "crab/animation/animset.h"
 #include "crab/collision.h"
-#include "crab/common_header.h"
 #include "crab/people/person.h"
 #include "crab/ai/spriteai.h"
 #include "crab/timer.h"

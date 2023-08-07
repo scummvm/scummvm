@@ -30,7 +30,6 @@
 
 #ifndef CRAB_IMAGEEFFECT_H
 #define CRAB_IMAGEEFFECT_H
-#include "crab/common_header.h"
 
 #include "crab/image/ImageManager.h"
 

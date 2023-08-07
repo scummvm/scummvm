@@ -32,7 +32,6 @@
 #define CRAB_FIGHTANIM_H
 
 #include "crab/music/MusicManager.h"
-#include "crab/common_header.h"
 #include "crab/input/fightinput.h"
 #include "crab/animation/fm_ai_data.h"
 #include "crab/ai/moveeffect.h"

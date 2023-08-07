@@ -33,7 +33,6 @@
 
 #include "crab/ui/ImageData.h"
 #include "crab/ui/OptionSelect.h"
-#include "crab/common_header.h"
 #include "crab/ui/menu.h"
 
 namespace Crab {

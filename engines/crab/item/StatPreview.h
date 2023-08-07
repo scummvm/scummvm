@@ -30,7 +30,6 @@
 
 #ifndef CRAB_STATPREVIEW_H
 #define CRAB_STATPREVIEW_H
-#include "crab/common_header.h"
 
 #include "crab/item/Item.h"
 #include "crab/ui/SectionHeader.h"

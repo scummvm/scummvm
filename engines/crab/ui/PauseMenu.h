@@ -36,7 +36,6 @@
 #include "crab/ui/OptionMenu.h"
 #include "crab/ui/SaveGameMenu.h"
 #include "crab/ui/SlideShow.h"
-#include "crab/common_header.h"
 #include "crab/ui/menu.h"
 #include "crab/ui/slider.h"
 #include "crab/ui/textarea.h"

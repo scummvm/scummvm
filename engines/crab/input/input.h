@@ -35,7 +35,6 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "crab/common_header.h"
 //#include "crab/input/inputval.h"
 
 namespace Crab {

@@ -32,8 +32,9 @@
 // Author:   Arvind
 // Purpose:  Cursor class
 //=============================================================================
-#include "crab/input/cursor.h"
+#include "graphics/cursorman.h"
 #include "crab/crab.h"
+#include "crab/input/cursor.h"
 
 namespace Crab {
 using namespace pyrodactyl::input;

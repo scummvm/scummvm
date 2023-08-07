@@ -29,7 +29,6 @@
  */
 
 #include "crab/XMLDoc.h"
-#include "crab/common_header.h"
 
 namespace rapidxml {
 	void parse_error_handler(char const* what, void* where) {

@@ -32,8 +32,8 @@
 #define CRAB_SHADOW_H
 
 #include "crab/crab.h"
-#include "crab/common_header.h"
 #include "crab/vectors.h"
+#include "crab/image/ImageManager.h"
 
 namespace Crab {
 

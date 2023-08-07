@@ -30,7 +30,6 @@
 
 #ifndef CRAB_VECTORS_H
 #define CRAB_VECTORS_H
-#include "crab/common_header.h"
 
 #include "crab/GameParam.h"
 #include "crab/loaders.h"

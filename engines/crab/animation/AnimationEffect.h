@@ -31,7 +31,6 @@
 #ifndef CRAB_ANIMATIONEFFECT_H
 #define CRAB_ANIMATIONEFFECT_H
 
-#include "crab/common_header.h"
 #include "crab/loaders.h"
 
 namespace Crab {

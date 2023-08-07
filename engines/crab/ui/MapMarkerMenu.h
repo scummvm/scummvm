@@ -32,7 +32,6 @@
 #define CRAB_MAPMARKERMENU_H
 
 #include "crab/ui/StateButton.h"
-#include "crab/common_header.h"
 #include "crab/ui/menu.h"
 
 namespace Crab {

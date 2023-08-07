@@ -32,7 +32,6 @@
 #define CRAB_MUSICAREA_H
 
 #include "crab/Shape.h"
-#include "crab/common_header.h"
 #include "crab/music/musicparam.h"
 
 namespace Crab {

@@ -36,7 +36,6 @@
 #include "crab/event/GameEventInfo.h"
 #include "crab/image/ImageManager.h"
 #include "crab/LoadingScreen.h"
-#include "crab/common_header.h"
 #include "crab/input/cursor.h"
 #include "crab/event/gameeventmanager.h"
 #include "crab/gamestate_container.h"

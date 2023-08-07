@@ -31,6 +31,7 @@
 #ifndef CRAB_PATHFINDINGAGENT_H
 #define CRAB_PATHFINDINGAGENT_H
 
+#include "common/stablemap.h"
 #include "crab/PathfindingGrid.h"
 #include "crab/PriorityQueue.h"
 #include "crab/vectors.h"

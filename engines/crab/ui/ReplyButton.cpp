@@ -28,6 +28,7 @@
  *
  */
 
+#include "graphics/font.h"
 #include "crab/crab.h"
 #include "crab/ui/ReplyButton.h"
 

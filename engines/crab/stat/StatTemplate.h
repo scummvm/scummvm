@@ -30,7 +30,6 @@
 
 #ifndef CRAB_STATTEMPLATE_H
 #define CRAB_STATTEMPLATE_H
-#include "crab/common_header.h"
 
 #include "crab/stat/Stat.h"
 

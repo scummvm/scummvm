@@ -30,7 +30,6 @@
 
 #ifndef CRAB_STATDRAWHELPER_H
 #define CRAB_STATDRAWHELPER_H
-#include "crab/common_header.h"
 
 #include "crab/ui/TextData.h"
 #include "crab/people/person.h"

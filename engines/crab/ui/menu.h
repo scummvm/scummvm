@@ -39,7 +39,6 @@
 #include "crab/crab.h"
 #include "crab/image/ImageManager.h"
 #include "crab/ui/button.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

@@ -32,7 +32,6 @@
 #define CRAB_FIGHTMOVES_H
 
 #include "crab/music/MusicManager.h"
-#include "crab/common_header.h"
 #include "crab/animation/fightmove.h"
 #include "crab/timer.h"
 

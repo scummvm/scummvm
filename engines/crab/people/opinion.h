@@ -30,7 +30,6 @@
 
 #ifndef CRAB_OPINION_H
 #define CRAB_OPINION_H
-#include "crab/common_header.h"
 
 #include "crab/GameParam.h"
 

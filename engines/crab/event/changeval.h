@@ -31,7 +31,6 @@
 #ifndef CRAB_CHANGEVAL_H
 #define CRAB_CHANGEVAL_H
 
-#include "crab/common_header.h"
 #include "crab/people/opinion.h"
 
 namespace Crab {

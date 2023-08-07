@@ -31,8 +31,10 @@
 #ifndef CRAB_GAMEPARAM_H
 #define CRAB_GAMEPARAM_H
 
+#include "common/str.h"
+#include "common/hashmap.h"
+#include "common/rect.h"
 #include "crab/XMLDoc.h"
-#include "crab/common_header.h"
 #include "crab/loaders.h"
 
 namespace Crab {

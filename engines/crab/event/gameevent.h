@@ -32,7 +32,6 @@
 #define CRAB_GAMEEVENT_H
 
 #include "crab/image/ImageManager.h"
-#include "crab/common_header.h"
 #include "crab/event/effect.h"
 #include "crab/event/eventstore.h"
 #include "crab/people/person.h"

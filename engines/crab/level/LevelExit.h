@@ -34,7 +34,6 @@
 #include "crab/event/GameEventInfo.h"
 #include "crab/image/ImageManager.h"
 #include "crab/Shape.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 
