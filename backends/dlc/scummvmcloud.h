@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef BACKENDS_DLC_SCUMMVMCLOUD_SCUMMVMCLOUD_H
-#define BACKENDS_DLC_SCUMMVMCLOUD_SCUMMVMCLOUD_H
+#ifndef BACKENDS_DLC_SCUMMVMCLOUD_H
+#define BACKENDS_DLC_SCUMMVMCLOUD_H
 
 #include "common/queue.h"
 
@@ -33,7 +33,7 @@
 namespace DLC {
 namespace ScummVMCloud {
 
-class ScummVMCloud: public DLC::Store {
+class ScummVMCloud : public DLC::Store {
 
 Networking::SessionRequest *_rq;
 
