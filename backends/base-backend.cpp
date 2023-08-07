@@ -103,9 +103,9 @@ void BaseBackend::initBackend() {
 }
 
 bool BaseBackend::hasFeature(Feature f) {
-	if (f == kFeatureSSE2) return _cpuFeatures & kCpuFeatureSSE2;
-	if (f == kFeatureAVX2) return _cpuFeatures & kCpuFeatureAVX2;
-	if (f == kFeatureNEON) return _cpuFeatures & kCpuFeatureNEON;
+	if (f == kFeatureCpuSSE2) return _cpuFeatures & kCpuFeatureSSE2;
+	if (f == kFeatureCpuAVX2) return _cpuFeatures & kCpuFeatureAVX2;
+	if (f == kFeatureCpuNEON) return _cpuFeatures & kCpuFeatureNEON;
 	return false;
 }
 

@@ -645,7 +645,7 @@ bool OSystem_Android::hasFeature(Feature f) {
 	if (f == kFeatureOpenGLForGame) return true;
 	/* GLES2 always supports shaders */
 	if (f == kFeatureShadersForGame) return true;
-	if (f == kFeatureNEON) return _neonSupport;
+	if (f == kFeatureCpuNEON) return _neonSupport;
 	return ModularGraphicsBackend::hasFeature(f);
 }
 

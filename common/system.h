@@ -584,28 +584,28 @@ public:
 		* Arm-v8 requires NEON extensions, but before that, NEON was just
 		* optional, so this signifies that the processor can use NEON.
 		*/
-		kFeatureNEON,
+		kFeatureCpuNEON,
 
 		/**
 		* For x86/x86_64 platforms that have SSE2 support
 		*/
-		kFeatureSSE2,
+		kFeatureCpuSSE2,
 
 		/**
 		* For x86/x86_64 platforms that have SSE4.1 support
 		*/
-		kFeatureSSE41,
+		kFeatureCpuSSE41,
 
 		/**
 		* For x86_64 platforms that have AVX2 support
 		*/
-		kFeatureAVX2,
+		kFeatureCpuAVX2,
 
 		/**
 		* For PowerPC platforms that have the altivec standard as of 1999.
 		* Covers a wide range of platforms, Apple Macs, XBox 360, PS3, and more
 		*/
-		kFeatureAltivec,
+		kFeatureCpuAltivec,
 	};
 
 	/**
