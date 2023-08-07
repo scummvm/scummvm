@@ -580,7 +580,7 @@ void Room101::daemon() {
 			break;
 
 		case 20:
-			_G(roomVal1) = 11;
+			_G(roomVal1) = 21;
 			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, gTELEPORT, 3, 6, 100, 0, -53);
 			break;
 
