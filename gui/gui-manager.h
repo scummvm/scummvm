@@ -194,8 +194,8 @@ protected:
 	} _lastTooltipShown;
 
 	// mouse cursor state
-	int		_cursorAnimateCounter;
-	int		_cursorAnimateTimer;
+	uint32	_cursorAnimateCounter;
+	uint32	_cursorAnimateTimer;
 	byte	_cursor[2048];
 
 	// delayed deletion of GuiObject
