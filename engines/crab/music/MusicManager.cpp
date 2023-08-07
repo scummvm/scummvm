@@ -28,11 +28,11 @@
  *
  */
 
-
-#include "crab/music/MusicManager.h"
+#include "common/config-manager.h"
+#include "crab/crab.h"
 #include "crab/ScreenSettings.h"
 #include "crab/XMLDoc.h"
-#include "crab/crab.h"
+#include "crab/music/MusicManager.h"
 
 namespace Crab {
 

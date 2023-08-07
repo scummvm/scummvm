@@ -28,6 +28,7 @@
  *
  */
 
+#include "graphics/screen.h"
 #include "crab/crab.h"
 #include "crab/Rectangle.h"
 

@@ -27,6 +27,8 @@
  * Licensed under MIT
  *
  */
+
+#include "graphics/screen.h"
 #include "crab/crab.h"
 #include "crab/LoadingScreen.h"
 #include "crab/XMLDoc.h"

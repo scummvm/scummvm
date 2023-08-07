@@ -27,9 +27,11 @@
  * Licensed under MIT
  *
  */
+#include "common/system.h"
 #include "common/translation.h"
-
 #include "crab/crab.h"
+#include "crab/loaders.h"
+#include "crab/XMLDoc.h"
 #include "crab/input/input.h"
 
 namespace Crab {

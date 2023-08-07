@@ -22,23 +22,16 @@
 #ifndef CRAB_H
 #define CRAB_H
 
-#include "common/error.h"
-#include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
-#include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/system.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "engines/savestate.h"
-#include "graphics/screen.h"
-#include "crab/input/input.h"
-#include "crab/music/MusicManager.h"
-#include "crab/ScreenSettings.h"
-#include "crab/GameParam.h"
 
 #include "crab/detection.h"
+
+namespace Graphics {
+class ManagedSurface;
+class PixelFormat;
+class Screen;
+} // End of namespace Graphics
 
 namespace Crab {
 
@@ -47,7 +40,10 @@ struct CrabGameDescription;
 
 class LoadingScreen;
 
+class FilePaths;
+class TempValue;
 class StringPool;
+class ScreenSettings;
 
 namespace pyrodactyl {
 namespace event {
@@ -70,7 +66,12 @@ class ImageManager;
 
 namespace input {
 class Cursor;
+class InputManager;
 } // End of namespace input
+
+namespace music {
+class MusicManager;
+} // End of namespace music
 
 namespace text {
 class TextManager;
@@ -151,9 +152,8 @@ public:
 	bool canLoadGameStateCurrently() override {
 		return true;
 	}
-	bool canSaveGameStateCurrently() override {
-		return _screenSettings->_inGame;
-	}
+
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Uses a serializer to allow implementing savegame

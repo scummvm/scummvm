@@ -28,6 +28,7 @@
  *
  */
 
+#include "graphics/managed_surface.h"
 #include "crab/crab.h"
 #include "crab/ui/SectionHeader.h"
 

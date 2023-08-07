@@ -19,17 +19,16 @@
  *
  */
 
-#include "crab/crab.h"
+
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "crab/console.h"
-#include "crab/detection.h"
-#include "crab/ScreenSettings.h"
-#include "crab/app.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
+#include "graphics/managed_surface.h"
 #include "graphics/palette.h"
+#include "graphics/screen.h"
+#include "crab/crab.h"
+#include "crab/app.h"
+#include "crab/console.h"
 
 namespace Crab {
 
@@ -169,6 +168,10 @@ Common::Error CrabEngine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+bool CrabEngine::canSaveGameStateCurrently() {
+	return _screenSettings->_inGame;
 }
 
 } // End of namespace Crab

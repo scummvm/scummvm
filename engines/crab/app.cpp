@@ -29,6 +29,7 @@
  */
 
 #include "common/events.h"
+#include "graphics/screen.h"
 #include "crab/app.h"
 
 namespace Crab {

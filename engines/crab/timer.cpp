@@ -32,6 +32,7 @@
 // Author:   Arvind
 // Purpose:  Timer functions
 //=============================================================================
+#include "common/system.h"
 #include "crab/timer.h"
 
 namespace Crab {

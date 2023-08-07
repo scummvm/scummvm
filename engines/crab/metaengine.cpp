@@ -18,18 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-#include "common/translation.h"
-
-#include "crab/crab.h"
-#include "crab/detection.h"
-#include "crab/metaengine.h"
-
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/standard-actions.h"
-
+#include "common/translation.h"
 #include "graphics/scaler.h"
+
+#include "crab/crab.h"
+#include "crab/metaengine.h"
+#include "crab/input/input.h"
 
 namespace Crab {
 
