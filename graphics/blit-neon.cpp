@@ -194,7 +194,7 @@ struct AdditiveBlend {
 			srcr = vandq_u32(vaddq_u32(dstr, vshrq_n_u32(vmulq_u32(srcr, vmulq_u32(vmovq_n_u32(cr), ina)), BlendBlit::kRModShift - 16)), vmovq_n_u32(BlendBlit::kRModMask));
 
     	    src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
-    	    src = vorrq_u32(src, vorrq_u32(srcb, vorrq_u32(srcg, srcb)));
+    	    src = vorrq_u32(src, vorrq_u32(srcb, vorrq_u32(srcg, srcr)));
     	} else if (alphamod) {
     	    uint32x4_t srcg = vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask));
     	    uint32x4_t srcrb = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
