@@ -3332,7 +3332,7 @@ void cb_SaveLoad_Load(void *, void *theMenu) {
 	_G(kernel).restore_slot = _GM(slotSelected);
 	oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_trigger_dispatch(kernel_trigger_create(TRIG_RESTORE_GAME));
+	kernel_trigger_dispatchx(kernel_trigger_create(TRIG_RESTORE_GAME));
 	_G(kernel).trigger_mode = oldMode;
 }
 

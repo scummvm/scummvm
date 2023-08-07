@@ -56,7 +56,7 @@ extern int32 kernel_trigger_create_mode(int32 trigger_num, int32 desired_mode);
 /**
  * Dispatches a trigger
  */
-extern bool kernel_trigger_dispatch(int32 trigger_num);
+extern bool kernel_trigger_dispatchx(int32 trigger_num);
 
 /**
  * Dispatches a trigger.

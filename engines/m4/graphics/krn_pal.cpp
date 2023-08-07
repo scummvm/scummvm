@@ -364,7 +364,7 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 	krn_pal_game_task();
 
 	// set in kernel_examine_inventory_object (above)
-	kernel_trigger_dispatch(_GP(myFadeTrigger));
+	kernel_trigger_dispatchx(_GP(myFadeTrigger));
 
 	//	gr_pal_set(master_palette);
 
@@ -616,7 +616,7 @@ void pal_fade_set_start(RGB8 *origPalette, int32 percent) {
 }
 
 static void pal_cycle_callback(frac16 myMessage) {
-	kernel_trigger_dispatch((uint32)myMessage);
+	kernel_trigger_dispatchx((uint32)myMessage);
 }
 
 void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry,

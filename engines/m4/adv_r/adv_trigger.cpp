@@ -47,21 +47,6 @@ bool kernel_trigger_dispatch_now(int32 trigger_num) {
 	return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
 }
 
-bool kernel_trigger_dispatch(int32 trigger) {
-#if 0
-	if (trigger == -1 || trigger == 65535 || _G(between_rooms))
-		return true;
-
-	_GT(sound_trigger_q)[_GT(q_end)++] = trigger;
-	if (_GT(q_end) == _GT(q_start))
-		error_show(FL, 'QOVF');
-
-	return true;
-#else
-	error("TODO: Probably meant to call dispatchx");
-#endif
-}
-
 void cisco_dispatch_triggers() {
 	for (int i = 0; i < _GT(q_end); ++i) {
 		kernel_trigger_dispatchx(_GT(sound_trigger_q)[i]);
@@ -170,7 +155,7 @@ void kernel_service_timing_trigger_q() {
 
 	while (iter < _GT(time_q_end) && _GT(time_q)[iter] <= now)
 	{
-		kernel_trigger_dispatch(_GT(time_trigger_q)[iter]);
+		kernel_trigger_dispatchx(_GT(time_trigger_q)[iter]);
 		++iter;
 	}
 	if (!iter)

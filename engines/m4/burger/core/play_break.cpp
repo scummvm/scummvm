@@ -72,7 +72,7 @@ static void set_next_series_play_break(int32 slot) {
 			} else {
 				// No sound to play so see if there is a trigger to dispatch
 				if (player->current_break.trigger != NO_TRIGGER) {
-					kernel_trigger_dispatch(kernel_trigger_create(player->current_break.trigger));
+					kernel_trigger_dispatchx(kernel_trigger_create(player->current_break.trigger));
 				}
 			}
 
