@@ -237,6 +237,9 @@ private:
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 LOGIC_FUNCS_EXT(NEON)
 #endif
+#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+LOGIC_FUNCS_EXT(SSE2)
+#endif
 LOGIC_FUNCS_EXT(Generic)
 #undef LOGIC_FUNCS_EXT
 
