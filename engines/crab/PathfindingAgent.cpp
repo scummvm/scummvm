@@ -111,7 +111,7 @@ void PathfindingAgent::setDestination(Vector2f d, bool r) {
 void PathfindingAgent::update(uint32 timeslice) {
 
 	uint32 prevTime = g_system->getMillis();
-	uint32 time = timeslice;
+	uint32 timeLeft = timeslice;
 
 	double dTempCost;
 
@@ -199,11 +199,11 @@ void PathfindingAgent::update(uint32 timeslice) {
 
 		// Update the time
 		if (timeslice != 0) {
-			time -= (g_system->getMillis() - prevTime);
+			timeLeft -= (g_system->getMillis() - prevTime);
 			prevTime = g_system->getMillis();
 		}
 
-	} while (!isDone() && ((int32)time >= 0 || timeslice == 0));
+	} while (!isDone() && ((int32)timeLeft >= 0 || timeslice == 0));
 	_noSolution = true; // You can't get there from here (SZ)
 }
 
