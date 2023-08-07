@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace TMX;
 
-PathfindingGrid::PathfindingGrid(void) {
+PathfindingGrid::PathfindingGrid() {
 	_blockedCost = BLOCKED;
 	_openCost = OPEN;
 	_stairsCost = STAIRS;
@@ -48,7 +48,7 @@ PathfindingGrid::PathfindingGrid(void) {
 	_cellSize.y = 0.0;
 }
 
-PathfindingGrid::~PathfindingGrid(void) {
+PathfindingGrid::~PathfindingGrid() {
 	reset();
 }
 

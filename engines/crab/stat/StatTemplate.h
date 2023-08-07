@@ -42,8 +42,8 @@ struct StatTemplates {
 	Common::Array<StatGroup> _collection;
 
 public:
-	StatTemplates(void) {}
-	~StatTemplates(void) {}
+	StatTemplates() {}
+	~StatTemplates() {}
 
 	void load(const Common::String &filename);
 };

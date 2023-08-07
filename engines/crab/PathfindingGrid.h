@@ -64,8 +64,8 @@ public:
 	int _openCost;
 	int _stairsCost;
 
-	PathfindingGrid(void);
-	~PathfindingGrid(void);
+	PathfindingGrid();
+	~PathfindingGrid();
 
 	void reset();
 

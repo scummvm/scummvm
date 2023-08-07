@@ -50,7 +50,7 @@ private:
 	Game *_game;
 	void loadSettings(const Common::String &filename);
 public:
-	~App(void);
+	~App();
 
 	void run();
 	Game *getGame() const {

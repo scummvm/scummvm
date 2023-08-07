@@ -57,11 +57,11 @@ class GameOverMenu {
 	ButtonMenu _menu;
 
 public:
-	GameOverMenu(void) {
+	GameOverMenu() {
 		_cur = 0;
 	}
 
-	~GameOverMenu(void) {}
+	~GameOverMenu() {}
 
 	void reset() {
 	warning("STUB: GameOverMenu::reset()");

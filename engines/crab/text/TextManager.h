@@ -96,12 +96,12 @@ class TextManager {
 	int findFreeSlot();
 
 public:
-	TextManager(void) {
+	TextManager() {
 		_oldest = 0;
 		_cacheSize = 30;
 	}
 
-	~TextManager(void) {}
+	~TextManager() {}
 
 	void init();
 	void quit();

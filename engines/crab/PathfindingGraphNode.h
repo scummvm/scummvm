@@ -54,10 +54,10 @@ public:
 	Common::Array<float> _neighborCosts; // The movement cost for the neighbor nodes (distance to the node X the nodes movement cost)
 									  // This is stored to prevent having to recalculate each frame.
 
-	PathfindingGraphNode(void);
+	PathfindingGraphNode();
 	PathfindingGraphNode(Vector2f pos, int i);
 
-	~PathfindingGraphNode(void);
+	~PathfindingGraphNode();
 
 	float getMovementCost() {
 		return _movementCost;
