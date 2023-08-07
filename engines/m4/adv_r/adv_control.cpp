@@ -163,7 +163,7 @@ void update_mouse_pos_dialog() {
 	assert(game_buff_ptr);
 
 	if (_G(my_walker) != nullptr) {
-		if (((int32)_G(my_walker)->myAnim8) < 0)
+		if (!_G(my_walker)->myAnim8)
 			error_show(FL, 'W:-(');
 		player_get_info();
 	}
