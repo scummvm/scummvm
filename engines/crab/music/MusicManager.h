@@ -34,7 +34,6 @@
 #include "audio/mixer.h"
 #include "audio/decoders/wave.h"
 #include "crab/GameParam.h"
-#include "crab/common_header.h"
 #include "crab/music/musicparam.h"
 
 namespace Crab {

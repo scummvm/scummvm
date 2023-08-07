@@ -30,7 +30,6 @@
 
 #ifndef CRAB_EVENTSEQUENCE_H
 #define CRAB_EVENTSEQUENCE_H
-#include "crab/common_header.h"
 
 #include "crab/event/GameEventInfo.h"
 #include "crab/image/ImageManager.h"

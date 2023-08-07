@@ -33,7 +33,6 @@
 
 #include "crab/image/ImageManager.h"
 #include "crab/ScreenSettings.h"
-#include "crab/common_header.h"
 #include "crab/vectors.h"
 #include "crab/Rectangle.h"
 

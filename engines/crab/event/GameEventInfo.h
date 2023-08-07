@@ -33,7 +33,6 @@
 
 #include "crab/ui/Inventory.h"
 #include "crab/stat/StatTemplate.h"
-#include "crab/common_header.h"
 #include "crab/ui/journal.h"
 #include "crab/people/person.h"
 

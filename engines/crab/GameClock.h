@@ -31,7 +31,6 @@
 #ifndef CRAB_GAMECLOCK_H
 #define CRAB_GAMECLOCK_H
 
-#include "crab/common_header.h"
 #include "crab/timer.h"
 
 namespace Crab {

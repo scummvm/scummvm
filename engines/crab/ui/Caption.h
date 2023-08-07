@@ -30,7 +30,6 @@
 
 #ifndef CRAB_CAPTION_H
 #define CRAB_CAPTION_H
-#include "crab/common_header.h"
 
 #include "crab/ui/TextData.h"
 

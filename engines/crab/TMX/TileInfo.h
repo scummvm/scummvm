@@ -30,7 +30,6 @@
 
 #ifndef CRAB_TILEINFO_H
 #define CRAB_TILEINFO_H
-#include "crab/common_header.h"
 
 #include "crab/loaders.h"
 

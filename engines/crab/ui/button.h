@@ -40,7 +40,6 @@
 #include "crab/image/ImageManager.h"
 #include "crab/music/MusicManager.h"
 #include "crab/text/TextManager.h"
-#include "crab/common_header.h"
 #include "crab/ui/element.h"
 #include "crab/input/hotkey.h"
 

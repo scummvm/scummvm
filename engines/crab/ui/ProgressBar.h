@@ -32,7 +32,6 @@
 #define CRAB_PROGRESSBAR_H
 
 #include "crab/ui/ClipButton.h"
-#include "crab/common_header.h"
 #include "crab/timer.h"
 
 namespace Crab {

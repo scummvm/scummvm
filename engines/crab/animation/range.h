@@ -32,7 +32,6 @@
 #define CRAB_RANGE_H
 
 #include "crab/animation/animframe.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

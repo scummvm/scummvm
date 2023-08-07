@@ -32,7 +32,6 @@
 #define CRAB_LOADINGSCREEN_H
 
 #include "crab/image/Image.h"
-#include "crab/common_header.h"
 #include "crab/timer.h"
 #include "crab/vectors.h"
 

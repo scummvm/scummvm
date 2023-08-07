@@ -32,7 +32,6 @@
 #define CRAB_STAIRS_H
 
 #include "crab/Shape.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

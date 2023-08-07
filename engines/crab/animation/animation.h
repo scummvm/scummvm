@@ -33,7 +33,6 @@
 
 #include "crab/animation/AnimationEffect.h"
 #include "crab/animation/AnimationFrame.h"
-#include "crab/common_header.h"
 #include "crab/timer.h"
 
 namespace Crab {

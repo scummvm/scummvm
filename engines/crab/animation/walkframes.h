@@ -32,7 +32,6 @@
 #define CRAB_WALKFRAMES_H
 
 #include "crab/animation/animframe.h"
-#include "crab/common_header.h"
 #include "crab/ai/movement.h"
 #include "crab/people/personbase.h"
 #include "crab/timer.h"

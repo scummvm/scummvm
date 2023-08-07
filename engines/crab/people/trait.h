@@ -32,7 +32,6 @@
 #define CRAB_TRAIT_H
 
 #include "crab/image/ImageManager.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

@@ -38,7 +38,6 @@
 #include "crab/ui/ImageData.h"
 #include "crab/ui/PageMenu.h"
 #include "crab/ui/TextData.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

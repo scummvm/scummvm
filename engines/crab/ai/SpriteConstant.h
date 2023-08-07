@@ -31,7 +31,6 @@
 #ifndef CRAB_SPRITECONSTANT_H
 #define CRAB_SPRITECONSTANT_H
 
-#include "crab/common_header.h"
 #include "crab/vectors.h"
 
 namespace Crab {

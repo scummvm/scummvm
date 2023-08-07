@@ -33,7 +33,6 @@
 
 #include "crab/ui/ParagraphData.h"
 #include "crab/ui/TraitButton.h"
-#include "crab/common_header.h"
 #include "crab/ui/menu.h"
 #include "crab/people/person.h"
 

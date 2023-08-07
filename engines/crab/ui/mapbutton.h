@@ -30,7 +30,6 @@
 
 #ifndef CRAB_MAPBUTTON_H
 #define CRAB_MAPBUTTON_H
-#include "crab/common_header.h"
 
 #include "crab/ui/menu.h"
 #include "crab/event/triggerset.h"

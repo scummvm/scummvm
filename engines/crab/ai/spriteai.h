@@ -31,7 +31,6 @@
 #ifndef CRAB_SPRITEAI_H
 #define CRAB_SPRITEAI_H
 
-#include "crab/common_header.h"
 #include "crab/ai/movement.h"
 #include "crab/PathfindingAgent.h"
 

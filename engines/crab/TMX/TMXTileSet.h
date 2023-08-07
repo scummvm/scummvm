@@ -33,7 +33,6 @@
 
 #include "crab/image/Image.h"
 #include "crab/TMX/TMXLayer.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

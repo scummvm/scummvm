@@ -32,7 +32,6 @@
 #define CRAB_SAVEGAMEMENU_H
 
 #include "crab/ui/FileMenu.h"
-#include "crab/common_header.h"
 #include "crab/ui/textarea.h"
 
 namespace Crab {

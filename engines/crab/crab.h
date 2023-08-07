@@ -33,10 +33,7 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
-#include "crab/image/ImageManager.h"
-#include "crab/input/cursor.h"
 #include "crab/input/input.h"
-#include "crab/text/TextManager.h"
 #include "crab/music/MusicManager.h"
 #include "crab/ScreenSettings.h"
 #include "crab/GameParam.h"
@@ -66,6 +63,18 @@ class FileMenu;
 
 class SaveFileData;
 } // End of namespace ui
+
+namespace image {
+class ImageManager;
+} // End of namespace image
+
+namespace input {
+class Cursor;
+} // End of namespace input
+
+namespace text {
+class TextManager;
+} // End of namespace text
 
 } // End of namespace pyrodactyl
 

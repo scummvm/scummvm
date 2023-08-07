@@ -30,7 +30,6 @@
 
 #ifndef CRAB_NUMSTR_H
 #define CRAB_NUMSTR_H
-#include "crab/common_header.h"
 
 namespace Crab {
 

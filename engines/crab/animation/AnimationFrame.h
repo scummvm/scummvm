@@ -35,7 +35,6 @@
 #include "crab/ui/HoverInfo.h"
 #include "crab/image/ImageManager.h"
 #include "crab/text/TextManager.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

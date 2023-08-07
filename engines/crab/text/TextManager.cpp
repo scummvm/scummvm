@@ -28,9 +28,11 @@
  *
  */
 
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 #include "crab/crab.h"
-#include "crab/text/TextManager.h"
 #include "crab/XMLDoc.h"
+#include "crab/text/TextManager.h"
 
 namespace Crab {
 

@@ -39,7 +39,6 @@
 #include "crab/image/Image.h"
 //#include "crab/LoadingScreen.h"
 #include "crab/TMX/TMXTileSet.h"
-#include "crab/common_header.h"
 #include "crab/input/cursor.h"
 #include "crab/loaders.h"
 

@@ -34,7 +34,6 @@
 #include "crab/image/Image.h"
 #include "crab/Rectangle.h"
 #include "crab/TMX/TileInfo.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

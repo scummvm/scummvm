@@ -33,7 +33,6 @@
 
 #include "crab/Polygon.h"
 #include "crab/Rectangle.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

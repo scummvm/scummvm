@@ -32,10 +32,13 @@
 #define CRAB_TEXTMANAGER_H
 
 #include "crab/GameParam.h"
+#include "crab/vectors.h"
 #include "crab/image/Image.h"
 #include "crab/text/color.h"
-#include "crab/common_header.h"
-#include "crab/vectors.h"
+
+namespace Graphics {
+class Font;
+} // End of namespace Graphics
 
 namespace Crab {
 

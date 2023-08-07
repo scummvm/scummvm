@@ -37,7 +37,6 @@
 #include "crab/ui/KeyBindMenu.h"
 #include "crab/ui/StateButton.h"
 #include "crab/ui/ToggleButton.h"
-#include "crab/common_header.h"
 #include "crab/ui/slider.h"
 #include "crab/timer.h"
 

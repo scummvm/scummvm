@@ -32,7 +32,6 @@
 #define CRAB_LEVEL_OBJECTS_H
 
 #include "crab/image/ImageManager.h"
-#include "crab/common_header.h"
 #include "crab/Rectangle.h"
 
 namespace Crab {

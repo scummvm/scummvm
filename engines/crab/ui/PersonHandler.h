@@ -33,7 +33,6 @@
 
 #include "crab/event/GameEventInfo.h"
 #include "crab/ui/ProgressBar.h"
-#include "crab/common_header.h"
 #include "crab/ui/dialogbox.h"
 #include "crab/event/gameevent.h"
 #include "crab/people/person.h"

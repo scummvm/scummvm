@@ -40,7 +40,6 @@
 #include "crab/ui/OptionMenu.h"
 #include "crab/ui/SlideShow.h"
 #include "crab/ui/StateButton.h"
-#include "crab/common_header.h"
 #include "crab/input/cursor.h"
 #include "crab/gamestate_container.h"
 #include "crab/gamestates.h"

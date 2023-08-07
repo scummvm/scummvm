@@ -32,7 +32,6 @@
 #define CRAB_SCREENSETTINGS_H
 
 #include "crab/GameParam.h"
-#include "crab/common_header.h"
 #include "crab/loaders.h"
 
 

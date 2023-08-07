@@ -31,7 +31,6 @@
 #ifndef CRAB_ANIMSET_H
 #define CRAB_ANIMSET_H
 
-#include "crab/common_header.h"
 #include "crab/animation/fightmoves.h"
 #include "crab/animation/shadow.h"
 #include "crab/animation/walkframes.h"

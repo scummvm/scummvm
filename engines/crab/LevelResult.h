@@ -30,7 +30,6 @@
 
 #ifndef CRAB_LEVELRESULT_H
 #define CRAB_LEVELRESULT_H
-#include "crab/common_header.h"
 
 #include "crab/image/ImageManager.h"
 

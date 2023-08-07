@@ -32,7 +32,6 @@
 #define CRAB_RECTANGLE_H
 
 #include "crab/Line.h"
-#include "crab/common_header.h"
 #include "crab/vectors.h"
 
 namespace Crab {

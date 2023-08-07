@@ -30,7 +30,6 @@
 
 #ifndef CRAB_HEALTHINDICATOR_H
 #define CRAB_HEALTHINDICATOR_H
-#include "crab/common_header.h"
 
 #include "crab/image/ImageManager.h"
 

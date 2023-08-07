@@ -32,7 +32,6 @@
 #define CRAB_PATHFINDINGGRID_H
 
 #include "crab/PathfindingGraphNode.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

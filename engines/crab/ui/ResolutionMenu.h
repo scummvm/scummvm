@@ -30,7 +30,6 @@
 
 #ifndef CRAB_RESOLUTIONMENU_H
 #define CRAB_RESOLUTIONMENU_H
-#include "crab/common_header.h"
 
 #include "crab/ui/menu.h"
 #include "crab/ui/textarea.h"

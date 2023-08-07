@@ -30,7 +30,6 @@
 
 #ifndef CRAB_STAT_H
 #define CRAB_STAT_H
-#include "crab/common_header.h"
 
 #include "crab/image/ImageManager.h"
 //#include "crab/text/TextManager.h"

@@ -31,7 +31,6 @@
 #ifndef CRAB_PRIORITYQUEUE_H
 #define CRAB_PRIORITYQUEUE_H
 
-#include "crab/common_header.h"
 
 namespace Crab {
 

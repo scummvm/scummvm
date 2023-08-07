@@ -32,7 +32,6 @@
 #define CRAB_TEXTDATA_H
 
 #include "crab/text/TextManager.h"
-#include "crab/common_header.h"
 #include "crab/ui/element.h"
 
 namespace Crab {

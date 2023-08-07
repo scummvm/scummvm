@@ -39,7 +39,6 @@
 #include "crab/Shape.h"
 #include "crab/level/Stairs.h"
 #include "crab/TMX/TMXTileSet.h"
-#include "crab/common_header.h"
 #include "crab/ai/spriteai.h"
 
 namespace Crab {

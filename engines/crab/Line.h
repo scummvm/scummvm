@@ -32,7 +32,6 @@
 #define CRAB_LINE_H
 
 #include "crab/ScreenSettings.h"
-#include "crab/common_header.h"
 #include "crab/vectors.h"
 
 namespace Crab {

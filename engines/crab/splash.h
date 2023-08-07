@@ -41,7 +41,6 @@
 #include "crab/music/MusicManager.h"
 #include "crab/ScreenSettings.h"
 #include "crab/text/TextManager.h"
-#include "crab/common_header.h"
 #include "crab/gamestate_container.h"
 #include "crab/gamestates.h"
 #include "crab/timer.h"

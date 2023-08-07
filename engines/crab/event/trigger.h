@@ -31,7 +31,6 @@
 #ifndef CRAB_TRIGGER_H
 #define CRAB_TRIGGER_H
 #include "crab/event/GameEventInfo.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

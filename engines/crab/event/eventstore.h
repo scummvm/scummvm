@@ -33,7 +33,6 @@
 
 #include "crab/ui/StateButton.h"
 #include "crab/animation/animation.h"
-#include "crab/common_header.h"
 #include "crab/event/conversationdata.h"
 
 namespace Crab {

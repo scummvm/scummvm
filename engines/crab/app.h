@@ -34,7 +34,6 @@
 #include "crab/crab.h"
 #include "crab/image/ImageManager.h"
 #include "crab/music/MusicManager.h"
-#include "crab/common_header.h"
 #include "crab/game.h"
 #include "crab/gamestates.h"
 #include "crab/gamestate_container.h"

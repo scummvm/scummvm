@@ -42,7 +42,6 @@
 #include "crab/ui/PauseMenu.h"
 #include "crab/ui/SlideShow.h"
 #include "crab/ui/StateButton.h"
-#include "crab/common_header.h"
 #include "crab/input/input.h"
 #include "crab/level/level_objects.h"
 #include "crab/level/talknotify.h"

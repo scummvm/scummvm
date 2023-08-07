@@ -30,7 +30,6 @@
 
 #ifndef CRAB_GAMESTATES_H
 #define CRAB_GAMESTATES_H
-#include "crab/common_header.h"
 
 namespace Crab {
 

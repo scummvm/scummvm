@@ -31,7 +31,6 @@
 #ifndef CRAB_GAMEEVENTMANAGER_H
 #define CRAB_GAMEEVENTMANAGER_H
 
-#include "crab/common_header.h"
 #include "crab/event/EventSeqGroup.h"
 #include "crab/level/level.h"
 #include "crab/ui/ChapterIntro.h"

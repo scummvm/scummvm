@@ -33,7 +33,6 @@
 
 #include "crab/item/ItemMenu.h"
 #include "crab/stat/StatDrawHelper.h"
-#include "crab/common_header.h"
 
 namespace Crab {
 

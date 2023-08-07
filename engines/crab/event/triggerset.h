@@ -31,7 +31,6 @@
 #ifndef CRAB_TRIGGERSET_H
 #define CRAB_TRIGGERSET_H
 
-#include "crab/common_header.h"
 #include "crab/event/trigger.h"
 
 namespace Crab {

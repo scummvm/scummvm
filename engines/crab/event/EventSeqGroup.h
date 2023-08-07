@@ -30,7 +30,6 @@
 
 #ifndef CRAB_EVENTSEQGROUP_H
 #define CRAB_EVENTSEQGROUP_H
-#include "crab/common_header.h"
 
 #include "crab/event/EventSequence.h"
 

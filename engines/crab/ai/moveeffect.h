@@ -31,7 +31,6 @@
 #ifndef CRAB_MOVEEFFECT_H
 #define CRAB_MOVEEFFECT_H
 
-#include "crab/common_header.h"
 #include "crab/animation/imageeffect.h"
 #include "crab/music/musicparam.h"
 

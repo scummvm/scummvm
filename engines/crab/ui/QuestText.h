@@ -34,7 +34,6 @@
 #include "crab/ui/ImageData.h"
 #include "crab/ui/ParagraphData.h"
 #include "crab/ui/button.h"
-#include "crab/common_header.h"
 #include "crab/event/quest.h"
 
 namespace Crab {
