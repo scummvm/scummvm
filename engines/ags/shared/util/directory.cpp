@@ -56,7 +56,7 @@ bool CreateAllDirectories(const String &parent, const String &sub_dirs) {
 		const char *cur = sect + 1;
 		for (; *cur && *cur != '/' && *cur != PATH_ALT_SEPARATOR; ++cur);
 		// Skip empty dirs (duplicated separators etc)
-		if ((cur - sect == 1) && (*cur == '.' || *cur == '/' || *cur == PATH_ALT_SEPARATOR)) {
+		if ((cur - sect == 1) && (*sect == '.' || *sect == '/' || *sect == PATH_ALT_SEPARATOR)) {
 			sect = cur;
 			continue;
 		}
