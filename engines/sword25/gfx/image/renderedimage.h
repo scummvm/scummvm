@@ -38,7 +38,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/graphicengine.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Sword25 {
 
@@ -108,11 +108,11 @@ public:
 	bool isSolid() const override { return !_isTransparent; }
 
 private:
-	Graphics::TransparentSurface _surface;
+	Graphics::ManagedSurface _surface;
 	bool _doCleanup;
 	bool _isTransparent;
 
-	Graphics::Surface *_backSurface;
+	Graphics::ManagedSurface *_backSurface;
 
 	void checkForTransparency();
 };
