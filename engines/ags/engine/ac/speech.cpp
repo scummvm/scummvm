@@ -113,7 +113,7 @@ bool init_voicepak(const String &name) {
 		Debug::Printf(kDbgMsg_Info, "Voice pack found: %s", speech_file.GetCStr());
 		_GP(play).voice_avail = true;
 	} else {
-		Debug::Printf(kDbgMsg_Error, "Unable to init voice pack '%s', file not found or of unknown format.",
+		Debug::Printf(kDbgMsg_Info, "Was not able to init voice pack '%s': file not found or of unknown format.",
 			speech_file.GetCStr());
 	}
 
