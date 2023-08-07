@@ -48,8 +48,8 @@ Vars::Vars() : _digi(g_engine->_mixer) {
 Vars::~Vars() {
 	game_systems_shutdown();
 
-	sysfile_shutdown();
-	f_stream_Shutdown();
+	woodscript_shutdown();
+	dbg_ws_shutdown();
 	player_been_shutdown();
 	gui_system_shutdown();
 	gui_buffer_system_shutdown();
@@ -57,8 +57,8 @@ Vars::~Vars() {
 	gui_mouse_shutdown();
 	mem_stash_shutdown();
 	param_shutdown();
-	woodscript_shutdown();
-	dbg_ws_shutdown();
+	sysfile_shutdown();
+	f_stream_Shutdown();
 
 	g_vars = nullptr;
 }
