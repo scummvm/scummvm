@@ -42,6 +42,12 @@ DLCManager::DLCManager(): CommandSender(nullptr) {
 	_store = new DLC::ScummVMCloud::ScummVMCloud();
 }
 
+DLCManager::~DLCManager() {
+	for (uint32 i = 0; i < _dlcs.size(); ++i) {
+		delete _dlcs[i];
+	}
+}
+
 void DLCManager::init() {}
 
 void DLCManager::getAllDLCs() {

@@ -54,23 +54,25 @@ void ScummVMCloud::jsonCallbackGetAllDLCs(Networking::JsonResponse response) {
 		for (uint32 i = 0; i < items.size(); ++i) {
 			if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "ScummVMCloud")) continue;
 			Common::JSONObject item = items[i]->asObject();
-			Common::String id = item.getVal("id")->asString();
-			Common::String name = item.getVal("name")->asString();
-			Common::String url = item.getVal("url")->asString();
-			Common::String platform = item.getVal("platform")->asString();
-			Common::String gameid = item.getVal("gameid")->asString();
-			Common::String description = item.getVal("description")->asString();
-			Common::String language = item.getVal("language")->asString();
-			Common::String extra = item.getVal("extra")->asString();
-			Common::String engineid = item.getVal("engineid")->asString();
-			Common::String guioptions = item.getVal("guioptions")->asString();
-			uint32 size;
+
+			DLC::DLCDesc *dlc = new DLC::DLCDesc();
+			dlc->id = item.getVal("id")->asString();
+			dlc->name = item.getVal("name")->asString();
+			dlc->url = item.getVal("url")->asString();
+			dlc->platform = item.getVal("platform")->asString();
+			dlc->gameid = item.getVal("gameid")->asString();
+			dlc->description = item.getVal("description")->asString();
+			dlc->language = item.getVal("language")->asString();
+			dlc->extra = item.getVal("extra")->asString();
+			dlc->engineid = item.getVal("engineid")->asString();
+			dlc->guioptions = item.getVal("guioptions")->asString();
 			if (item.getVal("size")->isString()) {
-				size = item.getVal("size")->asString().asUint64();
+				dlc->size = item.getVal("size")->asString().asUint64();
 			} else {
-				size = item.getVal("size")->asIntegerNumber();
+				dlc->size = item.getVal("size")->asIntegerNumber();
 			}
-			DLCMan._dlcs.push_back(new DLCDesc{name, id, url, platform, gameid, description, language, extra, engineid, guioptions, size, i, DLCDesc::kAvailable});
+			dlc->idx = i;
+			DLCMan._dlcs.push_back(dlc);
 		}
 	}
 	// send refresh DLC list command to GUI
