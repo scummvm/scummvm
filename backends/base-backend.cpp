@@ -73,6 +73,7 @@ void BaseBackend::initBackend() {
 		 "mov %%edx, %0\n\t"
 		 "mov %%ecx, %2\n\t"
 		 "mov $7, %%eax\n\t"
+		 "mov $0, %%ecx\n\t"
 		 "cpuid\n\t"
 		 "mov %%ebx, %1\n\t"
 		 : "=rm" (ext_edx1), "=rm" (ext_ebx7), "=rm" (ext_ecx1)
@@ -85,7 +86,8 @@ void BaseBackend::initBackend() {
 		cpuid
 		mov ext_edx1,edx
 		mov ext_ecx1,ecx
-		mov ebx,7
+		mov eax,7
+		mov ecx,0
 		cpuid
 		mov ext_ebx7,ebx
 	}
