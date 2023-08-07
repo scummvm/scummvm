@@ -25,6 +25,7 @@
 
 #include "graphics/blit-neon.cpp"
 #include "graphics/blit-sse2.cpp"
+#include "graphics/blit-avx2.cpp"
 
 namespace Graphics {
 
@@ -545,6 +546,9 @@ void BlendBlit::blit(byte *dst, const byte *src,
 #ifdef SCUMMVM_SSE2
 	if (g_system->hasFeature(OSystem::kFeatureSSE2)) blitFunc = blitSSE2;
 #endif
+#ifdef SCUMMVM_AVX2
+	if (g_system->hasFeature(OSystem::kFeatureAVX2)) blitFunc = blitAVX2;
+#endif
 	}
 	
 	Args args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, colorMod, flipping);
@@ -678,6 +682,9 @@ BLIT_FUNC(NEON)
 #endif
 #ifdef SCUMMVM_SSE2
 BLIT_FUNC(SSE2)
+#endif
+#ifdef SCUMMVM_AVX2
+BLIT_FUNC(AVX2)
 #endif
 
 } // End of namespace Graphics
