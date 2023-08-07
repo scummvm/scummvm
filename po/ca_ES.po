@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-06 21:07+0000\n"
+"POT-Creation-Date: 2023-08-06 23:03+0000\n"
 "PO-Revision-Date: 2023-07-21 07:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5718,12 +5718,12 @@ msgid "Save file created by different version."
 msgstr "El fitxer de la partida desada va ser creat per una versió diferent."
 
 #: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1499
-#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:582
+#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:585
 msgid "Failed to load saved game from file."
 msgstr "No s'ha pogut carregar la partida desada al fitxer."
 
 #: engines/gob/inter_v2.cpp:1569 engines/gob/inter_v7.cpp:1407
-#: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:595
+#: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:598
 msgid "Failed to save game to file."
 msgstr "No s'ha pogut desar la partida al fitxer."
 
