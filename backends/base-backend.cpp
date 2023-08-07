@@ -64,8 +64,41 @@ void BaseBackend::initBackend() {
 	if (!_audiocdManager)
 		_audiocdManager = new DefaultAudioCDManager();
 #endif
-
+#if defined(__x86_64__) || defined(__i686__)
+	uint32 ext_edx1 = 0, ext_ebx7 = 0;
+#  ifdef __GNUC__
+	asm ("mov $1, %%eax\n\t"
+		 "cpuid\n\t"
+		 "mov %%edx, %0\n\t"
+		 "mov $7, %%eax\n\t"
+		 "cpuid\n\t"
+		 "mov %%ebx, %1\n\t"
+		 : "=rm" (ext_edx1), "=rm" (ext_ebx7)
+		 :
+		 : "eax", "ebx", "ecx", "edx");
+#  elif _MSC_VER
+	__asm
+	{
+		mov eax,1
+		cpuid
+		mov ext_edx1,edx
+		mov ebx,7
+		cpuid
+		mov ext_ebx7,ebx
+	}
+#  endif // __GNUC__ and _MSC_VER
+	_x86features = (ext_edx1 & (1 << 26)) ? kX86FeatureSSE2 : kX86NoFeatures;
+	_x86features |= (ext_ebx7 & (1 << 5)) ? kX86FeatureAVX2 : kX86NoFeatures;
+#else
+	_x86features = kX86NotX86;
+#endif // __x86_64__ and __i686__
 	OSystem::initBackend();
+}
+
+bool BaseBackend::hasFeature(Feature f) {
+	if (f == kFeatureSSE2) return (_x86features & kX86FeatureSSE2) == kX86FeatureSSE2;
+	if (f == kFeatureAVX2) return (_x86features & kX86FeatureAVX2) == kX86FeatureAVX2;
+	return false;
 }
 
 void BaseBackend::fillScreen(uint32 col) {
