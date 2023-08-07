@@ -203,6 +203,7 @@ int  is_valid_character(int newchar);
 int  wantMoveNow(CharacterInfo *chi, CharacterExtras *chex);
 void setup_player_character(int charid);
 void CheckViewFrameForCharacter(CharacterInfo *chi);
+int  GetCharacterFrameVolume(CharacterInfo *chi);
 Shared::Bitmap *GetCharacterImage(int charid, int *isFlipped);
 CharacterInfo *GetCharacterAtScreen(int xx, int yy);
 CharacterInfo *GetCharacterAtRoom(int x, int y);
