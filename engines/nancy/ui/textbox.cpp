@@ -178,7 +178,7 @@ void Textbox::drawTextbox() {
 
 		// Simply remove telephone end token
 		if (currentLine.hasSuffix(_telephoneEndToken)) {
-			currentLine = currentLine.substr(0, currentLine.size() - ARRAYSIZE(_telephoneEndToken) + 1);
+			currentLine.erase(currentLine.size() - ARRAYSIZE(_telephoneEndToken) + 1, String::npos);
 		}
 
 		// Remove hotspot tokens and mark that we need to calculate the bounds
@@ -214,6 +214,11 @@ void Textbox::drawTextbox() {
 				newLinePos = currentLine.size();
 			}
 			colorTokens.push(newLinePos);
+		}
+
+		// A closing color token may appear without an open one. This happens in nancy4's intro
+		while (newLinePos = currentLine.find(_colorEndToken), newLinePos != String::npos) {
+			currentLine.erase(newLinePos, ARRAYSIZE(_colorEndToken) - 1);
 		}
 
 		// Do word wrapping on the text, sans tokens
