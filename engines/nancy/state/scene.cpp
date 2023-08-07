@@ -172,7 +172,7 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	if (nextState != NancyState::kPause) {
 		_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
 	}
-	
+
 	_actionManager.onPause(true);
 	pauseSceneSpecificSounds();
 	_gameStateRequested = NancyState::kNone;
@@ -181,7 +181,7 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	if (nextState == NancyState::kMap && g_nancy->getGameType() == kGameTypeVampire) {
 		_clock->registerGraphics();
 	}
-	
+
 	return false;
 }
 
@@ -610,7 +610,7 @@ PuzzleData *Scene::getPuzzleData(const uint32 tag) {
 		if (newData) {
 			_puzzleData.setVal(tag, newData);
 		}
-		
+
 		return newData;
 	}
 }
@@ -781,7 +781,7 @@ void Scene::handleInput() {
 			break;
 		}
 	}
-	
+
 	// Handle clock before viewport since it overlaps the left hotspot in TVD
 	if (_clock) {
 		_clock->handleInput(input);
@@ -814,7 +814,7 @@ void Scene::handleInput() {
 			}
 		}
 	}
-	
+
 	if (_helpButton) {
 		_helpButton->handleInput(input);
 
@@ -840,7 +840,7 @@ void Scene::initStaticData() {
 	// Init buttons
 	BSUM *bsum = g_nancy->_bootSummary;
 	assert(bsum);
-	
+
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_mapHotspot = bsum->extraButtonHotspot;
 	} else if (g_nancy->_mapData) {
@@ -850,7 +850,7 @@ void Scene::initStaticData() {
 	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->menuButtonSrc, bsum->menuButtonDest, bsum->menuButtonHighlightSrc);
 	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->helpButtonSrc, bsum->helpButtonDest, bsum->helpButtonHighlightSrc);
 	g_nancy->setMouseEnabled(true);
-	
+
 	// Init ornaments and clock (TVD only)
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_viewportOrnaments = new UI::ViewportOrnaments(9);

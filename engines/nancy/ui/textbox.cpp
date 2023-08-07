@@ -234,7 +234,7 @@ void Textbox::drawTextbox() {
 		bool isColor = false;
 		for (Common::String &line : wrappedLines) {
 			uint horizontalOffset = 0;
-			
+
 			// Trim whitespaces at end of wrapped lines to make counting
 			// of characters consistent. We do this manually since we _want_
 			// some whitespaces at the beginning of a line (e.g. tabs)
@@ -276,7 +276,7 @@ void Textbox::drawTextbox() {
 												tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist,
 												maxWidth,
 												isColor);
-				
+
 				// Then, draw the highlight
 				if (hasHotspot) {
 					highlightFont->drawString(	&_textHighlightSurface,
@@ -387,7 +387,7 @@ void Textbox::onScrollbarMove() {
 uint16 Textbox::getInnerHeight() const {
 	TBOX *tbox = g_nancy->_textboxData;
 	assert(tbox);
-	
+
 	// These calculations are _almost_ correct, but off by a pixel sometimes
 	uint lineDist = tbox->lineHeight + tbox->lineHeight / 4;
 	if (g_nancy->getGameType() == kGameTypeVampire) {

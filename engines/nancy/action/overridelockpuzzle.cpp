@@ -84,7 +84,7 @@ void OverrideLockPuzzle::execute() {
 	case kBegin: {
 		init();
 		registerGraphics();
-		
+
 		// Set the order of the button presses (always random)
 		// and of the lights (only random on expert difficulty)
 		uint numButtons = _buttonSrcs.size();
@@ -117,12 +117,12 @@ void OverrideLockPuzzle::execute() {
 			if (_popButtons == kButtonsPopUp) {
 				drawButton(_lastPushedButton, true);
 			}
-			
+
 			drawLights();
 
 			_lastPushedButton = -1;
 			_timeToPop = 0;
-			
+
 			for (uint i = 0; i < _playerOrder.size(); ++i) {
 				if (_playerOrder[i] != _buttonOrder[i]) {
 					// Wrong order, reset
@@ -195,7 +195,7 @@ void OverrideLockPuzzle::handleInput(NancyInput &input) {
 
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
-			
+
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				drawButton(i, false);
 				_lastPushedButton = i;

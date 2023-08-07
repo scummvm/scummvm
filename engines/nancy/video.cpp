@@ -248,13 +248,13 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 			warning("Decompressed size %d exceeds frame size %d", info.size, _frameSize);
 			return nullptr;
 		}
-		
+
 		decompBuf = (byte *)_surface->getPixels();
 	} else {
 		// For types 1 and 2, we decompress to a temp buffer for decoding
 		decompBuf = new byte[info.size];
 	}
-	
+
 	Common::SeekableSubReadStream input(_fileStream, info.offset, info.offset + info.compressedSize);
 
 	if (_compressed) {
@@ -268,7 +268,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 	} else {
 		// No compression, just copy the data
 		input.read(decompBuf, info.size);
-	}	
+	}
 
 	if (info.type != 0) {
 		Common::MemoryReadStream decompStr(decompBuf, info.size);
@@ -278,7 +278,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 	if (info.type != 0) {
 		delete[] decompBuf;
 	}
-	
+
 	_refFrame = frameNr;
 	return _surface;
 }

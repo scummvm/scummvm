@@ -95,7 +95,7 @@ void PlaySecondaryMovie::init() {
 	}
 
 	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
-	
+
 	if (_paletteName.size()) {
 		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
 		GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
@@ -104,7 +104,7 @@ void PlaySecondaryMovie::init() {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		setTransparent(true);
 		_fullFrame.setTransparentColor(_drawSurface.getTransparentColor());
-		
+
 		// TVD uses empty video files during the endgame ceremony
 		// This makes sure the screen doesn't go black while the sound is playing
 		_drawSurface.clear(_drawSurface.getTransparentColor());
@@ -143,7 +143,7 @@ void PlaySecondaryMovie::updateGraphics() {
 		GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteName.size() > 0);
 		_drawSurface.create(_fullFrame, _fullFrame.getBounds());
 		moveTo(_videoDescs[descID].destRect);
-		
+
 		_needsRedraw = true;
 
 		for (auto &f : _frameFlags) {
@@ -156,7 +156,7 @@ void PlaySecondaryMovie::updateGraphics() {
 	if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
 		(_decoder.getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
 		_decoder.atEnd()) {
-		
+
 		// Stop the video and block it from starting again, but also wait for
 		// sound to end before changing state
 		_decoder.stop();

@@ -99,7 +99,7 @@ void SetPlayerClock::execute() {
 		g_nancy->_sound->loadSound(_alarmRingSound);
 
 		_alarmHours = NancySceneState.getPlayerTime().getHours();
-		
+
 		Nancy::UI::Clock *clock = NancySceneState.getClock();
 		if (clock) {
 			clock->lockClock(true);
@@ -182,7 +182,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 			_needsRedraw = true;
 
 			g_nancy->_sound->playSound(_buttonSound);
-			
+
 			_state = kActionTrigger;
 			return;
 		}
@@ -200,7 +200,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 
 				g_nancy->_sound->playSound(_buttonSound);
 				_lastDrawnHours = _lastDrawnMinutes = -1;
-				
+
 				_alarmState = kAlarmMode;
 				_clearButton = true;
 				return;
@@ -217,7 +217,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 				_needsRedraw = true;
 
 				g_nancy->_sound->playSound(_buttonSound);
-				
+
 				_alarmState = kTimeMode;
 				_clearButton = true;
 				return;
@@ -233,7 +233,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 
 				g_nancy->_sound->playSound(_buttonSound);
 				_alarmHours = _alarmHours + 1 > 23 ? 0 : _alarmHours + 1;
-				
+
 				_clearButton = true;
 				return;
 			}
@@ -248,7 +248,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 
 				g_nancy->_sound->playSound(_buttonSound);
 				_alarmHours = _alarmHours - 1 < 0 ? 23 : _alarmHours - 1;
-				
+
 				_clearButton = true;
 				return;
 			}
@@ -262,7 +262,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 				_needsRedraw = true;
 
 				g_nancy->_sound->playSound(_buttonSound);
-				
+
 				_clearButton = true;
 				_state = kActionTrigger;
 				_alarmState = kWait;

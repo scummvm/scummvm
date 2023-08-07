@@ -91,10 +91,10 @@ void readFilename(Common::SeekableReadStream &stream, Common::String &inString) 
 		stream.read(buf, 33);
 		buf[32] = '\0';
 	}
-	
+
 	inString = buf;
 }
-	
+
 
 // Reads an 8-character filename from a 10-character source
 void readFilename(Common::Serializer &stream, Common::String &inString, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
@@ -111,7 +111,7 @@ void readFilename(Common::Serializer &stream, Common::String &inString, Common::
 			stream.syncBytes((byte *)buf, 33);
 			buf[32] = '\0';
 		}
-		
+
 		inString = buf;
 	}
 }
@@ -139,7 +139,7 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String>
 				stream.syncBytes((byte *)buf, 33);
 				buf[32] = '\0';
 			}
-			
+
 			str = buf;
 		}
 	}

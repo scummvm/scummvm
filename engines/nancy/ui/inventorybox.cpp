@@ -112,7 +112,7 @@ void InventoryBox::handleInput(NancyInput &input) {
 				}
 			} else if (_itemHotspots[i].itemID != -1) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
-				
+
 				hoveredHotspot = i;
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {

@@ -405,7 +405,7 @@ void Nancy1Map::load() {
 	if (!g_nancy->_sound->isSoundPlaying(getSound())) {
 		g_nancy->_sound->loadSound(getSound());
 	}
-		
+
 	registerGraphics();
 	_state = kRun;
 }

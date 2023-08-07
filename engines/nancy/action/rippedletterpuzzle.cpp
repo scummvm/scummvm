@@ -216,7 +216,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 						// ...then clear the piece from the drawSurface
 						drawPiece(i, 0);
-						
+
 						g_nancy->_sound->playSound(_takeSound);
 					}
 
@@ -271,7 +271,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 		// Then, make sure it doesn't escape outside the viewport bounds
 		Common::Rect screen = NancySceneState.getViewport().getScreenPosition();
-		
+
 		if (newLocation.left < screen.left) {
 			newLocation.translate(screen.left - newLocation.left, 0);
 		}

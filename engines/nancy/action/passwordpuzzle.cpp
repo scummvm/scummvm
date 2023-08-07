@@ -145,7 +145,7 @@ void PasswordPuzzle::execute() {
 			_solveExitScene.execute();
 			break;
 		}
-		
+
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 		finishExecution();
 	}

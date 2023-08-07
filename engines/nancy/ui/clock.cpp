@@ -71,7 +71,7 @@ void Clock::init() {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		GraphicsManager::loadSurfacePalette(_drawSurface, "OBJECT0");
 	}
-	
+
 	setTransparent(true);
 
 	_animation.init();
@@ -129,7 +129,7 @@ void Clock::ClockAnim::init() {
 	_destRects = _owner->_clockData->animDests;
 	_highlightSrcRect = g_nancy->_bootSummary->clockHighlightSrc;
 	_highlightDestRect = g_nancy->_bootSummary->extraButtonHighlightDest;
-	
+
 	if (_destRects.size()) {
 		moveTo(g_nancy->_bootSummary->extraButtonHotspot);
 	} else {
@@ -165,7 +165,7 @@ void Clock::ClockAnim::onClick() {
 		} else if (g_nancy->getGameType() != kGameTypeVampire) {
 			_owner->_staticImage.setVisible(true);
 		}
-		
+
 		_owner->_playerTime = NancySceneState.getPlayerTime();
 		g_nancy->_sound->playSound("GLOB");
 	}

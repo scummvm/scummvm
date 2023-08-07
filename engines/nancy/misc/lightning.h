@@ -35,7 +35,7 @@ public:
 
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
 	void endLightning();
-	
+
 	void run();
 
 private:

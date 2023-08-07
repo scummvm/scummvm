@@ -29,18 +29,18 @@ namespace Nancy {
 
 BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
-	
+
 	chunkStream->seek(0);
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
 	// The header is used to verify savegames
 	s.syncBytes(header, 90);
-	
+
 	s.skip(0x17, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
 	s.skip(0x43, kGameTypeNancy2);
-	
+
 	s.syncAsUint16LE(firstScene.sceneID);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
 	s.syncAsUint16LE(firstScene.frameID);
@@ -85,7 +85,7 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 
 VIEW::VIEW(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
-	
+
 	chunkStream->seek(0);
 	readRect(*chunkStream, screenPosition);
 	readRect(*chunkStream, bounds);
@@ -153,7 +153,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 	itemDescriptions.resize(numItems);
 	for (uint i = 0; i < numItems; ++i) {
 		ItemDescription &item = itemDescriptions[i];
-		
+
 		s.syncBytes(textBuf, itemNameLength);
 		textBuf[itemNameLength - 1] = '\0';
 		item.name = (char *)textBuf;
@@ -208,7 +208,7 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) {
 	if (isVampire) {
 		ornamentSrcs.resize(14);
 		ornamentDests.resize(14);
-		
+
 		chunkStream->seek(0x3E);
 		for (uint i = 0; i < 14; ++i) {
 			readRect(*chunkStream, ornamentSrcs[i]);
@@ -221,7 +221,7 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) {
 
 	chunkStream->seek(0x1FE);
 	defaultFontID = chunkStream->readUint16LE();
-	
+
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
 		chunkStream->skip(2);
 		conversationFontID = chunkStream->readUint16LE();
@@ -325,7 +325,7 @@ HELP::HELP(Common::SeekableReadStream *chunkStream) {
 		readRect(*chunkStream, buttonDest);
 		readRect(*chunkStream, buttonSrc);
 		readRect(*chunkStream, buttonHoverSrc);
-	}	
+	}
 
 	delete chunkStream;
 }
@@ -378,7 +378,7 @@ SPUZ::SPUZ(Common::SeekableReadStream *chunkStream) {
 			tileOrder[i][j] = chunkStream->readSint16LE();
 		}
 	}
-	
+
 	delete chunkStream;
 }
 

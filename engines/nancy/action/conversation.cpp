@@ -452,7 +452,7 @@ void ConversationVideo::init() {
 		GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
 		setTransparent(true);
 	}
-	
+
 	ConversationSound::init();
 	registerGraphics();
 }
@@ -556,7 +556,7 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, xsheetName);
 	readFilename(stream, _bodyTreeName);
 	readFilename(stream, _headTreeName);
-	
+
 	uint xsheetDataSize = 0;
 	byte *xsbuf = g_nancy->_resource->loadData(xsheetName, xsheetDataSize);
 	if (!xsbuf) {
@@ -564,7 +564,7 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	}
 
 	Common::MemoryReadStream xsheet(xsbuf, xsheetDataSize, DisposeAfterUse::YES);
-	
+
 	// Read the xsheet and load all images into the arrays
 	// Completely unoptimized, the original engine uses a buffer
 	xsheet.seek(0);
@@ -618,6 +618,6 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 bool ConversationCel::isVideoDonePlaying() {
 	return _curFrame >= _lastFrame && _nextFrameTime <= g_nancy->getTotalPlayTime();
 }
-	
+
 } // End of namespace Action
 } // End of namespace Nancy

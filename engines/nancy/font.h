@@ -77,7 +77,7 @@ private:
 	uint16 _semicolonOffset;					// 0x5E
 	uint16 _slashOffset;						// 0x60
 	Common::Array<Common::Rect> _symbolRects;	// 0x62
-	
+
 	Graphics::ManagedSurface _image;
 
 	int _fontHeight;

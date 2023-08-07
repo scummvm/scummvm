@@ -134,7 +134,7 @@ NancyInput InputManager::getInput() const {
 	} else {
 		ret.eatMouseInput();
 	}
-	
+
 	return ret;
 }
 

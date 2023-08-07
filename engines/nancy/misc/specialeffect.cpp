@@ -74,7 +74,7 @@ void SpecialEffect::afterSceneChange() {
 	// transColor gets set to the one color guaranteed to not appear in any scene,
 	// and transparency works correctly
 	_fadeTo.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
-	
+
 	registerGraphics();
 	_nextFrameTime = g_nancy->getTotalPlayTime() + _frameTime;
 	_fadeToBlackEndTime = g_nancy->getTotalPlayTime() + _fadeToBlackTime;

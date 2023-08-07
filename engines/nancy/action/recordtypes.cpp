@@ -415,10 +415,10 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 
 void LoseGame::execute() {
 	g_nancy->_sound->stopAndUnloadSpecificSounds();
-	
+
 	// We're not using original menus yet, so just quit the game and go back to the launcher
-	// g_nancy->setState(NancyState::kMainMenu); 
-	
+	// g_nancy->setState(NancyState::kMainMenu);
+
 	Common::Event ev;
 	ev.type = Common::EVENT_RETURN_TO_LAUNCHER;
 	g_system->getEventManager()->pushEvent(ev);

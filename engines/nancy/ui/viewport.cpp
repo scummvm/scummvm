@@ -192,7 +192,7 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 	_videoFormat = format;
 
 	enableEdges(kUp | kDown | kLeft | kRight);
-	
+
 	_panningType = panningType;
 
 	setFrame(frameNr);

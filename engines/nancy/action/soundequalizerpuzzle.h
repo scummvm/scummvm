@@ -49,7 +49,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 	Common::String _imageName;
-	
+
 	Common::Rect _buttonSrc;
 	Common::Rect _buttonDest;
 	Common::Rect _sliderSrc;

@@ -225,7 +225,7 @@ struct RCLB {
 		Common::Array<uint16> exitFloorIDs;
 		Common::Array<uint16> floorIDs;
 		Common::Array<uint16> ceilingIDs;
-		
+
 		Common::Array<uint32> doorIDs;
 		Common::Array<uint32> transparentwallIDs;
 		Common::Array<uint32> objectwallIDs;
@@ -233,7 +233,7 @@ struct RCLB {
 
 		uint16 generalLighting;
 		uint16 hasLightSwitch;
-		
+
 		int16 transparentWallDensity;
 		int16 objectWallDensity;
 		int16 doorDensity;

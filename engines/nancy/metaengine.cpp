@@ -70,7 +70,7 @@ public:
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
-	
+
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
 
@@ -112,7 +112,7 @@ void NancyMetaEngine::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.setInt("speech_volume", 54 * 255 / 100, target);
 	ConfMan.setInt("sfx_volume", 51 * 255 / 100, target);
 	ConfMan.setBool("subtitles", true, target);
-	
+
 	ConfMan.setBool("player_speech", true, target);
 	ConfMan.setBool("character_speech", true, target);
 }

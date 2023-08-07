@@ -68,7 +68,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 			return new LightningOn();
 		} else {
 			return new SpecialEffect();
-		}		
+		}
 	case 50:
 		return new ConversationVideo(); // PlayPrimaryVideoChan0
 	case 51:

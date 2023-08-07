@@ -38,7 +38,7 @@ public:
 
 	void init();
 	void draw(bool updateScreen = true);
-	
+
 	void loadFonts(Common::SeekableReadStream *chunkStream);
 
 	void addObject(RenderObject *object);

@@ -173,7 +173,7 @@ void TowerPuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun && _solveState != kNotSolved) {
 		return;
 	}
-	
+
 	// Note: this is a click-and-drag puzzle
 
 	// Check if mouse is above a pole hotspot

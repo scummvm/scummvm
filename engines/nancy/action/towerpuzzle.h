@@ -25,7 +25,7 @@
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
-	
+
 struct TowerPuzzleData;
 
 namespace Action {

@@ -112,7 +112,7 @@ NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDe
 	if (type >= kGameTypeVampire && type <= kGameTypeNancy6) {
 		return new NancyEngine(syst, gd);
 	}
-	
+
 	error("Unknown GameType");
 }
 
@@ -274,12 +274,12 @@ Common::Error NancyEngine::run() {
 		if (s) {
 			s->process();
 		}
-		
+
 		_graphicsManager->draw();
-		
-		if (_gameFlow.changingState) { 
+
+		if (_gameFlow.changingState) {
 			_graphicsManager->clearObjects();
-			
+
 			s = getStateObject(_gameFlow.prevState);
 			if (s) {
 				if(s->onStateExit(_gameFlow.prevState)) {

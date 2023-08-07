@@ -238,7 +238,7 @@ void SoundEqualizerPuzzle::handleInput(NancyInput &input) {
 
 			g_nancy->_sound->loadSound(_exitSound);
 			g_nancy->_sound->playSound(_exitSound);
-			
+
 			_state = kActionTrigger;
 			return;
 		}
@@ -255,7 +255,7 @@ void SoundEqualizerPuzzle::handleInput(NancyInput &input) {
 void SoundEqualizerPuzzle::updateSlider(uint sliderID) {
 	float sliderVal = 1 - _sliders[sliderID]->getPos();
 	_puzzleState->sliderValues[sliderID] = sliderVal * 100;
-	
+
 	if (sliderID < 3) {
 		// First three sliders change pitch, except when the slider
 		// controls the "solve" sound; in that case it does nothing
@@ -264,7 +264,7 @@ void SoundEqualizerPuzzle::updateSlider(uint sliderID) {
 				_minRate[sliderID] + (_maxRate[sliderID] - _minRate[sliderID]) * sliderVal);
 		}
 	} else {
-		// Other three sliders change volume; 
+		// Other three sliders change volume;
 		// "solve" sound slider behaves as an on/off switch
 		if (sliderID - 3 != _solveChannelID) {
 			g_nancy->_sound->setVolume(_sounds[sliderID - 3],

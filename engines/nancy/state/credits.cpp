@@ -100,7 +100,7 @@ void Credits::run() {
 		g_nancy->_sound->stopSound(_creditsData->sound);
 		g_nancy->setMouseEnabled(true);
 		_fullTextSurface.free();
-		
+
 		// We don't yet support the original menus, so we close the game and go back to the launcher
 		// g_nancy->setState(NancyState::kMainMenu);
 

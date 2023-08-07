@@ -111,7 +111,7 @@ protected:
 	void drawMap();
 	void drawMaze();
 	void clearZBuffer();
-	
+
 	void checkSwitch();
 };
 

@@ -149,14 +149,14 @@ void RaycastLevelBuilder::fillCells() {
 	Common::Array<byte> switchStack;
 
 	Common::Point curCell(0, 0);
-	
+
 	for (uint i = 1; i < _inputNumCells;) {
 		switchStack.clear();
 
 		if ( (curCell.y > 0) && ((_cells[(curCell.y - 1) * _inputWidth + curCell.x] & 0xF) == 0xF) ) {
 			switchStack.push_back(2);
 		}
-		
+
 		if ( (curCell.y + 1 <= (int)_inputHeight - 1) && ((_cells[(curCell.y + 1) * _inputWidth + curCell.x] & 0xF) == 0xF) ) {
 			switchStack.push_back(3);
 		}
@@ -461,7 +461,7 @@ void RaycastLevelBuilder::writeObjectWalls(uint startX, uint startY, uint themeI
 	for (uint numWrittenWalls = 0; numWrittenWalls < numWallsToWrite;) {
 		bool vertical = g_nancy->_randomSource->getRandomBit();
 		bool foundWallLocation = false;
-		
+
 		uint x = 0;
 		uint y = 0;
 
@@ -584,7 +584,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 	for (uint numWrittenWalls = 0; numWrittenWalls < numDoorsToWrite;) {
 		bool vertical = g_nancy->_randomSource->getRandomBit();
 		bool foundDoorLocation = false;
-		
+
 		uint x = 0;
 		uint y = 0;
 		uint otherX = 0;
@@ -637,7 +637,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 								!(_infoMap[y * _fullWidth + otherX])	&&
 								(y != _startY || x != _startX)			&&
 								(y != _startY || otherX != _startX) ) {
-							
+
 							foundDoorLocation = true;
 						}
 					}
@@ -661,7 +661,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 								!(_infoMap[otherY * _fullWidth + x])	&&
 								(y != _startY || x != _startX)			&&
 								(otherY != _startY || x != _startX) ) {
-							
+
 							foundDoorLocation = true;
 						}
 					} else if (	!(_wallMap[(y + 1) * _fullWidth + x])				&&
@@ -678,7 +678,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 
 						otherY = y + 1;
 						otherX = x;
-							
+
 						if (	!(_infoMap[y * _fullWidth + x])			&&
 								!(_infoMap[otherY * _fullWidth + x])	&&
 								(y != _startY || x != _startX)			&&
@@ -819,7 +819,7 @@ void RaycastLevelBuilder::writeExitFloorTexture(uint themeID) {
 	RCLB::Theme &theme = _themeData->themes[themeID];
 	int16 selectedFloorID = theme.exitFloorIDs[g_nancy->_randomSource->getRandomNumber(theme.exitFloorIDs.size() - 1)];
 	uint addToID = 0;
-	
+
 	for (uint y = 0; y < _fullHeight; ++y) {
 		for (uint x = 0; x < _fullWidth; ++x) {
 			if (_infoMap[y * _fullWidth + x] == 1) {
@@ -851,7 +851,7 @@ void RaycastLevelBuilder::validateMap() {
 			if (_wallMap[y * _fullWidth + x] == 1) {
 				error("wallMap not complete at coordinates x = %d, y = %d", x, y);
 			}
-			
+
 			if (_floorMap[y * _fullWidth + x] == -1) {
 				error("floorMap not complete at coordinates x = %d, y = %d", x, y);
 			}
@@ -868,7 +868,7 @@ void RaycastPuzzle::init() {
 	assert(_puzzleData);
 
 	RaycastLevelBuilder levelBuilder(_mapWidth, _mapHeight, _wallHeight);
-	
+
 	_wallMap.push_back(levelBuilder._wallMap);
 	_infoMap.push_back(levelBuilder._infoMap);
 	_floorMap.push_back(levelBuilder._floorMap);
@@ -1052,7 +1052,7 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 			newX = _playerX + (int32)(_sinTable[invertedRotation] * deltaPosition);
 			newY = _playerY + (int32)(_cosTable[invertedRotation] * deltaPosition);
 		}
-		
+
 		hasMoved = true;
 	}
 
@@ -1176,7 +1176,7 @@ void RaycastPuzzle::drawMap() {
 
 	uint16 *pixelPtr;
 	Graphics::PixelFormat &format = _map._drawSurface.format;
-	
+
 	uint16 wallColor = format.RGBToColor(_puzzleData->wallColor[0], _puzzleData->wallColor[1], _puzzleData->wallColor[2]);
 	uint16 uColor6 = format.RGBToColor(_puzzleData->uColor6[0], _puzzleData->uColor6[1], _puzzleData->uColor6[2]);
 	uint16 uColor7 = format.RGBToColor(_puzzleData->uColor7[0], _puzzleData->uColor7[1], _puzzleData->uColor7[2]);
@@ -1195,7 +1195,7 @@ void RaycastPuzzle::drawMap() {
 			if (wallMapCell & kWall) {
 				*pixelPtr = wallColor;
 			}
-			
+
 			if ((wallMapCell != 0) && !(wallMapCell & kWall)) {
 				*pixelPtr = uColor6;
 			}
@@ -1545,7 +1545,7 @@ void RaycastPuzzle::drawMaze() {
 			lightValues[0] = hitWallLightValue & 0xF;
 			lightValues[1] = (hitWallLightValue >> 4) & 0xF;
 			lightValues[2] = (hitWallLightValue >> 8) & 0xF;
-			
+
 			wallIDs[0] = hitWallValue & 0xFF;
 			wallIDs[1] = (hitWallValue >> 8) & 0xFF;
 			wallIDs[2] = (hitWallValue >> 16) & 0xFF;
@@ -1630,11 +1630,11 @@ void RaycastPuzzle::drawMaze() {
 						for (int y = 0; y < drawnWallHeight; ++y) {
 							uint32 sY = srcY >> 16;
 							uint16 *srcPixel = srcPixels[2 - (sY >> 7)] ? &srcPixels[2 - (sY >> 7)][128 * (sY & 0x7F)] : nullptr;
-							
+
 							if (srcPixel) {
 								*destPixel = *srcPixel;
 							}
-							
+
 							srcY -= srcYSubtractVal;
 							destPixel -= _drawSurface.w;
 							*zBufferDestPixel = curZBufferDepth;
@@ -1665,7 +1665,7 @@ void RaycastPuzzle::drawMaze() {
 								*destPixel = *srcPixel;
 								*zBufferDestPixel = curZBufferDepth;
 							}
-							
+
 							srcY -= srcYSubtractVal;
 							destPixel -= _drawSurface.w;
 							zBufferDestPixel -= _drawSurface.w;
@@ -1695,7 +1695,7 @@ void RaycastPuzzle::drawMaze() {
 								*destPixel = *srcPixel;
 								*zBufferDestPixel = curZBufferDepth;
 							}
-							
+
 							srcY -= srcYSubtractVal;
 							destPixel -= _drawSurface.w;
 							zBufferDestPixel -= _drawSurface.w;
@@ -1725,7 +1725,7 @@ void RaycastPuzzle::drawMaze() {
 								*destPixel = *srcPixel;
 								*zBufferDestPixel = curZBufferDepth;
 							}
-							
+
 							srcY -= srcYSubtractVal;
 							destPixel -= _drawSurface.w;
 							zBufferDestPixel -= _drawSurface.w;
@@ -1832,7 +1832,7 @@ void RaycastPuzzle::clearZBuffer() {
 }
 
 void RaycastPuzzle::checkSwitch() {
-	
+
 }
 
 } // End of namespace Action

@@ -70,7 +70,7 @@ void BitmapDescription::readData(Common::SeekableReadStream &stream, bool frameI
 		// Most likely transparency
 		stream.skip(2);
 	}
-	
+
 	readRect(stream, src);
 	readRect(stream, dest);
 }
@@ -109,12 +109,12 @@ void SoundDescription::readNormal(Common::SeekableReadStream &stream) {
 	s.skip(4, kGameTypeVampire, kGameTypeNancy2);
 
 	s.syncAsUint32LE(numLoops);
-	
+
 	s.skip(2);
 
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first
-	
+
 	s.skip(4, kGameTypeVampire, kGameTypeNancy1); // Prior to nancy2 this field was used for something else
 	s.syncAsUint32LE(samplesPerSec, kGameTypeNancy2, kGameTypeNancy2);
 }
@@ -131,11 +131,11 @@ void SoundDescription::readDIGI(Common::SeekableReadStream &stream) {
 	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
 
 	s.syncAsUint32LE(numLoops);
-	
+
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first
-	
+
 	s.syncAsUint16LE(panAnchorFrame, kGameTypeVampire, kGameTypeNancy2);
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 
@@ -156,7 +156,7 @@ void SoundDescription::readMenu(Common::SeekableReadStream &stream) {
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 
 	s.syncAsUint32LE(numLoops);
-	
+
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 
 	s.syncAsUint16LE(volume);
@@ -180,7 +180,7 @@ void SoundDescription::readScene(Common::SeekableReadStream &stream) {
 	s.skip(2, kGameTypeNancy3);
 
 	s.syncAsUint32LE(numLoops);
-	
+
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first

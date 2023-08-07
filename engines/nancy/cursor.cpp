@@ -40,7 +40,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	case kGameTypeNancy1:
 		_numCursorTypes = 4;
 		break;
-	case kGameTypeNancy2:	
+	case kGameTypeNancy2:
 		_numCursorTypes = 5;
 		break;
 	default:
@@ -69,7 +69,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	showCursor(false);
 
 	_isInitialized = true;
-	
+
 	delete chunkStream;
 }
 
@@ -104,7 +104,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		} else {
 			_curCursorID = 8;
 		}
-		
+
 		return;
 	case kHotspotArrow:
 		if (gameType <= kGameTypeNancy1) {
@@ -134,7 +134,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		} else {
 			type = kMove;
 		}
-		
+
 		break;
 	case kExit:
 		// Not valid in TVD
@@ -142,7 +142,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = 3;
 			return;
 		}
-		
+
 		break;
 	default:
 		break;

@@ -63,7 +63,7 @@ public:
 	RenderObject _pickedUpPiece;
 	int8 _pickedUpPieceID = -1;
 	byte _pickedUpPieceRot = 0;
-	
+
 	Graphics::ManagedSurface _image;
 	SolveState _solveState = kNotSolved;
 	RippedLetterPuzzleData *_puzzleState = nullptr;

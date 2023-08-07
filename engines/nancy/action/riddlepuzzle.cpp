@@ -141,7 +141,7 @@ void RiddlePuzzle::execute() {
 		// fall through
 	case kRun:
 		switch (_solveState) {
-		case kWaitForSound: 
+		case kWaitForSound:
 			if (!g_nancy->_sound->isSoundPlaying(_riddles[_riddleID].sound)) {
 				_solveState = kNotSolved;
 				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
@@ -243,7 +243,7 @@ void RiddlePuzzle::execute() {
 
 			break;
 		default:
-			return;	
+			return;
 		}
 
 		if (g_nancy->_sound->isSoundPlaying(*sound)) {
