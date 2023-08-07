@@ -145,7 +145,7 @@ void HUD::State(const int &val) {
 }
 
 void HUD::setTooltip() {
-	unsigned int count = 0;
+	uint count = 0;
 	for (auto i = _menu._element.begin(); i != _menu._element.end() && count < _tooltip.size(); ++i, ++count)
 		i->_tooltip._text = _tooltip[count] + " (" + i->_hotkey.name() + ")";
 

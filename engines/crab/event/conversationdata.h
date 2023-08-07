@@ -44,10 +44,10 @@ struct ReplyChoice {
 	Common::String _text;
 
 	// The tone of the response
-	unsigned int _tone;
+	uint _tone;
 
 	// The next event id
-	unsigned int _nextid;
+	uint _nextid;
 
 	// The conditions to unlock this choice
 	TriggerSet _unlock;

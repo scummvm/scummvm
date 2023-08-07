@@ -130,7 +130,7 @@ void QuestMenu::draw(Button &buMap) {
 		auto base_x = _menu.baseX(count), base_y = _menu.baseY(count);
 
 		// Only draw in _s color if we are on the same button and page
-		if ((unsigned int)_selBu == count && (unsigned int)_selPage == _menu.currentPage())
+		if ((uint)_selBu == count && (uint)_selPage == _menu.currentPage())
 			g_engine->_textManager->draw(base_x + _offTitle.x, base_y + _offTitle.y, _quest[i]._title, _colS, _font, _align);
 		else
 			g_engine->_textManager->draw(base_x + _offTitle.x, base_y + _offTitle.y, _quest[i]._title, _colN, _font, _align);
@@ -141,7 +141,7 @@ void QuestMenu::draw(Button &buMap) {
 		}
 	}
 
-	if (_selQuest >= 0 && (unsigned int)_selQuest < _quest.size()) {
+	if (_selQuest >= 0 && (uint)_selQuest < _quest.size()) {
 		_text.draw(_quest[_selQuest]);
 
 		if (_quest[_selQuest]._marker)
@@ -168,7 +168,7 @@ bool QuestMenu::handleEvents(Button &buMap, Common::String &mapTitle, const Comm
 		_menu.image(_selBu, _selPage, _imgS);
 	}
 
-	if (_selQuest >= 0 && (unsigned int)_selQuest < _quest.size()) {
+	if (_selQuest >= 0 && (uint)_selQuest < _quest.size()) {
 		if (_quest[_selQuest]._marker)
 			if (buMap.handleEvents(event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
@@ -186,7 +186,7 @@ bool QuestMenu::handleEvents(Button &buMap, Common::String &mapTitle, const Comm
 // Purpose: Select an entry
 //------------------------------------------------------------------------
 void QuestMenu::select(const int &questIndex) {
-	if (questIndex >= 0 && (unsigned int)questIndex < _quest.size()) {
+	if (questIndex >= 0 && (uint)questIndex < _quest.size()) {
 		if (_selBu >= 0 && _selPage >= 0)
 			_menu.image(_selBu, _selPage, _imgN);
 

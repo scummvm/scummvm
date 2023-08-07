@@ -126,7 +126,7 @@ public:
 		_slotInfo.clear();
 		_menu.clear();
 
-		unsigned int countSlot = 0, countMenu = 0;
+		uint countSlot = 0, countMenu = 0;
 		for (const Common::String& save : saves) {
 			_slotInfo.push_back(FileType(save));
 			_menu.add(countSlot, countMenu);
@@ -149,7 +149,7 @@ public:
 			std::sort(file_in_dir.begin(), file_in_dir.end(), PathCompare);
 
 			// First, we must load all the files with the same extension as our save file
-			unsigned int count_slot = 0, count_menu = 0;
+			uint count_slot = 0, count_menu = 0;
 			for (auto i = file_in_dir.begin(); i != file_in_dir.end(); ++i)
 				if (is_regular_file(*i) && i->extension().string() == extension) {
 					slot_info.push_back(FileType(*i));

@@ -129,7 +129,7 @@ bool loadDirection(Direction &dir, rapidxml::xml_node<char> *node, const bool &e
 bool loadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, const bool &echo = true);
 
 // Check the version of a file
-unsigned int version(const Common::String &filename);
+uint version(const Common::String &filename);
 
 } // End of namespace Crab
 

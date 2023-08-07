@@ -48,7 +48,7 @@ class GameOverMenu {
 	Common::Array<Common::String> _quote;
 
 	// The current picked quote
-	unsigned int _cur;
+	uint _cur;
 
 	// How to draw the quote
 	TextData _title;

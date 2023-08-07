@@ -68,7 +68,7 @@ struct SpriteAIData {
 		Timer _delay;
 
 		// The list of moves that can be performed while attacking
-		Common::Array<unsigned int> _attack;
+		Common::Array<uint> _attack;
 
 		FightData() {
 			_state = FIGHTSTATE_GETNEXTMOVE;

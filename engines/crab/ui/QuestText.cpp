@@ -72,10 +72,10 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 	_stop = q._text.size();
 
 	// Keep count of lines and pages - remember a single entry can take more than one line
-	unsigned int pageCount = 0, pageStart = 0;
+	uint pageCount = 0, pageStart = 0;
 
 	// Start from line 0, page 0 and scan the list of entries
-	for (unsigned int i = 0, lineCount = 0; i < q._text.size(); ++i) {
+	for (uint i = 0, lineCount = 0; i < q._text.size(); ++i) {
 		// Increment the number of lines by one text entry
 		lineCount += (q._text[i].size() / _line.x) + 1;
 
@@ -121,7 +121,7 @@ void QuestText::draw(pyrodactyl::event::Quest &q) {
 		// Count the number of lines, because a single entry can take more than one line
 		int count = 0;
 
-		for (unsigned int i = _start; i < (unsigned int)_stop; ++i) {
+		for (uint i = _start; i < (uint)_stop; ++i) {
 			_img.draw(_inc.x * count, _inc.y * count);
 
 			// Draw first entry in selected color, and older quest entries in standard color

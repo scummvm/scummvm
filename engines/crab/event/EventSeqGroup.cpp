@@ -35,24 +35,24 @@ namespace Crab {
 
 using namespace pyrodactyl::event;
 
-void EventSeqGroup::endSeq(const unsigned int &id) {
+void EventSeqGroup::endSeq(const uint &id) {
 	_seq.erase(id);
 	_end.push_back(id);
 }
 
-void EventSeqGroup::addSeq(const unsigned int &id, Common::String &path) {
+void EventSeqGroup::addSeq(const uint &id, Common::String &path) {
 	_seq[id].load(path);
 }
 
-bool EventSeqGroup::eventInProgress(const unsigned int &id) {
+bool EventSeqGroup::eventInProgress(const uint &id) {
 	return _seq.contains(id) && _seq[id].eventInProgress();
 }
 
-GameEvent *EventSeqGroup::curEvent(const unsigned int &id) {
+GameEvent *EventSeqGroup::curEvent(const uint &id) {
 	return _seq[id].currentEvent();
 }
 
-void EventSeqGroup::nextEvent(const unsigned int &id, Info &info, const Common::String &playerId,
+void EventSeqGroup::nextEvent(const uint &id, Info &info, const Common::String &playerId,
 							  Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq, const int choice) {
 	return _seq[id].nextEvent(info, playerId, result, endSeq, choice);
 }
@@ -62,7 +62,7 @@ void EventSeqGroup::internalEvents(Info &info) {
 		it->_value.internalEvents(info);
 }
 
-bool EventSeqGroup::activeSeq(unsigned int &activeSeq) {
+bool EventSeqGroup::activeSeq(uint &activeSeq) {
 	for (auto i = _seq.begin(); i != _seq.end(); ++i)
 		if (i->_value.eventInProgress()) {
 			activeSeq = i->_key;
@@ -86,11 +86,11 @@ void EventSeqGroup::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<
 
 void EventSeqGroup::loadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *i = node->first_node("end"); i != nullptr; i = i->next_sibling("end"))
-		endSeq(stringToNumber<unsigned int>(i->value()));
+		endSeq(stringToNumber<uint>(i->value()));
 
 	for (auto n = node->first_node("set"); n != nullptr; n = n->next_sibling("set"))
 		if (n->first_attribute("name") != nullptr) {
-			unsigned int id = stringToNumber<unsigned int>(n->first_attribute("name")->value());
+			uint id = stringToNumber<uint>(n->first_attribute("name")->value());
 			if (_seq.contains(id))
 				_seq[id].loadState(n);
 		}

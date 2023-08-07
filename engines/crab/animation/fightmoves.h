@@ -47,7 +47,7 @@ enum FrameUpdateResult {
 };
 
 // This state value indicates that the move should execute regardless of actual sprite state
-const unsigned int SPRITE_STATE_OVERRIDE = std::numeric_limits<unsigned int>::max();
+const uint SPRITE_STATE_OVERRIDE = std::numeric_limits<uint>::max();
 
 class FightMoves {
 	// The fighting moves of a sprite
@@ -66,7 +66,7 @@ class FightMoves {
 	bool _start;
 
 	// The current frame and total frames
-	unsigned int _frameCur, _frameTotal;
+	uint _frameCur, _frameTotal;
 
 public:
 	FightMoves();
@@ -85,17 +85,17 @@ public:
 	FrameUpdateResult updateFrame(const Direction &d);
 	bool curFrame(FightAnimFrame &faf, const Direction &d);
 
-	unsigned int findMove(const pyrodactyl::input::FightAnimationType &type, const int &state);
+	uint findMove(const pyrodactyl::input::FightAnimationType &type, const int &state);
 
-	void listAttackMoves(Common::Array<unsigned int> &list);
+	void listAttackMoves(Common::Array<uint> &list);
 
-	bool forceUpdate(const unsigned int &index, pyrodactyl::input::FightInput &input, const Direction &d);
+	bool forceUpdate(const uint &index, pyrodactyl::input::FightInput &input, const Direction &d);
 
 	bool lastFrame() {
 		return _frameCur >= _frameTotal;
 	}
 
-	void frameIndex(unsigned int val) {
+	void frameIndex(uint val) {
 		_frameCur = val;
 	}
 
@@ -104,7 +104,7 @@ public:
 	}
 
 	bool validMove() {
-		return _cur >= 0 && (unsigned int)_cur < _move.size();
+		return _cur >= 0 && (uint)_cur < _move.size();
 	}
 
 	bool empty() {

@@ -48,12 +48,12 @@ class EventSequence {
 	bool _eventInProgress;
 
 	// The event currently in execution - updated only when all trigger conditions are met in InternalEvents
-	unsigned int _cur;
+	uint _cur;
 
 	// The events that can happen next - these are updated when the cur event is over
 	// This means cur and next operate in an alternating way
 	// scan next until find event, make it cur, end cur and update next, repeat
-	Common::Array<unsigned int> _next;
+	Common::Array<uint> _next;
 
 public:
 	EventSequence() {

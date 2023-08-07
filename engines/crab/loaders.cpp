@@ -197,8 +197,8 @@ bool loadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, 
 	return false;
 }
 
-unsigned int version(const Common::String &filename) {
-	unsigned int version = 0;
+uint version(const Common::String &filename) {
+	uint version = 0;
 
 	XMLDoc doc(filename);
 	if (doc.ready()) {

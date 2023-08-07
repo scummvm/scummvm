@@ -119,7 +119,7 @@ void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 	seqnode->append_attribute(doc.allocate_attribute("current", g_engine->_stringPool->Get(_cur)));
 
 	// Prepare strings of next events and write them
-	for (unsigned int i = 0; i < _next.size(); i++) {
+	for (uint i = 0; i < _next.size(); i++) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "next");
 		child->value(g_engine->_stringPool->Get(_next[i]));
 		seqnode->append_node(child);
@@ -134,11 +134,11 @@ void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 void EventSequence::loadState(rapidxml::xml_node<char> *node) {
 	rapidxml::xml_attribute<char> *curid = node->first_attribute("current");
 	if (curid != nullptr)
-		_cur = stringToNumber<unsigned int>(curid->value());
+		_cur = stringToNumber<uint>(curid->value());
 
 	_next.clear();
 	for (auto n = node->first_node("next"); n != nullptr; n = n->next_sibling("next"))
-		_next.push_back(stringToNumber<unsigned int>(n->value()));
+		_next.push_back(stringToNumber<uint>(n->value()));
 
 	if (_next.empty())
 		_next.push_back(0);

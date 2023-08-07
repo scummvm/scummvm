@@ -179,7 +179,7 @@ void Level::loadMoves(const Common::String &filename) {
 	if (movList.ready()) {
 		rapidxml::xml_node<char> *node = movList.doc()->first_node("movelist");
 		for (auto n = node->first_node("set"); n != nullptr; n = n->next_sibling("set")) {
-			unsigned int pos = _animSet.size();
+			uint pos = _animSet.size();
 
 			loadNum(pos, "id", n);
 			if (pos >= _animSet.size())

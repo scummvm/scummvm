@@ -86,7 +86,7 @@ LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result
 //------------------------------------------------------------------------
 void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
 				  Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq, Common::String &id) {
-	unsigned int index = 0;
+	uint index = 0;
 	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index) {
 		// Only bother if the sprite is visible
 		if (i->visible()) {
@@ -170,7 +170,7 @@ void Level::think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event
 // Purpose: Once a player provokes any sprite, call this function
 //------------------------------------------------------------------------
 void Level::battleAlert(pyrodactyl::event::Info &info) {
-	unsigned int index = 0;
+	uint index = 0;
 	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index) {
 		if (index != _playerIndex && i->visible() && info.state(i->id()) != PST_KO) {
 			switch (info.type(i->id())) {
@@ -208,7 +208,7 @@ void Level::moveObject(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &
 // Purpose: If any other object is trying to kill you, you are in combat
 //------------------------------------------------------------------------
 bool Level::playerInCombat(pyrodactyl::event::Info &info) {
-	unsigned int index = 0;
+	uint index = 0;
 	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++index)
 		if (index != _playerIndex && info.state(i->id()) == PST_FIGHT && i->visible())
 			return true;

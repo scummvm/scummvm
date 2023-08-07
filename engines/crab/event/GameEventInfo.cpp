@@ -184,7 +184,7 @@ void Info::varDel(const Common::String &name) {
 //------------------------------------------------------------------------
 void Info::traitAdd(const Common::String &perId, const int &traitId) {
 	if (personValid(perId)) { // Valid person id
-		if (traitId >= 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) { // Valid trait id
+		if (traitId >= 0 && (uint)traitId < g_engine->_eventStore->_trait.size()) { // Valid trait id
 			// Check for duplicate traits, DONT award anything if duplicate found
 			Person *p = &personGet(perId);
 
@@ -201,7 +201,7 @@ void Info::traitAdd(const Common::String &perId, const int &traitId) {
 
 void Info::traitDel(const Common::String &perId, const int &traitId) {
 	if (personValid(perId)) { // Valid person id
-		if (traitId > 0 && (unsigned int)traitId < g_engine->_eventStore->_trait.size()) { // Valid trait id
+		if (traitId > 0 && (uint)traitId < g_engine->_eventStore->_trait.size()) { // Valid trait id
 			Person *p = &personGet(perId);
 
 			for (auto j = p->_trait.begin(); j != p->_trait.end(); ++j) {
@@ -292,11 +292,11 @@ bool Info::collideWithTrigger(const Common::String &id, int rectIndex) {
 //------------------------------------------------------------------------
 void Info::insertName(Common::String &msg) {
 	// We scan the dialog for #id values, which we convert to actual NPC names
-	for (unsigned int i = 0; i < msg.size(); ++i) {
+	for (uint i = 0; i < msg.size(); ++i) {
 		// The # symbol indicates that the next string until an end character needs to be replaced by the name
 		if (msg[i] == '#') {
 			// The position we want to start from, and the length of the substring
-			unsigned int start = i, end = i + 1, len = 0;
+			uint start = i, end = i + 1, len = 0;
 
 			// First make sure # wasn't the end of the string
 			for (; end < msg.size(); ++end, ++len)

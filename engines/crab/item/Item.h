@@ -54,7 +54,7 @@ struct Item {
 	Common::Array<pyrodactyl::stat::Bonus> _bonus;
 
 	// The price
-	unsigned int _value;
+	uint _value;
 
 	Item() {
 		clear();

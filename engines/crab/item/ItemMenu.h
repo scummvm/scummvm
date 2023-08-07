@@ -67,8 +67,8 @@ public:
 	void draw(pyrodactyl::ui::ItemDesc &itemInfo);
 	/*pyrodactyl::people::Person &obj, pyrodactyl::stat::StatDrawHelper &helper*/
 
-	void init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows,
-			  const unsigned int &cols, const bool &keyboard);
+	void init(const ItemSlot &ref, const Vector2i &inc, const uint &rows,
+			  const uint &cols, const bool &keyboard);
 
 	void handleEvents(const Common::Event &event, const int &xOffset = 0, const int &yOffset = 0);
 #if 0

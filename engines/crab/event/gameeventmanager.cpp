@@ -60,7 +60,7 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 				loadStr(locName, "name", loc);
 
 				for (auto n = loc->first_node("file"); n != nullptr; n = n->next_sibling("file")) {
-					unsigned int id;
+					uint id;
 					Common::String path;
 					loadNum(id, "name", n);
 					loadStr(path, "path", n);
@@ -393,7 +393,7 @@ void Manager::endSequence(const Common::String &curloc) {
 			if (i->_cur)
 				_eventMap[curloc].endSeq(_activeSeq);
 			else if (_eventMap.contains(i->_loc))
-				_eventMap[i->_loc].endSeq(stringToNumber<unsigned int>(i->_val));
+				_eventMap[i->_loc].endSeq(stringToNumber<uint>(i->_val));
 
 		_activeSeq = UINT_MAX;
 		_endSeq.clear();

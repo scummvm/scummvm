@@ -40,9 +40,9 @@
 namespace Crab {
 
 // We use this object as the key for all fonts
-typedef unsigned int FontKey;
+typedef uint FontKey;
 
-// Since we use unsigned int as a key for images, our loadImgKey function is loadNum
+// Since we use uint as a key for images, our loadImgKey function is loadNum
 #define LoadFontKey loadNum
 
 namespace pyrodactyl {
@@ -117,7 +117,7 @@ public:
 			  const FontKey &font = 0, const Align &align = ALIGN_LEFT, const bool &background = false);
 
 	void draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &font, const Align &align,
-			  const unsigned int &lineWidth, const unsigned int &lineHeight, const bool &background = false);
+			  const uint &lineWidth, const uint &lineHeight, const bool &background = false);
 };
 
 } // End of namespace text

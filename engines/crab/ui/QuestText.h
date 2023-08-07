@@ -53,10 +53,10 @@ protected:
 	ImageData _img;
 
 	// The lines per page, we split the quest text into multiple pages if we have to draw more than that
-	unsigned int _linesPerPage;
+	uint _linesPerPage;
 
 	// Keep track of which page we are at, and total pages
-	unsigned int _currentPage, _totalPage;
+	uint _currentPage, _totalPage;
 
 	// The quest entries we start and stop the drawing at
 	int _start, _stop;

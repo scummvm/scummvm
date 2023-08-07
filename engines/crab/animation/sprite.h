@@ -257,8 +257,8 @@ public:
 	void updateMove(const pyrodactyl::input::FightAnimationType &combo);
 	void forceUpdateMove(const pyrodactyl::input::FightAnimationType &combo);
 
-	void updateMove(const unsigned int &index);
-	void forceUpdateMove(const unsigned int &index);
+	void updateMove(const uint &index);
+	void forceUpdateMove(const uint &index);
 
 	// Set sprite destination
 	void setDestPathfinding(const Vector2i &dest, bool reachable = true);

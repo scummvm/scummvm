@@ -51,7 +51,7 @@ class Map {
 	Common::Array<MapData> _map;
 
 	// Index of the currently visible map
-	unsigned int _cur;
+	uint _cur;
 
 	// The currently loaded map background image
 	pyrodactyl::image::Image _imgBg, _imgOverlay;
@@ -135,7 +135,7 @@ public:
 	void selectDest(const Common::String &name);
 
 	void update(pyrodactyl::event::Info &info);
-	void setImage(const unsigned int &val, const bool &force = false);
+	void setImage(const uint &val, const bool &force = false);
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);

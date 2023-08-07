@@ -99,7 +99,7 @@ void OptionMenu::reset() {
 	_keybind.reset();
 	_state = STATE_GENERAL;
 
-	for (unsigned i = 0; i < _menu._element.size(); ++i)
+	for (uint i = 0; i < _menu._element.size(); ++i)
 		_menu._element[i].state(i == STATE_GENERAL);
 }
 
@@ -318,7 +318,7 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 	int choice = menu.handleEvents(Event);
 	if (choice >= 0) {
 		if (choice < 4)
-			for (unsigned i = 0; i < menu.element.size(); ++i)
+			for (uint i = 0; i < menu.element.size(); ++i)
 				menu.element[i].State(i == choice);
 
 		switch (choice) {

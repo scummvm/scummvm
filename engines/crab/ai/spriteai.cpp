@@ -213,7 +213,7 @@ void Sprite::attack(pyrodactyl::event::Info &info, Sprite &targetSp, const Sprit
 		_aiData._fight._state = FIGHTSTATE_GETINRANGE;
 		_aiData._fight._delay.start();
 
-		unsigned int size = _aiData._fight._attack.size();
+		uint size = _aiData._fight._attack.size();
 		if (size > 1)
 			_animSet._fight.next(_aiData._fight._attack[g_engine->getRandomNumber(_aiData._fight._attack.size())]);
 		else if (size <= 0)

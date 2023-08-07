@@ -45,7 +45,7 @@ class OptionSelect {
 		TextData _data;
 
 		void draw(const int &index) {
-			if (index >= 0 && (unsigned int)index < _text.size())
+			if (index >= 0 && (uint)index < _text.size())
 				_data.draw(_text[index]);
 		}
 	} option;

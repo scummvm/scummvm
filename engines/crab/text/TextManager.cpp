@@ -62,7 +62,7 @@ void TextManager::init() {
 			size = n->first_attribute("size");
 
 			if (id != nullptr && path != nullptr && size != nullptr) {
-				unsigned int pos = stringToNumber<unsigned int>(id->value());
+				uint pos = stringToNumber<uint>(id->value());
 				if (_font.size() <= pos)
 					_font.resize(pos + 1);
 				Common::File file;
@@ -195,9 +195,9 @@ void TextManager::draw(const int &x, const int &y, const Common::String &text, c
 }
 
 void TextManager::draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &fKey, const Align &align,
-					   const unsigned int &lineWidth, const unsigned int &lineHeight, const bool &background) {
-	for (unsigned int startPos = 0, len = text.size(); startPos < len; y += lineHeight) {
-		unsigned int endPos = startPos + 1;
+					   const uint &lineWidth, const uint &lineHeight, const bool &background) {
+	for (uint startPos = 0, len = text.size(); startPos < len; y += lineHeight) {
+		uint endPos = startPos + 1;
 		int lastInterrupt = -1;
 		Common::String word;
 
@@ -215,13 +215,13 @@ void TextManager::draw(const int &x, int y, const Common::String &text, const in
 
 		if (lastInterrupt >= 0) // wrap a word around
 		{
-			for (unsigned int i = 0; i < lastInterrupt - startPos; i++)
+			for (uint i = 0; i < lastInterrupt - startPos; i++)
 				word += text[startPos + i];
 
 			startPos = lastInterrupt + 1;
 		} else // word bigger than line, just thunk
 		{
-			for (unsigned int i = 0; i < endPos - startPos; i++)
+			for (uint i = 0; i < endPos - startPos; i++)
 				word += text[startPos + i];
 
 			startPos += lineWidth;

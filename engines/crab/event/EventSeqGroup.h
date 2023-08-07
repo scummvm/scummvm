@@ -39,25 +39,25 @@ namespace Crab {
 namespace pyrodactyl {
 namespace event {
 class EventSeqGroup {
-	typedef Common::HashMap<unsigned int, EventSequence> SeqMap;
+	typedef Common::HashMap<uint, EventSequence> SeqMap;
 
 	// The event sequences in this group
 	SeqMap _seq;
 
 	// The sequences that have ended in this group
-	Common::Array<unsigned int> _end;
+	Common::Array<uint> _end;
 
 public:
 	EventSeqGroup(void) {}
 	~EventSeqGroup(void) {}
 
-	void addSeq(const unsigned int &id, Common::String &path);
-	void endSeq(const unsigned int &id);
-	bool eventInProgress(const unsigned int &id);
-	bool activeSeq(unsigned int &activeSeq);
+	void addSeq(const uint &id, Common::String &path);
+	void endSeq(const uint &id);
+	bool eventInProgress(const uint &id);
+	bool activeSeq(uint &activeSeq);
 
-	GameEvent *curEvent(const unsigned int &id);
-	void nextEvent(const unsigned int &id, Info &info, const Common::String &playerId, Common::Array<EventResult> &result,
+	GameEvent *curEvent(const uint &id);
+	void nextEvent(const uint &id, Info &info, const Common::String &playerId, Common::Array<EventResult> &result,
 				   Common::Array<EventSeqInfo> &endSeq, const int choice = -1);
 
 	void internalEvents(Info &info);

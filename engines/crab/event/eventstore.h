@@ -80,7 +80,7 @@ struct GameEventStore {
 
 	void load(const Common::String &filename);
 
-	void addConv(rapidxml::xml_node<char> *node, unsigned int &index);
+	void addConv(rapidxml::xml_node<char> *node, uint &index);
 	void setAchievement(const int &id);
 };
 

@@ -37,7 +37,7 @@
 namespace Crab {
 
 namespace TMX {
-typedef unsigned int GidFormat;
+typedef uint GidFormat;
 
 // Bits on the far end of the 32-bit global tile ID are used for tile flags
 const static GidFormat FlippedHorizontallyFlag = 0x80000000;

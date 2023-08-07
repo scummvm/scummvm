@@ -77,7 +77,7 @@ void Sprite::load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 		_imgSize.x = dat.w();
 		_imgSize.y = dat.h();
 
-		unsigned int index = 0;
+		uint index = 0;
 		loadNum(index, "moveset", node);
 
 		if (index < animations.size())
@@ -518,19 +518,19 @@ void Sprite::updateMove(const FightAnimationType &combo) {
 }
 
 void Sprite::forceUpdateMove(const FightAnimationType &combo) {
-	unsigned int index = _animSet._fight.findMove(combo, _input._state);
+	uint index = _animSet._fight.findMove(combo, _input._state);
 	forceUpdateMove(index);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Update the move info of the AI or player sprite
 //------------------------------------------------------------------------
-void Sprite::updateMove(const unsigned int &index) {
+void Sprite::updateMove(const uint &index) {
 	if (_input.idle())
 		forceUpdateMove(index);
 }
 
-void Sprite::forceUpdateMove(const unsigned int &index) {
+void Sprite::forceUpdateMove(const uint &index) {
 	if (_animSet._fight.forceUpdate(index, _input, _dir)) {
 		// This sets the sprite input to the current move input
 		_animSet._fight.curCombo(_input);

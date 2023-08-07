@@ -51,7 +51,7 @@ class GameSaveMenu : public FileMenu<SaveFileData> {
 	// The index of the selected button
 	int _index;
 
-	void addButton(const Common::String &p, unsigned int &slotIndex, unsigned int &menuIndex);
+	void addButton(const Common::String &p, uint &slotIndex, uint &menuIndex);
 
 public:
 	GameSaveMenu() {

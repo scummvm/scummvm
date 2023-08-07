@@ -79,7 +79,7 @@ void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 			} else {
 				int index = 0;
 				loadNum(index, "template", statnode);
-				if (index >= 0 && (unsigned int)index < stem._collection.size())
+				if (index >= 0 && (uint)index < stem._collection.size())
 					for (int i = 0; i < STAT_TOTAL; i++)
 						_stat._val[i] = stem._collection[index]._val[i];
 			}
@@ -108,7 +108,7 @@ void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 	child->append_attribute(doc.allocate_attribute("id", _id.c_str()));
 	child->append_attribute(doc.allocate_attribute("name", _name.c_str()));
 
-	unsigned int val = static_cast<unsigned int>(_state);
+	uint val = static_cast<uint>(_state);
 	child->append_attribute(doc.allocate_attribute("state", g_engine->_stringPool->Get(val)));
 
 	_opinion.saveState(doc, child);

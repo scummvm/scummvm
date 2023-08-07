@@ -45,7 +45,7 @@ struct EmotionIndicator {
 	TextData _text;
 
 	// This array is used to store the corresponding tone values to a reply
-	Common::Array<unsigned int> _value;
+	Common::Array<uint> _value;
 
 	EmotionIndicator() {}
 

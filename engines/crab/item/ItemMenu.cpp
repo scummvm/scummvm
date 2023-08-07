@@ -39,10 +39,10 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load the layout and items
 //------------------------------------------------------------------------
-void ItemMenu::init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows, const unsigned int &cols,
+void ItemMenu::init(const ItemSlot &ref, const Vector2i &inc, const uint &rows, const uint &cols,
 					const bool &keyboard) {
-	unsigned int size = rows * cols;
-	for (unsigned int i = 0; i < size; ++i) {
+	uint size = rows * cols;
+	for (uint i = 0; i < size; ++i) {
 		ItemSlot b;
 		b.init(ref, inc.x * (i % cols), inc.y * (i / cols));
 		_element.push_back(b);
@@ -56,7 +56,7 @@ void ItemMenu::init(const ItemSlot &ref, const Vector2i &inc, const unsigned int
 // Purpose: Load items from file
 //------------------------------------------------------------------------
 void ItemMenu::loadState(rapidxml::xml_node<char> *node) {
-	unsigned int count = 0;
+	uint count = 0;
 	for (auto n = node->first_node(); n != nullptr && count < _element.size(); n = n->next_sibling(), ++count)
 		_element[count].loadState(n);
 }
@@ -76,8 +76,8 @@ void ItemMenu::handleEvents(const Common::Event &event, const int &xOffset, cons
 	int result = Menu<ItemSlot>::handleEvents(event);
 	if (result != -1) {
 		_selectIndex = result;
-		for (unsigned int i = 0; i < _element.size(); ++i)
-			_element[i].state(i == (unsigned int)_selectIndex);
+		for (uint i = 0; i < _element.size(); ++i)
+			_element[i].state(i == (uint)_selectIndex);
 	}
 }
 

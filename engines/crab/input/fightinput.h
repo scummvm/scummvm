@@ -62,7 +62,7 @@ struct FightInput {
 	FightAnimationType _type;
 
 	// The sprite state, used to have different moves trigger from the same move
-	unsigned int _state;
+	uint _state;
 
 	FightInput() {
 		reset();

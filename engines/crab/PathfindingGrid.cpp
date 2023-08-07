@@ -258,7 +258,7 @@ PathfindingGraphNode *PathfindingGrid::getNearestOpenNode(Vector2f nodePos, Vect
 				returnNode = checkNodes.front();
 			}
 		} else {
-			for (unsigned int i = 0; i < checkNodes.front()->_neighborNodes.size(); ++i) {
+			for (uint i = 0; i < checkNodes.front()->_neighborNodes.size(); ++i) {
 				// If the neighbor hasn't been checked yet, add it to the list to check.
 				if (Common::find(allUsedNodes.begin(), allUsedNodes.end(), checkNodes.front()->_neighborNodes[i]) == allUsedNodes.end()) {
 					allUsedNodes.push_back(checkNodes.front()->_neighborNodes[i]);

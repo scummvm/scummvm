@@ -46,9 +46,9 @@
 namespace Crab {
 
 // We use this object as the key for all image assets
-typedef unsigned int ImageKey;
+typedef uint ImageKey;
 
-// Since we use unsigned int as a key for images, our loadImgKey function is loadNum
+// Since we use uint as a key for images, our loadImgKey function is loadNum
 #define loadImgKey loadNum
 
 namespace pyrodactyl {

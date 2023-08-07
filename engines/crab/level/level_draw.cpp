@@ -43,7 +43,7 @@ using namespace pyrodactyl::input;
 // Purpose: Pre render the terrain layer
 void Level::preDraw() {
 	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(_terrain.w(), _terrain.h(), *g_engine->_format);
-	unsigned int layerCount = 0u;
+	uint layerCount = 0u;
 	for (auto l = _terrain._layer.begin(); l != _terrain._layer.end(); ++l, ++layerCount) {
 		g_engine->_imageManager->_tileset.preDraw(*l, _terrain._tileSize, surf);
 
@@ -70,7 +70,7 @@ void Level::draw(pyrodactyl::event::Info &info) {
 	// Background sprites are assumed to be sorted by their layer count
 	auto b = _background.begin();
 
-	unsigned int layerCount = 0u;
+	uint layerCount = 0u;
 
 	// Draw the terrain layer
 	g_engine->_imageManager->_tileset.draw(_terrain._layer[0], _camera, _terrain._tileSize, _objects[_playerIndex].posRect(), _img);
@@ -82,9 +82,9 @@ void Level::draw(pyrodactyl::event::Info &info) {
 
 		// Draw the background sprites
 		for (; b != _background.end(); ++b) {
-			if ((unsigned int)b->_layer > layerCount) // We don't have any sprites to draw at this layer
+			if ((uint)b->_layer > layerCount) // We don't have any sprites to draw at this layer
 				break;
-			else if ((unsigned int)b->_layer == layerCount && b->visible())
+			else if ((uint)b->_layer == layerCount && b->visible())
 				b->draw(info, _camera);
 		}
 
@@ -98,9 +98,9 @@ void Level::draw(pyrodactyl::event::Info &info) {
 
 	// Draw the background sprites
 	for (; b != _background.end(); ++b) {
-		if ((unsigned int)b->_layer > layerCount) // We don't have any sprites to draw at this layer
+		if ((uint)b->_layer > layerCount) // We don't have any sprites to draw at this layer
 			break;
-		else if ((unsigned int)b->_layer >= layerCount && b->visible())
+		else if ((uint)b->_layer >= layerCount && b->visible())
 			b->draw(info, _camera);
 	}
 

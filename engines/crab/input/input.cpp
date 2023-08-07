@@ -207,17 +207,17 @@ void InputManager::restoreBackup() {
 }
 
 void InputManager::populateKeyTable() {
-	for (unsigned int type = IG_START; type < IT_TOTAL; type++) {
+	for (uint type = IG_START; type < IT_TOTAL; type++) {
 		_keyDescs[type] = '\0';
 	}
 
 	setKeyBindingMode(KBM_GAME);
-	for (unsigned int i = IG_START; i < IG_SIZE + IG_START; i++) {
+	for (uint i = IG_START; i < IG_SIZE + IG_START; i++) {
 		getAssociatedKey((InputType)i);
 	}
 
 	setKeyBindingMode(KBM_UI);
-	for (unsigned int i = IU_START; i < IU_SIZE + IU_START; i++) {
+	for (uint i = IU_START; i < IU_SIZE + IU_START; i++) {
 		getAssociatedKey((InputType)i);
 	}
 }

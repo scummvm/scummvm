@@ -48,7 +48,7 @@ void ColorPool::load(const Common::String &filename) {
 }
 
 SDL_Color &ColorPool::get(const int &num) {
-	if (_pool.size() <= static_cast<unsigned int>(num))
+	if (_pool.size() <= static_cast<uint>(num))
 		return _invalid;
 
 	return _pool[num];

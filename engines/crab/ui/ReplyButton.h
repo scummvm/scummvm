@@ -44,7 +44,7 @@ class ReplyButton : public Button {
 	int _colB, _colS, _colH;
 	FontKey _font;
 	Align _replyAlign;
-	Vector2D<unsigned int> _lineSize;
+	Vector2D<uint> _lineSize;
 
 	// Reply options get moved around a lot, this remembers their actual position
 	Rect _orig;

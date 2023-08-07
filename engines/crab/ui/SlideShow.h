@@ -48,7 +48,7 @@ class SlideShow {
 	pyrodactyl::image::Image _img;
 
 	// The index of our current image
-	unsigned int _index;
+	uint _index;
 
 	// The position at which map image has to be drawn
 	Element _pos;
