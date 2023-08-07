@@ -65,8 +65,8 @@ void ItemMenu::loadState(rapidxml::xml_node<char> *node) {
 // Purpose: Save to file
 //------------------------------------------------------------------------
 void ItemMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto i = _element.begin(); i != _element.end(); ++i)
-		i->saveState(doc, root);
+	for (auto &i : _element)
+		i.saveState(doc, root);
 }
 
 //------------------------------------------------------------------------
@@ -88,16 +88,16 @@ void ItemMenu::draw(ItemDesc &itemInfo) {
 	if (_selectIndex != -1)
 		itemInfo.draw(_element[_selectIndex]._item);
 
-	for (auto i = _element.begin(); i != _element.end(); ++i)
-		i->draw();
+	for (auto &i : _element)
+		i.draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Equip an item at the first available location (used in events)
 //------------------------------------------------------------------------
 bool ItemMenu::equip(Item &item) {
-	for (auto i = _element.begin(); i != _element.end(); ++i)
-		if (i->_category == SLOT_STORAGE && i->equip(item))
+	for (auto &i : _element)
+		if (i._category == SLOT_STORAGE && i.equip(item))
 			return true;
 
 	return false;
@@ -125,13 +125,13 @@ bool ItemMenu::del(const Common::String &id) {
 // Purpose: Find out if we have an item with a name
 //------------------------------------------------------------------------
 bool ItemMenu::has(const Common::String &container, const Common::String &id) {
-	for (auto i = _element.begin(); i != _element.end(); ++i)
-		if (i->_item._id == id) {
+	for (const auto &i : _element)
+		if (i._item._id == id) {
 			if (container == "equip") {
-				if (i->_category == SLOT_EQUIP)
+				if (i._category == SLOT_EQUIP)
 					return true;
 			} else if (container == "storage") {
-				if (i->_category == SLOT_STORAGE)
+				if (i._category == SLOT_STORAGE)
 					return true;
 			} else
 				return true;

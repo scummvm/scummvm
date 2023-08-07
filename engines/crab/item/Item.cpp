@@ -78,9 +78,9 @@ void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	root->append_attribute(doc.allocate_attribute("img", g_engine->_stringPool->Get(_img)));
 	root->append_attribute(doc.allocate_attribute("desc", _desc.c_str()));
 
-	for (auto i = _bonus.begin(); i != _bonus.end(); ++i) {
+	for (const auto &i : _bonus) {
 		auto n = doc.allocate_node(rapidxml::node_element, "bonus");
-		switch (i->_type) {
+		switch (i._type) {
 		case STAT_HEALTH:
 			n->append_attribute(doc.allocate_attribute("type", STATNAME_HEALTH));
 			break;
@@ -99,7 +99,7 @@ void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 			break;
 		}
 
-		n->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(i->_val)));
+		n->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(i._val)));
 		root->append_node(n);
 	}
 }
@@ -108,11 +108,11 @@ void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 // Purpose: Calculate effect of item on stats
 //------------------------------------------------------------------------
 void Item::statChange(pyrodactyl::people::Person &obj, bool increase) {
-	for (auto i = _bonus.begin(); i != _bonus.end(); ++i)
+	for (const auto &i : _bonus)
 		if (increase)
-			obj._stat.change(i->_type, i->_val);
+			obj._stat.change(i._type, i._val);
 		else
-			obj._stat.change(i->_type, -i->_val);
+			obj._stat.change(i._type, -i._val);
 }
 
 void Item::draw(const int &x, const int &y) {
