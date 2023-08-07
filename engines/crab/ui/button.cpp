@@ -33,6 +33,7 @@
 // Purpose:  Contains the button functions
 //=============================================================================
 #include "crab/crab.h"
+#include "crab/input/cursor.h"
 #include "crab/ui/button.h"
 
 namespace Crab {

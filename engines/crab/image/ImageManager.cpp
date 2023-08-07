@@ -33,8 +33,9 @@
 // Purpose:  Contains the image manager class - used to manage in-game images
 //=============================================================================
 #include "crab/crab.h"
-#include "crab/image/ImageManager.h"
 #include "crab/XMLDoc.h"
+#include "crab/image/ImageManager.h"
+#include "crab/input/cursor.h"
 
 namespace Crab {
 

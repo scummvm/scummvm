@@ -31,11 +31,9 @@
 #ifndef CRAB_GAMEEVENT_H
 #define CRAB_GAMEEVENT_H
 
-#include "crab/image/ImageManager.h"
 #include "crab/event/effect.h"
 #include "crab/event/eventstore.h"
 #include "crab/people/person.h"
-#include "crab/people/personbase.h"
 #include "crab/event/triggerset.h"
 
 namespace Crab {

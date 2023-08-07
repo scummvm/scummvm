@@ -28,7 +28,6 @@
  *
  */
 
-
 #include "crab/event/triggerset.h"
 
 namespace Crab {

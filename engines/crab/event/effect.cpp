@@ -30,7 +30,6 @@
 
 #include "crab/crab.h"
 #include "crab/event/effect.h"
-#include "crab/music/MusicManager.h"
 
 namespace Crab {
 

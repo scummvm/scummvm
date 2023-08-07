@@ -35,12 +35,8 @@
 #ifndef CRAB_IMAGEMANAGER_H
 #define CRAB_IMAGEMANAGER_H
 
-#include "crab/GameParam.h"
 #include "crab/image/Image.h"
-//#include "crab/LoadingScreen.h"
 #include "crab/TMX/TMXTileSet.h"
-#include "crab/input/cursor.h"
-#include "crab/loaders.h"
 
 namespace Crab {
 

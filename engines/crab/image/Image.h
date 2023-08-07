@@ -31,8 +31,8 @@
 #ifndef CRAB_IMAGE_H
 #define CRAB_IMAGE_H
 
-#include "crab/rapidxml/rapidxml.hpp"
 #include "crab/Rectangle.h"
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Graphics {
 class ManagedSurface;

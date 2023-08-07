@@ -31,10 +31,9 @@
 #ifndef CRAB_GAMEEVENTINFO_H
 #define CRAB_GAMEEVENTINFO_H
 
-#include "crab/ui/Inventory.h"
 #include "crab/stat/StatTemplate.h"
+#include "crab/ui/Inventory.h"
 #include "crab/ui/journal.h"
-#include "crab/people/person.h"
 
 namespace Crab {
 
