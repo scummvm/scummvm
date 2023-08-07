@@ -126,9 +126,9 @@ void ItemCollection::loadState(rapidxml::xml_node<char> *node) {
 // Purpose: Write items to save file
 //------------------------------------------------------------------------
 void ItemCollection::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto i = _item.begin(); i != _item.end(); ++i) {
-		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, i->_key.c_str());
-		i->_value.saveState(doc, child);
+	for (auto &i : _item) {
+		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, i._key.c_str());
+		i._value.saveState(doc, child);
 		root->append_node(child);
 	}
 }
@@ -139,8 +139,8 @@ void ItemCollection::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node
 void ItemCollection::setUI() {
 	_itemInfo.setUI();
 
-	for (auto i = _item.begin(); i != _item.end(); ++i)
-		i->_value.setUI();
+	for (auto &i : _item)
+		i._value.setUI();
 }
 
 } // End of namespace Crab
