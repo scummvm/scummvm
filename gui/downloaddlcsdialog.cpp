@@ -28,6 +28,10 @@
 #include "backends/dlc/dlcmanager.h"
 #include "backends/dlc/dlcdesc.h"
 
+enum {
+	kCancelSelectedCmd = 'CANS',
+};
+
 namespace GUI {
 
 DownloadDLCsDialog::DownloadDLCsDialog()
