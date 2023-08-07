@@ -23,9 +23,9 @@
 #include "graphics/pixelformat.h"
 #include "common/system.h"
 
-#include "graphics/blit-neon.cpp"
-#include "graphics/blit-sse2.cpp"
-#include "graphics/blit-avx2.cpp"
+#include "graphics/blit/blit-neon.cpp"
+#include "graphics/blit/blit-sse2.cpp"
+#include "graphics/blit/blit-avx2.cpp"
 
 namespace Graphics {
 
