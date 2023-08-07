@@ -769,6 +769,9 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 	}
 
 	if (!dstArea.isEmpty() && !srcArea.isEmpty()) {
+		if (dstArea.width() != srcArea.width() || dstArea.height() != srcArea.height()) {
+			return Common::Rect(0, 0, dstArea.width(), dstArea.height());
+		}
 		if (colorMod == 0xffffffff && blend == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
 			Graphics::opaqueBlendBlit(
 				(byte *)getBasePtr(0, 0),
