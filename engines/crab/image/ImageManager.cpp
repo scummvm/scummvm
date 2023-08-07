@@ -44,8 +44,8 @@ using namespace pyrodactyl::image;
 // Purpose: Load assets here.
 //------------------------------------------------------------------------
 void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
-	for (auto it = _map[mapid].begin(); it != _map[mapid].end(); ++it)
-		it->_value.deleteImage();
+	for (auto &it : _map[mapid])
+		it._value.deleteImage();
 
 	_map[mapid].clear();
 	XMLDoc imageList(filename);
@@ -181,8 +181,8 @@ void ImageManager::blackScreen() {
 //------------------------------------------------------------------------
 void ImageManager::quit() {
 	for (int i = 0; i < MAP_TOTAL; i++) {
-		for (auto it = _map[i].begin(); it != _map[i].end(); ++it)
-			it->_value.deleteImage();
+		for (auto &it : _map[i])
+			it._value.deleteImage();
 
 		_map[i].clear();
 	}
