@@ -24,6 +24,7 @@
 #include "common/system.h"
 
 #include "graphics/blit-neon.cpp"
+#include "graphics/blit-sse2.cpp"
 
 namespace Graphics {
 
@@ -172,12 +173,12 @@ bool setAlpha(byte *dst, const byte *src,
 
 
 BlendBlit::Args::Args(byte *dst, const byte *src,
-	const uint dstPitch, const uint srcPitch,
+	const uint _dstPitch, const uint _srcPitch,
 	const int posX, const int posY,
 	const uint _width, const uint _height,
 	const int _scaleX, const int _scaleY,
 	const uint32 colorMod, const uint _flipping) :
-		xp(0), yp(0), dstPitch(dstPitch),
+		xp(0), yp(0), dstPitch(_dstPitch),
 		width(_width), height(_height), color(colorMod),
 		scaleX(_scaleX), scaleY(_scaleY), flipping(_flipping) {
 	bool doScale = scaleX != SCALE_THRESHOLD || scaleY != SCALE_THRESHOLD;
@@ -185,7 +186,7 @@ BlendBlit::Args::Args(byte *dst, const byte *src,
 	rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
 	alphamod = ((colorMod & kAModMask)   != kAModMask);
 	inStep = 4;
-	inoStep = srcPitch;
+	inoStep = _srcPitch;
 	if (flipping & FLIP_H) {
 		inStep = -inStep;
 		xp = width - 1;
@@ -198,8 +199,8 @@ BlendBlit::Args::Args(byte *dst, const byte *src,
 		if (doScale) yp = yp * scaleY / SCALE_THRESHOLD;
 	}
 
-	ino = src + yp * srcPitch + xp * 4;
-	outo = dst + posY * dstPitch + posX * 4;
+	ino = src + yp * _srcPitch + xp * 4;
+	outo = dst + posY * _dstPitch + posX * 4;
 }
 
 /**
@@ -540,6 +541,9 @@ void BlendBlit::blit(byte *dst, const byte *src,
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 	if (g_system->hasFeature(OSystem::kFeatureNEON)) blitFunc = blitNEON;
 	else blitFunc = blitGeneric;
+#elif defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+	if (g_system->hasFeature(OSystem::kFeatureSSE2)) blitFunc = blitSSE2;
+	else blitFunc = blitGeneric;
 #else
 	blitFunc = blitGeneric;
 #endif
@@ -673,6 +677,9 @@ void BlendBlit::blit(byte *dst, const byte *src,
 BLIT_FUNC(Generic)
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 BLIT_FUNC(NEON)
+#endif
+#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+BLIT_FUNC(SSE2)
 #endif
 
 } // End of namespace Graphics

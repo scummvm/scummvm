@@ -112,7 +112,7 @@ struct MultiplyBlend {
     	    srcr = vandq_u32(vshlq_n_u32(vmulq_u32(dstr, vshrq_n_u32(vmulq_u32(vmulq_u32(srcr, vmovq_n_u32(cr)), ina), 16)), BlendBlit::kRModShift - 8), vmovq_n_u32(BlendBlit::kRModMask));
 
     	    src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
-    	    src = vorrq_u32(src, vorrq_u32(srcb, vorrq_u32(srcg, srcb)));
+    	    src = vorrq_u32(src, vorrq_u32(srcb, vorrq_u32(srcg, srcr)));
     	} else {
     	    uint32x4_t srcg = vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask));
     	    uint32x4_t srcrb = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
@@ -154,10 +154,10 @@ struct OpaqueBlend {
 template<bool doscale, bool rgbmod, bool alphamod>
 struct BinaryBlend {
 	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
-            uint32x4_t alphaMask = vceqq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vmovq_n_u32(0));
-            dst = vandq_u32(dst, alphaMask);
-            src = vandq_u32(vorrq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vmvnq_u32(alphaMask));
-            return vorrq_u32(dst, src);
+        uint32x4_t alphaMask = vceqq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vmovq_n_u32(0));
+        dst = vandq_u32(dst, alphaMask);
+        src = vandq_u32(vorrq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vmvnq_u32(alphaMask));
+        return vorrq_u32(dst, src);
 	}
 
 	static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
@@ -254,10 +254,10 @@ struct SubtractiveBlend {
 	}
 
 	static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
-			out[BlendBlit::kAIndex] = 255;
-			out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * cb  * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-			out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * cg  * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-			out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * cr *  (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kAIndex] = 255;
+		out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * cb  * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * cg  * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * cr *  (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
 	}
 };
 
