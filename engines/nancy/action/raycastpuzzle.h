@@ -26,7 +26,7 @@
 
 namespace Nancy {
 
-class RCPR;
+struct RCPR;
 
 namespace Action {
 
