@@ -28,15 +28,11 @@
  *
  */
 
-
 #include "crab/people/personbase.h"
-
 namespace Crab {
-
-using namespace pyrodactyl::stat;
-
 namespace pyrodactyl {
 namespace people {
+
 PersonType stringToPersonType(const Common::String &val) {
 	if (val == "neutral")
 		return PE_NEUTRAL;

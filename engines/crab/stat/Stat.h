@@ -31,8 +31,9 @@
 #ifndef CRAB_STAT_H
 #define CRAB_STAT_H
 
-#include "crab/image/ImageManager.h"
-//#include "crab/text/TextManager.h"
+#include "common/str.h"
+#include "crab/gametype.h"
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Crab {
 

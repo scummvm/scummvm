@@ -31,8 +31,7 @@
 #ifndef CRAB_OPINION_H
 #define CRAB_OPINION_H
 
-#include "crab/GameParam.h"
-
+#include "crab/rapidxml/rapidxml.hpp"
 namespace Crab {
 
 namespace pyrodactyl {
