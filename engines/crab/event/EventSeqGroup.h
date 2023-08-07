@@ -48,8 +48,8 @@ class EventSeqGroup {
 	Common::Array<uint> _end;
 
 public:
-	EventSeqGroup(void) {}
-	~EventSeqGroup(void) {}
+	EventSeqGroup() {}
+	~EventSeqGroup() {}
 
 	void addSeq(const uint &id, Common::String &path);
 	void endSeq(const uint &id);

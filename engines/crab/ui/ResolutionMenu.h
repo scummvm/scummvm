@@ -62,11 +62,11 @@ class ResolutionMenu : public ButtonMenu {
 	int _columns;
 
 public:
-	ResolutionMenu(void) {
+	ResolutionMenu() {
 		_state = STATE_NORMAL;
 		_columns = 1;
 	}
-	~ResolutionMenu(void) {}
+	~ResolutionMenu() {}
 
 	void load(rapidxml::xml_node<char> *node);
 	void draw();

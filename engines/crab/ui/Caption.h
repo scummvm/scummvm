@@ -46,11 +46,11 @@ public:
 
 	Common::String _text;
 
-	Caption(void) {
+	Caption() {
 		_colS = 0;
 		_enabled = false;
 	}
-	~Caption(void) {}
+	~Caption() {}
 
 	void init(const Caption &c, const int &xOffset = 0, const int &yOffset = 0);
 

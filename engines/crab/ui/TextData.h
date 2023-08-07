@@ -46,13 +46,13 @@ public:
 	Align _align;
 	bool _background;
 
-	TextData(void) {
+	TextData() {
 		_col = 0;
 		_font = 0;
 		_align = ALIGN_LEFT;
 		_background = false;
 	}
-	~TextData(void) {}
+	~TextData() {}
 
 	bool load(rapidxml::xml_node<char> *node, Rect *parent = nullptr, const bool &echo = true);
 

@@ -38,7 +38,7 @@ static bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB) {
 	return nodeA->getFinalCost() > nodeB->getFinalCost();
 }
 
-PathfindingAgent::PathfindingAgent(void) : _nodeQueue(compareNodes) {
+PathfindingAgent::PathfindingAgent() : _nodeQueue(compareNodes) {
 	_grid = nullptr;
 
 	_destinationSet = false;
@@ -51,7 +51,7 @@ PathfindingAgent::PathfindingAgent(void) : _nodeQueue(compareNodes) {
 	_clickedTile = nullptr;
 }
 
-PathfindingAgent::~PathfindingAgent(void) {
+PathfindingAgent::~PathfindingAgent() {
 }
 
 void PathfindingAgent::initialize(PathfindingGrid *g) {

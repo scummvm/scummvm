@@ -58,13 +58,13 @@ class TextArea : public TextData {
 public:
 	Common::String _text;
 
-	TextArea(void) : _text("") {
+	TextArea() : _text("") {
 		_size = 20;
 		_seEntry = -1;
 		_seErase = -1;
 		_seAccept = -1;
 	}
-	~TextArea(void) {}
+	~TextArea() {}
 
 	void load(rapidxml::xml_node<char> *node);
 

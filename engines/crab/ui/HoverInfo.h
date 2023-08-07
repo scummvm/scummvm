@@ -44,11 +44,11 @@ public:
 	bool _enabled;
 	Common::String _text;
 
-	HoverInfo(void) {
+	HoverInfo() {
 		_enabled = false;
 	}
 
-	~HoverInfo(void) {}
+	~HoverInfo() {}
 
 	void init(const HoverInfo &h, const int &xOffset = 0, const int &yOffset = 0);
 

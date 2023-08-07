@@ -76,12 +76,12 @@ class PauseMenu {
 	int _choice;
 
 public:
-	PauseMenu(void) {
+	PauseMenu() {
 		_state = STATE_NORMAL;
 		_choice = -1;
 	}
 
-	~PauseMenu(void) {}
+	~PauseMenu() {}
 
 	void updateMode(const bool &ironman) {
 		_menu._element[PS_SAVE - 1]._visible = !ironman;

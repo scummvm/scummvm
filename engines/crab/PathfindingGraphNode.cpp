@@ -32,7 +32,7 @@
 
 namespace Crab {
 
-PathfindingGraphNode::PathfindingGraphNode(void) {
+PathfindingGraphNode::PathfindingGraphNode() {
 	_id = -1;
 	_movementCost = -1.0f;
 }
@@ -42,7 +42,7 @@ PathfindingGraphNode::PathfindingGraphNode(Vector2f pos, int i) : _position(pos)
 	_movementCost = -1.0f;
 }
 
-PathfindingGraphNode::~PathfindingGraphNode(void) {
+PathfindingGraphNode::~PathfindingGraphNode() {
 }
 
 void PathfindingGraphNode::addNeighbor(PathfindingGraphNode *node) {

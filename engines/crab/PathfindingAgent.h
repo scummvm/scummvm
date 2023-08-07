@@ -60,27 +60,27 @@ public:
 	}
 	~PlannerNode() {}
 
-	PathfindingGraphNode *getLocation(void) {
+	PathfindingGraphNode *getLocation() {
 		return _location;
 	}
 
-	PlannerNode *getParent(void) {
+	PlannerNode *getParent() {
 		return _parent;
 	}
 
-	PlannerNode *getChild(void) {
+	PlannerNode *getChild() {
 		return _child;
 	}
 
-	double getHCost(void) const {
+	double getHCost() const {
 		return _cost;
 	}
 
-	double getFinalCost(void) const {
+	double getFinalCost() const {
 		return _finalCost;
 	}
 
-	double getGivenCost(void) const {
+	double getGivenCost() const {
 		return _givenCost;
 	}
 

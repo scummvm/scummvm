@@ -94,12 +94,12 @@ class OptionMenu {
 public:
 	bool _loaded;
 
-	OptionMenu(void) {
+	OptionMenu() {
 		_loaded = false;
 		_state = STATE_GENERAL;
 		_menu.useKeyboard(true);
 	}
-	~OptionMenu(void) {}
+	~OptionMenu() {}
 
 	void reset();
 	bool disableHotkeys() {
