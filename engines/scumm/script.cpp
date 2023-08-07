@@ -606,12 +606,6 @@ int ScummEngine::readVar(uint var) {
 				if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && vm.slot[_currentScript].number == 2099 && var == 32 && readVar(399) == 1) {
 					return 1;
 				}
-				// Mod for Backyard Football online competitive play: allow all 38 backyard kids and pros
-				// to be drafted in an online game. This variable controls how many kids are shown in the
-				// bleachers when drafting.
-				if (_game.id == GID_FOOTBALL && readVar(465) == 1 && _currentRoom == 5 && var == 9) {
-					return 38;
-				}
 			}
 #endif
 
