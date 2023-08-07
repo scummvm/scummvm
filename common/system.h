@@ -592,6 +592,11 @@ public:
 		kFeatureSSE2,
 
 		/**
+		* For x86/x86_64 platforms that have SSE4.1 support
+		*/
+		kFeatureSSE41,
+
+		/**
 		* For x86_64 platforms that have AVX2 support
 		*/
 		kFeatureAVX2,
