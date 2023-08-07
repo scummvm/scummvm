@@ -735,7 +735,7 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 										   const TSpriteBlendMode blend,
 										   const AlphaType alphaType) {
 	Common::Rect srcArea = srcRect, dstArea = destRect;
-	if (format != getSupportedBlendBlitPixelFormat() || src.format != getSupportedBlendBlitPixelFormat()) {
+	if (!isBlendBlitPixelFormatSupported(src.format, format)) {
 		warning("ManagedSurface::blendBlitFrom only accepts RGBA32!");
 		return Common::Rect(0, 0, 0, 0);
 	}
