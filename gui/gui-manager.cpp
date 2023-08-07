@@ -539,11 +539,11 @@ void GuiManager::runLoop() {
 		//    then delay showing the tooltip based on the value of kTooltipSameWidgetDelay.
 		uint32 systemMillisNowForTooltipCheck = _system->getMillis(true);
 		if ((_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
-		    && _lastMousePosition.time + kTooltipDelay < systemMillisNowForTooltipCheck
+		    && systemMillisNowForTooltipCheck - _lastMousePosition.time > (uint32)kTooltipDelay
 		    && !activeDialog->isDragging()) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
 			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)
-			    && (_lastTooltipShown.wdg != wdg || _lastTooltipShown.time + kTooltipSameWidgetDelay < systemMillisNowForTooltipCheck)) {
+			    && (_lastTooltipShown.wdg != wdg || systemMillisNowForTooltipCheck - _lastTooltipShown.time > (uint32)kTooltipSameWidgetDelay)) {
 				_lastTooltipShown.time = systemMillisNowForTooltipCheck;
 				_lastTooltipShown.wdg  = wdg;
 				_lastTooltipShown.x = _lastMousePosition.x;
@@ -683,8 +683,8 @@ void GuiManager::setupCursor() {
 // very much. We could plug in a different cursor here if we like to.
 
 void GuiManager::animateCursor() {
-	int time = _system->getMillis(true);
-	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
+	uint32 time = _system->getMillis(true);
+	if (time - _cursorAnimateTimer > (uint32)kCursorAnimateDelay) {
 		for (int i = 0; i < 15; i++) {
 			if ((i < 6) || (i > 8)) {
 				_cursor[16 * 7 + i] = _cursorAnimateCounter;
@@ -774,10 +774,10 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	case Common::EVENT_RBUTTONDOWN:
 		button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
 		time = _system->getMillis(true);
-		if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-			&& ABS(_lastClick.x - event.mouse.x) < 3
-			&& ABS(_lastClick.y - event.mouse.y) < 3) {
-				_lastClick.count++;
+		if (_lastClick.count && (time - _lastClick.time < (uint32)kDoubleClickDelay)
+		    && ABS(_lastClick.x - event.mouse.x) < 3
+		    && ABS(_lastClick.y - event.mouse.y) < 3) {
+			_lastClick.count++;
 		} else {
 			_lastClick.x = event.mouse.x;
 			_lastClick.y = event.mouse.y;
