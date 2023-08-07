@@ -268,7 +268,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 	HLock(workHandle);
 	mainAssetPtr = (char *)(*workHandle);
 
-	endOfAssetBlock = (char *)((byte *)mainAssetPtr + (uint32)assetSize);
+	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 
 	parseAssetPtr = mainAssetPtr;
 
@@ -550,7 +550,7 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 	HLock(workHandle);
 
 	mainAssetPtr = (char *)*workHandle;
-	endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -599,7 +599,7 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 	f.close();
 
 	// Set up some pointers
-	endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -711,7 +711,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		mainAssetPtr = (char *)(*workHandle);
 
 		parseAssetPtr = mainAssetPtr;
-		endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+		endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 
 		ClearWSAssets(_WS_ASSET_CELS, emptySlot, emptySlot);
 
@@ -955,7 +955,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		for (i = 0; i < data[CELS_COUNT]; i++) {
 
 			// The beginning of sprite i is the dataPtr + the number of bytes in the offset table
-			tempPtr = (uint32 *)((uint32)dataPtr + offsetPtr[i]);
+			tempPtr = (uint32 *)((intptr)dataPtr + offsetPtr[i]);
 
 			// Byteswap the individual sprite's header
 			for (j = 0; j < SS_INDV_HEAD; j++) {
@@ -1050,7 +1050,7 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 	HLock(workHandle);
 
 	mainAssetPtr = (char *)*workHandle;
-	endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -1103,7 +1103,7 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 	f.close();
 
 	// Set up some pointers
-	endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+	endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
 	parseAssetPtr = mainAssetPtr;
 
 	// Process the SS from the stream file
@@ -1199,7 +1199,7 @@ int32 GetWSAssetCELCount(uint32 hash) {
 	}
 
 	// Find and return the number of sprites in the SS
-	celsPtr = (uint32 *)((uint32) * (_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 	return celsPtr[CELS_COUNT];
 }
 
@@ -1227,7 +1227,7 @@ int32 GetWSAssetCELFrameRate(uint32 hash) {
 	}
 
 	// Find and return the frame rate for the SS
-	celsPtr = (uint32 *)((uint32) * (_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 	return celsPtr[CELS_FRAME_RATE];
 }
 
@@ -1255,7 +1255,7 @@ int32 GetWSAssetCELPixSpeed(uint32 hash) {
 	}
 
 	// Find and return the pix speed for the SS
-	celsPtr = (uint32 *)((uint32) * (_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 	return celsPtr[CELS_PIX_SPEED];
 }
 
@@ -1283,7 +1283,7 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	}
 
 	// Find the source for the SS
-	celsPtr = (uint32 *)((uint32) * (_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
 	numCels = celsPtr[CELS_COUNT];
@@ -1299,7 +1299,7 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((uint32)data + offsets[index]);
+	myCelSource = (uint32 *)((intptr)data + offsets[index]);
 
 	return (int32)myCelSource[CELS_W];
 }
@@ -1328,7 +1328,7 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	}
 
 	// Find the source for the SS
-	celsPtr = (uint32 *)((uint32) * (_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
+	celsPtr = (uint32 *)((intptr)*(_GWS(globalCELSHandles)[hash]) + (uint32)(_GWS(globalCELSoffsets)[hash]));
 
 	// Check that the index into the series requested is within a valid range
 	numCels = celsPtr[CELS_COUNT];
@@ -1344,7 +1344,7 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	data = &celsPtr[CELS_OFFSETS + numCels];
 
 	// Find the sprite data for the specific sprite in the series
-	myCelSource = (uint32 *)((uint32)data + offsets[index]);
+	myCelSource = (uint32 *)((intptr)data + offsets[index]);
 
 	return (int32)myCelSource[CELS_H];
 }
@@ -1371,7 +1371,7 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 	}
 
 	// Find the sequence chunk
-	sequPtr = (uint32 *)((uint32)*(_GWS(globalSEQUHandles)[hash]) + (uint32)(_GWS(globalSEQUoffsets)[hash]));
+	sequPtr = (uint32 *)((intptr)*(_GWS(globalSEQUHandles)[hash]) + (uint32)(_GWS(globalSEQUoffsets)[hash]));
 
 	// Return the offset into the resource chunk, and the number of local vars used by the sequence
 	*offset = (byte *)(&sequPtr[SEQU_SEQU_START]) - (byte *)*(_GWS(globalSEQUHandles)[hash]);
@@ -1407,7 +1407,7 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 	HLock(_GWS(globalMACHHandles)[hash]);
 
 	// Find the machine chunk
-	machPtr = (uint32 *)((uint32) * (_GWS(globalMACHHandles)[hash]) + (uint32)(_GWS(globalMACHoffsets)[hash]));
+	machPtr = (uint32 *)((intptr)*(_GWS(globalMACHHandles)[hash]) + (uint32)(_GWS(globalMACHoffsets)[hash]));
 
 	// Set the number of states, the state offset table, the start of the mach instructions
 	*numStates = (int32)machPtr[MACH_NUM_STATES];
@@ -1441,7 +1441,7 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 	}
 
 	// Find the data block chunk
-	dataPtr = (uint32 *)((uint32) * (_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
+	dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
 
 	// Verify the row index of the data block is valid
 	if (index > dataPtr[DATA_REC_COUNT]) {
@@ -1481,7 +1481,7 @@ int32 ws_GetDATACount(uint32 hash) {
 	}
 
 	// Find the data block chunk
-	dataPtr = (uint32 *)((uint32) * (_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
+	dataPtr = (uint32 *)((intptr)*(_GWS(globalDATAHandles)[hash]) + (uint32)(_GWS(globalDATAoffsets)[hash]));
 
 	// Return the number of rows in the data block
 	return dataPtr[DATA_REC_COUNT];
