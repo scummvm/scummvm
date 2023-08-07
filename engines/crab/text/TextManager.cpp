@@ -30,8 +30,8 @@
 
 #include "common/file.h"
 #include "graphics/font.h"
-#include "graphics/fonts/ttf.h"
 #include "graphics/screen.h"
+#include "graphics/fonts/ttf.h"
 #include "crab/crab.h"
 #include "crab/XMLDoc.h"
 #include "crab/text/TextManager.h"
