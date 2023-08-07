@@ -100,6 +100,32 @@ void *androidGLgetProcAddress(const char *name);
 
 class OSystem_Android : public ModularGraphicsBackend, Common::EventSource {
 private:
+	static const int kQueuedInputEventDelay = 50;
+
+	struct EventWithDelay : public Common::Event {
+		/** The time which the delay starts counting from */
+		uint32 referTimeMillis;
+
+		/** The delay for the event to be handled */
+		uint32 delayMillis;
+
+		/** The connected EventType of the "connected" event that should be handled before this one */
+		Common::EventType connectedType;
+
+		/** A status flag indicating whether the "connected" event was handled */
+		bool connectedTypeExecuted;
+
+		EventWithDelay() : referTimeMillis(0), delayMillis(0), connectedType(Common::EVENT_INVALID), connectedTypeExecuted(false) {
+		}
+
+		void reset() {
+			referTimeMillis = 0;
+			delayMillis = 0;
+			connectedType = Common::EVENT_INVALID;
+			connectedTypeExecuted = false;
+		}
+	};
+
 	// passed from the dark side
 	int _audio_sample_rate;
 	int _audio_buffer_size;
@@ -120,8 +146,7 @@ private:
 	timeval _startTime;
 
 	Common::Queue<Common::Event> _event_queue;
-	Common::Event _queuedEvent;
-	uint32 _queuedEventTime;
+	EventWithDelay _delayedMouseBtnUpEvent;
 	Common::Mutex *_event_queue_lock;
 
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt, _touch_pt_multi;
@@ -183,6 +208,7 @@ public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	void pushEvent(const Common::Event &event);
 	void pushEvent(const Common::Event &event1, const Common::Event &event2);
+	void pushDelayedMouseBtnUpEvent();
 
 	TouchControls &getTouchControls() { return _touchControls; }
 	void applyTouchSettings(bool _3dMode, bool overlayShown);

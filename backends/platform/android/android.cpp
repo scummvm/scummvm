@@ -168,7 +168,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_buffer_size(audio_buffer_size),
 	_screen_changeid(0),
 	_mixer(0),
-	_queuedEventTime(0),
 	_event_queue_lock(0),
 	_touch_pt_down(),
 	_touch_pt_scroll(),
