@@ -693,21 +693,27 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		}
 	}
 
-	if (isDriller()) {
+	if (isDriller() || isDark()) {
+		debugC(1, kFreescapeDebugParser, "Time to finish the game:");
 		if (isAmiga() || isAtariST())
 			file->seek(offset + 0x168);
 		else
 			file->seek(offset + 0xb4);
 		Common::String n;
+
+		if (isDriller()) {
+			n += char(readField(file, 8));
+			n += char(readField(file, 8));
+			debugC(1, kFreescapeDebugParser, "'%s' hours", n.c_str());
+			_initialCountdown =_initialCountdown + 3600 * atoi(n.c_str());
+			n.clear();
+			n += char(readField(file, 8));
+			assert(n == ":");
+			n.clear();
+		}
 		n += char(readField(file, 8));
 		n += char(readField(file, 8));
-		_initialCountdown =_initialCountdown + 3600 * atoi(n.c_str());
-		n.clear();
-		n += char(readField(file, 8));
-		assert(n == ":");
-		n.clear();
-		n += char(readField(file, 8));
-		n += char(readField(file, 8));
+		debugC(1, kFreescapeDebugParser, "'%s' minutes", n.c_str());
 		_initialCountdown = _initialCountdown + 60 * atoi(n.c_str());
 		n.clear();
 		n += char(readField(file, 8));
@@ -715,13 +721,11 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		n.clear();
 		n += char(readField(file, 8));
 		n += char(readField(file, 8));
+		debugC(1, kFreescapeDebugParser, "'%s' seconds", n.c_str());
 		_initialCountdown = _initialCountdown + atoi(n.c_str());
-
 		if (_useExtendedTimer)
 			_initialCountdown = 359999; // 99:59:59
-	} else if (isDark())
-		_initialCountdown = 2 * 3600; // 02:00:00
-	else if (isCastle())
+	} else if (isCastle())
 		_initialCountdown = 1000000000;
 
 	if (isAmiga() || isAtariST())
