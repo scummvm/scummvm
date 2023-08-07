@@ -186,10 +186,7 @@ void PathfindingAgent::update(uint32 timeslice) {
 
 						_nodeQueue.push(currentIter->second);
 					}
-				}
-
-				// Otherwise...
-				else {
+				} else { // Otherwise...
 					PlannerNode *successor = new PlannerNode();
 					successor->setLocation((*i));
 
@@ -206,8 +203,6 @@ void PathfindingAgent::update(uint32 timeslice) {
 				}
 			}
 		}
-		//	}
-		//}
 
 		// Update the time
 		if (timeslice != 0) {
