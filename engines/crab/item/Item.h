@@ -32,8 +32,8 @@
 #define CRAB_ITEM_H
 
 #include "crab/image/ImageManager.h"
-#include "crab/stat/bonus.h"
 #include "crab/people/person.h"
+#include "crab/stat/bonus.h"
 
 namespace Crab {
 
