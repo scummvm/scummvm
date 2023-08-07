@@ -15,31 +15,32 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/ },.
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION9_ROOM901_H
-#define M4_BURGER_ROOMS_SECTION9_ROOM901_H
-
-#include "m4/burger/rooms/section9/menu_room.h"
+#include "m4/burger/rooms/section1/room106.h"
+#include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/vars.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room901 : public MenuRoom {
-public:
-	Room901() : MenuRoom("901menu", "901click") {}
-	~Room901() override {}
+void Room106::init() {
+	_G(player).walker_in_this_scene = true;
+}
 
-	void preload() override;
-	void init() override;
-	void daemon() override;
-};
+void Room106::daemon() {
+}
+
+void Room106::pre_parser() {
+}
+
+void Room106::parser() {
+}
 
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
-
-#endif

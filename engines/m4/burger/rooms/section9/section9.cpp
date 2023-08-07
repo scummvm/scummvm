@@ -27,12 +27,12 @@ namespace Burger {
 namespace Rooms {
 
 Section9::Section9() : Rooms::Section() {
-	add(&_room901);
-	add(&_room902);
-	add(&_room903);
-	add(&_room904);
-	add(&_room951);
-	add(&_room971);
+	add(901, &_room901);
+	add(902, &_room902);
+	add(903, &_room903);
+	add(904, &_room904);
+	add(951, &_room951);
+	add(971, &_room971);
 }
 
 void Section9::daemon() {

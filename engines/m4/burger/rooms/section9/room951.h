@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Room951 : public Rooms::Room {
 public:
-	Room951() : Rooms::Room(951) {}
+	Room951() : Rooms::Room() {}
 	~Room951() override {}
 
 	void preload() override;

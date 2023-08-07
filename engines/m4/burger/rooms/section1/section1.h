@@ -25,6 +25,26 @@
 #include "m4/burger/rooms/room.h"
 #include "m4/burger/rooms/section.h"
 #include "m4/burger/rooms/section1/room101.h"
+#include "m4/burger/rooms/section1/room102.h"
+#include "m4/burger/rooms/section1/room103.h"
+#include "m4/burger/rooms/section1/room104.h"
+#include "m4/burger/rooms/section1/room105.h"
+#include "m4/burger/rooms/section1/room106.h"
+#include "m4/burger/rooms/section1/room120.h"
+#include "m4/burger/rooms/section1/room133_136.h"
+#include "m4/burger/rooms/section1/room135.h"
+#include "m4/burger/rooms/section1/room137.h"
+#include "m4/burger/rooms/section1/room138.h"
+#include "m4/burger/rooms/section1/room141.h"
+#include "m4/burger/rooms/section1/room142.h"
+#include "m4/burger/rooms/section1/room144.h"
+#include "m4/burger/rooms/section1/room170.h"
+#include "m4/burger/rooms/section1/room171.h"
+#include "m4/burger/rooms/section1/room172.h"
+#include "m4/burger/rooms/section1/room173.h"
+#include "m4/burger/rooms/section1/room174.h"
+#include "m4/burger/rooms/section1/room175.h"
+#include "m4/burger/rooms/section1/room176.h"
 
 namespace M4 {
 namespace Burger {
@@ -38,6 +58,26 @@ enum Goto1 {
 class Section1 : public Rooms::Section {
 private:
 	Room101 _room101;
+	Room102 _room102;
+	Room103 _room103;
+	Room104 _room104;
+	Room105 _room105;
+	Room106 _room106;
+	Room120 _room120;
+	Room133_136 _room133_136;
+	Room135 _room135;
+	Room137 _room137;
+	Room138 _room138;
+	Room141 _room141;
+	Room142 _room142;
+	Room144 _room144;
+	Room170 _room170;
+	Room171 _room171;
+	Room172 _room172;
+	Room173 _room173;
+	Room174 _room174;
+	Room175 _room175;
+	Room176 _room176;
 
 	int _trigger = 0;
 	int _series1 = -1;

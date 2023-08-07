@@ -22,7 +22,7 @@
 #ifndef M4_CORE_ROOMS_H
 #define M4_CORE_ROOMS_H
 
-#include "common/array.h"
+#include "common/hashmap.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_hotspot.h"
 
@@ -30,12 +30,8 @@ namespace M4 {
 
 class Room {
 public:
-	uint _roomNum;
-public:
-	Room(uint roomNum) : _roomNum(roomNum) {
-	}
-	virtual ~Room() {
-	}
+	Room() {}
+	virtual ~Room() {}
 
 	virtual void preload() {}
 	virtual void init() {}
@@ -52,11 +48,11 @@ public:
 
 class Section {
 private:
-	Common::Array<Room *> _rooms;
+	Common::HashMap<int, Room *> _rooms;
 protected:
 	// Add a room to the section
-	void add(Room *room) {
-		_rooms.push_back(room);
+	void add(int roomNum, Room *room) {
+		_rooms[roomNum] = room;
 	}
 
 public:

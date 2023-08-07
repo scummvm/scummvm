@@ -32,7 +32,7 @@ namespace Rooms {
 
 class Room : public M4::Room {
 public:
-	Room(uint roomNum) : M4::Room(roomNum) {}
+	Room() : M4::Room() {}
 	~Room() override {}
 
 	void shutdown() override;

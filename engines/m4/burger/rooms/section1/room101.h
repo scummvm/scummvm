@@ -46,7 +46,7 @@ private:
 	void daemon20();
 
 public:
-	Room101() : Room(101) {}
+	Room101() : Room() {}
 	~Room101() override {}
 
 	void init() override;

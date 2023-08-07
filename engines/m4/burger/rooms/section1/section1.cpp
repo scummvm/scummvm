@@ -30,7 +30,28 @@ namespace Burger {
 namespace Rooms {
 
 Section1::Section1() : Rooms::Section() {
-	add(&_room101);
+	add(101, &_room101);
+	add(102, &_room102);
+	add(103, &_room103);
+	add(104, &_room104);
+	add(105, &_room105);
+	add(106, &_room106);
+	add(120, &_room120);
+	add(133, &_room133_136);
+	add(135, &_room135);
+	add(136, &_room133_136);
+	add(137, &_room137);
+	add(138, &_room138);
+	add(141, &_room141);
+	add(142, &_room142);
+	add(144, &_room144);
+	add(170, &_room170);
+	add(171, &_room171);
+	add(172, &_room172);
+	add(173, &_room173);
+	add(174, &_room174);
+	add(175, &_room175);
+	add(176, &_room176);
 }
 
 void Section1::updateWalker(int x, int y, int dir, int trigger, bool mode) {
