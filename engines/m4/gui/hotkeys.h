@@ -76,6 +76,8 @@ public:
 	static void pal_override(void *, void *);
 
 public:
+	virtual ~Hotkeys() {}
+
 	virtual void add_hot_keys();
 	void disable_hot_keys();
 	void restore_hot_keys();

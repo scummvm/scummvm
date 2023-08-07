@@ -108,6 +108,7 @@ public:
 	Room *_activeRoom = nullptr;
 public:
 	Sections() {}
+	virtual ~Sections() {}
 
 	void global_section_constructor();
 	void section_room_constructor();
