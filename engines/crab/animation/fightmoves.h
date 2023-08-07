@@ -31,9 +31,8 @@
 #ifndef CRAB_FIGHTMOVES_H
 #define CRAB_FIGHTMOVES_H
 
-#include "crab/music/MusicManager.h"
-#include "crab/animation/fightmove.h"
 #include "crab/timer.h"
+#include "crab/animation/fightmove.h"
 
 namespace Crab {
 

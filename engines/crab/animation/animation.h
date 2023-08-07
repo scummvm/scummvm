@@ -31,9 +31,9 @@
 #ifndef CRAB_ANIMATION_H
 #define CRAB_ANIMATION_H
 
+#include "crab/timer.h"
 #include "crab/animation/AnimationEffect.h"
 #include "crab/animation/AnimationFrame.h"
-#include "crab/timer.h"
 
 namespace Crab {
 
