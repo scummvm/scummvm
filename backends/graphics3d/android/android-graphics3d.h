@@ -95,7 +95,7 @@ public:
 	virtual Graphics::Surface *lockScreen() override;
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col) override;
-	virtial void fillScreen(const Common::Rect &r, uint32 col) override;
+	virtual void fillScreen(const Common::Rect &r, uint32 col) override;
 
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) {};
 	virtual void setFocusRectangle(const Common::Rect &rect) {}
