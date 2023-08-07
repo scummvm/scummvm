@@ -79,6 +79,7 @@ extern HotSpotRec *hotspot_unlink(HotSpotRec *head, HotSpotRec *h);
 extern void hotspot_delete_all(HotSpotRec *head);
 
 extern void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not);
+extern void hotspot_set_active(const char *name, bool active_or_not);
 extern void hotspot_set_active_xy(HotSpotRec *head, const char *name, int32 x, int32 y, bool active_or_not);
 #define kernel_flip_hotspot(aa,bb) (hotspot_set_active(currentSceneDef.hotspots,aa,bb))
 #define kernel_flip_hotspot_xy(aa,bb,xx,yy) (hotspot_set_active_xy(currentSceneDef.hotspots,aa,xx,yy,bb))

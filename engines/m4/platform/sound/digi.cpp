@@ -257,4 +257,8 @@ int digi_get_overall_volume() {
 	return _G(digi).get_overall_volume();
 }
 
+int32 digi_ticks_to_play(const char *name, int val2) {
+	error("TODO: digi_ticks_to_play");
+}
+
 } // namespace M4

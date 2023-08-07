@@ -250,6 +250,10 @@ void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not) 
 		term_message("hotspot '%s' not found!", name_str);
 }
 
+void hotspot_set_active(const char *name, bool active_or_not) {
+	hotspot_set_active(_G(currentSceneDef).hotspots, name, active_or_not);
+}
+
 void hotspot_set_active_xy(HotSpotRec *head, const char *name, int32 x, int32 y, bool active_or_not) {
 	char name_str[MAX_FILENAME_SIZE];
 	HotSpotRec *i;
