@@ -40,6 +40,7 @@ public:
 		// of the platform.
 		kCpuFeatureNEON    = 0x04,
 		kCpuFeatureAlitvec = 0x08, // Platform specific
+		kCpuFeatureSSE41   = 0x10, // Completely detected by BaseBackend
 	};
 
 	void initBackend() override;
