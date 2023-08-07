@@ -242,11 +242,9 @@ Common::Array<PathfindingGraphNode const *> const PathfindingAgent::getSolution(
 
 	if (_createdList.find(_goalTile) != _createdList.end()) {
 		current = _createdList.find(_goalTile)->second;
-	}
-
-	// If the dest node passed in is not null, that means we did not reach the goal but came close
-	// so we should start with that node instead when we are constructing our path
-	else if (destNode != nullptr) {
+	} else if (destNode != nullptr) {
+		// If the dest node passed in is not null, that means we did not reach the goal but came close
+		// so we should start with that node instead when we are constructing our path
 		current = _createdList.find(destNode)->second;
 	}
 

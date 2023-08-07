@@ -91,10 +91,4 @@ bool PathfindingGraphNode::adjacentToNode(PathfindingGraphNode *otherNode) {
 	return false;
 }
 
-//
-// const Common::Array< PathfindingGraphNode*>& PathfindingGraphNode::GetNeighbors() const
-//{
-//	return neighborNodes;
-//}
-
 } // End of namespace Crab
