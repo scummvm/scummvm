@@ -32,15 +32,15 @@
 class BaseBackend : public OSystem {
 public:
 	enum CpuFeatureFlags {
-		kCpuNoFeatures     = 0x00, // Completely detected by BaseBackend
-		kCpuFeatureSSE2    = 0x01, // Completely detected by BaseBackend
-		kCpuFeatureAVX2    = 0x02, // Completely detected by BaseBackend
+		kCpuNoFeatures     = 0, // Completely detected by BaseBackend
+		kCpuFeatureSSE2    = (1 << 0), // Completely detected by BaseBackend
+		kCpuFeatureAVX2    = (1 << 1), // Completely detected by BaseBackend
 		// Detected either by BaseBackend (if platform ONLY supports ARMv8+) or
 		// platform specific Backends if ARM is optional or not on all versions
 		// of the platform.
-		kCpuFeatureNEON    = 0x04,
-		kCpuFeatureAlitvec = 0x08, // Platform specific
-		kCpuFeatureSSE41   = 0x10, // Completely detected by BaseBackend
+		kCpuFeatureNEON    = (1 << 2),
+		kCpuFeatureAlitvec = (1 << 3), // Platform specific
+		kCpuFeatureSSE41   = (1 << 4), // Completely detected by BaseBackend
 	};
 
 	void initBackend() override;
