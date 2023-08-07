@@ -77,7 +77,7 @@ bool inv_init(int32 num_objects) {
 	for (i = 0; i < num_objects; i++) {
 		_G(inventory)->_objects[i] = (InvObj *)mem_get_from_stash(_G(inv_obj_mem_type), "obj");
 		if (!_G(inventory)->_objects[i])
-			error_show(FL, 'OOM!', "%ld bytes", (int32)sizeof(InvObj));
+			error_show(FL, 'OOM!', "%d bytes", (int32)sizeof(InvObj));
 	}
 
 	_G(inventory)->_tail = 0;

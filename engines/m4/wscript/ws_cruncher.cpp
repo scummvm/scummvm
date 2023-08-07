@@ -135,7 +135,7 @@ bool ws_InitCruncher(void) {
 		error_show(FL, 'WSCE');
 
 	if ((_GWS(myCruncher) = (cruncher *)mem_alloc(sizeof(cruncher), "cruncher")) == nullptr)
-		error_show(FL, 'OOM!', "%ld bytes.", sizeof(cruncher));
+		error_show(FL, 'OOM!', "%d bytes.", sizeof(cruncher));
 
 	_GWS(myCruncher)->backLayerAnim8 = nullptr;
 	_GWS(myCruncher)->frontLayerAnim8 = nullptr;
@@ -145,7 +145,7 @@ bool ws_InitCruncher(void) {
 	// Set up stack
 	_GWS(stackSize) = 2048;
 	if ((_GWS(stackBase) = (uint32 *)mem_alloc(_GWS(stackSize), "crunchstack")) == nullptr) {
-		error_show(FL, 'OOM!', "%ld bytes.", _GWS(stackSize));
+		error_show(FL, 'OOM!', "%d bytes.", _GWS(stackSize));
 	}
 	_GWS(stackTop) = _GWS(stackBase);
 	_GWS(stackLimit) = (uint32 *)((byte *)_GWS(stackBase) + (uint32)_GWS(stackSize));
@@ -188,7 +188,7 @@ Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 
 	// Allocate an anim8 structure
 	if ((myAnim8 = (Anim8 *)mem_alloc(sizeof(Anim8), "Anim8")) == nullptr) {
-		ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld.", sizeof(Anim8));
+		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(Anim8));
 		return nullptr;
 	}
 
@@ -199,7 +199,7 @@ Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 
 	// Allocate an array of registers
 	if ((myRegs = (frac16 *)mem_alloc(sizeof(frac16) * (IDX_COUNT + numLocalVars), "Anim8 regs")) == nullptr) {
-		ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld.", sizeof(frac16) * (IDX_COUNT + numLocalVars));
+		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(frac16) * (IDX_COUNT + numLocalVars));
 		return nullptr;
 	}
 
@@ -418,7 +418,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 				if (!parentAnim8) {
 					ws_LogErrorMsg(FL, "Trying to access a parent register - no parent exists");
 				} else {
-					ws_LogErrorMsg(FL, "Parent Reg Index out of range - max: %ld, requested %ld.",
+					ws_LogErrorMsg(FL, "Parent Reg Index out of range - max: %d, requested %d.",
 						IDX_COUNT + parentAnim8->numLocalVars, myIndex);
 				}
 				return false;
@@ -429,7 +429,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 		case LOCAL_FMT_REG:
 			// Range check to make sure we don't index off into hyperspace
 			if ((myIndex >= IDX_COUNT + myAnim8->numLocalVars)) {
-				ws_LogErrorMsg(FL, "Register Index out of range - max: %ld, requested %ld.",
+				ws_LogErrorMsg(FL, "Register Index out of range - max: %d, requested %d.",
 					IDX_COUNT + myAnim8->numLocalVars, myIndex);
 				return false;
 			}
@@ -925,7 +925,7 @@ static void op_SETCEL(Anim8 *myAnim8) {
 	if (!myAnim8->myCCB) {
 		// Allocate and initialize a CCB structure
 		if ((myAnim8->myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld bytes.", sizeof(CCB));
+			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes.", sizeof(CCB));
 			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x02fe, "setcel() failed.");
 		}
 		if (!InitCCB(myAnim8->myCCB)) {
@@ -1038,7 +1038,7 @@ static void op_JSR(Anim8 *myAnim8) {
 	int32		dummy;
 
 	if (myAnim8->returnStackIndex >= JSR_STACK_MAX) {
-		ws_LogErrorMsg(FL, "Max number of nested jsr instructions is: %ld", JSR_STACK_MAX);
+		ws_LogErrorMsg(FL, "Max number of nested jsr instructions is: %d", JSR_STACK_MAX);
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0256, "jsr() failed");
 	}
 	myAnim8->returnHashes[myAnim8->returnStackIndex] = myAnim8->sequHash;
@@ -1235,7 +1235,7 @@ static void op_OPEN_STREAM_SS(Anim8 *myAnim8) {
 	if (!myAnim8->myCCB) {
 		// Allocate and initialize a CCB structure
 		if ((myAnim8->myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld.", sizeof(CCB));
+			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(CCB));
 			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x02fe, "open_ss_stream() failed.");
 		}
 		if (!InitCCB(myAnim8->myCCB)) {

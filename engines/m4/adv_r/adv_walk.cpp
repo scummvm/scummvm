@@ -127,10 +127,10 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 	if (_G(screenCodeBuff))
 		walkerCodes = _G(screenCodeBuff)->get_buffer();
 	if ((currNodeID = AddRailNode(currX, currY, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Walker's curr posn: %ld %ld", currX, currY);
+		error_show(FL, 'WCAN', "Walker's curr posn: %d %d", currX, currY);
 	}
 	if ((destNodeID = AddRailNode(x, y, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Trying to walk to: %ld %ld", x, y);
+		error_show(FL, 'WCAN', "Trying to walk to: %d %d", x, y);
 	}
 
 	// Dispose of the current path myWalker is following
@@ -198,10 +198,10 @@ bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y) {
 		walkerCodes = _G(screenCodeBuff)->get_buffer();
 	}
 	if ((currNodeID = AddRailNode(currX, currY, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Walker's curr posn: %ld %ld", currX, currY);
+		error_show(FL, 'WCAN', "Walker's curr posn: %d %d", currX, currY);
 	}
 	if ((destNodeID = AddRailNode(x, y, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Trying to walk to: %ld %ld", x, y);
+		error_show(FL, 'WCAN', "Trying to walk to: %d %d", x, y);
 	}
 
 	// Dispose of the current path myWalker is following
@@ -307,7 +307,7 @@ void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger) {
 	int8 directions[13] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9 };
 
 	if (!myWalker || !myWalker->myAnim8) {
-		error_show(FL, 'W:-(', "demand facing: %ld", facing);
+		error_show(FL, 'W:-(', "demand facing: %d", facing);
 		return;
 	}
 

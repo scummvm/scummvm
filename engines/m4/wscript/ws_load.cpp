@@ -305,7 +305,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_MACH:
 			// Check the validity of the machine hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, MACH hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLA', "Asset Name: %s, MACH hash was: %d", wsAssetName, *chunkHash);
 			}
 			ClearWSAssets(_WS_ASSET_MACH, *chunkHash, *chunkHash);
 
@@ -316,7 +316,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
-				error_show(FL, 'WSLE', "Asset Name: %s, MACH hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLE', "Asset Name: %s, MACH hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// Byteswap the entire machine if necessary
@@ -344,7 +344,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_SEQU:
 			// Check the validity of the sequence hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, SEQU hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLA', "Asset Name: %s, SEQU hash was: %d", wsAssetName, *chunkHash);
 			}
 			ClearWSAssets(_WS_ASSET_SEQU, *chunkHash, *chunkHash);
 
@@ -355,7 +355,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
-				error_show(FL, 'WSLE', "Asset Name: %s, SEQU hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLE', "Asset Name: %s, SEQU hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// Byteswap the entire sequence if necessary
@@ -383,7 +383,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_DATA:
 			// Check the validity of the data block hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, DATA hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLA', "Asset Name: %s, DATA hash was: %d", wsAssetName, *chunkHash);
 			}
 			ClearWSAssets(_WS_ASSET_DATA, *chunkHash, *chunkHash);
 
@@ -394,7 +394,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
-				error_show(FL, 'WSLE', "Asset Name: %s, DATA hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLE', "Asset Name: %s, DATA hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// Byteswap the entire data block if necessary
@@ -421,7 +421,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_CELS:
 			// Check the validity of the cels hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, CELS hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLA', "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
 			}
 			ClearWSAssets(_WS_ASSET_CELS, *chunkHash, *chunkHash);
 
@@ -430,7 +430,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Process the SS from the stream file
 			if (ProcessCELS(wsAssetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette) < 0) {
-				error_show(FL, 'WSLP', "Asset Name: %s, CELS hash was: %ld", wsAssetName, *chunkHash);
+				error_show(FL, 'WSLP', "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// At this point, celsPtr points to the beginning of the cels data, palPtr to the pal data
@@ -449,7 +449,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			break;
 
 		default:
-			error_show(FL, 'WSLT', "Asset Name: %s, %ld bytes into the file.", wsAssetName,
+			error_show(FL, 'WSLT', "Asset Name: %s, %d bytes into the file.", wsAssetName,
 				(int32)parseAssetPtr - 12 - (int32)mainAssetPtr);
 			break;
 		}
@@ -478,7 +478,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	if (!mySprite) {
 		mySprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "Sprite");
 		if (!mySprite) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld.", sizeof(M4sprite));
+			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(M4sprite));
 			return nullptr;
 		}
 	}
@@ -490,7 +490,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	// Check that the index into the series requested is within a valid range
 	numCels = celsPtr[CELS_COUNT];
 	if (index >= (int)numCels) {
-		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %ld, requested index: %ld", numCels - 1, index);
+		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return nullptr;
 	}
 
@@ -674,7 +674,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		// Else the SS must be stored in the given hash, replacing any previous contents.
 		// Index checking
 		if (hash > MAX_ASSET_HASH) {
-			error_show(FL, 'WSLA', "Asset Name: %s, hash given was %ld", wsAssetName, hash);
+			error_show(FL, 'WSLA', "Asset Name: %s, hash given was %d", wsAssetName, hash);
 		}
 
 		// Check to see if the SS is already loaded in the given hash slot
@@ -1015,7 +1015,7 @@ M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite
 		if (spriteName) {
 			ws_LogErrorMsg(FL, "Sprite series is not in memory: %s.", spriteName);
 		} else {
-			ws_LogErrorMsg(FL, "Series number out of range: requested num: %ld.", hash);
+			ws_LogErrorMsg(FL, "Series number out of range: requested num: %d.", hash);
 		}
 	}
 
@@ -1027,7 +1027,7 @@ M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite
 
 	// Check the sprite
 	if (!mySprite) {
-		ws_LogErrorMsg(FL, "Series: %s, Hash: %ld, index: %ld", _GWS(globalCELSnames)[hash], hash, index);
+		ws_LogErrorMsg(FL, "Series: %s, Hash: %d, index: %d", _GWS(globalCELSnames)[hash], hash, index);
 	}
 
 	return mySprite;
@@ -1134,13 +1134,13 @@ CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 	if (!myCCB) {
 		// Create the CCB struct
 		if ((myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld bytes", sizeof(CCB));
+			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes", sizeof(CCB));
 			return nullptr;
 		}
 
 		// Create the CCB current location and new location rectangles
 		if ((myCCB->currLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "M4Rect")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld bytes", sizeof(M4Rect));
+			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes", sizeof(M4Rect));
 			return nullptr;
 		}
 		myCCB->currLocation->x1 = 0;
@@ -1148,7 +1148,7 @@ CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 		myCCB->currLocation->x2 = 0;
 		myCCB->currLocation->y2 = 0;
 		if ((myCCB->newLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "M4Rect")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld bytes", sizeof(M4Rect));
+			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes", sizeof(M4Rect));
 			return nullptr;
 		}
 		myCCB->maxArea = nullptr;
@@ -1188,13 +1188,13 @@ int32 GetWSAssetCELCount(uint32 hash) {
 
 	// Verify the hash is valid, and a SS for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "Series number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series number out of range: requested num: %d", hash);
 		return -1;
 	}
 
 	// Make sure the series is still in memory
 	if ((!_GWS(globalCELSHandles)[hash]) || (!*_GWS(globalCELSHandles)[hash])) {
-		ws_LogErrorMsg(FL, "Series not in memory series num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series not in memory series num: %d", hash);
 		return -1;
 	}
 
@@ -1216,13 +1216,13 @@ int32 GetWSAssetCELFrameRate(uint32 hash) {
 
 	// Verify the hash is valid, and a SS for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "Series number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series number out of range: requested num: %d", hash);
 		return -1;
 	}
 
 	// Make sure the series is still in memory
 	if ((!_GWS(globalCELSHandles)[hash]) || (!*_GWS(globalCELSHandles)[hash])) {
-		ws_LogErrorMsg(FL, "Series not in memory series num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series not in memory series num: %d", hash);
 		return -1;
 	}
 
@@ -1244,13 +1244,13 @@ int32 GetWSAssetCELPixSpeed(uint32 hash) {
 
 	// Verify the hash is valid, and a SS for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "Series number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series number out of range: requested num: %d", hash);
 		return -1;
 	}
 
 	// Make sure the series is still in memory
 	if ((!_GWS(globalCELSHandles)[hash]) || (!*_GWS(globalCELSHandles)[hash])) {
-		ws_LogErrorMsg(FL, "Series not in memory series num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series not in memory series num: %d", hash);
 		return -1;
 	}
 
@@ -1272,13 +1272,13 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 
 	// Verify the hash is valid, and a SS for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "Series number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series number out of range: requested num: %d", hash);
 		return -1;
 	}
 
 	// Make sure the series is still in memory
 	if ((!_GWS(globalCELSHandles)[hash]) || (!*_GWS(globalCELSHandles)[hash])) {
-		ws_LogErrorMsg(FL, "Series not in memory series num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series not in memory series num: %d", hash);
 		return -1;
 	}
 
@@ -1288,7 +1288,7 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	// Check that the index into the series requested is within a valid range
 	numCels = celsPtr[CELS_COUNT];
 	if (index >= numCels) {
-		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %ld, requested index: %ld", numCels - 1, index);
+		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return -1;
 	}
 
@@ -1317,13 +1317,13 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 
 	// Verify the hash is valid, and a SS for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "Series number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series number out of range: requested num: %d", hash);
 		return -1;
 	}
 
 	// Make sure the series is still in memory
 	if ((!_GWS(globalCELSHandles)[hash]) || (!*_GWS(globalCELSHandles)[hash])) {
-		ws_LogErrorMsg(FL, "Series not in memory series num: %ld", hash);
+		ws_LogErrorMsg(FL, "Series not in memory series num: %d", hash);
 		return -1;
 	}
 
@@ -1333,7 +1333,7 @@ int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	// Check that the index into the series requested is within a valid range
 	numCels = celsPtr[CELS_COUNT];
 	if (index >= numCels) {
-		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %ld, requested index: %ld", numCels - 1, index);
+		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %d, requested index: %d", numCels - 1, index);
 		return -1;
 	}
 
@@ -1360,13 +1360,13 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 
 	// Verify the hash is valid, and a SEQU for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "SEQU number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "SEQU number out of range: requested num: %d", hash);
 		return nullptr;
 	}
 
 	// Make sure the SEQU is still in memory
 	if ((!_GWS(globalSEQUHandles)[hash]) || (!*_GWS(globalSEQUHandles)[hash])) {
-		ws_LogErrorMsg(FL, "SEQU not in memory: sequence num: %ld", hash);
+		ws_LogErrorMsg(FL, "SEQU not in memory: sequence num: %d", hash);
 		return nullptr;
 	}
 
@@ -1393,13 +1393,13 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 
 	// Verify the hash is valid, and a MACH for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "MACH number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "MACH number out of range: requested num: %d", hash);
 		return nullptr;
 	}
 
 	// Make sure the MACH is still in memory
 	if ((!_GWS(globalMACHHandles)[hash]) || (!*_GWS(globalMACHHandles)[hash])) {
-		ws_LogErrorMsg(FL, "MACH not in memory: machine num: %ld", hash);
+		ws_LogErrorMsg(FL, "MACH not in memory: machine num: %d", hash);
 		return nullptr;
 	}
 
@@ -1430,13 +1430,13 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 
 	// Verify the hash is valid, and a SS for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "DATA number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "DATA number out of range: requested num: %d", hash);
 		return nullptr;
 	}
 
 	// Make sure the DATA is still in memory
 	if ((!_GWS(globalDATAHandles)[hash]) || (!*_GWS(globalDATAHandles)[hash])) {
-		ws_LogErrorMsg(FL, "DATA not in memory: data num: %ld", hash);
+		ws_LogErrorMsg(FL, "DATA not in memory: data num: %d", hash);
 		return nullptr;
 	}
 
@@ -1445,9 +1445,9 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 
 	// Verify the row index of the data block is valid
 	if (index > dataPtr[DATA_REC_COUNT]) {
-		term_message("File: %s, line: %ld, ws_GetDATA() failed:", FL);
-		term_message("Data block num: %ld", hash);
-		term_message("Data row out of range - max row index: %ld, requested row index: %ld", dataPtr[DATA_REC_COUNT], index);
+		term_message("File: %s, line: %d, ws_GetDATA() failed:", FL);
+		term_message("Data block num: %d", hash);
+		term_message("Data row out of range - max row index: %d, requested row index: %d", dataPtr[DATA_REC_COUNT], index);
 		return nullptr;
 	}
 
@@ -1470,13 +1470,13 @@ int32 ws_GetDATACount(uint32 hash) {
 
 	// Verify the hash is valid, and a SS for that hash has been loaded
 	if (hash > MAX_ASSET_HASH) {
-		ws_LogErrorMsg(FL, "DATA number out of range: requested num: %ld", hash);
+		ws_LogErrorMsg(FL, "DATA number out of range: requested num: %d", hash);
 		return -1;
 	}
 
 	// Make sure the DATA is still in memory
 	if ((!_GWS(globalDATAHandles)[hash]) || (!*_GWS(globalDATAHandles)[hash])) {
-		ws_LogErrorMsg(FL, "DATA not in memory: data num: %ld", hash);
+		ws_LogErrorMsg(FL, "DATA not in memory: data num: %d", hash);
 		return -1;
 	}
 
@@ -1558,7 +1558,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 		// If there is at least one color specified in this block
 		if (numColors > 0) {
 			if ((myColors = (uint32 *)mem_alloc(celsSize - 12, "ss pal info")) == nullptr) {
-				ws_LogErrorMsg(FL, "Failed to mem_alloc() %ld bytes.", celsSize - 12);
+				ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", celsSize - 12);
 				return -1;
 			}
 
@@ -1650,7 +1650,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 
 	// Allocate a block to hold both the series header, and the sprite offset table
 	if ((*data = (uint32 *)mem_alloc((SS_HEAD_SIZE + numCels) * 4, "ss header")) == nullptr) {
-		ws_LogErrorMsg(FL, "Failed to mem_alloc() %ld bytes.", (SS_HEAD_SIZE + numCels) << 2);
+		ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", (SS_HEAD_SIZE + numCels) << 2);
 		return -1;
 	}
 
@@ -1738,12 +1738,12 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	if (!myCCB->source) {
 		myCCB->source = (M4sprite *)mem_alloc(sizeof(M4sprite), "Sprite");
 		if (!myCCB->source) {
-			ws_LogErrorMsg(FL, "Failed to mem_alloc() %ld bytes.", sizeof(M4sprite));
+			ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", sizeof(M4sprite));
 			return false;
 		}
 	}
 
-	term_message("Biggest frame was: %ld, size: %ld bytes (compressed)", obesest_frame, maxFrameSize);
+	term_message("Biggest frame was: %d, size: %d bytes (compressed)", obesest_frame, maxFrameSize);
 
 	// Access the streamer to recognize the new client
 	if ((myCCB->myStream = (void *)f_stream_Open(sysFile, ssDataOffset, maxFrameSize, maxFrameSize << 4, numSprites, (int32 *)offsets, 4, false)) == nullptr) {

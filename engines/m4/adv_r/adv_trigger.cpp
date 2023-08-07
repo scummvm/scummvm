@@ -35,7 +35,7 @@ int32 kernel_trigger_create(int32 trigger_num) {
 		return (trigger_num);
 
 	if (trigger_num > 0xffff) {		// If room changed, this is an invalid trigger 
-		error_show(FL, 'BADT', "bad trigger. %ld > 0xffff", trigger_num);
+		error_show(FL, 'BADT', "bad trigger. %d > 0xffff", trigger_num);
 	}
 
 	new_trigger = trigger_num + (_G(game).room_id << 16) + (_G(kernel).trigger_mode << 28);
@@ -86,7 +86,7 @@ bool kernel_trigger_dispatchx(int32 trigger_num) {
 		return false;
 
 	if (((trigger_num >> 16) & 0xfff) != _G(game).room_id) {		// if room changed, this is an invalid trigger 
-		term_message("orphan scene trigger:mode: %ld, scene: %ld, trigger: %ld",
+		term_message("orphan scene trigger:mode: %d, scene: %d, trigger: %d",
 			trigger_num >> 28, (trigger_num >> 16) & 0xffff, trigger_num & 0xffff);
 		return false;
 	}
@@ -122,7 +122,7 @@ bool kernel_trigger_dispatchx(int32 trigger_num) {
 		break;
 
 	default:
-		term_message("orphan mode trigger: mode: %ld, scene: %ld, trigger: %ld",
+		term_message("orphan mode trigger: mode: %d, scene: %d, trigger: %d",
 			trigger_num >> 28, (trigger_num >> 16) & 0xffff, trigger_num & 0xffff);
 		result = false;
 		break;

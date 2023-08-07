@@ -2790,7 +2790,7 @@ void cb_Options_Digi(void *theItem, void *theMenu) {
 	mySlider = (menuItemHSlider *)myItem->itemInfo;
 	// Set the digi volume
 	digi_set_overall_volume(mySlider->percent);
-	term_message("digi volume: %ld", mySlider->percent);
+	term_message("digi volume: %d", mySlider->percent);
 
 	// this scroller control has been moved, so make sure that the DONE button is not greyed out
 	menu_EnableButton(nullptr, OM_TAG_DONE, myMenu);
@@ -2805,7 +2805,7 @@ void cb_Options_Digestability(void *theItem, void *theMenu) {
 
 	mySlider = (menuItemHSlider *)myItem->itemInfo;
 	// Set the midi volume
-	term_message("digestability: %ld", mySlider->percent);
+	term_message("digestability: %d", mySlider->percent);
 	_G(flags)[digestability] = mySlider->percent;
 
 	// this scroller control has been moved, so make sure that the DONE button is not greyed out

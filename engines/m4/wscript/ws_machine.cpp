@@ -131,7 +131,7 @@ static void clear_persistent_msg_list(machine *m) {
 static msgRequest *new_msgRequest() {
 	msgRequest *newMsg;
 	if ((newMsg = (msgRequest *)mem_alloc(sizeof(msgRequest), "msgRequest")) == nullptr) {
-		ws_LogErrorMsg(FL, "Failed to mem_alloc() %ld bytes.", sizeof(msgRequest));
+		ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", sizeof(msgRequest));
 	}
 	return newMsg;
 }
@@ -486,7 +486,7 @@ static bool op_TRIG(machine *m, int32 *pcOffset) {
 		myCount = 1;
 	}
 
-	Common::sprintf_s(tempStr, "*** TRIGGERED BY MACHINE: %ld", m->myHash);
+	Common::sprintf_s(tempStr, "*** TRIGGERED BY MACHINE: %d", m->myHash);
 	for (i = 0; i < myCount; i++) {
 		if (!TriggerMachineByHash(*_GWS(myArg1) >> 16, m->myAnim8, -1, -1, m->CintrMsg, false, tempStr)) {
 			ws_Error(m, ERR_MACH, 0x0267, "trig() failed");
@@ -557,7 +557,7 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 				myCount = imath_ranged_rand(minCount, maxCount);
 			}
 			for (i = 0; i < myCount; i++) {
-				Common::sprintf_s(tempStr, "*** TRIGGERED BY MACHINE: %ld", m->myHash);
+				Common::sprintf_s(tempStr, "*** TRIGGERED BY MACHINE: %d", m->myHash);
 				if (!TriggerMachineByHash(myHash, m->myAnim8, myDataHash, myIndex, m->CintrMsg, false, tempStr)) {
 					ws_Error(m, ERR_MACH, 0x0267, "trig_w() failed");
 				}
@@ -569,7 +569,7 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 			myCount = imath_ranged_rand(minCount, maxCount);
 		}
 		for (i = 0; i < myCount; i++) {
-			Common::sprintf_s(tempStr, "*** TRIGGERED BY MACHINE: %ld", m->myHash);
+			Common::sprintf_s(tempStr, "*** TRIGGERED BY MACHINE: %d", m->myHash);
 			if (!TriggerMachineByHash(myHash, m->myAnim8, myDataHash, myIndex, m->CintrMsg, false, tempStr)) {
 				ws_Error(m, ERR_MACH, 0x0267, "trig_w() failed");
 			}
@@ -963,8 +963,8 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 	machine *m;
 
 	if ((m = (machine *)mem_alloc(sizeof(machine), "machine")) == nullptr) {
-		ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld.", sizeof(machine));
-		ws_LogErrorMsg(FL, "Trying to trigger hash: %ld, name: %s", myHash, machName);
+		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(machine));
+		ws_LogErrorMsg(FL, "Trying to trigger hash: %d, name: %s", myHash, machName);
 		ws_Error(m, ERR_INTERNAL, 0x2fe, "TriggerMachineByHash() failed.");
 		return nullptr;
 	}
@@ -980,7 +980,7 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 	m->machName = mem_strdup(machName);
 
 	if ((m->machHandle = ws_GetMACH(myHash, &m->numOfStates, &m->stateTableOffset, &m->machInstrOffset)) == nullptr) {
-		ws_LogErrorMsg(FL, "Trying to trigger hash: %ld, name: %s", myHash, machName);
+		ws_LogErrorMsg(FL, "Trying to trigger hash: %d, name: %s", myHash, machName);
 		return nullptr;
 	}
 
@@ -988,7 +988,7 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 	if (dataHash >= 0) {
 		m->dataHash = dataHash;
 		if ((m->dataHandle = ws_GetDATA(dataHash, (uint32)dataRow, &m->dataOffset)) == nullptr) {
-			ws_LogErrorMsg(FL, "Trying to trigger hash: %ld, name: %s", myHash, machName);
+			ws_LogErrorMsg(FL, "Trying to trigger hash: %d, name: %s", myHash, machName);
 			return nullptr;
 		}
 	} else {
@@ -1142,7 +1142,7 @@ void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 
 	// Prepare a global message structure
 	if ((tempGlobalMsg = (globalMsgReq *)mem_alloc(sizeof(globalMsgReq), "globalMsgReq")) == nullptr) {
-		ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld.", sizeof(machine));
+		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(machine));
 		ws_Error(nullptr, ERR_INTERNAL, 0x2fe, "SendWSMessage() failed.");
 	}
 	tempGlobalMsg->msgHash = msgHash;
