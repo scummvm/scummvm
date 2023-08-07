@@ -23,8 +23,6 @@
 #define GUI_DLCSDIALOG_H
 
 #include "gui/dialog.h"
-#include "gui/widgets/list.h"
-#include "gui/launcher.h"
 
 namespace GUI {
 
@@ -33,6 +31,10 @@ enum {
 	kRefreshDLCList = 'RDLC',
 	kAllDownloadsCmd = 'ALLD'
 };
+
+class CommandSender;
+class ListWidget;
+class ButtonWidget;
 
 class DLCsDialog : public Dialog {
 public:

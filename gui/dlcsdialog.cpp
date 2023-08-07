@@ -26,9 +26,11 @@
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 #include "gui/gui-manager.h"
+#include "gui/launcher.h"
 #include "gui/downloaddlcsdialog.h"
 
 #include "backends/dlc/dlcmanager.h"
+#include "backends/dlc/dlcdesc.h"
 
 namespace GUI {
 
