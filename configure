@@ -296,9 +296,6 @@ add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
-add_feature ext_sse2 "Add x86/64 SSE2 support" "_ext_sse2"
-add_feature ext_avx2 "Add x86/64 AVX2 support" "_ext_avx2"
-add_feature ext_neon "Add Arm NEON support" "_ext_neon"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -985,9 +982,9 @@ Optional Features:
   --disable-windows-console do not show console output on Windows
   --enable-windows-unicode  use Windows Unicode APIs (default)
   --disable-windows-unicode use Windows ANSI APIs
-	--enable-ext-sse2				  allow code to use sse2 extensions on x86/64
-	--enable-ext-avx2				  allow code to use avx2 extensions on x86/64
-	--enable-ext-neon				  allow code to use neon extensions on Arm
+  --enable-ext-sse2         allow code to use sse2 extensions on x86/64
+  --enable-ext-avx2         allow code to use avx2 extensions on x86/64
+  --enable-ext-neon         allow code to use neon extensions on Arm
 
 Optional Documentation Options:
   --with-manual-version=VERSION version to use when generating the manual (optional)
@@ -1301,12 +1298,12 @@ for ac_option in $@; do
 	--disable-eventrecorder)     _eventrec=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
-	--enable-ext-sse2)           _ext_sse2=yes       		 ;;
-	--disable-ext-sse2)          _ext_sse2=no        		 ;;
-	--enable-ext-avx2)           _ext_avx2=yes       		 ;;
-	--disable-ext-avx2)          _ext_avx2=no        		 ;;
-	--enable-ext-neon)           _ext_neon=yes       		 ;;
-	--disable-ext-neon)          _ext_neon=no        		 ;;
+	--enable-ext-sse2)           _ext_sse2=yes           ;;
+	--disable-ext-sse2)          _ext_sse2=no            ;;
+	--enable-ext-avx2)           _ext_avx2=yes           ;;
+	--disable-ext-avx2)          _ext_avx2=no            ;;
+	--enable-ext-neon)           _ext_neon=yes           ;;
+	--disable-ext-neon)          _ext_neon=no            ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
