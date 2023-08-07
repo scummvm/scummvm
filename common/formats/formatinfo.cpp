@@ -37,12 +37,12 @@ struct FormatTypeInfo {
 };
 
 const FormatTypeInfo g_formatTypeInfo[kCount] = {
-	{nullptr},
+	{nullptr, nullptr},
 
 	// Image formats
-	{"bmp"},
-	{"png"},
-	{"jpg"},
+	{"bmp", nullptr},
+	{"png", nullptr},
+	{"jpg", nullptr},
 	{"pct", "pict"},
 
 	// Binary formats
