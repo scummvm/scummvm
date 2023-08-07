@@ -186,7 +186,7 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID) {
-	if (id == 9999) {
+	if (id == 9999 || _state == kLoad) {
 		return;
 	}
 
