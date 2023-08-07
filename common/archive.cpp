@@ -344,6 +344,20 @@ int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern,
 	return matches;
 }
 
+int SearchSet::listMatchingMembers(ArchiveMemberDetailsList &list, const Path &pattern, bool matchPathComponents) const {
+	int matches = 0;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it) {
+		List<ArchiveMemberPtr> matchingMembers;
+		matches += it->_arc->listMatchingMembers(matchingMembers, pattern, matchPathComponents);
+		for (ArchiveMemberPtr &member : matchingMembers)
+			list.push_back(ArchiveMemberDetails(member, it->_name));
+	}
+
+	return matches;
+}
+
 int SearchSet::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 

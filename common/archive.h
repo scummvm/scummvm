@@ -73,6 +73,15 @@ public:
 typedef SharedPtr<ArchiveMember> ArchiveMemberPtr; /*!< Shared pointer to an archive member. */
 typedef List<ArchiveMemberPtr> ArchiveMemberList; /*!< List of archive members. */
 
+struct ArchiveMemberDetails {
+	ArchiveMemberPtr arcMember;
+	Common::String arcName;
+
+	ArchiveMemberDetails(const ArchiveMemberPtr &arcMember_, const Common::String &_arcName) : arcMember(arcMember_), arcName(_arcName) {
+	}
+};
+typedef List<ArchiveMemberDetails> ArchiveMemberDetailsList; /*!< List of archive members with the name of the archive they belong to */
+
 /**
  * Compare two archive member operators @p a and @p b and return which of them is higher.
  */
@@ -365,6 +374,7 @@ public:
 
 	bool hasFile(const Path &path) const override;
 	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents = false) const override;
+	int listMatchingMembers(ArchiveMemberDetailsList &list, const Path &pattern, bool matchPathComponents = false) const;
 	int listMembers(ArchiveMemberList &list) const override;
 
 	const ArchiveMemberPtr getMember(const Path &path) const override;
