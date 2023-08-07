@@ -438,7 +438,7 @@ static void check_keyboard_controls() {
 	}
 
 	// skip speech if desired by Speech.SkipStyle
-	if ((_GP(play).text_overlay_on > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS)) {
+	if ((_GP(play).text_overlay_on > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS) && !IsAGSServiceKey(ki.Key)) {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress
@@ -452,7 +452,7 @@ static void check_keyboard_controls() {
 		return;
 	}
 
-	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
+	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) && !IsAGSServiceKey(ki.Key)) {
 		_GP(play).SetWaitKeySkip(ki);
 		return;
 	}

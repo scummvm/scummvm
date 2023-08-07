@@ -324,7 +324,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 				KeyInput ki;
 				if (run_service_key_controls(ki)) {
 					check_skip_cutscene_keypress(ki.Key);
-					if ((skip_setting & SKIP_KEYPRESS) && !_GP(play).IsIgnoringInput()) {
+					if ((skip_setting & SKIP_KEYPRESS) && !_GP(play).IsIgnoringInput() && !IsAGSServiceKey(ki.Key)) {
 						_GP(play).SetWaitKeySkip(ki);
 						do_break = true;
 					}
@@ -554,7 +554,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 	}
 }
 
-// Draw an outline if requested, then draw the text on top 
+// Draw an outline if requested, then draw the text on top
 void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int font, color_t text_color, const char *texx) {
 	size_t const text_font = static_cast<size_t>(font);
 	// Draw outline (a backdrop) if requested
