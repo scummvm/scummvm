@@ -34,6 +34,7 @@
 
 #include "gui/gui-manager.h"
 
+#include "backends/networking/curl/sessionrequest.h"
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/dlcmanager.h"
 

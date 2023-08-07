@@ -23,9 +23,14 @@
 #define GUI_DOWNLOADDLCSDIALOG_H
 
 #include "gui/dialog.h"
-#include "gui/widgets/list.h"
 
 namespace GUI {
+
+class CommandSender;
+class StaticTextWidget;
+class SliderWidget;
+class ListWidget;
+class ButtonWidget;
 
 class DownloadDLCsDialog : public Dialog {
 public:

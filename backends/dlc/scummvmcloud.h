@@ -26,9 +26,12 @@
 
 #include "backends/dlc/store.h"
 #include "backends/dlc/dlcdesc.h"
-#include "backends/networking/curl/session.h"
 #include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
+
+namespace Networking {
+class SessionRequest;
+}
 
 namespace DLC {
 namespace ScummVMCloud {

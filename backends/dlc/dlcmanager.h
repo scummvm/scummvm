@@ -28,11 +28,17 @@
 #include "common/singleton.h"
 
 #include "gui/object.h"
-#include "gui/launcher.h"
 
-#include "backends/dlc/store.h"
-#include "backends/dlc/dlcdesc.h"
 #include "backends/networking/curl/request.h"
+
+namespace GUI {
+class LauncherDialog;
+}
+
+namespace DLC {
+class Store;
+struct DLCDesc;
+}
 
 namespace DLC {
 
