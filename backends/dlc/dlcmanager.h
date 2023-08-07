@@ -54,7 +54,7 @@ public:
 	Common::Queue<DLCDesc*> _queuedDownloadTasks;
 	
 	DLCManager();
-	virtual ~DLCManager() {}
+	virtual ~DLCManager();
 
 	void init();
 

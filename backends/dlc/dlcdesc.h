@@ -26,7 +26,7 @@
 
 namespace DLC {
 
-class DLCDesc {
+struct DLCDesc {
 
 public:
 	enum State {
@@ -46,9 +46,9 @@ public:
 	Common::String extra;
 	Common::String engineid;
 	Common::String guioptions;
-	uint32 size;
-	uint32 idx;
-	State state;
+	uint32 size = 0;
+	uint32 idx = 0;
+	State state = State::kAvailable;
 };
 
 
