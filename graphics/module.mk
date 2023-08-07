@@ -2,9 +2,9 @@ MODULE := graphics
 
 MODULE_OBJS := \
 	big5.o \
-	blit.o \
-	blit-alpha.o \
-	blit-scale.o \
+	blit/blit.o \
+	blit/blit-alpha.o \
+	blit/blit-scale.o \
 	cursorman.o \
 	font.o \
 	fontman.o \
