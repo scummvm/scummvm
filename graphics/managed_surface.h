@@ -525,15 +525,12 @@ public:
 	}
 	
 	/**
-	 * Returns the pixel format all operations of blendBlitFrom support.
-	 *
-	 * Unlike normal blit functions, blendBlitFrom only works with a fixed pixel
-	 * format. This format can be queried using this static function.
-	 *
-	 * @return Supported pixel format.
+	 * ManagedSurface::blendBlitFrom is meant to be a highly optimized
+	 * blending/blitting function, so it can only accept certain format combinations.
+	 * @return true if the formats can be used by blendBlitFrom.
 	 */
-	static inline PixelFormat getSupportedBlendBlitPixelFormat() {
-		return BlendBlit::getSupportedPixelFormat();
+	static inline bool isBlendBlitPixelFormatSupported(const PixelFormat &src, const PixelFormat &dst) {
+		return BlendBlit::getSupportedPixelFormat() == src && BlendBlit::getSupportedPixelFormat() == dst;
 	}
 
 	/**
