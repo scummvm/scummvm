@@ -156,15 +156,13 @@ void PathfindingAgent::update(uint32 timeslice) {
 			return;
 		}
 
-		Common::Array<PathfindingGraphNode *>::iterator i;
-
-		for (i = current->_location->_neighborNodes.begin(); i != current->_location->_neighborNodes.end(); ++i) {
-			if ((*i)->getMovementCost() > 0) {
+		for (auto &i : current->_location->_neighborNodes) {
+			if (i->getMovementCost() > 0) {
 				// Compute the temp given cost
-				dTempCost = current->getGivenCost() + ((*i)->getMovementCost() * distExact((*i), current->getLocation()));
+				dTempCost = current->getGivenCost() + i->getMovementCost() * distExact(i, current->getLocation());
 
 				// If it's a duplicate...
-				currentIter = _createdList.find((*i));
+				currentIter = _createdList.find(i);
 				if (currentIter != _createdList.end()) {
 					if (dTempCost < currentIter->second->getGivenCost()) {
 						// If the current planner node has already been added, but the current path is cheaper,
@@ -183,17 +181,17 @@ void PathfindingAgent::update(uint32 timeslice) {
 					}
 				} else { // Otherwise...
 					PlannerNode *successor = new PlannerNode();
-					successor->setLocation((*i));
+					successor->setLocation(i);
 
 					// Set the new heuristic (distance from node to the goal)
-					successor->setHCost(distExact((*i), _goalTile));
+					successor->setHCost(distExact(i, _goalTile));
 					successor->setGivenCost(dTempCost);
 					// Final cost is the distance to goal (scaled by 10%) plus the distance of the path.
 					successor->setFinalCost(successor->getHCost() * 1.1 + successor->getGivenCost());
 
 					successor->setParent(current);
 
-					_createdList[(*i)] = (successor);
+					_createdList[i] = (successor);
 					_nodeQueue.push(successor); // When the node is pushed onto the PriorityQueue it ends up beings sorted cheapest -> most expensive
 				}
 			}
