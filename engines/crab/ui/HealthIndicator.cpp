@@ -51,12 +51,12 @@ void HealthIndicator::load(rapidxml::xml_node<char> *node) {
 }
 
 void HealthIndicator::draw(int num) {
-	for (auto i = _img.begin(); i != _img.end(); ++i)
-		if (num == i->_val) {
+	for (auto i : _img)
+		if (num == i._val) {
 			using namespace pyrodactyl::image;
-			g_engine->_imageManager->draw(_x, _y, i->_normal);
-			g_engine->_imageManager->getTexture(i->_glow).alpha(_alpha);
-			g_engine->_imageManager->draw(_x, _y, i->_glow);
+			g_engine->_imageManager->draw(_x, _y, i._normal);
+			g_engine->_imageManager->getTexture(i._glow).alpha(_alpha);
+			g_engine->_imageManager->draw(_x, _y, i._glow);
 
 			if (_inc) {
 				_alpha += 2;

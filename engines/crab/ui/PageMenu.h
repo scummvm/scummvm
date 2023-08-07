@@ -72,8 +72,8 @@ public:
 	~PageMenu() {}
 
 	void reset() {
-		for (auto m = _menu.begin(); m != _menu.end(); ++m)
-			m->reset();
+		for (auto &m : _menu)
+			m.reset();
 	}
 
 	void clear() {
@@ -137,13 +137,13 @@ public:
 	}
 
 	void assignPaths() {
-		for (auto m = _menu.begin(); m != _menu.end(); ++m)
-			m->assignPaths();
+		for (auto &m : _menu)
+			m.assignPaths();
 	}
 
 	void useKeyboard(const bool &val) {
-		for (auto m = _menu.begin(); m != _menu.end(); ++m)
-			m->useKeyboard(val);
+		for (auto &m : _menu)
+			m.useKeyboard(val);
 	}
 
 	void setUI() {
@@ -152,8 +152,8 @@ public:
 		_ref.setUI();
 		_status.setUI();
 
-		for (auto m = _menu.begin(); m != _menu.end(); ++m)
-			m->setUI();
+		for (auto &m : _menu)
+			m.setUI();
 	}
 
 	void updateInfo() {

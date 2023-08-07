@@ -84,11 +84,10 @@ void QuestMenu::load(rapidxml::xml_node<char> *node) {
 // Purpose: Add an entry to the menu
 //------------------------------------------------------------------------
 void QuestMenu::add(const Common::String &title, const Common::String &txt) {
-	for (auto i = _quest.begin(); i != _quest.end(); ++i)
-		if (i->_title == title) // We already have the quest entry
-		{
-			i->_text.insert_at(0, txt); // Just add the new string to the start of the quest messages and return
-			i->_unread = true;
+	for (auto &i : _quest)
+		if (i._title == title) { // We already have the quest entry
+			i._text.insert_at(0, txt); // Just add the new string to the start of the quest messages and return
+			i._unread = true;
 			return;
 		}
 
@@ -115,9 +114,9 @@ void QuestMenu::erase(const int &index) {
 // Purpose: Indicate that this quest has an associated map marker in world map
 //------------------------------------------------------------------------
 void QuestMenu::marker(const Common::String &title, const bool &val) {
-	for (auto i = _quest.begin(); i != _quest.end(); ++i)
-		if (i->_title == title)
-			i->_marker = val;
+	for (auto &i : _quest)
+		if (i._title == title)
+			i._marker = val;
 }
 //------------------------------------------------------------------------
 // Purpose: Draw
@@ -213,8 +212,8 @@ void QuestMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char
 
 	saveBool(_unread, "unread", doc, child);
 
-	for (auto q = _quest.begin(); q != _quest.end(); ++q)
-		q->saveState(doc, child);
+	for (auto &q: _quest)
+		q.saveState(doc, child);
 
 	root->append_node(child);
 }
