@@ -2,7 +2,9 @@ gui/about.cpp
 gui/browser.cpp
 gui/chooser.cpp
 gui/cloudconnectionwizard.cpp
+gui/dlcsdialog.h
 gui/downloaddialog.cpp
+gui/downloaddlcsdialog.h
 gui/downloadpacksdialog.cpp
 gui/editgamedialog.cpp
 gui/editrecorddialog.cpp
