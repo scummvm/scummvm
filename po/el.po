@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-06 23:03+0000\n"
+"POT-Creation-Date: 2023-08-07 08:22+0000\n"
 "PO-Revision-Date: 2023-07-29 09:44+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -261,7 +261,8 @@ msgstr "Χειροκίνητη Ρύθμιση: Επιτυχία"
 msgid "Back"
 msgstr "Πίσω"
 
-#: gui/cloudconnectionwizard.cpp:436 gui/saveload-dialog.cpp:829
+#: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
+#: gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Επόμενο"
 
@@ -469,8 +470,8 @@ msgstr "Η λήψη ολοκληρώθηκε, λήφθηκαν %d πακέτα, 
 
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
-#: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
-#: backends/platform/android/options.cpp:492
+#: gui/gui-manager.cpp:162 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
+#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
@@ -979,6 +980,27 @@ msgstr "Δεξιά"
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
 msgstr "???"
+
+#: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
+msgid "Prev"
+msgstr "Προηγούμενο"
+
+#: gui/imagealbum-dialog.cpp:127
+#, fuzzy
+#| msgid "Saving game..."
+msgid "Save Image..."
+msgstr "Αποθήκευση παιχνιδιού..."
+
+#: gui/imagealbum-dialog.cpp:267
+#, c-format
+msgid "%u of %u"
+msgstr ""
+
+#: gui/imagealbum-dialog.cpp:380
+#, fuzzy
+#| msgid "Save Game"
+msgid "Save Image"
+msgstr "Αποθήκευση παιχνιδιού"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
@@ -2435,10 +2457,6 @@ msgstr "Ώρα παιχνιδιού: "
 msgid "Untitled saved game"
 msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
 
-#: gui/saveload-dialog.cpp:832
-msgid "Prev"
-msgstr "Προηγούμενο"
-
 #: gui/saveload-dialog.cpp:1033
 msgid "New Save"
 msgstr "Νέα Αποθήκευση"
@@ -2825,6 +2843,26 @@ msgstr "GB"
 #: common/util.cpp:206
 msgid "TB"
 msgstr "TB"
+
+#: common/formats/formatinfo.cpp:102
+msgid "Bitmap Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:104
+msgid "PNG Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:106
+msgid "JPEG Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:108
+msgid "QuickDraw PICT Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:111
+msgid "Data File"
+msgstr ""
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -7383,6 +7421,10 @@ msgstr ""
 "Το παιχνίδι απαιτεί υποστήριξη για ήχο μορφής MPEG για ένα\n"
 "μέρος από το περιεχόμενο του, η οποία δεν έχει γίνει compiled.\n"
 "Μπορείτε να παίξετε το παιχνίδι, αλλά κάποιο ήχοι δεν θα παίζουν."
+
+#: engines/mtropolis/plugin/mti.cpp:549
+msgid "Image Viewer"
+msgstr ""
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format

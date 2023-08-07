@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-06 23:03+0000\n"
+"POT-Creation-Date: 2023-08-07 08:22+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -268,7 +268,8 @@ msgstr ""
 msgid "Back"
 msgstr "Backend"
 
-#: gui/cloudconnectionwizard.cpp:436 gui/saveload-dialog.cpp:829
+#: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
+#: gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Nästa"
 
@@ -483,8 +484,8 @@ msgstr "Nedladdning klar, laddade ner %d paket, %s %S"
 
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
-#: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
-#: backends/platform/android/options.cpp:492
+#: gui/gui-manager.cpp:162 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
+#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
@@ -985,6 +986,26 @@ msgstr "Höger"
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
 msgstr "???"
+
+#: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
+msgid "Prev"
+msgstr "Bakåt"
+
+#: gui/imagealbum-dialog.cpp:127
+#, fuzzy
+#| msgid "Saving game..."
+msgid "Save Image..."
+msgstr "Sparar speldata..."
+
+#: gui/imagealbum-dialog.cpp:267
+#, c-format
+msgid "%u of %u"
+msgstr ""
+
+#: gui/imagealbum-dialog.cpp:380
+#, fuzzy
+msgid "Save Image"
+msgstr "Spara spelet:"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
@@ -2430,10 +2451,6 @@ msgstr "Speltid: "
 msgid "Untitled saved game"
 msgstr "Namnlös sparfil"
 
-#: gui/saveload-dialog.cpp:832
-msgid "Prev"
-msgstr "Bakåt"
-
 #: gui/saveload-dialog.cpp:1033
 msgid "New Save"
 msgstr "Ny sparning"
@@ -2775,6 +2792,26 @@ msgstr "GB"
 #: common/util.cpp:206
 msgid "TB"
 msgstr "TB"
+
+#: common/formats/formatinfo.cpp:102
+msgid "Bitmap Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:104
+msgid "PNG Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:106
+msgid "JPEG Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:108
+msgid "QuickDraw PICT Image File"
+msgstr ""
+
+#: common/formats/formatinfo.cpp:111
+msgid "Data File"
+msgstr ""
 
 #: dists/android.strings.xml.cpp:30
 #, fuzzy
@@ -7229,6 +7266,10 @@ msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
+msgstr ""
+
+#: engines/mtropolis/plugin/mti.cpp:549
+msgid "Image Viewer"
 msgstr ""
 
 #: engines/mutationofjb/util.cpp:32
