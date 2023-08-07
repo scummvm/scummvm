@@ -111,7 +111,7 @@ void Vars::game_systems_initialize(byte flags) {
 
 	debugC(kDebugCore, _G(kernel).suppress_cache ?
 		"Cache System Disabled" : "Cache System Enabled");
-	debugC(kDebugCore, "Available memory: %ld", totalMem);
+	debugC(kDebugCore, "Available memory: %d", totalMem);
 
 	mem_stash_init(32);
 

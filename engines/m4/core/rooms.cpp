@@ -280,7 +280,7 @@ void Sections::game_control_cycle() {
 					parse_player_command_now();
 					term_message("parsed0");
 				} else {
-					term_message("player: walk to (%ld, %ld), facing: %ld",
+					term_message("player: walk to (%d, %d), facing: %d",
 						_G(player).walk_x, _G(player).walk_y, _G(player).walk_facing);
 
 					if (_G(player).walk_x < 0 || _G(player).walk_y < 0) {

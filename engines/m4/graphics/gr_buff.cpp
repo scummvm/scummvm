@@ -67,14 +67,14 @@ void GrBuff::release() {
 void GrBuff::alloc_pixmap() {
 	pixmap = NewHandle(pitch * height, "pixmap");
 	if (!pixmap) {
-		term_message("GrBuff::alloc_pixmap(): Trying to free up %ld bytes", pitch * height);
+		term_message("GrBuff::alloc_pixmap(): Trying to free up %d bytes", pitch * height);
 		if (MakeMem(pitch * height, "pixmap"))
 		{
 			pixmap = NewHandle(pitch * height, "pixmap");
 			if (!pixmap)
-				error_show(FL, 15, "pixmap h:%ld w:%ld bytes:%ld", height, pitch, pitch * height);
+				error_show(FL, 15, "pixmap h:%d w:%d bytes:%d", height, pitch, pitch * height);
 		} else
-			error_show(FL, 1, "GrBuff::alloc_pixmap() x, y: %ld %ld", pitch, height);
+			error_show(FL, 1, "GrBuff::alloc_pixmap() x, y: %d %d", pitch, height);
 	}
 	HLock(pixmap);
 	memset(*pixmap, __BLACK, pitch * height);
@@ -125,7 +125,7 @@ int32 gr_buffer_free(Buffer *buf) {
 
 byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
 	if (!buf || !buf->data || y < 0 || x < 0) {
-		error_show(FL, 'BUF!', "buffer_pointer x,y = %ld,%ld", x, y);
+		error_show(FL, 'BUF!', "buffer_pointer x,y = %d,%d", x, y);
 		return 0;
 	}
 
@@ -134,7 +134,7 @@ byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
 
 const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y) {
 	if (!buf || !buf->data || y < 0 || x < 0) {
-		error_show(FL, 'BUF!', "buffer_pointer x,y = %ld,%ld", x, y);
+		error_show(FL, 'BUF!', "buffer_pointer x,y = %d,%d", x, y);
 		return 0;
 	}
 
@@ -151,7 +151,7 @@ int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 
 	buf->data = (uint8 *)mem_alloc(buf->stride * h, name);
 	if (buf->data == NULL)
-		error_show(FL, 'OOM!', "buffer: %s - w:%ld h:%ld bytes:%ld", name, buf->stride, h, buf->stride * h);
+		error_show(FL, 'OOM!', "buffer: %s - w:%d h:%d bytes:%d", name, buf->stride, h, buf->stride * h);
 
 	memset(buf->data, 0, buf->stride * h);
 

@@ -84,12 +84,12 @@ strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuff
 	}
 
 	if (strmMinBuffSize < 0) {
-		error_show(FL, 'FSF1', "neg min buffsize: %ld", strmMinBuffSize);
+		error_show(FL, 'FSF1', "neg min buffsize: %d", strmMinBuffSize);
 	}
 
 	// Allocate a new stream request struct
 	if ((newStream = (strmRequest *)mem_alloc(sizeof(strmRequest), STR_STRMREQ)) == nullptr) {
-		error_show(FL, 'OOM!', "%ld", sizeof(strmRequest));
+		error_show(FL, 'OOM!', "%d", sizeof(strmRequest));
 		return nullptr;
 	}
 
@@ -137,7 +137,7 @@ strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuff
 	}
 
 	// sorry, bud.
-	error_show(FL, 'FSOM', "want: %ld, have: %ld", strmMinBuffSize, memAvail);
+	error_show(FL, 'FSOM', "want: %d, have: %d", strmMinBuffSize, memAvail);
 
 got_mem:
 	//lock the buffer - to be locked until the stream is closed
@@ -247,7 +247,7 @@ static bool UnwrapStream(strmRequest *myStream) {
 		bytesToMove = (byte *)myStream->strmHead - (byte *)myStream->strmBuff;
 
 		if ((tempBuff = (uint8 *)mem_alloc(bytesToMove, "stream temp buff")) == nullptr)
-			error_show(FL, 'OOM!', "UnwrapStream() failed - temp buff avail: %ld", bytesToMove);
+			error_show(FL, 'OOM!', "UnwrapStream() failed - temp buff avail: %d", bytesToMove);
 
 		memcpy(tempBuff, myStream->strmBuff, bytesToMove);
 	}
@@ -292,7 +292,7 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 		error_show(FL, 'FSIS', "f_stream_Read() failed - invalid stream request");
 
 	if ((numBytes <= 0) || (numBytes >= myStream->strmSize))
-		error_show(FL, 'FSR!', "%ld stream size %ld", numBytes, myStream->strmSize);
+		error_show(FL, 'FSR!', "%d stream size %d", numBytes, myStream->strmSize);
 
 	// If the stream tail is > the stream head, and the number of bytes at the end of the buffer is < numBytes
 	// we must unwrap the stream, moving the data at the end of the buffer to the beginning, and slide the beginning down

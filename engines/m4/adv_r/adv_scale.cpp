@@ -103,12 +103,12 @@ void scale_editor_draw() {
 	gr_font_set_color(__WHITE);
 	gr_font_set(_G(font_tiny));
 
-	Common::sprintf_s(string, "Front: %ld, %ld", _GS(old_front), _G(currentSceneDef).front_scale);
+	Common::sprintf_s(string, "Front: %d, %d", _GS(old_front), _G(currentSceneDef).front_scale);
 	int x;
 	for (x = 10; x < scr_orig->w - 220; x += 400)
 		gr_font_write(game_buff, string, x, _GS(old_front) - LABEL_OFFSET, 0, 0);
 
-	Common::sprintf_s(string, "Back: %ld, %ld", _GS(old_back), _G(currentSceneDef).back_scale);
+	Common::sprintf_s(string, "Back: %d, %d", _GS(old_back), _G(currentSceneDef).back_scale);
 	for (x = 110; x < scr_orig->w - 320; x += 400)
 		gr_font_write(game_buff, string, x, _GS(old_back) - LABEL_OFFSET, 0, 0);
 

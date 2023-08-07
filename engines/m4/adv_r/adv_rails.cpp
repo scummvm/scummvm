@@ -131,7 +131,7 @@ noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 
 
 	// Create new noWalkRect structure
 	if ((newRect = (noWalkRect *)mem_alloc(sizeof(noWalkRect), "intr noWalkRect")) == NULL) {
-		error_show(FL, 'IADN', "rect size: %ld %ld %ld %ld", x1, y1, x2, y2);
+		error_show(FL, 'IADN', "rect size: %d %d %d %d", x1, y1, x2, y2);
 		return NULL;
 	}
 
@@ -143,7 +143,7 @@ noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 
 
 	// Add the alternate walkto node - this node must exist
 	if ((newRect->alternateWalkToNode = AddRailNode(altX, altY, walkCodes, false)) < 0) {
-		error_show(FL, 'IADN', "could not add node. coord: %ld %ld", altX, altY);
+		error_show(FL, 'IADN', "could not add node. coord: %d %d", altX, altY);
 	}
 
 	// Now add the corner nodes.  Not as important if these don't exist

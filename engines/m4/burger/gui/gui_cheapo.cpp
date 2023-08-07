@@ -490,7 +490,7 @@ ControlStatus InterfaceBox::track(int32 eventType, int16 x, int16 y) {
 	for (int iter = 0; iter < _index; iter++) {
 		if (_button[iter]->track(eventType, x, y) == SELECTED) {
 			_highlight_index = _button[iter]->get_tag();
-			term_message("selected button: %ld", iter);
+			term_message("selected button: %d", iter);
 			result = SELECTED;
 			break;
 		}

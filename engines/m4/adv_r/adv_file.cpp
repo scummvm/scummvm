@@ -104,7 +104,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 
 	// Read DEF file
 	if (db_def_chk_read(_G(game).new_room, rdef) != -1) {
-		error_show(FL, 'DF:(', "trying to find %ld.CHK", (uint32)_G(game).new_room);
+		error_show(FL, 'DF:(', "trying to find %d.CHK", (uint32)_G(game).new_room);
 		return false;
 	}
 

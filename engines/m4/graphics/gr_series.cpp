@@ -58,7 +58,7 @@ bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x
 
 	srcSpritePtr = &srcSprite;
 	if ((srcSpritePtr = GetWSAssetSprite(nullptr, (uint32)spriteHash, (uint32)index, srcSpritePtr, nullptr)) == nullptr)
-		error_show(FL, 'SPNF', "hash: %ld, index: %ld", spriteHash, index);
+		error_show(FL, 'SPNF', "hash: %d, index: %d", spriteHash, index);
 
 	HLock(srcSpritePtr->sourceHandle);
 	//gr_pal_interface(&master_palette[0]);

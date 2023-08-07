@@ -39,7 +39,7 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	uint8 *pScaled, *pData = S->data;
 
 	if (!D || !S)
-		error_show(FL, 'BUF!', "scale sprite h:%ld w:%ld sx:%uld sy:%uld", D->h, D->w, ScaleX, ScaleY);
+		error_show(FL, 'BUF!', "scale sprite h:%d w:%d sx:%uld sy:%uld", D->h, D->w, ScaleX, ScaleY);
 
 	/* calculate new x size */
 	D->w = S->w * ScaleX / 100;
@@ -138,7 +138,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		// If it's scaled we decode it first
 		if (Rle) {
 			if (!(scaledBuff = (uint8 *)mem_alloc(source.stride * source.h, "scaled buffer")))
-				error_show(FL, 'OOM!', "no mem: buffer w:%ld, h:%ld", source.w, source.h);
+				error_show(FL, 'OOM!', "no mem: buffer w:%d, h:%d", source.w, source.h);
 
 			RLE8Decode(source.data, scaledBuff, source.stride);
 			source.data = scaledBuff;
