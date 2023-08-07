@@ -225,6 +225,9 @@ _builtin_resources=yes
 _windows_console=yes
 _windows_unicode=yes
 _cygwin_build=no
+_ext_sse2=no
+_ext_avx2=no
+_ext_neon=no
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -6872,22 +6875,23 @@ echo "$_enable_ubsan"
 #
 # Whether to add compiler options and preprocessor defines for SIMD extensions
 #
-if [[ "$_host_cpu" =~ ^86$ ]] ; then
+if ( echo "$_host_cpu" | grep '86' >> /dev/null ) ; then
 	define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
 	if test "$_ext_sse2" = yes ; then
-		append_var CXXFLAGS "-msse2"
+		append_var CXXFLAGS "-msse2 -msse"
 	fi
 	echo_n "Enabling x86/64 SSE2... "
 	echo "$_ext_sse2"
 	define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_AVX2'
 	if test "$_ext_avx2" = yes ; then
-		append_var CXXFLAGS "-mavx2 -mavx"
+		append_var CXXFLAGS "-mavx2 -mavx -msse2 -msse"
+		define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_SSE2'
 	fi
-	echo_n "Enabling x86/64 AVX2... "
+	echo_n "Enabling x86/64 AVX2 and SSE2... "
 	echo "$_ext_avx2"
 fi
 
-if [[ "$_host_cpu" =~ ^arm$ ]] || [[ "$_host_cpu" =~ ^aarch64$ ]] ; then
+if ( echo "$_host_cpu" | grep 'arm' >> /dev/null ) || ( echo "$_host_cpu" | grep 'aarch64' >> /dev/null ) ; then
 	define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
 	echo_n "Enabling arm NEON... "
 	echo "$_ext_neon"
