@@ -252,6 +252,20 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"Demo",
 		{
+			{"driller", 0, "ff9b84a6526de87a301f7aba5c2d87d9", 164736},
+			{"data", 0, "6add87a10042d0a9fd32c62ed56b7690", 24220},
+			{"demo.cmd", 0, "247601bec1bfa858955749364c876609", 4096},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_DEMO | GF_AMIGA_MAGAZINE_DEMO,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"Demo",
+		{
 			{"auto_x.prg", 0, "14388ba3cfd222938e5e48f0e316b335", 158919},
 			{"data", 0, "6add87a10042d0a9fd32c62ed56b7690", 24220},
 			{"demo.cmd", 0, "7b90427c5c3c4bbb42d14076af994d50", 4096},
