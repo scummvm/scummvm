@@ -27,10 +27,6 @@
 
 namespace GUI {
 
-enum {
-	kCancelSelectedCmd = 'CANS',
-};
-
 class DownloadDLCsDialog : public Dialog {
 public:
 	DownloadDLCsDialog();
