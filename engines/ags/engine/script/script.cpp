@@ -500,6 +500,11 @@ void post_script_cleanup() {
 
 	int old_room_number = _G(displayed_room);
 
+	// FIXME: sync audio in case any screen changing or time-consuming post-script actions were scheduled
+	if (copyof.numPostScriptActions > 0) {
+		sync_audio_playback();
+	}
+
 	// run the queued post-script actions
 	for (int ii = 0; ii < copyof.numPostScriptActions; ii++) {
 		int thisData = copyof.postScriptActionData[ii];
@@ -551,6 +556,9 @@ void post_script_cleanup() {
 		}
 	}
 
+	if (copyof.numPostScriptActions > 0) {
+		sync_audio_playback();
+	}
 
 	for (int jj = 0; jj < copyof.numanother; jj++) {
 		old_room_number = _G(displayed_room);
