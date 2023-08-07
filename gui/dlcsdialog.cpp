@@ -36,7 +36,7 @@ DLCsDialog::DLCsDialog() : Dialog("DownloadGames") {
 	// Set target (Command Receiver) for Command Sender
 	DLCMan.setTarget(this);
 
-	new StaticTextWidget(this, "DownloadGames.Headline", _("Download Freeware Games"));
+	new StaticTextWidget(this, "DownloadGames.Headline", _("Download Freeware Games and Demos"));
 
 	// Add list with downloadable game titles
 	_gamesList = new ListWidget(this, "DownloadGames.List");
