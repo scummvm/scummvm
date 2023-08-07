@@ -46,11 +46,11 @@ void MusicManager::freeMusic() {
 }
 
 void MusicManager::freeChunk() {
-	for (auto i = _effects.begin(); i != _effects.end(); ++i) {
-		i->_value->_file.close();
-		delete i->_value->_handle;
-		delete i->_value->_stream;
-		delete i->_value;
+	for (auto &i : _effects) {
+		i._value->_file.close();
+		delete i._value->_handle;
+		delete i._value->_stream;
+		delete i._value;
 	}
 
 	_effects.clear();
