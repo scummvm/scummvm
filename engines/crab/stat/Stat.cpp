@@ -29,6 +29,7 @@
  */
 
 #include "crab/crab.h"
+#include "crab/GameParam.h"
 #include "crab/stat/Stat.h"
 
 namespace Crab {

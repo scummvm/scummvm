@@ -31,8 +31,8 @@
 #ifndef CRAB_STATDRAWHELPER_H
 #define CRAB_STATDRAWHELPER_H
 
-#include "crab/ui/TextData.h"
 #include "crab/people/person.h"
+#include "crab/ui/TextData.h"
 
 namespace Crab {
 

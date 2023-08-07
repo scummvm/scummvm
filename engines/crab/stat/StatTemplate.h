@@ -31,6 +31,7 @@
 #ifndef CRAB_STATTEMPLATE_H
 #define CRAB_STATTEMPLATE_H
 
+#include "common/array.h"
 #include "crab/stat/Stat.h"
 
 namespace Crab {
