@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/XMLDoc.h"
 #include "crab/text/color.h"
 
 namespace Crab {

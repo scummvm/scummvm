@@ -31,7 +31,7 @@
 #ifndef CRAB_COLOR_H
 #define CRAB_COLOR_H
 
-#include "crab/XMLDoc.h"
+#include "common/array.h"
 #include "crab/loaders.h"
 
 namespace Crab {
