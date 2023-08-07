@@ -145,9 +145,6 @@ void ImageAlbumDialog::open() {
 }
 
 void ImageAlbumDialog::changeToSlot(uint slot) {
-	ContainerWidget *container = _imageContainer;
-	container = _imageContainer;
-
 	bool canSaveImage = _canAlwaysSaveImage;
 
 	if (_imageGraphic) {
