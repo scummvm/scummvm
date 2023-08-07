@@ -31,8 +31,6 @@
 #ifndef CRAB_LEVELEXIT_H
 #define CRAB_LEVELEXIT_H
 
-#include "crab/event/GameEventInfo.h"
-#include "crab/image/ImageManager.h"
 #include "crab/Shape.h"
 
 namespace Crab {

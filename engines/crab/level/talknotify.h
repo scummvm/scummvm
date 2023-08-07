@@ -31,8 +31,6 @@
 #ifndef CRAB_TALKNOTIFY_H
 #define CRAB_TALKNOTIFY_H
 
-#include "crab/event/GameEventInfo.h"
-#include "crab/image/ImageManager.h"
 #include "crab/animation/sprite.h"
 
 namespace Crab {
