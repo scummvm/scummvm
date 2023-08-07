@@ -228,13 +228,13 @@ void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitm
 	const auto found = _txRefs.find(sprite_id);
 	if (found == _txRefs.end())
 		return;
-	auto txdata = found->second.Data.lock();
+	auto txdata = found->_value.Data.lock();
 	if (!txdata)
 		return;
 
 	// Update texture ONLY if the bitmap's resolution matches;
 	// otherwise - detach shared texture (don't delete the data yet, as it may be in use)
-	const auto &res = found->second.Res;
+	const auto &res = found->_value.Res;
 	if (res.Width == bitmap->GetWidth() && res.Height == bitmap->GetHeight() && res.ColorDepth == bitmap->GetColorDepth()) {
 		UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
 	} else {
