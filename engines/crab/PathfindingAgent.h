@@ -214,8 +214,6 @@ public:
 	bool adjacentToGoal(PathfindingGraphNode *node);
 };
 
-bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB);
-
 } // End of namespace Crab
 
 #endif // CRAB_PATHFINDINGAGENT_H
