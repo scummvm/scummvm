@@ -43,7 +43,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Used to sort background sprites
 //------------------------------------------------------------------------
-bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
+static bool compSpriteLayer(const Sprite &a, const Sprite &b) {
 	return (a._layer < b._layer);
 }
 
@@ -123,7 +123,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 					_background.push_back(s);
 				}
 
-				Common::sort(_background.begin(), _background.end(), CompSpriteLayer);
+				Common::sort(_background.begin(), _background.end(), compSpriteLayer);
 			}
 
 			if (nodeValid("fly", node)) {

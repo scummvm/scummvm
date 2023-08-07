@@ -33,6 +33,11 @@
 
 namespace Crab {
 
+// This keeps the PriorityQueue organized based on the cost of the paths.
+static bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB) {
+	return nodeA->getFinalCost() > nodeB->getFinalCost();
+}
+
 PathfindingAgent::PathfindingAgent(void) : _nodeQueue(compareNodes) {
 	_grid = nullptr;
 
@@ -295,11 +300,6 @@ double PathfindingAgent::distExact(PathfindingGraphNode *tileA, PathfindingGraph
 	Vector2f vecTo = tileA->getPosition() - tileB->getPosition();
 
 	return vecTo.magnitude();
-}
-
-// This keeps the PriorityQueue organized based on the cost of the paths.
-bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB) {
-	return nodeA->getFinalCost() > nodeB->getFinalCost();
 }
 
 bool PathfindingAgent::adjacentToGoal(PathfindingGraphNode *node) {

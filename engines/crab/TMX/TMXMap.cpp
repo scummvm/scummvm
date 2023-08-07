@@ -37,7 +37,7 @@ namespace Crab {
 using namespace TMX;
 using namespace pyrodactyl::image;
 
-bool propCompare(const MapLayer &l1, const MapLayer &l2) {
+static bool propCompare(const MapLayer &l1, const MapLayer &l2) {
 	return l1._pos.y + l1._pos.h < l2._pos.y + l2._pos.h;
 }
 
