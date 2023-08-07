@@ -274,7 +274,7 @@ Common::String OSystem_Win32::getDefaultIconsPath() {
 	return Win32::tcharToString(iconsPath);
 }
 
-Common::String OSystem_Win32::getDefaultDLCsPath() {
+Common::Path OSystem_Win32::getDefaultDLCsPath() {
 	TCHAR dlcsPath[MAX_PATH];
 
 	if (_isPortable) {
@@ -283,13 +283,13 @@ Common::String OSystem_Win32::getDefaultDLCsPath() {
 	} else {
 		// Use the Application Data directory of the user profile
 		if (!Win32::getApplicationDataDirectory(dlcsPath)) {
-			return Common::String();
+			return Common::Path();
 		}
 		_tcscat(dlcsPath, TEXT("\\DLCs\\"));
 		CreateDirectory(dlcsPath, nullptr);
 	}
 
-	return Win32::tcharToString(dlcsPath);
+	return Common::Path(Win32::tcharToString(dlcsPath));
 }
 
 Common::String OSystem_Win32::getScreenshotsPath() {

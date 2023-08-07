@@ -261,11 +261,11 @@ Common::String OSystem_MacOSX::getDefaultIconsPath() {
 	return defaultIconsPath;
 }
 
-Common::String OSystem_MacOSX::getDefaultDLCsPath() {
-	const Common::String defaultDLCsPath = getAppSupportPathMacOSX() + "/DLCs";
+Common::Path OSystem_MacOSX::getDefaultDLCsPath() {
+	const Common::Path defaultDLCsPath(getAppSupportPathMacOSX() + "/DLCs");
 
-	if (!Posix::assureDirectoryExists(defaultDLCsPath)) {
-		return Common::String();
+	if (!Posix::assureDirectoryExists(defaultDLCsPath.toString())) {
+		return Common::Path();
 	}
 
 	return defaultDLCsPath;
