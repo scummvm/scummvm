@@ -98,14 +98,14 @@ struct AlphaBlend {
 template<bool doscale, bool rgbmod, bool alphamod>
 struct MultiplyBlend {
 	static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
-    	__m128i ina;
-	    if (alphamod)
+		__m128i ina;
+		if (alphamod)
 			ina = _mm_srli_epi32(_mm_mullo_epi16(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask)), _mm_set1_epi32(ca)), 8);
-	    else
+		else
 			ina = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
-	    __m128i alphaMask = _mm_cmpeq_epi32(ina, _mm_setzero_si128());
+		__m128i alphaMask = _mm_cmpeq_epi32(ina, _mm_setzero_si128());
 
-    	if (rgbmod) {
+		if (rgbmod) {
 			__m128i srcb = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
 			__m128i srcg = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
 			__m128i srcr = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);

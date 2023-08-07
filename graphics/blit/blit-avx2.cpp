@@ -277,7 +277,7 @@ void BlendBlitImpl::blitInnerLoopAVX2(BlendBlit::Args &args) {
 	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
 
-    if (!doscale && (args.flipping & FLIP_H)) args.ino -= 4 * 7;
+	if (!doscale && (args.flipping & FLIP_H)) args.ino -= 4 * 7;
 
 	for (uint32 i = 0; i < args.height; i++) {
 		if (doscale) {
