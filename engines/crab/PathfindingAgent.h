@@ -190,7 +190,7 @@ public:
 
 	//! \brief Performs the main part of the algorithm until the specified time has elapsed or
 	//! no nodes are left open.
-	void update(long timeslice);
+	void update(uint32 timeslice);
 
 	//! \brief Returns <code>true</code> if and only if no nodes are left open.
 	//!
