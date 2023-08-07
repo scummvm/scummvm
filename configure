@@ -225,9 +225,9 @@ _builtin_resources=yes
 _windows_console=yes
 _windows_unicode=yes
 _cygwin_build=no
-_ext_sse2=no
-_ext_avx2=no
-_ext_neon=no
+_ext_sse2=auto
+_ext_avx2=auto
+_ext_neon=auto
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -6875,27 +6875,72 @@ echo "$_enable_ubsan"
 #
 # Whether to add compiler options and preprocessor defines for SIMD extensions
 #
-if ( echo "$_host_cpu" | grep '86' >> /dev/null ) ; then
-	define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
-	if test "$_ext_sse2" = yes ; then
-		append_var CXXFLAGS "-msse2 -msse"
-	fi
-	echo_n "Enabling x86/64 SSE2... "
-	echo "$_ext_sse2"
-	define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_AVX2'
-	if test "$_ext_avx2" = yes ; then
-		append_var CXXFLAGS "-mavx2 -mavx -msse2 -msse"
-		define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_SSE2'
-	fi
-	echo_n "Enabling x86/64 AVX2 and SSE2... "
-	echo "$_ext_avx2"
-fi
 
-if ( echo "$_host_cpu" | grep 'arm' >> /dev/null ) || ( echo "$_host_cpu" | grep 'aarch64' >> /dev/null ) ; then
-	define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
-	echo_n "Enabling arm NEON... "
-	echo "$_ext_neon"
+# Automatically detect if SSE2, NEON, AVX2 can be compiled (not if they can
+# be run at runtime)
+case $_host_cpu in
+	x86_64 | amd64)
+		if test "$_ext_sse2" = auto ; then
+			_ext_sse2=yes
+		fi
+		if test "$_ext_avx2" = auto ; then
+			_ext_avx2=yes
+		fi
+		_ext_neon=no
+		;;
+	i[3-6]86)
+		if test "$_ext_sse2" = auto ; then
+			_ext_sse2=yes
+		fi
+		if test "$_ext_avx2" = auto ; then
+			_ext_avx2=no
+		fi
+		_ext_neon=no
+		;;
+	aarch64)
+		if test "$_ext_neon" = auto ; then
+			_ext_neon=yes
+		fi
+		_ext_sse2=no
+		_ext_avx2=no
+		;;
+	arm*)
+		if test "$_ext_neon" = auto ; then
+			_ext_neon=no
+		fi
+		_ext_sse2=no
+		_ext_avx2=no
+		;;
+	*)
+		_ext_sse2=no
+		_ext_avx2=no
+		_ext_neon=no
+		;;
+esac
+
+define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
+if test "$_ext_sse2" = yes ; then
+	append_var CXXFLAGS "-msse2 -msse"
 fi
+echo_n "Enabling x86/64 SSE2... "
+echo "$_ext_sse2"
+define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_AVX2'
+if test "$_ext_avx2" = yes ; then
+	append_var CXXFLAGS "-mavx2 -mavx -msse2 -msse"
+	define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_SSE2'
+fi
+echo_n "Enabling x86/64 AVX2 and SSE2... "
+echo "$_ext_avx2"
+define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
+# AArch64 might by default come with more fpu extensions, so we wouldn't want
+# to downgrade. Almost all armv7 cpus have neon or less in terms of fpu
+# extensions so setting fpu to neon is almost always an upgrade over defaults.
+# Not to mention it would have to be included anyways
+if ( test "$_ext_avx2" = yes ) && ( test "$_host_cpu" != aarch64 ) ; then
+	append_var CXXFLAGS "-mfpu=neon"
+fi
+echo_n "Enabling arm NEON... "
+echo "$_ext_neon"
 
 echo_n "Backend... "
 echo_n "$_backend"
