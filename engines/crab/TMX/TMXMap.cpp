@@ -269,9 +269,9 @@ void TMXMap::drawDebug(const Rect &camera) {
 	}
 
 	// Draw the pathfinding grid (SZ)
-	for(int x = 0; x < _grid->getDimensions().x; ++x) {
-		for(int y = 0; y < _grid->getDimensions().y; ++y) {
-			if(_grid->getNodeAtCoords(x, y)->getMovementCost() < 0.0f)
+	for (int x = 0; x < _grid->getDimensions().x; ++x) {
+		for (int y = 0; y < _grid->getDimensions().y; ++y) {
+			if (_grid->getNodeAtCoords(x, y)->getMovementCost() < 0.0f)
 				_grid->getNodeAtCoords(x, y)->getRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
 		}
 	}
@@ -370,9 +370,5 @@ bool TMXMap::collideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &mus
 
 	return false;
 }
-
-//------------------------------------------------------------------------
-// Purpose: Path finding functions
-//------------------------------------------------------------------------
 
 } // End of namespace Crab
