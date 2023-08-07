@@ -29,6 +29,35 @@ namespace Burger {
 namespace Rooms {
 
 class Room102 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = -1;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	int _val10 = 99999;
+	int _val11 = 0;
+	int _val12 = 0;
+	int _val13 = 0;
+	int _val14 = 0;
+	int _val15 = -1;
+	int _val16 = 0;
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	machine *_laz1 = nullptr;
+	machine *_laz2 = nullptr;
+	int _index1 = -1, _index2 = -1;
+
+	void setup(int val1, int val2);
+	void setupWax();
+	void setupLaz();
+	const char *getDigi1(int num) const;
+	const char *getDigi2(int num) const;
+
 public:
 	Room102() : Room() {}
 	~Room102() override {}
