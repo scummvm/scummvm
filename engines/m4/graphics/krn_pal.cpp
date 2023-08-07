@@ -269,8 +269,8 @@ void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 
 	memcpy(pal, _GP(picPal), sizeof(RGB8) * 256);
 
-	ws_RefreshWoodscriptBuffer(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]), _G(screenCodeBuff),
-		(uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr());
+	ws_RefreshWoodscriptBuffer(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
+		_G(screenCodeBuff)->get_buffer(), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr());
 	_G(game_bgBuff)->release();
 	_G(inverse_pal)->release();
 

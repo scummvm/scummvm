@@ -164,7 +164,7 @@ extern void CreateGameMenuFromMain(RGB8 *myPalette);
 //
 //		gamemenu module defines
 //
-#define MEMORY_NEEDED		478000  // bytes needed for menus to work
+#define MEMORY_NEEDED		0	// bytes needed for menus to work
 #define MENU_DEPTH 			9 	// video depth for menu popup boxes
 #define MAX_SLOTS				99	// number of save games you can have
 #define MAX_SLOTS_SHOWN 	8	// number of slots in the scrolling field
@@ -481,7 +481,7 @@ struct MenuGlobals {
 	int32	menuSeriesOffset;
 	int32	menuSeriesPalOffset;
 
-	Font *menuFont;
+	Font *menuFont = nullptr;
 
 	// menu sprites array (used to hold all the sprites for the current menu, spriteCount is set tot he number of sprites in the series)
 	int32	spriteCount = 0;

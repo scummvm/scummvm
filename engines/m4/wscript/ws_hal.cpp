@@ -378,8 +378,83 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff
 	vmng_DisposeRectList(&drawRectList);
 }
 
-void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT) {
-	error("TODO: ws_hal_RefreshWoodscriptBuffer");
+void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
+		int16 *depth_table, Buffer *screenCodes, uint8 *myPalette, uint8 *ICT) {
+	Anim8 *myAnim8;
+	CCB *myCCB;
+	uint8 myDepth;
+	Buffer drawSpriteBuff;
+	DrawRequest spriteDrawReq;
+
+	if ((!background) || (!background->data))
+		return;
+
+	term_message("Refresh");
+
+	// Restore the background
+	Buffer *halScrnBuf = _G(gameDrawBuff)->get_buffer();
+	gr_buffer_rect_copy(background, halScrnBuf, 0, 0, halScrnBuf->w, halScrnBuf->h);
+
+	// Now draw all the sprites that are not hidden
+	myAnim8 = myCruncher->backLayerAnim8;
+
+	while (myAnim8) {
+		myCCB = myAnim8->myCCB;
+		if (myCCB && (myCCB->source != nullptr) && (!(myCCB->flags & CCB_SKIP)) && (!(myCCB->flags & CCB_HIDE))) {
+			if (!(myCCB->flags & CCB_DISC_STREAM)) {
+				// Make sure the series is still in memory
+				if ((!myCCB->source->sourceHandle) || (!*(myCCB->source->sourceHandle))) {
+					ws_LogErrorMsg(FL, "Sprite series is no longer in memory.");
+					ws_Error(myAnim8->myMachine, ERR_INTERNAL, 0x02ff,
+						"Error discovered during ws_hal_RefreshWoodscriptBuffer()");
+				}
+
+				// Lock the sprite handle
+				HLock(myCCB->source->sourceHandle);
+				myCCB->source->data = (uint8 *)((intptr)*(myCCB->source->sourceHandle) +
+					myCCB->source->sourceOffset);
+			}
+
+			// Prepare a sprite for drawing, as in ws_DoDisplay
+			drawSpriteBuff.w = myCCB->source->w;
+			drawSpriteBuff.h = myCCB->source->h;
+			drawSpriteBuff.stride = myCCB->source->w;
+
+			if (!myPalette || !ICT)
+				drawSpriteBuff.encoding = (uint8)(myCCB->source->encoding & 0x7f);
+			else
+				drawSpriteBuff.encoding = (uint8)myCCB->source->encoding;
+			drawSpriteBuff.data = myCCB->source->data;
+
+			if (!depth_table || !screenCodes || !screenCodes->data)
+				myDepth = 0;
+			else
+				myDepth = (uint8)(myCCB->layer >> 8);
+
+			spriteDrawReq.Src = (Buffer *)&drawSpriteBuff;
+			spriteDrawReq.Dest = halScrnBuf;
+			spriteDrawReq.x = myCCB->currLocation->x1;
+			spriteDrawReq.y = myCCB->currLocation->y1;
+			spriteDrawReq.scaleX = myCCB->scaleX;
+			spriteDrawReq.scaleY = myCCB->scaleY;
+			spriteDrawReq.srcDepth = myDepth;
+			spriteDrawReq.depthCode = screenCodes->data;
+			spriteDrawReq.Pal = myPalette;
+			spriteDrawReq.ICT = ICT;
+
+			gr_sprite_draw(&spriteDrawReq);
+			myCCB->flags &= ~CCB_REDRAW;
+
+			if (!(myCCB->flags & CCB_DISC_STREAM)) {
+				// Unlock the handle
+				HUnLock(myCCB->source->sourceHandle);
+			}
+		}
+
+		myAnim8 = myAnim8->infront;
+	}
+
+	_G(gameDrawBuff)->release();
 }
 
 void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs) {

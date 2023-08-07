@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "m4/graphics/gr_sprite.h"
 #include "m4/graphics/gr_surface.h"
 #include "m4/core/errors.h"
@@ -160,7 +161,8 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		source = afterScaled;
 	}
 
-	assert((drawReq->Src->encoding & SHADOW) == 0);
+	if ((drawReq->Src->encoding & SHADOW) != 0)
+		warning("TODO: shadowed sprites drawing");
 
 	M4Surface dst(*drawReq->Dest);
 	dst.draw(source, drawReq->x, drawReq->y, drawReq->scaleX > 0,
