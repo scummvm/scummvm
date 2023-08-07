@@ -1323,8 +1323,8 @@ void RaycastPuzzle::drawMaze() {
 
 	// Draw walls
 	for (int x = viewBounds.left; x <= viewBounds.right; ++x) {
-		int columnAngleForX = _wallCastColumnAngles[x];
-		int rotatedColumnAngleForX = columnAngleForX + _playerRotation;
+		int32 columnAngleForX = _wallCastColumnAngles[x];
+		int32 rotatedColumnAngleForX = columnAngleForX + _playerRotation;
 		clampRotation(rotatedColumnAngleForX);
 
 		float rayStartX = _playerX;
@@ -1334,17 +1334,17 @@ void RaycastPuzzle::drawMaze() {
 		float angleCos = (float)_cosTable[rotatedColumnAngleForX] * 1024.0;
 
 		if (angleSin == 0.0) {
-			angleSin = 0.001;
+			angleSin = 0.001f;
 		}
 
 		if (angleCos == 0.0) {
-			angleCos = 0.001;
+			angleCos = 0.001f;
 		}
 
 		float angleAtan = angleCos / angleSin;
 
 		if (angleAtan == 0.0) {
-			angleAtan = 0.001;
+			angleAtan = 0.001f;
 		}
 
 		bool isBehindTransparentWall = false;
@@ -1751,8 +1751,8 @@ void RaycastPuzzle::drawMaze() {
 
 	// Draw floors and ceilings
 	// TODO exit does not get rendered correctly
-	int leftAngle = _playerRotation + _leftmostAngle;
-	int rightAngle = _playerRotation + _rightmostAngle;
+	int32 leftAngle = _playerRotation + _leftmostAngle;
+	int32 rightAngle = _playerRotation + _rightmostAngle;
 
 	clampRotation(leftAngle);
 	clampRotation(rightAngle);
