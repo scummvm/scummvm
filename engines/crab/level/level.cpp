@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/input/cursor.h"
 #include "crab/level/level.h"
 
 namespace Crab {

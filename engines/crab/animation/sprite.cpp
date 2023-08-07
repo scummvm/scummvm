@@ -29,6 +29,7 @@
  */
 
 #include "crab/animation/sprite.h"
+#include "crab/input/cursor.h"
 
 namespace Crab {
 
