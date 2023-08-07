@@ -29,6 +29,7 @@
  */
 
 #include "crab/crab.h"
+#include "crab/loaders.h"
 #include "crab/input/fightinput.h"
 
 namespace Crab {

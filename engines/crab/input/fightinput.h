@@ -32,7 +32,7 @@
 #define CRAB_FIGHTINPUT_H
 
 #include "crab/input/input.h"
-#include "crab/loaders.h"
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Crab {
 

@@ -31,7 +31,6 @@
 #ifndef CRAB_ITEMSLOT_H
 #define CRAB_ITEMSLOT_H
 
-#include "crab/image/ImageManager.h"
 #include "crab/item/Item.h"
 #include "crab/ui/StateButton.h"
 

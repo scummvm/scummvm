@@ -36,9 +36,8 @@
 #define CRAB_CURSOR_H
 
 #include "common/events.h"
-#include "crab/image/Image.h"
-#include "crab/loaders.h"
 #include "crab/vectors.h"
+#include "crab/image/Image.h"
 
 namespace Crab {
 
