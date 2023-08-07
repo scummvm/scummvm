@@ -249,23 +249,23 @@ void TMXMap::reset() {
 void TMXMap::drawDebug(const Rect &camera) {
 	using namespace pyrodactyl::text;
 
-	for (auto i = _areaTrig.begin(); i != _areaTrig.end(); ++i)
-		i->draw(-camera.x, -camera.y, 0, 0, 254, 254);
+	for (auto &i : _areaTrig)
+		i.draw(-camera.x, -camera.y, 0, 0, 254, 254);
 
-	for (auto i = _areaExit.begin(); i != _areaExit.end(); ++i)
-		i->_dim.draw(-camera.x, -camera.y, 0, 254, 254, 254);
+	for (auto &i : _areaExit)
+		i._dim.draw(-camera.x, -camera.y, 0, 254, 254, 254);
 
-	for (auto i = _prop.begin(); i != _prop.end(); ++i)
-		i->_pos.draw(-camera.x, -camera.y, 254, 0, 254, 254);
+	for (auto &i : _prop)
+		i._pos.draw(-camera.x, -camera.y, 254, 0, 254, 254);
 
-	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i)
-		i->draw(-camera.x, -camera.y, 254, 0, 0, 254);
+	for (auto &i : _areaNowalk)
+		i.draw(-camera.x, -camera.y, 254, 0, 0, 254);
 
-	for (auto i = _areaMusic.begin(); i != _areaMusic.end(); ++i)
-		i->draw(-camera.x, -camera.y, 254, 254, 0, 254);
+	for (auto &i : _areaMusic)
+		i.draw(-camera.x, -camera.y, 254, 254, 0, 254);
 
-	for (auto i = _areaStairs.begin(); i != _areaStairs.end(); ++i) {
-		i->draw(-camera.x, -camera.y, 0, 254, 0, 254);
+	for (auto &i : _areaStairs) {
+		i.draw(-camera.x, -camera.y, 0, 254, 0, 254);
 	}
 
 	// Draw the pathfinding grid (SZ)
@@ -276,8 +276,8 @@ void TMXMap::drawDebug(const Rect &camera) {
 		}
 	}
 
-	for (auto i = _layer.begin(); i != _layer.end(); ++i)
-		i->_pos.draw(-camera.x, -camera.y, 254, 216, 0);
+	for (auto i : _layer)
+		i._pos.draw(-camera.x, -camera.y, 254, 216, 0);
 
 	_areaWalk.draw(-camera.x, -camera.y, 254, 254, 254, 254);
 }
@@ -287,16 +287,16 @@ void TMXMap::drawDebug(const Rect &camera) {
 //------------------------------------------------------------------------
 void TMXMap::collideWithNoWalk(const Rect boundingBox, Common::List<CollisionData> &colliders) {
 	CollisionData res;
-	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i) {
-		res = i->collide(boundingBox);
+	for (auto &i : _areaNowalk) {
+		res = i.collide(boundingBox);
 		if (res._intersect)
 			colliders.push_back(res);
 	}
 }
 
 bool TMXMap::insideNoWalk(const Vector2i &pos) {
-	for (auto i = _areaNowalk.begin(); i != _areaNowalk.end(); ++i)
-		if (i->contains(pos))
+	for (auto &i : _areaNowalk)
+		if (i.contains(pos))
 			return true;
 
 	return false;
@@ -333,11 +333,11 @@ void TMXMap::collideWithTrigger(const Rect rect, Common::Array<int> &collisionTa
 }
 
 bool TMXMap::collideWithExit(const Rect rect, LevelResult &res) {
-	for (auto i = _areaExit.begin(); i != _areaExit.end(); ++i)
-		if (i->_dim.collide(rect)._intersect) {
-			res._val = i->_name;
-			res._x = i->_entry.x;
-			res._y = i->_entry.y;
+	for (const auto &i : _areaExit)
+		if (i._dim.collide(rect)._intersect) {
+			res._val = i._name;
+			res._x = i._entry.x;
+			res._y = i._entry.y;
 			return true;
 		}
 
@@ -345,9 +345,9 @@ bool TMXMap::collideWithExit(const Rect rect, LevelResult &res) {
 }
 
 bool TMXMap::collideWithStairs(const Rect rect, Vector2f &velMod) {
-	for (auto i = _areaStairs.begin(); i != _areaStairs.end(); ++i) {
-		if (i->collide(rect)._intersect) {
-			velMod = i->_modifier;
+	for (const auto &i : _areaStairs) {
+		if (i.collide(rect)._intersect) {
+			velMod = i._modifier;
 			return true;
 		}
 	}
@@ -359,11 +359,11 @@ bool TMXMap::collideWithStairs(const Rect rect, Vector2f &velMod) {
 }
 
 bool TMXMap::collideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music) {
-	for (auto i = _areaMusic.begin(); i != _areaMusic.end(); ++i) {
-		if (i->collide(rect)._intersect) {
-			music._id = i->_id;
-			music._track = i->_track;
-			music._loops = i->_loops;
+	for (const auto &i : _areaMusic) {
+		if (i.collide(rect)._intersect) {
+			music._id = i._id;
+			music._track = i._track;
+			music._loops = i._loops;
 			return true;
 		}
 	}

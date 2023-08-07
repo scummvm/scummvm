@@ -66,8 +66,8 @@ void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 }
 
 void TileSetGroup::reset() {
-	for (auto i = _tileset.begin(); i != _tileset.end(); ++i)
-		i->_img.deleteImage();
+	for (auto &i : _tileset)
+		i._img.deleteImage();
 
 	_tileset.clear();
 }
