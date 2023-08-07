@@ -448,7 +448,7 @@ void NancyConsole::recurseDependencies(const Nancy::Action::DependencyRecord &re
 		case DependencyType::kEvent :
 			debugPrintf("kEvent, flag %u, %s, %s",
 				dep.label,
-				g_nancy->getStaticData().eventFlagNames[dep.label > 1000 ? dep.label - 1000 : dep.label].c_str(),
+				g_nancy->getStaticData().eventFlagNames[dep.label >= 1000 ? dep.label - 1000 : dep.label].c_str(),
 				dep.condition == g_nancy->_true ? "true" : "false");
 			break;
 		case DependencyType::kLogic :
