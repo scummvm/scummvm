@@ -54,18 +54,18 @@ bool TriggerSet::evaluate(pyrodactyl::event::Info &info) {
 		_result = true;
 		bool curResult = false;
 
-		for (auto i = _statement.begin(); i != _statement.end(); ++i) {
-			if (i->_negate)
-				curResult = !i->evaluate(info);
+		for (auto &i : _statement) {
+			if (i._negate)
+				curResult = !i.evaluate(info);
 			else
-				curResult = i->evaluate(info);
+				curResult = i.evaluate(info);
 
 			if (nextOp == OP_AND)
 				_result = curResult && _result;
 			else
 				_result = curResult || _result;
 
-			nextOp = i->_rel;
+			nextOp = i._rel;
 		}
 	} else
 		_result = true;
