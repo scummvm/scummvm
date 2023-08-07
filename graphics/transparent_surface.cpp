@@ -19,8 +19,6 @@
  *
  */
 
-
-
 #include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/util.h"
@@ -56,30 +54,6 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 }
 
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
-	// TESTING PURPOSES
-	// ManagedSurface s(&target, DisposeAfterUse::NO);
-	// ManagedSurface me(this, DisposeAfterUse::NO);
-	// Common::Rect srcRect(0, 0, me.w, me.h);
-	// if (pPartRect) {
-	// 	srcRect = *pPartRect;
-	// }
-	// if (width == -1) {
-	// 	width = srcRect.width();
-	// }
-	// if (height == -1) {
-	// 	height = srcRect.height();
-	// }
-	// auto rect =  s.blendBlitFrom(me,
-	// 	srcRect,
-	// 	Common::Rect(posX, posY, posX + width, posY + height),
-	// 	flipping,
-	// 	color,
-	// 	blendMode,
-	// 	_alphaMode
-	// );
-	// target.copyFrom(*s.surfacePtr());
-	// return rect;
-
 	Common::Rect retSize;
 	retSize.top = 0;
 	retSize.left = 0;
@@ -116,13 +90,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		srcImage.pixels = getBasePtr(xOffset, yOffset);
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
-
-		debug("Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-			  pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
-	} else {
-
-		debug("Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-			  srcImage.w, srcImage.h, color, width, height);
 	}
 
 	if (width == -1) {
@@ -178,53 +145,13 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
-		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
-			Graphics::opaqueBlendBlit(
-				(byte *)target.getBasePtr(0, 0),
-				(byte *)img->getBasePtr(0, 0),
-				target.pitch, img->pitch,
-				posX, posY, img->w, img->h,
-				color, flipping);
-		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
-			Graphics::binaryBlendBlit(
-				(byte *)target.getBasePtr(0, 0),
-				(byte *)img->getBasePtr(0, 0),
-				target.pitch, img->pitch,
-				posX, posY, img->w, img->h,
-				color, flipping);
-		} else {
-			if (blendMode == BLEND_ADDITIVE) {
-				Graphics::additiveBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				Graphics::subtractiveBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			} else if (blendMode == BLEND_MULTIPLY) {
-				Graphics::multiplyBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			} else {
-				assert(blendMode == BLEND_NORMAL);
-				Graphics::alphaBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			}
-		}
-
+		Graphics::blendBlitUnfiltered(
+			(byte *)target.getBasePtr(0, 0),
+			(byte *)img->getBasePtr(0, 0),
+			target.pitch, img->pitch,
+			posX, posY, img->w, img->h, BLEND_BLIT_SCALE_THRESHOLD, BLEND_BLIT_SCALE_THRESHOLD,
+			color, flipping,
+			blendMode, _alphaMode);
 	}
 
 	retSize.setWidth(img->w);
@@ -276,13 +203,6 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 		srcImage.pixels = getBasePtr(xOffset, yOffset);
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
-
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-			pPartRect->left, pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
-	} else {
-
-		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-			srcImage.w, srcImage.h, color, width, height);
 	}
 
 	if (width == -1) {
@@ -338,53 +258,13 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 
 	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
-		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
-			Graphics::opaqueBlendBlit(
-				(byte *)target.getBasePtr(0, 0),
-				(byte *)img->getBasePtr(0, 0),
-				target.pitch, img->pitch,
-				posX, posY, img->w, img->h,
-				color, flipping);
-		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
-			Graphics::binaryBlendBlit(
-				(byte *)target.getBasePtr(0, 0),
-				(byte *)img->getBasePtr(0, 0),
-				target.pitch, img->pitch,
-				posX, posY, img->w, img->h,
-				color, flipping);
-		} else {
-			if (blendMode == BLEND_ADDITIVE) {
-				Graphics::additiveBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				Graphics::subtractiveBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			} else if (blendMode == BLEND_MULTIPLY) {
-				Graphics::multiplyBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			} else {
-				assert(blendMode == BLEND_NORMAL);
-				Graphics::alphaBlendBlit(
-					(byte *)target.getBasePtr(0, 0),
-					(byte *)img->getBasePtr(0, 0),
-					target.pitch, img->pitch,
-					posX, posY, img->w, img->h,
-				color, flipping);
-			}
-		}
-
+		Graphics::blendBlitUnfiltered(
+			(byte *)target.getBasePtr(0, 0),
+			(byte *)img->getBasePtr(0, 0),
+			target.pitch, img->pitch,
+			posX, posY, img->w, img->h, BLEND_BLIT_SCALE_THRESHOLD, BLEND_BLIT_SCALE_THRESHOLD,
+			color, flipping,
+			blendMode, _alphaMode);
 	}
 
 	retSize.setWidth(img->w);

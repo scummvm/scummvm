@@ -30,9 +30,6 @@
 
 namespace Graphics {
 
-#define BLENDBLIT_RGB(R,G,B)       (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | 0xff)
-#define BLENDBLIT_ARGB(A,R,G,B)    (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
-
 /**
  * @defgroup graphics_managed_surface Managed surface
  * @ingroup graphics
@@ -571,9 +568,9 @@ public:
 	 */
 	Common::Rect blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
 							   const Common::Rect &destRect, int flipping = FLIP_NONE,
-							   uint32 colorMod = BLENDBLIT_ARGB(255, 255, 255, 255),
-							   TSpriteBlendMode blend = BLEND_NORMAL,
-							   int alphaType = ALPHA_FULL);
+							   const uint32 colorMod = TS_ARGB(255, 255, 255, 255),
+							   const TSpriteBlendMode blend = BLEND_NORMAL,
+							   const AlphaType alphaType = ALPHA_FULL);
 
 	/**
 	 * Clear the entire surface.

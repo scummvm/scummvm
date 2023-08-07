@@ -190,27 +190,80 @@ bool setAlpha(byte *dst, const byte *src,
 	return true;
 }
 
+
+struct BlendingSetupArgs {
+	bool rgbmod, alphamod;
+	int xp, yp;
+	int inStep, inoStep;
+	const byte *ino;
+	byte *outo;
+
+	int scaleX, scaleY;
+	uint dstPitch;
+	uint width, height;
+	uint32 color;
+	int flipping;
+
+	BlendingSetupArgs(byte *dst, const byte *src,
+					  const uint dstPitch, const uint srcPitch,
+					  const int posX, const int posY,
+					  const uint width, const uint height,
+					  const int scaleX, const int scaleY,
+					  const uint32 colorMod, const uint flipping) :
+			xp(0), yp(0), dstPitch(dstPitch),
+			width(width), height(height), color(colorMod),
+			scaleX(scaleX), scaleY(scaleY), flipping(flipping) {
+		bool doScale = scaleX != BLEND_BLIT_SCALE_THRESHOLD || scaleY != BLEND_BLIT_SCALE_THRESHOLD;
+		
+		rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
+		alphamod = ((colorMod & kAModMask)   != kAModMask);
+		inStep = 4;
+		inoStep = srcPitch;
+		if (flipping & FLIP_H) {
+			inStep = -inStep;
+			xp = width - 1;
+			if (doScale) xp = xp * scaleX / BLEND_BLIT_SCALE_THRESHOLD;
+		}
+
+		if (flipping & FLIP_V) {
+			inoStep = -inoStep;
+			yp = height - 1;
+			if (doScale) yp = yp * scaleY / BLEND_BLIT_SCALE_THRESHOLD;
+		}
+
+		ino = src + yp * srcPitch + xp * 4;
+		outo = dst + posY * dstPitch + posX * 4;
+	}
+};
+
 /**
  * Optimized version of doBlit to be used with multiply blended blitting
  */
-template<bool rgbmod, bool alphamod>
-static void doBlitMultiplyBlendLogic(const byte *ino, byte *outo,
-									 uint32 width, uint32 height,
-									 uint32 outPitch, int32 inStep,
-									 int32 inoStep, uint32 color) {
-
+template<bool doscale>
+static void doBlitMultiplyBlendLogic(BlendingSetupArgs &args) {
 	const byte *in;
 	byte *out;
 
-	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
+	int scaleXCtr, scaleYCtr = 0;
+	const byte *inBase;
 
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
+	byte ca = args.alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
+	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+
+	for (uint32 i = 0; i < args.height; i++) {
+		if (doscale) {
+			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			scaleXCtr = 0;
+		} else {
+			in = args.ino;
+		}
+		out = args.outo;
+		for (uint32 j = 0; j < args.width; j++) {
+			if (doscale) {
+				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+			}
 
 			uint32 ina = in[kAIndex] * ca >> 8;
 
@@ -234,82 +287,46 @@ static void doBlitMultiplyBlendLogic(const byte *ino, byte *outo,
 				}
 			}
 
-			in += inStep;
+			if (doscale)
+				scaleXCtr += args.scaleX;
+			else
+				in += args.inStep;
 			out += 4;
 		}
-		outo += outPitch;
-		ino += inoStep;
+		if (doscale)
+			scaleYCtr += args.scaleY;
+		else
+			args.ino += args.inoStep;
+		args.outo += args.dstPitch;
 	}
 
 }
 
-// Only blits to and from 32bpp images
-void multiplyBlendBlit(byte *dst, const byte *src,
-					   const uint dstPitch, const uint srcPitch,
-					   const int posX, const int posY,
-					   const uint width, const uint height,
-					   const uint32 colorMod, const uint flipping) {
-	bool rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
-	bool alphamod = ((colorMod & kAModMask)   != kAModMask);
-
-	int xp = 0, yp = 0;
-
-	int inStep = 4;
-	int inoStep = srcPitch;
-	if (flipping & FLIP_H) {
-		inStep = -inStep;
-		xp = width - 1;
-	}
-
-	if (flipping & FLIP_V) {
-		inoStep = -inoStep;
-		yp = height - 1;
-	}
-
-	const byte *ino = src + yp * srcPitch + xp * 4;
-	byte *outo = dst + posY * dstPitch + posX * 4;
-
-	if (rgbmod) {
-		if (alphamod) {
-			doBlitMultiplyBlendLogic<true, true>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		} else {
-			doBlitMultiplyBlendLogic<true, false>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		}
-	} else {
-		if (alphamod) {
-			doBlitMultiplyBlendLogic<false, true>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		} else {
-			doBlitMultiplyBlendLogic<false, false>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		}
-	}
-}
-
-/**
- * Optimized version of doBlit to be used with alpha blended blitting
- * @param ino a pointer to the input surface
- * @param outo a pointer to the output surface
- * @param width width of the input surface
- * @param height height of the input surface
- * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
- * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
- * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
- * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
- */
-template<bool rgbmod, bool alphamod>
-static void doBlitAlphaBlendLogic(const byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
+template<bool doscale>
+static void doBlitAlphaBlendLogic(BlendingSetupArgs &args) {
 	const byte *in;
 	byte *out;
 
-	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
+	int scaleXCtr, scaleYCtr = 0;
+	const byte *inBase;
 
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
+	byte ca = args.alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
+	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+
+	for (uint32 i = 0; i < args.height; i++) {
+		if (doscale) {
+			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			scaleXCtr = 0;
+		} else {
+			in = args.ino;
+		}
+		out = args.outo;
+		for (uint32 j = 0; j < args.width; j++) {
+			if (doscale) {
+				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+			}
 
 			uint32 ina = in[kAIndex] * ca >> 8;
 
@@ -324,74 +341,48 @@ static void doBlitAlphaBlendLogic(const byte *ino, byte *outo, uint32 width, uin
 				out[kRIndex] = outr + (in[kRIndex] * ina * cr >> 16);
 			}
 
-			in += inStep;
+			if (doscale)
+				scaleXCtr += args.scaleX;
+			else
+				in += args.inStep;
 			out += 4;
 		}
-		outo += pitch;
-		ino += inoStep;
-	}
-}
 
-// Only blits to and from 32bpp images
-void alphaBlendBlit(byte *dst, const byte *src,
-					const uint dstPitch, const uint srcPitch,
-					const int posX, const int posY,
-					const uint width, const uint height,
-					const uint32 colorMod, const uint flipping) {
-	bool rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
-	bool alphamod = ((colorMod & kAModMask)   != kAModMask);
-
-	int xp = 0, yp = 0;
-
-	int inStep = 4;
-	int inoStep = srcPitch;
-	if (flipping & FLIP_H) {
-		inStep = -inStep;
-		xp = width - 1;
-	}
-
-	if (flipping & FLIP_V) {
-		inoStep = -inoStep;
-		yp = height - 1;
-	}
-
-	const byte *ino = src + yp * srcPitch + xp * 4;
-	byte *outo = dst + posY * dstPitch + posX * 4;
-
-	if (rgbmod) {
-		if (alphamod) {
-			doBlitAlphaBlendLogic<true, true>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		} else {
-			doBlitAlphaBlendLogic<true, false>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		}
-	} else {
-		if (alphamod) {
-			doBlitAlphaBlendLogic<false, true>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		} else {
-			doBlitAlphaBlendLogic<false, false>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		}
+		if (doscale)
+			scaleYCtr += args.scaleY;
+		else
+			args.ino += args.inoStep;
+		args.outo += args.dstPitch;
 	}
 }
 
 /**
  * Optimized version of doBlit to be used with subtractive blended blitting
  */
-template<bool rgbmod>
-static void doBlitSubtractiveBlendLogic(const byte *ino, byte *outo,
-										uint32 width, uint32 height,
-										uint32 pitch, int32 inStep,
-										int32 inoStep, uint32 color) {
+template<bool doscale>
+static void doBlitSubtractiveBlendLogic(BlendingSetupArgs &args) {
 	const byte *in;
 	byte *out;
 
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
+	int scaleXCtr, scaleYCtr = 0;
+	const byte *inBase;
 
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
+	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+
+	for (uint32 i = 0; i < args.height; i++) {
+		if (doscale) {
+			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			scaleXCtr = 0;
+		} else {
+			in = args.ino;
+		}
+		out = args.outo;
+		for (uint32 j = 0; j < args.width; j++) {
+			if (doscale) {
+				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+			}
 
 			out[kAIndex] = 255;
 			if (cb != 255) {
@@ -412,66 +403,48 @@ static void doBlitSubtractiveBlendLogic(const byte *ino, byte *outo,
 				out[kRIndex] = MAX(out[kRIndex] - (in[kRIndex] * (out[kRIndex]) * in[kAIndex] >> 16), 0);
 			}
 
-			in += inStep;
+			if (doscale)
+				scaleXCtr += args.scaleX;
+			else
+				in += args.inStep;
 			out += 4;
 		}
-		outo += pitch;
-		ino += inoStep;
-	}
-}
-
-// Only blits to and from 32bpp images
-void subtractiveBlendBlit(byte *dst, const byte *src,
-						  const uint dstPitch, const uint srcPitch,
-						  const int posX, const int posY,
-						  const uint width, const uint height,
-						  const uint32 colorMod, const uint flipping) {
-	bool rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
-
-	int xp = 0, yp = 0;
-
-	int inStep = 4;
-	int inoStep = srcPitch;
-	if (flipping & FLIP_H) {
-		inStep = -inStep;
-		xp = width - 1;
-	}
-
-	if (flipping & FLIP_V) {
-		inoStep = -inoStep;
-		yp = height - 1;
-	}
-
-	const byte *ino = src + yp * srcPitch + xp * 4;
-	byte *outo = dst + posY * dstPitch + posX * 4;
-
-	if (rgbmod) {
-		doBlitSubtractiveBlendLogic<true>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-	} else {
-		doBlitSubtractiveBlendLogic<false>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
+		if (doscale)
+			scaleYCtr += args.scaleY;
+		else
+			args.ino += args.inoStep;
+		args.outo += args.dstPitch;
 	}
 }
 
 /**
  * Optimized version of doBlit to be used with additive blended blitting
  */
-template<bool rgbmod, bool alphamod>
-static void doBlitAdditiveBlendLogic(const byte *ino, byte *outo,
-									 uint32 width, uint32 height, uint32 pitch,
-									 int32 inStep, int32 inoStep, uint32 color) {
-
+template<bool doscale>
+static void doBlitAdditiveBlendLogic(BlendingSetupArgs &args) {
 	const byte *in;
 	byte *out;
 
-	byte ca = alphamod ? ((color >> kAModShift) & 0xFF) : 255;
-	byte cr = rgbmod   ? ((color >> kRModShift) & 0xFF) : 255;
-	byte cg = rgbmod   ? ((color >> kGModShift) & 0xFF) : 255;
-	byte cb = rgbmod   ? ((color >> kBModShift) & 0xFF) : 255;
+	int scaleXCtr, scaleYCtr = 0;
+	const byte *inBase;
 
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
+	byte ca = args.alphamod ? ((args.color >> kAModShift) & 0xFF) : 255;
+	byte cr = args.rgbmod   ? ((args.color >> kRModShift) & 0xFF) : 255;
+	byte cg = args.rgbmod   ? ((args.color >> kGModShift) & 0xFF) : 255;
+	byte cb = args.rgbmod   ? ((args.color >> kBModShift) & 0xFF) : 255;
+
+	for (uint32 i = 0; i < args.height; i++) {
+		if (doscale) {
+			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			scaleXCtr = 0;
+		} else {
+			in = args.ino;
+		}
+		out = args.outo;
+		for (uint32 j = 0; j < args.width; j++) {
+			if (doscale) {
+				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+			}
 
 			uint32 ina = in[kAIndex] * ca >> 8;
 
@@ -495,123 +468,91 @@ static void doBlitAdditiveBlendLogic(const byte *ino, byte *outo,
 				}
 			}
 
-			in += inStep;
+			if (doscale)
+				scaleXCtr += args.scaleX;
+			else
+				in += args.inStep;
 			out += 4;
 		}
 
-		outo += pitch;
-		ino += inoStep;
+		if (doscale)
+			scaleYCtr += args.scaleY;
+		else
+			args.ino += args.inoStep;
+		args.outo += args.dstPitch;
 	}
 }
 
-// Only blits to and from 32bpp images
-void additiveBlendBlit(byte *dst, const byte *src,
-					   const uint dstPitch, const uint srcPitch,
-					   const int posX, const int posY,
-					   const uint width, const uint height,
-					   const uint32 colorMod, const uint flipping) {
-	bool rgbmod   = ((colorMod & kRGBModMask) != kRGBModMask);
-	bool alphamod = ((colorMod & kAModMask)   != kAModMask);
-
-	int xp = 0, yp = 0;
-
-	int inStep = 4;
-	int inoStep = srcPitch;
-	if (flipping & FLIP_H) {
-		inStep = -inStep;
-		xp = width - 1;
-	}
-
-	if (flipping & FLIP_V) {
-		inoStep = -inoStep;
-		yp = height - 1;
-	}
-
-	const byte *ino = src + yp * srcPitch + xp * 4;
-	byte *outo = dst + posY * dstPitch + posX * 4;
-
-	if (rgbmod) {
-		if (alphamod) {
-			doBlitAdditiveBlendLogic<true, true>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		} else {
-			doBlitAdditiveBlendLogic<true, false>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		}
-	} else {
-		if (alphamod) {
-			doBlitAdditiveBlendLogic<false, true>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		} else {
-			doBlitAdditiveBlendLogic<false, false>(ino, outo, width, height, dstPitch, inStep, inoStep, colorMod);
-		}
-	}
-}
-
-void opaqueBlendBlit(byte *dst, const byte *src,
-					 const uint dstPitch, const uint srcPitch,
-					 const int posX, const int posY,
-					 const uint width, const uint height,
-					 const uint32 colorMod, const uint flipping) {
-	int xp = 0, yp = 0;
-
-	int inStep = 4;
-	int inoStep = srcPitch;
-	if (flipping & FLIP_H) {
-		inStep = -inStep;
-		xp = width - 1;
-	}
-
-	if (flipping & FLIP_V) {
-		inoStep = -inoStep;
-		yp = height - 1;
-	}
-
-	const byte *ino = src + yp * srcPitch + xp * 4;
-	byte *outo = dst + posY * dstPitch + posX * 4;
-	
+template<bool doscale>
+void doBlitOpaqueBlendLogic(BlendingSetupArgs &args) {
 	const byte *in;
 	byte *out;
 
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		memcpy(out, in, width * 4);
-		for (uint32 j = 0; j < width; j++) {
-			out[kAIndex] = 0xFF;
-			out += 4;
+	int scaleXCtr, scaleYCtr = 0;
+	const byte *inBase;
+
+	for (uint32 i = 0; i < args.height; i++) {
+		if (doscale) {
+			inBase = args.ino + (scaleYCtr + 1) / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			scaleXCtr = 0;
+		} else {
+			in = args.ino;
 		}
-		outo += dstPitch;
-		ino += inoStep;
+		out = args.outo;
+
+		if (doscale) {
+			for (uint32 j = 0; j < args.width; j++) {
+				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+
+				memcpy(out, in, 4);
+				out[kAIndex] = 0xFF;
+
+				scaleXCtr += args.scaleX;
+				out += 4;
+			}
+		} else if (args.flipping & FLIP_H) {
+			for (uint32 j = 0; j < args.width; j++) {
+				memcpy(out, in, 4);
+				out[kAIndex] = 0xFF;
+				out += 4;
+				in += args.inStep;
+			}
+		} else {
+			memcpy(out, in, args.width * 4);
+			for (uint32 j = 0; j < args.width; j++) {
+				out[kAIndex] = 0xFF;
+				out += 4;
+			}
+		}
+
+		if (doscale)
+			scaleYCtr += args.scaleY;
+		else
+			args.ino += args.inoStep;
+		args.outo += args.dstPitch;
 	}
 }
 
-void binaryBlendBlit(byte *dst, const byte *src,
-					 const uint dstPitch, const uint srcPitch,
-					 const int posX, const int posY,
-					 const uint width, const uint height,
-					 const uint32 colorMod, const uint flipping) {
-	int xp = 0, yp = 0;
-
-	int inStep = 4;
-	int inoStep = srcPitch;
-	if (flipping & FLIP_H) {
-		inStep = -inStep;
-		xp = width - 1;
-	}
-
-	if (flipping & FLIP_V) {
-		inoStep = -inoStep;
-		yp = height - 1;
-	}
-
-	const byte *ino = src + yp * srcPitch + xp * 4;
-	byte *outo = dst + posY * dstPitch + posX * 4;
-
+template<bool doscale>
+void doBlitBinaryBlendLogic(BlendingSetupArgs &args) {
 	const byte *in;
 	byte *out;
 
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
+	int scaleXCtr, scaleYCtr = 0;
+	const byte *inBase;
+
+	for (uint32 i = 0; i < args.height; i++) {
+		if (doscale) {
+			inBase = args.ino + scaleYCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inoStep;
+			scaleXCtr = 0;
+		} else {
+			in = args.ino;
+		}
+		out = args.outo;
+		for (uint32 j = 0; j < args.width; j++) {
+			if (doscale) {
+				in = inBase + scaleXCtr / BLEND_BLIT_SCALE_THRESHOLD * args.inStep;
+			}
 			uint32 pix = *(const uint32 *)in;
 			int a = in[kAIndex];
 
@@ -619,11 +560,65 @@ void binaryBlendBlit(byte *dst, const byte *src,
 				*(uint32 *)out = pix;
 				out[kAIndex] = 0xFF;
 			}
+			if (doscale)
+				scaleXCtr += args.scaleX;
+			else
+				in += args.inStep;
 			out += 4;
-			in += inStep;
 		}
-		outo += dstPitch;
-		ino += inoStep;
+		if (doscale)
+			scaleYCtr += args.scaleY;
+		else
+			args.ino += args.inoStep;
+		args.outo += args.dstPitch;
+	}
+}
+
+// Only blits to and from 32bpp images
+void blendBlitUnfiltered(byte *dst, const byte *src,
+					 const uint dstPitch, const uint srcPitch,
+					 const int posX, const int posY,
+					 const uint width, const uint height,
+					 const int scaleX, const int scaleY,
+					 const uint32 colorMod, const uint flipping,
+					 const TSpriteBlendMode blendMode,
+					 const AlphaType alphaType) {
+	if (width == 0 || height == 0) return;
+	BlendingSetupArgs args(dst, src, dstPitch, srcPitch, posX, posY, width, height, scaleX, scaleY, colorMod, flipping);
+	if (scaleX == BLEND_BLIT_SCALE_THRESHOLD && scaleY == BLEND_BLIT_SCALE_THRESHOLD) {
+		if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
+			doBlitOpaqueBlendLogic<false>(args);
+		} else if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
+			doBlitBinaryBlendLogic<false>(args);
+		} else {
+			if (blendMode == BLEND_ADDITIVE) {
+				doBlitAdditiveBlendLogic<false>(args);
+			} else if (blendMode == BLEND_SUBTRACTIVE) {
+				doBlitSubtractiveBlendLogic<false>(args);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlendLogic<false>(args);
+			} else {
+				assert(blendMode == BLEND_NORMAL);
+				doBlitAlphaBlendLogic<false>(args);
+			}
+		}
+	} else {
+		if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
+			doBlitOpaqueBlendLogic<true>(args);
+		} else if (colorMod == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
+			doBlitBinaryBlendLogic<true>(args);
+		} else {
+			if (blendMode == BLEND_ADDITIVE) {
+				doBlitAdditiveBlendLogic<true>(args);
+			} else if (blendMode == BLEND_SUBTRACTIVE) {
+				doBlitSubtractiveBlendLogic<true>(args);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlendLogic<true>(args);
+			} else {
+				assert(blendMode == BLEND_NORMAL);
+				doBlitAlphaBlendLogic<true>(args);
+			}
+		}
 	}
 }
 
