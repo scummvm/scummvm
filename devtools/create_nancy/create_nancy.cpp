@@ -24,11 +24,12 @@
 #include "nancy1_data.h"
 #include "nancy2_data.h"
 #include "nancy3_data.h"
+#include "nancy4_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 0
 #define NANCYDAT_MINOR_VERSION 2
 
-#define NANCYDAT_NUM_GAMES 4
+#define NANCYDAT_NUM_GAMES 5
 
 /**
  * Format specifications for nancy.dat:
@@ -223,6 +224,20 @@ int main(int argc, char *argv[]) {
                     nullptr,
                     &_nancy3TelephoneRinging,
                     _nancy3EventFlagNames);
+	
+	// Nancy Drew: Treasure in the Royal Tower data
+    gameOffsets.push_back(output.pos());
+	writeGameData(  output,
+                    _nancy4Constants,
+                    _nancy4LanguagesOrder,
+                    &_nancy4ConditionalDialogue,
+                    &_nancy4Goodbyes,
+                    nullptr,
+                    &_nancy4ConditionalDialogueTexts,
+                    &_nancy4GoodbyeTexts,
+                    nullptr,
+                    &_nancy4TelephoneRinging,
+                    _nancy4EventFlagNames);
 
     // Write the offsets for each game in the header
     output.seek(offsetsOffset);
