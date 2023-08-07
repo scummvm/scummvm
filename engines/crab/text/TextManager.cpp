@@ -235,13 +235,13 @@ void TextManager::draw(const int &x, int y, const Common::String &text, const in
 // Purpose: Quit
 //------------------------------------------------------------------------
 void TextManager::quit() {
-	for (auto i = _font.begin(); i != _font.end(); ++i)
-		delete *i;
+	for (auto &i : _font)
+		delete i;
 
-	for (auto i = _cache.begin(); i != _cache.end(); ++i) {
-		if (i->_empty == false) {
-			i->_img.deleteImage();
-			i->_empty = true;
+	for (auto &i : _cache) {
+		if (i._empty == false) {
+			i._img.deleteImage();
+			i._empty = true;
 		}
 	}
 }
