@@ -28,6 +28,7 @@
  *
  */
 
+#include "common/system.h"
 #include "crab/crab.h"
 #include "crab/PathfindingAgent.h"
 

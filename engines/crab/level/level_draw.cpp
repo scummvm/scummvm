@@ -28,6 +28,7 @@
  *
  */
 
+#include "graphics/managed_surface.h"
 #include "crab/level/level.h"
 
 namespace Crab {

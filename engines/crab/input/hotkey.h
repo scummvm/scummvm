@@ -33,6 +33,7 @@
 
 #include "crab/crab.h"
 #include "crab/input/input.h"
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Crab {
 

@@ -33,6 +33,7 @@
 // Purpose:  Cursor class
 //=============================================================================
 #include "graphics/cursorman.h"
+#include "graphics/managed_surface.h"
 #include "crab/crab.h"
 #include "crab/input/cursor.h"
 

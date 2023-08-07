@@ -28,6 +28,9 @@
  *
  */
 
+#include "common/file.h"
+#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 #include "image/png.h"
 #include "crab/crab.h"
 #include "crab/image/Image.h"

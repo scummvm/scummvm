@@ -28,8 +28,9 @@
  *
  */
 
-#include "crab/input/hotkey.h"
 #include "crab/crab.h"
+#include "crab/loaders.h"
+#include "crab/input/hotkey.h"
 
 namespace Crab {
 

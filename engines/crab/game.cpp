@@ -28,6 +28,8 @@
  *
  */
 
+#include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 #include "crab/backInserter.h"
 #include "crab/game.h"
 #include "crab/rapidxml/rapidxml_print.hpp"

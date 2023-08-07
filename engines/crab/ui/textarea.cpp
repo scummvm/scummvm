@@ -33,6 +33,7 @@
 // Purpose:  TextArea functions
 //=============================================================================
 #include "crab/crab.h"
+#include "crab/input/input.h"
 #include "crab/ui/textarea.h"
 
 namespace Crab {

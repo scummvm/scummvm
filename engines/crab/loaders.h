@@ -31,9 +31,10 @@
 #ifndef CRAB_LOADERS_H
 #define CRAB_LOADERS_H
 
-#include "crab/XMLDoc.h"
+#include "common/str.h"
 #include "crab/gametype.h"
 #include "crab/numstr.h"
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Crab {
 
