@@ -40,6 +40,8 @@ struct Hotkeys : public M4::Hotkeys {
 	 */
 	static void escape_key_pressed(void *, void *);
 
+	virtual ~Hotkeys() {}
+
 	void add_hot_keys() override;
 
 	void toggle_through_cursors() override;
