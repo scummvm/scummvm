@@ -260,8 +260,8 @@ Common::String OSystem_POSIX::getDefaultIconsPath() {
 	return Common::String::format("%s/%s", prefix, iconsPath.c_str());
 }
 
-Common::String OSystem_POSIX::getDefaultDLCsPath() {
-	Common::String dlcsPath;
+Common::Path OSystem_POSIX::getDefaultDLCsPath() {
+	Common::Path dlcsPath;
 
 	// On POSIX systems we follow the XDG Base Directory Specification for
 	// where to store files. The version we based our code upon can be found
@@ -275,14 +275,12 @@ Common::String OSystem_POSIX::getDefaultDLCsPath() {
 
 		dlcsPath = ".cache/";
 	}
-
-	dlcsPath += "scummvm/dlcs";
-
-	if (!Posix::assureDirectoryExists(dlcsPath, prefix)) {
-		return Common::String();
+	dlcsPath = dlcsPath.join(Common::Path("scummvm/dlcs"));
+	if (!Posix::assureDirectoryExists(dlcsPath.toString(), prefix)) {
+		return Common::Path();
 	}
 
-	return Common::String::format("%s/%s", prefix, dlcsPath.c_str());
+	return dlcsPath;
 }
 
 Common::String OSystem_POSIX::getScreenshotsPath() {

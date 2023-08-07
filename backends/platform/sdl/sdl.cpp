@@ -314,7 +314,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 	ConfMan.registerDefault("iconspath", this->getDefaultIconsPath());
-	ConfMan.registerDefault("dlcspath", this->getDefaultDLCsPath());
+	ConfMan.registerDefault("dlcspath", this->getDefaultDLCsPath().toString());
 
 	_inited = true;
 
@@ -790,10 +790,8 @@ Common::String OSystem_SDL::getDefaultIconsPath() {
 }
 
 // Not specified in base class
-Common::String OSystem_SDL::getDefaultDLCsPath() {
-	Common::String path = ConfMan.get("dlcspath");
-	if (!path.empty() && !path.hasSuffix("/"))
-		path += "/";
+Common::Path OSystem_SDL::getDefaultDLCsPath() {
+	Common::Path path(ConfMan.get("dlcspath"));
 	return path;
 }
 
