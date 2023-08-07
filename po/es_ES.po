@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-07 08:22+0000\n"
+"POT-Creation-Date: 2023-08-07 08:50+0000\n"
 "PO-Revision-Date: 2023-08-07 09:44+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -977,12 +977,12 @@ msgstr "Anterior"
 msgid "Save Image..."
 msgstr "Guardar imagen..."
 
-#: gui/imagealbum-dialog.cpp:267
+#: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
 msgstr "%u de %u"
 
-#: gui/imagealbum-dialog.cpp:380
+#: gui/imagealbum-dialog.cpp:377
 msgid "Save Image"
 msgstr "Guardar imagen"
 

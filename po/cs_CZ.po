@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-07 08:22+0000\n"
+"POT-Creation-Date: 2023-08-07 08:50+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -996,12 +996,12 @@ msgstr "Předchozí"
 msgid "Save Image..."
 msgstr "Ukládání hry..."
 
-#: gui/imagealbum-dialog.cpp:267
+#: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
 msgstr ""
 
-#: gui/imagealbum-dialog.cpp:380
+#: gui/imagealbum-dialog.cpp:377
 #, fuzzy
 #| msgid "Save Game"
 msgid "Save Image"

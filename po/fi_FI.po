@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-07 08:22+0000\n"
+"POT-Creation-Date: 2023-08-07 08:50+0000\n"
 "PO-Revision-Date: 2023-07-28 01:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -977,12 +977,12 @@ msgstr "Edellinen"
 msgid "Save Image..."
 msgstr "Tallennetaan peliä..."
 
-#: gui/imagealbum-dialog.cpp:267
+#: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
 msgstr ""
 
-#: gui/imagealbum-dialog.cpp:380
+#: gui/imagealbum-dialog.cpp:377
 #, fuzzy
 #| msgid "Save Game"
 msgid "Save Image"
