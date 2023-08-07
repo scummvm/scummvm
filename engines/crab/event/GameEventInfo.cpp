@@ -188,8 +188,8 @@ void Info::traitAdd(const Common::String &perId, const int &traitId) {
 			// Check for duplicate traits, DONT award anything if duplicate found
 			Person *p = &personGet(perId);
 
-			for (auto i = p->_trait.begin(); i != p->_trait.end(); ++i)
-				if (i->_id == traitId)
+			for (const auto &i : p->_trait)
+				if (i._id == traitId)
 					return;
 
 			p->_trait.push_back(g_engine->_eventStore->_trait[traitId]);
@@ -279,8 +279,8 @@ pyrodactyl::people::Person &Info::personGet(const Common::String &id) {
 
 bool Info::collideWithTrigger(const Common::String &id, int rectIndex) {
 	if (_people.contains(id)) {
-		for (auto i = _people[id]._trig.begin(); i != _people[id]._trig.end(); ++i)
-			if (*i == rectIndex)
+		for (const auto &i : _people[id]._trig)
+			if (i == rectIndex)
 				return true;
 	}
 
@@ -327,15 +327,15 @@ Common::String Info::getName(const Common::String &id) {
 // Purpose: Save and load object state
 //------------------------------------------------------------------------
 void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto v = _var.begin(); v != _var.end(); ++v) {
+	for (const auto &v : _var) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "var");
-		child->append_attribute(doc.allocate_attribute("id", v->_key.c_str()));
-		child->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(v->_value)));
+		child->append_attribute(doc.allocate_attribute("id", v._key.c_str()));
+		child->append_attribute(doc.allocate_attribute("val", g_engine->_stringPool->Get(v._value)));
 		root->append_node(child);
 	}
 
-	for (auto p = _people.begin(); p != _people.end(); ++p)
-		p->_value.saveState(doc, root);
+	for (auto &p : _people)
+		p._value.saveState(doc, root);
 
 	rapidxml::xml_node<char> *childUnr = doc.allocate_node(rapidxml::node_element, "unread");
 

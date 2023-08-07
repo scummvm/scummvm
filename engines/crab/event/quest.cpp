@@ -56,9 +56,9 @@ void Quest::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *r
 	saveBool(_unread, "unread", doc, child);
 	saveBool(_marker, "marker", doc, child);
 
-	for (auto i = _text.begin(); i != _text.end(); ++i) {
+	for (const auto &i : _text) {
 		rapidxml::xml_node<char> *grandchild = doc.allocate_node(rapidxml::node_element, "info");
-		grandchild->value(i->c_str());
+		grandchild->value(i.c_str());
 		child->append_node(grandchild);
 	}
 

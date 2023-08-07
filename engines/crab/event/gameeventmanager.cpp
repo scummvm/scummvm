@@ -388,16 +388,17 @@ void Manager::calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const R
 // Purpose: Get/set info
 //------------------------------------------------------------------------
 void Manager::endSequence(const Common::String &curloc) {
-	if (_endSeq.empty() == false) {
-		for (auto i = _endSeq.begin(); i != _endSeq.end(); ++i)
-			if (i->_cur)
-				_eventMap[curloc].endSeq(_activeSeq);
-			else if (_eventMap.contains(i->_loc))
-				_eventMap[i->_loc].endSeq(stringToNumber<uint>(i->_val));
+	if (_endSeq.empty())
+		return;
 
-		_activeSeq = UINT_MAX;
-		_endSeq.clear();
-	}
+	for (const auto &i : _endSeq)
+		if (i._cur)
+			_eventMap[curloc].endSeq(_activeSeq);
+		else if (_eventMap.contains(i._loc))
+			_eventMap[i._loc].endSeq(stringToNumber<uint>(i._val));
+
+	_activeSeq = UINT_MAX;
+	_endSeq.clear();
 }
 
 bool Manager::eventInProgress() {
@@ -410,10 +411,10 @@ bool Manager::eventInProgress() {
 // Purpose: Save the state of the object
 //------------------------------------------------------------------------
 void Manager::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto i = _eventMap.begin(); i != _eventMap.end(); ++i) {
+	for (auto &i : _eventMap) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "loc");
-		child->append_attribute(doc.allocate_attribute("name", i->_key.c_str()));
-		i->_value.saveState(doc, child);
+		child->append_attribute(doc.allocate_attribute("name", i._key.c_str()));
+		i._value.saveState(doc, child);
 		root->append_node(child);
 	}
 }

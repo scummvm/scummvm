@@ -58,30 +58,31 @@ void EventSeqGroup::nextEvent(const uint &id, Info &info, const Common::String &
 }
 
 void EventSeqGroup::internalEvents(Info &info) {
-	for (auto it = _seq.begin(); it != _seq.end(); ++it)
-		it->_value.internalEvents(info);
+	for (auto &it : _seq)
+		it._value.internalEvents(info);
 }
 
 bool EventSeqGroup::activeSeq(uint &activeSeq) {
-	for (auto i = _seq.begin(); i != _seq.end(); ++i)
-		if (i->_value.eventInProgress()) {
-			activeSeq = i->_key;
+	for (auto &i : _seq) {
+		if (i._value.eventInProgress()) {
+			activeSeq = i._key;
 			return true;
 		}
+	}
 
 	activeSeq = UINT_MAX;
 	return false;
 }
 
 void EventSeqGroup::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	for (auto i = _end.begin(); i != _end.end(); ++i) {
+	for (const auto &i : _end) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "end");
-		child->value(g_engine->_stringPool->Get(*i));
+		child->value(g_engine->_stringPool->Get(i));
 		root->append_node(child);
 	}
 
-	for (auto i = _seq.begin(); i != _seq.end(); ++i)
-		i->_value.saveState(doc, root, g_engine->_stringPool->Get(i->_key));
+	for (auto &i : _seq)
+		i._value.saveState(doc, root, g_engine->_stringPool->Get(i._key));
 }
 
 void EventSeqGroup::loadState(rapidxml::xml_node<char> *node) {

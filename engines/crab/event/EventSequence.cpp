@@ -53,14 +53,15 @@ void EventSequence::load(const Common::String &filename) {
 // Purpose: Check for events happening
 //------------------------------------------------------------------------
 void EventSequence::internalEvents(pyrodactyl::event::Info &info) {
-	for (auto nxe = _next.begin(); nxe != _next.end(); ++nxe)
-		if (*nxe < _events.size()) {
-			if (_events[*nxe]._trig.evaluate(info)) {
+	for (const auto &nxe : _next) {
+		if (nxe < _events.size()) {
+			if (_events[nxe]._trig.evaluate(info)) {
 				_eventInProgress = true;
-				_cur = *nxe;
+				_cur = nxe;
 				break;
 			}
 		}
+	}
 }
 
 //------------------------------------------------------------------------
@@ -72,8 +73,8 @@ void EventSequence::nextEvent(pyrodactyl::event::Info &info, const Common::Strin
 	_eventInProgress = false;
 
 	// Execute all effects associated with the event
-	for (auto i = _events[_cur]._effect.begin(); i != _events[_cur]._effect.end(); ++i)
-		if (i->execute(info, player_id, result, end_seq))
+	for (auto &i : _events[_cur]._effect)
+		if (i.execute(info, player_id, result, end_seq))
 			sync = true;
 
 	// Play a notification sound
@@ -103,8 +104,8 @@ void EventSequence::nextEvent(pyrodactyl::event::Info &info, const Common::Strin
 	if (NextEventChoice != -1)
 		_next.push_back(NextEventChoice);
 	else {
-		for (auto i = _events[_cur]._next.begin(); i != _events[_cur]._next.end(); ++i)
-			_next.push_back(*i);
+		for (const auto &i : _events[_cur]._next)
+			_next.push_back(i);
 	}
 }
 
