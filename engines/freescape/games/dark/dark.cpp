@@ -34,6 +34,8 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 		initDOS();
 	else if (isSpectrum())
 		initZX();
+	else if (isAmiga() || isAtariST())
+		initAmigaAtari();
 
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);

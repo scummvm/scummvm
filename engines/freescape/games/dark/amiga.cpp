@@ -72,8 +72,16 @@ Common::SeekableReadStream *DarkEngine::decryptFile(const Common::String filenam
 
 void DarkEngine::loadAssetsAmigaFullGame() {
 	Common::SeekableReadStream *stream = decryptFile("1.drk");
+	_border = loadAndConvertNeoImage(stream, 0x1b762);
 	load8bitBinary(stream, 0x2e96a, 16);
 	loadPalettes(stream, 0x2e638);
+}
+
+void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
+}
+
+void DarkEngine::initAmigaAtari() {
+	_viewArea = Common::Rect(32, 33, 287, 130);
 }
 
 } // End of namespace Freescape

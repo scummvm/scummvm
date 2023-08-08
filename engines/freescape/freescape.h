@@ -547,6 +547,7 @@ public:
 	void executePrint(FCLInstruction &instruction) override;
 
 	void initDOS();
+	void initAmigaAtari();
 	void initZX();
 
 	void loadAssetsDOSFullGame() override;
@@ -562,6 +563,8 @@ public:
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
+	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
+
 
 	void drawInfoMenu() override;
 	void drawFullscreenMessageAndWait(Common::String message);
