@@ -70,8 +70,16 @@ endif
 ifdef USE_SCUMMVMDLC
 ifdef USE_LIBCURL
 MODULE_OBJS += \
-	dlc/dlcmanager.o \
 	dlc/scummvmcloud.o
+endif
+endif
+
+ifdef USE_DLC
+MODULE_OBJS += \
+	dlc/dlcmanager.o
+ifeq ($(BACKEND),android)
+MODULE_OBJS += \
+	dlc/android/playstore.o
 endif
 endif
 
@@ -296,7 +304,6 @@ endif
 
 ifeq ($(BACKEND),android)
 MODULE_OBJS += \
-	dlc/android/playstore.o \
 	fs/android/android-fs-factory.o \
 	fs/android/android-posix-fs.o \
 	fs/android/android-saf-fs.o \

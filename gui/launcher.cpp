@@ -58,7 +58,7 @@
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
-#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+#if defined(USE_DLC)
 #include "backends/dlc/dlcmanager.h"
 #endif
 
@@ -209,6 +209,10 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 
 #if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
 	DLCMan.setLauncher(this);
+#elif defined(USE_DLC)
+	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
+		DLCMan.setLauncher(this);
+	}
 #endif
 }
 
@@ -264,12 +268,14 @@ void LauncherDialog::build() {
 	// I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
 
-	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
 #if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
-		// I18N: Button browse downloadable games (DLC)
+	// I18N: Button browse downloadable games (DLC)
+	new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
+#elif defined(USE_DLC)
+	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
 		new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
-#endif
 	}
+#endif
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	DropdownButtonWidget *addButton =
@@ -743,7 +749,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kMassAddGameCmd:
 		massAddGame();
 		break;
-#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+#if defined(USE_DLC)
 	case kDownloadGameCmd: {
 		DLCsDialog downloader;
 		downloader.runModal();

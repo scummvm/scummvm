@@ -39,9 +39,11 @@ DECLARE_SINGLETON(DLC::DLCManager);
 namespace DLC {
 
 DLCManager::DLCManager(): CommandSender(nullptr) {
-	// _store = g_system->getDLCStore();
-	// TODO: Handle creation through getDLCStore()
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
 	_store = new DLC::ScummVMCloud::ScummVMCloud();
+#else
+	_store = g_system->getDLCStore();
+#endif
 }
 
 DLCManager::~DLCManager() {
