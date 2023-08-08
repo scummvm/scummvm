@@ -6933,7 +6933,7 @@ define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
 # to downgrade. Almost all armv7 cpus have neon or less in terms of fpu
 # extensions so setting fpu to neon is almost always an upgrade over defaults.
 # Not to mention it would have to be included anyways
-if ( test "$_ext_avx2" = yes ) && ( test "$_host_cpu" != aarch64 ) ; then
+if ( test "$_ext_neon" = yes ) && ( test "$_host_cpu" != aarch64 ) ; then
 	append_var CXXFLAGS "-mfpu=neon"
 fi
 echo_n "Enabling arm NEON... "
