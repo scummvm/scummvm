@@ -49,7 +49,8 @@ struct NancyGameDescription {
 enum NancyDebugChannels {
 	kDebugEngine		= 1 << 0,
 	kDebugActionRecord	= 1 << 1,
-	kDebugScene			= 1 << 2
+	kDebugScene			= 1 << 2,
+	kDebugSound			= 1 << 3
 };
 
 } // End of namespace Nancy

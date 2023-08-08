@@ -42,6 +42,28 @@ class NancyEngine;
 
 class SoundManager {
 public:
+	// Settings for playing a sound, used in nancy3 and up
+	// Older versions had a different, non-bitflag enum, but testing 
+	// indicates those were never actually implemented
+	enum PlayCommandFlags {
+		kPlaySequential		= 1 << 0, // Same as kPlaySequentialAndDie
+		kPlayPosition		= 1 << 1, // Play at fixed position in 3D space
+		kPlayFrameAnchor	= 1 << 2, // Position in 3D space is tied to a background frame, ignoring 3D coordinates
+
+		kPlayRandomTime		= 1 << 4, // Play at random time intervals
+		kPlayRandomPosition = 1 << 5, // Play at random 3D positions
+
+		kPlayMoveLinear		= 1 << 8, // Move sound position in 3D space. The movement is linear unless kPlayMoveCircular is also set
+		kPlayMoveCircular	= 1 << 9, // Move sound position in a circular direction (see SoundRotationAxis)
+		kPlayRandomMove		= 1 << 10 // Move along random vector. Does not combine with kPlayMoveCircular
+	};
+
+	enum SoundRotationAxis {
+		kRotateAroundX = 0,
+		kRotateAroundY = 1,
+		kRotateAroundZ = 2
+	};
+	
 	SoundManager();
 	~SoundManager();
 
@@ -88,6 +110,7 @@ protected:
 	struct Channel {
 		Common::String name;
 		Audio::Mixer::SoundType type;
+		uint16 playCommands = 1;
 		uint16 numLoops = 0;
 		uint volume = 0;
 		uint16 panAnchorFrame = 0;

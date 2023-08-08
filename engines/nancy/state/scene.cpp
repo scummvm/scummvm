@@ -70,15 +70,19 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	sound.readScene(stream);
 
 	ser.syncAsUint16LE(panningType);
-	ser.syncAsUint16LE(numberOfVideoFrames);
-	ser.syncAsUint16LE(soundPanPerFrame, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsUint16LE(numberOfVideoFrames, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsUint16LE(soundPanPerFrame);
 	ser.syncAsUint16LE(totalViewAngle, kGameTypeVampire, kGameTypeNancy2);
-	ser.syncAsUint16LE(horizontalScrollDelta, kGameTypeVampire, kGameTypeNancy2); // horizontalScrollDelta
-	ser.syncAsUint16LE(verticalScrollDelta, kGameTypeVampire, kGameTypeNancy2); // verticalScrollDelta
+	ser.syncAsUint32LE(startX, kGameTypeNancy3);
+	ser.syncAsUint32LE(startY, kGameTypeNancy3);
+	ser.syncAsUint32LE(startZ, kGameTypeNancy3);
+	ser.syncAsUint16LE(horizontalScrollDelta);
+	ser.syncAsUint16LE(verticalScrollDelta);
 	ser.syncAsUint16LE(horizontalEdgeSize);
 	ser.syncAsUint16LE(verticalEdgeSize);
 	ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
 	ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
+	ser.skip(1); // CD required for scene
 
 	if (g_nancy->_bootSummary->overrideMovementTimeDeltas) {
 		slowMoveTimeDelta = g_nancy->_bootSummary->slowMovementTimeDelta;

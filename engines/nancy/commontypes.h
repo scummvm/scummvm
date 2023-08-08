@@ -162,6 +162,7 @@ struct SecondaryVideoDescription {
 struct SoundDescription {
 	Common::String name;
 	uint16 channelID = 0;
+	uint16 playCommands = 1;
 	uint16 numLoops = 0;
 	uint16 volume = 0;
 	uint16 panAnchorFrame = 0;

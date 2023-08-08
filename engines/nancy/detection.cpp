@@ -31,9 +31,10 @@ const char *const directoryGlobs[] = {
 };
 
 static const DebugChannelDef debugFlagList[] = {
-	{ Nancy::kDebugEngine, "Engine", "Engine debug level" },
-	{ Nancy::kDebugActionRecord, "ActionRecord", "Action Record debug level" },
-	{ Nancy::kDebugScene, "Scene", "Scene debug level" },
+	{ Nancy::kDebugEngine, "Engine", "Engine general debug" },
+	{ Nancy::kDebugActionRecord, "ActionRecord", "Action Record debug" },
+	{ Nancy::kDebugScene, "Scene", "Scene debug" },
+	{ Nancy::kDebugSound, "Sound", "Sound debug" },
 	DEBUG_CHANNEL_END
 };
 

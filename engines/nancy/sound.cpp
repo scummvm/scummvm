@@ -303,6 +303,7 @@ void SoundManager::loadSound(const SoundDescription &description, bool panning) 
 	chan.stream = nullptr;
 
 	chan.name = description.name;
+	chan.playCommands = description.playCommands;
 	chan.numLoops = description.numLoops;
 	chan.volume = description.volume;
 	chan.panAnchorFrame = description.panAnchorFrame;
@@ -320,6 +321,10 @@ void SoundManager::playSound(uint16 channelID) {
 
 	Channel &chan = _channels[channelID];
 	chan.stream->seek(0);
+
+	if (chan.playCommands != 1) {
+		debugC(kDebugSound, "Unhandled playCommand type 0x%08x! Sound name: %s", chan.playCommands, chan.name.c_str());
+	}
 
 	_mixer->playStream(	chan.type,
 						&chan.handle,
@@ -511,7 +516,9 @@ void SoundManager::setRate(const Common::String &chunkName, uint32 rate) {
 }
 
 void SoundManager::stopAndUnloadSpecificSounds() {
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+	Nancy::GameType gameType = g_nancy->getGameType();
+
+	if (gameType == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
 		// Don't stop the map sound in certain scenes
 		uint nextScene = NancySceneState.getNextSceneInfo().sceneID;
 		if (nextScene != 0 && (nextScene < 15 || nextScene > 27)) {

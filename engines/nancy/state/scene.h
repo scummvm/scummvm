@@ -95,12 +95,12 @@ public:
 	struct SceneSummary { // SSUM
 		Common::String description;
 		Common::String videoFile;
-		//
+		
 		uint16 videoFormat;
 		Common::Array<Common::String> palettes;
 		Common::String audioFile;
 		SoundDescription sound;
-		//
+		
 		byte panningType;
 		uint16 numberOfVideoFrames;
 		uint16 soundPanPerFrame;
@@ -111,7 +111,11 @@ public:
 		uint16 verticalEdgeSize;
 		Time slowMoveTimeDelta;
 		Time fastMoveTimeDelta;
-		//
+		
+		// Sound start vectors, used in nancy3 and up
+		uint32 startX = 0;
+		uint32 startY = 0;
+		uint32 startZ = 0;
 
 		void read(Common::SeekableReadStream &stream);
 	};
