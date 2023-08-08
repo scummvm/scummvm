@@ -29,6 +29,7 @@
  */
 
 #include "crab/crab.h"
+#include "crab/image/ImageManager.h"
 #include "crab/ui/AlphaImage.h"
 #include "crab/text/TextManager.h"
 
