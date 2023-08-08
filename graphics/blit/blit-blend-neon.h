@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GRAPHICS_BLIT_BLIT_BLEND_NEON_H
+#define GRAPHICS_BLIT_BLIT_BLEND_NEON_H
+
 #ifdef SCUMMVM_NEON
 #include <arm_neon.h>
 
@@ -370,3 +373,4 @@ void BlendBlit::doBlitMultiplyBlendLogicNEON(Args &args) {
 } // end of namespace Graphics
 
 #endif // SCUMMVM_NEON
+#endif // GRAPHICS_BLIT_BLIT_BLEND_NEON_H

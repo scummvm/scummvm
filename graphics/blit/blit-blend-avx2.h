@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GRAPHICS_BLIT_BLIT_BLEND_AVX2_H
+#define GRAPHICS_BLIT_BLIT_BLEND_AVX2_H
+
 #ifdef SCUMMVM_AVX2
 #include <immintrin.h>
 
@@ -368,3 +371,4 @@ void BlendBlit::doBlitMultiplyBlendLogicAVX2(Args &args) {
 } // End of namespace Graphics
 
 #endif // SCUMMVM_AVX2
+#endif // GRAPHICS_BLIT_BLIT_BLEND_AVX2_H
