@@ -112,8 +112,8 @@ int TextManager::findFreeSlot() {
 // Purpose: Render the SDL surface for text
 //------------------------------------------------------------------------
 Graphics::ManagedSurface *TextManager::renderTextBlended(const FontKey &fKey, const Common::String &text, const int &color) {
-	SDL_Color sdlcolor = _colpool.get(color);
-	uint32 col = g_engine->_format->ARGBToColor(255, sdlcolor.r, sdlcolor.g, sdlcolor.b);
+	Color pooledColor = _colpool.get(color);
+	uint32 col = g_engine->_format->ARGBToColor(255, pooledColor.r, pooledColor.g, pooledColor.b);
 
 	Graphics::ManagedSurface *surf = nullptr;
 

@@ -41,14 +41,6 @@ namespace Crab {
 namespace pyrodactyl {
 namespace anim {
 
-// Make linker happy by temporarily defining SDL_COLOR
-struct SDL_Color {
-	uint32 r;
-	uint32 g;
-	uint32 b;
-	uint32 a;
-};
-
 struct AnimationFrame : public Vector2i {
 	// The image drawn in this frame
 	ImageKey _img;
@@ -63,7 +55,7 @@ struct AnimationFrame : public Vector2i {
 	pyrodactyl::ui::HoverInfo _text;
 
 	// The color drawn on the screen
-	SDL_Color _col;
+	Color _col;
 
 	AnimationFrame() {
 		_img = 0;
