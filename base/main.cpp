@@ -72,12 +72,6 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
 
-#ifdef USE_SCUMMVMDLC
-#ifdef USE_LIBCURL
-#include "backends/dlc/dlcmanager.h"
-#endif
-#endif
-
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
@@ -705,10 +699,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	CloudMan.syncSaves();
 #endif
 
-#if defined(USE_SCUMMVM) && defined(USE_LIBCURL)
-	DLCMan.init();
-#endif
-
 	// Unless a game was specified, show the launcher dialog
 	if (nullptr == ConfMan.getActiveDomain())
 		launcherDialog();
@@ -856,11 +846,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Networking::ConnectionManager::destroy();
 	//I think it's important to destroy it after ConnectionManager
 	Cloud::CloudManager::destroy();
-#endif
-#endif
-#ifdef USE_SCUMMVMDLC
-#ifdef USE_LIBCURL
-	DLC::DLCManager::destroy();
 #endif
 #endif
 	PluginManager::instance().unloadDetectionPlugin();
