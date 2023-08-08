@@ -1,16 +1,27 @@
 MODULE := engines/crab
 
 MODULE_OBJS = \
+	app.o \
 	crab.o \
-	console.o \
-	metaengine.o \
-	filesystem.o \
-	XMLDoc.o \
-	loaders.o \
-	ScreenSettings.o \
 	collision.o \
+	console.o \
+	filesystem.o \
 	game.o \
 	GameParam.o \
+	loaders.o \
+	LoadingScreen.o \
+	metaengine.o \
+	mainmenu.o \
+	PathfindingAgent.o \
+	PathfindingGraphNode.o \
+	PathfindingGrid.o \
+	Polygon.o \
+	Rectangle.o \
+	ScreenSettings.o \
+	Shape.o \
+	splash.o \
+	timer.o \
+	XMLDoc.o \
 	ai/moveeffect.o \
 	ai/movement.o \
 	ai/spriteai.o \
@@ -118,18 +129,7 @@ MODULE_OBJS = \
 	ui/textdata.o \
 	ui/ToggleButton.o \
 	ui/TraitButton.o \
-	ui/TraitMenu.o \
-	timer.o \
-	app.o \
-	splash.o \
-	LoadingScreen.o \
-	mainmenu.o \
-	PathfindingAgent.o \
-	PathfindingGraphNode.o \
-	PathfindingGrid.o \
-	Polygon.o \
-	Rectangle.o \
-	Shape.o
+	ui/TraitMenu.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRAB), DYNAMIC_PLUGIN)
