@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GRAPHICS_BLIT_BLIT_BLEND_SSE2_H
+#define GRAPHICS_BLIT_BLIT_BLEND_SSE2_H
+
 #ifdef SCUMMVM_SSE2
 #include <immintrin.h>
 
@@ -379,3 +382,4 @@ void BlendBlit::doBlitMultiplyBlendLogicSSE2(Args &args) {
 } // End of namespace Graphics
 
 #endif // SSE2
+#endif // GRAPHICS_BLIT_BLIT_BLEND_SSE2_H
