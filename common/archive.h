@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/singleton.h"
+#include "common/error.h"
 
 namespace Common {
 
@@ -168,7 +169,7 @@ public:
 	/**
 	 * Dump all files from the archive to the given directory
 	 */
-	void dumpArchive(String destPath);
+	Common::Error dumpArchive(String destPath);
 
 	/**
 	 * Returns the separator used by internal paths in the archive

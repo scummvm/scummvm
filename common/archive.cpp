@@ -80,7 +80,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, b
 	return matches;
 }
 
-void Archive::dumpArchive(String destPath) {
+Common::Error Archive::dumpArchive(String destPath) {
 	Common::ArchiveMemberList files;
 
 	listMembers(files);
@@ -91,6 +91,7 @@ void Archive::dumpArchive(String destPath) {
 	for (auto &f : files) {
 		Common::Path filePath = f->getPathInArchive().punycodeEncode();
 		debug(1, "File: %s", filePath.toString().c_str());
+
 		Common::SeekableReadStream *stream = f->createReadStream();
 
 		uint32 len = stream->size();
@@ -107,7 +108,14 @@ void Archive::dumpArchive(String destPath) {
 		if (!out.open(outPath.toString(), true)) {
 			warning("Archive::dumpArchive(): Can not open dump file %s", outPath.toString().c_str());
 		} else {
-			out.write(data, len);
+			uint32 writtenBytes = out.write(data, len);
+			if (writtenBytes < len) {
+				// Not all data was written
+				out.close();
+				delete stream;
+				free(data);
+				return Common::Error(Common::kWritingFailed, "Not enough storage space! Please free up some storage and try again");
+			}
 			out.flush();
 			out.close();
 		}
@@ -116,6 +124,7 @@ void Archive::dumpArchive(String destPath) {
 	}
 
 	free(data);
+	return Common::kNoError;
 }
 
 char Archive::getPathSeparator() const {
