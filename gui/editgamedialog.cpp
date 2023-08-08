@@ -619,9 +619,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_savePathWidget->setLabel(Common::Path());
 		break;
 
-	case kCmdCheckIntegrity:
-		IntegrityDialog("http://localhost:8000/api/validate", _domain).sendJSON();
+	case kCmdCheckIntegrity: {
+		IntegrityDialog wizard("http://localhost:8000/api/validate", _domain);
 		break;
+	}
 
 	case kOKCmd:
 	{
