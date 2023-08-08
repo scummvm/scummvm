@@ -40,8 +40,12 @@ bool Console::cmdDraw(int argc, const char **argv) {
 				g_engine->_debugDraw |= DRAW_TMX;
 			else if (!scumm_stricmp(argv[i], "PROPS"))
 				g_engine->_debugDraw |= DRAW_PROP_BOUNDS;
+			else if (!scumm_stricmp(argv[i], "SPRITE"))
+				g_engine->_debugDraw |= DRAW_SPRITE_BOUNDS;
+			else if (!scumm_stricmp(argv[i], "PATHING"))
+				g_engine->_debugDraw |= DRAW_PATHING;
 			else if (!scumm_stricmp(argv[i], "ALL"))
-				g_engine->_debugDraw = DRAW_TMX | DRAW_PROP_BOUNDS;
+				g_engine->_debugDraw = DRAW_TMX | DRAW_PROP_BOUNDS | DRAW_SPRITE_BOUNDS | DRAW_PATHING;
 		}
 	}
 	return true;
