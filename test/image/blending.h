@@ -70,28 +70,13 @@ struct OldTransparentSurface : public Graphics::Surface {
 						int width = -1, int height = -1,
 						TSpriteBlendMode blend = BLEND_NORMAL);
 	OldTransparentSurface *scale(int16 newWidth, int16 newHeight, bool filtering = false) const;
-
-	OldTransparentSurface *rotoscale(const TransformStruct &transform, bool filtering = false) const;
-
-	OldTransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
-
-	float getRatio() {
-		if (!w)
-			return 0;
-
-		return h / (float)w;
-	}
-
-	AlphaType getAlphaMode() const;
-	void setAlphaMode(AlphaType);
-private:
 	AlphaType _alphaMode;
 };
 
-static const int kBModShift = 8;//img->format.bShift;
-static const int kGModShift = 16;//img->format.gShift;
-static const int kRModShift = 24;//img->format.rShift;
-static const int kAModShift = 0;//img->format.aShift;
+static const int kBModShift = 8;
+static const int kGModShift = 16;
+static const int kRModShift = 24;
+static const int kAModShift = 0;
 
 static const uint32 kBModMask = 0x0000ff00;
 static const uint32 kGModMask = 0x00ff0000;
@@ -737,14 +722,6 @@ Common::Rect OldTransparentSurface::blitClip(Graphics::Surface &target, Common::
 	return retSize;
 }
 
-AlphaType OldTransparentSurface::getAlphaMode() const {
-	return _alphaMode;
-}
-
-void OldTransparentSurface::setAlphaMode(AlphaType mode) {
-	_alphaMode = mode;
-}
-
 OldTransparentSurface *OldTransparentSurface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
 
 	OldTransparentSurface *target = new OldTransparentSurface();
@@ -758,102 +735,6 @@ OldTransparentSurface *OldTransparentSurface::scale(int16 newWidth, int16 newHei
 	}
 
 	return target;
-}
-
-OldTransparentSurface *OldTransparentSurface::rotoscale(const TransformStruct &transform, bool filtering) const {
-
-	Common::Point newHotspot;
-	Common::Rect rect = TransformTools::newRect(Common::Rect((int16)w, (int16)h), transform, &newHotspot);
-
-	OldTransparentSurface *target = new OldTransparentSurface();
-
-	target->create((uint16)rect.right - rect.left, (uint16)rect.bottom - rect.top, this->format);
-
-	if (filtering) {
-		rotoscaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
-	} else {
-		rotoscaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
-	}
-
-	return target;
-}
-
-OldTransparentSurface *OldTransparentSurface::convertTo(const PixelFormat &dstFormat, const byte *palette) const {
-	assert(pixels);
-
-	OldTransparentSurface *surface = new OldTransparentSurface();
-
-	// If the target format is the same, just copy
-	if (format == dstFormat) {
-		surface->copyFrom(*this);
-		return surface;
-	}
-
-	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
-		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
-
-	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
-		error("Surface::convertTo(): Can only convert to 2Bpp and 4Bpp");
-
-	surface->create(w, h, dstFormat);
-
-	if (format.bytesPerPixel == 1) {
-		// Converting from paletted to high color
-		assert(palette);
-
-		for (int y = 0; y < h; y++) {
-			const byte *srcRow = (const byte *)getBasePtr(0, y);
-			byte *dstRow = (byte *)surface->getBasePtr(0, y);
-
-			for (int x = 0; x < w; x++) {
-				byte index = *srcRow++;
-				byte r = palette[index * 3];
-				byte g = palette[index * 3 + 1];
-				byte b = palette[index * 3 + 2];
-
-				uint32 color = dstFormat.RGBToColor(r, g, b);
-
-				if (dstFormat.bytesPerPixel == 2)
-					*((uint16 *)dstRow) = color;
-				else
-					*((uint32 *)dstRow) = color;
-
-				dstRow += dstFormat.bytesPerPixel;
-			}
-		}
-	} else {
-		// Converting from high color to high color
-		for (int y = 0; y < h; y++) {
-			const byte *srcRow = (const byte *)getBasePtr(0, y);
-			byte *dstRow = (byte *)surface->getBasePtr(0, y);
-
-			for (int x = 0; x < w; x++) {
-				uint32 srcColor;
-				if (format.bytesPerPixel == 2)
-					srcColor = READ_UINT16(srcRow);
-				else if (format.bytesPerPixel == 3)
-					srcColor = READ_UINT24(srcRow);
-				else
-					srcColor = READ_UINT32(srcRow);
-
-				srcRow += format.bytesPerPixel;
-
-				// Convert that color to the new format
-				byte r, g, b, a;
-				format.colorToARGB(srcColor, a, r, g, b);
-				uint32 color = dstFormat.ARGBToColor(a, r, g, b);
-
-				if (dstFormat.bytesPerPixel == 2)
-					*((uint16 *)dstRow) = color;
-				else
-					*((uint32 *)dstRow) = color;
-
-				dstRow += dstFormat.bytesPerPixel;
-			}
-		}
-	}
-
-	return surface;
 }
 
 } // namespace OldTransparentSurface
@@ -950,7 +831,7 @@ public:
 		for (uint32 color = 0xffffffff; color != 0; color = (color == 0xffffffff ? 0x7f7f7f7f : 0)) {
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(255, 255, 255, 255));
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(255, 255, 255, 255));
-            oldSurf.setAlphaMode((Graphics::AlphaType)alphaType);
+            oldSurf._alphaMode = (Graphics::AlphaType)alphaType;
 			uint32 oldStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
             	oldSurf.blit(oldSurfDest, 0, 0, flipping, nullptr, color, -1, -1, (Graphics::TSpriteBlendMode)blendMode);
@@ -975,7 +856,7 @@ public:
 			// scaled
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(255, 255, 255, 255));
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(255, 255, 255, 255));
-            oldSurf.setAlphaMode((Graphics::AlphaType)alphaType);
+            oldSurf._alphaMode = (Graphics::AlphaType)alphaType;
 			oldStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
             	oldSurf.blit(oldSurfDest, 0, 0, flipping, nullptr, color, oldSurfDest.w, oldSurfDest.h, (Graphics::TSpriteBlendMode)blendMode);
@@ -1082,7 +963,7 @@ public:
         for (int flipping = 0; flipping <= 3; flipping++) {
         for (int rect = 0; rect < (int)(sizeof(srcs)/sizeof(srcs[0])); rect++) {
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(ba, br, bg, bb));
-            oldSurf.setAlphaMode((Graphics::AlphaType)alphaType);
+            oldSurf._alphaMode = (Graphics::AlphaType)alphaType;
             Common::Rect ret1 = oldSurf.blit(oldSurfDest, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
             newSurfDest.fillRect(Common::Rect(0, 0, newSurfDest.w, newSurfDest.h), newSurfDest.format.ARGBToColor(ba, br, bg, bb));
             newSurf.setAlphaMode((Graphics::AlphaType)alphaType);
@@ -1138,7 +1019,7 @@ public:
 
 			
             oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(ba, br, bg, bb));
-            oldSurf.setAlphaMode((Graphics::AlphaType)alphaType);
+            oldSurf._alphaMode = (Graphics::AlphaType)alphaType;
             ret1 = oldSurf.blitClip(oldSurfDest, Common::Rect(2, 2, oldSurfDest.w - 2, oldSurfDest.h - 2), dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
             newSurfDest.fillRect(Common::Rect(0, 0, newSurfDest.w, newSurfDest.h), newSurfDest.format.ARGBToColor(ba, br, bg, bb));
             newSurf.setAlphaMode((Graphics::AlphaType)alphaType);
