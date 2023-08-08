@@ -42,7 +42,7 @@
 #include "common/system.h"
 
 #define TS_COLOR(wmeColor) \
-	TS_ARGB(RGBCOLGetA(wmeColor), RGBCOLGetR(wmeColor), RGBCOLGetG(wmeColor), RGBCOLGetB(wmeColor))
+	MS_ARGB(RGBCOLGetA(wmeColor), RGBCOLGetR(wmeColor), RGBCOLGetG(wmeColor), RGBCOLGetB(wmeColor))
 
 namespace Wintermute {
 

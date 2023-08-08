@@ -781,7 +781,7 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	if (y1 < 0)
 		y1 = 0;
 
-	int alphac = TS_ARGB(alpha, 0xff, 0xff, 0xff);
+	int alphac = MS_ARGB(alpha, 0xff, 0xff, 0xff);
 
 	_surface->blit(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
 	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(x1, y1), g_nmi->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
@@ -946,7 +946,7 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 
 	g_nmi->_origFormat.colorToRGB(color, r, g, b);
 
-	uint32 c = TS_ARGB(0xff, r, g, b);
+	uint32 c = MS_ARGB(0xff, r, g, b);
 
 	for (int i = 0; i < len; i++)
 		*dest++ = c;
@@ -969,7 +969,7 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palett
 	for (int i = 0; i < len; i++) {
 		g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
-		*dest++ = TS_ARGB(0xff, r, g, b);
+		*dest++ = MS_ARGB(0xff, r, g, b);
 	}
 }
 
@@ -997,7 +997,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 		for (int i = 0; i < len; i++) {
 			if (*src != keyColor) {
 				g_nmi->_origFormat.colorToRGB(palette.pal[*src] & 0xffff, r, g, b);
-				*dest = TS_ARGB(0xff, r, g, b);
+				*dest = MS_ARGB(0xff, r, g, b);
 			}
 
 			dest++;
@@ -1009,7 +1009,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 		for (int i = 0; i < len; i++) {
 			if (*src16 != 0) {
 				g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16), r, g, b);
-				*dest = TS_ARGB(0xff, r, g, b);
+				*dest = MS_ARGB(0xff, r, g, b);
 			}
 
 			dest++;
@@ -1042,14 +1042,14 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bo
 		for (int i = 0; i < len; i++) {
 			g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
-			*dest++ = TS_ARGB(0xff, r, g, b);
+			*dest++ = MS_ARGB(0xff, r, g, b);
 		}
 	} else {
 		int16 *src16 = (int16 *)src;
 
 		for (int i = 0; i < len; i++) {
 			g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16++), r, g, b);
-			*dest++ = TS_ARGB(0xff, r, g, b);
+			*dest++ = MS_ARGB(0xff, r, g, b);
 		}
 	}
 }

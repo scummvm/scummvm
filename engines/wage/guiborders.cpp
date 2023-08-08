@@ -251,15 +251,15 @@ void Gui::loadBorder(Graphics::MacWindow *target, const char *border[], uint hei
 		for (uint x = 0; x < width; x++) {
 			switch(border[y][x * 2]) {
 			case ' ':
-				*dst = TS_RGB(0, 0, 0);
+				*dst = MS_RGB(0, 0, 0);
 				break;
 
 			case '#':
-				*dst = TS_RGB(0xff, 0xff, 0xff);
+				*dst = MS_RGB(0xff, 0xff, 0xff);
 				break;
 
 			case '.':
-				*dst = TS_RGB(0xff, 0, 0xff);
+				*dst = MS_RGB(0xff, 0, 0xff);
 				break;
 
 			default:

@@ -284,8 +284,8 @@ public:
 	/**
 	 * Returns the pixel format all operations of BlendBlit::blit support.
 	 *
-	 * Use TS_ARGB and TS_RGB to quickly make a color in this format.
-	 * TS_ARGB/RGB are found in graphics/transform_struct.h
+	 * Use MS_ARGB and MS_RGB to quickly make a color in this format.
+	 * MS_ARGB/RGB are found in graphics/transform_struct.h
 	 *
 	 * @return Supported pixel format.
 	 */

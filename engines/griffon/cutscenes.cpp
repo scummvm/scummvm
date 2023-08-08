@@ -169,7 +169,7 @@ void GriffonEngine::showLogos() {
 		}
 
 		_videoBuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
-		_logosImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((int)y, (int)y, (int)y, (int)y));
+		_logosImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB((int)y, (int)y, (int)y, (int)y));
 
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();

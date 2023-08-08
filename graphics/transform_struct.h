@@ -24,9 +24,6 @@
 
 #include "common/rect.h"
 
-#define TS_RGB(R,G,B)       (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | 0xff)
-#define TS_ARGB(A,R,G,B)    (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
-
 namespace Graphics {
 
 enum TSpriteBlendMode {

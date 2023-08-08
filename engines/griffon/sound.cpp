@@ -132,7 +132,7 @@ void GriffonEngine::setupAudio() {
 	rcDest.left = 160 - 44;
 	rcDest.top = 116 + 12;
 
-	loadimg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, TS_ARGB(160, 255, 255, 255));
+	loadimg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(160, 255, 255, 255));
 
 	g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 	g_system->updateScreen();

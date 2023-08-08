@@ -323,7 +323,7 @@ void GraphicsManager::drawHorizontalLine(uint x1, uint y, uint x2) {
 
 void GraphicsManager::darkScreen() {
 	Graphics::TransparentSurface tmp(_backdropSurface, false);
-	tmp.blit(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255 >> 1, 0, 0, 0));
+	tmp.blit(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 0, 0, 0));
 
 	// reset zBuffer
 	if (_zBuffer->originalNum >= 0) {
@@ -360,7 +360,7 @@ bool GraphicsManager::loadLightMap(int v) {
 		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
-			tmp.blit(_lightMap, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)_sceneWidth, (int)_sceneHeight);
+			tmp.blit(_lightMap, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)_sceneWidth, (int)_sceneHeight);
 		} else {
 			_lightMap.copyFrom(tmp);
 		}
@@ -461,7 +461,7 @@ bool GraphicsManager::mixHSI(int num, Common::SeekableReadStream *stream, int x,
 		return false;
 
 	Graphics::TransparentSurface tmp(mixSurface, false);
-	tmp.blit(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, TS_ARGB(255 >> 1, 255, 255, 255));
+	tmp.blit(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 255, 255, 255));
 	mixSurface.free();
 
 	return true;

@@ -26,8 +26,10 @@
 #include "graphics/surface.h"
 #include "graphics/transform_struct.h"
 #include "common/types.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/blit.h"
+
+#define MS_RGB(R,G,B)       (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | 0xff)
+#define MS_ARGB(A,R,G,B)    (uint32)(((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
 
 namespace Graphics {
 
@@ -546,7 +548,7 @@ public:
 	 */
 	Common::Rect blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
 							   const Common::Rect &destRect, int flipping = FLIP_NONE,
-							   const uint32 colorMod = TS_ARGB(255, 255, 255, 255),
+							   const uint32 colorMod = MS_ARGB(255, 255, 255, 255),
 							   const TSpriteBlendMode blend = BLEND_NORMAL,
 							   const AlphaType alphaType = ALPHA_FULL);
 
