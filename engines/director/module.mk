@@ -113,6 +113,7 @@ MODULE_OBJS = \
 	lingo/xlibs/volumelist.o \
 	lingo/xlibs/widgetxobj.o \
 	lingo/xlibs/winxobj.o \
+	lingo/xlibs/wininfo.o \
 	lingo/xlibs/xio.o \
 	lingo/xlibs/xplayanim.o \
 	lingo/xlibs/yasix.o

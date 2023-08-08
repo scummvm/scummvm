@@ -218,9 +218,14 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		if (_lastFrame) {
 			_lastFrame->free();
 			delete _lastFrame;
+			_lastFrame = nullptr;
 		}
 
-		_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+		if (frame->getPixels()) {
+			_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+		} else {
+			warning("DigitalVideoCastMember::createWidget(): frame has no pixel data");
+		}
 	}
 	if (_lastFrame)
 		widget->getSurface()->blitFrom(*_lastFrame);
