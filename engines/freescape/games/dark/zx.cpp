@@ -127,6 +127,8 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 		energyBar = Common::Rect(80, 148, 143 - (_maxEnergy - energy), 154);
 		surface->fillRect(energyBar, front);
 	}
+	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
+	drawBinaryClock(surface, 273, 128, clockColor, back);
 }
 
 } // End of namespace Freescape

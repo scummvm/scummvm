@@ -652,6 +652,17 @@ void DarkEngine::drawFullscreenMessageAndWait(Common::String message) {
 	delete surface;
 }
 
+void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int yPosition, uint32 front, uint32 back) {
+	int number = _ticks / 2;
+	int bits = 0;
+	while (bits <= 15) {
+		int y = yPosition - (7 * bits);
+		surface->drawLine(xPosition, y, xPosition + 3, y, number & 1 ? front : back);
+		number = number >> 1;
+		bits++;
+	}
+}
+
 void DarkEngine::drawSensorShoot(Sensor *sensor) {
 	Math::Vector3d target;
 	target = _position;

@@ -560,6 +560,7 @@ public:
 	int _lastSecond;
 	void updateTimeVariables() override;
 
+	void drawBinaryClock(Graphics::Surface *surface, int xPosition, int yPosition, uint32 front, uint32 back);
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
