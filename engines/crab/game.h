@@ -31,18 +31,13 @@
 #ifndef CRAB_GAME_H
 #define CRAB_GAME_H
 
-#include "crab/ui/DevConsole.h"
 #include "crab/GameClock.h"
-#include "crab/event/GameEventInfo.h"
-#include "crab/image/ImageManager.h"
-#include "crab/LoadingScreen.h"
-#include "crab/input/cursor.h"
-#include "crab/event/gameeventmanager.h"
 #include "crab/gamestate_container.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/event/gameeventmanager.h"
+#include "crab/ui/DevConsole.h"
 #include "crab/ui/hud.h"
-#include "crab/level/level.h"
 #include "crab/ui/map.h"
-#include "crab/ui/menu.h"
 
 namespace Crab {
 

@@ -31,6 +31,8 @@
 #include "crab/console.h"
 #include "crab/game.h"
 #include "crab/GameParam.h"
+#include "crab/LoadingScreen.h"
+#include "crab/input/cursor.h"
 
 namespace Crab {
 
