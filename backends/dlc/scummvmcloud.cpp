@@ -48,7 +48,7 @@ void ScummVMCloud::jsonCallbackGetAllDLCs(Networking::JsonResponse response) {
 	if (json == nullptr || !json->isObject()) {
 		return;
 	}
-	// warning("%s", json->stringify(true).c_str());
+	debug(1, "DLC list JSON response: %s", json->stringify(true).c_str());
 	Common::JSONObject result = json->asObject();
 	if (result.contains("entries")) {
 		Common::JSONArray items = result.getVal("entries")->asArray();
