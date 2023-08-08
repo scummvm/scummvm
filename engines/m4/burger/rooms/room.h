@@ -25,6 +25,9 @@
 #include "m4/core/rooms.h"
 #include "m4/burger/core/play_break.h"
 #include "m4/burger/core/stream_break.h"
+#include "m4/burger/core/conv.h"
+#include "m4/adv_r/conv_io.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Burger {
