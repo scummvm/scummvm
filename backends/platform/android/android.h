@@ -147,6 +147,7 @@ private:
 
 	Common::Queue<Common::Event> _event_queue;
 	EventWithDelay _delayedMouseBtnUpEvent;
+	EventWithDelay _delayedMouseBtnDownEvent;
 	Common::Mutex *_event_queue_lock;
 
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt, _touch_pt_multi;
@@ -208,7 +209,7 @@ public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	void pushEvent(const Common::Event &event);
 	void pushEvent(const Common::Event &event1, const Common::Event &event2);
-	void pushDelayedMouseBtnUpEvent();
+	void pushDelayedTouchMouseBtnEvents();
 
 	TouchControls &getTouchControls() { return _touchControls; }
 	void applyTouchSettings(bool _3dMode, bool overlayShown);

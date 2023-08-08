@@ -697,6 +697,12 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 		_touch_pt_scroll.x = -1;
 		_touch_pt_scroll.y = -1;
+//		if (_touch_mode != TOUCH_MODE_TOUCHPAD) {
+//			ev0.type = Common::EVENT_MOUSEMOVE;
+//			ev0.mouse.x = arg1;
+//			ev0.mouse.y = arg2;
+//			pushEvent(ev0);
+//		}
 		break;
 
 	case JE_SCROLL:
@@ -769,7 +775,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				up = Common::EVENT_LBUTTONUP;
 			}
 
-			pushDelayedMouseBtnUpEvent();
+			pushDelayedTouchMouseBtnEvents();
 			Common::Event ev1 = ev0;
 			ev1.type = down; // mouse down
 			_event_queue_lock->lock();
@@ -777,9 +783,19 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				// In this case the mouse move is done in "direct mode"
 				// ie. the cursor jumps to where the tap occurred
 				// so we don't have relMouse coordinates to set for the event
+				// However, in Direct Touch mode, some games seem to expect a delay 
+				// between the move event and the subsequence mouse down event (eg. Curse of Monkey Island, Tony Tough)
+				// Thus, thie Mouse Button Down event is also sent with a delay
 				_event_queue.push(ev0);
+				_delayedMouseBtnDownEvent.mouse = ev1.mouse;
+				_delayedMouseBtnDownEvent.type = down;
+				_delayedMouseBtnDownEvent.referTimeMillis = getMillis(true);
+				_delayedMouseBtnDownEvent.delayMillis = kQueuedInputEventDelay;
+				_delayedMouseBtnDownEvent.connectedType = ev0.type;
+				_delayedMouseBtnDownEvent.connectedTypeExecuted = false;
+			} else {
+				_event_queue.push(ev1);
 			}
-			_event_queue.push(ev1);
 
 			_delayedMouseBtnUpEvent.mouse = ev1.mouse;
 			_delayedMouseBtnUpEvent.type = up;
@@ -854,7 +870,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			ev1.type = dptype;
 			if (ev1.type == Common::EVENT_LBUTTONDOWN) {
-				pushDelayedMouseBtnUpEvent();
+				pushDelayedTouchMouseBtnEvents();
 			}
 //			// Commented out: Don't do a "move mouse" pre-event on a double_tap
 //			pushEvent(ev0, ev1);
@@ -991,7 +1007,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			ev1.type = multitype;
 			if (ev1.type == Common::EVENT_RBUTTONDOWN || ev1.type == Common::EVENT_MBUTTONDOWN) {
-				pushDelayedMouseBtnUpEvent();
+				pushDelayedTouchMouseBtnEvents();
 			}
 
 			if (ev1.type != Common::EVENT_INVALID) {
@@ -1372,14 +1388,20 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 	// We currently allow only one delayed event at any time, and it's always a mouse up event that comes from a touch event/gesture
 	// Handling multiple delayed events gets complicated and is practically unnecessary too
-	if (_delayedMouseBtnUpEvent.delayMillis > 0
+	if (_delayedMouseBtnDownEvent.delayMillis > 0
+	    && _delayedMouseBtnDownEvent.connectedTypeExecuted
+	    && (getMillis(true) - _delayedMouseBtnDownEvent.referTimeMillis > _delayedMouseBtnDownEvent.delayMillis)) {
+		Common::Event evHP = _delayedMouseBtnDownEvent;
+		event = evHP;
+		if ((_delayedMouseBtnUpEvent.delayMillis > 0)
+		    && (event.type == _delayedMouseBtnUpEvent.connectedType)) {
+			_delayedMouseBtnUpEvent.connectedTypeExecuted = true;
+			_delayedMouseBtnUpEvent.referTimeMillis = getMillis(true);
+		}
+		_delayedMouseBtnDownEvent.reset();
+	} else if (_delayedMouseBtnUpEvent.delayMillis > 0
 	    && _delayedMouseBtnUpEvent.connectedTypeExecuted
 	    && (getMillis(true) - _delayedMouseBtnUpEvent.referTimeMillis > _delayedMouseBtnUpEvent.delayMillis)) {
-//		if (_queuedEvent.type == Common::EVENT_RBUTTONDOWN) {
-//			LOGD("Executing delayed RIGHT MOUSE DOWN!!!!");
-//		} else if (_queuedEvent.type == Common::EVENT_RBUTTONUP) {
-//			LOGD("Executing delayed RIGHT MOUSE UP!!!!");
-//		}
 		Common::Event evHP = _delayedMouseBtnUpEvent;
 		event = evHP;
 		_delayedMouseBtnUpEvent.reset();
@@ -1389,7 +1411,11 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 	} else {
 		event = _event_queue.pop();
-		if ((_delayedMouseBtnUpEvent.delayMillis > 0)
+		if ((_delayedMouseBtnDownEvent.delayMillis > 0)
+		    && (event.type == _delayedMouseBtnDownEvent.connectedType)) {
+			_delayedMouseBtnDownEvent.connectedTypeExecuted = true;
+			_delayedMouseBtnDownEvent.referTimeMillis = getMillis(true);
+		} else if ((_delayedMouseBtnUpEvent.delayMillis > 0)
 		    && (event.type == _delayedMouseBtnUpEvent.connectedType)) {
 			_delayedMouseBtnUpEvent.connectedTypeExecuted = true;
 			_delayedMouseBtnUpEvent.referTimeMillis = getMillis(true);
@@ -1418,10 +1444,16 @@ void OSystem_Android::pushEvent(const Common::Event &event1, const Common::Event
 	_event_queue_lock->unlock();
 }
 
-void OSystem_Android::pushDelayedMouseBtnUpEvent() {
+void OSystem_Android::pushDelayedTouchMouseBtnEvents() {
 	_event_queue_lock->lock();
+	Common::Event evHP;
+	if (_delayedMouseBtnDownEvent.delayMillis > 0) {
+		evHP = _delayedMouseBtnDownEvent;
+		_event_queue.push(_delayedMouseBtnDownEvent);
+		_delayedMouseBtnDownEvent.reset();
+	}
 	if (_delayedMouseBtnUpEvent.delayMillis > 0) {
-		Common::Event evHP = _delayedMouseBtnUpEvent;
+		evHP = _delayedMouseBtnUpEvent;
 		_event_queue.push(_delayedMouseBtnUpEvent);
 		_delayedMouseBtnUpEvent.reset();
 	}
