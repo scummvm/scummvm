@@ -94,13 +94,11 @@ int GfxSettingMenu::handleEvents(const Common::Event &event) {
 	if (_fullscreen.handleEvents(event)) {
 		// Setting video flags is necessary when toggling fullscreen
 		g_engine->_screenSettings->_fullscreen = !g_engine->_screenSettings->_fullscreen;
-		g_engine->_screenSettings->setFullscreen();
 	}
 
 	// Vsync doesn't need to set the change value
 	if (_vsync.handleEvents(event)) {
 		g_engine->_screenSettings->_vsync = !g_engine->_screenSettings->_vsync;
-		g_engine->_screenSettings->setVsync();
 	}
 
 	// Quality and resolution can only be changed in the main menu
@@ -112,12 +110,10 @@ int GfxSettingMenu::handleEvents(const Common::Event &event) {
 	// Window border doesn't matter if you are in fullscreen
 	if (_border.handleEvents(event) && !g_engine->_screenSettings->_fullscreen) {
 		g_engine->_screenSettings->_border = !g_engine->_screenSettings->_border;
-		g_engine->_screenSettings->setWindowBorder();
 	}
 
 	if (_brightness.handleEvents(event)) {
 		g_engine->_screenSettings->_gamma = static_cast<float>(_brightness.Value()) / 100.0f;
-		g_engine->_screenSettings->setGamma();
 	}
 
 	return _resolution.handleEvents(event);

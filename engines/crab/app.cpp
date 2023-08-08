@@ -77,13 +77,6 @@ void App::run() {
 			case GAMESTATE_TITLE:
 				currentState = new Splash();
 				g_engine->_screenSettings->_inGame = false;
-
-				// Now apply all settings - except resolution because that's already set at the start
-				g_engine->_screenSettings->setFullscreen();
-				g_engine->_screenSettings->setWindowBorder();
-				g_engine->_screenSettings->setVsync();
-				g_engine->_screenSettings->setGamma();
-				g_engine->_screenSettings->setMouseTrap();
 				break;
 
 			case GAMESTATE_MAIN_MENU:

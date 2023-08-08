@@ -100,8 +100,6 @@ public:
 
 // Screen attributes
 class ScreenSettings : public ScreenAttributes {
-	// A backup of the attributes
-	ScreenAttributes _backup;
 
 public:
 	// The desktop dimensions
@@ -126,17 +124,6 @@ public:
 	bool validDimension(Dimension d) {
 		return d.w <= _desktop.w && d.h <= _desktop.h;
 	}
-
-	void setVideoFlags();
-	void createBackup();
-	void restoreBackup();
-
-	void setResolution();
-	void setFullscreen();
-	void setWindowBorder();
-	void setVsync();
-	void setGamma() { }//SDL_SetWindowBrightness(gWindow, gamma); }
-	void setMouseTrap();
 
 	void load(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

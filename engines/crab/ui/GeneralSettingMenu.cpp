@@ -84,7 +84,6 @@ void GeneralSettingMenu::handleEvents(const Common::Event &event) {
 
 	if (_mouseTrap.handleEvents(event)) {
 		g_engine->_screenSettings->_mouseTrap = !g_engine->_screenSettings->_mouseTrap;
-		g_engine->_screenSettings->setMouseTrap();
 	}
 
 	int result = _textSpeed.handleEvents(event);
