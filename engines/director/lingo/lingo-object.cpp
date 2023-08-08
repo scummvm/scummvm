@@ -89,6 +89,7 @@
 #include "director/lingo/xlibs/videodiscxobj.h"
 #include "director/lingo/xlibs/volumelist.h"
 #include "director/lingo/xlibs/widgetxobj.h"
+#include "director/lingo/xlibs/wininfo.h"
 #include "director/lingo/xlibs/winxobj.h"
 #include "director/lingo/xlibs/xio.h"
 #include "director/lingo/xlibs/xplayanim.h"
@@ -223,6 +224,7 @@ static struct XLibProto {
 	{ ValkyrieXObj::fileNames,			ValkyrieXObj::open,			ValkyrieXObj::close,		kXObj,					400 },	// D4
 	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
 	{ VolumeList::fileNames,			VolumeList::open,			VolumeList::close,			kXObj,					300 },	// D3
+	{ WinInfoXObj::fileNames,			WinInfoXObj::open,			WinInfoXObj::close,			kXObj,					400 },  // D4
 	{ WidgetXObj::fileNames,			WidgetXObj::open,			WidgetXObj::close, 			kXObj,					400 },  // D4
 	{ XioXObj::fileNames,				XioXObj::open,				XioXObj::close,				kXObj,					400 },	// D3
 	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
