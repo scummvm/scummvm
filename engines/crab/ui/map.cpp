@@ -29,6 +29,7 @@
  */
 
 #include "crab/crab.h"
+#include "crab/XMLDoc.h"
 #include "crab/input/cursor.h"
 #include "crab/ui/map.h"
 

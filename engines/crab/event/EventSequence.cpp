@@ -28,7 +28,7 @@
  *
  */
 
-
+#include "crab/XMLDoc.h"
 #include "crab/event/EventSequence.h"
 
 namespace Crab {

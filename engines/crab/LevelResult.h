@@ -31,7 +31,7 @@
 #ifndef CRAB_LEVELRESULT_H
 #define CRAB_LEVELRESULT_H
 
-#include "crab/image/ImageManager.h"
+#include "common/str.h"
 
 namespace Crab {
 

@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/XMLDoc.h"
 #include "crab/ui/Inventory.h"
 
 namespace Crab {

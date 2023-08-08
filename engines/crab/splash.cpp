@@ -33,6 +33,7 @@
 // Author:   Arvind
 // Purpose:  Splash functions
 //=============================================================================
+#include "crab/ScreenSettings.h"
 #include "crab/splash.h"
 
 namespace Crab {

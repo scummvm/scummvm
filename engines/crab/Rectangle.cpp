@@ -30,6 +30,7 @@
 
 #include "graphics/screen.h"
 #include "crab/crab.h"
+#include "crab/GameParam.h"
 #include "crab/Rectangle.h"
 
 namespace Crab {

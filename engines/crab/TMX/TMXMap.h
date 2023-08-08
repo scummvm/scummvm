@@ -33,6 +33,7 @@
 
 #include "crab/LevelResult.h"
 #include "crab/Shape.h"
+#include "crab/XMLDoc.h"
 #include "crab/ai/spriteai.h"
 #include "crab/level/LevelExit.h"
 #include "crab/level/MusicArea.h"

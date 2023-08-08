@@ -30,6 +30,7 @@
 
 #include "common/config-manager.h"
 #include "crab/crab.h"
+#include "crab/GameParam.h"
 #include "crab/ScreenSettings.h"
 #include "crab/XMLDoc.h"
 #include "crab/music/MusicManager.h"
