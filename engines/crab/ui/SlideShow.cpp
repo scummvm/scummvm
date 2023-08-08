@@ -27,6 +27,7 @@
  * Licensed under MIT
  *
  */
+
 #include "crab/ui/SlideShow.h"
 
 namespace Crab {

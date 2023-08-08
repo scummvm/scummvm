@@ -32,7 +32,6 @@
 #define CRAB_FILEMENU_H
 
 #include "common/savefile.h"
-
 #include "crab/crab.h"
 #include "crab/ui/FileData.h"
 #include "crab/ui/ImageData.h"

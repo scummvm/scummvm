@@ -35,9 +35,8 @@
 #ifndef CRAB_MENU_H
 #define CRAB_MENU_H
 
-#include "crab/metaengine.h"
 #include "crab/crab.h"
-#include "crab/image/ImageManager.h"
+#include "crab/metaengine.h"
 #include "crab/ui/button.h"
 
 namespace Crab {

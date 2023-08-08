@@ -31,11 +31,10 @@
 #ifndef CRAB_INVENTORY_H
 #define CRAB_INVENTORY_H
 
-#include "crab/ui/ImageData.h"
 #include "crab/item/ItemCollection.h"
 #include "crab/item/ItemSlot.h"
-#include "crab/stat/Stat.h"
 #include "crab/ui/button.h"
+#include "crab/ui/ImageData.h"
 
 namespace Crab {
 

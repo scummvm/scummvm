@@ -33,7 +33,6 @@
 
 #include "crab/ui/Caption.h"
 #include "crab/ui/ImageData.h"
-#include "crab/image/ImageManager.h"
 #include "crab/ui/button.h"
 
 namespace Crab {

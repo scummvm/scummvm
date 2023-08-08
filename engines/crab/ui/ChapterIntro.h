@@ -31,14 +31,16 @@
 #ifndef CRAB_CHAPTERINTRO_H
 #define CRAB_CHAPTERINTRO_H
 
-#include "crab/event/GameEventInfo.h"
 #include "crab/ui/button.h"
 #include "crab/ui/dialogbox.h"
-#include "crab/animation/sprite.h"
 
 namespace Crab {
 
 namespace pyrodactyl {
+namespace anim {
+class Sprite;
+} // End of namespace anim
+
 namespace ui {
 class ChapterIntro {
 	// This contains the background image info and start button

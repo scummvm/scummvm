@@ -31,14 +31,13 @@
 #ifndef CRAB_REPLYMENU_H
 #define CRAB_REPLYMENU_H
 
+#include "crab/event/conversationdata.h"
+#include "crab/event/eventstore.h"
 #include "crab/event/GameEventInfo.h"
+#include "crab/ui/emotion.h"
 #include "crab/ui/ImageData.h"
 #include "crab/ui/PersonHandler.h"
 #include "crab/ui/ReplyButton.h"
-#include "crab/event/conversationdata.h"
-#include "crab/ui/emotion.h"
-#include "crab/event/eventstore.h"
-#include "crab/ui/menu.h"
 
 namespace Crab {
 

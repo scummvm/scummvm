@@ -31,18 +31,19 @@
 #ifndef CRAB_PERSONSCREEN_H
 #define CRAB_PERSONSCREEN_H
 
-#include "crab/event/GameEventInfo.h"
-#include "crab/ui/ImageData.h"
-#include "crab/ui/TraitMenu.h"
 #include "crab/event/gameevent.h"
+#include "crab/event/GameEventInfo.h"
 #include "crab/level/level.h"
-#include "crab/ui/menu.h"
 #include "crab/people/person.h"
-#include "crab/animation/sprite.h"
+#include "crab/ui/TraitMenu.h"
 
 namespace Crab {
 
 namespace pyrodactyl {
+namespace anim {
+class Sprite;
+} // End of namespace anim
+
 namespace ui {
 class PersonScreen {
 	// The background

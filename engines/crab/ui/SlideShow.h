@@ -32,8 +32,8 @@
 #define CRAB_SLIDESHOW_H
 
 #include "crab/image/Image.h"
-#include "crab/ui/ImageData.h"
 #include "crab/ui/button.h"
+#include "crab/ui/ImageData.h"
 
 namespace Crab {
 

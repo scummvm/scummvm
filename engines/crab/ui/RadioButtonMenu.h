@@ -31,8 +31,8 @@
 #ifndef CRAB_RADIOBUTTONMENU_H
 #define CRAB_RADIOBUTTONMENU_H
 
-#include "crab/ui/RadioButton.h"
 #include "crab/ui/menu.h"
+#include "crab/ui/RadioButton.h"
 
 namespace Crab {
 

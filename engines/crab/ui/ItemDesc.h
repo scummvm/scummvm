@@ -31,9 +31,7 @@
 #ifndef CRAB_ITEMDESC_H
 #define CRAB_ITEMDESC_H
 
-#include "crab/item/Item.h"
 #include "crab/ui/ParagraphData.h"
-#include "crab/ui/SectionHeader.h"
 
 namespace Crab {
 

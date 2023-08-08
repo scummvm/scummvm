@@ -30,6 +30,8 @@
 
 #include "common/savefile.h"
 #include "crab/crab.h"
+#include "crab/loaders.h"
+#include "crab/XMLDoc.h"
 #include "crab/ui/FileData.h"
 
 namespace Crab {

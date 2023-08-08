@@ -35,16 +35,12 @@
 #ifndef CRAB_HUD_H
 #define CRAB_HUD_H
 
-#include "crab/ui/FileMenu.h"
 #include "crab/event/GameEventInfo.h"
-#include "crab/ui/GameOverMenu.h"
-#include "crab/ui/HealthIndicator.h"
-#include "crab/ui/PauseMenu.h"
-#include "crab/ui/SlideShow.h"
-#include "crab/ui/StateButton.h"
-#include "crab/input/input.h"
 #include "crab/level/level_objects.h"
 #include "crab/level/talknotify.h"
+#include "crab/ui/FileMenu.h"
+#include "crab/ui/GameOverMenu.h"
+#include "crab/ui/PauseMenu.h"
 
 namespace Crab {
 

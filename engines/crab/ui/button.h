@@ -36,13 +36,13 @@
 #define CRAB_BUTTON_H
 
 #include "crab/GameParam.h"
-#include "crab/ui/Caption.h"
-#include "crab/ui/HoverInfo.h"
 #include "crab/image/ImageManager.h"
+#include "crab/input/hotkey.h"
 #include "crab/music/MusicManager.h"
 #include "crab/text/TextManager.h"
+#include "crab/ui/Caption.h"
 #include "crab/ui/element.h"
-#include "crab/input/hotkey.h"
+#include "crab/ui/HoverInfo.h"
 
 namespace Crab {
 

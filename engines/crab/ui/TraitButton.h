@@ -31,8 +31,8 @@
 #ifndef CRAB_TRAITBUTTON_H
 #define CRAB_TRAITBUTTON_H
 
-#include "crab/ui/StateButton.h"
 #include "crab/people/trait.h"
+#include "crab/ui/StateButton.h"
 
 namespace Crab {
 

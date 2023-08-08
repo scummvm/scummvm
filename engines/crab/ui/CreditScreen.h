@@ -31,11 +31,9 @@
 #ifndef CRAB_CREDITSCREEN_H
 #define CRAB_CREDITSCREEN_H
 
+#include "crab/ui/button.h"
 #include "crab/ui/ImageData.h"
 #include "crab/ui/TextData.h"
-#include "crab/text/TextManager.h"
-#include "crab/ui/button.h"
-#include "crab/timer.h"
 
 namespace Crab {
 

@@ -28,7 +28,7 @@
  *
  */
 
-
+#include "crab/ScreenSettings.h"
 #include "crab/crab.h"
 #include "crab/ui/GeneralSettingMenu.h"
 

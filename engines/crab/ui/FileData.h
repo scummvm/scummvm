@@ -31,8 +31,7 @@
 #ifndef CRAB_FILEDATA_H
 #define CRAB_FILEDATA_H
 
-#include "crab/XMLDoc.h"
-#include "crab/loaders.h"
+#include "common/str.h"
 
 namespace Crab {
 

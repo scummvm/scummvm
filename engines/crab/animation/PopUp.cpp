@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/ScreenSettings.h"
 #include "crab/animation/PopUp.h"
 
 namespace Crab {
