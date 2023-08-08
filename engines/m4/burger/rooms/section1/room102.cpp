@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "m4/burger/rooms/section1/room102.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
@@ -37,6 +36,37 @@ static const seriesStreamBreak STREAMS1[] = {
 	STREAM_BREAK_END
 };
 
+static const seriesStreamBreak STREAMS2[] = {
+	{ 13, "102_036", 2, 255, -1, 0, nullptr, 0 },
+	{ 16, "102_037", 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak STREAMS3[] = {
+	{ 13, "102_036", 2, 255, -1, 0, nullptr, 0 },
+	{ 16, "102_037", 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak STREAMS4[] = {
+	{ 6,"102_035", 2, 255, -1, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak STREAMS5[] = {
+	STREAM_BREAK_END
+};
+
+static const seriesPlayBreak PLAY1[] = {
+	{ 0, 7, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 8, 8, nullptr, 1, 255,  2, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY2[] = {
+	{ 0, 18, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
 
 void Room102::init() {
 	_G(player).walker_in_this_scene = true;
@@ -46,7 +76,7 @@ void Room102::init() {
 	_val4 = 0;
 	_val5 = 0;
 	_val6 = 0;
-	_val7 = 0;
+	_series4 = 0;
 	_val8 = 0;
 	_val9 = 0;
 	_val10 = 99999;
@@ -115,10 +145,11 @@ void Room102::init() {
 
 void Room102::daemon() {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	int frame;
 
 	switch (_G(kernel).trigger) {
 	case 1:
-		conv_resume();
+		conv_resume_curr();
 		break;
 	case 2:
 		ws_unhide_walker(_G(my_walker));
@@ -241,7 +272,7 @@ void Room102::daemon() {
 				kernel_trigger_dispatch_now(3);
 				hotspot_set_active("harry", false);
 				hotspot_set_active("harry ", true);
-				conv_resume();
+				conv_resume_curr();
 				break;
 
 			default:
@@ -404,12 +435,312 @@ void Room102::daemon() {
 
 				if (++_val5 > 24 && _val5 != -666 && player_commands_allowed()) {
 					_val5 = -666;
-					//error("TODO: conv_load_and_prepare");
+					conv_load_and_prepare("conv05", 20, 0);
+					conv_export_pointer_curr(&_G(flags)[V016], 0);
+					conv_play_curr();
 				}
+				break;
+
+			case 36:
+				_val12 = 36;
+				series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
+				series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 16);
+				break;
+
+			case 37:
+				_val11 = 39;
+				_G(flags)[GLB_TEMP_5] = 2;
+				digi_preload_stream_breaks(STREAMS2);
+				series_play_("102ha09s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_stream_with_breaks(STREAMS2, "102ha09", 6, 256, 3);
+				break;
+
+			case 38:
+				_val11 = 40;
+				_G(flags)[GLB_TEMP_5] = 1;
+				digi_preload_stream_breaks(STREAMS3);
+				series_play_("102ha10s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_stream_with_breaks(STREAMS3, "102ha10", 6, 256, 3);
+				break;
+
+			case 39:
+				digi_unload_stream_breaks(STREAMS2);
+				_val11 = 41;
+				kernel_trigger_dispatch_now(3);
+				break;
+
+			case 40:
+				digi_unload_stream_breaks(STREAMS3);
+				_val11 = 41;
+				kernel_trigger_dispatch_now(3);
+				break;
+
+			case 41:
+				_val13 = 65;
+				series_unload(_index2);
+				_val11 = 42;
+				sub1();
+
+				digi_preload_stream_breaks(STREAMS4);
+				series_play_("102ha04s", 1024, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_stream_with_breaks(STREAMS4, "102ha04", 6, 768, 3);
+				break;
+
+			case 42:
+				digi_unload_stream_breaks(STREAMS4);
+				digi_stop(2);
+				_val14 = 59;
+				_val13 = 58;
+				kernel_trigger_dispatch_now(4);
+
+				_index3 = series_load("102wi05", -1);
+				_index4 = series_load("102ha05", -1);
+				_val11 = 43;
+				_val12 = 43;
+
+				series_play_("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 4);
+				series_play_("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+
+				conv_load_and_prepare("conv06", 21, false);
+				conv_export_pointer_curr(&_val4, 0);
+				conv_export_value_curr(_G(flags)[V001], 1);
+				conv_play_curr();
+				_G(flags)[V017] = 1;
+				break;
+
+			default:
+				break;
 			}
+			break;
+
+		case 36:
+			if (_val11 == 36) {
+				if (!digi_play_state(2)) {
+					++_val6;
+
+					if (imath_ranged_rand(4, 6) < _val6) {
+						_val6 = 0;
+
+						switch (imath_ranged_rand(1, 4)) {
+						case 1:
+							digi_play("102_030", 2, 255, -1);
+							break;
+						case 2:
+							digi_play("102_031", 2, 255, -1);
+							break;
+						case 3:
+							digi_play("102_032", 2, 255, -1);
+							break;
+						case 4:
+							digi_play("102_033", 2, 255, -1);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+
+				while ((frame = imath_ranged_rand(16, 21)) == _val3) {
+				}
+
+				_val13 = frame;
+				series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, frame, frame);
+				series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, frame, frame);
+
+			} else {
+				_val13 = 35;
+				series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
+				series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 16);
+			}
+			break;
+
+		case 43:
+			switch (_val11) {
+			case 20:
+				frame = imath_ranged_rand(8, 11);
+				series_play_("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
+				series_play_("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 21:
+				frame = imath_ranged_rand(12, 15);
+				series_play_("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
+				series_play_("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 43:
+				frame = imath_ranged_rand(4, 7);
+				series_play_("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
+				series_play_("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 44:
+				_val11 = 45;
+				series_play_("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 24);
+				series_play_("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 24);
+				break;
+
+			case 45:
+				series_play_("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 24, 24);
+				series_play_("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 24, 24);
+				break;
+
+			case 48:
+				_val11 = 49;
+				series_play_("102ha05", 2560, 2, 3, 6, 0, 100, 0, 0, 0, 3);
+				series_play_("102ha05s", 2561, 2, -1, 6, 0, 100, 0, 0, 0, 3);
+				break;
+
+			case 49:
+				_val11 = 50;
+				series_play_("102ha05", 2818, 2, 3, 30, 0, 100, 0, 0, 8, 8);
+				series_play_("102ha05s", 2818, 2, -1, 30, 0, 100, 0, 0, 8, 8);
+				break;
+
+			case 50:
+				sub1();
+				series_unload(_index4);
+				series_unload(_index3);
+				_val13 = 65;
+				_val11 = 51;
+				series_play_with_breaks(PLAY1, "102ha11", 2560, 3, 3, 6, 100, 0, 0);
+				break;
+
+			case 51:
+				_index1 = series_load("102ha01", -1);
+				series_play_with_breaks(PLAY2, "102ha06", 2560, 25, 3, 6, 100, 0, 0);
+				hotspot_set_active("harry", true);
+				hotspot_set_active("harry ", false);
+
+				_G(flags)[V012] = 0;
+				if (!_flag1)
+					player_set_commands_allowed(true);
+				break;
+			}
+			break;
+
+		case 54:
+			switch (_val11) {
+			case 46:
+				TerminateMachineAndNull(_series1);
+				TerminateMachineAndNull(_series2);
+				_val11 = 47;
+				series_play_with_breaks(PLAY2, "102ha06", 2560, 3, 3, 6, 100, 0, 0);
+				hotspot_set_active("harry", true);
+				break;
+
+			case 47:
+				_series2 = series_play_("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+				_index1 = series_load("102ha01", -1);
+				_val11 = 19;
+				_val12 = 19;
+
+				kernel_trigger_dispatch_now(3);
+				player_set_commands_allowed(true);
+
+				if (_G(flags)[V015] && !_G(flags)[V013])
+					queuePlay("102h202");
+
+				_G(flags)[V012] = 0;
+				++_G(flags)[V015];
+				break;
+
+			case 53:
+				_val11 = 54;
+				_index5 = series_load("102ha07", -1);
+				series_play_("102ha07", 3840, 0, 3, 10, 0, 100, 0, 0, 0, 7);
+				series_play_("102ha07s", 3841, 0, -1, 10, 0, 100, 0, 0, 0, 7);
+
+				if (_G(flags)[V013]) {
+					_play1 = "102h204";
+					_val11 = 56;
+					_G(flags)[ROOM101_FLAG1] = 1;
+				} else {
+					_val11 = 55;
+					_play1 = _G(flags)[V015] ? "102h203" : "102h201";
+				}
+				break;
+
+			case 54:
+				series_play_("102ha07", 3840, 0, 3, 30, 0, 100, 0, 0, 23, 23);
+				series_play_("102ha07s", 3841, 0, -1, 30, 0, 100, 0, 0, 23, 23);
+
+				if (_play1) {
+					digi_play(_play1, 1, 255, 10);
+					_play1 = nullptr;
+				}
+				break;
+
+			case 55:
+				_val12 = 55;
+				series_play_("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 30, 30);
+				series_play_("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 30, 30);
+				break;
+
+			case 56:
+				_val12 = 56;
+				series_play_("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 9, 10);
+				series_play_("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 9, 10);
+				break;
+
+			case 57:
+				series_unload(_index5);
+				_val11 = 46;
+				series_play_("102ha08s", 3841, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_stream_with_breaks(STREAMS5, "102ha08", 6, 3840, 3);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 55:
+			if (_val11 == 55) {
+				_series3 = series_play_("102ha07", 3840, 4, -1, 6, -1, 100, 0, 0, 30, 33);
+				_series6 = series_play_("102ha07s", 3841, 4, -1, 6, -1, 100, 0, 0, 30, 33);
+
+				if (_play1) {
+					digi_play(_play1, 1, 255, 10);
+					_play1 = nullptr;
+					kernel_timing_trigger(80, 16);
+				}
+			} else {
+				TerminateMachineAndNull(_series3);
+				TerminateMachineAndNull(_series6);
+				_series3 = nullptr;
+				_val12 = 54;
+				series_play_("102ha07", 3840, 2, 3, 6, 0, 100, 0, 0, 30, 30);
+				series_play_("102ha07s", 3841, 2, -1, 6, 0, 100, 0, 0, 30, 30);
+			}
+			break;
+
+		case 56:
+			if (_val11 == 56) {
+				_series3 = series_play_("102ha07", 3840, 4, -1, 4, -1, 100, 0, 0, 11, 19);
+				_series6 = series_play_("102ha07s", 3841, 4, -1, 4, -1, 100, 0, 0, 11, 19);
+
+				if (_play1) {
+					digi_play(_play1, 1, 255, 15);
+					_play1 = nullptr;
+				}
+			} else {
+				TerminateMachineAndNull(_series3);
+				TerminateMachineAndNull(_series6);
+				_series3 = nullptr;
+				_val12 = 54;
+				series_play_("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 20, 21);
+				series_play_("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 20, 21);
+			}
+			break;
+
+		default:
 			break;
 		}
 		break;
+
+	// TODO: More daemon stuff
+
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;
@@ -504,6 +835,34 @@ const char *Room102::getDigi2(int num) const {
 	return (num >= 1 && num <= 35) ? NAMES[num - 1] : "102_024";
 }
 
+void Room102::sub1() {
+	if (_series4) {
+		TerminateMachineAndNull(_series4);
+		TerminateMachineAndNull(_series5);
+	}
+}
+
+void Room102::queuePlay(const char *filename, int trigger, KernelTriggerType triggerMode) {
+	if (_val9) {
+		digi_stop(2);
+		_val9 = 0;
+		_val8 = 1;
+	}
+
+	_play1 = filename;
+	_val11 = 20;
+	_trigger = trigger;
+	_triggerMode = triggerMode;
+	player_set_commands_allowed(false);
+
+	term_message("spleen %d %d    %d %d", _val12, _val11, 19, 20);
+
+	if (_val12 == 20) {
+		term_message("spleen2");
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_trigger_dispatch_now(3);
+	}
+}
 
 } // namespace Rooms
 } // namespace Burger

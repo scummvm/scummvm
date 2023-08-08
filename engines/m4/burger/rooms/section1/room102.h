@@ -32,10 +32,9 @@ class Room102 : public Room {
 private:
 	int _val1 = 0;
 	int _val3 = -1;
-	int _val4 = 0;
+	long _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	int _val7 = 0;
 	int _val8 = 0;
 	int _val9 = 0;
 	uint32 _val10 = 99999;
@@ -49,17 +48,25 @@ private:
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
 	machine *_series3 = nullptr;
+	machine *_series4 = nullptr;
+	machine *_series5 = nullptr;
+	machine *_series6 = nullptr;
 	machine *_laz1 = nullptr;
 	machine *_laz2 = nullptr;
 	machine *_stream1 = nullptr;
 	int _index1 = 0, _index2 = 0;
+	int _index3 = 0, _index4 = 0;
+	int _index5 = 0;
 	const char *_play1 = nullptr;
+	bool _flag1 = false;
 
 	void setup(int val1 = 0, int val2 = 1);
 	void setupWax();
 	void setupLaz();
 	const char *getDigi1(int num) const;
 	const char *getDigi2(int num) const;
+	void sub1();
+	void queuePlay(const char *filename, int trigger = 29, KernelTriggerType triggerMode = KT_DAEMON);
 
 public:
 	Room102() : Room() {}

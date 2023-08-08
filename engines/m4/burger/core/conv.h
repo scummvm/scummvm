@@ -28,7 +28,8 @@
 namespace M4 {
 namespace Burger {
 
-extern void conv_resume();
+extern void conv_play_curr();
+extern void conv_resume_curr();
 
 } // namespace Burger
 } // namespace M4

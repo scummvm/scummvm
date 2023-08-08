@@ -276,7 +276,7 @@ void BurgerEngine::syncFlags(Common::Serializer &s) {
 void BurgerEngine::global_daemon() {
 	switch (_G(kernel).trigger) {
 	case gRESUME_CONVERSATION:
-		conv_resume();
+		conv_resume_curr();
 		break;
 
 	case gSERIES_STREAM_BREAK:
