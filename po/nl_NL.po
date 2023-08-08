@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-07 08:50+0000\n"
+"POT-Creation-Date: 2023-08-08 06:29+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -283,7 +283,7 @@ msgstr "Een andere opslag is actief. Wilt u die onderbreken?"
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3837
-#: engines/toon/toon.cpp:1501
+#: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Ja"
 
@@ -296,7 +296,7 @@ msgstr "Ja"
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3837
-#: engines/toon/toon.cpp:1501
+#: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Nee"
 
@@ -3009,7 +3009,7 @@ msgstr "~T~erug naar Startmenu"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:742
 #: engines/sci/engine/kfile.cpp:1076 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3771
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3801
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
@@ -3031,7 +3031,7 @@ msgstr "Spel opslaan:"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
 #: engines/sci/engine/kfile.cpp:1076 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3771
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3801
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
@@ -4751,7 +4751,7 @@ msgstr "Controleren op updates..."
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:301 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:464 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5376
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5406
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Kon de '%s' engine data file niet vinden."
@@ -4759,7 +4759,7 @@ msgstr "Kon de '%s' engine data file niet vinden."
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:309 engines/supernova/supernova.cpp:469
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5389
+#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5419
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "De '%s' engine data file is corrupt."
@@ -4767,7 +4767,7 @@ msgstr "De '%s' engine data file is corrupt."
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
 #: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:319 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5400
+#: engines/toon/toon.cpp:5430
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -4912,7 +4912,7 @@ msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3865
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3895
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
 msgstr "Laad opgeslagen spel:"
@@ -4932,7 +4932,7 @@ msgstr "Laad opgeslagen spel:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3865
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3895
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
 msgstr "Laad"
@@ -9137,31 +9137,31 @@ msgstr "Saturn CD versie wordt nog niet ondersteund"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Font variant niet aanwezig in '%s' engine data file."
 
-#: engines/toon/toon.cpp:244
+#: engines/toon/toon.cpp:261
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "Spel opgeslagen in slot #%d "
 
-#: engines/toon/toon.cpp:248
+#: engines/toon/toon.cpp:265
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "Snel opslaan in slot #%d mislukt"
 
-#: engines/toon/toon.cpp:261
+#: engines/toon/toon.cpp:278
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "Opgeslagen spel #%d snel geladen"
 
-#: engines/toon/toon.cpp:265
+#: engines/toon/toon.cpp:282
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Kon opgeslagen spel #%d niet snelladen"
 
-#: engines/toon/toon.cpp:1501
+#: engines/toon/toon.cpp:1531
 msgid "Are you sure you want to exit?"
 msgstr "Weet u zeker dat u wilt weggaan?"
 
-#: engines/toon/toon.cpp:1911
+#: engines/toon/toon.cpp:1941
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Kan de '%s' data file niet vinden."

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-07 08:50+0000\n"
+"POT-Creation-Date: 2023-08-08 06:29+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -290,7 +290,7 @@ msgstr "Цяпер працуе іншае сховішча. Перапыніц�
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3837
-#: engines/toon/toon.cpp:1501
+#: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Так"
 
@@ -303,7 +303,7 @@ msgstr "Так"
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3837
-#: engines/toon/toon.cpp:1501
+#: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Не"
 
@@ -3014,7 +3014,7 @@ msgstr "Г~а~лоўнае меню"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:742
 #: engines/sci/engine/kfile.cpp:1076 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3771
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3801
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
@@ -3036,7 +3036,7 @@ msgstr "Захаваць гульню:"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
 #: engines/sci/engine/kfile.cpp:1076 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3771
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3801
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
@@ -4763,7 +4763,7 @@ msgstr "Правяраю абнаўленні..."
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:301 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:464 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5376
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5406
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Не атрымалася знайсці файл рухавічка %s."
@@ -4771,7 +4771,7 @@ msgstr "Не атрымалася знайсці файл рухавічка %s.
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:309 engines/supernova/supernova.cpp:469
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5389
+#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5419
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "Файл рухавічка %s пашкоджаны."
@@ -4779,7 +4779,7 @@ msgstr "Файл рухавічка %s пашкоджаны."
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
 #: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:319 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5400
+#: engines/toon/toon.cpp:5430
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -4921,7 +4921,7 @@ msgstr "Дадаць меню хуткасці гульні (падобна на
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3865
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3895
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
 msgstr "Узнавіць гульню:"
@@ -4941,7 +4941,7 @@ msgstr "Узнавіць гульню:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3865
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3895
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
 msgstr "Узнавіць"
@@ -9131,32 +9131,32 @@ msgstr "Game id не падтрымваецца"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Варыянт шрыфту адсутны ў файле рухавічка %s."
 
-#: engines/toon/toon.cpp:244
+#: engines/toon/toon.cpp:261
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "Гульня захавана ў слот %d "
 
-#: engines/toon/toon.cpp:248
+#: engines/toon/toon.cpp:265
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "Не атрымалася хутка захаваць гульню ў слот %d"
 
-#: engines/toon/toon.cpp:261
+#: engines/toon/toon.cpp:278
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "Захаваная гульня №%d загружана"
 
-#: engines/toon/toon.cpp:265
+#: engines/toon/toon.cpp:282
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Не атрымалася хутка загрузіць захаваную гульню №%d"
 
-#: engines/toon/toon.cpp:1501
+#: engines/toon/toon.cpp:1531
 #, fuzzy
 msgid "Are you sure you want to exit?"
 msgstr "   Вы ўпэўнены, што жадаеце выйсці?   "
 
-#: engines/toon/toon.cpp:1911
+#: engines/toon/toon.cpp:1941
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Не магчыма знайсці файл дадзеных '%s'."
