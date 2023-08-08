@@ -1737,7 +1737,7 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 			_vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable2, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable3, temp));
 	} else if (fontId == FID_CHINESE_FNT && _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::ZH_TWN) {
 		// We wrap all fonts in Big5 support but FID_CHINESE additionally attempts to match height
-		OldDOSFont *ofnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
+		OldDOSFont *ofnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12, false);
 		ofnt->loadPCBIOSTall();
 		fnt = new ChineseTwoByteFontEoB(_big5, ofnt);
 		fnt->setColorMap(_textColorsMap);
@@ -1993,7 +1993,7 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor), _numGlyphsMax(128), _useOverlay(false), _scaleV(1), _colorMap8bit(0), _colorMap16bit(0) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor, bool remapCharacters) : _renderMode(mode), _shadowColor(shadowColor), _remapCharacters(remapCharacters), _numGlyphsMax(128), _useOverlay(false), _scaleV(1), _colorMap8bit(0), _colorMap16bit(0) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
@@ -2115,7 +2115,8 @@ void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col
 		0x0000, 0x8000, 0xc000, 0xe000, 0xf000, 0xf800, 0xfc00, 0xfe00, 0xff00, 0xff80, 0xffc0, 0xffe0, 0xfff0, 0xfff8, 0xfffc, 0xfffe, 0xffff
 	};
 
-	c = convert(c);
+	if (_remapCharacters)
+		c = convert(c);
 
 	if (c >= _numGlyphs)
 		return;

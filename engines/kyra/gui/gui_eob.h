@@ -56,6 +56,7 @@ public:
 	// Non button based menu handling (main menu, character generation)
 	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing, int textColor, int highlightColor, int shadowColor);
 	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset);
+	void simpleMenu_unselect(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset);
 
 	// Button based menus (camp menu, load menu)
 	virtual void runCampMenu();
@@ -173,6 +174,10 @@ private:
 	int _updateBoxColorIndex;
 	const uint8 *_highLightColorTable;
 	uint32 _highLightBoxTimer;
+
+	const bool _textInputForceUppercase;
+	const int _textInputHeight;
+	const int _textInputShadowOffset;
 
 	const Screen::FontId _menuFont;
 	const Screen::FontId _menuFont2;

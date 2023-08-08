@@ -721,6 +721,7 @@ public:
 
 	void setTextMarginRight(int x) { _textMarginRight = x; }
 	uint16 _textMarginRight;
+	bool _overdrawMargin;
 
 	const ScreenDim *_curDim;
 

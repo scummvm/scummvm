@@ -87,6 +87,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_fontStyles = 0;
 	_paletteChanged = true;
 	_textMarginRight = SCREEN_W;
+	_overdrawMargin = false;
 	_customDimTable = nullptr;
 	_curDim = nullptr;
 	_curDimIndex = 0;
@@ -262,6 +263,7 @@ bool Screen::init() {
 	_curDim = nullptr;
 	_charSpacing = 0;
 	_lineSpacing = 0;
+	_overdrawMargin = (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::ZH_TWN);
 	for (int i = 0; i < ARRAYSIZE(_textColorsMap); ++i)
 		_textColorsMap[i] = i;
 	_textColorsMap16bit[0] = _textColorsMap16bit[1] = 0;
@@ -1543,9 +1545,17 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			x = x_start;
 			y += (charHeight + _lineSpacing);
 		} else {
+			bool needDrawing = true;
 			int charWidth = getCharWidth(c);
 			int needSpace = enableWordWrap ? getTextWidth(str, true) + charWidth : charWidth;
 			if (x + needSpace > _textMarginRight) {
+				if (_overdrawMargin && (x + needSpace <= Screen::SCREEN_W)) {
+					// The Chinese version of EOB II has a weird way of handling the right margin.
+					// It will squeeze in the final character even if it goes over the margin
+					// (see e. g. the chargen screen "Your party is complete. Select the PLAY button...").
+					drawChar(c, x, y, pitch);
+					needDrawing = false;
+				}
 				x = x_start;
 				y += (charHeight + _lineSpacing);
 				if (enableWordWrap) {
@@ -1558,9 +1568,10 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 				if (y >= _screenHeight)
 					break;
 			}
-
-			drawChar(c, x, y, pitch);
-			x += charWidth;
+			if (needDrawing) {
+				drawChar(c, x, y, pitch);
+				x += charWidth;
+			}
 		}
 	}
 }

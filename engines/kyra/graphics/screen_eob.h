@@ -262,7 +262,7 @@ private:
 */
 class OldDOSFont : public Font {
 public:
-	OldDOSFont(Common::RenderMode mode, uint8 shadowColor);
+	OldDOSFont(Common::RenderMode mode, uint8 shadowColor, bool remapCharacters = true);
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
@@ -297,6 +297,7 @@ private:
 	virtual uint16 convert(uint16 c) const;
 	Common::RenderMode _renderMode;
 	const uint16 *_colorMap16bit;
+	bool _remapCharacters;
 
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;
