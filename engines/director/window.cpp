@@ -223,8 +223,6 @@ void Window::setStageColor(uint32 stageColor, bool forceReset) {
 void Window::setTitleVisible(bool titleVisible) {
 	MacWindow::setTitleVisible(titleVisible);
 	updateBorderType();
-
-	setVisible(true); // Activate this window on top
 }
 
 Datum Window::getStageRect() {
@@ -262,14 +260,10 @@ void Window::setModal(bool modal) {
 		_wm->setLockedWidget(this);
 		_isModal = true;
 	}
-
-	setVisible(true); // Activate this window on top
 }
 
 void Window::setFileName(Common::String filename) {
 	setNextMovie(filename);
-
-	setVisible(true); // Activate this window on top
 }
 
 void Window::reset() {
