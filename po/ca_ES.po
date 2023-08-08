@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-08 06:29+0000\n"
-"PO-Revision-Date: 2023-07-21 07:40+0000\n"
+"PO-Revision-Date: 2023-08-09 05:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -226,10 +226,8 @@ msgid "Load"
 msgstr "Carrega"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Carrega el fitxer"
+msgstr "Carrega el codi des del fitxer"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
@@ -357,10 +355,8 @@ msgstr ""
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "No s'ha pogut pujar el fitxer!"
+msgstr "No s'ha pogut carregar el fitxer JSON"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
@@ -980,10 +976,8 @@ msgid "Prev"
 msgstr "Anterior"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Desant la partida..."
+msgstr "Desa la imatge..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
@@ -991,10 +985,8 @@ msgid "%u of %u"
 msgstr ""
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "Desa la partida"
+msgstr "Desa la imatge"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
