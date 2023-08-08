@@ -35,6 +35,7 @@ namespace Nancy {
 namespace Action {
 
 void ActionManager::handleInput(NancyInput &input) {
+	bool setHoverCursor = false;
 	for (auto &rec : _records) {
 		if (rec->_isActive) {
 			// Send input to all active records
@@ -45,7 +46,12 @@ void ActionManager::handleInput(NancyInput &input) {
 				rec->_hasHotspot &&
 				rec->_hotspot.isValidRect() && // Needed for nancy2 scene 1600
 				NancySceneState.getViewport().convertViewportToScreen(rec->_hotspot).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(rec->getHoverCursor());
+			if (!setHoverCursor) {
+				// Hotspots may overlap, but we want the hover cursor for the first one we encounter
+				// This fixes the stairs in nancy3
+				g_nancy->_cursorManager->setCursorType(rec->getHoverCursor());
+				setHoverCursor = true;
+			}
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.input &= ~NancyInput::kLeftMouseButtonUp;
