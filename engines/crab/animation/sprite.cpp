@@ -273,13 +273,13 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 
 		FightMove fm;
 		if (_animSet._fight.nextMove(fm)) {
-			Rect actual_range;
-			actual_range.x = bounds.x + fm._ai._range._val[_dir].x;
-			actual_range.y = bounds.y + fm._ai._range._val[_dir].y;
-			actual_range.w = fm._ai._range._val[_dir].w;
-			actual_range.h = fm._ai._range._val[_dir].h;
+			Rect actualRange;
+			actualRange.x = bounds.x + fm._ai._range._val[_dir].x;
+			actualRange.y = bounds.y + fm._ai._range._val[_dir].y;
+			actualRange.w = fm._ai._range._val[_dir].w;
+			actualRange.h = fm._ai._range._val[_dir].h;
 
-			actual_range.draw(-camera.x, -camera.y, 255, 0, 255);
+			actualRange.draw(-camera.x, -camera.y, 255, 0, 255);
 		}
 
 		/*int health = 0;
@@ -341,7 +341,7 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 	int num = 0;
 	info.statGet(_id, pyrodactyl::stat::STAT_SPEED, num);
 	++num;
-	float player_speed = static_cast<float>(num);
+	float playerSpeed = static_cast<float>(num);
 
 	// This is for Diablo style hold-mouse-button-in-direction-of-movement
 	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
@@ -355,39 +355,38 @@ void Sprite::handleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 		// X axis
 		if (g_engine->_mouse->_motion.x > x + w)
-			xVel(player_speed * sc._walkVelMod.x);
+			xVel(playerSpeed * sc._walkVelMod.x);
 		else if (g_engine->_mouse->_motion.x < x)
-			xVel(-player_speed * sc._walkVelMod.x);
+			xVel(-playerSpeed * sc._walkVelMod.x);
 		else
 			xVel(0.0f);
 
 		// Y axis
 		if (g_engine->_mouse->_motion.y > y + h)
-			yVel(player_speed * sc._walkVelMod.y);
+			yVel(playerSpeed * sc._walkVelMod.y);
 		else if (g_engine->_mouse->_motion.y < y)
-			yVel(-player_speed * sc._walkVelMod.y);
+			yVel(-playerSpeed * sc._walkVelMod.y);
 		else
 			yVel(0.0f);
-	} else // Keyboard movement
-	{
+	} else { // Keyboard movement
 		// Disable destination as soon as player presses a direction key
 		// X axis
 		if (g_engine->_inputManager->state(IG_LEFT)) {
 			_aiData._dest._active = false;
-			xVel(-player_speed * sc._walkVelMod.x);
+			xVel(-playerSpeed * sc._walkVelMod.x);
 		} else if (g_engine->_inputManager->state(IG_RIGHT)) {
 			_aiData._dest._active = false;
-			xVel(player_speed * sc._walkVelMod.x);
+			xVel(playerSpeed * sc._walkVelMod.x);
 		} else if (!_aiData._dest._active)
 			xVel(0.0f);
 
 		// Y axis
 		if (g_engine->_inputManager->state(IG_UP)) {
 			_aiData._dest._active = false;
-			yVel(-player_speed * sc._walkVelMod.y);
+			yVel(-playerSpeed * sc._walkVelMod.y);
 		} else if (g_engine->_inputManager->state(IG_DOWN)) {
 			_aiData._dest._active = false;
-			yVel(player_speed * sc._walkVelMod.y);
+			yVel(playerSpeed * sc._walkVelMod.y);
 		} else if (!_aiData._dest._active)
 			yVel(0.0f);
 
