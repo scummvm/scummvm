@@ -36,11 +36,11 @@
 
 namespace Graphics {
 class ManagedSurface;
-class Surface;
+struct Surface;
 } // End of namespace Graphics
 
 namespace Common {
-class Rect;
+struct Rect;
 } // End of namespace Common
 
 namespace Crab {

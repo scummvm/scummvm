@@ -29,7 +29,7 @@
 
 namespace Graphics {
 class ManagedSurface;
-class PixelFormat;
+struct PixelFormat;
 class Screen;
 } // End of namespace Graphics
 
@@ -40,8 +40,8 @@ struct CrabGameDescription;
 
 class LoadingScreen;
 
-class FilePaths;
-class TempValue;
+struct FilePaths;
+struct TempValue;
 class StringPool;
 class ScreenSettings;
 
