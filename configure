@@ -6916,25 +6916,22 @@ case $_host_cpu in
 esac
 
 define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
-if test "$_ext_sse2" = yes ; then
-	append_var CXXFLAGS "-msse2 -msse"
-fi
 echo_n "Enabling x86/64 SSE2... "
 echo "$_ext_sse2"
 define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_AVX2'
 if test "$_ext_avx2" = yes ; then
-	append_var CXXFLAGS "-mavx2 -mavx -msse2 -msse"
-	define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_SSE2'
+	define_in_config_h_if_yes "$_ext_avx2" 'SCUMMVM_SSE2'
 fi
 echo_n "Enabling x86/64 AVX2 and SSE2... "
 echo "$_ext_avx2"
-define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
 # AArch64 might by default come with more fpu extensions, so we wouldn't want
 # to downgrade. Almost all armv7 cpus have neon or less in terms of fpu
 # extensions so setting fpu to neon is almost always an upgrade over defaults.
 # Not to mention it would have to be included anyways
-if ( test "$_ext_neon" = yes ) && ( test "$_host_cpu" != aarch64 ) ; then
-	append_var CXXFLAGS "-mfpu=neon"
+if ( test "$_host_cpu" != aarch64 ) ; then
+	define_in_config_h_if_yes "$_ext_neon" 'SCUMMVM_NEON'
+else
+	define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
 fi
 echo_n "Enabling arm NEON... "
 echo "$_ext_neon"
