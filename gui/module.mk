@@ -56,12 +56,10 @@ MODULE_OBJS += \
 endif
 endif
 
-ifdef USE_SCUMMVMDLC
-ifdef USE_LIBCURL
+ifdef USE_DLC
 MODULE_OBJS += \
 	dlcsdialog.o \
 	downloaddlcsdialog.o
-endif
 endif
 
 ifdef ENABLE_EVENTRECORDER

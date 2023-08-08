@@ -197,6 +197,7 @@ _enable_tsan=no
 _enable_ubsan=no
 _bink=yes
 _cloud=auto
+_dlc=no
 _scummvmdlc=no
 _pandoc=no
 _curl=yes
@@ -959,7 +960,8 @@ Optional Features:
   --disable-cloud          don't build cloud support
   --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
-  --enable-scummvmdlc      build scummvm dlc downloading support
+  --enable-dlc             build scummvm dlc downloading support
+  --enable-scummvmdlc      build scummvm dlc downloading support using ScummVM Cloud
   --enable-eventrecorder   enable event recording functionality
   --disable-eventrecorder  disable event recording functionality
   --enable-updates         build support for updates
@@ -1254,6 +1256,8 @@ for ac_option in $@; do
 	--disable-enet)               _enet=no               ;;
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
+	--enable-dlc)                 _dlc=yes               ;;
+	--disable-dlc)                _dlc=no                ;;
 	--enable-scummvmdlc)          _scummvmdlc=yes        ;;
 	--disable-scummvmdlc)         _scummvmdlc=no         ;;
 	--enable-lld)                 _lld=yes               ;;
@@ -5835,6 +5839,13 @@ else
 fi
 define_in_config_if_yes $_cloud 'USE_CLOUD'
 
+if test "$_scummvmdlc" = "yes"; then
+	if test "$_libcurl" = "yes"; then
+		_dlc=yes
+	fi
+fi
+
+define_in_config_if_yes $_dlc 'USE_DLC'
 define_in_config_if_yes $_scummvmdlc 'USE_SCUMMVMDLC'
 
 #
@@ -7034,6 +7045,10 @@ fi
 
 if test "$_cloud" = yes ; then
 	echo_n ", cloud"
+fi
+
+if test "$_dlc" = yes ; then
+	echo_n ", dlc"
 fi
 
 if test "$_scummvmdlc" = yes ; then
