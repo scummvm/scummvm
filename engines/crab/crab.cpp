@@ -127,8 +127,7 @@ Common::Error CrabEngine::run() {
 }
 
 void CrabEngine::initializePath(const Common::FSNode &gamePath) {
-	Engine::initializePath(gamePath);
-	SearchMan.addDirectory("res", gamePath, 0, 5);
+	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 5);
 }
 
 Common::Error CrabEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
