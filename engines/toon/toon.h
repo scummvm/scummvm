@@ -109,7 +109,7 @@ public:
 	char **_specialInfoLine;
 
 	Common::Error run() override;
-	bool showMainmenu(bool &loadedGame);
+	bool showMainMenu(bool &loadedGame);
 	bool showOptions();
 	bool showQuitConfirmationDialogue();
 	void init();

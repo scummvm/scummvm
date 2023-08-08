@@ -192,11 +192,28 @@ void ToonEngine::parseInput() {
 	_mouseY = _event->getMousePos().y;
 	_mouseButton = _event->getButtonState();
 
+	bool breakPollEventloop = false;
 	Common::Event event;
-	while (_event->pollEvent(event)) {
+	while (!breakPollEventloop && _event->pollEvent(event)) {
 
 		const bool hasModifier = (event.kbd.flags & Common::KBD_NON_STICKY) != 0;
 		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			// fall through
+		case Common::EVENT_LBUTTONUP:
+			// fall through
+		case Common::EVENT_RBUTTONDOWN:
+			// fall through
+		case Common::EVENT_RBUTTONUP:
+			_mouseButton = _event->getButtonState();
+			breakPollEventloop = true;
+			break;
+
 		case Common::EVENT_KEYDOWN:
 			if ((event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) && !hasModifier) {
 				_audioManager->stopCurrentVoice();
@@ -1253,7 +1270,7 @@ bool ToonEngine::showOptions() {
 	return exitGame;
 }
 
-bool ToonEngine::showMainmenu(bool &loadedGame) {
+bool ToonEngine::showMainMenu(bool &loadedGame) {
 	Picture *mainmenuPicture = new Picture(this);
 	mainmenuPicture->loadPicture("TITLESCR.CPS");
 	mainmenuPicture->setupPalette();
@@ -1298,9 +1315,10 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	while (!doExitMenu) {
 		int clickingOn = MAINMENUHOTSPOT_NONE;
 		int clickingOnSprite = 0;
-		bool clickRelease = false;
+		bool resetHotspotLoop = false;
+		bool clickEarlyRelease = false;
 
-		while (!clickRelease) {
+		while (!resetHotspotLoop) {
 			if (!musicPlaying) {
 				musicPlayingChannel = _audioManager->playMusic("", "BR091013");
 				musicPlaying = musicPlayingChannel >= 0;
@@ -1340,13 +1358,17 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 			if (_shouldQuit || doExitMenu) {
 				clickingOn = MAINMENUHOTSPOT_NONE;
-				clickRelease = true;
+				resetHotspotLoop = true;
 				doExitMenu = true;
 				// Prevent holding left mouse button down to be detected
 				// as a new click when returning from menu
 				_lastMouseButton = _mouseButton;
 			} else {
 				// update mouse clicking state and handle hotkeys
+				// TODO The code handling menu button presses could be further simplified
+				//      since we expect that a clicked button (on left-mouse-down) will go through
+				//      two steps of handling (step 1: pressed state and sound, step 2: doing the relevant task),
+				//      and the sequence of these two steps should not be broken once it's started.
 				parseInput();
 
 				copyToVirtualScreen(true);
@@ -1355,7 +1377,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 				if (_mouseButton & 1) {
 					// left mouse button pushed down
 					for (int entryNr = 0; entryNr < MAINMENU_ENTRYCOUNT; ++entryNr) {
-						if (entries[entryNr].menuMask & menuMask
+						if ((entries[entryNr].menuMask & menuMask)
 						    && entries[entryNr].id != MAINMENUHOTSPOT_NONE
 						    && entries[entryNr].rect.contains(_mouseX, _mouseY)
 						    && (clickingOn == MAINMENUHOTSPOT_NONE && !(oldMouseButton & 1))) {
@@ -1366,9 +1388,13 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 					}
 				} else if (clickingOn != MAINMENUHOTSPOT_NONE) {
 					// left mouse button released/not pushed down
-					clickRelease = true;
-					clickingOn = MAINMENUHOTSPOT_NONE;
-					entries[clickingOnSprite].handled = false;
+					if (!entries[clickingOnSprite].handled)
+						clickEarlyRelease = true;
+					else {
+						resetHotspotLoop = true;
+						clickingOn = MAINMENUHOTSPOT_NONE;
+						entries[clickingOnSprite].handled = false;
+					}
 				}
 
 				// handle buttons
@@ -1404,14 +1430,14 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 						case MAINMENUHOTSPOT_HOTKEYS:
 							// fall through
 						case MAINMENUHOTSPOT_HOTKEYSCLOSE:
-							menuMask = clickingOn == MAINMENUHOTSPOT_HOTKEYS? MAINMENUMASK_HOTKEYS : MAINMENUMASK_BASE;
+							menuMask = (clickingOn == MAINMENUHOTSPOT_HOTKEYS)? MAINMENUMASK_HOTKEYS : MAINMENUMASK_BASE;
 							entries[clickingOnSprite].activeFrame = 0;
 							break;
 
 						case MAINMENUHOTSPOT_START:
 							// Start game (actually exit main menu)
 							clickingOn = MAINMENUHOTSPOT_NONE;
-							clickRelease = true;
+							resetHotspotLoop = true;
 							loadedGame = false;
 							doExitMenu = true;
 							break;
@@ -1422,7 +1448,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 							loadedGame = doExitMenu;
 							if (loadedGame) {
 								clickingOn = MAINMENUHOTSPOT_NONE;
-								clickRelease = true;
+								resetHotspotLoop = true;
 							} else {
 								entries[clickingOnSprite].activeFrame = 0;
 							}
@@ -1453,7 +1479,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 							exitGame = showQuitConfirmationDialogue();
 							if (exitGame)  {
 								clickingOn = MAINMENUHOTSPOT_NONE;
-								clickRelease = true;
+								resetHotspotLoop = true;
 								doExitMenu = true;
 							} else {
 								entries[clickingOnSprite].activeFrame = 0;
@@ -1462,6 +1488,10 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 						default:
 							break;
+						}
+
+						if (clickEarlyRelease) {
+							resetHotspotLoop = true;
 						}
 					}
 				}
@@ -1525,7 +1555,7 @@ Common::Error ToonEngine::run() {
 
 		// show mainmenu
 		// the demo does not have a menu and starts a new game right away
-		if (!_isDemo && !showMainmenu(loadedGame)) {
+		if (!_isDemo && !showMainMenu(loadedGame)) {
 			return Common::kNoError;
 		}
 	}
