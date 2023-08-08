@@ -30,6 +30,7 @@
 
 #include "crab/crab.h"
 #include "crab/animation/imageeffect.h"
+#include "crab/image/ImageManager.h"
 
 namespace Crab {
 

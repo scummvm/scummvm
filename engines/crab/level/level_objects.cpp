@@ -29,6 +29,7 @@
  */
 
 #include "crab/crab.h"
+#include "crab/image/ImageManager.h"
 #include "crab/level/level_objects.h"
 
 namespace Crab {
