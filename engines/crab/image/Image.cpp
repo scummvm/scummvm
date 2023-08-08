@@ -33,6 +33,7 @@
 #include "graphics/screen.h"
 #include "image/png.h"
 #include "crab/crab.h"
+#include "crab/filesystem.h"
 #include "crab/image/Image.h"
 
 using ImageDecoder = Image::PNGDecoder;

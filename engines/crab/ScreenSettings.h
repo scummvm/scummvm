@@ -31,9 +31,7 @@
 #ifndef CRAB_SCREENSETTINGS_H
 #define CRAB_SCREENSETTINGS_H
 
-#include "crab/GameParam.h"
-#include "crab/loaders.h"
-
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Crab {
 

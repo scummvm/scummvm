@@ -29,6 +29,8 @@
  */
 
 #include "crab/crab.h"
+#include "crab/GameParam.h"
+#include "crab/loaders.h"
 #include "crab/ScreenSettings.h"
 
 namespace Crab {

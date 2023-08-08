@@ -33,6 +33,7 @@
 // Purpose:  Timer functions
 //=============================================================================
 #include "common/system.h"
+#include "crab/loaders.h"
 #include "crab/timer.h"
 
 namespace Crab {

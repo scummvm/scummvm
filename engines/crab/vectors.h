@@ -31,7 +31,7 @@
 #ifndef CRAB_VECTORS_H
 #define CRAB_VECTORS_H
 
-#include "crab/GameParam.h"
+#include "common/debug.h"
 #include "crab/loaders.h"
 
 namespace Crab {

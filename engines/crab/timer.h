@@ -36,7 +36,7 @@
 #define CRAB_TIMER_H
 
 #include "crab/crab.h"
-#include "crab/loaders.h"
+#include "crab/rapidxml/rapidxml.hpp"
 
 namespace Crab {
 

@@ -33,6 +33,7 @@
 #include "graphics/screen.h"
 #include "graphics/fonts/ttf.h"
 #include "crab/crab.h"
+#include "crab/GameParam.h"
 #include "crab/XMLDoc.h"
 #include "crab/text/TextManager.h"
 

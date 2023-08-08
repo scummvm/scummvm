@@ -31,7 +31,6 @@
 #ifndef CRAB_LINE_H
 #define CRAB_LINE_H
 
-#include "crab/ScreenSettings.h"
 #include "crab/vectors.h"
 
 namespace Crab {

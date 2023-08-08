@@ -29,6 +29,7 @@
  */
 
 #include "crab/GameParam.h"
+#include "crab/XMLDoc.h"
 
 namespace Crab {
 // Are we in debug mode or not?

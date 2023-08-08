@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/XMLDoc.h"
 #include "crab/ui/CreditScreen.h"
 //#include "crab/url.h"
 

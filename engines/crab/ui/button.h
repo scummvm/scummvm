@@ -35,6 +35,7 @@
 #ifndef CRAB_BUTTON_H
 #define CRAB_BUTTON_H
 
+#include "crab/GameParam.h"
 #include "crab/ui/Caption.h"
 #include "crab/ui/HoverInfo.h"
 #include "crab/image/ImageManager.h"

@@ -28,8 +28,9 @@
  *
  */
 
-#include "crab/TMX/TMXMap.h"
+#include "crab/image/ImageManager.h"
 #include "crab/text/TextManager.h"
+#include "crab/TMX/TMXMap.h"
 
 namespace Crab {
 
