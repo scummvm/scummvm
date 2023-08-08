@@ -42,11 +42,12 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"Unrest",
 		"",
-		AD_ENTRY1s("Unrest.exe", "bae406538172eb062480f25ea6e387e5", 805376),
+		AD_ENTRY2s("res/anims/kanikasman1_moves.xml", "e7eb0c1346f236d8475cad8aab597283", 11778,
+				   "res/traits/tanya_intelligent.png", "441221becc2b70e7c9d7838d6a8bd990", 12593),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE),
+		ADGF_DROPLANGUAGE | ADGF_DROPPLATFORM,
+		GUIO3(GUIO_NOSPEECH, GUIO_NOLAUNCHLOAD, GUIO_NOMIDI),
 	},
 	AD_TABLE_END_MARKER};
 
@@ -54,6 +55,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 CrabMetaEngineDetection::CrabMetaEngineDetection() : AdvancedMetaEngineDetection(Crab::gameDescriptions,
 																				 sizeof(ADGameDescription), crabGames) {
+	_flags = kADFlagMatchFullPaths;
 }
 
 REGISTER_PLUGIN_STATIC(CRAB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, CrabMetaEngineDetection);
