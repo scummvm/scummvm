@@ -57,7 +57,7 @@ void App::run() {
 	g_engine->_screenSettings->_inGame = false;
 
 	// While the user hasn't quit - This is the main game loop
-	while (currentStateId != GAMESTATE_EXIT && !SHOULD_QUIT) {
+	while (currentStateId != GAMESTATE_EXIT && !g_engine->shouldQuit()) {
 		// Start the frame timer
 		fps.start();
 
