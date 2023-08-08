@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef CRAB_COLOR_H
-#define CRAB_COLOR_H
+#ifndef CRAB_TEXTCOLOR_H
+#define CRAB_TEXTCOLOR_H
 
 #include "common/array.h"
 #include "crab/loaders.h"
@@ -42,10 +42,10 @@ namespace text {
 
 class ColorPool {
 
-	Common::Array<SDL_Color> _pool;
+	Common::Array<Color> _pool;
 
 	// Default invalid color
-	SDL_Color _invalid;
+	Color _invalid;
 
 public:
 	ColorPool() {
@@ -55,7 +55,7 @@ public:
 		_invalid.b = 220;
 	}
 
-	SDL_Color &get(const int &num);
+	Color &get(const int &num);
 	void load(const Common::String &filename);
 };
 } // End of namespace text
@@ -63,4 +63,4 @@ public:
 
 } // End of namespace Crab
 
-#endif // CRAB_COLOR_H
+#endif // CRAB_TEXTCOLOR_H

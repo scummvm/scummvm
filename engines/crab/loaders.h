@@ -32,6 +32,7 @@
 #define CRAB_LOADERS_H
 
 #include "common/str.h"
+#include "crab/color.h"
 #include "crab/gametype.h"
 #include "crab/numstr.h"
 #include "crab/rapidxml/rapidxml.hpp"
@@ -81,15 +82,8 @@ bool loadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node
 	return true;
 }
 
-// Make linker happy by temporarily defining SDL_COLOR
-struct SDL_Color {
-	uint32 r;
-	uint32 g;
-	uint32 b;
-};
-
 //Load Color
-bool loadColor(SDL_Color &col, rapidxml::xml_node<char> *node, const bool &echo = true,
+bool loadColor(Color &col, rapidxml::xml_node<char> *node, const bool &echo = true,
 	const Common::String &r_name = "r", const Common::String &g_name = "g", const Common::String &b_name = "b");
 
 //Shortcut to load integer color index to a number

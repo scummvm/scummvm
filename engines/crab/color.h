@@ -19,40 +19,17 @@
  *
  */
 
-/*
- * This code is based on the CRAB engine
- *
- * Copyright (c) Arvind Raja Yadav
- *
- * Licensed under MIT
- *
- */
-
-#include "crab/XMLDoc.h"
-#include "crab/text/color.h"
+#ifndef CRAB_COLOR_H
+#define CRAB_COLOR_H
 
 namespace Crab {
-
-using namespace pyrodactyl::text;
-
-void ColorPool::load(const Common::String &filename) {
-	_pool.clear();
-	XMLDoc colList(filename);
-	if (colList.ready()) {
-		rapidxml::xml_node<char> *node = colList.doc()->first_node("colors");
-		for (rapidxml::xml_node<char> *n = node->first_node("color"); n != nullptr; n = n->next_sibling("color")) {
-			Color c;
-			loadColor(c, n);
-			_pool.push_back(c);
-		}
-	}
-}
-
-Color &ColorPool::get(const int &num) {
-	if (_pool.size() <= static_cast<uint>(num))
-		return _invalid;
-
-	return _pool[num];
-}
+struct Color {
+	uint32 r;
+	uint32 g;
+	uint32 b;
+	uint32 a;
+};
 
 } // End of namespace Crab
+
+#endif // CRAB_COLOR_H
