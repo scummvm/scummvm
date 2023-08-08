@@ -31,18 +31,6 @@
  */
 class BaseBackend : public OSystem {
 public:
-	enum CpuFeatureFlags {
-		kCpuNoFeatures     = 0, // Completely detected by BaseBackend
-		kCpuFeatureSSE2    = (1 << 0), // Completely detected by BaseBackend
-		kCpuFeatureAVX2    = (1 << 1), // Completely detected by BaseBackend
-		// Detected either by BaseBackend (if platform ONLY supports ARMv8+) or
-		// platform specific Backends if ARM is optional or not on all versions
-		// of the platform.
-		kCpuFeatureNEON    = (1 << 2),
-		kCpuFeatureAlitvec = (1 << 3), // Platform specific
-		kCpuFeatureSSE41   = (1 << 4), // Completely detected by BaseBackend
-	};
-
 	void initBackend() override;
 	bool hasFeature(Feature f) override;
 
@@ -52,9 +40,6 @@ public:
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override {}
 	void fillScreen(uint32 col) override;
 	void fillScreen(const Common::Rect &r, uint32 col) override;
-
-private:
-	uint32 _cpuFeatures;
 };
 
 class EventsBaseBackend : virtual public BaseBackend, Common::EventSource {

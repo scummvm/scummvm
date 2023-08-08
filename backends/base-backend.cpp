@@ -64,48 +64,10 @@ void BaseBackend::initBackend() {
 	if (!_audiocdManager)
 		_audiocdManager = new DefaultAudioCDManager();
 #endif
-	_cpuFeatures = kCpuNoFeatures;
-#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
-	uint32 ext_edx1 = 0, ext_ebx7 = 0, ext_ecx1 = 0;
-#  ifdef __GNUC__
-	asm ("mov $1, %%eax\n\t"
-		 "cpuid\n\t"
-		 "mov %%edx, %0\n\t"
-		 "mov %%ecx, %2\n\t"
-		 "mov $7, %%eax\n\t"
-		 "mov $0, %%ecx\n\t"
-		 "cpuid\n\t"
-		 "mov %%ebx, %1\n\t"
-		 : "=rm" (ext_edx1), "=rm" (ext_ebx7), "=rm" (ext_ecx1)
-		 :
-		 : "eax", "ebx", "ecx", "edx");
-#  elif _MSC_VER
-	__asm
-	{
-		mov eax,1
-		cpuid
-		mov ext_edx1,edx
-		mov ext_ecx1,ecx
-		mov eax,7
-		mov ecx,0
-		cpuid
-		mov ext_ebx7,ebx
-	}
-#  endif // __GNUC__ and _MSC_VER
-	_cpuFeatures |= (ext_edx1 & (1 << 26)) ? kCpuFeatureSSE2 : kCpuNoFeatures;
-	_cpuFeatures |= (ext_ebx7 & (1 << 5)) ? kCpuFeatureAVX2 : kCpuNoFeatures;
-	_cpuFeatures |= (ext_ecx1 & (1 << 19)) ? kCpuFeatureSSE41 : kCpuNoFeatures;
-#endif // __x86_64__ and __i686__
-#if defined(__ARM_NEON) || defined(__ARM_NEON__)
-	_cpuFeatures |= kCpuFeatureNEON;
-#endif
 	OSystem::initBackend();
 }
 
 bool BaseBackend::hasFeature(Feature f) {
-	if (f == kFeatureCpuSSE2) return _cpuFeatures & kCpuFeatureSSE2;
-	if (f == kFeatureCpuAVX2) return _cpuFeatures & kCpuFeatureAVX2;
-	if (f == kFeatureCpuNEON) return _cpuFeatures & kCpuFeatureNEON;
 	return false;
 }
 

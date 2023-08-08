@@ -175,6 +175,11 @@ void OSystem_SDL::init() {
 bool OSystem_SDL::hasFeature(Feature f) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
+	if (f == kFeatureCpuSSE2) return SDL_HasSSE2();
+	if (f == kFeatureCpuNEON) return SDL_HasNEON();
+	if (f == kFeatureCpuSSE41) return SDL_HasSSE41();
+	if (f == kFeatureCpuAVX2) return SDL_HasAVX2();
+	if (f == kFeatureCpuAltivec) return SDL_HasAltiVec();
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 14)
 	if (f == kFeatureOpenUrl) return true;
