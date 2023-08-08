@@ -734,7 +734,7 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 										   const uint32 colorMod,
 										   const TSpriteBlendMode blend,
 										   const AlphaType alphaType) {
-	return blendBlitFrom(src, srcRect, destRect, flipping, colorMod, blend, alphaType);
+	return blendBlitFrom(src.rawSurface(), srcRect, destRect, flipping, colorMod, blend, alphaType);
 }
 Common::Rect ManagedSurface::blendBlitFrom(const Surface &src, const Common::Rect &srcRect,
 										   const Common::Rect &destRect, int flipping,
