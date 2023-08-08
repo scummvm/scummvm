@@ -235,14 +235,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 	if (width == -1) width = pPartRect ? pPartRect->width() : _surface.w;
 	if (height == -1) height = pPartRect ? pPartRect->height() : _surface.h;
-	//_surface.blit(*_backSurface, posX, posY, newFlipping, pPartRect, _surface.format.ARGBToColor(ca, cr, cg, cb), width, height);
-	_backSurface->blendBlitFrom(
-		_surface,
-		pPartRect ? *pPartRect : Common::Rect(0, 0, _surface.w, _surface.h),
-		Common::Rect(posX, posY, posX + width, posY + height),
-		newFlipping,
-		_surface.format.ARGBToColor(ca, cr, cg, cb)
-	);
+	_backSurface->blendBlitFrom(_surface, posX, posY, newFlipping, pPartRect, _surface.format.ARGBToColor(ca, cr, cg, cb), width, height);
 
 	return true;
 }

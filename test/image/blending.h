@@ -839,7 +839,7 @@ public:
 			oldTime += g_system->getMillis() - oldStart;
 			uint32 newStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurf.w, managedSurf.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+				managedSurfDest.blendBlitFrom(managedSurf, 0, 0, flipping, nullptr, color, -1, -1, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			newTime += g_system->getMillis() - newStart;
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(255, 255, 255, 255));
@@ -847,7 +847,7 @@ public:
 			Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 			uint32 genericStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurf.w, managedSurf.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+				managedSurfDest.blendBlitFrom(managedSurf, 0, 0, flipping, nullptr, color, -1, -1, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			Graphics::BlendBlit::blitFunc = oldFunc;
 			genericTime += g_system->getMillis() - genericStart;
@@ -864,14 +864,14 @@ public:
 			oldTimeScaled += g_system->getMillis() - oldStart;
 			newStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+				managedSurfDest.blendBlitFrom(managedSurf, 0, 0, flipping, nullptr, color, managedSurfDest.w, managedSurfDest.h, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			newTimeScaled += g_system->getMillis() - newStart;
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(255, 255, 255, 255));
 			Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 			genericStart = g_system->getMillis();
 			for (int i = 0; i < iters; i++) {
-            	managedSurfDest.blendBlitFrom(managedSurf, Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), Common::Rect(0, 0, managedSurf.w, managedSurf.h), flipping, color, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+				managedSurfDest.blendBlitFrom(managedSurf, 0, 0, flipping, nullptr, color, managedSurfDest.w, managedSurfDest.h, (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 			}
 			Graphics::BlendBlit::blitFunc = oldFunc;
 			genericTimeScaled += g_system->getMillis() - genericStart;
@@ -969,7 +969,7 @@ public:
             newSurf.setAlphaMode((Graphics::AlphaType)alphaType);
             Common::Rect ret2 = newSurf.blit(newSurfDest, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
             managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(ba, br, bg, bb));
-            Common::Rect ret3 = managedSurfDest.blendBlitFrom(managedSurf, srcs[rect], dsts[rect], flipping, MS_ARGB(a, r, g, b), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
+            Common::Rect ret3 = managedSurfDest.blendBlitFrom(managedSurf, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 
 			if (ret1 != ret2 || ret2 != ret3 || ret1 != ret3) {
                 warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
