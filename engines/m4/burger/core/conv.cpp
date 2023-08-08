@@ -25,7 +25,13 @@
 namespace M4 {
 namespace Burger {
 
-void conv_resume() {
+void conv_play_curr() {
+	_G(flags)[V298] = 1;
+	_G(flags)[V299] = 1;
+	conv_play(conv_get_handle());
+}
+
+void conv_resume_curr() {
 	_G(flags)[V298] = 1;
 	_G(flags)[V299] = 1;
 	conv_resume(conv_get_handle());

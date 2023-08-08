@@ -71,7 +71,8 @@ struct Converstation_Globals {
 	void conv_go(Conv *c);
 };
 
-extern Conv *conv_load(char *filename, int x1, int y1, int32 myTrigger, bool want_box = true);
+extern Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box = true);
+extern void conv_load_and_prepare(const char *filename, int trigger, bool ignoreIt = true);
 
 extern void conv_unload(Conv *c);
 extern void conv_shutdown();
@@ -93,7 +94,9 @@ extern int32 conv_whos_talking();
 extern long conv_get_decl_val(decl_chunk *decl);
 extern void conv_set_decl_val(decl_chunk *decl, long val);
 extern void conv_export_value(Conv *c, long val, int index);
+extern void conv_export_value_curr(long val, int index);
 extern void conv_export_pointer(Conv *c, long *val, int index);
+extern void conv_export_pointer_curr(long *val, int index);
 
 extern void conv_set_font_spacing(int32 h, int32 v);
 extern void conv_set_text_colour(int32 norm_colour, int32 hi_colour);

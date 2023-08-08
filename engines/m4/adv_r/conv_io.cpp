@@ -220,11 +220,15 @@ void conv_export_value(Conv *c, long val, int index) {
 	c->myCNode = ent_old;
 }
 
+void conv_export_value_curr(long val, int index) {
+	conv_export_value(conv_get_handle(), val, index);
+}
+
 void conv_export_pointer(Conv *c, long *val, int index) {
-	long			ent = 0, tag = 0, next;
+	long ent = 0, tag = 0, next;
 	decl_chunk *decl;
-	long			ent_old = 0;
-	int			i = 0;
+	long ent_old = 0;
+	int	i = 0;
 
 	if (!c)
 		return;
@@ -252,6 +256,10 @@ void conv_export_pointer(Conv *c, long *val, int index) {
 		ent = next;
 	}
 	c->myCNode = ent_old;
+}
+
+void conv_export_pointer_curr(long *val, int index) {
+	conv_export_pointer(conv_get_handle(), val, index);
 }
 
 void conv_init(Conv *c) {
@@ -942,7 +950,7 @@ static void conv_set_disp_default(void) {
 	_GC(conv_shading) = 75;
 }
 
-Conv *conv_load(char *filename, int x1, int y1, int32 myTrigger, bool want_box) {
+Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box) {
 	Conv *convers = nullptr;
 	long cSize = 0;
 	char fullpathname[MAX_FILENAME_SIZE];
@@ -1038,6 +1046,17 @@ done:
 	fp.close();
 
 	return convers;
+}
+
+void conv_load_and_prepare(const char *filename, int trigger, bool ignoreIt) {
+	player_set_commands_allowed(false);
+
+	if (!ignoreIt) {
+		conv_load(filename, 10, 375, trigger, true);
+		conv_set_shading(100);
+		conv_set_text_colours(3, 1, 2, 22, 10, 14);
+		conv_set_font_spacing(10, 2);
+	}
 }
 
 void conv_unload(Conv *c) {

@@ -549,7 +549,7 @@ enum {
 	V511 = 511
 };
 
-class Flags : public Common::Array<uint32> {
+class Flags : public Common::Array<long> {
 private:
 	Common::Array<byte> _convSave;
 public:
