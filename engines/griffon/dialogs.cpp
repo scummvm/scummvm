@@ -316,14 +316,14 @@ void GriffonEngine::configMenu() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, TS_ARGB(128, 255, 255, 255));
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, TS_ARGB(128, 255, 255, 255));
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
 		configwindow->blit(*_videoBuffer);
 
@@ -661,14 +661,14 @@ void GriffonEngine::saveLoadNew() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, TS_ARGB(128, 255, 255, 255));
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, TS_ARGB(128, 255, 255, 255));
+		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
 		_saveLoadImg->blit(*_videoBuffer);
 

@@ -37,7 +37,7 @@ void GraphicsManager::setBrightnessLevel(int brightnessLevel) {
 unsigned lastFrom, lastTo;
 
 void GraphicsManager::transitionFader() {
-	blendColor(&_renderSurface, TS_ARGB(255 - _brightnessLevel, 0, 0, 0), Graphics::BLEND_NORMAL);
+	blendColor(&_renderSurface, MS_ARGB(255 - _brightnessLevel, 0, 0, 0), Graphics::BLEND_NORMAL);
 }
 
 void GraphicsManager::transitionCrossFader() {
@@ -48,7 +48,7 @@ void GraphicsManager::transitionCrossFader() {
 		return;
 
 	Graphics::TransparentSurface tmp(_snapshotSurface, false);
-	tmp.blit(_renderSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255 - _brightnessLevel, 0xff, 0xff, 0xff));
+	tmp.blit(_renderSurface, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 - _brightnessLevel, 0xff, 0xff, 0xff));
 }
 
 void GraphicsManager::transitionSnapshotBox() {

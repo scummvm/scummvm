@@ -741,7 +741,7 @@ Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Comm
 	}
 
 	// Alpha is zero
-	if ((colorMod & TS_ARGB(255, 0, 0, 0)) == 0) return Common::Rect(0, 0, 0, 0);
+	if ((colorMod & MS_ARGB(255, 0, 0, 0)) == 0) return Common::Rect(0, 0, 0, 0);
 
 	const int scaleX = BlendBlit::getScaleFactor(srcArea.width(), dstArea.width());
 	const int scaleY = BlendBlit::getScaleFactor(srcArea.height(), dstArea.height());

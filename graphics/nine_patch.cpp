@@ -335,7 +335,7 @@ void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int
 						_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blit(target, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-					Graphics::FLIP_NONE, &r, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
+					Graphics::FLIP_NONE, &r, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 					_h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
@@ -370,7 +370,7 @@ void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int
 				_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blitClip(target, clip, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-				Graphics::FLIP_NONE, &r, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
+				Graphics::FLIP_NONE, &r, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 				_h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
@@ -379,10 +379,10 @@ void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int
 byte NinePatchBitmap::getColorIndex(uint32 target, byte* palette) {
 	byte *pal = palette;
 	uint i = 0;
-	uint32 color = TS_RGB(pal[0], pal[1], pal[2]);
+	uint32 color = MS_RGB(pal[0], pal[1], pal[2]);
 	while (color != target) {
 		i += 3;
-		color = TS_RGB(pal[i], pal[i + 1], pal[i + 2]);
+		color = MS_RGB(pal[i], pal[i + 1], pal[i + 2]);
 	}
 	return (i / 3);
 }

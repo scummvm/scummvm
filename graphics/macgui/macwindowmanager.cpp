@@ -812,7 +812,7 @@ void MacWindowManager::loadDesktop() {
 void MacWindowManager::setDesktopColor(byte r, byte g, byte b) {
 	cleanupDesktopBmp();
 	_desktopBmp = new Graphics::TransparentSurface();
-	uint32 color = TS_RGB(r, g, b);
+	uint32 color = MS_RGB(r, g, b);
 
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::ManagedSurface *source = new Graphics::ManagedSurface();
