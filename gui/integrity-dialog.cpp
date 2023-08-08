@@ -372,10 +372,22 @@ Common::String IntegrityDialog::parseJSON(Common::JSONValue *response) {
 		return messageText;
 	}
 
+	Common::Array<int> results = Common::Array<int>(5, 0);
 	for (Common::JSONValue *fileJSON : responseObject.getVal("files")->asArray()) {
 		Common::String name = fileJSON->asObject().getVal("name")->asString();
 		Common::String status = fileJSON->asObject().getVal("status")->asString();
-		debug(status.c_str());
+
+		if (status == "ok") {
+			results[OK]++;
+			continue;
+		} else if (status == "missing")
+			results[MISSING]++;
+		else if (status == "checksum_mismatch")
+			results[CHECKSUM_MISMATCH]++;
+		else if (status == "size_mismatch")
+			results[SIZE_MISMATCH]++;
+		else if (status == "unknown")
+			results[UNKNOWN]++;
 
 		messageText += Common::String::format("%s %s\n", name.c_str(), status.c_str());
 	}
@@ -383,23 +395,6 @@ Common::String IntegrityDialog::parseJSON(Common::JSONValue *response) {
 		messageText += "Files all OK";
 
 	return messageText;
-}
-
-void IntegrityDialog::open() {
-	Dialog::open();
-	reflowLayout();
-	g_gui.scheduleTopDialogRedraw();
-}
-
-void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-	case kCleanupCmd:
-		close();
-		break;
-
-	default:
-		Dialog::handleCommand(sender, cmd, data);
-	}
 }
 
 } // End of namespace GUI
