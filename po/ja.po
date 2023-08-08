@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-07 08:50+0000\n"
-"PO-Revision-Date: 2023-07-27 16:23+0000\n"
+"PO-Revision-Date: 2023-08-08 06:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -968,21 +968,17 @@ msgid "Prev"
 msgstr "前"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "セーブ中..."
+msgstr "画像を保存..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u of %u"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "ゲームをセーブ"
+msgstr "画像を保存"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
@@ -2748,23 +2744,23 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "BMP形式"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG形式"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG形式"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "QuickDraw PICT形式"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "データファイル"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -7156,7 +7152,7 @@ msgstr ""
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
-msgstr ""
+msgstr "イメージビューアー"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
