@@ -98,7 +98,7 @@ void MacWindow::resize(int w, int h) {
 	_dims.setWidth(w);
 	_dims.setHeight(h);
 	updateInnerDims();
-	
+
 	rebuildSurface();
 }
 
@@ -239,6 +239,9 @@ void MacWindow::updateInnerDims() {
 		_innerDims = _dims;
 		_innerDims.grow(-kBorderWidth);
 	}
+	// Prevent negative dimensions
+	_innerDims.right = MAX(_innerDims.left, _innerDims.right);
+	_innerDims.bottom = MAX(_innerDims.top, _innerDims.bottom);
 }
 
 void MacWindow::updateOuterDims() {
@@ -292,7 +295,7 @@ void MacWindow::setTitle(const Common::String &title) {
 		_shadowedTitle = title;
 		return;
 	}
-	
+
 	_title = title;
 	_borderIsDirty = true;
 	_macBorder.setTitle(title, _borderSurface.w, _wm);
