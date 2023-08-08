@@ -29,6 +29,7 @@
  */
 
 #include "crab/XMLDoc.h"
+#include "crab/ScreenSettings.h"
 #include "crab/level/level.h"
 
 namespace Crab {

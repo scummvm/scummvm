@@ -27,6 +27,8 @@
  * Licensed under MIT
  *
  */
+
+#include "crab/animation/sprite.h"
 #include "crab/ui/ChapterIntro.h"
 
 namespace Crab {

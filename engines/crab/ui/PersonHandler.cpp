@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/animation/sprite.h"
 #include "crab/ui/PersonHandler.h"
 
 namespace Crab {

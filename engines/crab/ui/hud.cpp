@@ -32,6 +32,7 @@
 // Author:   Arvind
 // Purpose:  The tray where you have inventory, map and GameObjectives icons
 //=============================================================================
+#include "crab/XMLDoc.h"
 #include "crab/input/cursor.h"
 #include "crab/ui/hud.h"
 

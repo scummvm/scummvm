@@ -31,16 +31,18 @@
 #ifndef CRAB_PERSONHANDLER_H
 #define CRAB_PERSONHANDLER_H
 
+#include "crab/event/gameevent.h"
 #include "crab/event/GameEventInfo.h"
 #include "crab/ui/ProgressBar.h"
 #include "crab/ui/dialogbox.h"
-#include "crab/event/gameevent.h"
-#include "crab/people/person.h"
-#include "crab/animation/sprite.h"
 
 namespace Crab {
 
 namespace pyrodactyl {
+namespace anim {
+class Sprite;
+} // End of namespace Sprite
+
 namespace ui {
 class PersonHandler {
 	// The positions of various elements

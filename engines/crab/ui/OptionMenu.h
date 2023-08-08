@@ -31,6 +31,7 @@
 #ifndef CRAB_OPTIONMENU_H
 #define CRAB_OPTIONMENU_H
 
+#include "crab/timer.h"
 #include "crab/ui/GeneralSettingMenu.h"
 #include "crab/ui/GfxSettingMenu.h"
 #include "crab/ui/ImageData.h"
@@ -38,7 +39,6 @@
 #include "crab/ui/StateButton.h"
 #include "crab/ui/ToggleButton.h"
 #include "crab/ui/slider.h"
-#include "crab/timer.h"
 
 namespace Crab {
 

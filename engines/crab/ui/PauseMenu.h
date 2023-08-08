@@ -31,13 +31,13 @@
 #ifndef CRAB_PAUSEMENU_H
 #define CRAB_PAUSEMENU_H
 
-#include "crab/ui/FileMenu.h"
 #include "crab/event/GameEventInfo.h"
+#include "crab/ui/FileMenu.h"
+#include "crab/ui/menu.h"
 #include "crab/ui/OptionMenu.h"
 #include "crab/ui/SaveGameMenu.h"
-#include "crab/ui/SlideShow.h"
-#include "crab/ui/menu.h"
 #include "crab/ui/slider.h"
+#include "crab/ui/SlideShow.h"
 #include "crab/ui/textarea.h"
 
 namespace Crab {

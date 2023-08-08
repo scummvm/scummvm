@@ -31,7 +31,6 @@
 #ifndef CRAB_SECTIONHEADER_H
 #define CRAB_SECTIONHEADER_H
 
-#include "crab/image/ImageManager.h"
 #include "crab/ui/TextData.h"
 #include "crab/text/TextManager.h"
 

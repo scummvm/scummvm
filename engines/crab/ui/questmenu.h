@@ -31,10 +31,9 @@
 #ifndef CRAB_QUESTMENU_H
 #define CRAB_QUESTMENU_H
 
+#include "crab/event/quest.h"
 #include "crab/ui/PageMenu.h"
 #include "crab/ui/QuestText.h"
-#include "crab/ui/StateButton.h"
-#include "crab/event/quest.h"
 
 namespace Crab {
 

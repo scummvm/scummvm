@@ -31,7 +31,6 @@
 #ifndef CRAB_EMOTION_H
 #define CRAB_EMOTION_H
 
-#include "crab/image/ImageManager.h"
 #include "crab/event/eventstore.h"
 #include "crab/ui/textarea.h"
 

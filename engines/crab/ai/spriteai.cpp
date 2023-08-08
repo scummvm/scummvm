@@ -29,6 +29,7 @@
  */
 
 #include "crab/crab.h"
+#include "crab/ScreenSettings.h"
 #include "crab/animation/sprite.h"
 
 namespace Crab {

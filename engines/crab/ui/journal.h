@@ -32,9 +32,8 @@
 #define CRAB_JOURNAL_H
 
 #include "crab/ui/ImageData.h"
-#include "crab/image/ImageManager.h"
-#include "crab/ui/StateButton.h"
 #include "crab/ui/questmenu.h"
+#include "crab/ui/StateButton.h"
 
 namespace Crab {
 

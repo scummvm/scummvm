@@ -32,8 +32,8 @@
 #define CRAB_GENERALSETTINGMENU_H
 
 #include "crab/ui/RadioButtonMenu.h"
-#include "crab/ui/ToggleButton.h"
 #include "crab/ui/slider.h"
+#include "crab/ui/ToggleButton.h"
 
 namespace Crab {
 

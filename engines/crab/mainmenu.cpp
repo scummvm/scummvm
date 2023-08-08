@@ -29,6 +29,7 @@
  */
 
 #include "crab/mainmenu.h"
+#include "crab/XMLDoc.h"
 
 namespace Crab {
 

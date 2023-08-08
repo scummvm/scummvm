@@ -31,8 +31,8 @@
 #ifndef CRAB_MAPMARKERMENU_H
 #define CRAB_MAPMARKERMENU_H
 
-#include "crab/ui/StateButton.h"
 #include "crab/ui/menu.h"
+#include "crab/ui/StateButton.h"
 
 namespace Crab {
 

@@ -28,7 +28,6 @@
  *
  */
 
-
 #include "crab/ui/OptionSelect.h"
 
 namespace Crab {

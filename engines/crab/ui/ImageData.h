@@ -31,7 +31,6 @@
 #ifndef CRAB_IMAGEDATA_H
 #define CRAB_IMAGEDATA_H
 
-#include "crab/image/ImageManager.h"
 #include "crab/ui/element.h"
 
 namespace Crab {

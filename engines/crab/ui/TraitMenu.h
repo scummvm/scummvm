@@ -31,10 +31,10 @@
 #ifndef CRAB_TRAITMENU_H
 #define CRAB_TRAITMENU_H
 
+#include "crab/people/person.h"
+#include "crab/ui/menu.h"
 #include "crab/ui/ParagraphData.h"
 #include "crab/ui/TraitButton.h"
-#include "crab/ui/menu.h"
-#include "crab/people/person.h"
 
 namespace Crab {
 

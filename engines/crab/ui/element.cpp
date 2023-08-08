@@ -27,6 +27,8 @@
  * Licensed under MIT
  *
  */
+
+#include "crab/ScreenSettings.h"
 #include "crab/crab.h"
 #include "crab/ui/element.h"
 

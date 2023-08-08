@@ -33,13 +33,11 @@
 
 #include "crab/event/GameEventInfo.h"
 #include "crab/ui/ImageData.h"
-#include "crab/image/ImageManager.h"
+#include "crab/ui/mapbutton.h"
 #include "crab/ui/MapData.h"
 #include "crab/ui/MapMarkerMenu.h"
 #include "crab/ui/StateButton.h"
 #include "crab/ui/ToggleButton.h"
-#include "crab/ui/mapbutton.h"
-#include "crab/event/triggerset.h"
 
 namespace Crab {
 

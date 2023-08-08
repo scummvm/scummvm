@@ -33,9 +33,9 @@
 
 #include "crab/ui/ImageData.h"
 #include "crab/ui/ResolutionMenu.h"
+#include "crab/ui/slider.h"
 #include "crab/ui/StateButton.h"
 #include "crab/ui/ToggleButton.h"
-#include "crab/ui/slider.h"
 
 namespace Crab {
 

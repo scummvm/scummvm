@@ -32,9 +32,8 @@
 #define CRAB_ELEMENT_H
 
 #include "crab/image/ImageManager.h"
-#include "crab/ScreenSettings.h"
-#include "crab/vectors.h"
 #include "crab/Rectangle.h"
+#include "crab/vectors.h"
 
 namespace Crab {
 
