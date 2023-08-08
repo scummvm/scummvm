@@ -113,7 +113,6 @@ public:
 	}
 };
 
-extern ImageManager gImageManager;
 } // End of namespace image
 } // End of namespace pyrodactyl
 
