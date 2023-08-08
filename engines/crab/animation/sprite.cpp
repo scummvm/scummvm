@@ -263,7 +263,7 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 	g_engine->_imageManager->draw(x, y, _image, &_clip, _animSet.flip(_dir));
 	_imgEff.draw(x, y);
 
-	if (GameDebug) {
+	if (g_engine->_debugDraw & DRAW_SPRITE_BOUNDS) {
 		// Nice boxes for the frames and boxV, boxD
 		Rect bounds = boundRect(), vul = boxV(), dmg = boxD(), debugpos = posRect();
 		bounds.draw(-camera.x, -camera.y);
@@ -281,17 +281,9 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 
 			actualRange.draw(-camera.x, -camera.y, 255, 0, 255);
 		}
+	}
 
-		/*int health = 0;
-		info.StatGet(id, pyrodactyl::stat::STAT_HEALTH, health);
-		g_engine->_textManager->draw(x + 60.0f, y - 100.0f, NumberToString(health), 0);
-
-		pyrodactyl::people::PersonState state = info.State(id);
-		g_engine->_textManager->draw(x, y - 60.0f, NumberToString(state), 0);
-
-		g_engine->_textManager->draw(x + 120.0f, y - 60.0f, NumberToString(_aiData.dest.y), 0);*/
-
-
+	if (g_engine->_debugDraw & DRAW_PATHING) {
 		for (const auto &iter : _pathing._vSolution) {
 			bool nextToWall = false;
 			for (const auto &neighbor : iter->_neighborNodes) {
@@ -307,15 +299,10 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 				iter->getRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
 		}
 
-		_pathing._goalTile->getRect().draw(-camera.x, -camera.y, 0, 0, 200, 254);
-		_pathing._startTile->getRect().draw(-camera.x, -camera.y, 0, 200, 0, 254);
-
-		// Draw adjacencies to the goal tile.
-		/*
-			for(auto neighbor = _pathing.m_pGoalTile->neighborNodes.begin(); neighbor != _pathing.m_pGoalTile->neighborNodes.end(); ++neighbor) {
-				(*neighbor)->GetRect().draw(-camera.x, -camera.y, 200, 0, 0, 254);
-			}
-		*/
+		if (_pathing._goalTile && _pathing._startTile) {
+			_pathing._goalTile->getRect().draw(-camera.x, -camera.y, 0, 0, 200, 254);
+			_pathing._startTile->getRect().draw(-camera.x, -camera.y, 0, 200, 0, 254);
+		}
 
 		Rect destinationRect = Rect((int)_pathing._destination.x - 5,
 									(int)_pathing._destination.y - 5,
