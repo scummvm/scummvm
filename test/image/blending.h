@@ -858,6 +858,7 @@ OldTransparentSurface *OldTransparentSurface::convertTo(const PixelFormat &dstFo
 
 } // namespace OldTransparentSurface
 
+#ifdef TEST_IMAGE_BLENDING_SAVE
 static int save_bitmap(const char *path, const Graphics::Surface *surf) {
     Common::FSNode fileNode(path);
     Common::SeekableWriteStream *out = fileNode.createWriteStream();
@@ -903,6 +904,7 @@ static int save_bitmap(const char *path, const Graphics::Surface *surf) {
 
 	return true;
 }
+#endif
 
 static bool areSurfacesEqual(const Graphics::Surface *a, const Graphics::Surface *b) {
     if (a->w != b->w || a->h != b->h) return false;
@@ -1100,30 +1102,36 @@ public:
             if (!areSurfacesEqual(&oldSurfDest, &newSurfDest)) {
                 warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
                     blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
+#ifdef TEST_IMAGE_BLENDING_SAVE
                 save_bitmap("sourceSurf.bmp", &newSurf);
                 save_bitmap("oldSurfDest.bmp", &oldSurfDest);
                 save_bitmap("newSurfDest.bmp", &newSurfDest);
                 save_bitmap("managedSurfDest.bmp", managedSurfDest.surfacePtr());
+#endif
                 TS_FAIL("oldSurfDest and newSurfDest are not equal!");
                 return;
             }
             if (!areSurfacesEqual(&oldSurfDest, managedSurfDest.surfacePtr())) {
                 warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
                     blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
+#ifdef TEST_IMAGE_BLENDING_SAVE
                 save_bitmap("sourceSurf.bmp", &newSurf);
                 save_bitmap("oldSurfDest.bmp", &oldSurfDest);
                 save_bitmap("newSurfDest.bmp", &newSurfDest);
                 save_bitmap("managedSurfDest.bmp", managedSurfDest.surfacePtr());
+#endif
                 TS_FAIL("oldSurfDest and managedSurfDest are not equal!");
                 return;
             }
             if (!areSurfacesEqual(&newSurfDest, managedSurfDest.surfacePtr())) {
                 warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
                     blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
+#ifdef TEST_IMAGE_BLENDING_SAVE
                 save_bitmap("sourceSurf.bmp", &newSurf);
                 save_bitmap("oldSurfDest.bmp", &oldSurfDest);
                 save_bitmap("newSurfDest.bmp", &newSurfDest);
                 save_bitmap("managedSurfDest.bmp", managedSurfDest.surfacePtr());
+#endif
                 TS_FAIL("newSurfDest and managedSurfDest are not equal!");
                 return;
             }
@@ -1138,10 +1146,12 @@ public:
             if (!areSurfacesEqual(&oldSurfDest, &newSurfDest)) {
                 warning("BLIT_CLIP blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
                     blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
+#ifdef TEST_IMAGE_BLENDING_SAVE
                 save_bitmap("sourceSurfBlipClip.bmp", &newSurf);
                 save_bitmap("oldSurfDestBlitClip.bmp", &oldSurfDest);
                 save_bitmap("newSurfDestBlitClip.bmp", &newSurfDest);
                 save_bitmap("managedSurfDest.bmp", managedSurfDest.surfacePtr());
+#endif
                 TS_FAIL("oldSurfDest and newSurfDest are not equal with blipClip!");
                 return;
             }
