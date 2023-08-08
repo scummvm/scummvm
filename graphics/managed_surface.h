@@ -551,6 +551,11 @@ public:
 							   const uint32 colorMod = MS_ARGB(255, 255, 255, 255),
 							   const TSpriteBlendMode blend = BLEND_NORMAL,
 							   const AlphaType alphaType = ALPHA_FULL);
+	Common::Rect blendBlitFrom(const Surface &src, const Common::Rect &srcRect,
+							   const Common::Rect &destRect, int flipping = FLIP_NONE,
+							   const uint32 colorMod = MS_ARGB(255, 255, 255, 255),
+							   const TSpriteBlendMode blend = BLEND_NORMAL,
+							   const AlphaType alphaType = ALPHA_FULL);
 
 	/**
 	 * Clear the entire surface.
