@@ -538,22 +538,30 @@ public:
 	/**
 	 * @brief renders src onto this managed surface
 	 * @param src source surface
-	 * @param srcRect source clipping rectangle (used for sprite sheets for example)
-	 * @param destRect the destination of source onto this managed surface
+	 * @param posX, posY are the position of the src onto this surface
 	 * @param flipping flipping flags (use Graphics::FLIP_FLAGS)
+	 * @param srcRect source clipping
+	 * @param width width of destination
+	 * @param height height of destination
 	 * @param colorMod what color to multiply by (0xffffffff does nothing)
 	 * @param blend the blending mode to use.
 	 * @param alphaType what alpha mode to use. FULL is default
 	 * @return returns the size of the rendered rectangle
 	 */
-	Common::Rect blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
-							   const Common::Rect &destRect, int flipping = FLIP_NONE,
-							   const uint32 colorMod = MS_ARGB(255, 255, 255, 255),
+	Common::Rect blendBlitFrom(const ManagedSurface &src,
+							   const int posX = 0, const int posY = 0,
+							   const int flipping = FLIP_NONE,
+							   const Common::Rect *srcRect = nullptr,
+							   const uint colorMod = MS_ARGB(255, 255, 255, 255),
+							   const int width = -1, const int height = -1,
 							   const TSpriteBlendMode blend = BLEND_NORMAL,
 							   const AlphaType alphaType = ALPHA_FULL);
-	Common::Rect blendBlitFrom(const Surface &src, const Common::Rect &srcRect,
-							   const Common::Rect &destRect, int flipping = FLIP_NONE,
-							   const uint32 colorMod = MS_ARGB(255, 255, 255, 255),
+	Common::Rect blendBlitFrom(const Surface &src,
+							   const int posX = 0, const int posY = 0,
+							   const int flipping = FLIP_NONE,
+							   const Common::Rect *srcRect = nullptr,
+							   const uint colorMod = MS_ARGB(255, 255, 255, 255),
+							   const int width = -1, const int height = -1,
 							   const TSpriteBlendMode blend = BLEND_NORMAL,
 							   const AlphaType alphaType = ALPHA_FULL);
 

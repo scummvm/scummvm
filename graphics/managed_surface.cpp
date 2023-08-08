@@ -729,19 +729,28 @@ void ManagedSurface::transBlitFromInner(const Surface &src, const Common::Rect &
 
 #undef HANDLE_BLIT
 
-Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
-										   const Common::Rect &destRect, int flipping,
-										   const uint32 colorMod,
+Common::Rect ManagedSurface::blendBlitFrom(const ManagedSurface &src,
+										   const int posX, const int posY,
+										   const int flipping,
+										   const Common::Rect *srcRect,
+										   const uint colorMod,
+										   const int width, const int height,
 										   const TSpriteBlendMode blend,
 										   const AlphaType alphaType) {
-	return blendBlitFrom(src.rawSurface(), srcRect, destRect, flipping, colorMod, blend, alphaType);
+	return blendBlitFrom(src.rawSurface(), posX, posY, flipping, srcRect, colorMod, width, height, blend, alphaType);
 }
-Common::Rect ManagedSurface::blendBlitFrom(const Surface &src, const Common::Rect &srcRect,
-										   const Common::Rect &destRect, int flipping,
-										   const uint32 colorMod,
+Common::Rect ManagedSurface::blendBlitFrom(const Surface &src,
+										   const int posX, const int posY,
+										   const int flipping,
+										   const Common::Rect *srcRect,
+										   const uint colorMod,
+										   const int width, const int height,
 										   const TSpriteBlendMode blend,
 										   const AlphaType alphaType) {
-	Common::Rect srcArea = srcRect, dstArea = destRect;
+
+	Common::Rect dstArea(posX, posY, posX + (width == -1 ? src.w : width), posY + (height == -1 ? src.h : height));
+	Common::Rect srcArea = srcRect ? *srcRect : Common::Rect(0, 0, src.w, src.h);
+	
 	if (!isBlendBlitPixelFormatSupported(src.format, format)) {
 		warning("ManagedSurface::blendBlitFrom only accepts RGBA32!");
 		return Common::Rect(0, 0, 0, 0);
