@@ -39,7 +39,7 @@ public:
 	virtual void pre_parser() {}
 	virtual void parser() {}
 	virtual void parser_code() {}
-	virtual void error() {}
+	virtual void roomError() {}
 	virtual void shutdown() {}
 	virtual HotSpotRec *custom_hotspot_which(int x, int y) {
 		return nullptr;
@@ -145,7 +145,7 @@ public:
 		_activeRoom->parser_code();
 	}
 	void room_error() {
-		_activeRoom->error();
+		_activeRoom->roomError();
 	}
 	void room_shutdown() {
 		_activeRoom->shutdown();

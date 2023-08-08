@@ -31,7 +31,6 @@ namespace Rooms {
 class Room102 : public Room {
 private:
 	int _val1 = 0;
-	int _val2 = 0;
 	int _val3 = -1;
 	int _val4 = 0;
 	int _val5 = 0;
@@ -39,20 +38,24 @@ private:
 	int _val7 = 0;
 	int _val8 = 0;
 	int _val9 = 0;
-	int _val10 = 99999;
+	uint32 _val10 = 99999;
 	int _val11 = 0;
 	int _val12 = 0;
 	int _val13 = 0;
 	int _val14 = 0;
-	int _val15 = -1;
 	int _val16 = 0;
+	int _trigger = -1;
+	int _triggerMode = 0;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
 	machine *_laz1 = nullptr;
 	machine *_laz2 = nullptr;
-	int _index1 = -1, _index2 = -1;
+	machine *_stream1 = nullptr;
+	int _index1 = 0, _index2 = 0;
+	const char *_play1 = nullptr;
 
-	void setup(int val1, int val2);
+	void setup(int val1 = 0, int val2 = 1);
 	void setupWax();
 	void setupLaz();
 	const char *getDigi1(int num) const;
