@@ -37,6 +37,7 @@ MemoryPool *g_refCountPool = nullptr; // FIXME: This is never freed right now
 Mutex *g_refCountPoolMutex = nullptr;
 
 void lockMemoryPoolMutex() {
+#ifndef SINGLE_THREADED
 	// The Mutex class can only be used once g_system is set and initialized,
 	// but we may use the String class earlier than that (it is for example
 	// used in the OSystem_POSIX constructor). However in those early stages
@@ -46,11 +47,14 @@ void lockMemoryPoolMutex() {
 	if (!g_refCountPoolMutex)
 		g_refCountPoolMutex = new Mutex();
 	g_refCountPoolMutex->lock();
+#endif
 }
 
 void unlockMemoryPoolMutex() {
+#ifndef SINGLE_THREADED
 	if (g_refCountPoolMutex)
 		g_refCountPoolMutex->unlock();
+#endif
 }
 
 TEMPLATE void BASESTRING::releaseMemoryPoolMutex() {

@@ -19,6 +19,8 @@
  *
  */
 
+#ifndef SINGLE_THREADED
+
 #include "common/debug.h"
 #include "common/mutex.h"
 #include "common/system.h"
@@ -75,3 +77,5 @@ bool StackLock::unlock() {
 }
 
 } // End of namespace Common
+
+#endif

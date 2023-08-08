@@ -45,6 +45,7 @@ public:
 	virtual bool unlock() = 0;
 };
 
+#ifndef SINGLE_THREADED
 /**
  * Auxillary class to (un)lock a mutex on the stack.
  */
@@ -78,6 +79,22 @@ public:
 };
 
 /** @} */
+
+#else
+
+class StackLock final {
+public:
+	explicit StackLock(MutexInternal *mutex, const char *mutexName = nullptr) {}
+	explicit StackLock(const Mutex &mutex, const char *mutexName = nullptr) {}
+};
+
+class Mutex final {
+public:
+	void lock() {}
+	void unlock() {}
+};
+
+#endif
 
 } // End of namespace Common
 

@@ -3987,7 +3987,9 @@ case $_backend in
 		fi
 		;;
 	atari)
-		define_in_config_if_yes yes "ATARI"
+		add_line_to_config_mk 'ATARI = 1'
+		append_var DEFINES "-DATARI"
+		append_var DEFINES "-DSINGLE_THREADED"
 		append_var DEFINES "-DDISABLE_LAUNCHERDISPLAY_GRID"
 		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DDISABLE_NES_APU"
