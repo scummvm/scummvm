@@ -23,9 +23,7 @@
 
 #include "backends/dlc/dlcmanager.h"
 #include "backends/dlc/dlcdesc.h"
-#include "backends/dlc/android/playstore.h"
 #include "backends/dlc/scummvmcloud.h"
-#include "backends/dlc/android/playstore.h"
 
 #include "gui/dlcsdialog.h"
 #include "gui/launcher.h"
