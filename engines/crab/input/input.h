@@ -37,8 +37,6 @@
 
 namespace Crab {
 
-#define ANALOG_PRESSED 2
-
 namespace pyrodactyl {
 namespace input {
 enum InputType {
@@ -91,9 +89,6 @@ const int IG_START = IG_UP, IG_SIZE = IG_BLOCK - IG_START + 1;
 const int IU_START = IU_UP, IU_SIZE = IT_TOTAL - IU_START;
 
 class InputManager {
-	// The backups used to restore in case of the user pressing cancel
-	Common::String _backup[IT_TOTAL];
-
 	// Load key configuration from file
 	void load(const Common::String &filename);
 
@@ -108,7 +103,6 @@ class InputManager {
 
 public:
 	InputManager() {
-		//controller = nullptr;
 		_version = 0;
 
 		clearInputs();
@@ -129,15 +123,8 @@ public:
 
 	void setKeyBindingMode(KeyBindingMode mode);
 
-	KeyBindingMode getKeyBindingMode() const { return _keyMode; }
-
-	void quit() {
-		warning("STUB: InputManager::quit()");
-
-#if 0
-		if (controller != nullptr)
-			SDL_GameControllerClose(controller);
-#endif
+	KeyBindingMode getKeyBindingMode() const {
+		return _keyMode;
 	}
 
 	// NOTE: The lower level arrays can have buttons in common, but buttons cannot be common within these arrays
@@ -147,35 +134,10 @@ public:
 	Common::String _iv[IT_TOTAL];
 	bool _ivState[IT_TOTAL];
 
-	// Our controller object
-	//SDL_GameController *controller;
-
-	// These functions check if the value of a key matches the input values
-	// Returns SDL_PRESSED for pressing a button, SDL_RELEASED for releasing a button and -1 if no input
-#if 0
-	const int Equals(const InputType &val, const SDL_Event &Event);
-#endif
-
 	// These functions return true if key is pressed, false otherwise
 	bool state(const InputType &val);
 
-	void createBackup();
-	void restoreBackup();
-
-	// Initialize the controller if it is plugged in
-	void addController();
-
 	Common::String getAssociatedKey(const InputType &type);
-
-#if 0
-	// Handle plugging and unplugging of controllers on the fly
-	void HandleController(const SDL_Event &Event);
-#endif
-
-	// Initialize the input system
-	void init();
-
-	void save();
 };
 
 } // End of namespace input
