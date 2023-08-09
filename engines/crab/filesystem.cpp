@@ -33,6 +33,13 @@
 
 namespace Crab {
 
+Common::String cleansePath(const Common::String &path) {
+	if (path.hasPrefix("res/"))
+		return Common::String(&path.c_str()[4]);
+
+	return path;
+}
+
 bool fileOpen(const Common::Path &path, char *&data) {
 	if (path.empty())
 		return false;
@@ -41,7 +48,7 @@ bool fileOpen(const Common::Path &path, char *&data) {
 		delete[] data;
 
 	Common::File file;
-	if (!file.open(path)) {
+	if (!file.open(cleansePath(path.toString()))) {
 		warning("Unable to open file %s", path.toString().c_str());
 		data = nullptr;
 		return false;
@@ -66,7 +73,7 @@ bool fileOpen(const Common::Path &path, Common::File *file) {
 	if (file->isOpen())
 		file->close();
 
-	if (!file->open(path)) {
+	if (!file->open(cleansePath(path.toString()))) {
 		warning("Unable to open file %s", path.toString().c_str());
 		return false;
 	}
