@@ -117,11 +117,13 @@ void DarkEngine::loadAssetsDOSFullGame() {
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
 
+	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
+	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
 	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
 	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
 
-	_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
-	_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
 }
 
 void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
@@ -190,10 +192,14 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	drawBinaryClock(surface, 300, 124, clockColor, back);
 
-	if (!_flyMode)
+	if (_hasFallen)
 		surface->copyRectToSurface(*_indicators[0], 160, 136, Common::Rect(_indicators[0]->w, _indicators[0]->h));
-	else
+	else if (_flyMode)
+		surface->copyRectToSurface(*_indicators[3], 160, 136, Common::Rect(_indicators[3]->w, _indicators[3]->h));
+	else if (_playerHeightNumber == 0)
 		surface->copyRectToSurface(*_indicators[1], 160, 136, Common::Rect(_indicators[1]->w, _indicators[1]->h));
+	else
+		surface->copyRectToSurface(*_indicators[2], 160, 136, Common::Rect(_indicators[2]->w, _indicators[2]->h));
 }
 
 } // End of namespace Freescape

@@ -153,6 +153,7 @@ bool DarkEngine::checkECD(uint16 areaID, int index) {
 
 void DarkEngine::initGameState() {
 	_flyMode = false;
+	_hasFallen = false;
 	_noClipMode = false;
 	_playerWasCrushed = false;
 	_shootingFrames = 0;
@@ -370,7 +371,6 @@ bool DarkEngine::checkIfGameEnded() {
 	}
 
 	if (_hasFallen) {
-		_hasFallen = false;
 		_gameStateVars[kVariableDarkEnding] = kDarkEndingEvathDestroyed;
 		playSound(14, false);
 		insertTemporaryMessage(_messagesList[17], _countdown - 4);
