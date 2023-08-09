@@ -101,19 +101,6 @@ bool ImageManager::init() {
 }
 
 //------------------------------------------------------------------------
-// Purpose: Add texture to image map
-//------------------------------------------------------------------------
-void ImageManager::addTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex) {
-	if (_map[mapindex].contains(id))
-		freeTexture(id, mapindex);
-
-	_map[mapindex][id].load(surface);
-#if 0
-	SDL_FreeSurface(surface);
-#endif
-}
-
-//------------------------------------------------------------------------
 // Purpose: Get texture for a particular id
 //------------------------------------------------------------------------
 void ImageManager::getTexture(const ImageKey &id, Image &data) {
