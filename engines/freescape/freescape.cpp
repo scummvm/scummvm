@@ -183,6 +183,11 @@ FreescapeEngine::~FreescapeEngine() {
 	delete _gfx;
 	delete _dataBundle;
 	delete _speaker;
+
+	for (auto &it : _indicators) {
+		it->free();
+		delete it;
+	}
 }
 
 void FreescapeEngine::drawBorder() {
