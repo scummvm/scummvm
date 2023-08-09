@@ -253,11 +253,6 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point crossairPosition) 
 	_triangleShader->setUniform("useStipple", false);
 	_triangleShader->setUniform("mvpMatrix", identity);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _screenW, _screenH, 0, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 
