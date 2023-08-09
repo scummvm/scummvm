@@ -1742,7 +1742,7 @@ public:
 	/**
 	 * Return the DLC Store, used to implement DLC manager functions.
 	 *
-	 * @return The Store for the current distribution platform.
+	 * @return The Store for the current architecture/distribution platform.
 	 */
 	virtual DLC::Store *getDLCStore() {
 		return _dlcStore;
