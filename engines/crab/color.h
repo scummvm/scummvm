@@ -24,10 +24,10 @@
 
 namespace Crab {
 struct Color {
-	uint32 r;
-	uint32 g;
-	uint32 b;
-	uint32 a;
+	uint8 r;
+	uint8 g;
+	uint8 b;
+	uint8 a;
 };
 
 } // End of namespace Crab
