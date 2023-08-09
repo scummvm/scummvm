@@ -1159,7 +1159,158 @@ void Room102::pre_parser() {
 }
 
 void Room102::parser() {
+	bool lookFlag = player_said("look") || player_said("look at");
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (player_said("conv04")) {
+		conv04();
+	} else if (player_said("conv05")) {
+		conv05();
+	} else if (player_said("talk to")) {
+		conv_load_and_prepare("conv04", 19, false);
+		conv_export_value_curr(_G(flags)[V017], 0);
+		conv_export_value_curr(_G(flags)[V016], 1);
+		conv_play_curr();
+	} else if (inv_player_has(_G(player).verb) && player_said("main street")) {
+		_G(walker).wilbur_speech("102w015");
+	} else if (player_said("exit") || player_said("gear", "main_street")) {
+		player_set_commands_allowed(false);
+		digi_preload("102_038");
+		digi_play("103_038", 2, 255, 17);
+	} else {
+		if (player_said("TAKE", "DOORWAY"))
+			_G(walker).wilbur_speech("102W003");
+
+		if (player_said("USE", "GO", "DOORWAY")) {
+			_G(roomVal1) = 1;
+			kernel_trigger_dispatch_now(gTELEPORT);
+		}
+
+		if (player_said("USE", "GO", "FIRE ESCAPE")) {
+			_G(walker).wilbur_speech("102W005");
+			kernel_trigger_dispatch_now(1003);
+		}
+
+		if (player_said("TAKE", "LAZY SUSAN")) {
+			flagAction("102w007");
+		} else if (player_said("GEAR", "LAZY SUSAN")) {
+			if (_G(flags)[V012]) {
+				player_set_commands_allowed(false);
+				_G(roomVal1) = _G(flags)[V019] ? 82 : 79;
+				kernel_trigger_dispatch_now(gTELEPORT);
+			} else {
+				queuePlay("102h005");
+			}
+		} else if (player_said("GEAR", "harry") || player_said("take", "harry")) {
+			_G(walker).wilbur_speech("102w015");
+		} else if (player_said("take", "hair wax") || player_said("take", "hair wax ")) {
+			if (_G(flags)[V012]) {
+				player_set_commands_allowed(false);
+				_G(roomVal1) = player_said("hair wax") ? 71 : 75;
+				kernel_trigger_dispatch_now(gTELEPORT);
+			} else {
+				queuePlay("102h007");
+			}
+		} else if (player_said("gear", "hair wax") || player_said("gear", "hair wax ")) {
+			flagAction("102w012");
+		} else if (player_said("take", "television")) {
+			flagAction("102w018");
+		} else if (player_said("gear", "television")) {
+			flagAction("102w019");
+		} else if (player_said("take", "hair wax  ") || player_said("take", "hair wax   ")) {
+			if (_G(flags)[V012]) {
+				player_set_commands_allowed(false);
+				_G(roomVal1) = player_said("hair wax  ") ? 73 : 77;
+				kernel_trigger_dispatch_now(gTELEPORT);
+			} else {
+				queuePlay("102h007");
+			}
+		} else if (player_said("gear", "hair wax  ") || player_said("gear", "hair wax   ")) {
+			flagAction("102w012");
+		} else if (player_said("take", "back room") || player_said("gear", "back room")) {
+			_G(walker).wilbur_speech("102w015");
+		} else if (player_said("enter", "back room")) {
+			if (_G(flags)[V012]) {
+				switch (_G(kernel).trigger) {
+				case -1:
+					player_set_commands_allowed(false);
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play("102h015", 1, 255, 1);
+					break;
+				case 1:
+					freshen();
+					break;
+				default:
+					break;
+				}
+			} else {
+				queuePlay("102h014");
+			}
+		} else if (player_said("take", "barber's chair")) {
+			flagAction("102w021");
+		} else if (player_said("gear", "barber's chair")) {
+			flagAction("102w022");
+		} else if (player_said("take", "fish")) {
+			flagAction("102w025");
+		} else if (player_said("gear", "fish")) {
+			flagAction("102w026");
+		} else if (player_said("gear", "bottles")) {
+			_G(walker).wilbur_speech("102w029");
+		} else if (player_said("take", "bottles")) {
+			if (_G(flags)[V012]) {
+				switch (_G(kernel).trigger) {
+				case -1:
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play("102h023", 1, 255, 1);
+					player_set_commands_allowed(false);
+					break;
+				case 1:
+					_G(kernel).trigger_mode = KT_PARSE;
+					_G(walker).wilbur_speech("102w028");
+					break;
+				default:
+					break;
+				}
+			} else {
+				player_set_commands_allowed(false);
+			}
+		} else if (player_said("take", "towels")) {
+			_G(walker).wilbur_speech("102w2029");
+		} else if (player_said("gear", "towels")) {
+			flagAction("102w032");
+		} else if (player_said("take", "mirror")) {
+			_G(walker).wilbur_speech("102w015");
+		} else if (player_said("gear", "mirror")) {
+			flagAction("102w034");
+		} else if (player_said("take", "sink")) {
+			_G(walker).wilbur_speech("102w037");
+		} else if (player_said("gear", "sink")) {
+			// TODO
+		}
+
+		// TODO
+	}
 }
+
+void Room102::flagAction(const char *name) {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_G(flags)[V012]) {
+			_G(walker).wilbur_speech(name);
+		} else {
+			_G(kernel).trigger_mode = KT_PARSE;
+			_G(walker).wilbur_speech(name);
+			player_set_commands_allowed(false);
+		}
+		break;
+	case 1:
+		queuePlay("102h018");
+		break;
+	default:
+		break;
+	}
+}
+
 
 void Room102::setup(int val1, int val2) {
 	digi_stop(3);
@@ -1284,6 +1435,19 @@ void Room102::freshen() {
 		Section1::walk();
 	}
 }
+
+void Room102::conv04() {
+	error("TODO: conv04");
+}
+
+void Room102::conv05() {
+	error("TODO: conv05");
+}
+
+void Room102::conv06() {
+	error("TODO: conv06");
+}
+
 
 } // namespace Rooms
 } // namespace Burger
