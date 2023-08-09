@@ -168,7 +168,6 @@ public:
 };
 
 extern CrabEngine *g_engine;
-#define SHOULD_QUIT ::Crab::g_engine->shouldQuit()
 
 } // End of namespace Crab
 
