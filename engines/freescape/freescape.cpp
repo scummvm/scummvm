@@ -920,6 +920,8 @@ void FreescapeEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 
 	// TODO: Handle the viewport here
+	if (_frameLimiter)
+		_frameLimiter->pause(pause);
 
 	// Unlock the mouse so that the cursor is usable when the GMM opens
 	if (!_shootMode) {
