@@ -118,7 +118,7 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 	if (!file.isOpen())
 		error("Failed to open 'driller' file");
 
-	if (_variant | GF_AMIGA_MAGAZINE_DEMO) {
+	if (_variant & GF_AMIGA_MAGAZINE_DEMO) {
 		loadFonts(&file, 0xa62);
 		loadMessagesFixedSize(&file, 0x3df0, 14, 20);
 		loadGlobalObjects(&file, 0x3ba6, 8);
@@ -153,7 +153,7 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	Common::String coords;
 
 	// It seems that some demos will not include the complete font
-	if (!isDemo() || (_variant | GF_AMIGA_MAGAZINE_DEMO) || (_variant | GF_ATARI_MAGAZINE_DEMO)) {
+	if (!isDemo() || (_variant & GF_AMIGA_MAGAZINE_DEMO) || (_variant & GF_ATARI_MAGAZINE_DEMO)) {
 		drawStringInSurface("x", 37, 18, white, transparent, surface, 82);
 		coords = Common::String::format("%04d", 2 * int(_position.x()));
 		for (int i = 0; i < 4; i++)
