@@ -36,7 +36,7 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace event {
-bool IsChar(char c) {
+bool isChar(char c) {
 	if (c >= '0' && c <= '9')
 		return false;
 	return true;
@@ -138,7 +138,7 @@ bool Info::varGet(const Common::String &name, int &val) {
 
 void Info::varSet(const Common::String &name, const Common::String &val) {
 	int varVal = 0;
-	bool assignToVar = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
+	bool assignToVar = Common::find_if(val.begin(), val.end(), isChar) != val.end();
 
 	if (assignToVar)
 		varGet(val, varVal);

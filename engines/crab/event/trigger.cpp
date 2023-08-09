@@ -155,7 +155,7 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 	case TRIG_STAT: {
 		StatType ty = stringToStatType(_target);
 		int sub = 0, value = 0;
-		bool compareToVar = Common::find_if(_val.begin(), _val.end(), IsChar) != _val.end();
+		bool compareToVar = Common::find_if(_val.begin(), _val.end(), isChar) != _val.end();
 
 		info.statGet(_subject, ty, sub);
 		if (compareToVar)
@@ -182,7 +182,7 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 
 	case TRIG_VAR: {
 		int var_sub = 0, var_val = 0;
-		bool compare_to_var = Common::find_if(_val.begin(), _val.end(), IsChar) != _val.end();
+		bool compare_to_var = Common::find_if(_val.begin(), _val.end(), isChar) != _val.end();
 
 		info.varGet(_subject, var_sub);
 		if (compare_to_var)
