@@ -177,20 +177,22 @@ struct SoundDescription {
 // Structs inside nancy.dat, which contains all the data that was
 // originally stored inside the executable
 
+enum class StaticDataConditionType : byte { kEvent = 0, kInventory = 1, kDifficulty = 2 };
+struct StaticDataFlag { byte type; int16 label; byte flag; };
+
 struct ConditionalDialogue {
 	byte textID;
 	uint16 sceneID;
 	Common::String soundID;
-	Common::Array<FlagDescription> flagConditions;
-	Common::Array<FlagDescription> inventoryConditions;
+	Common::Array<StaticDataFlag> conditions;
 
 	void readData(Common::SeekableReadStream &stream);
 };
 
 struct GoodbyeSceneChange {
 	Common::Array<uint16> sceneIDs;
-	Common::Array<FlagDescription> flagConditions;
-	FlagDescription flagToSet;
+	Common::Array<StaticDataFlag> conditions;
+	StaticDataFlag flagToSet;
 
 	void readData(Common::SeekableReadStream &stream);
 };
@@ -207,9 +209,18 @@ struct Hint {
 	int16 hintWeight;
 	SceneChangeDescription sceneChange;
 	Common::String soundIDs[3];
-	Common::Array<FlagDescription> flagConditions;
-	Common::Array<FlagDescription> inventoryConditions;
+	Common::Array<StaticDataFlag> conditions;
 
+	void readData(Common::SeekableReadStream &stream);
+};
+
+struct SoundChannelInfo {
+	byte numChannels;
+	byte numSceneSpecificChannels;
+	Common::Array<byte> speechChannels;
+	Common::Array<byte> musicChannels;
+	Common::Array<byte> sfxChannels;
+	
 	void readData(Common::SeekableReadStream &stream);
 };
 
@@ -222,6 +233,9 @@ struct StaticData {
 	uint16 numNonItemCursors = 12;
 	uint16 numCurtainAnimationFrames = 7;
 	uint32 logoEndAfter = 7000;
+
+	// Data for sound channels
+	SoundChannelInfo soundChannelInfo;
 
 	// In-game strings and related logic
 	Common::Array<Common::Array<ConditionalDialogue>> conditionalDialogue;
@@ -236,7 +250,7 @@ struct StaticData {
 	// Debug strings
 	Common::Array<Common::String> eventFlagNames;
 
-	void readData(Common::SeekableReadStream &stream, Common::Language language);
+	void readData(Common::SeekableReadStream &stream, Common::Language language, uint32 endPos);
 };
 
 } // End of namespace Nancy

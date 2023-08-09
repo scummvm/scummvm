@@ -670,17 +670,19 @@ void HintSystem::readData(Common::SeekableReadStream &stream) {
 
 void HintSystem::execute() {
 	switch (_state) {
-	case kBegin:
+	case kBegin: {
+		uint16 difficulty = NancySceneState.getDifficulty();
 		selectHint();
-		_genericSound.name = selectedHint->soundIDs[NancySceneState.getDifficulty()];
+		_genericSound.name = selectedHint->soundIDs[difficulty];
 
 		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(g_nancy->getStaticData().hintTexts[selectedHint->textID + NancySceneState.getDifficulty()]);
+		NancySceneState.getTextbox().addTextLine(g_nancy->getStaticData().hintTexts[selectedHint->textID * 3 + difficulty]);
 
 		g_nancy->_sound->loadSound(_genericSound);
 		g_nancy->_sound->playSound(_genericSound);
 		_state = kRun;
 		break;
+	}
 	case kRun:
 		if (!g_nancy->_sound->isSoundPlaying(_genericSound)) {
 			g_nancy->_sound->stopSound(_genericSound);
@@ -710,31 +712,37 @@ void HintSystem::selectHint() {
 	for (uint i = 1; i < g_nancy->getStaticData().hints[_characterID].size(); ++i) {
 		const auto &hint = g_nancy->getStaticData().hints[_characterID][i];
 
-		bool satisfied = true;
+		bool isSatisfied = true;
 
-		for (const auto &flag : hint.flagConditions) {
-			if (flag.label == kFlagNoLabel) {
+		for (const auto &cond : hint.conditions) {
+			switch (cond.type) {
+			case (byte)StaticDataConditionType::kEvent :
+				if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
+					isSatisfied = false;
+				}
+
+				break;
+			case (byte)StaticDataConditionType::kInventory :
+				if (NancySceneState.hasItem(cond.label) != cond.flag) {
+					isSatisfied = false;
+				}
+
+				break;
+			case (byte)StaticDataConditionType::kDifficulty :
+				if (	(NancySceneState.getDifficulty() != cond.label && cond.flag == true) ||
+						(NancySceneState.getDifficulty() == cond.label && cond.flag == false) ) {
+					isSatisfied = false;
+				}
+
 				break;
 			}
 
-			if (!NancySceneState.getEventFlag(flag.label, flag.flag)) {
-				satisfied = false;
+			if (!isSatisfied) {
 				break;
 			}
 		}
 
-		for (const auto &inv : hint.inventoryConditions) {
-			if (inv.label == kFlagNoLabel) {
-				break;
-			}
-
-			if (NancySceneState.hasItem(inv.label) != inv.flag) {
-				satisfied = false;
-				break;
-			}
-		}
-
-		if (satisfied) {
+		if (isSatisfied) {
 			selectedHint = &hint;
 			break;
 		}

@@ -68,6 +68,7 @@ public:
 	~SoundManager();
 
 	void loadCommonSounds(IFF *boot);
+	void initSoundChannels();
 
 	// Load a sound into a channel without starting it
 	void loadSound(const SoundDescription &description, bool panning = false);
@@ -109,7 +110,7 @@ public:
 protected:
 	struct Channel {
 		Common::String name;
-		Audio::Mixer::SoundType type;
+		Audio::Mixer::SoundType type = Audio::Mixer::SoundType::kPlainSoundType;
 		uint16 playCommands = 1;
 		uint16 numLoops = 0;
 		uint volume = 0;
@@ -120,10 +121,9 @@ protected:
 		bool isPersistent = false;
 	};
 
-	void initSoundChannels();
 	Audio::Mixer *_mixer;
 
-	Channel _channels[32];
+	Common::Array<Channel> _channels;
 	Common::HashMap<Common::String, SoundDescription> _commonSounds;
 };
 

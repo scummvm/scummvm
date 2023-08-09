@@ -198,17 +198,11 @@ void ConditionalDialogue::readData(Common::SeekableReadStream &stream) {
 	soundID = stream.readString();
 
 	uint16 num = stream.readUint16LE();
-	flagConditions.resize(num);
+	conditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
-		flagConditions[i].label = stream.readSint16LE();
-		flagConditions[i].flag = stream.readByte();
-	}
-
-	num = stream.readUint16LE();
-	inventoryConditions.resize(num);
-	for (uint16 i = 0; i < num; ++i) {
-		inventoryConditions[i].label = stream.readSint16LE();
-		inventoryConditions[i].flag = stream.readByte();
+		conditions[i].type = stream.readByte();
+		conditions[i].label = stream.readSint16LE();
+		conditions[i].flag = stream.readByte();
 	}
 }
 
@@ -220,12 +214,14 @@ void GoodbyeSceneChange::readData(Common::SeekableReadStream &stream) {
 	}
 
 	num = stream.readUint16LE();
-	flagConditions.resize(num);
+	conditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
-		flagConditions[i].label = stream.readSint16LE();
-		flagConditions[i].flag = stream.readByte();
+		conditions[i].type = stream.readByte();
+		conditions[i].label = stream.readSint16LE();
+		conditions[i].flag = stream.readByte();
 	}
 
+	flagToSet.type = stream.readByte();
 	flagToSet.label = stream.readSint16LE();
 	flagToSet.flag = stream.readByte();
 }
@@ -243,144 +239,221 @@ void Goodbye::readData(Common::SeekableReadStream &stream) {
 void Hint::readData(Common::SeekableReadStream &stream) {
 	textID = stream.readByte();
 	hintWeight = stream.readSint16LE();
-	sceneChange.readData(stream);
 	soundIDs[0] = stream.readString();
 	soundIDs[1] = stream.readString();
 	soundIDs[2] = stream.readString();
 
 	uint16 num = stream.readUint16LE();
-	flagConditions.resize(num);
+	conditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
-		flagConditions[i].label = stream.readSint16LE();
-		flagConditions[i].flag = stream.readByte();
-	}
-
-	num = stream.readUint16LE();
-	inventoryConditions.resize(num);
-	for (uint16 i = 0; i < num; ++i) {
-		inventoryConditions[i].label = stream.readSint16LE();
-		inventoryConditions[i].flag = stream.readByte();
+		conditions[i].type = stream.readByte();
+		conditions[i].label = stream.readSint16LE();
+		conditions[i].flag = stream.readByte();
 	}
 }
 
-void StaticData::readData(Common::SeekableReadStream &stream, Common::Language language) {
-	numItems = stream.readUint16LE();
-	numEventFlags = stream.readUint16LE();
+void SoundChannelInfo::readData(Common::SeekableReadStream &stream) {
+	numChannels = stream.readByte();
+	numSceneSpecificChannels = stream.readByte();
 
 	uint16 num = stream.readUint16LE();
-	mapAccessSceneIDs.resize(num);
+	speechChannels.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
-		mapAccessSceneIDs[i] = stream.readUint16LE();
+		speechChannels[i] = stream.readByte();
 	}
 
 	num = stream.readUint16LE();
-	genericEventFlags.resize(num);
+	musicChannels.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
-		genericEventFlags[i] = stream.readUint16LE();
+		musicChannels[i] = stream.readByte();
 	}
 
-	numNonItemCursors = stream.readUint16LE();
-	numCurtainAnimationFrames = stream.readUint16LE();
-	logoEndAfter = stream.readUint32LE();
-
-	// Check for language
 	num = stream.readUint16LE();
-	int languageID = -1;
+	sfxChannels.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
-		if (stream.readByte() == language) {
-			languageID = i;
+		sfxChannels[i] = stream.readByte();
+	}
+}
+
+void StaticData::readData(Common::SeekableReadStream &stream, Common::Language language, uint32 endPos) {
+	uint16 num;
+	int languageID;
+
+	while (stream.pos() < endPos) {
+		uint32 nextSectionOffset = stream.readUint32LE();
+
+		switch(stream.readUint32LE()) {
+		case MKTAG('C', 'O', 'N', 'S') :
+			// Game constants
+			numItems = stream.readUint16LE();
+			numEventFlags = stream.readUint16LE();
+
+			num = stream.readUint16LE();
+			mapAccessSceneIDs.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				mapAccessSceneIDs[i] = stream.readUint16LE();
+			}
+
+			num = stream.readUint16LE();
+			genericEventFlags.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				genericEventFlags[i] = stream.readUint16LE();
+			}
+
+			numNonItemCursors = stream.readUint16LE();
+			numCurtainAnimationFrames = stream.readUint16LE();
+			logoEndAfter = stream.readUint32LE();
+
+			break;
+		case MKTAG('S', 'C', 'H', 'N') :
+			// Sound channels data
+			soundChannelInfo.readData(stream);
+
+			break;
+		case MKTAG('L', 'A', 'N', 'G') : 
+			// Order of languages inside game data
+			num = stream.readUint16LE();
+			languageID = -1;
+			for (uint16 i = 0; i < num; ++i) {
+				if (stream.readByte() == language) {
+					languageID = i;
+				}
+			}
+
+			if (languageID == -1) {
+				error("Language not present in nancy.dat");
+			}
+
+			break;
+		case MKTAG('C', 'D', 'L', 'G') :
+			// Conditional dialogue
+			num = stream.readUint16LE();
+			conditionalDialogue.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				uint16 num2 = stream.readUint16LE();
+				conditionalDialogue[i].resize(num2);
+				for (uint j = 0; j < num2; ++j) {
+					conditionalDialogue[i][j].readData(stream);
+				}
+			}
+
+			num = stream.readUint16LE();
+			if (num > 0) {
+				uint32 endOffset = stream.readUint32LE();
+				stream.skip(languageID * 4);
+				stream.seek(stream.readUint32LE());
+				num = stream.readUint16LE();
+				conditionalDialogueTexts.resize(num);
+				for (uint16 i = 0; i < num; ++i) {
+					conditionalDialogueTexts[i] = stream.readString();
+				}
+
+				stream.seek(endOffset);
+			}
+
+			break;
+		case MKTAG('G', 'D', 'B', 'Y') :
+			// Goodbyes
+			num = stream.readUint16LE();
+			goodbyes.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				goodbyes[i].readData(stream);
+			}
+
+			num = stream.readUint16LE();
+			if (num > 0) {
+				uint32 endOffset = stream.readUint32LE();
+				stream.skip(languageID * 4);
+				stream.seek(stream.readUint32LE());
+				num = stream.readUint16LE();
+				goodbyeTexts.resize(num);
+				for (uint16 i = 0; i < num; ++i) {
+					goodbyeTexts[i] = stream.readString();
+				}
+
+				stream.seek(endOffset);
+			}
+
+			break;
+		case MKTAG('H', 'I', 'N', 'T') : {
+			// Hints (nancy1 only)
+			SceneChangeDescription sceneChange;
+			sceneChange.readData(stream, false);
+
+			num = stream.readUint16LE();
+			hints.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				uint16 num2 = stream.readUint16LE();
+				hints[i].resize(num2);
+				for (uint j = 0; j < num2; ++j) {
+					hints[i][j].readData(stream);
+					hints[i][j].sceneChange = sceneChange;
+				}
+			}
+
+			num = stream.readUint16LE();
+			if (num > 0) {
+				uint32 endOffset = stream.readUint32LE();
+				stream.skip(languageID * 4);
+				stream.seek(stream.readUint32LE());
+				num = stream.readUint16LE();
+				hintTexts.resize(num);
+				for (uint16 i = 0; i < num; ++i) {
+					hintTexts[i] = stream.readString();
+				}
+
+				stream.seek(endOffset);
+			}
+
+			break;
+		}
+		case MKTAG('R', 'I', 'N', 'G') :
+			// Ringing text (nancy1 and up)
+			num = stream.readUint16LE();
+			for (int i = 0; i < num; ++i) {
+				if (i == languageID) {
+					ringingText = stream.readString();
+				} else {
+					stream.readString();
+				}
+			}
+
+			break;
+		case MKTAG('E', 'F', 'L', 'G') :
+			// Event flag names
+			num = stream.readUint16LE();
+			eventFlagNames.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				eventFlagNames[i] = stream.readString();
+			}
+
+			break;
+		default:
+			stream.seek(nextSectionOffset);
 		}
 	}
+	
 
-	if (languageID == -1) {
-		error("Language not present in nancy.dat");
-	}
+	
 
 	// Read the strings logic
-	num = stream.readUint16LE();
-	conditionalDialogue.resize(num);
-	for (uint16 i = 0; i < num; ++i) {
-		uint16 num2 = stream.readUint16LE();
-		conditionalDialogue[i].resize(num2);
-		for (uint j = 0; j < num2; ++j) {
-			conditionalDialogue[i][j].readData(stream);
-		}
-	}
+	
 
-	num = stream.readUint16LE();
-	goodbyes.resize(num);
-	for (uint16 i = 0; i < num; ++i) {
-		goodbyes[i].readData(stream);
-	}
+	
 
-	num = stream.readUint16LE();
-	hints.resize(num);
-	for (uint16 i = 0; i < num; ++i) {
-		uint16 num2 = stream.readUint16LE();
-		hints[i].resize(num2);
-		for (uint j = 0; j < num2; ++j) {
-			hints[i][j].readData(stream);
-		}
-	}
+	
 
 	// Read the in-game strings, making sure to pick the correct language
-	num = stream.readUint16LE();
-	if (num > 0) {
-		uint32 endOffset = stream.readUint32LE();
-		stream.skip(languageID * 4);
-		stream.seek(stream.readUint32LE());
-		num = stream.readUint16LE();
-		conditionalDialogueTexts.resize(num);
-		for (uint16 i = 0; i < num; ++i) {
-			conditionalDialogueTexts[i] = stream.readString();
-		}
 
-		stream.seek(endOffset);
-	}
 
-	num = stream.readUint16LE();
-	if (num > 0) {
-		uint32 endOffset = stream.readUint32LE();
-		stream.skip(languageID * 4);
-		stream.seek(stream.readUint32LE());
-		num = stream.readUint16LE();
-		goodbyeTexts.resize(num);
-		for (uint16 i = 0; i < num; ++i) {
-			goodbyeTexts[i] = stream.readString();
-		}
+	
 
-		stream.seek(endOffset);
-	}
+	
 
-	num = stream.readUint16LE();
-	if (num > 0) {
-		uint32 endOffset = stream.readUint32LE();
-		stream.skip(languageID * 4);
-		stream.seek(stream.readUint32LE());
-		num = stream.readUint16LE();
-		hintTexts.resize(num);
-		for (uint16 i = 0; i < num; ++i) {
-			hintTexts[i] = stream.readString();
-		}
-
-		stream.seek(endOffset);
-	}
-
-	num = stream.readUint16LE();
-	for (int i = 0; i < num; ++i) {
-		if (i == languageID) {
-			ringingText = stream.readString();
-		} else {
-			stream.readString();
-		}
-	}
+	
 
 	// Read debug strings
-	num = stream.readUint16LE();
-	eventFlagNames.resize(num);
-	for (uint16 i = 0; i < num; ++i) {
-		eventFlagNames[i] = stream.readString();
-	}
+	
 }
 
 } // End of namespace Nancy

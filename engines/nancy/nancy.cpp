@@ -53,8 +53,8 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 		Engine(syst),
 		_gameDescription(gd),
 		_system(syst),
-		_datFileMajorVersion(0),
-		_datFileMinorVersion(2),
+		_datFileMajorVersion(1),
+		_datFileMinorVersion(0),
 		_false(gd->gameType <= kGameTypeNancy2 ? 1 : 0),
 		_true(gd->gameType <= kGameTypeNancy2 ? 2 : 1) {
 
@@ -409,6 +409,7 @@ void NancyEngine::bootGameEngine() {
 		_raycastPuzzleLevelBuilderData = new RCLB(chunkStream);
 	}
 
+	_sound->initSoundChannels();
 	_sound->loadCommonSounds(boot);
 
 	delete boot;
@@ -511,22 +512,32 @@ void NancyEngine::readDatFile() {
 
 	byte major = datFile->readByte();
 	byte minor = datFile->readByte();
-	if (major != _datFileMajorVersion || minor != _datFileMinorVersion) {
+	if (major != _datFileMajorVersion) {
 		error("Incorrect nancy.dat version. Expected '%d.%d', found %d.%d",
 			_datFileMajorVersion, _datFileMinorVersion, major, minor);
+	} else {
+		if (minor != _datFileMinorVersion) {
+			warning("Incorrect nancy.dat version. Expected '%d.%d', found %d.%d. Game may still work, but expect bugs",
+			_datFileMajorVersion, _datFileMinorVersion, major, minor);
+		}
 	}
 
 	uint16 numGames = datFile->readUint16LE();
-	if (getGameType() > numGames) {
+	uint16 gameType = getGameType();
+	if (gameType > numGames) {
+		// Fallback for when no data is present for the current game:
+		// throw a warning and use the last available game data
 		warning("Data for game type %d is not in nancy.dat", getGameType());
-		return;
+		gameType = numGames;
 	}
 
 	// Seek to offset containing current game
-	datFile->skip((getGameType() - 1) * 4);
-	datFile->seek(datFile->readUint32LE());
+	datFile->skip((gameType - 1) * 4);
+	uint32 thisGameOffset = datFile->readUint32LE();
+	uint32 nextGameOffset = gameType == numGames ? datFile->size() : datFile->readUint32LE();
+	datFile->seek(thisGameOffset);
 
-	_staticData.readData(*datFile, _gameDescription->desc.language);
+	_staticData.readData(*datFile, _gameDescription->desc.language, nextGameOffset);
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
