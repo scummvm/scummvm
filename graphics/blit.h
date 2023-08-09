@@ -218,33 +218,16 @@ private:
 			 const uint32 colorMod, const uint flipping);
 	};
 
-// Define logic functions for different architecture extensions.
-// These extensions would just be a template parameter if it weren't for the
-// fact that partial template specialization doesn't exist.
-#define LOGIC_FUNCS_EXT(ext) \
-	template<bool doscale> \
-	static void doBlitBinaryBlendLogic##ext(Args &args); \
-	template<bool doscale> \
-	static void doBlitOpaqueBlendLogic##ext(Args &args); \
-	template<bool doscale, bool rgbmod, bool alphamod> \
-	static void doBlitMultiplyBlendLogic##ext(Args &args); \
-	template<bool doscale, bool rgbmod> \
-	static void doBlitSubtractiveBlendLogic##ext(Args &args); \
-	template<bool doscale, bool rgbmod, bool alphamod> \
-	static void doBlitAdditiveBlendLogic##ext(Args &args); \
-	template<bool doscale, bool rgbmod, bool alphamod> \
-	static void doBlitAlphaBlendLogic##ext(Args &args); \
-	static void blit##ext(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 #ifdef SCUMMVM_NEON
-LOGIC_FUNCS_EXT(NEON)
+	static void blitNEON(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 #endif
 #ifdef SCUMMVM_SSE2
-LOGIC_FUNCS_EXT(SSE2)
+	static void blitSSE2(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 #endif
 #ifdef SCUMMVM_AVX2
-LOGIC_FUNCS_EXT(AVX2)
+	static void blitAVX2(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 #endif
-LOGIC_FUNCS_EXT(Generic)
+	static void blitGeneric(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 #undef LOGIC_FUNCS_EXT
 
 	typedef void(*BlitFunc)(Args &, const TSpriteBlendMode &, const AlphaType &);
