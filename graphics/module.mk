@@ -144,10 +144,10 @@ ifeq ($(SCUMMVM_NEON),1)
 $(MODULE)/blit/blit-blend.o: CXXFLAGS += -mfpu=neon
 endif
 ifeq ($(SCUMMVM_SSE2),1)
-$(MODULE)/blit/blit-blend.o: CXXFLAGS += -msse2 -msse
+$(MODULE)/blit/blit-blend.o: CXXFLAGS += -msse2
 endif
 ifeq ($(SCUMMVM_AVX2),1)
-$(MODULE)/blit/blit-blend.o: CXXFLAGS += -mavx2 -mavx -msse2 -msse
+$(MODULE)/blit/blit-blend.o: CXXFLAGS += -mavx2
 endif
 
 # Include common rules
