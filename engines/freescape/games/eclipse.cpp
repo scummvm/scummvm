@@ -122,7 +122,6 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
-		loadBundledImages();
 		file.open("TOTEC.EXE");
 
 		if (!file.isOpen())

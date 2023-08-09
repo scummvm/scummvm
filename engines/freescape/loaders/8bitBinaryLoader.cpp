@@ -22,8 +22,6 @@
 // Based on Phantasma code by Thomas Harte (2013),
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
-#include "image/bmp.h"
-
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/objects/connections.h"
@@ -768,32 +766,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	_startEntrance = startEntrance;
 	_colorNumber = ncolors;
 	_binaryBits = 8;
-}
-
-void FreescapeEngine::loadBundledImages() {
-	/*Image::BitmapDecoder decoder;
-	Common::String targetName = Common::String(_gameDescription->gameId);
-	if (isDOS() && isDemo())
-		Common::replace(targetName, "-demo", "");
-
-	Common::String borderFilename = targetName + "_" + Common::getRenderModeCode(_renderMode) + ".bmp";
-	if (_dataBundle->hasFile(borderFilename)) {
-		Common::SeekableReadStream *borderFile = _dataBundle->createReadStreamForMember(borderFilename);
-		decoder.loadStream(*borderFile);
-		_border = new Graphics::Surface();
-		_border->copyFrom(*decoder.getSurface());
-		decoder.destroy();
-	} else
-		error("Missing border file '%s' in data bundle", borderFilename.c_str());
-
-	Common::String titleFilename = targetName + "_" + Common::getRenderModeDescription(_renderMode) + "_title.bmp";
-	if (_dataBundle->hasFile(titleFilename)) {
-		Common::SeekableReadStream *titleFile = _dataBundle->createReadStreamForMember(titleFilename);
-		decoder.loadStream(*titleFile);
-		_title = new Graphics::Surface();
-		_title->copyFrom(*decoder.getSurface());
-		decoder.destroy();
-	}*/
 }
 
 void FreescapeEngine::loadFonts(byte *font, int charNumber) {

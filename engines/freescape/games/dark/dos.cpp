@@ -66,7 +66,6 @@ void DarkEngine::loadAssetsDOSDemo() {
 			addSkanner(it._value);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
-		//loadBundledImages();
 		file.open("DSIDEC.EXE");
 
 		if (!file.isOpen())
@@ -75,6 +74,12 @@ void DarkEngine::loadAssetsDOSDemo() {
 		load8bitBinary(&file, 0x8a70, 4); // TODO
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+
+	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
+	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
+
+	_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+	_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
 }
 
 void DarkEngine::loadAssetsDOSFullGame() {
@@ -98,14 +103,12 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
 
-		// TODO: load objects
 		for (auto &it : _areaMap) {
 			addWalls(it._value);
 			addECDs(it._value);
 			addSkanner(it._value);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
-		loadBundledImages();
 		file.open("DSIDEC.EXE");
 
 		if (!file.isOpen())
@@ -113,6 +116,12 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		load8bitBinary(&file, 0x7bb0, 4); // TODO
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+
+	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
+	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
+
+	_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+	_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
 }
 
 void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
@@ -180,6 +189,11 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	}
 	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	drawBinaryClock(surface, 300, 124, clockColor, back);
+
+	if (!_flyMode)
+		surface->copyRectToSurface(*_indicators[0], 160, 136, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+	else
+		surface->copyRectToSurface(*_indicators[1], 160, 136, Common::Rect(_indicators[1]->w, _indicators[1]->h));
 }
 
 } // End of namespace Freescape

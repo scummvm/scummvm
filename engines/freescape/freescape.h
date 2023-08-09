@@ -134,6 +134,7 @@ public:
 	Texture *_borderTexture;
 	Texture *_titleTexture;
 	Texture *_uiTexture;
+	Common::Array<Graphics::Surface *>_indicators;
 	Common::HashMap<uint16, Texture *> _borderCGAByArea;
 	Common::HashMap<uint16, byte *> _paletteCGAByArea;
 
@@ -169,7 +170,7 @@ public:
 
 	Common::Archive *_dataBundle;
 	void loadDataBundle();
-	void loadBundledImages();
+	Graphics::Surface *loadBundledImage(const Common::String &name);
 	byte *getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset);
 	Graphics::ManagedSurface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette = nullptr);
 	Graphics::ManagedSurface *loadAndCenterScrImage(Common::SeekableReadStream *stream);

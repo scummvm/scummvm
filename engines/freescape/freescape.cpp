@@ -22,7 +22,6 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/math.h"
-#include "common/compression/unzip.h"
 #include "common/random.h"
 #include "common/timer.h"
 #include "graphics/cursorman.h"
@@ -834,25 +833,6 @@ Common::Error FreescapeEngine::saveGameStreamExtended(Common::WriteStream *strea
 
 Common::Error FreescapeEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
 	return Common::kNoError;
-}
-
-void FreescapeEngine::loadDataBundle() {
-	_dataBundle = Common::makeZipArchive(FREESCAPE_DATA_BUNDLE);
-	if (!_dataBundle) {
-		error("ENGINE: Couldn't load data bundle '%s'.", FREESCAPE_DATA_BUNDLE.c_str());
-	}
-	Common::String versionFilename = "version";
-	if (!_dataBundle->hasFile(versionFilename))
-		error("No version number in %s", FREESCAPE_DATA_BUNDLE.c_str());
-
-	Common::SeekableReadStream *versionFile = _dataBundle->createReadStreamForMember(versionFilename);
-	char *versionData = (char *)malloc((versionFile->size() + 1) * sizeof(char));
-	versionFile->read(versionData, versionFile->size());
-	versionData[versionFile->size()] = '\0';
-	Common::String expectedVersion = "2";
-	if (versionData != expectedVersion)
-		error("Unexpected version number for freescape.dat: expecting '%s' but found '%s'", expectedVersion.c_str(), versionData);
-	free(versionData);
 }
 
 void FreescapeEngine::insertTemporaryMessage(const Common::String message, int deadline) {
