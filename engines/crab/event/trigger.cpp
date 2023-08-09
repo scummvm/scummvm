@@ -181,16 +181,16 @@ bool Trigger::evaluate(pyrodactyl::event::Info &info) {
 		break;
 
 	case TRIG_VAR: {
-		int var_sub = 0, var_val = 0;
-		bool compare_to_var = Common::find_if(_val.begin(), _val.end(), isChar) != _val.end();
+		int varSub = 0, varVal = 0;
+		bool compareToVar = Common::find_if(_val.begin(), _val.end(), isChar) != _val.end();
 
-		info.varGet(_subject, var_sub);
-		if (compare_to_var)
-			info.varGet(_val, var_val);
+		info.varGet(_subject, varSub);
+		if (compareToVar)
+			info.varGet(_val, varVal);
 		else
-			var_val = stringToNumber<int>(_val);
+			varVal = stringToNumber<int>(_val);
 
-		return evaluate(var_sub, var_val);
+		return evaluate(varSub, varVal);
 	}
 		break;
 
