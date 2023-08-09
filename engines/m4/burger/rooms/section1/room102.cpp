@@ -104,8 +104,8 @@ void Room102::init() {
 		hotspot_set_active("harry", false);
 		hotspot_set_active("harry ", false);
 
-		_series1 = series_play_("102seat", 2560, 0, -1, 100, -1, 100, 0, 0, 0, 0);
-		_series2 = series_play_("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_series1 = series_play("102seat", 2560, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_series2 = series_play("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 		setup(5, 0);
 		break;
 
@@ -118,7 +118,7 @@ void Room102::init() {
 		kernel_trigger_dispatch_now(3);
 		++_G(flags)[V015];
 
-		_series2 = series_play_("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_series2 = series_play("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 		hotspot_set_active("harry ", false);
 		break;
 	}
@@ -180,47 +180,47 @@ void Room102::daemon() {
 				case 1:
 				case 2:
 				case 3:
-					series_play_("102ha01", 2560, 1, 3, 4, 0, 100, 0, 0, 0, 0);
+					series_play("102ha01", 2560, 1, 3, 4, 0, 100, 0, 0, 0, 0);
 					break;
 				case 6:
 					_val12 = 30;
-					series_play_("102ha01", 2560, 2, 3, 10, 0, 100, 0, 0, 19, 19);
+					series_play("102ha01", 2560, 2, 3, 10, 0, 100, 0, 0, 19, 19);
 					break;
 				case 7:
 					_val12 = 31;
-					series_play_("102ha01", 2560, 2, 3, 10, 0, 100, 0, 0, 20, 23);
+					series_play("102ha01", 2560, 2, 3, 10, 0, 100, 0, 0, 20, 23);
 					break;
 				case 8:
 					_val12 = 24;
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 1, 1);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 1, 1);
 					break;
 				case 9:
 					_val12 = 25;
-					series_play_("102ha01", 2560, 0, 3, 7, 0, 100, 0, 0, 3, 4);
+					series_play("102ha01", 2560, 0, 3, 7, 0, 100, 0, 0, 3, 4);
 					break;
 				case 10:
 					_val12 = 23;
-					series_play_("102ha01", 2560, 0, 3, 8, 0, 100, 0, 0, 46, 48);
+					series_play("102ha01", 2560, 0, 3, 8, 0, 100, 0, 0, 46, 48);
 					break;
 				default:
-					series_play_("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 0, 0);
+					series_play("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 0, 0);
 					break;
 				}
 				break;
 
 			case 20:
 				_val12 = 20;
-				series_play_("102ha01", 0, 3, 4, 0, 100, 0, 0, 24, 24);
+				series_play("102ha01", 0, 3, 4, 0, 100, 0, 0, 24, 24);
 				break;
 
 			case 21:
 				_val12 = 21;
-				series_play_("102ha01", 0, 3, 4, 0, 100, 0, 0, 30, 30);
+				series_play("102ha01", 0, 3, 4, 0, 100, 0, 0, 30, 30);
 				break;
 
 			case 26:
 				_val11 = 27;
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 8, 14);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 8, 14);
 				break;
 
 			case 27:
@@ -230,26 +230,26 @@ void Room102::daemon() {
 					_val12 = 26;
 					kernel_trigger_dispatch_now(3);
 				} else {
-					series_play_("102ha01", 2560, 0, 3, 60, 0, 100, 0, 0, 14, 14);
+					series_play("102ha01", 2560, 0, 3, 60, 0, 100, 0, 0, 14, 14);
 				}
 				break;
 
 			case 28:
 				_val11 = 29;
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 8, 14);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 8, 14);
 				break;
 
 			case 29:
 				setup(5);
 				_val11 = 32;
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 15, 15);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 15, 15);
 				break;
 
 			case 32:
 				series_unload(_index1);
 				TerminateMachineAndNull(_series2);
 				_val11 = 33;
-				series_play_("102ha02s", 3841, 0, 11, 6, 0, 100, 0, 0, 0, 41);
+				series_play("102ha02s", 3841, 0, 11, 6, 0, 100, 0, 0, 0, 41);
 				digi_preload_stream_breaks(STREAMS1);
 				series_stream_with_breaks(STREAMS1, "102ha02", 6, 3840, 3);
 				break;
@@ -262,8 +262,8 @@ void Room102::daemon() {
 				digi_stop(2);
 				_index2 = series_load("102ha03", -1);
 				_val11 = 34;
-				series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 4);
-				series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+				series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 4);
+				series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 34:
@@ -289,12 +289,12 @@ void Room102::daemon() {
 				if (_series3)
 					TerminateMachineAndNull(_series3);
 
-				_series3 = series_play_("102ha01", 2560, 4, -1, 5, -1, 100, 0, 0, 24, 29);
+				_series3 = series_play("102ha01", 2560, 4, -1, 5, -1, 100, 0, 0, 24, 29);
 			} else {
 				TerminateMachineAndNull(_series3);
 				_series3 = nullptr;
 				_val12 = 19;
-				series_play_("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 24, 24);
+				series_play("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 24, 24);
 			}
 			break;
 
@@ -305,35 +305,35 @@ void Room102::daemon() {
 					_play1 = nullptr;
 				}
 
-				_series3 = series_play_("102ha01", 2560, 4, -1, 5, -1, 100, 0, 0, 31, 42);
+				_series3 = series_play("102ha01", 2560, 4, -1, 5, -1, 100, 0, 0, 31, 42);
 			} else {
 				TerminateMachineAndNull(_series3);
 				_series3 = nullptr;
 				_val12 = 19;
-				series_play_("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 30, 30);
+				series_play("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 30, 30);
 			}
 			break;
 
 		case 22:
 			_val12 = 23;
-			series_play_("102ha01", 2560, 2, 3, 6, 0, 100, 0, 0, 44, 48);
+			series_play("102ha01", 2560, 2, 3, 6, 0, 100, 0, 0, 44, 48);
 			break;
 
 		case 23:
 			_val12 = 19;
-			series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 44, 46);
+			series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 44, 46);
 			break;
 
 		case 24:
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
 					_val12 = 19;
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 0);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 0);
 				} else {
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 1, 1);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 1, 1);
 				}
 			} else {
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 0);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
@@ -341,13 +341,13 @@ void Room102::daemon() {
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
 					_val12 = 19;
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 5, 7);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 5, 7);
 				} else {
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 1, 1);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 1, 1);
 				}
 			} else {
 				_val12 = 19;
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 5, 7);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 5, 7);
 			}
 			break;
 
@@ -355,13 +355,13 @@ void Room102::daemon() {
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 17) == 1) {
 					_val12 = 19;
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 15, 15);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 15, 15);
 				} else {
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 14, 14);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 14, 14);
 				}
 			} else {
 				_val12 = 19;
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 15, 15);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 15, 15);
 			}
 			break;
 
@@ -369,13 +369,13 @@ void Room102::daemon() {
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
 					_val12 = 19;
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 19);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 19);
 				} else {
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
 				}
 			} else {
 				_val12 = 19;
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 19);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 19);
 			}
 			break;
 
@@ -383,13 +383,13 @@ void Room102::daemon() {
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
 					_val12 = 19;
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 20, 23);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 20, 23);
 				} else {
-					series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 20, 20);
+					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 20, 20);
 				}
 			} else {
 				_val12 = 19;
-				series_play_("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 20, 23);
+				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 20, 23);
 			}
 			break;
 
@@ -401,32 +401,32 @@ void Room102::daemon() {
 					if (!digi_play_state(2))
 						digi_play("102_030", 2, 255, -1);
 
-					series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 4, 6);
-					series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 4, 6);
+					series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 4, 6);
+					series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 4, 6);
 					break;
 
 				case 2:
 					if (!digi_play_state(2))
 						digi_play("102_031", 2, 255, -1);
 
-					series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 7, 8);
-					series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 7, 8);
+					series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 7, 8);
+					series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 7, 8);
 					break;
 
 				case 3:
 					if (!digi_play_state(2))
 						digi_play("102_032", 2, 255, -1);
 
-					series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 9, 11);
-					series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 9, 11);
+					series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 9, 11);
+					series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 9, 11);
 					break;
 
 				case 4:
 					if (!digi_play_state(2))
 						digi_play("102_033", 2, 255, -1);
 
-					series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 12, 15);
-					series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 12, 15);
+					series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 12, 15);
+					series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 12, 15);
 					break;
 
 				default:
@@ -443,15 +443,15 @@ void Room102::daemon() {
 
 			case 36:
 				_val12 = 36;
-				series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
-				series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 16);
+				series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
+				series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 16);
 				break;
 
 			case 37:
 				_val11 = 39;
 				_G(flags)[GLB_TEMP_5] = 2;
 				digi_preload_stream_breaks(STREAMS2);
-				series_play_("102ha09s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("102ha09s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS2, "102ha09", 6, 256, 3);
 				break;
 
@@ -459,7 +459,7 @@ void Room102::daemon() {
 				_val11 = 40;
 				_G(flags)[GLB_TEMP_5] = 1;
 				digi_preload_stream_breaks(STREAMS3);
-				series_play_("102ha10s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("102ha10s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS3, "102ha10", 6, 256, 3);
 				break;
 
@@ -482,7 +482,7 @@ void Room102::daemon() {
 				sub1();
 
 				digi_preload_stream_breaks(STREAMS4);
-				series_play_("102ha04s", 1024, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("102ha04s", 1024, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS4, "102ha04", 6, 768, 3);
 				break;
 
@@ -498,8 +498,8 @@ void Room102::daemon() {
 				_val11 = 43;
 				_val12 = 43;
 
-				series_play_("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 4);
-				series_play_("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+				series_play("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 4);
+				series_play("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 0, 4);
 
 				conv_load_and_prepare("conv06", 21, false);
 				conv_export_pointer_curr(&_val4, 0);
@@ -544,13 +544,13 @@ void Room102::daemon() {
 				}
 
 				_val13 = frame;
-				series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, frame, frame);
-				series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, frame, frame);
+				series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, frame, frame);
+				series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, frame, frame);
 
 			} else {
 				_val13 = 35;
-				series_play_("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
-				series_play_("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 16);
+				series_play("102ha03", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 16);
+				series_play("102ha03s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 16);
 			}
 			break;
 
@@ -558,43 +558,43 @@ void Room102::daemon() {
 			switch (_val11) {
 			case 20:
 				frame = imath_ranged_rand(8, 11);
-				series_play_("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
-				series_play_("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 21:
 				frame = imath_ranged_rand(12, 15);
-				series_play_("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
-				series_play_("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 43:
 				frame = imath_ranged_rand(4, 7);
-				series_play_("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
-				series_play_("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102ha05", 2560, 0, 3, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102ha05s", 2561, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 44:
 				_val11 = 45;
-				series_play_("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 24);
-				series_play_("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 24);
+				series_play("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 16, 24);
+				series_play("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 16, 24);
 				break;
 
 			case 45:
-				series_play_("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 24, 24);
-				series_play_("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 24, 24);
+				series_play("102ha05", 2560, 0, 3, 6, 0, 100, 0, 0, 24, 24);
+				series_play("102ha05s", 2561, 0, -1, 6, 0, 100, 0, 0, 24, 24);
 				break;
 
 			case 48:
 				_val11 = 49;
-				series_play_("102ha05", 2560, 2, 3, 6, 0, 100, 0, 0, 0, 3);
-				series_play_("102ha05s", 2561, 2, -1, 6, 0, 100, 0, 0, 0, 3);
+				series_play("102ha05", 2560, 2, 3, 6, 0, 100, 0, 0, 0, 3);
+				series_play("102ha05s", 2561, 2, -1, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 49:
 				_val11 = 50;
-				series_play_("102ha05", 2818, 2, 3, 30, 0, 100, 0, 0, 8, 8);
-				series_play_("102ha05s", 2818, 2, -1, 30, 0, 100, 0, 0, 8, 8);
+				series_play("102ha05", 2818, 2, 3, 30, 0, 100, 0, 0, 8, 8);
+				series_play("102ha05s", 2818, 2, -1, 30, 0, 100, 0, 0, 8, 8);
 				break;
 
 			case 50:
@@ -630,7 +630,7 @@ void Room102::daemon() {
 				break;
 
 			case 47:
-				_series2 = series_play_("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+				_series2 = series_play("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 				_index1 = series_load("102ha01", -1);
 				_val11 = 19;
 				_val12 = 19;
@@ -648,8 +648,8 @@ void Room102::daemon() {
 			case 53:
 				_val11 = 54;
 				_index5 = series_load("102ha07", -1);
-				series_play_("102ha07", 3840, 0, 3, 10, 0, 100, 0, 0, 0, 7);
-				series_play_("102ha07s", 3841, 0, -1, 10, 0, 100, 0, 0, 0, 7);
+				series_play("102ha07", 3840, 0, 3, 10, 0, 100, 0, 0, 0, 7);
+				series_play("102ha07s", 3841, 0, -1, 10, 0, 100, 0, 0, 0, 7);
 
 				if (_G(flags)[V013]) {
 					_play1 = "102h204";
@@ -662,8 +662,8 @@ void Room102::daemon() {
 				break;
 
 			case 54:
-				series_play_("102ha07", 3840, 0, 3, 30, 0, 100, 0, 0, 23, 23);
-				series_play_("102ha07s", 3841, 0, -1, 30, 0, 100, 0, 0, 23, 23);
+				series_play("102ha07", 3840, 0, 3, 30, 0, 100, 0, 0, 23, 23);
+				series_play("102ha07s", 3841, 0, -1, 30, 0, 100, 0, 0, 23, 23);
 
 				if (_play1) {
 					digi_play(_play1, 1, 255, 10);
@@ -673,20 +673,20 @@ void Room102::daemon() {
 
 			case 55:
 				_val12 = 55;
-				series_play_("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 30, 30);
-				series_play_("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 30, 30);
+				series_play("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 30, 30);
+				series_play("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 30, 30);
 				break;
 
 			case 56:
 				_val12 = 56;
-				series_play_("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 9, 10);
-				series_play_("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 9, 10);
+				series_play("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 9, 10);
+				series_play("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 9, 10);
 				break;
 
 			case 57:
 				series_unload(_index5);
 				_val11 = 46;
-				series_play_("102ha08s", 3841, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("102ha08s", 3841, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS5, "102ha08", 6, 3840, 3);
 				break;
 
@@ -697,8 +697,8 @@ void Room102::daemon() {
 
 		case 55:
 			if (_val11 == 55) {
-				_series3 = series_play_("102ha07", 3840, 4, -1, 6, -1, 100, 0, 0, 30, 33);
-				_series6 = series_play_("102ha07s", 3841, 4, -1, 6, -1, 100, 0, 0, 30, 33);
+				_series3 = series_play("102ha07", 3840, 4, -1, 6, -1, 100, 0, 0, 30, 33);
+				_series6 = series_play("102ha07s", 3841, 4, -1, 6, -1, 100, 0, 0, 30, 33);
 
 				if (_play1) {
 					digi_play(_play1, 1, 255, 10);
@@ -710,15 +710,15 @@ void Room102::daemon() {
 				TerminateMachineAndNull(_series6);
 				_series3 = nullptr;
 				_val12 = 54;
-				series_play_("102ha07", 3840, 2, 3, 6, 0, 100, 0, 0, 30, 30);
-				series_play_("102ha07s", 3841, 2, -1, 6, 0, 100, 0, 0, 30, 30);
+				series_play("102ha07", 3840, 2, 3, 6, 0, 100, 0, 0, 30, 30);
+				series_play("102ha07s", 3841, 2, -1, 6, 0, 100, 0, 0, 30, 30);
 			}
 			break;
 
 		case 56:
 			if (_val11 == 56) {
-				_series3 = series_play_("102ha07", 3840, 4, -1, 4, -1, 100, 0, 0, 11, 19);
-				_series6 = series_play_("102ha07s", 3841, 4, -1, 4, -1, 100, 0, 0, 11, 19);
+				_series3 = series_play("102ha07", 3840, 4, -1, 4, -1, 100, 0, 0, 11, 19);
+				_series6 = series_play("102ha07s", 3841, 4, -1, 4, -1, 100, 0, 0, 11, 19);
 
 				if (_play1) {
 					digi_play(_play1, 1, 255, 15);
@@ -729,8 +729,8 @@ void Room102::daemon() {
 				TerminateMachineAndNull(_series6);
 				_series3 = nullptr;
 				_val12 = 54;
-				series_play_("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 20, 21);
-				series_play_("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 20, 21);
+				series_play("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 20, 21);
+				series_play("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 20, 21);
 			}
 			break;
 
@@ -798,11 +798,11 @@ void Room102::setupWax() {
 
 void Room102::setupLaz() {
 	if (_G(flags)[V019]) {
-		_laz1 = series_play_("102lazys", 512, 0, -1, 100, -1, 100, 0, 0, 0, 0);
-		_laz2 = series_play_("102lazss", 513, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_laz1 = series_play("102lazys", 512, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_laz2 = series_play("102lazss", 513, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 	} else {
-		_laz1 = series_play_("102lazy2", 512, 0, -1, 100, -1, 100, 0, 0, 0, 0);
-		_laz2 = series_play_("102laz2s", 513, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_laz1 = series_play("102lazy2", 512, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_laz2 = series_play("102laz2s", 513, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 	}
 }
 

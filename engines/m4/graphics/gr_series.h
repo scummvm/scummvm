@@ -63,8 +63,13 @@ extern machine *series_show_sprite(const char *seriesName, int32 index, int32 la
 extern machine *series_play(char *seriesName, int32 loopCount, uint32 flags,
 	int32 s, int32 layer, int32 frameRate, int16 triggerNum,
 	bool stick_when_done);
-
+extern machine *series_play(const char *seriesName, frac16 layer, uint32 flags,
+	int16 triggerNum, int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
+	int32 firstFrame = 0, int32 lastFrame = -1);
 extern machine *series_simple_play(char *seriesName, frac16 layer, bool stick_when_done);
+
+extern machine *series_show(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
+	int32 duration, int32 index, int32 s = 100, int32 x = 0, int32 y = 0);
 
 extern machine *series_ranged_play(char *seriesName, int32 loopCount, uint32 flags,
 	int32 firstFrame, int32 lastFrame,
@@ -80,12 +85,6 @@ machine *series_ranged_play_xy(char *seriesName, int32 loopCount, uint32 flags,
 machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger);
 bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger);
 void series_set_frame_rate(machine *m, int32 newFrameRate);
-
-extern machine *series_show_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
-	int32 duration, int32 index, int32 s = 100, int32 x = 0, int32 y = 0);
-extern machine *series_play_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
-	int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
-	int32 firstFrame = 0, int32 lastFrame = -1);
 
 } // namespace M4
 

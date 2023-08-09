@@ -226,10 +226,10 @@ void Room101::daemon() {
 	case 1:
 		if (_val2 == 12) {
 			int frame = imath_ranged_rand(8, 10);
-			series_play_("101ha01", 3840, 0, 1, 6, 0, 100, 0, 0, frame, frame);
+			series_play("101ha01", 3840, 0, 1, 6, 0, 100, 0, 0, frame, frame);
 		} else {
 			digi_preload("101_002");
-			series_play_("101ha01", 3840, 0, 21, 6, 0, 100, 0, 0, 11, 13);
+			series_play("101ha01", 3840, 0, 21, 6, 0, 100, 0, 0, 11, 13);
 		}
 		break;
 
@@ -338,7 +338,7 @@ void Room101::daemon() {
 		if (_G(flags)[ROOM101_FLAG20])
 			series_load("101wi11s", -1, nullptr);
 
-		_machine1 = series_play_("101wi14s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine1 = series_play("101wi14s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 		_machine2 = series_stream_with_breaks(STREAM_BREAKS6, "101wi14", 6, 256, 2);
 		break;
 
@@ -358,7 +358,7 @@ void Room101::daemon() {
 		break;
 
 	case 10:
-		_machine1 = series_play_("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine1 = series_play("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 		_machine2 = series_stream_with_breaks(STREAM_BREAKS1, "101wi13", 6, 256, 2);
 		break;
 
@@ -380,7 +380,7 @@ void Room101::daemon() {
 		break;
 
 	case 13:
-		_machine1 = series_play_("101wi12s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine1 = series_play("101wi12s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 		_machine2 = series_stream_with_breaks(STREAM_BREAKS2, "101wi12", 6, 256, 2);
 		break;
 
@@ -399,7 +399,7 @@ void Room101::daemon() {
 		break;
 
 	case 16:
-		_machine1 = series_play_("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine1 = series_play("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 		_machine2 = series_stream_with_breaks(STREAM_BREAKS3, "101wi13", 6, 256, 2);
 		break;
 
@@ -420,7 +420,7 @@ void Room101::daemon() {
 		break;
 
 	case 19:
-		_machine1 = series_play_("101wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine1 = series_play("101wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 		_machine2 = series_stream_with_breaks(STREAM_BREAKS4, "101wi11", 6, 256, 2);
 		break;
 
@@ -431,7 +431,7 @@ void Room101::daemon() {
 	case 21:
 		digi_play("101_002", 2, 255, -1);
 		_G(roomVal1) = 18;
-		series_play_("101ha01", 3840, 0, gTELEPORT, 6, 0, 100, 0, 0, 14, -1);
+		series_play("101ha01", 3840, 0, gTELEPORT, 6, 0, 100, 0, 0, 14, -1);
 		break;
 
 	case 23:
@@ -566,7 +566,7 @@ void Room101::daemon() {
 				_G(flags)[V005] = 1;
 			}
 
-			series_play_("101ha01", 3840, 0, 1, 6, 0, 100, 0, 0, 0, 7);
+			series_play("101ha01", 3840, 0, 1, 6, 0, 100, 0, 0, 0, 7);
 			break;
 
 		case 18:
@@ -590,8 +590,8 @@ void Room101::daemon() {
 			break;
 
 		case 22:
-			series_play_("101wi04", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
-			series_play_("101wi04s", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
+			series_play("101wi04", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
+			series_play("101wi04s", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
 			break;
 
 		default:
@@ -708,7 +708,7 @@ void Room101::parser() {
 }
 
 void Room101::door() {
-	_doorMachine = series_play_("101door", 3840, 0, -1, 10, -1, 100, 0, -53, 0, 0);
+	_doorMachine = series_play("101door", 3840, 0, -1, 10, -1, 100, 0, -53, 0, 0);
 }
 
 void Room101::loadSounds() {

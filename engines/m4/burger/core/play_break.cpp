@@ -79,12 +79,12 @@ static void set_next_series_play_break(int32 slot) {
 			// Play the series
 			if (player->digi_trigger) {
 				// Don't ask for the gSERIES_PLAY_BREAK trigger
-				player->series_machine = series_play_(player->name, player->depth, player->current_break.flags, NO_TRIGGER,
+				player->series_machine = series_play(player->name, player->depth, player->current_break.flags, NO_TRIGGER,
 					player->framerate, player->current_break.loopCount,
 					player->scale, player->x, player->y,
 					player->current_break.firstFrame, player->current_break.lastFrame);
 			} else { // ask for the gSERIES_PLAY_BREAK trigger
-				player->series_machine = series_play_(player->name, player->depth, player->current_break.flags, (int16)slot + gSERIES_PLAY_BREAK_0,
+				player->series_machine = series_play(player->name, player->depth, player->current_break.flags, (int16)slot + gSERIES_PLAY_BREAK_0,
 					player->framerate, player->current_break.loopCount,
 					player->scale, player->x, player->y,
 					player->current_break.firstFrame, player->current_break.lastFrame);
@@ -92,7 +92,7 @@ static void set_next_series_play_break(int32 slot) {
 
 			// play the shadow series if necessary
 			if (player->with_shadow) {
-				player->shadow_machine = series_play_(player->shadow_name, player->depth + 1, player->current_break.flags, NO_TRIGGER,
+				player->shadow_machine = series_play(player->shadow_name, player->depth + 1, player->current_break.flags, NO_TRIGGER,
 					player->framerate, player->current_break.loopCount,
 					player->scale, player->x, player->y,
 					player->current_break.firstFrame, player->current_break.lastFrame);
