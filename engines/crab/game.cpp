@@ -735,14 +735,14 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	root->append_attribute(doc.allocate_attribute("loc_id", loc.c_str()));
 
 	// Save location name
-	Common::String loc_name = _info.curLocName();
-	root->append_attribute(doc.allocate_attribute("loc_name", loc_name.c_str()));
+	Common::String locName = _info.curLocName();
+	root->append_attribute(doc.allocate_attribute("loc_name", locName.c_str()));
 
 	// Save player character name
-	Common::String char_name;
+	Common::String charName;
 	if (_info.personValid(_level.playerId()))
-		char_name = _info.personGet(_level.playerId())._name;
-	root->append_attribute(doc.allocate_attribute("char_name", char_name.c_str()));
+		charName = _info.personGet(_level.playerId())._name;
+	root->append_attribute(doc.allocate_attribute("char_name", charName.c_str()));
 
 	// Difficulty
 	Common::String diff = "Normal";
@@ -760,59 +760,26 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	Common::String playtime = _clock.getTime();
 	root->append_attribute(doc.allocate_attribute("time", playtime.c_str()));
 
-	rapidxml::xml_node<char> *child_gem = doc.allocate_node(rapidxml::node_element, "events");
-	_gem.saveState(doc, child_gem);
-	root->append_node(child_gem);
+	rapidxml::xml_node<char> *childGem = doc.allocate_node(rapidxml::node_element, "events");
+	_gem.saveState(doc, childGem);
+	root->append_node(childGem);
 
-	rapidxml::xml_node<char> *child_info = doc.allocate_node(rapidxml::node_element, "info");
-	_info.saveState(doc, child_info);
-	root->append_node(child_info);
+	rapidxml::xml_node<char> *childInfo = doc.allocate_node(rapidxml::node_element, "info");
+	_info.saveState(doc, childInfo);
+	root->append_node(childInfo);
 
-	rapidxml::xml_node<char> *child_map = doc.allocate_node(rapidxml::node_element, "map");
-	_map.saveState(doc, child_map);
-	root->append_node(child_map);
+	rapidxml::xml_node<char> *childMap = doc.allocate_node(rapidxml::node_element, "map");
+	_map.saveState(doc, childMap);
+	root->append_node(childMap);
 
-	rapidxml::xml_node<char> *child_level = doc.allocate_node(rapidxml::node_element, "level");
-	_level.saveState(doc, child_level);
-	root->append_node(child_level);
+	rapidxml::xml_node<char> *childLevel = doc.allocate_node(rapidxml::node_element, "level");
+	_level.saveState(doc, childLevel);
+	root->append_node(childLevel);
 
-	Common::String xml_as_string;
-	rapidxml::print(Crab::backInserter(xml_as_string), doc);
+	Common::String xmlAsString;
+	rapidxml::print(Crab::backInserter(xmlAsString), doc);
 
-	stream->writeString(xml_as_string);
-
-#if 0
-	Common::String fullpath = FullPath(filename);
-
-	// We don't check for duplicates for auto-saves and iron man saves
-	if (!overwrite) {
-		// If a file of this name already exists, find appropriate filename
-		if (boost::filesystem::exists(fullpath)) {
-			// Copy the original filename, add a _1 at the end
-			// Start from one because that's how humans count
-			Common::String result = filename + "_1";
-			int count = 1;
-
-			// Keep trying a filename until it no longer exists or we reach an insanely high number
-			while (boost::filesystem::exists(FullPath(result)) && count < 1000) {
-				++count;
-				result = filename + "_" + NumberToString(count);
-			}
-
-			// Make result the new save file path
-			fullpath = FullPath(result);
-		}
-	}
-
-	std::ofstream save(fullpath.c_str(), std::ios::out);
-	if (save.is_open()) {
-		save << xml_as_string;
-		save.close();
-	}
-
-	doc.clear();
-	hud.pause.ScanDir();
-#endif
+	stream->writeString(xmlAsString);
 }
 //------------------------------------------------------------------------
 // Purpose: Quit the game
