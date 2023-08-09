@@ -120,14 +120,22 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		// extract the downloaded zip
 		Common::String gameDir = Common::punycode_encodefilename(DLCMan._queuedDownloadTasks.front()->name);
 		Common::Path destPath = Common::Path(ConfMan.get("dlcspath")).appendComponent(gameDir);
-		extractZip(relativeFilePath, destPath);
+		Common::Error error = extractZip(relativeFilePath, destPath);
 		// remove cache (the downloaded .zip)
 		removeCacheFile(relativeFilePath);
-		// add downloaded game entry in scummvm configuration file
-		addEntryToConfig(destPath);
-		// handle next download
-		DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
+		if (error.getCode() == Common::kNoError) {
+			// add downloaded game entry in scummvm configuration file
+			addEntryToConfig(destPath);
+			DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
+			DLCMan._errorText = "";
+		} else {
+			// if there is any error in extraction
+			DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kErrorDownloading;
+			DLCMan._errorText = error.getDesc();
+		}
 		DLCMan.refreshDLCList();
+
+		// handle next download
 		DLCMan._queuedDownloadTasks.pop();
 		DLCMan._dlcsInProgress.remove_at(0);
 		DLCMan.processDownloadQueue();
@@ -152,22 +160,24 @@ void ScummVMCloud::startDownloadAsync(const Common::String &id, const Common::St
 	_rq->start();
 }
 
-void ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &destPath) {
+Common::Error ScummVMCloud::extractZip(const Common::Path &file, const Common::Path &destPath) {
 	Common::Archive *dataArchive = nullptr;
 	Common::Path dlcPath = Common::Path(ConfMan.get("dlcspath"));
 	Common::FSNode *fs = new Common::FSNode(dlcPath.join(file));
+	Common::Error error = Common::kNoError;
 	if (fs->exists()) {
 		dataArchive = Common::makeZipArchive(*fs);
 		// dataArchive is nullptr if zip file is incomplete
 		if (dataArchive != nullptr) {
-			dataArchive->dumpArchive(destPath.toString());
-			DLCMan._errorText = "";
+			error = dataArchive->dumpArchive(destPath.toString());
 		} else {
-			DLCMan._errorText = "ERROR: " + DLCMan._queuedDownloadTasks.front()->name + ": Archive is broken, please re-download!";
+			error = Common::Error(Common::kCreatingFileFailed, DLCMan._queuedDownloadTasks.front()->name + "Archive is broken, please re-download");
 		}
 	}
 	delete fs;
 	delete dataArchive;
+
+	return error;
 }
 
 void ScummVMCloud::removeCacheFile(const Common::Path &file) {
