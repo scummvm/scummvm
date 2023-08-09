@@ -168,21 +168,25 @@ Common::Keymap *GuiManager::getKeymap() const {
 	act = new Action(kStandardActionMoveUp, _("Up"));
 	act->setKeyEvent(KEYCODE_UP);
 	act->addDefaultInputMapping("JOY_UP");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Down"));
 	act->setKeyEvent(KEYCODE_DOWN);
 	act->addDefaultInputMapping("JOY_DOWN");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Left"));
 	act->setKeyEvent(KEYCODE_LEFT);
 	act->addDefaultInputMapping("JOY_LEFT");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action(kStandardActionMoveRight, _("Right"));
 	act->setKeyEvent(KEYCODE_RIGHT);
 	act->addDefaultInputMapping("JOY_RIGHT");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action(kStandardActionEE, _("???"));
