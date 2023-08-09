@@ -74,7 +74,7 @@ struct AlphaBlend {
         return vorrq_u32(dst, src);
     }
 
-    static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+    static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
         uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
 
         if (ina != 0) {
@@ -130,7 +130,7 @@ struct MultiplyBlend {
         return vorrq_u32(dst, src);
     }
 
-    static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+    static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
         uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
 
         if (ina != 0) {
@@ -147,7 +147,7 @@ struct OpaqueBlend {
         return vorrq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
     }
 
-    static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+    static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
         *(uint32 *)out = *(const uint32 *)in | BlendBlit::kAModMask;
     }
 };
@@ -161,7 +161,7 @@ struct BinaryBlend {
         return vorrq_u32(dst, src);
     }
 
-    static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+    static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
         uint32 pix = *(const uint32 *)in;
         int a = in[BlendBlit::kAIndex];
 
@@ -225,7 +225,7 @@ struct AdditiveBlend {
         return vorrq_u32(dst, src);
     }
 
-    static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+    static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
         uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
 
         if (ina != 0) {
@@ -254,7 +254,7 @@ struct SubtractiveBlend {
         return vorrq_u32(vmovq_n_u32(BlendBlit::kAModMask), vorrq_u32(srcb, vorrq_u32(srcg, srcr)));
     }
 
-    static inline void normal(const byte *in, byte *out, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+    static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
         out[BlendBlit::kAIndex] = 255;
         out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * cb  * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
         out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * cg  * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
@@ -325,7 +325,7 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
                 in = inBase + scaleXCtr / BlendBlit::SCALE_THRESHOLD * args.inStep;
             }
 
-            PixelFunc<doscale, rgbmod, alphamod>::normal(in, out, args.flipping & FLIP_H, ca, cr, cg, cb);
+            PixelFunc<doscale, rgbmod, alphamod>::normal(in, out, ca, cr, cg, cb);
             
             if (doscale)
                 scaleXCtr += args.scaleX;

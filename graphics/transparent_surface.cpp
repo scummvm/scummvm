@@ -82,10 +82,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	if (width == -1) {
-		width = srcImage.w;
+		width = srcW;
 	}
 	if (height == -1) {
-		height = srcImage.h;
+		height = srcH;
 	}
 
 	int scaleX = BlendBlit::getScaleFactor(srcW, width), scaleXoff = 0;
@@ -182,10 +182,10 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 	}
 
 	if (width == -1) {
-		width = srcImage.w;
+		width = srcW;
 	}
 	if (height == -1) {
-		height = srcImage.h;
+		height = srcH;
 	}
 
 	int scaleX = BlendBlit::getScaleFactor(srcW, width), scaleXoff = 0;;
