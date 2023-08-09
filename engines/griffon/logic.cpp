@@ -1307,7 +1307,7 @@ void GriffonEngine::updateSpells() {
 						}
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
-							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB((int)alf, 255, 255, 255));
+							_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB((int)alf, 255, 255, 255));
 
 							if (_spellInfo[i].damagewho == 0) {
 								for (int e = 1; e <= _lastNpc; e++) {
@@ -1382,7 +1382,7 @@ void GriffonEngine::updateSpells() {
 				rcDest.left = xloc;
 				rcDest.top = yloc;
 
-				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(255, 255, 255, 255));
+				_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(255, 255, 255, 255));
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.2 * _fpsr;
 				if (_spellInfo[i].frame < 0)
@@ -1504,7 +1504,7 @@ void GriffonEngine::updateSpells() {
 						rcDest.top = yloc;
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
-							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(255, 255, 255, 255));
+							_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(255, 255, 255, 255));
 
 							if (scatter) {
 								if (_spellInfo[i].damagewho == 0) {
@@ -1583,7 +1583,7 @@ void GriffonEngine::updateSpells() {
 				if (fra > 24)
 					f = 192 * (1 - (fra - 24) / 8);
 
-				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(f, 255, 255, 255));
+				_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(f, 255, 255, 255));
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.3 * _fpsr;
 				if (_spellInfo[i].frame < 0) {
@@ -1680,7 +1680,7 @@ void GriffonEngine::updateSpells() {
 						rcDest.left = xloc;
 						rcDest.top = yloc;
 
-						_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
+						_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
 					}
 				} else {
 
@@ -1712,7 +1712,7 @@ void GriffonEngine::updateSpells() {
 							rcDest.left = xloc;
 							rcDest.top = yloc;
 
-							_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(192, 255, 255, 255));
+							_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(192, 255, 255, 255));
 						}
 
 						if (xloc < -1 || yloc < -1 || xloc > 304 || yloc > 224)
@@ -2089,7 +2089,7 @@ void GriffonEngine::updateSpellsUnder() {
 				if (fra > 24)
 					f = 160 * (1 - (fra - 24) / 8);
 
-				_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(f, 255, 255, 255));
+				_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(f, 255, 255, 255));
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.2 * _fpsr;
 				if (_spellInfo[i].frame < 0)
@@ -2191,7 +2191,7 @@ void GriffonEngine::updateSpellsUnder() {
 							rcDest.top = (int)yloc;
 
 							if (xloc > -1 && xloc < 304 && yloc > -1 && yloc < 224) {
-								_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
+								_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
 
 								int sx = (xloc / 2 + 4);
 								int sy = (yloc / 2 + 8);
@@ -2313,7 +2313,7 @@ void GriffonEngine::updateSpellsUnder() {
 					rcDest.top = yloc;
 
 					if (xloc > -16 && xloc < 320 && yloc > -16 && yloc < 240) {
-						_spellImg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
+						_spellImg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
 
 						if (_spellInfo[i].damagewho == 1) {
 							float xdif = (xloc + 8) - (_player.px + 12);
