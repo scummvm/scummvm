@@ -46,6 +46,8 @@ bool Console::cmdDraw(int argc, const char **argv) {
 				g_engine->_debugDraw |= DRAW_PATHING;
 			else if (!scumm_stricmp(argv[i], "ALL"))
 				g_engine->_debugDraw = DRAW_TMX | DRAW_PROP_BOUNDS | DRAW_SPRITE_BOUNDS | DRAW_PATHING;
+			else
+				debugPrintf("Valid parameters are 'TMX', 'PROPS', 'SPRITE', 'PATHING', 'ALL' or 'OFF'\n");
 		}
 	}
 	return true;
