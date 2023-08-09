@@ -264,9 +264,7 @@ void Sprite::flyAround(const Rect &camera, const SpriteConstant &sc) {
 				_aiData._walk._timer.target(sc._fly._delayMin + (g_engine->getRandomNumber(sc._fly._delayMax)));
 				_aiData._walk._timer.start();
 			}
-		}
-		// Flying towards the right edge
-		else if (xVel() > 0) {
+		} else if (xVel() > 0) { // Flying towards the right edge
 			// Are we completely out of the left edge of the camera?
 			if (x() > camera.x + camera.w + w()) {
 				_aiData._walk._enabled = false;
