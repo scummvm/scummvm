@@ -747,8 +747,8 @@ Common::Rect ManagedSurface::blendBlitTo(Surface &target,
 										 const int width, const int height,
 										 const TSpriteBlendMode blend,
 										 const AlphaType alphaType) {
-	Common::Rect dstArea(posX, posY, posX + (width == -1 ? w : width), posY + (height == -1 ? h : height));
 	Common::Rect srcArea = srcRect ? *srcRect : Common::Rect(0, 0, w, h);
+	Common::Rect dstArea(posX, posY, posX + (width == -1 ? srcArea.width() : width), posY + (height == -1 ? srcArea.height() : height));
 	
 	if (!isBlendBlitPixelFormatSupported(format, target.format)) {
 		warning("ManagedSurface::blendBlitTo only accepts RGBA32!");
