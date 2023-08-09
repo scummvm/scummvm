@@ -3,7 +3,9 @@ MODULE := graphics
 MODULE_OBJS := \
 	big5.o \
 	blit/blit.o \
-	blit/blit-blend.o \
+	blit/blit-sse2.o \
+	blit/blit-avx2.o \
+	blit/blit-neon.o \
 	blit/blit-alpha.o \
 	blit/blit-scale.o \
 	cursorman.o \
@@ -141,13 +143,13 @@ endif
 endif
 
 ifeq ($(SCUMMVM_NEON),1)
-$(MODULE)/blit/blit-blend.o: CXXFLAGS += -mfpu=neon
+$(MODULE)/blit/blit-neon.cpp: CXXFLAGS += -mfpu=neon
 endif
 ifeq ($(SCUMMVM_SSE2),1)
-$(MODULE)/blit/blit-blend.o: CXXFLAGS += -msse2
+$(MODULE)/blit/blit-sse2.cpp: CXXFLAGS += -msse2
 endif
 ifeq ($(SCUMMVM_AVX2),1)
-$(MODULE)/blit/blit-blend.o: CXXFLAGS += -mavx2
+$(MODULE)/blit/blit-avx2.cpp: CXXFLAGS += -mavx2
 endif
 
 # Include common rules

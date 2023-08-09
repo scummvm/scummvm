@@ -19,9 +19,7 @@
  *
  */
 
-#ifndef GRAPHICS_BLIT_BLIT_BLEND_SSE2_H
-#define GRAPHICS_BLIT_BLIT_BLEND_SSE2_H
-
+#include "common/scummsys.h"
 #ifdef SCUMMVM_SSE2
 #include <immintrin.h>
 
@@ -271,13 +269,7 @@ struct SubtractiveBlend {
 };
 
 class BlendBlitImpl {
-
 public:
-#ifdef SCUMMVM_AVX2
-template<template <bool DOSCALE, bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod, bool coloradd1, bool loaddst>
-static inline void blitInnerLoopAVX2(BlendBlit::Args &args);
-#endif
-
 template<template <bool DOSCALE, bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod, bool coloradd1, bool loaddst>
 static inline void blitInnerLoop(BlendBlit::Args &args) {
     const byte *in;
@@ -352,34 +344,128 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
     }
 }
 
-};
+}; // End of class BlendBlitImpl
 
-template<bool doscale, bool rgbmod, bool alphamod>
-void BlendBlit::doBlitAlphaBlendLogicSSE2(Args &args) {
-    BlendBlitImpl::blitInnerLoop<AlphaBlend, doscale, rgbmod, alphamod, false, true>(args);
-}
-template<bool doscale, bool rgbmod>
-void BlendBlit::doBlitSubtractiveBlendLogicSSE2(Args &args) {
-    BlendBlitImpl::blitInnerLoop<SubtractiveBlend, doscale, rgbmod, false, false, true>(args);
-}
-template<bool doscale, bool rgbmod, bool alphamod>
-void BlendBlit::doBlitAdditiveBlendLogicSSE2(Args &args) {
-    BlendBlitImpl::blitInnerLoop<AdditiveBlend, doscale, rgbmod, alphamod, false, true>(args);
-}
-template<bool doscale>
-void BlendBlit::doBlitOpaqueBlendLogicSSE2(Args &args) {
-    BlendBlitImpl::blitInnerLoop<OpaqueBlend, doscale, false, false, false, true>(args);
-}
-template<bool doscale>
-void BlendBlit::doBlitBinaryBlendLogicSSE2(Args &args) {
-    BlendBlitImpl::blitInnerLoop<BinaryBlend, doscale, false, false, false, true>(args);
-}
-template<bool doscale, bool rgbmod, bool alphamod>
-void BlendBlit::doBlitMultiplyBlendLogicSSE2(Args &args) {
-    BlendBlitImpl::blitInnerLoop<MultiplyBlend, doscale, rgbmod, alphamod, false, true>(args);
+void BlendBlit::blitSSE2(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType) {
+    bool rgbmod   = ((args.color & kRGBModMask) != kRGBModMask);
+    bool alphamod = ((args.color & kAModMask)   != kAModMask);
+    if (args.scaleX == SCALE_THRESHOLD && args.scaleY == SCALE_THRESHOLD) {
+        if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
+            BlendBlitImpl::blitInnerLoop<OpaqueBlend, false, false, false, false, true>(args);
+        } else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
+            BlendBlitImpl::blitInnerLoop<BinaryBlend, false, false, false, false, true>(args);
+        } else {
+            if (blendMode == BLEND_ADDITIVE) {
+                if (rgbmod) {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, false, true, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, false, true, false, false, true>(args);
+                    }
+                } else {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, false, false, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, false, false, false, false, true>(args);
+                    }
+                }
+            } else if (blendMode == BLEND_SUBTRACTIVE) {
+                if (rgbmod) {
+                    BlendBlitImpl::blitInnerLoop<SubtractiveBlend, false, true, false, false, true>(args);
+                } else {
+                    BlendBlitImpl::blitInnerLoop<SubtractiveBlend, false, false, false, false, true>(args);
+                }
+            } else if (blendMode == BLEND_MULTIPLY) {
+                if (rgbmod) {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, false, true, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, false, true, false, false, true>(args);
+                    }
+                } else {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, false, false, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, false, false, false, false, true>(args);
+                    }
+                }
+            } else {
+                assert(blendMode == BLEND_NORMAL);
+                if (rgbmod) {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, false, true, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, false, true, false, false, true>(args);
+                    }
+                } else {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, false, false, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, false, false, false, false, true>(args);
+                    }
+                }
+            }
+        }
+    } else {
+        if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
+            BlendBlitImpl::blitInnerLoop<OpaqueBlend, true, false, false, false, true>(args);
+        } else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
+            BlendBlitImpl::blitInnerLoop<BinaryBlend, true, false, false, false, true>(args);
+        } else {
+            if (blendMode == BLEND_ADDITIVE) {
+                if (rgbmod) {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, true, true, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, true, true, false, false, true>(args);
+                    }
+                } else {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, true, false, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AdditiveBlend, true, false, false, false, true>(args);
+                    }
+                }
+            } else if (blendMode == BLEND_SUBTRACTIVE) {
+                if (rgbmod) {
+                    BlendBlitImpl::blitInnerLoop<SubtractiveBlend, true, true, false, false, true>(args);
+                } else {
+                    BlendBlitImpl::blitInnerLoop<SubtractiveBlend, true, false, false, false, true>(args);
+                }
+            } else if (blendMode == BLEND_MULTIPLY) {
+                if (rgbmod) {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, true, true, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, true, true, false, false, true>(args);
+                    }
+                } else {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, true, false, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<MultiplyBlend, true, false, false, false, true>(args);
+                    }
+                }
+            } else {
+                assert(blendMode == BLEND_NORMAL);
+                if (rgbmod) {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, true, true, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, true, true, false, false, true>(args);
+                    }
+                } else {
+                    if (alphamod) {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, true, false, true, false, true>(args);
+                    } else {
+                        BlendBlitImpl::blitInnerLoop<AlphaBlend, true, false, false, false, true>(args);
+                    }
+                }
+            }
+        }
+    }
 }
 
 } // End of namespace Graphics
 
 #endif // SSE2
-#endif // GRAPHICS_BLIT_BLIT_BLEND_SSE2_H
