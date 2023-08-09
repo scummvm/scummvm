@@ -122,7 +122,7 @@ void GriffonEngine::setupAudio() {
 	const char *stri = "Loading...";
 	drawString(_videoBuffer, stri, 160 - 4 * strlen(stri), 116, 0);
 
-	Graphics::TransparentSurface *loadimg = loadImage("art/load.bmp", true);
+	Graphics::ManagedSurface *loadimg = loadImage("art/load.bmp", true);
 
 	rcSrc.left = 0;
 	rcSrc.top = 0;
@@ -132,7 +132,7 @@ void GriffonEngine::setupAudio() {
 	rcDest.left = 160 - 44;
 	rcDest.top = 116 + 12;
 
-	loadimg->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(160, 255, 255, 255));
+	loadimg->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(160, 255, 255, 255));
 
 	g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 	g_system->updateScreen();

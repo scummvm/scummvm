@@ -43,7 +43,7 @@
 
 #include "audio/mixer.h"
 
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Griffon {
 
@@ -395,8 +395,8 @@ private:
 	void addFloatIcon(int ico, float xloc, float yloc);
 	void addFloatText(const char *stri, float xloc, float yloc, int col);
 	void eventText(const char *stri);
-	void drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col);
-	void drawString(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col);
+	void drawLine(Graphics::ManagedSurface *buffer, int x1, int y1, int x2, int y2, int col);
+	void drawString(Graphics::ManagedSurface *buffer, const char *stri, int xloc, int yloc, int col);
 	void drawProgress(int w, int wm);
 
 	// input.cpp
@@ -414,7 +414,7 @@ private:
 
 	// resources.cpp
 	void initialize();
-	Graphics::TransparentSurface *loadImage(const char *name, bool colorkey = false);
+	Graphics::ManagedSurface *loadImage(const char *name, bool colorkey = false);
 	void loadMap(int mapnum);
 	void loadAnims();
 	void loadFont();
@@ -450,23 +450,23 @@ private:
 	bool hasFeature(EngineFeature f) const override;
 
 private:
-	Graphics::TransparentSurface *_video, *_videoBuffer, *_videoBuffer2, *_videoBuffer3;
+	Graphics::ManagedSurface *_video, *_videoBuffer, *_videoBuffer2, *_videoBuffer3;
 
 	// system
-	Graphics::TransparentSurface *_titleImg, *_titleImg2, *_inventoryImg;
-	Graphics::TransparentSurface *_logosImg, *_theEndImg;
+	Graphics::ManagedSurface *_titleImg, *_titleImg2, *_inventoryImg;
+	Graphics::ManagedSurface *_logosImg, *_theEndImg;
 	Common::Event _event;
 
-	Graphics::TransparentSurface *_mapBg, *_clipBg, *_clipBg2;
+	Graphics::ManagedSurface *_mapBg, *_clipBg, *_clipBg2;
 	unsigned int _clipSurround[4][4];
 
 	float _animSpeed; // CHECKME: it seems to always be 0.5
 	int _rampData[40][24];
 
 	int _curMap;
-	Graphics::TransparentSurface *_fontChr[224][5]; // 256 - 32
-	Graphics::TransparentSurface *_itemImg[21], *_windowImg;
-	Graphics::TransparentSurface *_spellImg;
+	Graphics::ManagedSurface *_fontChr[224][5]; // 256 - 32
+	Graphics::ManagedSurface *_itemImg[21], *_windowImg;
+	Graphics::ManagedSurface *_spellImg;
 
 	bool _itemSelOn;
 	int _curItem, _itemTicks;
@@ -482,7 +482,7 @@ private:
 	float _fp, _fps, _fpsr; // CHECKME: _fp and _fps seems to be integers
 	int _secsInGame, _secStart;
 
-	Graphics::TransparentSurface *mapImg[4];
+	Graphics::ManagedSurface *mapImg[4];
 
 	Common::Rect rcSrc, rcDest;
 
@@ -490,14 +490,14 @@ private:
 	bool _dontDrawOver;   // used in map24 so that the candles don't draw over the boss, default set to 0
 
 	// saveload info
-	Graphics::TransparentSurface *_saveLoadImg;
+	Graphics::ManagedSurface *_saveLoadImg;
 
 	// post info
 	float _postInfo[21][3];
 	int _postInfoNbr;
 
 	// cloud info
-	Graphics::TransparentSurface *_cloudImg;
+	Graphics::ManagedSurface *_cloudImg;
 	float _cloudAngle;
 	int _cloudsOn;
 
@@ -512,13 +512,13 @@ private:
 	int _asecstart;
 
 	// tile info
-	Graphics::TransparentSurface *_tiles[4];
+	Graphics::ManagedSurface *_tiles[4];
 	int _tileinfo[3][40][24][3]; // maplayer, x, y, tiledata (tile, tilelayer)
 
 	// animation info
-	Graphics::TransparentSurface *_anims[100];
+	Graphics::ManagedSurface *_anims[100];
 	// id number 0&1 = players
-	Graphics::TransparentSurface *_animsAttack[100];
+	Graphics::ManagedSurface *_animsAttack[100];
 	// attack anims
 	AttackOffsetStruct _playerAttackOfs[4][16];
 

@@ -66,19 +66,19 @@ void GriffonEngine::initialize() {
 		_floatIcon[i].ico = 0;
 	}
 
-	_video = new Graphics::TransparentSurface;
+	_video = new Graphics::ManagedSurface;
 	_video->create(320, 240, g_system->getScreenFormat());
-	_videoBuffer = new Graphics::TransparentSurface;
+	_videoBuffer = new Graphics::ManagedSurface;
 	_videoBuffer->create(320, 240, g_system->getScreenFormat());
-	_videoBuffer2 = new Graphics::TransparentSurface;
+	_videoBuffer2 = new Graphics::ManagedSurface;
 	_videoBuffer2->create(320, 240, g_system->getScreenFormat());
-	_videoBuffer3 = new Graphics::TransparentSurface;
+	_videoBuffer3 = new Graphics::ManagedSurface;
 	_videoBuffer3->create(320, 240, g_system->getScreenFormat());
-	_mapBg = new Graphics::TransparentSurface;
+	_mapBg = new Graphics::ManagedSurface;
 	_mapBg->create(320, 240, g_system->getScreenFormat());
-	_clipBg = new Graphics::TransparentSurface;
+	_clipBg = new Graphics::ManagedSurface;
 	_clipBg->create(320, 240, g_system->getScreenFormat());
-	_clipBg2 = new Graphics::TransparentSurface;
+	_clipBg2 = new Graphics::ManagedSurface;
 	_clipBg2->create(320, 240, g_system->getScreenFormat());
 
 	for (int i = 0; i <= 3; i++) {
@@ -89,13 +89,13 @@ void GriffonEngine::initialize() {
 	}
 
 	_cloudImg = loadImage("art/clouds.bmp", true);
-	_cloudImg->setAlpha(64, true);
+	_cloudImg->surfacePtr()->setAlpha(64, true);
 
 	_saveLoadImg = nullptr;
 
 	_titleImg = loadImage("art/titleb.bmp");
 	_titleImg2 = loadImage("art/titlea.bmp", true);
-	//_titleimg2->setAlpha(204, true);
+	//_titleimg2->surfacePtr()->setAlpha(204, true);
 
 	_inventoryImg = loadImage("art/inventory.bmp", true);
 
@@ -130,7 +130,7 @@ void GriffonEngine::initialize() {
 	setupAudio();
 }
 
-Graphics::TransparentSurface *GriffonEngine::loadImage(const char *name, bool colorkey) {
+Graphics::ManagedSurface *GriffonEngine::loadImage(const char *name, bool colorkey) {
 	Common::File file;
 
 	file.open(name);
@@ -144,10 +144,10 @@ Graphics::TransparentSurface *GriffonEngine::loadImage(const char *name, bool co
 	bitmapDecoder.loadStream(file);
 	file.close();
 
-	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface(*bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat()));
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat()));
 
 	if (colorkey)
-		surface->applyColorKey(255, 0, 255);
+		surface->surfacePtr()->applyColorKey(255, 0, 255);
 
 	return surface;
 }
@@ -321,7 +321,7 @@ void GriffonEngine::loadMap(int mapnum) {
 						}
 					}
 
-					_tiles[curtilel]->blit(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
+					_tiles[curtilel]->blendBlitTo(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc, MS_ARGB(alpha, 255, 255, 255));
 
 					rcDest.left = x * 8;
 					rcDest.top = y * 8;
@@ -1087,10 +1087,10 @@ void GriffonEngine::loadAnims() {
 }
 
 void GriffonEngine::loadItemImgs() {
-	Graphics::TransparentSurface *temp = loadImage("art/icons.bmp", true);
+	Graphics::ManagedSurface *temp = loadImage("art/icons.bmp", true);
 
 	for (int i = 0; i <= 20; i++) {
-		_itemImg[i] = new Graphics::TransparentSurface;
+		_itemImg[i] = new Graphics::ManagedSurface;
 		_itemImg[i]->create(16, 16, g_system->getScreenFormat());
 
 		rcSrc.left = i * 16;
@@ -1098,20 +1098,20 @@ void GriffonEngine::loadItemImgs() {
 		rcSrc.setWidth(16);
 		rcSrc.setHeight(16);
 
-		temp->blit(*_itemImg[i], 0, 0, Graphics::FLIP_NONE, &rcSrc);
+		temp->blendBlitTo(*_itemImg[i], 0, 0, Graphics::FLIP_NONE, &rcSrc);
 	}
 
 	temp->free();
 }
 
 void GriffonEngine::loadFont() {
-	Graphics::TransparentSurface *font = loadImage("art/font.bmp", true);
+	Graphics::ManagedSurface *font = loadImage("art/font.bmp", true);
 
 	for (int i = 32; i <= 255; i++)
 		for (int f = 0; f <= 4; f++) {
 			int i2 = i - 32;
 
-			_fontChr[i2][f] = new Graphics::TransparentSurface;
+			_fontChr[i2][f] = new Graphics::ManagedSurface;
 			_fontChr[i2][f]->create(8, 8, g_system->getScreenFormat());
 
 			int col = i2 % 40;
@@ -1125,7 +1125,7 @@ void GriffonEngine::loadFont() {
 
 			rcDest.left = 0;
 			rcDest.top = 0;
-			font->blit(*_fontChr[i2][f], rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+			font->blendBlitTo(*_fontChr[i2][f], rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 		}
 
 	font->free();

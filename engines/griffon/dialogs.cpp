@@ -71,8 +71,8 @@ void GriffonEngine::title(int mode) {
 
 	_ticks = g_system->getMillis();
 
-	_videoBuffer->blit(*_videoBuffer3);
-	_videoBuffer->blit(*_videoBuffer2);
+	_videoBuffer->blendBlitTo(*_videoBuffer3);
+	_videoBuffer->blendBlitTo(*_videoBuffer2);
 
 	int cursel = 0;
 	int ticks1 = _ticks;
@@ -104,17 +104,17 @@ void GriffonEngine::title(int mode) {
 		rc.left = -xofs;
 		rc.top = 0;
 
-		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
+		_titleImg->blendBlitTo(*_videoBuffer, rc.left, rc.top);
 
 		rc.left = -xofs + 320.0;
 		rc.top = 0;
 
-		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
+		_titleImg->blendBlitTo(*_videoBuffer, rc.left, rc.top);
 
 		rc.left = 0;
 		rc.top = 0;
 
-		_titleImg2->blit(*_videoBuffer, rc.left, rc.top);
+		_titleImg2->blendBlitTo(*_videoBuffer, rc.left, rc.top);
 
 		int y = 172;
 		int x = 160 - 14 * 4;
@@ -131,7 +131,7 @@ void GriffonEngine::title(int mode) {
 		rc.left = (int16)(x - 16 - 4 * cos(2 * PI * _itemyloc / 16));
 		rc.top = (int16)(y - 4 + 16 * cursel);
 
-		_itemImg[15]->blit(*_videoBuffer, rc.left, rc.top);
+		_itemImg[15]->blendBlitTo(*_videoBuffer, rc.left, rc.top);
 
 		float yf = 255.0;
 		if (_ticks < ticks1 + 1000) {
@@ -139,7 +139,7 @@ void GriffonEngine::title(int mode) {
 			yf = CLIP<float>(yf, 0.0, 255.0);
 		}
 
-		_videoBuffer->setAlpha((int)yf);
+		_videoBuffer->surfacePtr()->setAlpha((int)yf);
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
 		g_system->updateScreen();
 
@@ -300,8 +300,8 @@ void GriffonEngine::configMenu() {
 
 	_ticks = g_system->getMillis();
 
-	Graphics::TransparentSurface *configwindow = loadImage("art/configwindow.bmp", true);
-	configwindow->setAlpha(160, true);
+	Graphics::ManagedSurface *configwindow = loadImage("art/configwindow.bmp", true);
+	configwindow->surfacePtr()->setAlpha(160, true);
 
 	int ticks1 = _ticks;
 
@@ -316,16 +316,16 @@ void GriffonEngine::configMenu() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
+		_cloudImg->blendBlitTo(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
+		_cloudImg->blendBlitTo(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
-		configwindow->blit(*_videoBuffer);
+		configwindow->blendBlitTo(*_videoBuffer);
 
 		int sy = SY;
 
@@ -377,16 +377,16 @@ void GriffonEngine::configMenu() {
 		rc.left = 148 + 3 * cos(2 * PI * _itemyloc / 16.0);
 		rc.top = sy + 8 * curselt - 4;
 
-		_itemImg[15]->blit(*_videoBuffer, rc.left, rc.top);
+		_itemImg[15]->blendBlitTo(*_videoBuffer, rc.left, rc.top);
 
 		if (_ticks < ticks1 + 1000) {
 			float yy = 255.0 * ((float)(_ticks - ticks1) / 1000.0);
 			yy = CLIP<float>(yy, 0.0, 255.0);
 
-			_videoBuffer->setAlpha((uint8)yy);
+			_videoBuffer->surfacePtr()->setAlpha((uint8)yy);
 		}
 
-		_videoBuffer->blit(*_videoBuffer2);
+		_videoBuffer->blendBlitTo(*_videoBuffer2);
 		g_system->copyRectToScreen(_videoBuffer2->getPixels(), _videoBuffer2->pitch, 0, 0, _videoBuffer2->w, _videoBuffer2->h);
 
 		_ticksPassed = _ticks;
@@ -591,19 +591,19 @@ void GriffonEngine::renderSaveStates() {
 			int ss = (_playera.sword - 1) * 3;
 			if (_playera.sword == 3)
 				ss = 18;
-			_itemImg[ss]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+			_itemImg[ss]->blendBlitTo(*_videoBuffer2, rcSrc.left, rcSrc.top);
 
 			rcSrc.left += 16;
 			ss = (_playera.shield - 1) * 3 + 1;
 			if (_playera.shield == 3)
 				ss = 19;
-			_itemImg[ss]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+			_itemImg[ss]->blendBlitTo(*_videoBuffer2, rcSrc.left, rcSrc.top);
 
 			rcSrc.left += 16;
 			ss = (_playera.armour - 1) * 3 + 2;
 			if (_playera.armour == 3)
 				ss = 20;
-			_itemImg[ss]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+			_itemImg[ss]->blendBlitTo(*_videoBuffer2, rcSrc.left, rcSrc.top);
 
 			int nx = rcSrc.left + 13 + 3 * 8;
 			rcSrc.left = nx - 17;
@@ -612,7 +612,7 @@ void GriffonEngine::renderSaveStates() {
 				for (int i = 0; i < 5; i++) {
 					rcSrc.left += 17;
 					if (_playera.foundSpell[i])
-						_itemImg[7 + i]->blit(*_videoBuffer2, rcSrc.left, rcSrc.top);
+						_itemImg[7 + i]->blendBlitTo(*_videoBuffer2, rcSrc.left, rcSrc.top);
 				}
 			}
 		} else {
@@ -648,7 +648,7 @@ void GriffonEngine::saveLoadNew() {
 		uint32 color = *(uint32 *)_saveLoadImg->getBasePtr(120, 10);
 		_saveLoadImg->fillRect(Common::Rect(125, 15, 160, 33), color);
 	}
-	_saveLoadImg->setAlpha(192, true);
+	_saveLoadImg->surfacePtr()->setAlpha(192, true);
 
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
@@ -661,16 +661,16 @@ void GriffonEngine::saveLoadNew() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
+		_cloudImg->blendBlitTo(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		_cloudImg->blit(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
+		_cloudImg->blendBlitTo(*_videoBuffer, 0, 0, Graphics::FLIP_NONE, &rcDest, MS_ARGB(128, 255, 255, 255));
 
-		_saveLoadImg->blit(*_videoBuffer);
+		_saveLoadImg->blendBlitTo(*_videoBuffer);
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
 			if (_event.type == Common::EVENT_QUIT || _event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -790,7 +790,7 @@ void GriffonEngine::saveLoadNew() {
 		}
 
 		// Render savestates
-		_videoBuffer2->blit(*_videoBuffer);
+		_videoBuffer2->blendBlitTo(*_videoBuffer);
 
 		// ------------------------------------------
 
@@ -820,7 +820,7 @@ void GriffonEngine::saveLoadNew() {
 			rcDest.top = (int16)(53 + (curRow - 1) * 48);
 		}
 
-		_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
+		_itemImg[15]->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top);
 
 		if (curRow != 0) {
 			rcDest.top = 18;
@@ -829,18 +829,18 @@ void GriffonEngine::saveLoadNew() {
 			else if (curCol == 2)
 				rcDest.left = 170;
 
-			_itemImg[15]->blit(*_videoBuffer, rcDest.left, rcDest.top);
+			_itemImg[15]->blendBlitTo(*_videoBuffer, rcDest.left, rcDest.top);
 		}
 
 		if (_ticks < ticks1 + 1000) {
 			int yy = 255 * (_ticks - ticks1) / 1000;
 			yy = CLIP(yy, 0, 255);
 
-			_videoBuffer->setAlpha((uint8)yy);
+			_videoBuffer->surfacePtr()->setAlpha((uint8)yy);
 		}
 
 		_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
-		_videoBuffer->blit(*_videoBuffer3);
+		_videoBuffer->blendBlitTo(*_videoBuffer3);
 
 		g_system->copyRectToScreen(_videoBuffer3->getPixels(), _videoBuffer3->pitch, 0, 0, _videoBuffer3->w, _videoBuffer3->h);
 		g_system->updateScreen();
