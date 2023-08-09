@@ -94,7 +94,7 @@ public:
 
 	static void updateWalker(int x, int y, int dir, int trigger, bool mode = false);
 	static void updateDisablePlayer();
-	static void walk(int facing, int trigger = -1);
+	static void walk(int facing = -1, int trigger = -1);
 };
 
 } // namespace Rooms
