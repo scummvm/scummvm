@@ -99,11 +99,6 @@ public:
 	// Handle events for the dialog box
 	bool handleDlboxEvents(const Common::Event &event);
 
-#if 0
-	bool HandleCommonEvents(const SDL_Event &Event);
-	bool HandleDlboxEvents(const SDL_Event &Event);
-#endif
-
 	void internalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s);
 
 	void draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *event, const Common::String &personId,

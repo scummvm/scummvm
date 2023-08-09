@@ -74,9 +74,6 @@ public:
 	void load(const Common::String &filename);
 	void draw(pyrodactyl::event::Info &info);
 
-#if 0
-	void handleEvents(const SDL_Event &Event);
-#endif
 	void internalEvents();
 };
 } // End of namespace ui
