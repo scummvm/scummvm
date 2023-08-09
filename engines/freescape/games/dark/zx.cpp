@@ -65,6 +65,14 @@ void DarkEngine::loadAssetsZXDemo() {
 		addECDs(it._value);
 		addSkanner(it._value);
 	}
+
+	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
+	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
+	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
+	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
 }
 
 void DarkEngine::drawZXUI(Graphics::Surface *surface) {
@@ -129,6 +137,7 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 	}
 	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
 	drawBinaryClock(surface, 273, 128, clockColor, back);
+	drawIndicator(surface, 152, 140);
 }
 
 } // End of namespace Freescape

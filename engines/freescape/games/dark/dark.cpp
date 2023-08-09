@@ -663,6 +663,17 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 	}
 }
 
+void DarkEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition) {
+	if (_hasFallen)
+		surface->copyRectToSurface(*_indicators[0], xPosition, yPosition, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+	else if (_flyMode)
+		surface->copyRectToSurface(*_indicators[3], xPosition, yPosition, Common::Rect(_indicators[3]->w, _indicators[3]->h));
+	else if (_playerHeightNumber == 0)
+		surface->copyRectToSurface(*_indicators[1], xPosition, yPosition, Common::Rect(_indicators[1]->w, _indicators[1]->h));
+	else
+		surface->copyRectToSurface(*_indicators[2], xPosition, yPosition, Common::Rect(_indicators[2]->w, _indicators[2]->h));
+}
+
 void DarkEngine::drawSensorShoot(Sensor *sensor) {
 	Math::Vector3d target;
 	target = _position;

@@ -191,15 +191,7 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	}
 	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	drawBinaryClock(surface, 300, 124, clockColor, back);
-
-	if (_hasFallen)
-		surface->copyRectToSurface(*_indicators[0], 160, 136, Common::Rect(_indicators[0]->w, _indicators[0]->h));
-	else if (_flyMode)
-		surface->copyRectToSurface(*_indicators[3], 160, 136, Common::Rect(_indicators[3]->w, _indicators[3]->h));
-	else if (_playerHeightNumber == 0)
-		surface->copyRectToSurface(*_indicators[1], 160, 136, Common::Rect(_indicators[1]->w, _indicators[1]->h));
-	else
-		surface->copyRectToSurface(*_indicators[2], 160, 136, Common::Rect(_indicators[2]->w, _indicators[2]->h));
+	drawIndicator(surface, 160, 136);
 }
 
 } // End of namespace Freescape
