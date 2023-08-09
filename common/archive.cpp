@@ -92,6 +92,9 @@ Common::Error Archive::dumpArchive(String destPath) {
 		Common::Path filePath = f->getPathInArchive().punycodeEncode();
 		debug(1, "File: %s", filePath.toString().c_str());
 
+		// skip if f represents a directory
+		if (filePath.toString().lastChar() == '/') continue;
+
 		Common::SeekableReadStream *stream = f->createReadStream();
 
 		uint32 len = stream->size();
@@ -106,7 +109,7 @@ Common::Error Archive::dumpArchive(String destPath) {
 		Common::DumpFile out;
 		Common::Path outPath = Common::Path(destPath).join(filePath);
 		if (!out.open(outPath.toString(), true)) {
-			warning("Archive::dumpArchive(): Can not open dump file %s", outPath.toString().c_str());
+			return Common::Error(Common::kCreatingFileFailed, "Cannot open/create dump file " + outPath.toString());
 		} else {
 			uint32 writtenBytes = out.write(data, len);
 			if (writtenBytes < len) {
