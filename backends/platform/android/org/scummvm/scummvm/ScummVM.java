@@ -12,8 +12,6 @@ import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.google.android.play.core.assetpacks.AssetPackManager;
-
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Scanner;
@@ -92,7 +90,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected SAFFSTree getNewSAFTree(boolean folder, boolean write, String initialURI, String prompt);
 	abstract protected SAFFSTree[] getSAFTrees();
 	abstract protected SAFFSTree findSAFTree(String name);
-	abstract protected AssetPackManager getPlayStoreDLCManager();
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder, final MyScummVMDestroyedCallback scummVMDestroyedCallback) {
 		_asset_manager = asset_manager;

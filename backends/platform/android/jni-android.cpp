@@ -107,8 +107,6 @@ jmethodID JNI::_MID_getNewSAFTree = 0;
 jmethodID JNI::_MID_getSAFTrees = 0;
 jmethodID JNI::_MID_findSAFTree = 0;
 
-jmethodID JNI::_MID_getPlayStoreDLCManager = 0;
-
 jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
 
 jmethodID JNI::_MID_AudioTrack_flush = 0;
@@ -802,8 +800,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getSAFTrees, "()[Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, findSAFTree, "(Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 
-	FIND_METHOD(, getPlayStoreDLCManager, "()Lcom/google/android/play/core/assetpacks/AssetPackManager;");
-
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
 	_egl_version = 0;
@@ -1151,23 +1147,6 @@ jobject JNI::findSAFTree(const Common::String &name) {
 	}
 
 	return tree;
-}
-
-jobject JNI::getPlayStoreDLCManager() {
-	JNIEnv *env = JNI::getEnv();
-
-	jobject store = env->CallObjectMethod(_jobj, _MID_getPlayStoreDLCManager);
-
-	if (env->ExceptionCheck()) {
-		LOGE("getPlayStoreDLCManager: error");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		return nullptr;
-	}
-
-	return store;
 }
 
 #endif
