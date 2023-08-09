@@ -47,12 +47,20 @@ extern void ws_demand_location(machine *myWalker, int32 x, int32 y);
 extern void ws_demand_facing(machine *myWalker, int32 newFacing);
 extern void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger);
 extern void ws_nosepick(machine *myWalker, int32 seriesHash);
-
 extern void ws_hide_walker(machine *myWalker);
 extern void ws_unhide_walker(machine *myWalker);
+extern void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int32 finalFacing, bool complete_walk = true);
+
+extern void ws_demand_location(int32 x, int32 y);
+extern void ws_demand_facing(int32 newFacing);
+extern void ws_turn_to_face(int32 facing, int32 trigger);
+extern void ws_nosepick(int32 seriesHash);
+extern void ws_hide_walker();
+extern void ws_unhide_walker();
+extern void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing, bool complete_walk = true);
+
 extern void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing);
 
-extern void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int32 finalFacing, bool complete_walk = true);
 
 extern bool ws_walk_init_system();
 

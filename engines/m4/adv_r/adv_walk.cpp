@@ -277,7 +277,6 @@ void ws_demand_location(machine *myWalker, int32 x, int32 y) {
 	SendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
 }
 
-
 static void ws_demand_location_and_facing(machine *myWalker, int32 x, int32 y, int32 facing) {
 	const int8 directions[13] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9 };
 	frac16 s;
@@ -327,7 +326,6 @@ void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger) {
 	SendWSMessage(TURN_TO_FACE << 16, 0, myWalker, 0, nullptr, 1);
 }
 
-
 void ws_nosepick(machine *myWalker, int32 seriesHash) {
 	Anim8 *myAnim8;
 	if ((!myWalker) || (!myWalker->myAnim8)) {
@@ -339,6 +337,9 @@ void ws_nosepick(machine *myWalker, int32 seriesHash) {
 	SendWSMessage(NOSEPICK << 16, 0, myWalker, 0, nullptr, 1);
 }
 
+void ws_demand_location(int32 x, int32 y) {
+	ws_demand_location(_G(my_walker), x, y);
+}
 
 void ws_hide_walker(machine *myWalker) {
 	if (!myWalker) {
@@ -358,6 +359,29 @@ void ws_unhide_walker(machine *myWalker) {
 	SendWSMessage(PLAYER_UNHIDE << 16, 0, myWalker, 0, nullptr, 1);
 }
 
+void ws_demand_facing(int32 newFacing) {
+	ws_demand_facing(_G(my_walker), newFacing);
+}
+
+void ws_turn_to_face(int32 facing, int32 trigger) {
+	ws_turn_to_face(_G(my_walker), facing, trigger);
+}
+
+void ws_nosepick(int32 seriesHash) {
+	ws_nosepick(_G(my_walker), seriesHash);
+}
+
+void ws_hide_walker() {
+	ws_hide_walker(_G(my_walker));
+}
+
+void ws_unhide_walker() {
+	ws_unhide_walker(_G(my_walker));
+}
+
+void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing, bool complete_walk) {
+	ws_walk(_G(my_walker), x, y, buffer, trigger, finalFacing, complete_walk);
+}
 
 void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing) {
 	Anim8 *myAnim8;

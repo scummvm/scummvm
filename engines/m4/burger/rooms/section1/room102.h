@@ -44,13 +44,14 @@ private:
 	int _val14 = 0;
 	int _val16 = 0;
 	int _trigger = -1;
-	int _triggerMode = 0;
+	KernelTriggerType _triggerMode = KT_DAEMON;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
 	machine *_series3 = nullptr;
 	machine *_series4 = nullptr;
 	machine *_series5 = nullptr;
 	machine *_series6 = nullptr;
+	machine *_series7 = nullptr;
 	machine *_laz1 = nullptr;
 	machine *_laz2 = nullptr;
 	machine *_stream1 = nullptr;
@@ -67,6 +68,7 @@ private:
 	const char *getDigi2(int num) const;
 	void sub1();
 	void queuePlay(const char *filename, int trigger = 29, KernelTriggerType triggerMode = KT_DAEMON);
+	void freshen();
 
 public:
 	Room102() : Room() {}
