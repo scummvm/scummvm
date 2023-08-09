@@ -166,7 +166,7 @@ public:
 	ImageEntryList _images;
 	int _mouseMode;
 
-	int _playerDataCount;
+	uint8 _playerDataCount;
 	int _currentManOld;
 	int _converseMode;
 	bool _currentCharFlag;

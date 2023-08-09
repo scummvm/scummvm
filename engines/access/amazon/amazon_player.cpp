@@ -47,7 +47,7 @@ void AmazonPlayer::load() {
 		_downDelta = -2;
 		_scrollConst = 2;
 
-		for (int i = 0; i < _vm->_playerDataCount; ++i) {
+		for (uint8 i = 0; i < _vm->_playerDataCount; ++i) {
 			_walkOffRight[i] = OVEROFFR[i];
 			_walkOffLeft[i] = OVEROFFL[i];
 			_walkOffUp[i] = OVEROFFU[i];
@@ -78,7 +78,7 @@ void AmazonPlayer::load() {
 		_diagDownWalkMax = 5;
 		_game->_guard->setPosition(Common::Point(56, 190));
 	} else {
-		for (int i = 0; i < _vm->_playerDataCount; ++i) {
+		for (uint8 i = 0; i < _vm->_playerDataCount; ++i) {
 			_walkOffRight[i] = SIDEOFFR[i];
 			_walkOffLeft[i] = SIDEOFFL[i];
 			_walkOffUp[i] = SIDEOFFU[i];

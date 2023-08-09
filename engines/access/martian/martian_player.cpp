@@ -46,7 +46,7 @@ void MartianPlayer::load() {
 	_downDelta = -5;
 	_scrollConst = 5;
 
-	for (int i = 0; i < _vm->_playerDataCount; ++i) {
+	for (uint8 i = 0; i < _vm->_playerDataCount; ++i) {
 		_walkOffRight[i] = SIDEOFFR[i];
 		_walkOffLeft[i] = SIDEOFFL[i];
 		_walkOffUp[i] = SIDEOFFU[i];
