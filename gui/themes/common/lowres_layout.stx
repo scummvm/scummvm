@@ -186,6 +186,9 @@
 				<widget name = 'AddGameButton'
 						height = 'Globals.Button.Height'
 				/>
+				<widget name = 'DownloadGamesButton'
+						height = 'Globals.Button.Height'
+				/>
 				<widget name = 'EditGameButton'
 						height = 'Globals.Button.Height'
 				/>
@@ -261,6 +264,9 @@
 			<widget name = 'IconArea'/>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'AddGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'DownloadGamesButton'
 						height = 'Globals.Button.Height'
 				/>
 				<widget name = 'RemoveGameButton'
@@ -371,6 +377,68 @@
 							type = 'Button'
 					/>
 				</layout>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'DownloadGames' overlays = 'screen' inset = '16' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'List'/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'Back'
+						type = 'Button'
+				/>
+				<widget name = 'AllDownloads'
+						type = 'Button'
+				/>
+				<space/>
+				<widget name = 'Download'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'DLCDownloads' overlays = 'screen' inset = '16' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'CurrentDownload'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'ErrorText'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'ProgressBar'
+					height = 'Globals.Button.Height'
+			/>
+			<space size = '1'/>
+			<widget name = 'PercentText'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+			/>
+			<widget name = 'DownloadedSize'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'DownloadSpeed'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Pending'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'List'/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'Back'
+						type = 'Button'
+				/>
+				<space/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
 			</layout>
 		</layout>
 	</dialog>
