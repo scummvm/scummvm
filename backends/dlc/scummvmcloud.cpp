@@ -114,25 +114,32 @@ void ScummVMCloud::downloadFileCallback(Networking::DataResponse r) {
 		DLCMan.processDownloadQueue();
 	}
 	if (response->eos) {
-		warning("downloaded");
+		DLC::DLCDesc *dlc = DLCMan._queuedDownloadTasks.front();
+		debug(1, "Downloaded: %s", dlc->name.c_str());
+
 		_rq->close(); // delete request
-		Common::Path relativeFilePath = Common::Path(DLCMan._queuedDownloadTasks.front()->id);
+
+		Common::Path relativeFilePath = Common::Path(dlc->id);
+
 		// extract the downloaded zip
-		Common::String gameDir = Common::punycode_encodefilename(DLCMan._queuedDownloadTasks.front()->name);
+		Common::String gameDir = Common::punycode_encodefilename(dlc->name);
 		Common::Path destPath = Common::Path(ConfMan.get("dlcspath")).appendComponent(gameDir);
 		Common::Error error = extractZip(relativeFilePath, destPath);
+
 		// remove cache (the downloaded .zip)
 		removeCacheFile(relativeFilePath);
+
 		if (error.getCode() == Common::kNoError) {
 			// add downloaded game entry in scummvm configuration file
 			addEntryToConfig(destPath);
-			DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kDownloaded;
+			dlc->state = DLCDesc::kDownloaded;
 			DLCMan._errorText = "";
 		} else {
 			// if there is any error in extraction
-			DLCMan._queuedDownloadTasks.front()->state = DLCDesc::kErrorDownloading;
+			dlc->state = DLCDesc::kErrorDownloading;
 			DLCMan._errorText = error.getDesc();
 		}
+
 		DLCMan.refreshDLCList();
 
 		// handle next download
