@@ -60,12 +60,6 @@ int GameOverMenu::handleEvents(const Common::Event &event) {
 	return _menu.handleEvents(event);
 }
 
-#if 0
-int GameOverMenu::handleEvents(const SDL_Event &Event) {
-	return menu.handleEvents(Event);
-}
-#endif
-
 void GameOverMenu::draw() {
 	_bg.draw();
 	if (_cur < _quote.size())

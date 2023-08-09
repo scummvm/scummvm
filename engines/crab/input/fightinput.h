@@ -83,9 +83,6 @@ struct FightInput {
 	void load(rapidxml::xml_node<char> *node);
 
 	FightAnimationType handleEvents(const Common::Event &event);
-#if 0
-	FightAnimationType handleEvents(const SDL_Event &Event);
-#endif
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
