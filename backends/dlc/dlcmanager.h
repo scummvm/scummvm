@@ -80,18 +80,11 @@ public:
 
 	void processDownloadQueue();
 
-	// Returns the % download progress of current downloading game
-	uint32 downloadProgress() const;
-
 	Common::String getCurrentDownloadingDLC() const;
 
 	int getDLCIdxFromId(const Common::String &id) const;
 
 	void startDownloadAsync(const Common::String &id, const Common::String &url);
-
-	void errorCallback(Networking::ErrorResponse error);
-
-	void downloadFileCallback(Networking::DataResponse r);
 };
 
 #define DLCMan        DLC::DLCManager::instance()
