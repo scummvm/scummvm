@@ -82,17 +82,10 @@ public:
 	void quit();
 
 	bool init();
-	void loadPaths();
-
 	// image related stuff
 
 	// Load all images specified in an xml file in a map
 	void loadMap(const Common::String &filename, const MapID &mapid = MAP_CURRENT);
-
-	void addTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex = MAP_COMMON);
-	void freeTexture(const ImageKey &id, int mapindex = MAP_COMMON) {
-		_map[mapindex][id].deleteImage();
-	}
 
 	void getTexture(const ImageKey &id, Image &data);
 	Image &getTexture(const ImageKey &id);
