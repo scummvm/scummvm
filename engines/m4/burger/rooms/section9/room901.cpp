@@ -62,12 +62,12 @@ void Room901::init() {
 	case INTERACTIVE_DEMO:
 	case MAGAZINE_DEMO:
 		setButtons(DEMO_BUTTONS, 4);
-		series_play_("901order", 0, 0, -1, 60, -1, 100, 165, 395, 0, -1);
+		series_play("901order", 0, 0, -1, 60, -1, 100, 165, 395, 0, -1);
 		break;
 
 	case WHOLE_GAME:
 		setButtons(GAME_BUTTONS, 2);
-		series_play_("901order", 0, 0, -1, 60, -1, 100, 470, 245, 0, -1);
+		series_play("901order", 0, 0, -1, 60, -1, 100, 470, 245, 0, -1);
 		break;
 	}
 

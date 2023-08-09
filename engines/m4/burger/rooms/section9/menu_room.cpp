@@ -62,7 +62,7 @@ void MenuRoom::drawButton(int index) {
 		btn._frame_disabled, btn._frame_enabled,
 		btn._frame_highlighted, btn._frame_pressed
 	};
-	btn._machine = series_show_(_menuName, 0, 0, -1, -1, frame[btn._state], 100, btn._x1, btn._y1);
+	btn._machine = series_show(_menuName, 0, 0, -1, -1, frame[btn._state], 100, btn._x1, btn._y1);
 }
 
 void MenuRoom::drawButtons() {

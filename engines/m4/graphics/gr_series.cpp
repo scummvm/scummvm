@@ -152,7 +152,7 @@ void series_set_frame_rate(machine *m, int32 newFrameRate) {
 	m->myAnim8->myRegs[IDX_CELS_FRAME_RATE] = newFrameRate << 16;
 }
 
-machine *series_show_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
+machine *series_show(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
 	int32 duration, int32 index, int32 s, int32 x, int32 y) {
 	CHECK_SERIES
 
@@ -190,7 +190,7 @@ machine *series_show_(const char *seriesName, frac16 layer, uint32 flags, int16 
 	return m;
 }
 
-machine *series_play_(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
+machine *series_play(const char *seriesName, frac16 layer, uint32 flags, int16 triggerNum,
 		int32 frameRate, int32 loopCount, int32 s, int32 x, int32 y,
 		int32 firstFrame, int32 lastFrame) {
 	CHECK_SERIES

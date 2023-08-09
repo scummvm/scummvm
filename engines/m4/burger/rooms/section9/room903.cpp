@@ -50,7 +50,7 @@ void Room903::init() {
 	_buttonsDrawn = false;
 
 	setButtons(BUTTONS, 6);
-	series_show_("903logo", 0, 0, -1, -1, 0, 100, 386, 20);
+	series_show("903logo", 0, 0, -1, -1, 0, 100, 386, 20);
 
 	if (_G(game).previous_room <= 0 || _G(game).previous_room == 951) {
 		kernel_trigger_dispatch_now(11);
@@ -142,7 +142,7 @@ void Room903::daemon() {
 			digi_play("903_001", 2, 155, -1);
 
 		pal_fade_set_start(_G(master_palette), 0);
-		series_play_("903d", 1792, 16, 12, 8, 0, 100, -5, 50, 0, -1);
+		series_play("903d", 1792, 16, 12, 8, 0, 100, -5, 50, 0, -1);
 		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, -1);
 		break;
 
@@ -155,7 +155,7 @@ void Room903::daemon() {
 		break;
 
 	case 14:
-		series_show_("903d", 0, 0, -1, -1, 23);
+		series_show("903d", 0, 0, -1, -1, 23);
 		break;
 
 	case 15:

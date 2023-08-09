@@ -71,7 +71,7 @@ void Section1::updateWalker_(int x, int y, int dir, int trigger, bool mode) {
 	gr_backup_palette();
 	pal_fade_set_start(_G(master_palette), 0);
 	_series1 = series_load("110", -1, _G(master_palette));
-	_play = series_play_("110", 0, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+	_play = series_play("110", 0, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 
 	kernel_trigger_dispatch_now(mode ? 1032 : 1027);
 	kernel_timing_trigger(1, 1026);
@@ -167,7 +167,7 @@ void Section1::daemon() {
 		break;
 	case 1027:
 		_series2 = series_load("110bu01", -1, _G(master_palette));
-		series_play_("110bu01", 0, 0, 1028, 6, 0, 100, 0, 0, 0, 8);
+		series_play("110bu01", 0, 0, 1028, 6, 0, 100, 0, 0, 0, 8);
 		_state1 = 2;
 		break;
 	case 1028:
@@ -177,7 +177,7 @@ void Section1::daemon() {
 	case 1029:
 		if (_state1 == 2) {
 			int frame = imath_ranged_rand(9, 12);
-			series_play_("110bu01", 0, 0, 1029, 5, 0, 100, 0, 0, frame, frame);
+			series_play("110bu01", 0, 0, 1029, 5, 0, 100, 0, 0, frame, frame);
 		} else {
 			pal_fade_set_start(_G(master_palette), 0);
 			TerminateMachineAndNull(_play);
@@ -201,9 +201,9 @@ void Section1::daemon() {
 	case 1033:
 		if (_state1 == 2) {
 			int frame = imath_ranged_rand(0, 4);
-			series_play_("110bu02", 0, 0, 1033, 5, 0, 100, 0, 0, frame, frame);
+			series_play("110bu02", 0, 0, 1033, 5, 0, 100, 0, 0, frame, frame);
 		} else {
-			series_play_("110bu02", 0, 0, 1035, 5, 0, 100, 0, 0, 5, 16);
+			series_play("110bu02", 0, 0, 1035, 5, 0, 100, 0, 0, 5, 16);
 		}
 		break;
 	case 1034:

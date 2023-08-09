@@ -85,7 +85,7 @@ void Room902::daemon() {
 				series_unload(_seriesIndex);
 
 			_seriesIndex = series_load(_name, -1, _G(master_palette));
-			series_show_(_name, 1, 64, 1, _duration + 60, 0, 100, 0, 0);
+			series_show(_name, 1, 64, 1, _duration + 60, 0, 100, 0, 0);
 			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 100, 30, 5);
 			kernel_timing_trigger(_duration + 30, 2);
 
@@ -105,7 +105,7 @@ void Room902::daemon() {
 		break;
 
 	case 3:
-		series_show_("902ob", 2, 64, -1, -1, 0, 100, 320, 430);
+		series_show("902ob", 2, 64, -1, -1, 0, 100, 320, 430);
 		break;
 
 	case 4:
