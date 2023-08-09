@@ -34,6 +34,7 @@
 #include "audio/decoders/vorbis.h"
 #include "common/file.h"
 #include "crab/loaders.h"
+#include "crab/filesystem.h"
 
 namespace Crab {
 
@@ -74,7 +75,7 @@ struct MusicData {
 		loadNum(_id, "id", node);
 		loadNum(_fadeInDuration, "fade_in", node);
 
-		_file.open(node->first_attribute("path")->value());
+		_file.open(cleansePath(node->first_attribute("path")->value()));
 		Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(&_file, DisposeAfterUse::NO);
 		// loops=0 means infinite here.
 		_track = Audio::makeLoopingAudioStream(stream, 0, 0, 0);
