@@ -435,14 +435,13 @@ void InputManager::setKeyBindingMode(KeyBindingMode mode) {
 	mapper->setGameKeymapState("Unrest-HUD", true);
 
 	switch (mode) {
+	case KBM_GAME:
+		mapper->setGameKeymapState("Unrest-Game", true);
+		break;
 
-		case KBM_GAME:
-			mapper->setGameKeymapState("Unrest-Game", true);
-			break;
-
-		case KBM_UI:
-			mapper->setGameKeymapState("Unrest-UI", true);
-			break;
+	case KBM_UI:
+		mapper->setGameKeymapState("Unrest-UI", true);
+		break;
 	}
 
 	// Clear All inputs
