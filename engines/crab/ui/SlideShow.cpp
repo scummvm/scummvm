@@ -82,35 +82,17 @@ void SlideShow::handleEvents(const Common::Event &event) {
 	using namespace pyrodactyl::input;
 
 	if (_index > 0)
-		if (_prev.handleEvents(event) == BUAC_LCLICK) {
+		if (_prev.handleEvents(event) == BUAC_LCLICK || (_usekeyboard && g_engine->_inputManager->state(IU_LEFT))) {
 			_index--;
 			refresh();
 		}
 
 	if (_index < _path.size() - 1)
-		if (_next.handleEvents(event) == BUAC_LCLICK) {
+		if (_next.handleEvents(event) == BUAC_LCLICK || (_usekeyboard && g_engine->_inputManager->state(IU_RIGHT))) {
 			_index++;
 			refresh();
 		}
 }
-
-#if 0
-void SlideShow::handleEvents(const SDL_Event &Event) {
-	using namespace pyrodactyl::input;
-
-	if (index > 0)
-		if (prev.handleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)) {
-			index--;
-			Refresh();
-		}
-
-	if (index < path.size() - 1)
-		if (next.handleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
-			index++;
-			Refresh();
-		}
-}
-#endif
 
 void SlideShow::refresh() {
 	_img.deleteImage();
