@@ -69,6 +69,10 @@ private:
 	void sub1();
 	void queuePlay(const char *filename, int trigger = 29, KernelTriggerType triggerMode = KT_DAEMON);
 	void freshen();
+	void conv04();
+	void conv05();
+	void conv06();
+	void flagAction(const char *name);
 
 public:
 	Room102() : Room() {}
