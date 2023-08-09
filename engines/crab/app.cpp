@@ -116,17 +116,17 @@ void App::run() {
 		while (g_system->getEventManager()->pollEvent(e)) {
 
 			switch (e.type) {
-				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-					g_engine->_inputManager->_ivState[e.customType] = true;
-					break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				g_engine->_inputManager->_ivState[e.customType] = true;
+				break;
 
-				case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-					g_engine->_inputManager->_ivState[e.customType] = false;
-					break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+				g_engine->_inputManager->_ivState[e.customType] = false;
+				break;
 
 				// explicitly specify the default block to turn off unhandled case warnings
-				default:
-					break;
+			default:
+				break;
 			}
 
 			// Do state Event handling
