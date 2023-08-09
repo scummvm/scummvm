@@ -25,7 +25,6 @@
 #include "common/queue.h"
 
 #include "backends/dlc/store.h"
-#include "backends/dlc/dlcdesc.h"
 #include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
 

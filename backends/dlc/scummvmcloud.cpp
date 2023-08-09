@@ -37,6 +37,7 @@
 #include "backends/networking/curl/sessionrequest.h"
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/dlcmanager.h"
+#include "backends/dlc/dlcdesc.h"
 
 #include "engines/metaengine.h"
 
@@ -193,17 +194,18 @@ void ScummVMCloud::addEntryToConfig(Common::Path gamePath) {
 		gamePath = gamePath.appendComponent(fsnodes[0].getFileName());
 	}
 	// add a new entry in scummvm config file
-	Common::String domain = EngineMan.generateUniqueDomain(DLCMan._queuedDownloadTasks.front()->gameid);
+	DLC::DLCDesc *dlc = DLCMan._queuedDownloadTasks.front();
+	Common::String domain = EngineMan.generateUniqueDomain(dlc->gameid);
 	ConfMan.addGameDomain(domain);
-	ConfMan.set("engineid", DLCMan._queuedDownloadTasks.front()->engineid, domain);
-	ConfMan.set("gameid", DLCMan._queuedDownloadTasks.front()->gameid, domain);
-	ConfMan.set("description", DLCMan._queuedDownloadTasks.front()->description, domain);
-	ConfMan.set("language", DLCMan._queuedDownloadTasks.front()->language, domain);
-	ConfMan.set("platform", DLCMan._queuedDownloadTasks.front()->platform, domain);
+	ConfMan.set("engineid", dlc->engineid, domain);
+	ConfMan.set("gameid", dlc->gameid, domain);
+	ConfMan.set("description", dlc->description, domain);
+	ConfMan.set("language", dlc->language, domain);
+	ConfMan.set("platform", dlc->platform, domain);
 	ConfMan.set("path", gamePath.toString(), domain);
-	ConfMan.set("extra", DLCMan._queuedDownloadTasks.front()->extra, domain);
-	ConfMan.set("guioptions", DLCMan._queuedDownloadTasks.front()->guioptions, domain);
-	ConfMan.set("download", DLCMan._queuedDownloadTasks.front()->id, domain);
+	ConfMan.set("extra", dlc->extra, domain);
+	ConfMan.set("guioptions", dlc->guioptions, domain);
+	ConfMan.set("download", dlc->id, domain);
 
 	// send refresh launcher command to GUI
 	DLCMan.refreshLauncherGameList();
