@@ -54,6 +54,9 @@
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #include "graphics/opengl/context.h"
 #endif
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+#include "backends/dlc/scummvmcloud.h"
+#endif
 #include "graphics/renderer.h"
 
 #include <time.h>	// for getTimeAndDate()
@@ -90,6 +93,9 @@ OSystem_SDL::OSystem_SDL()
 	_eventSource(nullptr),
 	_eventSourceWrapper(nullptr),
 	_window(nullptr) {
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+	_dlcStore = new DLC::ScummVMCloud::ScummVMCloud();
+#endif
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -198,6 +204,9 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	 * we are at one initGraphics3d call of supporting OpenGL */
 	if (f == kFeatureOpenGLForGame) return true;
 	if (f == kFeatureShadersForGame) return _supportsShaders;
+#endif
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+	if (f == kFeatureDLC) return true;
 #endif
 	return ModularGraphicsBackend::hasFeature(f);
 }

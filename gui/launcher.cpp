@@ -207,9 +207,7 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 	}
 	g_gui.unlockIconsSet();
 
-#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
-	DLCMan.setLauncher(this);
-#elif defined(USE_DLC)
+#if defined(USE_DLC)
 	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
 		DLCMan.setLauncher(this);
 	}
@@ -268,10 +266,7 @@ void LauncherDialog::build() {
 	// I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
 
-#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
-	// I18N: Button browse downloadable games (DLC)
-	new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
-#elif defined(USE_DLC)
+#if defined(USE_DLC)
 	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
 		new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
 	}

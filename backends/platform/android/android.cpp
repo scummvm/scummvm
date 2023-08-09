@@ -224,9 +224,9 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	}
 	_fsFactory = &fsFactory;
 
-	// TODO: Create a new factory for Android, to assign it according to the Android's distribution store
-	// E.g. to handle the cases for: playstore, no store (apk on ScummVM website), amazon app store, etc. 
+#if defined(USE_DLC)
 	_dlcStore = new DLC::PlayStore::PlayStore();
+#endif
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -646,7 +646,9 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureTouchscreen) {
 		return true;
 	}
+#if defined(USE_DLC)
 	if (f == kFeatureDLC) return true;
+#endif
 	/* Even if we are using the 2D graphics manager,
 	 * we are at one initGraphics3d call of supporting GLES2 */
 	if (f == kFeatureOpenGLForGame) return true;
