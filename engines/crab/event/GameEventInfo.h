@@ -39,7 +39,7 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace event {
-bool IsChar(char c);
+bool isChar(char c);
 
 class Info {
 	// The characters in the game
