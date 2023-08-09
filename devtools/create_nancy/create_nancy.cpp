@@ -25,11 +25,12 @@
 #include "nancy2_data.h"
 #include "nancy3_data.h"
 #include "nancy4_data.h"
+#include "nancy5_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 1
 #define NANCYDAT_MINOR_VERSION 0
 
-#define NANCYDAT_NUM_GAMES 5
+#define NANCYDAT_NUM_GAMES 6
 
 /**
  * Format specifications for nancy.dat:
@@ -62,6 +63,7 @@
  * 		Nancy Drew: Stay Tuned for Danger
  * 		Nancy Drew: Message in a Haunted Mansion
  * 		Nancy Drew: Treasure in the Royal Tower
+ * 		Nancy Drew: The Final Scene
 */
 
 // Add the offset to the next tagged section before the section itself for easier navigation
@@ -203,6 +205,16 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy4Goodbyes, _nancy4GoodbyeTexts))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy4TelephoneRinging))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy4EventFlagNames))
+
+	// Nancy Drew: The Final Scene data
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _nancy5Constants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to5SoundChannelInfo))
+	WRAPWITHOFFSET(writeLanguages(output, _nancy5LanguagesOrder))
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy5ConditionalDialogue, _nancy5ConditionalDialogueTexts))
+	WRAPWITHOFFSET(writeGoodbyes(output, _nancy5Goodbyes, _nancy5GoodbyeTexts))
+	WRAPWITHOFFSET(writeRingingTexts(output, _nancy5TelephoneRinging))
+	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy5EventFlagNames))
 
 	// Write the offsets for each game in the header
 	output.seek(offsetsOffset);
