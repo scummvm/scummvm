@@ -77,10 +77,6 @@ endif
 ifdef USE_DLC
 MODULE_OBJS += \
 	dlc/dlcmanager.o
-ifeq ($(BACKEND),android)
-MODULE_OBJS += \
-	dlc/android/playstore.o
-endif
 endif
 
 ifdef USE_LIBCURL

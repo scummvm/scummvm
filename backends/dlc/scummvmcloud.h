@@ -43,18 +43,6 @@ public:
 	ScummVMCloud() {}
 	virtual ~ScummVMCloud() {}
 
-	virtual void init() override {}
-
-	virtual void requestInfo() override {}
-
-	virtual void getDownloadState() override {}
-
-	virtual void requestDownload() override {}
-
-	virtual void getBytesDownloaded() override {}
-
-	virtual void cancelDownload() override {}
-
 	virtual void getAllDLCs() override;
 
 	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) override;

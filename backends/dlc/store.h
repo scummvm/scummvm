@@ -35,18 +35,6 @@ public:
 	Store() {}
 	virtual ~Store() {}
 
-	virtual void init() = 0;
-
-	virtual void requestInfo() = 0;
-
-	virtual void getDownloadState() = 0;
-
-	virtual void requestDownload() = 0;
-
-	virtual void getBytesDownloaded() = 0;
-
-	virtual void cancelDownload() = 0;
-
 	virtual void getAllDLCs() = 0;
 
 	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) = 0;
