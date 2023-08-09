@@ -26,9 +26,10 @@
 #include "common/array.h"
 #include "common/language.h"
 
-#define NOFLAG { -1, kFalse }
+#define NOFLAG { kEv, -1, kFalse }
 
 enum NancyFlag : byte { kFalse = 1, kTrue = 2 };
+enum ConditionType : byte { kEv = 0, kIn = 1, kDi = 2 };
 
 struct GameConstants {
 	uint16 numItems;
@@ -41,6 +42,7 @@ struct GameConstants {
 };
 
 struct EventFlagDescription {
+	byte type;
 	int16 label;
 	byte flag; // NancyFlag up to nancy2, bool from nancy3 up
 };
@@ -53,11 +55,10 @@ struct SceneChangeDescription {
 };
 
 struct ConditionalDialogue {
-    byte textID;
-    uint16 sceneID;
-    const char *soundID;
-	Common::Array<EventFlagDescription> flagConditions;
-	Common::Array<EventFlagDescription> inventoryConditions;
+	byte textID;
+	uint16 sceneID;
+	const char *soundID;
+	Common::Array<EventFlagDescription> conditions;
 };
 
 struct GoodbyeSceneChange {
@@ -72,12 +73,18 @@ struct Goodbye {
 };
 
 struct Hint {
-    byte textID;
-    int16 hintWeight;
-    SceneChangeDescription sceneChange;
-    const char *soundIDs[3];
-    Common::Array<EventFlagDescription> flagConditions;
-	Common::Array<EventFlagDescription> inventoryConditions;
+	byte textID;
+	int16 hintWeight;
+	const char *soundIDs[3];
+	Common::Array<EventFlagDescription> conditions;
+};
+
+struct SoundChannelInfo {
+	byte numChannels;
+	byte numSceneSpecificChannels;
+	Common::Array<byte> speechChannels; // 0 in the original engine
+	Common::Array<byte> musicChannels; // 1
+	Common::Array<byte> sfxChannels; // 2
 };
 
 #endif // CREATE_NANCY_TYPES_H

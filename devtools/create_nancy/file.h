@@ -29,6 +29,8 @@
 
 #include "types.h"
 
+#define MKTAG(a0,a1,a2,a3) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
+
 enum AccessMode {
 	kFileReadMode = 1,
 	kFileWriteMode = 2
@@ -48,9 +50,9 @@ public:
 
 	void close();
 
-    uint pos() const;
-    uint size() const;
-    bool eof() const;
+	uint pos() const;
+	uint size() const;
+	bool eof() const;
 
 	int seek(int offset, int whence = SEEK_SET);
 	void skip(int offset);
@@ -67,15 +69,15 @@ public:
 
 template <class T>
 void writeToFile(File &file, T &obj) {
-    file.write(&obj, sizeof(obj));
+	file.write(&obj, sizeof(obj));
 }
 
 template<class T>
 void writeToFile(File &file, const Common::Array<T> &obj) {
-    file.writeUint16(obj.size());
-    for (uint i = 0; i < obj.size(); ++i) {
-        writeToFile(file, obj[i]);
-    }
+	file.writeUint16(obj.size());
+	for (uint i = 0; i < obj.size(); ++i) {
+		writeToFile(file, obj[i]);
+	}
 }
 
 template<>

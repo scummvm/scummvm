@@ -26,8 +26,8 @@
 #include "nancy3_data.h"
 #include "nancy4_data.h"
 
-#define NANCYDAT_MAJOR_VERSION 0
-#define NANCYDAT_MINOR_VERSION 2
+#define NANCYDAT_MAJOR_VERSION 1
+#define NANCYDAT_MINOR_VERSION 0
 
 #define NANCYDAT_NUM_GAMES 5
 
@@ -38,214 +38,179 @@
  * 1 byte               Minor version number
  * 2 bytes              Number of games (ignoring multiple languages)
  * 4 bytes per game     File offsets for every game's data
+ * Rest of file			Game data
  * 
- * Game data order:
- *      Game constants structure
- *      Array with the order of game languages
- *      Conditional dialogue (logic)
- *      Goodbyes (logic)
- *      Hints (logic)
- *      Conditional dialogue (text)
- *      Goodbyes (text)
- *      Hints (text)  
- *      Telephone ringing text
- *      Item names
- *      Event flag names
+ * Game data contents:
+ * 		Various data sections, depending on title;
+ * 		e.g.: only nancy1 has a hint section, since later
+ * 		titles abandoned the dedicated hint system.
+ * 		Each section has the following structure:
+ * 			4 bytes		Offset to next section
+ * 			4 bytes		Section tag (generated using MKTAG macro)
+ * 			variable	Section data
  * 
  * Arrays in the game data are variable-size.
  * All arrays are preceded by a 2-byte size property.
  * 2D arrays with strings (e.g conditional dialogue) are also preceded
  * by a list of 4-byte offsets (one per language).
- * Nonexistent data isn't skipped, but has size 0.
- * All offsets are absolute (relative to start of file)
+ * All offsets are absolute (relative to start of file).
+ * All data is little endian.
  * 
  * Game order:
  *      The Vampire Diaries
  *      Nancy Drew: Secrets Can Kill
  * 		Nancy Drew: Stay Tuned for Danger
- * 		Nancy Drew: Message in a Haunted Mansion 
+ * 		Nancy Drew: Message in a Haunted Mansion
+ * 		Nancy Drew: Treasure in the Royal Tower
 */
+
+// Add the offset to the next tagged section before the section itself for easier navigation
+#define WRAPWITHOFFSET(x) beginOffset = output.pos();\
+	output.skip(4);\
+	x;\
+	endOffset = output.pos();\
+	output.seek(beginOffset);\
+	output.writeUint32(endOffset);\
+	output.seek(endOffset);
 
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
 	exit(1);
 }
 
-void writeGameData( File &output,
-                    const GameConstants &gameConstants,
-                    const Common::Array<Common::Language> &languages,
-                    const Common::Array<Common::Array<ConditionalDialogue>> *conditionalDialogue,
-                    const Common::Array<Goodbye> *goodbyes,
-                    const Common::Array<Common::Array<Hint>> *hints,
-                    const Common::Array<Common::Array<const char *>> *dialogueTexts,
-                    const Common::Array<Common::Array<const char *>> *goodbyeTexts,
-                    const Common::Array<Common::Array<const char *>> *hintTexts,
-                    const Common::Array<const char *> *ringingTexts,
-                    const Common::Array<const char *> &eventFlagNames) {
-    
-    // Write game constants
-    output.writeUint16(gameConstants.numItems);
-    output.writeUint16(gameConstants.numEventFlags);
-    writeToFile(output, gameConstants.mapAccessSceneIDs);
-    writeToFile(output, gameConstants.genericEventFlags);
-    output.writeUint16(gameConstants.numNonItemCursors);
-    output.writeUint16(gameConstants.numCurtainAnimationFrames);
-    output.writeUint32(gameConstants.logoEndAfter);
+void writeConstants(File &output, const GameConstants &gameConstants) {
+	output.writeUint32(MKTAG('C', 'O', 'N', 'S'));
+	output.writeUint16(gameConstants.numItems);
+	output.writeUint16(gameConstants.numEventFlags);
+	writeToFile(output, gameConstants.mapAccessSceneIDs);
+	writeToFile(output, gameConstants.genericEventFlags);
+	output.writeUint16(gameConstants.numNonItemCursors);
+	output.writeUint16(gameConstants.numCurtainAnimationFrames);
+	output.writeUint32(gameConstants.logoEndAfter);
+}
 
-    // Write languages
-    writeToFile(output, languages);
+void writeSoundChannels(File &output, const SoundChannelInfo &soundChannelInfo) {
+	output.writeUint32(MKTAG('S', 'C', 'H', 'N'));
+	output.writeByte(soundChannelInfo.numChannels);
+	output.writeByte(soundChannelInfo.numSceneSpecificChannels);
+	writeToFile(output, soundChannelInfo.speechChannels);
+	writeToFile(output, soundChannelInfo.musicChannels);
+	writeToFile(output, soundChannelInfo.sfxChannels);
+}
 
-    // Write conditional dialogue logic
-    if (conditionalDialogue) {
-        writeToFile(output, *conditionalDialogue);
-    } else {
-        output.writeUint16(0);
-    }
+void writeLanguages(File &output, const Common::Array<Common::Language> &languages) {
+	output.writeUint32(MKTAG('L', 'A', 'N', 'G'));
+	writeToFile(output, languages);
+}
 
-    // Write Goodbyes logic
-    if (goodbyes) {
-        writeToFile(output, *goodbyes);
-    } else {
-        output.writeUint16(0);
-    }
+void writeConditionalDialogue(File &output, const Common::Array<Common::Array<ConditionalDialogue>> &conditionalDialogue, const Common::Array<Common::Array<const char *>> &dialogueTexts) {
+	output.writeUint32(MKTAG('C', 'D', 'L', 'G'));
+	writeToFile(output, conditionalDialogue);
+	writeMultilangArray(output, dialogueTexts);
+}
 
-    // Write hints logic
-    if (hints) {
-        writeToFile(output, *hints);
-    } else {
-        output.writeUint16(0);
-    }
+void writeGoodbyes(File &output, const Common::Array<Goodbye> &goodbyes, const Common::Array<Common::Array<const char *>> &goodbyeTexts) {
+	output.writeUint32(MKTAG('G', 'D', 'B', 'Y'));
+	writeToFile(output, goodbyes);
+	writeMultilangArray(output, goodbyeTexts);
+}
 
-    // Write conditional dialogue text
-    if (dialogueTexts) {
-        writeMultilangArray(output, *dialogueTexts);
-    } else {
-        output.writeUint16(0);
-    }
+void writeHints(File &output, const Common::Array<Common::Array<Hint>> &hints, const SceneChangeDescription &hintSceneChange, const Common::Array<Common::Array<const char *>> &hintTexts) {
+	output.writeUint32(MKTAG('H', 'I', 'N', 'T'));
+	writeToFile(output, hintSceneChange);
+	writeToFile(output, hints);
+	writeMultilangArray(output, hintTexts);
+}
 
-    // Write goodbyes text
-    if (goodbyeTexts) {
-        writeMultilangArray(output, *goodbyeTexts);
-    } else {
-        output.writeUint16(0);
-    }
+void writeRingingTexts(File &output, const Common::Array<const char *> &ringingTexts) {
+	output.writeUint32(MKTAG('R', 'I', 'N', 'G'));
+	writeToFile(output, ringingTexts);
+}
 
-    // Write hints text
-    if (hintTexts) {
-        writeMultilangArray(output, *hintTexts);
-    } else {
-        output.writeUint16(0);
-    }
-
-    // Write hints text
-    if (ringingTexts) {
-        writeToFile(output, *ringingTexts);
-    } else {
-        output.writeUint16(0);
-    }
-
-    // Write event flag names
-    writeToFile(output, eventFlagNames);
+void writeEventFlagNames(File &output, const Common::Array<const char *> &eventFlagNames) {
+	output.writeUint32(MKTAG('E', 'F', 'L', 'G'));
+	writeToFile(output, eventFlagNames);
 }
 
 int main(int argc, char *argv[]) {
-    File output;
+	File output;
 	if (!output.open("nancy.dat", kFileWriteMode)) {
 		error("Unable to open nancy.dat");
 	}
 
-    Common::Array<uint32> gameOffsets;
+	Common::Array<uint32> gameOffsets;
+	uint32 beginOffset, endOffset;
 
-    // Write header
-    output.writeByte('N');
-    output.writeByte('N');
-    output.writeByte('C');
-    output.writeByte('Y');
-    output.writeByte(NANCYDAT_MAJOR_VERSION);
-    output.writeByte(NANCYDAT_MINOR_VERSION);
-    output.writeUint16(NANCYDAT_NUM_GAMES);
+	// Write header
+	output.writeByte('N');
+	output.writeByte('N');
+	output.writeByte('C');
+	output.writeByte('Y');
+	output.writeByte(NANCYDAT_MAJOR_VERSION);
+	output.writeByte(NANCYDAT_MINOR_VERSION);
+	output.writeUint16(NANCYDAT_NUM_GAMES);
 
-    // Skip game offsets, they'll be written at the end
-    uint32 offsetsOffset = output.pos();
-    output.skip(NANCYDAT_NUM_GAMES * 4);
+	// Skip game offsets, they'll be written at the end
+	uint32 offsetsOffset = output.pos();
+	output.skip(NANCYDAT_NUM_GAMES * 4);
 
-    // The Vampire Diaries data
-    gameOffsets.push_back(output.pos());
-    writeGameData(  output,
-                    _tvdConstants,
-                    _tvdLanguagesOrder,
-                    &_tvdConditionalDialogue,
-                    &_tvdGoodbyes,
-                    nullptr,
-                    &_tvdConditionalDialogueTexts,
-                    &_tvdGoodbyeTexts,
-                    nullptr,
-                    nullptr,
-                    _tvdEventFlagNames);
-    
-    // Nancy Drew: Secrets Can Kill data
-    gameOffsets.push_back(output.pos());
-    writeGameData(  output,
-                    _nancy1Constants,
-                    _nancy1LanguagesOrder,
-                    &_nancy1ConditionalDialogue,
-                    &_nancy1Goodbyes,
-                    &_nancy1Hints,
-                    &_nancy1ConditionalDialogueTexts,
-                    &_nancy1GoodbyeTexts,
-                    &_nancy1HintTexts,
-                    &_nancy1TelephoneRinging,
-                    _nancy1EventFlagNames);
+	// The Vampire Diaries data
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _tvdConstants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _tvdToNancy2SoundChannelInfo))
+	WRAPWITHOFFSET(writeLanguages(output, _tvdLanguagesOrder))
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _tvdConditionalDialogue, _tvdConditionalDialogueTexts))
+	WRAPWITHOFFSET(writeGoodbyes(output, _tvdGoodbyes, _tvdGoodbyeTexts))
+	WRAPWITHOFFSET(writeEventFlagNames(output, _tvdEventFlagNames))
+	
+	// Nancy Drew: Secrets Can Kill data
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _nancy1Constants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _tvdToNancy2SoundChannelInfo))
+	WRAPWITHOFFSET(writeLanguages(output, _nancy1LanguagesOrder))
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy1ConditionalDialogue, _nancy1ConditionalDialogueTexts))
+	WRAPWITHOFFSET(writeGoodbyes(output, _nancy1Goodbyes, _nancy1GoodbyeTexts))
+	WRAPWITHOFFSET(writeHints(output, _nancy1Hints, _nancy1HintSceneChange, _nancy1HintTexts))
+	WRAPWITHOFFSET(writeRingingTexts(output, _nancy1TelephoneRinging))
+	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy1EventFlagNames))
 	
 	// Nancy Drew: Stay Tuned for Danger data
-    gameOffsets.push_back(output.pos());
-	writeGameData(  output,
-                    _nancy2Constants,
-                    _nancy2LanguagesOrder,
-                    &_nancy2ConditionalDialogue,
-                    &_nancy2Goodbyes,
-                    nullptr,
-                    &_nancy2ConditionalDialogueTexts,
-                    &_nancy2GoodbyeTexts,
-                    nullptr,
-                    &_nancy2TelephoneRinging,
-                    _nancy2EventFlagNames);
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _nancy2Constants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _tvdToNancy2SoundChannelInfo))
+	WRAPWITHOFFSET(writeLanguages(output, _nancy2LanguagesOrder))
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy2ConditionalDialogue, _nancy2ConditionalDialogueTexts))
+	WRAPWITHOFFSET(writeGoodbyes(output, _nancy2Goodbyes, _nancy2GoodbyeTexts))
+	WRAPWITHOFFSET(writeRingingTexts(output, _nancy2TelephoneRinging))
+	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy2EventFlagNames))
 	
 	// Nancy Drew: Message in a Haunted Mansion data
-    gameOffsets.push_back(output.pos());
-	writeGameData(  output,
-                    _nancy3Constants,
-                    _nancy3LanguagesOrder,
-                    &_nancy3ConditionalDialogue,
-                    &_nancy3Goodbyes,
-                    nullptr,
-                    &_nancy3ConditionalDialogueTexts,
-                    &_nancy3GoodbyeTexts,
-                    nullptr,
-                    &_nancy3TelephoneRinging,
-                    _nancy3EventFlagNames);
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _nancy3Constants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to5SoundChannelInfo))
+	WRAPWITHOFFSET(writeLanguages(output, _nancy3LanguagesOrder))
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy3ConditionalDialogue, _nancy3ConditionalDialogueTexts))
+	WRAPWITHOFFSET(writeGoodbyes(output, _nancy3Goodbyes, _nancy3GoodbyeTexts))
+	WRAPWITHOFFSET(writeRingingTexts(output, _nancy3TelephoneRinging))
+	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy3EventFlagNames))
 	
 	// Nancy Drew: Treasure in the Royal Tower data
-    gameOffsets.push_back(output.pos());
-	writeGameData(  output,
-                    _nancy4Constants,
-                    _nancy4LanguagesOrder,
-                    &_nancy4ConditionalDialogue,
-                    &_nancy4Goodbyes,
-                    nullptr,
-                    &_nancy4ConditionalDialogueTexts,
-                    &_nancy4GoodbyeTexts,
-                    nullptr,
-                    &_nancy4TelephoneRinging,
-                    _nancy4EventFlagNames);
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _nancy4Constants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to5SoundChannelInfo))
+	WRAPWITHOFFSET(writeLanguages(output, _nancy4LanguagesOrder))
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy4ConditionalDialogue, _nancy4ConditionalDialogueTexts))
+	WRAPWITHOFFSET(writeGoodbyes(output, _nancy4Goodbyes, _nancy4GoodbyeTexts))
+	WRAPWITHOFFSET(writeRingingTexts(output, _nancy4TelephoneRinging))
+	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy4EventFlagNames))
 
-    // Write the offsets for each game in the header
-    output.seek(offsetsOffset);
-    for (uint i = 0; i < gameOffsets.size(); ++i) {
-        output.writeUint32(gameOffsets[i]);
-    }
+	// Write the offsets for each game in the header
+	output.seek(offsetsOffset);
+	for (uint i = 0; i < gameOffsets.size(); ++i) {
+		output.writeUint32(gameOffsets[i]);
+	}
 
-    output.close();
+	output.close();
 
-    return 0;
+	return 0;
 }

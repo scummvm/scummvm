@@ -25,312 +25,251 @@
 #include "types.h"
 
 const GameConstants _nancy2Constants ={
-    18,
-    240,
-    { }, // No Map state
-    {	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-        11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
-    15,
-    7,
-    7000
+	18,
+	240,
+	{ }, // No Map state
+	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
+	15,
+	7,
+	7000
 };
 
 const Common::Array<Common::Language> _nancy2LanguagesOrder = {
-    Common::Language::EN_ANY,
-    Common::Language::RU_RUS
+	Common::Language::EN_ANY,
+	Common::Language::RU_RUS
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy2ConditionalDialogue = {
 {	// Dwayne, 7 responses + 2 repeats
-	{   0, 816, "nda33",
-        { { 0x32, kTrue }, { 0x76, kFalse } },
-        { } },
-	{   1, 817, "nda34",
-        { { 0x31, kTrue }, { 0x77, kFalse } },
-        { } },
-	{   2, 820, "nda35",
-        { { 0x37, kTrue }, { 0x78, kFalse }, { 0x4C, kFalse } },
-        { } },
-	{   3, 821, "nda15",
-        { { 0x43, kTrue }, { 0x79, kFalse }, { 0x50, kFalse } },
-        { } },
-	{   4, 823, "nda19",
-        { { 0x7B, kTrue }, { 0x7A, kFalse } },
-        { } },
-	{   5, 824, "nda22",
-        { { 0x7C, kFalse }, { 0x44, kTrue } },
-        { } },
-	{   5, 824, "nda22",
-        { { 0x7C, kFalse }, { 0x44, kFalse }, { 0x40, kTrue } },
-        { } },
-	{   6, 826, "nda27",
-        { { 0x7E, kFalse }, { 0x38, kTrue } },
-        { } },
-	{   6, 826, "nda27",
-        { { 0x7E, kFalse }, { 0x38, kFalse }, { 0x3A, kTrue } },
-        { } },
-	{   7, 829, "nda28",
-        { { 0x27, kTrue }, { 0x7F, kFalse } },
-        { } }
+	{	0, 816, "nda33",
+		{ { kEv, 0x32, kTrue }, { kEv, 0x76, kFalse } } },
+	{	1, 817, "nda34",
+		{ { kEv, 0x31, kTrue }, { kEv, 0x77, kFalse } } },
+	{	2, 820, "nda35",
+		{ { kEv, 0x37, kTrue }, { kEv, 0x78, kFalse }, { kEv, 0x4C, kFalse } } },
+	{	3, 821, "nda15",
+		{ { kEv, 0x43, kTrue }, { kEv, 0x79, kFalse }, { kEv, 0x50, kFalse } } },
+	{	4, 823, "nda19",
+		{ { kEv, 0x7B, kTrue }, { kEv, 0x7A, kFalse } } },
+	{	5, 824, "nda22",
+		{ { kEv, 0x7C, kFalse }, { kEv, 0x44, kTrue } } },
+	{	5, 824, "nda22",
+		{ { kEv, 0x7C, kFalse }, { kEv, 0x44, kFalse }, { kEv, 0x40, kTrue } } },
+	{	6, 826, "nda27",
+		{ { kEv, 0x7E, kFalse }, { kEv, 0x38, kTrue } } },
+	{	6, 826, "nda27",
+		{ { kEv, 0x7E, kFalse }, { kEv, 0x38, kFalse }, { kEv, 0x3A, kTrue } } },
+	{	7, 829, "nda28",
+		{ { kEv, 0x27, kTrue }, { kEv, 0x7F, kFalse } } }
 },
 {	// Rick, 4 responses + 1 repeat
-	{   8, 729, "NRD29",
-        { { 0x73, kFalse }, { 0x44, kTrue } },
-        { } },
-	{   8, 729, "NRD29",
-        { { 0x73, kFalse }, { 0x44, kFalse }, { 0x40, kTrue } },
-        { } },
-	{   9, 728, "NRD28",
-        { { 0x32, kTrue }, { 0x72, kFalse } },
-        { } },
-	{   10, 717, "NRD18",
-        { { 0x30, kTrue }, { 0x70, kFalse } },
-        { } },
-	{   11, 721, "NRD21",
-        { { 0x97, kTrue }, { 0x71, kFalse } },
-        { } }
+	{	8, 729, "NRD29",
+		{ { kEv, 0x73, kFalse }, { kEv, 0x44, kTrue } } },
+	{	8, 729, "NRD29",
+		{ { kEv, 0x73, kFalse }, { kEv, 0x44, kFalse }, { kEv, 0x40, kTrue } } },
+	{	9, 728, "NRD28",
+		{ { kEv, 0x32, kTrue }, { kEv, 0x72, kFalse } } },
+	{	10, 717, "NRD18",
+		{ { kEv, 0x30, kTrue }, { kEv, 0x70, kFalse } } },
+	{	11, 721, "NRD21",
+		{ { kEv, 0x97, kTrue }, { kEv, 0x71, kFalse } } }
 },
 {	// Millie, 2 responses
-	{   12, 317, "NPR12",
-        { { 0x34, kTrue }, { 0x85, kFalse } },
-        { } },
-	{   13, 321, "NPR15",
-        { { 0x40, kTrue }, { 0x86, kFalse } },
-        { } }
+	{	12, 317, "NPR12",
+		{ { kEv, 0x34, kTrue }, { kEv, 0x85, kFalse } } },
+	{	13, 321, "NPR15",
+		{ { kEv, 0x40, kTrue }, { kEv, 0x86, kFalse } } }
 },
 {	// Lillian, 4 responses + 1 repeat
-	{   14, 503, "NLR07",
-        { { 0x41, kTrue }, { 0x81, kFalse } },
-        { } },
-	{   15, 504, "NLR08",
-        { { 0x97, kTrue }, { 0x82, kFalse } },
-        { } },
-	{   16, 510, "NLR15",
-        { { 0x83, kFalse }, { 0x44, kTrue } },
-        { } },
-	{   16, 510, "NLR15",
-        { { 0x83, kFalse }, { 0x44, kFalse }, { 0x40, kTrue } },
-        { } },
-	{   17, 512, "NLR17",
-        { { 0x84, kTrue }, { 0x35, kTrue }, { 0x83, kTrue }, { 0x7B, kFalse } },
-        { } }
+	{	14, 503, "NLR07",
+		{ { kEv, 0x41, kTrue }, { kEv, 0x81, kFalse } } },
+	{	15, 504, "NLR08",
+		{ { kEv, 0x97, kTrue }, { kEv, 0x82, kFalse } } },
+	{	16, 510, "NLR15",
+		{ { kEv, 0x83, kFalse }, { kEv, 0x44, kTrue } } },
+	{	16, 510, "NLR15",
+		{ { kEv, 0x83, kFalse }, { kEv, 0x44, kFalse }, { kEv, 0x40, kTrue } } },
+	{	17, 512, "NLR17",
+		{ { kEv, 0x84, kTrue }, { kEv, 0x35, kTrue }, { kEv, 0x83, kTrue }, { kEv, 0x7B, kFalse } } }
 },
 {	// Ned, 9 responses
-	{   18, 3007, "NNP08",
-        { { 0x34, kTrue }, { 0x65, kFalse }, { 0x49, kFalse } },
-        { } },
-	{   19, 3010, "NNP11",
-        { { 0x29, kTrue }, { 0x4F, kFalse }, { 0x66, kFalse } },
-        { } },
-	{   20, 3013, "NNP14",
-        { { 0x67, kFalse } },
-        { { 0xF, kTrue } } },
-	{   21, 3014, "NNP15",
-        { { 0x69, kTrue }, { 0x2D, kFalse }, { 0x5C, kFalse } },
-        { } },
-	{   22, 3015, "NNP16",
-        { { 0x44, kTrue }, { 0x40, kTrue }, { 0x3B, kFalse }, { 0x6A, kFalse } },
-        { } },
-	{   23, 3016, "NNP17",
-        { { 0x38, kTrue }, { 0x39, kFalse }, { 0x6B, kFalse }, { 0x3A, kTrue } },
-        { } },
-	{   24, 3017, "NNP28",
-        { { 0x39, kTrue }, { 0x6B, kTrue }, { 0x6C, kFalse } },
-        { } },
-	{   25, 3019, "NNP20",
-        { { 0x43, kTrue }, { 0x50, kFalse }, { 0x6D, kFalse } },
-        { } },
-	{   26, 3020, "NNP21",
-        { { 0x43, kTrue }, { 0x50, kFalse }, { 0x6E, kFalse } },
-        { } }
+	{	18, 3007, "NNP08",
+		{ { kEv, 0x34, kTrue }, { kEv, 0x65, kFalse }, { kEv, 0x49, kFalse } } },
+	{	19, 3010, "NNP11",
+		{ { kEv, 0x29, kTrue }, { kEv, 0x4F, kFalse }, { kEv, 0x66, kFalse } } },
+	{	20, 3013, "NNP14",
+		{ { kEv, 0x67, kFalse }, { kIn, 0xF, kTrue } } },
+	{	21, 3014, "NNP15",
+		{ { kEv, 0x69, kTrue }, { kEv, 0x2D, kFalse }, { kEv, 0x5C, kFalse } } },
+	{	22, 3015, "NNP16",
+		{ { kEv, 0x44, kTrue }, { kEv, 0x40, kTrue }, { kEv, 0x3B, kFalse }, { kEv, 0x6A, kFalse } } },
+	{	23, 3016, "NNP17",
+		{ { kEv, 0x38, kTrue }, { kEv, 0x39, kFalse }, { kEv, 0x6B, kFalse }, { kEv, 0x3A, kTrue } } },
+	{	24, 3017, "NNP28",
+		{ { kEv, 0x39, kTrue }, { kEv, 0x6B, kTrue }, { kEv, 0x6C, kFalse } } },
+	{	25, 3019, "NNP20",
+		{ { kEv, 0x43, kTrue }, { kEv, 0x50, kFalse }, { kEv, 0x6D, kFalse } } },
+	{	26, 3020, "NNP21",
+		{ { kEv, 0x43, kTrue }, { kEv, 0x50, kFalse }, { kEv, 0x6E, kFalse } } }
 },
 {	// Bess, 18 responses
-	{   27, 3123, "NBES32g",
-        { { 0x50, kTrue }, { 0x2C, kFalse }, { 0x9B, kFalse } },
-        { } },
-	{   28, 3124, "NBES35",
-        { { 0x55, kTrue }, { 0x3E, kFalse }, { 0x9C, kFalse } },
-        { } },
-	{   29, 3125, "NBES36",
-        { { 0x56, kTrue }, { 0x4C, kFalse }, { 0x9D, kFalse } },
-        { } },
-	{   30, 3127, "NBES38",
-        { { 0x57, kTrue }, { 0x3B, kFalse }, { 0x9F, kFalse } },
-        { } },
-	{   31, 3128, "NBES39g",
-        { { 0x84, kTrue }, { 0x35, kFalse }, { 0xA0, kFalse } },
-        { } },
-	{   32, 3129, "NBES41g",
-        { { 0x84, kTrue }, { 0x23, kTrue }, { 0xA1, kFalse } },
-        { } },
-	{   33, 3130, "NBES43",
-        { { 0x7B, kTrue }, { 0xA2, kFalse } },
-        { } },
-	{   34, 3131, "NBES46",
-        { { 0x58, kTrue }, { 0xA3, kFalse } },
-        { } },
-	{   35, 3133, "NBES48",
-        { { 0x3D, kTrue }, { 0xA6, kFalse } },
-        { { 0xC, kFalse } } },
-	{   36, 3136, "NBES53",
-        { { 0x40, kTrue }, { 0xA8, kFalse } },
-        { } },
-	{   37, 3137, "NBES55",
-        { { 0x55, kFalse }, { 0x3E, kTrue }, { 0xA9, kFalse } },
-        { } },
-	{   38, 3138, "NBES61g",
-        { { 0x40, kTrue }, { 0x44, kFalse }, { 0xAA, kFalse } },
-        { } },
-	{   39, 3139, "NBES65",
-        { { 0x2A, kTrue }, { 0x2B, kFalse }, { 0x9B, kFalse } },
-        { } },
-	{   40, 3140, "NBES66",
-        { { 0x53, kTrue }, { 0x4A, kFalse }, { 0xAB, kFalse } },
-        { } },
-	{   41, 3141, "NBES67g",
-        { { 0x48, kTrue }, { 0xAC, kFalse } },
-        { } },
-	{   42, 3142, "NBES72",
-        { { 0xA8, kTrue }, { 0x44, kTrue }, { 0xAD, kFalse } },
-        { } },
+	{	27, 3123, "NBES32g",
+		{ { kEv, 0x50, kTrue }, { kEv, 0x2C, kFalse }, { kEv, 0x9B, kFalse } } },
+	{	28, 3124, "NBES35",
+		{ { kEv, 0x55, kTrue }, { kEv, 0x3E, kFalse }, { kEv, 0x9C, kFalse } } },
+	{	29, 3125, "NBES36",
+		{ { kEv, 0x56, kTrue }, { kEv, 0x4C, kFalse }, { kEv, 0x9D, kFalse } } },
+	{	30, 3127, "NBES38",
+		{ { kEv, 0x57, kTrue }, { kEv, 0x3B, kFalse }, { kEv, 0x9F, kFalse } } },
+	{	31, 3128, "NBES39g",
+		{ { kEv, 0x84, kTrue }, { kEv, 0x35, kFalse }, { kEv, 0xA0, kFalse } } },
+	{	32, 3129, "NBES41g",
+		{ { kEv, 0x84, kTrue }, { kEv, 0x23, kTrue }, { kEv, 0xA1, kFalse } } },
+	{	33, 3130, "NBES43",
+		{ { kEv, 0x7B, kTrue }, { kEv, 0xA2, kFalse } } },
+	{	34, 3131, "NBES46",
+		{ { kEv, 0x58, kTrue }, { kEv, 0xA3, kFalse } } },
+	{	35, 3133, "NBES48",
+		{ { kEv, 0x3D, kTrue }, { kEv, 0xA6, kFalse }, { kIn, 0xC, kFalse } } },
+	{	36, 3136, "NBES53",
+		{ { kEv, 0x40, kTrue }, { kEv, 0xA8, kFalse } } },
+	{	37, 3137, "NBES55",
+		{ { kEv, 0x55, kFalse }, { kEv, 0x3E, kTrue }, { kEv, 0xA9, kFalse } } },
+	{	38, 3138, "NBES61g",
+		{ { kEv, 0x40, kTrue }, { kEv, 0x44, kFalse }, { kEv, 0xAA, kFalse } } },
+	{	39, 3139, "NBES65",
+		{ { kEv, 0x2A, kTrue }, { kEv, 0x2B, kFalse }, { kEv, 0x9B, kFalse } } },
+	{	40, 3140, "NBES66",
+		{ { kEv, 0x53, kTrue }, { kEv, 0x4A, kFalse }, { kEv, 0xAB, kFalse } } },
+	{	41, 3141, "NBES67g",
+		{ { kEv, 0x48, kTrue }, { kEv, 0xAC, kFalse } } },
+	{	42, 3142, "NBES72",
+		{ { kEv, 0xA8, kTrue }, { kEv, 0x44, kTrue }, { kEv, 0xAD, kFalse } } },
 	{	43, 3144, "NBES76",
-        { { 0x24, kTrue }, { 0xAE, kFalse } },
-        { } },
+		{ { kEv, 0x24, kTrue }, { kEv, 0xAE, kFalse } } },
 	{	44, 3145, "NBES79g",
-        { { 0x1F, kTrue }, { 0xAF, kFalse } },
-        { } }
+		{ { kEv, 0x1F, kTrue }, { kEv, 0xAF, kFalse } } }
 },
 {	// George, 6 responses
 	{	45, 3207, "NGEO14",
-        { { 0x68, kTrue }, { 0xB1, kFalse }, { 0x3D, kFalse } },
-        { { 0xA, kFalse }} },
+		{ { kEv, 0x68, kTrue }, { kEv, 0xB1, kFalse }, { kEv, 0x3D, kFalse }, { kIn, 0xA, kFalse } } },
 	{	46, 3209, "NGEO16",
-        { { 0x3D, kFalse }, { 0xB3, kFalse } },
-        { { 0xA, kTrue }} },
+		{ { kEv, 0x3D, kFalse }, { kEv, 0xB3, kFalse }, { kIn, 0xA, kTrue } } },
 	{	47, 3210, "NGEO17",
-        { { 0x3D, kTrue }, { 0xB4, kFalse } },
-        { } },
+		{ { kEv, 0x3D, kTrue }, { kEv, 0xB4, kFalse } } },
 	{	48, 3213, "NGEO18",
-        { { 0xB5, kFalse } },
-        { { 0x4, kTrue }} },
+		{ { kEv, 0xB5, kFalse }, { kIn, 0x4, kTrue } } },
 	{	49, 3214, "NGEO19",
-        { { 0x29, kTrue }, { 0x9A, kFalse }, { 0x4F, kFalse } },
-        { } },
+		{ { kEv, 0x29, kTrue }, { kEv, 0x9A, kFalse }, { kEv, 0x4F, kFalse } } },
 	{	50, 3215, "NGEO20",
-        { { 0xB6, kFalse }, { 0x49, kFalse } },
-        { { 0xE, kTrue } } }
+		{ { kEv, 0xB6, kFalse }, { kEv, 0x49, kFalse }, { kIn, 0xE, kTrue } } }
 },
 {	// Security guard, 3 responses + 1 repeat
 	{	51, 401, "NG01",
-        { { 0x3D, kFalse } },
-        { { 0xA, kFalse }, { 0x4, kFalse } } },
+		{ { kEv, 0x3D, kFalse }, { kIn, 0xA, kFalse }, { kIn, 0x4, kFalse } } },
 	{	52, 403, "NG02",
-        { { 0x75, kTrue } },
-        { { 0x4, kFalse } } },
+		{ { kEv, 0x75, kTrue }, { kIn, 0x4, kFalse } } },
 	{	53, 409, "NG04",
-        { },
-        { { 0xA, kTrue } } },
+		{ { kIn, 0xA, kTrue } } },
 	{	53, 409, "NG04",
-        { },
-        { { 0xA, kFalse }, { 0x4, kTrue } } }
+		{ { kIn, 0xA, kFalse }, { kIn, 0x4, kTrue } } }
 },
 {	// Mattie, 2 responses
 	{	54, 215, "NMD20",
-        { { 0x97, kTrue }, { 0x89, kFalse } },
-        { } },
+		{ { kEv, 0x97, kTrue }, { kEv, 0x89, kFalse } } },
 	{	55, 230, "NMD31",
-        { { 0x40, kTrue }, { 0x8A, kFalse } },
-        { } }
+		{ { kEv, 0x40, kTrue }, { kEv, 0x8A, kFalse } } }
 }
 };
 
 const Common::Array<Goodbye> _nancy2Goodbyes = {
-    { "NDA29", { { { 890, 891, 892, 893 }, {}, NOFLAG } } }, // Dwayne
-    { "NRD35", { { { 791, 792, 793, 794 }, {}, NOFLAG } } }, // Rick
-    { "NPR16", { { { 391, 392, 394 }, {}, NOFLAG } } },      // Millie
-    { "NLR18", { { { 590, 591, 593 }, {}, NOFLAG } } },      // Lillian
-    { "NPR16", { { { 3090, 3092, 3093 }, {}, NOFLAG } } },   // Ned
-    { "NBES86", { { { 3190 }, {}, NOFLAG } } },              // Bess
-    { "NGEO90", { { { 3290 }, {}, NOFLAG } } },              // George
-    { "", { { {}, {}, NOFLAG } } },              			 // Security guard, no goodbye
-    { "NMD32", { { { 290, 291, 292, 293 }, {}, NOFLAG } } }, // Mattie
+	{ "NDA29", { { { 890, 891, 892, 893 }, {}, NOFLAG } } }, // Dwayne
+	{ "NRD35", { { { 791, 792, 793, 794 }, {}, NOFLAG } } }, // Rick
+	{ "NPR16", { { { 391, 392, 394 }, {}, NOFLAG } } },		// Millie
+	{ "NLR18", { { { 590, 591, 593 }, {}, NOFLAG } } },		// Lillian
+	{ "NPR16", { { { 3090, 3092, 3093 }, {}, NOFLAG } } },	// Ned
+	{ "NBES86", { { { 3190 }, {}, NOFLAG } } },				  // Bess
+	{ "NGEO90", { { { 3290 }, {}, NOFLAG } } },				  // George
+	{ "", { { {}, {}, NOFLAG } } },				  			 // Security guard, no goodbye
+	{ "NMD32", { { { 290, 291, 292, 293 }, {}, NOFLAG } } }, // Mattie
 };
 
 const Common::Array<Common::Array<const char *>> _nancy2ConditionalDialogueTexts {
-{   // English
+{	// English
 	// 00
-    "Have you met the prop master at Worldwide? She seems...rather strange.<h><n>", // nda33
-    "I'm afraid that I'm not making a very good impression on Lillian. She doesn't seem to like me very much.<h><n>", // nda34
-    "Do you know how I could get into the control room at the studio?<h><n>", // nda35
-    "Can I get a pass that let's me get into the studio during the night?<h><n>", // ..nda15
-    "I'm afraid I've upset Lillian - did she call about terminating my employment with the studio?<h><n>", // nda19
+	"Have you met the prop master at Worldwide? She seems...rather strange.<h><n>", // nda33
+	"I'm afraid that I'm not making a very good impression on Lillian. She doesn't seem to like me very much.<h><n>", // nda34
+	"Do you know how I could get into the control room at the studio?<h><n>", // nda35
+	"Can I get a pass that let's me get into the studio during the night?<h><n>", // ..nda15
+	"I'm afraid I've upset Lillian - did she call about terminating my employment with the studio?<h><n>", // nda19
 	// 05
-    "Do you have many employees working for you at Worldwide?<h><n>", // nda22
-    "What do you make of these threats against Rick? Mattie's very concerned about them.<h><n>", // nda27
-    "The producer seems pretty upset lately - he's always yelling.<h><n>", // nda28
-    "Tell me Rick, do you know a guy by the name of Owen Spayder?<h><n>", // NRD29
-    "What's the story with the prop master?<h><n>", // NRD28
+	"Do you have many employees working for you at Worldwide?<h><n>", // nda22
+	"What do you make of these threats against Rick? Mattie's very concerned about them.<h><n>", // nda27
+	"The producer seems pretty upset lately - he's always yelling.<h><n>", // nda28
+	"Tell me Rick, do you know a guy by the name of Owen Spayder?<h><n>", // NRD29
+	"What's the story with the prop master?<h><n>", // NRD28
 	// 10
-    "Can I ask your advice? Dwayne Powers is my agent - he's pretty good isn't he?<h><n>", // NRD18
-    "So tell me Rick, who haven't you dated on 'Light Of Our Love'? You've got quite a reputation on the set.<h><n>", // NRD21
-    "It must be wonderful to work with Rick Arlen. Is he really that exciting in real life as he is on stage?<h><n>", // NPR12
-    "Do you know where I can find Owen Spayder? He's a stage hand, I believe.<h><n>", // NPR15
-    "I thought you might be interested to know that I found a light clamp on the set. It looked as if it had been sawed off. That was no accident on the set - it was a deliberate attempt on Rick's life.<h><n>", // NLR07
+	"Can I ask your advice? Dwayne Powers is my agent - he's pretty good isn't he?<h><n>", // NRD18
+	"So tell me Rick, who haven't you dated on 'Light Of Our Love'? You've got quite a reputation on the set.<h><n>", // NRD21
+	"It must be wonderful to work with Rick Arlen. Is he really that exciting in real life as he is on stage?<h><n>", // NPR12
+	"Do you know where I can find Owen Spayder? He's a stage hand, I believe.<h><n>", // NPR15
+	"I thought you might be interested to know that I found a light clamp on the set. It looked as if it had been sawed off. That was no accident on the set - it was a deliberate attempt on Rick's life.<h><n>", // NLR07
 	// 15
-    "Can I ask your advice on something? Rick's really been flirty with me - should I take him seriously?<h><n>", // NLR08
-    "Can you tell me something about Owen Spayder?<h><n>", // NLR15
-    "Lillian, I have reason to believe you're the one threatening Rick. I know for a fact you sent him those chocolates. <h><n>", // NLR17
-    "I finally met the Rick Arlen. That man has an ego the size of Texas - he's worse than Daryl Gray!<h><n>", // NNP08
-    "Ned, are you very good at riddles?<h><n>", // NNP11
+	"Can I ask your advice on something? Rick's really been flirty with me - should I take him seriously?<h><n>", // NLR08
+	"Can you tell me something about Owen Spayder?<h><n>", // NLR15
+	"Lillian, I have reason to believe you're the one threatening Rick. I know for a fact you sent him those chocolates. <h><n>", // NLR17
+	"I finally met the Rick Arlen. That man has an ego the size of Texas - he's worse than Daryl Gray!<h><n>", // NNP08
+	"Ned, are you very good at riddles?<h><n>", // NNP11
 	// 20
-    "What do you think I should look for on that death threat tape?<h><n>", // NNP14
-    "There's a locked area of the prop room. I wonder what the prop master is hiding there.<h><n>", // NNP15
-    "I got into the locked area of the prop room and found an employee ID for one of Dwayne's contract workers, Owen Spayder.<h><n>", // NNP16
-    "Guess what, I got a look at the letters Rick has been getting. Some of them have the letters cut out of magazines and some of them are typewritten.  But get this, the 'Y' is dropped on the typewritten letters.<h><n>", // NNP17
-    "This case is getting stranger by the minute. Now I found out that the prop master has a typewriter and guess what? The Y's on her machine are dropped!<h><n>", // NNP28
+	"What do you think I should look for on that death threat tape?<h><n>", // NNP14
+	"There's a locked area of the prop room. I wonder what the prop master is hiding there.<h><n>", // NNP15
+	"I got into the locked area of the prop room and found an employee ID for one of Dwayne's contract workers, Owen Spayder.<h><n>", // NNP16
+	"Guess what, I got a look at the letters Rick has been getting. Some of them have the letters cut out of magazines and some of them are typewritten.  But get this, the 'Y' is dropped on the typewritten letters.<h><n>", // NNP17
+	"This case is getting stranger by the minute. Now I found out that the prop master has a typewriter and guess what? The Y's on her machine are dropped!<h><n>", // NNP28
 	// 25
-    "I'd like to get into the studio at night, but it's locked. Any ideas?<h><n>", // .NNP20
-    "I found a side entrance to the studio, but there's a keypad lock on it.<h><n>", // NNP21
-    "I need to get into Lillian's office at night. I think there's more to her than meets the eye.<h><n>", // NBES32g
-    "Now I need to find an access code to the system computers.<h><n>", // NBES35
-    "If only I could find the password into the control room.<h><n>", // NBES36
+	"I'd like to get into the studio at night, but it's locked. Any ideas?<h><n>", // .NNP20
+	"I found a side entrance to the studio, but there's a keypad lock on it.<h><n>", // NNP21
+	"I need to get into Lillian's office at night. I think there's more to her than meets the eye.<h><n>", // NBES32g
+	"Now I need to find an access code to the system computers.<h><n>", // NBES35
+	"If only I could find the password into the control room.<h><n>", // NBES36
 	// 30
-    "I can't get the employee log to print.<h><n>", // NBES38
-    "You'll never guess what I found in Lillian's office. A bottle of castor oil.<h><n>", // NBES39g
-    "Lillian must've been the one who sent Rick those threats. I found a bottle of castor oil and the number of a chocolate shop in her drawer.<h><n>", // NBES41g
-    "Lillian just kicked me off the set!<h><n>", // NBES43
-    "I found the sound mixer but am not sure what I am looking for.<h><n>", // NBES46
+	"I can't get the employee log to print.<h><n>", // NBES38
+	"You'll never guess what I found in Lillian's office. A bottle of castor oil.<h><n>", // NBES39g
+	"Lillian must've been the one who sent Rick those threats. I found a bottle of castor oil and the number of a chocolate shop in her drawer.<h><n>", // NBES41g
+	"Lillian just kicked me off the set!<h><n>", // NBES43
+	"I found the sound mixer but am not sure what I am looking for.<h><n>", // NBES46
 	// 35
-    "If only I could find a surveillance video.<h><n>", // NBES48
-    "I found an employee badge for an Owen Spayder in the lost and found.<h><n>", // NBES53
-    "I found Millie's computer login.<h><n>", // NBES55
-    "I really need to get into Dwayne's office. I need to find more information on this Owen Spayder guy. Do you think I should sneak into Dwayne's office?<h><n>", // NBES61g
-    "I can't get into Dwayne's office.<h><n>", // NBES65
+	"If only I could find a surveillance video.<h><n>", // NBES48
+	"I found an employee badge for an Owen Spayder in the lost and found.<h><n>", // NBES53
+	"I found Millie's computer login.<h><n>", // NBES55
+	"I really need to get into Dwayne's office. I need to find more information on this Owen Spayder guy. Do you think I should sneak into Dwayne's office?<h><n>", // NBES61g
+	"I can't get into Dwayne's office.<h><n>", // NBES65
 	// 40
-    "I can't get into Dwayne's briefcase.<h><n>", // NBES66
-    "Dwayne's agency is not doing so well. I found all of these outstanding bills. I also found several checks that Mattie wrote to Dwayne.<h><n>", // NBES67g
-    "I found out that Owen Spayder worked at the same theater where Dwayne and Mattie met.<h><n>", // NBES72
-    "Oh Bess, this is awful. I just got a phony bomb threat in the mail!<h><n>", // NBES76
-    "Lillian just called me. She wants me to meet her at the studio. Do you think I should go?<h><n>", // NBES79g
+	"I can't get into Dwayne's briefcase.<h><n>", // NBES66
+	"Dwayne's agency is not doing so well. I found all of these outstanding bills. I also found several checks that Mattie wrote to Dwayne.<h><n>", // NBES67g
+	"I found out that Owen Spayder worked at the same theater where Dwayne and Mattie met.<h><n>", // NBES72
+	"Oh Bess, this is awful. I just got a phony bomb threat in the mail!<h><n>", // NBES76
+	"Lillian just called me. She wants me to meet her at the studio. Do you think I should go?<h><n>", // NBES79g
 	// 45
-    "Mattie got me a visitor's pass, but I don't see it anywhere.<h><n>", // NGEO14
-    "I wonder how I can get into the sound stage.<h><n>", // NGEO16
-    "Rick was almost killed by a falling klieg light!<h><n>", // NGEO17
-    "I'm officially an extra on the set, but there's not much to do.<h><n>", // NGEO18
-    "Are you any good at riddles?<h><n>", // NGEO19
+	"Mattie got me a visitor's pass, but I don't see it anywhere.<h><n>", // NGEO14
+	"I wonder how I can get into the sound stage.<h><n>", // NGEO16
+	"Rick was almost killed by a falling klieg light!<h><n>", // NGEO17
+	"I'm officially an extra on the set, but there's not much to do.<h><n>", // NGEO18
+	"Are you any good at riddles?<h><n>", // NGEO19
 	// 50
-    "I found a pair of wire cutters!<h><n>", // NGEO20
-    "Yes, Mattie Jensen left a visitor's pass for me. It should be listed under Nancy Drew.<h><n>", // NG01
-    "Hi, I've been hired as an extra by the Powers Agency.<h><n>", // NG02
-    "Hello...here is my pass.<h><n>", // NG04
-    "Did Lillian and Rick date after you both broke up?<h><n>", // NMD20
+	"I found a pair of wire cutters!<h><n>", // NGEO20
+	"Yes, Mattie Jensen left a visitor's pass for me. It should be listed under Nancy Drew.<h><n>", // NG01
+	"Hi, I've been hired as an extra by the Powers Agency.<h><n>", // NG02
+	"Hello...here is my pass.<h><n>", // NG04
+	"Did Lillian and Rick date after you both broke up?<h><n>", // NMD20
 	// 55
-    "Tell me, do you know someone by the name of Owen Spayder?<h><n>" // NMD31
+	"Tell me, do you know someone by the name of Owen Spayder?<h><n>" // NMD31
 },
-{   // Russian
+{	// Russian
 	// 00
-    "V= znakom= s zaveduyQej rekvizitom? Kagets*, ona nemnoho... stranna*.<h><n>",
+	"V= znakom= s zaveduyQej rekvizitom? Kagets*, ona nemnoho... stranna*.<h><n>",
 	"Po-moemu, * proizvela ploxoe vpeqatlenie na Lilian.<h><n>",
 	"Kak popast% v apparatnuy telestudii?<h><n>",
 	"Mogno poluqit% propusk, qtob= zaxodit% v telestudiy noq%y?<h><n>",
@@ -401,18 +340,18 @@ const Common::Array<Common::Array<const char *>> _nancy2ConditionalDialogueTexts
 };
 
 const Common::Array<Common::Array<const char *>> _nancy2GoodbyeTexts = {
-{   // English
-    "Well, I should get back to the set. Thanks for your help.<h>", // NDA29
-    "Listen, I gotta' go, Rick. Be careful, Okay?<h>", // NRD35
-    "I should get back to the set. Goodbye!<h>", //  NPR16
-    "Well, I'll let you get back to your business.<h>", // NLR18
-    "I should get back to the set. Goodbye!<h>", //  NPR16
-    "I'll talk to you later. Bye!<h>", // NBES86
-    "Talk to you later.<h>", // NGEO90
+{	// English
+	"Well, I should get back to the set. Thanks for your help.<h>", // NDA29
+	"Listen, I gotta' go, Rick. Be careful, Okay?<h>", // NRD35
+	"I should get back to the set. Goodbye!<h>", //  NPR16
+	"Well, I'll let you get back to your business.<h>", // NLR18
+	"I should get back to the set. Goodbye!<h>", //  NPR16
+	"I'll talk to you later. Bye!<h>", // NBES86
+	"Talk to you later.<h>", // NGEO90
 	"", // No goodbye, empty string
-    "Well, I'll see you later, Mattie.<h>", // NMD32
+	"Well, I'll see you later, Mattie.<h>", // NMD32
 },
-{   // Russian
+{	// Russian
 	"Nu, mne pora. Spasibo za pomoQ%.<h>",
 	"Rik, mne nugno idti. Bud%te ostorogn=.<h>",
 	"Mne pora. Poka!<h>",
@@ -426,8 +365,8 @@ const Common::Array<Common::Array<const char *>> _nancy2GoodbyeTexts = {
 };
 
 const Common::Array<const char *> _nancy2TelephoneRinging = {
-    "ringing...<n><e>", // English
-    "Hudki...  <n><e>"  // Russian
+	"ringing...<n><e>", // English
+	"Hudki...  <n><e>"  // Russian
 };
 
 const Common::Array<const char *> _nancy2EventFlagNames = {
