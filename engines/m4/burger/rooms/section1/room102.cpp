@@ -832,7 +832,7 @@ void Room102::daemon() {
 		break;
 
 	case 8:
-		_series2 = series_play("102seats", 0, -1, 100, -1, 100, 0, 0, 0, 0);
+		_series2 = series_play("102seats", 2561, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 		break;
 
 	case 9:
@@ -1034,7 +1034,7 @@ void Room102::daemon() {
 			_G(roomVal1) = 72;
 			digi_preload_stream_breaks(STREAMS6);
 			series_play("102wi07s", 2816, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS6, "102wi07", 6, 256, 10016);
+			series_stream_with_breaks(STREAMS6, "102wi07", 6, 256, gTELEPORT);
 			break;
 
 		case 72:
@@ -1048,7 +1048,7 @@ void Room102::daemon() {
 			_G(roomVal1) = 74;
 			digi_preload_stream_breaks(STREAMS7);
 			series_play("102wi06s", 2816, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS7, "102wi06", 6, 256, 10016);
+			series_stream_with_breaks(STREAMS7, "102wi06", 6, 256, gTELEPORT);
 			break;
 
 		case 74:
@@ -1060,9 +1060,9 @@ void Room102::daemon() {
 		case 75:
 			ws_hide_walker();
 			_G(roomVal1) = 76;
-			digi_preload_stream_breaks(STREAMS7);
-			digi_play("102wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS6, "102wi11", 6, 256, 10016);
+			digi_preload_stream_breaks(STREAMS6);
+			series_play("102wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+			series_stream_with_breaks(STREAMS6, "102wi11", 6, 256, gTELEPORT);
 			break;
 
 		case 76:
@@ -1076,7 +1076,7 @@ void Room102::daemon() {
 			_G(roomVal1) = 78;
 			digi_preload_stream_breaks(STREAMS7);
 			series_play("102wi10s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS7, "102wi10");
+			series_stream_with_breaks(STREAMS7, "102wi10", 6, 256, gTELEPORT);
 			break;
 
 		case 78:
@@ -1095,7 +1095,7 @@ void Room102::daemon() {
 			if (!_G(flags)[V020])
 				digi_preload("102w008");
 
-			series_play_with_breaks(PLAY4, "102wi09", 256, 10016, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY4, "102wi09", 256, gTELEPORT, 3, 6, 100, 0, 0);
 			break;
 
 		case 80:
@@ -1121,17 +1121,21 @@ void Room102::daemon() {
 			TerminateMachineAndNull(_laz2);
 			_G(flags)[V019] = 0;
 			_G(roomVal1) = 83;
-			series_play_with_breaks(PLAY4, "102wi08", 256, 10016, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY4, "102wi08", 256, gTELEPORT, 3, 6, 100, 0, 0);
 			break;
 
+		case 83:
+			ws_unhide_walker();
+			setupLaz();
+			setupWax();
+			player_set_commands_allowed(true);
+			break;
 
 		default:
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
 		break;
-
-	// TODO: More daemon stuff
 
 	default:
 		_G(kernel).continue_handling_trigger = true;
@@ -1140,6 +1144,18 @@ void Room102::daemon() {
 }
 
 void Room102::pre_parser() {
+	if (player_said("main street") && !player_said_any("exit", "gear", "look", "look at"))
+		player_hotspot_walk_override_just_face(3);
+
+	if (_G(flags)[V012] == 1) {
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_trigger_dispatch_now(23);
+		_G(player).need_to_walk = false;
+		_G(kernel).trigger_mode = KT_PARSE;
+		g_vars->getInterface()->freshen_sentence();
+	} else if (player_said("talk to")) {
+		player_hotspot_walk_override(192, 327, 2, -1);
+	}
 }
 
 void Room102::parser() {
