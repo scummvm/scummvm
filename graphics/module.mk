@@ -143,13 +143,13 @@ endif
 endif
 
 ifeq ($(SCUMMVM_NEON),1)
-$(MODULE)/blit/blit-neon.cpp: CXXFLAGS += -mfpu=neon
+$(MODULE)/blit/blit-neon.o: CXXFLAGS += -mfpu=neon
 endif
 ifeq ($(SCUMMVM_SSE2),1)
-$(MODULE)/blit/blit-sse2.cpp: CXXFLAGS += -msse2
+$(MODULE)/blit/blit-sse2.o: CXXFLAGS += -msse2
 endif
 ifeq ($(SCUMMVM_AVX2),1)
-$(MODULE)/blit/blit-avx2.cpp: CXXFLAGS += -mavx2
+$(MODULE)/blit/blit-avx2.o: CXXFLAGS += -mavx2
 endif
 
 # Include common rules

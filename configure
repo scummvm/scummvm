@@ -6919,10 +6919,10 @@ define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
 echo_n "Enabling x86/64 SSE2... "
 echo "$_ext_sse2"
 define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_AVX2'
-echo_n "Enabling x86/64 AVX2 and SSE2... "
+echo_n "Enabling x86/64 AVX2... "
 echo "$_ext_avx2"
 define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
-echo_n "Enabling arm NEON... "
+echo_n "Enabling Arm NEON... "
 echo "$_ext_neon"
 
 echo_n "Backend... "
