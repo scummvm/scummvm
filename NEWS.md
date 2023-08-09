@@ -44,7 +44,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Added support for unpacked RuSCUMM patches for Russian localizations.
-   - Allow usage of the official Monkey Island 1 Roland MT-32 patch with EGA versions.
+   - Allow usage of the official Monkey Island 1 Roland MT-32 patch with any
+     EGA version, not just the English release.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
