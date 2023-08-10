@@ -107,7 +107,6 @@ void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
 		g_engine->_imageManager->draw(_menu._element[HS_MAP].x + _menu._element[HS_MAP].w - _clip.w / 2,
 									  _menu._element[HS_MAP].y - _clip.h / 2, _notifyAnim, &_clip);
 	}
-//#endif
 }
 
 void HUD::internalEvents(bool showMap) {
