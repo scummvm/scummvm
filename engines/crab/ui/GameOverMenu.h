@@ -63,10 +63,7 @@ public:
 	~GameOverMenu() {}
 
 	void reset() {
-	warning("STUB: GameOverMenu::reset()");
-#if 0
-		cur = gRandom.Num() % quote.size();
-#endif
+		_cur = g_engine->getRandomNumber(_quote.size());
 	}
 
 	void load(rapidxml::xml_node<char> *node);
