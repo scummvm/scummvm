@@ -55,7 +55,7 @@ class TextArea : public TextData {
 public:
 	Common::String _text;
 
-	TextArea() : _text("") {
+	TextArea() {
 		_size = 20;
 		_seEntry = -1;
 		_seErase = -1;

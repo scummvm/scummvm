@@ -47,7 +47,7 @@ struct LevelPath {
 	// The name of the level
 	Common::String _name;
 
-	LevelPath() : _layout(""), _asset(""), _name("") {}
+	LevelPath() {}
 
 	void load(rapidxml::xml_node<char> *node) {
 		loadStr(_name, "name", node);

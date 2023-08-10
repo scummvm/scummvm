@@ -67,7 +67,7 @@ class Info {
 		// The name of the player's current location
 		Common::String _name;
 
-		PlayerLoc() : _id(""), _name("") {}
+		PlayerLoc() {}
 	} _loc;
 
 	// This image changes to reflect the playable character
