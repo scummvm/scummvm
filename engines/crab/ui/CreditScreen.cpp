@@ -115,28 +115,13 @@ bool CreditScreen::handleEvents(Common::Event &event) {
 	else if (_reverse.handleEvents(event) == BUAC_LCLICK)
 		_speed._cur = _speed._reverse;
 
+	if (_website.handleEvents(event))
+		g_system->openUrl("http://pyrodactyl.com");
+	else if (_twitter.handleEvents(event))
+		g_system->openUrl("https://www.twitter.com/pyrodactylgames");
+
 	return (_back.handleEvents(event) == BUAC_LCLICK);
 }
-
-#if 0
-bool CreditScreen::handleEvents(SDL_Event &Event) {
-	if (slow.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = speed.slow;
-	else if (fast.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = speed.fast;
-	else if (pause.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = 0.0f;
-	else if (reverse.handleEvents(Event) == BUAC_LCLICK)
-		speed.cur = speed.reverse;
-
-	if (website.handleEvents(Event))
-		OpenURL("http://pyrodactyl.com");
-	else if (twitter.handleEvents(Event))
-		OpenURL("https://www.twitter.com/pyrodactylgames");
-
-	return (back.handleEvents(Event) == BUAC_LCLICK);
-}
-#endif
 
 void CreditScreen::draw() {
 	_bg.draw();
