@@ -86,28 +86,26 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlaySecondaryMovie::init() {
-	if (_decoder.isVideoLoaded()) {
-		_decoder.close();
-	}
+	if (!_decoder.isVideoLoaded()) {
+		if (!_decoder.loadFile(_videoName + ".avf")) {
+			error("Couldn't load video file %s", _videoName.c_str());
+		}
 
-	if (!_decoder.loadFile(_videoName + ".avf")) {
-		error("Couldn't load video file %s", _videoName.c_str());
-	}
+		_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
 
-	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
+		if (_paletteName.size()) {
+			GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
+			GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
+		}
 
-	if (_paletteName.size()) {
-		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
-		GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
-	}
+		if (g_nancy->getGameType() == kGameTypeVampire) {
+			setTransparent(true);
+			_fullFrame.setTransparentColor(_drawSurface.getTransparentColor());
 
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		setTransparent(true);
-		_fullFrame.setTransparentColor(_drawSurface.getTransparentColor());
-
-		// TVD uses empty video files during the endgame ceremony
-		// This makes sure the screen doesn't go black while the sound is playing
-		_drawSurface.clear(_drawSurface.getTransparentColor());
+			// TVD uses empty video files during the endgame ceremony
+			// This makes sure the screen doesn't go black while the sound is playing
+			_drawSurface.clear(_drawSurface.getTransparentColor());
+		}
 	}
 
 	_screenPosition = _drawSurface.getBounds();
@@ -159,7 +157,7 @@ void PlaySecondaryMovie::updateGraphics() {
 
 		// Stop the video and block it from starting again, but also wait for
 		// sound to end before changing state
-		_decoder.stop();
+		_decoder.pauseVideo(true);
 		_isFinished = true;
 
 		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
@@ -225,6 +223,14 @@ void PlaySecondaryMovie::execute() {
 		}
 
 		finishExecution();
+
+		// Allow looping
+		if (!_isDone) {
+			_isFinished = false;
+			_decoder.seek(0);
+			_decoder.pauseVideo(false);
+		}
+
 		break;
 	}
 }
