@@ -77,7 +77,7 @@ void MusicManager::playMusic(const MusicKey &id) {
 			}
 		}
 
-		if (_bg._track != nullptr)
+		if (_bg._track != nullptr && id >= 0)
 			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, _musicHandle, _bg._track, (int)_bg._id);
 	}
 }
