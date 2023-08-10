@@ -34,8 +34,13 @@
 namespace Crab {
 
 template<typename T>
-Common::String numberToString(T number) {
+inline Common::String numberToString(T number) {
 	return Common::String::format("%d", number);
+}
+
+template<>
+inline Common::String numberToString<float>(float number) {
+	return Common::String::format("%f", number);
 }
 
 template<typename T>
