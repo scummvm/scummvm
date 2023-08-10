@@ -138,7 +138,7 @@ public:
 
 		FloatString fs;
 		fs._val = num;
-		//fs.str = NumberToString<float>(num);
+		fs._str = numberToString<float>(num);
 		poolF.push_back(fs);
 
 		auto ret = poolF.back();
