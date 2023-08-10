@@ -557,16 +557,43 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
-	if (argc < 2) {
+	if (argc < 2 || argc % 2) {
 		debugPrintf("Scans all IFFs for ActionRecords of the provided type\n");
-		debugPrintf("Usage: %s <typeID> [cal]\n", argv[0]);
+		debugPrintf("Optionally also scans inside the AR's data for matching bytes\n");
+		debugPrintf("Warning: can be quite slow, especially on archived game versions\n");
+		debugPrintf("Usage: %s <typeID> {[byte offset] [byte value]}...\n", argv[0]);
 		return true;
 	}
 
-	byte typeID = atoi(argv[1]);
+	Common::Array<uint64> vals;
+	vals.push_back(0x30);
+
+	uint64 insertVal = 0;
+
+	for (int i = 1; i < argc; ++i) {
+		Common::String s(argv[i]);
+		insertVal = s.asUint64();
+
+		if (insertVal != 0 || s.firstChar() == '0') {
+			if (i % 2)  {
+				if (insertVal > 255) {
+					debugPrintf("Invalid input: %u is a byte, value cannot be over 255!\n", (uint32)insertVal);
+					return true;
+				}
+				vals.push_back(insertVal);
+			} else {
+				vals.push_back(insertVal + 0x32);
+			}
+			
+		} else {
+			debugPrintf("Invalid input: %s\n", argv[i]);
+			return true;
+		}
+	}
 
 	Common::Array<Common::String> list;
-	g_nancy->_resource->list((argc == 2 ? "ciftree" : argv[2]), list, ResourceManager::kResTypeScript);
+	// Action records only appear in the ciftree
+	g_nancy->_resource->list("ciftree", list, ResourceManager::kResTypeScript);
 
 	char descBuf[0x30];
 
@@ -587,13 +614,27 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 				uint num = 0;
 				Common::SeekableReadStream *chunk = nullptr;
 				while (chunk = iff.getChunkStream("ACT", num), chunk != nullptr) {
-					chunk->seek(0x30);
-					if (chunk->readByte() == typeID) {
+					bool isSatisfied = true;
+					for (uint i = 0; i < vals.size(); i += 2) {
+						if ((int64)vals[i] >= chunk->size()) {
+							isSatisfied = false;
+							break;
+						}
+
+						chunk->seek(vals[i]);
+						if (chunk->readByte() != vals[i + 1]) {
+							isSatisfied = false;
+							break;
+						}
+					}
+
+					if (isSatisfied) {
 						chunk->seek(0);
 						chunk->read(descBuf, 0x30);
 						descBuf[0x2F] = '\0';
 						debugPrintf("%s: ACT chunk %u, %s\n", cifName.c_str(), num, descBuf);
 					}
+
 					++num;
 					delete chunk;
 				}
