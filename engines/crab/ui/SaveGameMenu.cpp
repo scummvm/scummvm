@@ -125,7 +125,7 @@ void GameSaveMenu::draw() {
 			tdB[DATA_SAVENAME].draw(_slotInfo[i]._name, base_x, base_y);
 	}
 
-	DrawHover();
+	drawHover();
 }
 
 void GameSaveMenu::setUI() {

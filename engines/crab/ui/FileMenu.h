@@ -114,8 +114,6 @@ public:
 	}
 
 	void scanDir() {
-		warning("STUB: FileMenu::scanDir()");
-
 		Common::String res = "CRAB_*";
 		res += g_engine->_filePath->_saveExt;
 		Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
@@ -130,33 +128,6 @@ public:
 		}
 
 		_menu.assignPaths();
-
-#if 0
-		using namespace boost::filesystem;
-
-		slot_info.clear();
-		menu.Clear();
-
-		path filedir(directory);
-		if (exists(filedir) && is_directory(filedir)) {
-			directory_iterator dir_it(filedir);
-			Common::Array<path> file_in_dir;
-
-			std::copy(directory_iterator(filedir), directory_iterator(), std::back_inserter(file_in_dir));
-			std::sort(file_in_dir.begin(), file_in_dir.end(), PathCompare);
-
-			// First, we must load all the files with the same extension as our save file
-			uint count_slot = 0, count_menu = 0;
-			for (auto i = file_in_dir.begin(); i != file_in_dir.end(); ++i)
-				if (is_regular_file(*i) && i->extension().string() == extension) {
-					slot_info.push_back(FileType(*i));
-					menu.Add(count_slot, count_menu);
-				}
-		} else
-			create_directories(filedir);
-
-		menu.AssignPaths();
-#endif
 	}
 
 	void load(rapidxml::xml_node<char> *node) {
@@ -218,10 +189,10 @@ public:
 			tdB[DATA_LASTMODIFIED].draw(_slotInfo[i]._lastModified, base_x, base_y);
 		}
 
-		DrawHover();
+		drawHover();
 	}
 
-	void DrawHover() {
+	void drawHover() {
 		if (_menu.hoverIndex() >= 0) {
 			int i = _menu.hoverIndex();
 
