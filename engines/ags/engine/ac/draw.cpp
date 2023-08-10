@@ -2052,7 +2052,7 @@ void put_sprite_list_on_screen(bool in_room) {
 bool GfxDriverSpriteEvtCallback(int evt, int data) {
 	if (_G(displayed_room) < 0) {
 		// if no room loaded, various stuff won't be initialized yet
-		return 1;
+		return false;
 	}
 	return (pl_run_plugin_hooks(evt, data) != 0);
 }
