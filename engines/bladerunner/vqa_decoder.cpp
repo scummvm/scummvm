@@ -211,7 +211,7 @@ void VQADecoder::overrideOffsetXY(uint16 offX, uint16 offY) {
 	if (_videoTrack != nullptr) {
 		_videoTrack->overrideOffsetXY(offX, offY);
 	}
-};
+}
 
 
 void VQADecoder::decodeVideoFrame(Graphics::Surface *surface, int frame, bool forceDraw) {
@@ -1338,7 +1338,7 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 						// With the even rows of the line blocks completely filled, go to the odd rows
 						// which are empty and completely fill them in, too.
 						// NOTE if _allowVerticalScanlines is true, then the even rows are not completely filled.
-						//      In that case we need to skip the odd columns here 
+						//      In that case we need to skip the odd columns here
 						uint8 topColorIdx = 0;
 						uint8 botColorIdx = 0;
 						uint8 jIncr = 1;
