@@ -253,6 +253,7 @@ void FreescapeEngine::rise() {
 			}
 		}
 	}
+	checkIfStillInArea();
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	executeMovementConditions();
@@ -271,7 +272,7 @@ void FreescapeEngine::lower() {
 		_playerHeightNumber--;
 		changePlayerHeight(_playerHeightNumber);
 	}
-
+	checkIfStillInArea();
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	executeMovementConditions();
@@ -318,6 +319,8 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	if (!_flyMode)
 		destination.y() = positionY;
 	resolveCollisions(destination);
+	checkIfStillInArea();
+
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	//debugC(1, kFreescapeDebugMove, "player height: %f", _position.y() - areaScale * _playerHeight);
