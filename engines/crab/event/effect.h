@@ -59,7 +59,7 @@ struct EventResult {
 	Common::String _val;
 	int _x, _y;
 
-	EventResult() : _val("") {
+	EventResult() {
 		_type = ER_NONE;
 		_x = -1;
 		_y = -1;

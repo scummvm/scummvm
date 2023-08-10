@@ -46,7 +46,7 @@ struct LevelResult {
 	Common::String _val;
 	int _x, _y;
 
-	LevelResult() : _val("") {
+	LevelResult() {
 		_type = LR_NONE;
 		_x = -1;
 		_y = -1;
