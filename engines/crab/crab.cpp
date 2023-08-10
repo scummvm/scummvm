@@ -176,4 +176,10 @@ bool CrabEngine::canSaveGameStateCurrently() {
 	return _screenSettings->_inGame;
 }
 
+void CrabEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_musicManager->syncSettings();
+}
+
 } // End of namespace Crab

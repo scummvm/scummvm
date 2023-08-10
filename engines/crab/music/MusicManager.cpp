@@ -97,18 +97,25 @@ void MusicManager::playEffect(const ChunkKey &id, const int &loops) {
 	}
 }
 
-//------------------------------------------------------------------------
-// Purpose: Initialize the music subsystem and load sound effects
-//------------------------------------------------------------------------
-bool MusicManager::load(rapidxml::xml_node<char> *node) {
-	_musicHandle = new Audio::SoundHandle();
 
+void MusicManager::syncSettings() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
 	int volumeEff = mute ? 0 : ConfMan.getInt("sfx_volume");
 	int volumeMus = mute ? 0 : ConfMan.getInt("music_volume");
+
+	// Set the volume from the settings
+	volEffects(volumeEff);
+	volMusic(volumeMus);
+}
+
+//------------------------------------------------------------------------
+// Purpose: Initialize the music subsystem and load sound effects
+//------------------------------------------------------------------------
+bool MusicManager::load(rapidxml::xml_node<char> *node) {
+	_musicHandle = new Audio::SoundHandle();
 
 	if (nodeValid("sound", node)) {
 		rapidxml::xml_node<char> *volnode = node->first_node("sound");
@@ -124,9 +131,7 @@ bool MusicManager::load(rapidxml::xml_node<char> *node) {
 		loadNum(_chunksize, "chunk_size", volnode);
 	}
 
-	// Set the volume from the settings
-	volEffects(volumeEff);
-	volMusic(volumeMus);
+	syncSettings();
 
 	// Load sound effects
 	XMLDoc trackList(g_engine->_filePath->_soundEffect);
