@@ -116,21 +116,6 @@ void MusicManager::syncSettings() {
 //------------------------------------------------------------------------
 bool MusicManager::load(rapidxml::xml_node<char> *node) {
 	_musicHandle = new Audio::SoundHandle();
-
-	if (nodeValid("sound", node)) {
-		rapidxml::xml_node<char> *volnode = node->first_node("sound");
-		/* Originally the game loads the music and sound effect at the default value of 100 from the settings file.
-			However, we get these values from the ConfMan, so skip reading these values from settings
-		*/
-
-		//loadNum(_volumeMus, "music", volnode);
-		//loadNum(_volumeEff, "effects", volnode);
-
-		loadNum(_freq, "frequency", volnode);
-		loadNum(_channels, "channels", volnode);
-		loadNum(_chunksize, "chunk_size", volnode);
-	}
-
 	syncSettings();
 
 	// Load sound effects
