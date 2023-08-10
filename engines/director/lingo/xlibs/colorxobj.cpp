@@ -110,12 +110,12 @@ void ColorXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(ColorXObj::m_dispose, 0);
-XOBJSTUBNR(ColorXObj::m_setOurColors);
-XOBJSTUBNR(ColorXObj::m_restoreColors);
-XOBJSTUB(ColorXObj::m_getSysColor, 0);
-XOBJSTUB(ColorXObj::m_setSysColor, 0);
-XOBJSTUB(ColorXObj::m_setSysColorRGB, 0);
-XOBJSTUB(ColorXObj::m_setSysColorIndex, 0);
+XOBJSTUB(ColorXObj::m_dispose, 0)
+XOBJSTUBNR(ColorXObj::m_setOurColors)
+XOBJSTUBNR(ColorXObj::m_restoreColors)
+XOBJSTUB(ColorXObj::m_getSysColor, 0)
+XOBJSTUB(ColorXObj::m_setSysColor, 0)
+XOBJSTUB(ColorXObj::m_setSysColorRGB, 0)
+XOBJSTUB(ColorXObj::m_setSysColorIndex, 0)
 
 } // End of namespace Director
