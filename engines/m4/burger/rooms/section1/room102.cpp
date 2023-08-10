@@ -1192,7 +1192,7 @@ void Room102::parser() {
 		}
 
 		if (player_said("TAKE", "LAZY SUSAN")) {
-			flagAction("102w007");
+			flagAction("102w007", "102h004");
 		} else if (player_said("GEAR", "LAZY SUSAN")) {
 			if (_G(flags)[V012]) {
 				player_set_commands_allowed(false);
@@ -1212,11 +1212,11 @@ void Room102::parser() {
 				queuePlay("102h007");
 			}
 		} else if (player_said("gear", "hair wax") || player_said("gear", "hair wax ")) {
-			flagAction("102w012");
+			flagAction("102w012", "102h007");
 		} else if (player_said("take", "television")) {
-			flagAction("102w018");
+			flagAction("102w018", "102h012");
 		} else if (player_said("gear", "television")) {
-			flagAction("102w019");
+			flagAction("102w019", "102h013");
 		} else if (player_said("take", "hair wax  ") || player_said("take", "hair wax   ")) {
 			if (_G(flags)[V012]) {
 				player_set_commands_allowed(false);
@@ -1226,7 +1226,7 @@ void Room102::parser() {
 				queuePlay("102h007");
 			}
 		} else if (player_said("gear", "hair wax  ") || player_said("gear", "hair wax   ")) {
-			flagAction("102w012");
+			flagAction("102w012", "102h007");
 		} else if (player_said("take", "back room") || player_said("gear", "back room")) {
 			_G(walker).wilbur_speech("102w015");
 		} else if (player_said("enter", "back room")) {
@@ -1247,13 +1247,13 @@ void Room102::parser() {
 				queuePlay("102h014");
 			}
 		} else if (player_said("take", "barber's chair")) {
-			flagAction("102w021");
+			flagAction("102w021", "102h016");
 		} else if (player_said("gear", "barber's chair")) {
-			flagAction("102w022");
+			flagAction("102w022", "102h017");
 		} else if (player_said("take", "fish")) {
-			flagAction("102w025");
+			flagAction("102w025", "102h019");
 		} else if (player_said("gear", "fish")) {
-			flagAction("102w026");
+			flagAction("102w026", "102h020");
 		} else if (player_said("gear", "bottles")) {
 			_G(walker).wilbur_speech("102w029");
 		} else if (player_said("take", "bottles")) {
@@ -1277,34 +1277,109 @@ void Room102::parser() {
 		} else if (player_said("take", "towels")) {
 			_G(walker).wilbur_speech("102w2029");
 		} else if (player_said("gear", "towels")) {
-			flagAction("102w032");
+			flagAction("102w032", "102h025");
 		} else if (player_said("take", "mirror")) {
 			_G(walker).wilbur_speech("102w015");
 		} else if (player_said("gear", "mirror")) {
-			flagAction("102w034");
+			flagAction("102w034", "102h027");
 		} else if (player_said("take", "sink")) {
 			_G(walker).wilbur_speech("102w037");
 		} else if (player_said("gear", "sink")) {
+			flagAction("102w038", "102h029");
+		} else if (player_said("take", "stove")) {
+			_G(walker).wilbur_speech("102w040");
+		} else if (player_said("gear", "stove")) {
 			// TODO
+			flagAction("102w041", "102h031");
+		} else if (player_said("harry") && inv_player_has(_G(player).verb) && !_G(flags)[V012]) {
+			queuePlay(imath_ranged_rand(1, 2) == 1 ? "102h009y" : "102h009z");
+		} else if (lookFlag) {
+			if (player_said("Harry")) {
+				switch (_G(kernel).trigger) {
+				case -1:
+					if (!_G(flags)[V012]) {
+						_G(kernel).trigger_mode = KT_PARSE;
+						_G(walker).wilbur_speech("102w014");
+						player_set_commands_allowed(false);
+					}
+					break;
+				case 1:
+					queuePlay("102h009", 2, KT_PARSE);
+					break;
+				case 2:
+					kernel_trigger_dispatch_now(3);
+					_G(kernel).trigger_mode = KT_PARSE;
+					kernel_timing_trigger(120, 3);
+					break;
+				case 3:
+					queuePlay("102h010");
+					break;
+				default:
+					break;
+				}
+			} else if (player_said("HAIR WAX") || player_said("HAIR WAX ")) {
+				flagAction("102w009", "102h006");
+			} else if (player_said("HAIR WAX  ") || player_said("HAIR WAX   ")) {
+				flagAction("102w013", "102h008");
+			} else if (player_said("LAZY SUSAN")) {
+				flagAction("102w005", "102h003");
+			} else if (player_said("television")) {
+				flagAction("102w017", "102h011");
+			} else if (player_said("back room")) {
+				if (_G(flags)[V012]) {
+					switch (_G(kernel).trigger) {
+					case -1:
+						player_set_commands_allowed(false);
+						_G(kernel).trigger_mode = KT_PARSE;
+						digi_play("102h015", 1, 255, 1);
+						break;
+					case 1:
+						freshen();
+						break;
+					default:
+						break;
+					}
+				} else {
+					queuePlay("102h014");
+				}
+			} else if (player_said("barber's chair")) {
+				_G(walker).wilbur_speech("102W020");
+			} else if (player_said("fish")) {
+				flagAction("102w023", "102h018");
+			} else if (player_said("bottles")) {
+				flagAction("102w027", "102h021");
+			} else if (player_said("towels")) {
+				flagAction("102w030", "102h024");
+			} else if (player_said("mirror")) {
+				flagAction("102w033", "102h026");
+			} else if (player_said("sink")) {
+				flagAction("102w036", "102h028");
+			} else if (player_said("stove")) {
+				flagAction("102w039", "102h030");
+			} else {
+				return;
+			}
+		} else {
+			return;
 		}
-
-		// TODO
 	}
+
+	_G(player).command_ready = false;
 }
 
-void Room102::flagAction(const char *name) {
+void Room102::flagAction(const char *name1, const char *name2) {
 	switch (_G(kernel).trigger) {
 	case -1:
 		if (_G(flags)[V012]) {
-			_G(walker).wilbur_speech(name);
+			_G(walker).wilbur_speech(name1);
 		} else {
 			_G(kernel).trigger_mode = KT_PARSE;
-			_G(walker).wilbur_speech(name);
+			_G(walker).wilbur_speech(name1);
 			player_set_commands_allowed(false);
 		}
 		break;
 	case 1:
-		queuePlay("102h018");
+		queuePlay(name2);
 		break;
 	default:
 		break;
