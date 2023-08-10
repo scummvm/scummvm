@@ -48,8 +48,9 @@ bool fileOpen(const Common::Path &path, char *&data) {
 		delete[] data;
 
 	Common::File file;
-	if (!file.open(cleansePath(path.toString()))) {
-		warning("Unable to open file %s", path.toString().c_str());
+	Common::String cleansedPath = cleansePath(path.toString());
+	if (!file.open(cleansedPath)) {
+		warning("Unable to open file %s", cleansedPath.c_str());
 		data = nullptr;
 		return false;
 	}
@@ -73,8 +74,9 @@ bool fileOpen(const Common::Path &path, Common::File *file) {
 	if (file->isOpen())
 		file->close();
 
-	if (!file->open(cleansePath(path.toString()))) {
-		warning("Unable to open file %s", path.toString().c_str());
+	Common::String cleansedPath = cleansePath(path.toString());
+	if (!file->open(cleansedPath)) {
+		warning("Unable to open file %s", cleansedPath.c_str());
 		return false;
 	}
 
