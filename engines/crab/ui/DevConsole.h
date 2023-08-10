@@ -71,6 +71,8 @@ public:
 		return (_state == STATE_VAR || _menu.hoverIndex() != -1);
 	}
 
+	void handleEvents(const Common::Event &event);
+
 	void load(const Common::String &filename);
 	void draw(pyrodactyl::event::Info &info);
 

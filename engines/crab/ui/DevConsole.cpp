@@ -90,38 +90,36 @@ void DebugConsole::draw(pyrodactyl::event::Info &info) {
 	}
 }
 
-#if 0
-void DebugConsole::handleEvents(const SDL_Event &Event) {
-	switch (state) {
+void DebugConsole::handleEvents(const Common::Event &event) {
+	switch (_state) {
 	case STATE_NORMAL: {
-		int choice = menu.handleEvents(Event);
+		int choice = _menu.handleEvents(event);
 		if (choice == 0)
-			state = STATE_VAR;
+			_state = STATE_VAR;
 	} break;
 	case STATE_VAR:
-		text_field.handleEvents(Event);
+		_textField.handleEvents(event);
 
-		if (check.handleEvents(Event))
-			var_name = text_field.text;
+		if (_check.handleEvents(event))
+			_varName = _textField._text;
 
 		// Control+V pastes clipboard text into text field
-		if (Event.type == SDL_KEYDOWN && Event.key.keysym.scancode == SDL_SCANCODE_V && Event.key.keysym.mod & KMOD_CTRL) {
-			if (SDL_HasClipboardText() == SDL_TRUE) {
-				char *temp = SDL_GetClipboardText();
-				text_field.text = temp;
-				SDL_free(temp);
+		if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_v) {
+			if (g_system->hasTextInClipboard()) {
+				Common::U32String str = g_system->getTextFromClipboard();
+				_textField._text = convertFromU32String(str).c_str();
 			}
 		}
 
-		if (back.handleEvents(Event))
-			state = STATE_NORMAL;
+		if (_back.handleEvents(event)) {
+			_state = STATE_NORMAL;
+		}
 		break;
 
 	default:
 		break;
 	}
 }
-#endif
 
 void DebugConsole::internalEvents() {
 }
