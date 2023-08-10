@@ -68,18 +68,6 @@ bool loadStr(Common::String &val, const Common::String &name, rapidxml::xml_node
 	return true;
 }
 
-#if 0
-
-bool loadRect(SDL_Rect &rect, rapidxml::xml_node<char> *node, const bool &echo,
-	const Common::String &x_name, const Common::String &y_name, const Common::String &w_name, const Common::String &h_name)
-{
-	if (loadNum(rect.x, x_name, node, echo) && loadNum(rect.y, y_name, node, echo)
-		&& loadNum(rect.w, w_name, node, echo) && loadNum(rect.h, h_name, node, echo))
-		return true;
-	return false;
-}
-#endif
-
 bool loadColor(Color &col, rapidxml::xml_node<char> *node, const bool &echo,
 	const Common::String &rName, const Common::String &gName, const Common::String &bName) {
 	int r = 0, g = 0, b = 0;
