@@ -276,8 +276,8 @@ void SoundChannelInfo::readData(Common::SeekableReadStream &stream) {
 }
 
 void StaticData::readData(Common::SeekableReadStream &stream, Common::Language language, uint32 endPos) {
-	uint16 num;
-	int languageID;
+	uint16 num = 0;
+	int languageID = -1;
 
 	while (stream.pos() < endPos) {
 		uint32 nextSectionOffset = stream.readUint32LE();
