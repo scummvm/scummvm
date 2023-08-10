@@ -727,14 +727,16 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 
 	if (argc == 1) {
 		for (uint i = 0; i < numItems; ++i) {
+			byte keep = g_nancy->_inventoryData->itemDescriptions[i].keepItem;
 			debugPrintf("\nItem %u, %s, %s, %s",
 				i,
 				g_nancy->_inventoryData->itemDescriptions[i].name.c_str(),
-				g_nancy->_inventoryData->itemDescriptions[i].keepItem == 0 ? "UseThenLose" : "KeepAlways",
+				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : "ReturnToInventory",
 				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
+			byte keep = g_nancy->_inventoryData->itemDescriptions[i].keepItem;
 			int flagID = atoi(argv[i]);
 			if (flagID < 0 || flagID >= (int)numItems) {
 				debugPrintf("\nInvalid flag %s", argv[i]);
@@ -743,7 +745,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 			debugPrintf("\nItem %u, %s, %s, %s",
 				flagID,
 				g_nancy->_inventoryData->itemDescriptions[flagID].name.c_str(),
-				g_nancy->_inventoryData->itemDescriptions[i].keepItem == 0 ? "UseThenLose" : "KeepAlways",
+				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : "ReturnToInventory",
 				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
 
 		}

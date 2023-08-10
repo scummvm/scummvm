@@ -77,11 +77,22 @@ void ActionManager::handleInput(NancyInput &input) {
 
 						// Re-add the object to the inventory unless it's marked as a one-time use
 						if (item == NancySceneState.getHeldItem() && item != -1) {
-							if (g_nancy->_inventoryData->itemDescriptions[item].keepItem == kInvItemKeepAlways) {
-								NancySceneState.addItemToInventory(item);
-							}
+							switch (g_nancy->_inventoryData->itemDescriptions[item].keepItem) {
+							case kInvItemKeepAlways :
+								if (g_nancy->getGameType() >= kGameTypeNancy3) {
+									// In nancy3 and up this means the object remains in hand, so do nothing
+									// Older games had the kInvItemReturn behavior instead
+									break;
+								}
 
-							NancySceneState.setHeldItem(-1);
+								// fall through
+							case kInvItemReturn :
+								NancySceneState.addItemToInventory(item);
+								// fall through
+							case kInvItemUseThenLose :
+								NancySceneState.setHeldItem(-1);
+								break;
+							}
 						}
 
 						rec->_cursorDependency = nullptr;
