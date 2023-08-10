@@ -152,20 +152,28 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		debugC(1, kFreescapeDebugParser, "Number of colors: %d", numberOfColours / 2);
 		uint8 entry;
 		for (uint8 colour = 0; colour < numberOfColours / 2; colour++) {
-			uint8 data = readField(file, 8);
+			uint8 data = 0;
+			uint8 extraData = 0;
+			if (!isDriller() && (isAmiga() || isAtariST())) {
+				uint16 field = file->readUint16BE();
+				data = field & 0xff;
+				extraData = field >> 8;
+			} else
+				data = readField(file, 8);
+
 			entry = data & 0xf;
-			//if (_renderMode == Common::kRenderCGA)
-			//	entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour, entry);
+			if (!isDriller() && (isAmiga() || isAtariST()))
+				debugC(1, kFreescapeDebugParser, "ecolor[%d] = %x", 2 * colour, extraData & 0xf);
 
 			entry = data >> 4;
-			//if (_renderMode == Common::kRenderCGA)
-			//	entry = entry % 4; // TODO: use dithering
-
 			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour + 1, entry);
+			if (!isDriller() && (isAmiga() || isAtariST()))
+				debugC(1, kFreescapeDebugParser, "ecolor[%d] = %x", 2 * colour + 1, extraData >> 4);
+
 			byteSizeOfObject--;
 		}
 
