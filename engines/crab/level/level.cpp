@@ -71,15 +71,14 @@ void Level::reset() {
 }
 
 //------------------------------------------------------------------------
-// Purpose: Get index of a sprite in the object array
+// Purpose: Get sprite in the object array
 //------------------------------------------------------------------------
 pyrodactyl::anim::Sprite *Level::getSprite(const Common::String &id) {
-	int count = 0;
-	for (auto i = _objects.begin(); i != _objects.end(); ++i, ++count)
-		if (i->id() == id)
-			return &_objects[count];
+	for (auto &i : _objects)
+		if (i.id() == id)
+			return &i;
 
-	return NULL;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------
