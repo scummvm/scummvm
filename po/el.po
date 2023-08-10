@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-08 06:29+0000\n"
+"POT-Creation-Date: 2023-08-10 15:07+0000\n"
 "PO-Revision-Date: 2023-07-29 09:44+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -903,6 +903,7 @@ msgid "Interact"
 msgstr "Αλληλεπίδραση"
 
 #: gui/gui-manager.cpp:168 engines/metaengine.cpp:120
+#: engines/crab/input/input.cpp:94 engines/crab/input/input.cpp:134
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:809
@@ -916,6 +917,7 @@ msgid "Up"
 msgstr "Πάνω"
 
 #: gui/gui-manager.cpp:173 engines/metaengine.cpp:126
+#: engines/crab/input/input.cpp:100 engines/crab/input/input.cpp:140
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:776
@@ -929,6 +931,7 @@ msgid "Down"
 msgstr "Κάτω"
 
 #: gui/gui-manager.cpp:178 engines/metaengine.cpp:132
+#: engines/crab/input/input.cpp:106 engines/crab/input/input.cpp:146
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:789
@@ -943,6 +946,7 @@ msgid "Left"
 msgstr "Αριστερά"
 
 #: gui/gui-manager.cpp:183 engines/metaengine.cpp:138
+#: engines/crab/input/input.cpp:112 engines/crab/input/input.cpp:152
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:796
@@ -4909,22 +4913,22 @@ msgstr ""
 "αντιγράψετε στο φάκελο παιχνιδιού"
 
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
-#: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
-#: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:107
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
-#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
-#: engines/zvision/metaengine.cpp:46
+#: engines/cine/metaengine.cpp:42 engines/crab/metaengine.cpp:34
+#: engines/drascula/metaengine.cpp:38 engines/dreamweb/metaengine.cpp:36
+#: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:48
+#: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
-#: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
-#: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/neverhood/dialogs.cpp:49 engines/sci/detection_options.h:108
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
-#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
-#: engines/zvision/metaengine.cpp:47
+#: engines/cine/metaengine.cpp:43 engines/crab/metaengine.cpp:35
+#: engines/drascula/metaengine.cpp:39 engines/dreamweb/metaengine.cpp:37
+#: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:49
+#: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Χρήση των αρχικών οθονών αποθήκευσης/φόρτωσης αντί για αυτές του ScummVM"
@@ -5666,6 +5670,66 @@ msgstr ""
 "Παρακαλώ, προτιμήστε να ξεκινήσετε το Operation Stealth από την αρχή και να "
 "αποθηκεύσετε εκ νέου το παιχνίδι σας."
 
+#: engines/crab/input/input.cpp:118
+#, fuzzy
+#| msgid "Interact"
+msgid "Talk/Interact"
+msgstr "Αλληλεπίδραση"
+
+#: engines/crab/input/input.cpp:158 engines/twine/metaengine.cpp:445
+msgid "Accept"
+msgstr "Αποδοχή"
+
+#: engines/crab/input/input.cpp:164
+msgid "Reply 1"
+msgstr ""
+
+#: engines/crab/input/input.cpp:169
+msgid "Reply 2"
+msgstr ""
+
+#: engines/crab/input/input.cpp:174
+msgid "Reply 3"
+msgstr ""
+
+#: engines/crab/input/input.cpp:179
+msgid "Reply 4"
+msgstr ""
+
+#: engines/crab/input/input.cpp:184
+msgid "Reply 5"
+msgstr ""
+
+#: engines/crab/input/input.cpp:189
+msgid "Reply 6"
+msgstr ""
+
+#: engines/crab/input/input.cpp:204
+msgid "Map"
+msgstr "Αντιστοίχιση"
+
+#: engines/crab/input/input.cpp:209
+#, fuzzy
+#| msgid "Show journal"
+msgid "Journal"
+msgstr "Προβολή ημερολογίου"
+
+#. I18N: Action in In Cold Blood
+#: engines/crab/input/input.cpp:214 engines/dragons/metaengine.cpp:149
+#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:507
+#: engines/grim/grim.cpp:603 engines/hdb/metaengine.cpp:251
+#: engines/hpl1/metaengine.cpp:99 engines/icb/icb.cpp:101
+#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:223
+#: engines/scumm/help.cpp:232 engines/scumm/help.cpp:239
+#: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:418
+#: engines/zvision/metaengine.cpp:232
+msgid "Inventory"
+msgstr "Υπάρχοντα"
+
+#: engines/crab/input/input.cpp:219
+msgid "Traits"
+msgstr ""
+
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
 msgstr ""
@@ -5716,17 +5780,6 @@ msgstr "Πράξη"
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
 msgstr "Αλλαγή Εντολής"
-
-#. I18N: Action in In Cold Blood
-#: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:152
-#: engines/grim/grim.cpp:507 engines/grim/grim.cpp:603
-#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:99
-#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:223
-#: engines/scumm/help.cpp:232 engines/scumm/help.cpp:239
-#: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
-msgid "Inventory"
-msgstr "Υπάρχοντα"
 
 #: engines/dragons/metaengine.cpp:220
 msgid "Debug Graphics"
@@ -9612,10 +9665,6 @@ msgstr "Άνοιγμα ολογραφικού χάρτη"
 msgid "Special Action"
 msgstr "Ειδική Ενέργεια"
 
-#: engines/twine/metaengine.cpp:445
-msgid "Accept"
-msgstr "Αποδοχή"
-
 #: engines/twine/metaengine.cpp:453 engines/twine/metaengine.cpp:505
 #: engines/twine/metaengine.cpp:521
 msgid "Abort"
@@ -11171,9 +11220,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Προσθέσατε το παιχνίδι με λάθος τρόπο. Παρακαλούμε προσθέστε τον απώτερο "
 #~ "(root) φάκελο του παιχνιδιού."
-
-#~ msgid "Map"
-#~ msgstr "Αντιστοίχιση"
 
 #~ msgid "Select an action and click 'Map'"
 #~ msgstr "Επιλέξτε μια ενέργεια και πατήστε 'Αντιστοίχιση'"
