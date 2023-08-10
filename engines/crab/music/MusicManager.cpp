@@ -98,7 +98,7 @@ void MusicManager::playEffect(const ChunkKey &id, const int &loops) {
 }
 
 //------------------------------------------------------------------------
-// Purpose: Initialize the music subsystem (currently SDL_mixer) and load sound effects
+// Purpose: Initialize the music subsystem and load sound effects
 //------------------------------------------------------------------------
 bool MusicManager::load(rapidxml::xml_node<char> *node) {
 	_musicHandle = new Audio::SoundHandle();
