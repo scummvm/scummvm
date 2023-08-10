@@ -57,7 +57,6 @@ void TextArea::load(rapidxml::xml_node<char> *node) {
 }
 
 bool TextArea::handleEvents(const Common::Event &event, bool numbersOnly) {
-	warning("STUB: TextArea::handleEvents()");
 	if (event.type == Common::EVENT_KEYDOWN && event.kbd.ascii == Common::ASCII_BACKSPACE && _text.size() != 0) {
 		// Now play the text erase sound
 		g_engine->_musicManager->playEffect(_seErase, 0);
