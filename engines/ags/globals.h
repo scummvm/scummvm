@@ -1107,10 +1107,6 @@ public:
 
 	// Current engine version
 	Version _EngineVersion;
-	// Lowest savedgame version, accepted by this engine
-	Version _SavedgameLowestBackwardCompatVersion;
-	// Lowest engine version, which would accept current savedgames
-	Version _SavedgameLowestForwardCompatVersion;
 
 	/**@}*/
 
