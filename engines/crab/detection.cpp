@@ -40,7 +40,7 @@ namespace Crab {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"Unrest",
+		"unrest",
 		"",
 		AD_ENTRY2s("characters/backer_chars.xml", "d9028280f75836192d93e56df7313d8c", 2517,
 				   "traits/tanya_intelligent.png", "441221becc2b70e7c9d7838d6a8bd990", 12593),
@@ -50,7 +50,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO3(GUIO_NOSPEECH, GUIO_NOLAUNCHLOAD, GUIO_NOMIDI),
 	},
 	{
-		"Unrest",
+		"unrest",
 		"Demo",
 		AD_ENTRY2s("characters/backer_chars.xml", "5ba20126349bc57b3774623a1ec89627", 2127,
 				   "traits/tanya_intelligent.png", "441221becc2b70e7c9d7838d6a8bd990", 12593),
