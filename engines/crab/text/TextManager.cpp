@@ -218,14 +218,12 @@ void TextManager::draw(const int &x, int y, const Common::String &text, const in
 			endPos++;
 		}
 
-		if (lastInterrupt >= 0) // wrap a word around
-		{
+		if (lastInterrupt >= 0) { // wrap a word around
 			for (uint i = 0; i < lastInterrupt - startPos; i++)
 				word += text[startPos + i];
 
 			startPos = lastInterrupt + 1;
-		} else // word bigger than line, just thunk
-		{
+		} else { // word bigger than line, just thunk
 			for (uint i = 0; i < endPos - startPos; i++)
 				word += text[startPos + i];
 
