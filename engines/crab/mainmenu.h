@@ -76,8 +76,7 @@ class MainMenu : public GameState {
 	pyrodactyl::ui::ImageData _logo;
 
 	// Data for the difficulty menu
-	struct
-	{
+	struct {
 		pyrodactyl::ui::ImageData _bg;
 		pyrodactyl::ui::HoverInfo _heading;
 		pyrodactyl::ui::ButtonMenu _menu;

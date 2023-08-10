@@ -67,8 +67,7 @@ protected:
 	TextData tdH[DATA_HOVER_TOTAL];
 
 	// The preview picture details
-	struct
-	{
+	struct {
 		// We load only the current preview image instead of all of them
 		pyrodactyl::image::Image _preview;
 
