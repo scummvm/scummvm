@@ -729,8 +729,8 @@ void HintSystem::selectHint() {
 
 				break;
 			case (byte)StaticDataConditionType::kDifficulty :
-				if (	(NancySceneState.getDifficulty() != cond.label && cond.flag == true) ||
-						(NancySceneState.getDifficulty() == cond.label && cond.flag == false) ) {
+				if (	(NancySceneState.getDifficulty() != cond.label && cond.flag != 0) ||
+						(NancySceneState.getDifficulty() == cond.label && cond.flag == 0) ) {
 					isSatisfied = false;
 				}
 
