@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-10 15:07+0000\n"
-"PO-Revision-Date: 2023-08-07 09:44+0000\n"
+"PO-Revision-Date: 2023-08-10 15:56+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -5605,10 +5605,8 @@ msgstr ""
 "Stealth desde el principio, con partidas guardadas nuevas."
 
 #: engines/crab/input/input.cpp:118
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Interactuar"
+msgstr "Hablar/Interactuar"
 
 #: engines/crab/input/input.cpp:158 engines/twine/metaengine.cpp:445
 msgid "Accept"
@@ -5616,37 +5614,35 @@ msgstr "Aceptar"
 
 #: engines/crab/input/input.cpp:164
 msgid "Reply 1"
-msgstr ""
+msgstr "Respuesta 1"
 
 #: engines/crab/input/input.cpp:169
 msgid "Reply 2"
-msgstr ""
+msgstr "Respuesta 2"
 
 #: engines/crab/input/input.cpp:174
 msgid "Reply 3"
-msgstr ""
+msgstr "Respuesta 3"
 
 #: engines/crab/input/input.cpp:179
 msgid "Reply 4"
-msgstr ""
+msgstr "Respuesta 4"
 
 #: engines/crab/input/input.cpp:184
 msgid "Reply 5"
-msgstr ""
+msgstr "Respuesta 5"
 
 #: engines/crab/input/input.cpp:189
 msgid "Reply 6"
-msgstr ""
+msgstr "Respuesta 6"
 
 #: engines/crab/input/input.cpp:204
 msgid "Map"
 msgstr "Asignar"
 
 #: engines/crab/input/input.cpp:209
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Mostrar diario"
+msgstr "Diario"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:214 engines/dragons/metaengine.cpp:149
@@ -5662,7 +5658,7 @@ msgstr "Inventario"
 
 #: engines/crab/input/input.cpp:219
 msgid "Traits"
-msgstr ""
+msgstr "Atributos"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
