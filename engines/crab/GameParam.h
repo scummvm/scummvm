@@ -124,14 +124,14 @@ public:
 		poolF.clear();
 	}
 
-	const char *Get(const int &num) {
+	const char *get(const int &num) {
 		if (poolI.contains(num) == false)
 			poolI[num] = numberToString<int>(num);
 
 		return poolI.getVal(num).c_str();
 	}
 
-	const char *FGet(const float &num) {
+	const char *fGet(const float &num) {
 		for (auto &i : poolF)
 			if (i._val == num)
 				return i._str.c_str();

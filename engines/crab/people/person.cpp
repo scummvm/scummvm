@@ -110,7 +110,7 @@ void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 	child->append_attribute(doc.allocate_attribute("name", _name.c_str()));
 
 	uint val = static_cast<uint>(_state);
-	child->append_attribute(doc.allocate_attribute("state", g_engine->_stringPool->Get(val)));
+	child->append_attribute(doc.allocate_attribute("state", g_engine->_stringPool->get(val)));
 
 	_opinion.saveState(doc, child);
 

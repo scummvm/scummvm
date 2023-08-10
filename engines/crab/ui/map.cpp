@@ -451,7 +451,7 @@ void Map::destDel(const Common::String &name) {
 void Map::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "map");
 
-	child->append_attribute(doc.allocate_attribute("cur", g_engine->_stringPool->Get(_cur)));
+	child->append_attribute(doc.allocate_attribute("cur", g_engine->_stringPool->get(_cur)));
 	saveBool(_overlay, "overlay", doc, child);
 
 	for (auto &r : _map) {

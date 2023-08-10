@@ -117,12 +117,12 @@ void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 
 	// Write current event id and name to node
 	seqnode->append_attribute(doc.allocate_attribute("name", name));
-	seqnode->append_attribute(doc.allocate_attribute("current", g_engine->_stringPool->Get(_cur)));
+	seqnode->append_attribute(doc.allocate_attribute("current", g_engine->_stringPool->get(_cur)));
 
 	// Prepare strings of next events and write them
 	for (uint i = 0; i < _next.size(); i++) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "next");
-		child->value(g_engine->_stringPool->Get(_next[i]));
+		child->value(g_engine->_stringPool->get(_next[i]));
 		seqnode->append_node(child);
 	}
 
