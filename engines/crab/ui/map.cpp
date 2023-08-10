@@ -233,97 +233,23 @@ void Map::move(const Common::Event &event) {
 		}
 		break;
 	default:
-		warning("STUB: Map keyboard processing");
-#if 0
 		// Move the map camera if player presses the direction keys
-		if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_PRESSED)
-			vel.y = -1 * speed;
-		else if (g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_PRESSED)
-			vel.y = speed;
-		else if (g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)
-			vel.x = speed;
-		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)
-			vel.x = -1 * speed;
+		if (g_engine->_inputManager->state(IU_UP))
+			_vel.y = -1 * _speed;
+		else if (g_engine->_inputManager->state(IU_DOWN))
+			_vel.y = _speed;
+		else if (g_engine->_inputManager->state(IU_RIGHT))
+			_vel.x = _speed;
+		else if (g_engine->_inputManager->state(IU_LEFT))
+			_vel.x = -1 * _speed;
 		// Stop moving when we release a key (but only in that direction)
-		else if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_RELEASED)
-			vel.y = 0;
-		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_RELEASED)
-			vel.x = 0;
+		else if (!g_engine->_inputManager->state(IU_UP) && !g_engine->_inputManager->state(IU_DOWN))
+			_vel.y = 0;
+		else if (!g_engine->_inputManager->state(IU_LEFT) && !g_engine->_inputManager->state(IU_RIGHT))
+			_vel.x = 0;
 		break;
-	}
-#endif
 	}
 }
-
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Move
-//------------------------------------------------------------------------
-void Map::Move(const SDL_Event &Event) {
-	// Reset the velocity to avoid weirdness
-	vel.x = 0;
-	vel.y = 0;
-
-	// We don't use the result, but this keeps the button states up to date
-	scroll.handleEvents(Event);
-
-	switch (Event.type) {
-	case SDL_MOUSEBUTTONDOWN: {
-		bool click = false;
-		int count = 0;
-		for (auto &i : scroll.element) {
-			if (i.Contains(g_engine->_mouse->button)) {
-				if (count == DIRECTION_UP)
-					vel.y = -1 * speed;
-				else if (count == DIRECTION_DOWN)
-					vel.y = speed;
-				else if (count == DIRECTION_RIGHT)
-					vel.x = speed;
-				else if (count == DIRECTION_LEFT)
-					vel.x = -1 * speed;
-
-				click = true;
-			}
-			count++;
-		}
-
-		if (!click) {
-			pan = true;
-			vel.x = 0;
-			vel.y = 0;
-		} else
-			pan = false;
-	} break;
-	case SDL_MOUSEBUTTONUP:
-		pan = false;
-		break;
-	case SDL_MOUSEMOTION:
-		if (pan) {
-			camera.x -= g_engine->_mouse->rel.x;
-			camera.y -= g_engine->_mouse->rel.y;
-			Validate();
-		}
-		break;
-	default: {
-		// Move the map camera if player presses the direction keys
-		if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_PRESSED)
-			vel.y = -1 * speed;
-		else if (g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_PRESSED)
-			vel.y = speed;
-		else if (g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)
-			vel.x = speed;
-		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)
-			vel.x = -1 * speed;
-		// Stop moving when we release a key (but only in that direction)
-		else if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_RELEASED)
-			vel.y = 0;
-		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_RELEASED)
-			vel.x = 0;
-		break;
-	}
-	}
-}
-#endif
 
 //------------------------------------------------------------------------
 // Purpose: Internal Events
