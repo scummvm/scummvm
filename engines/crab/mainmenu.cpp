@@ -199,14 +199,13 @@ void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameS
 		}
 	}
 
-#if 0
-	if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_PRESSED || (back.handleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
-		if (state == STATE_SAVENAME)
-			ChangeState(STATE_DIFF);
-		else if (state != STATE_NORMAL)
-			ChangeState(STATE_NORMAL);
+	if (g_engine->_inputManager->state(IU_BACK) || (_back.handleEvents(event) && (_state != STATE_SAVENAME && _state != STATE_CREDITS))) {
+		if (_state == STATE_SAVENAME)
+			changeState(STATE_DIFF);
+		else if (_state != STATE_NORMAL)
+			changeState(STATE_NORMAL);
 	}
-#endif
+
 
 	switch (_state) {
 	case STATE_NORMAL:
