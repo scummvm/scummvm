@@ -118,68 +118,6 @@ PauseSignal PauseMenu::handleEvents(const Common::Event &event, Button &back) {
 	return PS_NONE;
 }
 
-#if 0
-PauseSignal PauseMenu::handleEvents(const SDL_Event &Event, Button &back) {
-	switch (state) {
-	case STATE_NORMAL:
-		choice = menu.handleEvents(Event);
-		if (choice == -1) {
-			if (back.hotkey.handleEvents(Event))
-				return PS_RESUME;
-		} else {
-			switch (choice) {
-			case 0:
-				state = STATE_NORMAL;
-				return PS_RESUME;
-			case 1:
-				state = STATE_SAVE;
-				save.ScanDir();
-				break;
-			case 2:
-				state = STATE_LOAD;
-				g_engine->_loadMenu->ScanDir();
-				break;
-			case 3:
-				state = STATE_OPTION;
-				break;
-			case 4:
-				return PS_HELP;
-			case 5:
-				return PS_QUIT_MENU;
-			case 6:
-				return PS_QUIT_GAME;
-			default:
-				break;
-			}
-		}
-		break;
-	case STATE_SAVE:
-		if (save.handleEvents(Event)) {
-			state = STATE_NORMAL;
-			return PS_SAVE;
-		} else if (back.handleEvents(Event) == BUAC_LCLICK && !save.DisableHotkeys())
-			state = STATE_NORMAL;
-		break;
-	case STATE_OPTION:
-		if (g_engine->_optionMenu->handleEvents(back, Event)) {
-			g_engine->_optionMenu->reset();
-			state = STATE_NORMAL;
-		}
-		break;
-	case STATE_LOAD:
-		if (g_engine->_loadMenu->handleEvents(Event))
-			return PS_LOAD;
-		else if (back.handleEvents(Event) == BUAC_LCLICK)
-			state = STATE_NORMAL;
-		break;
-	default:
-		break;
-	}
-
-	return PS_NONE;
-}
-#endif
-
 bool PauseMenu::disableHotkeys() {
 	return (_state == STATE_SAVE && _save.disableHotkeys()) || (_state == STATE_OPTION && g_engine->_optionMenu->disableHotkeys());
 }
