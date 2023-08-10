@@ -250,7 +250,7 @@ void Room101::daemon() {
 
 	case 6:
 		if (!_G(flags)[ROOM101_FLAG2]) {
-			uint idx = _G(flags)[ROOM101_FLAG3];
+			uint idx = _G(flags)[NEURO_TEST_COUNTER];
 			assert(idx < 8);
 
 			static const char *const NAMES[8] = {
