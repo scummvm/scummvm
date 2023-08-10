@@ -19,26 +19,26 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION_H
-#define M4_BURGER_ROOMS_SECTION_H
+#ifndef M4_BURGER_ROOMS_SECTION8_H
+#define M4_BURGER_ROOMS_SECTION8_H
 
-#include "m4/core/rooms.h"
+#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section.h"
+#include "m4/burger/rooms/section8/room801.h"
+#include "m4/burger/rooms/section8/room802.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Section : public M4::Section {
+class Section8 : public Rooms::Section {
 private:
-	void init_series_players();
+	Room801 _room801;
+	Room802 _room802;
 
 public:
-	Section() : M4::Section() {}
-	~Section() override {}
-
-	void global_room_init() override;
-	void tick() override;
-	void daemon() override;
+	Section8();
+	virtual ~Section8() {}
 };
 
 } // namespace Rooms

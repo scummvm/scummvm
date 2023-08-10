@@ -137,6 +137,10 @@ void Section::tick() {
 	_G(kernel).trigger = oldTrigger;
 }
 
+void Section::daemon() {
+	_G(kernel).continue_handling_trigger = true;
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
