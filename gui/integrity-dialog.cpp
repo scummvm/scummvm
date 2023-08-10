@@ -25,6 +25,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/md5.h"
 #include "common/translation.h"
 
@@ -221,7 +222,6 @@ void IntegrityDialog::calculateTotalSize(Common::String gamePath) {
 		if (entry.isDirectory())
 			calculateTotalSize(entry.getPath());
 		else {
-			const Common::Path filename(entry.getPath());
 			Common::File file;
 			if (!file.open(entry))
 				continue;
@@ -252,6 +252,26 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 			generateChecksums(entry.getPath(), fileChecksums);
 		else {
 			const Common::Path filename(entry.getPath());
+			auto macFile = Common::MacResManager();
+			if (macFile.openFileOrDataFork(filename)) {
+				auto originalStream = macFile.openFileOrDataFork(filename);
+				auto fileStream = originalStream;
+
+				Common::Array<Common::String> fileChecksum = {filename.toString()};
+				// Various checksizes
+				for (auto size : {0, 5000, 1024 * 1024}) {
+					fileChecksum.push_back(Common::computeStreamMD5AsString(*(fileStream), size).c_str());
+					fileStream->seek(0);
+				}
+				// Tail checksums with checksize 5000
+				fileStream->seek(-5000, SEEK_END);
+				fileChecksum.push_back(Common::computeStreamMD5AsString(*(fileStream)).c_str());
+
+				g_state->calculatedSize += fileStream->size();
+
+				fileChecksums.push_back(fileChecksum);
+			}
+
 			Common::File file;
 			if (!file.open(entry))
 				continue;
