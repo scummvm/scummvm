@@ -552,6 +552,10 @@ private:
 	bool _gotSessions;
 	int _sessionServerPeer;
 	bool _isRelayingGame; ///< If we're relaying in-game data over the session server or not.
+
+	// Used to determine net lag between players.
+	int _savedTime;
+	bool _waitForTimedResp;
 };
 
 } // End of namespace Scumm

@@ -738,6 +738,7 @@ protected:
 	byte VAR_REMOTE_START_SCRIPT;
 	byte VAR_NETWORK_AVAILABLE;
 	byte VAR_NETWORK_RECEIVE_ARRAY_SCRIPT;
+	byte VAR_NETWORK_NET_LAG;
 
 public:
 	int networkSessionDialog();
@@ -1046,6 +1047,7 @@ protected:
 	byte VAR_REMOTE_START_SCRIPT;
 	byte VAR_NETWORK_AVAILABLE;
 	byte VAR_NETWORK_RECEIVE_ARRAY_SCRIPT;
+	byte VAR_NETWORK_NET_LAG;
 };
 
 class ScummEngine_vCUPhe : public Engine {

@@ -96,7 +96,7 @@ void SessionSelectorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd
 
 void SessionSelectorDialog::handleTickle() {
 	// Keep the connection active.
-	_vm->_net->doNetworkOnceAFrame(12);
+	_vm->_net->doNetworkOnceAFrame(15);
 
 	// Query for new sessions every 5 seconds.
 	if (!_timestamp || g_system->getMillis() - _timestamp > 5000) {

@@ -32,6 +32,8 @@ namespace Scumm {
 #define PN_SENDTYPE_GROUP							2
 #define PN_SENDTYPE_HOST							3
 #define PN_SENDTYPE_ALL								4
+#define PN_SENDTYPE_ALL_RELIABLE					14
+#define PN_SENDTYPE_ALL_RELIABLE_TIMED				24
 
 #define MAX_GAME_NAME								128				/* Used for the multiplayer networking code */
 #define MAX_PLAYER_NAME								128				/* Used for the multiplayer networking code */
@@ -45,6 +47,9 @@ namespace Scumm {
 #define PACKETTYPE_REMOTESTARTSCRIPTRETURN			2
 #define PACKETTYPE_REMOTESTARTSCRIPTRESULT			3
 #define PACKETTYPE_REMOTESENDSCUMMARRAY				4
+// ScummVM specific type, used for determine
+// net lag
+#define PACKETTYPE_RELIABLETIMEDRESP				5
 
 const int MAX_PACKET_SIZE = 4096;	// bytes
 const int MAX_HOSTNAME_SIZE = 256;

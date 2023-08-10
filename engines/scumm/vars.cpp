@@ -341,6 +341,7 @@ void ScummEngine_v90he::setupScummVars() {
 			VAR_REMOTE_START_SCRIPT = 98;
 			VAR_NETWORK_AVAILABLE = 100;
 			VAR_NETWORK_RECEIVE_ARRAY_SCRIPT = 101;
+			VAR_NETWORK_NET_LAG = 136;
 		}
 #endif
 		VAR_MAIN_SCRIPT = 127;
@@ -362,6 +363,8 @@ void ScummEngine_v100he::setupScummVars() {
 		VAR_U32_USER_VAR_D = 111;
 		VAR_U32_USER_VAR_E = 112;
 		VAR_U32_USER_VAR_F = 113;
+		VAR_NETWORK_NET_LAG = 136;
+
 	}
 }
 #endif
