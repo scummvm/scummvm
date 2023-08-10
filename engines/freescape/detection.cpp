@@ -508,7 +508,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
