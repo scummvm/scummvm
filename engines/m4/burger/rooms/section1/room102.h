@@ -72,7 +72,7 @@ private:
 	void conv04();
 	void conv05();
 	void conv06();
-	void flagAction(const char *name);
+	void flagAction(const char *name1, const char *name2);
 
 public:
 	Room102() : Room() {}
