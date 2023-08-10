@@ -131,13 +131,14 @@ bool MusicManager::load(rapidxml::xml_node<char> *node) {
 				rapidxml::xml_attribute<char> *id = n->first_attribute("id"), *path = n->first_attribute("path");
 				if (id != nullptr && path != nullptr) {
 					EffectAudio *audio = new EffectAudio();
-					if (audio->_file.open(cleansePath(path->value()))) {
+					Common::String cleansedPath = cleansePath(path->value());
+					if (audio->_file.open(cleansedPath)) {
 						audio->_handle = new Audio::SoundHandle();
 						audio->_stream = Audio::makeWAVStream(&audio->_file, DisposeAfterUse::NO);
 						_effects[stringToNumber<ChunkKey>(id->value())] = audio;
 					} else {
 						delete audio;
-						warning("Could not open audio file : %s", path->value());
+						warning("Could not open audio file : %s", cleansedPath.c_str());
 						return false;
 					}
 				}
