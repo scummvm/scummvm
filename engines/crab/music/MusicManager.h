@@ -85,6 +85,8 @@ public:
 
 	bool load(rapidxml::xml_node<char> *node);
 
+	void syncSettings();
+
 	void playMusic(const MusicKey &id);
 	void playEffect(const ChunkKey &id, const int &loops);
 

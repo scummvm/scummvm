@@ -165,6 +165,10 @@ public:
 
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	Common::Error loadGameState(int slot) override;
+
+	void syncSoundSettings() override;
+
+
 };
 
 extern CrabEngine *g_engine;
