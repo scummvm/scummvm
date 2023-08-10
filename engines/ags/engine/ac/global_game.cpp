@@ -403,32 +403,17 @@ int SetGameOption(int opt, int newval) {
 	}
 
 	// Handle forbidden options
-	switch (opt) {
-	case OPT_DEBUGMODE: // we don't support switching OPT_DEBUGMODE from script
-	case OPT_LETTERBOX:
-	case OPT_HIRES_FONTS:
-	case OPT_SPLITRESOURCES:
-	case OPT_STRICTSCRIPTING:
-	case OPT_LEFTTORIGHTEVAL:
-	case OPT_COMPRESSSPRITES:
-	case OPT_STRICTSTRINGS:
-	case OPT_NATIVECOORDINATES:
-	case OPT_SAFEFILEPATHS:
-	case OPT_DIALOGOPTIONSAPI:
-	case OPT_BASESCRIPTAPI:
-	case OPT_SCRIPTCOMPATLEV:
-	case OPT_RELATIVEASSETRES:
-	case OPT_GAMETEXTENCODING:
-	case OPT_KEYHANDLEAPI:
-	case OPT_CUSTOMENGINETAG:
-		debug_script_warn("SetGameOption: option %d cannot be modified at runtime", opt);
-		return _GP(game).options[opt];
-	default:
-		break;
+	const auto restricted_opts = GameSetupStructBase::GetRestrictedOptions();
+	for (auto r_opt : restricted_opts) {
+		if (r_opt == opt) {
+			debug_script_warn("SetGameOption: option %d cannot be modified at runtime", opt);
+			return _GP(game).options[opt];
+		}
 	}
 
+	// Test if option already has this value
 	if (_GP(game).options[opt] == newval)
-		return _GP(game).options[opt]; // no change necessary
+		return _GP(game).options[opt];
 
 	const int oldval = _GP(game).options[opt];
 	_GP(game).options[opt] = newval;
