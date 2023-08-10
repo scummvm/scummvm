@@ -193,58 +193,6 @@ ButtonAction Button::handleEvents(const Common::Event &event, const int &xOffset
 	return BUAC_IGNORE;
 }
 
-#if 0
-//------------------------------------------------------------------------
-// Purpose: Handle input and stuff
-//------------------------------------------------------------------------
-ButtonAction Button::handleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
-	Rect dim = *this;
-	dim.x += XOffset;
-	dim.y += YOffset;
-
-	if (visible) {
-		if (dim.Contains(g_engine->_mouse->motion.x, g_engine->_mouse->motion.y)) {
-			hover_mouse = true;
-
-			if (!hover_prev) {
-				hover_prev = true;
-				g_engine->_musicManager->PlayEffect(se_hover, 0);
-			}
-		} else {
-			hover_prev = false;
-			hover_mouse = false;
-		}
-
-		if (Event.type == SDL_MOUSEMOTION) {
-			if (canmove && mousepressed) {
-				x += g_engine->_mouse->rel.x;
-				y += g_engine->_mouse->rel.y;
-				return BUAC_GRABBED;
-			}
-		} else if (Event.type == SDL_MOUSEBUTTONDOWN) {
-			// The g_engine->_mouse button pressed, then released, comprises of a click action
-			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y))
-				mousepressed = true;
-		} else if (Event.type == SDL_MOUSEBUTTONUP && mousepressed) {
-			reset();
-			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y)) {
-				mousepressed = false;
-				if (Event.button.button == SDL_BUTTON_LEFT) {
-					g_engine->_musicManager->PlayEffect(se_click, 0);
-					return BUAC_LCLICK;
-				} else if (Event.button.button == SDL_BUTTON_RIGHT)
-					return BUAC_RCLICK;
-			}
-		} else if (hotkey.handleEvents(Event)) {
-			g_engine->_musicManager->PlayEffect(se_click, 0);
-			return BUAC_LCLICK;
-		}
-	}
-
-	return BUAC_IGNORE;
-}
-#endif
-
 void Button::setUI(Rect *parent) {
 	Element::setUI(parent);
 
