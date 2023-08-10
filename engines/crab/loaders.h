@@ -31,6 +31,7 @@
 #ifndef CRAB_LOADERS_H
 #define CRAB_LOADERS_H
 
+#include "common/debug.h"
 #include "common/str.h"
 #include "crab/color.h"
 #include "crab/gametype.h"
@@ -54,11 +55,8 @@ bool loadNum(T &val, const Common::String &name, rapidxml::xml_node<char> *node,
 	if (node->first_attribute(name.c_str()) != nullptr)
 		val = stringToNumber<T>(node->first_attribute(name.c_str())->value());
 	else {
-		/*if (echo)
-		{
-		Common::String error_msg = "attribute " + name + " not found in node " + node->parent()->name() + " -> " + node->name();
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
-		}*/
+		if (echo)
+			warning("XML: attribute %s not found in node %s -> %s", name.c_str(), node->parent()->name(), node->name());
 		return false;
 	}
 
@@ -71,11 +69,8 @@ bool loadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node
 	if (node->first_attribute(name.c_str()) != nullptr)
 		val = static_cast<T>(stringToNumber<int>(node->first_attribute(name.c_str())->value()));
 	else {
-		/*if (echo)
-		{
-		Common::String error_msg = "attribute " + name + " not found in node " + node->parent()->name() + " -> " + node->name();
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
-		}*/
+		if (echo)
+			warning("XML: attribute %s not found in node %s -> %s", name.c_str(), node->parent()->name(), node->name());
 		return false;
 	}
 
