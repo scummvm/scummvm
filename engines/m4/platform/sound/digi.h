@@ -97,6 +97,7 @@ public:
 
 	void set_overall_volume(int vol);
 	int get_overall_volume();
+	int32 ticks_to_play(const char *name, int roomNum = -1);
 };
 
 } // namespace Sound
@@ -111,7 +112,7 @@ extern bool digi_play_state(int channel);
 extern void digi_change_volume(int channel, int vol);
 extern void digi_set_overall_volume(int vol);
 extern int digi_get_overall_volume();
-extern int32 digi_ticks_to_play(const char *name, int val2 = -1);
+extern int32 digi_ticks_to_play(const char *name, int roomNum = -1);
 
 } // namespace M4
 

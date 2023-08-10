@@ -215,6 +215,20 @@ int Digi::get_overall_volume() {
 	return _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
 }
 
+int32 Digi::ticks_to_play(const char *name, int roomNum) {
+	// Get the file and retrieve it's size
+	Common::String filename = expand_name_2_RAW(name, roomNum);
+	SysFile sf(filename);
+	double size = sf.size();
+	sf.close();
+
+	term_message("  digi_ticks_to_play");
+	term_message("  %s", filename.c_str());
+	term_message("  size = %f, room = %d", size, roomNum);
+
+	return (int32)floor(size * 0.000090702946 * 60.0);
+}
+
 } // namespace Sound
 
 bool digi_preload(const Common::String &name, int roomNum) {
@@ -257,8 +271,8 @@ int digi_get_overall_volume() {
 	return _G(digi).get_overall_volume();
 }
 
-int32 digi_ticks_to_play(const char *name, int val2) {
-	error("TODO: digi_ticks_to_play");
+int32 digi_ticks_to_play(const char *name, int roomNum) {
+	return _G(digi).ticks_to_play(name, roomNum);
 }
 
 } // namespace M4
