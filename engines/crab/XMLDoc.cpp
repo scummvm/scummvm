@@ -52,7 +52,7 @@ const rapidxml::xml_document<> *XMLDoc::doc() const {
 	if (_text != nullptr)
 		return &_doc;
 	else
-		return NULL;
+		return nullptr;
 }
 
 } // End of namespace Crab
