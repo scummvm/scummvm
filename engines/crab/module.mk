@@ -93,7 +93,6 @@ MODULE_OBJS = \
 	ui/element.o \
 	ui/emotion.o \
 	ui/FileData.o \
-	ui/FileMenu.o \
 	ui/GameOverMenu.o \
 	ui/GeneralSettingMenu.o \
 	ui/GfxSettingMenu.o \
