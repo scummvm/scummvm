@@ -49,6 +49,7 @@ static const int8 kFrNoFrame			= -1;
 // Inventory items use types
 static const byte kInvItemUseThenLose	= 0;
 static const byte kInvItemKeepAlways	= 1;
+static const byte kInvItemReturn		= 2;
 
 // Dependency types
 static const byte kFlagEvent			= 1;
