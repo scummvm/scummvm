@@ -47,18 +47,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-// this needs to be updated if the "play" struct changes
-#define SVG_VERSION_BWCOMPAT_MAJOR      3
-#define SVG_VERSION_BWCOMPAT_MINOR      2
-#define SVG_VERSION_BWCOMPAT_RELEASE    0
-#define SVG_VERSION_BWCOMPAT_REVISION   1103
-// CHECKME: we may lower this down, if we find that earlier versions may still
-// load new savedgames
-#define SVG_VERSION_FWCOMPAT_MAJOR      3
-#define SVG_VERSION_FWCOMPAT_MINOR      2
-#define SVG_VERSION_FWCOMPAT_RELEASE    1
-#define SVG_VERSION_FWCOMPAT_REVISION   1111
-
 void main_init(int argc, const char *argv[]) {
 	_G(our_eip) = -999;
 
@@ -70,8 +58,6 @@ void main_init(int argc, const char *argv[]) {
 #if defined (BUILD_STR)
 	_G(EngineVersion).BuildInfo = BUILD_STR;
 #endif
-	_G(SavedgameLowestBackwardCompatVersion) = Version(SVG_VERSION_BWCOMPAT_MAJOR, SVG_VERSION_BWCOMPAT_MINOR, SVG_VERSION_BWCOMPAT_RELEASE, SVG_VERSION_BWCOMPAT_REVISION);
-	_G(SavedgameLowestForwardCompatVersion) = Version(SVG_VERSION_FWCOMPAT_MAJOR, SVG_VERSION_FWCOMPAT_MINOR, SVG_VERSION_FWCOMPAT_RELEASE, SVG_VERSION_FWCOMPAT_REVISION);
 
 	_G(platform) = AGSPlatformDriver::GetDriver();
 	_G(platform)->SetCommandArgs(argv, argc);
