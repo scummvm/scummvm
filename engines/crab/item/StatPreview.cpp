@@ -59,7 +59,7 @@ void StatPreview::draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper) {
 		int count = 0;
 		for (auto i = item._bonus.begin(); i != item._bonus.end(); ++i, ++count) {
 			stat.draw(helper.name(i->_type), _incS.x * count, _incS.y * count);
-			unit.draw(g_engine->_stringPool->Get(i->_val), _incU.x * count, _incU.y * count);
+			unit.draw(g_engine->_stringPool->get(i->_val), _incU.x * count, _incU.y * count);
 		}
 	}
 }

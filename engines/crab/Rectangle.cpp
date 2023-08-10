@@ -121,10 +121,10 @@ void Rect::draw(const int &xOffset, const int &yOffset, const uint8 &r, const ui
 
 void Rect::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
-	child->append_attribute(doc.allocate_attribute("x", g_engine->_stringPool->Get(x)));
-	child->append_attribute(doc.allocate_attribute("y", g_engine->_stringPool->Get(y)));
-	child->append_attribute(doc.allocate_attribute("w", g_engine->_stringPool->Get(w)));
-	child->append_attribute(doc.allocate_attribute("h", g_engine->_stringPool->Get(h)));
+	child->append_attribute(doc.allocate_attribute("x", g_engine->_stringPool->get(x)));
+	child->append_attribute(doc.allocate_attribute("y", g_engine->_stringPool->get(y)));
+	child->append_attribute(doc.allocate_attribute("w", g_engine->_stringPool->get(w)));
+	child->append_attribute(doc.allocate_attribute("h", g_engine->_stringPool->get(h)));
 	root->append_node(child);
 }
 

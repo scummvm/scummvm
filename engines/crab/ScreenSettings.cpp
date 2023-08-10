@@ -51,15 +51,15 @@ void ScreenSettings::load(rapidxml::xml_node<char> *node) {
 }
 
 void ScreenSettings::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	root->append_attribute(doc.allocate_attribute("version", g_engine->_stringPool->Get(_version)));
+	root->append_attribute(doc.allocate_attribute("version", g_engine->_stringPool->get(_version)));
 
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "screen");
-	child->append_attribute(doc.allocate_attribute("w", g_engine->_stringPool->Get(_cur.w)));
-	child->append_attribute(doc.allocate_attribute("h", g_engine->_stringPool->Get(_cur.h)));
-	child->append_attribute(doc.allocate_attribute("fps", g_engine->_stringPool->Get(_fps)));
+	child->append_attribute(doc.allocate_attribute("w", g_engine->_stringPool->get(_cur.w)));
+	child->append_attribute(doc.allocate_attribute("h", g_engine->_stringPool->get(_cur.h)));
+	child->append_attribute(doc.allocate_attribute("fps", g_engine->_stringPool->get(_fps)));
 
-	child->append_attribute(doc.allocate_attribute("gamma", g_engine->_stringPool->FGet(_gamma)));
-	child->append_attribute(doc.allocate_attribute("text_speed", g_engine->_stringPool->FGet(_textSpeed)));
+	child->append_attribute(doc.allocate_attribute("gamma", g_engine->_stringPool->fGet(_gamma)));
+	child->append_attribute(doc.allocate_attribute("text_speed", g_engine->_stringPool->fGet(_textSpeed)));
 
 	saveBool(_vsync, "vsync", doc, child);
 	saveBool(_border, "border", doc, child);
