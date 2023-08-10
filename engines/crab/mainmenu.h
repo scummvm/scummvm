@@ -114,10 +114,8 @@ class MainMenu : public GameState {
 		}
 	} _musicKey;
 
-#ifdef UNREST_DEMO
 	// UI elements related to the demo
-	pyrodactyl::ui::Button steam, direct;
-#endif
+	pyrodactyl::ui::Button _steam, _direct;
 
 public:
 	MainMenu();

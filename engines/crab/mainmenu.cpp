@@ -128,17 +128,15 @@ MainMenu::MainMenu() {
 				loadNum(_musicKey._credits, "credits", node->first_node("music"));
 			}
 
-#ifdef UNREST_DEMO
-			if (nodeValid("demo", node)) {
+			if ((g_engine->getFeatures() & ADGF_DEMO) && nodeValid("demo", node)) {
 				rapidxml::xml_node<char> *denode = node->first_node("demo");
 
 				if (nodeValid("steam", denode))
-					steam.load(denode->first_node("steam"));
+					_steam.load(denode->first_node("steam"));
 
 				if (nodeValid("direct", denode))
-					direct.load(denode->first_node("direct"));
+					_direct.load(denode->first_node("direct"));
 			}
-#endif
 		}
 	}
 
@@ -211,19 +209,18 @@ void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameS
 #endif
 
 	switch (_state) {
-#ifdef UNREST_DEMO
 	case STATE_NORMAL:
-		if (steam.handleEvents(Event) == BUAC_LCLICK) {
+		if ((g_engine->getFeatures() & ADGF_DEMO) && _steam.handleEvents(event) == BUAC_LCLICK) {
 			// Open steam in browser window
-			OpenURL("https://store.steampowered.com/app/292400/");
+			g_system->openUrl("https://store.steampowered.com/app/292400/");
 		}
 
-		if (direct.handleEvents(Event) == BUAC_LCLICK) {
+		if ((g_engine->getFeatures() & ADGF_DEMO) && _direct.handleEvents(event) == BUAC_LCLICK) {
 			// Open humble widget in browser window
-			OpenURL("https://www.humblebundle.com/store/unrest/Udg6Ytd8Dfw");
+			g_system->openUrl("https://www.humblebundle.com/store/unrest/Udg6Ytd8Dfw");
 		}
 		break;
-#endif
+
 	case STATE_OPTIONS:
 		if (g_engine->_optionMenu->handleEvents(_back, event))
 			changeState(STATE_NORMAL);
@@ -498,11 +495,11 @@ void MainMenu::draw() {
 
 		_meMain.draw();
 
-#ifdef UNREST_DEMO
-		g_engine->_textManager->draw(logo.x + logo.w, logo.y + logo.h / 2, "Demo", 0, 0, ALIGN_CENTER);
-		steam.draw();
-		direct.draw();
-#endif
+		if (g_engine->getFeatures() & ADGF_DEMO) {
+			g_engine->_textManager->draw(_logo.x + _logo.w, _logo.y + _logo.h / 2, "Demo", 0, 0, ALIGN_CENTER);
+			_steam.draw();
+			_direct.draw();
+		}
 		break;
 
 	case STATE_OPTIONS:
@@ -576,10 +573,10 @@ void MainMenu::setUI() {
 	_warning.setUI();
 	_bgSave.setUI();
 
-#ifdef UNREST_DEMO
-	steam.setUI();
-	direct.setUI();
-#endif
+	if(g_engine->getFeatures() & ADGF_DEMO) {
+		_steam.setUI();
+		_direct.setUI();
+	}
 }
 
 } // End of namespace Crab
