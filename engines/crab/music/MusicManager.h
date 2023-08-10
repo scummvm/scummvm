@@ -50,13 +50,6 @@ class MusicManager {
 	MusicData _bg;
 
 	Common::HashMap<ChunkKey, EffectAudio *> _effects;
-#if 0
-	// The sound effects in the game
-	std::unordered_map<ChunkKey, Mix_Chunk *> effect;
-#endif
-
-	// Data about the audio
-	int _freq, _channels, _chunksize;
 
 	Audio::SoundHandle *_musicHandle;
 
@@ -65,19 +58,9 @@ public:
 	ChunkKey _notify, _repInc, _repDec;
 
 	MusicManager() {
-#if 0
-		freq = MIX_DEFAULT_FREQUENCY;
-		channels = MIX_DEFAULT_CHANNELS;
-#endif
-		_chunksize = 1024;
-
 		_notify = -1;
 		_repInc = -1;
 		_repDec = -1;
-
-		(void)_freq;
-		(void)_channels;
-		(void)_chunksize;
 
 		_musicHandle = nullptr;
 	}
