@@ -273,7 +273,7 @@ PathfindingGraphNode *PathfindingGrid::getNearestOpenNode(Vector2f nodePos, Vect
 		checkNodes.pop_front();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Crab

@@ -40,7 +40,7 @@ using namespace pyrodactyl::image;
 
 void SectionHeader::load(rapidxml::xml_node<char> *node) {
 
-	if (TextData::load(node, NULL, false)) {
+	if (TextData::load(node, nullptr, false)) {
 		loadStr(_text, "text", node);
 		_text.insertChar(' ', 0);
 		_text += " ";
@@ -86,7 +86,7 @@ void SectionHeader::draw(const Common::String &str, const int &xOffset, const in
 		g_engine->_imageManager->draw(_left.x + xOffset, _left.y + yOffset, _img);
 
 	if (_drawR)
-		g_engine->_imageManager->draw(_right.x + xOffset, _right.y + yOffset, _img, (Rect*)NULL, FLIP_X);
+		g_engine->_imageManager->draw(_right.x + xOffset, _right.y + yOffset, _img, (Rect*)nullptr, FLIP_X);
 
 	TextData::draw(str, xOffset, yOffset);
 }

@@ -148,7 +148,7 @@ void PathfindingAgent::update(uint32 timeslice) {
 
 		if (current->getLocation() == _goalTile) { // We're done.
 			// m_vSolution = getSolution();
-			_vSolution = getPrunedSolution(NULL);
+			_vSolution = getPrunedSolution(nullptr);
 			_solutionFound = true;
 			return;
 		} else if (current->getLocation()->getMovementCost() > 0 && current->getLocation()->adjacentToNode(_clickedTile) && _clickedTile->getMovementCost() < 0) {
