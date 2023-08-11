@@ -1008,12 +1008,25 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			ev1.type = multitype;
 			if (ev1.type == Common::EVENT_RBUTTONDOWN || ev1.type == Common::EVENT_MBUTTONDOWN) {
 				pushDelayedTouchMouseBtnEvents();
-			}
 
-			if (ev1.type != Common::EVENT_INVALID) {
-				pushEvent(ev0, ev1);
-			} else {
-				pushEvent(ev0);
+				if (_touch_mode != TOUCH_MODE_TOUCHPAD) {
+					// Only send an early move event if:
+					// - in direct touch mode
+					// - and the multi touch event is a mouse button down (right or middle)
+					_event_queue_lock->lock();
+					_event_queue.push(ev0);
+					_delayedMouseBtnDownEvent.mouse = ev1.mouse;
+					_delayedMouseBtnDownEvent.type = ev1.type;
+					_delayedMouseBtnDownEvent.referTimeMillis = getMillis(true);
+					_delayedMouseBtnDownEvent.delayMillis = kQueuedInputEventDelay;
+					_delayedMouseBtnDownEvent.connectedType = ev0.type;
+					_delayedMouseBtnDownEvent.connectedTypeExecuted = false;
+					_event_queue_lock->unlock();
+				} else {
+					pushEvent(ev1);
+				}
+			} else if (ev1.type != Common::EVENT_INVALID) {
+				pushEvent(ev1);
 			}
 		}
 		break;
