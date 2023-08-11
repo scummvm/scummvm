@@ -104,6 +104,7 @@ class InputManager {
 public:
 	InputManager() {
 		_version = 0;
+		_keyMode = KBM_GAME;
 
 		clearInputs();
 	}
