@@ -105,7 +105,7 @@ void Inventory::draw(Person &obj, const int &moneyVal) {
 //------------------------------------------------------------------------
 void Inventory::handleEvents(const Common::String &string, const Common::Event &event) {
 	_collection.handleEvents(string, event);
-	_money.handleEvents(event);
+	(void)_money.handleEvents(event);
 }
 
 //------------------------------------------------------------------------
