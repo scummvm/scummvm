@@ -110,9 +110,9 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 }
 
 bool PersonHandler::handleCommonEvents(const Common::Event &event) {
-	_opinion[OPI_LIKE].handleEvents(event);
-	_opinion[OPI_RESPECT].handleEvents(event);
-	_opinion[OPI_FEAR].handleEvents(event);
+	(void)_opinion[OPI_LIKE].handleEvents(event);
+	(void)_opinion[OPI_RESPECT].handleEvents(event);
+	(void)_opinion[OPI_FEAR].handleEvents(event);
 
 	if (_jb.handleEvents(event) == BUAC_LCLICK) {
 		// User wants to open their journal

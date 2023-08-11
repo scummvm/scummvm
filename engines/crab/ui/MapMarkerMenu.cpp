@@ -83,7 +83,8 @@ void MapMarkerMenu::draw(const Element &pos, const Vector2i &player_pos, const R
 //------------------------------------------------------------------------
 void MapMarkerMenu::handleEvents(const Element &pos, const Vector2i &playerPos, const Rect &camera, const Common::Event &event) {
 	if (playerPos.x >= camera.x && playerPos.y >= camera.y)
-		_player.handleEvents(event, pos.x + playerPos.x - camera.x + _offset._player.x, pos.y + playerPos.y - camera.y + _offset._player.y);
+		(void)_player.handleEvents(event, pos.x + playerPos.x - camera.x + _offset._player.x,
+								   pos.y + playerPos.y - camera.y + _offset._player.y);
 
 	int choice = _menu.handleEvents(event, pos.x - camera.x + _offset._marker.x, pos.y - camera.y + _offset._marker.y);
 	if (choice != -1) {
