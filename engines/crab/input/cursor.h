@@ -69,6 +69,7 @@ public:
 		_pressed = false;
 		_insideHud = false;
 		_hover = false;
+		reset();
 	}
 	~Cursor() {}
 
