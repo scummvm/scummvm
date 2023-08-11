@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-10 15:07+0000\n"
-"PO-Revision-Date: 2023-08-08 06:40+0000\n"
+"PO-Revision-Date: 2023-08-12 05:40+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5584,10 +5584,8 @@ msgstr ""
 "salvo."
 
 #: engines/crab/input/input.cpp:118
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Interagir"
+msgstr "Falar/Interagir"
 
 #: engines/crab/input/input.cpp:158 engines/twine/metaengine.cpp:445
 msgid "Accept"
@@ -5595,37 +5593,35 @@ msgstr "Aceitar"
 
 #: engines/crab/input/input.cpp:164
 msgid "Reply 1"
-msgstr ""
+msgstr "Resposta 1"
 
 #: engines/crab/input/input.cpp:169
 msgid "Reply 2"
-msgstr ""
+msgstr "Resposta 2"
 
 #: engines/crab/input/input.cpp:174
 msgid "Reply 3"
-msgstr ""
+msgstr "Resposta 3"
 
 #: engines/crab/input/input.cpp:179
 msgid "Reply 4"
-msgstr ""
+msgstr "Resposta 4"
 
 #: engines/crab/input/input.cpp:184
 msgid "Reply 5"
-msgstr ""
+msgstr "Resposta 5"
 
 #: engines/crab/input/input.cpp:189
 msgid "Reply 6"
-msgstr ""
+msgstr "Resposta 6"
 
 #: engines/crab/input/input.cpp:204
 msgid "Map"
 msgstr "Mapear"
 
 #: engines/crab/input/input.cpp:209
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Exibir diário"
+msgstr "Diário"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:214 engines/dragons/metaengine.cpp:149
@@ -5641,7 +5637,7 @@ msgstr "Inventário"
 
 #: engines/crab/input/input.cpp:219
 msgid "Traits"
-msgstr ""
+msgstr "Atributos"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
