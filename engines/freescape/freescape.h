@@ -315,6 +315,7 @@ public:
 	void executeSwapJet(FCLInstruction &instruction);
 	virtual void executePrint(FCLInstruction &instruction);
 	void executeSPFX(FCLInstruction &instruction);
+	void executeStartAnim(FCLInstruction &instruction);
 
 	// Sound
 	Audio::SoundHandle _soundFxHandle;

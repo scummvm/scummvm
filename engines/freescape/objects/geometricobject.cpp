@@ -123,6 +123,7 @@ GeometricObject::GeometricObject(
 	FCLInstructionVector conditionInstructions_,
 	Common::String conditionSource_) {
 	_type = type_;
+	assert(_type != kGroupType);
 	_flags = flags_;
 
 	if (isDestroyed()) // If the object is destroyed, restore it

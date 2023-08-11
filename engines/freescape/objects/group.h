@@ -35,9 +35,10 @@ public:
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;
 	Common::Array<Math::Vector3d> _objectPositions;
-	Common::Array<int16> _objectIndices;
+	Common::Array<int16> _objectOperations;
 	Common::Array<int16> _objectIds;
 	int _scale;
+	bool _active;
 
 	ObjectType getType() override { return ObjectType::kGroupType; };
 	bool isDrawable() override { return true; }
