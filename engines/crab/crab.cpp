@@ -40,6 +40,10 @@ CrabEngine *g_engine;
 
 CrabEngine::CrabEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																		   _gameDescription(gameDesc), _randomSource("Crab") {
+	_app = nullptr;
+	_thumbnail = nullptr;
+	_debugDraw = 0;
+
 	g_engine = this;
 }
 
