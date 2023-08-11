@@ -49,6 +49,7 @@ struct MovementSet {
 
 		Movement(rapidxml::xml_node<char> *node) {
 			_target.load(node);
+			_delay = 0;
 			loadNum(_delay, "delay", node);
 		}
 	};
