@@ -20,7 +20,6 @@
  */
 
 #include "common/scummsys.h"
-#ifdef SCUMMVM_AVX2
 #include <immintrin.h>
 
 #include "graphics/blit.h"
@@ -194,7 +193,7 @@ struct AdditiveBlend {
             srcg = _mm256_and_si256(_mm256_add_epi32(dstg, _mm256_mullo_epi32(srcg, _mm256_mullo_epi32(_mm256_set1_epi32(cg), ina))), _mm256_set1_epi32(BlendBlit::kGModMask));
             srcr = _mm256_and_si256(_mm256_add_epi32(dstr, _mm256_srli_epi32(_mm256_mullo_epi32(srcr, _mm256_mullo_epi32(_mm256_set1_epi32(cr), ina)), BlendBlit::kRModShift - 16)), _mm256_set1_epi32(BlendBlit::kRModMask));
 
-            src = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
+            src = _mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kAModMask));
             src = _mm256_or_si256(src, _mm256_or_si256(srcb, _mm256_or_si256(srcg, srcb)));
         } else if (alphamod) {
             __m256i srcg = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kGModMask));
@@ -205,7 +204,7 @@ struct AdditiveBlend {
             srcg = _mm256_and_si256(_mm256_add_epi32(dstg, _mm256_srli_epi32(_mm256_mullo_epi32(srcg, ina), 8)), _mm256_set1_epi32(BlendBlit::kGModMask));
             srcrb = _mm256_and_si256(_mm256_add_epi32(dstrb, _mm256_mullo_epi32(srcrb, ina)), _mm256_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask));
 
-            src = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
+            src = _mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kAModMask));
             src = _mm256_or_si256(src, _mm256_or_si256(srcrb, srcg));
         } else {
             __m256i srcg = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kGModMask));
@@ -216,7 +215,7 @@ struct AdditiveBlend {
             srcg = _mm256_and_si256(_mm256_add_epi32(dstg, srcg), _mm256_set1_epi32(BlendBlit::kGModMask));
             srcrb = _mm256_and_si256(_mm256_slli_epi32(_mm256_add_epi32(dstrb, srcrb), 8), _mm256_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask));
 
-            src = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
+            src = _mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kAModMask));
             src = _mm256_or_si256(src, _mm256_or_si256(srcrb, srcg));
         }
 
@@ -466,5 +465,3 @@ void BlendBlit::blitAVX2(Args &args, const TSpriteBlendMode &blendMode, const Al
 }
 
 } // End of namespace Graphics
-
-#endif // SCUMMVM_AVX2
