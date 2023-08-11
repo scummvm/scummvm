@@ -129,15 +129,15 @@ public:
 		return _h;
 	}
 
-	const Rect &areaWalk() {
+	const Rect &areaWalk() const {
 		return _areaWalk;
 	}
 
-	const Common::Array<Shape> &areaNoWalk() {
+	const Common::Array<Shape> &areaNoWalk() const {
 		return _areaNowalk;
 	}
 
-	const Common::Array<pyrodactyl::level::Stairs> &areaStairs() {
+	const Common::Array<pyrodactyl::level::Stairs> &areaStairs() const {
 		return _areaStairs;
 	}
 };
