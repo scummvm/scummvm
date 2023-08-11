@@ -69,7 +69,7 @@ struct AnimationEffect {
 		_finish = 0;
 	}
 
-	AnimationEffect(rapidxml::xml_node<char> *node) {
+	AnimationEffect(rapidxml::xml_node<char> *node) : AnimationEffect() {
 		if (nodeValid("effect", node)) {
 			rapidxml::xml_node<char> *effnode = node->first_node("effect");
 			loadNum(_start, "start", effnode);

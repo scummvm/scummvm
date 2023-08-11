@@ -40,6 +40,7 @@ using namespace pyrodactyl::ui;
 
 SaveFileData::SaveFileData(const Common::String &file) {
 	_path = file;
+	_blank = true;
 
 	// Extract String between _ and . For eg., CRAB_Autosave 1.unr -> Autosave 1
 	// 4 => .unr
