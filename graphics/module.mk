@@ -3,9 +3,6 @@ MODULE := graphics
 MODULE_OBJS := \
 	big5.o \
 	blit/blit.o \
-	blit/blit-sse2.o \
-	blit/blit-avx2.o \
-	blit/blit-neon.o \
 	blit/blit-alpha.o \
 	blit/blit-scale.o \
 	cursorman.o \
@@ -143,12 +140,18 @@ endif
 endif
 
 ifeq ($(SCUMMVM_NEON),1)
+MODULE_OBJS += \
+	blit/blit-neon.o
 $(MODULE)/blit/blit-neon.o: CXXFLAGS += -mfpu=neon
 endif
 ifeq ($(SCUMMVM_SSE2),1)
+MODULE_OBJS += \
+	blit/blit-sse2.o
 $(MODULE)/blit/blit-sse2.o: CXXFLAGS += -msse2
 endif
 ifeq ($(SCUMMVM_AVX2),1)
+MODULE_OBJS += \
+	blit/blit-avx2.o
 $(MODULE)/blit/blit-avx2.o: CXXFLAGS += -mavx2
 endif
 
