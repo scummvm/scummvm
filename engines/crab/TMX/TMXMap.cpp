@@ -276,7 +276,7 @@ void TMXMap::drawDebug(const Rect &camera) {
 		}
 	}
 
-	for (auto i : _layer)
+	for (auto &i : _layer)
 		i._pos.draw(-camera.x, -camera.y, 254, 216, 0);
 
 	_areaWalk.draw(-camera.x, -camera.y, 254, 254, 254, 254);

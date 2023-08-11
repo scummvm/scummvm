@@ -51,7 +51,7 @@ void HealthIndicator::load(rapidxml::xml_node<char> *node) {
 }
 
 void HealthIndicator::draw(int num) {
-	for (auto i : _img)
+	for (const auto &i : _img)
 		if (num == i._val) {
 			using namespace pyrodactyl::image;
 			g_engine->_imageManager->draw(_x, _y, i._normal);
