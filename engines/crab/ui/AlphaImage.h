@@ -68,6 +68,7 @@ class AlphaImage {
 public:
 	AlphaImage() {}
 	AlphaImage(rapidxml::xml_node<char> *node) {
+		_img = 0;
 		load(node);
 	}
 
