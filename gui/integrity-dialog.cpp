@@ -318,10 +318,10 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath,
 		Common::File tempFile;
 		if (!tempFile.open(tempNode))
 			continue;
-		long long fileSize = tempFile.size();
+		uint64 fileSize = tempFile.size();
 		tempFile.close();
 
-		file.setVal("size", new Common::JSONValue(fileSize));
+		file.setVal("size", new Common::JSONValue((long long)fileSize));
 
 		Common::JSONArray checksums;
 		Common::StringArray checkcodes = {"md5", "md5-5000", "md5-1M", "md5-t-5000"};
@@ -352,14 +352,14 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath,
 }
 
 void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
-	debug(r->stringify().c_str());
+	debug(3, "JSON Response: %s", r->stringify().c_str());
 	Common::String messageText = IntegrityDialog::parseJSON(r);
 	MessageDialog result(messageText);
 	result.reflowLayout();
 }
 
 void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
-	debug("ERROR %ld: %s", error.httpResponseCode, error.response.c_str());
+	warning("ERROR %ld: %s", error.httpResponseCode, error.response.c_str());
 }
 
 void IntegrityDialog::sendJSON() {
@@ -384,10 +384,10 @@ Common::String IntegrityDialog::parseJSON(Common::JSONValue *response) {
 	if (responeError == -1) { // Unknown variant
 		long long fileset = responseObject.getVal("fileset")->asIntegerNumber();
 		messageText =
-			Common::String::format("Your set of game files seems to be unknown to us. If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org \n\
+			_(Common::String::format("Your set of game files seems to be unknown to us. If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org \n\
 		The game of fileset %lld seems to be an unknown game variant. \n\
 		The details of the game : %s, %s, %s, %s, %s",
-								   fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str());
+								   fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str()));
 
 		return messageText;
 	}
@@ -412,7 +412,7 @@ Common::String IntegrityDialog::parseJSON(Common::JSONValue *response) {
 		messageText += Common::String::format("%s %s\n", name.c_str(), status.c_str());
 	}
 	if (messageText == "")
-		messageText += "Files all OK";
+		messageText += _("Files all OK");
 
 	return messageText;
 }
