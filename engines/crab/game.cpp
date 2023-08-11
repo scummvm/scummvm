@@ -673,8 +673,12 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 		loadGame();
 
 	Common::String data = stream->readString();
+	uint64 end = data.findLastOf(">");
+	if (end == Common::String::npos)
+		error("Invalid save file");
+
 	// +1 to include > as well
-	size_t end = data.findLastOf(">") + 1;
+	end++;
 
 	uint8 *dataC = new uint8[end + 1];
 	dataC[end] = '\0';
