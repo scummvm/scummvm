@@ -61,7 +61,7 @@ struct Trait {
 		_img = 0;
 		_unread = true;
 	}
-	Trait(rapidxml::xml_node<char> *node) {
+	Trait(rapidxml::xml_node<char> *node) : Trait() {
 		load(node);
 	}
 
