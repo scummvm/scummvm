@@ -190,11 +190,10 @@ void Digi::read_another_chunk() {
 		if (c._trigger != -1 && !_mixer->isSoundHandleActive(c._soundHandle)) {
 			int trigger = c._trigger;
 			c._trigger = -1;
+			stop(channel);
 
 			// Dispatch the trigger
 			kernel_trigger_dispatchx(trigger);
-
-			stop(channel);
 		}
 	}
 }

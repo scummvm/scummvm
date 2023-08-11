@@ -357,6 +357,7 @@ void Room102::daemon() {
 					series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 1, 1);
 				}
 			} else {
+				_val12 = 19;
 				series_play("102ha01", 2560, 0, 3, 6, 0, 100, 0, 0, 0, 0);
 			}
 			break;
