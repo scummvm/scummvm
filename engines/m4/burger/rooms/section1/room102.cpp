@@ -149,10 +149,11 @@ void Room102::init() {
 	_trigger = -1;
 
 	if (_G(game).previous_room == -2) {
-		ws_demand_location(_G(my_walker), 321, 343);
-		ws_demand_facing(_G(my_walker), 4);
-		ws_hide_walker(_G(my_walker));
-
+		if (_G(flags)[V012] == 1) {
+			ws_demand_location(321, 343);
+			ws_demand_facing(4);
+			ws_hide_walker();
+		}
 	} else {
 		_G(roomVal1) = 1;
 		_val16 = 1;
@@ -233,12 +234,12 @@ void Room102::daemon() {
 
 			case 20:
 				_val12 = 20;
-				series_play("102ha01", 0, 3, 4, 0, 100, 0, 0, 24, 24);
+				series_play("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 24, 24);
 				break;
 
 			case 21:
 				_val12 = 21;
-				series_play("102ha01", 0, 3, 4, 0, 100, 0, 0, 30, 30);
+				series_play("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 30, 30);
 				break;
 
 			case 26:
@@ -984,8 +985,9 @@ void Room102::daemon() {
 
 		case 2:
 			if (_G(flags)[V012] == 2) {
+				_G(roomVal1) = 3;
 				_G(walker).wilbur_speech("102w003", gTELEPORT);
-			} else if (_G(flags)[V012]) {
+			} else if (_G(flags)[V012] == 0) {
 				_G(roomVal1) = 5;
 
 				if (_G(flags)[V018]) {
