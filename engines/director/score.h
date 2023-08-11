@@ -73,7 +73,7 @@ public:
 	Movie *getMovie() const { return _movie; }
 
 	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
-	bool loadFrame(int frame);
+	bool loadFrame(int frame, bool loadCast);
 	bool readOneFrame();
 	void updateFrame(Frame *frame);
 	Frame *getFrameData(int frameNum);

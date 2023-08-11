@@ -446,7 +446,7 @@ void Score::update() {
 		}
 	}
 
-	loadFrame(_curFrameNumber);
+	loadFrame(_curFrameNumber, true);
 
 	byte tempo = _currentFrame->_mainChannels.tempo;
 
@@ -1455,7 +1455,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect
-	for (_numFrames = 1; loadFrame(_numFrames); _numFrames++) {
+	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
 		if (_framesStream->pos() < _framesStreamSize) {
 			// Record the starting offset for next frame
 			_frameOffsets.push_back(_framesStream->pos());
@@ -1466,7 +1466,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	_currentFrame->reset();
 
-	loadFrame(1);
+	loadFrame(1, true);
 
 	// Read over frame offset array and print each item
 	for (uint i = 0; i < _frameOffsets.size(); i++) {
@@ -1476,7 +1476,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
 
-bool Score::loadFrame(int frameNum) {
+bool Score::loadFrame(int frameNum, bool loadCast) {
 	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %ld", frameNum, _framesStream->pos());
 
 	// Read existing frame (ie already visited)
@@ -1499,8 +1499,10 @@ bool Score::loadFrame(int frameNum) {
 	if (!isFrameRead)
 		return false;
 
-	// Load frame cast
-	setSpriteCasts();
+	if (loadCast) {
+		// Load frame cast
+		setSpriteCasts();
+	}
 
 	return true;
 }
@@ -1588,7 +1590,7 @@ Frame *Score::getFrameData(int frameNum){
 	Frame *frame = _currentFrame;
 	_currentFrame = nullptr; // To avoid later deletion of frame inside renderOneFrame()
 
-	bool isFrameRead = loadFrame(frameNum);
+	bool isFrameRead = loadFrame(frameNum, false);
 
 	// Start restoring all states
 	_curFrameNumber = curFrameNumber;
