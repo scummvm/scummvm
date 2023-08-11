@@ -74,8 +74,7 @@ struct MovementSet {
 		_enabled = false;
 	}
 
-	MovementSet(rapidxml::xml_node<char> *node) {
-		_cur = 0;
+	MovementSet(rapidxml::xml_node<char> *node) : MovementSet() {
 		load(node);
 	}
 
