@@ -68,7 +68,7 @@ public:
 
 	void reset();
 
-	void setupNodes(TMX::TMXMap map);
+	void setupNodes(const TMX::TMXMap &map);
 
 	// Return the node at the given point (SZ)
 	PathfindingGraphNode *getNodeAtPoint(Vector2f point);

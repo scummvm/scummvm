@@ -67,7 +67,7 @@ void PathfindingGrid::reset() {
 	_cellSize.y = 0.0;
 }
 
-void PathfindingGrid::setupNodes(TMX::TMXMap map) {
+void PathfindingGrid::setupNodes(const TMX::TMXMap &map) {
 	// delete nodes if they exist
 	reset();
 
