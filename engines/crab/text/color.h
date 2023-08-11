@@ -53,6 +53,7 @@ public:
 		_invalid.r = 255;
 		_invalid.g = 0;
 		_invalid.b = 220;
+		_invalid.a = 255;
 	}
 
 	Color &get(const int &num);
