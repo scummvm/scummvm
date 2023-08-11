@@ -498,7 +498,7 @@ iVertexBuffer *cMeshLoaderCollada::CreateVertexBuffer(cColladaGeometry &aGeometr
 	}
 
 	// Add tangents
-	memcpy(pVtxBuff->GetArray(eVertexFlag_Texture1), &aGeometry.mvTangents[0],
+	memcpy(pVtxBuff->GetArray(eVertexFlag_Texture1), aGeometry.mvTangents.data(),
 		   aGeometry.mvTangents.size() * sizeof(float));
 
 	// Add indices
