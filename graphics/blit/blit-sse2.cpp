@@ -20,7 +20,6 @@
  */
 
 #include "common/scummsys.h"
-#ifdef SCUMMVM_SSE2
 #include <immintrin.h>
 
 #include "graphics/blit.h"
@@ -200,7 +199,7 @@ struct AdditiveBlend {
             srcg = _mm_and_si128(_mm_add_epi32(dstg, sse2_mul32(srcg, sse2_mul32(_mm_set1_epi32(cg), ina))), _mm_set1_epi32(BlendBlit::kGModMask));
             srcr = _mm_and_si128(_mm_add_epi32(dstr, _mm_srli_epi32(sse2_mul32(srcr, sse2_mul32(_mm_set1_epi32(cr), ina)), BlendBlit::kRModShift - 16)), _mm_set1_epi32(BlendBlit::kRModMask));
 
-            src = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
+            src = _mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kAModMask));
             src = _mm_or_si128(src, _mm_or_si128(srcb, _mm_or_si128(srcg, srcr)));
         } else if (alphamod) {
             __m128i srcg = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask));
@@ -211,7 +210,7 @@ struct AdditiveBlend {
             srcg = _mm_and_si128(_mm_add_epi32(dstg, _mm_srli_epi32(sse2_mul32(srcg, ina), 8)), _mm_set1_epi32(BlendBlit::kGModMask));
             srcrb = _mm_and_si128(_mm_add_epi32(dstrb, sse2_mul32(srcrb, ina)), _mm_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask));
 
-            src = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
+            src = _mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kAModMask));
             src = _mm_or_si128(src, _mm_or_si128(srcrb, srcg));
         } else {
             __m128i srcg = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask));
@@ -222,7 +221,7 @@ struct AdditiveBlend {
             srcg = _mm_and_si128(_mm_add_epi32(dstg, srcg), _mm_set1_epi32(BlendBlit::kGModMask));
             srcrb = _mm_and_si128(_mm_slli_epi32(_mm_add_epi32(dstrb, srcrb), 8), _mm_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask));
 
-            src = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
+            src = _mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kAModMask));
             src = _mm_or_si128(src, _mm_or_si128(srcrb, srcg));
         }
 
@@ -467,5 +466,3 @@ void BlendBlit::blitSSE2(Args &args, const TSpriteBlendMode &blendMode, const Al
 }
 
 } // End of namespace Graphics
-
-#endif // SSE2

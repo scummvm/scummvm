@@ -20,7 +20,6 @@
  */
 
 #include "common/scummsys.h"
-#ifdef SCUMMVM_NEON
 #include <arm_neon.h>
 
 #include "graphics/blit.h"
@@ -194,7 +193,7 @@ struct AdditiveBlend {
             srcg = vandq_u32(vaddq_u32(dstg, vmulq_u32(srcg, vmulq_u32(vmovq_n_u32(cg), ina))), vmovq_n_u32(BlendBlit::kGModMask));
             srcr = vandq_u32(vaddq_u32(dstr, vshrq_n_u32(vmulq_u32(srcr, vmulq_u32(vmovq_n_u32(cr), ina)), BlendBlit::kRModShift - 16)), vmovq_n_u32(BlendBlit::kRModMask));
 
-            src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
+            src = vandq_u32(dst, vmovq_n_u32(BlendBlit::kAModMask));
             src = vorrq_u32(src, vorrq_u32(srcb, vorrq_u32(srcg, srcr)));
         } else if (alphamod) {
             uint32x4_t srcg = vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask));
@@ -205,7 +204,7 @@ struct AdditiveBlend {
             srcg = vandq_u32(vaddq_u32(dstg, vshrq_n_u32(vmulq_u32(srcg, ina), 8)), vmovq_n_u32(BlendBlit::kGModMask));
             srcrb = vandq_u32(vaddq_u32(dstrb, vmulq_u32(srcrb, ina)), vmovq_n_u32(BlendBlit::kRModMask | BlendBlit::kBModMask));
 
-            src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
+            src = vandq_u32(dst, vmovq_n_u32(BlendBlit::kAModMask));
             src = vorrq_u32(src, vorrq_u32(srcrb, srcg));
         } else {
             uint32x4_t srcg = vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask));
@@ -216,7 +215,7 @@ struct AdditiveBlend {
             srcg = vandq_u32(vaddq_u32(dstg, srcg), vmovq_n_u32(BlendBlit::kGModMask));
             srcrb = vandq_u32(vshlq_n_u32(vaddq_u32(dstrb, srcrb), 8), vmovq_n_u32(BlendBlit::kRModMask | BlendBlit::kBModMask));
 
-            src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
+            src = vandq_u32(dst, vmovq_n_u32(BlendBlit::kAModMask));
             src = vorrq_u32(src, vorrq_u32(srcrb, srcg));
         }
 
@@ -464,5 +463,3 @@ void BlendBlit::blitNEON(Args &args, const TSpriteBlendMode &blendMode, const Al
 }
 
 } // end of namespace Graphics
-
-#endif // SCUMMVM_NEON
