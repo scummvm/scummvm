@@ -36,12 +36,13 @@ namespace Crab {
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::anim;
 
-AnimationFrame::AnimationFrame(rapidxml::xml_node<char> *node) : _eff(node) {
+AnimationFrame::AnimationFrame(rapidxml::xml_node<char> *node) : AnimationFrame() {
+	_eff = AnimationEffect(node);
 	Vector2i::load(node);
 	loadImgKey(_img, "img", node);
 	loadNum(_start, "start", node);
 	loadNum(_finish, "finish", node);
-	//loadColor(col, node);
+	loadColor(_col, node);
 
 	if (nodeValid("text", node, false))
 		_text.load(node->first_node("text"));
