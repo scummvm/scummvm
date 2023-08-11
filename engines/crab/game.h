@@ -119,7 +119,7 @@ private:
 	}
 
 public:
-	Game() : _isInited(false) {}
+	Game() : _isInited(false), _state(STATE_GAME) {}
 
 	void init(const Common::String &filename);
 
