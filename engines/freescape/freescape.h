@@ -223,6 +223,7 @@ public:
 	bool _flyMode;
 	bool _shootMode;
 	bool _noClipMode;
+	bool _invertY;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 	void processInput();
 	void resetInput();

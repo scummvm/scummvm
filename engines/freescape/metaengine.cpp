@@ -95,6 +95,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_INVERT_Y,
+		{
+			_s("Invert Y-axis on mouse"),
+			_s("Use alternative camera controls"),
+			"invert_y",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

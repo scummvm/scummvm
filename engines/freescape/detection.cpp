@@ -777,7 +777,7 @@ static const DebugChannelDef debugFlagList[] = {
 class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
-		_guiOptions = GUIO6(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS, GAMEOPTION_EXTENDED_TIMER, GAMEOPTION_DISABLE_DEMO_MODE, GAMEOPTION_DISABLE_SENSORS, GAMEOPTION_DISABLE_FALLING);
+		_guiOptions = GUIO7(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS, GAMEOPTION_EXTENDED_TIMER, GAMEOPTION_DISABLE_DEMO_MODE, GAMEOPTION_DISABLE_SENSORS, GAMEOPTION_DISABLE_FALLING, GAMEOPTION_INVERT_Y);
 	}
 
 	const char *getName() const override {

@@ -76,6 +76,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("disable_falling"), _disableFalling))
 		error("Failed to parse bool from disable_falling option");
 
+	if (!Common::parseBool(ConfMan.get("invert_y"), _invertY))
+		error("Failed to parse bool from disable_falling option");
+
 	_startArea = 0;
 	_startEntrance = 0;
 	_currentArea = nullptr;
@@ -491,6 +494,9 @@ void FreescapeEngine::processInput() {
 				// so on-screen controls are still accesible
 				mousePos.x = g_system->getWidth() * ( _viewArea.left + _viewArea.width() / 2) / _screenW;
 				mousePos.y = g_system->getHeight() * (_viewArea.top + _viewArea.height() / 2) / _screenW;
+				if (_invertY)
+					event.relMouse.y = -event.relMouse.y;
+
 				g_system->warpMouse(mousePos.x, mousePos.y);
 				g_system->getEventManager()->purgeMouseEvents();
 			}
