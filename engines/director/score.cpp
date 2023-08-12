@@ -1552,18 +1552,20 @@ Frame *Score::getFrameData(int frameNum){
 	// Be sure to delete this frame after use
 
 	// Backup variables
-	int curFrameNumber = _curFrameNumber;
-	Frame *frame = _currentFrame;
-	_currentFrame = nullptr; // To avoid later deletion of frame inside renderOneFrame()
-
+	int tempFrameNumber = _curFrameNumber;
+	
 	bool isFrameRead = loadFrame(frameNum, false);
+	Frame *tempFrame = _currentFrame;
 
-	// Start restoring all states
-	_curFrameNumber = curFrameNumber;
-	_currentFrame = frame;
+	_currentFrame = new Frame(this, _numChannelsDisplayed);
+	loadFrame(frameNum, true);
+	Frame *frame = _currentFrame;
+
+	_currentFrame = tempFrame;
+	_curFrameNumber = tempFrameNumber;
 
 	if (isFrameRead) {
-		return _currentFrame;
+		return frame;
 	}
 	return nullptr;
 }
