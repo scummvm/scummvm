@@ -149,20 +149,23 @@ Common::Error CrabEngine::saveGameState(int slot, const Common::String &desc, bo
 }
 
 Common::Error CrabEngine::loadGameState(int slot) {
+	Common::Error res = Common::kReadingFailed;
 	saveAutosaveIfEnabled();
 
 	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(getSaveStateName(slot));
 
 	if (!saveFile)
-		return Common::kReadingFailed;
+		return res;
 
-	_app->getGame()->loadState(saveFile);
-	ExtendedSavegameHeader header;
-	if (MetaEngine::readSavegameHeader(saveFile, &header))
-		setTotalPlayTime(header.playtime);
+	if (_app->getGame()->loadState(saveFile)) {
+		ExtendedSavegameHeader header;
+		if (MetaEngine::readSavegameHeader(saveFile, &header))
+			setTotalPlayTime(header.playtime);
+		res = Common::kNoError;
+	}
 
 	delete saveFile;
-	return Common::kNoError;
+	return res;
 }
 
 Common::Error CrabEngine::syncGame(Common::Serializer &s) {

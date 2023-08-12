@@ -668,14 +668,11 @@ void Game::applyResult(LevelResult result) {
 //------------------------------------------------------------------------
 // Purpose: Save/load game
 //------------------------------------------------------------------------
-void Game::loadState(Common::SeekableReadStream *stream) {
-	if (!_isInited)
-		loadGame();
-
+bool Game::loadState(Common::SeekableReadStream *stream) {
 	Common::String data = stream->readString();
 	uint64 end = data.findLastOf(">");
-	if (end == Common::String::npos)
-		error("Invalid save file");
+	if (end == Common::String::npos) // invalid save file, returning false from here will display "Reading data failed" dialogbox
+		return false;
 
 	// +1 to include > as well
 	end++;
@@ -684,6 +681,9 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 	dataC[end] = '\0';
 	memcpy(dataC, data.c_str(), end);
 	XMLDoc conf(dataC);
+
+	if (!_isInited)
+		loadGame();
 
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
@@ -717,6 +717,8 @@ void Game::loadState(Common::SeekableReadStream *stream) {
 			_clock.start(playtime);
 		}
 	}
+
+	return true;
 }
 //------------------------------------------------------------------------
 // Purpose: Write game state to file

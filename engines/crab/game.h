@@ -133,7 +133,7 @@ public:
 	void internalEvents(bool &shouldChangeState, GameStateID &newStateId);
 	void draw();
 
-	void loadState(Common::SeekableReadStream *stream);
+	bool loadState(Common::SeekableReadStream *stream);
 
 	// Raw function to save game to file - generally, using the CreateSaveGame function is recommended
 	void saveState(Common::SeekableWriteStream *stream);
