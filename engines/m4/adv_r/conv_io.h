@@ -72,7 +72,7 @@ struct Converstation_Globals {
 };
 
 extern Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box = true);
-extern void conv_load_and_prepare(const char *filename, int trigger, bool ignoreIt = true);
+extern void conv_load_and_prepare(const char *filename, int trigger, bool ignoreIt);
 
 extern void conv_unload(Conv *c);
 extern void conv_shutdown();

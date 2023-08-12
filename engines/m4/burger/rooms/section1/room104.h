@@ -33,8 +33,13 @@ private:
 	int _val1 = 0;
 	int _val2 = 14;
 	int _val3 = 0;
+	bool _flag1 = false;
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
 
 	void conv();
+	void freeSeries();
+	int getRandom() const;
 
 public:
 	Room104() : Room() {}

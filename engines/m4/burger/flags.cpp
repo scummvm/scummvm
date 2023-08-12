@@ -141,7 +141,7 @@ void Flags::reset1() {
 	(*this)[V018] = 0;
 	(*this)[V019] = 0;
 	(*this)[V023] = 0;
-	(*this)[V027] = 0;
+	(*this)[WAKE_UP_STOLIE_COUNT] = 0;
 	(*this)[V028] = 0;
 	(*this)[V031] = 0;
 	(*this)[V032] = 0;

@@ -201,6 +201,10 @@ PlayerInfo *player_update_info(machine *myWalker, PlayerInfo *player_info) {
 	return player_info;
 }
 
+PlayerInfo *player_update_info() {
+	return player_update_info(_G(my_walker), &_G(player_info));
+}
+
 void player_set_facing_hotspot(int trigger) {
 	player_set_facing_at(trigger, _G(hotspot_x), _G(hotspot_y));
 }
