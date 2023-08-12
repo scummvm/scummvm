@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section1/room104.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
+#include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
 
 namespace M4 {
@@ -35,6 +36,18 @@ static const char *SAID1[][4] = {
 	{ "MAIN STREET", nullptr,   "104W002", "104W002" },
 	{ "AUNT POLLY'S HOUSE", nullptr, "104W002", "104W002" },
 	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const seriesPlayBreak PLAY1[] = {
+	{ 1,  3, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ 4, 23, "104S101", 2, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY2[] = {
+	{ 18, 28, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ 29, 47, "104_003", 2, 150, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
 };
 
 void Room104::init() {
@@ -91,6 +104,355 @@ void Room104::init() {
 }
 
 void Room104::daemon() {
+	int frame, frameRate;
+
+	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		player_update_info();
+
+		if (_G(player_info).y > 374) {
+			player_set_commands_allowed(false);
+			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1001);
+			_G(kernel).call_daemon_every_loop = false;
+		}
+	}
+
+	switch (_G(kernel).trigger) {
+	case 1:
+		digi_play("104_006", 2, 255, 1005);
+		break;
+
+	case 2:
+		digi_unload("104_005");
+		break;
+
+	case 3:
+		switch (_val2) {
+		case 6:
+			_flag1 = false;
+			_val2 = 9;
+			series_play("104dr04", 512, 2, 3, 6, 0, 100, 0, 0, 0, 10);
+			series_play("104dr04s", 513, 2, -1, 6, 0, 100, 0, 0, 0, 10);
+			break;
+
+		case 8:
+			_flag1 = false;
+			_val2 = 13;
+			series_play("104dr04", 512, 2, 3, 6, 0, 100, 0, 0, 0, 10);
+			series_play("104dr04s", 513, 2, -1, 6, 0, 100, 0, 0, 0, 10);
+			break;
+
+		case 9:
+			_flag1 = false;
+			_val2 = 14;
+			series_play("104dr02", 512, 0, 3, 6, 0, 100, 0, 0, 0, 7);
+			series_play("104dr02s", 513, 0, -1, 6, 0, 100, 0, 0, 0, 7);
+			break;
+
+		case 10:
+			digi_stop(2);
+			freeSeries();
+			_flag1 = true;
+			_series1 = series_play("104DR04", 512, 16, 4, 6, 0, 100, 0, 0, 0, 10);
+			_series2 = series_play("104DR04S", 513, 16, -1, 6, 0, 100, 0, 0, 0, 10);
+			break;
+
+		case 12:
+			freeSeries();
+			_val2 = 10;
+			series_play_with_breaks(PLAY1, "104DR03", 512, 3, 1);
+			break;
+
+		case 13:
+			_flag1 = false;
+			_val2 = 9;
+			series_play_with_breaks(PLAY2, "104dr01", 512, 3, 1);
+			break;
+
+		case 14:
+			if (!digi_play_state(2)) {
+				if (imath_ranged_rand(1, 4) == 1) {
+					_val2 = 15;
+					series_play("104dr02", 512, 0, 3, 8, 0, 100, 0, 0, 13, 14);
+					series_play("104dr02s", 513, 0, -1, 8, 0, 100, 0, 0, 13, 14);
+					return;
+				}
+
+				_val1 = 0;
+
+				switch (getRandom()) {
+				case 1:
+					digi_play("104s100a", 2, 125, -1);
+					break;
+				case 2:
+					digi_play("104s100b", 2, 125, -1);
+					_val1 = 100;
+					break;
+				case 3:
+					digi_play("104s100c", 2, 125, -1);
+					break;
+				case 4:
+					digi_play("104s100d", 2, 125, -1);
+					break;
+				case 5:
+					digi_play("104s100e", 2, 125, -1);
+					break;
+				default:
+					break;
+				}
+			}
+
+			_flag1 = false;
+			++_val1;
+
+			frame = 0;
+			if (_val1 < 3)
+				frame = 22;
+			else if (_val1 < 14)
+				frame = 23;
+			else {
+				switch (imath_ranged_rand(1, 3)) {
+				case 1:
+					frame = 22;
+					break;
+				case 2:
+					frame = 24;
+					break;
+				case 3:
+					frame = 25;
+					break;
+				default:
+					break;
+				}
+			}
+
+			frameRate = _val1 < 14 ? 15 : imath_ranged_rand(6, 15);
+			series_play("104dr02", 512, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
+			series_play("104dr02s", 513, 0, -1, frameRate, 0, 100, 0, 0, frame, frame);
+			break;
+
+		case 15:
+			if (!digi_play_state(2)) {
+				switch (imath_ranged_rand(1, 6)) {
+				case 1:
+					_val2 = 14;
+					series_play("104dr02", 512, 2, 3, 8, 0, 100, 0, 0, 13, 14);
+					series_play("104dr02s", 513, 2, -1, 8, 0, 100, 0, 0, 13, 14);
+					return;
+				case 2:
+					_val2 = 16;
+					series_play("104dr02", 512, 0, 3, 8, 0, 100, 0, 0, 20, 20);
+					series_play("104dr02s", 513, 0, -1, 8, 0, 100, 0, 0, 20, 20);
+					return;
+				default:
+					break;
+				}
+
+				_val1 = 0;
+
+				switch (getRandom()) {
+				case 1:
+					digi_play("104s100a", 2, 125, -1);
+					break;
+				case 2:
+					digi_play("104s100b", 2, 125, -1);
+					_val1 = 100;
+					break;
+				case 3:
+					digi_play("104s100c", 2, 125, -1);
+					break;
+				case 4:
+					digi_play("104s100d", 2, 125, -1);
+					break;
+				case 5:
+					digi_play("104s100e", 2, 125, -1);
+					break;
+				default:
+					break;
+				}
+
+				_flag1 = false;
+				++_val1;
+
+				frame = 0;
+				if (_val1 < 3)
+					frame = 16;
+				else if (_val1 < 14)
+					frame = 18;
+				else {
+					switch (imath_ranged_rand(1, 3)) {
+					case 1:
+						frame = 15;
+						break;
+					case 2:
+						frame = 17;
+						break;
+					case 3:
+						frame = 19;
+						break;
+					default:
+						break;
+					}
+				}
+
+				frameRate = _val1 < 14 ? 15 : imath_ranged_rand(6, 15);
+				series_play("104dr02", 512, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
+				series_play("104dr02s", 513, 0, -1, frameRate, 0, 100, 0, 0, frame, frame);
+			}
+			break;
+
+		case 16:
+			if (!digi_play_state(2)) {
+				if (imath_ranged_rand(1, 4) == 1) {
+					_val2 = 15;
+					series_play("104dr02", 512, 0, 3, 8, 0, 100, 0, 0, 20, 20);
+					series_play("104dr02s", 513, 0, -1, 8, 0, 100, 0, 0, 20, 20);
+					break;
+				} else {
+					switch (getRandom()) {
+					case 1:
+						digi_play("104s100a", 2, 125, -1);
+						break;
+					case 2:
+						digi_play("104s100b", 2, 125, -1);
+						_val1 = 100;
+						break;
+					case 3:
+						digi_play("104s100c", 2, 125, -1);
+						break;
+					case 4:
+						digi_play("104s100d", 2, 125, -1);
+						break;
+					case 5:
+						digi_play("104s100e", 2, 125, -1);
+						break;
+					default:
+						break;
+					}
+
+					_flag1 = false;
+					++_val1;
+
+					frame = 0;
+					if (_val1 < 3)
+						frame = 16;
+					else if (_val1 < 14)
+						frame = 18;
+					else {
+						switch (getRandom()) {
+						case 1:
+							frame = 15;
+							break;
+						case 2:
+							frame = 17;
+							break;
+						case 3:
+							frame = 19;
+							break;
+						default:
+							break;
+						}
+					}
+
+					frameRate = (_val1 < 14) ? 15 : imath_ranged_rand(6, 15);
+					series_play("104dr02", 512, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
+					series_play("104dr02s", 513, 0, -1, frameRate, 0, 100, 0, 0, frame, frame);
+				}
+			}
+			break;
+
+		case 17:
+			freeSeries();
+			_flag1 = true;
+			_val2 = 18;
+			_series1 = series_play("104DR04", 512, 4, -1, 6, -1, 100, 0, 0, 11, 15);
+			_series2 = series_show("104DR04S", 513, 0, -1, -1, 11);
+			digi_play(conv_sound_to_play(), 1, 255, 3);
+			break;
+
+		case 18:
+			freeSeries();
+			_flag1 = true;
+			_series1 = series_show("104DR04", 512, 0, -1, -1, 11);
+			_series2 = series_show("104DR04S", 513, 0, -1, -1, 11);
+			conv_resume_curr();
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 4:
+		conv_load_and_prepare("conv16", 5, false);
+		conv_export_pointer_curr(&_G(flags)[WAKE_UP_STOLIE_COUNT], 0);
+		conv_play_curr();
+		break;
+
+	case 5:
+		term_message("WAKE UP STOLIE COUNT = %d", _G(flags)[WAKE_UP_STOLIE_COUNT]);
+		if (!_G(flags)[WAKE_UP_STOLIE_COUNT]) {
+			term_message("AT END OF CONV? COUNT = %d", _G(flags)[WAKE_UP_STOLIE_COUNT]);
+			_G(flags)[V028] = 0;
+			_G(flags)[WAKE_UP_STOLIE_COUNT]++;
+		}
+
+		freeSeries();
+
+		switch (_G(flags)[WAKE_UP_STOLIE_COUNT]) {
+		case 1:
+		case 4:
+		case 7:
+		case 11:
+			_val2 = 6;
+			break;
+		case 2:
+		case 3:
+		case 5:
+		case 6:
+		case 8:
+		case 9:
+		case 10:
+			_val2 = 8;
+			break;
+		default:
+			break;
+		}
+
+		kernel_trigger_dispatch_now(3);
+		player_set_commands_allowed(true);
+		break;
+
+	case gTELEPORT:
+		switch (_G(roomVal1)) {
+		case 1:
+			ws_demand_location(315, 373);
+			ws_demand_facing(10);
+			ws_walk(271, 348, 0, -1, 10);
+			break;
+		case 2:
+			ws_demand_location(208, 243);
+			ws_demand_facing(7);
+			ws_walk(180, 287, 0, -1, 7);
+			break;
+		case 3:
+			ws_demand_location(417, 361);
+			ws_demand_facing(3);
+			break;
+		case 4:
+			ws_demand_location(0, 326);
+			ws_demand_facing(3);
+			ws_walk(36, 338, 0, -1, 3);
+			break;
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room104::pre_parser() {
@@ -122,7 +484,7 @@ void Room104::parser() {
 			if (_G(flags)[V028]) {
 				player_set_commands_allowed(false);
 
-				switch (_G(flags)[V027]) {
+				switch (_G(flags)[WAKE_UP_STOLIE_COUNT]) {
 				case 0:
 					_val2 = 12;
 					_G(walker).wilbur_speech_random("104W100A", "104W100B", "104W100C",
@@ -165,6 +527,31 @@ void Room104::conv() {
 		}
 	}
 }
+
+void Room104::freeSeries() {
+	if (_flag1) {
+		TerminateMachine(_series1);
+		TerminateMachine(_series2);
+		_flag1 = false;
+	}
+}
+
+int Room104::getRandom() const {
+	if (imath_ranged_rand(1, 4) == 1) {
+		return imath_ranged_rand(3, 4);
+	} else {
+		switch (imath_ranged_rand(1, 5)) {
+		case 1:
+		case 2:
+			return 1;
+		case 3:
+			return 2;
+		default:
+			return 5;
+		}
+	}
+}
+
 
 } // namespace Rooms
 } // namespace Burger
