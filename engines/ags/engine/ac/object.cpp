@@ -88,16 +88,6 @@ void Object_RemoveTint(ScriptObject *objj) {
 }
 
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
-	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) { // Previous version of SetView had negative loop and frame mean "use latest values"
-		auto &obj = _G(objs)[objj->id];
-		if (loop < 0) loop = obj.loop;
-		if (frame < 0) frame = obj.frame;
-		const int vidx = view - 1;
-		if (vidx < 0 || vidx >= _GP(game).numviews) quit("!Object_SetView: invalid view number used");
-		loop = Math::Clamp(loop, 0, (int)_GP(views)[vidx].numLoops - 1);
-		frame = Math::Clamp(frame, 0, (int)_GP(views)[vidx].loops[loop].numFrames - 1);
-	}
-
 	SetObjectFrame(objj->id, view, loop, frame);
 }
 
