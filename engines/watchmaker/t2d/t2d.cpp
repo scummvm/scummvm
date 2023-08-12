@@ -2891,7 +2891,7 @@ void doT2DMouse(WGame &game) {
 							for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
 								int afret;
 
-								sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
+								snprintf(Name, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
 
 								t3dForceNOFastFile(1);
 								afret = t3dAccessFile(Name);
@@ -2909,12 +2909,12 @@ void doT2DMouse(WGame &game) {
 						{
 							TimeDate sysTime;
 							g_system->getTimeAndDate(sysTime);
-							sprintf(Text, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.tm_hour, sysTime.tm_min,
+							snprintf(Text, 1000, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.tm_hour, sysTime.tm_min,
 									sysTime.tm_sec, sysTime.tm_mday, sysTime.tm_mon, sysTime.tm_year);
 						}
 						if (DataSave(Text, (uint8) optionsSlot)) {
-							sprintf(Text, "%stemp.tmp", game.workDirs._gameDir.c_str());
-							sprintf(Name, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
+							snprintf(Text, 1000, "%stemp.tmp", game.workDirs._gameDir.c_str());
+							snprintf(Name, MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
 							CopyFile(Text, Name, FALSE);
 						} else {
 							DebugLogFile("DataSave(slot %d) Failed. Quitting ...", optionsSlot);
@@ -2928,7 +2928,7 @@ void doT2DMouse(WGame &game) {
 					case T2D_BT_OPTIONS_LOAD:
 						bShowOnlyLoadWindow = 0;
 						i = Saves[optionsCurPos + optionsWhat].NFile;
-						sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
+						snprintf(Name, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
 						if (!DataLoad(game, "", (uint8) i)) {
 							DebugLogFile("DataLoad(slot %d) Failed. Quitting ...", i);
 							CloseSys(game);
@@ -4412,14 +4412,14 @@ void doT2D(WGame &game) {
 			w->text[T2D_TEXT_PDA_MAIN_TIME].font = FontKind::PDA;
 			w->text[T2D_TEXT_PDA_MAIN_TIME].color = GREEN_FONT;
 			if (t3dCurTime >= 1300) {
-				sprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, "%04d", t3dCurTime - 1200);
+				snprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, T2D_MAX_TEXTS_IN_WIN, "%04d", t3dCurTime - 1200);
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[5] = 0;
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[4] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[3];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[3] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[2];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[2] = ':';
 				strcat(w->text[T2D_TEXT_PDA_MAIN_TIME].text, " PM");
 			} else {
-				sprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, "%04d", t3dCurTime);
+				snprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, T2D_MAX_TEXTS_IN_WIN, "%04d", t3dCurTime);
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[5] = 0;
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[4] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[3];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[3] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[2];
@@ -5456,8 +5456,8 @@ void CaricaSaves(WGame &game) {
 	t3dForceNOFastFile(1);
 
 	for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
-		sprintf(DataFile, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
-		sprintf(GfxFile,  "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), i + 1);
+		snprintf(DataFile, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
+		snprintf(GfxFile,  MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), i + 1);
 
 //		se non facessi cosi' la funzione t3dOpenFile() non trovando il file sparerebbe mille warning
 		if (!t3dAccessFile(DataFile)) continue;
@@ -5542,8 +5542,8 @@ void RefreshSaveImg(WGame &game, int Pos, uint8 Type) {
 
 		if (Pos >= NSaves) break;
 
-		sprintf(DataFileName, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
-		sprintf(GfxFileName,  "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
+		snprintf(DataFileName, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
+		snprintf(GfxFileName,  MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
 
 		t3dForceNOFastFile(1);
 		if (!t3dAccessFile(DataFileName)) {
@@ -5563,7 +5563,7 @@ void RefreshSaveImg(WGame &game, int Pos, uint8 Type) {
 		w->bm[T2D_BM_OPTIONS_SAVE_START + i].tnum &= ~T2D_BM_OFF;
 
 		//Aggiorna la descrizione
-		sprintf(w->text[T2D_TEXT_OPTIONS_SAVE_START + i].text, "%02d:%02d %02d/%02d/%04d", Saves[Pos].Hour, Saves[Pos].Min, Saves[Pos].Day, Saves[Pos].Month, Saves[Pos].Year);
+		snprintf(w->text[T2D_TEXT_OPTIONS_SAVE_START + i].text, T2D_MAX_TEXTS_IN_WIN, "%02d:%02d %02d/%02d/%04d", Saves[Pos].Hour, Saves[Pos].Min, Saves[Pos].Day, Saves[Pos].Month, Saves[Pos].Year);
 		w->bm[T2D_BM_OPTIONS_TEXT_SAVE_START + i].tnum &= ~T2D_BM_OFF;
 		strcpy(optionsSaves[i], DataFileName);
 
