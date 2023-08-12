@@ -6,15 +6,18 @@
 mkdir -p build-release
 cd build-release
 
+PLATFORM=m68k-atari-mintelf
+
 export ASFLAGS="-m68020-60"
 export CXXFLAGS="-m68020-60 -DUSE_MOVE16 -DUSE_SUPERVIDEL -DUSE_SV_BLITTER"
 export LDFLAGS="-m68020-60"
+export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"
 
 if [ ! -f config.log ]
 then
 ../configure \
 	--backend=atari \
-	--host=m68k-atari-mint \
+	--host=${PLATFORM} \
 	--enable-release \
 	--disable-mt32emu \
 	--disable-lua \
@@ -35,6 +38,13 @@ make -j 16
 rm -rf dist-generic
 make dist-generic
 
+# make memory protection friendly
+${PLATFORM}-flags -S dist-generic/scummvm/scummvm.ttp
+
+# create symbol file and strip
+${PLATFORM}-nm -C dist-generic/scummvm/scummvm.ttp | grep -vF ' .L' | grep ' [TtWV] ' | ${PLATFORM}-c++filt | sort -u > dist-generic/scummvm/scummvm.sym
+${PLATFORM}-strip -s dist-generic/scummvm/scummvm.ttp
+
 # remove unused files; absent gui-icons.dat massively speeds up startup time (used for the grid mode)
 rm -f dist-generic/scummvm/data/{gui-icons,achievements,macgui,shaders}.dat
 
@@ -52,3 +62,9 @@ cd -
 # readme.txt
 cp ../backends/platform/atari/readme.txt dist-generic/scummvm
 unix2dos dist-generic/scummvm/readme.txt
+
+cd dist-generic
+zip -r -9 scummvm-fat.zip scummvm
+cd -
+
+mv dist-generic/scummvm-fat.zip ..

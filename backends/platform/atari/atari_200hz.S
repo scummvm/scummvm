@@ -19,14 +19,16 @@
  *
  */
 
-	.globl	_atari_200hz_init
-	.globl	_atari_200hz_shutdown
+ #include "symbols.h"
 
-	.globl	_counter_200hz
+	.globl	SYM(atari_200hz_init)
+	.globl	SYM(atari_200hz_shutdown)
+
+	.globl	SYM(counter_200hz)
 
 	.text
 
-_atari_200hz_init:
+SYM(atari_200hz_init):
 	move	sr,-(sp)
 	or	#0x700,sr
 
@@ -36,7 +38,7 @@ _atari_200hz_init:
 	move	(sp)+,sr
 	rts
 
-_atari_200hz_shutdown:
+SYM(atari_200hz_shutdown):
 	move	sr,-(sp)
 	or	#0x700,sr
 
@@ -50,7 +52,7 @@ _atari_200hz_shutdown:
 old_200hz:
 	dc.l	0
 my_200hz:
-	addq.l	#1,_counter_200hz
+	addq.l	#1,SYM(counter_200hz)
 
 	move.l	old_200hz,-(sp)
 	rts
@@ -59,5 +61,5 @@ my_200hz:
 	.bss
 	.even
 
-_counter_200hz:
+SYM(counter_200hz):
 	ds.l	1

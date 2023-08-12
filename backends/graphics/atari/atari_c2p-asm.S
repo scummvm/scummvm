@@ -19,20 +19,22 @@
  *
  */
 
+ #include "../../platform/atari/symbols.h"
+
 | C2P by Mikael Kalms (public domain)
 | See https://github.com/Kalmalyzer/kalms-c2p
 
-	.globl	_asm_c2p1x1_8
-	.globl	_asm_c2p1x1_8_tt
-	.globl	_asm_c2p1x1_8_rect
-	.globl	_asm_c2p1x1_4
-	.globl	_asm_c2p1x1_4_rect
+	.globl	SYM(asm_c2p1x1_8)
+	.globl	SYM(asm_c2p1x1_8_tt)
+	.globl	SYM(asm_c2p1x1_8_rect)
+	.globl	SYM(asm_c2p1x1_4)
+	.globl	SYM(asm_c2p1x1_4_rect)
 
 
 	.text
 
 | void asm_c2p1x1_8(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
-_asm_c2p1x1_8:
+SYM(asm_c2p1x1_8):
 	move.l	(4,sp),a0				| chunky
 	move.l	(8,sp),d0				| chunky end
 	move.l	(12,sp),a1				| screen
@@ -229,7 +231,7 @@ c2p1x1_8_start:
 
 
 | void asm_c2p1x1_8_tt(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen, uint32 screenPitch);
-_asm_c2p1x1_8_tt:
+SYM(asm_c2p1x1_8_tt):
 	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
 
 	move.l	(11*4+4,sp),a0				| a0: chunky
@@ -444,7 +446,7 @@ c2p1x1_8_tt_start:
 
 
 | void asm_c2p1x1_8_rect(const byte *pChunky, const byte *pChunkyEnd, uint32 chunkyWidth, uint32 chunkyPitch, byte *pScreen, uint32 screenPitch);
-_asm_c2p1x1_8_rect:
+SYM(asm_c2p1x1_8_rect):
 	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
 
 	move.l	(11*4+4,sp),a0				| a0: chunky
@@ -676,7 +678,7 @@ c2p1x1_8_rect_done:
 
 
 | void asm_c2p1x1_4(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
-_asm_c2p1x1_4:
+SYM(asm_c2p1x1_4):
 	move.l	(4,sp),a0				| chunky
 	move.l	(8,sp),d0				| chunky end
 	move.l	(12,sp),a1				| screen
@@ -780,7 +782,7 @@ c2p1x1_4_start:
 
 
 | void asm_c2p1x1_4_rect(const byte *pChunky, const byte *pChunkyEnd, uint32 chunkyWidth, uint32 chunkyPitch, byte *pScreen, uint32 screenPitch);
-_asm_c2p1x1_4_rect:
+SYM(asm_c2p1x1_4_rect):
 	movem.l	d2-d7/a2-a6,-(sp)			| 6 + 5 = 11 longs
 
 	move.l	(11*4+4,sp),a0				| a0: chunky

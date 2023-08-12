@@ -19,23 +19,25 @@
  *
  */
 
-	.global	_atari_kbdvec
-	.global	_atari_mousevec
-	.global	_atari_vkbderr
+ #include "symbols.h"
 
-	.extern	_g_atari_ikbd_mouse_buttons_state
-	.extern	_g_atari_ikbd_mouse_delta_x
-	.extern	_g_atari_ikbd_mouse_delta_y
+	.global	SYM(atari_kbdvec)
+	.global	SYM(atari_mousevec)
+	.global	SYM(atari_vkbderr)
 
-	.extern	_g_atari_ikbd_scancodes
-	.extern	_g_atari_ikbd_scancodes_mask
-	.extern	_g_atari_ikbb_scancodes_head
+	.extern	SYM(g_atari_ikbd_mouse_buttons_state)
+	.extern	SYM(g_atari_ikbd_mouse_delta_x)
+	.extern	SYM(_atari_ikbd_mouse_delta_y)
 
-	.extern	_g_atari_old_kbdvec
+	.extern	SYM(g_atari_ikbd_scancodes)
+	.extern	SYM(g_atari_ikbd_scancodes_mask)
+	.extern	SYM(g_atari_ikbb_scancodes_head)
+
+	.extern	SYM(g_atari_old_kbdvec)
 
 	.text
 
-_atari_kbdvec:
+SYM(atari_kbdvec):
 	tst.w	(vkbderr_count,pc)
 	bne.b	kbdvec_end
 
@@ -51,7 +53,7 @@ key_released:
 
 	| if we get a sudden release key event,
 	| let the original handler process it
-	move.l	_g_atari_old_kbdvec,a0
+	move.l	SYM(g_atari_old_kbdvec),a0
 	tst.l	a0
 	beq.b	kbdvec_end
 	jmp	(a0)
@@ -64,38 +66,38 @@ key_pressed:
 	addq.b	#1,(a0,d1.l)				| mark as pressed
 
 kbdvec_process:
-	lea	_g_atari_ikbd_scancodes,a0
-	move.w	_g_atari_ikbb_scancodes_head,d1
+	lea	SYM(g_atari_ikbd_scancodes),a0
+	move.w	SYM(g_atari_ikbb_scancodes_head),d1
 
 	| g_atari_ikbd_scancodes[g_atari_ikbb_scancodes_head] = scancode
 
 	move.b	d0,(0.b,a0,d1.w)
 
 	addq.l	#1,d1
-	and.w	_g_atari_ikbd_scancodes_mask,d1
-	move.w	d1,_g_atari_ikbb_scancodes_head
+	and.w	SYM(g_atari_ikbd_scancodes_mask),d1
+	move.w	d1,SYM(g_atari_ikbb_scancodes_head)
 
 kbdvec_end:
 	rts
 
 
-_atari_vkbderr:
+SYM(atari_vkbderr):
 	addq.w	#1,vkbderr_count
 	rts
 
 
-_atari_mousevec:
+SYM(atari_mousevec):
 	clr.w	vkbderr_count
 
-	move.b	(a0)+,_g_atari_ikbd_mouse_buttons_state
+	move.b	(a0)+,SYM(g_atari_ikbd_mouse_buttons_state)
 
 	move.b	(a0)+,d0
 	ext.w	d0
-	add.w	d0,_g_atari_ikbd_mouse_delta_x
+	add.w	d0,SYM(g_atari_ikbd_mouse_delta_x)
 
 	move.b	(a0)+,d0
 	ext.w	d0
-	add.w	d0,_g_atari_ikbd_mouse_delta_y
+	add.w	d0,SYM(g_atari_ikbd_mouse_delta_y)
 	rts
 
 // place it within reach of 32K (PC relative)

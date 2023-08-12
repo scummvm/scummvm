@@ -19,20 +19,22 @@
  *
  */
 
-	.global	_asm_screen_tt_save
-	.global	_asm_screen_falcon_save
+#include "../../platform/atari/symbols.h"
 
-	.global	_asm_screen_tt_restore
-	.global	_asm_screen_falcon_restore
+	.global	SYM(asm_screen_tt_save)
+	.global	SYM(asm_screen_falcon_save)
 
-	.global	_asm_draw_4bpl_sprite
-	.global	_asm_draw_8bpl_sprite
+	.global	SYM(asm_screen_tt_restore)
+	.global	SYM(asm_screen_falcon_restore)
+
+	.global	SYM(asm_draw_4bpl_sprite)
+	.global	SYM(asm_draw_8bpl_sprite)
 
 	.text
 
 | extern void asm_screen_tt_save(void);
 |
-_asm_screen_tt_save:
+SYM(asm_screen_tt_save):
 	bsr	wait_vbl			| avoid flickering
 
 	lea	0xffff8400.w,a0
@@ -51,7 +53,7 @@ tt_save_loop:
 
 | extern void asm_screen_falcon_save(void);
 |
-_asm_screen_falcon_save:
+SYM(asm_screen_falcon_save):
 	movem.l	d2-d7/a2,-(sp)
 
 	bsr	wait_vbl			| avoid flickering
@@ -99,7 +101,7 @@ falcon_save_loop:
 
 | extern void asm_screen_tt_restore(void);
 |
-_asm_screen_tt_restore:
+SYM(asm_screen_tt_restore):
 	bsr	wait_vbl			| avoid flickering
 
 	lea	save_video,a1
@@ -117,7 +119,7 @@ _asm_screen_tt_restore:
 
 | extern void asm_screen_falcon_restore(void);
 |
-_asm_screen_falcon_restore:
+SYM(asm_screen_falcon_restore):
 	movem.l	d2-d7/a2,-(sp)
 
 	bsr	wait_vbl			| avoid flickering
@@ -188,7 +190,7 @@ wait_vbl:
 | extern void asm_draw_4bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
 |				   uint destX, uint destY, uint dstPitch, uint w, uint h);
 |
-_asm_draw_4bpl_sprite:
+SYM(asm_draw_4bpl_sprite):
 	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
 	move.l	(4+11*4,sp),a2			| a2: dstBuffer
@@ -286,7 +288,7 @@ sprite4_xloop:
 | extern void asm_draw_8bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
 |				   uint destX, uint destY, uint dstPitch, uint w, uint h);
 |
-_asm_draw_8bpl_sprite:
+SYM(asm_draw_8bpl_sprite):
 	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
 	move.l	(4+11*4,sp),a2			| a2: dstBuffer
