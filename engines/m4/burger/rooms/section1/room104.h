@@ -29,6 +29,13 @@ namespace Burger {
 namespace Rooms {
 
 class Room104 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 14;
+	int _val3 = 0;
+
+	void conv();
+
 public:
 	Room104() : Room() {}
 	~Room104() override {}
