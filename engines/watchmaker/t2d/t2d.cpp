@@ -1353,7 +1353,7 @@ void doT2DMouse(WGame &game) {
 			}*/
 		}
 
-		if ((T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_DOCUMENT) |
+		if ((T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_DOCUMENT) ||
 		        (T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_EMAIL_VIEWER)) {
 			GetDDBitmapExtends(renderer, &t, &w->bm[a]);
 
