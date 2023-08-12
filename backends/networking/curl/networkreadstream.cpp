@@ -96,9 +96,9 @@ void NetworkReadStream::initCurl(const char *url, curl_slist *headersList) {
 	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 
-	const char *caCertPath = ConnMan.getCaCertPath();
-	if (caCertPath) {
-		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+	Common::String caCertPath = ConnMan.getCaCertPath();
+	if (!caCertPath.empty()) {
+		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath.c_str());
 	}
 
 #if LIBCURL_VERSION_NUM >= 0x072000

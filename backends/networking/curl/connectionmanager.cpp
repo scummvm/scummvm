@@ -116,7 +116,7 @@ uint32 ConnectionManager::getCloudRequestsPeriodInMicroseconds() {
 	return TIMER_INTERVAL * CLOUD_PERIOD;
 }
 
-const char *ConnectionManager::getCaCertPath() {
+Common::String ConnectionManager::getCaCertPath() {
 #if defined(__ANDROID__)
 	Common::ArchiveMemberPtr member = SearchMan.getMember("cacert.pem");
 	Common::FSNode *node = dynamic_cast<Common::FSNode *>(member.get());
@@ -124,7 +124,7 @@ const char *ConnectionManager::getCaCertPath() {
 		return nullptr;
 	}
 
-	return node->getPath().c_str();
+	return node->getPath();
 #elif defined(DATA_PATH)
 	static enum {
 		kNotInitialized,
@@ -140,10 +140,10 @@ const char *ConnectionManager::getCaCertPath() {
 	if (state == kFileExists) {
 		return DATA_PATH"/cacert.pem";
 	} else {
-		return nullptr;
+		return "";
 	}
 #else
-	return nullptr;
+	return "";
 #endif
 }
 

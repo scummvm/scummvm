@@ -119,7 +119,7 @@ public:
 	static uint32 getCloudRequestsPeriodInMicroseconds();
 
 	/** Return the path to the CA certificates bundle. */
-	static const char *getCaCertPath();
+	static Common::String getCaCertPath();
 };
 
 /** Shortcut for accessing the connection manager. */
