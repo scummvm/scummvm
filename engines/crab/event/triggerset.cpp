@@ -50,7 +50,6 @@ bool TriggerSet::evaluate(pyrodactyl::event::Info &info) {
 
 	if (_statement.empty() == false) {
 		RelOp nextOp = OP_AND;
-		_result = true;
 		bool curResult = false;
 
 		for (auto &i : _statement) {
@@ -66,8 +65,7 @@ bool TriggerSet::evaluate(pyrodactyl::event::Info &info) {
 
 			nextOp = i._rel;
 		}
-	} else
-		_result = true;
+	}
 
 	return _result;
 }
