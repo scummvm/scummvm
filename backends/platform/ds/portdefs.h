@@ -56,9 +56,4 @@ typedef unsigned int uint;
 #define STREAM_AUDIO_FROM_DISK
 #endif
 
-// FIXME: Since I can't change the engine at the moment (post lockdown) this define can go here.
-// This define changes the mouse-relative motion which doesn't make sense on a touch screen to
-// a more conventional form of input where the menus can be clicked on.
-#define LURE_CLICKABLE_MENUS
-
 #endif
