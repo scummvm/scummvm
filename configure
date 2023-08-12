@@ -982,9 +982,9 @@ Optional Features:
   --disable-windows-console do not show console output on Windows
   --enable-windows-unicode  use Windows Unicode APIs (default)
   --disable-windows-unicode use Windows ANSI APIs
-  --enable-ext-sse2         allow code to use sse2 extensions on x86/64
-  --enable-ext-avx2         allow code to use avx2 extensions on x86/64
-  --enable-ext-neon         allow code to use neon extensions on Arm
+  --enable-ext-sse2         allow code to use sse2 extensions on x86/amd64
+  --enable-ext-avx2         allow code to use avx2 extensions on x86/amd64
+  --enable-ext-neon         allow code to use neon extensions on ARM
 
 Optional Documentation Options:
   --with-manual-version=VERSION version to use when generating the manual (optional)
@@ -6916,13 +6916,13 @@ case $_host_cpu in
 esac
 
 define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
-echo_n "Enabling x86/64 SSE2... "
+echo_n "Enabling x86/amd64 SSE2... "
 echo "$_ext_sse2"
 define_in_config_if_yes "$_ext_avx2" 'SCUMMVM_AVX2'
-echo_n "Enabling x86/64 AVX2... "
+echo_n "Enabling x86/amd64 AVX2... "
 echo "$_ext_avx2"
 define_in_config_if_yes "$_ext_neon" 'SCUMMVM_NEON'
-echo_n "Enabling Arm NEON... "
+echo_n "Enabling ARM NEON... "
 echo "$_ext_neon"
 
 echo_n "Backend... "
