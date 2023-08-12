@@ -78,7 +78,6 @@ static void VblHandler() {
 			   : (2 * MAX_HZ_SHAKE * bitsPerPixel / 8) / 2 - bitsPerPixel;
 		}
 
-
 		union { byte c[4]; uintptr p; } sptr;
 		sptr.p = p;
 
@@ -122,6 +121,34 @@ static uint32 UninstallVblHandler() {
 	return uninstalled;
 }
 
+static void shrinkVidelVisibleArea() {
+	// Active VGA screen area consists of 960 half-lines, i.e. 480 raster lines.
+	// In case of 320x240, the number is still 480 but data is fetched
+	// only for 240 lines so it doesn't make a difference to us.
+	Vsync();
+
+	if (hasSuperVidel()) {
+		const int vOffset = ((480 - 400) / 2) * 2;	// *2 because of half-lines
+
+		// VDB = VBE = VDB + paddding/2
+		*((volatile uint16*)0xFFFF82A8) = *((volatile uint16*)0xFFFF82A6) = *((volatile uint16*)0xFFFF82A8) + vOffset;
+		// VDE = VBB = VDE - padding/2
+		*((volatile uint16*)0xFFFF82AA) = *((volatile uint16*)0xFFFF82A4) = *((volatile uint16*)0xFFFF82AA) - vOffset;
+	} else {
+		// 31500/60.1 = 524 raster lines
+		// vft = 524 * 2 + 1 = 1049 half-lines
+		// 480 visible lines = 960 half-lines
+		// 1049 - 960 = 89 half-lines reserved for borders
+		// we want 400 visible lines = 800 half-lines
+		// vft = 800 + 89 = 889 half-lines in total ~ 70.1 Hz vertical frequency
+		int16 vft = *((volatile int16*)0xFFFF82A2);
+		int16 vss = *((volatile int16*)0xFFFF82AC);	// vss = vft - vss_sync
+		vss -= vft;	// -vss_sync
+		*((volatile int16*)0xFFFF82A2) = 889;
+		*((volatile int16*)0xFFFF82AC) = 889 + vss;
+	}
+}
+
 static int  s_oldRez = -1;
 static int  s_oldMode = -1;
 static void *s_oldPhysbase = nullptr;
@@ -134,6 +161,8 @@ void AtariGraphicsShutdown() {
 	} else if (s_oldMode != -1) {
 		// prevent setting video base address just on the VDB line
 		Vsync();
+		if (hasSuperVidel())
+			VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
 		VsetMode(s_oldMode);
 		VsetScreen(SCR_NOCHANGE, s_oldPhysbase, SCR_NOCHANGE, SCR_NOCHANGE);
 	}
@@ -227,7 +256,7 @@ bool AtariGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::Feature::kFeatureAspectRatioCorrection:
 		//debug("hasFeature(kFeatureAspectRatioCorrection): %d", !_vgaMonitor);
-		return !_tt && !_vgaMonitor;
+		return !_tt;
 	case OSystem::Feature::kFeatureCursorPalette:
 		// FIXME: pretend to have cursor palette at all times, this function
 		// can get (and it is) called any time, before and after showOverlay()
@@ -249,7 +278,7 @@ void AtariGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		_aspectRatioCorrection = enable;
 		break;
 	default:
-		[[fallthrough]];
+		break;
 	}
 }
 
@@ -574,7 +603,7 @@ void AtariGraphicsManager::updateScreen() {
 	_pendingScreenChange = kPendingScreenChangeNone;
 
 	if (_oldAspectRatioCorrection != _aspectRatioCorrection) {
-		if (!isOverlayVisible()) {
+		if (!isOverlayVisible() && _currentState.height == 200) {
 			if (!_vgaMonitor) {
 				short mode = VsetMode(VM_INQUIRE);
 				if (_aspectRatioCorrection) {
@@ -587,15 +616,82 @@ void AtariGraphicsManager::updateScreen() {
 					mode |= PAL;
 				}
 				VsetMode(mode);
-			} else if (hasSuperVidel()) {
-				// TODO: reduce to 200 scan lines?
-			} else if (!_tt) {
-				// TODO: increase vertical frequency?
+			} else if (hasSuperVidel() || !_tt) {
+				if (_aspectRatioCorrection) {
+					for (int screenId : { FRONT_BUFFER, BACK_BUFFER1, BACK_BUFFER2 }) {
+						Screen *screen = _screen[screenId];
+						Graphics::Surface *offsettedSurf = screen->offsettedSurf;
+
+						// erase old screen
+						offsettedSurf->fillRect(Common::Rect(offsettedSurf->w, offsettedSurf->h), 0);
+
+						// setup new screen
+						screen->oldScreenSurfaceWidth = screen->surf.w;
+						screen->oldScreenSurfaceHeight = screen->surf.h;
+						screen->oldScreenSurfacePitch = screen->surf.pitch;
+						screen->oldOffsettedSurfaceWidth = offsettedSurf->w;
+						screen->oldOffsettedSurfaceHeight = offsettedSurf->h;
+
+						screen->surf.w = 320 + 2 * MAX_HZ_SHAKE;
+						screen->surf.h = 200 + 2 * MAX_V_SHAKE;
+						screen->surf.pitch = screen->surf.w;
+
+						offsettedSurf->init(
+							320, 200, screen->surf.pitch,
+							screen->surf.getBasePtr((screen->surf.w - 320) / 2, (screen->surf.h - 200) / 2),
+							screen->surf.format);
+
+						screen->addDirtyRect(*lockScreen(), Common::Rect(offsettedSurf->w, offsettedSurf->h), _currentState.mode == GraphicsMode::DirectRendering);
+					}
+
+					Supexec(shrinkVidelVisibleArea);
+				} else {
+					for (int screenId : { FRONT_BUFFER, BACK_BUFFER1, BACK_BUFFER2 }) {
+						Screen *screen = _screen[screenId];
+						Graphics::Surface *offsettedSurf = screen->offsettedSurf;
+
+						assert(screen->oldScreenSurfaceWidth != -1);
+						assert(screen->oldScreenSurfaceHeight != -1);
+						assert(screen->oldScreenSurfacePitch != -1);
+						assert(screen->oldOffsettedSurfaceWidth != -1);
+						assert(screen->oldOffsettedSurfaceHeight != -1);
+
+						// erase old screen
+						offsettedSurf->fillRect(Common::Rect(offsettedSurf->w, offsettedSurf->h), 0);
+
+						// setup new screen
+						screen->surf.w = screen->oldScreenSurfaceWidth;
+						screen->surf.h = screen->oldScreenSurfaceHeight;
+						screen->surf.pitch = screen->oldScreenSurfacePitch;
+
+						offsettedSurf->init(
+							screen->oldOffsettedSurfaceWidth, screen->oldOffsettedSurfaceHeight, screen->surf.pitch,
+							screen->surf.getBasePtr(
+								(screen->surf.w - screen->oldOffsettedSurfaceWidth) / 2,
+								(screen->surf.h - screen->oldOffsettedSurfaceHeight) / 2),
+							screen->surf.format);
+
+						screen->oldScreenSurfaceWidth = -1;
+						screen->oldScreenSurfaceHeight = -1;
+						screen->oldScreenSurfacePitch = -1;
+						screen->oldOffsettedSurfaceWidth = -1;
+						screen->oldOffsettedSurfaceHeight = -1;
+
+						screen->addDirtyRect(*lockScreen(), Common::Rect(offsettedSurf->w, offsettedSurf->h), _currentState.mode == GraphicsMode::DirectRendering);
+					}
+
+					if (hasSuperVidel())
+						VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
+					VsetMode(_workScreen->mode);
+				}
 			} else {
 				// TODO: some tricks with TT's 480 lines?
 			}
 
 			_oldAspectRatioCorrection = _aspectRatioCorrection;
+
+			_pendingScreenChange |= kPendingScreenChangeScreen;
+			updateScreen();
 		} else {
 			// ignore new value in overlay
 			_aspectRatioCorrection = _oldAspectRatioCorrection;

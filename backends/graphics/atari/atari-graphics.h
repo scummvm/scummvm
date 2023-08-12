@@ -294,6 +294,12 @@ private:
 		int mode = -1;
 		Graphics::Surface *const offsettedSurf = &_offsettedSurf;
 
+		int oldScreenSurfaceWidth = -1;
+		int oldScreenSurfaceHeight = -1;
+		int oldScreenSurfacePitch = -1;
+		int oldOffsettedSurfaceWidth = -1;
+		int oldOffsettedSurfaceHeight = -1;
+
 	private:
 		static constexpr size_t ALIGN = 16;	// 16 bytes
 

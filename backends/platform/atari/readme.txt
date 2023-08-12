@@ -213,6 +213,39 @@ means that if the SuperVidel is detected, it does the following:
   and makes a *huge* difference for 640x480 fullscreen updates.
 
 
+Aspect ratio correction
+-----------------------
+
+Please refer to the official documentation about its usage. Normally ScummVM
+implements this functionality using yet another fullscreen transformation of
+320x200 surface into a 320x240 one (there is even a selection of algorithms
+for this task, varying in performance and quality).
+
+Naturally, this would pose a terrible performance anchor on our backend so some
+cheating has been used:
+
+- on RGB, the vertical refresh rate frequency is set to 60 Hz, creating an
+  illusion of creating non-square pixels. Works best on CRT monitors.
+
+- on VGA, the vertical refresh rate frequency is set to 70 Hz, with more or
+  less the same effect as on RGB. Works best on CRT monitors.
+
+- on SuperVidel, video output is modified in such way that the DVI/HDMI monitor
+  receives a 320x200 image and if properly set/supported, it will automatically
+  stretch the image to 320x240 (this is usually a setting called "picture
+  expansion" or "picture stretch" -- make sure it isn't set to something like
+  "1:1" or "dot by dot")
+
+Yes, it's a hack. :) Owners of a CRT monitor can achieve the same effect by the
+analog knobs -- stretch and move the 320x200 picture unless black borders are
+no longer visible. This hack provides a more elegant and per-game
+functionality.
+
+Realtime aspect ratio correction (CTRL+ALT+a) should be used with caution in
+Direct rendering mode because there's no way to refresh the screen. So if you
+change the setting and there isn't any game screen update coming, screen will
+stay black.
+
 Audio mixing
 ------------
 
@@ -295,8 +328,9 @@ music (and therefore avoiding the expensive synthesis emulation) but beware, it
 doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx.
 
 The least amount of cycles is spent when:
-- "No music" (or keep it default and choose a native MIDI device) is set in the
-   GUI options; this prevents MIDI sythesis of any kind
+- "No music" as "Preferred device": this prevents MIDI sythesis of any kind
+- "Subtitles" as "Text and speech": this prevents any sampled speech to be
+  mixed
 - all external audio files are deleted (typically *.wav); that way the mixer
   wont have anything to mix. However beware, this is not allowed in every game!
 
@@ -336,8 +370,6 @@ restricts features but also improves performance:
 Known issues
 ------------
 
-- aspect ratio correction works on RGB only (yet)
-
 - adding a game in TOS and loading it in FreeMiNT (and vice versa) generates
   incompatible paths. Either use only one system or edit scummvm.ini and set
   there only relative paths (mintlib bug/limitation).
@@ -348,6 +380,9 @@ Known issues
 
 - horizontal screen shaking doesn't work on TT because TT Shifter doesn't
   support fine scrolling. However it is "emulated" via vertical shaking.
+
+- aspect ratio correction has no effect on TT because is not possible to alter
+  its vertical screen refresh frequency.
 
 - tooltips in overlay are sometimes drawn with corrupted background.
 
@@ -373,10 +408,14 @@ Known issues
 		- Engine GUI (for save/load/etc) does not support 8-bit screens
 		- https://wiki.scummvm.org/index.php?title=Hugo
 
+- Indy4 (the adventure) may have a bug in the screen when you K.O. the bouncer.
+  I was able to get a freeze when he fell to the ground but currently I am
+  unable to reproduce it. It may be related to the intensive mouse clicking
+  during that scene so feel free to use keypad for the fight and report whether
+  it has improved the situation.
+
 Future plans
 ------------
-
-- aspect ratio correction for TT/VGA/SuperVidel
 
 - unified file paths in scummvm.ini
 
