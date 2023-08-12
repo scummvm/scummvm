@@ -26,6 +26,7 @@
 #define FREESCAPE_GEOMETRICOBJECT_H
 
 #include "freescape/language/instruction.h"
+#include "freescape/objects/group.h"
 #include "freescape/objects/object.h"
 
 namespace Freescape {

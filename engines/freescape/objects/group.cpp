@@ -92,6 +92,7 @@ void Group::linkObject(Object *obj) {
 	_origins.push_back(obj->getOrigin());
 	obj->makeInitiallyVisible();
 	obj->makeVisible();
+	obj->_partOfGroup = this;
 	_objects.push_back(obj);
 }
 

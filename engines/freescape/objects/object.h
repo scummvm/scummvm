@@ -88,6 +88,7 @@ public:
 	uint16 _objectID;
 	Math::Vector3d _origin, _size, _rotation;
 	Math::AABB _boundingBox;
+	Object *_partOfGroup = nullptr;
 };
 
 } // End of namespace Freescape

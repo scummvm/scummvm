@@ -651,11 +651,13 @@ void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeStartAnim(FCLInstruction &instruction) {
-	uint16 groupID = instruction._source + 1;
-	debugC(1, kFreescapeDebugCode, "Staring animation of group %d", groupID);
-	Group *group = (Group *)_currentArea->objectWithID(groupID);
-	assert(group);
-	assert(group->getType() == kGroupType);
+	uint16 objID = instruction._source;
+	debugC(1, kFreescapeDebugCode, "Staring animation of object %d", objID);
+	Object *obj = _currentArea->objectWithID(objID);
+	assert(obj);
+	assert(obj->_partOfGroup);
+	Group *group = (Group *)obj->_partOfGroup;
+	debugC(1, kFreescapeDebugCode, "From group %d", group->getObjectID());
 	group->_active = true;
 }
 
