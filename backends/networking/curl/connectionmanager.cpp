@@ -29,6 +29,10 @@
 #include "common/system.h"
 #include "common/timer.h"
 
+#if defined(__ANDROID__)
+#include "backends/platform/android/jni-android.h"
+#endif
+
 namespace Common {
 
 DECLARE_SINGLETON(Networking::ConnectionManager);
@@ -118,13 +122,10 @@ uint32 ConnectionManager::getCloudRequestsPeriodInMicroseconds() {
 
 Common::String ConnectionManager::getCaCertPath() {
 #if defined(__ANDROID__)
-	Common::ArchiveMemberPtr member = SearchMan.getMember("cacert.pem");
-	Common::FSNode *node = dynamic_cast<Common::FSNode *>(member.get());
-	if (!node) {
-		return nullptr;
-	}
-
-	return node->getPath();
+	// cacert path must exist on filesystem and be reachable by standard open syscall
+	// Lets use ScummVM internal directory
+	Common::String basePath = JNI::getScummVMBasePath();
+	return basePath + "/cacert.pem";
 #elif defined(DATA_PATH)
 	static enum {
 		kNotInitialized,
