@@ -1361,7 +1361,6 @@ void CharacterGenerator::processNameInput(int index, int textColor) {
 		_screen->drawShape(0, _nameLabelsZH[index], _chargenNameFieldX[index] & ~7, _chargenNameFieldY[index] - 5);
 		_screen->printShadedText(_characters[index].name, _chargenNameFieldX[index] + ((62 - (strlen(_characters[index].name) << 3)) >> 1), _chargenNameFieldY[index] - 4, textColor, 0, _vm->guiSettings()->colors.guiColorBlack);
 	} else {
-		int xOffs = ((60 - _screen->getTextWidth(_characters[index].name)) >> 1);
 		_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->printText(_characters[index].name, _chargenNameFieldX[index] + ((60 - _screen->getTextWidth(_characters[index].name)) >> 1), _chargenNameFieldY[index], textColor, 0);
 	}	
