@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-10 15:07+0000\n"
+"POT-Creation-Date: 2023-08-12 13:39+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -5767,6 +5767,16 @@ msgstr "Не атрымалася захаваць гульню"
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
 msgstr ""
+
+#: engines/freescape/metaengine.cpp:101
+msgid "Invert Y-axis on mouse"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:102
+#, fuzzy
+#| msgid "Use an alternative palette"
+msgid "Use alternative camera controls"
+msgstr "Выкарыстоўваць альтэрнатыўную палітру"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"

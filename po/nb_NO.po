@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-10 15:07+0000\n"
+"POT-Creation-Date: 2023-08-12 13:39+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5782,6 +5782,16 @@ msgstr "Skru av fall"
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
 msgstr "Spilleren kan ikke falle over kanter"
+
+#: engines/freescape/metaengine.cpp:101
+msgid "Invert Y-axis on mouse"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:102
+#, fuzzy
+#| msgid "Use an alternative palette"
+msgid "Use alternative camera controls"
+msgstr "Bruk en alternativ palett"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
