@@ -70,7 +70,7 @@ public:
 
 	static Common::Array<Common::StringArray> generateChecksums(Common::Path gamePath, Common::Array<Common::StringArray> &fileChecksums);
 	static Common::JSONValue *generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
-	static Common::String parseJSON(const Common::JSONValue *response);
+	static void parseJSON(const Common::JSONValue *response);
 
 	void open() override;
 	void close() override;
