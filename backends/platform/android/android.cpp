@@ -633,7 +633,8 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureOpenUrl ||
 			f == kFeatureClipboardSupport ||
 			f == kFeatureKbdMouseSpeed ||
-			f == kFeatureJoystickDeadzone) {
+			f == kFeatureJoystickDeadzone ||
+			f == kFeatureTouchscreen) {
 		return true;
 	}
 	/* Even if we are using the 2D graphics manager,

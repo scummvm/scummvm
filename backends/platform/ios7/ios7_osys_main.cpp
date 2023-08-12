@@ -159,6 +159,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureKbdMouseSpeed:
 	case kFeatureOpenGLForGame:
 	case kFeatureShadersForGame:
+	case kFeatureTouchscreen:
 		return true;
 
 	default:
