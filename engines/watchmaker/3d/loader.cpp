@@ -135,7 +135,7 @@ public:
 	};
 	_t3dLOADLIST t3dLoadList[MAX_T3D_LOADLIST_ITEMS] = {};
 
-	void addToLoadList(t3dMESH *m, const Common::String &pname, uint32 _LoaderFlags) {
+	void addToLoadList(t3dMESH *m, const Common::String &pname, uint32 _LoaderFlags) override {
 		if (!pname.empty()) {
 			int32 a;
 			for (a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
@@ -203,7 +203,7 @@ public:
 		return nullptr;
 	}
 
-	t3dMESH *linkMeshToStr(Init &init, const Common::String &str) {
+	t3dMESH *linkMeshToStr(Init &init, const Common::String &str) override {
 		if (str.empty()) return nullptr;
 
 		//	Cerca tra le camere
