@@ -93,10 +93,8 @@ void TraitMenu::handleEvents(pyrodactyl::people::Person *obj, const Common::Even
 		_menu._element[choice].state(true);
 		_select = choice;
 
-		if (obj != nullptr) {
-			if (_select > -1 && (uint)_select < obj->_trait.size())
-				obj->_trait[_select]._unread = false;
-		}
+		if (obj != nullptr && (uint)_select < obj->_trait.size())
+			obj->_trait[_select]._unread = false;
 	}
 }
 
