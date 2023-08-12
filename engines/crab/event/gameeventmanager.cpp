@@ -186,6 +186,10 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 		if (_eventMap[info.curLocID()].eventInProgress(_activeSeq)) {
 			switch (_curEvent->_type) {
 			case EVENT_DIALOG:
+			// fallthrough intended
+			case EVENT_REPLY:
+			// fallthrough intended
+			case EVENT_SPLASH:
 				updateDialogBox(info, level);
 				break;
 			case EVENT_ANIM: {
@@ -202,12 +206,6 @@ void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult
 			} break;
 			case EVENT_SILENT:
 				_eventMap[info.curLocID()].nextEvent(_activeSeq, info, level.playerId(), result, _endSeq);
-				break;
-			case EVENT_REPLY:
-				updateDialogBox(info, level);
-				break;
-			case EVENT_SPLASH:
-				updateDialogBox(info, level);
 				break;
 			default:
 				break;
