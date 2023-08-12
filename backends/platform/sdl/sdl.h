@@ -52,6 +52,10 @@ public:
 	void init() override;
 
 	bool hasFeature(Feature f) override;
+#if defined(USE_SDL_TS_VMOUSE)
+	void setFeatureState(Feature f, bool enable) override;
+	bool getFeatureState(Feature f) override;
+#endif // defined(USE_SDL_TS_VMOUSE)
 
 	// Override functions from ModularBackend and OSystem
 	void initBackend() override;

@@ -182,6 +182,9 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
 		return _eventSource->isJoystickConnected();
 	}
+#if defined(USE_SDL_TS_VMOUSE)
+    if (f == kFeatureTouchpadMode) return true;
+#endif
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	/* Even if we are using the 2D graphics manager,
 	 * we are at one initGraphics3d call of supporting OpenGL */
@@ -190,6 +193,29 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #endif
 	return ModularGraphicsBackend::hasFeature(f);
 }
+
+#if defined(USE_SDL_TS_VMOUSE)
+void OSystem_SDL::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		break;
+	default:
+		ModularGraphicsBackend::setFeatureState(f, enable);
+		break;
+	}
+}
+bool OSystem_SDL::getFeatureState(Feature f) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
+		break;
+	default:
+		return ModularGraphicsBackend::getFeatureState(f);
+		break;
+	}
+}
+#endif // defined(USE_SDL_TS_VMOUSE)
 
 void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
