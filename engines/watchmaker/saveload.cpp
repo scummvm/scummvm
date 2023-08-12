@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
 #include "watchmaker/saveload.h"
@@ -191,7 +190,7 @@ bool DataSave(const char *SaveName, uint8 slot) {
 	    }
 	#endif
 	*/
-	sprintf(str, "%sWm%#02d.sav", WmSavesDir, slot);
+	snprintf(str, T3D_NAMELEN, "%sWm%#02d.sav", WmSavesDir, slot);
 
 	if ((fhs = fopen(str, "wb")) == nullptr)
 		return FALSE;
@@ -373,7 +372,7 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 	if (!FileName.empty())
 		strcpy(str, FileName.c_str());
 	else
-		sprintf(str, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), slot);
+		snprintf(str, T3D_NAMELEN, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), slot);
 
 	auto stream = openFile(FileName);
 	if (!stream) {
