@@ -30,6 +30,8 @@ Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 	_flags = flags_;
 	_scale = 0;
 	_active = false;
+	_finished = false;
+	_step = 0;
 
 	int i;
 	for (i = 0; i < 5; i++) {
@@ -42,10 +44,12 @@ Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 	i = 9;
 	while (i < int(data_.size())) {
 		int operation = data_[i];
+		_objectOperations.push_back(operation);
 		debugC(1, kFreescapeDebugParser, "group data[%d] = %d (operation)", i, operation);
-		if (operation == 0x80)
+		if (operation == 0x80) {
 			i++;
-		else if (operation == 0x01) {
+			_objectPositions.push_back(Math::Vector3d());
+		} else if (operation == 0x01) {
 			i++;
 			int scriptSize = data_[i];
 			assert(scriptSize > 0);
@@ -56,16 +60,17 @@ Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 			}
 			Common::String conditionStr = detokenise8bitCondition(conditionData, instructions, false);
 			debugC(1, kFreescapeDebugParser, "group condition:\n%s", conditionStr.c_str());
+			_objectPositions.push_back(Math::Vector3d());
 			i = i + 1 + scriptSize;
 		} else {
-			_objectOperations.push_back(operation);
 			if (i < int(data_.size() - 4)) {
 				debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 1, data_[i + 1]);
 				debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 2, data_[i + 2]);
 				debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 3, data_[i + 3]);
 				Math::Vector3d position(data_[i + 1], data_[i + 2], data_[i + 3]);
 				_objectPositions.push_back(position);
-			}
+			} else
+				_objectOperations.pop_back();
 			i = i + 4;
 		}
 	}
@@ -96,9 +101,9 @@ void Group::linkObject(Object *obj) {
 	_objects.push_back(obj);
 }
 
-void Group::assemble(int frame, int index) {
+void Group::assemble(int index) {
 	GeometricObject *gobj = (GeometricObject *)_objects[index];
-	Math::Vector3d position = _objectPositions[frame];
+	Math::Vector3d position = _objectPositions[_step];
 
 	if (!GeometricObject::isPolygon(gobj->getType()))
 		position = 32 * position / _scale;
@@ -107,4 +112,50 @@ void Group::assemble(int frame, int index) {
 
 	gobj->offsetOrigin(position);
 }
+
+void Group::run() {
+	if (_finished)
+		return;
+
+	uint32 groupSize = _objects.size();
+	for (uint32 i = 0; i < groupSize ; i++) {
+		run(i);
+	}
+}
+
+void Group::run(int index) {
+	if (_objectOperations[_step] == 0x80) {
+		_step = -1;
+		_active = false;
+		_finished = false;
+	} else if (_objectOperations[_step] == 0x01) {
+		// TODO
+	} else {
+		if (_objectOperations[_step] == 0x10)
+			if (!_active) {
+				_step = -1;
+				return;
+			}
+		assemble(index);
+	}
+}
+
+void Group::draw(Renderer *gfx) {
+	uint32 groupSize = _objects.size();
+	for (uint32 i = 0; i < groupSize ; i++) {
+		_objects[i]->draw(gfx);
+	}
+}
+
+void Group::step() {
+	if (_finished)
+		return;
+
+	if (_step < int(_objectOperations.size() - 1))
+		_step++;
+	else {
+		_finished = true;
+	}
+}
+
 } // End of namespace Freescape

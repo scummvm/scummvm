@@ -22,6 +22,7 @@
 #ifndef FREESCAPE_GROUP_H
 #define FREESCAPE_GROUP_H
 
+#include "freescape/gfx.h"
 #include "freescape/objects/object.h"
 
 namespace Freescape {
@@ -30,7 +31,10 @@ class Group : public Object {
 public:
 	Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_);
 	void linkObject(Object *obj);
-	void assemble(int frame, int index);
+	void assemble(int index);
+	void step();
+	void run();
+	void run(int index);
 
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;
@@ -38,11 +42,13 @@ public:
 	Common::Array<int16> _objectOperations;
 	Common::Array<int16> _objectIds;
 	int _scale;
+	int _step;
 	bool _active;
+	bool _finished;
 
 	ObjectType getType() override { return ObjectType::kGroupType; };
 	bool isDrawable() override { return true; }
-	void draw(Freescape::Renderer *gfx) override { error("cannot render Group"); };
+	void draw(Renderer *gfx) override;
 	void scale(int scale_) override { _scale = scale_; };
 	Object *duplicate() override { error("cannot duplicate Group"); };
 };
