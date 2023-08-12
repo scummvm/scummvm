@@ -581,6 +581,13 @@ public:
 		kFeatureNoQuit,
 
 		/**
+		* The presence of this feature indicates that the backend uses a touchscreen.
+		*
+		* This feature has no associated state.
+		*/
+		kFeatureTouchscreen,
+
+		/**
 		* Arm-v8 requires NEON extensions, but before that, NEON was just
 		* optional, so this signifies that the processor can use NEON.
 		*/
