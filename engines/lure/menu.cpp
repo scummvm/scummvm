@@ -30,10 +30,6 @@
 #include "lure/events.h"
 #include "lure/lure.h"
 
-#if defined(__ANDROID__) || defined(__WII__)
-#define LURE_CLICKABLE_MENUS
-#endif
-
 namespace Lure {
 
 MenuRecord::MenuRecord(const MenuRecordBounds *bounds, int numParams, ...) {
@@ -485,21 +481,23 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 
 
 	const uint16 yMiddle = FULL_SCREEN_HEIGHT / 2;
-#ifndef LURE_CLICKABLE_MENUS
-	uint16 oldX = mouse.x();
-	uint16 oldY = mouse.y();
-	mouse.cursorOff();
-	mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
 
-	// Round up number of lines in dialog to next odd number
-	uint16 numLines = (numEntries / 2) * 2 + 1;
-	if (numLines > 5) numLines = 5;
-#else
-	mouse.pushCursorNum(CURSOR_ARROW);
+	uint16 numLines = 0, oldX = 0, oldY = 0;
+	bool clickable_menu = g_system->hasFeature(OSystem::kFeatureTouchscreen);
+	if (clickable_menu) {
+		// The whole menu is shown and the items are click-selectable
+		mouse.pushCursorNum(CURSOR_ARROW);
+		numLines = numEntries;
+	} else {
+		oldX = mouse.x();
+		oldY = mouse.y();
+		mouse.cursorOff();
+		mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
 
-	// In WinCE, the whole menu is shown and the items are click-selectable
-	uint16 numLines = numEntries;
-#endif
+		// Round up number of lines in dialog to next odd number
+		numLines = (numEntries / 2) * 2 + 1;
+		if (numLines > 5) numLines = 5;
+	}
 
 	// Figure out the character width
 	uint16 numCols = 0;
@@ -518,13 +516,13 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	int selectedIndex = 0;
 	bool refreshFlag = true;
 
-#ifdef LURE_CLICKABLE_MENUS
 	Common::Rect r;
-	r.left = Surface::textX();
-	r.right = s->width() - Surface::textX() + 1;
-	r.top = Surface::textY();
-	r.bottom = s->height() - Surface::textY() + 1;
-#endif
+	if (clickable_menu) {
+		r.left = Surface::textX();
+		r.right = s->width() - Surface::textX() + 1;
+		r.top = Surface::textY();
+		r.bottom = s->height() - Surface::textY() + 1;
+	}
 
 	bool bailOut = false;
 
@@ -534,20 +532,14 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 			s->refreshDialog();
 
 			for (int index = 0; index < numLines; ++index) {
-#ifndef LURE_CLICKABLE_MENUS
-				int actionIndex = selectedIndex - (numLines / 2) + index;
-#else
-				int actionIndex = index;
-#endif
+				int actionIndex = clickable_menu ? index : selectedIndex - (numLines / 2) + index;
 				if ((actionIndex >= 0) && (actionIndex < numEntries)) {
+					byte color = textColor;
+					if (index == (clickable_menu ? selectedIndex : numLines / 2))
+						color = whiteColor;
 					s->writeString(Surface::textX(), Surface::textY() + index * FONT_HEIGHT,
 						actions[actionIndex], true,
-#ifndef LURE_CLICKABLE_MENUS
-						(index == (numLines / 2)) ? whiteColor : textColor,
-#else
-						(index == selectedIndex) ? whiteColor : textColor,
-#endif
-						false);
+						color, false);
 				}
 			}
 
@@ -591,9 +583,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					bailOut = true;
 					break;
 				}
-
-#ifdef LURE_CLICKABLE_MENUS
-			} else if (e.type() == Common::EVENT_LBUTTONDOWN || e.type() == Common::EVENT_MOUSEMOVE) {
+			} else if (clickable_menu && (e.type() == Common::EVENT_LBUTTONDOWN || e.type() == Common::EVENT_MOUSEMOVE)) {
 				int16 x = mouse.x();
 				int16 y = mouse.y() - yMiddle + (s->height() / 2);
 				refreshFlag = true;
@@ -605,13 +595,11 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 						break;
 					}
 				}
-#else
-			} else if ((e.type() == Common::EVENT_LBUTTONDOWN) ||
-					(e.type() == Common::EVENT_MBUTTONDOWN)) {
+			} else if (!clickable_menu && ((e.type() == Common::EVENT_LBUTTONDOWN) ||
+					(e.type() == Common::EVENT_MBUTTONDOWN))) {
 				//mouse.waitForRelease();
 				bailOut = true;
 				break;
-#endif
 			} else if (e.type() == Common::EVENT_RBUTTONDOWN) {
 				mouse.waitForRelease();
 				selectedIndex = 0xffff;
@@ -621,26 +609,26 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 		}
 
 		if (!bailOut) {
-#ifndef LURE_CLICKABLE_MENUS
-			// Warping the mouse to "neutral" even if the top/bottom menu
-			// entry has been reached has both pros and cons. It makes the
-			// menu behave a bit more sensibly, but it also makes it harder
-			// to move the mouse pointer out of the ScummVM window.
+			if (!clickable_menu) {
+				// Warping the mouse to "neutral" even if the top/bottom menu
+				// entry has been reached has both pros and cons. It makes the
+				// menu behave a bit more sensibly, but it also makes it harder
+				// to move the mouse pointer out of the ScummVM window.
 
-			if (mouse.y() < yMiddle - POPMENU_CHANGE_SENSITIVITY) {
-				if (selectedIndex > 0) {
-					--selectedIndex;
-					refreshFlag = true;
+				if (mouse.y() < yMiddle - POPMENU_CHANGE_SENSITIVITY) {
+					if (selectedIndex > 0) {
+						--selectedIndex;
+						refreshFlag = true;
+					}
+					mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
+				} else if (mouse.y() > yMiddle + POPMENU_CHANGE_SENSITIVITY) {
+					if (selectedIndex < numEntries - 1) {
+						++selectedIndex;
+						refreshFlag = true;
+					}
+					mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
 				}
-				mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
-			} else if (mouse.y() > yMiddle + POPMENU_CHANGE_SENSITIVITY) {
-				if (selectedIndex < numEntries - 1) {
-					++selectedIndex;
-					refreshFlag = true;
-				}
-				mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
 			}
-#endif
 
 			system.delayMillis(20);
 		}
@@ -649,12 +637,12 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	// bailOut
 	delete s;
 
-#ifndef LURE_CLICKABLE_MENUS
-	mouse.setPosition(oldX, oldY);
-	mouse.cursorOn();
-#else
-	mouse.popCursor();
-#endif
+	if (clickable_menu) {
+		mouse.popCursor();
+	} else {
+		mouse.setPosition(oldX, oldY);
+		mouse.cursorOn();
+	}
 	screen.update();
 	return selectedIndex;
 }
