@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import android.content.res.Configuration;
 
 import androidx.annotation.NonNull;
 
@@ -102,6 +103,11 @@ public class SplashActivity extends Activity {
 		if (hasFocus) {
 			hideSystemUI();
 		}
+	}
+
+	@Override
+	public void onConfigurationChanged(@NonNull Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
 	}
 
 }
