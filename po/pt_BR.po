@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-12 15:37+0000\n"
-"PO-Revision-Date: 2023-08-12 05:40+0000\n"
+"PO-Revision-Date: 2023-08-13 10:28+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5776,13 +5776,11 @@ msgstr "Jogador não cairá das beiradas"
 
 #: engines/freescape/metaengine.cpp:101
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Inverter o eixo Y do mouse"
 
 #: engines/freescape/metaengine.cpp:102
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Utilizar uma paleta alternativa"
+msgstr "Utilizar controles de câmera alternativos"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
