@@ -403,7 +403,6 @@ void Score::update() {
 		if (_nextFrame) {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
 			// when jumping.
-			rebuildChannelData(_nextFrame);
 			_curFrameNumber = _nextFrame;
 		}
 		else if (!_window->_newMovieStarted)
@@ -425,7 +424,6 @@ void Score::update() {
 				return;
 			}
 
-			rebuildChannelData(ref.frameI);
 			_curFrameNumber = ref.frameI;
 		} else {
 			if (debugChannelSet(-1, kDebugNoLoop)) {
@@ -1440,27 +1438,19 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	// TODO Merge it with shared cast
 	_currentFrame = new Frame(this, _numChannelsDisplayed);
 
-	// This makes all indexing simpler
-	_frameOffsets.push_back(0);
-
 	_currentTempo = 0;
 	_currentPaletteId = CastMemberID(0, 0);
 
 	// Prepare frameOffsets
 	_version = version;
-	_frameOffsets.push_back(_framesStream->pos());
+	_firstFramePosition = _framesStream->pos();
 
 	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches
 	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
 
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect
-	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
-		if (_framesStream->pos() < _framesStreamSize) {
-			// Record the starting offset for next frame
-			_frameOffsets.push_back(_framesStream->pos());
-		}
-	}
+	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) { }
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
 
@@ -1468,10 +1458,6 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	loadFrame(1, true);
 
-	// Read over frame offset array and print each item
-	for (uint i = 0; i < _frameOffsets.size(); i++) {
-		debugC(8, kDebugLoading, "Score::loadFrames(): Frame %d, offset %ld", i, _frameOffsets[i]);
-	}
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
@@ -1479,25 +1465,32 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 bool Score::loadFrame(int frameNum, bool loadCast) {
 	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %ld", frameNum, _framesStream->pos());
 
-	// Read existing frame (ie already visited)
-	if (frameNum < (int)_frameOffsets.size()) {
-		// Seek to existing frame in offsets
-		_framesStream->seek(_frameOffsets[frameNum]);
-	} else {
-		// Seek to latest frame
-		_framesStream->seek(_frameOffsets[_frameOffsets.size() - 1]);
-		_curFrameNumber = _frameOffsets.size() - 1;
+	int sourceFrame = _curFrameNumber;
+	int targetFrame = frameNum;
+
+	if (frameNum <= (int)_curFrameNumber) {
+		debugC(7, kDebugLoading, "****** Resetting frame %d to start %ld", sourceFrame, _framesStream->pos());
+		// If we are going back, we need to rebuild frames from start
+		_currentFrame->reset();
+		sourceFrame = 0;
+
+		// Reset position to start
+		_framesStream->seek(_firstFramePosition);
 	}
 
-	debugC(7, kDebugLoading, "****** Frame request %d, current offset %ld", frameNum, _framesStream->pos());
+	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset %ld", sourceFrame, targetFrame, _framesStream->pos());
 
-	while (_frameOffsets.size() <= (uint)frameNum && readOneFrame())
-		_curFrameNumber++;
+	while (sourceFrame < targetFrame - 1 && readOneFrame()) {
+		sourceFrame++;
+	}
 
 	// Finally read the target frame!
 	bool isFrameRead = readOneFrame();
 	if (!isFrameRead)
 		return false;
+
+	// We have read the frame, now update current frame number
+	_curFrameNumber = targetFrame;
 
 	if (loadCast) {
 		// Load frame cast
@@ -1505,33 +1498,6 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 	}
 
 	return true;
-}
-
-// Rebuild channel data from frame 1 to frameNum, to prepare for next frame loading
-// Why? Because director works on concept of "delta" changes between frame, to save
-// space each frame only contains changes from previous frame, so we need to rebuild
-// whole channel data if we were to make a very big jump. This is essential because
-// without it we might have leftover casts/properties which will interfere with channel
-// data after the jump
-void Score::rebuildChannelData(int frameNum) {
-	// Builds channel data from frame 1 to frame
-	if (frameNum > (int)_numFrames) {
-		warning("Score::rebuildChannelData(): frameNum %d is greater than total frames %d", frameNum, _numFrames);
-		return;
-	}
-
-	// Lock variables
-	int curFrameNumber = _curFrameNumber;
-
-	_currentFrame->reset();
-
-	_framesStream->seek(_frameOffsets[1]); // Seek to frame 1
-	for (int i = 1; i < frameNum; i++) {
-		readOneFrame();
-	}
-
-	// Unlock variables
-	_curFrameNumber = curFrameNumber;
 }
 
 bool Score::readOneFrame() {
