@@ -199,7 +199,8 @@ void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameS
 		}
 	}
 
-	if (g_engine->_inputManager->state(IU_BACK) || (_back.handleEvents(event) && (_state != STATE_SAVENAME && _state != STATE_CREDITS))) {
+	if (g_engine->_inputManager->state(IU_BACK) || ((_back.handleEvents(event) != BUAC_IGNORE) &&
+	   (_state != STATE_SAVENAME && _state != STATE_CREDITS))) {
 		if (_state == STATE_SAVENAME)
 			changeState(STATE_DIFF);
 		else if (_state != STATE_NORMAL)
@@ -254,7 +255,7 @@ void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameS
 	} break;
 
 	case STATE_SAVENAME:
-		if (_save.handleEvents(event) || _accept.handleEvents(event)) {
+		if (_save.handleEvents(event) || (_accept.handleEvents(event)) != BUAC_IGNORE) {
 			if (_save._text != "") {
 				g_engine->_tempData->_filename = _save._text;
 				g_engine->_tempData->_ironman = true;
@@ -262,7 +263,7 @@ void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameS
 				newStateId = GAMESTATE_NEW_GAME;
 			} else
 				debug("Please enter a valid filename for the iron man save.");
-		} else if (_cancel.handleEvents(event))
+		} else if (_cancel.handleEvents(event) != BUAC_IGNORE)
 			changeState(STATE_DIFF);
 
 		break;

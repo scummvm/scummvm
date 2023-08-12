@@ -48,7 +48,7 @@ void ChapterIntro::load(rapidxml::xml_node<char> *node) {
 }
 
 bool ChapterIntro::handleEvents(Common::Event &event) {
-	if (_traits.handleEvents(event))
+	if (_traits.handleEvents(event) != BUAC_IGNORE)
 		_showTraits = true;
 
 	return _dialog.handleEvents(event);

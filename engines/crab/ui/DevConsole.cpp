@@ -111,7 +111,7 @@ void DebugConsole::handleEvents(const Common::Event &event) {
 			}
 		}
 
-		if (_back.handleEvents(event)) {
+		if (_back.handleEvents(event) != BUAC_IGNORE) {
 			_state = STATE_NORMAL;
 		}
 		break;

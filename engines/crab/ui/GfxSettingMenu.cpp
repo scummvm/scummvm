@@ -91,24 +91,24 @@ void GfxSettingMenu::draw() {
 // Purpose: Handle input
 //------------------------------------------------------------------------
 int GfxSettingMenu::handleEvents(const Common::Event &event) {
-	if (_fullscreen.handleEvents(event)) {
+	if (_fullscreen.handleEvents(event) != BUAC_IGNORE) {
 		// Setting video flags is necessary when toggling fullscreen
 		g_engine->_screenSettings->_fullscreen = !g_engine->_screenSettings->_fullscreen;
 	}
 
 	// Vsync doesn't need to set the change value
-	if (_vsync.handleEvents(event)) {
+	if (_vsync.handleEvents(event) != BUAC_IGNORE) {
 		g_engine->_screenSettings->_vsync = !g_engine->_screenSettings->_vsync;
 	}
 
 	// Quality and resolution can only be changed in the main menu
 	if (!g_engine->_screenSettings->_inGame) {
-		if (_quality.handleEvents(event))
+		if (_quality.handleEvents(event) != BUAC_IGNORE)
 			g_engine->_screenSettings->_quality = !g_engine->_screenSettings->_quality;
 	}
 
 	// Window border doesn't matter if you are in fullscreen
-	if (_border.handleEvents(event) && !g_engine->_screenSettings->_fullscreen) {
+	if (_border.handleEvents(event) && !g_engine->_screenSettings->_fullscreen != BUAC_IGNORE) {
 		g_engine->_screenSettings->_border = !g_engine->_screenSettings->_border;
 	}
 
