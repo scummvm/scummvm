@@ -85,6 +85,9 @@ struct KernelPal_Globals {
 
 extern void pal_fade_set_start(RGB8 *origPalette, int32 percent);
 extern void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
+extern void pal_fade_init(int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
+extern void pal_fade_init(int32 triggerNum);
+
 extern void disable_player_commands_and_fade_init(int trigger);
 extern void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks, int32 totalTicks, int32 triggerNum);
 

@@ -562,6 +562,14 @@ void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry,
 	_G(pal_fade_in_progress) = true;
 }
 
+void pal_fade_init(int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum) {
+	pal_fade_init(_G(master_palette), firstPalEntry, lastPalEntry, targetPercent, numTicks, triggerNum);
+}
+
+void pal_fade_init(int32 triggerNum) {
+	pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, triggerNum);
+}
+
 void disable_player_commands_and_fade_init(int trigger) {
 	player_set_commands_allowed(false);
 	pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, trigger);
