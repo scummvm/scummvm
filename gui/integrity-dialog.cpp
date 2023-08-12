@@ -40,6 +40,19 @@ enum {
 	kCleanupCmd = 'DlCL',
 };
 
+struct ResultFormat {
+	bool unknown;
+	Common::String messageText;
+	Common::String emailText;
+
+	ResultFormat() {
+		unknown = 0;
+		messageText = "";
+		emailText = "";
+	}
+
+} static *g_result;
+
 struct DialogState {
 	IntegrityDialog *dialog;
 	IconProcessState state;
@@ -353,9 +366,17 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath,
 
 void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
 	debug(3, "JSON Response: %s", r->stringify().c_str());
-	Common::String messageText = IntegrityDialog::parseJSON(r);
-	MessageDialog result(messageText);
-	result.reflowLayout();
+	IntegrityDialog::parseJSON(r);
+
+	if (!g_result->unknown) {
+		MessageDialog resultDialog(g_result->messageText);
+		resultDialog.runModal();
+	} else {
+		MessageDialog resultDialog(g_result->messageText, "OK", "Copy message to Clipboard");
+		bool copy = resultDialog.runModal();
+		if (copy == 1)
+			g_system->setTextInClipboard(g_result->emailText);
+	}
 }
 
 void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
@@ -363,6 +384,8 @@ void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
 }
 
 void IntegrityDialog::sendJSON() {
+	g_result = new ResultFormat();
+
 	auto conn = new Networking::PostRequest(g_state->endpoint,
 											new Common::Callback<IntegrityDialog, Common::JSONValue *>(this, &IntegrityDialog::checksumResponseCallback),
 											new Common::Callback<IntegrityDialog, Networking::ErrorResponse>(this, &IntegrityDialog::errorCallback));
@@ -375,21 +398,27 @@ void IntegrityDialog::sendJSON() {
 	delete json;
 }
 
-Common::String IntegrityDialog::parseJSON(Common::JSONValue *response) {
-	Common::String messageText;
-
+void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 	Common::JSONObject responseObject = response->asObject();
 	int responeError = responseObject.getVal("error")->asIntegerNumber();
 
+	Common::String messageText;
 	if (responeError == -1) { // Unknown variant
 		long long fileset = responseObject.getVal("fileset")->asIntegerNumber();
-		messageText =
-			_(Common::String::format("Your set of game files seems to be unknown to us. If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org \n\
-		The game of fileset %lld seems to be an unknown game variant. \n\
-		The details of the game : %s, %s, %s, %s, %s",
-								   fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str()));
 
-		return messageText;
+		Common::String emailText =
+			Common::String::format("The game of fileset %lld seems to be an unknown game variant. \n\
+		The details of the game : %s, %s, %s, %s, %s",
+								   fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str());
+
+		messageText =
+			_(Common::String::format("Your set of game files seems to be unknown to us. \
+			If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org \n%s",
+									 emailText.c_str()));
+
+		g_result->messageText += messageText;
+		g_result->emailText += emailText;
+		return;
 	}
 
 	Common::Array<int> results = Common::Array<int>(5, 0);
@@ -414,7 +443,7 @@ Common::String IntegrityDialog::parseJSON(Common::JSONValue *response) {
 	if (messageText == "")
 		messageText += _("Files all OK");
 
-	return messageText;
+	g_result->messageText += messageText;
 }
 
 } // End of namespace GUI
