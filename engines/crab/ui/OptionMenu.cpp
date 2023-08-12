@@ -201,10 +201,10 @@ bool OptionMenu::handleEvents(Button &back, const Common::Event &event) {
 
 			break;
 		case STATE_CONFIRM:
-			if (_accept.handleEvents(event)) {
+			if (_accept.handleEvents(event) != BUAC_IGNORE) {
 				_state = STATE_GRAPHICS;
 				_timer.stop();
-			} else if (_cancel.handleEvents(event)) {
+			} else if (_cancel.handleEvents(event) != BUAC_IGNORE) {
 				_gfx.SetInfo();
 				_state = STATE_GRAPHICS;
 			}

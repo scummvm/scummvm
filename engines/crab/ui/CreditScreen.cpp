@@ -115,9 +115,9 @@ bool CreditScreen::handleEvents(Common::Event &event) {
 	else if (_reverse.handleEvents(event) == BUAC_LCLICK)
 		_speed._cur = _speed._reverse;
 
-	if (_website.handleEvents(event))
+	if (_website.handleEvents(event) != BUAC_IGNORE)
 		g_system->openUrl("http://pyrodactyl.com");
-	else if (_twitter.handleEvents(event))
+	else if (_twitter.handleEvents(event) != BUAC_IGNORE)
 		g_system->openUrl("https://www.twitter.com/pyrodactylgames");
 
 	return (_back.handleEvents(event) == BUAC_LCLICK);

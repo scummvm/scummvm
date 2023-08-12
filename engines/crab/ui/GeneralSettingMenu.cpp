@@ -79,10 +79,10 @@ void GeneralSettingMenu::handleEvents(const Common::Event &event) {
 		g_engine->_musicManager->volEffects(_volEffects.Value());
 
 	// No need to change screen here
-	if (_saveOnExit.handleEvents(event))
+	if (_saveOnExit.handleEvents(event) != BUAC_IGNORE)
 		g_engine->_screenSettings->_saveOnExit = !g_engine->_screenSettings->_saveOnExit;
 
-	if (_mouseTrap.handleEvents(event)) {
+	if (_mouseTrap.handleEvents(event) != BUAC_IGNORE) {
 		g_engine->_screenSettings->_mouseTrap = !g_engine->_screenSettings->_mouseTrap;
 	}
 
