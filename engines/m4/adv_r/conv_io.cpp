@@ -83,11 +83,11 @@ void cdd_init(void) {
 	_G(cdd).mesg_snd_file = nullptr;
 }
 
-void set_conv_name(char *s) {
+void set_conv_name(const char *s) {
 	Common::strcpy_s(_GC(conv_name), s);
 }
 
-char *get_conv_name(void) {
+const char *get_conv_name() {
 	return _GC(conv_name);
 }
 
@@ -127,7 +127,7 @@ long conv_current_node(void) {
 	return 0;
 }
 
-void conv_reset(char *filename) {
+void conv_reset(const char *filename) {
 	Conv *c = nullptr;
 	_GC(restore_conv) = 0;
 
@@ -140,7 +140,7 @@ void conv_reset_all(void) {
 	_G(conversations).conv_reset_all();
 }
 
-char *conv_sound_to_play(void) {
+const char *conv_sound_to_play(void) {
 	return _G(cdd).mesg_snd_file;
 }
 

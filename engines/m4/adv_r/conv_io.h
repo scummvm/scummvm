@@ -86,9 +86,9 @@ extern void conv_reset(char *filename);
 extern void conv_reset_all();
 extern void conv_play(Conv *c);
 
-extern void set_conv_name(char *s);
-extern char *get_conv_name();
-extern char *conv_sound_to_play();
+extern void set_conv_name(const char *s);
+extern const char *get_conv_name();
+extern const char *conv_sound_to_play();
 extern int32 conv_whos_talking();
 
 extern long conv_get_decl_val(decl_chunk *decl);
