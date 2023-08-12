@@ -1402,7 +1402,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
 		_screen->setFont(Screen::FID_8_FNT);
 		Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
-		_screen->copyRegion(b->x - 115, b->y - 63, b->x + 29, b->y + 1, index == 6 ? 20 : 40, 14, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(b->x - 115, b->y - 63, b->x + 29, b->y + 1, index == 6 ? 20 : 40, 13, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->printShadedText(statStr.c_str(), b->x + 29, b->y + 1, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 	} else {
 		Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
@@ -1506,7 +1506,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			_screen->sega_getRenderer()->render(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
 		} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
 			Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
-			_screen->copyRegion(b->x - 115, b->y - 63, b->x + 29, b->y + 1, index == 6 ? 20 : 40, 14, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(b->x - 115, b->y - 63, b->x + 29, b->y + 1, index == 6 ? 20 : 40, 13, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->printShadedText(statStr.c_str(), b->x + 29, b->y + 1, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 			if (hpChanged) {
@@ -1863,13 +1863,13 @@ const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefsDOSChinese[] = {
 	{ 183,  64, 35, 15, 0x34 },
 	{ 144,  80, 35, 15, 0x22 },
 	{ 183,  80, 35, 15, 0x26 },
-	{ 145, 130, 43, 16, 0x00 },
-	{ 145, 146, 43, 16, 0x00 },
-	{ 145, 162, 43, 16, 0x00 },
-	{ 220, 130, 43, 16, 0x00 },
-	{ 220, 146, 43, 16, 0x00 },
-	{ 220, 162, 43, 16, 0x00 },
-	{ 190, 178, 43, 16, 0x00 },
+	{ 147, 130, 43, 16, 0x00 },
+	{ 147, 146, 43, 16, 0x00 },
+	{ 147, 162, 43, 16, 0x00 },
+	{ 219, 130, 43, 16, 0x00 },
+	{ 219, 146, 43, 16, 0x00 },
+	{ 219, 162, 43, 16, 0x00 },
+	{ 187, 178, 43, 16, 0x00 },
 	{ 144,  64, 17, 15, 0x0D },
 	{ 167,  64, 17, 15, 0x0C },
 	{ 190,  64, 35, 15, 0x19 },
