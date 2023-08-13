@@ -1196,7 +1196,7 @@ void ScummEngine_v60he::o60_isSoundRunning() {
 	int snd = pop();
 
 	if (snd)
-		snd = _sound->isSoundInUse(snd);
+		snd = _sound->isSoundRunning(snd);
 
 	push(snd);
 }

@@ -146,6 +146,37 @@ void SoundHE::processSoundQueues() {
 }
 
 int SoundHE::isSoundRunning(int sound) const {
+	// If our sound is a channel number, search for it
+	// between the currently playing sounds first, then
+	// search the sound queue...
+
+	if (_vm->_game.heversion >= 70 || (_vm->_game.heversion < 70 && sound > 0)) {
+		if (sound >= HSND_CHANNEL_0) {
+			int channel = sound - HSND_CHANNEL_0;
+			sound = _heChannel[channel].sound;
+
+			if (sound)
+				return sound;
+
+			for (int i = 0; i < _soundQueuePos; i++) {
+				if (_soundQueue[i].channel == channel) {
+					return _soundQueue[i].sound;
+				}
+			}
+
+			return 0;
+		}
+
+		// ...otherwise the sound parameter is a proper
+		//  sound number, so search the queue
+		int i = _soundQueuePos;
+		while (i) {
+			if (sound == _soundQueue[--i].sound)
+				return sound;
+		}
+	}
+
+	// If it's not in the queue, go check if it is actually playing
 	if (_vm->_game.heversion >= 70 || sound == HSND_TALKIE_SLOT) {
 		if (sound >= HSND_CHANNEL_0) {
 			sound = _heChannel[sound - HSND_CHANNEL_0].sound;
@@ -177,38 +208,8 @@ int SoundHE::isSoundRunning(int sound) const {
 }
 
 bool SoundHE::isSoundInUse(int sound) const {
-	// If our sound is a channel number, search for it
-	// between the currently playing sounds first, then
-	// search the sound queue...
 
-	if (_vm->_game.heversion >= 70 || (_vm->_game.heversion < 70 && sound > 0)) {
-		if (sound >= HSND_CHANNEL_0) {
-			int channel = sound - HSND_CHANNEL_0;
-			sound = _heChannel[channel].sound;
-
-			if (sound)
-				return sound;
-
-			for (int i = 0; i < _soundQueuePos; i++) {
-				if (_soundQueue[i].channel == channel) {
-					return _soundQueue[i].sound;
-				}
-			}
-
-			return 0;
-		}
-
-		// ...otherwise the sound parameter is a proper
-		//  sound number, so search the queue
-		int i = _soundQueuePos;
-		while (i) {
-			if (sound == _soundQueue[--i].sound)
-				return sound;
-		}
-	}
-
-	// If it's not in the queue, look to see if it is actually playing
-	return isSoundRunning(sound);
+	return isSoundRunning(sound) != 0;
 }
 
 void SoundHE::stopSound(int sound) {
@@ -373,7 +374,6 @@ int SoundHE::getChannelPosition(int channel) {
 	int frequency = _vm->_game.heversion >= 95 ? _heChannel[channel].frequency : HSND_DEFAULT_FREQUENCY;
 	soundPos = (int)(((uint64)_vm->getHETimer(HSND_TIMER_SLOT + channel) * (uint64)frequency) / 1000);
 
-	debug(5, "SoundHE::getChannelPosition(): channel %d pos %d ms", channel, soundPos);
 	return soundPos;
 }
 
