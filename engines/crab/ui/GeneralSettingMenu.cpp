@@ -47,11 +47,19 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 		if (nodeValid("desc", musnode))
 			_noticeVolume.load(musnode->first_node("desc"));
 
-	//	if (nodeValid("music", musnode))
-	//		vol_music.load(musnode->first_node("music"), 0, MIX_MAX_VOLUME, g_engine->_musicManager->VolMusic());
+		if (nodeValid("music", musnode)) {
+			int val = g_engine->_musicManager->volMusic();
+			if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
+				val = 0;
+			_volMusic.load(musnode->first_node("music"), 0, 255, val);
+		}
 
-	//	if (nodeValid("effects", musnode))
-	//		vol_effects.load(musnode->first_node("effects"), 0, MIX_MAX_VOLUME, g_engine->_musicManager->VolEffects());
+		if (nodeValid("effects", musnode)) {
+			int val = g_engine->_musicManager->volEffects();
+			if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
+				val = 0;
+			_volEffects.load(musnode->first_node("effects"), 0, 255, val);
+		}
 	}
 
 	if (nodeValid("mouse_trap", node))
@@ -66,17 +74,24 @@ void GeneralSettingMenu::load(rapidxml::xml_node<char> *node) {
 	// Sync popup text value with actual value
 	for (auto &i : _textSpeed._element)
 		i._state = (i._val == g_engine->_screenSettings->_textSpeed);
+
+	setUI();
+	createBackup();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
 void GeneralSettingMenu::handleEvents(const Common::Event &event) {
-	if (_volMusic.handleEvents(event))
-		g_engine->_musicManager->volMusic(_volMusic.Value());
+	if (_volMusic.handleEvents(event)) {
+		bool unmute = _volMusic.Value() > 0 && ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+		g_engine->_musicManager->volMusic(_volMusic.Value(), unmute);
+	}
 
-	if (_volEffects.handleEvents(event))
-		g_engine->_musicManager->volEffects(_volEffects.Value());
+	if (_volEffects.handleEvents(event)) {
+		bool unmute = _volEffects.Value() > 0 && ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+		g_engine->_musicManager->volEffects(_volEffects.Value(), unmute);
+	}
 
 	// No need to change screen here
 	if (_saveOnExit.handleEvents(event) != BUAC_IGNORE)
@@ -119,7 +134,7 @@ void GeneralSettingMenu::draw() {
 //------------------------------------------------------------------------
 // Purpose: Revert to previously backed up settings
 //------------------------------------------------------------------------
-void GeneralSettingMenu::RestoreBackup() {
+void GeneralSettingMenu::restoreBackup() {
 	_volMusic.restoreBackup();
 	g_engine->_musicManager->volMusic(_volMusic.Value());
 

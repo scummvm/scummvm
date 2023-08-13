@@ -63,12 +63,12 @@ public:
 	void draw();
 	void setUI();
 
-	void CreateBackup() {
+	void createBackup() {
 		_volMusic.createBackup();
 		_volEffects.createBackup();
 	}
 
-	void RestoreBackup();
+	void restoreBackup();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
