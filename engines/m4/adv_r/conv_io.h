@@ -42,6 +42,7 @@ struct Converstation_Globals {
 	long myFinalTrigger = 0;
 	bool interface_was_visible = false;  // to remember to turn it back on
 	int restore_conv = 1;
+	int ent = 0;
 
 	int32 conv_font_spacing_h = 0;
 	int32 conv_font_spacing_v = 5;
@@ -117,6 +118,8 @@ extern void conv_set_event(int e);
 extern int conv_is_event_ready();
 
 extern void conv_swap_words(Conv *c);
+extern long conv_current_node();
+extern int32 conv_current_entry();
 
 } // End of namespace M4
 
