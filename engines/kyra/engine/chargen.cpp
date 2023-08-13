@@ -1511,12 +1511,12 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 
 			if (hpChanged) {
 				statStr = Common::String::format("%d", c->hitPointsCur);
-				_screen->copyRegion(75, 115, 219, 179, 20, 8, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->printShadedText(statStr.c_str(), 219, 179, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+				_screen->copyRegion(72, 115, 216, 179, 20, 8, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->printShadedText(statStr.c_str(), 216, 179, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 			} else if (acChanged) {
 				statStr = Common::String::format("%d", c->armorClass);
-				_screen->copyRegion(121, 115, 265, 179, 20, 8, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->printShadedText(statStr.c_str(), 265, 179, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+				_screen->copyRegion(32, 115, 176, 179, 18, 8, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->printShadedText(statStr.c_str(), 176, 179, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 			}
 		} else {
 			Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
