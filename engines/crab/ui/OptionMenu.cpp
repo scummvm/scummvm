@@ -152,8 +152,6 @@ void OptionMenu::draw(Button &back) {
 
 bool OptionMenu::handleEvents(Button &back, const Common::Event &event) {
 	if (_state < STATE_ENTER_W) {
-		_bg.draw();
-
 		switch (_state) {
 		case STATE_GENERAL:
 			_general.handleEvents(event);
