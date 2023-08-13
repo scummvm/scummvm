@@ -67,10 +67,6 @@ void BaseBackend::initBackend() {
 	OSystem::initBackend();
 }
 
-bool BaseBackend::hasFeature(Feature f) {
-	return false;
-}
-
 void BaseBackend::fillScreen(uint32 col) {
 	Graphics::Surface *screen = lockScreen();
 	if (screen)

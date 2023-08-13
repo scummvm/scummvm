@@ -41,7 +41,6 @@ ModularGraphicsBackend::~ModularGraphicsBackend() {
 }
 
 bool ModularGraphicsBackend::hasFeature(Feature f) {
-	if (BaseBackend::hasFeature(f)) return true;
 	return _graphicsManager->hasFeature(f);
 }
 

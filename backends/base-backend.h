@@ -32,7 +32,6 @@
 class BaseBackend : public OSystem {
 public:
 	void initBackend() override;
-	bool hasFeature(Feature f) override;
 
 	using OSystem::setScaler;
 	bool setScaler(const char *name, int factor) override final;
