@@ -369,13 +369,11 @@ bool SoundHE::isSoundCodeUsed(int sound) {
 
 int SoundHE::getChannelPosition(int channel) {
 	int soundPos;
-	if (_vm->_game.heversion >= 80) {
-		int frequency = _vm->_game.heversion >= 95 ? _heChannel[channel].frequency : HSND_DEFAULT_FREQUENCY;
-		soundPos = (int)(((uint64)_vm->getHETimer(HSND_TIMER_SLOT + channel) * (uint64)frequency) / 1000);
-	} else {
-		soundPos = _heMixer->getChannelCurrentPosition(channel);
-	}
 
+	int frequency = _vm->_game.heversion >= 95 ? _heChannel[channel].frequency : HSND_DEFAULT_FREQUENCY;
+	soundPos = (int)(((uint64)_vm->getHETimer(HSND_TIMER_SLOT + channel) * (uint64)frequency) / 1000);
+
+	debug(5, "SoundHE::getChannelPosition(): channel %d pos %d ms", channel, soundPos);
 	return soundPos;
 }
 
@@ -1320,6 +1318,8 @@ void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundDa
 
 		_heChannel[channel].sound = sound;
 		_heChannel[channel].priority = priority;
+
+		_vm->setHETimer(channel + HSND_TIMER_SLOT);
 
 		return;
 	}

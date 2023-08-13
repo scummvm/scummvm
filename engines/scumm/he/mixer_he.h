@@ -52,7 +52,7 @@ namespace Scumm {
 #define MIXER_PCM_CHUNK_SIZE       4096
 #define MIXER_MAX_QUEUED_STREAMS   8
 #define MIXER_DEFAULT_SAMPLE_RATE  11025
-#define SPOOL_CHUNK_SIZE           (8 * 1024)
+#define MIXER_SPOOL_CHUNK_SIZE     (8 * 1024)
 
 #define MILES_MAX_CHANNELS                    8
 #define MILES_PCM_CHUNK_SIZE                  4096u
@@ -154,7 +154,6 @@ public:
 	void stopAllChannels();
 	bool pauseMixerSubSystem(bool paused);
 	void feedMixer();
-	int getChannelCurrentPosition(int channel);
 	bool changeChannelVolume(int channel, int volume, bool soft);
 	bool startChannelNew(
 		int channel, int globType, int globNum, uint32 soundData, uint32 offset,
@@ -185,12 +184,11 @@ public:
 
 	/* --- SOFTWARE MIXER CODE --- */
 	bool mixerInitMyMixerSubSystem();
-	bool mixerDeinitMyMixerSubSystem();
 	void mixerFeedMixer();
 	bool mixerIsMixerDisabled();
 	bool mixerStopChannel(int channel);
+	bool mixerStopAllSounds();
 	bool mixerChangeChannelVolume(int channel, int volume, bool soft);
-	int  mixerGetChannelCurrentPosition(int channel);
 	bool mixerPauseMixerSubSystem(bool paused);
 	bool mixerStartChannel(
 		int channel, int globType, int globNum, uint32 sampleDataOffset,
