@@ -42,6 +42,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Kyra1 Amiga French release and DOS Czech fan translation.
    - Improved game controls menu accuracy for all platforms.
    - Added support for Chinese EOB2.
+   - Added support for the PC-98 version of EOB2. 
 
  SCUMM:
    - Added support for unpacked RuSCUMM patches for Russian localizations.
