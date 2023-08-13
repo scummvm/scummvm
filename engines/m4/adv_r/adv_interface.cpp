@@ -26,12 +26,13 @@
 
 namespace M4 {
 
-void Interface::init(int arrow, int wait, int look, int grab, int use) {
+bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 	_arrow = arrow;
 	_wait = wait;
 	_look = look;
 	_grab = grab;
 	_use = use;
+	return true;
 }
 
 void Interface::showWaitCursor() {

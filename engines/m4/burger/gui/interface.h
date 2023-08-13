@@ -65,7 +65,7 @@ public:
 	Interface();
 	~Interface() override;
 
-	void init(int arrow, int wait, int look, int grab, int use) override;
+	bool init(int arrow, int wait, int look, int grab, int use) override;
 
 	void cancel_sentence() override;
 

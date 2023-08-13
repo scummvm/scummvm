@@ -43,7 +43,7 @@ public:
 	virtual ~Interface() {
 	}
 
-	virtual void init(int arrow, int wait, int look, int grab, int use);
+	virtual bool init(int arrow, int wait, int look, int grab, int use);
 
 	virtual void cancel_sentence() = 0;
 
