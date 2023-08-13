@@ -142,7 +142,6 @@ endif
 ifeq ($(SCUMMVM_NEON),1)
 MODULE_OBJS += \
 	blit/blit-neon.o
-$(MODULE)/blit/blit-neon.o: CXXFLAGS += -mfpu=neon
 endif
 ifeq ($(SCUMMVM_SSE2),1)
 MODULE_OBJS += \
