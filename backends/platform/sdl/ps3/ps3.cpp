@@ -133,7 +133,5 @@ bool OSystem_PS3::hasFeature(Feature f) {
 		return false;
 	}
 
-	if (f == kFeatureCpuAltivec) return true;
-
 	return OSystem_SDL::hasFeature(f);
 }
