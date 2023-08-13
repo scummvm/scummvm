@@ -483,7 +483,7 @@ void OptionsDialog::build() {
 
 	if (_multiMidiCheckbox) {
 		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device"))
-			_gmDevicePopUp->setSelected(0);
+			_gmDevicePopUp->setSelected(1);
 
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));

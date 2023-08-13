@@ -321,7 +321,7 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("music_driver", "auto");
 	ConfMan.registerDefault("mt32_device", "null");
-	ConfMan.registerDefault("gm_device", "null");
+	ConfMan.registerDefault("gm_device", "auto");
 	ConfMan.registerDefault("opl2lpt_parport", "null");
 
 	ConfMan.registerDefault("cdrom", 0);
