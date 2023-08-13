@@ -108,7 +108,7 @@ namespace Scumm {
 // Used both in SoundHE and HEMixer
 struct HESoundModifiers {
 	HESoundModifiers(int mFrequencyShift, int mPan, int mVolume) {
-		// Hey, turns out Moonbase Commander just LOVES to send out invalid modifiers :-)
+		// Hey, turns out Moonbase Commander just LOVES sending out invalid modifiers :-)
 		/*
 		assert(mFrequencyShift >= HSND_SOUND_FREQ_BASE / HSND_MAX_FREQ_RATIO);
 		assert(mFrequencyShift <= HSND_SOUND_FREQ_BASE * HSND_MAX_FREQ_RATIO);
@@ -199,8 +199,6 @@ public: // Used by createSound()
 
 	} _heChannel[HSND_MAX_CHANNELS];
 
-	bool _useMilesSoundSystem = false;
-
 	// Used throughout script functions
 	int32 _createSndId;
 	int32 _createSndLastAppend;
@@ -228,6 +226,7 @@ public:
 	int getSoundPosition(int sound);
 	int getSoundVar(int sound, int var);
 	void setSoundVar(int sound, int var, int val);
+	void setSoundVolume(int sound, int volume);
 	void triggerSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
 	void triggerSpoolingSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers);
 	void triggerDigitalSound(int soundId, int heOffset, int heChannel, int heFlags);
