@@ -106,14 +106,8 @@ TEMPLATE BASESTRING::BaseString(const value_type *str) : _size(0), _str(_storage
 	if (str == nullptr) {
 		_storage[0] = 0;
 		_size = 0;
-	} else {
-		uint32 len = 0;
-		const value_type *s = str;
-		while (*s++) {
-			++len;
-		}
-		initWithValueTypeStr(str, len);
-	}
+	} else
+		initWithValueTypeStr(str, cStrLen(str));
 }
 
 TEMPLATE BASESTRING::BaseString(const value_type *str, uint32 len) : _size(0), _str(_storage) {
@@ -839,6 +833,14 @@ TEMPLATE void BASESTRING::assign(const value_type *str) {
 TEMPLATE uint BASESTRING::getUnsignedValue(uint pos) const {
 	const int shift = (sizeof(uint) - sizeof(value_type)) * 8;
 	return ((uint)_str[pos]) << shift >> shift;
+}
+
+TEMPLATE uint32 BASESTRING::cStrLen(const value_type *str) {
+	uint32 len = 0;
+	while (str[len])
+		len++;
+
+	return len;
 }
 
 // Hash function for strings, taken from CPython.
