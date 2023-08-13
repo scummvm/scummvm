@@ -2845,6 +2845,8 @@ case $_host_os in
 				append_var CXXFLAGS "-mfpu=vfp"
 				# This is really old CPU but might be still used with android 4.1, it slightly increases code size and decreases performance.
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
+				# Allow NEON optimized code after runtime detection
+				_ext_neon=yes
 				ABI="armeabi-v7a"
 				;;
 			android-arm64-v8a)
@@ -6912,6 +6914,10 @@ case $_host_cpu in
 	arm*)
 		if test "$_ext_neon" = auto ; then
 			_ext_neon=no
+		fi
+		if test "$_ext_neon" = yes ; then
+			# -mfpu=neon doesn't work with aarch64 but neon is available
+			add_line_to_config_mk 'NEON_CXXFLAGS = -mfpu=neon'
 		fi
 		_ext_sse2=no
 		_ext_avx2=no
