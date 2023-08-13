@@ -848,7 +848,86 @@ void Room135::parser() {
 }
 
 void Room135::conv01() {
-	error("TODO: conv01");
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	switch (_G(kernel).trigger) {
+	case 13:
+		digi_play(conv_sound_to_play(), 1, 255, 35);
+		break;
+
+	case 35:
+		if (who <= 0) {
+			if (node == 14 || node == 12 || node == 13 || node == 4) {
+				_val9 = 36;
+				_flag1 = false;
+			}
+
+			if ((node == 7 && !entry) || (node == 2 && !entry)) {
+				_val6 = 8;
+			} else if (node == 2 && entry == 3) {
+				_val6 = 13;
+			} else if (!(node == 6 && !entry) && !(node == 2 && entry == 1) &&
+					!(node == 2 && entry == 2)) {
+				if (node == 6 && entry == 1)
+					_val6 = 17;
+				else
+					_val6 = 1;
+			}
+		} else if (who == 1) {
+			if (!(node == 2 && entry == 2) &&
+					!(node == 4 && node == 10) &&
+					!(node == 6 && entry == 0) &&
+					!(node == 2 && entry == 1) &&
+					!(node == 7 && node == 0)) {
+				SendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+			}
+		}
+		break;
+
+	default:
+		if (conv_sound_to_play()) {
+			if (who <= 0) {
+				if ((node == 2 && entry == 2) || (node == 2 && entry == 3)) {
+					digi_play(conv_sound_to_play(), 1, 255, 35);
+				} else if ((node == 7 && entry == 1) || (node == 2 && entry == 1)) {
+					digi_play(conv_sound_to_play(), 1, 255, 35);
+				} else if (node == 6 && entry == 1) {
+					kernel_timing_trigger(120, 13);
+				} else if ((node == 7 && entry == 0) || (node == 2 && entry == 0)) {
+					_val6 = 12;
+					_name1 = conv_sound_to_play();
+				} else if (node == 6 && entry == 0) {
+					_val6 = 14;
+					digi_play(conv_sound_to_play(), 1, 255, 35);
+				} else if (node == 9 && entry == 1) {
+					_val6 = 4;
+					digi_play(conv_sound_to_play(), 1, 255, 35);
+				} else {
+					_val6 = (node == 9 && entry == 0) ? 7 : 2;
+					_name1 = conv_sound_to_play();
+				}
+			} else if (who == 1) {
+				if ((node == 2 && entry == 0) ||
+						(node == 4) ||
+						(node == 10) ||
+						(node == 6 && entry == 0) ||
+						(node == 7 && entry == 0)) {
+					_val6 = 11;
+					digi_play(conv_sound_to_play(), 1, 255, 35);
+				} else if ((node == 7 && entry == 1) || (node == 2 && entry == 1)) {
+					_val6 = 14;
+				} else {
+					SendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+					digi_play(conv_sound_to_play(), 1, 255, 35);
+				}
+			}
+		} else {
+			conv_resume();
+		}
+	}
 }
 
 void Room135::conv02() {
