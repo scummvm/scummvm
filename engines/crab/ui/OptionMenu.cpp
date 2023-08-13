@@ -227,7 +227,7 @@ bool OptionMenu::handleTabs(Button &back, const Common::Event &event) {
 	int choice = _menu.handleEvents(event);
 	if (choice >= 0) {
 		if (choice < 4)
-			for (uint i = 0; i < _menu._element.size(); ++i)
+			for (int i = 0; i < (int)_menu._element.size(); ++i)
 				_menu._element[i].state(i == choice);
 
 		switch (choice) {
