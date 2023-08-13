@@ -228,6 +228,15 @@ void Room135::daemon() {
 		kernel_timing_trigger(70, 7);
 		break;
 
+	case 7:
+		series_stream_with_breaks(STREAMS2, "120dt01", 9, 0, 1008);
+		kernel_timing_trigger(1, 8);
+		break;
+
+	case 8:
+		pal_fade_init(15, 255, 100, 0, -1);
+		break;
+
 	case 9:
 		ws_unhide_walker();
 		break;
@@ -242,6 +251,9 @@ void Room135::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
+	case 12:
+		player_set_commands_allowed(true);
+		break;
 
 	case 14:
 		_series5 = series_play("135od07", 2560, 0, -1, 600, -1, 100, 0, 0, 0, 0);
@@ -339,6 +351,11 @@ void Room135::daemon() {
 	case 26:
 		digi_preload("135_006");
 		_series4 = series_play("135dt02", 3840, 0, 27, 6, 0, 100, 0, 0, 0, 13);
+		break;
+
+	case 27:
+		digi_play("135_006", 1, 255, -1);
+		_series4 = series_play("135dt02", 3840, 0, 28, 6, 0, 100, 0, 0, 14, 25);
 		break;
 
 	case 28:
@@ -553,6 +570,32 @@ void Room135::daemon() {
 			}
 			break;
 
+		case 17:
+			switch (_val6) {
+			case 13:
+				kernel_trigger_dispatch_now(18);
+				break;
+
+			case 17:
+				series_play("135od20", 2560, 0, 32, 10, 0, 100, 0, 0, 0, 0);
+				series_play("135od20s", 2560, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 18:
+				frame = imath_ranged_rand(0, 5);
+				series_play("135od20", 2560, 0, 32, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od20s", 2560, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				loadDigi();
+				break;
+
+			default:
+				_val5 = 1;
+				series_play("135od21", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 2);
+				series_play("135od21s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 2);
+				break;
+			}
+			break;
+
 		case 19:
 			switch (_val6) {
 			case 19:
@@ -571,11 +614,12 @@ void Room135::daemon() {
 				kernel_trigger_dispatch_now(18);
 				break;
 			}
+			break;
 
-		// TODO:
 		default:
 			break;
 		}
+		break;
 
 	case 33:
 		switch (_val10) {
@@ -697,6 +741,10 @@ void Room135::daemon() {
 		}
 		break;
 
+	case 37:
+		player_set_commands_allowed(true);
+		break;
+
 	case gTELEPORT:
 		switch (_G(roomVal1)) {
 		case 37:
@@ -726,7 +774,6 @@ void Room135::daemon() {
 			kernel_timing_trigger(60, 10028);
 		}
 		break;
-
 
 	default:
 		_G(kernel).continue_handling_trigger = true;
