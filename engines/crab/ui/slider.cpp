@@ -43,6 +43,7 @@ void Slider::load(rapidxml::xml_node<char> *node, const int &min, const int &max
 		_knob.load(node->first_node("knob"), false);
 		_bar.load(node->first_node("bar"));
 
+		_knob.x = _bar.x + ((_bar.w - _knob.w) * _value / (_max - _min));
 		_knob.y = _bar.y;
 		_knob.w = g_engine->_imageManager->getTexture(_knob._img._normal).w();
 		_knob.h = g_engine->_imageManager->getTexture(_knob._img._normal).h();
@@ -54,8 +55,6 @@ void Slider::load(rapidxml::xml_node<char> *node, const int &min, const int &max
 
 		_caption.load(node->first_node("caption"), &_bar);
 	}
-
-	createBackup();
 }
 
 bool Slider::handleEvents(const Common::Event &Event) {
