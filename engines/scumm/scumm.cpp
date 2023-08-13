@@ -2410,7 +2410,7 @@ Common::Error ScummEngine::go() {
 		// Run the main loop
 		scummLoop(delta);
 
-		if (_game.heversion >= 70) {
+		if (_game.heversion >= 60) {
 			((SoundHE *)_sound)->feedMixer();
 		}
 

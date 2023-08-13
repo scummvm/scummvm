@@ -869,9 +869,10 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	_types[type][idx]._address = ptr;
 	_types[type][idx]._size = size;
 	setResourceCounter(type, idx, 1);
-	return ptr;
 
 	_vm->_insideCreateResource--;
+
+	return ptr;
 }
 
 ResourceManager::Resource::Resource() {

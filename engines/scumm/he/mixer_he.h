@@ -34,12 +34,8 @@
 #include "audio/decoders/adpcm.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/rate.h"
 
-namespace Audio {
-class AudioStream;
-class Mixer;
-class QueuingAudioStream;
-} // namespace Audio
 
 namespace Scumm {
 
@@ -49,10 +45,14 @@ namespace Scumm {
 #define CHANNEL_LOOPING            0x00000004
 #define CHANNEL_LAST_CHUNK         0x00000008
 #define CHANNEL_SPOOLING           0x00000010
-#define CHANNEL_SPOOL_READ         0x00000020
-#define CHANNEL_SPOOL_CRITICAL     0x00000040
 #define CHANNEL_CALLBACK_EARLY     0x00000080
 #define CHANNEL_SOFT_REMIX         0x00000100
+
+#define MIXER_MAX_CHANNELS         8
+#define MIXER_PCM_CHUNK_SIZE       4096
+#define MIXER_MAX_QUEUED_STREAMS   8
+#define MIXER_DEFAULT_SAMPLE_RATE  11025
+#define SPOOL_CHUNK_SIZE           (8 * 1024)
 
 #define MILES_MAX_CHANNELS                    8
 #define MILES_PCM_CHUNK_SIZE                  4096u
@@ -118,64 +118,87 @@ protected:
 	Audio::Mixer *_mixer;
 	bool _useMilesSoundSystem = false;
 	bool _mixerPaused = false;
+	int _pauseCount = 0;
 
 	HEMilesChannel _milesChannels[MILES_MAX_CHANNELS];
+
+	struct HEMixerChannel {
+		Audio::SoundHandle handle;
+		Audio::QueuingAudioStream *stream = nullptr;
+		Common::File *fileHandle = nullptr;
+		int number;
+		int volume;
+		int frequency;
+		int globType;
+		int globNum;
+		int callbackID;
+		int endSampleAdjustment;
+		uint32 lastReadPosition;
+		uint32 initialSpoolingFileOffset;
+		uint32 sampleLen;
+		uint32 dataOffset;
+		uint32 flags;
+		bool callbackOnNextFrame;
+	};
+
+	HEMixerChannel _mixerChannels[MIXER_MAX_CHANNELS];
+
 
 public:
 	HEMixer(Audio::Mixer *mixer, ScummEngine_v60he *vm, bool useMiles);
 	~HEMixer();
 
-	void *getMilesSoundSystemObject();
 	bool initSoftMixerSubSystem();
 	void deinitSoftMixerSubSystem();
-	void endNeglectProcess();
-	void startLongNeglectProcess();
-	bool forceMusicBufferFill();
-	bool isMixerDisabled();
 	bool stopChannel(int channel);
 	void stopAllChannels();
-	bool changeChannelVolume(int channel, int volume, bool soft);
-	void softRemixAllChannels();
-	void premixUntilCritical();
 	bool pauseMixerSubSystem(bool paused);
 	void feedMixer();
-	void serviceAllStreams();
 	int getChannelCurrentPosition(int channel);
-
+	bool changeChannelVolume(int channel, int volume, bool soft);
 	bool startChannelNew(
 		int channel, int globType, int globNum, uint32 soundData, uint32 offset,
 		int sampleLen, int frequency, int bitsPerSample, int sampleChannels,
 		const HESoundModifiers &modifiers, int callbackId, int32 flags, ...);
-
 	bool startChannel(
 		int channel, int globType, int globNum, uint32 sampleDataOffset,
 		int sampleLen, int frequency, int volume, int callbackId, int32 flags, ...);
-
 	bool startSpoolingChannel(
 		int channel, Common::File &spoolingFile, int sampleLen, int frequency,
-		int volume, int callbackID, int32 flags, ...);
+		int volume, int callbackID, int32 flags);
 
+	/* --- MILES MIXER CODE --- */
 	bool isMilesActive();
-	bool changeChannelVolume(int channel, int newVolume, int soft_flag);
 	void milesStartSpoolingChannel(int channel, const char *filename, long offset, int flags, HESoundModifiers modifiers);
-	int  hsFindSoundQueue(int sound);
-	bool mixerStartChannel(
-		int channel, int globType, int globNum, uint32 sampleDataOffset,
-		int sampleLen, int frequency, int volume, int callbackID, uint32 flags, ...);
-
 	bool milesStartChannel(
 		int channel, int globType, int globNum, uint32 sound_data, uint32 offset,
 		int sampleLen, int bitsPerSample, int sampleChannels,
 		int frequency, HESoundModifiers modifiers, int callbackID, uint32 flags, ...);
-
 	bool milesStopChannel(int channel);
 	void milesStopAllSounds();
 	void milesModifySound(int channel, int offset, HESoundModifiers modifiers, int flags);
 	void milesStopAndCallback(int channel, int messageId);
-	void milesRestoreChannel(int channel);
 	void milesFeedMixer();
+	void milesServiceAllStreams();
 	bool milesPauseMixerSubSystem(bool paused);
 	byte *milesGetAudioDataFromResource(int globType, int globNum, uint32 dataOffset, uint16 &compType, uint16 &blockAlign, uint32 &dataSize);
+
+	/* --- SOFTWARE MIXER CODE --- */
+	bool mixerInitMyMixerSubSystem();
+	bool mixerDeinitMyMixerSubSystem();
+	void mixerFeedMixer();
+	bool mixerIsMixerDisabled();
+	bool mixerStopChannel(int channel);
+	bool mixerChangeChannelVolume(int channel, int volume, bool soft);
+	int  mixerGetChannelCurrentPosition(int channel);
+	bool mixerPauseMixerSubSystem(bool paused);
+	bool mixerStartChannel(
+		int channel, int globType, int globNum, uint32 sampleDataOffset,
+		int sampleLen, int frequency, int volume, int callbackID, uint32 flags, ...);
+	bool mixerStartSpoolingChannel(
+		int channel, Common::File &sampleFileIOHandle, int sampleLen, int frequency,
+		int volume, int callbackID, uint32 flags);
+	byte mixerGetOutputFlags();
 };
 
 } // End of namespace Scumm

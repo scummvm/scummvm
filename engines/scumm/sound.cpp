@@ -207,10 +207,6 @@ void Sound::startSound(int sound, int offset, int channel, int flags, int freq, 
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	_lastSound = sound;
 
-	// HE music resources are in separate file
-	if (sound <= _vm->_numSounds)
-		_vm->ensureResourceLoaded(rtSound, sound);
-
 	addSoundToQueue(sound, offset, channel, flags, freq, pan, volume);
 }
 
@@ -633,7 +629,7 @@ void Sound::processSfxQueues() {
 #endif
 			}
 		} else if (_vm->_game.heversion >= 60) {
-			finished = !isSoundRunning(1);
+			finished = !isSoundInUse(1);
 		} else {
 			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
 		}

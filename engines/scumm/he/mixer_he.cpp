@@ -27,9 +27,16 @@ HEMixer::HEMixer(Audio::Mixer *mixer, ScummEngine_v60he *vm, bool useMilesSoundS
 	_mixer = mixer;
 	_vm = vm;
 	_useMilesSoundSystem = useMilesSoundSystem;
+
+	initSoftMixerSubSystem();
 }
 
 HEMixer::~HEMixer() {
+	deinitSoftMixerSubSystem();
+}
+
+bool HEMixer::isMilesActive() {
+	return _useMilesSoundSystem;
 }
 
 uint32 calculateDeflatedADPCMBlockSize(uint32 numBlocks, uint32 blockAlign, uint32 numChannels, uint32 bitsPerSample) {
@@ -39,36 +46,27 @@ uint32 calculateDeflatedADPCMBlockSize(uint32 numBlocks, uint32 blockAlign, uint
 	return totalSize;
 }
 
-void *HEMixer::getMilesSoundSystemObject() {
-	return nullptr;
-}
-
 bool HEMixer::initSoftMixerSubSystem() {
-	return false;
+	if (!isMilesActive()) {
+		return mixerInitMyMixerSubSystem();
+	}
+
+	return true;
 }
 
 void HEMixer::deinitSoftMixerSubSystem() {
-}
-
-void HEMixer::endNeglectProcess() {
-}
-
-void HEMixer::startLongNeglectProcess() {
-}
-
-bool HEMixer::forceMusicBufferFill() {
-	return false;
-}
-
-bool HEMixer::isMixerDisabled() {
-	return false;
+	if (isMilesActive()) {
+		milesStopAllSounds();
+	} else {
+		mixerDeinitMyMixerSubSystem();
+	}
 }
 
 bool HEMixer::stopChannel(int channel) {
-	if (_useMilesSoundSystem) {
+	if (isMilesActive()) {
 		return milesStopChannel(channel);
 	} else {
-		//return mixerStopChannel(channel);
+		return mixerStopChannel(channel);
 	}
 
 	return true;
@@ -80,46 +78,51 @@ void HEMixer::stopAllChannels() {
 	}
 }
 
-bool HEMixer::changeChannelVolume(int channel, int volume, bool soft) {
-	return false;
-}
-
-void HEMixer::softRemixAllChannels() {
-}
-
-void HEMixer::premixUntilCritical() {
-}
-
 bool HEMixer::pauseMixerSubSystem(bool paused) {
-	return false;
-}
-
-void HEMixer::feedMixer() {
-	if (_useMilesSoundSystem) {
-		milesFeedMixer();
+	if (isMilesActive()) {
+		return milesPauseMixerSubSystem(paused);
 	} else {
-		//mixerFeedMixer();
+		return mixerPauseMixerSubSystem(paused);
 	}
 }
 
+void HEMixer::feedMixer() {
+	if (isMilesActive()) {
+		milesFeedMixer();
+	} else {
+		mixerFeedMixer();
+	}
+}
+
+
 int HEMixer::getChannelCurrentPosition(int channel) {
-	return 0;
+	// We are sure this will never be called with Miles on
+	return mixerGetChannelCurrentPosition(channel);
+}
+
+bool HEMixer::changeChannelVolume(int channel, int volume, bool soft) {
+	if (!isMilesActive()) {
+		return mixerChangeChannelVolume(channel, volume, soft);
+	}
+
+	return true;
 }
 
 bool HEMixer::startChannelNew(
 	int channel, int globType, int globNum, uint32 soundData, uint32 offset,
 	int sampleLen, int frequency, int bitsPerSample, int sampleChannels,
 	const HESoundModifiers &modifiers, int callbackID, int32 flags, ...) {
+
 	va_list params;
 	bool retValue;
 
-	if (!_useMilesSoundSystem) {
+	if (!isMilesActive()) {
 		if (bitsPerSample != 8) {
 			debug(5, "HEMixer::startChannelNew(): Glob(%d, %d) is %d bits per channel, must be 8 for software mixer", globType, globNum, bitsPerSample);
 			return false;
 		}
 
-		if (CHANNEL_CALLBACK_EARLY & flags) {
+		if (flags & CHANNEL_CALLBACK_EARLY) {
 			va_start(params, flags);
 
 			retValue = mixerStartChannel(
@@ -145,27 +148,428 @@ bool HEMixer::startChannelNew(
 	return true;
 }
 
-void HEMixer::serviceAllStreams() {
+bool HEMixer::startChannel(int channel, int globType, int globNum,
+	uint32 sampleDataOffset, int sampleLen, int frequency, int volume, int callbackId, int32 flags, ...) {
+
+	va_list params;
+	bool retValue;
+
+	if (flags & CHANNEL_CALLBACK_EARLY) {
+		va_start(params, flags);
+
+		retValue = mixerStartChannel(
+			channel, globType, globNum, sampleDataOffset, sampleLen,
+			frequency, volume, callbackId, flags, va_arg(params, int));
+
+		va_end(params);
+		return retValue;
+	} else {
+		return mixerStartChannel(
+			channel, globType, globNum, sampleDataOffset, sampleLen,
+			frequency, volume, callbackId, flags);
+	}
+}
+
+bool HEMixer::startSpoolingChannel(int channel, Common::File &sampleFileIOHandle,
+	int sampleLen, int frequency, int volume, int callbackID, int32 flags) {
+
+	if (!isMilesActive()) {
+		return mixerStartSpoolingChannel(channel, sampleFileIOHandle, sampleLen,
+			frequency, volume, callbackID, flags);
+	}
+
+	return false;
+}
+
+/* --- SOFTWARE MIXER --- */
+
+bool HEMixer::mixerInitMyMixerSubSystem() {
+	// Init the channel buffers, and kick start the mixer...
+	memset(_mixerChannels, 0, sizeof(_mixerChannels));
+
+	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
+		_mixerChannels[i].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
+		_mixer->playStream(
+			Audio::Mixer::kPlainSoundType,
+			&_mixerChannels[i].handle,
+			_mixerChannels[i].stream,
+			-1,
+			Audio::Mixer::kMaxChannelVolume);
+	}
+
+	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
+		mixerStartChannel(i, 0, 0, 0, 0, 0, 0, 0, CHANNEL_EMPTY_FLAGS);
+	}
+
+	return true;
+}
+
+bool HEMixer::mixerDeinitMyMixerSubSystem() {
+	return false;
+}
+
+void HEMixer::mixerFeedMixer() {
+	if (_mixerPaused) {
+		return;
+	}
+
+	if (!_vm->_insideCreateResource && _vm->_game.heversion >= 80) {
+		((SoundHE *)_vm->_sound)->unqueueSoundCallbackScripts();
+	}
+
+	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
+		if (!(_mixerChannels[i].flags & CHANNEL_LOOPING)) {
+			if ((_mixerChannels[i].flags & CHANNEL_ACTIVE) && _mixerChannels[i].stream->endOfData()) {
+				_mixerChannels[i].flags |= CHANNEL_FINISHED;
+				_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
+
+				debug(5, "hit finish on channel %d", i);
+				_mixerChannels[i].stream->finish();
+				_mixerChannels[i].stream = nullptr;
+				((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID);
+			}
+
+			if (_mixerChannels[i].flags & CHANNEL_SPOOLING) {
+				if (_mixerChannels[i].callbackOnNextFrame) {
+					_mixerChannels[i].callbackOnNextFrame = false;
+					((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID);
+				}
+
+				if ((_mixerChannels[i].flags & CHANNEL_ACTIVE) && (_mixerChannels[i].flags & CHANNEL_LAST_CHUNK)) {
+					_mixerChannels[i].flags &= ~CHANNEL_LAST_CHUNK;
+					_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
+					_mixerChannels[i].flags |= CHANNEL_FINISHED;
+
+					debug(5, "hit finish on spooling channel %d", i);
+					_mixerChannels[i].stream->finish();
+					_mixerChannels[i].stream = nullptr;
+					_mixerChannels[i].callbackOnNextFrame = true;
+				}
+			}
+		}
+	}
+
+	// Feed the streams
+	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
+		if (_mixerChannels[i].flags & CHANNEL_ACTIVE) {
+			if (_mixerChannels[i].flags & CHANNEL_SPOOLING) {
+				bool looping = (_mixerChannels[i].flags & CHANNEL_LOOPING);
+
+				if (_mixerChannels[i].stream->numQueuedStreams() > 1)
+					continue;
+
+				_mixerChannels[i].fileHandle->seek(_mixerChannels[i].initialSpoolingFileOffset, SEEK_SET);
+				uint32 curOffset = _mixerChannels[i].lastReadPosition;
+
+				_mixerChannels[i].fileHandle->seek(curOffset, SEEK_CUR);
+
+				int length = SPOOL_CHUNK_SIZE;
+				if (_mixerChannels[i].lastReadPosition + SPOOL_CHUNK_SIZE >= _mixerChannels[i].sampleLen) {
+					length = _mixerChannels[i].sampleLen % SPOOL_CHUNK_SIZE;
+					_mixerChannels[i].flags |= CHANNEL_LAST_CHUNK;
+				}
+
+				// The file size is an exact multiple of SPOOL_CHUNK_SIZE, and we've already read the
+				// last chunk, so signal it this is not a looping sample, otherwise rewind the file.
+				// Should never happen, but... you know how it goes :-)
+				if (length == 0) {
+					if (looping) {
+						curOffset = _mixerChannels[i].lastReadPosition = 0;
+						_mixerChannels[i].fileHandle->seek(curOffset, SEEK_CUR);
+					} else {
+						_mixerChannels[i].flags |= CHANNEL_LAST_CHUNK;
+						continue;
+					}
+				}
+
+				byte *data = (byte *)malloc(length * sizeof(byte));
+				if (data) {
+					_mixerChannels[i].fileHandle->read(data, length);
+					_mixerChannels[i].lastReadPosition += length;
+
+					// If we've reached the end of the sample after a residual read,
+					// and if we have to loop the sample, rewind the read position
+					if (looping && _mixerChannels[i].lastReadPosition == _mixerChannels[i].sampleLen)
+						_mixerChannels[i].lastReadPosition = 0;
+
+					_mixerChannels[i].stream->queueBuffer(
+						data,
+						length,
+						DisposeAfterUse::YES,
+						mixerGetOutputFlags());
+				}
+			}
+		}
+	}
+}
+
+bool HEMixer::mixerIsMixerDisabled() {
+	return false;
+}
+
+bool HEMixer::mixerStopChannel(int channel) {
+	if ((0 <= channel) && (MIXER_MAX_CHANNELS > channel))
+		return mixerStartChannel(channel, 0, 0, 0, 0, 0, 0, 0, CHANNEL_EMPTY_FLAGS);
+
+	return false;
+}
+
+bool HEMixer::mixerChangeChannelVolume(int channel, int volume, bool soft) {
+	byte newVolume = (byte)MAX<int>(0, MIN<int>(255, volume));
+	_mixerChannels[channel].volume = newVolume;
+	_mixer->setChannelVolume(_mixerChannels[channel].handle, newVolume);
+
+	return true;
+}
+
+int HEMixer::mixerGetChannelCurrentPosition(int channel) {
+	return 0;
+}
+
+bool HEMixer::mixerPauseMixerSubSystem(bool paused) {
+	_mixerPaused = paused;
+
+	_mixer->pauseAll(_mixerPaused);
+
+	return true;
+}
+
+bool HEMixer::mixerStartChannel(
+	int channel, int globType, int globNum, uint32 sampleDataOffset,
+	int sampleLen, int frequency, int volume, int callbackID, uint32 flags, ...) {
+
+	va_list params;
+
+	if ((channel < 0) || (channel > MIXER_MAX_CHANNELS))
+		return false;
+
+	if (_mixerChannels[channel].flags != CHANNEL_EMPTY_FLAGS) {
+		if (!(_mixerChannels[channel].flags & CHANNEL_FINISHED)) {
+
+			_mixerChannels[channel].flags |= CHANNEL_FINISHED;
+			_mixerChannels[channel].flags &= ~CHANNEL_ACTIVE;
+
+			debug(5, "stopping handle on channel %d", channel);
+			_mixer->stopHandle(_mixerChannels[channel].handle);
+			_mixerChannels[channel].stream = nullptr;
+
+			// Signal the sound engine that a sound has finished playing
+			((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_STOPPED, _mixerChannels[channel].callbackID);
+		}
+	}
+
+	if (flags != CHANNEL_EMPTY_FLAGS) {
+		if (sampleLen <= 0) {
+			error("HEMixer::mixerStartChannel(): Sample invalid size %d", sampleLen);
+		}
+
+		if ((flags & CHANNEL_LOOPING) && (sampleLen <= MIXER_PCM_CHUNK_SIZE)) {
+			error("HEMixer::mixerStartChannel(): Sample too small to loop (%d)", sampleLen);
+		}
+	}
+
+	_mixerChannels[channel].flags = flags;
+	_mixerChannels[channel].volume = MIN<int>(MAX<int>(0, volume), 255);
+	_mixerChannels[channel].number = channel;
+	_mixerChannels[channel].frequency = frequency;
+	_mixerChannels[channel].callbackID = callbackID;
+	_mixerChannels[channel].lastReadPosition = 0;
+	_mixerChannels[channel].dataOffset = sampleDataOffset;
+	_mixerChannels[channel].sampleLen = sampleLen;
+	_mixerChannels[channel].globType = globType;
+	_mixerChannels[channel].globNum = globNum;
+
+	if (flags & CHANNEL_CALLBACK_EARLY) {
+		va_start(params, flags);
+		_mixerChannels[channel].endSampleAdjustment = va_arg(params, int);
+		va_end(params);
+	} else {
+		_mixerChannels[channel].endSampleAdjustment = 0;
+	}
+
+	if (flags != CHANNEL_EMPTY_FLAGS) {
+		byte *ptr = _vm->getResourceAddress((ResType)globType, globNum);
+
+		if (READ_BE_UINT32(ptr) == MKTAG('W', 'S', 'O', 'U')) {
+			ptr += 8;
+		}
+
+		byte *data = (byte *)malloc(_mixerChannels[channel].sampleLen * sizeof(byte));
+
+		if (!data)
+			return false;
+
+		// The following feature is the only thing which would justify
+		// the pain of having non-spooling audio files played as chunks.
+		//
+		// The purpose of this is to produce a callback before the end of
+		// the sound, precisely endSampleAdjustment bytes earlier.
+		//
+		// I haven't seen this one used anywhere (except in puttcircus,
+		// which only gives 2 as a value - which is a value which of course
+		// does nothing even in the original). Please, (don't) prove me wrong :-)
+		int offset = _mixerChannels[channel].endSampleAdjustment;
+		if (offset != 0 && offset != 2)
+			error("HEMixer::mixerStartChannel(): Unimplemented early callback with value %d, in room %d, for sound %d!\n",
+				offset, _vm->_currentRoom, globNum);
+
+		ptr += sampleDataOffset;
+
+		memcpy(data, ptr, _mixerChannels[channel].sampleLen);
+
+		byte *dataTmp = data;
+		int rampUpSampleCount = 64;
+		for (int i = 0; i < rampUpSampleCount; i++) {
+			*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
+			dataTmp++;
+		}
+
+		_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
+
+		_mixer->playStream(
+			Audio::Mixer::kPlainSoundType,
+			&_mixerChannels[channel].handle,
+			_mixerChannels[channel].stream,
+			-1,
+			volume);
+
+		// Only HE60/61/62 games allowed for samples pitch shifting
+		if (_vm->_game.heversion < 70)
+			_mixer->setChannelRate(_mixerChannels[channel].handle, frequency);
+
+		if (_mixerChannels[channel].flags & CHANNEL_LOOPING) {
+			Audio::RewindableAudioStream *stream = Audio::makeRawStream(
+				data,
+				_mixerChannels[channel].sampleLen,
+				MIXER_DEFAULT_SAMPLE_RATE,
+				mixerGetOutputFlags(),
+				DisposeAfterUse::YES);
+
+			_mixerChannels[channel].stream->queueAudioStream(Audio::makeLoopingAudioStream(stream, 0), DisposeAfterUse::YES);
+		} else {
+			_mixerChannels[channel].stream->queueBuffer(
+				data,
+				_mixerChannels[channel].sampleLen,
+				DisposeAfterUse::YES,
+				mixerGetOutputFlags());
+		}
+	} else {
+		_mixerChannels[channel].callbackOnNextFrame = false;
+		_mixerChannels[channel].stream = nullptr;
+	}
+
+	return true;
+}
+
+bool HEMixer::mixerStartSpoolingChannel(
+	int channel, Common::File &sampleFileIOHandle, int sampleLen, int frequency,
+	int volume, int callbackID, uint32 flags) {
+
+	uint32 initialReadCount;
+
+	if ((channel < 0) || (channel > MIXER_MAX_CHANNELS))
+		return false;
+
+	if (_mixerChannels[channel].flags != CHANNEL_EMPTY_FLAGS) {
+		if (!(_mixerChannels[channel].flags & CHANNEL_FINISHED)) {
+
+			_mixerChannels[channel].flags |= CHANNEL_FINISHED;
+			_mixerChannels[channel].flags &= ~CHANNEL_ACTIVE;
+
+			debug(5, "stopping handle on channel %d", channel);
+			_mixer->stopHandle(_mixerChannels[channel].handle);
+			_mixerChannels[channel].stream = nullptr;
+
+			// Signal the sound engine that a sound has finished playing
+			((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_STOPPED, callbackID);
+		}
+	}
+
+	if (flags != CHANNEL_EMPTY_FLAGS) {
+		if (sampleLen <= 0) {
+			error("HEMixer::mixerStartSpoolingChannel(): Sample invalid size %d", sampleLen);
+		}
+
+		if ((flags & CHANNEL_LOOPING) && (sampleLen <= MIXER_PCM_CHUNK_SIZE)) {
+			error("HEMixer::mixerStartSpoolingChannel(): Sample too small to loop (%d)", sampleLen);
+		}
+	}
+
+	_mixerChannels[channel].flags = flags | CHANNEL_SPOOLING;
+	_mixerChannels[channel].volume = MIN<int>(MAX<int>(0, volume), 255);
+	_mixerChannels[channel].number = channel;
+	_mixerChannels[channel].frequency = frequency;
+	_mixerChannels[channel].callbackID = callbackID;
+	_mixerChannels[channel].lastReadPosition = 0;
+	_mixerChannels[channel].dataOffset = 0;
+	_mixerChannels[channel].globType = rtSpoolBuffer;
+	_mixerChannels[channel].globNum = channel + 1;
+	_mixerChannels[channel].endSampleAdjustment = 0;
+
+	if (_vm->_res->createResource(
+		(ResType)_mixerChannels[channel].globType,
+			_mixerChannels[channel].globNum, SPOOL_CHUNK_SIZE) == nullptr) {
+		return false;
+	}
+
+	_mixerChannels[channel].fileHandle = &sampleFileIOHandle;
+	_mixerChannels[channel].sampleLen = sampleLen;
+	initialReadCount = MIN<int>(sampleLen, SPOOL_CHUNK_SIZE);
+	_mixerChannels[channel].initialSpoolingFileOffset = sampleFileIOHandle.pos();
+
+	_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
+
+	_mixer->playStream(
+		Audio::Mixer::kPlainSoundType,
+		&_mixerChannels[channel].handle,
+		_mixerChannels[channel].stream,
+		-1,
+		volume);
+
+	byte *data = (byte *)malloc(initialReadCount * sizeof(byte));
+	if (data) {
+		sampleFileIOHandle.read(data, initialReadCount);
+
+		_mixerChannels[channel].lastReadPosition += initialReadCount;
+
+		byte *dataTmp = data;
+		int rampUpSampleCount = 64;
+		for (int i = 0; i < rampUpSampleCount; i++) {
+			*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
+			dataTmp++;
+		}
+
+		_mixerChannels[channel].stream->queueBuffer(
+			data,
+			initialReadCount,
+			DisposeAfterUse::YES,
+			mixerGetOutputFlags());
+	}
+
+	return true;
+}
+
+byte HEMixer::mixerGetOutputFlags() {
+	// Just plain mono 8-bit sound...
+
+	byte streamFlags = 0;
+	streamFlags |= Audio::FLAG_UNSIGNED;
+
+#ifdef SCUMM_LITTLE_ENDIAN
+	streamFlags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+
+	return streamFlags;
+}
+
+
+/* --- MILES FUNCTIONS --- */
+
+void HEMixer::milesServiceAllStreams() {
 	for (int i = 0; i < MILES_MAX_CHANNELS; i++) {
 		if (_milesChannels[i]._stream.streamObj != nullptr)
 			_milesChannels[i].serviceStream();
 	}
-}
-
-bool HEMixer::startChannel(int channel, int globType, int globNum, uint32 sampleDataOffset, int sampleLen, int frequency, int volume, int callbackId, int32 flags, ...) {
-	return false;
-}
-
-bool HEMixer::startSpoolingChannel(int channel, Common::File &sampleFileIOHandle, int sampleLen, int frequency, int volume, int callbackID, int32 flags, ...) {
-	return false;
-}
-
-bool HEMixer::isMilesActive() {
-	return _useMilesSoundSystem;
-}
-
-bool HEMixer::changeChannelVolume(int channel, int newVolume, int soft_flag) {
-	return false;
 }
 
 void HEMixer::milesStartSpoolingChannel(int channel, const char *filename, long offset, int flags, HESoundModifiers modifiers) {
@@ -175,15 +579,9 @@ void HEMixer::milesStartSpoolingChannel(int channel, const char *filename, long 
 		_milesChannels[channel].startSpoolingChannel(filename, offset, flags, modifiers, _mixer);
 }
 
-int HEMixer::hsFindSoundQueue(int sound) {
-	return 0;
-}
+bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 soundData, uint32 offset,
+	int sampleLen, int bitsPerSample, int sampleChannels, int frequency, HESoundModifiers modifiers, int callbackID, uint32 flags, ...) {
 
-bool HEMixer::mixerStartChannel(int channel, int globType, int globNum, uint32 sampleDataOffset, int sampleLen, int frequency, int volume, int callbackID, uint32 flags, ...) {
-	return false;
-}
-
-bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 soundData, uint32 offset, int sampleLen, int bitsPerSample, int sampleChannels, int frequency, HESoundModifiers modifiers, int callbackID, uint32 flags, ...) {
 	// This function executes either a one-shot or a looping sfx/voice file
 	// which will entirely fit in RAM (as opposed to spooling sounds)
 	debug(5, "HEMixer::milesStartChannel(): Starting sound with resource %d in channel %d, modifiers v %d p %d f %d",
@@ -395,17 +793,13 @@ void HEMixer::milesStopAndCallback(int channel, int messageId) {
 	((SoundHE *)_vm->_sound)->digitalSoundCallback(messageId, channel);
 }
 
-void HEMixer::milesRestoreChannel(int channel) {
-	milesStopAndCallback(channel, HSND_SOUND_TIMEOUT);
-}
-
 void HEMixer::milesFeedMixer() {
 	if (_mixerPaused) {
 		return;
 	}
 
 	// Feed the audio streams
-	serviceAllStreams();
+	milesServiceAllStreams();
 
 	// Check for any sound which has finished playing and call the milesStopAndCallback function
 	for (int i = 0; i < MILES_MAX_CHANNELS; i++) {

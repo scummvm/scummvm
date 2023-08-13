@@ -1010,7 +1010,7 @@ void ScummEngine_v60he::o60_soundOps() {
 		}
 		break;
 	case SO_SOUND_VOLUME_RAMP:
-		// WORKAROUND: For error in room script 228 (room 2) of fbear.
+		// No-op in the original as well.
 		break;
 	case SO_SOUND_FREQUENCY:
 		// Fatty Bear's Birthday surprise uses this when playing the

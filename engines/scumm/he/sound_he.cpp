@@ -61,7 +61,7 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 
 	memset(_heChannel, 0, sizeof(_heChannel));
 
-	_useMilesSoundSystem =
+	bool useMilesSoundSystem =
 		parent->_game.id == GID_MOONBASE ||
 		parent->_game.id == GID_BASEBALL2003 ||
 		parent->_game.id == GID_BASKETBALL ||
@@ -69,7 +69,7 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 		parent->_game.id == GID_SOCCER2004 ||
 		parent->_game.id == GID_PJGAMES;
 
-	_heMixer = new HEMixer(_mixer, _vm, _useMilesSoundSystem);
+	_heMixer = new HEMixer(_mixer, _vm, useMilesSoundSystem);
 }
 
 SoundHE::~SoundHE() {
@@ -92,6 +92,10 @@ void SoundHE::startSound(int sound, int heOffset, int heChannel, int heFlags, in
 
 void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	int i = _soundQueuePos;
+
+	if (_vm->_game.heversion < 95 && heChannel == -1)
+		heChannel = 1;
+
 	while (i--) {
 		if (_soundQueue[i].sound == sound && !(heFlags & ScummEngine_v70he::HESndFlags::HE_SND_APPEND))
 			// Sound is already queued
@@ -105,7 +109,7 @@ void SoundHE::modifySound(int sound, int offset, int frequencyShift, int pan, in
 	int channel = hsFindSoundChannel(sound);
 	if (channel >= 0 && _heChannel[channel].sound) {
 		// The implementation for this is only available for the Miles mixer
-		if (_useMilesSoundSystem) {
+		if (_heMixer->isMilesActive()) {
 			_heMixer->milesModifySound(channel, offset, HESoundModifiers(frequencyShift, pan, volume), flags);
 		}
 	}
@@ -114,44 +118,35 @@ void SoundHE::modifySound(int sound, int offset, int frequencyShift, int pan, in
 void SoundHE::processSoundQueues() {
 	int snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol;
 
-	if (_vm->_game.heversion >= 72) {
-		for (int i = 0; i <_soundQueuePos; i++) {
-			snd = _soundQueue[i].sound;
-			heOffset = _soundQueue[i].offset;
-			heChannel = _soundQueue[i].channel;
-			heFlags = _soundQueue[i].flags;
-			heFreq = _soundQueue[i].freq;
-			hePan = _soundQueue[i].pan;
-			heVol = _soundQueue[i].vol;
+	for (int i = 0; i <_soundQueuePos; i++) {
+		snd = _soundQueue[i].sound;
+		heOffset = _soundQueue[i].offset;
+		heChannel = _soundQueue[i].channel;
+		heFlags = _soundQueue[i].flags;
+		heFreq = _soundQueue[i].freq;
+		hePan = _soundQueue[i].pan;
+		heVol = _soundQueue[i].vol;
 
-			if (snd) {
-				if (_vm->_game.heversion < 99) {
-					triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers());
-				} else {
-					triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers(heFreq, hePan, heVol));
-				}
-			}
-		}
-		_soundQueuePos = 0;
-	} else {
-		while (_soundQueuePos) {
-			_soundQueuePos--;
-			snd = _soundQueue[_soundQueuePos].sound;
-			heOffset = _soundQueue[_soundQueuePos].offset;
-			heChannel = _soundQueue[_soundQueuePos].channel;
-			heFlags = _soundQueue[_soundQueuePos].flags;
+		HESoundModifiers modifiers =
+			_vm->_game.heversion < 99 ? HESoundModifiers() : HESoundModifiers(heFreq, hePan, heVol);
 
-			if (snd) {
-				triggerSound(snd, heOffset, heChannel, heFlags, HESoundModifiers());
+		if (snd) {
+			if (((_vm->_game.heversion >= 80) && (_vm->_game.heversion < 95)) &&
+				(_soundQueue[i].flags & ScummEngine_v70he::HESndFlags::HE_SND_VOL)) {
+				setSoundVolume(snd, _soundQueue[i].vol);
+			} else {
+				triggerSound(snd, heOffset, heChannel, heFlags, modifiers);
 			}
 		}
 	}
+
+	_soundQueuePos = 0;
 
 	Sound::processSoundQueues();
 }
 
 int SoundHE::isSoundRunning(int sound) const {
-	if (_vm->_game.heversion >= 70) {
+	if (_vm->_game.heversion >= 70 || sound == HSND_TALKIE_SLOT) {
 		if (sound >= HSND_CHANNEL_0) {
 			sound = _heChannel[sound - HSND_CHANNEL_0].sound;
 		}
@@ -164,18 +159,18 @@ int SoundHE::isSoundRunning(int sound) const {
 	} else {
 		if (sound == -2) {
 			sound = _heChannel[0].sound;
+			if (hsFindSoundChannel(sound) != -1) {
+				return sound;
+			}
 		} else if (sound == -1) {
 			sound = _currentMusic;
+			if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound))
+				return sound;
+		} else if (sound > 0) {
+			if (hsFindSoundChannel(sound) != -1) {
+				return sound;
+			}
 		}
-
-		if (_mixer->isSoundIDActive(sound))
-			return sound;
-
-		if (isSoundInQueue(sound))
-			return sound;
-
-		if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound))
-			return sound;
 
 		return 0;
 	}
@@ -185,93 +180,89 @@ bool SoundHE::isSoundInUse(int sound) const {
 	// If our sound is a channel number, search for it
 	// between the currently playing sounds first, then
 	// search the sound queue...
-	if (sound >= HSND_CHANNEL_0) {
-		int channel = sound - HSND_CHANNEL_0;
-		sound = _heChannel[channel].sound;
 
-		if (sound)
-			return sound;
+	if (_vm->_game.heversion >= 70 || (_vm->_game.heversion < 70 && sound > 0)) {
+		if (sound >= HSND_CHANNEL_0) {
+			int channel = sound - HSND_CHANNEL_0;
+			sound = _heChannel[channel].sound;
 
-		for (int i = 0; i < _soundQueuePos; i++) {
-			if (_soundQueue[i].channel == channel) {
-				return _soundQueue[i].sound;
+			if (sound)
+				return sound;
+
+			for (int i = 0; i < _soundQueuePos; i++) {
+				if (_soundQueue[i].channel == channel) {
+					return _soundQueue[i].sound;
+				}
 			}
+
+			return 0;
 		}
 
-		return 0;
-	}
-
-	// ...otherwise the sound parameter is a proper
-	//  sound number, so search the queue
-	int i = _soundQueuePos;
-	while (i) {
-		if (sound == _soundQueue[--i].sound)
-			return sound;
+		// ...otherwise the sound parameter is a proper
+		//  sound number, so search the queue
+		int i = _soundQueuePos;
+		while (i) {
+			if (sound == _soundQueue[--i].sound)
+				return sound;
+		}
 	}
 
 	// If it's not in the queue, look to see if it is actually playing
-	return (isSoundRunning(sound));
+	return isSoundRunning(sound);
 }
 
 void SoundHE::stopSound(int sound) {
-	if (_vm->_game.heversion >= 70) {
-		int channel = -1;
+	int channel = -1;
 
-		if (sound >= HSND_CHANNEL_0 && sound <= HSND_CHANNEL_7) {
-			channel = sound - HSND_CHANNEL_0;
-
-			if (_heChannel[channel].sound) {
-				sound = _heChannel[channel].sound;
-				stopDigitalSound(sound);
-			}
-
-			for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
-				if (_soundQueue[i].channel == channel)
-					_soundQueue[i].sound = 0;
-			}
-		} else {
-			if (_vm->_game.heversion >= 95 && sound == HSND_DYN_SOUND_CHAN) {
-				for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
-					if (_soundQueue[i].channel == HSND_DYN_SOUND_CHAN) {
-						_soundQueue[i].sound = 0;
-					}
-				}
-			} else {
-				if (hsFindSoundChannel(sound) != -1) {
-					stopDigitalSound(sound);
-				}
-
-				for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
-					if (_soundQueue[i].sound == sound)
-						_soundQueue[i].sound = 0;
-				}
-			}
-		}
-
-		if ((sound == HSND_TALKIE_SLOT) || (channel == _vm->VAR(_vm->VAR_TALK_CHANNEL))) {
-			_vm->_talkDelay = 0;
-		}
-
-	} else if (_vm->_game.heversion >= 60) {
+	if (_vm->_game.heversion == 60) {
 		if (sound == -2) {
 			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
 			sound = _currentMusic;
+			Sound::stopSound(sound);
+
+			for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
+				if (_heChannel[i].sound == sound) {
+					_heChannel[i].clearChannel();
+				}
+			}
+			return;
+		}
+	}
+
+	if (sound >= HSND_CHANNEL_0 && sound <= HSND_CHANNEL_7) {
+		channel = sound - HSND_CHANNEL_0;
+
+		if (_heChannel[channel].sound) {
+			sound = _heChannel[channel].sound;
+			stopDigitalSound(sound);
 		}
 
-		Sound::stopSound(sound);
+		for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
+			if (_soundQueue[i].channel == channel)
+				_soundQueue[i].sound = 0;
+		}
+	} else {
+		if (_vm->_game.heversion >= 95 && sound == HSND_DYN_SOUND_CHAN) {
+			for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
+				if (_soundQueue[i].channel == HSND_DYN_SOUND_CHAN) {
+					_soundQueue[i].sound = 0;
+				}
+			}
+		} else {
+			if (hsFindSoundChannel(sound) != -1) {
+				stopDigitalSound(sound);
+			}
 
-		for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
-			if (_heChannel[i].sound == sound) {
-				_heChannel[i].sound = 0;
-				_heChannel[i].priority = 0;
-				_heChannel[i].frequency = 0;
-				_heChannel[i].timeout = 0;
-				_heChannel[i].hasSoundTokens = false;
-				_heChannel[i].codeOffset = 0;
-				memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
+			for (int i = 0; i < ARRAYSIZE(_soundQueue); i++) {
+				if (_soundQueue[i].sound == sound)
+					_soundQueue[i].sound = 0;
 			}
 		}
+	}
+
+	if ((sound == HSND_TALKIE_SLOT) || (_vm->VAR_TALK_CHANNEL != 0xFF && channel == _vm->VAR(_vm->VAR_TALK_CHANNEL))) {
+		_vm->_talkDelay = 0;
 	}
 }
 
@@ -436,6 +427,20 @@ void SoundHE::setSoundVar(int sound, int var, int val) {
 	}
 }
 
+void SoundHE::setSoundVolume(int sound, int volume) {
+	int channel;
+
+	if (sound < HSND_CHANNEL_0) {
+		if ((channel = hsFindSoundChannel(sound)) == -1) {
+			return;
+		}
+	} else {
+		channel = sound - HSND_CHANNEL_0;
+	}
+
+	_heMixer->changeChannelVolume(channel, volume, true);
+}
+
 void SoundHE::setOverrideFreq(int freq) {
 	_overrideFreq = freq;
 }
@@ -573,6 +578,10 @@ void SoundHE::unqueueSoundCallbackScripts() {
 			args[2] = 0;
 			args[3] = 0;
 
+			debug(5, "SoundHE::unqueueSoundCallbackScripts(): dequeued callback for sound %d in channel %d",
+				_soundCallbackScripts[i].sound,
+				_soundCallbackScripts[i].channel);
+
 			_vm->runScript(_vm->VAR(_vm->VAR_SOUND_CALLBACK_SCRIPT), 0, 0, args);
 		}
 
@@ -636,7 +645,9 @@ void SoundHE::digitalSoundCallback(int message, int channel) {
 
 		_heChannel[channel].clearChannel();
 
-		queueSoundCallbackScript(sound, channel, message);
+		if (_vm->_game.heversion >= 80)
+			queueSoundCallbackScript(sound, channel, message);
+
 		break;
 	}
 
@@ -648,6 +659,7 @@ void SoundHE::queueSoundCallbackScript(int sound, int channel, int message) {
 	if (!_mixer->isReady())
 		return;
 
+	debug(5, "SoundHE::queueSoundCallbackScript(): callback for channel %d, sound %d, attempting queueing...", channel, sound);
 	// Check if we are about to duplicate this event...
 	for (int i = 0; i < _soundCallbacksQueueSize; i++) {
 
@@ -950,7 +962,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 							pcm.wBlockAlign = _heSpoolingMusicFile.readUint16LE();
 							pcm.wBitsPerSample = _heSpoolingMusicFile.readUint16LE();
 
-							if (_useMilesSoundSystem) {
+							if (_heMixer->isMilesActive()) {
 								if (pcm.wFormatTag != WAVE_FORMAT_PCM && pcm.wFormatTag != WAVE_FORMAT_IMA_ADPCM) {
 									error("SoundHE::triggerSpoolingSound(): Illegal .wav format for Miles mixer, song %d - %d",
 										  song, pcm.wFormatTag);
@@ -1008,7 +1020,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 					error("SoundHE::triggerSpoolingSound(): Illegal spooling sound %d, id %s", song, tag2str(id));
 				}
 
-				if (_useMilesSoundSystem) {
+				if (_heMixer->isMilesActive()) {
 					if (offset)
 						debug("SoundHE::triggerSpoolingSound(): Starting offsets into music files not supported with Miles currently");
 
@@ -1683,8 +1695,6 @@ void SoundHE::createSound(int baseSound, int sound) {
 
 	_vm->_res->unlock(rtSound, baseSound);
 	_vm->_res->unlock(rtSound, sound);
-
-	_heMixer->softRemixAllChannels();
 }
 
 byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
