@@ -103,6 +103,10 @@ void conv_resume(Conv *c) {
 	conv_go(c);
 }
 
+void conv_resume() {
+	conv_resume(conv_get_handle());
+}
+
 int conv_is_event_ready(void) {
 	return _GC(event_ready);
 }

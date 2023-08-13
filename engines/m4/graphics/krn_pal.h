@@ -84,6 +84,7 @@ struct KernelPal_Globals {
 };
 
 extern void pal_fade_set_start(RGB8 *origPalette, int32 percent);
+extern void pal_fade_set_start(int32 percent);
 extern void pal_fade_init(RGB8 *origPalette, int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
 extern void pal_fade_init(int32 firstPalEntry, int32 lastPalEntry, int32 targetPercent, int32 numTicks, int32 triggerNum);
 extern void pal_fade_init(int32 triggerNum);

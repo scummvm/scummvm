@@ -623,6 +623,10 @@ void pal_fade_set_start(RGB8 *origPalette, int32 percent) {
 	pal_fx_update();
 }
 
+void pal_fade_set_start(int32 percent) {
+	pal_fade_set_start(_G(master_palette), percent);
+}
+
 static void pal_cycle_callback(frac16 myMessage) {
 	kernel_trigger_dispatchx((uint32)myMessage);
 }
