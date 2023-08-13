@@ -80,6 +80,7 @@ public:
 
 	void restoreBackup() {
 		_value = _backup;
+		setUI();
 	}
 
 	void setUI();
