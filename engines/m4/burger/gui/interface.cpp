@@ -42,19 +42,22 @@ Interface::Interface() : M4::Interface() {
 	_y2 = SCREEN_HEIGHT;
 }
 
-void Interface::init(int arrow, int wait, int look, int grab, int use) {
+bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 	M4::Interface::init(arrow, wait, look, grab, use);
 
 	_sprite = series_load("999intr", 22, nullptr);
 	if (_sprite != 22)
 		error_show(FL, 'SLF!');
 
-	mouse_set_sprite(wait);
-
-	_G(gameInterfaceBuff) = new GrBuff(_x2 - _x1, _y2 - _y1);
-	setup();
-
 	mouse_set_sprite(arrow);
+
+	if (!_G(gameInterfaceBuff)) {
+		_G(gameInterfaceBuff) = new GrBuff(_x2 - _x1, _y2 - _y1);
+		setup();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 Interface::~Interface() {

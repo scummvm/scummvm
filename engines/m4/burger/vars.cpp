@@ -119,9 +119,8 @@ void Vars::global_menu_system_init() {
 	AddSystemHotkey(Common::KEYCODE_F2, cb_F2);
 	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
 
-	_interface.init(0, 5, 6, 8, 9);
-
-	static_cast<Inventory *>(_inventory)->init();
+	if (_interface.init(0, 5, 6, 8, 9))
+		static_cast<Inventory *>(_inventory)->init();
 }
 
 void Vars::initialize_game() {
