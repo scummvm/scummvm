@@ -149,8 +149,20 @@ bool MusicManager::load(rapidxml::xml_node<char> *node) {
 	return true;
 }
 
-// Function is not needed as of now, keeping it incase its needed in future.
-void MusicManager::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void MusicManager::saveState() {
+	bool unmute = volEffects() > 0 || volMusic() > 0;
+
+	// set flag in case either value is greater than 0
+	if (ConfMan.hasKey("mute"))
+		ConfMan.setBool("mute", !unmute);
+
+	ConfMan.setInt("sfx_volume", volEffects());
+	ConfMan.setInt("music_volume", volMusic());
+
+	ConfMan.flushToDisk();
+
+	g_engine->syncSoundSettings();
+
 #if 0
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sound");
 	child->append_attribute(doc.allocate_attribute("music", g_engine->_stringPool->Get(Mix_VolumeMusic(-1))));
