@@ -424,7 +424,6 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			buffer += 14;
 			if (_game.heversion >= 60) {
 #ifdef ENABLE_HE
-				// TODO: Properly wire up Localizer to new sound system
 				((SoundHE *)_sound)->playVoice(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset, digiTalkieLength);
 #else
 				((SoundHE *)_sound)->playVoice(digiTalkieOffset, digiTalkieLength);
