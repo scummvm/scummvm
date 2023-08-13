@@ -250,13 +250,12 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			if (flags & MDT_PREFER_MT32)
 				devStr = ConfMan.hasKey("mt32_device") ? ConfMan.get("mt32_device") : Common::String("null");
 			else if (flags & MDT_PREFER_GM)
-				devStr = ConfMan.hasKey("gm_device") ? ConfMan.get("gm_device") : Common::String("null");
-			else
+				devStr = ConfMan.get("gm_device");
+
+			if (devStr.empty())
 				devStr = "auto";
 
-			// Default to Null device here, since we also register a default null setting for
-			// the MT32 or GM device in the config manager.
-			hdl = getDeviceHandle(devStr.empty() ? Common::String("null") : devStr);
+			hdl = getDeviceHandle(devStr);
 			const MusicType type = getMusicType(hdl);
 
 			// If we have a "Don't use GM/MT-32" setting we skip this part and jump
