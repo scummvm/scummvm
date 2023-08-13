@@ -58,7 +58,7 @@ void HEMixer::deinitSoftMixerSubSystem() {
 	if (isMilesActive()) {
 		milesStopAllSounds();
 	} else {
-		mixerDeinitMyMixerSubSystem();
+		mixerStopAllSounds();
 	}
 }
 
@@ -92,12 +92,6 @@ void HEMixer::feedMixer() {
 	} else {
 		mixerFeedMixer();
 	}
-}
-
-
-int HEMixer::getChannelCurrentPosition(int channel) {
-	// We are sure this will never be called with Miles on
-	return mixerGetChannelCurrentPosition(channel);
 }
 
 bool HEMixer::changeChannelVolume(int channel, int volume, bool soft) {
@@ -204,8 +198,12 @@ bool HEMixer::mixerInitMyMixerSubSystem() {
 	return true;
 }
 
-bool HEMixer::mixerDeinitMyMixerSubSystem() {
-	return false;
+bool HEMixer::mixerStopAllSounds() {
+	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
+		mixerStopChannel(i);
+	}
+
+	return true;
 }
 
 void HEMixer::mixerFeedMixer() {
@@ -219,13 +217,21 @@ void HEMixer::mixerFeedMixer() {
 
 	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
 		if (!(_mixerChannels[i].flags & CHANNEL_LOOPING)) {
-			if ((_mixerChannels[i].flags & CHANNEL_ACTIVE) && _mixerChannels[i].stream->endOfData()) {
-				_mixerChannels[i].flags |= CHANNEL_FINISHED;
-				_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
+			if (!(_mixerChannels[i].flags & CHANNEL_SPOOLING)) {
+				if (((_mixerChannels[i].flags & CHANNEL_ACTIVE) && _mixerChannels[i].stream->endOfData()) ||
+					((_mixerChannels[i].flags & CHANNEL_ACTIVE) && (_mixerChannels[i].flags & CHANNEL_LAST_CHUNK))) {
 
-				_mixerChannels[i].stream->finish();
-				_mixerChannels[i].stream = nullptr;
-				((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID);
+					// For early callbacks which are bigger than the sample length
+					if (_mixerChannels[i].flags & CHANNEL_LAST_CHUNK)
+						_mixerChannels[i].flags &= ~CHANNEL_LAST_CHUNK;
+
+					_mixerChannels[i].flags |= CHANNEL_FINISHED;
+					_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
+
+					_mixerChannels[i].stream->finish();
+					_mixerChannels[i].stream = nullptr;
+					((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID);
+				}
 			}
 
 			if (_mixerChannels[i].flags & CHANNEL_SPOOLING) {
@@ -261,9 +267,9 @@ void HEMixer::mixerFeedMixer() {
 
 				_mixerChannels[i].fileHandle->seek(curOffset, SEEK_CUR);
 
-				int length = SPOOL_CHUNK_SIZE;
-				if (_mixerChannels[i].lastReadPosition + SPOOL_CHUNK_SIZE >= _mixerChannels[i].sampleLen) {
-					length = _mixerChannels[i].sampleLen % SPOOL_CHUNK_SIZE;
+				int length = MIXER_SPOOL_CHUNK_SIZE;
+				if (_mixerChannels[i].lastReadPosition + MIXER_SPOOL_CHUNK_SIZE >= _mixerChannels[i].sampleLen) {
+					length = _mixerChannels[i].sampleLen % MIXER_SPOOL_CHUNK_SIZE;
 					_mixerChannels[i].flags |= CHANNEL_LAST_CHUNK;
 				}
 
@@ -318,10 +324,6 @@ bool HEMixer::mixerChangeChannelVolume(int channel, int volume, bool soft) {
 	_mixer->setChannelVolume(_mixerChannels[channel].handle, newVolume);
 
 	return true;
-}
-
-int HEMixer::mixerGetChannelCurrentPosition(int channel) {
-	return 0;
 }
 
 bool HEMixer::mixerPauseMixerSubSystem(bool paused) {
@@ -380,6 +382,19 @@ bool HEMixer::mixerStartChannel(
 		va_start(params, flags);
 		_mixerChannels[channel].endSampleAdjustment = va_arg(params, int);
 		va_end(params);
+
+		// The original has a very convoluted way of making sure that the sample
+		// both callbacks earlier and stops earlier. We just set a shorter sample length
+		// as this should ensure the same effect on both ends. Hopefully it's still accurate.
+		if ((int)_mixerChannels[channel].sampleLen >= _mixerChannels[channel].endSampleAdjustment) {
+			_mixerChannels[channel].sampleLen -= _mixerChannels[channel].endSampleAdjustment;
+		} else {
+			// Sometimes a game can give an end sample adjustment which is bigger than the sample itself
+			// (looking at you, Backyard Baseball '97). In this case we should at least give one frame
+			// for the sound to play for a while.
+			_mixerChannels[channel].flags |= CHANNEL_LAST_CHUNK;
+		}
+
 	} else {
 		_mixerChannels[channel].endSampleAdjustment = 0;
 	}
@@ -395,20 +410,6 @@ bool HEMixer::mixerStartChannel(
 
 		if (!data)
 			return false;
-
-		// The following feature is the only thing which would justify
-		// the pain of having non-spooling audio files played as chunks.
-		//
-		// The purpose of this is to produce a callback before the end of
-		// the sound, precisely endSampleAdjustment bytes earlier.
-		//
-		// I haven't seen this one used anywhere (except in puttcircus,
-		// which only gives 2 as a value - which is a value which of course
-		// does nothing even in the original). Please, (don't) prove me wrong :-)
-		int offset = _mixerChannels[channel].endSampleAdjustment;
-		if (offset != 0 && offset != 2)
-			error("HEMixer::mixerStartChannel(): Unimplemented early callback with value %d, in room %d, for sound %d!\n",
-				offset, _vm->_currentRoom, globNum);
 
 		ptr += sampleDataOffset;
 
@@ -504,13 +505,13 @@ bool HEMixer::mixerStartSpoolingChannel(
 
 	if (_vm->_res->createResource(
 		(ResType)_mixerChannels[channel].globType,
-			_mixerChannels[channel].globNum, SPOOL_CHUNK_SIZE) == nullptr) {
+			_mixerChannels[channel].globNum, MIXER_SPOOL_CHUNK_SIZE) == nullptr) {
 		return false;
 	}
 
 	_mixerChannels[channel].fileHandle = &sampleFileIOHandle;
 	_mixerChannels[channel].sampleLen = sampleLen;
-	initialReadCount = MIN<int>(sampleLen, SPOOL_CHUNK_SIZE);
+	initialReadCount = MIN<int>(sampleLen, MIXER_SPOOL_CHUNK_SIZE);
 	_mixerChannels[channel].initialSpoolingFileOffset = sampleFileIOHandle.pos();
 
 	_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
