@@ -366,9 +366,9 @@ bool Cast::loadConfig() {
 		field21 = stream->readSint16();
 		field22 = stream->readSint32();
 		field23 = stream->readSint32();
-
-		debugC(1, kDebugLoading, "Cast::loadConfig(): directorVersion: %d", _version);
 	}
+
+	debugC(1, kDebugLoading, "Cast::loadConfig(): directorVersion: %d", humanVer);
 
 	if (_version >= kFileVer400) {
 		int32 field24 = stream->readSint32();
