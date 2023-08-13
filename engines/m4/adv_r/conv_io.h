@@ -81,6 +81,7 @@ extern Conv *conv_get_handle();
 extern void conv_set_handle(Conv *c);
 
 extern void conv_resume(Conv *c);
+extern void conv_resume();
 extern void conv_reset(char *filename);
 
 extern void conv_reset_all();

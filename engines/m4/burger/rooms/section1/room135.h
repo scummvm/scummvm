@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Room135 : public Room {
 private:
-	int _val1 = 0;
+	int _volume = 0;
 	int _val2 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
@@ -39,14 +39,28 @@ private:
 	int _val8 = 0;
 	int _val9 = 0;
 	int _val10 = 0;
+	int _val11 = 0;
 	bool _flag1 = false;
 	bool _odieLoaded = false;
 	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
+	machine *_series4 = nullptr;
+	machine *_series5 = nullptr;
+	machine *_series6 = nullptr;
+	machine *_play1 = nullptr;
+	machine *_play2 = nullptr;
+	machine *_play3 = nullptr;
+	machine *_play4 = nullptr;
+	int _xp = 0, _yp = 0;
+	int _frame = 0;
+	const char *_name1 = nullptr;
 
 	void conv01();
 	void conv02();
 	void conv03();
-	void odie();
+	void loadOdie();
+	void loadDigi();
 
 public:
 	Room135() : Room() {}
