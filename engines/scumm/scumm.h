@@ -1621,6 +1621,7 @@ public:
 	byte *get2byteCharPtr(int idx);
 
 	bool isScummvmKorTarget();
+	bool hasLocalizer();
 
 //protected:
 	byte *_2byteFontPtr = nullptr;
