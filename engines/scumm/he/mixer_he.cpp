@@ -425,7 +425,7 @@ bool HEMixer::mixerStartChannel(
 		_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
 
 		_mixer->playStream(
-			Audio::Mixer::kPlainSoundType,
+			globNum == 1 ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType,
 			&_mixerChannels[channel].handle,
 			_mixerChannels[channel].stream,
 			-1,
@@ -517,7 +517,7 @@ bool HEMixer::mixerStartSpoolingChannel(
 	_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
 
 	_mixer->playStream(
-		Audio::Mixer::kPlainSoundType,
+		Audio::Mixer::kMusicSoundType,
 		&_mixerChannels[channel].handle,
 		_mixerChannels[channel].stream,
 		-1,
