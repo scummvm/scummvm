@@ -149,7 +149,7 @@ bool OSystem_MacOSX::hasFeature(Feature f) {
 #endif
 
 #if defined(__VEC__) || defined(__VEC) // PowerPC Altivec extensions
-	if (f == kFeatureAltivec)
+	if (f == kFeatureCpuAltivec)
 		return true;
 #endif
 
