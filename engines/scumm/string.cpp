@@ -1175,7 +1175,7 @@ void ScummEngine::CHARSET_1() {
 		} else {
 			if (_game.features & GF_16BIT_COLOR) {
 				// HE games which use sprites for subtitles
-			} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(HSND_TALKIE_SLOT)) {
+			} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundInUse(HSND_TALKIE_SLOT)) {
 				// Special case for HE games
 			} else if (_game.id == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 				// Special case for Loom (CD), since it only uses CD audio.for sound
