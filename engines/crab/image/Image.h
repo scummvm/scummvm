@@ -84,7 +84,7 @@ public:
 #if 0
 		return SDL_SetTextureAlphaMod(texture, alpha);
 #endif
-		warning("Setting alpha modulation for texture: %d ", alpha);
+		debug(5, "Setting alpha modulation for texture: %d ", alpha);
 		return 0;
 	}
 
