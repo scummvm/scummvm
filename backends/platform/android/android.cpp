@@ -49,10 +49,13 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/system_properties.h>
-#include <cpu-features.h>
 #include <time.h>
 #include <unistd.h>
 #include <dlfcn.h>
+
+#if defined(__arm__) || defined(__x86_64__) || defined(__i386__)
+#include <cpu-features.h>
+#endif
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
@@ -445,13 +448,6 @@ void OSystem_Android::initBackend() {
 		}
 	}
 
-	// Quickly figure out if arm NEON is supported
-	if (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM) {
-		_neonSupport = android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON;
-	} else {
-		_neonSupport = android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM64;
-	}
-
 	// Warning: ConfMan.registerDefault() can be used for a Session of ScummVM
 	//          but:
 	//              1. The values will NOT persist to storage
@@ -645,7 +641,52 @@ bool OSystem_Android::hasFeature(Feature f) {
 	if (f == kFeatureOpenGLForGame) return true;
 	/* GLES2 always supports shaders */
 	if (f == kFeatureShadersForGame) return true;
-	if (f == kFeatureCpuNEON) return _neonSupport;
+
+	if (f == kFeatureCpuNEON) {
+#if defined(__aarch64__)
+		// ARMv8 mandates NEON
+		return true;
+#elif defined(__arm__)
+		return (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON);
+#else
+		return false;
+#endif
+	}
+
+	if (f == kFeatureCpuSSE2) {
+#if defined(__x86_64__)
+		// x86_64 mandates SSE2
+		return true;
+#elif defined(__i386__) && defined(__SSE2__)
+		// Android NDK mandates SSE2 starting with Jellybean but some people tried hacks
+		// Allow to disable SSE2
+		return true;
+#else
+		return false;
+#endif
+	}
+
+	if (f == kFeatureCpuSSE41) {
+#if defined(__x86_64__) || defined(__i386__)
+		return (android_getCpuFeatures() & ANDROID_CPU_X86_FEATURE_SSE4_1);
+#else
+		return false;
+#endif
+	}
+
+	if (f == kFeatureCpuAVX2) {
+#if defined(__x86_64__)
+		// No AVX2 in 32-bits
+		return (android_getCpuFeatures() & ANDROID_CPU_X86_FEATURE_AVX2);
+#else
+		return false;
+#endif
+	}
+
+	if (f == kFeatureCpuAltivec) {
+		return false;
+	}
+
 	return ModularGraphicsBackend::hasFeature(f);
 }
 

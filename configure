@@ -2108,7 +2108,6 @@ if test "$_host_os" = android; then
 
 	case $_host_cpu in
 	aarch64)
-		add_line_to_config_mk 'NEED_ANDROID_CPUFEATURES = 1'
 		;;
 	arm|i686|x86_64)
 		add_line_to_config_mk 'NEED_ANDROID_CPUFEATURES = 1'
