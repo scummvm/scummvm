@@ -125,10 +125,14 @@ void conv_play(Conv *c) {
 	conv_go(c);
 }
 
-long conv_current_node(void) {
+long conv_current_node() {
 	if (conv_get_handle())
 		return conv_get_handle()->node_hash;
 	return 0;
+}
+
+int32 conv_current_entry() {
+	return _GC(ent);
 }
 
 void conv_reset(const char *filename) {

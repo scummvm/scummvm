@@ -852,11 +852,67 @@ void Room135::conv01() {
 }
 
 void Room135::conv02() {
-	error("TODO: conv02");
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+
+	if (_G(kernel).trigger == 35) {
+		if (who == 0) {
+			_val6 = 1;
+			conv_resume();
+		}
+	} else if (conv_sound_to_play()) {
+		if (who == 0) {
+			_name1 = conv_sound_to_play();
+			_val6 = 12;
+		}
+	} else {
+		conv_resume();
+	}
 }
 
 void Room135::conv03() {
-	error("TODO: conv03");
+	_G(kernel).trigger_mode = KT_PARSE;
+
+	if (_G(kernel).trigger == 35) {
+		int who = conv_whos_talking();
+		if (who <= 0) {
+			if (conv_current_node() == 8 && !conv_current_entry()) {
+				digi_preload("03p1001");
+				_val6 = 9;
+			} else {
+				_val6 = 1;
+				conv_resume();
+			}
+		} else if (who == 1) {
+			SendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+			conv_resume();
+		}
+	} else if (conv_sound_to_play()) {
+		int who = conv_whos_talking();
+		if (who <= 0) {
+			if (conv_current_node() == 8 && conv_current_entry()) {
+				kernel_timing_trigger(1, 35);
+			} else {
+				_name1 = conv_sound_to_play();
+				_val6 = 2;
+			}
+		} else if (who == 1) {
+			if (conv_current_node() == 1 || conv_current_node() == 2)
+				_val6 = 3;
+
+			if (conv_current_node() == 9 && !conv_current_entry()) {
+				digi_preload("03p1001");
+				_val6 = 9;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				digi_play(conv_sound_to_play(), 1, 255, 16);
+			} else {
+				SendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+				digi_play(conv_sound_to_play(), 1, 255, 35);
+			}
+		}
+	} else {
+		conv_resume();
+	}
 }
 
 void Room135::loadOdie() {
