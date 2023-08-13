@@ -18,10 +18,6 @@ void BaseBackend::initBackend() {
 	OSystem::initBackend();
 }
 
-bool BaseBackend::hasFeature(OSystem::Feature f) {
-	return false;
-}
-
 void BaseBackend::fillScreen(uint32 col) {
 }
 
