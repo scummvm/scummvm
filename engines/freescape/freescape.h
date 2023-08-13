@@ -192,12 +192,14 @@ public:
 	Common::Event decodeDOSMouseEvent(int code, int repetition);
 
 	uint16 readField(Common::SeekableReadStream *file, int nbits);
+	uint16 readPtr(Common::SeekableReadStream *file);
 	Common::Array<uint16> readArray(Common::SeekableReadStream *file, int size);
 
 	// 8-bit
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
+	Group *load8bitGroup(Common::SeekableReadStream *file, byte rawFlagsAndType);
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size);
 	void renderPixels8bitBinImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
 

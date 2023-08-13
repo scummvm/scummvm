@@ -29,7 +29,10 @@ namespace Freescape {
 
 class Group : public Object {
 public:
-	Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_);
+	Group(uint16 objectID_, uint16 flags_,
+		const Common::Array<uint16> objectIds_,
+		const Common::Array<uint16> objectOperations_,
+		const Common::Array<Math::Vector3d> objectPositions_);
 	void linkObject(Object *obj);
 	void assemble(int index);
 	void step();
@@ -39,8 +42,8 @@ public:
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;
 	Common::Array<Math::Vector3d> _objectPositions;
-	Common::Array<int16> _objectOperations;
-	Common::Array<int16> _objectIds;
+	Common::Array<uint16> _objectOperations;
+	Common::Array<uint16> _objectIds;
 	int _scale;
 	int _step;
 	bool _active;

@@ -25,7 +25,10 @@
 
 namespace Freescape {
 
-Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
+Group::Group(uint16 objectID_, uint16 flags_,
+const Common::Array<uint16> objectIds_,
+const Common::Array<uint16> objectOperations_,
+const Common::Array<Math::Vector3d> objectPositions_) {
 	_objectID = objectID_;
 	_flags = flags_;
 	_scale = 0;
@@ -33,47 +36,9 @@ Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 	_finished = false;
 	_step = 0;
 
-	int i;
-	for (i = 0; i < 5; i++) {
-		debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i, data_[i]);
-		if (data_[i] > 0)
-			_objectIds.push_back(data_[i]);
-	}
-	for (i = 5; i < 9; i++)
-		debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i, data_[i]);
-	i = 9;
-	while (i < int(data_.size())) {
-		int operation = data_[i];
-		_objectOperations.push_back(operation);
-		debugC(1, kFreescapeDebugParser, "group data[%d] = %d (operation)", i, operation);
-		if (operation == 0x80) {
-			i++;
-			_objectPositions.push_back(Math::Vector3d());
-		} else if (operation == 0x01) {
-			i++;
-			int scriptSize = data_[i];
-			assert(scriptSize > 0);
-			Common::Array<uint16> conditionData;
-			FCLInstructionVector instructions;
-			for (int j = i + 1; j < i + 1 + scriptSize && j < int(data_.size()); j++) {
-				conditionData.push_back(data_[j]);
-			}
-			Common::String conditionStr = detokenise8bitCondition(conditionData, instructions, false);
-			debugC(1, kFreescapeDebugParser, "group condition:\n%s", conditionStr.c_str());
-			_objectPositions.push_back(Math::Vector3d());
-			i = i + 1 + scriptSize;
-		} else {
-			if (i < int(data_.size() - 4)) {
-				debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 1, data_[i + 1]);
-				debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 2, data_[i + 2]);
-				debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 3, data_[i + 3]);
-				Math::Vector3d position(data_[i + 1], data_[i + 2], data_[i + 3]);
-				_objectPositions.push_back(position);
-			} else
-				_objectOperations.pop_back();
-			i = i + 4;
-		}
-	}
+	_objectIds = objectIds_;
+	_objectOperations = objectOperations_;
+	_objectPositions = objectPositions_;
 
 	if (isDestroyed()) // If the object is destroyed, restore it
 		restore();
