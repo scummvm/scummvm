@@ -159,7 +159,7 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 // (eg. a room change occurred)
 int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny) {
 
-	if ((nint->ScriptFuncNames.size() <= evnt) || nint->ScriptFuncNames[evnt].IsEmpty()) {
+	if (((int)nint->ScriptFuncNames.size() <= evnt) || nint->ScriptFuncNames[evnt].IsEmpty()) {
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
