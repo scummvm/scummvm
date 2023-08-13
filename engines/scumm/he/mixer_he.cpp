@@ -425,7 +425,7 @@ bool HEMixer::mixerStartChannel(
 		_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
 
 		_mixer->playStream(
-			globNum == 1 ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType,
+			globNum == HSND_TALKIE_SLOT ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType,
 			&_mixerChannels[channel].handle,
 			_mixerChannels[channel].stream,
 			-1,
@@ -616,6 +616,10 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 		 // This flag signals that there's an active sound in our channel!
 		_milesChannels[channel]._audioHandleActive = true;
 
+		Audio::Mixer::SoundType soundType =
+			globNum == HSND_TALKIE_SLOT ?
+			Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+
 		// Play the sound, whether in one-shot fashion or as a loop
 		if (flags & CHANNEL_LOOPING) {
 			_milesChannels[channel]._playFlags = CHANNEL_LOOPING;
@@ -639,7 +643,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 			}
 
 			if (stream) {
-				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_milesChannels[channel]._audioHandle,
+				_mixer->playStream(soundType, &_milesChannels[channel]._audioHandle,
 						Audio::makeLoopingAudioStream(stream, 0), channel, 255, 0, DisposeAfterUse::NO);
 			}
 
@@ -680,7 +684,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 
 			if (stream) {
 				stream->seek(msOffset);
-				_mixer->playStream(Audio::Mixer::kPlainSoundType, &_milesChannels[channel]._audioHandle,
+				_mixer->playStream(soundType, &_milesChannels[channel]._audioHandle,
 								   stream, channel, _milesChannels[channel]._modifiers.volume, scaledPan, DisposeAfterUse::NO);
 			}
 		}
@@ -976,7 +980,7 @@ void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int
 
 	// Create our stream and start it
 	_stream.streamObj = Audio::makeQueuingAudioStream(_baseFrequency, (waveHeader.wChannels > 1));
-	mixer->playStream(Audio::Mixer::kPlainSoundType, &_stream.streamHandle, _stream.streamObj, -1, 255, 0, DisposeAfterUse::NO);
+	mixer->playStream(Audio::Mixer::kMusicSoundType, &_stream.streamHandle, _stream.streamObj, -1, 255, 0, DisposeAfterUse::NO);
 
 	if (_dataFormat == WAVE_FORMAT_PCM) {
 		// Apply the modifiers and the loop flag, if available
