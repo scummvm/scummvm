@@ -852,6 +852,11 @@ TEMPLATE uint BASESTRING::hash() const {
 	return hashResult ^ _size;
 }
 
+template<>
+uint32 BaseString<char>::cStrLen(const value_type *str) {
+	return static_cast<uint32>(strlen(str));
+}
+
 template class BaseString<char>;
 template class BaseString<uint16>;
 template class BaseString<u32char_type_t>;
