@@ -223,7 +223,6 @@ void HEMixer::mixerFeedMixer() {
 				_mixerChannels[i].flags |= CHANNEL_FINISHED;
 				_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
 
-				debug(5, "hit finish on channel %d", i);
 				_mixerChannels[i].stream->finish();
 				_mixerChannels[i].stream = nullptr;
 				((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID);
@@ -240,7 +239,6 @@ void HEMixer::mixerFeedMixer() {
 					_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
 					_mixerChannels[i].flags |= CHANNEL_FINISHED;
 
-					debug(5, "hit finish on spooling channel %d", i);
 					_mixerChannels[i].stream->finish();
 					_mixerChannels[i].stream = nullptr;
 					_mixerChannels[i].callbackOnNextFrame = true;
@@ -349,7 +347,6 @@ bool HEMixer::mixerStartChannel(
 			_mixerChannels[channel].flags |= CHANNEL_FINISHED;
 			_mixerChannels[channel].flags &= ~CHANNEL_ACTIVE;
 
-			debug(5, "stopping handle on channel %d", channel);
 			_mixer->stopHandle(_mixerChannels[channel].handle);
 			_mixerChannels[channel].stream = nullptr;
 
@@ -476,7 +473,6 @@ bool HEMixer::mixerStartSpoolingChannel(
 			_mixerChannels[channel].flags |= CHANNEL_FINISHED;
 			_mixerChannels[channel].flags &= ~CHANNEL_ACTIVE;
 
-			debug(5, "stopping handle on channel %d", channel);
 			_mixer->stopHandle(_mixerChannels[channel].handle);
 			_mixerChannels[channel].stream = nullptr;
 
