@@ -22,9 +22,10 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for PC98 font ROM.
   - Added optional dependency for libsonivox, implementing EAS (Embedded Audio
     Synthesis) sound driver.
+  - Added YUV422 and YUV444 support to Theora decoder.  
 
  AGS:
-   - Synced with upstream AGS 3.6.0.48.
+   - Synced with upstream AGS 3.6.0.51.
 
  Asylum:
    - Added support for Chinese Sanitarium.
