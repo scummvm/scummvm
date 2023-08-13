@@ -27,12 +27,22 @@
 
 namespace Freescape {
 
+struct AnimationOpcode {
+	AnimationOpcode(uint16 opcode_) {
+		opcode = opcode_;
+	}
+	uint16 opcode;
+	Math::Vector3d position;
+	Common::String conditionSource;
+	FCLInstructionVector condition;
+};
+
 class Group : public Object {
 public:
 	Group(uint16 objectID_, uint16 flags_,
 		const Common::Array<uint16> objectIds_,
-		const Common::Array<uint16> objectOperations_,
-		const Common::Array<Math::Vector3d> objectPositions_);
+		const Common::Array<AnimationOpcode *> operations);
+	~Group();
 	void linkObject(Object *obj);
 	void assemble(int index);
 	void step();
@@ -41,8 +51,7 @@ public:
 
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;
-	Common::Array<Math::Vector3d> _objectPositions;
-	Common::Array<uint16> _objectOperations;
+	Common::Array<AnimationOpcode *> _operations;
 	Common::Array<uint16> _objectIds;
 	int _scale;
 	int _step;

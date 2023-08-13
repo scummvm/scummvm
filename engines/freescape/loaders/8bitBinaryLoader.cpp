@@ -84,6 +84,7 @@ Common::Array<uint16> FreescapeEngine::readArray(Common::SeekableReadStream *fil
 
 Group *FreescapeEngine::load8bitGroup(Common::SeekableReadStream *file, byte rawFlagsAndType) {
 	debugC(1, kFreescapeDebugParser, "Object of type 'group'");
+	Common::Array<AnimationOpcode *> animation;
 	Common::Array<uint16> groupObjects = readArray(file, 6);
 
 	// object ID
@@ -116,19 +117,19 @@ Group *FreescapeEngine::load8bitGroup(Common::SeekableReadStream *file, byte raw
 	Common::Array<uint16> groupOperations;
 	Common::Array<Math::Vector3d> groupPositions;
 	while (byteSizeOfObject > 0) {
-		uint16 operation = 0;
+		uint16 opcode = 0;
 		if (isAmiga() || isAtariST())
-			operation = readField(file, 16);
+			opcode = readField(file, 16);
 		else
-			operation = readField(file, 8);
+			opcode = readField(file, 8);
+
+		AnimationOpcode* operation = new AnimationOpcode(opcode);
 
 		byteSizeOfObject--;
-		Math::Vector3d position;
-		if (operation == 0x80) {
+		if (opcode == 0x80) {
 			debugC(1, kFreescapeDebugParser, "Group operation rewind");
-		} else if (operation == 0x01) {
+		} else if (opcode == 0x01) {
 			debugC(1, kFreescapeDebugParser, "Group operation script execution");
-			FCLInstructionVector instructions;
 			// get the length
 			uint32 lengthOfCondition = readField(file, 8);
 			assert(lengthOfCondition > 0);
@@ -136,31 +137,29 @@ Group *FreescapeEngine::load8bitGroup(Common::SeekableReadStream *file, byte raw
 			debugC(1, kFreescapeDebugParser, "Length of condition: %d at %lx", lengthOfCondition, long(file->pos()));
 			// get the condition
 			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
-			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
-			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
+			operation->conditionSource = detokenise8bitCondition(conditionArray, operation->condition, isAmiga() || isAtariST());
+			debugC(1, kFreescapeDebugParser, "%s", operation->conditionSource.c_str());
 			byteSizeOfObject = byteSizeOfObject - lengthOfCondition;
 		} else {
 			if (byteSizeOfObject >= 3) {
-				position.x() = readField(file, 8);
-				position.y() = readField(file, 8);
-				position.z() = readField(file, 8);
-				debugC(1, kFreescapeDebugParser, "Group operation %d move to: %f %f %f", operation, position.x(), position.y(), position.z());
+				operation->position.x() = readField(file, 8);
+				operation->position.y() = readField(file, 8);
+				operation->position.z() = readField(file, 8);
+				debugC(1, kFreescapeDebugParser, "Group operation %d move to: %f %f %f", opcode, operation->position.x(), operation->position.y(), operation->position.z());
 				byteSizeOfObject = byteSizeOfObject - 3;
 			} else {
 				byteSizeOfObject = 0;
 				continue;
 			}
 		}
-		groupOperations.push_back(operation);
-		groupPositions.push_back(position);
+		animation.push_back(operation);
 	}
 
 	return new Group(
 		objectID,
 		rawFlagsAndType,
 		groupObjects,
-		groupOperations,
-		groupPositions);
+		animation);
 }
 
 Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {

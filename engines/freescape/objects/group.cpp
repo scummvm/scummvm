@@ -27,8 +27,7 @@ namespace Freescape {
 
 Group::Group(uint16 objectID_, uint16 flags_,
 const Common::Array<uint16> objectIds_,
-const Common::Array<uint16> objectOperations_,
-const Common::Array<Math::Vector3d> objectPositions_) {
+const Common::Array<AnimationOpcode *> operations_) {
 	_objectID = objectID_;
 	_flags = flags_;
 	_scale = 0;
@@ -37,14 +36,18 @@ const Common::Array<Math::Vector3d> objectPositions_) {
 	_step = 0;
 
 	_objectIds = objectIds_;
-	_objectOperations = objectOperations_;
-	_objectPositions = objectPositions_;
+	_operations = operations_;
 
 	if (isDestroyed()) // If the object is destroyed, restore it
 		restore();
 
 	makeInitiallyVisible();
 	makeVisible();
+}
+
+Group::~Group() {
+	for (int i = 0; i < int(_operations.size()); i++)
+		delete _operations[i];
 }
 
 void Group::linkObject(Object *obj) {
@@ -68,7 +71,7 @@ void Group::linkObject(Object *obj) {
 
 void Group::assemble(int index) {
 	GeometricObject *gobj = (GeometricObject *)_objects[index];
-	Math::Vector3d position = _objectPositions[_step];
+	Math::Vector3d position = _operations[_step]->position;
 
 	if (!GeometricObject::isPolygon(gobj->getType()))
 		position = 32 * position / _scale;
@@ -89,14 +92,14 @@ void Group::run() {
 }
 
 void Group::run(int index) {
-	if (_objectOperations[_step] == 0x80) {
+	if (_operations[_step]->opcode == 0x80) {
 		_step = -1;
 		_active = false;
 		_finished = false;
-	} else if (_objectOperations[_step] == 0x01) {
-		// TODO
+	} else if (_operations[_step]->opcode == 0x01) {
+		g_freescape->executeCode(_operations[_step]->condition, false, true, false, false);
 	} else {
-		if (_objectOperations[_step] == 0x10)
+		if (_operations[_step]->opcode == 0x10)
 			if (!_active) {
 				_step = -1;
 				return;
@@ -116,7 +119,7 @@ void Group::step() {
 	if (_finished)
 		return;
 
-	if (_step < int(_objectOperations.size() - 1))
+	if (_step < int(_operations.size() - 1))
 		_step++;
 	else {
 		_finished = true;

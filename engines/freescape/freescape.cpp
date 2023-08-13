@@ -34,6 +34,8 @@
 
 namespace Freescape {
 
+FreescapeEngine *g_freescape;
+
 FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _gfx(nullptr) {
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
@@ -157,6 +159,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_maxShield = 63;
 	_maxEnergy = 63;
+
+	g_freescape = this;
 }
 
 FreescapeEngine::~FreescapeEngine() {
