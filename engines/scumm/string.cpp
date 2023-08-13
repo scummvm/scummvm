@@ -498,7 +498,6 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			}
 			value[i] = 0;
 			digiTalkieLength = atoi(value);
-			// TODO: Properly wire up Localizer to new sound system
 			((SoundHE *)_sound)->playVoice(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset, digiTalkieLength);
 			break;
 		case 104:
@@ -520,9 +519,6 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			digiTalkieOffset = atoi(value);
-			//digiTalkieLength = 0;
-			// TODO: Properly wire up Localizer to new sound system
 			((SoundHE *)_sound)->playVoiceFile(value);
 			break;
 		case 119:
@@ -1800,6 +1796,10 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	return 0;
 }
 
+
+bool ScummEngine::hasLocalizer() {
+	return _localizer != nullptr;
+}
 
 #pragma mark -
 #pragma mark --- Charset initialisation ---

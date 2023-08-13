@@ -1549,6 +1549,12 @@ void SoundHE::playVoice(uint32 offset, uint32 length) {
 
 	file.seek(offset, SEEK_SET);
 
+	if (_vm->hasLocalizer()) {
+		file.seek(offset + 4, SEEK_SET);
+		length = file.readUint32BE();
+		file.seek(offset, SEEK_SET);
+	}
+
 	_vm->_res->createResource(rtSound, 1, length);
 	ptr = _vm->getResourceAddress(rtSound, 1);
 	file.read(ptr, length);
