@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-12 15:37+0000\n"
-"PO-Revision-Date: 2023-08-12 13:47+0000\n"
+"PO-Revision-Date: 2023-08-13 08:13+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -5803,13 +5803,11 @@ msgstr "Il giocatore non cadrà mai fuori dai bordi"
 
 #: engines/freescape/metaengine.cpp:101
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Inverti asse Y del mouse"
 
 #: engines/freescape/metaengine.cpp:102
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Usa palette colori alternativa"
+msgstr "Usa metodo di controllo alternativo per la camera"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
