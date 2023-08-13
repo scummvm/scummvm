@@ -85,7 +85,9 @@ public:
 		g_system->getMixer()->stopAll();
 	}
 
-	static void volEffects(const int &volume) {
+	static void volEffects(const int &volume, const bool &unmute = false) {
+		if (unmute)
+			g_system->getMixer()->muteSoundType(Audio::Mixer::kSFXSoundType, false);
 		g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 	}
 
@@ -93,7 +95,9 @@ public:
 		return g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 	}
 
-	static void volMusic(const int &volume) {
+	static void volMusic(const int &volume, const bool &unmute = false) {
+		if (unmute)
+			g_system->getMixer()->muteSoundType(Audio::Mixer::kMusicSoundType, false);
 		g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 	}
 
@@ -101,7 +105,7 @@ public:
 		return g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 	}
 
-	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void saveState();
 
 	void freeMusic();
 	void freeChunk();
