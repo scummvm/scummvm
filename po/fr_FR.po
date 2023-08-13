@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-12 15:37+0000\n"
-"PO-Revision-Date: 2023-08-11 11:40+0000\n"
+"PO-Revision-Date: 2023-08-13 10:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5809,13 +5809,11 @@ msgstr "Le joueur ne peut plus chuter par dessus les bords"
 
 #: engines/freescape/metaengine.cpp:101
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Inverser l'axe Y de la souris"
 
 #: engines/freescape/metaengine.cpp:102
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Utiliser une palette alternative"
+msgstr "Utilise des contrôles de caméra alternatifs"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
