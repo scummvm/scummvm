@@ -55,7 +55,7 @@
 		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
 		<def var = 'DropdownButton.Width' value = '17' scalable = 'yes'/>
-		<def var = 'VolumeSlider.Width' value = '275' scalable = 'yes'/>
+		<def var = 'VolumeSlider.Width' value = '128' scalable = 'yes'/>
 
 		<def var = 'Checkbox.Spacing' value = '15' scalable = 'yes'/>
 		<def var = 'Radiobutton.Spacing' value = '15' scalable = 'yes'/>
