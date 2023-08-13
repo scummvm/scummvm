@@ -259,6 +259,8 @@ protected:
 	bool pointerInOwnBuffer(const value_type *str) const;
 
 	uint getUnsignedValue(uint pos) const;
+
+	static uint32 cStrLen(const value_type *str);
 };
 }
 #endif
