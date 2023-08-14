@@ -1357,12 +1357,12 @@ void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundDa
 	int overrideDuration;
 	if (_heMixer->audioOverrideExists(globNum, true, &overrideDuration)) {
 		_heChannel[channel].timeout = overrideDuration;
+		_heChannel[channel].codeOffset = -1;
+		_heChannel[channel].hasSoundTokens = false;
 	}
 
 	for (int i = 0; i < HSND_MAX_SOUND_VARS; i++) {
 		_heChannel[channel].soundVars[i] = 0;
-		_heChannel[channel].codeOffset = -1;
-		_heChannel[channel].hasSoundTokens = false;
 	}
 }
 
