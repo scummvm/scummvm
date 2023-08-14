@@ -882,7 +882,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 				Common::String filename(_vm->generateFilename(-4));
 				int fileOffset = 0;
 				int songsize = 0;
-				int id, len;
+				uint32 id, len;
 
 				hsStopDigitalSound(_heChannel[channel].sound);
 
@@ -1386,7 +1386,7 @@ void SoundHE::hsStopDigitalSound(int sound) {
 void SoundHE::triggerDigitalSound(int sound, int offset, int channel, int flags) {
 	byte *soundAddr;
 	int soundCode, soundData, bitsPerSample, sampleChannels;
-	byte *soundResPtr;
+	const byte *soundResPtr;
 	uint32 soundLength, soundFrequency;
 	int soundPriority;
 
@@ -1417,14 +1417,14 @@ void SoundHE::triggerDigitalSound(int sound, int offset, int channel, int flags)
 		}
 	}
 
-	soundResPtr = (byte *)_vm->findResource(MKTAG('S', 'B', 'N', 'G'), soundAddr);
+	soundResPtr = _vm->findResource(MKTAG('S', 'B', 'N', 'G'), soundAddr);
 	if (soundResPtr == nullptr) {
 		soundCode = -1;
 	} else {
 		soundCode = soundResPtr - soundAddr + 8;
 	}
 
-	soundResPtr = (byte *)_vm->findResource(MKTAG('S', 'D', 'A', 'T'), soundAddr);
+	soundResPtr = _vm->findResource(MKTAG('S', 'D', 'A', 'T'), soundAddr);
 	if (soundResPtr == nullptr)
 		error("SoundHE::triggerDigitalSound(): Can't find SDAT section in sound %d", sound);
 
@@ -1588,9 +1588,6 @@ void SoundHE::createSound(int baseSound, int sound) {
 		}
 	}
 
-	byte *pRiff = nullptr;
-	byte *pData = nullptr;
-
 	// Find where the actual sound data is located...
 	if (sndIsWav) {
 		baseSndPtr = (byte *)findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtr);
@@ -1600,9 +1597,6 @@ void SoundHE::createSound(int baseSound, int sound) {
 		sndPtr = (byte *)findWavBlock(MKTAG('d', 'a', 't', 'a'), sndPtr);
 		if (sndPtr == nullptr)
 			error("SoundHE::createSound(): Bad format for sound %d, couldn't find data tag", sound);
-
-		pData = baseSndPtr;
-		pRiff = baseSndPtr + 8;
 
 		if (_baseSndSize == 0) {
 			_baseSndSize = READ_LE_UINT32(baseSndPtr + sizeof(uint32)) - 8;
@@ -1645,8 +1639,8 @@ void SoundHE::createSound(int baseSound, int sound) {
 	_vm->_res->unlock(rtSound, sound);
 }
 
-byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
-	byte *wsouPtr = (byte *)block;
+const byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
+	const byte *wsouPtr = block;
 
 	// For compatibility reason with old sound formats this
 	// doesn't error out, and instead gracefully returns a nullptr.
@@ -1654,7 +1648,7 @@ byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
 		return nullptr;
 
 	// Skip over the WSOU header...
-	byte *soundPtr = wsouPtr + 8;
+	const byte *soundPtr = wsouPtr + 8;
 	if (READ_BE_UINT32(soundPtr) != MKTAG('R', 'I', 'F', 'F'))
 		error("SoundHE::findWavBlock(): Expected RIFF block");
 
@@ -1662,23 +1656,23 @@ byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
 	assert((riffLength & 1) == 0); // It must be even, since all sub-blocks must be padded to even.
 
 	// Skip over RIFF and length and go to the actual sound data...
-	byte *wavePtr = soundPtr + 8;
+	const byte *wavePtr = soundPtr + 8;
 	assert(READ_BE_UINT32(wavePtr) == MKTAG('W', 'A', 'V', 'E'));
 	wavePtr += 4; // Skip over the WAVE tag
 	riffLength -= 4;
 
 	// Walk the nested blocks of the .wav file...
 	while (riffLength > 0) {
-		int chunkID = READ_BE_UINT32(wavePtr);
-		int chunkLength = READ_LE_UINT32(wavePtr + 4);
+		uint32 chunkID = READ_BE_UINT32(wavePtr);
+		uint32 chunkLength = READ_LE_UINT32(wavePtr + 4);
 		if (chunkLength < 0)
 			error("SoundHE::findWavBlock(): Illegal chunk length - %d bytes", chunkLength);
-		if (chunkLength > riffLength)
+		if ((int)chunkLength > (int)riffLength)
 			error("SoundHE::findWavBlock(): Chunk extends beyond file end - %d versus %d", chunkLength, riffLength);
 
 		riffLength -= 8;
 
-		if ((uint32)chunkID == tag)
+		if (chunkID == tag)
 			return wavePtr;
 
 		wavePtr += 8;

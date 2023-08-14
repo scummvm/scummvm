@@ -385,7 +385,7 @@ int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 		} else {
 			if (READ_BE_UINT32(ptr) == MKTAG('W', 'S', 'O', 'U')) {
 				// Wrapped .wav file
-				byte *data = ((SoundHE *)_sound)->findWavBlock(MKTAG('d', 'a', 't', 'a'), ptr);
+				const byte *data = ((SoundHE *)_sound)->findWavBlock(MKTAG('d', 'a', 't', 'a'), ptr);
 				if (data)
 					return READ_LE_UINT32(data + 4);
 			} else {
