@@ -160,7 +160,7 @@ private:
 
 	KeymapArray _keymaps;
 
-	bool _joystickAxisPreviouslyPressed[6];
+	bool _joystickAxisPreviouslyPressed[8]; // size should match the number of valid axis entries of defaultJoystickAxes (in hardware-input.cpp)
 
 	Keymap::KeymapMatch getMappedActions(const Event &event, Keymap::ActionArray &actions, Keymap::KeymapType keymapType) const;
 	Event executeAction(const Action *act, const Event &incomingEvent);
