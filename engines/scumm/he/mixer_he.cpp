@@ -598,12 +598,19 @@ bool HEMixer::mixerStartChannel(
 			_mixer->setChannelRate(_mixerChannels[channel].handle, frequency);
 
 		if (_mixerChannels[channel].flags & CHANNEL_LOOPING) {
+			// Workaround from hell which will get removed
+			// before this goes into the main tree: scrap the
+			// data copy into a malloc buffer, and just use
+			// the original resource address; this fixes sounds
+			// appended with the create-sound opcode.
+			free(data);
+
 			Audio::RewindableAudioStream *stream = Audio::makeRawStream(
-				data,
+				ptr,
 				_mixerChannels[channel].sampleLen,
 				MIXER_DEFAULT_SAMPLE_RATE,
 				mixerGetOutputFlags(),
-				DisposeAfterUse::YES);
+				DisposeAfterUse::NO);
 
 			_mixerChannels[channel].stream->queueAudioStream(Audio::makeLoopingAudioStream(stream, 0), DisposeAfterUse::YES);
 		} else {
