@@ -105,6 +105,7 @@ InfoMessage &InfoMessage::operator=(const InfoMessage &src) {
 	_largeMessage = src._largeMessage;
 	_sound = src._sound;
 	_delaySeconds = src._delaySeconds;
+	_fontReduced = src._fontReduced;
 	return *this;
 }
 
