@@ -243,8 +243,8 @@ void Combat::timeout() {
 		combatDone();
 		break;
 	case SPELL_RESULT:
-		if (_spellResult._timeoutCallback)
-			_spellResult._timeoutCallback();
+		if (_spellResult._callback)
+			_spellResult._callback();
 		else
 			// Character is done
 			block();
@@ -284,8 +284,8 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 		}
 	} else if (_mode == SPELL_RESULT && !isDelayActive()) {
 		// Displaying a spell result that required waiting for keypress
-		assert(_spellResult._timeoutCallback);
-		_spellResult._timeoutCallback();
+		assert(_spellResult._callback);
+		_spellResult._callback();
 
 	} else if (isDelayActive()) {
 		// In all other modes, if a delay is active, any keypress

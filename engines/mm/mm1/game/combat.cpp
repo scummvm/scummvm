@@ -996,7 +996,7 @@ void Combat::iterateMonsters1Inner() {
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->iterateMonsters1Inner();
 		};
 	}
@@ -1080,11 +1080,11 @@ void Combat::iterateMonsters2Inner() {
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->iterateMonsters2Inner();
 		};
 	} else {
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->characterDone();
 		};
 	}
@@ -1170,7 +1170,7 @@ void Combat::summonLightning() {
 
 		InfoMessage msg(0, 0, line1);
 		msg._delaySeconds = 3;
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->summonLightning2();
 		};
 		displaySpellResult(msg);
@@ -1304,7 +1304,7 @@ void Combat::identifyMonster() {
 		_monsterP->_resistUndead & MAGIC_RESISTANCE);
 	msg._lines.push_back(Line(0, 3, line));
 
-	msg._timeoutCallback = []() {
+	msg._callback = []() {
 		g_globals->_combat->characterDone();
 	};
 
@@ -1328,7 +1328,7 @@ void Combat::fireball() {
 
 		InfoMessage msg(0, 0, line1);
 		msg._delaySeconds = 3;
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->fireball2();
 		};
 		displaySpellResult(msg);
@@ -1432,7 +1432,7 @@ void Combat::fingerOfDeath() {
 
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
-	msg._timeoutCallback = []() {
+	msg._callback = []() {
 		g_globals->_combat->characterDone();
 	};
 
@@ -1463,7 +1463,7 @@ void Combat::disintegration() {
 
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
-	msg._timeoutCallback = []() {
+	msg._callback = []() {
 		g_globals->_combat->characterDone();
 	};
 

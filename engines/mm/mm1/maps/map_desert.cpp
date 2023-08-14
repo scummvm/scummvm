@@ -67,7 +67,7 @@ void MapDesert::desert() {
 	switch (_randomMode) {
 	case RND_BASIC:
 		if (getRandomNumber(100) == 100) {
-			msg._timeoutCallback = []() {
+			msg._callback = []() {
 				g_globals->_encounters.execute();
 			};
 			msg._delaySeconds = 3;

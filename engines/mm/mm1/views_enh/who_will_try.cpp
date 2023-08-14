@@ -92,7 +92,7 @@ void WhoWillTry::selectChar(uint charNum) {
 		if ((c._condition & (BAD_CONDITION | DEAD | STONE | ASLEEP)) != 0) {
 			InfoMessage msg(STRING["dialogs.misc.check_condition"], ALIGN_MIDDLE);
 			msg._delaySeconds = 3;
-			msg._timeoutCallback = []() {
+			msg._callback = []() {
 				WhoWillTry *view = static_cast<WhoWillTry *>(g_events->findView("WhoWillTry"));
 				view->_callback(-1);
 			};

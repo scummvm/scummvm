@@ -149,7 +149,7 @@ void Map17::askQuestion(uint partyIndex) {
 					msg2._lines.push_back(Line(0, 0, STRING["maps.map17.color"]));
 					msg2._lines.push_back(Line(0, 2, STRING["maps.map17.options"]));
 					msg2._lines.push_back(Line(16, 6, line));
-					msg2._timeoutCallback = []() {
+					msg2._callback = []() {
 						Map17 &map17 = *static_cast<Map17 *>(g_maps->_currentMap);
 						map17.askQuestion(map17[VAL1] + 1);
 					};
