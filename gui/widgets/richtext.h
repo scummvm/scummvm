@@ -26,39 +26,30 @@
 #include "common/str.h"
 #include "gui/dialog.h"
 
+namespace Graphics {
+class MacTextWindow;
+}
+
 namespace GUI {
 
 /* RichTextWidget */
-class RichTextWidget : public EditableWidget {
+class RichTextWidget : public Widget {
 protected:
 	Common::U32String _backupString;
 
-	int				_leftPadding;
-	int				_rightPadding;
+	Graphics::MacTextWindow *_txtWnd = nullptr;
+	Common::U32String _text;
 
 public:
-	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
-	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
-	RichTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
-
-	void setEditString(const Common::U32String &str) override;
-
-	bool wantsFocus() override { return true; }
+	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
+	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
+	RichTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 
 	void reflowLayout() override;
 
 protected:
 	void drawWidget() override;
-	void receivedFocusWidget() override;
-	void lostFocusWidget() override;
-
-	void startEditMode() override;
-	void endEditMode() override;
-	void abortEditMode() override;
-
-	Common::Rect getEditRect() const override;
-
-	uint32 _finishCmd;
+	void createWidget();
 };
 
 } // End of namespace GUI
