@@ -256,6 +256,7 @@ public:
 	int getChannelPosition(int channel);
 
 	byte *findWavBlock(uint32 tag, const byte *block);
+	int getCurrentSpeechOffset();
 
 protected:
 	void processSoundQueues() override;
@@ -269,9 +270,6 @@ private:
 	int _inUnqueueCallbackScripts = 0;
 	int _soundsDebugFrameCounter = 0;
 	int _scummOverrideFrequency = 0;
-
-
-	Audio::RewindableAudioStream *tryLoadAudioOverride(int soundID, int *duration = nullptr);
 };
 
 
