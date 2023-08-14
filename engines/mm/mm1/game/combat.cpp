@@ -145,7 +145,7 @@ void Combat::setupCanAttacks() {
 				}
 			}
 
-			setupCanAttacks();
+			setupAttackersCount();
 			return;
 		}
 	} else {
