@@ -72,7 +72,7 @@ void OSystem_libretro::delayMillis(uint msecs) {
 
 	_threadSwitchCaller = THREAD_SWITCH_DELAY;
 
-	if (timing_inaccuracies_is_enabled()) {
+	if (retro_setting_get_timing_inaccuracies_enabled()) {
 		while (elapsed_time < msecs) {
 			/* When remaining delay would take us past the next thread switch time, we switch immediately
 			in order to burn as much as possible delay time in the main RetroArch thread as soon as possible. */

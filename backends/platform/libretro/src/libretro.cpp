@@ -71,7 +71,7 @@ static int retro_device = RETRO_DEVICE_JOYPAD;
 // Default deadzone: 15%
 static int analog_deadzone = (int)(0.15f * ANALOG_RANGE);
 
-static float gampad_cursor_speed = 1.0f;
+static float gamepad_cursor_speed = 1.0f;
 static bool analog_response_is_quadratic = false;
 
 static float mouse_speed = 1.0f;
@@ -101,8 +101,8 @@ static uint8 performance_switch = 0;
 static uint32 perf_ref_frame = 0;
 static uint32 perf_ref_audio_buff_occupancy = 0;
 
-float frame_rate = 0;
-uint16 sample_rate = 0;
+static float frame_rate = 0;
+static uint16 sample_rate = 0;
 static uint16 samples_per_frame = 0;               // length in samples per frame
 static size_t samples_per_frame_buffer_size = 0;
 
@@ -194,9 +194,9 @@ static void update_variables(void) {
 
 	var.key = "scummvm_gamepad_cursor_speed";
 	var.value = NULL;
-	gampad_cursor_speed = 1.0f;
+	gamepad_cursor_speed = 1.0f;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		gampad_cursor_speed = (float)atof(var.value);
+		gamepad_cursor_speed = (float)atof(var.value);
 	}
 
 	var.key = "scummvm_gamepad_cursor_acceleration_time";
@@ -320,11 +320,40 @@ static void update_variables(void) {
 	}
 }
 
-bool timing_inaccuracies_is_enabled(){
+bool retro_setting_get_timing_inaccuracies_enabled(){
 	if (performance_switch & PERF_SWITCH_ON)
 		return (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
 	else
 		return timing_inaccuracies_enabled;
+}
+
+
+int retro_setting_get_analog_deadzone(void) {
+	return analog_deadzone;
+}
+
+float retro_setting_get_gamepad_cursor_speed(void) {
+	return gamepad_cursor_speed;
+}
+
+bool retro_setting_get_analog_response_is_quadratic(void) {
+	return analog_response_is_quadratic;
+}
+
+float retro_setting_get_mouse_speed(void) {
+	return mouse_speed;
+}
+
+float retro_setting_get_gamepad_acceleration_time(void) {
+	return gamepad_acceleration_time;
+}
+
+float retro_setting_get_frame_rate(void) {
+	return frame_rate;
+}
+
+uint16 retro_setting_get_sample_rate(void) {
+	return sample_rate;
 }
 
 void init_command_params(void) {
@@ -851,7 +880,7 @@ void retro_run(void) {
 		} while (LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 		poll_cb();
-		LIBRETRO_G_SYSTEM->processMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
+		LIBRETRO_G_SYSTEM->processMouse(input_cb, retro_device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 	}
 }
 

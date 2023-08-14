@@ -33,11 +33,16 @@
 #define LIBRETRO_G_SYSTEM dynamic_cast<OSystem_libretro *>(g_system)
 
 extern retro_log_printf_t log_cb;
-extern bool timing_inaccuracies_is_enabled(void);
+extern bool retro_setting_get_timing_inaccuracies_enabled(void);
+extern float retro_setting_get_frame_rate(void);
+extern uint16 retro_setting_get_sample_rate(void);
+extern int retro_setting_get_analog_deadzone(void);
+extern bool retro_setting_get_analog_response_is_quadratic(void);
+extern float retro_setting_get_mouse_speed(void);
+extern float retro_setting_get_gamepad_cursor_speed(void);
+extern float retro_setting_get_gamepad_acceleration_time(void);
 extern void reset_performance_tuner(void);
 extern void retro_osd_notification(const char* msg);
-extern float frame_rate;
-extern uint16 sample_rate;
 extern const char * retro_get_system_dir(void);
 extern const char * retro_get_save_dir(void);
 
