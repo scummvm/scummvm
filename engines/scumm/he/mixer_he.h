@@ -34,8 +34,10 @@
 #include "audio/decoders/adpcm.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/rate.h"
-
+#include "audio/decoders/wave.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/flac.h"
 
 namespace Scumm {
 
@@ -165,8 +167,11 @@ public:
 		int channel, int globType, int globNum, uint32 sampleDataOffset,
 		int sampleLen, int frequency, int volume, int callbackId, int32 flags, ...);
 	bool startSpoolingChannel(
-		int channel, Common::File &spoolingFile, int sampleLen, int frequency,
+		int channel, int song, Common::File &spoolingFile, int sampleLen, int frequency,
 		int volume, int callbackID, int32 flags);
+
+	bool audioOverrideExists(int globNum, bool justGetInfo,
+		int *duration = nullptr, Audio::SeekableAudioStream **outStream = nullptr);
 
 	/* --- MILES MIXER CODE --- */
 	bool isMilesActive();
@@ -196,7 +201,7 @@ public:
 		int channel, int globType, int globNum, uint32 sampleDataOffset,
 		int sampleLen, int frequency, int volume, int callbackID, uint32 flags, ...);
 	bool mixerStartSpoolingChannel(
-		int channel, Common::File &sampleFileIOHandle, int sampleLen, int frequency,
+		int channel, int song, Common::File &sampleFileIOHandle, int sampleLen, int frequency,
 		int volume, int callbackID, uint32 flags);
 	byte mixerGetOutputFlags();
 };

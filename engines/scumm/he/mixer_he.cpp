@@ -164,13 +164,99 @@ bool HEMixer::startChannel(int channel, int globType, int globNum,
 	}
 }
 
-bool HEMixer::startSpoolingChannel(int channel, Common::File &sampleFileIOHandle,
+bool HEMixer::startSpoolingChannel(int channel, int song, Common::File &sampleFileIOHandle,
 	int sampleLen, int frequency, int volume, int callbackID, int32 flags) {
 
 	if (!isMilesActive()) {
-		return mixerStartSpoolingChannel(channel, sampleFileIOHandle, sampleLen,
+		return mixerStartSpoolingChannel(channel, song, sampleFileIOHandle, sampleLen,
 			frequency, volume, callbackID, flags);
 	}
+
+	return false;
+}
+
+bool HEMixer::audioOverrideExists(int soundId, bool justGetInfo, int *duration, Audio::SeekableAudioStream **outStream) {
+	if (!_vm->_enableAudioOverride) {
+		return false;
+	}
+
+	const char *formats[] = {
+#ifdef USE_FLAC
+		"flac",
+#endif
+		"wav",
+#ifdef USE_VORBIS
+		"ogg",
+#endif
+#ifdef USE_MAD
+		"mp3",
+#endif
+	};
+
+	Audio::SeekableAudioStream *(*formatDecoders[])(Common::SeekableReadStream *, DisposeAfterUse::Flag) = {
+#ifdef USE_FLAC
+		Audio::makeFLACStream,
+#endif
+		Audio::makeWAVStream,
+#ifdef USE_VORBIS
+		Audio::makeVorbisStream,
+#endif
+#ifdef USE_MAD
+		Audio::makeMP3Stream,
+#endif
+	};
+
+	STATIC_ASSERT(
+		ARRAYSIZE(formats) == ARRAYSIZE(formatDecoders),
+		formats_formatDecoders_must_have_same_size);
+
+	const char *type;
+	if (soundId == HSND_TALKIE_SLOT) {
+		// Speech audio doesn't have a unique ID,
+		// so we use the file offset instead.
+		// _heTalkOffset is set at playVoice.
+		type = "speech";
+		soundId = ((SoundHE *)(_vm->_sound))->getCurrentSpeechOffset();
+	} else {
+		// Music and sfx share the same prefix.
+		type = "sound";
+	}
+
+	for (int i = 0; i < ARRAYSIZE(formats); i++) {
+		Common::Path pathDir(Common::String::format("%s%d.%s", type, soundId, formats[i]));
+		Common::Path pathSub(Common::String::format("%s/%d.%s", type, soundId, formats[i]));
+
+		debug(5, "HEMixer::audioOverrideExists(): %s or %s", pathSub.toString().c_str(), pathDir.toString().c_str());
+
+		// First check if the file exists before opening it to
+		// reduce the amount of "opening %s failed" in the console.
+		// Prefer files in subdirectory.
+		Common::File soundFileOverride;
+		bool foundFile = (soundFileOverride.exists(pathSub) && soundFileOverride.open(pathSub)) ||
+						 (soundFileOverride.exists(pathDir) && soundFileOverride.open(pathDir));
+		if (foundFile) {
+			soundFileOverride.seek(0, SEEK_SET);
+			Common::SeekableReadStream *oStr = soundFileOverride.readStream(soundFileOverride.size());
+			soundFileOverride.close();
+
+			Audio::SeekableAudioStream *seekStream = formatDecoders[i](oStr, DisposeAfterUse::YES);
+			if (duration != nullptr) {
+				*duration = seekStream->getLength().msecs();
+			}
+
+			if (justGetInfo) {
+				delete seekStream;
+				return true;
+			}
+
+			debug(5, "HEMixer::audioOverrideExists(): %s loaded from %s", formats[i], soundFileOverride.getName());
+
+			*outStream = seekStream;
+			return true;
+		}
+	}
+
+	debug(5, "HEMixer::audioOverrideExists(): file not found");
 
 	return false;
 }
@@ -211,14 +297,30 @@ void HEMixer::mixerFeedMixer() {
 		return;
 	}
 
+	// Unqueue any callback scripts, if available...
 	if (!_vm->_insideCreateResource && _vm->_game.heversion >= 80) {
 		((SoundHE *)_vm->_sound)->unqueueSoundCallbackScripts();
 	}
 
+	// Then check if any sound has ended; if so, issue a callback...
 	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
 		if (!(_mixerChannels[i].flags & CHANNEL_LOOPING)) {
-			if (!(_mixerChannels[i].flags & CHANNEL_SPOOLING)) {
 
+			// This is the check for audio overrides, it is sufficient to check if the stream is empty
+			if ((_mixerChannels[i].flags & CHANNEL_ACTIVE) && _mixerChannels[i].isUsingStreamOverride) {
+				if (_mixerChannels[i].stream->endOfData()) {
+					_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
+					_mixerChannels[i].flags |= CHANNEL_FINISHED;
+
+					_mixerChannels[i].stream->finish();
+					_mixerChannels[i].stream = nullptr;
+					((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID, false);
+				}
+
+				continue;
+			}
+
+			if (!(_mixerChannels[i].flags & CHANNEL_SPOOLING)) {
 				// Early callback! Play just one more audio frame from the residual data...
 				if (_mixerChannels[i].flags & CHANNEL_CALLBACK_EARLY) {
 
@@ -271,8 +373,12 @@ void HEMixer::mixerFeedMixer() {
 		}
 	}
 
-	// Feed the streams
+	// Finally, feed the streams...
 	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
+		// Do not feed the streams for audio overrides!
+		if (_mixerChannels[i].isUsingStreamOverride)
+			continue;
+
 		if (_mixerChannels[i].flags & CHANNEL_ACTIVE) {
 			if (_mixerChannels[i].flags & CHANNEL_SPOOLING) {
 				bool looping = (_mixerChannels[i].flags & CHANNEL_LOOPING);
@@ -396,6 +502,30 @@ bool HEMixer::mixerStartChannel(
 	_mixerChannels[channel].globType = globType;
 	_mixerChannels[channel].globNum = globNum;
 	_mixerChannels[channel].residualData = nullptr;
+	_mixerChannels[channel].isUsingStreamOverride = false;
+
+	Audio::SeekableAudioStream *audioOverride = nullptr;
+	if (audioOverrideExists(globNum, false, nullptr, &audioOverride)) {
+		_mixerChannels[channel].isUsingStreamOverride = true;
+		bool shouldLoop = (_mixerChannels[channel].flags & CHANNEL_LOOPING);
+
+		_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(
+			audioOverride->getRate(),
+			audioOverride->isStereo());
+
+		_mixer->playStream(
+			Audio::Mixer::kMusicSoundType,
+			&_mixerChannels[channel].handle,
+			_mixerChannels[channel].stream,
+			-1,
+			volume);
+
+		_mixerChannels[channel].stream->queueAudioStream(
+			Audio::makeLoopingAudioStream(audioOverride, shouldLoop ? 0 : 1),
+			DisposeAfterUse::YES);
+
+		return true;
+	}
 
 	bool hasCallbackData = false;
 	if (flags & CHANNEL_CALLBACK_EARLY) {
@@ -501,7 +631,7 @@ bool HEMixer::mixerStartChannel(
 }
 
 bool HEMixer::mixerStartSpoolingChannel(
-	int channel, Common::File &sampleFileIOHandle, int sampleLen, int frequency,
+	int channel, int song, Common::File &sampleFileIOHandle, int sampleLen, int frequency,
 	int volume, int callbackID, uint32 flags) {
 
 	uint32 initialReadCount;
@@ -543,6 +673,30 @@ bool HEMixer::mixerStartSpoolingChannel(
 	_mixerChannels[channel].globType = rtSpoolBuffer;
 	_mixerChannels[channel].globNum = channel + 1;
 	_mixerChannels[channel].endSampleAdjustment = 0;
+	_mixerChannels[channel].isUsingStreamOverride = false;
+
+	Audio::SeekableAudioStream *audioOverride = nullptr;
+	if (audioOverrideExists(song, false, nullptr, &audioOverride)) {
+		_mixerChannels[channel].isUsingStreamOverride = true;
+		bool shouldLoop = (_mixerChannels[channel].flags & CHANNEL_LOOPING);
+
+		_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(
+			audioOverride->getRate(),
+			audioOverride->isStereo());
+
+		_mixer->playStream(
+			Audio::Mixer::kMusicSoundType,
+			&_mixerChannels[channel].handle,
+			_mixerChannels[channel].stream,
+			-1,
+			volume);
+
+		_mixerChannels[channel].stream->queueAudioStream(
+			Audio::makeLoopingAudioStream(audioOverride, shouldLoop ? 0 : 1),
+			DisposeAfterUse::YES);
+
+		return true;
+	}
 
 	if (_vm->_res->createResource(
 		(ResType)_mixerChannels[channel].globType,

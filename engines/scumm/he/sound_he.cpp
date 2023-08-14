@@ -912,7 +912,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 				// Old spooled music format (raw audio)
 				if (_vm->_game.heversion < 80) {
 					_heMixer->startSpoolingChannel(
-						channel, _heSpoolingMusicFile, songsize,
+						channel, song, _heSpoolingMusicFile, songsize,
 						HSND_DEFAULT_FREQUENCY, HSND_MAX_VOLUME, channel,
 						CHANNEL_ACTIVE);
 
@@ -1043,7 +1043,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 						songsize -= offset;
 					}
 
-					_heMixer->startSpoolingChannel(channel, _heSpoolingMusicFile, songsize,
+					_heMixer->startSpoolingChannel(channel, song, _heSpoolingMusicFile, songsize,
 											HSND_DEFAULT_FREQUENCY, HSND_MAX_VOLUME, channel, CHANNEL_ACTIVE);
 				}
 
@@ -1354,8 +1354,15 @@ void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundDa
 		}
 	}
 
+	int overrideDuration;
+	if (_heMixer->audioOverrideExists(globNum, true, &overrideDuration)) {
+		_heChannel[channel].timeout = overrideDuration;
+	}
+
 	for (int i = 0; i < HSND_MAX_SOUND_VARS; i++) {
 		_heChannel[channel].soundVars[i] = 0;
+		_heChannel[channel].codeOffset = -1;
+		_heChannel[channel].hasSoundTokens = false;
 	}
 }
 
@@ -1441,87 +1448,6 @@ void SoundHE::triggerMidiSound(int soundId, int heOffset) {
 		_currentMusic = soundId;
 		_vm->_musicEngine->startSoundWithTrackID(soundId, heOffset);
 	}
-}
-
-Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundId, int *duration) {
-	if (!_vm->_enableAudioOverride) {
-		return nullptr;
-	}
-
-	const char *formats[] = {
-#ifdef USE_FLAC
-	    "flac",
-#endif
-	    "wav",
-#ifdef USE_VORBIS
-		"ogg",
-#endif
-#ifdef USE_MAD
-	    "mp3",
-#endif
-	};
-
-	Audio::SeekableAudioStream *(*formatDecoders[])(Common::SeekableReadStream *, DisposeAfterUse::Flag) = {
-#ifdef USE_FLAC
-	    Audio::makeFLACStream,
-#endif
-	    Audio::makeWAVStream,
-#ifdef USE_VORBIS
-	    Audio::makeVorbisStream,
-#endif
-#ifdef USE_MAD
-	    Audio::makeMP3Stream,
-#endif
-	};
-
-	STATIC_ASSERT(
-	    ARRAYSIZE(formats) == ARRAYSIZE(formatDecoders),
-	    formats_formatDecoders_must_have_same_size
-	);
-
-	const char *type;
-	if (soundId == 1) {
-		// Speech audio doesn't have a unique ID,
-		// so we use the file offset instead.
-		// _heTalkOffset is set at playVoice.
-		type = "speech";
-		soundId = _heTalkOffset;
-	} else {
-		// Music and sfx share the same prefix.
-		type = "sound";
-	}
-
-	for (int i = 0; i < ARRAYSIZE(formats); i++) {
-		Common::Path pathDir(Common::String::format("%s%d.%s", type, soundId, formats[i]));
-		Common::Path pathSub(Common::String::format("%s/%d.%s", type, soundId, formats[i]));
-
-		debug(5, "tryLoadAudioOverride: %s or %s", pathSub.toString().c_str(), pathDir.toString().c_str());
-
-		// First check if the file exists before opening it to
-		// reduce the amount of "opening %s failed" in the console.
-		// Prefer files in subdirectory.
-		Common::File soundFileOverride;
-		bool foundFile = (soundFileOverride.exists(pathSub) && soundFileOverride.open(pathSub)) ||
-						 (soundFileOverride.exists(pathDir) && soundFileOverride.open(pathDir));
-		if (foundFile) {
-			soundFileOverride.seek(0, SEEK_SET);
-			Common::SeekableReadStream *oStr = soundFileOverride.readStream(soundFileOverride.size());
-			soundFileOverride.close();
-
-			Audio::SeekableAudioStream *seekStream = formatDecoders[i](oStr, DisposeAfterUse::YES);
-			if (duration != nullptr) {
-				*duration = seekStream->getLength().msecs();
-			}
-
-			debug(5, "tryLoadAudioOverride: %s loaded from %s", formats[i], soundFileOverride.getName());
-
-			return seekStream;
-		}
-	}
-
-	debug(5, "tryLoadAudioOverride: file not found");
-
-	return nullptr;
 }
 
 void SoundHE::playVoice(uint32 offset, uint32 length) {
@@ -1756,6 +1682,10 @@ byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
 	}
 
 	return nullptr;
+}
+
+int SoundHE::getCurrentSpeechOffset() {
+	return _heTalkOffset;
 }
 
 #endif
