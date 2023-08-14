@@ -63,8 +63,6 @@ void Group::linkObject(Object *obj) {
 		return;
 
 	_origins.push_back(obj->getOrigin());
-	obj->makeInitiallyVisible();
-	obj->makeVisible();
 	obj->_partOfGroup = this;
 	_objects.push_back(obj);
 }
@@ -111,7 +109,8 @@ void Group::run(int index) {
 void Group::draw(Renderer *gfx) {
 	uint32 groupSize = _objects.size();
 	for (uint32 i = 0; i < groupSize ; i++) {
-		_objects[i]->draw(gfx);
+		if (!_objects[i]->isDestroyed() && !_objects[i]->isInvisible())
+			_objects[i]->draw(gfx);
 	}
 }
 
