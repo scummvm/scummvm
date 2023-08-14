@@ -28,6 +28,7 @@
  *
  */
 
+#include "graphics/screen.h"
 #include "crab/crab.h"
 #include "crab/input/cursor.h"
 #include "crab/ui/slider.h"
@@ -58,6 +59,9 @@ void Slider::load(rapidxml::xml_node<char> *node, const int &min, const int &max
 }
 
 bool Slider::handleEvents(const Common::Event &Event) {
+	if (_isGreyed) // do not entertain events when greyed is set
+		return false;
+
 	// A person is moving the knob
 	if (_knob.handleEvents(Event) == BUAC_GRABBED) {
 		int dx = g_engine->_mouse->_motion.x - _bar.x;
@@ -91,6 +95,36 @@ void Slider::draw() {
 	_bar.draw();
 	_caption.draw(false);
 	_knob.draw();
+	greyOut();
+}
+
+// This function only works when slider is drawn over the textured background in Unrest
+// Constants have been found by hit and trial
+void Slider::greyOut() {
+	if (!_isGreyed)
+		return;
+
+	int w = _bar.w + _bar.x - _caption.x;
+	int h = _knob.h > _caption.h ? _knob.h : _caption.h;
+
+	byte a, r, g, b;
+	for (int y = _caption.y; y < _caption.y + h; y++) {
+		uint32 *ptr = (uint32 *)g_engine->_screen->getBasePtr(_caption.x, y);
+		for (int x = 0; x < w; x++, ptr++) {
+			g_engine->_format->colorToARGB(*ptr, a, r, g, b);
+			if (x >= _knob.x - _caption.x && x <= _knob.w + _knob.x - _caption.x) {
+				r /= 3;
+				g /= 3;
+				b /= 2;
+				*ptr = g_engine->_format->ARGBToColor(a, r, g, b);
+			} else if (g > 0x37) {
+				r >>= 1;
+				g >>= 1;
+				b >>= 1;
+				*ptr = g_engine->_format->ARGBToColor(a, r, g, b);
+			}
+		}
+	}
 }
 
 void Slider::value(const int val) {
