@@ -1113,7 +1113,7 @@ void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int
 
 	_stream.fileHandle->seek(offset, SEEK_CUR);
 	if (_stream.fileHandle->pos() != offset) {
-		debug(5, "HEMilesChannel::startSpoolingChannel(): Couldn't seek file %s to offset %d", filename, offset);
+		debug(5, "HEMilesChannel::startSpoolingChannel(): Couldn't seek file %s to offset %ld", filename, offset);
 		_stream.fileHandle->close();
 		return;
 	}
@@ -1215,7 +1215,7 @@ void HEMilesChannel::startSpoolingChannel(const char *filename, long offset, int
 		_stream.curDataPos = 0;
 		_stream.dataOffset = _stream.fileHandle->pos();
 	} else {
-		debug(5, "HEMixer::milesStartChannel(): Unexpected sound format %d in sound file '%s' at offset %d",
+		debug(5, "HEMixer::milesStartChannel(): Unexpected sound format %d in sound file '%s' at offset %ld",
 			  _dataFormat, filename, offset);
 	}
 

@@ -256,7 +256,7 @@ public:
 	void createSound(int snd1id, int snd2id);
 	int getChannelPosition(int channel);
 
-	byte *findWavBlock(uint32 tag, const byte *block);
+	const byte *findWavBlock(uint32 tag, const byte *block);
 	int getCurrentSpeechOffset();
 
 protected:
