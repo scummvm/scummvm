@@ -106,15 +106,15 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
 
 /**
  * Wrapper around zlib's inflate functions. This function is used by Glk to
- * decompress TAF 4.0 files, which are headerless Zlib compressed streams with a
- * custom header
+ * decompress TAF 4.0 files, which are Zlib compressed streams with a custom
+ * header
  *
  * @param dst       the destination stream to write decompressed data out to
  * @param src       the Source stream
  *
  * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
  */
-bool inflateZlibHeaderless(Common::WriteStream *dst, Common::SeekableReadStream *src);
+bool inflateZlib(Common::WriteStream *dst, Common::SeekableReadStream *src);
 
 #endif
 

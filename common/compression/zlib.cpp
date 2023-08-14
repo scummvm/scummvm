@@ -142,7 +142,7 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
 	return true;
 }
 
-bool inflateZlibHeaderless(Common::WriteStream *dst, Common::SeekableReadStream *src) {
+bool inflateZlib(Common::WriteStream *dst, Common::SeekableReadStream *src) {
 	byte *inBuffer, *outBuffer;
 	z_stream stream;
 	int status;

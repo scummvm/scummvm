@@ -396,7 +396,7 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 	Common::MemoryWriteStreamDynamic dest(DisposeAfterUse::YES);
 	size_t startingPos = src->pos();
 
-	if (!Common::inflateZlibHeaderless(&dest, src))
+	if (!Common::inflateZlib(&dest, src))
 		return false;
 
 	// Iterate through pushing data out to the taf file
