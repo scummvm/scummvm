@@ -97,7 +97,7 @@ void Room135::init() {
 	digi_preload("135_004");
 
 	switch (_G(game).previous_room) {
-	case -2:
+	case RESTORING_GAME:
 		break;
 
 	case 101:

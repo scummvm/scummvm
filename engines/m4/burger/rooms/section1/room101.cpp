@@ -131,7 +131,7 @@ void Room101::init() {
 		door();
 
 	switch (_G(game).previous_room) {
-	case -2:
+	case RESTORING_GAME:
 		// Do nothing
 		break;
 

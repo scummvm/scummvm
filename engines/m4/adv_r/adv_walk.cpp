@@ -260,7 +260,7 @@ void ws_demand_facing(machine *myWalker, int32 facing) {
 	}
 }
 
-void ws_demand_location(machine *myWalker, int32 x, int32 y) {
+void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing) {
 	frac16 s;
 
 	if (!myWalker || !myWalker->myAnim8 || !_G(globals)) {
@@ -275,6 +275,9 @@ void ws_demand_location(machine *myWalker, int32 x, int32 y) {
 	_G(globals)[GLB_TEMP_3] = s;
 
 	SendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
+
+	if (facing != -1)
+		ws_demand_facing(myWalker, facing);
 }
 
 static void ws_demand_location_and_facing(machine *myWalker, int32 x, int32 y, int32 facing) {
@@ -337,8 +340,8 @@ void ws_nosepick(machine *myWalker, int32 seriesHash) {
 	SendWSMessage(NOSEPICK << 16, 0, myWalker, 0, nullptr, 1);
 }
 
-void ws_demand_location(int32 x, int32 y) {
-	ws_demand_location(_G(my_walker), x, y);
+void ws_demand_location(int32 x, int32 y, int facing) {
+	ws_demand_location(_G(my_walker), x, y, facing);
 }
 
 void ws_hide_walker(machine *myWalker) {
