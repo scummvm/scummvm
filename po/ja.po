@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-12 15:37+0000\n"
-"PO-Revision-Date: 2023-08-11 22:40+0000\n"
+"PO-Revision-Date: 2023-08-14 10:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5671,13 +5671,11 @@ msgstr "プレイヤーが落ちなくなる"
 
 #: engines/freescape/metaengine.cpp:101
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "マウスのY軸を反転"
 
 #: engines/freescape/metaengine.cpp:102
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "異なるパレットを使用する"
+msgstr "異なるカメラ操作を使用"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
