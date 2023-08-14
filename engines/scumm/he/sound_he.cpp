@@ -309,6 +309,14 @@ void SoundHE::setupSound() {
 	}
 }
 
+void SoundHE::pauseSounds(bool pause) {
+	// For MIDI audio
+	if (_vm->_imuse)
+		_vm->_imuse->pause(pause);
+
+	_heMixer->pauseMixerSubSystem(pause);
+}
+
 void SoundHE::stopDigitalSound(int sound) {
 	if (sound == HSND_TALKIE_SLOT) {
 		_vm->_haveMsg = 3;

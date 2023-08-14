@@ -137,7 +137,7 @@ public:
 	void soundKludge(int *list, int num);
 	void talkSound(uint32 offset, uint32 length, int mode, int channel = 0);
 	virtual void setupSound();
-	void pauseSounds(bool pause);
+	virtual void pauseSounds(bool pause);
 	bool isSfxFileCompressed();
 	bool hasSfxFile() const;
 	ScummFile *restoreDiMUSESpeechFile(const char *fileName);

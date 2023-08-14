@@ -219,6 +219,7 @@ public:
 	void stopAllSounds() override;
 	int hsFindSoundChannel(int sound) const;
 	void setupSound() override;
+	void pauseSounds(bool pause) override;
 
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 	int getNextDynamicChannel();
