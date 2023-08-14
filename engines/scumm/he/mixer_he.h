@@ -139,6 +139,8 @@ protected:
 		uint32 dataOffset;
 		uint32 flags;
 		bool callbackOnNextFrame;
+		bool isUsingStreamOverride;
+		byte *residualData = nullptr; // For early callbacks
 	};
 
 	HEMixerChannel _mixerChannels[MIXER_MAX_CHANNELS];

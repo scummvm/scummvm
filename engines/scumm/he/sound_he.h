@@ -243,7 +243,7 @@ public:
 	void feedMixer();
 	void unqueueSoundCallbackScripts();
 	void checkSoundTimeouts();
-	void digitalSoundCallback(int message, int channel);
+	void digitalSoundCallback(int message, int channel, bool earlyCallback = false);
 	void queueSoundCallbackScript(int sound, int channel, int message);
 	void runSoundCode();
 	void processSoundOpcodes(int sound, byte *codePtr, int *soundVars);

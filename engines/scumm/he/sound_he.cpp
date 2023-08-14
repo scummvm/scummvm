@@ -447,6 +447,10 @@ void SoundHE::setupHEMusicFile() {
 	uint32 id, len;
 	Common::String musicFilename(_vm->generateFilename(-4));
 
+	// For engine restarts
+	if (_heSpoolingMusicFile.isOpen())
+		_heSpoolingMusicFile.close();
+
 	if (_heSpoolingMusicFile.open(musicFilename)) {
 
 		id = _heSpoolingMusicFile.readUint32BE();
@@ -603,7 +607,7 @@ void SoundHE::checkSoundTimeouts() {
 	}
 }
 
-void SoundHE::digitalSoundCallback(int message, int channel) {
+void SoundHE::digitalSoundCallback(int message, int channel, bool earlyCallback) {
 	// The action done for each sound is always the same;
 	// it's useful to keep track of the message for debugging
 	// purposes though...
@@ -612,7 +616,11 @@ void SoundHE::digitalSoundCallback(int message, int channel) {
 		debug(5, "SoundHE::digitalSoundCallback(): TIMEOUT, channel %d", channel);
 		break;
 	case HSND_SOUND_ENDED:
-		debug(5, "SoundHE::digitalSoundCallback(): ENDED, channel %d", channel);
+		if (earlyCallback)
+			debug(5, "SoundHE::digitalSoundCallback(): ENDED with EARLY CALLBACK, channel %d", channel);
+		else
+			debug(5, "SoundHE::digitalSoundCallback(): ENDED, channel %d", channel);
+
 		break;
 	case HSND_SOUND_STOPPED:
 		debug(5, "SoundHE::digitalSoundCallback(): STOPPED, channel %d", channel);

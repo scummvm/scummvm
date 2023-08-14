@@ -218,19 +218,37 @@ void HEMixer::mixerFeedMixer() {
 	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
 		if (!(_mixerChannels[i].flags & CHANNEL_LOOPING)) {
 			if (!(_mixerChannels[i].flags & CHANNEL_SPOOLING)) {
+
+				// Early callback! Play just one more audio frame from the residual data...
+				if (_mixerChannels[i].flags & CHANNEL_CALLBACK_EARLY) {
+
+					bool validEarlyCallback =
+						(_mixerChannels[i].flags & CHANNEL_ACTIVE) &&
+						!(_mixerChannels[i].flags & CHANNEL_LAST_CHUNK) &&
+						_mixerChannels[i].stream->numQueuedStreams() == 1 &&
+						_mixerChannels[i].residualData;
+
+					if (validEarlyCallback) {
+						_mixerChannels[i].flags |= CHANNEL_LAST_CHUNK;
+					}
+				}
+
 				if (((_mixerChannels[i].flags & CHANNEL_ACTIVE) && _mixerChannels[i].stream->endOfData()) ||
 					((_mixerChannels[i].flags & CHANNEL_ACTIVE) && (_mixerChannels[i].flags & CHANNEL_LAST_CHUNK))) {
 
-					// For early callbacks which are bigger than the sample length
+					bool isEarlyCallback = (_mixerChannels[i].flags & CHANNEL_LAST_CHUNK);
+
+					// For early callbacks...
 					if (_mixerChannels[i].flags & CHANNEL_LAST_CHUNK)
 						_mixerChannels[i].flags &= ~CHANNEL_LAST_CHUNK;
+
 
 					_mixerChannels[i].flags |= CHANNEL_FINISHED;
 					_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
 
 					_mixerChannels[i].stream->finish();
 					_mixerChannels[i].stream = nullptr;
-					((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID);
+					((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID, isEarlyCallback);
 				}
 			}
 
@@ -377,7 +395,9 @@ bool HEMixer::mixerStartChannel(
 	_mixerChannels[channel].sampleLen = sampleLen;
 	_mixerChannels[channel].globType = globType;
 	_mixerChannels[channel].globNum = globNum;
+	_mixerChannels[channel].residualData = nullptr;
 
+	bool hasCallbackData = false;
 	if (flags & CHANNEL_CALLBACK_EARLY) {
 		va_start(params, flags);
 		_mixerChannels[channel].endSampleAdjustment = va_arg(params, int);
@@ -386,13 +406,17 @@ bool HEMixer::mixerStartChannel(
 		// The original has a very convoluted way of making sure that the sample
 		// both callbacks earlier and stops earlier. We just set a shorter sample length
 		// as this should ensure the same effect on both ends. Hopefully it's still accurate.
-		if ((int)_mixerChannels[channel].sampleLen >= _mixerChannels[channel].endSampleAdjustment) {
-			_mixerChannels[channel].sampleLen -= _mixerChannels[channel].endSampleAdjustment;
-		} else {
-			// Sometimes a game can give an end sample adjustment which is bigger than the sample itself
-			// (looking at you, Backyard Baseball '97). In this case we should at least give one frame
-			// for the sound to play for a while.
-			_mixerChannels[channel].flags |= CHANNEL_LAST_CHUNK;
+		if (_mixerChannels[channel].endSampleAdjustment != 0) {
+			if ((int)_mixerChannels[channel].sampleLen >= _mixerChannels[channel].endSampleAdjustment) {
+				_mixerChannels[channel].sampleLen -= _mixerChannels[channel].endSampleAdjustment;
+				_mixerChannels[channel].residualData = (byte *)malloc(_mixerChannels[channel].endSampleAdjustment * sizeof(byte));
+				hasCallbackData = _mixerChannels[channel].residualData != nullptr;
+			} else {
+				// Sometimes a game can give an end sample adjustment which is bigger than the sample itself
+				// (looking at you, Backyard Baseball '97). In this case we should at least give one frame
+				// for the sound to play for a while.
+				_mixerChannels[channel].flags |= CHANNEL_LAST_CHUNK;
+			}
 		}
 
 	} else {
@@ -414,6 +438,14 @@ bool HEMixer::mixerStartChannel(
 		ptr += sampleDataOffset;
 
 		memcpy(data, ptr, _mixerChannels[channel].sampleLen);
+
+		// Residual early callback data
+		if (hasCallbackData) {
+			memcpy(
+				_mixerChannels[channel].residualData,
+				&ptr[_mixerChannels[channel].sampleLen],
+				_mixerChannels[channel].endSampleAdjustment);
+		}
 
 		byte *dataTmp = data;
 		int rampUpSampleCount = 64;
@@ -451,6 +483,15 @@ bool HEMixer::mixerStartChannel(
 				DisposeAfterUse::YES,
 				mixerGetOutputFlags());
 		}
+
+		if (hasCallbackData && !(_mixerChannels[channel].flags & CHANNEL_LOOPING)) {
+			_mixerChannels[channel].stream->queueBuffer(
+				_mixerChannels[channel].residualData,
+				_mixerChannels[channel].endSampleAdjustment,
+				DisposeAfterUse::YES,
+				mixerGetOutputFlags());
+		}
+
 	} else {
 		_mixerChannels[channel].callbackOnNextFrame = false;
 		_mixerChannels[channel].stream = nullptr;
