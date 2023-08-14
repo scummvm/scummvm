@@ -66,6 +66,7 @@ void Encounter::execute() {
 
 	while (firstLoop || _levelIndex < _totalLevels) {
 		randomAdjust();
+		firstLoop = false;
 
 		maxRand = _levelOffset + _highestLevel;
 		if (maxRand >= 2) {
