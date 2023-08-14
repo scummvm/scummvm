@@ -51,8 +51,8 @@ public:
 	uint8 getScale();
 	void remapColor(int index, int color);
 	void unremapColor(int index);
-	void draw(Renderer *gfx, uint32 ticks);
-	void drawGroup(Renderer *gfx, Group *group, uint32 ticks);
+	void draw(Renderer *gfx, uint32 animationTicks);
+	void drawGroup(Renderer *gfx, Group *group, bool runAnimation);
 	void show();
 
 	Object *shootRay(const Math::Ray &ray);
@@ -86,6 +86,8 @@ public:
 	uint8 _paperColor;
 	uint8 _extraColor[4];
 	ColorReMap _colorRemaps;
+
+	uint32 _lastTick;
 
 private:
 	uint16 _areaID;

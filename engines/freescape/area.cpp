@@ -93,6 +93,7 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 	} compareObjects;
 
 	Common::sort(_drawableObjects.begin(), _drawableObjects.end(), compareObjects);
+	_lastTick = 0;
 }
 
 Area::~Area() {
@@ -222,25 +223,28 @@ void Area::resetArea() {
 }
 
 
-void Area::draw(Freescape::Renderer *gfx, uint32 ticks) {
+void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks) {
+	bool runAnimation = animationTicks != _lastTick;
 	assert(_drawableObjects.size() > 0);
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
 			if (obj->getType() != ObjectType::kGroupType)
 				obj->draw(gfx);
-			else
-				drawGroup(gfx, (Group *)obj, ticks);
+			else {
+				drawGroup(gfx, (Group *)obj, runAnimation);
+			}
 		}
 	}
+	_lastTick = animationTicks;
 }
 
-void Area::drawGroup(Freescape::Renderer *gfx, Group* group, uint32 ticks) {
-	if ((ticks % 10) != 0)
-		return;
-
-	group->run();
-	group->draw(gfx);
-	group->step();
+void Area::drawGroup(Freescape::Renderer *gfx, Group* group, bool runAnimation) {
+	if (runAnimation) {
+		group->run();
+		group->draw(gfx);
+		group->step();
+	} else
+		group->draw(gfx);
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {

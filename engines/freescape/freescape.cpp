@@ -305,7 +305,7 @@ void FreescapeEngine::drawFrame() {
 
 	drawBackground();
 	if (!_playerWasCrushed) // Avoid rendering inside objects
-		_currentArea->draw(_gfx, _ticks);
+		_currentArea->draw(_gfx, _ticks / 10);
 
 	if (_underFireFrames > 0) {
 		for (auto &it : _sensors) {
