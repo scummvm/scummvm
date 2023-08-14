@@ -1544,8 +1544,13 @@ void SoundHE::createSound(int baseSound, int sound) {
 	_vm->_res->lock(rtSound, baseSound);
 	_vm->_res->lock(rtSound, sound);
 
-	baseSndPtr = (byte *)_vm->getResourceAddress(rtSound, baseSound);
-	sndPtr = (byte *)_vm->getResourceAddress(rtSound, sound);
+	const byte *baseSndPtrConst = _vm->getResourceAddress(rtSound, baseSound);
+	const byte *sndPtrConst = _vm->getResourceAddress(rtSound, sound);
+
+	// The whole point of this create sound mechanism is to MODIFY
+	// these buffers, hence the deliberate non-const cast!
+	baseSndPtr = const_cast<byte *>(baseSndPtrConst);
+	sndPtr = const_cast<byte *>(sndPtrConst);
 
 	channel = hsFindSoundChannel(baseSound);
 
@@ -1553,10 +1558,10 @@ void SoundHE::createSound(int baseSound, int sound) {
 
 	if (!sndIsWav) {
 		// For non-WAV files we have to deal with sound variables (i.e. skip them :-) )
-		baseSndSbngPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'B', 'N', 'G'), baseSndPtr);
+		baseSndSbngPtr = ((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'B', 'N', 'G'), baseSndPtr);
 
 		if (baseSndSbngPtr != nullptr) {
-			sndSbngPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'B', 'N', 'G'), sndPtr);
+			sndSbngPtr = ((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'B', 'N', 'G'), sndPtr);
 
 			if (sndSbngPtr != nullptr) {
 				if (channel != -1 && (_heChannel[channel].codeOffset > 0)) {
@@ -1590,11 +1595,11 @@ void SoundHE::createSound(int baseSound, int sound) {
 
 	// Find where the actual sound data is located...
 	if (sndIsWav) {
-		baseSndPtr = (byte *)findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtr);
+		baseSndPtr = const_cast<byte *>(findWavBlock(MKTAG('d', 'a', 't', 'a'), baseSndPtrConst));
 		if (baseSndPtr == nullptr)
 			error("SoundHE::createSound(): Bad format for sound %d, couldn't find data tag", baseSound);
 
-		sndPtr = (byte *)findWavBlock(MKTAG('d', 'a', 't', 'a'), sndPtr);
+		sndPtr = const_cast<byte *>(findWavBlock(MKTAG('d', 'a', 't', 'a'), sndPtrConst));
 		if (sndPtr == nullptr)
 			error("SoundHE::createSound(): Bad format for sound %d, couldn't find data tag", sound);
 
@@ -1604,11 +1609,11 @@ void SoundHE::createSound(int baseSound, int sound) {
 
 		sndSize = READ_LE_UINT32(sndPtr + sizeof(uint32)) - 8;
 	} else {
-		baseSndPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'D', 'A', 'T'), baseSndPtr);
+		baseSndPtr = ((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'D', 'A', 'T'), baseSndPtr);
 		if (baseSndPtr == nullptr)
 			error("SoundHE::createSound(): Bad format for sound %d, couldn't find SDAT tag", baseSound);
 
-		sndPtr = (byte *)((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'D', 'A', 'T'), sndPtr);
+		sndPtr = ((ScummEngine_v71he *)_vm)->heFindResource(MKTAG('S', 'D', 'A', 'T'), sndPtr);
 		if (sndPtr == nullptr)
 			error("SoundHE::createSound(): Bad format for sound %d, couldn't find SDAT tag", sound);
 
@@ -1665,7 +1670,7 @@ const byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
 	while (riffLength > 0) {
 		uint32 chunkID = READ_BE_UINT32(wavePtr);
 		uint32 chunkLength = READ_LE_UINT32(wavePtr + 4);
-		if (chunkLength < 0)
+		if ((int)chunkLength < 0)
 			error("SoundHE::findWavBlock(): Illegal chunk length - %d bytes", chunkLength);
 		if ((int)chunkLength > (int)riffLength)
 			error("SoundHE::findWavBlock(): Chunk extends beyond file end - %d versus %d", chunkLength, riffLength);
