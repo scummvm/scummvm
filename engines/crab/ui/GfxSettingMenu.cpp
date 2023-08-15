@@ -61,6 +61,9 @@ void GfxSettingMenu::load(rapidxml::xml_node<char> *node) {
 
 	if (nodeValid("brightness", node))
 		_brightness.load(node->first_node("brightness"), 0, 100, g_engine->_screenSettings->_gamma * 100);
+
+	// This functionality has been disabled in ScummVM.
+	_brightness.setEnabled(false);
 }
 
 //------------------------------------------------------------------------
