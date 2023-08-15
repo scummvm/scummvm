@@ -27,6 +27,7 @@
 #include "gui/widgets/richtext.h"
 #include "gui/gui-manager.h"
 
+#include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 
 namespace GUI {
@@ -67,9 +68,12 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::createWidget() {
-	_txtWnd = _wm->addTextWindow(FontMan.getFontByUsage(Graphics::FontManager::kGUIFont),
-				0, 0xffffffff, _w, Graphics::kTextAlignLeft, nullptr, false);
-	_txtWnd->setTextColorRGB(0xffffffff);
+	uint32 white = _wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff);
+	uint32 black = _wm->_pixelformat.RGBToColor(0x00, 0x00, 0x00);
+
+	_txtWnd = _wm->addTextWindow(g_gui.theme()->getFont(),
+			black, white, _w, Graphics::kTextAlignLeft, nullptr, false);
+	_txtWnd->setTextColorRGB(black);
 	_txtWnd->setBorderType(Graphics::kWindowBorderMacOSNoBorderScrollbar);
 	_txtWnd->enableScrollbar(true);
 	// it will hide the scrollbar when the text height is smaller than the window height
@@ -81,8 +85,6 @@ void RichTextWidget::createWidget() {
 	_txtWnd->appendText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
-
-	warning("Pixel format: %s", _wm->_pixelformat.toString().c_str());
 }
 
 void RichTextWidget::reflowLayout() {
