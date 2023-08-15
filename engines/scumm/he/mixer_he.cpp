@@ -355,18 +355,22 @@ void HEMixer::mixerFeedMixer() {
 			}
 
 			if (_mixerChannels[i].flags & CHANNEL_SPOOLING) {
-				if (_mixerChannels[i].callbackOnNextFrame) {
+				// Callback, assuming the stream has finished playing the final chunk of the song...
+				if (_mixerChannels[i].callbackOnNextFrame && _mixerChannels[i].stream->endOfData()) {
 					_mixerChannels[i].callbackOnNextFrame = false;
+
+					_mixerChannels[i].stream->finish();
+					_mixerChannels[i].stream = nullptr;
+
 					((SoundHE *)_vm->_sound)->digitalSoundCallback(HSND_SOUND_ENDED, _mixerChannels[i].callbackID);
 				}
 
+				// Last chunk fetched! Signal a callback for the next frame...
 				if ((_mixerChannels[i].flags & CHANNEL_ACTIVE) && (_mixerChannels[i].flags & CHANNEL_LAST_CHUNK)) {
 					_mixerChannels[i].flags &= ~CHANNEL_LAST_CHUNK;
 					_mixerChannels[i].flags &= ~CHANNEL_ACTIVE;
 					_mixerChannels[i].flags |= CHANNEL_FINISHED;
 
-					_mixerChannels[i].stream->finish();
-					_mixerChannels[i].stream = nullptr;
 					_mixerChannels[i].callbackOnNextFrame = true;
 				}
 			}
