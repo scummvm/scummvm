@@ -28,6 +28,8 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/system.h"
 #include "crab/crab.h"
 #include "crab/GameParam.h"
 #include "crab/loaders.h"
@@ -42,15 +44,43 @@ void ScreenSettings::load(rapidxml::xml_node<char> *node) {
 	loadNum(_gamma, "gamma", node);
 	loadNum(_textSpeed, "text_speed", node);
 
-	loadBool(_vsync, "vsync", node);
+	// The following values are read from ConfMan instead of the XML
+	//loadBool(_vsync, "vsync", node);
+	//loadBool(_fullscreen, "fullscreen", node);
 	loadBool(_border, "border", node);
-	loadBool(_fullscreen, "fullscreen", node);
 	loadBool(_saveOnExit, "save_on_exit", node);
 	loadBool(_mouseTrap, "mouse_trap", node);
 	loadBool(_quality, "quality", node);
+
+	if (ConfMan.hasKey("fullscreen"))
+		_fullscreen = ConfMan.getBool("fullscreen");
+
+	if (ConfMan.hasKey("vsync"))
+		_vsync = ConfMan.getBool("vsync");
+}
+
+void ScreenSettings::toggleFullScreen() {
+	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
+		_fullscreen = !_fullscreen;
+		g_system->beginGFXTransaction();
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, _fullscreen);
+		g_system->endGFXTransaction();
+	}
+}
+
+void ScreenSettings::toggleVsync() {
+	if (g_system->hasFeature(OSystem::kFeatureVSync)) {
+		_vsync = !_vsync;
+		g_system->beginGFXTransaction();
+			g_system->setFeatureState(OSystem::kFeatureVSync, _vsync);
+		g_system->endGFXTransaction();
+	}
 }
 
 void ScreenSettings::saveState() {
+	ConfMan.setBool("fullscreen", _fullscreen);
+	ConfMan.setBool("vsync", _vsync);
+
 #if 0
 	root->append_attribute(doc.allocate_attribute("version", g_engine->_stringPool->get(_version)));
 
