@@ -58,7 +58,7 @@
 static struct retro_game_info game_buf;
 static struct retro_game_info * game_buf_ptr;
 
-retro_log_printf_t log_cb = NULL;
+retro_log_printf_t retro_log_cb = NULL;
 static retro_video_refresh_t video_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
 static retro_environment_t environ_cb = NULL;
@@ -111,11 +111,11 @@ static int16_t *sound_buffer_empty = NULL;         // pointer to zeroed output b
 
 static void log_scummvm_exit_code(void) {
 	if (retro_get_scummvm_res() == Common::kNoError)
-		log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
+		retro_log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
 	else if (retro_get_scummvm_res() < Common::kNoError)
-		log_cb(RETRO_LOG_WARN, "Unknown ScummVM exit code.\n");
+		retro_log_cb(RETRO_LOG_WARN, "Unknown ScummVM exit code.\n");
 	else
-		log_cb(RETRO_LOG_ERROR, "ScummVM exited with error %d.\n", retro_get_scummvm_res());
+		retro_log_cb(RETRO_LOG_ERROR, "ScummVM exited with error %d.\n", retro_get_scummvm_res());
 }
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
@@ -130,7 +130,7 @@ static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 		memset(sound_buffer, 0, samples_per_frame_buffer_size);
 		memset(sound_buffer_empty, 0, samples_per_frame_buffer_size);
 	} else
-		log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
+		retro_log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
 
 	audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 }
@@ -152,7 +152,7 @@ static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool und
 static void increase_performance() {
 	if (!(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
 		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
-		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
+		retro_log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
 		return;
 	}
 
@@ -164,7 +164,7 @@ static void increase_accuracy() {
 
 	if (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES) {
 		performance_switch &= ~PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
-		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' disabled.\n");
+		retro_log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' disabled.\n");
 		return;
 	}
 }
@@ -172,7 +172,7 @@ static void increase_accuracy() {
 void reset_performance_tuner() {
 	if (performance_switch & PERF_SWITCH_ON) {
 		performance_switch = PERF_SWITCH_ON;
-		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: reset.\n");
+		retro_log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: reset.\n");
 	}
 }
 
@@ -298,13 +298,13 @@ static void update_variables(void) {
 
 	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
 		if (frameskip_type > 1) {
-			log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
+			retro_log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
 			retro_osd_notification("Selected frameskip mode not available");
 			frameskip_type = 0;
 		}
 
 		if (performance_switch) {
-			log_cb(RETRO_LOG_WARN, "Auto performance tuner not available.\n");
+			retro_log_cb(RETRO_LOG_WARN, "Auto performance tuner not available.\n");
 			retro_osd_notification("Auto performance tuner not available");
 			performance_switch = 0;
 		}
@@ -527,8 +527,8 @@ const char * retro_get_system_dir(void){
 	if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &sysdir))
 		return sysdir;
 	else {
-		if (log_cb)
-			log_cb(RETRO_LOG_WARN, "No System directory specified, using current directory.\n");
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "No System directory specified, using current directory.\n");
 		if (! environ_cb(RETRO_ENVIRONMENT_GET_LIBRETRO_PATH, &coredir))
 			coredir = ".";
 		return coredir;
@@ -543,8 +543,8 @@ const char * retro_get_save_dir(void){
 	if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &savedir))
 		return savedir;
 	else {
-		if (log_cb)
-			log_cb(RETRO_LOG_WARN, "No Save directory specified, using current directory.\n");
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "No Save directory specified, using current directory.\n");
 		if (! environ_cb(RETRO_ENVIRONMENT_GET_LIBRETRO_PATH, &coredir))
 			coredir = ".";
 		return coredir;
@@ -554,11 +554,11 @@ const char * retro_get_save_dir(void){
 void retro_init(void) {
 	struct retro_log_callback log;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
-		log_cb = log.log;
+		retro_log_cb = log.log;
 	else
-		log_cb = NULL;
+		retro_log_cb = NULL;
 
-	log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n",__GIT_VERSION);
+	retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n",__GIT_VERSION);
 
 	struct retro_audio_buffer_status_callback buf_status_cb;
 	buf_status_cb.callback = retro_audio_buff_status_cb;
@@ -608,8 +608,8 @@ void retro_init(void) {
 
 #ifdef FRONTEND_SUPPORTS_RGB565
 	enum retro_pixel_format rgb565 = RETRO_PIXEL_FORMAT_RGB565;
-	if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565) && log_cb)
-		log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 -will use that instead of XRGB1555.\n");
+	if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565) && retro_log_cb)
+		retro_log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 -will use that instead of XRGB1555.\n");
 #endif
 
 	retro_keyboard_callback cb = {LIBRETRO_G_SYSTEM->processKeyEvent};
@@ -625,8 +625,8 @@ void retro_deinit(void) {
 
 void retro_set_controller_port_device(unsigned port, unsigned device) {
 	if (port != 0) {
-		if (log_cb)
-			log_cb(RETRO_LOG_WARN, "Invalid controller port %d.\n", port);
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "Invalid controller port %d.\n", port);
 		return;
 	}
 
@@ -636,16 +636,16 @@ void retro_set_controller_port_device(unsigned port, unsigned device) {
 		retro_device = device;
 		break;
 	default:
-		if (log_cb)
-			log_cb(RETRO_LOG_WARN, "Invalid controller device class %d.\n", device);
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "Invalid controller device class %d.\n", device);
 		break;
 	}
 }
 
 bool retro_load_game(const struct retro_game_info *game) {
 	if (!g_system) {
-		if (log_cb)
-			log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to initialize platform driver.\n");
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to initialize platform driver.\n");
 		return false;
 	}
 
@@ -673,14 +673,14 @@ bool retro_load_game(const struct retro_game_info *game) {
 			// Open the file.
 			RFILE *gamefile = filestream_open(game->path, RETRO_VFS_FILE_ACCESS_READ, RETRO_VFS_FILE_ACCESS_HINT_NONE);
 			if (!gamefile) {
-				log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to load given game file '%s'.\n", game->path);
+				retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to load given game file '%s'.\n", game->path);
 				return false;
 			}
 
 			// Load the file data.
 			if (filestream_gets(gamefile, target_id, sizeof(target_id)) == NULL) {
 				filestream_close(gamefile);
-				log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to load contents of game file '%s'.\n", game->path);
+				retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to load contents of game file '%s'.\n", game->path);
 				return false;
 			}
 			filestream_close(gamefile);
@@ -690,7 +690,7 @@ bool retro_load_game(const struct retro_game_info *game) {
 			strcpy(target_id, tmp.c_str());
 
 			if (strlen(target_id) == 0) {
-				log_cb(RETRO_LOG_ERROR, "[scummvm] Game file '%s' does not contain any target id.\n", game->path);
+				retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Game file '%s' does not contain any target id.\n", game->path);
 				return false;
 			}
 
@@ -701,7 +701,7 @@ bool retro_load_game(const struct retro_game_info *game) {
 			} else {
 				// If this node has no parent node, then it returns a duplicate of this node.
 				if (detect_target.getPath().equals(parent_dir.getPath())) {
-					log_cb(RETRO_LOG_ERROR, "[scummvm] Autodetect not possible. No parent directory detected in '%s'.\n", game->path);
+					retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Autodetect not possible. No parent directory detected in '%s'.\n", game->path);
 					return false;
 				}
 			}
@@ -713,23 +713,23 @@ bool retro_load_game(const struct retro_game_info *game) {
 		switch (test_game_status) {
 		case TEST_GAME_OK_ID_FOUND:
 			sprintf(buffer, "-p \"%s\" %s", parent_dir.getPath().c_str(), target_id);
-			log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via target id and game dir\n");
+			retro_log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via target id and game dir\n");
 			break;
 		case TEST_GAME_OK_TARGET_FOUND:
 			sprintf(buffer, "%s", target_id);
-			log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via target id and scummvm.ini\n");
+			retro_log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via target id and scummvm.ini\n");
 			break;
 		case TEST_GAME_OK_ID_AUTODETECTED:
 			sprintf(buffer, "-p \"%s\" --auto-detect", parent_dir.getPath().c_str());
-			log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via autodetect\n");
+			retro_log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via autodetect\n");
 			break;
 		case TEST_GAME_KO_MULTIPLE_RESULTS:
-			log_cb(RETRO_LOG_WARN, "[scummvm] Multiple targets found for '%s' in scummvm.ini\n", target_id);
+			retro_log_cb(RETRO_LOG_WARN, "[scummvm] Multiple targets found for '%s' in scummvm.ini\n", target_id);
 			retro_osd_notification("Multiple targets found");
 			break;
 		case TEST_GAME_KO_NOT_FOUND:
 		default:
-			log_cb(RETRO_LOG_WARN, "[scummvm] Game not found. Check path and content of '%s'\n", game->path);
+			retro_log_cb(RETRO_LOG_WARN, "[scummvm] Game not found. Check path and content of '%s'\n", game->path);
 			retro_osd_notification("Game not found");
 		}
 
@@ -739,8 +739,8 @@ bool retro_load_game(const struct retro_game_info *game) {
 	}
 
 	if (!retro_init_emu_thread()) {
-		if (log_cb)
-			log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to initialize emulation thread!\n");
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to initialize emulation thread!\n");
 		return false;
 	}
 	return true;
@@ -818,7 +818,7 @@ void retro_run(void) {
 
 			/* Reset frameskip counter if not flagged */
 			if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
-				log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped (%ld)\n", frameskip_counter, current_frame);
+				retro_log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped (%ld)\n", frameskip_counter, current_frame);
 				skip_frame = false;
 				frameskip_counter = 0;
 			/* Keep on skipping frames if flagged */

@@ -84,7 +84,7 @@ void OSystem_libretro::initBackend() {
 	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 #endif
 	_mixer = new Audio::MixerImpl(retro_setting_get_sample_rate());
-	log_cb(RETRO_LOG_DEBUG,"Mixer set up at %dHz\n", retro_setting_get_sample_rate());
+	retro_log_cb(RETRO_LOG_DEBUG,"Mixer set up at %dHz\n", retro_setting_get_sample_rate());
 
 	_timerManager = new LibretroTimerManager(retro_setting_get_frame_rate());
 
@@ -97,7 +97,7 @@ void OSystem_libretro::engineInit() {
 	Common::String engineId = ConfMan.get("engineid");
 	if (engineId.equalsIgnoreCase("scumm") && ConfMan.getBool("original_gui")) {
 		ConfMan.setBool("original_gui", false);
-		log_cb(RETRO_LOG_INFO, "\"original_gui\" setting forced to false\n");
+		retro_log_cb(RETRO_LOG_INFO, "\"original_gui\" setting forced to false\n");
 	}
 }
 

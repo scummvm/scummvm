@@ -32,7 +32,7 @@
 
 #define LIBRETRO_G_SYSTEM dynamic_cast<OSystem_libretro *>(g_system)
 
-extern retro_log_printf_t log_cb;
+extern retro_log_printf_t retro_log_cb;
 extern bool retro_setting_get_timing_inaccuracies_enabled(void);
 extern float retro_setting_get_frame_rate(void);
 extern uint16 retro_setting_get_sample_rate(void);

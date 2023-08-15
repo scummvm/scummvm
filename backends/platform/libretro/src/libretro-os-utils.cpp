@@ -78,8 +78,8 @@ void OSystem_libretro::logMessage(LogMessageType::Type type, const char *message
 			break;
 	}
 
-	if (log_cb)
-		log_cb(loglevel, "%s\n", message);
+	if (retro_log_cb)
+		retro_log_cb(loglevel, "%s\n", message);
 }
 
 
