@@ -43,24 +43,15 @@
 
 
 /* Compression methods (see algorithm.doc) */
-#define GRUB_GZ_STORED      0
-#define GRUB_GZ_COMPRESSED  1
-#define GRUB_GZ_PACKED      2
-#define GRUB_GZ_LZHED       3
-/* methods 4 to 7 reserved */
-#define GRUB_GZ_DEFLATED    8
-#define GRUB_GZ_MAX_METHODS 9
+#define GZ_DEFLATED    8
 
 /* gzip flag byte */
-#define GRUB_GZ_ASCII_FLAG   0x01	/* bit 0 set: file probably ascii text */
-#define GRUB_GZ_CONTINUATION 0x02	/* bit 1 set: continuation of multi-part gzip file */
-#define GRUB_GZ_EXTRA_FIELD  0x04	/* bit 2 set: extra field present */
-#define GRUB_GZ_ORIG_NAME    0x08	/* bit 3 set: original file name present */
-#define GRUB_GZ_COMMENT      0x10	/* bit 4 set: file comment present */
-#define GRUB_GZ_ENCRYPTED    0x20	/* bit 5 set: file is encrypted */
-#define GRUB_GZ_RESERVED     0xC0	/* bit 6,7:   reserved */
-
-#define GRUB_GZ_UNSUPPORTED_FLAGS	(GRUB_GZ_CONTINUATION | GRUB_GZ_ENCRYPTED | GRUB_GZ_RESERVED)
+#define GZ_ASCII_FLAG   0x01	/* bit 0 set: file probably ascii text */
+#define GZ_CRC          0x02	/* bit 1 set: crc present */
+#define GZ_EXTRA_FIELD  0x04	/* bit 2 set: extra field present */
+#define GZ_ORIG_NAME    0x08	/* bit 3 set: original file name present */
+#define GZ_COMMENT      0x10	/* bit 4 set: file comment present */
+#define GZ_RESERVED     0xE0	/* bit 5,6,7:   reserved */
 
 /* inflate block codes */
 #define INFLATE_STORED	0
@@ -1033,7 +1024,7 @@ GzioReadStream::test_zlib_header ()
   flg = parentGetByte ();
 
   /* Check that compression method is DEFLATE.  */
-  if ((cmf & 0xf) != GRUB_GZ_DEFLATED)
+  if ((cmf & 0xf) != GZ_DEFLATED)
     {
       return false;
     }
