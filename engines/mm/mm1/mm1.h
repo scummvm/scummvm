@@ -67,6 +67,9 @@ public:
 		return _randomSource.getRandomNumber(maxNumber - minNumber + 1) + minNumber;
 	}
 	int getRandomNumber(int maxNumber) {
+		if (maxNumber < 2)
+			maxNumber = 2;
+
 		return getRandomNumber(1, maxNumber - 1);
 	}
 
