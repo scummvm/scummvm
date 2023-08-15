@@ -10,6 +10,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Might and Magic Book One hinzugefügt.
    - Unterstützung für Muppet Tresure Island hinzugefügt.
    - Unterstützung für Primordia, Shardlight und Technobabylon hinzugefügt.
+   - Unterstützung für Adibou 1 (Adi Jr.) hinzugefügt.
 
  Neue Plattformen:
    - Vollständig erneute Portierung für libretro hinzugefügt.
