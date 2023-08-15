@@ -747,16 +747,16 @@ void ScummEngine_v100he::o100_createSound() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case SO_INIT:
+	case SO_INIT: // 0
 		_heSndResId = pop();
 		break;
-	case SO_NEW:
+	case SO_NEW: // 53
 		((SoundHE *)_sound)->createSound(_heSndResId, -1);
 		break;
-	case SO_SOUND_ADD:
+	case SO_SOUND_ADD: // 128
 		((SoundHE *)_sound)->createSound(_heSndResId, pop());
 		break;
-	case SO_END:
+	case SO_END: // 92
 		break;
 	default:
 		error("o100_createSound: default case %d", subOp);
@@ -1741,47 +1741,47 @@ void ScummEngine_v100he::o100_soundOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case SO_AT:
+	case SO_AT: // 6
 		_heSndFlags |= HE_SND_OFFSET;
 		_heSndOffset = pop();
 		break;
-	case SO_LOAD:
+	case SO_LOAD: // 47
 		copyScriptString(filename, sizeof(filename));
 		_heSndSoundId = pop();
 		if (_heSndSoundId)
 			debug(0, "Load sound %d from file %s\n", _heSndSoundId, filename);
 		break;
-	case SO_NOW:
+	case SO_NOW: // 55
 		_heSndFlags |= HE_SND_QUICK_START;
 		break;
-	case SO_VARIABLE:
+	case SO_VARIABLE: // 83
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
 		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
-	case SO_END:
+	case SO_END: // 92
 		if (_heSndStartNewSoundFlag) {
 			_sound->startSound(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift, _heSndPan, _heSndVol);
 		} else {
 			_sound->modifySound(_heSndSoundId, _heSndOffset, _heSndFrequencyShift, _heSndPan, _heSndVol, _heSndFlags);
 		}
 		break;
-	case SO_SOUND_ADD:
+	case SO_SOUND_ADD: // 128
 		_heSndFlags |= HE_SND_APPEND;
 		break;
-	case SO_SOUND_CHANNEL:
+	case SO_SOUND_CHANNEL: // 129
 		_heSndChannel = pop();
 		break;
-	case SO_SOUND_FREQUENCY:
+	case SO_SOUND_FREQUENCY: // 130
 		_heSndFlags |= HE_SND_FREQUENCY;
 		_heSndFrequencyShift = pop();
 		break;
-	case SO_SOUND_LOOPING:
+	case SO_SOUND_LOOPING: // 131
 		_heSndFlags |= HE_SND_LOOP;
 		break;
-	case SO_SOUND_MODIFY:
-	case SO_SOUND_START:
+	case SO_SOUND_MODIFY: // 132
+	case SO_SOUND_START: // 134
 		_heSndStartNewSoundFlag = (SO_SOUND_START == subOp);
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
@@ -1791,14 +1791,14 @@ void ScummEngine_v100he::o100_soundOps() {
 		_heSndPan = HSND_SOUND_PAN_CENTER;
 		_heSndFlags = 0;
 		break;
-	case SO_SOUND_PAN:
+	case SO_SOUND_PAN: // 133
 		_heSndFlags |= HE_SND_PAN;
 		_heSndPan = pop();
 		break;
-	case SO_SOUND_SOFT:
+	case SO_SOUND_SOFT: // 135
 		_heSndFlags |= HE_SND_SOFT_SOUND;
 		break;
-	case SO_SOUND_VOLUME:
+	case SO_SOUND_VOLUME: // 136
 		_heSndFlags |= HE_SND_VOL;
 		_heSndVol = pop();
 		break;

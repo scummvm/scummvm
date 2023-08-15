@@ -19,7 +19,7 @@
  *
  */
 
-#include "mixer_he.h"
+#include "scumm/he/mixer_he.h"
 
 namespace Scumm {
 
@@ -414,7 +414,7 @@ void HEMixer::mixerFeedMixer() {
 					}
 				}
 
-				byte *data = (byte *)malloc(length * sizeof(byte));
+				byte *data = (byte *)malloc(length);
 				if (data) {
 					_mixerChannels[i].fileHandle->read(data, length);
 					_mixerChannels[i].lastReadPosition += length;
@@ -543,7 +543,7 @@ bool HEMixer::mixerStartChannel(
 		if (_mixerChannels[channel].endSampleAdjustment != 0) {
 			if ((int)_mixerChannels[channel].sampleLen >= _mixerChannels[channel].endSampleAdjustment) {
 				_mixerChannels[channel].sampleLen -= _mixerChannels[channel].endSampleAdjustment;
-				_mixerChannels[channel].residualData = (byte *)malloc(_mixerChannels[channel].endSampleAdjustment * sizeof(byte));
+				_mixerChannels[channel].residualData = (byte *)malloc(_mixerChannels[channel].endSampleAdjustment);
 				hasCallbackData = _mixerChannels[channel].residualData != nullptr;
 			} else {
 				// Sometimes a game can give an end sample adjustment which is bigger than the sample itself
@@ -564,7 +564,7 @@ bool HEMixer::mixerStartChannel(
 			ptr += 8;
 		}
 
-		byte *data = (byte *)malloc(_mixerChannels[channel].sampleLen * sizeof(byte));
+		byte *data = (byte *)malloc(_mixerChannels[channel].sampleLen);
 
 		if (!data)
 			return false;
@@ -729,7 +729,7 @@ bool HEMixer::mixerStartSpoolingChannel(
 		-1,
 		volume);
 
-	byte *data = (byte *)malloc(initialReadCount * sizeof(byte));
+	byte *data = (byte *)malloc(initialReadCount);
 	if (data) {
 		sampleFileIOHandle.read(data, initialReadCount);
 
@@ -840,7 +840,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 				Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, audioDataLen, Audio::kADPCMMSIma,
 						frequency, _milesChannels[channel]._numChannels, _milesChannels[channel]._blockAlign);
 
-				byte *adpcmData = (byte *)malloc(audioDataLen * 4 * sizeof(byte));
+				byte *adpcmData = (byte *)malloc(audioDataLen * 4);
 				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, audioDataLen * 2);
 				delete adpcmStream;
 
@@ -880,7 +880,7 @@ bool HEMixer::milesStartChannel(int channel, int globType, int globNum, uint32 s
 				Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, audioDataLen, Audio::kADPCMMSIma,
 						_milesChannels[channel]._baseFrequency, _milesChannels[channel]._numChannels, _milesChannels[channel]._blockAlign);
 
-				byte *adpcmData = (byte *)malloc(audioDataLen * 4 * sizeof(byte));
+				byte *adpcmData = (byte *)malloc(audioDataLen * 4);
 				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, audioDataLen * 2);
 				delete adpcmStream;
 
@@ -1298,7 +1298,7 @@ void HEMilesChannel::serviceStream() {
 			sizeToRead = MIN<uint32>(MILES_PCM_CHUNK_SIZE * _blockAlign, _stream.dataLength - _stream.curDataPos);
 			reachedTheEnd = sizeToRead < MILES_PCM_CHUNK_SIZE * _blockAlign;
 
-			byte *buffer = (byte *)malloc(sizeToRead * sizeof(byte));
+			byte *buffer = (byte *)malloc(sizeToRead);
 			if (sizeToRead > 0 && buffer != nullptr) {
 				int readBytes = _stream.fileHandle->read(buffer, sizeToRead);
 				_stream.curDataPos += readBytes;
@@ -1316,7 +1316,7 @@ void HEMilesChannel::serviceStream() {
 
 			// We allocate a buffer which is going to be filled with
 			// (MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM) compressed blocks or less
-			byte *compressedBuffer = (byte *)malloc(sizeToRead * sizeof(byte));
+			byte *compressedBuffer = (byte *)malloc(sizeToRead);
 			if (sizeToRead > 0 && compressedBuffer != nullptr) {
 				int readBytes = _stream.fileHandle->read(compressedBuffer, sizeToRead);
 				_stream.curDataPos += readBytes;
@@ -1332,7 +1332,7 @@ void HEMilesChannel::serviceStream() {
 				uint32 uncompSize =
 					calculateDeflatedADPCMBlockSize(MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM, _blockAlign, _numChannels, 16);
 
-				byte *adpcmData = (byte *)malloc(uncompSize * sizeof(byte));
+				byte *adpcmData = (byte *)malloc(uncompSize);
 				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, uncompSize * 2);
 
 				adpcmSize *= 2;

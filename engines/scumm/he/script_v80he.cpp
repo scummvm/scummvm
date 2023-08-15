@@ -67,17 +67,17 @@ void ScummEngine_v80he::o80_createSound() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case SO_ADD:
+	case SO_ADD: // 27
 		((SoundHE *)_sound)->createSound(_heSndResId, pop());
 		break;
-	case SO_NEW:
+	case SO_NEW: // 217
 		((SoundHE *)_sound)->createSound(_heSndResId, -1);
 		break;
-	case SO_SOUND_START:
+	case SO_SOUND_START: // 232
 		_heSndResId = pop();
 		break;
-	case SO_END:
-		// dummy case
+	case SO_END: // 255
+		// Dummy case
 		break;
 	default:
 		error("o80_createSound: default case %d", subOp);
