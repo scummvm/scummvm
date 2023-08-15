@@ -126,7 +126,7 @@ public:
 	}
 
 	void load(rapidxml::xml_node<char> *node);
-	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void saveState();
 };
 
 }
