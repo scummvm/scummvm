@@ -49,7 +49,7 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float * cumulativeXYAcc, in
 	*relMouseXY = (int)deltaAcc;
 }
 
-void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, float gampad_cursor_speed, float gamepad_acceleration_time, bool analog_response_is_quadratic, int analog_deadzone, float mouse_speed) {
+void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int device, float gampad_cursor_speed, float gamepad_acceleration_time, bool analog_response_is_quadratic, int analog_deadzone, float mouse_speed) {
 	enum processMouse_status {
 		STATUS_DOING_JOYSTICK  = (1 << 0),
 		STATUS_DOING_MOUSE     = (1 << 1),
@@ -95,15 +95,15 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 	};
 
 	// Reduce gamepad cursor speed, if required
-	if (device == RETRO_DEVICE_JOYPAD && aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2)) {
+	if (device == RETRO_DEVICE_JOYPAD && retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2)) {
 		adjusted_cursor_speed = adjusted_cursor_speed * (1.0f / 5.0f);
 	}
 
 	status = 0;
-	x = aCallback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
-	y = aCallback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
-	joy_x = aCallback(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_X);
-	joy_y = aCallback(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y);
+	x = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
+	y = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
+	joy_x = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_X);
+	joy_y = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y);
 
 	// Left Analog X Axis
 	if (joy_x > analog_deadzone || joy_x < -analog_deadzone) {
@@ -158,10 +158,10 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 	}
 
 	if (device == RETRO_DEVICE_JOYPAD) {
-		bool dpadLeft = aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
-		bool dpadRight = aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
-		bool dpadUp = aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP);
-		bool dpadDown = aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN);
+		bool dpadLeft = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
+		bool dpadRight = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
+		bool dpadUp = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP);
+		bool dpadDown = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN);
 
 		if (dpadLeft || dpadRight) {
 			status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_X);
@@ -200,7 +200,7 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 			_dpadYVel = 0.0f;
 		}
 
-		if (aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START)) {
+		if (retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START)) {
 			Common::Event ev;
 			ev.type = Common::EVENT_MAINMENU;
 			_events.push_back(ev);
@@ -208,9 +208,9 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 	}
 
 #if defined(WIIU) || defined(__SWITCH__)
-	int p_x = aCallback(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
-	int p_y = aCallback(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
-	int p_press = aCallback(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_PRESSED);
+	int p_x = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
+	int p_y = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
+	int p_press = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_PRESSED);
 	int px = (int)((p_x + 0x7fff) * _screen.w / 0xffff);
 	int py = (int)((p_y + 0x7fff) * _screen.h / 0xffff);
 	// printf("(%d,%d) p:%d\n",px,py,pp);
@@ -262,7 +262,7 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 	}
 
 	// Gampad mouse buttons
-	down = aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
+	down = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
 	if (down != _joypadmouseButtons[0]) {
 		_joypadmouseButtons[0] = down;
 
@@ -273,7 +273,7 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 		_events.push_back(ev);
 	}
 
-	down = aCallback(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
+	down = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
 	if (down != _joypadmouseButtons[1]) {
 		_joypadmouseButtons[1] = down;
 
@@ -286,7 +286,7 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 
 	// Gamepad keyboard buttons
 	for (int i = 0; i < 8; i++) {
-		down = aCallback(0, RETRO_DEVICE_JOYPAD, 0, gampad_key_map[i][0]);
+		down = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, gampad_key_map[i][0]);
 		if (down != _joypadkeyboardButtons[i]) {
 			_joypadkeyboardButtons[i] = down;
 			bool state = down ? true : false;
@@ -295,8 +295,8 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 	}
 
 	// Gamepad right stick numpad emulation
-	joy_rx = aCallback(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X);
-	joy_ry = aCallback(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y);
+	joy_rx = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X);
+	joy_ry = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y);
 
 	if (joy_rx > analog_deadzone)
 		joy_rx = joy_rx - analog_deadzone;
@@ -401,7 +401,7 @@ void OSystem_libretro::processMouse(retro_input_state_t aCallback, int device, f
 
 	for (int i = 0; i < 2; i++) {
 		Common::Event ev;
-		bool down = aCallback(0, RETRO_DEVICE_MOUSE, 0, retroButtons[i]);
+		bool down = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, retroButtons[i]);
 		if (down != _mouseButtons[i]) {
 			_mouseButtons[i] = down;
 

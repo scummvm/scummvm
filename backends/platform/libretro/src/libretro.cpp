@@ -59,11 +59,11 @@ static struct retro_game_info game_buf;
 static struct retro_game_info * game_buf_ptr;
 
 retro_log_printf_t retro_log_cb = NULL;
+retro_input_state_t retro_input_cb = NULL;
 static retro_video_refresh_t video_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
 static retro_environment_t environ_cb = NULL;
 static retro_input_poll_t poll_cb = NULL;
-static retro_input_state_t input_cb = NULL;
 static int retro_device = RETRO_DEVICE_JOYPAD;
 
 // System analog stick range is -0x8000 to 0x8000
@@ -479,7 +479,7 @@ void retro_set_input_poll(retro_input_poll_t cb) {
 }
 
 void retro_set_input_state(retro_input_state_t cb) {
-	input_cb = cb;
+	retro_input_cb = cb;
 }
 
 void retro_set_environment(retro_environment_t cb) {
@@ -880,7 +880,7 @@ void retro_run(void) {
 		} while (LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 		poll_cb();
-		LIBRETRO_G_SYSTEM->processMouse(input_cb, retro_device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
+		LIBRETRO_G_SYSTEM->processMouse(retro_input_cb, retro_device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 	}
 }
 
