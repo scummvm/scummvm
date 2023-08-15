@@ -19,7 +19,7 @@
  *
  */
 
-#if !defined(SCUMM_HE_MIXER_HE_H)
+#ifndef SCUMM_HE_MIXER_HE_H
 #define SCUMM_HE_MIXER_HE_H
 
 #include "scumm/he/sound_he.h"
@@ -41,14 +41,14 @@
 
 namespace Scumm {
 
-#define CHANNEL_EMPTY_FLAGS        0x00000000
-#define CHANNEL_ACTIVE             0x00000001
-#define CHANNEL_FINISHED           0x00000002
-#define CHANNEL_LOOPING            0x00000004
-#define CHANNEL_LAST_CHUNK         0x00000008
-#define CHANNEL_SPOOLING           0x00000010
-#define CHANNEL_CALLBACK_EARLY     0x00000080
-#define CHANNEL_SOFT_REMIX         0x00000100
+#define CHANNEL_EMPTY_FLAGS        (0 << 0)
+#define CHANNEL_ACTIVE             (1 << 0)
+#define CHANNEL_FINISHED           (1 << 1)
+#define CHANNEL_LOOPING            (1 << 2)
+#define CHANNEL_LAST_CHUNK         (1 << 3)
+#define CHANNEL_SPOOLING           (1 << 4)
+#define CHANNEL_CALLBACK_EARLY     (1 << 7)
+#define CHANNEL_SOFT_REMIX         (1 << 8)
 
 #define MIXER_MAX_CHANNELS         8
 #define MIXER_PCM_CHUNK_SIZE       4096

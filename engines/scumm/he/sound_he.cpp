@@ -775,13 +775,13 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 		debug(5, "SoundHE::processSoundOpcodes(): sound %d opcode %d", sound, opcode);
 
 		switch (opcode) {
-		case HSND_SBNG_END: // Continue
+		case HSND_SBNG_END: // Continue - 0
 			break;
-		case HSND_SBNG_FACE: // Set talk state
+		case HSND_SBNG_FACE: // Set talk state - 16
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			setSoundVar(sound, 19, val);
 			break;
-		case HSND_SBNG_SET_SET: // Set var
+		case HSND_SBNG_SET_SET: // Set var - 32
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -789,7 +789,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			}
 			setSoundVar(sound, var, val);
 			break;
-		case HSND_SBNG_SET_ADD: // Add
+		case HSND_SBNG_SET_ADD: // Add - 48
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -798,7 +798,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) + val;
 			setSoundVar(sound, var, val);
 			break;
-		case HSND_SBNG_SET_SUB: // Subtract
+		case HSND_SBNG_SET_SUB: // Subtract - 56
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -807,7 +807,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) - val;
 			setSoundVar(sound, var, val);
 			break;
-		case HSND_SBNG_SET_MUL: // Multiple
+		case HSND_SBNG_SET_MUL: // Multiple - 64
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -816,7 +816,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) * val;
 			setSoundVar(sound, var, val);
 			break;
-		case HSND_SBNG_SET_DIV: // Divide
+		case HSND_SBNG_SET_DIV: // Divide - 80
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -829,12 +829,12 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) / val;
 			setSoundVar(sound, var, val);
 			break;
-		case HSND_SBNG_SET_INC: // Increment
+		case HSND_SBNG_SET_INC: // Increment - 96
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = getSoundVar(sound, var) + 1;
 			setSoundVar(sound, var, val);
 			break;
-		case HSND_SBNG_SET_DEC: // Decrement
+		case HSND_SBNG_SET_DEC: // Decrement - 104
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = getSoundVar(sound, var) - 1;
 			setSoundVar(sound, var, val);
