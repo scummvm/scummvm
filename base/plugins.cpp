@@ -724,7 +724,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32
 	plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	// Clear md5 cache before each detection starts, just in case.
-	MD5Man.clear();
+	ADCacheMan.clear();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
@@ -740,6 +740,9 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32
 			candidates.push_back(engineCandidates[i]);
 		}
 	}
+
+	// Close all archives that were opened during detection
+	ADCacheMan.clearArchives();
 
 	return DetectionResults(candidates);
 }
@@ -942,7 +945,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		// set debug flags before call detectGames
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
 		// Clear md5 cache before detection starts
-		MD5Man.clear();
+		ADCacheMan.clear();
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",

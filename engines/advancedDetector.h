@@ -571,9 +571,9 @@ protected:
 };
 
 /**
- * Singleton Cache Storage for Computed MD5s
+ * Singleton Cache Storage for Computed MD5s and Open Archives
  */
-class MD5CacheManager : public Common::Singleton<MD5CacheManager> {
+class AdvancedDetectorCacheManager : public Common::Singleton<AdvancedDetectorCacheManager> {
 public:
 	void setMD5(Common::String fname, Common::String md5) {
 		md5HashMap.setVal(fname, md5);
@@ -591,29 +591,57 @@ public:
 		return sizeHashMap.getVal(fname);
 	}
 
-	bool contains(Common::String fname) {
+	bool containsMD5(Common::String fname) {
 		return (md5HashMap.contains(fname) && sizeHashMap.contains(fname));
 	}
 
-	MD5CacheManager() {
+	void addArchive(const Common::FSNode &node, Common::Archive *archivePtr) {
+		if (!archivePtr)
+			return;
+
+		Common::String filename = node.getPath();
+		
+		if (archiveHashMap.contains(filename)) {
+			delete archiveHashMap[filename];
+		}
+		
+		archiveHashMap.setVal(filename, archivePtr);
+	}
+
+	Common::Archive *getArchive(const Common::FSNode &node) {
+		Common::Archive *ret = nullptr;
+		return archiveHashMap.tryGetVal(node.getPath(), ret) ? ret : nullptr;
+	}
+
+	AdvancedDetectorCacheManager() {
 		clear();
+	}
+
+	void clearArchives() {
+		for (auto &entry : archiveHashMap) {
+			delete entry._value;
+		}
+		archiveHashMap.clear(true);
 	}
 
 	void clear() {
 		md5HashMap.clear(true);
 		sizeHashMap.clear(true);
+		clearArchives();
 	}
 
 private:
-	friend class Common::Singleton<MD5CacheManager>;
+	friend class Common::Singleton<AdvancedDetectorCacheManager>;
 
 	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileHashMap;
 	typedef Common::HashMap<Common::String, int64, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeHashMap;
+	typedef Common::HashMap<Common::String, Common::Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ArchiveHashMap;
 	FileHashMap md5HashMap;
 	SizeHashMap sizeHashMap;
+	ArchiveHashMap archiveHashMap;
 };
 
 /** Convenience shortcut for accessing the MD5CacheManager. */
-#define MD5Man MD5CacheManager::instance()
+#define ADCacheMan AdvancedDetectorCacheManager::instance()
 /** @} */
 #endif
