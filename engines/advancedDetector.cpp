@@ -380,7 +380,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	composeFileHashMap(allFiles, files, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Clear md5 cache before each detection starts, just in case.
-	MD5Man.clear();
+	ADCacheMan.clear();
 
 	// Run the detector on this
 	ADDetectedGames matches = detectGame(files.begin()->getParent(), allFiles, language, platform, extra);
@@ -514,7 +514,7 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 /* Singleton Cache Storage for MD5 */
 
 namespace Common {
-	DECLARE_SINGLETON(MD5CacheManager);
+	DECLARE_SINGLETON(AdvancedDetectorCacheManager);
 }
 
 
@@ -609,17 +609,17 @@ bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, MD5
 		hashname += ':';
 		hashname += Common::String::format("%d", _md5Bytes);
 
-	if (MD5Man.contains(hashname)) {
-		fileProps.md5 = MD5Man.getMD5(hashname);
-		fileProps.size = MD5Man.getSize(hashname);
+	if (ADCacheMan.containsMD5(hashname)) {
+		fileProps.md5 = ADCacheMan.getMD5(hashname);
+		fileProps.size = ADCacheMan.getSize(hashname);
 		return true;
 	}
 
 	bool res = getFilePropertiesIntern(_md5Bytes, allFiles, md5prop, fname, fileProps);
 
 	if (res) {
-		MD5Man.setMD5(hashname, fileProps.md5);
-		MD5Man.setSize(hashname, fileProps.size);
+		ADCacheMan.setMD5(hashname, fileProps.md5);
+		ADCacheMan.setSize(hashname, fileProps.size);
 	}
 
 	return res;
@@ -682,9 +682,13 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 			if (!allFiles.contains(archiveName))
 				return false;
 			
-			Common::ScopedPtr<Common::Archive> archive(Common::makeInstallShieldArchive(allFiles[archiveName]));
-			if (!archive)
-				return false;
+			Common::Archive *archive = ADCacheMan.getArchive(allFiles[archiveName]);
+			if (!archive) {
+				archive = Common::makeInstallShieldArchive(allFiles[archiveName]);
+				ADCacheMan.addArchive(allFiles[archiveName], archive);
+				if (!archive)
+					return false;
+			}
 			
 			testFile.reset(archive->createReadStreamForMember(tok.nextToken()));
 			if (!testFile) {
