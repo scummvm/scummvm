@@ -45,6 +45,7 @@ extern float retro_setting_get_gamepad_cursor_speed(void);
 extern float retro_setting_get_gamepad_acceleration_time(void);
 extern void reset_performance_tuner(void);
 extern void retro_osd_notification(const char* msg);
+extern int retro_get_input_device(void);
 extern const char * retro_get_system_dir(void);
 extern const char * retro_get_save_dir(void);
 

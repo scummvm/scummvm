@@ -64,7 +64,7 @@ static retro_video_refresh_t video_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
 static retro_environment_t environ_cb = NULL;
 static retro_input_poll_t poll_cb = NULL;
-static int retro_device = RETRO_DEVICE_JOYPAD;
+static int retro_input_device = RETRO_DEVICE_JOYPAD;
 
 // System analog stick range is -0x8000 to 0x8000
 #define ANALOG_RANGE 0x8000
@@ -362,6 +362,10 @@ void init_command_params(void) {
 	strcpy(cmd_params[0], "scummvm\0");
 }
 
+int retro_get_input_device(void) {
+	return retro_input_device;
+}
+
 void parse_command_params(char *cmdline) {
 	int j = 0;
 	int cmdlen = strlen(cmdline);
@@ -633,7 +637,7 @@ void retro_set_controller_port_device(unsigned port, unsigned device) {
 	switch (device) {
 	case RETRO_DEVICE_JOYPAD:
 	case RETRO_DEVICE_MOUSE:
-		retro_device = device;
+		retro_input_device = device;
 		break;
 	default:
 		if (retro_log_cb)
@@ -880,7 +884,7 @@ void retro_run(void) {
 		} while (LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 		poll_cb();
-		LIBRETRO_G_SYSTEM->processMouse(retro_input_cb, retro_device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
+		LIBRETRO_G_SYSTEM->processMouse(retro_input_cb, retro_input_device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 	}
 }
 
