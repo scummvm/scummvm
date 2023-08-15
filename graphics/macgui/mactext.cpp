@@ -1199,7 +1199,7 @@ void MacText::resize(int w, int h) {
 	setMaxWidth(w);
 	if (_composeSurface->w != w || _composeSurface->h != h) {
 		delete _composeSurface;
-		_composeSurface = new Graphics::ManagedSurface(w, h);
+		_composeSurface = new Graphics::ManagedSurface(w, h, _wm->_pixelformat);
 		_dims.right = _dims.left + w;
 		_dims.bottom = _dims.top + h;
 
