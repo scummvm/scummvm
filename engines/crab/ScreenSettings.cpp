@@ -50,7 +50,8 @@ void ScreenSettings::load(rapidxml::xml_node<char> *node) {
 	loadBool(_quality, "quality", node);
 }
 
-void ScreenSettings::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void ScreenSettings::saveState() {
+#if 0
 	root->append_attribute(doc.allocate_attribute("version", g_engine->_stringPool->get(_version)));
 
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "screen");
@@ -69,6 +70,7 @@ void ScreenSettings::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node
 	saveBool(_mouseTrap, "mouse_trap", doc, child);
 
 	root->append_node(child);
+#endif
 }
 
 } // End of namespace Crab
