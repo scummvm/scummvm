@@ -717,11 +717,8 @@ void SoundHE::runSoundCode() {
 			continue;
 		}
 
-		soundPos = _vm->getHETimer(chan + HSND_TIMER_SLOT) * _heChannel[chan].frequency / 1000;
-		soundPos += _vm->VAR(_vm->VAR_SOUND_TOKEN_OFFSET);
-
-		if (soundPos < 0)
-			soundPos = 0;
+		soundPos = getChannelPosition(chan) + _vm->VAR(_vm->VAR_SOUND_TOKEN_OFFSET);
+		soundPos = MAX<int>(0, soundPos);
 
 		if (_heChannel[chan].codeBuffer == nullptr) {
 			soundPtr = _vm->getResourceAddress(rtSound, _heChannel[chan].sound);
