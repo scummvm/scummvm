@@ -2491,9 +2491,7 @@ void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
 			int talkState = -1;
 
-			if (!((SoundHE *)_vm->_sound)->isSoundCodeUsed(HSND_TALKIE_SLOT))
-				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
-			else
+			if (((SoundHE *)_vm->_sound)->isSoundCodeUsed(HSND_TALKIE_SLOT))
 				talkState = ((SoundHE *)_vm->_sound)->getSoundVar(HSND_TALKIE_SLOT, 19);
 
 			// Allow a talkie with tokens to kick into random mouth mode
