@@ -169,7 +169,6 @@ protected:
 	};
 
 	int32 _heSpoolingMusicCount;
-
 	Common::File _heSpoolingMusicFile;
 	byte _heSpoolingCodeBuffer[HSND_MAX_SPOOLING_CODE_SIZE];
 
@@ -270,7 +269,7 @@ private:
 	int _soundAlreadyInQueueCount = 0;
 	int _inUnqueueCallbackScripts = 0;
 	int _soundsDebugFrameCounter = 0;
-	int _scummOverrideFrequency = 0;
+	int _dynamicSoundAgeCounter = 0;
 };
 
 

@@ -847,6 +847,8 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 }
 
 void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags, HESoundModifiers modifiers) {
+	_dynamicSoundAgeCounter++;
+
 	if (_vm->_game.heversion >= 95) {
 		if (heChannel == HSND_DYN_SOUND_CHAN) {
 			heChannel = getNextDynamicChannel();
@@ -1055,6 +1057,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 
 				_vm->setHETimer(channel + HSND_TIMER_SLOT);
 
+				_heChannel[channel].age = _dynamicSoundAgeCounter;
 				_heChannel[channel].sound = song;
 				_heChannel[channel].priority = 255;
 				_heChannel[channel].frequency = HSND_DEFAULT_FREQUENCY;
@@ -1340,6 +1343,7 @@ void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundDa
 
 	_vm->setHETimer(channel + HSND_TIMER_SLOT);
 
+	_heChannel[channel].age = _dynamicSoundAgeCounter;
 	_heChannel[channel].sound = sound;
 	_heChannel[channel].priority = priority;
 	_heChannel[channel].codeOffset = soundCode;
