@@ -84,7 +84,7 @@ uint32 getDownloadingProgress() {
 	return progress;
 }
 
-IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain) : Dialog("GameOptions_IntegrityDialog"), _close(false) {
+IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain) : Dialog("GameOptions_IntegrityDialog"), CommandSender(this), _close(false) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
@@ -98,12 +98,8 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "GameOptions_IntegrityDialog.PercentText", Common::String::format("%u %%", progress));
+	_calcSizeLabel = new StaticTextWidget(this, "GameOptions_IntegrityDialog.DownloadSize", Common::U32String());
 	_cancelButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.MainButton", _("Cancel"), Common::U32String(), kCleanupCmd);
-
-	MessageDialog alert(Common::U32String("Verifying file integrity may take a long time to complete.\nAre you sure you want to continue?"), "OK", "Cancel");
-	int result = alert.runModal();
-	if (result == 1)
-		return;
 
 	if (!g_state) {
 		g_state = new DialogState();
@@ -202,9 +198,17 @@ void IntegrityDialog::reflowLayout() {
 	refreshWidgets();
 }
 
+Common::U32String IntegrityDialog::getSizeLabelText() {
+	const char *calculatedUnits, *totalUnits;
+	Common::String calculated = Common::getHumanReadableBytes(g_state->calculatedSize, calculatedUnits);
+	Common::String total = Common::getHumanReadableBytes(g_state->totalSize, totalUnits);
+	return Common::U32String::format(_("Calculated %s %S / %s %S"), calculated.c_str(), _(calculatedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
+}
+
 void IntegrityDialog::refreshWidgets() {
 	uint32 progress = getDownloadingProgress();
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
+	_calcSizeLabel->setLabel(getSizeLabelText());
 	_progressBar->setValue(progress);
 }
 
@@ -306,6 +310,7 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 		}
 	}
 
+	setState(kChecksumComplete);
 	return fileChecksums;
 }
 
@@ -368,15 +373,16 @@ void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
 	debug(3, "JSON Response: %s", r->stringify().c_str());
 	IntegrityDialog::parseJSON(r);
 
-	if (!g_result->unknown) {
-		MessageDialog resultDialog(g_result->messageText);
-		resultDialog.runModal();
-	} else {
-		MessageDialog resultDialog(g_result->messageText, "OK", "Copy message to Clipboard");
-		bool copy = resultDialog.runModal();
-		if (copy == 1)
-			g_system->setTextInClipboard(g_result->emailText);
-	}
+	debug(g_result->messageText.c_str());
+	// if (!g_result->unknown) {
+	// 	MessageDialog resultDialog(g_result->messageText);
+	// 	resultDialog.runModal();
+	// } else {
+	// 	MessageDialog resultDialog(g_result->messageText, "OK", "Copy message to Clipboard");
+	// 	bool copy = resultDialog.runModal();
+	// 	if (copy == 1)
+	// 		g_system->setTextInClipboard(g_result->emailText);
+	// }
 }
 
 void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {

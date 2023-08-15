@@ -47,15 +47,17 @@ enum IconProcessState {
 	kChecksumComplete
 };
 
-class IntegrityDialog : Dialog {
+class IntegrityDialog : public Dialog, public CommandSender {
 	StaticTextWidget *_statusText;
 	StaticTextWidget *_errorText;
 	StaticTextWidget *_percentLabel;
+	StaticTextWidget *_calcSizeLabel;
 	SliderWidget *_progressBar;
 	ButtonWidget *_cancelButton;
 
 	bool _close;
 
+	Common::U32String getSizeLabelText();
 	void refreshWidgets();
 
 public:
@@ -68,9 +70,9 @@ public:
 
 	void calculateTotalSize(Common::String gamePath);
 
-	static Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums);
-	static Common::JSONValue *generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
-	static void parseJSON(Common::JSONValue *response);
+	Common::Array<Common::StringArray> generateChecksums(Common::String gamePath, Common::Array<Common::StringArray> &fileChecksums);
+	Common::JSONValue *generateJSONRequest(Common::String gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
+	void parseJSON(Common::JSONValue *response);
 
 	void open() override;
 	void close() override;

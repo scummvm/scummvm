@@ -608,6 +608,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	case kCmdCheckIntegrity: {
 		IntegrityDialog wizard("http://gamesdb.sev.zone/endpoints/validate.php", _domain);
+		wizard.runModal();
 		break;
 	}
 

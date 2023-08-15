@@ -1666,6 +1666,9 @@
 					height = 'Globals.Line.Height'
 					textalign = 'center'
 			/>
+			<widget name = 'DownloadSize'
+					height = 'Globals.Line.Height'
+			/>
 			<space/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'MainButton'
