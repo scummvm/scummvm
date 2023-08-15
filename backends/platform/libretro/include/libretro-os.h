@@ -181,7 +181,7 @@ private:
 
 	/* Inputs */
 public:
-	void processMouse(retro_input_state_t aCallback, int device, float gampad_cursor_speed, float gamepad_acceleration_time, bool analog_response_is_quadratic, int analog_deadzone, float mouse_speed);
+	void processMouse(void);
 	static void processKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers);
 	void setShakePos(int shakeXOffset, int shakeYOffset) override {}
 private:

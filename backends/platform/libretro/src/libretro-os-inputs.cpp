@@ -49,7 +49,7 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float * cumulativeXYAcc, in
 	*relMouseXY = (int)deltaAcc;
 }
 
-void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int device, float gampad_cursor_speed, float gamepad_acceleration_time, bool analog_response_is_quadratic, int analog_deadzone, float mouse_speed) {
+void OSystem_libretro::processMouse(void) {
 	enum processMouse_status {
 		STATUS_DOING_JOYSTICK  = (1 << 0),
 		STATUS_DOING_MOUSE     = (1 << 1),
@@ -62,8 +62,8 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 	float deltaAcc;
 	bool  down;
 	float screen_adjusted_cursor_speed = (float)_screen.w / 320.0f; // Dpad cursor speed should always be based off a 320 wide screen, to keep speeds consistent
-	float adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * gampad_cursor_speed * screen_adjusted_cursor_speed;
-	float inverse_acceleration_time = (gamepad_acceleration_time > 0.0) ? (1.0 / 60.0) * (1.0 / gamepad_acceleration_time) : 1.0;
+	float adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * retro_setting_get_gamepad_cursor_speed() * screen_adjusted_cursor_speed;
+	float inverse_acceleration_time = (retro_setting_get_gamepad_acceleration_time() > 0.0) ? (1.0 / 60.0) * (1.0 / retro_setting_get_gamepad_acceleration_time()) : 1.0;
 	int dpad_cursor_offset;
 	double rs_radius, rs_angle;
 	unsigned numpad_index;
@@ -95,7 +95,7 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 	};
 
 	// Reduce gamepad cursor speed, if required
-	if (device == RETRO_DEVICE_JOYPAD && retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2)) {
+	if (retro_get_input_device() == RETRO_DEVICE_JOYPAD && retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2)) {
 		adjusted_cursor_speed = adjusted_cursor_speed * (1.0f / 5.0f);
 	}
 
@@ -106,21 +106,21 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 	joy_y = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y);
 
 	// Left Analog X Axis
-	if (joy_x > analog_deadzone || joy_x < -analog_deadzone) {
+	if (joy_x > retro_setting_get_analog_deadzone() || joy_x < -retro_setting_get_analog_deadzone()) {
 		status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_X);
-		if (joy_x > analog_deadzone) {
+		if (joy_x > retro_setting_get_analog_deadzone()) {
 			// Reset accumulator when changing direction
 			_mouseXAcc = (_mouseXAcc < 0.0) ? 0.0 : _mouseXAcc;
-			joy_x = joy_x - analog_deadzone;
+			joy_x = joy_x - retro_setting_get_analog_deadzone();
 		}
-		if (joy_x < -analog_deadzone) {
+		if (joy_x < -retro_setting_get_analog_deadzone()) {
 			// Reset accumulator when changing direction
 			_mouseXAcc = (_mouseXAcc > 0.0) ? 0.0 : _mouseXAcc;
-			joy_x = joy_x + analog_deadzone;
+			joy_x = joy_x + retro_setting_get_analog_deadzone();
 		}
 		// Update accumulator
-		analog_amplitude_x = (float)joy_x / (float)(ANALOG_RANGE - analog_deadzone);
-		if (analog_response_is_quadratic) {
+		analog_amplitude_x = (float)joy_x / (float)(ANALOG_RANGE - retro_setting_get_analog_deadzone());
+		if (retro_setting_get_analog_response_is_quadratic()) {
 			if (analog_amplitude_x < 0.0)
 				analog_amplitude_x = -(analog_amplitude_x * analog_amplitude_x);
 			else
@@ -132,21 +132,21 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 	}
 
 	// Left Analog Y Axis
-	if (joy_y > analog_deadzone || joy_y < -analog_deadzone) {
+	if (joy_y > retro_setting_get_analog_deadzone() || joy_y < -retro_setting_get_analog_deadzone()) {
 		status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_Y);
-		if (joy_y > analog_deadzone) {
+		if (joy_y > retro_setting_get_analog_deadzone()) {
 			// Reset accumulator when changing direction
 			_mouseYAcc = (_mouseYAcc < 0.0) ? 0.0 : _mouseYAcc;
-			joy_y = joy_y - analog_deadzone;
+			joy_y = joy_y - retro_setting_get_analog_deadzone();
 		}
-		if (joy_y < -analog_deadzone) {
+		if (joy_y < -retro_setting_get_analog_deadzone()) {
 			// Reset accumulator when changing direction
 			_mouseYAcc = (_mouseYAcc > 0.0) ? 0.0 : _mouseYAcc;
-			joy_y = joy_y + analog_deadzone;
+			joy_y = joy_y + retro_setting_get_analog_deadzone();
 		}
 		// Update accumulator
-		analog_amplitude_y = (float)joy_y / (float)(ANALOG_RANGE - analog_deadzone);
-		if (analog_response_is_quadratic) {
+		analog_amplitude_y = (float)joy_y / (float)(ANALOG_RANGE - retro_setting_get_analog_deadzone());
+		if (retro_setting_get_analog_response_is_quadratic()) {
 			if (analog_amplitude_y < 0.0)
 				analog_amplitude_y = -(analog_amplitude_y * analog_amplitude_y);
 			else
@@ -157,7 +157,7 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 		updateMouseXY(deltaAcc, &_mouseYAcc, 0);
 	}
 
-	if (device == RETRO_DEVICE_JOYPAD) {
+	if (retro_get_input_device() == RETRO_DEVICE_JOYPAD) {
 		bool dpadLeft = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
 		bool dpadRight = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
 		bool dpadUp = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP);
@@ -298,24 +298,24 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 	joy_rx = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X);
 	joy_ry = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y);
 
-	if (joy_rx > analog_deadzone)
-		joy_rx = joy_rx - analog_deadzone;
-	else if (joy_rx < -analog_deadzone)
-		joy_rx = joy_rx + analog_deadzone;
+	if (joy_rx > retro_setting_get_analog_deadzone())
+		joy_rx = joy_rx - retro_setting_get_analog_deadzone();
+	else if (joy_rx < -retro_setting_get_analog_deadzone())
+		joy_rx = joy_rx + retro_setting_get_analog_deadzone();
 	else
 		joy_rx = 0;
 
-	if (joy_ry > analog_deadzone)
-		joy_ry = joy_ry - analog_deadzone;
-	else if (joy_ry < -analog_deadzone)
-		joy_ry = joy_ry + analog_deadzone;
+	if (joy_ry > retro_setting_get_analog_deadzone())
+		joy_ry = joy_ry - retro_setting_get_analog_deadzone();
+	else if (joy_ry < -retro_setting_get_analog_deadzone())
+		joy_ry = joy_ry + retro_setting_get_analog_deadzone();
 	else
 		joy_ry = 0;
 
 	// This is very ugly, but I don't have time to make it nicer...
 	if (joy_rx != 0 || joy_ry != 0) {
-		analog_amplitude_x = (float)joy_rx / (float)(ANALOG_RANGE - analog_deadzone);
-		analog_amplitude_y = (float)joy_ry / (float)(ANALOG_RANGE - analog_deadzone);
+		analog_amplitude_x = (float)joy_rx / (float)(ANALOG_RANGE - retro_setting_get_analog_deadzone());
+		analog_amplitude_y = (float)joy_ry / (float)(ANALOG_RANGE - retro_setting_get_analog_deadzone());
 
 		// Convert to polar coordinates: part 1
 		rs_radius = sqrt((double)(analog_amplitude_x * analog_amplitude_x) + (double)(analog_amplitude_y * analog_amplitude_y));
@@ -371,7 +371,7 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 			// Reset accumulator when changing direction
 			_mouseXAcc = (_mouseXAcc > 0.0) ? 0.0 : _mouseXAcc;
 		}
-		deltaAcc = (float)x * mouse_speed;
+		deltaAcc = (float)x * retro_setting_get_mouse_speed();
 		updateMouseXY(deltaAcc, &_mouseXAcc, 1);
 	}
 	// > Y Axis
@@ -385,7 +385,7 @@ void OSystem_libretro::processMouse(retro_input_state_t retro_input_cb, int devi
 			// Reset accumulator when changing direction
 			_mouseYAcc = (_mouseYAcc > 0.0) ? 0.0 : _mouseYAcc;
 		}
-		deltaAcc = (float)y * mouse_speed;
+		deltaAcc = (float)y * retro_setting_get_mouse_speed();
 		updateMouseXY(deltaAcc, &_mouseYAcc, 0);
 	}
 

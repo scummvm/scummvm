@@ -887,7 +887,7 @@ void retro_run(void) {
 		} while (LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 		poll_cb();
-		LIBRETRO_G_SYSTEM->processMouse(retro_input_cb, retro_input_device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
+		LIBRETRO_G_SYSTEM->processMouse();
 	}
 }
 
