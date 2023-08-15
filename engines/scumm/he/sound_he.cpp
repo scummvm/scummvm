@@ -33,6 +33,7 @@
 #include "common/memstream.h"
 #include "common/timer.h"
 #include "common/util.h"
+#include "common/translation.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
@@ -1510,8 +1511,13 @@ void SoundHE::playVoiceFile(char *filename) {
 	// Originally this served the purpose of fetching voice lines from separate files
 	// instead of using a single .HE2 bundle.
 	//
-	// Again, we should never end up in here, but IF WE DO we issue an error.
-	error("SoundHE::playVoiceFile(): Unimplemented development codepath, please file a ticket!");
+	// Again, we should never end up in here, but IF WE DO we issue a message box.
+	GUIErrorMessageWithURL(_(
+			"Unimplemented development codepath encountered within the sound engine,\n"
+			"please file a ticket at https://bugs.scummvm.org."),
+		"https://bugs.scummvm.org");
+
+	warning("SoundHE::playVoiceFile(): Unimplemented development codepath");
 }
 
 #ifdef ENABLE_HE
