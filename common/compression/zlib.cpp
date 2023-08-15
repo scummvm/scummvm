@@ -235,6 +235,7 @@ protected:
 	ScopedPtr<SeekableReadStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
+	uint64 _parentPos;
 	uint32 _pos;
 	uint32 _origSize;
 	bool _eos;
@@ -244,8 +245,8 @@ public:
 	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream() {
 		assert(w != nullptr);
 
+		_parentPos = w->pos();
 		// Verify file header is correct
-		w->seek(0, SEEK_SET);
 		uint16 header = w->readUint16BE();
 		assert(header == 0x1F8B ||
 		       ((header & 0x0F00) == 0x0800 && header % 31 == 0));
@@ -259,8 +260,8 @@ public:
 			// use an otherwise known size if supplied.
 			_origSize = knownSize;
 		}
+		w->seek(_parentPos, SEEK_SET);
 		_pos = 0;
-		w->seek(0, SEEK_SET);
 		_eos = false;
 
 		// Adding 32 to windowBits indicates to zlib that it is supposed to
@@ -354,7 +355,7 @@ public:
 #endif
 
 			_pos = 0;
-			_wrapped->seek(0, SEEK_SET);
+			_wrapped->seek(_parentPos, SEEK_SET);
 			_zlibErr = inflateReset(&_stream);
 			if (_zlibErr != Z_OK)
 				return false; // FIXME: STREAM REWRITE
