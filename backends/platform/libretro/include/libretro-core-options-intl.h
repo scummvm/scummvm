@@ -85,6 +85,11 @@ struct retro_core_option_v2_category option_cats_it[] = {
 		NULL,
 		"Impostazioni relative al timing"
 	},
+	{
+                "retropad",
+                "Mappatura RetroPad",
+                "Configura la mappatura del RetroPad"
+        },
 	{ NULL, NULL, NULL },
 };
 
@@ -234,6 +239,297 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		},
 		NULL
 	},
+	/* Button mappings */
+	{
+		"scummvm_mapper_up",
+		"RetroPad > Su",
+		"Su",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_down",
+		"RetroPad > Giù",
+		"Giù",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_left",
+		"RetroPad > Sinistra",
+		"Sinistra",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_right",
+		"RetroPad > Destra",
+		"Destra",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_a",
+		"RetroPad > A",
+		"A",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_b",
+		"RetroPad > B",
+		"B",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_x",
+		"RetroPad > X",
+		"X",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_y",
+		"RetroPad > Y",
+		"Y",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_select",
+		"RetroPad > Select",
+		"Select",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_start",
+		"RetroPad > Start",
+		"Start",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_l",
+		"RetroPad > L",
+		"L",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_r",
+		"RetroPad > R",
+		"R",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_l2",
+		"RetroPad > L2",
+		"L2",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_r2",
+		"RetroPad > R2",
+		"R2",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_l3",
+		"RetroPad > L3",
+		"L3",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_r3",
+		"RetroPad > R3",
+		"R3",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	/* Left Stick */
+	{
+		"scummvm_mapper_lu",
+		"RetroPad > Leva Analogica Sinistra > Su",
+		"Leva Analogica Sinistra > Su",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_ld",
+		"RetroPad > Leva Analogica Sinistra > Giù",
+		"Leva Analogica Sinistra > Giù",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_ll",
+		"RetroPad > Leva Analogica Sinistra > Sinistra",
+		"Leva Analogica Sinistra > Sinistra",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_lr",
+		"RetroPad > Leva Analogica Sinistra > Destra",
+		"Leva Analogica Sinistra > Destra",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	/* Right Stick */
+	{
+		"scummvm_mapper_ru",
+		"RetroPad > Leva Analogica Destra > Su",
+		"Leva Analogica Destra > Su",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_rd",
+		"RetroPad > Leva Analogica Destra > Giù",
+		"Leva Analogica Destra > Giù",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_rl",
+		"RetroPad > Leva Analogica Destra > Sinistra",
+		"Leva Analogica Destra > Sinistra",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
+	{
+		"scummvm_mapper_rr",
+		"RetroPad > Leva Analogica Destra > Leva Analogica Destra",
+		"Leva Analogica Destra > Destra",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		NULL,
+	},
 	{
 		"scummvm_auto_performance_tuner",
 		"Regolazione automatica performance",
@@ -252,6 +548,165 @@ struct retro_core_options_v2 options_it = {
 	option_cats_it,
 	option_defs_it
 };
+
+
+/* List has been reduced to fit RETRO_NUM_CORE_OPTION_VALUES_MAX.
+ * Latest element {NULL, NULL} has been omitted in this case as the array is exactly sized
+ * RETRO_NUM_CORE_OPTION_VALUES_MAX; in case the array size will be reduced, {NULL, NULL}
+ * element to be uncommented.
+ */
+
+struct retro_core_option_value retro_keys_label_it [] = {
+	{"---", "---"},
+	{"RETROKE_VKBD", "Attiva/disattiva Tastiera Virtuale"},
+	{"RETROKE_LEFT", "Cursore Mouse Sinistra"},
+	{"RETROKE_UP", "Cursore Mouse Su"},
+	{"RETROKE_DOWN", "Cursore Mouse Giù"},
+	{"RETROKE_RIGHT", "Cursore Mouse Destra"},
+	{"RETROKE_LEFT_BUTTON", "Tasto Mouse Sinistra"},
+	{"RETROKE_RIGHT_BUTTON", "Tasto Mouse Destra"},
+	{"RETROKE_FINE_CONTROL", "Controllo Fine Cursore Mouse"},
+	{"RETROKE_SCUMMVM_GUI", "ScummVM GUI"},
+	{"RETROKE_SHIFT_MOD", "Tastiera Shift (Modificatore)"},
+	{"RETROKE_CTRL_MOD", "Tastiera Control (Modificatore)"},
+	{"RETROKE_ALT_MOD", "Tastiera Alt (Modificatore)"},
+	{"RETROK_BACKSPACE", "Tastiera Backspace"},
+	{"RETROK_TAB", "Tastiera Tab"},
+	{"RETROK_CLEAR", "Tastiera Clear"},
+	{"RETROK_RETURN", "Tastiera Return"},
+	{"RETROK_PAUSE", "Tastiera Pause"},
+	{"RETROK_ESCAPE", "Tastiera Escape"},
+	{"RETROK_SPACE", "Tastiera Space"},
+	{"RETROK_EXCLAIM", "Tastiera !"},
+	{"RETROK_QUOTEDBL", "Tastiera \""},
+	{"RETROK_HASH", "Tastiera #"},
+	{"RETROK_DOLLAR", "Tastiera $"},
+	{"RETROK_AMPERSAND", "Tastiera &"},
+	{"RETROK_QUOTE", "Tastiera \'"},
+	{"RETROK_LEFTPAREN", "Tastiera ("},
+	{"RETROK_RIGHTPAREN", "Tastiera )"},
+	{"RETROK_ASTERISK", "Tastiera *"},
+	{"RETROK_PLUS", "Tastiera +"},
+	{"RETROK_COMMA", "Tastiera ,"},
+	{"RETROK_MINUS", "Tastiera -"},
+	{"RETROK_PERIOD", "Tastiera ."},
+	{"RETROK_SLASH", "Tastiera /"},
+	{"RETROK_0", "Tastiera 0"},
+	{"RETROK_1", "Tastiera 1"},
+	{"RETROK_2", "Tastiera 2"},
+	{"RETROK_3", "Tastiera 3"},
+	{"RETROK_4", "Tastiera 4"},
+	{"RETROK_5", "Tastiera 5"},
+	{"RETROK_6", "Tastiera 6"},
+	{"RETROK_7", "Tastiera 7"},
+	{"RETROK_8", "Tastiera 8"},
+	{"RETROK_9", "Tastiera 9"},
+	{"RETROK_COLON", "Tastiera :"},
+	{"RETROK_SEMICOLON", "Tastiera ;"},
+	{"RETROK_LESS", "Tastiera <"},
+	{"RETROK_EQUALS", "Tastiera ="},
+	{"RETROK_GREATER", "Tastiera >"},
+	{"RETROK_QUESTION", "Tastiera ?"},
+	{"RETROK_AT", "Tastiera @"},
+	{"RETROK_LEFTBRACKET", "Tastiera ["},
+	{"RETROK_BACKSLASH", "Tastiera \\"},
+	{"RETROK_RIGHTBRACKET", "Tastiera ]"},
+	{"RETROK_CARET", "Tastiera ^"},
+	{"RETROK_UNDERSCORE", "Tastiera _"},
+	{"RETROK_BACKQUOTE", "Tastiera `"},
+	{"RETROK_a", "Tastiera a"},
+	{"RETROK_b", "Tastiera b"},
+	{"RETROK_c", "Tastiera c"},
+	{"RETROK_d", "Tastiera d"},
+	{"RETROK_e", "Tastiera e"},
+	{"RETROK_f", "Tastiera f"},
+	{"RETROK_g", "Tastiera g"},
+	{"RETROK_h", "Tastiera h"},
+	{"RETROK_i", "Tastiera i"},
+	{"RETROK_j", "Tastiera j"},
+	{"RETROK_k", "Tastiera k"},
+	{"RETROK_l", "Tastiera l"},
+	{"RETROK_m", "Tastiera m"},
+	{"RETROK_n", "Tastiera n"},
+	{"RETROK_o", "Tastiera o"},
+	{"RETROK_p", "Tastiera p"},
+	{"RETROK_q", "Tastiera q"},
+	{"RETROK_r", "Tastiera r"},
+	{"RETROK_s", "Tastiera s"},
+	{"RETROK_t", "Tastiera t"},
+	{"RETROK_u", "Tastiera u"},
+	{"RETROK_v", "Tastiera v"},
+	{"RETROK_w", "Tastiera w"},
+	{"RETROK_x", "Tastiera x"},
+	{"RETROK_y", "Tastiera y"},
+	{"RETROK_z", "Tastiera z"},
+	{"RETROK_KP0", "Tastiera Numpad 0"},
+	{"RETROK_KP1", "Tastiera Numpad 1"},
+	{"RETROK_KP2", "Tastiera Numpad 2"},
+	{"RETROK_KP3", "Tastiera Numpad 3"},
+	{"RETROK_KP4", "Tastiera Numpad 4"},
+	{"RETROK_KP5", "Tastiera Numpad 5"},
+	{"RETROK_KP6", "Tastiera Numpad 6"},
+	{"RETROK_KP7", "Tastiera Numpad 7"},
+	{"RETROK_KP8", "Tastiera Numpad 8"},
+	{"RETROK_KP9", "Tastiera Numpad 9"},
+	{"RETROK_KP_PERIOD", "Tastiera Numpad ."},
+	{"RETROK_KP_DIVIDE", "Tastiera Numpad /"},
+	{"RETROK_KP_MULTIPLY", "Tastiera Numpad *"},
+	{"RETROK_KP_MINUS", "Tastiera Numpad -"},
+	{"RETROK_KP_PLUS", "Tastiera Numpad +"},
+	{"RETROK_KP_ENTER", "Tastiera Numpad Enter"},
+	{"RETROK_KP_EQUALS", "Tastiera Numpad ="},
+	{"RETROK_UP", "Tastiera Su"},
+	{"RETROK_DOWN", "Tastiera Giù"},
+	{"RETROK_LEFT", "Tastiera Sinistra"},
+	{"RETROK_RIGHT", "Tastiera Destra"},
+	{"RETROK_INSERT", "Tastiera Insert"},
+	{"RETROK_DELETE", "Tastiera Delete"},
+	{"RETROK_HOME", "Tastiera Home"},
+	{"RETROK_END", "Tastiera End"},
+	{"RETROK_PAGEUP", "Tastiera PageUp"},
+	{"RETROK_PAGEDOWN", "Tastiera PageDown"},
+	{"RETROK_F1", "Tastiera F1"},
+	{"RETROK_F2", "Tastiera F2"},
+	{"RETROK_F3", "Tastiera F3"},
+	{"RETROK_F4", "Tastiera F4"},
+	{"RETROK_F5", "Tastiera F5"},
+	{"RETROK_F6", "Tastiera F6"},
+	{"RETROK_F7", "Tastiera F7"},
+	{"RETROK_F8", "Tastiera F8"},
+	{"RETROK_F9", "Tastiera F9"},
+	{"RETROK_F10", "Tastiera F10"},
+	{"RETROK_F11", "Tastiera F11"},
+	{"RETROK_F12", "Tastiera F12"},
+//{"RETROK_F13","Tastiera F13"},
+//{"RETROK_F14","Tastiera F14"},
+//{"RETROK_F15","Tastiera F15"},
+//{"RETROK_NUMLOCK","Tastiera NumLock"},
+//{"RETROK_CAPSLOCK","Tastiera Caps Lock"},
+//{"RETROK_SCROLLOCK","Tastiera Scroll Lock"},
+	{"RETROK_LSHIFT", "Tastiera Shift Sinistra"},
+	{"RETROK_RSHIFT", "Tastiera Shift Destra"},
+	{"RETROK_LCTRL", "Tastiera Control Sinistra"},
+	{"RETROK_RCTRL", "Tastiera Control Destra"},
+	{"RETROK_LALT", "Tastiera Alt Sinistra"},
+	{"RETROK_RALT", "Tastiera Alt Destra"},
+//{"RETROK_LMETA","Tastiera Left Meta"},
+//{"RETROK_RMETA","Tastiera Right Meta"},
+//{"RETROK_LSUPER","Tastiera Left Super"},
+//{"RETROK_RSUPER","Tastiera Right Super"},
+//{"RETROK_MODE","Tastiera Mode"},
+//{"RETROK_COMPOSE","Tastiera Compose"},
+//{"RETROK_HELP","Tastiera Help"},
+//{"RETROK_PRINT","Tastiera Print"},
+//{"RETROK_SYSREQ","Tastiera SysReq"},
+//{"RETROK_BREAK","Tastiera Break"},
+//{"RETROK_MENU","Tastiera Menu"},
+//{"RETROK_POWER","Tastiera Power"},
+//{"RETROK_EURO","Tastiera Euro"},
+//{"RETROK_UNDO","Tastiera Undo"},
+};
+
 /* RETRO_LANGUAGE_DUTCH */
 
 /* RETRO_LANGUAGE_PORTUGUESE_BRAZIL */

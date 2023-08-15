@@ -57,7 +57,7 @@
 #include "backends/platform/libretro/include/libretro-mapper.h"
 
 static struct retro_game_info game_buf;
-static struct retro_game_info * game_buf_ptr;
+static struct retro_game_info *game_buf_ptr;
 
 retro_log_printf_t retro_log_cb = NULL;
 retro_input_state_t retro_input_cb = NULL;
@@ -67,8 +67,6 @@ static retro_environment_t environ_cb = NULL;
 static retro_input_poll_t poll_cb = NULL;
 static int retro_input_device = RETRO_DEVICE_JOYPAD;
 
-// System analog stick range is -0x8000 to 0x8000
-#define ANALOG_RANGE 0x8000
 // Default deadzone: 15%
 static int analog_deadzone = (int)(0.15f * ANALOG_RANGE);
 
@@ -110,6 +108,7 @@ static size_t samples_per_frame_buffer_size = 0;
 static int16_t *sound_buffer = NULL;               // pointer to output buffer
 static int16_t *sound_buffer_empty = NULL;         // pointer to zeroed output buffer, to regulate GUI FPS
 
+static bool input_bitmask_supported = false;
 static bool updating_variables = false;
 static int opt_frameskip_threshold_display = 0;
 static int opt_frameskip_no_display = 0;
@@ -181,7 +180,7 @@ void reset_performance_tuner() {
 	}
 }
 
-void retro_osd_notification(const char* msg) {
+void retro_osd_notification(const char *msg) {
 	if (!msg || *msg == '\0')
 		return;
 	struct retro_message_ext retro_msg;
@@ -195,7 +194,7 @@ void retro_osd_notification(const char* msg) {
 static void update_variables(void) {
 	struct retro_variable var;
 	updating_variables = true;
-	const char* osd_msg = "";
+	const char *osd_msg = "";
 
 	var.key = "scummvm_gamepad_cursor_speed";
 	var.value = NULL;
@@ -307,6 +306,150 @@ static void update_variables(void) {
 			performance_switch = 0;
 	}
 
+	var.key = "scummvm_mapper_up";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_UP, var.value);
+	}
+
+	var.key = "scummvm_mapper_down";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_DOWN, var.value);
+	}
+
+	var.key = "scummvm_mapper_left";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_LEFT, var.value);
+	}
+
+	var.key = "scummvm_mapper_right";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_RIGHT, var.value);
+	}
+
+	var.key = "scummvm_mapper_a";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_A, var.value);
+	}
+
+	var.key = "scummvm_mapper_b";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_B, var.value);
+	}
+
+	var.key = "scummvm_mapper_x";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_X, var.value);
+	}
+
+	var.key = "scummvm_mapper_y";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_Y, var.value);
+	}
+
+	var.key = "scummvm_mapper_select";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_SELECT, var.value);
+	}
+
+	var.key = "scummvm_mapper_start";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_START, var.value);
+	}
+
+	var.key = "scummvm_mapper_l";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_L, var.value);
+	}
+
+	var.key = "scummvm_mapper_r";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_R, var.value);
+	}
+
+	var.key = "scummvm_mapper_l2";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_L2, var.value);
+	}
+
+	var.key = "scummvm_mapper_r2";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_R2, var.value);
+	}
+
+	var.key = "scummvm_mapper_l3";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_L3, var.value);
+	}
+
+	var.key = "scummvm_mapper_r3";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_R3, var.value);
+	}
+
+	var.key = "scummvm_mapper_lu";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_LU, var.value);
+	}
+
+	var.key = "scummvm_mapper_ld";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_LD, var.value);
+	}
+
+	var.key = "scummvm_mapper_ll";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_LL, var.value);
+	}
+
+	var.key = "scummvm_mapper_lr";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_LR, var.value);
+	}
+
+	var.key = "scummvm_mapper_ru";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_RU, var.value);
+	}
+
+	var.key = "scummvm_mapper_rd";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_RD, var.value);
+	}
+
+	var.key = "scummvm_mapper_rl";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_RL, var.value);
+	}
+
+	var.key = "scummvm_mapper_rr";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_RR, var.value);
+	}
+
 	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
 		if (frameskip_type > 1) {
 			retro_log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
@@ -347,12 +490,11 @@ static void retro_set_options_display(void) {
 
 static bool retro_update_display(void) {
 	if (updating_variables)
-	return false;
+		return false;
 
 	/* Core options */
 	bool updated = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
-	{
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated) {
 		update_variables();
 		LIBRETRO_G_SYSTEM->refreshRetroSettings();
 		retro_set_options_display();
@@ -360,7 +502,7 @@ static bool retro_update_display(void) {
 	return updated;
 }
 
-bool retro_setting_get_timing_inaccuracies_enabled(){
+bool retro_setting_get_timing_inaccuracies_enabled() {
 	if (performance_switch & PERF_SWITCH_ON)
 		return (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
 	else
@@ -389,6 +531,10 @@ float retro_setting_get_gamepad_acceleration_time(void) {
 
 float retro_setting_get_frame_rate(void) {
 	return frame_rate;
+}
+
+bool retro_get_input_bitmask_supported(void) {
+	return input_bitmask_supported;
 }
 
 uint16 retro_setting_get_sample_rate(void) {
@@ -529,8 +675,8 @@ void retro_set_environment(retro_environment_t cb) {
 	environ_cb = cb;
 	bool tmp = true;
 	bool has_categories;
-
 	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
+	libretro_fill_options_mapper_data(environ_cb);
 	libretro_set_core_options(environ_cb, &has_categories);
 
 	/* Core option display callback */
@@ -567,7 +713,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 	info->timing.sample_rate = sample_rate;
 }
 
-const char * retro_get_system_dir(void){
+const char *retro_get_system_dir(void) {
 	const char *sysdir;
 	const char *coredir;
 
@@ -582,7 +728,7 @@ const char * retro_get_system_dir(void){
 	}
 }
 
-const char * retro_get_save_dir(void){
+const char *retro_get_save_dir(void) {
 	const char *savedir;
 	const char *coredir;
 
@@ -605,7 +751,7 @@ void retro_init(void) {
 	else
 		retro_log_cb = NULL;
 
-	retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n",__GIT_VERSION);
+	retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
 
 	struct retro_audio_buffer_status_callback buf_status_cb;
 	buf_status_cb.callback = retro_audio_buff_status_cb;
@@ -619,7 +765,7 @@ void retro_init(void) {
 
 	environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, retro_input_desc);
 
-	environ_cb(RETRO_ENVIRONMENT_SET_CONTROLLER_INFO, (void*)retro_controller_lists);
+	environ_cb(RETRO_ENVIRONMENT_SET_CONTROLLER_INFO, (void *)retro_controller_lists);
 
 	/* Get color mode: 32 first as VGA has 6 bits per pixel */
 #if 0
@@ -639,6 +785,9 @@ void retro_init(void) {
 
 	retro_keyboard_callback cb = {LIBRETRO_G_SYSTEM->processKeyEvent};
 	environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
+
+	if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
+		input_bitmask_supported = true;
 
 	g_system = new OSystem_libretro();
 }
@@ -779,13 +928,13 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 }
 
 void retro_run(void) {
-	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO){
+	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO) {
 		struct retro_system_av_info info;
 		retro_get_system_av_info(&info);
-		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO , &info);
+		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
 	}
 
-	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY){
+	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY) {
 		uint32 audio_latency;
 		float frame_time_msec = 1000.0f / frame_rate;
 
@@ -799,7 +948,7 @@ void retro_run(void) {
 		audio_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
 	}
 
-	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO){
+	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO) {
 		audio_status &= ~AUDIO_STATUS_UPDATE_AV_INFO;
 		retro_reset();
 		return;
@@ -897,7 +1046,7 @@ void retro_run(void) {
 		} while (LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 		poll_cb();
-		LIBRETRO_G_SYSTEM->processMouse();
+		LIBRETRO_G_SYSTEM->processInputs();
 	}
 }
 

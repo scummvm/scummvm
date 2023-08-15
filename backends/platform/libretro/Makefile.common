@@ -127,7 +127,8 @@ LIBRETRO_OBJS := $(CORE_PATH)/libretro.o \
 	$(CORE_PATH)/libretro-os-inputs.o \
 	$(CORE_PATH)/libretro-os-utils.o \
 	$(CORE_PATH)/libretro-threads.o \
-	$(CORE_PATH)/libretro-timer.o
+	$(CORE_PATH)/libretro-timer.o \
+	$(CORE_PATH)/libretro-mapper.o
 
 OBJS += $(LIBRETRO_OBJS)
 

@@ -33,11 +33,9 @@
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-defs.h"
 
-OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _joypadnumpadLast(8), _joypadnumpadActive(false), _mixer(0), _startTime(0), _threadSwitchCaller(0) {
+OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _mixer(0), _startTime(0), _threadSwitchCaller(0), _cursorStatus(0) {
 	_fsFactory = new FS_SYSTEM_FACTORY();
 	memset(_mouseButtons, 0, sizeof(_mouseButtons));
-	memset(_joypadmouseButtons, 0, sizeof(_joypadmouseButtons));
-	memset(_joypadkeyboardButtons, 0, sizeof(_joypadkeyboardButtons));
 
 	s_systemDir = Common::String(retro_get_system_dir());
 	s_saveDir = Common::String(retro_get_save_dir());

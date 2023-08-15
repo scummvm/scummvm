@@ -87,6 +87,11 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"Timing",
 		"Configure timing settings"
 	},
+	{
+		"retropad",
+		"RetroPad mapping",
+		"Configure RetroPad mapping"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -307,6 +312,297 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		},
 		"48000 Hz"
 	},
+	/* Button mappings */
+	{
+		"scummvm_mapper_up",
+		"RetroPad > Up",
+		"Up",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_UP"
+	},
+	{
+		"scummvm_mapper_down",
+		"RetroPad > Down",
+		"Down",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_DOWN"
+	},
+	{
+		"scummvm_mapper_left",
+		"RetroPad > Left",
+		"Left",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_LEFT"
+	},
+	{
+		"scummvm_mapper_right",
+		"RetroPad > Right",
+		"Right",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_RIGHT"
+	},
+	{
+		"scummvm_mapper_a",
+		"RetroPad > A",
+		"A",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_ESCAPE"
+	},
+	{
+		"scummvm_mapper_b",
+		"RetroPad > B",
+		"B",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_RETURN"
+	},
+	{
+		"scummvm_mapper_x",
+		"RetroPad > X",
+		"X",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_F5"
+	},
+	{
+		"scummvm_mapper_y",
+		"RetroPad > Y",
+		"Y",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_SPACE"
+	},
+	{
+		"scummvm_mapper_select",
+		"RetroPad > Select",
+		"Select",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_VKBD"
+	},
+	{
+		"scummvm_mapper_start",
+		"RetroPad > Start",
+		"Start",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_SCUMMVM_GUI"
+	},
+	{
+		"scummvm_mapper_l",
+		"RetroPad > L",
+		"L",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_LEFT_BUTTON"
+	},
+	{
+		"scummvm_mapper_r",
+		"RetroPad > R",
+		"R",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_RIGHT_BUTTON"
+	},
+	{
+		"scummvm_mapper_l2",
+		"RetroPad > L2",
+		"L2",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"---"
+	},
+	{
+		"scummvm_mapper_r2",
+		"RetroPad > R2",
+		"R2",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_FINE_CONTROL"
+	},
+	{
+		"scummvm_mapper_l3",
+		"RetroPad > L3",
+		"L3",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"---"
+	},
+	{
+		"scummvm_mapper_r3",
+		"RetroPad > R3",
+		"R3",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"---"
+	},
+	/* Left Stick */
+	{
+		"scummvm_mapper_lu",
+		"RetroPad > Left Analog > Up",
+		"Left Analog > Up",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_UP"
+	},
+	{
+		"scummvm_mapper_ld",
+		"RetroPad > Left Analog > Down",
+		"Left Analog > Down",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_DOWN"
+	},
+	{
+		"scummvm_mapper_ll",
+		"RetroPad > Left Analog > Left",
+		"Left Analog > Left",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_LEFT"
+	},
+	{
+		"scummvm_mapper_lr",
+		"RetroPad > Left Analog > Right",
+		"Left Analog > Right",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROKE_RIGHT"
+	},
+	/* Right Stick */
+	{
+		"scummvm_mapper_ru",
+		"RetroPad > Right Analog > Up",
+		"Right Analog > Up",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_UP"
+	},
+	{
+		"scummvm_mapper_rd",
+		"RetroPad > Right Analog > Down",
+		"Right Analog > Down",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_DOWN"
+	},
+	{
+		"scummvm_mapper_rl",
+		"RetroPad > Right Analog > Left",
+		"Right Analog > Left",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_LEFT"
+	},
+	{
+		"scummvm_mapper_rr",
+		"RetroPad > Right Analog > Right",
+		"Right Analog > Right",
+		NULL,
+		NULL,
+		"retropad",
+		{
+			{ NULL, NULL }
+		},
+		"RETROK_RIGHT"
+	},
 	{
 		"scummvm_auto_performance_tuner",
 		"Auto performance tuner",
@@ -331,6 +627,164 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 struct retro_core_options_v2 options_us = {
 	option_cats_us,
 	option_defs_us
+};
+
+/* List has been reduced to fit RETRO_NUM_CORE_OPTION_VALUES_MAX.
+ * Latest element {NULL, NULL} has been omitted in this case as the array is exactly sized
+ * RETRO_NUM_CORE_OPTION_VALUES_MAX; in case the array size will be reduced, {NULL, NULL}
+ * element to be uncommented.
+ */
+
+struct retro_core_option_value retro_keys_label_us [] = {
+	{"---", "---"},
+	{"RETROKE_VKBD", "Toggle Virtual Keyboard"},
+	{"RETROKE_LEFT", "Mouse Cursor Left"},
+	{"RETROKE_UP", "Mouse Cursor Up"},
+	{"RETROKE_DOWN", "Mouse Cursor Down"},
+	{"RETROKE_RIGHT", "Mouse Cursor Right"},
+	{"RETROKE_LEFT_BUTTON", "Mouse Left Button"},
+	{"RETROKE_RIGHT_BUTTON", "Mouse Right Button"},
+	{"RETROKE_FINE_CONTROL", "Mouse Cursor Fine Control"},
+	{"RETROKE_SCUMMVM_GUI", "ScummVM GUI"},
+	{"RETROKE_SHIFT_MOD", "Keyboard Shift (Modifier)"},
+	{"RETROKE_CTRL_MOD", "Keyboard Control (Modifier)"},
+	{"RETROKE_ALT_MOD", "Keyboard Alt (Modifier)"},
+	{"RETROK_BACKSPACE", "Keyboard Backspace"},
+	{"RETROK_TAB", "Keyboard Tab"},
+	{"RETROK_CLEAR", "Keyboard Clear"},
+	{"RETROK_RETURN", "Keyboard Return"},
+	{"RETROK_PAUSE", "Keyboard Pause"},
+	{"RETROK_ESCAPE", "Keyboard Escape"},
+	{"RETROK_SPACE", "Keyboard Space"},
+	{"RETROK_EXCLAIM", "Keyboard !"},
+	{"RETROK_QUOTEDBL", "Keyboard \""},
+	{"RETROK_HASH", "Keyboard #"},
+	{"RETROK_DOLLAR", "Keyboard $"},
+	{"RETROK_AMPERSAND", "Keyboard &"},
+	{"RETROK_QUOTE", "Keyboard \'"},
+	{"RETROK_LEFTPAREN", "Keyboard ("},
+	{"RETROK_RIGHTPAREN", "Keyboard )"},
+	{"RETROK_ASTERISK", "Keyboard *"},
+	{"RETROK_PLUS", "Keyboard +"},
+	{"RETROK_COMMA", "Keyboard ,"},
+	{"RETROK_MINUS", "Keyboard -"},
+	{"RETROK_PERIOD", "Keyboard ."},
+	{"RETROK_SLASH", "Keyboard /"},
+	{"RETROK_0", "Keyboard 0"},
+	{"RETROK_1", "Keyboard 1"},
+	{"RETROK_2", "Keyboard 2"},
+	{"RETROK_3", "Keyboard 3"},
+	{"RETROK_4", "Keyboard 4"},
+	{"RETROK_5", "Keyboard 5"},
+	{"RETROK_6", "Keyboard 6"},
+	{"RETROK_7", "Keyboard 7"},
+	{"RETROK_8", "Keyboard 8"},
+	{"RETROK_9", "Keyboard 9"},
+	{"RETROK_COLON", "Keyboard :"},
+	{"RETROK_SEMICOLON", "Keyboard ;"},
+	{"RETROK_LESS", "Keyboard <"},
+	{"RETROK_EQUALS", "Keyboard ="},
+	{"RETROK_GREATER", "Keyboard >"},
+	{"RETROK_QUESTION", "Keyboard ?"},
+	{"RETROK_AT", "Keyboard @"},
+	{"RETROK_LEFTBRACKET", "Keyboard ["},
+	{"RETROK_BACKSLASH", "Keyboard \\"},
+	{"RETROK_RIGHTBRACKET", "Keyboard ]"},
+	{"RETROK_CARET", "Keyboard ^"},
+	{"RETROK_UNDERSCORE", "Keyboard _"},
+	{"RETROK_BACKQUOTE", "Keyboard `"},
+	{"RETROK_a", "Keyboard a"},
+	{"RETROK_b", "Keyboard b"},
+	{"RETROK_c", "Keyboard c"},
+	{"RETROK_d", "Keyboard d"},
+	{"RETROK_e", "Keyboard e"},
+	{"RETROK_f", "Keyboard f"},
+	{"RETROK_g", "Keyboard g"},
+	{"RETROK_h", "Keyboard h"},
+	{"RETROK_i", "Keyboard i"},
+	{"RETROK_j", "Keyboard j"},
+	{"RETROK_k", "Keyboard k"},
+	{"RETROK_l", "Keyboard l"},
+	{"RETROK_m", "Keyboard m"},
+	{"RETROK_n", "Keyboard n"},
+	{"RETROK_o", "Keyboard o"},
+	{"RETROK_p", "Keyboard p"},
+	{"RETROK_q", "Keyboard q"},
+	{"RETROK_r", "Keyboard r"},
+	{"RETROK_s", "Keyboard s"},
+	{"RETROK_t", "Keyboard t"},
+	{"RETROK_u", "Keyboard u"},
+	{"RETROK_v", "Keyboard v"},
+	{"RETROK_w", "Keyboard w"},
+	{"RETROK_x", "Keyboard x"},
+	{"RETROK_y", "Keyboard y"},
+	{"RETROK_z", "Keyboard z"},
+	{"RETROK_KP0", "Keyboard Numpad 0"},
+	{"RETROK_KP1", "Keyboard Numpad 1"},
+	{"RETROK_KP2", "Keyboard Numpad 2"},
+	{"RETROK_KP3", "Keyboard Numpad 3"},
+	{"RETROK_KP4", "Keyboard Numpad 4"},
+	{"RETROK_KP5", "Keyboard Numpad 5"},
+	{"RETROK_KP6", "Keyboard Numpad 6"},
+	{"RETROK_KP7", "Keyboard Numpad 7"},
+	{"RETROK_KP8", "Keyboard Numpad 8"},
+	{"RETROK_KP9", "Keyboard Numpad 9"},
+	{"RETROK_KP_PERIOD", "Keyboard Numpad ."},
+	{"RETROK_KP_DIVIDE", "Keyboard Numpad /"},
+	{"RETROK_KP_MULTIPLY", "Keyboard Numpad *"},
+	{"RETROK_KP_MINUS", "Keyboard Numpad -"},
+	{"RETROK_KP_PLUS", "Keyboard Numpad +"},
+	{"RETROK_KP_ENTER", "Keyboard Numpad Enter"},
+	{"RETROK_KP_EQUALS", "Keyboard Numpad ="},
+	{"RETROK_UP", "Keyboard Up"},
+	{"RETROK_DOWN", "Keyboard Down"},
+	{"RETROK_LEFT", "Keyboard Left"},
+	{"RETROK_RIGHT", "Keyboard Right"},
+	{"RETROK_INSERT", "Keyboard Insert"},
+	{"RETROK_DELETE", "Keyboard Delete"},
+	{"RETROK_HOME", "Keyboard Home"},
+	{"RETROK_END", "Keyboard End"},
+	{"RETROK_PAGEUP", "Keyboard PageUp"},
+	{"RETROK_PAGEDOWN", "Keyboard PageDown"},
+	{"RETROK_F1", "Keyboard F1"},
+	{"RETROK_F2", "Keyboard F2"},
+	{"RETROK_F3", "Keyboard F3"},
+	{"RETROK_F4", "Keyboard F4"},
+	{"RETROK_F5", "Keyboard F5"},
+	{"RETROK_F6", "Keyboard F6"},
+	{"RETROK_F7", "Keyboard F7"},
+	{"RETROK_F8", "Keyboard F8"},
+	{"RETROK_F9", "Keyboard F9"},
+	{"RETROK_F10", "Keyboard F10"},
+	{"RETROK_F11", "Keyboard F11"},
+	{"RETROK_F12", "Keyboard F12"},
+//{"RETROK_F13","Keyboard F13"},
+//{"RETROK_F14","Keyboard F14"},
+//{"RETROK_F15","Keyboard F15"},
+//{"RETROK_NUMLOCK","Keyboard NumLock"},
+//{"RETROK_CAPSLOCK","Keyboard Caps Lock"},
+//{"RETROK_SCROLLOCK","Keyboard Scroll Lock"},
+	{"RETROK_LSHIFT", "Keyboard Left Shift"},
+	{"RETROK_RSHIFT", "Keyboard Right Shift"},
+	{"RETROK_LCTRL", "Keyboard Left Control"},
+	{"RETROK_RCTRL", "Keyboard Right Control"},
+	{"RETROK_LALT", "Keyboard Left Alt"},
+	{"RETROK_RALT", "Keyboard Right Alt"},
+//{"RETROK_LMETA","Keyboard Left Meta"},
+//{"RETROK_RMETA","Keyboard Right Meta"},
+//{"RETROK_LSUPER","Keyboard Left Super"},
+//{"RETROK_RSUPER","Keyboard Right Super"},
+//{"RETROK_MODE","Keyboard Mode"},
+//{"RETROK_COMPOSE","Keyboard Compose"},
+//{"RETROK_HELP","Keyboard Help"},
+//{"RETROK_PRINT","Keyboard Print"},
+//{"RETROK_SYSREQ","Keyboard SysReq"},
+//{"RETROK_BREAK","Keyboard Break"},
+//{"RETROK_MENU","Keyboard Menu"},
+//{"RETROK_POWER","Keyboard Power"},
+//{"RETROK_EURO","Keyboard Euro"},
+//{"RETROK_UNDO","Keyboard Undo"},
+//{NULL, NULL}
 };
 
 /*
@@ -361,6 +815,28 @@ struct retro_core_options_v2 *options_intl[RETRO_LANGUAGE_LAST] = {
 	NULL,           /* RETRO_LANGUAGE_GREEK */
 	NULL,           /* RETRO_LANGUAGE_TURKISH */
 };
+
+struct retro_core_option_value *retro_keys_labels_intl[RETRO_LANGUAGE_LAST] = {
+	retro_keys_label_us, /* RETRO_LANGUAGE_ENGLISH */
+	NULL,           /* RETRO_LANGUAGE_JAPANESE */
+	NULL,           /* RETRO_LANGUAGE_FRENCH */
+	NULL,           /* RETRO_LANGUAGE_SPANISH */
+	NULL,           /* RETRO_LANGUAGE_GERMAN */
+	retro_keys_label_it, /* RETRO_LANGUAGE_ITALIAN */
+	NULL,           /* RETRO_LANGUAGE_DUTCH */
+	NULL,           /* RETRO_LANGUAGE_PORTUGUESE_BRAZIL */
+	NULL,           /* RETRO_LANGUAGE_PORTUGUESE_PORTUGAL */
+	NULL,           /* RETRO_LANGUAGE_RUSSIAN */
+	NULL,           /* RETRO_LANGUAGE_KOREAN */
+	NULL,           /* RETRO_LANGUAGE_CHINESE_TRADITIONAL */
+	NULL,           /* RETRO_LANGUAGE_CHINESE_SIMPLIFIED */
+	NULL,           /* RETRO_LANGUAGE_ESPERANTO */
+	NULL,           /* RETRO_LANGUAGE_POLISH */
+	NULL,           /* RETRO_LANGUAGE_VIETNAMESE */
+	NULL,           /* RETRO_LANGUAGE_ARABIC */
+	NULL,           /* RETRO_LANGUAGE_GREEK */
+	NULL,           /* RETRO_LANGUAGE_TURKISH */
+};
 #endif
 
 /*
@@ -368,6 +844,52 @@ struct retro_core_options_v2 *options_intl[RETRO_LANGUAGE_LAST] = {
  * Functions
  ********************************
  */
+
+static INLINE void libretro_fill_options_mapper_data(retro_environment_t environ_cb) {
+	/* Fill in the values for all the mappers */
+	int m = 0;
+	int n = 0;
+	while (option_defs_us[m].key) {
+		if (strstr(option_defs_us[m].key, "scummvm_mapper_")) {
+			n = 0;
+			while (retro_keys_label_us[n].label && n < RETRO_NUM_CORE_OPTION_VALUES_MAX - 1) {
+				option_defs_us[m].values[n].value = retro_keys_label_us[n].value;
+				option_defs_us[m].values[n].label = retro_keys_label_us[n].label;
+				++n;
+			}
+			option_defs_us[m].values[n].value = NULL;
+			option_defs_us[m].values[n].label = NULL;
+		}
+		++m;
+	}
+#ifndef HAVE_NO_LANGEXTRA
+	struct retro_core_option_value *retro_keys_label_intl = NULL;
+	unsigned language = 0;
+
+	if (environ_cb(RETRO_ENVIRONMENT_GET_LANGUAGE, &language) &&
+	        (language < RETRO_LANGUAGE_LAST) && (language != RETRO_LANGUAGE_ENGLISH))
+		retro_keys_label_intl = retro_keys_labels_intl[language];
+
+	if (! options_intl[language] || ! retro_keys_label_intl)
+		return;
+
+	m = 0;
+	n = 0;
+	while (options_intl[language]->definitions[m].key) {
+		if (strstr(options_intl[language]->definitions[m].key, "scummvm_mapper_")) {
+			n = 0;
+			while ((retro_keys_label_intl + n)->label && n < RETRO_NUM_CORE_OPTION_VALUES_MAX - 1) {
+				options_intl[language]->definitions[m].values[n].value = (retro_keys_label_intl + n)->value;
+				options_intl[language]->definitions[m].values[n].label = (retro_keys_label_intl + n)->label;
+				++n;
+			}
+			options_intl[language]->definitions[m].values[n].value = NULL;
+			options_intl[language]->definitions[m].values[n].label = NULL;
+		}
+		++m;
+	}
+#endif
+}
 
 /* Handles configuration/setting of core options.
  * Should be called as early as possible - ideally inside

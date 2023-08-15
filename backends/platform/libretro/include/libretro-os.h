@@ -31,6 +31,11 @@
 #include "graphics/surface.h"
 
 #define BASE_CURSOR_SPEED 4
+#define CURSOR_STATUS_DOING_JOYSTICK  (1 << 0)
+#define CURSOR_STATUS_DOING_MOUSE     (1 << 1)
+#define CURSOR_STATUS_DOING_X         (1 << 2)
+#define CURSOR_STATUS_DOING_Y         (1 << 3)
+#define CURSOR_STATUS_DOING_SLOWER    (1 << 4)
 
 #define LIBRETRO_G_SYSTEM dynamic_cast<OSystem_libretro *>(g_system)
 
@@ -87,11 +92,11 @@ private:
 	float _dpadYAcc;
 	float _dpadXVel;
 	float _dpadYVel;
-	unsigned _joypadnumpadLast;
 	float _adjusted_cursor_speed;
 	float _inverse_acceleration_time;
 	uint32 _startTime;
 	uint8 _threadSwitchCaller;
+	uint8_t _cursorStatus;
 	Common::String s_systemDir;
 	Common::String s_saveDir;
 	Common::String s_extraDir;
@@ -111,9 +116,6 @@ public:
 	bool _overlayInGUI;
 	bool _mouseDontScale;
 	bool _mouseButtons[2];
-	bool _joypadmouseButtons[2];
-	bool _joypadkeyboardButtons[8];
-	bool _joypadnumpadActive;
 	bool _ptrmouseButton;
 	bool _mousePaletteEnabled;
 	bool _mouseVisible;
@@ -186,7 +188,7 @@ private:
 
 	/* Inputs */
 public:
-	void processMouse(void);
+	void processInputs(void);
 	static void processKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers);
 	void setShakePos(int shakeXOffset, int shakeYOffset) override {}
 private:

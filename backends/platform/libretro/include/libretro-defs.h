@@ -18,6 +18,9 @@
 #ifndef LIBRETRO_DEFS_H
 #define LIBRETRO_DEFS_H
 
+// System analog stick range is -0x8000 to 0x8000
+#define ANALOG_RANGE 0x8000
+
 #define DEFAULT_SAMPLE_RATE     48000
 #define DEFAULT_REFRESH_RATE    60
 #define FRAMESKIP_MAX           DEFAULT_REFRESH_RATE / 2
