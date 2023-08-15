@@ -630,13 +630,16 @@ void retro_deinit(void) {
 void retro_set_controller_port_device(unsigned port, unsigned device) {
 	if (port != 0) {
 		if (retro_log_cb)
-			retro_log_cb(RETRO_LOG_WARN, "Invalid controller port %d.\n", port);
+			retro_log_cb(RETRO_LOG_WARN, "Invalid controller port %d, expected port 0 (#1)\n", port);
 		return;
 	}
 
 	switch (device) {
 	case RETRO_DEVICE_JOYPAD:
 	case RETRO_DEVICE_MOUSE:
+	case RETRO_DEVICE_KEYBOARD:
+	case RETRO_DEVICE_ANALOG:
+	case RETRO_DEVICE_POINTER:
 		retro_input_device = device;
 		break;
 	default:
