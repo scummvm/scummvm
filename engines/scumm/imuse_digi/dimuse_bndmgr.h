@@ -68,8 +68,6 @@ public:
 class BundleMgr {
 
 private:
-	const ScummEngine *_vm;
-
 	struct CompTable {
 		int32 offset;
 		int32 size;
