@@ -38,7 +38,7 @@ void ensureWM() {
 		return;
 
 	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeForceBuiltinFonts
-		| Graphics::kWMModeUnicode | Graphics::kWMModeWin95;
+		| Graphics::kWMModeUnicode | Graphics::kWMMode32bpp;
 
 	_wm = new Graphics::MacWindowManager(wmMode);
 }
@@ -79,6 +79,10 @@ void RichTextWidget::createWidget() {
 	_txtWnd->setSelectable(false);
 
 	_txtWnd->appendText(_text);
+
+	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
+
+	warning("Pixel format: %s", _wm->_pixelformat.toString().c_str());
 }
 
 void RichTextWidget::reflowLayout() {
@@ -92,7 +96,11 @@ void RichTextWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 	                                    ThemeEngine::kWidgetBackgroundEditText);
 
-	_wm->draw();
+	_txtWnd->draw(_surface);
+
+	g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), *_surface);
+
+	warning("DRAW");
 }
 
 } // End of namespace GUI
