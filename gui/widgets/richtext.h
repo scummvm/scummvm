@@ -22,12 +22,12 @@
 #ifndef GUI_WIDGETS_RICHTEXT_H
 #define GUI_WIDGETS_RICHTEXT_H
 
-#include "gui/widgets/editable.h"
 #include "common/str.h"
-#include "gui/dialog.h"
+#include "gui/widget.h"
 
 namespace Graphics {
 class MacTextWindow;
+class ManagedSurface;
 }
 
 namespace GUI {
@@ -35,9 +35,8 @@ namespace GUI {
 /* RichTextWidget */
 class RichTextWidget : public Widget {
 protected:
-	Common::U32String _backupString;
-
 	Graphics::MacTextWindow *_txtWnd = nullptr;
+	Graphics::ManagedSurface *_surface = nullptr;
 	Common::U32String _text;
 
 public:
