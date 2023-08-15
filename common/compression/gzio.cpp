@@ -1409,22 +1409,6 @@ bool inflateZlibHeaderless(byte *dst, uint *dstLen, const byte *src, uint srcLen
 	// In zlib version we use Z_SYNC_FLUSH so no error is raised if buffer is not completely consumed
 	return !gzio->err();
 }
-
-bool inflateZlib(Common::WriteStream *dst, Common::SeekableReadStream *src) {
-	Common::ScopedPtr<Common::SeekableReadStream> gzio(wrapCompressedReadStream(src, DisposeAfterUse::NO, 0));
-	if (!gzio)
-		return false;
-
-	byte *buffer = new byte[65536];
-	while(!gzio->eos()) {
-		uint32 readBytes = gzio->read(buffer, 65536);
-		if (gzio->err()) {
-			return false;
-		}
-		dst->write(buffer, readBytes);
-	}
-	return true;
-}
 #endif
 
 SeekableReadStream* wrapClickteamReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 uncompressed_size) {
