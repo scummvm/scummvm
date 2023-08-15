@@ -123,7 +123,7 @@ void Combat::monsterIndexOf() {
 }
 
 void Combat::monsterSetPtr(int monsterNum) {
-	_monsterP = &g_globals->_encounters._monsterList[monsterNum];
+	_monsterP = _remainingMonsters[monsterNum];
 	monsterIndexOf();
 }
 
