@@ -395,8 +395,19 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 	Common::MemoryWriteStreamDynamic dest(DisposeAfterUse::YES);
 	size_t startingPos = src->pos();
 
-	if (!Common::inflateZlib(&dest, src))
+	Common::SeekableReadStream *gzStream = wrapCompressedReadStream(src, DisposeAfterUse::NO);
+	if (!gzStream) {
 		return false;
+	}
+
+	dest.writeStream(gzStream);
+
+	if (!gzStream->eos() || gzStream->err()) {
+		delete gzStream;
+		return false;
+	}
+
+	delete gzStream;
 
 	// Iterate through pushing data out to the taf file
 	const byte *pTemp = dest.getData();
