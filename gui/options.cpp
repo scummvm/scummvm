@@ -89,9 +89,11 @@ enum {
 	kSavePathClearCmd		= 'clsp',
 	kChooseThemeDirCmd		= 'chth',
 	kChooseIconDirCmd		= 'chic',
+	kChooseDLCDirCmd		= 'chdc',
 	kThemePathClearCmd		= 'clth',
 	kBrowserPathClearCmd	= 'clbr',
 	kIconPathClearCmd		= 'clic',
+	kDLCPathClearCmd		= 'cldc',
 	kChooseExtraDirCmd		= 'chex',
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
@@ -2091,6 +2093,10 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_themePathClearButton = nullptr;
 	_iconPath = nullptr;
 	_iconPathClearButton = nullptr;
+#ifdef USE_DLC
+	_dlcPath = nullptr;
+	_dlcPathClearButton = nullptr;
+#endif
 	_extraPath = nullptr;
 	_extraPathClearButton = nullptr;
 #ifdef DYNAMIC_MODULES
@@ -2357,6 +2363,9 @@ void GlobalOptionsDialog::build() {
 	setPath(_savePath, "savepath", _("Default"));
 	setPath(_themePath, "themepath", _c("None", "path"));
 	setPath(_iconPath, "iconspath", _("Default"));
+#ifdef USE_DLC
+	setPath(_dlcPath, "dlcspath", _("Default"));
+#endif
 	setPath(_extraPath, "extrapath", _c("None", "path"));
 
 #ifdef DYNAMIC_MODULES
@@ -2449,6 +2458,18 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	_iconPath = new StaticTextWidget(boss, prefix + "IconPath", _c("Default", "path"));
 
 	_iconPathClearButton = addClearButton(boss, prefix + "IconPathClearButton", kIconPathClearCmd);
+
+#if defined(USE_DLC)
+	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
+		if (!lowres)
+			new ButtonWidget(boss, prefix + "DLCButton", _("DLC Path:"), Common::U32String(), kChooseDLCDirCmd);
+		else
+			new ButtonWidget(boss, prefix + "DLCButton", _c("DLC Path:", "lowres"), Common::U32String(), kChooseDLCDirCmd);
+		_dlcPath = new StaticTextWidget(boss, prefix + "DLCPath", _c("Default", "path"));
+
+		_dlcPathClearButton = addClearButton(boss, prefix + "DLCPathClearButton", kDLCPathClearCmd);
+	}
+#endif
 
 	if (!lowres)
 		new ButtonWidget(boss, prefix + "ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
@@ -2894,6 +2915,9 @@ void GlobalOptionsDialog::apply() {
 	changePath(_savePath, "savepath", _("Default"));
 	changePath(_themePath, "themepath", _c("None", "path"));
 	changePath(_iconPath, "iconspath", _("Default"));
+#ifdef USE_DLC
+	changePath(_dlcPath, "dlcspath", _("Default"));
+#endif
 	changePath(_extraPath, "extrapath", _c("None", "path"));
 
 #ifdef DYNAMIC_MODULES
@@ -3166,6 +3190,18 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
+#ifdef USE_DLC
+	case kChooseDLCDirCmd: {
+		BrowserDialog browser(_("Select directory for DLC downloads"), true);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::FSNode dir(browser.getResult());
+			_dlcPath->setLabel(dir.getPath());
+			g_gui.scheduleTopDialogRedraw();
+		}
+		break;
+	}
+#endif
 	case kChooseExtraDirCmd: {
 		BrowserDialog browser(_("Select directory for extra files"), true);
 		if (browser.runModal() > 0) {
@@ -3231,6 +3267,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kIconPathClearCmd:
 		_iconPath->setLabel(_("Default"));
 		break;
+#ifdef USE_DLC
+	case kDLCPathClearCmd:
+		_dlcPath->setLabel(_("Default"));
+		break;
+#endif
 	case kExtraPathClearCmd:
 		_extraPath->setLabel(_c("None", "path"));
 		break;
@@ -3490,6 +3531,13 @@ void GlobalOptionsDialog::reflowLayout() {
 		_iconPathClearButton->setNext(nullptr);
 		delete _iconPathClearButton;
 		_iconPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.IconPathClearButton", kIconPathClearCmd);
+
+#ifdef USE_DLC
+		_tabWidget->removeWidget(_dlcPathClearButton);
+		_dlcPathClearButton->setNext(nullptr);
+		delete _dlcPathClearButton;
+		_dlcPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.DLCPathClearButton", kDLCPathClearCmd);
+#endif
 
 		_tabWidget->removeWidget(_extraPathClearButton);
 		_extraPathClearButton->setNext(nullptr);
