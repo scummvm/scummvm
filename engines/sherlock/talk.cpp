@@ -88,7 +88,7 @@ void Statement::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 /*----------------------------------------------------------------*/
 
 TalkHistoryEntry::TalkHistoryEntry() {
-	Common::fill(&_data[0], &_data[16], false);
+	Common::fill(&_data[0], &_data[32], false);
 }
 
 /*----------------------------------------------------------------*/
@@ -975,11 +975,19 @@ void Talk::popStack() {
 }
 
 void Talk::synchronize(Serializer &s) {
+	// Since save version 6: each TalkHistoryEntry now holds 32 flags
+	const int numFlags = s.getVersion() > 5 ? 32 : 16;
+	const auto flagSize = sizeof _talkHistory[0]._data[0];
+
 	for (uint idx = 0; idx < _talkHistory.size(); ++idx) {
 		TalkHistoryEntry &he = _talkHistory[idx];
 
-		for (int flag = 0; flag < 16; ++flag)
+		for (int flag = 0; flag < numFlags; ++flag)
 			s.syncAsByte(he._data[flag]);
+
+		// For old saves with less than 32 flags we zero the rest
+		if (s.isLoading() && numFlags < 32)
+			memset(he._data + flagSize * 16, 0, flagSize * 16);
 	}
 }
 
