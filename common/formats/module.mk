@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	iff_container.o \
 	ini-file.o \
 	json.o \
+	markdown.o \
 	prodos.o \
 	quicktime.o \
 	winexe.o \
