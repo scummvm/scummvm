@@ -36,6 +36,9 @@ private:
 	machine *_series4 = nullptr;
 	machine *_series5 = nullptr;
 	noWalkRect *_noWalk = nullptr;
+	int _actionType = 0;
+
+	void checkAction();
 
 public:
 	Room142() : Room() {}

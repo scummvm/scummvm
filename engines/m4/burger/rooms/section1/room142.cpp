@@ -113,10 +113,105 @@ void Room142::daemon() {
 void Room142::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	// TODO
+	if (_G(flags)[V059]) {
+		_G(player).ready_to_walk = false;
+		_G(player).need_to_walk = false;
+
+		if (player_said("GEAR", "ICE BOX")) {
+			_G(roomVal1) = 5;
+			kernel_trigger_dispatch_now(gTELEPORT);
+		} else if (player_said("ICE")) {
+			if (player_said("LOOK AT")) {
+				if (_G(flags)[V040] && !inv_player_has("BLOCK OF ICE")) {
+					_G(walker).wilbur_speech("142w008");
+				} else {
+					_G(walker).wilbur_speech("142w007");
+				}
+			} else if (player_said("TAKE")) {
+				if (!_G(flags)[V040]) {
+					_G(walker).wilbur_speech("142w017");
+				} else if (inv_player_has("BLOCK_OF_ICE")) {
+					_G(walker).wilbur_speech("142w009");
+				} else {
+					kernel_trigger_dispatch_now(gTELEPORT);
+				}
+			} else if (player_said("GEAR")) {
+				_G(walker).wilbur_speech("142w002");
+			} else {
+				term_message("ERROR - don't know what to do with ice!!!");
+			}
+		} else {
+			_G(roomVal1) = 7;
+			kernel_trigger_dispatch_now(gTELEPORT);
+		}
+
+		_G(player).command_ready = false;
+
+	} else {
+		if (_G(flags)[V000] == 1003 &&
+			_G(player).walk_x >= 230 && _G(player).walk_x <= 294 &&
+			_G(player).walk_y >= 250 && _G(player).walk_y <= 277) {
+			player_hotspot_walk_override(_G(hotspot_x), 278);
+		} else if (player_said_any("GEAR", "LOOK AT")) {
+			if (player_said("MAIN STREET")) {
+				player_hotspot_walk_override(_G(player).walk_x, 400);
+				checkAction();
+				_G(kernel).call_daemon_every_loop = true;
+				_G(player).command_ready = false;
+			} else if (player_said("PARKING LOT") && _G(flags)[V058]) {
+				checkAction();
+				_G(kernel).call_daemon_every_loop = true;
+				_G(player).command_ready = false;
+			}
+
+		} else if (player_said("MAIN STREET")) {
+			player_set_facing_at(120, 400);
+		} else if (player_said("HANLON'S POINT")) {
+			player_set_facing_at(-40, 375);
+		} else if (player_said("AUNT POLLY'S HOUSE")) {
+			player_set_facing_at(680, 325);
+		} else if (player_said("FRONT DOOR")) {
+			player_set_facing_at(350, 270);
+		} else if (player_said("HIGHWAY 2")) {
+			player_set_facing_at(192, 252);
+		} else if (player_said("PARKING LOT")) {
+			player_set_facing_at(303, 247);
+		} else if (player_said("TOUR BUS")) {
+			checkAction();
+			_G(kernel).call_daemon_every_loop = true;
+			_G(player).command_ready = false;
+		}
+	}
 }
 
 void Room142::parser() {
+}
+
+void Room142::checkAction() {
+	_actionType = 0;
+
+	if (player_said_any("GEAR", "LOOK AT", "GO TO")) {
+		if (player_said("MAIN STREET")) {
+			_actionType = 1;
+		} else if (_G(flags)[V058] && (player_said("PARKING LOT") ||
+				player_said("GO TO", "TOUR BUS"))) {
+			_actionType = 2;
+		}
+	}
+
+	if (_actionType) {
+		player_update_info();
+
+		if (_actionType == 1 && _G(player_info).y > 375 && player_commands_allowed()) {
+			player_update_info();
+			player_hotspot_walk_override(_G(player_info).x, 400);
+			disable_player_commands_and_fade_init(1001);
+
+		} else if (_actionType == 2 && _G(player_info).y < 280 &&
+				player_commands_allowed()) {
+			disable_player_commands_and_fade_init(1016);
+		}
+	}
 }
 
 } // namespace Rooms
