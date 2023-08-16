@@ -83,6 +83,94 @@ Common::Array<uint16> FreescapeEngine::readArray(Common::SeekableReadStream *fil
 }
 
 Group *FreescapeEngine::load8bitGroup(Common::SeekableReadStream *file, byte rawFlagsAndType) {
+	if (isDark())
+		return load8bitGroupV1(file, rawFlagsAndType);
+	else
+		return load8bitGroupV2(file, rawFlagsAndType);
+}
+
+Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte rawFlagsAndType) {
+	debugC(1, kFreescapeDebugParser, "Object of type 'group'");
+	Common::Array<AnimationOpcode *> animation;
+	Common::Array<uint16> groupObjects = readArray(file, 6);
+
+	// object ID
+	uint16 objectID = readField(file, 8);
+	// size of object on disk; we've accounted for 8 bytes
+	// already so we can subtract that to get the remaining
+	// length beyond here
+	uint8 byteSizeOfObject = readField(file, 8);
+	debugC(1, kFreescapeDebugParser, "Raw object %d ; type group ; size %d", objectID, byteSizeOfObject);
+	if (byteSizeOfObject < 9) {
+		error("Not enough bytes %d to read object %d with type group", byteSizeOfObject, objectID);
+	}
+
+	assert(byteSizeOfObject >= 9);
+	byteSizeOfObject = byteSizeOfObject - 9;
+	for (int i = 0; i < 3; i++) {
+		uint16 value = 0;
+		if (isAmiga() || isAtariST())
+			value = readField(file, 16);
+		else
+			value = readField(file, 8);
+
+		groupObjects.push_back(value);
+	}
+
+	byteSizeOfObject = byteSizeOfObject - 3;
+	for (int i = 0; i < 9; i++)
+		debugC(1, kFreescapeDebugParser, "Group object[%d] = %d", i, groupObjects[i]);
+
+	Common::Array<uint16> groupOperations;
+	Common::Array<Math::Vector3d> groupPositions;
+	while (byteSizeOfObject > 0) {
+		uint16 value = 0;
+		if (isAmiga() || isAtariST())
+			value = readField(file, 16);
+		else
+			value = readField(file, 8);
+
+		int opcode = value >> 8;
+		AnimationOpcode* operation = new AnimationOpcode(opcode);
+		byteSizeOfObject--;
+		if (opcode == 0xff) {
+			debugC(1, kFreescapeDebugParser, "Group operation rewind");
+		} else if (opcode == 0x01) {
+			debugC(1, kFreescapeDebugParser, "Group operation script execution");
+			// get the length
+			uint32 lengthOfCondition = value & 0xff;
+			assert(lengthOfCondition > 0);
+			debugC(1, kFreescapeDebugParser, "Length of condition: %d at %lx", lengthOfCondition, long(file->pos()));
+			// get the condition
+			Common::Array<uint16> conditionArray = readArray(file, lengthOfCondition);
+			operation->conditionSource = detokenise8bitCondition(conditionArray, operation->condition, isAmiga() || isAtariST());
+			debugC(1, kFreescapeDebugParser, "%s", operation->conditionSource.c_str());
+			byteSizeOfObject = byteSizeOfObject - lengthOfCondition;
+		} else {
+			if (byteSizeOfObject >= 1) {
+				operation->position.x() = value >> 8;
+				operation->position.y() = file->readByte();
+				operation->position.z() = file->readByte();
+				debugC(1, kFreescapeDebugParser, "Group operation %d move to: %f %f %f", opcode, operation->position.x(), operation->position.y(), operation->position.z());
+				byteSizeOfObject = byteSizeOfObject - 1;
+			} else {
+				debugC(1, kFreescapeDebugParser, "Incomplete group operation %d", opcode);
+				byteSizeOfObject = 0;
+				continue;
+			}
+		}
+		animation.push_back(operation);
+	}
+
+	return new Group(
+		objectID,
+		rawFlagsAndType,
+		groupObjects,
+		animation);
+}
+
+
+Group *FreescapeEngine::load8bitGroupV2(Common::SeekableReadStream *file, byte rawFlagsAndType) {
 	debugC(1, kFreescapeDebugParser, "Object of type 'group'");
 	Common::Array<AnimationOpcode *> animation;
 	Common::Array<uint16> groupObjects = readArray(file, 6);

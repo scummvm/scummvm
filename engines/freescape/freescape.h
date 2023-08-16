@@ -200,6 +200,9 @@ public:
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
 	Group *load8bitGroup(Common::SeekableReadStream *file, byte rawFlagsAndType);
+	Group *load8bitGroupV1(Common::SeekableReadStream *file, byte rawFlagsAndType);
+	Group *load8bitGroupV2(Common::SeekableReadStream *file, byte rawFlagsAndType);
+
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size);
 	void renderPixels8bitBinImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
 
