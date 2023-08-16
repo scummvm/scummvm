@@ -91,6 +91,8 @@ public:
 
 	st_rate_t getInputRate() const override { return _inRate; }
 	st_rate_t getOutputRate() const override { return _outRate; }
+
+	bool needsDraining() const override { return _bufferSize != 0; }
 };
 
 template<bool inStereo, bool outStereo, bool reverseStereo>

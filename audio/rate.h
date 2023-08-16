@@ -95,6 +95,13 @@ public:
 
 	virtual st_rate_t getInputRate() const = 0;
 	virtual st_rate_t getOutputRate() const = 0;
+
+	/**
+	 * Does the internal buffer still have some leftover data?
+	 * 
+	 * @return True if we need to drain, false otherwise
+	 */
+	virtual bool needsDraining() const = 0;
 };
 
 RateConverter *makeRateConverter(st_rate_t inRate, st_rate_t outRate, bool inStereo, bool outStereo, bool reverseStereo);

@@ -59,7 +59,7 @@ public:
 	/**
 	 * Queries whether the channel is still playing or not.
 	 */
-	bool isFinished() const { return _stream->endOfStream(); }
+	bool isFinished() const { return _stream->endOfStream() && !_converter->needsDraining(); }
 
 	/**
 	 * Queries whether the channel is a permanent channel.
@@ -709,12 +709,10 @@ void Channel::loop() {
 
 int Channel::mix(int16 *data, uint len) {
 	assert(_stream);
+	assert(_converter);
 
 	int res = 0;
-	if (_stream->endOfData()) {
-		// TODO: call drain method
-	} else {
-		assert(_converter);
+	if (!_stream->endOfData() || _converter->needsDraining()) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis(true);
 		_pauseTime = 0;
