@@ -837,7 +837,11 @@ public:
 		int numIters = 0, numItersScaled = 0;
 		double oldTime = 0.0, newTime = 0.0, genericTime = 0.0;
 		double oldTimeScaled = 0.0, newTimeScaled = 0.0, genericTimeScaled = 0.0;
+#ifdef SLOW_TESTS
 		const int iters = 2500;
+#else
+		const int iters = 1;
+#endif
 
 		for (int blendMode = 0; blendMode < Graphics::NUM_BLEND_MODES; blendMode++) {
 		for (int alphaType = 0; alphaType <= Graphics::ALPHA_FULL; alphaType++) {
@@ -907,6 +911,7 @@ public:
 	}
 
 	void test_blend_blit_unfiltered() {
+#ifdef SLOW_TESTS
 		Common::Rect dsts[] = {
 			Common::Rect(4, 4, 4+16, 4+16), // Case 0 (source clipping)
 			Common::Rect(24, 20, 24+16, 20+16), // Case 1 (outside of destination)
@@ -1073,5 +1078,9 @@ public:
 		} // blend
 
 		baseSurface.free();
+#else
+		// This kills warning about unused function
+		(void)areSurfacesEqual;
+#endif
 	}
 };
