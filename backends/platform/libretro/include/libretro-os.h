@@ -192,6 +192,8 @@ public:
 private:
 	void updateMouseXY(float deltaAcc, float * cumulativeXYAcc, int doing_x);
 	void getMouseXYFromAnalog(bool is_x, int16_t coor);
+	void getMouseXYFromButton(int16_t coor_x, int16_t coor_y);
+	void updateMouseXYFromButton(bool is_x, int16_t coor);
 };
 
 #endif

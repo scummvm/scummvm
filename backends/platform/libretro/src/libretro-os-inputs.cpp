@@ -80,10 +80,50 @@ void OSystem_libretro::getMouseXYFromAnalog(bool is_x, int16_t coor) {
 	if (retro_setting_get_analog_response_is_quadratic())
 		analog_amplitude *= analog_amplitude;
 
-	if (sign < 0)
-		analog_amplitude = -analog_amplitude;
+	updateMouseXY(sign * analog_amplitude * _adjusted_cursor_speed, mouseAcc, is_x);
+}
 
-	updateMouseXY(analog_amplitude * _adjusted_cursor_speed, mouseAcc, is_x);
+void OSystem_libretro::updateMouseXYFromButton(bool is_x, int16_t sign) {
+	float * dpadVel;
+	float * dpadAcc;
+
+	if (is_x) {
+		dpadVel = &_dpadXVel;
+		dpadAcc = &_dpadXAcc;
+	} else {
+		dpadVel = &_dpadYVel;
+		dpadAcc = &_dpadYAcc;
+	}
+
+	if (*dpadAcc && ((*dpadAcc > 0) - (*dpadAcc < 0)) != sign) {
+		*dpadVel = 0.0f;
+		*dpadAcc = 0.0f;
+	}
+
+	*dpadVel = MIN(*dpadVel + _inverse_acceleration_time, 1.0f);
+
+	updateMouseXY(sign * *dpadVel * _adjusted_cursor_speed, dpadAcc, is_x);
+}
+
+
+void OSystem_libretro::getMouseXYFromButton(int16_t coor_x, int16_t coor_y) {
+
+	if (! coor_x && ! coor_y)
+		return;
+
+	status |= STATUS_DOING_JOYSTICK;
+
+	if (coor_x) {
+		status |= STATUS_DOING_X;
+		updateMouseXYFromButton(1, coor_x);
+	} else
+		_dpadXVel = 0.0f;
+
+	if (coor_y) {
+		status |= STATUS_DOING_Y;
+		updateMouseXYFromButton(0, coor_y);
+	} else
+		_dpadYVel = 0.0f;
 }
 
 void OSystem_libretro::processMouse(void) {
@@ -134,47 +174,9 @@ void OSystem_libretro::processMouse(void) {
 	getMouseXYFromAnalog(false, retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y));
 
 	if (retro_get_input_device() == RETRO_DEVICE_JOYPAD) {
-		bool dpadLeft = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
-		bool dpadRight = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
-		bool dpadUp = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP);
-		bool dpadDown = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN);
 
-		if (dpadLeft || dpadRight) {
-			status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_X);
-			_dpadXVel = MIN(_dpadXVel + _inverse_acceleration_time, 1.0f);
-
-			if (dpadLeft) {
-				deltaAcc = -(_dpadXVel * _adjusted_cursor_speed);
-				_dpadXAcc = _dpadXAcc < deltaAcc ? _dpadXAcc : 0.0f;
-			} else { //dpadRight
-				deltaAcc = _dpadXVel * _adjusted_cursor_speed;
-				_dpadXAcc = _dpadXAcc > deltaAcc ? _dpadXAcc : 0.0f;
-			}
-
-			updateMouseXY(deltaAcc, &_dpadXAcc, 1);
-		} else {
-			_dpadXVel = 0.0f;
-		}
-
-
-		if (dpadUp || dpadDown) {
-			status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_Y);
-			_dpadYVel = MIN(_dpadYVel + _inverse_acceleration_time, 1.0f);
-
-			if (dpadUp) {
-				deltaAcc = -(_dpadYVel * _adjusted_cursor_speed);
-				_dpadYAcc = _dpadYAcc < deltaAcc ? _dpadYAcc : 0.0f;
-			} else { //dpadDown
-				deltaAcc = _dpadYVel * _adjusted_cursor_speed;
-				_dpadYAcc = _dpadYAcc > deltaAcc ? _dpadYAcc : 0.0f;
-			}
-
-			updateMouseXY(deltaAcc, &_dpadYAcc, 0);
-
-
-		} else {
-			_dpadYVel = 0.0f;
-		}
+		getMouseXYFromButton(retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT) - retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT),
+					retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN) - retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP));
 
 		if (retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START)) {
 			Common::Event ev;
