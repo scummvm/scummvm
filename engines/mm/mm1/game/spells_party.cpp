@@ -164,9 +164,9 @@ SpellResult SpellsParty::cleric12_bless() {
 SpellResult SpellsParty::cleric13_blind() {
 	SpellsState &s = g_globals->_spellsState;
 	s._mmVal1++;
-	s._mmVal2 = 7;
+	s._resistenceIndex = 7;
 	s._damage = BLINDED;
-	s._resistanceType = static_cast<Resistance>((int)s._resistanceType + 1);
+	s._resistanceTypeOrTargetCount = static_cast<Resistance>((int)s._resistanceTypeOrTargetCount + 1);
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -227,8 +227,8 @@ SpellResult SpellsParty::cleric23_pain() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._damage = getRandomNumber(6) + getRandomNumber(6);
 	ss._mmVal1++;
-	ss._resistanceType++;
-	ss._mmVal2 = 6;
+	ss._resistanceTypeOrTargetCount++;
+	ss._resistenceIndex = 6;
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -255,9 +255,9 @@ SpellResult SpellsParty::cleric26_protectionFromPoison() {
 SpellResult SpellsParty::cleric27_silence() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._mmVal2 = 7;
+	ss._resistenceIndex = 7;
 	ss._damage = SILENCED;
-	ss._resistanceType++;
+	ss._resistanceTypeOrTargetCount++;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -266,9 +266,9 @@ SpellResult SpellsParty::cleric27_silence() {
 SpellResult SpellsParty::cleric28_suggestion() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._mmVal2 = 6;
+	ss._resistenceIndex = 6;
 	ss._damage = PARALYZED;
-	ss._resistanceType++;
+	ss._resistanceTypeOrTargetCount++;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -309,8 +309,8 @@ SpellResult SpellsParty::cleric34_lastingLight() {
 SpellResult SpellsParty::cleric35_produceFlame() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._resistanceType++;
-	ss._mmVal2 = 4;
+	ss._resistanceTypeOrTargetCount++;
+	ss._resistenceIndex = 4;
 	ss._damage = getRandomNumber(6) +
 		getRandomNumber(6) + getRandomNumber(6);
 	g_globals->_combat->iterateMonsters2();
@@ -320,7 +320,7 @@ SpellResult SpellsParty::cleric35_produceFlame() {
 SpellResult SpellsParty::cleric36_produceFrost() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._mmVal2++;
+	ss._resistenceIndex++;
 	ss._damage = getRandomNumber(6) +
 		getRandomNumber(6) + getRandomNumber(6);
 	g_globals->_combat->iterateMonsters2();
@@ -407,7 +407,7 @@ SpellResult SpellsParty::cleric51_deadlySwarm() {
 	SpellsState &ss = g_globals->_spellsState;
 	g_globals->_combat->resetDestMonster();
 	ss._mmVal1++;
-	ss._mmVal2 = 0;
+	ss._resistenceIndex = 0;
 	ss._damage = getRandomNumber(10) + getRandomNumber(10);
 
 	g_globals->_combat->iterateMonsters2();
@@ -481,7 +481,7 @@ SpellResult SpellsParty::cleric61_moonRay() {
 	g_globals->_combat->resetDestMonster();
 	ss._damage = hp;
 	ss._mmVal1++;
-	ss._mmVal2 = 5;
+	ss._resistenceIndex = 5;
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -619,8 +619,8 @@ SpellResult SpellsParty::cleric75_sunRay() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._damage = getRandomNumber(51) + 49;
 	ss._mmVal1++;
-	ss._mmVal2++;
-	ss._resistanceType = RESISTANCE_FIRE;
+	ss._resistenceIndex++;
+	ss._resistanceTypeOrTargetCount = RESISTANCE_FIRE;
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -638,8 +638,8 @@ SpellResult SpellsParty::wizard13_energyBlast() {
 		damage += getRandomNumber(4);
 
 	ss._damage = MIN(damage, 255);
-	ss._mmVal2 = 5;
-	ss._resistanceType++;
+	ss._resistenceIndex = 5;
+	ss._resistanceTypeOrTargetCount++;
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -649,8 +649,8 @@ SpellResult SpellsParty::wizard14_flameArrow() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._damage = getRandomNumber(6);
 	ss._mmVal1++;
-	ss._mmVal2 = 1;
-	ss._resistanceType++;
+	ss._resistenceIndex = 1;
+	ss._resistanceTypeOrTargetCount++;
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -669,8 +669,8 @@ SpellResult SpellsParty::wizard17_location() {
 SpellResult SpellsParty::wizard18_sleep() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._mmVal2 = 8;
-	ss._resistanceType = RESISTANCE_FEAR;
+	ss._resistenceIndex = 8;
+	ss._resistanceTypeOrTargetCount = RESISTANCE_FEAR;
 	ss._damage = 16;
 
 	g_globals->_combat->iterateMonsters1();
@@ -681,8 +681,8 @@ SpellResult SpellsParty::wizard21_electricArrow() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._damage = getRandomNumber(6) + getRandomNumber(6);
 	ss._mmVal1++;
-	ss._resistanceType++;
-	ss._mmVal2 = 2;
+	ss._resistanceTypeOrTargetCount++;
+	ss._resistenceIndex = 2;
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -745,8 +745,8 @@ SpellResult SpellsParty::wizard27_quickness() {
 SpellResult SpellsParty::wizard28_scare() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._mmVal2 = 7;
-	ss._resistanceType++;
+	ss._resistenceIndex = 7;
+	ss._resistanceTypeOrTargetCount++;
 	ss._damage = 1;
 
 	g_globals->_combat->iterateMonsters1();
@@ -795,8 +795,8 @@ SpellResult SpellsParty::wizard38_web() {
 SpellResult SpellsParty::wizard41_acidArrow() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._resistanceType++;
-	ss._mmVal2 = 3;
+	ss._resistanceTypeOrTargetCount++;
+	ss._resistenceIndex = 3;
 	ss._damage += getRandomNumber(10) +
 		getRandomNumber(10) + getRandomNumber(10);
 
@@ -807,8 +807,8 @@ SpellResult SpellsParty::wizard41_acidArrow() {
 SpellResult SpellsParty::wizard42_coldBeam() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._resistanceType++;
-	ss._mmVal2 = 4;
+	ss._resistanceTypeOrTargetCount++;
+	ss._resistenceIndex = 4;
 
 	ss._damage = getRandomNumber(10) + getRandomNumber(10) +
 		getRandomNumber(10) + getRandomNumber(10);
@@ -820,8 +820,8 @@ SpellResult SpellsParty::wizard42_coldBeam() {
 SpellResult SpellsParty::wizard43_feebleMind() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._mmVal2 = 0;
-	ss._resistanceType++;
+	ss._resistenceIndex = 0;
+	ss._resistanceTypeOrTargetCount++;
 	ss._damage = 8;
 
 	g_globals->_combat->iterateMonsters1();
@@ -831,8 +831,8 @@ SpellResult SpellsParty::wizard43_feebleMind() {
 SpellResult SpellsParty::wizard44_freeze() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 0;
-	ss._mmVal2 = 6;
-	ss._resistanceType++;
+	ss._resistenceIndex = 6;
+	ss._resistanceTypeOrTargetCount++;
 	ss._damage = 128;
 
 	g_globals->_combat->iterateMonsters1();
@@ -894,7 +894,7 @@ SpellResult SpellsParty::wizard61_dancingSword() {
 	g_globals->_combat->resetDestMonster();
 
 	ss._mmVal1 = 0;
-	ss._mmVal2 = 0;
+	ss._resistenceIndex = 0;
 	ss._damage = getRandomNumber(30);
 
 	g_globals->_combat->iterateMonsters2();
@@ -944,7 +944,7 @@ SpellResult SpellsParty::wizard73_meteorShower() {
 	g_globals->_combat->resetDestMonster();
 
 	ss._mmVal1++;
-	ss._mmVal2 = 5;
+	ss._resistenceIndex = 5;
 	ss._damage = MIN((int)getRandomNumber(120) +
 		(int)g_globals->_currCharacter->_level._current, 120);
 

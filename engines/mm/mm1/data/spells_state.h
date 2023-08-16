@@ -29,10 +29,13 @@ namespace MM {
 namespace MM1 {
 
 struct SpellsState {
-	byte _mmVal1 = 0, _mmVal2 = 0;
+	byte _mmVal1 = 0;
+	byte _resistenceIndex = 0;
 	byte _mmVal5 = 0;
 	byte _mmVal7 = 0;
-	byte _resistanceType = RESISTANCE_MAGIC;
+
+	// This can hold both a resistence type, or count of monsters to affect
+	byte _resistanceTypeOrTargetCount = RESISTANCE_MAGIC;
 
 	// TODO: Is this variable different in different contexts?
 	// In some places it's used to hold a new condition,
@@ -44,10 +47,10 @@ struct SpellsState {
 	 */
 	void synchronize(Common::Serializer &s) {
 		s.syncAsByte(_mmVal1);
-		s.syncAsByte(_mmVal2);
+		s.syncAsByte(_resistenceIndex);
 		s.syncAsByte(_mmVal5);
 		s.syncAsByte(_mmVal7);
-		s.syncAsByte(_resistanceType);
+		s.syncAsByte(_resistanceTypeOrTargetCount);
 		s.syncAsByte(_damage);
 	}
 };
