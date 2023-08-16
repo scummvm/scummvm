@@ -155,7 +155,7 @@ struct Statement {
 };
 
 struct TalkHistoryEntry {
-	bool _data[16];
+	bool _data[32];
 
 	TalkHistoryEntry();
 	bool &operator[](int index) { return _data[index]; }
