@@ -44,6 +44,12 @@
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
 
+#if NULL_OSYSTEM_IS_AVAILABLE
+#define BENCHMARK_TIME 1
+#else
+#define BENCHMARK_TIME 0
+#endif
+
 namespace OldTransparentSurface {
 
 using namespace Graphics;
@@ -795,6 +801,9 @@ static bool areSurfacesEqual(const Graphics::Surface *a, const Graphics::Surface
 class BlendBlitUnfilteredTestSuite : public CxxTest::TestSuite {
 public:
 	void test_blend_speed() {
+#if BENCHMARK_TIME
+		Common::install_null_g_system();
+
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 #ifdef SCUMMVM_NEON
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitNEON;
@@ -889,6 +898,7 @@ public:
 		debug("New SCALING ManagedSurface::blendBlitTo avg time per %d iters (in milliseconds): %f\n", iters, newTimeScaled / numItersScaled);
 
 		baseSurface.free();
+#endif
 	}
 
 	void test_blend_blit_unfiltered() {
