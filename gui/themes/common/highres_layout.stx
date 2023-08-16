@@ -1836,6 +1836,9 @@
 
 	<dialog name = 'GameOptions_IntegrityDialog' overlays = 'Dialog.GameOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '16, 16, 16, 8' spacing = '8'>
+			<widget name = 'WarningText'
+					height = 'Globals.Line.Height'
+			/>
 			<widget name = 'StatusText'
 					height = 'Globals.Line.Height'
 			/>
@@ -1856,6 +1859,9 @@
 			<space/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'MainButton'
+						type = 'Button'
+				/>
+				<widget name = 'CopyButton'
 						type = 'Button'
 				/>
 			</layout>

@@ -41,19 +41,23 @@ enum {
 	UNKNOWN = 4
 };
 
-enum IconProcessState {
+enum ProcessState {
 	kChecksumStateNone,
 	kChecksumStateCalculating,
-	kChecksumComplete
+	kChecksumComplete,
+	kResponseReceived
 };
 
 class IntegrityDialog : public Dialog, public CommandSender {
+	StaticTextWidget *_warningText;
+
 	StaticTextWidget *_statusText;
 	StaticTextWidget *_errorText;
 	StaticTextWidget *_percentLabel;
 	StaticTextWidget *_calcSizeLabel;
 	SliderWidget *_progressBar;
 	ButtonWidget *_cancelButton;
+	ButtonWidget *_copyEmailButton;
 
 	bool _close;
 
@@ -83,7 +87,7 @@ public:
 	void setError(Common::U32String &msg);
 
 private:
-	void setState(IconProcessState state);
+	void setState(ProcessState state);
 };
 
 } // End of namespace GUI
