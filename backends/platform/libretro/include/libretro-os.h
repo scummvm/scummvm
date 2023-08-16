@@ -191,7 +191,7 @@ public:
 	void setShakePos(int shakeXOffset, int shakeYOffset) override {}
 private:
 	void updateMouseXY(float deltaAcc, float * cumulativeXYAcc, int doing_x);
-
+	void getMouseXYFromAnalog(bool is_x, int16_t coor);
 };
 
 #endif

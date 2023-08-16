@@ -21,6 +21,14 @@
 #define ANALOG_RANGE 0x8000
 #define PI 3.141592653589793238
 
+uint8_t status = 0;
+enum processMouse_status {
+	STATUS_DOING_JOYSTICK  = (1 << 0),
+	STATUS_DOING_MOUSE     = (1 << 1),
+	STATUS_DOING_X         = (1 << 2),
+	STATUS_DOING_Y         = (1 << 3)
+};
+
 void OSystem_libretro::updateMouseXY(float deltaAcc, float * cumulativeXYAcc, int doing_x){
 	int * mouseXY;
 	int16 * screen_wh;
@@ -48,15 +56,38 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float * cumulativeXYAcc, in
 	*relMouseXY = (int)deltaAcc;
 }
 
+void OSystem_libretro::getMouseXYFromAnalog(bool is_x, int16_t coor) {
+
+	int16_t sign = (coor > 0) - (coor < 0);
+	uint16_t abs_coor = abs(coor);
+	float * mouseAcc;
+
+	if (abs_coor < retro_setting_get_analog_deadzone()) return;
+
+	status |= STATUS_DOING_JOYSTICK;
+
+	if (is_x) {
+		status |= STATUS_DOING_X;
+		mouseAcc = &_mouseXAcc;
+	} else {
+		status |= STATUS_DOING_Y;
+		mouseAcc = &_mouseYAcc;
+	}
+
+	*mouseAcc = ((*mouseAcc > 0) - (*mouseAcc < 0)) == sign ? *mouseAcc : 0;
+	float analog_amplitude = (float)(abs_coor - retro_setting_get_analog_deadzone()) / (float)(ANALOG_RANGE - retro_setting_get_analog_deadzone());
+
+	if (retro_setting_get_analog_response_is_quadratic())
+		analog_amplitude *= analog_amplitude;
+
+	if (sign < 0)
+		analog_amplitude = -analog_amplitude;
+
+	updateMouseXY(analog_amplitude * _adjusted_cursor_speed, mouseAcc, is_x);
+}
+
 void OSystem_libretro::processMouse(void) {
-	enum processMouse_status {
-		STATUS_DOING_JOYSTICK  = (1 << 0),
-		STATUS_DOING_MOUSE     = (1 << 1),
-		STATUS_DOING_X         = (1 << 2),
-		STATUS_DOING_Y         = (1 << 3)
-	};
-	uint8_t status = 0;
-	int16_t joy_x, joy_y, joy_rx, joy_ry, x, y;
+	int16_t joy_rx, joy_ry, x, y;
 	float analog_amplitude_x, analog_amplitude_y;
 	float deltaAcc;
 	bool  down;
@@ -98,60 +129,9 @@ void OSystem_libretro::processMouse(void) {
 	status = 0;
 	x = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
 	y = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
-	joy_x = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_X);
-	joy_y = retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y);
 
-	// Left Analog X Axis
-	if (joy_x > retro_setting_get_analog_deadzone() || joy_x < -retro_setting_get_analog_deadzone()) {
-		status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_X);
-		if (joy_x > retro_setting_get_analog_deadzone()) {
-			// Reset accumulator when changing direction
-			_mouseXAcc = (_mouseXAcc < 0.0) ? 0.0 : _mouseXAcc;
-			joy_x = joy_x - retro_setting_get_analog_deadzone();
-		}
-		if (joy_x < -retro_setting_get_analog_deadzone()) {
-			// Reset accumulator when changing direction
-			_mouseXAcc = (_mouseXAcc > 0.0) ? 0.0 : _mouseXAcc;
-			joy_x = joy_x + retro_setting_get_analog_deadzone();
-		}
-		// Update accumulator
-		analog_amplitude_x = (float)joy_x / (float)(ANALOG_RANGE - retro_setting_get_analog_deadzone());
-		if (retro_setting_get_analog_response_is_quadratic()) {
-			if (analog_amplitude_x < 0.0)
-				analog_amplitude_x = -(analog_amplitude_x * analog_amplitude_x);
-			else
-				analog_amplitude_x = analog_amplitude_x * analog_amplitude_x;
-		}
-		// printf("analog_amplitude_x: %f\n", analog_amplitude_x);
-		deltaAcc = analog_amplitude_x * _adjusted_cursor_speed;
-		updateMouseXY(deltaAcc, &_mouseXAcc, 1);
-	}
-
-	// Left Analog Y Axis
-	if (joy_y > retro_setting_get_analog_deadzone() || joy_y < -retro_setting_get_analog_deadzone()) {
-		status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_Y);
-		if (joy_y > retro_setting_get_analog_deadzone()) {
-			// Reset accumulator when changing direction
-			_mouseYAcc = (_mouseYAcc < 0.0) ? 0.0 : _mouseYAcc;
-			joy_y = joy_y - retro_setting_get_analog_deadzone();
-		}
-		if (joy_y < -retro_setting_get_analog_deadzone()) {
-			// Reset accumulator when changing direction
-			_mouseYAcc = (_mouseYAcc > 0.0) ? 0.0 : _mouseYAcc;
-			joy_y = joy_y + retro_setting_get_analog_deadzone();
-		}
-		// Update accumulator
-		analog_amplitude_y = (float)joy_y / (float)(ANALOG_RANGE - retro_setting_get_analog_deadzone());
-		if (retro_setting_get_analog_response_is_quadratic()) {
-			if (analog_amplitude_y < 0.0)
-				analog_amplitude_y = -(analog_amplitude_y * analog_amplitude_y);
-			else
-				analog_amplitude_y = analog_amplitude_y * analog_amplitude_y;
-		}
-		// printf("analog_amplitude_y: %f\n", analog_amplitude_y);
-		deltaAcc = analog_amplitude_y * _adjusted_cursor_speed;
-		updateMouseXY(deltaAcc, &_mouseYAcc, 0);
-	}
+	getMouseXYFromAnalog(true, retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_X));
+	getMouseXYFromAnalog(false, retro_input_cb(0, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y));
 
 	if (retro_get_input_device() == RETRO_DEVICE_JOYPAD) {
 		bool dpadLeft = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
