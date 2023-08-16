@@ -804,6 +804,18 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' align = 'center'>
+				<widget name = 'DLCButton'
+						type = 'Button'
+				/>
+				<widget name = 'DLCPath'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'DLCPathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' align = 'center'>
 				<widget name = 'PluginsButton'
 						type = 'Button'
 				/>

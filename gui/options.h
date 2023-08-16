@@ -278,6 +278,10 @@ protected:
 	ButtonWidget	 *_themePathClearButton;
 	StaticTextWidget *_iconPath;
 	ButtonWidget	 *_iconPathClearButton;
+#ifdef USE_DLC
+	StaticTextWidget *_dlcPath;
+	ButtonWidget	 *_dlcPathClearButton;
+#endif
 	StaticTextWidget *_extraPath;
 	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
