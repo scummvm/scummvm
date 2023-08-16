@@ -1015,7 +1015,7 @@ void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file,
 		}
 
 		_messagesList.push_back(message);
-		debugC(1, kFreescapeDebugParser, "%s", _messagesList[i].c_str());
+		debugC(1, kFreescapeDebugParser, "'%s'", _messagesList[i].c_str());
 	}
 }
 

@@ -775,6 +775,24 @@ void DarkEngine::drawInfoMenu() {
 	delete surface;
 }
 
+void DarkEngine::loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number) {
+	file->seek(offset);
+	debugC(1, kFreescapeDebugParser, "String table:");
+
+	for (int i = 0; i < number; i++) {
+		Common::String message = "";
+		while (true) {
+			byte c = file->readByte();
+			if (c <= 21)
+				break;
+			message = message + c;
+		}
+
+		_messagesList.push_back(message);
+		debugC(1, kFreescapeDebugParser, "'%s'", _messagesList[i].c_str());
+	}
+}
+
 Common::Error DarkEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	for (auto &it : _areaMap) {
 		stream->writeUint16LE(it._key);

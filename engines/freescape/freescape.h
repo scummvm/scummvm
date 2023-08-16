@@ -372,7 +372,7 @@ public:
 	Common::StringArray _messagesList;
 
 	void loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number);
-	void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
+	virtual void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
 
 	void loadFonts(Common::SeekableReadStream *file, int offset);
 	void loadFonts(byte *font, int charNumber);
@@ -563,6 +563,7 @@ public:
 	void loadAssetsAmigaFullGame() override;
 
 	void loadAssetsZXDemo() override;
+	void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number) override;
 
 	int _lastTenSeconds;
 	int _lastSecond;

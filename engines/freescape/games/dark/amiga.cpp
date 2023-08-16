@@ -75,6 +75,7 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	_border = loadAndConvertNeoImage(stream, 0x1b762);
 	load8bitBinary(stream, 0x2e96a, 16);
 	loadPalettes(stream, 0x2e638);
+	loadMessagesVariableSize(stream, 0x3d37, 66);
 }
 
 void DarkEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
