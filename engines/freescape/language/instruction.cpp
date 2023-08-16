@@ -655,8 +655,13 @@ void FreescapeEngine::executeStartAnim(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Staring animation of object %d", objID);
 	Object *obj = _currentArea->objectWithID(objID);
 	assert(obj);
-	assert(obj->_partOfGroup);
-	Group *group = (Group *)obj->_partOfGroup;
+	Group *group = nullptr;
+	if (obj->getType() == kGroupType) {
+		group = (Group *)obj;
+	} else {
+		assert(obj->_partOfGroup);
+		group = (Group *)obj->_partOfGroup;
+	}
 	debugC(1, kFreescapeDebugCode, "From group %d", group->getObjectID());
 	group->_active = true;
 }
