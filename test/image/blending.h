@@ -20,6 +20,7 @@
  */
 
 #include <cxxtest/TestSuite.h>
+#include "test/instrset_detect.h"
 
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
@@ -809,10 +810,14 @@ public:
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitNEON;
 #endif
 #ifdef SCUMMVM_SSE2
-		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitSSE2;
+		if (instrset_detect() >= 2) {
+			Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitSSE2;
+		}
 #endif
 #ifdef SCUMMVM_AVX2
-		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitAVX2;
+		if (instrset_detect() >= 8) {
+			Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitAVX2;
+		}
 #endif
 		Graphics::Surface baseSurface, destSurface;
 		baseSurface.create(103, 103, OldTransparentSurface::OldTransparentSurface::getSupportedPixelFormat());
