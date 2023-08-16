@@ -91,6 +91,8 @@ void OSystem_libretro::initBackend() {
 	_mixer->setReady(true);
 
 	EventsBaseBackend::initBackend();
+
+	refreshRetroSettings();
 }
 
 void OSystem_libretro::engineInit() {
@@ -120,6 +122,11 @@ bool OSystem_libretro::getFeatureState(Feature f) {
 
 Audio::Mixer *OSystem_libretro::getMixer() {
         return _mixer;
+}
+
+void OSystem_libretro::refreshRetroSettings() {
+        _adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * retro_setting_get_gamepad_cursor_speed() * (float)(_overlayInGUI ? _overlay.w : _gameScreen.w) / 320.0f; // Dpad cursor speed should always be based off a 320 wide screen, to keep speeds consistent;
+        _inverse_acceleration_time = (retro_setting_get_gamepad_acceleration_time() > 0.0) ? (1.0 / 60.0) * (1.0 / retro_setting_get_gamepad_acceleration_time()) : 1.0;
 }
 
 void OSystem_libretro::destroy() {

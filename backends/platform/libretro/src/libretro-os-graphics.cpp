@@ -245,6 +245,7 @@ const OSystem_libretro::GraphicsMode *OSystem_libretro::getSupportedGraphicsMode
 
 void OSystem_libretro::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	_gameScreen.create(width, height, format ? *format : Graphics::PixelFormat::createFormatCLUT8());
+	refreshRetroSettings();
 }
 
 int16 OSystem_libretro::getHeight() {

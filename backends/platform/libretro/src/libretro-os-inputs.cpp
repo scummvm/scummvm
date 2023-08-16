@@ -19,7 +19,6 @@
 #include "backends/platform/libretro/include/libretro-os.h"
 
 #define ANALOG_RANGE 0x8000
-#define BASE_CURSOR_SPEED 4
 #define PI 3.141592653589793238
 
 void OSystem_libretro::updateMouseXY(float deltaAcc, float * cumulativeXYAcc, int doing_x){
@@ -61,9 +60,6 @@ void OSystem_libretro::processMouse(void) {
 	float analog_amplitude_x, analog_amplitude_y;
 	float deltaAcc;
 	bool  down;
-	float screen_adjusted_cursor_speed = (float)_screen.w / 320.0f; // Dpad cursor speed should always be based off a 320 wide screen, to keep speeds consistent
-	float adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * retro_setting_get_gamepad_cursor_speed() * screen_adjusted_cursor_speed;
-	float inverse_acceleration_time = (retro_setting_get_gamepad_acceleration_time() > 0.0) ? (1.0 / 60.0) * (1.0 / retro_setting_get_gamepad_acceleration_time()) : 1.0;
 	int dpad_cursor_offset;
 	double rs_radius, rs_angle;
 	unsigned numpad_index;
@@ -96,7 +92,7 @@ void OSystem_libretro::processMouse(void) {
 
 	// Reduce gamepad cursor speed, if required
 	if (retro_get_input_device() == RETRO_DEVICE_JOYPAD && retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2)) {
-		adjusted_cursor_speed = adjusted_cursor_speed * (1.0f / 5.0f);
+		_adjusted_cursor_speed = _adjusted_cursor_speed * (1.0f / 5.0f);
 	}
 
 	status = 0;
@@ -127,7 +123,7 @@ void OSystem_libretro::processMouse(void) {
 				analog_amplitude_x = analog_amplitude_x * analog_amplitude_x;
 		}
 		// printf("analog_amplitude_x: %f\n", analog_amplitude_x);
-		deltaAcc = analog_amplitude_x * adjusted_cursor_speed;
+		deltaAcc = analog_amplitude_x * _adjusted_cursor_speed;
 		updateMouseXY(deltaAcc, &_mouseXAcc, 1);
 	}
 
@@ -153,7 +149,7 @@ void OSystem_libretro::processMouse(void) {
 				analog_amplitude_y = analog_amplitude_y * analog_amplitude_y;
 		}
 		// printf("analog_amplitude_y: %f\n", analog_amplitude_y);
-		deltaAcc = analog_amplitude_y * adjusted_cursor_speed;
+		deltaAcc = analog_amplitude_y * _adjusted_cursor_speed;
 		updateMouseXY(deltaAcc, &_mouseYAcc, 0);
 	}
 
@@ -165,13 +161,13 @@ void OSystem_libretro::processMouse(void) {
 
 		if (dpadLeft || dpadRight) {
 			status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_X);
-			_dpadXVel = MIN(_dpadXVel + inverse_acceleration_time, 1.0f);
+			_dpadXVel = MIN(_dpadXVel + _inverse_acceleration_time, 1.0f);
 
 			if (dpadLeft) {
-				deltaAcc = -(_dpadXVel * adjusted_cursor_speed);
+				deltaAcc = -(_dpadXVel * _adjusted_cursor_speed);
 				_dpadXAcc = _dpadXAcc < deltaAcc ? _dpadXAcc : 0.0f;
 			} else { //dpadRight
-				deltaAcc = _dpadXVel * adjusted_cursor_speed;
+				deltaAcc = _dpadXVel * _adjusted_cursor_speed;
 				_dpadXAcc = _dpadXAcc > deltaAcc ? _dpadXAcc : 0.0f;
 			}
 
@@ -183,13 +179,13 @@ void OSystem_libretro::processMouse(void) {
 
 		if (dpadUp || dpadDown) {
 			status |= (STATUS_DOING_JOYSTICK | STATUS_DOING_Y);
-			_dpadYVel = MIN(_dpadYVel + inverse_acceleration_time, 1.0f);
+			_dpadYVel = MIN(_dpadYVel + _inverse_acceleration_time, 1.0f);
 
 			if (dpadUp) {
-				deltaAcc = -(_dpadYVel * adjusted_cursor_speed);
+				deltaAcc = -(_dpadYVel * _adjusted_cursor_speed);
 				_dpadYAcc = _dpadYAcc < deltaAcc ? _dpadYAcc : 0.0f;
 			} else { //dpadDown
-				deltaAcc = _dpadYVel * adjusted_cursor_speed;
+				deltaAcc = _dpadYVel * _adjusted_cursor_speed;
 				_dpadYAcc = _dpadYAcc > deltaAcc ? _dpadYAcc : 0.0f;
 			}
 

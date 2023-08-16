@@ -30,6 +30,8 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
+#define BASE_CURSOR_SPEED 4
+
 #define LIBRETRO_G_SYSTEM dynamic_cast<OSystem_libretro *>(g_system)
 
 /* libretro.cpp functions */
@@ -86,6 +88,8 @@ private:
 	float _dpadXVel;
 	float _dpadYVel;
 	unsigned _joypadnumpadLast;
+	float _adjusted_cursor_speed;
+	float _inverse_acceleration_time;
 	uint32 _startTime;
 	uint8 _threadSwitchCaller;
 	Common::String s_systemDir;
@@ -123,6 +127,7 @@ public:
 	bool hasFeature(Feature f) override;
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
+	void refreshRetroSettings(void);
 	void destroy(void);
 	void quit() override {}
 

@@ -761,6 +761,7 @@ void retro_run(void) {
 	bool updated = false;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated){
 		update_variables();
+		LIBRETRO_G_SYSTEM->refreshRetroSettings();
 	}
 
 	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO){
