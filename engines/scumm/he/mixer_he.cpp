@@ -564,28 +564,38 @@ bool HEMixer::mixerStartChannel(
 			ptr += 8;
 		}
 
-		byte *data = (byte *)malloc(_mixerChannels[channel].sampleLen);
-
-		if (!data)
-			return false;
-
+		byte *data = nullptr;
 		ptr += sampleDataOffset;
 
-		memcpy(data, ptr, _mixerChannels[channel].sampleLen);
+		// Some looping sounds need the original resource address to
+		// work properly (e.g. the ones created with createSound()),
+		// so we only copy the data over and create a 64 samples fade-in
+		// just for non-looping sounds. Also, remember that non-looping
+		// sounds might have early callbacks, so we still have to copy
+		// data over, instead of using the original buffer.
+		if (!(_mixerChannels[channel].flags & CHANNEL_LOOPING)) {
+			data = (byte *)malloc(_mixerChannels[channel].sampleLen);
 
-		// Residual early callback data
-		if (hasCallbackData) {
-			memcpy(
-				_mixerChannels[channel].residualData,
-				&ptr[_mixerChannels[channel].sampleLen],
-				_mixerChannels[channel].endSampleAdjustment);
-		}
+			if (!data)
+				return false;
 
-		byte *dataTmp = data;
-		int rampUpSampleCount = 64;
-		for (int i = 0; i < rampUpSampleCount; i++) {
-			*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
-			dataTmp++;
+			memcpy(data, ptr, _mixerChannels[channel].sampleLen);
+
+			// Residual early callback data
+			if (hasCallbackData) {
+				memcpy(
+					_mixerChannels[channel].residualData,
+					&ptr[_mixerChannels[channel].sampleLen],
+					_mixerChannels[channel].endSampleAdjustment);
+			}
+
+			// Fade-in to avoid possible sound popping...
+			byte *dataTmp = data;
+			int rampUpSampleCount = 64;
+			for (int i = 0; i < rampUpSampleCount; i++) {
+				*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
+				dataTmp++;
+			}
 		}
 
 		_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
@@ -602,13 +612,6 @@ bool HEMixer::mixerStartChannel(
 			_mixer->setChannelRate(_mixerChannels[channel].handle, frequency);
 
 		if (_mixerChannels[channel].flags & CHANNEL_LOOPING) {
-			// Workaround from hell which will get removed
-			// before this goes into the main tree: scrap the
-			// data copy into a malloc buffer, and just use
-			// the original resource address; this fixes sounds
-			// appended with the create-sound opcode.
-			free(data);
-
 			Audio::RewindableAudioStream *stream = Audio::makeRawStream(
 				ptr,
 				_mixerChannels[channel].sampleLen,
@@ -618,6 +621,7 @@ bool HEMixer::mixerStartChannel(
 
 			_mixerChannels[channel].stream->queueAudioStream(Audio::makeLoopingAudioStream(stream, 0), DisposeAfterUse::YES);
 		} else {
+			// If we're here, data is surely a correctly allocated buffer...
 			_mixerChannels[channel].stream->queueBuffer(
 				data,
 				_mixerChannels[channel].sampleLen,
