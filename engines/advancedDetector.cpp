@@ -413,6 +413,9 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
 
+	// Detection is done, no need to keep archives in memory anymore
+	ADCacheMan.clearArchives();
+
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
 	ConfMan.setAndFlush("guioptions", gameDescriptor.getGUIOptions());
