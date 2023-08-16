@@ -432,13 +432,25 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 
 	// for the underLine font, we need to draw the line at the whole area, which includes the kerning space.
 	if ((_data._slant & kMacFontUnderline) && glyph->kerningOffset) {
-		for (uint16 j = 1; j <= glyph->kerningOffset; j++) {
-			if (dst->format.bytesPerPixel == 1)
-				*((byte *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
-			else if (dst->format.bytesPerPixel == 2)
-				*((uint16 *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
-			else if (dst->format.bytesPerPixel == 4)
-				*((uint32 *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
+		int underlineY = y + _data._ascent + 2;
+
+		if (underlineY >= 0 && underlineY < dst->h) {
+			int underlineXStart = x - glyph->kerningOffset;
+			int underlineXEnd = x - 1;
+
+			if (underlineXStart < 0)
+				underlineXStart = 0;
+			if (underlineXEnd >= dst->w)
+				underlineXEnd = dst->w - 1;
+
+			for (int ulx = underlineXStart; ulx <= underlineXEnd; ulx++) {
+				if (dst->format.bytesPerPixel == 1)
+					*((byte *)dst->getBasePtr(ulx, underlineY)) = color;
+				else if (dst->format.bytesPerPixel == 2)
+					*((uint16 *)dst->getBasePtr(ulx, underlineY)) = color;
+				else if (dst->format.bytesPerPixel == 4)
+					*((uint32 *)dst->getBasePtr(ulx, underlineY)) = color;
+			}
 		}
 	}
 
