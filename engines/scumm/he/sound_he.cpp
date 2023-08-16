@@ -869,7 +869,9 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('W', 'S', 'O', 'U')) {
 		triggerRIFFSound(soundId, heOffset, heChannel, heFlags, modifiers);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('X', 'S', 'O', 'U')) {
+#ifdef ENABLE_HE
 		triggerXSOUSound(soundId, heOffset, heChannel, heFlags);
+#endif
 	} else {
 		error("SoundHE::triggerSound(): Illegal sound %d type %s", soundId, tag2str(READ_BE_UINT32(soundAddr)));
 	}
@@ -1220,6 +1222,8 @@ void SoundHE::triggerRIFFSound(int soundId, int heOffset, int heChannel, int heF
 						heFlags, bitsPerSample, sampleChannelCount, modifiers);
 }
 
+#ifdef ENABLE_HE
+
 void SoundHE::triggerXSOUSound(int heSound, int heOffset, int heChannel, int heFlags) {
 	int sampleFrequency, bitsPerSample, sampleChannelCount, soundPriority;
 	int soundCodeOffset, soundDataOffset, sampleCount;
@@ -1278,6 +1282,8 @@ void SoundHE::triggerXSOUSound(int heSound, int heOffset, int heChannel, int heF
 		sampleCount, sampleFrequency, heChannel, soundPriority, soundCodeOffset,
 		heFlags, bitsPerSample, sampleChannelCount, HESoundModifiers());
 }
+
+#endif
 
 void SoundHE::hsStartDigitalSound(int sound, int offset, byte *addr, int soundData,
 	int globType, int globNum, int sampleCount, int frequency, int channel, int priority,
@@ -1693,10 +1699,10 @@ const byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
 	return nullptr;
 }
 
+#endif
+
 int SoundHE::getCurrentSpeechOffset() {
 	return _heTalkOffset;
 }
-
-#endif
 
 } // End of namespace Scumm
