@@ -990,6 +990,21 @@ String toPrintable(const String &in, bool keepNewLines) {
 	return res;
 }
 
+String percentEncodeString(const String &src) {
+	String res;
+
+	for (uint i = 0; i < src.size(); i++) {
+		char c = src[i];
+		if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') ||
+			c == '~' || c == '-' || c == '.' || c == '_')
+			res += c;
+		else
+			res += Common::String::format("%%%02X", c);
+
+		return res;
+	}
+}
+
 } // End of namespace Common
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.

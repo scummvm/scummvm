@@ -37,25 +37,29 @@
 namespace GUI {
 
 enum {
-	kCleanupCmd = 'DlCL',
+	kResponseCmd = 'IDRC',
+	kCopyEmailCmd = 'IDCE',
+	kCleanupCmd = 'IDCl'
 };
 
 struct ResultFormat {
-	bool unknown;
+	bool error;
 	Common::String messageText;
 	Common::String emailText;
+	Common::String errorText;
 
 	ResultFormat() {
-		unknown = 0;
+		error = 0;
 		messageText = "";
 		emailText = "";
+		errorText = "";
 	}
 
 } static *g_result;
 
 struct DialogState {
 	IntegrityDialog *dialog;
-	IconProcessState state;
+	ProcessState state;
 
 	int totalSize;
 	int calculatedSize;
@@ -75,7 +79,7 @@ struct DialogState {
 	}
 } static *g_state;
 
-uint32 getDownloadingProgress() {
+uint32 getCalculationProgress() {
 	if (!g_state || g_state->totalSize == 0)
 		return 0;
 
@@ -88,10 +92,14 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
+	Common::U32String warningMessage = _(
+		"Verifying file integrity may take a long time to complete. Please wait...\n");
+	_warningText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.WarningText", warningMessage);
+
 	_statusText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.StatusText", Common::U32String::format(_("Calculating file checksums...")));
 	_errorText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.ErrorText", Common::U32String(""));
 
-	uint32 progress = getDownloadingProgress();
+	uint32 progress = getCalculationProgress();
 	_progressBar = new SliderWidget(this, "GameOptions_IntegrityDialog.ProgressBar");
 	_progressBar->setMinValue(0);
 	_progressBar->setMaxValue(100);
@@ -100,6 +108,9 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 	_percentLabel = new StaticTextWidget(this, "GameOptions_IntegrityDialog.PercentText", Common::String::format("%u %%", progress));
 	_calcSizeLabel = new StaticTextWidget(this, "GameOptions_IntegrityDialog.DownloadSize", Common::U32String());
 	_cancelButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.MainButton", _("Cancel"), Common::U32String(), kCleanupCmd);
+
+	_copyEmailButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.CopyButton", _("Copy Email to Clipboard"), Common::U32String(), kCopyEmailCmd);
+	_copyEmailButton->setVisible(false);
 
 	if (!g_state) {
 		g_state = new DialogState();
@@ -142,7 +153,7 @@ void IntegrityDialog::close() {
 	Dialog::close();
 }
 
-void IntegrityDialog::setState(IconProcessState state) {
+void IntegrityDialog::setState(ProcessState state) {
 	g_state->state = state;
 
 	switch (state) {
@@ -155,9 +166,28 @@ void IntegrityDialog::setState(IconProcessState state) {
 
 	case kChecksumComplete:
 		_statusText->setLabel(Common::U32String::format(_("Calculation complete")));
-		_cancelButton->setVisible(false);
-		_cancelButton->setLabel(_("Cancel"));
+		_cancelButton->setVisible(true);
+		_cancelButton->setLabel(_("OK"));
 		_cancelButton->setCmd(kCleanupCmd);
+
+		// Hide all other elements
+		_statusText->setVisible(false);
+		_errorText->setVisible(false);
+		_percentLabel->setVisible(false);
+		_calcSizeLabel->setVisible(false);
+		_progressBar->setVisible(false);
+
+		break;
+
+	case kResponseReceived:
+		// Display results in _warningText
+		if (g_result->messageText != "")
+			_warningText->setLabel(g_result->messageText);
+		else
+			_warningText->setLabel(g_result->errorText);
+
+		_copyEmailButton->setVisible(true);
+		_copyEmailButton->setCmd(kCopyEmailCmd);
 
 		break;
 	}
@@ -165,11 +195,21 @@ void IntegrityDialog::setState(IconProcessState state) {
 
 void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kResponseReceived:
+		setState(kResponseReceived);
+		break;
 	case kCleanupCmd: {
 		delete g_state;
 		g_state = nullptr;
 
+		delete g_result;
+		g_result = nullptr;
+
 		close();
+		break;
+	}
+	case kCopyEmailCmd: {
+		g_system->setTextInClipboard(g_result->emailText);
 		break;
 	}
 	default:
@@ -184,7 +224,7 @@ void IntegrityDialog::handleTickle() {
 		return;
 	}
 
-	int32 progress = getDownloadingProgress();
+	int32 progress = getCalculationProgress();
 	if (_progressBar->getValue() != progress) {
 		refreshWidgets();
 		g_gui.scheduleTopDialogRedraw();
@@ -206,7 +246,7 @@ Common::U32String IntegrityDialog::getSizeLabelText() {
 }
 
 void IntegrityDialog::refreshWidgets() {
-	uint32 progress = getDownloadingProgress();
+	uint32 progress = getCalculationProgress();
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_calcSizeLabel->setLabel(getSizeLabelText());
 	_progressBar->setValue(progress);
@@ -373,20 +413,16 @@ void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
 	debug(3, "JSON Response: %s", r->stringify().c_str());
 	IntegrityDialog::parseJSON(r);
 
-	debug(g_result->messageText.c_str());
-	// if (!g_result->unknown) {
-	// 	MessageDialog resultDialog(g_result->messageText);
-	// 	resultDialog.runModal();
-	// } else {
-	// 	MessageDialog resultDialog(g_result->messageText, "OK", "Copy message to Clipboard");
-	// 	bool copy = resultDialog.runModal();
-	// 	if (copy == 1)
-	// 		g_system->setTextInClipboard(g_result->emailText);
-	// }
+	if (g_state->dialog)
+		g_state->dialog->sendCommand(kResponseReceived, 0);
 }
 
 void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
 	warning("ERROR %ld: %s", error.httpResponseCode, error.response.c_str());
+	g_result->errorText = Common::String::format("ERROR %ld: %s", error.httpResponseCode, error.response.c_str());
+
+	if (g_state->dialog)
+		g_state->dialog->sendCommand(kResponseCmd, 0);
 }
 
 void IntegrityDialog::sendJSON() {
@@ -423,7 +459,7 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 									 emailText.c_str()));
 
 		g_result->messageText += messageText;
-		g_result->emailText += emailText;
+		g_result->emailText += Common::percentEncodeString(emailText);
 		return;
 	}
 
@@ -448,6 +484,13 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 	}
 	if (messageText == "")
 		messageText += _("Files all OK");
+	else {
+		Common::String resultSummary = "\n\nTotal: ";
+		resultSummary += Common::String::format("%d OK, %d missing, %d mismatch, %d unknown files",
+												results[OK], results[MISSING], results[SIZE_MISMATCH] + results[CHECKSUM_MISMATCH], results[UNKNOWN]);
+
+		messageText += resultSummary;
+	}
 
 	g_result->messageText += messageText;
 }
