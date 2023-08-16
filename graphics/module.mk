@@ -66,11 +66,6 @@ MODULE_OBJS += \
 	scaler/downscalerARM.o
 endif
 
-ifdef ATARI
-MODULE_OBJS += \
-	blit-atari.o
-endif
-
 ifdef USE_TINYGL
 MODULE_OBJS += \
 	tinygl/api.o \
@@ -137,6 +132,11 @@ MODULE_OBJS += \
 	scaler/edge.o
 endif
 
+endif
+
+ifdef ATARI
+MODULE_OBJS += \
+	blit-atari.o
 endif
 
 ifeq ($(SCUMMVM_NEON),1)
