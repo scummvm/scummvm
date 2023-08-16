@@ -23,10 +23,29 @@
 #ifndef M4_BURGER_WALKER_H
 #define M4_BURGER_WALKER_H
 
+#include "common/array.h"
 #include "m4/adv_r/adv_walk.h"
 
 namespace M4 {
 namespace Burger {
+
+struct WilburMatch {
+	const char *_word0 = nullptr;
+	const char *_word1 = nullptr;
+	int _trigger = -1;
+	const long *_testVariable = nullptr;
+	int _testValue = 0;
+	int *_newVariable = nullptr;
+	int _newValue = 0;
+
+	WilburMatch() {}
+	WilburMatch(const char *word0, const char *word1, int trigger,
+		const long *testVariable, int testValue, int *newVariable,
+		int newValue) : _word0(word0), _word1(word1),
+		_trigger(trigger), _testVariable(testVariable),
+		_testValue(testValue), _newVariable(newVariable),
+		_newValue(newValue) {}
+};
 
 class Walker : public M4::Walker {
 private:
@@ -100,6 +119,8 @@ public:
 	}
 
 	bool wilbur_parser(const char **list);
+
+	bool wilbur_match(const Common::Array<WilburMatch> &list);
 
 	void wilbur_poof();
 	void wilbur_unpoof();

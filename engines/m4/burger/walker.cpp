@@ -362,6 +362,29 @@ bool Walker::wilbur_parser(const char **list) {
 	return false;
 }
 
+bool Walker::wilbur_match(const Common::Array<WilburMatch> &list) { 
+	for (uint idx = 0; idx < list.size(); ++idx) {
+		const WilburMatch &m = list[idx];
+
+		if (player_said(m._word0, m._word1)) {
+			term_message("matched %s and %s", m._word0, m._word1);
+			term_message("test variable:%d  value:%d", *m._testVariable, m._testValue);
+
+			if (!m._testVariable || *m._testVariable == m._testValue) {
+				if (m._newVariable)
+					*m._newVariable = m._newValue;
+
+				if (m._trigger != -1)
+					kernel_trigger_dispatch_now(m._trigger);
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void Walker::wilbur_poof() {
 	error("TODO: Walker::wilbur_poof");
 }

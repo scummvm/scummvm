@@ -23,6 +23,7 @@
 #define M4_BURGER_ROOMS_SECTION1_ROOM142_H
 
 #include "m4/burger/rooms/room.h"
+#include "m4/burger/walker.h"
 
 namespace M4 {
 namespace Burger {
@@ -30,6 +31,7 @@ namespace Rooms {
 
 class Room142 : public Room {
 private:
+	Common::Array<WilburMatch> _MATCH;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
 	machine *_series3 = nullptr;
@@ -37,11 +39,13 @@ private:
 	machine *_series5 = nullptr;
 	noWalkRect *_noWalk = nullptr;
 	int _actionType = 0;
+	static int _val1;
+	static int _val2;
 
 	void checkAction();
 
 public:
-	Room142() : Room() {}
+	Room142();
 	~Room142() override {}
 
 	void init() override;

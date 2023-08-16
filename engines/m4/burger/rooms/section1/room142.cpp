@@ -28,6 +28,49 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID1[][4] = {
+	{ "VERA'S DINER",   "142w001", "142w002", "142w002" },
+	{ "CAR",            "142w003", nullptr,   "142w004" },
+	{ "FANBELT",        "142w005", nullptr,   "142w002" },
+	{ "ICE BOX",        "142w006", "142w002", nullptr   },
+	{ "ICE",            nullptr,   nullptr,   "142w002" },
+	{ "GARBAGE CANS",   "142w010", "142w011", "142w012" },
+	{ "BACK DOOR",      "142w013", "142w002", nullptr   },
+	{ "PLANTS",         "142w014", "142w015", "142w002" },
+	{ "SIGN",           "142w016", "142w017", "142w002" },
+	{ "SIGN ",          "142w018", "142w002", "142w002" },
+	{ "FRONT DOOR",     nullptr,   "142w002", nullptr   },
+	{ "MAIN STREET",    nullptr,   "142w002", nullptr   },
+	{ "HANLON'S POINT", nullptr,   "142w002", nullptr   },
+	{ "AUNT POLLY'S HOUSE", nullptr, "142w002", nullptr },
+	{ "PARKING LOT",    nullptr,   "142w002", nullptr   },
+	{ "HIGHWAY 2",      "142w020", "142w002", "142w021" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+int Room142::_val1;
+int Room142::_val2;
+
+Room142::Room142() : Room() {
+	_val1 = 0;
+	_val2 = 0;
+
+	_MATCH.push_back(WilburMatch("GEAR", "PARKING LOT", 9,
+		&_G(flags)[V000], 1003, &_val1, 18));
+	_MATCH.push_back(WilburMatch("LOOK AT", "PARKING LOT", 9,
+		&_G(flags)[V000], 1003, &_val1, 18));
+	_MATCH.push_back(WilburMatch("GEAR", "PARKING LOT", 5,
+		&_G(flags)[V058], 0, &_val2, 13));
+	_MATCH.push_back(WilburMatch("LOOK AT", "PARKING LOT", 5,
+		&_G(flags)[V058], 0, &_val2, 13));
+	_MATCH.push_back(WilburMatch("GEAR", "ICE BOX", gTELEPORT,
+		&_G(flags)[V059], 0, &_G(roomVal1), 1));
+	_MATCH.push_back(WilburMatch("TAKE", "FANBELT", gTELEPORT,
+		nullptr, 0, &_G(roomVal1), 9));
+	_MATCH.push_back(WilburMatch("GEAR", "BACK DOOR", 6,
+		nullptr, 0, nullptr, 0));
+}
+
 void Room142::init() {
 	_G(player).walker_in_this_scene = true;
 	digi_preload("142_004");
@@ -185,6 +228,21 @@ void Room142::pre_parser() {
 }
 
 void Room142::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (!_G(walker).wilbur_said(SAID1)) {
+		if (player_said_any("GEAR", "LOOK AT") && player_said("HANLON'S POINT")) {
+			disable_player_commands_and_fade_init(1012);
+		} else if (player_said_any("GEAR", "LOOK AT") && player_said("FRONT DOOR")) {
+			disable_player_commands_and_fade_init(1015);
+		} else if (player_said_any("GEAR", "LOOK AT") && player_said("AUNT POLLY'S HOUSE")) {
+			disable_player_commands_and_fade_init(1017);
+		} else if (!_G(walker).wilbur_match(_MATCH)) {
+			return;
+		}
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room142::checkAction() {
