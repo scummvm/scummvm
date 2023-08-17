@@ -35,6 +35,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "backends/platform/atari/osystem_atari.h"
 
@@ -75,6 +77,8 @@ extern void nf_init(void);
 extern void nf_print(const char* msg);
 
 static bool s_tt = false;
+static int s_app_id = -1;
+
 typedef void (*KBDVEC)(void *);
 KBDVEC g_atari_old_kbdvec = nullptr;
 static void (*s_vkbderr)(void) = nullptr;
@@ -107,6 +111,10 @@ static void critical_restore() {
 	// somehow manipulates the same memory area used for the critical handler's stack
 	// what causes v_clsvwk() never returning and leading to a bus error (and another
 	// critical_restore() called...)
+	if (s_app_id != -1) {
+		// ok, restore mouse cursor at least
+		graf_mouse(M_ON, NULL);
+	}
 }
 
 // called on normal program termination (via exit() or returning from main())
@@ -134,7 +142,8 @@ OSystem_Atari::OSystem_Atari() {
 	vdo >>= 16;
 
 	if (vdo != VDO_TT && vdo != VDO_FALCON) {
-		error("ScummVM requires Atari TT/Falcon compatible video");
+		fprintf(stderr, "ScummVM requires Atari TT/Falcon compatible video\n");
+		exit(EXIT_FAILURE);
 	}
 
 	s_tt = (vdo == VDO_TT);
@@ -153,7 +162,8 @@ OSystem_Atari::OSystem_Atari() {
 	mch >>= 16;
 
 	if (mch == MCH_ARANYM && Getcookie(C_fVDI, NULL) == C_FOUND) {
-		error("Disable fVDI, ScummVM uses XBIOS video calls");
+		fprintf(stderr, "Disable fVDI, ScummVM uses XBIOS video calls\n");
+		exit(EXIT_FAILURE);
 	}
 
 	_KBDVECS *kbdvecs = Kbdvbase();
@@ -230,7 +240,7 @@ OSystem_Atari::~OSystem_Atari() {
 		g_atari_old_kbdvec = s_mousevec = nullptr;
 	}
 
-	if (_app_id != -1) {
+	if (s_app_id != -1) {
 		//wind_update(END_UPDATE);
 
 		// redraw screen
@@ -247,8 +257,8 @@ OSystem_Atari::~OSystem_Atari() {
 }
 
 void OSystem_Atari::initBackend() {
-	_app_id = appl_init();
-	if (_app_id != -1) {
+	s_app_id = appl_init();
+	if (s_app_id != -1) {
 		// get the ID of the current physical screen workstation
 		int16 dummy;
 		_vdi_handle = graf_handle(&dummy, &dummy, &dummy, &dummy);
@@ -392,9 +402,12 @@ void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
 void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	{
 		Common::FSDirectory currentDirectory{ getFilesystemFactory()->makeCurrentDirectoryFileNode()->getPath() };
-		Common::FSNode dataNode = currentDirectory.getSubDirectory("data")->getFSNode();
-		if (dataNode.exists() && dataNode.isDirectory() && dataNode.isReadable()) {
-			s.addDirectory(dataNode.getPath(), dataNode, priority);
+		Common::FSDirectory *dataDirectory = currentDirectory.getSubDirectory("data");
+		if (dataDirectory) {
+			Common::FSNode dataNode = dataDirectory->getFSNode();
+			if (dataNode.exists() && dataNode.isDirectory() && dataNode.isReadable()) {
+				s.addDirectory(dataNode.getPath(), dataNode, priority);
+			}
 		}
 	}
 #ifdef DATA_PATH

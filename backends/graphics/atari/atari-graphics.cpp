@@ -495,7 +495,11 @@ void AtariGraphicsManager::updateScreen() {
 			// Surface::init() & delete[] Surface::getPixels() just use this hack.
 			const Common::String engineId = activeDomain->getValOrDefault("engineid");
 			const Common::String gameId = activeDomain->getValOrDefault("gameid");
-			if (engineId == "hypno"
+
+			debug("checking %s/%s", engineId.c_str(), gameId.c_str());
+
+			if (engineId == "composer"
+				|| engineId == "hypno"
 				|| engineId == "mohawk"
 				|| engineId == "parallaction"
 				|| engineId == "private"
