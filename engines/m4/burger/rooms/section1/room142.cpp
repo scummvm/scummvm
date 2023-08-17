@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section1/room142.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
 #include "m4/graphics/gr_series.h"
 
@@ -106,6 +107,36 @@ const seriesPlayBreak Room142::PLAY7[] = {
 const seriesPlayBreak Room142::PLAY8[] = {
 	{ 0,  5, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	{ 6, 25, nullptr, 0, 0, 13, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY9[] = {
+	{ 0, 3, "142_003", 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY10[] = {
+	{ 3, 0, "142_002", 1, 255, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY11[] = {
+	{  4, 13, "142_001", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 14, -1, "142_002", 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY12[] = {
+	{ 0, -1, "142_005", 1, 255, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY13[] = {
+	{  0,  1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{  2,  7, "100_010", 2, 255, -1, 0, 0, &_val3,  1 },
+	{  2,  7, "100_011", 2, 255, -1, 0, 0, &_val3,  2 },
+	{  2,  7, "100_012", 2, 255, -1, 0, 0, &_val3,  3 },
+	{ -1, -1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -226,14 +257,14 @@ void Room142::daemon() {
 	case 5:
 		switch (_val2) {
 		case 11:
-			_G(walker).wilbur_speech("142w007");
+			wilbur_speech("142w007");
 			break;
 		case 12:
-			_G(walker).wilbur_speech(inv_player_has("BLOCK OF ICE") ?
+			wilbur_speech(inv_player_has("BLOCK OF ICE") ?
 				"142w007" : "142w008");
 			break;
 		case 13:
-			_G(walker).wilbur_speech("142w019");
+			wilbur_speech("142w019");
 			break;
 		default:
 			break;
@@ -312,7 +343,92 @@ void Room142::daemon() {
 		break;
 
 	case gTELEPORT:
-		// TODO
+		switch (_G(roomVal1)) {
+		case 1:
+			TerminateMachineAndNull(_series5);
+			disable_player();
+			_G(roomVal1) = 2;
+			series_play_with_breaks(PLAY9, "142wi04", 0xdff, gTELEPORT, 3);
+			break;
+
+		case 2:
+			player_set_commands_allowed(true);
+			_G(flags)[V059] = 1;
+			hotspot_set_active("ICE", true);
+			_series6 = series_show("142wi04", 0xdff, 0, -1, -1, 3);
+			_series7 = series_show("142wi04s", 0xdfe, 0, -1, -1, 3);
+			break;
+
+		case 3:
+			if (inv_player_has("BLOCK OF ICE")) {
+				wilbur_speech("142w009");
+			} else {
+				player_set_commands_allowed(false);
+				TerminateMachineAndNull(_series6);
+				TerminateMachineAndNull(_series7);
+				_G(roomVal1) = 4;
+
+				series_play_with_breaks(PLAY11, "142wi04", 0xdff, gTELEPORT, 3);
+			}
+			break;
+
+		case 4:
+			_G(flags)[V059] = 0;
+			hotspot_set_active("ICE", false);
+			_series5 = series_show("142icedr", 0xf00);
+			enable_player();
+			inv_give_to_player("BLOCK OF ICE");
+			break;
+
+		case 5:
+			player_set_commands_allowed(false);
+			TerminateMachineAndNull(_series6);
+			TerminateMachineAndNull(_series7);
+			_G(roomVal1) = 6;
+
+			series_play_with_breaks(PLAY10, "142wi02", 0xdff, gTELEPORT, 3);
+			break;
+
+		case 6:
+			_G(flags)[V059] = 0;
+			hotspot_set_active("ICE", false);
+			_series5 = series_show("142icedr", 0xe00);
+			enable_player();
+			break;
+
+		case 7:
+			player_set_commands_allowed(false);
+			TerminateMachineAndNull(_series6);
+			TerminateMachineAndNull(_series7);
+			_G(roomVal1) = 8;
+
+			series_play_with_breaks(PLAY10, "142wi04", 0xdff, gTELEPORT, 3);
+			break;
+
+		case 8:
+			_G(flags)[V059] = 0;
+			hotspot_set_active("ICE", false);
+			_series5 = series_show("142icedr", 0xe00);
+			enable_player();
+			triggerParser();
+			break;
+
+		case 9:
+			disable_player();
+			_G(roomVal1) = 10;
+			series_play_with_breaks(PLAY12, "142wi05", 0x400, gTELEPORT, 3);
+			break;
+
+		case 10:
+			enable_player();
+			hotspot_set_active("FANBELT", false);
+			inv_give_to_player("PANTYHOSE");
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
 		break;
 
 	case 10031:
@@ -364,20 +480,20 @@ void Room142::pre_parser() {
 		} else if (player_said("ICE")) {
 			if (player_said("LOOK AT")) {
 				if (_G(flags)[V040] && !inv_player_has("BLOCK OF ICE")) {
-					_G(walker).wilbur_speech("142w008");
+					wilbur_speech("142w008");
 				} else {
-					_G(walker).wilbur_speech("142w007");
+					wilbur_speech("142w007");
 				}
 			} else if (player_said("TAKE")) {
 				if (!_G(flags)[V040]) {
-					_G(walker).wilbur_speech("142w017");
+					wilbur_speech("142w017");
 				} else if (inv_player_has("BLOCK_OF_ICE")) {
-					_G(walker).wilbur_speech("142w009");
+					wilbur_speech("142w009");
 				} else {
 					kernel_trigger_dispatch_now(gTELEPORT);
 				}
 			} else if (player_said("GEAR")) {
-				_G(walker).wilbur_speech("142w002");
+				wilbur_speech("142w002");
 			} else {
 				term_message("ERROR - don't know what to do with ice!!!");
 			}
@@ -483,6 +599,19 @@ void Room142::preloadAssets() {
 	digi_preload_play_breaks(PLAY5);
 	digi_preload_play_breaks(PLAY6);
 	digi_preload_play_breaks(PLAY7);
+}
+
+void Room142::triggerParser() {
+	_G(player).waiting_for_walk = true;
+	_G(player).ready_to_walk = true;
+	_G(player).need_to_walk = true;
+	_G(player).command_ready = true;
+	_G(kernel).trigger = -1;
+	_G(kernel).trigger_mode = KT_PREPARSE;
+	_G(player).walker_trigger = -1;
+
+	pre_parser();
+	g_engine->global_pre_parser();
 }
 
 } // namespace Rooms
