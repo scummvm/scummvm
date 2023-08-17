@@ -67,7 +67,8 @@ enum Features {
 	kFeatures640x480   = 1 << 5,
 	kFeatures800x600   = 1 << 6,
 	kFeaturesTrueColor = 1 << 7,
-	kFeatures16Colors  = 1 << 8
+	kFeatures16Colors  = 1 << 8,
+	kFeatures640x400   = 1 << 9,
 };
 
 enum AdditionalGameFlags {

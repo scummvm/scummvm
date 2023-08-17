@@ -85,7 +85,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
-	kFeaturesAdLib | kFeatures640x480,
+	kFeaturesAdLib | kFeatures640x400,
 	0, 0, 0
 },
 {
@@ -100,7 +100,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	 kGameTypeAdibou1,
-	 kFeaturesAdLib | kFeatures640x480,
+	 kFeaturesAdLib | kFeatures640x400,
 	 0 ,0 , 0
 },
 

@@ -210,6 +210,7 @@ public:
 	bool hasAdLib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
+	bool is640x400() const;
 	bool is640x480() const;
 	bool is800x600() const;
 	bool is16Colors() const;
