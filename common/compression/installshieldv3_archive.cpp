@@ -42,6 +42,65 @@ bool InstallShieldV3::open(const Common::String &filename) {
 	if (!_stream)
 		return false;
 
+	return read();
+}
+
+bool InstallShieldV3::open(const Common::FSNode &node) {
+	close();
+
+	_stream = node.createReadStream();
+
+	if (!_stream)
+		return false;
+
+	return read();
+}
+
+void InstallShieldV3::close() {
+	delete _stream; _stream = nullptr;
+	_map.clear();
+}
+
+bool InstallShieldV3::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
+	return _map.contains(name);
+}
+
+int InstallShieldV3::listMembers(Common::ArchiveMemberList &list) const {
+	for (FileMap::const_iterator it = _map.begin(); it != _map.end(); it++)
+		list.push_back(getMember(it->_key));
+
+	return _map.size();
+}
+
+const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+}
+
+Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
+	// Make sure "/" is converted to "\"
+	while (name.contains("/"))
+		Common::replace(name, "/", "\\");
+
+	if (!_stream || !_map.contains(name))
+		return nullptr;
+
+	const FileEntry &entry = _map[name];
+
+	// Seek to our offset and then send it off to the decompressor
+	_stream->seek(entry.offset);
+	return Common::decompressDCL(_stream, entry.compressedSize, entry.uncompressedSize);
+}
+
+char InstallShieldV3::getPathSeparator() const {
+	return '\\';
+}
+
+bool InstallShieldV3::read() {
+	assert(_stream);
+
 	// Check for the magic uint32
 	// No idea what it means, but it's how "file" recognizes them
 	if (_stream->readUint32BE() != 0x135D658C) {
@@ -112,49 +171,8 @@ bool InstallShieldV3::open(const Common::String &filename) {
 					entry.offset, entry.compressedSize, entry.uncompressedSize);
 		}
 	}
+
 	return true;
-}
-
-void InstallShieldV3::close() {
-	delete _stream; _stream = nullptr;
-	_map.clear();
-}
-
-bool InstallShieldV3::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return _map.contains(name);
-}
-
-int InstallShieldV3::listMembers(Common::ArchiveMemberList &list) const {
-	for (FileMap::const_iterator it = _map.begin(); it != _map.end(); it++)
-		list.push_back(getMember(it->_key));
-
-	return _map.size();
-}
-
-const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
-}
-
-Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	// Make sure "/" is converted to "\"
-	while (name.contains("/"))
-		Common::replace(name, "/", "\\");
-
-	if (!_stream || !_map.contains(name))
-		return nullptr;
-
-	const FileEntry &entry = _map[name];
-
-	// Seek to our offset and then send it off to the decompressor
-	_stream->seek(entry.offset);
-	return Common::decompressDCL(_stream, entry.compressedSize, entry.uncompressedSize);
-}
-
-char InstallShieldV3::getPathSeparator() const {
-	return '\\';
 }
 
 } // End of namespace Common

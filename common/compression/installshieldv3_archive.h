@@ -38,6 +38,7 @@ public:
 	~InstallShieldV3() override;
 
 	bool open(const Common::String &filename);
+	bool open(const Common::FSNode &node);
 	void close();
 	bool isOpen() const { return _stream != nullptr; }
 
@@ -54,6 +55,8 @@ private:
 		uint32 compressedSize;
 		uint32 offset;
 	};
+
+	bool read();
 
 	Common::SeekableReadStream *_stream;
 
