@@ -854,6 +854,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "tomlisaindiens",		"Tom et Lisa: les Indiens" },
 
 	// German titles
+	{ "addybuschuzirkus",	"Addy Buschu: Im Zirkus" },
 	{ "bibi2",				"Bibi Blocksberg 2: Ein verhexter Schultag" },
 	{ "bibifilm",			"Bibi Blocksberg: Mein verhextes Filmstudio" },
 	{ "braingames",			"Brain Games" },
@@ -5194,7 +5195,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("shinshofukei", "", "SINSYO2.EXE", "bb16588758a1ebd5df9fa8ecdd6bc249", 1296944, Common::JA_JPN, 404),
 
 	WINDEMO1("shramerica", "Demo", "SHRAMER.EXE", "b50e77a25088cfe1cb88ee2dc4d3a9c9", 1335269, 404),
+
+	MACGAME2("shrgrammar", "",	   "Grammar Power Mac",		"r:096e0aacbc1670c80a354c3c49b3fabe", 63304,
+								   "OFFSTAGE/GRAMSLAM.DIR", "t:43d84ede1e83bda9d8588201a74f397a", 697989, 404),
+	WINGAME2("shrgrammar", "",	   "START.EXE", 			"t:737838e6f24205bd85486d08b7bb27ad", 700655,
+								   "OFFSTAGE/GRAMSLAM.DIR", "t:43d84ede1e83bda9d8588201a74f397a", 697989, 404),
 	WINDEMO1("shrgrammar", "Demo", "SHRGRAM.EXE", "c3ee0462fe5935cf1eabfbdecfe33f03", 698575, 404),
+
 	WINDEMO1("shrmath", "Demo", "SHRMATH.EXE", "bc3ec272680e0e57f76032a2a8e196eb", 690109, 404),
 
 	// Player app is a standalone player for cartoons created in Studio
@@ -8854,6 +8861,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2_l("1contre100", "", "start.exe", "00541c08177b6d55a3df893bcfccc843", 2764454,
 								 "main.dxr",  "c2bf555f6209e51a1c8cce29c8e6534f", 43315121, Common::FR_FRA, 1010),
+
+	// TRAC report #14576
+	WINGAME2_l("addybuschuzirkus", "", "AC1.exe",  "t:bce969dfb978d2c1c00785d102787f3d", 4204863,
+									   "adbc.ico", "t:cc3dd9e7e9f690f6a6b0701796a73148", 21974, Common::DE_DEU, 1010),
 
 	// TRAC report #14382
 	WINGAME1_l("adiboubobos", "", "Casse-Virus.exe", "t:8be9bfb3aa0c3f7d6a20980721149998", 5270940, Common::FR_FRA, 1010),
