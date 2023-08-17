@@ -78,7 +78,7 @@ const OSystem::GraphicsMode s_supportedStretchModes[] = {
 };
 #endif
 
-AspectRatio::AspectRatio(int w, int h) {
+SurfaceSdlGraphicsManager::AspectRatio::AspectRatio(int w, int h) {
 	// TODO : Validation and so on...
 	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
 	_kw = w;
@@ -86,7 +86,7 @@ AspectRatio::AspectRatio(int w, int h) {
 }
 
 #if defined(USE_ASPECT)
-static AspectRatio getDesiredAspectRatio() {
+SurfaceSdlGraphicsManager::AspectRatio SurfaceSdlGraphicsManager::getDesiredAspectRatio() {
 	const size_t AR_COUNT = 4;
 	const char *desiredAspectRatioAsStrings[AR_COUNT] = {	"auto",				"4/3",				"16/9",				"16/10" };
 	const AspectRatio desiredAspectRatios[AR_COUNT] = {		AspectRatio(0, 0),	AspectRatio(4,3),	AspectRatio(16,9),	AspectRatio(16,10) };

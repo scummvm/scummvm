@@ -44,18 +44,6 @@ enum {
 };
 
 
-class AspectRatio {
-	int _kw, _kh;
-public:
-	AspectRatio() { _kw = _kh = 0; }
-	AspectRatio(int w, int h);
-
-	bool isAuto() const { return (_kw | _kh) == 0; }
-
-	int kw() const { return _kw; }
-	int kh() const { return _kh; }
-};
-
 /**
  * SDL graphics manager
  */
@@ -166,6 +154,20 @@ protected:
 	void updateOSD();
 	void drawOSD();
 #endif
+
+	class AspectRatio {
+		int _kw, _kh;
+	public:
+		AspectRatio() { _kw = _kh = 0; }
+		AspectRatio(int w, int h);
+
+		bool isAuto() const { return (_kw | _kh) == 0; }
+
+		int kw() const { return _kw; }
+		int kh() const { return _kh; }
+	};
+
+	static AspectRatio getDesiredAspectRatio();
 
 	bool gameNeedsAspectRatioCorrection() const override {
 		return _videoMode.aspectRatioCorrection;
