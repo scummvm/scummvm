@@ -48,6 +48,7 @@ public:
 	void appendText(const Common::U32String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
 	void appendText(const Common::String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
 	void clearText();
+	void setMarkdownText(const Common::U32String &str);
 
 	void setEditable(bool editable) { _editable = editable; _mactext->setEditable(editable); }
 	void setSelectable(bool selectable) { _selectable = selectable; }

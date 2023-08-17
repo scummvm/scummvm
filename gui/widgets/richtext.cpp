@@ -82,7 +82,7 @@ void RichTextWidget::createWidget() {
 	_txtWnd->setEditable(false);
 	_txtWnd->setSelectable(false);
 
-	_txtWnd->appendText(_text);
+	_txtWnd->setMarkdownText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
 }
