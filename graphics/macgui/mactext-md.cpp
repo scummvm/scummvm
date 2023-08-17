@@ -251,6 +251,7 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	Common::String input = str.encode(); // Encode to UTF8
 
 	Common::DataBuffer *ib = Common::bufnew(input.size());
+	Common::bufgrow(ib, input.size());
 	memcpy(ib->data, input.c_str(), input.size());
 
 	Common::DataBuffer *ob = Common::bufnew(1024);
