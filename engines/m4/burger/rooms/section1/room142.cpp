@@ -154,7 +154,10 @@ Room142::Room142() : Room() {
 	_val1 = 0;
 	_val2 = 0;
 	_val3 = 0;
+}
 
+void Room142::init() {
+	_MATCH.clear();
 	_MATCH.push_back(WilburMatch("GEAR", "PARKING LOT", 9,
 		&_G(flags)[V000], 1003, &_val1, 18));
 	_MATCH.push_back(WilburMatch("LOOK AT", "PARKING LOT", 9,
@@ -169,9 +172,7 @@ Room142::Room142() : Room() {
 		nullptr, 0, &_G(roomVal1), 9));
 	_MATCH.push_back(WilburMatch("GEAR", "BACK DOOR", 6,
 		nullptr, 0, nullptr, 0));
-}
 
-void Room142::init() {
 	_G(player).walker_in_this_scene = true;
 	digi_preload("142_004");
 	digi_play_loop("142_004", 3, 255, -1);
