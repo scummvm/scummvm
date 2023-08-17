@@ -248,8 +248,11 @@ endif
 endif
 endif
 
+ifdef USE_SDL2
+MODULE_OBJS += \
+	graphics/rendersdl/rendersdl-graphics.o
+else
 # SDL 2 removed audio CD support
-ifndef USE_SDL2
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o
 endif
