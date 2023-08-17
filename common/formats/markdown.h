@@ -106,7 +106,7 @@ struct SDCallbacks {
 #define MKD_LIST_ORDERED	1
 #define MKD_LI_BLOCK		2  /* <li> containing block data */
 
-SDMarkdown *sd_markdown_new(int extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque);
+SDMarkdown *sd_markdown_new(uint extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque);
 
 void sd_markdown_render(DataBuffer *ob, const byte *document, size_t doc_size, SDMarkdown *md);
 
