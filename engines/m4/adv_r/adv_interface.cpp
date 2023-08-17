@@ -75,4 +75,8 @@ void intr_cancel_sentence() {
 	_GI().cancel_sentence();
 }
 
+void intr_freshen_sentence() {
+	_GI().freshen_sentence();
+}
+
 } // End of namespace M4

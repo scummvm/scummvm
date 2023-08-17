@@ -110,7 +110,7 @@ extern void player_set_defaults();
 extern void player_noun_becomes_verb(int32 spriteNum);
 
 extern void player_hotspot_walk_override(int32 x, int32 y, int32 facing = -1, int32 trigger = -1);
-extern void player_hotspot_walk_override_just_face(int32 facing, int32 trigger = -1); //mar4
+extern void player_hotspot_walk_override_just_face(int32 facing, int32 trigger = -1);
 
 extern bool player_commands_allowed();
 extern PlayerInfo *player_update_info(machine *myWalker, PlayerInfo *player_info);

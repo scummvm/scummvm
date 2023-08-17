@@ -1106,11 +1106,9 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 		myBuff = myGrBuff->get_buffer();
 		while (myItem) {
 			if (myItem == myTextScrn->hiliteItem) {
-				//mar4
 				//gr_font_set_color(myTextScrn->hiliteColor);
 				font_set_colors(myTextScrn->hiliteColor_alt1, myTextScrn->hiliteColor_alt2, myTextScrn->hiliteColor);
 			} else {
-				//mar4
 				//gr_font_set_color(myTextScrn->textColor);
 				font_set_colors(myTextScrn->textColor_alt1, myTextScrn->textColor_alt2, myTextScrn->textColor);
 			}

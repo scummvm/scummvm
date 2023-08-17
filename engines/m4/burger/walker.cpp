@@ -394,5 +394,17 @@ void Walker::wilbur_unpoof() {
 	_wilburPoof = -1;
 }
 
+
+void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger) {
+	_G(player_facing_x) = facing_x;
+	_G(player_facing_y) = facing_y;
+	_G(player_trigger) = trigger;
+	player_hotspot_walk_override(x, y, -1, gSET_FACING);
+}
+
+void player_walk_to(int32 x, int32 y, int trigger) {
+	player_walk_to(x, y, _G(hotspot_x), _G(hotspot_y), trigger);
+}
+
 } // namespace Burger
 } // namespace M4

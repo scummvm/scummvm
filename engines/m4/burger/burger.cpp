@@ -432,7 +432,8 @@ void BurgerEngine::global_daemon() {
 		break;
 
 	case gSET_FACING:
-		player_set_facing_at(_G(player_facing_x), _G(player_facing_y));
+		player_set_facing_at(_G(player_facing_x), _G(player_facing_y),
+			_G(player_trigger));
 		break;
 
 	case gSET_DEST:

@@ -78,6 +78,7 @@ extern void track_hotspots_refresh();
 extern bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z);
 
 extern void intr_cancel_sentence();
+extern void intr_freshen_sentence();
 
 } // End of namespace M4
 

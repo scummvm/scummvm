@@ -45,7 +45,7 @@ extern void set_walker_scaling(SceneDef *rdef);
 extern bool walker_has_walk_finished(machine *sender);
 extern void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing = -1);
 extern void ws_demand_facing(machine *myWalker, int32 newFacing);
-extern void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger);
+extern void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger = -1);
 extern void ws_nosepick(machine *myWalker, int32 seriesHash);
 extern void ws_hide_walker(machine *myWalker);
 extern void ws_unhide_walker(machine *myWalker);
@@ -53,7 +53,7 @@ extern void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigge
 
 extern void ws_demand_location(int32 x, int32 y, int facing = -1);
 extern void ws_demand_facing(int32 newFacing);
-extern void ws_turn_to_face(int32 facing, int32 trigger);
+extern void ws_turn_to_face(int32 facing, int32 trigger = -1);
 extern void ws_nosepick(int32 seriesHash);
 extern void ws_hide_walker();
 extern void ws_unhide_walker();

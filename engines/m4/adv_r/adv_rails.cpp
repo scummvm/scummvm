@@ -167,6 +167,9 @@ noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 
 	return newRect;
 }
 
+noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 altX, int32 altY) {
+	return intr_add_no_walk_rect(x1, y1, x2, y2, altX, altY, _G(screenCodeBuff)->get_buffer());
+}
 
 void intr_move_no_walk_rect(noWalkRect *myRect, int32 new_x1, int32 new_y1,
 	int32 new_x2, int32 new_y2, int32 new_altX, int32 new_altY, Buffer *walkCodes) {
@@ -220,6 +223,10 @@ void intr_remove_no_walk_rect(noWalkRect *myRect, Buffer *walkCodes) {
 
 	// Now refresh all the edges
 	RestoreEdgeList(walkCodes);
+}
+
+void intr_remove_no_walk_rect(noWalkRect *myRect) {
+	intr_remove_no_walk_rect(myRect, _G(screenCodeBuff)->get_buffer());
 }
 
 bool intr_LineCrossesRect(int32 line_x1, int32 line_y1, int32 line_x2, int32 line_y2,
