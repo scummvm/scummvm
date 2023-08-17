@@ -43,6 +43,7 @@ class Room142 : public Room {
 	static const seriesPlayBreak PLAY11[];
 	static const seriesPlayBreak PLAY12[];
 	static const seriesPlayBreak PLAY13[];
+	static const seriesPlayBreak PLAY14[];
 private:
 	Common::Array<WilburMatch> _MATCH;
 	machine *_series1 = nullptr;
@@ -52,6 +53,7 @@ private:
 	machine *_series5 = nullptr;
 	machine *_series6 = nullptr;
 	machine *_series7 = nullptr;
+	machine *_series8 = nullptr;
 
 	noWalkRect *_noWalk = nullptr;
 	int _actionType = 0;
@@ -64,7 +66,12 @@ private:
 	void checkAction();
 	void faceTruck();
 	void preloadAssets();
+	void preloadAssets2();
 	void triggerParser();
+	void play015();
+	int adjustY(int val) const {
+		return (int)((double)val * -1.428571428571429);
+	}
 
 public:
 	Room142();

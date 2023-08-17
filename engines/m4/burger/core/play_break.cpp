@@ -182,13 +182,13 @@ int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name, fr
 	return slot;
 }
 
-void digi_preload_play_breaks(const seriesPlayBreak list[]) {
+void digi_preload_play_breaks(const seriesPlayBreak list[], bool loadAll) {
 	int32 i = 0;
 
 	// While there is a legitimate frame to break on
 	while (list[i].firstFrame >= 0) {
 		// If variable is null or variable = value then this break is used
-		if ((!list[i].variable) || (*(list[i].variable) == list[i].value)) {
+		if ((!list[i].variable) || (*(list[i].variable) == list[i].value) || loadAll) {
 			// If there is a sound to load	for this break
 			if (list[i].sound) {
 				if (!digi_preload(list[i].sound)) {

@@ -140,6 +140,11 @@ const seriesPlayBreak Room142::PLAY13[] = {
 	PLAY_BREAK_END
 };
 
+const seriesPlayBreak Room142::PLAY14[] = {
+	{ 0, 19, "142_007", 2, 255, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
 
 int Room142::_val1;
 int Room142::_val2;
@@ -247,6 +252,30 @@ void Room142::init() {
 
 void Room142::daemon() {
 	switch (_G(kernel).trigger) {
+	case 1:
+		TerminateMachineAndNull(_series8);
+		TerminateMachineAndNull(_series5);
+		TerminateMachineAndNull(_series1);
+
+		if (_G(player_info.y) < 285) {
+			Section1::updateWalker(adjustY(_G(player_info).y), 285, 9, 2);
+		} else {
+			Section1::updateWalker(adjustY(_G(player_info).y), _G(player_info).y, 9, 2);
+		}
+		break;
+
+	case 2:
+		_series8 = series_play("142sm01", 0xf00, 4);
+		_series5 = series_play("142icedr", 0xe00);
+		_series1 = series_play("142door", 0xe00);
+		_G(walker).reset_walker_sprites();
+		play015();
+		break;
+
+	case 3:
+		play015();
+		break;
+
 	case 4:
 		digi_unload("142_006");
 		digi_play_loop("142_004", 3);
@@ -278,6 +307,10 @@ void Room142::daemon() {
 
 	case 7:
 		digi_play("142e901", 1, 255, 8);
+		break;
+
+	case 8:
+		player_set_commands_allowed(true);
 		break;
 
 	case 9:
@@ -341,6 +374,42 @@ void Room142::daemon() {
 			break;
 		}
 		break;
+
+	case 10:
+		_volume -= 10;
+		if (_volume > 0) {
+			term_message("fading truck theme, current volume = %d", _volume);
+			digi_change_volume(3, _volume);
+			kernel_timing_trigger(6, 10);
+		} else {
+			digi_stop(3);
+			digi_unload("100_013");
+			digi_play_loop("142_004", 3);
+		}
+		break;
+
+	case 11:
+		_volume -= 20;
+		if (_volume > 0) {
+			term_message("fading truck noise, current volume = %d", _volume);
+			digi_change_volume(1, _volume);
+			kernel_timing_trigger(6, 10);
+		} else {
+			digi_stop(1);
+			digi_stop(2);
+			digi_unload("100_015");
+			digi_unload("100_021");
+		}
+		break;
+
+	case 13:
+		_series1 = series_show("142door", 0xe00);
+		break;
+
+	case 14:
+		TerminateMachineAndNull(_series1);
+		break;
+
 
 	case gTELEPORT:
 		switch (_G(roomVal1)) {
@@ -431,6 +500,40 @@ void Room142::daemon() {
 		}
 		break;
 
+	case 10028:
+		if (!_G(flags)[V043]) {
+			if (_series2) {
+				TerminateMachineAndNull(_series2);
+				TerminateMachineAndNull(_series3);
+			}
+			if (_series4) {
+				TerminateMachineAndNull(_series4);
+				_G(flags)[V058] = 0;
+			}
+
+			_G(flags)[V000] = 1003;
+
+			if (player_commands_allowed() && _G(roomVal2) &&
+					INTERFACE_VISIBLE && !digi_play_state(1)) {
+				digi_preload("100_013");
+				digi_play("100_013", 3, 155);
+				Section1::updateDisablePlayer();
+				preloadAssets2();
+
+				if (adjustY(_G(player_info).y) > _G(player_info).x ||
+						(_G(player_info).x < 298 && _G(player_info).y < 285)) {
+					kernel_timing_trigger(240, 1);
+				} else {
+					kernel_timing_trigger(240, 3);
+				}
+			} else {
+				kernel_timing_trigger(15, 10028);
+			}
+		} else {
+			_G(kernel).continue_handling_trigger = true;
+		}
+		break;
+
 	case 10031:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
@@ -463,7 +566,32 @@ void Room142::daemon() {
 			}
 		}
 		break;
-	// TODO
+
+	case 10032:
+		if (_series2) {
+			TerminateMachineAndNull(_series2);
+			_G(flags)[V000] = _G(flags)[V043] ? 1002 : 1004;
+		}
+
+		if (!_G(flags)[V058]) {
+			_G(flags)[V058] = 1;
+			digi_preload("142_006");
+			digi_play("142_006", 3, 255, 4);
+			series_play_with_breaks(PLAY14, "142ba01", 0xf00, -1, 2);
+		}
+		break;
+
+	case CALLED_EACH_LOOP:
+		if (_actionType == 0) {
+			_G(kernel).call_daemon_every_loop = false;
+		} else {
+			checkAction();
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
 	}
 }
 
@@ -591,14 +719,23 @@ void Room142::faceTruck() {
 }
 
 void Room142::preloadAssets() {
-	series_load("142dt02", -1);
-	series_load("142dt02s", -1);
-	series_load("142dt03", -1);
-	series_load("142dt03s", -1);
+	series_load("142dt02");
+	series_load("142dt02s");
+	series_load("142dt03");
+	series_load("142dt03s");
 
 	digi_preload_play_breaks(PLAY5);
 	digi_preload_play_breaks(PLAY6);
 	digi_preload_play_breaks(PLAY7);
+}
+
+void Room142::preloadAssets2() {
+	series_load("142dt01");
+	series_load("142dt01s");
+	series_load("142dt02");
+	series_load("142dt02s");
+	digi_preload_play_breaks(PLAY1, true);
+	digi_preload_play_breaks(PLAY1, true);
 }
 
 void Room142::triggerParser() {
@@ -612,6 +749,15 @@ void Room142::triggerParser() {
 
 	pre_parser();
 	g_engine->global_pre_parser();
+}
+
+void Room142::play015() {
+	digi_preload("100_015");
+	digi_play_loop("100_015", 1);
+
+	_val3 = imath_ranged_rand(1, 3);
+	_val1 = 14;
+	series_play_with_breaks(PLAY13, "142dt01", 0x100, 9, 3);
 }
 
 } // namespace Rooms
