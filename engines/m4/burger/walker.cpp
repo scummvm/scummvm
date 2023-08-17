@@ -263,6 +263,11 @@ void enable_player() {
 	ws_unhide_walker(_G(my_walker));
 }
 
+void disable_player() {
+	player_set_commands_allowed(false);
+	ws_hide_walker(_G(my_walker));
+}
+
 void wilbur_abduct(int trigger) {
 	player_set_commands_allowed(false);
 	digi_stop(1);
@@ -405,6 +410,12 @@ void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigge
 void player_walk_to(int32 x, int32 y, int trigger) {
 	player_walk_to(x, y, _G(hotspot_x), _G(hotspot_y), trigger);
 }
+
+void wilbur_speech(const char *name, int trigger, int room, byte flags,
+		int vol, int channel) {
+	_G(walker).wilbur_speech(name, trigger, room, flags, vol, channel);
+}
+
 
 } // namespace Burger
 } // namespace M4
