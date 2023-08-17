@@ -52,7 +52,7 @@ enum {
 	HASH_STREAM_MACHINE = 6
 };
 
-extern int32 series_load(const char *seriesName, int32 assetIndex, RGB8 *myPal = nullptr);
+extern int32 series_load(const char *seriesName, int32 assetIndex = -1, RGB8 *myPal = nullptr);
 extern void series_unload(int32 assetIndex);
 extern bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);
 
@@ -60,8 +60,8 @@ extern bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, i
 //extern machine *series_place_sprite(const char *seriesName, int32 index, int32 x, int32 y, int32 s, int32 layer); // was series_show_sprite
 //extern machine *series_show_sprite(const char *seriesName, int32 index, int32 layer);	// was simple_show_sprite
 
-extern machine *series_play(const char *seriesName, frac16 layer, uint32 flags,
-	int16 triggerNum, int32 frameRate, int32 loopCount, int32 s = 100,
+extern machine *series_play(const char *seriesName, frac16 layer, uint32 flags = 0,
+	int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = -1, int32 s = 100,
 	int32 x = 0, int32 y = 0, int32 firstFrame = 0, int32 lastFrame = -1);
 //extern machine *series_simple_play(char *seriesName, frac16 layer, bool stick_when_done);
 
