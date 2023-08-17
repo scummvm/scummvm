@@ -21,6 +21,7 @@
 
 #include "common/endian.h"
 #include "common/types.h"
+#include "common/bufferedstream.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 
@@ -418,12 +419,15 @@ Common::SeekableReadStream *DataIO::getFile(File &file) {
 	Common::SeekableReadStream *rawData =
 		new Common::SafeSeekableSubReadStream(&file.archive->file, file.offset, file.offset + file.size);
 
+	Common::SeekableReadStream *bufferedRawData =
+		Common::wrapBufferedSeekableReadStream(rawData, 4096, DisposeAfterUse::NO);
+
 	if (file.compression == 0)
-		return rawData;
+		return bufferedRawData;
 
-	Common::SeekableReadStream *unpackedData = unpack(*rawData, file.compression);
+	Common::SeekableReadStream *unpackedData = unpack(*bufferedRawData, file.compression);
 
-	delete rawData;
+	delete bufferedRawData;
 
 	return unpackedData;
 }
