@@ -3095,9 +3095,14 @@ void LB::b_soundBusy(int nargs) {
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	Datum whichChannel = g_lingo->pop();
 
-	TYPECHECK(whichChannel, INT);
+	// Horror Tour 2 calls this with a void argument
+	TYPECHECK2(whichChannel, INT, VOID);
+	int channel = whichChannel.u.i;
+	if (whichChannel.type == VOID) {
+		channel = 1;
+	}
 
-	bool isBusy = sound->isChannelActive(whichChannel.u.i);
+	bool isBusy = sound->isChannelActive(channel);
 	Datum result;
 	result.type = INT;
 	result.u.i = isBusy ? 1 : 0;
