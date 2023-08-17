@@ -318,8 +318,8 @@ void GraphicsManager::keyBlit(Graphics::Surface *dst, int xDst, int yDst, int w,
 	Common::Rect srcRect(xSrc, ySrc, xSrc + w, ySrc + h);
 	Common::Rect dstRect(xDst, yDst, xDst + w, yDst + h);
 
-	dst->clip(srcRect, dstRect);
-	dst->copyRectToSurfaceWithKey(*src, xDst, yDst, srcRect, transColor);
+	if (dst->clip(srcRect, dstRect))
+		dst->copyRectToSurfaceWithKey(*src, dstRect.left, dstRect.top, srcRect, transColor);
 }
 
 void GraphicsManager::keyBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, uint xSrc, uint ySrc, byte rTrans, byte gTrans, byte bTrans) {
