@@ -157,20 +157,12 @@
  * the textField. To be able to handle the cases where the user wants to
  * delete existing texts when the textField is empty the inputView has
  * to implement the UITextInput protocol function deleteBackward that is
- * called every time the backward key is pressed. */
+ * called every time the backward key is pressed.
+ * Propagate all delete callbacks to the backend.
+ */
 -(void)deleteBackward {
-	if ([self hasText]) {
-		/* If the textField has text the backward key presses will be
-		 * forwarded to the EventManager in the delegate function
-		 * textField:shouldChangeTextInRange:replacementText:
-		 * call the super class to delete characters in the textField */
-		[super deleteBackward];
-	} else {
-		/* Forward the key press to the EventManager also in the cases
-		 * where the textField is empty to remove prefilled characters
-		 * in dialogs. */
-		[softKeyboard handleKeyPress:'\b'];
-	}
+	[softKeyboard handleKeyPress:'\b'];
+	[super deleteBackward];
 }
 
 -(void)selectUITabBarItem:(UITapGestureRecognizer *)recognizer {
@@ -468,14 +460,9 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)text {
-	unichar c;
 	if (text.length) {
-		c = [text characterAtIndex:0];
+		[inputDelegate handleKeyPress:[text characterAtIndex:0]];
 	}
-	else {
-		c = '\b';
-	}
-	[inputDelegate handleKeyPress:c];
 	return YES;
 }
 
