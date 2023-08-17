@@ -172,7 +172,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v0.50",
 		{
 			{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
@@ -190,7 +190,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
@@ -208,7 +208,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
@@ -226,7 +226,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "edd7403e5dc2a14459d2665a4c17714d", 209534},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
@@ -280,7 +280,7 @@
 { // Found in Found in french ADI 2.5 Anglais Multimedia 5e
 	{
 		"gob3",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "edd7403e5dc2a14459d2665a4c17714d", 209534),
 		FR_FRA,
 		kPlatformWindows,
