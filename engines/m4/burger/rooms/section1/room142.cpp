@@ -48,12 +48,76 @@ static const char *SAID1[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+const seriesPlayBreak Room142::PLAY1[] = {
+	{  8, 12, "100_010", 2, 255, -1, 0, 0, &_val3,  1 },
+	{  8, 12, "100_011", 2, 255, -1, 0, 0, &_val3,  2 },
+	{  8, 12, "100_012", 2, 255, -1, 0, 0, &_val3,  3 },
+	{ 13, -1, nullptr,   0,   0, 10, 0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY2[] = {
+	{  0, -1, "100_015", 2, 255, -1, 1, 3, nullptr, 0 },
+	{  0, -1, "100_017", 2, 255, -1, 1, 3, nullptr, 0 },
+	{  1,  1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY3[] = {
+	{ 0,  26, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 27, -1, nullptr, 0, 0, 14, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY4[] = {
+	{  0, 2, nullptr,   0,   0, -1, 0,  0, nullptr, 0 },
+	{  3, 6, "142b901", 2, 255, -1, 4, -1, nullptr, 0 },
+	{  7, -1, nullptr,  0,   0, -1, 0,  0, nullptr, 0 },
+	{ -1, -1, nullptr,  0,   0, -1, 0,  0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY5[] = {
+	{ 1,  1, "100_021", 2, 255, -1, 0, 12, nullptr, 0 },
+	{ 0, -1, "100_015", 2, 255, -1, 1,  4, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY6[] = {
+	{  0,  0, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{  1, 10, "100_010", 2, 255, -1, 0, 0, &_val3,  1 },
+	{  1, 10, "100_011", 2, 255, -1, 0, 0, &_val3,  2 },
+	{  1, 10, "100_012", 2, 255, -1, 0, 0, &_val3,  3 },
+	{ 11, 14, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY7[] = {
+	{ 15, -1, "100_010", 2, 255, -1, 0, 0, &_val3,  1 },
+	{ 15, -1, "100_011", 2, 255, -1, 0, 0, &_val3,  2 },
+	{ 15, -1, "100_012", 2, 255, -1, 0, 0, &_val3,  3 },
+	{ -1, -1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room142::PLAY8[] = {
+	{ 0,  5, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 6, 25, nullptr, 0, 0, 13, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 int Room142::_val1;
 int Room142::_val2;
+int Room142::_val3;
 
 Room142::Room142() : Room() {
 	_val1 = 0;
 	_val2 = 0;
+	_val3 = 0;
 
 	_MATCH.push_back(WilburMatch("GEAR", "PARKING LOT", 9,
 		&_G(flags)[V000], 1003, &_val1, 18));
@@ -151,6 +215,140 @@ void Room142::init() {
 }
 
 void Room142::daemon() {
+	switch (_G(kernel).trigger) {
+	case 4:
+		digi_unload("142_006");
+		digi_play_loop("142_004", 3);
+		hotspot_set_active("TOUR BUS", true);
+		_series4 = series_play("142ba01", 0xf00, 16, -1, 10, 0, 100, 0, 0, 20, 21);
+		break;
+
+	case 5:
+		switch (_val2) {
+		case 11:
+			_G(walker).wilbur_speech("142w007");
+			break;
+		case 12:
+			_G(walker).wilbur_speech(inv_player_has("BLOCK OF ICE") ?
+				"142w007" : "142w008");
+			break;
+		case 13:
+			_G(walker).wilbur_speech("142w019");
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 6:
+		player_set_commands_allowed(false);
+		digi_play("142v901", 1, 255, 7);
+		break;
+
+	case 7:
+		digi_play("142e901", 1, 255, 8);
+		break;
+
+	case 9:
+		switch (_val1) {
+		case 14:
+			_val3 = imath_ranged_rand(1, 3);
+			_val1 = 15;
+			_volume = 155;
+			series_play_with_breaks(PLAY1, "142dt01", 0xd00, 9, 3, 6, 100);
+			break;
+
+		case 15:
+			digi_stop(1);
+			digi_unload("100_015");
+			faceTruck();
+			hotspot_set_active("TRUCK", true);
+			_val1 = 16;
+			series_play_with_breaks(PLAY2, "142dt02", 0xd00, 9, 3, 8, 100);
+			break;
+
+		case 16:
+			_val1 = 17;
+			series_play_with_breaks(PLAY3, "142bu01", 0xd00, 9, 3, 6, 100);
+			break;
+
+		case 17:
+			_noWalk = intr_add_no_walk_rect(230, 250, 294, 277, 229, 278);
+			player_set_commands_allowed(true);
+			_series2 = series_show("142dt01", 0xd00, 0, -1, -1, 22);
+			_series3 = series_show("142dt01s", 0xd01, 0, -1, -1, 22);
+			_series1 = series_show("142door", 0xe00);
+			break;
+
+		case 18:
+			player_set_commands_allowed(false);
+			ws_turn_to_face(3);
+			series_play_with_breaks(PLAY4, "142bu02", 0xd00, 8, 2, 6, 100);
+			break;
+
+		case 19:
+			_val1 = 20;
+			series_play_with_breaks(PLAY5, "142dt02", 0xd00, 9, 3, 8, 100);
+			break;
+
+		case 20:
+			digi_preload("100_015");
+			digi_play_loop("100_015", 1);
+			_val3 = imath_ranged_rand(1, 3);
+			_val1 = 21;
+			series_play_with_breaks(PLAY6, "142dt03", 0xd00, 9, 3);
+			break;
+
+		case 21:
+			_val3 = imath_ranged_rand(1, 3);
+			series_play_with_breaks(PLAY7, "142dt03", 0xf00, 8, 3);
+			_volume = 255;
+			kernel_trigger_dispatch_now(11);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case gTELEPORT:
+		// TODO
+		break;
+
+	case 10031:
+		if (_G(flags)[V000] == 1002) {
+			_G(kernel).continue_handling_trigger = true;
+
+		} else {
+			player_update_info();
+
+			if (player_commands_allowed() && _G(roomVal2) &&
+					INTERFACE_VISIBLE && !digi_play_state(1)) {
+				player_set_commands_allowed(false);
+
+				if (_G(player_info).y > 285) {
+					faceTruck();
+				} else {
+					player_walk_to(267, 290, 262, 278);
+				}
+
+				preloadAssets();
+				_G(flags)[V000] = 1004;
+				intr_remove_no_walk_rect(_noWalk);
+				hotspot_set_active("TRUCK", false);
+
+				TerminateMachineAndNull(_series1);
+				TerminateMachineAndNull(_series2);
+
+				_val1 = 19;
+				series_play_with_breaks(PLAY8, "142bu03", 0xd00, 9, 3);
+			} else {
+				kernel_timing_trigger(15, 10031);
+			}
+		}
+		break;
+	// TODO
+	}
 }
 
 void Room142::pre_parser() {
@@ -270,6 +468,21 @@ void Room142::checkAction() {
 			disable_player_commands_and_fade_init(1016);
 		}
 	}
+}
+
+void Room142::faceTruck() {
+	ws_turn_to_face(calc_facing(262, 277));
+}
+
+void Room142::preloadAssets() {
+	series_load("142dt02", -1);
+	series_load("142dt02s", -1);
+	series_load("142dt03", -1);
+	series_load("142dt03s", -1);
+
+	digi_preload_play_breaks(PLAY5);
+	digi_preload_play_breaks(PLAY6);
+	digi_preload_play_breaks(PLAY7);
 }
 
 } // namespace Rooms

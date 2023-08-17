@@ -61,9 +61,7 @@ namespace M4 {
 #define	CONV_CHUNK					((long) ('C' << 24) | ('O' << 16) | ('N' << 8) | 'V')
 #define	DECL_CHUNK					((long) ('D' << 24) | ('E' << 16) | ('C' << 8) | 'L')
 
-//mar22
 #define	FALL_CHUNK					((long) ('F' << 24) | ('A' << 16) | ('L' << 8) | 'L')
-//mar15
 #define	LNODE_CHUNK					((long) ('L' << 24) | ('N' << 16) | ('O' << 8) | 'D')
 #define	NODE_CHUNK					((long) ('N' << 24) | ('O' << 16) | ('D' << 8) | 'E')
 #define	ENTRY_CHUNK					((long) ('E' << 24) | ('T' << 16) | ('R' << 8) | 'Y')

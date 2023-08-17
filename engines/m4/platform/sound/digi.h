@@ -104,8 +104,10 @@ public:
 
 extern bool digi_preload(const Common::String &name, int roomNum = -1);
 extern void digi_unload(const Common::String &name);
-extern int32 digi_play(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
-extern int32 digi_play_loop(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num = -1);
+extern int32 digi_play(const char *name, uint channel, int32 vol = 255,
+	int32 trigger = -1, int32 room_num = -1);
+extern int32 digi_play_loop(const char *name, uint channel, int32 vol = 255,
+	int32 trigger = -1, int32 room_num = -1);
 extern void digi_read_another_chunk();
 extern void digi_stop(int channel);
 extern bool digi_play_state(int channel);

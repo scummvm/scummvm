@@ -109,6 +109,7 @@ public:
 	int _npcTrigger = -1;
 	int _player_facing_x = 0, _player_facing_y = 0;
 	int _player_dest_x = 0, _player_dest_y = 0;
+	int _player_trigger = 0;
 
 public:
 	Vars();

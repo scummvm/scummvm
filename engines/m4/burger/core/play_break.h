@@ -38,7 +38,7 @@ struct seriesPlayBreak {
 	int32 trigger;
 	uint32 flags;
 	int32 loopCount;
-	int32 *variable;
+	int *variable;
 	int32 value;
 };
 

@@ -42,10 +42,12 @@ struct Rails_Globals {
 extern bool InitRails();
 extern void rail_system_shutdown();
 extern void ClearRails();
-noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 altX, int32 altY, Buffer *walkCodes);
+extern noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 altX, int32 altY, Buffer *walkCodes);
+extern noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 altX, int32 altY);
 extern void intr_move_no_walk_rect(noWalkRect *myRect, int32 new_x1, int32 new_y1,
 	int32 new_x2, int32 new_y2, int32 new_altX, int32 new_altY, Buffer *walkCodes);
 extern void intr_remove_no_walk_rect(noWalkRect *myRect, Buffer *walkCodes);
+extern void intr_remove_no_walk_rect(noWalkRect *myRect);
 extern void CreateEdge(int32 node1, int32 node2, Buffer *walkCodes);
 extern void RestoreNodeEdges(int32 nodeID, Buffer *walkCodes);
 extern void RestoreEdgeList(Buffer *walkCodes);
