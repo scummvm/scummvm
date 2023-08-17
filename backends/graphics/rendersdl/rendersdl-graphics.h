@@ -202,7 +202,6 @@ protected:
 	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
 	int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
 	int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
-	int SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key);
 #endif
 
 	/** Unseen game screen */
@@ -385,7 +384,6 @@ protected:
 			{ }
 	};
 
-	SDL_Rect _mouseLastRect, _mouseNextRect;
 	MousePos _mouseCurState;
 #ifdef USE_RGB_COLOR
 	uint32 _mouseKeyColor;
@@ -398,6 +396,7 @@ protected:
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
 	SDL_Surface *_mouseSurface;
+	SDL_Texture *_mouseTexture;
 
 	// Shake mode
 	// This is always set to 0 when building with SDL2.
@@ -429,7 +428,6 @@ protected:
 	virtual void addDirtyRect(int x, int y, int w, int h, bool inOverlay, bool realCoordinates = false);
 
 	virtual void drawMouse();
-	virtual void undrawMouse();
 	virtual void blitCursor();
 
 	virtual void internUpdateScreen();
@@ -450,6 +448,8 @@ protected:
 private:
 	void setFullscreenMode(bool enable);
 	void handleScalerHotkeys(uint mode, int factor);
+
+	void recalculateCursorScaling();
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the
@@ -485,7 +485,6 @@ private:
 	 */
 	bool _needRestoreAfterOverlay;
 	bool _prevForceRedraw;
-	bool _prevCursorNeedsRedraw;
 };
 
 #endif
