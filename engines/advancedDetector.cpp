@@ -33,6 +33,7 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 #include "common/compression/installshield_cab.h"
+#include "common/compression/installshieldv3_archive.h"
 #include "gui/EventRecorder.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
@@ -674,31 +675,45 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	if (md5prop & kMD5Archive) {
 		// The desired file is inside an archive
 
-		// First, check the type of archive
+		// First, split the file string
 		Common::StringTokenizer tok(fname, ":");
 		Common::String archiveType = tok.nextToken();
+		Common::String archiveName = tok.nextToken();
+		Common::String fileName = tok.nextToken();
 
-		if (archiveType.equals("is")) {
-			// InstallShield (v4 and up)
-			Common::String archiveName = tok.nextToken();
+		if (!allFiles.contains(archiveName))
+			return false;
 
-			if (!allFiles.contains(archiveName))
-				return false;
-			
-			Common::Archive *archive = ADCacheMan.getArchive(allFiles[archiveName]);
-			if (!archive) {
+		// Check if archive has already been opened and is stored in cache
+		Common::Archive *archive = ADCacheMan.getArchive(allFiles[archiveName]);
+
+		if (!archive) {
+			// Archive not in cache. Find the appropriate type based on the type string,
+			// open the archive, and add it to the cache 
+			if (archiveType.equals("is")) {
+				// InstallShield (v4 and up)
 				archive = Common::makeInstallShieldArchive(allFiles[archiveName]);
 				ADCacheMan.addArchive(allFiles[archiveName], archive);
 				if (!archive)
 					return false;
-			}
-			
-			testFile.reset(archive->createReadStreamForMember(tok.nextToken()));
-			if (!testFile) {
+			} else if (archiveType.equals("is3")) {
+				// InstallShield v3
+				archive = new Common::InstallShieldV3();
+				if (((Common::InstallShieldV3 *)archive)->open(allFiles[archiveName])) {
+					ADCacheMan.addArchive(allFiles[archiveName], archive);
+				} else {
+					delete archive;
+					return false;
+				}
+			} else {
+				debugC(3, kDebugGlobalDetection, "WARNING: Archive type string '%s' not recognized", archiveType.c_str());
 				return false;
 			}
-		} else {
-			debugC(3, kDebugGlobalDetection, "WARNING: Archive type string '%s' not recognized", archiveType.c_str());
+		}
+
+		// Look for file with matching name inside the archive
+		testFile.reset(archive->createReadStreamForMember(fileName));
+		if (!testFile) {
 			return false;
 		}
 	} else {
