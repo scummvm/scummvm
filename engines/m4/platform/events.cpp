@@ -229,7 +229,7 @@ void Events::delay(uint amount) {
 
 	do {
 		krn_pal_game_task();
-		g_system->delayMillis(10);
+		g_system->delayMillis(5);
 		process();
 
 		newTime = g_system->getMillis();
