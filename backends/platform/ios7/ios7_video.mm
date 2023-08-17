@@ -424,36 +424,12 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	return true;
 }
 
-- (BOOL)isControllerTypeConnected:(Class)controller {
-	for (GameController *c : _controllers) {
-		if ([c isConnected]) {
-			if ([c isKindOfClass:controller]) {
-				return YES;
-			}
-		}
-	}
-	return NO;
-}
-
-- (BOOL)isTouchControllerConnected {
-	return [self isControllerTypeConnected:TouchController.class];
-}
-
-- (BOOL)isMouseControllerConnected {
+- (bool)isGamepadControllerSupported {
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
-		return [self isControllerTypeConnected:MouseController.class];
+		// Both virtual and hardware controllers are supported
+		return true;
 	} else {
-		// Fallback on earlier versions
-		return NO;
-	}
-}
-
-- (BOOL)isGamepadControllerConnected {
-	if (@available(iOS 14.0, tvOS 14.0, *)) {
-		return [self isControllerTypeConnected:GamepadController.class];
-	} else {
-		// Fallback on earlier versions
-		return NO;
+		return false;
 	}
 }
 

@@ -97,9 +97,7 @@ uint getSizeNextPOT(uint size);
 - (void)addEvent:(InternalEvent)event;
 - (bool)fetchEvent:(InternalEvent *)event;
 
-- (BOOL)isTouchControllerConnected;
-- (BOOL)isMouseControllerConnected;
-- (BOOL)isGamepadControllerConnected;
+- (bool)isGamepadControllerSupported;
 - (void)virtualController:(bool)connect;
 @end
 

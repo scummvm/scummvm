@@ -155,12 +155,6 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			event.joystick.button = internalEvent.value1;
 			break;
 
-		case kInputChanged:
-			event.type = Common::EVENT_INPUT_CHANGED;
-			_queuedInputEvent.type = Common::EVENT_INVALID;
-			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
-			break;
-
 		case kInputScreenChanged:
 			rebuildSurface();
 			dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyResize(getScreenWidth(), getScreenHeight());

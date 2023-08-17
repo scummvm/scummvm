@@ -216,13 +216,10 @@ Common::HardwareInputSet *OSystem_iOS7::getHardwareInputSet() {
 	using namespace Common;
 
 	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
-	// Ask view about connected controllers
-	if ([[iOS7AppDelegate iPhoneView] isTouchControllerConnected] ||
-		[[iOS7AppDelegate iPhoneView] isMouseControllerConnected]) {
-		inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
-	}
+	// Mouse is alwyas supported, either through touch or device
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
 
-	if ([[iOS7AppDelegate iPhoneView] isGamepadControllerConnected]) {
+	if ([[iOS7AppDelegate iPhoneView] isGamepadControllerSupported]) {
 		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
 	}
 
