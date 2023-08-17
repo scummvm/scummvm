@@ -373,7 +373,8 @@ bool Walker::wilbur_match(const Common::Array<WilburMatch> &list) {
 
 		if (player_said(m._word0, m._word1)) {
 			term_message("matched %s and %s", m._word0, m._word1);
-			term_message("test variable:%d  value:%d", *m._testVariable, m._testValue);
+			term_message("test variable:%d  value:%d",
+				m._testVariable ? *m._testVariable : 0, m._testValue);
 
 			if (!m._testVariable || *m._testVariable == m._testValue) {
 				if (m._newVariable)
