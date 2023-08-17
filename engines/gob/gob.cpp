@@ -699,9 +699,10 @@ void GobEngine::deinitGameParts() {
 }
 
 Common::Error GobEngine::initGraphics() {
-	if        (is800x600()) {
-		warning("GobEngine::initGraphics(): 800x600 games currently unsupported");
-		return Common::kUnsupportedGameidError;
+	if (is800x600()) {
+		_width = 800;
+		_height = 600;
+		_mode = 0x18;
 	} else if (is640x480()) {
 		_width  = 640;
 		_height = 480;
