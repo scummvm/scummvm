@@ -44,13 +44,6 @@
 	return self;
 }
 
-// Override the setter method
-- (void)setIsConnected:(BOOL)isConnected {
-	// Inform that input changed
-	_isConnected = isConnected;
-	[view addEvent:InternalEvent(kInputChanged, 0, 0)];
-}
-
 - (CGPoint)getLocationInView:(UITouch *)touch; {
 	CGPoint p = [touch locationInView:[self view]];
 	p.x *= [[self view] contentScaleFactor];
