@@ -1655,6 +1655,9 @@
 			<widget name = 'WarningText'
 					height = 'Globals.Line.Height'
 			/>
+			<widget name = 'ResultsText'
+					height = '250'
+			/>
 			<widget name = 'StatusText'
 					height = 'Globals.Line.Height'
 			/>

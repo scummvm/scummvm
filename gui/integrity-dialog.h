@@ -30,6 +30,7 @@
 
 #include "gui/dialog.h"
 #include "gui/widget.h"
+#include "gui/widgets/list.h"
 
 namespace GUI {
 
@@ -50,6 +51,7 @@ enum ProcessState {
 
 class IntegrityDialog : public Dialog, public CommandSender {
 	StaticTextWidget *_warningText;
+	ListWidget *_resultsText;
 
 	StaticTextWidget *_statusText;
 	StaticTextWidget *_errorText;

@@ -44,13 +44,13 @@ enum {
 
 struct ResultFormat {
 	bool error;
-	Common::String messageText;
+	Common::U32StringArray messageText;
 	Common::String emailText;
 	Common::String errorText;
 
 	ResultFormat() {
 		error = 0;
-		messageText = "";
+		messageText = Common::U32StringArray();
 		emailText = "";
 		errorText = "";
 	}
@@ -95,6 +95,10 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 	Common::U32String warningMessage = _(
 		"Verifying file integrity may take a long time to complete. Please wait...\n");
 	_warningText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.WarningText", warningMessage);
+	_resultsText = new ListWidget(this, "GameOptions_IntegrityDialog.ResultsText");
+	_resultsText->setNumberingMode(kListNumberingOff);
+	_resultsText->setList({Common::U32String()});
+	_resultsText->setVisible(false);
 
 	_statusText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.StatusText", Common::U32String::format(_("Calculating file checksums...")));
 	_errorText = new StaticTextWidget(this, "GameOptions_IntegrityDialog.ErrorText", Common::U32String(""));
@@ -170,7 +174,8 @@ void IntegrityDialog::setState(ProcessState state) {
 		_cancelButton->setLabel(_("OK"));
 		_cancelButton->setCmd(kCleanupCmd);
 
-		// Hide all other elements
+		// Hide all elements
+		_warningText->setVisible(false);
 		_statusText->setVisible(false);
 		_errorText->setVisible(false);
 		_percentLabel->setVisible(false);
@@ -180,14 +185,17 @@ void IntegrityDialog::setState(ProcessState state) {
 		break;
 
 	case kResponseReceived:
-		// Display results in _warningText
-		if (g_result->messageText != "")
-			_warningText->setLabel(g_result->messageText);
-		else
-			_warningText->setLabel(g_result->errorText);
+		if (g_result->messageText.size() != 0) {
+			_resultsText->setList(g_result->messageText);
+		} else
+			_resultsText->setList(Common::U32StringArray({g_result->errorText}));
 
-		_copyEmailButton->setVisible(true);
-		_copyEmailButton->setCmd(kCopyEmailCmd);
+		if (g_result->error) {
+			_copyEmailButton->setVisible(true);
+			_copyEmailButton->setCmd(kCopyEmailCmd);
+		}
+
+		_resultsText->setVisible(true);
 
 		break;
 	}
@@ -442,24 +450,32 @@ void IntegrityDialog::sendJSON() {
 
 void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 	Common::JSONObject responseObject = response->asObject();
-	int responeError = responseObject.getVal("error")->asIntegerNumber();
+	int responseError = responseObject.getVal("error")->asIntegerNumber();
 
-	Common::String messageText;
-	if (responeError == -1) { // Unknown variant
+	Common::U32StringArray messageText = {Common::U32String("Results")};
+	if (responseError == -1) { // Unknown variant
+		g_result->error = true;
+
 		long long fileset = responseObject.getVal("fileset")->asIntegerNumber();
 
 		Common::String emailText =
-			Common::String::format("The game of fileset %lld seems to be an unknown game variant. \n\
+			Common::U32String::format("The game of fileset %lld seems to be an unknown game variant. \n\
 		The details of the game : %s, %s, %s, %s, %s",
-								   fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str());
+									  fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str());
 
-		messageText =
-			_(Common::String::format("Your set of game files seems to be unknown to us. \
+		messageText.push_back(
+			_(Common::U32String::format("Your set of game files seems to be unknown to us. \
 			If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org \n%s",
-									 emailText.c_str()));
+										emailText.c_str())));
 
-		g_result->messageText += messageText;
-		g_result->emailText += Common::percentEncodeString(emailText);
+		g_result->messageText = messageText;
+		g_result->emailText = Common::percentEncodeString(emailText);
+		return;
+
+	} else if (responseError == 2) { // Fileset is empty
+		messageText.push_back(_("The game doesn't seem to have any files. Are you sure the path is correct?"));
+
+		g_result->messageText = messageText;
 		return;
 	}
 
@@ -480,19 +496,22 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 		else if (status == "unknown")
 			results[UNKNOWN]++;
 
-		messageText += Common::String::format("%s %s\n", name.c_str(), status.c_str());
+		messageText.push_back(Common::String::format("%s %s\n", name.c_str(), status.c_str()));
 	}
-	if (messageText == "")
-		messageText += _("Files all OK");
+
+	if (messageText.size() == 0)
+		messageText.push_back(_("Files all OK"));
 	else {
-		Common::String resultSummary = "\n\nTotal: ";
-		resultSummary += Common::String::format("%d OK, %d missing, %d mismatch, %d unknown files",
-												results[OK], results[MISSING], results[SIZE_MISMATCH] + results[CHECKSUM_MISMATCH], results[UNKNOWN]);
+		g_result->error = true;
 
-		messageText += resultSummary;
+		Common::String resultSummary = "\n\nTotal: ";
+		resultSummary += Common::U32String::format("%d OK, %d missing, %d mismatch, %d unknown files",
+												   results[OK], results[MISSING], results[SIZE_MISMATCH] + results[CHECKSUM_MISMATCH], results[UNKNOWN]);
+
+		messageText.push_back(resultSummary);
 	}
 
-	g_result->messageText += messageText;
+	g_result->messageText = messageText;
 }
 
 } // End of namespace GUI
