@@ -3631,7 +3631,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ kEoBBaseFlightObjFlipIndex, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2FlightObjFlipIndexDOSProvider },
 	{ kEoBBaseFlightObjShpMap, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2FlightObjShpMapDOSProvider },
 	{ kEoBBaseFlightObjSclIndex, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2FlightObjSclIndexDOSProvider },
-	{ kEoB2TransferPortraitFrames, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2TransferPortraitFramesDOSProvider },
+	{ kEoB2TransferPortraitFrames, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2TransferPortraitFramesDOSChineseProvider },
 	{ kEoB2TransferConvertTable, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2TransferConvertTableDOSProvider },
 	{ kEoB2TransferItemTable, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2TransferItemTableDOSProvider },
 	{ kEoB2TransferExpTable, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2TransferExpTableDOSProvider },

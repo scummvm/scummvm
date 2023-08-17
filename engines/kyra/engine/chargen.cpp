@@ -2036,9 +2036,23 @@ private:
 	const char *const *_strings1;
 	const char *const *_strings2;
 	const char *const *_labels;
+
+	struct DialogDefs {
+		const Common::Rect dlgCoords;
+		const Common::Point headLinesXY[2];
+		const Common::Rect buttonCoords[2];
+		const Common::Point buttonLabelsXY[2];
+	};
+
+	const DialogDefs &_dlg;
+
+	static const DialogDefs _dialogSettings_DEF;
+	static const DialogDefs _dialogSettings_JP;
+	static const DialogDefs _dialogSettings_ZH;
 };
 
-TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
+TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen),
+	_dlg(vm ? ((vm->gameFlags().lang == Common::ZH_TWN) ? _dialogSettings_ZH : (vm->gameFlags().lang == Common::JA_JPN ? _dialogSettings_JP : _dialogSettings_DEF)) : _dialogSettings_DEF) {
 	int temp;
 	_portraitFrames = _vm->staticres()->loadRawDataBe16(kEoB2TransferPortraitFrames, temp);
 	_convertTable = _vm->staticres()->loadRawData(kEoB2TransferConvertTable, temp);
@@ -2163,34 +2177,25 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 }
 
 int TransferPartyWiz::selectCharactersMenu() {
-	static const int16 coordDef[] = { 0, 272, 43, 9, 288 };
-	static const int16 coordJp[] = { 2, 259, 56, 8, 280 };
-	const int16 *coord = coordDef;
-
 	_screen->setCurPage(2);
 	Screen::FontId of = _screen->setFont(_vm->_conFont);
 	_screen->clearCurPage();
 
-	_vm->gui_drawBox(0, 0, 320, 163, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+	for (int i = 0; i < 2; ++i)
+		_vm->gui_drawBox(_dlg.dlgCoords.left, _dlg.dlgCoords.top, _dlg.dlgCoords.width(), _dlg.dlgCoords.height(), _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 
 	_screen->setFont(_vm->_invFont1);
 	for (int i = 0; i < 6; i++)
 		drawCharPortraitWithStats(i, 0);
 	_screen->setFont(_vm->_conFont);
 
-	if (_vm->_flags.lang == Common::JA_JPN) {
-		_screen->printText(_strings2[0], 4, 4, _vm->guiSettings()->colors.guiColorWhite, 0);
-		_screen->printText(_strings2[1], 4, 12, _vm->guiSettings()->colors.guiColorWhite, 0);
-		coord = coordJp;
-	} else {
-		_screen->printText(_strings2[0], 5, 3, _vm->guiSettings()->colors.guiColorWhite, 0);
-		_screen->printText(_strings2[1], 5, 10, _vm->guiSettings()->colors.guiColorWhite, 0);
-	}
+	for (int i = 0; i < 2 && _dlg.headLinesXY[i].x != -1; ++i)
+		_screen->printText(_strings2[i], _dlg.headLinesXY[i].x, _dlg.headLinesXY[i].y, _vm->guiSettings()->colors.guiColorWhite, 0);
 
-	_vm->gui_drawBox(4, 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-	_vm->gui_drawBox(coord[1], 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-	_screen->printShadedText(_labels[0], coord[3], 151 - (coord[0] >> 1), _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_labels[1], coord[4], 151 - (coord[0] >> 1), _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);	
+	for (int i = 0; i < 2; ++i) {
+		_vm->gui_drawBox(_dlg.buttonCoords[i].left, _dlg.buttonCoords[i].top, _dlg.buttonCoords[i].width(), _dlg.buttonCoords[i].height(), _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+		_screen->printShadedText(_labels[i], _dlg.buttonLabelsXY[i].x, _dlg.buttonLabelsXY[i].y, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	}
 
 	_screen->setCurPage(0);
 	_screen->clearPage(0);
@@ -2251,11 +2256,10 @@ int TransferPartyWiz::selectCharactersMenu() {
 			continue;
 		}
 
-		int x = (highlight - 6) * (coord[1] - 4) + 4;
-		_vm->gui_drawBox(x, 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
+		_vm->gui_drawBox(_dlg.buttonCoords[highlight - 6].left, _dlg.buttonCoords[highlight - 6].top, _dlg.buttonCoords[highlight - 6].width(), _dlg.buttonCoords[highlight - 6].height(), _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
 		_screen->updateScreen();
 		_vm->_system->delayMillis(80);
-		_vm->gui_drawBox(x, 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
+		_vm->gui_drawBox(_dlg.buttonCoords[highlight - 6].left, _dlg.buttonCoords[highlight - 6].top, _dlg.buttonCoords[highlight - 6].width(), _dlg.buttonCoords[highlight - 6].height(), _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
 		_screen->updateScreen();
 
 		if (highlight == 6 || _vm->shouldQuit()) {
@@ -2272,7 +2276,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 		if (count == 4 || _vm->shouldQuit())
 			loop = false;
 		else
-			_vm->_gui->messageDialogue(16, count < 4 ? 69 : 70, _vm->guiSettings()->colors.guiColorLightRed);
+			_vm->_gui->messageDialog(16, count < 4 ? 69 : 70, _vm->guiSettings()->colors.guiColorLightRed);
 
 		_screen->updateScreen();
 	}
@@ -2281,52 +2285,71 @@ int TransferPartyWiz::selectCharactersMenu() {
 	if (_vm->shouldQuit())
 		return 0;
 	else
-		_vm->_gui->messageDialogue(16, 71, _vm->guiSettings()->colors.guiColorLightRed);
+		_vm->_gui->messageDialog(16, 71, _vm->guiSettings()->colors.guiColorLightRed);
 
 	return selection;
 }
 
 void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
+	int adjY = 0;
+	int multY = 40;
+	int boxH = 34;
+	int txtColor2D = _vm->guiSettings()->colors.guiColorBlack;
+
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		adjY = -6;
+		multY = 60;
+		boxH = 57;
+		txtColor2D = _vm->guiSettings()->colors.guiColorDarkBlue;
+	}
+
 	int16 x = (charIndex % 2) * 159;
-	int16 y = (charIndex / 2) * 40;
+	int16 y = (charIndex / 2) * multY;
 	EoBCharacter *c = &_vm->_characters[charIndex];
 
-	_screen->fillRect(x + 4, y + 24, x + 36, y + 57, 12);
-	_vm->gui_drawBox(x + 40, y + 24, 118, 34, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+	_screen->fillRect(x + 4, y + 24 + adjY, x + 36, y + 57 + adjY, 12);
+	_vm->gui_drawBox(x + 40, y + 24 + adjY, 118, boxH, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 
 	if (!(c->flags & 1))
 		return;
 
-	_screen->drawShape(_screen->_curPage, c->faceShape, x + 4, y + 25, 0);
+	_screen->drawShape(_screen->_curPage, c->faceShape, x + 4, y + 25 + adjY, 0);
 
 	int color1 = _vm->guiSettings()->colors.guiColorWhite;
-	int color2 = _vm->guiSettings()->colors.guiColorBlack;
+	int color2 = txtColor2D;
 
 	if (enabled) {
 		color1 = _vm->guiSettings()->colors.guiColorLightRed;
 		color2 = _vm->guiSettings()->colors.guiColorWhite;
 	} else {
-		_screen->drawShape(_screen->_curPage, _vm->_disabledCharGrid, x + 4, y + 25, 0);
+		_screen->drawShape(_screen->_curPage, _vm->_disabledCharGrid, x + 4, y + 25 + adjY, 0);
 	}
 
-	_screen->printShadedText(c->name, x + 44, y + 27, color1, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printText(_vm->_chargenRaceSexStrings[c->raceSex], x + 43, y + 36, color2, 0);
-	_screen->printText(_vm->_chargenClassStrings[c->cClass], x + 43, y + 43, color2, 0);
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		_screen->printShadedText(c->name, x + 44, y + 20, color1, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->setFont(of);
+		_screen->printShadedText(_vm->_chargenRaceSexStrings[c->raceSex], x + 43, y + 28, color2, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_vm->_chargenClassStrings[c->cClass], x + 43, y + 43, color2, 0, _vm->guiSettings()->colors.guiColorBlack);
+	} else {
+		_screen->printShadedText(c->name, x + 44, y + 27, color1, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printText(_vm->_chargenRaceSexStrings[c->raceSex], x + 43, y + 36, color2, 0);
+		_screen->printText(_vm->_chargenClassStrings[c->cClass], x + 43, y + 43, color2, 0);
+	}
 
 	Common::String tmp = Common::String::format(_strings1[0], c->level[0]);
 	for (int i = 1; i < _vm->_numLevelsPerClass[c->cClass]; i++)
 		tmp += Common::String::format(_strings1[1], c->level[i]);
-	_screen->printText(tmp.c_str(), x + 43, y + 50, color2, 0);
+
+	if (_vm->gameFlags().lang == Common::ZH_TWN)
+		_screen->printShadedText(tmp.c_str(), x + 43, y + 58, color2, 0, _vm->guiSettings()->colors.guiColorBlack);
+	else
+		_screen->printText(tmp.c_str(), x + 43, y + 50, color2, 0);
 }
 
 void TransferPartyWiz::updateHighlight(int index) {
-	static const int16 xPosDef[] = { 9, 288 };
-	static const int16 xPosJp[] = { 8, 280 };
-	const int16 *xPos = (_vm->_flags.lang == Common::JA_JPN) ? xPosJp : xPosDef;
-	int16 yPos = (_vm->_flags.lang == Common::JA_JPN) ? 150 : 151;
-
 	if (_highlight > 5 && _highlight != index)
-		_screen->printText(_labels[_highlight - 6], xPos[_highlight - 6], yPos, _vm->guiSettings()->colors.guiColorWhite, 0);
+		_screen->printText(_labels[_highlight - 6], _dlg.buttonLabelsXY[_highlight - 6].x, _dlg.buttonLabelsXY[_highlight - 6].y, _vm->guiSettings()->colors.guiColorWhite, 0);
 
 	if (index < 6) {
 		_vm->_gui->updateBoxFrameHighLight(14 + index);
@@ -2340,7 +2363,7 @@ void TransferPartyWiz::updateHighlight(int index) {
 	if (_highlight < 6)
 		_vm->_gui->updateBoxFrameHighLight(-1);
 
-	_screen->printText(_labels[index - 6], xPos[index - 6], yPos, _vm->guiSettings()->colors.guiColorLightRed, 0);
+	_screen->printText(_labels[index - 6], _dlg.buttonLabelsXY[index - 6].x, _dlg.buttonLabelsXY[index - 6].y, _vm->guiSettings()->colors.guiColorLightRed, 0);
 	_screen->updateScreen();
 	_highlight = index;
 }
@@ -2635,6 +2658,27 @@ Common::String TransferPartyWiz::makeTwoByteString(const Common::String &src) {
 	}
 	return n;
 }
+
+const TransferPartyWiz::DialogDefs TransferPartyWiz::_dialogSettings_DEF = {
+	{ 0, 0, 320, 163 },
+	{ { 5, 3 }, { 5, 10 } },
+	{ { 4, 148, 47, 160}, { 272, 148, 315, 160} },
+	{ { 9, 151 }, { 288, 151 } }
+};
+
+const TransferPartyWiz::DialogDefs TransferPartyWiz::_dialogSettings_JP = {
+	{ 0, 0, 320, 163 },
+	{ { 4, 4 }, { 4, 12 } },
+	{ { 4, 146, 60, 160}, { 259, 146, 315, 160} },
+	{ { 8, 150 }, { 280, 150 } }
+};
+
+const TransferPartyWiz::DialogDefs TransferPartyWiz::_dialogSettings_ZH = {
+	{ 0, 0, 320, 200 },
+	{ { 5, 2 }, { -1, -1 } },
+	{ { 2, 180, 37, 200}, { 161, 180, 196, 200} },
+	{ { 4, 183 }, { 163, 183 } }
+};
 
 // Start functions
 

@@ -63,8 +63,8 @@ public:
 	virtual bool runLoadMenu(int x, int y, bool fromMainMenu = false);
 
 	bool confirmDialogue2(int dim, int id, int deflt);
-	void messageDialogue(int dim, int id, int buttonTextCol);
-	void messageDialogue2(int dim, int id, int buttonTextCol);
+	void messageDialog(int dim, int id, int buttonTextCol);
+	void messageDialog2(int dim, int id, int buttonTextCol);
 
 	void updateBoxFrameHighLight(int box);
 
@@ -181,9 +181,13 @@ private:
 
 	const Screen::FontId _menuFont;
 	const Screen::FontId _menuFont2;
+	const int _dlgButtonHeight1;
+	const int _dlgButtonHeight2;
+	const int _dlgButtonLabelYOffs;
 
 	const EoBRect16 *_highlightFrames;
-	static const EoBRect16 _highlightFramesDefault[];
+	static const EoBRect16 _highlightFramesDefault[20];
+	static const EoBRect16 _highlightFramesTransferZH[6];
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
 	static const uint8 _highlightColorTableAmiga[];

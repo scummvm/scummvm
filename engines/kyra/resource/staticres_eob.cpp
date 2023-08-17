@@ -1913,7 +1913,7 @@ void DarkMoonEngine::initStaticResource() {
 	};
 
 	// ScummVM specific
-	static const char *const transferStringsScummVM[3][5] = {
+	static const char *const transferStringsScummVM[5][5] = {
 		{
 			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
 			"Game ID",
@@ -1934,6 +1934,20 @@ void DarkMoonEngine::initStaticResource() {
 			"\r Parece que ya se ha vencido\r Xanathar aqui. Deseas transferir\r el grupo que ha finalizado el\r juego? En caso contrario puedes\r seleccionar otra partida de las\r anteriores guardadas.",
 			"Escoge Fichero",
 			"\r\r   Un momento\r   por favor..."
+		},
+		{// TODO: translate to Japanese
+			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
+			"  ""\x83""Q""\x81""[""\x83\x80""ID",
+			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialog.",
+			"\x83""t""\x83""@""\x83""C""\x83\x8b\x82\xf0\x91""I""\x91\xf0",
+			"\r\r  ""\x82\xb5\x82\xce\x82\xe7\x82\xad\x82\xa8\x91\xd2\x82\xbf\x82\xad\x82\xbe\x82\xb3\x82\xa2\x81""E""\x81""E""\x81""E"
+		},
+		{// TODO: translate to Traditional Chinese
+			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
+			" ""\xb9""C""\xc0\xb8""ID",
+			" It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game dialog.",
+			"\xbf\xef\xbe\xdc\xa4""@""\xad\xd3\xa4\xe5\xa5\xf3",
+			"\r     ""\xbd\xd0\xb5y\xb5\xa5""..."
 		}
 	};
 
@@ -1953,13 +1967,21 @@ void DarkMoonEngine::initStaticResource() {
 			break;
 		case Common::JA_JPN:
 			_errorSlotNoNameString = errorSlotNoNameString[3];
-			_transferStringsScummVM = transferStringsScummVM[0];
+			_transferStringsScummVM = transferStringsScummVM[3];
 			break;
 		case Common::ZH_TWN:
 			_errorSlotNoNameString = errorSlotNoNameString[4];
-			_transferStringsScummVM = transferStringsScummVM[0];
+			_transferStringsScummVM = transferStringsScummVM[4];
 			break;
 	}
+
+	Common::U32String g("選擇一個文件");
+	Common::String r = g.encode(Common::kWindows950);
+	Common::String dmp;
+	for (int i = 0; i < r.size(); ++i) {
+		dmp += (((uint8)r[i] <= 0x7F) ? Common::String(r[i]).c_str() : Common::String::format("\\x%02x", (uint8)r[i]).c_str());
+	}
+	debug("%s", dmp.c_str());
 }
 
 void DarkMoonEngine::initSpells() {
