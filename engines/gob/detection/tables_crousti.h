@@ -41,8 +41,22 @@
 	0, 0, 0
 },
 {
-	{ // -- Fan Translation by BJNFNE --
-		"crousti", 
+	{	// English Fan Translation by denzquix
+		"crousti",
+		"",
+		AD_ENTRY1s("intro.stk", "c660f5500907ecf18a05412d4fda2222", 850731),
+		EN_ANY,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeCrousti,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+{
+	{	// German Fan Translation by BJNFNE
+		"crousti",
 		"",
 		AD_ENTRY1s("intro.stk", "df96be976e53cc7de9e2741c45c18a1f", 864746),
 		DE_DEU,
