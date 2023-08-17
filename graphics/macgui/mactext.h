@@ -289,6 +289,10 @@ public:
 
 	void scroll(int delta);
 
+	// Markdown
+public:
+	void setMarkdownText(const Common::U32String &str);
+
 private:
 	void init();
 	bool isCutAllowed();
