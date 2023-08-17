@@ -141,7 +141,7 @@ public:
 protected:
 #ifdef USE_OSD
 	/** Surface containing the OSD message */
-	SDL_Surface *_osdMessageSurface;
+	SDL_Texture *_osdMessageTexture;
 	/** Transparency level of the OSD message */
 	uint8 _osdMessageAlpha;
 	/** When to start the fade out */
@@ -157,13 +157,15 @@ protected:
 	/** Clear the currently displayed OSD message if any */
 	void removeOSDMessage();
 	/** Surface containing the OSD background activity icon */
-	SDL_Surface *_osdIconSurface;
+	SDL_Texture *_osdIconTexture;
 	/** Screen rectangle where the OSD background activity icon is drawn */
 	SDL_Rect getOSDIconRect() const;
 
 	void updateOSD();
 	void drawOSD();
 #endif
+
+	void drawScreen();
 
 	class AspectRatio {
 		int _kw, _kh;
