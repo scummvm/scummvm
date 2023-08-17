@@ -1974,14 +1974,6 @@ void DarkMoonEngine::initStaticResource() {
 			_transferStringsScummVM = transferStringsScummVM[4];
 			break;
 	}
-
-	Common::U32String g("選擇一個文件");
-	Common::String r = g.encode(Common::kWindows950);
-	Common::String dmp;
-	for (int i = 0; i < r.size(); ++i) {
-		dmp += (((uint8)r[i] <= 0x7F) ? Common::String(r[i]).c_str() : Common::String::format("\\x%02x", (uint8)r[i]).c_str());
-	}
-	debug("%s", dmp.c_str());
 }
 
 void DarkMoonEngine::initSpells() {
