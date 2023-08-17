@@ -57,8 +57,6 @@
 
 // SDL surface flags which got removed in SDL2.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#define SDL_SRCCOLORKEY 0
-#define SDL_SRCALPHA    0
 #define SDL_FULLSCREEN  0x40000000
 #endif
 
@@ -125,7 +123,7 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	_useOldSrc(false), _isHwPalette(false),
 	_overlayscreen(nullptr), _tmpscreen2(nullptr),
 	_screenChangeCount(0),
-	_mouseSurface(nullptr), _mouseScaler(nullptr),
+	_mouseTexture(nullptr), _mouseScaler(nullptr), _mouseSurface(nullptr),
 	_mouseOrigSurface(nullptr), _cursorDontScale(false), _cursorPaletteDisabled(true),
 	_currentShakeXOffset(0), _currentShakeYOffset(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
@@ -137,7 +135,6 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	_transactionMode(kTransactionNone),
 	_scalerPlugins(ScalerMan.getPlugins()), _scalerPlugin(nullptr), _scaler(nullptr),
 	_needRestoreAfterOverlay(false), _isInOverlayPalette(false), _isDoubleBuf(false), _prevForceRedraw(false), _numPrevDirtyRects(0),
-	_prevCursorNeedsRedraw(false),
 	_mouseKeyColor(0), _disableMouseKeyColor(false) {
 
 	// allocate palette storage
@@ -154,9 +151,6 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 		_overlayPalette[i].a = 0xff;
 #endif
 	}
-
-	_mouseLastRect.x = _mouseLastRect.y = _mouseLastRect.w = _mouseLastRect.h = 0;
-	_mouseNextRect.x = _mouseNextRect.y = _mouseNextRect.w = _mouseNextRect.h = 0;
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
@@ -457,8 +451,10 @@ OSystem::TransactionError RenderSdlGraphicsManager::endGFXTransaction() {
 			_screenChangeCount++;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-			if (_transactionDetails.needDisplayResize)
+			if (_transactionDetails.needDisplayResize) {
 				recalculateDisplayAreas();
+				recalculateCursorScaling();
+			}
 #endif
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
@@ -467,15 +463,19 @@ OSystem::TransactionError RenderSdlGraphicsManager::endGFXTransaction() {
 	} else if (_transactionDetails.needTextureUpdate) {
 		setGraphicsModeIntern();
 		recreateScreenTexture();
-		if (_transactionDetails.needDisplayResize)
+		if (_transactionDetails.needDisplayResize) {
 			recalculateDisplayAreas();
+			recalculateCursorScaling();
+		}
 		internUpdateScreen();
 #endif
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-		if (_transactionDetails.needDisplayResize)
+		if (_transactionDetails.needDisplayResize) {
 			recalculateDisplayAreas();
+			recalculateCursorScaling();
+		}
 #endif
 		internUpdateScreen();
 	}
@@ -1082,6 +1082,11 @@ void RenderSdlGraphicsManager::unloadGFXMode() {
 	}
 #endif
 
+	if (_mouseTexture) {
+		SDL_DestroyTexture(_mouseTexture);
+		_mouseTexture = nullptr;
+	}
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	deinitializeRenderer();
 #endif
@@ -1192,18 +1197,11 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	if (debugger)
 		debugger->onFrame();
 
-	bool curCursorNeedsRedraw = _cursorNeedsRedraw;
-	if (_prevCursorNeedsRedraw && _isDoubleBuf) {
-		_cursorNeedsRedraw = true;
-	}
-	_prevCursorNeedsRedraw = curCursorNeedsRedraw;
-
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// If the shake position changed, fill the dirty area with blackness
 	// When building with SDL2, the shake offset is added to the active rect instead,
 	// so this isn't needed there.
-	if (_currentShakeXOffset != _gameScreenShakeXOffset ||
-		(_cursorNeedsRedraw && _mouseLastRect.x <= _currentShakeXOffset)) {
+	if (_currentShakeXOffset != _gameScreenShakeXOffset) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
 		if (_gameScreenShakeXOffset >= 0)
@@ -1223,8 +1221,7 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 
 		_forceRedraw = true;
 	}
-	if (_currentShakeYOffset != _gameScreenShakeYOffset ||
-		(_cursorNeedsRedraw && _mouseLastRect.y <= _currentShakeYOffset)) {
+	if (_currentShakeYOffset != _gameScreenShakeYOffset) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
 		if (_gameScreenShakeYOffset >= 0)
@@ -1296,13 +1293,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 		_needRestoreAfterOverlay = _useOldSrc;
 	}
 
-	// Add the area covered by the mouse cursor to the list of dirty rects if
-	// we have to redraw the mouse, or if the cursor is alpha-blended since
-	// alpha-blended cursors will happily blend into themselves if the surface
-	// under the cursor is not reset first
-	if (_cursorNeedsRedraw || _cursorFormat.aBits() > 1)
-		undrawMouse();
-
 #ifdef USE_OSD
 	updateOSD();
 #endif
@@ -1349,7 +1339,7 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 
 	// Only draw anything if necessary
 	bool doPresent = false;
-	if (actualDirtyRects > 0 || _cursorNeedsRedraw) {
+	if (actualDirtyRects > 0) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 bpp, srcPitch, dstPitch;
@@ -1441,8 +1431,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 			_dirtyRectList[0].h = _videoMode.hardwareHeight;
 		}
 
-		drawMouse();
-
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 		// We draw the focus rectangle on top of everything, to assure it's easily visible.
 		// Of course when the overlay is visible we do not show it, since it is only for game
@@ -1529,6 +1517,7 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 
 	SDL_RenderClear(_renderer);
 	drawScreen();
+	drawMouse();
 #ifdef USE_OSD
 	drawOSD();
 #endif
@@ -2202,6 +2191,11 @@ void RenderSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, i
 			_mouseSurface = nullptr;
 		}
 
+		if (formatChanged && _mouseTexture) {
+			SDL_DestroyTexture(_mouseTexture);
+			_mouseTexture = nullptr;
+		}
+
 		if (!w || !h) {
 			return;
 		}
@@ -2222,6 +2216,11 @@ void RenderSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, i
 			error("Allocating _mouseOrigSurface failed");
 		}
 
+		if (_mouseOrigSurface->format->Aloss < 8)
+			SDL_SetSurfaceBlendMode(_mouseOrigSurface, SDL_BLENDMODE_BLEND);
+		else
+			SDL_SetSurfaceRLE(_mouseOrigSurface, SDL_TRUE);
+
 #ifdef USE_SCALERS
 		if (_mouseScaler != nullptr) {
 			delete _mouseScaler;
@@ -2237,7 +2236,7 @@ void RenderSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, i
 	}
 
 	if (keycolorChanged) {
-		uint32 flags = _disableMouseKeyColor ? 0 : SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA;
+		uint32 flags = _disableMouseKeyColor ? SDL_FALSE : SDL_TRUE;
 		SDL_SetColorKey(_mouseOrigSurface, flags, _mouseKeyColor);
 	}
 
@@ -2276,7 +2275,9 @@ void RenderSdlGraphicsManager::blitCursor() {
 		return;
 	}
 
-	_cursorNeedsRedraw = true;
+	if (!_mouseOrigSurface) {
+		return;
+	}
 
 	int cursorScale;
 	if (_cursorDontScale) {
@@ -2318,6 +2319,11 @@ void RenderSdlGraphicsManager::blitCursor() {
 	}
 
 	if (sizeChanged || !_mouseSurface) {
+		if (_mouseTexture) {
+			SDL_DestroyTexture(_mouseTexture);
+			_mouseTexture = nullptr;
+		}
+
 		if (_mouseSurface)
 			SDL_FreeSurface(_mouseSurface);
 
@@ -2332,10 +2338,15 @@ void RenderSdlGraphicsManager::blitCursor() {
 
 		if (_mouseSurface == nullptr)
 			error("Allocating _mouseSurface failed");
+
+		if (_mouseSurface->format->Aloss < 8)
+			SDL_SetSurfaceBlendMode(_mouseSurface, SDL_BLENDMODE_BLEND);
+		else
+			SDL_SetSurfaceRLE(_mouseSurface, SDL_TRUE);
 	}
 
 	SDL_SetColors(_mouseSurface, _cursorPaletteDisabled ? _currentPalette : _cursorPalette, 0, 256);
-	uint32 flags = _disableMouseKeyColor ? 0 : SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA;
+	uint32 flags = _disableMouseKeyColor ? SDL_FALSE : SDL_TRUE;
 	SDL_SetColorKey(_mouseSurface, flags, _mouseKeyColor);
 
 	SDL_LockSurface(_mouseOrigSurface);
@@ -2376,80 +2387,113 @@ void RenderSdlGraphicsManager::blitCursor() {
 
 	SDL_UnlockSurface(_mouseSurface);
 	SDL_UnlockSurface(_mouseOrigSurface);
-}
 
-void RenderSdlGraphicsManager::undrawMouse() {
-	_mouseLastRect = _mouseNextRect;
+	if (!_mouseTexture) {
+		// TODO: Pick a better pixel format?
+		_mouseTexture = SDL_CreateTexture(_renderer,
+						SDL_PIXELFORMAT_RGBA32,
+						SDL_TEXTUREACCESS_STREAMING,
+						_mouseSurface->w,
+						_mouseSurface->h);
 
-	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
+		if (_mouseTexture == nullptr)
+			error("Creating _mouseTexture failed");
 
-	// The offsets must be applied, since the call to convertWindowToVirtual()
-	// counteracts the move of the view port.
-
-	_mouseNextRect.x = virtualCursor.x + _gameScreenShakeXOffset;
-	_mouseNextRect.y = virtualCursor.y + _gameScreenShakeYOffset;
-
-	if (!_overlayInGUI) {
-		_mouseNextRect.w = _mouseCurState.vW;
-		_mouseNextRect.h = _mouseCurState.vH;
-		_mouseNextRect.x -= _mouseCurState.vHotX;
-		_mouseNextRect.y -= _mouseCurState.vHotY;
-	} else {
-		_mouseNextRect.w = _mouseCurState.rW;
-		_mouseNextRect.h = _mouseCurState.rH;
-		_mouseNextRect.x -= _mouseCurState.rHotX;
-		_mouseNextRect.y -= _mouseCurState.rHotY;
+		SDL_SetTextureBlendMode(_mouseTexture, SDL_BLENDMODE_BLEND);
 	}
 
-	if (!_cursorVisible || !_mouseSurface) {
-		_mouseNextRect.x = _mouseNextRect.y = _mouseNextRect.w = _mouseNextRect.h = 0;
+	SDL_Surface *tmp;
+	if (SDL_LockTextureToSurface(_mouseTexture, nullptr, &tmp) >= 0) {
+		SDL_FillRect(tmp, nullptr, 0);
+		SDL_BlitSurface(_mouseSurface, nullptr, tmp, nullptr);
+		SDL_UnlockTexture(_mouseTexture);
 	}
 
-	// Add the area covered by the mouse cursor to the list of dirty rects if
-	// we have to redraw the mouse, or if the cursor is alpha-blended since
-	// alpha-blended cursors will happily blend into themselves if the surface
-	// under the cursor is not reset first
-	//
-	// The mouse is undrawn using virtual coordinates, i.e. they may be
-	// scaled and aspect-ratio corrected.
-
-	if (_mouseLastRect.w != 0 && _mouseLastRect.h != 0)
-		addDirtyRect(_mouseLastRect.x, _mouseLastRect.y, _mouseLastRect.w, _mouseLastRect.h, _overlayInGUI);
-
-	if (_mouseNextRect.w != 0 && _mouseNextRect.h != 0)
-		addDirtyRect(_mouseNextRect.x, _mouseNextRect.y, _mouseNextRect.w, _mouseNextRect.h, _overlayInGUI);
+	recalculateCursorScaling();
 }
 
 void RenderSdlGraphicsManager::drawMouse() {
-	if (!_cursorVisible || !_mouseSurface || !_mouseCurState.w || !_mouseCurState.h) {
+	if (!_cursorVisible || !_mouseTexture || !_mouseCurState.w || !_mouseCurState.h) {
 		return;
 	}
 
 	SDL_Rect dst;
 
+	// The offsets must be applied, since the call to convertWindowToVirtual()
+	// counteracts the move of the view port.
+
+	dst.x = _cursorX - _mouseCurState.vHotX + _gameScreenShakeXOffset;
+	dst.y = _cursorY - _mouseCurState.vHotY + _gameScreenShakeYOffset;
+	dst.w = _mouseCurState.vW;
+	dst.h = _mouseCurState.vH;
+
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
-
-	dst.x = _mouseNextRect.x;
-	dst.y = _mouseNextRect.y;
-	dst.w = _mouseNextRect.w;
-	dst.h = _mouseNextRect.h;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 		dst.y = real2Aspect(dst.y);
 
-	if (!_overlayInGUI) {
-		dst.x *= _videoMode.scaleFactor;
-		dst.y *= _videoMode.scaleFactor;
+	int rotation = getRotationMode();
+	switch (rotation) {
+	case Common::kRotationNormal:
+		break;
+	case Common::kRotation90: {
+		int x0 = dst.x, y0 = dst.y;
+		dst.x = CLIP<int16>(_windowWidth - 1 - y0, 0, _windowWidth - 1);
+		dst.y = CLIP<int16>(x0, 0, _windowHeight - 1);
+		break;
 	}
-	dst.w = _mouseCurState.rW;
-	dst.h = _mouseCurState.rH;
+	case Common::kRotation180: {
+		dst.x = CLIP<int16>(_windowWidth - 1 - dst.x, 0, _windowWidth - 1);
+		dst.y = CLIP<int16>(_windowHeight - 1 - dst.y, 0, _windowHeight - 1);
+		break;
+	}
+	case Common::kRotation270: {
+		int x0 = dst.x, y0 = dst.y;
+		dst.x = CLIP<int16>(y0, 0, _windowWidth - 1);
+		dst.y = CLIP<int16>(_windowHeight - 1 - x0, 0, _windowHeight - 1);
+		break;
+	}
+	}
 
-	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
-	// clipping necessary
+	// TODO: Handle clipping?
 
-	if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
-		error("SDL_BlitSurface failed: %s", SDL_GetError());
+	if (rotation != 0) {
+		const SDL_Point center = { 0, 0 };
+		if (SDL_RenderCopyEx(_renderer, _mouseTexture, nullptr, &dst, rotation, &center, SDL_FLIP_NONE) != 0)
+			error("SDL_RenderCopy failed: %s", SDL_GetError());
+	} else {
+		if (SDL_RenderCopy(_renderer, _mouseTexture, nullptr, &dst) != 0)
+			error("SDL_RenderCopy failed: %s", SDL_GetError());
+	}
+}
+
+void RenderSdlGraphicsManager::recalculateCursorScaling() {
+	if (!_mouseTexture) {
+		return;
+	}
+
+	int cursorWidth, cursorHeight;
+	SDL_QueryTexture(_mouseTexture, nullptr, nullptr, &cursorWidth, &cursorHeight);
+
+	// By default we use the unscaled versions.
+	_mouseCurState.vHotX = _mouseCurState.rHotX;
+	_mouseCurState.vHotY = _mouseCurState.rHotY;
+	_mouseCurState.vW    = cursorWidth;
+	_mouseCurState.vH    = cursorHeight;
+
+	// In case scaling is actually enabled we will scale the cursor according
+	// to the game screen.
+	/* if (!_cursorDontScale) */ {
+		const frac_t screenScaleFactorX = intToFrac(_gameDrawRect.width()) / _hwScreen->w;
+		const frac_t screenScaleFactorY = intToFrac(_gameDrawRect.height()) / _hwScreen->h;
+
+		_mouseCurState.vHotX = fracToInt(_mouseCurState.rHotX * screenScaleFactorX);
+		_mouseCurState.vW    = fracToInt(cursorWidth          * screenScaleFactorX);
+
+		_mouseCurState.vHotY = fracToInt(_mouseCurState.rHotY * screenScaleFactorY);
+		_mouseCurState.vH    = fracToInt(cursorHeight         * screenScaleFactorY);
+	}
 }
 
 #pragma mark -
@@ -2692,6 +2736,7 @@ void RenderSdlGraphicsManager::drawScreen() {
 void RenderSdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 	SdlGraphicsManager::handleResizeImpl(width, height);
 	recalculateDisplayAreas();
+	recalculateCursorScaling();
 }
 
 void RenderSdlGraphicsManager::handleScalerHotkeys(uint mode, int factor) {
@@ -2971,10 +3016,6 @@ int RenderSdlGraphicsManager::SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Ui
 	}
 
 	return 0;
-}
-
-int RenderSdlGraphicsManager::SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key) {
-	return ::SDL_SetColorKey(surface, flag ? SDL_TRUE : SDL_FALSE, key) ? -1 : 0;
 }
 
 #if defined(USE_IMGUI) && defined(USE_IMGUI_SDLRENDERER2)
