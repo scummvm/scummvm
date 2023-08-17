@@ -130,6 +130,7 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 		else
 			value = readField(file, 8);
 
+		debugC(1, kFreescapeDebugParser, "Reading value: %x", value);
 		int opcode = value >> 8;
 		AnimationOpcode* operation = new AnimationOpcode(opcode);
 		byteSizeOfObject--;
@@ -148,7 +149,7 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 			byteSizeOfObject = byteSizeOfObject - lengthOfCondition;
 		} else {
 			if (byteSizeOfObject >= 1) {
-				operation->position.x() = value >> 8;
+				operation->position.x() = value & 0xff;
 				operation->position.y() = file->readByte();
 				operation->position.z() = file->readByte();
 				debugC(1, kFreescapeDebugParser, "Group operation %d move to: %f %f %f", opcode, operation->position.x(), operation->position.y(), operation->position.z());
