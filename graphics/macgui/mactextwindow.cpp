@@ -173,6 +173,12 @@ void MacTextWindow::appendText(const Common::String &str, const MacFont *macFont
 	appendText(Common::U32String(str), macFont, skipAdd);
 }
 
+void MacTextWindow::setMarkdownText(const Common::U32String &str) {
+	_mactext->setMarkdownText(str);
+
+	_contentIsDirty = true;
+}
+
 void MacTextWindow::clearText() {
 	_mactext->clearText();
 
