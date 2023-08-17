@@ -165,8 +165,8 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	:
 	SdlGraphicsManager(sdlEventSource, window),
 #ifdef USE_OSD
-	_osdMessageSurface(nullptr), _osdMessageAlpha(SDL_ALPHA_TRANSPARENT), _osdMessageFadeStartTime(0),
-	_osdIconSurface(nullptr),
+	_osdMessageTexture(nullptr), _osdMessageAlpha(SDL_ALPHA_TRANSPARENT), _osdMessageFadeStartTime(0),
+	_osdIconTexture(nullptr),
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
@@ -1099,6 +1099,18 @@ void RenderSdlGraphicsManager::unloadGFXMode() {
 		_screen = nullptr;
 	}
 
+#ifdef USE_OSD
+	if (_osdMessageTexture) {
+		SDL_DestroyTexture(_osdMessageTexture);
+		_osdMessageTexture = nullptr;
+	}
+
+	if (_osdIconTexture) {
+		SDL_DestroyTexture(_osdIconTexture);
+		_osdIconTexture = nullptr;
+	}
+#endif
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	deinitializeRenderer();
 #endif
@@ -1122,18 +1134,6 @@ void RenderSdlGraphicsManager::unloadGFXMode() {
 		destroySurface(_overlayscreen);
 		_overlayscreen = nullptr;
 	}
-
-#ifdef USE_OSD
-	if (_osdMessageSurface) {
-		destroySurface(_osdMessageSurface);
-		_osdMessageSurface = nullptr;
-	}
-
-	if (_osdIconSurface) {
-		destroySurface(_osdIconSurface);
-		_osdIconSurface = nullptr;
-	}
-#endif
 
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Reset video mode to original.
@@ -1377,9 +1377,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	bool doPresent = false;
-#endif
 	if (actualDirtyRects > 0 || _cursorNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
@@ -1481,10 +1478,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 
 		drawMouse();
 
-#ifdef USE_OSD
-		drawOSD();
-#endif
-
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 		// We draw the focus rectangle on top of everything, to assure it's easily visible.
 		// Of course when the overlay is visible we do not show it, since it is only for game
@@ -1577,11 +1570,14 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
 			updateScreen(_dirtyRectList, actualDirtyRects);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-			doPresent = true;
-#endif
 		}
 	}
+
+	SDL_RenderClear(_renderer);
+	drawScreen();
+#ifdef USE_OSD
+	drawOSD();
+#endif
 
 	// Set up the old scale factor
 	if (_scaler)
@@ -1597,9 +1593,7 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 	renderImGui();
 #endif
 
-	if (doPresent) {
-		SDL_RenderPresent(_renderer);
-	}
+	SDL_RenderPresent(_renderer);
 #else
 	if (_isDoubleBuf)
 		SDL_Flip(_hwScreen);
@@ -2652,57 +2646,59 @@ void RenderSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg)
 	const SDL_PixelFormatDetails *pixelFormatDetails = SDL_GetPixelFormatDetails(_hwScreen->format);
 	if (pixelFormatDetails == nullptr)
 		error("getting pixel format details failed");
-	_osdMessageSurface = SDL_CreateSurface(
+	SDL_Surface *osdMessageSurface = SDL_CreateSurface(
 		width, height,
 		SDL_GetPixelFormatForMasks(pixelFormatDetails->bits_per_pixel, pixelFormatDetails->Rmask, pixelFormatDetails->Gmask, pixelFormatDetails->Bmask, pixelFormatDetails->Amask));
 #else
-	_osdMessageSurface = SDL_CreateRGBSurface(
+	SDL_Surface *osdMessageSurface = SDL_CreateRGBSurface(
 		SDL_SWSURFACE,
 		width, height, _hwScreen->format->BitsPerPixel, _hwScreen->format->Rmask, _hwScreen->format->Gmask, _hwScreen->format->Bmask, _hwScreen->format->Amask
 	);
 #endif
 
 	// Lock the surface
-	if (!lockSurface(_osdMessageSurface))
+	if (!lockSurface(osdMessageSurface))
 		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
 
 	// Draw a dark gray rect
 	// TODO: Rounded corners ? Border?
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	SDL_FillSurfaceRect(_osdMessageSurface, nullptr, SDL_MapSurfaceRGB(_osdMessageSurface, 64, 64, 64));
+	SDL_FillSurfaceRect(osdMessageSurface, nullptr, SDL_MapSurfaceRGB(osdMessageSurface, 64, 64, 64));
 #else
-	SDL_FillRect(_osdMessageSurface, nullptr, SDL_MapRGB(_osdMessageSurface->format, 64, 64, 64));
+	SDL_FillRect(osdMessageSurface, nullptr, SDL_MapRGB(osdMessageSurface->format, 64, 64, 64));
 #endif
 
 	Graphics::Surface dst;
-	dst.init(_osdMessageSurface->w, _osdMessageSurface->h, _osdMessageSurface->pitch, _osdMessageSurface->pixels,
-		convertSDLPixelFormat(_osdMessageSurface->format));
+	dst.init(osdMessageSurface->w, osdMessageSurface->h, osdMessageSurface->pitch, osdMessageSurface->pixels,
+		convertSDLPixelFormat(osdMessageSurface->format));
 
 	// Render the message, centered, and in white
 	for (i = 0; i < lines.size(); i++) {
 		font->drawString(&dst, lines[i],
 			0, 0 + i * lineHeight + vOffset + lineSpacing, width,
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-			SDL_MapSurfaceRGB(_osdMessageSurface, 255, 255, 255),
+			SDL_MapSurfaceRGB(osdMessageSurface, 255, 255, 255),
 #else
-			SDL_MapRGB(_osdMessageSurface->format, 255, 255, 255),
+			SDL_MapRGB(osdMessageSurface->format, 255, 255, 255),
 #endif
 			Graphics::kTextAlignCenter, 0, true);
 	}
 
 	// Finished drawing, so unlock the OSD message surface
-	SDL_UnlockSurface(_osdMessageSurface);
+	SDL_UnlockSurface(osdMessageSurface);
+
+	// Create a new texture from the surface
+	_osdMessageTexture = SDL_CreateTextureFromSurface(_renderer, osdMessageSurface);
+
+	// We don't need the surface any more
+	SDL_FreeSurface(osdMessageSurface);
 
 	// Init the OSD display parameters, and the fade out
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 	_osdMessageFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
 	// Enable alpha blending
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-	SDL_SetAlpha(_osdMessageSurface, SDL_SRCALPHA, _osdMessageAlpha);
-	SDL_SetSurfaceRLE(_osdMessageSurface, true);
-#else
-	SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
-#endif
+	SDL_SetTextureBlendMode(_osdMessageTexture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureAlphaMod(_osdMessageTexture, _osdMessageAlpha);
 
 #if defined(MACOSX)
 	macOSTouchbarUpdate(msg.encode().c_str());
@@ -2718,11 +2714,14 @@ void RenderSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg)
 }
 
 SDL_Rect RenderSdlGraphicsManager::getOSDMessageRect() const {
+	int w, h;
+	SDL_QueryTexture(_osdMessageTexture, nullptr, nullptr, &w, &h);
+
 	SDL_Rect rect;
-	rect.x = (_hwScreen->w - _osdMessageSurface->w) / 2;
-	rect.y = (_hwScreen->h - _osdMessageSurface->h) / 2;
-	rect.w = _osdMessageSurface->w;
-	rect.h = _osdMessageSurface->h;
+	rect.x = (_windowWidth - w) / 2;
+	rect.y = (_windowHeight - h) / 2;
+	rect.w = w;
+	rect.h = h;
 	return rect;
 }
 
@@ -2731,37 +2730,29 @@ void RenderSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface 
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
-	if (_osdIconSurface && !icon) {
-		// Force a redraw to clear the icon on the next update
-		_forceRedraw = true;
-	}
-
-	if (_osdIconSurface) {
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-		SDL_DestroySurface(_osdIconSurface);
-#else
-		SDL_FreeSurface(_osdIconSurface);
-#endif
-		_osdIconSurface = nullptr;
+	if (_osdIconTexture) {
+		SDL_DestroyTexture(_osdIconTexture);
+		_osdIconTexture = nullptr;
 	}
 
 	if (icon) {
 		const Graphics::PixelFormat &iconFormat = icon->format;
 
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-		_osdIconSurface = SDL_CreateSurface(
+		SDL_Surface *osdIconSurface = SDL_CreateSurfaceFrom(
 				icon->w, icon->h,
 				SDL_GetPixelFormatForMasks(
 					iconFormat.bytesPerPixel * 8,
 					((0xFF >> iconFormat.rLoss) << iconFormat.rShift),
 					((0xFF >> iconFormat.gLoss) << iconFormat.gShift),
 					((0xFF >> iconFormat.bLoss) << iconFormat.bShift),
-					((0xFF >> iconFormat.aLoss) << iconFormat.aShift))
+					((0xFF >> iconFormat.aLoss) << iconFormat.aShift)),
+				const_cast<void *>(icon->getPixels()),
+				icon->pitch
 		);
 #else
-		_osdIconSurface = SDL_CreateRGBSurface(
-				SDL_SWSURFACE,
-				icon->w, icon->h, iconFormat.bytesPerPixel * 8,
+		SDL_Surface *osdIconSurface = SDL_CreateRGBSurfaceFrom(const_cast<void *>(icon->getPixels()),
+				icon->w, icon->h, iconFormat.bytesPerPixel * 8, icon->pitch,
 				((0xFF >> iconFormat.rLoss) << iconFormat.rShift),
 				((0xFF >> iconFormat.gLoss) << iconFormat.gShift),
 				((0xFF >> iconFormat.bLoss) << iconFormat.bShift),
@@ -2769,44 +2760,37 @@ void RenderSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface 
 		);
 #endif
 
-		// Lock the surface
-		if (!lockSurface(_osdIconSurface))
-			error("displayActivityIconOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
+		// Create a new texture from the surface
+		_osdIconTexture = SDL_CreateTextureFromSurface(_renderer, osdIconSurface);
 
-		byte *dst = (byte *) _osdIconSurface->pixels;
-		const byte *src = (const byte *) icon->getPixels();
-		for (int y = 0; y < icon->h; y++) {
-			memcpy(dst, src, icon->w * iconFormat.bytesPerPixel);
-			src += icon->pitch;
-			dst += _osdIconSurface->pitch;
-		}
+		// We don't need the surface any more
+		SDL_FreeSurface(osdIconSurface);
 
-		// Finished drawing, so unlock the OSD icon surface
-		SDL_UnlockSurface(_osdIconSurface);
+		// Enable alpha blending
+		SDL_SetTextureBlendMode(_osdIconTexture, SDL_BLENDMODE_BLEND);
 	}
 }
 
 SDL_Rect RenderSdlGraphicsManager::getOSDIconRect() const {
+	int w, h;
+	SDL_QueryTexture(_osdIconTexture, nullptr, nullptr, &w, &h);
+
 	SDL_Rect dstRect;
-	dstRect.x = _hwScreen->w - _osdIconSurface->w - 10;
+	dstRect.x = _windowWidth - w - 10;
 	dstRect.y = 10;
-	dstRect.w = _osdIconSurface->w;
-	dstRect.h = _osdIconSurface->h;
+	dstRect.w = w;
+	dstRect.h = h;
 	return dstRect;
 }
 
 void RenderSdlGraphicsManager::removeOSDMessage() {
 	// Remove the previous message
-	if (_osdMessageSurface) {
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-		SDL_DestroySurface(_osdMessageSurface);
-#else
-		SDL_FreeSurface(_osdMessageSurface);
-#endif
+	if (_osdMessageTexture) {
+		SDL_DestroyTexture(_osdMessageTexture);
 		_forceRedraw = true;
 	}
 
-	_osdMessageSurface = nullptr;
+	_osdMessageTexture = nullptr;
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
 
 #if defined(MACOSX)
@@ -2828,38 +2812,80 @@ void RenderSdlGraphicsManager::updateOSD() {
 				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
 			}
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-			SDL_SetAlpha(_osdMessageSurface, SDL_SRCALPHA, _osdMessageAlpha);
-			SDL_SetSurfaceRLE(_osdMessageSurface, true);
-#else
-			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
-#endif
+			SDL_SetTextureAlphaMod(_osdMessageTexture, _osdMessageAlpha);
 		}
 
 		if (_osdMessageAlpha == SDL_ALPHA_TRANSPARENT) {
 			removeOSDMessage();
 		}
 	}
-
-	if (_osdIconSurface || _osdMessageSurface) {
-		// Redraw the area below the icon and message for the transparent blit to give correct results.
-		_forceRedraw = true;
-	}
 }
 
 void RenderSdlGraphicsManager::drawOSD() {
-	if (_osdMessageSurface) {
+	if (_osdMessageTexture) {
 		SDL_Rect dstRect = getOSDMessageRect();
-		SDL_BlitSurface(_osdMessageSurface, nullptr, _hwScreen, &dstRect);
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FRect dstRectF;
+		SDL_RectToFRect(&dstRect, &dstRectF);
+		SDL_RenderTexture(_renderer, _osdMessageTexture, nullptr, &dstRectF);
+#else
+		SDL_RenderCopy(_renderer, _osdMessageTexture, nullptr, &dstRect);
+#endif
 	}
 
-	if (_osdIconSurface) {
+	if (_osdIconTexture) {
 		SDL_Rect dstRect = getOSDIconRect();
-		SDL_BlitSurface(_osdIconSurface, nullptr, _hwScreen, &dstRect);
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FRect dstRectF;
+		SDL_RectToFRect(&dstRect, &dstRectF);
+		SDL_RenderTexture(_renderer, _osdIconTexture, nullptr, &dstRectF);
+#else
+		SDL_RenderCopy(_renderer, _osdIconTexture, nullptr, &dstRect);
+#endif
 	}
 }
 
 #endif
+
+void RenderSdlGraphicsManager::drawScreen() {
+	SDL_Rect viewport;
+
+	Common::Rect &drawRect = (_overlayVisible) ? _overlayDrawRect : _gameDrawRect;
+
+	/* Destination rectangle represents the texture before rotation */
+	if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
+		viewport.w = drawRect.height();
+		viewport.h = drawRect.width();
+		int delta = (viewport.w - viewport.h) / 2;
+		viewport.x = drawRect.left - delta;
+		viewport.y = drawRect.top + delta;
+	} else {
+		viewport.w = drawRect.width();
+		viewport.h = drawRect.height();
+		viewport.x = drawRect.left;
+		viewport.y = drawRect.top;
+	}
+
+	int rotangle = (int)_rotationMode;
+
+	if (rotangle != 0) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FRect fViewport;
+		SDL_RectToFRect(&viewport, &fViewport);
+		SDL_RenderTextureRotated(_renderer, _screenTexture, nullptr, &fViewport, rotangle, nullptr, SDL_FLIP_NONE);
+#else
+		SDL_RenderCopyEx(_renderer, _screenTexture, nullptr, &viewport, rotangle, nullptr, SDL_FLIP_NONE);
+#endif
+	} else {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FRect fViewport;
+		SDL_RectToFRect(&viewport, &fViewport);
+		SDL_RenderTexture(_renderer, _screenTexture, nullptr, &fViewport);
+#else
+		SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);
+#endif
+	}
+}
 
 void RenderSdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 	SdlGraphicsManager::handleResizeImpl(width, height);
@@ -3164,46 +3190,6 @@ SDL_Surface *RenderSdlGraphicsManager::SDL_SetVideoMode(int width, int height, i
 
 void RenderSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) {
 	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
-
-	SDL_Rect viewport;
-
-	Common::Rect &drawRect = (_overlayVisible) ? _overlayDrawRect : _gameDrawRect;
-
-	/* Destination rectangle represents the texture before rotation */
-	if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
-		viewport.w = drawRect.height();
-		viewport.h = drawRect.width();
-		int delta = (viewport.w - viewport.h) / 2;
-		viewport.x = drawRect.left - delta;
-		viewport.y = drawRect.top + delta;
-	} else {
-		viewport.w = drawRect.width();
-		viewport.h = drawRect.height();
-		viewport.x = drawRect.left;
-		viewport.y = drawRect.top;
-	}
-
-	int rotangle = (int)_rotationMode;
-
-	SDL_RenderClear(_renderer);
-
-	if (rotangle != 0) {
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-		SDL_FRect fViewport;
-		SDL_RectToFRect(&viewport, &fViewport);
-		SDL_RenderTextureRotated(_renderer, _screenTexture, nullptr, &fViewport, rotangle, nullptr, SDL_FLIP_NONE);
-#else
-		SDL_RenderCopyEx(_renderer, _screenTexture, nullptr, &viewport, rotangle, nullptr, SDL_FLIP_NONE);
-#endif
-	} else {
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-		SDL_FRect fViewport;
-		SDL_RectToFRect(&viewport, &fViewport);
-		SDL_RenderTexture(_renderer, _screenTexture, nullptr, &fViewport);
-#else
-		SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);
-#endif
-	}
 }
 
 int RenderSdlGraphicsManager::SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
