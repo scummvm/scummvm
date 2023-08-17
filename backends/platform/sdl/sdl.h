@@ -32,7 +32,7 @@
 
 #include "common/array.h"
 
-#ifdef USE_OPENGL
+#if SDL_VERSION_ATLEAST(2, 0, 0) || defined(USE_OPENGL)
 #define USE_MULTIPLE_RENDERERS
 #endif
 
@@ -172,6 +172,9 @@ protected:
 #ifdef USE_MULTIPLE_RENDERERS
 	enum GraphicsManagerType {
 		GraphicsManagerSurfaceSDL,
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		GraphicsManagerRenderSDL,
+#endif
 #ifdef USE_OPENGL
 		GraphicsManagerOpenGL,
 #endif
