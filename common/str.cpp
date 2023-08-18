@@ -831,9 +831,9 @@ String percentEncodeString(const String &src) {
 			res += c;
 		else
 			res += Common::String::format("%%%02X", c);
-
-		return res;
 	}
+
+	return res;
 }
 
 } // End of namespace Common
