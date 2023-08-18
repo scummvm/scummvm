@@ -50,10 +50,75 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+const seriesPlayBreak Room106::PLAY1[] = {
+	{ 0, -1, "106d003a", 2, 255, -1, 0, 0, &_val3, 1 },
+	{ 0, -1, "106d003b", 2, 255, -1, 0, 0, &_val3, 2 },
+	{ 0, -1, "106d003c", 2, 255, -1, 0, 0, &_val3, 3 },
+	{ 0, -1, "106d003d", 2, 255, -1, 0, 0, &_val3, 4 },
+	{ 0, -1, "106d003e", 2, 255, -1, 0, 0, &_val3, 5 },
+	{ 0, -1, "106d003f", 2, 255, -1, 0, 0, &_val3, 6 },
+	{ 0, -1, "106d003g", 2, 255, -1, 0, 0, &_val3, 7 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room106::PLAY2[] = {
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room106::PLAY3[] = {
+	{ 0, -1, "106d001a", 2, 255, -1, 0, -1, &_val3, 1 },
+	{ 0, -1, "106d001b", 2, 255, -1, 0, -1, &_val3, 2 },
+	{ 0, -1, "106d001c", 2, 255, -1, 0, -1, &_val3, 3 },
+	{ 0, -1, "106d001d", 2, 255, -1, 0, -1, &_val3, 4 },
+	{ 0, -1, "106d001e", 2, 255, -1, 0, -1, &_val3, 5 },
+	{ 0, -1, "106d001f", 2, 255, -1, 0, -1, &_val3, 6 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room106::PLAY4[] = {
+	{ 0, -1, "106d002a", 2, 255, -1, 0, -1, &_val3, 1 },
+	{ 0, -1, "106d002b", 2, 255, -1, 0, -1, &_val3, 2 },
+	{ 0, -1, "106d002c", 2, 255, -1, 0, -1, &_val3, 3 },
+	{ 0, -1, "106d002d", 2, 255, -1, 0, -1, &_val3, 4 },
+	{ 0, -1, "106d002e", 2, 255, -1, 0, -1, &_val3, 5 },
+	{ 0, -1, "106d002f", 2, 255, -1, 0, -1, &_val3, 6 },
+	{ 0, -1, "106d002g", 2, 255, -1, 0, -1, &_val3, 7 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room106::PLAY5[] = {
+	{ 0,  4, "106d006a", 2, 255, -1, 0, 0, &_val3,  1 },
+	{ 0,  4, "106d006b", 2, 255, -1, 0, 0, &_val3,  2 },
+	{ 0,  4, "106d006c", 2, 255, -1, 0, 0, &_val3,  3 },
+	{ 5, -1, "106_005",  2, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room106::PLAY6[] = {
+	{ 0, 4, "106_005",   2, 255, -1, 0, 0, nullptr, 0 },
+	{ 5, -1, "106d007a", 2, 255, -1, 0, 0, &_val3,  1 },
+	{ 5, -1, "106d007b", 2, 255, -1, 0, 0, &_val3,  2 },
+	{ 5, -1, "106d007c", 2, 255, -1, 0, 0, &_val3,  3 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room106::PLAY7[] = {
+	{ 0, -1, "106d005",  2, 255, -1, 0, 0, &_val3, 1 },
+	{ 0, -1, "106d005b", 2, 255, -1, 0, 0, &_val3, 2 },
+	{ 0, -1, "106d005c", 2, 255, -1, 0, 0, &_val3, 3 },
+	{ 0, -1, "106d005d", 2, 255, -1, 0, 0, &_val3, 4 },
+	{ 0, -1, "106d005e", 2, 255, -1, 0, 0, &_val3, 5 },
+	{ 0, -1, "106d005f", 2, 255, -1, 0, 0, &_val3, 6 },
+	PLAY_BREAK_END
+};
+
+int Room106::_val3;
 
 void Room106::init() {
 	_G(player).walker_in_this_scene = _G(game).room_id != 137 &&
 		_G(game).room_id != 138;
+	_val3 = 0;
 
 	_MATCH.clear();
 	_MATCH.push_back(WilburMatch("JAWZ O' LIFE", "GATE", 2, nullptr, 0, &_val1, 2));
@@ -104,6 +169,13 @@ void Room106::init() {
 }
 
 void Room106::daemon() {
+	switch (_G(kernel).trigger) {
+	case 5:
+		_val3 = imath_ranged_rand(1, 7);
+		_val2 = 7;
+		series_play_with_breaks(PLAY1, "106dg01", 0x501, 3, 3);
+		break;
+	}
 }
 
 void Room106::pre_parser() {
