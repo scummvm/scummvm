@@ -34,11 +34,6 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-#ifndef RELEASE_BUILD
-// Define this to allow for focus rectangle debugging
-#define USE_SDL_DEBUG_FOCUSRECT
-#endif
-
 enum {
 	GFX_RENDERSDL = 0
 };
@@ -103,8 +98,8 @@ public:
 	void fillScreen(uint32 col) override;
 	void fillScreen(const Common::Rect &r, uint32 col) override;
 	void updateScreen() override;
-	void setFocusRectangle(const Common::Rect& rect) override;
-	void clearFocusRectangle() override;
+	void setFocusRectangle(const Common::Rect& rect) override {}
+	void clearFocusRectangle() override {}
 
 	Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
 	void clearOverlay() override;
@@ -415,12 +410,6 @@ protected:
 	 * when accessing the screen.
 	 */
 	Common::Mutex _graphicsMutex;
-
-#ifdef USE_SDL_DEBUG_FOCUSRECT
-	bool _enableFocusRectDebugCode;
-	bool _enableFocusRect;
-	Common::Rect _focusRect;
-#endif
 
 	virtual void addDirtyRect(int x, int y, int w, int h);
 
