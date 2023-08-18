@@ -28,17 +28,133 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID[][4] = {
+	{ "GARBAGE CANS",   "106w002", "106w003",  nullptr    },
+	{ "POLICE STATION", "106w004", "106w004z", "106w004z" },
+	{ "JAIL CELL",      "106w005", "106w004z", "106w004z" },
+	{ "BARRED WINDOW",  "106w006", "106w004z", nullptr    },
+	{ "FENCE ",         "106w008", "106w004z", "106w009"  },
+	{ "RAZOR WIRE",     "106w010", "106w011",  "106w011"  },
+	{ "GATE",           "106w012", "106w004z", "106w013"  },
+	{ "SIGN",           "106w015", nullptr,    nullptr    },
+	{ "TIRE",           "106w016", "106w017",  "106w018"  },
+	{ "TOW TRUCK",      "106w019", "106w004z", "106w020"  },
+	{ "PEGLEG",         "106w021", "106w022",  "106w022"  },
+	{ "PEGLEG ",        "106w021", "106w022",  "106w022"  },
+	{ "TIRE ",          "106w023", "106w020",  "106w020"  },
+	{ "MAIN STREET",    nullptr,   "106w004z", nullptr    },
+	{ "DOG COLLAR ",    "106w900", nullptr,    "106w901"  },
+	{ "DOG COLLAR  ",   "106w900", nullptr,    "106w901"  },
+	{ "HOOK ",          "106w903", "106w904",  "106w004z" },
+	{ "WINCH",          "106w902", "106w004z", "106w904"  },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+
 void Room106::init() {
-	_G(player).walker_in_this_scene = true;
+	_G(player).walker_in_this_scene = _G(game).room_id != 137 &&
+		_G(game).room_id != 138;
+
+	_MATCH.clear();
+	_MATCH.push_back(WilburMatch("JAWZ O' LIFE", "GATE", 2, nullptr, 0, &_val1, 2));
+	_MATCH.push_back(WilburMatch("JAWZ O' LIFE", "CHAIN", 2, nullptr, 0, &_val1, 2));
+	_MATCH.push_back(WilburMatch("JAWZ O' LIFE", "LOCK", 2, nullptr, 0, &_val1, 2));
+
+	digi_preload("100_001");
+	digi_preload("106_101");
+	_digi1 = "100_001";
+
+	kernel_trigger_dispatch_now(1);
+	player_set_commands_allowed(false);
+	_val1 = 0;
+
+	setHotspots();
+	loadSeries();
+
+	if (_G(game).previous_room == -1) {
+		_val2 = _G(flags)[V172] == 10023 ? 9 : 15;
+	} else {
+		_val2 = imath_ranged_rand(1, 2) == 1 ? 5 : 6;
+	}
+
+	kernel_trigger_dispatch_now(3);
+	series_show("106gate", 0x4fd);
+	series_show("106gates", 0x4fe);
+	series_show("106tt", 0x600);
+	series_show("106tire", 0x600);
+
+	switch (_G(game).previous_room) {
+	case 101:
+		ws_demand_location(-40, 317, 3);
+		ws_walk(62, 340, nullptr, 0);
+		break;
+
+	case 138:
+		digi_play("106_102", 1, 255, 4);
+		break;
+
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		ws_demand_location(169, 336, 5);
+		break;
+	}
 }
 
 void Room106::daemon() {
 }
 
 void Room106::pre_parser() {
+	if (player_said("SKY"))
+		player_set_facing_hotspot();
+
+	if (player_said("MAIN STREET") && player_said_any("GEAR", "LOOK AT")) {
+		player_set_facing_at(-40, 317);
+	}
 }
 
 void Room106::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (!_G(walker).wilbur_said(SAID)) {
+		if (player_said_any("GEAR", "LOOK AT") && player_said("MAIN STREET")) {
+			disable_player_commands_and_fade_init(1001);
+			_G(player).command_ready = false;
+		} else if (_G(walker).wilbur_match(_MATCH)) {
+			_G(player).command_ready = false;
+		}
+	}
+}
+
+void Room106::setHotspots() {
+	hotspot_set_active("PEGLEG", false);
+	hotspot_set_active("PEGLEG ", false);
+	hotspot_set_active("DOG COLLAR ", false);
+	hotspot_set_active("DOG COLLAR  ", false);
+
+	switch (_G(flags)[V172]) {
+	case 10023:
+		hotspot_set_active("PEGLEG", true);
+		hotspot_set_active("DOG COLLAR ", true);
+		break;
+
+	case 10024:
+		hotspot_set_active("PEGLEG ", true);
+		hotspot_set_active("DOG COLLAR  ", true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room106::loadSeries() {
+	series_load("106dg04");
+	series_load("106dg04s");
+	series_load("106dg07");
+	series_load("106dg07s");
 }
 
 } // namespace Rooms

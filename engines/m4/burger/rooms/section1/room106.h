@@ -23,12 +23,22 @@
 #define M4_BURGER_ROOMS_SECTION1_ROOM106_H
 
 #include "m4/burger/rooms/room.h"
+#include "m4/burger/walker.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
 class Room106 : public Room {
+private:
+	Common::Array<WilburMatch> _MATCH;
+	const char *_digi1 = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
+
+	void setHotspots();
+	void loadSeries();
+
 public:
 	Room106() : Room() {}
 	~Room106() override {}
