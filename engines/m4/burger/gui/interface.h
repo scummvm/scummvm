@@ -60,7 +60,7 @@ public:
 	char _prepText[40] = { 0 };
 	char _nounText[40] = { 0 };
 	char _verbText[40] = { 0 };
-	bool _flag1 = false;
+	bool _iconSelected = false;
 	int _state = 0;
 
 	Interface();
