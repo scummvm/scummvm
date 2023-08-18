@@ -51,6 +51,8 @@ void EventManager::checkForEvent(Object *compact) {
 					    compact->o_event_list[objCnt].o_event_script;
 					compact->o_tree.o_script_pc[compact->o_tree.o_script_level] =
 					    compact->o_event_list[objCnt].o_event_script;
+
+					break;
 				}
 			}
 	}

@@ -28,13 +28,18 @@ namespace Sword1 {
 
 #define LOOPED 1
 
-#define FRAME_RATE          12                      // number of frames per second (max rate)
-#define SCREEN_WIDTH        640
-#define SCREEN_DEPTH        400
-#define SCREEN_LEFT_EDGE    128
-#define SCREEN_RIGHT_EDGE   (128+SCREEN_WIDTH-1)
-#define SCREEN_TOP_EDGE     128
-#define SCREEN_BOTTOM_EDGE  (128+SCREEN_DEPTH-1)
+#define FRAME_TIME            80  // 80ms, for exactly 12.5Hz
+#define PAUSE_FRAME_RATE      12  // This frame time is only used in fnPauseSeconds(), like for the original
+#define TIMER_RATE            100
+#define TIMER_USEC            1000000 / TIMER_RATE
+#define PALETTE_FADE_RATE     60
+#define PALETTE_FADE_USEC     16667
+#define SCREEN_WIDTH          640
+#define SCREEN_DEPTH          400
+#define SCREEN_LEFT_EDGE      128
+#define SCREEN_RIGHT_EDGE     (128+SCREEN_WIDTH-1)
+#define SCREEN_TOP_EDGE       128
+#define SCREEN_BOTTOM_EDGE    (128+SCREEN_DEPTH-1)
 #define TYPE_FLOOR 1
 #define TYPE_MOUSE 2
 #define TYPE_SPRITE 3

@@ -34,6 +34,7 @@
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/timer.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -577,6 +578,8 @@ Common::Error SwordEngine::go() {
 	_control->checkForOldSaveGames();
 	setTotalPlayTime(0);
 
+	installTimerRoutines();
+
 	uint16 startPos = ConfMan.getInt("boot_param");
 	_control->readSavegameDescriptions();
 	if (startPos) {
@@ -614,6 +617,8 @@ Common::Error SwordEngine::go() {
 			_systemVars.controlPanelMode = CP_NORMAL;
 		}
 	}
+
+	uninstallTimerRoutines();
 
 	return Common::kNoError;
 }
@@ -655,28 +660,32 @@ uint8 SwordEngine::mainLoop() {
 
 		do {
 			uint32 newTime;
+			uint32 frameTime = _system->getMillis();
+
 			bool scrollFrameShown = false;
 
-			uint32 frameTime = _system->getMillis();
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
 
 			_screen->draw();
 			_mouse->animate();
-			_sound->engine();
-			_menu->refresh(MENU_TOP);
-			_menu->refresh(MENU_BOT);
 
-			newTime = _system->getMillis();
-			if (newTime - frameTime < 1000 / FRAME_RATE) {
-				scrollFrameShown = _screen->showScrollFrame();
-				delay((1000 / (FRAME_RATE * 2)) - (_system->getMillis() - frameTime));
+			if (!Logic::_scriptVars[NEW_PALETTE]) {
+				newTime = _system->getMillis();
+				if (newTime - frameTime < FRAME_TIME / 2) {
+					scrollFrameShown = _screen->showScrollFrame();
+					pollInput((FRAME_TIME / 2) - (_system->getMillis() - frameTime));
+				}
 			}
 
+			_sound->engine();
+
 			newTime = _system->getMillis();
-			if ((newTime - frameTime < 1000 / FRAME_RATE) || (!scrollFrameShown))
+			if ((newTime - frameTime < FRAME_TIME) || (!scrollFrameShown))
 				_screen->updateScreen();
-			delay((1000 / FRAME_RATE) - (_system->getMillis() - frameTime));
+			pollInput((FRAME_TIME) - (_system->getMillis() - frameTime));
+
+			_vblCount = 0; // Reset the vBlank counter...
 
 			_mouse->engine(_mouseCoord.x, _mouseCoord.y, _mouseState);
 
@@ -693,26 +702,28 @@ uint8 SwordEngine::mainLoop() {
 
 			_mouseState = 0;
 			_keyPressed.reset();
+
 		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!shouldQuit()));
 
 		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!shouldQuit())) {
 			_screen->fadeDownPalette();
-			int32 relDelay = (int32)_system->getMillis();
-			while (_screen->stillFading()) {
-				relDelay += (1000 / FRAME_RATE);
-				_screen->updateScreen();
-				delay(relDelay - (int32)_system->getMillis());
-			}
 		}
 
-		_sound->quitScreen();
-		_screen->quitScreen(); // close graphic resources
-		_objectMan->closeSection(Logic::_scriptVars[SCREEN]); // close the section that PLAYER has just left, if it's empty now
+		_screen->quitScreen(); // Close graphic resources
+
+		while (_screen->stillFading()) { // This indirectly also waits for FX to be faded
+			if (_vblCount >= _rate)
+				_vblCount = 0;
+		}
+
+		_sound->quitScreen(); // Purge the sound AFTER they've been faded
+
+		_objectMan->closeSection(Logic::_scriptVars[SCREEN]); // Close the section that PLAYER has just left, if it's empty now
 	}
 	return retCode;
 }
 
-void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
+void SwordEngine::pollInput(uint32 delay) { //copied and mutilated from sky.cpp
 
 	Common::Event event;
 	uint32 start = _system->getMillis();
@@ -749,10 +760,10 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 
 		_system->updateScreen();
 
-		if (amount > 0)
+		if (delay > 0)
 			_system->delayMillis(10);
 
-	} while (_system->getMillis() < start + amount);
+	} while (_system->getMillis() < start + delay);
 }
 
 bool SwordEngine::mouseIsActive() {
@@ -770,6 +781,55 @@ void SwordEngine::reinitRes() {
 	_logic->updateScreenParams();
 	_screen->fullRefresh();
 	_screen->draw();
+}
+
+void SwordEngine::updateTopMenu() {
+	_menu->refresh(MENU_TOP);
+}
+
+void SwordEngine::updateBottomMenu() {
+	_menu->refresh(MENU_BOT);
+}
+
+static void vblCallback(void *refCon) {
+	SwordEngine *vm = (SwordEngine *)refCon;
+
+	vm->_inTimer++;
+
+	if (vm->_inTimer == 0) {
+		vm->_vblCount++;
+		vm->_vbl60HzUSecElapsed += TIMER_USEC;
+
+		if ((vm->_vblCount == 1) || (vm->_vblCount == 5)) {
+			vm->updateTopMenu();
+		}
+
+		if ((vm->_vblCount == 3) || (vm->_vblCount == 7)) {
+			vm->updateBottomMenu();
+		}
+
+		if (vm->_vbl60HzUSecElapsed >= PALETTE_FADE_USEC) {
+			// Subtract the target interval (to handle potential drift)
+			vm->_vbl60HzUSecElapsed -= PALETTE_FADE_USEC;
+
+			// This is where you place your 60Hz logic
+			//debug("Fade palette logic!");
+		}
+
+		// TODO: Volume fading here...
+	}
+
+	vm->_inTimer--;
+}
+
+void SwordEngine::installTimerRoutines() {
+	debug(2, "SwordEngine::installTimerRoutines(): Installing timers...");
+	getTimerManager()->installTimerProc(&vblCallback, 1000000 / TIMER_RATE, this, "AILTimer");
+}
+
+void SwordEngine::uninstallTimerRoutines() {
+	debug(2, "SwordEngine::uninstallTimerRoutines(): Uninstalling timers...");
+	getTimerManager()->removeTimerProc(&vblCallback);
 }
 
 } // End of namespace Sword1

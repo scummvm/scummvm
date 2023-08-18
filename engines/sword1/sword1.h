@@ -88,11 +88,20 @@ public:
 
 	uint32 _features;
 
+	int _inTimer = -1; // Is the timer running?
+	int32 _vbl60HzUSecElapsed = 0; // 60 Hz counter for palette fades
+	int _vblCount = 0; // How many vblCallback calls have been made?
+	int _rate = 8;
+
 	bool mouseIsActive();
 
 	static bool isMac() { return _systemVars.platform == Common::kPlatformMacintosh; }
 	static bool isPsx() { return _systemVars.platform == Common::kPlatformPSX; }
 	static bool isWindows() { return _systemVars.platform == Common::kPlatformWindows ; }
+
+	// Used by timer
+	void updateTopMenu();
+	void updateBottomMenu();
 
 protected:
 	// Engine APIs
@@ -116,7 +125,7 @@ protected:
 		return Common::String::format("sword1.%03d", slot);
 	}
 private:
-	void delay(int32 amount);
+	void pollInput(uint32 delay);
 
 	void checkCdFiles();
 	void checkCd();
@@ -124,6 +133,9 @@ private:
 	void flagsToBool(bool *dest, uint8 flags);
 
 	void reinitRes(); //Reinits the resources after a GMM load
+
+	void installTimerRoutines();
+	void uninstallTimerRoutines();
 
 	uint8 mainLoop();
 

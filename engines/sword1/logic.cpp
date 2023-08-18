@@ -990,7 +990,7 @@ int Logic::fnPause(Object *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f
 }
 
 int Logic::fnPauseSeconds(Object *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	cpt->o_pause = pause * FRAME_RATE;
+	cpt->o_pause = pause * PAUSE_FRAME_RATE;
 	cpt->o_logic = LOGIC_pause;
 	return SCRIPT_STOP;
 }
