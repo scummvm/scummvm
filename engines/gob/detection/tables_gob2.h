@@ -110,20 +110,6 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Included in a German version of Adi 2
-	{
-		"gob2",
-		"",
-		AD_ENTRY1("intro.stk", "271863a3dfc27665fac4b3589a0e735f"),
-		DE_DEU,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeGob2,
-	kFeaturesAdLib,
-	0, 0, 0
-},
 { // Supplied by goodoldgeorg in bug report #4163
 	{
 		"gob2",
@@ -357,7 +343,7 @@
 {
 	{
 		"gob2",
-		"",
+		"v1.02",
 		{
 			{"intro.stk", 0, "285d7340f98ebad65d465585da12910b", 837286},
 			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
@@ -479,9 +465,23 @@
 { // Found in french ADI 2.5 Anglais Multimedia 5e
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY1s("intro.stk", "285d7340f98ebad65d465585da12910b", 837286),
 		FR_FRA,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob2,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+{ // Included in a German version of Adi 2
+	{
+		"gob2",
+		"v1.03",
+		AD_ENTRY1("intro.stk", "271863a3dfc27665fac4b3589a0e735f"),
+		DE_DEU,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
