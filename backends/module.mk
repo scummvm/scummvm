@@ -190,6 +190,7 @@ MODULE_OBJS += \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/sdl/sdl-mixer.o \
+	mixer/null/null-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	timer/sdl/sdl-timer.o
 

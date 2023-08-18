@@ -38,11 +38,13 @@ public:
 	NullMixerManager();
 	virtual ~NullMixerManager();
 
-	virtual void init();
+	void init();
 	void update(uint8 callbackPeriod = 10);
 
-	virtual void suspendAudio();
-	virtual int resumeAudio();
+	void suspendAudio() override;
+	int resumeAudio() override;
+
+	bool isNullDevice() const override;
 
 private:
 	uint32 _outputRate;
