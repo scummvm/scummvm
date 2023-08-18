@@ -201,6 +201,9 @@ public:
 	size_t find(const value_type *s, uint32 pos = 0) const;
 	uint32 find(const BaseString &str, uint32 pos = 0) const;
 
+	/** Appends a string containing the characters between beginP (including) and endP (excluding). */
+	void append(const value_type *begin, const value_type *end);
+
 	/**
 	 * Wraps the text in the string to the given line maximum. Lines will be
 	 * broken at any whitespace character. New lines are assumed to be
