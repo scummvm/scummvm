@@ -219,7 +219,7 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 			_state = status ? OVER_CONTROL : NOTHING;
 		}
 
-		if (!_state) {
+		if (_state == NOTHING) {
 			int32 scrStatus;
 			ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &scrStatus);
 
@@ -365,52 +365,51 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 	if (!hotspot)
 		hotspot = hotspot_which(_G(currentSceneDef).hotspots, x, y);
 
-	if (hotspot != _hotspot && !hotspot) {
-		_textField->set_string(" ");
-		_hotspot = nullptr;
-		return NOTHING;
-
-	} else {
-		if (hotspot != _hotspot) {
-			if (!_iconSelected) {
-				if (!mouse_set_sprite(hotspot->cursor_number))
-					mouse_set_sprite(kArrowCursor);
-
-				strncpy(_verbText, hotspot->verb, 40);
-			}
-
-			Common::String tmp = (g_engine->getLanguage() == Common::EN_ANY) ?
-				hotspot->vocab : hotspot->prep;
-			tmp.toUppercase();
-			_textField->set_string(tmp.c_str());
-
-			tmp = hotspot->vocab;
-			tmp.toUppercase();
-			strncpy(_nounText, tmp.c_str(), 40);
-
-			_hotspot = hotspot;
-		}
-
-		if (event == 5 && hotspot) {
-			_G(player).walk_x = x;
-			_G(player).walk_y = y;
-			_G(hotspot_x) = x;
-			_G(hotspot_y) = y;
-
-			if (hotspot) {
-				if (hotspot->feet_x != 0x7fff)
-					_G(player).walk_x = hotspot->feet_x;
-				if (hotspot->feet_y != 0x7fff)
-					_G(player).walk_y = hotspot->feet_y;
-			}
-
-			_G(player).walk_facing = hotspot->facing;
+	if (hotspot != _hotspot) {
+		if (!hotspot) {
+			_textField->set_string(" ");
 			_hotspot = nullptr;
-
-			return SELECTED;
-		} else {
 			return NOTHING;
 		}
+
+		if (!_iconSelected) {
+			if (!mouse_set_sprite(hotspot->cursor_number))
+				mouse_set_sprite(kArrowCursor);
+
+			strncpy(_verbText, hotspot->verb, 40);
+		}
+
+		Common::String tmp = (g_engine->getLanguage() == Common::EN_ANY) ?
+			hotspot->vocab : hotspot->prep;
+		tmp.toUppercase();
+		_textField->set_string(tmp.c_str());
+
+		tmp = hotspot->vocab;
+		tmp.toUppercase();
+		strncpy(_nounText, tmp.c_str(), 40);
+
+		_hotspot = hotspot;
+	}
+
+	if (event == 5 && hotspot) {
+		_G(player).walk_x = x;
+		_G(player).walk_y = y;
+		_G(hotspot_x) = x;
+		_G(hotspot_y) = y;
+
+		if (hotspot) {
+			if (hotspot->feet_x != 0x7fff)
+				_G(player).walk_x = hotspot->feet_x;
+			if (hotspot->feet_y != 0x7fff)
+				_G(player).walk_y = hotspot->feet_y;
+		}
+
+		_G(player).walk_facing = hotspot->facing;
+		_hotspot = nullptr;
+
+		return SELECTED;
+	} else {
+		return IN_CONTROL;
 	}
 }
 
@@ -441,6 +440,7 @@ void Interface::handleState(ControlStatus status) {
 
 	switch (status) {
 	case NOTHING:
+		_hotspot = nullptr;
 		cstrncpy(_nounText, " ", 40);
 		_textField->set_string(" ");
 		break;
