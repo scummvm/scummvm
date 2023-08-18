@@ -165,23 +165,7 @@ protected:
 	void drawOverlay();
 	void recreateOverlay(const int width, const int height);
 
-	class AspectRatio {
-		int _kw, _kh;
-	public:
-		AspectRatio() { _kw = _kh = 0; }
-		AspectRatio(int w, int h);
-
-		bool isAuto() const { return (_kw | _kh) == 0; }
-
-		int kw() const { return _kw; }
-		int kh() const { return _kh; }
-	};
-
-	static AspectRatio getDesiredAspectRatio();
-
-	bool gameNeedsAspectRatioCorrection() const override {
-		return _videoMode.aspectRatioCorrection;
-	}
+	bool gameNeedsAspectRatioCorrection() const override;
 	int getGameRenderScale() const override {
 		return _videoMode.scaleFactor;
 	}
@@ -189,8 +173,6 @@ protected:
 	void handleResizeImpl(const int width, const int height) override;
 
 	virtual void setupHardwareSize();
-
-	void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/* SDL2 features a different API for 2D graphics. We create a wrapper
@@ -269,7 +251,6 @@ protected:
 
 		bool fullscreen;
 		bool aspectRatioCorrection;
-		AspectRatio desiredAspectRatio;
 		bool filtering;
 
 		int mode;
@@ -291,7 +272,6 @@ protected:
 			setup = false;
 			fullscreen = false;
 			aspectRatioCorrection = false;
-			// desiredAspectRatio set to (0, 0) by AspectRatio constructor
 			filtering = false;
 
 			mode = GFX_RENDERSDL;
