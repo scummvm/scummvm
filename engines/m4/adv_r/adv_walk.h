@@ -57,7 +57,7 @@ extern void ws_turn_to_face(int32 facing, int32 trigger = -1);
 extern void ws_nosepick(int32 seriesHash);
 extern void ws_hide_walker();
 extern void ws_unhide_walker();
-extern void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing, bool complete_walk = true);
+extern void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing = -1, bool complete_walk = true);
 
 extern void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing);
 
