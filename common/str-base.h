@@ -245,7 +245,10 @@ public:
 protected:
 	~BaseString();
 
-	void makeUnique();
+	void makeUnique() {
+		ensureCapacity(_size, true);
+	}
+
 	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);

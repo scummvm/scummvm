@@ -123,10 +123,6 @@ TEMPLATE BASESTRING::~BaseString() {
 	decRefCount(_extern._refCount);
 }
 
-TEMPLATE void BASESTRING::makeUnique() {
-	ensureCapacity(_size, true);
-}
-
 TEMPLATE void BASESTRING::ensureCapacity(uint32 new_size, bool keep_old) {
 	bool isShared;
 	uint32 curCapacity, newCapacity;
