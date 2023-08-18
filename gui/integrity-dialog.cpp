@@ -46,12 +46,14 @@ struct ResultFormat {
 	bool error;
 	Common::U32StringArray messageText;
 	Common::String emailText;
+	Common::String emailLink;
 	Common::String errorText;
 
 	ResultFormat() {
 		error = 0;
 		messageText = Common::U32StringArray();
 		emailText = "";
+		emailLink = "";
 		errorText = "";
 	}
 
@@ -456,20 +458,37 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 	if (responseError == -1) { // Unknown variant
 		g_result->error = true;
 
-		long long fileset = responseObject.getVal("fileset")->asIntegerNumber();
+		Common::String fileset = responseObject.getVal("fileset")->asString();
 
 		Common::String emailText =
-			Common::U32String::format("The game of fileset %lld seems to be an unknown game variant. \n\
-		The details of the game : %s, %s, %s, %s, %s",
-									  fileset, g_state->engineid.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str(), g_state->extra.c_str());
+			Common::String::format("To: integrity@scummvm.org\
+\
+Subject: Unknown game variant fileset %s\
+\
+Fileset %s is a new or unknown fileset, the game details are:\
+%s %s %s\
+\
+Here describe the details of your release:\
+",
+								   fileset.c_str(), fileset.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str());
 
-		messageText.push_back(
-			_(Common::U32String::format("Your set of game files seems to be unknown to us. \
-			If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org \n%s",
-										emailText.c_str())));
+		Common::String emailLink = Common::String::format("mailto:integrity@scummvm.org?subject=Subject: Unknown game variant fileset %s&body=%s!", fileset.c_str(), emailText.c_str());
+
+		messageText.push_back(_("Your set of game files seems to be unknown to us."));
+		messageText.push_back(_("If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org"));
+		messageText.push_back(_(""));
+		messageText.push_back(Common::U32String("To: integrity@scummvm.org"));
+		messageText.push_back(_(""));
+		messageText.push_back(Common::U32String::format("Subject: Unknown game variant fileset %s", fileset.c_str()));
+		messageText.push_back(_(""));
+		messageText.push_back(Common::U32String::format("Fileset %s is a new or unknown fileset, the game details are:", fileset.c_str()));
+		messageText.push_back(Common::U32String::format("%s %s %s", g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str()));
+		messageText.push_back(_(""));
+		messageText.push_back(Common::U32String("Here describe the details of your release:"));
 
 		g_result->messageText = messageText;
-		g_result->emailText = Common::percentEncodeString(emailText);
+		g_result->emailText = emailText;
+		g_result->emailLink = emailLink;
 		return;
 
 	} else if (responseError == 2) { // Fileset is empty
@@ -493,7 +512,7 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 			results[CHECKSUM_MISMATCH]++;
 		else if (status == "size_mismatch")
 			results[SIZE_MISMATCH]++;
-		else if (status == "unknown")
+		else if (status == "unknown_file")
 			results[UNKNOWN]++;
 
 		messageText.push_back(Common::String::format("%s %s\n", name.c_str(), status.c_str()));
