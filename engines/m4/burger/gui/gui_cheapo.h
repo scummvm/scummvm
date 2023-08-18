@@ -188,13 +188,14 @@ private:
 
 	int16 cell_pos_x(int16 index);
 	int16 cell_pos_y(int16 index);
+	int16 interface_tracking = -1;
 
 public:
 	int16 _scroll = 0;
 	int16 _cells_h = 0, _cells_v = 0;
 	int16 _cell_w = 0, _cell_h = 0;
 	int16 _must_redraw1 = 0, _must_redraw2 = 0;
-	int16 _highlight = 0, _dehighlight = 0;
+	int16 _highlight = 0;
 	bool _must_redraw_all = false;
 
 	Entry _items[INVENTORY_CELLS_COUNT];

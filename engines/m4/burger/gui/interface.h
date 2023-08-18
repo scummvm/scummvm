@@ -40,6 +40,7 @@ private:
 	void trackIcons();
 	ControlStatus trackHotspots(int event, int x, int y);
 	void dispatch_command();
+	void handleState(ControlStatus status);
 
 public:
 	int _sprite = 22; // main_interface_sprite;

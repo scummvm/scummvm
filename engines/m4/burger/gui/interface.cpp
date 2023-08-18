@@ -213,8 +213,10 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 			break;
 		}
 
-		if (_state == 0 || _state == 2) {
-			_state = _inventory->track(event, _x1, _y1) ? 2 : 0;
+		if (_state == NOTHING || _state == OVER_CONTROL) {
+			status = _inventory->track(event, x - _x1, y - _y1);
+			handleState(status);
+			_state = status ? OVER_CONTROL : NOTHING;
 		}
 
 		if (!_state) {
@@ -431,6 +433,68 @@ void Interface::dispatch_command() {
 
 	g_engine->_activeRoom->pre_parser();
 	g_engine->global_pre_parser();
+}
+
+void Interface::handleState(ControlStatus status) {
+	int highlight = _inventory->_highlight;
+	int index = _inventory->_scroll + highlight;
+
+	switch (status) {
+	case NOTHING:
+		cstrncpy(_nounText, " ", 40);
+		_textField->set_string(" ");
+		break;
+
+	case OVER_CONTROL:
+		if (highlight < -1 || (highlight != -1 && (
+				highlight < 128 || highlight > 129))) {
+			_hotspot = nullptr;
+			cstrncpy(_nounText, _inventory->_items[index]._name.c_str(), 40);
+
+			if (g_engine->getLanguage() == Common::EN_ANY) {
+				_textField->set_string(_inventory->_items[index]._name.c_str());
+			} else {
+				_textField->set_string(_inventory->_items[index]._verb.c_str());
+			}
+		}
+		break;
+
+	case SELECTED:
+		if (highlight != -1 && _inventory->_items[index]._cell != -1) {
+			if (_flag1) {
+				_hotspot = nullptr;
+				cstrncpy(_nounText, _inventory->_items[index]._name.c_str(), 40);
+
+				if (g_engine->getLanguage() == Common::EN_ANY) {
+					_textField->set_string(_inventory->_items[index]._name.c_str());
+				} else {
+					_textField->set_string(_inventory->_items[index]._verb.c_str());
+				}
+
+				term_message("got %d", index);
+				dispatch_command();
+
+				_G(player).ready_to_walk = true;
+				_G(player).need_to_walk = false;
+				_G(player).waiting_for_walk = false;
+			} else {
+				_hotspot = nullptr;
+				cstrncpy(_verbText, _inventory->_items[index]._name.c_str(), 40);
+
+				if (g_engine->getLanguage() == Common::EN_ANY) {
+					_textField->set_string(_inventory->_items[index]._name.c_str());
+				} else {
+					_textField->set_string(_inventory->_items[index]._verb.c_str());
+				}
+
+				mouse_set_sprite(_inventory->_items[index]._cursor);
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Interface::l_cb() {

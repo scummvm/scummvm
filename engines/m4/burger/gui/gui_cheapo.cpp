@@ -539,7 +539,7 @@ Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cell
 		error_show(FL, 'CGIC');
 	}
 
-	_highlight = _dehighlight = -1;
+	_highlight = -1;
 	_must_redraw_all = true;
 	_must_redraw1 = -1;
 	_must_redraw2 = -1;
@@ -720,7 +720,6 @@ ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
 	if (!_GI(visible))
 		return NOTHING;
 
-	static int16 interface_tracking = -1;
 	ControlStatus result = NOTHING;
 
 	int16 over = inside(x, y);
