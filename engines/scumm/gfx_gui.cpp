@@ -1379,7 +1379,8 @@ void ScummEngine::saveSurfacesPreGUI() {
 					// Only draw non transparent pixels
 					if (_tempTextSurface[x + y * _screenWidth] != 0xFD) {
 						if (x < _virtscr[kMainVirtScreen].pitch && y < _virtscr[kMainVirtScreen].h)
-							_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, _tempTextSurface[x + y * _screenWidth]);
+							_virtscr[kMainVirtScreen].setPixel((_virtscr[kMainVirtScreen].xstart + x) % _virtscr[kMainVirtScreen].pitch,
+								y + (_virtscr[kMainVirtScreen].xstart + x) / _virtscr[kMainVirtScreen].pitch, _tempTextSurface[x + y * _screenWidth]);
 					}
 				}
 			}
