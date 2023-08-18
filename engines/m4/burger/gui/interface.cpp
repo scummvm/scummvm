@@ -120,7 +120,7 @@ void Interface::cancel_sentence() {
 	_prepText[0] = '\0';
 	_nounText[0] = '\0';
 	_verbText[0] = '\0';
-	_flag1 = false;
+	_iconSelected = false;
 
 	track_hotspots_refresh();
 }
@@ -203,13 +203,13 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 
 		switch (status) {
 		case NOTHING:
-			_state = 0;
+			_state = NOTHING;
 			break;
 		case SELECTED:
 			trackIcons();
 			break;
 		default:
-			_state = 1;
+			_state = IN_CONTROL;
 			break;
 		}
 
@@ -224,7 +224,7 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 			ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &scrStatus);
 
 			if (y >= _y1) {
-				if (!_flag1)
+				if (!_iconSelected)
 					mouse_set_sprite(kArrowCursor);
 
 				_textField->set_string(" ");
@@ -288,7 +288,7 @@ void Interface::trackIcons() {
 
 	case 6:
 		mouse_set_sprite(_arrow);
-		_flag1 = false;
+		_iconSelected = false;
 
 		if (_btnScrollRight->is_hidden())
 			refresh_right_arrow();
@@ -372,7 +372,7 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 
 	} else {
 		if (hotspot != _hotspot) {
-			if (!_flag1) {
+			if (!_iconSelected) {
 				if (!mouse_set_sprite(hotspot->cursor_number))
 					mouse_set_sprite(kArrowCursor);
 
@@ -426,7 +426,7 @@ void Interface::dispatch_command() {
 	_G(player).command_ready = true;
 	_G(kernel).trigger = -1;
 	_G(kernel).trigger_mode = KT_PREPARSE;
-	_flag1 = false;
+	_iconSelected = false;
 
 	mouse_set_sprite(_arrow);
 	_G(player).walker_trigger = -1;
@@ -461,7 +461,7 @@ void Interface::handleState(ControlStatus status) {
 
 	case SELECTED:
 		if (highlight != -1 && _inventory->_items[index]._cell != -1) {
-			if (_flag1) {
+			if (_iconSelected) {
 				_hotspot = nullptr;
 				cstrncpy(_nounText, _inventory->_items[index]._name.c_str(), 40);
 
@@ -488,6 +488,7 @@ void Interface::handleState(ControlStatus status) {
 				}
 
 				mouse_set_sprite(_inventory->_items[index]._cursor);
+				_iconSelected = true;
 			}
 		}
 		break;
@@ -501,7 +502,7 @@ void Interface::l_cb() {
 	if (player_commands_allowed() && INTERFACE_VISIBLE) {
 		Common::strcpy_s(_verbText, "look at");
 		mouse_set_sprite(_look);
-		_flag1 = true;
+		_iconSelected = true;
 		_G(cursor_state) = kLOOK;
 	}
 }
@@ -510,7 +511,7 @@ void Interface::u_cb() {
 	if (player_commands_allowed() && INTERFACE_VISIBLE) {
 		Common::strcpy_s(_verbText, "gear");
 		mouse_set_sprite(_use);
-		_flag1 = true;
+		_iconSelected = true;
 		_G(cursor_state) = kUSE;
 	}
 }
@@ -519,7 +520,7 @@ void Interface::t_cb() {
 	if (player_commands_allowed() && INTERFACE_VISIBLE) {
 		Common::strcpy_s(_verbText, "take");
 		mouse_set_sprite(_grab);
-		_flag1 = true;
+		_iconSelected = true;
 		_G(cursor_state) = kTAKE;
 	}
 }
@@ -528,7 +529,7 @@ void Interface::a_cb() {
 	if (player_commands_allowed() && INTERFACE_VISIBLE) {
 		Common::strcpy_s(_verbText, "<><><><><><><><>");
 		mouse_set_sprite(_arrow);
-		_flag1 = true;
+		_iconSelected = true;
 		_G(cursor_state) = kARROW;
 	}
 }
