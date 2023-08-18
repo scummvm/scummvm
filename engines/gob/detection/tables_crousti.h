@@ -29,7 +29,7 @@
 {
 	{
 		"crousti",
-		"",
+		"v1.01",
 		AD_ENTRY1s("intro.stk", "63fd795818fa72c32b903bbd99e18ea1", 851926),
 		PT_PRT,
 		kPlatformDOS,
@@ -43,7 +43,7 @@
 {
 	{	// English Fan Translation by denzquix
 		"crousti",
-		"",
+		"v1.01",
 		AD_ENTRY1s("intro.stk", "c660f5500907ecf18a05412d4fda2222", 850731),
 		EN_ANY,
 		kPlatformDOS,
@@ -57,7 +57,7 @@
 {
 	{	// German Fan Translation by BJNFNE
 		"crousti",
-		"",
+		"v1.01",
 		AD_ENTRY1s("intro.stk", "df96be976e53cc7de9e2741c45c18a1f", 864746),
 		DE_DEU,
 		kPlatformDOS,
