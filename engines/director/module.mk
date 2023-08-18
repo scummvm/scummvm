@@ -88,6 +88,7 @@ MODULE_OBJS = \
 	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/maniacbg.o \
 	lingo/xlibs/memoryxobj.o \
+	lingo/xlibs/misc.o \
 	lingo/xlibs/miscx.o \
 	lingo/xlibs/moovxobj.o \
 	lingo/xlibs/movemousexobj.o \
