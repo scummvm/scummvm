@@ -176,8 +176,11 @@ void Talk::talkTo(const Common::String filename) {
 	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() &&
 			(IS_SERRATED_SCALPEL || people._allowWalkAbort))) {
 		// Only interrupt if trying to do an action, and not just if player is walking around the scene
-		if (people._allowWalkAbort)
+		if (people._allowWalkAbort) {
 			abortFlag = true;
+			// an arrow zone might have been clicked before the interrupt, cancel the scene transition
+			ui._exitZone = -1;
+		}
 
 		people[HOLMES].gotoStand();
 	}
