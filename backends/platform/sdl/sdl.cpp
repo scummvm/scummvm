@@ -41,6 +41,7 @@
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 #endif
 
+#include "backends/mixer/null/null-mixer.h"
 #include "backends/events/default/default-events.h"
 #include "backends/events/sdl/legacy-sdl-events.h"
 #include "backends/keymapper/hardware-input.h"
@@ -303,6 +304,13 @@ void OSystem_SDL::initBackend() {
 		_mixerManager = new SdlMixerManager();
 		// Setup and start mixer
 		_mixerManager->init();
+
+		if (_mixerManager->getMixer() == nullptr) {
+			// Audio was unavailable or disabled
+			delete _mixerManager;
+			_mixerManager = new NullMixerManager();
+			_mixerManager->init();
+		}
 	}
 
 #ifdef ENABLE_EVENTRECORDER
