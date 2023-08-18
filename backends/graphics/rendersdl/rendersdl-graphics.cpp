@@ -184,9 +184,6 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
 	_displayDisabled(false),
-#ifdef USE_SDL_DEBUG_FOCUSRECT
-	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
-#endif
 	_transactionMode(kTransactionNone),
 	_scalerPlugins(ScalerMan.getPlugins()), _scalerPlugin(nullptr), _scaler(nullptr),
 	_isDoubleBuf(false), _prevForceRedraw(false), _numPrevDirtyRects(0),
@@ -195,11 +192,6 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(256, sizeof(SDL_Color));
 	_cursorPalette = (SDL_Color *)calloc(256, sizeof(SDL_Color));
-
-#ifdef USE_SDL_DEBUG_FOCUSRECT
-	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
-		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
-#endif
 
 #if defined(USE_ASPECT)
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
@@ -1397,95 +1389,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 			_dirtyRectList[0].h = _videoMode.hardwareHeight;
 		}
 
-#ifdef USE_SDL_DEBUG_FOCUSRECT
-		// We draw the focus rectangle on top of everything, to assure it's easily visible.
-		// Of course when the overlay is visible we do not show it, since it is only for game
-		// specific focus.
-		if (_enableFocusRect && !_overlayInGUI) {
-			int x = _focusRect.left + _currentShakeXOffset;
-			int y = _focusRect.top + _currentShakeYOffset;
-
-			if (x < width && y < height) {
-				int w = _focusRect.width();
-				if (w > width - x)
-					w = width - x;
-
-				int h = _focusRect.height();
-				if (h > height - y)
-					h = height - y;
-
-				x *= scale1;
-				y *= scale1;
-				w *= scale1;
-				h *= scale1;
-
-				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
-					y = real2Aspect(y);
-
-				if (h > 0 && w > 0) {
-					SDL_LockSurface(_hwScreen);
-
-					// Use white as color for now.
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-					Uint32 rectColor = SDL_MapSurfaceRGB(_hwScreen, 0xFF, 0xFF, 0xFF);
-#else
-					Uint32 rectColor = SDL_MapRGB(_hwScreen->format, 0xFF, 0xFF, 0xFF);
-#endif
-
-					// First draw the top and bottom lines
-					// then draw the left and right lines
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-					if (pixelFormatDetails->bytes_per_pixel == 2) {
-#else
-					if (_hwScreen->format->BytesPerPixel == 2) {
-#endif
-						uint16 *top = (uint16 *)((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 2);
-						uint16 *bottom = (uint16 *)((byte *)_hwScreen->pixels + (y + h) * _hwScreen->pitch + x * 2);
-						byte *left = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 2);
-						byte *right = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + (x + w - 1) * 2);
-
-						while (w--) {
-							*top++ = rectColor;
-							*bottom++ = rectColor;
-						}
-
-						while (h--) {
-							*(uint16 *)left = rectColor;
-							*(uint16 *)right = rectColor;
-
-							left += _hwScreen->pitch;
-							right += _hwScreen->pitch;
-						}
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-					} else if (pixelFormatDetails->bytes_per_pixel == 4) {
-#else
-					} else if (_hwScreen->format->BytesPerPixel == 4) {
-#endif
-						uint32 *top = (uint32 *)((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 4);
-						uint32 *bottom = (uint32 *)((byte *)_hwScreen->pixels + (y + h) * _hwScreen->pitch + x * 4);
-						byte *left = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 4);
-						byte *right = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + (x + w - 1) * 4);
-
-						while (w--) {
-							*top++ = rectColor;
-							*bottom++ = rectColor;
-						}
-
-						while (h--) {
-							*(uint32 *)left = rectColor;
-							*(uint32 *)right = rectColor;
-
-							left += _hwScreen->pitch;
-							right += _hwScreen->pitch;
-						}
-					}
-
-					SDL_UnlockSurface(_hwScreen);
-				}
-			}
-		}
-#endif
-
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
 			updateScreen(_dirtyRectList, actualDirtyRects);
@@ -1826,42 +1729,6 @@ void RenderSdlGraphicsManager::setCursorPalette(const byte *colors, uint start, 
 
 	_cursorPaletteDisabled = false;
 	blitCursor();
-}
-
-void RenderSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
-#ifdef USE_SDL_DEBUG_FOCUSRECT
-	// Only enable focus rectangle debug code, when the user wants it
-	if (!_enableFocusRectDebugCode)
-		return;
-
-	_enableFocusRect = true;
-	_focusRect = rect;
-
-	if (rect.left < 0 || rect.top < 0 || rect.right > _videoMode.screenWidth || rect.bottom > _videoMode.screenHeight)
-		warning("RenderSdlGraphicsManager::setFocusRectangle: Got a rect which does not fit inside the screen bounds: %d,%d,%d,%d", rect.left, rect.top, rect.right, rect.bottom);
-
-	// It's gross but we actually sometimes get rects, which are not inside the screen bounds,
-	// thus we need to clip the rect here...
-	_focusRect.clip(_videoMode.screenWidth, _videoMode.screenHeight);
-
-	// We just fake this as a dirty rect for now, to easily force a screen update whenever
-	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
-#endif
-}
-
-void RenderSdlGraphicsManager::clearFocusRectangle() {
-#ifdef USE_SDL_DEBUG_FOCUSRECT
-	// Only enable focus rectangle debug code, when the user wants it
-	if (!_enableFocusRectDebugCode)
-		return;
-
-	_enableFocusRect = false;
-
-	// We just fake this as a dirty rect for now, to easily force a screen update whenever
-	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
-#endif
 }
 
 #pragma mark -
