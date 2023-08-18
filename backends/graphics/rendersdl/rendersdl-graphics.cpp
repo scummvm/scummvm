@@ -1531,44 +1531,22 @@ bool RenderSdlGraphicsManager::saveScreenshot(const Common::Path &filename) cons
 		return false;
 	}
 
-	if (!lockSurface(_hwScreen)) {
-		warning("Could not lock RGB surface");
+	Graphics::Surface data;
+	data.create(_windowWidth, _windowHeight, Graphics::PixelFormat::createFormatRGB24());
+
+	if (SDL_RenderReadPixels(_renderer, NULL, SDL_PIXELFORMAT_RGB24, data.getPixels(), data.pitch) < 0) {
+		warning("Could not create screenshot: %s", SDL_GetError());
+		data.free();
 		return false;
 	}
 
-	Graphics::PixelFormat format = convertSDLPixelFormat(_hwScreen->format);
-	Graphics::Surface data;
-	data.init(_hwScreen->w, _hwScreen->h, _hwScreen->pitch, _hwScreen->pixels, format);
-
-	bool success;
-
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-	SDL_Palette *sdlPalette = SDL_CreateSurfacePalette(_hwScreen);
-#else
-	SDL_Palette *sdlPalette = _hwScreen->format->palette;
-#endif
-	if (sdlPalette) {
-		byte palette[256 * 3];
-		for (int i = 0; i < sdlPalette->ncolors; i++) {
-			palette[(i * 3) + 0] = sdlPalette->colors[i].r;
-			palette[(i * 3) + 1] = sdlPalette->colors[i].g;
-			palette[(i * 3) + 2] = sdlPalette->colors[i].b;
-		}
-
 #ifdef USE_PNG
-		success = Image::writePNG(out, data, palette);
+	const bool success = Image::writePNG(out, data);
 #else
-		success = Image::writeBMP(out, data, palette);
+	const bool success = Image::writeBMP(out, data);
 #endif
-	} else {
-#ifdef USE_PNG
-		success = Image::writePNG(out, data);
-#else
-		success = Image::writeBMP(out, data);
-#endif
-	}
 
-	SDL_UnlockSurface(_hwScreen);
+	data.free();
 
 	return success;
 }
