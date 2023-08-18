@@ -38,7 +38,6 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
-#include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
 #include "gui/EventRecorder.h"
@@ -76,34 +75,6 @@ const OSystem::GraphicsMode s_supportedStretchModes[] = {
 };
 #endif
 
-RenderSdlGraphicsManager::AspectRatio::AspectRatio(int w, int h) {
-	// TODO : Validation and so on...
-	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
-	_kw = w;
-	_kh = h;
-}
-
-#if defined(USE_ASPECT)
-RenderSdlGraphicsManager::AspectRatio RenderSdlGraphicsManager::getDesiredAspectRatio() {
-	const size_t AR_COUNT = 4;
-	const char *desiredAspectRatioAsStrings[AR_COUNT] = {	"auto",				"4/3",				"16/9",				"16/10" };
-	const AspectRatio desiredAspectRatios[AR_COUNT] = {		AspectRatio(0, 0),	AspectRatio(4,3),	AspectRatio(16,9),	AspectRatio(16,10) };
-
-	//TODO : We could parse an arbitrary string, if we code enough proper validation
-	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
-
-	for (size_t i = 0; i < AR_COUNT; i++) {
-		assert(desiredAspectRatioAsStrings[i] != nullptr);
-
-		if (!scumm_stricmp(desiredAspectRatio.c_str(), desiredAspectRatioAsStrings[i])) {
-			return desiredAspectRatios[i];
-		}
-	}
-	// TODO : Report a warning
-	return AspectRatio(0, 0);
-}
-#endif
-
 RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	:
 	SdlGraphicsManager(sdlEventSource, window),
@@ -138,12 +109,7 @@ RenderSdlGraphicsManager::RenderSdlGraphicsManager(SdlEventSource *sdlEventSourc
 	_currentPalette = (SDL_Color *)calloc(256, sizeof(SDL_Color));
 	_cursorPalette = (SDL_Color *)calloc(256, sizeof(SDL_Color));
 
-#if defined(USE_ASPECT)
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
-#else // for small screen platforms
-	_videoMode.aspectRatioCorrection = false;
-#endif
 
 	_scaler = nullptr;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
@@ -185,9 +151,7 @@ bool RenderSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 #ifdef USE_SCALERS
 		(f == OSystem::kFeatureScalers) ||
 #endif
-#ifdef USE_ASPECT
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-#endif
 		(f == OSystem::kFeatureFilteringMode) ||
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
@@ -206,11 +170,9 @@ void RenderSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 	case OSystem::kFeatureFullscreenMode:
 		setFullscreenMode(enable);
 		break;
-#ifdef USE_ASPECT
 	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
-#endif
 	case OSystem::kFeatureFilteringMode:
 		setFilteringMode(enable);
 		break;
@@ -242,10 +204,8 @@ bool RenderSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 		return _videoMode.fullscreen;
-#ifdef USE_ASPECT
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
-#endif
 	case OSystem::kFeatureVSync:
 		return _videoMode.vsync;
 	case OSystem::kFeatureFilteringMode:
@@ -819,76 +779,23 @@ void RenderSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 	_transactionDetails.sizeChanged = true;
 }
 
-void RenderSdlGraphicsManager::fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) const {
-	assert(&width != &height);
+bool RenderSdlGraphicsManager::gameNeedsAspectRatioCorrection() const {
+	if (_videoMode.aspectRatioCorrection) {
+		const uint width = getWidth();
+		const uint height = getHeight();
 
-	if (desiredAspectRatio.isAuto())
-		return;
-
-	int kw = desiredAspectRatio.kw();
-	int kh = desiredAspectRatio.kh();
-
-	const int w = width;
-	const int h = height;
-
-	int bestW = 0, bestH = 0;
-	uint bestMetric = (uint)-1; // Metric is wasted space
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	const int display = _window->getDisplayIndex();
-	const int numModes = SDL_GetNumDisplayModes(display);
-	SDL_DisplayMode modeData, *mode = &modeData;
-	for (int i = 0; i < numModes; ++i) {
-		if (SDL_GetDisplayMode(display, i, &modeData)) {
-			continue;
-		}
-#else
-	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_SWSURFACE); //TODO : Maybe specify a pixel format
-	assert(availableModes);
-
-	while (const SDL_Rect *mode = *availableModes++) {
-#endif
-		if (mode->w < w)
-			continue;
-		if (mode->h < h)
-			continue;
-		if (mode->h * kw != mode->w * kh)
-			continue;
-
-		uint metric = mode->w * mode->h - w * h;
-		if (metric > bestMetric)
-			continue;
-
-		bestMetric = metric;
-		bestW = mode->w;
-		bestH = mode->h;
-
-	// Make editors a bit more happy by having the same amount of closing as
-	// opening curley braces.
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+		// In case we enable aspect ratio correction we force a 4/3 ratio.
+		// But just for 320x200 and 640x400 games, since other games do not need
+		// this.
+		return (width == 320 && height == 200) || (width == 640 && height == 400);
 	}
-#else
-	}
-#endif
 
-	if (!bestW || !bestH) {
-		warning("Unable to enforce the desired aspect ratio");
-		return;
-	}
-	width = bestW;
-	height = bestH;
+	return false;
 }
 
 void RenderSdlGraphicsManager::setupHardwareSize() {
-	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
-		_videoMode.aspectRatioCorrection = false;
-
 	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
-	if (_videoMode.aspectRatioCorrection) {
-		_videoMode.hardwareHeight = real2Aspect(_videoMode.hardwareHeight);
-	}
 }
 
 void RenderSdlGraphicsManager::initGraphicsSurface() {
@@ -939,11 +846,6 @@ bool RenderSdlGraphicsManager::loadGFXMode() {
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
-
-	if (_videoMode.fullscreen) {
-		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
-	}
-
 
 #ifdef ENABLE_EVENTRECORDER
 	_displayDisabled = ConfMan.getBool("disable_display");
@@ -1148,10 +1050,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 			blackrect.x = ((_videoMode.screenWidth + _gameScreenShakeXOffset) * _videoMode.scaleFactor);
 		}
 
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
-			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
-		}
-
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
 		_currentShakeXOffset = _gameScreenShakeXOffset;
@@ -1166,11 +1064,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 		else {
 			blackrect.h = ((-_gameScreenShakeYOffset) * _videoMode.scaleFactor);
 			blackrect.y = ((_videoMode.screenHeight + _gameScreenShakeYOffset) * _videoMode.scaleFactor);
-		}
-
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
-			blackrect.y = real2Aspect(blackrect.y);
-			blackrect.h = real2Aspect(blackrect.h + blackrect.y - 1) - blackrect.y + 1;
 		}
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
@@ -1278,9 +1171,7 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 			int dst_y = r->y;
 			int dst_w = r->w;
 			int dst_h = r->h;
-#ifdef USE_ASPECT
-			int orig_dst_y = 0;
-#endif
+
 			dst_x += _currentShakeXOffset;
 			if (dst_x < 0) {
 				src_x -= dst_x;
@@ -1306,14 +1197,8 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 				if (dst_h > height - src_y)
 					dst_h = height - src_y;
 
-#ifdef USE_ASPECT
-				orig_dst_y = dst_y;
-#endif
 				dst_x *= scale1;
 				dst_y *= scale1;
-
-				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
-					dst_y = real2Aspect(dst_y);
 
 				_scaler->scale((byte *)srcSurf->pixels + (src_x + _maxExtraPixels) * bpp + (src_y + _maxExtraPixels) * srcPitch, srcPitch,
 						(byte *)_hwScreen->pixels + dst_x * bpp + dst_y * dstPitch, dstPitch, dst_w, dst_h, src_x, src_y);
@@ -1322,11 +1207,6 @@ void RenderSdlGraphicsManager::internUpdateScreen() {
 				r->y = dst_y;
 				r->w = dst_w * scale1;
 				r->h = dst_h * scale1;
-
-#ifdef USE_ASPECT
-				if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayInGUI)
-					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, 	convertSDLPixelFormat(_hwScreen->format));
-#endif
 			}
 		}
 		SDL_UnlockSurface(srcSurf);
@@ -1453,7 +1333,8 @@ void RenderSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 
 	if (_transactionMode == kTransactionActive) {
 		_videoMode.aspectRatioCorrection = enable;
-		_transactionDetails.needHotswap = true;
+		_transactionDetails.needUpdatescreen = true;
+		_transactionDetails.needDisplayResize = true;
 	}
 }
 
@@ -1598,11 +1479,6 @@ void RenderSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h) {
 	if (h > height - y) {
 		h = height - y;
 	}
-
-#ifdef USE_ASPECT
-	if (_videoMode.aspectRatioCorrection)
-		makeRectStretchable(x, y, w, h, _videoMode.filtering);
-#endif
 
 	if (w == width && h == height) {
 		_forceRedraw = true;
@@ -2156,16 +2032,6 @@ void RenderSdlGraphicsManager::blitCursor() {
 	_mouseCurState.vHotX = _mouseCurState.hotX;
 	_mouseCurState.vHotY = _mouseCurState.hotY;
 
-#ifdef USE_ASPECT
-	// store original to pass to aspect-correction function later
-	const int rH1 = rH;
-#endif
-
-	if (!_cursorDontScale && _videoMode.aspectRatioCorrection) {
-		rH = real2Aspect(rH - 1) + 1;
-		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
-	}
-
 	bool sizeChanged = false;
 	if (_mouseCurState.rW != rW || _mouseCurState.rH != rH) {
 		_mouseCurState.rW = rW;
@@ -2235,11 +2101,6 @@ void RenderSdlGraphicsManager::blitCursor() {
 		                   _mouseCurState.w, _mouseCurState.h, _mouseSurface->format->BytesPerPixel);
 	}
 
-#ifdef USE_ASPECT
-	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
-		stretch200To240Nearest((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0, convertSDLPixelFormat(_mouseSurface->format));
-#endif
-
 	SDL_UnlockSurface(_mouseSurface);
 	SDL_UnlockSurface(_mouseOrigSurface);
 
@@ -2283,10 +2144,7 @@ void RenderSdlGraphicsManager::drawMouse() {
 	dst.h = _mouseCurState.vH;
 
 	// We draw the pre-scaled cursor image, so now we need to adjust for
-	// scaling, shake position and aspect ratio correction manually.
-
-	if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
-		dst.y = real2Aspect(dst.y);
+	// scaling and shake position manually.
 
 	int rotation = getRotationMode();
 	switch (rotation) {
@@ -2340,8 +2198,8 @@ void RenderSdlGraphicsManager::recalculateCursorScaling() {
 	// In case scaling is actually enabled we will scale the cursor according
 	// to the game screen.
 	if (!_cursorDontScale) {
-		const frac_t screenScaleFactorX = intToFrac(_gameDrawRect.width()) / _hwScreen->w;
-		const frac_t screenScaleFactorY = intToFrac(_gameDrawRect.height()) / _hwScreen->h;
+		const frac_t screenScaleFactorX = intToFrac(_gameDrawRect.width()) / _windowWidth;
+		const frac_t screenScaleFactorY = intToFrac(_gameDrawRect.height()) / _windowHeight;
 
 		_mouseCurState.vHotX = fracToInt(_mouseCurState.rHotX * screenScaleFactorX);
 		_mouseCurState.vW    = fracToInt(cursorWidth          * screenScaleFactorX);
@@ -2643,21 +2501,12 @@ bool RenderSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
 		endGFXTransaction();
 #ifdef USE_OSD
-		Common::U32String message;
-		if (_videoMode.aspectRatioCorrection)
-			message = Common::U32String::format("%S\n%d x %d -> %d x %d",
-			                                    _("Enabled aspect ratio correction").c_str(),
-			                                    _videoMode.screenWidth, _videoMode.screenHeight,
-			                                    _hwScreen->w, _hwScreen->h
-			          );
+		if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+			displayMessageOnOSD(_("Enabled aspect ratio correction"));
 		else
-			message = Common::U32String::format("%S\n%d x %d -> %d x %d",
-			                                    _("Disabled aspect ratio correction").c_str(),
-			                                    _videoMode.screenWidth, _videoMode.screenHeight,
-			                                    _hwScreen->w, _hwScreen->h
-			          );
-		displayMessageOnOSD(message);
+			displayMessageOnOSD(_("Disabled aspect ratio correction"));
 #endif
+		_forceRedraw = true;
 		internUpdateScreen();
 		return true;
 	}
