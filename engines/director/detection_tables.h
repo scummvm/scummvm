@@ -468,6 +468,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "warlock",			"Spaceship Warlock" },
 	{ "wiggles1",			"A Day with the Wiggles" },
 	{ "willywabbit",		"Willy Wabbit & His Magical Books" },
+	{ "willywabbit2",		"Around the World With Willy Wabbit" },
 	{ "willywabbitmosaic",	"Mosaic Game" },
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
@@ -5547,6 +5548,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Windows version is D3
 	MACGAME1t("willywabbit", "North American release", "Willy Wabbit(Click me)", "04e5a9a6c98f48aaef7fe7115b3606ca", 304029, 400),
+
+	// Released on two discs, sold separately or bundled together
+	WINGAME1t_l("willywabbit2", "Around the World", "ATWMAIN.EXE", "34c63cc23bb4987a054bdf8c378b2fc9", 1342511, Common::JA_JPN, 404),
+	WINGAME1t_l("willywabbit2", "Game Pack", "ATWGAME.EXE", "79c57e89e0beb4f8f2bd1ef5cc5ad5d1", 1325755, Common::JA_JPN, 404),
 
 	// Free download from SEC's website:
 	// https://web.archive.org/web/19970109103231/http://www.sec.com.sg/freegame.htm
