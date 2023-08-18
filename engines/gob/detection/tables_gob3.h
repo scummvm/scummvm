@@ -57,7 +57,7 @@
 { // Supplied by raziel_ in bug report #3622
 	{
 		"gob3",
-		"",
+		"v0.50",
 		AD_ENTRY1s("intro.stk", "16b014bf32dbd6ab4c5163c44f56fed1", 445104),
 		EN_GRB,
 		kPlatformDOS,
@@ -172,7 +172,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
@@ -190,7 +190,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
@@ -208,7 +208,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
