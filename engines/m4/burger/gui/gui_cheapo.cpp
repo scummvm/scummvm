@@ -694,10 +694,12 @@ void Inventory::draw(GrBuff *myBuffer) {
 
 			// Draw box around icon
 			if (_highlight == cell_iter) {
-				gr_line(left, top, left + _cell_w - 2, top + 1, __LTGRAY, myBuff);
-				gr_line(left, top + _cell_h - 2, left + _cell_w - 2, top + _cell_h - 2, __LTGRAY, myBuff);
-				gr_line(left, top, left, top + _cell_h - 2, __LTGRAY, myBuff);
-				gr_line(left + _cell_w - 2, top + 1, left + _cell_w - 2, top + _cell_h - 2, __LTGRAY, myBuff);
+				left += 2;
+				top += 20;
+				gr_line(left, top, left + 35, top, __GREEN, myBuff);
+				gr_line(left + 35, top, left + 35, top + 35, __GREEN, myBuff);
+				gr_line(left, top, left, top + 35, __GREEN, myBuff);
+				gr_line(left, top + 35, left + 35, top + 35, __GREEN, myBuff);
 			}
 		}
 	}
