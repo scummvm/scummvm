@@ -114,8 +114,8 @@ public:
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
-	int16 getOverlayHeight() const override { return _videoMode.overlayHeight; }
-	int16 getOverlayWidth() const override { return _videoMode.overlayWidth; }
+	int16 getOverlayHeight() const override { return _overlaySurface ? _overlaySurface->h : 0; }
+	int16 getOverlayWidth() const override { return _overlaySurface ? _overlaySurface->w : 0; }
 
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask, bool disableKeyColor);
@@ -166,6 +166,9 @@ protected:
 #endif
 
 	void drawScreen();
+
+	void drawOverlay();
+	void recreateOverlay(const int width, const int height);
 
 	class AspectRatio {
 		int _kw, _kh;
@@ -224,10 +227,10 @@ protected:
 
 	/** Temporary screen (for scalers) */
 	SDL_Surface *_tmpscreen;
-	/** Temporary screen (for scalers) */
-	SDL_Surface *_tmpscreen2;
 
-	SDL_Surface *_overlayscreen;
+	SDL_Texture *_overlayTexture;
+	SDL_Surface *_overlaySurface;
+	bool _overlayDirty;
 	bool _useOldSrc;
 	Graphics::PixelFormat _overlayFormat;
 	bool _isDoubleBuf, _isHwPalette;
@@ -284,7 +287,6 @@ protected:
 		int scaleFactor;
 
 		int screenWidth, screenHeight;
-		int overlayWidth, overlayHeight;
 		int hardwareWidth, hardwareHeight;
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format;
@@ -308,8 +310,6 @@ protected:
 
 			screenWidth = 0;
 			screenHeight = 0;
-			overlayWidth = 0;
-			overlayHeight = 0;
 			hardwareWidth = 0;
 			hardwareHeight = 0;
 #ifdef USE_RGB_COLOR
@@ -411,9 +411,6 @@ protected:
 	SDL_Color *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
 
-	SDL_Color *_overlayPalette;
-	bool _isInOverlayPalette;
-
 	// Cursor palette data
 	SDL_Color *_cursorPalette;
 
@@ -429,7 +426,7 @@ protected:
 	Common::Rect _focusRect;
 #endif
 
-	virtual void addDirtyRect(int x, int y, int w, int h, bool inOverlay, bool realCoordinates = false);
+	virtual void addDirtyRect(int x, int y, int w, int h);
 
 	virtual void drawMouse();
 	virtual void blitCursor();
@@ -458,39 +455,6 @@ private:
 
 	void recalculateCursorScaling();
 
-	/**
-	 * Converts the given point from the overlay's coordinate space to the
-	 * game's coordinate space.
-	 */
-	Common::Point convertOverlayToGame(const int x, const int y) const {
-		if (getOverlayWidth() == 0 || getOverlayHeight() == 0) {
-			error("convertOverlayToGame called without a valid overlay");
-		}
-
-		return Common::Point(x * getWidth() / getOverlayWidth(),
-							 y * getHeight() / getOverlayHeight());
-	}
-
-	/**
-	 * Converts the given point from the game's coordinate space to the
-	 * overlay's coordinate space.
-	 */
-	Common::Point convertGameToOverlay(const int x, const int y) const {
-		if (getWidth() == 0 || getHeight() == 0) {
-			error("convertGameToOverlay called without a valid overlay");
-		}
-
-		return Common::Point(x * getOverlayWidth() / getWidth(),
-							 y * getOverlayHeight() / getHeight());
-	}
-
-	/**
-	 * Special case for scalers that use the useOldSrc feature (currently
-	 * only the Edge scalers). The variable is checked after closing the
-	 * overlay, so that the creation of a new output buffer for the scaler
-	 * can be triggered.
-	 */
-	bool _needRestoreAfterOverlay;
 	bool _prevForceRedraw;
 };
 
