@@ -25,256 +25,571 @@
 #include "common/list.h"
 #include "common/punycode.h"
 
-const char ESCAPER = '/';
-const char ESCAPE_SLASH = '+';
-const char ESCAPE_SEPARATOR = '/';
-const char *DIR_SEPARATOR = "//";
-const char *SLASH_ESCAPED = "/+";
-
 namespace Common {
 
-Path::Path(const Path &path) {
-	_str = path._str;
+#ifndef RELEASE_BUILD
+bool Path::_shownSeparatorCollisionWarning = false;
+#endif
+
+inline void Path::escape(String &dst, char srcSeparator, const char *begin, const char *end) {
+	if (!end) {
+		end = begin + strlen(begin);
+	}
+
+	const char *nextEsc = strchr(begin, ESCAPE);
+	const char *nextEscSep, *nextSrcSep;
+	if (srcSeparator == SEPARATOR) {
+		// The source directory separator is ours, no need to escape it
+		nextEscSep = nullptr;
+	} else {
+		nextEscSep = strchr(begin, SEPARATOR);
+	}
+	if (!srcSeparator || srcSeparator == SEPARATOR) {
+		// There is no source directory separator, every SEPARATOR will get escaped
+		// Source directory separator is already a SEPARATOR, nothing to do
+		nextSrcSep = nullptr;
+	} else {
+		nextSrcSep = strchr(begin, srcSeparator);
+	}
+
+	while (true) {
+		const char *next = nullptr;
+		if (nextEsc && nextEsc < end && (!next || nextEsc < next)) {
+			next = nextEsc;
+		}
+		if (nextEscSep && nextEscSep < end && (!next || nextEscSep < next)) {
+			next = nextEscSep;
+		}
+		if (nextSrcSep && nextSrcSep < end && (!next || nextSrcSep < next)) {
+			next = nextSrcSep;
+		}
+		if (!next) {
+			break;
+		}
+
+		// Append all content up to what we found first, excluded
+		dst.append(begin, next);
+
+		// We will look after the current found character
+		begin = next + 1;
+
+		// Do the escaping
+		if (next == nextEsc) {
+			// We found an ESCAPE
+			dst += ESCAPE;
+			dst += ESCAPED_ESCAPE;
+			nextEsc = strchr(begin, ESCAPE);
+		} else if (next == nextEscSep) {
+			// We found a SEPARATOR
+			dst += ESCAPE;
+			dst += ESCAPED_SEPARATOR;
+			nextEscSep = strchr(begin, SEPARATOR);
+		} else {
+			// We found a srcSeparator
+			dst += SEPARATOR;
+			nextSrcSep = strchr(begin, srcSeparator);
+		}
+	}
+
+	// Append anything after the last escape up to end
+	dst.append(begin, end);
 }
 
-Path::Path(const char *str, char separator) {
-	set(str, separator);
+inline String Path::unescape(char dstSeparator, const char *begin, const char *end) {
+	String dst;
+
+	if (!end) {
+		end = begin + strlen(begin);
+	}
+
+#ifndef RELEASE_BUILD
+	if (!_shownSeparatorCollisionWarning &&
+	        dstSeparator &&
+	        dstSeparator != ESCAPE && dstSeparator != SEPARATOR) {
+		// ESCAPE and SEPARATOR cases are handled when unescaping
+		const char *dstSep = strchr(begin, dstSeparator);
+		if (dstSep && dstSep < end) {
+			warning("Collision in path \"%s\" with separator %c", begin, dstSeparator);
+			_shownSeparatorCollisionWarning = true;
+		}
+	}
+#endif
+
+	const char *nextEsc = strchr(begin, ESCAPE);
+	const char *nextSep;
+	if (dstSeparator == SEPARATOR) {
+		// dstSeparator is SEPARATOR so there is no substitution to do
+		nextSep = nullptr;
+	} else {
+		nextSep = strchr(begin, SEPARATOR);
+	}
+
+	while (true) {
+		const char *next = nullptr;
+		if (nextEsc && nextEsc < end && (!next || nextEsc < next)) {
+			next = nextEsc;
+		}
+		if (nextSep && nextSep < end && (!next || nextSep < next)) {
+			next = nextSep;
+		}
+		if (!next) {
+			break;
+		}
+
+		// Append all content up to character excluded
+		dst.append(begin, next);
+
+		if (next == nextSep) {
+			// We found a SEPARATOR, replace with dstSeparator
+			// Make sure dstSeparator is not 0
+			assert(dstSeparator);
+			dst += dstSeparator;
+			begin = next + 1;
+			nextSep = strchr(begin, SEPARATOR);
+
+			continue;
+		}
+
+		// We found an ESCAPE
+		char follower = *(next + 1);
+		switch (follower) {
+		case ESCAPED_ESCAPE:
+			dst += ESCAPE;
+#ifndef RELEASE_BUILD
+			if (!_shownSeparatorCollisionWarning && dstSeparator == ESCAPE) {
+				warning("Collision while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
+				_shownSeparatorCollisionWarning = true;
+			}
+#endif
+			break;
+		case ESCAPED_SEPARATOR:
+			dst += SEPARATOR;
+#ifndef RELEASE_BUILD
+			if (!_shownSeparatorCollisionWarning && dstSeparator == SEPARATOR) {
+				warning("Collision while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
+				_shownSeparatorCollisionWarning = true;
+			}
+#endif
+			break;
+		default:
+			error("Invalid escape character '%c' in path part \"%s\"", follower, begin);
+		}
+		begin = next + 2;
+		// Look for the next one
+		nextEsc = strchr(begin, ESCAPE);
+	}
+
+	// Append anything after the last ESCAPE up to end
+	dst.append(begin, end);
+
+	return dst;
 }
 
-Path::Path(const String &str, char separator) {
-	set(str.c_str(), separator);
+bool Path::canUnescape(bool willBeAtBegin, bool wasAtBegin,
+                       const char *begin, const char *end) {
+	if (begin == end || (end == nullptr && *begin == '\x00')) {
+		// It's empty
+		return true;
+	}
+
+	if (*begin == ESCAPE) {
+		if (willBeAtBegin) {
+			// begin will be the start and contains an ESCAPE marker
+			// This means it escapes either a SEPARATOR or an ESCAPE
+			return false;
+		}
+
+		// We won't end up at begin of future path so we must check further what ESCAPE we have
+	} else {
+		if (wasAtBegin && end == nullptr) {
+			// begin is the start of an escaped path and doesn't begin with an ESCAPE
+			// and we go till the end of string
+			// This means we must have ESCAPED_SEPARATOR somewhere
+			return false;
+		}
+	}
+
+	const char *esc = strchr(begin, ESCAPE);
+	while (esc && (!end || esc < end)) {
+		if (*(esc + 1) == ESCAPED_SEPARATOR) {
+			return false;
+		}
+		esc = strchr(esc + 2, ESCAPE);
+	}
+	return true;
+}
+
+String Path::encode(const char *str, char separator) {
+	if (*str != ESCAPE && !strchr(str, SEPARATOR)) {
+		// If we start with ESCAPE we will need to escape
+		// No SEPARATOR, no clash
+		Common::String ret(str);
+		if (separator) {
+			// If separator is 0 there is only one path component
+			ret.replace(separator, SEPARATOR);
+		}
+		return ret;
+	}
+
+	// Prepend ESCAPE as we are escaping
+	Common::String ret(ESCAPE);
+
+	// Do the escape and replace separators by SEPARATOR
+	escape(ret, separator, str);
+
+	return ret;
+}
+
+Path Path::extract(const char *begin, const char *end) const {
+	if (_str.empty() || begin == end) {
+		// We are empty, we can't extract anything
+		return Path();
+	}
+
+	if (!end) {
+		end = _str.c_str() + _str.size();
+	}
+
+	if (!isEscaped()) {
+		Path ret;
+		if (*begin == ESCAPE) {
+			// We were not escaped but we will need to because we are creating a path starting with ESCAPE
+			ret._str += ESCAPE;
+			escape(ret._str, SEPARATOR, begin, end);
+		} else {
+			// Not escaped and no escape character at begin: just do the extraction
+			ret._str = String(begin, end);
+		}
+		return ret;
+	}
+
+	// We are escaped
+
+	// Make sure begin points on real start
+	if (begin == _str.c_str()) {
+		begin++;
+	}
+
+	if (canUnescape(true, false, begin, end)) {
+		// No escaped separator was found and no ESCAPE was at begin, unescape
+		Path ret;
+		ret._str = unescape(SEPARATOR, begin, end);
+
+		return ret;
+	}
+
+	// We can't unescape add escape marker and the escaped range
+	Path ret;
+	ret._str += ESCAPE;
+	ret._str.append(begin, end);
+	return ret;
 }
 
 String Path::toString(char separator) const {
-	String res;
-	for (uint i = 0; i < _str.size(); i++) {
-		if (_str[i] == ESCAPER) {
-			i++;
-			if (_str[i] == ESCAPE_SLASH)
-				res += '/';
-			else if (_str[i] == ESCAPE_SEPARATOR)
-				res += separator;
-			else
-				error("Path::toString(): Malformed Common::Path. '%c' unexpected after '/'", _str[i]);
-		} else {
-			res += _str[i];
-		}
+	// toString should never be called with \x00 separator
+	assert(separator != kNoSeparator);
+
+	if (_str.empty() ||
+	        (separator == SEPARATOR && !isEscaped())) {
+		return _str;
 	}
-	return res;
+
+	if (!isEscaped()) {
+		// Path was not escaped, replace all SEPARATOR by the real separator
+#ifndef RELEASE_BUILD
+		if (!_shownSeparatorCollisionWarning && strchr(_str.c_str(), separator)) {
+			warning("Collision while unescaping path \"%s\" with separator %c", _str.c_str(), separator);
+			_shownSeparatorCollisionWarning = true;
+		}
+#endif
+
+		Common::String ret(_str);
+		ret.replace(SEPARATOR, separator);
+		return ret;
+	}
+
+	// Remove leading escape indicator and do our stuff
+	const char *str = _str.c_str();
+	str++;
+
+	// Unescape and replace SEPARATORs by separator
+	return unescape(separator, str, _str.c_str() + _str.size());
 }
 
 size_t Path::findLastSeparator(size_t last) const {
-	if (_str.size() < 2)
-		return String::npos;
-
-	size_t res = String::npos;
-	if (last == String::npos || last > _str.size())
-		last = _str.size();
-
-	for (uint i = 0; i < last - 1; i++) {
-		if (_str[i] == ESCAPER && _str[i + 1] == ESCAPE_SEPARATOR) {
-			res = i;
+	if (last == String::npos || last > _str.size()) {
+		// Easy case
+		const char *sep = strrchr(_str.c_str(), SEPARATOR);
+		if (!sep) {
+			return String::npos;
+		} else {
+			return sep - _str.c_str();
 		}
 	}
 
-	return res;
+	// Let's jump from separator to separator
+	const char *begin = _str.c_str();
+	const char *end = begin + last;
+
+	const char *str = begin;
+	const char *sep = strchr(str, SEPARATOR);
+	while (sep && sep < end) {
+		str = sep + 1;
+		sep = strchr(str, SEPARATOR);
+	}
+
+	if (str == begin) {
+		// Nothing was found in the range specified
+		return String::npos;
+	} else {
+		// str was pointing just after the matching separator
+		return (str - 1) - begin;
+	}
 }
 
 Path Path::getParent() const {
-	if (_str.size() < 2)
+	if (_str.empty()) {
 		return Path();
+	}
+
 	// ignore potential trailing separator
 	size_t separatorPos = findLastSeparator(_str.size() - 1);
-	if (separatorPos == String::npos)
+	if (separatorPos == String::npos) {
 		return Path();
-	Path ret;
-	ret._str = _str.substr(0, separatorPos + 2);
-	return ret;
+	}
+
+	const char *begin = _str.c_str();
+	const char *end = begin + separatorPos + 1;
+	return extract(begin, end);
 }
 
 Path Path::getLastComponent() const {
-	if (_str.size() < 2)
-		return *this;
+	if (_str.empty()) {
+		return Path();
+	}
+
 	// ignore potential trailing separator
 	size_t separatorPos = findLastSeparator(_str.size() - 1);
-	if (separatorPos == String::npos)
+	if (separatorPos == String::npos) {
 		return *this;
-	Path ret;
-	ret._str = _str.substr(separatorPos + 2);
-	return ret;
-}
-
-static String escapePath(const String& in) {
-	String ret;
-	for (uint i = 0; i < in.size(); i++) {
-		if (in[i] == '/')
-			ret += SLASH_ESCAPED;
-		else
-			ret += in[i];
 	}
-	return ret;
-}
 
-Path Path::appendComponent(const String &x) const {
-	if (x.empty())
-		return *this;
-	String str = _str;
-	size_t lastSep = findLastSeparator();
-	if (!str.empty() && (lastSep == String::npos || lastSep != str.size() - 2))
-		str += DIR_SEPARATOR;
-
-	str += escapePath(x);
-
-	Path ret;
-	ret._str = str;
-	return ret;
-}
-
-bool Path::operator==(const Path &x) const {
-	return _str == x._str;
-}
-
-bool Path::operator!=(const Path &x) const {
-	return _str != x._str;
-}
-
-bool Path::empty() const {
-	return _str.empty();
-}
-
-Path &Path::operator=(const Path &path) {
-	_str = path._str;
-	return *this;
-}
-
-Path &Path::operator=(const char *str) {
-	set(str);
-	return *this;
-}
-
-Path &Path::operator=(const String &str) {
-	set(str.c_str());
-	return *this;
-}
-
-void Path::set(const char *str, char separator) {
-	_str.clear();
-	appendInPlace(str, separator);
+	const char *begin = _str.c_str() + separatorPos + 1;
+	const char *end = _str.c_str() + _str.size();
+	return extract(begin, end);
 }
 
 Path &Path::appendInPlace(const Path &x) {
-	_str += x._str;
-	return *this;
-}
+	if (x._str.empty()) {
+		return *this;
+	}
 
-Path &Path::appendInPlace(const String &str, char separator) {
-	appendInPlace(str.c_str(), separator);
+	if (_str.empty()) {
+		_str = x._str;
+		return *this;
+	}
+	// From here both paths have data
+
+	if (isEscaped() == x.isEscaped()) {
+		if (isEscaped()) {
+			// Both are escaped: no chance we could unescape
+			// Append the other without its escape mark
+			_str.append(x._str.begin() + 1, x._str.end());
+		} else {
+			// No escape: append as we will don't need to escape
+			_str += x._str;
+		}
+		return *this;
+	}
+
+	// If we are here, one of us is escaped and the other one is not
+	if (isEscaped()) {
+		// This one is escaped not the other one
+		// There is no chance we could unescape this one
+		escape(_str, SEPARATOR, x._str.c_str(), x._str.c_str() + x._str.size());
+		return *this;
+	}
+
+	// This one is not escaped the other one is
+	// There is a small chance the other one is escaped because it started with ESCAPED
+	// In this case (and only this one) we could unescape
+	const char *other = x._str.c_str() + 1; // Remove leading ESCAPE
+
+	if (canUnescape(false, true, other)) {
+		// This one stays unescaped and the other one becomes unescaped
+		_str += unescape(SEPARATOR, other, x._str.c_str() + x._str.size());
+	} else {
+		// This one gets escaped and the other one stays escaped
+		String str(ESCAPE);
+		escape(str, SEPARATOR, _str.c_str(), _str.c_str() + _str.size());
+		str.append(other, x._str.c_str() + x._str.size());
+		// Replace ourselves
+		_str = str;
+	}
 	return *this;
 }
 
 Path &Path::appendInPlace(const char *str, char separator) {
-	for (; *str; str++) {
-		if (*str == separator)
-			_str += DIR_SEPARATOR;
-		else if (*str == '/') // Order matters as / may be the separator and often is.
-			_str += SLASH_ESCAPED;
-		else
-			_str += *str;
+	if (!*str) {
+		return *this;
 	}
+	if (_str.empty()) {
+		set(str, separator);
+		return *this;
+	}
+	// From here both paths have data
+
+	if (isEscaped()) {
+		// This one is escaped
+		// There is no chance we could unescape it
+		escape(_str, separator, str);
+		return *this;
+	}
+
+	// We are not escaped, let's hope str won't need escaping
+	if (!needsEncoding(str, separator)) {
+		// No need to encode means it's perfect
+		_str += str;
+		return *this;
+	}
+
+	if (!strchr(str, SEPARATOR)) {
+		// No SEPARATOR, no clash
+		// Even if str starts with ESCAPE, no need to escape as we append
+		Common::String tmp(str);
+		if (separator) {
+			// If separator is 0 there is only one path component
+			tmp.replace(separator, SEPARATOR);
+		}
+		_str += tmp;
+		return *this;
+	}
+
+	// Too bad, we need to escape
+	String tmp(ESCAPE);
+	escape(tmp, SEPARATOR, _str.c_str(), _str.c_str() + _str.size());
+	escape(tmp, separator, str);
+	// Replace ourselves
+	_str = tmp;
+
 	return *this;
 }
 
-Path Path::append(const Path &x) const {
-	Path temp(*this);
-	temp.appendInPlace(x);
-	return temp;
-}
+Path Path::appendComponent(const char *str) const {
+	if (!*str) {
+		return *this;
+	}
 
-Path Path::append(const String &str, char separator) const {
-	return append(str.c_str(), separator);
-}
+	if (_str.empty()) {
+		return Path(str, kNoSeparator);
+	}
 
-Path Path::append(const char *str, char separator) const {
-	Path temp(*this);
-	temp.appendInPlace(str, separator);
-	return temp;
+	bool addSeparator = (*(_str.end() - 1) != SEPARATOR);
+
+	if (isEscaped()) {
+		// We are escaped, escape str as well
+		Path ret(*this);
+		if (addSeparator) {
+			ret._str += SEPARATOR;
+		}
+		// It's a component, there is no directory separator in source
+		escape(ret._str, kNoSeparator, str);
+		return ret;
+	} else if (strchr(str, SEPARATOR)) {
+		// We are not escaped but str will need escape: escape both parts
+		Path ret;
+		ret._str += ESCAPE;
+		escape(ret._str, SEPARATOR, _str.c_str(), _str.c_str() + _str.size());
+		if (addSeparator) {
+			ret._str += SEPARATOR;
+		}
+		// It's a component, there is no directory separator in source
+		escape(ret._str, kNoSeparator, str);
+		return ret;
+	} else {
+		// No need to escape anything
+		Path ret(*this);
+		if (addSeparator) {
+			ret._str += SEPARATOR;
+		}
+		ret._str += str;
+		return ret;
+	}
 }
 
 Path &Path::joinInPlace(const Path &x) {
-	if (x.empty())
+	if (x.empty()) {
 		return *this;
+	}
+	if (_str.empty()) {
+		_str = x._str;
+		return *this;
+	}
 
-	size_t lastSep = findLastSeparator();
-	if (!_str.empty() && (lastSep == String::npos || lastSep != _str.size() - 2) && !x._str.hasPrefix(DIR_SEPARATOR))
-		_str += DIR_SEPARATOR;
+	const char *str = x._str.c_str();
+	// Append SEPARATOR if:
+	// - we don't finish with SEPARATOR already
+	// - other Path is escaped and doesn't begin by SEPARATOR
+	// - or other Path isn't escaped and doesn't begin by SEPARATOR
+	if (*(_str.end() - 1) != SEPARATOR &&
+	        ((x.isEscaped() && str[1] != SEPARATOR) ||
+	         *str != SEPARATOR)) {
+		_str += SEPARATOR;
+	}
 
-	_str += x._str;
-
-	return *this;
-}
-
-Path &Path::joinInPlace(const String &str, char separator) {
-	return joinInPlace(str.c_str(), separator);
+	return appendInPlace(x);
 }
 
 Path &Path::joinInPlace(const char *str, char separator) {
-	if (*str == '\0')
+	if (*str == '\0') {
 		return *this;
+	}
+	if (_str.empty()) {
+		set(str, separator);
+		return *this;
+	}
 
-	size_t lastSep = findLastSeparator();
-	if (!_str.empty() && (lastSep == String::npos || lastSep != _str.size() - 2) && *str != separator)
-		_str += DIR_SEPARATOR;
+	if (*(_str.end() - 1) != SEPARATOR && *str != separator) {
+		_str += SEPARATOR;
+	}
 
-	appendInPlace(str, separator);
-
-	return *this;
-}
-
-Path Path::join(const Path &x) const {
-	Path temp(*this);
-	temp.joinInPlace(x);
-	return temp;
-}
-
-Path Path::join(const String &str, char separator) const {
-	return join(str.c_str(), separator);
-}
-
-Path Path::join(const char *str, char separator) const {
-	Path temp(*this);
-	temp.joinInPlace(str, separator);
-	return temp;
+	return appendInPlace(str, separator);
 }
 
 Path Path::normalize() const {
-	if (empty()) {
+	if (_str.empty()) {
 		return Path();
 	}
 
-	Common::String::const_iterator cur = _str.begin();
-	const Common::String::const_iterator end = _str.end();
+	const char *cur = _str.c_str();
 
-	Common::Path result;
+	bool hasLeadingSeparator = false;
 
-	// If there is a leading slash, preserve that:
-	if (cur != end &&
-	    *cur == ESCAPER &&
-	    *(cur + 1) == ESCAPE_SEPARATOR) {
-		result._str += DIR_SEPARATOR;
-		cur += 2;
-		// Skip over multiple leading slashes, so "//" equals "/"
-		while (cur != end && *cur == ESCAPER && *(cur + 1) == ESCAPE_SEPARATOR)
-			cur += 2;
+	if (isEscaped()) {
+		// We are an escaped path
+		cur++;
+	}
+
+	// If there is a leading separator, preserve that:
+	if (*cur == SEPARATOR) {
+		hasLeadingSeparator = true;
+		cur++;
+		// Skip over multiple leading separators, so "//" equals "/"
+		while (*cur == SEPARATOR) {
+			cur++;
+		}
 	}
 
 	// Scan for path components till the end of the String
-	List<String> comps;
-	while (cur != end) {
-		Common::String::const_iterator start = cur;
+	StringArray comps;
+	while (*cur) {
+		const char *start = cur;
 
 		// Scan till the next path separator resp. the end of the string
-		while (!(*cur == ESCAPER && *(cur + 1) == ESCAPE_SEPARATOR) && cur != end)
-			cur++;
+		cur = strchr(cur, SEPARATOR);
+		if (!cur) {
+			cur = _str.c_str() + _str.size();
+		}
 
 		const String component(start, cur);
 
@@ -289,16 +604,70 @@ Path Path::normalize() const {
 		}
 
 		// Skip over separator chars
-		while (cur != end && *cur == ESCAPER && *(cur + 1) == ESCAPE_SEPARATOR)
-			cur += 2;
+		while (*cur == SEPARATOR) {
+			cur++;
+		}
+	}
+
+	Common::Path result;
+
+	if (comps.empty()) {
+		// No components, add the leading separator if there was any
+		if (hasLeadingSeparator) {
+			result._str += SEPARATOR;
+		}
+		return result;
+	}
+
+	// Before making the new path, we need to determine if it will be escaped
+	bool needEscape = false;
+	bool needUnescape = false;
+	if (isEscaped()) {
+		// We are an escaped path
+		// Maybe we can get unescaped because problematic component got shifted
+		if (hasLeadingSeparator || *comps.front().c_str() != ESCAPE) {
+			// Well, we don't start with ESCAPE so there is still a chance we get unescaped
+			needUnescape = true;
+
+			StringArray::const_iterator it;
+			for (it = comps.begin(); it != comps.end(); it++) {
+				if (!canUnescape(false, false, it->c_str())) {
+					// Nope we can't get unescaped
+					needUnescape = false;
+					break;
+				}
+			}
+		}
+
+		// We will have an escaped result
+		if (!needUnescape) {
+			result._str += ESCAPE;
+		}
+	} else {
+		// We are not an escaped path
+		// The only reason we would need to escape is that we begin with an ESCAPE character
+		if (!hasLeadingSeparator && *comps.front().c_str() == ESCAPE) {
+			// Uh oh: we need to escape everything
+			needEscape = true;
+			result._str += ESCAPE;
+		}
 	}
 
 	// Finally, assemble all components back into a path
-	while (!comps.empty()) {
-		result._str += comps.front();
-		comps.pop_front();
-		if (!comps.empty())
-			result._str += DIR_SEPARATOR;
+	bool addSep = hasLeadingSeparator;
+	for (StringArray::const_iterator it = comps.begin(); it != comps.end(); it++) {
+		if (addSep) {
+			result._str += SEPARATOR;
+		}
+		addSep = true;
+
+		if (needEscape) {
+			escape(result._str, kNoSeparator, it->c_str(), it->c_str() + it->size());
+		} else if (needUnescape) {
+			result._str += unescape(kNoSeparator, it->c_str(), it->c_str() + it->size());
+		} else {
+			result._str += *it;
+		}
 	}
 
 	return result;
@@ -306,71 +675,200 @@ Path Path::normalize() const {
 
 StringArray Path::splitComponents() const {
 	StringArray res;
-	String cur;
-	for (uint i = 0; i < _str.size(); i++) {
-		if (_str[i] == ESCAPER) {
-			i++;
-			if (_str[i] == ESCAPE_SLASH)
-				cur += '/';
-			else if (_str[i] == ESCAPE_SEPARATOR) {
-				res.push_back(cur);
-				cur = "";
-			} else {
-				error("Path::splitComponents(): Malformed Common::Path. '%c' unexpected after '/'", _str[i]);
-			}
-		} else
-			cur += _str[i];
+
+	if (_str.empty()) {
+		// We always return at least 1 component
+		res.push_back("");
+		return res;
 	}
 
-	res.push_back(cur);
+	const char *str = _str.c_str();
+	const char *end = str + _str.size();
+
+	bool escaped = isEscaped();
+	if (escaped) {
+		str++;
+	}
+
+	const char *sep = strchr(str, SEPARATOR);
+	while (sep) {
+		if (!escaped) {
+			res.push_back(String(str, sep));
+		} else {
+			res.push_back(unescape(kNoSeparator, str, sep));
+		}
+		str = sep + 1;
+		sep = strchr(str, SEPARATOR);
+	}
+
+	if (!escaped) {
+		res.push_back(String(str, end));
+	} else {
+		res.push_back(unescape(kNoSeparator, str, end));
+	}
 
 	return res;
+}
+
+Path Path::joinComponents(StringArray::const_iterator begin, StringArray::const_iterator end) {
+	if (begin == end) {
+		return Path();
+	}
+
+	Path ret(*begin, kNoSeparator);
+
+	for (StringArray::const_iterator it = begin + 1; it != end; it++) {
+		ret._str += SEPARATOR;
+		ret.appendInPlace(*it, kNoSeparator);
+	}
+	return ret;
+}
+
+template<typename T>
+T Path::reduceComponents(T(*reducer)(T value, const String &element, bool last), T value) const {
+	if (_str.empty()) {
+		return value;
+	}
+
+	const char *str = _str.c_str();
+	const char *end = str + _str.size();
+
+	bool escaped = isEscaped();
+	if (escaped) {
+		str++;
+	}
+
+	const char *sep = strchr(str, SEPARATOR);
+	while (sep) {
+		String item;
+		if (escaped) {
+			item = unescape(kNoSeparator, str, sep);
+		} else {
+			item = String(str, sep);
+		}
+
+		value = reducer(value, item, false);
+
+		str = sep + 1;
+		sep = strchr(str, SEPARATOR);
+	}
+
+	String item;
+	if (escaped) {
+		item = unescape(kNoSeparator, str, end);
+	} else {
+		item = String(str, end);
+	}
+
+	value = reducer(value, item, true);
+
+	return value;
+}
+
+bool Path::compareComponents(bool (*comparator)(const String &x, const String &y),
+                             const Path &other) const {
+	if (_str.empty() != other._str.empty()) {
+		// One is empty and the other is not
+		return false;
+	}
+	if (_str.empty()) {
+		// Both are empty
+		return true;
+	}
+
+	const char *str = _str.c_str();
+	const char *end = str + _str.size();
+	bool escaped = isEscaped();
+	if (escaped) {
+		str++;
+	}
+
+	const char *strOther = other._str.c_str();
+	const char *endOther = strOther + other._str.size();
+	bool escapedOther = other.isEscaped();
+	if (escapedOther) {
+		strOther++;
+	}
+
+	const char *sep = strchr(str, SEPARATOR);
+	const char *sepOther = strchr(strOther, SEPARATOR);
+	while (sep && sepOther) {
+		String item;
+		if (escaped) {
+			item = unescape(kNoSeparator, str, sep);
+		} else {
+			item = String(str, sep);
+		}
+
+		String itemOther;
+		if (escapedOther) {
+			itemOther = unescape(kNoSeparator, strOther, sepOther);
+		} else {
+			itemOther = String(strOther, sepOther);
+		}
+
+		if (!comparator(item, itemOther)) {
+			return false;
+		}
+
+		str = sep + 1;
+		strOther = sepOther + 1;
+		sep = strchr(str, SEPARATOR);
+		sepOther = strchr(strOther, SEPARATOR);
+	}
+
+	if (sep != sepOther) {
+		// When one is nullptr and the other is not
+		// This means we don't have an equal number of path components
+		return false;
+	}
+
+	String item;
+	if (escaped) {
+		item = unescape(kNoSeparator, str, end);
+	} else {
+		item = String(str);
+	}
+
+	String itemOther;
+	if (escapedOther) {
+		itemOther = unescape(kNoSeparator, strOther, endOther);
+	} else {
+		itemOther = String(strOther);
+	}
+
+	return comparator(item, itemOther);
 }
 
 Path Path::punycodeDecode() const {
-	StringArray c = splitComponents();
-	String res;
-
-	for (uint i = 0; i < c.size(); i++) {
-		res += escapePath(punycode_decodefilename(c[i]));
-		if (i + 1 < c.size())
-			res += DIR_SEPARATOR;
-	}
-
-	Path ret;
-	ret._str = res;
-	return ret;
+	Path tmp;
+	return reduceComponents<Path &>(
+		+[](Path &path, const String &in, bool last) -> Path & {
+			// We encode the result as UTF-8
+			String out = punycode_decodefilename(in).encode();
+			path.appendInPlace(out, kNoSeparator);
+			if (!last) {
+				path._str += SEPARATOR;
+			}
+			return path;
+		}, tmp);
 }
 
-Path Path::joinComponents(const StringArray& c) {
-	String res;
-
-	for (uint i = 0; i < c.size(); i++) {
-		res += escapePath(c[i]);
-		if (i + 1 < c.size())
-			res += DIR_SEPARATOR;
-	}
-
-	Path ret;
-	ret._str = res;
-	return ret;
+Path Path::punycodeEncode() const {
+	Path tmp;
+	return reduceComponents<Path &>(
+		+[](Path &path, const String &in, bool last) -> Path & {
+			// We decode the result as UTF-8
+			Common::String out = punycode_encodefilename(in.decode());
+			path.appendInPlace(out, kNoSeparator);
+			if (!last) {
+				path._str += SEPARATOR;
+			}
+			return path;
+		}, tmp);
 }
 
-// See getIdentifierString() for more details.
-// This does the same but for a single path component and is used by
-// getIdentifierString().
-static String getIdentifierComponent(const String& in) {
-	String part = punycode_decodefilename(in);
-	String res = "";
-	for (uint j = 0; j < part.size(); j++)
-		if (part[j] == '/')
-			res += ':';
-		else
-			res += part[j];
-	return res;
-}
-
-// For a path creates a string with following property:
+// For a path component creates a string with following property:
 // if 2 files have the same case-insensitive
 // identifier string then and only then we treat them as
 // effectively the same file. For this there are 2
@@ -379,56 +877,66 @@ static String getIdentifierComponent(const String& in) {
 // * Replace / with : in path components so a path from
 // HFS(+) image will end up with : independently of how
 // it was dumped or copied from
-String Path::getIdentifierString() const {
-	StringArray c = splitComponents();
-	String res;
-
-	for (uint i = 0; i < c.size(); i++) {
-		res += getIdentifierComponent(c[i]);
-		if (i + 1 < c.size())
-			res += DIR_SEPARATOR;
-	}
-
-	return res;
+static String getIdentifierComponent(const String &in) {
+	String part = punycode_decodefilename(in).encode();
+	part.replace('/', ':');
+	return part;
 }
 
-Path Path::punycodeEncode() const {
-	StringArray c = splitComponents();
-	String res;
+// This hash algorithm is inspired by a Python proposal to hash for tuples
+// https://bugs.python.org/issue942952#msg20602
+// As we don't have the length, it's not added in but
+// it doesn't change collisions that much on their stress test
+struct hasher {
+	uint result;
+	uint mult;
+};
 
-	for (uint i = 0; i < c.size(); i++) {
-		res += escapePath(punycode_encodefilename(c[i]));
-		if (i + 1 < c.size())
-			res += DIR_SEPARATOR;
-	}
+uint Path::hashIgnoreCase() const {
+	hasher v = { 0x345678, 1000003 };
+	reduceComponents<hasher &>(
+		+[](hasher &value, const String &in, bool last) -> hasher & {
+			uint hash = hashit_lower(in);
 
-	Path ret;
-	ret._str = res;
-	return ret;
+			value.result = (value.result + hash) * value.mult;
+			value.mult = (value.mult * 69069);
+			return value;
+		}, v);
+	return v.result;
 }
 
-bool Path::matchPattern(const Path& pattern) const {
-	StringArray c = splitComponents();
-	StringArray cpat = pattern.splitComponents();
+uint Path::hashIgnoreCaseAndMac() const {
+	hasher v = { 0x345678, 1000003 };
+	reduceComponents<hasher &>(
+		+[](hasher &value, const String &in, bool last) -> hasher & {
+			uint hash = hashit_lower(getIdentifierComponent(in));
 
-	// Prevent wildcards from matching the directory separator.
-	if (c.size() != cpat.size())
-		return false;
-
-	for (uint i = 0; i < c.size(); i++) {
-		if (!getIdentifierComponent(c[i]).matchString(getIdentifierComponent(cpat[i]), true))
-			return false;
-	}
-
-	return true;
+			value.result = (value.result + hash) * value.mult;
+			value.mult = (value.mult * 69069);
+			return value;
+		}, v);
+	return v.result;
 }
 
-bool Path::IgnoreCaseAndMac_EqualTo::operator()(const Path& x, const Path& y) const {
-	return x.getIdentifierString().equalsIgnoreCase(y.getIdentifierString());
+bool Path::matchPattern(const Path &pattern) const {
+	return compareComponents(
+		+[](const String &x, const String &y) {
+			return getIdentifierComponent(x).matchString(getIdentifierComponent(y), true);
+		}, pattern);
 }
 
-uint Path::IgnoreCaseAndMac_Hash::operator()(const Path& x) const {
-	return hashit_lower(x.getIdentifierString().c_str());
+bool Path::equalsIgnoreCase(const Path &other) const {
+	return compareComponents(
+		+[](const String &x, const String &y) {
+			return x.equalsIgnoreCase(y);
+		}, other);
+}
+
+bool Path::equalsIgnoreCaseAndMac(const Path &other) const {
+	return compareComponents(
+		+[](const String &x, const String &y) {
+			return getIdentifierComponent(x).equalsIgnoreCase(getIdentifierComponent(y));
+		}, other);
 }
 
 } // End of namespace Common
