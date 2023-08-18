@@ -40,7 +40,7 @@
 		GUIO0()
 	},
 	kGameTypeNone,
-	kFeatures800x600,
+	kFeatures640x480,
 	0,0,0
 },
 
