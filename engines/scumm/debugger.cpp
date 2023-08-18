@@ -59,6 +59,11 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	: GUI::Debugger() {
 	_vm = s;
 
+	// Initialize the debug colors
+	for (int i = 0; i < DEBUG_COLOR_COUNT; ++i) {
+		_debugColors[i] = 0x01 + i;
+	}
+
 	// Register variables
 	registerVar("scumm_speed", &_vm->_fastMode);
 	registerVar("scumm_room", &_vm->_currentRoom);
@@ -962,6 +967,7 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 		debugPrintf("|%4d|%-12.12s|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|$%08x|$%08x|\n",
 				o->obj_nr, name, o->x_pos, o->y_pos, o->width, o->height, o->state,
 				o->fl_object_index, classData, o->OBIMoffset, o->OBCDoffset);
+		drawRect(o->x_pos, o->y_pos, o->width, o->height, getNextColor());
 	}
 	debugPrintf("\n");
 
@@ -1124,7 +1130,7 @@ void ScummDebugger::printBox(int box) {
 								flags, mask, scale);
 
 	// Draw the box
-	drawBox(box);
+	drawBox(box, getNextColor());
 }
 
 /************ ENDER: Temporary debug code for boxen **************/
@@ -1216,7 +1222,7 @@ static void fillQuad(ScummEngine *scumm, Common::Point v[4], int color) {
 	return;
 }
 
-void ScummDebugger::drawBox(int box) {
+void ScummDebugger::drawBox(int box, int color) {
 	BoxCoords coords;
 	Common::Point r[4];
 
@@ -1234,14 +1240,36 @@ void ScummDebugger::drawBox(int box) {
 		}
 	}
 
-	// TODO - maybe use different colors for each box, and/or print the box number inside it?
-	fillQuad(_vm, r, 13);
+	// TODO - maybe also print the box number inside it?
+	fillQuad(_vm, r, color);
 
 	VirtScreen *vs = _vm->findVirtScreen(coords.ul.y);
 	if (vs != nullptr)
 		_vm->markRectAsDirty(vs->number, 0, vs->w, 0, vs->h);
 	_vm->drawDirtyScreenParts();
 	_vm->_system->updateScreen();
+}
+
+void ScummDebugger::drawRect(int x, int y, int width, int height, int color) {
+	Common::Point r[4];
+	r[0] = Common::Point(x, y);
+	r[1] = Common::Point(x + width, y);
+	r[2] = Common::Point(x + width, y + height);
+	r[3] = Common::Point(x, y + height);
+
+	fillQuad(_vm, r, color);
+
+	VirtScreen *vs = _vm->findVirtScreen(y);
+	if (vs != nullptr)
+		_vm->markRectAsDirty(vs->number, 0, vs->w, 0, vs->h);
+	_vm->drawDirtyScreenParts();
+	_vm->_system->updateScreen();
+}
+
+int ScummDebugger::getNextColor() {
+	int color = _debugColors[_nextColorIndex++];
+	_nextColorIndex %= DEBUG_COLOR_COUNT;
+	return color;
 }
 
 bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
