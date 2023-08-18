@@ -182,6 +182,13 @@ public:
 	/**@}*/
 
 	/**
+	 * Replace all from characters in object by to character
+	 * @param from the character to look for
+	 * @param to The replacement character
+	 */
+	void replace(char from, char to);
+
+	/**
 	 * Print formatted data into a String object. Similar to sprintf,
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.

@@ -249,6 +249,29 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 
 }
 
+void String::replace(char from, char to) {
+	// Don't allow removing trailing \x00
+	if (from == '\x00') {
+		return;
+	}
+
+	char *next = strchr(_str, from);
+	if (!next) {
+		// Nothing to do
+		return;
+	}
+
+	size_t off = next - _str;
+	makeUnique();
+
+	next = _str + off;
+	while(next) {
+		*next = to;
+		next++;
+		next = strchr(next, from);
+	}
+}
+
 // static
 String String::format(const char *fmt, ...) {
 	String output;
