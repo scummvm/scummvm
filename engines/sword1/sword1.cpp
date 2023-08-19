@@ -116,6 +116,7 @@ Common::Error SwordEngine::init() {
 	_systemVars.wantFade = true;
 	_systemVars.realLanguage = Common::parseLanguage(ConfMan.get("language"));
 	_systemVars.isLangRtl = false;
+	_systemVars.debugMode = (gDebugLevel >= 0);
 
 	switch (_systemVars.realLanguage) {
 	case Common::DE_DEU:
@@ -245,6 +246,70 @@ void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
 		flags >>= 1;
 		bitPos++;
 	}
+}
+
+uint8 SwordEngine::checkKeys() {
+	uint8 retCode = 0;
+	if (_systemVars.forceRestart) {
+		retCode = CONTROL_RESTART_GAME;
+	} else {
+		switch (_keyPressed.keycode) {
+		case Common::KEYCODE_F5:
+		case Common::KEYCODE_ESCAPE:
+			if ((Logic::_scriptVars[MOUSE_STATUS] & 1) && (Logic::_scriptVars[GEORGE_HOLDING_PIECE] == 0)) {
+				/*
+				 * saveGameFlag = 1;
+				 * snrStatus = 1;
+				*/
+				retCode = _control->runPanel();
+				if (retCode == CONTROL_NOTHING_DONE)
+					_screen->fullRefresh();
+			}
+			break;
+		default:
+			break;
+		}
+
+		// Debug keys!
+		if (!_systemVars.isDemo && _systemVars.debugMode) {
+			switch (_keyPressed.keycode) {
+			case Common::KEYCODE_1: // Slow mode
+				{
+					if (_slowMode) {
+						_slowMode = false;
+						_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
+					} else {
+						_slowMode = true;
+						_targetFrameTime = SLOW_FRAME_TIME; // 2Hz
+					}
+
+					_fastMode = false; // For good measure...
+
+					_rate = _targetFrameTime / 10;
+				}
+				break;
+			case Common::KEYCODE_4: // Fast mode
+				{
+					if (_fastMode) {
+						_fastMode = false;
+						_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
+					} else {
+						_fastMode = true;
+						_targetFrameTime = FAST_FRAME_TIME; // 100Hz
+					}
+
+					_slowMode = false; // For good measure...
+
+					_rate = _targetFrameTime / 10;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	return retCode;
 }
 
 static const char *const errorMsgs[] = {
@@ -673,33 +738,24 @@ uint8 SwordEngine::mainLoop() {
 
 			if (!Logic::_scriptVars[NEW_PALETTE]) {
 				newTime = _system->getMillis();
-				if (newTime - frameTime < FRAME_TIME / 2) {
+				if ((int32)(newTime - frameTime) < _targetFrameTime / 2) {
 					scrollFrameShown = _screen->showScrollFrame();
-					pollInput((FRAME_TIME / 2) - (_system->getMillis() - frameTime));
+					pollInput((_targetFrameTime / 2) - (_system->getMillis() - frameTime));
 				}
 			}
 
 			_sound->engine();
 
 			newTime = _system->getMillis();
-			if ((newTime - frameTime < FRAME_TIME) || (!scrollFrameShown))
+			if (((int32)(newTime - frameTime) < _targetFrameTime) || (!scrollFrameShown))
 				_screen->updateScreen();
-			pollInput((FRAME_TIME) - (_system->getMillis() - frameTime));
+			pollInput((_targetFrameTime) - (_system->getMillis() - frameTime));
 
 			_vblCount = 0; // Reset the vBlank counter for the other timers...
 
 			_mouse->engine(_mouseCoord.x, _mouseCoord.y, _mouseState);
 
-			if (_systemVars.forceRestart)
-				retCode = CONTROL_RESTART_GAME;
-
-			// The control panel is triggered by F5 or ESC.
-			else if (((_keyPressed.keycode == Common::KEYCODE_F5 || _keyPressed.keycode == Common::KEYCODE_ESCAPE)
-			          && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
-				retCode = _control->runPanel();
-				if (retCode == CONTROL_NOTHING_DONE)
-					_screen->fullRefresh();
-			}
+			retCode = checkKeys();
 
 			_mouseState = 0;
 			_keyPressed.reset();
