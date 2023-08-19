@@ -165,10 +165,10 @@ void Room135::daemon() {
 		_val6 = 21;
 
 		if (_play1)
-			TerminateMachineAndNull(_play1);
-		TerminateMachineAndNull(_series1);
-		TerminateMachineAndNull(_series2);
-		TerminateMachineAndNull(_series3);
+			terminateMachineAndNull(_play1);
+		terminateMachineAndNull(_series1);
+		terminateMachineAndNull(_series2);
+		terminateMachineAndNull(_series3);
 		Section1::updateWalker(340, 250, 7, 4);
 		break;
 
@@ -217,11 +217,11 @@ void Room135::daemon() {
 		_val6 = 21;
 
 		if (_play1)
-			TerminateMachineAndNull(_play1);
+			terminateMachineAndNull(_play1);
 
-		TerminateMachineAndNull(_series1);
-		TerminateMachineAndNull(_series2);
-		TerminateMachineAndNull(_series3);
+		terminateMachineAndNull(_series1);
+		terminateMachineAndNull(_series2);
+		terminateMachineAndNull(_series3);
 		gr_backup_palette();
 		digi_preload("100_022");
 		digi_preload_stream_breaks(STREAMS2);
@@ -270,15 +270,15 @@ void Room135::daemon() {
 		break;
 
 	case 16:
-		TerminateMachineAndNull(_series5);
-		TerminateMachineAndNull(_series6);
+		terminateMachineAndNull(_series5);
+		terminateMachineAndNull(_series6);
 		series_play("135od06", 2560, 0, 17, 6, 0, 100, 0, 0, 0, 4);
 		series_play("135od06s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 4);
 		break;
 
 	case 17:
-		TerminateMachineAndNull(_play3);
-		TerminateMachineAndNull(_play4);
+		terminateMachineAndNull(_play3);
+		terminateMachineAndNull(_play4);
 		_val6 = 1;
 		_val5 = 1;
 		_G(flags)[V001]--;
@@ -303,8 +303,8 @@ void Room135::daemon() {
 		break;
 
 	case 20:
-		TerminateMachineAndNull(_series5);
-		TerminateMachineAndNull(_series6);
+		terminateMachineAndNull(_series5);
+		terminateMachineAndNull(_series6);
 		_val5 = 1;
 		_val6 = 1;
 		inv_give_to_player("broken puz dispenser");
@@ -455,7 +455,7 @@ void Room135::daemon() {
 				break;
 
 			case 25:
-				TerminateMachineAndNull(_play2);
+				terminateMachineAndNull(_play2);
 				_val6 = 26;
 				series_play("134od24", 2560, 0, 32, 6, 0, 100, 0, 0, 37, -1);
 				series_play("134od24s", 2560, 0, -1, 6, 0, 100, 0, 0, 37, -1);

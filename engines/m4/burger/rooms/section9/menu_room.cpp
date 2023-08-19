@@ -74,7 +74,7 @@ void MenuRoom::setButtonState(int index, ButtonState newState) {
 	if (index >= 0 && index < (int)_buttons.size()) {
 		MenuButton &btn = _buttons[index];
 		if (btn._state != BTNSTATE_DISABLED && newState != btn._state) {
-			TerminateMachineAndNull(btn._machine);
+			terminateMachineAndNull(btn._machine);
 			btn._state = newState;
 			drawButton(index);
 		}

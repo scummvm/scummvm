@@ -271,7 +271,7 @@ void Room102::daemon() {
 
 			case 32:
 				series_unload(_index1);
-				TerminateMachineAndNull(_series2);
+				terminateMachineAndNull(_series2);
 				_val11 = 33;
 				series_play("102ha02s", 3841, 0, 11, 6, 0, 100, 0, 0, 0, 41);
 				digi_preload_stream_breaks(STREAMS1);
@@ -311,11 +311,11 @@ void Room102::daemon() {
 					_play1 = nullptr;
 				}
 				if (_series3)
-					TerminateMachineAndNull(_series3);
+					terminateMachineAndNull(_series3);
 
 				_series3 = series_play("102ha01", 2560, 4, -1, 5, -1, 100, 0, 0, 24, 29);
 			} else {
-				TerminateMachineAndNull(_series3);
+				terminateMachineAndNull(_series3);
 				_series3 = nullptr;
 				_val12 = 19;
 				series_play("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 24, 24);
@@ -331,7 +331,7 @@ void Room102::daemon() {
 
 				_series3 = series_play("102ha01", 2560, 4, -1, 5, -1, 100, 0, 0, 31, 42);
 			} else {
-				TerminateMachineAndNull(_series3);
+				terminateMachineAndNull(_series3);
 				_series3 = nullptr;
 				_val12 = 19;
 				series_play("102ha01", 2560, 0, 3, 4, 0, 100, 0, 0, 30, 30);
@@ -647,8 +647,8 @@ void Room102::daemon() {
 		case 54:
 			switch (_val11) {
 			case 46:
-				TerminateMachineAndNull(_series1);
-				TerminateMachineAndNull(_series2);
+				terminateMachineAndNull(_series1);
+				terminateMachineAndNull(_series2);
 				_val11 = 47;
 				series_play_with_breaks(PLAY2, "102ha06", 2560, 3, 3, 6, 100, 0, 0);
 				hotspot_set_active("harry", true);
@@ -731,8 +731,8 @@ void Room102::daemon() {
 					kernel_timing_trigger(80, 16);
 				}
 			} else {
-				TerminateMachineAndNull(_series3);
-				TerminateMachineAndNull(_series6);
+				terminateMachineAndNull(_series3);
+				terminateMachineAndNull(_series6);
 				_series3 = nullptr;
 				_val12 = 54;
 				series_play("102ha07", 3840, 2, 3, 6, 0, 100, 0, 0, 30, 30);
@@ -750,8 +750,8 @@ void Room102::daemon() {
 					_play1 = nullptr;
 				}
 			} else {
-				TerminateMachineAndNull(_series3);
-				TerminateMachineAndNull(_series6);
+				terminateMachineAndNull(_series3);
+				terminateMachineAndNull(_series6);
 				_series3 = nullptr;
 				_val12 = 54;
 				series_play("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 20, 21);
@@ -856,7 +856,7 @@ void Room102::daemon() {
 		break;
 
 	case 13:
-		TerminateMachineAndNull(_series7);
+		terminateMachineAndNull(_series7);
 		series_play("102ha02s", 3841, 0, -1, 6, 0, 100, 0, 0, 42, -1);
 		series_set_frame_rate(_stream1, 6);
 		ws_OverrideCrunchTime(_stream1);
@@ -1090,8 +1090,8 @@ void Room102::daemon() {
 
 		case 79:
 			ws_hide_walker();
-			TerminateMachineAndNull(_laz1);
-			TerminateMachineAndNull(_laz2);
+			terminateMachineAndNull(_laz1);
+			terminateMachineAndNull(_laz2);
 			_G(flags)[V019] = 1;
 			_G(roomVal1) = 80;
 
@@ -1120,8 +1120,8 @@ void Room102::daemon() {
 
 		case 82:
 			ws_hide_walker();
-			TerminateMachineAndNull(_laz1);
-			TerminateMachineAndNull(_laz2);
+			terminateMachineAndNull(_laz1);
+			terminateMachineAndNull(_laz2);
 			_G(flags)[V019] = 0;
 			_G(roomVal1) = 83;
 			series_play_with_breaks(PLAY4, "102wi08", 256, gTELEPORT, 3, 6, 100, 0, 0);
@@ -1474,8 +1474,8 @@ const char *Room102::getDigi2(int num) const {
 
 void Room102::sub1() {
 	if (_series4) {
-		TerminateMachineAndNull(_series4);
-		TerminateMachineAndNull(_series5);
+		terminateMachineAndNull(_series4);
+		terminateMachineAndNull(_series5);
 	}
 }
 

@@ -351,8 +351,8 @@ void Room101::daemon() {
 
 		if (_G(flags)[ROOM101_FLAG4] || _G(flags)[ROOM101_FLAG22] ||
 				_G(flags)[ROOM101_FLAG23] || _G(flags)[V002]) {
-			TerminateMachineAndNull(_machine1);
-			TerminateMachineAndNull(_machine2);
+			terminateMachineAndNull(_machine1);
+			terminateMachineAndNull(_machine2);
 			kernel_trigger_dispatch_now(10);
 		}
 		break;
@@ -372,8 +372,8 @@ void Room101::daemon() {
 		if (_G(flags)[ROOM101_FLAG4]) {
 			if (_G(flags)[ROOM101_FLAG10] || _G(flags)[V112] ||
 					_G(flags)[V080] || _G(flags)[V126]) {
-				TerminateMachineAndNull(_machine1);
-				TerminateMachineAndNull(_machine2);
+				terminateMachineAndNull(_machine1);
+				terminateMachineAndNull(_machine2);
 				kernel_timing_trigger(1, 13);
 			}
 		}
@@ -392,8 +392,8 @@ void Room101::daemon() {
 		daemon15();
 
 		if (_G(flags)[ROOM101_FLAG10] && (_G(flags)[ROOM101_FLAG16] || _G(flags)[V220])) {
-			TerminateMachineAndNull(_machine1);
-			TerminateMachineAndNull(_machine2);
+			terminateMachineAndNull(_machine1);
+			terminateMachineAndNull(_machine2);
 			kernel_timing_trigger(1, 16);
 		}
 		break;
@@ -412,8 +412,8 @@ void Room101::daemon() {
 
 		if (_G(flags)[ROOM101_FLAG16]) {
 			if (_G(flags)[ROOM101_FLAG20] || _G(flags)[V220]) {
-				TerminateMachineAndNull(_machine1);
-				TerminateMachineAndNull(_machine2);
+				terminateMachineAndNull(_machine1);
+				terminateMachineAndNull(_machine2);
 				kernel_timing_trigger(1, 19);
 			}
 		}
@@ -470,7 +470,7 @@ void Room101::daemon() {
 		break;
 
 	case 27:
-		TerminateMachineAndNull(_doorMachine);
+		terminateMachineAndNull(_doorMachine);
 		Section1::updateWalker(226, 281, 8, 26);
 		break;
 
@@ -517,7 +517,7 @@ void Room101::daemon() {
 		case 8:
 			// Barbershop door open
 			_G(roomVal1) = 9;
-			TerminateMachineAndNull(_doorMachine);
+			terminateMachineAndNull(_doorMachine);
 			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gTELEPORT, 3, 6, 100, 0, 0);
 			break;
 
@@ -538,7 +538,7 @@ void Room101::daemon() {
 			break;
 
 		case 14:
-			TerminateMachineAndNull(_doorMachine);
+			terminateMachineAndNull(_doorMachine);
 			_G(roomVal1) = 15;
 			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gTELEPORT, 3, 6, 100, 0, 0);
 			break;

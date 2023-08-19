@@ -57,10 +57,10 @@ void player_set_commands_allowed(bool t_or_f) {
 void game_pause(bool flag) {
 	if (flag) {
 		_G(kernel).pause = true;
-		PauseEngines();
+		pauseEngines();
 	} else {
 		_G(kernel).pause = false;
-		UnpauseEngines();
+		unpauseEngines();
 	}
 }
 

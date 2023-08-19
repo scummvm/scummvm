@@ -146,7 +146,7 @@ bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
 void series_set_frame_rate(machine *m, int32 newFrameRate) {
 	CHECK_SERIES
 
-	if ((!m) || (!m->myAnim8) || !VerifyMachineExists(m))
+	if ((!m) || (!m->myAnim8) || !verifyMachineExists(m))
 		error_show(FL, 'SSFR');
 
 	m->myAnim8->myRegs[IDX_CELS_FRAME_RATE] = newFrameRate << 16;

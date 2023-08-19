@@ -173,19 +173,19 @@ struct WSMachine_Globals {
 
 extern bool ws_Initialize(frac16 *theGlobals);
 extern void ws_Shutdown();
-extern void PauseEngines();
-extern void UnpauseEngines();
-extern void AddPauseTime(int32 myTime);
+extern void pauseEngines();
+extern void unpauseEngines();
+extern void addPauseTime(int32 myTime);
 
-void CycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
+void cycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
 	uint8 *myPalette, uint8 *ICT, bool updateVideo);
 void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table,
 	Buffer *screenCodes, uint8 *myPalette, uint8 *ICT);
 
-void TerminateMachine(machine *m);
+void terminateMachine(machine *m);
 void TerminateMachinesByHash(uint32 machHash);
-void TerminateMachineAndNull(machine *&m);
-bool VerifyMachineExists(machine *m);
+void terminateMachineAndNull(machine *&m);
+bool verifyMachineExists(machine *m);
 int32 ws_KillMachines();
 void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount);
 void IntoTheState(machine *m);
@@ -198,7 +198,7 @@ extern void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	uint32 machHash, machine *sendM, int32 msgCount);
 
 #define kernel_spawn_machine(name,hash,callback) TriggerMachineByHash(hash, nullptr, -1, -1, callback, false, name)
-#define kernel_terminate_machine(m) TerminateMachine(m)
+#define kernel_terminate_machine(m) terminateMachine(m)
 
 } // End of namespace M4
 

@@ -530,8 +530,8 @@ void Room104::conv() {
 
 void Room104::freeSeries() {
 	if (_flag1) {
-		TerminateMachine(_series1);
-		TerminateMachine(_series2);
+		terminateMachine(_series1);
+		terminateMachine(_series2);
 		_flag1 = false;
 	}
 }

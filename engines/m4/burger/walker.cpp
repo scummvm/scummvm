@@ -171,7 +171,7 @@ machine *Walker::walk_initialize_walker() {
 		m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "Wilbur Walker");
 
 		// we need to all init sequences to happen immediately (init coordinates)
-		CycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
+		cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
 			nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
 
 		_G(inverse_pal)->release();
