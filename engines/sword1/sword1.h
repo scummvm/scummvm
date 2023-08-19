@@ -80,6 +80,8 @@ struct SystemVars {
 
 class SwordEngine : public Engine {
 	friend class SwordConsole;
+	friend class Screen;
+
 public:
 	SwordEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~SwordEngine() override;
@@ -102,6 +104,10 @@ public:
 	// Used by timer
 	void updateTopMenu();
 	void updateBottomMenu();
+	void fadePaletteStep();
+	void startFadePaletteDown(int speed);
+	void startFadePaletteUp(int speed);
+	void waitForFade();
 
 protected:
 	// Engine APIs

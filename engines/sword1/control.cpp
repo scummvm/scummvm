@@ -228,7 +228,8 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic) {
+Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen) {
+	_vm = vm;
 	_saveFileMan = saveFileMan;
 	_resMan = pResMan;
 	_objMan = pObjMan;
@@ -236,6 +237,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_mouse = pMouse;
 	_music = pMusic;
 	_sound = pSound;
+	_screen = pScreen;
 	_lStrings = loadCustomStrings("strings.txt") ? _customStrings : _languageStrings + SwordEngine::_systemVars.language * 20;
 	_selectedButton = 255;
 	_panelShown = false;
@@ -323,23 +325,31 @@ uint8 Control::runPanel() {
 	_font = (uint8 *)_resMan->openFetchRes(fontId);
 	_redFont = (uint8 *)_resMan->openFetchRes(redFontId);
 
-	uint8 *pal = (uint8 *)_resMan->openFetchRes(SR_PALETTE);
-	uint8 *palOut = (uint8 *)malloc(256 * 3);
-	for (uint16 cnt = 1; cnt < 256; cnt++) {
-		palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
-		palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
-		palOut[cnt * 3 + 2] = pal[cnt * 3 + 2] << 2;
-	}
-	palOut[0] = palOut[1] = palOut[2] = 0;
-	_resMan->resClose(SR_PALETTE);
-	_system->getPaletteManager()->setPalette(palOut, 0, 256);
-	free(palOut);
+	//uint8 *pal = (uint8 *)_resMan->openFetchRes(SR_PALETTE);
+
+	//uint8 *palOut = (uint8 *)malloc(256 * 3);
+	//for (uint16 cnt = 1; cnt < 256; cnt++) {
+	//	palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
+	//	palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
+	//	palOut[cnt * 3 + 2] = pal[cnt * 3 + 2] << 2;
+	//}
+	//palOut[0] = palOut[1] = palOut[2] = 0;
+	//_resMan->resClose(SR_PALETTE);
+	//_system->getPaletteManager()->setPalette(palOut, 0, 256);
+	//free(palOut);
 	uint8 mode = 0, newMode = BUTTON_MAIN_PANEL;
 	bool fullRefresh = false;
 	_mouse->controlPanel(true);
 	uint8 retVal = CONTROL_NOTHING_DONE;
 	_music->startMusic(61, 1);
+	setupMainPanel();
 
+	_screen->fnSetFadeTargetPalette(0, 256, SR_PALETTE);
+	_screen->fnSetFadeTargetPalette(0, 1, 0, true);
+	_screen->startFadePaletteDown(1);
+	_vm->waitForFade();
+
+	//clearAllFx();
 	do {
 		if (newMode) {
 			mode = newMode;
@@ -425,6 +435,9 @@ uint8 Control::runPanel() {
 			ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
 		ConfMan.flushToDisk();
 	}
+
+	//_screen->startFadePaletteDown(1);
+	//_vm->waitForFade();
 
 	destroyButtons();
 	_resMan->resClose(fontId);
@@ -603,6 +616,11 @@ void Control::setupMainPanel() {
 			renderText(_lStrings[STR_RESTART], 285, 260 + 40, TEXT_LEFT_ALIGN);
 		renderText(_lStrings[STR_QUIT], 285, 296 + 40, TEXT_LEFT_ALIGN);
 	}
+
+	_screen->fnSetFadeTargetPalette(0, 256, SR_PALETTE);
+	_screen->fnSetFadeTargetPalette(0, 1, 0, true);
+	_screen->startFadePaletteUp(1);
+	_vm->waitForFade();
 }
 
 void Control::setupSaveRestorePanel(bool saving) {

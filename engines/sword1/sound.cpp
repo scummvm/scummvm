@@ -199,6 +199,9 @@ int Sound::addToQueue(int32 fxNo) {
 }
 
 void Sound::engine() {
+	// TODO: FX fading step
+
+
 	// first of all, add any random sfx to the queue...
 	for (uint16 cnt = 0; cnt < TOTAL_FX_PER_ROOM; cnt++) {
 		uint16 fxNo = _roomsFixedFx[Logic::_scriptVars[SCREEN]][cnt];
