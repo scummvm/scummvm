@@ -715,23 +715,38 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			} else if (*s == '\016') {	// human-readable format
 				s++;
 
-				uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
+				if (*s == '-') { // \016-XX  -- closing textSlant
+					uint16 textSlant;
 
-				s = readHex(&fontId, s, 4);
-				s = readHex(&textSlant, s, 2);
-				s = readHex(&fontSize, s, 4);
-				s = readHex(&palinfo1, s, 4);
-				s = readHex(&palinfo2, s, 4);
-				s = readHex(&palinfo3, s, 4);
+					s = readHex(&textSlant, s, 2);
 
-				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+					current_format.textSlant &= ~textSlant; // Clearing the specified byte
+					current_format.textSlant &= ~textSlant; // Clearing the specified bit
+				} else if (*s == '+') { // \016+XX  -- opening textSlant
+					uint16 textSlant;
 
-				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+					s = readHex(&textSlant, s, 2);
 
-				// So far, we enforce single font here, though in the future, font size could be altered
-				if (!_macFontMode)
-					current_format.font = _defaultFormatting.font;
+					current_format.textSlant |= textSlant; // Setting the specified bit
+				} else {
+					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
+
+					s = readHex(&fontId, s, 4);
+					s = readHex(&textSlant, s, 2);
+					s = readHex(&fontSize, s, 4);
+					s = readHex(&palinfo1, s, 4);
+					s = readHex(&palinfo2, s, 4);
+					s = readHex(&palinfo3, s, 4);
+
+					D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+							fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+					current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+					// So far, we enforce single font here, though in the future, font size could be altered
+					if (!_macFontMode)
+						current_format.font = _defaultFormatting.font;
+				}
 			}
 
 			while (*s && *s != ' ' && *s != '\001') {
