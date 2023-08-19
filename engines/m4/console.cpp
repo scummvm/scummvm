@@ -21,12 +21,14 @@
 
 #include "m4/console.h"
 #include "m4/vars.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
 	registerCmd("room",   WRAP_METHOD(Console, Cmd_room));
+	registerCmd("flag",   WRAP_METHOD(Console, Cmd_flag));
 }
 
 Console::~Console() {
@@ -47,5 +49,22 @@ bool Console::Cmd_room(int argc, const char **argv) {
 	}
 }
 
+bool Console::Cmd_flag(int argc, const char **argv) {
+	if (!Burger::g_vars) {
+		debugPrintf("Not Orion Burger\n");
+	} else if (argc == 2) {
+		int flagNum = atol(argv[1]);
+		debugPrintf("Flag %d = %d\n", flagNum, Burger::g_vars->_flags[flagNum]);
+	} else if (argc == 3) {
+		int flagNum = atol(argv[1]);
+		int flagVal = atol(argv[2]);
+		Burger::g_vars->_flags[flagNum] = flagVal;
+		debugPrintf("Flag set\n");
+	} else {
+		debugPrintf("Flag <num> [<value>]\n");
+	}
+
+	return true;
+}
 
 } // End of namespace M4
