@@ -692,12 +692,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 		if (newObject) {
 			newObject->scale(scale);
-			if (newObject->getType() == ObjectType::kGroupType) {
-				Group *group = (Group *)newObject;
-				for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); ++it)
-					group->linkObject(it->_value);
-			}
-
 			if (newObject->getType() == kEntranceType) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);
@@ -711,6 +705,16 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		} else if (!(isDemo() && isCastle()))
 			error("Failed to read an object!");
 	}
+
+	// Link all groups
+	for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); ++it) {
+		if (it->_value->getType() == ObjectType::kGroupType) {
+			Group *group = (Group *)it->_value;
+			for (ObjectMap::iterator itt = objectsByID->begin(); itt != objectsByID->end(); ++itt)
+				group->linkObject(itt->_value);
+		}
+	}
+
 	int64 endLastObject = file->pos();
 	debugC(1, kFreescapeDebugParser, "Last position %lx", endLastObject);
 	if (isDark() && isAmiga())

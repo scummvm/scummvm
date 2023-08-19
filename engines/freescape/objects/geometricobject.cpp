@@ -184,9 +184,21 @@ void GeometricObject::offsetOrigin(Math::Vector3d origin_) {
 		Math::Vector3d offset = origin_ - _origin;
 		offset = 32 * offset;
 		for (int i = 0; i < int(_ordinates->size()); i = i + 3) {
-			(*_ordinates)[i    ] += uint16(offset.x());
-			(*_ordinates)[i + 1] += uint16(offset.y());
-			(*_ordinates)[i + 2] += uint16(offset.z());
+			int16 ordinate = 0;
+			ordinate = (*_ordinates)[i];
+			ordinate +=  int16(offset.x());
+			assert(ordinate >= 0);
+			(*_ordinates)[i] = uint16(ordinate);
+
+			ordinate = (*_ordinates)[i + 1];
+			ordinate +=  int16(offset.y());
+			assert(ordinate >= 0);
+			(*_ordinates)[i + 1] = uint16(ordinate);
+
+			ordinate = (*_ordinates)[i + 2];
+			ordinate +=  int16(offset.z());
+			assert(ordinate >= 0);
+			(*_ordinates)[i + 2] = uint16(ordinate);
 		}
 	}
 	setOrigin(origin_);
