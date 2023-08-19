@@ -31,6 +31,7 @@ class Console : public GUI::Debugger {
 private:
 	bool Cmd_test(int argc, const char **argv);
 	bool Cmd_room(int argc, const char **argv);
+	bool Cmd_flag(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;
