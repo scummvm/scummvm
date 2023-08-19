@@ -107,51 +107,51 @@ void BITMAP::floodfill(int x, int y, int color) {
 const int SCALE_THRESHOLD = 0x100;
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
-void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint32_t alphaMask, PALETTE palette, int useTint, int sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY) {
-	const int xDir = horizFlip ? -1 : 1;
+void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
+	const int xDir = args.horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
 
 	// Instead of skipping pixels outside our boundary here, we just clip
 	// our area instead.
-	int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = dstRect.width();
-	if (xStart + xCtrWidth > destArea.w) { // Clip the right
-		xCtrWidth = destArea.w - xStart;
+	int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = args.dstRect.width();
+	if (args.xStart + xCtrWidth > args.destArea.w) { // Clip the right
+		xCtrWidth = args.destArea.w - args.xStart;
 	}
-	if (xStart < 0) { // Clip the left
-		xCtrStart = -xStart;
+	if (args.xStart < 0) { // Clip the left
+		xCtrStart = -args.xStart;
 		xCtrBppStart = xCtrStart * SrcBytesPerPixel;
-		xStart = 0;
+		args.xStart = 0;
 	}
-	int destY = yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = dstRect.height();
-	if (yStart < 0) { // Clip the top
-		yCtr = -yStart;
+	int destY = args.yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = args.dstRect.height();
+	if (args.yStart < 0) { // Clip the top
+		yCtr = -args.yStart;
 		destY = 0;
 		if (ScaleThreshold != 0) {
-			scaleYCtr = yCtr * scaleY;
+			scaleYCtr = yCtr * args.scaleY;
 			srcYCtr = scaleYCtr / ScaleThreshold;
 		}
 	}
-	if (yStart + yCtrHeight > destArea.h) { // Clip the bottom
-		yCtrHeight = destArea.h - yStart;
+	if (args.yStart + yCtrHeight > args.destArea.h) { // Clip the bottom
+		yCtrHeight = args.destArea.h - args.yStart;
 	}
 
-	byte *destP = (byte *)destArea.getBasePtr(0, destY);
-	const byte *srcP = (const byte *)src.getBasePtr(
-	                       horizFlip ? srcArea.right - 1 : srcArea.left,
-	                       vertFlip ? srcArea.bottom - 1 - yCtr :
-	                       srcArea.top + yCtr);
-	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += scaleY) {
+	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
+	const byte *srcP = (const byte *)args.src.getBasePtr(
+	                       args.horizFlip ? args.srcArea.right - 1 : args.srcArea.left,
+	                       args.vertFlip ? args.srcArea.bottom - 1 - yCtr :
+	                       args.srcArea.top + yCtr);
+	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += args.scaleY) {
 		if (ScaleThreshold != 0) {
 			int newSrcYCtr = scaleYCtr / ScaleThreshold;
 			if (srcYCtr != newSrcYCtr) {
 				int diffSrcYCtr = newSrcYCtr - srcYCtr;
-				srcP += src.pitch * diffSrcYCtr;
+				srcP += args.src.pitch * diffSrcYCtr;
 				srcYCtr = newSrcYCtr;
 			}
 		}
 		// Loop through the pixels of the row
-		for (int destX = xStart, xCtr = xCtrStart, xCtrBpp = xCtrBppStart, scaleXCtr = xCtr * scaleX; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += SrcBytesPerPixel, scaleXCtr += scaleX) {
+		for (int destX = args.xStart, xCtr = xCtrStart, xCtrBpp = xCtrBppStart, scaleXCtr = xCtr * args.scaleX; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += SrcBytesPerPixel, scaleXCtr += args.scaleX) {
 			const byte *srcVal = srcP + xDir * xCtrBpp;
 			if (ScaleThreshold != 0) {
 				srcVal = srcP + (scaleXCtr / ScaleThreshold) * SrcBytesPerPixel;
@@ -159,7 +159,7 @@ void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint3
 			uint32 srcCol = getColor(srcVal, SrcBytesPerPixel);
 
 			// Check if this is a transparent color we should skip
-			if (skipTrans && ((srcCol & alphaMask) == transColor))
+			if (args.skipTrans && ((srcCol & args.alphaMask) == args.transColor))
 				continue;
 
 			byte *destVal = (byte *)&destP[destX * DestBytesPerPixel];
@@ -168,7 +168,7 @@ void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint3
 			if (DestBytesPerPixel == 1) {
 				*destVal = srcCol;
 				continue;
-			} else if ((DestBytesPerPixel == SrcBytesPerPixel) && srcAlpha == -1) {
+			} else if ((DestBytesPerPixel == SrcBytesPerPixel) && args.srcAlpha == -1) {
 				if (DestBytesPerPixel)
 					*(uint32 *)destVal = srcCol;
 				else
@@ -178,7 +178,7 @@ void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint3
 
 			// We need the rgb values to do blending and/or convert between formats
 			if (SrcBytesPerPixel == 1) {
-				const RGB &rgb = palette[srcCol];
+				const RGB &rgb = args.palette[srcCol];
 				aSrc = 0xff;
 				rSrc = rgb.r;
 				gSrc = rgb.g;
@@ -201,24 +201,24 @@ void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint3
 				//src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
 			}
 
-			if (srcAlpha == -1) {
+			if (args.srcAlpha == -1) {
 				// This means we don't use blending.
 				aDest = aSrc;
 				rDest = rSrc;
 				gDest = gSrc;
 				bDest = bSrc;
 			} else {
-				if (useTint) {
+				if (args.useTint) {
 					rDest = rSrc;
 					gDest = gSrc;
 					bDest = bSrc;
 					aDest = aSrc;
-					rSrc = tintRed;
-					gSrc = tintGreen;
-					bSrc = tintBlue;
-					aSrc = srcAlpha;
+					rSrc = args.tintRed;
+					gSrc = args.tintGreen;
+					bSrc = args.tintBlue;
+					aSrc = args.srcAlpha;
 				}
-				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
+				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, args.srcAlpha, args.useTint, destVal);
 			}
 
 			uint32 pixel;// = format.ARGBToColor(aDest, rDest, gDest, bDest);
@@ -232,9 +232,23 @@ void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint3
 			}
 		}
 
-		destP += destArea.pitch;
-		if (ScaleThreshold == 0) srcP += vertFlip ? -src.pitch : src.pitch;
+		destP += args.destArea.pitch;
+		if (ScaleThreshold == 0) srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
 	}
+}
+
+BITMAP::DrawInnerArgs::DrawInnerArgs(int yStart, int xStart, uint32 transColor,
+	uint32 alphaMask, PALETTE palette, int useTint, int sameFormat,
+	const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea,
+	int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed,
+	int tintGreen, int tintBlue, const Common::Rect &dstRect,
+	const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX,
+	int scaleY) : yStart(yStart), xStart(xStart), transColor(transColor),
+	alphaMask(alphaMask), palette(palette), useTint(useTint), sameFormat(sameFormat), src(src),
+	destArea(destArea), horizFlip(horizFlip), vertFlip(vertFlip),
+	skipTrans(skipTrans), srcAlpha(srcAlpha), tintRed(tintRed),
+	tintGreen(tintGreen), tintBlue(tintBlue), dstRect(dstRect),
+	srcArea(srcArea), blenderMode(blenderMode), scaleX(scaleX), scaleY(scaleY) {
 }
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
@@ -292,7 +306,8 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
-#define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea, _G(_blender_mode), 0, 0)
+	auto args = DrawInnerArgs(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea, _G(_blender_mode), 0, 0);
+#define DRAWINNER(func) func(args)
 	// Calling drawInnerXXXX with a ScaleThreshold of 0 just does normal un-scaled drawing
 	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
 		if (sameFormat) {
@@ -375,7 +390,8 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
-#define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, 0, sameFormat, src, destArea, false, false, skipTrans, srcAlpha, 0, 0, 0, dstRect, srcRect, _G(_blender_mode), scaleX, scaleY)
+	auto args = DrawInnerArgs(yStart, xStart, transColor, alphaMask, palette, 0, sameFormat, src, destArea, false, false, skipTrans, srcAlpha, 0, 0, 0, dstRect, srcRect, _G(_blender_mode), scaleX, scaleY);
+#define DRAWINNER(func) func(args)
 	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
 		if (sameFormat) {
 			switch (format.bytesPerPixel) {
