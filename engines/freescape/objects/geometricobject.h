@@ -51,6 +51,7 @@ public:
 	virtual ~GeometricObject();
 	void setOrigin(Math::Vector3d origin) override;
 	void offsetOrigin(Math::Vector3d origin_);
+	void restoreOrdinates();
 
 	Object *duplicate() override;
 	void scale(int factor) override;
@@ -66,6 +67,7 @@ public:
 private:
 	Common::Array<uint8> *_colours;
 	Common::Array<uint16> *_ordinates;
+	Common::Array<uint16> *_initialOrdinates;
 };
 
 } // End of namespace Freescape

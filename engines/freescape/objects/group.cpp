@@ -74,14 +74,14 @@ void Group::linkObject(Object *obj) {
 
 void Group::assemble(int index) {
 	GeometricObject *gobj = (GeometricObject *)_objects[index];
+	gobj->makeVisible();
 	Math::Vector3d position = _operations[_step]->position;
 
 	if (!GeometricObject::isPolygon(gobj->getType()))
 		position = 32 * position / _scale;
 	else
 		position = position / _scale;
-
-	gobj->offsetOrigin(position);
+	gobj->offsetOrigin(position + _origins[index] - _origins[0]);
 }
 
 void Group::run() {
@@ -100,9 +100,7 @@ void Group::run(int index) {
 
 	int opcode = _operations[_step]->opcode;
 	if (opcode == 0x80 || opcode == 0xff) {
-		_step = -1;
-		_active = false;
-		_finished = false;
+		reset();
 	} else if (opcode == 0x01) {
 		g_freescape->executeCode(_operations[_step]->condition, false, true, false, false);
 	} else {
@@ -112,6 +110,21 @@ void Group::run(int index) {
 				return;
 			}
 		assemble(index);
+	}
+}
+
+void Group::reset() {
+	_step = -1;
+	_active = false;
+	_finished = false;
+	uint32 groupSize = _objects.size();
+	for (uint32 i = 0; i < groupSize ; i++) {
+		GeometricObject *gobj = (GeometricObject *)_objects[i];
+		if (GeometricObject::isPolygon(_objects[i]->getType())) {
+			gobj->setOrigin(_origins[i]);
+			gobj->restoreOrdinates();
+			gobj->makeInvisible();
+		}
 	}
 }
 

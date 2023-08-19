@@ -144,9 +144,12 @@ GeometricObject::GeometricObject(
 		_colours = colours_;
 
 	_ordinates = nullptr;
+	_initialOrdinates = nullptr;
 
-	if (ordinates_)
+	if (ordinates_) {
 		_ordinates = ordinates_;
+		_initialOrdinates = new Common::Array<uint16>(*_ordinates);
+	}
 	_condition = conditionInstructions_;
 	_conditionSource = conditionSource_;
 
@@ -196,8 +199,20 @@ void GeometricObject::scale(int factor) {
 		for (uint i = 0; i < _ordinates->size(); i++) {
 			// This division is always exact because each ordinate was multipled by 32
 			(*_ordinates)[i] = (*_ordinates)[i] / factor;
+			if (_initialOrdinates)
+				(*_initialOrdinates)[i] = (*_initialOrdinates)[i] / factor;
 		}
 	}
+	computeBoundingBox();
+}
+
+void GeometricObject::restoreOrdinates() {
+	if (!isPolygon(_type))
+		return;
+
+	for (uint i = 0; i < _ordinates->size(); i++)
+		(*_ordinates)[i] = (*_initialOrdinates)[i];
+
 	computeBoundingBox();
 }
 
@@ -369,6 +384,7 @@ void GeometricObject::computeBoundingBox() {
 GeometricObject::~GeometricObject() {
 	delete _colours;
 	delete _ordinates;
+	delete _initialOrdinates;
 }
 
 bool GeometricObject::isDrawable() { return true; }

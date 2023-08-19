@@ -48,6 +48,7 @@ public:
 	void step();
 	void run();
 	void run(int index);
+	void reset();
 
 	Common::Array<Object *> _objects;
 	Common::Array<Math::Vector3d> _origins;
