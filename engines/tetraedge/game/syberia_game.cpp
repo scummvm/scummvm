@@ -713,10 +713,12 @@ void SyberiaGame::leave(bool flag) {
 		_scene.unloadCharacter(_scene._character->_model->name());
 	}
 
-	for (auto &sound : _gameSounds) {
+	// Deleting these sounds can cause events which can modify the list.
+	Common::Array<GameSound *> sounds = _gameSounds;
+	_gameSounds.clear();
+	for (auto &sound : sounds) {
 		delete sound;
 	}
-	_gameSounds.clear();
 
 	for (auto &randsoundlist : _randomSounds) {
 		for (auto *randsound : randsoundlist._value) {
