@@ -103,52 +103,12 @@ namespace AGS3 {
 
 Globals *g_globals;
 
-static bool checkForSIMDExtensions() {
-#if defined(__x86_64__) || defined(__i686__)
-#  ifdef __GNUC__
-	uint32 extensions;
-	asm ("mov $1, %%eax\n\t"
-		 "cpuid\n\t"
-		 "mov %%edx, %0\n\t"
-		 : "=rm" (extensions)
-		 :
-		 : "eax", "ebx", "ecx", "edx");
-	return extensions & (1 << 26); // SSE2 extensions bit
-#  elif _MSC_VER
-	uint32 extensions;
-	__asm
-	{
-		mov eax,1
-		cpuid
-		mov extensions,edx
-	}
-	return extensions & (1 << 26); // SSE2 extensions bit
-#  else
-	return false;
-#  endif
-#elif defined(__aarch64__)
-	return true;
-// TODO: Complete PowerPC code
-//#elif defined(__powerpc__)
-//#  if __GNUC__ > 6 || \
-//		(__GNUC__ == 6 && (__GNUC_MINOR__ > 59 || \
-//							__GNUC_MINOR__ == 59) && \
-//							(__GNUC_PATCHLEVEL__ > 21 || \
-//							__GNUC_PATCHLEVEL__ == 21))
-//	return __builtin_cpu_supports("altivec");
-//#  else
-//	return true; // Just assume that we have these extensions 
-//#  endif
-#else
-	return false;
-#endif
-}
-
 Globals::Globals() {
 	g_globals = this;
 
 	// Allegro globals
-	__bitmap_simd_optimizations = checkForSIMDExtensions();
+	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuNEON) ? SIMD_NEON : SIMD_NONE;
+	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuSSE2) ? SIMD_SSE2 : SIMD_NONE;
 	Common::fill((byte *)&_black_palette, (byte *)&_black_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_current_palette, (byte *)&_current_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_prev_current_palette, (byte *)&_prev_current_palette + PAL_SIZE, 0);
