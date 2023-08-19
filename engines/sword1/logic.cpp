@@ -922,32 +922,33 @@ int Logic::fnFullSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 fra
 }
 
 int Logic::fnFadeDown(Object *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fadeDownPalette();
+	_vm->startFadePaletteDown(speed);
 	return SCRIPT_CONT;
 }
 
 int Logic::fnFadeUp(Object *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fadeUpPalette();
+	_vm->startFadePaletteUp(speed);
 	return SCRIPT_CONT;
 }
 
 int Logic::fnCheckFade(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_scriptVars[RETURN_VALUE] = (uint8)_screen->stillFading();
+	_scriptVars[RETURN_VALUE] = _screen->stillFading();
 	return SCRIPT_CONT;
 }
 
 int Logic::fnSetSpritePalette(Object *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fnSetPalette(184, 72, spritePal, false);
+	_screen->fnSetPalette(184, 72, spritePal);
 	return SCRIPT_CONT;
 }
 
 int Logic::fnSetWholePalette(Object *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fnSetPalette(0, 256, spritePal, false);
+	_screen->fnSetPalette(0, 256, spritePal);
 	return SCRIPT_CONT;
 }
 
 int Logic::fnSetFadeTargetPalette(Object *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fnSetPalette(0, 184, spritePal, true);
+	_screen->fnSetFadeTargetPalette(0, 184, spritePal, false);
+	_screen->fnSetFadeTargetPalette(0, 1, 0, true);
 	return SCRIPT_CONT;
 }
 

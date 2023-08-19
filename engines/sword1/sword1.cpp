@@ -158,7 +158,7 @@ Common::Error SwordEngine::init() {
 	_logic->initialize();
 	_objectMan->initialize();
 	_mouse->initialize();
-	_control = new Control(_saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music);
+	_control = new Control(this, _saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music, _screen);
 
 	return Common::kNoError;
 }
@@ -578,6 +578,7 @@ Common::Error SwordEngine::go() {
 	_control->checkForOldSaveGames();
 	setTotalPlayTime(0);
 
+	_screen->initFadePaletteServer();
 	installTimerRoutines();
 
 	uint16 startPos = ConfMan.getInt("boot_param");
@@ -685,7 +686,7 @@ uint8 SwordEngine::mainLoop() {
 				_screen->updateScreen();
 			pollInput((FRAME_TIME) - (_system->getMillis() - frameTime));
 
-			_vblCount = 0; // Reset the vBlank counter...
+			_vblCount = 0; // Reset the vBlank counter for the other timers...
 
 			_mouse->engine(_mouseCoord.x, _mouseCoord.y, _mouseState);
 
@@ -706,21 +707,26 @@ uint8 SwordEngine::mainLoop() {
 		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!shouldQuit()));
 
 		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!shouldQuit())) {
-			_screen->fadeDownPalette();
+			_screen->startFadePaletteDown(1);
 		}
 
 		_screen->quitScreen(); // Close graphic resources
-
-		while (_screen->stillFading()) { // This indirectly also waits for FX to be faded
-			if (_vblCount >= _rate)
-				_vblCount = 0;
-		}
+		waitForFade();
 
 		_sound->quitScreen(); // Purge the sound AFTER they've been faded
 
 		_objectMan->closeSection(Logic::_scriptVars[SCREEN]); // Close the section that PLAYER has just left, if it's empty now
 	}
 	return retCode;
+}
+
+void SwordEngine::waitForFade() {
+	while (_screen->stillFading()) { // This indirectly also waits for FX to be faded
+		if (_vblCount >= _rate)
+			_vblCount = 0;
+
+		pollInput(0);
+	}
 }
 
 void SwordEngine::pollInput(uint32 delay) { //copied and mutilated from sky.cpp
@@ -791,6 +797,22 @@ void SwordEngine::updateBottomMenu() {
 	_menu->refresh(MENU_BOT);
 }
 
+void SwordEngine::fadePaletteStep() {
+	_screen->fadePalette();
+}
+
+void SwordEngine::startFadePaletteDown(int speed) {
+	_screen->startFadePaletteDown(speed);
+
+	// Fade audio here
+}
+
+void SwordEngine::startFadePaletteUp(int speed) {
+	_screen->startFadePaletteUp(speed);
+
+	// Fade audio here
+}
+
 static void vblCallback(void *refCon) {
 	SwordEngine *vm = (SwordEngine *)refCon;
 
@@ -809,11 +831,9 @@ static void vblCallback(void *refCon) {
 		}
 
 		if (vm->_vbl60HzUSecElapsed >= PALETTE_FADE_USEC) {
-			// Subtract the target interval (to handle potential drift)
 			vm->_vbl60HzUSecElapsed -= PALETTE_FADE_USEC;
 
-			// This is where you place your 60Hz logic
-			//debug("Fade palette logic!");
+			vm->fadePaletteStep();
 		}
 
 		// TODO: Volume fading here...

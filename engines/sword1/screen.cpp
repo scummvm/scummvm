@@ -38,10 +38,11 @@
 
 namespace Sword1 {
 
-#define SCROLL_FRACTION 16
-#define MAX_SCROLL_DISTANCE 8
-#define FADE_UP 1
-#define FADE_DOWN -1
+#define SCROLL_FRACTION      16
+#define MAX_SCROLL_DISTANCE  8
+#define NO_FADE              0
+#define FADE_UP              1
+#define FADE_DOWN           -1
 
 Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_system = system;
@@ -49,7 +50,6 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_objMan = pObjMan;
 	_screenBuf = _screenGrid = NULL;
 	_backLength = _foreLength = _sortLength = 0;
-	_fadingStep = 0;
 	_currentScreen = 0xFFFF;
 	_updatePalette = false;
 	_psxCache.decodedBackground = NULL;
@@ -78,8 +78,6 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_scrnSizeY = 0;
 	_gridSizeX = 0;
 	_gridSizeY = 0;
-	_fadingDirection = 0;
-	_isBlack = 0;
 }
 
 Screen::~Screen() {
@@ -140,19 +138,39 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 	}
 }
 
-void Screen::fadeDownPalette() {
-	if (!_isBlack) { // don't fade down twice
-		_fadingStep = 15;
-		_fadingDirection = FADE_DOWN;
+void Screen::startFadePaletteDown(int speed) {
+	if (SwordEngine::_systemVars.wantFade) {
+		_paletteFadeInfo.paletteIndex = speed;
+		_paletteFadeInfo.paletteCount = 64;
+		_paletteFadeInfo.fadeCount = 0;
+		_paletteFadeInfo.paletteStatus = FADE_DOWN;
+	} else {
+		_system->getPaletteManager()->setPalette(_zeroPalette, 0, 256);
 	}
 }
 
-void Screen::fadeUpPalette() {
-	_fadingStep = 1;
-	_fadingDirection = FADE_UP;
+void Screen::startFadePaletteUp(int speed) {
+	if (SwordEngine::_systemVars.wantFade) {
+		// Set up the source palette;
+		// We are deliberately casting these to signed byte,
+		// because we want to allow them to go below zero.
+		for (int i = 0; i < 256 * 3; i++)
+			((int8 *)_paletteFadeInfo.srcPalette)[i] = ((int8 *)_paletteFadeInfo.dstPalette)[i] - 63;
+
+		// Start the fade
+		_paletteFadeInfo.paletteIndex = speed;
+		_paletteFadeInfo.paletteCount = 64;
+		_paletteFadeInfo.fadeCount = 0;
+		_paletteFadeInfo.paletteStatus = FADE_UP;
+	} else {
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
+
+		// Set up the source palette
+		memcpy((uint8 *)_paletteFadeInfo.srcPalette, (uint8 *)_currentPalette, 256 * 3);
+	}
 }
 
-void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
+void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id) {
 	uint8 *palData = (uint8 *)_resMan->openFetchRes(id);
 	if (start == 0) // force color 0 to black
 		palData[0] = palData[1] = palData[2] = 0;
@@ -168,14 +186,28 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 		_targetPalette[(start + cnt) * 3 + 2] = palData[cnt * 3 + 2] << 2;
 	}
 	_resMan->resClose(id);
-	_isBlack = false;
-	if (fadeUp) {
-		_fadingStep = 1;
-		_fadingDirection = FADE_UP;
-		memset(_currentPalette, 0, 256 * 3);
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
-	} else
-		_system->getPaletteManager()->setPalette(_targetPalette + 3 * start, start, length);
+
+	_system->getPaletteManager()->setPalette(_targetPalette + 3 * start, start, length);
+}
+
+void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool toBlack) {
+	byte *rgbData = nullptr;
+
+	if (toBlack) {
+		rgbData = const_cast<byte *>(_black);
+	} else {
+		rgbData = (byte *) _resMan->openFetchRes(id);
+	}
+
+	if (SwordEngine::_systemVars.wantFade) {
+		memcpy(_currentPalette + (start * 3), rgbData, length * 3);
+		memcpy(_paletteFadeInfo.dstPalette + (start * 3), rgbData, length * 3);
+		memset(_paletteFadeInfo.srcPalette + (start * 3), 0, length * 3);
+	} else {
+		memcpy(_currentPalette + (start * 3), rgbData, length * 3);
+	}
+
+	_resMan->resClose(id);
 }
 
 void Screen::fullRefresh() {
@@ -183,8 +215,62 @@ void Screen::fullRefresh() {
 	_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
 }
 
-bool Screen::stillFading() {
-	return (_fadingStep != 0);
+int16 Screen::stillFading() {
+	if (SwordEngine::_systemVars.wantFade)
+		return _paletteFadeInfo.paletteStatus;
+	else
+		return 0;
+}
+
+
+void Screen::fadePalette() {
+	_paletteFadeInfo.fadeCount++;
+
+	if (_paletteFadeInfo.fadeCount == _paletteFadeInfo.paletteIndex) {
+		_paletteFadeInfo.fadeCount = 0;
+
+		if (_paletteFadeInfo.paletteStatus == NO_FADE)
+			return;
+
+		// Set the whole palette to the current source.
+		// But first, remember that these are 6 bit values, and
+		// they have to be shifted left two times before using them.
+		byte outPal[256 * 3];
+		for (int i = 0; i < 256 * 3; i++) {
+			// Remember that we previously allowed the RGB values
+			// to go below zero? It's time to account for that;
+			// This contributes to producing the correct palette fading effect.
+			int8 curValueSigned = (int8)_paletteFadeInfo.srcPalette[i];
+			if (curValueSigned < 0)
+				curValueSigned = 0;
+
+			outPal[i] = ((byte)curValueSigned) << 2;
+		}
+
+		_system->getPaletteManager()->setPalette((const byte *)outPal, 0, 256);
+
+		_paletteFadeInfo.paletteCount--;
+
+		if (_paletteFadeInfo.paletteCount == 0) {
+			_paletteFadeInfo.paletteStatus = NO_FADE;
+		} else {
+			if (_paletteFadeInfo.paletteStatus == FADE_DOWN) {
+				// Fade down
+				for (int i = 0; i < 256 * 3; i++) {
+					if (_paletteFadeInfo.srcPalette[i] > 0)
+						_paletteFadeInfo.srcPalette[i]--;
+				}
+			} else if (_paletteFadeInfo.paletteStatus == FADE_UP) {
+				// Fade up
+				for (int i = 0; i < 256 * 3; i++) {
+					// Remember, we might have previously obtained negative values!
+					if ((int8)_paletteFadeInfo.srcPalette[i] < (int8)_paletteFadeInfo.dstPalette[i]) {
+						_paletteFadeInfo.srcPalette[i]++;
+					}
+				}
+			}
+		}
+	}
 }
 
 bool Screen::showScrollFrame() {
@@ -204,19 +290,16 @@ bool Screen::showScrollFrame() {
 
 void Screen::updateScreen() {
 	if (Logic::_scriptVars[NEW_PALETTE]) {
-		_fadingStep = 1;
-		_fadingDirection = FADE_UP;
 		_updatePalette = true;
 		Logic::_scriptVars[NEW_PALETTE] = 0;
 	}
+
 	if (_updatePalette) {
-		fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], false);
-		fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], false);
+		fnSetFadeTargetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0]);
+		fnSetFadeTargetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1]);
+		fnSetFadeTargetPalette(0, 1, 0, true);
+		startFadePaletteUp(1);
 		_updatePalette = false;
-	}
-	if (_fadingStep) {
-		fadePalette();
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 	}
 
 	uint16 scrlX = (uint16)Logic::_scriptVars[SCROLL_OFFSET_X];
@@ -461,6 +544,19 @@ void Screen::draw() {
 		processImage(_foreList[cnt]);
 
 	_backLength = _sortLength = _foreLength = 0;
+}
+
+void Screen::initFadePaletteServer() {
+	memset(_zeroPalette, 0, sizeof(_zeroPalette));
+
+	// Initialise the palette info variables.
+	_paletteFadeInfo.paletteStatus = 0;
+	_paletteFadeInfo.paletteIndex = 0;
+
+	memset(_paletteFadeInfo.dstPalette, 0, sizeof(_paletteFadeInfo.dstPalette));
+	memset(_paletteFadeInfo.srcPalette, 0, sizeof(_paletteFadeInfo.srcPalette));
+
+	_system->getPaletteManager()->setPalette((const byte *)_paletteFadeInfo.srcPalette, 0, 256);
 }
 
 void Screen::processImage(uint32 id) {
@@ -1142,23 +1238,6 @@ void Screen::flushPsxCache() {
 	}
 }
 
-void Screen::fadePalette() {
-	if (_fadingStep == 16)
-		memcpy(_currentPalette, _targetPalette, 256 * 3);
-	else if ((_fadingStep == 1) && (_fadingDirection == FADE_DOWN)) {
-		memset(_currentPalette, 0, 3 * 256);
-	} else
-		for (uint16 cnt = 0; cnt < 256 * 3; cnt++)
-			_currentPalette[cnt] = (_targetPalette[cnt] * _fadingStep) >> 4;
-
-	_fadingStep += _fadingDirection;
-	if (_fadingStep == 17) {
-		_fadingStep = 0;
-		_isBlack = false;
-	} else if (_fadingStep == 0)
-		_isBlack = true;
-}
-
 void Screen::fnSetParallax(uint32 screen, uint32 resId) {
 	_roomDefTable[screen].parallax[0] = resId;
 }
@@ -1232,7 +1311,41 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 }
 
 void Screen::fnFlash(uint8 color) {
-	warning("stub: Screen::fnFlash(%d)", color);
+	const byte *targetColor = _white;
+
+	switch (color) {
+	case FLASH_RED:
+		targetColor = _red;
+		break;
+	case FLASH_BLUE:
+		targetColor = _blue;
+		break;
+	case BORDER_YELLOW:
+		targetColor = _yellow;
+		break;
+	case BORDER_GREEN:
+		targetColor = _green;
+		break;
+	case BORDER_PURPLE:
+		targetColor = _purple;
+		break;
+	case BORDER_BLACK:
+		targetColor = _black;
+		break;
+	default:
+		warning("Screen::fnFlash(%d): Bogus color", color);
+		return;
+	}
+
+	_system->getPaletteManager()->setPalette(_currentPalette, 0, 1);
+
+	if (color == FLASH_RED || color == FLASH_BLUE) {
+		// This is what the original did here to induce a small wait cycle
+		// to correctly display the color before it is turned back to black...
+		for (int i = 0; i < 20000; ++i);
+
+		_system->getPaletteManager()->setPalette(_black, 0, 1);
+	}
 }
 
 // ------------------- Menu screen interface ---------------------------
