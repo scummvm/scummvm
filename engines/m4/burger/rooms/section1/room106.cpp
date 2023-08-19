@@ -170,10 +170,186 @@ void Room106::init() {
 
 void Room106::daemon() {
 	switch (_G(kernel).trigger) {
+	case 1:
+		_digi1 = !strcmp(_digi1, "106_101") ? "100_001" : "106_101";
+		digi_play(_digi1, 3, 255, 1);
+		break;
+
+	case 2:
+		switch (_val1) {
+		case 1:
+			player_set_commands_allowed(true);
+			_G(walker).wilbur_speech_random("106w001a", "106w001b", "106w001c");
+			break;
+		case 2:
+			wilbur_speech("106w014");
+			break;
+		case 3:
+			wilbur_speech("106w501", 5);
+			break;
+		case 4:
+			wilbur_speech("106w500", 10022);
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		switch (_val2) {
+		case 5:
+			_val3 = imath_ranged_rand(1, 7);
+			_val2 = 7;
+			series_play_with_breaks(PLAY1, "106dg01", 0x501, 3, 3);
+			break;
+
+		case 6:
+			_val2 = 7;
+			series_play_with_breaks(PLAY2, "106dg02", 0x501, 3, 3);
+			break;
+
+		case 7:
+			_val3 = imath_ranged_rand(1, 6);
+			_val2 = _G(game).previous_room == 137 || _G(game).previous_room == 138 ? 9 : 8;
+			series_play_with_breaks(PLAY3, "106dg04", 0x501, 3, 3);
+			break;
+
+		case 8:
+			_val1 = 1;
+			ws_turn_to_face(calc_facing(415, 234), 2);
+			_val2 = 9;
+			kernel_trigger_dispatch_now(3);
+			break;
+
+		case 9:
+			_G(flags)[V172] = 10023;
+
+			switch (imath_ranged_rand(1, 6)) {
+			case 1:
+				_val2 = 10;
+				break;
+			case 2:
+				_val2 = 11;
+				break;
+			case 3:
+				_val2 = 12;
+				break;
+			default:
+				_val2 = 9;
+				break;
+			}
+
+			series_show("106dg07", 0x501, 0, 3, 120);
+			series_show("106dg07s", 0x502, 0, -1, 120);
+			break;
+
+		case 10:
+			if (digi_play_state(1)) {
+				_val2 = 9;
+				kernel_trigger_dispatch_now(3);
+			} else {
+				_val3 = imath_ranged_rand(1, 7);
+				_val2 = 9;
+				series_play_with_breaks(PLAY4, "106dg05", 0x501, 3, 3);
+			}
+			break;
+
+		case 11:
+			if (digi_play_state(1)) {
+				_val2 = 9;
+				kernel_trigger_dispatch_now(3);
+			} else {
+				_val3 = imath_ranged_rand(1, 3);
+				_val2 = 15;
+				series_play_with_breaks(PLAY5, "106dg07", 0x501, 3, 3);
+			}
+			break;
+
+		case 12:
+			if (digi_play_state(1)) {
+				_val2 = 9;
+				kernel_trigger_dispatch_now(3);
+			} else {
+				_val3 = imath_ranged_rand(1, 6);
+				_val2 = 9;
+				series_play_with_breaks(PLAY3, "106dg04", 0x501, 3, 3);
+			}
+			break;
+
+		case 13:
+			if (digi_play_state(1)) {
+				_val2 = 15;
+				kernel_trigger_dispatch_now(3);
+			} else {
+				_val3 = imath_ranged_rand(1, 6);
+				_val2 = 15;
+				series_play_with_breaks(PLAY3, "106dg09", 0x501, 3, 3);
+			}
+			break;
+
+		case 14:
+			if (digi_play_state(1)) {
+				_val2 = 15;
+				kernel_trigger_dispatch_now(3);
+			} else {
+				_val3 = imath_ranged_rand(1, 3);
+				_val2 = 9;
+				series_play_with_breaks(PLAY6, "106dg11", 0x501, 3, 3);
+			}
+			break;
+
+		case 15:
+			_G(flags)[V172] = 10024;
+
+			switch (imath_ranged_rand(1, 4)) {
+			case 1:
+				_val2 = 13;
+				break;
+			case 2:
+				_val2 = 14;
+				break;
+			default:
+				_val2 = 15;
+				break;
+			}
+
+			series_show("106dg07", 0x501, 0, 3, 120, 8);
+			series_show("106dg07s", 0x502, 0, -1, 120, 8);
+			break;
+
+		case 16:
+			_val3 = imath_ranged_rand(1, 6);
+			_val2 = 11;
+			series_play_with_breaks(PLAY7, "106dg06", 0x501, 3, 3);
+			break;
+
+		case 17:
+			_val3 = imath_ranged_rand(1, 6);
+			_val2 = 13;
+			series_play_with_breaks(PLAY7, "106dg10", 0x501, 3, 3);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 4:
+		_val1 = 3;
+		digi_play("106s001", 1, 255, 2);
+		break;
+
 	case 5:
-		_val3 = imath_ranged_rand(1, 7);
-		_val2 = 7;
-		series_play_with_breaks(PLAY1, "106dg01", 0x501, 3, 3);
+		_val1 = 4;
+		digi_play("106_103", 1, 255, 2);
+		break;
+
+	case 10008:
+		_val2 = _G(flags)[V172] == 10023 ? 16 : 17;
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
 		break;
 	}
 }
