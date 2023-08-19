@@ -62,8 +62,46 @@ HelpDialog::HelpDialog()
 	tab->addTab(_("Kaboom"), "GlobalOptions_Graphics", false);
 	tab->addTab(_("Boomka"), "GlobalOptions_Graphics", false);
 
-	new RichTextWidget(tab, 10, 10, _w - 40, tabHeight - buttonHeight, Common::U32String("Hello world"));
+	Common::U32String helpText = _(
+"# Touch controls\n"
+"\n"
+"The touch control scheme can be configured in the global settings. From the Launcher, go to **Options > Backend > Choose the preferred touch mode**.\n"
+"It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games) and choose one of the three possible modes:\n"
+"\n"
+" * Direct mouse, the touch controls are direct. The pointer jumps to where the finger touches the screen (default for menus).\n"
+" * Touchpad emulation, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.\n"
+" * Gamepad emulation, the touch controls don't move any mouse. The fingers must be placed on lower left and right of the screen and respectively emulate a directional pad and action buttons.\n"
+" * The pointer speed setting in the **Controls tab** affects how far the pointer moves in response to a finger movement.\n"
+"\n"
+"The touch mode can be switched at anytime by tapping on the controller icon, next to the menu icon at the top right of the screen.\n"
+"\n"
+"To display or hide the small controller icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the controller icon.\n"
+"\n"
+"## Two finger tap\n"
+"\n"
+"To do a two finger tap, hold one finger down and then tap with a second finger.\n"
+"\n"
+"## Three finger tap\n"
+"\n"
+"To do a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.\n"
+"\n"
+"## Immersive Sticky fullscreen mode\n"
+"\n"
+"ScummVM for Android uses the Immersive Sticky fullscreen mode, which means that the Android system bar is hidden until the user swipes from an edge with a system bar. Swipe from the edge to reveal the system bars.  They remain semi-transparent and disappear after a few seconds unless you interact with them. Your swipe also registers in the game, so if you need to swipe from an edge with system bars, your game play is not interrupted.\n"
+"\n"
+"## Global Main Menu\n"
+"\n"
+"To open the Global Main Menu, tap on the small menu icon at the top right of the screen.\n"
+"\n"
+"To display or hide the small menu icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the menu icon.\n"
+"\n"
+"## Virtual keyboard\n"
+"\n"
+"To open the virtual keyboard, long press on the small controller icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the small controller icon (which became a keyboard one) again, or tap outside the text field.\n"
+"\n"
+	);
 
+	new RichTextWidget(tab, 10, 10, _w - 40, tabHeight - buttonHeight, helpText);
 
 	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
