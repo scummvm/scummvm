@@ -720,7 +720,6 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 					s = readHex(&textSlant, s, 2);
 
-					current_format.textSlant &= ~textSlant; // Clearing the specified byte
 					current_format.textSlant &= ~textSlant; // Clearing the specified bit
 				} else if (*s == '+') { // \016+XX  -- opening textSlant
 					uint16 textSlant;
