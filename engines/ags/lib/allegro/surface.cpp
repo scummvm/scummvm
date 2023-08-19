@@ -294,7 +294,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 
 #define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea, _G(_blender_mode), 0, 0)
 	// Calling drawInnerXXXX with a ScaleThreshold of 0 just does normal un-scaled drawing
-	if (!_G(_bitmap_simd_optimizations)) {
+	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
 		if (sameFormat) {
 			switch (format.bytesPerPixel) {
 			case 1: DRAWINNER((drawInnerGeneric<1, 1, 0>)); return;
@@ -376,7 +376,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
 #define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, 0, sameFormat, src, destArea, false, false, skipTrans, srcAlpha, 0, 0, 0, dstRect, srcRect, _G(_blender_mode), scaleX, scaleY)
-	if (!_G(_bitmap_simd_optimizations)) {
+	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
 		if (sameFormat) {
 			switch (format.bytesPerPixel) {
 			case 1: DRAWINNER((drawInnerGeneric<1, 1, SCALE_THRESHOLD>)); return;
