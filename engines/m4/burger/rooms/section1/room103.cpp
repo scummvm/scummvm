@@ -113,7 +113,7 @@ int32 Room103::_val0 = 0;
 
 void Room103::init() {
 	_G(player).walker_in_this_scene = true;
-	_val1 = 0;
+	_flag1 = false;
 	_val2 = 0;
 	_val3 = 0;
 
@@ -158,7 +158,471 @@ void Room103::init() {
 }
 
 void Room103::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		term_message("death timer");
+
+		if (_flag1) {
+			term_message("++");
+
+			if (++_val7 < 5 || (_val2 != 0 && _val2 != 2)) {
+				kernel_timing_trigger(60, 1);
+
+			} else if (_val2 == 2) {
+				kernel_timing_trigger(1, 3);
+				player_set_commands_allowed(false);
+				_flag1 = false;
+				term_message("left");
+
+			} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+				term_message("caught");
+				kernel_timing_trigger(1, 8);
+				intr_freshen_sentence();
+				Section1::walk();
+				player_set_commands_allowed(false);
+				_flag1 = false;
+			
+			} else {
+				term_message("again");
+				kernel_timing_trigger(60, 1);
+			}
+		}
+		break;
+
+	case 2:
+		if (++_val0 >= 5) {
+			static const char *NAMES[7] = {
+				"103h002a", "103h002b", "103h002c", "103h002d",
+				"103h002e", "103h002f",  "103h002g"
+			};
+			assert(_digi1 >= 1 && _digi1 <= 7);
+			digi_play(NAMES[_digi1 - 1], 2, 255, 1);
+		} else {
+			kernel_timing_trigger(60, 2);
+		}
+		break;
+
+	case 3:
+		TerminateMachineAndNull(_series2);
+		series_load("103ha03");
+		series_load("103ha03s");
+		digi_preload("103H005");
+		digi_preload_stream_breaks(SERIES2);
+		series_play("103ha01s", 0x201);
+		series_stream_with_breaks(SERIES2, "103ha01", 6, 0x200, 4);
+		break;
+
+	case 4:
+		digi_unload_stream_breaks(SERIES2);
+		series_play_with_breaks(PLAY2, "103ha03", 0x200, 9, 3, 12);
+		break;
+
+	case 6:
+		digi_play("103H005", 1, 255, 7);
+		break;
+
+	case 7:
+		_G(flags)[V023] = 0;
+		_G(flags)[GLB_TEMP_3] = _G(flags).get_boonsville_time_and_display() + 1800;
+		_G(flags)[V012] = 2;
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
+		break;
+
+	case 8:
+		player_update_info();
+		digi_stop(1);
+
+		if ((_G(player_info).x > 391 && _G(player_info).y < 321) ||
+				(_G(player_info).x > 490 && _G(player_info).y < 374) ||
+				(_G(player_info).x > 215 && _G(player_info).y < 267) ||
+				(_G(player_info).y < 224)) {
+			ws_walk(271, 265, 0, 19, 2);
+			term_message("walk to caught");
+
+		} else {
+			kernel_timing_trigger(1, 19);
+			term_message("don't walk to caught");
+		}
+		break;
+
+	case 9:
+		series_play_with_breaks(PLAY3, "103ha03", 0x201, 9, 3, 12);
+		series_play_with_breaks(PLAY2, "103ha03", 0x200, 9, 3, 12);
+		break;
+
+	case 10:
+		switch (_val4) {
+		case 12:
+			if (imath_ranged_rand(1, 3) == 1) {
+				series_play("103cr01", 0x100, 0, 10, 30, 0, 100, 0, 0, 1, 2);
+				series_play("103cr01s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
+			} else {
+				series_play("103cr01", 0x100, 0, 10, 60, 0, 100, 0, 0, 0, 0);
+				series_play("103cr01s", 0x100, 0, -1, 60, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		case 13:
+			switch (imath_ranged_rand(1, 8)) {
+			case 1:
+				_val4 = 12;
+				series_play("103cr01", 0x100, 2, 10, 30, 0, 100, 0, 0, 1, 2);
+				series_play("103cr01s", 0x100, 2, -1, 30, 0, 100, 0, 0, 1, 2);
+				break;
+
+			case 3:
+				series_play("103cr01", 0x100, 0, 10, 6, 0, 100, 0, 0, 7, 15);
+				series_play("103cr01s", 0x100, 0, -1, 6, 0, 100, 0, 0, 7, 15);
+				break;
+
+			case 4:
+			case 5:
+				_val4 = 14;
+				series_play("103cr01", 0x100, 0, 10, 30, 0, 100, 0, 0, 3, 4);
+				series_play("103cr01s", 0x100, 0, -1, 30, 0, 100, 0, 0, 3, 4);
+				break;
+
+			default:
+				series_play("103cr01", 0x100, 0, 10, 60, 0, 100, 0, 0, 2, 2);
+				series_play("103cr01s", 0x100, 0, -1, 60, 0, 100, 0, 0, 2, 2);
+				break;
+			}
+			break;
+
+		case 14:
+			if (imath_ranged_rand(1, 4) == 1) {
+				_val4 = 13;
+				series_play("103cr01", 0x100, 0, 10, 6, 0, 100, 0, 0, 5, 15);
+				series_play("103cr01s", 0x100, 0, -1, 6, 0, 100, 0, 0, 5, 15);
+			} else {
+				series_play("103cr01", 0x100, 0, 10, 60, 0, 100, 0, 0, 4, 4);
+				series_play("103cr01s", 0x100, 0, -1, 60, 0, 100, 0, 0, 4, 4);
+			}
+			break;
+		}
+		break;
+
+	case 11:
+		switch (_val9) {
+		case 15:
+			if (imath_ranged_rand(1, 4) == 1) {
+				_val9 = 16;
+				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 1, 2);
+				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
+			} else {
+				series_play("103cr02", 0x100, 0, 11, 70, 0, 100, 0, 0, 0, 0);
+				series_play("103cr02s", 0x100, 0, -1, 70, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		case 16:
+			switch (imath_ranged_rand(1, 5)) {
+			case 1:
+				_val9 = 15;
+				series_play("103cr02", 0x100, 2, 11, 30, 0, 100, 0, 0, 1, 2);
+				series_play("103cr02s", 0x100, 2, -1, 30, 0, 100, 0, 0, 1, 2);
+				break;
+
+			case 2:
+				_val9 = 17;
+				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 3, 4);
+				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 3, 4);
+				break;
+
+			default:
+				series_play("103cr02", 0x100, 0, 11, 70, 0, 100, 0, 0, 2, 2);
+				series_play("103cr02s", 0x100, 0, -1, 70, 0, 100, 0, 0, 2, 2);
+				break;
+			}
+			break;
+
+		case 17:
+			switch (imath_ranged_rand(1, 6)) {
+			case 1:
+				_val9 = 16;
+				series_play("103cr02", 0x100, 2, 11, 30, 0, 100, 0, 0, 3, 4);
+				series_play("103cr02s", 0x100, 2, -1, 30, 0, 100, 0, 0, 3, 4);
+				break;
+
+			case 2:
+				_val9 = 18;
+				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 5, 8);
+				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 5, 8);
+				break;
+
+			default:
+				series_play("103cr02", 0x100, 0, 11, 70, 0, 100, 0, 0, 4, 4);
+				series_play("103cr02s", 0x100, 0, -1, 70, 0, 100, 0, 0, 4, 4);
+				break;
+			}
+			break;
+
+		case 18:
+			if (imath_ranged_rand(1, 4) == 1) {
+				_val9 = 17;
+				series_play("103cr02", 0x100, 0, 11, 30, 0, 100, 0, 0, 9, 12);
+				series_play("103cr02s", 0x100, 0, -1, 30, 0, 100, 0, 0, 9, 12);
+			} else {
+				series_play("103cr02", 0x100, 0, 11, 70, 0, 100, 0, 0, 8, 8);
+				series_play("103cr02s", 0x100, 0, -1, 70, 0, 100, 0, 0, 8, 8);
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 12:
+		switch (_val5) {
+		case 19:
+			if (imath_ranged_rand(1, 4) == 1) {
+				_val5 = 20;
+				series_play("103cr03", 0x100, 0, 12, 30, 0, 100, 0, 0, 1, 2);
+				series_play("103cr03s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
+			} else {
+				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 0, 0);
+				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		case 20:
+			switch (imath_ranged_rand(1, 6)) {
+			case 1:
+				_val5 = 19;
+				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 4, 4);
+				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 4, 4);
+				break;
+
+			case 3:
+				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 2, 2);
+				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 2, 2);
+				break;
+
+			default:
+				series_play("103cr03", 0x100, 0, 12, 80, 0, 100, 0, 0, 3, 3);
+				series_play("103cr03s", 0x100, 0, -1, 80, 0, 100, 0, 0, 3, 3);
+				break;
+			}
+			break;
+		}
+		break;
+
+	case 13:
+		switch (_val6) {
+		case 21:
+			switch (imath_ranged_rand(1, 6)) {
+			case 1:
+				series_play("103cr04", 0x100, 0, 13, 6, 0, 100, 0, 0, 5, 9);
+				series_play("103cr04s", 0x100, 0, -1, 6, 0, 100, 0, 0, 5, 9);
+				break;
+
+			case 2:
+				_val6 = 22;
+				series_play("103cr04", 0x100, 0, 13, 30, 0, 100, 0, 0, 1, 2);
+				series_play("103cr04s", 0x100, 0, -1, 30, 0, 100, 0, 0, 1, 2);
+				break;
+
+			default:
+				series_play("103cr04", 0x100, 0, 13, 90, 0, 100, 0, 0, 0, 0);
+				series_play("103cr04s", 0x100, 0, -1, 90, 0, 100, 0, 0, 0, 0);
+				break;
+			}
+			break;
+
+		case 22:
+			if (imath_ranged_rand(1, 4) == 1) {
+				_val6 = 21;
+				series_play("103cr04", 0x100, 2, 13, 30, 0, 100, 0, 0, 0, 1);
+				series_play("103cr04s", 0x100, 2, -1, 30, 0, 100, 0, 0, 0, 1);
+			} else {
+				series_play("103cr04", 0x100, 0, 13, 90, 0, 100, 0, 0, 0, 2);
+				series_play("103cr04s", 0x100, 0, -1, 90, 0, 100, 0, 0, 2, 2);
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 14:
+		_digi1 = imath_ranged_rand(1, 7);
+		preloadDigi1();
+		_G(flags)[V298] = 1;
+
+		if (_G(flags)[V024]) {
+			player_set_commands_allowed(true);
+			kernel_timing_trigger(60, 2);
+		} else {
+			wilbur_speech("103w003", 15);
+		}
+
+		_G(flags)[V023] = 1;
+		_G(flags)[V024] = 1;
+		_flag1 = true;
+		_val7 = 0;
+		_val0 = 0;
+		break;
+
+	case 15:
+		player_set_commands_allowed(true);
+		kernel_timing_trigger(1, 2);
+		break;
+
+	case 16:
+		TerminateMachineAndNull(_series1);
+		break;
+
+	case 17:
+		_G(flags)[V023] = 0;
+		_G(roomVal1) = 6;
+		_G(flags)[V298] = 0;
+		ws_walk(325, 173, 0, 10016);
+		break;
+
+	case 19:
+		_G(flags)[V298] = 1;
+		TerminateMachineAndNull(_series2);
+		series_play_with_breaks(PLAY4, "103ha02", 0x100, 20, 2, 10, 100, 0, 0);
+		_frame = 10;
+		_val8 = 9;
+		break;
+
+	case 20:
+		switch (_val8) {
+		case 9:
+			if (imath_ranged_rand(1, 2) == 1) {
+				if (++_frame >= 17)
+					_frame = 15;
+			} else {
+				if (--_frame <= 10)
+					_frame = 12;
+			}
+
+			series_play("103ha02", 0x101, 0, 20, 10, 0, 100, 0, 0, _frame, _frame);
+			break;
+
+		case 10:
+			series_play("103ha02", 0x101, 0, 22, 6, 0, 100, 0, 0, 17, 22);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 21:
+		_val8 = 10;
+		kernel_timing_trigger(1, 24);
+		break;
+
+	case 22:
+		series_play("103ha02", 0x101, 0, -1, 6, -1, 100, 0, 0, 22, 22);
+		break;
+
+	case 23:
+		if (_G(flags)[GLB_TEMP_4] == 2 || _G(flags)[V013]) {
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				digi_play("103h008a", 1, 255, 21);
+				break;
+			case 2:
+				digi_play("103h008b", 1, 255, 21);
+				break;
+			case 3:
+				digi_play("103h008c", 1, 255, 21);
+				break;
+			default:
+				break;
+			}
+		} else {
+			digi_play("103h007", 1, 255, 21);
+		}
+
+		_G(flags)[GLB_TEMP_3] = _G(flags).get_boonsville_time_and_display() + 1800;
+		_G(flags)[V012] = 2;
+		ws_walk(271, 265, 0, 24, 2);
+		break;
+
+	case 24:
+		if (++_val3 > 1) {
+			wilbur_speech("103w004", 17, -1, 0, 75);
+			_G(flags)[V013] = 1;
+		}
+		break;
+
+	case gTELEPORT:
+		switch (_G(roomVal1)) {
+		case 1:
+			digi_unload_stream_breaks(SERIES1);
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			_G(roomVal1) = 10002;
+			break;
+
+		case 2:
+			ws_hide_walker();
+			_G(roomVal1) = 3;
+			digi_preload_stream_breaks(SERIES3);
+			series_play("103wi04s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 9);
+			series_stream_with_breaks(SERIES3, "103wi04", 6, 0x100, gTELEPORT);
+			break;
+
+		case 3:
+			digi_unload_stream_breaks(SERIES3);
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			_G(roomVal1) = 10002;
+			wilbur_speech("103w012");
+			break;
+
+		case 4:
+			_G(roomVal1) = 5;
+			TerminateMachineAndNull(_series1);
+			ws_hide_walker();
+			series_play("103wi03s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, 19);
+			series_stream_with_breaks(SERIES4, "103wi03", 6, 0x100, gTELEPORT);
+			break;
+
+		case 5:
+			ws_unhide_walker();
+			_G(roomVal1) = 10002;
+			_series1 = series_play("103wi06", 0x500, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+			digi_play(Common::String::format("103h001%c",
+				'a' + imath_ranged_rand(0, 4)).c_str(), 2, 255, 14);
+			break;
+
+		case 6:
+			_G(roomVal1) = 7;
+			kernel_timing_trigger(1, gTELEPORT);
+			break;
+
+		case 7:
+			_G(roomVal1) = 8;
+			ws_hide_walker();
+			series_play_with_breaks(PLAY1, "103wi02", 0xa00, gTELEPORT, 2);
+			series_play("103wi02s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 27);
+			player_set_commands_allowed(false);
+			break;
+
+		case 8:
+			_val2 = 2;
+
+			if (!_G(flags)[V023])
+				pal_fade_init(1001);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room103::pre_parser() {
@@ -195,6 +659,16 @@ void Room103::parser() {
 	} else {
 		_G(player).command_ready = false;
 	}
+}
+
+void Room103::preloadDigi1() {
+	const char *NAMES[7] = {
+		"103h002a", "103h002b", "103h002c", "103h002d",
+		"103h002e", "103h002f", "103h002g"
+	};
+
+	assert(_digi1 >= 1 && _digi1 <= 7);
+	digi_preload(NAMES[_digi1 - 1]);
 }
 
 } // namespace Rooms

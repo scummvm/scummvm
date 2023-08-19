@@ -35,14 +35,21 @@ class Room103 : public Room {
 	static const seriesStreamBreak SERIES4[];
 private:
 	static int32 _val0;
-	int _val1 = 0;
+	bool _flag1 = false;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	int _frame = 0;
+	int _digi1 = 0;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
+
+	void preloadDigi1();
 
 public:
 	Room103() : Room() {}
