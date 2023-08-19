@@ -117,22 +117,26 @@ int render_codespan(Common::DataBuffer *ob, const Common::DataBuffer *text, void
 }
 
 int render_double_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
-	if (!text)
+	if (!text || !text->size)
 		return 0;
 
 	warning("render_double_emphasis(%s)", PR(text));
 
-	bufput(ob, text->data, text->size);
+	Common::String res = Common::String::format("\016+%02x%s\016-%02x", kMacFontBold, Common::String((const char *)text->data , text->size).c_str(), kMacFontBold);
+
+	bufput(ob, res.c_str(), res.size());
 	return 1;
 }
 
 int render_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
-	if (!text)
+	if (!text || !text->size)
 		return 0;
 
 	warning("render_emphasis(%s)", PR(text));
 
-	bufput(ob, text->data, text->size);
+	Common::String res = Common::String::format("\016+%02x%s\016-%02x", kMacFontItalic, Common::String((const char *)text->data , text->size).c_str(), kMacFontItalic);
+
+	bufput(ob, res.c_str(), res.size());
 	return 1;
 }
 
