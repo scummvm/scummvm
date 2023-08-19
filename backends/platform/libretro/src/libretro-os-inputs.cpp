@@ -26,7 +26,8 @@ enum processMouse_status {
 	STATUS_DOING_JOYSTICK  = (1 << 0),
 	STATUS_DOING_MOUSE     = (1 << 1),
 	STATUS_DOING_X         = (1 << 2),
-	STATUS_DOING_Y         = (1 << 3)
+	STATUS_DOING_Y         = (1 << 3),
+	STATUS_DOING_SLOWER    = (1 << 4)
 };
 
 void OSystem_libretro::updateMouseXY(float deltaAcc, float * cumulativeXYAcc, int doing_x){
@@ -37,6 +38,9 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float * cumulativeXYAcc, in
 
 	if (! deltaAcc)
 		return;
+
+	if (status & STATUS_DOING_SLOWER)
+		deltaAcc *= 0.2f;
 
 	if (doing_x) {
 		status |= STATUS_DOING_X;
@@ -149,12 +153,15 @@ void OSystem_libretro::processMouse(void) {
 		{(unsigned)Common::KEYCODE_KP4, 52},
 	};
 
-	// Reduce gamepad cursor speed, if required
+	status = 0;
+
+	// Reduce cursor speed, if required
 	if (retro_get_input_device() == RETRO_DEVICE_JOYPAD && retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2)) {
-		_adjusted_cursor_speed = _adjusted_cursor_speed * (1.0f / 5.0f);
+		status |= STATUS_DOING_SLOWER;
+	} else {
+		status &= ~STATUS_DOING_SLOWER;
 	}
 
-	status = 0;
 	x = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
 	y = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
 
