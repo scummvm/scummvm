@@ -203,7 +203,7 @@ void Room103::daemon() {
 		break;
 
 	case 3:
-		TerminateMachineAndNull(_series2);
+		terminateMachineAndNull(_series2);
 		series_load("103ha03");
 		series_load("103ha03s");
 		digi_preload("103H005");
@@ -471,7 +471,7 @@ void Room103::daemon() {
 		break;
 
 	case 16:
-		TerminateMachineAndNull(_series1);
+		terminateMachineAndNull(_series1);
 		break;
 
 	case 17:
@@ -483,7 +483,7 @@ void Room103::daemon() {
 
 	case 19:
 		_G(flags)[V298] = 1;
-		TerminateMachineAndNull(_series2);
+		terminateMachineAndNull(_series2);
 		series_play_with_breaks(PLAY4, "103ha02", 0x100, 20, 2, 10, 100, 0, 0);
 		_frame = 10;
 		_val8 = 9;
@@ -579,7 +579,7 @@ void Room103::daemon() {
 
 		case 4:
 			_G(roomVal1) = 5;
-			TerminateMachineAndNull(_series1);
+			terminateMachineAndNull(_series1);
 			ws_hide_walker();
 			series_play("103wi03s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, 19);
 			series_stream_with_breaks(SERIES4, "103wi03", 6, 0x100, gTELEPORT);

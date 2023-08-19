@@ -180,7 +180,7 @@ void Section1::daemon() {
 			series_play("110bu01", 0, 0, 1029, 5, 0, 100, 0, 0, frame, frame);
 		} else {
 			pal_fade_set_start(_G(master_palette), 0);
-			TerminateMachineAndNull(_play);
+			terminateMachineAndNull(_play);
 			kernel_timing_trigger(1, 1031);
 		}
 		break;
@@ -211,7 +211,7 @@ void Section1::daemon() {
 		break;
 	case 1035:
 		pal_fade_set_start(_G(master_palette), 0);
-		TerminateMachineAndNull(_play);
+		terminateMachineAndNull(_play);
 		kernel_timing_trigger(1, 1036);
 		break;
 	case 1036:

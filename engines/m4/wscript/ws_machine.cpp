@@ -638,19 +638,19 @@ void (*condOpTable[])(machine *m, int32 *pcOffset) = {
 	&op_SWITCH_GT				//9
 };
 
-void PauseEngines(void) {
+void pauseEngines(void) {
 	_GWS(enginesPaused) = true;
 }
 
-void UnpauseEngines(void) {
+void unpauseEngines(void) {
 	_GWS(enginesPaused) = false;
 }
 
-void AddPauseTime(int32 myTime) {
+void addPauseTime(int32 myTime) {
 	_GWS(pauseTime) += myTime;
 }
 
-void CycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
+void cycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
 		uint8 *myPalette, uint8 *ICT, bool updateVideo) {
 	int32 clockTime;
 
@@ -681,7 +681,7 @@ void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table,
 		screenCodes, myPalette, ICT);
 }
 
-static void CancelAllEngineReqs(machine *m) {
+static void cancelAllEngineReqs(machine *m) {
 	globalMsgReq *myGMsg, *tempGMsg;
 
 	//---- CANCEL CRUNCHER REQS
@@ -712,7 +712,7 @@ static void CancelAllEngineReqs(machine *m) {
 }
 
 
-static void ShutdownMachine(machine *m) {
+static void shutdownMachine(machine *m) {
 	dbg_RemoveWSMach(m);
 
 	if (m->myAnim8) {
@@ -762,28 +762,28 @@ void TerminateMachinesByHash(uint32 machHash) {
 			if (curr == _GWS(firstMachine)) {	//	maintain the beginning of machine chain
 				_GWS(firstMachine) = next;
 			}
-			CancelAllEngineReqs(curr);			// cancel its requests
-			ShutdownMachine(curr);				// deallocate the whole ball'o'wax
+			cancelAllEngineReqs(curr);			// cancel its requests
+			shutdownMachine(curr);				// deallocate the whole ball'o'wax
 		}
 		curr = next;							// and pop aint32 the chain
 	}
 }
 
-void TerminateMachine(machine *myMachine) {
-	if ((!myMachine) || (!VerifyMachineExists(myMachine))) {
+void terminateMachine(machine *myMachine) {
+	if ((!myMachine) || (!verifyMachineExists(myMachine))) {
 		return;
 	}
 
-	CancelAllEngineReqs(myMachine);
-	ShutdownMachine(myMachine);
+	cancelAllEngineReqs(myMachine);
+	shutdownMachine(myMachine);
 }
 
-void TerminateMachineAndNull(machine *&m) {
-	TerminateMachine(m);
+void terminateMachineAndNull(machine *&m) {
+	terminateMachine(m);
 	m = nullptr;
 }
 
-bool VerifyMachineExists(machine *m) {
+bool verifyMachineExists(machine *m) {
 	machine *tempM;
 
 	// Parameter verification
@@ -870,9 +870,9 @@ static int32 StepAt(int32 *pcOffset, machine *m) {
 		if (!keepProcessing) {
 			// Does the machine still exist
 			if (m->machID == machID) {
-				CancelAllEngineReqs(m);
+				cancelAllEngineReqs(m);
 				if (m->curState == -1) {
-					ShutdownMachine(m);
+					shutdownMachine(m);
 				} else {									// If machine hasn't terminated
 					IntoTheState(m);						// recurse to kickstart next state
 				}

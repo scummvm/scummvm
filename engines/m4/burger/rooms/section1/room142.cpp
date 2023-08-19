@@ -254,9 +254,9 @@ void Room142::init() {
 void Room142::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		TerminateMachineAndNull(_series8);
-		TerminateMachineAndNull(_series5);
-		TerminateMachineAndNull(_series1);
+		terminateMachineAndNull(_series8);
+		terminateMachineAndNull(_series5);
+		terminateMachineAndNull(_series1);
 
 		if (_G(player_info.y) < 285) {
 			Section1::updateWalker(adjustY(_G(player_info).y), 285, 9, 2);
@@ -408,14 +408,14 @@ void Room142::daemon() {
 		break;
 
 	case 14:
-		TerminateMachineAndNull(_series1);
+		terminateMachineAndNull(_series1);
 		break;
 
 
 	case gTELEPORT:
 		switch (_G(roomVal1)) {
 		case 1:
-			TerminateMachineAndNull(_series5);
+			terminateMachineAndNull(_series5);
 			disable_player();
 			_G(roomVal1) = 2;
 			series_play_with_breaks(PLAY9, "142wi04", 0xdff, gTELEPORT, 3);
@@ -434,8 +434,8 @@ void Room142::daemon() {
 				wilbur_speech("142w009");
 			} else {
 				player_set_commands_allowed(false);
-				TerminateMachineAndNull(_series6);
-				TerminateMachineAndNull(_series7);
+				terminateMachineAndNull(_series6);
+				terminateMachineAndNull(_series7);
 				_G(roomVal1) = 4;
 
 				series_play_with_breaks(PLAY11, "142wi04", 0xdff, gTELEPORT, 3);
@@ -452,8 +452,8 @@ void Room142::daemon() {
 
 		case 5:
 			player_set_commands_allowed(false);
-			TerminateMachineAndNull(_series6);
-			TerminateMachineAndNull(_series7);
+			terminateMachineAndNull(_series6);
+			terminateMachineAndNull(_series7);
 			_G(roomVal1) = 6;
 
 			series_play_with_breaks(PLAY10, "142wi02", 0xdff, gTELEPORT, 3);
@@ -468,8 +468,8 @@ void Room142::daemon() {
 
 		case 7:
 			player_set_commands_allowed(false);
-			TerminateMachineAndNull(_series6);
-			TerminateMachineAndNull(_series7);
+			terminateMachineAndNull(_series6);
+			terminateMachineAndNull(_series7);
 			_G(roomVal1) = 8;
 
 			series_play_with_breaks(PLAY10, "142wi04", 0xdff, gTELEPORT, 3);
@@ -504,11 +504,11 @@ void Room142::daemon() {
 	case 10028:
 		if (!_G(flags)[V043]) {
 			if (_series2) {
-				TerminateMachineAndNull(_series2);
-				TerminateMachineAndNull(_series3);
+				terminateMachineAndNull(_series2);
+				terminateMachineAndNull(_series3);
 			}
 			if (_series4) {
-				TerminateMachineAndNull(_series4);
+				terminateMachineAndNull(_series4);
 				_G(flags)[V058] = 0;
 			}
 
@@ -557,8 +557,8 @@ void Room142::daemon() {
 				intr_remove_no_walk_rect(_noWalk);
 				hotspot_set_active("TRUCK", false);
 
-				TerminateMachineAndNull(_series1);
-				TerminateMachineAndNull(_series2);
+				terminateMachineAndNull(_series1);
+				terminateMachineAndNull(_series2);
 
 				_val1 = 19;
 				series_play_with_breaks(PLAY8, "142bu03", 0xd00, 9, 3);
@@ -570,7 +570,7 @@ void Room142::daemon() {
 
 	case 10032:
 		if (_series2) {
-			TerminateMachineAndNull(_series2);
+			terminateMachineAndNull(_series2);
 			_G(flags)[V000] = _G(flags)[V043] ? 1002 : 1004;
 		}
 

@@ -306,9 +306,9 @@ void BurgerEngine::global_daemon() {
 
 	case gNONPLAYERS_SPEECH_FINISHED:
 		if (_G(npcSpeech1))
-			TerminateMachineAndNull(_G(npcSpeech1));
+			terminateMachineAndNull(_G(npcSpeech1));
 		if (_G(npcSpeech2))
-			TerminateMachineAndNull(_G(npcSpeech2));
+			terminateMachineAndNull(_G(npcSpeech2));
 
 		kernel_trigger_dispatch_now(_G(npcTrigger));
 		break;

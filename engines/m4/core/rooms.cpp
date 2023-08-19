@@ -375,7 +375,7 @@ void Sections::pal_game_task() {
 
 		updateVideo = !_cameraShiftAmount && !_cameraShift_vert_Amount;
 
-		CycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
+		cycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
 			_G(screenCodeBuff)->get_buffer(), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), updateVideo);
 
 		_G(inverse_pal)->release();

@@ -346,9 +346,9 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 
 	player_set_commands_allowed(false);
 	game_pause(false);
-	UnpauseEngines();
+	unpauseEngines();
 
-	TerminateMachine(_GP(seriesAnim8));
+	terminateMachine(_GP(seriesAnim8));
 	series_unload(_GP(seriesHash));
 	_GP(seriesAnim8) = NULL;
 	_GP(seriesHash) = 0;
