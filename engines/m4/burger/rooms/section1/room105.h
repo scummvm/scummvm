@@ -29,6 +29,33 @@ namespace Burger {
 namespace Rooms {
 
 class Room105 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	const char *_digi1 = nullptr;
+	int _series1[12];
+	int _series2[4];
+	int _series3[12];
+
+	void conv10();
+	void conv11();
+	void conv12();
+	void conv13();
+	void talkTo();
+	void enteringMayorsOffice();
+	void loadAssets1();
+	void loadAssets2();
+	void loadAssets3();
+	void unloadAssets1();
+	void unloadAssets2();
+	void unloadAssets3();
+
 public:
 	Room105() : Room() {}
 	~Room105() override {}
