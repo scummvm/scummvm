@@ -28,7 +28,9 @@ namespace Sword1 {
 
 #define LOOPED 1
 
-#define FRAME_TIME            80  // 80ms, for exactly 12.5Hz
+#define DEFAULT_FRAME_TIME    80  // 80ms, for exactly 12.5Hz
+#define FAST_FRAME_TIME       10  // 10ms, for 100Hz
+#define SLOW_FRAME_TIME       500 // 500ms, for 2Hz
 #define PAUSE_FRAME_RATE      12  // This frame time is only used in fnPauseSeconds(), like for the original
 #define TIMER_RATE            100
 #define TIMER_USEC            1000000 / TIMER_RATE

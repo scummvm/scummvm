@@ -76,6 +76,7 @@ struct SystemVars {
 	Common::Platform platform;
 	Common::Language realLanguage;
 	bool isLangRtl;
+	bool debugMode;
 };
 
 class SwordEngine : public Engine {
@@ -93,7 +94,10 @@ public:
 	int _inTimer = -1; // Is the timer running?
 	int32 _vbl60HzUSecElapsed = 0; // 60 Hz counter for palette fades
 	int _vblCount = 0; // How many vblCallback calls have been made?
-	int _rate = 8;
+	int _rate = DEFAULT_FRAME_TIME / 10;
+	int _targetFrameTime = DEFAULT_FRAME_TIME;
+	bool _slowMode = false;
+	bool _fastMode = false;
 
 	bool mouseIsActive();
 
@@ -132,6 +136,7 @@ protected:
 	}
 private:
 	void pollInput(uint32 delay);
+	uint8 checkKeys();
 
 	void checkCdFiles();
 	void checkCd();
