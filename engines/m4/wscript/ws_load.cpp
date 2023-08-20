@@ -1127,7 +1127,7 @@ CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
 		ws_LogErrorMsg(FL, "WS loader has not been initialized.");
-		return false;
+		return nullptr;
 	}
 
 	//If a memory location to store the CCB has not been provided...
