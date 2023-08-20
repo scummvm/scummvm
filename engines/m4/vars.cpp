@@ -90,7 +90,7 @@ bool Vars::init() {
 
 	if (_cheat_keys_enabled) {
 		if (!dbg_ws_init(_kernel.start_up_with_dbg_ws, _font_tiny_prop, _globals))
-			error(FL, 'DWIF');
+			error_show(FL, 'DWIF', "cheat system");
 	}
 
 	main_cold_data_init();
@@ -111,7 +111,7 @@ void Vars::game_systems_initialize(byte flags) {
 
 	debugC(kDebugCore, _G(kernel).suppress_cache ?
 		"Cache System Disabled" : "Cache System Enabled");
-	debugC(kDebugCore, "Available memory: %d", totalMem);
+	debugC(kDebugCore, "Available memory: %ld", totalMem);
 
 	mem_stash_init(32);
 

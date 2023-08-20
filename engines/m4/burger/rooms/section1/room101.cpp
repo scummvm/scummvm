@@ -203,8 +203,6 @@ void Room101::init() {
 }
 
 void Room101::daemon() {
-	const int FIFTY_THREE = -53;
-
 	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
 		player_update_info(_G(my_walker), &_G(player_info));
 

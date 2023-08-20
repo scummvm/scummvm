@@ -76,8 +76,6 @@ strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuff
 	void *bufferHandle;
 	int32 memAvail;
 
-	const int32 PADDING = 256;
-
 	// Parameter verification        
 	if (!srcFile) {
 		error_show(FL, 'FSF!');

@@ -110,14 +110,14 @@ static int32 count_catalog_items() {
 }
 
 static int compare_catalog_entries_for_sort(const void *n1, const void *n2) {
-	char *entry1 = *(char **)n1;
-	if (convert_intel16(*(short *)&entry1[2]) == _T_ROOM)
+	const char *entry1 = *(const char **)n1;
+	if (convert_intel16(*(const short *)&entry1[2]) == _T_ROOM)
 		entry1 = &entry1[6];
 	else
 		entry1 = &entry1[4];
 
-	char *entry2 = *(char **)n2;
-	if (convert_intel16(*(short *)&entry2[2]) == _T_ROOM)
+	const char *entry2 = *(const char **)n2;
+	if (convert_intel16(*(const short *)&entry2[2]) == _T_ROOM)
 		entry2 = &entry2[6];
 	else
 		entry2 = &entry2[4];
@@ -143,7 +143,7 @@ static void sort_catalog() {
 
 		switch (tag) {
 		case _T_ROOM:
-			snprintf(&pCatalogIter[(3 * sizeof(short))], 256, "%03d!\0", room_number);
+			snprintf(&pCatalogIter[(3 * sizeof(short))], 256, "%03d!", room_number);
 
 			i = (3 * sizeof(short)) + (5 * sizeof(char));
 
@@ -259,14 +259,14 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 }
 
 static int compare_catalog_entries_for_search(const void *n1, const void *n2) {
-	char *cat_entry = *(char **)n2;
+	const char *cat_entry = *(const char **)n2;
 
-	if (convert_intel16(*(short *)&cat_entry[2]) == _T_ROOM)
+	if (convert_intel16(*(const short *)&cat_entry[2]) == _T_ROOM)
 		cat_entry = &cat_entry[6];
 	else
 		cat_entry = &cat_entry[4];
 
-	return (scumm_strnicmp((char *)n1, cat_entry, 80));
+	return (scumm_strnicmp((const char *)n1, cat_entry, 80));
 }
 
 } // End of namespace M4

@@ -487,7 +487,11 @@ Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *pr
 	case REPEAT_BUTTON:
 		item->prompt = mem_strdup(prompt);
 		break;
+
+	default:
+		break;
 	}
+
 	CorrectItemWidthHeight(item, fontHeight);
 	if (type == LISTBOX) {
 		if (!sizeofGUIelement_border(LISTBOX, &listboxWidth, &listboxHeight)) return nullptr;
