@@ -51,6 +51,10 @@ private:
 	machine *_series6 = nullptr;
 	machine *_series7 = nullptr;
 	machine *_series8 = nullptr;
+	machine *_series9 = nullptr;
+	machine *_series10 = nullptr;
+	int _series11 = 0;
+	int _series12 = 0;
 
 	void conv10();
 	void conv11();

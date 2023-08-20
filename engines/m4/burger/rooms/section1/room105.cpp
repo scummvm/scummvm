@@ -1056,15 +1056,23 @@ void Room105::daemon() {
 		digi_play(imath_ranged_rand(1, 2) == 1 ? "105_011" : "105_012", 2, 180, -1);
 		break;
 
+	case 11:
+		ws_walk(186, 263, 0, -1, 10);
+		break;
+
 	case 12:
 		ws_walk(341, 216, nullptr, -1, 11);
+		break;
+
+	case 13:
+		ws_walk(415, 254, 0, -1, 2);
 		break;
 
 	case 15:
 		ws_unhide_walker();
 
 		if (_G(flags)[V112]) {
-			_savedMode = 2;
+			_savedMode = KT_DAEMON;
 			_savedTrigger = 21;
 			_digi1 = "105g003";
 			_val3 = 60;
@@ -1089,7 +1097,7 @@ void Room105::daemon() {
 
 	case 17:
 		if (_G(flags)[V112]) {
-			_savedMode = 2;
+			_savedMode = KT_DAEMON;
 			_savedTrigger = 21;
 			_digi1 = "105g002";
 			_val3 = 60;
@@ -1129,6 +1137,22 @@ void Room105::daemon() {
 		_val3 = 59;
 		break;
 
+	case 22:
+		ws_demand_location(376, 226, 5);
+		ws_hide_walker();
+		series_play_with_breaks(PLAY30, "105wi06", 0xf00, 25, 3);
+		break;
+
+	case 23:
+		ws_demand_location(346, 226, 5);
+		ws_hide_walker();
+		series_play_with_breaks(PLAY30, "105wi06", 0xf00, 25, 3, 6, 100, -30, 0);
+		break;
+
+	case 24:
+		ws_walk(385, 254, 0, -1, 2);
+		break;
+
 	case 25:
 		ws_unhide_walker();
 		break;
@@ -1137,12 +1161,110 @@ void Room105::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
+	case 27:
+		ws_demand_location(358, 246, 11);
+		ws_hide_walker();
+		series_play_with_breaks(PLAY32, "105wi05", 0x100, 25, 3);
+		break;
+
+	case 28:
+		ws_demand_location(228, 262, 10);
+		ws_hide_walker();
+		series_play_with_breaks(PLAY23, "105wi01", 0x100, 25, 3);
+		break;
+
+	case 29:
+		ws_hide_walker();
+		_series12 = series_load("105wi07");
+		digi_preload("100_023");
+		series_play("105wi07", 0x100, 0, 30, 6, 0, 100, -30, 0, 0, 15);
+		series_play("105wi07s", 0x101, 0, -1, 6, 0, 100, -30, 0, 0, 15);
+		break;
+
+	case 30:
+		series_play("105wi07", 0x100, 0, 31, 6, 0, 100, -30, 0, 16, 21);
+		series_play("105wi07s", 0x101, 0, -1, 6, 0, 100, -30, 0, 16, 21);
+		digi_play("100_023", 2, 255);
+		conv_resume_curr();
+		break;
+
+	case 31:
+		digi_stop(2);
+		_series9 = series_play("105wi07", 0x100, 0, 30, 600, -1, 100, -30, 0, 21, 21);
+		_series10 = series_play("105wi07s", 0x100, 0, -1, 600, -1, 100, -30, 0, 21, 21);
+		break;
+
+	case 32:
+		terminateMachineAndNull(_series9);
+		terminateMachineAndNull(_series10);
+		digi_play("100_023", 2, 255);
+		series_play("105wi07", 0x100, 0, 33, 6, 0, 100, -30, 0, 21, 43);
+		series_play("105wi07s", 0x101, 0, -1, 6, 0, 100, -30, 0, 21, 43);
+		break;
+
+	case 33:
+		digi_stop(2);
+		digi_unload("100_023");
+		series_unload(_series12);
+		ws_unhide_walker();
+		break;
+
+	case 34:
+		_series8 = series_play("105ag07", 0xe00, 0, -1, 600, -1, 100, 0, 0, 23, 23);
+		series_play_with_breaks(PLAY28, "105wi03", 0x200, 46, 3, 6, 100, 40, 0);
+		break;
+
+
 	case 36:
 		terminateMachineAndNull(_series8);
 		_series8 = series_play("105ag07", 0xe00, 0, -1, 600, -1, 100, 0, 0, 24, 24);
 		break;
 
-	// TODO
+	case 37:
+		_series5 = series_play("105deed", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		series_play("105ag07", 0xe00, 0, 38, 6, 0, 100, 0, 0, 31, 32);
+		break;
+
+	case 38:
+		series_play_with_breaks(PLAY4, "105ag08", 0xe00, 39, 2);
+		break;
+
+	case 39:
+		_series8 = series_play("105ag08", 0xe00, 0, -1, 600, -1, 100, 0, 0, 6, 6);
+		series_play_with_breaks(PLAY24, "105wi02", 0x200, 40, 3, 6, 100, 40, 0);
+		break;
+
+	case 40:
+		terminateMachineAndNull(_series8);
+		series_play("105ag08", 0xe00, 0, 41, 7, 0, 100, 0, 0, 11, 15);
+		series_play_with_breaks(PLAY25, "105wi02", 0x200, 46, 3, 6, 100, 40, 0);
+		break;
+
+	case 41:
+		terminateMachineAndNull(_series5);
+		_G(flags)[V001] = 0;
+		series_play_with_breaks(PLAY2, "105ag08", 0xe00, 42, 2);
+		break;
+
+	case gTELEPORT:
+		switch (_G(roomVal1)) {
+		case 62:
+			if (_G(flags)[V112] && !_G(flags)[V034]) {
+				player_set_commands_allowed(false);
+				_G(flags)[V034] = 1;
+				ws_walk(199, 279, 0, 19, 9);
+
+			} else {
+				ws_walk(301, 313, 0, -1, 11);
+			}
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
 	}
 }
 
@@ -1183,7 +1305,7 @@ void Room105::parser() {
 				break;
 
 			case 1:
-				_savedMode = 2;
+				_savedMode = KT_DAEMON;
 				_savedTrigger = 21;
 				_digi1 = "105g001";
 				_val3 = 60;
