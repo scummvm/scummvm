@@ -295,6 +295,7 @@ void Room105::init() {
 
 void Room105::daemon() {
 	const int ZERO = 0;
+	int frame;
 
 	switch (_G(kernel).trigger) {
 	case 1:
@@ -589,7 +590,424 @@ void Room105::daemon() {
 			}
 			break;
 
-			// TODO
+		case 27:
+			if (_val3 == 27) {
+				_series6 = series_play("105mg06", 0xf00, 4, -1, 4, -1, 100, 0, ZERO, 10, 14);
+				_series7 = series_play("105mg06s", 0xf01, 4, -1, 4, -1, 100, 0, ZERO, 10, 14);
+			} else {
+				terminateMachineAndNull(_series6);
+				terminateMachineAndNull(_series7);
+				_val4 = 25;
+
+				series_play("105mg02", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 0);
+				series_play("105mg02s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 0);
+			}
+			break;
+
+		case 31:
+			if (_val3 == 31) {
+				_series6 = series_play("105mg07", 0xf00, 4, -1, 4, -1, 100, 0, ZERO, 3, 6);
+				_series7 = series_play("105mg07s", 0xf01, 4, -1, 4, -1, 100, 0, ZERO, 3, 6);
+			} else {
+				terminateMachineAndNull(_series6);
+				terminateMachineAndNull(_series7);
+				_val3 = 32;
+				_val4 = 25;
+
+				series_play("105mg07", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 7, 8);
+				series_play("105mg07s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 7, 8);
+			}
+			break;
+
+		case 35:
+			switch (_val3) {
+			case 23:
+				_val3 = 24;
+				series_play_with_breaks(PLAY12, "105mg09", 0xf00, 1, 2, 6, 100, 0, ZERO);
+				break;
+
+			case 24:
+				_val3 = 35;
+				kernel_trigger_dispatch_now(1);
+
+				if (_G(flags)[V033] == 2) {
+					handleDeed3();
+				} else {
+					conv_resume();
+				}
+				break;
+
+			case 32:
+				_val3 = 33;
+				series_play_with_breaks(PLAY13, "105mg14", 0xf00, 1, 2, 6, 100, 0, ZERO);
+				break;
+
+			case 33:
+				_val3 = 34;
+				kernel_timing_trigger(1, 1);
+				break;
+
+			case 34:
+				unloadAssets2();
+
+				if (_flag1) {
+					_flag1 = false;
+					_flag4 = false;
+					_flag2 = false;
+					loadAssets3();
+					handleDeed2();
+					kernel_timing_trigger(60, 13);
+				} else if (_flag2) {
+					_flag1 = false;
+					_flag4 = false;
+					_flag2 = false;
+					loadAssets4();
+					handleDeed1();
+					kernel_timing_trigger(60, 11);
+				} else {
+					player_set_commands_allowed(true);
+					_G(flags)[V298] = 0;
+				}
+				break;
+
+			case 35:
+				if (imath_ranged_rand(1, 13) == 1) {
+					series_play("105mg11", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 0);
+				} else {
+					series_play("105mg11", 0xf00, 0, 1, 10, 0, 100, 0, ZERO, 0, 0);
+				}
+				break;
+
+			case 36:
+				_val3 = 35;
+				kernel_trigger_dispatch_now(1);
+				conv_resume();
+				break;
+
+			case 37:
+				_val4 = 37;
+				series_play("105mg12", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 16, 16);
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play(conv_sound_to_play(), 1, 255, 10);
+				break;
+
+			case 38:
+				_val4 = 38;
+				series_play("105mg13", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 10);
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play(conv_sound_to_play(), 1, 255, 10);
+				break;
+
+			case 39:
+				_val4 = 37;
+				series_play("105mg12", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 15);
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play(conv_sound_to_play(), 1, 255, 10);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 37:
+			if (_val3 == 37) {
+				_series6 = series_play("105mg12", 0xf00, 4, -1, 4, -1, 100, 0, ZERO, 16, 18);
+			} else {
+				terminateMachineAndNull(_series6);
+				_val4 = 35;
+				series_play("105mg12", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 19, 19);
+			}
+			break;
+
+		case 38:
+			if (_val3 == 38) {
+				_series6 = series_play("105mg13", 0xf00, 4, -1, 4, -1, 100, 0, ZERO, 11, 14);
+			} else {
+				terminateMachineAndNull(_series6);
+				_val4 = 35;
+				series_play("105mg13", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 15, 16);
+			}
+			break;
+
+		case 42:
+			switch (_val3) {
+			case 40:
+				_val3 = 41;
+				series_play_with_breaks(PLAY1, "105ag01", 0xe00, 1, 2, 6, 100, 0, 0);
+				break;
+
+			case 41:
+				_val3 = 42;
+				series_play("105ag02", 0xe00, 0, 1, 10, 0, 100, 0, 0, 0, 0);
+
+				if (_G(flags)[V033] == 1) {
+					handleDeed1();
+				} else {
+					conv_resume();
+				}
+				break;
+
+			case 42:
+				switch (imath_ranged_rand(1, 35)) {
+				case 1:
+				case 2:
+				case 3:
+					series_play_with_breaks(PLAY3, "105ag04", 0xe00, 1, 2, 4, 100, 0, 0);
+					break;
+
+				case 4:
+					series_play_with_breaks(PLAY5, "105ag03", 0xe00, 1, 2, 6, 100, 0, 0);
+					break;
+
+				default:
+					series_play("105ag02", 0xe00, 0, 1, 15, 0, 100, 0, 0, 0, 0);
+					break;
+				}
+				break;
+
+			case 43:
+				_val3 = 42;
+				kernel_trigger_dispatch_now(1);
+				conv_resume();
+				break;
+
+			case 44:
+				if (imath_ranged_rand(1, 2) == 1) {
+					_val4 = 45;
+					series_play("105ag05", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 4);
+				} else {
+					_val4 = 46;
+					series_play("105ag05", 0xe00, 2, 1, 4, 0, 100, 0, 0, 16, 19);
+				}
+
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play(conv_sound_to_play(), 1, 255, 10);
+				break;
+
+			case 47:
+				_val4 = 47;
+				series_play("105ag06", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 6);
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play(conv_sound_to_play(), 1, 255, 10);
+				break;
+
+			case 49:
+				_val4 = 50;
+				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 9);
+				break;
+
+			case 50:
+				conv_resume();
+				_val4 = 49;
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			case 51:
+				_val4 = 51;
+				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 2);
+				break;
+
+			case 52:
+				_val4 = 52;
+				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 24);
+				break;
+
+			case 54:
+				series_play_with_breaks(PLAY9, "105ag10", 0xe00, 26, 2, 6, 100, 0, 0);
+				break;
+
+			case 55:
+				series_play_with_breaks(PLAY7, "105ag07", 0xe00, 34, 2, 6, 100, 0, 0);
+				break;
+
+			case 56:
+				_val3 = 57;
+				series_play_with_breaks(PLAY8, "105ag09", 0xe00, 1, 2, 6, 100, 0, 0);
+				break;
+
+			case 57:
+				_val3 = 58;
+				kernel_timing_trigger(1, 1);
+				break;
+
+			case 58:
+				unloadAssets4();
+
+				if (_flag1) {
+					_flag1 = false;
+					_flag4 = false;
+					_flag2 = false;
+					loadAssets3();
+					handleDeed2();
+					kernel_timing_trigger(60, 13);
+
+				} else if (_flag4) {
+					_flag1 = false;
+					_flag4 = false;
+					_flag2 = false;
+					kernel_timing_trigger(60, 12);
+
+				} else {
+					player_set_commands_allowed(true);
+					_G(flags)[V298] = 0;
+				}
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 45:
+			if (_val3 == 44) {
+				_series6 = series_play("105ag05", 0xe00, 4, -1, 4, -1, 100, 0, 0, 5, 8);
+			} else {
+				terminateMachineAndNull(_series6);
+				_val4 = 42;
+				series_play("105ag05", 0xe00, 2, 1, 4, 0, 100, 0, 0, 0, 4);
+			}
+			break;
+
+		case 46:
+			if (_val3 == 44) {
+				_series6 = series_play("105ag05", 0xe00, 4, -1, 4, -1, 100, 0, 0, 11, 15);
+			} else {
+				terminateMachineAndNull(_series6);
+				_val4 = 42;
+				series_play("105ag05", 0xe00, 0, 1, 4, 0, 100, 0, 0, 16, 19);
+			}
+			break;
+
+		case 47:
+			if (_val3 == 47) {
+				if (imath_ranged_rand(1, 10) == 1) {
+					series_play("105ag06", 0xe00, 0, 1, 4, 0, 100, 0, 0, 7, 11);
+				} else {
+					_series6 = series_play("105ag06", 0xe00, 4, -1, 4, -1, 100, 0, 0, 6, 9);
+				}
+			} else {
+				terminateMachineAndNull(_series6);
+				_val4 = 42;
+				series_play("105ag06", 0xe00, 2, 1, 4, 0, 100, 0, 0, 0, 6);
+			}
+			break;
+
+		case 48:
+			if (_val3 == 47) {
+				if (imath_ranged_rand(1, 10) == 1) {
+					_val4 = 47;
+					series_play("105ag06", 0xe00, 2, 1, 4, 0, 100, 0, 0, 7, 11);
+				} else {
+					_series6 = series_play("105ag06", 0xe00, 4, -1, 4, -1, 100, 0, 0, 12, 15);
+				}
+			} else {
+				terminateMachineAndNull(_series6);
+				_val4 = 42;
+				series_play("105ag06", 0xe00, 2, 1, 4, 0, 100, 0, 0, 16, 18);
+			}
+			break;
+
+		case 49:
+			if (_val3 == 50) {
+				series_play("105ag07", 0xe00, 0, 1, 10, 0, 100, 0, 0, 9, 9);
+			} else {
+				terminateMachineAndNull(_series6);
+				_val4 = 42;
+				series_play_with_breaks(PLAY6, "105ag07", 0xe00, 1, 2, 6, 100, 0, 0);
+			}
+			break;
+
+		case 51:
+			switch (_val3) {
+			case 51:
+				frame = imath_ranged_rand(3, 6);
+				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 54:
+				_val4 = 42;
+				_val3 = 58;
+				series_play_with_breaks(PLAY9, "105ag10", 0xe00, 1, 3, 6, 100, 0, 0);
+				break;
+
+			default:
+				_val4 = 42;
+				_val3 = 58;
+				series_play_with_breaks(PLAY8, "105ag14", 0xe00, 1, 3, 6, 100, 0, 0);
+				break;
+			}
+			break;
+
+		case 53:
+			if (_val3 == 52) {
+				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 29, 29);
+			} else {
+				_val4 = 42;
+				series_play("105ag07", 0xe00, 2, 1, 4, 0, 100, 0, 0, 30, 33);
+			}
+			break;
+
+		case 59:
+			switch (_val3) {
+			case 59:
+				frame = imath_ranged_rand(0, 1);
+				series_play("105ag12", 0xa00, 0, 1, 40, 0, 100, 0, 0, frame, frame);
+				series_play("105ag12s", 0xa01, 0, -1, 40, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 60:
+				_val4 = 60;
+				series_play("105ag13", 0xa00, 0, 1, 4, 0, 100, 0, 0, 0, 0);
+				series_play("105ag13s", 0xa01, 0, -1, 4, 0, 100, 0, 0, 0, 0);
+
+				if (_digi1) {
+					_G(kernel).trigger_mode = _savedMode;
+					digi_play(_digi1, 1, 255, _savedTrigger);
+					_digi1 = nullptr;
+				}
+				break;
+
+			case 61:
+				_val4 = 61;
+				series_play("105ag14", 0xa00, 0, 1, 4, 0, 100, 0, 0, 0, 5);
+				series_play("105ag14s", 0xa01, 0, -1, 4, 0, 100, 0, 0, 0, 5);
+
+				if (_digi1) {
+					_G(kernel).trigger_mode = _savedMode;
+					digi_play(_digi1, 1, 255, _savedTrigger);
+					_digi1 = nullptr;
+				}
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 60:
+			if (_val3 == 60) {
+				frame = imath_ranged_rand(4, 8);
+				series_play("105ag13", 0xa00, 0, 1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("105ag13s", 0xa01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+			} else {
+				_val4 = 59;
+				series_play("105ag13", 0xa00, 2, 1, 4, 0, 100, 0, 0, 0, 3);
+				series_play("105ag13s", 0xa01, 2, -1, 4, 0, 100, 0, 0, 0, 3);
+			}
+			break;
+
+		case 61:
+			if (_val3 == 61) {
+				frame = imath_ranged_rand(6, 9);
+				series_play("105ag14", 0xa00, 0, 1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("105ag14s", 0xa01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+			} else {
+				_val4 = 59;
+				series_play("105ag14", 0xa00, 0, 1, 4, 0, 100, 0, 0, 12, 15);
+				series_play("105ag14s", 0xa01, 0, -1, 4, 0, 100, 0, 0, 12, 15);
+			}
+			break;
 
 		default:
 			break;
@@ -646,8 +1064,8 @@ void Room105::daemon() {
 		ws_unhide_walker();
 
 		if (_G(flags)[V112]) {
-			_val5 = 2;
-			_val6 = 21;
+			_savedMode = 2;
+			_savedTrigger = 21;
 			_digi1 = "105g003";
 			_val3 = 60;
 		} else if (_G(flags)[V033] == 3 && !_G(flags)[V032]) {
@@ -671,8 +1089,8 @@ void Room105::daemon() {
 
 	case 17:
 		if (_G(flags)[V112]) {
-			_val5 = 2;
-			_val6 = 21;
+			_savedMode = 2;
+			_savedTrigger = 21;
 			_digi1 = "105g002";
 			_val3 = 60;
 		} else if (_G(flags)[V033] != 2) {
@@ -765,8 +1183,8 @@ void Room105::parser() {
 				break;
 
 			case 1:
-				_val5 = 2;
-				_val6 = 21;
+				_savedMode = 2;
+				_savedTrigger = 21;
 				_digi1 = "105g001";
 				_val3 = 60;
 				break;
