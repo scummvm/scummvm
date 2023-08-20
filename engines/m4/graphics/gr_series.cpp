@@ -62,7 +62,7 @@ bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x
 
 	HLock(srcSpritePtr->sourceHandle);
 	//gr_pal_interface(&master_palette[0]);
-	srcSpritePtr->data = (uint8 *)((int32) * (srcSpritePtr->sourceHandle) + srcSpritePtr->sourceOffset);
+	srcSpritePtr->data = (uint8 *)((intptr)*(srcSpritePtr->sourceHandle) + srcSpritePtr->sourceOffset);
 
 	RendGrBuff Destination;
 	DrawRequestX dr;
