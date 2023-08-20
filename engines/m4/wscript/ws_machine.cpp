@@ -522,8 +522,8 @@ static bool op_TRIG_W(machine *m, int32 *pcOffset) {
 	}
 
 	// This is a double length instruction - up to 128 bits, we must read in the next pCode
-	machInstr = (uint32 *)((uint32)(*(m->machHandle)) + (uint32)m->machInstrOffset);
-	myPC = (uint32 *)((uint32)(machInstr)+*pcOffset);
+	machInstr = (uint32 *)((intptr)(*(m->machHandle)) + (uint32)m->machInstrOffset);
+	myPC = (uint32 *)((intptr)machInstr + *pcOffset);
 	oldPC = myPC;
 	if ((myInstruction = ws_PreProcessPcode(&myPC, m->myAnim8)) < 0) {
 		ws_Error(m, ERR_MACH, 0x0266, "trig_w() failed.");
@@ -932,7 +932,7 @@ void IntoTheState(machine *m) {
 		ws_Error(m, ERR_INTERNAL, 0x2f2, "IntoTheState() failed.");
 	}
 
-	stateTable = (uint32 *)((uint32)(*(m->machHandle)) + (uint32)m->stateTableOffset);
+	stateTable = (uint32 *)((intptr)(*(m->machHandle)) + (intptr)m->stateTableOffset);
 	pcOffset = stateTable[m->curState];
 
 	// Increment and remember the recurseLevel and the machine ID
