@@ -444,7 +444,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			}
 
 			// Dereferrence the dataHandle, add the offset to find the array of data for this anim8
-			dataArray = (frac16 *)((byte *)*(myAnim8->dataHandle) + myAnim8->dataOffset);
+			dataArray = (frac16 *)((intptr)*(myAnim8->dataHandle) + myAnim8->dataOffset);
 
 			// Copy the data field into dataArg1, and set myArg1 to point to this location
 			*argValue = dataArray[myIndex];
@@ -1376,7 +1376,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 	while (_GWS(keepProcessing)) {
 		dbg_SetCurrSequInstr(myAnim8, _GWS(compareCCR));
 
-		myPC = (uint32 *)((byte *)*(myAnim8->sequHandle) + myAnim8->pcOffset);
+		myPC = (uint32 *)((intptr)*(myAnim8->sequHandle) + myAnim8->pcOffset);
 		oldPC = myPC;
 		_GWS(pcOffsetOld) = myAnim8->pcOffset;
 
@@ -1384,7 +1384,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025c, nullptr);
 		}
 
-		myAnim8->pcOffset += (byte *)myPC - (byte *)oldPC;
+		myAnim8->pcOffset += (intptr)myPC - (intptr)oldPC;
 		pCodeJmpTable[myInstruction](myAnim8);
 	}
 

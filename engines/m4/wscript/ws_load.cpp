@@ -627,7 +627,7 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 	// Lock the handle, and get the cels source
 	HLock(ssHandle);
-	celsPtr = (int32 *)((byte *)*ssHandle + ssOffset);
+	celsPtr = (int32 *)((intptr)*ssHandle + ssOffset);
 
 	// Return the values
 	if (maxW) {
@@ -1374,7 +1374,7 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset) {
 	sequPtr = (uint32 *)((intptr)*(_GWS(globalSEQUHandles)[hash]) + (uint32)(_GWS(globalSEQUoffsets)[hash]));
 
 	// Return the offset into the resource chunk, and the number of local vars used by the sequence
-	*offset = (byte *)(&sequPtr[SEQU_SEQU_START]) - (byte *)*(_GWS(globalSEQUHandles)[hash]);
+	*offset = (intptr)(&sequPtr[SEQU_SEQU_START]) - (intptr)*(_GWS(globalSEQUHandles)[hash]);
 	*numLocalVars = sequPtr[SEQU_NUM_VARS];
 
 	// Return the resource handle
