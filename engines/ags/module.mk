@@ -387,6 +387,11 @@ MODULE_OBJS += \
 	lib/allegro/surface_sse2.o
 $(MODULE)/lib/allegro/surface_sse2.o: CXXFLAGS += -msse2
 endif
+ifeq ($(SCUMMVM_AVX2),1)
+MODULE_OBJS += \
+	lib/allegro/surface_avx2.o
+$(MODULE)/lib/allegro/surface_avx2.o: CXXFLAGS += -mavx2 -mavx -msse2
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGS), DYNAMIC_PLUGIN)
