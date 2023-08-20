@@ -236,18 +236,65 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 	}
 }
 
-BITMAP::DrawInnerArgs::DrawInnerArgs(int yStart, int xStart, uint32 transColor,
-	uint32 alphaMask, PALETTE palette, int useTint, int sameFormat,
-	const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea,
-	int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed,
-	int tintGreen, int tintBlue, const Common::Rect &dstRect,
-	const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX,
-	int scaleY) : yStart(yStart), xStart(xStart), transColor(transColor),
-	alphaMask(alphaMask), palette(palette), useTint(useTint), sameFormat(sameFormat), src(src),
-	destArea(destArea), horizFlip(horizFlip), vertFlip(vertFlip),
-	skipTrans(skipTrans), srcAlpha(srcAlpha), tintRed(tintRed),
-	tintGreen(tintGreen), tintBlue(tintBlue), dstRect(dstRect),
-	srcArea(srcArea), blenderMode(blenderMode), scaleX(scaleX), scaleY(scaleY) {
+BITMAP::DrawInnerArgs::DrawInnerArgs(BITMAP *dstBitmap, const BITMAP *srcBitmap,
+	const Common::Rect &srcRect, const Common::Rect &_dstRect, bool _skipTrans,
+	int _srcAlpha, bool _horizFlip, bool _vertFlip, int _tintRed,
+	int _tintGreen, int _tintBlue, bool _doScale) : skipTrans(_skipTrans),
+		srcAlpha(_srcAlpha), horizFlip(_horizFlip), vertFlip(_vertFlip),
+		tintRed(_tintRed), tintGreen(_tintGreen), tintBlue(_tintBlue),
+		doScale(_doScale), src(**srcBitmap), shouldDraw(false),
+		useTint(_tintRed >= 0 && _tintGreen >= 0 && _tintBlue >= 0),
+		blenderMode(_G(_blender_mode)), dstRect(_dstRect) {
+	// Allegro disables draw when the clipping rect has negative width/height.
+	// Common::Rect instead asserts, which we don't want.
+	if (dstBitmap->cr <= dstBitmap->cl || dstBitmap->cb <= dstBitmap->ct)
+		return;
+
+	// Figure out the dest area that will be updated
+	srcArea = srcRect;
+	srcArea.clip(Common::Rect(0, 0, srcBitmap->w, srcBitmap->h));
+	if (srcArea.isEmpty())
+		return;
+	
+	if (!doScale) {
+		// Ensure the src rect is constrained to the source bitmap
+		dstRect.setWidth(srcArea.width());
+		dstRect.setHeight(srcArea.height());
+	}
+	Common::Rect destRect = dstRect.findIntersectingRect(
+	                            Common::Rect(dstBitmap->cl, dstBitmap->ct, dstBitmap->cr, dstBitmap->cb));
+	if (destRect.isEmpty())
+		// Area is entirely outside the clipping area, so nothing to draw
+		return;
+
+	// Get source and dest surface. Note that for the destination we create
+	// a temporary sub-surface based on the allowed clipping area
+	Graphics::ManagedSurface &dest = *dstBitmap->_owner;
+	destArea = dest.getSubArea(destRect);
+
+	// Define scaling and other stuff used by the drawing loops
+	scaleX = SCALE_THRESHOLD * srcRect.width() / dstRect.width();
+	scaleY = SCALE_THRESHOLD * srcRect.height() / dstRect.height();
+	sameFormat = (src.format == dstBitmap->format);
+
+	if (src.format.bytesPerPixel == 1 && dstBitmap->format.bytesPerPixel != 1) {
+		for (int i = 0; i < PAL_SIZE; ++i) {
+			palette[i].r = VGA_COLOR_TRANS(_G(current_palette)[i].r);
+			palette[i].g = VGA_COLOR_TRANS(_G(current_palette)[i].g);
+			palette[i].b = VGA_COLOR_TRANS(_G(current_palette)[i].b);
+		}
+	}
+
+	transColor = 0, alphaMask = 0xff;
+	if (skipTrans && src.format.bytesPerPixel != 1) {
+		transColor = src.format.ARGBToColor(0, 255, 0, 255);
+		alphaMask = src.format.ARGBToColor(255, 0, 0, 0);
+		alphaMask = ~alphaMask;
+	}
+
+	xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
+	yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
+	shouldDraw = true;
 }
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
@@ -257,80 +304,33 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 	       (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
-	// Allegro disables draw when the clipping rect has negative width/height.
-	// Common::Rect instead asserts, which we don't want.
-	if (cr <= cl || cb <= ct)
-		return;
-
-	// Ensure the src rect is constrained to the source bitmap
-	Common::Rect srcArea = srcRect;
-	srcArea.clip(Common::Rect(0, 0, srcBitmap->w, srcBitmap->h));
-	if (srcArea.isEmpty())
-		return;
-
-	// Figure out the dest area that will be updated
-	Common::Rect dstRect(dstX, dstY, dstX + srcArea.width(), dstY + srcArea.height());
-	Common::Rect destRect = dstRect.findIntersectingRect(
-	                            Common::Rect(cl, ct, cr, cb));
-	if (destRect.isEmpty())
-		// Area is entirely outside the clipping area, so nothing to draw
-		return;
-
-	// Get source and dest surface. Note that for the destination we create
-	// a temporary sub-surface based on the allowed clipping area
-	const Graphics::ManagedSurface &src = **srcBitmap;
-	Graphics::ManagedSurface &dest = *_owner;
-	Graphics::Surface destArea = dest.getSubArea(destRect);
-
-	// Define scaling and other stuff used by the drawing loops
-	bool useTint = (tintRed >= 0 && tintGreen >= 0 && tintBlue >= 0);
-	bool sameFormat = (src.format == format);
-
-	PALETTE palette;
-	if (src.format.bytesPerPixel == 1 && format.bytesPerPixel != 1) {
-		for (int i = 0; i < PAL_SIZE; ++i) {
-			palette[i].r = VGA_COLOR_TRANS(_G(current_palette)[i].r);
-			palette[i].g = VGA_COLOR_TRANS(_G(current_palette)[i].g);
-			palette[i].b = VGA_COLOR_TRANS(_G(current_palette)[i].b);
-		}
-	}
-
-	uint32 transColor = 0, alphaMask = 0xff;
-	if (skipTrans && src.format.bytesPerPixel != 1) {
-		transColor = src.format.ARGBToColor(0, 255, 0, 255);
-		alphaMask = src.format.ARGBToColor(255, 0, 0, 0);
-		alphaMask = ~alphaMask;
-	}
-
-	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
-	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
-
-	auto args = DrawInnerArgs(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea, _G(_blender_mode), 0, 0);
+	auto args = DrawInnerArgs(this, srcBitmap, srcRect, Common::Rect(dstX, dstY, dstX+1, dstY+1), skipTrans, srcAlpha, horizFlip, vertFlip, tintRed, tintGreen, tintBlue, false);
+	if (!args.shouldDraw) return;
 #define DRAWINNER(func) func(args)
 	// Calling drawInnerXXXX with a ScaleThreshold of 0 just does normal un-scaled drawing
 	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
-		if (sameFormat) {
+		if (args.sameFormat) {
 			switch (format.bytesPerPixel) {
 			case 1: DRAWINNER((drawInnerGeneric<1, 1, false>)); return;
 			case 2: DRAWINNER((drawInnerGeneric<2, 2, false>)); return;
 			case 4: DRAWINNER((drawInnerGeneric<4, 4, false>)); return;
 			}
-		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
+		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
 			DRAWINNER((drawInnerGeneric<4, 2, false>));
-		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
+		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
 			DRAWINNER((drawInnerGeneric<2, 4, false>));
 		}
 	} else {
-		if (sameFormat) {
+		if (args.sameFormat) {
 			switch (format.bytesPerPixel) {
 			case 1: DRAWINNER(drawInner1Bpp<false>); return;
 			case 2: DRAWINNER(drawInner2Bpp<false>); return;
 			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, false>)); return;
 			}
-		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
+		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
 			DRAWINNER((drawInner4BppWithConv<4, 2, false>));
 			return;
-		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
+		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
 			DRAWINNER((drawInner4BppWithConv<2, 4, false>));
 			return;
 		}
@@ -346,74 +346,32 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
                          const Common::Rect &dstRect, bool skipTrans, int srcAlpha) {
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 	       (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
-
-	// Allegro disables draw when the clipping rect has negative width/height.
-	// Common::Rect instead asserts, which we don't want.
-	if (cr <= cl || cb <= ct)
-		return;
-
-	// Figure out the dest area that will be updated
-	Common::Rect destRect = dstRect.findIntersectingRect(
-	                            Common::Rect(cl, ct, cr, cb));
-	if (destRect.isEmpty())
-		// Area is entirely outside the clipping area, so nothing to draw
-		return;
-
-	// Get source and dest surface. Note that for the destination we create
-	// a temporary sub-surface based on the allowed clipping area
-	const Graphics::ManagedSurface &src = **srcBitmap;
-	Graphics::ManagedSurface &dest = *_owner;
-	Graphics::Surface destArea = dest.getSubArea(destRect);
-
-	// Define scaling and other stuff used by the drawing loops
-	const int scaleX = SCALE_THRESHOLD * srcRect.width() / dstRect.width();
-	const int scaleY = SCALE_THRESHOLD * srcRect.height() / dstRect.height();
-	bool sameFormat = (src.format == format);
-
-	PALETTE palette;
-	if (src.format.bytesPerPixel == 1 && format.bytesPerPixel != 1) {
-		for (int i = 0; i < PAL_SIZE; ++i) {
-			palette[i].r = VGA_COLOR_TRANS(_G(current_palette)[i].r);
-			palette[i].g = VGA_COLOR_TRANS(_G(current_palette)[i].g);
-			palette[i].b = VGA_COLOR_TRANS(_G(current_palette)[i].b);
-		}
-	}
-
-	uint32 transColor = 0, alphaMask = 0xff;
-	if (skipTrans && src.format.bytesPerPixel != 1) {
-		transColor = src.format.ARGBToColor(0, 255, 0, 255);
-		alphaMask = src.format.ARGBToColor(255, 0, 0, 0);
-		alphaMask = ~alphaMask;
-	}
-
-	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
-	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
-
-	auto args = DrawInnerArgs(yStart, xStart, transColor, alphaMask, palette, 0, sameFormat, src, destArea, false, false, skipTrans, srcAlpha, 0, 0, 0, dstRect, srcRect, _G(_blender_mode), scaleX, scaleY);
+	auto args = DrawInnerArgs(this, srcBitmap, srcRect, dstRect, skipTrans, srcAlpha, false, false, 0, 0, 0, true);
+	if (!args.shouldDraw) return;
 #define DRAWINNER(func) func(args)
 	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
-		if (sameFormat) {
+		if (args.sameFormat) {
 			switch (format.bytesPerPixel) {
 			case 1: DRAWINNER((drawInnerGeneric<1, 1, true>)); return;
 			case 2: DRAWINNER((drawInnerGeneric<2, 2, true>)); return;
 			case 4: DRAWINNER((drawInnerGeneric<4, 4, true>)); return;
 			}
-		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
+		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
 			DRAWINNER((drawInnerGeneric<4, 2, true>));
-		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
+		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
 			DRAWINNER((drawInnerGeneric<2, 4, true>));
 		}
 	} else {
-		if (sameFormat) {
+		if (args.sameFormat) {
 			switch (format.bytesPerPixel) {
 			case 1: DRAWINNER(drawInner1Bpp<true>); return;
 			case 2: DRAWINNER(drawInner2Bpp<true>); return;
 			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, true>)); return;
 			}
-		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
+		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
 			DRAWINNER((drawInner4BppWithConv<4, 2, true>));
 			return;
-		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
+		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
 			DRAWINNER((drawInner4BppWithConv<2, 4, true>));
 			return;
 		}
