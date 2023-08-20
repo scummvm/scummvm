@@ -224,11 +224,12 @@ void InventoryScreen::Prepare() {
 	// Fun fact: this fallback does not seem to be intentional, and was a
 	// coincidental result of SpriteCache incorrectly remembering "last seeked
 	// sprite" as 2041/2042/2043 while in fact stream was after sprite 0.
-	if (_GP(spriteset)[2041] == nullptr || _GP(spriteset)[2042] == nullptr || _GP(spriteset)[2043] == nullptr)
+	if (!_GP(spriteset).DoesSpriteExist(2041) || !_GP(spriteset).DoesSpriteExist(2042) || !_GP(spriteset).DoesSpriteExist(2043)) {
 		debug_script_warn("InventoryScreen: one or more of the inventory screen graphics (sprites 2041, 2042, 2043) does not exist, fallback to sprites 0, 1, 2 instead");
-	btn_look_sprite = _GP(spriteset)[2041] != nullptr ? 2041 : 0;
-	btn_select_sprite = _GP(spriteset)[2042] != nullptr ? 2042 : (_GP(spriteset)[1] != nullptr ? 1 : 0);
-	btn_ok_sprite = _GP(spriteset)[2043] != nullptr ? 2043 : (_GP(spriteset)[2] != nullptr ? 2 : 0);
+	}
+	btn_look_sprite = _GP(spriteset).DoesSpriteExist(2041) ? 2041 : 0;
+	btn_select_sprite = _GP(spriteset).DoesSpriteExist(2042) ? 2042 : (_GP(spriteset).DoesSpriteExist(1) ? 1 : 0);
+	btn_ok_sprite = _GP(spriteset).DoesSpriteExist(2043) ? 2043 : (_GP(spriteset).DoesSpriteExist(2) ? 2 : 0);
 
 	break_code = 0;
 }
