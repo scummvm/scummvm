@@ -183,7 +183,7 @@ void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table,
 	Buffer *screenCodes, uint8 *myPalette, uint8 *ICT);
 
 void terminateMachine(machine *m);
-void TerminateMachinesByHash(uint32 machHash);
+void terminateMachinesByHash(uint32 machHash);
 void terminateMachineAndNull(machine *&m);
 bool verifyMachineExists(machine *m);
 int32 ws_KillMachines();
@@ -194,7 +194,7 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 /**
  * This proc is what allows a machine to send a message to another machine(s)
  */
-extern void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
+extern void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	uint32 machHash, machine *sendM, int32 msgCount);
 
 #define kernel_spawn_machine(name,hash,callback) TriggerMachineByHash(hash, nullptr, -1, -1, callback, false, name)

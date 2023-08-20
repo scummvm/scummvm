@@ -882,7 +882,7 @@ void Room135::conv01() {
 					!(node == 6 && entry == 0) &&
 					!(node == 2 && entry == 1) &&
 					!(node == 7 && node == 0)) {
-				SendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			}
 		}
 		break;
@@ -920,7 +920,7 @@ void Room135::conv01() {
 				} else if ((node == 7 && entry == 1) || (node == 2 && entry == 1)) {
 					_val6 = 14;
 				} else {
-					SendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+					sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 					digi_play(conv_sound_to_play(), 1, 255, 35);
 				}
 			}
@@ -963,7 +963,7 @@ void Room135::conv03() {
 				conv_resume();
 			}
 		} else if (who == 1) {
-			SendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			conv_resume();
 		}
 	} else if (conv_sound_to_play()) {
@@ -985,7 +985,7 @@ void Room135::conv03() {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				digi_play(conv_sound_to_play(), 1, 255, 16);
 			} else {
-				SendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
 				digi_play(conv_sound_to_play(), 1, 255, 35);
 			}
 		}

@@ -426,7 +426,7 @@ void BurgerEngine::global_daemon() {
 	case 10017:
 		if (!player_commands_allowed() && !_G(flags)[V299] && _G(my_walker) &&
 				_G(player).walker_in_this_scene && _G(roomVal2))
-			SendWSMessage(0, 0, _G(my_walker), 0, 0, 1);
+			sendWSMessage(0, 0, _G(my_walker), 0, 0, 1);
 
 		kernel_timing_trigger(imath_ranged_rand(900, 1800), 10017);
 		break;

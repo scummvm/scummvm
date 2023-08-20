@@ -80,7 +80,7 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		// Walker has arrived at a node
 		if (walker_has_walk_finished(sender)) {
 			// Walks walker to next node if not at end of walk
-			SendWSMessage(ENDWALK << 16, 0, sender, 0, nullptr, 1);
+			sendWSMessage(ENDWALK << 16, 0, sender, 0, nullptr, 1);
 		}
 		break;
 
@@ -210,7 +210,7 @@ void Walker::wilbur_say() {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 
 	if (_flag && _G(player).walker_in_this_scene && _G(roomVal2))
-		SendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+		sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
 
 	term_message("wilbur_say:  wilburs_talk_trigger = %d", _trigger);
 	digi_stop(_channel);
@@ -248,7 +248,7 @@ bool Walker::wilbur_said(const char *list[][4]) {
 
 void Walker::wilburs_speech_finished() {
 	if (_flag && !_G(player).walker_in_this_scene && !_G(roomVal2))
-		SendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
+		sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
 
 	term_message("wilburs_speech_finished: dispatching wilburs_talk_trigger = %d", _trigger);
 	kernel_trigger_dispatchx(_trigger);
