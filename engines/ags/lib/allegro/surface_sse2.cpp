@@ -624,7 +624,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 }
 
 template<bool Scale>
-void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
+static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
@@ -791,7 +791,7 @@ void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 }
 
 template<bool Scale>
-void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
+static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	__m128i transColors = _mm_set1_epi16(args.transColor | (args.transColor << 8));
 
@@ -936,5 +936,3 @@ template void BITMAP::drawSSE2<false>(DrawInnerArgs &);
 template void BITMAP::drawSSE2<true>(DrawInnerArgs &);
 
 } // namespace AGS3
-
-#endif

@@ -136,6 +136,31 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 					gSrc = args.tintGreen;
 					bSrc = args.tintBlue;
 					aSrc = args.srcAlpha;
+				} else {
+					uint32 destCol = getColor(destVal, DestBytesPerPixel);
+					if (DestBytesPerPixel == 1) {
+						const RGB &rgb = args.palette[destCol];
+						aDest = 0xff;
+						rDest = rgb.r;
+						gDest = rgb.g;
+						bDest = rgb.b;
+					} else {
+						if (DestBytesPerPixel == 4) {
+							aDest = destCol >> 24;
+							rDest = (destCol >> 16) & 0xff;
+							gDest = (destCol >> 8) & 0xff;
+							bDest = destCol & 0xff;
+						} else { // DestBytesPerPixel == 2
+							aDest = 0xff;
+							rDest = (destCol >> 11) & 0x1f;
+							rDest = (rDest << 3) | (rDest >> 2);
+							gDest = (destCol >> 5) & 0x3f;
+							gDest = (gDest << 2) | (gDest >> 4);
+							bDest = destCol & 0x1f;
+							bDest = (bDest << 3) | (bDest >> 2);
+						}
+						//src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
+					}
 				}
 				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, args.srcAlpha, args.useTint, destVal);
 			}

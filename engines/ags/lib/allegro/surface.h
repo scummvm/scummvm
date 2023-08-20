@@ -298,6 +298,10 @@ public:
 	template<bool Scale>
 	void drawSSE2(DrawInnerArgs &args);
 #endif
+#ifdef SCUMMVM_AVX2
+	template<bool Scale>
+	void drawAVX2(DrawInnerArgs &args);
+#endif
 	template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
 	void drawInnerGeneric(DrawInnerArgs &args);
 	
@@ -313,9 +317,6 @@ public:
 			error("Unsupported format in BITMAP::getColor");
 		}
 	}
-
-	// This is for testing the blending modes int Test_Gfx
-	friend void Test_BlenderModes();
 };
 
 /**

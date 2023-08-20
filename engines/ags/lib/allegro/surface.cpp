@@ -189,6 +189,12 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 		return;
 	}
 #endif
+#ifdef SCUMMVM_AVX2
+	if (_G(simd_flags) & AGS3::Globals::SIMD_AVX2) {
+		drawAVX2<false>(args);
+		return;
+	}
+#endif
 #ifdef SCUMMVM_SSE2
 	if (_G(simd_flags) & AGS3::Globals::SIMD_SSE2) {
 		drawSSE2<false>(args);
@@ -202,7 +208,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
                          const Common::Rect &dstRect, bool skipTrans, int srcAlpha) {
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 	       (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
-	auto args = DrawInnerArgs(this, srcBitmap, srcRect, dstRect, skipTrans, srcAlpha, false, false, 0, 0, 0, true);
+	auto args = DrawInnerArgs(this, srcBitmap, srcRect, dstRect, skipTrans, srcAlpha, false, false, -1, -1, -1, true);
 	if (!args.shouldDraw) return;
 	if (!args.sameFormat && args.src.format.bytesPerPixel == 1) {
 		if (format.bytesPerPixel == 4)
@@ -214,6 +220,12 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 #ifdef SCUMMVM_NEON
 	if (_G(simd_flags) & AGS3::Globals::SIMD_NEON) {
 		drawNEON<true>(args);
+		return;
+	}
+#endif
+#ifdef SCUMMVM_AVX2
+	if (_G(simd_flags) & AGS3::Globals::SIMD_AVX2) {
+		drawAVX2<true>(args);
 		return;
 	}
 #endif
