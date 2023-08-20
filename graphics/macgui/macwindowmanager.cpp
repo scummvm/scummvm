@@ -581,7 +581,11 @@ Common::U32String stripFormat(const Common::U32String &str) {
 					tmp += *s++;
 				}
 			} else if (*s == '\016') {	// human-readable format
-				s += 23;
+				s++;
+				if (*s == '+' || *s == '-')
+					s += 3;
+				else
+					s += 22;
 			} else {
 				tmp += *s++;
 			}
