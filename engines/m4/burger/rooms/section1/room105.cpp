@@ -1246,6 +1246,37 @@ void Room105::daemon() {
 		series_play_with_breaks(PLAY2, "105ag08", 0xe00, 42, 2);
 		break;
 
+	case 42:
+		_series11 = series_load("105ag08");
+		_series8 = series_play("105ag08", 0xe00, 0, -1, 600, -1, 100, 0, 0, 37, 37);
+		ws_hide_walker();
+		series_play_with_breaks(PLAY26, "105wi04", 0x200, 43, 3, 6, 100, 40, 0);
+		break;
+
+	case 43:
+		terminateMachineAndNull(_series8);
+		series_play("105ag08", 0xe00, 0, 44, 6, 0, 100, 0, 0, 38, 42);
+		series_play_with_breaks(PLAY27, "105wi04", 0x200, 46, 3, 6, 100, 40, 0);
+		inv_give_to_player("deed");			// Finally get the deed after all the above code
+		inv_move_object("money", NOWHERE);	// No! My money!
+		break;
+
+	case 44:
+		series_unload(_series11);
+		_val3 = 42;
+		_val4 = 42;
+		kernel_trigger_dispatch_now(1);
+		conv_resume();
+		break;
+
+	case 45:
+		terminateMachineAndNull(_series5);
+		break;
+
+	case 46:
+		ws_unhide_walker();
+		break;
+
 	case gTELEPORT:
 		switch (_G(roomVal1)) {
 		case 62:
