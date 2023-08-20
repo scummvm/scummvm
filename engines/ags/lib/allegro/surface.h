@@ -268,10 +268,11 @@ public:
 	constexpr static int SCALE_THRESHOLD_BITS = 8;
 	constexpr static int SCALE_THRESHOLD = 1 << SCALE_THRESHOLD_BITS;
 	struct DrawInnerArgs {
-		bool useTint, sameFormat, horizFlip, vertFlip, skipTrans, doScale;
+		const bool useTint, horizFlip, vertFlip, skipTrans, doScale;
+		bool sameFormat, shouldDraw;
 		int xStart, yStart, srcAlpha, tintRed, tintGreen, tintBlue, scaleX, scaleY;
 		uint32 transColor, alphaMask;
-		color *palette;
+		PALETTE palette;
 
 		BlenderMode blenderMode;
 		Common::Rect dstRect, srcArea;
@@ -279,7 +280,11 @@ public:
 		const ::Graphics::ManagedSurface &src;
 		::Graphics::Surface destArea;
 
-		DrawInnerArgs(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, int useTint, int sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY);
+		DrawInnerArgs(BITMAP *dstBitmap, const BITMAP *srcBitmap,
+					  const Common::Rect &srcRect, const Common::Rect &dstRect,
+					  bool skipTrans, int srcAlpha, bool horizFlip,
+					  bool vertFlip, int tintRed, int tintGreen, int tintBlue,
+					  bool doScale);
 	};
 
 	template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
