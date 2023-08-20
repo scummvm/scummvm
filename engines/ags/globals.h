@@ -188,6 +188,7 @@ public:
 		SIMD_NONE = 0,
 		SIMD_NEON = (1 << 0),
 		SIMD_SSE2 = (1 << 1),
+		SIMD_AVX2 = (1 << 2),
 	};
 
 	/**

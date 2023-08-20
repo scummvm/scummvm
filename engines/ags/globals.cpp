@@ -109,6 +109,7 @@ Globals::Globals() {
 	// Allegro globals
 	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuNEON) ? SIMD_NEON : SIMD_NONE;
 	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuSSE2) ? SIMD_SSE2 : SIMD_NONE;
+	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuAVX2) ? SIMD_AVX2 : SIMD_NONE;
 	Common::fill((byte *)&_black_palette, (byte *)&_black_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_current_palette, (byte *)&_current_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_prev_current_palette, (byte *)&_prev_current_palette + PAL_SIZE, 0);
