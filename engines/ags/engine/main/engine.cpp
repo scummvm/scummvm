@@ -23,7 +23,6 @@
 // Engine initialization
 //
 
-#include "ags/lib/allegro/color.h"
 #include "ags/shared/core/platform.h"
 #include "ags/lib/allegro.h" // allegro_install and _exit
 #include "ags/engine/ac/asset_helper.h"

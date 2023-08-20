@@ -183,32 +183,32 @@ void Test_BlenderModes() {
 
 											int tolerance, tolerance16;
 											switch ((BlenderMode)blenderMode) {
-												// These need to be IDENTICAL for lamplight city to work
-												// It would be nice to get tolerance16 down to 0 though...
-												case kRgbToRgbBlender:
-												case kArgbToRgbBlender:
-												case kSourceAlphaBlender:
-												case kAlphaPreservedBlenderMode:
+											// These need to be IDENTICAL for lamplight city to work
+											// It would be nice to get tolerance16 down to 0 though...
+											case kRgbToRgbBlender:
+											case kArgbToRgbBlender:
+											case kSourceAlphaBlender:
+											case kAlphaPreservedBlenderMode:
 												tolerance = 0;
 												tolerance16 = 1;
 												break;
 
-												// These can be 1 or 2 off, as long as they look the same
-												case kArgbToArgbBlender:
-												case kRgbToArgbBlender:
-												case kOpaqueBlenderMode:
-												case kAdditiveBlenderMode:
+											// These can be 1 or 2 off, as long as they look the same
+											case kArgbToArgbBlender:
+											case kRgbToArgbBlender:
+											case kOpaqueBlenderMode:
+											case kAdditiveBlenderMode:
 												tolerance = 1;
 												tolerance16 = 1;
 												break;
 
-												case kTintBlenderMode:
-												case kTintLightBlenderMode:
+											case kTintBlenderMode:
+											case kTintLightBlenderMode:
 												tolerance = 2;
 												tolerance16 = 1;
 												break;
 
-												default:
+											default:
 												tolerance = 0;
 											}
 											if (std::abs((int)a - (int)(simdCol >> 24)) > tolerance) {

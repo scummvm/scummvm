@@ -1,9 +1,9 @@
 #include <arm_neon.h>
-#include "ags/lib/allegro/gfx.h"
-#include "ags/lib/allegro/color.h"
-#include "ags/lib/allegro/flood.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
+#include "ags/lib/allegro/color.h"
+#include "ags/lib/allegro/flood.h"
+#include "ags/lib/allegro/gfx.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 
