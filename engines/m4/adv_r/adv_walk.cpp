@@ -70,9 +70,9 @@ static void ws_walkto_node(machine *myWalker, railNode *destNode, bool firstTime
 		} else {
 			_G(globals)[GLB_TEMP_6] = 0;		// so the walker will freeze when he reaches the last node
 		}
-		SendWSMessage(STARTWALK << 16, 0, myWalker, 0, nullptr, 1);
+		sendWSMessage(STARTWALK << 16, 0, myWalker, 0, nullptr, 1);
 	} else {
-		SendWSMessage(WALKSEQ << 16, 0, myWalker, 0, nullptr, 1);
+		sendWSMessage(WALKSEQ << 16, 0, myWalker, 0, nullptr, 1);
 	}
 }
 
@@ -256,7 +256,7 @@ void ws_demand_facing(machine *myWalker, int32 facing) {
 
 	if (facing > 0 && facing < 13) {
 		_G(globals)[GLB_TEMP_4] = directions[facing] << 16;
-		SendWSMessage(DEMAND_FACING << 16, 0, myWalker, 0, nullptr, 1);
+		sendWSMessage(DEMAND_FACING << 16, 0, myWalker, 0, nullptr, 1);
 	}
 }
 
@@ -274,7 +274,7 @@ void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing) {
 	_G(globals)[GLB_TEMP_2] = y << 16;
 	_G(globals)[GLB_TEMP_3] = s;
 
-	SendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
+	sendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
 
 	if (facing != -1)
 		ws_demand_facing(myWalker, facing);
@@ -298,9 +298,9 @@ static void ws_demand_location_and_facing(machine *myWalker, int32 x, int32 y, i
 	if (facing > 0 && facing < 13) {
 		// If there is a facing to be set
 		_G(globals)[GLB_TEMP_4] = directions[facing] << 16;
-		SendWSMessage(747 << 16, 0, myWalker, 0, nullptr, 1);
+		sendWSMessage(747 << 16, 0, myWalker, 0, nullptr, 1);
 	} else {
-		SendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
+		sendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
 		_G(player).waiting_for_walk = false; // lets parse code get called when there is no facing set (from scenedit)
 	}
 }
@@ -326,7 +326,7 @@ void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger) {
 	// Make sure the _G(completeWalk) flag is set
 	_G(globals)[GLB_TEMP_6] = 0x10000;
 
-	SendWSMessage(TURN_TO_FACE << 16, 0, myWalker, 0, nullptr, 1);
+	sendWSMessage(TURN_TO_FACE << 16, 0, myWalker, 0, nullptr, 1);
 }
 
 void ws_nosepick(machine *myWalker, int32 seriesHash) {
@@ -337,7 +337,7 @@ void ws_nosepick(machine *myWalker, int32 seriesHash) {
 	}
 	myAnim8 = myWalker->myAnim8;
 	myAnim8->myRegs[IDX_CELS_HASH] = seriesHash << 16;
-	SendWSMessage(NOSEPICK << 16, 0, myWalker, 0, nullptr, 1);
+	sendWSMessage(NOSEPICK << 16, 0, myWalker, 0, nullptr, 1);
 }
 
 void ws_demand_location(int32 x, int32 y, int facing) {
@@ -350,7 +350,7 @@ void ws_hide_walker(machine *myWalker) {
 		return;
 	}
 
-	SendWSMessage(PLAYER_HIDE << 16, 0, myWalker, 0, nullptr, 1);
+	sendWSMessage(PLAYER_HIDE << 16, 0, myWalker, 0, nullptr, 1);
 }
 
 void ws_unhide_walker(machine *myWalker) {
@@ -359,7 +359,7 @@ void ws_unhide_walker(machine *myWalker) {
 		return;
 	}
 
-	SendWSMessage(PLAYER_UNHIDE << 16, 0, myWalker, 0, nullptr, 1);
+	sendWSMessage(PLAYER_UNHIDE << 16, 0, myWalker, 0, nullptr, 1);
 }
 
 void ws_demand_facing(int32 newFacing) {

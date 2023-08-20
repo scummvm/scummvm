@@ -969,7 +969,7 @@ static void op_SEQ_SEND_MSG(Anim8 *myAnim8) {
 		msgValue = 0;
 	}
 
-	SendWSMessage(*_GWS(myArg2), msgValue, nullptr, (*_GWS(myArg1)) >> 16, nullptr, 1);
+	sendWSMessage(*_GWS(myArg2), msgValue, nullptr, (*_GWS(myArg1)) >> 16, nullptr, 1);
 	return;
 }
 

@@ -158,7 +158,7 @@ bool ClearWSAssets(uint32 assetType, int32 minHash, int32 maxHash) {
 	case _WS_ASSET_MACH:
 		// Clear the machines table for entries [minHash, maxHash]
 		for (i = minHash; i <= maxHash; i++) {
-			TerminateMachinesByHash(i);
+			terminateMachinesByHash(i);
 			if (_GWS(globalMACHnames)[i]) {
 				rtoss(_GWS(globalMACHnames)[i]);
 				mem_free(_GWS(globalMACHnames)[i]);

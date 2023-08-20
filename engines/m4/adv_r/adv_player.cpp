@@ -163,7 +163,7 @@ bool player_load_series(const char *walkerName, const char *shadowName, bool loa
 		AddWSAssetCELS(assetPath, i + 4, nullptr);
 	}
 
-	SendWSMessage(0, 0, nullptr, 6, nullptr, 1);		// Hash 6 is the shadow machine
+	sendWSMessage(0, 0, nullptr, 6, nullptr, 1);		// Hash 6 is the shadow machine
 	return true;
 }
 

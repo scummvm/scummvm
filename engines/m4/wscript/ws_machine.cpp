@@ -419,7 +419,7 @@ static bool op_SEND_MSG(machine *m, int32 *pcOffset) {
 	} else {
 		msgValue = 0;
 	}
-	SendWSMessage(*_GWS(myArg2), msgValue, nullptr, *_GWS(myArg1) >> 16, m, 1);
+	sendWSMessage(*_GWS(myArg2), msgValue, nullptr, *_GWS(myArg1) >> 16, m, 1);
 	return true;
 }
 
@@ -435,7 +435,7 @@ static bool op_SEND_GMSG(machine *m, int32 *pcOffset) {
 		msgValue = 0;
 	}
 
-	SendWSMessage(*_GWS(myArg2), msgValue, nullptr, *_GWS(myArg1) >> 16, m, 0);
+	sendWSMessage(*_GWS(myArg2), msgValue, nullptr, *_GWS(myArg1) >> 16, m, 0);
 	return true;
 }
 
@@ -451,7 +451,7 @@ static bool op_REPLY_MSG(machine *m, int32 *pcOffset) {
 		msgValue = 0;
 	}
 
-	SendWSMessage(*_GWS(myArg1), msgValue, m->msgReplyXM, 0, m, 1);
+	sendWSMessage(*_GWS(myArg1), msgValue, m->msgReplyXM, 0, m, 1);
 	return true;
 }
 
@@ -752,7 +752,7 @@ static void shutdownMachine(machine *m) {
 }
 
 
-void TerminateMachinesByHash(uint32 machHash) {
+void terminateMachinesByHash(uint32 machHash) {
 	machine *curr, *next;
 
 	curr = _GWS(firstMachine);					// Start at beginning of machine chain
@@ -1117,7 +1117,7 @@ static bool SearchMsgList(uint32 msgHash, uint32 msgValue, machine *recvM, int32
 
 // This proc is what allows a machine to send a message to another machine(s)
 
-void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
+void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 		uint32 machHash, machine *sendM, int32 msgCount) {
 	bool found, more_to_send;
 	machine *currMachine;

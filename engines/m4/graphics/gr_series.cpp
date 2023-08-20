@@ -138,7 +138,7 @@ bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
 	_G(globals)[GLB_TEMP_3] = kernel_trigger_create(trigger);
 
 	// Send the message to the machine to accept the new callback frame num and trigger
-	SendWSMessage(0x10000, 0, m, 0, nullptr, 1);
+	sendWSMessage(0x10000, 0, m, 0, nullptr, 1);
 
 	return true;
 }

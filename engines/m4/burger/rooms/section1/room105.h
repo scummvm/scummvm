@@ -31,7 +31,6 @@ namespace Rooms {
 class Room105 : public Room {
 private:
 	int _val1 = 0;
-	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
@@ -40,10 +39,18 @@ private:
 	int _val8 = 0;
 	bool _flag1 = false;
 	bool _flag2 = false;
+	bool _flag3 = false;
+	bool _flag4 = false;
+	bool _flag5 = false;
 	const char *_digi1 = nullptr;
 	int _series1[12];
 	int _series2[4];
 	int _series3[12];
+	int _series4[5];
+	machine *_series5 = nullptr;
+	machine *_series6 = nullptr;
+	machine *_series7 = nullptr;
+	machine *_series8 = nullptr;
 
 	void conv10();
 	void conv11();
@@ -54,9 +61,14 @@ private:
 	void loadAssets1();
 	void loadAssets2();
 	void loadAssets3();
+	void loadAssets4();
 	void unloadAssets1();
 	void unloadAssets2();
 	void unloadAssets3();
+	void unloadAssets4();
+	void handleDeed1();
+	void handleDeed2();
+	void handleDeed3();
 
 public:
 	Room105() : Room() {}
