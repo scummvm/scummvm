@@ -695,34 +695,19 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			}
 
 			// get format
-			if (*s == '\015') {	// binary format
-				s++;
-
-				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
-				byte textSlant = *s++;
-				uint16 fontSize = *s++; fontSize = (fontSize << 8) | *s++;
-				uint16 palinfo1 = *s++; palinfo1 = (palinfo1 << 8) | *s++;
-				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
-				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
-
-				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				if (!_macFontMode)
-					current_format.font = _defaultFormatting.font;
-			} else if (*s == '\016') {	// human-readable format
+			if (*s == '\016') {	// human-readable format
 				s++;
 
 				if (*s == '-') { // \016-XX  -- closing textSlant
 					uint16 textSlant;
+					s++;
 
 					s = readHex(&textSlant, s, 2);
 
 					current_format.textSlant &= ~textSlant; // Clearing the specified bit
 				} else if (*s == '+') { // \016+XX  -- opening textSlant
 					uint16 textSlant;
+					s++;
 
 					s = readHex(&textSlant, s, 2);
 
