@@ -226,6 +226,8 @@ Common::HardwareInputSet *OSystem_iOS7::getHardwareInputSet() {
 		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
 	}
 
+	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+  
 	return inputSet;
 }
 
