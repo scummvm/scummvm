@@ -779,11 +779,17 @@ uint8 SwordEngine::mainLoop() {
 }
 
 void SwordEngine::waitForFade() {
+	uint32 startTime = _system->getMillis();
 	while (_screen->stillFading()) { // This indirectly also waits for FX to be faded
 		if (_vblCount >= _rate)
 			_vblCount = 0;
 
 		pollInput(0);
+
+		// In the remote event that this wait cycle gets
+		// stuck during debugging, trigger a timeout
+		if (_system->getMillis() - startTime > 2000)
+			break;
 	}
 }
 
