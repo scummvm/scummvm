@@ -895,14 +895,35 @@ void QuickTimeParser::flattenEditLists() {
 	//
 	// Other players seem to just play the audio track chunks consecutively without the
 	// 30-sample skips, which produces the correct results, not sure why.
-
+	//
+	//
+	// We also need to account for mixed silent and non-silent tracks.  In Obsidian's
+	// Japanese localization, the vidbot that you talk to at the end of the maze (asset
+	// 4375) has a brief silent edit followed by the actual audio track.  If we
+	// collapse the audio track into the silent edit, then it causes the entire track
+	// to be silent.
 	for (Track *track : _tracks) {
-		if (track->editList.size()) {
-			EditListEntry &lastEntry = track->editList.back();
-			EditListEntry &firstEntry = track->editList.front();
-			firstEntry.trackDuration = (lastEntry.timeOffset + lastEntry.trackDuration);
+		if (track->editList.size() >= 2) {
+			Common::Array<EditListEntry> newEdits;
 
-			track->editList.resize(1);
+			for (const EditListEntry &curEdit : track->editList) {
+				if (newEdits.size() == 0) {
+					newEdits.push_back(curEdit);
+					continue;
+				}
+
+				EditListEntry &prevEdit = newEdits.back();
+				bool prevIsSilent = (prevEdit.mediaTime == -1);
+				bool currentIsSilent = (curEdit.mediaTime == -1);
+
+				if (prevIsSilent != currentIsSilent) {
+					newEdits.push_back(curEdit);
+					continue;
+				} else
+					prevEdit.trackDuration += curEdit.trackDuration;
+			}
+
+			track->editList = Common::move(newEdits);
 		}
 	}
 }
