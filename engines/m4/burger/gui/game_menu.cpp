@@ -267,7 +267,7 @@ void gui_DrawSprite(Sprite *mySprite, Buffer *myBuff, int32 x, int32 y) {
 
 	if (mySprite->sourceHandle) {
 		HLock(mySprite->sourceHandle);
-		mySprite->data = (uint8 *)((int32) * (mySprite->sourceHandle) + mySprite->sourceOffset);
+		mySprite->data = (uint8 *)((intptr)*(mySprite->sourceHandle) + mySprite->sourceOffset);
 
 		drawSpriteBuff.w = mySprite->w;
 		drawSpriteBuff.stride = mySprite->w;
@@ -2332,7 +2332,7 @@ guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFla
 	// draw the sprite
 	if (backgroundSprite->sourceHandle) {
 		HLock(backgroundSprite->sourceHandle);
-		backgroundSprite->data = (uint8 *)((int32) * (backgroundSprite->sourceHandle) + backgroundSprite->sourceOffset);
+		backgroundSprite->data = (uint8 *)((intptr)*(backgroundSprite->sourceHandle) + backgroundSprite->sourceOffset);
 
 		drawSpriteBuff.w = backgroundSprite->w;
 		drawSpriteBuff.stride = backgroundSprite->w;

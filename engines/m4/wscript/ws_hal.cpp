@@ -156,7 +156,7 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 
 		// Lock the sprite handle
 		HLock(source->sourceHandle);
-		source->data = (uint8 *)((byte *)*(source->sourceHandle) + source->sourceOffset);
+		source->data = (uint8 *)((intptr)*(source->sourceHandle) + source->sourceOffset);
 	}
 
 	assert(myCCB->currLocation);
