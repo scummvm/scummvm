@@ -30,81 +30,84 @@ void render_blockcode(Common::DataBuffer *ob, const Common::DataBuffer *text, co
 	if (!text)
 		return;
 
-	warning("render_blockcode(%s)", PR(text));
+	warning("STUB: render_blockcode(%s)", PR(text));
 }
 
 void render_blockquote(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_blockquote(%s)", PR(text));
+	warning("STUB: render_blockquote(%s)", PR(text));
 }
 
 void render_blockhtml(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_blockhtml(%s)", PR(text));
+	warning("STUB: render_blockhtml(%s)", PR(text));
 }
 
 void render_header(Common::DataBuffer *ob, const Common::DataBuffer *text, int level, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_header(%s)", PR(text));
+	warning("STUB: render_header(%s)", PR(text));
 }
 
 void render_hrule(Common::DataBuffer *ob, void *opaque) {
-	warning("render_hrule()");
+	warning("STUB: render_hrule()");
 }
 
 void render_list(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_list(%s)", PR(text));
+	warning("STUB: render_list(%s)", PR(text));
 }
 
 void render_listitem(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_listitem(%s)", PR(text));
+	warning("STUB: render_listitem(%s)", PR(text));
 }
 
 void render_paragraph(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_paragraph(%s)", PR(text));
+	debug(1, "render_paragraph(%s)", PR(text));
+
+	bufput(ob, text->data, text->size);
+	bufput(ob, "\n\n", 2);
 }
 
 void render_table(Common::DataBuffer *ob, const Common::DataBuffer *header, const Common::DataBuffer *body, void *opaque) {
 	if (!body)
 		return;
 
-	warning("render_table(%s, %s)", header ? PR(header) : 0, PR(body));
+	warning("STUB: render_table(%s, %s)", header ? PR(header) : 0, PR(body));
 }
 
 void render_table_row(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_table_row(%s)", PR(text));
+	warning("STUB: render_table_row(%s)", PR(text));
 }
 
 void render_table_cell(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
 	if (!text)
 		return;
 
-	warning("render_table_cell(%s)", PR(text));
+	warning("STUB: render_table_cell(%s)", PR(text));
 }
 
 int render_autolink(Common::DataBuffer *ob, const Common::DataBuffer *link, Common::MKDAutolink type, void *opaque) {
 	if (!link)
 		return 0;
 
-	warning("render_autolink(%s)", PR(link));
+	warning("STUB: render_autolink(%s)", PR(link));
 	return 1;
 }
 
@@ -112,7 +115,7 @@ int render_codespan(Common::DataBuffer *ob, const Common::DataBuffer *text, void
 	if (!text)
 		return 0;
 
-	warning("render_codespan(%s)", PR(text));
+	warning("STUB: render_codespan(%s)", PR(text));
 	return 1;
 }
 
@@ -120,7 +123,7 @@ int render_double_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *tex
 	if (!text || !text->size)
 		return 0;
 
-	warning("render_double_emphasis(%s)", PR(text));
+	debug(1, "render_double_emphasis(%s)", PR(text));
 
 	Common::String res = Common::String::format("\016+%02x%s\016-%02x", kMacFontBold, Common::String((const char *)text->data , text->size).c_str(), kMacFontBold);
 
@@ -132,7 +135,7 @@ int render_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void
 	if (!text || !text->size)
 		return 0;
 
-	warning("render_emphasis(%s)", PR(text));
+	debug(1, "render_emphasis(%s)", PR(text));
 
 	Common::String res = Common::String::format("\016+%02x%s\016-%02x", kMacFontItalic, Common::String((const char *)text->data , text->size).c_str(), kMacFontItalic);
 
@@ -144,12 +147,14 @@ int render_image(Common::DataBuffer *ob, const Common::DataBuffer *link, const C
 	if (!link)
 		return 0;
 
-	warning("render_image(%s, %s, %s)", PR(link), title ? PR(title) : 0, alt ? PR(alt) : 0);
+	warning("STUB: render_image(%s, %s, %s)", PR(link), title ? PR(title) : 0, alt ? PR(alt) : 0);
 	return 1;
 }
 
 int render_linebreak(Common::DataBuffer *ob, void *opaque) {
-	warning("render_linebreak()");
+	debug(1, "render_linebreak()");
+
+	bufput(ob, "\n", 1);
 	return 1;
 }
 
@@ -157,7 +162,7 @@ int render_link(Common::DataBuffer *ob, const Common::DataBuffer *link, const Co
 	if (!link)
 		return 0;
 
-	warning("render_link(%s, %s, %s)", PR(link), title ? PR(title) : 0, content ? PR(content) : 0);
+	warning("STUB: render_link(%s, %s, %s)", PR(link), title ? PR(title) : 0, content ? PR(content) : 0);
 	return 1;
 }
 
@@ -165,7 +170,7 @@ int render_raw_html_tag(Common::DataBuffer *ob, const Common::DataBuffer *tag, v
 	if (!tag)
 		return 0;
 
-	warning("render_raw_html_tag(%s)", tag->data);
+	warning("STUB: render_raw_html_tag(%s)", tag->data);
 	return 1;
 }
 
@@ -173,7 +178,7 @@ int render_triple_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *tex
 	if (!text)
 		return 0;
 
-	warning("render_triple_emphasis(%s)", PR(text));
+	warning("STUB: render_triple_emphasis(%s)", PR(text));
 	return 1;
 }
 
@@ -181,7 +186,7 @@ int render_strikethrough(Common::DataBuffer *ob, const Common::DataBuffer *text,
 	if (!text)
 		return 0;
 
-	warning("render_strikethrough(%s)", PR(text));
+	warning("STUB: render_strikethrough(%s)", PR(text));
 	return 1;
 }
 
@@ -189,7 +194,7 @@ int render_superscript(Common::DataBuffer *ob, const Common::DataBuffer *text, v
 	if (!text)
 		return 0;
 
-	warning("render_superscript(%s)", PR(text));
+	warning("STUB: render_superscript(%s)", PR(text));
 	return 1;
 }
 
@@ -245,6 +250,7 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	sd_markdown_render(ob, ib->data, ib->size, md);
 	sd_markdown_free(md);
 
+	setText(Common::String((const char *)ob->data, ob->size));
 	warning("%zu bytes: %s", ob->size, Common::String((const char *)ob->data, ob->size).c_str());
 }
 
