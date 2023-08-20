@@ -694,24 +694,35 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				}
 			}
 
-			// get format
+			// get format (sync with stripFormat() )
 			if (*s == '\016') {	// human-readable format
 				s++;
 
-				if (*s == '-') { // \016-XX  -- closing textSlant
-					uint16 textSlant;
+				// First two digits is slant, third digit is Header number
+				if (*s == '-') { // \016-XXY  -- closing textSlant, H<Y>
+					uint16 textSlant, headSize;
 					s++;
 
 					s = readHex(&textSlant, s, 2);
 
 					current_format.textSlant &= ~textSlant; // Clearing the specified bit
-				} else if (*s == '+') { // \016+XX  -- opening textSlant
-					uint16 textSlant;
+
+					s = readHex(&headSize, s, 1);
+					if (headSize == 0xf) // reset
+						current_format.fontSize = _defaultFormatting.fontSize;
+				} else if (*s == '+') { // \016+XXY  -- opening textSlant. H<Y>
+					uint16 textSlant, headSize;
 					s++;
 
 					s = readHex(&textSlant, s, 2);
 
 					current_format.textSlant |= textSlant; // Setting the specified bit
+
+					s = readHex(&headSize, s, 1);
+					if (headSize >= 1 && headSize <= 6) { // set
+						const float sizes[] = { 1, 3.0f, 2.5f, 2.0f, 1.75f, 1.5f, 1.25f };
+						current_format.fontSize = _defaultFormatting.fontSize * sizes[headSize];
+					}
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 

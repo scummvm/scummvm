@@ -51,7 +51,11 @@ void render_header(Common::DataBuffer *ob, const Common::DataBuffer *text, int l
 	if (!text)
 		return;
 
-	warning("STUB: render_header(%s)", PR(text));
+	debug(1, "render_header(%s)", PR(text));
+
+	Common::String res = Common::String::format("\016+00%01x%s\001\016-00f", level, Common::String((const char *)text->data , text->size).c_str());
+
+	bufput(ob, res.c_str(), res.size());
 }
 
 void render_hrule(Common::DataBuffer *ob, void *opaque) {
@@ -125,7 +129,7 @@ int render_double_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *tex
 
 	debug(1, "render_double_emphasis(%s)", PR(text));
 
-	Common::String res = Common::String::format("\016+%02x%s\016-%02x", kMacFontBold, Common::String((const char *)text->data , text->size).c_str(), kMacFontBold);
+	Common::String res = Common::String::format("\016+%02x0%s\001\016-%02x0", kMacFontBold, Common::String((const char *)text->data , text->size).c_str(), kMacFontBold);
 
 	bufput(ob, res.c_str(), res.size());
 	return 1;
@@ -137,7 +141,7 @@ int render_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void
 
 	debug(1, "render_emphasis(%s)", PR(text));
 
-	Common::String res = Common::String::format("\016+%02x%s\016-%02x", kMacFontItalic, Common::String((const char *)text->data , text->size).c_str(), kMacFontItalic);
+	Common::String res = Common::String::format("\016+%02x0%s\001\016-%02x0", kMacFontItalic, Common::String((const char *)text->data , text->size).c_str(), kMacFontItalic);
 
 	bufput(ob, res.c_str(), res.size());
 	return 1;
@@ -250,8 +254,10 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	sd_markdown_render(ob, ib->data, ib->size, md);
 	sd_markdown_free(md);
 
+	warning("%zu bytes: %s", ob->size, toPrintable(Common::String((const char *)ob->data, ob->size)).c_str());
+
+	setDefaultFormatting(kMacFontChicago, kMacFontChicago, 40, 0, 0, 0);
 	setText(Common::String((const char *)ob->data, ob->size));
-	warning("%zu bytes: %s", ob->size, Common::String((const char *)ob->data, ob->size).c_str());
 }
 
 } // End of namespace Graphics
