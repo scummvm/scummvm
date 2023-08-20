@@ -1,9 +1,9 @@
 #include <immintrin.h>
-#include "ags/lib/allegro/gfx.h"
-#include "ags/lib/allegro/color.h"
-#include "ags/lib/allegro/flood.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
+#include "ags/lib/allegro/color.h"
+#include "ags/lib/allegro/flood.h"
+#include "ags/lib/allegro/gfx.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 
@@ -77,8 +77,7 @@ inline __m128i rgbBlendSIMD2Bpp(__m128i srcCols, __m128i destCols, __m128i alpha
 	return _mm_or_si128(diffs[0], _mm_slli_epi16(diffs[2], 11));
 }
 
-inline __m128i mul32_as32(__m128i a, __m128i b)
-{
+inline __m128i mul32_as32(__m128i a, __m128i b) {
 	__m128i tmp1 = _mm_mul_epu32(a,b);
 	__m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(a,4), _mm_srli_si128(b,4));
 	return _mm_unpacklo_epi32(_mm_shuffle_epi32(tmp1, _MM_SHUFFLE (0,0,2,0)), _mm_shuffle_epi32(tmp2, _MM_SHUFFLE (0,0,2,0))); /* shuffle results to [63..0] and pack */
@@ -458,13 +457,13 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
-    __m128i tint = _mm_sll_epi32(_mm_set1_epi32(args.srcAlpha), _mm_set1_epi32(24));
+	__m128i tint = _mm_sll_epi32(_mm_set1_epi32(args.srcAlpha), _mm_set1_epi32(24));
 	tint = _mm_or_si128(tint, _mm_sll_epi32(_mm_set1_epi32(args.tintRed), _mm_set1_epi32(16)));
 	tint = _mm_or_si128(tint, _mm_sll_epi32(_mm_set1_epi32(args.tintGreen), _mm_set1_epi32(8)));
 	tint = _mm_or_si128(tint, _mm_set1_epi32(args.tintBlue));
 	__m128i maskedAlphas = _mm_set1_epi32(args.alphaMask);
 	__m128i transColors = _mm_set1_epi32(args.transColor);
-    __m128i alphas = _mm_set1_epi32(args.srcAlpha);
+	__m128i alphas = _mm_set1_epi32(args.srcAlpha);
 
 	// This is so that we can calculate what pixels to crop off in a vectorized way
 	__m128i addIndexes = _mm_set_epi32(3, 2, 1, 0);
