@@ -265,6 +265,8 @@ public:
 	// kTintBlenderMode and kTintLightBlenderMode
 	void blendTintSprite(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool light) const;
 
+	constexpr static int SCALE_THRESHOLD_BITS = 8;
+	constexpr static int SCALE_THRESHOLD = 1 << SCALE_THRESHOLD_BITS;
 	struct DrawInnerArgs {
 		bool useTint, sameFormat, horizFlip, vertFlip, skipTrans, doScale;
 		int xStart, yStart, srcAlpha, tintRed, tintGreen, tintBlue, scaleX, scaleY;
@@ -280,13 +282,13 @@ public:
 		DrawInnerArgs(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, int useTint, int sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, int horizFlip, int vertFlip, int skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY);
 	};
 
-	template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
+	template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
 	void drawInner4BppWithConv(DrawInnerArgs &args);
-	template<int ScaleThreshold>
+	template<bool Scale>
 	void drawInner2Bpp(DrawInnerArgs &args);
-	template<int ScaleThreshold>
+	template<bool Scale>
 	void drawInner1Bpp(DrawInnerArgs &args);
-	template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
+	template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
 	void drawInnerGeneric(DrawInnerArgs &args);
 	
 	inline uint32 getColor(const byte *data, byte bpp) const {
