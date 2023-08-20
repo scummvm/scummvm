@@ -268,7 +268,7 @@ public:
 	constexpr static int SCALE_THRESHOLD_BITS = 8;
 	constexpr static int SCALE_THRESHOLD = 1 << SCALE_THRESHOLD_BITS;
 	struct DrawInnerArgs {
-		const bool useTint, horizFlip, vertFlip, skipTrans, doScale;
+		const bool useTint, horizFlip, vertFlip, skipTrans;
 		bool sameFormat, shouldDraw;
 		int xStart, yStart, srcAlpha, tintRed, tintGreen, tintBlue, scaleX, scaleY;
 		uint32 transColor, alphaMask;
@@ -277,6 +277,7 @@ public:
 		BlenderMode blenderMode;
 		Common::Rect dstRect, srcArea;
 
+		BITMAP &dstBitmap;
 		const ::Graphics::ManagedSurface &src;
 		::Graphics::Surface destArea;
 
@@ -286,13 +287,17 @@ public:
 					  bool vertFlip, int tintRed, int tintGreen, int tintBlue,
 					  bool doScale);
 	};
-
-	template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
-	void drawInner4BppWithConv(DrawInnerArgs &args);
+	friend class DrawInnerImpl;
 	template<bool Scale>
-	void drawInner2Bpp(DrawInnerArgs &args);
+	void drawGeneric(DrawInnerArgs &args);
+#ifdef SCUMMVM_NEON
 	template<bool Scale>
-	void drawInner1Bpp(DrawInnerArgs &args);
+	void drawNEON(DrawInnerArgs &args);
+#endif
+#ifdef SCUMMVM_SSE2
+	template<bool Scale>
+	void drawSSE2(DrawInnerArgs &args);
+#endif
 	template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
 	void drawInnerGeneric(DrawInnerArgs &args);
 	
