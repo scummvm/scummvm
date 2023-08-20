@@ -104,9 +104,8 @@ void BITMAP::floodfill(int x, int y, int color) {
 	AGS3::floodfill(this, x, y, color);
 }
 
-const int SCALE_THRESHOLD = 0x100;
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
+template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
 void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
@@ -127,9 +126,9 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 	if (args.yStart < 0) { // Clip the top
 		yCtr = -args.yStart;
 		destY = 0;
-		if (ScaleThreshold != 0) {
+		if (Scale) {
 			scaleYCtr = yCtr * args.scaleY;
-			srcYCtr = scaleYCtr / ScaleThreshold;
+			srcYCtr = scaleYCtr / SCALE_THRESHOLD;
 		}
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) { // Clip the bottom
@@ -142,8 +141,8 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 	                       args.vertFlip ? args.srcArea.bottom - 1 - yCtr :
 	                       args.srcArea.top + yCtr);
 	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += args.scaleY) {
-		if (ScaleThreshold != 0) {
-			int newSrcYCtr = scaleYCtr / ScaleThreshold;
+		if (Scale) {
+			int newSrcYCtr = scaleYCtr / SCALE_THRESHOLD;
 			if (srcYCtr != newSrcYCtr) {
 				int diffSrcYCtr = newSrcYCtr - srcYCtr;
 				srcP += args.src.pitch * diffSrcYCtr;
@@ -153,8 +152,8 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 		// Loop through the pixels of the row
 		for (int destX = args.xStart, xCtr = xCtrStart, xCtrBpp = xCtrBppStart, scaleXCtr = xCtr * args.scaleX; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += SrcBytesPerPixel, scaleXCtr += args.scaleX) {
 			const byte *srcVal = srcP + xDir * xCtrBpp;
-			if (ScaleThreshold != 0) {
-				srcVal = srcP + (scaleXCtr / ScaleThreshold) * SrcBytesPerPixel;
+			if (Scale) {
+				srcVal = srcP + (scaleXCtr / SCALE_THRESHOLD) * SrcBytesPerPixel;
 			}
 			uint32 srcCol = getColor(srcVal, SrcBytesPerPixel);
 
@@ -233,7 +232,7 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 		}
 
 		destP += args.destArea.pitch;
-		if (ScaleThreshold == 0) srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
+		if (!Scale) srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
 	}
 }
 
@@ -312,34 +311,34 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
 		if (sameFormat) {
 			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER((drawInnerGeneric<1, 1, 0>)); return;
-			case 2: DRAWINNER((drawInnerGeneric<2, 2, 0>)); return;
-			case 4: DRAWINNER((drawInnerGeneric<4, 4, 0>)); return;
+			case 1: DRAWINNER((drawInnerGeneric<1, 1, false>)); return;
+			case 2: DRAWINNER((drawInnerGeneric<2, 2, false>)); return;
+			case 4: DRAWINNER((drawInnerGeneric<4, 4, false>)); return;
 			}
 		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInnerGeneric<4, 2, 0>));
+			DRAWINNER((drawInnerGeneric<4, 2, false>));
 		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInnerGeneric<2, 4, 0>));
+			DRAWINNER((drawInnerGeneric<2, 4, false>));
 		}
 	} else {
 		if (sameFormat) {
 			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER(drawInner1Bpp<0>); return;
-			case 2: DRAWINNER(drawInner2Bpp<0>); return;
-			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, 0>)); return;
+			case 1: DRAWINNER(drawInner1Bpp<false>); return;
+			case 2: DRAWINNER(drawInner2Bpp<false>); return;
+			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, false>)); return;
 			}
 		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInner4BppWithConv<4, 2, 0>));
+			DRAWINNER((drawInner4BppWithConv<4, 2, false>));
 			return;
 		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInner4BppWithConv<2, 4, 0>));
+			DRAWINNER((drawInner4BppWithConv<2, 4, false>));
 			return;
 		}
 	}
 	if (format.bytesPerPixel == 4) // src.bytesPerPixel must be 1 here
-		DRAWINNER((drawInnerGeneric<4, 1, 0>));
+		DRAWINNER((drawInnerGeneric<4, 1, false>));
 	else
-		DRAWINNER((drawInnerGeneric<2, 1, 0>));
+		DRAWINNER((drawInnerGeneric<2, 1, false>));
 #undef DRAWINNER
 }
 
@@ -395,34 +394,34 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
 		if (sameFormat) {
 			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER((drawInnerGeneric<1, 1, SCALE_THRESHOLD>)); return;
-			case 2: DRAWINNER((drawInnerGeneric<2, 2, SCALE_THRESHOLD>)); return;
-			case 4: DRAWINNER((drawInnerGeneric<4, 4, SCALE_THRESHOLD>)); return;
+			case 1: DRAWINNER((drawInnerGeneric<1, 1, true>)); return;
+			case 2: DRAWINNER((drawInnerGeneric<2, 2, true>)); return;
+			case 4: DRAWINNER((drawInnerGeneric<4, 4, true>)); return;
 			}
 		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInnerGeneric<4, 2, SCALE_THRESHOLD>));
+			DRAWINNER((drawInnerGeneric<4, 2, true>));
 		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInnerGeneric<2, 4, SCALE_THRESHOLD>));
+			DRAWINNER((drawInnerGeneric<2, 4, true>));
 		}
 	} else {
 		if (sameFormat) {
 			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER(drawInner1Bpp<SCALE_THRESHOLD>); return;
-			case 2: DRAWINNER(drawInner2Bpp<SCALE_THRESHOLD>); return;
-			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, SCALE_THRESHOLD>)); return;
+			case 1: DRAWINNER(drawInner1Bpp<true>); return;
+			case 2: DRAWINNER(drawInner2Bpp<true>); return;
+			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, true>)); return;
 			}
 		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInner4BppWithConv<4, 2, SCALE_THRESHOLD>));
+			DRAWINNER((drawInner4BppWithConv<4, 2, true>));
 			return;
 		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInner4BppWithConv<2, 4, SCALE_THRESHOLD>));
+			DRAWINNER((drawInner4BppWithConv<2, 4, true>));
 			return;
 		}
 	}
 	if (format.bytesPerPixel == 4) // src.bytesPerPixel must be 1 here
-		DRAWINNER((drawInnerGeneric<4, 1, SCALE_THRESHOLD>));
+		DRAWINNER((drawInnerGeneric<4, 1, true>));
 	else
-		DRAWINNER((drawInnerGeneric<2, 1, SCALE_THRESHOLD>));
+		DRAWINNER((drawInnerGeneric<2, 1, true>));
 #undef DRAWINNER
 }
 void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const {

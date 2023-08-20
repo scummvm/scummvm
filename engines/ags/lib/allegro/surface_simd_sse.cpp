@@ -25,7 +25,7 @@ inline uint32 extract32_idx3(__m128i x) {
 }
 
 // This template handles 2bpp and 4bpp, the other specializations handle 1bpp and format conversion blits
-template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
+template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
 void BITMAP::drawInner4BppWithConv(DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
@@ -57,13 +57,13 @@ void BITMAP::drawInner4BppWithConv(DrawInnerArgs &args) {
 		args.xStart = 0;
 	}
 	int destY = args.yStart, srcYCtr = 0, yCtr = 0, scaleYCtr = 0, yCtrHeight = (xCtrWidth % 4 == 0) ? args.dstRect.height() : (args.dstRect.height() - 1);
-	if (ScaleThreshold != 0) yCtrHeight = args.dstRect.height();
+	if (Scale) yCtrHeight = args.dstRect.height();
 	if (args.yStart < 0) {
 		yCtr = -args.yStart;
 		destY = 0;
-		if (ScaleThreshold != 0) {
+		if (Scale) {
 			scaleYCtr = yCtr * args.scaleY;
-			srcYCtr = scaleYCtr / ScaleThreshold;
+			srcYCtr = scaleYCtr / SCALE_THRESHOLD;
 		}
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) {
@@ -77,7 +77,7 @@ void BITMAP::drawInner4BppWithConv(DrawInnerArgs &args) {
 	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += args.scaleY) {
 		__m128i xCtrWidthSIMD = _mm_set1_epi32(xCtrWidth); // This is the width of the row
 
-		if (ScaleThreshold == 0) {
+		if (!Scale) {
 			// If we are not scaling the image
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart; xCtr < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
 				byte *destPtr = &destP[destX * DestBytesPerPixel];
@@ -90,7 +90,7 @@ void BITMAP::drawInner4BppWithConv(DrawInnerArgs &args) {
 			srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
 		} else {
 			// Here we are scaling the image
-			int newSrcYCtr = scaleYCtr / ScaleThreshold;
+			int newSrcYCtr = scaleYCtr / SCALE_THRESHOLD;
 			// Since the source yctr might not update every row of the destination, we have
 			// to see if we are on a new row...
 			if (srcYCtr != newSrcYCtr) {
@@ -106,15 +106,11 @@ void BITMAP::drawInner4BppWithConv(DrawInnerArgs &args) {
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart, scaleXCtr = xCtrStart * args.scaleX; xCtr < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
 				if (yCtr + 1 == yCtrHeight && xCtr + 4 > xCtrWidth) break; // Don't go past the last 4 pixels
 				__m128i indexes = _mm_set1_epi32(scaleXCtr);
-#if (ScaleThreshold == 0 || ScaleThreshold == 0x100)
 				// Calculate in parallel the indexes of the pixels
 				if (SrcBytesPerPixel == 4)
-					indexes = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes, scaleAdds), 8), 2);
+					indexes = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes, scaleAdds), SCALE_THRESHOLD_BITS), 2);
 				else
-					indexes = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes, scaleAdds), 8), 1);
-#else
-#error Change code to allow different scale threshold!
-#endif
+					indexes = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes, scaleAdds), SCALE_THRESHOLD_BITS), 1);
 				// Simply memcpy them in. memcpy has no real performance overhead here
 				memcpy(&srcBuffer[0*(size_t)SrcBytesPerPixel], srcP + extract32_idx0(indexes), SrcBytesPerPixel);
 				memcpy(&srcBuffer[1*(size_t)SrcBytesPerPixel], srcP + extract32_idx1(indexes), SrcBytesPerPixel);
@@ -147,7 +143,7 @@ void BITMAP::drawInner4BppWithConv(DrawInnerArgs &args) {
 	// Drawing the last few not scaled pixels here.
 	// Same as the loop above but now we check if we are going to overflow,
 	// and thus we don't need to mask out pixels that go over the row.
-	if (ScaleThreshold == 0) {
+	if (!Scale) {
 		for (; xCtr + 4 < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
 			byte *destPtr = &destP[(ptrdiff_t)destX * DestBytesPerPixel];
 			drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, srcP, tint, alphas, maskedAlphas, transColors, xDir, xCtrBpp, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, _mm_setzero_si128());
@@ -165,8 +161,8 @@ void BITMAP::drawInner4BppWithConv(DrawInnerArgs &args) {
 	// For the last 4 pixels, we just do them in serial, nothing special
 	for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += SrcBytesPerPixel) {
 		const byte *srcColPtr = (const byte *)(srcP + xDir * xCtrBpp);
-		if (ScaleThreshold != 0) {
-			srcColPtr = (const byte *)(srcP + (xCtr * args.scaleX) / ScaleThreshold * SrcBytesPerPixel);
+		if (Scale) {
+			srcColPtr = (const byte *)(srcP + (xCtr * args.scaleX) / SCALE_THRESHOLD * SrcBytesPerPixel);
 		}
 		byte *destVal = (byte *)&destP[destX * DestBytesPerPixel];
 		uint32 srcCol = getColor(srcColPtr, SrcBytesPerPixel);
@@ -228,13 +224,13 @@ void BITMAP::drawInner2Bpp(DrawInnerArgs &args) {
 		args.xStart = 0;
 	}
 	int destY = args.yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = (xCtrWidth % 8 == 0) ? args.dstRect.height() : (args.dstRect.height() - 1);
-	if (ScaleThreshold != 0) yCtrHeight = args.dstRect.height();
+	if (Scale) yCtrHeight = args.dstRect.height();
 	if (args.yStart < 0) {
 		yCtr = -args.yStart;
 		destY = 0;
-		if (ScaleThreshold != 0) {
+		if (Scale) {
 			scaleYCtr = yCtr * args.scaleY;
-			srcYCtr = scaleYCtr / ScaleThreshold;
+			srcYCtr = scaleYCtr / SCALE_THRESHOLD;
 		}
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) {
@@ -247,7 +243,7 @@ void BITMAP::drawInner2Bpp(DrawInnerArgs &args) {
 	                       args.vertFlip ? args.srcArea.bottom - 1 - yCtr : args.srcArea.top + yCtr);
 	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += args.scaleY) {
 		__m128i xCtrWidthSIMD = _mm_set1_epi16(xCtrWidth); // This is the width of the row
-		if (ScaleThreshold == 0) {
+		if (!Scale) {
 			// If we are not scaling the image
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
 				byte *destPtr = &destP[destX * 2];
@@ -260,7 +256,7 @@ void BITMAP::drawInner2Bpp(DrawInnerArgs &args) {
 			srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
 		} else {
 			// Here we are scaling the image
-			int newSrcYCtr = scaleYCtr / ScaleThreshold;
+			int newSrcYCtr = scaleYCtr / SCALE_THRESHOLD;
 			// Since the source yctr might not update every row of the destination, we have
 			// to see if we are on a new row...
 			if (srcYCtr != newSrcYCtr) {
@@ -276,13 +272,9 @@ void BITMAP::drawInner2Bpp(DrawInnerArgs &args) {
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart, scaleXCtr = xCtrStart * args.scaleX; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
 				if (yCtr + 1 == yCtrHeight && xCtr + 8 > xCtrWidth) break;
 				__m128i indexes = _mm_set1_epi32(scaleXCtr), indexes2 = _mm_set1_epi32(scaleXCtr);
-#if (ScaleThreshold == 0 || ScaleThreshold == 0x100)
 				// Calculate in parallel the indexes of the pixels
-				indexes = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes, scaleAdds), 8), 1);
-				indexes2 = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes2, scaleAdds2), 8), 1);
-#else
-#error Change code to allow different scale threshold!
-#endif
+				indexes = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes, scaleAdds), SCALE_THRESHOLD_BITS), 1);
+				indexes2 = _mm_slli_epi32(_mm_srli_epi32(_mm_add_epi32(indexes2, scaleAdds2), SCALE_THRESHOLD_BITS), 1);
 				// Simply memcpy them in. memcpy has no real performance overhead here
 				srcBuffer[0] = *(const uint16 *)(srcP + extract32_idx0(indexes));
 				srcBuffer[1] = *(const uint16 *)(srcP + extract32_idx1(indexes));
@@ -319,7 +311,7 @@ void BITMAP::drawInner2Bpp(DrawInnerArgs &args) {
 	// Drawing the last few not scaled pixels here.
 	// Same as the loop above but now we check if we are going to overflow,
 	// and thus we don't need to mask out pixels that go over the row.
-	if (ScaleThreshold == 0) {
+	if (!Scale) {
 		for (; xCtr + 8 < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
 			byte *destPtr = &destP[destX * 2];
 			drawPixelSIMD2Bpp(destPtr, srcP, tint, alphas, transColors, xDir, xCtrBpp, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, _mm_setzero_si128());
@@ -337,8 +329,8 @@ void BITMAP::drawInner2Bpp(DrawInnerArgs &args) {
 	// For the last 4 pixels, we just do them in serial, nothing special
 	for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += 2) {
 		const byte *srcColPtr = (const byte *)(srcP + xDir * xCtrBpp);
-		if (ScaleThreshold != 0) {
-			srcColPtr = (const byte *)(srcP + (xCtr * args.scaleX) / ScaleThreshold * 2);
+		if (Scale) {
+			srcColPtr = (const byte *)(srcP + (xCtr * args.scaleX) / SCALE_THRESHOLD * 2);
 		}
 		byte *destVal = (byte *)&destP[destX * 2];
 		uint32 srcCol = (uint32)(*(const uint16 *)srcColPtr);
@@ -370,7 +362,7 @@ void BITMAP::drawInner2Bpp(DrawInnerArgs &args) {
 	}
 }
 
-template<int ScaleThreshold>
+template<bool Scale>
 void BITMAP::drawInner1Bpp(DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	__m128i transColors = _mm_set1_epi16(args.transColor | (args.transColor << 8));
@@ -392,13 +384,13 @@ void BITMAP::drawInner1Bpp(DrawInnerArgs &args) {
 		args.xStart = 0;
 	}
 	int destY = args.yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = args.dstRect.height();
-	if (ScaleThreshold != 0) yCtrHeight = args.dstRect.height();
+	if (Scale) yCtrHeight = args.dstRect.height();
 	if (args.yStart < 0) {
 		yCtr = -args.yStart;
 		destY = 0;
-		if (ScaleThreshold != 0) {
+		if (Scale) {
 			scaleYCtr = yCtr * args.scaleY;
-			srcYCtr = scaleYCtr / ScaleThreshold;
+			srcYCtr = scaleYCtr / SCALE_THRESHOLD;
 		}
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) {
@@ -410,10 +402,10 @@ void BITMAP::drawInner1Bpp(DrawInnerArgs &args) {
 	                       args.horizFlip ? args.srcArea.right - 16 : args.srcArea.left,
 	                       args.vertFlip ? args.srcArea.bottom - 1 - yCtr : args.srcArea.top + yCtr);
 	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += args.scaleY) {
-		if (ScaleThreshold != 0) {
+		if (Scale) {
 			// So here we update the srcYCtr differently due to this being for
 			// scaling
-			int newSrcYCtr = scaleYCtr / ScaleThreshold;
+			int newSrcYCtr = scaleYCtr / SCALE_THRESHOLD;
 			if (srcYCtr != newSrcYCtr) {
 				// Since the source yctr might not update every row of the destination, we have
 				// to see if we are on a new row...
@@ -430,19 +422,15 @@ void BITMAP::drawInner1Bpp(DrawInnerArgs &args) {
 			// can't have any blending applied to them
 			__m128i destCols = _mm_loadu_si128((const __m128i *)destPtr);
 			__m128i srcCols = _mm_loadu_si128((const __m128i *)(srcP + xDir * xCtr));
-			if (ScaleThreshold != 0) {
+			if (Scale) {
 				// If we are scaling, we have to set each pixel individually
 				__m128i indexes1 = _mm_set1_epi32(scaleXCtr), indexes2 = _mm_set1_epi32(scaleXCtr);
 				__m128i indexes3 = _mm_set1_epi32(scaleXCtr), indexes4 = _mm_set1_epi32(scaleXCtr);
-#if (ScaleThreshold == 0 || ScaleThreshold == 0x100)
 				// Calculate in parallel the indexes of the pixels
-				indexes1 = _mm_srli_epi32(_mm_add_epi32(indexes1, scaleAdds1), 8);
-				indexes2 = _mm_srli_epi32(_mm_add_epi32(indexes2, scaleAdds2), 8);
-				indexes3 = _mm_srli_epi32(_mm_add_epi32(indexes3, scaleAdds3), 8);
-				indexes4 = _mm_srli_epi32(_mm_add_epi32(indexes4, scaleAdds4), 8);
-#else
-#error Change code to allow different scale threshold!
-#endif
+				indexes1 = _mm_srli_epi32(_mm_add_epi32(indexes1, scaleAdds1), SCALE_THRESHOLD_BITS);
+				indexes2 = _mm_srli_epi32(_mm_add_epi32(indexes2, scaleAdds2), SCALE_THRESHOLD_BITS);
+				indexes3 = _mm_srli_epi32(_mm_add_epi32(indexes3, scaleAdds3), SCALE_THRESHOLD_BITS);
+				indexes4 = _mm_srli_epi32(_mm_add_epi32(indexes4, scaleAdds4), SCALE_THRESHOLD_BITS);
 				srcCols = _mm_set_epi8(
 					srcP[extract32_idx3(indexes4)],
 					srcP[extract32_idx2(indexes4)],
@@ -482,8 +470,8 @@ void BITMAP::drawInner1Bpp(DrawInnerArgs &args) {
 		if (args.horizFlip) srcP += 15;
 		for (; xCtr < xCtrWidth; ++destX, ++xCtr, scaleXCtr += args.scaleX) {
 			const byte *srcCol = (const byte *)(srcP + xDir * xCtr);
-			if (ScaleThreshold != 0) {
-				srcCol = (const byte *)(srcP + scaleXCtr / ScaleThreshold);
+			if (Scale) {
+				srcCol = (const byte *)(srcP + scaleXCtr / SCALE_THRESHOLD);
 			}
 			// Check if this is a transparent color we should skip
 			if (args.skipTrans && *srcCol == args.transColor)
@@ -495,7 +483,7 @@ void BITMAP::drawInner1Bpp(DrawInnerArgs &args) {
 		if (args.horizFlip) srcP -= 15; // Undo what we did up there
 		destP += args.destArea.pitch; // Goto next row
 		// Only advance the src row by 1 every time like this if we don't scale
-		if (ScaleThreshold == 0) srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
+		if (!Scale) srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
 	}
 }
 
