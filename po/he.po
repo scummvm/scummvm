@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-18 20:20+0000\n"
+"POT-Creation-Date: 2023-08-20 20:39+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4419,19 +4419,19 @@ msgid ""
 "Keyboard spacebar: Pause"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_events.cpp:443
+#: backends/platform/ios7/ios7_osys_events.cpp:424
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "מצב עכבר-לחיצה-וגרירה פעיל."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:445
+#: backends/platform/ios7/ios7_osys_events.cpp:426
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "מצב עכבר-לחיצה-וגרירה כבוי."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:466
+#: backends/platform/ios7/ios7_osys_events.cpp:447
 msgid "Touchpad mode enabled."
 msgstr "מצב משטח מגע פעיל."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:468
+#: backends/platform/ios7/ios7_osys_events.cpp:449
 msgid "Touchpad mode disabled."
 msgstr "מצב משטח מגע כבוי."
 

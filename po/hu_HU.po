@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-18 20:20+0000\n"
+"POT-Creation-Date: 2023-08-20 20:39+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4492,19 +4492,19 @@ msgstr ""
 "Érintés (ne nyomd) az érintőterület alján: Lefelé nyíl\n"
 "Billentyűzet szóköz: Szünet"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:443
+#: backends/platform/ios7/ios7_osys_events.cpp:424
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Egér kattint-és-húz mód engedélyezve."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:445
+#: backends/platform/ios7/ios7_osys_events.cpp:426
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Egér kattint-és-húz mód letiltva."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:466
+#: backends/platform/ios7/ios7_osys_events.cpp:447
 msgid "Touchpad mode enabled."
 msgstr "Touchpad mód engedélyezve."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:468
+#: backends/platform/ios7/ios7_osys_events.cpp:449
 msgid "Touchpad mode disabled."
 msgstr "Touchpad mód letiltva."
 
