@@ -25,23 +25,23 @@
 
 namespace M4 {
 
-M4Surface::M4Surface(int w, int h) : Buffer() {
-	this->w = w;
-	this->h = h;
-	this->stride = w;
+M4Surface::M4Surface(int sw, int sh) : Buffer() {
+	this->w = sw;
+	this->h = sh;
+	this->stride = sw;
 	this->encoding = NO_COMPRESS;
-	this->data = new byte[w * h];
-	Common::fill(this->data, this->data + w * h, 0);
+	this->data = new byte[sw * sh];
+	Common::fill(this->data, this->data + sw * sh, 0);
 	_disposeAfterUse = DisposeAfterUse::YES;
 }
 
-M4Surface::M4Surface(const byte *src, int w, int h) {
-	this->w = w;
-	this->h = h;
-	this->stride = w;
+M4Surface::M4Surface(const byte *src, int sw, int sh) {
+	this->w = sw;
+	this->h = sh;
+	this->stride = sw;
 	this->encoding = NO_COMPRESS;
-	this->data = new byte[w * h];
-	Common::fill(this->data, this->data + w * h, 0);
+	this->data = new byte[sw * sh];
+	Common::fill(this->data, this->data + sw * sh, 0);
 	_disposeAfterUse = DisposeAfterUse::YES;
 
 	rleDraw(src);
