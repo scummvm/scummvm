@@ -38,6 +38,8 @@ private:
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
 	const char *_digi1 = nullptr;
 	int _series1[12];
 	int _series2[4];
