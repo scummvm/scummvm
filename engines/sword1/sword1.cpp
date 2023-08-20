@@ -117,6 +117,8 @@ Common::Error SwordEngine::init() {
 	_systemVars.realLanguage = Common::parseLanguage(ConfMan.get("language"));
 	_systemVars.isLangRtl = false;
 	_systemVars.debugMode = (gDebugLevel >= 0);
+	_systemVars.slowMode = false;
+	_systemVars.fastMode = false;
 
 	switch (_systemVars.realLanguage) {
 	case Common::DE_DEU:
@@ -275,30 +277,30 @@ uint8 SwordEngine::checkKeys() {
 			switch (_keyPressed.keycode) {
 			case Common::KEYCODE_1: // Slow mode
 				{
-					if (_slowMode) {
-						_slowMode = false;
+					if (_systemVars.slowMode) {
+						_systemVars.slowMode = false;
 						_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
 					} else {
-						_slowMode = true;
+						_systemVars.slowMode = true;
 						_targetFrameTime = SLOW_FRAME_TIME; // 2Hz
 					}
 
-					_fastMode = false; // For good measure...
+					_systemVars.fastMode = false; // For good measure...
 
 					_rate = _targetFrameTime / 10;
 				}
 				break;
 			case Common::KEYCODE_4: // Fast mode
 				{
-					if (_fastMode) {
-						_fastMode = false;
+					if (_systemVars.fastMode) {
+						_systemVars.fastMode = false;
 						_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
 					} else {
-						_fastMode = true;
+						_systemVars.fastMode = true;
 						_targetFrameTime = FAST_FRAME_TIME; // 100Hz
 					}
 
-					_slowMode = false; // For good measure...
+					_systemVars.slowMode = false; // For good measure...
 
 					_rate = _targetFrameTime / 10;
 				}
