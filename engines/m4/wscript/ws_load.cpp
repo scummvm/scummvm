@@ -351,7 +351,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Store the resource name, and the offset into the resource block
 			_GWS(globalSEQUnames)[*chunkHash] = mem_strdup(wsAssetName);
 			_GWS(globalSEQUHandles)[*chunkHash] = workHandle;
-			_GWS(globalSEQUoffsets)[*chunkHash] = (byte *)parseAssetPtr - (byte *)mainAssetPtr;
+			_GWS(globalSEQUoffsets)[*chunkHash] = (intptr)parseAssetPtr - (intptr)mainAssetPtr;
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
@@ -390,7 +390,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Store the resource name, and the offset into the resource block
 			_GWS(globalDATAnames)[*chunkHash] = mem_strdup(wsAssetName);
 			_GWS(globalDATAHandles)[*chunkHash] = workHandle;
-			_GWS(globalDATAoffsets)[*chunkHash] = (byte *)parseAssetPtr - (byte *)mainAssetPtr;
+			_GWS(globalDATAoffsets)[*chunkHash] = (intptr)parseAssetPtr - (intptr)mainAssetPtr;
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
@@ -437,12 +437,12 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Store the Handle, and calculate the offsets
 			_GWS(globalCELSHandles)[*chunkHash] = workHandle;
 			if (celsPtr) {
-				_GWS(globalCELSoffsets)[*chunkHash] = (byte *)celsPtr - (byte *)mainAssetPtr;
+				_GWS(globalCELSoffsets)[*chunkHash] = (intptr)celsPtr - (intptr)mainAssetPtr;
 			} else {
 				_GWS(globalCELSoffsets)[*chunkHash] = -1;
 			}
 			if (palPtr) {
-				_GWS(globalCELSPaloffsets)[*chunkHash] = (byte *)palPtr - (byte *)mainAssetPtr;
+				_GWS(globalCELSPaloffsets)[*chunkHash] = (intptr)palPtr - (intptr)mainAssetPtr;
 			} else {
 				_GWS(globalCELSPaloffsets)[*chunkHash] = -1;
 			}
@@ -450,7 +450,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 		default:
 			error_show(FL, 'WSLT', "Asset Name: %s, %d bytes into the file.", wsAssetName,
-				(int32)parseAssetPtr - 12 - (int32)mainAssetPtr);
+				(intptr)parseAssetPtr - 12 - (intptr)mainAssetPtr);
 			break;
 		}
 
@@ -560,8 +560,8 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
-	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
+	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
+	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
 
 	HUnLock(workHandle);
 
@@ -609,8 +609,8 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
-	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
+	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
+	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
 	HUnLock(workHandle);
 
 	return celsSize;
@@ -703,7 +703,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 	if ((i > MAX_ASSET_HASH) && (emptySlot >= 0)) {
 
 		if ((workHandle = rget(wsAssetName, &assetSize)) == nullptr) {
-			error_show(FL, 'FNF!', (char *)wsAssetName);
+			error_show(FL, 'FNF!', wsAssetName);
 		}
 
 		// Lock the handle so we can step through the chunk
@@ -727,12 +727,12 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		// Store the Handle, and calculate the offsets
 		_GWS(globalCELSHandles)[emptySlot] = workHandle;
 		if (celsPtr) {
-			_GWS(globalCELSoffsets)[emptySlot] = (byte *)celsPtr - (byte *)mainAssetPtr;
+			_GWS(globalCELSoffsets)[emptySlot] = (intptr)celsPtr - (intptr)mainAssetPtr;
 		} else {
 			_GWS(globalCELSoffsets)[emptySlot] = -1;
 		}
 		if (palPtr) {
-			_GWS(globalCELSPaloffsets)[emptySlot] = (byte *)palPtr - (byte *)mainAssetPtr;
+			_GWS(globalCELSPaloffsets)[emptySlot] = (intptr)palPtr - (intptr)mainAssetPtr;
 		} else {
 			_GWS(globalCELSPaloffsets)[emptySlot] = -1;
 		}
@@ -851,7 +851,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		*palDataOffset = (int32 *)numColors;
 		palData = (uint32 *)numColors;
 
-		if (((int32)endOfAssetBlock - (int32)(*parseAssetPtr)) < ((int32)(*celsSize) - 8)) {
+		if (((intptr)endOfAssetBlock - (intptr)(*parseAssetPtr)) < ((int32)(*celsSize) - 8)) {
 			ws_LogErrorMsg(FL, "Pal info is larger than asset block.");
 			return -1;
 		}
@@ -919,7 +919,7 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		return -1;
 	}
 
-	if (((byte *)endOfAssetBlock - (byte *)data) < (int32)*celsSize) {
+	if (((intptr)endOfAssetBlock - (intptr)data) < (int32)*celsSize) {
 		ws_LogErrorMsg(FL, "SS info is larger than asset block.");
 		return -1;
 	}
@@ -1060,8 +1060,8 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
-	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
+	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
+	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
 
 	HUnLock(workHandle);
 
@@ -1113,8 +1113,8 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 
 	// Store the handle and offsets
 	*seriesHandle = workHandle;
-	*celsOffset = (byte *)celsPtr - (byte *)mainAssetPtr;
-	*palOffset = (byte *)palPtr - (byte *)mainAssetPtr;
+	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
+	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
 	HUnLock(workHandle);
 
 	return celsSize;
@@ -1411,8 +1411,8 @@ MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int
 
 	// Set the number of states, the state offset table, the start of the mach instructions
 	*numStates = (int32)machPtr[MACH_NUM_STATES];
-	*stateTableOffset = (byte *)(&machPtr[MACH_OFFSETS]) - (byte *)(*_GWS(globalMACHHandles)[hash]);
-	*machInstrOffset = ((byte *)machPtr + ((*numStates + 1) << 2)) - (byte *)(*_GWS(globalMACHHandles)[hash]);
+	*stateTableOffset = (intptr)(&machPtr[MACH_OFFSETS]) - (intptr)(*_GWS(globalMACHHandles)[hash]);
+	*machInstrOffset = ((intptr)machPtr + ((*numStates + 1) << 2)) - (intptr)(*_GWS(globalMACHHandles)[hash]);
 
 	// Unlock and return the handle
 	HUnLock(_GWS(globalMACHHandles)[hash]);
@@ -1451,8 +1451,8 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 		return nullptr;
 	}
 
-	*rowOffset = (int32)((byte *)(&dataPtr[DATA_REC_START]) + ((index * dataPtr[DATA_REC_SIZE]) << 2)
-		- (byte *)(*_GWS(globalDATAHandles)[hash]));
+	*rowOffset = (int32)((intptr)(&dataPtr[DATA_REC_START]) + ((index * dataPtr[DATA_REC_SIZE]) << 2)
+		- (intptr)(*_GWS(globalDATAHandles)[hash]));
 	// Return the data handle
 	return _GWS(globalDATAHandles)[hash];
 }
