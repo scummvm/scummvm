@@ -105,149 +105,19 @@ void BITMAP::floodfill(int x, int y, int color) {
 }
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-template<int DestBytesPerPixel, int SrcBytesPerPixel, bool Scale>
-void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
-	const int xDir = args.horizFlip ? -1 : 1;
-	byte rSrc, gSrc, bSrc, aSrc;
-	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
 
-	// Instead of skipping pixels outside our boundary here, we just clip
-	// our area instead.
-	int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = args.dstRect.width();
-	if (args.xStart + xCtrWidth > args.destArea.w) { // Clip the right
-		xCtrWidth = args.destArea.w - args.xStart;
-	}
-	if (args.xStart < 0) { // Clip the left
-		xCtrStart = -args.xStart;
-		xCtrBppStart = xCtrStart * SrcBytesPerPixel;
-		args.xStart = 0;
-	}
-	int destY = args.yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = args.dstRect.height();
-	if (args.yStart < 0) { // Clip the top
-		yCtr = -args.yStart;
-		destY = 0;
-		if (Scale) {
-			scaleYCtr = yCtr * args.scaleY;
-			srcYCtr = scaleYCtr / SCALE_THRESHOLD;
-		}
-	}
-	if (args.yStart + yCtrHeight > args.destArea.h) { // Clip the bottom
-		yCtrHeight = args.destArea.h - args.yStart;
-	}
-
-	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
-	const byte *srcP = (const byte *)args.src.getBasePtr(
-	                       args.horizFlip ? args.srcArea.right - 1 : args.srcArea.left,
-	                       args.vertFlip ? args.srcArea.bottom - 1 - yCtr :
-	                       args.srcArea.top + yCtr);
-	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += args.scaleY) {
-		if (Scale) {
-			int newSrcYCtr = scaleYCtr / SCALE_THRESHOLD;
-			if (srcYCtr != newSrcYCtr) {
-				int diffSrcYCtr = newSrcYCtr - srcYCtr;
-				srcP += args.src.pitch * diffSrcYCtr;
-				srcYCtr = newSrcYCtr;
-			}
-		}
-		// Loop through the pixels of the row
-		for (int destX = args.xStart, xCtr = xCtrStart, xCtrBpp = xCtrBppStart, scaleXCtr = xCtr * args.scaleX; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += SrcBytesPerPixel, scaleXCtr += args.scaleX) {
-			const byte *srcVal = srcP + xDir * xCtrBpp;
-			if (Scale) {
-				srcVal = srcP + (scaleXCtr / SCALE_THRESHOLD) * SrcBytesPerPixel;
-			}
-			uint32 srcCol = getColor(srcVal, SrcBytesPerPixel);
-
-			// Check if this is a transparent color we should skip
-			if (args.skipTrans && ((srcCol & args.alphaMask) == args.transColor))
-				continue;
-
-			byte *destVal = (byte *)&destP[destX * DestBytesPerPixel];
-
-			// When blitting to the same format we can just copy the color
-			if (DestBytesPerPixel == 1) {
-				*destVal = srcCol;
-				continue;
-			} else if ((DestBytesPerPixel == SrcBytesPerPixel) && args.srcAlpha == -1) {
-				if (DestBytesPerPixel)
-					*(uint32 *)destVal = srcCol;
-				else
-					*(uint16 *)destVal = srcCol;
-				continue;
-			}
-
-			// We need the rgb values to do blending and/or convert between formats
-			if (SrcBytesPerPixel == 1) {
-				const RGB &rgb = args.palette[srcCol];
-				aSrc = 0xff;
-				rSrc = rgb.r;
-				gSrc = rgb.g;
-				bSrc = rgb.b;
-			} else {
-				if (SrcBytesPerPixel == 4) {
-					aSrc = srcCol >> 24;
-					rSrc = (srcCol >> 16) & 0xff;
-					gSrc = (srcCol >> 8) & 0xff;
-					bSrc = srcCol & 0xff;
-				} else { // SrcBytesPerPixel == 2
-					aSrc = 0xff;
-					rSrc = (srcCol >> 11) & 0x1f;
-					rSrc = (rSrc << 3) | (rSrc >> 2);
-					gSrc = (srcCol >> 5) & 0x3f;
-					gSrc = (gSrc << 2) | (gSrc >> 4);
-					bSrc = srcCol & 0x1f;
-					bSrc = (bSrc << 3) | (bSrc >> 2);
-				}
-				//src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
-			}
-
-			if (args.srcAlpha == -1) {
-				// This means we don't use blending.
-				aDest = aSrc;
-				rDest = rSrc;
-				gDest = gSrc;
-				bDest = bSrc;
-			} else {
-				if (args.useTint) {
-					rDest = rSrc;
-					gDest = gSrc;
-					bDest = bSrc;
-					aDest = aSrc;
-					rSrc = args.tintRed;
-					gSrc = args.tintGreen;
-					bSrc = args.tintBlue;
-					aSrc = args.srcAlpha;
-				}
-				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, args.srcAlpha, args.useTint, destVal);
-			}
-
-			uint32 pixel;// = format.ARGBToColor(aDest, rDest, gDest, bDest);
-			if (DestBytesPerPixel == 4) {
-				pixel = (aDest << 24) | (rDest << 16) | (gDest << 8) | (bDest);
-				*(uint32 *)destVal = pixel;
-			}
-			else {
-				pixel = ((rDest >> 3) << 11) | ((gDest >> 2) << 5) | (bDest >> 3);
-				*(uint16 *)destVal = pixel;
-			}
-		}
-
-		destP += args.destArea.pitch;
-		if (!Scale) srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
-	}
-}
-
-BITMAP::DrawInnerArgs::DrawInnerArgs(BITMAP *dstBitmap, const BITMAP *srcBitmap,
+BITMAP::DrawInnerArgs::DrawInnerArgs(BITMAP *_dstBitmap, const BITMAP *srcBitmap,
 	const Common::Rect &srcRect, const Common::Rect &_dstRect, bool _skipTrans,
 	int _srcAlpha, bool _horizFlip, bool _vertFlip, int _tintRed,
-	int _tintGreen, int _tintBlue, bool _doScale) : skipTrans(_skipTrans),
+	int _tintGreen, int _tintBlue, bool doScale) : skipTrans(_skipTrans),
 		srcAlpha(_srcAlpha), horizFlip(_horizFlip), vertFlip(_vertFlip),
 		tintRed(_tintRed), tintGreen(_tintGreen), tintBlue(_tintBlue),
-		doScale(_doScale), src(**srcBitmap), shouldDraw(false),
+		src(**srcBitmap), shouldDraw(false), dstBitmap(*_dstBitmap),
 		useTint(_tintRed >= 0 && _tintGreen >= 0 && _tintBlue >= 0),
 		blenderMode(_G(_blender_mode)), dstRect(_dstRect) {
 	// Allegro disables draw when the clipping rect has negative width/height.
 	// Common::Rect instead asserts, which we don't want.
-	if (dstBitmap->cr <= dstBitmap->cl || dstBitmap->cb <= dstBitmap->ct)
+	if (dstBitmap.cr <= dstBitmap.cl || dstBitmap.cb <= dstBitmap.ct)
 		return;
 
 	// Figure out the dest area that will be updated
@@ -262,22 +132,22 @@ BITMAP::DrawInnerArgs::DrawInnerArgs(BITMAP *dstBitmap, const BITMAP *srcBitmap,
 		dstRect.setHeight(srcArea.height());
 	}
 	Common::Rect destRect = dstRect.findIntersectingRect(
-	                            Common::Rect(dstBitmap->cl, dstBitmap->ct, dstBitmap->cr, dstBitmap->cb));
+	                            Common::Rect(dstBitmap.cl, dstBitmap.ct, dstBitmap.cr, dstBitmap.cb));
 	if (destRect.isEmpty())
 		// Area is entirely outside the clipping area, so nothing to draw
 		return;
 
 	// Get source and dest surface. Note that for the destination we create
 	// a temporary sub-surface based on the allowed clipping area
-	Graphics::ManagedSurface &dest = *dstBitmap->_owner;
+	Graphics::ManagedSurface &dest = *dstBitmap._owner;
 	destArea = dest.getSubArea(destRect);
 
 	// Define scaling and other stuff used by the drawing loops
 	scaleX = SCALE_THRESHOLD * srcRect.width() / dstRect.width();
 	scaleY = SCALE_THRESHOLD * srcRect.height() / dstRect.height();
-	sameFormat = (src.format == dstBitmap->format);
+	sameFormat = (src.format == dstBitmap.format);
 
-	if (src.format.bytesPerPixel == 1 && dstBitmap->format.bytesPerPixel != 1) {
+	if (src.format.bytesPerPixel == 1 && dstBitmap.format.bytesPerPixel != 1) {
 		for (int i = 0; i < PAL_SIZE; ++i) {
 			palette[i].r = VGA_COLOR_TRANS(_G(current_palette)[i].r);
 			palette[i].g = VGA_COLOR_TRANS(_G(current_palette)[i].g);
@@ -306,40 +176,26 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 
 	auto args = DrawInnerArgs(this, srcBitmap, srcRect, Common::Rect(dstX, dstY, dstX+1, dstY+1), skipTrans, srcAlpha, horizFlip, vertFlip, tintRed, tintGreen, tintBlue, false);
 	if (!args.shouldDraw) return;
-#define DRAWINNER(func) func(args)
-	// Calling drawInnerXXXX with a ScaleThreshold of 0 just does normal un-scaled drawing
-	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
-		if (args.sameFormat) {
-			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER((drawInnerGeneric<1, 1, false>)); return;
-			case 2: DRAWINNER((drawInnerGeneric<2, 2, false>)); return;
-			case 4: DRAWINNER((drawInnerGeneric<4, 4, false>)); return;
-			}
-		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInnerGeneric<4, 2, false>));
-		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInnerGeneric<2, 4, false>));
-		}
-	} else {
-		if (args.sameFormat) {
-			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER(drawInner1Bpp<false>); return;
-			case 2: DRAWINNER(drawInner2Bpp<false>); return;
-			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, false>)); return;
-			}
-		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInner4BppWithConv<4, 2, false>));
-			return;
-		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInner4BppWithConv<2, 4, false>));
-			return;
-		}
+	if (!args.sameFormat && args.src.format.bytesPerPixel == 1) {
+		if (format.bytesPerPixel == 4)
+			drawInnerGeneric<4, 1, false>(args);
+		else
+			drawInnerGeneric<2, 1, false>(args);
+		return;
 	}
-	if (format.bytesPerPixel == 4) // src.bytesPerPixel must be 1 here
-		DRAWINNER((drawInnerGeneric<4, 1, false>));
-	else
-		DRAWINNER((drawInnerGeneric<2, 1, false>));
-#undef DRAWINNER
+#ifdef SCUMMVM_NEON
+	if (_G(simd_flags) & AGS3::Globals::SIMD_NEON) {
+		drawNEON<false>(args);
+		return;
+	}
+#endif
+#ifdef SCUMMVM_SSE2
+	if (_G(simd_flags) & AGS3::Globals::SIMD_SSE2) {
+		drawSSE2<false>(args);
+		return;
+	}
+#endif
+	drawGeneric<false>(args);
 }
 
 void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
@@ -348,39 +204,26 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	       (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 	auto args = DrawInnerArgs(this, srcBitmap, srcRect, dstRect, skipTrans, srcAlpha, false, false, 0, 0, 0, true);
 	if (!args.shouldDraw) return;
-#define DRAWINNER(func) func(args)
-	if (_G(simd_flags) == AGS3::Globals::SIMD_NONE) {
-		if (args.sameFormat) {
-			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER((drawInnerGeneric<1, 1, true>)); return;
-			case 2: DRAWINNER((drawInnerGeneric<2, 2, true>)); return;
-			case 4: DRAWINNER((drawInnerGeneric<4, 4, true>)); return;
-			}
-		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInnerGeneric<4, 2, true>));
-		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInnerGeneric<2, 4, true>));
-		}
-	} else {
-		if (args.sameFormat) {
-			switch (format.bytesPerPixel) {
-			case 1: DRAWINNER(drawInner1Bpp<true>); return;
-			case 2: DRAWINNER(drawInner2Bpp<true>); return;
-			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, true>)); return;
-			}
-		} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
-			DRAWINNER((drawInner4BppWithConv<4, 2, true>));
-			return;
-		} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
-			DRAWINNER((drawInner4BppWithConv<2, 4, true>));
-			return;
-		}
+	if (!args.sameFormat && args.src.format.bytesPerPixel == 1) {
+		if (format.bytesPerPixel == 4)
+			drawInnerGeneric<4, 1, true>(args);
+		else
+			drawInnerGeneric<2, 1, true>(args);
+		return;
 	}
-	if (format.bytesPerPixel == 4) // src.bytesPerPixel must be 1 here
-		DRAWINNER((drawInnerGeneric<4, 1, true>));
-	else
-		DRAWINNER((drawInnerGeneric<2, 1, true>));
-#undef DRAWINNER
+#ifdef SCUMMVM_NEON
+	if (_G(simd_flags) & AGS3::Globals::SIMD_NEON) {
+		drawNEON<true>(args);
+		return;
+	}
+#endif
+#ifdef SCUMMVM_SSE2
+	if (_G(simd_flags) & AGS3::Globals::SIMD_SSE2) {
+		drawSSE2<true>(args);
+		return;
+	}
+#endif
+	drawGeneric<true>(args);
 }
 void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const {
 	switch (_G(_blender_mode)) {
