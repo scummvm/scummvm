@@ -926,6 +926,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bem",				"妖怪人間ベム 新たなる魂の迷宮" },					// Yokai Ningen Bemu
 	{ "bemtoybox",			"妖怪人間ベム データToyBox" },						// Bem Data Toy Box
 	{ "beyondthetime",		"Beyond the Time" },
+	{ "bluesango",			"Blue Sango" },
 	{ "bombreikochiba",		"千葉麗子 BOMB!" },	// Reiko Chiba - Bomb
 	{ "cattheripper",		"Cat the Ripper 13人目の探偵士" }, // Cat the Ripper: 13th Detective
 	{ "cellofania",			"セロファニア" },
@@ -5825,6 +5826,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("blender", "Volume 2.5", "BLENDME.EXE",	   "2e62abdad839e42068afdcd0644d7dcf", 949909,
 									  "FILES/OPENING.DIR", "45cb69d7174a3f93d54e9a5ee1fb9f3b", 2274768, 500),
 	WINGAME1("blender", "Volume 3.1", "LNCHR_32.EXE",	   "1a7acbba10a7246ba58c1d53fc7203f5", 1421431, 501),
+
+	WINGAME1t_l("bluesango", "", "BLUESANG.EXE", "08e531b980ebfb343201400add17b68e", 2143080, Common::JA_JPN, 501),
 
 	// Designed by In Chair Viewing (ICV)
 	// Binaries provided for Win3.1, Win95, WinNT
