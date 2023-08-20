@@ -56,7 +56,6 @@ byte gr_color_get_current() {
 
 void gr_pal_clear(RGB8 *palette) {
 	int i;
-	RGB8 x = { 0, 0, 0 };
 
 	for (i = 0; i < 256; i++) {
 		palette[i].r = 0;
@@ -89,8 +88,6 @@ void  gr_pal_set_entry(int32 index, RGB8 *entry) {
 }
 
 void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color) {
-	RGB8 x = { 0, 0, 0 };
-
 	for (int i = first_color; i <= last_color; i++) {
 		palette[i].r = 0;
 		palette[i].g = 0;

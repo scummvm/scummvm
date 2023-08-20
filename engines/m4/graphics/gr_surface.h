@@ -37,8 +37,8 @@ private:
 public:
 	M4Surface() : Buffer() {}
 	M4Surface(const Buffer &src) : Buffer(src) {}
-	M4Surface(int w, int h);
-	M4Surface(const byte *src, int w, int h);
+	M4Surface(int sw, int sh);
+	M4Surface(const byte *src, int sw, int sh);
 
 	~M4Surface();
 

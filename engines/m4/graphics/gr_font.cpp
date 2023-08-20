@@ -230,7 +230,7 @@ int32 gr_font_string_width(char *out_string, int32 auto_spacing) {
 	byte *widthArray = _G(font)->width;
 
 	while (*out_string) {
-		width += widthArray[*out_string] + auto_spacing;
+		width += widthArray[(byte)*out_string] + auto_spacing;
 		out_string++;
 	}
 
@@ -298,7 +298,7 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	short *offsetArray = _G(font)->offset;
 
 	while (*out_string) {
-		char c = (*out_string++) & (char)0x7f;
+		byte c = (*out_string++) & 0x7f;
 		int32 wdth = widthArray[c];
 
 		// if width is zero, nothing to draw
@@ -389,7 +389,7 @@ Font *gr_font_load(const char *fontName) {
 	bumpf = (uint32 *)&buffer[0];
 	tag = convert_intel32(*bumpf);
 	if (tag != 'WIDT')
-		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (char *)fontName, 1);
+		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 1);
 
 	// width table
 	newFont->width = (byte *)mem_alloc(256, STR_FONTWIDTH);
@@ -405,7 +405,7 @@ Font *gr_font_load(const char *fontName) {
 	bumpf = (uint32 *)&buffer[0];
 	tag = convert_intel32(*bumpf);
 	if (tag != 'OFFS')
-		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (char *)fontName, 2);
+		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 2);
 
 	// offset table
 	newFont->offset = (short *)mem_alloc(256 * sizeof(short), STR_FONTOFF);
@@ -424,7 +424,7 @@ Font *gr_font_load(const char *fontName) {
 	bumpf = (uint32 *)&buffer[0];
 	tag = convert_intel32(*bumpf);
 	if (tag != 'PIXS')
-		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (char *)fontName, 3);
+		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 3);
 
 	// pixData
 	newFont->pixData = (byte *)mem_alloc(newFont->dataSize, STR_FONTDATA);
