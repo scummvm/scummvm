@@ -580,10 +580,6 @@ Common::U32String stripFormat(const Common::U32String &str) {
 				if (*s == '\001') {
 					tmp += *s++;
 				}
-			} else if (*s == '\015') {	// binary format
-				// we are skipping the formatting stuffs
-				// this number 12, and the number 23, is the size of our format
-				s += 12;
 			} else if (*s == '\016') {	// human-readable format
 				s += 23;
 			} else {
