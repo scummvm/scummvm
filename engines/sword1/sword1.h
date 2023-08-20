@@ -61,22 +61,23 @@ class Music;
 class Control;
 
 struct SystemVars {
-	bool    runningFromCd;
-	uint32  currentCD;          // starts at zero, then either 1 or 2 depending on section being played
-	uint32  justRestoredGame;   // see main() in sword.c & New_screen() in gtm_core.c
-
-	uint8   controlPanelMode;   // 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
-	bool    forceRestart;
-	bool    wantFade;           // when true => fade during scene change, else cut.
-	bool   playSpeech;
-	bool   showText;
-	uint8   language;
-	bool    isDemo;
-	bool    isSpanishDemo;
+	bool             runningFromCd;
+	uint32           currentCD;          // starts at zero, then either 1 or 2 depending on section being played
+	uint32           justRestoredGame;   // see main() in sword.c & New_screen() in gtm_core.c
+	uint8            controlPanelMode;   // 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
+	bool             forceRestart;
+	bool             wantFade;           // when true => fade during scene change, else cut.
+	bool             playSpeech;
+	bool             showText;
+	uint8            language;
+	bool             isDemo;
+	bool             isSpanishDemo;
 	Common::Platform platform;
 	Common::Language realLanguage;
-	bool isLangRtl;
-	bool debugMode;
+	bool             isLangRtl;
+	bool             debugMode;
+	bool             slowMode;
+	bool             fastMode;
 };
 
 class SwordEngine : public Engine {
@@ -96,8 +97,6 @@ public:
 	int _vblCount = 0; // How many vblCallback calls have been made?
 	int _rate = DEFAULT_FRAME_TIME / 10;
 	int _targetFrameTime = DEFAULT_FRAME_TIME;
-	bool _slowMode = false;
-	bool _fastMode = false;
 
 	bool mouseIsActive();
 
