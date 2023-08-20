@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-18 20:20+0000\n"
-"PO-Revision-Date: 2023-07-28 01:40+0000\n"
+"PO-Revision-Date: 2023-08-20 19:41+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -976,21 +976,17 @@ msgid "Prev"
 msgstr "Edellinen"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Tallennetaan peliä..."
+msgstr "Tallenna kuva..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u %u:sta"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "Tallenna peli"
+msgstr "Tallenna kuva"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
@@ -2778,23 +2774,23 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Bittikarttakuvatiedosto"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG-kuvatiedosto"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG-kuvatiedosto"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "QuickDraw PICT-kuvatiedosto"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Datatiedosto"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -5539,10 +5535,8 @@ msgstr ""
 "Stealth alusta käyttäen uusia pelitallennuksia."
 
 #: engines/crab/input/input.cpp:118
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Käytä"
+msgstr "Puhu/Vuorovaikuta"
 
 #: engines/crab/input/input.cpp:158 engines/twine/metaengine.cpp:445
 msgid "Accept"
@@ -5550,37 +5544,35 @@ msgstr "Hyväksy"
 
 #: engines/crab/input/input.cpp:164
 msgid "Reply 1"
-msgstr ""
+msgstr "Vastaus 1"
 
 #: engines/crab/input/input.cpp:169
 msgid "Reply 2"
-msgstr ""
+msgstr "Vastaus 2"
 
 #: engines/crab/input/input.cpp:174
 msgid "Reply 3"
-msgstr ""
+msgstr "Vastaus 3"
 
 #: engines/crab/input/input.cpp:179
 msgid "Reply 4"
-msgstr ""
+msgstr "Vastaus 4"
 
 #: engines/crab/input/input.cpp:184
 msgid "Reply 5"
-msgstr ""
+msgstr "Vastaus 5"
 
 #: engines/crab/input/input.cpp:189
 msgid "Reply 6"
-msgstr ""
+msgstr "Vastaus 6"
 
 #: engines/crab/input/input.cpp:204
 msgid "Map"
 msgstr "Näppäinkartta"
 
 #: engines/crab/input/input.cpp:209
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Näytä päiväkirja"
+msgstr "Päiväkirja"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:214 engines/dragons/metaengine.cpp:149
@@ -5596,7 +5588,7 @@ msgstr "Tavarat"
 
 #: engines/crab/input/input.cpp:219
 msgid "Traits"
-msgstr ""
+msgstr "Piirteet"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
@@ -5733,13 +5725,11 @@ msgstr "Pelaaja ei voi pudota kielekkeiltä"
 
 #: engines/freescape/metaengine.cpp:101
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Käännä hiiren Y-akseli"
 
 #: engines/freescape/metaengine.cpp:102
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Käytä vaihtoehtoista palettia"
+msgstr "Käytä vaihtoehtoisia kamerakontrolleja"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7295,7 +7285,7 @@ msgstr ""
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
-msgstr ""
+msgstr "Kuvankatselu"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
