@@ -29,6 +29,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
 	registerCmd("room",   WRAP_METHOD(Console, Cmd_room));
 	registerCmd("flag",   WRAP_METHOD(Console, Cmd_flag));
+	registerCmd("item",   WRAP_METHOD(Console, Cmd_item));
 }
 
 Console::~Console() {
@@ -65,6 +66,16 @@ bool Console::Cmd_flag(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::Cmd_item(int argc, const char **argv) {
+	if (argc == 2) {
+		inv_give_to_player(argv[1]);
+		return false;
+	} else {
+		debugPrintf("item <item name>\n");
+		return true;
+	}
 }
 
 } // End of namespace M4
