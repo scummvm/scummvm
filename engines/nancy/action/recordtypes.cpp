@@ -500,14 +500,24 @@ void ShowInventoryItem::init() {
 }
 
 void ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
+	GameType gameType = g_nancy->getGameType();
 	_objectID = stream.readUint16LE();
 	readFilename(stream, _imageName);
 
 	uint16 numFrames = stream.readUint16LE();
+	if (gameType >= kGameTypeNancy3) {
+		stream.skip(2);
+	}
 
 	_bitmaps.resize(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
-		_bitmaps[i].readData(stream);
+		if (gameType <= kGameTypeNancy2) {
+			_bitmaps[i].readData(stream);
+		} else {
+			_bitmaps[i].frameID = i;
+			readRect(stream, _bitmaps[i].src);
+			readRect(stream, _bitmaps[i].dest);
+		}
 	}
 }
 
