@@ -32,6 +32,7 @@ class SeekableReadStream;
 
 namespace Audio {
 class SeekableAudioStream;
+class QueuingAudioStream;
 }
 
 namespace Nancy {
@@ -46,16 +47,16 @@ public:
 	// Older versions had a different, non-bitflag enum, but testing 
 	// indicates those were never actually implemented
 	enum PlayCommandFlags {
-		kPlaySequential		= 1 << 0, // Same as kPlaySequentialAndDie
-		kPlayPosition		= 1 << 1, // Play at fixed position in 3D space
-		kPlayFrameAnchor	= 1 << 2, // Position in 3D space is tied to a background frame, ignoring 3D coordinates
+		kPlaySequential				= 0x0001, 		// Play normally
+		kPlaySequentialPosition		= 0x0003, 		// Play at fixed position in 3D space
+		kPlaySequentialFrameAnchor	= 0x0007,		// Position in 3D space is tied to a background frame, ignoring 3D coordinates
 
-		kPlayRandomTime		= 1 << 4, // Play at random time intervals
-		kPlayRandomPosition = 1 << 5, // Play at random 3D positions
+		kPlayRandomTime				= 0x0010,	// Play at random time intervals
+		kPlayRandomPosition 		= 0x0020,	// Play at random 3D positions
 
-		kPlayMoveLinear		= 1 << 8, // Move sound position in 3D space. The movement is linear unless kPlayMoveCircular is also set
-		kPlayMoveCircular	= 1 << 9, // Move sound position in a circular direction (see SoundRotationAxis)
-		kPlayRandomMove		= 1 << 10 // Move along random vector. Does not combine with kPlayMoveCircular
+		kPlayMoveLinear				= 0x0100,	// Move sound position in 3D space. The movement is linear unless kPlayMoveCircular is also set
+		kPlayMoveCircular			= 0x0300,	// Move sound position in a circular direction (see SoundRotationAxis)
+		kPlayRandomMove				= 0x0500	// Move along random vector. Does not combine with kPlayMoveCircular
 	};
 
 	enum SoundRotationAxis {
@@ -71,7 +72,7 @@ public:
 	void initSoundChannels();
 
 	// Load a sound into a channel without starting it
-	void loadSound(const SoundDescription &description, bool panning = false);
+	void loadSound(const SoundDescription &description, SoundEffectDescription **effectData = nullptr);
 
 	void playSound(uint16 channelID);
 	void playSound(const SoundDescription &description);
@@ -90,10 +91,6 @@ public:
 	void stopSound(const Common::String &chunkName);
 	void stopAllSounds();
 
-	void calculatePan(uint16 channelID);
-	void calculatePan(const SoundDescription &description);
-	void calculatePanForAllSounds();
-
 	void setVolume(uint16 channelID, uint16 volume);
 	void setVolume(const SoundDescription &description, uint16 volume);
 	void setVolume(const Common::String &chunkName, uint16 volume);
@@ -102,6 +99,9 @@ public:
 	void setRate(const SoundDescription &description, uint32 rate);
 	void setRate(const Common::String &chunkName, uint32 rate);
 
+	void soundEffectMaintenance();
+	void recalculateSoundEffects();
+
 	// Used when changing scenes
 	void stopAndUnloadSpecificSounds();
 
@@ -109,6 +109,7 @@ public:
 
 protected:
 	struct Channel {
+		~Channel();
 		Common::String name;
 		Audio::Mixer::SoundType type = Audio::Mixer::SoundType::kPlainSoundType;
 		uint16 playCommands = 1;
@@ -119,12 +120,25 @@ protected:
 		Audio::SeekableAudioStream *stream = nullptr;
 		Audio::SoundHandle handle;
 		bool isPersistent = false;
+
+		// Sound effect data, not applicable to nancy2 and below
+		SoundEffectDescription *effectData = nullptr;
+		Math::Vector3d position;
+		Math::Vector3d positionDelta;
+		uint32 nextStepTime = 0;
+		uint16 stepsLeft = 0;
+		uint32 nextRepeatTime = 0;
 	};
+
+	void soundEffectMaintenance(uint16 channelID);
 
 	Audio::Mixer *_mixer;
 
 	Common::Array<Channel> _channels;
 	Common::HashMap<Common::String, SoundDescription> _commonSounds;
+
+	bool _shouldRecalculate;
+	Math::Vector3d _orientation;
 };
 
 } // End of namespace Nancy

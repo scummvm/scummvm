@@ -35,10 +35,15 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 		paletteID = stream.readByte();
 		stream.skip(2);
 	}
+
 	continueSceneSound = stream.readUint16LE();
 
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
-		stream.skip(12); // 3D sound listener position
+		int32 x = stream.readSint32LE();
+		int32 y = stream.readSint32LE();
+		int32 z = stream.readSint32LE();
+		listenerFrontVector.set(x, y, z);
+		frontVectorFrameID = frameID;
 	}
 }
 
@@ -95,6 +100,40 @@ void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream) {
 	stream.skip(0x20);
 }
 
+void SoundEffectDescription::readData(Common::SeekableReadStream &stream) {
+	minTimeDelay = stream.readUint32LE();
+	maxTimeDelay = stream.readUint32LE();
+
+	randomMoveMinX = stream.readSint32LE();
+	randomMoveMaxX = stream.readSint32LE();
+	randomMoveMinY = stream.readSint32LE();
+	randomMoveMaxY = stream.readSint32LE();
+	randomMoveMinZ = stream.readSint32LE();
+	randomMoveMaxZ = stream.readSint32LE();
+
+	fixedPosX = stream.readSint32LE();
+	fixedPosY = stream.readSint32LE();
+	fixedPosZ = stream.readSint32LE();
+
+	moveStepTime = stream.readUint32LE();
+	numMoveSteps = stream.readSint32LE();
+
+	linearMoveStartX = stream.readSint32LE();
+	linearMoveEndX = stream.readSint32LE();
+	linearMoveStartY = stream.readSint32LE();
+	linearMoveEndY = stream.readSint32LE();
+	linearMoveStartZ = stream.readSint32LE();
+	linearMoveEndX = stream.readSint32LE();
+
+	rotateMoveStartX = stream.readSint32LE();
+	rotateMoveStartY = stream.readSint32LE();
+	rotateMoveStartZ = stream.readSint32LE();
+	rotateMoveAxis = stream.readByte();
+
+	minDistance = stream.readUint32LE();
+	maxDistance = stream.readUint32LE();
+}
+
 void SoundDescription::readNormal(Common::SeekableReadStream &stream) {
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(g_nancy->getGameType());
@@ -140,8 +179,6 @@ void SoundDescription::readDIGI(Common::SeekableReadStream &stream) {
 
 	s.syncAsUint16LE(panAnchorFrame, kGameTypeVampire, kGameTypeNancy2);
 	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
-
-	s.skip(0x61, kGameTypeNancy3);
 }
 
 void SoundDescription::readMenu(Common::SeekableReadStream &stream) {

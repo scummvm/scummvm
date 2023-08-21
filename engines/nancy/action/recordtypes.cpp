@@ -557,6 +557,12 @@ void ShowInventoryItem::execute() {
 
 void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		_soundEffect = new SoundEffectDescription;
+		_soundEffect->readData(stream);
+	}
+
 	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
 
 	_flagOnTrigger.label = stream.readSint16LE();
@@ -567,7 +573,7 @@ void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 void PlayDigiSoundAndDie::execute() {
 	switch (_state) {
 	case kBegin:
-		g_nancy->_sound->loadSound(_sound);
+		g_nancy->_sound->loadSound(_sound, &_soundEffect);
 		g_nancy->_sound->playSound(_sound);
 		_state = kRun;
 		break;
@@ -593,10 +599,11 @@ void PlayDigiSoundAndDie::execute() {
 void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 	stream.skip(2);
+	_sound.isPanning = true;
 }
 
 void PlaySoundPanFrameAnchorAndDie::execute() {
-	g_nancy->_sound->loadSound(_sound, true);
+	g_nancy->_sound->loadSound(_sound);
 	g_nancy->_sound->playSound(_sound);
 	_isDone = true;
 }

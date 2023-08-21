@@ -49,6 +49,9 @@ namespace State {
 
 void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	char *buf = new char[0x32];
+	int32 x = 0;
+	int32 y = 0;
+	int32 z = 0;
 
 	stream.seek(0);
 	Common::Serializer ser(&stream, nullptr);
@@ -71,11 +74,12 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 
 	ser.syncAsUint16LE(panningType);
 	ser.syncAsUint16LE(numberOfVideoFrames, kGameTypeVampire, kGameTypeNancy2);
-	ser.syncAsUint16LE(soundPanPerFrame);
+	ser.syncAsUint16LE(degreesPerRotation);
 	ser.syncAsUint16LE(totalViewAngle, kGameTypeVampire, kGameTypeNancy2);
-	ser.syncAsUint32LE(startX, kGameTypeNancy3);
-	ser.syncAsUint32LE(startY, kGameTypeNancy3);
-	ser.syncAsUint32LE(startZ, kGameTypeNancy3);
+	ser.syncAsUint32LE(x, kGameTypeNancy3);
+	ser.syncAsUint32LE(y, kGameTypeNancy3);
+	ser.syncAsUint32LE(z, kGameTypeNancy3);
+	listenerPosition.set(x, y, z);
 	ser.syncAsUint16LE(horizontalScrollDelta);
 	ser.syncAsUint16LE(verticalScrollDelta);
 	ser.syncAsUint16LE(horizontalEdgeSize);
@@ -139,7 +143,7 @@ void Scene::process() {
 		// fall through
 	case kStartSound:
 		_state = kRun;
-		if (_sceneState.continueSceneSound == kLoadSceneSound) {
+		if (_sceneState.currentScene.continueSceneSound == kLoadSceneSound) {
 			g_nancy->_sound->stopAndUnloadSpecificSounds();
 			g_nancy->_sound->loadSound(_sceneState.summary.sound);
 			g_nancy->_sound->playSound(_sceneState.summary.sound);
@@ -189,29 +193,13 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	return false;
 }
 
-void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID) {
-	if (id == 9999 || _state == kLoad) {
+void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
+	if (sceneDescription.sceneID == 9999 || _state == kLoad) {
 		return;
 	}
 
-	_sceneState.nextScene.sceneID = id;
-	_sceneState.nextScene.frameID = frame;
-	_sceneState.nextScene.verticalOffset = verticalOffset;
-	_sceneState.continueSceneSound = continueSceneSound;
-
-	if (paletteID != -1) {
-		_sceneState.nextScene.paletteID = paletteID;
-	}
-
+	_sceneState.nextScene = sceneDescription;
 	_state = kLoad;
-}
-
-void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
-	changeScene(sceneDescription.sceneID,
-				sceneDescription.frameID,
-				sceneDescription.verticalOffset,
-				sceneDescription.continueSceneSound,
-				sceneDescription.paletteID);
 }
 
 void Scene::pushScene() {
@@ -220,7 +208,8 @@ void Scene::pushScene() {
 }
 
 void Scene::popScene() {
-	changeScene(_sceneState.pushedScene.sceneID, _sceneState.pushedScene.frameID, _sceneState.pushedScene.verticalOffset, true);
+	_sceneState.pushedScene.continueSceneSound = true;
+	changeScene(_sceneState.pushedScene);
 	_sceneState.isScenePushed = false;
 }
 
@@ -409,15 +398,21 @@ void Scene::registerGraphics() {
 }
 
 void Scene::synchronize(Common::Serializer &ser) {
-	if (ser.isSaving()) {
-		ser.syncAsUint16LE(_sceneState.currentScene.sceneID);
-		ser.syncAsUint16LE(_sceneState.currentScene.frameID);
-		ser.syncAsUint16LE(_sceneState.currentScene.verticalOffset);
-	} else if (ser.isLoading()) {
-		ser.syncAsUint16LE(_sceneState.nextScene.sceneID);
-		ser.syncAsUint16LE(_sceneState.nextScene.frameID);
-		ser.syncAsUint16LE(_sceneState.nextScene.verticalOffset);
-		_sceneState.continueSceneSound = kLoadSceneSound;
+	ser.syncAsUint16LE(_sceneState.currentScene.sceneID);
+	ser.syncAsUint16LE(_sceneState.currentScene.frameID);
+	ser.syncAsUint16LE(_sceneState.currentScene.verticalOffset);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		ser.syncAsUint16LE(_sceneState.currentScene.frontVectorFrameID);
+
+		for (uint i = 0; i < 3; ++i) {
+			ser.syncAsFloatLE(_sceneState.currentScene.listenerFrontVector.getData()[i]);
+		}
+	}
+
+	if (ser.isLoading()) {
+		_sceneState.currentScene.continueSceneSound = kLoadSceneSound;
+		_sceneState.nextScene = _sceneState.currentScene;
 
 		g_nancy->_sound->stopAllSounds();
 
@@ -536,6 +531,8 @@ void Scene::synchronize(Common::Serializer &ser) {
 			}
 		}
 	}
+
+	// Sync sound data
 }
 
 void Scene::init() {
@@ -649,9 +646,15 @@ void Scene::load() {
 				_sceneState.summary.description.c_str(),
 				_sceneState.nextScene.frameID,
 				_sceneState.nextScene.verticalOffset,
-				_sceneState.continueSceneSound == kContinueSceneSound ? "kContinueSceneSound" : "kLoadSceneSound");
+				_sceneState.currentScene.continueSceneSound == kContinueSceneSound ? "kContinueSceneSound" : "kLoadSceneSound");
 
+	SceneChangeDescription lastScene = _sceneState.currentScene;
 	_sceneState.currentScene = _sceneState.nextScene;
+
+	// Make sure to discard invalid front vectors and reuse the last one
+	if (_sceneState.currentScene.listenerFrontVector.isZero()) {
+		_sceneState.currentScene.listenerFrontVector = lastScene.listenerFrontVector;
+	}
 
 	// Search for Action Records, maximum for a scene is 30
 	Common::SeekableReadStream *actionRecordChunk = nullptr;
@@ -663,6 +666,10 @@ void Scene::load() {
 
 		_actionManager.addNewActionRecord(*actionRecordChunk);
 		delete actionRecordChunk;
+	}
+
+	if (_sceneState.currentScene.paletteID == -1) {
+		_sceneState.currentScene.paletteID = 0;
 	}
 
 	_viewport.loadVideo(_sceneState.summary.videoFile,
@@ -696,6 +703,8 @@ void Scene::load() {
 	_timers.sceneTime = 0;
 
 	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
+
+	g_nancy->_sound->recalculateSoundEffects();
 
 	_state = kStartSound;
 }
@@ -742,6 +751,8 @@ void Scene::run() {
 	if (_lightning) {
 		_lightning->run();
 	}
+
+	g_nancy->_sound->soundEffectMaintenance();
 
 	if (_state == kLoad) {
 		g_nancy->_graphicsManager->suppressNextDraw();
@@ -797,7 +808,7 @@ void Scene::handleInput() {
 
 	if (_sceneState.currentScene.frameID != _viewport.getCurFrame()) {
 		_sceneState.currentScene.frameID = _viewport.getCurFrame();
-		g_nancy->_sound->calculatePanForAllSounds();
+		g_nancy->_sound->recalculateSoundEffects();
 	}
 
 	_actionManager.handleInput(input);

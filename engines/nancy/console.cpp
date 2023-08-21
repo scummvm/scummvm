@@ -415,7 +415,9 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 		return true;
 	}
 
-	NancySceneState.changeScene((uint16)atoi(argv[1]), 0, 0, false);
+	SceneChangeDescription scene;
+	scene.sceneID = (uint16)atoi(argv[1]);
+	NancySceneState.changeScene(scene);
 	NancySceneState._state = State::Scene::kLoad;
 	return cmdExit(0, nullptr);
 }

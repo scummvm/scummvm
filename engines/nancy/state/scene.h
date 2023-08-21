@@ -67,13 +67,6 @@ class Clock;
 
 namespace State {
 
-struct SceneInfo {
-	uint16 sceneID = 0;
-	uint16 frameID = 0;
-	uint16 verticalOffset = 0;
-	uint16 paletteID = 0;
-};
-
 // The game state that handles all of the gameplay
 class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::Action::ActionRecord;
@@ -103,7 +96,7 @@ public:
 		
 		byte panningType;
 		uint16 numberOfVideoFrames;
-		uint16 soundPanPerFrame;
+		uint16 degreesPerRotation;
 		uint16 totalViewAngle;
 		uint16 horizontalScrollDelta;
 		uint16 verticalScrollDelta;
@@ -113,9 +106,7 @@ public:
 		Time fastMoveTimeDelta;
 		
 		// Sound start vectors, used in nancy3 and up
-		uint32 startX = 0;
-		uint32 startY = 0;
-		uint32 startZ = 0;
+		Math::Vector3d listenerPosition;
 
 		void read(Common::SeekableReadStream &stream);
 	};
@@ -128,7 +119,6 @@ public:
 	void onStateEnter(const NancyState::NancyState prevState) override;
 	bool onStateExit(const NancyState::NancyState nextState) override;
 
-	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID = -1);
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene();
 	void popScene();
@@ -184,8 +174,8 @@ public:
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
 
-	SceneInfo &getSceneInfo() { return _sceneState.currentScene; }
-	SceneInfo &getNextSceneInfo() { return _sceneState.nextScene; }
+	SceneChangeDescription &getSceneInfo() { return _sceneState.currentScene; }
+	SceneChangeDescription &getNextSceneInfo() { return _sceneState.nextScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
 	void setActiveConversation(Action::ConversationSound *activeConversation);
@@ -220,12 +210,10 @@ private:
 
 	struct SceneState {
 		SceneSummary summary;
-		SceneInfo currentScene;
-		SceneInfo nextScene;
-		SceneInfo pushedScene;
-		bool isScenePushed;
-
-		uint16 continueSceneSound = kLoadSceneSound;
+		SceneChangeDescription currentScene;
+		SceneChangeDescription nextScene;
+		SceneChangeDescription pushedScene;
+		bool isScenePushed = false;
 	};
 
 	struct Timers {

@@ -409,10 +409,14 @@ protected:
 
 class PlayDigiSoundAndDie : public ActionRecord {
 public:
+	PlayDigiSoundAndDie() {}
+	~PlayDigiSoundAndDie() { delete _soundEffect; }
+	
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	SoundDescription _sound;
+	SoundEffectDescription *_soundEffect = nullptr;
 	SceneChangeDescription _sceneChange;
 	FlagDescription _flagOnTrigger;
 
