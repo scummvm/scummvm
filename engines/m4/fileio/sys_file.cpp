@@ -100,6 +100,11 @@ void SysFile::open_read_low_level() {
 	Common::String local_name, resource_hag;
 	Common::File hagfile_fp;
 
+	if (filename.empty()) {
+		_fp = nullptr;
+		return;
+	}
+
 	if (!_G(hag).first_read_flag) {
 		// First time to read
 		if (_G(hag).hag_flag) {
