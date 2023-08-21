@@ -30,14 +30,14 @@ namespace M4 {
 namespace Burger {
 
 struct seriesStreamBreak {
-	int32 frame = 0;
-	const char *sound = nullptr;
-	int32 channel = 0;
-	int32 volume = 0;
-	int32 trigger = 0;
-	uint32 flags = 0;
-	const int32 *variable = nullptr;
-	int32 value = 0;
+	int32 frame;
+	const char *sound;
+	int32 channel;
+	int32 volume;
+	int32 trigger;
+	uint32 flags;
+	const int32 *variable;
+	int32 value;
 };
 #define STREAM_BREAK_END {  -1,    nullptr, 0,   0, NO_TRIGGER, 0, nullptr, 0 }
 
