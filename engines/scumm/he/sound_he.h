@@ -262,7 +262,7 @@ protected:
 	void processSoundQueues() override;
 
 private:
-	int _heTalkOffset;
+	int _heTalkOffset = 0;
 	bool _stopActorTalkingFlag = false;
 	bool _inSoundCallbackFlag = false;
 	int _soundCallbacksQueueSize = 0;

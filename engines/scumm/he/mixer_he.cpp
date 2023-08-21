@@ -440,7 +440,7 @@ bool HEMixer::mixerIsMixerDisabled() {
 }
 
 bool HEMixer::mixerStopChannel(int channel) {
-	if ((0 <= channel) && (MIXER_MAX_CHANNELS > channel))
+	if ((channel >= 0) && (channel < MIXER_MAX_CHANNELS))
 		return mixerStartChannel(channel, 0, 0, 0, 0, 0, 0, 0, CHANNEL_EMPTY_FLAGS);
 
 	return false;
@@ -468,7 +468,7 @@ bool HEMixer::mixerStartChannel(
 
 	va_list params;
 
-	if ((channel < 0) || (channel > MIXER_MAX_CHANNELS))
+	if ((channel < 0) || (channel >= MIXER_MAX_CHANNELS))
 		return false;
 
 	if (_mixerChannels[channel].flags != CHANNEL_EMPTY_FLAGS) {
@@ -651,7 +651,7 @@ bool HEMixer::mixerStartSpoolingChannel(
 
 	uint32 initialReadCount;
 
-	if ((channel < 0) || (channel > MIXER_MAX_CHANNELS))
+	if ((channel < 0) || (channel >= MIXER_MAX_CHANNELS))
 		return false;
 
 	if (_mixerChannels[channel].flags != CHANNEL_EMPTY_FLAGS) {
@@ -1302,11 +1302,14 @@ void HEMilesChannel::serviceStream() {
 			sizeToRead = MIN<uint32>(MILES_PCM_CHUNK_SIZE * _blockAlign, _stream.dataLength - _stream.curDataPos);
 			reachedTheEnd = sizeToRead < MILES_PCM_CHUNK_SIZE * _blockAlign;
 
-			byte *buffer = (byte *)malloc(sizeToRead);
-			if (sizeToRead > 0 && buffer != nullptr) {
-				int readBytes = _stream.fileHandle->read(buffer, sizeToRead);
-				_stream.curDataPos += readBytes;
-				_stream.streamObj->queueBuffer(buffer, readBytes, DisposeAfterUse::YES, getOutputFlags());
+
+			if (sizeToRead > 0) {
+				byte *buffer = (byte *)malloc(sizeToRead);
+				if (buffer != nullptr) {
+					int readBytes = _stream.fileHandle->read(buffer, sizeToRead);
+					_stream.curDataPos += readBytes;
+					_stream.streamObj->queueBuffer(buffer, readBytes, DisposeAfterUse::YES, getOutputFlags());
+				}
 			}
 
 		} else if (_dataFormat == WAVE_FORMAT_IMA_ADPCM) {
@@ -1320,30 +1323,32 @@ void HEMilesChannel::serviceStream() {
 
 			// We allocate a buffer which is going to be filled with
 			// (MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM) compressed blocks or less
-			byte *compressedBuffer = (byte *)malloc(sizeToRead);
-			if (sizeToRead > 0 && compressedBuffer != nullptr) {
-				int readBytes = _stream.fileHandle->read(compressedBuffer, sizeToRead);
-				_stream.curDataPos += readBytes;
+			if (sizeToRead > 0) {
+				byte *compressedBuffer = (byte *)malloc(sizeToRead);
+				if (compressedBuffer != nullptr){
+					int readBytes = _stream.fileHandle->read(compressedBuffer, sizeToRead);
+					_stream.curDataPos += readBytes;
 
-				// Now, the ugly trick: use a MemoryReadStream containing our compressed data,
-				// to feed an ADPCM stream, and then use the latter to read uncompressed data,
-				// and then queue the latter in the output stream.
-				// Hey, it IS ugly! ...and it works :-)
-				Common::MemoryReadStream memStream(compressedBuffer, readBytes);
-				Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO,
-					readBytes, Audio::kADPCMMSIma, _baseFrequency, _numChannels, _blockAlign);
+					// Now, the ugly trick: use a MemoryReadStream containing our compressed data,
+					// to feed an ADPCM stream, and then use the latter to read uncompressed data,
+					// and then queue the latter in the output stream.
+					// Hey, it IS ugly! ...and it works :-)
+					Common::MemoryReadStream memStream(compressedBuffer, readBytes);
+					Audio::AudioStream *adpcmStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO,
+																			 readBytes, Audio::kADPCMMSIma, _baseFrequency, _numChannels, _blockAlign);
 
-				uint32 uncompSize =
-					calculateDeflatedADPCMBlockSize(MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM, _blockAlign, _numChannels, 16);
+					uint32 uncompSize =
+						calculateDeflatedADPCMBlockSize(MILES_IMA_ADPCM_PER_FRAME_CHUNKS_NUM, _blockAlign, _numChannels, 16);
 
-				byte *adpcmData = (byte *)malloc(uncompSize);
-				uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, uncompSize * 2);
+					byte *adpcmData = (byte *)malloc(uncompSize);
+					uint32 adpcmSize = adpcmStream->readBuffer((int16 *)(void *)adpcmData, uncompSize * 2);
 
-				adpcmSize *= 2;
-				_stream.streamObj->queueBuffer(adpcmData, adpcmSize, DisposeAfterUse::YES, getOutputFlags());
+					adpcmSize *= 2;
+					_stream.streamObj->queueBuffer(adpcmData, adpcmSize, DisposeAfterUse::YES, getOutputFlags());
 
-				delete adpcmStream;
-				free(compressedBuffer);
+					delete adpcmStream;
+					free(compressedBuffer);
+				}
 			}
 		}
 

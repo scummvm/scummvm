@@ -380,7 +380,7 @@ protected:
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-	int _stringLength;
+	int _stringLength = 1;
 	byte _stringBuffer[4096];
 
 	WizParameters _wizParams;
@@ -497,7 +497,8 @@ protected:
 
 class ScummEngine_v80he : public ScummEngine_v72he {
 protected:
-	int32 _heSndResId;
+	int32 _heSndResId = 0;
+
 	enum SubOpType {
 		SO_CURSOR_IMAGE = 19,
 		SO_CURSOR_COLOR_IMAGE = 20,

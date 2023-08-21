@@ -61,6 +61,7 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 	_baseSndSize = 0;
 
 	memset(_heChannel, 0, sizeof(_heChannel));
+	memset(_soundCallbackScripts, 0, sizeof(_soundCallbackScripts));
 
 	bool useMilesSoundSystem =
 		parent->_game.id == GID_MOONBASE ||
@@ -78,6 +79,8 @@ SoundHE::~SoundHE() {
 
 	if (_heSpoolingMusicFile.isOpen())
 		_heSpoolingMusicFile.close();
+
+	delete _heMixer;
 }
 
 void SoundHE::startSound(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
@@ -403,13 +406,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 
 	assertRange(0, var, HSND_MAX_SOUND_VARS - 1, "sound variable");
 
-	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
-		if (_heChannel[i].sound == sound)
-			chan = i;
-	}
-
-	chan = hsFindSoundChannel(sound);
+	int chan = hsFindSoundChannel(sound);
 
 	if (chan != -1) {
 		debug(5, "SoundHE::getSoundVar(): sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
