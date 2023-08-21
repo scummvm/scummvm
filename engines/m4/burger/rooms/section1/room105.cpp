@@ -1299,6 +1299,9 @@ void Room105::daemon() {
 		}
 		break;
 
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
 	}
 }
 
@@ -1317,7 +1320,7 @@ void Room105::pre_parser() {
 
 void Room105::parser() {
 	bool lookFlag = player_said("look") || player_said("look at");
-	_G(kernel).trigger_mode = KT_PARSE;
+	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("conv12")) {
 		conv12();
