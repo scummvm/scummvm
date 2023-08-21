@@ -95,7 +95,7 @@ static const char *SAID1[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
-static const char *PARSER_LIST[] = {
+static const char *GLOBAL_PARSER_LIST[] = {
 	"DEED",
 	"LOOK AT",
 	"999w101",
@@ -594,7 +594,7 @@ void BurgerEngine::global_parser() {
 	} else if (player_said("GEAR")) {
 		_G(walker).wilbur_speech_random("999w017", "999w018", "999w019", "999w020");
 
-	} else if (!_G(walker).wilbur_parser(PARSER_LIST)) {
+	} else if (!_G(walker).wilbur_parser(GLOBAL_PARSER_LIST)) {
 		if (player_said("LOOK AT")) {
 			_G(walker).wilbur_speech_random("999w013", "999w014", "999w015");
 		} else if (player_said("WALK") || player_said("WALK TO") ||

@@ -359,7 +359,7 @@ bool Walker::wilbur_parser(const char **list) {
 				return true;
 			}
 		} else {
-			for (; !*curr && scumm_stricmp(*curr, "Th-th-th-that's all folks..."); ++curr) {
+			for (; !*curr || scumm_stricmp(*curr, "Th-th-th-that's all folks..."); ++curr) {
 			}
 		}
 	}

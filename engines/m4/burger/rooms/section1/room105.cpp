@@ -28,6 +28,9 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+// TODO: Double-check if the belows should be !strcmp
+#define COMPARE(X) strcmp(conv_sound_to_play(), X)
+
 static const char *SAID[][4] = {
 	{ "TOWN RECORDS",     nullptr,   nullptr,   nullptr   },
 	{ "MAYOR'S OFFICE",   "105W002", nullptr,   nullptr   },
@@ -1394,10 +1397,9 @@ void Room105::conv10() {
 			if (node == 1) {
 				digi_stop(2);
 
-				// TODO: Double-check if the belows should be !strcmp
-				if (strcmp(conv_sound_to_play(), "10n02011")) {
+				if (COMPARE("10n02011")) {
 					digi_unload("105gucr1");
-				} else if (strcmp(conv_sound_to_play(), "10n02012")) {
+				} else if (COMPARE("10n02012")) {
 					digi_unload("105gucr2");
 				} else {
 					digi_unload("105gucr3");
@@ -1422,13 +1424,13 @@ void Room105::conv10() {
 				_flag2 = true;
 
 			if (node == 1) {
-				if (strcmp(conv_sound_to_play(), "10n02011")) {
+				if (COMPARE("10n02011")) {
 					digi_preload("105gucr1");
 					digi_play("105gucr1", 2, 150);
-				} else if (strcmp(conv_sound_to_play(), "10n02012")) {
+				} else if (COMPARE("10n02012")) {
 					digi_preload("105gucr2");
 					digi_play("105gucr2", 2, 150);
-				} else if (strcmp(conv_sound_to_play(), "10n02013")) {
+				} else if (COMPARE("10n02013")) {
 					digi_preload("105gucr3");
 					digi_play("105gucr3", 2, 150);
 				}
@@ -1448,19 +1450,214 @@ void Room105::conv10() {
 }
 
 void Room105::conv11() {
-	error("TODO: Room105::conv11");
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 10) {
+		if (who <= 0) {
+			if (node == 1) {
+				digi_stop(2);
+
+				if (COMPARE("10n02011")) {
+					digi_unload("105e1cr1");
+				} else if (COMPARE("10n02012")) {
+					digi_unload("105e1cr2");
+				} else if (COMPARE("10n02013")) {
+					digi_unload("105e1cr3");
+				}
+
+				_val3 = 1;
+				_val4 = 5;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(30, 1);
+
+			} else if ((node == 8 && entry == 1) ||
+					(node == 1 && entry == 4 && inv_player_has("deed"))) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 29);
+				_val3 = 5;
+				kernel_trigger_dispatch_now(1);
+			} else {
+				_val3 = 6;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(1);
+			}
+		} else if (who == 1) {
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
+			conv_resume();
+		}
+	} else if (conv_sound_to_play()) {
+		if (who <= 0) {
+			if (node == 9 && entry == 2)
+				_flag3 = true;
+			if (node == 10)
+				_flag4 = true;
+
+			if (node != 7 &&
+					(node != 8 || entry != 0) && (node != 9 || node != 2) &&
+					(node != 11 || entry != 3) && (node != 12 || entry != 3)) {
+				if (node == 13 && entry == 0) {
+					_val3 = 9;
+				} else if (node == 13 && entry == 1) {
+					_val3 = 14;
+				} else if (node != 1) {
+					_val3 = 7;
+				} else {
+					if (COMPARE("10n02011")) {
+						digi_preload("105e1cr1");
+						digi_play("105e1cr1", 2, 150);
+					} else if (COMPARE("10n02012")) {
+						digi_preload("105e1cr2");
+						digi_play("105e1cr2", 2, 150);
+					} else if (COMPARE("10n02013")) {
+						digi_preload("105e1cr3");
+						digi_play("105e1cr3", 2, 150);
+					}
+
+					digi_play(conv_sound_to_play(), 1, 255, 10);
+				}
+			} else {
+				_val3 = 8;
+			}
+		} else if (who == 1) {
+			if (node == 13 && entry == 1) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 32);
+				_G(kernel).trigger_mode = KT_PARSE;
+			} else if (node != 13 || entry != 0) {
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+			}
+
+			digi_play(conv_sound_to_play(), 1, 255, 10);
+		}
+	} else {
+		conv_resume();
+	}
 }
 
 void Room105::conv12() {
-	error("TODO: Room105::conv12");
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 10) {
+		if (who <= 0) {
+			if (node == 1) {
+				digi_stop(2);
+
+				if (COMPARE("10n02011")) {
+					digi_unload("105ancr1");
+				} else if (COMPARE("10n02012")) {
+					digi_unload("105ancr2");
+				} else if (COMPARE("10n02013")) {
+					digi_unload("105ancr3");
+				}
+
+				_val3 = 40;
+				_val4 = 42;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(1);
+
+			} else if (node == 7 && entry == 6) {
+				_val3 = 49;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(1);
+
+			} else if (node == 15 && entry == 4) {
+				_val3 = 55;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(1);
+
+			} else if (node == 9) {
+				conv_resume();
+
+			} else {
+				_val3 = 43;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(1);
+			}
+		} else if (who == 1) {
+			if (node == 16 && entry == 1)
+				digi_unload("12p1702");
+
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
+			conv_resume();
+		}
+	} else if (conv_sound_to_play()) {
+		if (who <= 0) {
+			if (node == 17)
+				_flag1 = true;
+			if (node == 7 && entry == 7)
+				_flag4 = true;
+
+			if (node == 1) {
+				if (COMPARE("10n02011")) {
+					digi_preload("105ancr1");
+					digi_play("105ancr1", 2, 150);
+				} else if (COMPARE("10n02012")) {
+					digi_preload("105ancr2");
+					digi_play("105ancr2", 2, 150);
+				} else if (COMPARE("10n02013")) {
+					digi_preload("105ancr3");
+					digi_play("105ancr3", 2, 150);
+				}
+
+				digi_play(conv_sound_to_play(), 1, 255, 10);
+
+			} else if (node == 9) {
+				digi_play(conv_sound_to_play(), 1, 255, 10);
+
+			} else {
+				_val3 = 44;
+			}
+		} else if (who == 1) {
+			if (node == 16 && entry == 1) {
+				digi_preload("12p1702");
+				_val3 = 56;
+				_val1 = 0;
+			}
+
+			sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+			digi_play(conv_sound_to_play(), 1, 255, 10);
+		}
+	} else {
+		conv_resume();
+	}
 }
 
 void Room105::conv13() {
-	error("TODO: Room105::conv13");
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+
+	if (_G(kernel).trigger == 10) {
+		if (who <= 0) {
+			_val3 = 59;
+		} else if (who == 1) {
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
+		}
+	} else if (conv_sound_to_play()) {
+		if (who <= 0) {
+			_val3 = (node == 2) ? 61 : 60;
+			_savedMode = KT_PARSE;
+			_savedTrigger = 10;
+			_digi1 = conv_sound_to_play();
+		} else if (who == 1) {
+			sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+			digi_play(conv_sound_to_play(), 1, 255, 10);
+		}
+	} else {
+		conv_resume();
+	}
 }
 
 void Room105::talkTo() {
-	error("TODO: Room105::talkTo");
+	_val1 = 1;
+	conv_load_and_prepare("conv13", 5);
+	conv_play_curr();
 }
 
 void Room105::enteringMayorsOffice() {
