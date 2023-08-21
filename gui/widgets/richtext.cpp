@@ -71,7 +71,9 @@ void RichTextWidget::createWidget() {
 	uint32 white = _wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff);
 	uint32 black = _wm->_pixelformat.RGBToColor(0x00, 0x00, 0x00);
 
-	_txtWnd = _wm->addTextWindow(g_gui.theme()->getFont(),
+	Graphics::MacFont macFont(Graphics::kMacFontChicago, 30, Graphics::kMacFontRegular);
+
+	_txtWnd = _wm->addTextWindow(&macFont,
 			black, white, _w, Graphics::kTextAlignLeft, nullptr, false);
 	_txtWnd->setTextColorRGB(black);
 	_txtWnd->setBorderType(Graphics::kWindowBorderMacOSNoBorderScrollbar);
