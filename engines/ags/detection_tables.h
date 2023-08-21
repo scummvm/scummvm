@@ -818,6 +818,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "butcherstanys2", "Butcher Stanys II: Stanys Meets Marilyn Manson" },
 	{ "buttercup", "Buttercup's Gone Missing!" },
 	{ "byohero", "BYO-Hero" },
+	{ "bytebetrayal", "Byte-Sized Betrayal" },
 	{ "bythenumbers", "By the Numbers" },
 	{ "bytheswordconspiracy", "By the Sword: Conspiracy" },
 	{ "byzantine", "Byzantine" },
@@ -1319,6 +1320,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "funnyboneyard", "The Funny Boneyard" },
 	{ "funsunmishaps", "Fun, Sun & Mishaps" },
 	{ "funwithnumbers", "Fun With Numbers" },
+	{ "fuoriora", "Fuori Ora" },
 	{ "furballs1", "Fur Balls 1 - evil be thy name: Bundles of mayhem!" },
 	{ "furryfather", "Sorrow of a Furry Father" },
 	{ "futuramatrivia", "Futurama: Who Said That?" },
@@ -1678,6 +1680,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "labyrinth", "Labyrinth" },
 	{ "lacarbonara", "La Carbonara" },
 	{ "lacicuta", "La Cicuta" },
+	{ "lacolonia", "La Colonia" },
 	{ "lacroixpan", "La Croix Pan" },
 	{ "lagrancastanya", "La Gran Castanya" },
 	{ "lagrandeplaine", "La Grande Plaine" },
@@ -1691,6 +1694,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lasthope", "Last Hope" },
 	{ "lastlightpost", "The Last Light Post" },
 	{ "lastnfurious", "Last'n'Furious" },
+	{ "lastnovax", "The Last No-Vax" },
 	{ "latelastnite", "Late Last Nite" },
 	{ "laundryday", "Laundry Day" },
 	{ "lavablava", "Lava Blava" },
@@ -2500,6 +2504,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "redpantsep2", "Redpants Meets Robinson Clauseau" },
 	{ "reefriversquestforekoban", "Reef Rivers: Quest for Ekoban" },
 	{ "rein", "rein" },
+	{ "remotelyinteresting", "(not even) Remotely Interesting" },
 	{ "rend", "The Tapestry - Chapter 2: Rend" },
 	{ "renuncio", "Renuncio!" },
 	{ "renuncio2", "Renuncio: Parte 2 - El Escape" },
@@ -2829,6 +2834,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "stuckinamuddle", "Stuck in a Muddle with You" },
 	{ "stuckonyou", "Stuck on you" },
 	{ "studiomediocre", "Studio Mediocre: The Case of the Bedeaded Dramatist" },
+	{ "stygiophobia", "Stygiophobia Another Day" },
 	{ "subatomic", "subAtomic" },
 	{ "subterra", "Subterra" },
 	{ "subwaycrisis", "Subway Crisis" },
@@ -3149,6 +3155,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "trumpsbed", "Shit in Trump's Bed" },
 	{ "truthmatter", "The Truth of the Matter" },
 	{ "tsomi2", "The Secret of Monkey Island 2" },
+	{ "tunnelvision", "Tunnel Vision" },
 	{ "turtlesintime", "Turtles Ninja in Time" },
 	{ "tvabroder", "Two Brothers / Två bröder" },
 	{ "tvquest2015", "Tv Quest" },
@@ -3167,6 +3174,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "uncontrollable", "UNCONTROLLABLE" },
 	{ "underwateradv", "Underwater Adventures" },
 	{ "underworld", "The Underworld" },
+	{ "undyep1", "Hey Der, Undy! Episode I: De King of Pong" },
 	{ "unexpectedguest", "Unexpected Guest" },
 	{ "unexpectedquest", "Unexpected Quest" },
 	{ "unfair", "Unfair" },
@@ -3218,6 +3226,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "virtualpiano", "Virtual Piano" },
 	{ "vivarium", "Vivarium" },
 	{ "vorezkor", "The VorezKor Hack" },
+	{ "voxinrama", "Vox in Rama" },
 	{ "voyagesfuturo", "Les Voyages de Futuro" },
 	{ "vohaulsrevenge2", "Space Quest XII: Vohaul's Revenge II" },
 	{ "voodoodave", "Voodoo Dave and the Tablecloth Mystery" },
@@ -3238,6 +3247,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "wduprodigal", "World of Darkness Unbound - Prodigal" },
 	{ "wearevectors", "We Are Vectors" },
 	{ "weathered", "Weathered" },
+	{ "weepinglilium", "Weeping Lilium" },
 	{ "wegotlost", "I Think We Got Lost" },
 	{ "weightloss", "Narcoleptic Weight Loss Expert" },
 	{ "welcometodarklake", "Welcome to Dark Lake" },
@@ -3298,6 +3308,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "woof", "Woof!" },
 	{ "woolyrockbottom", "Wooly Rockbottom and the Quest for the Golden Beard of Thor!" },
 	{ "worldisweird", "The World is Weird" },
+	{ "worldoftoto", "The World of Toto" },
 	{ "worldofwarcraftquest", "World of Warcraft: The IMBA Quest" },
 	{ "wormholech1", "Wormhole - Capítulo 1" },
 	{ "wrathofthesolonoids", "Doctor Who: Wrath of the Solonoids" },
@@ -4086,10 +4097,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("mybigsister", "My Big Sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 147248623),  // rollback - latest
 	GAME_ENTRY_PLATFORM("mybigsister", "AGSProject.ags", "5dccc941089cedbb7d84cc890528b5e4", 144835477, "Switch"),  // Nintendo Switch
 	GAME_ENTRY_EN_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 156797059),
-	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157043019),  // Multilang rollback 0.1
-	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157045932),  // Multilang rollback 0.2
-	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157046186),  // Multilang
-	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157048203),  // Multilang
+	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157043019),  // Multilang (rollback 0.1)
+	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157045932),  // rollback 0.2
+	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157046186),
+	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157048203),
+	GAME_ENTRY_STEAM("mybigsisterrm", "MBSRemastered.exe", "e08c78e2591f196a2f42e5911062e56e", 157056576),
 	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "521aecdb5343c8d8f1c1000c4c2fa468", 11069524),  // Win En-Fr-De-Es-Pl
 	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "28f22ae60e2f3524665c1d5be60a0bf3", 11069220),
 	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "ad0aa2a72c107a9782c4ca3358d0db0f", 11032356),
@@ -4582,6 +4594,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("kq3plus", "Intro.ags", "06a03fe35791b0578068ab1873455463", 4866555),
 	DEMO_ENTRY_EN("kq9vga", "KQ9DEMO1.exe", "06a03fe35791b0578068ab1873455463", 2635933),
 	DEMO_ENTRY_EN("kumastory", "Kuma Story.exe", "54e966a013d104bf23603c780438d089", 2893472),
+	DEMO_ENTRY("lacolonia", "thehomestead.ags", "990a907fae9dae241bcfdf245224fe09", 45322084),  // itch.io client Eng-Ita
 	DEMO_ENTRY_EN("laportenoire", "proute.exe", "06a03fe35791b0578068ab1873455463", 17087125),
 	DEMO_ENTRY_EN("lastpirateadventure", "DrakeTreasureDemo.exe", "7971a7c02d414dc8cb33b6ec36080b91", 554164470),
 	DEMO_ENTRY_EN("lastpirateadventure", "DrakeTreasureDemo.exe", "7971a7c02d414dc8cb33b6ec36080b91", 554166474),
@@ -5001,6 +5014,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("alienpuzzleinvasion", "alien.exe", "a524cbb1c51589903c4043b98917f1d9", 10552264),  // En-Fr
 	GAME_ENTRY_EN("alienrapeescape", "a.r.e.exe", "39d7a558298a9f1d40c1f415daf9bb74", 4802707),
 	GAME_ENTRY_EN("alienspaceman", "AGS1.exe", "8aff96231ca059cd61fe5ce68b83f50f", 18075265),
+	GAME_ENTRY_EN("alienspaceman", "AGS1.ags", "3a758042f7c37c1fad714c6bdb383b72", 15588465),  // itch.io client
 	GAME_ENTRY_EN("alienthreat", "alien threat.exe", "f120690b506dd63cd7d1112ea6af2f77", 6341266),
 	GAME_ENTRY_EN("alientimezone", "atz.exe", "0710e2ec71042617f565c01824f0cf3c", 2910487),
 	GAME_ENTRY_EN("alientimezone", "atz.exe", "0710e2ec71042617f565c01824f0cf3c", 2911858),
@@ -5348,6 +5362,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("butcherstanys2", "stanys.exe", "97d700529f5cc826f230c27acf81adfd", 1489182),
 	GAME_ENTRY_EN("buttercup", "Buttercups gone missing!.exe", "4d17844029d8910fbaae1bdc99e250f2", 2854591),
 	GAME_ENTRY_EN("byohero", "BYO-Hero.exe", "f0dd8a7e2c0e033d8f928e65aa54b10f", 163626763),
+	GAME_ENTRY_EN("bytebetrayal", "Byte-Sized Betrayal.exe", "bf0c8894a91378e7772dbb0a930b188d", 167768171),
 	GAME_ENTRY_EN("bythenumbers", "By the Numbers.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 15781843),
 	GAME_ENTRY_EN("cabbagequest", "Cabbagequest.exe", "06a03fe35791b0578068ab1873455463", 4916170),
 	GAME_ENTRY_EN("cabbagesandkings", "fal.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3611642),  // v2.0
@@ -5940,6 +5955,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("funsunmishaps", "Fun, Sun & Mishaps.exe", "933200c8f306eccaaa484b1575da8528", 452348894),
 	GAME_ENTRY_EN("funsunmishaps", "Fun, Sun & Mishaps.exe", "933200c8f306eccaaa484b1575da8528", 452348866),
 	GAME_ENTRY_EN("funwithnumbers", "fwn.exe", "a524cbb1c51589903c4043b98917f1d9", 18743833),
+	GAME_ENTRY_LANG("fuoriora", "Fuoriora.ags", "476087d40d6f86d42731eb94685db38d", 59443091, Common::IT_ITA),  // itch.io client
 	GAME_ENTRY_EN("furballs1", "Fur Balls 1 Evil be thy name.exe", "c876b504a1048fe06c71c9d9a0bc5817", 11417569),
 	GAME_ENTRY_EN("furryfather", "Sorrow of a Furry Father.exe", "0fe1d93da69963d5eef55ce2619c94be", 20220753),  // Windows
 	GAME_ENTRY_EN("furryfather", "Sorrow of a Furry Father.ags", "5f2b5f4a20550110de2a00c46c722dee", 17186109),  // Linux
@@ -6391,6 +6407,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("lamaleta", "La Maleta.ags", "144566549a27ad1b41346627ec82f586", 43741777),  // Eng-Esp
 	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.ags", "37b6847ce6000a0a51391e8c1013bf2b", 25212295),  // Linux
 	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.exe", "8aff96231ca059cd61fe5ce68b83f50f", 27699095),  // Windows
+	GAME_ENTRY_LANG("lastnovax", "THE LAST NO VAX.exe", "63f8a60cc094996bd070e68cb3c4722c", 26323807, Common::IT_ITA),
 	GAME_ENTRY_EN("lancethepenguin", "LanceThePenguin.exe", "a524cbb1c51589903c4043b98917f1d9", 3838581),
 	GAME_ENTRY_LANG("laodiseadelfracaso2", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622, Common::ES_ESP),
 	GAME_ENTRY_EN_PLATFORM("larrylotter", "Warthogs.exe", "06a03fe35791b0578068ab1873455463", 3387147, "MAGS"),
@@ -7350,6 +7367,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("redpantsep2", "DBL.exe", "c0aab3e02bbaf8468770480079436f61", 15658119),
 	GAME_ENTRY_EN("reefriversquestforekoban", "Quest for Ekoban.exe", "338fa79960d40689063af31c671b8729", 179342350),
 	GAME_ENTRY_EN("rein", "rein.exe", "798691640b168556245d5fc261772fde", 17483005),
+	GAME_ENTRY_EN("remotelyinteresting", "RemotelyInteresting_Frame42.exe", "a9093fafca0476d3d486f3ad08665cbe", 23599293),
 	GAME_ENTRY_EN("rend", "rend.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 6156428),
 	GAME_ENTRY("renuncio", "renuncio.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 3477434),  // v1.1  Eng-Esp
 	GAME_ENTRY("renuncio2", "Renuncio2.exe", "bb628c1fdcfdc091ea57430e6c4af2ac", 8533739),  //v1.1  Eng-Esp
@@ -7747,6 +7765,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("stuckonyou", "Stuck on you.exe", "5cca0f8af961d2bc1c6e475437d3b23b", 85832117),  // Windows
 	GAME_ENTRY_EN("stuckonyou", "Stuck on you.ags", "e2416cf4eeb317fb2f6127b398ad0979", 82798497),  // Linux
 	GAME_ENTRY_EN("studiomediocre", "Studio.exe", "9cb3c8dc7a8ab9c44815955696be2677", 10524547),
+	GAME_ENTRY_EN("stygiophobia", "Stygiophobia Another Day.ags", "59b1696d414575a035c152d07b26a009", 3117650),  // itch.io client
 	GAME_ENTRY_EN("subatomic", "LD48-23.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 25655660),
 	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.ags", "97341b3ddd7a0eb8ae4a247fe25dc082", 3508218),  // Linux
 	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.exe", "78f88f71bbef277d93cbe10f1d2ac404", 5996042),  // Windows
@@ -8153,6 +8172,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("trumpsbed", "SITB.exe", "c1a6f1752b85d9127d6f9d11bcb124bb", 67920649),  // Windows
 	GAME_ENTRY_EN("trumpsbed", "SITB.ags", "0d79c6f044b0f44b07e8800c5224fbf8", 65180409),  // Linux
 	GAME_ENTRY_EN("truthmatter", "Liars.exe", "615e73fc1874e92d60a1996c2330ea36", 6636818),
+	GAME_ENTRY_EN("tunnelvision", "TunnelVision.exe", "aa8082a7cc63d9b14d6be5dac69f10ac", 27915422),  // Win/Mac
+	GAME_ENTRY_EN("tunnelvision", "TunnelVision.ags", "ca92226f62424c66bff8ccfbe7faffc2", 24755338),  // Linux
 	GAME_ENTRY_EN("turtlesintime", "Turtles.exe", "465f972675db2da6040518221af5b0ba", 2309552),
 	GAME_ENTRY("tvabroder", "TvaBroder.exe", "7a669a96e488653db661d285bbc12783", 17875297),  // En-Sw
 	GAME_ENTRY_EN("tvquest2015", "TvQuest.exe", "c3b72132686c4a102b3365d380c8ae3a", 10999697),
@@ -8175,6 +8196,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("uncontrollable", "OROW2015.exe", "615e73fc1874e92d60a1996c2330ea36", 3012777),
 	GAME_ENTRY_EN("underwateradv", "fishres.exe", "3128b9f90e2f954ba704414ae854d10b", 3970713),
 	GAME_ENTRY_EN("underworld", "Underworld.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5147661),
+	GAME_ENTRY_EN("undyep1", "heyderundy.exe", "39fe9b76597c2d8c14922b8369a4a4db", 9842962),  // v1.2
 	GAME_ENTRY_EN("unexpectedguest", "unexpectedGuest.exe", "5e1d1fbbaadb46b5cfd5474d71080c9d", 4541793),
 	GAME_ENTRY_EN("unexpectedquest", "UQ.exe", "f120690b506dd63cd7d1112ea6af2f77", 1837663),
 	GAME_ENTRY_EN_PLATFORM("unfair", "Unfair.exe", "8d1ff95c16500befbdc72260d461d73f", 5203436, "MAGS"),
@@ -8235,6 +8257,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("virmachina", "Cyber.ags", "82a1293d6e986bed1d207351bf855182", 22029096),
 	GAME_ENTRY_EN("virtualpiano", "Synth.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1419081),
 	GAME_ENTRY_EN("vivarium", "Vivarium.exe", "e5744908aea934a7adfe301a27c71168", 77505388),
+	GAME_ENTRY_EN("voxinrama", "voxinrama.ags", "fcf753ad836899ef4b8f120310252d07", 47620042),  // itch.io client
 	GAME_ENTRY_LANG("voyagesfuturo", "AtelierRAB.exe", "495d45fb8adfd49690ae3b97921feec6", 1818625248, Common::FR_FRA),  // Windows
 	GAME_ENTRY_LANG("voyagesfuturo", "AtelierRAB.ags", "6550012348b11be9ef0063c4720fb9bf", 1816144592, Common::FR_FRA),  // Linux
 	GAME_ENTRY_EN("voodoodave", "vdtm.exe", "06a03fe35791b0578068ab1873455463", 4451423),
@@ -8258,6 +8281,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("wduprodigal", "vtprodigal.ags", "44a50cc46c4b2b6940d0070c78a0a7b3", 291157671),  // Linux
 	GAME_ENTRY_EN("wearevectors", "WAV.exe", "a524cbb1c51589903c4043b98917f1d9", 5851536),
 	GAME_ENTRY_EN_PLATFORM("weathered", "Weathered.exe", "60850a0b0f1ef2e2deb15a815c0a1715", 110310651, "Beta"),
+	GAME_ENTRY_LANG("weepinglilium", "weepinglilium.ags", "b570d980a264f085d00f52936e72ad43", 99619088, Common::IT_ITA),  // itch.io client
 	GAME_ENTRY_EN("wegotlost", "dream.exe", "0710e2ec71042617f565c01824f0cf3c", 8820049),
 	GAME_ENTRY_EN("weightloss", "Narcoleptic Weight Loss Expert.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 3940985),
 	GAME_ENTRY_EN("wellmeetagain", "We'll meet again.exe", "981e60a9be515bb56c634856462abbc7", 105830995),  //Windows
@@ -8334,6 +8358,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("woof", "woof.exe", "0710e2ec71042617f565c01824f0cf3c", 777374),
 	GAME_ENTRY_EN("woolyrockbottom", "Wooly.exe", "261d108f9213356a351b35b54867f342", 3409152),
 	GAME_ENTRY_EN("worldisweird", "worldweird.exe", "22fd810f7844c6366df3024b65a3411f", 341060078),
+	GAME_ENTRY_EN("worldoftoto", "WorldOfToto.ags", "03bf57f3cf0974e210dacd00ec7ba574", 135938736),
+	GAME_ENTRY_EN("worldoftoto", "WorldOfToto.exe", "2f2bc0b9c539d20529c0e343315d5f65", 139047620),
 	GAME_ENTRY("worldofwarcraftquest", "IMBA.exe", "3a96a134156aeccee37daae9a7d5232d", 31743641),  //En-De
 	GAME_ENTRY_LANG("wormholech1", "WH1.exe", "0564de07d3fd5c16e6947a647061913c", 294320191, Common::ES_ESP),
 	GAME_ENTRY_EN("wrathofthesolonoids", "verb.exe", "0500aacb6c176d47ac0f8158f055db83", 3582078),
