@@ -147,7 +147,79 @@ void Room137::init() {
 }
 
 void Room137::daemon() {
-	// TODO
+	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		player_update_info();
+
+		if (_G(player_info).y < 235 && player_said("FORK IN THE ROAD")) {
+			player_set_commands_allowed(false);
+			pal_fade_init(1009);
+		}
+	}
+
+	if (!digi_play_state(2) && _flag1 && imath_ranged_rand(1, 3000) == 235) {
+		// Ocassional actions. *VERY* occasional actions
+		if (_flag2 && inv_object_in_scene("keys", 138)) {
+			digi_play("137_022", 2, 100);
+			_flag2 = false;
+		} else if (inv_object_in_scene("keys", 138)) {
+			digi_play(imath_ranged_rand(1, 7) == 1 ? "137_020" : "137_021", 2);
+
+		} else {
+			digi_play(Common::String::format("137_0%d", imath_ranged_rand(23, 28)).c_str(), 2, 150);
+		}
+	}
+
+	switch (_G(kernel).trigger) {
+	case 3:
+		ws_walk(276, 292, 0, -1, 4);
+		break;
+
+	case 5:
+		unloadAssets();
+
+		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] == 4)
+			_mode1 = 30;
+
+		_mode4 = 5;
+		_mode3 = 10;
+
+		if (_G(player_info).y > 308) {
+			_mode3 = 14;
+			ws_walk(307, 349, 0, -1, 2);
+		}
+
+		kernel_trigger_dispatch_now(1);
+		break;
+
+	case 12:
+		_volume -= 10;
+		if (_volume > 0) {
+			digi_change_volume(2, _volume);
+			kernel_timing_trigger(4, 12);
+		} else {
+			digi_stop(1);
+			digi_unload_stream_breaks(SERIES1);
+			digi_stop(2);
+			digi_unload("100_013");
+			player_set_commands_allowed(true);
+			_volume = 255;
+		}
+		break;
+
+	case 20:
+		terminateMachineAndNull(_series2);
+		inv_give_to_player("jawz o' life");
+		break;
+
+	case 21:
+		if (inv_object_is_here("jawz o' life"))
+			terminateMachineAndNull(_series2);
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room137::parser() {
@@ -232,6 +304,16 @@ void Room137::conv15() {
 	}
 }
 
+void Room137::unloadAssets() {
+	const char *NAMES[13] = {
+		"137_020", "137_021", "137_022", "137_023", "137_024",
+		"137_025", "137_026", "137_027", "138_028", "138_013",
+		"137_014", "137_015", "137_016"
+	};
+
+	for (int i = 0; i < 13; ++i)
+		digi_unload(NAMES[i]);
+}
 
 } // namespace Rooms
 } // namespace Burger
