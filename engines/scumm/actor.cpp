@@ -509,7 +509,13 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 		deltaYFactor = 0;
 	}
 
-	if ((uint)ABS(deltaXFactor >> 16) > _speedx) {
+	// We used to have ABS(deltaXFactor >> 16) for the calculation here, which
+	// caused bug no. https://bugs.scummvm.org/ticket/14582
+	// For SCUMM4-6 it is obvious from disam that they do the division by 0x10000.
+	// SCUMM7/8 original code gives the impression of using deltaXFactor >> 16 at
+	// first glance, but it really doesn't. It is a more complicated operation
+	// which amounts to the exact same thing as the following...
+	if ((uint)ABS(deltaXFactor / 0x10000) > _speedx) {
 		deltaXFactor = _speedx << 16;
 		if (diffX < 0)
 			deltaXFactor = -deltaXFactor;
