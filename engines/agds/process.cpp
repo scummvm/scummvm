@@ -293,9 +293,6 @@ void Process::run() {
 			restart = true;
 			break;
 		case kExitCodeSaveGame:
-			if (_engine->saveGameState(getExitIntArg1(), "").getCode() != Common::kNoError) {
-				warning("failed to save game");
-			}
 			break;
 		default:
 			error("unknown process exit code %d", code);
