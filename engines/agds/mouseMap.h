@@ -47,9 +47,8 @@ struct MouseRegion {
 		enabled = true;
 	}
 
-	void disable(AGDSEngine *engine) {
+	void disable() {
 		enabled = false;
-		hide(engine);
 	}
 
 	MouseRegion()
@@ -83,11 +82,11 @@ public:
 
 	int findFree() const;
 	int add(MouseRegion area);
-	void remove(AGDSEngine *engine, int id);
+	void remove(int id);
 
 	void hideAll(AGDSEngine *engine);
 
-	MouseRegion * find(Common::Point pos);
+	void hideInactive(AGDSEngine *engine, Common::Point pos);
 	MouseRegion * find(int id);
 };
 

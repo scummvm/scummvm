@@ -58,7 +58,6 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 	_nextScreenType(ScreenLoadingType::Normal),
 	_mouse(400, 300),
 	_userEnabled(true), _systemUserEnabled(true),
-	_currentRegion(),
 	_random("agds"),
 	_inventoryRegion(),
 	_soundManager(this, system->getMixer()),
@@ -371,11 +370,6 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 }
 
 void AGDSEngine::resetCurrentScreen() {
-	if (_currentRegion) {
-		_currentRegion->hide(this);
-		_currentRegion = NULL;
-	}
-
 	delete _currentScreen;
 	_currentScreen = NULL;
 	_currentScreenName.clear();
@@ -483,19 +477,12 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 			break;
 		case 0:
 			debug("disabling mouse area %d", id);
-			if (_currentRegion) {
-				_currentRegion->hide(this);
-				_currentRegion = NULL;
-			}
-			mouseArea->disable(this);
+			mouseArea->hide(this);
+			mouseArea->disable();
 			break;
 		case -1:
 			debug("removing mouse area %d", id);
-			if (_currentRegion) {
-				_currentRegion->hide(this);
-				_currentRegion = NULL;
-			}
-			_mouseMap.remove(this, id);
+			_mouseMap.remove(id);
 			break;
 		default:
 			warning("invalid value for changeMouseArea: %d", enabled);
@@ -573,30 +560,7 @@ Common::Error AGDSEngine::run() {
 
 			case Common::EVENT_MOUSEMOVE:
 				_mouse = event.mouse;
-				if (userEnabled()) {
-					MouseRegion *region = _mouseMap.find(_mouse);
-					if (region != _currentRegion) {
-						if (_currentRegion) {
-							MouseRegion *currentRegion = _currentRegion;
-							_currentRegion = NULL;
-							currentRegion->hide(this);
-						}
-
-						if (region) {
-							_currentRegion = region;
-							region->show(this);
-						}
-					}
-					if (_inventoryRegion && _inventory.enabled()) {
-						if (_mouseMap.disabled()) {
-							_inventory.visible(false);
-						} else {
-							if (_userEnabled) {
-								_inventory.visible(_inventoryRegion->pointIn(_mouse));
-							}
-						}
-					}
-				}
+				_mouseMap.hideInactive(this, _mouse);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
