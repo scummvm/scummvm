@@ -23,7 +23,7 @@
 #ifndef M4_ADV_R_ADV_H
 #define M4_ADV_R_ADV_H
 
-#include "common/textconsole.h"
+#include "common/algorithm.h"
 #include "m4/adv_r/adv_hotspot.h"
 #include "m4/m4_types.h"
 
@@ -90,8 +90,12 @@ struct SceneDef {
 	int32 front_y = 400, back_y = 100;				// Player scaling baselines
 	int32 front_scale = 100, back_scale = 85;		// Player scaling factors
 
-	int16 depth_table[16] = { 0 };					// Player sprite depth table
+	int16 depth_table[16];							// Player sprite depth table
 	int32 numRailNodes = 0;							// # of rails
+
+	SceneDef() {
+		Common::fill(depth_table, depth_table + 16, 0);
+	}
 };
 
 } // namespace M4
