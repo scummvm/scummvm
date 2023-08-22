@@ -402,6 +402,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 ScummEngine::~ScummEngine() {
 	delete _musicEngine;
 
+	// Delete the sound object earlier than the actors
+	// for HE games, since in SoundHE::stopAllSounds() we
+	// try dereferencing actors to stop the speaking chore.
+	if (_game.heversion != 0)
+		delete _sound;
+
 	_mixer->stopAll();
 
 	if (_actors) {
@@ -427,7 +433,8 @@ ScummEngine::~ScummEngine() {
 	delete _versionDialog;
 	delete _fileHandle;
 
-	delete _sound;
+	if (_game.heversion == 0)
+		delete _sound;
 
 	delete _costumeLoader;
 	delete _costumeRenderer;
