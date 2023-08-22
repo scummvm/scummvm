@@ -1325,7 +1325,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 }
 
 void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType) {
-	debug(0, "captureImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
+	debug(7, "captureImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	Common::Rect rCapt(srcw, srch);
 	if (rCapt.intersects(r)) {
 		rCapt.clip(r);
@@ -1909,7 +1909,7 @@ struct PolygonDrawData {
 };
 
 void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2, int compType) {
-	debug(0, "captureWizPolygon: resNum %d, maskNum %d maskState %d, id1 %d id2 %d compType %d", resNum, maskNum, maskState, id1, id2, compType);
+	debug(7, "captureWizPolygon: resNum %d, maskNum %d maskState %d, id1 %d id2 %d compType %d", resNum, maskNum, maskState, id1, id2, compType);
 
 	int i, j;
 	WizPolygon *wp;
@@ -2003,7 +2003,7 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 }
 
 void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette) {
-	debug(0, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
+	debug(7, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
 	const Common::Rect *r = NULL;
 	uint8 *srcWizBuf = NULL;
 	bool freeBuffer = true;
@@ -2013,7 +2013,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			flags |= kWIFBlitToMemBuffer;
 
 			if (flags & 0x800000) {
-				debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
+				debug(7, "drawWizPolygonTransform() unhandled flag 0x800000");
 			}
 
 			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, flags, 0, _vm->getHEPaletteSlot(palette), 0);
@@ -2242,7 +2242,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	int sourceImage = 0;
 	if (params->processFlags & kWPFMaskImg) {
 		sourceImage = params->sourceImage;
-		debug(0, "displayWizComplexImage() flag kWPFMaskImg");
+		debug(7, "displayWizComplexImage() flag kWPFMaskImg");
 	}
 	int palette = 0;
 	if (params->processFlags & kWPFPaletteNum) {
@@ -2277,7 +2277,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	int zbuffer = 0;
 	if (params->processFlags & kWPFZBuffer) {
 		zbuffer = params->img.zbuffer;
-		debug(0, "displayWizComplexImage() unhandled flag kWPFZBuffer");
+		debug(7, "displayWizComplexImage() unhandled flag kWPFZBuffer");
 	}
 	const Common::Rect *r = NULL;
 	if (params->processFlags & kWPFClipBox) {
@@ -2556,7 +2556,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 }
 
 void Wiz::processWizImage(const WizParameters *params) {
-	debug(3, "processWizImage: processMode %d", params->processMode);
+	debug(7, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
@@ -2656,7 +2656,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 				img_y = params->img.y1;
 			}
 			if (params->processFlags & kWPFParams) {
-				debug(0, "Compression %d Color Depth %d", params->params1, params->params2);
+				debug(7, "Compression %d Color Depth %d", params->params1, params->params2);
 			}
 			createWizEmptyImage(params->img.resNum, img_x, img_y, img_w, img_h);
 		}
