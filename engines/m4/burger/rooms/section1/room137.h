@@ -34,13 +34,16 @@ private:
 	bool _flag2 = false;
 	bool _flag3 = false;
 	int _volume = 255;
-	machine *_series1 = nullptr;
 	int _mode1 = 0;
 	int _mode2 = 0;
 	int _mode3 = 0;
+	int _mode4 = 0;
 	const char *_digi1 = nullptr;
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
 
 	void conv15();
+	void unloadAssets();
 
 public:
 	Room137() : Room() {}
