@@ -686,7 +686,9 @@ void SoundManager::soundEffectMaintenance(uint16 channelID) {
 	}
 
 	// Panning/volume/rate adjustment used in nancy3 and up. Originally handled by DirectSound 3D
-	if (g_nancy->getGameType() >= 3 && chan.effectData) {
+	if (g_nancy->getGameType() >= 3 && chan.effectData &&
+			(chan.playCommands & ~kPlaySequential) & (kPlaySequentialFrameAnchor | kPlayRandomPosition | kPlayMoveLinear)) {
+
 		const Math::Vector3d &listenerPos = NancySceneState.getSceneSummary().listenerPosition;
 		float dist = listenerPos.getDistanceTo(chan.position);
 		float volume;
