@@ -863,71 +863,196 @@ void RaycastLevelBuilder::validateMap() {
 	}
 }
 
+class RaycastDeferredLoader : public DeferredLoader {
+public:
+	RaycastDeferredLoader(RaycastPuzzle &owner, uint width, uint height, uint verticalHeight) :
+		_owner(owner),
+		_builder(width, height, verticalHeight),
+		_loadState(kInitDrawSurface),
+		_x(0), _y(0),
+		_isDone(false) {}
+	virtual ~RaycastDeferredLoader() {}
+
+	bool _isDone;
+
+private:
+	bool loadInner() override;
+
+	enum State { kInitDrawSurface, kCopyData, kInitMap, kInitTables1, kInitTables2, kLoadTextures };
+
+	State _loadState;
+
+	RaycastPuzzle &_owner;
+	RaycastLevelBuilder _builder;
+
+	uint16 _x, _y;
+};
+
+bool RaycastDeferredLoader::loadInner() {
+	switch(_loadState) {
+	case kInitDrawSurface : {
+		Common::Rect viewport = g_nancy->_viewportData->bounds;
+		_owner.moveTo(viewport);
+		_owner._drawSurface.create(viewport.width(), viewport.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+		_owner.setTransparent(true);
+
+		_loadState = kCopyData;
+		break;
+	}
+	case kCopyData :
+		_owner._wallMap.swap(_builder._wallMap);
+		_owner._infoMap.swap(_builder._infoMap);
+		_owner._floorMap.swap(_builder._floorMap);
+		_owner._ceilingMap.swap(_builder._ceilingMap);
+		_owner._heightMap.swap(_builder._heightMap);
+		_owner._wallLightMap.swap(_builder._wallLightMap);
+		_owner._floorCeilingLightMap.swap(_builder._floorCeilingLightMap);
+		_owner._mapFullWidth = _builder._fullWidth;
+		_owner._mapFullHeight = _builder._fullHeight;
+
+		_loadState = kInitMap;
+		break;
+	case kInitMap : {
+		// TODO map is a debug feature, make sure to hide it
+		// Also, fix the fact that it's rendered upside-down
+		_owner._map._drawSurface.create(_owner._mapFullWidth, _owner._mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
+		Common::Rect mapPos(g_nancy->_bootSummary->textboxScreenPosition);
+		mapPos.setWidth(_owner._mapFullWidth * 2);
+		mapPos.setHeight(_owner._mapFullHeight * 2);
+		_owner._map.moveTo(mapPos);
+		_owner._map.init();
+		_owner.drawMap();
+
+		_loadState = kInitTables1;
+		break;
+	}
+	case kInitTables1 : {
+		Common::Rect selectedBounds = _owner._puzzleData->screenViewportSizes[_owner._puzzleData->viewportSizeUsed];
+
+		_owner._wallCastColumnAngles.resize(g_nancy->_viewportData->screenPosition.width());
+		uint center = selectedBounds.left + (selectedBounds.width() >> 1);
+		for (uint i = 0; i < _owner._wallCastColumnAngles.size(); ++i) {
+			int32 &angle = _owner._wallCastColumnAngles[i];
+			angle = (int32)(atan(((float)i - (float)center) / (float)_owner._fov) * _owner._rotationSingleStep);
+			clampRotation(angle);
+		}
+
+		_owner._leftmostAngle = _owner._wallCastColumnAngles[selectedBounds.left];
+		_owner._rightmostAngle = _owner._wallCastColumnAngles[selectedBounds.right];
+
+		_loadState = kInitTables2;
+		break;
+	}
+	case kInitTables2 : {
+		_owner._sinTable.resize(4096);
+		_owner._cosTable.resize(4096);
+
+		for (uint i = 0; i < 4096; ++i) {
+			double f = (i * _owner._pi * 2) / 4096;
+			_owner._cosTable[i] = cos(f);
+			_owner._sinTable[i] = sin(f);
+		}
+
+		_owner._maxWorldDistance = sqrt(((128 * _owner._mapFullWidth) - 1) * ((128 * _owner._mapFullHeight) - 1) * 2);
+		_owner._depthBuffer.resize(g_nancy->_viewportData->bounds.width());
+		_owner._zBuffer.resize(g_nancy->_viewportData->bounds.width() * g_nancy->_viewportData->bounds.height(), 0);
+		_owner._lastZDepth = 0;
+
+		_loadState = kLoadTextures;
+		break;
+	}
+	case kLoadTextures: {
+		bool shouldBreak = false;
+
+		for (; _y < _owner._mapFullHeight; ++_y) {
+			if (_x >= _owner._mapFullWidth) {
+				_x = 0;
+			}
+			
+			for (; _x < _owner._mapFullWidth && !shouldBreak; ++_x) {
+				uint32 wallMapVal = _owner._wallMap[_y * _owner._mapFullHeight + _x];
+
+				for (uint i = 0; i < 3; ++i) {
+					byte textureID = wallMapVal & 0xFF;
+
+					if (textureID & 0x80) {
+						if (!_owner._specialWallTextures.contains(textureID & 0x7F)) {
+							_owner.createTextureLightSourcing(&_owner._specialWallTextures[textureID & 0x7F], _owner._puzzleData->specialWallNames[(textureID & 0x7F) - 1]);
+							shouldBreak = true;
+						}
+					} else if (textureID) {
+						if (!_owner._wallTextures.contains(textureID & 0x7F)) {
+							_owner.createTextureLightSourcing(&_owner._wallTextures[textureID], _owner._puzzleData->wallNames[textureID - 1]);
+							shouldBreak = true;
+						}
+					}
+
+					wallMapVal >>= 8;
+				}
+
+				if (shouldBreak) {
+					break;
+				}
+
+				int16 floorMapVal = _owner._floorMap[_y * _owner._mapFullWidth + _x];
+				int16 ceilingMapVal = _owner._ceilingMap[_y * _owner._mapFullWidth + _x];
+
+				if (!_owner._floorTextures.contains(floorMapVal)) {
+					_owner.createTextureLightSourcing(&_owner._floorTextures[floorMapVal], _owner._puzzleData->floorNames[floorMapVal]);
+					shouldBreak = true;
+					break;
+				}
+
+				if (!_owner._ceilingTextures.contains(ceilingMapVal)) {
+					_owner.createTextureLightSourcing(&_owner._ceilingTextures[ceilingMapVal], _owner._puzzleData->ceilingNames[ceilingMapVal]);
+					shouldBreak = true;
+					break;
+				}
+			}
+
+			if (shouldBreak) {
+				break;
+			}
+		}
+
+		if (!shouldBreak) {
+			for (auto &a : _owner._specialWallTextures) {
+				for (auto &tex : a._value) {
+					tex.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+				}
+			}
+
+			// TODO these need to be set according to the start position in _infoMap
+			_owner._playerRotation = 2048;
+			_owner._playerX = _owner._playerY = 320;
+			
+			_isDone = true;
+		}
+
+		break;
+	}
+	}
+
+	return _isDone;
+}
+
 void RaycastPuzzle::init() {
 	_puzzleData = g_nancy->_raycastPuzzleData;
 	assert(_puzzleData);
 
-	RaycastLevelBuilder levelBuilder(_mapWidth, _mapHeight, _wallHeight);
+	RaycastDeferredLoader *loader = _loaderPtr.get();
+	if (!loader) {
+		_loaderPtr.reset(new RaycastDeferredLoader(*this, _mapWidth, _mapHeight, _wallHeight));
+		auto castedPtr = _loaderPtr.dynamicCast<DeferredLoader>();
+		g_nancy->addDeferredLoader(castedPtr);
+	} else {
+		if (loader->_isDone) {
+			_loaderPtr.reset();
+			registerGraphics();
 
-	_wallMap.push_back(levelBuilder._wallMap);
-	_infoMap.push_back(levelBuilder._infoMap);
-	_floorMap.push_back(levelBuilder._floorMap);
-	_ceilingMap.push_back(levelBuilder._ceilingMap);
-	_heightMap.push_back(levelBuilder._heightMap);
-	_wallLightMap.push_back(levelBuilder._wallLightMap);
-	_floorCeilingLightMap.push_back(levelBuilder._floorCeilingLightMap);
-
-	_mapFullWidth = levelBuilder._fullWidth;
-	_mapFullHeight = levelBuilder._fullHeight;
-
-	Common::Rect viewport = g_nancy->_viewportData->bounds;
-	moveTo(viewport);
-	_drawSurface.create(viewport.width(), viewport.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	setTransparent(true);
-
-	// TODO map is a debug feature, make sure to hide it
-	// Also, fix the fact that it's rendered upside-down
-	_map._drawSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
-	Common::Rect mapPos(g_nancy->_bootSummary->textboxScreenPosition);
-	mapPos.setWidth(_mapFullWidth * 2);
-	mapPos.setHeight(_mapFullHeight * 2);
-	_map.moveTo(mapPos);
-	_map.init();
-
-	drawMap();
-
-	Common::Rect selectedBounds = _puzzleData->screenViewportSizes[_puzzleData->viewportSizeUsed];
-
-	_wallCastColumnAngles.resize(g_nancy->_viewportData->screenPosition.width());
-	uint center = selectedBounds.left + (selectedBounds.width() >> 1);
-	for (uint i = 0; i < _wallCastColumnAngles.size(); ++i) {
-		int32 &angle = _wallCastColumnAngles[i];
-		angle = (int32)(atan(((float)i - (float)center) / (float)_fov) * _rotationSingleStep);
-		clampRotation(angle);
+			_state = kRun;
+		}
 	}
-
-	_leftmostAngle = _wallCastColumnAngles[selectedBounds.left];
-	_rightmostAngle = _wallCastColumnAngles[selectedBounds.right];
-
-	_sinTable.resize(4096);
-	_cosTable.resize(4096);
-
-	for (uint i = 0; i < 4096; ++i) {
-		double f = (i * _pi * 2) / 4096;
-		_cosTable[i] = cos(f);
-		_sinTable[i] = sin(f);
-	}
-
-	_maxWorldDistance = sqrt(((128 * _mapFullWidth) - 1) * ((128 * _mapFullHeight) - 1) * 2);
-	_depthBuffer.resize(viewport.width());
-	_zBuffer.resize(viewport.width() * viewport.height());
-
-	loadTextures();
-	clearZBuffer();
-
-	// TODO these need to be set according to the start position in _infoMap
-	_playerRotation = 2048;
-	_playerX = _playerY = 320;
 }
 
 void RaycastPuzzle::registerGraphics() {
@@ -955,10 +1080,6 @@ void RaycastPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
 		init();
-		registerGraphics();
-
-		_state = kRun;
-
 		break;
 	case kRun:
 		// TODO check light switches
@@ -1237,44 +1358,7 @@ void RaycastPuzzle::drawMap() {
 
 void RaycastPuzzle::loadTextures() {
 	// TODO this is slow and freezes the engine for a few seconds
-	for (uint y = 0; y < _mapFullHeight; ++y) {
-		for (uint x = 0; x < _mapFullWidth; ++x) {
-			uint32 wallMapVal = _wallMap[y * _mapFullHeight + x];
-
-			for (uint i = 0; i < 3; ++i) {
-				byte textureID = wallMapVal & 0xFF;
-
-				if (textureID & 0x80) {
-					if (!_specialWallTextures.contains(textureID)) {
-						createTextureLightSourcing(&_specialWallTextures[textureID & 0x7F], _puzzleData->specialWallNames[(textureID & 0x7F) - 1]);
-					}
-				} else if (textureID) {
-					if (!_wallTextures.contains(textureID)) {
-						createTextureLightSourcing(&_wallTextures[textureID], _puzzleData->wallNames[textureID - 1]);
-					}
-				}
-
-				wallMapVal >>= 8;
-			}
-
-			int16 floorMapVal = _floorMap[y * _mapFullWidth + x];
-			int16 ceilingMapVal = _ceilingMap[y * _mapFullWidth + x];
-
-			if (!_floorTextures.contains(floorMapVal)) {
-				createTextureLightSourcing(&_floorTextures[floorMapVal], _puzzleData->floorNames[floorMapVal]);
-			}
-
-			if (!_ceilingTextures.contains(ceilingMapVal)) {
-				createTextureLightSourcing(&_ceilingTextures[ceilingMapVal], _puzzleData->ceilingNames[ceilingMapVal]);
-			}
-		}
-	}
-
-	for (auto &a : _specialWallTextures) {
-		for (auto &tex : a._value) {
-			tex.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
-		}
-	}
+	
 }
 
 void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, Common::String &textureName) {

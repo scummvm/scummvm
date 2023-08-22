@@ -239,6 +239,10 @@ void NancyEngine::setMouseEnabled(bool enabled) {
 	_cursorManager->showCursor(enabled); _input->setMouseInputEnabled(enabled);
 }
 
+void NancyEngine::addDeferredLoader(Common::SharedPtr<DeferredLoader> &loaderPtr) {
+	_deferredLoaderObjects.push_back(Common::WeakPtr<DeferredLoader>(loaderPtr));
+}
+
 Common::Error NancyEngine::run() {
 	setDebugger(new NancyConsole());
 
@@ -256,6 +260,8 @@ Common::Error NancyEngine::run() {
 
 	// Main loop
 	while (!shouldQuit()) {
+		uint32 frameEndTime = _system->getMillis() + 16;
+
 		_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		_input->processEvents();
 
@@ -289,7 +295,41 @@ Common::Error NancyEngine::run() {
 		}
 
 		_system->updateScreen();
-		_system->delayMillis(16);
+
+		// Use the spare time until the next frame to load larger data objects
+		// Some loading is guaranteed to happen even with no time left, to ensure
+		// slower systems won't be stuck waiting forever
+		if (_deferredLoaderObjects.size()) {
+			uint i = _deferredLoaderObjects.size() - 1;
+			int32 timePerObj = (frameEndTime - g_system->getMillis()) / _deferredLoaderObjects.size();
+
+			if (timePerObj < 0) {
+				timePerObj = 0;
+			}
+
+			for (auto *iter = _deferredLoaderObjects.begin(); iter < _deferredLoaderObjects.end(); ++iter) {
+				if (iter->expired()) {
+					iter = _deferredLoaderObjects.erase(iter);
+				} else {
+					auto objectPtr = iter->lock();
+					if (objectPtr) {
+						if (objectPtr->load(frameEndTime - (i * timePerObj))) {
+							iter = _deferredLoaderObjects.erase(iter);
+						}
+						--i;
+					}
+
+					if (_system->getMillis() > frameEndTime) {
+						break;
+					}
+				}
+			}
+		}
+
+		uint32 frameFinishTime = _system->getMillis();
+		if (frameFinishTime < frameEndTime) {
+			_system->delayMillis(frameEndTime - frameFinishTime);
+		}
 	}
 
 	if (State::Logo::hasInstance())

@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "common/str.h"
+#include "common/ptr.h"
 
 #include "engines/engine.h"
 
@@ -63,6 +64,7 @@ class SoundManager;
 class GraphicsManager;
 class CursorManager;
 class NancyConsole;
+class DeferredLoader;
 
 namespace State {
 class State;
@@ -100,6 +102,8 @@ public:
 	void setToPreviousState();
 
 	void setMouseEnabled(bool enabled);
+
+	void addDeferredLoader(Common::SharedPtr<DeferredLoader> &loaderPtr);
 
 	// The first few games used 1/2 for false/true in
 	// inventory, logic conditions, and event flags
@@ -164,6 +168,8 @@ private:
 	OSystem *_system;
 
 	const NancyGameDescription *_gameDescription;
+
+	Common::Array<Common::WeakPtr<DeferredLoader>> _deferredLoaderObjects;
 };
 
 extern NancyEngine *g_nancy;

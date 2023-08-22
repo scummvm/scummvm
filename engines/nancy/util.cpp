@@ -20,6 +20,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
+#include "common/system.h"
 
 namespace Nancy {
 
@@ -143,6 +144,30 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String>
 			str = buf;
 		}
 	}
+}
+
+bool DeferredLoader::load(uint32 endTime) {
+	uint32 loopStartTime = g_system->getMillis();
+	uint32 loopTime = 0; // Stores the loop that took the longest time to complete
+
+	while (loopTime + loopStartTime < endTime) {
+		if (loadInner()) {
+			return true;
+		}
+
+		uint32 loopEndTime = g_system->getMillis();
+		loopTime = MAX<uint32>(loopEndTime - loopStartTime, loopTime);
+		loopStartTime = loopEndTime;
+
+		// We do this after at least one execution to avoid the case where the game runs below
+		// the target fps, and thus has no spare milliseconds until the next frame. This way
+		// we ensure loading actually gets done, at the expense of some lag
+		if (g_system->getMillis() < endTime) {
+			break;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Nancy
