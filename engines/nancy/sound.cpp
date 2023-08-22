@@ -398,6 +398,10 @@ void SoundManager::pauseSound(const Common::String &chunkName, bool pause) {
 	pauseSound(_commonSounds[chunkName], pause);
 }
 
+void SoundManager::pauseAllSounds(bool pause) {
+	_mixer->pauseAll(pause);
+}
+
 bool SoundManager::isSoundPlaying(uint16 channelID) const {
 	if (channelID >= _channels.size() || !_channels[channelID].stream)
 		return false;

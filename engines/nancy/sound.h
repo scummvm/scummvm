@@ -81,6 +81,7 @@ public:
 	void pauseSound(uint16 channelID, bool pause);
 	void pauseSound(const SoundDescription &description, bool pause);
 	void pauseSound(const Common::String &chunkName, bool pause);
+	void pauseAllSounds(bool pause);
 
 	bool isSoundPlaying(uint16 channelID) const;
 	bool isSoundPlaying(const SoundDescription &description) const;

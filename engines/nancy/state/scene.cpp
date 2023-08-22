@@ -171,7 +171,13 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 			g_nancy->_cursorManager->setCursorItemID(getHeldItem());
 		}
 
-		unpauseSceneSpecificSounds();
+
+		if (prevState == NancyState::kPause) {
+			g_nancy->_sound->pauseAllSounds(false);
+		} else {
+			unpauseSceneSpecificSounds();
+		}
+
 		g_nancy->_sound->stopSound("MSND");
 	}
 }
@@ -182,7 +188,13 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	}
 
 	_actionManager.onPause(true);
-	pauseSceneSpecificSounds();
+
+	if (nextState == NancyState::kPause) {
+		g_nancy->_sound->pauseAllSounds(true);
+	} else {
+		pauseSceneSpecificSounds();
+	}
+
 	_gameStateRequested = NancyState::kNone;
 
 	// Re-register the clock so the open/close animation can continue playing inside Map
