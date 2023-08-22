@@ -928,6 +928,8 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 					_heChannel[channel].sound = song;
 					_heChannel[channel].priority = 255;
 
+					_vm->setHETimer(channel + HSND_TIMER_SLOT);
+
 					_vm->VAR(_vm->VAR_ERROR_FLAG) = 0;
 					return;
 				}
