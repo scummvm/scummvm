@@ -50,8 +50,14 @@ private:
 		ArchiveMember(GrpFile * parent, const Common::String &name, uint32 offset, uint32 size):
 			_parent(parent), _name(name), _offset(offset), _size(size) {
 		}
-		virtual Common::SeekableReadStream *createReadStream() const;
-		virtual Common::String getName() const {
+		Common::SeekableReadStream *createReadStream() const override;
+		Common::String getName() const override {
+			return getFileName();
+		}
+		Common::Path getPathInArchive() const override {
+			return _name;
+		}
+		Common::String getFileName() const override {
 			return _name;
 		}
 	};
