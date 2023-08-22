@@ -63,24 +63,24 @@ void Room104::init() {
 		break;
 
 	case 101:
-		_G(roomVal1) = 1;
+		_G(wilbur_should) = 1;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 105:
-		_G(roomVal1) = 2;
+		_G(wilbur_should) = 2;
 		digi_preload("104_005");
 		digi_play("104_005", 2, 255, 2);
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 107:
-		_G(roomVal1) = 3;
+		_G(wilbur_should) = 3;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 170:
-		_G(roomVal1) = 4;
+		_G(wilbur_should) = 4;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
@@ -423,7 +423,7 @@ void Room104::daemon() {
 		break;
 
 	case gCHANGE_WILBUR_ANIMATION:
-		switch (_G(roomVal1)) {
+		switch (_G(wilbur_should)) {
 		case 1:
 			ws_demand_location(315, 373);
 			ws_demand_facing(10);

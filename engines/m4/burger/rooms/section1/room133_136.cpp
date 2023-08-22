@@ -77,7 +77,7 @@ void Room133_136::init() {
 
 	case 134:
 	case 135:
-		_G(roomVal1) = 3;
+		_G(wilbur_should) = 3;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
@@ -86,7 +86,7 @@ void Room133_136::init() {
 		break;
 
 	case 137:
-		_G(roomVal1) = 4;
+		_G(wilbur_should) = 4;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
@@ -248,7 +248,7 @@ void Room133_136::daemon() {
 		break;
 
 	case gCHANGE_WILBUR_ANIMATION:
-		switch (_G(roomVal1)) {
+		switch (_G(wilbur_should)) {
 		case 3:
 			player_set_commands_allowed(true);
 			player_first_walk(639, 264, 9, 588, 252, 9, true);
