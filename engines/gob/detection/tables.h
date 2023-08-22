@@ -71,6 +71,8 @@ static const PlainGameDescriptor gobGames[] = {
 	{"adiboudessin", "Adibou presente Dessin"},
 	{"adiboudchoumer", "Adiboud'chou a la mer"},
 	{"adiboudchoubanquise", "Adiboud'chou sur la banquise"},
+	{"adiboudchoucampagne", "Adiboud'chou a la campagne"},
+	{"adiboudchoujunglesavane", "Adiboud'chou dans la jungle et la savane"},
 	{0, 0}
 };
 
