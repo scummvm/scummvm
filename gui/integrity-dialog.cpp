@@ -192,7 +192,7 @@ void IntegrityDialog::setState(ProcessState state) {
 		} else
 			_resultsText->setList(Common::U32StringArray({g_result->errorText}));
 
-		if (g_result->error) {
+		if (g_result->error != 0) {
 			_copyEmailButton->setVisible(true);
 			_copyEmailButton->setCmd(kCopyEmailCmd);
 		}

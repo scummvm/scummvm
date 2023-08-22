@@ -1836,11 +1836,11 @@
 
 	<dialog name = 'GameOptions_IntegrityDialog' overlays = 'Dialog.GameOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '16, 16, 16, 8' spacing = '8'>
+			<widget name = 'ResultsText'
+					height = '150'
+			/>
 			<widget name = 'WarningText'
 					height = 'Globals.Line.Height'
-			/>
-			<widget name = 'ResultsText'
-					height = '250'
 			/>
 			<widget name = 'StatusText'
 					height = 'Globals.Line.Height'
