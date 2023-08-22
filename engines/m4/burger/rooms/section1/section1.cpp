@@ -83,7 +83,7 @@ void Section1::updateDisablePlayer() {
 	g_vars->getInterface()->freshen_sentence();
 	walk(-1);
 
-	_G(flags)[V000] = _G(flags)[V043] ? 1002 : 1003;
+	_G(flags)[V000] = _G(flags)[kRoadOpened] ? 1002 : 1003;
 }
 
 void Section1::walk(int facing, int trigger) {
@@ -237,18 +237,18 @@ void Section1::daemon() {
 		_G(kernel).continue_handling_trigger = true;
 		break;
 	case 10028:
-		_G(flags)[V000] = _G(flags)[V043] ? 1002 : 1003;
+		_G(flags)[V000] = _G(flags)[kRoadOpened] ? 1002 : 1003;
 		break;
 	case 10029:
-		if (!_G(flags)[V043])
+		if (!_G(flags)[kRoadOpened])
 			_G(flags)[V063] = 1;
 		break;
 	case 10030:
-		if (_G(flags)[V043])
+		if (_G(flags)[kRoadOpened])
 			_G(flags)[V063] = 0;
 		break;
 	case 10031:
-		if (_G(flags)[V043])
+		if (_G(flags)[kRoadOpened])
 			_G(flags)[V000] = 1004;
 		break;
 	case 10032:

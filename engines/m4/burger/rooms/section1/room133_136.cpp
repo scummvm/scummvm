@@ -37,6 +37,33 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+static const seriesPlayBreak PLAY1[] = {
+	{  0, 12, nullptr,   1, 255, -1,    0, 0, 0, 0 },
+	{ 13, 30, "136_002", 2, 255, -1,    0, 0, 0, 0 },
+	{ 31, 57, "136_002", 2, 255, -1,    0, 0, 0, 0 },
+	{ 58, -1, nullptr,   2, 255, -1, 2048, 0, 0, 0 },
+	{ -1, -1, nullptr,   0,   0, -1,    0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesStreamBreak SERIES1[] = {
+	{  6, nullptr,   2, 255,  9, 0, 0, 0 },
+	{ 10, "100_022", 2, 255, -1, 0, 0, 0 },
+	{ -1, nullptr,   0,   0, -1, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak SERIES2[] = {
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak SERIES3[] = {
+	{  0, "100_010", 1, 255, -1, 0, nullptr, 0 },
+	{ 14, "100_011", 1, 255, -1, 0, nullptr, 0 },
+	{ 20, nullptr,   1, 255, 14, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
 void Room133_136::init() {
 	_G(player).walker_in_this_scene = true;
 	_flag = true;
@@ -51,7 +78,7 @@ void Room133_136::init() {
 	case 134:
 	case 135:
 		_G(roomVal1) = 3;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 136:
@@ -60,7 +87,7 @@ void Room133_136::init() {
 
 	case 137:
 		_G(roomVal1) = 4;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -75,10 +102,189 @@ void Room133_136::init() {
 }
 
 void Room133_136::daemon() {
+	int frame;
+
+	if (player_commands_allowed() && _G(roomVal2)) {
+		player_update_info();
+
+		if (_G(player_info).y < 188 && _flag) {
+			_flag = false;
+			kernel_timing_trigger(120, 1);
+			player_set_commands_allowed(false);
+			intr_freshen_sentence();
+			series_play("136cw01", 0xf00, 0, 2, 6, 0, 100, 0, 0, 0, 10);
+		}
+	}
+
+	switch (_G(kernel).trigger) {
+	case 1:
+		Section1::walk();
+		break;
+
+	case 2:
+		_G(flags)[V298] = 1;
+		digi_play("136c001", 1, 255, 5, 136);
+		kernel_trigger_dispatch_now(3);
+		break;
+
+	case 3:
+		if (_val1 == 1) {
+			frame = imath_ranged_rand(8, 10);
+			series_play("136cw01", 0xf00, 0, 3, 6, 0, 100, 0, 0, frame, frame);
+		} else {
+			ws_walk(217, 268, 0, 4, 2);
+			series_play("136cw01", 0xf00, 2, -1, 6, 0, 100, 0, 0, 0, 10);
+		}
+		break;
+
+	case 4:
+		wilbur_speech("136w009");
+		_flag = true;
+		player_set_commands_allowed(true);
+		break;
+
+	case 5:
+		_G(flags)[V298] = 0;
+		_val1 = 2;
+		break;
+
+	case 6:
+		pal_fade_set_start(0);
+		terminateMachineAndNull(_sign1);
+		terminateMachineAndNull(_sign2);
+		ws_hide_walker();
+		gr_backup_palette();
+		digi_preload("100_022");
+		digi_preload_stream_breaks(SERIES1);
+		kernel_timing_trigger(30, 7);
+		break;
+
+	case 7:
+		series_stream_with_breaks(SERIES1, "120dt01", 9, 0, 1009);
+		kernel_timing_trigger(1, 8);
+		break;
+
+	case 8:
+		pal_fade_init(15, 255, 100, 0, -1);
+		break;
+
+	case 9:
+		digi_change_volume(2, 0);
+		break;
+
+	case 10:
+		player_set_commands_allowed(true);
+		break;
+
+	case 11:
+		terminateMachineAndNull(_sign1);
+		terminateMachineAndNull(_sign2);
+
+		if (_G(flags)[kRoadOpened]) {
+			Section1::updateWalker(413, 281, 9, 15, true);
+		} else {
+			Section1::updateWalker(238, 226, 4, 15);
+		}
+		break;
+
+	case 13:
+		if ((_G(player_info).x < 320 && _G(player_info).y > 250) ||
+			(_G(player_info).y > 227 && !_G(flags)[kRoadOpened])) {
+			kernel_trigger_dispatch_now(11);
+		} else if (!_G(flags)[kRoadOpened]) {
+			digi_preload_stream_breaks(SERIES2);
+			series_stream_with_breaks(SERIES2, "136dt01", 6, 0x400, 14);
+		} else {
+			kernel_trigger_dispatch_now(11);
+		}
+		break;
+
+	case 14:
+		if (!_G(flags)[kRoadOpened]) {
+			_volume -= 10;
+			if (_volume > 0) {
+				digi_change_volume(2, _volume);
+				kernel_timing_trigger(3, 14);
+			} else {
+				digi_stop(1);
+				digi_unload_stream_breaks(SERIES2);
+				digi_stop(2);
+				digi_unload("100_013");
+				player_set_commands_allowed(true);
+				_volume = 255;
+			}
+		}
+		break;
+
+	case 15:
+		setupSign();
+		_G(walker).reset_walker_sprites();
+		digi_preload_stream_breaks(SERIES2);
+
+		if (_G(flags)[kRoadOpened]) {
+			_G(flags)[V000] = 1002;
+			series_stream_with_breaks(SERIES3, "136dt02", 6, 0x200, 6);
+		} else {
+			series_stream_with_breaks(SERIES2, "136dt01", 6, 0x200, 14);
+		}
+		break;
+
+	case 16:
+		ws_demand_location(398, 297, 8);
+		ws_hide_walker();
+		terminateMachineAndNull(_sign1);
+		terminateMachineAndNull(_sign2);
+		player_set_commands_allowed(false);
+		series_play_with_breaks(PLAY1, "136wi01", 0x300, 17, 3);
+		break;
+
+	case 17:
+		_G(flags)[kRoadOpened] = 1;
+		ws_unhide_walker();
+		player_set_commands_allowed(true);
+		setupSign();
+		setupSignWalkAreas();
+		wilbur_speech("136w0004");
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(roomVal1)) {
+		case 3:
+			player_set_commands_allowed(true);
+			player_first_walk(639, 264, 9, 588, 252, 9, true);
+			break;
+
+		case 4:
+			player_set_commands_allowed(true);
+			player_first_walk(0, 355, 3, 96, 340, 3, true);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case 10028:
+		if (player_commands_allowed() && _G(roomVal2) &&
+				INTERFACE_VISIBLE && !digi_play_state(1)) {
+			Section1::updateDisablePlayer();
+			digi_preload("100_013");
+			digi_play("100_013", 2);
+			kernel_timing_trigger(240, 13);
+		} else {
+			kernel_timing_trigger(60, 10028);
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room133_136::pre_parser() {
-	if (player_said("gear", "sign") && !_G(flags)[V043])
+	if (player_said("gear", "sign") && !_G(flags)[kRoadOpened])
 		player_hotspot_walk_override(246, 247, 8);
 
 	if (player_said("old bridge") &&
@@ -97,7 +303,7 @@ void Room133_136::parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (player_said("gear", "sign") && !_G(flags)[V043]) {
+	if (player_said("gear", "sign") && !_G(flags)[kRoadOpened]) {
 		kernel_trigger_dispatch_now(16);
 
 	} else if (_G(walker).wilbur_said(SAID)) {
@@ -127,7 +333,7 @@ void Room133_136::parser() {
 }
 
 void Room133_136::setupSign() {
-	if (_G(flags)[V043]) {
+	if (_G(flags)[kRoadOpened]) {
 		hotspot_set_active("sign", false);
 		hotspot_set_active("sign ", true);
 		_sign1 = series_play("136signr", 0x800, 0, -1, 600, -1, 100, 0, 0, 0, 0);
@@ -137,13 +343,13 @@ void Room133_136::setupSign() {
 		hotspot_set_active("sign ", false);
 		hotspot_set_active("sign", true);
 
-		_sign1 = series_play("136sign1", 0xa00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
-		_sign2 = series_play("136sin1s", 0xa01, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		_sign1 = series_play("136signl", 0xa00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		_sign2 = series_play("136sinls", 0xa01, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 	}
 }
 
 void Room133_136::setupSignWalkAreas() {
-	if (_G(flags)[V043]) {
+	if (_G(flags)[kRoadOpened]) {
 		intr_add_no_walk_rect(294, 263, 332, 278, 297, 292);
 		intr_add_no_walk_rect(332, 278, 380, 300, 297, 292);
 

@@ -552,7 +552,7 @@ void Room103::daemon() {
 		}
 		break;
 
-	case gTELEPORT:
+	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(roomVal1)) {
 		case 1:
 			digi_unload_stream_breaks(SERIES1);
@@ -566,7 +566,7 @@ void Room103::daemon() {
 			_G(roomVal1) = 3;
 			digi_preload_stream_breaks(SERIES3);
 			series_play("103wi04s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 9);
-			series_stream_with_breaks(SERIES3, "103wi04", 6, 0x100, gTELEPORT);
+			series_stream_with_breaks(SERIES3, "103wi04", 6, 0x100, gCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 3:
@@ -582,7 +582,7 @@ void Room103::daemon() {
 			terminateMachineAndNull(_series1);
 			ws_hide_walker();
 			series_play("103wi03s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, 19);
-			series_stream_with_breaks(SERIES4, "103wi03", 6, 0x100, gTELEPORT);
+			series_stream_with_breaks(SERIES4, "103wi03", 6, 0x100, gCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 5:
@@ -595,13 +595,13 @@ void Room103::daemon() {
 
 		case 6:
 			_G(roomVal1) = 7;
-			kernel_timing_trigger(1, gTELEPORT);
+			kernel_timing_trigger(1, gCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 7:
 			_G(roomVal1) = 8;
 			ws_hide_walker();
-			series_play_with_breaks(PLAY1, "103wi02", 0xa00, gTELEPORT, 2);
+			series_play_with_breaks(PLAY1, "103wi02", 0xa00, gCHANGE_WILBUR_ANIMATION, 2);
 			series_play("103wi02s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 27);
 			player_set_commands_allowed(false);
 			break;
@@ -639,20 +639,20 @@ void Room103::parser() {
 	if (!_G(walker).wilbur_said(SAID)) {
 		if (player_said("gear", "satellite dish") && _G(flags)[V023] == 0) {
 			_G(roomVal1) = 4;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			player_set_commands_allowed(false);
 			_G(player).command_ready = false;
 
 		} else if (player_said("gear", "door") || player_said("gear", "stairway")) {
 			_G(roomVal1) = 2;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			player_set_commands_allowed(false);
 			_G(player).command_ready = false;
 
 		} else if (player_said("ENTER", "FIRE ESCAPE") || player_said("gear", "FIRE ESCAPE")) {
 			_val2 = 1;
 			_G(roomVal1) = 6;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			player_set_commands_allowed(false);
 			_G(player).command_ready = false;
 		}

@@ -105,7 +105,7 @@ void Room135::init() {
 			_G(flags)[V039] = 1;
 
 		_G(roomVal1) = 37;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 133:
@@ -114,7 +114,7 @@ void Room135::init() {
 			_G(flags)[V039] = 1;
 
 		_G(roomVal1) = 38;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 135:
@@ -173,7 +173,7 @@ void Room135::daemon() {
 		break;
 
 	case 2:
-		kernel_trigger_dispatch_now(_G(flags)[V043] ? 26 : 1);
+		kernel_trigger_dispatch_now(_G(flags)[kRoadOpened] ? 26 : 1);
 		break;
 
 	case 3:
@@ -745,7 +745,7 @@ void Room135::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
-	case gTELEPORT:
+	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(roomVal1)) {
 		case 37:
 			player_set_commands_allowed(true);

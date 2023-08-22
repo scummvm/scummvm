@@ -64,24 +64,24 @@ void Room104::init() {
 
 	case 101:
 		_G(roomVal1) = 1;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 105:
 		_G(roomVal1) = 2;
 		digi_preload("104_005");
 		digi_play("104_005", 2, 255, 2);
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 107:
 		_G(roomVal1) = 3;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 170:
 		_G(roomVal1) = 4;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -422,7 +422,7 @@ void Room104::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
-	case gTELEPORT:
+	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(roomVal1)) {
 		case 1:
 			ws_demand_location(315, 373);
