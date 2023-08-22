@@ -49,7 +49,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("chunk_list", WRAP_METHOD(NancyConsole, Cmd_chunkList));
 	registerCmd("show_image", WRAP_METHOD(NancyConsole, Cmd_showImage));
 	registerCmd("play_video", WRAP_METHOD(NancyConsole, Cmd_playVideo));
-	registerCmd("play_audio", WRAP_METHOD(NancyConsole, Cmd_playAudio));
+	registerCmd("play_sound", WRAP_METHOD(NancyConsole, Cmd_playSound));
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
 	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
 	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listActionRecords));
@@ -62,6 +62,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("set_player_time", WRAP_METHOD(NancyConsole, Cmd_setPlayerTime));
 	registerCmd("get_difficulty", WRAP_METHOD(NancyConsole, Cmd_getDifficulty));
 	registerCmd("set_difficulty", WRAP_METHOD(NancyConsole, Cmd_setDifficulty));
+	registerCmd("sound_info", WRAP_METHOD(NancyConsole, Cmd_soundInfo));
 
 }
 
@@ -371,7 +372,7 @@ bool NancyConsole::Cmd_loadCal(int argc, const char **argv) {
 	return true;
 }
 
-bool NancyConsole::Cmd_playAudio(int argc, const char **argv) {
+bool NancyConsole::Cmd_playSound(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Plays an audio file\n");
 		debugPrintf("Usage: %s <name>\n", argv[0]);
@@ -876,6 +877,49 @@ bool NancyConsole::Cmd_setDifficulty(int argc, const char **argv) {
 	debugPrintf("Set difficulty to %i\n", diff);
 
 	return cmdExit(0, nullptr);
+}
+
+bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		const Math::Vector3d &pos = NancySceneState.getSceneSummary().listenerPosition;
+		const Math::Vector3d &or = g_nancy->_sound->_orientation;
+		debugPrintf("3D listener position: %f, %f, %f\n", pos.x(), pos.y(), pos.z());
+		debugPrintf("3D listener orientation: %f, %f, %f\n\n", or.x(), or.y(), or.z());
+	}
+
+	Common::Array<byte> channelIDs;
+	if (argc == 1) {
+		debugPrintf("Currently playing sounds:\n\n");
+		
+		for (uint i = 0; i < g_nancy->getStaticData().soundChannelInfo.numChannels; ++i) {
+			channelIDs.push_back(i);
+		}
+	} else {
+		for (int i = 1; i < argc; ++i) {
+			channelIDs.push_back(atoi(argv[i]));
+		}
+	}
+
+	for (byte channelID : channelIDs) {
+		const auto &chan = g_nancy->_sound->_channels[channelID];
+
+		if (g_nancy->_sound->isSoundPlaying(channelID)) {
+			debugPrintf("Channel %u, filename %s\n", channelID, chan.name.c_str());
+			debugPrintf("Source rate %i, playing at %i\n", chan.stream->getRate(), g_nancy->_sound->_mixer->getChannelRate(chan.handle));
+			debugPrintf("Volume: %u, pan: %i, numLoops: %u\n\n", chan.volume, g_nancy->_sound->_mixer->getChannelBalance(chan.handle), chan.numLoops);
+			
+			if (chan.playCommands != SoundManager::kPlaySequential) {
+				debugPrintf("\tPlay commands 0x%08x\n", chan.playCommands);
+
+				if (chan.effectData) {
+					debugPrintf("\tPosition: %f, %f, %f, ", chan.position.x(), chan.position.y(), chan.position.z());
+					debugPrintf("delta: %f, %f, %f\n\n", chan.positionDelta.x(), chan.positionDelta.y(), chan.positionDelta.z());
+				}
+			}
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Nancy

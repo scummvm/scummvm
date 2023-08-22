@@ -38,10 +38,11 @@ class QueuingAudioStream;
 namespace Nancy {
 
 class IFF;
-
+class NancyConsole;
 class NancyEngine;
 
 class SoundManager {
+	friend class NancyConsole;
 public:
 	// Settings for playing a sound, used in nancy3 and up
 	// Older versions had a different, non-bitflag enum, but testing 
