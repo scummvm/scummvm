@@ -876,7 +876,10 @@ void Process::loadGame() {
 void Process::saveGame() {
 	int saveSlot = pop();
 	debug("saveGame %d", saveSlot);
-	suspend(kExitCodeSaveGame, saveSlot);
+	if (_engine->saveGameState(saveSlot, "").getCode() != Common::kNoError) {
+		warning("failed to save game");
+	}
+	suspend(kExitCodeSaveGame);
 }
 
 void Process::getSaveGameName() {
