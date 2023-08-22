@@ -32,7 +32,8 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 
 	Common::Rect srcRect(getCharWidth(chr), _glyphH);
 	srcRect.moveTo(_cellW * (chr & 0x0f), _cellH * (chr >> 4));
-	_surface->blit(*dst, x, y, Graphics::FLIP_NONE, &srcRect);
+	if (!srcRect.isEmpty())
+		_surface->blit(*dst, x, y, Graphics::FLIP_NONE, &srcRect);
 }
 
 } // namespace AGDS
