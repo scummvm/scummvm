@@ -261,6 +261,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 			deleteIndex--;
 			_editString.deleteChar(deleteIndex);
 			setCaretPos(caretVisualPos(deleteIndex));
+			_selCaretPos = -1;
 			dirty = true;
 
 			sendCommand(_cmd, 0);
@@ -285,6 +286,8 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		if (deleteIndex < (int)_editString.size()) {
 			_editString.deleteChar(deleteIndex);
 			setCaretPos(caretVisualPos(deleteIndex));
+			_selCaretPos = -1;
+			_selOffset = 0;
 			dirty = true;
 
 			sendCommand(_cmd, 0);
