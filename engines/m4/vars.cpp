@@ -152,7 +152,7 @@ void Vars::game_systems_initialize(byte flags) {
 		inv_init(128);	// Initialize with 128 objects
 
 	if (flags & INSTALL_INVERSE_PALETTE)
-		_inverse_pal = new InvPal("");	// Ceate an empty color table.
+		_inverse_pal = new InvPal(nullptr);		// Create an empty color table.
 	else
 		_inverse_pal = nullptr;
 }
