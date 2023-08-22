@@ -285,7 +285,7 @@ void Room105::init() {
 	case 104:
 		ws_demand_location(310, 353, 11);
 		_G(roomVal1) = 62;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -1280,7 +1280,7 @@ void Room105::daemon() {
 		ws_unhide_walker();
 		break;
 
-	case gTELEPORT:
+	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(roomVal1)) {
 		case 62:
 			if (_G(flags)[V112] && !_G(flags)[V034]) {

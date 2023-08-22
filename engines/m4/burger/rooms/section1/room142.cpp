@@ -166,9 +166,9 @@ void Room142::init() {
 		&_G(flags)[V058], 0, &_val2, 13));
 	_MATCH.push_back(WilburMatch("LOOK AT", "PARKING LOT", 5,
 		&_G(flags)[V058], 0, &_val2, 13));
-	_MATCH.push_back(WilburMatch("GEAR", "ICE BOX", gTELEPORT,
+	_MATCH.push_back(WilburMatch("GEAR", "ICE BOX", gCHANGE_WILBUR_ANIMATION,
 		&_G(flags)[V059], 0, &_G(roomVal1), 1));
-	_MATCH.push_back(WilburMatch("TAKE", "FANBELT", gTELEPORT,
+	_MATCH.push_back(WilburMatch("TAKE", "FANBELT", gCHANGE_WILBUR_ANIMATION,
 		nullptr, 0, &_G(roomVal1), 9));
 	_MATCH.push_back(WilburMatch("GEAR", "BACK DOOR", 6,
 		nullptr, 0, nullptr, 0));
@@ -182,7 +182,7 @@ void Room142::init() {
 		if (_G(flags)[V059]) {
 			ws_hide_walker();
 			_G(roomVal1) = 2;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -412,13 +412,13 @@ void Room142::daemon() {
 		break;
 
 
-	case gTELEPORT:
+	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(roomVal1)) {
 		case 1:
 			terminateMachineAndNull(_series5);
 			disable_player();
 			_G(roomVal1) = 2;
-			series_play_with_breaks(PLAY9, "142wi04", 0xdff, gTELEPORT, 3);
+			series_play_with_breaks(PLAY9, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
@@ -438,7 +438,7 @@ void Room142::daemon() {
 				terminateMachineAndNull(_series7);
 				_G(roomVal1) = 4;
 
-				series_play_with_breaks(PLAY11, "142wi04", 0xdff, gTELEPORT, 3);
+				series_play_with_breaks(PLAY11, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -456,7 +456,7 @@ void Room142::daemon() {
 			terminateMachineAndNull(_series7);
 			_G(roomVal1) = 6;
 
-			series_play_with_breaks(PLAY10, "142wi02", 0xdff, gTELEPORT, 3);
+			series_play_with_breaks(PLAY10, "142wi02", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 6:
@@ -472,7 +472,7 @@ void Room142::daemon() {
 			terminateMachineAndNull(_series7);
 			_G(roomVal1) = 8;
 
-			series_play_with_breaks(PLAY10, "142wi04", 0xdff, gTELEPORT, 3);
+			series_play_with_breaks(PLAY10, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 8:
@@ -486,7 +486,7 @@ void Room142::daemon() {
 		case 9:
 			disable_player();
 			_G(roomVal1) = 10;
-			series_play_with_breaks(PLAY12, "142wi05", 0x400, gTELEPORT, 3);
+			series_play_with_breaks(PLAY12, "142wi05", 0x400, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 10:
@@ -502,7 +502,7 @@ void Room142::daemon() {
 		break;
 
 	case 10028:
-		if (!_G(flags)[V043]) {
+		if (!_G(flags)[kRoadOpened]) {
 			if (_series2) {
 				terminateMachineAndNull(_series2);
 				terminateMachineAndNull(_series3);
@@ -571,7 +571,7 @@ void Room142::daemon() {
 	case 10032:
 		if (_series2) {
 			terminateMachineAndNull(_series2);
-			_G(flags)[V000] = _G(flags)[V043] ? 1002 : 1004;
+			_G(flags)[V000] = _G(flags)[kRoadOpened] ? 1002 : 1004;
 		}
 
 		if (!_G(flags)[V058]) {
@@ -605,7 +605,7 @@ void Room142::pre_parser() {
 
 		if (player_said("GEAR", "ICE BOX")) {
 			_G(roomVal1) = 5;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else if (player_said("ICE")) {
 			if (player_said("LOOK AT")) {
 				if (_G(flags)[V040] && !inv_player_has("BLOCK OF ICE")) {
@@ -619,7 +619,7 @@ void Room142::pre_parser() {
 				} else if (inv_player_has("BLOCK_OF_ICE")) {
 					wilbur_speech("142w009");
 				} else {
-					kernel_trigger_dispatch_now(gTELEPORT);
+					kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 				}
 			} else if (player_said("GEAR")) {
 				wilbur_speech("142w002");
@@ -628,7 +628,7 @@ void Room142::pre_parser() {
 			}
 		} else {
 			_G(roomVal1) = 7;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 
 		_G(player).command_ready = false;

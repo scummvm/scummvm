@@ -35,6 +35,7 @@ private:
 	noWalkRect *_walkCodes = nullptr;
 	machine *_sign1 = nullptr;
 	machine *_sign2 = nullptr;
+	int _val1 = 0;
 
 	void setupSign();
 	void setupSignWalkAreas();

@@ -96,7 +96,7 @@ static const seriesPlayBreak PLAY_BREAKS3[] = {
 static const seriesPlayBreak PLAY_BREAKS4[] = {
 	{   0,  6, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
 	{   7,  9, "101w005", 1, 255, -1,    0, 0, nullptr, 0 },
-	{  10, -1, nullptr,   1, 255, gTELEPORT, 0, 0, nullptr, 0 },
+	{  10, -1, nullptr,   1, 255, gCHANGE_WILBUR_ANIMATION, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -160,27 +160,27 @@ void Room101::init() {
 		ws_hide_walker(_G(my_walker));
 
 		_G(roomVal1) = 6;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 104:
 		_G(roomVal1) = 2;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 106:
 		_G(roomVal1) = 3;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 135:
 		_G(roomVal1) = 4;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 142:
 		_G(roomVal1) = 5;
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -429,7 +429,7 @@ void Room101::daemon() {
 	case 21:
 		digi_play("101_002", 2, 255, -1);
 		_G(roomVal1) = 18;
-		series_play("101ha01", 3840, 0, gTELEPORT, 6, 0, 100, 0, 0, 14, -1);
+		series_play("101ha01", 3840, 0, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 14, -1);
 		break;
 
 	case 23:
@@ -472,7 +472,7 @@ void Room101::daemon() {
 		Section1::updateWalker(226, 281, 8, 26);
 		break;
 
-	case gTELEPORT:
+	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(roomVal1)) {
 		case 2:
 			player_set_commands_allowed(true);
@@ -504,7 +504,7 @@ void Room101::daemon() {
 
 		case 6:
 			_G(roomVal1) = 7;
-			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, gTELEPORT, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
 		case 7:
@@ -516,7 +516,7 @@ void Room101::daemon() {
 			// Barbershop door open
 			_G(roomVal1) = 9;
 			terminateMachineAndNull(_doorMachine);
-			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gTELEPORT, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 9:
@@ -526,7 +526,7 @@ void Room101::daemon() {
 
 		case 10:
 			_G(roomVal1) = 11;
-			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 256, gTELEPORT, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
 		case 11:
@@ -538,17 +538,17 @@ void Room101::daemon() {
 		case 14:
 			terminateMachineAndNull(_doorMachine);
 			_G(roomVal1) = 15;
-			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gTELEPORT, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 15:
 			_G(roomVal1) = 16;
-			digi_play("101h001", 1, 255, gTELEPORT);
+			digi_play("101h001", 1, 255, gCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 16:
 			_G(roomVal1) = 17;
-			series_play_with_breaks(PLAY_BREAKS2, "101wi03", 3072, gTELEPORT, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY_BREAKS2, "101wi03", 3072, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 17:
@@ -558,9 +558,9 @@ void Room101::daemon() {
 			if (_G(flags)[V005]) {
 				Common::String name = Common::String::format("101h003%c",
 					'a' + imath_ranged_rand(0, 5));
-				digi_play(name.c_str(), 1, 255, gTELEPORT);
+				digi_play(name.c_str(), 1, 255, gCHANGE_WILBUR_ANIMATION);
 			} else {
-				digi_play("101h002", 1, 255, gTELEPORT);
+				digi_play("101h002", 1, 255, gCHANGE_WILBUR_ANIMATION);
 				_G(flags)[V005] = 1;
 			}
 
@@ -579,7 +579,7 @@ void Room101::daemon() {
 
 		case 20:
 			_G(roomVal1) = 21;
-			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, gTELEPORT, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
 		case 21:
@@ -599,7 +599,7 @@ void Room101::daemon() {
 		break;
 
 	case 10028:
-		if (_G(flags)[V043]) {
+		if (_G(flags)[kRoadOpened]) {
 			_G(kernel).continue_handling_trigger = true;
 
 		} else if (player_commands_allowed() && _G(roomVal2) &&
@@ -647,26 +647,26 @@ void Room101::parser() {
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 8;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else if (_G(flags)[V013]) {
 			ws_demand_location(_G(my_walker), 338, 265);
 			ws_demand_facing(_G(my_walker), 10);
 			ws_hide_walker(_G(my_walker));
 			player_set_commands_allowed(false);
 			_G(roomVal1) = 14;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else {
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 8;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 
 	} else if (player_said("ENTER", "FIRE ESCAPE") || player_said("gear", "fire escape")) {
 		player_set_commands_allowed(false);
 		_G(roomVal1) = 20;
 		ws_hide_walker(_G(my_walker));
-		kernel_trigger_dispatch_now(gTELEPORT);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("ENTER", "TOWN HALL") || player_said("gear", "town hall") ||
 			(lookFlag && player_said("town hall"))) {
@@ -787,7 +787,7 @@ void Room101::daemon15() {
 		_G(flags)[V001] = 0;
 		inv_move_object("MONEY", NOWHERE);
 		_G(flags)[V039] = 1;
-		_G(flags)[V043] = 1;
+		_G(flags)[kRoadOpened] = 1;
 		inv_give_to_player("DEED");
 		_G(flags)[V112] = 1;
 	} else {
@@ -796,7 +796,7 @@ void Room101::daemon15() {
 			_G(flags)[V001] = 12;
 
 		_G(flags)[V039] = 0;
-		_G(flags)[V043] = 0;
+		_G(flags)[kRoadOpened] = 0;
 		_G(flags)[V058] = 0;
 	}
 

@@ -321,7 +321,7 @@ void BurgerEngine::global_daemon() {
 		_G(walker).wilbur_say();
 		break;
 
-	case gTELEPORT:
+	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(roomVal1)) {
 		case 10001:
 			ws_unhide_walker(_G(my_walker));
@@ -339,7 +339,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 10013;
-			series_play_with_breaks(PLAY_BREAKS1, "999wbw", UNKNOWN_DEPTH_1, gTELEPORT, 3, 7,
+			series_play_with_breaks(PLAY_BREAKS1, "999wbw", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 7,
 				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10004:
@@ -347,7 +347,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 10012;
-			series_play_with_breaks(PLAY_BREAKS2, "999wbj", UNKNOWN_DEPTH_1, gTELEPORT, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS2, "999wbj", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
 				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10005:
@@ -355,7 +355,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 10009;
-			series_play_with_breaks(PLAY_BREAKS3, "600wek", UNKNOWN_DEPTH_1, gTELEPORT, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS3, "600wek", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
 				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10006:
@@ -363,7 +363,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 10001;
-			series_play_with_breaks(PLAY_BREAKS4, "999wsdu", UNKNOWN_DEPTH_1, gTELEPORT, 3, 7,
+			series_play_with_breaks(PLAY_BREAKS4, "999wsdu", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 7,
 				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10007:
@@ -371,7 +371,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 10014;
-			series_play_with_breaks(PLAY_BREAKS5, "999wtpe", UNKNOWN_DEPTH_1, gTELEPORT, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS5, "999wtpe", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
 				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10008:
@@ -379,17 +379,17 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(roomVal1) = 10001;
-			series_play_with_breaks(PLAY_BREAKS6, "999wtpf", UNKNOWN_DEPTH_1, gTELEPORT, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS6, "999wtpf", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
 				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10009:
 			ws_unhide_walker(_G(my_walker));
 			_G(roomVal1) = 10018;
-			_G(walker).wilbur_speech("602w012x", gTELEPORT);
+			_G(walker).wilbur_speech("602w012x", gCHANGE_WILBUR_ANIMATION);
 			break;
 		case 10010:
 			_G(roomVal1) = 10011;
-			_G(walker).wilbur_speech("602w012y", gTELEPORT);
+			_G(walker).wilbur_speech("602w012y", gCHANGE_WILBUR_ANIMATION);
 			break;
 		case 10011:
 			player_set_commands_allowed(true);
@@ -452,7 +452,7 @@ void BurgerEngine::global_daemon() {
 	case 10022:
 		if (_G(game).room_id < 200) {
 			_G(roomVal1) = 10017;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else {
 			error_show(FL, 'Burg', "Time to abduct Wilbur in space?");
 		}
@@ -461,7 +461,7 @@ void BurgerEngine::global_daemon() {
 	case 10023:
 		if (_G(game).room_id < 700) {
 			_G(roomVal1) = 10018;
-			kernel_trigger_dispatch_now(gTELEPORT);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -513,7 +513,7 @@ void BurgerEngine::global_parser() {
 			} else if (_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
 				_G(flags)[V123] = 1;
 				_G(roomVal1) = 10004;
-				ws_turn_to_face(_G(my_walker), 3, gTELEPORT);
+				ws_turn_to_face(_G(my_walker), 3, gCHANGE_WILBUR_ANIMATION);
 				goto done;
 			}
 		}
@@ -522,21 +522,21 @@ void BurgerEngine::global_parser() {
 	if (player_said("WHISTLE") && player_said_any("GEAR", "WILBUR") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
 		_G(roomVal1) = 10003;
-		ws_turn_to_face(_G(my_walker), 7, gTELEPORT);
+		ws_turn_to_face(_G(my_walker), 7, gCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
 	if (player_said("kibble") && player_said_any("gear", "wilbur") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
 		_G(roomVal1) = 10005;
-		ws_turn_to_face(_G(my_walker), 9, gTELEPORT);
+		ws_turn_to_face(_G(my_walker), 9, gCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
 	if (player_said("rubber ducky") && player_said_any("gear", "wilbur") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
 		_G(roomVal1) = 10006;
-		ws_turn_to_face(_G(my_walker), 9, gTELEPORT);
+		ws_turn_to_face(_G(my_walker), 9, gCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
@@ -550,7 +550,7 @@ void BurgerEngine::global_parser() {
 	if (player_said("puz dispenser") && player_said_any("gear", "wilbur") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
 		_G(roomVal1) = 10008;
-		ws_turn_to_face(_G(my_walker), 5, gTELEPORT);
+		ws_turn_to_face(_G(my_walker), 5, gCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 

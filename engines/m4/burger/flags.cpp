@@ -153,7 +153,7 @@ void Flags::reset1() {
 	(*this)[V172] = 10023;
 	(*this)[V037] = 1;
 	(*this)[V039] = 0;
-	(*this)[V043] = 0;
+	(*this)[kRoadOpened] = 0;
 	(*this)[V046] = 0;
 	(*this)[V047] = 0;
 	(*this)[V048] = 0;
