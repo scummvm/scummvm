@@ -882,9 +882,9 @@ bool NancyConsole::Cmd_setDifficulty(int argc, const char **argv) {
 bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
 		const Math::Vector3d &pos = NancySceneState.getSceneSummary().listenerPosition;
-		const Math::Vector3d &or = g_nancy->_sound->_orientation;
+		const Math::Vector3d &ori = g_nancy->_sound->_orientation;
 		debugPrintf("3D listener position: %f, %f, %f\n", pos.x(), pos.y(), pos.z());
-		debugPrintf("3D listener orientation: %f, %f, %f\n\n", or.x(), or.y(), or.z());
+		debugPrintf("3D listener orientation: %f, %f, %f\n\n", ori.x(), ori.y(), ori.z());
 	}
 
 	Common::Array<byte> channelIDs;
