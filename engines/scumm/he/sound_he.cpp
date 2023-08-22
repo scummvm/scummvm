@@ -205,6 +205,10 @@ int SoundHE::isSoundRunning(int sound) const {
 			if (hsFindSoundChannel(sound) != -1) {
 				return sound;
 			}
+
+			if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound)) {
+				return sound;
+			}
 		}
 
 		return 0;
