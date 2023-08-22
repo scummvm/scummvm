@@ -27,7 +27,10 @@
 namespace M4 {
 
 InvPal::InvPal(const char *filename) {
-	handle = NULL;
+	handle = nullptr;
+	if (!filename)
+		return;
+
 	SysFile ipl5(filename, BINARY);
 
 	if (!ipl5.exists())
@@ -55,7 +58,7 @@ InvPal::~InvPal() {
 
 uint8 *InvPal::get_ptr() {
 	if (!handle)
-		return NULL;
+		return nullptr;
 
 	HLock(handle);
 	return (uint8 *)*handle;
