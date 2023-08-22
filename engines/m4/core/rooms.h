@@ -41,7 +41,7 @@ public:
 	virtual void init() {}
 	virtual void daemon() {}
 	virtual void pre_parser() {}
-	virtual void parser() {}
+	virtual void parser();
 	virtual void parser_code() {}
 	virtual void roomError() {}
 	virtual void shutdown() {}

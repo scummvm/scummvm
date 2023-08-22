@@ -29,16 +29,20 @@ namespace Burger {
 namespace Rooms {
 
 void Room120::init() {
-	_G(player).walker_in_this_scene = true;
+	_G(player).walker_in_this_scene = false;
+	player_set_commands_allowed(false);
+	kernel_timing_trigger(200, 1);
 }
 
 void Room120::daemon() {
-}
-
-void Room120::pre_parser() {
-}
-
-void Room120::parser() {
+	// After reimplementing for ScummVM the massive mess of multi-level switch
+	// statements that are the previous rooms' daemons, I seriously love
+	// the simplicity of this room's daemon. It's awesome!
+	if (_G(kernel).trigger == 1) {
+		_G(game).new_room = _G(game).previous_room;
+	} else {
+		_G(kernel).continue_handling_trigger = true;
+	}
 }
 
 } // namespace Rooms
