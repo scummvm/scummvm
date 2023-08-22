@@ -965,7 +965,7 @@ void Process::setObjectScale() {
 void Process::disableMouseAreas() {
 	int value = pop();
 	debug("disableMouseAreas %d", value);
-	_engine->_mouseMap.disable(_engine, value > 0);
+	_engine->_mouseMap.disable(value > 0);
 }
 
 void Process::sampleAmbient() {

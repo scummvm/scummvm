@@ -208,7 +208,7 @@ enum Opcode {
 	kSetObjectText					= 188,
 	kInventoryFindObjectByName		= 189,
 	kSetObjectScale					= 190,
-	kStub191						= 191,
+	kDisableMouseAreas				= 191,
 	kObjectIgnoreRegion				= 192,
 	kRemoveGapsFromInventory		= 193,
 	kSampleAmbient					= 194,
@@ -432,7 +432,7 @@ enum Opcode {
 	OP(kReturnCurrentInventoryObject, returnCurrentInventoryObject) \
 	OP(kSetObjectText, setObjectText) \
 	OP(kSetObjectScale, setObjectScale) \
-	OP(kStub191, disableMouseAreas) \
+	OP(kDisableMouseAreas, disableMouseAreas) \
 	OP(kRemoveGapsFromInventory, removeGapsFromInventory) \
 	OP(kSampleAmbient, sampleAmbient) \
 	OP(kGetObjectPictureWidth, getObjectPictureWidth) \
