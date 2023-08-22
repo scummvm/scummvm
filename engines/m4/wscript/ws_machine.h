@@ -23,6 +23,7 @@
 #ifndef M4_WSCRIPT_WS_MACHINE_H
 #define M4_WSCRIPT_WS_MACHINE_H
 
+#include "common/algorithm.h"
 #include "m4/m4_types.h"
 #include "m4/gui/gui.h"
 
@@ -117,6 +118,11 @@ struct Anim8 {
 	int32 returnStackIndex = 0;
 	uint32 returnHashes[JSR_STACK_MAX] = { 0 };
 	int32 returnOffsets[JSR_STACK_MAX] = { 0 };
+
+	Anim8() {
+		Common::fill(returnHashes, returnHashes + JSR_STACK_MAX, 0);
+		Common::fill(returnOffsets, returnOffsets + JSR_STACK_MAX, 0);
+	}
 };
 
 struct machine {
