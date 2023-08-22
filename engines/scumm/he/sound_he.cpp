@@ -523,6 +523,8 @@ void SoundHE::setupHEMusicFile() {
 							_heSpoolingMusicTable[i].offset,
 							_heSpoolingMusicTable[i].size);
 				}
+
+				_heMixer->setSpoolingSongsTable(_heSpoolingMusicTable, _heSpoolingMusicCount);
 			} else {
 				debug(5, "setupHEMusicFile(): Can't allocate table for spooling music file '%s'", musicFilename.c_str());
 			}

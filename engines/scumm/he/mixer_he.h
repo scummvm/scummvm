@@ -62,6 +62,7 @@ namespace Scumm {
 #define MILES_MAX_QUEUED_STREAMS              16
 
 struct HESoundModifiers;
+struct HESpoolingMusicItem;
 class ScummEngine_v60he;
 
 struct MilesModifiers {
@@ -99,6 +100,8 @@ public:
 	uint16 _bitsPerSample = 8;
 	uint16 _dataFormat = 1;
 
+	bool _isUsingStreamOverride = false;
+
 	HEMilesChannel() {
 		clearChannelData();
 	}
@@ -121,6 +124,7 @@ protected:
 	bool _useMilesSoundSystem = false;
 	bool _mixerPaused = false;
 	int _pauseCount = 0;
+	Common::HashMap<int32, int32> _offsetsToSongId;
 
 	HEMilesChannel _milesChannels[MILES_MAX_CHANNELS];
 
@@ -172,6 +176,9 @@ public:
 
 	bool audioOverrideExists(int globNum, bool justGetInfo,
 		int *duration = nullptr, Audio::SeekableAudioStream **outStream = nullptr);
+
+	void setSpoolingSongsTable(HESpoolingMusicItem *heSpoolingMusicTable, int32 tableSize);
+	int32 matchOffsetToSongId(int32 offset);
 
 	/* --- MILES MIXER CODE --- */
 	bool isMilesActive();

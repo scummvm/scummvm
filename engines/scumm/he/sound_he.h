@@ -132,10 +132,21 @@ struct HESoundModifiers {
 	int volume;
 };
 
+
+struct HESpoolingMusicItem {
+	int32 song;
+	int32 offset;
+	int32 size;
+
+	char filename[128];
+};
+
 class ScummEngine_v60he;
 class HEMixer;
 
 class SoundHE : public Sound {
+	friend class HEMixer;
+
 protected:
 	ScummEngine_v60he *_vm;
 
@@ -150,13 +161,6 @@ protected:
 	};
 	HESoundCallbackItem _soundCallbackScripts[HSND_MAX_CALLBACK_SCRIPTS];
 
-	struct HESpoolingMusicItem {
-		int32 song;
-		int32 offset;
-		int32 size;
-
-		char filename[128];
-	};
 	HESpoolingMusicItem *_heSpoolingMusicTable;
 
 	struct PCMWaveFormat {
