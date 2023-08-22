@@ -704,9 +704,9 @@ void SoundManager::soundEffectMaintenance(uint16 channelID) {
 		if (dist < chan.effectData->minDistance) {
 			volume = 255;
 		} else if (dist > chan.effectData->maxDistance) {
-			volume = 255.0 / (2 * log2(chan.effectData->maxDistance - chan.effectData->minDistance + 1));
+			volume = 255.0 / (2 * log2f(chan.effectData->maxDistance - chan.effectData->minDistance + 1));
 		} else {
-			float dlog = (2 * log2(dist - chan.effectData->minDistance + 1));
+			float dlog = (2 * log2f(dist - chan.effectData->minDistance + 1));
 			volume = 255.0 / dlog;
 
 			// Sounds that are closer to the listener shouldn't pan as hard
