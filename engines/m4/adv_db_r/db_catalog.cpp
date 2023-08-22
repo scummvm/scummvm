@@ -65,7 +65,7 @@ char *db_get_catalog() {
 }
 
 char *db_rmlst_get_asset_room_path(const char *asset_name, char *result, int32 *sceneCode) {
-	char name[MAX_FILENAME_SIZE], path[MAX_FILENAME_SIZE];
+	char name[MAX_FILENAME_SIZE] = { 0 }, path[MAX_FILENAME_SIZE] = { 0 };
 	short tag = 0, room = 0;
 	short c_size = 0;
 	long str_len;
