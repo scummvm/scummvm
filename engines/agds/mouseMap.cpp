@@ -24,14 +24,22 @@ int MouseMap::add(MouseRegion area) {
 	return id;
 }
 
-MouseRegion *MouseMap::find(Common::Point pos) {
-	if (_disabled)
-		return nullptr;
+void MouseMap::hideInactive(AGDSEngine *engine, Common::Point pos) {
 	for (auto & region : _mouseRegions) {
-		if (region && region->enabled && region->region->pointIn(pos))
-			return region.get();
+		if (!region || !region->enabled)
+			continue;
+
+		if (_disabled) {
+			region->hide(engine);
+		} else if (engine->userEnabled()) {
+			if (!region->region->pointIn(pos)) {
+				region->hide(engine);
+			} else {
+				region->show(engine);
+				return;
+			}
+		}
 	}
-	return nullptr;
 }
 
 MouseRegion *MouseMap::find(int id) {
@@ -42,13 +50,13 @@ MouseRegion *MouseMap::find(int id) {
 	return nullptr;
 }
 
-void MouseMap::remove(AGDSEngine *engine, int id) {
+void MouseMap::remove(int id) {
 	auto &region = _mouseRegions[id];
 	if (!region) {
 		warning("removing non-existent mouse region %d", id);
 		return;
 	}
-	region->disable(engine);
+	region->disable();
 	region.reset();
 }
 

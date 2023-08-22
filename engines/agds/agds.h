@@ -325,7 +325,6 @@ private:
 	Common::String 				_defaultMouseCursorName;
 	Animation *					_defaultMouseCursor;
 	Common::Point				_mouse;
-	MouseRegion *				_currentRegion;
 	bool						_userEnabled;
 	bool						_systemUserEnabled;
 	MouseMap					_mouseMap;
