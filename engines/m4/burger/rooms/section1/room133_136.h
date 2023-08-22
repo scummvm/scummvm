@@ -29,6 +29,16 @@ namespace Burger {
 namespace Rooms {
 
 class Room133_136 : public Room {
+private:
+	bool _flag = false;
+	int _volume = 255;
+	noWalkRect *_walkCodes = nullptr;
+	machine *_sign1 = nullptr;
+	machine *_sign2 = nullptr;
+
+	void setupSign();
+	void setupSignWalkAreas();
+
 public:
 	Room133_136() : Room() {}
 	~Room133_136() override {}
