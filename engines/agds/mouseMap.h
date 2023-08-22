@@ -70,10 +70,8 @@ class MouseMap {
 public:
 	MouseMap(): _mouseRegions(100), _disabled(false) { }
 
-	void disable(AGDSEngine * engine, bool disabled) {
+	void disable(bool disabled) {
 		_disabled = disabled;
-		if (disabled)
-			hideAll(engine);
 	}
 
 	bool disabled() const {
