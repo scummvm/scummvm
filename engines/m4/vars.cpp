@@ -43,6 +43,10 @@ Vars *g_vars;
 Vars::Vars() : _digi(g_engine->_mixer) {
 	g_vars = this;
 	_cheating_enabled = gDebugLevel > 0;
+
+	Common::fill(_sizeMem, _sizeMem + _MEMTYPE_LIMIT, 0);
+	Common::fill(_requests, _requests + _MEMTYPE_LIMIT, 0);
+	Common::fill(_memBlock, _memBlock + _MEMTYPE_LIMIT, nullptr);
 }
 
 Vars::~Vars() {

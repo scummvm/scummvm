@@ -152,9 +152,9 @@ public:
 	int32 _memtypeSCRN = 0;		// Memory slots used by the memory manager
 	int32 _memtypeMATTE = 0;
 	int32 _memtypeRECT = 0;
-	int32 _sizeMem[_MEMTYPE_LIMIT] = { 0 };
-	int32 _requests[_MEMTYPE_LIMIT] = { 0 };
-	void *_memBlock[_MEMTYPE_LIMIT] = { nullptr };
+	int32 _sizeMem[_MEMTYPE_LIMIT];
+	int32 _requests[_MEMTYPE_LIMIT];
+	void *_memBlock[_MEMTYPE_LIMIT];
 	RGB8 _master_palette[256];
 	RGB8 _backup_palette[256];
 	bool _pal_fade_in_progress = false;
