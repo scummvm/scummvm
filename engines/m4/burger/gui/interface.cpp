@@ -338,13 +338,13 @@ void Interface::trackIcons() {
 
 		if (_G(game).section_id == 1) {
 			term_message("Abduct me now!");
-			_G(roomVal1) = 10017;
+			_G(wilbur_should) = 10017;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else if (_G(game).section_id == 7) {
 			_G(walker).wilbur_speech("999w023");
 		} else {
 			term_message("Fail me now!");
-			_G(roomVal1) = 10015;
+			_G(wilbur_should) = 10015;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 		break;

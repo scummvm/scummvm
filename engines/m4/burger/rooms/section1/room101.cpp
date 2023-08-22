@@ -141,12 +141,12 @@ void Room101::init() {
 			_G(flags)[ROOM101_FLAG1] = 0;
 			ws_demand_facing(_G(my_walker), 10);
 			ws_demand_location(_G(my_walker), 338, 265);
-			_G(roomVal1) = 16;
+			_G(wilbur_should) = 16;
 
 		} else {
 			ws_demand_facing(_G(my_walker), 4);
 			ws_demand_location(_G(my_walker), 264, 259);
-			_G(roomVal1) = 10;
+			_G(wilbur_should) = 10;
 		}
 
 		ws_hide_walker(_G(my_walker));
@@ -159,27 +159,27 @@ void Room101::init() {
 		ws_demand_location(_G(my_walker), 197, 276);
 		ws_hide_walker(_G(my_walker));
 
-		_G(roomVal1) = 6;
+		_G(wilbur_should) = 6;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 104:
-		_G(roomVal1) = 2;
+		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 106:
-		_G(roomVal1) = 3;
+		_G(wilbur_should) = 3;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 135:
-		_G(roomVal1) = 4;
+		_G(wilbur_should) = 4;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 142:
-		_G(roomVal1) = 5;
+		_G(wilbur_should) = 5;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
@@ -428,7 +428,7 @@ void Room101::daemon() {
 
 	case 21:
 		digi_play("101_002", 2, 255, -1);
-		_G(roomVal1) = 18;
+		_G(wilbur_should) = 18;
 		series_play("101ha01", 3840, 0, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 14, -1);
 		break;
 
@@ -473,7 +473,7 @@ void Room101::daemon() {
 		break;
 
 	case gCHANGE_WILBUR_ANIMATION:
-		switch (_G(roomVal1)) {
+		switch (_G(wilbur_should)) {
 		case 2:
 			player_set_commands_allowed(true);
 			ws_demand_location(_G(my_walker), 336, 184);
@@ -503,7 +503,7 @@ void Room101::daemon() {
 			break;
 
 		case 6:
-			_G(roomVal1) = 7;
+			_G(wilbur_should) = 7;
 			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
@@ -514,7 +514,7 @@ void Room101::daemon() {
 
 		case 8:
 			// Barbershop door open
-			_G(roomVal1) = 9;
+			_G(wilbur_should) = 9;
 			terminateMachineAndNull(_doorMachine);
 			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
@@ -525,7 +525,7 @@ void Room101::daemon() {
 			break;
 
 		case 10:
-			_G(roomVal1) = 11;
+			_G(wilbur_should) = 11;
 			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
@@ -537,22 +537,22 @@ void Room101::daemon() {
 
 		case 14:
 			terminateMachineAndNull(_doorMachine);
-			_G(roomVal1) = 15;
+			_G(wilbur_should) = 15;
 			series_play_with_breaks(PLAY_BREAKS2, "101wi01", 3072, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 15:
-			_G(roomVal1) = 16;
+			_G(wilbur_should) = 16;
 			digi_play("101h001", 1, 255, gCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 16:
-			_G(roomVal1) = 17;
+			_G(wilbur_should) = 17;
 			series_play_with_breaks(PLAY_BREAKS2, "101wi03", 3072, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 17:
-			_G(roomVal1) = 19;
+			_G(wilbur_should) = 19;
 			_val2 = 12;
 
 			if (_G(flags)[V005]) {
@@ -578,12 +578,12 @@ void Room101::daemon() {
 			break;
 
 		case 20:
-			_G(roomVal1) = 21;
+			_G(wilbur_should) = 21;
 			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
 		case 21:
-			_G(roomVal1) = 22;
+			_G(wilbur_should) = 22;
 			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1003);
 			break;
 
@@ -646,25 +646,25 @@ void Room101::parser() {
 		if (_G(flags)[V012] == 2) {
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
-			_G(roomVal1) = 8;
+			_G(wilbur_should) = 8;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else if (_G(flags)[V013]) {
 			ws_demand_location(_G(my_walker), 338, 265);
 			ws_demand_facing(_G(my_walker), 10);
 			ws_hide_walker(_G(my_walker));
 			player_set_commands_allowed(false);
-			_G(roomVal1) = 14;
+			_G(wilbur_should) = 14;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else {
 			player_set_commands_allowed(false);
 			ws_hide_walker(_G(my_walker));
-			_G(roomVal1) = 8;
+			_G(wilbur_should) = 8;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 
 	} else if (player_said("ENTER", "FIRE ESCAPE") || player_said("gear", "fire escape")) {
 		player_set_commands_allowed(false);
-		_G(roomVal1) = 20;
+		_G(wilbur_should) = 20;
 		ws_hide_walker(_G(my_walker));
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 

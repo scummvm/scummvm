@@ -29,13 +29,25 @@ namespace Burger {
 namespace Rooms {
 
 class Room137 : public Room {
+private:
+	bool _flag1 = false;
+	bool _flag2 = false;
+	bool _flag3 = false;
+	int _volume = 255;
+	machine *_series1 = nullptr;
+	int _mode1 = 0;
+	int _mode2 = 0;
+	int _mode3 = 0;
+	const char *_digi1 = nullptr;
+
+	void conv15();
+
 public:
 	Room137() : Room() {}
 	~Room137() override {}
 
 	void init() override;
 	void daemon() override;
-	void pre_parser() override;
 	void parser() override;
 };
 

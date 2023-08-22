@@ -167,9 +167,9 @@ void Room142::init() {
 	_MATCH.push_back(WilburMatch("LOOK AT", "PARKING LOT", 5,
 		&_G(flags)[V058], 0, &_val2, 13));
 	_MATCH.push_back(WilburMatch("GEAR", "ICE BOX", gCHANGE_WILBUR_ANIMATION,
-		&_G(flags)[V059], 0, &_G(roomVal1), 1));
+		&_G(flags)[V059], 0, &_G(wilbur_should), 1));
 	_MATCH.push_back(WilburMatch("TAKE", "FANBELT", gCHANGE_WILBUR_ANIMATION,
-		nullptr, 0, &_G(roomVal1), 9));
+		nullptr, 0, &_G(wilbur_should), 9));
 	_MATCH.push_back(WilburMatch("GEAR", "BACK DOOR", 6,
 		nullptr, 0, nullptr, 0));
 
@@ -181,7 +181,7 @@ void Room142::init() {
 	case RESTORING_GAME:
 		if (_G(flags)[V059]) {
 			ws_hide_walker();
-			_G(roomVal1) = 2;
+			_G(wilbur_should) = 2;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 		break;
@@ -413,11 +413,11 @@ void Room142::daemon() {
 
 
 	case gCHANGE_WILBUR_ANIMATION:
-		switch (_G(roomVal1)) {
+		switch (_G(wilbur_should)) {
 		case 1:
 			terminateMachineAndNull(_series5);
 			disable_player();
-			_G(roomVal1) = 2;
+			_G(wilbur_should) = 2;
 			series_play_with_breaks(PLAY9, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
@@ -436,7 +436,7 @@ void Room142::daemon() {
 				player_set_commands_allowed(false);
 				terminateMachineAndNull(_series6);
 				terminateMachineAndNull(_series7);
-				_G(roomVal1) = 4;
+				_G(wilbur_should) = 4;
 
 				series_play_with_breaks(PLAY11, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			}
@@ -454,7 +454,7 @@ void Room142::daemon() {
 			player_set_commands_allowed(false);
 			terminateMachineAndNull(_series6);
 			terminateMachineAndNull(_series7);
-			_G(roomVal1) = 6;
+			_G(wilbur_should) = 6;
 
 			series_play_with_breaks(PLAY10, "142wi02", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
@@ -470,7 +470,7 @@ void Room142::daemon() {
 			player_set_commands_allowed(false);
 			terminateMachineAndNull(_series6);
 			terminateMachineAndNull(_series7);
-			_G(roomVal1) = 8;
+			_G(wilbur_should) = 8;
 
 			series_play_with_breaks(PLAY10, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
@@ -485,7 +485,7 @@ void Room142::daemon() {
 
 		case 9:
 			disable_player();
-			_G(roomVal1) = 10;
+			_G(wilbur_should) = 10;
 			series_play_with_breaks(PLAY12, "142wi05", 0x400, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
@@ -604,7 +604,7 @@ void Room142::pre_parser() {
 		_G(player).need_to_walk = false;
 
 		if (player_said("GEAR", "ICE BOX")) {
-			_G(roomVal1) = 5;
+			_G(wilbur_should) = 5;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		} else if (player_said("ICE")) {
 			if (player_said("LOOK AT")) {
@@ -627,7 +627,7 @@ void Room142::pre_parser() {
 				term_message("ERROR - don't know what to do with ice!!!");
 			}
 		} else {
-			_G(roomVal1) = 7;
+			_G(wilbur_should) = 7;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 

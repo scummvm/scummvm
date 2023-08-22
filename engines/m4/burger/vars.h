@@ -100,7 +100,7 @@ public:
 	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
-	int _roomVal1 = 0;
+	int _wilbur_should = 0;
 	int _roomVal2 = 0;
 	int _roomVal3 = 0;
 	int _walkTrigger = 0;

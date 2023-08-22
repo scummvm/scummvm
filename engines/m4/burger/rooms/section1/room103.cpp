@@ -127,7 +127,7 @@ void Room103::init() {
 
 		player_set_commands_allowed(false);
 		ws_hide_walker();
-		_G(roomVal1) = 1;
+		_G(wilbur_should) = 1;
 		digi_preload_stream_breaks(SERIES1);
 		series_play("103wi01s", 0x100);
 		series_stream_with_breaks(SERIES1, "103wi01", 6, 0xa00, 10016);
@@ -476,7 +476,7 @@ void Room103::daemon() {
 
 	case 17:
 		_G(flags)[V023] = 0;
-		_G(roomVal1) = 6;
+		_G(wilbur_should) = 6;
 		_G(flags)[V298] = 0;
 		ws_walk(325, 173, 0, 10016);
 		break;
@@ -553,17 +553,17 @@ void Room103::daemon() {
 		break;
 
 	case gCHANGE_WILBUR_ANIMATION:
-		switch (_G(roomVal1)) {
+		switch (_G(wilbur_should)) {
 		case 1:
 			digi_unload_stream_breaks(SERIES1);
 			player_set_commands_allowed(true);
 			ws_unhide_walker();
-			_G(roomVal1) = 10002;
+			_G(wilbur_should) = 10002;
 			break;
 
 		case 2:
 			ws_hide_walker();
-			_G(roomVal1) = 3;
+			_G(wilbur_should) = 3;
 			digi_preload_stream_breaks(SERIES3);
 			series_play("103wi04s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 9);
 			series_stream_with_breaks(SERIES3, "103wi04", 6, 0x100, gCHANGE_WILBUR_ANIMATION);
@@ -573,12 +573,12 @@ void Room103::daemon() {
 			digi_unload_stream_breaks(SERIES3);
 			player_set_commands_allowed(true);
 			ws_unhide_walker();
-			_G(roomVal1) = 10002;
+			_G(wilbur_should) = 10002;
 			wilbur_speech("103w012");
 			break;
 
 		case 4:
-			_G(roomVal1) = 5;
+			_G(wilbur_should) = 5;
 			terminateMachineAndNull(_series1);
 			ws_hide_walker();
 			series_play("103wi03s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, 19);
@@ -587,19 +587,19 @@ void Room103::daemon() {
 
 		case 5:
 			ws_unhide_walker();
-			_G(roomVal1) = 10002;
+			_G(wilbur_should) = 10002;
 			_series1 = series_play("103wi06", 0x500, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 			digi_play(Common::String::format("103h001%c",
 				'a' + imath_ranged_rand(0, 4)).c_str(), 2, 255, 14);
 			break;
 
 		case 6:
-			_G(roomVal1) = 7;
+			_G(wilbur_should) = 7;
 			kernel_timing_trigger(1, gCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 7:
-			_G(roomVal1) = 8;
+			_G(wilbur_should) = 8;
 			ws_hide_walker();
 			series_play_with_breaks(PLAY1, "103wi02", 0xa00, gCHANGE_WILBUR_ANIMATION, 2);
 			series_play("103wi02s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 27);
@@ -638,20 +638,20 @@ void Room103::parser() {
 
 	if (!_G(walker).wilbur_said(SAID)) {
 		if (player_said("gear", "satellite dish") && _G(flags)[V023] == 0) {
-			_G(roomVal1) = 4;
+			_G(wilbur_should) = 4;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			player_set_commands_allowed(false);
 			_G(player).command_ready = false;
 
 		} else if (player_said("gear", "door") || player_said("gear", "stairway")) {
-			_G(roomVal1) = 2;
+			_G(wilbur_should) = 2;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			player_set_commands_allowed(false);
 			_G(player).command_ready = false;
 
 		} else if (player_said("ENTER", "FIRE ESCAPE") || player_said("gear", "FIRE ESCAPE")) {
 			_val2 = 1;
-			_G(roomVal1) = 6;
+			_G(wilbur_should) = 6;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			player_set_commands_allowed(false);
 			_G(player).command_ready = false;
