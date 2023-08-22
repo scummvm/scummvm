@@ -192,7 +192,7 @@ void IntegrityDialog::setState(ProcessState state) {
 		} else
 			_resultsText->setList(Common::U32StringArray({g_result->errorText}));
 
-		if (g_result->error) {
+		if (g_result->error != 0) {
 			_copyEmailButton->setVisible(true);
 			_copyEmailButton->setCmd(kCopyEmailCmd);
 		}
@@ -379,7 +379,9 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath,
 
 	for (Common::StringArray fileChecksum : fileChecksums) {
 		Common::JSONObject file;
-		Common::String relativePath = fileChecksum[0].substr(gamePath.size() + 1); // +1 to remove the first '/'
+		Common::String relativePath = fileChecksum[0].substr(gamePath.size());
+		if (relativePath[0] == '/') // Remove slash if path starts with '/'
+			relativePath = relativePath.substr(1);
 		file.setVal("name", new Common::JSONValue(relativePath));
 
 		auto tempNode = Common::FSNode(fileChecksum[0]);
