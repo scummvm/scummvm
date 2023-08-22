@@ -29,8 +29,11 @@ Random seed
 	*random_seed*
 
 .. _discord:
-	
+
 Enable Discord Integration
+	Show the currently running game in a Discord user's status (if Activity Status is also enabled in the Discord settings).
+
+	.. figure:: ../images/settings/discord_integration.png
 
 .. _updatecheck:
 
