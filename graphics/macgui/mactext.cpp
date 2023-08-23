@@ -710,6 +710,9 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					s = readHex(&headSize, s, 1);
 					if (headSize == 0xf) // reset
 						current_format.fontSize = _defaultFormatting.fontSize;
+
+					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d,",
+							current_format.fontId, current_format.textSlant, current_format.fontSize);
 				} else if (*s == '+') { // \016+XXY  -- opening textSlant. H<Y>
 					uint16 textSlant, headSize;
 					s++;
@@ -723,6 +726,9 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						const float sizes[] = { 1, 3.0f, 2.5f, 2.0f, 1.75f, 1.5f, 1.25f };
 						current_format.fontSize = _defaultFormatting.fontSize * sizes[headSize];
 					}
+
+					D(9, "** splitString+: fontId: %d, textSlant: %d, fontSize: %d,",
+							current_format.fontId, current_format.textSlant, current_format.fontSize);
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 
@@ -957,9 +963,9 @@ void MacText::render(int from, int to, int shadow) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (int j = start; j != end; j += delta) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
 				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
-				  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
+				  _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].fontSize, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
 				  (const void *)_textLines[i].chunks[j].getFont());
 
 			if (_textLines[i].chunks[j].text.empty())
