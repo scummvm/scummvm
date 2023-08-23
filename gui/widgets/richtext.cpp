@@ -38,8 +38,12 @@ void ensureWM() {
 	if (_wm)
 		return;
 
-	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeForceBuiltinFonts
-		| Graphics::kWMModeUnicode | Graphics::kWMMode32bpp;
+	if (ConfMan.hasKey("extrapath")) {
+		Common::FSNode dir(ConfMan.get("extrapath"));
+		SearchMan.addDirectory(dir.getPath(), dir);
+	}
+
+	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp;
 
 	_wm = new Graphics::MacWindowManager(wmMode);
 }
