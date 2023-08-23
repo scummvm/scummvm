@@ -120,7 +120,7 @@ void Room137::init() {
 	_series1 = series_play("137do01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 
 	const char *NAMES[18] = {
-		"137_120", "137_021", "137_022", "137_023", "137_024", "137_025",
+		"137_020", "137_021", "137_022", "137_023", "137_024", "137_025",
 		"137_026", "137_027", "137_028", "137_013", "137_014", "137_026",
 		"137_027", "137_028", "137_013", "137_014", "137_015", "137_016"
 	};
@@ -147,6 +147,8 @@ void Room137::init() {
 }
 
 void Room137::daemon() {
+	int frame;
+
 	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
 		player_update_info();
 
@@ -170,8 +172,202 @@ void Room137::daemon() {
 	}
 
 	switch (_G(kernel).trigger) {
+	case 1:
+		switch (_mode4) {
+		case 5:
+			switch (_mode3) {
+			case 10:
+				_mode3 = 11;
+				series_play("137sh01", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 17);
+				break;
+
+			case 11:
+				_mode3 = 12;
+				series_play("137sh07", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 8);
+				break;
+
+			case 12:
+				sub2();
+				_mode3 = 22;
+				_mode4 = 10;
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			case 14:
+				_mode3 = 15;
+				series_play("137sh01", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 17);
+				break;
+
+			case 15:
+				sub2();
+				_mode4 = 14;
+				_mode3 = 22;
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			case 17:
+				_mode3 = 18;
+				series_play("137sh01", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 17);
+				break;
+
+			case 18:
+				_mode3 = 19;
+				series_play("137sh07", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 8);
+				break;
+
+			case 19:
+				_mode3 = 20;
+				series_play("137sh09", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 8);
+				break;
+
+			case 20:
+				sub2();
+				_mode3 = 22;
+				_mode4 = 17;
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 13:
+			if (_mode3 == 23) {
+				frame = imath_ranged_rand(0, 6);
+				series_play("137sh08", 0x800, 0, 1, 6, 0, 100, 0, 0, frame, frame);
+
+				if (_digi1) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_digi1, 1, 255, 14);
+					_digi1 = nullptr;
+				}
+			} else {
+				_mode4 = 10;
+				series_play("137sh08", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		case 16:
+			if (_mode3 == 23) {
+				frame = imath_ranged_rand(0, 8);
+				series_play("137sh03", 0x800, 0, 1, 6, 0, 100, 0, 0);
+
+				if (_digi1) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_digi1, 1, 255, 14);
+					_digi1 = nullptr;
+				}
+			} else {
+				_mode4 = 14;
+				series_play("137sh03", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		case 17:
+			switch (_mode3) {
+			case 22:
+				series_play("137sh09", 0x800, 0, 1, 10, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 23:
+				_mode4 = 21;
+				series_play("137sh10", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 21:
+			if (_mode3 == 23) {
+				frame = imath_ranged_rand(0, 5);
+				series_play("137sh10", 0x800, 0, 1, 6, 0, 100, 0, 0, frame, frame);
+
+				if (_digi1) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_digi1, 1, 255, 14);
+					_digi1 = nullptr;
+				}
+			} else {
+				_mode4 = 17;
+				series_play("137sh10", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 2:
+		switch (_mode2) {
+		case 27:
+			switch (_mode1) {
+			case 27:
+				sub1();
+				kernel_timing_trigger(10, 2);
+				break;
+
+			case 29:
+				_mode1 = 30;
+				series_play("137dp02", 0x700, 0, 2, 8, 0, 100, 0, 0, 0, 7);
+				break;
+
+			case 30:
+				terminateMachineAndNull(_series1);
+				_mode2 = 31;
+				series_play("137dp03", 0x700, 0, 2, 8, 0, 100, 0, 0, 0, 14);
+				digi_play("137_003", 1, 255);
+				break;
+
+			case 34:
+				sub1();
+				_mode1 = 29;
+				series_play("137dp01", 0x700, 0, 2, 60, 0, 100, 0, 0, 6, 6);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 31:
+			if (imath_ranged_rand(1, 20) == 1) {
+				_mode2 = 32;
+				series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 0, 0);
+			} else {
+				series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 7, 7);
+			}
+			break;
+
+		case 32:
+			if (imath_ranged_rand(1, 20) == 1) {
+				_mode2 = 33;
+				series_play("137dp04", 0x700, 0, 2, imath_ranged_rand(60, 90),
+					0, 100, 0, 0, 0, 5);
+			} else {
+				series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		case 33:
+			_mode2 = 31;
+			series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 6, 7);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 3:
 		ws_walk(276, 292, 0, -1, 4);
+		break;
+
+	case 4:
+		digi_play("137_014", 2, 200, 5);
 		break;
 
 	case 5:
@@ -191,6 +387,65 @@ void Room137::daemon() {
 		kernel_trigger_dispatch_now(1);
 		break;
 
+	case 6:
+		digi_play("137_015", 2, 200, 7);
+		break;
+
+	case 7:
+		_mode4 = 5;
+		_mode3 = 14;
+		unloadAssets();
+
+		if (_G(player_info).y < 308)
+			_mode3 = 10;
+		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] != 4)
+			_mode1 = 30;
+
+		kernel_trigger_dispatch_now(1);
+		break;
+
+	case 8:
+		player_set_commands_allowed(true);
+		break;
+
+	case 9:
+		terminateMachineAndNull(_series1);
+
+		if (_G(flags)[V046]) {
+			terminateMachineAndNull(_series3);
+
+			if (inv_object_is_here("jawz o' life"))
+				terminateMachineAndNull(_series2);
+		}
+
+		Section1::updateWalker(227, 309, 11, 13);
+		break;
+
+	case 10:
+		switch (_mode3) {
+		case 22:
+			series_play("137sh08", 0x800, 0, 1, 10, 0, 100, 0, 0, 0, 0);
+			break;
+
+		case 23:
+			_mode4 = 13;
+			series_play("137sh08", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 11:
+		if (_G(player_info).y >= 300) {
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "137dt01", 6, 0xf00, -1);
+		} else {
+			kernel_trigger_dispatch_now(9);
+		}
+		break;
+
 	case 12:
 		_volume -= 10;
 		if (_volume > 0) {
@@ -206,6 +461,86 @@ void Room137::daemon() {
 		}
 		break;
 
+	case 13:
+		jawz();
+		_series1 = series_play("137do01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		_G(walker).reset_walker_sprites();
+		digi_preload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES1, "137dt01", 0, 0xf00, -1);
+		_G(flags)[V049] = 1;
+		break;
+
+	case 14:
+		switch (_mode3) {
+		case 22:
+			if (imath_ranged_rand(1, 30) == 2) {
+				series_play("137sh04", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 14);
+			} else {
+				series_play("137sh01", 0x800, 0, 1, 12, 0, 100, 0, 0, 17, 17);
+			}
+			break;
+
+		case 23:
+			_mode4 = 16;
+			series_play("137sh03", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
+			break;
+
+		case 24:
+			_mode3 = 23;
+			series_play("137sh05", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 17);
+
+			if (_digi1) {
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play(_digi1, 1, 255, 14);
+			}
+			break;
+
+		case 25:
+			_mode3 = 26;
+			series_play("137sh06", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 23);
+			break;
+
+		case 26:
+			conv_resume_curr();
+			_mode3 = 22;
+			kernel_trigger_dispatch_now(1);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 15:
+		if (_flag3) {
+			inv_move_object("keys", 138);
+			inv_move_object("jawz o' life", 137);
+			_G(flags)[V046] = 0;
+			pal_fade_init(1006);
+
+		} else {
+			pal_fade_init(1009);
+		}
+		break;
+
+	case 16:
+		terminateMachineAndNull(_series3);
+		inv_move_object("keys", NOWHERE);
+		break;
+
+	case 17:
+		terminateMachineAndNull(_series3);
+		break;
+
+	case 18:
+		_series3 = series_play("137tr02", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		inv_give_to_player("keys");
+		break;
+
+	case 19:
+		_series3 = series_play("137tr01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		break;
+
 	case 20:
 		terminateMachineAndNull(_series2);
 		inv_give_to_player("jawz o' life");
@@ -214,6 +549,113 @@ void Room137::daemon() {
 	case 21:
 		if (inv_object_is_here("jawz o' life"))
 			terminateMachineAndNull(_series2);
+		break;
+
+	case 22:
+		if (inv_object_is_here("jawz o' life"))
+			_series2 = series_play("137jaws", 0x600, 0, -1, 7, -1, 100, 0, 0, 0, 0);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			_G(wilbur_should) = 2;
+			series_play("137wi01", 0x100, 2, gCHANGE_WILBUR_ANIMATION,
+				6, 0, 100, 0, 0, 0, 9);
+			series_play("137wi01s", 0x101, 2, -1, 6, 0, 100, 0, 0, 0, 9);
+			break;
+
+		case 2:
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+			break;
+
+		case 3:
+			ws_demand_location(183, 216, 8);
+			_G(wilbur_should) = 4;
+			ws_walk(171, 236, 0, gCHANGE_WILBUR_ANIMATION, 5);
+			break;
+
+		case 4:
+			player_set_commands_allowed(true);
+
+			if (!_G(visited_room))
+				wilbur_speech("137w001");
+			break;
+
+		case 6:
+			ws_hide_walker();
+			player_set_commands_allowed(false);
+			series_load("137jaws");
+			series_play_with_breaks(PLAY1, "137wi02", 0x100, gCHANGE_WILBUR_ANIMATION,
+				3, 6, 100, 0, 0);
+			hotspot_set_active("keys", true);
+			hotspot_set_active("trunk ", true);
+
+			if (inv_object_is_here("jawz o' life"))
+				hotspot_set_active("jawz o' life", true);
+
+			_G(flags)[V046] = 1;
+			break;
+
+		case 7:
+			ws_hide_walker();
+			player_set_commands_allowed(false);
+			_G(wilbur_should) = 9;
+			series_play_with_breaks(PLAY2, "137wi03", 0x100, gCHANGE_WILBUR_ANIMATION,
+				3, 6, 100, 0, 0);
+			hotspot_set_active("keys", false);
+			hotspot_set_active("trunk ", false);
+			hotspot_set_active("jawz o' life", false);
+			_G(flags)[V046] = 0;
+			break;
+
+		case 8:
+			ws_hide_walker();
+			player_set_commands_allowed(false);
+			_G(wilbur_should) = 9;
+			series_play_with_breaks(PLAY3, "137wi04", 0x100, gCHANGE_WILBUR_ANIMATION,
+				3, 6, 100, 0, 0);
+			hotspot_set_active("jawz o' life", false);
+			break;
+
+		case 9:
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+			break;
+
+		case 35:
+			_G(wilbur_should) = 36;
+			ws_hide_walker();
+			series_play("137wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION,
+				6, 0, 100, 0, 0, 0, 9);
+			series_play("137wi01s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 9);
+			break;
+
+		case 36:
+			series_play("137wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION,
+				600, 0, 100, 0, 0, 9, 9);
+			series_play("137wi01s", 0x100, 0, -1, 600, 0, 100, 0, 0, 9, 9);
+			pal_fade_init(1011);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case 10028:
+		if (player_commands_allowed() && _G(roomVal2) &&
+				INTERFACE_VISIBLE && !digi_play_state(1)) {
+			Section1::updateDisablePlayer();
+			digi_preload("100_013");
+			digi_play("100_013", 2);
+			kernel_timing_trigger(240, 11);
+
+		} else {
+			kernel_timing_trigger(60, 10028);
+		}
 		break;
 
 	default:
@@ -313,6 +755,94 @@ void Room137::unloadAssets() {
 
 	for (int i = 0; i < 13; ++i)
 		digi_unload(NAMES[i]);
+}
+
+void Room137::jawz() {
+	if (_G(flags)[V046]) {
+		_series3 = series_play("137tr01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+
+		if (inv_object_is_here("jawz o' life")) {
+			_series2 = series_play("137jaws", 0x600, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		} else {
+			hotspot_set_active("jawz o' life", false);
+		}
+	} else {
+		_series3 = series_play("137tr02", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		hotspot_set_active("keys", false);
+		hotspot_set_active("trunk", false);
+		hotspot_set_active("jawz o' life", false);
+	}
+}
+
+void Room137::sub1() {
+	if (_G(flags)[V048] && player_commands_allowed()) {
+		++_G(flags)[V048];
+		player_update_info();
+
+		if (_G(player_info).y < 300 && inv_player_has("keys")) {
+			_G(flags)[V047] = 6;
+			_G(flags)[V048] = 201;
+		}
+
+		if (_G(player_info).y < 308 && _G(flags)[V046])
+			_G(flags)[V048] = 201;
+
+		if (_G(flags)[V048] >= 200) {
+			player_set_commands_allowed(false);
+			intr_freshen_sentence();
+			_G(flags)[V048] = 0;
+			_flag1 = false;
+
+			if (_G(flags)[V042] == 6) {
+				kernel_timing_trigger(100, 3);
+				digi_play("137_013", 2, 200, 4);
+
+			} else if (_G(player_info).x > 460) {
+				ws_walk(307, 349, nullptr, -1, 2);
+
+				if (_G(flags)[V046]) {
+					digi_play("137_013", 2, 200, 6);
+				} else {
+					digi_play("137_013", 2, 200, 7);
+				}
+			} else if (_G(flags)[V047] == 1 || _G(flags)[V047] == 2 ||
+					_G(flags)[V047] == 3 || _G(flags)[V047] == 4) {
+				kernel_timing_trigger(30, 7);
+			} else {
+				digi_play("137_013", 2, 200, 7);
+				player_update_info();
+
+				if (_G(player_info).y < 308)
+					kernel_timing_trigger(180, 3);
+			}
+		}
+	}
+}
+
+void Room137::sub2() {
+	conv_load_and_prepare("conv15", 15);
+
+	switch (_G(flags)[V047]) {
+	case 1:
+		conv_export_value_curr(0, 0);
+		break;
+	case 2:
+	case 3:
+		conv_export_value_curr(1, 0);
+		break;
+	case 4:
+		conv_export_value_curr(4, 0);
+		break;
+	case 5:
+		conv_export_value_curr(2, 0);
+		break;
+	default:
+		break;
+	}
+
+	conv_export_value_curr(_G(flags)[V049], 2);
+	conv_export_value_curr(_G(flags)[kRoadOpened], 3);
+	conv_play_curr();
 }
 
 } // namespace Rooms
