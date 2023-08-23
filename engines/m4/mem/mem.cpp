@@ -52,10 +52,7 @@ bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumReques
 	bool found = false;
 
 	while ((i < _MEMTYPE_LIMIT) && (_G(sizeMem)[i] > 0) && (!found)) {
-		if (blockSize == _G(sizeMem)[i])
-			break;
-		else
-			i++;
+		i++;
 	}
 	if (i == _MEMTYPE_LIMIT)
 		error_show(FL, 'MSIF', "stash: %s", name.c_str());
