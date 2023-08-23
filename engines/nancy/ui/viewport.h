@@ -51,7 +51,8 @@ public:
 		_currentFrame(0),
 		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
-		_panningType(kPanNone) {}
+		_panningType(kPanNone),
+		_decoder(AVFDecoder::kLoadBidirectional) {}
 
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 

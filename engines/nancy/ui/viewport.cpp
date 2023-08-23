@@ -213,6 +213,7 @@ void Viewport::setFrame(uint frameNr) {
 	assert(frameNr < _decoder.getFrameCount());
 
 	const Graphics::Surface *newFrame = _decoder.decodeFrame(frameNr);
+	_decoder.seek(frameNr); // Seek to take advantage of caching
 
 	// Format 1 uses quarter-size images, while format 2 uses full-size ones
 	// Videos in TVD are always upside-down
