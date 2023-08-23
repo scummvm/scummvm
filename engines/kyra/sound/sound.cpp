@@ -215,11 +215,11 @@ void MixedSoundDriver::loadSoundFile(uint file) {
 
 void MixedSoundDriver::loadSoundFile(Common::String file) {
 	_music->loadSoundFile(file);
-	_sfx->loadSoundFile(file);
+	_sfx->loadSoundFile(Common::move(file));
 }
 
 void MixedSoundDriver::loadSfxFile(Common::String file) {
-	_sfx->loadSoundFile(file);
+	_sfx->loadSoundFile(Common::move(file));
 }
 
 void MixedSoundDriver::playTrack(uint8 track) {

@@ -30,7 +30,7 @@
 
 namespace Kyra {
 
-GUI::GUI(KyraEngine_v1 *kyra) : _vm(kyra), _screen(kyra->screen()) {
+GUI::GUI(KyraEngine_v1 *kyra) : _vm(kyra), _screen(kyra ? kyra->screen() : nullptr) {
 	_saveSlotsListUpdateNeeded = true;
 	_savegameListSize = 0;
 	_savegameList = nullptr;

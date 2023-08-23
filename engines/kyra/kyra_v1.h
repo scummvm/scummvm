@@ -234,8 +234,8 @@ protected:
 		bool causedSkip;
 
 		Event() : event(), causedSkip(false) {}
-		Event(Common::Event e) : event(e), causedSkip(false) {}
-		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
+		Event(Common::Event e) : event(Common::move(e)), causedSkip(false) {}
+		Event(Common::Event e, bool skip) : event(Common::move(e)), causedSkip(skip) {}
 
 		operator Common::Event() const { return event; }
 	};

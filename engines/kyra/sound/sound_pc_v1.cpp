@@ -212,7 +212,7 @@ void SoundPC_v1::loadSoundFile(uint file) {
 }
 
 void SoundPC_v1::loadSoundFile(Common::String file) {
-	internalLoadFile(file);
+	internalLoadFile(Common::move(file));
 }
 
 void SoundPC_v1::internalLoadFile(Common::String file) {
