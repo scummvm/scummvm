@@ -781,13 +781,7 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 void retro_run(void) {
 	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO){
 		struct retro_system_av_info info;
-		info.geometry.base_width = RES_W;
-		info.geometry.base_height = RES_H;
-		info.geometry.max_width = RES_W;
-		info.geometry.max_height = RES_H;
-		info.geometry.aspect_ratio = 4.0f / 3.0f;
-		info.timing.fps = frame_rate;
-		info.timing.sample_rate = sample_rate;
+		retro_get_system_av_info(&info);
 		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO , &info);
 	}
 
