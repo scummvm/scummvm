@@ -88,7 +88,8 @@ enum {
 	kWMMode32bpp				= (1 << 8),
 	kWMNoScummVMWallpaper		= (1 << 9),
 	kWMModeWin95				= (1 << 10),
-	kWMModeForceMacFontsInWin95 = (1 << 11) // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
+	kWMModeForceMacFontsInWin95 = (1 << 11), // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
+	kWMModeNoCursorOverride     = (1 << 12),
 };
 
 }
@@ -306,7 +307,7 @@ public:
 	 * @param window Pointer to the widget to background, nullptr for no widget
 	 */
 	void setBackgroundWindow(MacWindow *window);
-	
+
 	MacPatterns  &getBuiltinPatterns() { return _builtinPatterns; }
 
 	MacWidget *getActiveWidget() { return _activeWidget; }
