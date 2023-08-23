@@ -155,7 +155,7 @@ void Sections::m4SceneLoad() {
 		MoveScreenAbs(_G(game_buff_ptr), _G(player_info).camera_x, _G(player_info).camera_y);
 	}
 
-	_visited_room = player_been_here(_G(game).room_id);
+	_G(visited_room) = player_been_here(_G(game).room_id);
 
 	term_message("calling room_init_code");
 	room_init();

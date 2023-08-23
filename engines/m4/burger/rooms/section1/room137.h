@@ -41,9 +41,13 @@ private:
 	const char *_digi1 = nullptr;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
 
 	void conv15();
 	void unloadAssets();
+	void jawz();
+	void sub1();
+	void sub2();
 
 public:
 	Room137() : Room() {}
