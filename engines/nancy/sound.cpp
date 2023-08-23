@@ -461,29 +461,96 @@ void SoundManager::stopSound(const Common::String &chunkName) {
 }
 
 void SoundManager::stopAllSounds() {
-	for (uint i = 0; i < 31; ++i) {
+	for (uint i = 0; i < _channels.size(); ++i) {
 		stopSound(i);
 	}
 }
 
+byte SoundManager::getVolume(uint16 channelID) {
+	if (channelID >= _channels.size())
+		return 0;
+
+	return _mixer->getChannelVolume(_channels[channelID].handle);
+}
+
+byte SoundManager::getVolume(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getVolume(description.channelID);
+	}
+	
+	return 0;
+}
+
+byte SoundManager::getVolume(const Common::String &chunkName) {
+	return getVolume(_commonSounds[chunkName]);
+}
+
 void SoundManager::setVolume(uint16 channelID, uint16 volume) {
+	if (channelID >= _channels.size())
+		return;
+
 	_mixer->setChannelVolume(_channels[channelID].handle, volume);
 }
 
 void SoundManager::setVolume(const SoundDescription &description, uint16 volume) {
-	setVolume(description.channelID, volume);
+	if (description.name != "NO SOUND") {
+		setVolume(description.channelID, volume);
+	}
 }
 
 void SoundManager::setVolume(const Common::String &chunkName, uint16 volume) {
 	setVolume(_commonSounds[chunkName], volume);
 }
 
+uint32 SoundManager::getRate(uint16 channelID) {
+	if (channelID >= _channels.size())
+		return 0;
+	
+	return _mixer->getChannelRate(_channels[channelID].handle);
+}
+
+uint32 SoundManager::getRate(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getRate(description.channelID);
+	}
+
+	return 0;
+}
+
+uint32 SoundManager::getRate(const Common::String &chunkName) {
+	return getRate(_commonSounds[chunkName]);
+}
+
+uint32 SoundManager::getBaseRate(uint16 channelID) {
+	if (channelID >= _channels.size() || !_channels[channelID].stream)
+		return 0;
+	
+	return _channels[channelID].stream->getRate();
+}
+
+uint32 SoundManager::getBaseRate(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getBaseRate(description.channelID);
+	}
+
+	return 0;
+}
+
+uint32 SoundManager::getBaseRate(const Common::String &chunkName) {
+	return getBaseRate(_commonSounds[chunkName]);
+}
+
 void SoundManager::setRate(uint16 channelID, uint32 rate) {
+	if (channelID >= _channels.size())
+		return;
+
 	_mixer->setChannelRate(_channels[channelID].handle, rate);
 }
 
 void SoundManager::setRate(const SoundDescription &description, uint32 rate) {
-	setRate(description.channelID, rate);
+	if (description.name != "NO SOUND") {
+		setRate(description.channelID, rate);
+	}
 }
 
 void SoundManager::setRate(const Common::String &chunkName, uint32 rate) {

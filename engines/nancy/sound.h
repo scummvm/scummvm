@@ -93,9 +93,21 @@ public:
 	void stopSound(const Common::String &chunkName);
 	void stopAllSounds();
 
+	byte getVolume(uint16 channelID);
+	byte getVolume(const SoundDescription &description);
+	byte getVolume(const Common::String &chunkName);
+
 	void setVolume(uint16 channelID, uint16 volume);
 	void setVolume(const SoundDescription &description, uint16 volume);
 	void setVolume(const Common::String &chunkName, uint16 volume);
+
+	uint32 getRate(uint16 channelID);
+	uint32 getRate(const SoundDescription &description);
+	uint32 getRate(const Common::String &chunkName);
+
+	uint32 getBaseRate(uint16 channelID);
+	uint32 getBaseRate(const SoundDescription &description);
+	uint32 getBaseRate(const Common::String &chunkName);
 
 	void setRate(uint16 channelID, uint32 rate);
 	void setRate(const SoundDescription &description, uint32 rate);
