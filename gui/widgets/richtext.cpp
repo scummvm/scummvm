@@ -73,9 +73,10 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 
 void RichTextWidget::createWidget() {
 	uint32 white = _wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff);
-	uint32 black = _wm->_pixelformat.RGBToColor(0x00, 0x00, 0x00);
+	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
+	uint32 black = _wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
 
-	Graphics::MacFont macFont(Graphics::kMacFontChicago, 30, Graphics::kMacFontRegular);
+	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
 
 	_txtWnd = _wm->addTextWindow(&macFont,
 			black, white, _w, Graphics::kTextAlignLeft, nullptr, false);
