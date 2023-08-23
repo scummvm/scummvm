@@ -469,6 +469,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wiggles1",			"A Day with the Wiggles" },
 	{ "willywabbit",		"Willy Wabbit & His Magical Books" },
 	{ "willywabbit2",		"Around the World With Willy Wabbit" },
+	{ "willywabbitmath",	"Willy Wabbit Math Adventure" },
 	{ "willywabbitmosaic",	"Mosaic Game" },
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
@@ -6862,6 +6863,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("vp2", "Demo", "VP2Demo", "cb91232ecece0045461d236d5914c03d", 719261, 500),
 	WINGAME1("vp2", "", "VPHYS2.EXE", "c3c38bd3907ca7e13220b74bd0317a6c", 1021347, 500),
 	WINDEMO1("vp2", "Demo", "VP2DEMO.EXE", "c3c38bd3907ca7e13220b74bd0317a6c", 1021353, 500),
+
+	WINGAME1t("willywabbitmath", "US Version", "MATHAD32.EXE", "b8417f75139827f36d96c0c8cc0189d4", 2038701, 501),
 
 	MACGAME1("wine", "", "double-click me!", "231d3041df162be4a0ddd36a74eb03b6", 719289, 501),
 	WINGAME2("wine", "", "WIN95.EXE",		 "1a7acbba10a7246ba58c1d53fc7203f5", 1411337,

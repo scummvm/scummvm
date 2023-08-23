@@ -23,6 +23,7 @@
  *
  * USED IN:
  * Around the World With Willy Wabbit
+ * Willy Wabbit Math Adventure
  *
  *************************************/
 
