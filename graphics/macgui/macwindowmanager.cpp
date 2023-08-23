@@ -222,10 +222,12 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 
 	_fontMan = new MacFontManager(mode, language);
 
-	_cursor = nullptr;
-	_tempType = kMacCursorArrow;
-	replaceCursor(kMacCursorArrow);
-	CursorMan.showMouse(true);
+	if (!(mode & kWMModeNoCursorOverride)) {
+		_cursor = nullptr;
+		_tempType = kMacCursorArrow;
+		replaceCursor(kMacCursorArrow);
+		CursorMan.showMouse(true);
+	}
 
 	loadDataBundle();
 	setDesktopMode(mode);
