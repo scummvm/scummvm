@@ -49,9 +49,7 @@ class Timestamp;
 class SoundHandle {
 	friend class Channel;
 	friend class MixerImpl;
-	uint32 _val;
-public:
-	inline SoundHandle() : _val(0xFFFFFFFF) {}
+	uint32 _val = 0xffffffff;
 };
 
 /**
