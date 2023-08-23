@@ -68,10 +68,6 @@ struct TextDrawData {
 	const Graphics::Font *_fontPtr;
 };
 
-struct TextColorData {
-	int r, g, b;
-};
-
 struct WidgetDrawData {
 	/** List of all the steps needed to draw this widget */
 	Common::List<Graphics::DrawStep> _steps;
@@ -1694,6 +1690,13 @@ TextData ThemeEngine::getTextData(DrawData ddId) const {
 
 TextColor ThemeEngine::getTextColor(DrawData ddId) const {
 	return _widgets[ddId] ? _widgets[ddId]->_textColorId : kTextColorMAX;
+}
+
+TextColorData *ThemeEngine::getTextColorData(TextColor color) const {
+	if (color >= kTextColorMAX)
+		color = kTextColorMAX;
+
+	return _textColors[color];
 }
 
 DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
