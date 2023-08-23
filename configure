@@ -3664,6 +3664,7 @@ if test -n "$_host"; then
 			_backend="ios7"
 			_seq_midi=no
 			_timidity=no
+			_ext_neon=yes
 			;;
 		kos32)
 			# neither pkg-config nor *-config work, so we setup everything manually

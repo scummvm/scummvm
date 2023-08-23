@@ -162,6 +162,11 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureTouchscreen:
 		return true;
 
+#if defined(__ARM_NEON__) || defined(__aarch64__)
+	case kFeatureCpuNEON:
+		return true; // If NEON can be used in this file, assume it's always available.
+#endif
+
 	default:
 		return ModularGraphicsBackend::hasFeature(f);
 	}
