@@ -54,6 +54,7 @@ void OrderingPuzzle::init() {
 }
 
 void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
+	bool isPiano = _puzzleType == kPiano;
 	readFilename(stream, _imageName);
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
@@ -66,26 +67,30 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		ser.syncAsUint16LE(numElements);
 	}
 
-	_srcRects.resize(numElements);
-	for (uint i = 0; i < numElements; ++i) {
-		readRect(stream, _srcRects[i]);
-	}
+	readRectArray(stream, _srcRects, numElements);
 
 	ser.skip(16 * (15 - numElements), kGameTypeNancy1);
 
-	_destRects.resize(numElements);
+	readRectArray(stream, _destRects, numElements);
+
+	ser.skip(16 * (15 - numElements), kGameTypeNancy1);
+
+	_hotspots.resize(numElements);
+	if (isPiano) {
+		readRectArray(stream, _hotspots, numElements);
+		ser.skip(16 * (15 - numElements));
+	} else {
+		_hotspots = _destRects;
+	}
+
 	_drawnElements.resize(numElements, false);
 	for (uint i = 0; i < numElements; ++i) {
-		readRect(stream, _destRects[i]);
-
 		if (i == 0) {
 			_screenPosition = _destRects[i];
 		} else {
 			_screenPosition.extend(_destRects[i]);
 		}
 	}
-
-	ser.skip(16 * (15 - numElements), kGameTypeNancy1);
 
 	if (ser.getVersion() == kGameTypeVampire) {
 		_sequenceLength = 5;
@@ -95,10 +100,14 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_correctSequence.resize(_sequenceLength);
 	for (uint i = 0; i < _sequenceLength; ++i) {
-		ser.syncAsByte(_correctSequence[i]);
+		if (isPiano) {
+			ser.syncAsUint16LE(_correctSequence[i]);
+		} else {
+			ser.syncAsByte(_correctSequence[i]);
+		}
 	}
 
-	ser.skip(15 - _sequenceLength, kGameTypeNancy1);
+	ser.skip((15 - _sequenceLength) * (isPiano ? 2 : 1), kGameTypeNancy1);
 
 	if (ser.getVersion() != kGameTypeVampire) {
 		_clickSound.readNormal(stream);
@@ -125,18 +134,44 @@ void OrderingPuzzle::execute() {
 	case kRun:
 		switch (_solveState) {
 		case kNotSolved:
-			if (_clickedSequence.size() <  _sequenceLength) {
-				return;
-			}
-
-			for (uint i = 0; i < _sequenceLength; ++i) {
-
-				if (_clickedSequence[i] != (int16)_correctSequence[i]) {
-					if (_clickedSequence.size() > (g_nancy->getGameType() == kGameTypeVampire ? 4 : (uint)_sequenceLength + 1)) {
-						clearAllElements();
-					}
-
+			if (_puzzleType == kOrdering) {
+				if (_clickedSequence.size() <  _sequenceLength) {
 					return;
+				}
+
+				for (uint i = 0; i < _sequenceLength; ++i) {
+					if (_clickedSequence[i] != (int16)_correctSequence[i]) {
+						if (_clickedSequence.size() > (g_nancy->getGameType() == kGameTypeVampire ? 4 : (uint)_sequenceLength + 1)) {
+							clearAllElements();
+						}
+
+						return;
+					}
+				}
+			} else {
+				if (g_nancy->_sound->isSoundPlaying(_clickSound)) {
+					return;
+				}
+
+				for (uint i = 0; i < _drawnElements.size(); ++i) {
+					if (_drawnElements[i]) {
+						undrawElement(i);
+					}
+				}
+				
+				if (_clickedSequence.size() <  _sequenceLength) {
+					return;
+				}
+
+				// Arbitrary number
+				if (_clickedSequence.size() > 30) {
+					_clickedSequence.erase(&_clickedSequence[0], &_clickedSequence[_clickedSequence.size() - 6]);
+				}
+
+				for (uint i = 0; i < _sequenceLength; ++i) {
+					if (_clickedSequence[_clickedSequence.size() - _sequenceLength + i] != (int16)_correctSequence[i]) {
+						return;
+					}
 				}
 			}
 
@@ -184,40 +219,57 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	bool canClick = true;
+	if (_puzzleType == kPiano && g_nancy->_sound->isSoundPlaying(_clickSound)) {
+		canClick = false;
+	}
+
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kExit);
 
-		if (input.input & NancyInput::kLeftMouseButtonUp) {
+		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
 		return;
 	}
 
-	for (int i = 0; i < (int)_destRects.size(); ++i) {
-		if (NancySceneState.getViewport().convertViewportToScreen(_destRects[i]).contains(input.mousePos)) {
+	for (int i = 0; i < (int)_hotspots.size(); ++i) {
+		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 				if (g_nancy->getGameType() == kGameTypeVampire) {
 					g_nancy->_sound->playSound("BUOK");
 				} else {
+					if (_puzzleType == kPiano) {
+						if (Common::isDigit(_clickSound.name.lastChar())) {
+							_clickSound.name.deleteLastChar();
+						}
+
+						_clickSound.name.insertChar('0' + i, _clickSound.name.size());
+						g_nancy->_sound->loadSound(_clickSound);
+					}
+
 					g_nancy->_sound->playSound(_clickSound);
 				}
 
-				for (uint j = 0; j < _clickedSequence.size(); ++j) {
-					if (_clickedSequence[j] == i && _drawnElements[i] == true) {
-						undrawElement(i);
-						if (_clickedSequence.back() == i) {
-							_clickedSequence.pop_back();
-						}
+				if (_puzzleType == kOrdering) {
+					for (uint j = 0; j < _clickedSequence.size(); ++j) {
+						if (_clickedSequence[j] == i && _drawnElements[i] == true) {
+							undrawElement(i);
+							if (_clickedSequence.back() == i) {
+								_clickedSequence.pop_back();
+							}
 
-						return;
+							return;
+						}
 					}
 				}
 
 				_clickedSequence.push_back(i);
 				drawElement(i);
 			}
+
 			return;
 		}
 	}

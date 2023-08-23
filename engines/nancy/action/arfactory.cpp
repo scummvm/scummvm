@@ -136,7 +136,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 107:
 		return new EventFlags();
 	case 108:
-		return new OrderingPuzzle();
+		return new OrderingPuzzle(OrderingPuzzle::kOrdering);
 	case 109:
 		return new LoseGame();
 	case 110:
@@ -193,6 +193,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new RiddlePuzzle();
 	case 206:
 		return new RaycastPuzzle();
+	case 208:
+		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kPiano);
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;

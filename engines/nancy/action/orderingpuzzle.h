@@ -30,7 +30,8 @@ namespace Action {
 class OrderingPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	OrderingPuzzle() : RenderActionRecord(7) {}
+	enum PuzzleType { kOrdering, kPiano };
+	OrderingPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
 	virtual ~OrderingPuzzle() {}
 
 	void init() override;
@@ -39,9 +40,18 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+protected:
+	Common::String getRecordTypeName() const override { return _puzzleType == kOrdering ? "OrderingPuzzle" : "PianoPuzzle"; }
+	bool isViewportRelative() const override { return true; }
+
+	void drawElement(uint id);
+	void undrawElement(uint id);
+	void clearAllElements();
+
 	Common::String _imageName;
 	Common::Array<Common::Rect> _srcRects;
 	Common::Array<Common::Rect> _destRects;
+	Common::Array<Common::Rect> _hotspots;
 	uint16 _sequenceLength = 0;
 	Common::Array<byte> _correctSequence;
 	Nancy::SoundDescription _clickSound;
@@ -57,13 +67,7 @@ public:
 	Common::Array<bool> _drawnElements;
 	Time _solveSoundPlayTime;
 
-protected:
-	Common::String getRecordTypeName() const override { return "OrderingPuzzle"; }
-	bool isViewportRelative() const override { return true; }
-
-	void drawElement(uint id);
-	void undrawElement(uint id);
-	void clearAllElements();
+	PuzzleType _puzzleType;
 };
 
 } // End of namespace Action
