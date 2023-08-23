@@ -110,6 +110,10 @@ static size_t samples_per_frame_buffer_size = 0;
 static int16_t *sound_buffer = NULL;               // pointer to output buffer
 static int16_t *sound_buffer_empty = NULL;         // pointer to zeroed output buffer, to regulate GUI FPS
 
+static bool updating_variables = false;
+static int opt_frameskip_threshold_display = 0;
+static int opt_frameskip_no_display = 0;
+
 static void log_scummvm_exit_code(void) {
 	if (retro_get_scummvm_res() == Common::kNoError)
 		retro_log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
@@ -190,7 +194,7 @@ void retro_osd_notification(const char* msg) {
 
 static void update_variables(void) {
 	struct retro_variable var;
-
+	updating_variables = true;
 	const char* osd_msg = "";
 
 	var.key = "scummvm_gamepad_cursor_speed";
@@ -275,14 +279,20 @@ static void update_variables(void) {
 	var.value = NULL;
 	uint8 old_frameskip_type = frameskip_type;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		opt_frameskip_threshold_display = 0;
+		opt_frameskip_no_display = 0;
+
 		if (strcmp(var.value, "disabled") == 0)
 			frameskip_type = 0;
-		else if (strcmp(var.value, "fixed") == 0)
+		else if (strcmp(var.value, "fixed") == 0) {
 			frameskip_type = 1;
-		else if (strcmp(var.value, "auto") == 0)
+			opt_frameskip_no_display = 1;
+		} else if (strcmp(var.value, "auto") == 0)
 			frameskip_type = 2;
-		else if (strcmp(var.value, "manual") == 0)
+		else if (strcmp(var.value, "manual") == 0) {
 			frameskip_type = 3;
+			opt_frameskip_threshold_display = 1;
+		}
 	}
 
 	var.key = "scummvm_auto_performance_tuner";
@@ -319,6 +329,35 @@ static void update_variables(void) {
 				audio_status |= AUDIO_STATUS_UPDATE_AV_INFO;
 		}
 	}
+	updating_variables = false;
+}
+
+static void retro_set_options_display(void) {
+	struct retro_core_option_display option_display;
+
+	option_display.visible = opt_frameskip_threshold_display;
+	option_display.key = "scummvm_frameskip_threshold";
+	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
+
+
+	option_display.visible = opt_frameskip_no_display;
+	option_display.key = "scummvm_frameskip_no";
+	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
+}
+
+static bool retro_update_display(void) {
+	if (updating_variables)
+	return false;
+
+	/* Core options */
+	bool updated = false;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
+	{
+		update_variables();
+		LIBRETRO_G_SYSTEM->refreshRetroSettings();
+		retro_set_options_display();
+	}
+	return updated;
 }
 
 bool retro_setting_get_timing_inaccuracies_enabled(){
@@ -327,7 +366,6 @@ bool retro_setting_get_timing_inaccuracies_enabled(){
 	else
 		return timing_inaccuracies_enabled;
 }
-
 
 int retro_setting_get_analog_deadzone(void) {
 	return analog_deadzone;
@@ -494,6 +532,10 @@ void retro_set_environment(retro_environment_t cb) {
 
 	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
 	libretro_set_core_options(environ_cb, &has_categories);
+
+	/* Core option display callback */
+	struct retro_core_options_update_display_callback update_display_callback = {retro_update_display};
+	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK, &update_display_callback);
 }
 
 unsigned retro_api_version(void) {
@@ -570,6 +612,8 @@ void retro_init(void) {
 	audio_status = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, &buf_status_cb) ? (audio_status | AUDIO_STATUS_BUFFER_SUPPORT) : (audio_status & ~AUDIO_STATUS_BUFFER_SUPPORT);
 
 	update_variables();
+
+	retro_set_options_display();
 
 	init_command_params();
 
@@ -735,12 +779,6 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 }
 
 void retro_run(void) {
-	bool updated = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated){
-		update_variables();
-		LIBRETRO_G_SYSTEM->refreshRetroSettings();
-	}
-
 	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO){
 		struct retro_system_av_info info;
 		info.geometry.base_width = RES_W;
