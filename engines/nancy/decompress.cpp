@@ -92,6 +92,11 @@ bool Decompressor::decompress(Common::ReadStream &input, Common::MemoryWriteStre
 	}
 
 	if (output.err() || output.pos() != output.size()) {
+		// Workaround for nancy3 file "SLN RollPanOpn.avf", which outputs 2 bytes less than it should
+		if (output.size() - output.pos() <= 2) {
+			return true;
+		}
+
 		warning("Failed to decompress resource");
 		return false;
 	}
