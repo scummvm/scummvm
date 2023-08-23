@@ -343,8 +343,11 @@ void Scene::setLogicCondition(int16 label, byte flag) {
 			// In nancy3 and onwards logic conditions begin from 2000
 			label -= 2000;
 		}
-		_flags.logicConditions[label].flag = flag;
-		_flags.logicConditions[label].timestamp = g_nancy->getTotalPlayTime();
+
+		if (label > kEvNoEvent && (uint)label < 30) {
+			_flags.logicConditions[label].flag = flag;
+			_flags.logicConditions[label].timestamp = g_nancy->getTotalPlayTime();
+		}
 	}
 }
 
@@ -496,7 +499,8 @@ void Scene::synchronize(Common::Serializer &ser) {
 			ser.syncAsUint16LE(entry._value);
 		}
 	} else {
-		uint16 key, val;
+		uint16 key = 0;
+		uint16 val = 0;
 		for (uint i = 0; i < numSceneCounts; ++i) {
 			ser.syncAsUint16LE(key);
 			ser.syncAsUint16LE(val);
@@ -526,7 +530,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(numPuzzleData);
 
 	if (ser.isSaving()) {
-		for (auto pd : _puzzleData) {
+		for (auto &pd : _puzzleData) {
 			uint32 tag = pd._key;
 			ser.syncAsUint32LE(tag);
 			pd._value->synchronize(ser);
@@ -534,7 +538,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	} else {
 		clearPuzzleData();
 
-		uint32 tag;
+		uint32 tag = 0;
 		for (uint i = 0; i < numPuzzleData; ++i) {
 			ser.syncAsUint32LE(tag);
 			PuzzleData *pd = getPuzzleData(tag);

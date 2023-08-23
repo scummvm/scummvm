@@ -54,7 +54,7 @@ protected:
 	Common::Array<byte> _solveOrder;
 	SoundDescription _snipSound;
 	SoundDescription _noToolSound;
-	uint16 _toolID;
+	uint16 _toolID = 0;
 	SceneChangeWithFlag _solveSceneChange;
 	SoundDescription _solveSound;
 	SceneChangeWithFlag _failSceneChange;

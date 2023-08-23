@@ -271,7 +271,7 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation) {
 	assert(!src.empty() && !dest.empty());
 	assert(src.w == src.h && src.h == dest.w && dest.w == dest.h);
-	assert(rotation >= 0 && rotation <= 3);
+	assert(rotation <= 3);
 	assert(src.format.bytesPerPixel == 2 && dest.format.bytesPerPixel == 2);
 
 	uint size = src.w;

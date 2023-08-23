@@ -58,8 +58,8 @@ protected:
 
 	void drawText();
 
-	uint16 _viewportTextFontID;
-	uint16 _textboxTextFontID;
+	uint16 _viewportTextFontID = 0;
+	uint16 _textboxTextFontID = 0;
 	Time _cursorBlinkTime;
 	SoundDescription _typeSound;
 	SoundDescription _eraseSound;

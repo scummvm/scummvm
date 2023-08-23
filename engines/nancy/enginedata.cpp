@@ -358,8 +358,9 @@ HINT::HINT(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 
 	chunkStream->seek(0);
-	numHints.resize(chunkStream->size());
-	for (uint i = 0; i < numHints.size(); ++i) {
+	uint size = chunkStream->size();
+	numHints.resize(size);
+	for (uint i = 0; i < size; ++i) {
 		numHints[i] = chunkStream->readByte();
 	}
 

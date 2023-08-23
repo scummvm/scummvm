@@ -77,7 +77,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	_sound.readNormal(stream);
 	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 
-	uint16 numVideoDescs;
+	uint16 numVideoDescs = 0;
 	ser.syncAsUint16LE(numVideoDescs);
 	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {

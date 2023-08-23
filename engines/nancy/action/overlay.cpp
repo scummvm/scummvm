@@ -45,7 +45,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
 
-	uint16 numSrcRects;
+	uint16 numSrcRects = 0;
 
 	readFilename(ser, _imageName);
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy2);

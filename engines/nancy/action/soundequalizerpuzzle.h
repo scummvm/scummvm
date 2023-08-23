@@ -70,11 +70,11 @@ public:
 	Common::Array<uint16> _minRate;
 	Common::Array<uint16> _maxRate;
 
-	uint16 _solveChannelID;
-	uint16 _solveMinVolume;
-	uint16 _solveMaxVolume;
-	uint16 _solveMinRate;
-	uint16 _solveMaxRate;
+	uint16 _solveChannelID = 0;
+	uint16 _solveMinVolume = 0;
+	uint16 _solveMaxVolume = 0;
+	uint16 _solveMinRate = 0;
+	uint16 _solveMaxRate = 0;
 
 	SceneChangeDescription _exitScene;
 	SoundDescription _exitSound;
