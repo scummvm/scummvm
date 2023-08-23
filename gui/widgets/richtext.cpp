@@ -43,7 +43,7 @@ void ensureWM() {
 		SearchMan.addDirectory(dir.getPath(), dir);
 	}
 
-	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp;
+	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp | Graphics::kWMModeNoCursorOverride;
 
 	_wm = new Graphics::MacWindowManager(wmMode);
 }
