@@ -132,20 +132,20 @@ protected:
 		Audio::SoundHandle handle;
 		Audio::QueuingAudioStream *stream = nullptr;
 		Common::File *fileHandle = nullptr;
-		int number;
-		int volume;
-		int frequency;
-		int globType;
-		int globNum;
-		int callbackID;
-		int endSampleAdjustment;
-		uint32 lastReadPosition;
-		uint32 initialSpoolingFileOffset;
-		uint32 sampleLen;
-		uint32 dataOffset;
-		uint32 flags;
-		bool callbackOnNextFrame;
-		bool isUsingStreamOverride;
+		int number = 0;
+		int volume = 0;
+		int frequency = 0;
+		int globType = 0;
+		int globNum = 0;
+		int callbackID = 0;
+		int endSampleAdjustment = 0;
+		uint32 lastReadPosition = 0;
+		uint32 initialSpoolingFileOffset = 0;
+		uint32 sampleLen = 0;
+		uint32 dataOffset = 0;
+		uint32 flags = 0;
+		bool callbackOnNextFrame = false;
+		bool isUsingStreamOverride = false;
 		byte *residualData = nullptr; // For early callbacks
 	};
 

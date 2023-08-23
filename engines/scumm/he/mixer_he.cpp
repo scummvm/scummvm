@@ -274,9 +274,6 @@ int32 HEMixer::matchOffsetToSongId(int32 offset) {
 /* --- SOFTWARE MIXER --- */
 
 bool HEMixer::mixerInitMyMixerSubSystem() {
-	// Init the channel buffers, and kick start the mixer...
-	memset(_mixerChannels, 0, sizeof(_mixerChannels));
-
 	for (int i = 0; i < MIXER_MAX_CHANNELS; i++) {
 		_mixerChannels[i].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
 		_mixer->playStream(
