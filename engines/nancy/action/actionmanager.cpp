@@ -22,6 +22,7 @@
 #include "common/serializer.h"
 #include "common/stack.h"
 #include "common/config-manager.h"
+#include "common/random.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/input.h"
@@ -462,6 +463,18 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				dep.satisfied = dep.condition == 1;
 			} else {
 				dep.satisfied = dep.condition == 0;
+			}
+
+			break;
+		case DependencyType::kRandom:
+			// Pick a random number and compare it with the value in condition
+			// This is only executed once
+			if (!dep.stopEvaluating) {
+				if ((int)g_nancy->_randomSource->getRandomNumber(99) < dep.condition) {
+					dep.satisfied = true;
+				}
+
+				dep.stopEvaluating = true;
 			}
 
 			break;

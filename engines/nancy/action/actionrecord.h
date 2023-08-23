@@ -59,7 +59,8 @@ enum struct DependencyType : int16 {
 	kClosedCaptioning				= 16,
 	kSound							= 17,
 	kOpenParenthesis				= 18,
-	kCloseParenthesis				= 19
+	kCloseParenthesis				= 19,
+	kRandom							= 20
 };
 
 // Describes a condition that needs to be fulfilled before the
@@ -76,6 +77,9 @@ struct DependencyRecord {
 
 	bool satisfied		= false;
 	Time timeData;
+
+	// Only used for kRandom
+	bool stopEvaluating = false;
 
 	// Used to support the dependency tree structure in nancy3 and up
 	// The only valid field in dependencies with children is the orFlag

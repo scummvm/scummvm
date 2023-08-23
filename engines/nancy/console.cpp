@@ -519,6 +519,9 @@ void NancyConsole::recurseDependencies(const Nancy::Action::DependencyRecord &re
 			recurseDependencies(dep);
 			debugPrintf("\n))))))))");
 			break;
+		case DependencyType::kRandom :
+			debugPrintf("kRandom, chance %i", dep.condition);
+			break;
 		default:
 			debugPrintf("unknown type %u", (uint)dep.type);
 			break;
