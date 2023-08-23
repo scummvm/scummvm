@@ -554,11 +554,41 @@ Common::String ConversationVideo::getRecordTypeName() const {
 	}
 }
 
+class ConversationCelLoader : public DeferredLoader {
+public:
+	ConversationCelLoader(ConversationCel &owner) : _owner(owner) {}
+
+private:
+	bool loadInner() override;
+
+	ConversationCel &_owner;
+};
+
+bool ConversationCelLoader::loadInner() {
+	for (uint i = _owner._curFrame; i < _owner._bodyCelNames.size(); ++i) {
+		if (!_owner._celCache.contains(_owner._bodyCelNames[i])) {
+			_owner.loadCel(_owner._bodyCelNames[i], _owner._bodyTreeName);
+			return false;
+		}
+
+		if (!_owner._celCache.contains(_owner._headCelNames[i])) {
+			_owner.loadCel(_owner._headCelNames[i], _owner._headTreeName);
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void ConversationCel::init() {
 	registerGraphics();
 	_curFrame = _firstFrame;
 	_nextFrameTime = g_nancy->getTotalPlayTime();
 	ConversationSound::init();
+
+	_loaderPtr.reset(new ConversationCelLoader(*this));
+	auto castedPtr = _loaderPtr.dynamicCast<DeferredLoader>();
+	g_nancy->addDeferredLoader(castedPtr);
 }
 
 void ConversationCel::registerGraphics() {
@@ -570,16 +600,14 @@ void ConversationCel::updateGraphics() {
 	uint32 currentTime = g_nancy->getTotalPlayTime();
 
 	if (_state == kRun && currentTime > _nextFrameTime && _curFrame <= _lastFrame) {
-		Cel &curCel = _cels[_curFrame];
+		Cel &bodyCel = loadCel(_bodyCelNames[_curFrame], _bodyTreeName);
+		Cel &headCel = loadCel(_headCelNames[_curFrame], _headTreeName);
 
-		g_nancy->_resource->loadImage(curCel.bodyCelName, curCel.bodySurf, _bodyTreeName, &curCel.bodySrc, &curCel.bodyDest);
-		g_nancy->_resource->loadImage(curCel.headCelName, curCel.headSurf, _headTreeName, &curCel.headSrc, &curCel.headDest);
+		_drawSurface.create(bodyCel.surf, bodyCel.src);
+		moveTo(bodyCel.dest);
 
-		_drawSurface.create(curCel.bodySurf, curCel.bodySrc);
-		moveTo(curCel.bodyDest);
-
-		_headRObj._drawSurface.create(curCel.headSurf, curCel.headSrc);
-		_headRObj.moveTo(curCel.headDest);
+		_headRObj._drawSurface.create(headCel.surf, headCel.src);
+		_headRObj.moveTo(headCel.dest);
 
 		_nextFrameTime += _frameTime;
 		++_curFrame;
@@ -616,11 +644,11 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	_frameTime = xsheet.readUint16LE();
 	xsheet.skip(2);
 
-	_cels.resize(numFrames);
+	_bodyCelNames.resize(numFrames);
+	_headCelNames.resize(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
-		Cel &cel = _cels[i];
-		readFilename(xsheet, cel.bodyCelName);
-		readFilename(xsheet, cel.headCelName);
+		readFilename(xsheet, _bodyCelNames[i]);
+		readFilename(xsheet, _headCelNames[i]);
 
 		// Zeroes
 		if (gameType >= kGameTypeNancy3) {
@@ -653,6 +681,17 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 
 bool ConversationCel::isVideoDonePlaying() {
 	return _curFrame >= _lastFrame && _nextFrameTime <= g_nancy->getTotalPlayTime();
+}
+
+ConversationCel::Cel &ConversationCel::loadCel(const Common::String &name, const Common::String &treeName) {
+	// Assumes head and body cels will be named differently
+	if (_celCache.contains(name)) {
+		return _celCache[name];
+	}
+
+	Cel &newCel = _celCache.getOrCreateVal(name);
+	g_nancy->_resource->loadImage(name, newCel.surf, treeName, &newCel.src, &newCel.dest);
+	return _celCache[name];
 }
 
 } // End of namespace Action

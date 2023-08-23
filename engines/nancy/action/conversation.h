@@ -134,27 +134,13 @@ protected:
 	AVFDecoder _decoder;
 };
 
+class ConversationCelLoader;
+
 // Conversation with separate cels for the body and head of the character.
 // Cels are separate images bundled inside a .cal file
 class ConversationCel : public ConversationSound {
+	friend class ConversationCelLoader;
 public:
-	struct Cel {
-		Common::String bodyCelName;
-		Graphics::ManagedSurface bodySurf;
-		Common::Rect bodySrc;
-		Common::Rect bodyDest;
-		Common::String headCelName;
-		Graphics::ManagedSurface headSurf;
-		Common::Rect headSrc;
-		Common::Rect headDest;
-	};
-
-	class HeadCel : public RenderObject {
-	public:
-		HeadCel() : RenderObject(9) {}
-		bool isViewportRelative() const override { return true; }
-	};
-
 	ConversationCel() {}
 
 	void init() override;
@@ -163,9 +149,26 @@ public:
 
 	void readData(Common::SeekableReadStream &stream) override;
 
-	bool isVideoDonePlaying() override;
+protected:
+	Common::String getRecordTypeName() const override { return "ConversationCel"; }
+	
+	struct Cel {
+		Graphics::ManagedSurface surf;
+		Common::Rect src;
+		Common::Rect dest;
+	};
 
-	Common::Array<Cel> _cels;
+	class HeadCel : public RenderObject {
+	public:
+		HeadCel() : RenderObject(9) {}
+		bool isViewportRelative() const override { return true; }
+	};
+
+	bool isVideoDonePlaying() override;
+	Cel &loadCel(const Common::String &name, const Common::String &treeName);
+
+	Common::Array<Common::String> _bodyCelNames;
+	Common::Array<Common::String> _headCelNames;
 	Common::String _bodyTreeName;
 	Common::String _headTreeName;
 
@@ -180,8 +183,8 @@ public:
 	// We use the built-in RenderObject for the body
 	HeadCel _headRObj;
 
-protected:
-	Common::String getRecordTypeName() const override { return "ConversationCel"; }
+	Common::HashMap<Common::String, Cel> _celCache;
+	Common::SharedPtr<ConversationCelLoader> _loaderPtr;
 };
 
 } // End of namespace Action
