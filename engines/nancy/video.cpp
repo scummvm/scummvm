@@ -130,8 +130,7 @@ bool AVFDecoder::atEnd() const {
 AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uint32 chunkFileFormat, CacheHint cacheHint) {
 	assert(stream);
 	_fileStream = stream;
-	_curFrame = -1;
-	_refFrame = -1;
+	_curFrame = 0;
 	_reversed = false;
 	_dec = new Decompressor;
 
@@ -202,7 +201,6 @@ AVFDecoder::AVFVideoTrack::~AVFVideoTrack() {
 }
 
 bool AVFDecoder::AVFVideoTrack::seek(const Audio::Timestamp &time) {
-	// TODO this will almost definitely break video type 2
 	_curFrame = getFrameAtTime(time);
 	return true;
 }
@@ -269,8 +267,7 @@ bool AVFDecoder::AVFVideoTrack::decode(byte *outBuf, uint32 frameSize, Common::R
 const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 	if (frameNr < _frameCache.size() && _frameCache[frameNr].getPixels()) {
 		// Frame is cached, return a pointer to it
-		_surface = &_frameCache[frameNr];
-		return _surface;
+		return &_frameCache[frameNr];
 	}
 
 	if (frameNr >= _chunkInfo.size()) {
@@ -280,19 +277,19 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 
 	const ChunkInfo &info = _chunkInfo[frameNr];
 
-	if (info.type == 2 && (_refFrame == -1 || _refFrame != (int)frameNr - 1)) {
-		warning("Cannot decode frame %d, reference frame is invalid", frameNr);
-		return nullptr;
-	}
-
 	if (!info.size && !info.compressedSize) {
 		if (info.type != 2) {
 			warning("Found empty frame %d of type %d", frameNr, info.type);
 			return nullptr;
 		}
-		// Return previous frame
-		_refFrame = frameNr;
-		return _surface;
+
+		// Type 2 empty frames are valid. We recursively call decodeFrame until
+		// we find a valid previous frame, or arrive at the beginning of the video
+		if (frameNr != 0) {
+			return decodeFrame(frameNr - 1);
+		} else {
+			return nullptr;
+		}
 	}
 
 	Graphics::Surface &frameInCache = _frameCache[frameNr];
@@ -336,13 +333,11 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 		delete[] decompBuf;
 	}
 
-	_refFrame = frameNr;
-	_surface = &frameInCache;
-	return _surface;
+	return &frameInCache;
 }
 
 const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeNextFrame() {
-	return decodeFrame(_reversed ? _curFrame-- : ++_curFrame);
+	return decodeFrame(_reversed ? _curFrame-- : _curFrame++);
 }
 
 } // End of namespace Nancy

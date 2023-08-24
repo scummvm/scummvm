@@ -51,7 +51,6 @@ public:
 	void addFrameTime(const uint16 timeToAdd);
 	bool atEnd() const;
 
-
 private:
 	CacheHint _cacheHint;
 	class AVFVideoTrack : public FixedRateVideoTrack {
@@ -95,8 +94,6 @@ private:
 		int _curFrame;
 		uint _frameCount;
 		uint32 _frameTime;
-		Graphics::Surface *_surface;
-		int _refFrame;
 		Common::Array<ChunkInfo> _chunkInfo;
 		Decompressor *_dec;
 		bool _reversed;
