@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-08-22 22:37+0000\n"
-"PO-Revision-Date: 2023-07-29 09:44+0000\n"
+"PO-Revision-Date: 2023-08-24 09:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -990,21 +990,17 @@ msgid "Prev"
 msgstr "Προηγούμενο"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Αποθήκευση παιχνιδιού..."
+msgstr "Αποθήκευση Εικόνας..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u από %u"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "Αποθήκευση παιχνιδιού"
+msgstr "Αποθήκευση Εικόνας"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
@@ -2850,23 +2846,23 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Αρχείο Εικόνας Bitmap"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "Αρχείο Εικόνας PNG"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "Αρχείο Εικόνας JPEG"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "Αρχείο Εικόνας QuickDraw PICT"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Αρχείο Δεδομένων"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -5671,10 +5667,8 @@ msgstr ""
 "αποθηκεύσετε εκ νέου το παιχνίδι σας."
 
 #: engines/crab/input/input.cpp:118
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Αλληλεπίδραση"
+msgstr "Μίλα/Αλληλεπίδρασε"
 
 #: engines/crab/input/input.cpp:158 engines/twine/metaengine.cpp:445
 msgid "Accept"
@@ -5682,37 +5676,35 @@ msgstr "Αποδοχή"
 
 #: engines/crab/input/input.cpp:164
 msgid "Reply 1"
-msgstr ""
+msgstr "Απάντηση 1"
 
 #: engines/crab/input/input.cpp:169
 msgid "Reply 2"
-msgstr ""
+msgstr "Απάντηση 2"
 
 #: engines/crab/input/input.cpp:174
 msgid "Reply 3"
-msgstr ""
+msgstr "Απάντηση 3"
 
 #: engines/crab/input/input.cpp:179
 msgid "Reply 4"
-msgstr ""
+msgstr "Απάντηση 4"
 
 #: engines/crab/input/input.cpp:184
 msgid "Reply 5"
-msgstr ""
+msgstr "Απάντηση 5"
 
 #: engines/crab/input/input.cpp:189
 msgid "Reply 6"
-msgstr ""
+msgstr "Απάντηση 6"
 
 #: engines/crab/input/input.cpp:204
 msgid "Map"
 msgstr "Αντιστοίχιση"
 
 #: engines/crab/input/input.cpp:209
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Προβολή ημερολογίου"
+msgstr "Ημερολόγιο"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:214 engines/dragons/metaengine.cpp:149
@@ -5728,7 +5720,7 @@ msgstr "Υπάρχοντα"
 
 #: engines/crab/input/input.cpp:219
 msgid "Traits"
-msgstr ""
+msgstr "Γνωρίσματα"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
@@ -5868,13 +5860,11 @@ msgstr "Ο παίκτης δεν θα μπορεί να πέσει από τις
 
 #: engines/freescape/metaengine.cpp:101
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Αντιστροφή άξονα-Y στο ποντίκι"
 
 #: engines/freescape/metaengine.cpp:102
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Χρήση εναλλακτικής παλέτας"
+msgstr "Εναλλακτικός χειρισμός κάμερας"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7487,7 +7477,7 @@ msgstr ""
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
-msgstr ""
+msgstr "Προβολή Εικόνων"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
