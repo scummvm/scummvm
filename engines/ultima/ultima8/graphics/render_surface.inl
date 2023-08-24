@@ -105,24 +105,24 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 #define LINE_END_ASSIGN //
 #define NOT_CLIPPED_X (1)
 #define NOT_CLIPPED_Y (1)
-#define OFFSET_PIXELS (_pixels)
+#define OFFSET_PIXELS (pixels)
 
 //
 // No Clipping = FALSE
 //
 #else
 
-	const int		scrn_width = _clipWindow.width();
-	const int		scrn_height = _clipWindow.height();
+	const int		scrn_width = clipWindow.width();
+	const int		scrn_height = clipWindow.height();
 
 #define LINE_END_ASSIGN const uintX *dst_line_end = dst_line_start + scrn_width
 #define NOT_CLIPPED_X (dstpix >= dst_line_start && dstpix < dst_line_end)
 #define NOT_CLIPPED_Y (line >= 0 && line < scrn_height)
 #define OFFSET_PIXELS (off_pixels)
 
-	uint8			*off_pixels  = _pixels + _clipWindow.left * sizeof(uintX) + _clipWindow.top * _pitch;
-	x -= _clipWindow.left;
-	y -= _clipWindow.top;
+	uint8			*off_pixels  = pixels + clipWindow.left * sizeof(uintX) + clipWindow.top * pitch;
+	x -= clipWindow.left;
+	y -= clipWindow.top;
 
 #endif
 
@@ -170,9 +170,6 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	if (s->getPalette() == 0)
 		return;
 
-#ifdef XFORM_SHAPES
-	const Graphics::PixelFormat &format = _surface->format;
-#endif
 	const ShapeFrame *frame			= s->getFrame(framenum);
 	if (!frame)
 		return;
@@ -193,14 +190,14 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	x -= XNEG(frame->_xoff);
 	y -= frame->_yoff;
 
-	assert(_pixels00 && _pixels && srcpixels);
+	assert(pixels && srcpixels);
 
 	for (int i = 0; i < height_; i++)  {
 		const int line = y + i;
 
 		if (NOT_CLIPPED_Y) {
 			const uint8	*srcline = srcpixels + i * width_;
-			uintX *dst_line_start = reinterpret_cast<uintX *>(OFFSET_PIXELS + _pitch * line);
+			uintX *dst_line_start = reinterpret_cast<uintX *>(OFFSET_PIXELS + pitch * line);
 			LINE_END_ASSIGN;
 
 			for (int xpos = 0; xpos < width_; xpos++) {
