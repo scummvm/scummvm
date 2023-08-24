@@ -52,15 +52,6 @@ HelpDialog::HelpDialog()
 
 	tab->addTab(_("General"), "GlobalOptions_Graphics", false);
 	tab->addTab(_("Controls"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("More Stuff"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Even More"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Bubba"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Rulez"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Abra"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Shwabra"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Kadabra"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Kaboom"), "GlobalOptions_Graphics", false);
-	tab->addTab(_("Boomka"), "GlobalOptions_Graphics", false);
 
 	Common::U32String helpText = _(
 "# Touch controls\n"
@@ -101,7 +92,10 @@ HelpDialog::HelpDialog()
 "\n"
 	);
 
-	new RichTextWidget(tab, 10, 10, _w - 40, tabHeight - buttonHeight, helpText);
+	new RichTextWidget(tab, 10, 10, _w - 40, tabHeight - buttonHeight - 10, helpText);
+
+	tab->addTab(_("Adding Games"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Paths"), "GlobalOptions_Graphics", false);
 
 	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
