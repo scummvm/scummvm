@@ -24,7 +24,7 @@
 
 namespace Graphics {
 
-// see graphics/blit-atari.cpp
+// see graphics/blit/blit-atari.cpp
 #ifndef ATARI
 // Function to blit a rect
 void copyBlit(byte *dst, const byte *src,

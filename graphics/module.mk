@@ -136,7 +136,7 @@ endif
 
 ifdef ATARI
 MODULE_OBJS += \
-	blit-atari.o
+	blit/blit-atari.o
 endif
 
 ifeq ($(SCUMMVM_NEON),1)
