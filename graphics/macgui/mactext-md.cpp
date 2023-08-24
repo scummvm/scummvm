@@ -69,24 +69,46 @@ void render_hrule(Common::DataBuffer *ob, void *opaque) {
 }
 
 void render_list_start(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
-	if (!text)
-		return;
+	MDState *mdstate = (MDState *)opaque;
 
-	warning("STUB: render_list_start(%s, %d)", PR(text), flags);
+	mdstate->listNum.push_back(flags & MKD_LIST_ORDERED ? 1 : -1);
+
+	debug(1, "render_list_start(%s, %d)", PR(text), flags);
 }
 
 void render_list(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
-	if (!text)
-		return;
+	MDState *mdstate = (MDState *)opaque;
 
-	warning("STUB: render_list(%s, %d)", PR(text), flags);
+	mdstate->listNum.pop_back();
+
+	bufput(ob, text->data, text->size);
+	bufput(ob, "\n", 1);
+
+	debug(1, "render_list(%s, %d)", PR(text), flags);
 }
 
 void render_listitem(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
-	if (!text)
-		return;
+	MDState *mdstate = (MDState *)opaque;
 
-	warning("STUB: render_listitem(%s, %d)", PR(text), flags);
+	int listNum = mdstate->listNum.back();
+	int depth = mdstate->listNum.size() - 1;
+
+	for (int i = 0; i < depth; i++)
+		bufput(ob, "  ", 2);
+
+	if (flags & MKD_LIST_ORDERED) {
+		Common::String prefix = Common::String::format("%d. ", listNum);
+
+		bufput(ob, prefix.c_str(), prefix.size());
+
+		mdstate->listNum.back()++;
+	} else {
+		bufput(ob, "* ", 2);
+	}
+
+	bufput(ob, text->data, text->size);
+
+	debug(1, "render_listitem(%s, %d)", PR(text), flags);
 }
 
 void render_paragraph(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
