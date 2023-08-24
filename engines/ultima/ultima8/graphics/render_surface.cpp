@@ -41,7 +41,6 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _o
 															_surface(s) {
 	_clipWindow.setWidth(_surface->w);
 	_clipWindow.setHeight(_surface->h);
-	_pitch = _surface->pitch;
 
 	SetPixelsPointer();
 }
@@ -57,13 +56,14 @@ RenderSurface::~RenderSurface() {
 
 void RenderSurface::SetPixelsPointer()
 {
-	uint8 *pix00 = static_cast<uint8 *>(_surface->getPixels());
+	_pixels = static_cast<uint8 *>(_surface->getBasePtr(_ox, _oy));
+	_pitch = _surface->pitch;
 
 	if (_flipped) {
-		pix00 += -_pitch * (_surface->h - 1);
+		_pixels = static_cast<uint8 *>(_surface->getBasePtr(_ox, _surface->h - 1 - _oy));
+		_pitch = -_pitch;
 	}
 
-	_pixels = pix00 + _ox * _surface->format.bytesPerPixel + _oy * _pitch;
 }
 
 //
@@ -75,10 +75,6 @@ void RenderSurface::SetPixelsPointer()
 bool RenderSurface::BeginPainting() {
 	if (!_lockCount) {
 		_surface->markAllDirty();
-
-		_pitch = _surface->pitch;
-		if (_flipped)
-			_pitch = -_pitch;
 	}
 
 	_lockCount++;
@@ -291,8 +287,6 @@ void RenderSurface::SetFlipped(bool wantFlipped) {
 	_oy -= _clipWindow.top;
 	_clipWindow.setHeight(_surface->h - _clipWindow.top + _clipWindow.height());
 	_oy += _clipWindow.top;
-
-	_pitch = -_pitch;
 
 	SetPixelsPointer();
 }
