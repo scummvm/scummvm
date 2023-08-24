@@ -37,7 +37,7 @@ public:
 	Room() {}
 	virtual ~Room() {}
 
-	virtual void preload() {}
+	virtual void preload();
 	virtual void init() {}
 	virtual void daemon() {}
 	virtual void pre_parser() {}

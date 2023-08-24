@@ -121,10 +121,12 @@ static const seriesStreamBreak STREAMS9[] = {
 	STREAM_BREAK_END
 };
 
+void Room801::preload() {
+	_G(player).walker_in_this_scene = false;
+}
 
 void Room801::init() {
 	const char *HEADER = "+++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-	_G(player).walker_in_this_scene = false;
 	interface_hide();
 	player_set_commands_allowed(false);
 	pal_fade_set_start(_G(master_palette), 0);

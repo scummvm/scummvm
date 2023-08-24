@@ -33,6 +33,7 @@ public:
 	Room120() : Room() {}
 	~Room120() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

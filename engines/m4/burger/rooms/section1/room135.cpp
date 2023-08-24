@@ -84,7 +84,6 @@ static const seriesPlayBreak PLAY3[] = {
 };
 
 void Room135::init() {
-	_G(player).walker_in_this_scene = true;
 	_volume = 255;
 	_val2 = 0;
 	_odieLoaded = false;

@@ -28,8 +28,11 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-void Room120::init() {
+void Room120::preload() {
 	_G(player).walker_in_this_scene = false;
+}
+
+void Room120::init() {
 	player_set_commands_allowed(false);
 	kernel_timing_trigger(200, 1);
 }

@@ -173,7 +173,6 @@ void Room142::init() {
 	_MATCH.push_back(WilburMatch("GEAR", "BACK DOOR", 6,
 		nullptr, 0, nullptr, 0));
 
-	_G(player).walker_in_this_scene = true;
 	digi_preload("142_004");
 	digi_play_loop("142_004", 3, 255, -1);
 
