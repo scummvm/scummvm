@@ -22,21 +22,16 @@
 #ifndef ULTIMA8_GRAPHICS_RENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_RENDERSURFACE_H
 
-#include "graphics/pixelformat.h"
 #include "graphics/managed_surface.h"
 #include "ultima/ultima8/misc/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class Texture;
 class Shape;
-class ShapeFont;
-struct FixedWidthFont;
 
 struct Palette;
 struct Rect;
-class Scaler;
 
 //
 // RenderSurface
@@ -47,16 +42,14 @@ class RenderSurface {
 private:
 	// Frame buffer
 	uint8 *_pixels;   // Pointer to logical pixel 0,0
-	uint8 *_pixels00; // Pointer to physical pixel 0,0
 
 	// Dimensions
 	int32 _ox, _oy;        // Physical Pixel for Logical Origin
-	int32 _width, _height; // Width and height
 	int32 _pitch;          // Frame buffer pitch (bytes) (could be negated)
 	bool _flipped;
 
 	// Clipping Rectangle
-	Rect _clipWindow;
+	Common::Rect _clipWindow;
 
 	// Locking count
 	uint32 _lockCount; // Number of locks on surface
