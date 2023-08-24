@@ -32,7 +32,8 @@ class Room138 : public Room {
 private:
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
-	int _val1 = 0;
+	int _series3 = 0;
+	int _frame = 0;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
@@ -40,6 +41,13 @@ private:
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
+	bool _assetsFreed = false;
+	bool _flag1 = false;
+
+	void freeAssets();
+	void randomDigi();
+	void loadSeries();
+	void freeSeries();
 
 public:
 	Room138() : Room() {}
