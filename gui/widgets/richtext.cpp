@@ -72,14 +72,14 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::createWidget() {
-	uint32 white = _wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff);
+	uint32 white = _wm->_pixelformat.RGBToColor(0, 0, 0);
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
 	uint32 black = _wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
+	black = _wm->_pixelformat.RGBToColor(1, 1, 1);
 
 	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
 
-	_txtWnd = _wm->addTextWindow(&macFont,
-			black, white, _w, Graphics::kTextAlignLeft, nullptr, false);
+	_txtWnd = _wm->addTextWindow(&macFont, black, white, _w, Graphics::kTextAlignLeft, nullptr, false);
 	_txtWnd->setTextColorRGB(black);
 	_txtWnd->setBorderType(Graphics::kWindowBorderMacOSNoBorderScrollbar);
 	_txtWnd->enableScrollbar(true);
