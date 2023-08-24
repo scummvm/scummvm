@@ -429,7 +429,6 @@ MODULE_OBJS := \
 	ultima8/graphics/shape_frame.o \
 	ultima8/graphics/shape_info.o \
 	ultima8/graphics/skf_player.o \
-	ultima8/graphics/soft_render_surface.o \
 	ultima8/graphics/type_flags.o \
 	ultima8/graphics/wpn_ovlay_dat.o \
 	ultima8/graphics/xform_blend.o \
