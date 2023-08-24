@@ -91,7 +91,7 @@ void render_listitem(Common::DataBuffer *ob, const Common::DataBuffer *text, int
 	MDState *mdstate = (MDState *)opaque;
 
 	int listNum = mdstate->listNum.back();
-	int depth = mdstate->listNum.size() - 1;
+	int depth = mdstate->listNum.size();
 
 	for (int i = 0; i < depth; i++)
 		bufput(ob, "  ", 2);
