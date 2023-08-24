@@ -44,7 +44,7 @@ class Scaler;
 // Desc: The base class for rendering in Pentagram
 //
 class RenderSurface {
-protected:
+private:
 	// Frame buffer
 	uint8 *_pixels;   // Pointer to logical pixel 0,0
 	uint8 *_pixels00; // Pointer to physical pixel 0,0
@@ -79,8 +79,7 @@ public:
 	//! Create a SecondaryRenderSurface with an associated Texture object
 	static RenderSurface *CreateSecondaryRenderSurface(uint32 width, uint32 height);
 
-	// Virtual Destructor
-	virtual ~RenderSurface();
+	~RenderSurface();
 
 	//
 	// Being/End Painting
@@ -89,40 +88,40 @@ public:
 	//! Begin painting to the buffer. MUST BE CALLED BEFORE DOING ANYTHING TO THE SURFACE!
 	// \note Can be called multiple times
 	// \return true on success, false on failure
-	virtual bool BeginPainting();
+	bool BeginPainting();
 
 	//! Finish paining to the buffer.
 	// \note MUST BE CALLED FOR EACH CALL TO BeginPainting()
 	// \return true on success, false on failure
-	virtual bool EndPainting();
+	bool EndPainting();
 
 	//
 	// Surface Properties
 	//
 
 	//! Set the Origin of the Surface
-	virtual void SetOrigin(int32 x, int32 y);
+	void SetOrigin(int32 x, int32 y);
 
 	//! Set the Origin of the Surface
-	virtual void GetOrigin(int32 &x, int32 &y) const;
+	void GetOrigin(int32 &x, int32 &y) const;
 
 	//! Get the Surface Dimensions
-	virtual void GetSurfaceDims(Rect &) const;
+	void GetSurfaceDims(Rect &) const;
 
 	//! Get Clipping Rectangle
-	virtual void GetClippingRect(Rect &) const;
+	void GetClippingRect(Rect &) const;
 
 	//! Set Clipping Rectangle
-	virtual void SetClippingRect(const Rect &);
+	void SetClippingRect(const Rect &);
 
 	//! Flip the surface
-	virtual void SetFlipped(bool flipped);
+	void SetFlipped(bool flipped);
 
 	//! Has the render surface been flipped?
-	virtual bool IsFlipped() const;
+	bool IsFlipped() const;
 
 	//! Get a reference to the underlying surface that's being encapsulated
-	virtual Graphics::ManagedSurface *getRawSurface() const {
+	Graphics::ManagedSurface *getRawSurface() const {
 		return _surface;
 	};
 
@@ -130,7 +129,7 @@ public:
 	// Surface Palettes
 	//
 
-	virtual void CreateNativePalette(Palette *palette, int maxindex = 0);
+	void CreateNativePalette(Palette *palette, int maxindex = 0);
 
 
 	//
@@ -142,13 +141,13 @@ public:
 		Fill32(rgb, Rect(sx, sy, sx + w, sy + h));
 	}
 
-	virtual void Fill32(uint32 rgb, const Rect &r);
+	void Fill32(uint32 rgb, const Rect &r);
 
 	//! Fill alpha channel
-	virtual void FillAlpha(uint8 alpha, const Rect &r) = 0;
+	void FillAlpha(uint8 alpha, const Rect &r);
 
 	//! Fill the region doing alpha blending
-	virtual void FillBlended(uint32 rgba, const Rect &r) = 0;
+	void FillBlended(uint32 rgba, const Rect &r);
 
 	//
 	// The rule for painting methods:
@@ -163,32 +162,32 @@ public:
 	//
 
 	//! Paint a Shape
-	virtual void Paint(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
+	void Paint(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
 
 	//! Paint a Shape without clipping
-	virtual void PaintNoClip(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
+	void PaintNoClip(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
 
 	//! Paint a Translucent Shape.
-	virtual void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
+	void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
 
 	//! Paint a Mirrored Shape
-	virtual void PaintMirrored(const Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false) = 0;
+	void PaintMirrored(const Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false);
 
 	//! Paint an Invisible Shape
-	virtual void PaintInvisible(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false) = 0;
+	void PaintInvisible(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false);
 
 	//! Paint a Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	virtual void PaintHighlight(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) = 0;
+	void PaintHighlight(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false);
 
 	//! Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	virtual void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) = 0;
+	void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false);
 
 	//
 	// Basic Line Drawing
 	//
 
 	// Draw a RGB Line
-	virtual void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
+	void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
 
 
 	//
@@ -196,13 +195,13 @@ public:
 	//
 
 	//! Blit a region from a Texture (Alpha == 0 -> skipped)
-	virtual void Blit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, bool alpha_blend = false);
+	void Blit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, bool alpha_blend = false);
 
 	//! Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void FadedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
+	void FadedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false);
 
 	//! Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void MaskedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
+	void MaskedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false);
 
 };
 
