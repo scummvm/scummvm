@@ -203,6 +203,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// German demo
+	{
+		"peril",
+		"Demo",
+		AD_ENTRY1s("PPTP.ORB", "6ab19c3fba0fd3894758236831001456", 89851874),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+
+
 	// Dutch, Version 1.0
 	{
 		"pokus",
