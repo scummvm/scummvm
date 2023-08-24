@@ -175,6 +175,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new StopSound();
 	case 155:
 		return new StopSound(); // StopAndUnloadSound, but we always unload
+	case 157:
+		return new PlayDigiSoundCC();
 	case 160:
 		return new HintSystem();
 	case 170:

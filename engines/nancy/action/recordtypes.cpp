@@ -606,6 +606,25 @@ void PlayDigiSoundAndDie::execute() {
 	}
 }
 
+void PlayDigiSoundCC::readData(Common::SeekableReadStream &stream) {
+	PlayDigiSoundAndDie::readData(stream);
+
+	uint16 textSize = stream.readUint16LE();
+	if (textSize) {
+		char *strBuf = new char[textSize];
+		stream.read(strBuf, textSize);
+		UI::Textbox::assembleTextLine(strBuf, _ccText, textSize);
+		delete[] strBuf;
+	}
+}
+
+void PlayDigiSoundCC::execute() {
+	if (_state == kBegin) {
+		NancySceneState.getTextbox().addTextLine(_ccText);
+	}
+	PlayDigiSoundAndDie::execute();
+}
+
 void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 	stream.skip(2);

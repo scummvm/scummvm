@@ -424,6 +424,17 @@ protected:
 	Common::String getRecordTypeName() const override { return "PlayDigiSoundAndDie"; }
 };
 
+class PlayDigiSoundCC : public PlayDigiSoundAndDie {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::String _ccText;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlayDigiSoundCC"; }
+};
+
 class PlaySoundPanFrameAnchorAndDie : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
