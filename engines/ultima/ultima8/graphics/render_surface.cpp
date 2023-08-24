@@ -36,12 +36,11 @@ namespace Ultima8 {
 uint8 RenderSurface::_gamma10toGamma22[256];
 uint8 RenderSurface::_gamma22toGamma10[256];
 
-RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _pixels00(nullptr),
-															_ox(0), _oy(0), _width(0), _height(0), _pitch(0),
+RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _ox(0), _oy(0), _pitch(0),
 															_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
 															_surface(s) {
-	_clipWindow.setWidth(_width = _surface->w);
-	_clipWindow.setHeight(_height = _surface->h);
+	_clipWindow.setWidth(_surface->w);
+	_clipWindow.setHeight(_surface->h);
 	_pitch = _surface->pitch;
 
 	SetPixelsPointer();
@@ -53,14 +52,15 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _p
 // Desc: Destructor
 //
 RenderSurface::~RenderSurface() {
+	delete _surface;
 }
 
 void RenderSurface::SetPixelsPointer()
 {
-	uint8 *pix00 = _pixels00;
+	uint8 *pix00 = static_cast<uint8 *>(_surface->getPixels());
 
 	if (_flipped) {
-		pix00 += -_pitch * (_height - 1);
+		pix00 += -_pitch * (_surface->h - 1);
 	}
 
 	_pixels = pix00 + _ox * _surface->format.bytesPerPixel + _oy * _pitch;
@@ -74,25 +74,14 @@ void RenderSurface::SetPixelsPointer()
 //
 bool RenderSurface::BeginPainting() {
 	if (!_lockCount) {
+		_surface->markAllDirty();
 
-		if (_surface) {
-			// Pixels pointer
-			Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
-			_pixels00 = static_cast<uint8 *>(s.getPixels());
-
-			_pitch = _surface->pitch;
-			if (_flipped)
-				_pitch = -_pitch;
-		}
-		// else, nothing to lock.
+		_pitch = _surface->pitch;
+		if (_flipped)
+			_pitch = -_pitch;
 	}
 
 	_lockCount++;
-
-	if (_pixels00 == nullptr) {
-		error("Error: Surface Locked with NULL RenderSurface::_pixels pointer!");
-		return false;
-	}
 
 	// Origin offset pointers
 	SetPixelsPointer();
@@ -118,16 +107,13 @@ bool RenderSurface::EndPainting() {
 	--_lockCount;
 
 	if (!_lockCount) {
-		if (_surface) {
-			// Clear pointers
-			_pixels = _pixels00 = 0;
+		// Clear pointers
+		_pixels = 0;
 
-			// Render the screen if this is it (slight hack..)
-			Graphics::Screen *screen = dynamic_cast<Graphics::Screen *>(_surface);
-			if (screen)
-				screen->update();
-		}
-		// else, nothing to unlock.
+		// Render the screen if this is it (slight hack..)
+		Graphics::Screen *screen = dynamic_cast<Graphics::Screen *>(_surface);
+		if (screen)
+			screen->update();
 	}
 
 	// No error
@@ -230,8 +216,8 @@ void RenderSurface::CreateNativePalette(Palette *palette, int maxindex) {
 //
 void RenderSurface::GetSurfaceDims(Rect &r) const {
 	r.moveTo(_ox, _oy);
-	r.setWidth(_width);
-	r.setHeight(_height);
+	r.setWidth(_surface->w);
+	r.setHeight(_surface->h);
 }
 
 //
@@ -269,7 +255,7 @@ void RenderSurface::GetOrigin(int32 &x, int32 &y) const {
 // r: Rect object to fill
 //
 void RenderSurface::GetClippingRect(Rect &r) const {
-	r = _clipWindow;
+	r = Rect(_clipWindow.left, _clipWindow.top, _clipWindow.right, _clipWindow.bottom);
 }
 
 //
@@ -280,8 +266,8 @@ void RenderSurface::GetClippingRect(Rect &r) const {
 //
 void RenderSurface::SetClippingRect(const Rect &r) {
 	// What we need to do is to clip the clipping rect to the phyiscal screen
-	_clipWindow = r;
-	_clipWindow.clip(Rect(-_ox, -_oy, -_ox + _width, -_oy + _height));
+	_clipWindow = Common::Rect(r.left, r.top, r.right, r.bottom);
+	_clipWindow.clip(Common::Rect(-_ox, -_oy, -_ox + _surface->w, -_oy + _surface->h));
 }
 
 //
@@ -303,7 +289,7 @@ void RenderSurface::SetFlipped(bool wantFlipped) {
 	// We keep the 'origin' in the same position relative to the clipping window
 
 	_oy -= _clipWindow.top;
-	_clipWindow.setHeight(_height - _clipWindow.top + _clipWindow.height());
+	_clipWindow.setHeight(_surface->h - _clipWindow.top + _clipWindow.height());
 	_oy += _clipWindow.top;
 
 	_pitch = -_pitch;
@@ -326,7 +312,7 @@ bool RenderSurface::IsFlipped() const {
 // Desc: Fill buffer (using a RGB colour)
 //
 void RenderSurface::Fill32(uint32 rgb, const Rect &r) {
-	Rect rect = r;
+	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 	rgb = _surface->format.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 	_surface->fillRect(Common::Rect(rect.left + _ox, rect.top + _oy, rect.right + _ox, rect.bottom + _oy), rgb);
@@ -337,7 +323,7 @@ void RenderSurface::Fill32(uint32 rgb, const Rect &r) {
 namespace {
 
 template<typename uintX>
-void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Rect &rect, const Graphics::PixelFormat &format) {
+void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Common::Rect &rect, const Graphics::PixelFormat &format) {
 	uint32 aMask = format.aMax() << format.aShift;
 	int32 w = rect.width();
 	int32 h = rect.height();
@@ -394,7 +380,7 @@ void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Rect &
 // Desc: Fill alpha channel
 //
 void RenderSurface::FillAlpha(uint8 alpha, const Rect &r) {
-	Rect rect = r;
+	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 
 	if (_surface->format.bytesPerPixel == 4)
@@ -406,7 +392,7 @@ void RenderSurface::FillAlpha(uint8 alpha, const Rect &r) {
 namespace {
 
 template<typename uintX>
-void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Rect &rect, const Graphics::PixelFormat &format) {
+void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Common::Rect &rect, const Graphics::PixelFormat &format) {
 	int32 w = rect.width();
 	int32 h = rect.height();
 
@@ -461,7 +447,7 @@ void RenderSurface::FillBlended(uint32 rgba, const Rect &r) {
 		return;
 	}
 
-	Rect rect = r;
+	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 
 	if (_surface->format.bytesPerPixel == 4)
@@ -498,7 +484,7 @@ namespace {
 
 template<typename uintX>
 void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
-						   const Rect &clipWindow,
+						   const Common::Rect &clipWindow,
 						   const Graphics::PixelFormat &format,
 						   const Graphics::ManagedSurface &src,
 						   const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
@@ -516,7 +502,7 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 	// Clip to window
 	int px = dx, py = dy;
 
-	Rect rect(dx, dy, dx + w, dy + h);
+	Common::Rect rect(dx, dy, dx + w, dy + h);
 	rect.clip(clipWindow);
 	dx = rect.left;
 	dy = rect.top;
@@ -640,7 +626,7 @@ namespace {
 
 template<typename uintX>
 void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
-							const Rect &clipWindow,
+							const Common::Rect &clipWindow,
 							const Graphics::PixelFormat &format,
 							const Graphics::ManagedSurface &src,
 							const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
@@ -658,7 +644,7 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 	// Clip to window
 	int px = dx, py = dy;
 
-	Rect rect(dx, dy, dx + w, dy + h);
+	Common::Rect rect(dx, dy, dx + w, dy + h);
 	rect.clip(clipWindow);
 	dx = rect.left;
 	dy = rect.top;
@@ -837,7 +823,7 @@ namespace {
 template<typename uintX>
 
 void inline paintLogic(uint8 *pixels, int32 pitch,
-					   const Rect &clipWindow,
+					   const Common::Rect &clipWindow,
 					   const Graphics::PixelFormat &format,
 					   const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #include "ultima/ultima8/graphics/render_surface.inl"
@@ -845,7 +831,7 @@ void inline paintLogic(uint8 *pixels, int32 pitch,
 
 template<class uintX>
 void inline paintNoClipLogic(uint8 *pixels, int32 pitch,
-							 const Rect &clipWindow,
+							 const Common::Rect &clipWindow,
 							 const Graphics::PixelFormat &format,
 							 const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #define NO_CLIPPING
@@ -855,7 +841,7 @@ void inline paintNoClipLogic(uint8 *pixels, int32 pitch,
 
 template<class uintX>
 void inline paintTranslucentLogic(uint8 *pixels, int32 pitch,
-								  const Rect &clipWindow,
+								  const Common::Rect &clipWindow,
 								  const Graphics::PixelFormat &format,
 								  const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #define XFORM_SHAPES
@@ -865,7 +851,7 @@ void inline paintTranslucentLogic(uint8 *pixels, int32 pitch,
 
 template<class uintX>
 void inline paintMirroredLogic(uint8 *pixels, int32 pitch,
-							   const Rect &clipWindow,
+							   const Common::Rect &clipWindow,
 							   const Graphics::PixelFormat &format,
 							   const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool untformed_pal) {
 #define FLIP_SHAPES
@@ -881,7 +867,7 @@ void inline paintMirroredLogic(uint8 *pixels, int32 pitch,
 
 template<class uintX>
 void inline paintInvisibleLogic(uint8 *pixels, int32 pitch,
-								const Rect &clipWindow,
+								const Common::Rect &clipWindow,
 								const Graphics::PixelFormat &format,
 								const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal) {
 #define FLIP_SHAPES
@@ -901,7 +887,7 @@ void inline paintInvisibleLogic(uint8 *pixels, int32 pitch,
 
 template<class uintX>
 void inline paintHighlightLogic(uint8 *pixels, int32 pitch,
-								const Rect &clipWindow,
+								const Common::Rect &clipWindow,
 								const Graphics::PixelFormat &format,
 								const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
 #define FLIP_SHAPES
@@ -926,7 +912,7 @@ void inline paintHighlightLogic(uint8 *pixels, int32 pitch,
 
 template<class uintX>
 void inline paintHighlightInvisLogic(uint8 *pixels, int32 pitch,
-									 const Rect &clipWindow,
+									 const Common::Rect &clipWindow,
 									 const Graphics::PixelFormat &format,
 									 const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
 #define FLIP_SHAPES
