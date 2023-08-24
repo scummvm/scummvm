@@ -26,32 +26,6 @@
 
 namespace Freescape {
 
-static const entrancesTableEntry rawEntranceTable[] = {
-	{183, {36, 137, 13}}, // Correct?
-	{184, {36, 137, 13}}, // TODO
-	{185, {204, 68, 66}},
-	{186, {204, 88, 66}},
-	{187, {36, 137, 13}}, // TODO
-	{188, {352, 105, 204}},
-	{190, {36, 137, 13}}, // TODO
-	{191, {49, 7, 23}},   // TODO
-	{192, {36, 137, 13}}, // TODO
-	{193, {36, 137, 13}}, // TODO
-	{194, {36, 137, 13}}, // TODO
-	{195, {36, 137, 13}}, // TODO
-	{196, {36, 137, 13}}, // <-
-	{197, {203, 0, 31}},  // TODO
-	{198, {36, 137, 13}}, // TODO
-	{199, {36, 137, 13}}, // TODO
-	{200, {36, 137, 13}}, // TODO
-	{201, {36, 137, 13}}, // TODO
-	{202, {360, 25, 373}},
-	{203, {207, 25, 384}},
-	{204, {33, 48, 366}},
-	{206, {25, 8, 200}},
-	{0, {0, 0, 0}}, // NULL
-};
-
 static const char *rawMessagesTable[] = {
 	"HEART  FAILURE",
 	"SUN ECLIPSED",
@@ -83,12 +57,6 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerWidth = 8;
 	_playerDepth = 8;
 
-	const entrancesTableEntry *entry = rawEntranceTable;
-	while (entry->id) {
-		_entranceTable[entry->id] = entry;
-		entry++;
-	}
-
 	const char **messagePtr = rawMessagesTable;
 	debugC(1, kFreescapeDebugParser, "String table:");
 	while (*messagePtr) {
@@ -117,8 +85,11 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
-		for (auto &it : _areaMap)
+		for (auto &it : _areaMap) {
 			it._value->addStructure(_areaMap[255]);
+			for (int16 id = 183; id < 207; id++)
+				it._value->addObjectFromArea(id, _areaMap[255]);
+		}
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
@@ -143,26 +114,11 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentAreaMessages.clear();
 	_currentAreaMessages.push_back(_currentArea->_name);
 
-	int scale = _currentArea->getScale();
-	assert(scale > 0);
-
-	Entrance *entrance = nullptr;
 	if (entranceID == -1)
 		return;
 
 	assert(entranceID > 0);
-
-	entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
-
-	if (!entrance) {
-		assert(_entranceTable.contains(entranceID));
-		const entrancesTableEntry *entry = _entranceTable[entranceID];
-		_position = scale * Math::Vector3d(entry->position[0], entry->position[1], entry->position[2]);
-		_position.setValue(1, _position.y() + scale * _playerHeight);
-		debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
-		debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
-	} else
-		traverseEntrance(entranceID);
+	traverseEntrance(entranceID);
 
 	_lastPosition = _position;
 
