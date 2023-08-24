@@ -112,6 +112,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
+	case OSystem::kFeatureCursorAlpha:
 	case OSystem::kFeatureFilteringMode:
 	case OSystem::kFeatureStretchMode:
 	case OSystem::kFeatureCursorMask:

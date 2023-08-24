@@ -176,6 +176,7 @@ bool OSystem_Wii::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode) ||
 			(f == kFeatureAspectRatioCorrection) ||
 			(f == kFeatureCursorPalette) ||
+			(f == kFeatureCursorAlpha) ||
 			(f == kFeatureOverlaySupportsAlpha) ||
 			(f == kFeatureTouchscreen);
 }

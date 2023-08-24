@@ -107,7 +107,7 @@ void OSystem_PSP::engineDone() {
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette ||
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette || f == kFeatureCursorAlpha ||
 			f == kFeatureKbdMouseSpeed || f == kFeatureJoystickDeadzone);
 }
 

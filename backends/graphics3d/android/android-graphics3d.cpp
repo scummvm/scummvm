@@ -500,6 +500,7 @@ int AndroidGraphics3dManager::getGraphicsMode() const {
 
 bool AndroidGraphics3dManager::hasFeature(OSystem::Feature f) const {
 	if (f == OSystem::kFeatureCursorPalette ||
+	        f == OSystem::kFeatureCursorAlpha ||
 	        f == OSystem::kFeatureOpenGLForGame ||
 	        f == OSystem::kFeatureAspectRatioCorrection) {
 		return true;
