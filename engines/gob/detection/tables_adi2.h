@@ -138,7 +138,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
