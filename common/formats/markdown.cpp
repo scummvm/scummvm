@@ -1684,6 +1684,9 @@ static size_t parse_list(DataBuffer *ob, SDMarkdown *rndr, byte *data, size_t si
 
 	work = rndr_newbuf(rndr, BUFFER_BLOCK);
 
+	if (rndr->cb.list_start)
+		rndr->cb.list_start(ob, work, flags, rndr->opaque);
+
 	while (i < size) {
 		j = parse_listitem(work, rndr, data + i, size - i, &flags);
 		i += j;

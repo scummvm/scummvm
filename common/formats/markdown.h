@@ -68,6 +68,7 @@ struct SDCallbacks {
 	void (*blockhtml)(DataBuffer *ob,const  DataBuffer *text, void *opaque);
 	void (*header)(DataBuffer *ob, const DataBuffer *text, int level, void *opaque);
 	void (*hrule)(DataBuffer *ob, void *opaque);
+	void (*list_start)(DataBuffer *ob, const DataBuffer *text, int flags, void *opaque);
 	void (*list)(DataBuffer *ob, const DataBuffer *text, int flags, void *opaque);
 	void (*listitem)(DataBuffer *ob, const DataBuffer *text, int flags, void *opaque);
 	void (*paragraph)(DataBuffer *ob, const DataBuffer *text, void *opaque);

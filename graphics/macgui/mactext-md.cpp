@@ -20,11 +20,17 @@
  */
 
 #include "common/formats/markdown.h"
+
 #include "graphics/macgui/mactext.h"
 
 namespace Graphics {
 
 #define PR(x) (x->data ? Common::String((const char *)(x)->data , (x)->size).c_str() : "(null)")
+
+struct MDState {
+	Common::List<int> listNum;
+};
+
 
 void render_blockcode(Common::DataBuffer *ob, const Common::DataBuffer *text, const Common::DataBuffer *lang, void *opaque) {
 	if (!text)
@@ -62,18 +68,25 @@ void render_hrule(Common::DataBuffer *ob, void *opaque) {
 	warning("STUB: render_hrule()");
 }
 
+void render_list_start(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
+	if (!text)
+		return;
+
+	warning("STUB: render_list_start(%s, %d)", PR(text), flags);
+}
+
 void render_list(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
 	if (!text)
 		return;
 
-	warning("STUB: render_list(%s)", PR(text));
+	warning("STUB: render_list(%s, %d)", PR(text), flags);
 }
 
 void render_listitem(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
 	if (!text)
 		return;
 
-	warning("STUB: render_listitem(%s)", PR(text));
+	warning("STUB: render_listitem(%s, %d)", PR(text), flags);
 }
 
 void render_paragraph(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
@@ -211,6 +224,7 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 		render_blockhtml,
 		render_header,
 		render_hrule,
+		render_list_start,
 		render_list,
 		render_listitem,
 		render_paragraph,
@@ -250,7 +264,9 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 
 	Common::DataBuffer *ob = Common::bufnew(1024);
 
-	Common::SDMarkdown *md = sd_markdown_new(0, 16, &cb, this);
+	MDState mdState;
+
+	Common::SDMarkdown *md = sd_markdown_new(0, 16, &cb, &mdState);
 	sd_markdown_render(ob, ib->data, ib->size, md);
 	sd_markdown_free(md);
 
