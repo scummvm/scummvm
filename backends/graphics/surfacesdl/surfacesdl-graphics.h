@@ -219,7 +219,7 @@ protected:
 	SDL_Surface *_overlayscreen;
 	bool _useOldSrc;
 	Graphics::PixelFormat _overlayFormat;
-	bool _isDoubleBuf;
+	bool _isDoubleBuf, _isHwPalette;
 
 	enum {
 		kTransactionNone = 0,
@@ -262,8 +262,8 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 		bool filtering;
-		bool isHwPalette;
 
+		int mode;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
 #endif
@@ -286,6 +286,7 @@ protected:
 			// desiredAspectRatio set to (0, 0) by AspectRatio constructor
 			filtering = false;
 
+			mode = GFX_SURFACESDL;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 			stretchMode = 0;
 #endif

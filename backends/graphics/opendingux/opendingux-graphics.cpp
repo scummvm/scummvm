@@ -22,13 +22,16 @@
 #include "backends/graphics/opendingux/opendingux-graphics.h"
 
 void OpenDinguxGraphicsManager::initGraphicsSurface() {
-	Uint32 flags = _videoMode.isHwPalette ? (SDL_HWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF) : SDL_SWSURFACE;
-#ifndef RS90
-	flags |= SDL_FULLSCREEN;
+#ifdef RS90
+	Uint32 flags = SDL_HWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+	int bpp = 8;
+#else
+	Uint32 flags = SDL_SWSURFACE | SDL_FULLSCREEN;
+	int bpp = 16;
 #endif
-	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, _videoMode.isHwPalette ? 8 : 16,
-				     flags);
+	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, bpp, flags);
 	_isDoubleBuf = flags & SDL_DOUBLEBUF;
+	_isHwPalette = flags & SDL_HWPALETTE;
 }
 
 void OpenDinguxGraphicsManager::getDefaultResolution(uint &w, uint &h) {
@@ -57,14 +60,4 @@ void OpenDinguxGraphicsManager::getDefaultResolution(uint &w, uint &h) {
 	w = 320;
 	h = 200;
 #endif
-}
-
-void OpenDinguxGraphicsManager::setupHardwareSize() {
-#ifdef RS90
-	_videoMode.isHwPalette = true;
-	_videoMode.scaleFactor = 1;
-#else
-	_videoMode.isHwPalette = false;
-#endif
-	SurfaceSdlGraphicsManager::setupHardwareSize();
 }
