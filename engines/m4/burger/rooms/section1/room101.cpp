@@ -120,7 +120,6 @@ static const char *SAID1[][4] = {
 };
 
 void Room101::init() {
-	_G(player).walker_in_this_scene = true;
 	_val1 = 255;
 
 	digi_stop(1);

@@ -263,7 +263,6 @@ static const seriesPlayBreak PLAY32[] = {
 
 
 void Room105::init() {
-	_G(player).walker_in_this_scene = true;
 	_val1 = 1;
 	_series5 = 0;
 	digi_preload("105_001");

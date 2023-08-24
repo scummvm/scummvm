@@ -65,7 +65,6 @@ static const seriesStreamBreak SERIES3[] = {
 };
 
 void Room133_136::init() {
-	_G(player).walker_in_this_scene = true;
 	_flag = true;
 	_volume = 255;
 	_walkCodes = nullptr;

@@ -73,7 +73,6 @@ static const seriesPlayBreak PLAY3[] = {
 };
 
 void Room137::init() {
-	_G(player).walker_in_this_scene = true;
 	player_set_commands_allowed(true);
 	_G(kernel).call_daemon_every_loop = true;
 	_volume = 255;

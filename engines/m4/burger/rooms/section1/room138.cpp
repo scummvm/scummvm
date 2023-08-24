@@ -28,8 +28,11 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+void Room138::preload() {
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room138::init() {
-	_G(player).walker_in_this_scene = true;
 }
 
 void Room138::daemon() {

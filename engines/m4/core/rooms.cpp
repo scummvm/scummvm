@@ -41,6 +41,10 @@
 
 namespace M4 {
 
+void Room::preload() {
+	_G(player).walker_in_this_scene = true;
+}
+
 void Room::parser() {
 	_G(kernel).trigger = KT_DAEMON;
 }

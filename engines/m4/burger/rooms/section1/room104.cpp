@@ -51,7 +51,6 @@ static const seriesPlayBreak PLAY2[] = {
 };
 
 void Room104::init() {
-	_G(player).walker_in_this_scene = true;
 	_val1 = 0;
 	_val2 = 14;
 	_val3 = 0;

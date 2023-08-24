@@ -115,9 +115,12 @@ const seriesPlayBreak Room106::PLAY7[] = {
 
 int Room106::_val3;
 
-void Room106::init() {
+void Room106::preload() {
 	_G(player).walker_in_this_scene = _G(game).room_id != 137 &&
 		_G(game).room_id != 138;
+}
+
+void Room106::init() {
 	_val3 = 0;
 
 	_MATCH.clear();

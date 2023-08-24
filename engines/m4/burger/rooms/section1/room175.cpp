@@ -29,7 +29,6 @@ namespace Burger {
 namespace Rooms {
 
 void Room175::init() {
-	_G(player).walker_in_this_scene = true;
 }
 
 void Room175::daemon() {
