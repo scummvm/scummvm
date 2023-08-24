@@ -234,10 +234,8 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_cursorHotspotX = _cursorHotspotY = 0;
 	_cursorWidth = _cursorHeight = 0;
 	_cursorTransparent = 255;
-#ifndef USE_RGB_COLOR
 	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_cursorPalSize = 0;
-#endif
 
 	// We prefer files in archive bundles over the common search paths.
 	_themeFiles.add("default", &SearchMan, 0, false);
@@ -400,9 +398,8 @@ void ThemeEngine::refresh() {
 		_system->showOverlay();
 
 		if (_useCursor) {
-#ifndef USE_RGB_COLOR
-			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
-#endif
+			if (_cursorPalSize)
+				CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
 			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
 		}
 	}
@@ -1568,20 +1565,26 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	_cursorWidth = cursor->w;
 	_cursorHeight = cursor->h;
 
-#ifdef USE_RGB_COLOR
-	_cursorFormat = cursor->format;
-	_cursorTransparent = _cursorFormat.RGBToColor(0xFF, 0, 0xFF);
+	_cursorTransparent = 255;
+	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	_cursorPalSize = 0;
 
-	// Allocate a new buffer for the cursor
-	delete[] _cursor;
-	_cursor = new byte[_cursorWidth * _cursorHeight * _cursorFormat.bytesPerPixel];
-	assert(_cursor);
-	Graphics::copyBlit(_cursor, (const byte *)cursor->getPixels(),
-	                   _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
-	                   _cursorWidth, _cursorHeight, _cursorFormat.bytesPerPixel);
+	if (_system->hasFeature(OSystem::kFeatureCursorAlpha)) {
+		_cursorFormat = cursor->format;
+		_cursorTransparent = _cursorFormat.RGBToColor(0xFF, 0, 0xFF);
 
-	_useCursor = true;
-#else
+		// Allocate a new buffer for the cursor
+		delete[] _cursor;
+		_cursor = new byte[_cursorWidth * _cursorHeight * _cursorFormat.bytesPerPixel];
+		assert(_cursor);
+		Graphics::copyBlit(_cursor, (const byte *)cursor->getPixels(),
+		                   _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
+		                   _cursorWidth, _cursorHeight, _cursorFormat.bytesPerPixel);
+
+		_useCursor = true;
+		return true;
+	}
+
 	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return true;
 
@@ -1647,7 +1650,6 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 
 	_useCursor = true;
 	_cursorPalSize = colorsFound;
-#endif
 
 	return true;
 }
@@ -2102,9 +2104,8 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 
 void ThemeEngine::showCursor() {
 	if (_useCursor) {
-#ifndef USE_RGB_COLOR
-		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-#endif
+		if (_cursorPalSize)
+			CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
 		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
 		CursorMan.showMouse(true);
 	}
@@ -2112,9 +2113,8 @@ void ThemeEngine::showCursor() {
 
 void ThemeEngine::hideCursor() {
 	if (_useCursor) {
-#ifndef USE_RGB_COLOR
-		CursorMan.popCursorPalette();
-#endif
+		if (_cursorPalSize)
+			CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
 }

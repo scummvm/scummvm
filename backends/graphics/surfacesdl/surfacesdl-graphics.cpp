@@ -218,6 +218,7 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureVSync) ||
 #endif
 		(f == OSystem::kFeatureCursorPalette) ||
+		(f == OSystem::kFeatureCursorAlpha && !_isHwPalette) ||
 		(f == OSystem::kFeatureIconifyWindow) ||
 		(f == OSystem::kFeatureCursorMask);
 }
@@ -2066,7 +2067,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 	}
 
 #ifdef USE_RGB_COLOR
-	if (mask && format && format->bytesPerPixel > 1) {
+	if (mask && format && format->bytesPerPixel > 1 && !_isHwPalette) {
 		const uint numPixels = w * h;
 		const uint inBPP = format->bytesPerPixel;
 
@@ -2120,11 +2121,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 	bool formatChanged = false;
 
 	if (format) {
-#ifndef USE_RGB_COLOR
-		assert(format->bytesPerPixel == 1);
-#else
 		assert(format->bytesPerPixel == 1 || !_isHwPalette);
-#endif
 
 		if (format->bytesPerPixel != _cursorFormat.bytesPerPixel) {
 			formatChanged = true;

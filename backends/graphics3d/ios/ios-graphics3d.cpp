@@ -170,6 +170,7 @@ bool iOSGraphics3dManager::hasFeature(OSystem::Feature f) const {
 	if ((f == OSystem::kFeatureOpenGLForGame) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureStretchMode) ||
+		(f == OSystem::kFeatureCursorAlpha) ||
 		(f == OSystem::kFeatureOverlaySupportsAlpha && _overlayFormat.aBits() > 3)) {
 		return true;
 	}

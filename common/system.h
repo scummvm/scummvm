@@ -452,6 +452,12 @@ public:
 		kFeatureCursorPalette,
 
 		/**
+		 * Backends supporting this feature allow cursors to contain an alpha
+		 * channel.
+		 */
+		kFeatureCursorAlpha,
+
+		/**
 		 * Backends supporting this feature allow specifying a mask for a
 		 * cursor instead of a key color.
 		 */

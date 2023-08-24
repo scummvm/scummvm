@@ -219,7 +219,7 @@ void OSystem_DS::setSubScreen(int32 x, int32 y, int32 sx, int32 sy) {
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
-	return (f == kFeatureCursorPalette) || (f == kFeatureStretchMode) || (f == kFeatureVirtualKeyboard) || (f == kFeatureTouchscreen);
+	return (f == kFeatureCursorPalette) || (f == kFeatureCursorAlpha) || (f == kFeatureStretchMode) || (f == kFeatureVirtualKeyboard) || (f == kFeatureTouchscreen);
 }
 
 void OSystem_DS::setFeatureState(Feature f, bool enable) {

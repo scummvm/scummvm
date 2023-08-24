@@ -816,13 +816,12 @@ protected:
 	uint32 _cursorTransparent;
 	byte *_cursor;
 	uint _cursorWidth, _cursorHeight;
-#ifndef USE_RGB_COLOR
+
 	enum {
 		MAX_CURS_COLORS = 255
 	};
 	byte _cursorPal[3 * MAX_CURS_COLORS];
 	byte _cursorPalSize;
-#endif
 
 	Common::Rect _clip;
 };

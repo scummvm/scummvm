@@ -149,6 +149,7 @@ void OSystem_iOS7::initBackend() {
 bool OSystem_iOS7::hasFeature(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
+	case kFeatureCursorAlpha:
 	case kFeatureFilteringMode:
 	case kFeatureVirtualKeyboard:
 #if TARGET_OS_IOS

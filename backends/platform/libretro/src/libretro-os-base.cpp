@@ -106,7 +106,7 @@ void OSystem_libretro::engineDone() {
 }
 
 bool OSystem_libretro::hasFeature(Feature f) {
-	return (f == OSystem::kFeatureCursorPalette);
+	return (f == OSystem::kFeatureCursorPalette) || (f == OSystem::kFeatureCursorAlpha);
 }
 
 void OSystem_libretro::setFeatureState(Feature f, bool enable) {
