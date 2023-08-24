@@ -103,7 +103,6 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	// TODO: implement binary clock
 
 	Common::String message;
 	int deadline;

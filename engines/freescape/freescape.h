@@ -215,6 +215,7 @@ public:
 	uint16 _startArea;
 	AreaMap _areaMap;
 	Area *_currentArea;
+	bool _gotoExecuted;
 	Math::Vector3d _scale;
 
 	virtual void gotoArea(uint16 areaID, int entranceID);

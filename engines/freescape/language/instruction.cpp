@@ -579,6 +579,7 @@ void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
 	uint16 areaID = instruction._source;
 	uint16 entranceID = instruction._destination;
 	gotoArea(areaID, entranceID);
+	_gotoExecuted = true;
 }
 
 void FreescapeEngine::executeSetBit(FCLInstruction &instruction) {

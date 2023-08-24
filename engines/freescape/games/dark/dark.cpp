@@ -442,6 +442,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 
 	assert(_areaMap.contains(areaID));
+	bool sameArea = _currentArea ? areaID == _currentArea->getAreaID() : false;
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
 
@@ -451,9 +452,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
 
-	if (entranceID > 0 || areaID == 127) {
-		traverseEntrance(entranceID);
-	} else if (entranceID == 0) {
+	if (sameArea || entranceID == 0) {
 		int newPos = -1;
 		if (_position.z() < 200 || _position.z() >= 3800) {
 			if (_position.z() < 200)
@@ -470,7 +469,12 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 		}
 		assert(newPos != -1);
 		_sensors = _currentArea->getSensors();
-	}
+	} else if (entranceID > 0 || areaID == 127)
+		traverseEntrance(entranceID);
+	else if (entranceID == -1)
+		debugC(1, kFreescapeDebugMove, "Loading game, no change in position");
+	else
+		error("Invalid area change!");
 
 	_lastPosition = _position;
 	_gameStateVars[0x1f] = 0;
