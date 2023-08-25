@@ -147,7 +147,7 @@ private:
 
 	bool loadCursors();
 
-	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
+	void initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
 	void removeModule();
 

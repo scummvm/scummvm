@@ -183,7 +183,7 @@ void PinkEngine::load(Archive &archive) {
 	_modules.deserialize(archive);
 }
 
-void PinkEngine::initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile) {
+void PinkEngine::initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile) {
 	if (_module)
 		removeModule();
 
@@ -230,7 +230,7 @@ void PinkEngine::removeModule() {
 	for (uint i = 0; i < _modules.size(); ++i) {
 		if (_module == _modules[i]) {
 			_pdaMgr.close();
-			_modules[i] = new ModuleProxy(_module->getName());
+			_modules[i] = new ModuleProxy(Common::String(_module->getName()));
 			delete _module;
 			_module = nullptr;
 			break;
