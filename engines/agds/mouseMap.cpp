@@ -34,7 +34,7 @@ void MouseMap::hideInactive(AGDSEngine *engine, Common::Point pos) {
 		} else if (engine->userEnabled()) {
 			if (!region->region->pointIn(pos)) {
 				region->hide(engine);
-			} else {
+			} else if (!region->visible) {
 				region->show(engine);
 				return;
 			}
