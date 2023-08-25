@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/tokenizer.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
@@ -32,15 +34,6 @@
 
 namespace Nancy {
 namespace UI {
-
-const char Textbox::_CCBeginToken[] = "<i>";
-const char Textbox::_CCEndToken[] = "<o>";
-const char Textbox::_colorBeginToken[] = "<c1>";
-const char Textbox::_colorEndToken[] = "<c0>";
-const char Textbox::_hotspotToken[] = "<h>";
-const char Textbox::_newLineToken[] = "<n>";
-const char Textbox::_tabToken[] = "<t>";
-const char Textbox::_telephoneEndToken[] = "<e>";
 
 Textbox::Textbox() :
 		RenderObject(6),
@@ -145,81 +138,99 @@ void Textbox::drawTextbox() {
 
 	_numLines = 0;
 
-	const Font *font = g_nancy->_graphicsManager->getFont(_fontIDOverride == -1 ? tbox->conversationFontID : _fontIDOverride);
-	const Font *highlightFont = g_nancy->_graphicsManager->getFont(tbox->highlightConversationFontID);
-
 	uint maxWidth = _fullSurface.w - tbox->maxWidthDifference - tbox->borderWidth - 2;
 	uint lineDist = tbox->lineHeight + tbox->lineHeight / 4;
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
-		Common::String currentLine = _textLines[lineID];
+		Common::String currentLine;
 		bool hasHotspot = false;
 		Rect hotspot;
-
-		// Erase the begin and end tokens from the line
-		uint32 newLinePos;
-		while (newLinePos = currentLine.find(_CCBeginToken), newLinePos != String::npos) {
-			currentLine.erase(newLinePos, ARRAYSIZE(_CCBeginToken) - 1);
-		}
-
-		while (newLinePos = currentLine.find(_CCEndToken), newLinePos != String::npos) {
-			currentLine.erase(newLinePos, ARRAYSIZE(_CCEndToken) - 1);
-		}
-
-		// Replace every newline token with \n
-		while (newLinePos = currentLine.find(_newLineToken), newLinePos != String::npos) {
-			currentLine.replace(newLinePos, ARRAYSIZE(_newLineToken) - 1, "\n");
-		}
-
-		// Replace tab token with four spaces
-		while (newLinePos = currentLine.find(_tabToken), newLinePos != String::npos) {
-			currentLine.replace(newLinePos, ARRAYSIZE(_tabToken) - 1, "    ");
-		}
-
-		// Simply remove telephone end token
-		if (currentLine.hasSuffix(_telephoneEndToken)) {
-			currentLine.erase(currentLine.size() - ARRAYSIZE(_telephoneEndToken) + 1, String::npos);
-		}
-
-		// Remove hotspot tokens and mark that we need to calculate the bounds
-		// A single text line should only have one hotspot, but there's at least
-		// one malformed line in TVD that breaks this
-		uint32 hotspotPos, lastHotspotPos = 0;
-		while (hotspotPos = currentLine.find(_hotspotToken), hotspotPos != String::npos) {
-			currentLine.erase(hotspotPos, ARRAYSIZE(_hotspotToken) - 1);
-
-			if (hasHotspot) {
-				// Replace the second hotspot token with a newline to copy the original behavior
-				// Maybe consider fixing the glitch instead of replicating it??
-				currentLine.insertChar('\n', lastHotspotPos);
-			}
-
-			hasHotspot = true;
-			lastHotspotPos = hotspotPos;
-		}
-
-		// Scan for color begin and end tokens and keep their positions
-		// in a queue. We do this last so the positions are accurate
 		Common::Queue<uint> colorTokens;
-		while (newLinePos = currentLine.find(_colorBeginToken), newLinePos != String::npos) {
-			currentLine.erase(newLinePos, ARRAYSIZE(_colorBeginToken) - 1);
-			colorTokens.push(newLinePos);
+		int fontID = _fontIDOverride;
 
-			newLinePos = currentLine.find(_colorEndToken);
+		// Token braces plus invalid characters that are known to appear in strings
+		Common::StringTokenizer tokenizer(_textLines[lineID], "<>\"");
 
-			if (newLinePos != Common::String::npos) {
-				currentLine.erase(newLinePos, ARRAYSIZE(_colorEndToken) - 1);
-			} else {
-				// If we find no color end token we assume the whole line needs to be colored
-				newLinePos = currentLine.size();
+		Common::String curToken;
+		while(!tokenizer.empty()) {
+			curToken = tokenizer.nextToken();
+
+			if (curToken.size() <= 2) {
+				switch (curToken.firstChar()) {
+				case 'i' :
+					// CC begin
+					// fall through
+				case 'o' :
+					// CC end
+					// fall through
+				case 'e' :
+					// Telephone end
+					// Do nothing and just skip
+					continue;
+				case 'h' :
+					// Hotspot
+					if (hasHotspot) {
+						// Replace duplicate hotspot token with a newline to copy the original behavior
+						currentLine += '\n';
+					}
+					hasHotspot = true;
+					continue;
+				case 'n' :
+					// Newline
+					currentLine += '\n';
+					continue;
+				case 't' :
+					// Tab
+					currentLine += "    ";
+					continue;
+				case 'c' :
+					// Color tokens
+					// We keep the positions of the color tokens in a queue
+					if (curToken.size() != 2) {
+						break;
+					}
+
+					if (curToken[1] == '0' && colorTokens.size() == 0) {
+						// Found a color end token ("c0") without a corresponding begin ("c1"),
+						// insert a fake one at the beginning of the queue to make the color logic work.
+						// This happens in nancy5's intro
+						colorTokens.push(0);
+					}
+
+					if (curToken[1] == '1' && colorTokens.size() % 2 == 1) {
+						// Found a color begin token ("c1") following another color begin token.
+						// This is invalid, so we just skip it
+						// This probably also happens somewhere
+						continue;
+					}
+
+					if (curToken[1] == '0' && colorTokens.size() % 2 == 0) {
+						// Found a color end token ("c0") following another color end token.
+						// This is invalid, so we just skip it
+						// This happens in nancy5's intro
+						continue;
+					}
+					
+					colorTokens.push(currentLine.size());
+					continue;
+				case 'f' :
+					// Font token
+					// This selects a specific font ID for the current line
+					if (curToken.size() != 2) {
+						break;
+					}
+
+					fontID = (int)Common::String(curToken[1]).asUint64();
+
+					continue;
+				}
 			}
-			colorTokens.push(newLinePos);
-		}
 
-		// A closing color token may appear without an open one. This happens in nancy4's intro
-		while (newLinePos = currentLine.find(_colorEndToken), newLinePos != String::npos) {
-			currentLine.erase(newLinePos, ARRAYSIZE(_colorEndToken) - 1);
+			currentLine += curToken;
 		}
+		
+		const Font *font = g_nancy->_graphicsManager->getFont(fontID == -1 ? tbox->conversationFontID : fontID);
+		const Font *highlightFont = g_nancy->_graphicsManager->getFont(tbox->highlightConversationFontID);
 
 		// Do word wrapping on the text, sans tokens
 		Array<Common::String> wrappedLines;
@@ -260,8 +271,14 @@ void Textbox::drawTextbox() {
 
 					if (totalCharsDrawn >= colorTokens.front()) {
 						// Token is at begginning of (what's left of) the current line
-						isColor = !isColor;
-						colorTokens.pop();
+						uint val = colorTokens.pop();
+
+						if (!colorTokens.empty() && colorTokens.front() == val) {
+							// Two tokens with the same position just get ignored
+							colorTokens.pop();
+						} else {
+							isColor = !isColor;
+						}
 					}
 
 					if (totalCharsDrawn < colorTokens.front() && colorTokens.front() < (totalCharsDrawn + line.size())) {
