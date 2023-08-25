@@ -333,8 +333,13 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	if (savePatch)
 		saveScreenPatch();
 	resetCurrentInventoryObject();
-	_inventory.visible(false);
-	_mouseMap.hideAll(this);
+	{
+		bool userEnabled = _userEnabled;
+		_userEnabled = false;
+		_mouseMap.hideAll(this);
+		_inventory.visible(false);
+		_userEnabled = userEnabled;
+	}
 
 	auto previousScreenName = _currentScreenName;
 	resetCurrentScreen();
