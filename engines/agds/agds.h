@@ -110,6 +110,7 @@ private:
 	bool load();
 	void runProcesses();
 	void tick();
+	void fadeAndReactivate();
 
 public:
 
