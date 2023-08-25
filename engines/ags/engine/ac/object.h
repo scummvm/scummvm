@@ -43,7 +43,10 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-extern AGS_INLINE int is_valid_object(int obtest);
+extern AGS_INLINE bool is_valid_object(int obj_id);
+// Asserts the object ID is valid in the current room,
+// if not then prints a warning to the log; returns assertion result
+bool    AssertObject(const char *apiname, int obj_id);
 int     Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2);
 ScriptObject *GetObjectAtScreen(int xx, int yy);
 ScriptObject *GetObjectAtRoom(int x, int y);

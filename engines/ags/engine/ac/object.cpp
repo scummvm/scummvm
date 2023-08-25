@@ -56,6 +56,17 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
+AGS_INLINE bool is_valid_object(int obj_id) {
+	return (obj_id >= 0) && (static_cast<uint32_t>(obj_id) < _G(croom)->numobj);
+}
+
+bool AssertObject(const char *apiname, int obj_id) {
+	if ((obj_id >= 0) && (static_cast<uint32_t>(obj_id) < _G(croom)->numobj))
+		return true;
+	debug_script_warn("%s: invalid object id %d (range is 0..%d)", apiname, obj_id, _G(croom)->numobj - 1);
+	return false;
+}
+
 int Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2) {
 	return AreObjectsColliding(objj->id, obj2->id);
 }
@@ -72,11 +83,6 @@ ScriptObject *GetObjectAtRoom(int x, int y) {
 	if (hsnum < 0)
 		return nullptr;
 	return &_G(scrObj)[hsnum];
-}
-
-AGS_INLINE int is_valid_object(int obtest) {
-	if ((obtest < 0) || (static_cast<uint32_t>(obtest) >= _G(croom)->numobj)) return 0;
-	return 1;
 }
 
 void Object_Tint(ScriptObject *objj, int red, int green, int blue, int saturation, int luminance) {
@@ -436,14 +442,20 @@ void Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufe
 }
 
 const char *Object_GetTextProperty(ScriptObject *objj, const char *property) {
+	if (!AssertObject("Object.GetTextProperty", objj->id))
+		return nullptr;
 	return get_text_property_dynamic_string(_GP(thisroom).Objects[objj->id].Properties, _G(croom)->objProps[objj->id], property);
 }
 
 bool Object_SetProperty(ScriptObject *objj, const char *property, int value) {
+	if (!AssertObject("Object.SetProperty", objj->id))
+		return false;
 	return set_int_property(_G(croom)->objProps[objj->id], property, value);
 }
 
 bool Object_SetTextProperty(ScriptObject *objj, const char *property, const char *value) {
+	if (!AssertObject("Object.SetTextProperty", objj->id))
+		return false;
 	return set_text_property(_G(croom)->objProps[objj->id], property, value);
 }
 

@@ -34,6 +34,11 @@ namespace AGS3 {
 
 // **** CHARACTER: FUNCTIONS ****
 
+bool	is_valid_character(int char_id);
+// Asserts the character ID is valid,
+// if not then prints a warning to the log; returns assertion result
+bool	AssertCharacter(const char *apiname, int char_id);
+
 void    Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addIndex);
 void    Character_AddWaypoint(CharacterInfo *chaa, int x, int y);
 void    Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction);
@@ -199,7 +204,6 @@ int  find_nearest_walkable_area_within(int *xx, int *yy, int range, int step);
 void find_nearest_walkable_area(int *xx, int *yy);
 void FindReasonableLoopForCharacter(CharacterInfo *chap);
 void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int direct, bool isWalk);
-int  is_valid_character(int newchar);
 int  wantMoveNow(CharacterInfo *chi, CharacterExtras *chex);
 void setup_player_character(int charid);
 void CheckViewFrameForCharacter(CharacterInfo *chi);

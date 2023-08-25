@@ -78,6 +78,17 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
+bool is_valid_character(int char_id) {
+	return ((char_id >= 0) && (char_id < _GP(game).numcharacters));
+}
+
+bool AssertCharacter(const char *apiname, int char_id) {
+	if ((char_id >= 0) && (char_id < _GP(game).numcharacters))
+		return true;
+	debug_script_warn("%s: invalid character id %d (range is 0..%d)", apiname, char_id, _GP(game).numcharacters - 1);
+	return false;
+}
+
 void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addIndex) {
 	int ee;
 
@@ -984,22 +995,32 @@ void Character_RunInteraction(CharacterInfo *chaa, int mood) {
 // **** CHARACTER: PROPERTIES ****
 
 int Character_GetProperty(CharacterInfo *chaa, const char *property) {
-
+	if (!AssertCharacter("Character.GetProperty", chaa->index_id))
+		return 0;
 	return get_int_property(_GP(game).charProps[chaa->index_id], _GP(play).charProps[chaa->index_id], property);
-
 }
+
 void Character_GetPropertyText(CharacterInfo *chaa, const char *property, char *bufer) {
+	if (!AssertCharacter("Character.GetPropertyText", chaa->index_id))
+		return;
 	get_text_property(_GP(game).charProps[chaa->index_id], _GP(play).charProps[chaa->index_id], property, bufer);
 }
+
 const char *Character_GetTextProperty(CharacterInfo *chaa, const char *property) {
+	if (!AssertCharacter("Character.GetTextProperty", chaa->index_id))
+		return nullptr;
 	return get_text_property_dynamic_string(_GP(game).charProps[chaa->index_id], _GP(play).charProps[chaa->index_id], property);
 }
 
 bool Character_SetProperty(CharacterInfo *chaa, const char *property, int value) {
+	if (!AssertCharacter("Character.SetProperty", chaa->index_id))
+		return false;
 	return set_int_property(_GP(play).charProps[chaa->index_id], property, value);
 }
 
 bool Character_SetTextProperty(CharacterInfo *chaa, const char *property, const char *value) {
+	if (!AssertCharacter("Character.SetTextProperty", chaa->index_id))
+		return false;
 	return set_text_property(_GP(play).charProps[chaa->index_id], property, value);
 }
 
@@ -1928,11 +1949,6 @@ void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int
 	else if ((blocking != IN_BACKGROUND) && (blocking != 0))
 		quit("!Character.Walk: Blocking must be BLOCKING or IN_BACKGRUOND");
 
-}
-
-int is_valid_character(int newchar) {
-	if ((newchar < 0) || (newchar >= _GP(game).numcharacters)) return 0;
-	return 1;
 }
 
 int wantMoveNow(CharacterInfo *chi, CharacterExtras *chex) {
