@@ -792,8 +792,13 @@ void Scene::handleInput() {
 		}
 	}
 
+	// We handle the textbox and inventory box first because of their scrollbars, which
+	// need to take highest priority
+	_textbox.handleInput(input);
+	_inventoryBox.handleInput(input);
+
 	// Handle invisible map button
-	// We do this first since TVD's map button overlaps the viewport's right hotspot
+	// We do this before the viewport since TVD's map button overlaps the viewport's right hotspot
 	for (uint16 id : g_nancy->getStaticData().mapAccessSceneIDs) {
 		if ((int)_sceneState.currentScene.sceneID == id) {
 			if (_mapHotspot.contains(input.mousePos)) {
@@ -829,8 +834,6 @@ void Scene::handleInput() {
 	}
 
 	_actionManager.handleInput(input);
-	_textbox.handleInput(input);
-	_inventoryBox.handleInput(input);
 
 	if (_menuButton) {
 		_menuButton->handleInput(input);

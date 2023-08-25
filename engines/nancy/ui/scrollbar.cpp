@@ -53,7 +53,10 @@ void Scrollbar::init() {
 }
 
 void Scrollbar::handleInput(NancyInput &input) {
-	if (_screenPosition.contains(input.mousePos)) {
+	// Note: the original engine's scrollbars only work if the cursor is inside
+	// the hotspot (happens if we remove the _isClicked check below). This doesn't make
+	// for great UX, however, so it has been fixed.
+	if (_screenPosition.contains(input.mousePos) || _isClicked) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonDown && !_isClicked) {
@@ -90,8 +93,17 @@ void Scrollbar::handleInput(NancyInput &input) {
 		}
 	}
 
+	bool wasClicked = _isClicked;
 	if (input.input & NancyInput::kLeftMouseButtonUp) {
 		_isClicked = false;
+	}
+
+	// If the mouse is clicked and moves outside the scrollbar's hotspot, we don't want it
+	// to trigger other events. This only works if scrollbars are at the very top of the input priority.
+	// As a result, this effect won't be applied to the scrollbars in SoundEqualizerPuzzle
+	// In the future, this can be fixed by creating an input queue inside InputManager.
+	if (wasClicked) {
+		input.eatMouseInput();
 	}
 }
 
