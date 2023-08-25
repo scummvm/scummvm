@@ -1093,7 +1093,7 @@ void HEMixer::milesStopAndCallback(int channel, int messageId) {
 		int globType = _milesChannels[channel]._globType;
 		int globNum = _milesChannels[channel]._globNum;
 
-		if (!_vm->_res->isOffHeap((ResType)globType, globNum)) {
+		if (!_milesChannels[channel]._isUsingStreamOverride && !_vm->_res->isOffHeap((ResType)globType, globNum)) {
 			_vm->_res->unlock((ResType)globType, globNum);
 
 			if (globType == rtSound && globNum == HSND_TALKIE_SLOT) {
