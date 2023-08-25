@@ -264,7 +264,7 @@ bool AVFDecoder::AVFVideoTrack::decode(byte *outBuf, uint32 frameSize, Common::R
 	return true;
 }
 
-const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
+const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
 	if (frameNr < _frameCache.size() && _frameCache[frameNr].getPixels()) {
 		// Frame is cached, return a pointer to it
 		return &_frameCache[frameNr];
@@ -325,6 +325,16 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 	}
 
 	if (info.type != 0) {
+		if (info.type == 2 && frameNr != 0) {
+			// Type 2 frames are incomplete, and only contain the pixels
+			// that are different from the last valid frame. Thus, we need 
+			// to decode the previous frame and copy its contents to the new one's
+			const Graphics::Surface *refFrame = decodeFrame(frameNr - 1);
+			if (refFrame) {
+				Graphics::copyBlit((byte *)frameInCache.getPixels(), (const byte *)refFrame->getPixels(),
+					frameInCache.pitch, refFrame->pitch, frameInCache.w, frameInCache.h, frameInCache.format.bytesPerPixel);
+			}
+		}
 		Common::MemoryReadStream decompStr(decompBuf, info.size);
 		decode((byte *)frameInCache.getPixels(), _frameSize, decompStr);
 	}
