@@ -128,6 +128,21 @@ protected:
 	Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
 };
 
+class HotMultiframeMultisceneCursorTypeSceneChange : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::Array<SceneChangeDescription> _scenes;
+	Common::Array<uint16> _cursorTypes;
+
+	SceneChangeDescription _defaultScene;
+	Common::Array<HotspotDescription> _hotspots;
+
+protected:
+	Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneCursorTypeSceneChange"; }
+};
+
 class PaletteThisScene : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;

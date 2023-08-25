@@ -84,6 +84,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new Hot1FrSceneChange(CursorManager::kTurnLeft);
 	case 23:
 		return new Hot1FrSceneChange(CursorManager::kTurnRight);
+	case 24:
+		return new HotMultiframeMultisceneCursorTypeSceneChange();
 	case 40:
 		if (g_nancy->getGameType() < kGameTypeNancy2) {
 			// Only used in TVD

@@ -167,6 +167,56 @@ void HotMultiframeMultisceneChange::execute() {
 	}
 }
 
+void HotMultiframeMultisceneCursorTypeSceneChange::readData(Common::SeekableReadStream &stream) {
+	uint16 numScenes = stream.readUint16LE();
+	_scenes.resize(numScenes);
+	_cursorTypes.resize(numScenes);
+	for (uint i = 0; i < numScenes; ++i) {
+		_cursorTypes[i] = stream.readUint16LE();
+		_scenes[i].readData(stream);
+	}
+
+	stream.skip(2);
+	_defaultScene.readData(stream);
+	
+	uint16 numHotspots = stream.readUint16LE();
+	_hotspots.resize(numHotspots);
+	for (uint i = 0; i < numHotspots; ++i) {
+		_hotspots[i].readData(stream);
+	}
+}
+
+void HotMultiframeMultisceneCursorTypeSceneChange::execute() {
+	switch (_state) {
+	case kBegin:
+		// turn main rendering on
+		_state = kRun;
+		// fall through
+	case kRun:
+		_hasHotspot = false;
+		for (uint i = 0; i < _hotspots.size(); ++i) {
+			if (_hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
+				_hasHotspot = true;
+				_hotspot = _hotspots[i].coords;
+			}
+		}
+		break;
+	case kActionTrigger:
+		for (uint i = 0; i < _cursorTypes.size(); ++i) {
+			if (NancySceneState.getHeldItem() == _cursorTypes[i]) {
+				NancySceneState.changeScene(_scenes[i]);
+
+				_isDone = true;
+				return;
+			}
+		}
+
+		NancySceneState.changeScene(_defaultScene);
+		_isDone = true;
+		break;
+	}
+}
+
 void PaletteThisScene::readData(Common::SeekableReadStream &stream) {
 	_paletteID = stream.readByte();
 	_unknownEnum = stream.readByte();
