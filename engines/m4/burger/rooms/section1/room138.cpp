@@ -84,6 +84,10 @@ void Room138::preload() {
 }
 
 void Room138::init() {
+	_assetsFreed = false;
+	_series3 = -1;
+	_flag1 = false;
+
 	static const char *NAMES[12] = {
 		"138_004", "137_012", "137_013", "137_020", "137_021",
 		"137_022", "137_023", "137_024", "137_025", "137_026",
