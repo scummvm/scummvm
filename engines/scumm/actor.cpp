@@ -1494,7 +1494,7 @@ int Actor::updateActorDirection(bool is_walking) {
 	dir &= 1023;
 
 	if (shouldInterpolate) {
-		if (_vm->_game.version <= 3) {
+		if (_vm->_game.version <= 6) {
 			static const uint8 tbl[] = { 0, 2, 2, 3, 2, 1, 2, 3, 0, 1, 2, 1, 0, 1, 0, 3 };
 			dir = oldDirToNewDir(tbl[newDirToOldDir(dir) | (newDirToOldDir(_facing) << 2)]);
 		} else {
