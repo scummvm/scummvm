@@ -88,7 +88,7 @@ void Misc::m_getProfileString(int nargs) {
 
 void Misc::m_isFilePresent(int nargs) {
     Common::String filename = g_lingo->pop().asString();
-    Common::Path filePath = findPath(filename);
+    Common::Path filePath = findMoviePath(filename);
     if (filePath.empty()) {
         g_lingo->push(Datum(0));
     } else {
