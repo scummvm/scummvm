@@ -164,8 +164,6 @@ public:
 
 	void synchronize(Common::Serializer &serializer);
 
-	void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
-
 	UI::FullScreenImage &getFrame() { return _frame; }
 	UI::Viewport &getViewport() { return _viewport; }
 	UI::Textbox &getTextbox() { return _textbox; }
@@ -277,8 +275,6 @@ private:
 	Action::ConversationSound *_activeConversation;
 
 	State _state;
-
-	bool _shouldClearTextbox = true;
 };
 
 #define NancySceneState Nancy::State::Scene::instance()

@@ -348,18 +348,12 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 	delete[] buf;
 }
 
-TextBoxWrite::~TextBoxWrite() {
-	NancySceneState.setShouldClearTextbox(true);
-	NancySceneState.getTextbox().setVisible(false);
-}
-
 void TextBoxWrite::execute() {
 	auto &tb = NancySceneState.getTextbox();
 	tb.clear();
 	tb.overrideFontID(g_nancy->_textboxData->defaultFontID);
 	tb.addTextLine(_text);
 	tb.setVisible(true);
-	NancySceneState.setShouldClearTextbox(false);
 	finishExecution();
 }
 
@@ -680,6 +674,7 @@ void PlayDigiSoundCC::readData(Common::SeekableReadStream &stream) {
 
 void PlayDigiSoundCC::execute() {
 	if (_state == kBegin) {
+		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(_ccText);
 	}
 	PlayDigiSoundAndDie::execute();

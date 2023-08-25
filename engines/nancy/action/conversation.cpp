@@ -47,14 +47,10 @@ ConversationSound::~ConversationSound() {
 	if (NancySceneState.getActiveConversation() == this) {
 		NancySceneState.setActiveConversation(nullptr);
 	}
-
-	NancySceneState.setShouldClearTextbox(true);
-	NancySceneState.getTextbox().setVisible(false);
 }
 
 void ConversationSound::init() {
 	RenderObject::init();
-	NancySceneState.setShouldClearTextbox(false);
 }
 
 void ConversationSound::readData(Common::SeekableReadStream &stream) {

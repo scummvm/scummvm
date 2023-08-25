@@ -346,15 +346,17 @@ void Textbox::drawTextbox() {
 }
 
 void Textbox::clear() {
-	_fullSurface.clear();
-	_textHighlightSurface.clear(_textHighlightSurface.getTransparentColor());
-	_textLines.clear();
-	_hotspots.clear();
-	_scrollbar->resetPosition();
-	_numLines = 0;
-	_fontIDOverride = -1;
-	onScrollbarMove();
-	_needsRedraw = true;
+	if (_textLines.size()) {
+		_fullSurface.clear();
+		_textHighlightSurface.clear(_textHighlightSurface.getTransparentColor());
+		_textLines.clear();
+		_hotspots.clear();
+		_scrollbar->resetPosition();
+		_numLines = 0;
+		_fontIDOverride = -1;
+		onScrollbarMove();
+		_needsRedraw = true;
+	}
 }
 
 void Textbox::addTextLine(const Common::String &text) {

@@ -231,8 +231,6 @@ protected:
 
 class TextBoxWrite : public ActionRecord {
 public:
-	virtual ~TextBoxWrite();
-
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 

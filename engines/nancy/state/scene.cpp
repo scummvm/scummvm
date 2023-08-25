@@ -408,8 +408,6 @@ void Scene::registerGraphics() {
 	if (_clock) {
 		_clock->registerGraphics();
 	}
-
-	_textbox.setVisible(!_shouldClearTextbox);
 }
 
 void Scene::synchronize(Common::Serializer &ser) {
@@ -917,6 +915,8 @@ void Scene::clearSceneData() {
 	if (_lightning) {
 		_lightning->endLightning();
 	}
+
+	_textbox.clear();
 }
 
 void Scene::clearPuzzleData() {

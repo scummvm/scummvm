@@ -134,7 +134,6 @@ void RiddlePuzzle::execute() {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().overrideFontID(_textboxTextFontID);
 		NancySceneState.getTextbox().addTextLine(_riddles[_riddleID].text);
-		NancySceneState.setShouldClearTextbox(false);
 
 		_state = kRun;
 	}
@@ -257,7 +256,6 @@ void RiddlePuzzle::execute() {
 
 		sceneChange->execute();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-		NancySceneState.setShouldClearTextbox(true);
 		finishExecution();
 	}
 	}

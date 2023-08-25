@@ -40,8 +40,6 @@ void Telephone::init() {
 	setTransparent(true);
 
 	g_nancy->_resource->loadImage(_imageName, _image);
-
-	NancySceneState.setShouldClearTextbox(false);
 }
 
 void Telephone::readData(Common::SeekableReadStream &stream) {
@@ -222,8 +220,6 @@ void Telephone::execute() {
 		}
 
 		finishExecution();
-		NancySceneState.setShouldClearTextbox(true);
-		NancySceneState.getTextbox().clear();
 	}
 }
 
