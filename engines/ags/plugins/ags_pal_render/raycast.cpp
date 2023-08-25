@@ -632,33 +632,33 @@ void AGSPalRender::MakeTextures(ScriptMethodParams &params) {
 
 void AGSPalRender::Ray_SetFloorAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, int, tex);
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
+	if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT || tex > 511) return;
 	else floorMap[x][y] = tex;
 }
 
 void AGSPalRender::Ray_SetCeilingAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, int, tex);
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
+	if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT || tex > 511) return;
 	else ceilingMap[x][y] = tex;
 }
 
 void AGSPalRender::Ray_GetCeilingAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
+	if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) params._result = -1;
 	else params._result = ceilingMap [x][y];
 }
 
 
 void AGSPalRender::Ray_GetFloorAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
+	if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) params._result = -1;
 	else params._result = floorMap [x][y];
 }
 
 
 void AGSPalRender::Ray_GetLightingAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
+	if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) params._result = -1;
 	else {
 		int lighting = 0;
 		if (ceilingMap[x][y] == 0) {
@@ -671,7 +671,7 @@ void AGSPalRender::Ray_GetLightingAt(ScriptMethodParams &params) {
 
 void AGSPalRender::Ray_SetLightingAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, unsigned char, lighting);
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return;
+	if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) return;
 	else {
 		lightMap [x][y] = lighting;
 	}
