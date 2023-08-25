@@ -336,6 +336,7 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	{
 		bool userEnabled = _userEnabled;
 		_userEnabled = false;
+		debug("loadScreen: hiding all mouse areas");
 		_mouseMap.hideAll(this);
 		_inventory.visible(false);
 		_userEnabled = userEnabled;
@@ -382,6 +383,7 @@ void AGDSEngine::resetCurrentScreen() {
 
 
 void AGDSEngine::runProcesses() {
+	fadeAndReactivate();
 	for (uint i = 0; i < _processes.size(); ++i) {
 		ProcessPtr process = _processes[i];
 		if (!process || process->parentScreenName() != _currentScreenName)
@@ -436,9 +438,10 @@ void AGDSEngine::curtain(const Common::String &process, int screen, int sound, i
 	_curtainTimer = 100;
 	_curtainScreen = screen;
 	enableSystemUser(false);
+	fadeAndReactivate();
 }
 
-void AGDSEngine::tick() {
+void AGDSEngine::fadeAndReactivate() {
 	if (_curtainTimer >= 0 && !_curtainProcess.empty()) {
 		_curtainTimer -= 5;
 		if (_curtainTimer < 0) {
@@ -448,10 +451,16 @@ void AGDSEngine::tick() {
 			_curtainProcess.clear();
 		}
 	}
+}
+
+void AGDSEngine::tick() {
 	loadNextScreen();
+	if (!_currentScreen)
+		return;
+
+	_currentScreen->tick();
+	_mouseMap.hideInactive(this, _mouse);
 	bool dialogActive = _dialog.tick();
-	if (_currentScreen)
-		_currentScreen->tick();
 	if (!dialogActive) {
 		tickInventory();
 		if (_currentCharacter)
@@ -565,7 +574,6 @@ Common::Error AGDSEngine::run() {
 
 			case Common::EVENT_MOUSEMOVE:
 				_mouse = event.mouse;
-				_mouseMap.hideInactive(this, _mouse);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
