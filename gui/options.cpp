@@ -256,15 +256,7 @@ void OptionsDialog::init() {
 	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
-
-		const Plugin *plugin = nullptr;
-		EngineMan.findTarget(_domain, &plugin);
-		if (plugin) {
-			const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();
-			_guioptions = metaEngineDetection.parseAndCustomizeGuiOptions(_guioptionsString, _domain);
-		} else {
-			_guioptions = parseGameGUIOptions(_guioptionsString);
-		}
+		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
 }
 
@@ -273,15 +265,7 @@ void OptionsDialog::build() {
 	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
-
-		const Plugin *plugin = nullptr;
-		EngineMan.findTarget(_domain, &plugin);
-		if (plugin) {
-			const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();
-			_guioptions = metaEngineDetection.parseAndCustomizeGuiOptions(_guioptionsString, _domain);
-		} else {
-			_guioptions = parseGameGUIOptions(_guioptionsString);
-		}
+		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
 
 	// Control options
