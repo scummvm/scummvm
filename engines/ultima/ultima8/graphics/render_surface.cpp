@@ -504,54 +504,51 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	const Graphics::PixelFormat &texformat = src.rawSurface().format;
+	const Graphics::PixelFormat &texformat = src.format;
 
 	if (texformat.bpp() == 32) {
 		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
 		int tex_diff = src.w - w;
 
 		for (int y = 0; y < h; ++y) {
-			if (!alpha_blend)
-				for (int x = 0; x < w; ++x) {
-					if (TEX32_A(*texel)) {
+			for (int x = 0; x < w; ++x) {
+				uint8 sa, sr, sg, sb;
+				texformat.colorToARGB(*texel, sa, sr, sg, sb);
+
+				if (!alpha_blend) {
+					if (sa) {
 						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(
 							format.RGBToColor(
-								(TEX32_R(*texel) * ia + r) >> 8,
-								(TEX32_G(*texel) * ia + g) >> 8,
-								(TEX32_B(*texel) * ia + b) >> 8));
+								(sr * ia + r) >> 8,
+								(sg * ia + g) >> 8,
+								(sb * ia + b) >> 8));
 					}
-					pixel += format.bytesPerPixel;
-					texel++;
-				}
-			else
-				for (int x = 0; x < w; ++x) {
-					uint32 alpha = TEX32_A(*texel);
-					if (alpha == 0xFF) {
+				} else {
+					if (sa == 0xFF) {
 						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(
 							format.RGBToColor(
-								(TEX32_R(*texel) * ia + r) >> 8,
-								(TEX32_G(*texel) * ia + g) >> 8,
-								(TEX32_B(*texel) * ia + b) >> 8));
-					} else if (alpha) {
+								(sr * ia + r) >> 8,
+								(sg * ia + g) >> 8,
+								(sb * ia + b) >> 8));
+					} else if (sa) {
 						uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-						uint32 Tsrc = *texel;
 						uint8 r2, g2, b2;
 						format.colorToRGB(*dest, r2, g2, b2);
 
-						uint32 dr = r2 * (256 - alpha);
-						uint32 dg = g2 * (256 - alpha);
-						uint32 db = b2 * (256 - alpha);
-						dr += TEX32_R(Tsrc) * ia + ((r * alpha) >> 8);
-						dg += TEX32_G(Tsrc) * ia + ((g * alpha) >> 8);
-						db += TEX32_B(Tsrc) * ia + ((b * alpha) >> 8);
+						uint32 dr = r2 * (256 - sa);
+						uint32 dg = g2 * (256 - sa);
+						uint32 db = b2 * (256 - sa);
+						dr += sr * ia + ((r * sa) >> 8);
+						dg += sg * ia + ((g * sa) >> 8);
+						db += sb * ia + ((b * sa) >> 8);
 
 						*dest = format.RGBToColor(dr >> 8, dg >> 8, db >> 8);
 					}
-					pixel += format.bytesPerPixel;
-					texel++;
 				}
-
+				pixel += format.bytesPerPixel;
+				texel++;
+			}
 			pixel += diff;
 			texel += tex_diff;
 		}
@@ -643,65 +640,63 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 	uint32 b = (TEX32_B(col32) * a);
 
 	uint32 aMask = format.aMax() << format.aShift;
-	int texbpp = src.rawSurface().format.bpp();
 
-	if (texbpp == 32) {
+	const Graphics::PixelFormat &texformat = src.format;
+
+	if (texformat.bpp() == 32) {
 		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
 		int tex_diff = src.w - w;
 
 		for (int y = 0; y < h; ++y) {
-			if (!alpha_blend) {
-				for (int x = 0; x < w; ++x) {
+			for (int x = 0; x < w; ++x) {
+				uint8 sa, sr, sg, sb;
+				texformat.colorToARGB(*texel, sa, sr, sg, sb);
+
+				if (!alpha_blend) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if (TEX32_A(*texel)) {
+					if (sa) {
 						if (!aMask || (*dest & aMask)) {
 							*dest = static_cast<uintX>(
 								format.RGBToColor(
-									(TEX32_R(*texel) * ia + r) >> 8,
-									(TEX32_G(*texel) * ia + g) >> 8,
-									(TEX32_B(*texel) * ia + b) >> 8));
+									(sr * ia + r) >> 8,
+									(sg * ia + g) >> 8,
+									(sb * ia + b) >> 8));
 						}
 					}
-					pixel += format.bytesPerPixel;
-					texel++;
-				}
-			} else {
-				for (int x = 0; x < w; ++x) {
+				} else {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 					if (!aMask || (*dest & aMask)) {
-						uint32 alpha = TEX32_A(*texel);
-						if (alpha == 0xFF) {
+						if (sa == 0xFF) {
 							*dest = static_cast<uintX>(
 								format.RGBToColor(
-									(TEX32_R(*texel) * ia + r) >> 8,
-									(TEX32_G(*texel) * ia + g) >> 8,
-									(TEX32_B(*texel) * ia + b) >> 8));
-						} else if (alpha) {
-							uint32 Tsrc = *texel;
+									(sr * ia + r) >> 8,
+									(sg * ia + g) >> 8,
+									(sb * ia + b) >> 8));
+						} else if (sa) {
 							uint8 r2, g2, b2;
 							format.colorToRGB(*dest, r2, g2, b2);
 
-							uint32 dr = r2 * (256 - alpha);
-							uint32 dg = g2 * (256 - alpha);
-							uint32 db = b2 * (256 - alpha);
-							dr += TEX32_R(Tsrc) * ia + ((r * alpha) >> 8);
-							dg += TEX32_G(Tsrc) * ia + ((g * alpha) >> 8);
-							db += TEX32_B(Tsrc) * ia + ((b * alpha) >> 8);
+							uint32 dr = r2 * (256 - sa);
+							uint32 dg = g2 * (256 - sa);
+							uint32 db = b2 * (256 - sa);
+							dr += sr * ia + ((r * sa) >> 8);
+							dg += sg * ia + ((g * sa) >> 8);
+							db += sb * ia + ((b * sa) >> 8);
 
 							*dest = format.RGBToColor(dr >> 8, dg >> 8, db >> 8);
 						}
 					}
-					pixel += format.bytesPerPixel;
-					texel++;
 				}
+				pixel += format.bytesPerPixel;
+				texel++;
 			}
 
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (texbpp == format.bpp()) {
+	} else if (texformat == format) {
 		const uintX *texel = reinterpret_cast<const uintX *>(src.getBasePtr(sx, sy));
 		int tex_diff = src.w - w;
 
@@ -722,7 +717,7 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 			texel += tex_diff;
 		}
 	} else {
-		error("unsupported texture format %d bpp", texbpp);
+		error("unsupported texture format %d bpp", texformat.bpp());
 	}
 }
 
