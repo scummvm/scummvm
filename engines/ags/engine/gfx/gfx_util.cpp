@@ -65,7 +65,7 @@ static const BlendModeSetter BlendModeSets[kNumBlendModes] = {
 };
 
 bool SetBlender(BlendMode blend_mode, bool dst_has_alpha, bool src_has_alpha, int blend_alpha) {
-	if (blend_mode < 0 || blend_mode > kNumBlendModes)
+	if (blend_mode < 0 || blend_mode >= kNumBlendModes)
 		return false;
 	const BlendModeSetter &set = BlendModeSets[blend_mode];
 	BlenderMode blender;
