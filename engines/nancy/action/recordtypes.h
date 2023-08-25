@@ -242,12 +242,13 @@ protected:
 	Common::String getRecordTypeName() const override { return "TextBoxWrite"; }
 };
 
-class TextBoxClear : public Unimplemented {
+class TextboxClear : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
 
 protected:
-	Common::String getRecordTypeName() const override { return "TextBoxClear"; }
+	Common::String getRecordTypeName() const override { return "TextboxClear"; }
 };
 
 class BumpPlayerClock : public ActionRecord {

@@ -120,7 +120,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 75:
 		return new TextBoxWrite();
 	case 76:
-		return new TextBoxClear();
+		return new TextboxClear();
 	case 99:
 		return new EventFlagsMultiHS(true);
 	case 100:

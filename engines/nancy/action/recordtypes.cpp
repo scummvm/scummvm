@@ -363,8 +363,13 @@ void TextBoxWrite::execute() {
 	finishExecution();
 }
 
-void TextBoxClear::readData(Common::SeekableReadStream &stream) {
+void TextboxClear::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
+}
+
+void TextboxClear::execute() {
+	NancySceneState.getTextbox().clear();
+	finishExecution();
 }
 
 void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
