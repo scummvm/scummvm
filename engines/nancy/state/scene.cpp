@@ -582,6 +582,9 @@ void Scene::init() {
 		if (saveSlot >= 0 && saveSlot <= g_nancy->getMetaEngine()->getMaximumSaveSlot()) {
 			g_nancy->loadGameState(saveSlot);
 		}
+
+		// Remove key so clicking on "New Game" in start menu doesn't just reload the save
+		ConfMan.removeKey("save_slot", Common::ConfigManager::kTransientDomain);
 	} else {
 		// Normal boot, load default first scene
 		_state = kLoad;
