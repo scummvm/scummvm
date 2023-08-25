@@ -1079,6 +1079,15 @@ void AGDSEngine::tickInventory() {
 		_inventoryRegionName.clear();
 		_inventoryRegion.reset();
 	}
+	if (userEnabled() && _inventoryRegion && _inventory.enabled()) {
+		if (_mouseMap.disabled()) {
+			_inventory.visible(false);
+		} else {
+			if (_userEnabled) {
+				_inventory.visible(_inventoryRegion->pointIn(_mouse));
+			}
+		}
+	}
 }
 
 bool AGDSEngine::hasFeature(EngineFeature f) const {
