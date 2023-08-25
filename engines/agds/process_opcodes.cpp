@@ -1588,7 +1588,6 @@ void Process::leaveCharacter(const Common::String &name, const Common::String &r
 		character->moveTo(getName(), region->center, dir);
 	} else
 		warning("character %s could not be found", name.c_str());
-	_engine->enableSystemUser(true); //called from update_music_screen_sound_curtain
 }
 
 void Process::leaveCharacter() {
