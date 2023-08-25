@@ -403,6 +403,7 @@ void NancyEngine::bootGameEngine() {
 	_textboxData = new TBOX(boot->getChunkStream("TBOX"));
 	_helpData = new HELP(boot->getChunkStream("HELP"));
 	_creditsData = new CRED(boot->getChunkStream("CRED"));
+	_menuData = new MENU(boot->getChunkStream("MENU"));
 
 	// For now we ignore the potential for more than one of each of these
 	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));

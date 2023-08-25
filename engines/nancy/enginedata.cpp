@@ -354,6 +354,44 @@ CRED::CRED(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+MENU::MENU(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	readFilename(*chunkStream, _imageName);
+	chunkStream->skip(22);
+
+	uint numOptions = 8;
+
+	_buttonDests.resize(numOptions);
+	_buttonDownSrcs.resize(numOptions);
+
+	if (g_nancy->getGameType() <= kGameTypeNancy1) {
+		for (uint i = 0; i < numOptions; ++i) {
+			Common::Rect &rect = _buttonDests[i];
+			rect.left = chunkStream->readSint16LE();
+			rect.top = chunkStream->readSint16LE();
+			rect.right = chunkStream->readSint16LE();
+			rect.bottom = chunkStream->readSint16LE();
+		}
+
+		for (uint i = 0; i < numOptions; ++i) {
+			Common::Rect &rect = _buttonDownSrcs[i];
+			rect.left = chunkStream->readSint16LE();
+			rect.top = chunkStream->readSint16LE();
+			rect.right = chunkStream->readSint16LE();
+			rect.bottom = chunkStream->readSint16LE();
+		}
+	} else {
+		_buttonHighlightSrcs.resize(numOptions);
+
+		readRectArray(*chunkStream, _buttonDests, numOptions);
+		readRectArray(*chunkStream, _buttonDownSrcs, numOptions);
+		readRectArray(*chunkStream, _buttonDisabledSrcs, numOptions);
+		readRectArray(*chunkStream, _buttonHighlightSrcs, numOptions);
+	}
+}
+
 HINT::HINT(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

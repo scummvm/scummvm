@@ -30,6 +30,7 @@
 #include "engines/nancy/state/credits.h"
 
 #include "common/events.h"
+#include "common/config-manager.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Credits);
@@ -101,8 +102,10 @@ void Credits::run() {
 		g_nancy->setMouseEnabled(true);
 		_fullTextSurface.free();
 
-		// We don't yet support the original menus, so we close the game and go back to the launcher
-		// g_nancy->setState(NancyState::kMainMenu);
+		if (ConfMan.getBool("original_menus")) {
+			g_nancy->setState(NancyState::kMainMenu);
+			return;
+		}
 
 		Common::Event ev;
 		ev.type = Common::EVENT_RETURN_TO_LAUNCHER;

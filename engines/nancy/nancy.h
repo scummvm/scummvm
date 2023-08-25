@@ -127,6 +127,7 @@ public:
 	MAP *_mapData;
 	HELP *_helpData;
 	CRED *_creditsData;
+	MENU *_menuData;
 	HINT *_hintData;
 	SPUZ *_sliderPuzzleData;
 	CLOK *_clockData;

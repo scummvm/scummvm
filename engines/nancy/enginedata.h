@@ -177,6 +177,16 @@ struct CRED {
 	SoundDescription sound;
 };
 
+struct MENU {
+	MENU(Common::SeekableReadStream *chunkStream);
+
+	Common::String _imageName;
+	Common::Array<Common::Rect> _buttonDests;
+	Common::Array<Common::Rect> _buttonDownSrcs;
+	Common::Array<Common::Rect> _buttonHighlightSrcs;
+	Common::Array<Common::Rect> _buttonDisabledSrcs;
+};
+
 struct HINT {
 	HINT(Common::SeekableReadStream *chunkStream);
 

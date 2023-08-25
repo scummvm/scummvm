@@ -29,15 +29,22 @@
 #include "engines/nancy/ui/fullscreenimage.h"
 
 namespace Nancy {
+
+namespace UI {
+class Button;
+}
+
 namespace State {
 
 class MainMenu : public State, public Common::Singleton<MainMenu> {
 	friend class MainMenuButton;
 public:
-	MainMenu() : _state(kInit), _selected(-1), _playedOKSound(false), _buttonDown(5) {}
+	MainMenu() : _state(kInit), _selected(-1) {}
+	virtual ~MainMenu();
 
 	// State API
 	void process() override;
+	void onStateEnter(const NancyState::NancyState prevState) override;
 	bool onStateExit(const NancyState::NancyState nextState) override;
 
 private:
@@ -45,16 +52,18 @@ private:
 	void run();
 	void stop();
 
+	void registerGraphics();
+	void clearButtonState();
+
 	enum State { kInit, kRun, kStop };
 
 	UI::FullScreenImage _background;
-	RenderObject _buttonDown;
 	State _state;
 	int16 _selected;
-	bool _playedOKSound;
 
-	Common::Array<Common::Rect> _destRects;
-	Common::Array<Common::Rect> _srcRects;
+	Common::Array<UI::Button *> _buttons;
+
+	MENU *_menuData;
 };
 
 } // End of namespace State

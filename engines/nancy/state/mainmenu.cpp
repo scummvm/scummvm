@@ -27,6 +27,9 @@
 
 #include "engines/nancy/state/mainmenu.h"
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/button.h"
+
+#include "common/config-manager.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::MainMenu);
@@ -34,6 +37,12 @@ DECLARE_SINGLETON(Nancy::State::MainMenu);
 
 namespace Nancy {
 namespace State {
+
+MainMenu::~MainMenu() {
+	for (auto *button : _buttons) {
+		delete button;
+	}
+}
 
 void MainMenu::process() {
 	switch (_state) {
@@ -49,18 +58,33 @@ void MainMenu::process() {
 	}
 }
 
+void MainMenu::onStateEnter(const NancyState::NancyState prevState) {
+	registerGraphics();
+}
+
 bool MainMenu::onStateExit(const NancyState::NancyState nextState) {
 	return true;
 }
 
+void MainMenu::registerGraphics() {
+	_background.registerGraphics();
+
+	for (auto *button : _buttons) {
+		button->registerGraphics();
+	}
+}
+
+void MainMenu::clearButtonState() {
+	for (auto *button : _buttons) {
+		button->_isClicked = false;
+	}
+}
+
 void MainMenu::init() {
-	/*Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MENU");
-	chunk->seek(0);
+	_menuData = g_nancy->_menuData;
+	assert(_menuData);
 
-	Common::String imageName;
-	readFilename(*chunk, imageName);
-
-	_background.init(imageName);
+	_background.init(_menuData->_imageName);
 	_background.registerGraphics();
 
 	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
@@ -70,28 +94,27 @@ void MainMenu::init() {
 		g_nancy->_sound->playSound("MSND");
 	}
 
-	chunk->seek(0x20);
-
-	// Unlike every other rect in the engine, these use int16 instead of int32
-	for (uint i = 0; i < 8; ++i) {
-		_destRects.push_back(Common::Rect());
-		Common::Rect &rect = _destRects.back();
-		rect.left = chunk->readSint16LE();
-		rect.top = chunk->readSint16LE();
-		rect.right = chunk->readSint16LE();
-		rect.bottom = chunk->readSint16LE();
+	for (uint i = 0; i < _menuData->_buttonDests.size(); ++i) {
+		_buttons.push_back(new UI::Button(5, _background._drawSurface,
+			_menuData->_buttonDownSrcs[i], _menuData->_buttonDests[i],
+			_menuData->_buttonHighlightSrcs.size() ? _menuData->_buttonHighlightSrcs[i] : Common::Rect(),
+			_menuData->_buttonDisabledSrcs.size() ? _menuData->_buttonDisabledSrcs[i] : Common::Rect()));
+		
+		_buttons.back()->init();
+		_buttons.back()->setVisible(false);
 	}
 
-	for (uint i = 0; i < 8; ++i) {
-		_srcRects.push_back(Common::Rect());
-		Common::Rect &rect = _srcRects.back();
-		rect.left = chunk->readSint16LE();
-		rect.top = chunk->readSint16LE();
-		rect.right = chunk->readSint16LE();
-		rect.bottom = chunk->readSint16LE();
+	registerGraphics();
+
+	// Disable continue if game was just started
+	// Perhaps could be enabled always, and just load the latest save?
+	if (!Scene::hasInstance()) {
+		_buttons[3]->setDisabled(true);
 	}
 
-	_buttonDown.registerGraphics();*/
+	// Disable load/save & settings
+	_buttons[2]->setDisabled(true);
+	_buttons[5]->setDisabled(true);
 
 	_state = kRun;
 }
@@ -99,81 +122,77 @@ void MainMenu::init() {
 void MainMenu::run() {
 	NancyInput input = g_nancy->_input->getInput();
 
-	_buttonDown.setVisible(false);
+	if (_selected != -1) {
+		input.input &= ~NancyInput::kLeftMouseButtonUp;
+	}
 
-	if (input.input & NancyInput::kLeftMouseButtonUp) {
-		for (uint i = 0; i < 8; ++i) {
-			if (_destRects[i].contains(input.mousePos)) {
-				if (i == 3 && !Scene::hasInstance()) {
-					g_nancy->_sound->playSound("BUDE");
-					_playedOKSound = false;
-				} else {
-					g_nancy->_sound->playSound("BUOK");
-					_playedOKSound = true;
-				}
+	for (uint i = 0; i < _buttons.size(); ++i) {
+		auto *button = _buttons[i];
+		button->handleInput(input);
+		if (_selected == -1 && button->_isClicked) {
+			if (button->_isDisabled) {
+				g_nancy->_sound->playSound("BUDE");
+			} else {
+				g_nancy->_sound->playSound("BUOK");
+			}
 
-				_selected = i;
+			_selected = i;
+		}
+	}
+
+	if (_selected != -1) {
+		if (!g_nancy->_sound->isSoundPlaying("BUOK") && !g_nancy->_sound->isSoundPlaying("BUDE")) {
+			if (_buttons[_selected]->_isDisabled) {
+				_selected = -1;
+				clearButtonState();
+			} else {
 				_state = kStop;
-
-				_buttonDown._drawSurface.create(_background._drawSurface, _srcRects[i]);
-				_buttonDown.moveTo(_destRects[i]);
-				_buttonDown.setVisible(true);
-
-				return;
 			}
 		}
 	}
 }
 
 void MainMenu::stop() {
-	if (!g_nancy->_sound->isSoundPlaying(_playedOKSound ? "BUOK" : "BUDE")) {
-		switch (_selected) {
-		case 0:
-			// Credits
-			g_nancy->setState(NancyState::kCredits);
-			break;
-		case 1:
-			// New Game
-			if (Scene::hasInstance()) {
-				NancySceneState.destroy(); // Simply destroy the existing Scene and create a new one
-			}
-
-			g_nancy->setState(NancyState::kScene);
-			break;
-		case 2:
-			// Load and Save Game, TODO
-			_state = kRun;
-			break;
-		case 3:
-			// Continue
-			if (Scene::hasInstance()) {
-				g_nancy->setState(NancyState::kScene);
-			} else {
-				_state = kRun;
-			}
-			break;
-		case 4:
-			// Second Chance
-			if (!Scene::hasInstance()) {
-				NancySceneState.process(); // run once to init the state
-			}
-
-			g_nancy->loadGameState(g_nancy->getAutosaveSlot());
-			g_nancy->setState(NancyState::kScene);
-			break;
-		case 5:
-			// Game Setup, TODO
-			_state = kRun;
-			break;
-		case 6:
-			// Exit Game
-			g_nancy->quitGame();
-			break;
-		case 7:
-			// Help
-			g_nancy->setState(NancyState::kHelp);
-			break;
+	switch (_selected) {
+	case 0:
+		// Credits
+		g_nancy->setState(NancyState::kCredits);
+		break;
+	case 1:
+		// New Game
+		if (Scene::hasInstance()) {
+			NancySceneState.destroy(); // Destroy the existing Scene and create a new one
 		}
+
+		g_nancy->setState(NancyState::kScene);
+		break;
+	case 2:
+		// Load and Save Game, TODO
+		break;
+	case 3:
+		// Continue
+		g_nancy->setState(NancyState::kScene);
+		break;
+	case 4:
+		// Second Chance
+		if (Scene::hasInstance()) {
+			NancySceneState.destroy(); // Destroy the existing Scene and create a new one
+		}
+
+		ConfMan.setInt("save_slot", g_nancy->getMetaEngine()->getMaximumSaveSlot(), Common::ConfigManager::kTransientDomain);
+		g_nancy->setState(NancyState::kScene);
+		break;
+	case 5:
+		// Game Setup, TODO
+		break;
+	case 6:
+		// Exit Game
+		g_nancy->quitGame();
+		break;
+	case 7:
+		// Help
+		g_nancy->setState(NancyState::kHelp);
+		break;
 	}
 }
 
