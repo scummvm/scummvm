@@ -95,8 +95,6 @@ public:
 		return entries;
 	}
 
-	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const override;
-
 	void dumpDetectionEntries() const override final {}
 };
 
@@ -150,7 +148,7 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 		// Based on generateComplexID() in advancedDetector.cpp.
 		game.preferredTarget = generatePreferredTarget(*x);
 
-		game.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
+		game.setGUIOptions(customizeGuiOptions(*x));
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
 		detectedGames.push_back(game);
@@ -182,53 +180,6 @@ const char *ScummMetaEngineDetection::getEngineName() const {
 const char *ScummMetaEngineDetection::getOriginalCopyright() const {
 	return "LucasArts SCUMM Games (C) LucasArts\n"
 	       "Humongous SCUMM Games (C) Humongous";
-}
-
-Common::String ScummMetaEngineDetection::parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
-	Common::String result = MetaEngineDetection::parseAndCustomizeGuiOptions(optionsString, domain);
-	const char *defaultRenderOption = nullptr;
-
-	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", domain));
-	const Common::String extra = ConfMan.get("extra", domain);
-
-	// Add default rendermode option for target. We don't put the default mode into the
-	// detection tables, due to the amount of targets we have. It it more convenient to
-	// add the option here.
-	switch (platform) {
-	case Common::kPlatformAmiga:
-		defaultRenderOption = GUIO_RENDERAMIGA;
-		break;
-	case Common::kPlatformApple2GS:
-		defaultRenderOption = GUIO_RENDERAPPLE2GS;
-		break;
-	case Common::kPlatformMacintosh:
-		defaultRenderOption = GUIO_RENDERMACINTOSH;
-		break;
-	case Common::kPlatformFMTowns:
-		defaultRenderOption = GUIO_RENDERFMTOWNS;
-		break;
-	case Common::kPlatformAtariST:
-		defaultRenderOption = GUIO_RENDERATARIST;
-		break;
-	case Common::kPlatformDOS:
-		defaultRenderOption = (extra.equalsIgnoreCase("EGA") || extra.equalsIgnoreCase("V1") || extra.equalsIgnoreCase("V2")) ? GUIO_RENDEREGA : GUIO_RENDERVGA;
-		break;
-	case Common::kPlatformUnknown:
-		// For targets that don't specify the platform (often happens with SCUMM6+ games) we stick with default VGA.
-		defaultRenderOption = GUIO_RENDERVGA;
-		break;
-	default:
-		// Leave this as nullptr for platforms that don't have a specific render option (SegaCD, NES, ...).
-		// These targets will then have the full set of render mode options in the launcher options dialog.
-		break;
-	}
-
-	// If the render option is already part of the string (specified in the
-	// detection tables) we don't add it again.
-	if (defaultRenderOption != nullptr && !result.contains(defaultRenderOption))
-		result += defaultRenderOption;
-
-	return result;
 }
 
 REGISTER_PLUGIN_STATIC(SCUMM_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ScummMetaEngineDetection);

@@ -859,6 +859,49 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 	return true;
 }
 
+static Common::String customizeGuiOptions(const DetectorResult &res) {
+	Common::String guiOptions = res.game.guioptions + MidiDriver::musicType2GUIO(res.game.midi);
+	Common::String defaultRenderOption = "";
+
+	// Add default rendermode option for target. We don't put the default mode into the
+	// detection tables, due to the amount of targets we have. It it more convenient to
+	// add the option here.
+	switch (res.game.platform) {
+	case Common::kPlatformAmiga:
+		defaultRenderOption = GUIO_RENDERAMIGA;
+		break;
+	case Common::kPlatformApple2GS:
+		defaultRenderOption = GUIO_RENDERAPPLE2GS;
+		break;
+	case Common::kPlatformMacintosh:
+		defaultRenderOption = GUIO_RENDERMACINTOSH;
+		break;
+	case Common::kPlatformFMTowns:
+		defaultRenderOption = GUIO_RENDERFMTOWNS;
+		break;
+	case Common::kPlatformAtariST:
+		defaultRenderOption = GUIO_RENDERATARIST;
+		break;
+	case Common::kPlatformDOS:
+		defaultRenderOption = (!strcmp(res.extra, "EGA") || !strcmp(res.extra, "V1") || !strcmp(res.extra, "V2")) ? GUIO_RENDEREGA : GUIO_RENDERVGA;
+		break;
+	case Common::kPlatformUnknown:
+		// For targets that don't specify the platform (often happens with SCUMM6+ games) we stick with default VGA.
+		defaultRenderOption = GUIO_RENDERVGA;
+		break;
+	default:
+		// Leave this as nullptr for platforms that don't have a specific render option (SegaCD, NES, ...).
+		// These targets will then have the full set of render mode options in the launcher options dialog.
+		break;
+	}
+
+	// If the render option is already part of the string (specified in the
+	// detection tables) we don't add it again.
+	if (!guiOptions.contains(defaultRenderOption))
+		guiOptions += defaultRenderOption;
+
+	return guiOptions;
+}
 
 } // End of namespace Scumm
 
