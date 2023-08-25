@@ -496,10 +496,6 @@ bool HEMixer::mixerStartChannel(
 		if (sampleLen <= 0) {
 			error("HEMixer::mixerStartChannel(): Sample invalid size %d", sampleLen);
 		}
-
-		if ((flags & CHANNEL_LOOPING) && (sampleLen <= MIXER_PCM_CHUNK_SIZE)) {
-			error("HEMixer::mixerStartChannel(): Sample too small to loop (%d)", sampleLen);
-		}
 	}
 
 	_mixerChannels[channel].flags = flags;
