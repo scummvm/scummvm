@@ -884,6 +884,9 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 	if (_heSpoolingMusicCount != 0) {
 		for (int i = 0; i < _heSpoolingMusicCount; i++) {
 			if (_heSpoolingMusicTable[i].song == song) {
+				debug(5, "SoundHE::triggerSpoolingSound(): Starting spooling sound %d with offset %d, on channel %d with flags %d",
+					song, offset, channel, flags);
+
 				Common::String filename(_vm->generateFilename(-4));
 				int fileOffset = 0;
 				int songsize = 0;
