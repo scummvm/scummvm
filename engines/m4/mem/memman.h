@@ -22,7 +22,7 @@
 #ifndef M4_MEM_MEMMAN_H
 #define M4_MEM_MEMMAN_H
 
-#include "common/memory.h"
+#include "common/algorithm.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -30,7 +30,9 @@ namespace M4 {
 #define _MEMTYPE_LIMIT 33
 
 inline Handle mem_alloc(size_t size, const char *) {
-	return (Handle)malloc(size);
+	byte *ptr = (byte *)malloc(size);
+	Common::fill(ptr, ptr + size, 0);
+	return (Handle)ptr;
 }
 
 inline void mem_free(Handle ptr) {
