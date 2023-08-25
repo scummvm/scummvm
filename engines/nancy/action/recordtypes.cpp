@@ -374,6 +374,11 @@ void EventFlags::execute() {
 
 void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 	EventFlags::readData(stream);
+
+	if (_isCursor) {
+		_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
+	}
+
 	uint16 numHotspots = stream.readUint16LE();
 
 	_hotspots.reserve(numHotspots);

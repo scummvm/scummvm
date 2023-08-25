@@ -119,6 +119,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new TextBoxWrite();
 	case 76:
 		return new TextBoxClear();
+	case 99:
+		return new EventFlagsMultiHS(true);
 	case 100:
 		return new BumpPlayerClock();
 	case 101:
@@ -132,7 +134,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 105:
 		return new StopTimer();
 	case 106:
-		return new EventFlagsMultiHS();
+		return new EventFlagsMultiHS(false);
 	case 107:
 		return new EventFlags();
 	case 108:
