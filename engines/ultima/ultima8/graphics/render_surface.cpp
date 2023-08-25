@@ -325,18 +325,6 @@ void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Common
 	if (!w || !h || !aMask)
 		return;
 
-	// An optimization.
-	if (w * format.bytesPerPixel == pitch) {
-		w *= h;
-		h = 1;
-	}
-
-	uint8 *pixel = pixels + rect.top * pitch + rect.left * format.bytesPerPixel;
-	uint8 *end = pixel + h * pitch;
-
-	uint8 *line_end = pixel + w * format.bytesPerPixel;
-	int diff = pitch - w * format.bytesPerPixel;
-
 	uint32 a = (((uint32)alpha) << format.aShift) & aMask;
 
 #ifdef CHECK_ALPHA_FILLS
@@ -351,8 +339,11 @@ void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Common
 	}
 #endif
 
-	while (pixel != end) {
-		while (pixel != line_end) {
+	uint8 *pixel = pixels + rect.top * pitch + rect.left * format.bytesPerPixel;
+	int diff = pitch - w * format.bytesPerPixel;
+
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w; ++x) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
 			*dest = (*dest & ~aMask) | a;
 #ifdef CHECK_ALPHA_FILLS
@@ -361,7 +352,6 @@ void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Common
 			pixel += format.bytesPerPixel;
 		}
 
-		line_end += pitch;
 		pixel += diff;
 	}
 }
@@ -393,18 +383,6 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 	if (!w || !h)
 		return;
 
-	// An optimization.
-	if (w * format.bytesPerPixel == pitch) {
-		w *= h;
-		h = 1;
-	}
-
-	uint8 *pixel = pixels + rect.top * pitch + rect.left * format.bytesPerPixel;
-	uint8 *end = pixel + h * pitch;
-
-	uint8 *line_end = pixel + w * format.bytesPerPixel;
-	int diff = pitch - w * format.bytesPerPixel;
-
 	uint32 aMask = format.aMax() << format.aShift;
 	int alpha = TEX32_A(rgba);
 	rgba = TEX32_PACK_RGBA((TEX32_R(rgba) * alpha) >> 8,
@@ -412,15 +390,17 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 						   (TEX32_B(rgba) * alpha) >> 8,
 						   (255 * alpha) >> 8);
 
-	while (pixel != end) {
-		while (pixel != line_end) {
+	uint8 *pixel = pixels + rect.top * pitch + rect.left * format.bytesPerPixel;
+	int diff = pitch - w * format.bytesPerPixel;
+
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w; ++x) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
 			uint32 d = *dest;
 			*dest = (d & aMask) | BlendPreModFast(rgba, d, format);
 			pixel += format.bytesPerPixel;
 		}
 
-		line_end += pitch;
 		pixel += diff;
 	}
 }
@@ -516,8 +496,6 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 		sy += dy - py;
 
 	uint8 *pixel = pixels + dy * pitch + dx * format.bytesPerPixel;
-	uint8 *line_end = pixel + w * format.bytesPerPixel;
-	uint8 *end = pixel + h * pitch;
 	int diff = pitch - w * format.bytesPerPixel;
 
 	uint32 a = TEX32_A(col32);
@@ -532,9 +510,9 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
 		int tex_diff = src.w - w;
 
-		while (pixel != end) {
+		for (int y = 0; y < h; ++y) {
 			if (!alpha_blend)
-				while (pixel != line_end) {
+				for (int x = 0; x < w; ++x) {
 					if (TEX32_A(*texel)) {
 						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(
 							format.RGBToColor(
@@ -546,7 +524,7 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 					texel++;
 				}
 			else
-				while (pixel != line_end) {
+				for (int x = 0; x < w; ++x) {
 					uint32 alpha = TEX32_A(*texel);
 					if (alpha == 0xFF) {
 						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(
@@ -574,7 +552,6 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 					texel++;
 				}
 
-			line_end += pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
@@ -582,8 +559,8 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 		const uintX *texel = reinterpret_cast<const uintX *>(src.getBasePtr(sx, sy));
 		int tex_diff = src.w - w;
 
-		while (pixel != end) {
-			while (pixel != line_end) {
+		for (int y = 0; y < h; ++y) {
+			for (int x = 0; x < w; ++x) {
 				// Uh, not supported right now
 				// if (TEX32_A(*texel))
 				{
@@ -593,7 +570,6 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 				texel++;
 			}
 
-			line_end += pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
@@ -658,8 +634,6 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 		sy += dy - py;
 
 	uint8 *pixel = pixels + dy * pitch + dx * format.bytesPerPixel;
-	uint8 *line_end = pixel + w * format.bytesPerPixel;
-	uint8 *end = pixel + h * pitch;
 	int diff = pitch - w * format.bytesPerPixel;
 
 	uint32 a = TEX32_A(col32);
@@ -675,9 +649,9 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
 		int tex_diff = src.w - w;
 
-		while (pixel != end) {
+		for (int y = 0; y < h; ++y) {
 			if (!alpha_blend) {
-				while (pixel != line_end) {
+				for (int x = 0; x < w; ++x) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 					if (TEX32_A(*texel)) {
@@ -693,7 +667,7 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 					texel++;
 				}
 			} else {
-				while (pixel != line_end) {
+				for (int x = 0; x < w; ++x) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 					if (!aMask || (*dest & aMask)) {
@@ -724,7 +698,6 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 				}
 			}
 
-			line_end += pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
@@ -732,8 +705,8 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 		const uintX *texel = reinterpret_cast<const uintX *>(src.getBasePtr(sx, sy));
 		int tex_diff = src.w - w;
 
-		while (pixel != end) {
-			while (pixel != line_end) {
+		for (int y = 0; y < h; ++y) {
+			for (int x = 0; x < w; ++x) {
 				uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 				// Uh, not completely supported right now
@@ -745,7 +718,6 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 				texel++;
 			}
 
-			line_end += pitch;
 			pixel += diff;
 			texel += tex_diff;
 		}
