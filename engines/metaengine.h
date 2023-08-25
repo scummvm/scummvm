@@ -174,19 +174,6 @@ public:
 	virtual void dumpDetectionEntries() const = 0;
 
 	/**
-	 * The default version of this method will just parse the options string from
-	 * the config manager. However it also allows the meta engine to post process
-	 * result and add/remove other options as needed.
-	 *
-	 * @param optionsString		Options string that from the config manager.
-	 * @param domain			Domain of the current target.
-	 *
-	 * @return    The fully processed options string that is usable by the GUI.
-	 *
-	 */
-	virtual Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const;
-
-	/**
 	 * Return a list of engine specified debug channels
 	 *
 	 * If engine has no specified debug channels or not supported yet, then it will return NULL

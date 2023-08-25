@@ -105,20 +105,6 @@ public:
 
 		return game;
 	}
-
-	/*
-	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
-		Common::String guiOptions = AdvancedMetaEngineDetection::parseAndCustomizeGuiOptions(optionsString, domain);
-
-		if (domain.hasPrefix("reah")) {
-			guiOptions += " lang_Dutch lang_French lang_Italian lang_German lang_Polish lang_Spanish";
-		} else if (domain.hasPrefix("schizm")) {
-			guiOptions += " lang_Dutch lang_French lang_Italian lang_German lang_Greek lang_Polish lang_Russian lang_Spanish";
-		}
-
-		return guiOptions;
-	}
-	*/
 };
 
 REGISTER_PLUGIN_STATIC(VCRUISE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, VCruiseMetaEngineDetection);
