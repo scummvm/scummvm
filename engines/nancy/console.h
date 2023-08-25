@@ -49,6 +49,7 @@ private:
 	bool Cmd_chunkHexDump(int argc, const char **argv);
 	bool Cmd_chunkList(int argc, const char **argv);
 	bool Cmd_showImage(int argc, const char **argv);
+	bool Cmd_exportImage(int argc, const char **argv);
 	bool Cmd_playVideo(int argc, const char **argv);
 	bool Cmd_playSound(int argc, const char **argv);
 	bool Cmd_loadScene(int argc, const char **argv);

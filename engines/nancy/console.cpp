@@ -24,6 +24,8 @@
 
 #include "audio/audiostream.h"
 
+#include "image/bmp.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/console.h"
 #include "engines/nancy/resource.h"
@@ -48,6 +50,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("chunk_hexdump", WRAP_METHOD(NancyConsole, Cmd_chunkHexDump));
 	registerCmd("chunk_list", WRAP_METHOD(NancyConsole, Cmd_chunkList));
 	registerCmd("show_image", WRAP_METHOD(NancyConsole, Cmd_showImage));
+	registerCmd("export_image", WRAP_METHOD(NancyConsole, Cmd_exportImage));
 	registerCmd("play_video", WRAP_METHOD(NancyConsole, Cmd_playVideo));
 	registerCmd("play_sound", WRAP_METHOD(NancyConsole, Cmd_playSound));
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
@@ -333,6 +336,29 @@ bool NancyConsole::Cmd_showImage(int argc, const char **argv) {
 		_imageFile = argv[1];
 		return cmdExit(0, nullptr);
 	}
+}
+
+bool NancyConsole::Cmd_exportImage(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Exports an image to a file\n");
+		debugPrintf("Usage: %s <name>\n", argv[0]);
+		return true;
+	}
+
+	Graphics::ManagedSurface surf;
+	if (g_nancy->_resource->loadImage(argv[1], surf)) {
+		Common::DumpFile f;
+		if (!f.open(Common::String(argv[1]) + ".bmp")) {
+			debugPrintf("Couldn't open file for writing!");
+
+			return true;
+		}
+		Image::writeBMP(f, surf);
+	} else {
+		debugPrintf("File doesn't exist!\n");
+	}
+
+	return true;
 }
 
 bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
