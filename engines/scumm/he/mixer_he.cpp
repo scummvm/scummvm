@@ -474,6 +474,7 @@ bool HEMixer::mixerStartChannel(
 	int sampleLen, int frequency, int volume, int callbackID, uint32 flags, ...) {
 
 	va_list params;
+	bool is3DOMusic = false;
 
 	if ((channel < 0) || (channel >= MIXER_MAX_CHANNELS))
 		return false;
@@ -563,6 +564,10 @@ bool HEMixer::mixerStartChannel(
 	if (flags != CHANNEL_EMPTY_FLAGS) {
 		byte *ptr = _vm->getResourceAddress((ResType)globType, globNum);
 
+		if (READ_BE_UINT32(ptr) == MKTAG('M', 'R', 'A', 'W')) {
+			is3DOMusic = true;
+		}
+
 		if (READ_BE_UINT32(ptr) == MKTAG('W', 'S', 'O', 'U')) {
 			ptr += 8;
 		}
@@ -595,16 +600,35 @@ bool HEMixer::mixerStartChannel(
 			// Fade-in to avoid possible sound popping...
 			byte *dataTmp = data;
 			int rampUpSampleCount = 64;
-			for (int i = 0; i < rampUpSampleCount; i++) {
-				*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
-				dataTmp++;
+			if (!is3DOMusic) {
+				for (int i = 0; i < rampUpSampleCount; i++) {
+					*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
+					dataTmp++;
+				}
+			} else {
+				// We can't just ramp volume as done above, we have to take
+				// into account the fact that 3DO music is 8-bit -> signed <-
+				rampUpSampleCount = 128;
+				for (int i = 0; i < rampUpSampleCount; i++) {
+					int8 signedSample = (int8)(*dataTmp);
+					signedSample = (signedSample * i) / rampUpSampleCount;
+					*dataTmp = (byte)signedSample;
+					dataTmp++;
+				}
 			}
 		}
 
 		_mixerChannels[channel].stream = Audio::makeQueuingAudioStream(MIXER_DEFAULT_SAMPLE_RATE, false);
 
+		Audio::Mixer::SoundType soundType =
+			globNum == HSND_TALKIE_SLOT ?
+			Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+
+		if (is3DOMusic)
+			soundType = Audio::Mixer::kMusicSoundType;
+
 		_mixer->playStream(
-			globNum == HSND_TALKIE_SLOT ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType,
+			soundType,
 			&_mixerChannels[channel].handle,
 			_mixerChannels[channel].stream,
 			-1,
@@ -619,7 +643,7 @@ bool HEMixer::mixerStartChannel(
 				ptr,
 				_mixerChannels[channel].sampleLen,
 				MIXER_DEFAULT_SAMPLE_RATE,
-				mixerGetOutputFlags(),
+				mixerGetOutputFlags(is3DOMusic),
 				DisposeAfterUse::NO);
 
 			_mixerChannels[channel].stream->queueAudioStream(Audio::makeLoopingAudioStream(stream, 0), DisposeAfterUse::YES);
@@ -629,7 +653,7 @@ bool HEMixer::mixerStartChannel(
 				data,
 				_mixerChannels[channel].sampleLen,
 				DisposeAfterUse::YES,
-				mixerGetOutputFlags());
+				mixerGetOutputFlags(is3DOMusic));
 		}
 
 		if (hasCallbackData && !(_mixerChannels[channel].flags & CHANNEL_LOOPING)) {
@@ -637,7 +661,7 @@ bool HEMixer::mixerStartChannel(
 				_mixerChannels[channel].residualData,
 				_mixerChannels[channel].endSampleAdjustment,
 				DisposeAfterUse::YES,
-				mixerGetOutputFlags());
+				mixerGetOutputFlags(is3DOMusic));
 		}
 
 	} else {
@@ -759,11 +783,13 @@ bool HEMixer::mixerStartSpoolingChannel(
 	return true;
 }
 
-byte HEMixer::mixerGetOutputFlags() {
+byte HEMixer::mixerGetOutputFlags(bool is3DOMusic) {
 	// Just plain mono 8-bit sound...
 
 	byte streamFlags = 0;
-	streamFlags |= Audio::FLAG_UNSIGNED;
+
+	if (!is3DOMusic)
+		streamFlags |= Audio::FLAG_UNSIGNED;
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	streamFlags |= Audio::FLAG_LITTLE_ENDIAN;

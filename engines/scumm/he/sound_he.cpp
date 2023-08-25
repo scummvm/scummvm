@@ -199,8 +199,14 @@ int SoundHE::isSoundRunning(int sound) const {
 			}
 		} else if (sound == -1) {
 			sound = _currentMusic;
-			if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound))
+
+			if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound)) {
 				return sound;
+			}
+
+			if (is3DOSound(sound) && hsFindSoundChannel(sound) != -1) {
+				return sound;
+			}
 		} else if (sound > 0) {
 			if (hsFindSoundChannel(sound) != -1) {
 				return sound;
@@ -865,7 +871,9 @@ void SoundHE::triggerSound(int soundId, int heOffset, int heChannel, int heFlags
 
 	byte *soundAddr = (byte *)_vm->getResourceAddress(rtSound, soundId);
 
-	if ((READ_BE_UINT32(soundAddr) == MKTAG('D', 'I', 'G', 'I')) || (READ_BE_UINT32(soundAddr) == MKTAG('T', 'A', 'L', 'K'))) {
+	if ((READ_BE_UINT32(soundAddr) == MKTAG('D', 'I', 'G', 'I')) ||
+		(READ_BE_UINT32(soundAddr) == MKTAG('T', 'A', 'L', 'K')) ||
+		(READ_BE_UINT32(soundAddr) == MKTAG('M', 'R', 'A', 'W'))) {
 		triggerDigitalSound(soundId, heOffset, heChannel, heFlags);
 	} else if (READ_BE_UINT32(soundAddr) == MKTAG('M', 'I', 'D', 'I')) {
 		triggerMidiSound(soundId, heOffset);
@@ -1408,12 +1416,20 @@ void SoundHE::triggerDigitalSound(int sound, int offset, int channel, int flags)
 
 	debug(5, "SoundHE::triggerDigitalSound(sound=%d, offset=%d, channel=%d, flags=%08x)", sound, offset, channel, flags);
 
+	soundAddr = (byte *)_vm->getResourceAddress(rtSound, sound);
+
+	// Is this a MRAW music file from the 3DO games? Then update _currentMusic
+	// and throw the sound on the last channel, since otherwise speech will interrupt it...
+	if (READ_BE_UINT32(soundAddr) == MKTAG('M', 'R', 'A', 'W')) {
+		_currentMusic = sound;
+		channel = HSND_MAX_CHANNELS - 1;
+	}
+
 	// Don't let digital sounds interrupt speech...
 	if (_heChannel[channel].sound == HSND_TALKIE_SLOT && sound != HSND_TALKIE_SLOT) {
 		return;
 	}
 
-	soundAddr = (byte *)_vm->getResourceAddress(rtSound, sound);
 	soundPriority = soundAddr[HSND_RES_OFFSET_KILL_PRIO];
 
 	if (_vm->_game.heversion < 95 && _overrideFreq) {
@@ -1711,6 +1727,14 @@ const byte *SoundHE::findWavBlock(uint32 tag, const byte *block) {
 
 int SoundHE::getCurrentSpeechOffset() {
 	return _heTalkOffset;
+}
+
+bool SoundHE::is3DOSound(int sound) const {
+	byte *soundAddr = _vm->getResourceAddress(rtSound, sound);
+	if (soundAddr == nullptr)
+		return false;
+
+	return READ_BE_UINT32(soundAddr) == MKTAG('M', 'R', 'A', 'W');
 }
 
 } // End of namespace Scumm

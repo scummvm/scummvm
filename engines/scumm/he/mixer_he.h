@@ -210,7 +210,7 @@ public:
 	bool mixerStartSpoolingChannel(
 		int channel, int song, Common::File &sampleFileIOHandle, int sampleLen, int frequency,
 		int volume, int callbackID, uint32 flags);
-	byte mixerGetOutputFlags();
+	byte mixerGetOutputFlags(bool is3DOMusic = false);
 };
 
 } // End of namespace Scumm

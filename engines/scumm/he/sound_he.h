@@ -261,6 +261,7 @@ public:
 
 	const byte *findWavBlock(uint32 tag, const byte *block);
 	int getCurrentSpeechOffset();
+	bool is3DOSound(int sound) const;
 
 protected:
 	void processSoundQueues() override;
