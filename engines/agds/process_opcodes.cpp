@@ -563,21 +563,26 @@ void Process::checkScreenPatch() {
 
 void Process::loadMouseCursorFromObject() {
 	Common::String name = popText();
-	debug("loadMouseCursorFromObject %s", !name.empty()? name.c_str(): "<remove>");
+	auto inventoryObject = _engine->currentInventoryObject();
+	bool changeInventoryObject = (inventoryObject && inventoryObject->getName() == getName());
+	debug("loadMouseCursorFromObject %s inventory: %d", !name.empty()? name.c_str(): "<remove>", changeInventoryObject);
 	Animation *cursor = !name.empty()? _engine->loadMouseCursor(name): nullptr;
 	_object->setMouseCursor(cursor); //overlay cursor
 }
 
-void Process::attachInventoryObjectToMouse(bool flag) {
+void Process::attachInventoryObjectToMouse(bool keepGraphics) {
 	Common::String name = popString();
-	debug("attachInventoryObjectToMouse %s %d", name.c_str(), flag);
-	if (flag)
-		_engine->resetCurrentInventoryObject();
+	debug("attachInventoryObjectToMouse %s, keepGraphics: %d", name.c_str(), keepGraphics);
 	auto object = _engine->getCurrentScreenObject(name);
-	if (object)
-		_engine->currentInventoryObject(object);
-	else
+	if (!object) {
 		warning("cannot find object %s", name.c_str());
+		return;
+	}
+	if (!keepGraphics) {
+		object->setAnimation(nullptr);
+		object->setPicture(nullptr);
+	}
+	_engine->currentInventoryObject(object);
 }
 
 void Process::returnCurrentInventoryObject() {

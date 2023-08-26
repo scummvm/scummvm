@@ -92,6 +92,7 @@ private:
 
 private:
 	void freeRotated();
+	void freePicture();
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
