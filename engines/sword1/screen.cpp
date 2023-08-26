@@ -210,9 +210,10 @@ void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool 
 	_resMan->resClose(id);
 }
 
-void Screen::fullRefresh() {
+void Screen::fullRefresh(bool soft) {
 	_fullRefresh = true;
-	_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
+	if (!soft)
+		_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
 }
 
 int16 Screen::stillFading() {

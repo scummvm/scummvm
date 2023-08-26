@@ -42,6 +42,7 @@ class Mouse;
 class Music;
 class Sound;
 class Screen;
+class Logic;
 
 #define SAVEGAME_HEADER MKTAG('B','S','_','1')
 #define SAVEGAME_VERSION 2
@@ -85,7 +86,7 @@ struct ButtonInfo {
 
 class Control {
 public:
-	Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen);
+	Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen, Logic *pLogic);
 	uint8 runPanel();
 	void doRestore();
 	void askForCd();
@@ -157,6 +158,7 @@ private:
 	Music *_music;
 	Sound *_sound;
 	Screen *_screen;
+	Logic *_logic;
 	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
 	Common::KeyState _keyPressed;

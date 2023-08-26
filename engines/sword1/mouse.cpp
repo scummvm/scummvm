@@ -71,12 +71,10 @@ void Mouse::controlPanel(bool on) { // true on entering cpanel, false when leavi
 	if (on) {
 		savedPtrId = _currentPtrId;
 		_mouseOverride = true;
-		setLuggage(0, 0);
 		setPointer(MSE_POINTER, 0);
 	} else {
 		_currentPtrId = savedPtrId;
 		_mouseOverride = false;
-		setLuggage(_currentLuggageId, 0);
 		setPointer(_currentPtrId, 0);
 	}
 }
