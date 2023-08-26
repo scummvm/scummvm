@@ -33,7 +33,7 @@ const GameConstants _nancy5Constants ={
 		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
 	36,
 	7,
-	7000
+	4000
 };
 
 const Common::Array<Common::Language> _nancy5LanguagesOrder = {
