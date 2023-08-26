@@ -390,6 +390,8 @@ MENU::MENU(Common::SeekableReadStream *chunkStream) {
 		readRectArray(*chunkStream, _buttonDisabledSrcs, numOptions);
 		readRectArray(*chunkStream, _buttonHighlightSrcs, numOptions);
 	}
+
+	delete chunkStream;
 }
 
 SET::SET(Common::SeekableReadStream *chunkStream) {
@@ -425,6 +427,8 @@ SET::SET(Common::SeekableReadStream *chunkStream) {
 	for (uint i = 0; i < 3; ++i) {
 		_sounds[i].readMenu(*chunkStream);
 	}
+
+	delete chunkStream;
 }
 
 HINT::HINT(Common::SeekableReadStream *chunkStream) {
