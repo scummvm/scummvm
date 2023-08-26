@@ -185,15 +185,21 @@ Graphics::Surface *GraphicsManager::getBitmap(uint32 bitmapID) {
 	return surface;
 }
 
-Graphics::Surface *GraphicsManager::getBitmap(const Common::String &fileName) {
+Graphics::Surface *GraphicsManager::getBitmap(const Common::String &fileName, bool required) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
 
-	if (!stream)
-		error("Could not find bitmap '%s'", fileName.c_str());
+	if (!stream) {
+		if (required)
+			error("Could not find bitmap '%s'", fileName.c_str());
+		return nullptr;
+	}
 
 	Graphics::Surface *surface = getBitmap(stream);
-	if (!surface)
-		error("Failed to decode bitmap '%s'", fileName.c_str());
+	if (!surface) {
+		if (required)
+			error("Failed to decode bitmap '%s'", fileName.c_str());
+		return nullptr;
+	}
 
 	return surface;
 }
