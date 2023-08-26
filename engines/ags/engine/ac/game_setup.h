@@ -23,6 +23,7 @@
 #define AGS_ENGINE_AC_GAME_SETUP_H
 
 #include "ags/engine/main/graphics_mode.h"
+#include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
@@ -101,7 +102,8 @@ struct GameSetup {
 	int   override_script_os; // pretend engine is running on this eScriptSystemOSID
 	char  override_multitasking; // -1 for none, 0 or 1 to lock in the on/off mode
 	bool  override_upscale; // whether upscale old games that supported that
-
+	// assume game data version when restoring legacy save format
+	GameDataVersion dataver_for_legacysavs = kGameVersion_Undefined;
 	// Optional keys for calling built-in save/restore dialogs;
 	// primarily meant for the test runs of the games where save functionality
 	// is not implemented (or does not work correctly).
