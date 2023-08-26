@@ -84,6 +84,11 @@ void Logo::init() {
 	_logoImage.init(g_nancy->_imageChunks["LG0"].imageName);
 	_logoImage.registerGraphics();
 
+	if (g_nancy->_imageChunks.contains("PLG0")) {
+		_partnerLogoImage.init(g_nancy->_imageChunks["PLG0"].imageName);
+		_partnerLogoImage.registerGraphics();
+	}
+
 	if (g_nancy->getGameType() == kGameTypeVampire && _tvdVideoDecoder.loadFile("VAMPINTR.AVI")) {
 		_tvdVideoDecoder.start();
 		_videoObj.moveTo(Common::Rect(0, 0, 640, 480));
@@ -120,8 +125,18 @@ void Logo::startSound() {
 }
 
 void Logo::run() {
-	if ((g_nancy->getTotalPlayTime() - _startTicks >= g_nancy->getStaticData().logoEndAfter) ||
-		(g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+	if (g_nancy->getTotalPlayTime() - _startTicks >= g_nancy->getStaticData().logoEndAfter) {
+		// Display game logo after partner logo
+		if (!_partnerLogoImage._drawSurface.empty() && _partnerLogoImage.isVisible()) {
+			_logoImage.setVisible(true);
+			_partnerLogoImage.setVisible(false);
+			_startTicks = g_nancy->getTotalPlayTime();
+		} else {
+			_state = kStop;
+		}
+	}
+
+	if (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown) {
 		_state = kStop;
 	}
 }

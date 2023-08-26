@@ -418,12 +418,21 @@ void NancyEngine::bootGameEngine() {
 	_imageChunks.setVal("FR0", boot->getChunkStream("FR0"));
 	_imageChunks.setVal("LG0", boot->getChunkStream("LG0"));
 
+	auto *chunkStream = boot->getChunkStream("PLG0");
+	if (!chunkStream) {
+		chunkStream = boot->getChunkStream("PLGO"); // nancy4 and above use an O instead of a zero
+	}
+
+	if (chunkStream) {
+		_imageChunks.setVal("PLG0", chunkStream);
+	}
+
 	_cursorManager->init(boot->getChunkStream("CURS"));
 
 	_graphicsManager->init();
 	_graphicsManager->loadFonts(boot->getChunkStream("FONT"));
 
-	auto *chunkStream = boot->getChunkStream("MAP");
+	chunkStream = boot->getChunkStream("MAP");
 	if (chunkStream) {
 		_mapData = new MAP(chunkStream);
 	}
