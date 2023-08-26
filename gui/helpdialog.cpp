@@ -51,10 +51,24 @@ HelpDialog::HelpDialog()
 	TabWidget *tab = new TabWidget(this, 10, 10, _w - 10, tabHeight, ThemeEngine::kTextAlignVBottom);
 
 	tab->addTab(_("General"), "GlobalOptions_Graphics", false);
+	Common::U32String helpText1 = _(
+"### Where to get the games\n"
+"\n"
+"Many games supported by ScummVM can still be bought from companies at the links below. Not all games on this list are supported by ScummVM, please check the compatibility page beforehand.\n"
+"\n"
+"Several games have been released for free legal download by their respective copyright holders. You can download them from [our website](https://scummvm.org/games).\n"
+"\n"
+"For other (out of print) games try Amazon, eBay, Game Trading Zone or other auction sites but beware of faulty games (e.g., scratched discs) and illegal game copies (e.g., from Butterfly Media).\n"
+"\n"
+"The ScummVM team does not recommend any individual supplier of games and this list is for reference purposes only. The ScummVM project does get a cut from every purchase on [GOG.com](https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) and [ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through one of the links with the added affiliate referrer though.\n"
+	);
+
+	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText1);
+
 	tab->addTab(_("Controls"), "GlobalOptions_Graphics", false);
 
-	Common::U32String helpText = _(
-"# Touch controls\n"
+	Common::U32String helpText2 = _(
+"### Touch controls\n"
 "\n"
 "The touch control scheme can be configured in the global settings. From the Launcher, go to **Options > Backend > Choose the preferred touch mode**.\n"
 "It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games) and choose one of the three possible modes:\n"
@@ -92,7 +106,7 @@ HelpDialog::HelpDialog()
 "\n"
 	);
 
-	new RichTextWidget(tab, 10, 10, _w - 40, tabHeight - buttonHeight - 10, helpText);
+	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText2);
 
 	tab->addTab(_("Adding Games"), "GlobalOptions_Graphics", false);
 	tab->addTab(_("Paths"), "GlobalOptions_Graphics", false);
