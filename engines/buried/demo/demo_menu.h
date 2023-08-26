@@ -54,6 +54,8 @@ private:
 	int _curButton;
 	//bool _buttonDrawnDown;
 	Graphics::Surface *_background;
+	Graphics::Surface *_mmbsel;
+	Graphics::Surface *_mmbquit;
 };
 
 } // End of namespace Buried

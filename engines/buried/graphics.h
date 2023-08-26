@@ -83,7 +83,7 @@ public:
 	Cursor setCursor(Cursor newCursor);
 	void toggleCursor(bool show);
 	Graphics::Surface *getBitmap(uint32 bitmapID);
-	Graphics::Surface *getBitmap(const Common::String &fileName);
+	Graphics::Surface *getBitmap(const Common::String &fileName, bool required = true);
 	uint32 getColor(byte r, byte g, byte b);
 
 	void invalidateRect(const Common::Rect &rect, bool erase = true);
