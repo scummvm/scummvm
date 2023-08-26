@@ -31,6 +31,11 @@ void readRect(Common::Serializer &stream, Common::Rect &inRect, Common::Serializ
 void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num);
 void readRectArray(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 
+void readRect16(Common::SeekableReadStream &stream, Common::Rect &inRect);
+void readRect16(Common::Serializer &stream, Common::Rect &inRect, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+void readRectArray16(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num);
+void readRectArray16(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+
 void readFilename(Common::SeekableReadStream &stream, Common::String &inString);
 void readFilename(Common::Serializer &stream, Common::String &inString, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::String> &inArray, uint num);
