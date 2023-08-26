@@ -114,7 +114,6 @@ void MainMenu::init() {
 
 	// Disable load/save & settings
 	_buttons[2]->setDisabled(true);
-	_buttons[5]->setDisabled(true);
 
 	_state = kRun;
 }
@@ -150,6 +149,8 @@ void MainMenu::run() {
 			}
 		}
 	}
+
+	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
 }
 
 void MainMenu::stop() {
@@ -183,7 +184,8 @@ void MainMenu::stop() {
 		g_nancy->setState(NancyState::kScene);
 		break;
 	case 5:
-		// Game Setup, TODO
+		// Game Setup
+		g_nancy->setState(NancyState::kSetup);
 		break;
 	case 6:
 		// Exit Game

@@ -85,5 +85,42 @@ void Button::setDisabled(bool disabled) {
 	}
 }
 
+Toggle::Toggle(uint16 zOrder, Graphics::ManagedSurface &surface, Common::Rect &srcRect, Common::Rect &destRect) :
+		RenderObject(zOrder, surface, srcRect, destRect),
+		surf(surface),
+		_clickSrc(srcRect),
+		_toggleState(false),
+		_stateChanged(false) {
+	setVisible(false);
+	setTransparent(true);
+}
+
+void Toggle::handleInput(NancyInput &input) {
+	_stateChanged = false;
+
+	if (_screenPosition.contains(input.mousePos)) {
+		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			setState(!_toggleState);
+		}
+	}
+}
+
+void Toggle::setState(bool toggleState) {
+	if (_toggleState == toggleState) {
+		return;
+	}
+
+	_toggleState = toggleState;
+	_stateChanged = true;
+
+	if (toggleState) {
+		setVisible(true);
+	} else {
+		setVisible(false);
+	}
+}
+
 } // End of namespace UI
 } // End of namespace Nancy

@@ -21,6 +21,7 @@
 
 #include "common/serializer.h"
 #include "common/config-manager.h"
+#include "common/func.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/iff.h"

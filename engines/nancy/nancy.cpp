@@ -44,6 +44,7 @@
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/state/credits.h"
 #include "engines/nancy/state/mainmenu.h"
+#include "engines/nancy/state/setupmenu.h"
 
 namespace Nancy {
 
@@ -77,6 +78,8 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_mapData = nullptr;
 	_helpData = nullptr;
 	_creditsData = nullptr;
+	_menuData = nullptr;
+	_setupData = nullptr;
 	_hintData = nullptr;
 	_sliderPuzzleData = nullptr;
 	_clockData = nullptr;
@@ -100,6 +103,8 @@ NancyEngine::~NancyEngine() {
 	delete _mapData;
 	delete _helpData;
 	delete _creditsData;
+	delete _menuData;
+	delete _setupData;
 	delete _hintData;
 	delete _sliderPuzzleData;
 	delete _clockData;
@@ -404,6 +409,7 @@ void NancyEngine::bootGameEngine() {
 	_helpData = new HELP(boot->getChunkStream("HELP"));
 	_creditsData = new CRED(boot->getChunkStream("CRED"));
 	_menuData = new MENU(boot->getChunkStream("MENU"));
+	_setupData = new SET(boot->getChunkStream("SET"));
 
 	// For now we ignore the potential for more than one of each of these
 	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));
@@ -464,6 +470,8 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::Credits::instance();
 	case NancyState::kMap:
 		return &State::Map::instance();
+	case NancyState::kSetup:
+		return &State::SetupMenu::instance();
 	case NancyState::kHelp:
 		return &State::Help::instance();
 	case NancyState::kScene:
@@ -505,6 +513,11 @@ void NancyEngine::destroyState(NancyState::NancyState state) const {
 	case NancyState::kMainMenu:
 		if (State::MainMenu::hasInstance()) {
 			State::MainMenu::instance().destroy();
+		}
+		break;
+	case NancyState::kSetup:
+		if (State::SetupMenu::hasInstance()) {
+			State::SetupMenu::instance().destroy();
 		}
 		break;
 	default:

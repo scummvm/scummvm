@@ -187,6 +187,24 @@ struct MENU {
 	Common::Array<Common::Rect> _buttonDisabledSrcs;
 };
 
+struct SET {
+	SET(Common::SeekableReadStream *chunkStream);
+
+	Common::String _imageName;
+	// Common::Rect _scrollbarsBounds
+	Common::Array<Common::Rect> _scrollbarBounds;
+	Common::Array<Common::Rect> _buttonDests;
+	Common::Array<Common::Rect> _buttonDownSrcs;
+	Common::Rect _doneButtonHighlightSrc;
+	Common::Array<Common::Rect> _scrollbarSrcs;
+
+	Common::Array<uint16> _scrollbarsCenterYPos;
+	Common::Array<uint16> _scrollbarsCenterXPosL;
+	Common::Array<uint16> _scrollbarsCenterXPosR;
+
+	Common::Array<SoundDescription> _sounds;
+};
+
 struct HINT {
 	HINT(Common::SeekableReadStream *chunkStream);
 

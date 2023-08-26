@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_STATE_MAINMENU_H
-#define NANCY_STATE_MAINMENU_H
+#ifndef NANCY_STATE_SETUPMENU_H
+#define NANCY_STATE_SETUPMENU_H
 
 #include "common/singleton.h"
 
@@ -30,18 +30,20 @@
 
 namespace Nancy {
 
-struct MENU;
+struct SET;
 
 namespace UI {
 class Button;
+class Toggle;
+class Scrollbar;
 }
 
 namespace State {
 
-class MainMenu : public State, public Common::Singleton<MainMenu> {
+class SetupMenu : public State, public Common::Singleton<SetupMenu> {
 public:
-	MainMenu() : _state(kInit), _selected(-1), _menuData(nullptr) {}
-	virtual ~MainMenu();
+	SetupMenu() : _state(kInit), _exitButton(nullptr), _setupData(nullptr) {}
+	virtual ~SetupMenu();
 
 	// State API
 	void process() override;
@@ -54,20 +56,20 @@ private:
 	void stop();
 
 	void registerGraphics();
-	void clearButtonState();
 
 	enum State { kInit, kRun, kStop };
 
 	UI::FullScreenImage _background;
 	State _state;
-	int16 _selected;
 
-	Common::Array<UI::Button *> _buttons;
+	Common::Array<UI::Toggle *> _toggles;
+	Common::Array<UI::Scrollbar *> _scrollbars;
+	UI::Button *_exitButton;
 
-	MENU *_menuData;
+	SET *_setupData;
 };
 
 } // End of namespace State
 } // End of namespace Nancy
 
-#endif // NANCY_STATE_MAINMENU_H
+#endif // NANCY_STATE_SETUPMENU_H

@@ -392,6 +392,41 @@ MENU::MENU(Common::SeekableReadStream *chunkStream) {
 	}
 }
 
+SET::SET(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	readFilename(*chunkStream, _imageName);
+	chunkStream->skip(20); // image info
+	chunkStream->skip(16); // bounds for all scrollbars
+
+	uint numButtons = g_nancy->getGameType() == kGameTypeVampire ? 5 : 4;
+
+	readRectArray(*chunkStream, _scrollbarBounds, 3);
+	readRectArray(*chunkStream, _buttonDests, numButtons);
+	readRectArray(*chunkStream, _buttonDownSrcs, numButtons);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy2) {
+		readRect(*chunkStream, _doneButtonHighlightSrc);
+	}
+	
+	readRectArray(*chunkStream, _scrollbarSrcs, 3);
+
+	_scrollbarsCenterYPos.resize(3);
+	_scrollbarsCenterXPosL.resize(3);
+	_scrollbarsCenterXPosR.resize(3);
+	for (uint i = 0; i < 3; ++i) {
+		_scrollbarsCenterYPos[i] = chunkStream->readUint16LE();
+		_scrollbarsCenterXPosL[i] = chunkStream->readUint16LE();
+		_scrollbarsCenterXPosR[i] = chunkStream->readUint16LE();
+	}
+
+	_sounds.resize(3);
+	for (uint i = 0; i < 3; ++i) {
+		_sounds[i].readMenu(*chunkStream);
+	}
+}
+
 HINT::HINT(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

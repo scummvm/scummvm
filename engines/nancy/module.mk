@@ -38,6 +38,7 @@ MODULE_OBJS = \
   state/mainmenu.o \
   state/map.o \
   state/scene.o \
+  state/setupmenu.o \
   misc/lightning.o \
   misc/specialeffect.o \
   commontypes.o \

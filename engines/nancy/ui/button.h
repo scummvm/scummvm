@@ -52,6 +52,21 @@ public:
 	bool _isDisabled;
 };
 
+class Toggle : public RenderObject {
+public:
+	Toggle(uint16 zOrder, Graphics::ManagedSurface &surface, Common::Rect &srcRect, Common::Rect &destRect);
+	virtual ~Toggle() = default;
+
+	void handleInput(NancyInput &input);
+	void setState(bool toggleState);
+
+	Graphics::ManagedSurface &surf;
+	Common::Rect _clickSrc;
+
+	bool _stateChanged;
+	bool _toggleState;
+};
+
 } // End of namespace UI
 } // End of namespace Nancy
 

@@ -128,6 +128,7 @@ public:
 	HELP *_helpData;
 	CRED *_creditsData;
 	MENU *_menuData;
+	SET *_setupData;
 	HINT *_hintData;
 	SPUZ *_sliderPuzzleData;
 	CLOK *_clockData;

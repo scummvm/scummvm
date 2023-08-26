@@ -43,6 +43,10 @@ Scrollbar::Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, Graphics::Man
 	_startPosition = topPosition;
 	_startPosition.x -= srcBounds.width() / 2;
 
+	if (!isVertical) {
+		_startPosition.y -= srcBounds.height() / 2;
+	}
+
 	_screenPosition = srcBounds;
 	_screenPosition.moveTo(_startPosition);
 }
@@ -109,7 +113,11 @@ void Scrollbar::handleInput(NancyInput &input) {
 
 void Scrollbar::setPosition(float pos) {
     _currentPosition = pos;
-    moveTo(Common::Point(_screenPosition.left, _startPosition.y + (_maxDist * pos)));
+	if (_isVertical) {
+		moveTo(Common::Point(_screenPosition.left, _startPosition.y + (_maxDist * pos)));
+	} else {
+		moveTo(Common::Point(_startPosition.x + (_maxDist * pos), _screenPosition.top));
+	}
 }
 
 void Scrollbar::calculatePosition() {
