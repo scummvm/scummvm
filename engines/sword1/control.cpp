@@ -228,7 +228,7 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen) {
+Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen, Logic *pLogic) {
 	_vm = vm;
 	_saveFileMan = saveFileMan;
 	_resMan = pResMan;
@@ -238,6 +238,8 @@ Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *
 	_music = pMusic;
 	_sound = pSound;
 	_screen = pScreen;
+	_logic = pLogic;
+
 	_lStrings = loadCustomStrings("strings.txt") ? _customStrings : _languageStrings + SwordEngine::_systemVars.language * 20;
 	_selectedButton = 255;
 	_panelShown = false;
@@ -307,16 +309,30 @@ uint8 Control::runPanel() {
 	_tempThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Graphics::saveThumbnail(*_tempThumbnail);
 
+	_logic->fnWipeHands(nullptr, 0, 0, 0, 0, 0, 0, 0);
+	_logic->fnEndMenu(nullptr, 0, 0, 0, 0, 0, 0, 0);
+
+	// Fade video and sounds down
+	_screen->startFadePaletteDown(1);
+	_vm->waitForFade();
+	_sound->quitScreen();
+
+	int previousMusic = Logic::_scriptVars[CURRENT_MUSIC];
+	_logic->fnPlayMusic(nullptr, 0, 61, LOOPED, 0, 0, 0, 0);
+	Logic::_scriptVars[CURRENT_MUSIC] = previousMusic;
+
 	_panelShown = true;
 	_mouseDown = false;
 	_restoreBuf = NULL;
 	_keyPressed.reset();
 	_numButtons = 0;
+
+	// Clear the whole screen
 	_screenBuf = (uint8 *)malloc(640 * 480);
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
-	_sound->quitScreen();
 
+	// Gather font resources
 	uint32 fontId = SR_FONT, redFontId = SR_REDFONT;
 	if (SwordEngine::_systemVars.language == BS1_CZECH) {
 		fontId = CZECH_SR_FONT;
@@ -325,31 +341,25 @@ uint8 Control::runPanel() {
 	_font = (uint8 *)_resMan->openFetchRes(fontId);
 	_redFont = (uint8 *)_resMan->openFetchRes(redFontId);
 
-	//uint8 *pal = (uint8 *)_resMan->openFetchRes(SR_PALETTE);
+	// Set up mouse
+	_mouse->controlPanel(true);
 
-	//uint8 *palOut = (uint8 *)malloc(256 * 3);
-	//for (uint16 cnt = 1; cnt < 256; cnt++) {
-	//	palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
-	//	palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
-	//	palOut[cnt * 3 + 2] = pal[cnt * 3 + 2] << 2;
-	//}
-	//palOut[0] = palOut[1] = palOut[2] = 0;
-	//_resMan->resClose(SR_PALETTE);
-	//_system->getPaletteManager()->setPalette(palOut, 0, 256);
-	//free(palOut);
 	uint8 mode = 0, newMode = BUTTON_MAIN_PANEL;
 	bool fullRefresh = false;
-	_mouse->controlPanel(true);
 	uint8 retVal = CONTROL_NOTHING_DONE;
-	_music->startMusic(61, 1);
+
+	// Set up the image and the correct palette for fading up
+	if (SwordEngine::isPsx())
+		destroyButtons();
 	setupMainPanel();
 
 	_screen->fnSetFadeTargetPalette(0, 256, SR_PALETTE);
 	_screen->fnSetFadeTargetPalette(0, 1, 0, true);
-	_screen->startFadePaletteDown(1);
+
+	// Fade up
+	_screen->startFadePaletteUp(1);
 	_vm->waitForFade();
 
-	//clearAllFx();
 	do {
 		if (newMode) {
 			mode = newMode;
@@ -401,7 +411,7 @@ uint8 Control::runPanel() {
 			fullRefresh = false;
 			_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
 		}
-		delay(1000 / 12);
+		delay(DEFAULT_FRAME_TIME);
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!Engine::shouldQuit()));
 
@@ -436,22 +446,57 @@ uint8 Control::runPanel() {
 		ConfMan.flushToDisk();
 	}
 
-	//_screen->startFadePaletteDown(1);
-	//_vm->waitForFade();
+	// Fade out video and sounds
+	bool didRestoreRestartOrQuit =
+		Engine::shouldQuit() ||
+		(retVal & CONTROL_RESTART_GAME) ||
+		(retVal & CONTROL_GAME_RESTORED);
 
+	if (didRestoreRestartOrQuit || (Logic::_scriptVars[CURRENT_MUSIC] == 0)) {
+		_logic->fnStopMusic(nullptr, 0, 0, 0, 0, 0, 0, 0);
+	}
+
+	_screen->startFadePaletteDown(1);
+	_vm->waitForFade();
+
+	_logic->fnNormalMouse(nullptr, 0, 0, 0, 0, 0, 0, 0);
+	Logic::_scriptVars[NEW_PALETTE] = 1;
+
+	// Clear the control panel resources and the free the temp screen buffer
 	destroyButtons();
 	_resMan->resClose(fontId);
 	_resMan->resClose(redFontId);
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
+
+	// Restore mouse
 	_mouse->controlPanel(false);
-	// Can also be used to end the control panel music.
-	_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
-	_sound->newScreen(Logic::_scriptVars[SCREEN]);
-	_panelShown = false;
+
+	// If DONE or SAVE was selected, try restoring audio
+	if (!didRestoreRestartOrQuit) {
+		// Restore sound effects...
+		for (int j = 0; j < TOTAL_FX_PER_ROOM; j++) {
+			if (int fxNo = Sound::_roomsFixedFx[Logic::_scriptVars[SCREEN]][j]) {
+				if (Sound::_fxList[fxNo].type == FX_LOOP)
+					_logic->fnPlayFx(nullptr, 0, fxNo, 0, 0, 0, 0, 0);
+			} else {
+				break; // Drop out as soon as we come across a zero, rather than searching the whole list...
+			}
+		}
+
+		// Restore in-game music...
+		if (Logic::_scriptVars[CURRENT_MUSIC]) {
+			_logic->fnPlayMusic(nullptr, 0, Logic::_scriptVars[CURRENT_MUSIC], LOOPED, 0, 0, 0, 0);
+		}
+	}
+
+	// Delete the temporary thumbnail
 	delete _tempThumbnail;
 	_tempThumbnail = 0;
+
+	_panelShown = false;
+
 	return retVal;
 }
 
@@ -616,11 +661,6 @@ void Control::setupMainPanel() {
 			renderText(_lStrings[STR_RESTART], 285, 260 + 40, TEXT_LEFT_ALIGN);
 		renderText(_lStrings[STR_QUIT], 285, 296 + 40, TEXT_LEFT_ALIGN);
 	}
-
-	_screen->fnSetFadeTargetPalette(0, 256, SR_PALETTE);
-	_screen->fnSetFadeTargetPalette(0, 1, 0, true);
-	_screen->startFadePaletteUp(1);
-	_vm->waitForFade();
 }
 
 void Control::setupSaveRestorePanel(bool saving) {

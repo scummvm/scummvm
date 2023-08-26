@@ -79,6 +79,7 @@ enum CowMode {
 
 class Sound {
 	friend class SwordConsole;
+	friend class Control;
 public:
 	Sound(Audio::Mixer *mixer, ResMan *pResMan);
 	~Sound();

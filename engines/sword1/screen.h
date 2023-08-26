@@ -90,7 +90,7 @@ public:
 	void fnSetPalette(uint8 start, uint16 length, uint32 id);
 	void fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool toBlack = false);
 	int16 stillFading();
-	void fullRefresh();
+	void fullRefresh(bool soft = false);
 
 	bool showScrollFrame();
 	void updateScreen();

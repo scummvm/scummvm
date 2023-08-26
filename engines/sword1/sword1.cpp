@@ -161,7 +161,7 @@ Common::Error SwordEngine::init() {
 	_logic->initialize();
 	_objectMan->initialize();
 	_mouse->initialize();
-	_control = new Control(this, _saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music, _screen);
+	_control = new Control(this, _saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music, _screen, _logic);
 
 	return Common::kNoError;
 }
@@ -259,13 +259,12 @@ uint8 SwordEngine::checkKeys() {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_ESCAPE:
 			if ((Logic::_scriptVars[MOUSE_STATUS] & 1) && (Logic::_scriptVars[GEORGE_HOLDING_PIECE] == 0)) {
-				/*
-				 * saveGameFlag = 1;
-				 * snrStatus = 1;
-				*/
 				retCode = _control->runPanel();
-				if (retCode == CONTROL_NOTHING_DONE)
-					_screen->fullRefresh();
+				if (retCode == CONTROL_NOTHING_DONE) {
+					_screen->fullRefresh(true);
+					Logic::_scriptVars[NEW_PALETTE] = 1;
+				}
+
 			}
 			break;
 		default:
