@@ -53,6 +53,7 @@ enum global_triggers {
 	gRELEASE_TRIGGER_DIGI_CHECK = 10006,	// Used only by release_trigger_digi_check() in global.cpp
 
 	gNONPLAYERS_SPEECH_FINISHED = 10011,	// digi_play trigger, used in talk.cpp
+	g10013 = 10013,
 	gWILBURS_SPEECH_FINISHED = 10014,
 	gWILBURS_SPEECH_START = 10015,
 	gCHANGE_WILBUR_ANIMATION = 10016,

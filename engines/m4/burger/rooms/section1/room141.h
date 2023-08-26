@@ -40,8 +40,11 @@ private:
 	int _val5 = 0;
 	int _val6 = 0;
 	int _val7 = 0;
+	int _val8 = 0;
+	bool _flag1 = false;
 
 	void conv20();
+	void playRandom();
 
 public:
 	Room141() : Room() {}
