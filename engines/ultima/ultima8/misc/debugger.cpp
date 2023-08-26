@@ -27,7 +27,9 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
@@ -201,6 +203,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("MusicProcess::playMusic", WRAP_METHOD(Debugger, cmdPlayMusic));
 	registerCmd("QuitGump::verifyQuit", WRAP_METHOD(Debugger, cmdVerifyQuit));
 	registerCmd("ShapeViewerGump::U8ShapeViewer", WRAP_METHOD(Debugger, cmdU8ShapeViewer));
+	registerCmd("RenderSurface::benchmark", WRAP_METHOD(Debugger, cmdBenchmarkRenderSurface));
 
 #ifdef DEBUG
 	registerCmd("Pathfinder::visualDebug", WRAP_METHOD(Debugger, cmdVisualDebugPathfinder));
@@ -1805,6 +1808,79 @@ bool Debugger::cmdClearMinimap(int argc, const char **argv) {
 		gump->clear();
 	}
 	return false;
+}
+
+bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
+	if (argc != 4) {
+		debugPrintf("usage: RenderSurface::benchmark shapenum framenum iterations\n");
+		return true;
+	}
+
+	int shapenum = atoi(argv[1]);
+	int frame = atoi(argv[2]);
+	int count = atoi(argv[3]);
+
+	GameData *gamedata = GameData::get_instance();
+	Shape *s = gamedata->getMainShapes()->getShape(shapenum);
+
+	RenderSurface *surface = RenderSurface::CreateSecondaryRenderSurface(320, 200);
+	surface->BeginPainting();
+
+	uint32 start, end;
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->Paint(s, frame, 160, 100);
+	}
+	end = g_system->getMillis();
+	debugPrintf("Paint: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintNoClip(s, frame, 160, 100);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintNoClip: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintTranslucent(s, frame, 160, 100);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintTranslucent: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintMirrored(s, frame, 160, 100);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintMirrored: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintInvisible(s, frame, 160, 100, false, false);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintInvisible: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintHighlight(s, frame, 160, 100, false, false, 0x7F00007F);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintHighlight: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintHighlightInvis(s, frame, 160, 100, false, false, 0x7F00007F);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintHighlightInvis: %d\n", end - start);
+
+	surface->EndPainting();
+	delete surface;
+
+	return true;
 }
 
 #ifdef DEBUG
