@@ -64,6 +64,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 
 	int getMaximumSaveSlot() const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
@@ -99,6 +100,16 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 }
 
 int NancyMetaEngine::getMaximumSaveSlot() const { return 8; }
+
+SaveStateDescriptor NancyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor ret = AdvancedMetaEngine::querySaveMetaInfos(target, slot);
+	if (slot == getMaximumSaveSlot()) {
+		// We do not allow the second chance slot to be overwritten
+		ret.setWriteProtectedFlag(true);
+	}
+
+	return ret;
+}
 
 void NancyMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	// Second Chance autosaves trigger when a scene changes, but before

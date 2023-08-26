@@ -143,28 +143,9 @@ bool NancyEngine::canSaveGameStateCurrently() {
 			NancySceneState.getActiveConversation() == nullptr;
 }
 
-bool NancyEngine::canSaveAutosaveCurrently() {
-	if (ConfMan.getBool("second_chance")) {
-		return false;
-	} else {
-		return Engine::canSaveAutosaveCurrently();
-	}
-}
-
 void NancyEngine::secondChance() {
-	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
-	Common::String name = "SECOND CHANCE";
-
-	// Overwrite an existing second chance if possible
-	for (auto &save : saves) {
-		if (save.getDescription() == name) {
-			saveGameState(save.getSaveSlot(), name, true);
-			return;
-		}
-	}
-
-	// If no second chance slot exists, create a new one
-	saveGameState(saves.size(), name, true);
+	uint secondChanceSlot = getMetaEngine()->getMaximumSaveSlot();
+	saveGameState(secondChanceSlot, "SECOND CHANCE", true);
 }
 
 bool NancyEngine::hasFeature(EngineFeature f) const {

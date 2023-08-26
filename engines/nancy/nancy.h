@@ -85,7 +85,6 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
-	bool canSaveAutosaveCurrently() override;
 
 	void secondChance();
 
