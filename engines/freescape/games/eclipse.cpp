@@ -65,6 +65,12 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		debugC(1, kFreescapeDebugParser, "%s", message.c_str());
 		messagePtr++;
 	}
+
+	_playerStepIndex = 2;
+	_playerSteps.clear();
+	_playerSteps.push_back(1);
+	_playerSteps.push_back(10);
+	_playerSteps.push_back(25);
 }
 
 extern byte kEGADefaultPaletteData[16][3];
