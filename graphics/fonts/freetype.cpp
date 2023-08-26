@@ -30,9 +30,42 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
+#include FT_MODULE_H
 
 namespace Graphics {
 namespace FreeType {
+
+void *Alloc_Callback(FT_Memory memory, long size) {
+	return realloc(nullptr, static_cast<size_t>(size));
+}
+
+void Free_Callback(FT_Memory memory, void *block) {
+	realloc(block, 0);
+}
+
+void *Realloc_Callback(FT_Memory memory, long cur_size, long new_size, void *block) {
+	return realloc(block, static_cast<size_t>(new_size));
+}
+
+FT_Error Init_FreeType_With_Mem(FT_Library *alibrary, FT_Memory *amem) {
+	// It seems FT_New_Memory isn't part of the public API in 2.10.4
+	FT_Memory mem = static_cast<FT_Memory>(malloc(sizeof(FT_MemoryRec_)));
+	if (!mem)
+		return FT_Err_Out_Of_Memory;
+
+	mem->alloc = Alloc_Callback;
+	mem->free = Free_Callback;
+	mem->realloc = Realloc_Callback;
+	mem->user = nullptr;
+
+	FT_Error error = FT_New_Library(mem, alibrary);
+	if (!error) {
+		FT_Add_Default_Modules(*alibrary);
+		*amem = mem;
+	}
+
+	return error;
+}
 
 FT_Error Init_FreeType(FT_Library *alibrary) {
 	return FT_Init_FreeType(alibrary);
@@ -40,6 +73,12 @@ FT_Error Init_FreeType(FT_Library *alibrary) {
 
 FT_Error Done_FreeType(FT_Library library) {
 	return FT_Done_FreeType(library);
+}
+
+FT_Error Done_FreeType_With_Mem(FT_Library library, FT_Memory mem) {
+	FT_Error error = FT_Done_Library(library);
+	free(mem);
+	return error;
 }
 
 FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
