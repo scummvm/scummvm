@@ -1072,7 +1072,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"harryhh",
-			"",
+			"v1.1",
 			AD_ENTRY1("HARRY.512", "8d786f0998f27e44603a2202d6786c25"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1106,7 +1106,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"harryhh",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("HARRY.512", "39d11399796dfa36d3f631d2d87e8b85"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1259,7 +1259,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"greeneggs",
-			"",
+			"32-bit",
 			AD_ENTRY1("GREEN32.LB", "5df8438138186f89e71299d7b4f88d06"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1320,7 +1320,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"seussabc",
-			"",
+			"32-bit",
 			AD_ENTRY1("ABC32.LB", "1d56a9351974a7a70ace5274a4570b72"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1475,7 +1475,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("TORTOISE.512", "e9ec7a6bc6b451c9e85e5b4f072d5143"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1728,7 +1728,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthur",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("PAGES.512", "cd995d20d0d7b4642476fd76044b4e5b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -3175,7 +3175,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"beardark",
-			"",
+			"32-bit",
 			AD_ENTRY1("DARK32.LB", "28abbf5498aeb29e78e5e0dec969ebe2"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
