@@ -1332,6 +1332,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// ZOOM-platform
+	{
+		{
+			"seussabc",
+			"",
+			AD_ENTRY1s("ABC32.LB", "436d08cbf0eb6573f0abffddac0da70d", 4032),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	{
 		{
 			"seussabc",
@@ -3299,6 +3315,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// ZOOM platform
+	{
+		{
+			"stellaluna",
+			"32-bit",
+			AD_ENTRY1s("STELLA32.LB", "ca8562a79f63485680e21191f5865fd7", 4336),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	// From aluff in bug#5711
 	{
 		{
@@ -3322,6 +3354,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"sheila",
 			"",
 			AD_ENTRY1("SHEILA.LB", "c28a60f615a46384d9a8941fc5c89d63"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// ZOOM platform
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1s("SHEILA32.LB", "334f3da1ed0b610506bec551be67c62b", 24997),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
