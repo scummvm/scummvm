@@ -51,6 +51,9 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 
 	g_paletteLookup = new Graphics::PaletteLookup;
+
+	_isPeril = !strcmp(_desc->gameId, kPeril);
+	_isPerilDemo = _isPeril  && (_desc->flags & ADGF_DEMO);
 }
 
 PinkEngine::~PinkEngine() {
@@ -314,7 +317,11 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 }
 
 bool PinkEngine::isPeril() const {
-	return !strcmp(_desc->gameId, kPeril);
+	return _isPeril;
+}
+
+bool PinkEngine::isPerilDemo() const {
+	return _isPerilDemo;
 }
 
 }

@@ -179,6 +179,16 @@ void PinkEngine::initMenu() {
 
 	Graphics::MacMenuSubMenu *subMenu = _menu->getSubmenu(nullptr, 0);
 	if (subMenu) {
+
+		if (isPerilDemo()) {
+			// From the first submenu ("Game"), disable the (zero indexed) item 5 ("Songs").
+			// Use setEnabled() rather than removeMenuItem() since the latter removes the item
+			// out of the list changing the index for the items that follow.
+			// The effect is that "Songs" will be greyed out for the demo, since it's not available for it.
+			// The original demo does not have the "Songs" item in the menu at all.
+			_menu->setEnabled( _menu->getSubMenuItem(_menu->getMenuItem(0), 5), false);
+		}
+
 		SaveStateList saves = listSaves();
 		if (!saves.empty()) {
 			_menu->removeMenuItem(subMenu, kRecentSaveId);
@@ -228,6 +238,7 @@ void PinkEngine::executeMenuCommand(uint id) {
 	case kExitAction:
 		openMainMenuDialog();
 		break;
+
 	case kSongsAction:
 		initModule("Muzik", "", nullptr);
 		break;
