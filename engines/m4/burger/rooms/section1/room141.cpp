@@ -43,9 +43,92 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+static const seriesPlayBreak PLAY1[] = {
+	{ 0, -1, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY2[] = {
+	{ 0, -1, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY3[] = {
+	{ 0, -1, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY4[] = {
+	{ 0, -1, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY5[] = {
+	{  0,   7, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  8,  10, "999blow", 1, 255, -1,    0, 0, nullptr, 0 },
+	{ 10,  11, nullptr,   1, 255, 14,    0, 0, nullptr, 0 },
+	{ 12,  -1, nullptr,   1, 255, -1, 2048, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY6[] = {
+	{ 0, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, "999blow", 1, 125, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, 15, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 9, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 9, 1, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 0, 0, nullptr,   1, 255, 20, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY7[] = {
+	{ 5, 7, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 7, 7, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 7, 7, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 7, 7, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 7, 7, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 7, 7, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 7, 5, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesStreamBreak SERIES1[] = {
+	{  9, "141_005", 1, 255, -1, 0, nullptr, 0 },
+	{ 18, nullptr,   2, 255,  1, 0, nullptr, 0 },
+	{ -1, nullptr,   0,   0, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak SERIES2[] = {
+	{ 5, "141_007", 1, 255, -1, 0, 0, 0 },
+	{ 9, 0, 2, 255, 3, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak SERIES3[] = {
+	{  0, "140_002", 2, 255, -1, 0, nullptr, 0 },
+	{ 14, "140_002", 2, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
 
 void Room141::preload() {
 	_G(player).walker_in_this_scene = false;
+
+	SERIES4.clear();
+	SERIES4.push_back(seriesStreamBreak(0, "140_002", 2, 255, -1, 0, 0, 0));
+	SERIES4.push_back(seriesStreamBreak(10, nullptr, 2, 255, 13, 0, &_G(flags)[V112], 0));
+	SERIES4.push_back(seriesStreamBreak(25, "140_002", 2, 255, -1, 0, 0, 0));
+	SERIES4.push_back(seriesStreamBreak(-1, 0, 0, 0, -1, 0, 0, 0));
 }
 
 void Room141::init() {
