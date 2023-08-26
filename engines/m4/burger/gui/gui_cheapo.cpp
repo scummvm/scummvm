@@ -118,7 +118,7 @@ void TextField::set_string(const char *string) {
 
 	int16 string_len = (int16)(cstrlen(string) + 1);
 	if (_string == nullptr) {
-		_string = (char *)mem_alloc(_string_len, "string");
+		_string = (char *)mem_alloc(string_len, "string");
 	} else {
 		if (_string_len < string_len) {
 			_string = (char *)mem_realloc(_string, string_len, "string");
