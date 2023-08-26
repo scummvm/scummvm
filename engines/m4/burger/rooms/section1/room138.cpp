@@ -531,7 +531,7 @@ void Room138::daemon() {
 				freeSeries();
 				_val8 = 1;
 				_val7 = 2;
-				kernel_trigger_dispatch_now(2);
+				kernel_trigger_dispatch_now(3);
 			}
 			break;
 
