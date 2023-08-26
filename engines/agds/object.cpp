@@ -61,10 +61,7 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
 
 Object::~Object() {
 	freeRotated();
-	if (_picture) {
-		_picture->free();
-		delete _picture;
-	}
+	freePicture();
 }
 
 void Object::lock() {
@@ -81,10 +78,17 @@ void Object::freeRotated() {
 	if (_rotatedPicture) {
 		_rotatedPicture->free();
 		delete _rotatedPicture;
+		_rotatedPicture = nullptr;
 	}
-	_rotatedPicture = nullptr;
 }
 
+void Object::freePicture() {
+	if (_picture) {
+		_picture->free();
+		delete _picture;
+		_picture = nullptr;
+	}
+}
 
 void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (_stringTableLoaded)
@@ -133,10 +137,7 @@ const Object::StringEntry &Object::getString(uint16 index) const {
 
 void Object::setPicture(Graphics::TransparentSurface *picture) {
 	_pos = Common::Point();
-	if (_picture) {
-		_picture->free();
-		delete _picture;
-	}
+	freePicture();
 	_picture = picture;
 	freeRotated();
 
