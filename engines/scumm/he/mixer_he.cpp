@@ -846,8 +846,6 @@ void HEMixer::milesStartSpoolingChannel(int channel, const char *filename, long 
 			} else {
 				int scaledPan = (modifiers.pan != 64) ? 2 * modifiers.pan - 127 : 0;
 				int newFrequency = (_milesChannels[channel]._baseFrequency * modifiers.frequencyShift) / HSND_SOUND_FREQ_BASE;
-				int msOffset = (offset * 1000) / newFrequency;
-				audioOverride->seek(msOffset);
 
 				_mixer->playStream(
 					Audio::Mixer::kMusicSoundType,
