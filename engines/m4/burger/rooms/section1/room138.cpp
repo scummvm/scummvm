@@ -654,7 +654,7 @@ void Room138::parser() {
 		wilbur_speech("138w610");
 		_val8 = 15;
 
-	} else if (player_said("take", "keys") && inv_player_has("keys")) {
+	} else if (player_said("take", "keys") && !inv_player_has("keys")) {
 		_val8 = 7;
 		player_set_commands_allowed(false);
 
