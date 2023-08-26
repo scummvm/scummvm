@@ -114,14 +114,14 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 
 		if (skip != VideoSkipNone) {
 			// Check for whether user aborted video
-			KeyInput key;
+			KeyInput ki;
 			eAGSMouseButton mbut;
 			int mwheelz;
 			// Handle all the buffered key events
 			bool do_break = false;
 			while (ags_keyevent_ready()) {
-				if (run_service_key_controls(key)) {
-					if ((key.Key == eAGSKeyCodeEscape) && (skip == VideoSkipEscape))
+				if (run_service_key_controls(ki) && !IsAGSServiceKey(ki.Key)) {
+					if ((ki.Key == eAGSKeyCodeEscape) && (skip == VideoSkipEscape))
 						do_break = true;
 					if (skip >= VideoSkipAnyKey)
 						do_break = true;  // skip on any key

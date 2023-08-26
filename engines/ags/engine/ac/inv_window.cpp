@@ -350,7 +350,7 @@ bool InventoryScreen::Run() {
 	bool do_break = false;
 	while (ags_keyevent_ready()) {
 		KeyInput ki;
-		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
+		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput() && !IsAGSServiceKey(ki.Key)) {
 			ags_clear_input_buffer();
 			do_break = true; // end inventory screen loop
 		}
