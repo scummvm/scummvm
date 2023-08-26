@@ -363,6 +363,8 @@ void NancyEngine::pauseEngineIntern(bool pause) {
 			s->onStateEnter(NancyState::kPause);
 		}
 	}
+
+	Engine::pauseEngineIntern(pause);
 }
 
 void NancyEngine::bootGameEngine() {
