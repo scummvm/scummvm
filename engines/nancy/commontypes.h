@@ -289,6 +289,7 @@ struct StaticData {
 	Common::Array<Common::String> goodbyeTexts;
 	Common::Array<Common::String> hintTexts;
 	Common::String ringingText;
+	Common::String emptySaveText;
 
 	// Debug strings
 	Common::Array<Common::String> eventFlagNames;

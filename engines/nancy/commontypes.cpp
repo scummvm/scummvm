@@ -456,6 +456,17 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 			}
 
 			break;
+		case MKTAG('E', 'S', 'A', 'V') :
+			num = stream.readUint16LE();
+			for (int i = 0; i < num; ++i) {
+				if (i == languageID) {
+					emptySaveText = stream.readString();
+				} else {
+					stream.readString();
+				}
+			}
+
+			break;
 		case MKTAG('E', 'F', 'L', 'G') :
 			// Event flag names
 			num = stream.readUint16LE();
