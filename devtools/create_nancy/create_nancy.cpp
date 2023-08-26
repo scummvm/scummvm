@@ -129,6 +129,11 @@ void writeRingingTexts(File &output, const Common::Array<const char *> &ringingT
 	writeToFile(output, ringingTexts);
 }
 
+void writeEmptySaveTexts(File &output, const Common::Array<const char *> &emptySaveTexts) {
+	output.writeUint32(MKTAG('E', 'S', 'A', 'V'));
+	writeToFile(output, emptySaveTexts);
+}
+
 void writeEventFlagNames(File &output, const Common::Array<const char *> &eventFlagNames) {
 	output.writeUint32(MKTAG('E', 'F', 'L', 'G'));
 	writeToFile(output, eventFlagNames);
@@ -163,6 +168,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeLanguages(output, _tvdLanguagesOrder))
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _tvdConditionalDialogue, _tvdConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _tvdGoodbyes, _tvdGoodbyeTexts))
+	WRAPWITHOFFSET(writeEmptySaveTexts(output, _tvdEmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _tvdEventFlagNames))
 	
 	// Nancy Drew: Secrets Can Kill data
@@ -174,6 +180,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy1Goodbyes, _nancy1GoodbyeTexts))
 	WRAPWITHOFFSET(writeHints(output, _nancy1Hints, _nancy1HintSceneChange, _nancy1HintTexts))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy1TelephoneRinging))
+	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy1EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy1EventFlagNames))
 	
 	// Nancy Drew: Stay Tuned for Danger data
@@ -184,6 +191,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy2ConditionalDialogue, _nancy2ConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy2Goodbyes, _nancy2GoodbyeTexts))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy2TelephoneRinging))
+	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy2EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy2EventFlagNames))
 	
 	// Nancy Drew: Message in a Haunted Mansion data
@@ -194,6 +202,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy3ConditionalDialogue, _nancy3ConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy3Goodbyes, _nancy3GoodbyeTexts))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy3TelephoneRinging))
+	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy3EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy3EventFlagNames))
 	
 	// Nancy Drew: Treasure in the Royal Tower data
@@ -204,6 +213,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy4ConditionalDialogue, _nancy4ConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy4Goodbyes, _nancy4GoodbyeTexts))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy4TelephoneRinging))
+	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy4EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy4EventFlagNames))
 
 	// Nancy Drew: The Final Scene data
@@ -214,6 +224,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy5ConditionalDialogue, _nancy5ConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy5Goodbyes, _nancy5GoodbyeTexts))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy5TelephoneRinging))
+	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy5EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy5EventFlagNames))
 
 	// Write the offsets for each game in the header

@@ -369,6 +369,11 @@ const Common::Array<const char *> _nancy2TelephoneRinging = {
 	"Hudki...  <n><e>"  // Russian
 };
 
+const Common::Array<const char *> _nancy2EmptySaveStrings = {
+	"Nothing Saved Here",	// English
+	"- - - - -"				// Russian
+};
+
 const Common::Array<const char *> _nancy2EventFlagNames = {
 	"Generic 0",
 	"Generic 1",

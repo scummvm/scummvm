@@ -384,6 +384,10 @@ const Common::Array<Common::Array<const char *>> _tvdGoodbyeTexts = { {
 	"<c1>b<c0>ye.<h>", // EGBYE, again
 } };
 
+const Common::Array<const char *> _tvdEmptySaveStrings = {
+	"-- Empty --",	// English
+};
+
 const Common::Array<const char *> _tvdEventFlagNames = {
 	"Aristocrat Bonnie told about mikhails bgnd",
 	"AskedCandle asked about a black candle",
