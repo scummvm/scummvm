@@ -1338,7 +1338,7 @@ void Screen::fnFlash(uint8 color) {
 		return;
 	}
 
-	_system->getPaletteManager()->setPalette(_currentPalette, 0, 1);
+	_system->getPaletteManager()->setPalette(targetColor, 0, 1);
 
 	if (color == FLASH_RED || color == FLASH_BLUE) {
 		// This is what the original did here to induce a small wait cycle
