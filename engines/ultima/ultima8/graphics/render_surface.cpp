@@ -272,21 +272,7 @@ void RenderSurface::SetClippingRect(const Rect &r) {
 // Desc: Flip the surface
 //
 void RenderSurface::SetFlipped(bool wantFlipped) {
-	// Flipping is not terrible complex
-	// But is a bit of a pain to set up
-
-	// First we check to see if we are currently _flipped
-	if (wantFlipped == _flipped)
-		return;
-
 	_flipped = wantFlipped;
-
-	// What we 'need' to do is negate the pitches, and flip the clipping window
-	// We keep the 'origin' in the same position relative to the clipping window
-
-	_oy -= _clipWindow.top;
-	_clipWindow.setHeight(_surface->h - _clipWindow.top + _clipWindow.height());
-	_oy += _clipWindow.top;
 
 	SetPixelsPointer();
 }
@@ -308,8 +294,9 @@ bool RenderSurface::IsFlipped() const {
 void RenderSurface::Fill32(uint32 rgb, const Rect &r) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
+	rect.translate(_ox, _oy);
 	rgb = _surface->format.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
-	_surface->fillRect(Common::Rect(rect.left + _ox, rect.top + _oy, rect.right + _ox, rect.bottom + _oy), rgb);
+	_surface->fillRect(rect, rgb);
 }
 
 
@@ -331,11 +318,13 @@ void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Common
 	uint32 c;
 	uint32 m;
 	if (a == 0) {
-		c = (format.bMask >> 1) & format.bMask;
-		m = format.bMask;
+		uint32 bMask = format.bMax() << format.bShift;
+		c = (bMask >> 1) & bMask;
+		m = bMask;
 	} else {
-		c = (format.rMask >> 1) & format.rMask;
-		m = format.rMask;
+		uint32 rMask = format.rMax() << format.rShift;
+		c = (rMask >> 1) & rMask;
+		m = rMask;
 	}
 #endif
 
