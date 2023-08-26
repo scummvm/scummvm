@@ -343,12 +343,12 @@ void GameSetupStruct::ReadAudioClips_Aligned(Shared::Stream *in, size_t count) {
 	}
 }
 
-void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
+void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
 											WordsDictionary *olddict, std::vector<String> &mesbk) {
 	ReadInvInfo_Aligned(in);
 	ReadMouseCursors_Aligned(in);
 
-	if (_G(loaded_game_file_version) <= kGameVersion_272) {
+	if (data_ver <= kGameVersion_272) {
 		for (int i = 0; i < numinvitems; ++i)
 			intrInv[i]->ReadTimesRunFromSave_v321(in);
 		for (int i = 0; i < numcharacters; ++i)

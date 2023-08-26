@@ -159,7 +159,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	//--------------------------------------------------------------------
 
 	// Functions for reading and writing appropriate data from/to save game
-	void ReadFromSaveGame_v321(Shared::Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
+	void ReadFromSaveGame_v321(Shared::Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
 							   WordsDictionary *olddict, std::vector<String> &mesbk);
 
 	void ReadFromSavegame(Shared::Stream *in);

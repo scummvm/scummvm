@@ -92,9 +92,8 @@ struct GameSetupStructBase {
 	void SetDefaultResolution(Size game_res);
 	void SetGameResolution(GameResolutionType type);
 	void SetGameResolution(Size game_res);
-	void ReadFromFile(Shared::Stream *in);
-	void WriteToFile(Shared::Stream *out);
-
+	void ReadFromFile(Shared::Stream *in, GameDataVersion game_ver);
+	void WriteToFile(Shared::Stream *out) const;
 
 	//
 	// ** On game resolution.
