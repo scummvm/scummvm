@@ -570,6 +570,7 @@ public:
 	void loadAssetsAmigaFullGame() override;
 
 	void loadAssetsZXDemo() override;
+	void loadAssetsZXFullGame() override;
 	void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number) override;
 
 	int _lastTenSeconds;

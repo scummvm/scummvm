@@ -33,6 +33,48 @@ void DarkEngine::initZX() {
 	_maxShield = 63;
 }
 
+
+void DarkEngine::loadAssetsZXFullGame() {
+	Common::File file;
+
+	file.open("darkside.zx.title");
+	if (file.isOpen()) {
+		_title = loadAndCenterScrImage(&file);
+	} else
+		error("Unable to find darkside.zx.title");
+
+	file.close();
+	file.open("darkside.zx.border");
+	if (file.isOpen()) {
+		_border = loadAndCenterScrImage(&file);
+	} else
+		error("Unable to find driller.zx.border");
+	file.close();
+
+	file.open("darkside.zx.data");
+	if (!file.isOpen())
+		error("Failed to open darksize.zx.data");
+
+	loadMessagesFixedSize(&file, 0x56b - 6, 16, 27);
+
+	loadFonts(&file, 0x5d60 - 6);
+	loadGlobalObjects(&file, 0x1a, 23);
+	load8bitBinary(&file, 0x5ec0 - 4, 4);
+	for (auto &it : _areaMap) {
+		addWalls(it._value);
+		addECDs(it._value);
+		addSkanner(it._value);
+	}
+
+	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
+	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
+	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
+	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+}
+
 void DarkEngine::loadAssetsZXDemo() {
 	Common::File file;
 
