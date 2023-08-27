@@ -57,7 +57,7 @@ namespace FreeType213 {
 #define AH_HINT_NO_VERT_EDGES  0x400000L  /* temporary hack */
 
 /* create a new empty hinter object */
-FT_Error ah_hinter_new(FT_Library library, AH_Hinter *ahinter);
+FT_Error ah_hinter_new(FT_Memory memory, AH_Hinter *ahinter);
 
 /* Load a hinted glyph in the hinter */
 FT_Error ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt glyph_index, FT_Int32 load_flags);
