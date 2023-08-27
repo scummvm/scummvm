@@ -256,13 +256,9 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 					separator = ", ";
 				}
 
-				// Give additional selector name context for all number push scenarios.
-				if (opcode == op_push0) {
-					debugN("%s%s", separator, kernel->getSelectorName(0).c_str());
-				} else if (opcode == op_push1) {
-					debugN("%s%s", separator, kernel->getSelectorName(1).c_str());
-				} else if (opcode == op_push2) {
-					debugN("%s%s", separator, kernel->getSelectorName(2).c_str());
+				// Provide additional selector name context for all integer push scenarios.
+				if (opcode >= op_push0 && opcode <= op_push2) {
+    				debugN("%s%s", separator, kernel->getSelectorName(opcode - op_push0).c_str());
 				} else if (opcode == op_pushi && param_value < kernel->getSelectorNamesSize()) {
 					debugN("%s%s", separator, kernel->getSelectorName(param_value).c_str());
 				}
