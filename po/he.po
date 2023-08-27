@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-26 10:25+0000\n"
+"POT-Creation-Date: 2023-08-27 06:40+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -286,7 +286,7 @@ msgstr "אחסון אחר עובד כעת. האם להפריע לו?"
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
-#: engines/buried/buried.cpp:584 engines/director/events.cpp:89
+#: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
@@ -299,7 +299,7 @@ msgstr "כן"
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
 #: gui/launcher.cpp:477 gui/options.cpp:3386 gui/options.cpp:3760
-#: engines/buried/buried.cpp:584 engines/director/events.cpp:89
+#: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
@@ -5391,11 +5391,11 @@ msgstr "מסד נתונים של רמזים"
 msgid "Quit Game"
 msgstr "יציאה מהמשחק"
 
-#: engines/buried/buried.cpp:584
+#: engines/buried/buried.cpp:590
 msgid "Are you sure you want to quit?"
 msgstr "האם לצאת?"
 
-#: engines/buried/buried.cpp:594
+#: engines/buried/buried.cpp:600
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "המשחק מושהה. יש ללחוץ אישור כדי להמשיך."
 
