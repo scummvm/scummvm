@@ -40,10 +40,9 @@
 /***************************************************************************/
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahglobal.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahglyph.h"
+#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahglobal.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahglyph.h"
 
 
 #define MAX_TEST_CHARACTERS  12
@@ -362,8 +361,7 @@ Exit:
 	return error;
 }
 
-FT_LOCAL_DEF(FT_Error)
-ah_hinter_compute_globals(AH_Hinter hinter) {
+FT_Error ah_hinter_compute_globals(AH_Hinter hinter) {
 	return ah_hinter_compute_widths(hinter) || ah_hinter_compute_blues(hinter);
 }
 

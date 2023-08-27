@@ -45,14 +45,11 @@
 #define AGS_LIB_FREETYPE_AHANGLES_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
-#include "ahtypes.h"
+#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahtypes.h"
 
 namespace AGS3 {
 namespace FreeType213 {
-
-// FT_BEGIN_HEADER
 
 
 /* PI expressed in ah_angles -- we don't really need an important */
@@ -68,14 +65,9 @@ namespace FreeType213 {
 
 extern const AH_Angle ah_arctan[1L << AH_ATAN_BITS];
 
-FT_LOCAL(AH_Angle)
-ah_angle(FT_Vector *v);
+AH_Angle ah_angle(FT_Vector *v);
+AH_Angle ah_angle_diff(AH_Angle angle1, AH_Angle angle2);
 
-FT_LOCAL(AH_Angle)
-ah_angle_diff(AH_Angle angle1, AH_Angle angle2);
-
-
-// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
