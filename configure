@@ -1159,6 +1159,7 @@ for ac_option in $@; do
 	--includedir=*)                                      ;;
 	--libexecdir=*)                                      ;;
 	--localstatedir=*)                                   ;;
+	--runstatedir=*)                                     ;;
 	--sharedstatedir=*)                                  ;;
 	--infodir=*)                                         ;;
 	--disable-dependency-tracking)                       ;;
