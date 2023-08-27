@@ -29,6 +29,12 @@ namespace Burger {
 namespace Rooms {
 
 class Room170 : public Room {
+private:
+	bool _firstTime = false;
+	bool _lookTownHall = false;
+
+	void setupTownHall();
+
 public:
 	Room170() : Room() {}
 	~Room170() override {}
