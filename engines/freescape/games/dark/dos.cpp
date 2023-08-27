@@ -27,7 +27,7 @@
 
 namespace Freescape {
 
-extern byte kEGADefaultPaletteData[16][3];
+extern byte kEGADefaultPalette[16][3];
 
 void DarkEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
@@ -45,7 +45,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		file.open("SCN1E.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+			_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
 		file.open("DSIDEE.EXE");
@@ -58,7 +58,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		loadGlobalObjects(&file, 0x3d04, 23);
 		load8bitBinary(&file, 0xa700, 16);
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 
 		for (auto &it : _areaMap) {
 			addWalls(it._value);
@@ -88,7 +88,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		file.open("SCN1E.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+			_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
 		file.open("DSIDEE.EXE");
@@ -101,7 +101,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		loadGlobalObjects(&file, 0x3d04, 23);
 		load8bitBinary(&file, 0xa280, 16);
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 
 		for (auto &it : _areaMap) {
 			addWalls(it._value);

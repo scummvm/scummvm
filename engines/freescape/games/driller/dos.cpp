@@ -27,7 +27,7 @@
 namespace Freescape {
 
 extern byte kCGAPalettePinkBlueWhiteData[4][3];
-extern byte kEGADefaultPaletteData[16][3];
+extern byte kEGADefaultPalette[16][3];
 
 void DrillerEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
@@ -196,24 +196,6 @@ byte kCGAPalettePinkBlueWhiteData[4][3] = {
 	{0xff, 0xff, 0xff},
 };
 
-byte kEGADefaultPaletteData[16][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0xaa},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0xaa, 0x00, 0xaa},
-	{0xaa, 0x55, 0x00},
-	{0x55, 0xff, 0x55},
-	{0xff, 0x55, 0x55},
-	{0x12, 0x34, 0x56},
-	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
 /*
  The following function is only used for decoding images for
  the Driller DOS demo
@@ -269,13 +251,13 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		file.open("SCN1E.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
+			_title->setPalette((byte*)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
 		file.open("EGATITLE.RL");
 		if (file.isOpen()) {
 			_title = load8bitTitleImage(&file, 0x1b3);
-			_title->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
+			_title->setPalette((byte*)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
 
@@ -289,7 +271,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		loadGlobalObjects(&file, 0x3b42, 8);
 		load8bitBinary(&file, 0x9b40, 16);
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
+		_border->setPalette((byte*)&kEGADefaultPalette, 0, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {

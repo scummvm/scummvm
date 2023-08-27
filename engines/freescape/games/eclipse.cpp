@@ -74,7 +74,7 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerSteps.push_back(25);
 }
 
-extern byte kEGADefaultPaletteData[16][3];
+extern byte kEGADefaultPalette[16][3];
 
 void EclipseEngine::loadAssetsDOSFullGame() {
 	Common::File file;
@@ -82,7 +82,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		file.open("SCN1E.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+			_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
 		file.open("TOTEE.EXE");
@@ -98,7 +98,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 				it._value->addObjectFromArea(id, _areaMap[255]);
 		}
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
 		file.open("TOTEC.EXE");
 

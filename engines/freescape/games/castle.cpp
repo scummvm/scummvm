@@ -46,62 +46,6 @@ CastleEngine::~CastleEngine() {
 	}
 }
 
-byte kCastleTitleDOSPalette[16][3] = {
-	{0x00, 0x00, 0x00}, // correct!
-	{0x00, 0x00, 0xaa}, // correct!
-	{0x00, 0x00, 0x00}, // ????
-	{0x00, 0xaa, 0xaa}, // changed
-	{0x55, 0x55, 0x55}, // changed
-	{0x55, 0x55, 0xff}, // changed
-	{0xaa, 0xaa, 0xaa}, // changed
-	{0x55, 0xff, 0xff}, // changed
-	{0xff, 0x55, 0xff}, // changed
-	{0x00, 0x00, 0x00},
-	{0xff, 0xff, 0xff}, // changed
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
-byte kCastleOptionDOSPalette[16][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0xaa},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0x55, 0x55, 0x55},
-	{0xaa, 0x55, 0x00},
-	{0xaa, 0xaa, 0xaa},
-	{0xff, 0x55, 0x55},
-	{0x12, 0x34, 0x56},
-	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
-byte kCastleBorderDOSPalette[16][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0xaa},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0x55, 0x55, 0x55},
-	{0xaa, 0x55, 0x00},
-	{0xaa, 0xaa, 0xaa}, // can be also green
-	{0xff, 0x55, 0x55},
-	{0x00, 0x00, 0x00},
-	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
 byte kFreescapeCastleFont[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x1c, 0x1c, 0x1c, 0x18, 0x18, 0x00, 0x18, 0x18,
@@ -184,7 +128,7 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 	return (new Common::MemoryReadStream(encryptedBuffer, size));
 }
 
-extern byte kEGADefaultPaletteData[16][3];
+extern byte kEGADefaultPalette[16][3];
 
 void CastleEngine::loadAssetsDOSFullGame() {
 	Common::File file;
@@ -195,17 +139,17 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 		file.open("CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
-		_title->setPalette((byte *)&kCastleTitleDOSPalette, 0, 16);
+		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CMOE.DAT");
 		_option = load8bitBinImage(&file, 0x0);
-		_option->setPalette((byte *)&kCastleOptionDOSPalette, 0, 16);
+		_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CME.DAT");
 		_border = load8bitBinImage(&file, 0x0);
-		_border->setPalette((byte *)&kCastleBorderDOSPalette, 0, 16);
+		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		switch (_language) {
@@ -254,17 +198,17 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 		file.open("CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
-		_title->setPalette((byte *)&kCastleTitleDOSPalette, 0, 16);
+		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CMOE.DAT");
 		_option = load8bitBinImage(&file, 0x0);
-		_option->setPalette((byte *)&kCastleOptionDOSPalette, 0, 16);
+		_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CME.DAT");
 		_border = load8bitBinImage(&file, 0x0);
-		_border->setPalette((byte *)&kCastleBorderDOSPalette, 0, 16);
+		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		stream = decryptFile("CMLD"); // Only english

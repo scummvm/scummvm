@@ -23,7 +23,7 @@
 
 namespace Freescape {
 
-byte dos_EGA_palette[16][3] = {
+byte kEGADefaultPalette[16][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0x00, 0xaa},
 	{0x00, 0xaa, 0x00},
@@ -110,7 +110,7 @@ byte kDrillerCPCPalette[32][3] = {
 
 void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
-		_gfx->_palette = (byte *)&dos_EGA_palette;
+		_gfx->_palette = (byte *)&kEGADefaultPalette;
 	} else if (_renderMode == Common::kRenderC64) {
 		_gfx->_palette = (byte *)&kDrillerC64Palette;
 	} else if (_renderMode == Common::kRenderZX) {

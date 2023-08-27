@@ -204,12 +204,17 @@ public:
 	Group *load8bitGroupV2(Common::SeekableReadStream *file, byte rawFlagsAndType);
 
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size);
-	void renderPixels8bitBinImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
+	void renderPixels8bitBinImage(Graphics::ManagedSurface *surface, int row, int column, int bit, int count);
 
 	void renderPixels8bitBinCGAImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
 	void renderPixels8bitBinEGAImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
 
 	Graphics::ManagedSurface *load8bitBinImage(Common::SeekableReadStream *file, int offset);
+	void load8bitBinImageRow(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row);
+	void load8bitBinImageRowIteration(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row, int bit);
+	int execute8bitBinImageCommand(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row, int pixels, int bit);
+	int execute8bitBinImageSingleCommand(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row, int pixels, int bit, int count);
+	int execute8bitBinImageMultiCommand(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int row, int pixels, int bit, int count);
 
 	// Areas
 	uint16 _startArea;

@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	games/eclipse.o \
 	games/palettes.o \
 	gfx.o \
+	loaders/8bitImage.o \
 	loaders/8bitBinaryLoader.o \
 	language/8bitDetokeniser.o \
 	language/instruction.o \
