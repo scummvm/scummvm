@@ -908,15 +908,15 @@ void Actor::walkActor() {
 			return;
 
 		if (_moving & MF_LAST_LEG) {
-				_moving = 0;
-				setBox(_walkdata.destbox);
-				if (_vm->_game.version <= 6) {
-					startAnimActor(_standFrame);
-					if (_targetFacing != _walkdata.destdir)
-						turnToDirection(_walkdata.destdir);
-				} else {
-					startWalkAnim(3, _walkdata.destdir);
-				}
+			_moving = 0;
+			setBox(_walkdata.destbox);
+			if (_vm->_game.version <= 6) {
+				startAnimActor(_standFrame);
+				if (_targetFacing != _walkdata.destdir)
+					turnToDirection(_walkdata.destdir);
+			} else {
+				startWalkAnim(3, _walkdata.destdir);
+			}
 			return;
 		}
 
