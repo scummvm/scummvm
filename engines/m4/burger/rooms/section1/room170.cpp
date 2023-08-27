@@ -97,7 +97,71 @@ void Room170::init() {
 }
 
 void Room170::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		if (_firstTime)
+			wilbur_speech("170w001");
+		break;
+
+	case 2:
+		disable_player_commands_and_fade_init(1018);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			disable_player();
+			series_play_with_breaks(PLAY1, "170wi01", 0x900, 2, 2, 6, 100, 0, 0);
+			break;
+
+		case 3:
+			disable_player();
+			_G(wilbur_should) = 4;
+			series_play_with_breaks(PLAY2, "170wi03", 0xa00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			break;
+
+		case 4:
+			enable_player();
+			wilbur_speech("170w007");
+			_G(flags)[V080] = 1;
+			_G(flags)[V079] = 0;
+			inv_give_to_player("WHISTLE");
+			inv_give_to_player("PHONE BILL");
+			break;
+
+		case 5:
+			disable_player();
+			_G(wilbur_should) = 6;
+			series_play_with_breaks(PLAY3, "170wi03", 0xa00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			break;
+
+		case 6:
+			enable_player();
+			_G(flags)[V079] = 0;
+			inv_give_to_player("WHISTLE");
+			inv_give_to_player("PHONE BILL");
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case CALLED_EACH_LOOP:
+		term_message("Calling daemon each loop..............");
+
+		if (_lookTownHall) {
+			setupTownHall();
+		} else {
+			_G(kernel).call_daemon_every_loop = false;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room170::pre_parser() {
