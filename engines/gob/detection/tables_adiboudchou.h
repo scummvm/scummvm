@@ -45,6 +45,7 @@
 
 {
 	{
+
 		"adiboudchoubanquise",
 		_s("Missing game code"), // Addy Buschu Schnee & Eis 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY1s("adbc_envir_obc.stk", "fde006186b93b4f33486f021826f88a0", 5199806),
