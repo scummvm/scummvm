@@ -155,7 +155,239 @@ void Room144::init() {
 }
 
 void Room144::daemon() {
-	// TODO
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 2:
+		digi_change_volume(2, 0);
+		break;
+
+	case 3:
+		pal_fade_set_start(0);
+		ws_hide_walker();
+		terminateMachineAndNull(_series1);
+		gr_backup_palette();
+
+		digi_preload("100_022");
+		digi_preload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES1, "120dt01", 8, 0, 1012);
+		kernel_timing_trigger(1, 4);
+		break;
+
+	case 4:
+		pal_fade_init(15, 255, 100, 0, -1);
+		break;
+
+	case 5:
+		digi_play("144b003d", 1);
+		break;
+
+	case 6:
+		player_set_commands_allowed(true);
+		_val3 = 3;
+		break;
+
+	case 7:
+		ws_hide_walker();
+		terminateMachineAndNull(_series1);
+
+		if (_G(flags)[V000] == 1002) {
+			series_play_with_breaks(PLAY2, "144wi01", 0xf00, -1, 3, 6, 100, 0, 0);
+		} else {
+			series_play_with_breaks(PLAY1, "139wi01", 0xf00, -1, 3, 6, 100, 0, 0);
+		}
+		break;
+
+	case 8:
+		pal_fade_init(1013);
+		break;
+
+	case 9:
+		switch (_val4) {
+		case 3:
+			switch (_val3) {
+			case 1:
+				_val3 = 2;
+				series_play("144bu01s", 0x301, 0, -1, 8);
+				digi_preload("144b003d");
+				digi_preload_stream_breaks(SERIES2);
+				series_stream_with_breaks(SERIES2, "144bu01", 8, 0x300, 9);
+				break;
+
+			case 2:
+				digi_unload_stream_breaks(SERIES2);
+				player_set_commands_allowed(true);
+				randomDigi();
+				_val3 = 3;
+
+				series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 15);
+				series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 15);
+				break;
+
+			case 3:
+				if (imath_ranged_rand(5, 10) < ++_val1) {
+					switch (imath_ranged_rand(1, 4)) {
+					case 1:
+						_val2 = 25;
+						break;
+
+					case 2:
+						_val2 = 36;
+						break;
+
+					case 3:
+						_val3 = 41;
+						break;
+
+					case 4:
+						_val2 = 42;
+						break;
+
+					default:
+						break;
+					}
+				}
+
+				if (imath_ranged_rand(1, 10) == 1) {
+					switch (imath_ranged_rand(1, 4)) {
+					case 1:
+						randomDigi();
+						series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 16, 24);
+						series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 16, 24);
+						break;
+
+					case 2:
+						randomDigi();
+						series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 26, 35);
+						series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 26, 35);
+						break;
+
+					case 3:
+						randomDigi();
+						series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 37, 40);
+						series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 37, 40);
+						break;
+
+					case 4:
+						_val3 = 7;
+						series_play("144bu06", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 12);
+						series_play("144bu06s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 12);
+						break;
+
+					default:
+						break;
+					}
+				} else {
+					series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, _val2, _val2);
+					series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, _val2, _val2);
+				}
+				break;
+
+			case 4:
+			case 5:
+				digi_play("144b002", 2);
+				series_play("144bu06", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 2);
+				series_play("144bu06s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 2);
+				break;
+
+			case 7:
+				digi_change_volume(2, 0);
+				_val4 = 7;
+				series_play("144bu07", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 2);
+				series_play("144bu07s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 2);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 4:
+			switch (_val3) {
+			case 4:
+				series_play("144bu08", 0x300, 0, 9, 10, 0, 100, 0, 0, 3, 3);
+				series_play("144bu08s", 0x301, 0, -1, 10, 0, 100, 0, 0, 3, 3);
+				break;
+
+			case 5:
+				_val4 = 5;
+				series_play("144bu08", 0x300, 0, 9, 4, 0, 100, 0, 0, 4, 7);
+				series_play("144bu08s", 0x301, 0, -1, 4, 0, 100, 0, 0, 4, 7);
+				break;
+
+			default:
+				digi_play("144b002", 2);
+				_val4 = 3;
+				_val3 = 2;
+				series_play("144bu08", 0x300, 2, 9, 7, 0, 100, 0, 0, 0, 3);
+				series_play("144bu08s", 0x301, 2, -1, 7, 0, 100, 0, 0, 0, 3);
+				break;
+			}
+			break;
+
+		case 5:
+			if (_val3 == 5) {
+				frame = imath_ranged_rand(0, 2);
+				series_play("144bu09", 0x300, 0, 9, 4, 0, 100, 0, 0, frame, frame);
+				series_play("144bu09s", 0x301, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+
+				if (_digi1) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_digi1, 1, 255, 1);
+					_digi1 = nullptr;
+				}
+			} else {
+				_val4 = 4;
+				series_play("144bu08", 0x300, 2, 9, 7, 0, 100, 0, 0, 4, 7);
+				series_play("144bu08s", 0x301, 2, -1, 7, 0, 100, 0, 0, 4, 7);				
+			}
+			break;
+
+		case 6:
+			_val4 = 4;
+			series_play("144bu08", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 3);
+			series_play("144bu08s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 3);
+			break;
+
+		case 7:
+			if (_val3 == 7) {
+				if (imath_ranged_rand(1, 10) == 1) {
+					randomDigi();
+					_val4 = 3;
+					_val3 = 3;
+					series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 15);
+					series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 15);
+				} else {
+					series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 0, 0);
+					series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				}
+			} else {
+				_val4 = 3;
+				series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 15);
+				series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 15);
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case g10028:
+		if (!_G(flags)[kRoadOpened]) {
+			_G(kernel).continue_handling_trigger = true;
+		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+			Section1::updateDisablePlayer();
+			kernel_timing_trigger(1, 3);
+		} else {
+			kernel_timing_trigger(60, g10028);
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room144::pre_parser() {
@@ -218,6 +450,14 @@ void Room144::preloadDigi() {
 	digi_preload("144b003a");
 	digi_preload("144b003b");
 	digi_preload("144b003c");
+}
+
+void Room144::randomDigi() {
+	if (!digi_play_state(2)) {
+		digi_play(Common::String::format("144b003%c", 'a' + imath_ranged_rand(0, 2)).c_str(), 2, 255);
+	}
+
+	digi_change_volume(2, 255);
 }
 
 void Room144::conv31() {

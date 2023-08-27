@@ -38,6 +38,7 @@ private:
 	int _val4 = 0;
 
 	void preloadDigi();
+	void randomDigi();
 	void conv31();
 
 public:
