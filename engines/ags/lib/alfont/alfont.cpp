@@ -50,10 +50,16 @@
 #include "ags/lib/allegro/unicode.h"
 #include "graphics/fonts/freetype.h"
 
+#ifndef NO_FT213_AUTOHINT
+#include "ags/lib/freetype-2.1.3/autohint/ahhint.h"
+#endif
+
 namespace AGS3 {
 
 using Graphics::FreeType::Init_FreeType;
+using Graphics::FreeType::Init_FreeType_With_Mem;
 using Graphics::FreeType::Done_FreeType;
+using Graphics::FreeType::Done_FreeType_With_Mem;
 using Graphics::FreeType::Load_Glyph;
 using Graphics::FreeType::Get_Glyph;
 using Graphics::FreeType::Glyph_Copy;
@@ -119,6 +125,10 @@ BITMAP *default_bmp; //Draw Font on default BITMAP;
 static FT_Library ft_library;
 static int alfont_textmode = 0;
 static int alfont_inited = 0;
+static FT_Memory ft_memory;
+#ifndef NO_FT213_AUTOHINT
+static FreeType213::AH_Hinter ft_hinter;
+#endif
 
 const char *alfont_get_name(ALFONT_FONT *f) {
 	if (!f)
@@ -560,7 +570,10 @@ int alfont_get_font_real_height(ALFONT_FONT *f) {
 void alfont_exit(void) {
 	if (alfont_inited) {
 		alfont_inited = 0;
-		Done_FreeType(ft_library);
+#ifndef NO_FT213_AUTOHINT
+		FreeType213::ah_hinter_done(ft_hinter);
+#endif
+		Done_FreeType_With_Mem(ft_library, ft_memory);
 		memset(&ft_library, 0, sizeof(ft_library));
 	}
 }
@@ -572,10 +585,20 @@ int alfont_init(void) {
 	else {
 		int error;
 		memset(&ft_library, 0, sizeof(ft_library));
-		error = Init_FreeType(&ft_library);
+		error = Init_FreeType_With_Mem(&ft_library, &ft_memory);
 
-		if (!error)
-			alfont_inited = 1;
+		if (!error) {
+#ifndef NO_FT213_AUTOHINT
+			error = FreeType213::ah_hinter_new(ft_memory, &ft_hinter);
+			if (error) {
+				Done_FreeType_With_Mem(ft_library, ft_memory);
+			}
+#endif
+
+			if (!error) {
+				alfont_inited = 1;
+			}
+		}
 
 		return error;
 	}
