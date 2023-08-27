@@ -361,10 +361,10 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if ((lastPosition - newPosition).length() < 1) { // If the player has not moved
 		// Try to step up
 		newPosition = position;
-		newPosition.y() = newPosition.y() + 64;
+		newPosition.y() = newPosition.y() + _stepUpDistance;
 
 		lastPosition = _lastPosition;
-		lastPosition.y() = lastPosition.y() + 64;
+		lastPosition.y() = lastPosition.y() + _stepUpDistance;
 
 		newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
 	}

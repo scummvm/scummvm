@@ -44,6 +44,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
 	_playerDepth = 32;
+	_stepUpDistance = 64;
 	_lastTenSeconds = -1;
 	_lastSecond = -1;
 

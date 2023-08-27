@@ -137,6 +137,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_playerHeight = 0;
 	_playerWidth = 0;
 	_playerDepth = 0;
+	_stepUpDistance = 0;
 	_colorNumber = 0;
 
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);

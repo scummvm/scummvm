@@ -56,6 +56,7 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_playerWidth = 8;
 	_playerDepth = 8;
+	_stepUpDistance = 32;
 
 	const char **messagePtr = rawMessagesTable;
 	debugC(1, kFreescapeDebugParser, "String table:");

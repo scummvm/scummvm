@@ -68,6 +68,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
 	_playerDepth = 32;
+	_stepUpDistance = 64;
 
 	_initialTankEnergy = 48;
 	_initialTankShield = 50;

@@ -35,6 +35,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_playerWidth = 8;
 	_playerDepth = 8;
+	_stepUpDistance = 32;
 	_option = nullptr;
 }
 
