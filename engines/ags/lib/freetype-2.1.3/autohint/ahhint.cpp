@@ -40,12 +40,15 @@
 /***************************************************************************/
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahhint.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahglyph.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahangles.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/aherrors.h"
-#include "engines/ags/lib/freetype-2.1.3/ftoutln.h"
+#include <ft2build.h>
+#include FT_OUTLINE_H
+
+#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
+#include "engines/ags/lib/freetype-2.1.3/ftgloadr.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahhint.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahglyph.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahangles.h"
 
 #define FACE_GLOBALS(face) ((AH_Face_Globals)(face)->autohint.data)
 
@@ -377,8 +380,7 @@ static void ah_hint_edges_3(AH_Hinter hinter) {
 	}
 }
 
-FT_LOCAL_DEF(void)
-ah_hinter_hint_edges(AH_Hinter hinter) {
+void ah_hinter_hint_edges(AH_Hinter hinter) {
 	/* AH_Interpolate_Blue_Edges( hinter ); -- doesn't seem to help      */
 	/* reduce the problem of the disappearing eye in the `e' of Times... */
 	/* also, creates some artifacts near the blue zones?                 */
@@ -701,8 +703,7 @@ static void ah_hinter_align_weak_points(AH_Hinter hinter) {
 
 #endif /* !AH_OPTION_NO_WEAK_INTERPOLATION */
 
-FT_LOCAL_DEF(void)
-ah_hinter_align_points(AH_Hinter hinter) {
+void ah_hinter_align_points(AH_Hinter hinter) {
 	ah_hinter_align_edge_points(hinter);
 
 #ifndef AH_OPTION_NO_STRONG_INTERPOLATION
@@ -771,8 +772,7 @@ static void ah_hinter_align(AH_Hinter hinter) {
 }
 
 /* finalize a hinter object */
-FT_LOCAL_DEF(void)
-ah_hinter_done(AH_Hinter hinter) {
+void ah_hinter_done(AH_Hinter hinter) {
 	if (hinter) {
 		FT_Memory memory = hinter->memory;
 
@@ -790,8 +790,7 @@ ah_hinter_done(AH_Hinter hinter) {
 }
 
 /* create a new empty hinter object */
-FT_LOCAL_DEF(FT_Error)
-ah_hinter_new(FT_Library library, AH_Hinter *ahinter) {
+FT_Error ah_hinter_new(FT_Library library, AH_Hinter *ahinter) {
 	AH_Hinter hinter = 0;
 	FT_Memory memory = library->memory;
 	FT_Error error;
@@ -822,8 +821,7 @@ Exit:
 }
 
 /* create a face's autohint globals */
-FT_LOCAL_DEF(FT_Error)
-ah_hinter_new_face_globals(AH_Hinter hinter, FT_Face face, AH_Globals globals) {
+FT_Error ah_hinter_new_face_globals(AH_Hinter hinter, FT_Face face, AH_Globals globals) {
 	FT_Error error;
 	FT_Memory memory = hinter->memory;
 	AH_Face_Globals face_globals;
@@ -848,8 +846,7 @@ Exit:
 }
 
 /* discard a face's autohint globals */
-FT_LOCAL_DEF(void)
-ah_hinter_done_face_globals(AH_Face_Globals globals) {
+void ah_hinter_done_face_globals(AH_Face_Globals globals) {
 	FT_Face face = globals->face;
 	FT_Memory memory = face->memory;
 
@@ -1138,8 +1135,7 @@ Exit:
 }
 
 /* load and hint a given glyph */
-FT_LOCAL_DEF(FT_Error)
-ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt glyph_index, FT_Int32 load_flags) {
+FT_Error ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size, FT_UInt glyph_index, FT_Int32 load_flags) {
 	FT_Face face = slot->face;
 	FT_Error error;
 	FT_Fixed x_scale = size->metrics.x_scale;
@@ -1197,8 +1193,7 @@ Exit:
 }
 
 /* retrieve a face's autohint globals for client applications */
-FT_LOCAL_DEF(void)
-ah_hinter_get_global_hints(AH_Hinter hinter, FT_Face face, void **global_hints, long *global_len) {
+void ah_hinter_get_global_hints(AH_Hinter hinter, FT_Face face, void **global_hints, long *global_len) {
 	AH_Globals globals = 0;
 	FT_Memory memory = hinter->memory;
 	FT_Error error;
@@ -1227,8 +1222,7 @@ Fail:
 	*global_len = 0;
 }
 
-FT_LOCAL_DEF(void)
-ah_hinter_done_global_hints(AH_Hinter hinter, void *global_hints) {
+void ah_hinter_done_global_hints(AH_Hinter hinter, void *global_hints) {
 	FT_Memory memory = hinter->memory;
 
 	FT_FREE(global_hints);
