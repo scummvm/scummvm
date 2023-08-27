@@ -855,7 +855,7 @@ void ah_hinter_done_face_globals(AH_Face_Globals globals) {
 static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 load_flags, FT_UInt depth) {
 	FT_Face face = hinter->face;
 	FT_GlyphSlot slot = face->glyph;
-	FT_Slot_Internal internal = slot->internal;
+//	FT_Slot_Internal internal = slot->internal;
 	FT_Fixed x_scale = face->size->metrics.x_scale;
 	FT_Fixed y_scale = face->size->metrics.y_scale;
 	FT_Error error;
@@ -868,6 +868,8 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		goto Exit;
 
 	/* Set `hinter->transformed' after loading with FT_LOAD_NO_RECURSE. */
+	// FIXME: Only used by Type1 and CFF?
+#if 0
 	hinter->transformed = internal->glyph_transformed;
 
 	if (hinter->transformed) {
@@ -880,6 +882,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		FT_Matrix_Invert(&imatrix);
 		FT_Vector_Transform(&hinter->trans_delta, &imatrix);
 	}
+#endif
 
 	/* set linear horizontal metrics */
 	slot->linearHoriAdvance = slot->metrics.horiAdvance;
@@ -1116,12 +1119,17 @@ Hint_Metrics:
 		slot->metrics.horiAdvance = (slot->metrics.horiAdvance + 32) & -64;
 
 		/* now copy outline into glyph slot */
+
+		// FIXME: check if needed
+#if 0
 		ah_loader_rewind(slot->internal->loader);
 		error = ah_loader_copy_points(slot->internal->loader, gloader);
 		if (error)
 			goto Exit;
-
 		slot->outline = slot->internal->loader->base.outline;
+#endif
+
+		slot->outline = gloader->base.outline;
 		slot->format = FT_GLYPH_FORMAT_OUTLINE;
 	}
 
