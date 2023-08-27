@@ -420,7 +420,7 @@ Common::SeekableReadStream *DataIO::getFile(File &file) {
 		new Common::SafeSeekableSubReadStream(&file.archive->file, file.offset, file.offset + file.size);
 
 	Common::SeekableReadStream *bufferedRawData =
-		Common::wrapBufferedSeekableReadStream(rawData, 4096, DisposeAfterUse::NO);
+		Common::wrapBufferedSeekableReadStream(rawData, 4096, DisposeAfterUse::YES);
 
 	if (file.compression == 0)
 		return bufferedRawData;
