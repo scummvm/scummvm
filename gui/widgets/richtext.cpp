@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "common/unicode-bidi.h"
 
-#include "graphics/macgui/mactextwindow.h"
+#include "graphics/macgui/mactext.h"
 
 #include "gui/gui-manager.h"
 
@@ -107,23 +107,13 @@ void RichTextWidget::recalc() {
 }
 
 void RichTextWidget::createWidget() {
-	uint32 white = _wm->_pixelformat.RGBToColor(0, 0, 0);
+	uint32 white = _wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff);
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
 	uint32 black = _wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
-	black = _wm->_pixelformat.RGBToColor(1, 1, 1);
 
 	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
 
-	_txtWnd = _wm->addTextWindow(&macFont, black, white, _w, Graphics::kTextAlignLeft, nullptr, false);
-	_txtWnd->setTextColorRGB(black);
-	_txtWnd->setBorderType(Graphics::kWindowBorderMacOSNoBorderScrollbar);
-	_txtWnd->enableScrollbar(true);
-	// it will hide the scrollbar when the text height is smaller than the window height
-	_txtWnd->setMode(Graphics::kWindowModeDynamicScrollbar);
-	_txtWnd->resize(_w, _h);
-	_txtWnd->setEditable(false);
-	_txtWnd->setSelectable(false);
-
+	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, black, white, _w, Graphics::kTextAlignLeft);
 	_txtWnd->setMarkdownText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
@@ -142,7 +132,7 @@ void RichTextWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 	                                    ThemeEngine::kWidgetBackgroundEditText);
 
-	_txtWnd->draw(_surface);
+	_txtWnd->draw(_surface, 0, 0, _w, _h, 0, 0);
 
 	g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), *_surface);
 }

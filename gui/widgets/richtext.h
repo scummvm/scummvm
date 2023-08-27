@@ -26,7 +26,7 @@
 #include "gui/widget.h"
 
 namespace Graphics {
-class MacTextWindow;
+class MacText;
 class ManagedSurface;
 }
 
@@ -37,7 +37,7 @@ class ScrollBarWidget;
 /* RichTextWidget */
 class RichTextWidget : public Widget {
 protected:
-	Graphics::MacTextWindow *_txtWnd = nullptr;
+	Graphics::MacText *_txtWnd = nullptr;
 	Graphics::ManagedSurface *_surface = nullptr;
 	Common::U32String _text;
 
