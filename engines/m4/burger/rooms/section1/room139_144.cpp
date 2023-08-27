@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/rooms/section1/room144.h"
+#include "m4/burger/rooms/section1/room139_144.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
 #include "m4/graphics/gr_series.h"
@@ -104,7 +104,7 @@ static const seriesStreamBreak SERIES2[] = {
 };
 
 
-void Room144::init() {
+void Room139_144::init() {
 	_val1 = 0;
 	_val2 = 15;
 	digi_preload("144_001");
@@ -154,7 +154,7 @@ void Room144::init() {
 	digi_play_loop("144_001", 3);
 }
 
-void Room144::daemon() {
+void Room139_144::daemon() {
 	int frame;
 
 	switch (_G(kernel).trigger) {
@@ -390,12 +390,12 @@ void Room144::daemon() {
 	}
 }
 
-void Room144::pre_parser() {
+void Room139_144::pre_parser() {
 	if (player_said("vera's diner") && player_said_any("enter", "look", "look at"))
 		player_hotspot_walk_override_just_face(3);
 }
 
-void Room144::parser() {
+void Room139_144::parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
@@ -445,14 +445,14 @@ void Room144::parser() {
 	_G(player).command_ready = false;
 }
 
-void Room144::preloadDigi() {
+void Room139_144::preloadDigi() {
 	digi_preload("144b002");
 	digi_preload("144b003a");
 	digi_preload("144b003b");
 	digi_preload("144b003c");
 }
 
-void Room144::randomDigi() {
+void Room139_144::randomDigi() {
 	if (!digi_play_state(2)) {
 		digi_play(Common::String::format("144b003%c", 'a' + imath_ranged_rand(0, 2)).c_str(), 2, 255);
 	}
@@ -460,7 +460,7 @@ void Room144::randomDigi() {
 	digi_change_volume(2, 255);
 }
 
-void Room144::conv31() {
+void Room139_144::conv31() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	int who = conv_whos_talking();
 

@@ -28,7 +28,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room144 : public Room {
+class Room139_144 : public Room {
 private:
 	machine *_series1 = nullptr;
 	const char *_digi1 = nullptr;
@@ -42,8 +42,8 @@ private:
 	void conv31();
 
 public:
-	Room144() : Room() {}
-	~Room144() override {}
+	Room139_144() : Room() {}
+	~Room139_144() override {}
 
 	void init() override;
 	void daemon() override;

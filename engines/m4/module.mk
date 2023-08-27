@@ -100,9 +100,9 @@ MODULE_OBJS = \
 	burger/rooms/section1/room135.o \
 	burger/rooms/section1/room137.o \
 	burger/rooms/section1/room138.o \
+	burger/rooms/section1/room139_144.o \
 	burger/rooms/section1/room141.o \
 	burger/rooms/section1/room142.o \
-	burger/rooms/section1/room144.o \
 	burger/rooms/section1/room170.o \
 	burger/rooms/section1/room171.o \
 	burger/rooms/section1/room172.o \
