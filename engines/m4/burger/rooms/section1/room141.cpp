@@ -952,7 +952,126 @@ done:
 }
 
 void Room141::conv20() {
-	error("TODO: Room141::conv20");
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 21) {
+		if (who <= 0) {
+			if (node == 4 && entry == 0) {
+				conv_resume_curr();
+			} else if (node == 15 && entry == 1) {
+				_val2 = 43;
+			} else if (node == 16) {
+				_val4 = 5;
+			} else if (node != 0) {
+				if (node == 20 && (entry == 2 || entry == 3)) {
+					_val2 = 40;
+					conv_resume_curr();
+				} else if (node == 20 && entry == 1) {
+					_val2 = 43;
+				} else if (node == 20 && entry == 6) {
+					_val2 = 38;
+				} else if (node == 20 && entry == 7) {
+					_val4 = 8;
+					_val2 = 32;
+				} else if (node == 20 && entry == 8) {
+					_val2 = 45;
+					conv_resume_curr();
+				} else if (node == 20 && entry == 9) {
+					_val2 = 48;
+					conv_resume_curr();
+				} else if (node == 6 && entry == 1) {
+					_val2 = 27;
+					conv_resume_curr();
+				} else if (node == 4 && (entry == 0 || entry == 4)) {
+					_val2 = 25;
+				} else if (node == 6 && entry == 3) {
+					_val2 = 31;
+					_val6 = 55;
+					conv_resume_curr();
+				} else if (node == 7 ||
+						(node == 4 && (entry == 1 || entry == 6 || entry == 7 || entry == 9)) ||
+						(node == 5 && entry == 1) ||
+						(node == 11 && entry == 5) ||
+						(node == 8 && (entry == 0 || entry == 2)) ||
+						(node == 10 && entry == 1) ||
+						(node == 9)) {
+					digi_preload("140_003");
+					_val2 = 24;
+					conv_resume_curr();
+
+				} else if ((node == 4 && (entry == 2 || entry == 5 || entry == 10 || entry == 11)) ||
+						(node == 15 && entry == 5) ||
+						(node == 18 && entry == 1) ||
+						(node == 19 && (entry == 2 || entry == 3))) {
+					_val6 = 55;
+					_val2 = (_val1 == 27 || _val1 == 40) ? 27 : 18;
+					conv_resume_curr();
+
+				} else {
+					_val2 = (_val1 == 27 || _val1 == 40) ? 27 : 18;
+					conv_resume_curr();
+
+				}
+			}
+		} else if (who == 1) {
+			if (node == 20 && entry == 1) {
+				_val6 = 57;
+				conv_resume_curr();
+			} else if (node == 20 && entry == 5) {
+				_val6 = 58;
+			} else if ((node == 6 && entry == 1) || (node == 8 && entry == 3)) {
+				_val2 = 25;
+				_val6 = 52;
+			} else if ((node == 4 && entry == 0) || (node == 20 && entry == 0)) {
+				_val2 = 21;
+				_val6 = 52;
+			} else {
+				_val6 = (node == 14) ? 55 : 52;
+				conv_resume_curr();
+			}
+		}
+	} else if (conv_sound_to_play()) {
+		if (who <= 0) {
+			if (node == 20 && entry == 7)
+				_val6 = 52;
+
+			if (node != 0) {
+				if (node == 1 || node == 2) {
+					_val2 = 20;
+					digi_unload("20n01011");
+					digi_unload("20n01012");
+					digi_unload("20n01013");
+					digi_unload("20n01014");
+				} else if (node == 6 && entry == 1) {
+					_val2 = 28;
+				} else if (node == 20 && entry == 4) {
+					_val2 = 28;
+				} else if (node == 20 && (entry == 2 || entry == 3 || entry == 7)) {
+					_val2 = 41;
+				} else if (node == 20 && (entry == 8 || entry == 9)) {
+					_val2 = 46;
+				} else if (node == 13 || node == 16) {
+					_val2 = 41;
+				} else if (node == 11 && entry == 5) {
+					_val2 = 20;
+				} else if (node == 6 && (entry == 2 || entry == 3)) {
+					_val2 = 28;
+				} else {
+					_val2 = (_val1 == 27) ? 28 : 20;
+				}
+			}
+		} else if (who == 1) {
+			_val6 = 53;
+		}
+
+		digi_play(conv_sound_to_play(), 1, 255, 21, 140);
+
+	} else {
+		conv_resume_curr();
+	}
 }
 
 void Room141::playRandom() {
