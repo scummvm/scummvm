@@ -45,13 +45,13 @@
 #define AGS_LIB_FREETYPE_AHTYPES_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
+#include <ft2build.h>
+#include FT_TYPES_H
 
 #ifdef DEBUG_HINTER
 #include <../modules/autohint/ahloader.h>
 #else
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahloader.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahloader.h"
 #endif
 
 
@@ -71,8 +71,6 @@
 
 namespace AGS3 {
 namespace FreeType213 {
-
-// FT_BEGIN_HEADER
 
 
 /**** COMPILE-TIME BUILD OPTIONS ****/
@@ -338,8 +336,6 @@ extern FT_Bool     ah_debug_disable_vert;
 #define ah_debug_disable_vert  0
 #endif /* DEBUG_HINTER */
 
-
-// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
