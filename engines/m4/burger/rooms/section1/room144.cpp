@@ -28,16 +28,220 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID1[][4] = {
+	{ "ISLAND",    nullptr,   "999w011", "999w011" },
+	{ "ROCK",      "144W004", "999w011", "999w011" },
+	{ "SHACK",     "144W005", "999w011", nullptr   },
+	{ "SIGN",      "144W006", nullptr,   nullptr   },
+	{ "ROWBOAT",   "144W007", nullptr,   nullptr   },
+	{ "WATER",     "144W008", "999w011", "144W009" },
+	{ "BURL",      "144W010", "999w011", "999w011" },
+	{ "MOTORBOAT", "144W012", nullptr,   "144W013" },
+	{ "VERA'S DINER", nullptr, "999w011", "999w011" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const char *SAID2[][4] = {
+	{ "ISLAND",     "139W001", "139W002", "139W002" },
+	{ "ROCK",       nullptr,   "139W002", "139W002" },
+	{ "SHACK",      "139W005", "139W002", nullptr   },
+	{ "SIGN",       "139W006", nullptr,   nullptr   },
+	{ "ROWBOAT",    "139W007", nullptr,   nullptr   },
+	{ "WATER",      "139W008", "139W002", "139W009" },
+	{ "VERA'S DINER", nullptr, "139W002", "139W002" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const seriesPlayBreak PLAY1[] = {
+	{ 0, 32, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 33, 39, "139_002", 2, 255, -1, 0, 0, 0, 0 },
+	{ 40, 43, 0, 1, 255, 8, 0, 0, 0, 0 },
+	{ 44, 52, "139_003", 2, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY2[] = {
+	{  0, 35, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 36, 39, "144_002", 2, 255, -1, 0, 0, nullptr, 0 },
+	{ 40, 46, nullptr,   1, 255,  8, 0, 0, nullptr, 0 },
+	{ 47, 52, "144_003", 2, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 52, 52, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesStreamBreak SERIES1[] = {
+	{ 6, 0, 2, 255, 2, 0, 0, 0 },
+	{ 10, "100_022", 2, 255, -1, 0, 0, 0 },
+	{ -1, 0, 0, 0, -1, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak SERIES2[] = {
+	{ 1, "144b001", 1, 255, -1, 0, nullptr, 0 },
+	{ 45, nullptr,  1, 255,  5, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+
 void Room144::init() {
+	_val1 = 0;
+	_val2 = 15;
+	digi_preload("144_001");
+
+	if (_G(game).previous_room == 144)
+		preloadDigi();
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
+	case 139:
+		player_set_commands_allowed(false);
+		ws_demand_location(470, 269, 8);
+		_val3 = 1;
+		_val4 = 3;
+		kernel_trigger_dispatch_now(9);
+		break;
+
+	case 141:
+		ws_demand_location(250, 224, 4);
+		break;
+
+	case 142:
+		ws_demand_location(670, 257, 9);
+		ws_walk(596, 245, 0, -1, 8);
+		break;
+
+	default:
+		ws_demand_location(320, 271, 5);
+		break;
+	}
+
+	if (_G(game).previous_room != 139 && _G(flags)[V000] == 1002) {
+		_val3 = _val4 = 3;
+		kernel_trigger_dispatch_now(9);
+	}
+
+	if (_G(flags)[V112]) {
+		series_play("144mb01", 0x600, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+	} else {
+		hotspot_set_active("motorboat", false);
+	}
+
+	_series1 = series_play((_G(flags)[V000] == 1002) ? "144rboat" : "139rboat",
+		0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+	digi_play_loop("144_001", 3);
 }
 
 void Room144::daemon() {
+	// TODO
 }
 
 void Room144::pre_parser() {
+	if (player_said("vera's diner") && player_said_any("enter", "look", "look at"))
+		player_hotspot_walk_override_just_face(3);
 }
 
 void Room144::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (player_said("talk to")) {
+		conv_load_and_prepare("conv31", 6);
+		conv_export_value_curr(_G(flags)[V052], 0);
+		conv_export_value_curr(_G(flags)[V112], 1);
+		conv_play_curr();
+
+	} else if (_G(flags)[V000] == 1002 && _G(walker).wilbur_said(SAID1)) {
+		// Do nothing
+	} else if (_G(flags)[V000] == 1002 && _G(walker).wilbur_said(SAID2)) {
+		// Do nothing
+	} else if (player_said("conv31")) {
+		conv31();
+
+	} else if (inv_player_has(_G(player).verb) && _G(flags)[V000] == 1002 &&
+			player_said_any("island", "rock")) {
+		_G(walker).wilbur_speech("999w011");
+
+	} else if (inv_player_has(_G(player).verb) && _G(flags)[V000] == 1002 &&
+			player_said("burl")) {
+		_G(walker).wilbur_speech("144w011");
+
+	} else if (inv_player_has(_G(player).verb) && _G(flags)[V000] != 1002 &&
+			player_said_any("rock", "island")) {
+		_G(walker).wilbur_speech("139w002");
+
+	} else if (lookFlag && player_said("rock")) {
+		wilbur_speech(inv_player_has("deed") ? "139w004" : "139w003");
+
+	} else if (lookFlag && player_said("island") && _G(flags)[V000] == 1002) {
+		wilbur_speech(_G(flags)[V112] ? "144w002" : "144w001");
+
+	} else if (player_said("enter", "vera's diner") || (lookFlag && player_said("vera's diner"))) {
+		player_set_commands_allowed(false);
+		pal_fade_init(1014);
+
+	} else if (player_said("gear", "rowboat") || player_said("go island")) {
+		player_set_commands_allowed(false);
+		kernel_trigger_dispatch_now(7);
+
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room144::preloadDigi() {
+	digi_preload("144b002");
+	digi_preload("144b003a");
+	digi_preload("144b003b");
+	digi_preload("144b003c");
+}
+
+void Room144::conv31() {
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+
+	if (_G(kernel).trigger == 1) {
+		if (who <= 0) {
+			_val3 = 4;
+			conv_resume();
+		} else if (who == 1) {
+			conv_resume();
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+		}
+	} else if (conv_sound_to_play()) {
+		if (who <= 0) {
+			_val3 = 5;
+			_digi1 = conv_sound_to_play();
+		} else if (who == 1) {
+			wilbur_speech(conv_sound_to_play(), 1);
+		}
+	} else {
+		conv_resume();
+	}
 }
 
 } // namespace Rooms
