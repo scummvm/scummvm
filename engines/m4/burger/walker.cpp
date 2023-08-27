@@ -367,9 +367,9 @@ bool Walker::wilbur_parser(const char **list) {
 	return false;
 }
 
-bool Walker::wilbur_match(const Common::Array<WilburMatch> &list) { 
-	for (uint idx = 0; idx < list.size(); ++idx) {
-		const WilburMatch &m = list[idx];
+bool Walker::wilbur_match(const WilburMatch *list) {
+	for (; list->_word0 || list->_word1; ++list) {
+		const WilburMatch &m = *list;
 
 		if (player_said(m._word0, m._word1)) {
 			term_message("matched %s and %s", m._word0, m._word1);

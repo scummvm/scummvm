@@ -86,6 +86,9 @@ protected:
 	void main_cold_data_init() override;
 
 public:
+	// These are defined as statics because they're referenced in data arrays
+	static long _wilbur_should;
+public:
 	Burger::Flags _flags;
 	GameMode _executing = WHOLE_GAME;
 	GUI::GUI_Globals _gui;
@@ -102,7 +105,6 @@ public:
 	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
-	int _wilbur_should = 0;
 	int _roomVal2 = 0;
 	int _roomVal3 = 0;
 	int _walkTrigger = 0;

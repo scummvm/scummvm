@@ -30,6 +30,7 @@ namespace Burger {
 namespace Rooms {
 
 class Room142 : public Room {
+	static const WilburMatch _MATCH[];
 	static const seriesPlayBreak PLAY1[];
 	static const seriesPlayBreak PLAY2[];
 	static const seriesPlayBreak PLAY3[];
@@ -45,7 +46,6 @@ class Room142 : public Room {
 	static const seriesPlayBreak PLAY13[];
 	static const seriesPlayBreak PLAY14[];
 private:
-	Common::Array<WilburMatch> _MATCH;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
 	machine *_series3 = nullptr;
@@ -58,9 +58,9 @@ private:
 	noWalkRect *_noWalk = nullptr;
 	int _actionType = 0;
 	int _volume = 0;
-	static int _val1;
-	static int _val2;
-	static int _val3;
+	static long _val1;
+	static long _val2;
+	static long _val3;
 	int _val4 = 0;
 
 	void checkAction();

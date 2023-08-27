@@ -28,8 +28,6 @@
 namespace M4 {
 namespace Burger {
 
-#define FLAGS_COUNT 512
-
 struct BoonsvilleRec {
 	int32 _time;
 	int32 _trigger;
@@ -57,8 +55,10 @@ static const BoonsvilleRec ARRAY[] = {
 	{ 0, 0, nullptr }
 };
 
+long Flags::_flags[FLAGS_COUNT];
+
 Flags::Flags() {
-	resize(FLAGS_COUNT);
+	Common::fill(_flags, _flags + FLAGS_COUNT, 0);
 }
 
 void Flags::sync(Common::Serializer &s) {

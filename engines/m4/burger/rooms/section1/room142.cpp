@@ -29,7 +29,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-static const char *SAID1[][4] = {
+static const char *SAID[][4] = {
 	{ "VERA'S DINER",   "142w001", "142w002", "142w002" },
 	{ "CAR",            "142w003", nullptr,   "142w004" },
 	{ "FANBELT",        "142w005", nullptr,   "142w002" },
@@ -47,6 +47,17 @@ static const char *SAID1[][4] = {
 	{ "PARKING LOT",    nullptr,   "142w002", nullptr   },
 	{ "HIGHWAY 2",      "142w020", "142w002", "142w021" },
 	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+const WilburMatch Room142::_MATCH[] = {
+	{ "GEAR", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
+	{ "LOOK AT", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
+	{ "GEAR", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
+	{ "LOOK AT", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
+	{ "GEAR", "ICE BOX", gCHANGE_WILBUR_ANIMATION, &_G(flags)[V059], 0, &Vars::_wilbur_should, 1 },
+	{ "TAKE", "FANBELT", gCHANGE_WILBUR_ANIMATION, nullptr, 0, &Vars::_wilbur_should, 9 },
+	{ "GEAR", "BACK DOOR", 6, nullptr, 0, nullptr, 0 },
+	WILBUR_MATCH_END
 };
 
 const seriesPlayBreak Room142::PLAY1[] = {
@@ -146,9 +157,9 @@ const seriesPlayBreak Room142::PLAY14[] = {
 };
 
 
-int Room142::_val1;
-int Room142::_val2;
-int Room142::_val3;
+long Room142::_val1;
+long Room142::_val2;
+long Room142::_val3;
 
 Room142::Room142() : Room() {
 	_val1 = 0;
@@ -157,22 +168,6 @@ Room142::Room142() : Room() {
 }
 
 void Room142::init() {
-	_MATCH.clear();
-	_MATCH.push_back(WilburMatch("GEAR", "PARKING LOT", 9,
-		&_G(flags)[V000], 1003, &_val1, 18));
-	_MATCH.push_back(WilburMatch("LOOK AT", "PARKING LOT", 9,
-		&_G(flags)[V000], 1003, &_val1, 18));
-	_MATCH.push_back(WilburMatch("GEAR", "PARKING LOT", 5,
-		&_G(flags)[V058], 0, &_val2, 13));
-	_MATCH.push_back(WilburMatch("LOOK AT", "PARKING LOT", 5,
-		&_G(flags)[V058], 0, &_val2, 13));
-	_MATCH.push_back(WilburMatch("GEAR", "ICE BOX", gCHANGE_WILBUR_ANIMATION,
-		&_G(flags)[V059], 0, &_G(wilbur_should), 1));
-	_MATCH.push_back(WilburMatch("TAKE", "FANBELT", gCHANGE_WILBUR_ANIMATION,
-		nullptr, 0, &_G(wilbur_should), 9));
-	_MATCH.push_back(WilburMatch("GEAR", "BACK DOOR", 6,
-		nullptr, 0, nullptr, 0));
-
 	digi_preload("142_004");
 	digi_play_loop("142_004", 3, 255, -1);
 
@@ -672,7 +667,7 @@ void Room142::pre_parser() {
 void Room142::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (!_G(walker).wilbur_said(SAID1)) {
+	if (!_G(walker).wilbur_said(SAID)) {
 		if (player_said_any("GEAR", "LOOK AT") && player_said("HANLON'S POINT")) {
 			disable_player_commands_and_fade_init(1012);
 		} else if (player_said_any("GEAR", "LOOK AT") && player_said("FRONT DOOR")) {
