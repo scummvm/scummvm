@@ -52,6 +52,7 @@ class Animation {
 	bool				_paused;
 	int					_speed;
 	int					_z;
+	int					_rotation;
 	int					_delay;
 	int					_random;
 	float				_scale;
@@ -143,6 +144,13 @@ public:
 
 	int z() const {
 		return _z;
+	}
+	void rotate(int rotation) {
+		if (_rotation == rotation)
+			return;
+
+		_rotation = rotation;
+		rescaleCurrentFrame();
 	}
 
 	void scale(float scale);

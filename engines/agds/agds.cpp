@@ -737,6 +737,7 @@ Common::Error AGDSEngine::run() {
 					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
 			} else if (auto *cursor = (_currentInventoryObject? _currentInventoryObject->getMouseCursor(): nullptr)) {
+				cursor->rotate(_currentInventoryObject->rotation());
 				cursor->tick();
 				auto pos = _mouse;
 				pos.x -= cursor->visibleCenter();

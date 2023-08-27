@@ -74,6 +74,7 @@ private:
 	Common::Point					_regionOffset;
 	Common::Rect					_srcRect;
 	int								_z;
+	int								_rotation;
 	Common::String					_text;
 	Common::String					_title;
 	uint							_clickHandler;
@@ -93,6 +94,7 @@ private:
 private:
 	void freeRotated();
 	void freePicture();
+	void createRotated();
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
@@ -158,6 +160,9 @@ public:
 	}
 
 	void rotate(int rot);
+	int rotation() const {
+		return _rotation;
+	}
 
 	void generateRegion();
 	void generateRegion(Common::Rect rect);
