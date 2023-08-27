@@ -37,7 +37,7 @@ namespace AGDS {
 Object::Object(const Common::String &name, Common::SeekableReadStream *stream) : _name(name), _stringTableLoaded(false),
                                                                                  _picture(), _rotatedPicture(), _region(),
                                                                                  _animation(), _mouseCursor(),
-                                                                                 _pos(), _z(10),
+                                                                                 _pos(), _z(10), _rotation(0),
                                                                                  _clickHandler(0), _examineHandler(0), _userUseHandler(0),
 																				 _throwHandler(0), _useOnHandler(0),
                                                                                  _alpha(255), _scale(100), _locked(0), _alive(true),
@@ -140,6 +140,7 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 	freePicture();
 	_picture = picture;
 	freeRotated();
+	_rotation = 0;
 
 	if (!picture) {
 		_offset = Common::Point();
@@ -168,23 +169,27 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 			}
 		}
 	}
+	createRotated();
 }
 
 void Object::rotate(int rot) {
-	if (rot == 0)
+	rot %= 4;
+	if (rot == _rotation)
 		return;
 
-	if (!_picture) {
-		warning("no picture for rotation");
-		return;
-	}
-
-	Graphics::TransformStruct transform(100, 100, 90 * rot, _picture->w / 2, _picture->h / 2);
-	auto rotated = getPicture()->rotoscale(transform);
-	freeRotated();
-	_rotatedPicture = rotated;
+	debug("%s: setting rotation to %d", _name.c_str(), rot);
+	_rotation = rot;
+	createRotated();
 }
 
+void Object::createRotated() {
+	freeRotated();
+	if (_rotation == 0 || !_picture)
+		return;
+
+	Graphics::TransformStruct transform(100, 100, 90 * _rotation, _picture->w / 2, _picture->h / 2);
+	_rotatedPicture = getPicture()->rotoscale(transform);
+}
 
 void Object::alive(bool value)
 {

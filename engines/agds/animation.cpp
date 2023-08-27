@@ -33,7 +33,7 @@ namespace AGDS {
 Animation::Animation(AGDSEngine *engine, const Common::String &name) :
 	_engine(engine), _name(name), _flic(), _frame(), _scaledFrame(),
 	_frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
-	_phase(0), _paused(false), _speed(100), _z(0),
+	_phase(0), _paused(false), _speed(100), _z(0), _rotation(0),
 	_delay(0), _random(0), _scale(1), _onScreen(true),
 	_visibleHeight(0), _visibleCenter(0) {
 }
@@ -116,8 +116,14 @@ void Animation::scale(float scale) {
 }
 
 void Animation::rescaleCurrentFrame() {
-	if (_scale != 1 && _frame) {
-		freeScaledFrame();
+	if (!_frame)
+		return;
+
+	freeScaledFrame();
+	if (_rotation != 0) {
+		Graphics::TransformStruct transform(_scale * 100, _scale * 100, 90 * _rotation, _frame->w / 2, _frame->h / 2, Graphics::TSpriteBlendMode::BLEND_NORMAL, Graphics::kDefaultRgbaMod);
+		_scaledFrame = _frame->rotoscale(transform);
+	} else if (_scale != 1) {
 		_scaledFrame = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
 	}
 	auto *frame = _scaledFrame? _scaledFrame: _frame;
