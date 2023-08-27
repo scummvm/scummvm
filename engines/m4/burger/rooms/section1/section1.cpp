@@ -42,9 +42,10 @@ Section1::Section1() : Rooms::Section() {
 	add(136, &_room133_136);
 	add(137, &_room137);
 	add(138, &_room138);
+	add(139, &_room139_144);
 	add(141, &_room141);
 	add(142, &_room142);
-	add(144, &_room144);
+	add(144, &_room139_144);
 	add(170, &_room170);
 	add(171, &_room171);
 	add(172, &_room172);
