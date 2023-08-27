@@ -32,6 +32,8 @@ class ManagedSurface;
 
 namespace GUI {
 
+class ScrollBarWidget;
+
 /* RichTextWidget */
 class RichTextWidget : public Widget {
 protected:
@@ -39,14 +41,23 @@ protected:
 	Graphics::ManagedSurface *_surface = nullptr;
 	Common::U32String _text;
 
+	ScrollBarWidget *_verticalScroll;
+	int16 _scrolledX, _scrolledY;
+	int _scrollbarWidth;
+	uint16 _limitH;
+	uint32 _reflowCmd;
+
 public:
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 	RichTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 
 	void reflowLayout() override;
+	void draw() override;
 
 protected:
+	void init();
+	void recalc();
 	void drawWidget() override;
 	void createWidget();
 };
