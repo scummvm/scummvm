@@ -889,7 +889,9 @@ void ScummEngine_v8::o8_actorOps() {
 		break;
 	case SO_ACTOR_FACE:		// Make actor face angle
 		a->_moving &= ~MF_TURN;
-		a->setDirection(pop());
+		j = pop();
+		a->turnToDirection(j);
+		a->setDirection(j);
 		break;
 	case SO_ACTOR_TURN:		// Turn actor
 		a->turnToDirection(pop());

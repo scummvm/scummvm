@@ -212,7 +212,7 @@ protected:
 	virtual void setupActorScale();
 
 	void setBox(int box);
-	int updateActorDirection(bool is_walking);
+	virtual int updateActorDirection(bool is_walking);
 
 public:
 	void adjustActorPos();
@@ -220,7 +220,7 @@ public:
 
 	virtual void setDirection(int direction);
 	void faceToObject(int obj);
-	void turnToDirection(int newdir);
+	virtual void turnToDirection(int newdir);
 	virtual void walkActor();
 	void drawActorCostume(bool hitTestMode = false);
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
@@ -358,6 +358,19 @@ public:
 protected:
 	bool isPlayer() override;
 	void prepareDrawActorCostume(BaseCostumeRenderer *bcr) override;
+};
+
+class Actor_v7 final : public Actor {
+public:
+	Actor_v7(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+
+	void initActor(int mode) override;
+	void walkActor() override;
+	void turnToDirection(int newdir) override;
+	void startAnimActor(int frame) override;
+
+private:
+	int updateActorDirection(bool) override;
 };
 
 enum ActorV0MiscFlags {

@@ -170,8 +170,6 @@ void Actor::initActor(int mode) {
 		_pos.x = 0;
 		_pos.y = 0;
 		_facing = 180;
-		if (_vm->_game.version >= 7)
-			_visible = false;
 	} else if (mode == 2) {
 		_facing = 180;
 	}
@@ -199,7 +197,7 @@ void Actor::initActor(int mode) {
 		_animProgress = 0;
 
 	_ignoreBoxes = false;
-	_forceClip = (_vm->_game.version >= 7) ? 100 : 0;
+	_forceClip = 0;
 	_ignoreTurns = false;
 
 	_talkFrequency = 256;
@@ -215,7 +213,7 @@ void Actor::initActor(int mode) {
 	_walkScript = 0;
 	_talkScript = 0;
 
-	_vm->_classData[_number] = (_vm->_game.version >= 7) ? _vm->_classData[0] : 0;
+	_vm->_classData[_number] = 0;
 }
 
 void Actor_v2::initActor(int mode) {
@@ -237,6 +235,16 @@ void Actor_v3::initActor(int mode) {
 		_stepThreshold = 0;
 	}
 	Actor::initActor(mode);
+}
+
+void Actor_v7::initActor(int mode) {
+	if (mode == 1 || mode == -1)
+		_visible = false;
+
+	Actor::initActor(mode);
+	
+	_forceClip = 100;
+	_vm->_classData[_number] = _vm->_classData[0];
 }
 
 void Actor_v0::initActor(int mode) {
@@ -536,7 +544,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaYFactor = deltaYFactor;
 
 	if (_vm->_game.version >= 7)
-		_targetFacing = normalizeAngle((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI));
+		_targetFacing = normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), (int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI));
 	else
 		_targetFacing = (ABS(diffY) * 3 > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
 
@@ -589,7 +597,7 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 int Actor::actorWalkStep() {
 	_needRedraw = true;
 
-	int nextFacing = updateActorDirection(true);
+	int nextFacing = (_vm->_game.version < 7) ? updateActorDirection(true) : _targetFacing;
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
 		if (_walkFrame != _frame || _facing != nextFacing) {
 			startWalkAnim(1, nextFacing);
@@ -865,9 +873,9 @@ void Actor::startWalkAnim(int cmd, int angle) {
 	if (angle == -1)
 		angle = _facing;
 
-	/* Note: walk scripts aren't required to make the Dig
-	 * work as usual
-	 */
+	if (_vm->_game.version >= 7)
+		angle = remapDirection(normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), angle), false); 
+
 	if (_walkScript) {
 		int args[NUM_SCRIPT_LOCAL];
 		memset(args, 0, sizeof(args));
@@ -876,40 +884,21 @@ void Actor::startWalkAnim(int cmd, int angle) {
 		args[2] = angle;
 		_vm->runScript(_walkScript, 1, 0, args);
 	} else {
-		switch (cmd) {
-		case 1:										/* start walk */
-			setDirection(angle);
-			startAnimActor(_walkFrame);
-			break;
-		case 2:										/* change dir only */
-			setDirection(angle);
-			break;
-		case 3:										/* stop walk */
+		if (_vm->_game.version >= 7 || cmd == 3)
 			turnToDirection(angle);
-			startAnimActor(_standFrame);
-			break;
-		default:
-			break;
-		}
+		else
+			setDirection(angle);
+
+		if (cmd == 1)
+			startAnimActor(_walkFrame);  /* start walk */
+		else if (cmd == 3)
+			startAnimActor(_standFrame); /* stop walk */
 	}
 }
 
 void Actor::walkActor() {
 	int new_dir, next_box;
 	Common::Point foundPath;
-
-	if (_vm->_game.version >= 7) {
-		if (_moving & MF_FROZEN) {
-			if (_moving & MF_TURN) {
-				new_dir = updateActorDirection(false);
-				if (_facing != new_dir)
-					setDirection(new_dir);
-				else
-					_moving &= ~MF_TURN;
-			}
-			return;
-		}
-	}
 
 	if (!_moving)
 		return;
@@ -919,27 +908,26 @@ void Actor::walkActor() {
 			return;
 
 		if (_moving & MF_LAST_LEG) {
-			_moving = 0;
-			setBox(_walkdata.destbox);
-			if (_vm->_game.version <= 6) {
-				startAnimActor(_standFrame);
-				if (_targetFacing != _walkdata.destdir)
-					turnToDirection(_walkdata.destdir);
-			} else {
-				startWalkAnim(3, _walkdata.destdir);
-			}
+				_moving = 0;
+				setBox(_walkdata.destbox);
+				if (_vm->_game.version <= 6) {
+					startAnimActor(_standFrame);
+					if (_targetFacing != _walkdata.destdir)
+						turnToDirection(_walkdata.destdir);
+				} else {
+					startWalkAnim(3, _walkdata.destdir);
+				}
 			return;
 		}
 
 		if (_moving & MF_TURN) {
-			new_dir = updateActorDirection(false);
-			if (_facing != new_dir)
-				setDirection(new_dir);
-			else
-				// I have checked that only the v7/8 games have this different handling of the moving flag. Our code was
-				// correct for the lower versions. For COMI this fixes one part of the issues that caused ticket #4424
-				// (wrong movement data being reported by ScummEngine_v8::o8_wait()).
-				_moving = (_vm->_game.version >= 7) ? (_moving & ~MF_TURN) : 0;
+			if (_vm->_game.version <= 6) {
+				new_dir = updateActorDirection(false);
+				if (_facing != new_dir)
+					setDirection(new_dir);
+				else
+					_moving = 0;
+			}
 			return;
 		}
 
@@ -1365,6 +1353,18 @@ void Actor_v3::walkActor() {
 	calcMovementFactor(_walkdata.dest);
 }
 
+void Actor_v7::walkActor() {
+	if (!(_moving & MF_FROZEN))
+		Actor::walkActor();
+
+	if (_moving & MF_TURN) {
+		int newDir = updateActorDirection(false);
+		if (_facing != newDir)
+			setDirection(newDir);
+		else
+			_moving &= ~MF_TURN;
+	}
+}
 
 #pragma mark -
 #pragma mark --- Actor direction ---
@@ -1467,56 +1467,47 @@ int Actor::remapDirection(int dir, bool is_walking) {
 				return 0;
 		}
 	}
-	// OR 1024 in to signal direction interpolation should be done
-	return normalizeAngle(dir) | 1024;
+
+	dir = (dir + 360) % 360;
+
+	// OR 0x400 to signal direction interpolation should be done
+	if (_vm->_game.version < 7)
+		dir |= 0x400;
+
+	return dir;
 }
 
 int Actor::updateActorDirection(bool is_walking) {
-	int from;
-	bool dirType = false;
-	int dir;
-	bool shouldInterpolate;
+	static const uint8 actorTurnInterpolateTable[] = { 0, 2, 2, 3, 2, 1, 2, 3, 0, 1, 2, 1, 0, 1, 0, 3 };
 
 	if ((_vm->_game.version == 6) && _ignoreTurns)
 		return _facing;
 
-	dirType = (_vm->_game.version >= 7) ? _vm->_costumeLoader->hasManyDirections(_costume) : false;
-
-	from = toSimpleDir(dirType, _facing);
-	dir = remapDirection(_targetFacing, is_walking);
-
-	if (_vm->_game.version >= 7)
-		// Direction interpolation interfers with walk scripts in Dig; they perform
-		// (much better) interpolation themselves.
-		shouldInterpolate = false;
-	else
-		shouldInterpolate = (dir & 1024) ? true : false;
-	dir &= 1023;
-
-	if (shouldInterpolate) {
-		if (_vm->_game.version <= 6) {
-			static const uint8 tbl[] = { 0, 2, 2, 3, 2, 1, 2, 3, 0, 1, 2, 1, 0, 1, 0, 3 };
-			dir = oldDirToNewDir(tbl[newDirToOldDir(dir) | (newDirToOldDir(_facing) << 2)]);
-		} else {
-			int to = toSimpleDir(dirType, dir);
-			int num = dirType ? 8 : 4;
-
-			// Turn left or right, depending on which is shorter.
-			int diff = to - from;
-			if (ABS(diff) > (num >> 1))
-				diff = -diff;
-
-			if (diff > 0) {
-				to = from + 1;
-			} else if (diff < 0) {
-				to = from - 1;
-			}
-
-			dir = fromSimpleDir(dirType, (to + num) % num);
-		}
-	}
+	int dir = remapDirection(_targetFacing, is_walking);
+	if (dir & 0x400)
+		dir = oldDirToNewDir(actorTurnInterpolateTable[newDirToOldDir(dir & 0x3ff) | (newDirToOldDir(_facing) << 2)]);
 
 	return dir;
+}
+
+int Actor_v7::updateActorDirection(bool) {
+	int dirType = _vm->_costumeLoader->hasManyDirections(_costume);
+	int from = toSimpleDir(dirType, _facing);
+	int to = toSimpleDir(dirType, _targetFacing);
+	int num = dirType ? 8 : 4;
+
+	// Turn left or right, depending on which is shorter.
+	int diff = to - from;
+	if (ABS(diff) > (num >> 1))
+		diff = -diff;
+
+	if (diff > 0) {
+		to = from + 1;
+	} else if (diff < 0) {
+		to = from - 1;
+	}
+
+	return fromSimpleDir(dirType, (to + num) % num);
 }
 
 void Actor::setDirection(int direction) {
@@ -1525,11 +1516,11 @@ void Actor::setDirection(int direction) {
 	uint16 vald;
 
 	// Do nothing if actor is already facing in the given direction
-	if (_facing == direction)
+	if (_facing == (direction + 360) % 360)
 		return;
 
 	// Normalize the angle
-	_facing = normalizeAngle(direction);
+	_facing = normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), direction);
 
 	// If there is no costume set for this actor, we are finished
 	if (_costume == 0)
@@ -1619,22 +1610,26 @@ void Actor::turnToDirection(int newdir) {
 	if (newdir == -1 || _ignoreTurns)
 		return;
 
-	if (_vm->_game.version <= 6) {
+	_targetFacing = newdir;
+
+	if (_vm->_game.version == 0)
+		setDirection(newdir);
+	else if (_vm->_game.version <= 2)
+		_moving |= MF_TURN;
+	else
+		_moving = MF_TURN;
+}
+
+void Actor_v7::turnToDirection(int newdir) {
+	if (newdir == -1 || _ignoreTurns)
+		return;
+
+	newdir = remapDirection((newdir + 360) % 360, false); 
+	_moving &= ~MF_TURN;
+
+	if (newdir != _facing) {
+		_moving |= MF_TURN;
 		_targetFacing = newdir;
-
-		if (_vm->_game.version == 0)
-			setDirection(newdir);
-		else if (_vm->_game.version <= 2)
-			_moving |= MF_TURN;
-		else
-			_moving = MF_TURN;
-
-	} else {
-		_moving &= ~MF_TURN;
-		if (newdir != _facing) {
-			_moving |= MF_TURN;
-			_targetFacing = newdir;
-		}
 	}
 }
 
@@ -2564,73 +2559,42 @@ bool Actor::actorHitTest(int x, int y) {
 #endif
 
 void Actor::startAnimActor(int f) {
-	if (_vm->_game.version >= 7 && !((_vm->_game.id == GID_FT) && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
-		switch (f) {
-		case 1001:
-			f = _initFrame;
-			break;
-		case 1002:
-			f = _walkFrame;
-			break;
-		case 1003:
-			f = _standFrame;
-			break;
-		case 1004:
-			f = _talkStartFrame;
-			break;
-		case 1005:
-			f = _talkStopFrame;
-			break;
-		default:
-			break;
-		}
+	switch (f) {
+	case 0x38:
+		f = _initFrame;
+		break;
+	case 0x39:
+		f = _walkFrame;
+		break;
+	case 0x3A:
+		f = _standFrame;
+		break;
+	case 0x3B:
+		f = _talkStartFrame;
+		break;
+	case 0x3C:
+		f = _talkStopFrame;
+		break;
+	default:
+		break;
+	}
 
-		if (_costume != 0) {
-			_animProgress = 0;
-			_needRedraw = true;
-			if (f == _initFrame)
-				_cost.reset();
-			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
-			_frame = f;
-		}
-	} else {
-		switch (f) {
-		case 0x38:
-			f = _initFrame;
-			break;
-		case 0x39:
-			f = _walkFrame;
-			break;
-		case 0x3A:
-			f = _standFrame;
-			break;
-		case 0x3B:
-			f = _talkStartFrame;
-			break;
-		case 0x3C:
-			f = _talkStopFrame;
-			break;
-		default:
-			break;
-		}
+	assert(f != 0x3E);
 
-		assert(f != 0x3E);
-
-		if (isInCurrentRoom() && _costume != 0) {
-			_animProgress = 0;
-			_needRedraw = true;
-			_cost.animCounter = 0;
-			// V1 - V2 games don't seem to need a _cost.reset() at this point.
-			// Causes Zak to lose his body in several scenes, see bug #1032
-			if (_vm->_game.version >= 3 && f == _initFrame) {
-				_cost.reset();
-				if (_vm->_game.heversion != 0) {
-					((ActorHE *)this)->_auxBlock.reset();
-				}
+	if (isInCurrentRoom() && _costume != 0) {
+		_animProgress = 0;
+		_needRedraw = true;
+		_cost.animCounter = 0;
+		// V1 - V2 games don't seem to need a _cost.reset() at this point.
+		// Causes Zak to lose his body in several scenes, see bug #1032
+		if (_vm->_game.version >= 3 && f == _initFrame) {
+			_cost.reset();
+			if (_vm->_game.heversion != 0) {
+				((ActorHE *)this)->_auxBlock.reset();
 			}
-			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
-			_frame = f;
 		}
+		_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
+		_frame = f;
 	}
 }
 
@@ -2652,6 +2616,42 @@ void Actor_v0::startAnimActor(int f) {
 
 	if (f == _standFrame)
 		setDirection(_facing);
+}
+
+void Actor_v7::startAnimActor(int f) {
+	if (_vm->_game.id == GID_FT && _vm->_game.platform == Common::kPlatformDOS && (_vm->_game.features & GF_DEMO)) {
+		Actor::animateActor(f);
+		return;
+	}
+
+	switch (f) {
+	case 1001:
+		f = _initFrame;
+		break;
+	case 1002:
+		f = _walkFrame;
+		break;
+	case 1003:
+		f = _standFrame;
+		break;
+	case 1004:
+		f = _talkStartFrame;
+		break;
+	case 1005:
+		f = _talkStopFrame;
+		break;
+	default:
+		break;
+	}
+
+	if (_costume != 0) {
+		_animProgress = 0;
+		_needRedraw = true;
+		if (f == _initFrame)
+			_cost.reset();
+		_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
+		_frame = f;
+	}
 }
 
 void Actor::animateActor(int anim) {
@@ -3646,12 +3646,12 @@ void Actor_v0::animateActor(int anim) {
 		if (dir == -1)
 			return;
 
-		_facing = normalizeAngle(oldDirToNewDir(dir));
+		_facing = normalizeAngle(0, oldDirToNewDir(dir));
 
 	} else {
 
 		if (anim >= 4 && anim <= 7)
-			_facing = normalizeAngle(oldDirToNewDir(dir));
+			_facing = normalizeAngle(0, oldDirToNewDir(dir));
 	}
 }
 

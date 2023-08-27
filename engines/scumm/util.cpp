@@ -62,7 +62,7 @@ int oldDirToNewDir(int dir) {
  */
 int toSimpleDir(int dirType, int dir) {
 	if (dirType) {
-		const int16 directions[] = { 22,  72, 107, 157, 202, 252, 287, 337 };
+		const int16 directions[] = { 22, 72, 107, 157, 202, 252, 287, 337 };
 		for (int i = 0; i < 7; i++)
 			if (dir >= directions[i] && dir <= directions[i+1])
 				return i+1;
@@ -90,12 +90,12 @@ int fromSimpleDir(int dirType, int dir) {
  * Normalize the given angle - that means, ensure it is positive, and
  * change it to the closest multiple of 45 degree by abusing toSimpleDir.
  */
-int normalizeAngle(int angle) {
+int normalizeAngle(int dirType, int angle) {
 	int temp;
 
 	temp = (angle + 360) % 360;
 
-	return toSimpleDir(1, temp) * 45;
+	return toSimpleDir(dirType, temp) * (dirType ? 45 : 90);
 }
 
 } // End of namespace Scumm

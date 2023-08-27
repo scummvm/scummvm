@@ -1719,6 +1719,8 @@ void ScummEngine::resetScumm() {
 			_actors[i] = new Actor_v2(this, i);
 		else if (_game.version == 3)
 			_actors[i] = new Actor_v3(this, i);
+		else if (_game.version >= 7)
+			_actors[i] = new Actor_v7(this, i);
 		else if (_game.heversion != 0)
 			_actors[i] = new ActorHE(this, i);
 		else

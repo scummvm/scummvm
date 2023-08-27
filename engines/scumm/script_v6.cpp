@@ -2069,7 +2069,9 @@ void ScummEngine_v6::o6_actorOps() {
 		break;
 	case SO_ACTOR_FACE:										/* set direction */
 		a->_moving &= ~MF_TURN;
-		a->setDirection(pop());
+		j = pop();
+		a->turnToDirection(j);
+		a->setDirection(j);
 		break;
 	case SO_ACTOR_TURN:										/* turn to direction */
 		a->turnToDirection(pop());
