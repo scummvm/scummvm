@@ -24,11 +24,13 @@
 
 #include "graphics/macgui/mactextwindow.h"
 
-#include "gui/widgets/richtext.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
+
+#include "gui/widgets/richtext.h"
+#include "gui/widgets/scrollbar.h"
 
 namespace GUI {
 
@@ -50,12 +52,10 @@ void ensureWM() {
 
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)
 	: Widget(boss, x, y, w, h, scale, tooltip)  {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
-	_type = kRichTextWidget;
 
 	_text = text;
 
-	ensureWM();
+	init();
 }
 
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, const Common::U32String &tooltip)
@@ -64,11 +64,46 @@ RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 
 RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip)
 	: Widget(boss, name, tooltip) {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
-	_type = kRichTextWidget;
+
 	_text = text;
 
+	init();
+}
+
+void RichTextWidget::init() {
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
+
+	_type = kRichTextWidget;
+
+	_verticalScroll = new ScrollBarWidget(this, _w, 0, 16, _h);
+	_verticalScroll->setTarget(this);
+	_scrolledX = 0;
+	_scrolledY = 0;
+
 	ensureWM();
+
+	_limitH = 140;
+}
+
+void RichTextWidget::recalc() {
+	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+	_limitH = _h;
+
+	//calculate virtual height
+	const int spacing = g_gui.xmlEval()->getVar("Global.Font.Height", 16); //on the bottom
+	int min = spacing, max = 0;
+
+	int h = max - min;
+
+	if (h <= _limitH) _scrolledY = 0;
+	if (_scrolledY > h - _limitH) _scrolledY = 0;
+
+	_verticalScroll->_numEntries = h;
+	_verticalScroll->_currentPos = _scrolledY;
+	_verticalScroll->_entriesPerPage = _limitH;
+	_verticalScroll->_singleStep = kLineHeight;
+	_verticalScroll->setPos(_w, _scrolledY);
+	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
 }
 
 void RichTextWidget::createWidget() {
@@ -92,6 +127,8 @@ void RichTextWidget::createWidget() {
 	_txtWnd->setMarkdownText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
+
+	recalc();
 }
 
 void RichTextWidget::reflowLayout() {
@@ -108,8 +145,14 @@ void RichTextWidget::drawWidget() {
 	_txtWnd->draw(_surface);
 
 	g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), *_surface);
+}
 
-	warning("DRAW");
+void RichTextWidget::draw() {
+	Widget::draw();
+
+	if (_verticalScroll->isVisible()) {
+		_verticalScroll->draw();
+	}
 }
 
 } // End of namespace GUI
