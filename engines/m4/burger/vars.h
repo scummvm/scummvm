@@ -63,6 +63,7 @@ enum global_triggers {
 	gUNPOOF = 10021,
 	gTELEPROTED1 = 10024,
 	gTELEPROTED2 = 10025,
+	g10028 = 10028,
 
 	CALLED_EACH_LOOP = 32764,
 
