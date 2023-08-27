@@ -51,7 +51,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 { // Found in french ADI 2 Francais-Maths CE2. Exact version not specified.
@@ -65,7 +65,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -79,7 +79,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -93,7 +93,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -107,7 +107,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
@@ -124,7 +124,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -152,7 +152,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
@@ -169,7 +169,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480,
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 

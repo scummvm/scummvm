@@ -823,7 +823,7 @@ void Inter_v2::o2_initScreen() {
 
 		}
 	}
-	else if (_vm->getGameType() == kGameTypeAdibou1) {
+	else if (_vm->getGameType() == kGameTypeAdibou1 || _vm->getGameType() == kGameTypeAdi2) {
 		if (_vm->is640x400() && width == 640 && height == 480) {
 			// Force height to 400: the game is mostly scaled from the 320x200 version and
 			// never makes use of the space beyond height 400, so we can get rid of it.
