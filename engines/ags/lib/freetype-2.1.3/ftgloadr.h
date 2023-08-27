@@ -41,13 +41,10 @@
 #define AGS_LIB_FREETYPE_FTGLOADR_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/freetype.h"
+#include "graphics/fonts/freetype.h"
 
 namespace AGS3 {
 namespace FreeType213 {
-
-// FT_BEGIN_HEADER
 
 
 typedef struct FT_GlyphLoaderRec_ *FT_GlyphLoader;
@@ -101,49 +98,37 @@ typedef struct  FT_GlyphLoaderRec_ {
 
 
 /* create new empty glyph loader */
-FT_BASE(FT_Error)
-FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader);
+FT_Error FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader);
 
 /* add an extra points table to a glyph loader */
-FT_BASE(FT_Error)
-FT_GlyphLoader_CreateExtra(FT_GlyphLoader loader);
+FT_Error FT_GlyphLoader_CreateExtra(FT_GlyphLoader loader);
 
 /* destroy a glyph loader */
-FT_BASE(void)
-FT_GlyphLoader_Done(FT_GlyphLoader loader);
+void FT_GlyphLoader_Done(FT_GlyphLoader loader);
 
 /* reset a glyph loader (frees everything int it) */
-FT_BASE(void)
-FT_GlyphLoader_Reset(FT_GlyphLoader loader);
+void FT_GlyphLoader_Reset(FT_GlyphLoader loader);
 
 /* rewind a glyph loader */
-FT_BASE(void)
-FT_GlyphLoader_Rewind(FT_GlyphLoader loader);
+void FT_GlyphLoader_Rewind(FT_GlyphLoader loader);
 
 /* check that there is enough room to add 'n_points' and 'n_contours' */
 /* to the glyph loader                                                */
-FT_BASE(FT_Error)
-FT_GlyphLoader_CheckPoints(FT_GlyphLoader loader, FT_UInt n_points, FT_UInt n_contours);
+FT_Error FT_GlyphLoader_CheckPoints(FT_GlyphLoader loader, FT_UInt n_points, FT_UInt n_contours);
 
 /* check that there is enough room to add 'n_subs' sub-glyphs to */
 /* a glyph loader                                                */
-FT_BASE(FT_Error)
-FT_GlyphLoader_CheckSubGlyphs(FT_GlyphLoader loader, FT_UInt n_subs);
+FT_Error FT_GlyphLoader_CheckSubGlyphs(FT_GlyphLoader loader, FT_UInt n_subs);
 
 /* prepare a glyph loader, i.e. empty the current glyph */
-FT_BASE(void)
-FT_GlyphLoader_Prepare(FT_GlyphLoader loader);
+void FT_GlyphLoader_Prepare(FT_GlyphLoader loader);
 
 /* add the current glyph to the base glyph */
-FT_BASE(void)
-FT_GlyphLoader_Add(FT_GlyphLoader loader);
+void FT_GlyphLoader_Add(FT_GlyphLoader loader);
 
 /* copy points from one glyph loader to another */
-FT_BASE(FT_Error)
-FT_GlyphLoader_CopyPoints(FT_GlyphLoader target, FT_GlyphLoader source);
+FT_Error FT_GlyphLoader_CopyPoints(FT_GlyphLoader target, FT_GlyphLoader source);
 
-
-// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

@@ -37,20 +37,17 @@
 /***************************************************************************/
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/ftgloadr.h"
+#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahhint.h"
 #include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
 
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_gloader
 
 namespace AGS3 {
 namespace FreeType213 {
 
 
 /* create a new glyph loader */
-FT_BASE_DEF(FT_Error)
-FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader) {
+FT_Error FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader) {
 	FT_GlyphLoader loader;
 	FT_Error error;
 
@@ -63,8 +60,7 @@ FT_GlyphLoader_New(FT_Memory memory, FT_GlyphLoader *aloader) {
 
 
 /* rewind the glyph loader - reset counters to 0 */
-FT_BASE_DEF(void)
-FT_GlyphLoader_Rewind(FT_GlyphLoader loader) {
+void FT_GlyphLoader_Rewind(FT_GlyphLoader loader) {
 	FT_GlyphLoad base = &loader->base;
 	FT_GlyphLoad current = &loader->current;
 
@@ -78,8 +74,7 @@ FT_GlyphLoader_Rewind(FT_GlyphLoader loader) {
 
 /* reset the glyph loader, frees all allocated tables */
 /* and starts from zero                               */
-FT_BASE_DEF(void)
-FT_GlyphLoader_Reset(FT_GlyphLoader loader) {
+void FT_GlyphLoader_Reset(FT_GlyphLoader loader) {
 	FT_Memory memory = loader->memory;
 
 	FT_FREE(loader->base.outline.points);
@@ -97,8 +92,7 @@ FT_GlyphLoader_Reset(FT_GlyphLoader loader) {
 
 
 /* delete a glyph loader */
-FT_BASE_DEF(void)
-FT_GlyphLoader_Done(FT_GlyphLoader loader) {
+void FT_GlyphLoader_Done(FT_GlyphLoader loader) {
 	if (loader) {
 		FT_Memory memory = loader->memory;
 
@@ -123,8 +117,7 @@ static void FT_GlyphLoader_Adjust_Points(FT_GlyphLoader loader) {
 }
 
 
-FT_BASE_DEF(FT_Error)
-FT_GlyphLoader_CreateExtra(FT_GlyphLoader loader) {
+FT_Error FT_GlyphLoader_CreateExtra(FT_GlyphLoader loader) {
 	FT_Error error;
 	FT_Memory memory = loader->memory;
 
@@ -149,8 +142,7 @@ static void FT_GlyphLoader_Adjust_Subglyphs(FT_GlyphLoader loader) {
 /* function reallocates its outline tables if necessary.  Note that it   */
 /* DOESN'T change the number of points within the loader!                */
 /*                                                                       */
-FT_BASE_DEF(FT_Error)
-FT_GlyphLoader_CheckPoints(FT_GlyphLoader loader, FT_UInt n_points, FT_UInt n_contours) {
+FT_Error FT_GlyphLoader_CheckPoints(FT_GlyphLoader loader, FT_UInt n_points, FT_UInt n_contours) {
 	FT_Memory memory = loader->memory;
 	FT_Error error = FT_Err_Ok;
 	FT_Outline *base = &loader->base.outline;
@@ -200,8 +192,7 @@ Exit:
 /* reallocates its subglyphs table if necessary.  Note that it DOES */
 /* NOT change the number of subglyphs within the loader!            */
 /*                                                                  */
-FT_BASE_DEF(FT_Error)
-FT_GlyphLoader_CheckSubGlyphs(FT_GlyphLoader loader, FT_UInt n_subs) {
+FT_Error FT_GlyphLoader_CheckSubGlyphs(FT_GlyphLoader loader, FT_UInt n_subs) {
 	FT_Memory memory = loader->memory;
 	FT_Error error = FT_Err_Ok;
 	FT_UInt new_max, old_max;
@@ -227,8 +218,7 @@ Exit:
 
 
 /* prepare loader for the addition of a new glyph on top of the base one */
-FT_BASE_DEF(void)
-FT_GlyphLoader_Prepare(FT_GlyphLoader loader) {
+void FT_GlyphLoader_Prepare(FT_GlyphLoader loader) {
 	FT_GlyphLoad current = &loader->current;
 
 	current->outline.n_points = 0;
@@ -241,8 +231,7 @@ FT_GlyphLoader_Prepare(FT_GlyphLoader loader) {
 
 
 /* add current glyph to the base image - and prepare for another */
-FT_BASE_DEF(void)
-FT_GlyphLoader_Add(FT_GlyphLoader loader) {
+void FT_GlyphLoader_Add(FT_GlyphLoader loader) {
 	FT_GlyphLoad base = &loader->base;
 	FT_GlyphLoad current = &loader->current;
 
@@ -265,8 +254,7 @@ FT_GlyphLoader_Add(FT_GlyphLoader loader) {
 }
 
 
-FT_BASE_DEF(FT_Error)
-FT_GlyphLoader_CopyPoints(FT_GlyphLoader target, FT_GlyphLoader source) {
+FT_Error FT_GlyphLoader_CopyPoints(FT_GlyphLoader target, FT_GlyphLoader source) {
 	FT_Error error;
 	FT_UInt num_points = source->base.outline.n_points;
 	FT_UInt num_contours = source->base.outline.n_contours;
