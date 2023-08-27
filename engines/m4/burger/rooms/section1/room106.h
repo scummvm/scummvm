@@ -30,6 +30,7 @@ namespace Burger {
 namespace Rooms {
 
 class Room106 : public Room {
+	static const WilburMatch MATCH[];
 	static const seriesPlayBreak PLAY1[];
 	static const seriesPlayBreak PLAY2[];
 	static const seriesPlayBreak PLAY3[];
@@ -38,11 +39,10 @@ class Room106 : public Room {
 	static const seriesPlayBreak PLAY6[];
 	static const seriesPlayBreak PLAY7[];
 private:
-	Common::Array<WilburMatch> _MATCH;
 	const char *_digi1 = nullptr;
-	int _val1 = 0;
+	static long _val1;
 	int _val2 = 0;
-	static int _val3;
+	static long _val3;
 
 	void setHotspots();
 	void loadSeries();

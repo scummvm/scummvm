@@ -50,6 +50,13 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+const WilburMatch Room106::MATCH[] = {
+	{ "JAWZ O' LIFE", "GATE",  2, nullptr, 0, &_val1, 2 },
+	{ "JAWZ O' LIFE", "CHAIN", 2, nullptr, 0, &_val1, 2 },
+	{ "JAWZ O' LIFE", "LOCK",  2, nullptr, 0, &_val1, 2 },
+	WILBUR_MATCH_END
+};
+
 const seriesPlayBreak Room106::PLAY1[] = {
 	{ 0, -1, "106d003a", 2, 255, -1, 0, 0, &_val3, 1 },
 	{ 0, -1, "106d003b", 2, 255, -1, 0, 0, &_val3, 2 },
@@ -113,7 +120,8 @@ const seriesPlayBreak Room106::PLAY7[] = {
 	PLAY_BREAK_END
 };
 
-int Room106::_val3;
+long Room106::_val1;
+long Room106::_val3;
 
 void Room106::preload() {
 	_G(player).walker_in_this_scene = _G(game).room_id != 137 &&
@@ -122,11 +130,6 @@ void Room106::preload() {
 
 void Room106::init() {
 	_val3 = 0;
-
-	_MATCH.clear();
-	_MATCH.push_back(WilburMatch("JAWZ O' LIFE", "GATE", 2, nullptr, 0, &_val1, 2));
-	_MATCH.push_back(WilburMatch("JAWZ O' LIFE", "CHAIN", 2, nullptr, 0, &_val1, 2));
-	_MATCH.push_back(WilburMatch("JAWZ O' LIFE", "LOCK", 2, nullptr, 0, &_val1, 2));
 
 	digi_preload("100_001");
 	digi_preload("106_101");
@@ -373,7 +376,7 @@ void Room106::parser() {
 		if (player_said_any("GEAR", "LOOK AT") && player_said("MAIN STREET")) {
 			disable_player_commands_and_fade_init(1001);
 			_G(player).command_ready = false;
-		} else if (_G(walker).wilbur_match(_MATCH)) {
+		} else if (_G(walker).wilbur_match(MATCH)) {
 			_G(player).command_ready = false;
 		}
 	}

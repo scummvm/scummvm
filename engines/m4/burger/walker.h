@@ -30,22 +30,16 @@ namespace M4 {
 namespace Burger {
 
 struct WilburMatch {
-	const char *_word0 = nullptr;
-	const char *_word1 = nullptr;
-	int _trigger = -1;
-	const long *_testVariable = nullptr;
-	int _testValue = 0;
-	int *_newVariable = nullptr;
-	int _newValue = 0;
-
-	WilburMatch() {}
-	WilburMatch(const char *word0, const char *word1, int trigger,
-		const long *testVariable, int testValue, int *newVariable,
-		int newValue) : _word0(word0), _word1(word1),
-		_trigger(trigger), _testVariable(testVariable),
-		_testValue(testValue), _newVariable(newVariable),
-		_newValue(newValue) {}
+	const char *_word0;
+	const char *_word1;
+	int _trigger;
+	const long *_testVariable;
+	int _testValue;
+	long *_newVariable;
+	int _newValue;
 };
+
+#define WILBUR_MATCH_END { nullptr, nullptr, -1, nullptr, 0, nullptr, 0 }
 
 class Walker : public M4::Walker {
 private:
@@ -120,7 +114,7 @@ public:
 
 	bool wilbur_parser(const char **list);
 
-	bool wilbur_match(const Common::Array<WilburMatch> &list);
+	bool wilbur_match(const WilburMatch *list);
 
 	void wilbur_poof();
 	void wilbur_unpoof();

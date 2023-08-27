@@ -29,6 +29,8 @@
 namespace M4 {
 namespace Burger {
 
+#define FLAGS_COUNT 512
+
 enum {
 	V000 =   0,
 	V001 =   1,
@@ -549,9 +551,12 @@ enum {
 	V511 = 511
 };
 
-class Flags : public Common::Array<long> {
+class Flags {
 private:
 	Common::Array<byte> _convSave;
+public:
+	static long _flags[FLAGS_COUNT];
+
 public:
 	Flags();
 
@@ -580,6 +585,14 @@ public:
 	 * Save/load values to a save file
 	 */
 	void sync(Common::Serializer &s);
+
+	size_t size() const {
+		return FLAGS_COUNT;
+	}
+	long &operator[](uint idx) {
+		assert(idx < FLAGS_COUNT);
+		return _flags[idx];
+	}
 };
 
 } // namespace Burger
