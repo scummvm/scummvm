@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-22 22:37+0000\n"
+"POT-Creation-Date: 2023-08-26 10:25+0000\n"
 "PO-Revision-Date: 2023-07-27 16:23+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5247,15 +5247,15 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:1216
 #: engines/mohawk/detection_tables.h:1231
 #: engines/mohawk/detection_tables.h:1277
-#: engines/mohawk/detection_tables.h:1383
-#: engines/mohawk/detection_tables.h:1398
-#: engines/mohawk/detection_tables.h:1413
-#: engines/mohawk/detection_tables.h:1431
-#: engines/mohawk/detection_tables.h:1446
-#: engines/mohawk/detection_tables.h:2479
-#: engines/mohawk/detection_tables.h:2494
-#: engines/mohawk/detection_tables.h:3564
-#: engines/mohawk/detection_tables.h:3579 engines/myst3/detection.cpp:142
+#: engines/mohawk/detection_tables.h:1399
+#: engines/mohawk/detection_tables.h:1414
+#: engines/mohawk/detection_tables.h:1429
+#: engines/mohawk/detection_tables.h:1447
+#: engines/mohawk/detection_tables.h:1462
+#: engines/mohawk/detection_tables.h:2495
+#: engines/mohawk/detection_tables.h:2510
+#: engines/mohawk/detection_tables.h:3612
+#: engines/mohawk/detection_tables.h:3627 engines/myst3/detection.cpp:142
 #: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5275
 #: engines/sci/detection_tables.h:5283 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
