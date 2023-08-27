@@ -40,12 +40,17 @@
 /*                                                                         */
 /***************************************************************************/
 
+#include <ft2build.h>
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahglyph.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahangles.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahglobal.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/aherrors.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahglyph.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahangles.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahglobal.h"
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahtypes.h"
+
+// util.h for ABS
+#include "common/util.h"
+
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -270,8 +275,7 @@ Exit:
 	return n;
 }
 
-FT_LOCAL_DEF(FT_Error)
-ah_outline_new(FT_Memory memory, AH_Outline *aoutline) {
+FT_Error ah_outline_new(FT_Memory memory, AH_Outline *aoutline) {
 	FT_Error error;
 	AH_Outline outline;
 
@@ -283,8 +287,7 @@ ah_outline_new(FT_Memory memory, AH_Outline *aoutline) {
 	return error;
 }
 
-FT_LOCAL_DEF(void)
-ah_outline_done(AH_Outline outline) {
+void ah_outline_done(AH_Outline outline) {
 	FT_Memory memory = outline->memory;
 
 	FT_FREE(outline->horz_edges);
@@ -295,8 +298,7 @@ ah_outline_done(AH_Outline outline) {
 	FT_FREE(outline);
 }
 
-FT_LOCAL_DEF(void)
-ah_outline_save(AH_Outline outline, AH_Loader gloader) {
+void ah_outline_save(AH_Outline outline, AH_Loader gloader) {
 	AH_Point point = outline->points;
 	AH_Point point_limit = point + outline->num_points;
 	FT_Vector *vec = gloader->current.outline.points;
@@ -316,8 +318,7 @@ ah_outline_save(AH_Outline outline, AH_Loader gloader) {
 	}
 }
 
-FT_LOCAL_DEF(FT_Error)
-ah_outline_load(AH_Outline outline, FT_Face face) {
+FT_Error ah_outline_load(AH_Outline outline, FT_Face face) {
 	FT_Memory memory = outline->memory;
 	FT_Error error = FT_Err_Ok;
 	FT_Outline *source = &face->glyph->outline;
@@ -523,8 +524,7 @@ Exit:
 	return error;
 }
 
-FT_LOCAL_DEF(void)
-ah_setup_uv(AH_Outline outline, AH_UV source) {
+void ah_setup_uv(AH_Outline outline, AH_UV source) {
 	AH_Point point = outline->points;
 	AH_Point point_limit = point + outline->num_points;
 
@@ -671,8 +671,7 @@ static void ah_outline_compute_inflections(AH_Outline outline) {
 	}
 }
 
-FT_LOCAL_DEF(void)
-ah_outline_compute_segments(AH_Outline outline) {
+void ah_outline_compute_segments(AH_Outline outline) {
 	int dimension;
 	AH_Segment segments;
 	FT_Int *p_num_segments;
@@ -887,8 +886,7 @@ ah_outline_compute_segments(AH_Outline outline) {
 	}
 }
 
-FT_LOCAL_DEF(void)
-ah_outline_link_segments(AH_Outline outline) {
+void ah_outline_link_segments(AH_Outline outline) {
 	AH_Segment segments;
 	AH_Segment segment_limit;
 	int dimension;
@@ -1203,16 +1201,14 @@ static void ah_outline_compute_edges(AH_Outline outline) {
 	}
 }
 
-FT_LOCAL_DEF(void)
-ah_outline_detect_features(AH_Outline outline) {
+void ah_outline_detect_features(AH_Outline outline) {
 	ah_outline_compute_segments(outline);
 	ah_outline_link_segments(outline);
 	ah_outline_compute_edges(outline);
 	ah_outline_compute_inflections(outline);
 }
 
-FT_LOCAL_DEF(void)
-ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals face_globals) {
+void ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals face_globals) {
 	AH_Edge edge = outline->horz_edges;
 	AH_Edge edge_limit = edge + outline->num_hedges;
 	AH_Globals globals = &face_globals->design;
@@ -1315,8 +1311,7 @@ ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals face_globals) 
 	}
 }
 
-FT_LOCAL_DEF(void)
-ah_outline_scale_blue_edges(AH_Outline outline, AH_Face_Globals globals) {
+void ah_outline_scale_blue_edges(AH_Outline outline, AH_Face_Globals globals) {
 	AH_Edge edge = outline->horz_edges;
 	AH_Edge edge_limit = edge + outline->num_hedges;
 	FT_Pos delta;
