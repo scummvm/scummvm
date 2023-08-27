@@ -41,28 +41,20 @@
 #define AGS_LIB_FREETYPE_FTMEMORY_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/config/ftconfig.h"
-#include "engines/ags/lib/freetype-2.1.3/fttypes.h"
+#include <ft2build.h>
+#include FT_TYPES_H
 
 namespace AGS3 {
 namespace FreeType213 {
-
-// FT_BEGIN_HEADER
 
 
 #undef  FT_SET_ERROR
 #define FT_SET_ERROR(expression) ((error = (expression)) != 0)
 
 
-FT_BASE(FT_Error)
-FT_Alloc(FT_Memory memory, FT_Long size, void **P);
-
-FT_BASE(FT_Error)
-FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P);
-
-FT_BASE(void)
-FT_Free(FT_Memory memory, void **P);
+FT_Error FT_Alloc(FT_Memory memory, FT_Long size, void **P);
+FT_Error FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P);
+void FT_Free(FT_Memory memory, void **P);
 
 
 #define FT_MEM_SET(dest, byte, count) ft_memset(dest, byte, count)
@@ -110,8 +102,6 @@ FT_Free(FT_Memory memory, void **P);
 #define FT_ALLOC_ARRAY(_pointer_, _count_, _type_) FT_SET_ERROR(FT_MEM_ALLOC(_pointer_, (_count_) * sizeof(_type_)))
 #define FT_REALLOC_ARRAY(_pointer_, _old_, _new_, _type_) FT_SET_ERROR(FT_MEM_REALLOC(_pointer_, (_old_) * sizeof(_type_), (_new_) * sizeof(_type_)))
 
-
-// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
