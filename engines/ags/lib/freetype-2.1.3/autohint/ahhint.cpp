@@ -790,9 +790,8 @@ void ah_hinter_done(AH_Hinter hinter) {
 }
 
 /* create a new empty hinter object */
-FT_Error ah_hinter_new(FT_Library library, AH_Hinter *ahinter) {
+FT_Error ah_hinter_new(FT_Memory memory, AH_Hinter *ahinter) {
 	AH_Hinter hinter = 0;
-	FT_Memory memory = library->memory;
 	FT_Error error;
 
 	*ahinter = 0;
