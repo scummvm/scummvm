@@ -72,6 +72,7 @@ typedef struct  FT_SubGlyphRec_ {
 
 } FT_SubGlyphRec;
 
+typedef FT_SubGlyphRec *FT_SubGlyph;
 
 typedef struct  FT_GlyphLoadRec_ {
 	FT_Outline   outline;        /* outline             */
