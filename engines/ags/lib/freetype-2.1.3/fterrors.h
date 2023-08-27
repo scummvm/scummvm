@@ -21,11 +21,11 @@
 
 /***************************************************************************/
 /*                                                                         */
-/*  ftutil.c                                                               */
+/*  fterrors.h                                                             */
 /*                                                                         */
-/*    FreeType utility file for memory and list management (body).         */
+/*    FreeType error codes                                                 */
 /*                                                                         */
-/*  Copyright 2002 by                                                      */
+/*  Copyright 1996-2001, 2002 by                                           */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -36,72 +36,15 @@
 /*                                                                         */
 /***************************************************************************/
 
-#include <ft2build.h>
-#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
-#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
-
-#include "common/debug.h"
+#ifndef AGS_LIB_FREETYPE_FTERRORS_H
+#define AGS_LIB_FREETYPE_FTERRORS_H
 
 
-namespace AGS3 {
-namespace FreeType213 {
+#define FT_Err_Ok 0x00
+#define FT_Err_Invalid_Argument 0x06
+#define FT_Err_Unimplemented_Feature 0x07
+#define FT_Err_Invalid_Composite 0x15
+#define FT_Err_Out_Of_Memory 0x40
 
 
-/**** MEMORY  MANAGEMENT ****/
-
-FT_Error FT_Alloc(FT_Memory memory, FT_Long size, void **P) {
-	assert(P != 0);
-
-	if (size > 0) {
-		*P = memory->alloc(memory, size);
-		if (!*P) {
-			warning("FT_Alloc: Out of memory? (%ld requested)\n", size);
-			return FT_Err_Out_Of_Memory;
-		}
-		FT_MEM_ZERO(*P, size);
-	} else
-		*P = NULL;
-
-	return FT_Err_Ok;
-}
-
-FT_Error FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P) {
-	void *Q;
-
-	assert(P != 0);
-
-	/* if the original pointer is NULL, call FT_Alloc() */
-	if (!*P)
-		return FT_Alloc(memory, size, P);
-
-	/* if the new block if zero-sized, clear the current one */
-	if (size <= 0) {
-		FT_Free(memory, P);
-		return FT_Err_Ok;
-	}
-
-	Q = memory->realloc(memory, current, size, *P);
-	if (!Q)
-		goto Fail;
-
-	if (size > current)
-		FT_MEM_ZERO((char *)Q + current, size - current);
-
-	*P = Q;
-	return FT_Err_Ok;
-
-Fail:
-	warning("FT_Realloc: Failed (current %ld, requested %ld)\n", current, size);
-	return FT_Err_Out_Of_Memory;
-}
-
-void FT_Free(FT_Memory memory, void **P) {
-	if (P && *P) {
-		memory->free(memory, *P);
-		*P = 0;
-	}
-}
-
-
-} // End of namespace FreeType213
-} // End of namespace AGS3
+#endif /* AGS_LIB_FREETYPE_FTERRORS_H */
