@@ -49,7 +49,7 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
-const WilburMatch Room142::_MATCH[] = {
+const WilburMatch Room142::MATCH[] = {
 	{ "GEAR", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
 	{ "LOOK AT", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
 	{ "GEAR", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
@@ -674,7 +674,7 @@ void Room142::parser() {
 			disable_player_commands_and_fade_init(1015);
 		} else if (player_said_any("GEAR", "LOOK AT") && player_said("AUNT POLLY'S HOUSE")) {
 			disable_player_commands_and_fade_init(1017);
-		} else if (!_G(walker).wilbur_match(_MATCH)) {
+		} else if (!_G(walker).wilbur_match(MATCH)) {
 			return;
 		}
 	}

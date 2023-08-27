@@ -30,7 +30,7 @@ namespace Burger {
 namespace Rooms {
 
 class Room142 : public Room {
-	static const WilburMatch _MATCH[];
+	static const WilburMatch MATCH[];
 	static const seriesPlayBreak PLAY1[];
 	static const seriesPlayBreak PLAY2[];
 	static const seriesPlayBreak PLAY3[];
