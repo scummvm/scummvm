@@ -304,8 +304,36 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 	/* if glyph not cached yet */
 	if (!f->cached_glyphs[glyph_number].is_cached) {
 		FT_Glyph new_glyph;
+
 		/* load the font glyph */
+
+#ifdef NO_FT213_AUTOHINT
 		Load_Glyph(f->face, glyph_number, FT_LOAD_DEFAULT);
+#else
+		FT_Int32 load_flags = FT_LOAD_DEFAULT;
+		FT_GlyphSlot slot = f->face->glyph;
+
+		FreeType213::ah_hinter_load_glyph(ft_hinter, slot, f->face->size, glyph_number, FT_LOAD_DEFAULT);
+
+		/* compute the advance */
+		if (load_flags & FT_LOAD_VERTICAL_LAYOUT) {
+			slot->advance.x = 0;
+			slot->advance.y = slot->metrics.vertAdvance;
+		} else {
+			slot->advance.x = slot->metrics.horiAdvance;
+			slot->advance.y = 0;
+		}
+
+		/* compute the linear advance in 16.16 pixels */
+		if ((load_flags & FT_LOAD_LINEAR_DESIGN) == 0) {
+			FT_UInt EM = f->face->units_per_EM;
+			FT_Size_Metrics *metrics = &f->face->size->metrics;
+
+			slot->linearHoriAdvance = FT_MulDiv(slot->linearHoriAdvance, (FT_Long)metrics->x_ppem << 16, EM);
+			slot->linearVertAdvance = FT_MulDiv(slot->linearVertAdvance, (FT_Long)metrics->y_ppem << 16, EM);
+		}
+#endif
+
 		Get_Glyph(f->face->glyph, &new_glyph);
 
 		/* ok, this glyph is now cached */
