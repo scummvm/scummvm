@@ -45,24 +45,18 @@
 #define AGS_LIB_FREETYPE_AHGLOBAL_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahtypes.h"
-#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
+#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahtypes.h"
 
 namespace AGS3 {
 namespace FreeType213 {
-
-// FT_BEGIN_HEADER
 
 
 #define AH_IS_TOP_BLUE(b) ((b) == AH_BLUE_CAPITAL_TOP || (b) == AH_BLUE_SMALL_TOP)
 
 /* compute global metrics automatically */
-FT_LOCAL(FT_Error)
-ah_hinter_compute_globals(AH_Hinter hinter);
+FT_Error ah_hinter_compute_globals(AH_Hinter hinter);
 
-
-// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3

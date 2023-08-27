@@ -41,8 +41,8 @@
 /***************************************************************************/
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahangles.h"
+#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahangles.h"
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -85,8 +85,7 @@ const AH_Angle ah_arctan[1L << AH_ATAN_BITS] = {
 	63, 63, 63, 63, 63, 64, 64, 64
 };
 
-FT_LOCAL_DEF(AH_Angle)
-ah_angle(FT_Vector *v) {
+AH_Angle ah_angle(FT_Vector *v) {
 	FT_Pos dx, dy;
 	AH_Angle angle;
 
@@ -139,8 +138,7 @@ ah_angle(FT_Vector *v) {
 }
 
 
-FT_LOCAL_DEF(AH_Angle)
-ah_angle_diff(AH_Angle angle1, AH_Angle angle2) {
+AH_Angle ah_angle_diff(AH_Angle angle1, AH_Angle angle2) {
 	AH_Angle delta;
 
 	delta = (angle2 - angle1);
