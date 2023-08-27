@@ -45,13 +45,11 @@
 #define AGS_LIB_FREETYPE_AHGLYPH_H
 
 
-#include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/modules/autohint/ahtypes.h"
+#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/autohint/ahtypes.h"
 
 namespace AGS3 {
 namespace FreeType213 {
-
-// FT_BEGIN_HEADER
 
 
 typedef enum  AH_UV_ {
@@ -66,40 +64,19 @@ typedef enum  AH_UV_ {
 } AH_UV;
 
 
-FT_LOCAL(void)
-ah_setup_uv(AH_Outline outline, AH_UV source);
+void ah_setup_uv(AH_Outline outline, AH_UV source);
 
 /* AH_OutlineRec functions - they should be typically called in this order */
+FT_Error ah_outline_new(FT_Memory memory, AH_Outline *aoutline);
+FT_Error ah_outline_load(AH_Outline outline, FT_Face face);
+void ah_outline_compute_segments(AH_Outline outline);
+void ah_outline_link_segments(AH_Outline outline);
+void ah_outline_detect_features(AH_Outline outline);
+void ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals globals);
+void ah_outline_scale_blue_edges(AH_Outline outline, AH_Face_Globals globals);
+void ah_outline_save(AH_Outline outline, AH_Loader loader);
+void ah_outline_done(AH_Outline outline);
 
-FT_LOCAL(FT_Error)
-ah_outline_new(FT_Memory memory, AH_Outline *aoutline);
-
-FT_LOCAL(FT_Error)
-ah_outline_load(AH_Outline outline, FT_Face face);
-
-FT_LOCAL(void)
-ah_outline_compute_segments(AH_Outline outline);
-
-FT_LOCAL(void)
-ah_outline_link_segments(AH_Outline outline);
-
-FT_LOCAL(void)
-ah_outline_detect_features(AH_Outline outline);
-
-FT_LOCAL(void)
-ah_outline_compute_blue_edges(AH_Outline outline, AH_Face_Globals globals);
-
-FT_LOCAL(void)
-ah_outline_scale_blue_edges(AH_Outline outline, AH_Face_Globals globals);
-
-FT_LOCAL(void)
-ah_outline_save(AH_Outline outline, AH_Loader loader);
-
-FT_LOCAL(void)
-ah_outline_done(AH_Outline outline);
-
-
-// FT_END_HEADER
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
