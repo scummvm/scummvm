@@ -37,11 +37,6 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 	g_nancy->_resource->loadImage(imageName, _image);
 
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		// Hacky fix for load/save menu
-		_image.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
-	}
-
 	char desc[0x20];
 	stream.read(desc, 0x20);
 	desc[0x1F] = '\0';

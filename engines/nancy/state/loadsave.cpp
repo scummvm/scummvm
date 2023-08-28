@@ -219,8 +219,10 @@ void LoadSaveMenu::init() {
 		_loadSaveData->_blinkingCursorSrc.height(),
 		g_nancy->_graphicsManager->getScreenPixelFormat());
 	_blinkingCursorOverlay.setTransparent(true);
-	_blinkingCursorOverlay._drawSurface.blitFrom(_highlightFont->getImageSurface(), _loadSaveData->_blinkingCursorSrc, Common::Point());
 	_blinkingCursorOverlay.setVisible(false);
+	_blinkingCursorOverlay._drawSurface.clear(_blinkingCursorOverlay._drawSurface.getTransparentColor());
+	_blinkingCursorOverlay._drawSurface.transBlitFrom(_highlightFont->getImageSurface(), _loadSaveData->_blinkingCursorSrc,
+		Common::Point(), g_nancy->_graphicsManager->getTransColor());
 
 	// Load the "Your game has been saved" popup graphic
 	if (_loadSaveData->_gameSavedPopup.size()) {
