@@ -166,7 +166,7 @@ void SetupMenu::run() {
 		float endPos = scroll->getPos();
 
 		if (endPos != startPos) {
-			Audio::Mixer::SoundType type;
+			Audio::Mixer::SoundType type = Audio::Mixer::SoundType::kSpeechSoundType;
 			switch (i) {
 			case 0 :
 				type = Audio::Mixer::SoundType::kSpeechSoundType;
@@ -179,6 +179,8 @@ void SetupMenu::run() {
 			case 2 :
 				type = Audio::Mixer::SoundType::kSFXSoundType;
 				ConfMan.setInt("sfx_volume", endPos * 255, ConfMan.getActiveDomainName());
+				break;
+			default:
 				break;
 			}
 			
