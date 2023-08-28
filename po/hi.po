@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-27 13:08+0000\n"
+"POT-Creation-Date: 2023-08-28 16:55+0000\n"
 "PO-Revision-Date: 2023-04-23 06:53+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5784,19 +5784,19 @@ msgstr ""
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
 msgid "Move up"
 msgstr "ऊपर को चलें"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
 msgid "Move down"
 msgstr "नीचे को चलें"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
 msgid "Move left"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
 #, fuzzy
 msgid "Move right"
 msgstr "दायें मुड़िए"
@@ -6618,6 +6618,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr ""
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
+#: engines/nancy/input.cpp:203
 msgid "Open main menu"
 msgstr ""
 
@@ -6898,32 +6899,32 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/input.cpp:153
+#: engines/nancy/input.cpp:159
 msgid "Left Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:160
+#: engines/nancy/input.cpp:166
 msgid "Right Click Interact"
 msgstr "राइट क्लिक इंटरैक्ट"
 
-#: engines/nancy/input.cpp:191
+#: engines/nancy/input.cpp:197
 msgid "Fast move modifier"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:35
+#: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:36
+#: engines/nancy/metaengine.cpp:39
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:46
+#: engines/nancy/metaengine.cpp:49
 msgid "Character Speech"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:47
+#: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""

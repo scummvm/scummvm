@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-27 13:08+0000\n"
+"POT-Creation-Date: 2023-08-28 16:55+0000\n"
 "PO-Revision-Date: 2023-08-14 10:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6042,19 +6042,19 @@ msgstr "チートモードを有効化"
 msgid "Debug info and level selection becomes available"
 msgstr "デバッグ情報とレベル選択を利用可能にする"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
 msgid "Move up"
 msgstr "上"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
 msgid "Move down"
 msgstr "下"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
 msgid "Move left"
 msgstr "左に行く"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
 msgid "Move right"
 msgstr "右に行く"
 
@@ -6936,6 +6936,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "ゲームはポーズされます。何かキーを押すと続行します。"
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
+#: engines/nancy/input.cpp:203
 msgid "Open main menu"
 msgstr "メインメニューを開く"
 
@@ -7246,34 +7247,34 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "無効なセーブファイル名です"
 
-#: engines/nancy/input.cpp:153
+#: engines/nancy/input.cpp:159
 msgid "Left Click Interact"
 msgstr "左クリックで会話"
 
-#: engines/nancy/input.cpp:160
+#: engines/nancy/input.cpp:166
 msgid "Right Click Interact"
 msgstr "右クリックで会話"
 
-#: engines/nancy/input.cpp:191
+#: engines/nancy/input.cpp:197
 msgid "Fast move modifier"
 msgstr "高速移動の修正"
 
-#: engines/nancy/metaengine.cpp:35
+#: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
 msgstr "プレイヤースピーチ"
 
-#: engines/nancy/metaengine.cpp:36
+#: engines/nancy/metaengine.cpp:39
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 "プレイヤースピーチを有効にします。オーディオ設定でスピーチが有効になっている"
 "場合のみ動作します。"
 
-#: engines/nancy/metaengine.cpp:46
+#: engines/nancy/metaengine.cpp:49
 msgid "Character Speech"
 msgstr "キャラクタースピーチ"
 
-#: engines/nancy/metaengine.cpp:47
+#: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-27 13:08+0000\n"
+"POT-Creation-Date: 2023-08-28 16:55+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -6183,22 +6183,22 @@ msgstr "Activa o modo Helio."
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
 #, fuzzy
 msgid "Move up"
 msgstr "Mover cara atrás"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
 #, fuzzy
 msgid "Move down"
 msgstr "Cancelar descarga"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
 #, fuzzy
 msgid "Move left"
 msgstr "Mover á esquerda"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
 #, fuzzy
 msgid "Move right"
 msgstr "Mover á dereita"
@@ -7094,6 +7094,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Xogo en pausa. Pulsa calquera tecla para continuar."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
+#: engines/nancy/input.cpp:203
 #, fuzzy
 msgid "Open main menu"
 msgstr "~V~olver ao Iniciador"
@@ -7418,36 +7419,36 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nome de ficheiro de gardado non válido"
 
-#: engines/nancy/input.cpp:153
+#: engines/nancy/input.cpp:159
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Botón primario"
 
-#: engines/nancy/input.cpp:160
+#: engines/nancy/input.cpp:166
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Botón secundario unha vez"
 
-#: engines/nancy/input.cpp:191
+#: engines/nancy/input.cpp:197
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Modo Rápido"
 
-#: engines/nancy/metaengine.cpp:35
+#: engines/nancy/metaengine.cpp:38
 #, fuzzy
 msgid "Player Speech"
 msgstr "Tempo de xogo: "
 
-#: engines/nancy/metaengine.cpp:36
+#: engines/nancy/metaengine.cpp:39
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:46
+#: engines/nancy/metaengine.cpp:49
 msgid "Character Speech"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:47
+#: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""

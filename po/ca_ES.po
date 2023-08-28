@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-27 13:08+0000\n"
+"POT-Creation-Date: 2023-08-28 16:55+0000\n"
 "PO-Revision-Date: 2023-08-09 05:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -6048,19 +6048,19 @@ msgstr "Habilita el mode amb trucs (cheats)"
 msgid "Debug info and level selection becomes available"
 msgstr "La informació de depuració i la selecció de nivell estan disponibles"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
 msgid "Move up"
 msgstr "Mou amunt"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
 msgid "Move down"
 msgstr "Mou avall"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
 msgid "Move left"
 msgstr "Mou a l'esquerra"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
 msgid "Move right"
 msgstr "Mou a la dreta"
 
@@ -6880,6 +6880,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "El joc està en pausa. Premeu qualsevol tecla per continuar."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
+#: engines/nancy/input.cpp:203
 msgid "Open main menu"
 msgstr "Obre el menú principal"
 
@@ -7166,32 +7167,32 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nom de fitxer no válid per desar la partida"
 
-#: engines/nancy/input.cpp:153
+#: engines/nancy/input.cpp:159
 msgid "Left Click Interact"
 msgstr "Interacciona amb el clic esquerre"
 
-#: engines/nancy/input.cpp:160
+#: engines/nancy/input.cpp:166
 msgid "Right Click Interact"
 msgstr "Interacciona amb el clic dret"
 
-#: engines/nancy/input.cpp:191
+#: engines/nancy/input.cpp:197
 msgid "Fast move modifier"
 msgstr "Modificador de moviment ràpid"
 
-#: engines/nancy/metaengine.cpp:35
+#: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
 msgstr "Veu del jugador"
 
-#: engines/nancy/metaengine.cpp:36
+#: engines/nancy/metaengine.cpp:39
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:46
+#: engines/nancy/metaengine.cpp:49
 msgid "Character Speech"
 msgstr ""
 
-#: engines/nancy/metaengine.cpp:47
+#: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""

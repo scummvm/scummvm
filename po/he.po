@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-27 13:08+0000\n"
+"POT-Creation-Date: 2023-08-28 16:55+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -6062,19 +6062,19 @@ msgstr "אפשר מצב רמאות"
 msgid "Debug info and level selection becomes available"
 msgstr "מידע על ניפוי באגים ובחירת הרמה הופך לזמין"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
 msgid "Move up"
 msgstr "תזוזה מעלה"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
 msgid "Move down"
 msgstr "תזוזה מטה"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
 msgid "Move left"
 msgstr "תזוזה שמאלה"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
 msgid "Move right"
 msgstr "תזוזה ימינה"
 
@@ -6994,6 +6994,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "המשחק מושהה. הקש על מקש כלשהו כדי להמשיך."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
+#: engines/nancy/input.cpp:203
 msgid "Open main menu"
 msgstr "פתיחת תפריט ראשי"
 
@@ -7294,32 +7295,32 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "שם קובץ לא חוקי לשמירה"
 
-#: engines/nancy/input.cpp:153
+#: engines/nancy/input.cpp:159
 msgid "Left Click Interact"
 msgstr "פעולת לחיצה שמאלית"
 
-#: engines/nancy/input.cpp:160
+#: engines/nancy/input.cpp:166
 msgid "Right Click Interact"
 msgstr "פעולת לחיצה ימנית"
 
-#: engines/nancy/input.cpp:191
+#: engines/nancy/input.cpp:197
 msgid "Fast move modifier"
 msgstr "מקש תזוזה מהירה"
 
-#: engines/nancy/metaengine.cpp:35
+#: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
 msgstr "דיבור שחקן"
 
-#: engines/nancy/metaengine.cpp:36
+#: engines/nancy/metaengine.cpp:39
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr "הפעלת דיבור שחקן. פעיל רק כאשר הדיבור מופעל בהגדרות שמע."
 
-#: engines/nancy/metaengine.cpp:46
+#: engines/nancy/metaengine.cpp:49
 msgid "Character Speech"
 msgstr "דיבור דמויות"
 
-#: engines/nancy/metaengine.cpp:47
+#: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr "הפעלת דיבור דמויות שאינן השחקן. פעיל רק כאשר הדיבור מופעל בהגדרות שמע."
