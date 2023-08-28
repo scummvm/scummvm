@@ -316,7 +316,11 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
 
 		if (!_dec->decompress(input, output)) {
 			warning("Failed to decompress frame %d", frameNr);
-			delete[] decompBuf;
+			// Make sure we don't delete data we don't own
+			if (info.type != 0) {
+				delete[] decompBuf;
+			}
+			
 			return nullptr;
 		}
 	} else {
