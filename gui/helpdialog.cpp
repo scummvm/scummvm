@@ -48,11 +48,11 @@ HelpDialog::HelpDialog()
 
 	int tabHeight = _h - (buttonHeight + 10) * 5 / 2;
 
-	TabWidget *tab = new TabWidget(this, 10, 10, _w - 10, tabHeight, ThemeEngine::kTextAlignVBottom);
+	TabWidget *tab = new TabWidget(this, 10, 10, _w - 10, tabHeight);
 
 	tab->addTab(_("General"), "GlobalOptions_Graphics", false);
 	Common::U32String helpText1 = _(
-"### Where to get the games\n"
+"#### Where to get the games\n"
 "\n"
 "Many games supported by ScummVM can still be bought from companies at the links below. Not all games on this list are supported by ScummVM, please check the compatibility page beforehand.\n"
 "\n"
@@ -68,7 +68,7 @@ HelpDialog::HelpDialog()
 	tab->addTab(_("Controls"), "GlobalOptions_Graphics", false);
 
 	Common::U32String helpText2 = _(
-"### Touch controls\n"
+"#### Touch controls\n"
 "\n"
 "The touch control scheme can be configured in the global settings. From the Launcher, go to **Options > Backend > Choose the preferred touch mode**.\n"
 "It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games) and choose one of the three possible modes:\n"
@@ -82,25 +82,25 @@ HelpDialog::HelpDialog()
 "\n"
 "To display or hide the small controller icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the controller icon.\n"
 "\n"
-"## Two finger tap\n"
+"#### Two finger tap\n"
 "\n"
 "To do a two finger tap, hold one finger down and then tap with a second finger.\n"
 "\n"
-"## Three finger tap\n"
+"#### Three finger tap\n"
 "\n"
 "To do a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.\n"
 "\n"
-"## Immersive Sticky fullscreen mode\n"
+"#### Immersive Sticky fullscreen mode\n"
 "\n"
 "ScummVM for Android uses the Immersive Sticky fullscreen mode, which means that the Android system bar is hidden until the user swipes from an edge with a system bar. Swipe from the edge to reveal the system bars.  They remain semi-transparent and disappear after a few seconds unless you interact with them. Your swipe also registers in the game, so if you need to swipe from an edge with system bars, your game play is not interrupted.\n"
 "\n"
-"## Global Main Menu\n"
+"#### Global Main Menu\n"
 "\n"
 "To open the Global Main Menu, tap on the small menu icon at the top right of the screen.\n"
 "\n"
 "To display or hide the small menu icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the menu icon.\n"
 "\n"
-"## Virtual keyboard\n"
+"#### Virtual keyboard\n"
 "\n"
 "To open the virtual keyboard, long press on the small controller icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the small controller icon (which became a keyboard one) again, or tap outside the text field.\n"
 "\n"
