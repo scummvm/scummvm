@@ -48,26 +48,10 @@
 #include <ft2build.h>
 #include FT_TYPES_H
 
-#ifdef DEBUG_HINTER
-#include <../modules/autohint/ahloader.h>
-#else
 #include "engines/ags/lib/freetype-2.1.3/autohint/ahloader.h"
-#endif
-
-
-#define xxAH_DEBUG
-
-
-#ifdef AH_DEBUG
-
-#include <stdio.h>
-#define AH_LOG(x) printf##x
-
-#else
 
 #define AH_LOG(x)  do ; while(0) /* nothing */
 
-#endif /* AH_DEBUG */
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -325,16 +309,6 @@ typedef struct AH_HinterRec {
 	FT_Bool do_horz_snapping; /* disable X stem size snapping */
 	FT_Bool do_vert_snapping; /* disable Y stem size snapping */
 } AH_HinterRec, *AH_Hinter;
-
-
-#ifdef  DEBUG_HINTER
-extern AH_Hinter   ah_debug_hinter;
-extern FT_Bool     ah_debug_disable_horz;
-extern FT_Bool     ah_debug_disable_vert;
-#else
-#define ah_debug_disable_horz  0
-#define ah_debug_disable_vert  0
-#endif /* DEBUG_HINTER */
 
 
 } // End of namespace FreeType213
