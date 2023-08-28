@@ -313,6 +313,160 @@ kernel_trigger_dispatch_now(6);
 }
 
 void Room171::daemon() {
+	switch (_G(kernel).trigger) {
+	case 2:
+		disable_player_commands_and_fade_init(1022);
+		break;
+
+	case 5:
+		switch (_val2) {
+		case 5:
+			digi_play_loop("171_003", 2);
+			_series1 = series_play("171ap01", 0x300);
+			_series2 = series_play("171ap01s", 0x301);
+			break;
+
+		case 6:
+			npc_say(conv_sound_to_play(), 10001, "171ap01n", 0x2ff);
+			break;
+
+		case 7:
+			digi_stop(2);
+			freeSeries();
+			series_play_with_breaks(PLAY3, "171ap02", 0x300, 10001, 3);
+			break;
+
+		case 8:
+			_val2 = 9;
+			npc_say(conv_sound_to_play(), 5, "171ap02", 0x300, 1, 17, 22);
+			break;
+
+		case 9:
+			freeSeries();
+			_val2 = 10;
+			series_play_with_breaks(PLAY4, "171ap03", 0x300, 5, 3);
+			break;
+
+		case 10:
+			_G(flags)[V083] = 1;
+			terminateMachineAndNull(_chair1);
+			terminateMachineAndNull(_chair2);
+
+			series_show("171stool", 0x300);
+			series_show("171stols", 0x301);
+			_val2 = 26;
+			kernel_trigger_dispatch_now(5);
+			break;
+
+		case 11:
+			npc_say(10001);
+			break;
+
+		case 12:
+			digi_stop(2);
+			npc_say();
+			series_play_with_breaks(PLAY5, "171ap04", 0x800, 10001, 3);
+			break;
+
+		case 13:
+			_val2 = 14;
+			npc_say(5, "171ap05", 0x800);
+			break;
+
+		case 14:
+			_G(flags)[V084] = 1;
+			terminateMachineAndNull(_chair1);
+			terminateMachineAndNull(_chair1);
+			_val2 = 26;
+			series_play_with_breaks(PLAY6, "171ap06", 0x800, 5, 3);
+			break;
+
+		case 15:
+			terminateMachineAndNull(_lid);
+			_val2 = 16;
+			series_play_with_breaks(PLAY7, "171ap07", 0, 6, 2);
+			break;
+
+		case 16:
+			npc_say(10001, "171ap08");
+			break;
+
+		case 17:
+			freeSeries();
+			_val2 = 18;
+			series_play_with_breaks(PLAY8, "171ap09", 0, 5, 3);
+			break;
+
+		case 18:
+			_val2 = 19;
+			series_play_with_breaks(PLAY9, "171ap09", 0x301, 5, 3);
+			series_show("171plid", 0);
+			break;
+
+		case 19:
+			_G(flags)[V085] = 1;
+			terminateMachineAndNull(_chair1);
+			terminateMachineAndNull(_chair2);
+			_val2 = 26;
+			kernel_trigger_dispatch_now(5);
+			break;
+
+		case 20:
+			_series1 = series_show("171ap10", 0x700);
+			_series2 = series_show("171ap10s", 0x701);
+			break;
+
+		case 21:
+			freeSeries();
+			npc_say(10001, "171ap10", 0x700);
+			break;
+
+		case 22:
+			npc_say(5);
+			series_play_with_breaks(PLAY10, "171ap10", 0x700, 5, 3);
+			break;
+
+		case 23:
+			_val2 = 24;
+			_series1 = series_play("171ap10", 0x700);
+			_series2 = series_play("171ap10s", 0x701);
+			break;
+
+		case 24:
+			freeSeries();
+			_val2 = 25;
+			series_play_with_breaks(PLAY11, "171ap10", 0x700, 5, 3);
+			break;
+
+		case 25:
+			_G(flags)[V086] = 1;
+			terminateMachineAndNull(_chair1);
+			terminateMachineAndNull(_chair2);
+			series_show("171phone", 0x700);
+			_val2 = 26;
+			kernel_trigger_dispatch_now(5);
+			break;
+
+		case 26:
+			player_update_info();
+
+			if (_flag1 && (_G(player_info).x != 436 || _G(player_info).y != 288))
+				ws_walk(436, 288, 0, 10001, 2);
+
+			digi_play_loop("171_009", 2, 50);
+			// TODO
+			break;
+
+		default:
+			// TODO
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room171::pre_parser() {
