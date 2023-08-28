@@ -35,7 +35,7 @@ namespace GUI {
 class ScrollBarWidget;
 
 /* RichTextWidget */
-class RichTextWidget : public Widget {
+class RichTextWidget : public Widget, public CommandSender {
 protected:
 	Graphics::MacText *_txtWnd = nullptr;
 	Graphics::ManagedSurface *_surface = nullptr;
@@ -54,6 +54,9 @@ public:
 
 	void reflowLayout() override;
 	void draw() override;
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleMouseWheel(int x, int y, int direction) override;
 
 	void markAsDirty() override;
 
