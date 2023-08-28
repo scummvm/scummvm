@@ -17,13 +17,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Atari port.
 
  General:
-  - Added optional dependency for libvpx.
-  - Added optional dependency for libmikmod.
-  - Added support for PC98 font ROM.
-  - Added optional dependency for libsonivox, implementing EAS (Embedded Audio
-    Synthesis) sound driver.
-  - Added YUV422 and YUV444 support to Theora decoder.
-  - Implemented specialized CPU routines for graphics blitting for ManagedSurface.
+   - Added optional dependency for libvpx.
+   - Added optional dependency for libmikmod.
+   - Added support for PC98 font ROM.
+   - Added optional dependency for libsonivox, implementing EAS (Embedded Audio
+     Synthesis) sound driver.
+   - Added YUV422 and YUV444 support to Theora decoder.
+   - Implemented specialized CPU routines for graphics blitting for ManagedSurface.
 
  AGS:
    - Synced with upstream AGS 3.6.0.51.
