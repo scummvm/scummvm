@@ -50,8 +50,6 @@
 
 #include "engines/ags/lib/freetype-2.1.3/autohint/ahloader.h"
 
-#define AH_LOG(x)  do ; while(0) /* nothing */
-
 
 namespace AGS3 {
 namespace FreeType213 {
