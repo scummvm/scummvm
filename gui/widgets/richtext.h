@@ -55,11 +55,16 @@ public:
 	void reflowLayout() override;
 	void draw() override;
 
+	void markAsDirty() override;
+
+	bool containsWidget(Widget *) const override;
+
 protected:
 	void init();
 	void recalc();
 	void drawWidget() override;
 	void createWidget();
+	Widget *findWidget(int x, int y) override;
 };
 
 } // End of namespace GUI
