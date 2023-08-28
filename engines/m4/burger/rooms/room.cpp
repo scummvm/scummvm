@@ -34,7 +34,7 @@ void Room::parser_code() {
 }
 
 void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
-		int layer, int channel, int firstFrame, int lastFrame, int digiSlot, int digiVol) {
+		int layer, bool shadow, int firstFrame, int lastFrame, int digiSlot, int digiVol) {
 	term_message("npc_say: %s     npc_series: %s     npc_trigger: %d",
 		digiName, seriesName, trigger);
 
@@ -43,7 +43,7 @@ void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
 	if (seriesName) {
 		_G(npcSpeech1) = series_play(seriesName, layer, 4, -1, 6, -1, 100, 0, 0, firstFrame, lastFrame);
 
-		if (channel) {
+		if (shadow) {
 			char temp[20];
 			strcpy_s(temp, 20, seriesName);
 			strcat_s(temp, 20, "s");
@@ -60,9 +60,9 @@ void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
 	_G(kernel).trigger_mode = oldMode;
 }
 
-void Room::npc_say(int trigger, const char *seriesName, int layer, int channel,
+void Room::npc_say(int trigger, const char *seriesName, int layer, bool shadow,
 		int firstFrame, int lastFrame, int digiSlot, int digiVol) {
-	npc_say(conv_sound_to_play(), trigger, seriesName, layer, channel,
+	npc_say(conv_sound_to_play(), trigger, seriesName, layer, shadow,
 		firstFrame, lastFrame, digiSlot, digiVol);
 }
 

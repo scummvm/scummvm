@@ -48,11 +48,9 @@ class Room171 : public Room {
 	static const seriesPlayBreak PLAY17[];
 
 private:
-	machine *_series1 = nullptr;
-	machine *_series2 = nullptr;
+	Series _series;
+	Series _chair;
 	machine *_series3 = nullptr;
-	machine *_chair1 = nullptr;
-	machine *_chair2 = nullptr;
 	machine *_lid = nullptr;
 	const char *_digi1 = nullptr;
 	bool _flag1 = false;
