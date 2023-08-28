@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:49+0000\n"
+"POT-Creation-Date: 2023-08-28 19:51+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4787,6 +4787,7 @@ msgstr "Frissítések keresése..."
 #: engines/mortevielle/mortevielle.cpp:301 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:464 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5406
+#: engines/ultima/ultima8/ultima8.cpp:183
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Nem található a(z) '%s' motorhoz adat fájl."
