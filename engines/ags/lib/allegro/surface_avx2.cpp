@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include <immintrin.h>
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
@@ -216,7 +237,7 @@ inline __m256i blendTintSpriteSIMD(__m256i srcCols, __m256i destCols, __m256i al
 		val = _mm256_sub_ps(val, _mm256_sub_ps(_mm256_set1_ps(1.0f), _mm256_mul_ps(_mm256_cvtepi32_ps(alphas), _mm256_set1_ps(1.0f / 250.0f))));
 		val = _mm256_max_ps(val, _mm256_setzero_ps());
 	}
-		
+
 	// then it stiches the HSV back together
 	// the hue and saturation come from the source (tint) color, and the value comes from
 	// the destinaion (real source) color
@@ -253,7 +274,7 @@ inline __m256i blendTintSpriteSIMD(__m256i srcCols, __m256i destCols, __m256i al
 	return final;
 }
 
-inline __m256i mul32_as16(__m256i a, __m256i b) {	
+inline __m256i mul32_as16(__m256i a, __m256i b) {
 	__m256i a16 = _mm256_packs_epi32(a, _mm256_setzero_si256());
 	__m256i b16 = _mm256_packs_epi32(b, _mm256_setzero_si256());
 	__m256i res = _mm256_mullo_epi16(a16, b16);
@@ -479,7 +500,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	
+
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
 	const byte *srcP = (const byte *)args.src.getBasePtr(
 	                       args.horizFlip ? args.srcArea.right - 8 : args.srcArea.left,
@@ -580,7 +601,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 		}
 		byte *destVal = (byte *)&destP[destX * DestBytesPerPixel];
 		uint32 srcCol = args.dstBitmap.getColor(srcColPtr, SrcBytesPerPixel);
-		
+
 		// Check if this is a transparent color we should skip
 		if (args.skipTrans && ((srcCol & args.alphaMask) == args.transColor))
 			continue;
@@ -650,7 +671,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	
+
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
 	const byte *srcP = (const byte *)args.src.getBasePtr(
 	                       args.horizFlip ? args.srcArea.right - 16 : args.srcArea.left,
@@ -756,7 +777,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 		}
 		byte *destVal = (byte *)&destP[destX * 2];
 		uint32 srcCol = (uint32)(*(const uint16 *)srcColPtr);
-		
+
 		// Check if this is a transparent color we should skip
 		if (args.skipTrans && srcCol == args.transColor)
 			continue;
@@ -794,7 +815,7 @@ static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 	__m256i scaleAdds2 = _mm256_set_epi32((uint32)args.scaleX*15, (uint32)args.scaleX*14, (uint32)args.scaleX*13, (uint32)args.scaleX*12, (uint32)args.scaleX*11, (uint32)args.scaleX*10, (uint32)args.scaleX*9, (uint32)args.scaleX*8);
 	__m256i scaleAdds3 = _mm256_set_epi32((uint32)args.scaleX*23, (uint32)args.scaleX*22, (uint32)args.scaleX*21, (uint32)args.scaleX*20, (uint32)args.scaleX*19, (uint32)args.scaleX*18, (uint32)args.scaleX*17, (uint32)args.scaleX*16);
 	__m256i scaleAdds4 = _mm256_set_epi32((uint32)args.scaleX*31, (uint32)args.scaleX*30, (uint32)args.scaleX*29, (uint32)args.scaleX*28, (uint32)args.scaleX*27, (uint32)args.scaleX*26, (uint32)args.scaleX*25, (uint32)args.scaleX*24);
-	
+
 	// Clip the bounds ahead of time (so we don't waste time checking if we are in bounds when
 	// we are in the inner loop)
 	int xCtrStart = 0, xCtrWidth = args.dstRect.width();
@@ -818,7 +839,7 @@ static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	
+
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
 	const byte *srcP = (const byte *)args.src.getBasePtr(
 	                       args.horizFlip ? args.srcArea.right - 32 : args.srcArea.left,
@@ -935,7 +956,7 @@ void BITMAP::drawAVX2(DrawInnerArgs &args) {
 		case 2: DrawInnerImpl::drawInner2Bpp<Scale>(args); break;
 		case 4: DrawInnerImpl::drawInner4BppWithConv<4, 4, Scale>(args); break;
 		}
-	} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) { 
+	} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) {
 		DrawInnerImpl::drawInner4BppWithConv<4, 2, Scale>(args);
 	} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
 		DrawInnerImpl::drawInner4BppWithConv<2, 4, Scale>(args);
