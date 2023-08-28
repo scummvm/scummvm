@@ -37,8 +37,8 @@
 /***************************************************************************/
 
 #include <ft2build.h>
-#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
-#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
+#include "ags/lib/freetype-2.1.3/fterrors.h"
+#include "ags/lib/freetype-2.1.3/ftmemory.h"
 
 #include "common/debug.h"
 

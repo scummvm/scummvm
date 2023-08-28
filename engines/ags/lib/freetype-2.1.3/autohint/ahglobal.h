@@ -46,7 +46,7 @@
 
 
 #include <ft2build.h>
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahtypes.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahtypes.h"
 
 namespace AGS3 {
 namespace FreeType213 {
