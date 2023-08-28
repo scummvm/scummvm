@@ -55,7 +55,7 @@ FT_Error FT_Alloc(FT_Memory memory, FT_Long size, void **P) {
 	if (size > 0) {
 		*P = memory->alloc(memory, size);
 		if (!*P) {
-			warning("FT_Alloc: Out of memory? (%ld requested)\n", size);
+			warning("FT_Alloc: Out of memory? (%ld requested)", size);
 			return FT_Err_Out_Of_Memory;
 		}
 		FT_MEM_ZERO(*P, size);
@@ -91,7 +91,7 @@ FT_Error FT_Realloc(FT_Memory memory, FT_Long current, FT_Long size, void **P) {
 	return FT_Err_Ok;
 
 Fail:
-	warning("FT_Realloc: Failed (current %ld, requested %ld)\n", current, size);
+	warning("FT_Realloc: Failed (current %ld, requested %ld)", current, size);
 	return FT_Err_Out_Of_Memory;
 }
 
