@@ -71,7 +71,7 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 
 	_type = kRichTextWidget;
 
@@ -79,6 +79,8 @@ void RichTextWidget::init() {
 	_verticalScroll->setTarget(this);
 	_scrolledX = 0;
 	_scrolledY = 0;
+
+	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
 	ensureWM();
 
@@ -89,11 +91,7 @@ void RichTextWidget::recalc() {
 	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_limitH = _h;
 
-	//calculate virtual height
-	const int spacing = g_gui.xmlEval()->getVar("Global.Font.Height", 16); //on the bottom
-	int min = spacing, max = 0;
-
-	int h = max - min;
+	int h = _txtWnd->getTextHeight();
 
 	if (h <= _limitH) _scrolledY = 0;
 	if (_scrolledY > h - _limitH) _scrolledY = 0;
@@ -104,6 +102,8 @@ void RichTextWidget::recalc() {
 	_verticalScroll->_singleStep = kLineHeight;
 	_verticalScroll->setPos(_w, _scrolledY);
 	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
+
+	warning("STUB: Text width recalc");
 }
 
 void RichTextWidget::createWidget() {
@@ -113,7 +113,7 @@ void RichTextWidget::createWidget() {
 
 	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
 
-	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, black, white, _w, Graphics::kTextAlignLeft);
+	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, black, white, _w - _scrollbarWidth, Graphics::kTextAlignLeft);
 	_txtWnd->setMarkdownText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
@@ -123,6 +123,14 @@ void RichTextWidget::createWidget() {
 
 void RichTextWidget::reflowLayout() {
 	Widget::reflowLayout();
+
+	if (!_txtWnd)
+		createWidget();
+
+	recalc();
+
+	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
+	_verticalScroll->recalc();
 }
 
 void RichTextWidget::drawWidget() {
@@ -132,9 +140,11 @@ void RichTextWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 	                                    ThemeEngine::kWidgetBackgroundEditText);
 
-	_txtWnd->draw(_surface, 0, 0, _w, _h, 0, 0);
+	_txtWnd->draw(_surface, 0, 0, _w - _scrollbarWidth, _h, 0, 0);
 
 	g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), *_surface);
+
+	warning("drawWidget()");
 }
 
 void RichTextWidget::draw() {
@@ -143,6 +153,28 @@ void RichTextWidget::draw() {
 	if (_verticalScroll->isVisible()) {
 		_verticalScroll->draw();
 	}
+
+}
+
+void RichTextWidget::markAsDirty() {
+	Widget::markAsDirty();
+
+	if (_verticalScroll->isVisible()) {
+		_verticalScroll->markAsDirty();
+	}
+}
+
+bool RichTextWidget::containsWidget(Widget *w) const {
+	if (w == _verticalScroll || _verticalScroll->containsWidget(w))
+		return true;
+	return false;
+}
+
+Widget *RichTextWidget::findWidget(int x, int y) {
+	if (_verticalScroll->isVisible() && x >= _w)
+		return _verticalScroll;
+
+	return this;
 }
 
 } // End of namespace GUI
