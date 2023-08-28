@@ -42,7 +42,7 @@
 
 
 #include <ft2build.h>
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahangles.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahangles.h"
 
 namespace AGS3 {
 namespace FreeType213 {

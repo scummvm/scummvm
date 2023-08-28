@@ -48,7 +48,7 @@
 #include <ft2build.h>
 #include FT_TYPES_H
 
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahloader.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahloader.h"
 
 
 namespace AGS3 {

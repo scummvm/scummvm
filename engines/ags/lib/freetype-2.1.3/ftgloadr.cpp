@@ -38,8 +38,8 @@
 
 
 #include <ft2build.h>
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahhint.h"
-#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahhint.h"
+#include "ags/lib/freetype-2.1.3/ftmemory.h"
 
 
 namespace AGS3 {

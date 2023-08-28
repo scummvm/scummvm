@@ -43,12 +43,12 @@
 #include <ft2build.h>
 #include FT_OUTLINE_H
 
-#include "engines/ags/lib/freetype-2.1.3/fterrors.h"
-#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
-#include "engines/ags/lib/freetype-2.1.3/ftgloadr.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahhint.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahglyph.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahangles.h"
+#include "ags/lib/freetype-2.1.3/fterrors.h"
+#include "ags/lib/freetype-2.1.3/ftmemory.h"
+#include "ags/lib/freetype-2.1.3/ftgloadr.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahhint.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahglyph.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahangles.h"
 
 #define FACE_GLOBALS(face) ((AH_Face_Globals)(face)->autohint.data)
 

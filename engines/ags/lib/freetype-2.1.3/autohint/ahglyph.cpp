@@ -42,11 +42,11 @@
 
 #include <ft2build.h>
 
-#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahglyph.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahangles.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahglobal.h"
-#include "engines/ags/lib/freetype-2.1.3/autohint/ahtypes.h"
+#include "ags/lib/freetype-2.1.3/ftmemory.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahglyph.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahangles.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahglobal.h"
+#include "ags/lib/freetype-2.1.3/autohint/ahtypes.h"
 
 #include "common/debug.h"
 // util.h for ABS

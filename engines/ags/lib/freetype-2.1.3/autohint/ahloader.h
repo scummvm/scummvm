@@ -46,7 +46,7 @@
 
 
 #include <ft2build.h>
-#include "engines/ags/lib/freetype-2.1.3/ftgloadr.h"
+#include "ags/lib/freetype-2.1.3/ftgloadr.h"
 #include FT_OUTLINE_H
 
 
