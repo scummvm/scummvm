@@ -10,6 +10,7 @@ f 0644 root sys usr/ScummVM/COPYING.MIT LICENSES/COPYING.MIT scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.MKV LICENSES/COPYING.MKV scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.TINYGL LICENSES/COPYING.TINYGL scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.GLAD LICENSES/COPYING.GLAD scummvm.man.readme
+f 0644 root sys usr/ScummVM/COPYING.CATHARON LICENSES/COPYING.CATHARON scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYRIGHT COPYRIGHT scummvm.man.readme
 f 0644 root sys usr/ScummVM/NEWS.md NEWS.module scummvm.man.readme
 f 0644 root sys usr/ScummVM/README.md README.md scummvm.man.readme

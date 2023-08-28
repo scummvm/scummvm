@@ -1156,6 +1156,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("LICENSES/COPYING.MKV");
 		files.push_back("LICENSES/COPYING.TINYGL");
 		files.push_back("LICENSES/COPYING.GLAD");
+		files.push_back("LICENSES/COPYING.CATHARON");
 		files.push_back("NEWS.md");
 		files.push_back("README.md");
 	}
