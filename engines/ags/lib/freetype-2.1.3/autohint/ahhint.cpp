@@ -1133,10 +1133,6 @@ Hint_Metrics:
 		slot->format = FT_GLYPH_FORMAT_OUTLINE;
 	}
 
-#ifdef DEBUG_HINTER
-	ah_debug_hinter = hinter;
-#endif
-
 Exit:
 	return error;
 }
@@ -1173,11 +1169,6 @@ FT_Error ah_hinter_load_glyph(AH_Hinter hinter, FT_GlyphSlot slot, FT_Size size,
 	/* reset hinting flags according to load flags and current render target */
 	hinter->do_horz_hints = !FT_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
 	hinter->do_vert_hints = !FT_BOOL(load_flags & FT_LOAD_NO_AUTOHINT);
-
-#ifdef DEBUG_HINTER
-	hinter->do_horz_hints = !ah_debug_disable_vert; /* not a bug, the meaning */
-	hinter->do_vert_hints = !ah_debug_disable_horz; /* of h/v is inverted!    */
-#endif
 
 	/* we snap the width of vertical stems for the monochrome and         */
 	/* horizontal LCD rendering targets only.  Corresponds to X snapping. */
