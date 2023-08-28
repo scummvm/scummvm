@@ -377,17 +377,17 @@ MODULE_OBJS += \
 	tests/test_version.o
 endif
 
-ifeq ($(SCUMMVM_NEON),1)
+ifdef SCUMMVM_NEON
 MODULE_OBJS += \
 	lib/allegro/surface_neon.o
 $(MODULE)/lib/allegro/surface_neon.o: CXXFLAGS += $(NEON_CXXFLAGS)
 endif
-ifeq ($(SCUMMVM_SSE2),1)
+ifdef SCUMMVM_SSE2
 MODULE_OBJS += \
 	lib/allegro/surface_sse2.o
 $(MODULE)/lib/allegro/surface_sse2.o: CXXFLAGS += -msse2
 endif
-ifeq ($(SCUMMVM_AVX2),1)
+ifdef SCUMMVM_AVX2
 MODULE_OBJS += \
 	lib/allegro/surface_avx2.o
 $(MODULE)/lib/allegro/surface_avx2.o: CXXFLAGS += -mavx2 -mavx -msse2
