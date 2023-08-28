@@ -146,7 +146,7 @@ void Logo::stop() {
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	if (ConfMan.getBool("original_menus")) {
+	if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
 		g_nancy->setState(NancyState::kMainMenu);
 	} else {
 		g_nancy->setState(NancyState::kScene);

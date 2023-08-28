@@ -206,7 +206,7 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		setState(NancyState::kLogo);
 		return;
 	case NancyState::kMainMenu: {
-		if (ConfMan.getBool("original_menus")) {
+		if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
 			break;
 		}
 

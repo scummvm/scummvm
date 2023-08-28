@@ -102,7 +102,7 @@ void Credits::run() {
 		g_nancy->setMouseEnabled(true);
 		_fullTextSurface.free();
 
-		if (ConfMan.getBool("original_menus")) {
+		if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
 			g_nancy->setState(NancyState::kMainMenu);
 			return;
 		}
