@@ -60,12 +60,10 @@ namespace FreeType213 {
 void ah_dump_edges(AH_Outline outline) {
 	AH_Edge edges;
 	AH_Edge edge_limit;
-	AH_Segment segments;
 	FT_Int dimension;
 
 	edges = outline->horz_edges;
 	edge_limit = edges + outline->num_hedges;
-	segments = outline->horz_segments;
 
 	for (dimension = 1; dimension >= 0; dimension--) {
 		AH_Edge edge;
@@ -96,7 +94,6 @@ void ah_dump_edges(AH_Outline outline) {
 
 		edges = outline->vert_edges;
 		edge_limit = edges + outline->num_vedges;
-		segments = outline->vert_segments;
 	}
 }
 
