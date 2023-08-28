@@ -71,6 +71,9 @@ void InputManager::processEvents() {
 			case kNancyActionMoveFast:
 				_inputs |= NancyInput::kMoveFastModifier;
 				break;
+			case kNancyActionOpenMainMenu:
+				_inputs |= NancyInput::kOpenMainMenu;
+				break;
 			default:
 				break;
 			}
@@ -100,6 +103,9 @@ void InputManager::processEvents() {
 				break;
 			case kNancyActionMoveFast:
 				_inputs &= ~NancyInput::kMoveFastModifier;
+				break;
+			case kNancyActionOpenMainMenu:
+				_inputs &= ~NancyInput::kOpenMainMenu;
 				break;
 			default:
 				break;
@@ -192,6 +198,12 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
 	act->setCustomEngineActionEvent(kNancyActionMoveFast);
 	act->addDefaultInputMapping("LCTRL");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	mainKeymap->addAction(act);
+
+	act = new Action("MMENU", _("Open main menu"));
+	act->setCustomEngineActionEvent(kNancyActionOpenMainMenu);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_START");
 	mainKeymap->addAction(act);
 
 	keymaps.push_back(mainKeymap);

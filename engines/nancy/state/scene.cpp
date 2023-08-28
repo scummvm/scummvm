@@ -768,6 +768,11 @@ void Scene::run() {
 
 	handleInput();
 
+	if (g_nancy->getState() == NancyState::kMainMenu) {
+		// Player pressed esc, do not process further
+		return;
+	}
+
 	_actionManager.processActionRecords();
 
 	if (_lightning) {
@@ -794,6 +799,12 @@ void Scene::handleInput() {
 		if (inactiveZone.bottom > adjustedMousePos.y) {
 			input.mousePos.y = inactiveZone.bottom + cursorHotspot.y;
 			g_system->warpMouse(input.mousePos.x, input.mousePos.y);
+		}
+	} else {
+		// Check if player has pressed esc
+		if (input.input & NancyInput::kOpenMainMenu) {
+			g_nancy->setState(NancyState::kMainMenu);
+			return;
 		}
 	}
 
