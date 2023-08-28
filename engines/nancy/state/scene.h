@@ -179,6 +179,8 @@ public:
 	void setActiveConversation(Action::ConversationSound *activeConversation);
 	Action::ConversationSound *getActiveConversation();
 
+	Graphics::ManagedSurface &getLastScreenshot() { return _lastScreenshot; }
+
 	// The Vampire Diaries only;
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
 
@@ -273,6 +275,9 @@ private:
 
 	Action::ActionManager _actionManager;
 	Action::ConversationSound *_activeConversation;
+
+	// Contains a screenshot of the Scene state from the last time it was exited
+	Graphics::ManagedSurface _lastScreenshot;
 
 	State _state;
 };

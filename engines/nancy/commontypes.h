@@ -80,7 +80,6 @@ enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMove
 namespace NancyState {
 enum NancyState {
 	kBoot,
-	kPartnerLogo,
 	kLogo,
 	kCredits,
 	kMap,

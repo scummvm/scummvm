@@ -48,6 +48,8 @@ public:
 
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
+	const Graphics::ManagedSurface &getImageSurface() const { return _image; }
+
 	// Custom word wrapping function to fix an edge case with overflowing whitespaces
 	void wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0) const;
 

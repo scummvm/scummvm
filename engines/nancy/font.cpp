@@ -37,6 +37,11 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 	g_nancy->_resource->loadImage(imageName, _image);
 
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		// Hacky fix for load/save menu
+		_image.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+	}
+
 	char desc[0x20];
 	stream.read(desc, 0x20);
 	desc[0x1F] = '\0';
@@ -224,7 +229,11 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			offset = _slashOffset;
 			break;
 		default:
-			error("Unsupported FONT character: %c", chr);
+			// Replace unknown characters with question marks. This shouldn't happen normally,
+			// but we need it to support displaying saves that were originally made in the GMM
+			// inside the in-game load/save menu.
+			offset = _questionMarkOffset;
+			break;
 		}
 	}
 	ret = _symbolRects[offset];

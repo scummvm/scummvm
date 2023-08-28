@@ -371,6 +371,12 @@ void GraphicsManager::screenshotViewport(Graphics::ManagedSurface &inSurf) {
 	inSurf.blitFrom(_screen, g_nancy->_viewportData->screenPosition, g_nancy->_viewportData->bounds);
 }
 
+void GraphicsManager::screenshotScreen(Graphics::ManagedSurface &inSurf) {
+	draw(false);
+	inSurf.free();
+	inSurf.copyFrom(_screen);
+}
+
 // Draw a given screen-space rectangle to the screen
 void GraphicsManager::blitToScreen(const RenderObject &src, Common::Rect screenRect) {
 	_screen.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);

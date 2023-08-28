@@ -205,6 +205,45 @@ struct SET {
 	Common::Array<SoundDescription> _sounds;
 };
 
+struct LOAD {
+	LOAD(Common::SeekableReadStream *chunkStream);
+
+	Common::String _imageName;
+
+	int16 _mainFontID;
+	int16 _highlightFontID;
+	int16 _disabledFontID;
+	int16 _fontXOffset;
+	int16 _fontYOffset;
+
+	Common::Array<Common::Rect> _saveButtonDests;
+	Common::Array<Common::Rect> _loadButtonDests;
+	Common::Array<Common::Rect> _textboxBounds;
+	Common::Rect _doneButtonDest;
+	Common::Array<Common::Rect> _saveButtonDownSrcs;
+	Common::Array<Common::Rect> _loadButtonDownSrcs;
+
+	Common::Rect _doneButtonDownSrc;
+	Common::Array<Common::Rect> _saveButtonHighlightSrcs;
+	Common::Array<Common::Rect> _loadButtonHighlightSrcs;
+
+	Common::Rect _doneButtonHighlightSrc;
+	Common::Array<Common::Rect> _saveButtonDisabledSrcs;
+	Common::Array<Common::Rect> _loadButtonDisabledSrcs;
+
+	Common::Rect _doneButtonDisabledSrc;
+	Common::Rect _blinkingCursorSrc;
+	uint16 _blinkingTimeDelay;
+	Common::Array<Common::Rect> _cancelButtonSrcs;
+	Common::Array<Common::Rect> _cancelButtonDests;
+	Common::Rect _cancelButtonDownSrc;
+	Common::Rect _cancelButtonHighlightSrc;
+	Common::Rect _cancelButtonDisabledSrc;
+
+	Common::String _gameSavedPopup;
+	// Common::Rect _gameSavedBounds
+};
+
 struct HINT {
 	HINT(Common::SeekableReadStream *chunkStream);
 

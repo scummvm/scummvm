@@ -45,6 +45,7 @@
 #include "engines/nancy/state/credits.h"
 #include "engines/nancy/state/mainmenu.h"
 #include "engines/nancy/state/setupmenu.h"
+#include "engines/nancy/state/loadsave.h"
 
 namespace Nancy {
 
@@ -80,6 +81,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_creditsData = nullptr;
 	_menuData = nullptr;
 	_setupData = nullptr;
+	_loadSaveData = nullptr;
 	_hintData = nullptr;
 	_sliderPuzzleData = nullptr;
 	_clockData = nullptr;
@@ -89,6 +91,15 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 }
 
 NancyEngine::~NancyEngine() {
+	destroyState(NancyState::kLogo);
+	destroyState(NancyState::kCredits);
+	destroyState(NancyState::kMap);
+	destroyState(NancyState::kHelp);
+	destroyState(NancyState::kScene);
+	destroyState(NancyState::kMainMenu);
+	destroyState(NancyState::kSetup);
+	destroyState(NancyState::kLoadSave);
+
 	delete _randomSource;
 
 	delete _graphicsManager;
@@ -105,6 +116,7 @@ NancyEngine::~NancyEngine() {
 	delete _creditsData;
 	delete _menuData;
 	delete _setupData;
+	delete _loadSaveData;
 	delete _hintData;
 	delete _sliderPuzzleData;
 	delete _clockData;
@@ -318,19 +330,6 @@ Common::Error NancyEngine::run() {
 		}
 	}
 
-	if (State::Logo::hasInstance())
-		State::Logo::instance().destroy();
-	if (State::Credits::hasInstance())
-		State::Credits::instance().destroy();
-	if (State::Map::hasInstance())
-		State::Map::instance().destroy();
-	if (State::Help::hasInstance())
-		State::Help::instance().destroy();
-	if (State::Scene::hasInstance())
-		State::Scene::instance().destroy();
-	if (State::MainMenu::hasInstance())
-		State::MainMenu::instance().destroy();
-
 	return Common::kNoError;
 }
 
@@ -393,6 +392,7 @@ void NancyEngine::bootGameEngine() {
 	_creditsData = new CRED(boot->getChunkStream("CRED"));
 	_menuData = new MENU(boot->getChunkStream("MENU"));
 	_setupData = new SET(boot->getChunkStream("SET"));
+	_loadSaveData = new LOAD(boot->getChunkStream("LOAD"));
 
 	// For now we ignore the potential for more than one of each of these
 	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));
@@ -470,6 +470,8 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::Scene::instance();
 	case NancyState::kMainMenu:
 		return &State::MainMenu::instance();
+	case NancyState::kLoadSave:
+		return &State::LoadSaveMenu::instance();
 	default:
 		return nullptr;
 	}
@@ -510,6 +512,11 @@ void NancyEngine::destroyState(NancyState::NancyState state) const {
 	case NancyState::kSetup:
 		if (State::SetupMenu::hasInstance()) {
 			State::SetupMenu::instance().destroy();
+		}
+		break;
+	case NancyState::kLoadSave:
+		if (State::LoadSaveMenu::hasInstance()) {
+			State::LoadSaveMenu::instance().destroy();
 		}
 		break;
 	default:

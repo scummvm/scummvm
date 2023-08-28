@@ -34,6 +34,7 @@ MODULE_OBJS = \
   ui/viewport.o \
   state/credits.o \
   state/logo.o \
+  state/loadsave.o \
   state/help.o \
   state/mainmenu.o \
   state/map.o \

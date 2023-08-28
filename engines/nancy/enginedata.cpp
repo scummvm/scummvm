@@ -431,6 +431,76 @@ SET::SET(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
+		_highlightFontID(-1),
+		_disabledFontID(-1),
+		_blinkingTimeDelay(0) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	Common::Serializer s(chunkStream, nullptr);
+	s.setVersion(g_nancy->getGameType());
+
+	readFilename(s, _imageName);
+
+	s.skip(0x1F, kGameTypeVampire, kGameTypeVampire);
+	s.skip(0x23, kGameTypeNancy1);
+	s.skip(4);
+
+	s.syncAsSint16LE(_mainFontID);
+	s.syncAsSint16LE(_highlightFontID, kGameTypeNancy2);
+	s.syncAsSint16LE(_disabledFontID, kGameTypeNancy2);
+	s.syncAsSint16LE(_fontXOffset);
+	s.syncAsSint16LE(_fontYOffset);
+
+	s.skip(16);
+
+	if (s.getVersion() <= kGameTypeNancy1) {
+		readRectArray16(s, _saveButtonDests, 7);
+		readRectArray16(s, _loadButtonDests, 7);
+		readRectArray16(s, _textboxBounds, 7);
+		readRect16(s, _doneButtonDest);
+		readRectArray16(s, _saveButtonDownSrcs, 7);
+		readRectArray16(s, _loadButtonDownSrcs, 7);
+		s.skip(8 * 7);
+		readRect16(s, _doneButtonDownSrc);
+		readRect(s, _blinkingCursorSrc);
+		s.syncAsUint16LE(_blinkingTimeDelay, kGameTypeNancy1);
+		readRectArray(s, _cancelButtonSrcs, 7);
+		readRectArray(s, _cancelButtonDests, 7);
+		readRect(s, _cancelButtonDownSrc);
+	} else {
+		readRectArray(s, _saveButtonDests, 7);
+		readRectArray(s, _loadButtonDests, 7);
+		readRectArray(s, _textboxBounds, 7);
+		readRect(s, _doneButtonDest);
+		readRectArray(s, _saveButtonDownSrcs, 7);
+		readRectArray(s, _loadButtonDownSrcs, 7);
+		s.skip(16 * 7);
+		readRect(s, _doneButtonDownSrc);
+		readRectArray(s, _saveButtonHighlightSrcs, 7);
+		readRectArray(s, _loadButtonHighlightSrcs, 7);
+		s.skip(16 * 7);
+		readRect(s, _doneButtonHighlightSrc);
+		readRectArray(s, _saveButtonDisabledSrcs, 7);
+		readRectArray(s, _loadButtonDisabledSrcs, 7);
+		s.skip(16 * 7);
+		readRect(s, _doneButtonDisabledSrc);
+		readRect(s, _blinkingCursorSrc);
+		s.syncAsUint16LE(_blinkingTimeDelay);
+		readRectArray(s, _cancelButtonSrcs, 7);
+		readRectArray(s, _cancelButtonDests, 7);
+		readRect(s, _cancelButtonDownSrc);
+		readRect(s, _cancelButtonHighlightSrc);
+		readRect(s, _cancelButtonDisabledSrc);
+
+		readFilename(s, _gameSavedPopup, kGameTypeNancy3);
+		s.skip(16, kGameTypeNancy3);
+	}
+
+	delete chunkStream;
+}
+
 HINT::HINT(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

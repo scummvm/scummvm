@@ -184,6 +184,8 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 }
 
 bool Scene::onStateExit(const NancyState::NancyState nextState) {
+	g_nancy->_graphicsManager->screenshotScreen(_lastScreenshot);
+
 	if (nextState != NancyState::kPause) {
 		_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
 	}

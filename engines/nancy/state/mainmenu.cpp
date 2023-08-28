@@ -112,9 +112,6 @@ void MainMenu::init() {
 		_buttons[3]->setDisabled(true);
 	}
 
-	// Disable load/save & settings
-	_buttons[2]->setDisabled(true);
-
 	_state = kRun;
 }
 
@@ -169,6 +166,7 @@ void MainMenu::stop() {
 		break;
 	case 2:
 		// Load and Save Game, TODO
+		g_nancy->setState(NancyState::kLoadSave);
 		break;
 	case 3:
 		// Continue

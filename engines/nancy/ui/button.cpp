@@ -82,6 +82,7 @@ void Button::setDisabled(bool disabled) {
 		}
 	} else {
 		setVisible(false);
+		_isDisabled = false;
 	}
 }
 

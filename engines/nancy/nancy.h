@@ -128,6 +128,7 @@ public:
 	CRED *_creditsData;
 	MENU *_menuData;
 	SET *_setupData;
+	LOAD *_loadSaveData;
 	HINT *_hintData;
 	SPUZ *_sliderPuzzleData;
 	CLOK *_clockData;
