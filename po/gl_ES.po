@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:52+0000\n"
+"POT-Creation-Date: 2023-08-28 19:59+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -920,7 +920,7 @@ msgstr "Interpolación:"
 msgid "Up"
 msgstr "Arriba"
 
-#: gui/gui-manager.cpp:173 engines/metaengine.cpp:126
+#: gui/gui-manager.cpp:174 engines/metaengine.cpp:126
 #: engines/crab/input/input.cpp:100 engines/crab/input/input.cpp:140
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
@@ -934,7 +934,7 @@ msgstr "Arriba"
 msgid "Down"
 msgstr "Abaixo"
 
-#: gui/gui-manager.cpp:178 engines/metaengine.cpp:132
+#: gui/gui-manager.cpp:180 engines/metaengine.cpp:132
 #: engines/crab/input/input.cpp:106 engines/crab/input/input.cpp:146
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
@@ -949,7 +949,7 @@ msgstr "Abaixo"
 msgid "Left"
 msgstr "Esquerda"
 
-#: gui/gui-manager.cpp:183 engines/metaengine.cpp:138
+#: gui/gui-manager.cpp:186 engines/metaengine.cpp:138
 #: engines/crab/input/input.cpp:112 engines/crab/input/input.cpp:152
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
@@ -964,7 +964,7 @@ msgstr "Esquerda"
 msgid "Right"
 msgstr "Dereita"
 
-#: gui/gui-manager.cpp:188 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:192 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
