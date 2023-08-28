@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 16:55+0000\n"
+"POT-Creation-Date: 2023-08-28 19:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7008,7 +7008,7 @@ msgstr ""
 msgid "Toggle Chatty AI"
 msgstr ""
 
-#: engines/pink/gui.cpp:278
+#: engines/pink/gui.cpp:289
 msgid "This menu item is not yet implemented"
 msgstr ""
 
