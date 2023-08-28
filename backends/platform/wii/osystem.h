@@ -116,6 +116,7 @@ private:
 	void updateScreenResolution();
 	void switchVideoMode(int mode);
 	bool needsScreenUpdate();
+	void updateMousePalette();
 
 	void initSfx();
 	void deinitSfx();

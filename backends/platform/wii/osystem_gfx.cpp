@@ -326,6 +326,13 @@ int16 OSystem_Wii::getHeight() {
 	return _gameHeight;
 }
 
+void OSystem_Wii::updateMousePalette() {
+	if (_texMouse.palette && _cursorPaletteDisabled) {
+		memcpy(_texMouse.palette, _cursorPalette, 256 * 2);
+		_cursorPaletteDirty = true;
+	}
+}
+
 void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 #ifdef USE_RGB_COLOR
 	assert(_pfGame.bytesPerPixel == 1);
