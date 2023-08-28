@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 16:55+0000\n"
+"POT-Creation-Date: 2023-08-28 19:34+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -7533,7 +7533,7 @@ msgstr "Паказаць/схаваць меню паўзы"
 msgid "Toggle Chatty AI"
 msgstr "Пераключыць хуткі рэжым"
 
-#: engines/pink/gui.cpp:278
+#: engines/pink/gui.cpp:289
 msgid "This menu item is not yet implemented"
 msgstr "Гэты пункт меню яшчэ не рэалізаваны"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 16:55+0000\n"
+"POT-Creation-Date: 2023-08-28 19:34+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -7480,7 +7480,7 @@ msgstr "عرض / إخفاء قائمة الإيقاف المؤقت"
 msgid "Toggle Chatty AI"
 msgstr "تبديل Chatty AI"
 
-#: engines/pink/gui.cpp:278
+#: engines/pink/gui.cpp:289
 msgid "This menu item is not yet implemented"
 msgstr "لم يتم تنفيذ عنصر القائمة هذا بعد"
 
