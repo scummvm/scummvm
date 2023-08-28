@@ -40,7 +40,7 @@
 #ifdef USE_WII_DI
 #include <di/di.h>
 #endif
-#if defined(DEBUG_WII_GDB) || defined (DEBUG_WII_GDB_NETWORK)
+#if defined(DEBUG_WII_GDB) || defined(DEBUG_WII_GDB_NETWORK)
 #include <debug.h>
 #endif
 #include <gxflux/gfx_con.h>
@@ -59,7 +59,7 @@ void reset_cb(u32, void *) {
 #else
 void reset_cb(void) {
 #endif
-#if defined(DEBUG_WII_GDB) || defined (DEBUG_WII_GDB_NETWORK)
+#if defined(DEBUG_WII_GDB) || defined(DEBUG_WII_GDB_NETWORK)
 	printf("attach gdb now\n");
 	_break();
 #else
@@ -88,7 +88,7 @@ static void show_console(int code) {
 	for (i = 0; i < 60 * 3; ++i)
 		VIDEO_WaitVSync();
 
-#if defined(DEBUG_WII_GDB) || defined (DEBUG_WII_GDB_NETWORK)
+#if defined(DEBUG_WII_GDB) || defined(DEBUG_WII_GDB_NETWORK)
 	printf("attach gdb now\n");
 	_break();
 #endif
