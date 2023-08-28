@@ -129,6 +129,7 @@ public:
 	MENU *_menuData;
 	SET *_setupData;
 	LOAD *_loadSaveData;
+	SDLG *_saveDialogData;
 	HINT *_hintData;
 	SPUZ *_sliderPuzzleData;
 	CLOK *_clockData;
@@ -137,6 +138,9 @@ public:
 	RCLB *_raycastPuzzleLevelBuilderData;
 
 	Common::HashMap<Common::String, ImageChunk> _imageChunks;
+
+	// Used to check whether we need to show the SaveDialog
+	bool _hasJustSaved;
 
 protected:
 	Common::Error run() override;

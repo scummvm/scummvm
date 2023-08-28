@@ -501,6 +501,30 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 	delete chunkStream;
 }
 
+SDLG::SDLG(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	readFilename(*chunkStream, _imageName);
+	chunkStream->skip(16);
+
+	readRect(*chunkStream, _yesDest);
+	readRect(*chunkStream, _noDest);
+	readRect(*chunkStream, _cancelDest);
+
+	chunkStream->skip(16);
+
+	readRect(*chunkStream, _yesHighlightSrc);
+	readRect(*chunkStream, _noHighlightSrc);
+	readRect(*chunkStream, _cancelHighlightSrc);
+
+	readRect(*chunkStream, _yesDownSrc);
+	readRect(*chunkStream, _noDownSrc);
+	readRect(*chunkStream, _cancelDownSrc);
+
+	delete chunkStream;
+}
+
 HINT::HINT(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

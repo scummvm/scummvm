@@ -38,6 +38,7 @@ MODULE_OBJS = \
   state/help.o \
   state/mainmenu.o \
   state/map.o \
+  state/savedialog.o \
   state/scene.o \
   state/setupmenu.o \
   misc/lightning.o \

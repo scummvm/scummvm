@@ -94,6 +94,7 @@ enum NancyState {
 	kQuit,
 	// regain focus
 	kNone,
+	kSaveDialog,
 	kPause, // only used when the GMM is on screen
 	kReloadSave
 };

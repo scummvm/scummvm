@@ -460,6 +460,8 @@ void LoadSaveMenu::save() {
 		_state = kSuccess;
 		_enteringNewState = true;
 	}
+
+	g_nancy->_hasJustSaved = true;
 }
 
 void LoadSaveMenu::load() {

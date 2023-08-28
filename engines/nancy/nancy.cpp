@@ -46,6 +46,7 @@
 #include "engines/nancy/state/mainmenu.h"
 #include "engines/nancy/state/setupmenu.h"
 #include "engines/nancy/state/loadsave.h"
+#include "engines/nancy/state/savedialog.h"
 
 namespace Nancy {
 
@@ -82,12 +83,15 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_menuData = nullptr;
 	_setupData = nullptr;
 	_loadSaveData = nullptr;
+	_saveDialogData = nullptr;
 	_hintData = nullptr;
 	_sliderPuzzleData = nullptr;
 	_clockData = nullptr;
 	_specialEffectData = nullptr;
 	_raycastPuzzleData = nullptr;
 	_raycastPuzzleLevelBuilderData = nullptr;
+
+	_hasJustSaved = false;
 }
 
 NancyEngine::~NancyEngine() {
@@ -99,6 +103,7 @@ NancyEngine::~NancyEngine() {
 	destroyState(NancyState::kMainMenu);
 	destroyState(NancyState::kSetup);
 	destroyState(NancyState::kLoadSave);
+	destroyState(NancyState::kSaveDialog);
 
 	delete _randomSource;
 
@@ -117,6 +122,7 @@ NancyEngine::~NancyEngine() {
 	delete _menuData;
 	delete _setupData;
 	delete _loadSaveData;
+	delete _saveDialogData;
 	delete _hintData;
 	delete _sliderPuzzleData;
 	delete _clockData;
@@ -394,15 +400,20 @@ void NancyEngine::bootGameEngine() {
 	_setupData = new SET(boot->getChunkStream("SET"));
 	_loadSaveData = new LOAD(boot->getChunkStream("LOAD"));
 
+	auto *chunkStream = boot->getChunkStream("SDLG");
+	if (chunkStream) {
+		_saveDialogData = new SDLG(chunkStream);
+	}
+
 	// For now we ignore the potential for more than one of each of these
 	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));
 	_imageChunks.setVal("FR0", boot->getChunkStream("FR0"));
 	_imageChunks.setVal("LG0", boot->getChunkStream("LG0"));
 
-	auto *chunkStream = boot->getChunkStream("PLG0");
+	chunkStream = boot->getChunkStream("PLG0");
 	if (!chunkStream) {
 		chunkStream = boot->getChunkStream("PLGO"); // nancy4 and above use an O instead of a zero
-	}
+	}	
 
 	if (chunkStream) {
 		_imageChunks.setVal("PLG0", chunkStream);
@@ -472,6 +483,8 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::MainMenu::instance();
 	case NancyState::kLoadSave:
 		return &State::LoadSaveMenu::instance();
+	case NancyState::kSaveDialog:
+		return &State::SaveDialog::instance();
 	default:
 		return nullptr;
 	}
@@ -517,6 +530,11 @@ void NancyEngine::destroyState(NancyState::NancyState state) const {
 	case NancyState::kLoadSave:
 		if (State::LoadSaveMenu::hasInstance()) {
 			State::LoadSaveMenu::instance().destroy();
+		}
+		break;
+	case NancyState::kSaveDialog:
+		if (State::SaveDialog::hasInstance()) {
+			State::SaveDialog::instance().destroy();
 		}
 		break;
 	default:

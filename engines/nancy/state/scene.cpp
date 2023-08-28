@@ -181,6 +181,8 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 
 		g_nancy->_sound->stopSound("MSND");
 	}
+
+	g_nancy->_hasJustSaved = false;
 }
 
 bool Scene::onStateExit(const NancyState::NancyState nextState) {

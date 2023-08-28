@@ -187,7 +187,12 @@ void MainMenu::stop() {
 		break;
 	case 6:
 		// Exit Game
-		g_nancy->quitGame();
+		if (g_nancy->_saveDialogData && Nancy::State::Scene::hasInstance() && !g_nancy->_hasJustSaved) {
+			g_nancy->setState(NancyState::kSaveDialog);
+		} else {
+			g_nancy->quitGame();
+		}
+		
 		break;
 	case 7:
 		// Help

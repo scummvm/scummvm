@@ -244,6 +244,24 @@ struct LOAD {
 	// Common::Rect _gameSavedBounds
 };
 
+struct SDLG {
+	SDLG(Common::SeekableReadStream *chunkStream);
+
+	Common::String _imageName;
+
+	Common::Rect _yesDest;
+	Common::Rect _noDest;
+	Common::Rect _cancelDest;
+
+	Common::Rect _yesHighlightSrc;
+	Common::Rect _noHighlightSrc;
+	Common::Rect _cancelHighlightSrc;
+
+	Common::Rect _yesDownSrc;
+	Common::Rect _noDownSrc;
+	Common::Rect _cancelDownSrc;
+};
+
 struct HINT {
 	HINT(Common::SeekableReadStream *chunkStream);
 
