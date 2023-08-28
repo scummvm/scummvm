@@ -44,6 +44,7 @@
 #include "engines/ags/lib/freetype-2.1.3/autohint/ahglobal.h"
 #include "engines/ags/lib/freetype-2.1.3/autohint/ahglyph.h"
 
+#include "common/debug.h"
 
 #define MAX_TEST_CHARACTERS  12
 
@@ -104,15 +105,15 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 	/* 'blue_chars[blues]' string, then compute its top-most and      */
 	/* bottom-most points                                             */
 
-	AH_LOG(("blue zones computation\n"));
-	AH_LOG(("------------------------------------------------\n"));
+	debug(6, "blue zones computation");
+	debug(6, "------------------------------------------------");
 
 	for (blue = AH_BLUE_CAPITAL_TOP; blue < AH_BLUE_MAX; blue++) {
 		const char *p = blue_chars[blue];
 		const char *limit = p + MAX_TEST_CHARACTERS;
 		FT_Pos *blue_ref, *blue_shoot;
 
-		AH_LOG(("blue %3d: ", blue));
+		debugN(6, "blue %3d: ", blue);
 
 		num_flats = 0;
 		num_rounds = 0;
@@ -129,7 +130,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 			if (!*p)
 				break;
 
-			AH_LOG(("`%c'", *p));
+			debugN(6, "`%c'", *p);
 
 			/* load the character in the face -- skip unknown or empty ones */
 			glyph_index = FT_Get_Char_Index(face, (FT_UInt)*p);
@@ -157,7 +158,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 						extremum = point;
 			}
 
-			AH_LOG(("%5d", (int)extremum->y));
+			debugN(6, "%5d", (int)extremum->y);
 
 			/* now, check whether the point belongs to a straight or round  */
 			/* segment; we first need to find in which contour the extremum */
@@ -219,7 +220,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 					FT_CURVE_TAG(glyph->outline.tags[prev]) != FT_CURVE_TAG_ON ||
 					FT_CURVE_TAG(glyph->outline.tags[next]) != FT_CURVE_TAG_ON);
 
-				AH_LOG(("%c ", round ? 'r' : 'f'));
+				debugN(6, "%c ", round ? 'r' : 'f');
 			}
 
 			if (round)
@@ -228,7 +229,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 				flats[num_flats++] = extremum->y;
 		}
 
-		AH_LOG(("\n"));
+		debugN(6, "\n");
 
 		/* we have computed the contents of the `rounds' and `flats' tables, */
 		/* now determine the reference and overshoot position of the blue;   */
@@ -262,7 +263,7 @@ static FT_Error ah_hinter_compute_blues(AH_Hinter hinter) {
 				*blue_shoot = *blue_ref = (shoot + ref) / 2;
 		}
 
-		AH_LOG(("-- ref = %ld, shoot = %ld\n", *blue_ref, *blue_shoot));
+		debug(6, "-- ref = %ld, shoot = %ld", *blue_ref, *blue_shoot);
 	}
 
 	/* reset original face charmap */
