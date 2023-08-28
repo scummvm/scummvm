@@ -463,7 +463,6 @@ void Process::appendToSharedStorage() {
 
 void Process::appendNameToSharedStorage() {
 	int index = _engine->appendToSharedStorage(_object->getName());
-	debug("appendNameToSharedStorage %s -> %d", _object->getName().c_str(), index);
 	push(index);
 }
 
