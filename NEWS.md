@@ -22,10 +22,12 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for PC98 font ROM.
   - Added optional dependency for libsonivox, implementing EAS (Embedded Audio
     Synthesis) sound driver.
-  - Added YUV422 and YUV444 support to Theora decoder.  
+  - Added YUV422 and YUV444 support to Theora decoder.
+  - Implemented specialized CPU routines for graphics blitting for ManagedSurface.
 
  AGS:
    - Synced with upstream AGS 3.6.0.51.
+   - Sped up graphics manipulation on modern hardware with CPU-specific code.
 
  Asylum:
    - Added support for Chinese Sanitarium.
@@ -42,7 +44,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Kyra1 Amiga French release and DOS Czech fan translation.
    - Improved game controls menu accuracy for all platforms.
    - Added support for Chinese EOB2.
-   - Added support for the PC-98 version of EOB2. 
+   - Added support for the PC-98 version of EOB2.
 
  SCUMM:
    - Added support for unpacked RuSCUMM patches for Russian localizations.
