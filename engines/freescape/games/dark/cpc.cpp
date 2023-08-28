@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
@@ -27,96 +28,47 @@
 
 namespace Freescape {
 
-void DarkEngine::initZX() {
-	_viewArea = Common::Rect(56, 28, 265, 132);
-	_maxEnergy = 63;
-	_maxShield = 63;
+void DarkEngine::initCPC() {
+	_viewArea = Common::Rect(40, 24, 279, 124);
+
 }
 
-void DarkEngine::loadAssetsZXFullGame() {
+extern byte kCPCPaletteTitleData[4][3];
+extern byte kCPCPaletteBorderData[4][3];
+
+extern Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode0);
+
+void DarkEngine::loadAssetsCPCFullGame() {
 	Common::File file;
 
-	file.open("darkside.zx.title");
-	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
-	} else
-		error("Unable to find darkside.zx.title");
-
-	file.close();
-	file.open("darkside.zx.border");
-	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
-	} else
-		error("Unable to find driller.zx.border");
-	file.close();
-
-	file.open("darkside.zx.data");
+	file.open("DARK1.SCR");
 	if (!file.isOpen())
-		error("Failed to open darksize.zx.data");
+		error("Failed to open DARK1.SCR");
 
-	loadMessagesFixedSize(&file, 0x56b - 6, 16, 27);
+	_title = readCPCImage(&file, false);
+	_title->setPalette((byte*)&kCPCPaletteTitleData, 0, 4);
 
-	loadFonts(&file, 0x5d60 - 6);
-	loadGlobalObjects(&file, 0x1a, 23);
-	load8bitBinary(&file, 0x5ec0 - 4, 4);
-	for (auto &it : _areaMap) {
-		addWalls(it._value);
-		addECDs(it._value);
-		addSkanner(it._value);
-	}
+	file.close();
+	file.open("DARK2.SCR");
+	if (!file.isOpen())
+		error("Failed to open DARK2.SCR");
 
-	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
-	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
-	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
-	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
+	_border = readCPCImage(&file, true);
+	_border->setPalette((byte*)&kCPCPaletteBorderData, 0, 4);
 
-	for (auto &it : _indicators)
-		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+	file.close();
+	file.open("DARKCODE.BIN");
+
+	if (!file.isOpen())
+		error("Failed to open DARKCODE.BIN");
+
+	loadMessagesFixedSize(&file, 0x5d9, 14, 20);
+	loadFonts(&file, 0x60f3);
+	loadGlobalObjects(&file, 0x9a, 8);
+	load8bitBinary(&file, 0x6255, 16);
 }
 
-void DarkEngine::loadAssetsZXDemo() {
-	Common::File file;
-
-	file.open("darkside.zx.title");
-	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
-	} else
-		error("Unable to find darkside.zx.title");
-
-	file.close();
-	file.open("darkside.zx.border");
-	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
-	} else
-		error("Unable to find driller.zx.border");
-	file.close();
-
-	file.open("darkside.zx.data");
-	if (!file.isOpen())
-		error("Failed to open darksize.zx.data");
-
-	loadMessagesFixedSize(&file, 0x56b, 16, 27);
-	loadMessagesFixedSize(&file, 0x5761, 264, 5);
-
-	loadFonts(&file, 0x6164);
-	loadGlobalObjects(&file, 0x20, 23);
-	load8bitBinary(&file, 0x62c6, 4);
-	for (auto &it : _areaMap) {
-		addWalls(it._value);
-		addECDs(it._value);
-		addSkanner(it._value);
-	}
-
-	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
-	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
-	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
-	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
-
-	for (auto &it : _indicators)
-		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
-}
-
-void DarkEngine::drawZXUI(Graphics::Surface *surface) {
+void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 	uint32 color = 7;
 	uint8 r, g, b;
 
@@ -177,7 +129,7 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 	}
 	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
 	drawBinaryClock(surface, 273, 128, clockColor, back);
-	drawIndicator(surface, 152, 140);
+	//drawIndicator(surface, 152, 140);
 }
 
 } // End of namespace Freescape

@@ -430,6 +430,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"darkside",
+		"",
+		{
+			{"DARKCODE.BIN", 0, "203ce55b7582c556c811acd6a1cf4ab6", 35385},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
 		"totaleclipse",
 		"",
 		{

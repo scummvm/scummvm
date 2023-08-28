@@ -564,10 +564,13 @@ public:
 	void initDOS();
 	void initAmigaAtari();
 	void initZX();
+	void initCPC();
 
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaFullGame() override;
+
+	void loadAssetsCPCFullGame() override;
 
 	void loadAssetsZXDemo() override;
 	void loadAssetsZXFullGame() override;
@@ -583,6 +586,7 @@ public:
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
+	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 
 
