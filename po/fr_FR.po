@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:59+0000\n"
+"POT-Creation-Date: 2023-08-28 20:06+0000\n"
 "PO-Revision-Date: 2023-08-13 10:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3391,8 +3391,8 @@ msgstr ""
 "Le périphérique audio sélectionné '%s' n'a pas été trouvé (il est peut-être "
 "éteint ou débranché)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
-#: audio/mididrv.cpp:289
+#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
+#: audio/mididrv.cpp:288
 msgid "Attempting to fall back to the next available device..."
 msgstr "Tentative d'utilisation du prochain périphérique disponible..."
 
@@ -3405,7 +3405,7 @@ msgstr ""
 "Le périphérique audio sélectionné '%s' ne peut pas être utilisé. Voir le "
 "fichier de log pour plus de détails."
 
-#: audio/mididrv.cpp:271
+#: audio/mididrv.cpp:270
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3414,7 +3414,7 @@ msgstr ""
 "Le périphérique audio préféré '%s' n'a pas été trouvé (il est peut-être "
 "éteint ou débranché)."
 
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:287
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3423,7 +3423,7 @@ msgstr ""
 "Le périphérique audio préféré '%s' ne peut pas être utilisé. Voir le fichier "
 "de log pour plus de détails."
 
-#: audio/mididrv.cpp:453
+#: audio/mididrv.cpp:452
 msgid "Starting MIDI dump"
 msgstr "Démarrage du dump MIDI"
 

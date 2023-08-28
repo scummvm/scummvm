@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:59+0000\n"
+"POT-Creation-Date: 2023-08-28 20:06+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -3349,8 +3349,8 @@ msgstr ""
 "Адзначаная гукавая прылада '%s' ня знойдзена (мабыць яна вымкнена або "
 "адлучана)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
-#: audio/mididrv.cpp:289
+#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
+#: audio/mididrv.cpp:288
 msgid "Attempting to fall back to the next available device..."
 msgstr "Спроба выкарыстаць іншую даступную прыладу…"
 
@@ -3363,7 +3363,7 @@ msgstr ""
 "Адзначаная гукавая прылада '%s' ня можа быць выкарыстана. Падрабязнасьці ў "
 "файле хронікі."
 
-#: audio/mididrv.cpp:271
+#: audio/mididrv.cpp:270
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3372,7 +3372,7 @@ msgstr ""
 "Пераважная гукавая прылада '%s' ня знойдзена (мабыць яна вымкнена або "
 "адлучана)."
 
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:287
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3381,7 +3381,7 @@ msgstr ""
 "Пераважная гукавая прылада '%s' ня можа быць выкарыстана. Падрабязнасьці ў "
 "файле хронікі."
 
-#: audio/mididrv.cpp:453
+#: audio/mididrv.cpp:452
 msgid "Starting MIDI dump"
 msgstr "Запуск адбітку MIDI"
 

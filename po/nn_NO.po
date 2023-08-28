@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:59+0000\n"
+"POT-Creation-Date: 2023-08-28 20:06+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -3336,8 +3336,8 @@ msgstr ""
 "Den valde lydeininga '%s' vart ikkje funne (t.d. kan den vere avslått eller "
 "fråkopla)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
-#: audio/mididrv.cpp:289
+#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
+#: audio/mididrv.cpp:288
 msgid "Attempting to fall back to the next available device..."
 msgstr "Prøver å nytte den neste tilgjengelege eininga..."
 
@@ -3350,7 +3350,7 @@ msgstr ""
 "Den foretrukne lydeininga '%s' kan ikkje nyttast. Sjå loggfila for meir "
 "informasjon."
 
-#: audio/mididrv.cpp:271
+#: audio/mididrv.cpp:270
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3359,7 +3359,7 @@ msgstr ""
 "Den foretrukne lydeininga '%s' vart ikkje funne (t.d. kan den vere avslått "
 "eller fråkopla)."
 
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:287
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3368,7 +3368,7 @@ msgstr ""
 "Den foretrukne lydeininga '%s' kan ikkje nyttast. Sjå loggfila for meir "
 "informasjon."
 
-#: audio/mididrv.cpp:453
+#: audio/mididrv.cpp:452
 msgid "Starting MIDI dump"
 msgstr ""
 

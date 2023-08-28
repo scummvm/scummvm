@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:59+0000\n"
+"POT-Creation-Date: 2023-08-28 20:06+0000\n"
 "PO-Revision-Date: 2023-03-20 15:33+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -3379,8 +3379,8 @@ msgstr ""
 "Nie znaleziono wybranego urządzenia audio '%s' (może być wyłączone albo "
 "niepodłączone)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
-#: audio/mididrv.cpp:289
+#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
+#: audio/mididrv.cpp:288
 msgid "Attempting to fall back to the next available device..."
 msgstr "Próbuję użyć następnego dostępnego urządzenia..."
 
@@ -3393,7 +3393,7 @@ msgstr ""
 "Nie można użyć wybranego urządzenia audio '%s'. Dalsze szczegóły są dostępne "
 "w pliku dziennika."
 
-#: audio/mididrv.cpp:271
+#: audio/mididrv.cpp:270
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3402,7 +3402,7 @@ msgstr ""
 "Nie znaleziono preferowanego urządzenia audio '%s' (może być wyłączone albo "
 "niepodłączone)."
 
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:287
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3411,7 +3411,7 @@ msgstr ""
 "Nie można użyć preferowanego urządzenia audio '%s'. Dalsze szczegóły są "
 "dostępne w pliku dziennika."
 
-#: audio/mididrv.cpp:453
+#: audio/mididrv.cpp:452
 msgid "Starting MIDI dump"
 msgstr "Uruchamianie MIDI dump"
 

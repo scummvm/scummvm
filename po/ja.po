@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:59+0000\n"
+"POT-Creation-Date: 2023-08-28 20:06+0000\n"
 "PO-Revision-Date: 2023-08-14 10:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -3300,8 +3300,8 @@ msgstr ""
 "選択されたオーディオデバイス'%s'が見つかりませんでした(電源が入っていないか、"
 "未接続の可能性があります)。"
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
-#: audio/mididrv.cpp:289
+#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
+#: audio/mididrv.cpp:288
 msgid "Attempting to fall back to the next available device..."
 msgstr "使用可能なデバイスまでフォールバックしています..."
 
@@ -3314,7 +3314,7 @@ msgstr ""
 "選択されたオーディオデバイス'%s'は使用できません。詳細はログファイルを参照し"
 "てください。"
 
-#: audio/mididrv.cpp:271
+#: audio/mididrv.cpp:270
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3323,7 +3323,7 @@ msgstr ""
 "優先オーディオデバイス'%s'が見つかりませんでした(電源が入っていないか、未接続"
 "の可能性があります)。"
 
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:287
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3332,7 +3332,7 @@ msgstr ""
 "優先オーディオデバイス'%s'は使用できません。詳細はログファイルを参照してくだ"
 "さい。"
 
-#: audio/mididrv.cpp:453
+#: audio/mididrv.cpp:452
 msgid "Starting MIDI dump"
 msgstr "MIDIダンプを開始しています"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:59+0000\n"
+"POT-Creation-Date: 2023-08-28 20:06+0000\n"
 "PO-Revision-Date: 2023-08-24 09:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3428,8 +3428,8 @@ msgstr ""
 "Η επιλεγμένη συσκευή ήχου '%s' δε βρέθηκε (π.χ. μπορεί να είναι σβηστή ή "
 "αποσυνδεδεμένη)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
-#: audio/mididrv.cpp:289
+#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
+#: audio/mididrv.cpp:288
 msgid "Attempting to fall back to the next available device..."
 msgstr "Προσπάθεια μετάπτωσης στην επόμενη διαθέσιμη συσκευή ..."
 
@@ -3442,7 +3442,7 @@ msgstr ""
 "Η επιλεγμένη συσκευή ήχου '%s' δεν ήταν δυνατό να χρησιμοποιηθεί. Δείτε το "
 "αρχείο καταγραφής για περισσότερες πληροφορίες."
 
-#: audio/mididrv.cpp:271
+#: audio/mididrv.cpp:270
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -3451,7 +3451,7 @@ msgstr ""
 "Η επιθυμητή συσκευή ήχου '%s' δε βρέθηκε (π.χ. μπορεί να είναι σβηστή ή "
 "αποσυνδεδεμένη)."
 
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:287
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -3460,7 +3460,7 @@ msgstr ""
 "Η επιθυμητή συσκευή ήχου '%s' δεν ήταν δυνατό να χρησιμοποιηθεί. Δείτε το "
 "αρχείο καταγραφής για περισσότερες πληροφορίες."
 
-#: audio/mididrv.cpp:453
+#: audio/mididrv.cpp:452
 msgid "Starting MIDI dump"
 msgstr "Έναρξη εξαγωγής MIDI δεδομένων"
 

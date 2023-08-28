@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:59+0000\n"
+"POT-Creation-Date: 2023-08-28 20:06+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3334,8 +3334,8 @@ msgid ""
 "disconnected)."
 msgstr "התקן השמע שנבחר '%s' לא נמצא (יכול להיות למשל כבוי או מנותק)."
 
-#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
-#: audio/mididrv.cpp:289
+#: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:271
+#: audio/mididrv.cpp:288
 msgid "Attempting to fall back to the next available device..."
 msgstr "מנסה את ההתקן הזמין הבא ..."
 
@@ -3346,21 +3346,21 @@ msgid ""
 "information."
 msgstr "לא ניתן להשתמש בהתקן השמע שנבחר '%s'. ראו קובץ יומן למידע נוסף."
 
-#: audio/mididrv.cpp:271
+#: audio/mididrv.cpp:270
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr "מכשיר השמע המועדף '%s' לא נמצא (למשל, ייתכן שהוא כבוי או מנותק)."
 
-#: audio/mididrv.cpp:288
+#: audio/mididrv.cpp:287
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr "לא ניתן להשתמש בהתקן השמע המועדף '%s'. ראו קובץ יומן למידע נוסף."
 
-#: audio/mididrv.cpp:453
+#: audio/mididrv.cpp:452
 msgid "Starting MIDI dump"
 msgstr "מתחיל בשמירת MIDI"
 
