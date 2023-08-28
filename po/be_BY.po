@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:34+0000\n"
+"POT-Creation-Date: 2023-08-28 19:49+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -9159,14 +9159,6 @@ msgstr ""
 "Выкарыстоўваць англійскую агучку замест нямецкай для ўсіх моў, акрамя "
 "нямецкай"
 
-#: engines/teenagent/resources.cpp:120
-msgid ""
-"The teenagent.dat file is compressed and zlib hasn't been included in this "
-"executable. Please decompress it"
-msgstr ""
-"Файл teenagent.dat зжаты, але zlib не ўключаны ў гэту праграму. Калі ласка, "
-"распакуйце яго"
-
 #: engines/tetraedge/metaengine.cpp:33
 #, fuzzy
 #| msgid "Correct aspect ratio for games"
@@ -10468,6 +10460,13 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid ""
+#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "this executable. Please decompress it"
+#~ msgstr ""
+#~ "Файл teenagent.dat зжаты, але zlib не ўключаны ў гэту праграму. Калі "
+#~ "ласка, распакуйце яго"
 
 #, fuzzy
 #~| msgid "Connect your cloud storage account"

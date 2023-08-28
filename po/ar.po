@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:34+0000\n"
+"POT-Creation-Date: 2023-08-28 19:49+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -9124,14 +9124,6 @@ msgid ""
 msgstr ""
 "استخدم التحدث باللغة الإنجليزية بدلاً من الألمانية لكل لغة أخرى غير الألمانية"
 
-#: engines/teenagent/resources.cpp:120
-msgid ""
-"The teenagent.dat file is compressed and zlib hasn't been included in this "
-"executable. Please decompress it"
-msgstr ""
-"يتم ضغط ملف teenagent.dat ولم يتم تضمين zlib في هذا الملف القابل للتنفيذ. من "
-"فضلك فك الضغط"
-
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Correct movie aspect ratio"
 msgstr "تصحيح نسبة أبعاد الفيلم"
@@ -10399,6 +10391,13 @@ msgstr ""
 "أو حزمة GNU FreeFont. ستحتاج إلى جميع الخطوط من حزمة الخطوط التي تختارها ، "
 "مثل LiberationMono و LiberationSans و LiberationSerif أو FreeMono و FreeSans "
 "و FreeSerif على التوالي."
+
+#~ msgid ""
+#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "this executable. Please decompress it"
+#~ msgstr ""
+#~ "يتم ضغط ملف teenagent.dat ولم يتم تضمين zlib في هذا الملف القابل للتنفيذ. "
+#~ "من فضلك فك الضغط"
 
 #, fuzzy
 #~| msgid "Connect your cloud storage account"

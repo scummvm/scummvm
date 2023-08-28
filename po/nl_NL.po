@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:34+0000\n"
+"POT-Creation-Date: 2023-08-28 19:49+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -9168,14 +9168,6 @@ msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr "Gebruik Engels in plaats van Duits voor elke taal anders dan Duits"
 
-#: engines/teenagent/resources.cpp:120
-msgid ""
-"The teenagent.dat file is compressed and zlib hasn't been included in this "
-"executable. Please decompress it"
-msgstr ""
-"Het \"teenagent.dat\" bestand is gecomprimeerd en zlib is niet meegenomen in "
-"deze versie van ScummVM. Decomprimeer a.u.b. het bestand"
-
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Correct movie aspect ratio"
 msgstr "Corrigeer film aspectratio"
@@ -10417,6 +10409,13 @@ msgstr ""
 "alle lettertypes van de collectie nodig die u selecteert, dus "
 "LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
 "FreeSerif respectievelijk."
+
+#~ msgid ""
+#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "this executable. Please decompress it"
+#~ msgstr ""
+#~ "Het \"teenagent.dat\" bestand is gecomprimeerd en zlib is niet meegenomen "
+#~ "in deze versie van ScummVM. Decomprimeer a.u.b. het bestand"
 
 #, fuzzy
 #~| msgid "Connect your cloud storage account"

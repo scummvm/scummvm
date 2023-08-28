@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:34+0000\n"
+"POT-Creation-Date: 2023-08-28 19:49+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -9240,14 +9240,6 @@ msgid ""
 msgstr ""
 "Angol beszéd használata a Német helyett minden nyelven, a Németen kívül"
 
-#: engines/teenagent/resources.cpp:120
-msgid ""
-"The teenagent.dat file is compressed and zlib hasn't been included in this "
-"executable. Please decompress it"
-msgstr ""
-"A teenagent.dat fájl tömörített és a zlib nem része ennek a futtatható "
-"állománynak. Kérlek tömörítsd ki"
-
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Correct movie aspect ratio"
 msgstr "A film megfelelő képaránya"
@@ -10518,6 +10510,13 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#~ msgid ""
+#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "this executable. Please decompress it"
+#~ msgstr ""
+#~ "A teenagent.dat fájl tömörített és a zlib nem része ennek a futtatható "
+#~ "állománynak. Kérlek tömörítsd ki"
 
 #, fuzzy
 #~| msgid "Connect your cloud storage account"

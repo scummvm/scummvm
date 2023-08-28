@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 19:34+0000\n"
+"POT-Creation-Date: 2023-08-28 19:49+0000\n"
 "PO-Revision-Date: 2023-04-05 10:46+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -9245,14 +9245,6 @@ msgstr ""
 "Использовать английскую озвучку вместо немецкой для всех языков, кроме "
 "немецкого"
 
-#: engines/teenagent/resources.cpp:120
-msgid ""
-"The teenagent.dat file is compressed and zlib hasn't been included in this "
-"executable. Please decompress it"
-msgstr ""
-"Файл teenagent.dat сжат, но zlib не включён в эту программу. Пожалуйста, "
-"распакуйте его"
-
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Correct movie aspect ratio"
 msgstr "Корректировать соотношение сторон для роликов"
@@ -10525,6 +10517,13 @@ msgstr ""
 "понадобятся все шрифты из выбранного вами пакета, то есть, LiberationMono, "
 "LiberationSans и LiberationSerif, либо FreeMono, FreeSans и FreeSerif "
 "соответственно."
+
+#~ msgid ""
+#~ "The teenagent.dat file is compressed and zlib hasn't been included in "
+#~ "this executable. Please decompress it"
+#~ msgstr ""
+#~ "Файл teenagent.dat сжат, но zlib не включён в эту программу. Пожалуйста, "
+#~ "распакуйте его"
 
 #, fuzzy
 #~| msgid "Connect your cloud storage account"
