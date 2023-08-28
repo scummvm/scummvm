@@ -30,6 +30,52 @@ namespace M4 {
 
 #define CHECK_SERIES if (!_G(globals)) error_show(FL, 'SERI');
 
+void Series::play(const char *seriesName, frac16 layer, uint32 flags,
+		int16 triggerNum, int32 frameRate, int32 loopCount, int32 s,
+		int32 x, int32 y, int32 firstFrame, int32 lastFrame) {
+	_series = M4::series_play(seriesName, layer, flags, triggerNum, frameRate,
+		loopCount, s, x, y, firstFrame, lastFrame);
+	_seriesS = M4::series_play(seriesName, layer + 1, flags, -1, frameRate,
+		loopCount, s, x, y, firstFrame, lastFrame);
+}
+
+void Series::show(const char *seriesName, frac16 layer, uint32 flags,
+		int16 triggerNum, int32 duration, int32 index, int32 s, int32 x, int32 y) {
+	_series = M4::series_show(seriesName, layer, flags, triggerNum, duration,
+		index, s, x, y);
+	_seriesS = M4::series_show(seriesName, layer + 1, flags, -1, duration,
+		index, s, x, y);
+}
+
+void Series::show(const char *series1, const char *series2, int layer) {
+	_series = M4::series_show(series1, layer);
+	_seriesS = M4::series_show(series2, layer + 1);
+}
+
+void Series::series_play(const char *seriesName, frac16 layer, uint32 flags,
+		int16 triggerNum, int32 frameRate, int32 loopCount, int32 s,
+		int32 x, int32 y, int32 firstFrame, int32 lastFrame) {
+	Series tmp;
+	tmp.play(seriesName, layer, flags, triggerNum, frameRate,
+		loopCount, s, x, y, firstFrame, lastFrame);
+}
+
+void Series::series_show(const char *seriesName, frac16 layer, uint32 flags,
+		int16 triggerNum, int32 duration, int32 index, int32 s, int32 x, int32 y) {
+	Series tmp;
+	tmp.show(seriesName, layer, flags, triggerNum, duration,
+		index, s, x, y);
+}
+
+
+void Series::terminate() {
+	if (_series)
+		terminateMachineAndNull(_series);
+	if (_seriesS)
+		terminateMachineAndNull(_seriesS);
+}
+
+
 static void series_trigger_dispatch_callback(frac16 myMessage, machine * /*sender*/) {
 	kernel_trigger_dispatchx(myMessage);
 }

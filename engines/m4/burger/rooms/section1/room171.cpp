@@ -258,8 +258,7 @@ kernel_trigger_dispatch_now(6);
 	_series3 = series_show("171pills", 0x700);
 
 	if (_val1 || _G(flags)[V092]) {
-		_chair1 = series_show("171chair", 0x900);
-		_chair2 = series_show("171chars", 0x901);
+		_chair.show("171chair", 0x900);
 	}
 
 	hotspot_set_active("PIANO STOOL", false);
@@ -314,16 +313,32 @@ kernel_trigger_dispatch_now(6);
 
 void Room171::daemon() {
 	switch (_G(kernel).trigger) {
+	case 1:
+		disable_player_commands_and_fade_init(1019);
+		break;
+
 	case 2:
 		disable_player_commands_and_fade_init(1022);
+		break;
+
+	case 3:
+		npc_say();
+		break;
+
+	case 4:
+		if (_val2 == 28 || _val2 == 36 || _val2 == 34 || _val2 == 33 ||
+				_val2 == 38 || _val2 == 30) {
+			digi_stop(2);
+			freeSeries();
+			kernel_trigger_dispatch_now(5);
+		}
 		break;
 
 	case 5:
 		switch (_val2) {
 		case 5:
 			digi_play_loop("171_003", 2);
-			_series1 = series_play("171ap01", 0x300);
-			_series2 = series_play("171ap01s", 0x301);
+			_series.play("171ap01", 0x300);
 			break;
 
 		case 6:
@@ -349,8 +364,7 @@ void Room171::daemon() {
 
 		case 10:
 			_G(flags)[V083] = 1;
-			terminateMachineAndNull(_chair1);
-			terminateMachineAndNull(_chair2);
+			_chair.terminate();
 
 			series_show("171stool", 0x300);
 			series_show("171stols", 0x301);
@@ -375,8 +389,7 @@ void Room171::daemon() {
 
 		case 14:
 			_G(flags)[V084] = 1;
-			terminateMachineAndNull(_chair1);
-			terminateMachineAndNull(_chair1);
+			_chair.terminate();
 			_val2 = 26;
 			series_play_with_breaks(PLAY6, "171ap06", 0x800, 5, 3);
 			break;
@@ -405,15 +418,13 @@ void Room171::daemon() {
 
 		case 19:
 			_G(flags)[V085] = 1;
-			terminateMachineAndNull(_chair1);
-			terminateMachineAndNull(_chair2);
+			_chair.terminate();
 			_val2 = 26;
 			kernel_trigger_dispatch_now(5);
 			break;
 
 		case 20:
-			_series1 = series_show("171ap10", 0x700);
-			_series2 = series_show("171ap10s", 0x701);
+			_series.show("171ap10", 0x700);
 			break;
 
 		case 21:
@@ -428,8 +439,7 @@ void Room171::daemon() {
 
 		case 23:
 			_val2 = 24;
-			_series1 = series_play("171ap10", 0x700);
-			_series2 = series_play("171ap10s", 0x701);
+			_series.play("171ap10", 0x700);
 			break;
 
 		case 24:
@@ -440,8 +450,7 @@ void Room171::daemon() {
 
 		case 25:
 			_G(flags)[V086] = 1;
-			terminateMachineAndNull(_chair1);
-			terminateMachineAndNull(_chair2);
+			_chair.terminate();
 			series_show("171phone", 0x700);
 			_val2 = 26;
 			kernel_trigger_dispatch_now(5);
@@ -454,12 +463,173 @@ void Room171::daemon() {
 				ws_walk(436, 288, 0, 10001, 2);
 
 			digi_play_loop("171_009", 2, 50);
-			// TODO
+			_series.play("171ap11", 0x8ff, 32, 4);
+			break;
+
+		case 28:
+			_val2 = 29;
+			npc_say(_digi1, 5, "171ap13", 0x8fe);
+			break;
+
+		case 29:
+			_val2 = 26;
+			kernel_trigger_dispatch_now(5);
+			player_set_commands_allowed(true);
+			break;
+
+		case 30:
+			_val2 = 32;
+			series_play_with_breaks(PLAY15, "171ap16", 0x8ff, 5, 3);
+			break;
+
+		case 31:
+			_val2 = 32;
+			series_play_with_breaks(PLAY16, "171ap17", 0x8ff, 5, 3);
+			break;
+
+		case 32:
+			_chair.show("171chair", "171chars", 0x900);
+			series_play_with_breaks(PLAY17, "171ap18", 0x400, 1, 3);
+			break;
+
+		case 33:
+			npc_say(10001, "171ap13", 0x8fe);
+			break;
+
+		case 34:
+			_val2 = 35;
+			npc_say(5, "171ap13", 0x8fe);
+			break;
+
+		case 35:
+			_val2 = 26;
+			kernel_trigger_dispatch_now(5);
+			conv_resume_curr();
+			break;
+
+		case 36:
+			_val2 = 26;
+			series_play_with_breaks(PLAY12, "171ap12", 0x8ff, 5, 3);
+			break;
+
+		case 37:
+			series_play_with_breaks(PLAY13, "171ap14", 0x8ff, 5, 3);
+			break;
+
+		case 38:
+			_val2 = 39;
+			npc_say(5, "171ap13", 0x8fe);
+			break;
+
+		case 39:
+			_chair.show("171chair", "171chars", 0x900);
+
+			if (_series3)
+				terminateMachineAndNull(_series3);
+
+			series_play_with_breaks(PLAY14, "171ap15", 0x700, 5, 2, 8);
+			break;
+
+		case 40:
+			_chair.terminate();
+			_series3 = series_show("171pills", 0x700);
+			_val2 = 26;
+			kernel_trigger_dispatch_now(5);
+			conv_resume_curr();
 			break;
 
 		default:
-			// TODO
+			term_message("ERROR!!!! polly_should not set!");
 			break;
+		}
+		break;
+
+	case 6:
+		_G(flags)[V298] = 1;
+		_G(flags)[V299] = 1;
+		_flag1 = true;
+		conv_load_and_prepare("conv40", 7);
+
+		switch (_val1) {
+		case 10019:
+			conv_export_value_curr(1, 0);
+			break;
+		case 10020:
+			conv_export_value_curr(3, 0);
+			break;
+		case 10021:
+			conv_export_value_curr(2, 0);
+			break;
+		case 10022:
+			conv_export_value_curr(4, 0);
+			break;
+		default:
+			conv_export_value_curr(0, 0);
+			break;
+		}
+
+		conv_export_value_curr(inv_player_has("WHISTLE") ? 1 : 0, 1);
+		conv_export_pointer_curr(&_G(flags)[V087], 2);
+		conv_export_pointer_curr(&_G(flags)[V088], 3);
+		conv_play_curr();
+		break;
+
+	case 7:
+		_val1 = 0;
+		_G(flags)[V298] = 0;
+		_G(flags)[V299] = 0;
+		_flag1 = false;
+		player_set_commands_allowed(true);
+		_val2 = 26;
+
+		if (_series) {
+			freeSeries();
+			kernel_trigger_dispatch_now(5);
+		}
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			disable_player();
+			series_play_with_breaks(PLAY1, "171wi01", 0xc01, 2, 3, 5);
+			break;
+
+		case 2:
+			disable_player();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY2, "171wi02", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5, 100, 0, -3);
+			break;
+
+		case 3:
+			if (_G(flags)[V087]) {
+				_digi1 = "171p903";
+			} else {
+				_digi1 = "1711p902";
+				_G(flags)[V087] = 1;
+			}
+
+			_val2 = 28;
+			break;
+
+		case 10001:
+			ws_unhide_walker();
+
+			if (_G(flags)[V092] || _G(flags)[V086])
+				player_set_commands_allowed(true);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case gCALLED_EACH_LOOP:
+		if (_doorFlag) {
+			frontDoor();
+		} else {
+			_G(kernel).call_daemon_every_loop = false;
 		}
 		break;
 
@@ -586,10 +756,7 @@ void Room171::loadSeries5() {
 }
 
 void Room171::freeSeries() {
-	if (_series1)
-		terminateMachineAndNull(_series1);
-	if (_series2)
-		terminateMachineAndNull(_series2);
+	_series.terminate();
 }
 
 void Room171::frontDoor() {

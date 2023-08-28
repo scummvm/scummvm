@@ -37,7 +37,7 @@ void MenuRoom::init() {
 
 
 void MenuRoom::daemon() {
-	if (_G(kernel).trigger == CALLED_EACH_LOOP) {
+	if (_G(kernel).trigger == gCALLED_EACH_LOOP) {
 		if (player_commands_allowed())
 			buttonsFrame();
 

@@ -576,7 +576,7 @@ void Room142::daemon() {
 		}
 		break;
 
-	case CALLED_EACH_LOOP:
+	case gCALLED_EACH_LOOP:
 		if (_actionType == 0) {
 			_G(kernel).call_daemon_every_loop = false;
 		} else {

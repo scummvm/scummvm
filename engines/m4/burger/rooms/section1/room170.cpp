@@ -148,7 +148,7 @@ void Room170::daemon() {
 		}
 		break;
 
-	case CALLED_EACH_LOOP:
+	case gCALLED_EACH_LOOP:
 		term_message("Calling daemon each loop..............");
 
 		if (_lookTownHall) {

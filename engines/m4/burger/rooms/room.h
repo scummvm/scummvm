@@ -46,10 +46,10 @@ public:
 	void compact_mem_and_report() {}
 
 	void npc_say(const char *digiName, int trigger = -1, const char *seriesName = nullptr,
-		int layer = 0, int channel = 1, int firstFrame = 0, int lastFrame = -1,
+		int layer = 0, bool shadow = true, int firstFrame = 0, int lastFrame = -1,
 		int digiSlot = 1, int digiVol = 255);
 	void npc_say(int trigger = -1, const char *seriesName = nullptr,
-		int layer = 0, int channel = 1, int firstFrame = 0, int lastFrame = -1,
+		int layer = 0, bool shadow = true, int firstFrame = 0, int lastFrame = -1,
 		int digiSlot = 1, int digiVol = 255);
 };
 
