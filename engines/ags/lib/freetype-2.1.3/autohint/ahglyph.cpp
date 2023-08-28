@@ -48,6 +48,7 @@
 #include "engines/ags/lib/freetype-2.1.3/autohint/ahglobal.h"
 #include "engines/ags/lib/freetype-2.1.3/autohint/ahtypes.h"
 
+#include "common/debug.h"
 // util.h for ABS
 #include "common/util.h"
 
@@ -55,9 +56,6 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-#ifdef AH_DEBUG
-
-#include <stdio.h>
 
 void ah_dump_edges(AH_Outline outline) {
 	AH_Edge edges;
@@ -72,13 +70,13 @@ void ah_dump_edges(AH_Outline outline) {
 	for (dimension = 1; dimension >= 0; dimension--) {
 		AH_Edge edge;
 
-		printf("Table of %s edges:\n", !dimension ? "vertical" : "horizontal");
-		printf("  [ index |  pos |  dir  | link |"
-			   " serif | blue | opos  |  pos  ]\n");
+		debug(6, "Table of %s edges:", !dimension ? "vertical" : "horizontal");
+		debug(6, "  [ index |  pos |  dir  | link |"
+			   " serif | blue | opos  |  pos  ]");
 
 		for (edge = edges; edge < edge_limit; edge++) {
-			printf("  [ %5d | %4d | %5s | %4d | %5d |  %c  | %5.2f | %5.2f ]\n",
-				   edge - edges,
+			debug(6, "  [ %5d | %4d | %5s | %4d | %5d |  %c  | %5.2f | %5.2f ]",
+				   (int)(edge - edges),
 				   (int)edge->fpos,
 				   edge->dir == AH_DIR_UP
 					   ? "up"
@@ -89,8 +87,8 @@ void ah_dump_edges(AH_Outline outline) {
 									 : (edge->dir == AH_DIR_RIGHT
 											? "right"
 											: "none"))),
-				   edge->link ? (edge->link - edges) : -1,
-				   edge->serif ? (edge->serif - edges) : -1,
+				   edge->link ? (int)(edge->link - edges) : -1,
+				   edge->serif ? (int)(edge->serif - edges) : -1,
 				   edge->blue_edge ? 'y' : 'n',
 				   edge->opos / 64.0,
 				   edge->pos / 64.0);
@@ -116,14 +114,14 @@ void ah_dump_segments(AH_Outline outline) {
 	for (dimension = 1; dimension >= 0; dimension--) {
 		AH_Segment seg;
 
-		printf("Table of %s segments:\n",
+		debug(6, "Table of %s segments:",
 			   !dimension ? "vertical" : "horizontal");
-		printf("  [ index |  pos |  dir  | link | serif |"
-			   " numl | first | start ]\n");
+		debug(6, "  [ index |  pos |  dir  | link | serif |"
+			   " numl | first | start ]");
 
 		for (seg = segments; seg < segment_limit; seg++) {
-			printf("  [ %5d | %4d | %5s | %4d | %5d | %4d | %5d | %5d ]\n",
-				   seg - segments,
+			debug(6, "  [ %5d | %4d | %5s | %4d | %5d | %4d | %5d | %5d ]",
+				   (int)(seg - segments),
 				   (int)seg->pos,
 				   seg->dir == AH_DIR_UP
 					   ? "up"
@@ -134,11 +132,11 @@ void ah_dump_segments(AH_Outline outline) {
 									 : (seg->dir == AH_DIR_RIGHT
 											? "right"
 											: "none"))),
-				   seg->link ? (seg->link - segments) : -1,
-				   seg->serif ? (seg->serif - segments) : -1,
+				   seg->link ? (int)(seg->link - segments) : -1,
+				   seg->serif ? (int)(seg->serif - segments) : -1,
 				   (int)seg->num_linked,
-				   seg->first - points,
-				   seg->last - points);
+				   (int)(seg->first - points),
+				   (int)(seg->last - points));
 		}
 
 		segments = outline->vert_segments;
@@ -146,7 +144,6 @@ void ah_dump_segments(AH_Outline outline) {
 	}
 }
 
-#endif /* AH_DEBUG */
 
 /* compute the direction value of a given vector.. */
 static AH_Direction ah_compute_direction(FT_Pos dx, FT_Pos dy) {
