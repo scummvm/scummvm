@@ -51,7 +51,7 @@ void ensureWM() {
 }
 
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)
-	: Widget(boss, x, y, w, h, scale, tooltip)  {
+	: Widget(boss, x, y, w, h, scale, tooltip), CommandSender(nullptr)  {
 
 	_text = text;
 
@@ -63,7 +63,7 @@ RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 }
 
 RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip)
-	: Widget(boss, name, tooltip) {
+	: Widget(boss, name, tooltip), CommandSender(nullptr)  {
 
 	_text = text;
 
@@ -87,6 +87,23 @@ void RichTextWidget::init() {
 	_limitH = 140;
 }
 
+void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
+	_verticalScroll->handleMouseWheel(x, y, direction);
+}
+
+void RichTextWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	Widget::handleCommand(sender, cmd, data);
+	switch (cmd) {
+	case kSetPositionCmd:
+		_scrolledY = _verticalScroll->_currentPos;
+		reflowLayout();
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	default:
+		break;
+	}
+}
+
 void RichTextWidget::recalc() {
 	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_limitH = _h;
@@ -99,7 +116,7 @@ void RichTextWidget::recalc() {
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
-	_verticalScroll->_singleStep = kLineHeight;
+	_verticalScroll->_singleStep = 30 * 3;
 	_verticalScroll->setPos(_w, _scrolledY);
 	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
 
@@ -140,7 +157,9 @@ void RichTextWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 	                                    ThemeEngine::kWidgetBackgroundEditText);
 
-	_txtWnd->draw(_surface, 0, 0, _w - _scrollbarWidth, _h, 0, 0);
+	_surface->clear(_wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff));
+
+	_txtWnd->draw(_surface, 0, _scrolledY, _w - _scrollbarWidth, _h, 0, 0);
 
 	g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), *_surface);
 
