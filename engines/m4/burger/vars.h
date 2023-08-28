@@ -52,7 +52,8 @@ enum global_triggers {
 	gSERIES_PLAY_BREAK_2 = 10005,
 	gRELEASE_TRIGGER_DIGI_CHECK = 10006,	// Used only by release_trigger_digi_check() in global.cpp
 
-	gNONPLAYERS_SPEECH_FINISHED = 10011,	// digi_play trigger, used in talk.cpp
+	gNPC_SPEECH_STARTED = 10010,	// NPC talk started
+	gNPC_SPEECH_FINISHED = 10011,	// NPC talk finished
 	g10013 = 10013,
 	gWILBURS_SPEECH_FINISHED = 10014,
 	gWILBURS_SPEECH_START = 10015,

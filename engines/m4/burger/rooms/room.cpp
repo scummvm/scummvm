@@ -33,6 +33,39 @@ void Room::parser_code() {
 	warning("TODO: global_parser_code");
 }
 
+void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
+		int layer, int channel, int firstFrame, int lastFrame, int digiSlot, int digiVol) {
+	term_message("npc_say: %s     npc_series: %s     npc_trigger: %d",
+		digiName, seriesName, trigger);
+
+	_G(npcTrigger) = trigger;
+
+	if (seriesName) {
+		_G(npcSpeech1) = series_play(seriesName, layer, 4, -1, 6, -1, 100, 0, 0, firstFrame, lastFrame);
+
+		if (channel) {
+			char temp[20];
+			strcpy_s(temp, 20, seriesName);
+			strcat_s(temp, 20, "s");
+			_G(npcSpeech2) = series_play(temp, layer + 1, 4, -1, 6, -1, 100, 0, 0, firstFrame, lastFrame);
+		}
+	}
+
+	kernel_trigger_dispatch_now(gNPC_SPEECH_STARTED);
+	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+
+	_G(kernel).trigger_mode = KT_DAEMON;
+	digi_play(digiName, digiSlot, digiVol, gNPC_SPEECH_FINISHED);
+
+	_G(kernel).trigger_mode = oldMode;
+}
+
+void Room::npc_say(int trigger, const char *seriesName, int layer, int channel,
+		int firstFrame, int lastFrame, int digiSlot, int digiVol) {
+	npc_say(conv_sound_to_play(), trigger, seriesName, layer, channel,
+		firstFrame, lastFrame, digiSlot, digiVol);
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
