@@ -80,7 +80,21 @@
         "Square150x150Logo": { "type": "string", "format": "uri" },
         "BackgroundColor": { "type": "string", "format": "uri" }
       }
-    }
+    },
+    "scummVMConfigData": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "engineid": { "type": "string" },
+        "extra": { "type": "string" },
+        "gameid": { "type": "string" },
+        "guioptions": { "type": "string" },
+        "language": { "type": "string" },
+        "platform": { "type": "string" }
+      }
+    },
+    "size": { "type": "string" },
+    "url": { "type" : "string" }
   },
   "required": [
     "name",
