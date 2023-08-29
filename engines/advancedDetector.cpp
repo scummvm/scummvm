@@ -1185,6 +1185,30 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 		} else {
 			idsMap[g->gameId]++;
 		}
+
+		// Perform sanity checks for entries with files inside archives
+		for (const ADGameFileDescription &fileDesc : ((const ADGameDescription *)descPtr)->filesDescriptions) {
+			if (fileDesc.fileName == nullptr && fileDesc.md5 == nullptr) {
+				break;
+			}
+
+			if (fileDesc.md5 && fileDesc.md5[0] == 'A' && fileDesc.md5[1] == ':') {
+				Common::StringTokenizer tok(fileDesc.fileName, ":");
+				uint numTokens = 0;
+
+				while (!tok.empty()) {
+					if (tok.nextToken().empty()) {
+						break;
+					}
+					++numTokens;
+				}
+
+				// We need exactly three tokens: <archive type> : <archive name> : <file name>
+				if (numTokens != 3) {
+					debug(0, "WARNING: Detection entry '%s' for gameId '%s' in engine '%s' is invalid", fileDesc.fileName, g->gameId, getName());
+				}
+			}
+		}
 	}
 
 	for (auto &k : idsMap) {
