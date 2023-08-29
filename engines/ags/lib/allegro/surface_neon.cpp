@@ -19,6 +19,7 @@
  *
  */
 
+#ifdef SCUMMVM_NEON
 #include <arm_neon.h>
 #include "ags/ags.h"
 #include "ags/globals.h"
@@ -925,3 +926,4 @@ template void BITMAP::drawNEON<false>(DrawInnerArgs &);
 template void BITMAP::drawNEON<true>(DrawInnerArgs &);
 
 } // namespace AGS3
+#endif // SCUMMVM_NEON
