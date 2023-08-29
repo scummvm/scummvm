@@ -30,6 +30,10 @@ namespace Rooms {
 
 class Room801 : public Room {
 private:
+	int _series1 = 0;
+	int _series2 = 0;
+	int _series3 = 0;
+	int _series4 = 0;
 	int _val1 = 10;
 
 public:

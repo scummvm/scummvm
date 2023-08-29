@@ -27,20 +27,20 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-static const seriesStreamBreak STREAMS1[] = {
+static const seriesStreamBreak SERIES1[] = {
 	{ 0, "805_001", 3,  80, -1, 0, nullptr, 0 },
 	{ 1, "805w001", 1, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS2[] = {
+static const seriesStreamBreak SERIES2[] = {
 	{  1, "806f002", 1, 255, -1, 0, nullptr, 0 },
 	{ 22, "806z002", 1, 255, -1, 0, nullptr, 0 },
 	{ 36, "806f003", 1, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS3[] = {
+static const seriesStreamBreak SERIES3[] = {
 	{   0, "803w001", 1, 255, -1, 0, nullptr, 0 },
 	{  59, "803z006", 1, 255, -1, 0, nullptr, 0 },
 	{  86, "803z007", 1, 255, -1, 0, nullptr, 0 },
@@ -50,7 +50,7 @@ static const seriesStreamBreak STREAMS3[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS4[] = {
+static const seriesStreamBreak SERIES4[] = {
 	{  5, "802_014", 2, 255, -1, 0, nullptr, 0 },
 	{ 16, "802f008", 1, 255, -1, 0, nullptr, 0 },
 	{ 28, "802f009", 1, 255, -1, 0, nullptr, 0 },
@@ -58,7 +58,7 @@ static const seriesStreamBreak STREAMS4[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS5[] = {
+static const seriesStreamBreak SERIES5[] = {
 	{  0, "807_001", 3, 255, -1, 0, nullptr, 0 },
 	{  0, "807_002", 2, 255, -1, 0, nullptr, 0 },
 	{  1, "804_003", 2, 255, -1, 0, nullptr, 0 },
@@ -72,7 +72,7 @@ static const seriesStreamBreak STREAMS5[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS6[] = {
+static const seriesStreamBreak SERIES6[] = {
 	{  0, nullptr,   0,   0, 37, 0, nullptr, 0 },
 	{  5, "801w001", 1, 255, -1, 0, nullptr, 0 },
 	{ 10, "801_001", 2,  75, -1, 0, nullptr, 0 },
@@ -84,7 +84,7 @@ static const seriesStreamBreak STREAMS6[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS7[] = {
+static const seriesStreamBreak SERIES7[] = {
 	{   0, nullptr,   0,   0, 37, 0, nullptr, 0 },
 	{   7, "801_003", 1, 175, -1, 0, nullptr, 0 },
 	{  23, "802_017", 2,  75, -1, 0, nullptr, 0 },
@@ -95,7 +95,7 @@ static const seriesStreamBreak STREAMS7[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS8[] = {
+static const seriesStreamBreak SERIES8[] = {
 	{   0, "803_008", 2, 175, -1, 0, nullptr, 0 },
 	{  10, "803_009", 1, 255, -1, 0, nullptr, 0 },
 	{  10, "803_002", 2, 200, -1, 0, nullptr, 0 },
@@ -107,7 +107,7 @@ static const seriesStreamBreak STREAMS8[] = {
 	STREAM_BREAK_END
 };
 
-static const seriesStreamBreak STREAMS9[] = {
+static const seriesStreamBreak SERIES9[] = {
 	{   3, "804_002", 2, 150, -1, 0, nullptr, 0 },
 	{  14, "804_003", 2, 150, -1, 0, nullptr, 0 },
 	{  17, "804_003", 2, 150, -1, 0, nullptr, 0 },
@@ -138,11 +138,11 @@ void Room801::init() {
 		term_message(HEADER);
 		term_message("Toxic wax in hair");
 
-		digi_preload_stream_breaks(STREAMS1);
-		digi_preload_stream_breaks(STREAMS2);
-		digi_preload_stream_breaks(STREAMS3);
-		digi_preload_stream_breaks(STREAMS4);
-		digi_preload_stream_breaks(STREAMS5);
+		digi_preload_stream_breaks(SERIES1);
+		digi_preload_stream_breaks(SERIES2);
+		digi_preload_stream_breaks(SERIES3);
+		digi_preload_stream_breaks(SERIES4);
+		digi_preload_stream_breaks(SERIES5);
 
 		kernel_trigger_dispatch_now(20);
 	} else {
@@ -151,9 +151,9 @@ void Room801::init() {
 			term_message(HEADER);
 			term_message("FIRST ATTEMPT AT NEURO TEST");
 
-			digi_preload_stream_breaks(STREAMS6);
-			digi_preload_stream_breaks(STREAMS7);
-			digi_preload_stream_breaks(STREAMS8);
+			digi_preload_stream_breaks(SERIES6);
+			digi_preload_stream_breaks(SERIES7);
+			digi_preload_stream_breaks(SERIES8);
 
 			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 0, -1);
 			kernel_trigger_dispatch_now(1);
@@ -162,14 +162,14 @@ void Room801::init() {
 		case 1:
 			term_message(HEADER);
 			term_message("SECOND ATTEMPT AT NEURO TEST");
-			digi_preload_stream_breaks(STREAMS8);
+			digi_preload_stream_breaks(SERIES8);
 			kernel_trigger_dispatch_now(4);
 			break;
 
 		case 2:
 			term_message(HEADER);
 			term_message("THIRD ATTEMPT AT NEURO TEST");
-			digi_preload_stream_breaks(STREAMS8);
+			digi_preload_stream_breaks(SERIES8);
 			kernel_trigger_dispatch_now(41);
 			kernel_trigger_dispatch_now(7);
 			break;
@@ -177,7 +177,7 @@ void Room801::init() {
 		default:
 			term_message(HEADER);
 			term_message("FOURTH OR GREATER ATTEMPT AT NEURO TEST");
-			digi_preload_stream_breaks(STREAMS5);
+			digi_preload_stream_breaks(SERIES5);
 			kernel_trigger_dispatch_now(20);
 			break;
 		}
@@ -185,7 +185,83 @@ void Room801::init() {
 }
 
 void Room801::daemon() {
-	warning("TODO: Room 801 daemon");
+	switch (_G(kernel).trigger) {
+	case 1:
+		pal_fade_init(-1);
+		series_stream_with_breaks(SERIES6, "801A", 6, 1, 2);
+		kernel_timing_trigger(1, 39);
+		break;
+
+	case 2:
+		kernel_timing_trigger(6, 3);
+		break;
+
+	case 3:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(4, 1, 0);
+		break;
+
+	case 4:
+		digi_play_loop("802_002", 3);
+		pal_fade_init(-1);
+		series_stream_with_breaks(SERIES7, "802A", 6, 1, 5);
+		kernel_timing_trigger(1, 39);
+		break;
+
+	case 5:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 6);
+		break;
+
+	case 6:
+		compact_mem_and_report();
+
+		if (_G(flags)[NEURO_TEST_COUNTER] == 0) {
+			release_trigger_on_digi_state(7, 3);
+		} else {
+			release_trigger_on_digi_state(10, 3);
+		}
+		break;
+
+	case 7:
+		digi_unload_stream_breaks(SERIES6);
+		series_stream_with_breaks(SERIES8, "803A", 6, 1, 8);
+		pal_fade_init(-1);
+		kernel_timing_trigger(1, 40);
+		break;
+
+	case 8:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 9);
+		break;
+
+	case 9:
+		pal_cycle_stop();
+		compact_mem_and_report();
+
+		if (_G(flags)[NEURO_TEST_COUNTER] == 2) {
+			release_trigger_on_digi_state(20, 1);
+		} else {
+			release_trigger_on_digi_state(10, 1);
+		}
+		break;
+
+	case 10:
+		compact_mem_and_report();
+		digi_preload_stream_breaks(SERIES9);
+		_series1 = series_load("804FX01");
+		_series2 = series_load("804FX02");
+		_series3 = series_load("804FX03");
+		_series4 = series_load("804FX04");
+		series_stream_with_breaks(SERIES9, "804A", 6, 1, 11);
+		pal_fade_init(-1);
+		break;
+
+	// TODO: More cases
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room801::parser() {

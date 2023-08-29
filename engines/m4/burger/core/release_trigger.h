@@ -33,7 +33,8 @@ struct ReleaseTrigger_Globals {
 	uint32 _check_channels = 0, _match_value = 0;
 };
 
-extern void release_trigger_on_digi_state(int32 trigger, int32 checkChannels, int32 matchValue);
+extern void release_trigger_on_digi_state(int32 trigger, int32 checkChannels,
+	int32 matchValue = 0);
 extern void release_trigger_digi_check();
 
 } // namespace Burger
