@@ -165,62 +165,36 @@ Common::U32String DetectionResults::generateUnknownGameReport(bool translate, ui
 	return ::generateUnknownGameReport(_detectedGames, translate, false, wordwrapAt);
 }
 
-const char *md5PropToCachePrefix(MD5Properties flags) {
-    if (flags & kMD5Archive) {
-        switch (flags & kMD5MacMask) {
-        case kMD5MacDataFork: {
-            if (flags & kMD5Tail)
-                return "dtA";
-            return "dA";
-        }
+Common::String md5PropToCachePrefix(MD5Properties flags) {
+	Common::String res;
 
-        case kMD5MacResOrDataFork: {
-            if (flags & kMD5Tail)
-                return "mtA";
-            return "mA";
-        }
+	if (flags & kMD5Tail) {
+		res += 't';
+	} else {
+		res += 'f';
+	}
 
-        case kMD5MacResFork: {
-            if (flags & kMD5Tail)
-                return "rtA";
-            return "rA";
-        }
+	switch (flags & kMD5MacMask) {
+	case kMD5MacDataFork: 
+		res += 'd';
+		break;
 
-        default: {
-            if (flags & kMD5Tail)
-                return "ftA";
+	case kMD5MacResOrDataFork:
+		res += 'm';
+		break;
 
-            return "fA";
-        }
-        }
-    } else {
-        switch (flags & kMD5MacMask) {
-        case kMD5MacDataFork: {
-            if (flags & kMD5Tail)
-                return "dt";
-            return "d";
-        }
+	case kMD5MacResFork:
+		res += 'r';
+		break;
 
-        case kMD5MacResOrDataFork: {
-            if (flags & kMD5Tail)
-                return "mt";
-            return "m";
-        }
+	default:
+		break;
+	}
 
-        case kMD5MacResFork: {
-            if (flags & kMD5Tail)
-                return "rt";
-            return "r";
-        }
+	if (flags & kMD5Archive)
+		res += 'A';
 
-        default: {
-            if (flags & kMD5Tail)
-                return "ft";
-
-            return "f";
-        }
-        }
-    }
+	return res;
 }
 
 Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt) {
@@ -269,7 +243,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
-			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(it->_value.md5prop), it->_key.c_str());
+			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(it->_value.md5prop).c_str(), it->_key.c_str());
 			matchedFiles.setVal(key, it->_value);
 		}
 	}
