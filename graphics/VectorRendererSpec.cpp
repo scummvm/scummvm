@@ -4146,8 +4146,8 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 			}
 		}
 	} else {
-		PixelType color1, color2;
-		color1 = color2 = color;
+		PixelType color1, color2, color3, color4;
+		color1 = color2 = color3 = color4 = color;
 
 		int long_h = h;
 		int short_h = h - real_radius;
