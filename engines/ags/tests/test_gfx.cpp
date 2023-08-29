@@ -105,9 +105,6 @@ void Test_GfxSpeed(bool enableSimd, size_t blenderModeStart, size_t blenderModeE
 	if (!enableSimd) _G(simd_flags) = oldSimdFlags;
 }
 
-
-void printInfo(uint8 srcA, uint8 srcR, uint8 srcG, uint8 srcB, uint8 destA, uint8 destR, uint8 destG, uint8 destB, uint32 alpha, uint32 controlCol, uint32 simdCol) {
-}
 void Test_BlenderModes() {
 	constexpr int depth = 2;
 	Graphics::ManagedSurface owner(16, 16, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
@@ -266,7 +263,6 @@ void Test_GfxTransparency() {
 	}
 }
 
-#define SLOW_TESTS
 void Test_Gfx() {
 	Test_GfxTransparency();
 #if (defined(SCUMMVM_AVX2) || defined(SCUMMVM_SSE2) || defined(SCUMMVM_NEON)) && defined(SLOW_TESTS)
