@@ -29,7 +29,7 @@ win32-data: all
 	cp $(srcdir)/LICENSES/COPYING.MKV $(WIN32PATH)/COPYING.MKV.txt
 	cp $(srcdir)/LICENSES/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
 	cp $(srcdir)/LICENSES/COPYING.GLAD $(WIN32PATH)/COPYING.GLAD.txt
-	cp $(srcdir)/LICENSES/COPYING.CATHARON $(WIN32PATH)/COPYING.CATHARON.txt
+	cp $(srcdir)/LICENSES/CatharonLicense.txt $(WIN32PATH)/CatharonLicense.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
