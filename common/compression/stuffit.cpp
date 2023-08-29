@@ -52,17 +52,25 @@ public:
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SharedArchiveContents readContentsForPath(const Common::String& name) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::String &name) const override;
+	Common::SharedArchiveContents readContentsForPathAltStream(const String &translatedPath, Common::AltStreamType altStreamType) const override;
 	Common::String translatePath(const Common::Path &path) const override;
 	char getPathSeparator() const override;
 
 private:
-	struct FileEntry {
-		byte compression;
+	struct FileEntryFork {
+		FileEntryFork();
+
 		uint32 uncompressedSize;
 		uint32 compressedSize;
 		uint32 offset;
 		uint16 crc;
+		byte compression;
+	};
+
+	struct FileEntry {
+		FileEntryFork dataFork;
+		FileEntryFork resFork;
 	};
 
 	Common::SeekableReadStream *_stream;
@@ -82,6 +90,8 @@ private:
 	// Decompression Helpers
 	void update14(uint16 first, uint16 last, byte *code, uint16 *freq) const;
 	void readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const;
+
+	Common::SharedArchiveContents readContentsForPathFork(const String &translatedPath, bool isResFork) const;
 };
 
 StuffItArchive::StuffItArchive() : Common::MemcachingCaseInsensitiveArchive(), _flattenTree(false) {
@@ -220,37 +230,32 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream, bool flattenTree) 
 		if (!flattenTree)
 			name = dirPrefix + name;
 
-		_metadataMap[name + ".finf"] = finfo.toData();
+		_metadataMap[name] = finfo.toData();
 
 		if (dataForkUncompressedSize != 0) {
 			// We have a data fork
 
-			FileEntry entry;
-			entry.compression = dataForkCompression;
-			entry.uncompressedSize = dataForkUncompressedSize;
-			entry.compressedSize = dataForkCompressedSize;
-			entry.offset = _stream->pos() + resForkCompressedSize;
-			entry.crc = dataForkCRC;
-			_map[name] = entry;
+			FileEntryFork &entryFork = _map[name].dataFork;
+			entryFork.compression = dataForkCompression;
+			entryFork.uncompressedSize = dataForkUncompressedSize;
+			entryFork.compressedSize = dataForkCompressedSize;
+			entryFork.offset = _stream->pos() + resForkCompressedSize;
+			entryFork.crc = dataForkCRC;
 
-			debug(0, "StuffIt file '%s', Compression = %d", name.c_str(), entry.compression);
+			debug(0, "StuffIt file '%s' data fork, Compression = %d", name.c_str(), entryFork.compression);
 		}
 
 		if (resForkUncompressedSize != 0) {
 			// We have a resource fork
 
-			// Add a .rsrc extension so we know it's the resource fork
-			name += ".rsrc";
+			FileEntryFork &entryFork = _map[name].resFork;
+			entryFork.compression = resForkCompression;
+			entryFork.uncompressedSize = resForkUncompressedSize;
+			entryFork.compressedSize = resForkCompressedSize;
+			entryFork.offset = _stream->pos();
+			entryFork.crc = resForkCRC;
 
-			FileEntry entry;
-			entry.compression = resForkCompression;
-			entry.uncompressedSize = resForkUncompressedSize;
-			entry.compressedSize = resForkCompressedSize;
-			entry.offset = _stream->pos();
-			entry.crc = resForkCRC;
-			_map[name] = entry;
-
-			debug(0, "StuffIt file '%s', Compression = %d", name.c_str(), entry.compression);
+			debug(0, "StuffIt file '%s' res fork, Compression = %d", name.c_str(), entryFork.compression);
 		}
 
 		// Go to the next entry
@@ -282,10 +287,14 @@ const Common::ArchiveMemberPtr StuffItArchive::getMember(const Common::Path &pat
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
-Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::String& name) const {
-	if (!_stream || !_map.contains(name)) {
-		if (_metadataMap.contains(name)) {
-			const Common::MacFinderInfoData &metadata = _metadataMap[name];
+Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::String &name) const {
+	return readContentsForPathFork(name, false);
+}
+
+Common::SharedArchiveContents StuffItArchive::readContentsForPathAltStream(const String &translatedPath, Common::AltStreamType altStreamType) const {
+	if (altStreamType == Common::AltStreamType::MacFinderInfo) {
+		if (_metadataMap.contains(translatedPath)) {
+			const Common::MacFinderInfoData &metadata = _metadataMap[translatedPath];
 			byte *copy = new byte[sizeof(Common::MacFinderInfoData)];
 			memcpy(copy, reinterpret_cast<const byte *>(&metadata), sizeof(Common::MacFinderInfoData));
 			return Common::SharedArchiveContents(copy, sizeof(Common::MacFinderInfoData));
@@ -293,39 +302,59 @@ Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::
 		return Common::SharedArchiveContents();
 	}
 
-	const FileEntry &entry = _map[name];
+	if (altStreamType == Common::AltStreamType::MacResourceFork)
+		return readContentsForPathFork(translatedPath, true);
 
-	if (entry.compression & 0xF0)
+	return Common::SharedArchiveContents();
+}
+
+Common::SharedArchiveContents StuffItArchive::readContentsForPathFork(const Common::String &name, bool isResFork) const {
+	FileMap::const_iterator entryIt = _map.find(name);
+
+	if (entryIt == _map.end())
+		return Common::SharedArchiveContents();
+
+	const FileEntry &entry = _map[name];
+	const FileEntryFork &entryFork = isResFork ? entry.resFork : entry.dataFork;
+
+	if (entryFork.uncompressedSize == 0) {
+		if (isResFork)
+			return Common::SharedArchiveContents();
+		else
+			return Common::SharedArchiveContents(nullptr, 0);	// Treat no data fork as an empty stream
+	}
+
+	if (entryFork.compression & 0xF0)
 		error("Unhandled StuffIt encryption");
 
-	Common::SeekableSubReadStream subStream(_stream, entry.offset, entry.offset + entry.compressedSize);
+	Common::SeekableSubReadStream subStream(_stream, entryFork.offset, entryFork.offset + entryFork.compressedSize);
 
-	byte *uncompressedBlock = new byte[entry.uncompressedSize];
+	byte *uncompressedBlock = new byte[entryFork.uncompressedSize];
 
 	// We currently only support type 14 compression
-	switch (entry.compression) {
+	switch (entryFork.compression) {
 	case 0: // Uncompressed
-		subStream.read(uncompressedBlock, entry.uncompressedSize);
+		subStream.read(uncompressedBlock, entryFork.uncompressedSize);
 		break;
 	case 13: // TableHuff
-		if (!decompress13(&subStream, uncompressedBlock, entry.uncompressedSize))
+		if (!decompress13(&subStream, uncompressedBlock, entryFork.uncompressedSize))
 			error("SIT-13 decompression failed");
 		break;
 	case 14: // Installer
-		decompress14(&subStream, uncompressedBlock, entry.uncompressedSize);
+		decompress14(&subStream, uncompressedBlock, entryFork.uncompressedSize);
 		break;
 	default:
-		error("Unhandled StuffIt compression %d", entry.compression);
+		error("Unhandled StuffIt compression %d", entryFork.compression);
 		return Common::SharedArchiveContents();
 	}
 
-	uint16 actualCRC = Common::CRC16().crcFast(uncompressedBlock, entry.uncompressedSize);
+	uint16 actualCRC = Common::CRC16().crcFast(uncompressedBlock, entryFork.uncompressedSize);
 
-	if (actualCRC != entry.crc) {
-		error("StuffItArchive::readContentsForPath(): CRC mismatch: %04x vs %04x for file %s", actualCRC, entry.crc, name.c_str());
+	if (actualCRC != entryFork.crc) {
+		error("StuffItArchive::readContentsForPath(): CRC mismatch: %04x vs %04x for file %s %s fork", actualCRC, entryFork.crc, name.c_str(), (isResFork ? "res" : "data"));
 	}
 
-	return Common::SharedArchiveContents(uncompressedBlock, entry.uncompressedSize);
+	return Common::SharedArchiveContents(uncompressedBlock, entryFork.uncompressedSize);
 }
 
 Common::String StuffItArchive::translatePath(const Common::Path &path) const {
@@ -1084,6 +1113,10 @@ void StuffItArchive::decompress14(Common::SeekableReadStream *src, byte *dst, ui
 
 #undef OUTPUT_VAL
 #undef ALIGN_BITS
+
+
+StuffItArchive::FileEntryFork::FileEntryFork() : uncompressedSize(0), compressedSize(0), offset(0), crc(0), compression(0) {
+}
 
 Common::Archive *createStuffItArchive(const Common::String &fileName, bool flattenTree) {
 	StuffItArchive *archive = new StuffItArchive();

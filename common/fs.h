@@ -256,9 +256,19 @@ public:
 	 * referred by this node. This assumes that the node actually refers
 	 * to a readable file. If this is not the case, 0 is returned.
 	 *
-	 * @return Pointer to the stream object, 0 in case of a failure.
+	 * @return Pointer to the stream object, nullptr in case of a failure.
 	 */
 	SeekableReadStream *createReadStream() const override;
+
+	/**
+	 * Create a SeekableReadStream instance corresponding to an alternate stream
+	 * of the file referred by this node. This assumes that the node actually
+	 * refers to a readable file and the alternate stream exists.  If either is
+	 * not the case, nullptr is returned.
+	 *
+	 * @return Pointer to the stream object, nullptr in case of a failure.
+	 */
+	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const override;
 
 	/**
 	 * Create a WriteStream instance corresponding to the file

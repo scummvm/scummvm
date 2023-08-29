@@ -90,6 +90,7 @@ public:
 	Common::Path getPathInArchive() const override;                       // Returns _name
 	Common::String getFileName() const override;                          // Returns _name
 	Common::SeekableReadStream *createReadStream() const override;        // This is what the archive needs to create a file
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
 	void getDataBlock(byte *memOffset, int offset, int size) const;       // Gets data up to the size of a single data block (512 bytes)
 	int parseIndexBlock(byte *memOffset, int blockNum, int cSize) const;  // Uses getDataBlock() on every pointer in the index file, adding them to byte * memory block
 

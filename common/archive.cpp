@@ -54,6 +54,9 @@ SeekableReadStream *GenericArchiveMember::createReadStream() const {
 	return _parent.createReadStreamForMember(_path);
 }
 
+SeekableReadStream *GenericArchiveMember::createReadStreamForAltStream(AltStreamType altStreamType) const {
+	return _parent.createReadStreamForMemberAltStream(_path, altStreamType);
+}
 
 int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	// Get all "names" (TODO: "files" ?)
@@ -78,6 +81,10 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, b
 	}
 
 	return matches;
+}
+
+SeekableReadStream *Archive::createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const {
+	return nullptr;
 }
 
 Common::Error Archive::dumpArchive(String destPath) {
@@ -135,17 +142,34 @@ char Archive::getPathSeparator() const {
 }
 
 SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {
-	String translated = translatePath(path);
+	return createReadStreamForMemberImpl(path, false, Common::AltStreamType::Invalid);
+}
+
+SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMemberAltStream(const Path &path, Common::AltStreamType altStreamType) const {
+	// There is no situation where an invalid alt stream should be returning anything unless the implementation
+	// of readContentsForPathAltStream is broken, and attempting that will break the cache keying since we used Invalid
+	// for keying the primary stream.
+	if (altStreamType == Common::AltStreamType::Invalid)
+		return nullptr;
+
+	return createReadStreamForMemberImpl(path, true, altStreamType);
+}
+
+SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMemberImpl(const Path &path, bool isAltStream, Common::AltStreamType altStreamType) const {
+	CacheKey cacheKey;
+	cacheKey.path = translatePath(path);
+	cacheKey.altStreamType = isAltStream ? altStreamType : AltStreamType::Invalid;
+
 	bool isNew = false;
-	if (!_cache.contains(translated)) {
-		SharedArchiveContents readResult = readContentsForPath(translated);
+	if (!_cache.contains(cacheKey)) {
+		SharedArchiveContents readResult = isAltStream ? readContentsForPathAltStream(cacheKey.path, altStreamType) : readContentsForPath(cacheKey.path);
 		if (readResult._bypass)
 			return readResult._bypass;
-		_cache[translated] = readResult;
+		_cache[cacheKey] = readResult;
 		isNew = true;
 	}
 
-	SharedArchiveContents* entry = &_cache[translated];
+	SharedArchiveContents* entry = &_cache[cacheKey];
 
 	// Errors and missing files. Just return nullptr,
 	// no need to create stream.
@@ -155,11 +179,11 @@ SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(
 	// Check whether the entry is still valid as WeakPtr might have expired.
 	if (!entry->makeStrong()) {
 		// If it's expired, recreate the entry.
-		SharedArchiveContents readResult = readContentsForPath(translated);
+		SharedArchiveContents readResult = isAltStream ? readContentsForPathAltStream(cacheKey.path, altStreamType) : readContentsForPath(cacheKey.path);
 		if (readResult._bypass)
 			return readResult._bypass;
-		_cache[translated] = readResult;
-		entry = &_cache[translated];
+		_cache[cacheKey] = readResult;
+		entry = &_cache[cacheKey];
 		isNew = true;
 	}
 
@@ -180,6 +204,20 @@ SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(
 	return memStream;
 }
 
+SharedArchiveContents MemcachingCaseInsensitiveArchive::readContentsForPathAltStream(const String &translatedPath, AltStreamType altStreamType) const {
+	return SharedArchiveContents();
+}
+
+MemcachingCaseInsensitiveArchive::CacheKey::CacheKey() : altStreamType(AltStreamType::Invalid) {
+}
+
+bool MemcachingCaseInsensitiveArchive::CacheKey_EqualTo::operator()(const CacheKey &x, const CacheKey &y) const {
+	return (x.altStreamType == y.altStreamType) && x.path.equalsIgnoreCase(y.path);
+}
+
+uint MemcachingCaseInsensitiveArchive::CacheKey_Hash::operator()(const CacheKey &x) const {
+	return static_cast<uint>(hashit_lower(x.path) * 1000003u) ^ static_cast<uint>(x.altStreamType);
+};
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {
 	ArchiveNodeList::iterator it = _list.begin();
@@ -408,6 +446,20 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const Path &path) const
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it) {
 		SeekableReadStream *stream = it->_arc->createReadStreamForMember(path);
+		if (stream)
+			return stream;
+	}
+
+	return nullptr;
+}
+
+SeekableReadStream *SearchSet::createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const {
+	if (path.empty())
+		return nullptr;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it) {
+		SeekableReadStream *stream = it->_arc->createReadStreamForMemberAltStream(path, altStreamType);
 		if (stream)
 			return stream;
 	}

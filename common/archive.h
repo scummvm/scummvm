@@ -46,6 +46,13 @@ namespace Common {
 class FSNode;
 class SeekableReadStream;
 
+enum class AltStreamType {
+	Invalid,
+
+	MacFinderInfo,
+	MacResourceFork,
+};
+
 
 /**
  * The ArchiveMember class is an abstract interface to represent elements inside
@@ -59,6 +66,7 @@ class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
 	virtual SeekableReadStream *createReadStream() const = 0; /*!< Create a read stream. */
+	virtual SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const = 0; /*!< Create a read stream of an alternate stream. */
 
 	/**
 	* @deprecated Get the name of the archive member.  This may be a file name or a full path depending on archive type.
@@ -112,6 +120,7 @@ public:
 	Path getPathInArchive() const override;       /*!< Get the full path of the archive member relative to the containing archive root. */
 	String getFileName() const override; /*!< Get the file name of the archive member relative to its containing directory within the archive. */
 	SeekableReadStream *createReadStream() const override; /*!< Create a read stream. */
+	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const override; /*!< Create a read stream of an alternate stream. */
 
 private:
 	const Archive &_parent;
@@ -166,6 +175,14 @@ public:
 	 * @return The newly created input stream.
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const = 0;
+
+	/**
+	 * Create a stream bound to an alternate stream of a member with the specified
+	 * name in the archive. If no member with this name exists, 0 is returned.
+	 *
+	 * @return The newly created input stream.
+	 */
+	virtual SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const;
 
 	/**
 	 * For most archives: same as previous. For SearchSet see SearchSet
@@ -243,6 +260,7 @@ class MemcachingCaseInsensitiveArchive : public Archive {
 public:
 	MemcachingCaseInsensitiveArchive(uint32 maxStronglyCachedSize = 512) : _maxStronglyCachedSize(maxStronglyCachedSize) {}
 	SeekableReadStream *createReadStreamForMember(const Path &path) const;
+	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, Common::AltStreamType altStreamType) const;
 
 	virtual String translatePath(const Path &path) const {
 		// Most of users of this class implement DOS-like archives.
@@ -250,10 +268,28 @@ public:
 		return normalizePath(path.toString('\\'), '\\');
 	}
 
-	virtual SharedArchiveContents readContentsForPath(const String& translatedPath) const = 0;
+	virtual SharedArchiveContents readContentsForPath(const String &translatedPath) const = 0;
+	virtual SharedArchiveContents readContentsForPathAltStream(const String &translatedPath, AltStreamType altStreamType) const;
 
 private:
-	mutable HashMap<String, SharedArchiveContents, IgnoreCase_Hash, IgnoreCase_EqualTo> _cache;
+	struct CacheKey {
+		CacheKey();
+
+		String path;
+		AltStreamType altStreamType;
+	};
+
+	struct CacheKey_EqualTo {
+		bool operator()(const CacheKey &x, const CacheKey &y) const;
+	};
+
+	struct CacheKey_Hash {
+		uint operator()(const CacheKey &x) const;
+	};
+
+	SeekableReadStream *createReadStreamForMemberImpl(const Path &path, bool isAltStream, Common::AltStreamType altStreamType) const;
+
+	mutable HashMap<CacheKey, SharedArchiveContents, CacheKey_Hash, CacheKey_EqualTo> _cache;
 	uint32 _maxStronglyCachedSize;
 };
 
@@ -387,6 +423,12 @@ public:
 	 * opening the first file encountered that matches the name.
 	 */
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+
+	/**
+	 * Implement createReadStreamForMemberAltStream from the Archive base class. The current policy is
+	 * opening the first file encountered that matches the name.
+	 */
+	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const override;
 
 	/**
 	 * Similar to above but exclude matches from archives before starting and starting itself.

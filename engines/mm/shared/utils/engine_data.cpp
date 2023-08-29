@@ -45,6 +45,9 @@ public:
 	Common::SeekableReadStream *createReadStream() const override {
 		return _member->createReadStream();
 	}
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override {
+		return nullptr;
+	}
 	Common::String getName() const override {
 		Common::String name = _member->getName();
 		assert(name.hasPrefixIgnoreCase(_innerfolder));
