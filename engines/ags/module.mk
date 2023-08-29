@@ -26,12 +26,6 @@ MODULE_OBJS = \
 	lib/allegro/surface.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
-	lib/freetype-2.1.3/autohint/ahangles.o \
-	lib/freetype-2.1.3/autohint/ahglobal.o \
-	lib/freetype-2.1.3/autohint/ahglyph.o \
-	lib/freetype-2.1.3/autohint/ahhint.o \
-	lib/freetype-2.1.3/ftgloadr.o \
-	lib/freetype-2.1.3/ftutil.o \
 	lib/std/std.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/script_audio_clip.o \
@@ -368,6 +362,16 @@ MODULE_OBJS = \
 	plugins/ags_waves/sound.o \
 	plugins/ags_waves/warper.o \
 	plugins/ags_waves/weather.o
+
+ifdef USE_FREETYPE2
+MODULE_OBJS += \
+	lib/freetype-2.1.3/autohint/ahangles.o \
+	lib/freetype-2.1.3/autohint/ahglobal.o \
+	lib/freetype-2.1.3/autohint/ahglyph.o \
+	lib/freetype-2.1.3/autohint/ahhint.o \
+	lib/freetype-2.1.3/ftgloadr.o \
+	lib/freetype-2.1.3/ftutil.o
+endif
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \
