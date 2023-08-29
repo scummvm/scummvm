@@ -28,6 +28,41 @@
 
 namespace M4 {
 
+#define PPLUS					402
+#define MINUS 					403
+#define TIMES 					404
+#define PERCENT 				405
+#define POWER 					406
+#define IS_ASSIGNED				407
+#define PERIOD 					410
+#define DOLLAR					411
+#define LT					412
+#define GT					413
+#define L_BRAK					416 
+#define R_BRAK					417
+
+#define DIVIDE					418  
+#define NOT					419
+
+#define LE					420
+#define GE					421
+#define NE					422
+#define PE					423
+#define ME					424
+#define TE					425
+#define DE					426
+#define AE					427
+#define OE					428
+#define EQ					429
+#define AND					430
+#define OR					431
+#define TILDA					432
+#define DBL_QUOTE				433
+#define ANDAND					444
+#define OROR					445
+#define DOT					446
+#define CNE					448
+
 extern conv_chunk *get_conv(Conv *c, long cSize);
 extern char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c);
 extern decl_chunk *get_decl(Conv *c, long cSize);

@@ -43,6 +43,7 @@ struct Converstation_Globals {
 	bool interface_was_visible = false;  // to remember to turn it back on
 	int restore_conv = 1;
 	int ent = 0;
+	bool swap = false;
 
 	int32 conv_font_spacing_h = 0;
 	int32 conv_font_spacing_v = 5;
@@ -76,6 +77,7 @@ extern Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bo
 extern void conv_load_and_prepare(const char *filename, int trigger, bool ignoreIt = false);
 
 extern void conv_unload(Conv *c);
+extern void conv_unload();
 extern void conv_shutdown();
 
 extern Conv *conv_get_handle();
