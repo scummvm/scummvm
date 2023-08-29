@@ -429,7 +429,8 @@ void unload_game_file() {
 	_G(scrDialog) = nullptr;
 
 	_GP(guis).clear();
-	free(_G(scrGui));
+	delete[] _G(scrGui);
+	_G(scrGui) = nullptr;
 
 	free_all_fonts();
 
