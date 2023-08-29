@@ -46,6 +46,7 @@ protected:
 	int _scrollbarWidth;
 	uint16 _limitH;
 	uint32 _reflowCmd;
+	int _textWidth;
 
 public:
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
