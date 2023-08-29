@@ -223,13 +223,16 @@ inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, u
 	const float32x4_t eplison0 = vmovq_n_f32(0.0000001);
 
 	float32x4_t chroma = vmaxq_f32(vsubq_f32(smaxes, smins), eplison0);
-
+	
 	// RGB to HSV is a piecewise function, so we compute each part of the function first...
-	float32x4_t hr, hg, hb, hue;
-	hr = vdivq_f32(vsubq_f32(ssg, ssb), chroma);
-	hr = vsubq_f32(hr, vmulq_n_f32(vrndmq_f32(vmulq_n_f32(hr, 1.0 / 6.0)), 6.0));
-	hg = vaddq_f32(vdivq_f32(vsubq_f32(ssb, ssr), chroma), vmovq_n_f32(2.0));
-	hb = vaddq_f32(vdivq_f32(vsubq_f32(ssr, ssg), chroma), vmovq_n_f32(4.0));
+	float32x4_t hr, hg, hb, hue, chromaReq;
+	chromaReq = vrecpeq_f32(chroma);
+	hr = vmulq_f32(vsubq_f32(ssg, ssb), chromaReq);
+	float32x4_t hrDiv6 = vmulq_n_f32(hr, 1.0 / 6.0);
+	hrDiv6 = vsubq_f32(hrDiv6, vcvtq_f32_u32(vandq_u32(vcltq_f32(hrDiv6, vmovq_n_f32(0.0)), vmovq_n_u32(1))));
+	hr = vsubq_f32(hr, vmulq_n_f32(vcvtq_f32_s32(vcvtq_s32_f32(hrDiv6)), 6.0));
+	hg = vaddq_f32(vmulq_f32(vsubq_f32(ssb, ssr), chromaReq), vmovq_n_f32(2.0));
+	hb = vaddq_f32(vmulq_f32(vsubq_f32(ssr, ssg), chromaReq), vmovq_n_f32(4.0));
 
 	// And then compute which one will be used based on criteria
 	float32x4_t hrfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssr, smaxes), vmvnq_u32(vceqq_u32(ssr, ssb))), vmovq_n_u32(1)));
@@ -249,9 +252,9 @@ inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, u
 	// then it stiches the HSV back together
 	// the hue and saturation come from the source (tint) color, and the value comes from
 	// the destinaion (real source) color
-	chroma = vmulq_f32(val, vdivq_f32(vsubq_f32(smaxes, smins), vaddq_f32(smaxes, eplison0)));
+	chroma = vmulq_f32(val, vmulq_f32(vsubq_f32(smaxes, smins), vrecpeq_f32(vaddq_f32(smaxes, eplison0))));
 	float32x4_t hprime_mod2 = vmulq_n_f32(hue, 1.0 / 2.0);
-	hprime_mod2 = vmulq_n_f32(vsubq_f32(hprime_mod2, vrndmq_f32(hprime_mod2)), 2.0);
+	hprime_mod2 = vmulq_n_f32(vsubq_f32(hprime_mod2, vcvtq_f32_s32(vcvtq_s32_f32(hprime_mod2))), 2.0);
 	float32x4_t x = vmulq_f32(chroma, vsubq_f32(vmovq_n_f32(1.0), vabsq_f32(vsubq_f32(hprime_mod2, vmovq_n_f32(1.0)))));
 	uint32x4_t hprime_rounded = vcvtq_u32_f32(hue);
 	uint32x4_t x_int = vcvtq_u32_f32(vmulq_n_f32(x, 255.0));
@@ -452,13 +455,14 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	tint = vorrq_u32(tint, vshlq_n_u32(vdupq_n_u32(args.tintRed), 16));
 	tint = vorrq_u32(tint, vshlq_n_u32(vdupq_n_u32(args.tintGreen), 8));
 	tint = vorrq_u32(tint, vdupq_n_u32(args.tintBlue));
-	uint32x4_t maskedAlphas = vld1q_dup_u32(&args.alphaMask);
-	uint32x4_t transColors = vld1q_dup_u32(&args.transColor);
-	uint32x4_t alphas = vld1q_dup_u32(&args.srcAlpha);
+	uint32x4_t maskedAlphas = vmovq_n_u32(args.alphaMask);
+	uint32x4_t transColors = vmovq_n_u32(args.transColor);
+	uint32x4_t alphas = vmovq_n_u32(args.srcAlpha);
 
 	// This is so that we can calculate what pixels to crop off in a vectorized way
-	uint32x4_t addIndexes = {0, 1, 2, 3};
-	if (args.horizFlip) addIndexes = {3, 2, 1, 0};
+	const uint32x4_t addIndexesNormal = {0, 1, 2, 3};
+	const uint32x4_t addIndexesFlipped = {3, 2, 1, 0};
+	uint32x4_t addIndexes = args.horizFlip ? addIndexesFlipped : addIndexesNormal;
 
 	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
 	uint32x4_t scaleAdds = {0, (uint32)args.scaleX, (uint32)args.scaleX*2, (uint32)args.scaleX*3};
@@ -619,10 +623,11 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	uint16x8_t alphas = vdupq_n_u16(args.srcAlpha);
 
 	// This is so that we can calculate what pixels to crop off in a vectorized way
-	uint16x8_t addIndexes = {0, 1, 2, 3, 4, 5, 6, 7};
+	uint16x8_t addIndexesNormal = {0, 1, 2, 3, 4, 5, 6, 7};
+	uint16x8_t addIndexesFlipped = {7, 6, 5, 4, 3, 2, 1, 0};
+	uint16x8_t addIndexes = args.horizFlip ? addIndexesFlipped : addIndexesNormal;
 
 	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
-	if (args.horizFlip) addIndexes = {7, 6, 5, 4, 3, 2, 1, 0};
 	uint32x4_t scaleAdds = {0, (uint32)args.scaleX, (uint32)args.scaleX*2, (uint32)args.scaleX*3};
 	uint32x4_t scaleAdds2 = {(uint32)args.scaleX*4, (uint32)args.scaleX*5, (uint32)args.scaleX*6, (uint32)args.scaleX*7};
 
