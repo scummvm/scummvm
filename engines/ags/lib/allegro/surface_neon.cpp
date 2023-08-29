@@ -155,54 +155,34 @@ inline uint32x4_t rgbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4
 
 // uses the alpha from srcCols and destCols
 inline uint32x4_t argbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols) {
-	float16x4_t sAlphas = vcvt_f16_f32(vcvtq_f32_u32(vshrq_n_u32(srcCols, 24)));
-	sAlphas = vmul_n_f16(sAlphas, 1.0 / 255.0);
+	float32x4_t srcA = vcvtq_f32_u32(vshrq_n_u32(srcCols, 24));
+	srcA = vmulq_n_f32(srcA, 1.0f / 255.0f);
+	float32x4_t srcR = vcvtq_f32_u32(vandq_u32(vshrq_n_u32(srcCols, 16), vmovq_n_u32(0xff)));
+	float32x4_t srcG = vcvtq_f32_u32(vandq_u32(vshrq_n_u32(srcCols, 8), vmovq_n_u32(0xff)));
+	float32x4_t srcB = vcvtq_f32_u32(vandq_u32(srcCols, vmovq_n_u32(0xff)));
 
-	// sAlphas1 has the alphas of the first pixel in lanes 0 and 1 and of the second pixel in lanes 2 and 3
-	// same with sAlphas2 but for the 2nd pixel
-	float16x8_t sAlphas1 = vcombine_f16(vmov_n_f16(vduph_lane_f16(sAlphas, 0)), vmov_n_f16(vduph_lane_f16(sAlphas, 1)));
-	float16x8_t sAlphas2 = vcombine_f16(vmov_n_f16(vduph_lane_f16(sAlphas, 2)), vmov_n_f16(vduph_lane_f16(sAlphas, 3)));
+	float32x4_t destA = vcvtq_f32_u32(vshrq_n_u32(destCols, 24));
+	destA = vmulq_n_f32(destA, 1.0f / 255.0f);
+	float32x4_t destR = vcvtq_f32_u32(vandq_u32(vshrq_n_u32(destCols, 16), vmovq_n_u32(0xff)));
+	float32x4_t destG = vcvtq_f32_u32(vandq_u32(vshrq_n_u32(destCols, 8), vmovq_n_u32(0xff)));
+	float32x4_t destB = vcvtq_f32_u32(vandq_u32(destCols, vmovq_n_u32(0xff)));
 
-	// Same thing going on here with dAlphas, except that it gets mutliplied by (1 - sAlpha) first
-	float16x4_t dAlphas = vcvt_f16_f32(vcvtq_f32_u32(vshrq_n_u32(destCols, 24)));
-	dAlphas = vmul_n_f16(dAlphas, 1.0 / 255.0);
-	dAlphas = vmul_f16(dAlphas, vsub_f16(vmov_n_f16(1.0), sAlphas));
-	float16x8_t dAlphas1 = vcombine_f16(vmov_n_f16(vduph_lane_f16(dAlphas, 0)), vmov_n_f16(vduph_lane_f16(dAlphas, 1)));
-	float16x8_t dAlphas2 = vcombine_f16(vmov_n_f16(vduph_lane_f16(dAlphas, 2)), vmov_n_f16(vduph_lane_f16(dAlphas, 3)));
-
-	// first 2 pixels
-	float16x8_t srcRgb1 = vcvtq_f16_u16(vmovl_u8(vreinterpret_u8_u32(vget_low_u32(srcCols))));
-	float16x8_t destRgb1 = vcvtq_f16_u16(vmovl_u8(vreinterpret_u8_u32(vget_low_u32(destCols))));
-	// last 2 pixels
-	float16x8_t srcRgb2 = vcvtq_f16_u16(vmovl_u8(vreinterpret_u8_u32(vget_high_u32(srcCols))));
-	float16x8_t destRgb2 = vcvtq_f16_u16(vmovl_u8(vreinterpret_u8_u32(vget_high_u32(destCols))));
+	// the destination alpha gets multiplied by 255 - source alpha
+	destA = vmulq_f32(destA, vsubq_f32(vmovq_n_f32(1.0f), srcA));
 
 	// ((src * sAlpha) + (dest * dAlpha)) / (sAlpha + dAlpha)
-	srcRgb1 = vmulq_f16(srcRgb1, sAlphas1);
-	destRgb1 = vmulq_f16(destRgb1, dAlphas1);
-	srcRgb1 = vaddq_f16(srcRgb1, destRgb1);
-	float16x8_t alphasRec = vrecpeq_f16(vaddq_f16(sAlphas1, dAlphas1)); // compute reciprocal
-	srcRgb1 = vmulq_f16(srcRgb1, alphasRec);
-	srcRgb2 = vmulq_f16(srcRgb2, sAlphas2);
-	destRgb2 = vmulq_f16(destRgb2, dAlphas2);
-	srcRgb2 = vaddq_f16(srcRgb2, destRgb2);
-	alphasRec = vrecpeq_f16(vaddq_f16(sAlphas2, dAlphas2));
-	srcRgb2 = vmulq_f16(srcRgb2, alphasRec);
+	float32x4_t combA = vaddq_f32(srcA, destA);
+	float32x4_t combArcp = vrecpeq_f32(combA);
+	destR = vmulq_f32(vaddq_f32(vmulq_f32(srcR, srcA), vmulq_f32(destR, destA)), combArcp);
+	destG = vmulq_f32(vaddq_f32(vmulq_f32(srcG, srcA), vmulq_f32(destG, destA)), combArcp);
+	destB = vmulq_f32(vaddq_f32(vmulq_f32(srcB, srcA), vmulq_f32(destB, destA)), combArcp);
+	combA = vmulq_n_f32(combA, 255.0);
 
-	// alpha channel is computed differently
-	uint16x4_t alphas = vcvta_u16_f16(vmul_n_f16(vadd_f16(sAlphas, dAlphas), 255.0));
-
-	// Final argb components as 16bit values
-	uint16x8_t uintSrcRgb1 = vcvtq_u16_f16(srcRgb1), uintSrcRgb2 = vcvtq_u16_f16(srcRgb2);
-
-	// copy alpha channel over
-	uintSrcRgb1 = vcopyq_lane_u16(uintSrcRgb1, 3, alphas, 0);
-	uintSrcRgb1 = vcopyq_lane_u16(uintSrcRgb1, 7, alphas, 1);
-	uintSrcRgb2 = vcopyq_lane_u16(uintSrcRgb2, 3, alphas, 2);
-	uintSrcRgb2 = vcopyq_lane_u16(uintSrcRgb2, 7, alphas, 3);
-
-	// cast 16bit to 8bit and reinterpret as uint32's
-	return vcombine_u32(vreinterpret_u32_u8(vmovn_u16(uintSrcRgb1)), vreinterpret_u32_u8(vmovn_u16(uintSrcRgb2)));
+	// Now put it back together
+	return vorrq_u32(vshlq_n_u32(vcvtq_u32_f32(combA), 24),
+		vorrq_u32(vshlq_n_u32(vcvtq_u32_f32(destR), 16),
+		vorrq_u32(vshlq_n_u32(vcvtq_u32_f32(destG), 8),
+			vcvtq_u32_f32(destB))));
 }
 
 inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool light) {
