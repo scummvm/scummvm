@@ -222,6 +222,8 @@ bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int3
 		if (_state == NOTHING) {
 			int32 scrStatus;
 			ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &scrStatus);
+			if (!screen)
+				return false;
 
 			if (y >= _y1) {
 				if (!_iconSelected)
