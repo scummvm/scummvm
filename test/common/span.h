@@ -659,7 +659,7 @@ public:
 		TS_ASSERT(span.checkInvalidBounds(2, -4)); // negative overflow (-2)
 		TS_ASSERT(span.checkInvalidBounds(0, 10)); // delta positive overflow
 
-		const Common::Span<byte>::difference_type big = 1L << (8 * sizeof(Common::Span<byte>::difference_type) - 1);
+		const Common::Span<byte>::difference_type big = (Common::Span<byte>::difference_type)1 << (8 * sizeof(Common::Span<byte>::difference_type) - 1);
 		TS_ASSERT(span.checkInvalidBounds(big, 0));
 		TS_ASSERT(span.checkInvalidBounds(0, big));
 		TS_ASSERT(span.checkInvalidBounds(big, big));
@@ -687,7 +687,7 @@ public:
 	}
 
 	void test_span_comparators() {
-		byte data[2];
+		byte data[2] = { 0 };
 		Common::Span<const byte> span0(data, sizeof(data));
 		Common::Span<const byte> span1(data, sizeof(data));
 		Common::Span<const byte> span2(data, sizeof(data) - 1);
