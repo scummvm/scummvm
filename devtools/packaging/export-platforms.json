@@ -19,7 +19,7 @@
 			"options": {
 				"--androidsdk": "$$$ANDROID_SDK_ROOT",
 				"--sdkver": "33",
-				"--buildtoolsver": "33.0.2",
+				"--buildtoolsver": "33.0.1",
 				"--bundletool": "scripts/android/bundletool-all-1.15.1.jar",
 				"--inputbundle": "$binary_location",
 				"--packdir": "output/android",
