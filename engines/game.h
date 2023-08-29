@@ -112,7 +112,7 @@ enum MD5Properties {
 	kMD5Archive              = 1 << 4,	// the desired file is inside an archive
 };
 
-const char *md5PropToCachePrefix(MD5Properties val);
+Common::String md5PropToCachePrefix(MD5Properties val);
 
 /**
  * A record describing the properties of a file. Used on the existing

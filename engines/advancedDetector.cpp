@@ -554,54 +554,33 @@ static MD5Properties gameFileToMD5Props(const ADGameFileDescription *fileEntry, 
 	return ret;
 }
 
-const char *md5PropToGameFile(MD5Properties flags) {
-	if (flags & kMD5Archive) {
-		switch (flags & kMD5MacMask)
-		case kMD5MacDataFork: {
-			if (flags & kMD5Tail)
-				return "dtA";
-			return "dA";
+Common::String md5PropToGameFile(MD5Properties flags) {
+	Common::String res;
 
-		case kMD5MacResOrDataFork:
-			if (flags & kMD5Tail)
-				return "mtA";
-			return "mA";
+	switch (flags & kMD5MacMask) {
+	case kMD5MacDataFork: 
+		res = "d";
+		break;
 
-		case kMD5MacResFork:
-			if (flags & kMD5Tail)
-				return "rtA";
-			return "rA";
+	case kMD5MacResOrDataFork:
+		res = "m";
+		break;
 
-		case kMD5Tail:
-			return "tA";
+	case kMD5MacResFork:
+		res = "r";
+		break;
 
-		default:
-			return "A";
-		}
-	} else {
-		switch (flags & kMD5MacMask)
-		case kMD5MacDataFork: {
-			if (flags & kMD5Tail)
-				return "dt";
-			return "d";
+	default:
+		break;
+    }
 
-		case kMD5MacResOrDataFork:
-			if (flags & kMD5Tail)
-				return "mt";
-			return "m";
+	if (flags & kMD5Tail)
+		res += "t";
 
-		case kMD5MacResFork:
-			if (flags & kMD5Tail)
-				return "rt";
-			return "r";
+	if (flags & kMD5Archive)
+		res += "A";
 
-		case kMD5Tail:
-			return "t";
-
-		default:
-			return "";
-		}
-	}
+	return res;
 }
 
 static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps);
