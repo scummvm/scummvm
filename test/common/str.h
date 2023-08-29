@@ -3,6 +3,8 @@
 #include "common/str.h"
 #include "common/ustr.h"
 
+#include "test/common/str-helper.h"
+
 class StringTestSuite : public CxxTest::TestSuite
 {
 	public:
