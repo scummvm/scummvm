@@ -506,8 +506,10 @@ void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<
 		debug(1, "Unpacking files...");
 
 		for (const MacVISE3InstallerUnpackRequest &request : unpackRequests) {
+			Common::Path requestPath(request.fileName, ':');
+
 			Common::MacFinderInfo finfo;
-			if (!Common::MacResManager::getFileFinderInfo(request.fileName, *archive, finfo))
+			if (!Common::MacResManager::getFileFinderInfo(requestPath, *archive, finfo))
 				error("Couldn't get Finder info for file '%s'", request.fileName);
 
 			FileIdentification ident;
@@ -518,14 +520,14 @@ void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<
 
 			if (request.extractResources) {
 				Common::SharedPtr<Common::MacResManager> resMan(new Common::MacResManager());
-				if (!resMan->open(request.fileName, *archive))
+				if (!resMan->open(requestPath, *archive))
 					error("Failed to open Mac res manager for file '%s'", request.fileName);
 
 				ident.resMan = resMan;
 			}
 
 			if (request.extractData)
-				ident.stream.reset(archive->createReadStreamForMember(request.fileName));
+				ident.stream.reset(archive->createReadStreamForMember(requestPath));
 
 			files.push_back(ident);
 		}
