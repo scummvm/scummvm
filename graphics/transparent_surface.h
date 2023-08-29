@@ -128,7 +128,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform, bool filtering = false) const;
 
-	TransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
+	TransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *srcPalette = 0, int srcPaletteCount = 0, const byte *dstPalette = 0, int dstPaletteCount = 0, DitherMethod method = kDitherFloyd) const;
 
 	float getRatio() {
 		if (!w)
