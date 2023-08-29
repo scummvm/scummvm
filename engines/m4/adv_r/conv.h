@@ -97,7 +97,7 @@ struct Conv {
 struct ConvDisplayData {
 	char *text[16];
 	char *snd_files[16];
-	char	mesg[1024];
+	char mesg[1024];
 	char *mesg_snd_file;
 	int	num_txt_ents;
 	int	player_non_player;
