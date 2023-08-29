@@ -966,7 +966,8 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 
 	term_message("conv_load");
 
-	_GC(playerCommAllowed) = _G(player).comm_allowed;	// Remember if player commands are on before we start the conversation
+	// Remember if player commands are on before we start the conversation
+	_GC(playerCommAllowed) = _G(player).comm_allowed;
 	_GC(interface_was_visible) = INTERFACE_VISIBLE;
 
 	term_message("conv load:   %s", filename);
@@ -1002,8 +1003,7 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	cSize = fp.size();
 
 	if (conv_get_handle() != nullptr) {
-		////fprintf( conv_fp, "conv_get_handle != nullptr conv_unload()\n" );
-		conv_unload(conv_get_handle());
+		conv_unload();
 	}
 
 	convers = (Conv *)mem_alloc(sizeof(Conv), "Conv struct");
@@ -1035,7 +1035,7 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 		goto done;
 	}
 
-	conv_swap_words(convers); //oct10
+	conv_swap_words(convers);
 	find_and_set_conv_name(convers);
 
 	_GC(glob_x) = x1;
@@ -1096,6 +1096,10 @@ void conv_unload(Conv *c) {
 	}
 
 	_GC(globConv) = c = nullptr;
+}
+
+void conv_unload() {
+	conv_unload(conv_get_handle());
 }
 
 // only called if node is visible.
