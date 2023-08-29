@@ -682,10 +682,6 @@ void Scene::load() {
 	Common::SeekableReadStream *actionRecordChunk = nullptr;
 
 	while (actionRecordChunk = sceneIFF.getChunkStream("ACT", _actionManager._records.size()), actionRecordChunk != nullptr) {
-		if (_actionManager._records.size() >= 30) {
-			error("Invalid number of Action Records");
-		}
-
 		_actionManager.addNewActionRecord(*actionRecordChunk);
 		delete actionRecordChunk;
 	}
