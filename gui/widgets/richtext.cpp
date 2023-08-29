@@ -127,13 +127,13 @@ void RichTextWidget::recalc() {
 }
 
 void RichTextWidget::createWidget() {
-	uint32 white = _wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff);
+	uint32 bg = _wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff); // transparent
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
-	uint32 black = _wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
+	uint32 fg = _wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
 
 	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
 
-	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, black, white, _textWidth, Graphics::kTextAlignLeft);
+	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 	_txtWnd->setMarkdownText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
@@ -157,10 +157,9 @@ void RichTextWidget::drawWidget() {
 	if (!_txtWnd)
 		createWidget();
 
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
-	                                    ThemeEngine::kWidgetBackgroundPlain);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
-	_surface->clear(_wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff));
+	_surface->clear(_wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff)); // transparent
 
 	_txtWnd->draw(_surface, 0, _scrolledY, _w - _scrollbarWidth, _h, 0, 0);
 
