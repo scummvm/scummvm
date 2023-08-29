@@ -117,10 +117,10 @@ void RichTextWidget::recalc() {
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
 	_verticalScroll->_singleStep = 30 * 3;
-	_verticalScroll->setPos(_w, _scrolledY);
+	_verticalScroll->setPos(_w - _scrollbarWidth - _x, 0);
 	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
 
-	warning("STUB: Text width recalc");
+	_txtWnd->setMaxWidth(_w - _scrollbarWidth - _x);
 }
 
 void RichTextWidget::createWidget() {
@@ -162,8 +162,6 @@ void RichTextWidget::drawWidget() {
 	_txtWnd->draw(_surface, 0, _scrolledY, _w - _scrollbarWidth, _h, 0, 0);
 
 	g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), *_surface);
-
-	warning("drawWidget()");
 }
 
 void RichTextWidget::draw() {
@@ -172,7 +170,6 @@ void RichTextWidget::draw() {
 	if (_verticalScroll->isVisible()) {
 		_verticalScroll->draw();
 	}
-
 }
 
 void RichTextWidget::markAsDirty() {
@@ -190,7 +187,7 @@ bool RichTextWidget::containsWidget(Widget *w) const {
 }
 
 Widget *RichTextWidget::findWidget(int x, int y) {
-	if (_verticalScroll->isVisible() && x >= _w)
+	if (_verticalScroll->isVisible() && x >= _w - _scrollbarWidth - _x)
 		return _verticalScroll;
 
 	return this;
