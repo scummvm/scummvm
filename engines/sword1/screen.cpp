@@ -227,47 +227,48 @@ int16 Screen::stillFading() {
 void Screen::fadePalette() {
 	_paletteFadeInfo.fadeCount++;
 
-	if (_paletteFadeInfo.fadeCount == _paletteFadeInfo.paletteIndex) {
-		_paletteFadeInfo.fadeCount = 0;
+	if (_paletteFadeInfo.fadeCount != _paletteFadeInfo.paletteIndex)
+		return;
 
-		if (_paletteFadeInfo.paletteStatus == NO_FADE)
-			return;
+	_paletteFadeInfo.fadeCount = 0;
 
-		// Set the whole palette to the current source.
-		// But first, remember that these are 6 bit values, and
-		// they have to be shifted left two times before using them.
-		byte outPal[256 * 3];
-		for (int i = 0; i < 256 * 3; i++) {
-			// Remember that we previously allowed the RGB values
-			// to go below zero? It's time to account for that;
-			// This contributes to producing the correct palette fading effect.
-			int8 curValueSigned = (int8)_paletteFadeInfo.srcPalette[i];
-			if (curValueSigned < 0)
-				curValueSigned = 0;
+	if (_paletteFadeInfo.paletteStatus == NO_FADE)
+		return;
 
-			outPal[i] = ((byte)curValueSigned) << 2;
-		}
+	// Set the whole palette to the current source.
+	// But first, remember that these are 6 bit values, and
+	// they have to be shifted left two times before using them.
+	byte outPal[256 * 3];
+	for (int i = 0; i < 256 * 3; i++) {
+		// Remember that we previously allowed the RGB values
+		// to go below zero? It's time to account for that;
+		// This contributes to producing the correct palette fading effect.
+		int8 curValueSigned = (int8)_paletteFadeInfo.srcPalette[i];
+		if (curValueSigned < 0)
+			curValueSigned = 0;
 
-		_system->getPaletteManager()->setPalette((const byte *)outPal, 0, 256);
+		outPal[i] = ((byte)curValueSigned) << 2;
+	}
 
-		_paletteFadeInfo.paletteCount--;
+	_system->getPaletteManager()->setPalette((const byte *)outPal, 0, 256);
 
-		if (_paletteFadeInfo.paletteCount == 0) {
-			_paletteFadeInfo.paletteStatus = NO_FADE;
-		} else {
-			if (_paletteFadeInfo.paletteStatus == FADE_DOWN) {
-				// Fade down
-				for (int i = 0; i < 256 * 3; i++) {
-					if (_paletteFadeInfo.srcPalette[i] > 0)
-						_paletteFadeInfo.srcPalette[i]--;
-				}
-			} else if (_paletteFadeInfo.paletteStatus == FADE_UP) {
-				// Fade up
-				for (int i = 0; i < 256 * 3; i++) {
-					// Remember, we might have previously obtained negative values!
-					if ((int8)_paletteFadeInfo.srcPalette[i] < (int8)_paletteFadeInfo.dstPalette[i]) {
-						_paletteFadeInfo.srcPalette[i]++;
-					}
+	_paletteFadeInfo.paletteCount--;
+
+	if (_paletteFadeInfo.paletteCount == 0) {
+		_paletteFadeInfo.paletteStatus = NO_FADE;
+	} else {
+		if (_paletteFadeInfo.paletteStatus == FADE_DOWN) {
+			// Fade down
+			for (int i = 0; i < 256 * 3; i++) {
+				if (_paletteFadeInfo.srcPalette[i] > 0)
+					_paletteFadeInfo.srcPalette[i]--;
+			}
+		} else if (_paletteFadeInfo.paletteStatus == FADE_UP) {
+			// Fade up
+			for (int i = 0; i < 256 * 3; i++) {
+				// Remember, we might have previously obtained negative values!
+				if ((int8)_paletteFadeInfo.srcPalette[i] < (int8)_paletteFadeInfo.dstPalette[i]) {
+					_paletteFadeInfo.srcPalette[i]++;
 				}
 			}
 		}

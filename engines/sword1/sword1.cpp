@@ -867,13 +867,13 @@ void SwordEngine::fadePaletteStep() {
 void SwordEngine::startFadePaletteDown(int speed) {
 	_screen->startFadePaletteDown(speed);
 
-	// Fade audio here
+	// TODO: Fade audio here
 }
 
 void SwordEngine::startFadePaletteUp(int speed) {
 	_screen->startFadePaletteUp(speed);
 
-	// Fade audio here
+	// TODO: Fade audio here
 }
 
 static void vblCallback(void *refCon) {
