@@ -1077,7 +1077,7 @@ void Room141::conv20() {
 void Room141::playRandom() {
 	if (_flag1 && !_val8) {
 		_flag1 = false;
-		digi_play(Common::String::format("140t001%c", 'c' + imath_ranged_rand(0, 5)).c_str(),
+		digi_play(Common::String::format("140t001%c", 'a' + imath_ranged_rand(0, 5)).c_str(),
 			2, 100, 9);
 	}
 }
