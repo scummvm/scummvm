@@ -2390,10 +2390,9 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (_GP(game).options[OPT_SPEECHTYPE] == 0)
 		allowShrink = 1;
 
-	if (speakingChar->idleleft < 0)  {
-		// if idle anim in progress for the character, stop it
+	// If has a valid speech view, and idle anim in progress for the character, then stop it
+	if (useview >= 0 && speakingChar->idleleft < 0) {
 		ReleaseCharacterView(aschar);
-		//    speakingChar->idleleft = speakingChar->idletime;
 	}
 
 	bool overlayPositionFixed = false;
@@ -2401,9 +2400,6 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	int viewWasLocked = 0;
 	if (speakingChar->flags & CHF_FIXVIEW)
 		viewWasLocked = 1;
-
-	/*if ((speakingChar->room == _G(displayed_room)) ||
-	((useview >= 0) && (_GP(game).options[OPT_SPEECHTYPE] > 0)) ) {*/
 
 	if (speakingChar->room == _G(displayed_room)) {
 		// If the character is in this room, go for it - otherwise
