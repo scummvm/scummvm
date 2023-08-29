@@ -28,8 +28,28 @@
 #include "m4/m4_types.h"
 #include "m4/adv_r/conv.h"
 #include "m4/graphics/gr_pal.h"
+#include "m4/gui/gui_dialog.h"
 
 namespace M4 {
+
+#define HIDDEN			0x00000004
+#define DESTROYED       0x00000008
+
+#define INITIAL         1
+#define PERSISTENT      2
+
+#define CONV_OK          0
+#define CONV_QUIT       -1
+#define CONV_NEW        -2
+#define CONV_BAIL       -3
+
+#define CONV_UNKNOWN_MODE   0
+#define CONV_GET_TEXT_MODE  1
+#define CONV_SET_TEXT_MODE  2
+#define CONV_GET_MESG_MODE  3
+#define CONV_UPDATE_MODE    4
+
+#define DECL_POINTER	1
 
 struct Converstation_Globals {
 	Common::Array<byte> conv_save_buff;
@@ -60,9 +80,11 @@ struct Converstation_Globals {
 	int32 conv_hilite_colour_alt2 = __YELLOW;
 	int32 conv_default_normal_colour = __BLACK;
 
+	TextScrn *myTextScrn = nullptr;
 	int32 width = 0, height = 0;
 	int32 glob_x = 0, glob_y = 0;
 	int32 r_x1 = 0, r_y1 = 0, r_x2 = 0, r_y2 = 0;
+	int n_t_e = 0;
 
 	void syncGame(Common::Serializer &s);
 
@@ -122,6 +144,11 @@ extern int conv_is_event_ready();
 extern void conv_swap_words(Conv *c);
 extern long conv_current_node();
 extern int32 conv_current_entry();
+
+extern int conv_toggle_flags(entry_chunk *entry);
+extern int ok_status(entry_chunk *entry);
+extern int conv_get_text(long offset, long size, Conv *c);
+extern void cdd_init();
 
 } // End of namespace M4
 

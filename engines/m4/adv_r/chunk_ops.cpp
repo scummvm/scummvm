@@ -38,7 +38,7 @@ long conv_ops_text_strlen(char *s) {
 	return len;
 }
 
-static void conv_ops_unknown_chunk(long tag, const char *s) {
+void conv_ops_unknown_chunk(long tag, const char *s) {
 	char *tag_name = nullptr;
 
 	tag_name = (char *)&tag;
@@ -248,7 +248,7 @@ static void swap_assign(assign_chunk *a) {
 	a->opnd1 = convert_intel32(a->opnd1);
 }
 
-static assign_chunk *get_asgn(Conv *c, long cSize) {
+assign_chunk *get_asgn(Conv *c, long cSize) {
 	char *s = nullptr;
 	assign_chunk *a = nullptr;
 
@@ -271,7 +271,7 @@ static void swap_c_asgn(c_assign_chunk *c) {
 	c->opnd1 = convert_intel32(c->opnd1);
 }
 
-static c_assign_chunk *get_c_asgn(Conv *c, long cSize) {
+c_assign_chunk *get_c_asgn(Conv *c, long cSize) {
 	char *s = nullptr;
 	c_assign_chunk *c_a = nullptr;
 
@@ -412,11 +412,13 @@ entry_chunk *get_entry(Conv *c, long cSize) {
 	return e;
 }
 
+#if 0
 static void swap_hash_entry(entry_chunk *e) {
 	e->tag = convert_intel32(e->tag);
 	e->size = convert_intel32(e->size);
 	e->status = convert_intel32(e->status);
 }
+#endif
 
 entry_chunk *get_hash_entry(Conv *c, long cSize) {
 	char *s = nullptr;
@@ -600,9 +602,11 @@ c_misc_chunk *get_c_misc(Conv *c, long cSize) {
 	return cm;
 }
 
+#if 0
 static void swap_long(long *l) {
 	*l = convert_intel32(*l);
 }
+#endif
 
 long get_long(Conv *c, long cSize) {
 	char *s = nullptr;
@@ -702,7 +706,7 @@ void conv_swap_words(Conv *c) {
 	fall_chunk *fall = nullptr;
 	lnode_chunk *lnode = nullptr;
 	entry_chunk *entry = nullptr;
-	entry_chunk *hash_entry = nullptr;
+	//entry_chunk *hash_entry = nullptr;
 
 	text_chunk *text = nullptr;
 	mesg_chunk *mesg = nullptr;
