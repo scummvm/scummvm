@@ -288,10 +288,9 @@ void conv_init(Conv *c) {
 	}
 }
 
-#ifdef TODO
 static long find_state(char *s, char *c, int file_size) {
-	char	name[9];
-	long	size, offset = 0;
+	char name[9];
+	long size = 0, offset = 0;
 
 	////fprintf( conv_fp, "find_state %s\n", s );
 	while (offset < file_size) {
@@ -307,11 +306,11 @@ static long find_state(char *s, char *c, int file_size) {
 
 		offset += 8 * sizeof(char);
 		if (offset < file_size) {
-			memcpy(&size, &c[offset], sizeof(long));
+			memcpy(&size, &c[offset], sizeof(int32));
 			////fprintf( conv_fp, "size %x\n", size );
 		}
 
-		offset += size + sizeof(long);
+		offset += size + sizeof(int32);
 	}
 
 	offset = -1;
@@ -320,7 +319,6 @@ static long find_state(char *s, char *c, int file_size) {
 handled:
 	return offset;
 }
-#endif
 
 void find_and_set_conv_name(Conv *c) {
 	long			ent = 0, tag = 0, next = 0;
@@ -344,202 +342,13 @@ void find_and_set_conv_name(Conv *c) {
 	}
 }
 
-/*
-void save_state( Conv *c )
-{
-	long			ent=0;
-	long			tag, next;
-	long			offset=-1, size=0, amt_to_write=0;
-
-	entry_chunk		*entry;
-	decl_chunk		*decl;
-	conv_chunk		*conv;
-	short				num_decls=0, num_entries=0;
-	short				flag_num=0, flag_index=0;
-	long				e_flags=0, myCNode, val;
-
-	FILE				*fp=nullptr;
-	char				fname[9];
-	char				*conv_save_buff=nullptr;
-	long				file_size;
-	bool				overwrite_file=false;
-	long				prev_size=0;
-
-	myCNode = c->myCNode; c->myCNode=0; ent=0;
-
-	while( ent < c->chunkSize ) {
-		conv_ops_get_entry( ent, &next, &tag, c );
-
-		switch( tag ) {
-			case CONV_CHUNK:
-				conv = get_conv( c, ent );
-				cstrncpy( fname, get_string( c, c->myCNode+ent+sizeof( conv_chunk ) ), 8 );
-				fname[8] = '\0';
-			break;
-
-			case DECL_CHUNK:
-				num_decls++;
-				amt_to_write += sizeof( long );
-			break;
-
-			case ENTRY_CHUNK:
-				num_entries++;
-			break;
-
-			default:
-			break;
-		}
-		ent = next;
-	}
-
-	sprintf( _GC(conv_file_name), "%sconvsave.dat", argv );
-	//file_size = f_info_get_file_size( _GC(conv_file_name) ); //oct11
-
-	//oct11
-	if( !f_info_exists(_GC(conv_file_name)) )
-		file_size = 0; //was -1
-	else
-		file_size = f_info_get_file_size( _GC(conv_file_name) );
-
-	amt_to_write += 3*sizeof( long );
-	amt_to_write += (num_entries / 8) * sizeof( long );
-	if( (num_entries%8) != 0 )
-		amt_to_write += sizeof( long );
-
-	fp = f_io_open( _GC(conv_file_name), "rb" ); //was r+b
-
-	if( fp ) {
-		conv_save_buff = (char *)mem_alloc( file_size, "conv save buff" );
-		fread( conv_save_buff, file_size, 1, fp );
-
-		f_io_close( fp );
-		offset = find_state( fname, conv_save_buff, file_size );
-
-		if( offset != -1 ) {
-			overwrite_file=true;
-			memcpy( &prev_size, &conv_save_buff[offset], sizeof( long ) );
-			prev_size += 3*sizeof(long);
-			offset += sizeof( long ); //skip header. (name + size)
-		} else {
-			//append!!!
-			offset=0;
-			if( conv_save_buff )
-				mem_free( conv_save_buff );
-
-			conv_save_buff = (char *)mem_alloc( amt_to_write+3*sizeof(long), "conv save buff" );
-			memcpy( &conv_save_buff[offset], fname, 8*sizeof(char) );
-			offset += 8*sizeof( char );
-			memcpy( &conv_save_buff[offset], &amt_to_write, sizeof( long ));
-			offset += sizeof( long );
-		}
-	} else {
-		offset=0;
-		conv_save_buff = (char *)mem_alloc( amt_to_write+3*sizeof(long), "conv save buff" );
-		memcpy( &conv_save_buff[offset], fname, 8*sizeof(char) );
-		offset += 8*sizeof( char );
-		memcpy( &conv_save_buff[offset], &amt_to_write, sizeof( long ));
-		offset += sizeof( long );
-	}
-
-	memcpy( &conv_save_buff[offset], &myCNode, sizeof( long ) );
-	offset += sizeof( long );
-
-	memcpy( &conv_save_buff[offset], &num_decls, sizeof( long ) );
-	offset += sizeof( long );
-
-	memcpy( &conv_save_buff[offset], &num_entries, sizeof( long ) );
-	offset += sizeof( long );
-	size += 3*sizeof( long );
-
-	ent=0; c->myCNode = 0;
-	while( ent < c->chunkSize ) {
-		conv_ops_get_entry( ent, &next, &tag, c );
-
-		switch( tag ) {
-			case DECL_CHUNK:
-				decl = get_decl( c, ent );
-				val = conv_get_decl_val( decl );
-
-				memcpy( &conv_save_buff[offset], &val, sizeof( long ) );
-				offset+=sizeof( long );
-
-				size+=sizeof( long );
-			break;
-
-			case LNODE_CHUNK:
-			case NODE_CHUNK:
-			break;
-
-			case ENTRY_CHUNK:
-				entry = get_entry( c, ent );
-
-				if( flag_index == 32 ) {
-					flag_index = 0;
-					flag_num++;
-
-					memcpy( &conv_save_buff[offset], &e_flags, sizeof( long ) );
-					offset += sizeof( long );
-					size += sizeof( long );
-
-					e_flags = 0;
-				}
-
-				//fprintf( conv_fp, "entry->status %d\n", entry->status );
-				e_flags |= ( (entry->status & 0x0000000f) << flag_index );
-
-				flag_index += 4;
-			break;
-
-			default:
-			break;
-		}
-		ent = next;
-	}
-
-	if( flag_index != 0 ) {
-		memcpy( &conv_save_buff[offset], &e_flags, sizeof(long) );
-		offset += sizeof( long );
-		size += sizeof( long );
-	}
-
-	if( (amt_to_write != size) )
-		error_show( FL, 'CNVS', "save_state: error! size written != size (%d %d)", amt_to_write, size );
-
-	if( overwrite_file == true ) {
-		////fprintf( conv_fp, "overwrite conversation\n" );
-		fp = f_io_open( _GC(conv_file_name), "wb" );
-		fwrite( conv_save_buff, file_size, 1, fp );
-
-		//if( prev_size != file_size )
-		//	error_show( FL, 'CNVS', "save_state() Prev save size != Curr save size (%d, %d)", prev_size, file_size );
-
-	} else {
-		////fprintf( conv_fp, "append conversation\n" );
-		fp = f_io_open( _GC(conv_file_name), "ab+" );
-		fwrite( conv_save_buff, amt_to_write+3*sizeof(long), 1, fp );
-	}
-
-	if( conv_save_buff )
-		mem_free( conv_save_buff );
-
-	f_io_close( fp );
-}
-*/
-
-//-------------------------------------------------------------------------------
-// nick documented and error checking added 960501
-// variables moved into their scopes because I'm a picky S.O.B.
-
-void save_state(Conv *c) {
-#ifndef TODO
-	error("TODO: save_state");
-#else
+static void conv_save_state(Conv *c) {
 	//-------------------------------------------------------------------------------
 	// calculate amt_to_write by counting up the size of DECL_CHUNKs.
 	// the number of ENTRY_CHUNKs affects the amt_to_write
 	// also extract fname from the CONV_CHUNK
 
-	long amt_to_write = 3 * sizeof(long);	// mystery padding
+	long amt_to_write = 3 * sizeof(int32);	// mystery padding
 	long ent = 0;
 	long next, tag;	// receive conv_ops_get_entry results
 	long myCNode = c->myCNode;
@@ -564,7 +373,7 @@ void save_state(Conv *c) {
 
 		case DECL_CHUNK:
 			num_decls++;
-			amt_to_write += sizeof(long);
+			amt_to_write += sizeof(int32);
 			break;
 
 		case ENTRY_CHUNK:
@@ -577,14 +386,9 @@ void save_state(Conv *c) {
 		ent = next;
 	}
 
-	amt_to_write += (num_entries / 8) * sizeof(long);
+	amt_to_write += (num_entries / 8) * sizeof(int32);
 	if ((num_entries % 8) != 0)
-		amt_to_write += sizeof(long);	// pad the sucker
-
-	//-------------------------------------------------------------------------------
-	// get the name of consave.dat
-
-	Common::strcpy_s(_GC(conv_file_name), "convsave.dat");
+		amt_to_write += sizeof(int32);	// pad the sucker
 
 	//-------------------------------------------------------------------------------
 	// if consave.dat exists, read it in
@@ -595,17 +399,14 @@ void save_state(Conv *c) {
 	char *conv_save_buff = nullptr;
 	bool overwrite_file = false;
 
-	if (f_info_exists(_GC(conv_file_name))) {
-		file_size = f_info_get_file_size(_GC(conv_file_name));
-		FILE *fp = f_io_open(_GC(conv_file_name), "rb"); //was r+b
+	if (!_GC(convSave).empty()) {
+		file_size = _GC(convSave).size();
 
 		conv_save_buff = (char *)mem_alloc(file_size, "conv save buff");
 		if (!conv_save_buff)
 			error_show(FL, 'OOM!');
 
-		fread(conv_save_buff, file_size, 1, fp);
-
-		f_io_close(fp);
+		Common::copy(&_GC(convSave)[0], &_GC(convSave)[0] + file_size, &conv_save_buff[0]);
 
 		//----------------------------------------------------------------------------
 		// if this conversation already in save file, overwrite it,
@@ -616,9 +417,9 @@ void save_state(Conv *c) {
 
 		if (offset != -1) {
 			overwrite_file = true;
-			memcpy(&prev_size, &conv_save_buff[offset], sizeof(long));
-			prev_size += 3 * sizeof(long);
-			offset += sizeof(long); //skip header. (name + size)
+			memcpy(&prev_size, &conv_save_buff[offset], sizeof(int32));
+			prev_size += 3 * sizeof(int32);
+			offset += sizeof(int32); //skip header. (name + size)
 		} else {
 			//append!!!
 			offset = 0;
@@ -626,14 +427,14 @@ void save_state(Conv *c) {
 			if (conv_save_buff)
 				mem_free(conv_save_buff);
 
-			conv_save_buff = (char *)mem_alloc(amt_to_write + 3 * sizeof(long), "conv save buff");
+			conv_save_buff = (char *)mem_alloc(amt_to_write + 3 * sizeof(int32), "conv save buff");
 			if (!conv_save_buff)
 				error_show(FL, 'OOM!');
 
 			memcpy(&conv_save_buff[offset], fname, 8 * sizeof(char));
 			offset += 8 * sizeof(char);
-			memcpy(&conv_save_buff[offset], &amt_to_write, sizeof(long));
-			offset += sizeof(long);
+			memcpy(&conv_save_buff[offset], &amt_to_write, sizeof(int32));
+			offset += sizeof(int32);
 		}
 	} else
 	{
@@ -642,29 +443,29 @@ void save_state(Conv *c) {
 
 		offset = 0;
 
-		conv_save_buff = (char *)mem_alloc(amt_to_write + 3 * sizeof(long), "conv save buff");
+		conv_save_buff = (char *)mem_alloc(amt_to_write + 3 * sizeof(int32), "conv save buff");
 		if (!conv_save_buff)
 			error_show(FL, 'OOM!');
 
 		memcpy(&conv_save_buff[offset], fname, 8 * sizeof(char));
 		offset += 8 * sizeof(char);
-		memcpy(&conv_save_buff[offset], &amt_to_write, sizeof(long));
-		offset += sizeof(long);
+		memcpy(&conv_save_buff[offset], &amt_to_write, sizeof(int32));
+		offset += sizeof(int32);
 	}
 
 	//----------------------------------------------------------------------------
 	// finish filling in conv_save_buff data with num of entries etc.
 
-	memcpy(&conv_save_buff[offset], &myCNode, sizeof(long));
-	offset += sizeof(long);
+	memcpy(&conv_save_buff[offset], &myCNode, sizeof(int32));
+	offset += sizeof(int32);
 
-	memcpy(&conv_save_buff[offset], &num_decls, sizeof(long));
-	offset += sizeof(long);
+	memcpy(&conv_save_buff[offset], &num_decls, sizeof(int32));
+	offset += sizeof(int32);
 
-	memcpy(&conv_save_buff[offset], &num_entries, sizeof(long));
-	offset += sizeof(long);
+	memcpy(&conv_save_buff[offset], &num_entries, sizeof(int32));
+	offset += sizeof(int32);
 
-	long size = 3 * sizeof(long);
+	long size = 3 * sizeof(int32);
 
 	// fill in all the entries themselves
 
@@ -688,10 +489,10 @@ void save_state(Conv *c) {
 			decl = get_decl(c, ent);
 			val = conv_get_decl_val(decl);
 
-			memcpy(&conv_save_buff[offset], &val, sizeof(long));
-			offset += sizeof(long);
+			memcpy(&conv_save_buff[offset], &val, sizeof(int32));
+			offset += sizeof(int32);
 
-			size += sizeof(long);
+			size += sizeof(int32);
 			break;
 
 		case LNODE_CHUNK:
@@ -705,9 +506,9 @@ void save_state(Conv *c) {
 				flag_index = 0;
 				//flag_num++;
 
-				memcpy(&conv_save_buff[offset], &e_flags, sizeof(long));
-				offset += sizeof(long);
-				size += sizeof(long);
+				memcpy(&conv_save_buff[offset], &e_flags, sizeof(int32));
+				offset += sizeof(int32);
+				size += sizeof(int32);
 
 				e_flags = 0;
 			}
@@ -724,50 +525,36 @@ void save_state(Conv *c) {
 		ent = next;
 	}
 
-	// copy the flags
+	// Copy the flags
 
 	if (flag_index != 0) {
-		memcpy(&conv_save_buff[offset], &e_flags, sizeof(long));
-		offset += sizeof(long);
-		size += sizeof(long);
+		memcpy(&conv_save_buff[offset], &e_flags, sizeof(int32));
+		offset += sizeof(int32);
+		size += sizeof(int32);
 	}
 
 	if ((amt_to_write != size))
 		error_show(FL, 'CNVS', "save_state: error! size written != size (%d %d)", amt_to_write, size);
 
-	// finally, write out the conversation data. Scoped to contain fp.
-	{
-		FILE *fp = nullptr;
-		if (overwrite_file == true)
-		{
-			////fprintf( conv_fp, "overwrite conversation\n" );
-			fp = f_io_open(_GC(conv_file_name), "wb");
-			if (!fp)
-				error_show(FL, 'FNF!', "consave.dat");
+	// Finally, write out the conversation data
+	if (overwrite_file == true) {
+		_GC(convSave).resize(file_size);
+		Common::copy(conv_save_buff, conv_save_buff + file_size, &_GC(convSave)[0]);
 
-			fwrite(conv_save_buff, file_size, 1, fp);
-		} else
-		{
-			////fprintf( conv_fp, "append conversation\n" );
-			fp = f_io_open(_GC(conv_file_name), "ab+");
-			if (!fp)
-				error_show(FL, 'FNF!', "consave.dat");
+	} else {
+		// Append conversation
+		size_t oldSize = _GC(convSave).size();
+		file_size = amt_to_write + 3 * sizeof(int32);
 
-			fwrite(conv_save_buff, amt_to_write + 3 * sizeof(long), 1, fp);
-		}
-
-		if (conv_save_buff)
-			mem_free(conv_save_buff);
-
-		f_io_close(fp);
+		_GC(convSave).resize(_GC(convSave).size() + file_size);
+		Common::copy(conv_save_buff, conv_save_buff + file_size, &_GC(convSave)[oldSize]);
 	}
-#endif
+
+	if (conv_save_buff)
+		mem_free(conv_save_buff);
 }
 
-Conv *restore_state(Conv *c) {
-#ifndef TODO
-	error("TODO: restore_state");
-#else
+static Conv *conv_restore_state(Conv *c) {
 	long ent = 0;
 	long tag, next, offset;
 
@@ -780,7 +567,6 @@ Conv *restore_state(Conv *c) {
 	long e_flags = 0;
 	long myCNode;
 
-	FILE *fp = nullptr;
 	char fname[9];
 	int dont_update_ents = 0;
 	int file_size = 0;
@@ -792,17 +578,12 @@ Conv *restore_state(Conv *c) {
 	cstrncpy(fname, get_conv_name(), 8);
 	fname[8] = '\0';
 
-	sprintf(_GC(conv_file_name), "%sconvsave.dat", argv);
-	//oct11
-	//file_size = f_info_get_file_size( _GC(conv_file_name) );
-	if (!f_info_exists(_GC(conv_file_name)))
+	if (_GC(convSave).empty())
 		file_size = -1;
 	else
-		file_size = f_info_get_file_size(_GC(conv_file_name));
+		file_size = _GC(convSave).size();
 
-	fp = f_io_open(_GC(conv_file_name), "rb");
-	if (!fp)
-	{
+	if (file_size <= 0) {
 		conv_init(c);
 		return c;
 	}
@@ -813,8 +594,7 @@ Conv *restore_state(Conv *c) {
 
 	// ------------------
 
-	fread(conv_save_buff, file_size, 1, fp);
-	f_io_close(fp);
+	Common::copy(&_GC(convSave)[0], &_GC(convSave)[0] + file_size, &conv_save_buff[0]);
 	offset = find_state(fname, conv_save_buff, file_size);
 
 	// nick 960501 changed from a return c to a goto in order to corret an insidious memory leak!
@@ -822,16 +602,16 @@ Conv *restore_state(Conv *c) {
 		goto i_am_so_done;
 
 	//skip header.
-	offset += sizeof(long);
+	offset += sizeof(int32);
 
-	memcpy(&myCNode, &conv_save_buff[offset], sizeof(long));
-	offset += sizeof(long);
+	memcpy(&myCNode, &conv_save_buff[offset], sizeof(int32));
+	offset += sizeof(int32);
 
-	memcpy(&num_decls, &conv_save_buff[offset], sizeof(long));
-	offset += sizeof(long);
+	memcpy(&num_decls, &conv_save_buff[offset], sizeof(int32));
+	offset += sizeof(int32);
 
-	memcpy(&num_entries, &conv_save_buff[offset], sizeof(long));
-	offset += sizeof(long);
+	memcpy(&num_entries, &conv_save_buff[offset], sizeof(int32));
+	offset += sizeof(int32);
 
 	ent = 0; c->myCNode = 0;
 
@@ -840,8 +620,8 @@ Conv *restore_state(Conv *c) {
 
 		switch (tag) {
 		case DECL_CHUNK:
-			memcpy(&val, &conv_save_buff[offset], sizeof(long));
-			offset += sizeof(long);
+			memcpy(&val, &conv_save_buff[offset], sizeof(int32));
+			offset += sizeof(int32);
 			decl = get_decl(c, ent);
 
 			conv_set_decl_val(decl, val);
@@ -880,8 +660,8 @@ Conv *restore_state(Conv *c) {
 			}
 
 			if (flag_index == 0) {
-				memcpy(&e_flags, &conv_save_buff[offset], sizeof(long));
-				offset += sizeof(long);
+				memcpy(&e_flags, &conv_save_buff[offset], sizeof(int32));
+				offset += sizeof(int32);
 			}
 
 			val = (e_flags >> flag_index) & 0x0000000f;
@@ -909,7 +689,6 @@ i_am_so_done:
 	if (conv_save_buff)
 		mem_free(conv_save_buff);
 	return c;
-#endif
 }
 
 void conv_set_font_spacing(int32 h, int32 v) {
@@ -1045,7 +824,7 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 		set_dlg_rect();
 
 	if (_GC(restore_conv))
-		convers = restore_state(convers);
+		convers = conv_restore_state(convers);
 	_GC(restore_conv) = 1;
 
 	conv_set_handle(convers);
@@ -1077,7 +856,7 @@ void conv_unload(Conv *c) {
 	_GC(globConv) = nullptr;
 
 	if (c)
-		save_state(c);
+		conv_save_state(c);
 
 	player_set_commands_allowed(_GC(playerCommAllowed));
 

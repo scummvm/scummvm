@@ -552,8 +552,6 @@ enum {
 };
 
 class Flags {
-private:
-	Common::Array<byte> _convSave;
 public:
 	static long _flags[FLAGS_COUNT];
 
@@ -570,10 +568,7 @@ public:
 	void reset3();
 	void reset4();
 	void reset5();
-
-	void conv_reset_all() {
-		_convSave.clear();
-	}
+	void conv_reset_all();
 
 	int32 get_boonsville_time_and_display(bool showTime = false);
 	void set_boonsville_time(int32 time);
