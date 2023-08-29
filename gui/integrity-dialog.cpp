@@ -59,7 +59,7 @@ struct ResultFormat {
 
 } static *g_result;
 
-struct DialogState {
+struct ChecksumDialogState {
 	IntegrityDialog *dialog;
 	ProcessState state;
 
@@ -74,18 +74,18 @@ struct DialogState {
 	Common::String platform;
 	Common::String language;
 
-	DialogState() {
+	ChecksumDialogState() {
 		state = kChecksumStateNone;
 		totalSize = calculatedSize = 0;
 		dialog = nullptr;
 	}
-} static *g_state;
+} static *g_checksum_state;
 
 uint32 getCalculationProgress() {
-	if (!g_state || g_state->totalSize == 0)
+	if (!g_checksum_state || g_checksum_state->totalSize == 0)
 		return 0;
 
-	uint32 progress = (uint32)(100 * ((double)g_state->calculatedSize / (double)g_state->totalSize));
+	uint32 progress = (uint32)(100 * ((double)g_checksum_state->calculatedSize / (double)g_checksum_state->totalSize));
 
 	return progress;
 }
@@ -118,27 +118,27 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 	_copyEmailButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.CopyButton", _("Copy Email to Clipboard"), Common::U32String(), kCopyEmailCmd);
 	_copyEmailButton->setVisible(false);
 
-	if (!g_state) {
-		g_state = new DialogState();
-		g_state->dialog = this;
+	if (!g_checksum_state) {
+		g_checksum_state = new ChecksumDialogState();
+		g_checksum_state->dialog = this;
 
 		setState(kChecksumStateCalculating);
 		refreshWidgets();
 
-		g_state->endpoint = endpoint;
-		g_state->gamePath = ConfMan.get("path", domain);
-		g_state->gameid = ConfMan.get("gameid", domain);
-		g_state->engineid = ConfMan.get("engineid", domain);
-		g_state->extra = ConfMan.get("extra", domain);
-		g_state->platform = ConfMan.get("platform", domain);
-		g_state->language = ConfMan.get("language", domain);
-		calculateTotalSize(g_state->gamePath);
+		g_checksum_state->endpoint = endpoint;
+		g_checksum_state->gamePath = ConfMan.get("path", domain);
+		g_checksum_state->gameid = ConfMan.get("gameid", domain);
+		g_checksum_state->engineid = ConfMan.get("engineid", domain);
+		g_checksum_state->extra = ConfMan.get("extra", domain);
+		g_checksum_state->platform = ConfMan.get("platform", domain);
+		g_checksum_state->language = ConfMan.get("language", domain);
+		calculateTotalSize(g_checksum_state->gamePath);
 
 		sendJSON();
 	} else {
-		g_state->dialog = this;
+		g_checksum_state->dialog = this;
 
-		setState(g_state->state);
+		setState(g_checksum_state->state);
 		refreshWidgets();
 	}
 }
@@ -153,14 +153,14 @@ void IntegrityDialog::open() {
 }
 
 void IntegrityDialog::close() {
-	if (g_state)
-		g_state->dialog = nullptr;
+	if (g_checksum_state)
+		g_checksum_state->dialog = nullptr;
 
 	Dialog::close();
 }
 
 void IntegrityDialog::setState(ProcessState state) {
-	g_state->state = state;
+	g_checksum_state->state = state;
 
 	switch (state) {
 	case kChecksumStateNone:
@@ -209,8 +209,8 @@ void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		setState(kResponseReceived);
 		break;
 	case kCleanupCmd: {
-		delete g_state;
-		g_state = nullptr;
+		delete g_checksum_state;
+		g_checksum_state = nullptr;
 
 		delete g_result;
 		g_result = nullptr;
@@ -250,8 +250,8 @@ void IntegrityDialog::reflowLayout() {
 
 Common::U32String IntegrityDialog::getSizeLabelText() {
 	const char *calculatedUnits, *totalUnits;
-	Common::String calculated = Common::getHumanReadableBytes(g_state->calculatedSize, calculatedUnits);
-	Common::String total = Common::getHumanReadableBytes(g_state->totalSize, totalUnits);
+	Common::String calculated = Common::getHumanReadableBytes(g_checksum_state->calculatedSize, calculatedUnits);
+	Common::String total = Common::getHumanReadableBytes(g_checksum_state->totalSize, totalUnits);
 	return Common::U32String::format(_("Calculated %s %S / %s %S"), calculated.c_str(), _(calculatedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
 }
 
@@ -293,7 +293,7 @@ void IntegrityDialog::calculateTotalSize(Common::String gamePath) {
 			if (!file.open(entry))
 				continue;
 
-			g_state->totalSize += file.size();
+			g_checksum_state->totalSize += file.size();
 		}
 	}
 }
@@ -334,7 +334,7 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 				fileStream->seek(-5000, SEEK_END);
 				fileChecksum.push_back(Common::computeStreamMD5AsString(*(fileStream)).c_str());
 
-				g_state->calculatedSize += fileStream->size();
+				g_checksum_state->calculatedSize += fileStream->size();
 
 				fileChecksums.push_back(fileChecksum);
 			}
@@ -353,7 +353,7 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 			file.seek(-5000, SEEK_END);
 			fileChecksum.push_back(Common::computeStreamMD5AsString(file).c_str());
 
-			g_state->calculatedSize += file.size();
+			g_checksum_state->calculatedSize += file.size();
 
 			file.close();
 			fileChecksums.push_back(fileChecksum);
@@ -425,27 +425,27 @@ void IntegrityDialog::checksumResponseCallback(Common::JSONValue *r) {
 	debug(3, "JSON Response: %s", r->stringify().c_str());
 	IntegrityDialog::parseJSON(r);
 
-	if (g_state->dialog)
-		g_state->dialog->sendCommand(kResponseReceived, 0);
+	if (g_checksum_state->dialog)
+		g_checksum_state->dialog->sendCommand(kResponseReceived, 0);
 }
 
 void IntegrityDialog::errorCallback(Networking::ErrorResponse error) {
 	warning("ERROR %ld: %s", error.httpResponseCode, error.response.c_str());
 	g_result->errorText = Common::String::format("ERROR %ld: %s", error.httpResponseCode, error.response.c_str());
 
-	if (g_state->dialog)
-		g_state->dialog->sendCommand(kResponseCmd, 0);
+	if (g_checksum_state->dialog)
+		g_checksum_state->dialog->sendCommand(kResponseCmd, 0);
 }
 
 void IntegrityDialog::sendJSON() {
 	g_result = new ResultFormat();
 
-	auto conn = new Networking::PostRequest(g_state->endpoint,
+	auto conn = new Networking::PostRequest(g_checksum_state->endpoint,
 											new Common::Callback<IntegrityDialog, Common::JSONValue *>(this, &IntegrityDialog::checksumResponseCallback),
 											new Common::Callback<IntegrityDialog, Networking::ErrorResponse>(this, &IntegrityDialog::errorCallback));
 
 	Common::JSONValue *json = generateJSONRequest(
-		g_state->gamePath, g_state->gameid, g_state->engineid, g_state->extra, g_state->platform, g_state->language);
+		g_checksum_state->gamePath, g_checksum_state->gameid, g_checksum_state->engineid, g_checksum_state->extra, g_checksum_state->platform, g_checksum_state->language);
 	conn->setJSONData(json);
 	conn->setContentType("application/json");
 	conn->start();
@@ -472,7 +472,7 @@ Fileset %s is a new or unknown fileset, the game details are:\
 \
 Here describe the details of your release:\
 ",
-								   fileset.c_str(), fileset.c_str(), g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str());
+								   fileset.c_str(), fileset.c_str(), g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str());
 
 		Common::String emailLink = Common::String::format("mailto:integrity@scummvm.org?subject=Subject: Unknown game variant fileset %s&body=%s!", fileset.c_str(), emailText.c_str());
 
@@ -484,7 +484,7 @@ Here describe the details of your release:\
 		messageText.push_back(Common::U32String::format("Subject: Unknown game variant fileset %s", fileset.c_str()));
 		messageText.push_back(_(""));
 		messageText.push_back(Common::U32String::format("Fileset %s is a new or unknown fileset, the game details are:", fileset.c_str()));
-		messageText.push_back(Common::U32String::format("%s %s %s", g_state->gameid.c_str(), g_state->platform.c_str(), g_state->language.c_str()));
+		messageText.push_back(Common::U32String::format("%s %s %s", g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str()));
 		messageText.push_back(_(""));
 		messageText.push_back(Common::U32String("Here describe the details of your release:"));
 
