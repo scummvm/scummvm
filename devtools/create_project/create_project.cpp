@@ -413,6 +413,7 @@ int main(int argc, char *argv[]) {
 		// the files, according to the target.
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
+		setup.defines.push_back("SCUMMVM_NEON");
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
 		setup.defines.push_back("WIN32");
 		backendWin32 = true;
