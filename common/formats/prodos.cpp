@@ -172,6 +172,10 @@ Common::SeekableReadStream *ProDOSFile::createReadStream() const {
 	return new Common::MemoryReadStream(finalData, _eof, DisposeAfterUse::YES);
 }
 
+Common::SeekableReadStream *ProDOSFile::createReadStreamForAltStream(Common::AltStreamType altStreamType) const {
+	return nullptr;
+}
+
 // --- ProDOSDisk methods ---
 
 /* The time and date are compressed into 16bit words, so to make them useable

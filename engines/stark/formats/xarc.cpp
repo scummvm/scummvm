@@ -39,6 +39,7 @@ public:
 	XARCMember(const XARCArchive *xarc, Common::ReadStream &stream, uint32 offset);
 
 	Common::SeekableReadStream *createReadStream() const override;
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
 	Common::String getName() const override { return _name; }
 	Common::Path getPathInArchive() const { return _name; }
 	Common::String getFileName() const { return _name; }
@@ -74,6 +75,10 @@ XARCMember::XARCMember(const XARCArchive *xarc, Common::ReadStream &stream, uint
 
 Common::SeekableReadStream *XARCMember::createReadStream() const {
 	return _xarc->createReadStreamForMember(this);
+}
+
+Common::SeekableReadStream *XARCMember::createReadStreamForAltStream(Common::AltStreamType altStreamType) const {
+	return nullptr;
 }
 
 Common::String XARCMember::readString(Common::ReadStream &stream) {

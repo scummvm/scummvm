@@ -33,6 +33,7 @@ public:
 	FSDirectoryFile(const Common::Path &pathInDirectory, const FSNode &fsNode);
 
 	SeekableReadStream *createReadStream() const override;
+	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const override;
 	String getName() const override;
 	Path getPathInArchive() const override;
 	String getFileName() const override;
@@ -48,6 +49,10 @@ FSDirectoryFile::FSDirectoryFile(const Common::Path &pathInDirectory, const FSNo
 
 SeekableReadStream *FSDirectoryFile::createReadStream() const {
 	return _fsNode.createReadStream();
+}
+
+SeekableReadStream *FSDirectoryFile::createReadStreamForAltStream(AltStreamType altStreamType) const {
+	return _fsNode.createReadStreamForAltStream(altStreamType);
 }
 
 String FSDirectoryFile::getName() const {
@@ -192,6 +197,21 @@ SeekableReadStream *FSNode::createReadStream() const {
 	}
 
 	return _realNode->createReadStream();
+}
+
+SeekableReadStream *FSNode::createReadStreamForAltStream(AltStreamType altStreamType) const {
+	if (_realNode == nullptr)
+		return nullptr;
+
+	if (!_realNode->exists()) {
+		warning("FSNode::createReadStream: '%s' does not exist", getName().c_str());
+		return nullptr;
+	} else if (_realNode->isDirectory()) {
+		warning("FSNode::createReadStream: '%s' is a directory", getName().c_str());
+		return nullptr;
+	}
+
+	return _realNode->createReadStreamForAltStream(altStreamType);
 }
 
 SeekableWriteStream *FSNode::createWriteStream() const {
@@ -360,21 +380,8 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 					warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring file '%s'",
 					        Common::toPrintable(name.toString('/')).c_str());
 				}
-			} else {
+			} else
 				_fileCache[name] = *it;
-
-#ifdef MACOSX
-				// On Mac, check for native resource fork
-				String rsrcName = it->getPath() + "/..namedfork/rsrc";
-				FSNode rsrc = FSNode(rsrcName);
-
-				Path cacheName = prefix.join(it->getRealName() + "/..namedfork/rsrc");
-
-				if (rsrc.exists()) {
-					_fileCache[cacheName] = rsrc;
-				}
-#endif
-			}
 		}
 	}
 

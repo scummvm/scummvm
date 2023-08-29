@@ -585,6 +585,7 @@ public:
 	ArchiveItem(Common::SeekableReadStream *stream, Common::Mutex *guardMutex, const Common::String &path, const Common::String &name, int64 filePos, uint compressedSize, uint decompressedSize, bool isCompressed);
 
 	Common::SeekableReadStream *createReadStream() const override;
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
 	Common::String getName() const override;
 	Common::Path getPathInArchive() const override { return getName(); }
 	Common::String getFileName() const override { return getName(); }
@@ -621,6 +622,10 @@ Common::SeekableReadStream *ArchiveItem::createReadStream() const {
 		return new DecompressingStream(sliceSubstream, _compressedSize, _decompressedSize);
 	else
 		return sliceSubstream;
+}
+
+Common::SeekableReadStream *ArchiveItem::createReadStreamForAltStream(Common::AltStreamType altStreamType) const {
+	return nullptr;
 }
 
 Common::String ArchiveItem::getName() const {

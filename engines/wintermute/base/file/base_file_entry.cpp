@@ -52,6 +52,10 @@ Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	return file;
 }
 
+Common::SeekableReadStream *BaseFileEntry::createReadStreamForAltStream(Common::AltStreamType altStreamType) const {
+	return nullptr;
+}
+
 //////////////////////////////////////////////////////////////////////////
 BaseFileEntry::BaseFileEntry() {
 	_package = nullptr;

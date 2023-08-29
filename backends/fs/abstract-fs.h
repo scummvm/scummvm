@@ -183,6 +183,16 @@ public:
 	virtual Common::SeekableReadStream *createReadStream() = 0;
 
 	/**
+	 * Creates a SeekableReadStream instance corresponding to an alternate
+	 * stream of the file referred by this node. This assumes that the node
+	 * actually refers to a readable file and the alt stream exists.
+	 * If either is not the case, 0 is returned.
+	 *
+	 * @return pointer to the stream object, 0 in case of a failure
+	 */
+	virtual Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType);
+
+	/**
 	 * Creates a WriteStream instance corresponding to the file
 	 * referred by this node. This assumes that the node actually refers
 	 * to a readable file. If this is not the case, 0 is returned.

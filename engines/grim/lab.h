@@ -42,6 +42,7 @@ public:
 	Common::String getFileName() const override { return _name; }
 	Common::Path getPathInArchive() const override { return _name; }
 	Common::SeekableReadStream *createReadStream() const override;
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override { return nullptr; }
 	friend class Lab;
 };
 
