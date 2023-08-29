@@ -24,7 +24,7 @@
 	},
 	"broken-sword-2.5": {
 		"name": "broken-sword-2.5",
-		"packname": "broken_sword_2.5",
+		"packname": "broken_sword_25",
 		"description": "Broken Sword 2.5: The Return of the Templars (original title: Baphomets Fluch 2.5) is a fan game of the Broken Sword series, which was given clearance to be developed, and certain art assets were granted to the team, by Revolution Software. It takes place between the first and second games. George travels to France after he receives a letter stating Nico had died. His relief to find her alive is short-lived, as he soon finds out that she has been accused of murdering the mayor of Paris. The two must clear Nico's name, and discover who is actually behind the murder. \n\nNote that this package only contains game-data. The game engine is provided by ScummVM.",
 		"shortDescription": "Fan game of the Broken Sword series for ScummVM",
 		"supportedLanguages": {
