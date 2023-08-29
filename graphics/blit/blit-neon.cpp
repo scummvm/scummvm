@@ -19,6 +19,7 @@
  *
  */
 
+#ifdef SCUMMVM_NEON
 #include "common/scummsys.h"
 #include <arm_neon.h>
 
@@ -463,3 +464,4 @@ void BlendBlit::blitNEON(Args &args, const TSpriteBlendMode &blendMode, const Al
 }
 
 } // end of namespace Graphics
+#endif // SCUMMVM_NEON
