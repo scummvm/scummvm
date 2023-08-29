@@ -160,6 +160,9 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureOpenGLForGame:
 	case kFeatureShadersForGame:
 	case kFeatureTouchscreen:
+#ifdef SCUMMVM_NEON
+	case kFeatureCpuNEON:
+#endif
 		return true;
 
 	default:
