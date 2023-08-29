@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import argparse
 import json
 import subprocess
 import sys
 
 
-def prepare(ex, game, dict):
+def prepare(ex, game, arg_dict):
     if ex["prepare"]["type"] == "python-script":
         cmd = sys.executable + " scripts/" + ex["prepare"]["location"]
         for key in ex["prepare"]["options"].keys():
@@ -17,7 +19,7 @@ def prepare(ex, game, dict):
                 # check in game's metadata
                 cmd += game[value[2:]]
             elif len(value) >= 1 and value[0] == '$':
-                cmd += dict[value[1:]]
+                cmd += arg_dict[value[1:]]
             else:
                 cmd += value
 
@@ -25,7 +27,7 @@ def prepare(ex, game, dict):
         print(ex["prepare"]["successMessage"])
 
 
-def bundle(ex, game, dict):
+def bundle(ex, game, arg_dict):
     if ex["bundle"]["type"] == "python-script":
         cmd = sys.executable + " scripts/" + ex["bundle"]["location"]
         for key in ex["bundle"]["options"].keys():
@@ -40,7 +42,7 @@ def bundle(ex, game, dict):
                 if value == "$$packname":
                     cmd += ".zip"  # temporary hack
             elif len(value) >= 1 and value[0] == '$':
-                cmd += dict[value[1:]]
+                cmd += arg_dict[value[1:]]
             else:
                 cmd += value
 
@@ -61,7 +63,7 @@ def main():
 
     args = parser.parse_args()
 
-    dict = {"game_location": args.game_location,
+    arg_dict = {"game_location": args.game_location,
             "binary_location": args.binary_location}
 
     f = open('export-platforms.json')
@@ -74,10 +76,10 @@ def main():
         if args.game in games:
             print()
             prepare(export_platforms[args.export_platform],
-                    games[args.game], dict)
+                    games[args.game], arg_dict)
 
             bundle(export_platforms[args.export_platform],
-                   games[args.game], dict)
+                   games[args.game], arg_dict)
 
         else:
             print(
