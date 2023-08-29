@@ -58,6 +58,7 @@ GFXTestSuite::GFXTestSuite() {
 
 	// Mouse Layer tests (Palettes and movements)
 	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
+	addTest("AlphaCursors", &GFXtests::alphaCursors);
 	addTest("MaskedCursors", &GFXtests::maskedCursors);
 	addTest("MouseMovements", &GFXtests::mouseMovements);
 	// FIXME: Scaled cursor crash with odd dimmensions
@@ -725,6 +726,78 @@ TestExitStatus GFXtests::palettizedCursors() {
 }
 
 /**
+ * Tests Alpha cursors.
+ * Method: Create a purple colored cursor with alpha transparency, should be able to move it. Once you click test terminates
+ */
+TestExitStatus GFXtests::alphaCursors() {
+
+	Testsuite::clearScreen();
+	Common::String info = "Alpha Cursors test.\n "
+		"Here you should expect to see a purple mouse cursor rendered with mouse graphics.\n"
+		"You would be able to move the cursor. The cursor should be round, and the background should be visible underneath it.\n"
+		"The test finishes when mouse (L/R) is clicked.";
+
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Alpha Cursors\n");
+		return kTestSkipped;
+	}
+
+	TestExitStatus passed = kTestPassed;
+	bool isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorAlpha);
+
+	if (isFeaturePresent) {
+		const uint32 cursorData[] = {
+			0xFF00FF00, 0xFF00FF00, 0xFF00FF00, 0xFF00FF3F, 0xFF00FF00, 0xFF00FF00, 0xFF00FF00,
+			0xFF00FF00, 0xFF00FF3F, 0xFF00FF5F, 0xFF00FF7F, 0xFF00FF5F, 0xFF00FF3F, 0xFF00FF00,
+			0xFF00FF00, 0xFF00FF5F, 0xFF00FF7F, 0xFF00FF9F, 0xFF00FF7F, 0xFF00FF5F, 0xFF00FF00,
+			0xFF00FF3F, 0xFF00FF7F, 0xFF00FF9F, 0xFF00FFBF, 0xFF00FF9F, 0xFF00FF7F, 0xFF00FF3F,
+			0xFF00FF00, 0xFF00FF5F, 0xFF00FF7F, 0xFF00FF9F, 0xFF00FF7F, 0xFF00FF5F, 0xFF00FF00,
+			0xFF00FF00, 0xFF00FF3F, 0xFF00FF5F, 0xFF00FF7F, 0xFF00FF5F, 0xFF00FF3F, 0xFF00FF00,
+			0xFF00FF00, 0xFF00FF00, 0xFF00FF00, 0xFF00FF3F, 0xFF00FF00, 0xFF00FF00, 0xFF00FF00
+		};
+
+		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		CursorMan.replaceCursor(cursorData, 7, 7, 3, 3, 0, false, &format);
+		CursorMan.showMouse(true);
+
+		bool waitingForClick = true;
+		while (waitingForClick) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+					waitingForClick = false;
+				}
+			}
+
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
+
+		if (Testsuite::handleInteractiveInput("Which color did the cursor appear to you?", "Purple", "Any other", kOptionRight)) {
+			Testsuite::logDetailedPrintf("Couldn't use alpha transparency for rendering cursor\n");
+			passed = kTestFailed;
+		}
+
+		if (Testsuite::handleInteractiveInput("Which shape did the cursor appear to you?", "Round", "Any other", kOptionRight)) {
+			Testsuite::logDetailedPrintf("Couldn't use alpha transparency for rendering cursor\n");
+			passed = kTestFailed;
+		}
+
+		if (!Testsuite::handleInteractiveInput("     Did test run as was described?     ")) {
+			passed = kTestFailed;
+		}
+
+		// Done with cursors, make them invisible, any other test the could simply make it visible
+		CursorMan.showMouse(false);
+	} else {
+		Testsuite::displayMessage("feature not supported");
+	}
+
+	return passed;
+}
+
+/**
  * Tests Masked cursors.
  * Method: Create a cursor with a transparent, mask, inverted, and color-inverted areas, it should behave properly over colored areas. Once you click test terminates
  */
@@ -743,6 +816,7 @@ TestExitStatus GFXtests::maskedCursors() {
 	TestExitStatus passed = kTestPassed;
 	bool isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorMask);
 	bool haveCursorPalettes = g_system->hasFeature(OSystem::kFeatureCursorPalette);
+	bool haveCursorAlpha = g_system->hasFeature(OSystem::kFeatureCursorAlpha);
 
 	g_system->delayMillis(1000);
 
@@ -880,60 +954,62 @@ TestExitStatus GFXtests::maskedCursors() {
 			}
 		}
 
-#ifdef USE_RGB_COLOR
 		Common::String rgbInfo = "Try again with a cursor using RGB data?";
 
 		if (!Testsuite::handleInteractiveInput(rgbInfo, "OK", "Skip", kOptionRight)) {
-			g_system->delayMillis(500);
+			if (haveCursorAlpha) {
+				g_system->delayMillis(500);
 
-			Graphics::PixelFormat rgbaFormat = Graphics::createPixelFormat<8888>();
+				Graphics::PixelFormat rgbaFormat = Graphics::createPixelFormat<8888>();
 
-			uint32 rgbaCursorData[16 * 16];
-			for (uint i = 0; i < 16 * 16; i++) {
-				byte colorByte = cursorData[i];
-				byte r = newPalette[colorByte * 3 + 0];
-				byte g = newPalette[colorByte * 3 + 1];
-				byte b = newPalette[colorByte * 3 + 2];
+				uint32 rgbaCursorData[16 * 16];
+				for (uint i = 0; i < 16 * 16; i++) {
+					byte colorByte = cursorData[i];
+					byte r = newPalette[colorByte * 3 + 0];
+					byte g = newPalette[colorByte * 3 + 1];
+					byte b = newPalette[colorByte * 3 + 2];
 
-				rgbaCursorData[i] = rgbaFormat.ARGBToColor(255, r, g, b);
-			}
+					rgbaCursorData[i] = rgbaFormat.ARGBToColor(255, r, g, b);
+				}
 
-			CursorMan.replaceCursor(rgbaCursorData, 16, 16, 1, 1, 0, false, &rgbaFormat, maskData);
+				CursorMan.replaceCursor(rgbaCursorData, 16, 16, 1, 1, 0, false, &rgbaFormat, maskData);
 
-			waitingForClick = true;
-			while (waitingForClick) {
-				Common::Event event;
-				while (g_system->getEventManager()->pollEvent(event)) {
-					if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
-						waitingForClick = false;
+				waitingForClick = true;
+				while (waitingForClick) {
+					Common::Event event;
+					while (g_system->getEventManager()->pollEvent(event)) {
+						if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+							waitingForClick = false;
+						}
+					}
+
+					g_system->delayMillis(10);
+					g_system->updateScreen();
+				}
+
+				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'T' transparent?", "Yes", "No", kOptionLeft)) {
+					return kTestFailed;
+				}
+
+				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'O' opaque?", "Yes", "No", kOptionLeft)) {
+					return kTestFailed;
+				}
+
+				if (haveInverted) {
+					if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'I' inverted?", "Yes", "No", kOptionLeft)) {
+						return kTestFailed;
 					}
 				}
 
-				g_system->delayMillis(10);
-				g_system->updateScreen();
-			}
-
-			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'T' transparent?", "Yes", "No", kOptionLeft)) {
-				return kTestFailed;
-			}
-
-			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'O' opaque?", "Yes", "No", kOptionLeft)) {
-				return kTestFailed;
-			}
-
-			if (haveInverted) {
-				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'I' inverted?", "Yes", "No", kOptionLeft)) {
-					return kTestFailed;
+				if (haveColorXorBlend) {
+					if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
+						return kTestFailed;
+					}
 				}
-			}
-
-			if (haveColorXorBlend) {
-				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
-					return kTestFailed;
-				}
+			} else {
+				Testsuite::displayMessage("feature not supported");
 			}
 		}
-#endif
 
 		CursorMan.showMouse(false);
 	} else {
