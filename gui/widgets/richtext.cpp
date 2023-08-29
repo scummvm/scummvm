@@ -82,6 +82,8 @@ void RichTextWidget::init() {
 
 	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
+	_textWidth = _w - _scrollbarWidth - _x;
+
 	ensureWM();
 
 	_limitH = 140;
@@ -107,6 +109,7 @@ void RichTextWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 void RichTextWidget::recalc() {
 	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_limitH = _h;
+	_textWidth = _w - _scrollbarWidth - _x;
 
 	int h = _txtWnd->getTextHeight();
 
@@ -117,10 +120,10 @@ void RichTextWidget::recalc() {
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
 	_verticalScroll->_singleStep = 30 * 3;
-	_verticalScroll->setPos(_w - _scrollbarWidth - _x, 0);
+	_verticalScroll->setPos(_textWidth, 0);
 	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
 
-	_txtWnd->setMaxWidth(_w - _scrollbarWidth - _x);
+	_txtWnd->setMaxWidth(_textWidth);
 }
 
 void RichTextWidget::createWidget() {
@@ -130,7 +133,7 @@ void RichTextWidget::createWidget() {
 
 	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
 
-	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, black, white, _w - _scrollbarWidth, Graphics::kTextAlignLeft);
+	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, black, white, _textWidth, Graphics::kTextAlignLeft);
 	_txtWnd->setMarkdownText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
@@ -155,7 +158,7 @@ void RichTextWidget::drawWidget() {
 		createWidget();
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
-	                                    ThemeEngine::kWidgetBackgroundEditText);
+	                                    ThemeEngine::kWidgetBackgroundPlain);
 
 	_surface->clear(_wm->_pixelformat.RGBToColor(0xff, 0xff, 0xff));
 
