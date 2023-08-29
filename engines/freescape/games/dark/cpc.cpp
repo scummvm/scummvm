@@ -29,7 +29,7 @@
 namespace Freescape {
 
 void DarkEngine::initCPC() {
-	_viewArea = Common::Rect(40, 24, 279, 124);
+	_viewArea = Common::Rect(36, 24, 284, 124);
 
 }
 
@@ -69,7 +69,7 @@ void DarkEngine::loadAssetsCPCFullGame() {
 }
 
 void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
-	uint32 color = 7;
+	uint32 color = _currentArea->_underFireBackgroundColor;
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
@@ -85,14 +85,14 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 191, 141, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 191, 149, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 191, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 200, 137, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 200, 137 + 9, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 200, 137 + 9, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 78, 165, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 78, 173, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 94, 13, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d%%", ecds), 190, 13, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 72, 168, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 72, 177, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 94, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d%%", ecds), 191, 8, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
@@ -101,34 +101,33 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 112, 173, back, front, surface);
+		drawStringInSurface(message, 112 + 5, 173 + 4, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
-		drawStringInSurface(_currentArea->_name, 112, 173, front, back, surface);
+		drawStringInSurface(_currentArea->_name, 112, 173 + 4, front, back, surface);
 
 	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
 	int shield = _gameStateVars[k8bitVariableShield];
 
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(80, 140, 143 - (_maxShield - shield), 148);
+		shieldBar = Common::Rect(72, 140, 143 - (_maxShield - shield), 148);
 		surface->fillRect(shieldBar, back);
 
-		shieldBar = Common::Rect(80, 141, 143 - (_maxShield - shield), 147);
+		shieldBar = Common::Rect(72, 141, 143 - (_maxShield - shield), 147);
 		surface->fillRect(shieldBar, front);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(80, 147, 143 - (_maxEnergy - energy), 155);
+		energyBar = Common::Rect(72, 147, 143 - (_maxEnergy - energy), 155);
 		surface->fillRect(energyBar, back);
 
-		energyBar = Common::Rect(80, 148, 143 - (_maxEnergy - energy), 154);
+		energyBar = Common::Rect(72, 148, 143 - (_maxEnergy - energy), 154);
 		surface->fillRect(energyBar, front);
 	}
-	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
-	drawBinaryClock(surface, 273, 128, clockColor, back);
+	drawBinaryClock(surface, 300, 124, front, back);
 	//drawIndicator(surface, 152, 140);
 }
 
