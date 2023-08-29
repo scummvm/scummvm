@@ -3,8 +3,16 @@
 #include "null_osystem.h"
 #include "../backends/platform/null/null.cpp"
 
+//#define DISPLAY_ERROR_MESSAGES
+
 void Common::install_null_g_system() {
-	g_system = OSystem_NULL_create();
+#ifdef DISPLAY_ERROR_MESSAGES
+	const bool silenceLogs = false;
+#else
+	const bool silenceLogs = true;
+#endif
+
+	g_system = OSystem_NULL_create(silenceLogs);
 }
 
 bool BaseBackend::setScaler(const char *name, int factor) {
