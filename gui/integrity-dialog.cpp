@@ -45,14 +45,12 @@ enum {
 struct ResultFormat {
 	bool error;
 	Common::U32StringArray messageText;
-	Common::String emailText;
 	Common::String emailLink;
 	Common::String errorText;
 
 	ResultFormat() {
 		error = 0;
 		messageText = Common::U32StringArray();
-		emailText = "";
 		emailLink = "";
 		errorText = "";
 	}
@@ -115,7 +113,7 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 	_calcSizeLabel = new StaticTextWidget(this, "GameOptions_IntegrityDialog.DownloadSize", Common::U32String());
 	_cancelButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.MainButton", _("Cancel"), Common::U32String(), kCleanupCmd);
 
-	_copyEmailButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.CopyButton", _("Copy Email to Clipboard"), Common::U32String(), kCopyEmailCmd);
+	_copyEmailButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.CopyButton", _("Launch Email Client"), Common::U32String(), kCopyEmailCmd);
 	_copyEmailButton->setVisible(false);
 
 	if (!g_checksum_state) {
@@ -219,7 +217,7 @@ void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 	}
 	case kCopyEmailCmd: {
-		g_system->setTextInClipboard(g_result->emailText);
+		g_system->openUrl(g_result->emailLink);
 		break;
 	}
 	default:
@@ -463,15 +461,7 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 		Common::String fileset = responseObject.getVal("fileset")->asString();
 
 		Common::String emailText =
-			Common::String::format("To: integrity@scummvm.org\
-\
-Subject: Unknown game variant fileset %s\
-\
-Fileset %s is a new or unknown fileset, the game details are:\
-%s %s %s\
-\
-Here describe the details of your release:\
-",
+			Common::String::format("Fileset %s is a new or unknown fileset, the game details are:\n%s %s %s\n\nHere describe the details of your release:\n",
 								   fileset.c_str(), fileset.c_str(), g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str());
 
 		Common::String emailLink = Common::String::format("mailto:integrity@scummvm.org?subject=Subject: Unknown game variant fileset %s&body=%s!", fileset.c_str(), emailText.c_str());
@@ -489,7 +479,6 @@ Here describe the details of your release:\
 		messageText.push_back(Common::U32String("Here describe the details of your release:"));
 
 		g_result->messageText = messageText;
-		g_result->emailText = emailText;
 		g_result->emailLink = emailLink;
 		return;
 
