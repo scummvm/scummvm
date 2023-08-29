@@ -64,6 +64,7 @@ namespace M4 {
 #define CNE					448
 
 extern conv_chunk *get_conv(Conv *c, long cSize);
+extern entry_chunk *get_entry(Conv *c, long cSize);
 extern char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c);
 extern decl_chunk *get_decl(Conv *c, long cSize);
 extern char *get_string(Conv *c, long cSize);

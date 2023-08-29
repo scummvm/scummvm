@@ -338,5 +338,9 @@ void Flags::reset5() {
 	(*this)[V181] = 0;
 }
 
+void Flags::conv_reset_all() {
+	_GC(convSave).clear();
+}
+
 } // namespace Burger
 } // namespace M4

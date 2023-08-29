@@ -33,9 +33,9 @@ namespace M4 {
 
 struct Converstation_Globals {
 	Common::Array<byte> conv_save_buff;
+	Common::Array<byte> convSave;
 	int	event = 0;
 	int	event_ready = 0;
-	char conv_file_name[MAX_FILENAME_SIZE] = { 0 };
 	char conv_name[16];
 	Conv *globConv = nullptr;
 	bool playerCommAllowed = false;
