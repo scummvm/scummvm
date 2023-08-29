@@ -54,7 +54,7 @@ public:
 
 class Toggle : public RenderObject {
 public:
-	Toggle(uint16 zOrder, Graphics::ManagedSurface &surface, Common::Rect &srcRect, Common::Rect &destRect);
+	Toggle(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcRect, const Common::Rect &destRect);
 	virtual ~Toggle() = default;
 
 	void handleInput(NancyInput &input);

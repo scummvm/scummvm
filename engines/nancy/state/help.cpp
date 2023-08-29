@@ -80,8 +80,9 @@ bool Help::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Help::init() {
-	HELP *helpData = g_nancy->_helpData;
+	const HELP *helpData = (const HELP *)g_nancy->getEngineData("HELP");
 	assert(helpData);
+	
 	_image.init(helpData->imageName);
 
 	_button = new UI::Button(5, _image._drawSurface, helpData->buttonSrc, helpData->buttonDest, helpData->buttonHoverSrc);
@@ -109,9 +110,12 @@ void Help::run() {
 	_button->handleInput(input);
 
 	if (_button->_isClicked) {
+		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+		assert(bootSummary);
+
 		_button->_isClicked = false;
 		g_nancy->_sound->playSound("BUOK");
-		_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+		_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
 		_state = kWait;
 	}
 }

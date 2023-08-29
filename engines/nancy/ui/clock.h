@@ -68,7 +68,7 @@ protected:
 		uint32 _timeToKeepOpen;
 	};
 
-	CLOK *_clockData;
+	const CLOK *_clockData;
 	ClockAnim _animation;
 
 	// Used for gargoyle eyes in TVD, inside of watch in nancy2 and up

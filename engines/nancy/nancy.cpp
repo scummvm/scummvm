@@ -73,24 +73,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 
 	_resource = nullptr;
 
-	_bootSummary = nullptr;
-	_viewportData = nullptr;
-	_inventoryData = nullptr;
-	_textboxData = nullptr;
-	_mapData = nullptr;
-	_helpData = nullptr;
-	_creditsData = nullptr;
-	_menuData = nullptr;
-	_setupData = nullptr;
-	_loadSaveData = nullptr;
-	_saveDialogData = nullptr;
-	_hintData = nullptr;
-	_sliderPuzzleData = nullptr;
-	_clockData = nullptr;
-	_specialEffectData = nullptr;
-	_raycastPuzzleData = nullptr;
-	_raycastPuzzleLevelBuilderData = nullptr;
-
 	_hasJustSaved = false;
 }
 
@@ -112,23 +94,9 @@ NancyEngine::~NancyEngine() {
 	delete _input;
 	delete _sound;
 
-	delete _bootSummary;
-	delete _viewportData;
-	delete _inventoryData;
-	delete _textboxData;
-	delete _mapData;
-	delete _helpData;
-	delete _creditsData;
-	delete _menuData;
-	delete _setupData;
-	delete _loadSaveData;
-	delete _saveDialogData;
-	delete _hintData;
-	delete _sliderPuzzleData;
-	delete _clockData;
-	delete _specialEffectData;
-	delete _raycastPuzzleData;
-	delete _raycastPuzzleLevelBuilderData;
+	for (auto &data : _engineData) {
+		delete data._value;
+	}
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
@@ -196,6 +164,14 @@ Common::Platform NancyEngine::getPlatform() const {
 
 const StaticData &NancyEngine::getStaticData() const {
 	return _staticData;
+}
+
+const EngineData *NancyEngine::getEngineData(const Common::String &name) const {
+	if (_engineData.contains(name)) {
+		return _engineData[name];
+	}
+
+	return nullptr;
 }
 
 void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState overridePrevious) {
@@ -390,25 +366,34 @@ void NancyEngine::bootGameEngine() {
 	preloadCals(*boot);
 
 	// Load BOOT chunks data
-	_bootSummary = new BSUM(boot->getChunkStream("BSUM"));
-	_viewportData = new VIEW(boot->getChunkStream("VIEW"));
-	_inventoryData = new INV(boot->getChunkStream("INV"));
-	_textboxData = new TBOX(boot->getChunkStream("TBOX"));
-	_helpData = new HELP(boot->getChunkStream("HELP"));
-	_creditsData = new CRED(boot->getChunkStream("CRED"));
-	_menuData = new MENU(boot->getChunkStream("MENU"));
-	_setupData = new SET(boot->getChunkStream("SET"));
-	_loadSaveData = new LOAD(boot->getChunkStream("LOAD"));
+	Common::SeekableReadStream *chunkStream = nullptr;
+	#define LOAD_BOOT_L(t, s) if (chunkStream = boot->getChunkStream(s), chunkStream) {	\
+								_engineData.setVal(s, new t(chunkStream));				\
+								delete chunkStream;										\
+							}
+	#define LOAD_BOOT(t) LOAD_BOOT_L(t, #t)
 
-	auto *chunkStream = boot->getChunkStream("SDLG");
-	if (chunkStream) {
-		_saveDialogData = new SDLG(chunkStream);
-	}
+	LOAD_BOOT(BSUM)
+	LOAD_BOOT(VIEW)
+	LOAD_BOOT(INV)
+	LOAD_BOOT(TBOX)
+	LOAD_BOOT(HELP)
+	LOAD_BOOT(CRED)
+	LOAD_BOOT(MENU)
+	LOAD_BOOT(SET)
+	LOAD_BOOT(LOAD)
+	LOAD_BOOT(SDLG)
+	LOAD_BOOT(MAP)
+	LOAD_BOOT(HINT)
+	LOAD_BOOT(SPUZ)
+	LOAD_BOOT(CLOK)
+	LOAD_BOOT(SPEC)
+	LOAD_BOOT(RCPR)
+	LOAD_BOOT(RCLB)
 
-	// For now we ignore the potential for more than one of each of these
-	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));
-	_imageChunks.setVal("FR0", boot->getChunkStream("FR0"));
-	_imageChunks.setVal("LG0", boot->getChunkStream("LG0"));
+	LOAD_BOOT_L(ImageChunk, "OB0")
+	LOAD_BOOT_L(ImageChunk, "FR0")
+	LOAD_BOOT_L(ImageChunk, "LG0")
 
 	chunkStream = boot->getChunkStream("PLG0");
 	if (!chunkStream) {
@@ -416,7 +401,7 @@ void NancyEngine::bootGameEngine() {
 	}	
 
 	if (chunkStream) {
-		_imageChunks.setVal("PLG0", chunkStream);
+		_engineData.setVal("PLG0", new ImageChunk(chunkStream));
 	}
 
 	_cursorManager->init(boot->getChunkStream("CURS"));
@@ -424,40 +409,8 @@ void NancyEngine::bootGameEngine() {
 	_graphicsManager->init();
 	_graphicsManager->loadFonts(boot->getChunkStream("FONT"));
 
-	chunkStream = boot->getChunkStream("MAP");
-	if (chunkStream) {
-		_mapData = new MAP(chunkStream);
-	}
-
-	chunkStream = boot->getChunkStream("HINT");
-	if (chunkStream) {
-		_hintData = new HINT(chunkStream);
-	}
-
-	chunkStream = boot->getChunkStream("SPUZ");
-	if (chunkStream) {
-		_sliderPuzzleData = new SPUZ(chunkStream);
-	}
-
-	chunkStream = boot->getChunkStream("CLOK");
-	if (chunkStream) {
-		_clockData = new CLOK(chunkStream);
-	}
-
-	chunkStream = boot->getChunkStream("SPEC");
-	if (chunkStream) {
-		_specialEffectData = new SPEC(chunkStream);
-	}
-
-	chunkStream = boot->getChunkStream("RCPR");
-	if (chunkStream) {
-		_raycastPuzzleData = new RCPR(chunkStream);
-	}
-
-	chunkStream = boot->getChunkStream("RCLB");
-	if (chunkStream) {
-		_raycastPuzzleLevelBuilderData = new RCLB(chunkStream);
-	}
+	#undef LOAD_BOOT_L
+	#undef LOAD_BOOT
 
 	_sound->initSoundChannels();
 	_sound->loadCommonSounds(boot);
@@ -612,11 +565,12 @@ void NancyEngine::readDatFile() {
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
-	assert(_bootSummary);
+	const BSUM *bootSummary = (const BSUM *)getEngineData("BSUM");
+	assert(bootSummary);
 
 	// Sync boot summary header, which includes full game title
 	ser.syncVersion(kSavegameVersion);
-	ser.matchBytes((char *)_bootSummary->header, 90);
+	ser.matchBytes((const char *)bootSummary->header, 90);
 
 	// Sync scene and action records
 	NancySceneState.synchronize(ser);

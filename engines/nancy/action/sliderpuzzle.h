@@ -43,7 +43,7 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	SPUZ *_spuzData = nullptr;
+	const SPUZ *_spuzData = nullptr;
 	SliderPuzzleData *_puzzleState = nullptr;
 
 	Common::String _imageName;

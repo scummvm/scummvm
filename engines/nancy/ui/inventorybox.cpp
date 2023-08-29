@@ -48,10 +48,16 @@ InventoryBox::~InventoryBox() {
 }
 
 void InventoryBox::init() {
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+
 	_order.clear();
 
-	moveTo(g_nancy->_bootSummary->inventoryBoxScreenPosition);
-	g_nancy->_resource->loadImage(g_nancy->_inventoryData->inventoryBoxIconsImageName, _iconsSurface);
+	moveTo(bootSummary->inventoryBoxScreenPosition);
+	g_nancy->_resource->loadImage(inventoryData->inventoryBoxIconsImageName, _iconsSurface);
 
 	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((g_nancy->getStaticData().numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
 	Common::Rect sourceRect = _screenPosition;
@@ -69,9 +75,9 @@ void InventoryBox::init() {
 	RenderObject::init();
 
 	_scrollbar = new Scrollbar(	9,
-								g_nancy->_inventoryData->scrollbarSrcBounds,
-								g_nancy->_inventoryData->scrollbarDefaultPos,
-								g_nancy->_inventoryData->scrollbarMaxScroll - g_nancy->_inventoryData->scrollbarDefaultPos.y);
+								inventoryData->scrollbarSrcBounds,
+								inventoryData->scrollbarDefaultPos,
+								inventoryData->scrollbarMaxScroll - inventoryData->scrollbarDefaultPos.y);
 	_scrollbar->init();
 	_curtains.init();
 }
@@ -194,7 +200,10 @@ void InventoryBox::setHotspots(const uint pageNr) {
 }
 
 void InventoryBox::drawItemInSlot(const uint itemID, const uint slotID, const bool highlighted) {
-	auto &item = g_nancy->_inventoryData->itemDescriptions[itemID];
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+
+	auto &item = inventoryData->itemDescriptions[itemID];
 	Common::Rect dest;
 
 	dest.setWidth(_screenPosition.width() / 2);
@@ -223,7 +232,10 @@ void InventoryBox::onScrollbarMove() {
 }
 
 void InventoryBox::Curtains::init() {
-	moveTo(g_nancy->_inventoryData->curtainsScreenPosition);
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+
+	moveTo(inventoryData->curtainsScreenPosition);
 	Common::Rect bounds = _screenPosition;
 	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
@@ -246,8 +258,11 @@ void InventoryBox::Curtains::updateGraphics() {
 	Time time = g_nancy->getTotalPlayTime();
 	if (_areOpen) {
 		if (_curFrame < g_nancy->getStaticData().numCurtainAnimationFrames && time > _nextFrameTime) {
+			const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+			assert(inventoryData);
+
 			setAnimationFrame(++_curFrame);
-			_nextFrameTime = time + g_nancy->_inventoryData->curtainsFrameTime;
+			_nextFrameTime = time + inventoryData->curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -256,8 +271,11 @@ void InventoryBox::Curtains::updateGraphics() {
 		}
 	} else {
 		if (_curFrame > 0 && time > _nextFrameTime) {
+			const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+			assert(inventoryData);
+
 			setAnimationFrame(--_curFrame);
-			_nextFrameTime = time + g_nancy->_inventoryData->curtainsFrameTime;
+			_nextFrameTime = time + inventoryData->curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -287,14 +305,17 @@ void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 		setVisible(true);
 	}
 
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
-	// Draw left shade
-	srcRect = g_nancy->_inventoryData->curtainAnimationSrcs[frame * 2];
+	// Draw left curtain
+	srcRect = inventoryData->curtainAnimationSrcs[frame * 2];
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 
-	// Draw right shade
-	srcRect = g_nancy->_inventoryData->curtainAnimationSrcs[frame * 2 + 1];
+	// Draw right curtain
+	srcRect = inventoryData->curtainAnimationSrcs[frame * 2 + 1];
 	destPoint.x = getBounds().width() - srcRect.width();
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 

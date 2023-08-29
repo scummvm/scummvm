@@ -54,7 +54,7 @@ protected:
 	bool isViewportRelative() const override { return true; }
 
 	void loadTextures();
-	void createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, Common::String &textureName);
+	void createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::String &textureName);
 
 	void drawMap();
 	void drawMaze();
@@ -117,7 +117,7 @@ protected:
 	int32 _slowdownDeltaX = -1;
 	int32 _slowdownDeltaY = -1;
 
-	RCPR *_puzzleData = nullptr;
+	const RCPR *_puzzleData = nullptr;
 	Common::SharedPtr<RaycastDeferredLoader> _loaderPtr;
 };
 

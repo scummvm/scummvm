@@ -352,7 +352,8 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 void TextBoxWrite::execute() {
 	auto &tb = NancySceneState.getTextbox();
 	tb.clear();
-	tb.overrideFontID(g_nancy->_textboxData->defaultFontID);
+	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	tb.overrideFontID(textboxData->defaultFontID);
 	tb.addTextLine(_text);
 	tb.setVisible(true);
 	finishExecution();
@@ -478,7 +479,7 @@ void LoseGame::execute() {
 		ev.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		g_system->getEventManager()->pushEvent(ev);
 	}
-	
+
 	_isDone = true;
 }
 

@@ -89,9 +89,12 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
 	ser.skip(1); // CD required for scene
 
-	if (g_nancy->_bootSummary->overrideMovementTimeDeltas) {
-		slowMoveTimeDelta = g_nancy->_bootSummary->slowMovementTimeDelta;
-		fastMoveTimeDelta = g_nancy->_bootSummary->fastMovementTimeDelta;
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	if (bootSummary->overrideMovementTimeDeltas) {
+		slowMoveTimeDelta = bootSummary->slowMovementTimeDelta;
+		fastMoveTimeDelta = bootSummary->fastMovementTimeDelta;
 	}
 
 	delete[] buf;
@@ -265,7 +268,10 @@ void Scene::setPlayerTime(Time time, byte relative) {
 		_timers.playerTime = _timers.playerTime.getDays() * 86400000 + time;
 	}
 
-	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + g_nancy->_bootSummary->playerTimeMinuteLength;
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + bootSummary->playerTimeMinuteLength;
 }
 
 byte Scene::getPlayerTOD() const {
@@ -555,6 +561,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 }
 
 void Scene::init() {
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	const HINT *hintData = (const HINT *)g_nancy->getEngineData("HINT");
+	assert(bootSummary);
+
 	_flags.eventFlags.resize(g_nancy->getStaticData().numEventFlags, g_nancy->_false);
 
 	_flags.sceneCounts.clear();
@@ -562,20 +572,18 @@ void Scene::init() {
 	_flags.items.resize(g_nancy->getStaticData().numItems, g_nancy->_false);
 
 	_timers.lastTotalTime = 0;
-	_timers.playerTime = g_nancy->_bootSummary->startTimeHours * 3600000;
+	_timers.playerTime = bootSummary->startTimeHours * 3600000;
 	_timers.sceneTime = 0;
 	_timers.timerTime = 0;
 	_timers.timerIsActive = false;
 	_timers.playerTimeNextMinute = 0;
 	_timers.pushedPlayTime = 0;
 
-	changeScene(g_nancy->_bootSummary->firstScene);
+	changeScene(bootSummary->firstScene);
 
-	if (g_nancy->_hintData) {
+	if (hintData) {
 		_hintsRemaining.clear();
-
-		_hintsRemaining = g_nancy->_hintData->numHints;
-
+		_hintsRemaining = hintData->numHints;
 		_lastHintCharacter = _lastHintID = -1;
 	}
 
@@ -758,8 +766,11 @@ void Scene::run() {
 
 	// Calculate the in-game time (playerTime)
 	if (currentPlayTime > _timers.playerTimeNextMinute) {
+		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+		assert(bootSummary);
+
 		_timers.playerTime += 60000; // Add a minute
-		_timers.playerTimeNextMinute = currentPlayTime + g_nancy->_bootSummary->playerTimeMinuteLength;
+		_timers.playerTimeNextMinute = currentPlayTime + bootSummary->playerTimeMinuteLength;
 	}
 
 	handleInput();
@@ -852,8 +863,11 @@ void Scene::handleInput() {
 
 		if (_menuButton->_isClicked) {
 			if (_buttonPressActivationTime == 0) {
+				const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+				assert(bootSummary);
+
 				g_nancy->_sound->playSound("BUOK");
-				_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+				_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
 			} else if (g_system->getMillis() > _buttonPressActivationTime) {
 				_menuButton->_isClicked = false;
 				requestStateChange(NancyState::kMainMenu);
@@ -867,8 +881,11 @@ void Scene::handleInput() {
 
 		if (_helpButton->_isClicked) {
 			if (_buttonPressActivationTime == 0) {
+				const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+				assert(bootSummary);
+
 				g_nancy->_sound->playSound("BUOK");
-				_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+				_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
 			} else if (g_system->getMillis() > _buttonPressActivationTime) {
 				_helpButton->_isClicked = false;
 				requestStateChange(NancyState::kHelp);
@@ -879,23 +896,28 @@ void Scene::handleInput() {
 }
 
 void Scene::initStaticData() {
-	_frame.init(g_nancy->_imageChunks["FR0"].imageName);
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	const ImageChunk *fr0 = (const ImageChunk *)g_nancy->getEngineData("FR0");
+	assert(fr0);
+
+	const MAP *mapData = (const MAP *)g_nancy->getEngineData("MAP");
+
+	_frame.init(fr0->imageName);
 	_viewport.init();
 	_textbox.init();
 	_inventoryBox.init();
 
 	// Init buttons
-	BSUM *bsum = g_nancy->_bootSummary;
-	assert(bsum);
-
 	if (g_nancy->getGameType() == kGameTypeVampire) {
-		_mapHotspot = bsum->extraButtonHotspot;
-	} else if (g_nancy->_mapData) {
-		_mapHotspot = g_nancy->_mapData->buttonDest;
+		_mapHotspot = bootSummary->extraButtonHotspot;
+	} else if (mapData) {
+		_mapHotspot = mapData->buttonDest;
 	}
 
-	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->menuButtonSrc, bsum->menuButtonDest, bsum->menuButtonHighlightSrc);
-	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->helpButtonSrc, bsum->helpButtonDest, bsum->helpButtonHighlightSrc);
+	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bootSummary->menuButtonSrc, bootSummary->menuButtonDest, bootSummary->menuButtonHighlightSrc);
+	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bootSummary->helpButtonSrc, bootSummary->helpButtonDest, bootSummary->helpButtonHighlightSrc);
 	g_nancy->setMouseEnabled(true);
 
 	// Init ornaments and clock (TVD only)

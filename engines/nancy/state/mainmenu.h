@@ -64,7 +64,7 @@ private:
 
 	Common::Array<UI::Button *> _buttons;
 
-	MENU *_menuData;
+	const MENU *_menuData;
 };
 
 } // End of namespace State

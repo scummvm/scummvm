@@ -81,11 +81,15 @@ bool Logo::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Logo::init() {
-	_logoImage.init(g_nancy->_imageChunks["LG0"].imageName);
+	const ImageChunk *lg0 = (const ImageChunk *)g_nancy->getEngineData("LG0");
+	const ImageChunk *plg0 = (const ImageChunk *)g_nancy->getEngineData("PLG0");
+	assert(lg0);
+
+	_logoImage.init(lg0->imageName);
 	_logoImage.registerGraphics();
 
-	if (g_nancy->_imageChunks.contains("PLG0")) {
-		_partnerLogoImage.init(g_nancy->_imageChunks["PLG0"].imageName);
+	if (plg0) {
+		_partnerLogoImage.init(plg0->imageName);
 		_partnerLogoImage.registerGraphics();
 	}
 

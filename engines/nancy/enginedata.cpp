@@ -27,10 +27,13 @@
 
 namespace Nancy {
 
-BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
+EngineData::EngineData(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
-
 	chunkStream->seek(0);
+}
+
+BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
@@ -79,25 +82,15 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.syncAsByte(overrideMovementTimeDeltas);
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);
-
-	delete chunkStream;
 }
 
-VIEW::VIEW(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+VIEW::VIEW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, screenPosition);
 	readRect(*chunkStream, bounds);
-
-	delete chunkStream;
 }
 
-INV::INV(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
-	Common::Serializer s(chunkStream, nullptr);
+INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+		Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
 	readRect(*chunkStream, scrollbarSrcBounds);
@@ -181,11 +174,9 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 			item.specificCantSound.readNormal(*chunkStream);
 		}
 	}
-
-	delete chunkStream;
 }
 
-TBOX::TBOX(Common::SeekableReadStream *chunkStream) {
+TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	assert(chunkStream);
 
 	bool isVampire = g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire;
@@ -230,14 +221,9 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) {
 		conversationFontID = defaultFontID;
 		highlightConversationFontID = defaultFontID;
 	}
-
-	delete chunkStream;
 }
 
-MAP::MAP(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+MAP::MAP(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 	uint numLocations = s.getVersion() == kGameTypeVampire ? 7 : 4;
@@ -301,14 +287,9 @@ MAP::MAP(Common::SeekableReadStream *chunkStream) {
 			s.syncAsUint16LE(sc.paletteID, kGameTypeVampire, kGameTypeVampire);
 		}
 	}
-
-	delete chunkStream;
 }
 
-HELP::HELP(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+HELP::HELP(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, imageName);
 	chunkStream->skip(20);
 
@@ -326,11 +307,9 @@ HELP::HELP(Common::SeekableReadStream *chunkStream) {
 		readRect(*chunkStream, buttonSrc);
 		readRect(*chunkStream, buttonHoverSrc);
 	}
-
-	delete chunkStream;
 }
 
-CRED::CRED(Common::SeekableReadStream *chunkStream) {
+CRED::CRED(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	assert(chunkStream);
 
 	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
@@ -350,14 +329,9 @@ CRED::CRED(Common::SeekableReadStream *chunkStream) {
 	updateTime = chunkStream->readUint16LE();
 	pixelsToScroll = chunkStream->readUint16LE();
 	sound.readMenu(*chunkStream);
-
-	delete chunkStream;
 }
 
-MENU::MENU(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+MENU::MENU(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, _imageName);
 	chunkStream->skip(22);
 
@@ -390,14 +364,9 @@ MENU::MENU(Common::SeekableReadStream *chunkStream) {
 		readRectArray(*chunkStream, _buttonDisabledSrcs, numOptions);
 		readRectArray(*chunkStream, _buttonHighlightSrcs, numOptions);
 	}
-
-	delete chunkStream;
 }
 
-SET::SET(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+SET::SET(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, _imageName);
 	chunkStream->skip(20); // image info
 	chunkStream->skip(16); // bounds for all scrollbars
@@ -427,17 +396,13 @@ SET::SET(Common::SeekableReadStream *chunkStream) {
 	for (uint i = 0; i < 3; ++i) {
 		_sounds[i].readMenu(*chunkStream);
 	}
-
-	delete chunkStream;
 }
 
 LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
+		EngineData(chunkStream),
 		_highlightFontID(-1),
 		_disabledFontID(-1),
 		_blinkingTimeDelay(0) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
@@ -497,14 +462,9 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 		readFilename(s, _gameSavedPopup, kGameTypeNancy3);
 		s.skip(16, kGameTypeNancy3);
 	}
-
-	delete chunkStream;
 }
 
-SDLG::SDLG(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+SDLG::SDLG(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, _imageName);
 	chunkStream->skip(16);
 
@@ -521,27 +481,17 @@ SDLG::SDLG(Common::SeekableReadStream *chunkStream) {
 	readRect(*chunkStream, _yesDownSrc);
 	readRect(*chunkStream, _noDownSrc);
 	readRect(*chunkStream, _cancelDownSrc);
-
-	delete chunkStream;
 }
 
-HINT::HINT(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+HINT::HINT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	uint size = chunkStream->size();
 	numHints.resize(size);
 	for (uint i = 0; i < size; ++i) {
 		numHints[i] = chunkStream->readByte();
 	}
-
-	delete chunkStream;
 }
 
-SPUZ::SPUZ(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+SPUZ::SPUZ(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	tileOrder.resize(3);
 
 	for (uint i = 0; i < 3; ++i) {
@@ -550,14 +500,9 @@ SPUZ::SPUZ(Common::SeekableReadStream *chunkStream) {
 			tileOrder[i][j] = chunkStream->readSint16LE();
 		}
 	}
-
-	delete chunkStream;
 }
 
-CLOK::CLOK(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+CLOK::CLOK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
@@ -585,11 +530,9 @@ CLOK::CLOK(Common::SeekableReadStream *chunkStream) {
 
 	s.syncAsUint32LE(timeToKeepOpen);
 	s.syncAsUint16LE(frameTime);
-
-	delete chunkStream;
 }
 
-SPEC::SPEC(Common::SeekableReadStream *chunkStream) {
+SPEC::SPEC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	assert(chunkStream);
 
 	chunkStream->seek(0);
@@ -599,7 +542,7 @@ SPEC::SPEC(Common::SeekableReadStream *chunkStream) {
 	crossDissolveNumFrames = chunkStream->readUint16LE();
 }
 
-RCLB::RCLB(Common::SeekableReadStream *chunkStream) {
+RCLB::RCLB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	assert(chunkStream);
 
 	chunkStream->seek(0);
@@ -680,7 +623,7 @@ RCLB::RCLB(Common::SeekableReadStream *chunkStream) {
 	}
 }
 
-RCPR::RCPR(Common::SeekableReadStream *chunkStream) {
+RCPR::RCPR(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	assert(chunkStream);
 
 	chunkStream->seek(0);
@@ -743,15 +686,10 @@ RCPR::RCPR(Common::SeekableReadStream *chunkStream) {
 	}
 }
 
-ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
+ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, imageName);
 	width = chunkStream->readUint16LE();
 	height = chunkStream->readUint16LE();
-
-	delete chunkStream;
 }
 
 } // End of namespace Nancy

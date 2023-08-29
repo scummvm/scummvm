@@ -133,7 +133,7 @@ void LoadSaveMenu::registerGraphics() {
 }
 
 void LoadSaveMenu::init() {
-	_loadSaveData = g_nancy->_loadSaveData;
+	_loadSaveData = (const LOAD*)g_nancy->getEngineData("LOAD");
 	assert(_loadSaveData);
 
 	_background.init(_loadSaveData->_imageName);
@@ -154,7 +154,7 @@ void LoadSaveMenu::init() {
 		// Load textbox objects
 		RenderObject *newTb = new RenderObject(5);
 		_textboxes[i] = newTb;
-		Common::Rect &bounds = _loadSaveData->_textboxBounds[i];
+		const Common::Rect &bounds = _loadSaveData->_textboxBounds[i];
 		newTb->_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
 		newTb->_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 		newTb->moveTo(bounds);

@@ -95,6 +95,7 @@ public:
 	Common::Platform getPlatform() const;
 
 	const StaticData &getStaticData() const;
+	const EngineData *getEngineData(const Common::String &name) const;
 
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	NancyState::NancyState getState() { return _gameFlow.curState; }
@@ -117,27 +118,6 @@ public:
 	SoundManager *_sound;
 
 	Common::RandomSource *_randomSource;
-
-	// BOOT chunks data
-	BSUM *_bootSummary;
-	VIEW *_viewportData;
-	INV *_inventoryData;
-	TBOX *_textboxData;
-	MAP *_mapData;
-	HELP *_helpData;
-	CRED *_creditsData;
-	MENU *_menuData;
-	SET *_setupData;
-	LOAD *_loadSaveData;
-	SDLG *_saveDialogData;
-	HINT *_hintData;
-	SPUZ *_sliderPuzzleData;
-	CLOK *_clockData;
-	SPEC *_specialEffectData;
-	RCPR *_raycastPuzzleData;
-	RCLB *_raycastPuzzleLevelBuilderData;
-
-	Common::HashMap<Common::String, ImageChunk> _imageChunks;
 
 	// Used to check whether we need to show the SaveDialog
 	bool _hasJustSaved;
@@ -167,6 +147,8 @@ private:
 	bool isCompressed();
 
 	StaticData _staticData;
+	Common::HashMap<Common::String, EngineData *> _engineData;
+
 	const byte _datFileMajorVersion;
 	const byte _datFileMinorVersion;
 

@@ -54,7 +54,7 @@ Map::Map() : _state(kInit),
 			_label(7),
 			_closedLabel(7),
 			_background(0) {
-	_mapData = g_nancy->_mapData;
+	_mapData = (const MAP*)g_nancy->getEngineData("MAP");
 	assert(_mapData);
 }
 
@@ -146,7 +146,10 @@ void Map::setLabel(int labelID) {
 }
 
 void Map::MapViewport::init() {
-	moveTo(g_nancy->_viewportData->screenPosition);
+	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	assert(viewportData);
+
+	moveTo(viewportData->screenPosition);
 	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 
 	RenderObject::init();
@@ -190,7 +193,10 @@ void TVDMap::init() {
 	_ornaments.init();
 	_globe.init();
 
-	Common::Rect textboxScreenPosition = g_nancy->_bootSummary->textboxScreenPosition;
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	Common::Rect textboxScreenPosition = bootSummary->textboxScreenPosition;
 	_closedLabel._drawSurface.create(g_nancy->_graphicsManager->_object0, _mapData->closedLabelSrc);
 
 	Common::Rect closedScreenRect;

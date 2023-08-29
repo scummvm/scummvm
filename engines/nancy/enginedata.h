@@ -28,7 +28,12 @@ namespace Nancy {
 
 // Data types corresponding to chunks found inside BOOT
 
-struct BSUM {
+struct EngineData {
+	EngineData(Common::SeekableReadStream *chunkStream);
+	virtual ~EngineData() {}
+};
+
+struct BSUM : public EngineData {
 	BSUM(Common::SeekableReadStream *chunkStream);
 
 	byte header[90];
@@ -61,14 +66,14 @@ struct BSUM {
 	uint16 fastMovementTimeDelta;
 };
 
-struct VIEW {
+struct VIEW : public EngineData {
 	VIEW(Common::SeekableReadStream *chunkStream);
 
 	Common::Rect screenPosition;
 	Common::Rect bounds;
 };
 
-struct INV {
+struct INV : public EngineData {
 	struct ItemDescription {
 		Common::String name;
 		byte keepItem;
@@ -103,7 +108,7 @@ struct INV {
 	Common::Array<ItemDescription> itemDescriptions;
 };
 
-struct TBOX {
+struct TBOX : public EngineData {
 	TBOX(Common::SeekableReadStream *chunkStream);
 
 	Common::Rect scrollbarSrcBounds;
@@ -124,7 +129,7 @@ struct TBOX {
 	uint16 highlightConversationFontID;
 };
 
-struct MAP {
+struct MAP : public EngineData {
 	struct Location {
 		Common::String description;
 		Common::Rect hotspot;
@@ -157,7 +162,7 @@ struct MAP {
 	Common::Point cursorPosition;
 };
 
-struct HELP {
+struct HELP : public EngineData {
 	HELP(Common::SeekableReadStream *chunkStream);
 
 	Common::String imageName;
@@ -166,7 +171,7 @@ struct HELP {
 	Common::Rect buttonHoverSrc;
 };
 
-struct CRED {
+struct CRED : public EngineData {
 	CRED(Common::SeekableReadStream *chunkStream);
 
 	Common::String imageName;
@@ -177,7 +182,7 @@ struct CRED {
 	SoundDescription sound;
 };
 
-struct MENU {
+struct MENU : public EngineData {
 	MENU(Common::SeekableReadStream *chunkStream);
 
 	Common::String _imageName;
@@ -187,7 +192,7 @@ struct MENU {
 	Common::Array<Common::Rect> _buttonDisabledSrcs;
 };
 
-struct SET {
+struct SET : public EngineData {
 	SET(Common::SeekableReadStream *chunkStream);
 
 	Common::String _imageName;
@@ -205,7 +210,7 @@ struct SET {
 	Common::Array<SoundDescription> _sounds;
 };
 
-struct LOAD {
+struct LOAD : public EngineData {
 	LOAD(Common::SeekableReadStream *chunkStream);
 
 	Common::String _imageName;
@@ -244,7 +249,7 @@ struct LOAD {
 	// Common::Rect _gameSavedBounds
 };
 
-struct SDLG {
+struct SDLG : public EngineData {
 	SDLG(Common::SeekableReadStream *chunkStream);
 
 	Common::String _imageName;
@@ -262,19 +267,19 @@ struct SDLG {
 	Common::Rect _cancelDownSrc;
 };
 
-struct HINT {
+struct HINT : public EngineData {
 	HINT(Common::SeekableReadStream *chunkStream);
 
 	Common::Array<uint16> numHints;
 };
 
-struct SPUZ {
+struct SPUZ : public EngineData {
 	SPUZ(Common::SeekableReadStream *chunkStream);
 
 	Common::Array<Common::Array<int16>> tileOrder;
 };
 
-struct CLOK {
+struct CLOK : public EngineData {
 	CLOK(Common::SeekableReadStream *chunkStream);
 
 	Common::Array<Common::Rect> animSrcs;
@@ -293,7 +298,7 @@ struct CLOK {
 	uint16 frameTime;
 };
 
-struct SPEC {
+struct SPEC : public EngineData {
 	SPEC(Common::SeekableReadStream *chunkStream);
 
 	byte fadeToBlackNumFrames;
@@ -301,7 +306,7 @@ struct SPEC {
 	byte crossDissolveNumFrames;
 };
 
-struct RCLB {
+struct RCLB : public EngineData {
 	struct Theme {
 		Common::String themeName;
 
@@ -331,7 +336,7 @@ struct RCLB {
 	Common::Array<Theme> themes;
 };
 
-struct RCPR {
+struct RCPR : public EngineData {
 	RCPR(Common::SeekableReadStream *chunkStream);
 
 	Common::Array<Common::Rect> screenViewportSizes;
@@ -354,8 +359,7 @@ struct RCPR {
 	Common::Array<Common::String> floorNames;
 };
 
-struct ImageChunk {
-	ImageChunk() : width(0), height(0) {}
+struct ImageChunk : public EngineData {
 	ImageChunk(Common::SeekableReadStream *chunkStream);
 
 	Common::String imageName;

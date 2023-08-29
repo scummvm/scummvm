@@ -93,7 +93,7 @@ private:
 	bool _enteringNewState;
 	uint32 _nextBlink;
 
-	LOAD *_loadSaveData;
+	const LOAD *_loadSaveData;
 };
 
 } // End of namespace State

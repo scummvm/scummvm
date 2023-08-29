@@ -45,7 +45,10 @@ void GraphicsManager::init() {
 	_screen.setTransparentColor(getTransColor());
 	_screen.clear();
 
-	g_nancy->_resource->loadImage(g_nancy->_imageChunks["OB0"].imageName, _object0);
+	const ImageChunk *ob0 = (const ImageChunk *)g_nancy->getEngineData("OB0");
+	assert(ob0);
+
+	g_nancy->_resource->loadImage(ob0->imageName, _object0);
 }
 
 void GraphicsManager::draw(bool updateScreen) {
@@ -365,10 +368,13 @@ void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray
 }
 
 void GraphicsManager::screenshotViewport(Graphics::ManagedSurface &inSurf) {
+	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	assert(viewportData);
+
 	draw(false);
 	inSurf.free();
-	inSurf.create(g_nancy->_viewportData->bounds.width(), g_nancy->_viewportData->bounds.height(), _screenPixelFormat);
-	inSurf.blitFrom(_screen, g_nancy->_viewportData->screenPosition, g_nancy->_viewportData->bounds);
+	inSurf.create(viewportData->bounds.width(), viewportData->bounds.height(), _screenPixelFormat);
+	inSurf.blitFrom(_screen, viewportData->screenPosition, viewportData->bounds);
 }
 
 void GraphicsManager::screenshotScreen(Graphics::ManagedSurface &inSurf) {

@@ -71,7 +71,8 @@ void SoundEqualizerPuzzle::init() {
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_image.setTransparentColor(_drawSurface.getTransparentColor());
 
-	Common::Rect vpPos = g_nancy->_viewportData->screenPosition;
+	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	Common::Rect vpPos = viewportData->screenPosition;
 
 	if (_puzzleState->sliderValues[0] == 255) {
 		for (uint i = 0; i < 6; ++i) {

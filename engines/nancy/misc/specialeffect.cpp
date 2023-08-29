@@ -28,14 +28,17 @@ namespace Nancy {
 namespace Misc {
 
 void SpecialEffect::init() {
-	_specialEffectData = g_nancy->_specialEffectData;
+	_specialEffectData = (const SPEC *)g_nancy->getEngineData("SPEC");
 	assert(_specialEffectData);
+
+	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	assert(viewportData);
 
 	_numFrames = _type == kSceneChangeFadeOutToBlack ? _specialEffectData->fadeToBlackNumFrames : _specialEffectData->crossDissolveNumFrames;
 	_frameTime = _type == kSceneChangeFadeOutToBlack ? _specialEffectData->fadeToBlackFrameTime : _frameTime;
 
-	_drawSurface.create(g_nancy->_viewportData->bounds.width(), g_nancy->_viewportData->bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
-	moveTo(g_nancy->_viewportData->screenPosition);
+	_drawSurface.create(viewportData->bounds.width(), viewportData->bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	moveTo(viewportData->screenPosition);
 	setTransparent(false);
 
 	RenderObject::init();

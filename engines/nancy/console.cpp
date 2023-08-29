@@ -462,6 +462,9 @@ bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
 void NancyConsole::recurseDependencies(const Nancy::Action::DependencyRecord &record) {
 	using namespace Nancy::Action;
 
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+
 	for (const DependencyRecord &dep : record.children) {
 		debugPrintf("\n\t\t");
 		switch (dep.type) {
@@ -471,7 +474,7 @@ void NancyConsole::recurseDependencies(const Nancy::Action::DependencyRecord &re
 		case DependencyType::kInventory :
 			debugPrintf("kInventory, item %u, %s, %s",
 				dep.label,
-				g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
+				inventoryData->itemDescriptions[dep.label].name.c_str(),
 				dep.condition == g_nancy->_true ? "true" : "false");
 			break;
 		case DependencyType::kEvent :
@@ -518,7 +521,7 @@ void NancyConsole::recurseDependencies(const Nancy::Action::DependencyRecord &re
 		case DependencyType::kCursorType :
 			debugPrintf("kCursorType, item %u, %s, %s",
 				dep.label,
-				g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
+				inventoryData->itemDescriptions[dep.label].name.c_str(),
 				dep.condition == ActionManager::kCursInvHolding ? "kCursInvHolding" : "kCursInvNotHolding");
 			break;
 		case DependencyType::kPlayerTOD :
@@ -754,21 +757,23 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 	}
 
 	uint numItems = g_nancy->getStaticData().numItems;
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
 
 	debugPrintf("Total number of inventory items: %u\n", numItems);
 
 	if (argc == 1) {
 		for (uint i = 0; i < numItems; ++i) {
-			byte keep = g_nancy->_inventoryData->itemDescriptions[i].keepItem;
+			byte keep = inventoryData->itemDescriptions[i].keepItem;
 			debugPrintf("\nItem %u, %s, %s, %s",
 				i,
-				g_nancy->_inventoryData->itemDescriptions[i].name.c_str(),
+				inventoryData->itemDescriptions[i].name.c_str(),
 				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : "ReturnToInventory",
 				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
-			byte keep = g_nancy->_inventoryData->itemDescriptions[i].keepItem;
+			byte keep = inventoryData->itemDescriptions[i].keepItem;
 			int flagID = atoi(argv[i]);
 			if (flagID < 0 || flagID >= (int)numItems) {
 				debugPrintf("\nInvalid flag %s", argv[i]);
@@ -776,7 +781,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 			}
 			debugPrintf("\nItem %u, %s, %s, %s",
 				flagID,
-				g_nancy->_inventoryData->itemDescriptions[flagID].name.c_str(),
+				inventoryData->itemDescriptions[flagID].name.c_str(),
 				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : "ReturnToInventory",
 				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
 
@@ -789,6 +794,9 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+	
 	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
@@ -811,12 +819,12 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 			NancySceneState.addItemToInventory(itemID);
 			debugPrintf("Added item %i, %s, to inventory\n",
 				itemID,
-				g_nancy->_inventoryData->itemDescriptions[itemID].name.c_str());
+				inventoryData->itemDescriptions[itemID].name.c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
 			NancySceneState.removeItemFromInventory(itemID, false);
 			debugPrintf("Removed item %i, %s, from inventory\n",
 				itemID,
-				g_nancy->_inventoryData->itemDescriptions[itemID].name.c_str());
+				inventoryData->itemDescriptions[itemID].name.c_str());
 		} else {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;

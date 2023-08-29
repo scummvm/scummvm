@@ -29,8 +29,11 @@ namespace Nancy {
 namespace UI {
 
 void ViewportOrnaments::init() {
-	Common::Rect viewportBounds = g_nancy->_viewportData->bounds;
-	moveTo(g_nancy->_viewportData->screenPosition);
+	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	assert(viewportData);
+
+	Common::Rect viewportBounds = viewportData->bounds;
+	moveTo(viewportData->screenPosition);
 
 	Graphics::ManagedSurface &object0 = g_nancy->_graphicsManager->_object0;
 
@@ -71,7 +74,13 @@ void ViewportOrnaments::init() {
 }
 
 void TextboxOrnaments::init() {
-	moveTo(g_nancy->_bootSummary->textboxScreenPosition);
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(textboxData);
+
+	moveTo(bootSummary->textboxScreenPosition);
 	Common::Rect textboxBounds = _screenPosition;
 	textboxBounds.moveTo(0, 0);
 
@@ -87,16 +96,22 @@ void TextboxOrnaments::init() {
 	setTransparent(true);
 
 	for (uint i = 0; i < 14; ++i) {
-		_drawSurface.blitFrom(object0, g_nancy->_textboxData->ornamentSrcs[i],
-								Common::Point(	g_nancy->_textboxData->ornamentDests[i].left - _screenPosition.left,
-												g_nancy->_textboxData->ornamentDests[i].top - _screenPosition.top));
+		_drawSurface.blitFrom(object0, textboxData->ornamentSrcs[i],
+								Common::Point(	textboxData->ornamentDests[i].left - _screenPosition.left,
+												textboxData->ornamentDests[i].top - _screenPosition.top));
 	}
 
 	RenderObject::init();
 }
 
 void InventoryBoxOrnaments::init() {
-	moveTo(g_nancy->_bootSummary->inventoryBoxScreenPosition);
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+
+	moveTo(bootSummary->inventoryBoxScreenPosition);
 	Common::Rect invBoxBounds = _screenPosition;
 	invBoxBounds.moveTo(0, 0);
 
@@ -112,9 +127,9 @@ void InventoryBoxOrnaments::init() {
 	setTransparent(true);
 
 	for (uint i = 0; i < 6; ++i) {
-		_drawSurface.blitFrom(object0, g_nancy->_inventoryData->ornamentSrcs[i],
-								Common::Point(	g_nancy->_inventoryData->ornamentDests[i].left - _screenPosition.left,
-												g_nancy->_inventoryData->ornamentDests[i].top - _screenPosition.top));
+		_drawSurface.blitFrom(object0, inventoryData->ornamentSrcs[i],
+								Common::Point(	inventoryData->ornamentDests[i].left - _screenPosition.left,
+												inventoryData->ornamentDests[i].top - _screenPosition.top));
 	}
 }
 

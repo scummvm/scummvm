@@ -67,7 +67,8 @@ protected:
 
 	int _currentFrame = 0;
 	uint _numFrames = 0;
-	SPEC *_specialEffectData = nullptr;
+
+	const SPEC *_specialEffectData = nullptr;
 };
 
 } // End of namespace Misc

@@ -86,7 +86,7 @@ void Button::setDisabled(bool disabled) {
 	}
 }
 
-Toggle::Toggle(uint16 zOrder, Graphics::ManagedSurface &surface, Common::Rect &srcRect, Common::Rect &destRect) :
+Toggle::Toggle(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcRect, const Common::Rect &destRect) :
 		RenderObject(zOrder, surface, srcRect, destRect),
 		surf(surface),
 		_clickSrc(srcRect),

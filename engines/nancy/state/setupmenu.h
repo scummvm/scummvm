@@ -66,7 +66,7 @@ private:
 	Common::Array<UI::Scrollbar *> _scrollbars;
 	UI::Button *_exitButton;
 
-	SET *_setupData;
+	const SET *_setupData;
 };
 
 } // End of namespace State

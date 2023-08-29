@@ -61,7 +61,10 @@ void ActionManager::handleInput(NancyInput &input) {
 
 				if (!rec->_dependencies.satisfied) {
 					if (g_nancy->getGameType() >= kGameTypeNancy2 && rec->_cursorDependency != nullptr) {
-						SoundDescription &sound = g_nancy->_inventoryData->itemDescriptions[rec->_cursorDependency->label].specificCantSound;
+						const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+						assert(inventoryData);
+
+						const SoundDescription &sound = inventoryData->itemDescriptions[rec->_cursorDependency->label].specificCantSound;
 						g_nancy->_sound->loadSound(sound);
 						g_nancy->_sound->playSound(sound);
 					} else {
@@ -78,7 +81,10 @@ void ActionManager::handleInput(NancyInput &input) {
 
 						// Re-add the object to the inventory unless it's marked as a one-time use
 						if (item == NancySceneState.getHeldItem() && item != -1) {
-							switch (g_nancy->_inventoryData->itemDescriptions[item].keepItem) {
+							const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+							assert(inventoryData);
+
+							switch (inventoryData->itemDescriptions[item].keepItem) {
 							case kInvItemKeepAlways :
 								if (g_nancy->getGameType() >= kGameTypeNancy3) {
 									// In nancy3 and up this means the object remains in hand, so do nothing

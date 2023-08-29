@@ -103,12 +103,11 @@ public:
 	Common::Array<uint16> _cells;
 	Common::Array<byte> _walls;
 
-	RCLB *_themeData;
+	const RCLB *_themeData;
 };
 
 RaycastLevelBuilder::RaycastLevelBuilder(uint width, uint height, uint verticalHeight) {
-	_themeData = g_nancy->_raycastPuzzleLevelBuilderData;
-
+	_themeData = (const RCLB *)g_nancy->getEngineData("RCLB");
 	assert(_themeData);
 
 	_verticalHeight = verticalHeight;
@@ -290,7 +289,7 @@ void RaycastLevelBuilder::writeThemesAndExitFloor() {
 
 uint RaycastLevelBuilder::writeTheme(uint startX, uint startY, uint quadrant) {
 	uint themeID = g_nancy->_randomSource->getRandomNumber(_themeData->themes.size() - 1);
-	RCLB::Theme &theme = _themeData->themes[themeID];
+	const RCLB::Theme &theme = _themeData->themes[themeID];
 
 	uint themeHalfWidth, themeHalfHeight;
 
@@ -347,7 +346,7 @@ uint RaycastLevelBuilder::writeTheme(uint startX, uint startY, uint quadrant) {
 }
 
 void RaycastLevelBuilder::writeTransparentWalls(uint startX, uint startY, uint themeID) {
-	RCLB::Theme &theme = _themeData->themes[themeID];
+	const RCLB::Theme &theme = _themeData->themes[themeID];
 	uint numWallsToWrite = (int)((float)theme.objectWallDensity * _objectsBaseDensity);
 
 	for (uint numWrittenWalls = 0; numWrittenWalls < numWallsToWrite;) {
@@ -453,7 +452,7 @@ void RaycastLevelBuilder::writeTransparentWalls(uint startX, uint startY, uint t
 }
 
 void RaycastLevelBuilder::writeObjectWalls(uint startX, uint startY, uint themeID) {
-	RCLB::Theme &theme = _themeData->themes[themeID];
+	const RCLB::Theme &theme = _themeData->themes[themeID];
 	uint numWallsToWrite = (int)((float)theme.objectWallDensity * _objectsBaseDensity);
 
 	uint textureVerticalHeight = _verticalHeight * 128; // 128 is a constant inside RayCast
@@ -578,7 +577,7 @@ void RaycastLevelBuilder::writeObjectWalls(uint startX, uint startY, uint themeI
 }
 
 void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
-	RCLB::Theme &theme = _themeData->themes[themeID];
+	const RCLB::Theme &theme = _themeData->themes[themeID];
 	uint numDoorsToWrite = (int)((float)theme.doorDensity * _objectsBaseDensity);
 
 	for (uint numWrittenWalls = 0; numWrittenWalls < numDoorsToWrite;) {
@@ -816,7 +815,7 @@ void RaycastLevelBuilder::writeLightSwitch(uint startX, uint startY, uint quadra
 }
 
 void RaycastLevelBuilder::writeExitFloorTexture(uint themeID) {
-	RCLB::Theme &theme = _themeData->themes[themeID];
+	const RCLB::Theme &theme = _themeData->themes[themeID];
 	int16 selectedFloorID = theme.exitFloorIDs[g_nancy->_randomSource->getRandomNumber(theme.exitFloorIDs.size() - 1)];
 	uint addToID = 0;
 
@@ -891,7 +890,10 @@ private:
 bool RaycastDeferredLoader::loadInner() {
 	switch(_loadState) {
 	case kInitDrawSurface : {
-		Common::Rect viewport = g_nancy->_viewportData->bounds;
+		const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+		assert(viewportData);
+		
+		Common::Rect viewport = viewportData->bounds;
 		_owner.moveTo(viewport);
 		_owner._drawSurface.create(viewport.width(), viewport.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 		_owner.setTransparent(true);
@@ -915,8 +917,11 @@ bool RaycastDeferredLoader::loadInner() {
 	case kInitMap : {
 		// TODO map is a debug feature, make sure to hide it
 		// Also, fix the fact that it's rendered upside-down
+		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+		assert(bootSummary);
+
 		_owner._map._drawSurface.create(_owner._mapFullWidth, _owner._mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
-		Common::Rect mapPos(g_nancy->_bootSummary->textboxScreenPosition);
+		Common::Rect mapPos(bootSummary->textboxScreenPosition);
 		mapPos.setWidth(_owner._mapFullWidth * 2);
 		mapPos.setHeight(_owner._mapFullHeight * 2);
 		_owner._map.moveTo(mapPos);
@@ -928,8 +933,10 @@ bool RaycastDeferredLoader::loadInner() {
 	}
 	case kInitTables1 : {
 		Common::Rect selectedBounds = _owner._puzzleData->screenViewportSizes[_owner._puzzleData->viewportSizeUsed];
+		const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+		assert(viewportData);
 
-		_owner._wallCastColumnAngles.resize(g_nancy->_viewportData->screenPosition.width());
+		_owner._wallCastColumnAngles.resize(viewportData->screenPosition.width());
 		uint center = selectedBounds.left + (selectedBounds.width() >> 1);
 		for (uint i = 0; i < _owner._wallCastColumnAngles.size(); ++i) {
 			int32 &angle = _owner._wallCastColumnAngles[i];
@@ -944,6 +951,9 @@ bool RaycastDeferredLoader::loadInner() {
 		break;
 	}
 	case kInitTables2 : {
+		const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+		assert(viewportData);
+
 		_owner._sinTable.resize(4096);
 		_owner._cosTable.resize(4096);
 
@@ -954,8 +964,8 @@ bool RaycastDeferredLoader::loadInner() {
 		}
 
 		_owner._maxWorldDistance = sqrt(((128 * _owner._mapFullWidth) - 1) * ((128 * _owner._mapFullHeight) - 1) * 2);
-		_owner._depthBuffer.resize(g_nancy->_viewportData->bounds.width());
-		_owner._zBuffer.resize(g_nancy->_viewportData->bounds.width() * g_nancy->_viewportData->bounds.height(), 0);
+		_owner._depthBuffer.resize(viewportData->bounds.width());
+		_owner._zBuffer.resize(viewportData->bounds.width() * viewportData->bounds.height(), 0);
 		_owner._lastZDepth = 0;
 
 		_loadState = kLoadTextures;
@@ -1037,7 +1047,7 @@ bool RaycastDeferredLoader::loadInner() {
 }
 
 void RaycastPuzzle::init() {
-	_puzzleData = g_nancy->_raycastPuzzleData;
+	_puzzleData = (const RCPR *)g_nancy->getEngineData("RCPR");
 	assert(_puzzleData);
 
 	RaycastDeferredLoader *loader = _loaderPtr.get();
@@ -1361,7 +1371,7 @@ void RaycastPuzzle::loadTextures() {
 	
 }
 
-void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, Common::String &textureName) {
+void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::String &textureName) {
 	Graphics::PixelFormat format = g_nancy->_graphicsManager->getInputPixelFormat();
 	array->resize(8);
 

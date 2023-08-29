@@ -43,18 +43,18 @@ Clock::Clock() : 	RenderObject(g_nancy->getGameType() == kGameTypeVampire ? 11 :
 void Clock::init() {
 	Graphics::ManagedSurface &object0 = g_nancy->_graphicsManager->_object0;
 
-	_clockData = g_nancy->_clockData;
+	_clockData = (const CLOK *)g_nancy->getEngineData("CLOK");
 	assert(_clockData);
 
 	// Calculate the size and location of the surface we'll need to draw the clock hands,
 	// since their dest rects are in absolute screen space
 	Common::Rect clockSurfaceScreenBounds;
 
-	for (Common::Rect &r : _clockData->hoursHandDests) {
+	for (const Common::Rect &r : _clockData->hoursHandDests) {
 		clockSurfaceScreenBounds.extend(r);
 	}
 
-	for (Common::Rect &r : _clockData->minutesHandDests) {
+	for (const Common::Rect &r : _clockData->minutesHandDests) {
 		clockSurfaceScreenBounds.extend(r);
 	}
 
@@ -125,13 +125,16 @@ void Clock::drawClockHands() {
 }
 
 void Clock::ClockAnim::init() {
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
 	_srcRects = _owner->_clockData->animSrcs;
 	_destRects = _owner->_clockData->animDests;
-	_highlightSrcRect = g_nancy->_bootSummary->clockHighlightSrc;
-	_highlightDestRect = g_nancy->_bootSummary->extraButtonHighlightDest;
+	_highlightSrcRect = bootSummary->clockHighlightSrc;
+	_highlightDestRect = bootSummary->extraButtonHighlightDest;
 
 	if (_destRects.size()) {
-		moveTo(g_nancy->_bootSummary->extraButtonHotspot);
+		moveTo(bootSummary->extraButtonHotspot);
 	} else {
 		moveTo(_owner->_clockData->screenPosition);
 	}

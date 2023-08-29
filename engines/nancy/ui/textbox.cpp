@@ -50,13 +50,16 @@ Textbox::~Textbox() {
 }
 
 void Textbox::init() {
-	TBOX *tbox = g_nancy->_textboxData;
-	assert(tbox);
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
 
-	moveTo(g_nancy->_bootSummary->textboxScreenPosition);
-	_highlightRObj.moveTo(g_nancy->_bootSummary->textboxScreenPosition);
-	_fullSurface.create(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
-	_textHighlightSurface.create(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(textboxData);
+
+	moveTo(bootSummary->textboxScreenPosition);
+	_highlightRObj.moveTo(bootSummary->textboxScreenPosition);
+	_fullSurface.create(textboxData->innerBoundingBox.width(), textboxData->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_textHighlightSurface.create(textboxData->innerBoundingBox.width(), textboxData->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
 	_textHighlightSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
 
 	Common::Rect outerBoundingBox = _screenPosition;
@@ -67,9 +70,9 @@ void Textbox::init() {
 
 	// zOrder bumped by 2 to avoid overlap with the inventory box curtains in The Vampire Diaries
 	_scrollbar = new Scrollbar(	11,
-								tbox->scrollbarSrcBounds,
-								tbox->scrollbarDefaultPos,
-								tbox->scrollbarMaxScroll - tbox->scrollbarDefaultPos.y);
+								textboxData->scrollbarSrcBounds,
+								textboxData->scrollbarDefaultPos,
+								textboxData->scrollbarMaxScroll - textboxData->scrollbarDefaultPos.y);
 	_scrollbar->init();
 }
 
@@ -133,13 +136,13 @@ void Textbox::handleInput(NancyInput &input) {
 void Textbox::drawTextbox() {
 	using namespace Common;
 
-	TBOX *tbox = g_nancy->_textboxData;
-	assert(tbox);
+	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(textboxData);
 
 	_numLines = 0;
 
-	uint maxWidth = _fullSurface.w - tbox->maxWidthDifference - tbox->borderWidth - 2;
-	uint lineDist = tbox->lineHeight + tbox->lineHeight / 4;
+	uint maxWidth = _fullSurface.w - textboxData->maxWidthDifference - textboxData->borderWidth - 2;
+	uint lineDist = textboxData->lineHeight + textboxData->lineHeight / 4;
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
 		Common::String currentLine;
@@ -229,8 +232,8 @@ void Textbox::drawTextbox() {
 			currentLine += curToken;
 		}
 		
-		const Font *font = g_nancy->_graphicsManager->getFont(fontID == -1 ? tbox->conversationFontID : fontID);
-		const Font *highlightFont = g_nancy->_graphicsManager->getFont(tbox->highlightConversationFontID);
+		const Font *font = g_nancy->_graphicsManager->getFont(fontID == -1 ? textboxData->conversationFontID : fontID);
+		const Font *highlightFont = g_nancy->_graphicsManager->getFont(textboxData->highlightConversationFontID);
 
 		// Do word wrapping on the text, sans tokens
 		Array<Common::String> wrappedLines;
@@ -238,9 +241,9 @@ void Textbox::drawTextbox() {
 
 		// Setup most of the hotspot
 		if (hasHotspot) {
-			hotspot.left = tbox->borderWidth;
-			hotspot.top = tbox->firstLineOffset - tbox->lineHeight + (_numLines * lineDist) - 1;
-			hotspot.setHeight((wrappedLines.size() * lineDist) - (lineDist - tbox->lineHeight));
+			hotspot.left = textboxData->borderWidth;
+			hotspot.top = textboxData->firstLineOffset - textboxData->lineHeight + (_numLines * lineDist) - 1;
+			hotspot.setHeight((wrappedLines.size() * lineDist) - (lineDist - textboxData->lineHeight));
 			hotspot.setWidth(0);
 		}
 
@@ -294,8 +297,8 @@ void Textbox::drawTextbox() {
 				// Draw the normal text
 				font->drawString(				&_fullSurface,
 												stringToDraw,
-												tbox->borderWidth + horizontalOffset,
-												tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist,
+												textboxData->borderWidth + horizontalOffset,
+												textboxData->firstLineOffset - font->getFontHeight() + _numLines * lineDist,
 												maxWidth,
 												isColor);
 
@@ -303,8 +306,8 @@ void Textbox::drawTextbox() {
 				if (hasHotspot) {
 					highlightFont->drawString(	&_textHighlightSurface,
 												stringToDraw,
-												tbox->borderWidth + horizontalOffset,
-												tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist,
+												textboxData->borderWidth + horizontalOffset,
+												textboxData->firstLineOffset - font->getFontHeight() + _numLines * lineDist,
 												maxWidth,
 												isColor);
 				}
@@ -409,15 +412,15 @@ void Textbox::onScrollbarMove() {
 }
 
 uint16 Textbox::getInnerHeight() const {
-	TBOX *tbox = g_nancy->_textboxData;
-	assert(tbox);
+	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(textboxData);
 
 	// These calculations are _almost_ correct, but off by a pixel sometimes
-	uint lineDist = tbox->lineHeight + tbox->lineHeight / 4;
+	uint lineDist = textboxData->lineHeight + textboxData->lineHeight / 4;
 	if (g_nancy->getGameType() == kGameTypeVampire) {
-		return _numLines * lineDist + tbox->firstLineOffset + (_lastResponseisMultiline ? - tbox->lineHeight / 2 : 1);
+		return _numLines * lineDist + textboxData->firstLineOffset + (_lastResponseisMultiline ? - textboxData->lineHeight / 2 : 1);
 	} else {
-		return _numLines * lineDist + tbox->firstLineOffset + lineDist / 2 - 1;
+		return _numLines * lineDist + textboxData->firstLineOffset + lineDist / 2 - 1;
 	}
 }
 

@@ -90,7 +90,7 @@ void SetupMenu::registerGraphics() {
 }
 
 void SetupMenu::init() {
-	_setupData = g_nancy->_setupData;
+	_setupData = (const SET*)g_nancy->getEngineData("SET");
 	assert(_setupData);
 
 	if (g_nancy->getGameType() == kGameTypeVampire) {

@@ -81,7 +81,7 @@ void MainMenu::clearButtonState() {
 }
 
 void MainMenu::init() {
-	_menuData = g_nancy->_menuData;
+	_menuData = (const MENU*)g_nancy->getEngineData("MENU");
 	assert(_menuData);
 
 	_background.init(_menuData->_imageName);
@@ -187,7 +187,7 @@ void MainMenu::stop() {
 		break;
 	case 6:
 		// Exit Game
-		if (g_nancy->_saveDialogData && Nancy::State::Scene::hasInstance() && !g_nancy->_hasJustSaved) {
+		if (g_nancy->getEngineData("SDLG") && Nancy::State::Scene::hasInstance() && !g_nancy->_hasJustSaved) {
 			g_nancy->setState(NancyState::kSaveDialog);
 		} else {
 			g_nancy->quitGame();

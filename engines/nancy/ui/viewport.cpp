@@ -36,12 +36,18 @@ namespace UI {
 
 // does NOT put the object in a valid state until loadVideo is called
 void Viewport::init() {
-	moveTo(g_nancy->_viewportData->screenPosition);
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
 
-	setEdgesSize(	g_nancy->_bootSummary->verticalEdgesSize,
-					g_nancy->_bootSummary->verticalEdgesSize,
-					g_nancy->_bootSummary->horizontalEdgesSize,
-					g_nancy->_bootSummary->horizontalEdgesSize);
+	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	assert(viewportData);
+
+	moveTo(viewportData->screenPosition);
+
+	setEdgesSize(	bootSummary->verticalEdgesSize,
+					bootSummary->verticalEdgesSize,
+					bootSummary->horizontalEdgesSize,
+					bootSummary->horizontalEdgesSize);
 
 	RenderObject::init();
 }

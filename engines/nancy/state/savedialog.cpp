@@ -87,7 +87,7 @@ void SaveDialog::registerGraphics() {
 }
 
 void SaveDialog::init() {
-	_dialogData = g_nancy->_saveDialogData;
+	_dialogData = (const SDLG*)g_nancy->getEngineData("SDLG");
 	assert(_dialogData);
 
 	_background.init(_dialogData->_imageName);
