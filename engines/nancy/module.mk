@@ -22,6 +22,7 @@ MODULE_OBJS = \
   action/sliderpuzzle.o \
   action/soundequalizerpuzzle.o \
   action/towerpuzzle.o \
+  action/turningpuzzle.o \
   action/telephone.o \
   ui/fullscreenimage.o \
   ui/animatedbutton.o \

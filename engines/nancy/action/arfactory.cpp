@@ -38,6 +38,7 @@
 #include "engines/nancy/action/soundequalizerpuzzle.h"
 #include "engines/nancy/action/setplayerclock.h"
 #include "engines/nancy/action/raycastpuzzle.h"
+#include "engines/nancy/action/turningpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -201,6 +202,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new RaycastPuzzle();
 	case 208:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kPiano);
+	case 209:
+		return new TurningPuzzle();
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;
