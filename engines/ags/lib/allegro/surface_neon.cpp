@@ -235,9 +235,9 @@ inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, u
 	hb = vaddq_f32(vmulq_f32(vsubq_f32(ssr, ssg), chromaReq), vmovq_n_f32(4.0));
 
 	// And then compute which one will be used based on criteria
-	float32x4_t hrfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssr, smaxes), vmvnq_u32(vceqq_u32(ssr, ssb))), vmovq_n_u32(1)));
-	float32x4_t hgfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssg, smaxes), vmvnq_u32(vceqq_u32(ssg, ssr))), vmovq_n_u32(1)));
-	float32x4_t hbfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssb, smaxes), vmvnq_u32(vceqq_u32(ssb, ssg))), vmovq_n_u32(1)));
+	float32x4_t hrfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssr, smaxes), vmvnq_u32(vceqq_f32(ssr, ssb))), vmovq_n_u32(1)));
+	float32x4_t hgfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssg, smaxes), vmvnq_u32(vceqq_f32(ssg, ssr))), vmovq_n_u32(1)));
+	float32x4_t hbfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssb, smaxes), vmvnq_u32(vceqq_f32(ssb, ssg))), vmovq_n_u32(1)));
 	hue = vmulq_f32(hr, hrfactors);
 	hue = vaddq_f32(hue, vmulq_f32(hg, hgfactors));
 	hue = vaddq_f32(hue, vmulq_f32(hb, hbfactors));
