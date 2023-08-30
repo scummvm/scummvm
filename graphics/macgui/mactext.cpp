@@ -701,21 +701,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				s++;
 
 				// First two digits is slant, third digit is Header number
-				if (*s == '-') { // \016-XXY  -- closing textSlant, H<Y>
-					uint16 textSlant, headSize;
-					s++;
-
-					s = readHex(&textSlant, s, 2);
-
-					current_format.textSlant &= ~textSlant; // Clearing the specified bit
-
-					s = readHex(&headSize, s, 1);
-					if (headSize == 0xf) // reset
-						current_format.fontSize = _defaultFormatting.fontSize;
-
-					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d,",
-							current_format.fontId, current_format.textSlant, current_format.fontSize);
-				} else if (*s == '+') { // \016+XXY  -- opening textSlant. H<Y>
+				if (*s == '+') { // \016+XXY  -- opening textSlant. H<Y>
 					uint16 textSlant, headSize;
 					s++;
 
@@ -730,6 +716,20 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					}
 
 					D(9, "** splitString+: fontId: %d, textSlant: %d, fontSize: %d,",
+							current_format.fontId, current_format.textSlant, current_format.fontSize);
+				} else if (*s == '-') { // \016-XXY  -- closing textSlant, H<Y>
+					uint16 textSlant, headSize;
+					s++;
+
+					s = readHex(&textSlant, s, 2);
+
+					current_format.textSlant &= ~textSlant; // Clearing the specified bit
+
+					s = readHex(&headSize, s, 1);
+					if (headSize == 0xf) // reset
+						current_format.fontSize = _defaultFormatting.fontSize;
+
+					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d,",
 							current_format.fontId, current_format.textSlant, current_format.fontSize);
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
