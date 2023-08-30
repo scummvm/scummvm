@@ -119,6 +119,9 @@ public:
 	void onStateEnter(const NancyState::NancyState prevState) override;
 	bool onStateExit(const NancyState::NancyState nextState) override;
 
+	// Used when winning/losing game
+	void setDestroyOnExit() { _destroyOnExit = true; }
+
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene();
 	void popScene();
@@ -278,6 +281,8 @@ private:
 
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;
+
+	bool _destroyOnExit;
 
 	State _state;
 };

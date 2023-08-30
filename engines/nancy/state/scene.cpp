@@ -118,7 +118,8 @@ Scene::Scene() :
 		_actionManager(),
 		_difficulty(0),
 		_activeConversation(nullptr),
-		_lightning(nullptr) {}
+		_lightning(nullptr),
+		_destroyOnExit(false) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -210,7 +211,7 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 		_clock->registerGraphics();
 	}
 
-	return false;
+	return _destroyOnExit;
 }
 
 void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
