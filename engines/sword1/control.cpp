@@ -344,7 +344,7 @@ uint8 Control::runPanel() {
 	// Set up mouse
 	_mouse->controlPanel(true);
 
-	uint8 mode = 0, newMode = BUTTON_MAIN_PANEL;
+	uint8 mode = BUTTON_MAIN_PANEL, newMode = 0;
 	bool fullRefresh = false;
 	uint8 retVal = CONTROL_NOTHING_DONE;
 

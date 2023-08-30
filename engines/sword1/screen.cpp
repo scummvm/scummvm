@@ -191,12 +191,12 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id) {
 }
 
 void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool toBlack) {
-	byte *rgbData = nullptr;
+	const uint8 *rgbData = nullptr;
 
 	if (toBlack) {
-		rgbData = const_cast<byte *>(_black);
+		rgbData = _black;
 	} else {
-		rgbData = (byte *) _resMan->openFetchRes(id);
+		rgbData = (const uint8 *) _resMan->openFetchRes(id);
 	}
 
 	if (SwordEngine::_systemVars.wantFade) {
@@ -1313,7 +1313,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 }
 
 void Screen::fnFlash(uint8 color) {
-	const byte *targetColor = _white;
+	const uint8 *targetColor = _white;
 
 	switch (color) {
 	case FLASH_RED:
@@ -1344,7 +1344,11 @@ void Screen::fnFlash(uint8 color) {
 	if (color == FLASH_RED || color == FLASH_BLUE) {
 		// This is what the original did here to induce a small wait cycle
 		// to correctly display the color before it is turned back to black...
-		for (int i = 0; i < 20000; ++i);
+		//
+		// for (int i = 0; i < 20000; ++i);
+		//
+		// We induce a delay instead
+		_system->delayMillis(200);
 
 		_system->getPaletteManager()->setPalette(_black, 0, 1);
 	}
