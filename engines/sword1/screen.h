@@ -103,22 +103,22 @@ public:
 
 private:
 	// The original values are 6-bit RGB numbers, so they have to be shifted
-	const byte _white[3]  = { 63 << 2, 63 << 2, 63 << 2};
-	const byte _red[3]    = { 63 << 2, 0  << 2, 0  << 2};
-	const byte _blue[3]   = { 0  << 2, 0  << 2, 63 << 2};
-	const byte _yellow[3] = { 63 << 2, 63 << 2, 0  << 2};
-	const byte _green[3]  = { 0  << 2, 63 << 2, 0  << 2};
-	const byte _purple[3] = { 32 << 2, 0  << 2, 32 << 2};
-	const byte _black[3]  = { 0  << 2, 0  << 2, 0  << 2};
-	const byte _grey[3]   = { 32 << 2, 32 << 2, 32 << 2};
+	const uint8 _white[3]  = { 63 << 2, 63 << 2, 63 << 2};
+	const uint8 _red[3]    = { 63 << 2, 0  << 2, 0  << 2};
+	const uint8 _blue[3]   = { 0  << 2, 0  << 2, 63 << 2};
+	const uint8 _yellow[3] = { 63 << 2, 63 << 2, 0  << 2};
+	const uint8 _green[3]  = { 0  << 2, 63 << 2, 0  << 2};
+	const uint8 _purple[3] = { 32 << 2, 0  << 2, 32 << 2};
+	const uint8 _black[3]  = { 0  << 2, 0  << 2, 0  << 2};
+	const uint8 _grey[3]   = { 32 << 2, 32 << 2, 32 << 2};
 
 	struct PaletteFadeInfo {
 		int16 paletteStatus;
 		int16 paletteIndex;
 		int16 paletteCount;
 		int16 fadeCount;
-		byte srcPalette[256 * 3];
-		byte dstPalette[256 * 3];
+		uint8 srcPalette[256 * 3];
+		uint8 dstPalette[256 * 3];
 	};
 
 	PaletteFadeInfo _paletteFadeInfo;
