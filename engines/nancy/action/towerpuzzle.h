@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_ACTION_TOWERIPPEDLETTERPUZZLE_H
-#define NANCY_ACTION_TOWERIPPEDLETTERPUZZLE_H
+#ifndef NANCY_ACTION_TOWERPUZZLE_H
+#define NANCY_ACTION_TOWERPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
 
@@ -78,4 +78,4 @@ protected:
 } // End of namespace Action
 } // End of namespace Nancy
 
-#endif // NANCY_ACTION_TOWERIPPEDLETTERPUZZLE_H
+#endif // NANCY_ACTION_TOWERPUZZLE_H
