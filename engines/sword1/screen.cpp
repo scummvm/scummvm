@@ -163,10 +163,18 @@ void Screen::startFadePaletteUp(int speed) {
 		_paletteFadeInfo.fadeCount = 0;
 		_paletteFadeInfo.paletteStatus = FADE_UP;
 	} else {
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
-
 		// Set up the source palette
 		memcpy((uint8 *)_paletteFadeInfo.srcPalette, (uint8 *)_currentPalette, 256 * 3);
+
+		// Remember: whenever we are showing the palette to the outside world
+		// we have to shift it, because these are 6-bit values!
+		uint8 shiftedPalette[768];
+
+		for (int i = 0; i < sizeof(shiftedPalette); i++) {
+			shiftedPalette[i] = _currentPalette[i] << 2;
+		}
+
+		_system->getPaletteManager()->setPalette(shiftedPalette, 0, 256);
 	}
 }
 
