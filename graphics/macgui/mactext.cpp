@@ -2096,6 +2096,18 @@ int MacText::getMouseLine(int x, int y) {
 	return row + 1;
 }
 
+Common::U32String MacText::getMouseLink(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int row, chunk;
+	getRowCol(x, y, nullptr, nullptr, &row, nullptr, &chunk);
+
+	return _textLines[row].chunks[chunk].text;
+}
+
 int MacText::getAlignOffset(int row) {
 	int alignOffset = 0;
 	if (_textAlignment == kTextAlignRight)
@@ -2105,7 +2117,7 @@ int MacText::getAlignOffset(int row) {
 	return alignOffset;
 }
 
-void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
+void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int *chunk_) {
 	int nsx = 0, nsy = 0, nrow = 0, ncol = 0;
 
 	if (y > _textMaxHeight) {
@@ -2150,6 +2162,9 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 		if (chunk == _textLines[nrow].chunks.size())
 			chunk--;
+
+		if (chunk_)
+			*chunk_ = (int)chunk;
 
 		Common::U32String str = _textLines[nrow].chunks[chunk].text;
 
