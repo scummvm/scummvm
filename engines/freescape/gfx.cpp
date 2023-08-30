@@ -339,10 +339,6 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 }
 
 void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1) {
-	if (_colorRemaps && _colorRemaps->contains(index)) {
-		index = (*_colorRemaps)[index];
-	}
-
 	if (index == 0) {
 		r1 = 0;
 		g1 = 0;
@@ -360,6 +356,10 @@ void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1
 bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *&stipple) {
 	if (index == _keyColor)
 		return false;
+
+	if (_colorRemaps && _colorRemaps->contains(index)) {
+		index = (*_colorRemaps)[index];
+	}
 
 	assert (_renderMode == Common::kRenderCPC);
 	if (index <= 4) { // Solid colors

@@ -62,10 +62,15 @@ void DarkEngine::loadAssetsCPCFullGame() {
 	if (!file.isOpen())
 		error("Failed to open DARKCODE.BIN");
 
-	loadMessagesFixedSize(&file, 0x5d9, 14, 20);
+	loadMessagesFixedSize(&file, 0x5d9, 16, 27);
 	loadFonts(&file, 0x60f3);
-	loadGlobalObjects(&file, 0x9a, 8);
+	loadGlobalObjects(&file, 0x9a, 23);
 	load8bitBinary(&file, 0x6255, 16);
+	for (auto &it : _areaMap) {
+		addWalls(it._value);
+		addECDs(it._value);
+		addSkanner(it._value);
+	}
 }
 
 void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
@@ -101,11 +106,11 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 112 + 5, 173 + 4, back, front, surface);
+		drawStringInSurface(message, 111, 173 + 4, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
-		drawStringInSurface(_currentArea->_name, 112, 173 + 4, front, back, surface);
+		drawStringInSurface(_currentArea->_name, 111, 173 + 4, front, back, surface);
 
 	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
 	int shield = _gameStateVars[k8bitVariableShield];
