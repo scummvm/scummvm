@@ -731,6 +731,27 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d,",
 							current_format.fontId, current_format.textSlant, current_format.fontSize);
+				} else if (*s == '[') { // \016[RRGGBB  -- setting color
+					uint16 palinfo1, palinfo2, palinfo3;
+					s++;
+
+					s = readHex(&palinfo1, s, 4);
+					s = readHex(&palinfo2, s, 4);
+					s = readHex(&palinfo3, s, 4);
+
+					current_format.palinfo1 = palinfo1;
+					current_format.palinfo2 = palinfo2;
+					current_format.palinfo3 = palinfo3;
+
+					D(9, "** splitString[: %02x%02x%02x", palinfo1, plinfo2, plainfo3);
+				} else if (*s == ']') { // \016]  -- setting default color
+					s++;
+
+					current_format.palinfo1 = _defaultFormatting.palinfo1;
+					current_format.palinfo2 = _defaultFormatting.palinfo2;
+					current_format.palinfo3 = _defaultFormatting.palinfo3;
+
+					D(9, "** splitString]: %02x%02x%02x", current_format.palinfo1, current_format.plinfo2, current_format.plainfo3);
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 
@@ -741,7 +762,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					s = readHex(&palinfo2, s, 4);
 					s = readHex(&palinfo3, s, 4);
 
-					D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+					D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p: %02x%02x%02x",
 							fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 					current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
