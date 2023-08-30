@@ -173,7 +173,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 			rely -= _shapeY;
 			const ShapeFrame *frame = shape->getFrame(_curFrame);
 			if (frame && frame->hasPoint(relx, rely)) {
-				uint8 rawpx = frame->getPixelAtPoint(relx, rely);
+				uint8 rawpx = frame->getPixel(relx, rely);
 				uint8 px_r = shape->getPalette()->_palette[rawpx * 3];
 				uint8 px_g = shape->getPalette()->_palette[rawpx * 3 + 1];
 				uint8 px_b = shape->getPalette()->_palette[rawpx * 3 + 2];

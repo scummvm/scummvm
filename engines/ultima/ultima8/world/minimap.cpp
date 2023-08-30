@@ -153,7 +153,7 @@ uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
 			if (!frame->hasPoint(i - sx, j - sy))
 				continue;
 
-			uint8 p = frame->getPixelAtPoint(i - sx, j - sy);
+			uint8 p = frame->getPixel(i - sx, j - sy);
 			byte r2 = pal->_palette[p * 3 + 0];
 			byte g2 = pal->_palette[p * 3 + 1];
 			byte b2 = pal->_palette[p * 3 + 2];

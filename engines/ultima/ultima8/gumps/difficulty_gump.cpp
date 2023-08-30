@@ -116,7 +116,7 @@ void DifficultyGump::InitGump(Gump *newparent, bool take_focus) {
 
 		_buttonHeight = MAX(_buttonHeight, leftFrame->_height);
 		_buttonHeight = MAX(_buttonHeight, rightFrame->_height);
-		_buttonWidth = MAX(_buttonWidth, leftFrame->_width + rightFrame->_width);
+		_buttonWidth = MAX(_buttonWidth, static_cast<int16>(leftFrame->_width + rightFrame->_width));
 	}
 
 	// remove focus from children (just in case)
