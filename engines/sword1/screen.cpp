@@ -300,6 +300,10 @@ void Screen::updateScreen() {
 		fnSetFadeTargetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0]);
 		fnSetFadeTargetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1]);
 		fnSetFadeTargetPalette(0, 1, 0, true);
+		// Bug #8636: Force color 255 to black
+		if (SwordEngine::isMac())
+			fnSetFadeTargetPalette(255, 1, 0, true);
+
 		startFadePaletteUp(1);
 		_updatePalette = false;
 	}
