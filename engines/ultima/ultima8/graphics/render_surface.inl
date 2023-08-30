@@ -66,9 +66,9 @@
 #ifdef XFORM_SHAPES
 
 #ifdef XFORM_CONDITIONAL
-#define USE_XFORM_FUNC ((XFORM_CONDITIONAL) && xform_pal[*srcpix])
+#define USE_XFORM_FUNC ((XFORM_CONDITIONAL) && xform_map[*srcpix])
 #else
-#define USE_XFORM_FUNC (xform_pal[*srcpix])
+#define USE_XFORM_FUNC (xform_map[*srcpix])
 #endif
 
 //
@@ -164,29 +164,13 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 // The Function
 //
 
-	// Sanity check
-	if (framenum >= s->frameCount())
-		return;
-	if (s->getPalette() == 0)
-		return;
+	const uint8	keycolor = frame->_keycolor;
 
-	const ShapeFrame *frame			= s->getFrame(framenum);
-	if (!frame)
-		return;
-	const uint8		*srcpixels		= frame->_pixels;
-	const uint8		keycolor		= frame->_keycolor;
-	const uint32	*pal			= untformed_pal ?
-										s->getPalette()->_native_untransformed:
-										s->getPalette()->_native;
+	const Graphics::Surface &src =  frame->getSurface();
+	const uint8 *srcpixels = reinterpret_cast<const uint8 *>(src.getPixels());
 
-#ifdef XFORM_SHAPES
-	const uint32	*xform_pal		= untformed_pal ?
-										s->getPalette()->_xform_untransformed:
-										s->getPalette()->_xform;
-#endif
-
-	const int32 width_ = frame->_width;
-	const int32 height_ = frame->_height;
+	const int width_ = src.w;
+	const int height_ = src.h;
 	x -= XNEG(frame->_xoff);
 	y -= frame->_yoff;
 
@@ -210,12 +194,12 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 					const uint8 *srcpix = srcline + xpos;
 					#ifdef XFORM_SHAPES
 					if (USE_XFORM_FUNC) {
-						*dstpix = CUSTOM_BLEND(BlendPreModulated(xform_pal[*srcpix], *dstpix, format));
+						*dstpix = CUSTOM_BLEND(BlendPreModulated(xform_map[*srcpix], *dstpix, format));
 					}
 					else
 					#endif
 					{
-						*dstpix = CUSTOM_BLEND(pal[*srcpix]);
+						*dstpix = CUSTOM_BLEND(map[*srcpix]);
 					}
 				}
 			}

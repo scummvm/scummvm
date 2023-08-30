@@ -775,7 +775,8 @@ template<typename uintX>
 void inline paintLogic(uint8 *pixels, int32 pitch,
 					   const Common::Rect &clipWindow,
 					   const Graphics::PixelFormat &format,
-					   const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+					   const ShapeFrame *frame, int32 x, int32 y,
+					   const uint32 *map) {
 #include "ultima/ultima8/graphics/render_surface.inl"
 }
 
@@ -783,7 +784,8 @@ template<class uintX>
 void inline paintNoClipLogic(uint8 *pixels, int32 pitch,
 							 const Common::Rect &clipWindow,
 							 const Graphics::PixelFormat &format,
-							 const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+							 const ShapeFrame *frame, int32 x, int32 y,
+							 const uint32 *map) {
 #define NO_CLIPPING
 #include "ultima/ultima8/graphics/render_surface.inl"
 #undef NO_CLIPPING
@@ -793,7 +795,8 @@ template<class uintX>
 void inline paintTranslucentLogic(uint8 *pixels, int32 pitch,
 								  const Common::Rect &clipWindow,
 								  const Graphics::PixelFormat &format,
-								  const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+								  const ShapeFrame *frame, int32 x, int32 y,
+								  const uint32 *map, const uint32 *xform_map) {
 #define XFORM_SHAPES
 #include "ultima/ultima8/graphics/render_surface.inl"
 #undef XFORM_SHAPES
@@ -803,7 +806,8 @@ template<class uintX>
 void inline paintMirroredLogic(uint8 *pixels, int32 pitch,
 							   const Common::Rect &clipWindow,
 							   const Graphics::PixelFormat &format,
-							   const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool untformed_pal) {
+							   const ShapeFrame *frame, int32 x, int32 y, bool trans,
+							   const uint32 *map, const uint32 *xform_map) {
 #define FLIP_SHAPES
 #define XFORM_SHAPES
 #define XFORM_CONDITIONAL trans
@@ -819,7 +823,8 @@ template<class uintX>
 void inline paintInvisibleLogic(uint8 *pixels, int32 pitch,
 								const Common::Rect &clipWindow,
 								const Graphics::PixelFormat &format,
-								const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal) {
+								const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored,
+								const uint32 *map, const uint32 *xform_map) {
 #define FLIP_SHAPES
 #define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
@@ -839,7 +844,8 @@ template<class uintX>
 void inline paintHighlightLogic(uint8 *pixels, int32 pitch,
 								const Common::Rect &clipWindow,
 								const Graphics::PixelFormat &format,
-								const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
+								const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32,
+								const uint32 *map, const uint32 *xform_map) {
 #define FLIP_SHAPES
 #define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
@@ -864,7 +870,8 @@ template<class uintX>
 void inline paintHighlightInvisLogic(uint8 *pixels, int32 pitch,
 									 const Common::Rect &clipWindow,
 									 const Graphics::PixelFormat &format,
-									 const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
+									 const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32,
+									 const uint32 *map, const uint32 *xform_map) {
 #define FLIP_SHAPES
 #define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
@@ -893,10 +900,16 @@ void inline paintHighlightInvisLogic(uint8 *pixels, int32 pitch,
 // Desc: Standard shape drawing functions. Clips but doesn't do anything else
 //
 void RenderSurface::Paint(const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+	const ShapeFrame *frame = s->getFrame(framenum);
+	if (!frame || !s->getPalette())
+		return;
+
+	const uint32 *map = untformed_pal ? s->getPalette()->_native_untransformed : s->getPalette()->_native;
+
 	if (_surface->format.bytesPerPixel == 4)
-		paintLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, untformed_pal);
+		paintLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, untformed_pal);
+		paintLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
 }
 
 //
@@ -905,10 +918,16 @@ void RenderSurface::Paint(const Shape *s, uint32 framenum, int32 x, int32 y, boo
 // Desc: Standard shape drawing functions. Doesn't clip
 //
 void RenderSurface::PaintNoClip(const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+	const ShapeFrame *frame = s->getFrame(framenum);
+	if (!frame || !s->getPalette())
+		return;
+
+	const uint32 *map = untformed_pal ? s->getPalette()->_native_untransformed : s->getPalette()->_native;
+
 	if (_surface->format.bytesPerPixel == 4)
-		paintNoClipLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, untformed_pal);
+		paintNoClipLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintNoClipLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, untformed_pal);
+		paintNoClipLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
 }
 
 //
@@ -917,10 +936,17 @@ void RenderSurface::PaintNoClip(const Shape *s, uint32 framenum, int32 x, int32 
 // Desc: Standard shape drawing functions. Clips and XForms
 //
 void RenderSurface::PaintTranslucent(const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+	const ShapeFrame *frame = s->getFrame(framenum);
+	if (!frame || !s->getPalette())
+		return;
+
+	const uint32 *map = untformed_pal ? s->getPalette()->_native_untransformed : s->getPalette()->_native;
+	const uint32 *xform_map = untformed_pal ? s->getPalette()->_xform_untransformed : s->getPalette()->_xform;
+
 	if (_surface->format.bytesPerPixel == 4)
-		paintTranslucentLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, untformed_pal);
+		paintTranslucentLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintTranslucentLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, untformed_pal);
+		paintTranslucentLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map, xform_map);
 }
 
 //
@@ -929,10 +955,17 @@ void RenderSurface::PaintTranslucent(const Shape *s, uint32 framenum, int32 x, i
 // Desc: Standard shape drawing functions. Clips, Flips and conditionally XForms
 //
 void RenderSurface::PaintMirrored(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool untformed_pal) {
+	const ShapeFrame *frame = s->getFrame(framenum);
+	if (!frame || !s->getPalette())
+		return;
+
+	const uint32 *map = untformed_pal ? s->getPalette()->_native_untransformed : s->getPalette()->_native;
+	const uint32 *xform_map = untformed_pal ? s->getPalette()->_xform_untransformed : s->getPalette()->_xform;
+
 	if (_surface->format.bytesPerPixel == 4)
-		paintMirroredLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, untformed_pal);
+		paintMirroredLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintMirroredLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, untformed_pal);
+		paintMirroredLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, map, xform_map);
 }
 
 //
@@ -941,10 +974,17 @@ void RenderSurface::PaintMirrored(const Shape *s, uint32 framenum, int32 x, int3
 // Desc: Standard shape drawing functions. Invisible, Clips, and conditionally Flips and Xforms
 //
 void RenderSurface::PaintInvisible(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal) {
+	const ShapeFrame *frame = s->getFrame(framenum);
+	if (!frame || !s->getPalette())
+		return;
+
+	const uint32 *map = untformed_pal ? s->getPalette()->_native_untransformed : s->getPalette()->_native;
+	const uint32 *xform_map = untformed_pal ? s->getPalette()->_xform_untransformed : s->getPalette()->_xform;
+
 	if (_surface->format.bytesPerPixel == 4)
-		paintInvisibleLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, mirrored, untformed_pal);
+		paintInvisibleLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintInvisibleLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, mirrored, untformed_pal);
+		paintInvisibleLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, map, xform_map);
 }
 
 //
@@ -953,10 +993,17 @@ void RenderSurface::PaintInvisible(const Shape *s, uint32 framenum, int32 x, int
 // Desc: Standard shape drawing functions. Highlights, Clips, and conditionally Flips and Xforms
 //
 void RenderSurface::PaintHighlight(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
+	const ShapeFrame *frame = s->getFrame(framenum);
+	if (!frame || !s->getPalette())
+		return;
+
+	const uint32 *map = untformed_pal ? s->getPalette()->_native_untransformed : s->getPalette()->_native;
+	const uint32 *xform_map = untformed_pal ? s->getPalette()->_xform_untransformed : s->getPalette()->_xform;
+
 	if (_surface->format.bytesPerPixel == 4)
-		paintHighlightLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, mirrored, col32, untformed_pal);
+		paintHighlightLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintHighlightLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, mirrored, col32, untformed_pal);
+		paintHighlightLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
 }
 
 //
@@ -965,10 +1012,17 @@ void RenderSurface::PaintHighlight(const Shape *s, uint32 framenum, int32 x, int
 // Desc: Standard shape drawing functions. Highlights, Clips, and conditionally Flips and Xforms. 50% translucent
 //
 void RenderSurface::PaintHighlightInvis(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
+	const ShapeFrame *frame = s->getFrame(framenum);
+	if (!frame || !s->getPalette())
+		return;
+
+	const uint32 *map = untformed_pal ? s->getPalette()->_native_untransformed : s->getPalette()->_native;
+	const uint32 *xform_map = untformed_pal ? s->getPalette()->_xform_untransformed : s->getPalette()->_xform;
+
 	if (_surface->format.bytesPerPixel == 4)
-		paintHighlightInvisLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, mirrored, col32, untformed_pal);
+		paintHighlightInvisLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintHighlightInvisLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, s, framenum, x, y, trans, mirrored, col32, untformed_pal);
+		paintHighlightInvisLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
 }
 
 } // End of namespace Ultima8
