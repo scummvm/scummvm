@@ -227,6 +227,7 @@ public:
 	int getMouseWord(int x, int y);
 	int getMouseItem(int x, int y);
 	int getMouseLine(int x, int y);
+	Common::U32String getMouseLink(int x, int y);
 
 private:
 	MacFontRun getTextChunks(int start, int end);
@@ -263,7 +264,7 @@ public:
 	void insertChar(byte c, int *row, int *col);
 
 	void getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uint &offset);
-	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col);
+	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int *chunk_ = nullptr);
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);
