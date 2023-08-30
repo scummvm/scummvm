@@ -2620,7 +2620,7 @@ void Actor_v0::startAnimActor(int f) {
 
 void Actor_v7::startAnimActor(int f) {
 	if (_vm->_game.id == GID_FT && _vm->_game.platform == Common::kPlatformDOS && (_vm->_game.features & GF_DEMO)) {
-		Actor::animateActor(f);
+		Actor::startAnimActor(f);
 		return;
 	}
 
