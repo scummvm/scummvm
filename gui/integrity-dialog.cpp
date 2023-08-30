@@ -318,23 +318,38 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::St
 		else {
 			const Common::Path filename(entry.getPath());
 			auto macFile = Common::MacResManager();
-			if (macFile.openFileOrDataFork(filename)) {
-				auto originalStream = macFile.openFileOrDataFork(filename);
-				auto fileStream = originalStream;
+			if (macFile.open(filename)) {
+				auto fileStream = macFile.openFileOrDataFork(filename);
+				Common::SeekableReadStream *dataForkStream;
+				if (macFile.isMacBinary(*fileStream))
+					dataForkStream = macFile.openDataForkFromMacBinary(fileStream);
+				else
+					dataForkStream = fileStream;
 
 				Common::Array<Common::String> fileChecksum = {filename.toString()};
+
+				// Data fork
 				// Various checksizes
 				for (auto size : {0, 5000, 1024 * 1024}) {
-					fileChecksum.push_back(Common::computeStreamMD5AsString(*(fileStream), size).c_str());
-					fileStream->seek(0);
+					fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream, size).c_str());
+					dataForkStream->seek(0);
 				}
 				// Tail checksums with checksize 5000
-				fileStream->seek(-5000, SEEK_END);
-				fileChecksum.push_back(Common::computeStreamMD5AsString(*(fileStream)).c_str());
+				dataForkStream->seek(-5000, SEEK_END);
+				fileChecksum.push_back(Common::computeStreamMD5AsString(*dataForkStream).c_str());
+
+				// Resource fork
+				if (macFile.hasResFork()) {
+					// Various checksizes
+					for (auto size : {0, 5000, 1024 * 1024}) {
+						fileChecksum.push_back(macFile.computeResForkMD5AsString(size).c_str());
+					}
+					// Tail checksums with checksize 5000
+					fileChecksum.push_back(macFile.computeResForkMD5AsString(5000, true).c_str());
+					fileChecksums.push_back(fileChecksum);
+				}
 
 				g_checksum_state->calculatedSize += fileStream->size();
-
-				fileChecksums.push_back(fileChecksum);
 			}
 
 			Common::File file;
@@ -392,7 +407,11 @@ Common::JSONValue *IntegrityDialog::generateJSONRequest(Common::String gamePath,
 		file.setVal("size", new Common::JSONValue((long long)fileSize));
 
 		Common::JSONArray checksums;
-		Common::StringArray checkcodes = {"md5", "md5-5000", "md5-1M", "md5-t-5000"};
+		Common::StringArray checkcodes;
+		if (fileChecksum.size() == 8)
+			checkcodes = {"md5-d", "md5-d-5000", "md5-d-1M", "md5-dt-5000", "md5-r", "md5-r-5000", "md5-r-1M", "md5-rt-5000"};
+		else
+			checkcodes = {"md5", "md5-5000", "md5-1M", "md5-t-5000"};
 
 		int index = -1;
 		for (Common::String val : fileChecksum) {
