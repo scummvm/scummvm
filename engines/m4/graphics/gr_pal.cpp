@@ -23,6 +23,7 @@
 #include "graphics/palette.h"
 #include "common/textconsole.h"
 #include "m4/graphics/gr_pal.h"
+#include "m4/core/errors.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -80,6 +81,10 @@ void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors) {
 	g_system->getPaletteManager()->setPalette((const byte *)pal + first_color * 3,
 		first_color, num_colors);
 	g_system->updateScreen();
+}
+
+void gr_pal_set_range(int first_color, int num_colors) {
+	gr_pal_set_range(_G(master_palette), first_color, num_colors);
 }
 
 void  gr_pal_set_entry(int32 index, RGB8 *entry) {
@@ -172,6 +177,18 @@ void gr_backup_palette() {
 
 void gr_restore_palette() {
 	Common::copy(_G(backup_palette), _G(backup_palette) + 768, _G(master_palette));
+}
+
+void pal_mirror_colours(int first_color, int last_color, RGB8 *pal) {
+	if (first_color < 0 || last_color > 255 || first_color > last_color)
+		error_show(FL, 'Burg', "pal_mirror_colours index error");
+
+	int num_colors = last_color - first_color + 1;
+	for (int index = 0; index < num_colors; ++index) {
+		RGB8 *destP = pal + (last_color + num_colors - index);
+		RGB8 *srcP = pal + (first_color + index);
+		*destP = *srcP;
+	}
 }
 
 } // namespace M4

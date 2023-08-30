@@ -54,6 +54,7 @@ extern void gr_color_set(int32 c);
 extern byte gr_color_get_current();
 
 extern void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors);
+extern void gr_pal_set_range(int first_color, int num_colors);
 extern void gr_pal_set(RGB8 *pal);
 extern void gr_pal_set_RGB8(RGB8 *entry, int r, int g, int b);
 extern void gr_pal_set_entry(int32 index, RGB8 *entry);
@@ -64,6 +65,8 @@ extern void gr_pal_interface(RGB8 *fixpal);
 extern void gr_pal_reset_ega_colors(RGB8 *pal);
 extern void gr_backup_palette();
 extern void gr_restore_palette();
+
+extern void pal_mirror_colours(int first_color, int last_color, RGB8 *pal);
 
 } // namespace M4
 

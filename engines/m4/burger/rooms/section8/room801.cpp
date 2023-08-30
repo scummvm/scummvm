@@ -257,7 +257,361 @@ void Room801::daemon() {
 		pal_fade_init(-1);
 		break;
 
-	// TODO: More cases
+	case 11:
+		digi_unload_stream_breaks(SERIES8);
+		compact_mem_and_report();
+
+		if (_G(flags)[NEURO_TEST_COUNTER] == 0) {
+			kernel_trigger_dispatch_now(13);
+		} else {
+			_G(wilbur_should) = getWilburShould();
+			_val2 = 2;
+			_val3 = 2;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(16);
+			kernel_trigger_dispatch_now(15);
+
+			loadSeries1();
+			kernel_timing_trigger(6, 18);
+		}
+		break;
+
+	case 12:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(13, 1);
+		break;
+
+	case 13:
+		kernel_trigger_dispatch_now(41);
+		loadSeries1();
+		loadSeries2();
+
+		_G(wilbur_should) = getWilburShould();
+		_val2 = 2;
+		_val3 = 2;
+
+		_series9 = series_play("804FL01", 2);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(16);
+		kernel_trigger_dispatch_now(15);
+		conv_load_and_prepare("conv80", 18);
+		player_set_commands_allowed(true);
+		conv_play_curr();
+		break;
+
+	case 14:
+		if (conv_sound_to_play()) {
+			int who = conv_whos_talking();
+			int node = conv_current_node();
+			int entry = conv_current_entry();
+
+			if (who <= 0) {
+				if ((node == 3 && entry == 0) || (node == 4 && entry == 0) ||
+					(node == 6 && entry == 1) || (node == 8 && entry == 0)) {
+					_val3 = 13;
+				} else {
+					_val2 = 13;
+				}
+			} else if (who == 1) {
+				_val3 = 13;
+			}
+		}
+		break;
+
+	case 15:
+		switch (_val2) {
+		case 3:
+			terminateMachineAndNull(_series10);
+			_series10 = series_show("804FLX01", 1);
+			digi_play("804_006", 2);
+			kernel_timing_trigger(60, 19);
+			break;
+
+		case 12:
+			terminateMachineAndNull(_series10);
+			_val2 = 2;
+			kernel_trigger_dispatch_now(15);
+			conv_resume_curr();
+			break;
+
+		case 13:
+			_val2 = 12;
+			_G(wilbur_should) = 6;
+			_series10 = series_play("804FLT01", 1, 4);
+			digi_play(conv_sound_to_play(), 1, 255, 15);
+			break;
+
+		default:
+			_val2 = 2;
+			_series10 = series_show("804FL01", 1, 0, 15, 30, 0);
+			break;
+		}
+		break;
+
+	case 16:
+		switch (_val3) {
+		case 2:
+			if (imath_ranged_rand(0, 15) <= 12) {
+				_val3 = 2;
+				_series11 = series_show("804ZL01", 1, 0, 16);
+			} else {
+				_val3 = 1;
+				kernel_trigger_dispatch_now(16);
+			}
+			break;
+
+		case 12:
+			terminateMachineAndNull(_series11);
+			_val3 = 2;
+			kernel_trigger_dispatch_now(16);
+			conv_resume_curr();
+			break;
+
+		case 13:
+			_val3 = 12;
+			_G(wilbur_should) = 4;
+			_series11 = series_play("804ZLT01", 1, 4);
+			digi_play(conv_sound_to_play(), 1, 255, 16);
+			break;
+
+		default:
+			_val3 = 2;
+			_series11 = series_play("804ZFX01", 1, 0, 16);
+			break;
+		}
+		break;
+
+	case  18:
+		terminateMachineAndNull(_series10);
+		terminateMachineAndNull(_series9);
+		_val2 = 3;
+		_series10 = series_play("804FLX01", 1, 16, -1, 6, 0, 100, 0, 0, 0, 7);
+		kernel_timing_trigger(180, 15);
+		break;
+
+	case 19:
+		pal_fade_set_start(0);
+
+		terminateMachineAndNull(_series12);
+		terminateMachineAndNull(_series10);
+		terminateMachineAndNull(_series11);
+
+		freeSeries1();
+		digi_unload_stream_breaks(SERIES7);
+		kernel_trigger_dispatch_now(20);
+		break;
+
+	case 20:
+		player_set_commands_allowed(false);
+		digi_preload_stream_breaks(SERIES5);
+		digi_preload("806w001");
+		adv_kill_digi_between_rooms(false);
+		series_stream_with_breaks(SERIES5, "807A", 6, 1, 21);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 21:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 16);
+		digi_unload_stream_breaks(SERIES9);
+		break;
+
+	case 22:
+		compact_mem_and_report();
+		kernel_trigger_dispatch_now(23);
+		break;
+
+	case 23:
+		if (_G(flags)[GLB_TEMP_5] == 1) {
+			kernel_trigger_dispatch_now(24);
+		} else if (_G(flags)[NEURO_TEST_COUNTER] <= 2) {
+			digi_unload("804_003");
+			digi_unload("807_002");
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("806w001", 1, 128, -1, 806);
+			digi_play_loop("807_003", 2, 255, -1, 807);
+			digi_play_loop("807_001", 3, 255, -1, 807);
+
+			_G(game).new_room = 802;
+		} else {
+			kernel_trigger_dispatch_now(g10027);
+		}
+		break;
+
+	case 24:
+		series_stream_with_breaks(SERIES1, "805A", 6, 1, 25);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 25:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 26);
+		break;
+
+	case 26:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(27, 1);
+		break;
+
+	case 27:
+		digi_unload_stream_breaks(SERIES5);
+		kernel_trigger_dispatch_now(41);
+		series_stream_with_breaks(SERIES2, "806B", 6, 1, 28);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 28:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 29);
+		break;
+
+	case 29:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(30, 1);
+		break;
+
+	case 30:
+		digi_unload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES3, "803c", 6, 1, 31);
+		pal_fade_init(0, 255, 100, 30, -1);
+		kernel_timing_trigger(1, 40);
+		break;
+
+	case 31:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 32);
+		break;
+
+	case 32:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(33, 1);
+		break;
+
+	case 33:
+		pal_cycle_stop();
+		digi_unload_stream_breaks(SERIES2);
+		series_stream_with_breaks(SERIES4, "802C", 6, 1, 34);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 34:
+		pal_fade_set_start(0);
+		digi_unload_stream_breaks(SERIES3);
+		kernel_timing_trigger(6, 35);
+		break;
+
+	case 35:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(36, 1);
+		break;
+
+	case 36:
+		_G(flags)[ROOM101_FLAG2] = 1;
+		adv_kill_digi_between_rooms(1);
+		kernel_trigger_dispatch_now(g10027);
+		break;
+
+	case 37:
+		pal_fade_init(30);
+		break;
+
+	case 38:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, -1);
+		break;
+
+	case 39:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		break;
+		
+	case 40:
+		pal_mirror_colours(119, 112, _G(master_palette));
+		gr_pal_set_range(119, 8);
+		pal_cycle_init(119, 126, 6, -1, -1);
+		break;
+
+	case 41:
+		digi_play_loop("800_001", 3, 48, -1, 800);
+		break;
+
+	case 42:
+		if (_G(flags)[GLB_TEMP_5] != 1)
+			digi_play("806w001", 1, 128);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_val1) {
+		case 9:
+			switch (_G(wilbur_should)) {
+			case 7:
+				_series12 = series_play("804WI04", 0x200, 2, gCHANGE_WILBUR_ANIMATION);
+				_val1 = 11;
+				break;
+
+			default:
+				_G(wilbur_should) = getWilburShould();
+				_series12 = series_show("804Wi04", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 30, 1);
+				break;
+			}
+			break;
+
+		case 10:
+			switch (_G(wilbur_should)) {
+			case 4:
+			case 7:
+				_series12 = series_play("804WI05", 0x200, 2, gCHANGE_WILBUR_ANIMATION);
+				_val1 = 11;
+				break;
+
+			case 5:
+				_G(wilbur_should) = 12;
+				_series12 = series_play("804WI01", 0x200, 4);
+				digi_play(conv_sound_to_play(), 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 12:
+				terminateMachineAndNull(_series12);
+				_G(wilbur_should) = getWilburShould();
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				conv_resume_curr();
+				break;
+
+			default:
+				_G(wilbur_should) = getWilburShould();
+				_series12 = series_show("804WI05", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 30, 3);
+				break;
+			}
+			break;
+
+		case 11:
+			switch (_G(wilbur_should)) {
+			case 4:
+				_series12 = series_play("804WI04", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				_val1 = 9;
+				break;
+
+			case 5:
+			case 6:
+				_series12 = series_play("804WI05", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				_val1 = 10;
+				break;
+
+			case 7:
+				_G(wilbur_should) = getWilburShould();
+				_series12 = series_play("804WI03", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			default:
+				_G(wilbur_should) = getWilburShould();
+				_series12 = series_play("804WI02", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;
@@ -271,6 +625,51 @@ void Room801::parser() {
 		kernel_trigger_dispatch_now(14);
 		_G(player).command_ready = false;
 	}
+}
+
+int Room801::getWilburShould() const {
+	switch (imath_ranged_rand(0, 15)) {
+	case 1:
+	case 2:
+		return 7;
+	case 6:
+	case 7:
+		return 6;
+	case 12:
+		return 4;
+	default:
+		return 8;
+	}
+}
+
+void Room801::loadSeries1() {
+	_series5 = series_play("804FX01", 0x400, 0, -1, 10);
+	_series6 = series_play("804FX02", 0x400, 0, -1, 45);
+	_series7 = series_play("804FX03", 0x400, 0, -1, 10);
+	_series8 = series_play("804FX04", 0x400, 0, -1, 10);
+}
+
+void Room801::loadSeries2() {
+	static const char *NAMES[16] = {
+		"804FX01", "804FX02", "804FX03", "804FX04", "804Wi01", "804Wi02",
+		"804Wi03", "804Wi04", "804Wi05", "804FL01", "804ZL01", "804FL01",
+		"804FLT01", "804ZLT01", "804FLX01", "804ZFX01"
+	};
+
+	digi_preload("804_005");
+	for (int i = 0; i < 16; ++i)
+		series_load(NAMES[i]);
+}
+
+void Room801::freeSeries1() {
+	terminateMachineAndNull(_series5);
+	terminateMachineAndNull(_series6);
+	terminateMachineAndNull(_series7);
+	terminateMachineAndNull(_series8);
+	series_unload(_series1);
+	series_unload(_series2);
+	series_unload(_series3);
+	series_unload(_series4);
 }
 
 } // namespace Rooms
