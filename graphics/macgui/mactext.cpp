@@ -742,16 +742,18 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					current_format.palinfo1 = palinfo1;
 					current_format.palinfo2 = palinfo2;
 					current_format.palinfo3 = palinfo3;
+					current_format.fgcolor  = _wm->findBestColor(palinfo1 & 0xff, palinfo2 & 0xff, palinfo3 & 0xff);
 
-					D(9, "** splitString[: %02x%02x%02x", palinfo1, plinfo2, plainfo3);
+					D(9, "** splitString[: %08x", fgcolor);
 				} else if (*s == ']') { // \016]  -- setting default color
 					s++;
 
 					current_format.palinfo1 = _defaultFormatting.palinfo1;
 					current_format.palinfo2 = _defaultFormatting.palinfo2;
 					current_format.palinfo3 = _defaultFormatting.palinfo3;
+					current_format.fgcolor = _defaultFormatting.fgcolor;
 
-					D(9, "** splitString]: %02x%02x%02x", current_format.palinfo1, current_format.plinfo2, current_format.plainfo3);
+					D(9, "** splitString]: %08x", current_format.fgcolor);
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 
@@ -762,10 +764,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					s = readHex(&palinfo2, s, 4);
 					s = readHex(&palinfo3, s, 4);
 
-					D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p: %02x%02x%02x",
-							fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
 					current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+					D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, fg: %04x",
+							fontId, textSlant, fontSize, current_format.fgcolor);
 
 					// So far, we enforce single font here, though in the future, font size could be altered
 					if (!_macFontMode)
