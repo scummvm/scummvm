@@ -346,6 +346,7 @@ inline uint32x4_t blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32
 	case kTintLightBlenderMode: // see BITMAP member function blendTintSprite
 		return blendTintSpriteSIMD(srcCols, destCols, alphas, true);
 	}
+	return srcCols;
 }
 
 inline uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) {
@@ -360,14 +361,15 @@ inline uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, ui
 		ch1 = vandq_u16(vmovq_n_u16(0xff), vceqq_u16(alphas, vmovq_n_u16(0)));
 		ch2 = vandq_u16(alphas, vcgtq_u16(alphas, vmovq_n_u16(0)));
 		alphas = vorrq_u16(ch1, ch2);
+		// fall through
 	case kRgbToRgbBlender:
 	case kAlphaPreservedBlenderMode:
 		return rgbBlendSIMD2Bpp(srcCols, destCols, alphas);
 	case kRgbToArgbBlender:
-		mask = vorrq_u32(vceqq_u32(alphas, vmovq_n_u32(0)), vceqq_u32(alphas, vmovq_n_u32(255)));
-		ch1 = vandq_u32(srcCols, mask);
-		ch2 = vandq_u32(rgbBlendSIMD2Bpp(srcCols, destCols, alphas), vmvnq_u32(mask));
-		return vorrq_u32(ch1, ch2);
+		mask = vorrq_u16(vceqq_u16(alphas, vmovq_n_u16(0)), vceqq_u16(alphas, vmovq_n_u16(255)));
+		ch1 = vandq_u16(srcCols, mask);
+		ch2 = vandq_u16(rgbBlendSIMD2Bpp(srcCols, destCols, alphas), vmvnq_u16(mask));
+		return vorrq_u16(ch1, ch2);
 	case kTintBlenderMode:
 	case kTintLightBlenderMode:
 		uint32x4_t srcColsLo = simd2BppTo4Bpp(vget_low_u16(srcCols));
@@ -380,6 +382,7 @@ inline uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, ui
 		uint16x4_t hi = simd4BppTo2Bpp(blendTintSpriteSIMD(srcColsHi, destColsHi, alphasHi, _G(_blender_mode) == kTintLightBlenderMode));
 		return vcombine_u16(lo, hi);
 	}
+	return srcCols;
 }
 
 template<int DestBytesPerPixel, int SrcBytesPerPixel>
@@ -784,7 +787,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 template<bool Scale>
 static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
-	uint8x16_t transColors = vld1q_dup_u8(&args.transColor);
+	uint8x16_t transColors = vmovq_n_u8(args.transColor);
 
 	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
 	uint32x4_t scaleAdds1 = {0, (uint32)args.scaleX, (uint32)args.scaleX*2, (uint32)args.scaleX*3};
