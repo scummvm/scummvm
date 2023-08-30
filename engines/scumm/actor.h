@@ -212,7 +212,7 @@ protected:
 	virtual void setupActorScale();
 
 	void setBox(int box);
-	virtual int updateActorDirection(bool is_walking);
+	int updateActorDirection(bool is_walking);
 
 public:
 	void adjustActorPos();
@@ -370,7 +370,7 @@ public:
 	void startAnimActor(int frame) override;
 
 private:
-	int updateActorDirection(bool) override;
+	int updateActorDirection();
 };
 
 enum ActorV0MiscFlags {

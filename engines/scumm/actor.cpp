@@ -1358,7 +1358,7 @@ void Actor_v7::walkActor() {
 		Actor::walkActor();
 
 	if (_moving & MF_TURN) {
-		int newDir = updateActorDirection(false);
+		int newDir = updateActorDirection();
 		if (_facing != newDir)
 			setDirection(newDir);
 		else
@@ -1490,7 +1490,7 @@ int Actor::updateActorDirection(bool is_walking) {
 	return dir;
 }
 
-int Actor_v7::updateActorDirection(bool) {
+int Actor_v7::updateActorDirection() {
 	int dirType = _vm->_costumeLoader->hasManyDirections(_costume);
 	int from = toSimpleDir(dirType, _facing);
 	int to = toSimpleDir(dirType, _targetFacing);
