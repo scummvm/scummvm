@@ -560,6 +560,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 	// Sync sound data
 }
 
+UI::Clock *Scene::getClock() {
+	return g_nancy->getGameType() != kGameTypeNancy5 ? (UI::Clock *)_clock : nullptr;
+}
+
 void Scene::init() {
 	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
 	const HINT *hintData = (const HINT *)g_nancy->getEngineData("HINT");
@@ -843,8 +847,8 @@ void Scene::handleInput() {
 	}
 
 	// Handle clock before viewport since it overlaps the left hotspot in TVD
-	if (_clock) {
-		_clock->handleInput(input);
+	if (getClock()) {
+		getClock()->handleInput(input);
 	}
 
 	_viewport.handleInput(input);
@@ -936,7 +940,13 @@ void Scene::initStaticData() {
 	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
-		_clock = new UI::Clock();
+		if (g_nancy->getGameType() == kGameTypeNancy5) {
+			// Nancy 5 uses a custom "clock" that mostly just indicates the in-game day
+			_clock = new UI::Nancy5Clock();
+		} else {
+			_clock = new UI::Clock();
+		}
+		
 		_clock->init();
 	}
 

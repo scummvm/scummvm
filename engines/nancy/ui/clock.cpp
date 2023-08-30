@@ -186,5 +186,51 @@ void Clock::ClockAnim::onTrigger() {
 	}
 }
 
+void Nancy5Clock::init() {
+	_clockData = (const CLOK *)g_nancy->getEngineData("CLOK");
+	assert(_clockData);
+
+	setVisible(true);
+}
+
+void Nancy5Clock::updateGraphics() {
+	// Show current day
+	if (_currentDay < 3) {
+		if (NancySceneState.getEventFlag(59, true) && _currentDay != 2) {
+			_currentDay = 2;
+			_drawSurface.create(g_nancy->_graphicsManager->_object0, _clockData->nancy5DaySrcs[2]);
+			moveTo(_clockData->staticImageDest);
+			setVisible(true);
+			setTransparent(true);
+		} else if (NancySceneState.getEventFlag(58, true) && _currentDay != 1) {
+			_currentDay = 1;
+			_drawSurface.create(g_nancy->_graphicsManager->_object0, _clockData->nancy5DaySrcs[1]);
+			moveTo(_clockData->staticImageDest);
+			setVisible(true);
+			setTransparent(true);
+		} else if (NancySceneState.getEventFlag(57, true) && _currentDay != 0) {
+			_currentDay = 0;
+			_drawSurface.create(g_nancy->_graphicsManager->_object0, _clockData->nancy5DaySrcs[0]);
+			moveTo(_clockData->staticImageDest);
+			setVisible(true);
+			setTransparent(true);
+		}
+	}
+
+	// Show demolition countdown
+	if (NancySceneState.getEventFlag(320, true)) {
+		_currentDay = 3;
+		Time timerTime = NancySceneState.getTimerTime();
+		int32 countdownFrameID = MIN<int32>((uint32)timerTime / (_clockData->nancy5CountdownTime / 12), 13);
+		if (countdownFrameID != _countdownProgress) {
+			_countdownProgress = countdownFrameID;
+
+			_drawSurface.create(g_nancy->_graphicsManager->_object0, _clockData->nancy5CountdownSrcs[_countdownProgress]);
+			moveTo(_clockData->staticImageDest);
+			setVisible(true);
+		}
+	}
+}
+
 } // End of namespace UI
 } // End of namespace Nancy

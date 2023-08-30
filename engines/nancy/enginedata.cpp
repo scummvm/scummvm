@@ -530,6 +530,12 @@ CLOK::CLOK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	s.syncAsUint32LE(timeToKeepOpen);
 	s.syncAsUint16LE(frameTime);
+
+	s.skip(2, kGameTypeNancy5);
+	s.syncAsUint32LE(nancy5CountdownTime, kGameTypeNancy5);
+	s.skip(2, kGameTypeNancy5);
+	readRectArray(s, nancy5DaySrcs, 3, kGameTypeNancy5);
+	readRectArray(s, nancy5CountdownSrcs, 13, kGameTypeNancy5);
 }
 
 SPEC::SPEC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

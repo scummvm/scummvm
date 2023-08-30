@@ -168,7 +168,7 @@ public:
 	UI::Viewport &getViewport() { return _viewport; }
 	UI::Textbox &getTextbox() { return _textbox; }
 	UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
-	UI::Clock *getClock() { return _clock; }
+	UI::Clock *getClock();
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
 
@@ -254,7 +254,7 @@ private:
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
-	UI::Clock *_clock;
+	RenderObject *_clock;
 
 	Common::Rect _mapHotspot;
 

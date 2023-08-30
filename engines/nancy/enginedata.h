@@ -296,6 +296,10 @@ struct CLOK : public EngineData {
 
 	uint32 timeToKeepOpen;
 	uint16 frameTime;
+
+	uint32 nancy5CountdownTime;
+	Common::Array<Common::Rect> nancy5DaySrcs;
+	Common::Array<Common::Rect> nancy5CountdownSrcs;
 };
 
 struct SPEC : public EngineData {
