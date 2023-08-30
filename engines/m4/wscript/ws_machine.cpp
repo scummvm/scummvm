@@ -779,7 +779,8 @@ void terminateMachine(machine *myMachine) {
 }
 
 void terminateMachineAndNull(machine *&m) {
-	terminateMachine(m);
+	if (m)
+		terminateMachine(m);
 	m = nullptr;
 }
 

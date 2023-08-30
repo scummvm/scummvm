@@ -34,7 +34,22 @@ private:
 	int _series2 = 0;
 	int _series3 = 0;
 	int _series4 = 0;
+	machine *_series5 = nullptr;
+	machine *_series6 = nullptr;
+	machine *_series7 = nullptr;
+	machine *_series8 = nullptr;
+	machine *_series9 = nullptr;
+	machine *_series10 = nullptr;
+	machine *_series11 = nullptr;
+	machine *_series12 = nullptr;
 	int _val1 = 10;
+	int _val2 = 0;
+	int _val3 = 0;
+
+	int getWilburShould() const;
+	void loadSeries1();
+	void loadSeries2();
+	void freeSeries1();
 
 public:
 	Room801() : Room() {}
