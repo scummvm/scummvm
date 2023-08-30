@@ -305,7 +305,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{ "44100 Hz", NULL },
 			{ NULL, NULL },
 		},
-		"48000"
+		"48000 Hz"
 	},
 	{
 		"scummvm_auto_performance_tuner",
