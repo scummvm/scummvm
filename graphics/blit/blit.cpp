@@ -224,7 +224,7 @@ bool crossBlit(byte *dst, const byte *src,
 	} else if (dstFmt.bytesPerPixel == 3) {
 		if (srcFmt.bytesPerPixel == 2) {
 			// We need to blit the surface from bottom right to top left here.
-			// This is neeeded, because when we convert to the same memory
+			// This is needed, because when we convert to the same memory
 			// buffer copying the surface from top left to bottom right would
 			// overwrite the source, since we have more bits per destination
 			// color than per source color.
@@ -296,7 +296,7 @@ bool crossKeyBlit(byte *dst, const byte *src,
 	} else if (dstFmt.bytesPerPixel == 3) {
 		if (srcFmt.bytesPerPixel == 2) {
 			// We need to blit the surface from bottom right to top left here.
-			// This is neeeded, because when we convert to the same memory
+			// This is needed, because when we convert to the same memory
 			// buffer copying the surface from top left to bottom right would
 			// overwrite the source, since we have more bits per destination
 			// color than per source color.
@@ -362,7 +362,7 @@ bool crossBlitMap(byte *dst, const byte *src,
 		crossBlitLogic1BppSource<uint16, 2, true, false>(dst, src, w, h, srcDelta, dstDelta, map, 0);
 	} else if (bytesPerPixel == 3) {
 		// We need to blit the surface from bottom right to top left here.
-		// This is neeeded, because when we convert to the same memory
+		// This is needed, because when we convert to the same memory
 		// buffer copying the surface from top left to bottom right would
 		// overwrite the source, since we have more bits per destination
 		// color than per source color.
@@ -371,7 +371,7 @@ bool crossBlitMap(byte *dst, const byte *src,
 		crossBlitLogic1BppSource<uint8, 3, true, false>(dst, src, w, h, srcDelta, dstDelta, map, 0);
 	} else if (bytesPerPixel == 4) {
 		// We need to blit the surface from bottom right to top left here.
-		// This is neeeded, because when we convert to the same memory
+		// This is needed, because when we convert to the same memory
 		// buffer copying the surface from top left to bottom right would
 		// overwrite the source, since we have more bits per destination
 		// color than per source color.
@@ -410,7 +410,7 @@ bool crossKeyBlitMap(byte *dst, const byte *src,
 		crossBlitLogic1BppSource<uint16, 2, true, true>(dst, src, w, h, srcDelta, dstDelta, map, key);
 	} else if (bytesPerPixel == 3) {
 		// We need to blit the surface from bottom right to top left here.
-		// This is neeeded, because when we convert to the same memory
+		// This is needed, because when we convert to the same memory
 		// buffer copying the surface from top left to bottom right would
 		// overwrite the source, since we have more bits per destination
 		// color than per source color.
