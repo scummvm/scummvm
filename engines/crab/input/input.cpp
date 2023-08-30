@@ -161,6 +161,22 @@ Common::Keymap* InputManager::getDefaultKeyMapsForUI() {
 	act->addDefaultInputMapping("JOY_A");
 	uiKeymap->addAction(act);
 
+	act = new Action("UI_BACK", _("Back"));
+	act->setCustomEngineActionEvent(IU_BACK);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	uiKeymap->addAction(act);
+
+	act = new Action("UI_NEXT", _("Next"));
+	act->setCustomEngineActionEvent(IU_NEXT);
+	act->addDefaultInputMapping("TAB");
+	uiKeymap->addAction(act);
+
+	act = new Action("UI_PREV", _("Previous"));
+	act->setCustomEngineActionEvent(IU_PREV);
+	act->addDefaultInputMapping("r");
+	uiKeymap->addAction(act);
+
 	act = new Action("REPLY1", _("Reply 1"));
 	act->setCustomEngineActionEvent(IU_REPLY_0);
 	act->addDefaultInputMapping("1");
@@ -189,6 +205,16 @@ Common::Keymap* InputManager::getDefaultKeyMapsForUI() {
 	act = new Action("REPLY6", _("Reply 6"));
 	act->setCustomEngineActionEvent(IU_REPLY_5);
 	act->addDefaultInputMapping("6");
+	uiKeymap->addAction(act);
+
+	act = new Action("NEXTPAGE", _("Next Page"));
+	act->setCustomEngineActionEvent(IU_PAGE_NEXT);
+	act->addDefaultInputMapping(".");
+	uiKeymap->addAction(act);
+
+	act = new Action("PREVPAGE", _("Previous Page"));
+	act->setCustomEngineActionEvent(IU_PAGE_PREV);
+	act->addDefaultInputMapping(",");
 	uiKeymap->addAction(act);
 
 	return uiKeymap;
