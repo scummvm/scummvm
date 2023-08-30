@@ -34,6 +34,9 @@ private:
 	int _val2 = 2;
 	int _val3 = 0;
 	int _val4 = 0;
+
+	void loadSeries();
+
 public:
 	Room802() : Room() {}
 	~Room802() override {}
