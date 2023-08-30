@@ -29,8 +29,8 @@ namespace Graphics {
 
 struct MDState {
 	Common::List<int> listNum;
+	uint32 linkr = 0, linkg = 0, linkb = 0;
 };
-
 
 void render_blockcode(Common::DataBuffer *ob, const Common::DataBuffer *text, const Common::DataBuffer *lang, void *opaque) {
 	if (!text)
@@ -201,7 +201,16 @@ int render_link(Common::DataBuffer *ob, const Common::DataBuffer *link, const Co
 	if (!link)
 		return 0;
 
-	warning("STUB: render_link(%s, %s, %s)", PR(link), title ? PR(title) : 0, content ? PR(content) : 0);
+	MDState *mdstate = (MDState *)opaque;
+	const Common::DataBuffer *text = content ? content : link;
+
+	Common::String res = Common::String::format("\001" "\016+%02x0" "\001\016[%04x%04x%04x"
+		"%s" "\001\016]" "\001\016-%02x0", kMacFontUnderline, mdstate->linkr, mdstate->linkg, mdstate->linkb,
+		Common::String((const char *)text->data , text->size).c_str(), kMacFontUnderline);
+
+	bufput(ob, res.c_str(), res.size());
+
+	debug(1, "render_link(%s, %s, %s)", PR(link), title ? PR(title) : 0, content ? PR(content) : 0);
 	return 1;
 }
 
@@ -287,6 +296,11 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	Common::DataBuffer *ob = Common::bufnew(1024);
 
 	MDState mdState;
+
+	// Set link color to blue
+	mdState.linkr = 0;
+	mdState.linkg = 0;
+	mdState.linkb = 0xff;
 
 	Common::SDMarkdown *md = sd_markdown_new(0, 16, &cb, &mdState);
 	sd_markdown_render(ob, ib->data, ib->size, md);
