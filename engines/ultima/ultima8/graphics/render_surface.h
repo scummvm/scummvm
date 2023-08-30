@@ -155,25 +155,25 @@ public:
 	//
 
 	//! Paint a Shape
-	void Paint(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
+	void Paint(const Shape *s, uint32 frame, int32 x, int32 y);
 
 	//! Paint a Shape without clipping
-	void PaintNoClip(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
+	void PaintNoClip(const Shape *s, uint32 frame, int32 x, int32 y);
 
 	//! Paint a Translucent Shape.
-	void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
+	void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y);
 
 	//! Paint a Mirrored Shape
-	void PaintMirrored(const Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false);
+	void PaintMirrored(const Shape *s, uint32 frame, int32 x, int32 y, bool trans = false);
 
 	//! Paint an Invisible Shape
-	void PaintInvisible(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false);
+	void PaintInvisible(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored);
 
 	//! Paint a Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	void PaintHighlight(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false);
+	void PaintHighlight(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
 
 	//! Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false);
+	void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
 
 	//
 	// Basic Line Drawing
