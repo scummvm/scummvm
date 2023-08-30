@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-28 21:00+0000\n"
+"POT-Creation-Date: 2023-08-29 22:31+0000\n"
 "PO-Revision-Date: 2023-08-13 10:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6971,14 +6971,14 @@ msgstr ""
 "de World of Xeen\n"
 "ou de Clouds of Xeen dans votre dossier du jeu Might and Magic 1"
 
-#: engines/mm/shared/utils/engine_data.cpp:279
-#: engines/ultima/shared/engine/data_archive.cpp:83
+#: engines/mm/shared/utils/engine_data.cpp:282
+#: engines/ultima/shared/engine/data_archive.cpp:86
 #, c-format
 msgid "Could not locate engine data %s"
 msgstr "Les données %s du moteur n'ont pas pu être trouvées"
 
-#: engines/mm/shared/utils/engine_data.cpp:297
-#: engines/ultima/shared/engine/data_archive.cpp:101
+#: engines/mm/shared/utils/engine_data.cpp:300
+#: engines/ultima/shared/engine/data_archive.cpp:104
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
