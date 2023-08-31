@@ -121,6 +121,16 @@ Common::Keymap* InputManager::getDefaultKeyMapsForGame() {
 	act->addDefaultInputMapping("JOY_A");
 	keymap->addAction(act);
 
+	act = new Action("ATTACK", _("Attack"));
+	act->setCustomEngineActionEvent(IG_ATTACK);
+	act->addDefaultInputMapping("z");
+	keymap->addAction(act);
+
+	act = new Action("BLOCK", _("Block"));
+	act->setCustomEngineActionEvent(IG_BLOCK);
+	act->addDefaultInputMapping("x");
+	keymap->addAction(act);
+
 	return keymap;
 }
 
@@ -209,12 +219,12 @@ Common::Keymap* InputManager::getDefaultKeyMapsForUI() {
 
 	act = new Action("NEXTPAGE", _("Next Page"));
 	act->setCustomEngineActionEvent(IU_PAGE_NEXT);
-	act->addDefaultInputMapping(".");
+	act->addDefaultInputMapping("PERIOD");
 	uiKeymap->addAction(act);
 
 	act = new Action("PREVPAGE", _("Previous Page"));
 	act->setCustomEngineActionEvent(IU_PAGE_PREV);
-	act->addDefaultInputMapping(",");
+	act->addDefaultInputMapping("COMMA");
 	uiKeymap->addAction(act);
 
 	return uiKeymap;
@@ -245,6 +255,21 @@ Common::Keymap* InputManager::getDefaultKeyMapsForHUD() {
 	act = new Action("TRAITS", _("Traits"));
 	act->setCustomEngineActionEvent(IG_CHARACTER);
 	act->addDefaultInputMapping("t");
+	hudKeymap->addAction(act);
+
+	act = new Action("PAUSE", _("Pause"));
+	act->setCustomEngineActionEvent(IG_PAUSE);
+	act->addDefaultInputMapping("p");
+	hudKeymap->addAction(act);
+
+	act = new Action("QUICKSAVE", _("Quick Save"));
+	act->setCustomEngineActionEvent(IG_QUICKSAVE);
+	act->addDefaultInputMapping("F5");
+	hudKeymap->addAction(act);
+
+	act = new Action("QUICKLOAD", _("Quick Load"));
+	act->setCustomEngineActionEvent(IG_QUICKLOAD);
+	act->addDefaultInputMapping("F9");
 	hudKeymap->addAction(act);
 
 	return hudKeymap;
