@@ -202,10 +202,6 @@ String punycode_encode(const U32String &src) {
 	return dst;
 }
 
-bool punycode_hasprefix(const String &src) {
-	return src.hasPrefix("xn--");
-}
-
 bool punycode_needEncode(const String &src) {
 	if (!src.size())
 		return false;
