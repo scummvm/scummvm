@@ -131,6 +131,7 @@ static const seriesStreamBreak SERIES7[] = {
 	STREAM_BREAK_END
 };
 
+
 void Room701::preload() {
 	_G(player).walker_in_this_scene = false;
 }
@@ -141,13 +142,161 @@ void Room701::init() {
 	pal_fade_set_start(0);
 	pal_fade_init(0, 255, 100, 40, -1);
 	digi_preload("700_001");
-
+	digi_preload_stream_breaks(SERIES1);
+	digi_preload_stream_breaks(SERIES2);
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room701::daemon() {
-}
+	switch (_G(kernel).trigger) {
+	case 1:
+		digi_play_loop("700_001", 3, 50, -1, 700);
+		series_stream_with_breaks(SERIES1, "700A", 6, 1, 2);
+		pal_fade_init(0, 255, 100, 30, -1);
+		kernel_timing_trigger(1, 23);
+		break;
 
-void Room701::parser() {
+	case 2:
+		pal_fade_set_start(0);
+		pal_cycle_stop();
+		kernel_timing_trigger(6, 3);
+		break;
+
+	case 3:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 4);
+		break;
+
+	case 4:
+		series_stream_with_breaks(SERIES2, "701A", 6, 1, 5);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 5:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 6);
+		break;
+
+	case 6:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 7);
+		break;
+
+	case 7:
+		digi_unload_stream_breaks(SERIES1);
+		digi_unload_stream_breaks(SERIES3);
+		series_stream_with_breaks(SERIES3, "700B", 6, 1, 8);
+		pal_fade_init(0, 255, 100, 30, -1);
+		kernel_timing_trigger(1, 24);
+		break;
+
+	case 8:
+		pal_fade_set_start(0);
+		pal_cycle_stop();
+		kernel_timing_trigger(6, 9);
+		break;
+
+	case 9:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 10);
+		break;
+
+	case 10:
+		digi_unload_stream_breaks(SERIES2);
+		digi_unload_stream_breaks(SERIES4);
+		series_stream_with_breaks(SERIES4, "702A", 6, 1, 11);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 11:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 12);
+		break;
+
+	case 12:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 13);
+		break;
+
+	case 13:
+		digi_unload_stream_breaks(SERIES3);
+		digi_unload_stream_breaks(SERIES5);
+		digi_preload_stream_breaks(SERIES6);
+		series_stream_with_breaks(SERIES5, "703A", 6, 1, 14);
+		break;
+
+	case 14:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 15);
+		break;
+
+	case 15:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 16);
+		break;
+
+	case 16:
+		digi_unload_stream_breaks(SERIES4);
+		series_stream_with_breaks(SERIES6, "702B", 6, 1, 17);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 17:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 18);
+		break;
+
+	case 18:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 19);
+		break;
+
+	case 19:
+		digi_unload_stream_breaks(SERIES5);
+		digi_unload_stream_breaks(SERIES6);
+		digi_preload_stream_breaks(SERIES7);
+		series_stream_with_breaks(SERIES7, "704A", 6, 1, 20);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 20:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 21);
+		break;
+
+	case 21:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 26);
+		break;
+
+	case 22:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 60, -1);
+		break;
+
+	case 23:
+		pal_mirror_colours(119, 121);
+		gr_pal_set_range(120, 8);
+		pal_cycle_init(119, 124, 10, -1, -1);
+		break;
+
+	case 24:
+		pal_mirror_colours(120, 122);
+		gr_pal_set_range(120, 8);
+		pal_cycle_init(120, 122, 10, -1, -1);
+		break;
+
+	case 25:
+		inv_give_to_player("MIRROR");
+		break;
+
+	case 26:
+		_G(game).new_room = 702;
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
