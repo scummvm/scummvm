@@ -61,47 +61,64 @@ inline uint16 createDitherTableIndex(const byte *clipTable, byte y, int8 u, int8
  */
 struct CodebookConverterRGB {
 	template<typename PixelInt>
-	static inline void decodeBlock1(byte codebookIndex, const CinepakStrip &strip, PixelInt *(&rows)[4], const byte *clipTable, const Graphics::PixelFormat &format) {
+	static inline void decodeBlock1(byte codebookIndex, const CinepakStrip &strip, PixelInt *dst, size_t dstPitch, const byte *clipTable, const Graphics::PixelFormat &format) {
 		const CinepakCodebook &codebook = strip.v1_codebook[codebookIndex];
+		const int8 u = codebook.u, v = codebook.v;
 
-		const PixelInt rgb0 = convertYUVToColor(clipTable, format, codebook.y[0], codebook.u, codebook.v);
-		rows[0][0] = rows[0][1] = rows[1][0] = rows[1][1] = rgb0;
+		const PixelInt rgb0 = convertYUVToColor(clipTable, format, codebook.y[0], u, v);
+		const PixelInt rgb1 = convertYUVToColor(clipTable, format, codebook.y[1], u, v);
 
-		const PixelInt rgb1 = convertYUVToColor(clipTable, format, codebook.y[1], codebook.u, codebook.v);
-		rows[0][2] = rows[0][3] = rows[1][2] = rows[1][3] = rgb1;
+		dst[0] = dst[1] = rgb0;
+		dst[2] = dst[3] = rgb1;
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
 
-		const PixelInt rgb2 = convertYUVToColor(clipTable, format, codebook.y[2], codebook.u, codebook.v);
-		rows[2][0] = rows[2][1] = rows[3][0] = rows[3][1] = rgb2;
+		dst[0] = dst[1] = rgb0;
+		dst[2] = dst[3] = rgb1;
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
 
-		const PixelInt rgb3 = convertYUVToColor(clipTable, format, codebook.y[3], codebook.u, codebook.v);
-		rows[2][2] = rows[2][3] = rows[3][2] = rows[3][3] = rgb3;
+		const PixelInt rgb2 = convertYUVToColor(clipTable, format, codebook.y[2], u, v);
+		const PixelInt rgb3 = convertYUVToColor(clipTable, format, codebook.y[3], u, v);
+
+		dst[0] = dst[1] = rgb2;
+		dst[2] = dst[3] = rgb3;
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
+
+		dst[0] = dst[1] = rgb2;
+		dst[2] = dst[3] = rgb3;
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
 	}
 
 	template<typename PixelInt>
-	static inline void decodeBlock4(const byte (&codebookIndex)[4], const CinepakStrip &strip, PixelInt *(&rows)[4], const byte *clipTable, const Graphics::PixelFormat &format) {
+	static inline void decodeBlock4(const byte (&codebookIndex)[4], const CinepakStrip &strip, PixelInt *dst, size_t dstPitch, const byte *clipTable, const Graphics::PixelFormat &format) {
 		const CinepakCodebook &codebook1 = strip.v4_codebook[codebookIndex[0]];
-		rows[0][0] = convertYUVToColor(clipTable, format, codebook1.y[0], codebook1.u, codebook1.v);
-		rows[0][1] = convertYUVToColor(clipTable, format, codebook1.y[1], codebook1.u, codebook1.v);
-		rows[1][0] = convertYUVToColor(clipTable, format, codebook1.y[2], codebook1.u, codebook1.v);
-		rows[1][1] = convertYUVToColor(clipTable, format, codebook1.y[3], codebook1.u, codebook1.v);
-
 		const CinepakCodebook &codebook2 = strip.v4_codebook[codebookIndex[1]];
-		rows[0][2] = convertYUVToColor(clipTable, format, codebook2.y[0], codebook2.u, codebook2.v);
-		rows[0][3] = convertYUVToColor(clipTable, format, codebook2.y[1], codebook2.u, codebook2.v);
-		rows[1][2] = convertYUVToColor(clipTable, format, codebook2.y[2], codebook2.u, codebook2.v);
-		rows[1][3] = convertYUVToColor(clipTable, format, codebook2.y[3], codebook2.u, codebook2.v);
+
+		dst[0] = convertYUVToColor(clipTable, format, codebook1.y[0], codebook1.u, codebook1.v);
+		dst[1] = convertYUVToColor(clipTable, format, codebook1.y[1], codebook1.u, codebook1.v);
+		dst[2] = convertYUVToColor(clipTable, format, codebook2.y[0], codebook2.u, codebook2.v);
+		dst[3] = convertYUVToColor(clipTable, format, codebook2.y[1], codebook2.u, codebook2.v);
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
+
+		dst[0] = convertYUVToColor(clipTable, format, codebook1.y[2], codebook1.u, codebook1.v);
+		dst[1] = convertYUVToColor(clipTable, format, codebook1.y[3], codebook1.u, codebook1.v);
+		dst[2] = convertYUVToColor(clipTable, format, codebook2.y[2], codebook2.u, codebook2.v);
+		dst[3] = convertYUVToColor(clipTable, format, codebook2.y[3], codebook2.u, codebook2.v);
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
 
 		const CinepakCodebook &codebook3 = strip.v4_codebook[codebookIndex[2]];
-		rows[2][0] = convertYUVToColor(clipTable, format, codebook3.y[0], codebook3.u, codebook3.v);
-		rows[2][1] = convertYUVToColor(clipTable, format, codebook3.y[1], codebook3.u, codebook3.v);
-		rows[3][0] = convertYUVToColor(clipTable, format, codebook3.y[2], codebook3.u, codebook3.v);
-		rows[3][1] = convertYUVToColor(clipTable, format, codebook3.y[3], codebook3.u, codebook3.v);
-
 		const CinepakCodebook &codebook4 = strip.v4_codebook[codebookIndex[3]];
-		rows[2][2] = convertYUVToColor(clipTable, format, codebook4.y[0], codebook4.u, codebook4.v);
-		rows[2][3] = convertYUVToColor(clipTable, format, codebook4.y[1], codebook4.u, codebook4.v);
-		rows[3][2] = convertYUVToColor(clipTable, format, codebook4.y[2], codebook4.u, codebook4.v);
-		rows[3][3] = convertYUVToColor(clipTable, format, codebook4.y[3], codebook4.u, codebook4.v);
+
+		dst[0] = convertYUVToColor(clipTable, format, codebook3.y[0], codebook3.u, codebook3.v);
+		dst[1] = convertYUVToColor(clipTable, format, codebook3.y[1], codebook3.u, codebook3.v);
+		dst[2] = convertYUVToColor(clipTable, format, codebook4.y[0], codebook4.u, codebook4.v);
+		dst[3] = convertYUVToColor(clipTable, format, codebook4.y[1], codebook4.u, codebook4.v);
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
+
+		dst[0] = convertYUVToColor(clipTable, format, codebook3.y[2], codebook3.u, codebook3.v);
+		dst[1] = convertYUVToColor(clipTable, format, codebook3.y[3], codebook3.u, codebook3.v);
+		dst[2] = convertYUVToColor(clipTable, format, codebook4.y[2], codebook4.u, codebook4.v);
+		dst[3] = convertYUVToColor(clipTable, format, codebook4.y[3], codebook4.u, codebook4.v);
+		dst = (PixelInt *)((uint8 *)dst + dstPitch);
 	}
 };
 
@@ -109,38 +126,59 @@ struct CodebookConverterRGB {
  * The default codebook converter for 8bpp: palettized output.
  */
 struct CodebookConverterPalette {
-	static inline void decodeBlock1(byte codebookIndex, const CinepakStrip &strip, byte *(&rows)[4], const byte *clipTable, const Graphics::PixelFormat &format) {
+	static inline void decodeBlock1(byte codebookIndex, const CinepakStrip &strip, byte *dst, size_t dstPitch, const byte *clipTable, const Graphics::PixelFormat &format) {
 		const CinepakCodebook &codebook = strip.v1_codebook[codebookIndex];
-		rows[0][0] = rows[0][1] = rows[1][0] = rows[1][1] = codebook.y[0];
-		rows[0][2] = rows[0][3] = rows[1][2] = rows[1][3] = codebook.y[1];
-		rows[2][0] = rows[2][1] = rows[3][0] = rows[3][1] = codebook.y[2];
-		rows[2][2] = rows[2][3] = rows[3][2] = rows[3][3] = codebook.y[3];
+
+		byte y0 = codebook.y[0], y1 = codebook.y[1];
+		byte y2 = codebook.y[2], y3 = codebook.y[3];
+
+		dst[0] = dst[1] = y0;
+		dst[2] = dst[3] = y1;
+		dst += dstPitch;
+
+		dst[0] = dst[1] = y0;
+		dst[2] = dst[3] = y1;
+		dst += dstPitch;
+
+		dst[0] = dst[1] = y2;
+		dst[2] = dst[3] = y3;
+		dst += dstPitch;
+
+		dst[0] = dst[1] = y2;
+		dst[2] = dst[3] = y3;
+		dst += dstPitch;
 	}
 
-	static inline void decodeBlock4(const byte (&codebookIndex)[4], const CinepakStrip &strip, byte *(&rows)[4], const byte *clipTable, const Graphics::PixelFormat &format) {
+	static inline void decodeBlock4(const byte (&codebookIndex)[4], const CinepakStrip &strip, byte *dst, size_t dstPitch, const byte *clipTable, const Graphics::PixelFormat &format) {
 		const CinepakCodebook &codebook1 = strip.v4_codebook[codebookIndex[0]];
-		rows[0][0] = codebook1.y[0];
-		rows[0][1] = codebook1.y[1];
-		rows[1][0] = codebook1.y[2];
-		rows[1][1] = codebook1.y[3];
-
 		const CinepakCodebook &codebook2 = strip.v4_codebook[codebookIndex[1]];
-		rows[0][2] = codebook2.y[0];
-		rows[0][3] = codebook2.y[1];
-		rows[1][2] = codebook2.y[2];
-		rows[1][3] = codebook2.y[3];
+
+		dst[0] = codebook1.y[0];
+		dst[1] = codebook1.y[1];
+		dst[2] = codebook2.y[0];
+		dst[3] = codebook2.y[1];
+		dst += dstPitch;
+
+		dst[0] = codebook1.y[2];
+		dst[1] = codebook1.y[3];
+		dst[2] = codebook2.y[2];
+		dst[3] = codebook2.y[3];
+		dst += dstPitch;
 
 		const CinepakCodebook &codebook3 = strip.v4_codebook[codebookIndex[2]];
-		rows[2][0] = codebook3.y[0];
-		rows[2][1] = codebook3.y[1];
-		rows[3][0] = codebook3.y[2];
-		rows[3][1] = codebook3.y[3];
-
 		const CinepakCodebook &codebook4 = strip.v4_codebook[codebookIndex[3]];
-		rows[2][2] = codebook4.y[0];
-		rows[2][3] = codebook4.y[1];
-		rows[3][2] = codebook4.y[2];
-		rows[3][3] = codebook4.y[3];
+
+		dst[0] = codebook3.y[0];
+		dst[1] = codebook3.y[1];
+		dst[2] = codebook4.y[0];
+		dst[3] = codebook4.y[1];
+		dst += dstPitch;
+
+		dst[0] = codebook3.y[2];
+		dst[1] = codebook3.y[3];
+		dst[2] = codebook4.y[2];
+		dst[3] = codebook4.y[3];
+		dst += dstPitch;
 	}
 };
 
@@ -148,44 +186,55 @@ struct CodebookConverterPalette {
  * Codebook converter that dithers in QT-style or VFW-style
  */
 struct CodebookConverterDithered {
-	static inline void decodeBlock1(byte codebookIndex, const CinepakStrip &strip, byte *(&rows)[4], const byte *clipTable, const Graphics::PixelFormat &format) {
+	static inline void decodeBlock1(byte codebookIndex, const CinepakStrip &strip, byte *dst, size_t dstPitch, const byte *clipTable, const Graphics::PixelFormat &format) {
 		const uint32 *colorPtr = (const uint32 *)(strip.v1_dither + codebookIndex);
-		*((uint32 *)rows[0]) = colorPtr[0];
-		*((uint32 *)rows[1]) = colorPtr[256];
-		*((uint32 *)rows[2]) = colorPtr[512];
-		*((uint32 *)rows[3]) = colorPtr[768];
+
+		*((uint32 *)dst) = colorPtr[0];
+		dst += dstPitch;
+
+		*((uint32 *)dst) = colorPtr[256];
+		dst += dstPitch;
+
+		*((uint32 *)dst) = colorPtr[512];
+		dst += dstPitch;
+
+		*((uint32 *)dst) = colorPtr[768];
+		dst += dstPitch;
 	}
 
-	static inline void decodeBlock4(const byte (&codebookIndex)[4], const CinepakStrip &strip, byte *(&rows)[4], const byte *clipTable, const Graphics::PixelFormat &format) {
-		const uint16 *colorPtr = (const uint16 *)(strip.v4_dither + codebookIndex[0]);
-		*((uint16 *)(rows[0] + 0)) = colorPtr[0];
-		*((uint16 *)(rows[1] + 0)) = colorPtr[1];
+	static inline void decodeBlock4(const byte (&codebookIndex)[4], const CinepakStrip &strip, byte *dst, size_t dstPitch, const byte *clipTable, const Graphics::PixelFormat &format) {
+		const uint16 *colorPtr1 = (const uint16 *)(strip.v4_dither + codebookIndex[0]);
+		const uint16 *colorPtr2 = (const uint16 *)(strip.v4_dither + codebookIndex[1]);
 
-		colorPtr = (const uint16 *)(strip.v4_dither + codebookIndex[1]);
-		*((uint16 *)(rows[0] + 2)) = colorPtr[512];
-		*((uint16 *)(rows[1] + 2)) = colorPtr[513];
+		*((uint16 *)(dst + 0)) = colorPtr1[0];
+		*((uint16 *)(dst + 2)) = colorPtr2[512];
+		dst += dstPitch;
 
-		colorPtr = (const uint16 *)(strip.v4_dither + codebookIndex[2]);
-		*((uint16 *)(rows[2] + 0)) = colorPtr[1024];
-		*((uint16 *)(rows[3] + 0)) = colorPtr[1025];
+		*((uint16 *)(dst + 0)) = colorPtr1[1];
+		*((uint16 *)(dst + 2)) = colorPtr2[513];
+		dst += dstPitch;
 
-		colorPtr = (const uint16 *)(strip.v4_dither + codebookIndex[3]);
-		*((uint16 *)(rows[2] + 2)) = colorPtr[1536];
-		*((uint16 *)(rows[3] + 2)) = colorPtr[1537];
+		const uint16 *colorPtr3 = (const uint16 *)(strip.v4_dither + codebookIndex[2]);
+		const uint16 *colorPtr4 = (const uint16 *)(strip.v4_dither + codebookIndex[3]);
+
+		*((uint16 *)(dst + 0)) = colorPtr3[1024];
+		*((uint16 *)(dst + 2)) = colorPtr4[1536];
+		dst += dstPitch;
+
+		*((uint16 *)(dst + 0)) = colorPtr3[1025];
+		*((uint16 *)(dst + 2)) = colorPtr4[1537];
+		dst += dstPitch;
 	}
 };
 
 template<typename PixelInt, typename CodebookConverter>
 void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize) {
 	uint32 flag = 0, mask = 0;
-	PixelInt *iy[4];
 	int32 startPos = stream.pos();
+	PixelInt *dst;
 
 	for (uint16 y = frame.strips[strip].rect.top; y < frame.strips[strip].rect.bottom; y += 4) {
-		iy[0] = (PixelInt *)frame.surface->getBasePtr(frame.strips[strip].rect.left, + y);
-		iy[1] = iy[0] + frame.width;
-		iy[2] = iy[1] + frame.width;
-		iy[3] = iy[2] + frame.width;
+		dst = (PixelInt *)frame.surface->getBasePtr(frame.strips[strip].rect.left, + y);
 
 		for (uint16 x = frame.strips[strip].rect.left; x < frame.strips[strip].rect.right; x += 4) {
 			if ((chunkID & 0x01) && !(mask >>= 1)) {
@@ -211,19 +260,18 @@ void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, Common::Seeka
 
 					// Get the codebook
 					byte codebook = stream.readByte();
-					CodebookConverter::decodeBlock1(codebook, frame.strips[strip], iy, clipTable, frame.surface->format);
+					CodebookConverter::decodeBlock1(codebook, frame.strips[strip], dst, frame.surface->pitch, clipTable, frame.surface->format);
 				} else if (flag & mask) {
 					if ((stream.pos() - startPos + 4) > (int32)chunkSize)
 						return;
 
 					byte codebook[4];
 					stream.read(codebook, 4);
-					CodebookConverter::decodeBlock4(codebook, frame.strips[strip], iy, clipTable, frame.surface->format);
+					CodebookConverter::decodeBlock4(codebook, frame.strips[strip], dst, frame.surface->pitch, clipTable, frame.surface->format);
 				}
 			}
 
-			for (byte i = 0; i < 4; i++)
-				iy[i] += 4;
+			dst += 4;
 		}
 	}
 }
