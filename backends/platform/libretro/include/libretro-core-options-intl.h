@@ -96,8 +96,8 @@ struct retro_core_option_v2_category option_cats_it[] = {
 struct retro_core_option_v2_definition option_defs_it[] = {
 	{
 		"scummvm_gamepad_cursor_speed",
+		"Cursore > Velocità del cursore",
 		"Velocità del cursore",
-		NULL,
 		"Moltiplicatore della velocità del cursore del mouse quando si usa la leva analogica sinistra o il D-Pad del RetroPad. Il valore di default di '1.0' è ottimizzato per i giochi con risoluzione nativa di '320x200' o '320x240'. Per i giochi ad 'alta definizione' con risoluzione di '640x400' or '640x480', si raccomanda il valore di '2.0'",
 		NULL,
 		NULL,
@@ -108,8 +108,8 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_gamepad_cursor_acceleration_time",
+		"Cursore > Accelerazione del cursore",
 		"Accelerazione del cursore",
-		NULL,
 		"Il tempo (in secondi) necessario al cursore del mouse per raggiungere la piena velocità quando si usa la leva analogica sinistra o il D-Pad del RetroPad.",
 		NULL,
 		NULL,
@@ -120,8 +120,8 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_analog_response",
+		"Cursore > Risposta analogica del cursore",
 		"Risposta analogica del cursore",
-		NULL,
 		"Modalità di risposta della velocità del cursore del mouse allo spostamento della leva analogica sinistra del RetroPad. 'Lineare': La velocità è direttamente proporzionale allo spostamento della leva. Questa è l'impostazione di default adatta alla maggior parte degli utenti. 'Quadratica': La velocità aumenta con il quadrato dello spostamento della leva. Questo permette maggior precisione nei piccoli movimenti senza sacrificare il raggiungimento della velocità massima a spostamento completo. Questa modalità può richiedere pratica per un uso efficace.",
 		NULL,
 		NULL,
@@ -134,8 +134,8 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_analog_deadzone",
+		"Cursore > Zona morta analogica (percentuale)",
 		"Zona morta analogica (percentuale)",
-		NULL,
 		"Zona morta della leva analogica sinistra del RetroPad. Può essere usata per eliminare scorrimenti indesiderati del cursore.",
 		NULL,
 		NULL,
@@ -146,8 +146,8 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_mouse_speed",
+		"Cursore > Velocità del mouse",
 		"Velocità del mouse",
-		NULL,
 		"Moltiplicatore della velocità del cursore del mouse quando si usa RetroMouse.",
 		NULL,
 		NULL,
@@ -158,11 +158,11 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_frameskip_type",
+		"Frameskip > Salto dei fotogrammi",
 		"Salto dei fotogrammi",
-		NULL,
 		"Salto dei fotogrammi per evitare buffer under-run audio (crackling). Migliora le prestazioni a discapito della fluidità video. 'Auto' salta i fotogrammi su indicazione del frontend, 'Soglia' usa l'impostazione di 'Soglia minima buffer audio (%)', 'Fisso' usa l'impostazione 'Salto dei fotogrammi fisso'.",
 		NULL,
-		"frameskip",
+		NULL,
 		{
 			{ "disabled", NULL },
 			{ "fixed", "Fisso" },
@@ -174,11 +174,11 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_frameskip_threshold",
+		"Frameskip > Soglia minima buffer audio (%)",
 		"Soglia minima buffer audio (%)",
-		NULL,
 		"Quando 'Salto dei fotogrammi' è impostato su 'Soglia', specifica la soglia minima del buffer audio al di sotto della quale il fotogramma viene saltato. Valori più alti riducono il rischio di crackling al costo di un salto di fotogrammi più frequente.",
 		NULL,
-		"frameskip",
+		NULL,
 		{
 			{ NULL, NULL },
 		},
@@ -186,11 +186,11 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_frameskip_no",
+		"Frameskip > Salto dei fotogrammi fisso",
 		"Salto dei fotogrammi fisso",
-		NULL,
 		"Quando la modalità di 'Salto dei fotogrammi' è 'Fisso', o il frontend non supporta una delle altre modalità selezionate, salta costantemente X fotogrammi ogni X+1.",
 		NULL,
-		"frameskip",
+		NULL,
 		{
 			{ "0", "Nessun fotogramma saltato" },
 			{ "1", "Salto di 1 fotogramma su 2" },
@@ -204,8 +204,8 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_allow_timing_inaccuracies",
+		"Timing > Consenti inaccuratezze di timing",
 		"Consenti inaccuratezze di timing",
-		NULL,
 		"Consente inaccuratezze di timing che riducono significativamente le richeste di CPU. Anche se la maggior parte delle inaccuratezze sono impercettibili, in alcuni casi potrebbe introdurre problemi di sincronizzazione audio, quindi questa opzione andrebbe abilitata solo se il raggiungimento della piena velocità non è possibile in altro modo.",
 		NULL,
 		NULL,
@@ -217,11 +217,11 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 
 	{
 		"scummvm_framerate",
+		"Timing > Tetto frequenza dei fotogrammi",
 		"Tetto frequenza dei fotogrammi",
-		NULL,
 		"Imposta il limite superiore della frequenza dei fotogrammi. Il cambio di questa impostazione causerà il reset del core.",
 		NULL,
-		"timing",
+		NULL,
 		{
 			{ NULL, NULL },
 		},
@@ -229,11 +229,11 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_samplerate",
+		"Timing > Frequenza di campionamento",
 		"Frequenza di campionamento",
-		NULL,
 		"Imposta la frequenza di campionamento. Il cambio di questa impostazione causerà il reset del core.",
 		NULL,
-		"timing",
+		NULL,
 		{
 			{ NULL, NULL },
 		},
@@ -246,7 +246,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Su",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -258,7 +258,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Giù",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -270,7 +270,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Sinistra",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -282,7 +282,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Destra",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -294,7 +294,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"A",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -306,7 +306,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"B",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -318,7 +318,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"X",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -330,7 +330,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Y",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -342,7 +342,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Select",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -354,7 +354,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Start",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -366,7 +366,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"L",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -378,7 +378,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"R",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -390,7 +390,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"L2",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -402,7 +402,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"R2",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -414,7 +414,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"L3",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -426,7 +426,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"R3",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -439,7 +439,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Sinistra > Su",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -451,7 +451,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Sinistra > Giù",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -463,7 +463,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Sinistra > Sinistra",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -475,7 +475,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Sinistra > Destra",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -488,7 +488,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Destra > Su",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -500,7 +500,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Destra > Giù",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -512,7 +512,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Destra > Sinistra",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},
@@ -524,7 +524,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Leva Analogica Destra > Destra",
 		NULL,
 		NULL,
-		"retropad",
+		NULL,
 		{
 			{ NULL, NULL }
 		},

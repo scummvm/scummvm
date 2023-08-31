@@ -98,8 +98,8 @@ struct retro_core_option_v2_category option_cats_us[] = {
 struct retro_core_option_v2_definition option_defs_us[] = {
 	{
 		"scummvm_gamepad_cursor_speed",
+		"Cursor > Gamepad Cursor Speed",
 		"Gamepad Cursor Speed",
-		NULL,
 		"Sets the mouse cursor speed multiplier when moving the cursor with the RetroPad left analog stick or D-Pad. The default value of '1.0' is optimised for games that have a native resolution of '320x200' or '320x240'. When running 'high definition' games with a resolution of '640x400' or '640x480', a Gamepad Cursor Speed of '2.0' is recommended.",
 		NULL,
 		"cursor",
@@ -118,8 +118,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_gamepad_cursor_acceleration_time",
+		"Cursor > Gamepad Cursor Acceleration",
 		"Gamepad Cursor Acceleration",
-		NULL,
 		"The amount of time (In seconds) it takes for the cursor to reach full speed",
 		NULL,
 		"cursor",
@@ -141,8 +141,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_analog_response",
+		"Cursor > Analog Cursor Response",
 		"Analog Cursor Response",
-		NULL,
 		"Determines how the speed of the cursor varies when tilting the RetroPad left analog stick. 'Linear': Speed is directly proportional to analog stick displacement. This is standard behaviour with which most users will be familiar. 'Quadratic': Speed increases quadratically with analog stick displacement. This allows for greater precision when making small movements without sacrificing maximum speed at full analog range. This mode may require practice for effective use.",
 		NULL,
 		"cursor",
@@ -155,8 +155,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_analog_deadzone",
+		"Cursor > Analog Deadzone (Percent)",
 		"Analog Deadzone (Percent)",
-		NULL,
 		"Sets the deadzone of the RetroPad analog sticks. Used to eliminate cursor drift/unwanted input.",
 		NULL,
 		"cursor",
@@ -174,8 +174,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_mouse_speed",
+		"Cursor > Mouse Speed",
 		"Mouse Speed",
-		NULL,
 		"Sets the mouse cursor speed multiplier when moving the cursor with the RetroMouse.",
 		NULL,
 		"cursor",
@@ -207,8 +207,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_frameskip_type",
+		"Frameskip > Frameskip Mode",
 		"Frameskip Mode",
-		NULL,
 		"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Threshold' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
 		NULL,
 		"frameskip",
@@ -223,8 +223,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_frameskip_threshold",
+		"Frameskip > Frameskip Threshold (%)",
 		"Frameskip Threshold (%)",
-		NULL,
 		"When 'Frameskip' is set to 'Threshold', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
 		NULL,
 		"frameskip",
@@ -251,8 +251,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_frameskip_no",
+		"Frameskip > Fixed Frameskip",
 		"Fixed Frameskip",
-		NULL,
 		"When 'Frameskip' is set to 'Fixed', or if the frontend doesn't support the alternative 'Frameskip' mode, skip rendering at a fixed rate of X frames out of X+1",
 		NULL,
 		"frameskip",
@@ -269,8 +269,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_allow_timing_inaccuracies",
+		"Timing > Allow Timing Inaccuracies",
 		"Allow Timing Inaccuracies",
-		NULL,
 		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
 		NULL,
 		"timing",
@@ -283,8 +283,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_framerate",
+		"Timing > Frame rate cap",
 		"Frame rate cap",
-		NULL,
 		"Set core frame rate upper limit. Changing this setting will reset the core.",
 		NULL,
 		"timing",
@@ -300,8 +300,8 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_samplerate",
+		"Timing > Sample rate",
 		"Sample rate",
-		NULL,
 		"Set core sample rate. Changing this setting will reset the core.",
 		NULL,
 		"timing",
