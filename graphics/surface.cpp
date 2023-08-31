@@ -481,10 +481,10 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 	}
 
 	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
-		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp but have %dbpp", format.bytesPerPixel);
+		error("Surface::convertToInPlace(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp but have %dbpp", format.bytesPerPixel);
 
 	if (dstFormat.bytesPerPixel == 0 || dstFormat.bytesPerPixel == 1 || dstFormat.bytesPerPixel > 4)
-		error("Surface::convertTo(): Can only convert to 2Bpp, 3Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
+		error("Surface::convertToInPlace(): Can only convert to 2Bpp, 3Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
 
 	// In case the surface data needs more space allocate it.
 	if (dstFormat.bytesPerPixel > format.bytesPerPixel) {
