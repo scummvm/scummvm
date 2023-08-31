@@ -65,7 +65,9 @@ String punycode_encodefilename(const U32String &src);
  */
 U32String punycode_decodefilename(const String &src);
 
-bool punycode_hasprefix(const String &src);
+inline bool punycode_hasprefix(const String &src) {
+	return src.hasPrefix("xn--");
+}
 
 bool punycode_needEncode(const String &src);
 

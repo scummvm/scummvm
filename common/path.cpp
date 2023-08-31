@@ -845,7 +845,9 @@ Path Path::punycodeDecode() const {
 	return reduceComponents<Path &>(
 		+[](Path &path, const String &in, bool last) -> Path & {
 			// We encode the result as UTF-8
-			String out = punycode_decodefilename(in).encode();
+			String out = punycode_hasprefix(in) ?
+				     punycode_decodefilename(in).encode() :
+				     in;
 			path.appendInPlace(out, kNoSeparator);
 			if (!last) {
 				path._str += SEPARATOR;
@@ -878,7 +880,9 @@ Path Path::punycodeEncode() const {
 // HFS(+) image will end up with : independently of how
 // it was dumped or copied from
 static String getIdentifierComponent(const String &in) {
-	String part = punycode_decodefilename(in).encode();
+	String part = punycode_hasprefix(in) ?
+	              punycode_decodefilename(in).encode() :
+	              in;
 	part.replace('/', ':');
 	return part;
 }
