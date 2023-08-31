@@ -36,7 +36,6 @@ public:
 	void preload() override;
 	void init() override;
 	void daemon() override;
-	void parser() override;
 };
 
 } // namespace Rooms
