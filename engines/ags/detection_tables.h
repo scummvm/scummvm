@@ -3867,6 +3867,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "6d17d5534a5c77a419117975053a1e90", 64199782), // Mac v2.3
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "7769be646afbdce6909e568a0d9bc857", 64204216), // Mac v2.4a
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "9f7e0d47caa495c98d8ea781fb52be49", 45246635), // Mac v3.0
+	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "504d537cc8af0b027ac7c2474a364ff9", 45250405), // Mac v3.1
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 19757071, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "blackwell1.exe", "e5a75b86a0ea8143e1784261f5f52e83", 67241529, AGSTEAM_WADJETEYE),
@@ -4013,6 +4014,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70375199), // Mac v2.2
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70412031), // Mac v2.3
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58212622), // Mac v3.0
+	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "ab6c0c2d89adb2d529131190a657be6a", 58249454), // Mac v3.0.1
 	GAME_ENTRY_GOG("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62069353), // Linux
 	GAME_ENTRY_GOG("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58212622),  // Linux v3.0
 	GAME_ENTRY_GOG("geminirue", "Gemini Rue.ags", "ab6c0c2d89adb2d529131190a657be6a", 58249454),  // Linux v3.0.1
@@ -4210,6 +4212,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("shivahkosher", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665), // Windows GOG, Humble Bundle
 	GAME_ENTRY_EN_GOG("shivahkosher", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596), // GOG, v2.1
 	GAME_ENTRY_EN_GOG("shivahkosher", "ac2game.dat", "021b85e94ba52ed77b6b4841ffb50c43", 30658376), // macOS v2.1a
+	GAME_ENTRY_EN_GOG("shivahkosher", "ac2game.dat", "75d706c07c1e8beb688a4968d1b8e6a4", 17889391), // macOS v3.0
 	GAME_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18659398),  // v1.0.0a
 	GAME_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18660074),  // v1.0.1
 	GAME_ENTRY_STEAM("smallsister", "sister.exe", "78dd4ca028ee0156b6a093d6d780aa65", 18534526),  // Eng-Tur
@@ -4267,6 +4270,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616), // Mac v2.2a
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445711980), // Mac v2.5a
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416922956), // Mac v3.0
+	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416929711), // Mac v3.0.1
 	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416929711), // Linux v3.0.1
 	GAME_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_EN_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
@@ -4290,6 +4294,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("unavowed", "ac2game.dat", "b1ff7d96667707daf4266975cea2bf90", 1755457364), // Mac
 	GAME_ENTRY_EN_STEAM("unavowed", "ac2game.dat", "140570a663877cb81e3656b4f29c63f6", 1752922600), // Mac
 	GAME_ENTRY_EN_STEAM("unavowed", "ac2game.dat", "140570a663877cb81e3656b4f29c63f6", 1752927680), // Mac
+	GAME_ENTRY_EN_STEAM("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617818900), // Mac
 	GAME_ENTRY_EN_PLATFORM("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, "Steam/GOG.com"), // TODO: split
 	GAME_ENTRY_EN_PLATFORM("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756036604, "Steam/GOG.com"), // Linux/Windows v0.9.0 (GOG v1.2)
 	GAME_ENTRY_EN_STEAM("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756040045), // Linux (and Windows?) v1.0.0
