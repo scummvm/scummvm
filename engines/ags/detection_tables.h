@@ -2953,6 +2953,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thedevilsteeth", "The Devil's Teeth" },
 	{ "thedigitalspell", "The Digital Spell" },
 	{ "thedisgracedprince", "The disgraced prince" },
+	{ "thedistantdoor", "The Distant Door" },
 	{ "thedollhousech1", "The Dollhouse - Chapter 1: Plaything" },
 	{ "thedome", "The Dome" },
 	{ "thedreamjobep1", "The Dream Job, ep. 1" },
@@ -7538,7 +7539,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shapevillage", "Shape Land.ags", "deabadb4ecba9fb40b963c155d422628", 10539829),
 	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "4b94f022e290af3ddc181263001d71ee", 76895827),  // Win v1.0
 	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "26e733a242fec82194e1f6d0f0f3d0e8", 76895828),  // Linux v1.0 fixed
-	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "921652f83e899467f974cbee74427cf9", 76897579),  // Win/Linux v1.1
+	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "921652f83e899467f974cbee74427cf9", 76897579),  // Win/Mac/Linux v1.1
 	GAME_ENTRY_EN("sharethis", "shareme.exe", "208aac8aaca15de5482efa5b429f6718", 3837255),
 	GAME_ENTRY_EN("sharkysthree", "Sharky's 3.exe", "25976a689b0f4d73eac69b1728377ecb", 9249262),
 	GAME_ENTRY_EN("shawshank", "Shawshank.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2968469),
@@ -7933,6 +7934,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thedevilsteeth", "The Devil's Teeth.exe", "0564de07d3fd5c16e6947a647061913c", 12560271),
 	GAME_ENTRY_EN("thedigitalspell", "Digital.exe", "4d17844029d8910fbaae1bdc99e250f2", 14657385),
 	GAME_ENTRY_EN("thedisgracedprince", "Byzanz 2.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 12592231),
+	GAME_ENTRY_EN("thedistantdoor", "DDoor.ags", "712e34e9df7ed49d8d5734885cf6b5c1", 9602695),
 	GAME_ENTRY_EN("thedollhousech1", "DH.exe", "6e861b1f476ff7cdf036082abb271329", 4931346),
 	GAME_ENTRY_EN("thedome", "TheDome.exe", "c2ab4c6df39f76b4290da75874a79f74", 15953711),  // Windows
 	GAME_ENTRY_EN("thedome", "TheDome.ags", "b634d6f4e3b6edbf47d8ec0db9b07967", 13455647),  // Linux
