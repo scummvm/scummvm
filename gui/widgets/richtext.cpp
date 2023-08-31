@@ -71,7 +71,7 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP);
 
 	_type = kRichTextWidget;
 
@@ -91,6 +91,15 @@ void RichTextWidget::init() {
 
 void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
 	_verticalScroll->handleMouseWheel(x, y, direction);
+}
+
+void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	warning("M: %s", _txtWnd->getMouseLink(x + _x + _scrolledX, y + _y + _scrolledY).encode().c_str());
+}
+
+void RichTextWidget::handleTooltipUpdate(int x, int y) {
+	_tooltip = _txtWnd->getMouseLink(x + _x + _scrolledX, y + _y + _scrolledY);
+	//warning("t: %s", _tooltip.encode().c_str());
 }
 
 void RichTextWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
