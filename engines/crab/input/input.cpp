@@ -76,6 +76,7 @@ Common::String InputManager::getAssociatedKey(const InputType &type) {
 			if ((int)action->event.customType == type) {
 				_keyDescs[type] = Common::String(keymap->getActionMapping(action)[0].description);
 				_keyDescs[type].toUppercase();
+				_iv[type] = Common::String(action->description);
 				break;
 			}
 		}
