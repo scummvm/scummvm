@@ -191,4 +191,8 @@ void pal_mirror_colours(int first_color, int last_color, RGB8 *pal) {
 	}
 }
 
+void pal_mirror_colours(int first_color, int last_color) {
+	pal_mirror_colours(first_color, last_color, _G(master_palette));
+}
+
 } // namespace M4

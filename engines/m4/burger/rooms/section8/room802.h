@@ -30,12 +30,20 @@ namespace Rooms {
 
 class Room802 : public Room {
 private:
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	Series _series3;
+	machine *_series5 = nullptr;
 	int _val1 = 11;
 	int _val2 = 2;
-	int _val3 = 0;
 	int _val4 = 0;
+	int _val5 = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
 
 	void loadSeries();
+	int getWilburShould();
+	int getRoomVal();
 
 public:
 	Room802() : Room() {}
