@@ -27,6 +27,20 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID[][4] = {
+	{ "DOOR",          nullptr,    "702W002", nullptr   },
+	{ "FLUMIX",        "702w001z", "702W002", "702W002" },
+	{ "ABDUCT-O-TRON", "702W006",  nullptr,   "702W007" },
+	{ "ABDUCT-O CONTROLS",    "702W008", nullptr,   "702W009" },
+	{ "NEUTRINO PULSE GUN",   "702W010", nullptr,   "702W011" },
+	{ "NEUTRINO GUN CONTROL", "702W012", nullptr,   "702W009" },
+	{ "VENT",          "702W013",  nullptr,   "702W013" },
+	{ "BRIG",          "702W014",  "702W002", "702W015" },
+	{ "MIRROR",        "999W010", nullptr,    "999W010" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+
 void Room702::init() {
 }
 
