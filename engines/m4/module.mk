@@ -110,6 +110,10 @@ MODULE_OBJS = \
 	burger/rooms/section1/room174.o \
 	burger/rooms/section1/room175.o \
 	burger/rooms/section1/room176.o \
+	burger/rooms/section7/section7.o \
+	burger/rooms/section7/room701.o \
+	burger/rooms/section7/room702.o \
+	burger/rooms/section7/room706.o \
 	burger/rooms/section8/section8.o \
 	burger/rooms/section8/room801.o \
 	burger/rooms/section8/room802.o \
