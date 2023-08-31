@@ -3861,7 +3861,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67332730),  // v2.3
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67337164),  // v2.4a
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48439487),  // v3.0
+	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48443257),  // v3.1
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.ags", "9f7e0d47caa495c98d8ea781fb52be49", 45246635),  // Linux v3.0
+	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.ags", "504d537cc8af0b027ac7c2474a364ff9", 45250405),  // Linux v3.1
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "7865a17a36ff5a1844cd5359071eb04b", 64183795),
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "5b63e0d2bc117cc9d32b88bfb5de167c", 64199320),
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "6d17d5534a5c77a419117975053a1e90", 64199782), // Mac v2.3
@@ -3875,7 +3877,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "ac2game.dat", "ff5b05b81909683fcd57580c58a81d87", 64200209, AGSTEAM_WADJETEYE), // Linux & Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "ac2game.dat", "1051d3fa462b1e0cc8973a8775128307", 66679994, AGSTEAM_WADJETEYE), // Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48439274, AGSTEAM_WADJETEYE), // Win 3.0
+	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48443044, AGSTEAM_WADJETEYE), // Win 3.1
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.ags", "670f3eaa22243dc1742964b697108ee8", 45246422, AGSTEAM_WADJETEYE), // Linux 3.0
+	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.ags", "ea3ea2ce1958205810eafa9f826c4dd6", 45250192, AGSTEAM_WADJETEYE), // Linux 3.1
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "Blackwell Legacy.ags", "99f4ff1080509c856be96ba55e644380", 45277507, AGSTEAM_WADJETEYE), // Steamdeck
 	GAME_ENTRY_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824247), // Humble Bundle (Windows)
 	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "ca6edbac96264b2adf73ef10d5a0348d", 18800040), // v1.4 Wadjet Eye store (Win)
