@@ -67,6 +67,7 @@ extern void gr_backup_palette();
 extern void gr_restore_palette();
 
 extern void pal_mirror_colours(int first_color, int last_color, RGB8 *pal);
+extern void pal_mirror_colours(int first_color, int last_color);
 
 } // namespace M4
 

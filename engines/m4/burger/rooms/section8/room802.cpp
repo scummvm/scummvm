@@ -134,8 +134,8 @@ void Room802::init() {
 
 	_val1 = 11;
 	_val2 = 2;
-	_val3 = 0;
-	_val4 = 0;
+	_flag1 = false;
+	_flag2 = false;
 
 	if (_G(flags)[NEURO_TEST_COUNTER] > 1) {
 		kernel_trigger_dispatch_now(24);
@@ -166,7 +166,376 @@ void Room802::daemon() {
 		pal_fade_init(0, 255, 100, 30, -1);
 		break;
 
-	// TODO: More cases
+	case 2:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 3);
+		break;
+
+	case 3:
+		switch (_G(flags)[NEURO_TEST_COUNTER]) {
+		case 0:
+			release_trigger_on_digi_state(4, 1);
+			break;
+		case 1:
+			kernel_trigger_dispatch_now(24);
+			release_trigger_on_digi_state(7, 1);
+			break;
+		default:
+			kernel_trigger_dispatch_now(24);
+			release_trigger_on_digi_state(14, 1);
+			break;
+		}
+		break;
+
+	case 4:
+		kernel_trigger_dispatch_now(24);
+		series_stream_with_breaks(SERIES3, "803B", 6, 1, 5);
+		pal_fade_init(0, 255, 10, 30, -1);
+		kernel_timing_trigger(1, 23);
+		break;
+
+	case 5:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 6);
+		break;
+
+	case 6:
+		pal_cycle_stop();
+		compact_mem_and_report();
+		release_trigger_on_digi_state(7, 1);
+		break;
+
+	case 7:
+		digi_unload_stream_breaks(SERIES2);
+		series_stream_with_breaks(SERIES4, "802B1", 6, 1, 10);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 8:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 9);
+		break;
+
+	case 9:
+		compact_mem_and_report();
+		release_trigger_on_digi_state(10, 1);
+		break;
+
+	case 10:
+		digi_preload("802_019");
+		digi_play_loop("802_019", 3, 128);
+
+		if (_G(flags)[NEURO_TEST_COUNTER] == 0) {
+			player_set_commands_allowed(true);
+			digi_unload_stream_breaks(SERIES3);
+
+			_G(wilbur_should) = getWilburShould();
+			_val2 = 6;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(17);
+
+			_series1 = series_play("802BFX03", 0x101);
+			_series2 = series_play("802BFX02", 0x100);
+			conv_load_and_prepare("conv81", 13);
+			conv_play_curr();
+
+		} else {
+			digi_unload_stream_breaks(SERIES3);
+			kernel_trigger_dispatch_now(14);
+		}
+		break;
+
+	case 13:
+		_G(wilbur_should) = 19;
+		_G(roomVal4) = 19;
+
+		if (_flag2 && _flag1) {
+			terminateMachineAndNull(_series5);
+			_flag2 = false;
+			_series3.terminate();
+			_flag1 = false;
+			terminateMachineAndNull(_series1);
+			terminateMachineAndNull(_series2);
+			kernel_trigger_dispatch_now(14);
+
+		} else {
+			kernel_timing_trigger(30, 13);
+		}
+		break;
+
+	case 14:
+		digi_stop(1);
+		digi_stop(2);
+		digi_stop(3);
+		digi_unload("806w001");
+		digi_unload("807_002");
+		digi_unload("807_001");
+		digi_preload("802_019");
+		digi_play_loop("802_019", 3, 128);
+		digi_unload_stream_breaks(SERIES4);
+		digi_unload_play_breaks(PLAY1);
+		digi_unload_play_breaks(PLAY2);
+		series_stream_with_breaks(SERIES1, "802B3", 6, 1, 15);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 15:
+		disable_player_commands_and_fade_init(16);
+		break;
+
+	case 16:
+		release_trigger_on_digi_state(g10027, 1);
+		break;
+
+	case 17:
+		switch (_val2) {
+		case 1:
+			switch (_G(roomVal4)) {
+			case 5:
+				_flag1 = true;
+				_val2 = 3;
+				_series3.play("802BF03", 0x100, 0, 17, 6);
+				break;
+
+			case 6:
+				_flag1 = true;
+				_val2 = 2;
+				_series3.play("802BF03", 0x100, 0, 17, 6);
+				break;
+
+			case 9:
+				_flag1 = false;
+				_G(roomVal4) = getRoomVal();
+				series_play_with_breaks(PLAY2, "802BF02", 0x100, 17, 3);
+				break;
+
+			case 10:
+				_flag1 = false;
+				_G(roomVal4) = getRoomVal();
+				_val4 = 30;
+				series_play_with_breaks(PLAY3, "802BF02", 0x100, 17, 1);
+				break;
+
+			case 19:
+				_flag1 = true;
+				_series3.show("802BF02", 0x100, 0, -1, -1, 5);
+				break;
+
+			default:
+				_flag1 = false;
+				_val4 = 30;
+				_G(roomVal4) = getRoomVal();
+				series_play_with_breaks(PLAY1, "802BF02", 0x100, 17, 3);
+				break;
+			}
+			break;
+
+		case 2:
+			switch (_G(roomVal4)) {
+			case 5:
+				_flag1 = true;
+				_val2 = 3;
+				_series3.show("802BF01", 0x100, 0, 17, 1);
+				break;
+
+			case 6:
+				_flag1 = true;
+				_G(roomVal4) = getRoomVal();
+				_series3.show("802BF03", 0x100, 0, 17, 30, 1);
+				break;
+
+			case 19:
+				_flag1 = true;
+				_series3.show("802BF02", 0x100, 0, -1, -1, 5);
+				break;
+
+			default:
+				_flag1 = true;
+				_val2 = 1;
+				_series3.show("802BF03", 0x100, 2, 17, 6);
+				break;
+			}
+			break;
+
+		case 3:
+			switch (_G(roomVal4)) {
+			case 5:
+				_flag1 = true;
+				_G(roomVal4) = 20;
+				_G(wilbur_should) = 16;
+				_series3.play("802BF01", 0x100, 4, -1, 6);
+				break;
+
+			case 20:
+				_series3.terminate();
+				_G(roomVal4) = getRoomVal();
+				_flag1 = true;
+				_series3.show("802BF01", 0x100, 0, 17, 30, 0);
+				conv_resume_curr();
+				break;
+
+			case 21:
+				_flag1 = true;
+				_series3.show("802BF02", 0x100, 0, -1, -1, 5);
+				break;
+
+			default:
+				_val2 = 1;
+				_flag1 = true;
+				_series3.play("802BF03", 0x100, 2, 17, 6);
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 19:
+		if (conv_sound_to_play()) {
+			int who = conv_whos_talking();
+			if (who <= 0)
+				_G(roomVal4) = 5;
+			else if (who == 1)
+				_G(roomVal4) = 14;
+		}
+		break;
+
+	case 22:
+		pal_fade_init(0, 255, 0, 30, -1);
+		break;
+
+	case 23:
+		pal_mirror_colours(119, 122);
+		gr_pal_set_range(119, 8);
+		pal_cycle_init(119, 126, 6, -1, -1);
+		break;
+
+	case 24:
+		digi_play_loop("800_001", 3, 48, -1, 800);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_val1) {
+		case 11:
+			switch (_G(wilbur_should)) {
+			case 14:
+				_flag2 = true;
+				_G(wilbur_should) = 20;
+				_G(roomVal4) = 6;
+				_series5 = series_play("802BW03", 0x100, 4);
+				digi_play(conv_sound_to_play(), 1, 255, gCHANGE_WILBUR_ANIMATION, 802);
+				break;
+
+			case 15:
+			case 18:
+				_flag2 = true;
+				_val1 = 13;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 19:
+				if (_flag2)
+					terminateMachineAndNull(_series5);
+
+				_flag2 = true;
+				_series5 = series_show("802BW01", 0x100, 0, -1, -1, 0);
+				break;
+
+			case 20:
+				terminateMachineAndNull(_series5);
+				_flag2 = true;
+				_G(wilbur_should) = 16;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				conv_resume_curr();
+				break;
+
+			default:
+				_flag2 = true;
+				_val1 = 12;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				break;
+			}
+			break;
+
+		case 12:
+			switch (_G(wilbur_should)) {
+			case 14:
+				_flag2 = true;
+				_G(roomVal4) = 6;
+				_val1 = 11;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 15:
+			case 18:
+				_flag2 = true;
+				_val1 = 13;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 16:
+				_flag2 = true;
+				_G(wilbur_should) = getWilburShould();
+				_series5 = series_show("802BW01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 30, 1);
+				break;
+
+			case 19:
+				if (_flag2)
+					terminateMachineAndNull(_series5);
+
+				_flag2 = true;
+				_series5 = series_show("802BW01", 0x100, 0, -1, -1, 0);
+				break;
+
+			default:
+				_flag2 = false;
+				_val5 = imath_ranged_rand(15, 30);
+				_G(wilbur_should) = getWilburShould();
+				series_play_with_breaks(PLAY4, "802BW01", 0x100, gCHANGE_WILBUR_ANIMATION, 0, 12);
+				break;
+			}
+			break;
+
+		case 13:
+			switch (_G(wilbur_should)) {
+			case 14:
+			case 16:
+			case 17:
+				_flag2 = true;
+				_val1 = 12;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 18:
+				_flag2 = false;
+				_G(wilbur_should) = 16;
+				_val1 = 12;
+				_val5 = imath_ranged_rand(120, 180);
+				series_play_with_breaks(PLAY5, "802BW02", 0x100, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 19:
+				if (_flag2)
+					terminateMachineAndNull(_series5);
+
+				_flag2 = true;
+				_series5 = series_show("802BW01", 0x100, 0, -1, -1, 0);
+				break;
+
+			default:
+				_flag2 = false;
+				_G(wilbur_should) = 16;
+				_val1 = 12;
+				series_play_with_breaks(PLAY6, "802BW04", 0x100, gCHANGE_WILBUR_ANIMATION);
+				break;
+			}
+			break;
+
+		}
+		break;
+
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;
@@ -193,6 +562,38 @@ void Room802::loadSeries() {
 	};
 	for (int i = 0; i < 12; ++i)
 		series_load(NAMES[i]);
+}
+
+int Room802::getWilburShould() {
+	switch (imath_ranged_rand(1, 16)) {
+	case 1:
+	case 2:
+	case 3:
+		return 17;
+	case 11:
+		return 18;
+	case 16:
+		return 15;
+	default:
+		return 16;
+	}
+}
+
+int Room802::getRoomVal() {
+	switch (imath_ranged_rand(1, 16)) {
+	case 1:
+	case 3:
+		return 8;
+	case 5:
+	case 7:
+		return 9;
+	case 9:
+	case 11:
+	case 13:
+		return 6;
+	default:
+		return 10;
+	}
 }
 
 } // namespace Rooms
