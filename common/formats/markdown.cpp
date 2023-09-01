@@ -160,7 +160,7 @@ static char_trigger markdown_char_ptrs[] = {
 static inline SDDataBuffer *rndr_newbuf(SDMarkdown *rndr, int type) {
 	static const size_t buf_size[2] = {256, 64};
 	SDDataBuffer *work = NULL;
-	SDStack *pool = &rndr->work_bufs[type];
+	SDStack *pool = &rndr->_work_bufs[type];
 
 	if (pool->size < pool->asize &&
 	        pool->item[pool->size] != NULL) {
@@ -175,7 +175,7 @@ static inline SDDataBuffer *rndr_newbuf(SDMarkdown *rndr, int type) {
 }
 
 static inline void rndr_popbuf(SDMarkdown *rndr, int type) {
-	rndr->work_bufs[type].size--;
+	rndr->_work_bufs[type].size--;
 }
 
 static void unscape_text(SDDataBuffer *ob, SDDataBuffer *src) {
@@ -369,20 +369,20 @@ static void parse_inline(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t 
 	byte action = 0;
 	SDDataBuffer work = { 0, 0, 0, 0 };
 
-	if (rndr->work_bufs[BUFFER_SPAN].size +
-	        rndr->work_bufs[BUFFER_BLOCK].size > rndr->max_nesting)
+	if (rndr->_work_bufs[BUFFER_SPAN].size +
+	        rndr->_work_bufs[BUFFER_BLOCK].size > rndr->_max_nesting)
 		return;
 
 	while (i < size) {
 		/* copying inactive chars into the output */
-		while (end < size && (action = rndr->active_char[data[end]]) == 0) {
+		while (end < size && (action = rndr->_active_char[data[end]]) == 0) {
 			end++;
 		}
 
-		if (rndr->cb.normal_text) {
+		if (rndr->_cb.normal_text) {
 			work.data = data + i;
 			work.size = end - i;
-			rndr->cb.normal_text(ob, &work, rndr->opaque);
+			rndr->_cb.normal_text(ob, &work, rndr->_opaque);
 		} else
 			sd_bufput(ob, data + i, end - i);
 
@@ -499,7 +499,7 @@ static size_t parse_emph1(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 	SDDataBuffer *work = 0;
 	int r;
 
-	if (!rndr->cb.emphasis) return 0;
+	if (!rndr->_cb.emphasis) return 0;
 
 	/* skipping one symbol if coming from emph3 */
 	if (size > 1 && data[0] == c && data[1] == c) i = 1;
@@ -512,14 +512,14 @@ static size_t parse_emph1(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 
 		if (data[i] == c && !_isspace(data[i - 1])) {
 
-			if (rndr->ext_flags & MKDEXT_NO_INTRA_EMPHASIS) {
+			if (rndr->_ext_flags & MKDEXT_NO_INTRA_EMPHASIS) {
 				if (i + 1 < size && Common::isAlnum(data[i + 1]))
 					continue;
 			}
 
 			work = rndr_newbuf(rndr, BUFFER_SPAN);
 			parse_inline(work, rndr, data, i);
-			r = rndr->cb.emphasis(ob, work, rndr->opaque);
+			r = rndr->_cb.emphasis(ob, work, rndr->_opaque);
 			rndr_popbuf(rndr, BUFFER_SPAN);
 			return r ? i + 1 : 0;
 		}
@@ -535,7 +535,7 @@ static size_t parse_emph2(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 	SDDataBuffer *work = 0;
 	int r;
 
-	render_method = (c == '~') ? rndr->cb.strikethrough : rndr->cb.double_emphasis;
+	render_method = (c == '~') ? rndr->_cb.strikethrough : rndr->_cb.double_emphasis;
 
 	if (!render_method)
 		return 0;
@@ -548,7 +548,7 @@ static size_t parse_emph2(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 		if (i + 1 < size && data[i] == c && data[i + 1] == c && i && !_isspace(data[i - 1])) {
 			work = rndr_newbuf(rndr, BUFFER_SPAN);
 			parse_inline(work, rndr, data, i);
-			r = render_method(ob, work, rndr->opaque);
+			r = render_method(ob, work, rndr->_opaque);
 			rndr_popbuf(rndr, BUFFER_SPAN);
 			return r ? i + 2 : 0;
 		}
@@ -572,12 +572,12 @@ static size_t parse_emph3(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 		if (data[i] != c || _isspace(data[i - 1]))
 			continue;
 
-		if (i + 2 < size && data[i + 1] == c && data[i + 2] == c && rndr->cb.triple_emphasis) {
+		if (i + 2 < size && data[i + 1] == c && data[i + 2] == c && rndr->_cb.triple_emphasis) {
 			/* triple symbol found */
 			SDDataBuffer *work = rndr_newbuf(rndr, BUFFER_SPAN);
 
 			parse_inline(work, rndr, data, i);
-			r = rndr->cb.triple_emphasis(ob, work, rndr->opaque);
+			r = rndr->_cb.triple_emphasis(ob, work, rndr->_opaque);
 			rndr_popbuf(rndr, BUFFER_SPAN);
 			return r ? i + 3 : 0;
 
@@ -602,7 +602,7 @@ static size_t char_emphasis(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size
 	byte c = data[0];
 	size_t ret;
 
-	if (rndr->ext_flags & MKDEXT_NO_INTRA_EMPHASIS) {
+	if (rndr->_ext_flags & MKDEXT_NO_INTRA_EMPHASIS) {
 		if (offset > 0 && !_isspace(data[-1]) && data[-1] != '>')
 			return 0;
 	}
@@ -642,7 +642,7 @@ static size_t char_linebreak(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, siz
 	while (ob->size && ob->data[ob->size - 1] == ' ')
 		ob->size--;
 
-	return rndr->cb.linebreak(ob, rndr->opaque) ? 1 : 0;
+	return rndr->_cb.linebreak(ob, rndr->_opaque) ? 1 : 0;
 }
 
 /* char_codespan • '`' parsing a code span (assuming codespan != 0) */
@@ -675,10 +675,10 @@ static size_t char_codespan(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size
 	/* real code span */
 	if (f_begin < f_end) {
 		SDDataBuffer work = { data + f_begin, f_end - f_begin, 0, 0 };
-		if (!rndr->cb.codespan(ob, &work, rndr->opaque))
+		if (!rndr->_cb.codespan(ob, &work, rndr->_opaque))
 			end = 0;
 	} else {
-		if (!rndr->cb.codespan(ob, 0, rndr->opaque))
+		if (!rndr->_cb.codespan(ob, 0, rndr->_opaque))
 			end = 0;
 	}
 
@@ -694,10 +694,10 @@ static size_t char_escape(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 		if (strchr(escape_chars, data[1]) == NULL)
 			return 0;
 
-		if (rndr->cb.normal_text) {
+		if (rndr->_cb.normal_text) {
 			work.data = data + 1;
 			work.size = 1;
-			rndr->cb.normal_text(ob, &work, rndr->opaque);
+			rndr->_cb.normal_text(ob, &work, rndr->_opaque);
 		} else sd_bufputc(ob, data[1]);
 	} else if (size == 1) {
 		sd_bufputc(ob, data[0]);
@@ -723,10 +723,10 @@ static size_t char_entity(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 	else
 		return 0; /* lone '&' */
 
-	if (rndr->cb.entity) {
+	if (rndr->_cb.entity) {
 		work.data = data;
 		work.size = end;
-		rndr->cb.entity(ob, &work, rndr->opaque);
+		rndr->_cb.entity(ob, &work, rndr->_opaque);
 	} else sd_bufput(ob, data, end);
 
 	return end;
@@ -740,15 +740,15 @@ static size_t char_langle_tag(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 	int ret = 0;
 
 	if (end > 2) {
-		if (rndr->cb.autolink && altype != MKDA_NOT_AUTOLINK) {
+		if (rndr->_cb.autolink && altype != MKDA_NOT_AUTOLINK) {
 			SDDataBuffer *u_link = rndr_newbuf(rndr, BUFFER_SPAN);
 			work.data = data + 1;
 			work.size = end - 2;
 			unscape_text(u_link, &work);
-			ret = rndr->cb.autolink(ob, u_link, altype, rndr->opaque);
+			ret = rndr->_cb.autolink(ob, u_link, altype, rndr->_opaque);
 			rndr_popbuf(rndr, BUFFER_SPAN);
-		} else if (rndr->cb.raw_html_tag)
-			ret = rndr->cb.raw_html_tag(ob, &work, rndr->opaque);
+		} else if (rndr->_cb.raw_html_tag)
+			ret = rndr->_cb.raw_html_tag(ob, &work, rndr->_opaque);
 	}
 
 	if (!ret) return 0;
@@ -759,7 +759,7 @@ static size_t char_autolink_www(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, 
 	SDDataBuffer *link, *link_url, *link_text;
 	size_t link_len, rewind;
 
-	if (!rndr->cb.link || rndr->in_link_body)
+	if (!rndr->_cb.link || rndr->_in_link_body)
 		return 0;
 
 	link = rndr_newbuf(rndr, BUFFER_SPAN);
@@ -770,13 +770,13 @@ static size_t char_autolink_www(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, 
 		sd_bufput(link_url, link->data, link->size);
 
 		ob->size -= rewind;
-		if (rndr->cb.normal_text) {
+		if (rndr->_cb.normal_text) {
 			link_text = rndr_newbuf(rndr, BUFFER_SPAN);
-			rndr->cb.normal_text(link_text, link, rndr->opaque);
-			rndr->cb.link(ob, link_url, NULL, link_text, rndr->opaque);
+			rndr->_cb.normal_text(link_text, link, rndr->_opaque);
+			rndr->_cb.link(ob, link_url, NULL, link_text, rndr->_opaque);
 			rndr_popbuf(rndr, BUFFER_SPAN);
 		} else {
-			rndr->cb.link(ob, link_url, NULL, link, rndr->opaque);
+			rndr->_cb.link(ob, link_url, NULL, link, rndr->_opaque);
 		}
 		rndr_popbuf(rndr, BUFFER_SPAN);
 	}
@@ -789,14 +789,14 @@ static size_t char_autolink_email(SDDataBuffer *ob, SDMarkdown *rndr, byte *data
 	SDDataBuffer *link;
 	size_t link_len, rewind;
 
-	if (!rndr->cb.autolink || rndr->in_link_body)
+	if (!rndr->_cb.autolink || rndr->_in_link_body)
 		return 0;
 
 	link = rndr_newbuf(rndr, BUFFER_SPAN);
 
 	if ((link_len = sd_autolink__email(&rewind, link, data, offset, size, 0)) > 0) {
 		ob->size -= rewind;
-		rndr->cb.autolink(ob, link, MKDA_EMAIL, rndr->opaque);
+		rndr->_cb.autolink(ob, link, MKDA_EMAIL, rndr->_opaque);
 	}
 
 	rndr_popbuf(rndr, BUFFER_SPAN);
@@ -807,14 +807,14 @@ static size_t char_autolink_url(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, 
 	SDDataBuffer *link;
 	size_t link_len, rewind;
 
-	if (!rndr->cb.autolink || rndr->in_link_body)
+	if (!rndr->_cb.autolink || rndr->_in_link_body)
 		return 0;
 
 	link = rndr_newbuf(rndr, BUFFER_SPAN);
 
 	if ((link_len = sd_autolink__url(&rewind, link, data, offset, size, 0)) > 0) {
 		ob->size -= rewind;
-		rndr->cb.autolink(ob, link, MKDA_NORMAL, rndr->opaque);
+		rndr->_cb.autolink(ob, link, MKDA_NORMAL, rndr->_opaque);
 	}
 
 	rndr_popbuf(rndr, BUFFER_SPAN);
@@ -829,12 +829,12 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 	SDDataBuffer *link = 0;
 	SDDataBuffer *title = 0;
 	SDDataBuffer *u_link = 0;
-	size_t org_work_size = rndr->work_bufs[BUFFER_SPAN].size;
+	size_t org_work_size = rndr->_work_bufs[BUFFER_SPAN].size;
 	int text_has_nl = 0, ret = 0;
 	int in_title = 0, qtype = 0;
 
 	/* checking whether the correct renderer exists */
-	if ((is_img && !rndr->cb.image) || (!is_img && !rndr->cb.link))
+	if ((is_img && !rndr->_cb.image) || (!is_img && !rndr->_cb.link))
 		goto cleanup;
 
 	/* looking for the matching closing bracket */
@@ -975,7 +975,7 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 			id.size = link_e - link_b;
 		}
 
-		lr = find_link_ref(rndr->refs, id.data, id.size);
+		lr = find_link_ref(rndr->_refs, id.data, id.size);
 		if (!lr)
 			goto cleanup;
 
@@ -1010,7 +1010,7 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 		}
 
 		/* finding the link_ref */
-		lr = find_link_ref(rndr->refs, id.data, id.size);
+		lr = find_link_ref(rndr->_refs, id.data, id.size);
 		if (!lr)
 			goto cleanup;
 
@@ -1030,9 +1030,9 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 		} else {
 			/* disable autolinking when parsing inline the
 			 * content of a link */
-			rndr->in_link_body = 1;
+			rndr->_in_link_body = 1;
 			parse_inline(content, rndr, data + 1, txt_e - 1);
-			rndr->in_link_body = 0;
+			rndr->_in_link_body = 0;
 		}
 	}
 
@@ -1046,14 +1046,14 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 		if (ob->size && ob->data[ob->size - 1] == '!')
 			ob->size -= 1;
 
-		ret = rndr->cb.image(ob, u_link, title, content, rndr->opaque);
+		ret = rndr->_cb.image(ob, u_link, title, content, rndr->_opaque);
 	} else {
-		ret = rndr->cb.link(ob, u_link, title, content, rndr->opaque);
+		ret = rndr->_cb.link(ob, u_link, title, content, rndr->_opaque);
 	}
 
 	/* cleanup */
 cleanup:
-	rndr->work_bufs[BUFFER_SPAN].size = (int)org_work_size;
+	rndr->_work_bufs[BUFFER_SPAN].size = (int)org_work_size;
 	return ret ? i : 0;
 }
 
@@ -1061,7 +1061,7 @@ static size_t char_superscript(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, s
 	size_t sup_start, sup_len;
 	SDDataBuffer *sup;
 
-	if (!rndr->cb.superscript)
+	if (!rndr->_cb.superscript)
 		return 0;
 
 	if (size < 2)
@@ -1087,7 +1087,7 @@ static size_t char_superscript(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, s
 
 	sup = rndr_newbuf(rndr, BUFFER_SPAN);
 	parse_inline(sup, rndr, data + sup_start, sup_len - sup_start);
-	rndr->cb.superscript(ob, sup, rndr->opaque);
+	rndr->_cb.superscript(ob, sup, rndr->_opaque);
 	rndr_popbuf(rndr, BUFFER_SPAN);
 
 	return (sup_start == 2) ? sup_len + 1 : sup_len;
@@ -1243,7 +1243,7 @@ static int is_atxheader(SDMarkdown *rndr, byte *data, size_t size) {
 	if (data[0] != '#')
 		return 0;
 
-	if (rndr->ext_flags & MKDEXT_SPACE_HEADERS) {
+	if (rndr->_ext_flags & MKDEXT_SPACE_HEADERS) {
 		size_t level = 0;
 
 		while (level < size && level < 6 && data[level] == '#')
@@ -1393,8 +1393,8 @@ static size_t parse_blockquote(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, s
 	}
 
 	parse_block(out, rndr, work_data, work_size);
-	if (rndr->cb.blockquote)
-		rndr->cb.blockquote(ob, out, rndr->opaque);
+	if (rndr->_cb.blockquote)
+		rndr->_cb.blockquote(ob, out, rndr->_opaque);
 	rndr_popbuf(rndr, BUFFER_BLOCK);
 	return end;
 }
@@ -1432,7 +1432,7 @@ static size_t parse_paragraph(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 		 * let's check to see if there's some kind of block starting
 		 * here
 		 */
-		if ((rndr->ext_flags & MKDEXT_LAX_SPACING) && !Common::isAlnum(data[i])) {
+		if ((rndr->_ext_flags & MKDEXT_LAX_SPACING) && !Common::isAlnum(data[i])) {
 			if (prefix_oli(data + i, size - i) ||
 			        prefix_uli(data + i, size - i)) {
 				end = i;
@@ -1440,14 +1440,14 @@ static size_t parse_paragraph(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 			}
 
 			/* see if an html block starts here */
-			if (data[i] == '<' && rndr->cb.blockhtml &&
+			if (data[i] == '<' && rndr->_cb.blockhtml &&
 			        parse_htmlblock(ob, rndr, data + i, size - i, 0)) {
 				end = i;
 				break;
 			}
 
 			/* see if a code fence starts here */
-			if ((rndr->ext_flags & MKDEXT_FENCED_CODE) != 0 &&
+			if ((rndr->_ext_flags & MKDEXT_FENCED_CODE) != 0 &&
 			        is_codefence(data + i, size - i, NULL) != 0) {
 				end = i;
 				break;
@@ -1464,8 +1464,8 @@ static size_t parse_paragraph(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 	if (!level) {
 		SDDataBuffer *tmp = rndr_newbuf(rndr, BUFFER_BLOCK);
 		parse_inline(tmp, rndr, work.data, work.size);
-		if (rndr->cb.paragraph)
-			rndr->cb.paragraph(ob, tmp, rndr->opaque);
+		if (rndr->_cb.paragraph)
+			rndr->_cb.paragraph(ob, tmp, rndr->_opaque);
 		rndr_popbuf(rndr, BUFFER_BLOCK);
 	} else {
 		SDDataBuffer *header_work;
@@ -1486,8 +1486,8 @@ static size_t parse_paragraph(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 				SDDataBuffer *tmp = rndr_newbuf(rndr, BUFFER_BLOCK);
 				parse_inline(tmp, rndr, work.data, work.size);
 
-				if (rndr->cb.paragraph)
-					rndr->cb.paragraph(ob, tmp, rndr->opaque);
+				if (rndr->_cb.paragraph)
+					rndr->_cb.paragraph(ob, tmp, rndr->_opaque);
 
 				rndr_popbuf(rndr, BUFFER_BLOCK);
 				work.data += beg;
@@ -1498,8 +1498,8 @@ static size_t parse_paragraph(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 		header_work = rndr_newbuf(rndr, BUFFER_SPAN);
 		parse_inline(header_work, rndr, work.data, work.size);
 
-		if (rndr->cb.header)
-			rndr->cb.header(ob, header_work, (int)level, rndr->opaque);
+		if (rndr->_cb.header)
+			rndr->_cb.header(ob, header_work, (int)level, rndr->_opaque);
 
 		rndr_popbuf(rndr, BUFFER_SPAN);
 	}
@@ -1543,8 +1543,8 @@ static size_t parse_fencedcode(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, s
 	if (work->size && work->data[work->size - 1] != '\n')
 		sd_bufputc(work, '\n');
 
-	if (rndr->cb.blockcode)
-		rndr->cb.blockcode(ob, work, lang.size ? &lang : NULL, rndr->opaque);
+	if (rndr->_cb.blockcode)
+		rndr->_cb.blockcode(ob, work, lang.size ? &lang : NULL, rndr->_opaque);
 
 	rndr_popbuf(rndr, BUFFER_BLOCK);
 	return beg;
@@ -1582,8 +1582,8 @@ static size_t parse_blockcode(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 
 	sd_bufputc(work, '\n');
 
-	if (rndr->cb.blockcode)
-		rndr->cb.blockcode(ob, work, NULL, rndr->opaque);
+	if (rndr->_cb.blockcode)
+		rndr->_cb.blockcode(ob, work, NULL, rndr->_opaque);
 
 	rndr_popbuf(rndr, BUFFER_BLOCK);
 	return beg;
@@ -1643,7 +1643,7 @@ static size_t parse_listitem(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, siz
 
 		pre = i;
 
-		if (rndr->ext_flags & MKDEXT_FENCED_CODE) {
+		if (rndr->_ext_flags & MKDEXT_FENCED_CODE) {
 			if (is_codefence(data + beg + i, end - beg - i, NULL) != 0)
 				in_fence = !in_fence;
 		}
@@ -1713,8 +1713,8 @@ static size_t parse_listitem(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, siz
 	}
 
 	/* render of li itself */
-	if (rndr->cb.listitem)
-		rndr->cb.listitem(ob, inter, *flags, rndr->opaque);
+	if (rndr->_cb.listitem)
+		rndr->_cb.listitem(ob, inter, *flags, rndr->_opaque);
 
 	rndr_popbuf(rndr, BUFFER_SPAN);
 	rndr_popbuf(rndr, BUFFER_SPAN);
@@ -1728,8 +1728,8 @@ static size_t parse_list(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t 
 
 	work = rndr_newbuf(rndr, BUFFER_BLOCK);
 
-	if (rndr->cb.list_start)
-		rndr->cb.list_start(ob, work, flags, rndr->opaque);
+	if (rndr->_cb.list_start)
+		rndr->_cb.list_start(ob, work, flags, rndr->_opaque);
 
 	while (i < size) {
 		j = parse_listitem(work, rndr, data + i, size - i, &flags);
@@ -1739,8 +1739,8 @@ static size_t parse_list(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t 
 			break;
 	}
 
-	if (rndr->cb.list)
-		rndr->cb.list(ob, work, flags, rndr->opaque);
+	if (rndr->_cb.list)
+		rndr->_cb.list(ob, work, flags, rndr->_opaque);
 	rndr_popbuf(rndr, BUFFER_BLOCK);
 	return i;
 }
@@ -1769,8 +1769,8 @@ static size_t parse_atxheader(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 
 		parse_inline(work, rndr, data + i, end - i);
 
-		if (rndr->cb.header)
-			rndr->cb.header(ob, work, (int)level, rndr->opaque);
+		if (rndr->_cb.header)
+			rndr->_cb.header(ob, work, (int)level, rndr->_opaque);
 
 		rndr_popbuf(rndr, BUFFER_SPAN);
 	}
@@ -1879,8 +1879,8 @@ static size_t parse_htmlblock(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 
 			if (j) {
 				work.size = i + j;
-				if (do_render && rndr->cb.blockhtml)
-					rndr->cb.blockhtml(ob, &work, rndr->opaque);
+				if (do_render && rndr->_cb.blockhtml)
+					rndr->_cb.blockhtml(ob, &work, rndr->_opaque);
 				return work.size;
 			}
 		}
@@ -1896,8 +1896,8 @@ static size_t parse_htmlblock(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 				j = is_empty(data + i, size - i);
 				if (j) {
 					work.size = i + j;
-					if (do_render && rndr->cb.blockhtml)
-						rndr->cb.blockhtml(ob, &work, rndr->opaque);
+					if (do_render && rndr->_cb.blockhtml)
+						rndr->_cb.blockhtml(ob, &work, rndr->_opaque);
 					return work.size;
 				}
 			}
@@ -1922,8 +1922,8 @@ static size_t parse_htmlblock(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, si
 
 	/* the end of the block has been found */
 	work.size = tag_end;
-	if (do_render && rndr->cb.blockhtml)
-		rndr->cb.blockhtml(ob, &work, rndr->opaque);
+	if (do_render && rndr->_cb.blockhtml)
+		rndr->_cb.blockhtml(ob, &work, rndr->_opaque);
 
 	return tag_end;
 }
@@ -1932,7 +1932,7 @@ static void parse_table_row(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size
 	size_t i = 0, col;
 	SDDataBuffer *row_work = 0;
 
-	if (!rndr->cb.table_cell || !rndr->cb.table_row)
+	if (!rndr->_cb.table_cell || !rndr->_cb.table_row)
 		return;
 
 	row_work = rndr_newbuf(rndr, BUFFER_SPAN);
@@ -1960,7 +1960,7 @@ static void parse_table_row(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size
 			cell_end--;
 
 		parse_inline(cell_work, rndr, data + cell_start, 1 + cell_end - cell_start);
-		rndr->cb.table_cell(row_work, cell_work, col_data[col] | header_flag, rndr->opaque);
+		rndr->_cb.table_cell(row_work, cell_work, col_data[col] | header_flag, rndr->_opaque);
 
 		rndr_popbuf(rndr, BUFFER_SPAN);
 		i++;
@@ -1968,10 +1968,10 @@ static void parse_table_row(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size
 
 	for (; col < columns; ++col) {
 		SDDataBuffer empty_cell = { 0, 0, 0, 0 };
-		rndr->cb.table_cell(row_work, &empty_cell, col_data[col] | header_flag, rndr->opaque);
+		rndr->_cb.table_cell(row_work, &empty_cell, col_data[col] | header_flag, rndr->_opaque);
 	}
 
-	rndr->cb.table_row(ob, row_work, rndr->opaque);
+	rndr->_cb.table_row(ob, row_work, rndr->_opaque);
 
 	rndr_popbuf(rndr, BUFFER_SPAN);
 }
@@ -2102,8 +2102,8 @@ static size_t parse_table(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t
 			i++;
 		}
 
-		if (rndr->cb.table)
-			rndr->cb.table(ob, header_work, body_work, rndr->opaque);
+		if (rndr->_cb.table)
+			rndr->_cb.table(ob, header_work, body_work, rndr->_opaque);
 	}
 
 	free(col_data);
@@ -2118,8 +2118,8 @@ static void parse_block(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t s
 	byte *txt_data;
 	beg = 0;
 
-	if (rndr->work_bufs[BUFFER_SPAN].size +
-	        rndr->work_bufs[BUFFER_BLOCK].size > rndr->max_nesting)
+	if (rndr->_work_bufs[BUFFER_SPAN].size +
+	        rndr->_work_bufs[BUFFER_BLOCK].size > rndr->_max_nesting)
 		return;
 
 	while (beg < size) {
@@ -2129,7 +2129,7 @@ static void parse_block(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t s
 		if (is_atxheader(rndr, txt_data, end))
 			beg += parse_atxheader(ob, rndr, txt_data, end);
 
-		else if (data[beg] == '<' && rndr->cb.blockhtml &&
+		else if (data[beg] == '<' && rndr->_cb.blockhtml &&
 		         (i = parse_htmlblock(ob, rndr, txt_data, end, 1)) != 0)
 			beg += i;
 
@@ -2137,8 +2137,8 @@ static void parse_block(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t s
 			beg += i;
 
 		else if (is_hrule(txt_data, end)) {
-			if (rndr->cb.hrule)
-				rndr->cb.hrule(ob, rndr->opaque);
+			if (rndr->_cb.hrule)
+				rndr->_cb.hrule(ob, rndr->_opaque);
 
 			while (beg < size && data[beg] != '\n')
 				beg++;
@@ -2146,11 +2146,11 @@ static void parse_block(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t s
 			beg++;
 		}
 
-		else if ((rndr->ext_flags & MKDEXT_FENCED_CODE) != 0 &&
+		else if ((rndr->_ext_flags & MKDEXT_FENCED_CODE) != 0 &&
 		         (i = parse_fencedcode(ob, rndr, txt_data, end)) != 0)
 			beg += i;
 
-		else if ((rndr->ext_flags & MKDEXT_TABLES) != 0 &&
+		else if ((rndr->_ext_flags & MKDEXT_TABLES) != 0 &&
 		         (i = parse_table(ob, rndr, txt_data, end)) != 0)
 			beg += i;
 
@@ -2332,47 +2332,47 @@ SDMarkdown::SDMarkdown(uint extensions, size_t max_nesting, const SDCallbacks *c
 
 	SDMarkdown *md = this;
 
-	memcpy(&md->cb, callbacks, sizeof(SDCallbacks));
+	memcpy(&md->_cb, callbacks, sizeof(SDCallbacks));
 
-	stack_init(&md->work_bufs[BUFFER_BLOCK], 4);
-	stack_init(&md->work_bufs[BUFFER_SPAN], 8);
+	stack_init(&md->_work_bufs[BUFFER_BLOCK], 4);
+	stack_init(&md->_work_bufs[BUFFER_SPAN], 8);
 
-	memset(md->active_char, 0x0, 256);
+	memset(md->_active_char, 0x0, 256);
 
-	if (md->cb.emphasis || md->cb.double_emphasis || md->cb.triple_emphasis) {
-		md->active_char[(int)'*'] = MD_CHAR_EMPHASIS;
-		md->active_char[(int)'_'] = MD_CHAR_EMPHASIS;
+	if (md->_cb.emphasis || md->_cb.double_emphasis || md->_cb.triple_emphasis) {
+		md->_active_char[(int)'*'] = MD_CHAR_EMPHASIS;
+		md->_active_char[(int)'_'] = MD_CHAR_EMPHASIS;
 		if (extensions & MKDEXT_STRIKETHROUGH)
-			md->active_char[(int)'~'] = MD_CHAR_EMPHASIS;
+			md->_active_char[(int)'~'] = MD_CHAR_EMPHASIS;
 	}
 
-	if (md->cb.codespan)
-		md->active_char[(int)'`'] = MD_CHAR_CODESPAN;
+	if (md->_cb.codespan)
+		md->_active_char[(int)'`'] = MD_CHAR_CODESPAN;
 
-	if (md->cb.linebreak)
-		md->active_char[(int)'\n'] = MD_CHAR_LINEBREAK;
+	if (md->_cb.linebreak)
+		md->_active_char[(int)'\n'] = MD_CHAR_LINEBREAK;
 
-	if (md->cb.image || md->cb.link)
-		md->active_char[(int)'['] = MD_CHAR_LINK;
+	if (md->_cb.image || md->_cb.link)
+		md->_active_char[(int)'['] = MD_CHAR_LINK;
 
-	md->active_char[(int)'<'] = MD_CHAR_LANGLE;
-	md->active_char[(int)'\\'] = MD_CHAR_ESCAPE;
-	md->active_char[(int)'&'] = MD_CHAR_ENTITITY;
+	md->_active_char[(int)'<'] = MD_CHAR_LANGLE;
+	md->_active_char[(int)'\\'] = MD_CHAR_ESCAPE;
+	md->_active_char[(int)'&'] = MD_CHAR_ENTITITY;
 
 	if (extensions & MKDEXT_AUTOLINK) {
-		md->active_char[(int)':'] = MD_CHAR_AUTOLINK_URL;
-		md->active_char[(int)'@'] = MD_CHAR_AUTOLINK_EMAIL;
-		md->active_char[(int)'w'] = MD_CHAR_AUTOLINK_WWW;
+		md->_active_char[(int)':'] = MD_CHAR_AUTOLINK_URL;
+		md->_active_char[(int)'@'] = MD_CHAR_AUTOLINK_EMAIL;
+		md->_active_char[(int)'w'] = MD_CHAR_AUTOLINK_WWW;
 	}
 
 	if (extensions & MKDEXT_SUPERSCRIPT)
-		md->active_char[(int)'^'] = MD_CHAR_SUPERSCRIPT;
+		md->_active_char[(int)'^'] = MD_CHAR_SUPERSCRIPT;
 
 	/* Extension data */
-	md->ext_flags = extensions;
-	md->opaque = opaque;
-	md->max_nesting = max_nesting;
-	md->in_link_body = 0;
+	md->_ext_flags = extensions;
+	md->_opaque = opaque;
+	md->_max_nesting = max_nesting;
+	md->_in_link_body = 0;
 }
 
 Common::String SDMarkdown::render(const byte *document, size_t doc_size) {
@@ -2391,7 +2391,7 @@ Common::String SDMarkdown::render(const byte *document, size_t doc_size) {
 	sd_bufgrow(text, doc_size);
 
 	/* reset the references table */
-	memset(&md->refs, 0x0, REF_TABLE_SIZE * sizeof(void *));
+	memset(&md->_refs, 0x0, REF_TABLE_SIZE * sizeof(void *));
 
 	/* first pass: looking for references, copying everything else */
 	beg = 0;
@@ -2402,7 +2402,7 @@ Common::String SDMarkdown::render(const byte *document, size_t doc_size) {
 		beg += 3;
 
 	while (beg < doc_size) /* iterating over lines */
-		if (is_ref(document, beg, doc_size, &end, md->refs))
+		if (is_ref(document, beg, doc_size, &end, md->_refs))
 			beg = end;
 		else { /* skipping to the next line */
 			end = beg;
@@ -2429,8 +2429,8 @@ Common::String SDMarkdown::render(const byte *document, size_t doc_size) {
 	sd_bufgrow(ob, MARKDOWN_GROW(text->size));
 
 	/* second pass: actual rendering */
-	if (md->cb.doc_header)
-		md->cb.doc_header(ob, md->opaque);
+	if (md->_cb.doc_header)
+		md->_cb.doc_header(ob, md->_opaque);
 
 	if (text->size) {
 		/* adding a final newline if not already present */
@@ -2440,15 +2440,15 @@ Common::String SDMarkdown::render(const byte *document, size_t doc_size) {
 		parse_block(ob, md, text->data, text->size);
 	}
 
-	if (md->cb.doc_footer)
-		md->cb.doc_footer(ob, md->opaque);
+	if (md->_cb.doc_footer)
+		md->_cb.doc_footer(ob, md->_opaque);
 
 	/* clean-up */
 	sd_bufrelease(text);
-	free_link_refs(md->refs);
+	free_link_refs(md->_refs);
 
-	assert(md->work_bufs[BUFFER_SPAN].size == 0);
-	assert(md->work_bufs[BUFFER_BLOCK].size == 0);
+	assert(md->_work_bufs[BUFFER_SPAN].size == 0);
+	assert(md->_work_bufs[BUFFER_BLOCK].size == 0);
 
 	Common::String res = Common::String((const char *)ob->data, ob->size);
 
@@ -2460,14 +2460,14 @@ Common::String SDMarkdown::render(const byte *document, size_t doc_size) {
 SDMarkdown::~SDMarkdown() {
 	size_t i;
 
-	for (i = 0; i < (size_t)work_bufs[BUFFER_SPAN].asize; ++i)
-		sd_bufrelease((SDDataBuffer *)work_bufs[BUFFER_SPAN].item[i]);
+	for (i = 0; i < (size_t)_work_bufs[BUFFER_SPAN].asize; ++i)
+		sd_bufrelease((SDDataBuffer *)_work_bufs[BUFFER_SPAN].item[i]);
 
-	for (i = 0; i < (size_t)work_bufs[BUFFER_BLOCK].asize; ++i)
-		sd_bufrelease((SDDataBuffer *)work_bufs[BUFFER_BLOCK].item[i]);
+	for (i = 0; i < (size_t)_work_bufs[BUFFER_BLOCK].asize; ++i)
+		sd_bufrelease((SDDataBuffer *)_work_bufs[BUFFER_BLOCK].item[i]);
 
-	stack_free(&work_bufs[BUFFER_SPAN]);
-	stack_free(&work_bufs[BUFFER_BLOCK]);
+	stack_free(&_work_bufs[BUFFER_SPAN]);
+	stack_free(&_work_bufs[BUFFER_BLOCK]);
 }
 
 void SDMarkdown::version(int *ver_major, int *ver_minor, int *ver_revision) {
