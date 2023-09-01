@@ -288,11 +288,6 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 
 	Common::String input = str.encode(); // Encode to UTF8
 
-	Common::DataBuffer *ib = Common::bufnew(input.size());
-	Common::bufgrow(ib, input.size());
-	ib->size = input.size();
-	memcpy(ib->data, input.c_str(), input.size());
-
 	Common::DataBuffer *ob = Common::bufnew(1024);
 
 	MDState mdState;
@@ -303,7 +298,7 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	mdState.linkb = 0xff;
 
 	Common::SDMarkdown *md = sd_markdown_new(0, 16, &cb, &mdState);
-	sd_markdown_render(ob, ib->data, ib->size, md);
+	sd_markdown_render(ob, (const byte *)input.c_str(), input.size(), md);
 	sd_markdown_free(md);
 
 	warning("%zu bytes: %s", ob->size, toPrintable(Common::String((const char *)ob->data, ob->size)).c_str());
