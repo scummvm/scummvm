@@ -479,11 +479,11 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 
 		Common::String fileset = responseObject.getVal("fileset")->asString();
 
-		Common::String emailText =
+		Common::String emailText = 
 			Common::String::format("Fileset %s is a new or unknown fileset, the game details are:\n%s %s %s\n\nHere describe the details of your release:\n",
 								   fileset.c_str(), fileset.c_str(), g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str());
 
-		Common::String emailLink = Common::String::format("mailto:integrity@scummvm.org?subject=Subject: Unknown game variant fileset %s&body=%s!", fileset.c_str(), emailText.c_str());
+		Common::String emailLink = Common::percentEncodeString(Common::String::format("mailto:integrity@scummvm.org?subject=Subject: Unknown game variant fileset %s&body=%s!", fileset.c_str(), emailText.c_str()));
 
 		messageText.push_back(_("Your set of game files seems to be unknown to us."));
 		messageText.push_back(_("If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org"));
