@@ -34,6 +34,40 @@ namespace Common {
 #define GPERF_DOWNCASE 1
 #define GPERF_CASE_STRNCMP 1
 
+
+// autolink.h
+enum {
+	SD_AUTOLINK_SHORT_DOMAINS = (1 << 0),
+};
+
+int sd_autolink_issafe(const byte *link, size_t link_len);
+
+size_t sd_autolink__www(size_t *rewind_p, DataBuffer *link,
+	byte *data, size_t offset, size_t size, uint flags);
+
+size_t sd_autolink__email(size_t *rewind_p, DataBuffer *link,
+	byte *data, size_t offset, size_t size, uint flags);
+
+size_t sd_autolink__url(size_t *rewind_p, DataBuffer *link,
+	byte *data, size_t offset, size_t size, uint flags);
+
+
+// stack.h
+
+struct SDStack {
+	void **item;
+	size_t size;
+	size_t asize;
+};
+
+void stack_free(SDStack *);
+int stack_grow(SDStack *, size_t);
+int stack_init(SDStack *, size_t);
+
+int stack_push(SDStack *, void *);
+
+void *stack_pop(SDStack *);
+
 /***************
  * LOCAL TYPES *
  ***************/
@@ -2688,21 +2722,6 @@ size_t sd_autolink__url(size_t *rewind_p, DataBuffer *link, byte *data, size_t m
 
 #define BUFFER_MAX_ALLOC_SIZE (1024 * 1024 * 16) //16mb
 
-int bufprefix(const DataBuffer *buf, const char *prefix) {
-	size_t i;
-	assert(buf && buf->unit);
-
-	for (i = 0; i < buf->size; ++i) {
-		if (prefix[i] == 0)
-			return 0;
-
-		if (buf->data[i] != prefix[i])
-			return buf->data[i] - prefix[i];
-	}
-
-	return 0;
-}
-
 /* bufgrow: increasing the allocated size to the given value */
 int bufgrow(DataBuffer *buf, size_t neosz) {
 	size_t neoasz;
@@ -2741,60 +2760,6 @@ DataBuffer *bufnew(size_t unit) {
 	return ret;
 }
 
-/* bufnullterm: NULL-termination of the string array */
-const char *bufcstr(DataBuffer *buf) {
-	assert(buf && buf->unit);
-
-	if (buf->size < buf->asize && buf->data[buf->size] == 0)
-		return (char *)buf->data;
-
-	if (buf->size + 1 <= buf->asize || bufgrow(buf, buf->size + 1) == 0) {
-		buf->data[buf->size] = 0;
-		return (char *)buf->data;
-	}
-
-	return NULL;
-}
-
-/* bufprintf: formatted printing to a buffer */
-void bufprintf(DataBuffer *buf, const char *fmt, ...) {
-	va_list ap;
-	int n;
-
-	assert(buf && buf->unit);
-
-	if (buf->size >= buf->asize && bufgrow(buf, buf->size + 1) < 0)
-		return;
-
-	va_start(ap, fmt);
-	n = vsnprintf((char *)buf->data + buf->size, buf->asize - buf->size, fmt, ap);
-	va_end(ap);
-
-	if (n < 0) {
-#ifdef _MSC_VER
-		va_start(ap, fmt);
-		n = _vscprintf(fmt, ap);
-		va_end(ap);
-#else
-		return;
-#endif
-	}
-
-	if ((size_t)n >= buf->asize - buf->size) {
-		if (bufgrow(buf, buf->size + n + 1) < 0)
-			return;
-
-		va_start(ap, fmt);
-		n = vsnprintf((char *)buf->data + buf->size, buf->asize - buf->size, fmt, ap);
-		va_end(ap);
-	}
-
-	if (n < 0)
-		return;
-
-	buf->size += n;
-}
-
 /* bufput: appends raw data to a buffer */
 void bufput(DataBuffer *buf, const void *data, size_t len) {
 	assert(buf && buf->unit);
@@ -2804,11 +2769,6 @@ void bufput(DataBuffer *buf, const void *data, size_t len) {
 
 	memcpy(buf->data + buf->size, data, len);
 	buf->size += len;
-}
-
-/* bufputs: appends a NUL-terminated string to a buffer */
-void bufputs(DataBuffer *buf, const char *str) {
-	bufput(buf, str, strlen(str));
 }
 
 /* bufputc: appends a single byte to a buffer */
@@ -2829,29 +2789,6 @@ void bufrelease(DataBuffer *buf) {
 
 	free(buf->data);
 	free(buf);
-}
-
-/* bufreset: frees internal data of the buffer */
-void bufreset(DataBuffer *buf) {
-	if (!buf)
-		return;
-
-	free(buf->data);
-	buf->data = NULL;
-	buf->size = buf->asize = 0;
-}
-
-/* bufslurp: removes a given number of bytes from the head of the array */
-void bufslurp(DataBuffer *buf, size_t len) {
-	assert(buf && buf->unit);
-
-	if (len >= buf->size) {
-		buf->size = 0;
-		return;
-	}
-
-	buf->size -= len;
-	memmove(buf->data, buf->data + len, buf->size);
 }
 
 // stack.c
@@ -2913,13 +2850,6 @@ int stack_push(SDStack *st, void *item) {
 
 	st->item[st->size++] = item;
 	return 0;
-}
-
-void *stack_top(SDStack *st) {
-	if (!st->size)
-		return NULL;
-
-	return st->item[st->size - 1];
 }
 
 // html_blocks.h
