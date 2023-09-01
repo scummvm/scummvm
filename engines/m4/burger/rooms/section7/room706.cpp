@@ -201,17 +201,371 @@ static const seriesStreamBreak SERIES10[] = {
 	STREAM_BREAK_END
 };
 
+void Room706::preload() {
+	_G(player).walker_in_this_scene = false;
+}
 
 void Room706::init() {
+	player_set_commands_allowed(false);
+	pal_fade_set_start(0);
+	pal_fade_init(0, 255, 100, 40, -1);
+	_flag5 = false;
+	_flag6 = false;
+	_flag7 = false;
+	_volume = 100;
+
+	_series1 = series_load("706FLX01");
+	digi_preload("706A_004");
+	digi_preload_stream_breaks(SERIES1);
+	_series2 = series_load("706AST01");
+	_series3 = series_load("706AST02");
+	_series4 = series_load("706WIT01");
+
+	digi_preload_stream_breaks(SERIES2);
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room706::daemon() {
-}
+	switch (_G(kernel).trigger) {
+	case 1:
+		digi_play_loop("706A_004", 3, 50, -1, 706);
+		series_stream_with_breaks(SERIES1, "706A1", 6, 1, 2);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
 
-void Room706::pre_parser() {
+	case 2:
+		kernel_timing_trigger(6, 3);
+		break;
+
+	case 3:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 4);
+		break;
+
+	case 4:
+		player_set_commands_allowed(true);
+		getRoomVal();
+		kernel_trigger_dispatch_now(34);
+		conv_load_and_prepare("conv83", 5);
+		conv_play_curr();
+		break;
+
+	case 5:
+		if (_flag5)
+			terminateMachineAndNull(_series5);
+		if (_flag7) {
+			terminateMachineAndNull(_series7);
+			terminateMachineAndNull(_series8);
+		}
+		if (_flag6)
+			terminateMachineAndNull(_series6);
+
+		_flag5 = _flag6 = _flag7 = false;
+		series_unload(_series2);
+		series_unload(_series3);
+		series_unload(_series4);
+		kernel_timing_trigger(6, 6);
+		break;
+
+	case 6:
+		digi_unload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES2, "706A3", 6, 1, 7);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 7:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 8);
+		break;
+
+	case 8:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 9);
+		break;
+
+	case 9:
+		series_unload(_series1);
+		digi_unload_stream_breaks(SERIES2);
+		digi_unload("706A_004");
+		digi_preload("700_001");
+		digi_preload_stream_breaks(SERIES3);
+		digi_play_loop("700_001", 3, 50, -1, 700);
+		series_stream_with_breaks(SERIES3, "707A", 6, 1, 10);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 10:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 11);
+		break;
+
+	case 11:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 12);
+		break;
+
+	case 12:
+		digi_unload_stream_breaks(SERIES3);
+		digi_preload_stream_breaks(SERIES4);
+		digi_preload("707B_001");
+		digi_preload_stream_breaks(SERIES5);
+		digi_preload_stream_breaks(SERIES6);
+		digi_preload_stream_breaks(SERIES7);
+		series_stream_with_breaks(SERIES4, "708A", 6, 1, 13);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 13:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 14);
+		break;
+
+	case 14:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 15);
+		break;
+
+	case 15:
+		digi_unload_stream_breaks(SERIES4);
+		digi_play("707B_001", 2, 125);
+		series_stream_with_breaks(SERIES5, "707B", 6, 1, 16);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 16:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 17);
+		break;
+
+	case 17:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 18);
+		break;
+
+	case 18:
+		series_stream_with_breaks(SERIES6, "708B", 6, 1, 19);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 19:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 20);
+		break;
+
+	case 20:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 21);
+		break;
+
+	case 21:
+		digi_unload_stream_breaks(SERIES5);
+		digi_unload_stream_breaks(SERIES6);
+		series_stream_with_breaks(SERIES7, "707C", 6, 1, 22);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 22:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 23);
+		break;
+
+	case 23:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 24);
+		break;
+
+	case 24:
+		digi_unload_stream_breaks(SERIES7);
+		digi_preload_stream_breaks(SERIES8);
+		series_stream_with_breaks(SERIES8, "709A", 6, 1, 25);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 25:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 26);
+		break;
+
+	case 26:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 27);
+		break;
+
+	case 27:
+		digi_unload_stream_breaks(SERIES8);
+		digi_preload_stream_breaks(SERIES9);
+		digi_preload("707D_007");
+		series_stream_with_breaks(SERIES9, "70D", 6, 1, 28);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 28:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 29);
+		break;
+
+	case 29:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 30);
+		break;
+
+	case 30:
+		digi_unload_stream_breaks(SERIES9);
+		digi_preload("909B_005");
+		digi_preload_stream_breaks(SERIES10);
+		series_stream_with_breaks(SERIES10, "709B", 6, 1, 31);
+		pal_fade_init(0, 255, 100, 31, -1);
+		break;
+
+	case 31:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 32);
+		digi_unload_stream_breaks(SERIES10);
+		break;
+
+	case 32:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 42);
+		break;
+
+	case 33:
+		switch (_val1) {
+		case 1:
+			_val1 = 21;
+			_flag7 = true;
+			_series7 = series_play("706AST01", 0x300);
+			_series8 = series_play("706AST02", 0x300);
+			digi_play(conv_sound_to_play(), 1, 255, 33);
+			break;
+
+		case 21:
+			if (_flag7) {
+				terminateMachineAndNull(_series7);
+				terminateMachineAndNull(_series8);
+			}
+
+			_flag7 = false;
+			conv_resume_curr();
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 34:
+		switch (_G(roomVal4)) {
+		case 2:
+			getRoomVal();
+			series_play("706FLX01", 0x400, 0, 34, 6);
+			break;
+
+		case 3:
+			getRoomVal();
+			kernel_timing_trigger(60, 34);
+			break;
+
+		default:
+			_G(roomVal4) = 4;
+			break;
+		}
+		break;
+
+	case 35:
+		inv_move_object("MIRROR", NOWHERE);
+		break;
+
+	case 36:
+		digi_stop(3);
+		break;
+
+	case 37:
+		digi_stop(2);
+		digi_unload("707B_001");
+		break;
+
+	case 38:
+		digi_play_loop("707D_007", 3, 100, -1, 707);
+		break;
+
+	case 39:
+		_volume -= 20;
+		if (_volume > 0) {
+			term_message("fading hero tune, current volume = %d", _volume);
+			digi_change_volume(3, _volume);
+			kernel_timing_trigger(20, 39);
+	
+		} else {
+			digi_stop(3);
+		}
+		break;
+
+	case 40:
+		digi_play("709B_005", 1, 255, -1, 709);
+		break;
+
+	case 41:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 150, -1);
+		break;
+
+	case 42:
+		adv_kill_digi_between_rooms(false);
+		_G(game).setRoom(_G(executing) == WHOLE_GAME ? 903 : 901);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			_G(wilbur_should) = 21;
+			_flag6 = true;
+			_series6 = series_play("706WIT01", 0x200);
+			digi_play(conv_sound_to_play(), 1, 255, gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 21:
+			if (_flag6)
+				terminateMachineAndNull(_series6);
+
+			_flag6 = false;
+			conv_resume_curr();
+			break;
+
+		default:
+			break;
+		}
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room706::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (player_said("conv83")) {
+		conv83();
+		_G(player).command_ready = false;
+	}
+}
+
+void Room706::conv83() {
+	if (conv_sound_to_play()) {
+		int who = conv_whos_talking();
+
+		if (who <= 0) {
+			_val1 = 1;
+			kernel_trigger_dispatch_now(33);
+
+		} else if (who == 1) {
+			_G(wilbur_should) = 1;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+	}
+}
+
+void Room706::getRoomVal() {
+	_G(roomVal4) = imath_ranged_rand(1, 100) >= 10 ? 3 : 2;
 }
 
 } // namespace Rooms

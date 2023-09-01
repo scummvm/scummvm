@@ -29,15 +29,33 @@ namespace Burger {
 namespace Rooms {
 
 class Room706 : public Room {
+private:
+	int _series1 = -1;
+	int _series2 = -1;
+	int _series3 = -1;
+	int _series4 = -1;
+	machine *_series5 = nullptr;
+	machine *_series6 = nullptr;
+	machine *_series7 = nullptr;
+	machine *_series8 = nullptr;
+	bool _flag5 = false;
+	bool _flag6 = false;
+	bool _flag7 = false;
+	int _volume = 0;
+	int _val1 = 0;
+
+	void conv83();
+	void getRoomVal();
+
 public:
 	Room706() : Room() {
 	}
 	~Room706() override {
 	}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
-	void pre_parser() override;
 	void parser() override;
 };
 
