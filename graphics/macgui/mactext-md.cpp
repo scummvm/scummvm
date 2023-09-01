@@ -73,6 +73,8 @@ void render_list_start(Common::SDDataBuffer *ob, const Common::SDDataBuffer *tex
 
 	mdstate->listNum.push_back(flags & MKD_LIST_ORDERED ? 1 : -1);
 
+	sd_bufput(ob, "\016+0001", 6);
+
 	debug(1, "render_list_start(%s, %d)", PR(text), flags);
 }
 
@@ -82,7 +84,7 @@ void render_list(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int
 	mdstate->listNum.pop_back();
 
 	sd_bufput(ob, text->data, text->size);
-	sd_bufput(ob, "\n", 1);
+	sd_bufput(ob, "\n\016-0001", 7);
 
 	debug(1, "render_list(%s, %d)", PR(text), flags);
 }
