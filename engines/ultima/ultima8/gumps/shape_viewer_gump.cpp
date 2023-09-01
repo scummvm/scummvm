@@ -52,7 +52,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump)
 
 ShapeViewerGump::ShapeViewerGump()
 	: ModalGump(), _curArchive(0), _curShape(0), _curFrame(0),
-	  _background(0x101010), _fontNo(0), _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
+	  _background(0x101010), _fontNo(0), _showGrid(false), _mirrored(false),
+	  _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
 
 }
 
@@ -60,8 +61,9 @@ ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
 								 Common::Array<ShapeArchiveEntry> &archives,
 								 uint32 flags, int32 layer)
 		: ModalGump(x, y, width, height, 0, flags, layer), _archives(archives),
-		_curArchive(0), _curShape(0), _curFrame(0), _background(0x101010), _fontNo(0),
-		_shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
+		  _curArchive(0), _curShape(0), _curFrame(0),
+		  _background(0x101010), _fontNo(0), _showGrid(false), _mirrored(false),
+		  _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
 
 	if (GAME_IS_CRUSADER) {
 		// Default to a decent font on Crusader
@@ -92,10 +94,44 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	int32 posx = (_dims.width() - _shapeW) / 2 + _shapeX;
 	int32 posy = (_dims.height() - _shapeH) / 2 + _shapeY - 25;
 
+	if (_showGrid) {
+		const int step = 16;
+
+		uint32 color = _background + 0x101010;
+		for (int i = step; i < _dims.width(); i += step) {
+			int32 x = posx + i;
+			if (x < _dims.right)
+				surf->DrawLine32(color, x, _dims.top, x, _dims.bottom - 1);
+
+			x = posx - i;
+			if (x > _dims.left)
+				surf->DrawLine32(color, x, _dims.top, x, _dims.bottom - 1);
+		}
+
+		for (int i = step; i < _dims.height(); i += step) {
+			int32 y = posy + i;
+			if (y < _dims.bottom)
+				surf->DrawLine32(color, _dims.left, y, _dims.right - 1, y);
+
+			y = posy - i;
+			if (y > _dims.top)
+				surf->DrawLine32(color, _dims.left, y, _dims.right - 1, y);
+		}
+
+		color = _background + 0x002000;
+		surf->DrawLine32(color, posx, _dims.top, posx, _dims.bottom - 1);
+		surf->DrawLine32(color, _dims.left, posy, _dims.right - 1, posy);
+	}
+
 	ShapeArchive *archive = _archives[_curArchive]._archive;
 	const Shape *shape = archive->getShape(_curShape);
-	if (shape && _curFrame < shape->frameCount())
-		surf->Paint(shape, _curFrame, posx, posy);
+	if (shape && _curFrame < shape->frameCount()) {
+		if (_mirrored) {
+			surf->PaintMirrored(shape, _curFrame, posx, posy);
+		} else {
+			surf->Paint(shape, _curFrame, posx, posy);
+		}
+	}
 
 	RenderedText *rendtext;
 	Font *font = FontManager::get_instance()->getGameFont(_fontNo, true);
@@ -113,14 +149,14 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		} else {
 			Common::sprintf_s(buf1, "Frame %d of %d", _curFrame+1, shape->frameCount());
 		}
-		Common::sprintf_s(buf2, "%s:  Shape %d, %s", _archives[_curArchive]._name.c_str(),
-				_curShape, buf1);
+		Common::sprintf_s(buf2, "%s:  Shape %d, %s %s", _archives[_curArchive]._name.c_str(),
+						  _curShape, buf1, _mirrored ? "(Mirrored)" : "");
 		rendtext = font->renderText(buf2, remaining);
 		rendtext->draw(surf, 8, 10);
 		delete rendtext;
 	}
 
-	{
+	if (!_mirrored) {
 		// Dump the pixel val under the mouse cursor:
 		int32 mx = 0;
 		int32 my = 0;
@@ -265,6 +301,14 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 			_fontNo > 17) {
 			_fontNo = 0;
 		}
+	}
+	break;
+	case Common::KEYCODE_m: {
+		_mirrored = !_mirrored;
+	}
+	break;
+	case Common::KEYCODE_g: {
+		_showGrid = !_showGrid;
 	}
 	break;
 	case Common::KEYCODE_b: {
