@@ -33,7 +33,7 @@ class String;
  * TYPE DEFINITIONS *
  ********************/
 
-struct DataBuffer;
+struct SDDataBuffer;
 struct SDMarkdown;
 
 /* mkd_autolink - type of autolink */
@@ -65,40 +65,40 @@ enum mkd_extensions {
 /* sd_callbacks - functions for rendering parsed data */
 struct SDCallbacks {
 	/* block level callbacks - NULL skips the block */
-	void (*blockcode)(DataBuffer *ob, const DataBuffer *text, const DataBuffer *lang, void *opaque);
-	void (*blockquote)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	void (*blockhtml)(DataBuffer *ob,const  DataBuffer *text, void *opaque);
-	void (*header)(DataBuffer *ob, const DataBuffer *text, int level, void *opaque);
-	void (*hrule)(DataBuffer *ob, void *opaque);
-	void (*list_start)(DataBuffer *ob, const DataBuffer *text, int flags, void *opaque);
-	void (*list)(DataBuffer *ob, const DataBuffer *text, int flags, void *opaque);
-	void (*listitem)(DataBuffer *ob, const DataBuffer *text, int flags, void *opaque);
-	void (*paragraph)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	void (*table)(DataBuffer *ob, const DataBuffer *header, const DataBuffer *body, void *opaque);
-	void (*table_row)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	void (*table_cell)(DataBuffer *ob, const DataBuffer *text, int flags, void *opaque);
+	void (*blockcode)(SDDataBuffer *ob, const SDDataBuffer *text, const SDDataBuffer *lang, void *opaque);
+	void (*blockquote)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	void (*blockhtml)(SDDataBuffer *ob,const  SDDataBuffer *text, void *opaque);
+	void (*header)(SDDataBuffer *ob, const SDDataBuffer *text, int level, void *opaque);
+	void (*hrule)(SDDataBuffer *ob, void *opaque);
+	void (*list_start)(SDDataBuffer *ob, const SDDataBuffer *text, int flags, void *opaque);
+	void (*list)(SDDataBuffer *ob, const SDDataBuffer *text, int flags, void *opaque);
+	void (*listitem)(SDDataBuffer *ob, const SDDataBuffer *text, int flags, void *opaque);
+	void (*paragraph)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	void (*table)(SDDataBuffer *ob, const SDDataBuffer *header, const SDDataBuffer *body, void *opaque);
+	void (*table_row)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	void (*table_cell)(SDDataBuffer *ob, const SDDataBuffer *text, int flags, void *opaque);
 
 
 	/* span level callbacks - NULL or return 0 prints the span verbatim */
-	int (*autolink)(DataBuffer *ob, const DataBuffer *link, MKDAutolink type, void *opaque);
-	int (*codespan)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	int (*double_emphasis)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	int (*emphasis)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	int (*image)(DataBuffer *ob, const DataBuffer *link, const DataBuffer *title, const DataBuffer *alt, void *opaque);
-	int (*linebreak)(DataBuffer *ob, void *opaque);
-	int (*link)(DataBuffer *ob, const DataBuffer *link, const DataBuffer *title, const DataBuffer *content, void *opaque);
-	int (*raw_html_tag)(DataBuffer *ob, const DataBuffer *tag, void *opaque);
-	int (*triple_emphasis)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	int (*strikethrough)(DataBuffer *ob, const DataBuffer *text, void *opaque);
-	int (*superscript)(DataBuffer *ob, const DataBuffer *text, void *opaque);
+	int (*autolink)(SDDataBuffer *ob, const SDDataBuffer *link, MKDAutolink type, void *opaque);
+	int (*codespan)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	int (*double_emphasis)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	int (*emphasis)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	int (*image)(SDDataBuffer *ob, const SDDataBuffer *link, const SDDataBuffer *title, const SDDataBuffer *alt, void *opaque);
+	int (*linebreak)(SDDataBuffer *ob, void *opaque);
+	int (*link)(SDDataBuffer *ob, const SDDataBuffer *link, const SDDataBuffer *title, const SDDataBuffer *content, void *opaque);
+	int (*raw_html_tag)(SDDataBuffer *ob, const SDDataBuffer *tag, void *opaque);
+	int (*triple_emphasis)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	int (*strikethrough)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
+	int (*superscript)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
 
 	/* low level callbacks - NULL copies input directly into the output */
-	void (*entity)(DataBuffer *ob, const DataBuffer *entity, void *opaque);
-	void (*normal_text)(DataBuffer *ob, const DataBuffer *text, void *opaque);
+	void (*entity)(SDDataBuffer *ob, const SDDataBuffer *entity, void *opaque);
+	void (*normal_text)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
 
 	/* header and footer */
-	void (*doc_header)(DataBuffer *ob, void *opaque);
-	void (*doc_footer)(DataBuffer *ob, void *opaque);
+	void (*doc_header)(SDDataBuffer *ob, void *opaque);
+	void (*doc_footer)(SDDataBuffer *ob, void *opaque);
 };
 
 /*********
@@ -117,47 +117,16 @@ void sd_markdown_free(SDMarkdown *md);
 
 void sd_version(int *major, int *minor, int *revision);
 
-// buffer.h
-
-enum buferror_t {
-	BUF_OK = 0,
-	BUF_ENOMEM = -1,
-};
-
-/* DataBuffer: character array buffer */
-struct DataBuffer {
+/* SDDataBuffer: character array buffer */
+struct SDDataBuffer {
 	byte *data;		/* actual character data */
 	size_t size;	/* size of the string */
 	size_t asize;	/* allocated size (0 = volatile buffer) */
 	size_t unit;	/* reallocation unit size (0 = read-only buffer) */
 };
 
-/* CONST_BUF: global buffer from a string litteral */
-#define BUF_STATIC(string) \
-	{ (byte *)string, sizeof string -1, sizeof string, 0, 0 }
-
-/* VOLATILE_BUF: macro for creating a volatile buffer on the stack */
-#define BUF_VOLATILE(strname) \
-	{ (byte *)strname, strlen(strname), 0, 0, 0 }
-
-/* BUFPUTSL: optimized bufputs of a string litteral */
-#define BUFPUTSL(output, literal) \
-	bufput(output, literal, sizeof literal - 1)
-
-/* bufgrow: increasing the allocated size to the given value */
-int bufgrow(DataBuffer *, size_t);
-
-/* bufnew: allocation of a new buffer */
-DataBuffer *bufnew(size_t);
-
-/* bufput: appends raw data to a buffer */
-void bufput(DataBuffer *, const void *, size_t);
-
-/* bufputc: appends a single char to a buffer */
-void bufputc(DataBuffer *, int);
-
-/* bufrelease: decrease the reference count and free the buffer if needed */
-void bufrelease(DataBuffer *);
+/* sd_bufput: appends raw data to a buffer */
+void sd_bufput(SDDataBuffer *, const void *, size_t);
 
 } // end of namespace Common
 

@@ -32,28 +32,28 @@ struct MDState {
 	uint32 linkr = 0, linkg = 0, linkb = 0;
 };
 
-void render_blockcode(Common::DataBuffer *ob, const Common::DataBuffer *text, const Common::DataBuffer *lang, void *opaque) {
+void render_blockcode(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, const Common::SDDataBuffer *lang, void *opaque) {
 	if (!text)
 		return;
 
 	warning("STUB: render_blockcode(%s)", PR(text));
 }
 
-void render_blockquote(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+void render_blockquote(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
 	warning("STUB: render_blockquote(%s)", PR(text));
 }
 
-void render_blockhtml(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+void render_blockhtml(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
 	warning("STUB: render_blockhtml(%s)", PR(text));
 }
 
-void render_header(Common::DataBuffer *ob, const Common::DataBuffer *text, int level, void *opaque) {
+void render_header(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int level, void *opaque) {
 	if (!text)
 		return;
 
@@ -61,14 +61,14 @@ void render_header(Common::DataBuffer *ob, const Common::DataBuffer *text, int l
 
 	Common::String res = Common::String::format("\016+00%01x%s\001\016-00f\n", level, Common::String((const char *)text->data , text->size).c_str());
 
-	bufput(ob, res.c_str(), res.size());
+	sd_bufput(ob, res.c_str(), res.size());
 }
 
-void render_hrule(Common::DataBuffer *ob, void *opaque) {
+void render_hrule(Common::SDDataBuffer *ob, void *opaque) {
 	warning("STUB: render_hrule()");
 }
 
-void render_list_start(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
+void render_list_start(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int flags, void *opaque) {
 	MDState *mdstate = (MDState *)opaque;
 
 	mdstate->listNum.push_back(flags & MKD_LIST_ORDERED ? 1 : -1);
@@ -76,73 +76,73 @@ void render_list_start(Common::DataBuffer *ob, const Common::DataBuffer *text, i
 	debug(1, "render_list_start(%s, %d)", PR(text), flags);
 }
 
-void render_list(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
+void render_list(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int flags, void *opaque) {
 	MDState *mdstate = (MDState *)opaque;
 
 	mdstate->listNum.pop_back();
 
-	bufput(ob, text->data, text->size);
-	bufput(ob, "\n", 1);
+	sd_bufput(ob, text->data, text->size);
+	sd_bufput(ob, "\n", 1);
 
 	debug(1, "render_list(%s, %d)", PR(text), flags);
 }
 
-void render_listitem(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
+void render_listitem(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int flags, void *opaque) {
 	MDState *mdstate = (MDState *)opaque;
 
 	int listNum = mdstate->listNum.back();
 	int depth = mdstate->listNum.size();
 
 	for (int i = 0; i < depth; i++)
-		bufput(ob, "  ", 2);
+		sd_bufput(ob, "  ", 2);
 
 	if (flags & MKD_LIST_ORDERED) {
 		Common::String prefix = Common::String::format("%d. ", listNum);
 
-		bufput(ob, prefix.c_str(), prefix.size());
+		sd_bufput(ob, prefix.c_str(), prefix.size());
 
 		mdstate->listNum.back()++;
 	} else {
-		bufput(ob, "* ", 2);
+		sd_bufput(ob, "* ", 2);
 	}
 
-	bufput(ob, text->data, text->size);
+	sd_bufput(ob, text->data, text->size);
 
 	debug(1, "render_listitem(%s, %d)", PR(text), flags);
 }
 
-void render_paragraph(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+void render_paragraph(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
 	debug(1, "render_paragraph(%s)", PR(text));
 
-	bufput(ob, text->data, text->size);
-	bufput(ob, "\n\n", 2);
+	sd_bufput(ob, text->data, text->size);
+	sd_bufput(ob, "\n\n", 2);
 }
 
-void render_table(Common::DataBuffer *ob, const Common::DataBuffer *header, const Common::DataBuffer *body, void *opaque) {
+void render_table(Common::SDDataBuffer *ob, const Common::SDDataBuffer *header, const Common::SDDataBuffer *body, void *opaque) {
 	if (!body)
 		return;
 
 	warning("STUB: render_table(%s, %s)", header ? PR(header) : 0, PR(body));
 }
 
-void render_table_row(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+void render_table_row(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
 	warning("STUB: render_table_row(%s)", PR(text));
 }
 
-void render_table_cell(Common::DataBuffer *ob, const Common::DataBuffer *text, int flags, void *opaque) {
+void render_table_cell(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int flags, void *opaque) {
 	if (!text)
 		return;
 
 	warning("STUB: render_table_cell(%s)", PR(text));
 }
 
-int render_autolink(Common::DataBuffer *ob, const Common::DataBuffer *link, Common::MKDAutolink type, void *opaque) {
+int render_autolink(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, Common::MKDAutolink type, void *opaque) {
 	if (!link)
 		return 0;
 
@@ -150,7 +150,7 @@ int render_autolink(Common::DataBuffer *ob, const Common::DataBuffer *link, Comm
 	return 1;
 }
 
-int render_codespan(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+int render_codespan(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return 0;
 
@@ -158,7 +158,7 @@ int render_codespan(Common::DataBuffer *ob, const Common::DataBuffer *text, void
 	return 1;
 }
 
-int render_double_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+int render_double_emphasis(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text || !text->size)
 		return 0;
 
@@ -166,11 +166,11 @@ int render_double_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *tex
 
 	Common::String res = Common::String::format("\001\016+%02x0%s\001\016-%02x0", kMacFontBold, Common::String((const char *)text->data , text->size).c_str(), kMacFontBold);
 
-	bufput(ob, res.c_str(), res.size());
+	sd_bufput(ob, res.c_str(), res.size());
 	return 1;
 }
 
-int render_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+int render_emphasis(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text || !text->size)
 		return 0;
 
@@ -178,11 +178,11 @@ int render_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void
 
 	Common::String res = Common::String::format("\001\016+%02x0%s\001\016-%02x0", kMacFontItalic, Common::String((const char *)text->data , text->size).c_str(), kMacFontItalic);
 
-	bufput(ob, res.c_str(), res.size());
+	sd_bufput(ob, res.c_str(), res.size());
 	return 1;
 }
 
-int render_image(Common::DataBuffer *ob, const Common::DataBuffer *link, const Common::DataBuffer *title, const Common::DataBuffer *alt, void *opaque) {
+int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, const Common::SDDataBuffer *title, const Common::SDDataBuffer *alt, void *opaque) {
 	if (!link)
 		return 0;
 
@@ -190,31 +190,31 @@ int render_image(Common::DataBuffer *ob, const Common::DataBuffer *link, const C
 	return 1;
 }
 
-int render_linebreak(Common::DataBuffer *ob, void *opaque) {
+int render_linebreak(Common::SDDataBuffer *ob, void *opaque) {
 	debug(1, "render_linebreak()");
 
-	bufput(ob, "\n", 1);
+	sd_bufput(ob, "\n", 1);
 	return 1;
 }
 
-int render_link(Common::DataBuffer *ob, const Common::DataBuffer *link, const Common::DataBuffer *title, const Common::DataBuffer *content, void *opaque) {
+int render_link(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, const Common::SDDataBuffer *title, const Common::SDDataBuffer *content, void *opaque) {
 	if (!link)
 		return 0;
 
 	MDState *mdstate = (MDState *)opaque;
-	const Common::DataBuffer *text = content ? content : link;
+	const Common::SDDataBuffer *text = content ? content : link;
 
 	Common::String res = Common::String::format("\001" "\016+%02x0" "\001\016[%04x%04x%04x"
 		"%s" "\001\016]" "\001\016-%02x0", kMacFontUnderline, mdstate->linkr, mdstate->linkg, mdstate->linkb,
 		Common::String((const char *)text->data , text->size).c_str(), kMacFontUnderline);
 
-	bufput(ob, res.c_str(), res.size());
+	sd_bufput(ob, res.c_str(), res.size());
 
 	debug(1, "render_link(%s, %s, %s)", PR(link), title ? PR(title) : 0, content ? PR(content) : 0);
 	return 1;
 }
 
-int render_raw_html_tag(Common::DataBuffer *ob, const Common::DataBuffer *tag, void *opaque) {
+int render_raw_html_tag(Common::SDDataBuffer *ob, const Common::SDDataBuffer *tag, void *opaque) {
 	if (!tag)
 		return 0;
 
@@ -222,7 +222,7 @@ int render_raw_html_tag(Common::DataBuffer *ob, const Common::DataBuffer *tag, v
 	return 1;
 }
 
-int render_triple_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+int render_triple_emphasis(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return 0;
 
@@ -230,7 +230,7 @@ int render_triple_emphasis(Common::DataBuffer *ob, const Common::DataBuffer *tex
 	return 1;
 }
 
-int render_strikethrough(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+int render_strikethrough(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return 0;
 
@@ -238,7 +238,7 @@ int render_strikethrough(Common::DataBuffer *ob, const Common::DataBuffer *text,
 	return 1;
 }
 
-int render_superscript(Common::DataBuffer *ob, const Common::DataBuffer *text, void *opaque) {
+int render_superscript(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return 0;
 
