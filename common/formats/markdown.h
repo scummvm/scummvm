@@ -148,68 +148,14 @@ int bufgrow(DataBuffer *, size_t);
 /* bufnew: allocation of a new buffer */
 DataBuffer *bufnew(size_t);
 
-/* bufnullterm: NUL-termination of the string array (making a C-string) */
-const char *bufcstr(DataBuffer *);
-
-/* bufprefix: compare the beginning of a buffer with a string */
-int bufprefix(const DataBuffer *buf, const char *prefix);
-
 /* bufput: appends raw data to a buffer */
 void bufput(DataBuffer *, const void *, size_t);
-
-/* bufputs: appends a NUL-terminated string to a buffer */
-void bufputs(DataBuffer *, const char *);
 
 /* bufputc: appends a single char to a buffer */
 void bufputc(DataBuffer *, int);
 
 /* bufrelease: decrease the reference count and free the buffer if needed */
 void bufrelease(DataBuffer *);
-
-/* bufreset: frees internal data of the buffer */
-void bufreset(DataBuffer *);
-
-/* bufslurp: removes a given number of bytes from the head of the array */
-void bufslurp(DataBuffer *, size_t);
-
-/* bufprintf: formatted printing to a buffer */
-void bufprintf(DataBuffer *, const char *, ...);
-
-
-// autolink.h
-enum {
-	SD_AUTOLINK_SHORT_DOMAINS = (1 << 0),
-};
-
-int sd_autolink_issafe(const byte *link, size_t link_len);
-
-size_t sd_autolink__www(size_t *rewind_p, DataBuffer *link,
-	byte *data, size_t offset, size_t size, uint flags);
-
-size_t sd_autolink__email(size_t *rewind_p, DataBuffer *link,
-	byte *data, size_t offset, size_t size, uint flags);
-
-size_t sd_autolink__url(size_t *rewind_p, DataBuffer *link,
-	byte *data, size_t offset, size_t size, uint flags);
-
-
-// stack.h
-
-struct SDStack {
-	void **item;
-	size_t size;
-	size_t asize;
-};
-
-void stack_free(SDStack *);
-int stack_grow(SDStack *, size_t);
-int stack_init(SDStack *, size_t);
-
-int stack_push(SDStack *, void *);
-
-void *stack_pop(SDStack *);
-void *stack_top(SDStack *);
-
 
 } // end of namespace Common
 
