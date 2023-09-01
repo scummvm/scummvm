@@ -45,8 +45,8 @@ void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
 
 		if (shadow) {
 			char temp[20];
-			strcpy_s(temp, 20, seriesName);
-			strcat_s(temp, 20, "s");
+			Common::strcpy_s(temp, 20, seriesName);
+			Common::strcat_s(temp, 20, "s");
 			_G(npcSpeech2) = series_play(temp, layer + 1, 4, -1, 6, -1, 100, 0, 0, firstFrame, lastFrame);
 		}
 	}
