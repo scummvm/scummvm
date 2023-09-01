@@ -295,9 +295,8 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	mdState.linkg = 0;
 	mdState.linkb = 0xff;
 
-	Common::SDMarkdown *md = sd_markdown_new(0, 16, &cb, &mdState);
-	Common::String rendered = sd_markdown_render((const byte *)input.c_str(), input.size(), md);
-	sd_markdown_free(md);
+	Common::SDMarkdown md(0, 16, &cb, &mdState);
+	Common::String rendered = md.render((const byte *)input.c_str(), input.size());
 
 	setText(rendered);
 }
