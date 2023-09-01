@@ -987,7 +987,7 @@ void MacText::render(int from, int to, int shadow) {
 	}
 
 	for (int i = myFrom; i != myTo; i += delta) {
-		int xOffset = getAlignOffset(i);
+		int xOffset = getAlignOffset(i) + _textLines[i].indent;
 		xOffset++;
 
 		int start = 0, end = _textLines[i].chunks.size();
