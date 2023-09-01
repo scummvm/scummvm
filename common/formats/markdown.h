@@ -120,15 +120,15 @@ struct LinkRef;
 
 class SDMarkdown {
 public:
-	SDCallbacks cb;
-	void *opaque;
+	SDCallbacks _cb;
+	void *_opaque;
 
-	LinkRef *refs[REF_TABLE_SIZE];
-	byte active_char[256];
-	SDStack work_bufs[2];
-	uint ext_flags;
-	size_t max_nesting;
-	int in_link_body;
+	LinkRef *_refs[REF_TABLE_SIZE];
+	byte _active_char[256];
+	SDStack _work_bufs[2];
+	uint _ext_flags;
+	size_t _max_nesting;
+	int _in_link_body;
 
 	SDMarkdown(uint extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque);
 	~SDMarkdown();
