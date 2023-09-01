@@ -307,7 +307,7 @@ const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts
 	"Have you seen the poem in the Chinese room?<h><n>", // NCM73
 	"What is that small closet in the hallway for?<h><n>", // NCM74
 	"Can you tell me about the Chinese writing system? I seem to come across a lot of Chinese symbols.<h><n>", // NEF30
-	"I found some old papers in the house, plus a page from a phone directory dated 1894.<h><n>" // NEF31
+	"I found some old papers in the house, plus a page from a phone directory dated 1894.<h><n>", // NEF31
 	// 40
 	"Have you ever heard of the Ladies Protection Society?<h><n>", // NEF32
 	"What do you know about 'The Bandit's Treasure'?<h><n>", // NEF33
@@ -317,41 +317,41 @@ const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts
 	// 45
 	"Do you know what the words, 'gum bo fu' mean?<h><n>", // NEF40
 	"Do you know where Yerba Buena town is?<h><n>", // NEF41
-	"Do you know anything about 'Valdez'?<h><n>" // NEF44
+	"Do you know anything about 'Valdez'?<h><n>", // NEF44
 	"Abby is very strange. She really is convinced there's a ghost somewhere in the house.<h><n>", // NHG20
 	"I met Rose's handyman, Charlie. He seems nice.<h><n>", // NHG23
 	// 50
 	"Did you know Rose has a resident expert on Victorians?<h><n>", // NHG26
-	"Have you heard about the seance Abby hosted for Rose and me?<h><n>" // NHG29
+	"Have you heard about the seance Abby hosted for Rose and me?<h><n>", // NHG29
 	"Abby faked the seance. She rigged a table with a projector.<h><n>", // NHG33
-	"I just found a hidden attic. I wonder if it has anything to do with all these accidents.<h><n>" // NHG34
-	"There was a fire in the parlor but I put it out in time.<h><n>" // NHG37
+	"I just found a hidden attic. I wonder if it has anything to do with all these accidents.<h><n>", // NHG34
+	"There was a fire in the parlor but I put it out in time.<h><n>", // NHG37
 	// 55
-	"Hannah, do you think Rose could have started the fire to collect the insurance on the house?<h><n>" // NHG38
+	"Hannah, do you think Rose could have started the fire to collect the insurance on the house?<h><n>", // NHG38
 	"This house is full of surprises. I found a secret room in the basement where someone's been living.<h><n>", // NHG39
 	"Louis is up to something. I saw him take a book from the library.<h><n>", // NHG40
 	"Louis's book mentioned that this house was once called 'gum bo fu' in the 1800's.<h><n>", // NHG41
 	"It turns out Charlie is the one living in the basement.<h><n>", // NHG42
 	// 60
 	"I was wondering whether you knew anything about someone named 'E. Valdez'?<h><n>", // NLC50
-	"Have you ever heard of the Great Christmas gold robbery?<h><n>" // NLC51
+	"Have you ever heard of the Great Christmas gold robbery?<h><n>", // NLC51
 	"What kind of antique store do you own?<h><n>", // NLC52
-	"Was this house once a hotel?<h><n>" // NLC53
+	"Was this house once a hotel?<h><n>", // NLC53
 	"Have you seen a paint scraper anywhere?<h><n>", // NLC54
 	// 65
 	"Do you know what a phoenix is?<h><n>", // NLC55
 	"Do you know why the fireplace in the parlor didn't have a screen?<h><n>", // NLC57
 	"Have you found any secret passage ways in this house?<h><n>", // NLC58
-	"Do you think Rose should sell the house?<h><n>" // NLC59
+	"Do you think Rose should sell the house?<h><n>", // NLC59
 	"Do you know what 'gum bo fu' means?<h><n>", // NLC60
 	// 70
 	"Do you know who Lizzie Applegate was?<h><n>", // NLC62
 	"What was the Ladies Protection Society?<h><n>", // NLC65
 	"Have you seen the poem in my room?<h><n>", // NAS54
 	"Do you think Charlie is doing a good job?<h><n>", // NLC67
-	"Did Lizzie ever wear men's clothing?<h><n>" // NLC68
+	"Did Lizzie ever wear men's clothing?<h><n>", // NLC68
 	// 75
-	"Where did Abby find those papers that are in the parlor?<h><n>" // NRM17
+	"Where did Abby find those papers that are in the parlor?<h><n>", // NRM17
 	"How did you find Charlie?<h><n>", // NRM18
 	"How do you know Louis?<h><n>", // NRM19
 	"How did you meet Abby?<h><n>", // NRM20
@@ -360,12 +360,12 @@ const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts
 	"Are you missing any papers?<h><n>", // NRM55
 	"Have you heard of someone named Lizzie Applegate?<h><n>", // NRM22
 	"What is Abby planning for tonight?<h><n>", // NRM23
-	"Have you found any rainbow designs in the house?<h><n>" // NRM24
-	"Do you think Charlie is responsible for these accidents?<h><n>" // NRM25
+	"Have you found any rainbow designs in the house?<h><n>", // NRM24
+	"Do you think Charlie is responsible for these accidents?<h><n>", // NRM25
 	// 85
 	"Does Charlie live around here?<h><n>", // NAS67
 	"Do you know why there's a speaker in the air vent?<h><n>", // NRM27
-	"Whose laptop is that in the library?<h><n>" // NRM28
+	"Whose laptop is that in the library?<h><n>", // NRM28
 	"Why are there dead roses in the parlor?<h><n>", // NRM29
 	"Do you know what 'gum bo fu' means?<h><n>", // NLC60
 },
@@ -486,8 +486,8 @@ const Common::Array<Common::Array<const char *>> _nancy3GoodbyeTexts = {
 	"I'll let you get back to what you were doing.<h>", // NAS90
 	"I should get going. Talk to you later.<h>", // NBG90
 	"I'll let you get back to your renovation.<h>", // NCM90
-	"I should get going. Goodbye, Emily.<h>" // NEF90
-	"I should get back to work. Goodbye.<h>" // NHG90
+	"I should get going. Goodbye, Emily.<h>", // NEF90
+	"I should get back to work. Goodbye.<h>", // NHG90
 	"I won't keep you any longer.<h>", // NLC90
 	"Goodbye, Ned.<h>", // NNN90
 	"I can see you're busy - I'll let you go.<h>" // NRG90
