@@ -24,6 +24,7 @@
 
 #include "m4/m4.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/rooms/section6/section6.h"
 #include "m4/burger/rooms/section7/section7.h"
 #include "m4/burger/rooms/section8/section8.h"
 #include "m4/burger/rooms/section9/section9.h"
@@ -38,7 +39,7 @@ private:
 	Rooms::Section1 _section3;
 	Rooms::Section1 _section4;
 	Rooms::Section1 _section5;
-	Rooms::Section1 _section6;
+	Rooms::Section6 _section6;
 	Rooms::Section7 _section7;
 	Rooms::Section8 _section8;
 	Rooms::Section9 _section9;
