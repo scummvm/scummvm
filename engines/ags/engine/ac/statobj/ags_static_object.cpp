@@ -19,12 +19,15 @@
  *
  */
 
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 const char *AGSStaticObject::GetFieldPtr(const char *address, intptr_t offset) {
 	return address + offset;
@@ -74,6 +77,9 @@ void AGSStaticObject::WriteFloat(const char *address, intptr_t offset, float val
 void StaticGame::WriteInt32(const char *address, intptr_t offset, int32_t val) {
 	if (offset == 4 * sizeof(int32_t)) {
 		set_debug_mode(val != 0);
+	} else if (offset == 57 * sizeof(int32_t)) {
+		_GP(play).inv_top = val;
+		GUI::MarkInventoryForUpdate(_GP(game).playercharacter, true);
 	} else if (offset == 99 * sizeof(int32_t) || offset == 112 * sizeof(int32_t)) {
 		*(int32_t *)(const_cast<char *>(address) + offset) = ReadScriptAlignment(val);
 	} else {
