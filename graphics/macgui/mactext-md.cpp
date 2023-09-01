@@ -59,7 +59,7 @@ void render_header(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, i
 
 	debug(1, "render_header(%s)", PR(text));
 
-	Common::String res = Common::String::format("\016+00%01x%s\001\016-00f\n", level, Common::String((const char *)text->data , text->size).c_str());
+	Common::String res = Common::String::format("\016+00%01x0" "%s" "\001\016-00f0\n", level, Common::String((const char *)text->data , text->size).c_str());
 
 	sd_bufput(ob, res.c_str(), res.size());
 }
@@ -164,7 +164,7 @@ int render_double_emphasis(Common::SDDataBuffer *ob, const Common::SDDataBuffer 
 
 	debug(1, "render_double_emphasis(%s)", PR(text));
 
-	Common::String res = Common::String::format("\001\016+%02x0%s\001\016-%02x0", kMacFontBold, Common::String((const char *)text->data , text->size).c_str(), kMacFontBold);
+	Common::String res = Common::String::format("\001\016+%02x00" "%s" "\001\016-%02x00", kMacFontBold, Common::String((const char *)text->data , text->size).c_str(), kMacFontBold);
 
 	sd_bufput(ob, res.c_str(), res.size());
 	return 1;
@@ -176,7 +176,7 @@ int render_emphasis(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, 
 
 	debug(1, "render_emphasis(%s)", PR(text));
 
-	Common::String res = Common::String::format("\001\016+%02x0%s\001\016-%02x0", kMacFontItalic, Common::String((const char *)text->data , text->size).c_str(), kMacFontItalic);
+	Common::String res = Common::String::format("\001\016+%02x00" "%s" "\001\016-%02x00", kMacFontItalic, Common::String((const char *)text->data , text->size).c_str(), kMacFontItalic);
 
 	sd_bufput(ob, res.c_str(), res.size());
 	return 1;
@@ -204,8 +204,8 @@ int render_link(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, cons
 	MDState *mdstate = (MDState *)opaque;
 	const Common::SDDataBuffer *text = content ? content : link;
 
-	Common::String res = Common::String::format("\001" "\016+%02x0" "\001\016[%04x%04x%04x"
-		"%s" "\001\016]" "\001\016-%02x0", kMacFontUnderline, mdstate->linkr, mdstate->linkg, mdstate->linkb,
+	Common::String res = Common::String::format("\001" "\016+%02x00" "\001\016[%04x%04x%04x"
+		"%s" "\001\016]" "\001\016-%02x00", kMacFontUnderline, mdstate->linkr, mdstate->linkg, mdstate->linkb,
 		Common::String((const char *)text->data , text->size).c_str(), kMacFontUnderline);
 
 	sd_bufput(ob, res.c_str(), res.size());
