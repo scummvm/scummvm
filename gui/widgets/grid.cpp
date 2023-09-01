@@ -599,16 +599,13 @@ void GridWidget::sortGroups() {
 	calcInnerHeight();
 	markGridAsInvalid();
 
-	_scrollBar->_currentPos = _scrollPos;
-	_scrollBar->checkBounds(_scrollBar->_currentPos);
-	_scrollPos = _scrollBar->_currentPos;
+	scrollBarRecalc();
 
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
 	}
 
 	assignEntriesToItems();
-	scrollBarRecalc();
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
