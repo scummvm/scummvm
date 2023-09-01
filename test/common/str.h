@@ -27,6 +27,28 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2, "  This is a s tring with spaces  ");
 	}
 
+	void test_chop() {
+		Common::String str("test-string");
+		str.chop();
+		TS_ASSERT_EQUALS(str, "test-strin");
+
+		str = "test-string";
+		str.chop(2);
+		TS_ASSERT_EQUALS(str, "test-stri");
+
+		str = "test-string";
+		str.chop(10);
+		TS_ASSERT_EQUALS(str, "t");
+
+		str = "test-string";
+		str.chop(11);
+		TS_ASSERT(str.empty());
+
+		str = "test-string";
+		str.chop(200);
+		TS_ASSERT(str.empty());
+	}
+
 	void test_empty_clear() {
 		Common::String str("test");
 		TS_ASSERT(!str.empty());
