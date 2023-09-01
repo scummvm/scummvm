@@ -33,7 +33,6 @@
 #include "m4/burger/rooms/section6/room608.h"
 #include "m4/burger/rooms/section6/room609.h"
 #include "m4/burger/rooms/section6/room610.h"
-#include "m4/burger/rooms/section6/room612.h"
 
 namespace M4 {
 namespace Burger {
@@ -50,7 +49,6 @@ private:
 	Room608 _room608;
 	Room609 _room609;
 	Room610 _room610;
-	Room612 _room612;
 
 public:
 	Section6();
