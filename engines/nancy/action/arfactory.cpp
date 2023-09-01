@@ -39,6 +39,7 @@
 #include "engines/nancy/action/setplayerclock.h"
 #include "engines/nancy/action/raycastpuzzle.h"
 #include "engines/nancy/action/turningpuzzle.h"
+#include "engines/nancy/action/tangrampuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -200,6 +201,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new RiddlePuzzle();
 	case 206:
 		return new RaycastPuzzle();
+	case 207:
+		return new TangramPuzzle();
 	case 208:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kPiano);
 	case 209:

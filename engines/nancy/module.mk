@@ -21,6 +21,7 @@ MODULE_OBJS = \
   action/setplayerclock.o \
   action/sliderpuzzle.o \
   action/soundequalizerpuzzle.o \
+  action/tangrampuzzle.o \
   action/towerpuzzle.o \
   action/turningpuzzle.o \
   action/telephone.o \

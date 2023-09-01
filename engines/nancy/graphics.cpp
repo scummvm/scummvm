@@ -130,13 +130,11 @@ void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
 }
 
 void GraphicsManager::addObject(RenderObject *object) {
-	for (const auto &r : _objects) {
+	for (auto &r : _objects) {
 		if (r == object) {
-			return;
-		}
-
-		if (r->getZOrder() > object->getZOrder()) {
-			break;
+			// Erase and re-add objects already in the array to make sure
+			// any changes in the z depth are reflected correctly
+			_objects.erase(&r);
 		}
 	}
 
@@ -269,16 +267,28 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 }
 
 // Custom rotation code since Surface::rotoscale() produces incorrect results
-// Only works on 16 bit square surfaces with the same size, and ignores transparency
+// Only works on 16 bit surfaces and ignores transparency
 // Rotation is a value between 0 and 3, corresponding to 0, 90, 180, or 270 degrees clockwise
 void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation) {
 	assert(!src.empty() && !dest.empty());
-	assert(src.w == src.h && src.h == dest.w && dest.w == dest.h);
 	assert(rotation <= 3);
 	assert(src.format.bytesPerPixel == 2 && dest.format.bytesPerPixel == 2);
 
-	uint size = src.w;
+	uint srcW = src.w;
+	uint srcH = src.h;
 	const uint16 *s, *e;
+
+	if (rotation % 2) {
+		if (src.h != dest.w || src.w != dest.h) {
+			// Dest surface is wrong size, destroy it and create an appropriate one
+			dest.create(src.h, src.w, src.format);
+		}
+	} else {
+		if (src.w != dest.w || src.h != dest.h) {
+			// Dest surface is wrong size, destroy it and create an appropriate one
+			dest.create(src.w, src.h, src.format);
+		}
+	}
 
 	switch (rotation) {
 	case 0 :
@@ -288,10 +298,10 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 	case 2 : {
 		// 180 degrees
 		uint16 *d;
-		for (uint y = 0; y < size; ++y) {
+		for (uint y = 0; y < srcH; ++y) {
 			s = (const uint16 *)src.getBasePtr(0, y);
-			e = (const uint16 *)src.getBasePtr(size - 1, y);
-			d = (uint16 *)dest.getBasePtr(size - 1, size - y - 1);
+			e = (const uint16 *)src.getBasePtr(srcW, y);
+			d = (uint16 *)dest.getBasePtr(srcW - 1, srcH - y - 1);
 			for (; s < e; ++s, --d) {
 				*d = *s;
 			}
@@ -301,22 +311,20 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 	}
 	case 1 :
 		// 90 degrees
-		for (uint y = 0; y < size; ++y) {
+		for (uint y = 0; y < srcH; ++y) {
 			s = (const uint16 *)src.getBasePtr(0, y);
-			e = (const uint16 *)src.getBasePtr(size - 1, y);
-			for (uint x = 0; x < size; ++x, ++s) {
-				*((uint16 *)dest.getBasePtr(size - y - 1, x)) = *s;
+			for (uint x = 0; x < srcW; ++x, ++s) {
+				*((uint16 *)dest.getBasePtr(srcH - y - 1, x)) = *s;
 			}
 		}
 
 		break;
 	case 3 :
 		// 270 degrees
-		for (uint y = 0; y < size; ++y) {
+		for (uint y = 0; y < srcH; ++y) {
 			s = (const uint16 *)src.getBasePtr(0, y);
-			e = (const uint16 *)src.getBasePtr(size - 1, y);
-			for (uint x = 0; x < size; ++x, ++s) {
-				*((uint16 *)dest.getBasePtr(y, size - x - 1)) = *s;
+			for (uint x = 0; x < srcW; ++x, ++s) {
+				*((uint16 *)dest.getBasePtr(y, srcW - x - 1)) = *s;
 			}
 		}
 
