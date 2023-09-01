@@ -250,7 +250,7 @@ BurgerEngine::BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	_sections.push_back(&_section1);	// TODO: Replace me
 	_sections.push_back(&_section1);	// TODO: Replace me
 	_sections.push_back(&_section1);	// TODO: Replace me
-	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section6);
 	_sections.push_back(&_section7);
 	_sections.push_back(&_section8);
 	_sections.push_back(&_section9);
