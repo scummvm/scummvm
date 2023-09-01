@@ -599,6 +599,7 @@ void GridWidget::sortGroups() {
 	calcInnerHeight();
 	markGridAsInvalid();
 
+	_scrollBar->_currentPos = _scrollPos;
 	_scrollBar->checkBounds(_scrollBar->_currentPos);
 	_scrollPos = _scrollBar->_currentPos;
 
