@@ -215,7 +215,9 @@ void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool 
 		memcpy(_currentPalette + (start * 3), rgbData, length * 3);
 	}
 
-	_resMan->resClose(id);
+	if (!toBlack) {
+		_resMan->resClose(id);
+	}
 }
 
 void Screen::fullRefresh(bool soft) {
