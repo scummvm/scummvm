@@ -585,7 +585,7 @@ Common::U32String stripFormat(const Common::U32String &str) {
 			} else if (*s == '\016') {	// human-readable format
 				s++;
 				if (*s == '+' || *s == '-') // style + header size
-					s += 4;
+					s += 5;
 				else if (*s == '[') // color information
 					s += 13;
 				else if (*s == ']') // default color

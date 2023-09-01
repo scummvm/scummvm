@@ -109,19 +109,14 @@ struct MacFontRun {
 };
 
 struct MacTextLine {
-	int width;
-	int height;
-	int y;
-	int charwidth;
-	bool paragraphEnd;
+	int width = -1;
+	int height = -1;
+	int y = 0;
+	int charwidth = -1;
+	bool paragraphEnd = false;
+	int indent = 0;
 
 	Common::Array<MacFontRun> chunks;
-
-	MacTextLine() {
-		width = height = charwidth = -1;
-		y = 0;
-		paragraphEnd = false;
-	}
 
 	MacFontRun &firstChunk() { return chunks[0]; }
 	MacFontRun &lastChunk() { return chunks[chunks.size() - 1]; }

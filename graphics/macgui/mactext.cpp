@@ -658,6 +658,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 	Common::U32String paragraph, tmp;
 
 	MacFontRun current_format = _defaultFormatting;
+	int indentSize = 0;
 
 	while (*l) {
 		paragraph.clear();
@@ -701,8 +702,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				s++;
 
 				// First two digits is slant, third digit is Header number
-				if (*s == '+') { // \016+XXY  -- opening textSlant. H<Y>
-					uint16 textSlant, headSize;
+				if (*s == '+') { // \016+XXYZ  -- opening textSlant, H<Y>, indent<+Z>
+					uint16 textSlant, headSize, indent;
 					s++;
 
 					s = readHex(&textSlant, s, 2);
@@ -715,10 +716,16 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						current_format.fontSize = _defaultFormatting.fontSize * sizes[headSize];
 					}
 
-					D(9, "** splitString+: fontId: %d, textSlant: %d, fontSize: %d,",
-							current_format.fontId, current_format.textSlant, current_format.fontSize);
-				} else if (*s == '-') { // \016-XXY  -- closing textSlant, H<Y>
-					uint16 textSlant, headSize;
+					s = readHex(&indent, s, 1);
+
+					if (s)
+						indentSize += 20 * indent;
+
+					D(9, "** splitString+: fontId: %d, textSlant: %d, fontSize: %d, indent: %d",
+							current_format.fontId, current_format.textSlant, current_format.fontSize,
+							indent);
+				} else if (*s == '-') { // \016-XXYZ  -- closing textSlant, H<Y>, indent<+Z>
+					uint16 textSlant, headSize, indent;
 					s++;
 
 					s = readHex(&textSlant, s, 2);
@@ -729,8 +736,14 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					if (headSize == 0xf) // reset
 						current_format.fontSize = _defaultFormatting.fontSize;
 
-					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d,",
-							current_format.fontId, current_format.textSlant, current_format.fontSize);
+					s = readHex(&indent, s, 1);
+
+					if (s)
+						indentSize -= 20 * indent;
+
+					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d, indent: %d",
+							current_format.fontId, current_format.textSlant, current_format.fontSize,
+							indent);
 				} else if (*s == '[') { // \016[RRGGBB  -- setting color
 					uint16 palinfo1, palinfo2, palinfo3;
 					s++;
@@ -786,8 +799,11 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				_textLines[curLine].lastChunk().text = tmp;
 				continue;
 			}
+
+			_textLines[curLine].indent = indentSize;
+
 			// calc word_width, the trick we define here is we don`t count the space
-			int word_width = getStringWidth(current_format, tmp);
+			int word_width = _textLines[curLine].indent + getStringWidth(current_format, tmp);
 			// add all spaces left
 			while (*s == ' ') {
 				tmp += *s;
@@ -830,7 +846,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					// we just need to deal it specially
 
 					// meaning you have to split this word;
-					int tmp_width = 0;
+					int tmp_width = _textLines[curLine].indent;
 					_textLines[curLine].chunks.push_back(word[i]);
 					// empty the string
 					_textLines[curLine].lastChunk().text = Common::U32String();
@@ -858,8 +874,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 							_textLines.insert_at(curLine, MacTextLine());
 							_textLines[curLine].chunks.push_back(word[i]);
 							_textLines[curLine].lastChunk().text = Common::U32String();
-							tmp_width = 0;
-							cur_width = 0;
+							tmp_width = _textLines[curLine].indent;
+							cur_width = _textLines[curLine].indent;
 						}
 						tmp_width += char_width;
 						_textLines[curLine].lastChunk().text += c;
@@ -1051,7 +1067,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 	if (_textLines[line].width != -1 && !enforce && col == -1)
 		return _textLines[line].width;
 
-	int width = 0;
+	int width = _textLines[line].indent;
 	int height = 0;
 	int charwidth = 0;
 
