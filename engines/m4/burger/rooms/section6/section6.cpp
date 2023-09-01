@@ -36,7 +36,7 @@ Section6::Section6() : Rooms::Section() {
 	add(608, &_room608);
 	add(609, &_room609);
 	add(610, &_room610);
-	add(612, &_room612);
+	add(612, &_room602);
 }
 
 } // namespace Rooms

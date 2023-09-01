@@ -29,13 +29,28 @@ namespace Burger {
 namespace Rooms {
 
 class Room602 : public Room {
+private:
+	noWalkRect *_walk1 = nullptr;
+	int _series1 = 0;
+	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
+	int _series4 = 0;
+	int _series5 = 0;
+	int _series6 = 0;
+	int _series7 = 0;
+	machine *_series8 = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+
 public:
 	Room602() : Room() {}
 	~Room602() override {}
 
-	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
