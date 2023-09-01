@@ -482,13 +482,12 @@ static void retro_set_options_display(void) {
 	option_display.key = "scummvm_frameskip_threshold";
 	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
 
-
 	option_display.visible = opt_frameskip_no_display;
 	option_display.key = "scummvm_frameskip_no";
 	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
 }
 
-static bool retro_update_display(void) {
+static bool retro_update_options_display(void) {
 	if (updating_variables)
 		return false;
 
@@ -680,7 +679,7 @@ void retro_set_environment(retro_environment_t cb) {
 	libretro_set_core_options(environ_cb, &has_categories);
 
 	/* Core option display callback */
-	struct retro_core_options_update_display_callback update_display_callback = {retro_update_display};
+	struct retro_core_options_update_display_callback update_display_callback = {retro_update_options_display};
 	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK, &update_display_callback);
 }
 
@@ -928,6 +927,10 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 }
 
 void retro_run(void) {
+	/* Settings change is covered by RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK
+	except in case of core options reset to defaults, for which the following call is needed*/
+	retro_update_options_display();
+
 	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO) {
 		struct retro_system_av_info info;
 		retro_get_system_av_info(&info);
