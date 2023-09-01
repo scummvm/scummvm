@@ -74,8 +74,10 @@ bool Inventory::has(int index) const {
 ObjectPtr Inventory::get(int index) {
 	if (index >= 0 && index < kMaxSize) {
 		auto & entry = _entries[index];
-		if (entry.hasObject && !entry.object)
+		if (entry.hasObject && !entry.object) {
 			entry.object = _engine->runObject(entry.name);
+			entry.object->persistent(false);
+		}
 		return entry.object;
 	}
 	return {};
