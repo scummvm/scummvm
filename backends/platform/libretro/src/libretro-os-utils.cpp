@@ -16,15 +16,7 @@
  */
 #define FORBIDDEN_SYMBOL_EXCEPTION_time
 
-#include <sys/time.h>
-#if defined(__CELLOS_LV2__)
-#include <sys/sys_time.h>
-#elif (defined(GEKKO) && !defined(WIIU))
-#include <ogc/lwp_watchdog.h>
-#else
-#include <time.h>
-#endif
-
+#include <features/features_cpu.h>
 #include "common/tokenizer.h"
 #include "common/config-manager.h"
 #include "base/commandLine.h"
@@ -32,7 +24,7 @@
 #include "backends/platform/libretro/include/libretro-defs.h"
 
 void OSystem_libretro::getTimeAndDate(TimeDate &t, bool skipRecord) const {
-	time_t curTime = time(NULL);
+	uint32 curTime = (uint32) (cpu_features_get_time_usec() / 1000000);
 
 #define YEAR0 1900
 #define EPOCH_YR 1970

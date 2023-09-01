@@ -18,15 +18,6 @@
 #include <unistd.h>
 #include <features/features_cpu.h>
 
-#include <sys/time.h>
-#if defined(__CELLOS_LV2__)
-#include <sys/sys_time.h>
-#elif (defined(GEKKO) && !defined(WIIU))
-#include <ogc/lwp_watchdog.h>
-#else
-#include <time.h>
-#endif
-
 #include "common/list.h"
 #include "common/events.h"
 #include "backends/platform/libretro/include/libretro-os.h"
@@ -52,18 +43,7 @@ uint8 OSystem_libretro::getThreadSwitchCaller(){
 }
 
 uint32 OSystem_libretro::getMillis(bool skipRecord) {
-#if (defined(GEKKO) && !defined(WIIU))
-	return (ticks_to_microsecs(gettime()) / 1000.0) - _startTime;
-#elif defined(WIIU)
-	return ((cpu_features_get_time_usec()) / 1000) - _startTime;
-#elif defined(__CELLOS_LV2__)
-	return (sys_time_get_system_time() / 1000.0) - _startTime;
-#else
-	struct timeval t;
-	gettimeofday(&t, 0);
-
-	return ((t.tv_sec * 1000) + (t.tv_usec / 1000)) - _startTime;
-#endif
+	return (uint32)(cpu_features_get_time_usec() / 1000) - _startTime;
 }
 
 void OSystem_libretro::delayMillis(uint msecs) {

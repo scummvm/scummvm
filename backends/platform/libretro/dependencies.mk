@@ -43,7 +43,9 @@ OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/file/file_path_io.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/vfs/vfs_implementation.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/string/stdstring.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/time/rtime.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/streams/file_stream.o
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/streams/file_stream.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/features/features_cpu.o
+
 
 ifeq ($(USE_LIBCO), 1)
 OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/libco/libco.o

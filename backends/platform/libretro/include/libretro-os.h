@@ -18,6 +18,7 @@
 #define BACKENDS_LIBRETRO_OS_H
 
 #include <libretro.h>
+#include <features/features_cpu.h>
 #include <retro_miscellaneous.h>
 
 #include "audio/mixer_intern.h"

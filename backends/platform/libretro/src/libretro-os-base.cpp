@@ -43,7 +43,7 @@ OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisibl
 	s_extraDir = s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR;
 	s_lastDir = s_systemDir;
 
-	_startTime = getMillis();
+	_startTime = (uint32)(cpu_features_get_time_usec() / 1000);
 }
 
 OSystem_libretro::~OSystem_libretro() {
