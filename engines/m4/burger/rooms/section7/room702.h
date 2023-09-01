@@ -37,6 +37,7 @@ private:
 	int _series5 = -1;
 	int _series6 = -1;
 	machine *_series10 = nullptr;
+	machine *_series11 = nullptr;
 	bool _flag1 = false;
 	bool _flag2 = false;
 	int _val1 = 0;

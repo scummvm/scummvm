@@ -83,6 +83,16 @@ void Room702::daemon() {
 		conv_play_curr();
 		break;
 
+	case 3:
+		_G(roomVal4) = 4;
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 90, -1);
+		kernel_timing_trigger(30, 5);
+		break;
+
+	case 4:
+		_G(game).new_room = 706;
+		break;
+
 	case 5:
 		switch (_val1) {
 		case 1:
@@ -152,7 +162,72 @@ void Room702::daemon() {
 			}
 			break;
 
+		case 2:
+			switch (_G(roomVal4)) {
+			case 3:
+				if (_flag1)
+					terminateMachineAndNull(_series10);
+
+				_flag1 = true;
+				_G(roomVal4) = 21;
+				_series10 = series_play("702FLT01", 0, 4);
+				digi_play(conv_sound_to_play(), 1, 255, 5);
+				break;
+
+			case 21:
+				terminateMachineAndNull(_series10);
+				_flag1 = false;
+				_G(roomVal4) = getRoomVal();
+				kernel_trigger_dispatch_now(5);
+				conv_resume_curr();
+				break;
+
+
+			default:
+				_val1 = 1;
+				kernel_trigger_dispatch_now(5);
+				break;
+			}
+			break;
+
+		default:
+			break;
 		}
+		break;
+
+	case 6:
+		switch (_val2) {
+		case 12:
+			_val2 = 13;
+			_series11 = series_play("702C1FX1", 0xf00, 0, 6, 6);
+			digi_play("702_006", 1, 200);
+			break;
+
+		case 13:
+			series_unload(_series6);
+			digi_unload("702_006");
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 10:
+			ws_walk(236, 338, 0, 11, 4);
+			break;
+
+		case 11:
+			_G(flags)[V298] = 0;
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
 	}
 }
 
