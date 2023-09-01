@@ -49,6 +49,12 @@
 #include "ags/engine/game/savegame_internal.h"
 #include "ags/engine/gui/animating_gui_button.h"
 #include "ags/shared/gui/gui_main.h"
+#include "ags/shared/gui/gui_button.h"
+#include "ags/shared/gui/gui_inv.h"
+#include "ags/shared/gui/gui_label.h"
+#include "ags/shared/gui/gui_listbox.h"
+#include "ags/shared/gui/gui_slider.h"
+#include "ags/shared/gui/gui_textbox.h"
 #include "ags/engine/media/audio/audio.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
@@ -63,6 +69,21 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 static const uint32_t MAGICNUMBER = 0xbeefcafe;
+
+// List of game objects, used to compare with the save contents
+struct ObjectCounts {
+	int CharacterCount = 0;
+	int DialogCount = 0;
+	int InvItemCount = 0;
+	int ViewCount = 0;
+	int GUICount = 0;
+	int GUILabelCount = 0;
+	int GUIButtonCount = 0;
+	int GUIInvWindowCount = 0;
+	int GUIListBoxCount = 0;
+	int GUISliderCount = 0;
+	int GUITextBoxCount = 0;
+};
 
 static HSaveError restore_game_head_dynamic_values(Stream *in, RestoredData &r_data) {
 	r_data.FPS = in->ReadInt32();
@@ -217,16 +238,30 @@ void ReadAnimatedButtons_Aligned(Stream *in, int num_abuts) {
 	}
 }
 
-static HSaveError restore_game_gui(Stream *in, int numGuisWas) {
-	HError err = GUI::ReadGUI(in, true);
-	if (!err)
-		return new SavegameError(kSvgErr_GameObjectInitFailed, err);
+inline bool AssertGameContent(HSaveError &err, int new_val, int original_val, const char *content_name) {
+	if (new_val != original_val) {
+		err = new SavegameError(kSvgErr_GameContentAssertion,
+								String::FromFormat("Mismatching number of %s (game: %d, save: %d).",
+												   content_name, original_val, new_val));
+	}
+	return new_val == original_val;
+}
+
+static HSaveError restore_game_gui(Stream *in, const ObjectCounts &guiwas) {
+	HError guierr = GUI::ReadGUI(in, true);
+	if (!guierr)
+		return new SavegameError(kSvgErr_GameObjectInitFailed, guierr);
 	_GP(game).numgui = _GP(guis).size();
 
-	if (numGuisWas != _GP(game).numgui) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of GUI.");
-	}
-
+	HSaveError err;
+	if (!AssertGameContent(err, _GP(game).numgui, guiwas.GUICount, "GUIs") ||
+		!AssertGameContent(err, _GP(guibuts).size(), guiwas.GUIButtonCount, "GUI Buttons") ||
+		!AssertGameContent(err, _GP(guiinv).size(), guiwas.GUIInvWindowCount, "GUI InvWindows") ||
+		!AssertGameContent(err, _GP(guilabels).size(), guiwas.GUILabelCount, "GUI Labels") ||
+		!AssertGameContent(err, _GP(guilist).size(), guiwas.GUIListBoxCount, "GUI ListBoxes") ||
+		!AssertGameContent(err, _GP(guislider).size(), guiwas.GUISliderCount, "GUI Sliders") ||
+		!AssertGameContent(err, _GP(guitext).size(), guiwas.GUITextBoxCount, "GUI TextBoxes"))
+		return err;
 	RemoveAllButtonAnimations();
 	int anim_count = in->ReadInt32();
 	ReadAnimatedButtons_Aligned(in, anim_count);
@@ -411,13 +446,21 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	CharacterInfo *chwas = _GP(game).chars;
 	WordsDictionary *olddict = _GP(game).dict;
 	std::vector<String> mesbk(MAXGLOBALMES);
-	int numchwas = _GP(game).numcharacters;
 	for (size_t i = 0; i < MAXGLOBALMES; ++i)
 		mesbk[i] = _GP(game).messages[i];
-	int numdiwas = _GP(game).numdialog;
-	int numinvwas = _GP(game).numinvitems;
-	int numviewswas = _GP(game).numviews;
-	int numGuisWas = _GP(game).numgui;
+
+	ObjectCounts objwas;
+	objwas.CharacterCount = _GP(game).numcharacters;
+	objwas.DialogCount = _GP(game).numdialog;
+	objwas.InvItemCount = _GP(game).numinvitems;
+	objwas.ViewCount = _GP(game).numviews;
+	objwas.GUICount = _GP(game).numgui;
+	objwas.GUIButtonCount = _GP(guibuts).size();
+	objwas.GUIInvWindowCount = _GP(guiinv).size();
+	objwas.GUILabelCount = _GP(guilabels).size();
+	objwas.GUIListBoxCount = _GP(guilist).size();
+	objwas.GUISliderCount = _GP(guislider).size();
+	objwas.GUITextBoxCount = _GP(guitext).size();
 
 	ReadGameSetupStructBase_Aligned(in, data_ver);
 
@@ -426,18 +469,11 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	delete[] _GP(game).load_messages;
 	_GP(game).load_messages = nullptr;
 
-	if (_GP(game).numdialog != numdiwas) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Dialogs.");
-	}
-	if (numchwas != _GP(game).numcharacters) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Characters.");
-	}
-	if (numinvwas != _GP(game).numinvitems) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Inventory Items.");
-	}
-	if (_GP(game).numviews != numviewswas) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Views.");
-	}
+	if (!AssertGameContent(err, _GP(game).numcharacters, objwas.CharacterCount, "Characters") ||
+		!AssertGameContent(err, _GP(game).numdialog, objwas.DialogCount, "Dialogs") ||
+		!AssertGameContent(err, _GP(game).numinvitems, objwas.InvItemCount, "Inventory Items") ||
+		!AssertGameContent(err, _GP(game).numviews, objwas.ViewCount, "Views"))
+		return err;
 
 	_GP(game).ReadFromSaveGame_v321(in, data_ver, gswas, compsc, chwas, olddict, mesbk);
 
@@ -448,7 +484,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	restore_game_palette(in);
 	restore_game_dialogs(in);
 	restore_game_more_dynamic_values(in);
-	err = restore_game_gui(in, numGuisWas);
+	err = restore_game_gui(in, objwas);
 	if (!err)
 		return err;
 	err = restore_game_audiocliptypes(in);
