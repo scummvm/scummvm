@@ -2172,7 +2172,7 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 		int32 w = pra->w;
 		int32 x_acc = pra->x_s;
 		int32 y_acc = pra->y_s;
-		while (--w) {
+		while (w--) {
 			int32 src_offs = (y_acc / (1 << 16)) * wizW + (x_acc / (1 << 16));
 			assert(src_offs < wizW * wizH);
 			x_acc += pra->x_step;
