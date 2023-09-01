@@ -76,6 +76,8 @@ public:
 private:
 	void showCursor(bool shouldShow);
 
+	void adjustCursorHotspot();
+
 	struct Cursor {
 		Common::Rect bounds;
 		Common::Point hotspot;

@@ -76,6 +76,8 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 
 	_isInitialized = true;
 
+	adjustCursorHotspot();
+
 	delete chunkStream;
 }
 
@@ -237,6 +239,29 @@ void CursorManager::applyCursor() {
 
 void CursorManager::showCursor(bool shouldShow) {
 	CursorMan.showMouse(shouldShow);
+}
+
+void CursorManager::adjustCursorHotspot() {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		return;
+	}
+
+	// Improvement: the arrow cursor in the Nancy games has an atrocious hotspot that's
+	// right in the middle of the graphic, instead of in the top left where
+	// it would make sense to be. This function fixes that.
+	// The hotspot is still a few pixels lower than it should be to account
+	// for the different graphic when hovering UI elements
+
+	// TODO: Make this optional?
+
+	uint startID = _curCursorID;
+
+	setCursorType(kNormalArrow);
+	_cursors[_curCursorID].hotspot = {3, 4};
+	setCursorType(kHotspotArrow);
+	_cursors[_curCursorID].hotspot = {3, 4};
+
+	_curCursorID = startID;
 }
 
 } // End of namespace Nancy
