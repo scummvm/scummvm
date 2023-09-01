@@ -34,7 +34,6 @@ class String;
  ********************/
 
 struct SDDataBuffer;
-struct SDMarkdown;
 
 /* mkd_autolink - type of autolink */
 enum MKDAutolink {
@@ -60,6 +59,12 @@ enum mkd_extensions {
 	MKDEXT_SPACE_HEADERS = (1 << 6),
 	MKDEXT_SUPERSCRIPT = (1 << 7),
 	MKDEXT_LAX_SPACING = (1 << 8),
+};
+
+struct SDStack {
+	void **item;
+	size_t size;
+	size_t asize;
 };
 
 /* sd_callbacks - functions for rendering parsed data */
@@ -109,13 +114,29 @@ struct SDCallbacks {
 #define MKD_LIST_ORDERED	1
 #define MKD_LI_BLOCK		2  /* <li> containing block data */
 
-SDMarkdown *sd_markdown_new(uint extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque);
+#define REF_TABLE_SIZE 8
 
-Common::String sd_markdown_render(const byte *document, size_t doc_size, SDMarkdown *md);
+struct LinkRef;
 
-void sd_markdown_free(SDMarkdown *md);
+class SDMarkdown {
+public:
+	SDCallbacks cb;
+	void *opaque;
 
-void sd_version(int *major, int *minor, int *revision);
+	LinkRef *refs[REF_TABLE_SIZE];
+	byte active_char[256];
+	SDStack work_bufs[2];
+	uint ext_flags;
+	size_t max_nesting;
+	int in_link_body;
+
+	SDMarkdown(uint extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque);
+	~SDMarkdown();
+
+	Common::String render(const byte *document, size_t doc_size);
+
+	void version(int *major, int *minor, int *revision);
+};
 
 /* SDDataBuffer: character array buffer */
 struct SDDataBuffer {

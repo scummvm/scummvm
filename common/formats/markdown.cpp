@@ -23,8 +23,6 @@
 
 namespace Common {
 
-#define REF_TABLE_SIZE 8
-
 #define BUFFER_BLOCK 0
 #define BUFFER_SPAN 1
 
@@ -53,12 +51,6 @@ size_t sd_autolink__url(size_t *rewind_p, SDDataBuffer *link,
 
 
 // stack.h
-
-struct SDStack {
-	void **item;
-	size_t size;
-	size_t asize;
-};
 
 void stack_free(SDStack *);
 int stack_grow(SDStack *, size_t);
@@ -111,19 +103,6 @@ struct LinkRef {
 	SDDataBuffer *title;
 
 	LinkRef *next;
-};
-
-/* render • structure containing one particular render */
-struct SDMarkdown {
-	SDCallbacks cb;
-	void *opaque;
-
-	LinkRef *refs[REF_TABLE_SIZE];
-	byte active_char[256];
-	SDStack work_bufs[2];
-	uint ext_flags;
-	size_t max_nesting;
-	int in_link_body;
 };
 
 /* char_trigger: function pointer to render active chars */
@@ -2348,14 +2327,10 @@ static void expand_tabs(SDDataBuffer *ob, const byte *line, size_t size) {
  * EXPORTED FUNCTIONS *
  **********************/
 
-SDMarkdown *sd_markdown_new(uint extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque) {
-	SDMarkdown *md = NULL;
-
+SDMarkdown::SDMarkdown(uint extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque) {
 	assert(max_nesting > 0 && callbacks);
 
-	md = (SDMarkdown *)malloc(sizeof(SDMarkdown));
-	if (!md)
-		return NULL;
+	SDMarkdown *md = this;
 
 	memcpy(&md->cb, callbacks, sizeof(SDCallbacks));
 
@@ -2398,11 +2373,10 @@ SDMarkdown *sd_markdown_new(uint extensions, size_t max_nesting, const SDCallbac
 	md->opaque = opaque;
 	md->max_nesting = max_nesting;
 	md->in_link_body = 0;
-
-	return md;
 }
 
-Common::String sd_markdown_render(const byte *document, size_t doc_size, SDMarkdown *md) {
+Common::String SDMarkdown::render(const byte *document, size_t doc_size) {
+	SDMarkdown *md = this;
 #define MARKDOWN_GROW(x) ((x) + ((x) >> 1))
 	static const byte UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 
@@ -2483,24 +2457,20 @@ Common::String sd_markdown_render(const byte *document, size_t doc_size, SDMarkd
 	return res;
 }
 
-void
-sd_markdown_free(SDMarkdown *md) {
+SDMarkdown::~SDMarkdown() {
 	size_t i;
 
-	for (i = 0; i < (size_t)md->work_bufs[BUFFER_SPAN].asize; ++i)
-		sd_bufrelease((SDDataBuffer *)md->work_bufs[BUFFER_SPAN].item[i]);
+	for (i = 0; i < (size_t)work_bufs[BUFFER_SPAN].asize; ++i)
+		sd_bufrelease((SDDataBuffer *)work_bufs[BUFFER_SPAN].item[i]);
 
-	for (i = 0; i < (size_t)md->work_bufs[BUFFER_BLOCK].asize; ++i)
-		sd_bufrelease((SDDataBuffer *)md->work_bufs[BUFFER_BLOCK].item[i]);
+	for (i = 0; i < (size_t)work_bufs[BUFFER_BLOCK].asize; ++i)
+		sd_bufrelease((SDDataBuffer *)work_bufs[BUFFER_BLOCK].item[i]);
 
-	stack_free(&md->work_bufs[BUFFER_SPAN]);
-	stack_free(&md->work_bufs[BUFFER_BLOCK]);
-
-	free(md);
+	stack_free(&work_bufs[BUFFER_SPAN]);
+	stack_free(&work_bufs[BUFFER_BLOCK]);
 }
 
-void
-sd_version(int *ver_major, int *ver_minor, int *ver_revision) {
+void SDMarkdown::version(int *ver_major, int *ver_minor, int *ver_revision) {
 	*ver_major = SUNDOWN_VER_MAJOR;
 	*ver_minor = SUNDOWN_VER_MINOR;
 	*ver_revision = SUNDOWN_VER_REVISION;
