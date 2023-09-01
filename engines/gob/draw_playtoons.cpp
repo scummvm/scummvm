@@ -206,14 +206,23 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 			dirtiedRect(_destSurface, dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 			break ;
 		}
-		case 0:
-			_spritesArray[_destSurface]->fillRect(destSpriteX,
-					_destSpriteY, _destSpriteX + _spriteRight - 1,
-					_destSpriteY + _spriteBottom - 1, _backColor);
+		case 0: {
+			if (!(_backColor & 0xFF00) || !(_backColor & 0x0100)) {
+				_spritesArray[_destSurface]->fillRect(_destSpriteX,
+													  _destSpriteY, _destSpriteX + _spriteRight - 1,
+													  _destSpriteY + _spriteBottom - 1, getColor(_backColor));
+			} else {
+				uint8 strength = 16 - (((uint16) _backColor) >> 12);
+
+				_spritesArray[_destSurface]->shadeRect(_destSpriteX,
+													   _destSpriteY, _destSpriteX + _spriteRight - 1,
+													   _destSpriteY + _spriteBottom - 1, getColor(_backColor), strength);
+			}
 
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+						_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 			break;
+		}
 		default:
 			warning("oPlaytoons_spriteOperation: operation DRAW_FILLRECT, unexpected pattern %d", _pattern & 0xFF);
 			break;
