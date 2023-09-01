@@ -40,6 +40,7 @@
 #include "engines/nancy/action/raycastpuzzle.h"
 #include "engines/nancy/action/turningpuzzle.h"
 #include "engines/nancy/action/tangrampuzzle.h"
+#include "engines/nancy/action/safelockpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -207,6 +208,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kPiano);
 	case 209:
 		return new TurningPuzzle();
+	case 210:
+		return new SafeLockPuzzle();
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;
