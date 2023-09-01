@@ -466,6 +466,13 @@ TEMPLATE void BASESTRING::deleteLastChar() {
 		deleteChar(_size - 1);
 }
 
+TEMPLATE void BASESTRING::chop(uint32 len) {
+	uint32 newSize = _size - MIN(_size, len);
+
+	_str[newSize] = 0;
+	_size = newSize;
+}
+
 TEMPLATE void BASESTRING::erase(uint32 p, uint32 len) {
 	if (len == 0)
 		return;
