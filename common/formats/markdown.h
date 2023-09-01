@@ -22,6 +22,8 @@
 
 namespace Common {
 
+class String;
+
 #define SUNDOWN_VERSION "1.16.0"
 #define SUNDOWN_VER_MAJOR 1
 #define SUNDOWN_VER_MINOR 16
@@ -109,7 +111,7 @@ struct SDCallbacks {
 
 SDMarkdown *sd_markdown_new(uint extensions, size_t max_nesting, const SDCallbacks *callbacks, void *opaque);
 
-void sd_markdown_render(DataBuffer *ob, const byte *document, size_t doc_size, SDMarkdown *md);
+Common::String sd_markdown_render(const byte *document, size_t doc_size, SDMarkdown *md);
 
 void sd_markdown_free(SDMarkdown *md);
 

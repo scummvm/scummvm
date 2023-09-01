@@ -2371,7 +2371,7 @@ SDMarkdown *sd_markdown_new(uint extensions, size_t max_nesting, const SDCallbac
 	return md;
 }
 
-void sd_markdown_render(DataBuffer *ob, const byte *document, size_t doc_size, SDMarkdown *md) {
+Common::String sd_markdown_render(const byte *document, size_t doc_size, SDMarkdown *md) {
 #define MARKDOWN_GROW(x) ((x) + ((x) >> 1))
 	static const byte UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 
@@ -2380,7 +2380,7 @@ void sd_markdown_render(DataBuffer *ob, const byte *document, size_t doc_size, S
 
 	text = bufnew(64);
 	if (!text)
-		return;
+		return Common::String();
 
 	/* Preallocate enough space for our buffer to avoid expanding while copying */
 	bufgrow(text, doc_size);
@@ -2418,6 +2418,8 @@ void sd_markdown_render(DataBuffer *ob, const byte *document, size_t doc_size, S
 			beg = end;
 		}
 
+	DataBuffer *ob = Common::bufnew(1024);
+
 	/* pre-grow the output buffer to minimize allocations */
 	bufgrow(ob, MARKDOWN_GROW(text->size));
 
@@ -2442,6 +2444,12 @@ void sd_markdown_render(DataBuffer *ob, const byte *document, size_t doc_size, S
 
 	assert(md->work_bufs[BUFFER_SPAN].size == 0);
 	assert(md->work_bufs[BUFFER_BLOCK].size == 0);
+
+	Common::String res = Common::String((const char *)ob->data, ob->size);
+
+	bufrelease(ob);
+
+	return res;
 }
 
 void

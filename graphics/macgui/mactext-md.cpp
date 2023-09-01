@@ -288,8 +288,6 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 
 	Common::String input = str.encode(); // Encode to UTF8
 
-	Common::DataBuffer *ob = Common::bufnew(1024);
-
 	MDState mdState;
 
 	// Set link color to blue
@@ -298,13 +296,10 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	mdState.linkb = 0xff;
 
 	Common::SDMarkdown *md = sd_markdown_new(0, 16, &cb, &mdState);
-	sd_markdown_render(ob, (const byte *)input.c_str(), input.size(), md);
+	Common::String rendered = sd_markdown_render((const byte *)input.c_str(), input.size(), md);
 	sd_markdown_free(md);
 
-	warning("%zu bytes: %s", ob->size, toPrintable(Common::String((const char *)ob->data, ob->size)).c_str());
-
-	//setDefaultFormatting(kMacFontChicago, kMacFontRegular, 40, 0, 0, 0);
-	setText(Common::String((const char *)ob->data, ob->size));
+	setText(rendered);
 }
 
 } // End of namespace Graphics
