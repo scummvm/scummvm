@@ -456,6 +456,53 @@ protected:
 	Graphics::ManagedSurface _gfx;
 };
 
+class PathWidget : public StaticTextWidget {
+public:
+	PathWidget(GuiObject *boss, int x, int y, int w, int h, bool scale,
+			const Common::Path &path, Graphics::TextAlign align,
+			const Common::U32String &placeholder = Common::U32String(),
+			const Common::U32String &tooltip = Common::U32String(),
+			ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold,
+			bool useEllipsis = true) :
+		StaticTextWidget(boss, x, y, w, h, scale,
+				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
+				align, tooltip, font, Common::UNK_LANG, useEllipsis),
+		_placeholder(placeholder) { }
+	PathWidget(GuiObject *boss, int x, int y, int w, int h,
+			const Common::Path &path, Graphics::TextAlign align,
+			const Common::U32String &placeholder = Common::U32String(),
+			const Common::U32String &tooltip = Common::U32String(),
+			ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold,
+			bool useEllipsis = true) :
+		StaticTextWidget(boss, x, y, w, h,
+				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
+				align, tooltip, font, Common::UNK_LANG, useEllipsis),
+		_placeholder(placeholder) {}
+	PathWidget(GuiObject *boss, const Common::String &name,
+			const Common::Path &path,
+			const Common::U32String &placeholder = Common::U32String(),
+			const Common::U32String &tooltip = Common::U32String(),
+			ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold,
+			bool useEllipsis = true) :
+		StaticTextWidget(boss, name,
+				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
+				tooltip, font, Common::UNK_LANG, useEllipsis),
+		_placeholder(placeholder) {}
+	void setLabel(const Common::Path &path) {
+		_path = path;
+		if (path.empty()) {
+			StaticTextWidget::setLabel(_placeholder);
+		} else {
+			StaticTextWidget::setLabel(path.toString(Common::Path::kNativeSeparator));
+		}
+	}
+	const Common::Path &getLabel() const { return _path; }
+	void setEmptyPlaceHolder(const Common::U32String &placeholder) { _placeholder = placeholder; }
+protected:
+	Common::Path _path;
+	Common::U32String _placeholder;
+};
+
 /* ContainerWidget */
 class ContainerWidget : public Widget {
 public:
