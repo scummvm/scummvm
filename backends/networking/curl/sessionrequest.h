@@ -28,6 +28,7 @@
 namespace Common {
 class DumpFile;
 class JSONValue;
+class Path;
 }
 
 namespace Networking {
@@ -63,16 +64,16 @@ protected:
 
 	void finishError(const ErrorResponse &error, RequestState state = PAUSED) override;
 	void finishSuccess() override;
-	void openLocalFile(const Common::String &localFile);
+	void openLocalFile(const Common::Path &localFile);
 
 public:
-	SessionRequest(const Common::String &url, const Common::String &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	SessionRequest(const Common::String &url, const Common::Path &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 	~SessionRequest() override;
 
 	void start();
 	void startAndWait();
 
-	void reuse(const Common::String &url, const Common::String &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	void reuse(const Common::String &url, const Common::Path &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 
 	void handle() override;
 	void restart() override;

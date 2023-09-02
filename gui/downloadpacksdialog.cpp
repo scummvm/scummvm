@@ -78,7 +78,7 @@ private:
 
 
 void DialogState::downloadList() {
-	Networking::SessionRequest *rq = session.get(Common::String::format("https://downloads.scummvm.org/frs/icons/%s", listfname), "",
+	Networking::SessionRequest *rq = session.get(Common::String::format("https://downloads.scummvm.org/frs/icons/%s", listfname), Common::Path(),
 		new Common::Callback<DialogState, const Networking::DataResponse &>(this, &DialogState::downloadListCallback),
 		new Common::Callback<DialogState, const Networking::ErrorResponse &>(this, &DialogState::errorCallback),
 		true);
