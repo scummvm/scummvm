@@ -52,7 +52,9 @@ public:
 	/**
 	 * Used to tell if x,y is over the walker hotspot
 	 */
-	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
+	virtual HotSpotRec *walker_spotter(int32 x, int32 y) {
+		return nullptr;
+	}
 };
 
 class Section {

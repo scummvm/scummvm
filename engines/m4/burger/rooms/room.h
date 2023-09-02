@@ -53,6 +53,11 @@ public:
 	void shutdown() override;
 	void parser_code() override;
 
+	/**
+	 * Used to tell if x,y is over the walker hotspot
+	 */
+	HotSpotRec *walker_spotter(int32 x, int32 y) override;
+
 	void compact_mem_and_report() {}
 
 	void npc_say(const char *digiName, int trigger = -1, const char *seriesName = nullptr,

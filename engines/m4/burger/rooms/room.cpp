@@ -49,6 +49,21 @@ void Room::parser_code() {
 	warning("TODO: global_parser_code");
 }
 
+HotSpotRec *Room::walker_spotter(int32 x, int32 y) {
+	if (!_G(player).walker_in_this_scene || !_G(roomVal2))
+		return nullptr;
+
+	player_update_info();
+	int y2 = _G(player_info).y - (_G(player_info).scale * 75 / 100);
+	int y1 = _G(player_info).y - (_G(player_info).scale * 150 / 100);
+	int xSize = _G(player_info).scale * 22 / 100;
+
+	if (y > y2 || y <= y1 || imath_abs(x - _G(player_info).x) >= xSize)
+		return nullptr;
+
+	return &_wilburHotspot;
+}
+
 void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
 		int layer, bool shadow, int firstFrame, int lastFrame, int digiSlot, int digiVol) {
 	term_message("npc_say: %s     npc_series: %s     npc_trigger: %d",
