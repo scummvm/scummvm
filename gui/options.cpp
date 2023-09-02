@@ -2493,16 +2493,17 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	if (ConfMan.isKeyTemporary("config"))
 		configPathWidget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 
-	Common::U32String logPath = g_system->getDefaultLogFileName();
+	Common::Path logPath = g_system->getDefaultLogFileName();
 	bool colorOverride = false;
 
 	if (ConfMan.hasKey("logfile")) {
-		logPath = ConfMan.get("logfile");
+		logPath = ConfMan.getPath("logfile");
 
 		if (ConfMan.isKeyTemporary("logfile"))
 			colorOverride = true;
 	}
-	_logPath = new StaticTextWidget(boss, prefix + "LogPath", _("ScummVM log path: ") + logPath, logPath);
+	Common::U32String logPathS = logPath.toString(Common::Path::kNativeSeparator);
+	_logPath = new StaticTextWidget(boss, prefix + "LogPath", _("ScummVM log path: ") + logPathS, logPathS);
 
 	if (colorOverride)
 		_logPath->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
@@ -3286,10 +3287,10 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 		break;
 	case kViewLogCmd: {
-		Common::String logPath;
+		Common::Path logPath;
 
 		if (ConfMan.hasKey("logfile"))
-			logPath = ConfMan.get("logfile");
+			logPath = ConfMan.getPath("logfile");
 		else
 			logPath = g_system->getDefaultLogFileName();
 

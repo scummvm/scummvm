@@ -157,7 +157,9 @@ bool OSystem_MacOSX::displayLogFile() {
 	if (_logFilePath.empty())
 		return false;
 
-	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)_logFilePath.c_str(), _logFilePath.size(), false);
+	Common::String logFilePath(_logFilePath.toString(Common::Path::kNativeSeparator));
+
+	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)logFilePath.c_str(), logFilePath.size(), false);
 	OSStatus err = LSOpenCFURLRef(url, NULL);
 	CFRelease(url);
 
@@ -236,19 +238,19 @@ Common::String OSystem_MacOSX::getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::String OSystem_MacOSX::getDefaultLogFileName() {
+Common::Path OSystem_MacOSX::getDefaultLogFileName() {
 	const char *prefix = getenv("HOME");
 	if (prefix == nullptr) {
-		return Common::String();
+		return Common::Path();
 	}
 
 	if (!Posix::assureDirectoryExists("Library/Logs", prefix)) {
-		return Common::String();
+		return Common::Path();
 	}
 
 	Common::String appName = getMacBundleName();
 	appName.toLowercase();
-	return Common::String(prefix) + "/Library/Logs/" + appName + ".log";
+	return Common::Path(prefix).join(Common::String("Library/Logs/") + appName + ".log");
 }
 
 Common::String OSystem_MacOSX::getDefaultIconsPath() {

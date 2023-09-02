@@ -155,14 +155,16 @@ Common::String OSystem_RISCOS::getDefaultConfigFileName() {
 	return "/<Choices$Write>/ScummVM/scummvmrc";
 }
 
-Common::String OSystem_RISCOS::getDefaultLogFileName() {
+Common::Path OSystem_RISCOS::getDefaultLogFileName() {
 	Common::String logFile = "/<Choices$Write>/ScummVM/Logs";
 
 	if (!Riscos::assureDirectoryExists(logFile)) {
-		return Common::String();
+		return Common::Path();
 	}
 
-	return logFile + "/scummvm";
+	Common::Path logPath(logFile);
+	logPath.joinInPlace("scummvm");
+	return logPath;
 }
 
 #endif

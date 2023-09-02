@@ -35,7 +35,7 @@ public:
 
 protected:
 	virtual Common::String getDefaultConfigFileName();
-	virtual Common::String getDefaultLogFileName();
+	virtual Common::Path getDefaultLogFileName();
 };
 
 #endif

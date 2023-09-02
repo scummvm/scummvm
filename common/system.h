@@ -29,6 +29,7 @@
 #include "common/ustr.h"
 #include "common/str-array.h" // For OSystem::updateStartSettings()
 #include "common/hash-str.h" // For OSystem::updateStartSettings()
+#include "common/path.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
 #include "graphics/opengl/context.h"
@@ -1810,7 +1811,7 @@ public:
 	 *
 	 * Note that not all ports can use this.
 	 */
-	virtual Common::String getDefaultLogFileName() { return Common::String(); }
+	virtual Common::Path getDefaultLogFileName() { return Common::Path(); }
 
 	/**
 	 * Register the default values for the settings the backend uses into the

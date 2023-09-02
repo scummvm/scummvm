@@ -123,7 +123,7 @@ protected:
 	 * only use of this value is to use it to open the log file in an
 	 * editor; for that, we need it only as a string anyway.
 	 */
-	Common::String _logFilePath;
+	Common::Path _logFilePath;
 
 	/**
 	 * The event source we use for obtaining SDL events.

@@ -166,7 +166,7 @@ private:
 	TouchControls _touchControls;
 
 	Common::String _defaultConfigFileName;
-	Common::String _defaultLogFileName;
+	Common::Path _defaultLogFileName;
 	Common::String _systemPropertiesSummaryStr;
 	Common::String _systemSDKdetectedStr;
 
@@ -223,7 +223,7 @@ public:
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	Common::String getDefaultConfigFileName() override;
-	Common::String getDefaultLogFileName() override;
+	Common::Path getDefaultLogFileName() override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
 	GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
