@@ -30,28 +30,46 @@ Section6Room::Section6Room() : Room() {
 	Common::strcpy_s(_gerbilsName, "GERBILS");
 	Common::strcpy_s(_gerbilsVerb, "LOOK AT");
 
-	_gerbilsHotspot.clear();
-	_gerbilsHotspot.vocab = _gerbilsName;
-	_gerbilsHotspot.verb = _gerbilsVerb;
-	_gerbilsHotspot.feet_x = 0x7fff;
-	_gerbilsHotspot.feet_y = 0x7fff;
-	_gerbilsHotspot.cursor_number = kArrowCursor;
+	_gerbilHotspot.clear();
+	_gerbilHotspot.vocab = _gerbilsName;
+	_gerbilHotspot.verb = _gerbilsVerb;
+	_gerbilHotspot.feet_x = 0x7fff;
+	_gerbilHotspot.feet_y = 0x7fff;
+	_gerbilHotspot.cursor_number = kArrowCursor;
 }
 
 HotSpotRec *Section6Room::custom_hotspot_which(int x, int y) {
 	HotSpotRec *hotspot = walker_spotter(x, y);
 	if (hotspot)
-		return hotspot;
+		return &_wilburHotspot;
 
-	if (_G(flags)[V243] != 6006 || !_table ||
+	if (_G(flags)[V243] != 6006 || !_gerbilTable ||
 			!verifyMachineExists(_sectionMachine) ||
 			(_G(game).room_id != 602 && _G(game).room_id != 603 &&
 				_G(game).room_id != 604))
 		return nullptr;
 
-	// TODO
-	error("TODO: custom_hotspot_which");
-	return nullptr;
+	int x1, x2, x3, y1, y2, y3;
+	int total1, total2, total3;
+
+	if (_G(flags)[V266]) {
+		x1 = 189;
+		y1 = 232;
+		x2 = 318;
+		y2 = 219;
+		x3 = 439;
+		y3 = 232;
+	} else {
+		// TODO
+		x1 = y1 = x2 = y2 = x3 = y3 = 0;
+	}
+
+	total1 = (x - x1) * (x - x1) + (y - y1) * (y - y1);
+	total2 = (x - x2) * (x - x2) + (y - y2) * (y - y2);
+	total3 = (x - x3) * (x - x3) + (y - y3) * (y - y3);
+
+	return (total1 < 1600) || (total2 < 1600) < (total3 < 1600) ?
+		&_gerbilHotspot : nullptr;
 }
 
 } // namespace Rooms
