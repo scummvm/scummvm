@@ -777,6 +777,7 @@ void inline paintLogic(uint8 *pixels, int32 pitch,
 					   const Graphics::PixelFormat &format,
 					   const ShapeFrame *frame, int32 x, int32 y,
 					   const uint32 *map) {
+	const bool mirrored = false;
 #include "ultima/ultima8/graphics/render_surface.inl"
 }
 
@@ -786,6 +787,7 @@ void inline paintNoClipLogic(uint8 *pixels, int32 pitch,
 							 const Graphics::PixelFormat &format,
 							 const ShapeFrame *frame, int32 x, int32 y,
 							 const uint32 *map) {
+	const bool mirrored = false;
 #define NO_CLIPPING
 #include "ultima/ultima8/graphics/render_surface.inl"
 #undef NO_CLIPPING
@@ -797,6 +799,7 @@ void inline paintTranslucentLogic(uint8 *pixels, int32 pitch,
 								  const Graphics::PixelFormat &format,
 								  const ShapeFrame *frame, int32 x, int32 y,
 								  const uint32 *map, const uint32 *xform_map) {
+	const bool mirrored = false;
 #define XFORM_SHAPES
 #include "ultima/ultima8/graphics/render_surface.inl"
 #undef XFORM_SHAPES
@@ -808,13 +811,12 @@ void inline paintMirroredLogic(uint8 *pixels, int32 pitch,
 							   const Graphics::PixelFormat &format,
 							   const ShapeFrame *frame, int32 x, int32 y, bool trans,
 							   const uint32 *map, const uint32 *xform_map) {
-#define FLIP_SHAPES
+	const bool mirrored = true;
 #define XFORM_SHAPES
 #define XFORM_CONDITIONAL trans
 
 #include "ultima/ultima8/graphics/render_surface.inl"
 
-#undef FLIP_SHAPES
 #undef XFORM_SHAPES
 #undef XFORM_CONDITIONAL
 }
@@ -825,16 +827,12 @@ void inline paintInvisibleLogic(uint8 *pixels, int32 pitch,
 								const Graphics::PixelFormat &format,
 								const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored,
 								const uint32 *map, const uint32 *xform_map) {
-#define FLIP_SHAPES
-#define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
 #define XFORM_CONDITIONAL trans
 #define BLEND_SHAPES(src, dst) BlendInvisible(src, dst, format)
 
 #include "ultima/ultima8/graphics/render_surface.inl"
 
-#undef FLIP_SHAPES
-#undef FLIP_CONDITIONAL
 #undef XFORM_SHAPES
 #undef XFORM_CONDITIONAL
 #undef BLEND_SHAPES
@@ -846,8 +844,6 @@ void inline paintHighlightLogic(uint8 *pixels, int32 pitch,
 								const Graphics::PixelFormat &format,
 								const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32,
 								const uint32 *map, const uint32 *xform_map) {
-#define FLIP_SHAPES
-#define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
 #define XFORM_CONDITIONAL trans
 #define BLEND_SHAPES(src, dst) BlendHighlight(src, cr, cg, cb, ca, 255 - ca, format)
@@ -859,8 +855,6 @@ void inline paintHighlightLogic(uint8 *pixels, int32 pitch,
 
 #include "ultima/ultima8/graphics/render_surface.inl"
 
-#undef FLIP_SHAPES
-#undef FLIP_CONDITIONAL
 #undef XFORM_SHAPES
 #undef XFORM_CONDITIONAL
 #undef BLEND_SHAPES
@@ -872,8 +866,6 @@ void inline paintHighlightInvisLogic(uint8 *pixels, int32 pitch,
 									 const Graphics::PixelFormat &format,
 									 const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32,
 									 const uint32 *map, const uint32 *xform_map) {
-#define FLIP_SHAPES
-#define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
 #define XFORM_CONDITIONAL trans
 #define BLEND_SHAPES(src, dst) BlendHighlightInvis(src, dst, cr, cg, cb, ca, 255 - ca, format)
@@ -885,8 +877,6 @@ void inline paintHighlightInvisLogic(uint8 *pixels, int32 pitch,
 
 #include "ultima/ultima8/graphics/render_surface.inl"
 
-#undef FLIP_SHAPES
-#undef FLIP_CONDITIONAL
 #undef XFORM_SHAPES
 #undef XFORM_CONDITIONAL
 #undef BLEND_SHAPES
