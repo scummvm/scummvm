@@ -30,6 +30,20 @@
 
 namespace Common {
 
+ArchiveMember::~ArchiveMember() {
+}
+
+U32String ArchiveMember::getDisplayName() const {
+	return getName();
+}
+
+bool ArchiveMember::isDirectory() const {
+	return false;
+}
+
+void ArchiveMember::listChildren(ArchiveMemberList &childList, const char *pattern) const {
+}
+
 GenericArchiveMember::GenericArchiveMember(const String &pathStr, const Archive &parent)
 	: _parent(parent), _path(pathStr, parent.getPathSeparator()) {
 }
@@ -56,6 +70,23 @@ SeekableReadStream *GenericArchiveMember::createReadStream() const {
 
 SeekableReadStream *GenericArchiveMember::createReadStreamForAltStream(AltStreamType altStreamType) const {
 	return _parent.createReadStreamForMemberAltStream(_path, altStreamType);
+}
+
+bool GenericArchiveMember::isDirectory() const {
+	return _parent.isPathDirectory(_path);
+}
+
+void GenericArchiveMember::listChildren(ArchiveMemberList &childList, const char *pattern) const {
+	if (!pattern)
+		pattern = "*";
+
+	Common::Path searchPath = _path.appendComponent(pattern);
+
+	_parent.listMatchingMembers(childList, searchPath);
+}
+
+bool Archive::isPathDirectory(const Path &path) const {
+	return false;
 }
 
 int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
@@ -379,6 +410,29 @@ bool SearchSet::hasFile(const Path &path) const {
 	for (; it != _list.end(); ++it) {
 		if (it->_arc->hasFile(path))
 			return true;
+	}
+
+	return false;
+}
+
+bool SearchSet::isPathDirectory(const Path &path) const {
+	if (path.empty())
+		return false;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it) {
+		if (it->_arc->isPathDirectory(path)) {
+			// See if an earlier archive contains the same path as a non-directory file.
+			// If this is the case, then we want to return false here because getMember will return
+			// that file.  This is a bit faster than hasFile for each archive first.
+			while (it != _list.begin()) {
+				--it;
+				if (it->_arc->hasFile(path))
+					return false;
+			}
+
+			return true;
+		}
 	}
 
 	return false;
