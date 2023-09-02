@@ -298,4 +298,16 @@ void InputManager::setKeyBindingMode(KeyBindingMode mode) {
 	clearInputs();
 }
 
+void InputManager::save() {
+	Common::KeymapArray keymapArr = g_system->getEventManager()->getKeymapper()->getKeymaps();
+	for(Common::Keymap *keymap : keymapArr) {
+		if (keymap->getType() != Common::Keymap::kKeymapTypeGame)
+			continue;
+
+		keymap->saveMappings();
+	}
+
+	ConfMan.flushToDisk();
+}
+
 } // End of namespace Crab

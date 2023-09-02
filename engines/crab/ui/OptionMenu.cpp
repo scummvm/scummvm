@@ -246,7 +246,7 @@ bool OptionMenu::handleTabs(Button &back, const Common::Event &event) {
 
 		case 4:
 			// Save settings to file
-			//g_engine->_inputManager->Save();
+			g_engine->_inputManager->save();
 			g_engine->_screenSettings->saveState();
 			g_engine->_musicManager->saveState();
 			saveState();

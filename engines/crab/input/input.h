@@ -139,6 +139,9 @@ public:
 	bool state(const InputType &val);
 
 	Common::String getAssociatedKey(const InputType &type);
+
+	// Save and flush the keymaps to disk
+	void save();
 };
 
 } // End of namespace input
