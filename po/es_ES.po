@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-02 09:33+0000\n"
-"PO-Revision-Date: 2023-08-13 10:28+0000\n"
+"PO-Revision-Date: 2023-09-02 22:07+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -5625,10 +5625,8 @@ msgid "Accept"
 msgstr "Aceptar"
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "~A~nterior"
+msgstr "Anterior"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
@@ -5659,8 +5657,6 @@ msgid "Next Page"
 msgstr "Página siguiente"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous Page"
 msgstr "Página anterior"
 
@@ -5689,14 +5685,10 @@ msgid "Traits"
 msgstr "Atributos"
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quick Save"
 msgstr "Guardado rápido"
 
 #: engines/crab/input/input.cpp:271
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick Load"
 msgstr "Carga rápida"
 
