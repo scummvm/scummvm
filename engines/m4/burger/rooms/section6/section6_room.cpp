@@ -20,7 +20,7 @@
  */
 
 #include "m4/burger/rooms/section6/section6_room.h"
-#include "m4/gui/gui_mouse.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
@@ -43,6 +43,14 @@ HotSpotRec *Section6Room::custom_hotspot_which(int x, int y) {
 	if (hotspot)
 		return hotspot;
 
+	if (_G(flags)[V243] != 6006 || !_table ||
+			!verifyMachineExists(_sectionMachine) ||
+			(_G(game).room_id != 602 && _G(game).room_id != 603 &&
+				_G(game).room_id != 604))
+		return nullptr;
+
+	// TODO
+	error("TODO: custom_hotspot_which");
 	return nullptr;
 }
 

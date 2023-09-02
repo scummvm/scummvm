@@ -35,6 +35,8 @@ private:
 protected:
 	int16 *_table = nullptr;
 	HotSpotRec _gerbilsHotspot;
+	machine *_sectionMachine = nullptr;
+
 public:
 	Section6Room();
 	~Section6Room() override {}
