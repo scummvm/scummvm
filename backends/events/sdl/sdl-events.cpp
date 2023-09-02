@@ -58,13 +58,13 @@ void SdlEventSource::loadGameControllerMappingFile() {
 			warning("Game controller DB file not found: %s", file.getPath().c_str());
 	}
 	if (!loaded && ConfMan.hasKey("extrapath")) {
-		Common::FSNode dir = Common::FSNode(ConfMan.get("extrapath"));
+		Common::FSNode dir = Common::FSNode(ConfMan.getPath("extrapath"));
 		Common::FSNode file = dir.getChild(GAMECONTROLLERDB_FILE);
 		if (file.exists()) {
-			if (SDL_GameControllerAddMappingsFromFile(file.getPath().c_str()) < 0)
-				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());
+			if (SDL_GameControllerAddMappingsFromFile(file.getPath().toString(Common::Path::kNativeSeparator).c_str()) < 0)
+				error("File %s not valid: %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str(), SDL_GetError());
 			else
-				debug("Game controller DB file loaded: %s", file.getPath().c_str());
+				debug("Game controller DB file loaded: %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		}
 	}
 }

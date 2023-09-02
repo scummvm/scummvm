@@ -975,8 +975,8 @@ Graphics::MacWindowManager *GuiManager::getWM() {
 		return _wm;
 
 	if (ConfMan.hasKey("extrapath")) {
-		Common::FSNode dir(ConfMan.get("extrapath"));
-		SearchMan.addDirectory(dir.getPath(), dir);
+		Common::FSNode dir(ConfMan.getPath("extrapath"));
+		SearchMan.addDirectory(dir);
 	}
 
 	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp | Graphics::kWMModeNoCursorOverride;

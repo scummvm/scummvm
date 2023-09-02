@@ -152,7 +152,7 @@ void OSystem_SDL_Miyoo::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("themepath", Common::Path("./themes"));
-	ConfMan.registerDefault("extrapath", "./engine-data");
+	ConfMan.registerDefault("extrapath", Common::Path("./engine-data"));
 	ConfMan.registerDefault("gui_theme", "builtin");
 	ConfMan.registerDefault("scale_factor", "1");
 
@@ -166,7 +166,7 @@ void OSystem_SDL_Miyoo::initBackend() {
 		ConfMan.setPath("themepath", "./themes");
 	}
 	if (!ConfMan.hasKey("extrapath")) {
-		ConfMan.set("extrapath", "./engine-data");
+		ConfMan.setPath("extrapath", "./engine-data");
 	}
 	if (!ConfMan.hasKey("savepath")) {
 		ConfMan.set("savepath", SAVE_PATH);

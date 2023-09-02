@@ -66,7 +66,7 @@ void OSystem_KolibriOS::addSysArchivesToSearchSet(Common::SearchSet &s, int prio
 
 void OSystem_KolibriOS::initBackend() {
 	Common::Path defaultThemePath = _exePath.join("themes");
-	Common::String defaultEngineData = _exePath.join("engine-data").toString();
+	Common::Path defaultEngineData = _exePath.join("engine-data");
 	ConfMan.registerDefault("themepath", defaultThemePath);
 	ConfMan.registerDefault("extrapath", defaultEngineData);
 
@@ -74,7 +74,7 @@ void OSystem_KolibriOS::initBackend() {
 		ConfMan.setPath("themepath", defaultThemePath);
 	}
 	if (!ConfMan.hasKey("extrapath")) {
-		ConfMan.set("extrapath", defaultEngineData);
+		ConfMan.setPath("extrapath", defaultEngineData);
 	}
 
 	// Create the savefile manager

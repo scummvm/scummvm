@@ -277,7 +277,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath")) {
-		dir = Common::FSNode(ConfMan.get("extrapath"));
+		dir = Common::FSNode(ConfMan.getPath("extrapath"));
 		SearchMan.addDirectory(dir);
 	}
 
@@ -286,9 +286,9 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// verify that it's not already there before adding it. The search manager will
 	// check for that too, so this check is mostly to avoid a warning message.
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain)) {
-		Common::String extraPath = ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain);
-		if (!SearchMan.hasArchive(extraPath)) {
-			dir = Common::FSNode(extraPath);
+		Common::Path extraPath = ConfMan.getPath("extrapath", Common::ConfigManager::kApplicationDomain);
+		dir = Common::FSNode(extraPath);
+		if (!SearchMan.hasArchive(dir.getPath().toString())) {
 			SearchMan.addDirectory(dir);
 		}
 	}

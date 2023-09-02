@@ -161,7 +161,7 @@ protected:
 		// Icons can be either in a subfolder named "icons" or directly in the path
 
 		Common::Path iconsPath = ConfMan.getPath("iconspath");
-		Common::String extraPath = ConfMan.get("extrapath");
+		Common::Path extraPath = ConfMan.getPath("extrapath");
 
 		Common::String targetIcon = target + extension;
 		Common::String qualifiedIcon = ConfMan.get("engineid") + "-" + ConfMan.get("gameid") + extension;
@@ -185,14 +185,14 @@ return (path); \
 		}
 
 		if (!extraPath.empty()) {
-			TRY_ICON_PATH(extraPath + "/" + targetIcon);
-			TRY_ICON_PATH(extraPath + "/" + qualifiedIcon);
-			TRY_ICON_PATH(extraPath + "/" + gameIcon);
-			TRY_ICON_PATH(extraPath + "/" + engineIcon);
-			TRY_ICON_PATH(extraPath + "/icons/" + targetIcon);
-			TRY_ICON_PATH(extraPath + "/icons/" + qualifiedIcon);
-			TRY_ICON_PATH(extraPath + "/icons/" + gameIcon);
-			TRY_ICON_PATH(extraPath + "/icons/" + engineIcon);
+			TRY_ICON_PATH(extraPath.join(targetIcon));
+			TRY_ICON_PATH(extraPath.join(qualifiedIcon));
+			TRY_ICON_PATH(extraPath.join(gameIcon));
+			TRY_ICON_PATH(extraPath.join(engineIcon));
+			TRY_ICON_PATH(extraPath.join("icons/" + targetIcon));
+			TRY_ICON_PATH(extraPath.join("icons/" + qualifiedIcon));
+			TRY_ICON_PATH(extraPath.join("icons/" + gameIcon));
+			TRY_ICON_PATH(extraPath.join("icons/" + engineIcon));
 		}
 #undef TRY_ICON_PATH
 
