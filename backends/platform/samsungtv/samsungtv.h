@@ -34,7 +34,7 @@ public:
 	virtual bool hasFeature(Feature f);
 
 protected:
-	virtual Common::String getDefaultConfigFileName();
+	virtual Common::Path getDefaultConfigFileName();
 	virtual Common::Path getDefaultLogFileName();
 };
 

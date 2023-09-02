@@ -85,8 +85,8 @@ void OSystem_KolibriOS::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-Common::String OSystem_KolibriOS::getDefaultConfigFileName() {
-	return _writablePath.join("scummvm.ini").toString();
+Common::Path OSystem_KolibriOS::getDefaultConfigFileName() {
+	return _writablePath.join("scummvm.ini");
 }
 
 Common::String OSystem_KolibriOS::getDefaultIconsPath() {

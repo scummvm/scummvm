@@ -1803,7 +1803,7 @@ public:
 	 *
 	 * Note that not all ports can use this.
 	 */
-	virtual Common::String getDefaultConfigFileName();
+	virtual Common::Path getDefaultConfigFileName();
 
 	/**
 	 * Get the default file name (or even path) where the scummvm.log

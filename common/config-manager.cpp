@@ -78,7 +78,7 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 }
 
 
-bool ConfigManager::loadDefaultConfigFile(const String &fallbackFilename) {
+bool ConfigManager::loadDefaultConfigFile(const Path &fallbackFilename) {
 	// Open the default config file
 	assert(g_system);
 	SeekableReadStream *stream = g_system->createConfigReadStream();
@@ -103,22 +103,22 @@ bool ConfigManager::loadDefaultConfigFile(const String &fallbackFilename) {
 	return loadResult;
 }
 
-bool ConfigManager::loadConfigFile(const String &filename, const String &fallbackFilename) {
+bool ConfigManager::loadConfigFile(const Path &filename, const Path &fallbackFilename) {
 	_filename = filename;
 
 	FSNode node(filename);
 	File cfg_file;
 	if (!cfg_file.open(node)) {
 		if (!loadFallbackConfigFile(fallbackFilename))
-			debug("Creating configuration file: %s", filename.c_str());
+			debug("Creating configuration file: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	} else {
-		debug("Using configuration file: %s", _filename.c_str());
+		debug("Using configuration file: %s", _filename.toString(Common::Path::kNativeSeparator).c_str());
 		return loadFromStream(cfg_file);
 	}
 	return true;
 }
 
-bool ConfigManager::loadFallbackConfigFile(const String &filename) {
+bool ConfigManager::loadFallbackConfigFile(const Path &filename) {
 	if (filename.empty())
 		return false;
 
@@ -126,7 +126,7 @@ bool ConfigManager::loadFallbackConfigFile(const String &filename) {
 	if (!fallbackFile.open(FSNode(filename)))
 		return false;
 
-	debug("Using initial configuration file: %s", filename.c_str());
+	debug("Using initial configuration file: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	loadFromStream(fallbackFile);
 	return true;
 }
@@ -298,7 +298,7 @@ void ConfigManager::flushToDisk() {
 		assert(dump);
 
 		if (!dump->open(_filename)) {
-			warning("Unable to write configuration file: %s", _filename.c_str());
+			warning("Unable to write configuration file: %s", _filename.toString(Common::Path::kNativeSeparator).c_str());
 			delete dump;
 			return;
 		}

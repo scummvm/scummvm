@@ -41,7 +41,7 @@ public:
 	Common::String getScreenshotsPath() override;
 
 protected:
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;
 
 	Common::String getXdgUserDir(const char *name);

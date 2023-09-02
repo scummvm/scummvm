@@ -44,7 +44,7 @@ public:
 	void logMessage(LogMessageType::Type type, const char *message) override;
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 
 	void update();
 

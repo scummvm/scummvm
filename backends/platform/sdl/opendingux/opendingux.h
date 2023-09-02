@@ -35,7 +35,7 @@ public:
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 protected:
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;
 };
 

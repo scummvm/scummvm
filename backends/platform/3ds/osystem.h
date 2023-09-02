@@ -126,7 +126,7 @@ public:
 	virtual void fatalError();
 	virtual void quit();
 
-	virtual Common::String getDefaultConfigFileName();
+	virtual Common::Path getDefaultConfigFileName();
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 
 	// Graphics

@@ -182,7 +182,7 @@ void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
 #endif
 }
 
-Common::String OSystem_PSP2::getDefaultConfigFileName() {
+Common::Path OSystem_PSP2::getDefaultConfigFileName() {
 	return "ux0:data/scummvm/scummvm.ini";
 }
 

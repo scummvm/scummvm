@@ -192,7 +192,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_thirdPointerId(-1),
 	_trackball_scale(2),
 	_joystick_scale(10),
-	_defaultConfigFileName(""),
+	_defaultConfigFileName(),
 	_defaultLogFileName(),
 	_systemPropertiesSummaryStr(""),
 	_systemSDKdetectedStr(""),
@@ -578,7 +578,7 @@ void OSystem_Android::initBackend() {
 	BaseBackend::initBackend();
 }
 
-Common::String OSystem_Android::getDefaultConfigFileName() {
+Common::Path OSystem_Android::getDefaultConfigFileName() {
 	// if possible, skip JNI call which is more costly (performance wise)
 	if (_defaultConfigFileName.empty()) {
 		_defaultConfigFileName = JNI::getScummVMConfigPath();

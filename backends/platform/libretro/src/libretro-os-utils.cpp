@@ -55,11 +55,11 @@ void OSystem_libretro::getTimeAndDate(TimeDate &t, bool skipRecord) const {
 	t.tm_mday = dayno + 1;
 }
 
-Common::String OSystem_libretro::getDefaultConfigFileName() {
+Common::Path OSystem_libretro::getDefaultConfigFileName() {
 	if (s_systemDir.empty())
-		return Common::String("scummvm.ini");
+		return Common::Path("scummvm.ini");
 	else
-		return s_systemDir + "/scummvm.ini";
+		return Common::Path(s_systemDir).appendComponent("scummvm.ini");
 }
 
 void OSystem_libretro::logMessage(LogMessageType::Type type, const char *message) {
