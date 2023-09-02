@@ -524,7 +524,7 @@ void OSystem_Android::initBackend() {
 	}
 
 	if (!ConfMan.hasKey("browser_lastpath")) {
-		ConfMan.set("browser_lastpath", "/");
+		ConfMan.setPath("browser_lastpath", "/");
 	}
 
 	if (!ConfMan.hasKey("gui_scale")) {

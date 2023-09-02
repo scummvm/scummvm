@@ -55,7 +55,7 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 		struct FileRequester *fr = nullptr;
 
 		if (ConfMan.hasKey("browser_lastpath")) {
-			strncpy(pathBuffer, ConfMan.get("browser_lastpath").c_str(), sizeof(pathBuffer) - 1);
+			strncpy(pathBuffer, ConfMan.getPath("browser_lastpath").toString(Common::Path::kNativeSeparator).c_str(), sizeof(pathBuffer) - 1);
 		}
 
 		fr = (struct FileRequester *)IAsl->AllocAslRequestTags(ASL_FileRequest, TAG_DONE);
@@ -70,8 +70,9 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 				if (!isDirBrowser) {
 					IDOS->AddPart(pathBuffer, fr->fr_File, sizeof(pathBuffer));
 				}
-				choice = Common::FSNode(pathBuffer);
-				ConfMan.set("browser_lastpath", pathBuffer);
+				Common::Path path(pathBuffer);
+				choice = Common::FSNode(path);
+				ConfMan.setPath("browser_lastpath", path);
 				result = kDialogOk;
 			}
 			IAsl->FreeAslRequest((APTR)fr);

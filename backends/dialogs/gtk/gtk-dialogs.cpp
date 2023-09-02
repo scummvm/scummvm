@@ -83,7 +83,7 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 	// Customize dialog
 	gtk_file_chooser_set_show_hidden(chooser, ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain));
 	if (ConfMan.hasKey("browser_lastpath")) {
-		gtk_file_chooser_set_current_folder(chooser, ConfMan.get("browser_lastpath").c_str());
+		gtk_file_chooser_set_current_folder(chooser, ConfMan.getPath("browser_lastpath").toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	// Show dialog
@@ -99,11 +99,12 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 #endif
 	if (res == GTK_RESPONSE_ACCEPT) {
 		// Get the selection from the user
-		char *path = gtk_file_chooser_get_filename(chooser);
+		char *pathS = gtk_file_chooser_get_filename(chooser);
+		Common::Path path(pathS, Common::Path::kNativeSeparator);
 		choice = Common::FSNode(path);
-		ConfMan.set("browser_lastpath", path);
+		ConfMan.setPath("browser_lastpath", path);
 		result = kDialogOk;
-		g_free(path);
+		g_free(pathS);
 	}
 
 	_inDialog = FALSE;
