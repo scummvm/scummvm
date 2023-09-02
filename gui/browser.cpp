@@ -186,12 +186,12 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 void BrowserDialog::updateListing() {
 	// Update the path display
-	_currentPath->setEditString(_node.getPath());
+	_currentPath->setEditString(_node.getPath().toString(Common::Path::kNativeSeparator));
 
 	// We memorize the last visited path.
 	// Don't memorize a path that is not a directory
 	if (_node.isDirectory()) {
-		ConfMan.set("browser_lastpath", _node.getPath());
+		ConfMan.setPath("browser_lastpath", _node.getPath());
 	}
 
 	// Read in the data from the file system

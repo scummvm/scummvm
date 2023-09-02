@@ -87,12 +87,12 @@ HRESULT winCreateItemFromParsingName(PCWSTR pszPath, IBindCtx *pbc, REFIID riid,
 	return func(pszPath, pbc, riid, ppv);
 }
 
-HRESULT getShellPath(IShellItem *item, Common::String &path) {
+HRESULT getShellPath(IShellItem *item, Common::Path &path) {
 	LPWSTR name = nullptr;
 	HRESULT hr = item->GetDisplayName(SIGDN_FILESYSPATH, &name);
 	if (SUCCEEDED(hr)) {
 		char *str = Win32::unicodeToAnsi(name);
-		path = Common::String(str);
+		path = Common::Path(str, Common::Path::kNativeSeparator);
 		CoTaskMemFree(name);
 		free(str);
 	}
@@ -139,7 +139,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 
 		LPWSTR str;
 		if (ConfMan.hasKey("browser_lastpath")) {
-			str = Win32::ansiToUnicode(ConfMan.get("browser_lastpath").c_str());
+			str = Win32::ansiToUnicode(ConfMan.getPath("browser_lastpath").toString(Common::Path::kNativeSeparator).c_str());
 			IShellItem *item = nullptr;
 			hr = winCreateItemFromParsingName(str, nullptr, IID_IShellItem, reinterpret_cast<void **> (&(item)));
 			if (SUCCEEDED(hr)) {
@@ -156,7 +156,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 			IShellItem *selectedItem = nullptr;
 			hr = dialog->GetResult(&selectedItem);
 			if (SUCCEEDED(hr)) {
-				Common::String path;
+				Common::Path path;
 				hr = getShellPath(selectedItem, path);
 				if (SUCCEEDED(hr)) {
 					choice = Common::FSNode(path);
@@ -169,10 +169,10 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 			IShellItem *lastFolder = nullptr;
 			hr = dialog->GetFolder(&lastFolder);
 			if (SUCCEEDED(hr)) {
-				Common::String path;
+				Common::Path path;
 				hr = getShellPath(lastFolder, path);
 				if (SUCCEEDED(hr)) {
-					ConfMan.set("browser_lastpath", path);
+					ConfMan.setPath("browser_lastpath", path);
 				}
 				lastFolder->Release();
 			}
