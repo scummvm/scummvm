@@ -50,7 +50,18 @@ private:
 	Room609 _room609;
 	Room610 _room610;
 
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
 	int _val1 = 0;
+
+	void freeDigi(int state);
+
+public:
+	static int _state1;
+	static int _state2;
+	static int _state3;
+	static int _state4;
 
 public:
 	Section6();
