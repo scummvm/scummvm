@@ -196,7 +196,7 @@ PluginList FilePluginProvider::getPlugins() {
 	addCustomDirectories(pluginDirs);
 
 	// Add the user specified directory
-	Common::String pluginsPath(ConfMan.get("pluginspath"));
+	Common::Path pluginsPath(ConfMan.getPath("pluginspath"));
 	if (!pluginsPath.empty())
 		pluginDirs.push_back(Common::FSNode(pluginsPath));
 
