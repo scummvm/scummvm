@@ -157,9 +157,6 @@ public:
 	//! Paint a Shape
 	void Paint(const Shape *s, uint32 frame, int32 x, int32 y);
 
-	//! Paint a Shape without clipping
-	void PaintNoClip(const Shape *s, uint32 frame, int32 x, int32 y);
-
 	//! Paint a Translucent Shape.
 	void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y);
 

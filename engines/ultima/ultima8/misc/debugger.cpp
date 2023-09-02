@@ -1837,13 +1837,6 @@ bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
 
 	start = g_system->getMillis();
 	for (int i = 0; i < count; i++) {
-		surface->PaintNoClip(s, frame, 160, 100);
-	}
-	end = g_system->getMillis();
-	debugPrintf("PaintNoClip: %d\n", end - start);
-
-	start = g_system->getMillis();
-	for (int i = 0; i < count; i++) {
 		surface->PaintTranslucent(s, frame, 160, 100);
 	}
 	end = g_system->getMillis();
