@@ -39,10 +39,10 @@
 
 KolibriOSSaveFileManager::KolibriOSSaveFileManager(const Common::Path& writeablePath) {
 	// Register default savepath.
-	Common::String savePath;
+	Common::Path savePath;
 
 	if (KolibriOS::assureDirectoryExists("saves", writeablePath.toString().c_str())) {
-		savePath = writeablePath.join("saves").toString().c_str();
+		savePath = writeablePath.join("saves");
 	}
 
 	if (!savePath.empty() && savePath.size() < MAXPATHLEN) {
@@ -65,7 +65,7 @@ KolibriOSSaveFileManager::KolibriOSSaveFileManager(const Common::Path& writeable
 			} else if (!saveDir.isWritable()) {
 				warning("Ignoring non-writable SCUMMVM_SAVEPATH '%s'", dir);
 			} else {
-				ConfMan.set("savepath", dir, Common::ConfigManager::kTransientDomain);
+				ConfMan.setPath("savepath", dir, Common::ConfigManager::kTransientDomain);
 			}
 		}
 	}

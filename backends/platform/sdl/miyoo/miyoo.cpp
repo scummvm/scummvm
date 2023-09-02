@@ -169,7 +169,7 @@ void OSystem_SDL_Miyoo::initBackend() {
 		ConfMan.setPath("extrapath", "./engine-data");
 	}
 	if (!ConfMan.hasKey("savepath")) {
-		ConfMan.set("savepath", SAVE_PATH);
+		ConfMan.setPath("savepath", SAVE_PATH);
 	}
 	if (!ConfMan.hasKey("gui_theme")) {
 		ConfMan.set("gui_theme", "builtin");

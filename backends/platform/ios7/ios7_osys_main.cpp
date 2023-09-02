@@ -65,23 +65,23 @@ SoundProc OSystem_iOS7::s_soundCallback = NULL;
 void *OSystem_iOS7::s_soundParam = NULL;
 
 class SandboxedSaveFileManager : public DefaultSaveFileManager {
-	Common::String _sandboxRootPath;
+	Common::Path _sandboxRootPath;
 public:
 
-	SandboxedSaveFileManager(Common::String sandboxRootPath, Common::String defaultSavepath)
+	SandboxedSaveFileManager(const Common::Path &sandboxRootPath, const Common::Path &defaultSavepath)
 			: DefaultSaveFileManager(defaultSavepath), _sandboxRootPath(sandboxRootPath) {
 	}
 
 	bool removeSavefile(const Common::String &filename) override {
-		Common::String chrootedFile = getSavePath() + "/" + filename;
-		Common::String realFilePath = _sandboxRootPath + chrootedFile;
+		Common::Path chrootedFile = getSavePath().join(filename);
+		Common::Path realFilePath = _sandboxRootPath.join(chrootedFile);
 
-		if (remove(realFilePath.c_str()) != 0) {
+		if (remove(realFilePath.toString(Common::Path::kNativeSeparator).c_str()) != 0) {
 			if (errno == EACCES)
-				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+chrootedFile);
+				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+chrootedFile.toString(Common::Path::kNativeSeparator));
 
 			if (errno == ENOENT)
-				setError(Common::kPathDoesNotExist, "removeSavefile: '"+chrootedFile+"' does not exist or path is invalid");
+				setError(Common::kPathDoesNotExist, "removeSavefile: '"+chrootedFile.toString(Common::Path::kNativeSeparator)+"' does not exist or path is invalid");
 			return false;
 		} else {
 			return true;
@@ -125,7 +125,7 @@ int OSystem_iOS7::timerHandler(int t) {
 }
 
 void OSystem_iOS7::initBackend() {
-	_savefileManager = new SandboxedSaveFileManager(_chrootBasePath, "/Savegames");
+	_savefileManager = new SandboxedSaveFileManager(Common::Path(_chrootBasePath, Common::Path::kNativeSeparator), "/Savegames");
 
 	_timerManager = new DefaultTimerManager();
 

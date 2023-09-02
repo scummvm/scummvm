@@ -66,7 +66,7 @@ void OSystem_RISCOS::initBackend() {
 	if (_savefileManager == 0) {
 		Common::String savePath = "/<Choices$Write>/ScummVM/Saves";
 		if (Riscos::assureDirectoryExists(savePath))
-			_savefileManager = new DefaultSaveFileManager(savePath);
+			_savefileManager = new DefaultSaveFileManager(Common::Path(savePath));
 	}
 
 	// Invoke parent implementation of this method
