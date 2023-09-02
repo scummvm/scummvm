@@ -45,14 +45,11 @@ public:
 	virtual void parser_code() {}
 	virtual void roomError() {}
 	virtual void shutdown() {}
-	virtual HotSpotRec *custom_hotspot_which(int x, int y) {
-		return nullptr;
-	}
 
 	/**
-	 * Used to tell if x,y is over the walker hotspot
+	 * Used to return custom hotspots at a given position
 	 */
-	virtual HotSpotRec *walker_spotter(int32 x, int32 y) {
+	virtual HotSpotRec *custom_hotspot_which(int32 x, int32 y) {
 		return nullptr;
 	}
 };

@@ -46,7 +46,7 @@ public:
 	Section6Room();
 	~Section6Room() override {}
 
-	HotSpotRec *custom_hotspot_which(int x, int y) override;
+	HotSpotRec *custom_hotspot_which(int32 x, int32 y) override;
 };
 
 } // namespace Rooms

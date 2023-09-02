@@ -56,7 +56,7 @@ public:
 	/**
 	 * Used to tell if x,y is over the walker hotspot
 	 */
-	HotSpotRec *walker_spotter(int32 x, int32 y) override;
+	HotSpotRec *custom_hotspot_which(int32 x, int32 y) override;
 
 	void compact_mem_and_report() {}
 

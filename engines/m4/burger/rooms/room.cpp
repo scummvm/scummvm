@@ -49,7 +49,7 @@ void Room::parser_code() {
 	warning("TODO: global_parser_code");
 }
 
-HotSpotRec *Room::walker_spotter(int32 x, int32 y) {
+HotSpotRec *Room::custom_hotspot_which(int32 x, int32 y) {
 	if (!_G(player).walker_in_this_scene || !_G(roomVal2))
 		return nullptr;
 
