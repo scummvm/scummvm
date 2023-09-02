@@ -192,33 +192,6 @@ bool KeyBindMenu::setKey(const Common::Event &event) {
 }
 
 #if 0
-void KeyBindMenu::handleEvents(const SDL_Event &Event) {
-	if (sel_controls.handleEvents(Event))
-		SetCaption();
-
-	switch (state) {
-	case STATE_NORMAL:
-		choice = menu[sel_controls.cur].handleEvents(Event);
-		if (choice >= 0) {
-			prompt.Swap(menu[sel_controls.cur].element[choice].caption);
-			state = STATE_KEY;
-			break;
-		}
-
-		break;
-	case STATE_KEY:
-		if (Event.type == SDL_KEYDOWN) {
-			SwapKey(Event.key.keysym.scancode);
-			SetCaption();
-			menu[sel_controls.cur].element[choice].caption.col = prompt.col_prev;
-			state = STATE_NORMAL;
-		}
-		break;
-	default:
-		break;
-	}
-}
-
 void KeyBindMenu::SwapKey(const SDL_Scancode &find) {
 	int start = 0, size = 0;
 	StartAndSize(sel_controls.cur, start, size);
