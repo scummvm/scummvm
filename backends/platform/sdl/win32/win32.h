@@ -49,7 +49,7 @@ public:
 	Common::String getSystemLanguage() const override;
 
 	// Default paths
-	Common::String getDefaultIconsPath() override;
+	Common::Path getDefaultIconsPath() override;
 	Common::Path getDefaultDLCsPath() override;
 	Common::Path getScreenshotsPath() override;
 

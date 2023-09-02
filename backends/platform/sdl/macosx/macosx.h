@@ -50,7 +50,7 @@ public:
 #endif
 
 	// Default paths
-	Common::String getDefaultIconsPath() override;
+	Common::Path getDefaultIconsPath() override;
 	Common::Path getDefaultDLCsPath() override;
 	Common::Path getScreenshotsPath() override;
 

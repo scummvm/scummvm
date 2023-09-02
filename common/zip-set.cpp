@@ -70,7 +70,7 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 	if (!dat) {
 		File *file = new File;
 		if (ConfMan.hasKey(packsPath)) {
-			String path(normalizePath(ConfMan.get(packsPath) + "/" + defaultFile, '/'));
+			Path path(ConfMan.getPath(packsPath).join(defaultFile).normalize());
 
 			if (File::exists(path))
 				file->open(path);

@@ -256,7 +256,7 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 	return OSystem_SDL::getSystemLanguage();
 }
 
-Common::String OSystem_Win32::getDefaultIconsPath() {
+Common::Path OSystem_Win32::getDefaultIconsPath() {
 	TCHAR iconsPath[MAX_PATH];
 
 	if (_isPortable) {
@@ -265,13 +265,13 @@ Common::String OSystem_Win32::getDefaultIconsPath() {
 	} else {
 		// Use the Application Data directory of the user profile
 		if (!Win32::getApplicationDataDirectory(iconsPath)) {
-			return Common::String();
+			return Common::Path();
 		}
 		_tcscat(iconsPath, TEXT("\\Icons\\"));
 		CreateDirectory(iconsPath, nullptr);
 	}
 
-	return Win32::tcharToString(iconsPath);
+	return Common::Path(Win32::tcharToString(iconsPath), Common::Path::kNativeSeparator);
 }
 
 Common::Path OSystem_Win32::getDefaultDLCsPath() {

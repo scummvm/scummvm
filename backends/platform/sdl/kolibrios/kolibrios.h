@@ -32,7 +32,7 @@ public:
 	void initBackend() override;
 
 	// Default paths
-	Common::String getDefaultIconsPath() override;
+	Common::Path getDefaultIconsPath() override;
 	Common::Path getScreenshotsPath() override;
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 	const Common::Path& getExePath() const { return _exePath; }

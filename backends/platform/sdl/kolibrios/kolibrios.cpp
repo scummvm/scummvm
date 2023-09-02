@@ -89,8 +89,8 @@ Common::Path OSystem_KolibriOS::getDefaultConfigFileName() {
 	return _writablePath.join("scummvm.ini");
 }
 
-Common::String OSystem_KolibriOS::getDefaultIconsPath() {
-	return _exePath.join("icons").toString();
+Common::Path OSystem_KolibriOS::getDefaultIconsPath() {
+	return _exePath.join("icons");
 }
 
 Common::Path OSystem_KolibriOS::getScreenshotsPath() {
