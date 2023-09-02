@@ -22,14 +22,14 @@
 #ifndef COMMON_ARCHIVE_H
 #define COMMON_ARCHIVE_H
 
-#include "common/str.h"
+#include "common/error.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/list.h"
 #include "common/path.h"
 #include "common/ptr.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "common/singleton.h"
-#include "common/error.h"
+#include "common/str.h"
 
 namespace Common {
 
@@ -205,7 +205,7 @@ public:
 	/**
 	 * Dump all files from the archive to the given directory
 	 */
-	Common::Error dumpArchive(String destPath);
+	Common::Error dumpArchive(const Path &destPath);
 
 	/**
 	 * Returns the separator used by internal paths in the archive
@@ -343,12 +343,18 @@ public:
 	/**
 	 * Create and add an FSDirectory by name.
 	 */
-	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1, bool flat = false);
+	void addDirectory(const String &name, const Path &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
 	 * Create and add an FSDirectory by FSNode.
 	 */
 	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1, bool flat = false);
+
+	/**
+	 * Overloads which use directory path as name
+	 */
+	void addDirectory(const Path &directory, int priority = 0, int depth = 1, bool flat = false);
+	void addDirectory(const FSNode &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
 	 * Create and add a subdirectory by name (caseless).
