@@ -46,16 +46,16 @@ static uint32 convUTF8ToUTF32(const char *src) {
 void SdlEventSource::loadGameControllerMappingFile() {
 	bool loaded = false;
 	if (ConfMan.hasKey("controller_map_db")) {
-		Common::FSNode file = Common::FSNode(ConfMan.get("controller_map_db"));
+		Common::FSNode file = Common::FSNode(ConfMan.getPath("controller_map_db"));
 		if (file.exists()) {
-			if (SDL_GameControllerAddMappingsFromFile(file.getPath().c_str()) < 0)
-				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());
+			if (SDL_GameControllerAddMappingsFromFile(file.getPath().toString(Common::Path::kNativeSeparator).c_str()) < 0)
+				error("File %s not valid: %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str(), SDL_GetError());
 			else {
 				loaded = true;
-				debug("Game controller DB file loaded: %s", file.getPath().c_str());
+				debug("Game controller DB file loaded: %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 			}
 		} else
-			warning("Game controller DB file not found: %s", file.getPath().c_str());
+			warning("Game controller DB file not found: %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	if (!loaded && ConfMan.hasKey("extrapath")) {
 		Common::FSNode dir = Common::FSNode(ConfMan.getPath("extrapath"));
