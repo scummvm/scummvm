@@ -65,12 +65,12 @@ bool File::open(const FSNode &node) {
 		warning("File::open: node does not exist");
 		return false;
 	} else if (node.isDirectory()) {
-		warning("File::open: '%s' is a directory", node.getPath().c_str());
+		warning("File::open: '%s' is a directory", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	SeekableReadStream *stream = node.createReadStream();
-	return open(stream, node.getPath());
+	return open(stream, node.getPath().toString(Common::Path::kNativeSeparator));
 }
 
 bool File::open(SeekableReadStream *stream, const String &name) {
@@ -150,24 +150,39 @@ DumpFile::~DumpFile() {
 	close();
 }
 
-bool DumpFile::open(const String &filename, bool createPath) {
+bool DumpFile::open(const Path &filename, bool createPath) {
 	assert(!filename.empty());
 	assert(!_handle);
 
 	if (createPath) {
-		for (uint32 i = 0; i < filename.size(); ++i) {
-			if (filename[i] == '/' || filename[i] == '\\') {
-				Common::String subpath = filename;
-				subpath.erase(i);
-				if (subpath.empty() || subpath == ".") continue;
-				AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(subpath);
+		Common::Path dirname(filename.getParent());
+
+		// If the parent directory already exists keep it simple
+		AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(dirname.toString(Common::Path::kNativeSeparator));
+		if (!node->exists()) {
+			delete node;
+
+			dirname = dirname.normalize();
+			StringArray components = dirname.splitComponents();
+
+			Common::Path subpath;
+			for (StringArray::iterator it = components.end() - 1; it != components.begin(); --it) {
+				subpath.joinInPlace(*it, Common::Path::kNoSeparator);
+				if (subpath.empty()) {
+					continue;
+				}
+				node = g_system->getFilesystemFactory()->makeFileNodePath(subpath.toString(Common::Path::kNativeSeparator));
 				if (node->exists()) {
 					delete node;
 					continue;
 				}
-				if (!node->createDirectory()) warning("DumpFile: unable to create directories from path prefix (%s)", subpath.c_str());
+				if (!node->createDirectory()) {
+					warning("DumpFile: unable to create directories from path prefix (%s)", subpath.toString(Common::Path::kNativeSeparator).c_str());
+				}
 				delete node;
 			}
+		} else {
+			delete node;
 		}
 	}
 

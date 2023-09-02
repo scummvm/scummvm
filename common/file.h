@@ -151,7 +151,7 @@ public:
 	DumpFile();
 	virtual ~DumpFile();
 
-	virtual bool open(const String &filename, bool createPath = false);
+	virtual bool open(const Path &filename, bool createPath = false);
 	virtual bool open(const FSNode &node);
 
 	virtual void close();
