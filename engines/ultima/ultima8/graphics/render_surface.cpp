@@ -36,9 +36,11 @@ namespace Ultima8 {
 uint8 RenderSurface::_gamma10toGamma22[256];
 uint8 RenderSurface::_gamma22toGamma10[256];
 
-RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _ox(0), _oy(0), _pitch(0),
-															_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
-															_surface(s) {
+RenderSurface::RenderSurface(Graphics::ManagedSurface *s, DisposeAfterUse::Flag disposeAfterUse) :
+		_pixels(nullptr), _ox(0), _oy(0), _pitch(0),
+		_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
+		_surface(s), _disposeAfterUse(disposeAfterUse) {
+
 	_clipWindow.setWidth(_surface->w);
 	_clipWindow.setHeight(_surface->h);
 
@@ -51,7 +53,8 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _o
 // Desc: Destructor
 //
 RenderSurface::~RenderSurface() {
-	delete _surface;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete _surface;
 }
 
 void RenderSurface::SetPixelsPointer()
@@ -104,12 +107,7 @@ bool RenderSurface::EndPainting() {
 
 	if (!_lockCount) {
 		// Clear pointers
-		_pixels = 0;
-
-		// Render the screen if this is it (slight hack..)
-		Graphics::Screen *screen = dynamic_cast<Graphics::Screen *>(_surface);
-		if (screen)
-			screen->update();
+		_pixels = nullptr;
 	}
 
 	// No error
@@ -732,23 +730,23 @@ void RenderSurface::MaskedBlit(const Graphics::ManagedSurface &src, const Common
 // Returns: Created RenderSurface or 0
 //
 
-RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp) {
-	// Set up the pixel format to use
-	Graphics::PixelFormat pixelFormat;
+RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height) {
+	Common::List<Graphics::PixelFormat> tryModes = g_system->getSupportedFormats();
+	for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
+		if (g->bytesPerPixel != 2 && g->bytesPerPixel != 4) {
+			g = tryModes.reverse_erase(g);
+		}
+	}
 
-	if (bpp == 16) {
-		pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	} else if (bpp == 32) {
-		pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	} else {
+	initGraphics(width, height, tryModes);
+
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4) {
 		error("Only 16 bit and 32 bit video modes supported");
 	}
 
-	// Set up screen mode
-	initGraphics(width, height, &pixelFormat);
-
 	// Set up blitting surface
-	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, pixelFormat);
+	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, format);
 	assert(surface);
 
 	// Initialize gamma correction tables

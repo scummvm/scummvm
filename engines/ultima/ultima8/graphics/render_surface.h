@@ -55,9 +55,10 @@ private:
 	uint32 _lockCount; // Number of locks on surface
 
 	Graphics::ManagedSurface *_surface;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	// Create from a managed surface
-	RenderSurface(Graphics::ManagedSurface *);
+	RenderSurface(Graphics::ManagedSurface *s, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 	// Update the Pixels Pointer
 	void SetPixelsPointer();
@@ -67,7 +68,7 @@ public:
 	static uint8 _gamma22toGamma10[256];
 
 	//! Create a standard RenderSurface
-	static RenderSurface *SetVideoMode(uint32 width, uint32 height, int bpp);
+	static RenderSurface *SetVideoMode(uint32 width, uint32 height);
 
 	//! Create a SecondaryRenderSurface with an associated Texture object
 	static RenderSurface *CreateSecondaryRenderSurface(uint32 width, uint32 height);

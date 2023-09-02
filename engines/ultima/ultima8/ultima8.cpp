@@ -701,6 +701,10 @@ void Ultima8Engine::paint() {
 
 	// End _painting
 	_screen->EndPainting();
+
+	Graphics::Screen *screen = getScreen();
+	if (screen)
+		screen->update();
 }
 
 void Ultima8Engine::GraphicSysInit() {
@@ -715,31 +719,28 @@ void Ultima8Engine::GraphicSysInit() {
 		ConfMan.registerDefault("width", _highRes ? CRUSADER_HIRES_SCREEN_WIDTH : CRUSADER_DEFAULT_SCREEN_WIDTH);
 		ConfMan.registerDefault("height", _highRes ? CRUSADER_HIRES_SCREEN_HEIGHT : CRUSADER_DEFAULT_SCREEN_HEIGHT);
 	}
-	ConfMan.registerDefault("bpp", 16);
 
 	int width = ConfMan.getInt("width");
 	int height = ConfMan.getInt("height");
-	int bpp = ConfMan.getInt("bpp");
 
 	if (_screen) {
 		Rect old_dims;
 		_screen->GetSurfaceDims(old_dims);
 		if (width == old_dims.width() && height == old_dims.height())
 			return;
-		bpp = _screen->getRawSurface()->format.bpp();
 
 		delete _screen;
 	}
 	_screen = nullptr;
 
 	// Set Screen Resolution
-	debugN(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
+	debugN(MM_INFO, "Setting Video Mode %dx%d...\n", width, height);
 
-	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
+	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height);
 
 	if (!new_screen) {
-		warning("Unable to set new video mode. Trying %dx%dx32", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
-		new_screen = RenderSurface::SetVideoMode(U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT, 32);
+		warning("Unable to set new video mode. Trying %dx%d", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
+		new_screen = RenderSurface::SetVideoMode(U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
 	}
 
 	if (!new_screen) {
