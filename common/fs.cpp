@@ -38,13 +38,16 @@ public:
 	Path getPathInArchive() const override;
 	String getFileName() const override;
 	U32String getDisplayName() const override;
+	bool isDirectory() const override;
+	void listChildren(ArchiveMemberList &list, const char *pattern) const override;
 
 private:
 	Common::Path _pathInDirectory;
 	FSNode _fsNode;
 };
 
-FSDirectoryFile::FSDirectoryFile(const Common::Path &pathInDirectory, const FSNode &fsNode) : _pathInDirectory(pathInDirectory), _fsNode(fsNode) {
+FSDirectoryFile::FSDirectoryFile(const Common::Path &pathInDirectory, const FSNode &fsNode)
+	: _pathInDirectory(pathInDirectory), _fsNode(fsNode) {
 }
 
 SeekableReadStream *FSDirectoryFile::createReadStream() const {
@@ -71,12 +74,39 @@ U32String FSDirectoryFile::getDisplayName() const {
 	return _fsNode.getDisplayName();
 }
 
+bool FSDirectoryFile::isDirectory() const {
+	return _fsNode.isDirectory();
+}
+
+void FSDirectoryFile::listChildren(ArchiveMemberList &list, const char *pattern) const {
+	// We don't check for includeDirectories in the parent archive to determine the list mode here because it is implicit,
+	// i.e. if includeDirectories was set false, then this file isn't a directory in the first place.
+
+	FSList fsList;
+	if (!_fsNode.getChildren(fsList, FSNode::kListAll))
+		return;
+
+	for (const FSNode &fsNode : fsList) {
+		Common::String fileName = fsNode.getName();
+
+		if (pattern != nullptr && !fileName.matchString(pattern, true))
+			continue;
+
+		Common::Path subPath = _pathInDirectory.appendComponent(fileName);
+
+		list.push_back(ArchiveMemberPtr(new FSDirectoryFile(subPath, fsNode)));
+	}
+}
+
 
 FSNode::FSNode() {
 }
 
 FSNode::FSNode(AbstractFSNode *realNode)
 	: _realNode(realNode) {
+}
+
+FSNode::~FSNode() {
 }
 
 FSNode::FSNode(const Path &p) {
@@ -174,6 +204,19 @@ String FSNode::getPath() const {
 
 bool FSNode::isDirectory() const {
 	return _realNode && _realNode->isDirectory();
+}
+
+void FSNode::listChildren(ArchiveMemberList &childList, const char *pattern) const {
+	Common::FSList fsList;
+	if (!getChildren(fsList, Common::FSNode::kListAll))
+		return;
+
+	for (const Common::FSNode &fsNode : fsList) {
+		if (pattern != nullptr && !fsNode.getName().matchString(pattern))
+			continue;
+
+		childList.push_back(ArchiveMemberPtr(new FSNode(fsNode)));
+	}
 }
 
 bool FSNode::isReadable() const {
@@ -297,6 +340,14 @@ bool FSDirectory::hasFile(const Path &path) const {
 
 	FSNode *node = lookupCache(_fileCache, path);
 	return node && node->exists();
+}
+
+bool FSDirectory::isPathDirectory(const Path &path) const {
+	if (path.toString().empty() || !_node.isDirectory())
+		return false;
+
+	FSNode *node = lookupCache(_fileCache, path);
+	return node && node->isDirectory();
 }
 
 const ArchiveMemberPtr FSDirectory::getMember(const Path &path) const {
