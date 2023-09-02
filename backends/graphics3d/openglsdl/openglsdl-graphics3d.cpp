@@ -789,7 +789,7 @@ void OpenGLSdlGraphics3dManager::deinitializeRenderer() {
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
-bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::String &filename) const {
+bool OpenGLSdlGraphics3dManager::saveScreenshot(const Common::Path &filename) const {
 	// Largely based on the implementation from ScummVM
 	uint width = _overlayScreen->getWidth();
 	uint height = _overlayScreen->getHeight();

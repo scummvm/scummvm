@@ -33,7 +33,7 @@ public:
 
 	// Default paths
 	Common::String getDefaultIconsPath() override;
-	Common::String getScreenshotsPath() override;
+	Common::Path getScreenshotsPath() override;
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 	const Common::Path& getExePath() const { return _exePath; }
 

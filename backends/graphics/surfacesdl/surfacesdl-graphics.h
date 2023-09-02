@@ -434,7 +434,7 @@ protected:
 	void setFilteringMode(bool enable);
 	void setVSync(bool enable);
 
-	bool saveScreenshot(const Common::String &filename) const override;
+	bool saveScreenshot(const Common::Path &filename) const override;
 	virtual void setGraphicsModeIntern();
 	virtual void getDefaultResolution(uint &w, uint &h);
 

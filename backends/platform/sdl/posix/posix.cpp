@@ -283,9 +283,9 @@ Common::Path OSystem_POSIX::getDefaultDLCsPath() {
 	return dlcsPath;
 }
 
-Common::String OSystem_POSIX::getScreenshotsPath() {
+Common::Path OSystem_POSIX::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
-	const Common::String path = OSystem_SDL::getScreenshotsPath();
+	const Common::Path path = OSystem_SDL::getScreenshotsPath();
 	if (!path.empty()) {
 		return path;
 	}
@@ -307,7 +307,7 @@ Common::String OSystem_POSIX::getScreenshotsPath() {
 		return "";
 	}
 
-	return picturesPath + SCREENSHOTS_DIR_NAME + "/";
+	return Common::Path(picturesPath).join(SCREENSHOTS_DIR_NAME);
 }
 
 void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
