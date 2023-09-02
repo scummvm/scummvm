@@ -252,14 +252,14 @@ Common::Path OSystem_MacOSX::getDefaultLogFileName() {
 	return Common::Path(prefix).join(Common::String("Library/Logs/") + appName + ".log");
 }
 
-Common::String OSystem_MacOSX::getDefaultIconsPath() {
+Common::Path OSystem_MacOSX::getDefaultIconsPath() {
 	const Common::String defaultIconsPath = getAppSupportPathMacOSX() + "/Icons";
 
 	if (!Posix::assureDirectoryExists(defaultIconsPath)) {
-		return Common::String();
+		return Common::Path();
 	}
 
-	return defaultIconsPath;
+	return Common::Path(defaultIconsPath);
 }
 
 Common::Path OSystem_MacOSX::getDefaultDLCsPath() {

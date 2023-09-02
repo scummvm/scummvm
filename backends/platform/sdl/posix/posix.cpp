@@ -235,7 +235,7 @@ Common::String OSystem_POSIX::getXdgUserDir(const char *name) {
 	return directoryPath;
 }
 
-Common::String OSystem_POSIX::getDefaultIconsPath() {
+Common::Path OSystem_POSIX::getDefaultIconsPath() {
 	Common::String iconsPath;
 
 	// On POSIX systems we follow the XDG Base Directory Specification for
@@ -257,7 +257,7 @@ Common::String OSystem_POSIX::getDefaultIconsPath() {
 		return Common::String();
 	}
 
-	return Common::String::format("%s/%s", prefix, iconsPath.c_str());
+	return Common::Path(prefix).join(iconsPath);
 }
 
 Common::Path OSystem_POSIX::getDefaultDLCsPath() {

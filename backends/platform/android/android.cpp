@@ -542,9 +542,9 @@ void OSystem_Android::initBackend() {
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
 
 
-	ConfMan.registerDefault("iconspath", basePath + "/icons");
+	ConfMan.registerDefault("iconspath", Common::Path(basePath, Common::Path::kNativeSeparator).joinInPlace("icons"));
 	// TODO remove the debug message eventually
-	LOGD("Setting Default Icons and Shaders path to: %s", ConfMan.get("iconspath").c_str());
+	LOGD("Setting Default Icons and Shaders path to: %s", ConfMan.getPath("iconspath").toString(Common::Path::kNativeSeparator).c_str());
 
 	_timerManager = new DefaultTimerManager();
 

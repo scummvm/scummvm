@@ -92,7 +92,7 @@ public:
 	uint32 getDoubleClickTime() const override;
 
 	// Default paths
-	virtual Common::String getDefaultIconsPath();
+	virtual Common::Path getDefaultIconsPath();
 	virtual Common::Path getDefaultDLCsPath();
 	virtual Common::Path getScreenshotsPath();
 

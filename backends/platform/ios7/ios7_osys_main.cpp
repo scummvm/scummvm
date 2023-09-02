@@ -137,7 +137,7 @@ void OSystem_iOS7::initBackend() {
 
 	setTimerCallback(&OSystem_iOS7::timerHandler, 10);
 
-	ConfMan.registerDefault("iconspath", "/");
+	ConfMan.registerDefault("iconspath", Common::Path("/"));
 
 	EventsBaseBackend::initBackend();
 }

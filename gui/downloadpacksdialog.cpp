@@ -101,7 +101,7 @@ bool DialogState::takeOneFile() {
 	fileHash.erase(fname);
 
 	Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", fname.c_str());
-	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
+	Common::Path localFile = ConfMan.getPath("iconspath").join(fname).normalize();
 
 	Networking::SessionRequest *rq = session.get(url, localFile,
 		new Common::Callback<DialogState, const Networking::DataResponse &>(this, &DialogState::downloadFileCallback),
@@ -390,7 +390,7 @@ void DownloadPacksDialog::setError(Common::U32String &msg) {
 }
 
 void DownloadPacksDialog::calculateList() {
-	Common::String iconsPath = ConfMan.get("iconspath");
+	Common::Path iconsPath = ConfMan.getPath("iconspath");
 	if (iconsPath.empty()) {
 		Common::U32String str(_("ERROR: No icons path set"));
 		setError(str);
@@ -435,7 +435,7 @@ void DownloadPacksDialog::calculateList() {
 }
 
 void DownloadPacksDialog::clearCache() {
-	Common::String iconsPath = ConfMan.get("iconspath");
+	Common::Path iconsPath = ConfMan.getPath("iconspath");
 	if (iconsPath.empty()) {
 		Common::U32String str(_("ERROR: No icons path set"));
 		setError(str);
@@ -469,7 +469,7 @@ void DownloadPacksDialog::clearCache() {
 		// Build list of previously downloaded icon files
 		for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 			Common::String fname = (*ic)->getName();
-			Common::FSNode fs(Common::Path(iconsPath).join(fname));
+			Common::FSNode fs(iconsPath.join(fname));
 			Common::WriteStream *str = fs.createWriteStream();
 
 			// Overwrite previously downloaded pack files with dummy data

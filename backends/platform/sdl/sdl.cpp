@@ -800,11 +800,8 @@ uint32 OSystem_SDL::getDoubleClickTime() const {
 }
 
 //Not specified in base class
-Common::String OSystem_SDL::getDefaultIconsPath() {
-	Common::String path = ConfMan.get("iconspath");
-	if (!path.empty() && !path.hasSuffix("/"))
-		path += "/";
-	return path;
+Common::Path OSystem_SDL::getDefaultIconsPath() {
+	return ConfMan.getPath("iconspath");
 }
 
 // Not specified in base class
