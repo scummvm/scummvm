@@ -1941,7 +1941,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 #endif
 
 	if (ConfMan.hasKey("themepath"))
-		listUsableThemes(Common::FSNode(ConfMan.get("themepath")), list);
+		listUsableThemes(Common::FSNode(ConfMan.getPath("themepath")), list);
 
 	listUsableThemes(SearchMan, list);
 

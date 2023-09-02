@@ -60,7 +60,7 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 	dat = nullptr;
 
 	if (ConfMan.hasKey("themepath")) {
-		FSNode *fs = new FSNode(normalizePath(ConfMan.get("themepath") + "/" + defaultFile, '/'));
+		FSNode *fs = new FSNode(ConfMan.getPath("themepath").join(defaultFile).normalize());
 		if (fs->exists()) {
 			dat = makeZipArchive(*fs);
 		}

@@ -38,7 +38,7 @@ namespace Networking {
 Common::Archive *HandlerUtils::getZipArchive() {
 	// first search in themepath
 	if (ConfMan.hasKey("themepath")) {
-		const Common::FSNode &node = Common::FSNode(ConfMan.get("themepath"));
+		const Common::FSNode &node = Common::FSNode(ConfMan.getPath("themepath"));
 		if (node.exists() && node.isReadable() && node.isDirectory()) {
 			Common::FSNode fileNode = node.getChild(ARCHIVE_NAME);
 			if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {

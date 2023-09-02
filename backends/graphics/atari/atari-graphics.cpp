@@ -206,7 +206,7 @@ AtariGraphicsManager::AtariGraphicsManager() {
 #ifndef DISABLE_FANCY_THEMES
 	// make "themes" the default theme path
 	if (!ConfMan.hasKey("themepath"))
-		ConfMan.set("themepath", "themes");
+		ConfMan.setPath("themepath", "themes");
 #endif
 
 	ConfMan.flushToDisk();
