@@ -165,7 +165,7 @@ private:
 
 	TouchControls _touchControls;
 
-	Common::String _defaultConfigFileName;
+	Common::Path _defaultConfigFileName;
 	Common::Path _defaultLogFileName;
 	Common::String _systemPropertiesSummaryStr;
 	Common::String _systemSDKdetectedStr;
@@ -222,7 +222,7 @@ public:
 	Common::KeymapArray getGlobalKeymaps() override;
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;
 
 	void registerDefaultSettings(const Common::String &target) const override;

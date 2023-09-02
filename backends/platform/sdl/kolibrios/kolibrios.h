@@ -38,7 +38,7 @@ public:
 	const Common::Path& getExePath() const { return _exePath; }
 
 protected:
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;
 
 	AudioCDManager *createAudioCDManager() override;

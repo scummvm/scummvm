@@ -220,17 +220,16 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 #endif // USE_DETECTLANG
 }
 
-Common::String OSystem_MacOSX::getDefaultConfigFileName() {
+Common::Path OSystem_MacOSX::getDefaultConfigFileName() {
 	const Common::String baseConfigName = "Library/Preferences/" + getMacBundleName() + " Preferences";
 
-	Common::String configFile;
+	Common::Path configFile;
 
 	Common::String prefix = getenv("HOME");
 
 	if (!prefix.empty() && (prefix.size() + 1 + baseConfigName.size()) < MAXPATHLEN) {
 		configFile = prefix;
-		configFile += '/';
-		configFile += baseConfigName;
+		configFile.joinInPlace(baseConfigName);
 	} else {
 		configFile = baseConfigName;
 	}

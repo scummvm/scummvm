@@ -141,7 +141,7 @@ public:
 
 	void logMessage(LogMessageType::Type type, const char *message);
 
-	virtual Common::String getDefaultConfigFileName();
+	virtual Common::Path getDefaultConfigFileName();
 };
 
 #endif /* OSYS_PSP_H */

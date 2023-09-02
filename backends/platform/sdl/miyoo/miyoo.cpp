@@ -198,7 +198,7 @@ void OSystem_SDL_Miyoo::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-Common::String OSystem_SDL_Miyoo::getDefaultConfigFileName() {
+Common::Path OSystem_SDL_Miyoo::getDefaultConfigFileName() {
 	return CONFIG_FILE;
 
 }

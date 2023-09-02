@@ -54,7 +54,7 @@ public:
 	Common::String getScreenshotsPath() override;
 
 protected:
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;
 
 	// Override createAudioCDManager() to get our Windows-specific

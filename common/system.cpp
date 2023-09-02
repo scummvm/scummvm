@@ -242,7 +242,7 @@ Common::WriteStream *OSystem::createConfigWriteStream() {
 #endif
 }
 
-Common::String OSystem::getDefaultConfigFileName() {
+Common::Path OSystem::getDefaultConfigFileName() {
 	return "scummvm.ini";
 }
 

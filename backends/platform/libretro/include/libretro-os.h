@@ -161,7 +161,7 @@ public:
 	/* Utils */
 	void getTimeAndDate(TimeDate &t, bool skipRecord) const override;
 	Audio::Mixer *getMixer(void) override;
-	Common::String getDefaultConfigFileName(void) override;
+	Common::Path getDefaultConfigFileName(void) override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	int testGame(const char *filedata, bool autodetect);
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override {}

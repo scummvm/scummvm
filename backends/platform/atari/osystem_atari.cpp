@@ -419,18 +419,15 @@ void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 #endif
 }
 
-Common::String OSystem_Atari::getDefaultConfigFileName() {
-	const Common::String baseConfigName = OSystem::getDefaultConfigFileName();
-
-	Common::String configFile;
+Common::Path OSystem_Atari::getDefaultConfigFileName() {
+	const Common::Path baseConfigName = OSystem::getDefaultConfigFileName();
 
 	const char *envVar = getenv("HOME");
 	if (envVar && *envVar) {
-		configFile = envVar;
-		configFile += '/';
-		configFile += baseConfigName;
+		Common::Path configFile(envVar);
+		confgFile.joinInPlace(baseConfigName);
 
-		if (configFile.size() < MAXPATHLEN)
+		if (configFile.toString(Common::Path::kNativeSeparator).size() < MAXPATHLEN)
 			return configFile;
 	}
 

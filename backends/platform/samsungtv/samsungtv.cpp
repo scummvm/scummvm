@@ -53,7 +53,7 @@ void OSystem_SDL_SamsungTV::fatalError() {
 	for (;;) {}
 }
 
-Common::String OSystem_SDL_SamsungTV::getDefaultConfigFileName() {
+Common::Path OSystem_SDL_SamsungTV::getDefaultConfigFileName() {
 	return "/mtd_rwarea/.scummvmrc";
 }
 

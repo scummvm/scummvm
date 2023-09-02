@@ -151,7 +151,7 @@ void OSystem_RISCOS::messageBox(LogMessageType::Type type, const char *message) 
 	_kernel_swi(Wimp_ReportError, &regs, &regs);
 }
 
-Common::String OSystem_RISCOS::getDefaultConfigFileName() {
+Common::Path OSystem_RISCOS::getDefaultConfigFileName() {
 	return "/<Choices$Write>/ScummVM/scummvmrc";
 }
 

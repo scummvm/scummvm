@@ -327,7 +327,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 	return Win32::tcharToString(picturesPath);
 }
 
-Common::String OSystem_Win32::getDefaultConfigFileName() {
+Common::Path OSystem_Win32::getDefaultConfigFileName() {
 	TCHAR configFile[MAX_PATH];
 
 	// if this is the first time the default config file name is requested
@@ -374,7 +374,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		}
 	}
 
-	return Win32::tcharToString(configFile);
+	return Common::Path(Win32::tcharToString(configFile), Common::Path::kNativeSeparator);
 }
 
 Common::Path OSystem_Win32::getDefaultLogFileName() {

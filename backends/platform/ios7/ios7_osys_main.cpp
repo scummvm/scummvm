@@ -418,9 +418,8 @@ OSystem_iOS7 *OSystem_iOS7::sharedInstance() {
 	return instance;
 }
 
-Common::String OSystem_iOS7::getDefaultConfigFileName() {
-	Common::String path = "/Preferences";
-	return path;
+Common::Path OSystem_iOS7::getDefaultConfigFileName() {
+	return Common::Path("/Preferences");
 }
 
 void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {

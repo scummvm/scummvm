@@ -111,7 +111,7 @@ bool OSystem_POSIX::hasFeature(Feature f) {
 	return OSystem_SDL::hasFeature(f);
 }
 
-Common::String OSystem_POSIX::getDefaultConfigFileName() {
+Common::Path OSystem_POSIX::getDefaultConfigFileName() {
 	const Common::String baseConfigName = "scummvm.ini";
 
 	Common::String configFile;

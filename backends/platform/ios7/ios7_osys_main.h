@@ -142,7 +142,7 @@ public:
 	void startSoundsystem();
 	void stopSoundsystem();
 
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	void fatalError() override;

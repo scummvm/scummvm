@@ -437,6 +437,6 @@ void OSystem_PSP::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	td.tm_wday = t.tm_wday;
 }
 
-Common::String OSystem_PSP::getDefaultConfigFileName() {
+Common::Path OSystem_PSP::getDefaultConfigFileName() {
 	return "ms0:/scummvm.ini";
 }

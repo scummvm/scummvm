@@ -173,7 +173,7 @@ void OSystem_SDL_Opendingux::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-Common::String OSystem_SDL_Opendingux::getDefaultConfigFileName() {
+Common::Path OSystem_SDL_Opendingux::getDefaultConfigFileName() {
 	return CONFIG_FILE;
 
 }

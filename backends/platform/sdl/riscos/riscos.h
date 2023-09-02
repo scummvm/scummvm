@@ -37,7 +37,7 @@ public:
 	virtual void messageBox(LogMessageType::Type type, const char *message);
 
 protected:
-	virtual Common::String getDefaultConfigFileName();
+	virtual Common::Path getDefaultConfigFileName();
 	virtual Common::Path getDefaultLogFileName();
 };
 

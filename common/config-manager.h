@@ -126,8 +126,8 @@ public:
 	static char const *const kCloudDomain;
 #endif
 
-	bool                     loadDefaultConfigFile(const String &fallbackFilename); /*!< Load the default configuration file. */
-	bool                     loadConfigFile(const String &filename, const String &fallbackFilename); /*!< Load a specific configuration file. */
+	bool                     loadDefaultConfigFile(const Path &fallbackFilename); /*!< Load the default configuration file. */
+	bool                     loadConfigFile(const Path &filename, const Path &fallbackFilename); /*!< Load a specific configuration file. */
 
 	/**
 	 * Retrieve the config domain with the given name.
@@ -222,7 +222,7 @@ public:
 	DomainMap::iterator      beginGameDomains() { return _gameDomains.begin(); } /*!< Return the beginning position of game domains. */
 	DomainMap::iterator      endGameDomains() { return _gameDomains.end(); } /*!< Return the ending position of game domains. */
 
-	const String             &getCustomConfigFileName() { return _filename; } /*!< Return the custom config file being used, or an empty string when using the default config file */
+	const Path              &getCustomConfigFileName() { return _filename; } /*!< Return the custom config file being used, or an empty string when using the default config file */
 
 	static void              defragment(); /*!< Move the configuration in memory to reduce fragmentation. */
 	void                     copyFrom(ConfigManager &source); /*!< Copy from a ConfigManager instance. */
@@ -231,7 +231,7 @@ private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
-	bool            loadFallbackConfigFile(const String &filename);
+	bool			loadFallbackConfigFile(const Path &filename);
 	bool			loadFromStream(SeekableReadStream &stream);
 	void			addDomain(const String &domainName, const Domain &domain);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
@@ -256,7 +256,7 @@ private:
 	String			_activeDomainName;
 	Domain *		_activeDomain;
 
-	String			_filename;
+	Path			_filename;
 };
 
 /** @} */
