@@ -85,6 +85,7 @@ public:
 	virtual void global_room_init() {}
 	virtual void daemon();
 	virtual void tick() {}
+	virtual void pre_parser() {}
 	virtual void parser() {}
 };
 

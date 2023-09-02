@@ -433,6 +433,7 @@ void Interface::dispatch_command() {
 	_G(player).walker_trigger = -1;
 
 	g_engine->_activeRoom->pre_parser();
+	g_engine->_activeSection->pre_parser();
 	g_engine->global_pre_parser();
 }
 
