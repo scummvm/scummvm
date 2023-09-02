@@ -48,6 +48,11 @@ public:
 	virtual HotSpotRec *custom_hotspot_which(int x, int y) {
 		return nullptr;
 	}
+
+	/**
+	 * Used to tell if x,y is over the walker hotspot
+	 */
+	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
 };
 
 class Section {
@@ -74,11 +79,6 @@ public:
 	 * Iterates through the rooms array to find a given room
 	 */
 	Room *operator[](uint roomNum);
-
-	/**
-	 * Used to tell if x,y is over the walker hotspot
-	 */
-	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
 
 	virtual void global_room_init() {}
 	virtual void daemon();

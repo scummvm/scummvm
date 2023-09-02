@@ -28,19 +28,21 @@
 namespace M4 {
 
 struct HotSpotRec {
-	int32 ul_x = 0, ul_y = 0, lr_x = 0, lr_y = 0;	// Hotspot screen coordinates
-	int32 feet_x = 0, feet_y = 0;			// Walk-to target for player
-	int8 facing = 0;						// Direction player should face
-	bool active = false;					// Flag if hotspot is active
-	byte cursor_number = 0;					// Mouse cursor number
-	byte syntax = 0;						// Word syntax
-	int32 vocabID = 0, verbID = 0;			// ids of name and verb
-	char *vocab = nullptr;					// Vocabulary name of hotspot
-	char *verb = nullptr;					// Vocabulary default verb name
-	char *prep = nullptr;					// Preposition
-	char *sprite = nullptr;					// Sprite name
-	int16 hash = 0;							// woodscript sprite hash (runtime only)
-	HotSpotRec *next = nullptr;
+	int32 ul_x, ul_y, lr_x, lr_y;	// Hotspot screen coordinates
+	int32 feet_x, feet_y;			// Walk-to target for player
+	int8 facing;					// Direction player should face
+	bool active;					// Flag if hotspot is active
+	byte cursor_number;				// Mouse cursor number
+	byte syntax;					// Word syntax
+	int32 vocabID, verbID;			// ids of name and verb
+	char *vocab;					// Vocabulary name of hotspot
+	char *verb;						// Vocabulary default verb name
+	char *prep;						// Preposition
+	char *sprite;					// Sprite name
+	int16 hash;						// woodscript sprite hash (runtime only)
+	HotSpotRec *next;
+
+	void clear();
 };
 
 extern HotSpotRec *hotspot_add_dynamic(

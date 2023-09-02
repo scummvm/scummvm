@@ -26,6 +26,22 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+HotSpotRec Room::_wilburHotspot;
+char Room::_wilburName[16];
+char Room::_wilburVerb = 0;
+
+void Room::setWilburHotspot() {
+	Common::strcpy_s(_wilburName, "Wilbur");
+
+	_wilburHotspot.clear();
+	_wilburHotspot.vocab = _wilburName;
+	_wilburHotspot.verb = &_wilburVerb;
+	_wilburHotspot.feet_x = 0x7fff;
+	_wilburHotspot.feet_y = 0x7fff;
+	_wilburHotspot.cursor_number = kArrowCursor;
+}
+
+
 void Room::shutdown() {
 }
 

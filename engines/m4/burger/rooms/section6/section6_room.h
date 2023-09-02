@@ -19,38 +19,23 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION6_ROOM602_H
-#define M4_BURGER_ROOMS_SECTION6_ROOM602_H
+#ifndef M4_BURGER_ROOMS_SECTION6_ROOM_H
+#define M4_BURGER_ROOMS_SECTION6_ROOM_H
 
-#include "m4/burger/rooms/section6/section6_room.h"
+#include "m4/burger/rooms/room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room602 : public Section6Room {
-private:
-	noWalkRect *_walk1 = nullptr;
-	int _series1 = 0;
-	machine *_series2 = nullptr;
-	machine *_series3 = nullptr;
-	int _series4 = 0;
-	int _series5 = 0;
-	int _series6 = 0;
-	int _series7 = 0;
-	machine *_series8 = nullptr;
-	int _val1 = 0;
-	int _val2 = 0;
-	int _val3 = 0;
-
+class Section6Room : public Rooms::Room {
+protected:
+	int16 *_table = nullptr;
 public:
-	Room602() : Section6Room() {}
-	~Room602() override {}
+	Section6Room() : Room() {}
+	~Section6Room() override {}
 
-	void init() override;
-	void daemon() override;
-	void pre_parser() override;
-	void parser() override;
+	HotSpotRec *custom_hotspot_which(int x, int y) override;
 };
 
 } // namespace Rooms
