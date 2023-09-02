@@ -90,25 +90,21 @@ void KeyBindMenu::startAndSize(const int &type, int &start, int &size) {
 }
 
 void KeyBindMenu::initMenu(const int &type) {
-	warning("STUB: KeyBindMenu::initMenu()");
-
-#if 0
 	int start = 0, size = 0;
-	StartAndSize(type, start, size);
+	startAndSize(type, start, size);
 
 	// Initialize the menu
-	menu[type].element.resize(size * 2);
-	for (int i = 0; i < size * 2; i += 2) {
-		int xoffset = inc.x * (i / 2) + divide.x * ((i / 2) / dim.x);
-		int yoffset = inc.y * ((i / 2) % dim.x) + divide.y * ((i / 2) / dim.x);
+	_menu[type]._element.resize(size);
+	for (int i = 0; i < size; i++) {
+		int xoffset = _inc.x * i + _divide.x * (i / _dim.x);
+		int yoffset = _inc.y * (i % _dim.x) + _divide.y * (i / _dim.x);
 
-		menu[type].element[i].Init(prim, xoffset, yoffset);
-		menu[type].element[i].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
+		_menu[type]._element[i].init(_prim, xoffset, yoffset);
+		_menu[type]._element[i]._caption._text = g_engine->_inputManager->getAssociatedKey((InputType)(start + i));
 
-		menu[type].element[i + 1].Init(alt, xoffset, yoffset);
-		menu[type].element[i + 1].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
+		//_menu[type]._element[i + 1].init(_alt, xoffset, yoffset);
+		//_menu[type]._element[i + 1]._caption._text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
 	}
-#endif
 }
 
 void KeyBindMenu::drawDesc(const int &type) {
@@ -131,48 +127,68 @@ void KeyBindMenu::draw() {
 }
 
 void KeyBindMenu::setCaption() {
-	warning("STUB: KeyBindMenu::setCaption()");
-
-#if 0
 	int start = 0, size = 0;
-	StartAndSize(sel_controls.cur, start, size);
+	startAndSize(_selControls._cur, start, size);
 
-	for (int i = 0; i < size * 2; i += 2) {
-		menu[sel_controls.cur].element[i].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
-		menu[sel_controls.cur].element[i + 1].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
-	}
-#endif
+	for (int i = 0; i < size; i++)
+		_menu[_selControls._cur]._element[i]._caption._text = g_engine->_inputManager->getAssociatedKey((InputType)(start + i));
 }
 
 void KeyBindMenu::handleEvents(const Common::Event &event) {
-	warning("STUB: KeyBindMenu::handleEvents()");
+	if (_selControls.handleEvents(event))
+		setCaption();
 
-	/*
-	if (sel_controls.handleEvents(Event))
-		SetCaption();
-
-	switch (state) {
+	switch (_state) {
 	case STATE_NORMAL:
-		choice = menu[sel_controls.cur].handleEvents(Event);
-		if (choice >= 0) {
-			prompt.Swap(menu[sel_controls.cur].element[choice].caption);
-			state = STATE_KEY;
+		_choice = _menu[_selControls._cur].handleEvents(event);
+		if (_choice >= 0) {
+			_prompt.swap(_menu[_selControls._cur]._element[_choice]._caption);
+			_state = STATE_KEY;
+			g_system->getEventManager()->getKeymapper()->setEnabled(false);
 			break;
 		}
 
 		break;
 	case STATE_KEY:
-		if (Event.type == SDL_KEYDOWN) {
-			SwapKey(Event.key.keysym.scancode);
-			SetCaption();
-			menu[sel_controls.cur].element[choice].caption.col = prompt.col_prev;
-			state = STATE_NORMAL;
+		if (setKey(event)) { // if key remapped successfully
+			g_engine->_inputManager->populateKeyTable(); // repopulate key table
+			g_system->getEventManager()->getKeymapper()->setEnabled(true);
+
+			setCaption();
+			_menu[_selControls._cur]._element[_choice]._caption._col = _prompt._colPrev;
+			_state = STATE_NORMAL;
 		}
+
 		break;
 	default:
 		break;
 	}
-	*/
+}
+
+bool KeyBindMenu::setKey(const Common::Event &event) {
+	Common::HardwareInput hwInput = g_system->getEventManager()->getKeymapper()->findHardwareInput(event);
+	if (hwInput.type != Common::kHardwareInputTypeInvalid) {
+		int ch = _choice;
+		if (_selControls._cur == CON_UI)
+			ch += IG_SIZE;
+
+		Common::KeymapArray keymapArr = g_system->getEventManager()->getKeymapper()->getKeymaps();
+		for (Common::Keymap *keymap : keymapArr) {
+			if (keymap->getType() != Common::Keymap::kKeymapTypeGame)
+				continue;
+
+			const Common::Keymap::ActionArray actions = keymap->getActions();
+			for (Common::Action *action : actions) {
+				if ((int)action->event.customType == ch) {
+					keymap->unregisterMapping(action);
+					keymap->registerMapping(action, hwInput);
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 #if 0

@@ -42,7 +42,7 @@ namespace ui {
 class KeyBindMenu {
 	// The keyboard controls menu has 2 types of inputs
 	enum Controls {
-		CON_GAME,
+		CON_GAME = 0,
 		CON_UI,
 		CON_TOTAL
 	};
@@ -92,7 +92,7 @@ class KeyBindMenu {
 			}
 		}
 
-		void Swap(Caption &c) {
+		void swap(Caption &c) {
 			_colPrev = c._col;
 			c._text = _text;
 			c._col = _col;
@@ -123,6 +123,8 @@ public:
 	void handleEvents(const Common::Event &event);
 
 	void setCaption();
+
+	bool setKey(const Common::Event &event);
 
 	void draw();
 	void setUI();
