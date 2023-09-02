@@ -28,11 +28,6 @@
 //
 // #define NO_CLIPPING to disable shape clipping
 //
-// #define FLIP_SHAPES to flip rendering
-//
-// #define FLIP_CONDITIONAL to an argument of the function so FLIPPING can be
-// enabled/disabled with a bool
-//
 // #define XFORM_SHAPES to enable XFORMing
 //
 // #define XFORM_CONDITIONAL to an argument of the function so XFORM can be
@@ -47,14 +42,6 @@
 //
 // Macros defined by this file:
 //
-// NOT_CLIPPED_Y - Does Y Clipping check per line
-//
-// NOT_CLIPPED_X - Does X Clipping check per Pixel
-//
-// LINE_END_ASSIGN - Calcuates the line_end pointer required for X clipping
-//
-// XNEG - Negates X values if doing shape flipping
-//
 // USE_XFORM_FUNC - Checks to see if we want to use XForm Blending for this pixel
 //
 // CUSTOM_BLEND - Final Blend for invisiblity
@@ -66,9 +53,9 @@
 #ifdef XFORM_SHAPES
 
 #ifdef XFORM_CONDITIONAL
-#define USE_XFORM_FUNC ((XFORM_CONDITIONAL) && xform_map[*srcpix])
+#define USE_XFORM_FUNC ((XFORM_CONDITIONAL) && xform_map[color])
 #else
-#define USE_XFORM_FUNC (xform_map[*srcpix])
+#define USE_XFORM_FUNC (xform_map[color])
 #endif
 
 //
@@ -77,55 +64,6 @@
 #else
 #define USE_XFORM_FUNC 0
 #endif
-
-
-//
-// Flipping = TRUE
-//
-#ifdef FLIP_SHAPES
-
-#ifdef FLIP_CONDITIONAL
-const int32 neg = (FLIP_CONDITIONAL)?-1:0;
-#define XNEG(x) (((x)+neg)^neg)
-#else
-#define XNEG(x) (-(x))
-#endif
-
-// Flipping = FALSE
-#else
-#define XNEG(x)(+(x))
-#endif
-
-
-//
-// No Clipping = TRUE
-//
-#ifdef NO_CLIPPING
-
-#define LINE_END_ASSIGN //
-#define NOT_CLIPPED_X (1)
-#define NOT_CLIPPED_Y (1)
-#define OFFSET_PIXELS (pixels)
-
-//
-// No Clipping = FALSE
-//
-#else
-
-	const int		scrn_width = clipWindow.width();
-	const int		scrn_height = clipWindow.height();
-
-#define LINE_END_ASSIGN const uintX *dst_line_end = dst_line_start + scrn_width
-#define NOT_CLIPPED_X (dstpix >= dst_line_start && dstpix < dst_line_end)
-#define NOT_CLIPPED_Y (line >= 0 && line < scrn_height)
-#define OFFSET_PIXELS (off_pixels)
-
-	uint8			*off_pixels  = pixels + clipWindow.left * sizeof(uintX) + clipWindow.top * pitch;
-	x -= clipWindow.left;
-	y -= clipWindow.top;
-
-#endif
-
 
 //
 // Invisilibity = TRUE
@@ -148,69 +86,86 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 #endif
 
 //
-// Destination Alpha Masking
-//
-#ifdef DESTALPHA_MASK
-
-#define NOT_DESTINATION_MASKED	(*pixptr & RenderSurface::_format.aMask)
-
-#else
-
-#define NOT_DESTINATION_MASKED	(1)
-
-#endif
-
-//
 // The Function
 //
 
-	const uint8	keycolor = frame->_keycolor;
-
 	const Graphics::Surface &src =  frame->getSurface();
-	const uint8 *srcpixels = reinterpret_cast<const uint8 *>(src.getPixels());
+	const uint8 keycolor = frame->_keycolor;
 
-	const int width_ = src.w;
-	const int height_ = src.h;
-	x -= XNEG(frame->_xoff);
-	y -= frame->_yoff;
+	Common::Rect srcRect(0, 0, src.w, src.h);
+	Common::Rect dstRect(x, y, x, y + src.h);
 
-	assert(pixels && srcpixels);
+	const int srcStep = sizeof(uint8);
+	int dstStep = sizeof(uintX);
 
-	for (int i = 0; i < height_; i++)  {
-		const int line = y + i;
-
-		if (NOT_CLIPPED_Y) {
-			const uint8	*srcline = srcpixels + i * width_;
-			uintX *dst_line_start = reinterpret_cast<uintX *>(OFFSET_PIXELS + pitch * line);
-			LINE_END_ASSIGN;
-
-			for (int xpos = 0; xpos < width_; xpos++) {
-				if (srcline[xpos] == keycolor)
-					continue;
-
-				uintX *dstpix = dst_line_start + x + XNEG(xpos);
-
-				if (NOT_CLIPPED_X && NOT_DESTINATION_MASKED) {
-					const uint8 *srcpix = srcline + xpos;
-					#ifdef XFORM_SHAPES
-					if (USE_XFORM_FUNC) {
-						*dstpix = CUSTOM_BLEND(BlendPreModulated(xform_map[*srcpix], *dstpix, format));
-					}
-					else
-					#endif
-					{
-						*dstpix = CUSTOM_BLEND(map[*srcpix]);
-					}
-				}
-			}
-		}
+	if (mirrored) {
+		dstRect.translate(frame->_xoff, -frame->_yoff);
+		dstRect.left = dstRect.right - src.w;
+		dstStep = -dstStep;
+	} else {
+		dstRect.translate(-frame->_xoff, -frame->_yoff);
+		dstRect.right = dstRect.left + src.w;
 	}
 
-#undef NOT_DESTINATION_MASKED
-#undef OFFSET_PIXELS
+#ifndef NO_CLIPPING
+
+	if (dstRect.left < clipWindow.left) {
+		if (mirrored) {
+			srcRect.right += dstRect.left - clipWindow.left;
+		} else {
+			srcRect.left -= dstRect.left - clipWindow.left;
+		}
+		dstRect.left = clipWindow.left;
+	}
+	if (dstRect.top < clipWindow.top) {
+		srcRect.top -= dstRect.top - clipWindow.top;
+		dstRect.top = clipWindow.top;
+	}
+	if (dstRect.right > clipWindow.right) {
+		if (mirrored) {
+			srcRect.left += dstRect.right - clipWindow.right;
+		} else {
+			srcRect.right -= dstRect.right - clipWindow.right;
+		}
+		dstRect.right = clipWindow.right;
+	}
+	if (dstRect.bottom > clipWindow.bottom) {
+		srcRect.bottom -= dstRect.bottom - clipWindow.bottom;
+		dstRect.bottom = clipWindow.bottom;
+	}
+
+#endif
+
+	const int w = srcRect.width();
+	const int h = srcRect.height();
+	const int srcDelta = src.pitch - (w * srcStep);
+	const int dstDelta = pitch - (w * dstStep);
+
+	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(srcRect.left, srcRect.top));
+	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + (mirrored ? dstRect.right - 1 : dstRect.left) * sizeof(uintX) + pitch * dstRect.top);
+
+	for (int i = 0; i < h; i++)  {
+		for (int j = 0; j < w; j++) {
+			const uint8 color = *srcPixels;
+			if (color != keycolor) {
+				uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
+				#ifdef XFORM_SHAPES
+				if (USE_XFORM_FUNC) {
+					*dstpix = CUSTOM_BLEND(BlendPreModulated(xform_map[color], *dstpix, format));
+				}
+				else
+				#endif
+				{
+					*dstpix = CUSTOM_BLEND(map[color]);
+				}
+			}
+			srcPixels += srcStep;
+			dstPixels += dstStep;
+		}
+
+		srcPixels += srcDelta;
+		dstPixels += dstDelta;
+	}
+
 #undef CUSTOM_BLEND
-#undef LINE_END_ASSIGN
-#undef NOT_CLIPPED_X
-#undef NOT_CLIPPED_Y
-#undef XNEG
 #undef USE_XFORM_FUNC
