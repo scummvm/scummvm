@@ -110,7 +110,7 @@ protected:
 
 	void generateSamples(int16 *buf, int len) override;
 
-	Common::String getSoundFontPath() const;
+	Common::Path getSoundFontPath() const;
 
 public:
 	MidiDriver_FluidSynth(Audio::Mixer *mixer);
@@ -280,22 +280,22 @@ static long SoundFontMemLoader_tell(void *handle) {
 
 #endif // USE_FLUIDLITE
 
-Common::String MidiDriver_FluidSynth::getSoundFontPath() const {
-	Common::String path = ConfMan.get("soundfont");
+Common::Path MidiDriver_FluidSynth::getSoundFontPath() const {
+	Common::Path path = ConfMan.getPath("soundfont");
 	if (path.empty())
 		return path;
 
 	// First check if this is a full path
-	Common::String fullPath = g_system->getFilesystemFactory()->getSystemFullPath(path);
+	Common::Path fullPath(g_system->getFilesystemFactory()->getSystemFullPath(path.toString(Common::Path::kNativeSeparator)), Common::Path::kNativeSeparator);
 	Common::FSNode fileNode(fullPath);
 	if (fileNode.exists())
 		return fullPath;
 
 	// Then check with soundfontpath
 	if (ConfMan.hasKey("soundfontpath")) {
-		Common::FSNode dirNode(ConfMan.get("soundfontpath"));
+		Common::FSNode dirNode(ConfMan.getPath("soundfontpath"));
 		if (dirNode.exists() && dirNode.isDirectory()) {
-			fileNode = dirNode.getChild(path);
+			fileNode = dirNode.getChild(path.baseName());
 			if (fileNode.exists())
 				return fileNode.getPath();
 		}
@@ -308,7 +308,7 @@ Common::String MidiDriver_FluidSynth::getSoundFontPath() const {
 		Common::FSDirectory* dir = dynamic_cast<Common::FSDirectory*>(SearchMan.getArchive(file.arcName));
 		if (!dir)
 			continue;
-		fileNode = dir->getFSNode().getChild(file.arcMember->getPathInArchive().toString());
+		fileNode = dir->getFSNode().getChild(file.arcMember->getPathInArchive().toString(Common::Path::kNativeSeparator));
 		if (fileNode.exists())
 			return fileNode.getPath();
 	}
@@ -476,7 +476,7 @@ int MidiDriver_FluidSynth::open() {
 #endif // FS_HAS_STREAM_SUPPORT
 	{
 //		soundfont = ConfMan.get("soundfont");
-		soundfont = getSoundFontPath();
+		soundfont = getSoundFontPath().toString(Common::Path::kNativeSeparator);
 	}
 
 	_soundFont = fluid_synth_sfload(_synth, soundfont.c_str(), 1);

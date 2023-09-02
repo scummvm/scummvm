@@ -180,9 +180,9 @@ int MidiDriver_EAS::open() {
 		warning("error setting EAS master volume: %d", (int32)res);
 
 	if (ConfMan.hasKey("soundfont")) {
-		const Common::String dls = ConfMan.get("soundfont");
+		const Common::Path dls = ConfMan.getPath("soundfont");
 
-		debug("loading DLS file '%s'", dls.c_str());
+		debug("loading DLS file '%s'", dls.toString(Common::Path::kNativeSeparator).c_str());
 		Common::FSNode fsnode(dls);
 		Common::SeekableReadStream *stream = fsnode.createReadStream();
 
@@ -200,13 +200,13 @@ int MidiDriver_EAS::open() {
 
 			res = EAS_LoadDLSCollection(_EASHandle, 0, &f);
 			if (res)
-				warning("error loading DLS file '%s': %d", dls.c_str(), (int32)res);
+				warning("error loading DLS file '%s': %d", dls.toString(Common::Path::kNativeSeparator).c_str(), (int32)res);
 			else
 				debug("DLS file loaded");
 
 			delete stream;
 		} else {
-			warning("error loading DLS file '%s': can't be opened", dls.c_str());
+			warning("error loading DLS file '%s': can't be opened", dls.toString(Common::Path::kNativeSeparator).c_str());
 		}
 	}
 
