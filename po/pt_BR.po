@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-02 09:33+0000\n"
-"PO-Revision-Date: 2023-08-13 10:28+0000\n"
+"PO-Revision-Date: 2023-09-02 22:07+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5604,10 +5604,8 @@ msgid "Accept"
 msgstr "Aceitar"
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "~A~nterior"
+msgstr "Anterior"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
@@ -5638,10 +5636,8 @@ msgid "Next Page"
 msgstr "Próxima Página"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous Page"
-msgstr "Página anterior"
+msgstr "Página Anterior"
 
 #: engines/crab/input/input.cpp:241
 msgid "Map"
@@ -5668,16 +5664,12 @@ msgid "Traits"
 msgstr "Atributos"
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quick Save"
-msgstr "Salvamento rápido"
+msgstr "Salvamento Rápido"
 
 #: engines/crab/input/input.cpp:271
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick Load"
-msgstr "Carregamento rápido"
+msgstr "Carregamento Rápido"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
