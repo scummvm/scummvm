@@ -122,7 +122,7 @@ SeekableReadStream *Archive::createReadStreamForMemberAltStream(const Path &path
 	return nullptr;
 }
 
-Common::Error Archive::dumpArchive(String destPath) {
+Common::Error Archive::dumpArchive(const Path &destPath) {
 	Common::ArchiveMemberList files;
 
 	listMembers(files);
@@ -135,7 +135,7 @@ Common::Error Archive::dumpArchive(String destPath) {
 		debug(1, "File: %s", filePath.toString().c_str());
 
 		// skip if f represents a directory
-		if (filePath.toString().lastChar() == '/') continue;
+		if (filePath.isSeparatorTerminated()) continue;
 
 		Common::SeekableReadStream *stream = f->createReadStream();
 
@@ -149,9 +149,9 @@ Common::Error Archive::dumpArchive(String destPath) {
 		stream->read(data, len);
 
 		Common::DumpFile out;
-		Common::Path outPath = Common::Path(destPath).join(filePath);
-		if (!out.open(outPath.toString(), true)) {
-			return Common::Error(Common::kCreatingFileFailed, "Cannot open/create dump file " + outPath.toString());
+		Common::Path outPath = destPath.join(filePath);
+		if (!out.open(outPath, true)) {
+			return Common::Error(Common::kCreatingFileFailed, "Cannot open/create dump file " + outPath.toString(Common::Path::kNativeSeparator));
 		} else {
 			uint32 writtenBytes = out.write(data, len);
 			if (writtenBytes < len) {
@@ -298,7 +298,7 @@ void SearchSet::add(const String &name, Archive *archive, int priority, bool aut
 
 }
 
-void SearchSet::addDirectory(const String &name, const String &directory, int priority, int depth, bool flat) {
+void SearchSet::addDirectory(const String &name, const Path &directory, int priority, int depth, bool flat) {
 	FSNode dir(directory);
 	addDirectory(name, dir, priority, depth, flat);
 }
@@ -308,6 +308,13 @@ void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority
 		return;
 
 	add(name, new FSDirectory(dir, depth, flat, _ignoreClashes), priority);
+}
+
+void SearchSet::addDirectory(const Path &directory, int priority, int depth, bool flat) {
+	addDirectory(directory.toString(), directory, priority, depth, flat);
+}
+void SearchSet::addDirectory(const FSNode &directory, int priority, int depth, bool flat) {
+	addDirectory(directory.getPath().toString(), directory, priority, depth, flat);
 }
 
 void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority, int depth, bool flat) {
@@ -344,11 +351,13 @@ void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPa
 				multipleMatches[name] = true;
 			} else {
 				if (matchIter->_value) {
-					warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(), directory.getPath().c_str(), matchIter->_key.c_str());
+					warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(),
+							directory.getPath().toString(Common::Path::kNativeSeparator).c_str(), matchIter->_key.c_str());
 					matchIter->_value = false;
 				}
 
-				warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(), directory.getPath().c_str(), name.c_str());
+				warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(),
+						directory.getPath().toString(Common::Path::kNativeSeparator).c_str(), name.c_str());
 			}
 
 			if (nextPattern.empty())
