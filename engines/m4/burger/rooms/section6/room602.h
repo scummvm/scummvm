@@ -29,6 +29,7 @@ namespace Burger {
 namespace Rooms {
 
 class Room602 : public Section6Room {
+	static const GerbilPoint GERBIL[];
 private:
 	noWalkRect *_walk1 = nullptr;
 	int _series1 = 0;
@@ -44,7 +45,7 @@ private:
 	int _val3 = 0;
 
 public:
-	Room602() : Section6Room() {}
+	Room602();
 	~Room602() override {}
 
 	void init() override;

@@ -37,7 +37,6 @@ protected:
 		int16 _x;
 		int16 _y;
 	};
-
 	const GerbilPoint *_gerbilTable = nullptr;
 	HotSpotRec _gerbilHotspot;
 	machine *_sectionMachine = nullptr;
