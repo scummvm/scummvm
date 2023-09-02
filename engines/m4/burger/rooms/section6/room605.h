@@ -22,15 +22,15 @@
 #ifndef M4_BURGER_ROOMS_SECTION6_ROOM605_H
 #define M4_BURGER_ROOMS_SECTION6_ROOM605_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section6/section6_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room605 : public Room {
+class Room605 : public Section6Room {
 public:
-	Room605() : Room() {}
+	Room605() : Section6Room() {}
 	~Room605() override {}
 
 	void preload() override;

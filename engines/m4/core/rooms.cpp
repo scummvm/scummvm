@@ -49,7 +49,7 @@ void Room::parser() {
 	_G(kernel).trigger = KT_DAEMON;
 }
 
-HotSpotRec *Section::walker_spotter(int32 x, int32 y) {
+HotSpotRec *Room::walker_spotter(int32 x, int32 y) {
 	warning("TODO: walker_spotter");
 	return nullptr;
 }

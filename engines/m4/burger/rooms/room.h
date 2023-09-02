@@ -36,6 +36,16 @@ namespace Burger {
 namespace Rooms {
 
 class Room : public M4::Room {
+private:
+	static char _wilburName[16];
+	static char _wilburVerb;
+
+protected:
+	static HotSpotRec _wilburHotspot;
+
+public:
+	static void setWilburHotspot();
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}

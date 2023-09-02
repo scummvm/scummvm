@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "m4/burger/vars.h"
+#include "m4/burger/rooms/room.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
@@ -138,6 +139,8 @@ void Vars::initialize_game() {
 	_flags.reset4();
 	_flags.reset5();
 	_flags.conv_reset_all();
+
+	Rooms::Room::setWilburHotspot();
 }
 
 void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {

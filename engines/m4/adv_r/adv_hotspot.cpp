@@ -32,6 +32,20 @@ namespace M4 {
 #define STR_HOT_SPOT "hot spot"
 #define _MAXPOSINT 0x7fffffff
 
+void HotSpotRec::clear() {
+	ul_x = ul_y = lr_x = lr_y = 0;
+	feet_x = feet_y = 0;
+	facing = 0;
+	active = false;
+	cursor_number = 0;
+	syntax = 0;
+	vocabID = verbID = 0;
+	vocab = verb = prep = nullptr;
+	sprite = nullptr;
+	hash = 0;
+	next = nullptr;
+}
+
 void hotspot_new_sprite(HotSpotRec *h, const char *sprite) {
 	if (!h)
 		return;
