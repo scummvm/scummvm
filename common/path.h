@@ -189,6 +189,16 @@ public:
 	static const char kNoSeparator = '\x00';
 
 	/**
+	 * The platform native separator.
+	 * This is used when accessing files on disk
+	 */
+#if defined(WIN32)
+	static const char kNativeSeparator = '\\';
+#else
+	static const char kNativeSeparator = '/';
+#endif
+
+	/**
 	 * Hash and comparator for Path with following changes:
 	 * * case-insensitive
 	 * * decoding of punycode
