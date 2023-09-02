@@ -43,8 +43,72 @@ void Section6::daemon() {
 	// TODO
 }
 
-void Section6::pre_parser() {
+void Section6::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
+	bool kibble = player_said("KIBBLE");
+
+	if (player_said("RAY GUN", "BLOCK OF ICE")) {
+		_G(flags)[V247] = 1;
+		_G(wilbur_should) = 6000;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		
+	} else if (player_said("RAY GUN", "GERBILS") && _G(flags)[V243] == 6006) {
+		_G(flags)[V247] = 1;
+		term_message("Taking gun out to shoot gerbils...");
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("RAY GUN", "KIBBLE ")) {
+		if (inv_player_has("KIBBLE")) {
+			_G(wilbur_should) = gSERIES_PLAY_BREAK_2;
+			ws_turn_to_face(9, gCHANGE_WILBUR_ANIMATION);
+
+		} else {
+			wilbur_speech("602w011");
+		}
+	} else if (kibble && player_said("LOOK AT")) {
+		wilbur_speech("602w009");
+	} else if (kibble && (player_said("KIBBLE TRAY") || player_said("KIBBLE "))) {
+		wilbur_speech("602w048");
+	} else if (kibble && (player_said("MOTOR") || player_said("MOTOR "))) {
+		wilbur_speech("600w003");
+	} else if (kibble && player_said("TAKE") && inv_player_has("KIBBLE")) {
+		wilbur_speech("602w010");
+
+	} else if (player_said("RAY GUN")) {
+		if (player_said("LOOK AT")) {
+			wilbur_speech(_G(flags)[V247] ? "600w002" : "600w001");
+		} else if (player_said("GERBIL HEAD") || player_said("GERBIL HEAD ") ||
+				player_said("WILBUR")) {
+			wilbur_speech("600w005");
+		} else if (player_said("GERBIL PIECES")) {
+			wilbur_speech("600w004");
+		} else if (player_said("BARS")) {
+			wilbur_speech("999w018");
+		} else if (player_said("FLOOR") || player_said("FLOOR ") || player_said("ROOF")) {
+			wilbur_speech("600w007");
+		} else if (player_said("TUBE") || player_said("TUBE ") ||
+				player_said("TUBE  ") || player_said("TUBE   ")) {
+			wilbur_speech("600w003");
+		} else if (player_said("TAKE")) {
+			wilbur_speech("999w021");
+		} else {
+			wilbur_speech("600w003");
+		}
+	} else if (player_said("GERBILS")) {
+		if (player_said("BLOCK OF ICE")) {
+			wilbur_speech("600w013");
+		} else if (player_said("BOTTLE")) {
+			wilbur_speech("600w014");
+		} else if (player_said("KIBBLE")) {
+			wilbur_speech("600w009");
+		} else {
+			return;
+		}
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
