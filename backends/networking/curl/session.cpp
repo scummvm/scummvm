@@ -36,9 +36,9 @@ static Common::String constructUrl(const Common::String &prefix, const Common::S
 	// check url prefix
 	if (!prefix.empty()) {
 		if (url.contains("://")) {
-			if (url.size() < prefix.size() || url.find(prefix) != 0) {
+			if (!url.hasPrefix(prefix)) {
 				warning("Session: given URL does not match the prefix!\n\t%s\n\t%s", url.c_str(), prefix.c_str());
-				return "";
+				return Common::String();
 			}
 		} else {
 			// if no schema given, just append <url> to <_prefix>
@@ -53,7 +53,7 @@ static Common::String constructUrl(const Common::String &prefix, const Common::S
 	return url;
 }
 
-SessionRequest *Session::get(const Common::String &url, const Common::String &localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
+SessionRequest *Session::get(const Common::String &url, const Common::Path &localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
 	Common::String builtUrl = constructUrl(_prefix, url);
 
 	if (builtUrl.empty())

@@ -35,7 +35,7 @@ public:
 	Session(const Common::String &prefix = Common::String());
 	~Session();
 
-	SessionRequest *get(const Common::String &url, const Common::String &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	SessionRequest *get(const Common::String &url, const Common::Path &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 	/**
 	 * @brief Gracefully close the session
 	 *

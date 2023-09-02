@@ -31,7 +31,7 @@
 
 namespace Networking {
 
-SessionRequest::SessionRequest(const Common::String &url, const Common::String &localFile, DataCallback cb, ErrorCallback ecb, bool binary):
+SessionRequest::SessionRequest(const Common::String &url, const Common::Path &localFile, DataCallback cb, ErrorCallback ecb, bool binary):
 	CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
 	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr), _localFile(nullptr),
 	_started(false), _complete(false), _success(false), _binary(binary) {
@@ -48,7 +48,7 @@ SessionRequest::~SessionRequest() {
 	delete[] _buffer;
 }
 
-void SessionRequest::openLocalFile(const Common::String &localFile) {
+void SessionRequest::openLocalFile(const Common::Path &localFile) {
 	if (localFile.empty())
 		return;
 
@@ -62,7 +62,7 @@ void SessionRequest::openLocalFile(const Common::String &localFile) {
 		return;
 	}
 
-	debug(5, "SessionRequest: opened localfile %s", localFile.c_str());
+	debug(5, "SessionRequest: opened localfile %s", localFile.toString(Common::Path::kNativeSeparator).c_str());
 
 	_binary = true; // Enforce binary
 }
@@ -137,7 +137,7 @@ void SessionRequest::startAndWait() {
 	wait();
 }
 
-void SessionRequest::reuse(const Common::String &url, const Common::String &localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
+void SessionRequest::reuse(const Common::String &url, const Common::Path &localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
 	_url = url;
 
 	delete _callback;
