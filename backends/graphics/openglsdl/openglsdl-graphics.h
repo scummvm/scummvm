@@ -57,7 +57,7 @@ protected:
 
 	void handleResizeImpl(const int width, const int height) override;
 
-	bool saveScreenshot(const Common::String &filename) const override;
+	bool saveScreenshot(const Common::Path &filename) const override;
 
 private:
 	bool setupMode(uint width, uint height);

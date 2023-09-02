@@ -328,7 +328,7 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 void SdlGraphicsManager::saveScreenshot() {
 	Common::String filename;
 
-	Common::String screenshotsPath;
+	Common::Path screenshotsPath;
 	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
 	if (sdl_g_system)
 		screenshotsPath = sdl_g_system->getScreenshotsPath();
@@ -346,17 +346,18 @@ void SdlGraphicsManager::saveScreenshot() {
 		filename = Common::String::format("scummvm%s%s-%05d.%s", currentTarget.empty() ? "" : "-",
 		                                  currentTarget.c_str(), n, extension);
 
-		Common::FSNode file = Common::FSNode(screenshotsPath + filename);
+		Common::FSNode file = Common::FSNode(screenshotsPath.appendComponent(filename));
 		if (!file.exists()) {
 			break;
 		}
 	}
 
-	if (saveScreenshot(screenshotsPath + filename)) {
+	if (saveScreenshot(screenshotsPath.appendComponent(filename))) {
 		if (screenshotsPath.empty())
 			debug("Saved screenshot '%s' in current directory", filename.c_str());
 		else
-			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(),
+					screenshotsPath.toString(Common::Path::kNativeSeparator).c_str());
 
 #ifdef USE_OSD
 		if (!ConfMan.getBool("disable_saved_screenshot_osd"))
@@ -366,7 +367,7 @@ void SdlGraphicsManager::saveScreenshot() {
 		if (screenshotsPath.empty())
 			warning("Could not save screenshot in current directory");
 		else
-			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+			warning("Could not save screenshot in directory '%s'", screenshotsPath.toString(Common::Path::kNativeSeparator).c_str());
 
 #ifdef USE_OSD
 		displayMessageOnOSD(_("Could not save screenshot"));

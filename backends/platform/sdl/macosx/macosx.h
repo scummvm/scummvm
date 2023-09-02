@@ -52,7 +52,7 @@ public:
 	// Default paths
 	Common::String getDefaultIconsPath() override;
 	Common::Path getDefaultDLCsPath() override;
-	Common::String getScreenshotsPath() override;
+	Common::Path getScreenshotsPath() override;
 
 protected:
 	Common::Path getDefaultConfigFileName() override;

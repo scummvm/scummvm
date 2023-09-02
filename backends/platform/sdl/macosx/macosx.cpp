@@ -272,15 +272,13 @@ Common::Path OSystem_MacOSX::getDefaultDLCsPath() {
 	return defaultDLCsPath;
 }
 
-Common::String OSystem_MacOSX::getScreenshotsPath() {
+Common::Path OSystem_MacOSX::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
-	const Common::String path = OSystem_SDL::getScreenshotsPath();
+	const Common::Path path = OSystem_SDL::getScreenshotsPath();
 	if (!path.empty())
 		return path;
 
-	Common::String desktopPath = getDesktopPathMacOSX();
-	if (!desktopPath.empty() && !desktopPath.hasSuffix("/"))
-		desktopPath += "/";
+	Common::Path desktopPath(getDesktopPathMacOSX(), Common::Path::kNativeSeparator);
 	return desktopPath;
 }
 

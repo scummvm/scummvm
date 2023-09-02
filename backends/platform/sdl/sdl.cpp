@@ -814,11 +814,8 @@ Common::Path OSystem_SDL::getDefaultDLCsPath() {
 }
 
 //Not specified in base class
-Common::String OSystem_SDL::getScreenshotsPath() {
-	Common::String path = ConfMan.get("screenshotpath");
-	if (!path.empty() && !path.hasSuffix("/"))
-		path += "/";
-	return path;
+Common::Path OSystem_SDL::getScreenshotsPath() {
+	return ConfMan.getPath("screenshotpath");
 }
 
 #ifdef USE_OPENGL

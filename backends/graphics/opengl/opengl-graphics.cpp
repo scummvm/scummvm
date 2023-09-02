@@ -1739,7 +1739,7 @@ const Graphics::Font *OpenGLGraphicsManager::getFontOSD() const {
 }
 #endif
 
-bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const {
+bool OpenGLGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 	const uint width  = _windowWidth;
 	const uint height = _windowHeight;
 

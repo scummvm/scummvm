@@ -449,7 +449,7 @@ void OpenGLSdlGraphicsManager::handleResizeImpl(const int width, const int heigh
 	SdlGraphicsManager::handleResizeImpl(width, height);
 }
 
-bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
+bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 	return OpenGLGraphicsManager::saveScreenshot(filename);
 }
 

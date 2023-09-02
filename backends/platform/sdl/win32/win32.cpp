@@ -292,12 +292,10 @@ Common::Path OSystem_Win32::getDefaultDLCsPath() {
 	return Common::Path(Win32::tcharToString(dlcsPath));
 }
 
-Common::String OSystem_Win32::getScreenshotsPath() {
+Common::Path OSystem_Win32::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
-	Common::String screenshotsPath = ConfMan.get("screenshotpath");
+	Common::Path screenshotsPath = ConfMan.getPath("screenshotpath");
 	if (!screenshotsPath.empty()) {
-		if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/"))
-			screenshotsPath += "\\";
 		return screenshotsPath;
 	}
 
@@ -312,7 +310,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 			if (hr != E_NOTIMPL) {
 				warning("Unable to locate My Pictures directory");
 			}
-			return Common::String();
+			return Common::Path();
 		}
 		_tcscat(picturesPath, TEXT("\\ScummVM Screenshots\\"));
 	}
@@ -324,7 +322,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 			error("Cannot create ScummVM Screenshots folder");
 	}
 
-	return Win32::tcharToString(picturesPath);
+	return Common::Path(Win32::tcharToString(picturesPath), Common::Path::kNativeSeparator);
 }
 
 Common::Path OSystem_Win32::getDefaultConfigFileName() {

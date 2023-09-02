@@ -93,19 +93,19 @@ Common::String OSystem_KolibriOS::getDefaultIconsPath() {
 	return _exePath.join("icons").toString();
 }
 
-Common::String OSystem_KolibriOS::getScreenshotsPath() {
+Common::Path OSystem_KolibriOS::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
-	const Common::String path = OSystem_SDL::getScreenshotsPath();
+	const Common::Path path = OSystem_SDL::getScreenshotsPath();
 	if (!path.empty()) {
 		return path;
 	}
 
 	static const char *SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
-	if (!KolibriOS::assureDirectoryExists(SCREENSHOTS_DIR_NAME, _writablePath.toString().c_str())) {
+	if (!KolibriOS::assureDirectoryExists(SCREENSHOTS_DIR_NAME, _writablePath.toString(Common::Path::kNativeSeparator).c_str())) {
 		return "";
 	}
 
-	return _writablePath.join(SCREENSHOTS_DIR_NAME).toString();
+	return _writablePath.join(SCREENSHOTS_DIR_NAME);
 }
 
 Common::Path OSystem_KolibriOS::getDefaultLogFileName() {

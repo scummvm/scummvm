@@ -286,7 +286,7 @@ protected:
 	 * @param filename The output filename.
 	 * @return true on success, false otherwise
 	 */
-	bool saveScreenshot(const Common::String &filename) const;
+	bool saveScreenshot(const Common::Path &filename) const;
 
 	// Do not hide the argument-less saveScreenshot from the base class
 	using WindowedGraphicsManager::saveScreenshot;

@@ -1526,7 +1526,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #endif
 }
 
-bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
+bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 	assert(_hwScreen != nullptr);
 
 	Common::StackLock lock(_graphicsMutex);
