@@ -125,7 +125,7 @@ void Room602::init() {
 	}
 
 	if (_G(flags)[V256] == 10028) {
-		_G(roomVal5) = 6002;
+		Section6::_state1 = 6002;
 		kernel_trigger_dispatch_now(6013);
 	}
 
@@ -137,7 +137,7 @@ void Room602::init() {
 		_series5 = series_load("602mg01s");
 		_series6 = series_load("602mg02");
 		_series7 = series_load("602mg02s");
-		_G(roomVal6) = 6001;
+		Section6::_state3 = 6001;
 		kernel_timing_trigger(60, 6011);
 	}
 
@@ -198,11 +198,11 @@ void Room602::init() {
 	}
 
 	if (_G(flags)[V243] == 6006)
-		_G(roomVal8) = 5;
+		Section6::_state4 = 5;
 	if (_G(flags)[V243] == 6007)
-		_G(roomVal8) = 9;
+		Section6::_state4 = 9;
 	else if (_G(flags)[V243] == 6000)
-		_G(roomVal8) = 2;
+		Section6::_state4 = 2;
 
 	kernel_trigger_dispatch_now(6014);
 }

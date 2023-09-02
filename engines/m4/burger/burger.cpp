@@ -560,7 +560,7 @@ void BurgerEngine::global_parser() {
 		inv_give_to_player("PUZ DISPENSER");
 
 	} else if (player_said("LOOK AT", "BLOCK OF ICE")) {
-		_G(walker).wilbur_speech(_G(flags)[ROOM101_FLAG22] ? "999w002" : "999w001");
+		_G(walker).wilbur_speech(_G(flags)[V250] ? "999w002" : "999w001");
 
 	} else if (player_said("PANTYHOSE", "WILBUR")) {
 		if (_G(flags)[V297]) {

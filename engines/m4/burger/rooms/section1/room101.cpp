@@ -346,7 +346,7 @@ void Room101::daemon() {
 	case 9:
 		daemon9();
 
-		if (_G(flags)[ROOM101_FLAG4] || _G(flags)[ROOM101_FLAG22] ||
+		if (_G(flags)[ROOM101_FLAG4] || _G(flags)[V250] ||
 				_G(flags)[ROOM101_FLAG23] || _G(flags)[V002]) {
 			terminateMachineAndNull(_machine1);
 			terminateMachineAndNull(_machine2);
@@ -744,7 +744,7 @@ void Room101::daemon9() {
 }
 
 void Room101::daemon12() {
-	if (_G(flags)[ROOM101_FLAG22] || _G(flags)[ROOM101_FLAG4])
+	if (_G(flags)[V250] || _G(flags)[ROOM101_FLAG4])
 		inv_give_to_player("BLOCK OF ICE");
 
 	if (_G(flags)[ROOM101_FLAG23] || _G(flags)[ROOM101_FLAG4])
