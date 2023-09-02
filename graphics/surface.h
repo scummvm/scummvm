@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/list.h"
-#include "common/textconsole.h"
 
 namespace Common {
 struct Rect;
@@ -125,7 +124,7 @@ public:
 	 *
 	 * @param newPixels The new pixel data.
 	 */
-	void setPixels(void *newPixels) { if ((unsigned long long)newPixels & 0xf) warning("unaligned pixels!"); pixels = newPixels; }
+	void setPixels(void *newPixels) { pixels = newPixels; }
 
 	/**
 	 * Return a pointer to the pixel at the specified point.
