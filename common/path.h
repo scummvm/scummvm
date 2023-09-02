@@ -175,6 +175,12 @@ private:
 		return *_str.c_str() == ESCAPE;
 	}
 
+	/**
+	 * Returns the suffix in this path after @p other path
+	 * Returns nullptr if @p other isn't a prefix
+	 */
+	const char *getSuffix(const Common::Path &other) const;
+
 public:
 	/**
 	 * A separator to use when building path conataining only base names
@@ -210,6 +216,14 @@ public:
 
 	struct IgnoreCase_Hash {
 		uint operator()(const Path &x) const { return x.hashIgnoreCase(); }
+	};
+
+	struct EqualTo {
+		bool operator()(const Path &x, const Path &y) const { return x.equals(y); }
+	};
+
+	struct Hash {
+		uint operator()(const Path &x) const { return x.hash(); }
 	};
 
 	/** Construct a new empty path. */
@@ -252,6 +266,11 @@ public:
 	String toString(char separator = '/') const;
 
 	/**
+	 * Clears the path object
+	 */
+	void clear() { _str.clear(); }
+
+	/**
 	 * Returns the Path for the parent directory of this path.
 	 *
 	 * Appending the getLastComponent() of a path to getParent() returns a path
@@ -267,6 +286,13 @@ public:
 	 */
 	Path getLastComponent() const;
 
+	/**
+	 * Returns the last non-empty component of this path.
+	 * Compared to getLastComponent(), baseName() doesn't
+	 * return the trailing / if any.
+	 */
+	String baseName() const;
+
 	/** Check whether this path is identical to path @p x. */
 	bool operator==(const Path &x) const {
 		return _str == x._str;
@@ -279,6 +305,12 @@ public:
 
 	/**
 	 * Check whether this path is identical to path @p x.
+	 */
+	bool equals(const Path &x) const {
+		return _str.equals(x._str);
+	}
+	/**
+	 * Check whether this path is identical to path @p x.
 	 * Ignores case
 	 */
 	bool equalsIgnoreCase(const Path &x) const;
@@ -289,6 +321,10 @@ public:
 	bool equalsIgnoreCaseAndMac(const Path &x) const;
 
 	/**
+	 * Calculate a case sensitive hash of path
+	 */
+	uint hash() const;
+	/**
 	 * Calculate a case insensitive hash of path
 	 */
 	uint hashIgnoreCase() const;
@@ -297,6 +333,8 @@ public:
 	 * Ignores case, punycode and Mac path separator.
 	 */
 	uint hashIgnoreCaseAndMac() const;
+
+	bool operator<(const Path &x) const;
 
 	/** Return if this path is empty */
 	bool empty() const {
@@ -414,6 +452,27 @@ public:
 	}
 
 	/**
+	 * Removes the trainling separators if any in this path (in-place).
+	 */
+	Path &removeTrailingSeparators();
+
+	/**
+	 * Returns whether this path ends with a separator
+	 */
+	bool isSeparatorTerminated() const { return _str.lastChar() == SEPARATOR; }
+
+	/**
+	 * Returns whether this path begins with @p other path
+	 */
+	bool isRelativeTo(const Common::Path &other) const { return getSuffix(other) != nullptr; }
+
+	/**
+	 * Returns a new path relative to the @p other one.
+	 * Returns a copy this if it wasn't relative to.
+	 */
+	Path relativeTo(const Common::Path &other) const;
+
+	/**
 	 * Convert path from Punycode
 	 */
 	Path punycodeDecode() const;
@@ -422,6 +481,28 @@ public:
 	* Convert path to Punycode
 	 */
 	Path punycodeEncode() const;
+
+	/**
+	 * Convert all characters in the path to lowercase.
+	 *
+	 * Be aware that this only affects the case of ASCII characters. All
+	 * other characters will not be touched at all.
+	 */
+	void toLowercase() {
+		// Escapism is not changed by changing case
+		_str.toLowercase();
+	}
+
+	/**
+	 * Convert all characters in the path to uppercase.
+	 *
+	 * Be aware that this only affects the case of ASCII characters. All
+	 * other characters will not be touched at all.
+	 */
+	void toUppercase() {
+		// Escapism is not changed by changing case
+		_str.toUppercase();
+	}
 
 	/**
 	* Check pattern match similar matchString

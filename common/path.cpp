@@ -379,6 +379,29 @@ Path Path::getLastComponent() const {
 	return extract(begin, end);
 }
 
+String Path::baseName() const {
+	if (_str.empty()) {
+		return String();
+	}
+
+	size_t last = _str.size();
+	if (isSeparatorTerminated()) {
+		last--;
+	}
+
+	const char *begin = _str.c_str();
+	const char *end = _str.c_str();
+
+	size_t separatorPos = findLastSeparator(last);
+
+	if (separatorPos != String::npos) {
+		begin += separatorPos + 1;
+	}
+	end += last;
+
+	return unescape(kNoSeparator, begin, end);
+}
+
 Path &Path::appendInPlace(const Path &x) {
 	if (x._str.empty()) {
 		return *this;
@@ -554,6 +577,107 @@ Path &Path::joinInPlace(const char *str, char separator) {
 	}
 
 	return appendInPlace(str, separator);
+}
+
+Path &Path::removeTrailingSeparators() {
+	while (_str.size() > 1 && _str.lastChar() == SEPARATOR) {
+		_str.deleteLastChar();
+	}
+	return *this;
+}
+
+const char *Path::getSuffix(const Common::Path &other) const {
+	if (other.empty()) {
+		// Other is empty, return full string
+		const char *suffix = _str.c_str();
+		if (isEscaped()) {
+			suffix++;
+		}
+		return suffix;
+	}
+
+	if (isEscaped() == other.isEscaped()) {
+		// Easy one both have same escapism
+		if (_str.hasPrefix(other._str)) {
+			const char *suffix = _str.c_str() + other._str.size();
+			if (!other.isSeparatorTerminated()) {
+				// Make sure we didn't end up in the middle of some path component
+				if (*suffix != SEPARATOR && *suffix != '\x00') {
+					return nullptr;
+				}
+				suffix++;
+			}
+			return suffix;
+		} else {
+			return nullptr;
+		}
+	}
+
+	// One is escaped and not the other
+	if (other.isEscaped()) {
+		// If the other is escaped it can't be a substring of this one
+		// as it must contain something which needed escape and we obviously didn't need it
+		return nullptr;
+	}
+
+	// We may be escaped because something needs escape after the end of the prefix
+	// We need to iterate over both paths and checking escape in ours
+	const char *str = _str.c_str() + 1;
+	const char *strOther = other._str.c_str();
+	while (*strOther) {
+		char c = *str;
+		if (c == ESCAPE) {
+			str++;
+			switch (*str) {
+			case ESCAPED_ESCAPE:
+				c = ESCAPE;
+				break;
+			case ESCAPED_SEPARATOR:
+				/* We are not supposed to have an escaped separator as
+				 * the other one would need one too.
+				 * We would then have the same escapism.
+				 */
+				c = SEPARATOR;
+				break;
+			default:
+				error("Invalid escape character '%c' in path \"%s\"", *str, _str.c_str());
+			}
+		}
+		if (*strOther != c) {
+			break;
+		}
+		++strOther;
+		++str;
+	}
+	// It's a prefix, if and only if all letters in other are 'used up' before
+	// we end.
+	if (*strOther != '\0') {
+		return nullptr;
+	}
+
+	if (!other.isSeparatorTerminated()) {
+		// Make sure we didn't end up in the middle of some path component
+		if (*str != SEPARATOR) {
+			return nullptr;
+		}
+		str++;
+	}
+
+	return str;
+}
+
+Path Path::relativeTo(const Common::Path &other) const {
+	const char *suffix = getSuffix(other);
+	if (!suffix) {
+		return *this;
+	}
+
+	// Remove all spurious separators
+	while (*suffix == SEPARATOR) {
+		suffix++;
+	}
+
+	return extract(suffix);
 }
 
 Path Path::normalize() const {
@@ -896,6 +1020,19 @@ struct hasher {
 	uint mult;
 };
 
+uint Path::hash() const {
+	hasher v = { 0x345678, 1000003 };
+	reduceComponents<hasher &>(
+		+[](hasher &value, const String &in, bool last) -> hasher & {
+			uint hash = hashit(in.c_str());
+
+			value.result = (value.result + hash) * value.mult;
+			value.mult = (value.mult * 69069);
+			return value;
+		}, v);
+	return v.result;
+}
+
 uint Path::hashIgnoreCase() const {
 	hasher v = { 0x345678, 1000003 };
 	reduceComponents<hasher &>(
@@ -941,6 +1078,34 @@ bool Path::equalsIgnoreCaseAndMac(const Path &other) const {
 		+[](const String &x, const String &y) {
 			return getIdentifierComponent(x).equalsIgnoreCase(getIdentifierComponent(y));
 		}, other);
+}
+
+bool Path::operator<(const Path &x) const {
+	// Here order matters: if we other is empty it is less or equal than us
+	// We can only be greater or equal
+	if (x.empty()) {
+		return false;
+	}
+	// Other is not empty, we are: we are less
+	if (empty()) {
+		return true;
+	}
+
+	// Same escapism, easy to compare
+	if (isEscaped() == x.isEscaped()) {
+		return _str < x._str;
+	}
+
+	// Different escapism: fall back on escaped
+	const Common::String &ref = isEscaped() ? _str : x._str;
+	Common::String val(ESCAPE);
+	if (isEscaped()) {
+		escape(val, SEPARATOR, x._str.c_str());
+		return ref < val;
+	} else {
+		escape(val, SEPARATOR, _str.c_str());
+		return val < ref;
+	}
 }
 
 } // End of namespace Common

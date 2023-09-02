@@ -77,6 +77,20 @@ class PathTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(p3.getLastComponent(), Common::Path("|file.txt"));
 	}
 
+	void test_baseName() {
+		Common::Path p;
+		TS_ASSERT_EQUALS(p.baseName(), "");
+
+		Common::Path p2(TEST_PATH);
+		TS_ASSERT_EQUALS(p2.baseName(), "file.txt");
+
+		Common::Path p3("parent\\dir\\fi/le.txt", '\\');
+		TS_ASSERT_EQUALS(p3.baseName(), "fi/le.txt");
+
+		Common::Path p4("parent/dir/file.txt/");
+		TS_ASSERT_EQUALS(p4.baseName(), "file.txt");
+	}
+
 	void test_getParent() {
 		Common::Path p;
 		TS_ASSERT_EQUALS(p.getParent().toString(), "");
@@ -263,6 +277,77 @@ class PathTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(p.toString('\\'), TEST_ESCAPED2_PATH);
 	}
 
+	void test_removeTrailingSeparators() {
+		Common::Path p;
+		p.removeTrailingSeparators();
+		TS_ASSERT_EQUALS(p.toString(), "");
+
+		Common::Path p2(TEST_PATH);
+		p2.removeTrailingSeparators();
+		TS_ASSERT_EQUALS(p2.toString(), TEST_PATH);
+
+		Common::Path p3("parent/dir/file.txt///");
+		p3.removeTrailingSeparators();
+		TS_ASSERT_EQUALS(p3.toString(), "parent/dir/file.txt");
+
+		Common::Path p4("//");
+		p4.removeTrailingSeparators();
+		TS_ASSERT_EQUALS(p4.toString(), "/");
+	}
+
+	void test_isRelativeTo() {
+		Common::Path p, p1(TEST_PATH), p2(TEST_ESCAPED1_PATH);
+
+		// Everything is relative to empty
+		TS_ASSERT_EQUALS(p1.isRelativeTo(p), true);
+		TS_ASSERT_EQUALS(p2.isRelativeTo(p), true);
+		// A path is not relative to empty one
+		TS_ASSERT_EQUALS(p.isRelativeTo(p1), false);
+
+		TS_ASSERT_EQUALS(p1.isRelativeTo(Common::Path("parent/dir")), true);
+		TS_ASSERT_EQUALS(p1.isRelativeTo(Common::Path("parent/dir/")), true);
+		TS_ASSERT_EQUALS(p1.isRelativeTo(Common::Path("parent/dir/fi")), false);
+
+		TS_ASSERT_EQUALS(p1.isRelativeTo(Common::Path("|parent/dir")), false);
+
+		Common::Path p3("parent\\dir\\fi/le.txt", '\\');
+		TS_ASSERT_EQUALS(p3.isRelativeTo(Common::Path("parent/dir")), true);
+		TS_ASSERT_EQUALS(p3.isRelativeTo(Common::Path("parent/dir/")), true);
+		TS_ASSERT_EQUALS(p3.isRelativeTo(Common::Path("parent/dir/fi")), false);
+		TS_ASSERT_EQUALS(p3.isRelativeTo(Common::Path("parent/dir/fa")), false);
+
+		Common::Path p4("par|ent\\dir\\fi/le.txt", '\\');
+		TS_ASSERT_EQUALS(p4.isRelativeTo(Common::Path("par|ent/dir")), true);
+	}
+
+	void test_relativeTo() {
+		Common::Path p, p1(TEST_PATH), p2(TEST_ESCAPED1_PATH);
+
+		// Everything is relative to empty
+		TS_ASSERT_EQUALS(p1.relativeTo(p).toString(), TEST_PATH);
+		TS_ASSERT_EQUALS(p2.relativeTo(p).toString(), TEST_ESCAPED1_PATH);
+		// A path is not relative to empty one
+		TS_ASSERT_EQUALS(p.relativeTo(p1), p);
+
+		TS_ASSERT_EQUALS(p1.relativeTo(Common::Path("parent/dir")).toString(), "file.txt");
+		TS_ASSERT_EQUALS(p1.relativeTo(Common::Path("parent/dir/")).toString(), "file.txt");
+		TS_ASSERT_EQUALS(p1.relativeTo(Common::Path("parent/dir/fi")), p1);
+
+		TS_ASSERT_EQUALS(p1.relativeTo(Common::Path("|parent/dir")), p1);
+
+		Common::Path p3("parent\\dir\\fi/le.txt", '\\');
+		TS_ASSERT_EQUALS(p3.relativeTo(Common::Path("parent/dir")).toString('\\'), "fi/le.txt");
+		TS_ASSERT_EQUALS(p3.relativeTo(Common::Path("parent/dir/")).toString('\\'), "fi/le.txt");
+		TS_ASSERT_EQUALS(p3.relativeTo(Common::Path("parent/dir/fi")), p3);
+		TS_ASSERT_EQUALS(p3.relativeTo(Common::Path("parent/dir/fa")), p3);
+
+		Common::Path p4("par|ent\\dir\\fi/le.txt", '\\');
+		TS_ASSERT_EQUALS(p4.relativeTo(Common::Path("par|ent/dir")).toString('\\'), "fi/le.txt");
+
+		Common::Path p5("par|ent\\dir\\\\\\fi/le.txt", '\\');
+		TS_ASSERT_EQUALS(p5.relativeTo(Common::Path("par|ent/dir")).toString('\\'), "fi/le.txt");
+	}
+
 	void test_normalize() {
 		TS_ASSERT_EQUALS(Common::Path("/", '/').normalize().toString(), "/");
 		TS_ASSERT_EQUALS(Common::Path("///", '/').normalize().toString(), "/");
@@ -322,6 +407,26 @@ class PathTestSuite : public CxxTest::TestSuite
 
 		map.setVal(p, false);
 		TS_ASSERT_EQUALS(map.size(), 2u);
+	}
+
+	void test_lowerupper() {
+		Common::Path p2(TEST_PATH);
+		p2.toUppercase();
+		TS_ASSERT_EQUALS(p2.toString('/'), "PARENT/DIR/FILE.TXT");
+
+		p2 = TEST_PATH;
+		p2.toLowercase();
+		TS_ASSERT_EQUALS(p2.toString('/'), TEST_PATH);
+
+		Common::Path p3(TEST_ESCAPED1_PATH);
+		p3.toUppercase();
+		TS_ASSERT_EQUALS(p3.toString('/'), "|PARENT/DIR/FILE.TXT");
+
+		Common::String s3(TEST_ESCAPED1_PATH);
+		s3.toUppercase();
+		p3 = s3;
+		p3.toLowercase();
+		TS_ASSERT_EQUALS(p3.toString('/'), TEST_ESCAPED1_PATH);
 	}
 
 	void test_caseinsensitive() {
