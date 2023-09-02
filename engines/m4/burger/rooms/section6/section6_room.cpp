@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section6/section6_room.h"
 #include "m4/burger/vars.h"
+#include "m4/wscript/wst_regs.h"
 
 namespace M4 {
 namespace Burger {
@@ -51,6 +52,7 @@ HotSpotRec *Section6Room::custom_hotspot_which(int x, int y) {
 
 	int x1, x2, x3, y1, y2, y3;
 	int total1, total2, total3;
+	int diff;
 
 	if (_G(flags)[V266]) {
 		x1 = 189;
@@ -60,8 +62,27 @@ HotSpotRec *Section6Room::custom_hotspot_which(int x, int y) {
 		x3 = 439;
 		y3 = 232;
 	} else {
-		// TODO
-		x1 = y1 = x2 = y2 = x3 = y3 = 0;
+		int index = _sectionMachine->myAnim8->myRegs[IDX_CELS_INDEX];
+		const GerbilPoint *points = _gerbilTable + index;
+
+		// TODO: Double check the modulus/divisions are correct
+		diff = points[3]._x - points[0]._x;
+		x1 = points[0]._x + (index % 3) * diff / 3;
+
+		diff = points[4]._x - points[1]._x;
+		x2 = points[1]._x + (index % 3) * diff / 3;
+
+		diff = points[5]._x - points[2]._x;
+		x3 = points[2]._x + (index % 3) * diff / 3;
+
+		diff = points[3]._y - points[0]._y;
+		y1 = points[0]._y + (index % 3) * diff / 3;
+
+		diff = points[4]._y - points[1]._y;
+		y2 = points[1]._y + (index % 3) * diff / 3;
+
+		diff = points[5]._y - points[2]._y;
+		y3 = points[2]._y + (index % 3) * diff / 3;
 	}
 
 	total1 = (x - x1) * (x - x1) + (y - y1) * (y - y1);

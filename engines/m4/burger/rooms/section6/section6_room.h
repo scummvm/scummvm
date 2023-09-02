@@ -33,16 +33,12 @@ private:
 	char _gerbilsName[16];
 	char _gerbilsVerb[16];
 protected:
-	struct GerbilEntry {
-		int16 _v1;
-		int16 _v2;
-		int16 _v3;
-		int16 _v4;
-		int16 _v5;
-		int16 _v6;
+	struct GerbilPoint {
+		int16 _x;
+		int16 _y;
 	};
 
-	GerbilEntry *_gerbilTable = nullptr;
+	const GerbilPoint *_gerbilTable = nullptr;
 	HotSpotRec _gerbilHotspot;
 	machine *_sectionMachine = nullptr;
 
