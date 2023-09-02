@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-08-29 22:31+0000\n"
+"POT-Creation-Date: 2023-09-02 08:55+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -264,14 +264,14 @@ msgstr ""
 msgid "Manual Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:428
+#: gui/cloudconnectionwizard.cpp:428 engines/crab/input/input.cpp:175
 #, fuzzy
 #| msgid "Backend"
 msgid "Back"
 msgstr "תשתית"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
-#: gui/saveload-dialog.cpp:829
+#: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
 msgid "Next"
 msgstr "הבא"
 
@@ -900,7 +900,7 @@ msgid "Interact"
 msgstr "אינטראקציה"
 
 #: gui/gui-manager.cpp:168 engines/metaengine.cpp:116
-#: engines/crab/input/input.cpp:94 engines/crab/input/input.cpp:134
+#: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:809
@@ -914,7 +914,7 @@ msgid "Up"
 msgstr "למעלה"
 
 #: gui/gui-manager.cpp:174 engines/metaengine.cpp:122
-#: engines/crab/input/input.cpp:100 engines/crab/input/input.cpp:140
+#: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:776
@@ -928,7 +928,7 @@ msgid "Down"
 msgstr "למטה"
 
 #: gui/gui-manager.cpp:180 engines/metaengine.cpp:128
-#: engines/crab/input/input.cpp:106 engines/crab/input/input.cpp:146
+#: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:789
@@ -943,7 +943,7 @@ msgid "Left"
 msgstr "שמאלה"
 
 #: gui/gui-manager.cpp:186 engines/metaengine.cpp:134
-#: engines/crab/input/input.cpp:112 engines/crab/input/input.cpp:152
+#: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:796
@@ -3231,9 +3231,9 @@ msgid "Right Click"
 msgstr "לחיצה ימנית"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:78 engines/grim/grim.cpp:535
-#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
-#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:596
+#: engines/metaengine.cpp:78 engines/crab/input/input.cpp:261
+#: engines/grim/grim.cpp:535 engines/hdb/metaengine.cpp:258
+#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:867 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
@@ -5501,52 +5501,81 @@ msgstr ""
 "אזהרה: המשחק השמור שנטען משתמש בפורמט זמני שבור. דברים ישברו. יש לשקול "
 "להתחיל את Operation Stealth מההתחלה ושימוש בשמירות חדשות."
 
-#: engines/crab/input/input.cpp:118
+#: engines/crab/input/input.cpp:119
 #, fuzzy
 #| msgid "Interact"
 msgid "Talk/Interact"
 msgstr "אינטראקציה"
 
-#: engines/crab/input/input.cpp:158 engines/twine/metaengine.cpp:445
+#. I18N: Combat command in Might & Magic 1
+#: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:822
+msgid "Attack"
+msgstr "תקיפה"
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:67
+#, fuzzy
+#| msgid "Unlock"
+msgid "Block"
+msgstr "לבטל נעילה"
+
+#: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:445
 msgid "Accept"
 msgstr "אישור"
 
-#: engines/crab/input/input.cpp:164
+#: engines/crab/input/input.cpp:186
+#, fuzzy
+#| msgid "~P~revious"
+msgid "Previous"
+msgstr "~ P ~ נלהב"
+
+#: engines/crab/input/input.cpp:191
 msgid "Reply 1"
 msgstr ""
 
-#: engines/crab/input/input.cpp:169
+#: engines/crab/input/input.cpp:196
 msgid "Reply 2"
 msgstr ""
 
-#: engines/crab/input/input.cpp:174
+#: engines/crab/input/input.cpp:201
 msgid "Reply 3"
 msgstr ""
 
-#: engines/crab/input/input.cpp:179
+#: engines/crab/input/input.cpp:206
 msgid "Reply 4"
 msgstr ""
 
-#: engines/crab/input/input.cpp:184
+#: engines/crab/input/input.cpp:211
 msgid "Reply 5"
 msgstr ""
 
-#: engines/crab/input/input.cpp:189
+#: engines/crab/input/input.cpp:216
 msgid "Reply 6"
 msgstr ""
 
-#: engines/crab/input/input.cpp:204
+#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
+msgid "Next Page"
+msgstr "הדף הבא"
+
+#: engines/crab/input/input.cpp:226
+#, fuzzy
+#| msgid "Previous page"
+msgid "Previous Page"
+msgstr "הדף הקודם"
+
+#: engines/crab/input/input.cpp:241
 msgid "Map"
 msgstr "מיפוי"
 
-#: engines/crab/input/input.cpp:209
+#: engines/crab/input/input.cpp:246
 #, fuzzy
 #| msgid "Show journal"
 msgid "Journal"
 msgstr "הצגת יומן"
 
 #. I18N: Action in In Cold Blood
-#: engines/crab/input/input.cpp:214 engines/dragons/metaengine.cpp:149
+#: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:149
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:507
 #: engines/grim/grim.cpp:603 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:99 engines/icb/icb.cpp:101
@@ -5557,9 +5586,21 @@ msgstr "הצגת יומן"
 msgid "Inventory"
 msgstr "מלאי"
 
-#: engines/crab/input/input.cpp:219
+#: engines/crab/input/input.cpp:256
 msgid "Traits"
 msgstr ""
+
+#: engines/crab/input/input.cpp:266
+#, fuzzy
+#| msgid "Quick save"
+msgid "Quick Save"
+msgstr "שמירה מהירה"
+
+#: engines/crab/input/input.cpp:271
+#, fuzzy
+#| msgid "Quick load"
+msgid "Quick Load"
+msgstr "טעינה מהירה"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
@@ -5816,12 +5857,6 @@ msgstr "מחיקת הקובץ נכשלה."
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
 msgstr "תפריט / דילוג"
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/griffon/metaengine.cpp:145 engines/mm/mm1/metaengine.cpp:65
-#: engines/scumm/metaengine.cpp:822
-msgid "Attack"
-msgstr "תקיפה"
 
 #: engines/griffon/metaengine.cpp:159
 msgid "Speed Up Cutscene"
@@ -6707,13 +6742,6 @@ msgstr ""
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View Party Member 6"
 msgstr ""
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Unlock"
-msgid "Block"
-msgstr "לבטל נעילה"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
@@ -9321,10 +9349,6 @@ msgstr "פעולה מיוחדת"
 #: engines/twine/metaengine.cpp:521
 msgid "Abort"
 msgstr "ביטול"
-
-#: engines/twine/metaengine.cpp:491
-msgid "Next Page"
-msgstr "הדף הבא"
 
 #: engines/twine/metaengine.cpp:558
 msgid "Previous location"
