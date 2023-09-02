@@ -719,7 +719,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					s = readHex(&indent, s, 1);
 
 					if (s)
-						indentSize += 20 * indent;
+						indentSize += indent * current_format.fontSize * 2;
 
 					D(9, "** splitString+: fontId: %d, textSlant: %d, fontSize: %d, indent: %d",
 							current_format.fontId, current_format.textSlant, current_format.fontSize,
@@ -739,7 +739,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					s = readHex(&indent, s, 1);
 
 					if (s)
-						indentSize -= 20 * indent;
+						indentSize -= indent * current_format.fontSize * 2;
 
 					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d, indent: %d",
 							current_format.fontId, current_format.textSlant, current_format.fontSize,
@@ -834,6 +834,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			if (cur_width + word_width >= _maxWidth && cur_width != 0) {
 				++curLine;
 				_textLines.insert_at(curLine, MacTextLine());
+				_textLines[curLine].indent = indentSize;
 			}
 
 			// deal with the super long word situation
