@@ -161,7 +161,7 @@ bool OSystem_Win32::displayLogFile() {
 
 	// Try opening the log file with the default text editor
 	// log files should be registered as "txtfile" by default and thus open in the default text editor
-	TCHAR *tLogFilePath = Win32::stringToTchar(_logFilePath);
+	TCHAR *tLogFilePath = Win32::stringToTchar(_logFilePath.toString(Common::Path::kNativeSeparator));
 	SHELLEXECUTEINFO sei;
 
 	memset(&sei, 0, sizeof(sei));
@@ -377,7 +377,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 	return Win32::tcharToString(configFile);
 }
 
-Common::String OSystem_Win32::getDefaultLogFileName() {
+Common::Path OSystem_Win32::getDefaultLogFileName() {
 	TCHAR logFile[MAX_PATH];
 
 	if (_isPortable) {
@@ -385,7 +385,7 @@ Common::String OSystem_Win32::getDefaultLogFileName() {
 	} else {
 		// Use the Application Data directory of the user profile
 		if (!Win32::getApplicationDataDirectory(logFile)) {
-			return Common::String();
+			return Common::Path();
 		}
 		_tcscat(logFile, TEXT("\\Logs"));
 		CreateDirectory(logFile, nullptr);
@@ -393,7 +393,7 @@ Common::String OSystem_Win32::getDefaultLogFileName() {
 
 	_tcscat(logFile, TEXT("\\scummvm.log"));
 
-	return Win32::tcharToString(logFile);
+	return Common::Path(Win32::tcharToString(logFile), Common::Path::kNativeSeparator);
 }
 
 bool OSystem_Win32::detectPortableConfigFile() {

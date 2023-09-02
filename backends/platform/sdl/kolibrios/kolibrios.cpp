@@ -108,8 +108,8 @@ Common::String OSystem_KolibriOS::getScreenshotsPath() {
 	return _writablePath.join(SCREENSHOTS_DIR_NAME).toString();
 }
 
-Common::String OSystem_KolibriOS::getDefaultLogFileName() {
-	return _writablePath.join("scummvm.log").toString();
+Common::Path OSystem_KolibriOS::getDefaultLogFileName() {
+	return _writablePath.join("scummvm.log");
 }
 
 AudioCDManager *OSystem_KolibriOS::createAudioCDManager() {

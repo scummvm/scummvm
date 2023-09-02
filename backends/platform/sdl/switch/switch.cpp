@@ -149,7 +149,7 @@ void OSystem_Switch::logMessage(LogMessageType::Type type, const char *message) 
 	printf("%s\n", message);
 }
 
-Common::String OSystem_Switch::getDefaultLogFileName() {
+Common::Path OSystem_Switch::getDefaultLogFileName() {
 	return "scummvm.log";
 }
 

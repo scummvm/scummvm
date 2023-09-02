@@ -55,7 +55,7 @@ public:
 
 protected:
 	Common::String getDefaultConfigFileName() override;
-	Common::String getDefaultLogFileName() override;
+	Common::Path getDefaultLogFileName() override;
 
 	// Override createAudioCDManager() to get our Windows-specific
 	// version.

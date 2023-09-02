@@ -178,7 +178,7 @@ Common::String OSystem_SDL_Opendingux::getDefaultConfigFileName() {
 
 }
 
-Common::String OSystem_SDL_Opendingux::getDefaultLogFileName() {
+Common::Path OSystem_SDL_Opendingux::getDefaultLogFileName() {
 	return LOG_FILE;
 }
 

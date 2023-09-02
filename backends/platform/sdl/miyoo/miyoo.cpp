@@ -203,7 +203,7 @@ Common::String OSystem_SDL_Miyoo::getDefaultConfigFileName() {
 
 }
 
-Common::String OSystem_SDL_Miyoo::getDefaultLogFileName() {
+Common::Path OSystem_SDL_Miyoo::getDefaultLogFileName() {
 	return LOG_FILE;
 }
 

@@ -158,7 +158,7 @@ public:
 	bool isConnectionLimited() override;
 	void virtualController(bool connect);
 
-	virtual Common::String getDefaultLogFileName() override { return Common::String("/scummvm.log"); }
+	virtual Common::Path getDefaultLogFileName() override { return Common::Path("/scummvm.log"); }
 
 	virtual GUI::OptionsContainerWidget* buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 	virtual void applyBackendSettings() override;

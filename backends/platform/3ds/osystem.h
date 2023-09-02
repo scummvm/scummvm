@@ -197,7 +197,7 @@ private:
 	void flushGameScreen();
 	void flushCursor();
 
-	virtual Common::String getDefaultLogFileName();
+	virtual Common::Path getDefaultLogFileName();
 	virtual Common::WriteStream *createLogFile();
 
 protected:
@@ -288,7 +288,7 @@ private:
 	u16 _magWidth, _magHeight;
 	u16 _magCenterX, _magCenterY;
 
-	Common::String _logFilePath;
+	Common::Path _logFilePath;
 
 public:
 	// Pause

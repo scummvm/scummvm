@@ -36,7 +36,7 @@ public:
 	virtual Common::String getSystemLanguage() const;
 
 protected:
-	Common::String getDefaultLogFileName() override;
+	Common::Path getDefaultLogFileName() override;
 };
 
 #endif

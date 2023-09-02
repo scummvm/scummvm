@@ -335,7 +335,7 @@ void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
 }
 
-Common::String OSystem_POSIX::getDefaultLogFileName() {
+Common::Path OSystem_POSIX::getDefaultLogFileName() {
 	Common::String logFile;
 
 	// On POSIX systems we follow the XDG Base Directory Specification for
@@ -357,7 +357,11 @@ Common::String OSystem_POSIX::getDefaultLogFileName() {
 		return Common::String();
 	}
 
-	return Common::String::format("%s/%s/scummvm.log", prefix, logFile.c_str());
+	Common::Path logPath(prefix);
+	logPath.joinInPlace(logFile);
+	logPath.joinInPlace("scummvm.log");
+
+	return logPath;
 }
 
 bool OSystem_POSIX::displayLogFile() {
@@ -376,7 +380,7 @@ bool OSystem_POSIX::displayLogFile() {
 	} else if (pid == 0) {
 
 		// Try xdg-open first
-		execlp("xdg-open", "xdg-open", _logFilePath.c_str(), (char *)0);
+		execlp("xdg-open", "xdg-open", _logFilePath.toString(Common::Path::kNativeSeparator).c_str(), (char *)0);
 
 		// If we're here, that clearly failed.
 
@@ -385,7 +389,7 @@ bool OSystem_POSIX::displayLogFile() {
 
 		// Try xterm+less next
 
-		execlp("xterm", "xterm", "-e", "less", _logFilePath.c_str(), (char *)0);
+		execlp("xterm", "xterm", "-e", "less", _logFilePath.toString(Common::Path::kNativeSeparator).c_str(), (char *)0);
 
 		// TODO: If less does not exist we could fall back to 'more'.
 		// However, we'll have to use 'xterm -hold' for that to prevent the

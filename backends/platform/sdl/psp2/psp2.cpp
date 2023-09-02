@@ -186,7 +186,7 @@ Common::String OSystem_PSP2::getDefaultConfigFileName() {
 	return "ux0:data/scummvm/scummvm.ini";
 }
 
-Common::String OSystem_PSP2::getDefaultLogFileName() {
+Common::Path OSystem_PSP2::getDefaultLogFileName() {
 	return "ux0:data/scummvm/scummvm.log";
 }
 

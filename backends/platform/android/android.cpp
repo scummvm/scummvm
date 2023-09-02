@@ -193,7 +193,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_trackball_scale(2),
 	_joystick_scale(10),
 	_defaultConfigFileName(""),
-	_defaultLogFileName(""),
+	_defaultLogFileName(),
 	_systemPropertiesSummaryStr(""),
 	_systemSDKdetectedStr(""),
 	_logger(nullptr) {
@@ -586,7 +586,7 @@ Common::String OSystem_Android::getDefaultConfigFileName() {
 	return _defaultConfigFileName;
 }
 
-Common::String OSystem_Android::getDefaultLogFileName() {
+Common::Path OSystem_Android::getDefaultLogFileName() {
 	if (_defaultLogFileName.empty()) {
 		_defaultLogFileName = JNI::getScummVMLogPath();
 	}
@@ -594,12 +594,14 @@ Common::String OSystem_Android::getDefaultLogFileName() {
 }
 
 Common::WriteStream *OSystem_Android::createLogFileForAppending() {
-	if (getDefaultLogFileName().empty()) {
+	Common::String logPath(getDefaultLogFileName().toString(Common::Path::kNativeSeparator));
+
+	if (logPath.empty()) {
 		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Log file path is not known upon create attempt!");
 		return nullptr;
 	}
 
-	FILE *scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "a");
+	FILE *scvmLogFilePtr = fopen(logPath.c_str(), "a");
 	if (scvmLogFilePtr != nullptr) {
 		// We check for log file size; if it's too big, we rewrite it.
 		// This happens only upon app launch, in initBackend() when createLogFileForAppending() is called
@@ -608,9 +610,9 @@ Common::WriteStream *OSystem_Android::createLogFileForAppending() {
 		if (sz > MAX_ANDROID_SCUMMVM_LOG_FILESIZE_IN_BYTES) {
 			fclose(scvmLogFilePtr);
 			__android_log_write(ANDROID_LOG_WARN, android_log_tag, "Default log file is bigger than 100KB. It will be overwritten!");
-			if (!getDefaultLogFileName().empty()) {
+			if (!logPath.empty()) {
 				// Create the log file from scratch overwriting the previous one
-				scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "w");
+				scvmLogFilePtr = fopen(logPath.c_str(), "w");
 				if (scvmLogFilePtr == nullptr) {
 					__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for rewrite!");
 					return nullptr;
@@ -622,7 +624,7 @@ Common::WriteStream *OSystem_Android::createLogFileForAppending() {
 		}
 	} else {
 		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for writing/appending.");
-		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, getDefaultLogFileName().c_str());
+		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, logPath.c_str());
 	}
 	return new PosixIoStream(scvmLogFilePtr);
 }
