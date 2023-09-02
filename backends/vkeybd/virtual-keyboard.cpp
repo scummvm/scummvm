@@ -120,7 +120,7 @@ bool VirtualKeyboard::loadKeyboardPack(const String &packName) {
 	if (ConfMan.hasKey("vkeybdpath"))
 		opened = openPack(packName, new FSDirectory(ConfMan.get("vkeybdpath")), DisposeAfterUse::YES);
 	else if (ConfMan.hasKey("extrapath"))
-		opened = openPack(packName, new FSDirectory(ConfMan.get("extrapath")), DisposeAfterUse::YES);
+		opened = openPack(packName, new FSDirectory(ConfMan.getPath("extrapath")), DisposeAfterUse::YES);
 
 	// fallback to SearchMan
 	if (!opened)

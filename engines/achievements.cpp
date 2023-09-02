@@ -101,7 +101,7 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 	Archive *cfgZip = nullptr;
 
 	if (!cfgZip && ConfMan.hasKey("extrapath")) {
-		Common::FSDirectory extrapath(ConfMan.get("extrapath"));
+		Common::FSDirectory extrapath(ConfMan.getPath("extrapath"));
 		cfgZip = Common::makeZipArchive(extrapath.createReadStreamForMember("achievements.dat"));
 	}
 

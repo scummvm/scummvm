@@ -893,7 +893,7 @@ Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode size
 Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	Common::SeekableReadStream *archiveStream = nullptr;
 	if (ConfMan.hasKey("extrapath")) {
-		Common::FSDirectory extrapath(ConfMan.get("extrapath"));
+		Common::FSDirectory extrapath(ConfMan.getPath("extrapath"));
 		archiveStream = extrapath.createReadStreamForMember("fonts.dat");
 	}
 
@@ -914,7 +914,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 
 		// Trying fonts-cjk.dat
 		if (ConfMan.hasKey("extrapath")) {
-			Common::FSDirectory extrapath(ConfMan.get("extrapath"));
+			Common::FSDirectory extrapath(ConfMan.getPath("extrapath"));
 			archiveStream = extrapath.createReadStreamForMember("fonts-cjk.dat");
 		}
 

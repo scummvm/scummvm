@@ -97,7 +97,7 @@ static const GLchar *readFile(const Common::String &filename) {
 #endif
 
 	if (ConfMan.hasKey("extrapath")) {
-		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.get("extrapath")), 0, 2);
+		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.getPath("extrapath")), 0, 2);
 	}
 #if !defined(IPHONE)
 	shaderDir = "shaders/";

@@ -108,7 +108,7 @@ void OSystem_AmigaOS::initBackend() {
 	ConfMan.registerDefault("gui_mode", "antialias");
 	ConfMan.registerDefault("gui_theme", "scummremastered");
 	ConfMan.registerDefault("gui_scale", "125");
-	ConfMan.registerDefault("extrapath", "extras/");
+	ConfMan.registerDefault("extrapath", Common::Path("extras/"));
 	ConfMan.registerDefault("themepath", Common::Path("themes/"));
 	// First time .ini defaults
 	if (!ConfMan.hasKey("audio_buffer_size")) {
@@ -136,7 +136,7 @@ void OSystem_AmigaOS::initBackend() {
 		ConfMan.set("gui_scale", "125");
 	}
 	if (!ConfMan.hasKey("extrapath")) {
-		ConfMan.set("extrapath", "extras/");
+		ConfMan.setPath("extrapath", "extras/");
 	}
 	if (!ConfMan.hasKey("themepath")) {
 		ConfMan.setPath("themepath", "themes/");
