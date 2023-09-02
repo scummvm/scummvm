@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-02 09:33+0000\n"
-"PO-Revision-Date: 2023-08-14 10:40+0000\n"
+"PO-Revision-Date: 2023-09-02 22:07+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5506,10 +5506,8 @@ msgid "Accept"
 msgstr "受け入れる"
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "前(~P~)"
+msgstr "前へ"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
@@ -5540,8 +5538,6 @@ msgid "Next Page"
 msgstr "次のページ"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous Page"
 msgstr "前のページ"
 
@@ -5570,14 +5566,10 @@ msgid "Traits"
 msgstr "特性"
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quick Save"
 msgstr "クイックセーブ"
 
 #: engines/crab/input/input.cpp:271
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick Load"
 msgstr "クイックロード"
 
