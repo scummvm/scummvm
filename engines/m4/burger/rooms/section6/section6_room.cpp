@@ -20,10 +20,23 @@
  */
 
 #include "m4/burger/rooms/section6/section6_room.h"
+#include "m4/gui/gui_mouse.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
+
+Section6Room::Section6Room() : Room() {
+	Common::strcpy_s(_gerbilsName, "GERBILS");
+	Common::strcpy_s(_gerbilsVerb, "LOOK AT");
+
+	_gerbilsHotspot.clear();
+	_gerbilsHotspot.vocab = _gerbilsName;
+	_gerbilsHotspot.verb = _gerbilsVerb;
+	_gerbilsHotspot.feet_x = 0x7fff;
+	_gerbilsHotspot.feet_y = 0x7fff;
+	_gerbilsHotspot.cursor_number = kArrowCursor;
+}
 
 HotSpotRec *Section6Room::custom_hotspot_which(int x, int y) {
 	HotSpotRec *hotspot = walker_spotter(x, y);

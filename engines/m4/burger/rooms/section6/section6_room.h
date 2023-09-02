@@ -29,10 +29,14 @@ namespace Burger {
 namespace Rooms {
 
 class Section6Room : public Rooms::Room {
+private:
+	char _gerbilsName[16];
+	char _gerbilsVerb[16];
 protected:
 	int16 *_table = nullptr;
+	HotSpotRec _gerbilsHotspot;
 public:
-	Section6Room() : Room() {}
+	Section6Room();
 	~Section6Room() override {}
 
 	HotSpotRec *custom_hotspot_which(int x, int y) override;
