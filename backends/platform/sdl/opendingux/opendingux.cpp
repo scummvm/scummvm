@@ -119,7 +119,7 @@ void OSystem_SDL_Opendingux::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 #endif
 	ConfMan.registerDefault("aspect_ratio", true);
-	ConfMan.registerDefault("themepath", "./themes");
+	ConfMan.registerDefault("themepath", Common::Path("./themes"));
 	ConfMan.registerDefault("extrapath", "./engine-data");
 	ConfMan.registerDefault("gui_theme", "builtin");
 	ConfMan.registerDefault("scale_factor", "1");
@@ -131,7 +131,7 @@ void OSystem_SDL_Opendingux::initBackend() {
 		ConfMan.setBool("aspect_ratio", true);
 	}
 	if (!ConfMan.hasKey("themepath")) {
-		ConfMan.set("themepath", "./themes");
+		ConfMan.setPath("themepath", "./themes");
 	}
 	if (!ConfMan.hasKey("extrapath")) {
 		ConfMan.set("extrapath", "./engine-data");

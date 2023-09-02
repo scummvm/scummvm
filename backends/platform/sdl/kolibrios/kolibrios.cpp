@@ -65,13 +65,13 @@ void OSystem_KolibriOS::addSysArchivesToSearchSet(Common::SearchSet &s, int prio
 }
 
 void OSystem_KolibriOS::initBackend() {
-	Common::String defaultThemePath = _exePath.join("themes").toString();
+	Common::Path defaultThemePath = _exePath.join("themes");
 	Common::String defaultEngineData = _exePath.join("engine-data").toString();
 	ConfMan.registerDefault("themepath", defaultThemePath);
 	ConfMan.registerDefault("extrapath", defaultEngineData);
 
 	if (!ConfMan.hasKey("themepath")) {
-		ConfMan.set("themepath", defaultThemePath);
+		ConfMan.setPath("themepath", defaultThemePath);
 	}
 	if (!ConfMan.hasKey("extrapath")) {
 		ConfMan.set("extrapath", defaultEngineData);

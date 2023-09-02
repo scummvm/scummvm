@@ -222,7 +222,7 @@ String TranslationManager::getLangById(int id) const {
 
 bool TranslationManager::openTranslationsFile(File &inFile) {
 	// First look in the Themepath if we can find the file.
-	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile))
+	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.getPath("themepath")), inFile))
 		return true;
 
 	// Then try to open it using the SearchMan.
