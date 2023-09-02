@@ -39,7 +39,7 @@ namespace GUI {
 #define kPadX 0.05
 #define kPadY 0.05
 
-TextViewerDialog::TextViewerDialog(Common::String fname)
+TextViewerDialog::TextViewerDialog(const Common::Path &fname)
 	: Dialog(0, 0, 1, 1), _fname(fname) {
 	_font = &g_gui.getFont(ThemeEngine::kFontStyleConsole);
 	_charWidth = _font->getMaxCharWidth();
@@ -64,11 +64,11 @@ TextViewerDialog::~TextViewerDialog() {
 	destroy();
 }
 
-bool TextViewerDialog::loadFile(Common::String &fname) {
+bool TextViewerDialog::loadFile(const Common::Path &fname) {
 	Common::FSNode file(fname);
 
 	if (!file.exists()) {
-		warning("TextViewerDialog::loadFile(): Cannot open file %s", fname.c_str());
+		warning("TextViewerDialog::loadFile(): Cannot open file %s", fname.toString(Common::Path::kNativeSeparator).c_str());
 
 		return false;
 	}
@@ -76,7 +76,7 @@ bool TextViewerDialog::loadFile(Common::String &fname) {
 	Common::SeekableReadStream *stream = file.createReadStream();
 
 	if (!stream) {
-		warning("TextViewerDialog::loadFile(): Cannot load file %s", fname.c_str());
+		warning("TextViewerDialog::loadFile(): Cannot load file %s", fname.toString(Common::Path::kNativeSeparator).c_str());
 
 		return false;
 	}
