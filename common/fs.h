@@ -106,8 +106,7 @@ public:
 	 * used (usually the root directory).
 	 */
 	explicit FSNode(const Path &path);
-
-	virtual ~FSNode() {}
+	~FSNode();
 
 	/**
 	 * Compare the name of this node to the name of another. Directories
@@ -223,7 +222,13 @@ public:
 	 * Or even replace isDirectory by a getType() method that can return values like
 	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
 	 */
-	bool isDirectory() const;
+	bool isDirectory() const override;
+
+	/**
+	 * Adds the immediate children of this FSNode to a list, optionally matching a pattern.
+	 * Has no effect if this FSNode is not a directory.
+	 */
+	void listChildren(Common::ArchiveMemberList &childList, const char *pattern = nullptr) const override;
 
 	/**
 	 * Indicate whether the object referred by this node can be read from or not.
@@ -258,7 +263,7 @@ public:
 	 *
 	 * @return Pointer to the stream object, nullptr in case of a failure.
 	 */
-	SeekableReadStream *createReadStream() const override;
+	SeekableReadStream *createReadStream() const;
 
 	/**
 	 * Create a SeekableReadStream instance corresponding to an alternate stream
@@ -268,7 +273,7 @@ public:
 	 *
 	 * @return Pointer to the stream object, nullptr in case of a failure.
 	 */
-	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const override;
+	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const;
 
 	/**
 	 * Create a WriteStream instance corresponding to the file
@@ -409,6 +414,11 @@ public:
 	 * is needed for success.
 	 */
 	bool hasFile(const Path &path) const override;
+
+	/**
+	 * Check if a specified subpath is a directory.
+	 */
+	bool isPathDirectory(const Path &path) const override;
 
 	/**
 	 * Return a list of matching file names. Pattern can use GLOB wildcards.
