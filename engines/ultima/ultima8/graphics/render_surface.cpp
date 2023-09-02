@@ -782,18 +782,6 @@ void inline paintLogic(uint8 *pixels, int32 pitch,
 }
 
 template<class uintX>
-void inline paintNoClipLogic(uint8 *pixels, int32 pitch,
-							 const Common::Rect &clipWindow,
-							 const Graphics::PixelFormat &format,
-							 const ShapeFrame *frame, int32 x, int32 y,
-							 const uint32 *map) {
-	const bool mirrored = false;
-#define NO_CLIPPING
-#include "ultima/ultima8/graphics/render_surface.inl"
-#undef NO_CLIPPING
-}
-
-template<class uintX>
 void inline paintTranslucentLogic(uint8 *pixels, int32 pitch,
 								  const Common::Rect &clipWindow,
 								  const Graphics::PixelFormat &format,
@@ -900,24 +888,6 @@ void RenderSurface::Paint(const Shape *s, uint32 framenum, int32 x, int32 y) {
 		paintLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
-}
-
-//
-// void RenderSurface::PaintNoClip(Shape*s, uint32 framenum, int32 x, int32 y)
-//
-// Desc: Standard shape drawing functions. Doesn't clip
-//
-void RenderSurface::PaintNoClip(const Shape *s, uint32 framenum, int32 x, int32 y) {
-	const ShapeFrame *frame = s->getFrame(framenum);
-	if (!frame || !s->getPalette())
-		return;
-
-	const uint32 *map = s->getPalette()->_native;
-
-	if (_surface->format.bytesPerPixel == 4)
-		paintNoClipLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
-	else if (_surface->format.bytesPerPixel == 2)
-		paintNoClipLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, map);
 }
 
 //

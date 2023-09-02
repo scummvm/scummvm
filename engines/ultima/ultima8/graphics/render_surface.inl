@@ -26,8 +26,6 @@
 //
 // Macros to define before including this:
 //
-// #define NO_CLIPPING to disable shape clipping
-//
 // #define XFORM_SHAPES to enable XFORMing
 //
 // #define XFORM_CONDITIONAL to an argument of the function so XFORM can be
@@ -107,8 +105,6 @@
 		dstRect.right = dstRect.left + src.w;
 	}
 
-#ifndef NO_CLIPPING
-
 	if (dstRect.left < clipWindow.left) {
 		if (mirrored) {
 			srcRect.right += dstRect.left - clipWindow.left;
@@ -133,8 +129,6 @@
 		srcRect.bottom -= dstRect.bottom - clipWindow.bottom;
 		dstRect.bottom = clipWindow.bottom;
 	}
-
-#endif
 
 	const int w = srcRect.width();
 	const int h = srcRect.height();

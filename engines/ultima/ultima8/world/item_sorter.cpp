@@ -156,8 +156,6 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 		return;
 	}
 
-	si->_clipped = !_clipWindow.contains(si->_sr);
-
 	// These help out with sorting. We calc them now, so it will be faster
 	si->_fbigsq = (xd == 128 && yd == 128) || (xd == 256 && yd == 256) || (xd == 512 && yd == 512);
 	si->_flat = zd == 0;
@@ -327,8 +325,6 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 			surf->PaintMirrored(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans);
 		else if (si->_trans)
 			surf->PaintTranslucent(si->_shape, si->_frame, si->_sxBot, si->_syBot);
-		else if (!si->_clipped)
-			surf->PaintNoClip(si->_shape, si->_frame, si->_sxBot, si->_syBot);
 		else
 			surf->Paint(si->_shape, si->_frame, si->_sxBot, si->_syBot);
 

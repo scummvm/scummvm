@@ -47,7 +47,7 @@ struct SortItem {
 			_syTop(0), _sxBot(0), _syBot(0),_fbigsq(false), _flat(false),
 			_occl(false), _solid(false), _draw(false), _roof(false),
 			_noisy(false), _anim(false), _trans(false), _fixed(false),
-			_land(false), _occluded(false), _clipped(false), _sprite(false),
+			_land(false), _occluded(false), _sprite(false),
 			_invitem(false) { }
 
 	SortItem                *_next;
@@ -108,7 +108,6 @@ struct SortItem {
 	bool 	_invitem : 1;        // Crusader inventory item, should appear above other things
 
 	bool    _occluded : 1;       // Set true if occluded
-	bool  	_clipped : 1;        // Clipped to RenderSurface
 
 	int32   _order;      // Rendering _order. -1 is not yet drawn
 
