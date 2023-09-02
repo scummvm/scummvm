@@ -118,7 +118,7 @@ FSNode::FSNode(const Path &p) {
 	if (p.empty() || p == Path("."))
 		tmp = factory->makeCurrentDirectoryFileNode();
 	else
-		tmp = factory->makeFileNodePath(p.toString());
+		tmp = factory->makeFileNodePath(p.toString(Common::Path::kNativeSeparator));
 	_realNode = SharedPtr<AbstractFSNode>(tmp);
 }
 
@@ -183,7 +183,7 @@ String FSNode::getFileName() const {
 }
 
 Common::Path FSNode::getPathInArchive() const {
-	return getName();
+	return Common::Path(getName(), Common::Path::kNoSeparator);
 }
 
 String FSNode::getRealName() const {
@@ -203,9 +203,9 @@ FSNode FSNode::getParent() const {
 	}
 }
 
-String FSNode::getPath() const {
+PathProxy FSNode::getPath() const {
 	assert(_realNode);
-	return _realNode->getPath();
+	return PathProxy(_realNode->getPath(), Common::Path::kNativeSeparator);
 }
 
 bool FSNode::isDirectory() const {
@@ -341,7 +341,7 @@ FSNode *FSDirectory::lookupCache(NodeCache &cache, const Path &name) const {
 }
 
 bool FSDirectory::hasFile(const Path &path) const {
-	if (path.toString().empty() || !_node.isDirectory())
+	if (path.empty() || !_node.isDirectory())
 		return false;
 
 	FSNode *node = lookupCache(_fileCache, path);
@@ -349,7 +349,7 @@ bool FSDirectory::hasFile(const Path &path) const {
 }
 
 bool FSDirectory::isPathDirectory(const Path &path) const {
-	if (path.toString().empty() || !_node.isDirectory())
+	if (path.empty() || !_node.isDirectory())
 		return false;
 
 	FSNode *node = lookupCache(_fileCache, path);
@@ -357,16 +357,16 @@ bool FSDirectory::isPathDirectory(const Path &path) const {
 }
 
 const ArchiveMemberPtr FSDirectory::getMember(const Path &path) const {
-	if (path.toString().empty() || !_node.isDirectory())
+	if (path.empty() || !_node.isDirectory())
 		return ArchiveMemberPtr();
 
 	FSNode *node = lookupCache(_fileCache, path);
 
 	if (!node || !node->exists()) {
-		warning("FSDirectory::getMember: '%s' does not exist", Common::toPrintable(path.toString()).c_str());
+		warning("FSDirectory::getMember: '%s' does not exist", Common::toPrintable(path.toString(Common::Path::kNativeSeparator)).c_str());
 		return ArchiveMemberPtr();
 	} else if (node->isDirectory()) {
-		warning("FSDirectory::getMember: '%s' is a directory", Common::toPrintable(path.toString()).c_str());
+		warning("FSDirectory::getMember: '%s' is a directory", Common::toPrintable(path.toString(Common::Path::kNativeSeparator)).c_str());
 		return ArchiveMemberPtr();
 	}
 
@@ -374,35 +374,35 @@ const ArchiveMemberPtr FSDirectory::getMember(const Path &path) const {
 }
 
 SeekableReadStream *FSDirectory::createReadStreamForMember(const Path &path) const {
-	if (path.toString().empty() || !_node.isDirectory())
+	if (path.empty() || !_node.isDirectory())
 		return nullptr;
 
 	FSNode *node = lookupCache(_fileCache, path);
 	if (!node)
 		return nullptr;
 
-	debug(5, "FSDirectory::createReadStreamForMember('%s') -> '%s'", path.toString().c_str(), node->getPath().c_str());
+	debug(5, "FSDirectory::createReadStreamForMember('%s') -> '%s'", path.toString(Common::Path::kNativeSeparator).c_str(), node->getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	SeekableReadStream *stream = node->createReadStream();
 	if (!stream)
-		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", Common::toPrintable(path.toString()).c_str());
+		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", Common::toPrintable(path.toString(Common::Path::kNativeSeparator)).c_str());
 
 	return stream;
 }
 
 SeekableReadStream *FSDirectory::createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const {
-	if (path.toString().empty() || !_node.isDirectory())
+	if (path.empty() || !_node.isDirectory())
 		return nullptr;
 
 	FSNode *node = lookupCache(_fileCache, path);
 	if (!node)
 		return nullptr;
 
-	debug(5, "FSDirectory::createReadStreamForMemberAltStream('%s', %i) -> '%s'", path.toString().c_str(), static_cast<int>(altStreamType), node->getPath().c_str());
+	debug(5, "FSDirectory::createReadStreamForMemberAltStream('%s', %i) -> '%s'", path.toString(Common::Path::kNativeSeparator).c_str(), static_cast<int>(altStreamType), node->getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	SeekableReadStream *stream = node->createReadStreamForAltStream(altStreamType);
 	if (!stream)
-		warning("FSDirectory::createReadStreamForMemberAltStream: Can't create stream for file '%s' alt stream type %i", Common::toPrintable(path.toString()).c_str(), static_cast<int>(altStreamType));
+		warning("FSDirectory::createReadStreamForMemberAltStream: Can't create stream for file '%s' alt stream type %i", Common::toPrintable(path.toString(Common::Path::kNativeSeparator)).c_str(), static_cast<int>(altStreamType));
 
 	return stream;
 }
@@ -413,7 +413,7 @@ FSDirectory *FSDirectory::getSubDirectory(const Path &name, int depth, bool flat
 
 FSDirectory *FSDirectory::getSubDirectory(const Path &prefix, const Path &name, int depth,
 		bool flat, bool ignoreClashes) {
-	if (name.toString().empty() || !_node.isDirectory())
+	if (name.empty() || !_node.isDirectory())
 		return nullptr;
 
 	FSNode *node = lookupCache(_subDirCache, name);
@@ -440,12 +440,12 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 				// Always warn in this case as it's when there are 2 directories at the same place with different case
 				// That means a problem in user installation as lookups are always done case insensitive
 				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring sub-directory '%s'",
-				        Common::toPrintable(name.toString('/')).c_str());
+				        Common::toPrintable(name.toString(Common::Path::kNativeSeparator)).c_str());
 			} else {
 				if (_subDirCache.contains(name)) {
 					if (!_ignoreClashes) {
 						warning("FSDirectory::cacheDirectory: name clash when building subDirCache with subdirectory '%s'",
-						        Common::toPrintable(name.toString('/')).c_str());
+						        Common::toPrintable(name.toString(Common::Path::kNativeSeparator)).c_str());
 					}
 				}
 				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : name);
@@ -455,7 +455,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 			if (_fileCache.contains(name)) {
 				if (!_ignoreClashes) {
 					warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring file '%s'",
-					        Common::toPrintable(name.toString('/')).c_str());
+					        Common::toPrintable(name.toString(Common::Path::kNativeSeparator)).c_str());
 				}
 			} else
 				_fileCache[name] = *it;
