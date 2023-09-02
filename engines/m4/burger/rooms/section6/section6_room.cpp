@@ -39,8 +39,8 @@ Section6Room::Section6Room() : Room() {
 	_gerbilHotspot.cursor_number = kArrowCursor;
 }
 
-HotSpotRec *Section6Room::custom_hotspot_which(int x, int y) {
-	HotSpotRec *hotspot = walker_spotter(x, y);
+HotSpotRec *Section6Room::custom_hotspot_which(int32 x, int32 y) {
+	HotSpotRec *hotspot = Rooms::Room::custom_hotspot_which(x, y);
 	if (hotspot)
 		return &_wilburHotspot;
 
