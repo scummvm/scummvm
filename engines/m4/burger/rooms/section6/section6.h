@@ -57,7 +57,7 @@ public:
 	virtual ~Section6() {}
 
 	void daemon() override;
-	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
