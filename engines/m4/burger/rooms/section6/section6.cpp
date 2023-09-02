@@ -39,6 +39,14 @@ Section6::Section6() : Rooms::Section() {
 	add(612, &_room602);
 }
 
+void Section6::daemon() {
+	// TODO
+}
+
+void Section6::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4

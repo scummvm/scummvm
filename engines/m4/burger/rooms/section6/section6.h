@@ -50,9 +50,14 @@ private:
 	Room609 _room609;
 	Room610 _room610;
 
+	int _val1 = 0;
+
 public:
 	Section6();
 	virtual ~Section6() {}
+
+	void daemon() override;
+	void pre_parser() override;
 };
 
 } // namespace Rooms
