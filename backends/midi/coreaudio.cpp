@@ -154,7 +154,7 @@ int MidiDriver_CORE::open() {
 
 	// Load custom soundfont, if specified
 	if (ConfMan.hasKey("soundfont"))
-		loadSoundFont(ConfMan.get("soundfont").c_str());
+		loadSoundFont(ConfMan.getPath("soundfont").toString(Common::Path::kNativeSeparator).c_str());
 
 #ifdef COREAUDIO_DISABLE_REVERB
 	// Disable reverb mode, as that sucks up a lot of CPU power, which can
