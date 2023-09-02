@@ -567,6 +567,10 @@ bool ConfigManager::getBool(const String &key, const String &domName) const {
 	      key.c_str(), domName.c_str(), value.c_str());
 }
 
+Path ConfigManager::getPath(const String &key, const String &domName) const {
+	return Path::fromConfig(get(key, domName));
+}
+
 
 #pragma mark -
 
@@ -653,6 +657,10 @@ void ConfigManager::setBool(const String &key, bool value, const String &domName
 	set(key, String(value ? "true" : "false"), domName);
 }
 
+void ConfigManager::setPath(const String &key, const Path &value, const String &domName) {
+	set(key, value.toConfig(), domName);
+}
+
 
 #pragma mark -
 
@@ -671,6 +679,10 @@ void ConfigManager::registerDefault(const String &key, int value) {
 
 void ConfigManager::registerDefault(const String &key, bool value) {
 	registerDefault(key, value ? "true" : "false");
+}
+
+void ConfigManager::registerDefault(const String &key, const Path &value) {
+	registerDefault(key, value.toConfig());
 }
 
 

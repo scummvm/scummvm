@@ -546,6 +546,19 @@ public:
 	static Path joinComponents(const StringArray &c) {
 		return joinComponents(c.begin(), c.end());
 	}
+
+	/**
+	 * Use by ConfigManager to store a path in a protected fashion
+	 * All components are punyencoded and / is used as a delimiter for all platforms
+	 */
+	String toConfig() const {
+		return punycodeEncode().toString('/');
+	}
+
+	/**
+	 * Used by ConfigManager to parse a configuration value in a bacwards compatible way
+	 */
+	static Path fromConfig(const String &value);
 };
 
 /** @} */

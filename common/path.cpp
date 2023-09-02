@@ -1108,4 +1108,26 @@ bool Path::operator<(const Path &x) const {
 	}
 }
 
+Path Path::fromConfig(const String &value) {
+	if (value.empty()) {
+		return Path();
+	}
+
+	// Paths saved under WIN32 used \ separator
+	// We now punyencode and store using /
+#if defined(WIN32)
+	if (strchr(value.c_str(), Path::kNativeSeparator)) {
+		String value_ = value;
+		// We may have mixed \ and / in our paths before
+		// As / is forbidden in paths under WIN32, this will never be a collision
+		value_.replace(Path::kNativeSeparator, '/');
+		// As we have \, we are sure we didn't punyencode this path
+		return Path(value, '/');
+	}
+#endif
+
+	// If the path is not punyencoded this will be a no-op
+	return Path(value, '/').punycodeDecode();
+}
+
 } // End of namespace Common

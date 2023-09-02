@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/path.h"
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/hash-str.h"
@@ -186,13 +187,16 @@ public:
 
 	int                      getInt(const String &key, const String &domName = String()) const; /*!< Get integer value. */
 	bool                     getBool(const String &key, const String &domName = String()) const; /*!< Get Boolean value. */
+	Path                     getPath(const String &key, const String &domName = String()) const; /*!< Get path value. */
 	void                     setInt(const String &key, int value, const String &domName = String()); /*!< Set integer value. */
 	void                     setBool(const String &key, bool value, const String &domName = String()); /*!< Set Boolean value. */
+	void                     setPath(const String &key, const Path &value, const String &domName = String()); /*!< Set path value. */
 
 	void                     registerDefault(const String &key, const String &value); /*!< Register a value as the default. */
 	void                     registerDefault(const String &key, const char *value); /*!< @overload */
 	void                     registerDefault(const String &key, int value); /*!< @overload */
 	void                     registerDefault(const String &key, bool value); /*!< @overload */
+	void                     registerDefault(const String &key, const Path &value); /*!< @overload */
 
 	void                     flushToDisk(); /*!< Flush configuration to disk. */
 
