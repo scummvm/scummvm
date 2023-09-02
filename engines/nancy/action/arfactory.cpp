@@ -210,6 +210,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new TurningPuzzle();
 	case 210:
 		return new SafeLockPuzzle();
+	case 212:
+		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kOrderItems);
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;
