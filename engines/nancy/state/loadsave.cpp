@@ -463,6 +463,7 @@ void LoadSaveMenu::save() {
 		_enteringNewState = true;
 	}
 
+	_saveExists[_selectedSave] = true;
 	g_nancy->_hasJustSaved = true;
 }
 
