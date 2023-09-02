@@ -138,10 +138,10 @@ void checkGlError(const char *expr, const char *file, int line) {
 
 class AndroidSaveFileManager : public DefaultSaveFileManager {
 public:
-	AndroidSaveFileManager(const Common::String &defaultSavepath) : DefaultSaveFileManager(defaultSavepath) {}
+	AndroidSaveFileManager(const Common::Path &defaultSavepath) : DefaultSaveFileManager(defaultSavepath) {}
 
 	bool removeSavefile(const Common::String &filename) override {
-		Common::String path = getSavePath() + "/" + filename;
+		Common::String path = getSavePath().join(filename).toString(Common::Path::kNativeSeparator);
 		AbstractFSNode *node = AndroidFilesystemFactory::instance().makeFileNodePath(path);
 
 		if (!node) {
@@ -537,9 +537,9 @@ void OSystem_Android::initBackend() {
 
 	Common::String basePath = JNI::getScummVMBasePath();
 
-	_savefileManager = new AndroidSaveFileManager(basePath + "/saves");
+	_savefileManager = new AndroidSaveFileManager(Common::Path(basePath, Common::Path::kNativeSeparator).joinInPlace("saves"));
 	// TODO remove the debug message eventually
-	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
+	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.getPath("savepath").toString(Common::Path::kNativeSeparator).c_str());
 
 
 	ConfMan.registerDefault("iconspath", Common::Path(basePath, Common::Path::kNativeSeparator).joinInPlace("icons"));

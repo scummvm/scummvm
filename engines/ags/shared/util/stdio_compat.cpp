@@ -60,7 +60,7 @@ static Common::FSNode getFSNode(const char *path) {
 		node = Common::FSNode(ConfMan.get("path"));
 	} else if (filePath.hasPrefixIgnoreCase(AGS::Shared::SAVE_FOLDER_PREFIX)) {
 		filePath = filePath.substr(strlen(AGS::Shared::SAVE_FOLDER_PREFIX));
-		node = Common::FSNode(ConfMan.get("savepath"));
+		node = Common::FSNode(ConfMan.getPath("savepath"));
 	} else {
 		node = Common::FSNode(filePath);
 		if (node.isReadable())

@@ -51,7 +51,7 @@ WindowsSaveFileManager::WindowsSaveFileManager(bool isPortable) {
 			error("Cannot create ScummVM Saved games folder");
 	}
 
-	ConfMan.registerDefault("savepath", Win32::tcharToString(defaultSavepath));
+	ConfMan.registerDefault("savepath", Common::Path(Win32::tcharToString(defaultSavepath), Common::Path::kNativeSeparator));
 }
 
 #endif
