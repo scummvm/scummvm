@@ -68,9 +68,191 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+static const seriesStreamBreak SERIES1[] = {
+	{  0, nullptr, 1, 0,    -1, 2048, nullptr, 0 },
+	{ 13, nullptr, 0, 0,     2,    0, nullptr, 0 },
+	{ 16, nullptr, 0, 0,    14,    0, &Flags::_flags[260], 0 },
+	{ 16, nullptr, 0, 0, 10016,    0, &Flags::_flags[260], 1 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak SERIES2[] = {
+	{  0, nullptr,   1,   0,    -1, 2048, nullptr, 0 },
+	{ 35, nullptr,   0,   0,    11,    0, nullptr, 0 },
+	{ 46, "602w018", 1, 255,    -1,    0, nullptr, 0 },
+	{ 49, nullptr,   0,   0, 10016,    0, nullptr, 0 },
+	{ 55, "602w019", 1, 255,    -1,    0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY1[] = {
+	{ 0,  0, "602_002", 2, 255, -1, 2048, 0, nullptr, 0 },
+	{ 1, -1, "602w001", 1, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY2[] = {
+	{  0, 10, "602_001", 2, 255, -1, 2048, 0, nullptr, 0 },
+	{ 11, -1, "602w002", 1, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY3[] = {
+	{ 0,  3, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 4,  5, "600w015", 2, 100, -1,    0, 0, nullptr, 0 },
+	{ 6, -1, nullptr,   1,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY4[] = {
+	{  0, 15, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 16, -1, "600_013", 1, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY5[] = {
+	{  0, 15, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 16, -1, "600_013", 1, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY6[] = {
+	{  0, 19, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 20, -1, "600_013", 1, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY7[] = {
+	{  0, 17, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 18, -1, "602_010", 2, 255, -1,    0, 0, nullptr, 0 },
+};
+
+const seriesPlayBreak Room602::PLAY8[] = {
+	{  0, 17, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 18, -1, "600_014", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY9[] = {
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY10[] = {
+	{ 0, 67, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY11[] = {
+	{ 68, 72, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY12[] = {
+	{  0,  3, "600_013", 2, 255, -1, 0, 0, nullptr, 0 },
+	{  4,  8, "600_013", 2, 205, -1, 0, 0, nullptr, 0 },
+	{  9, 11, "600_013", 2, 175, -1, 0, 0, nullptr, 0 },
+	{  0,  4, "600_013", 2, 215, -1, 0, 0, nullptr, 0 },
+	{  5,  9, "600_013", 2, 255, -1, 0, 0, nullptr, 0 },
+	{ 10, 11, "600_013", 2, 175, -1, 0, 0, nullptr, 0 },
+	{  0,  1, "600_013", 2, 225, -1, 0, 0, nullptr, 0 },
+	{  2,  7, "600_013", 2, 245, -1, 0, 0, nullptr, 0 },
+	{  8, 11, "600_013", 2, 205, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY13[] = {
+	{  0, 12, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 13, 15, "602w030", 1, 255, -1,    0, 0, nullptr, 0 },
+	{ 13, 15, nullptr,   0,   0, -1,    0, 2, nullptr, 0 },
+	{ 16, 21, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 22, -1, "602_008", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY14[] = {
+	{  0, 12, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 13, 15, "602w032", 1, 255, -1,    0, 0, nullptr, 0 },
+	{ 13, 15, nullptr,   0,   0, -1,    0, 2, nullptr, 0 },
+	{ 16, 21, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 22, -1, "602_008", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY15[] = {
+	{ 0,  6, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
+	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[V256], 1 },
+	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[V256], 2 },
+	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[V256], 3 },
+	{ 7, -1, "602_009", 2, 255, -1,    0, 0, &Flags::_flags[V256], 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY16[] = {
+	{ 0,  6, nullptr,    1,   0, -1, 2048, 0, &_test1, 0 },
+	{ 0,  6, nullptr,    1,   0, -1, 2048, 0, &_test1, 1 },
+	{ 0,  6, nullptr,    1,   0, -1, 2048, 0, &_test1, 2 },
+	{ 7, -1, "600w011a", 1, 255, -1,    0, 0, &_test1, 0 },
+	{ 7, -1, "600w011b", 1, 255, -1,    0, 0, &_test1, 1 },
+	{ 7, -1, "600w011c", 1, 255, -1,    0, 0, &_test1, 2 },
+	{ 0, -1, "600w011d", 1, 255, -1,    0, 0, &_test1, 3 },
+	{ 0, -1, "600w011e", 1, 255, -1,    0, 0, &_test1, 4 },
+	{ 0, -1, "600w011f", 1, 255, -1,    0, 0, &_test1, 5 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY17[] = {
+	{ 0, 7, "600w011a", 1, 255, -1, 0, 0, &_test1, 0 },
+	{ 0, 7, "600w011b", 1, 255, -1, 0, 0, &_test1, 1 },
+	{ 0, 7, "600w011c", 1, 255, -1, 0, 0, &_test1, 2 },
+	{ 0, 7, "600w011d", 1, 255, -1, 0, 0, &_test1, 3 },
+	{ 0, 7, "600w011e", 1, 255, -1, 0, 0, &_test1, 4 },
+	{ 0, 7, "600w011f", 1, 255, -1, 0, 0, &_test1, 5 },
+	{ 6, 1, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{ 0, 7, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{ 6, 0, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY18[] = {
+	{  0, 13, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 14, -1, "600_012", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY19[] = {
+	{ 0,  6, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 7, 24, "612w053", 1, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY20[] = {
+	{ 0,  6, nullptr,    1,   0, -1, 2048, 0, nullptr, 0  },
+	{ 7, -1, "612w054a", 1, 255, -1,    0, 0, &_test2, 0  },
+	{ 7, -1, "612w054b", 1, 255, -1,    0, 0, &_test2, 1  },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY21[] = {
+	{ 0, 6, 0, 0, 0, -1, 0, 0, 0, 0  },
+	{ 7, 27, "612w054y", 1, 255, -1, 0, 0, 0, 0  },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room602::PLAY22[] = {
+	{  0,  6, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{  7, 18, "612w054y", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 19, -1, nullptr,    0,   0,  3, 0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+long Room602::_test1;
+long Room602::_test2;
 
 Room602::Room602() : Section6Room() {
 	_gerbilTable = GERBIL;
+	_test1 = _test2 = 0;
 }
 
 void Room602::init() {
@@ -251,7 +433,162 @@ void Room602::init() {
 }
 
 void Room602::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		switch (_val1) {
+		case 53:
+			player_set_commands_allowed(false);
+			digi_preload("612_001b");
+			_series1 = series_load("612mot01");
+			series_load("612mot02");
+			series_play("602mg03", 1);
+			wilbur_speech("602w004");
+			terminateMachineAndNull(_series8);
+			_val1 = 54;
+			_series8 = series_play("612mot01", 0x600, 0, 1, 0, 8, 100, 0, 0, 0, 7);
+			break;
 
+		case 54:
+			_G(flags)[V249] = 1;
+			digi_play("612_001b", 3, 255, 12, 612);
+			_val1 = 55;
+			wilbur_speech("602w005");
+			_series8 = series_play("612mot01", 0x400, 0, 1, 0, 0, 100, 0, 0, 8, 18);
+			_G(wilbur_should) = 10001;
+			kernel_timing_trigger(30, gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 55:
+			_G(flags)[V278] = 0;
+			if (_series1)
+				series_unload(_series1);
+
+			_series8 = series_play("612mot02", 0x600, 0, -1, 0);
+			hotspot_set_active("PAW", true);
+			hotspot_set_active("MOTOR", true);
+			hotspot_set_active("MOTOR ", false);
+			hotspot_set_active("FOOR  ", true);
+			break;
+
+		case 56:
+			_G(flags)[V279] = 2;
+			terminateMachineAndNull(_series8);
+			_G(flags)[V278] = 1;
+			_series8 = series_play("612mot02", 0x700, 0, -1, 0, -1, 100, 114, -2);
+
+			hotspot_set_active("PAW", false);
+			hotspot_set_active("MOTOR", false);
+			hotspot_set_active("MOTOR ", true);
+			hotspot_set_active("FLOOR  ", false);
+			break;
+
+		case 57:
+			_G(flags)[V279] = 2;
+			_series8 = series_play("612mot03", 0x600, 0, -1, 0);
+			inv_move_object("PANTYHOSE", NOWHERE);
+			_G(flags)[V278] = 0;
+
+			hotspot_set_active("PAW", true);
+			hotspot_set_active("MOTOR", true);
+			hotspot_set_active("MOTOR ", false);
+			hotspot_set_active("FLOOR  ", true);
+			break;
+
+		case 58:
+			digi_play_loop("602_004", 3, 255, 6, 602);
+			term_message("*** Play wheel... 1");
+			_G(flags)[V279] = 2;
+			term_message("Run with push.");
+
+			_series8 = series_play("612mot03", 0x600, 0, -1, 0, -1, 100, 114, -2);
+			inv_move_object("PANTYHOSE", 999);
+			_G(flags)[V278] = 1;
+
+			hotspot_set_active("PAW", false);
+			hotspot_set_active("MOTOR", false);
+			hotspot_set_active("MOTOR ", true);
+			hotspot_set_active("FLOOR  ", false);
+			break;
+
+		case 59:
+			_G(flags)[V260] = 1;
+			_G(flags)[V279] = 2;
+			_val1 = 60;
+			// TODO
+			if (_G(flags)[V278]) {
+//				series_play_with_breaks(PLAY, "612wil7", 0x700, 1, 3, 6, 100, 114, -2);
+	
+			} else {
+
+			}
+			break;
+		}
+		break;
+
+	case 3:
+		_G(flags)[V258] = 40;
+		_G(flags)[V256] = 1;
+		_val3 = 63;
+		kernel_trigger_dispatch_now(2);
+		terminateMachineAndNull(_series2);
+
+		_series2 = series_play(_G(game).room_id == 602 ? "602wheel" : "612wheel",
+			0x5ff, 0, -1, 0);
+		hotspot_set_active("DOOR", false);
+		hotspot_set_active("EXIT", true);
+		break;
+
+	case 5:
+		disable_player_commands_and_fade_init(6009);
+		break;
+
+	case 6:
+		digi_play_loop("602_005", 2, 255, -1, 602);
+		digi_unload("602_004");
+		break;
+
+	case 7:
+		inv_give_to_player("KIBBLE");
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 8:
+		inv_move_object("KIBBLE", NOWHERE);
+		break;
+
+	case 9:
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(10);
+		break;
+
+	case 10:
+		series_show("602spill", 0xf00);
+		kernel_trigger_dispatch_now(8);
+		break;
+
+	case 11:
+		_val3 = 64;
+		_G(flags)[V256] = 3;
+		kernel_timing_trigger(1, 2);
+		break;
+
+	case 12:
+		digi_play_loop("612_001a", 3, 255, -1, 612);
+		break;
+
+	case 13:
+		_G(flags)[V263] = 1;
+		_series2 = series_play(_G(game).room_id == 602 ? "602wi07b" : "612wi07b", 0x6ff);
+		player_set_commands_allowed(true);
+		term_message("Ready to keep running...");
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room602::pre_parser() {
