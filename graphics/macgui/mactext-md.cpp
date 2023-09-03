@@ -98,15 +98,20 @@ void render_listitem(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text,
 	for (int i = 0; i < depth; i++)
 		sd_bufput(ob, "  ", 2);
 
+	Common::String prefix;
 	if (flags & MKD_LIST_ORDERED) {
-		Common::String prefix = Common::String::format("%d. ", listNum);
-
-		sd_bufput(ob, prefix.c_str(), prefix.size());
+		prefix = Common::String::format("%d. ", listNum);
 
 		mdstate->listNum.back()++;
 	} else {
-		sd_bufput(ob, "* ", 2);
+		prefix = "* ";
 	}
+
+	Common::String res = Common::String::format("\016*%02x%s", prefix.size(), prefix.c_str());
+
+	sd_bufput(ob, res.c_str(), res.size());
+
+	sd_bufput(ob, prefix.c_str(), prefix.size());
 
 	sd_bufput(ob, text->data, text->size);
 

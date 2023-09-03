@@ -114,7 +114,8 @@ struct MacTextLine {
 	int y = 0;
 	int charwidth = -1;
 	bool paragraphEnd = false;
-	int indent = 0;
+	int indent = 0; // in units
+	int firstLineIndent = 0; // in pixels
 
 	Common::Array<MacFontRun> chunks;
 

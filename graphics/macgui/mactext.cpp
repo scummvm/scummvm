@@ -659,6 +659,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 	MacFontRun current_format = _defaultFormatting;
 	int indentSize = 0;
+	int firstLineIndent = 0;
 
 	while (*l) {
 		paragraph.clear();
@@ -684,6 +685,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 		// Now process whole paragraph
 		const Common::U32String::value_type *s = paragraph.c_str();
+
+		firstLineIndent = 0;
 
 		while (*s) {
 			tmp.clear();
@@ -767,6 +770,20 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					current_format.fgcolor = _defaultFormatting.fgcolor;
 
 					D(9, "** splitString]: %08x", current_format.fgcolor);
+				} else if (*s == '*') { // \016*XXsssssss  -- negative indent, XX size, sssss is the string
+					s++;
+
+					uint16 len;
+
+					s = readHex(&len, s, 2);
+
+					Common::U32String bullet = Common::U32String(s, len);
+
+					s += len;
+
+					firstLineIndent = -current_format.getFont()->getStringWidth(bullet) * 2;
+
+					D(9, "** splitString*: %02x '%s' (%d)", len, bullet.encode().c_str(), firstLineIndent);
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 
@@ -801,9 +818,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			}
 
 			_textLines[curLine].indent = indentSize;
+			_textLines[curLine].firstLineIndent = firstLineIndent;
 
 			// calc word_width, the trick we define here is we don`t count the space
-			int word_width = _textLines[curLine].indent + getStringWidth(current_format, tmp);
+			int word_width = _textLines[curLine].indent + getStringWidth(current_format, tmp) + firstLineIndent;
 			// add all spaces left
 			while (*s == ' ') {
 				tmp += *s;
@@ -835,6 +853,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				++curLine;
 				_textLines.insert_at(curLine, MacTextLine());
 				_textLines[curLine].indent = indentSize;
+				_textLines[curLine].firstLineIndent = 0;
+				firstLineIndent = 0;
 			}
 
 			// deal with the super long word situation
@@ -875,6 +895,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 							_textLines.insert_at(curLine, MacTextLine());
 							_textLines[curLine].chunks.push_back(word[i]);
 							_textLines[curLine].lastChunk().text = Common::U32String();
+							_textLines[curLine].firstLineIndent = 0;
+							firstLineIndent = 0;
 							tmp_width = _textLines[curLine].indent;
 							cur_width = _textLines[curLine].indent;
 						}
@@ -988,7 +1010,7 @@ void MacText::render(int from, int to, int shadow) {
 	}
 
 	for (int i = myFrom; i != myTo; i += delta) {
-		int xOffset = getAlignOffset(i) + _textLines[i].indent;
+		int xOffset = getAlignOffset(i) + _textLines[i].indent + _textLines[i].firstLineIndent;
 		xOffset++;
 
 		int start = 0, end = _textLines[i].chunks.size();
@@ -1068,7 +1090,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 	if (_textLines[line].width != -1 && !enforce && col == -1)
 		return _textLines[line].width;
 
-	int width = _textLines[line].indent;
+	int width = _textLines[line].indent + _textLines[line].firstLineIndent;
 	int height = 0;
 	int charwidth = 0;
 
