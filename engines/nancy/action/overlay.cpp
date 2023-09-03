@@ -134,7 +134,7 @@ void Overlay::execute() {
 							moveTo(_bitmaps[i].dest);
 							setVisible(true);
 
-							if (_enableHotspot == kPlayOverlayWithHotspot) {
+							if ((_overlayType == kPlayOverlayStatic || g_nancy->getGameType() <= kGameTypeNancy1) && _enableHotspot == kPlayOverlayWithHotspot) {
 								_hotspot = _screenPosition;
 								_hasHotspot = true;
 							}
@@ -206,10 +206,11 @@ void Overlay::execute() {
 		g_nancy->_sound->stopSound(_sound);
 
 		_flagsOnTrigger.execute();
-		if (_hasSceneChange == kPlayOverlaySceneChange) {
+		if ((_overlayType == kPlayOverlayStatic || g_nancy->getGameType() <= kGameTypeNancy1) && _hasSceneChange == kPlayOverlaySceneChange) {
 			NancySceneState.changeScene(_sceneChange);
-			finishExecution();
 		}
+		
+		finishExecution();
 
 		break;
 	}
