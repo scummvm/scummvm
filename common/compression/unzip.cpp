@@ -535,14 +535,49 @@ unzFile unzOpen(Common::SeekableReadStream *stream, bool flattenTree) {
 		fe.cur_file_info = us->cur_file_info;
 		fe.cur_file_info_internal = us->cur_file_info_internal;
 
-		const char *name = szCurrentFileName;
+		Common::String name(szCurrentFileName);
 
-		if (flattenTree)
-			for (const char *p = szCurrentFileName; *p; p++)
-				if (*p == '\\' || *p == '/')
-					name = p + 1;
+		bool isDirectory = false;
+		if (name.hasSuffix("/") || name.hasSuffix("\\")) {
+			isDirectory = true;
+			name = name.substr(0, name.size() - 1);
+		}
 
-		us->_hash[Common::String(name)] = fe;
+		// If platform is specified as MS-DOS or Unix, check the directory flag
+		if (!isDirectory) {
+			int platform = (us->cur_file_info.version >> 8) & 0xff;
+			switch (platform) {
+			case 1: // Amiga
+				isDirectory = ((us->cur_file_info.external_fa & 0xc000000u) == 0x8000000u); // ((external_fa >> 16) & IFMT) == IFDIR
+				break;
+			case 0: // FAT (MS-DOS)
+			case 6: // HPFS (OS/2)
+			case 11: // NTFS
+			case 14: // VFAT
+				isDirectory = ((us->cur_file_info.external_fa & 0x10) == 0x10); // external_fa & FILE_ATTRIBUTE_DIRECTORY
+				break;
+			case 3: // Unix
+				isDirectory = ((us->cur_file_info.external_fa & 0xf0000000u) == 0x40000000u); // S_ISDIR(external_fa >> 16)
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (flattenTree) {
+			if (isDirectory)
+				continue;
+
+			size_t slashPos = name.findLastOf('\\');
+			if (slashPos != Common::String::npos)
+				name = name.substr(slashPos + 1);
+
+			slashPos = name.findLastOf('/');
+			if (slashPos != Common::String::npos)
+				name = name.substr(slashPos + 1);
+		}
+
+		us->_hash[name] = fe;
 
 		// Move to the next file
 		err = unzGoToNextFile((unzFile)us);
@@ -1001,6 +1036,7 @@ public:
 	~ZipArchive();
 
 	bool hasFile(const Path &path) const override;
+	bool isPathDirectory(const Path &path) const override;
 	int listMembers(ArchiveMemberList &list) const override;
 	const ArchiveMemberPtr getMember(const Path &path) const override;
 	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
@@ -1038,6 +1074,19 @@ ZipArchive::~ZipArchive() {
 bool ZipArchive::hasFile(const Path &path) const {
 	String name = path.toString();
 	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
+}
+
+bool ZipArchive::isPathDirectory(const Path &path) const {
+	String name = path.toString();
+
+	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
+		return false;
+
+	unz_file_info fi;
+	if (unzGetCurrentFileInfo(_zipFile, &fi, nullptr, 0, nullptr, 0, nullptr, 0) != UNZ_OK)
+		return false;
+
+	return (fi.external_fa & 0x10) != 0;
 }
 
 int ZipArchive::listMembers(ArchiveMemberList &list) const {
