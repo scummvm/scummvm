@@ -63,6 +63,7 @@ private:
 	int _series6 = 0;
 	int _series7 = 0;
 	machine *_series8 = nullptr;
+	machine *_series9 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;

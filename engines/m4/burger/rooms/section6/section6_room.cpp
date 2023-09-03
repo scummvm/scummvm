@@ -45,7 +45,7 @@ HotSpotRec *Section6Room::custom_hotspot_which(int32 x, int32 y) {
 		return &_wilburHotspot;
 
 	if (_G(flags)[V243] != 6006 || !_gerbilTable ||
-			!verifyMachineExists(_sectionMachine) ||
+			!verifyMachineExists(_sectionMachine1) ||
 			(_G(game).room_id != 602 && _G(game).room_id != 603 &&
 				_G(game).room_id != 604))
 		return nullptr;
@@ -62,7 +62,7 @@ HotSpotRec *Section6Room::custom_hotspot_which(int32 x, int32 y) {
 		x3 = 439;
 		y3 = 232;
 	} else {
-		int index = _sectionMachine->myAnim8->myRegs[IDX_CELS_INDEX];
+		int index = _sectionMachine1->myAnim8->myRegs[IDX_CELS_INDEX];
 		const GerbilPoint *points = _gerbilTable + index;
 
 		// TODO: Double check the modulus/divisions are correct
