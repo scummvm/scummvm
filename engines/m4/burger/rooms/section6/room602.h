@@ -30,6 +30,29 @@ namespace Rooms {
 
 class Room602 : public Section6Room {
 	static const GerbilPoint GERBIL[];
+	static const seriesPlayBreak PLAY1[];
+	static const seriesPlayBreak PLAY2[];
+	static const seriesPlayBreak PLAY3[];
+	static const seriesPlayBreak PLAY4[];
+	static const seriesPlayBreak PLAY5[];
+	static const seriesPlayBreak PLAY6[];
+	static const seriesPlayBreak PLAY7[];
+	static const seriesPlayBreak PLAY8[];
+	static const seriesPlayBreak PLAY9[];
+	static const seriesPlayBreak PLAY10[];
+	static const seriesPlayBreak PLAY11[];
+	static const seriesPlayBreak PLAY12[];
+	static const seriesPlayBreak PLAY13[];
+	static const seriesPlayBreak PLAY14[];
+	static const seriesPlayBreak PLAY15[];
+	static const seriesPlayBreak PLAY16[];
+	static const seriesPlayBreak PLAY17[];
+	static const seriesPlayBreak PLAY18[];
+	static const seriesPlayBreak PLAY19[];
+	static const seriesPlayBreak PLAY20[];
+	static const seriesPlayBreak PLAY21[];
+	static const seriesPlayBreak PLAY22[];
+
 private:
 	noWalkRect *_walk1 = nullptr;
 	int _series1 = 0;
@@ -43,6 +66,8 @@ private:
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
+	static long _test1;
+	static long _test2;
 
 public:
 	Room602();
