@@ -41,6 +41,7 @@
 #include "engines/nancy/action/turningpuzzle.h"
 #include "engines/nancy/action/tangrampuzzle.h"
 #include "engines/nancy/action/safelockpuzzle.h"
+#include "engines/nancy/action/collisionpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -210,6 +211,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new TurningPuzzle();
 	case 210:
 		return new SafeLockPuzzle();
+	case 211:
+		return new CollisionPuzzle();
 	case 212:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kOrderItems);
 	default:
