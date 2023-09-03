@@ -36,15 +36,8 @@ struct seriesStreamBreak {
 	int32 volume;
 	int32 trigger;
 	uint32 flags;
-	const int32 *variable;
+	const long *variable;
 	int32 value;
-
-	seriesStreamBreak() = default;
-	seriesStreamBreak(int32 frame_, const char *sound_, int32 channel_,
-		int32 volume_, int32 trigger_, uint32 flags_, const int32 *variable_,
-		int32 value_) :
-		frame(frame_), sound(sound_), channel(channel_), volume(volume_),
-		trigger(trigger_), flags(flags_), variable(variable_), value(value_) {}
 };
 #define STREAM_BREAK_END {  -1,    nullptr, 0,   0, NO_TRIGGER, 0, nullptr, 0 }
 
