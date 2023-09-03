@@ -272,36 +272,17 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 
 		// Create a list of the matching names
 		for (Common::ArchiveMemberList::iterator it = memberList.begin(); it != memberList.end(); ++it) {
-			Common::String name;
-			bool matchType;
-
-			// FSNode->getName() returns only name of the file, without the directory
-			// getPath() returns full path in the FS. Thus, we're getting it and
-			// removing the root from it.
-			if (_extractedFiles) {
-				Common::FSNode *node = (Common::FSNode *)(it->get());
-
-				name = node->getPath().substr(_directoryName.size());
-
-				for (uint c = 0; c < name.size(); c++) {
-					if (name[c] == '\\')
-						name.replace(c, 1, "/");
-				}
-
-				matchType = (((typeFilter & PackageManager::FT_DIRECTORY) && node->isDirectory()) ||
-					((typeFilter & PackageManager::FT_FILE) && !node->isDirectory()));
-			} else {
-				name = (*it)->getName();
-				matchType = ((typeFilter & PackageManager::FT_DIRECTORY) && name.hasSuffix("/")) ||
-				((typeFilter & PackageManager::FT_FILE) && !name.hasSuffix("/"));
-			}
+			Common::Path name = (*it)->getPathInArchive();
+			bool isDirectory = (*it)->isDirectory();
+			bool matchType = (((typeFilter & PackageManager::FT_DIRECTORY) && isDirectory) ||
+							  ((typeFilter & PackageManager::FT_FILE) && !isDirectory));
 
 			if (matchType) {
 
 				// Do not add duplicate files
 				bool found = false;
 				for (Common::ArchiveMemberList::iterator it1 = list.begin(); it1 != list.end(); ++it1) {
-					if ((*it1)->getName() == name) {
+					if ((*it1)->getPathInArchive() == name) {
 						found = true;
 						break;
 					}
@@ -309,7 +290,7 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 
 				if (!found) {
 					list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, *(*i)->archive)));
-					debug(9, "> %s", name.c_str());
+					debug(9, "> %s", name.toString().c_str());
 				}
 				num++;
 			}
