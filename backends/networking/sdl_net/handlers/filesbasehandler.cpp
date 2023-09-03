@@ -45,43 +45,35 @@ Common::String FilesBaseHandler::parentPath(const Common::String &path) {
 	return result;
 }
 
-bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory) {
-	// <path> is not empty, but could lack the trailing slash
-	if (isDirectory && path.lastChar() != '/' && path.lastChar() != '\\')
-		path += '/';
+bool FilesBaseHandler::urlToPath(Common::String &url, Common::Path &path, Common::String &baseUrl, Common::Path &basePath, bool isDirectory) {
+	// <url> is not empty, but could lack the trailing slash
+	if (isDirectory && url.lastChar() != '/')
+		url += '/';
 
-	if (path.hasPrefix("/root") && ConfMan.hasKey("rootpath", "cloud")) {
-		prefixToAdd = "/root/";
-		prefixToRemove = ConfMan.get("rootpath", "cloud");
-		if (prefixToRemove.size() && prefixToRemove.lastChar() != '/' && prefixToRemove.lastChar() != '\\')
-			prefixToRemove += '/';
-		if (prefixToRemove == "/") prefixToRemove = "";
-		path.erase(0, 5);
-		if (path.size() && (path[0] == '/' || path[0] == '\\'))
-			path.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"
-		path = prefixToRemove + path;
-		if (path == "")
-			path = "/"; // absolute root is '/'
+	if (url.hasPrefix("/root") && ConfMan.hasKey("rootpath", "cloud")) {
+		baseUrl = "/root/";
+		basePath = ConfMan.getPath("rootpath", "cloud");
+		url.erase(0, 5);
+		if (url.size() && url[0] == '/')
+			url.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"
+		path = basePath.join(url, '/');
 		return true;
 	}
 
-	if (path.hasPrefix("/saves")) {
-		prefixToAdd = "/saves/";
+	if (url.hasPrefix("/saves")) {
+		baseUrl = "/saves/";
 
 		// determine savepath (prefix to remove)
 #ifdef USE_LIBCURL
 		DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
-		prefixToRemove = (manager ? manager->concatWithSavesPath("") : ConfMan.get("savepath"));
+		basePath = (manager ? manager->concatWithSavesPath("") : ConfMan.getPath("savepath"));
 #else
-		prefixToRemove = ConfMan.get("savepath");
+		basePath = ConfMan.getPath("savepath");
 #endif
-		if (prefixToRemove.size() && prefixToRemove.lastChar() != '/' && prefixToRemove.lastChar() != '\\')
-			prefixToRemove += '/';
-
-		path.erase(0, 6);
-		if (path.size() && (path[0] == '/' || path[0] == '\\'))
-			path.deleteChar(0);
-		path = prefixToRemove + path;
+		url.erase(0, 6);
+		if (url.size() && url[0] == '/')
+			url.deleteChar(0);
+		path = basePath.join(url, '/');
 		return true;
 	}
 

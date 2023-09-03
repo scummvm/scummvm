@@ -86,13 +86,12 @@ bool FilesPageHandler::listDirectory(const Common::String &path_, Common::String
 		return false;
 
 	Common::String path = path_;
-	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd))
+	Common::String basePath;
+	Common::Path baseFSPath, fsPath;
+	if (!urlToPath(path, fsPath, basePath, baseFSPath))
 		return false;
 
-	Common::FSNode node = Common::FSNode(path);
-	if (path == "/")
-		node = node.getParent(); // absolute root
+	Common::FSNode node = Common::FSNode(fsPath);
 
 	if (!HandlerUtils::permittedPath(node.getPath()))
 		return false;
@@ -109,13 +108,11 @@ bool FilesPageHandler::listDirectory(const Common::String &path_, Common::String
 
 	// add parent directory link
 	{
-		Common::String filePath = path;
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		if (filePath == "" || filePath == "/" || filePath == "\\")
-			filePath = "/";
-		else
-			filePath = parentPath(prefixToAdd + filePath);
+		Common::Path relPath = fsPath.relativeTo(baseFSPath);
+		relPath = relPath.getParent();
+		Common::String filePath("/");
+		if (!relPath.empty())
+			filePath = basePath + relPath.toString('/');
 		addItem(content, itemTemplate, IT_PARENT_DIRECTORY, filePath, Common::convertFromU32String(_("Parent directory")));
 	}
 
@@ -125,10 +122,9 @@ bool FilesPageHandler::listDirectory(const Common::String &path_, Common::String
 		if (i->isDirectory())
 			name += "/";
 
-		Common::String filePath = i->getPath();
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		filePath = prefixToAdd + filePath;
+		Common::Path relPath = i->getPath().relativeTo(baseFSPath);
+		Common::String filePath(basePath);
+		filePath += relPath.toString('/');
 
 		addItem(content, itemTemplate, detectType(i->isDirectory(), name), filePath, name);
 	}

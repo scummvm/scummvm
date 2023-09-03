@@ -37,9 +37,9 @@ public:
 
 	static Common::String normalizePath(const Common::String &path);
 	static bool hasForbiddenCombinations(const Common::String &path);
-	static bool isBlacklisted(const Common::String &path);
-	static bool hasPermittedPrefix(const Common::String &path);
-	static bool permittedPath(const Common::String &path);
+	static bool isBlacklisted(const Common::Path &path);
+	static bool hasPermittedPrefix(const Common::Path &path);
+	static bool permittedPath(const Common::Path &path);
 
 	static void setMessageHandler(Client &client, const Common::String &message, const Common::String &redirectTo = "");
 	static void setFilesManagerErrorMessageHandler(Client &client, const Common::String &message, const Common::String &redirectTo = "");

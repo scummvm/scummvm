@@ -20,7 +20,6 @@
  */
 
 #include "backends/networking/sdl_net/handlers/createdirectoryhandler.h"
-#include "backends/fs/fs-factory.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/translation.h"
@@ -67,39 +66,38 @@ void CreateDirectoryHandler::handle(Client &client) {
 	}
 
 	// transform virtual path to actual file system one
-	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd) || path.empty()) {
+	Common::String basePath;
+	Common::Path baseFSPath, fsPath;
+	if (!urlToPath(path, fsPath, basePath, baseFSPath) || path.empty()) {
 		handleError(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
 
 	// check that <path> exists, is directory and isn't forbidden
-	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
-	if (!HandlerUtils::permittedPath(node->getPath())) {
+	Common::FSNode node(fsPath);
+	if (!HandlerUtils::permittedPath(node.getPath())) {
 		handleError(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
-	if (!node->exists()) {
+	if (!node.exists()) {
 		handleError(client, Common::convertFromU32String(_("Parent directory doesn't exists!")));
 		return;
 	}
-	if (!node->isDirectory()) {
+	if (!node.isDirectory()) {
 		handleError(client, Common::convertFromU32String(_("Can't create a directory within a file!")));
 		return;
 	}
 
 	// check that <directory_name> doesn't exist or is directory
-	if (path.lastChar() != '/' && path.lastChar() != '\\')
-		path += '/';
-	node = g_system->getFilesystemFactory()->makeFileNodePath(path + name);
-	if (node->exists()) {
-		if (!node->isDirectory()) {
+	node = Common::FSNode(fsPath.appendComponent(name));
+	if (node.exists()) {
+		if (!node.isDirectory()) {
 			handleError(client, Common::convertFromU32String(_("There is a file with that name in the parent directory!")));
 			return;
 		}
 	} else {
 		// create the <directory_name> in <path>
-		if (!node->createDirectory()) {
+		if (!node.createDirectory()) {
 			handleError(client, Common::convertFromU32String(_("Failed to create the directory!")));
 			return;
 		}

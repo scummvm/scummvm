@@ -24,6 +24,10 @@
 
 #include "backends/networking/sdl_net/handlers/basehandler.h"
 
+namespace Common {
+class Path;
+}
+
 namespace Networking {
 
 class FilesBaseHandler: public BaseHandler {
@@ -31,14 +35,14 @@ protected:
 	Common::String parentPath(const Common::String &path);
 
 	/**
-	* Transforms virtual <path> into actual file system path.
+	* Transforms virtual <url> into actual file system path.
 	*
-	* Fills prefixes with actual file system prefix ("to remove")
-	* and virtual path prefix ("to add").
+	* Fills base path with actual file system prefix
+	* and base URL with virtual prefix
 	*
 	* Returns true on success.
 	*/
-	bool transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory = true);
+	bool urlToPath(Common::String &url, Common::Path &path, Common::String &baseUrl, Common::Path &basePath, bool isDirectory = true);
 public:
 	FilesBaseHandler();
 	~FilesBaseHandler() override;

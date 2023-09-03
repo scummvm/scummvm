@@ -78,7 +78,7 @@ Common::SeekableReadStream *HandlerUtils::getArchiveFile(const Common::String &n
 	Common::SeekableReadStream *result = nullptr;
 	Common::Archive *zipArchive = getZipArchive();
 	if (zipArchive) {
-		const Common::ArchiveMemberPtr ptr = zipArchive->getMember(name);
+		const Common::ArchiveMemberPtr ptr = zipArchive->getMember(Common::Path(name, '/'));
 		if (ptr.get() == nullptr)
 			return nullptr;
 		result = ptr->createReadStream();
@@ -133,7 +133,7 @@ bool HandlerUtils::hasForbiddenCombinations(const Common::String &path) {
 	return (path.contains("/../") || path.contains("\\..\\") || path.contains("\\../") || path.contains("/..\\"));
 }
 
-bool HandlerUtils::isBlacklisted(const Common::String &path) {
+bool HandlerUtils::isBlacklisted(const Common::Path &path) {
 	const char *blacklist[] = {
 		"/etc",
 		"/bin",
@@ -141,40 +141,40 @@ bool HandlerUtils::isBlacklisted(const Common::String &path) {
 	};
 
 	// normalize path
-	Common::String normalized = normalizePath(path);
+	Common::Path normalized = path.normalize();
 
 	uint32 size = sizeof(blacklist) / sizeof(const char *);
 	for (uint32 i = 0; i < size; ++i)
-		if (normalized.hasPrefix(blacklist[i]))
+		if (normalized.isRelativeTo(Common::Path(blacklist[i], '/')))
 			return true;
 
 	return false;
 }
 
-bool HandlerUtils::hasPermittedPrefix(const Common::String &path) {
+bool HandlerUtils::hasPermittedPrefix(const Common::Path &path) {
 	// normalize path
-	Common::String normalized = normalizePath(path);
+	Common::Path normalized = path.normalize();
 
 	// prefix for /root/
-	Common::String prefix;
+	Common::Path prefix;
 	if (ConfMan.hasKey("rootpath", "cloud")) {
-		prefix = normalizePath(ConfMan.get("rootpath", "cloud"));
-		if (prefix == "/" || normalized.hasPrefix(prefix))
+		prefix = ConfMan.getPath("rootpath", "cloud").normalize();
+		if (normalized.isRelativeTo(prefix))
 			return true;
 	}
 
 	// prefix for /saves/
 #ifdef USE_LIBCURL
 	DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
-	prefix = (manager ? manager->concatWithSavesPath("") : ConfMan.get("savepath"));
+	prefix = (manager ? manager->concatWithSavesPath("") : ConfMan.getPath("savepath"));
 #else
-	prefix = ConfMan.get("savepath");
+	prefix = ConfMan.getPath("savepath");
 #endif
-	return normalized.hasPrefix(normalizePath(prefix))
-	       || normalizePath(prefix).compareTo(normalized + "/") == 0;
+	prefix = prefix.normalize();
+	return normalized.isRelativeTo(prefix);
 }
 
-bool HandlerUtils::permittedPath(const Common::String &path) {
+bool HandlerUtils::permittedPath(const Common::Path &path) {
 	return hasPermittedPrefix(path) && !isBlacklisted(path);
 }
 
