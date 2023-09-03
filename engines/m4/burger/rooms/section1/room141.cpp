@@ -121,14 +121,16 @@ static const seriesStreamBreak SERIES3[] = {
 	STREAM_BREAK_END
 };
 
+static const seriesStreamBreak SERIES4[] = {
+	{  0, "140_002", 2, 255, -1, 0, nullptr, 0 },
+	{ 10, nullptr,   2, 255, 13, 0, &Flags::_flags[V112], 0 },
+	{ 25, "140_002", 2, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+
 void Room141::preload() {
 	_G(player).walker_in_this_scene = false;
-
-	SERIES4.clear();
-	SERIES4.push_back(seriesStreamBreak(0, "140_002", 2, 255, -1, 0, 0, 0));
-	SERIES4.push_back(seriesStreamBreak(10, nullptr, 2, 255, 13, 0, &_G(flags)[V112], 0));
-	SERIES4.push_back(seriesStreamBreak(25, "140_002", 2, 255, -1, 0, 0, 0));
-	SERIES4.push_back(seriesStreamBreak(-1, 0, 0, 0, -1, 0, 0, 0));
 }
 
 void Room141::init() {

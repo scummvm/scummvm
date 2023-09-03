@@ -30,7 +30,6 @@ namespace Rooms {
 
 class Room141 : public Room {
 private:
-	Common::Array<seriesStreamBreak> SERIES4;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
 	int _val1 = 0;
