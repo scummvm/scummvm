@@ -590,6 +590,8 @@ Common::U32String stripFormat(const Common::U32String &str) {
 					s += 13;
 				else if (*s == ']') // default color
 					s += 1;
+				else if (*s == '*') // default color
+					s += 3;
 				else
 					s += 22;
 			} else {
