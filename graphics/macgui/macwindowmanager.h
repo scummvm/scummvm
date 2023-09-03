@@ -477,6 +477,8 @@ private:
 	Common::U32String _clipboard;
 };
 
+const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len);
+
 } // End of namespace Graphics
 
 #endif

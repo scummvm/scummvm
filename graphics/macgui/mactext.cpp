@@ -548,22 +548,6 @@ void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSiz
 	_defaultFormatting.font = _wm->_fontMan->getFont(macFont);
 }
 
-static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
-	*res = 0;
-
-	for (int i = 0; i < len; i++) {
-		char b = (char)*s++;
-
-		*res <<= 4;
-		if (tolower(b) >= 'a')
-			*res |= tolower(b) - 'a' + 10;
-		else
-			*res |= tolower(b) - '0';
-	}
-
-	return s;
-}
-
 // Adds the given string to the end of the last line/chunk
 // while observing the _maxWidth and keeping this chunk's
 // formatting
@@ -784,6 +768,27 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					firstLineIndent = -current_format.getFont()->getStringWidth(bullet) * 2;
 
 					D(9, "** splitString*: %02x '%s' (%d)", len, bullet.encode().c_str(), firstLineIndent);
+				} else if (*s == 'i') { // \016iXXNNnnnnAAaaaaTTttt -- image, XX% width,
+										//          NN, nnnn -- filename len and text
+										//          AA, aaaa -- alt len and text
+										//          TT, tttt -- text (tooltip) len and text
+					s++;
+
+					uint16 percent, len;
+
+					s = readHex(&percent, s, 2);
+					s = readHex(&len, s, 2);
+					_textLines[curLine].picfname = Common::U32String(s, len);
+					s += len;
+
+					s = readHex(&len, s, 2);
+					_textLines[curLine].picalt = Common::U32String(s, len);
+					s += len;
+
+					s = readHex(&len, s, 2);
+					_textLines[curLine].pictitle = Common::U32String(s, len);
+					s += len;
+
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 

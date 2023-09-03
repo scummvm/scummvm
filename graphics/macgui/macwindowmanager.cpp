@@ -590,9 +590,28 @@ Common::U32String stripFormat(const Common::U32String &str) {
 					s += 13;
 				else if (*s == ']') // default color
 					s += 1;
-				else if (*s == '*') // default color
-					s += 3;
-				else
+				else if (*s == '*') { // bullet
+					s++;
+					uint16 len;
+					s = readHex(&len, s, 2);
+					s += len;
+				} else if (*s == 'i') { // image
+					s += 3; // skip percent
+					uint16 len;
+					s = readHex(&len, s, 2); // fname
+					s += len;
+
+					s = readHex(&len, s, 2);
+					Common::String alt = Common::U32String(s, len);
+					s += len;
+
+					res += '[';
+					res += alt;
+					res += ']';
+
+					s = readHex(&len, s, 2); // title
+					s += len;
+				} else
 					s += 22;
 			} else {
 				tmp += *s++;
@@ -1447,5 +1466,22 @@ void MacWindowManager::printWMMode(int debuglevel) {
 
 	debug(debuglevel, "WM mode: %s", out.c_str());
 }
+
+const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
+	*res = 0;
+
+	for (int i = 0; i < len; i++) {
+		char b = (char)*s++;
+
+		*res <<= 4;
+		if (tolower(b) >= 'a')
+			*res |= tolower(b) - 'a' + 10;
+		else
+			*res |= tolower(b) - '0';
+	}
+
+	return s;
+}
+
 
 } // End of namespace Graphics

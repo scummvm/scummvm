@@ -193,7 +193,22 @@ int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, con
 	if (!link)
 		return 0;
 
-	warning("STUB: render_image(%s, %s, %s)", PR(link), title ? PR(title) : 0, alt ? PR(alt) : 0);
+	Common::String res = Common::String::format("\001" "\016i%02x" "%02x%s",
+			50, (uint)link->size, Common::String((const char *)link->data, link->size).c_str());
+
+	if (alt)
+		res += Common::String::format("%02x%s", (uint)alt->size, Common::String((const char *)alt->data, alt->size).c_str());
+	else
+		res += "00";
+
+	if (title)
+		res += Common::String::format("%02x%s\n", (uint)title->size, Common::String((const char *)title->data, title->size).c_str());
+	else
+		res += "00\n";
+
+	sd_bufput(ob, res.c_str(), res.size());
+
+	debug(1, "render_image(%s, %s, %s)", PR(link), title ? PR(title) : 0, alt ? PR(alt) : 0);
 	return 1;
 }
 

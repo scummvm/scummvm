@@ -116,6 +116,7 @@ struct MacTextLine {
 	bool paragraphEnd = false;
 	int indent = 0; // in units
 	int firstLineIndent = 0; // in pixels
+	Common::U32String picfname, picalt, pictitle;
 
 	Common::Array<MacFontRun> chunks;
 
