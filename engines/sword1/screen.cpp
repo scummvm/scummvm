@@ -168,9 +168,9 @@ void Screen::startFadePaletteUp(int speed) {
 
 		// Remember: whenever we are showing the palette to the outside world
 		// we have to shift it, because these are 6-bit values!
-		uint8 shiftedPalette[768];
+		uint8 shiftedPalette[256 * 3];
 
-		for (int i = 0; i < sizeof(shiftedPalette); i++) {
+		for (int i = 0; i < ARRAYSIZE(shiftedPalette); i++) {
 			shiftedPalette[i] = _currentPalette[i] << 2;
 		}
 
