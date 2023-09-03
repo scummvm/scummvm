@@ -142,6 +142,7 @@ class ConversationCel : public ConversationSound {
 	friend class ConversationCelLoader;
 public:
 	ConversationCel() {}
+	virtual ~ConversationCel();
 
 	void init() override;
 	void registerGraphics() override;
@@ -158,30 +159,37 @@ protected:
 		Common::Rect dest;
 	};
 
-	class HeadCel : public RenderObject {
+	class RenderedCel : public RenderObject {
+		friend class ConversationCel;
 	public:
-		HeadCel() : RenderObject(9) {}
+		RenderedCel() : RenderObject(9) {}
 		bool isViewportRelative() const override { return true; }
 	};
+
+	static const byte kCelOverrideTreeRectsOff	= 1;
+	static const byte kCelOverrideTreeRectsOn	= 2;
 
 	bool isVideoDonePlaying() override;
 	Cel &loadCel(const Common::String &name, const Common::String &treeName);
 
-	Common::Array<Common::String> _bodyCelNames;
-	Common::Array<Common::String> _headCelNames;
-	Common::String _bodyTreeName;
-	Common::String _headTreeName;
+	Common::Array<Common::Array<Common::String>> _celNames;
+	Common::Array<Common::String> _treeNames;
 
 	uint16 _frameTime = 0;
 	uint _videoFormat = kLargeVideoFormat;
 	uint16 _firstFrame = 0;
 	uint16 _lastFrame = 0;
 
+	Common::Array<byte> _drawingOrder;
+	Common::Array<byte> _overrideTreeRects;
+
+	Common::Array<Common::Rect> _overrideRectSrcs;
+	Common::Array<Common::Rect> _overrideRectDests;
+
 	uint _curFrame = 0;
 	uint32 _nextFrameTime = 0;
 
-	// We use the built-in RenderObject for the body
-	HeadCel _headRObj;
+	Common::Array<RenderedCel> _celRObjects;
 
 	Common::HashMap<Common::String, Cel> _celCache;
 	Common::SharedPtr<ConversationCelLoader> _loaderPtr;

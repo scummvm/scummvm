@@ -561,23 +561,25 @@ private:
 };
 
 bool ConversationCelLoader::loadInner() {
-	for (uint i = _owner._curFrame; i < _owner._bodyCelNames.size(); ++i) {
-		if (!_owner._celCache.contains(_owner._bodyCelNames[i])) {
-			_owner.loadCel(_owner._bodyCelNames[i], _owner._bodyTreeName);
-			return false;
-		}
-
-		if (!_owner._celCache.contains(_owner._headCelNames[i])) {
-			_owner.loadCel(_owner._headCelNames[i], _owner._headTreeName);
-			return false;
+	for (uint i = _owner._curFrame; i < _owner._celNames[0].size(); ++i) {
+		for (uint j = 0; j < _owner._celRObjects.size(); ++j) {
+			if (!_owner._celCache.contains(_owner._celNames[j][i])) {
+				_owner.loadCel(_owner._celNames[j][i], _owner._treeNames[j]);
+				return false;
+			}
 		}
 	}
 
 	return true;
 }
 
+ConversationCel::~ConversationCel() {
+	// Make sure there isn't a single-frame gap between conversation scenes where
+	// the character is invisible
+	g_nancy->_graphicsManager->suppressNextDraw();
+}
+
 void ConversationCel::init() {
-	registerGraphics();
 	_curFrame = _firstFrame;
 	_nextFrameTime = g_nancy->getTotalPlayTime();
 	ConversationSound::init();
@@ -585,25 +587,41 @@ void ConversationCel::init() {
 	_loaderPtr.reset(new ConversationCelLoader(*this));
 	auto castedPtr = _loaderPtr.dynamicCast<DeferredLoader>();
 	g_nancy->addDeferredLoader(castedPtr);
+
+	for (uint i = 0; i < _treeNames.size(); ++i) {
+		if (_treeNames[i].size()) {
+			_celRObjects.push_back(RenderedCel());
+		} else break;
+	}
+
+	registerGraphics();
 }
 
 void ConversationCel::registerGraphics() {
-	RenderObject::registerGraphics();
-	_headRObj.registerGraphics();
+	for (uint i = 0; i < _celRObjects.size(); ++i) {
+		_celRObjects[i]._z = 9 + _drawingOrder[i];
+		_celRObjects[i].setVisible(true);
+		_celRObjects[i].setTransparent(true);
+		_celRObjects[i].registerGraphics();
+	}
+
+	RenderActionRecord::registerGraphics();
 }
 
 void ConversationCel::updateGraphics() {
 	uint32 currentTime = g_nancy->getTotalPlayTime();
 
 	if (_state == kRun && currentTime > _nextFrameTime && _curFrame <= _lastFrame) {
-		Cel &bodyCel = loadCel(_bodyCelNames[_curFrame], _bodyTreeName);
-		Cel &headCel = loadCel(_headCelNames[_curFrame], _headTreeName);
-
-		_drawSurface.create(bodyCel.surf, bodyCel.src);
-		moveTo(bodyCel.dest);
-
-		_headRObj._drawSurface.create(headCel.surf, headCel.src);
-		_headRObj.moveTo(headCel.dest);
+		for (uint i = 0; i < _celRObjects.size(); ++i) {
+			Cel &cel = loadCel(_celNames[i][_curFrame], _treeNames[i]);
+			if (_overrideTreeRects[i] == kCelOverrideTreeRectsOn) {
+				_celRObjects[i]._drawSurface.create(cel.surf, _overrideRectSrcs[i]);
+				_celRObjects[i].moveTo(_overrideRectDests[i]);
+			} else {
+				_celRObjects[i]._drawSurface.create(cel.surf, cel.src);
+				_celRObjects[i].moveTo(cel.dest);
+			}
+		}
 
 		_nextFrameTime += _frameTime;
 		++_curFrame;
@@ -611,11 +629,10 @@ void ConversationCel::updateGraphics() {
 }
 
 void ConversationCel::readData(Common::SeekableReadStream &stream) {
-	Nancy::GameType gameType = g_nancy->getGameType();
 	Common::String xsheetName;
 	readFilename(stream, xsheetName);
-	readFilename(stream, _bodyTreeName);
-	readFilename(stream, _headTreeName);
+	
+	readFilenameArray(stream, _treeNames, 4);
 
 	uint xsheetDataSize = 0;
 	byte *xsbuf = g_nancy->_resource->loadData(xsheetName, xsheetDataSize);
@@ -640,28 +657,17 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	_frameTime = xsheet.readUint16LE();
 	xsheet.skip(2);
 
-	_bodyCelNames.resize(numFrames);
-	_headCelNames.resize(numFrames);
+	_celNames.resize(4, Common::Array<Common::String>(numFrames));
 	for (uint i = 0; i < numFrames; ++i) {
-		readFilename(xsheet, _bodyCelNames[i]);
-		readFilename(xsheet, _headCelNames[i]);
-
-		// Zeroes
-		if (gameType >= kGameTypeNancy3) {
-			xsheet.skip(74);
-		} else {
-			xsheet.skip(28);
+		for (uint j = 0; j < _celNames.size(); ++j) {
+			readFilename(xsheet, _celNames[j][i]);
 		}
+
+		// 4 unknown values
+		xsheet.skip(8);
 	}
 
 	// Continue reading the AR stream
-
-	// Zeroes
-	if (g_nancy->getGameType() >= kGameTypeNancy3) {
-		stream.skip(66);
-	} else {
-		stream.skip(20);
-	}
 
 	// Something related to quality
 	stream.skip(3);
@@ -669,8 +675,20 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	_firstFrame = stream.readUint16LE();
 	_lastFrame = stream.readUint16LE();
 
-	// A few more quality-related bytes and more zeroes
-	stream.skip(0x8E);
+	stream.skip(6);
+
+	_drawingOrder.resize(4);
+	for (uint i = 0; i < 4; ++i) {
+		_drawingOrder[i] = stream.readByte();
+	}
+
+	_overrideTreeRects.resize(4);
+	for (uint i = 0; i < 4; ++i) {
+		_overrideTreeRects[i] = stream.readByte();
+	}
+
+	readRectArray(stream, _overrideRectSrcs, 4);
+	readRectArray(stream, _overrideRectDests, 4);
 
 	ConversationSound::readData(stream);
 }
