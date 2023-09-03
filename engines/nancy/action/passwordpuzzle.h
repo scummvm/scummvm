@@ -40,12 +40,12 @@ public:
 	void handleInput(NancyInput &input) override;
 
 	uint16 _fontID = 0;
-	Time _cursorBlinkTime;
+	uint16 _cursorBlinkTime;
 	Common::Rect _nameBounds;
 	Common::Rect _passwordBounds;
 	// _screenPosition 0x24
-	Common::String _name;
-	Common::String _password;
+	Common::Array<Common::String> _names;
+	Common::Array<Common::String> _passwords;
 	SceneChangeWithFlag _solveExitScene;
 	SoundDescription _solveSound;
 	SceneChangeWithFlag _failExitScene;
@@ -59,6 +59,9 @@ public:
 	bool _passwordFieldIsActive = false;
 	bool _playerHasHitReturn = false;
 	SolveState _solveState = kNotSolved;
+
+	uint _maxNameLength = 0;
+	uint _maxPasswordLength = 0;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PasswordPuzzle"; }

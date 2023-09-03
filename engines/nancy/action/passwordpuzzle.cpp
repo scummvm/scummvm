@@ -42,19 +42,41 @@ void PasswordPuzzle::init() {
 }
 
 void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
-	_fontID = stream.readUint16LE();
-	_cursorBlinkTime = stream.readUint16LE();
-	readRect(stream, _nameBounds);
-	readRect(stream, _passwordBounds);
-	readRect(stream, _screenPosition);
+	Common::Serializer s(&stream, nullptr);
+	s.setVersion(g_nancy->getGameType());
 
+	s.syncAsUint16LE(_fontID);
+	s.syncAsUint16LE(_cursorBlinkTime);
+	readRect(s, _nameBounds);
+	readRect(s, _passwordBounds);
+	readRect(s, _screenPosition);
+
+	uint numNames = 1;
+	uint numPasswords = 1;
 	char buf[20];
-	stream.read(buf, 20);
-	buf[19] = '\0';
-	_name = buf;
-	stream.read(buf, 20);
-	buf[19] = '\0';
-	_password = buf;
+
+	s.syncAsUint16LE(numNames);
+	_names.resize(numNames);
+	for (uint i = 0; i < numNames; ++i) {
+		stream.read(buf, 20);
+		buf[19] = '\0';
+		_names[i] = buf;
+
+		_maxNameLength = MAX(_maxNameLength, _names[i].size());
+	}
+	s.skip((5 - numNames) * 20);
+
+	s.syncAsUint16LE(numPasswords);
+	_passwords.resize(numPasswords);
+	for (uint i = 0; i < numPasswords; ++i) {
+		stream.read(buf, 20);
+		buf[19] = '\0';
+		_passwords[i] = buf;
+
+		_maxPasswordLength = MAX(_maxPasswordLength, _passwords[i].size());
+	}
+	s.skip((5 - numPasswords) * 20);
+
 	_solveExitScene.readData(stream);
 	_solveSound.readNormal(stream);
 	_failExitScene.readData(stream);
@@ -76,7 +98,7 @@ void PasswordPuzzle::execute() {
 		switch (_solveState) {
 		case kNotSolved: {
 			Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
-			Common::String &correctField = _passwordFieldIsActive ? _password : _name;
+			Common::Array<Common::String> &correctAnswers = _passwordFieldIsActive ? _passwords : _names;
 			Time currentTime = g_nancy->getTotalPlayTime();
 
 			if (_playerHasHitReturn) {
@@ -87,21 +109,31 @@ void PasswordPuzzle::execute() {
 					drawText();
 				}
 
-				if (activeField.equalsIgnoreCase(correctField)) {
-					if (!_passwordFieldIsActive) {
-						_passwordFieldIsActive = true;
-					} else {
+				bool solvedCurrentInput = false;
+				if (correctAnswers.size()) {
+					for (uint i = 0; i < correctAnswers.size(); ++i) {
+						if (activeField.equalsIgnoreCase(correctAnswers[i])) {
+							solvedCurrentInput = true;
+							break;
+						}
+					}
+				} else {
+					solvedCurrentInput = true;
+				}
+
+				if (solvedCurrentInput) {
+					if (_passwordFieldIsActive || _passwords.size() == 0) {
 						g_nancy->_sound->loadSound(_solveSound);
 						g_nancy->_sound->playSound(_solveSound);
 						_solveState = kSolved;
+					} else {
+						_passwordFieldIsActive = true;
 					}
 				} else {
 					g_nancy->_sound->loadSound(_failSound);
 					g_nancy->_sound->playSound(_failSound);
 					_solveState = kFailed;
 				}
-
-
 			} else if (currentTime >= _nextBlinkTime) {
 				_nextBlinkTime = currentTime + _cursorBlinkTime;
 
@@ -167,7 +199,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
 		Common::KeyState &key = input.otherKbdInput[i];
 		Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
-		Common::String &correctField = _passwordFieldIsActive ? _password : _name;
+		uint &maxLength = _passwordFieldIsActive ? _maxPasswordLength : _maxNameLength;
 		if (key.keycode == Common::KEYCODE_BACKSPACE) {
 			if (activeField.size() && activeField.lastChar() == '-' ? activeField.size() > 1 : true) {
 				if (activeField.lastChar() == '-') {
@@ -182,13 +214,13 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 			_playerHasHitReturn = true;
 		} else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
 			if (activeField.size() && activeField.lastChar() == '-') {
-				if (activeField.size() <= correctField.size() + 2) {
+				if (activeField.size() <= maxLength + 2) {
 					activeField.deleteLastChar();
 					activeField += key.ascii;
 					activeField += '-';
 				}
 			} else {
-				if (activeField.size() <= correctField.size() + 1) {
+				if (activeField.size() <= maxLength + 1) {
 					activeField += key.ascii;
 				}
 			}
