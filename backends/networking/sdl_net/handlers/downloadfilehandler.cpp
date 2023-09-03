@@ -20,7 +20,6 @@
  */
 
 #include "backends/networking/sdl_net/handlers/downloadfilehandler.h"
-#include "backends/fs/fs-factory.h"
 #include "backends/networking/sdl_net/getclienthandler.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
@@ -50,27 +49,28 @@ void DownloadFileHandler::handle(Client &client) {
 	}
 
 	// transform virtual path to actual file system one
-	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd, false) || path.empty()) {
+	Common::String basePath;
+	Common::Path baseFSPath, fsPath;
+	if (!urlToPath(path, fsPath, basePath, baseFSPath, false) || path.empty()) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
 
 	// check that <path> exists, is directory and isn't forbidden
-	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
-	if (!HandlerUtils::permittedPath(node->getPath())) {
+	Common::FSNode node(fsPath);
+	if (!HandlerUtils::permittedPath(node.getPath())) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
-	if (!node->exists()) {
+	if (!node.exists()) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("The file doesn't exist!")));
 		return;
 	}
-	if (node->isDirectory()) {
+	if (node.isDirectory()) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Can't download a directory!")));
 		return;
 	}
-	Common::SeekableReadStream *stream = node->createReadStream();
+	Common::SeekableReadStream *stream = node.createReadStream();
 	if (stream == nullptr) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Failed to read the file!")));
 		return;
@@ -79,7 +79,7 @@ void DownloadFileHandler::handle(Client &client) {
 	GetClientHandler *handler = new GetClientHandler(stream);
 	handler->setResponseCode(200);
 	handler->setHeader("Content-Type", "application/force-download");
-	handler->setHeader("Content-Disposition", "attachment; filename=\"" + node->getName() + "\"");
+	handler->setHeader("Content-Disposition", "attachment; filename=\"" + node.getName() + "\"");
 	handler->setHeader("Content-Transfer-Encoding", "binary");
 	client.setHandler(handler);
 }

@@ -23,6 +23,7 @@
 #define BACKENDS_NETWORKING_SDL_NET_UPLOADFILECLIENTHANDLER_H
 
 #include "backends/networking/sdl_net/client.h"
+#include "common/path.h"
 #include "common/stream.h"
 
 namespace Networking {
@@ -49,7 +50,7 @@ class UploadFileClientHandler: public ClientHandler {
 	UploadFileHandlerState _state;
 	Common::MemoryReadWriteStream *_headersStream;
 	Common::WriteStream *_contentStream;
-	Common::String _parentDirectoryPath;
+	Common::Path _parentDirectoryPath;
 	uint32 _uploadedFiles;
 
 	void handleBlockHeaders(Client *client);
@@ -58,7 +59,7 @@ class UploadFileClientHandler: public ClientHandler {
 	void setSuccessHandler(Client &client);
 
 public:
-	UploadFileClientHandler(const Common::String &parentDirectoryPath);
+	UploadFileClientHandler(const Common::Path &parentDirectoryPath);
 	~UploadFileClientHandler() override;
 
 	void handle(Client *client) override;

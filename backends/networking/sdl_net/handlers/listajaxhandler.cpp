@@ -50,14 +50,13 @@ Common::JSONObject ListAjaxHandler::listDirectory(const Common::String &path_) {
 	if (HandlerUtils::hasForbiddenCombinations(path_))
 		return errorResult;
 
-	Common::String prefixToRemove = "", prefixToAdd = "";
 	Common::String path = path_;
-	if (!transformPath(path, prefixToRemove, prefixToAdd))
+	Common::String basePath;
+	Common::Path baseFSPath, fsPath;
+	if (!urlToPath(path, fsPath, basePath, baseFSPath))
 		return errorResult;
 
-	Common::FSNode node = Common::FSNode(path);
-	if (path == "/")
-		node = node.getParent(); // absolute root
+	Common::FSNode node = Common::FSNode(fsPath);
 
 	if (!HandlerUtils::permittedPath(node.getPath()))
 		return errorResult;
@@ -74,25 +73,24 @@ Common::JSONObject ListAjaxHandler::listDirectory(const Common::String &path_) {
 
 	// add parent directory link
 	{
-		Common::String filePath = path;
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		if (filePath == "" || filePath == "/" || filePath == "\\")
-			filePath = "/";
-		else
-			filePath = parentPath(prefixToAdd + filePath);
+		Common::Path relPath = fsPath.relativeTo(baseFSPath);
+		relPath = relPath.getParent();
+		Common::String filePath("/");
+		if (!relPath.empty())
+			filePath = basePath + relPath.toString('/');
+
 		addItem(itemsList, IT_PARENT_DIRECTORY, filePath, Common::convertFromU32String(_("Parent directory")));
 	}
 
 	// fill the content
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		Common::String name = i->getName();
-		if (i->isDirectory()) name += "/";
+		if (i->isDirectory())
+			name += "/";
 
-		Common::String filePath = i->getPath();
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		filePath = prefixToAdd + filePath;
+		Common::Path relPath = i->getPath().relativeTo(baseFSPath);
+		Common::String filePath(basePath);
+		filePath += relPath.toString('/');
 
 		addItem(itemsList, detectType(i->isDirectory(), name), filePath, name);
 	}
