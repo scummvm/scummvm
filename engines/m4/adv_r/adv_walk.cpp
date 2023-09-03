@@ -388,7 +388,7 @@ void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing
 
 void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing) {
 	Anim8 *myAnim8;
-	int8 facings[10] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 };
+	const int8 facings[10] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 };
 
 	if (!myWalker || !myWalker->myAnim8 || !_G(globals)) {
 		error_show(FL, 'W:-(');
@@ -410,11 +410,17 @@ void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *
 		*layer = myAnim8->myRegs[IDX_LAYER] >> 16;
 	}
 	if (facing) {
+		int index;
 		if (myAnim8->myRegs[IDX_W] < 0) {
-			*facing = facings[9 - (myAnim8->myRegs[IDX_CELS_HASH] >> 24)];	// currently walker final facing can be found in 55
+			// Currently walker final facing can be found in 55
+			index = 9 - (myAnim8->myRegs[IDX_CELS_HASH] >> 24);
 		} else {
-			*facing = facings[(myAnim8->myRegs[IDX_CELS_HASH] >> 24)];	// currently walker final facing can be found in 55
+			// Currently walker final facing can be found in 55
+			index = myAnim8->myRegs[IDX_CELS_HASH] >> 24;
 		}
+
+		assert(index >= 0 && index < 10);
+		*facing = facings[index];
 	}
 }
 
