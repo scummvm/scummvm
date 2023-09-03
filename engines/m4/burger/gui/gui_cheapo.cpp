@@ -622,7 +622,7 @@ bool Inventory::remove(const Common::String &name) {
 	return false;
 }
 
-int16 Inventory::inside(int16 x, int16 y) {
+int16 Inventory::inside(int16 x, int16 y) const {
 	if ((x < _x1) || (x >= (_x2 - 1)) || (y < _y1 + 2) ||
 		(y > _y1 + _cells_v * _cell_h - 2))
 		return -1;

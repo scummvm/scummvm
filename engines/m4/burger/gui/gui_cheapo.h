@@ -206,7 +206,7 @@ public:
 
 	void draw(GrBuff *interface_buffer);
 
-	int16 inside(int16 x, int16 y);
+	int16 inside(int16 x, int16 y) const override;
 	ControlStatus track(int32 eventType, int16 x, int16 y);
 
 	bool add(const Common::String &name, const Common::String &verb, int32 cel, int32 cursor);
