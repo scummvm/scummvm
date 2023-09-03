@@ -547,15 +547,10 @@ ShaderPreset *parsePreset(const Common::Path &shaderPreset, Common::SearchSet &a
 		Common::FSNode fsnode(shaderPreset);
 		if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
 				|| !(stream = fsnode.createReadStream())) {
-			warning("LibRetro Preset Parsing: Invalid file path '%s'", shaderPreset.toString().c_str());
+			warning("LibRetro Preset Parsing: Invalid file path '%s'", shaderPreset.toString(Common::Path::kNativeSeparator).c_str());
 			return nullptr;
 		}
-#if defined(WIN32)
-		static const char delimiter = '\\';
-#else
-		static const char delimiter = '/';
-#endif
-		basePath = Common::Path(fsnode.getParent().getPath(), delimiter);
+		basePath = fsnode.getParent().getPath();
 	}
 
 	PresetParser parser;

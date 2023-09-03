@@ -63,7 +63,7 @@ static Graphics::Surface *loadViaImageDecoder(const Common::Path &fileName, Comm
 		Common::FSNode fsnode(fileName);
 		if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
 				|| !(stream = fsnode.createReadStream())) {
-			warning("LibRetroPipeline::loadViaImageDecoder: Invalid file path '%s'", fileName.toString().c_str());
+			warning("LibRetroPipeline::loadViaImageDecoder: Invalid file path '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 			return nullptr;
 		}
 	}
@@ -479,7 +479,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 			Common::FSNode fsnode(fileName);
 			if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
 					|| !(stream = fsnode.createReadStream())) {
-				warning("LibRetroPipeline::loadPasses: Invalid file path '%s'", fileName.toString().c_str());
+				warning("LibRetroPipeline::loadPasses: Invalid file path '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 				return false;
 			}
 		}
@@ -742,7 +742,7 @@ void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader
 }
 
 LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet) {
-	Common::String baseName(fileName.getLastComponent().toString());
+	Common::String baseName(fileName.baseName());
 	const char *extension = nullptr;
 	for (int dotPos = baseName.size() - 1; dotPos >= 0; --dotPos) {
 		if (baseName[dotPos] == '.') {
