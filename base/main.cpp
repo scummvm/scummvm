@@ -235,7 +235,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 			metaEngineDetection.getEngineName(),
 			err.getDesc().c_str(),
 			target.c_str(),
-			dir.getPath().c_str()
+			dir.getPath().toString(Common::Path::kNativeSeparator).c_str()
 			);
 
 		// If a temporary target failed to launch, remove it from the configuration manager
@@ -278,7 +278,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath")) {
 		dir = Common::FSNode(ConfMan.get("extrapath"));
-		SearchMan.addDirectory(dir.getPath(), dir);
+		SearchMan.addDirectory(dir);
 	}
 
 	// If a second extrapath is specified on the app domain level, add that as well.
@@ -289,7 +289,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 		Common::String extraPath = ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain);
 		if (!SearchMan.hasArchive(extraPath)) {
 			dir = Common::FSNode(extraPath);
-			SearchMan.addDirectory(dir.getPath(), dir);
+			SearchMan.addDirectory(dir);
 		}
 	}
 

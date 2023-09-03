@@ -1454,7 +1454,7 @@ static DetectedGames getGameList(const Common::FSNode &dir) {
 
 	// Collect all files from directory
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-		printf("Path %s does not exist or is not a directory.\n", dir.getPath().c_str());
+		printf("Path %s does not exist or is not a directory.\n", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return DetectedGames();
 	}
 
@@ -1496,7 +1496,7 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	DetectedGames candidates = recListGames(dir, engineId, gameId, recursive);
 
 	if (candidates.empty()) {
-		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
+		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		if (noPath) {
 			printf("WARNING: Consider using --path=<path> to specify a directory\n");
 		}
@@ -1591,13 +1591,9 @@ static void calcMD5(Common::FSNode &path, int32 length) {
 static void calcMD5Mac(Common::Path &filePath, int32 length) {
 	// We need to split the path into the file name and a SearchSet
 	Common::SearchSet dir;
-	char nativeSeparator = '/';
-#ifdef WIN32
-	nativeSeparator = '\\';
-#endif
-	Common::FSNode dirNode(filePath.getParent().toString(nativeSeparator));
-	dir.addDirectory(dirNode.getPath(), dirNode);
-	Common::String fileName = filePath.getLastComponent().toString();
+	Common::FSNode dirNode(filePath.getParent());
+	dir.addDirectory(dirNode);
+	Common::Path fileName = filePath.getLastComponent();
 
 	Common::MacResManager macResMan;
 	// FIXME: There currently isn't any way to tell the Mac resource
@@ -1605,11 +1601,11 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 	// and constructs a file name out of that. While usually a desirable
 	// thing, it's not ideal here.
 	if (!macResMan.open(fileName, dir)) {
-		printf("Mac resource file '%s' not found or could not be open\n", filePath.toString(nativeSeparator).c_str());
+		printf("Mac resource file '%s' not found or could not be open\n", filePath.toString(Common::Path::kNativeSeparator).c_str());
 	} else {
 		Common::ScopedPtr<Common::SeekableReadStream> dataFork(Common::MacResManager::openFileOrDataFork(fileName, dir));
 		if (!macResMan.hasResFork() && !dataFork) {
-			printf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().toString().c_str());
+			printf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().toString(Common::Path::kNativeSeparator).c_str());
 		} else {
 			bool tail = false;
 			if (length < 0) {// Tail md5 is requested
@@ -1622,7 +1618,7 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 				Common::String md5 = macResMan.computeResForkMD5AsString(length, tail);
 				if (length != 0 && length < (int32)macResMan.getResForkDataSize())
 					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-				printf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
+				printf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString(Common::Path::kNativeSeparator).c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
 			}
 			if (dataFork) {
 				if (tail && dataFork->size() > length)
@@ -1630,7 +1626,7 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 				Common::String md5 = Common::computeStreamMD5AsString(*dataFork, length);
 				if (length != 0 && length < dataFork->size())
 					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)dataFork->size());
+				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString(Common::Path::kNativeSeparator).c_str(), md5.c_str(), (unsigned long long)dataFork->size());
 			}
 		}
 		macResMan.close();
