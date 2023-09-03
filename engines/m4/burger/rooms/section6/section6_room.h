@@ -39,7 +39,11 @@ protected:
 	};
 	const GerbilPoint *_gerbilTable = nullptr;
 	HotSpotRec _gerbilHotspot;
-	machine *_sectionMachine = nullptr;
+	machine *_sectionMachine1 = nullptr;
+	machine *_sectionMachine2 = nullptr;
+	int32 _sectionSeries1 = 0;
+	int32 _sectionSeries2 = 0;
+	int32 _sectionSeries3 = 0;
 
 public:
 	Section6Room();
