@@ -46,6 +46,29 @@ const Room602::GerbilPoint Room602::GERBIL[] = {
 	{ 176, 237 }, { 426, 231 }, { 316, 217 }, { 176, 237 }, { 426, 231 }, { 316, 217 }
 };
 
+static const char *SAID[][4] = {
+	{ "KIBBLE TRAY",    "602w006", "602w007", "602w008" },
+	{ "KIBBLE ",        "602w009", nullptr,   nullptr   },
+	{ "EXERCISE WHEEL", nullptr,   "602w014", nullptr   },
+	{ "GENERATOR",      nullptr,   "602w023", "602w023" },
+	{ "MAGNET",         nullptr,   "602w023", "602w023" },
+	{ "DOOR",           nullptr,   "602w008", nullptr   },
+	{ "PEANUT",         "602w034", "602w035", "602w036" },
+	{ "TUBE",           "602w037", "602w008", nullptr   },
+	{ "TUBE ",          "602w038", "602w008", "602w039" },
+	{ "BARS",           "602w040", "602w008", "602w008" },
+	{ "FLOOR",          nullptr,   "602w008", "602w008" },
+	{ "FLOOR  ",        nullptr,   "602w008", "602w008" },
+	{ "GERBIL HEAD",    "612w043", "612w044", "602w023" },
+	{ "GERBIL HEAD ",   "612w045", "612w046", "612w047" },
+	{ "GERBIL PIECES",  nullptr,   "612w050", "612w050" },
+	{ "MOTOR",          "612w051", "612w052", nullptr   },
+	{ "MOTOR ",         "612w051", "612w052", nullptr   },
+	{ "PAW",            nullptr,   "612w060", nullptr   },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+
 Room602::Room602() : Section6Room() {
 	_gerbilTable = GERBIL;
 }
@@ -228,6 +251,7 @@ void Room602::init() {
 }
 
 void Room602::daemon() {
+
 }
 
 void Room602::pre_parser() {
@@ -237,17 +261,172 @@ void Room602::pre_parser() {
 		_G(wilbur_should) = 13;
 		_G(player).command_ready = false;
 		player_set_commands_allowed(false);
-		g_vars->getInterface()->cancel_sentence();
+		intr_cancel_sentence();
 		hotspot_set_active("DOOR", true);
 		hotspot_set_active("EXIT", false);
 
-	} else if (_G(flags)[V243] == 6006) {
+	} else if (_G(flags)[V243] == 6006 && (player_said("GEAR", "TUBE") || player_said("CLIMB IN"))) {
+		wilbur_speech("600w003");
+		intr_cancel_sentence();
 
+	} else if (player_said("KIBBLE") && (player_said("FLOOR ") || player_said("FLOOR  ") || player_said("FLOOR"))) {
+		if (_G(flags)[V278] == 0) {
+			if (_G(flags)[V255] == 0) {
+				_G(wilbur_should) = 22;
+				player_hotspot_walk_override(423, 303, 9, gCHANGE_WILBUR_ANIMATION);
+			} else {
+				wilbur_speech("600w008z");
+			}
+		}
+	} else if (player_said("RAY GUN", "KIBBLE TRAY")) {
+		_G(wilbur_should) = 6;
+		if (_G(game).room_id == 602) {
+			player_hotspot_walk_override(172, 325, 9, gCHANGE_WILBUR_ANIMATION);
+		} else {
+			player_hotspot_walk_override(151, 315, 9, gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("RAY GUN", "KIBBLE ")) {
+		_G(wilbur_should) = 7;
+		player_hotspot_walk_override(151, 315, 9, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("RAY GUN", "EXERCISE WHEEL") && !_G(flags)[V278]) {
+		_G(wilbur_should) = 8;
+		player_hotspot_walk_override(409, 359, 2, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("RAY GUN", "DOOR")) {
+		_G(wilbur_should) = 9;
+		player_hotspot_walk_override(331, 303, 10, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("RAY GUN", "GERBILS")) {
+		_G(wilbur_should) = 10;
+		player_hotspot_walk_override(315, 317, 10, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "DOOR")) {
+		_G(wilbur_should) = 47;
+		player_hotspot_walk_override(257, 290, 10, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "MOTOR") || player_said("GEAR", "MOTOR ")) {
+		if (_G(flags)[V278] == 0) {
+			if (_G(flags)[V277] == 6001) {
+				_G(wilbur_should) = 25;
+				player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+			}
+			if (_G(flags)[V277] == 6002 || _G(flags)[V277] == 6003) {
+				if (_G(flags)[V255] == 1) {
+					_G(wilbur_should) = 39;
+					player_hotspot_walk_override(200, 21, 3, gCHANGE_WILBUR_ANIMATION);
+				} else {
+					_G(wilbur_should) = 26;
+					player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+				}
+			}
+		} else {
+			_G(wilbur_should) = 26;
+			player_hotspot_walk_override(314, 319, 3, gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if ((player_said("GEAR", "MOTOR ") || player_said("PANTYHOSE", "MOTOR ")) &&
+			_G(flags)[V277] != 6002) {
+		_G(wilbur_should) = 37;
+		if (_G(flags)[V278]) {
+			player_hotspot_walk_override(313, 319, 3, gCHANGE_WILBUR_ANIMATION);
+		} else {
+			player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+		}
+	} else {
+		return;
 	}
 }
 
 void Room602::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("RAY GUN") && (player_said("MOTOR") ||
+			player_said("MOTOR ") || player_said("PAW") || player_said("GENERATOR") ||
+			player_said("MAGNET"))) {
+		_G(wilbur_should) = 43;
+		intr_cancel_sentence();
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("RAY GUN", "PEANUT")) {
+		wilbur_speech("602w047");
+		intr_cancel_sentence();
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "TUBE") || player_said("CLIMB IN", "TUBE")) {
+		_G(flags)[V246] = 1;
+		Section6::_state2 = 2;
+		_G(wilbur_should) = 1;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("EXIT")) {
+		_G(wilbur_should) = 42;
+		ws_turn_to_face(5, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("PANTYHOSE", "MOTOR") || player_said("PANTYHOSE", "MOTOR ")) {
+		if (_G(flags)[V277] == 6001) {
+			_G(wilbur_should) = 25;
+			if (_G(flags)[V278]) {
+				player_hotspot_walk_override(314, 321, 3, gCHANGE_WILBUR_ANIMATION);
+			} else {
+				player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+			}
+		}
+
+		if (_G(flags)[V280]) {
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else {
+			wilbur_speech("612w064", gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("GEAR", "EXERCISE WHEEL")) {
+		_G(wilbur_should) = 11;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "DOOR")) {
+		_G(wilbur_should) = 47;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("KIBBLE ", "TAKE")) {
+		_G(wilbur_should) = 18;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("LOOK AT", "EXERCISE WHEEL")) {
+		if (_G(flags)[V278] == 1 && _G(flags)[V277] == 6003) {
+			wilbur_speech("612w062");
+		} else {
+			wilbur_speech("602w013");
+		}
+	} else if (player_said("LOOK AT", "MAGNET")) {
+		wilbur_speech(_G(flags)[V260] ? "602w025" : "602w024");
+
+	} else if (player_said("LOOK AT", "FLOOR") || player_said("LOOK AT", "FLOOR  ")) {
+		wilbur_speech(_G(game).room_id == 612 ? "602w042" : "602w041");
+
+	} else if (player_said("LOOK AT", "GENERATOR")) {
+		wilbur_speech(_G(flags)[V260] ? "602w022" : "602w021");
+
+	} else if (player_said("LOOK AT", "GERBIL PIECES") || player_said("LOOK AT", "GERBIL HAND")) {
+		wilbur_speech(_G(flags)[V281] ? "612w049" : "612w048");
+
+	} else if (player_said("LOOK AT", "DOOR")) {
+		if (_G(flags)[V261]) {
+			wilbur_speech(_G(flags)[V260] ? "602w029" : "602w028");
+		} else {
+			wilbur_speech(_G(flags)[V260] ? "602w027" : "602w026");
+		}
+	} else if (player_said("LOOK AT", "PAW")) {
+		wilbur_speech(_G(flags)[V277] == 6003 ? "612w059" : "612w058");
+
+	} else if (player_said("PAW", "GEAR") && _G(flags)[V277] != 6003) {
+		wilbur_speech("612w061");
+
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
