@@ -56,7 +56,7 @@ class DownloadDialog : public Dialog {
 	ButtonWidget *_cancelButton;
 	ButtonWidget *_closeButton;
 
-	Common::String _localDirectory;
+	Common::Path _localDirectory;
 	bool _close;
 
 	Common::U32String getSizeLabelText();

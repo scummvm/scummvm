@@ -31,7 +31,8 @@ namespace Cloud {
 class FolderDownloadRequest: public Networking::Request, public GUI::CommandSender {
 	Storage *_storage;
 	Storage::FileArrayCallback _fileArrayCallback;
-	Common::String _remoteDirectoryPath, _localDirectoryPath;
+	Common::String _remoteDirectoryPath;
+	Common::Path _localDirectoryPath;
 	bool _recursive;
 	Common::Array<StorageFile> _pendingFiles, _failedFiles;
 	StorageFile _currentFile;
@@ -48,7 +49,7 @@ class FolderDownloadRequest: public Networking::Request, public GUI::CommandSend
 	void downloadNextFile();
 	void finishDownload(Common::Array<StorageFile> &files);
 public:
-	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, const Common::String &remoteDirectoryPath, const Common::String &localDirectoryPath, bool recursive);
+	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, const Common::String &remoteDirectoryPath, const Common::Path &localDirectoryPath, bool recursive);
 	~FolderDownloadRequest() override;
 
 	void handle() override;
@@ -70,7 +71,7 @@ public:
 	Common::String getRemotePath() const { return _remoteDirectoryPath; }
 
 	/** Returns local directory path. */
-	Common::String getLocalPath() const { return _localDirectoryPath; }
+	Common::Path getLocalPath() const { return _localDirectoryPath; }
 };
 
 } // End of namespace Cloud

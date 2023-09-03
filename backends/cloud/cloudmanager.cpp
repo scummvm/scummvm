@@ -393,7 +393,7 @@ Networking::Request *CloudManager::listDirectory(const Common::String &path, Sto
 	return nullptr;
 }
 
-Networking::Request *CloudManager::downloadFolder(const Common::String &remotePath, const Common::String &localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+Networking::Request *CloudManager::downloadFolder(const Common::String &remotePath, const Common::Path &localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
 	if (storage) {
 		return storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
@@ -514,7 +514,7 @@ void CloudManager::showCloudDisabledIcon() {
 
 ///// DownloadFolderRequest-related /////
 
-bool CloudManager::startDownload(const Common::String &remotePath, const Common::String &localPath) const {
+bool CloudManager::startDownload(const Common::String &remotePath, const Common::Path &localPath) const {
 	Storage *storage = getCurrentStorage();
 	if (storage)
 		return storage->startDownload(remotePath, localPath);
@@ -575,11 +575,11 @@ Common::String CloudManager::getDownloadRemoteDirectory() const {
 	return "";
 }
 
-Common::String CloudManager::getDownloadLocalDirectory() const {
+Common::Path CloudManager::getDownloadLocalDirectory() const {
 	Storage *storage = getCurrentStorage();
 	if (storage)
 		return storage->getDownloadLocalDirectory();
-	return "";
+	return Common::Path();
 }
 
 bool CloudManager::pollEvent(Common::Event &event) {

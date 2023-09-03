@@ -29,6 +29,7 @@
 #include "common/array.h"
 #include "common/callback.h"
 #include "common/mutex.h"
+#include "common/path.h"
 #include "common/stream.h"
 #include "common/str.h"
 
@@ -140,7 +141,7 @@ public:
 
 	/** Returns StorageFile with info about uploaded file. */
 	virtual Networking::Request *upload(const Common::String &path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) = 0;
-	virtual Networking::Request *upload(const Common::String &remotePath, const Common::String &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *upload(const Common::String &remotePath, const Common::Path &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns whether Storage supports upload(ReadStream). */
 	virtual bool uploadStreamSupported();
@@ -150,11 +151,11 @@ public:
 	virtual Networking::Request *streamFileById(const Common::String &id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *download(const Common::String &remotePath, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
-	virtual Networking::Request *downloadById(const Common::String &remoteId, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *download(const Common::String &remotePath, const Common::Path &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *downloadById(const Common::String &remoteId, const Common::Path &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-	virtual Networking::Request *downloadFolder(const Common::String &remotePath, const Common::String &localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+	virtual Networking::Request *downloadFolder(const Common::String &remotePath, const Common::Path &localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Calls the callback when finished. */
 	virtual SavesSyncRequest *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
@@ -214,7 +215,7 @@ public:
 	///// DownloadFolderRequest-related /////
 
 	/** Starts a folder download. */
-	virtual bool startDownload(const Common::String &remotePath, const Common::String &localPath);
+	virtual bool startDownload(const Common::String &remotePath, const Common::Path &localPath);
 
 	/** Cancels running download. */
 	virtual void cancelDownload();
@@ -241,7 +242,7 @@ public:
 	virtual Common::String getDownloadRemoteDirectory();
 
 	/** Returns local directory path. */
-	virtual Common::String getDownloadLocalDirectory();
+	virtual Common::Path getDownloadLocalDirectory();
 
 protected:
 	/** Finishes the download. Shows an OSD message. */

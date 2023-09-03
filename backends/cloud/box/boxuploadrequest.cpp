@@ -34,7 +34,7 @@ namespace Box {
 
 #define BOX_API_FILES "https://upload.box.com/api/2.0/files"
 
-BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, const Common::String &path, const Common::String &localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
+BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, const Common::String &path, const Common::Path &localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _localPath(localPath), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
