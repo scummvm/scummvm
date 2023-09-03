@@ -19,9 +19,11 @@
  *
  */
 
-#ifdef SCUMMVM_NEON
-#include <arm_neon.h>
 #include "ags/ags.h"
+
+#ifdef SCUMMVM_NEON
+
+#include <arm_neon.h>
 #include "ags/globals.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
@@ -224,7 +226,7 @@ inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, u
 	const float32x4_t eplison0 = vmovq_n_f32(0.0000001);
 
 	float32x4_t chroma = vmaxq_f32(vsubq_f32(smaxes, smins), eplison0);
-	
+
 	// RGB to HSV is a piecewise function, so we compute each part of the function first...
 	float32x4_t hr, hg, hb, hue, chromaReq;
 	chromaReq = vrecpeq_f32(chroma);
