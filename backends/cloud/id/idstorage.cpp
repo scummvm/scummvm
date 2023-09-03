@@ -106,7 +106,7 @@ Networking::Request *IdStorage::streamFile(const Common::String &path, Networkin
 	return addRequest(new IdStreamFileRequest(this, path, outerCallback, errorCallback));
 }
 
-Networking::Request *IdStorage::download(const Common::String &remotePath, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *IdStorage::download(const Common::String &remotePath, const Common::Path &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	return addRequest(new IdDownloadRequest(this, remotePath, localPath, callback, errorCallback));
 }
 

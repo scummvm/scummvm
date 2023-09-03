@@ -84,7 +84,7 @@ void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer
 		syncSaves(nullptr, nullptr);
 }
 
-Networking::Request *Storage::upload(const Common::String &remotePath, const Common::String &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *Storage::upload(const Common::String &remotePath, const Common::Path &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 
 	Common::File *f = new Common::File();
@@ -110,12 +110,12 @@ Networking::Request *Storage::streamFile(const Common::String &path, Networking:
 	return streamFileById(path, callback, errorCallback);
 }
 
-Networking::Request *Storage::download(const Common::String &remotePath, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *Storage::download(const Common::String &remotePath, const Common::Path &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	//most Storages use paths instead of ids, so this should work
 	return downloadById(remotePath, localPath, callback, errorCallback);
 }
 
-Networking::Request *Storage::downloadById(const Common::String &remoteId, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *Storage::downloadById(const Common::String &remoteId, const Common::Path &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 
 	Common::DumpFile *f = new Common::DumpFile();
@@ -131,7 +131,7 @@ Networking::Request *Storage::downloadById(const Common::String &remoteId, const
 	return addRequest(new DownloadRequest(this, callback, errorCallback, remoteId, f));
 }
 
-Networking::Request *Storage::downloadFolder(const Common::String &remotePath, const Common::String &localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+Networking::Request *Storage::downloadFolder(const Common::String &remotePath, const Common::Path &localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	if (!_isEnabled) {
 		warning("Storage::downloadFolder: cannot be run while Storage is disabled");
 		if (errorCallback)
@@ -250,7 +250,7 @@ void Storage::savesSyncDefaultErrorCallback(const Networking::ErrorResponse &err
 
 ///// DownloadFolderRequest-related /////
 
-bool Storage::startDownload(const Common::String &remotePath, const Common::String &localPath) {
+bool Storage::startDownload(const Common::String &remotePath, const Common::Path &localPath) {
 	_runningRequestsMutex.lock();
 	if (_downloadFolderRequest) {
 		warning("Storage::startDownload: there is a download in progress already");
@@ -333,8 +333,8 @@ Common::String Storage::getDownloadRemoteDirectory() {
 	return result;
 }
 
-Common::String Storage::getDownloadLocalDirectory() {
-	Common::String result = "";
+Common::Path Storage::getDownloadLocalDirectory() {
+	Common::Path result;
 	_runningRequestsMutex.lock();
 	if (_downloadFolderRequest)
 		result = _downloadFolderRequest->getLocalPath();

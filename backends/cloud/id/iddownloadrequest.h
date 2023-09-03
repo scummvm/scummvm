@@ -32,7 +32,8 @@ namespace Id {
 class IdStorage;
 
 class IdDownloadRequest: public Networking::Request {
-	Common::String _requestedFile, _requestedLocalFile;
+	Common::String _requestedFile;
+	Common::Path _requestedLocalFile;
 	IdStorage *_storage;
 	Storage::BoolCallback _boolCallback;
 	Request *_workingRequest;
@@ -45,7 +46,7 @@ class IdDownloadRequest: public Networking::Request {
 	void downloadErrorCallback(const Networking::ErrorResponse &error);
 	void finishDownload(bool success);
 public:
-	IdDownloadRequest(IdStorage *storage, const Common::String &remotePath, const Common::String &localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+	IdDownloadRequest(IdStorage *storage, const Common::String &remotePath, const Common::Path &localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	~IdDownloadRequest() override;
 
 	void handle() override;

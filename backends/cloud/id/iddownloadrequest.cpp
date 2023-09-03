@@ -26,7 +26,7 @@
 namespace Cloud {
 namespace Id {
 
-IdDownloadRequest::IdDownloadRequest(IdStorage *storage, const Common::String &remotePath, const Common::String &localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
+IdDownloadRequest::IdDownloadRequest(IdStorage *storage, const Common::String &remotePath, const Common::Path &localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedFile(remotePath), _requestedLocalFile(localPath), _storage(storage), _boolCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();

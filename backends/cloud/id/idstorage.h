@@ -73,7 +73,7 @@ public:
 	virtual Networking::Request *streamFileById(const Common::String &id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) override = 0;
 
 	/** Calls the callback when finished. */
-	Networking::Request *download(const Common::String &remotePath, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) override;
+	Networking::Request *download(const Common::String &remotePath, const Common::Path &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	virtual Common::String getRootDirectoryId() = 0;
 };

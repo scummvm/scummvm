@@ -159,24 +159,8 @@ bool DownloadDialog::selectDirectories() {
 	}
 
 	//make a local path
-	Common::String localPath = dir.getPath();
-
-	//simple heuristic to determine which path separator to use
-	if (localPath.size() && localPath.lastChar() != '/' && localPath.lastChar() != '\\') {
-		int backslashes = 0;
-		for (uint32 i = 0; i < localPath.size(); ++i)
-			if (localPath[i] == '/')
-				--backslashes;
-			else if (localPath[i] == '\\')
-				++backslashes;
-
-		if (backslashes > 0)
-			localPath += '\\' + remoteDirectory.name();
-		else
-			localPath += '/' + remoteDirectory.name();
-	} else {
-		localPath += remoteDirectory.name();
-	}
+	Common::Path localPath = dir.getPath();
+	localPath.appendComponent(remoteDirectory.name());
 
 	CloudMan.startDownload(remoteDirectory.path(), localPath);
 	CloudMan.setDownloadTarget(this);
@@ -187,7 +171,7 @@ bool DownloadDialog::selectDirectories() {
 void DownloadDialog::handleTickle() {
 	if (_close) {
 		if (_launcher)
-			_launcher->doGameDetection(_localDirectory);
+			_launcher->doGameDetection(_localDirectory.toString('/'));
 		close();
 		_close = false;
 		return;
@@ -223,7 +207,7 @@ Common::U32String DownloadDialog::getSpeedLabelText() {
 void DownloadDialog::refreshWidgets() {
 	_localDirectory = CloudMan.getDownloadLocalDirectory();
 	_remoteDirectoryLabel->setLabel(_("From: ") + Common::U32String(CloudMan.getDownloadRemoteDirectory()));
-	_localDirectoryLabel->setLabel(_("To: ") + Common::U32String(_localDirectory));
+	_localDirectoryLabel->setLabel(_("To: ") + Common::U32String(_localDirectory.toString(Common::Path::kNativeSeparator)));
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_downloadSizeLabel->setLabel(getSizeLabelText());

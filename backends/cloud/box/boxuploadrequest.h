@@ -33,7 +33,8 @@ class BoxStorage;
 
 class BoxUploadRequest: public Networking::Request {
 	BoxStorage *_storage;
-	Common::String _savePath, _localPath;
+	Common::String _savePath;
+	Common::Path _localPath;
 	Storage::UploadCallback _uploadCallback;
 	Request *_workingRequest;
 	bool _ignoreCallback;
@@ -49,7 +50,7 @@ class BoxUploadRequest: public Networking::Request {
 	void finishUpload(const StorageFile &status);
 
 public:
-	BoxUploadRequest(BoxStorage *storage, const Common::String &path, const Common::String &localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+	BoxUploadRequest(BoxStorage *storage, const Common::String &path, const Common::Path &localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
 	~BoxUploadRequest() override;
 
 	void handle() override;

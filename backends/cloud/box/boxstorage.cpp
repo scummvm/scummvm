@@ -174,7 +174,7 @@ Networking::Request *BoxStorage::createDirectoryWithParentId(const Common::Strin
 	return addRequest(request);
 }
 
-Networking::Request *BoxStorage::upload(const Common::String &remotePath, const Common::String &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *BoxStorage::upload(const Common::String &remotePath, const Common::Path &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 	return addRequest(new BoxUploadRequest(this, remotePath, localPath, callback, errorCallback));

@@ -400,18 +400,11 @@ void LauncherDialog::addGame() {
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-			Common::String selectedDirectory = _browser->getResult().getPath();
-			Common::String bannedDirectory = CloudMan.getDownloadLocalDirectory();
-			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')
-				selectedDirectory += '/';
-			if (bannedDirectory.size() && bannedDirectory.lastChar() != '/' && bannedDirectory.lastChar() != '\\') {
-				if (selectedDirectory.size()) {
-					bannedDirectory += selectedDirectory.lastChar();
-				} else {
-					bannedDirectory += '/';
-				}
-			}
-			if (selectedDirectory.size() && bannedDirectory.size() && selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
+			Common::Path selectedDirectory = _browser->getResult().getPath();
+			Common::Path bannedDirectory = CloudMan.getDownloadLocalDirectory();
+			selectedDirectory.removeTrailingSeparators();
+			bannedDirectory.removeTrailingSeparators();
+			if (!selectedDirectory.empty() && !bannedDirectory.empty() && selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
 				MessageDialog alert(_("This directory cannot be used yet, it is being downloaded into!"));
 				alert.runModal();
 				return;

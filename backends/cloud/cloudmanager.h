@@ -240,7 +240,7 @@ public:
 	Networking::Request *listDirectory(const Common::String &path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-	Networking::Request *downloadFolder(const Common::String &remotePath, const Common::String &localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+	Networking::Request *downloadFolder(const Common::String &remotePath, const Common::Path &localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Return the StorageInfo struct. */
 	Networking::Request *info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
@@ -291,7 +291,7 @@ public:
 	///// DownloadFolderRequest-related /////
 
 	/** Starts a folder download. */
-	bool startDownload(const Common::String &remotePath, const Common::String &localPath) const;
+	bool startDownload(const Common::String &remotePath, const Common::Path &localPath) const;
 
 	/** Cancels running download. */
 	void cancelDownload() const;
@@ -318,7 +318,7 @@ public:
 	Common::String getDownloadRemoteDirectory() const;
 
 	/** Returns local directory path. */
-	Common::String getDownloadLocalDirectory() const;
+	Common::Path getDownloadLocalDirectory() const;
 };
 
 /** Shortcut for accessing the connection manager. */

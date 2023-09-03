@@ -86,7 +86,7 @@ public:
 	Networking::Request *createDirectoryWithParentId(const Common::String &parentId, const Common::String &directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns UploadStatus struct with info about uploaded file. */
-	Networking::Request *upload(const Common::String &remotePath, const Common::String &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) override;
+	Networking::Request *upload(const Common::String &remotePath, const Common::Path &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) override;
 	Networking::Request *upload(const Common::String &path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns whether Storage supports upload(ReadStream). */

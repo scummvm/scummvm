@@ -29,7 +29,7 @@
 
 namespace Cloud {
 
-FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, const Common::String &remoteDirectoryPath, const Common::String &localDirectoryPath, bool recursive):
+FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, const Common::String &remoteDirectoryPath, const Common::Path &localDirectoryPath, bool recursive):
 	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _fileArrayCallback(callback),
 	_remoteDirectoryPath(remoteDirectoryPath), _localDirectoryPath(localDirectoryPath), _recursive(recursive),
 	_workingRequest(nullptr), _ignoreCallback(false), _totalFiles(0) {
@@ -124,23 +124,23 @@ void FolderDownloadRequest::downloadNextFile() {
 	sendCommand(GUI::kDownloadProgressCmd, (int)(getProgress() * 100));
 
 	Common::String remotePath = _currentFile.path();
-	Common::String localPath = remotePath;
-	if (_remoteDirectoryPath == "" || remotePath.hasPrefix(_remoteDirectoryPath)) {
-		localPath.erase(0, _remoteDirectoryPath.size());
-		if (_remoteDirectoryPath != "" && (_remoteDirectoryPath.lastChar() != '/' && _remoteDirectoryPath.lastChar() != '\\'))
-			localPath.erase(0, 1);
-	} else {
-		warning("FolderDownloadRequest: Can't process the following paths:");
-		warning("remote directory: %s", _remoteDirectoryPath.c_str());
-		warning("remote file under that directory: %s", remotePath.c_str());
+	Common::String localPathStr = remotePath;
+	if (!_remoteDirectoryPath.empty()) {
+		if (remotePath.hasPrefix(_remoteDirectoryPath)) {
+			localPathStr.erase(0, _remoteDirectoryPath.size());
+			if (_remoteDirectoryPath.lastChar() != '/' && _remoteDirectoryPath.lastChar() != '\\')
+				localPathStr.erase(0, 1);
+		} else {
+			warning("FolderDownloadRequest: Can't process the following paths:");
+			warning("remote directory: %s", _remoteDirectoryPath.c_str());
+			warning("remote file under that directory: %s", remotePath.c_str());
+		}
 	}
-	if (_localDirectoryPath != "") {
-		if (_localDirectoryPath.lastChar() == '/' || _localDirectoryPath.lastChar() == '\\')
-			localPath = _localDirectoryPath + localPath;
-		else
-			localPath = _localDirectoryPath + "/" + localPath;
+	Common::Path localPath(localPathStr);
+	if (!_localDirectoryPath.empty()) {
+		localPath = _localDirectoryPath.append(localPath);
 	}
-	debug(9, "FolderDownloadRequest: %s -> %s", remotePath.c_str(), localPath.c_str());
+	debug(9, "FolderDownloadRequest: %s -> %s", remotePath.c_str(), localPath.toString(Common::Path::kNativeSeparator).c_str());
 	_workingRequest = _storage->downloadById(
 		_currentFile.id(), localPath,
 		new Common::Callback<FolderDownloadRequest, const Storage::BoolResponse &>(this, &FolderDownloadRequest::fileDownloadedCallback),
