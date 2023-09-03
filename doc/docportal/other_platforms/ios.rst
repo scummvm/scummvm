@@ -5,6 +5,8 @@ iOS
 
 This page contains all the information you need to get ScummVM up and running on an iOS device.
 
+ScummVM is an open source software, which means you can get, modify, and compile the source code yourself.  If you want to do so, see the :doc:`ios_build` page.
+
 
 Installing ScummVM
 =====================
