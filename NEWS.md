@@ -29,6 +29,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGS:
    - Synced with upstream AGS 3.6.0.51.
    - Sped up graphics manipulation on modern hardware with CPU-specific code.
+   - Added support for early font rendering, to match the original interpreter.
 
  Asylum:
    - Added support for Chinese Sanitarium.
@@ -56,6 +57,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
    - Added data to savegames whose lack could make savegames unwinnable.
+
+ Sword1:
+   - Major rewrite of palette fades, bringing it to match the original.
 
  Sword2:
    - Added support for Chinese translation.
