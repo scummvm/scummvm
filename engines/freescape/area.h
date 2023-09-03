@@ -45,6 +45,7 @@ public:
 	Common::String _name;
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
+	void changeObjectID(uint16 objectID, uint16 newObjectID);
 	ObjectArray getSensors();
 	uint16 getAreaID();
 	uint16 getAreaFlags();
