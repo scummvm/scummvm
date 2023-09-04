@@ -39,6 +39,119 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+static const seriesStreamBreak SERIES1[] = {
+	{   4, "604I001",  1, 255, -1, 0, nullptr, 0 },
+	{  29, "604Z001",  1, 255, -1, 0, nullptr, 0 },
+	{  36, "604I002",  1, 255, -1, 0, nullptr, 0 },
+	{  45, "604Z002",  1, 255, -1, 0, nullptr, 0 },
+	{  70, "604Z003",  1, 255, -1, 0, nullptr, 0 },
+	{ 106, "604I003",  1, 255, -1, 0, nullptr, 0 },
+	{ 132, "604Z004A", 1, 255, -1, 0, nullptr, 0 },
+	{ 208, "604Z004B", 1, 255, -1, 0, nullptr, 0 },
+	{ 245, "604Z004C", 1, 255, -1, 0, nullptr, 0 },
+	{ 324, "604I004",  1, 255, -1, 0, nullptr, 0 },
+	{ 344, "604Z005",  1, 255, -1, 0, nullptr, 0 },
+	{ 374, "604Z006",  1, 255, -1, 0, nullptr, 0 },
+	{ 409, "604I005",  1, 255, -1, 0, nullptr, 0 },
+	{ 459, "604Z007",  1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY1[] = {
+	{ 0, -1, "604_007", 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY2[] = {
+	{ 0,  2, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 3,  4, "600w016", 1, 100, -1,    0, 0, nullptr, 0 },
+	{ 5, -1, nullptr,   1,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY3[] = {
+	{ 0,  2, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 3,  4, "600w015", 1, 100, -1,    0, 0, nullptr, 0 },
+	{ 5, -1, nullptr,   1,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY4[] = {
+	{  0, 19, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 20, 21, "600_015", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 22, -1, nullptr,   1,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY5[] = {
+	{  0, 22, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 23, -1, "600_015", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY6[] = {
+	{ 0,  5, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 6, -1, "604_001", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY7[] = {
+	{ 0,  5, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 6, -1, "604_001", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY8[] = {
+	{ 0,  6, nullptr,    1,   0, -1, 2048, 0, &_state1, 0 },
+	{ 0,  6, nullptr,    1,   0, -1, 2048, 0, &_state1, 1 },
+	{ 0,  6, nullptr,    1,   0, -1, 2048, 0, &_state1, 2 },
+	{ 7, -1, "600w011a", 1, 255, -1,    0, 0, &_state1, 0 },
+	{ 7, -1, "600w011b", 1, 255, -1,    0, 0, &_state1, 1 },
+	{ 7, -1, "600w011c", 1, 255, -1,    0, 0, &_state1, 2 },
+	{ 0, -1, "600w011d", 1, 255, -1,    0, 0, &_state1, 3 },
+	{ 0, -1, "600w011e", 1, 255, -1,    0, 0, &_state1, 4 },
+	{ 0, -1, "600w011f", 1, 255, -1,    0, 0, &_state1, 5 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY9[] = {
+	{  0, 13, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 14, -1, "600_012", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY10[] = {
+	{  0,  3, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{  4, 14, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 15, 23, "604_008", 1, 255, -1,    0, 0, nullptr, 0 },
+	{  4, 14, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 15, 23, "604_008", 1, 255, -1,    0, 0, nullptr, 0 },
+	{  4, 14, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 15, 23, "604_008", 1, 255, -1,    0, 0, nullptr, 0 },
+	{ 24, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY11[] = {
+	{  0,  7, nullptr, 1, 0,    -1, 2048, 0, nullptr, 0 },
+	{  8, 17, nullptr, 1, 0,    -1,    0, 0, nullptr, 0 },
+	{ 18, -1, nullptr, 1, 0, 10016,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room604::PLAY12[] = {
+	{ 0, 15,  nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 16, -1, "600_014", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+long Room604::_state1;
+
+Room604::Room604() : Section6Room() {
+	_state1 = 0;
+}
+
 void Room604::init() {
 	player_set_commands_allowed(false);
 	_G(flags)[V246] = 0;
@@ -186,7 +299,22 @@ void Room604::pre_parser() {
 }
 
 void Room604::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("GEAR", "WOOD SHAVINGS")) {
+		player_set_commands_allowed(false);
+
+		if (_G(flags)[V243] == 6000) {
+			_G(wilbur_should) = 9;
+			wilbur_speech(_G(flags)[V248] ? "604w013" : "604w011");
+
+		} else {
+			_G(wilbur_should) = 13;
+			wilbur_speech("604w005");
+		}
+	}
 }
 
 } // namespace Rooms
