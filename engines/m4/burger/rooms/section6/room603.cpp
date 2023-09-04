@@ -247,11 +247,95 @@ void Room603::daemon() {
 }
 
 void Room603::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (_G(flags)[V243] == 6000 && (player_said("TUBE ") || player_said("TUBE  "))) {
+		term_message("Can't leave through back tube as gerbils are in the way.");
+		wilbur_speech("600w003");
+		intr_cancel_sentence();
+
+	} else if (player_said("GEAR", "WATER") || player_said("TAKE", "WATER")) {
+		_G(wilbur_should) = 15;
+		player_hotspot_walk_override(272, 271, 2, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("KIBBLE", "FLOOR")) {
+		if (_G(flags)[V269]) {
+			_G(player).need_to_walk = false;
+			_G(player).ready_to_walk = false;
+			wilbur_speech("600w008z");
+		} else {
+			_sectionSeries1 = series_load("602wi20");
+			_series3 = series_load("602wi20s");
+			_G(wilbur_should) = 14;
+			player_hotspot_walk_override(502, 301, 9, gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("RAY GUN", "GERBILS")) {
+		_G(wilbur_should) = 10;
+		player_hotspot_walk_override(226, 301, 2, gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("WATER DISH") || player_said("WATER")) {
+		if (_G(flags)[V243] == 6006) {
+			wilbur_speech("600w003");
+			intr_cancel_sentence();
+		} else if (player_said("KIBBLE")) {
+			_G(wilbur_should) = 11;
+			player_hotspot_walk_override(261, 274, 2, gCHANGE_WILBUR_ANIMATION);
+		} else if (player_said("RAY GUN", "WATER DISH")) {
+			if (_G(flags)[V277] == 6001 && _G(flags)[V270] == 6000)
+				_series4 = series_load("603motor");
+
+			_G(wilbur_should) = 8;
+			player_hotspot_walk_override(180, 329, 2, gCHANGE_WILBUR_ANIMATION);
+		} else if (player_said("RAY GUN", "WATER") && _G(flags)[V270] == 6000) {
+			_G(wilbur_should) = 9;
+			player_hotspot_walk_override(350, 282, 10, gCHANGE_WILBUR_ANIMATION);
+		} else {
+			return;
+		}
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room603::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if ((player_said("WATER DISH") || player_said("WATER")) &&
+			player_said("LOOK AT")) {
+		wilbur_speech(_G(flags)[V270] == 6000 ? "603w002" : "603w003");
+
+	} else if (player_said("GEAR", "TUBE ") || player_said("CLIMB IN", "TUBE ")) {
+		_G(flags)[V246] = 1;
+		_G(wilbur_should) = 6;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "TUBE  ") || player_said("CLIMB IN", "TUBE  ")) {
+		_G(flags)[V246] = 1;
+		_G(wilbur_should) = 7;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "TUBE") || player_said("CLIMB IN", "TUBE")) {
+		_G(flags)[V246] = 1;
+		_G(wilbur_should) = 4;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "TUBE   ") || player_said("CLIMB IN", "TUBE   ")) {
+		_G(flags)[V246] = 1;
+		_G(wilbur_should) = 5;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("RAY GUN", "CARROT")) {
+		wilbur_speech("603w019");
+
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
