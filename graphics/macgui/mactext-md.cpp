@@ -25,7 +25,7 @@
 
 namespace Graphics {
 
-#define PR(x) (x->data ? Common::String((const char *)(x)->data , (x)->size).c_str() : "(null)")
+#define PR(x) ((x && x->data) ? Common::String((const char *)(x)->data , (x)->size).c_str() : "(null)")
 
 struct MDState {
 	Common::List<int> listNum;
@@ -40,7 +40,7 @@ void render_blockcode(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text
 
 	sd_bufput(ob, res.c_str(), res.size());
 
-	//warning("STUB: render_blockcode(%s, %s)", PR(text), PR(lang));
+	debug(1, "render_blockcode(%s, %s)", PR(text), PR(lang));
 }
 
 void render_blockquote(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
@@ -136,7 +136,7 @@ void render_table(Common::SDDataBuffer *ob, const Common::SDDataBuffer *header, 
 	if (!body)
 		return;
 
-	warning("STUB: render_table(%s, %s)", header ? PR(header) : 0, PR(body));
+	warning("STUB: render_table(%s, %s)", PR(header), PR(body));
 }
 
 void render_table_row(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
@@ -212,7 +212,7 @@ int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, con
 
 	sd_bufput(ob, res.c_str(), res.size());
 
-	debug(1, "render_image(%s, %s, %s)", PR(link), title ? PR(title) : 0, alt ? PR(alt) : 0);
+	debug(1, "render_image(%s, %s, %s)", PR(link), PR(title), PR(alt));
 	return 1;
 }
 
@@ -236,7 +236,7 @@ int render_link(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, cons
 
 	sd_bufput(ob, res.c_str(), res.size());
 
-	debug(1, "render_link(%s, %s, %s)", PR(link), title ? PR(title) : 0, content ? PR(content) : 0);
+	debug(1, "render_link(%s, %s, %s)", PR(link), PR(title), PR(content));
 	return 1;
 }
 
