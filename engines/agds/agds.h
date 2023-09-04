@@ -223,7 +223,7 @@ public:
 	}
 
 	bool userEnabled() const {
-		return _userEnabled && _systemUserEnabled;
+		return _userEnabled && _systemUserEnabled && !_mjpgPlayer;
 	}
 
 	void newGame();
