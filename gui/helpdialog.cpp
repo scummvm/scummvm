@@ -109,6 +109,64 @@ HelpDialog::HelpDialog()
 	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText2);
 
 	tab->addTab(_("Adding Games"), "GlobalOptions_Graphics", false);
+
+	Common::U32String helpText3 = _(
+"#### Adding SAF paths to ScummVM directory list\n"
+"\n"
+"Starting with version 2.7.0 of ScummVM for Android, significant changes were made to the file access system to allow support for modern versions of the Android Operating System.\n"
+"If you find that your existing added games or custom paths no longer work, please edit those paths and this time use the SAF system to browse to the desired locations.\n"
+"To do that:\n"
+"\n"
+"  1. For each game whose data is not found, go to the \"Paths\" tab in the \"Game Options\" and change the \"Game path\"\n"
+"\n"
+"  2. Inside the ScummVM file browser, use \"Go Up\" until you reach the \"root\" folder where you will see the \"<Add a new folder>\" option.\n"
+"\n"
+"![File browser](browser-root.png \"Android browser\")\n"
+"\n"
+"    File Browser root with <Add a new folder> item\n"
+"\n"
+"   3. Choose that, then browse and select the \"parent\" folder for your games subfolders, e.g. \"SD Card > ScummVMgames\". Click on \"Use this folder\".\n"
+"\n"
+"![OS file browser root](fs-root.png \"OS file browser root\")\n"
+"\n"
+"    OS file browser root\n"
+"\n"
+"![OS selectable folder](fs-folder.png \"OS selectable folder\")\n"
+"\n"
+"    OS file browser selectable folder with \"Use this folder\" button\n"
+"\n"
+"![OS access permission dialog](fs-permission.png \"OS access permission\")\n"
+"\n"
+"    OS file browser ask to grant ScummVM directory access permission\n"
+"\n"
+"4. Then, a new folder \"ScummVMgames\" will appear on the \"root\" folder of the ScummVM browser.\n"
+"\n"
+"![SAF folder added](browser-folder-in-list.png \"SAF folder added\")\n"
+"\n"
+"    File browser with added SAF folder in root\n"
+"\n"
+"5. Browse through this folder to your game data.\n"
+"\n"
+"Steps 2 and 3 need to be done only once for all of your games.\n"
+"\n"
+"\n"
+"#### Removing SAF path authorizations\n"
+"\n"
+"In case you would like to revoke any of the granted SAF authorizations, there is an option for this in the \"Global Options > Backend\" tab as shown on the screenshot below:\n"
+"\n"
+"![\"Remove folder authorizations...\" button](gui-remove-permissions.png \"'Remove folder authorizations...' button\")\n"
+"\n"
+"    GUI tab with \"Remove folder authorizations...\" button\n"
+"\n"
+"![List of authorizations to revoked](gui-remove-list.png \"List of authorizations to revoke\")\n"
+"\n"
+"    GUI dialog with list of authorizations to revoke\n"
+"\n"
+"In case you revoke authorization to a path, still used for specific games/titles, please follow the procedure of fixing them outlined in the previous subheading.\n"
+	);
+
+	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText3);
+
 	tab->addTab(_("Paths"), "GlobalOptions_Graphics", false);
 
 	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
