@@ -240,7 +240,7 @@ int render_raw_html_tag(Common::SDDataBuffer *ob, const Common::SDDataBuffer *ta
 	if (!tag)
 		return 0;
 
-	warning("STUB: render_raw_html_tag(%s)", tag->data);
+	warning("STUB: render_raw_html_tag(%s)", PR(tag));
 	return 1;
 }
 
