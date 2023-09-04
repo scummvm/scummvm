@@ -789,6 +789,19 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					_textLines[curLine].pictitle = Common::U32String(s, len);
 					s += len;
 
+					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'", percent,
+						_textLines[curLine].picfname.c_str(), _textLines[curLine].picalt.c_str(),
+						_textLines[curLine].pictitle.c_str());
+				} else if (*s == 't') { // \016tXXXX -- switch to the requested font id
+					s++;
+
+					uint16 fontId;
+
+					s = readHex(&fontId, s, 4);
+
+					current_format.fontId = fontId;
+
+					D(9, "** splitString[t]: fontId: %d", fontId);
 				} else {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 
