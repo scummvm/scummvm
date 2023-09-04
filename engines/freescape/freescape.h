@@ -68,15 +68,15 @@ enum {
 	kFreescapeDebugMedia = 1 << 4,
 };
 
-struct entrancesTableEntry {
-	int id;
-	int position[3];
-};
-
 struct soundFx {
 	int size;
 	int sampleRate;
 	byte *data;
+};
+
+struct CGAPaletteEntry {
+	int areaId;
+	byte *palette;
 };
 
 class SizedPCSpeaker : public Audio::PCSpeaker {
@@ -176,6 +176,8 @@ public:
 	Graphics::ManagedSurface *loadAndCenterScrImage(Common::SeekableReadStream *stream);
 	void loadPalettes(Common::SeekableReadStream *file, int offset);
 	void swapPalette(uint16 areaID);
+	virtual byte *findCGAPalette(uint16 levelID);
+	const CGAPaletteEntry *_rawCGAPaletteByArea;
 	Common::HashMap<uint16, byte *> _paletteByArea;
 	void loadColorPalette();
 

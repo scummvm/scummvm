@@ -671,6 +671,8 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 }
 
 void DarkEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition) {
+	if (_indicators.size() == 0)
+		return;
 	if (_hasFallen)
 		surface->copyRectToSurface(*_indicators[0], xPosition, yPosition, Common::Rect(_indicators[0]->w, _indicators[0]->h));
 	else if (_flyMode)

@@ -29,12 +29,63 @@ namespace Freescape {
 
 extern byte kEGADefaultPalette[16][3];
 
+byte kDarkCGAPalettePinkBlue[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0xaa},
+	{0xaa, 0xaa, 0xaa},
+};
+
+byte kDarkCGAPaletteRedGreen[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0x55, 0x00},
+};
+
+static const CGAPaletteEntry rawCGAPaletteByArea[] {
+	{1, (byte *)kDarkCGAPaletteRedGreen},
+	{2, (byte *)kDarkCGAPalettePinkBlue},
+	{3, (byte *)kDarkCGAPaletteRedGreen},
+	{4, (byte *)kDarkCGAPalettePinkBlue},
+	{5, (byte *)kDarkCGAPaletteRedGreen},
+	{6, (byte *)kDarkCGAPalettePinkBlue},
+	{7, (byte *)kDarkCGAPaletteRedGreen},
+	{8, (byte *)kDarkCGAPaletteRedGreen}, // Verified
+	{9, (byte *)kDarkCGAPaletteRedGreen},
+	{10, (byte *)kDarkCGAPalettePinkBlue},
+	{11, (byte *)kDarkCGAPaletteRedGreen},
+	{12, (byte *)kDarkCGAPalettePinkBlue},
+	{13, (byte *)kDarkCGAPaletteRedGreen},
+	{14, (byte *)kDarkCGAPalettePinkBlue},
+	{15, (byte *)kDarkCGAPaletteRedGreen}, // Verified
+	{16, (byte *)kDarkCGAPalettePinkBlue},
+	{17, (byte *)kDarkCGAPalettePinkBlue},
+	{18, (byte *)kDarkCGAPaletteRedGreen}, // Verified
+	{19, (byte *)kDarkCGAPaletteRedGreen},
+	{20, (byte *)kDarkCGAPalettePinkBlue},
+	{21, (byte *)kDarkCGAPaletteRedGreen},
+	{22, (byte *)kDarkCGAPalettePinkBlue},
+	{23, (byte *)kDarkCGAPaletteRedGreen},
+	{25, (byte *)kDarkCGAPalettePinkBlue},
+	{27, (byte *)kDarkCGAPaletteRedGreen},
+	{28, (byte *)kDarkCGAPalettePinkBlue},
+
+	{31, (byte *)kDarkCGAPaletteRedGreen},
+	{32, (byte *)kDarkCGAPalettePinkBlue},
+	{127, (byte *)kDarkCGAPaletteRedGreen},
+	{0, 0}   // This marks the end
+};
+
 void DarkEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
+		_viewArea = Common::Rect(40, 24, 279, 124);
+	else if (_renderMode == Common::kRenderCGA)
 		_viewArea = Common::Rect(40, 24, 279, 124);
 	else
 		error("Invalid or unknown render mode");
 
+	_rawCGAPaletteByArea = (const CGAPaletteEntry *)&rawCGAPaletteByArea;
 	_maxEnergy = 79;
 	_maxShield = 79;
 }
@@ -108,26 +159,46 @@ void DarkEngine::loadAssetsDOSFullGame() {
 			addECDs(it._value);
 			addSkanner(it._value);
 		}
+
+		_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
+		_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
+		_indicators.push_back(loadBundledImage("dark_walk_indicator"));
+		_indicators.push_back(loadBundledImage("dark_jet_indicator"));
+
+		for (auto &it : _indicators)
+			it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+
 	} else if (_renderMode == Common::kRenderCGA) {
+		file.open("SCN1C.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
+		}
+		file.close();
 		file.open("DSIDEC.EXE");
 
 		if (!file.isOpen())
 			error("Failed to open DSIDEC.EXE");
-		load8bitBinary(&file, 0x7bb0, 4); // TODO
+
+		loadFonts(&file, 0x8496);
+		loadMessagesFixedSize(&file, 0x2d65, 16, 27);
+		loadGlobalObjects(&file, 0x2554, 23);
+		load8bitBinary(&file, 0x8600, 16);
+		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
+
+		for (auto &it : _areaMap) {
+			addWalls(it._value);
+			addECDs(it._value);
+			addSkanner(it._value);
+		}
+		swapPalette(1);
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
-
-	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
-	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
-	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
-	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
-
-	for (auto &it : _indicators)
-		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
 }
 
 void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
-	uint32 color = _renderMode == Common::kRenderCGA ? 1 : 14;
+	uint32 color = _renderMode == Common::kRenderCGA ? 3 : 14;
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
@@ -154,7 +225,6 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	// TODO: implement binary clock
 
 	Common::String message;
 	int deadline;
@@ -169,7 +239,7 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
 	int shield = _gameStateVars[k8bitVariableShield];
 
-	_gfx->readFromPalette(9, r, g, b);
+	_gfx->readFromPalette(_renderMode == Common::kRenderCGA ? 1 : 9, r, g, b);
 	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	if (shield >= 0) {
@@ -189,7 +259,7 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 		energyBar = Common::Rect(72, 148, 151 - (_maxEnergy - energy), 153);
 		surface->fillRect(energyBar, blue);
 	}
-	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
+	uint32 clockColor = _renderMode == Common::kRenderCGA ? front : _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	drawBinaryClock(surface, 300, 124, clockColor, back);
 	drawIndicator(surface, 160, 136);
 }
