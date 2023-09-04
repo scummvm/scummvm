@@ -51,7 +51,6 @@ private:
 private:
 	machine *_series1 = nullptr;
 	int _series2 = 0;
-	int _series3 = 0;
 	int _series4 = 0;
 	int _val1 = 0;
 

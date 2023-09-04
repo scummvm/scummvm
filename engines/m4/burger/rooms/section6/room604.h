@@ -29,13 +29,17 @@ namespace Burger {
 namespace Rooms {
 
 class Room604 : public Section6Room {
+private:
+	int _val1 = 0;
+
 public:
 	Room604() : Section6Room() {}
 	~Room604() override {}
 
-	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
