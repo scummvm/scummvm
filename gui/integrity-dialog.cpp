@@ -479,9 +479,9 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 
 		Common::String fileset = responseObject.getVal("fileset")->asString();
 
-		Common::String emailText = 
+		Common::String emailText =
 			Common::String::format("Fileset %s is a new or unknown fileset, the game details are:\n%s %s %s\n\nHere describe the details of your release:\n",
-								   fileset.c_str(), fileset.c_str(), g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str());
+								   fileset.c_str(), g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str());
 
 		Common::String emailLink = Common::percentEncodeString(Common::String::format("mailto:integrity@scummvm.org?subject=Subject: Unknown game variant fileset %s&body=%s!", fileset.c_str(), emailText.c_str()));
 
@@ -503,6 +503,11 @@ void IntegrityDialog::parseJSON(Common::JSONValue *response) {
 
 	} else if (responseError == 2) { // Fileset is empty
 		messageText.push_back(_("The game doesn't seem to have any files. Are you sure the path is correct?"));
+
+		g_result->messageText = messageText;
+		return;
+	} else if (responseError == 3) { // Game does not have any metadata
+		messageText.push_back(_("The game doesn't seem to have any metadata associated with it, so it is unable to be matched. Please fill in the correct metadata for the game."));
 
 		g_result->messageText = messageText;
 		return;
