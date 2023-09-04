@@ -603,7 +603,7 @@ void Room603::pre_parser() {
 			wilbur_speech("600w008z");
 		} else {
 			_sectionSeries1 = series_load("602wi20");
-			_series3 = series_load("602wi20s");
+			Section6::_series603 = series_load("602wi20s");
 			_G(wilbur_should) = 14;
 			player_hotspot_walk_override(502, 301, 9, gCHANGE_WILBUR_ANIMATION);
 		}

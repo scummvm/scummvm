@@ -63,6 +63,7 @@ public:
 	static int _state3;
 	static int _state4;
 	static int _savedX;
+	static int _series603;
 
 public:
 	Section6();
