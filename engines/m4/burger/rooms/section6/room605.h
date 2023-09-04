@@ -29,6 +29,9 @@ namespace Burger {
 namespace Rooms {
 
 class Room605 : public Section6Room {
+private:
+	int _val1 = 0;
+
 public:
 	Room605() : Section6Room() {}
 	~Room605() override {}
