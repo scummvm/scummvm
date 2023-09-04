@@ -799,7 +799,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 					s = readHex(&fontId, s, 4);
 
-					current_format.fontId = fontId;
+					current_format.fontId = fontId == 0xffff ? _defaultFormatting.fontId : fontId;
 
 					D(9, "** splitString[t]: fontId: %d", fontId);
 				} else {

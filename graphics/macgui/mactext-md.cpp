@@ -36,7 +36,8 @@ void render_blockcode(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text
 	if (!text)
 		return;
 
-	Common::String res = Common::String::format("\016t%04x" "%s" "\001\016]", kMacFontMonaco, Common::String((const char *)text->data , text->size).c_str());
+	Common::String res = Common::String::format("\n\016+0001" "\001\016t%04x" "%s" "\001\016tffff" "\n\016-0001",
+			kMacFontMonaco, Common::String((const char *)text->data , text->size).c_str());
 
 	sd_bufput(ob, res.c_str(), res.size());
 
