@@ -555,10 +555,13 @@ void GuiManager::runLoop() {
 				if (wdg->getType() != kEditTextWidget || activeDialog->getFocusWidget() != wdg) {
 					if (wdg->getFlags() & WIDGET_DYN_TOOLTIP)
 						wdg->handleTooltipUpdate(_lastMousePosition.x + activeDialog->_x - wdg->getAbsX(), _lastMousePosition.y + activeDialog->_y - wdg->getAbsY());
-					Tooltip *tooltip = new Tooltip();
-					tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
-					tooltip->runModal();
-					delete tooltip;
+
+					if (wdg->hasTooltip()) {
+						Tooltip *tooltip = new Tooltip();
+						tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
+						tooltip->runModal();
+						delete tooltip;
+					}
 				}
 			}
 		}
