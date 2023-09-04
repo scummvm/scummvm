@@ -42,6 +42,7 @@ private:
 
 protected:
 	static HotSpotRec _wilburHotspot;
+	Series _roomSeries1;
 
 public:
 	static void setWilburHotspot();
