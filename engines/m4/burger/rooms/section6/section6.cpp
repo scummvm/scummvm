@@ -38,6 +38,7 @@ int Section6::_state1;
 int Section6::_state2;
 int Section6::_state3;
 int Section6::_state4;
+int Section6::_savedX;
 
 Section6::Section6() : Rooms::Section() {
 	add(601, &_room601);
@@ -55,6 +56,7 @@ Section6::Section6() : Rooms::Section() {
 	_state2 = 3;
 	_state3 = 0;
 	_state4 = 0;
+	_savedX = 0;
 }
 
 void Section6::daemon() {

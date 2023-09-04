@@ -64,9 +64,11 @@ private:
 	int _series7 = 0;
 	machine *_series8 = nullptr;
 	machine *_series9 = nullptr;
+	machine *_series10 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
+	int _val4 = 0;
 	static long _test1;
 	static long _test2;
 

@@ -192,6 +192,23 @@ void Walker::reset_walker_sprites() {
 	kernel_timing_trigger(1, 1026);
 }
 
+void Walker::unloadSprites() {
+	if (_G(player).walker_in_this_scene) {
+		term_message("Unloading Wilbur walker...");
+		player_update_info();
+
+		// Send message for the unload
+		sendWSMessage(0x60000, 0, _G(my_walker), 0, nullptr, 1);
+		_G(player).walker_in_this_scene = false;
+
+		for (int i = 0; i < 7; ++i)
+			series_unload(i);
+
+		// TODO: This seems like it would leak memory
+		_G(my_walker) = nullptr;
+	}
+}
+
 void Walker::wilbur_speech(const char *name, int trigger, int room, byte flags, int vol, int channel) {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_name = name;
