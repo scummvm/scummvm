@@ -2199,7 +2199,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 	nsy = _textLines[nrow].y;
 
 	if (_textLines[nrow].chunks.size() > 0) {
-		int alignOffset = getAlignOffset(nrow);
+		int alignOffset = getAlignOffset(nrow) + _textLines[nrow].indent + _textLines[nrow].firstLineIndent;;
 
 		int width = 0, pwidth = 0;
 		int mcol = 0, pmcol = 0;
