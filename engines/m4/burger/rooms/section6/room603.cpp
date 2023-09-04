@@ -367,6 +367,7 @@ void Room603::daemon() {
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
+		break;
 
 	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {

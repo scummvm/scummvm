@@ -27,14 +27,50 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const seriesStreamBreak SERIES1[] = {
+	{  0, "605x001", 1, 255, -1, 0, nullptr, 0 },
+	{  1, "605_002", 3, 155, -1, 0, nullptr, 0 },
+	{ 31, "605_001", 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+static const seriesStreamBreak SERIES2[] = {
+	{  0, "605x001", 1, 255, -1, 0, nullptr, 0 },
+	{  1, "605_002", 3, 155, -1, 0, nullptr, 0 },
+	{ 31, "605_001", 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+
 void Room605::preload() {
 	_G(player).walker_in_this_scene = false;
 }
 
 void Room605::init() {
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room605::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		if (player_been_here(605)) {
+			digi_preload_stream_breaks(SERIES2);
+			_val1 = imath_ranged_rand(0, 4);
+			series_stream_with_breaks(SERIES2, "605radar", 6, 1, 6007);
+		} else {
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "605radar", 6, 1, 6007);
+		}
+		break;
+
+	case 6007:
+		_G(game).new_room = 608;
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
