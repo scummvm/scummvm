@@ -36,11 +36,12 @@ namespace Graphics {
 namespace FreeType {
 
 void *Alloc_Callback(FT_Memory memory, long size) {
-	return realloc(nullptr, static_cast<size_t>(size));
+	return malloc(static_cast<size_t>(size));
 }
 
 void Free_Callback(FT_Memory memory, void *block) {
-	realloc(block, 0);
+	free(block);
+	block = nullptr;
 }
 
 void *Realloc_Callback(FT_Memory memory, long cur_size, long new_size, void *block) {
