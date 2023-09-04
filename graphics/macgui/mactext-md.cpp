@@ -36,7 +36,11 @@ void render_blockcode(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text
 	if (!text)
 		return;
 
-	warning("STUB: render_blockcode(%s)", PR(text));
+	Common::String res = Common::String::format("\016t%04x" "%s" "\001\016]", kMacFontMonaco, Common::String((const char *)text->data , text->size).c_str());
+
+	sd_bufput(ob, res.c_str(), res.size());
+
+	//warning("STUB: render_blockcode(%s, %s)", PR(text), PR(lang));
 }
 
 void render_blockquote(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
@@ -240,7 +244,9 @@ int render_raw_html_tag(Common::SDDataBuffer *ob, const Common::SDDataBuffer *ta
 	if (!tag)
 		return 0;
 
-	warning("STUB: render_raw_html_tag(%s)", PR(tag));
+	sd_bufput(ob, tag->data, tag->size);
+
+	debug(1, "render_raw_html_tag(%s)", PR(tag));
 	return 1;
 }
 
