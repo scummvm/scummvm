@@ -544,6 +544,80 @@ void Room602::daemon() {
 		}
 		break;
 
+	case 2:
+		switch (_val3) {
+		case 48:
+			_val4 = 17;
+			kernel_trigger_dispatch_now(4);
+			break;
+
+		case 62:
+			_G(flags)[V256] = 1;
+			_G(flags)[V258] = 55;
+			_G(flags)[V257] = 0;
+			_val3 = 63;
+			digi_play("602_004", 2, 255, 6, 602);
+			kernel_timing_trigger(1, 2);
+			_val4 = 16;
+			kernel_trigger_dispatch_now(4);
+			break;
+
+		case 63:
+			if (_G(flags)[V258]) {
+				terminateMachineAndNull(_series3);
+				_series3 = series_show("602door", 0xf00, 0, 2, 6, 0, 100,
+					-_G(flags)[V257] / 21, _G(flags)[V257]);
+				_G(flags)[V257] -= _G(flags)[V258] >> 5;
+				_G(flags)[V256] = 1;
+
+				if (_G(flags)[V257] + 140 >= 20) {
+					_G(flags)[V258] += 3;
+				} else {
+					_G(flags)[V258] -= 32;
+					if (_G(flags)[V258] < 15)
+						_G(flags)[V258] = 0;
+				}
+			} else {
+				_G(flags)[V256] = 2;
+				_val3 = 48;
+				terminateMachineAndNull(_series3);
+				_series3 = series_show("602door", 0xf00, 0, -1, -1, 0, 100,
+					-_G(flags)[V257] / 21, _G(flags)[V257]);
+			}
+
+			_val4 = 16;
+			kernel_trigger_dispatch_now(4);
+			break;
+
+		case 64:
+			if (_G(flags)[V257] > 0) {
+				digi_play("602_007", 2);
+				_G(flags)[V256] = 0;
+				_G(flags)[V257] = 0;
+				_val3 = 48;
+
+				terminateMachineAndNull(_series3);
+				_series3 = series_show("602door", 0xf00, 1);
+
+			} else {
+				_G(flags)[V257] -= _G(flags)[V258] >> 5;
+				_G(flags)[V256] = 3;
+				_G(flags)[V258] -= 40;
+				terminateMachineAndNull(_series3);
+
+				_series3 = series_show("602door", 0xf00, 1, 2, 6, 0, 100,
+					-_G(flags)[V257] / 21, _G(flags)[V257]);
+			}
+
+			_val4 = 17;
+			kernel_trigger_dispatch_now(4);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 3:
 		_G(flags)[V258] = 40;
 		_G(flags)[V256] = 1;
@@ -555,6 +629,30 @@ void Room602::daemon() {
 			0x5ff, 0, -1, 0);
 		hotspot_set_active("DOOR", false);
 		hotspot_set_active("EXIT", true);
+		break;
+
+	case 4:
+		switch (_val4) {
+		case 16:
+			if (!_G(flags)[V265]) {
+				if (_G(game).room_id == 602) {
+					_series10 = series_play("602magnt", 0x600, 1, -1, 1);
+				} else {
+					_series10 = series_play("612magnt", 0x600, 1, -1, 1);
+				}
+			}
+
+			_G(flags)[V265] = 1;
+			break;
+
+		case 17:
+			if (_G(flags)[V265])
+				terminateMachineAndNull(_series10);
+			_G(flags)[V265] = 0;
+			break;
+		default:
+			break;
+		}
 		break;
 
 	case 5:
@@ -664,6 +762,7 @@ void Room602::daemon() {
 			break;
 
 		default:
+			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
 		break;
@@ -676,6 +775,35 @@ void Room602::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
 			series_play_with_breaks(PLAY3, "602wi03", 0xc00, 6003, 3);
+			break;
+
+		case 2:
+			ws_demand_location(283, 338, 7);
+			ws_hide_walker();
+			_G(wilbur_should) = 4;
+			series_play_with_breaks(PLAY2, "602wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 3:
+			_G(flags)[V264] = 0;
+			ws_demand_location(367, 280, 5);
+			ws_hide_walker();
+			_G(wilbur_should) = 4;
+			series_play_with_breaks(PLAY1, "602wi02", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 4:
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+
+			if (_G(visited_room)) {
+				_G(wilbur_should) = 10001;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			} else {
+				player_set_commands_allowed(false);
+				_G(wilbur_should) = 45;
+				ws_turn_to_face(10, gCHANGE_WILBUR_ANIMATION);
+			}
 			break;
 
 		case 6:
@@ -721,6 +849,57 @@ void Room602::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
 			series_play_with_breaks(PLAY8, "602wi40", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 11:
+			if (_G(flags)[V278] == 0 || _G(flags)[V277] != 6003) {
+				player_set_commands_allowed(false);
+				digi_stop(1);
+
+				if (_G(flags)[V243] == 6006) {
+					Walker::unloadSprites();
+
+				} else {
+					ws_demand_location(431, 343, 10);
+					ws_hide_walker();
+				}
+
+				static const char *NAMES[14] = {
+					"602_004", "602_005", "602_006", "602w015", "602w017a",
+					"602w017b", "602w017c", "602w017d", "602w017e", "602w017f",
+					"602w016a", "602w016b", "602w016c", "602w016d"
+				};
+				for (int i = 0; i < 14; ++i)
+					digi_preload(NAMES[i]);
+
+				_G(flags)[V262] = 0;
+				hotspot_set_active("DOOR", false);
+				hotspot_set_active("EXIT", true);
+
+				digi_preload_stream_breaks(SERIES1);
+				digi_preload_stream_breaks(SERIES2);
+				terminateMachineAndNull(_series2);
+
+				_sectionSeries2 = series_load("602wi7as");
+				_sectionSeries3 = series_load("602wi7bs");
+				_sectionSeries1 = series_load((_G(game).room_id == 612) ? "612wi07b" : "602wi07b");
+				_G(wilbur_should) = 12;
+
+				if (_G(flags)[V263]) {
+					kernel_trigger_dispatch_now(13);
+					kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+				} else {
+					// TODO: This seems like it's incorrect in the original
+					_series9 = series_play("602wi7as", 6, 0x700, -1);
+					_val3 = 62;
+					series_stream_with_breaks(SERIES1,
+						(_G(game).room_id == 602) ? "602wi07a" : "612wi07a",
+						6, 0x6ff, 13);
+				}
+			} else {
+				wilbur_speech("612w063");
+			}
 			break;
 
 		case 12:
@@ -789,12 +968,108 @@ void Room602::daemon() {
 			player_set_commands_allowed(true);
 			break;
 
+		case 18:
+			if (inv_player_has("KIBBLE")) {
+				wilbur_speech("602w010");
+			} else {
+				player_set_commands_allowed(false);
+				ws_hide_walker();
+				series_play_with_breaks(PLAY15, "602wi10", 0x500, 7, 3);
+			}
+			break;
+
 		case 20:
 			term_message("Slip on kibble!");
 			player_set_commands_allowed(false);
 			player_update_info();
 			_G(wilbur_should) = 21;
 			ws_walk(_G(player_info).x + 1, 304, 0, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 21:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			Section6::_savedX = _G(player_info).x - 343;
+
+			_G(wilbur_should) = 46;
+			_test1 = imath_ranged_rand(0, 5);
+			series_play_with_breaks((_G(game).room_id == 602) ? PLAY16 : PLAY17,
+				"602wi13", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, Section6::_savedX, 0);
+			break;
+
+		case 22:
+			ws_demand_location(423, 303, 9);
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+
+			_G(flags)[V255] = 1;
+			_G(kernel).call_daemon_every_loop = true;
+			_G(wilbur_should) = 10001;
+
+			series_play_with_breaks(PLAY18, "602wi20", 0x700, 9, 3);
+			break;
+
+		case 23:
+			_G(flags)[V277] = 6003;
+
+			if (_G(flags)[V278] == 1) {
+				ws_demand_location(339, 348);
+			} else {
+				ws_demand_location(225, 350);
+			}
+
+			ws_demand_facing(2);
+			ws_hide_walker();
+			terminateMachineAndNull(_series8);
+
+			if (_G(flags)[V278]) {
+				_val1 = 59;
+				series_play_with_breaks(PLAY10, "612wi17", 0x700, 1, 3, 6, 100, 114, -2);
+			} else {
+				_G(wilbur_should) = 24;
+				series_play_with_breaks(PLAY9, "612wi17", 0x700, gCHANGE_WILBUR_ANIMATION, 3);
+			}
+			break;
+
+		case 24:
+			_val1 = 57;
+			kernel_trigger_dispatch_now(1);
+
+			if (_G(flags)[V280] == 1) {
+				_G(wilbur_should) = 10001;
+			} else {
+				_G(flags)[V280] = 1;
+				_G(wilbur_should) = 34;
+			}
+
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 25:
+			player_set_commands_allowed(false);
+			++_G(flags)[V279];
+
+			ws_demand_location(200, 321, 3);
+			ws_hide_walker();
+			_G(wilbur_should) = 44;
+
+			series_play_with_breaks(PLAY19, "612wi14", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 26:
+			player_set_commands_allowed(false);
+			ws_demand_facing(3);
+			ws_hide_walker();
+
+			if (_G(flags)[V278]) {
+				_G(wilbur_should) = 10001;
+				_test2 = imath_ranged_rand(0, 1);
+				series_play_with_breaks(PLAY20, "612wi15", 0x600, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 114, 0);
+			} else {
+				_G(wilbur_should) = 40;
+				_test2 = imath_ranged_rand(0, 1);
+				series_play_with_breaks(PLAY20, "612wi15", 0x600, gCHANGE_WILBUR_ANIMATION, 3, 6);
+			}
 			break;
 
 		case 27:
@@ -840,12 +1115,118 @@ void Room602::daemon() {
 			wilbur_speech("602w043");
 			break;
 
+		case 31:
+			player_set_commands_allowed(false);
+			ws_unhide_walker();
+			_G(wilbur_should) = 10002;
+			wilbur_speech("602w044");
+			break;
+
+		case 32:
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			_G(wilbur_should) = 10002;
+			wilbur_speech("602w045");
+			break;
+
+		case 33:
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			_G(wilbur_should) = 10002;
+			wilbur_speech("602w046");
+			break;
+
+		case 34:
+			_G(wilbur_should) = 10001;
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			wilbur_speech("612w065");
+			break;
+
+		case 35:
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			wilbur_speech("612w065");
+			break;
+
+		case 37:
+			_G(wilbur_should) = 23;
+			player_set_commands_allowed(true);
+			wilbur_speech("612w064");
+			break;
+
+		case 38:
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+
+			if (!_G(flags)[V261]) {
+				_G(flags)[V261] = 1;
+				wilbur_speech("602w031", gCHANGE_WILBUR_ANIMATION);
+			}
+			break;
+
+		case 39:
+			_G(wilbur_should) = 27;
+			player_set_commands_allowed(false);
+			wilbur_speech("612w056", gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 40:
+			_G(wilbur_should) = 10001;
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			wilbur_speech("612w055");
+			break;
+
+		case 41:
+			_G(wilbur_should) = 10001;
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			wilbur_speech("612w057");
+			break;
+
+		case 42:
+			player_set_commands_allowed(false);
+			ws_unhide_walker();
+			wilbur_speech("602w033");
+			break;
+
+		case 43:
+			wilbur_speech("600w003");
+			_G(wilbur_should) = 10001;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
 		case 44:
 			_G(wilbur_should) = 10001;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 
 			if (_G(flags)[V279] > 4)
 				wilbur_speech("612w066");
+			break;
+
+		case 45:
+			_G(wilbur_should) = 10001;
+			wilbur_speech("602w003");
+			break;
+
+		case 46:
+			_G(wilbur_should) = 10002;
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			wilbur_speech("600w012");
+			break;
+
+		case 47:
+			if (!_G(flags)[V256]) {
+				player_set_commands_allowed(false);
+				ws_demand_location(191, 277, 3);
+				ws_hide_walker();
+				_G(wilbur_should) = 38;
+
+				series_play_with_breaks(_G(flags)[V261] ? PLAY14 : PLAY13,
+					"602wi09", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			}
 			break;
 
 		case 6001:
@@ -862,6 +1243,7 @@ void Room602::daemon() {
 			break;
 
 		default:
+			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
 
