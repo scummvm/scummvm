@@ -415,7 +415,7 @@ void Room602::init() {
 			_G(flags)[V243] = 6007;
 			_G(flags)[V244] = 6004;
 			_G(flags)[V245] = 10031;
-			_G(flags)[ROOM101_FLAG8] = 1;
+			_G(flags)[V248] = 1;
 			_val1 = 53;
 			kernel_trigger_dispatch_now(1);
 		}
