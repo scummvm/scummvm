@@ -765,7 +765,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 					s += len;
 
-					firstLineIndent = -current_format.getFont()->getStringWidth(bullet) * 2;
+					firstLineIndent = -current_format.getFont()->getStringWidth(bullet);
 
 					D(9, "** splitString*: %02x '%s' (%d)", len, bullet.encode().c_str(), firstLineIndent);
 				} else if (*s == 'i') { // \016iXXNNnnnnAAaaaaTTttt -- image, XX% width,
