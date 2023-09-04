@@ -688,7 +688,7 @@ bool InGameScene::load(const Common::FSNode &sceneNode) {
 		return false;
 
 	close();
-	_loadedPath = sceneNode.getPath();
+	_loadedPath = sceneNode.getParent().getPath();
 	Common::File scenefile;
 	if (!scenefile.open(sceneNode))
 		return false;
@@ -1026,7 +1026,7 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 		if (obj._name.empty())
 			continue;
 
-		Common::Path mpath = _loadedPath.getParent().join(name).join(obj._name + ".png");
+		Common::Path mpath = _loadedPath.join(name).join(obj._name + ".png");
 		if (img.load(core->findFile(mpath))) {
 			Te3DTexture *tex = Te3DTexture::makeInstance();
 			tex->load(img);
