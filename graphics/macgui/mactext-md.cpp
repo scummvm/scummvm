@@ -98,10 +98,6 @@ void render_listitem(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text,
 	MDState *mdstate = (MDState *)opaque;
 
 	int listNum = mdstate->listNum.back();
-	int depth = mdstate->listNum.size();
-
-	for (int i = 0; i < depth; i++)
-		sd_bufput(ob, "  ", 2);
 
 	Common::String prefix;
 	if (flags & MKD_LIST_ORDERED) {
@@ -112,7 +108,7 @@ void render_listitem(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text,
 		prefix = "* ";
 	}
 
-	Common::String res = Common::String::format("\016*%02x%s", prefix.size(), prefix.c_str());
+	Common::String res = Common::String::format("\001\016*%02x%s", prefix.size(), prefix.c_str());
 
 	sd_bufput(ob, res.c_str(), res.size());
 
