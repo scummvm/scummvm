@@ -167,7 +167,8 @@ HelpDialog::HelpDialog()
 "In case you revoke authorization to a path, still used for specific games/titles, please follow the procedure of fixing them outlined in the previous subheading.\n"
 	);
 
-	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText3);
+	RichTextWidget *saftext = new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText3);
+	saftext->setImageArchive("android-help.zip");
 
 	tab->addTab(_("Paths"), "GlobalOptions_Graphics", false);
 
