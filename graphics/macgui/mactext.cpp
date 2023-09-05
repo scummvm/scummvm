@@ -1066,7 +1066,8 @@ void MacText::render(int from, int to, int shadow) {
 			// Pre-fill images with white to accommodate transparency
 			surface->fillRect(bbox, surface->format.RGBToColor(0xff, 0x0, 0x0));
 
-			surface->blitFrom(image, Common::Rect(0, 0, image->w, image->h), bbox);
+			if (image)
+				surface->blitFrom(image, Common::Rect(0, 0, image->w, image->h), bbox);
 
 			continue;
 		}
@@ -1154,13 +1155,16 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 	if (!_textLines[line].picfname.empty()) {
 		const Surface *image = getImageSurface(_textLines[line].picfname);
 
-		if (!image)
-			return 1; // No image
-
-		float ratio = _maxWidth * _textLines[line].picpercent / 100.0 / (float)image->w;
-		_textLines[line].width = _maxWidth;
-		_textLines[line].height = image->h * ratio;
-		_textLines[line].charwidth = image->w * ratio;
+		if (image) {
+			float ratio = _maxWidth * _textLines[line].picpercent / 100.0 / (float)image->w;
+			_textLines[line].width = _maxWidth;
+			_textLines[line].height = image->h * ratio;
+			_textLines[line].charwidth = image->w * ratio;
+		} else {
+			_textLines[line].width = _maxWidth;
+			_textLines[line].height = 1;
+			_textLines[line].charwidth = 1;
+		}
 
 		return _textLines[line].width;
 	}
