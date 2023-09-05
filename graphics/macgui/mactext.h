@@ -31,6 +31,10 @@
 #include "graphics/macgui/macwidget.h"
 #include "graphics/macgui/macwindow.h"
 
+namespace Common {
+class Archive;
+}
+
 namespace Image {
 class PNGDecoder;
 }
@@ -232,6 +236,8 @@ public:
 	int getMouseLine(int x, int y);
 	Common::U32String getMouseLink(int x, int y);
 
+	void setImageArchive(Common::String name);
+
 private:
 	MacFontRun getTextChunks(int start, int end);
 	void setTextChunks(int start, int end, int param, void (*callback)(MacFontRun &, int));
@@ -389,6 +395,7 @@ private:
 	MacMenu *_menu;
 
 	Common::HashMap<Common::String, Image::PNGDecoder *> _imageCache;
+	Common::Archive *_imageArchive = nullptr;
 };
 
 } // End of namespace Graphics
