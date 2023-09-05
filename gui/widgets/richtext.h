@@ -48,6 +48,8 @@ protected:
 	uint32 _reflowCmd;
 	int _textWidth;
 
+	Common::String _imageArchive;
+
 public:
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
@@ -64,6 +66,8 @@ public:
 	void markAsDirty() override;
 
 	bool containsWidget(Widget *) const override;
+
+	void setImageArchive(Common::String fname) { _imageArchive = fname; }
 
 protected:
 	void init();
