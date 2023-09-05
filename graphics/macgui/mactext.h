@@ -31,6 +31,10 @@
 #include "graphics/macgui/macwidget.h"
 #include "graphics/macgui/macwindow.h"
 
+namespace Image {
+class PNGDecoder;
+}
+
 namespace Graphics {
 
 class MacMenu;
@@ -116,7 +120,9 @@ struct MacTextLine {
 	bool paragraphEnd = false;
 	int indent = 0; // in units
 	int firstLineIndent = 0; // in pixels
-	Common::U32String picfname, picalt, pictitle;
+	Common::String picfname;
+	Common::U32String picalt, pictitle;
+	uint16 picpercent = 50;
 
 	Common::Array<MacFontRun> chunks;
 
@@ -176,7 +182,7 @@ public:
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 
-	Graphics::ManagedSurface *getSurface() { return _surface; }
+	ManagedSurface *getSurface() { return _surface; }
 	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
@@ -292,6 +298,9 @@ public:
 	void setMarkdownText(const Common::U32String &str);
 
 private:
+	const Surface *getImageSurface(Common::String &fname);
+
+private:
 	void init();
 	bool isCutAllowed();
 
@@ -378,6 +387,8 @@ private:
 	SelectedText _selectedText;
 
 	MacMenu *_menu;
+
+	Common::HashMap<Common::String, Image::PNGDecoder *> _imageCache;
 };
 
 } // End of namespace Graphics
