@@ -689,7 +689,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				s++;
 
 				// First two digits is slant, third digit is Header number
-				if (*s == '+') { // \016+XXYZ  -- opening textSlant, H<Y>, indent<+Z>
+				switch (*s) {
+				case '+': { // \016+XXYZ  -- opening textSlant, H<Y>, indent<+Z>
 					uint16 textSlant, headSize, indent;
 					s++;
 
@@ -711,7 +712,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					D(9, "** splitString+: fontId: %d, textSlant: %d, fontSize: %d, indent: %d",
 							current_format.fontId, current_format.textSlant, current_format.fontSize,
 							indent);
-				} else if (*s == '-') { // \016-XXYZ  -- closing textSlant, H<Y>, indent<+Z>
+
+					break;
+					}
+				case '-': { // \016-XXYZ  -- closing textSlant, H<Y>, indent<+Z>
 					uint16 textSlant, headSize, indent;
 					s++;
 
@@ -731,7 +735,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					D(9, "** splitString-: fontId: %d, textSlant: %d, fontSize: %d, indent: %d",
 							current_format.fontId, current_format.textSlant, current_format.fontSize,
 							indent);
-				} else if (*s == '[') { // \016[RRGGBB  -- setting color
+					break;
+					}
+
+				case '[': { // \016[RRGGBB  -- setting color
 					uint16 palinfo1, palinfo2, palinfo3;
 					s++;
 
@@ -745,7 +752,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					current_format.fgcolor  = _wm->findBestColor(palinfo1 & 0xff, palinfo2 & 0xff, palinfo3 & 0xff);
 
 					D(9, "** splitString[: %08x", fgcolor);
-				} else if (*s == ']') { // \016]  -- setting default color
+					break;
+					}
+
+				case ']': { // \016]  -- setting default color
 					s++;
 
 					current_format.palinfo1 = _defaultFormatting.palinfo1;
@@ -754,7 +764,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					current_format.fgcolor = _defaultFormatting.fgcolor;
 
 					D(9, "** splitString]: %08x", current_format.fgcolor);
-				} else if (*s == '*') { // \016*XXsssssss  -- negative indent, XX size, sssss is the string
+					break;
+					}
+
+				case '*': { // \016*XXsssssss  -- negative indent, XX size, sssss is the string
 					s++;
 
 					uint16 len;
@@ -768,7 +781,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					firstLineIndent = -current_format.getFont()->getStringWidth(bullet);
 
 					D(9, "** splitString*: %02x '%s' (%d)", len, bullet.encode().c_str(), firstLineIndent);
-				} else if (*s == 'i') { // \016iXXNNnnnnAAaaaaTTttt -- image, XX% width,
+					break;
+					}
+
+				case 'i': { // \016iXXNNnnnnAAaaaaTTttt -- image, XX% width,
 										//          NN, nnnn -- filename len and text
 										//          AA, aaaa -- alt len and text
 										//          TT, tttt -- text (tooltip) len and text
@@ -792,7 +808,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'", percent,
 						_textLines[curLine].picfname.c_str(), _textLines[curLine].picalt.c_str(),
 						_textLines[curLine].pictitle.c_str());
-				} else if (*s == 't') { // \016tXXXX -- switch to the requested font id
+					break;
+					}
+
+				case 't': { // \016tXXXX -- switch to the requested font id
 					s++;
 
 					uint16 fontId;
@@ -802,7 +821,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					current_format.fontId = fontId == 0xffff ? _defaultFormatting.fontId : fontId;
 
 					D(9, "** splitString[t]: fontId: %d", fontId);
-				} else {
+					break;
+					}
+
+				default: {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 
 					s = readHex(&fontId, s, 4);
@@ -820,6 +842,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					// So far, we enforce single font here, though in the future, font size could be altered
 					if (!_macFontMode)
 						current_format.font = _defaultFormatting.font;
+					}
 				}
 			}
 
