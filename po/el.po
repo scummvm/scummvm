@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-03 20:26+0000\n"
+"POT-Creation-Date: 2023-09-04 19:36+0000\n"
 "PO-Revision-Date: 2023-09-03 05:59+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -66,7 +66,7 @@ msgstr "Μετάβαση πάνω"
 #: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1220
 #: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:595
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:741
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:747
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -220,7 +220,7 @@ msgid "Paste code from clipboard"
 msgstr "Επικόλληση κωδικού από το πρόχειρο"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:294
-#: engines/dialogs.cpp:98 engines/engine.cpp:909 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -313,7 +313,7 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:533 gui/launcher.cpp:537
 #: gui/massadd.cpp:90 gui/options.cpp:2335 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
-#: engines/engine.cpp:544 engines/engine.cpp:567
+#: engines/engine.cpp:550 engines/engine.cpp:573
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:69
@@ -1144,7 +1144,7 @@ msgstr "Αναζήτηση στη λίστα παιχνιδιών"
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
-#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:909
+#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:741
@@ -2233,7 +2233,7 @@ msgstr ""
 "\n"
 "Και άλλα..."
 
-#: gui/options.cpp:2847 engines/engine.cpp:596
+#: gui/options.cpp:2847 engines/engine.cpp:602
 msgid "Move"
 msgstr "Μετακίνηση"
 
@@ -2374,7 +2374,7 @@ msgstr "Εγγραφή ή Αναπαραγωγή Gameplay"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:590
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:596
 msgid "Delete"
 msgstr "Σβήσιμο"
 
@@ -3059,7 +3059,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Επισ~τ~ρ. σε Launcher"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:938 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3079,7 +3079,7 @@ msgstr "Επισ~τ~ρ. σε Launcher"
 msgid "Save game:"
 msgstr "Αποθήκευση παιχνιδιού:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:938 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3162,11 +3162,11 @@ msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης πλή
 msgid "Could not apply filtering setting."
 msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης φιλτραρίσματος."
 
-#: engines/engine.cpp:477
+#: engines/engine.cpp:483
 msgid "Error"
 msgstr "Σφάλμα"
 
-#: engines/engine.cpp:540
+#: engines/engine.cpp:546
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -3180,7 +3180,7 @@ msgstr ""
 "τα αρχεία δεδομένων στο σκληρό σας δίσκο.\n"
 "Δείτε την τεκμηρίωση του ScummVM (CD audio) για λεπτομέρειες."
 
-#: engines/engine.cpp:563
+#: engines/engine.cpp:569
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -3194,11 +3194,11 @@ msgstr ""
 "να ακούσετε τη μουσική του παιχνιδιού.\n"
 "Δείτε την τεκμηρίωση του ScummVM (CD audio) για λεπτομέρειες."
 
-#: engines/engine.cpp:591
+#: engines/engine.cpp:597
 msgid "Skip autosave"
 msgstr "Αναβολή αυτόματης αποθήκευσης"
 
-#: engines/engine.cpp:593
+#: engines/engine.cpp:599
 #, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
@@ -3214,21 +3214,21 @@ msgstr ""
 "Εναλλακτικά, μπορείτε να αναβάλλετε την αυτόματη αποθήκευση (θα ερωτηθείτε "
 "ξανά σε 5 λεπτά)."
 
-#: engines/engine.cpp:603
+#: engines/engine.cpp:609
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ΣΦΑΛΜΑ: Αδυναμία αντιγραφής του αποθηκευμένου παιχνιδιού σε νέα θυρίδα"
 
-#: engines/engine.cpp:630 engines/savestate.cpp:98
+#: engines/engine.cpp:636 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:297 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Αυτόματη αποθήκευση"
 
-#: engines/engine.cpp:638
+#: engines/engine.cpp:644
 msgid "Error occurred making autosave"
 msgstr "Σφάλμα κατά την αυτόματη αποθήκευση"
 
-#: engines/engine.cpp:713
+#: engines/engine.cpp:719
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -3238,15 +3238,15 @@ msgstr ""
 "το αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με "
 "το πώς να λάβετε περαιτέρω βοήθεια."
 
-#: engines/engine.cpp:737
+#: engines/engine.cpp:743
 msgid "WARNING: "
 msgstr "ΠΡΟΣΟΧΗ: "
 
-#: engines/engine.cpp:737
+#: engines/engine.cpp:743
 msgid " Shall we still run the game?"
 msgstr " Θέλετε ακόμα να ξεκινήσετε το παιχνίδι;"
 
-#: engines/engine.cpp:738
+#: engines/engine.cpp:744
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -3257,15 +3257,15 @@ msgstr ""
 "παιχνίδι που κάνετε μπορεί να μη λειτουργεί σε μελλοντικές εκδόσεις του "
 "ScummVM."
 
-#: engines/engine.cpp:741 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:747 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Εκκίνηση παρά ταύτα"
 
-#: engines/engine.cpp:759
+#: engines/engine.cpp:765
 msgid "This game is not supported."
 msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
 
-#: engines/engine.cpp:759
+#: engines/engine.cpp:765
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3273,11 +3273,11 @@ msgstr ""
 "Αυτό το παιχνίδι δεν υποστηρίζεται για τον εξής λόγο:\n"
 "\n"
 
-#: engines/engine.cpp:905
+#: engines/engine.cpp:911
 msgid "Loading game is currently unavailable"
 msgstr "Η φόρτωση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 
-#: engines/engine.cpp:934
+#: engines/engine.cpp:940
 msgid "Saving game is currently unavailable"
 msgstr "Η αποθήκευση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-03 20:26+0000\n"
+"POT-Creation-Date: 2023-09-04 19:36+0000\n"
 "PO-Revision-Date: 2023-08-09 05:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -67,7 +67,7 @@ msgstr "Amunt"
 #: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1220
 #: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:595
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:741
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:747
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -217,7 +217,7 @@ msgid "Paste code from clipboard"
 msgstr "Enganxa el codi del porta-retalls"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:294
-#: engines/dialogs.cpp:98 engines/engine.cpp:909 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -309,7 +309,7 @@ msgstr "El contingut del codi JSON està mal format."
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:533 gui/launcher.cpp:537
 #: gui/massadd.cpp:90 gui/options.cpp:2335 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
-#: engines/engine.cpp:544 engines/engine.cpp:567
+#: engines/engine.cpp:550 engines/engine.cpp:573
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:69
@@ -1134,7 +1134,7 @@ msgstr "Cerca a la llista de jocs"
 msgid "Search:"
 msgstr "Cerca:"
 
-#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:909
+#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:741
@@ -2201,7 +2201,7 @@ msgstr ""
 "\n"
 "I més..."
 
-#: gui/options.cpp:2847 engines/engine.cpp:596
+#: gui/options.cpp:2847 engines/engine.cpp:602
 msgid "Move"
 msgstr "Mou"
 
@@ -2337,7 +2337,7 @@ msgstr "Enregistrar o reproduïr vídeos de partida"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:590
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:596
 msgid "Delete"
 msgstr "Suprimeix"
 
@@ -2972,7 +2972,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~R~etorna al Llançador"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:938 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2992,7 +2992,7 @@ msgstr "~R~etorna al Llançador"
 msgid "Save game:"
 msgstr "Desa la partida:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:938 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3072,11 +3072,11 @@ msgstr "No s'ha pogut aplicar l'ajust de pantalla completa."
 msgid "Could not apply filtering setting."
 msgstr "No s'ha pogut aplicar la configuració de filtratge."
 
-#: engines/engine.cpp:477
+#: engines/engine.cpp:483
 msgid "Error"
 msgstr "Error"
 
-#: engines/engine.cpp:540
+#: engines/engine.cpp:546
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -3090,7 +3090,7 @@ msgstr ""
 "els fitxers de dades al vostre disc dur.\n"
 "Consulteu la documentació (àudio CD) per a més detalls."
 
-#: engines/engine.cpp:563
+#: engines/engine.cpp:569
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -3104,11 +3104,11 @@ msgstr ""
 "poder escoltar la música del joc.\n"
 "Consulteu la documentació (àudio CD) per a més detalls."
 
-#: engines/engine.cpp:591
+#: engines/engine.cpp:597
 msgid "Skip autosave"
 msgstr "Omet el desament automàtic"
 
-#: engines/engine.cpp:593
+#: engines/engine.cpp:599
 #, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
@@ -3124,21 +3124,21 @@ msgstr ""
 "Alternativament, podeu ometre el desament automàtic (es tornarà a preguntar "
 "en 5 minuts)."
 
-#: engines/engine.cpp:603
+#: engines/engine.cpp:609
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ERROR: No s'ha pogut copiar la partida desada a una ranura nova"
 
-#: engines/engine.cpp:630 engines/savestate.cpp:98
+#: engines/engine.cpp:636 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:297 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Desament automàtic"
 
-#: engines/engine.cpp:638
+#: engines/engine.cpp:644
 msgid "Error occurred making autosave"
 msgstr "S'ha produït un error en desar automàticament"
 
-#: engines/engine.cpp:713
+#: engines/engine.cpp:719
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -3148,15 +3148,15 @@ msgstr ""
 "per a la informació bàsica i les instruccions sobre com obtenir més "
 "assistència."
 
-#: engines/engine.cpp:737
+#: engines/engine.cpp:743
 msgid "WARNING: "
 msgstr "ADVERTÈNCIA: "
 
-#: engines/engine.cpp:737
+#: engines/engine.cpp:743
 msgid " Shall we still run the game?"
 msgstr " Encara s'ha d'executar el joc?"
 
-#: engines/engine.cpp:738
+#: engines/engine.cpp:744
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -3166,15 +3166,15 @@ msgstr ""
 "pel ScummVM. Com a tal, probablement serà inestable, i pot ser que les "
 "partides que deseu no funcionin en versions futures de ScummVM."
 
-#: engines/engine.cpp:741 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:747 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Inicia de totes maneres"
 
-#: engines/engine.cpp:759
+#: engines/engine.cpp:765
 msgid "This game is not supported."
 msgstr "Aquest joc no és compatible."
 
-#: engines/engine.cpp:759
+#: engines/engine.cpp:765
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3182,11 +3182,11 @@ msgstr ""
 "Aquest joc no és compatible per la següent raó:\n"
 "\n"
 
-#: engines/engine.cpp:905
+#: engines/engine.cpp:911
 msgid "Loading game is currently unavailable"
 msgstr "Actualment no es pot carregar la partida"
 
-#: engines/engine.cpp:934
+#: engines/engine.cpp:940
 msgid "Saving game is currently unavailable"
 msgstr "Actualment no es pot desar la partida"
 
