@@ -143,6 +143,10 @@ void RichTextWidget::createWidget() {
 	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
 
 	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
+
+	if (!_imageArchive.empty())
+		_txtWnd->setImageArchive(_imageArchive);
+
 	_txtWnd->setMarkdownText(_text);
 
 	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
