@@ -981,6 +981,10 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 			Graphics::MacCursor macCursor;
 			if (macCursor.readFromStream(*curs)) {
 				_cursor.animate = 0;
+				_cursor.width = macCursor.getWidth();
+				_cursor.height = macCursor.getHeight();
+				_cursor.hotspotX = macCursor.getHotspotX();
+				_cursor.hotspotY = macCursor.getHotspotY();
 				CursorMan.replaceCursor(&macCursor);
 				delete curs;
 				return;

@@ -1441,15 +1441,22 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// Post-load fix for broken SAMNMAX savegames which contain invalid
 	// cursor values; the value we're setting here should not count since
 	// it's being replaced by the post-load script, as long as it's not zero.
-	// The same also happens for the Mac version of INDY3: the cursor was being
-	// handled directly with a CursorMan.replaceCursor() without specifying any
-	// values for the _cursor object (#14498). Let's fix that with the proper values.
-	if ((_game.version == 6 || (_game.id == GID_INDY3 && _macScreen)) &&
-		(_cursor.width == 0 || _cursor.height == 0)) {
-		_cursor.width = 15;
-		_cursor.height = 15;
-		_cursor.hotspotX = 7;
-		_cursor.hotspotY = 7;
+	// The same also happens for the Mac versions of INDY3 and Loom: the cursor
+	// was being handled directly with a CursorMan.replaceCursor() without
+	// specifying any values for the _cursor object (#14498). Let's fix that
+	// with the proper values.
+	if (_cursor.width == 0 || _cursor.height == 0) {
+		if (_game.version == 6 || (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh)) {
+			_cursor.width = 15;
+			_cursor.height = 15;
+			_cursor.hotspotX = 7;
+			_cursor.hotspotY = 7;
+		} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh) {
+			_cursor.width = 16;
+			_cursor.height = 16;
+			_cursor.hotspotX = 3;
+			_cursor.hotspotY = 2;
+		}
 	}
 
 	s.syncAsByte(_cursor.animate, VER(20));
