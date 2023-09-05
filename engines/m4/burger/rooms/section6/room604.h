@@ -45,6 +45,8 @@ private:
 	static long _state1;
 
 private:
+	machine *_series1 = nullptr;
+	int32 _series2 = 0;
 	int _val1 = 0;
 public:
 	Room604();
