@@ -257,6 +257,408 @@ void Room604::init() {
 }
 
 void Room604::daemon() {
+	switch (_G(kernel).trigger) {
+	case 0:
+		digi_preload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES1, "604intro", 6, 1, 1);
+		break;
+
+	case 1:
+		digi_unload_stream_breaks(SERIES1);
+		_roomSeries1.show("604wi04", 1);
+		_val1 = 25;
+		kernel_trigger_dispatch_now(6012);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 2:
+		term_message("Kibble is now being removed.");
+		inv_move_object("KIBBLE", NOWHERE);
+		break;
+
+	case 3:
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(4);
+		break;
+
+	case 4:
+		series_show("602spill", 0x900);
+		_G(kernel).call_daemon_every_loop = true;
+		kernel_trigger_dispatch_now(2);
+		break;
+
+	case 6:
+		_G(game).new_room = 603;
+		break;
+
+	case 7:
+		_G(game).new_room = 602;
+		break;
+
+	case 9:
+		_G(game).new_room = 612;
+		break;
+
+	case 6002:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 7);
+		break;
+
+	case 6003:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 8);
+		break;
+
+	case 6010:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 9);
+		break;
+
+	case 6011:
+		switch (Section6::_state3) {
+		case 22:
+			break;
+
+		case 23:
+			_G(flags)[V243] = 6006;
+			_sectionMachine1 = series_play("604mg04", 0xcff, 0, 6011, 8, 0, 100, 0, 0, 0, 50);
+			_sectionMachine2 = series_play("604mg04s", 0xd00, 0, -1, 8, 0, 100, 0, 0, 0, 50);
+			Section6::_state4 = 3;
+			kernel_trigger_dispatch_now(6014);
+			Section6::_state3 = 24;
+			break;
+
+		case 24:
+			Section6::_state3 = 6003;
+			Section6::_state4 = 4;
+			kernel_trigger_dispatch_now(6014);
+			_sectionMachine1 = series_play("604mg04", 0xcff, 0, 6011, 8, 0, 100, 0, 0, 51, -1);
+			_sectionMachine2 = series_play("604mg04s", 0xd00, 0, -1, 8, 0, 100, 0, 0, 51, -1);
+			break;
+
+		case 6003:
+			Section6::_state3 = _G(flags)[V245] == 10030 ? 6005 : 6004;
+			_sectionMachine1 = series_show("604mg04", 0xcff, 0, -1, -1, 83, 100, 0, 0);
+			_sectionMachine2 = series_show("604mg04s", 0xd00, 0, -1, -1, 83, 100, 0, 0);
+			break;
+
+		case 6004:
+			if (!_G(flags)[V246])
+				_G(game).new_room = 605;
+			break;
+
+		case 6005:
+			kernel_trigger_dispatch_now(6006);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case 6012:
+		switch (_val1) {
+		case 25:
+			_series1 = series_show("604chips", 0xcc0);
+			break;
+
+		case 26:
+			_val1 = 28;
+			hotspot_set_active("WOOD SHAVINGS", false);
+			hotspot_set_active("ASHES", true);
+
+			terminateMachineAndNull(_series1);
+			_series1 = series_play("604chips", 0xb00, 0, 6012);
+			break;
+
+		case 27:
+			_series1 = series_show("604chips", 0xcc0);
+			break;
+
+		case 28:
+			_val1 = 27;
+			series_unload(_series2);
+			kernel_trigger_dispatch_now(6012);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 10008:
+		if (_G(flags)[V243] == 6000) {
+			_G(flags)[V002] = 1;
+			_G(flags)[V243] = 6006;
+			_G(flags)[V248] = 1;
+			Section6::_state3 = 23;
+			kernel_trigger_dispatch_now(6011);
+			_G(wilbur_should) = 10001;
+		}
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			_G(wilbur_should) = 2;
+			digi_play("604_006", 2, 155, gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 2:
+			_roomSeries1.terminate();
+			inv_give_to_player("RAY GUN");
+			series_play_with_breaks(PLAY1, "604wi04", 1, gCHANGE_WILBUR_ANIMATION, 3);
+			_G(wilbur_should) = 3;
+			break;
+
+		case 3:
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+
+			switch (_G(flags)[V242]) {
+			case 0:
+				wilbur_speech("604w001");
+				break;
+			case 1:
+				wilbur_speech("604w002");
+				break;
+			case 2:
+				wilbur_speech("604w003");
+				break;
+			case 3:
+				wilbur_speech("604w004");
+				break;
+			default:
+				wilbur_speech("604w005");
+				break;
+			}
+			break;
+
+		case 4:
+			player_set_commands_allowed(false);
+			ws_demand_facing(3);
+			ws_hide_walker();
+			series_play_with_breaks(PLAY2, "604wi06", 0x4ff, 6003, 3);
+			break;
+
+		case 5:
+			player_set_commands_allowed(false);
+			ws_demand_facing(7);
+			ws_hide_walker();
+
+			if (_G(flags)[V243] == 6007) {
+				series_play_with_breaks(PLAY3, "604wi07", 0xc80, 6010, 3);
+			} else {
+				series_play_with_breaks(PLAY3, "604wi07", 0xc80, 6002, 3);
+			}
+
+			_G(flags)[V246] = 1;
+			break;
+
+		case 6:
+			ws_demand_location(171, 310, 3);
+			ws_hide_walker();
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V243] == 6006) {
+				Section6::_state4 = 5;
+				kernel_trigger_dispatch_now(6014);
+				Section6::_state3 = 6004;
+				series_stream("604mg06", 4, 0xc80, 6011);
+				series_play("604mg06s", 4, 0xc80, 0, -1);
+				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, gCHANGE_WILBUR_ANIMATION, 3);
+			} else {
+				_G(wilbur_should) = 10001;
+				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, gCHANGE_WILBUR_ANIMATION, 3);
+			}
+			break;
+
+		case 7:
+			_G(wilbur_should) = 10001;
+			ws_demand_location(337, 279, 7);
+			ws_hide_walker();
+			series_play_with_breaks(PLAY5, "604wi09", 0xc80, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 8:
+			_G(flags)[V247] = 1;
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY12, "604wi40", 0x800, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 9:
+			ws_hide_walker();
+			_G(wilbur_should) = 20;
+			series_play_with_breaks(PLAY6, "604wi10", 0xcc0, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 10:
+			ws_hide_walker();
+			_G(wilbur_should) = 10001;
+			player_set_commands_allowed(false);
+			series_play_with_breaks(PLAY10, "604wi11", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+
+			if (_G(flags)[V274] == 0 && _G(flags)[V243] == 600) {
+				_G(flags)[V243] = 6006;
+				_G(flags)[V248] = 1;
+				term_message("The gerbils awaken");
+				Section6::_state3 = 23;
+				kernel_trigger_dispatch_now(6011);
+			}
+			break;
+
+		case 11:
+			ws_hide_walker();
+			player_set_commands_allowed(false);
+			_G(flags)[V247] = 1;
+			_G(flags)[V274] = 1;
+			_series2 = series_load("604chips");
+			_G(wilbur_should) = 12;
+
+			series_play_with_breaks(PLAY11, "604wi12", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 12:
+			if (_G(flags)[V243] == 6000) {
+				_G(flags)[V243] = 6006;
+				Section6::_state3 = 23;
+				kernel_trigger_dispatch_now(6011);
+			}
+
+			_G(wilbur_should) = 10001;
+			_val1 = 26;
+			kernel_trigger_dispatch_now(6012);
+			break;
+
+		case 13:
+			ws_hide_walker();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY7, "604wi10", 0xcc0, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 14:
+			term_message("Slip on kibble!");
+			player_set_commands_allowed(false);
+			player_update_info();
+			_G(wilbur_should) = 15;
+
+			ws_walk(_G(player_info).x + 1, 316, 0, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 15:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 19;
+			Section6::_savedX = _G(player_info).x - 358;
+			Section6::_state1 = imath_ranged_rand(0, 5);
+
+			series_play_with_breaks(PLAY8, "604wi31", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION,
+				3, 6, 100, Section6::_savedX, 0);
+			break;
+
+		case 16:
+			ws_demand_location(425, 303, 9);
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(flags)[V273] = 1;
+			_G(kernel).call_daemon_every_loop = true;
+
+			series_play_with_breaks(PLAY9, "604wi30", 0x901, 3, 3);
+			break;
+
+		case 17:
+			if (_G(flags)[V243] == 6000) {
+				if (_G(flags)[V248]) {
+					_G(wilbur_should) = 11;
+					player_set_commands_allowed(false);
+					wilbur_speech("604w028");
+				} else {
+					_G(wilbur_should) = 10001;
+					wilbur_speech("604w027");
+				}
+			} else {
+				_G(wilbur_should) = 11;
+				player_set_commands_allowed(false);
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			}
+			break;
+
+		case 18:
+			ws_unhide_walker();
+			player_set_commands_allowed(false);
+			_G(wilbur_should) = 21;
+			wilbur_speech("604w006");
+			break;
+
+		case 19:
+			_G(wilbur_should) = 10002;
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			wilbur_speech("600w012");
+			break;
+
+		case 20:
+			Section6::_state3 = 23;
+			kernel_trigger_dispatch_now(6011);
+			ws_unhide_walker();
+
+			if (_G(flags)[V248]) {
+				digi_preload("604w014");
+				player_set_commands_allowed(true);
+				_G(wilbur_should) = 10002;
+				wilbur_speech("604w014", gCHANGE_WILBUR_ANIMATION);
+			} else {
+				digi_preload("604w012");
+				player_set_commands_allowed(false);
+				_G(wilbur_should) = 10001;
+				_G(flags)[V248] = 1;
+				wilbur_speech("604w012", gCHANGE_WILBUR_ANIMATION);
+			}
+			break;
+
+		case 21:
+			player_set_commands_allowed(false);
+			ws_unhide_walker();
+			break;
+
+		case 10003:
+			if (_G(flags)[V243] == 6000) {
+				series_load("604mg04");
+				series_load("604mg04s");
+			}
+
+			_G(kernel).continue_handling_trigger = true;
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+
+	case gCALLED_EACH_LOOP:
+		player_update_info();
+		if (_G(player_info).x > 319 && _G(player_info).x < 413 &&
+				_G(player_info).y > 280 && _G(player_info).y < 305 &&
+				_G(walkTrigger) > 2 && _G(walkTrigger) < 7 &&
+				_G(flags)[V273] == 1) {
+			if (_G(flags)[V264]) {
+				_G(flags)[V264] = 1;
+			} else {
+				_G(flags)[V264] = 1;
+				intr_cancel_sentence();
+				_G(wilbur_should) = 14;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			}
+		} else {
+			_G(flags)[V264] = 0;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room604::pre_parser() {
@@ -300,6 +702,7 @@ void Room604::pre_parser() {
 
 void Room604::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
+	bool rayGun = player_said("RAY GUN");
 
 	if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
@@ -314,7 +717,37 @@ void Room604::parser() {
 			_G(wilbur_should) = 13;
 			wilbur_speech("604w005");
 		}
+	} else if (player_said("GEAR", "TUBE ") || player_said("CLIMB IN", "TUBE ")) {
+		_G(flags)[V246] = 1;
+		Section6::_state2 = 2;
+		_G(wilbur_should) = 5;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (player_said("GEAR", "TUBE") || player_said("CLIMB IN", "TUBE")) {
+		_G(flags)[V246] = 1;
+		Section6::_state2 = 0;
+		_G(wilbur_should) = 4;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+
+	} else if (rayGun && player_said("APPLE CORE")) {
+		wilbur_speech("604w029");
+	} else if (rayGun && player_said("ASHES")) {
+		wilbur_speech("600w004");
+	} else if (rayGun && player_said("BOTTLE CAP")) {
+		wilbur_speech("600w004");
+	} else if (player_said("LOOK AT", "WOOD SHAVINGS")) {
+		if (_G(flags)[V248] == 0) {
+			wilbur_speech("604w007");
+		} else if (_G(flags)[V243] == 6000) {
+			wilbur_speech("604w008");
+		} else {
+			wilbur_speech("604w005");
+		}
+	} else {
+		return;
 	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
