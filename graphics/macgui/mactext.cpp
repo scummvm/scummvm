@@ -19,9 +19,9 @@
  *
  */
 
-#include "common/unicode-bidi.h"
+#include "common/file.h"
 #include "common/timer.h"
-#include "common/system.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/font.h"
 #include "graphics/macgui/mactext.h"
@@ -30,6 +30,8 @@
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macwidget.h"
 #include "graphics/macgui/macwindow.h"
+
+#include "image/png.h"
 
 namespace Graphics {
 
@@ -267,6 +269,9 @@ MacText::~MacText() {
 	delete _shadowSurface;
 	delete _cursorSurface;
 	delete _cursorSurface2;
+
+	for (auto &i : _imageCache)
+		delete i._value;
 }
 
 // this func returns the fg color of the first character we met in text
@@ -790,11 +795,11 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 										//          TT, tttt -- text (tooltip) len and text
 					s++;
 
-					uint16 percent, len;
+					uint16 len;
 
-					s = readHex(&percent, s, 2);
+					s = readHex(&_textLines[curLine].picpercent, s, 2);
 					s = readHex(&len, s, 2);
-					_textLines[curLine].picfname = Common::U32String(s, len);
+					_textLines[curLine].picfname = Common::U32String(s, len).encode();
 					s += len;
 
 					s = readHex(&len, s, 2);
@@ -805,7 +810,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					_textLines[curLine].pictitle = Common::U32String(s, len);
 					s += len;
 
-					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'", percent,
+					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'",
+						_textLines[curLine].picpercent,
 						_textLines[curLine].picfname.c_str(), _textLines[curLine].picalt.c_str(),
 						_textLines[curLine].pictitle.c_str());
 					break;
@@ -1051,6 +1057,20 @@ void MacText::render(int from, int to, int shadow) {
 	}
 
 	for (int i = myFrom; i != myTo; i += delta) {
+		if (!_textLines[i].picfname.empty()) {
+			const Surface *image = getImageSurface(_textLines[i].picfname);
+
+			int xOffset = (_textLines[i].width - _textLines[i].charwidth) / 2;
+			Common::Rect bbox(xOffset, _textLines[i].y, xOffset + _textLines[i].charwidth, _textLines[i].y + _textLines[i].height);
+
+			// Pre-fill images with white to accommodate transparency
+			surface->fillRect(bbox, surface->format.RGBToColor(0xff, 0x0, 0x0));
+
+			surface->blitFrom(image, Common::Rect(0, 0, image->w, image->h), bbox);
+
+			continue;
+		}
+
 		int xOffset = getAlignOffset(i) + _textLines[i].indent + _textLines[i].firstLineIndent;
 		xOffset++;
 
@@ -1083,13 +1103,13 @@ void MacText::render(int from, int to, int shadow) {
 
 			if (_textLines[i].chunks[j].plainByteMode()) {
 				Common::String str = _textLines[i].chunks[j].getEncodedText();
-				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
+				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, kTextAlignLeft, 0, true);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
 			} else {
 				if (_wm->_language == Common::HE_ISR)
-					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text, Common::BIDI_PAR_RTL), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
+					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text, Common::BIDI_PAR_RTL), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, kTextAlignLeft, 0, true);
 				else
-					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
+					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, kTextAlignLeft, 0, true);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 			}
 		}
@@ -1130,6 +1150,20 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 
 	if (_textLines[line].width != -1 && !enforce && col == -1)
 		return _textLines[line].width;
+
+	if (!_textLines[line].picfname.empty()) {
+		const Surface *image = getImageSurface(_textLines[line].picfname);
+
+		if (!image)
+			return 1; // No image
+
+		float ratio = _maxWidth * _textLines[line].picpercent / 100.0 / (float)image->w;
+		_textLines[line].width = _maxWidth;
+		_textLines[line].height = image->h * ratio;
+		_textLines[line].charwidth = image->w * ratio;
+
+		return _textLines[line].width;
+	}
 
 	int width = _textLines[line].indent + _textLines[line].firstLineIndent;
 	int height = 0;
@@ -1320,7 +1354,7 @@ void MacText::resize(int w, int h) {
 	setMaxWidth(w);
 	if (_composeSurface->w != w || _composeSurface->h != h) {
 		delete _composeSurface;
-		_composeSurface = new Graphics::ManagedSurface(w, h, _wm->_pixelformat);
+		_composeSurface = new ManagedSurface(w, h, _wm->_pixelformat);
 		_dims.right = _dims.left + w;
 		_dims.bottom = _dims.top + h;
 
@@ -2185,6 +2219,9 @@ Common::U32String MacText::getMouseLink(int x, int y) {
 	int row, chunk;
 	getRowCol(x, y, nullptr, nullptr, &row, nullptr, &chunk);
 
+	if (!_textLines[row].picfname.empty())
+		return _textLines[row].pictitle;
+
 	return _textLines[row].chunks[chunk].text;
 }
 
@@ -2717,6 +2754,30 @@ void MacText::undrawCursor() {
 
 	Common::Point offset(calculateOffset());
 	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+}
+
+const Surface *MacText::getImageSurface(Common::String &fname) {
+	if (_imageCache.contains(fname))
+		return _imageCache[fname]->getSurface();
+
+	Common::File file;
+
+	if (!file.open(fname)) {
+		warning("MacText::getImageSurface(): Cannot open file %s", fname.c_str());
+		return nullptr;
+	}
+
+	_imageCache[fname] = new Image::PNGDecoder();
+
+	if (!_imageCache[fname]->loadStream(file)) {
+		delete _imageCache[fname];
+
+		warning("MacText::getImageSurface(): Cannot load file %s", fname.c_str());
+
+		return nullptr;
+	}
+
+	return _imageCache[fname]->getSurface();
 }
 
 } // End of namespace Graphics
