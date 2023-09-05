@@ -29,8 +29,11 @@ namespace Burger {
 namespace Rooms {
 
 class Room606 : public Section6Room {
+private:
+	static const seriesStreamBreak SERIES1[];
+	static long _state1;
 public:
-	Room606() : Section6Room() {}
+	Room606();
 	~Room606() override {}
 
 	void preload() override;

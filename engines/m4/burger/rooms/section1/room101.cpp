@@ -257,7 +257,7 @@ void Room101::daemon() {
 
 			_G(walker).wilbur_speech(NAMES[idx], 23);
 
-		} else if (!_G(flags)[ROOM101_FLAG4]) {
+		} else if (!_G(flags)[V241]) {
 			if (_G(flags)[V242] <= 1) {
 				_G(walker).wilbur_speech("101w520", 7);
 
@@ -328,7 +328,7 @@ void Room101::daemon() {
 		loadSounds();
 		ws_hide_walker(_G(my_walker));
 
-		if (_G(flags)[ROOM101_FLAG4] || _G(flags)[ROOM101_FLAG16])
+		if (_G(flags)[V241] || _G(flags)[ROOM101_FLAG16])
 			series_load("101wi13s", -1, nullptr);
 		if (_G(flags)[ROOM101_FLAG10])
 			series_load("101wi12s", -1, nullptr);
@@ -346,7 +346,7 @@ void Room101::daemon() {
 	case 9:
 		daemon9();
 
-		if (_G(flags)[ROOM101_FLAG4] || _G(flags)[V250] ||
+		if (_G(flags)[V241] || _G(flags)[V250] ||
 				_G(flags)[V280] || _G(flags)[V002]) {
 			terminateMachineAndNull(_machine1);
 			terminateMachineAndNull(_machine2);
@@ -366,7 +366,7 @@ void Room101::daemon() {
 	case 12:
 		daemon12();
 
-		if (_G(flags)[ROOM101_FLAG4]) {
+		if (_G(flags)[V241]) {
 			if (_G(flags)[ROOM101_FLAG10] || _G(flags)[V112] ||
 					_G(flags)[V080] || _G(flags)[V126]) {
 				terminateMachineAndNull(_machine1);
@@ -744,10 +744,10 @@ void Room101::daemon9() {
 }
 
 void Room101::daemon12() {
-	if (_G(flags)[V250] || _G(flags)[ROOM101_FLAG4])
+	if (_G(flags)[V250] || _G(flags)[V241])
 		inv_give_to_player("BLOCK OF ICE");
 
-	if (_G(flags)[V280] || _G(flags)[ROOM101_FLAG4])
+	if (_G(flags)[V280] || _G(flags)[V241])
 		inv_give_to_player("PANTYHOSE");
 
 	if (_G(flags)[V002]) {

@@ -27,14 +27,47 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+const seriesStreamBreak Room609::SERIES1[] = {
+	{  0, "609_001",  3, 125, -1, 0, nullptr,  0 },
+	{ 20, "609w001",  1, 255, -1, 0, &_state1, 1 },
+	{ 30, "609w002a", 1, 255, -1, 0, &_state1, 2 },
+	{ 30, "609w002b", 1, 255, -1, 0, &_state1, 3 },
+	{ 70, "609_002",  1, 255, -1, 0, nullptr,  0 },
+	STREAM_BREAK_END
+};
+
+long Room609::_state1;
+
+Room609::Room609() : Section6Room() {
+	_state1 = 0;
+}
+
 void Room609::preload() {
 	_G(player).walker_in_this_scene = false;
 }
 
 void Room609::init() {
+	_G(flags)[V277] = 6001;
+	_G(flags)[V243] = 6007;
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room609::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		_state1 = _G(visited_room) ? 1 : imath_ranged_rand(2, 3);
+		digi_preload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES1, "609wi01", 6, 1, 6010);
+		break;
+
+	case 6010:
+		_G(game).new_room = 612;
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
