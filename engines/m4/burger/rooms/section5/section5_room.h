@@ -29,12 +29,27 @@ namespace Burger {
 namespace Rooms {
 
 class Section5Room : public Rooms::Room {
+protected:
+	struct BorkPoint {
+		int16 _x;
+		int16 _y;
+	};
+	const BorkPoint *_borkTable = nullptr;
+	machine *_walker1 = nullptr;
+	HotSpotRec _borkHotspot;
+	int _borkThreshold = 0;
+
 public:
 	Section5Room() : Rooms::Room() {
 	}
 	~Section5Room() override {}
 
 	void preload() override;
+
+	/**
+	 * Used to tell if x,y is over the walker hotspot
+	 */
+	HotSpotRec *custom_hotspot_which(int32 x, int32 y) override;
 };
 
 } // namespace Rooms

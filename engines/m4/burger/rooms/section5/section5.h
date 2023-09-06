@@ -60,6 +60,9 @@ private:
 	Room513 _room511;
 
 public:
+	static machine *_bork;
+
+public:
 	Section5();
 	virtual ~Section5() {}
 
