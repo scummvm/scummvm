@@ -94,12 +94,14 @@ void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	warning("M: %s", _txtWnd->getMouseLink(x + _x + _scrolledX, y + _y + _scrolledY).encode().c_str());
+	Common::String link = _txtWnd->getMouseLink(x + _x + _scrolledX, y + _y + _scrolledY).encode();
+
+	if (link.hasPrefixIgnoreCase("http"))
+		g_system->openUrl(link);
 }
 
 void RichTextWidget::handleTooltipUpdate(int x, int y) {
 	_tooltip = _txtWnd->getMouseLink(x + _x + _scrolledX, y + _y + _scrolledY);
-	//warning("t: %s", _tooltip.encode().c_str());
 }
 
 void RichTextWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
