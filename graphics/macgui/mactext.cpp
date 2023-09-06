@@ -1057,6 +1057,15 @@ void MacText::render() {
 		render(0, _textLines.size());
 
 		_fullRefresh = false;
+
+#if 0
+		Common::DumpFile out;
+		Common::String filename = Common::String::format("z-%p.png", (void *)this);
+		if (out.open(filename)) {
+			warning("Wrote: %s", filename.c_str());
+			Image::writePNG(out, _surface->rawSurface());
+		}
+#endif
 	}
 }
 
