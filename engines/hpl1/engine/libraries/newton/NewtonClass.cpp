@@ -266,8 +266,6 @@ void NewtonUserJoint::GetInfo(dgConstraintInfo *const info) const {
 	}
 }
 
-void NewtonUserJoint::SetUpdateFeedbackFunction(
-    NewtonUserBilateralCallBack getFeedback) {
-	dgUserConstraint::SetUpdateFeedbackFunction(
-	    (ConstraintsForceFeeback) getFeedback);
+void NewtonUserJoint::SetUpdateFeedbackFunction(NewtonUserBilateralCallBack getFeedback) {
+	dgUserConstraint::SetUpdateFeedbackFunction((ConstraintsForceFeedback)getFeedback);
 }
