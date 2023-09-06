@@ -412,13 +412,8 @@ void RenderSurface::FillBlended(uint32 rgba, const Rect &r) {
 		fillBlendedLogic<uint16>(_pixels, _pitch, rgba, rect, _surface->format);
 }
 
-//
-// RenderSurface::DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
-//
-// Desc: Draw a (non-antialiased) line from (sx,sy) to (ex,ey) with color rgb
-//
-void RenderSurface::DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) {
-	rgb = _surface->format.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+void RenderSurface::drawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) {
+	rgb = _surface->format.RGBToColor(TEX32_R(rgb), TEX32_G(rgb), TEX32_B(rgb));
 	_surface->drawLine(sx + _ox, sy + _oy, ex + _ox, ey + _oy, rgb);
 }
 

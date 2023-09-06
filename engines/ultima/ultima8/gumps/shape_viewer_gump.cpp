@@ -118,26 +118,26 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		for (int i = step; i < _dims.width(); i += step) {
 			int32 x = posx + i;
 			if (x < _dims.right)
-				surf->DrawLine32(color, x, _dims.top, x, _dims.bottom - 1);
+				surf->drawLine32(color, x, _dims.top, x, _dims.bottom - 1);
 
 			x = posx - i;
 			if (x > _dims.left)
-				surf->DrawLine32(color, x, _dims.top, x, _dims.bottom - 1);
+				surf->drawLine32(color, x, _dims.top, x, _dims.bottom - 1);
 		}
 
 		for (int i = step; i < _dims.height(); i += step) {
 			int32 y = posy + i;
 			if (y < _dims.bottom)
-				surf->DrawLine32(color, _dims.left, y, _dims.right - 1, y);
+				surf->drawLine32(color, _dims.left, y, _dims.right - 1, y);
 
 			y = posy - i;
 			if (y > _dims.top)
-				surf->DrawLine32(color, _dims.left, y, _dims.right - 1, y);
+				surf->drawLine32(color, _dims.left, y, _dims.right - 1, y);
 		}
 
 		color = axis_colors[_background];
-		surf->DrawLine32(color, posx, _dims.top, posx, _dims.bottom - 1);
-		surf->DrawLine32(color, _dims.left, posy, _dims.right - 1, posy);
+		surf->drawLine32(color, posx, _dims.top, posx, _dims.bottom - 1);
+		surf->drawLine32(color, _dims.left, posy, _dims.right - 1, posy);
 	}
 
 	ShapeArchive *archive = _archives[_curArchive]._archive;

@@ -178,8 +178,8 @@ public:
 	// Basic Line Drawing
 	//
 
-	// Draw a RGB Line
-	void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
+	// Draw a line with a color in the TEX32_PACK_RGB format
+	void drawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
 
 
 	//
