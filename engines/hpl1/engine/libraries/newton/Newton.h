@@ -273,8 +273,8 @@ typedef void (*NewtonUserMeshCollisionCollideCallback)(NewtonUserMeshCollisionCo
 typedef dFloat(*NewtonUserMeshCollisionRayHitCallback)(NewtonUserMeshCollisionRayHitDesc *const lineDescData);
 typedef void (*NewtonUserMeshCollisionGetCollisionInfo)(void *const userData, NewtonCollisionInfoRecord *const infoRecord);
 typedef void (*NewtonUserMeshCollisionGetFacesInAABB)(void *const userData, const dFloat *const p0, const dFloat *const p1,
-													  const dFloat *const *const vertexArray, int *const vertexCount, int *const vertexStrideInBytes,
-													  const int *const indexList, int maxIndexCount, const int *const userDataList);
+													  const dFloat *const *const vertexArray, int32 *const vertexCount, int32 *const vertexStrideInBytes,
+													  const int32 *const indexList, int32 maxIndexCount, const int32 *const userDataList);
 
 typedef dFloat(*NewtonCollisionTreeRayCastCallback)(const NewtonBody *const body, const NewtonCollision *const treeCollision, dFloat interception, dFloat *normal, int faceId, void *usedData);
 typedef dFloat(*NewtonHeightFieldRayCastCallback)(const NewtonBody *const body, const NewtonCollision *const heightFieldCollision, dFloat interception, int row, int col, dFloat *normal, int faceId, void *usedData);
@@ -285,8 +285,8 @@ typedef void (*NewtonTreeCollisionCallback)(const NewtonBody *const bodyWithTree
         int vertexCount, const dFloat *const vertex, int vertexStrideInBytes);
 
 typedef void (*NewtonBodyDestructor)(const NewtonBody *const body);
-typedef void (*NewtonApplyForceAndTorque)(NewtonBody *const body, dFloat timestep, int threadIndex);
-typedef void (*NewtonSetTransform)(const NewtonBody *const body, const dFloat *const matrix, int threadIndex);
+typedef void (*NewtonApplyForceAndTorque)(NewtonBody *const body, dFloat timestep, int32 threadIndex);
+typedef void (*NewtonSetTransform)(const NewtonBody *const body, const dFloat *const matrix, int32 threadIndex);
 
 typedef int (*NewtonIslandUpdate)(const NewtonWorld *const newtonWorld, const void *islandHandle, int bodyCount);
 typedef void (*NewtonBodyLeaveWorld)(const NewtonBody *const body, int threadIndex);
@@ -295,12 +295,12 @@ typedef void (*NewtonCollisionDestructor)(const NewtonWorld *const newtonWorld, 
 
 typedef int (*NewtonCollisionCompoundBreakableCallback)(NewtonMesh *const mesh, void *const userData, dFloat *const planeMatrixOut);
 
-typedef int (*NewtonGetBuoyancyPlane)(const int collisionID, void *const context, const dFloat *const globalSpaceMatrix, dFloat *const globalSpacePlane);
+typedef int (*NewtonGetBuoyancyPlane)(const int32 collisionID, void *const context, const dFloat *const globalSpaceMatrix, dFloat *const globalSpacePlane);
 typedef unsigned(*NewtonWorldRayPrefilterCallback)(const NewtonBody *const body, const NewtonCollision *const collision, void *const userData);
 typedef dFloat(*NewtonWorldRayFilterCallback)(const NewtonBody *const body, const dFloat *const hitNormal, int collisionID, void *const userData, dFloat intersectParam);
 
 
-typedef int (*NewtonOnAABBOverlap)(const NewtonMaterial *const material, const NewtonBody *const body0, const NewtonBody *const body1, int threadIndex);
+typedef int (*NewtonOnAABBOverlap)(const NewtonMaterial *const material, const NewtonBody *const body0, const NewtonBody *const body1, int32 threadIndex);
 typedef void (*NewtonContactsProcess)(const NewtonJoint *const contact, dFloat timestep, int threadIndex);
 
 typedef void (*NewtonBodyIterator)(const NewtonBody *const body, void *const userData);

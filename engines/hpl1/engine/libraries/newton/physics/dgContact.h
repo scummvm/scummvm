@@ -38,8 +38,8 @@ class dgPolygonMeshDesc;
 #define DG_MAX_CONTATCS         128
 #define DG_CACHE_PAIR_BUFFER    256
 
-typedef int(dgApi *OnAABBOverlap)(const NewtonMaterial *const material, const NewtonBody *const body0, const NewtonBody *const body1, int threadIndex);
-typedef void(dgApi *OnContactCallback)(const NewtonJoint *const contact, dFloat timestep, int threadIndex);
+typedef int(dgApi *OnAABBOverlap)(const NewtonMaterial *const material, const NewtonBody *const body0, const NewtonBody *const body1, int32 threadIndex);
+typedef void(dgApi *OnContactCallback)(const NewtonJoint *const contact, dFloat timestep, int32 threadIndex);
 
 class dgActiveContacts: public dgList<dgContact *> {
 public:

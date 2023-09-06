@@ -43,7 +43,7 @@ class dgWorld;
 class dgConstraint;
 class dgBilateralBounds;
 
-typedef void(dgApi *ConstraintsForceFeeback)(const NewtonJoint *const userJoint, dFloat timestep, int threadIndex);
+typedef void(dgApi *ConstraintsForceFeeback)(const NewtonJoint *const userJoint, dFloat timestep, int32 threadIndex);
 
 class dgConstraintInfo {
 public:

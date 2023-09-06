@@ -61,11 +61,11 @@ public:
 };
 
 typedef void(dgApi *OnBodyDestroy)(const NewtonBody *const me);
-typedef void(dgApi *OnApplyExtForceAndTorque)(NewtonBody *const me, dFloat timestep, int threadIndex);
-typedef void(dgApi *OnMatrixUpdateCallback)(const NewtonBody *const body, const dFloat *const matrix, int threadIndex);
+typedef void(dgApi *OnApplyExtForceAndTorque)(NewtonBody *const me, dFloat timestep, int32 threadIndex);
+typedef void(dgApi *OnMatrixUpdateCallback)(const NewtonBody *const body, const dFloat *const matrix, int32 threadIndex);
 typedef dgUnsigned32(dgApi *OnRayPrecastAction)(const NewtonBody *const body, const NewtonCollision *const collision, void *const userData);
 typedef dgFloat32(dgApi *OnRayCastAction)(const NewtonBody *const body, const dFloat *const hitNormal, int collisionID, void *const userData, dFloat intersectParam);
-typedef dgUnsigned32(dgApi *GetBuoyancyPlane)(const int collisionID, void *const context, const dFloat *const globalSpaceMatrix, dFloat *const globalSpacePlane);
+typedef dgUnsigned32(dgApi *GetBuoyancyPlane)(const int32 collisionID, void *const context, const dFloat *const globalSpaceMatrix, dFloat *const globalSpacePlane);
 
 #define OverlapTest(body0, body1) dgOverlapTest((body0)->m_minAABB, (body0)->m_maxAABB, (body1)->m_minAABB, (body1)->m_maxAABB)
 //#define OverlapTest_SSE(body0,body1) dgOverlapTest_SSE ((body0)->m_minAABB, (body0)->m_maxAABB, (body1)->m_minAABB, (body1)->m_maxAABB)

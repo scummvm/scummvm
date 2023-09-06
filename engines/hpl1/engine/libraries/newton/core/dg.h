@@ -60,6 +60,8 @@
 #include "dgPolyhedraMassProperties.h"
 #include "dgDelaunayTetrahedralization.h"
 
+#include "common/system.h"
+
 class NewtonMesh;
 class NewtonBody;
 class NewtonWorld;

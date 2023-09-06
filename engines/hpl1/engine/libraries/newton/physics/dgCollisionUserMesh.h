@@ -31,8 +31,8 @@ typedef void(dgApi *OnUserMeshCollideCallback)(NewtonUserMeshCollisionCollideDes
 typedef dgFloat32(dgApi *OnUserMeshRayHitCallback)(NewtonUserMeshCollisionRayHitDesc *const lineDescData);
 typedef void (dgApi *UserMeshCollisionInfo)(void *userData, dgCollisionInfo *infoRecord);
 typedef void(dgApi *UserMeshFacesInAABB)(void *const userData, const dFloat *const p0, const dFloat *const p1,
-										 const dFloat *const *const vertexArray, int *const vertexCount, int *const vertexStrideInBytes,
-										 const int *const indexList, int maxIndexCount, const int *const userDataList);
+										 const dFloat *const *const vertexArray, int32 *const vertexCount, int32 *const vertexStrideInBytes,
+										 const int32 *const indexList, int32 maxIndexCount, const int32 *const userDataList);
 
 class dgUserMeshCreation {
 public:
