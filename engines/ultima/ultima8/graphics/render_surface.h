@@ -130,17 +130,18 @@ public:
 	// Surface Filling
 	//
 
-	//! Fill buffer (using a RGB colour)
-	void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-		Fill32(rgb, Rect(sx, sy, sx + w, sy + h));
+	//! Fill the region with a color in the TEX32_PACK_RGB format
+	void fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
+		fill32(rgb, Rect(sx, sy, sx + w, sy + h));
 	}
 
-	void Fill32(uint32 rgb, const Rect &r);
+	//! Fill the region with a color in the TEX32_PACK_RGB format
+	void fill32(uint32 rgb, const Rect &r);
 
 	//! Fill alpha channel
 	void FillAlpha(uint8 alpha, const Rect &r);
 
-	//! Fill the region doing alpha blending
+	//! Fill the region doing alpha blending with a color in the TEX32_PACK_RGBA format
 	void FillBlended(uint32 rgba, const Rect &r);
 
 	//

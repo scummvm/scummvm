@@ -683,7 +683,7 @@ void Ultima8Engine::paint() {
 	Rect r;
 	_screen->GetSurfaceDims(r);
 	if (_highRes)
-		_screen->Fill32(0, r);
+		_screen->fill32(TEX32_PACK_RGB(0, 0, 0), r);
 
 #ifdef DEBUG
 	// Fill the screen with an annoying color so we can see fast area bugs

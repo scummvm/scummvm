@@ -26,6 +26,7 @@
 
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
@@ -76,10 +77,13 @@ void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	_scroll[1] = RenderSurface::CreateSecondaryRenderSurface(width, height);
 	_scroll[2] = RenderSurface::CreateSecondaryRenderSurface(width, height);
 	_scroll[3] = RenderSurface::CreateSecondaryRenderSurface(width, height);
-	_scroll[0]->Fill32(0xFF000000, 0, 0, width, height); // black background
-	_scroll[1]->Fill32(0xFF000000, 0, 0, width, height);
-	_scroll[2]->Fill32(0xFF000000, 0, 0, width, height);
-	_scroll[3]->Fill32(0xFF000000, 0, 0, width, height);
+
+	uint32 color = TEX32_PACK_RGB(0, 0, 0);
+	_scroll[0]->fill32(color, 0, 0, width, height); // black background
+	_scroll[1]->fill32(color, 0, 0, width, height);
+	_scroll[2]->fill32(color, 0, 0, width, height);
+	_scroll[3]->fill32(color, 0, 0, width, height);
+
 	_scrollHeight[0] = 156;
 	_scrollHeight[1] = 0;
 	_scrollHeight[2] = 0;
@@ -176,8 +180,12 @@ void CreditsGump::run() {
 		// time to render next block
 		Rect bounds;
 		_scroll[nextblock]->GetSurfaceDims(bounds);
-		_scroll[nextblock]->Fill32(0xFF000000, 0, 0, bounds.width(), bounds.height());
-		//_scroll[nextblock]->Fill32(0xFFFFFFFF, 0, 0, bounds.width(), 2); // block marker
+
+		uint32 color = TEX32_PACK_RGB(0, 0, 0);
+		_scroll[nextblock]->fill32(color, 0, 0, bounds.width(), bounds.height());
+
+		//color = TEX32_PACK_RGB(0xFF, 0xFF, 0xFF);
+		//_scroll[nextblock]->fill32(color, 0, 0, bounds.width(), 2); // block marker
 		_scrollHeight[nextblock] = 0;
 
 		Font *redfont, *yellowfont;
@@ -278,8 +286,8 @@ void CreditsGump::run() {
 						int linewidth = outline.size() * 8;
 						if (linewidth > 192) linewidth = 192;
 
-						_scroll[nextblock]->
-						Fill32(0xFFD43030, 128 - (linewidth / 2),
+						color = TEX32_PACK_RGB(0xD4, 0x30, 0x30);
+						_scroll[nextblock]->fill32(color, 128 - (linewidth / 2),
 						       _scrollHeight[nextblock] + height + 3,
 						       linewidth, 1);
 						height += 7;
@@ -349,8 +357,12 @@ void CreditsGump::run() {
 }
 
 void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	surf->Fill32(0xFF000000, 0, 0, 320, 200); // black background
-	surf->Fill32(0xFFD43030, 64, 41, 192, 1); // line between _title and scroller
+	uint32 color = TEX32_PACK_RGB(0, 0, 0);
+	surf->fill32(color, 0, 0, 320, 200);
+
+	// line between _title and scroller
+	color = TEX32_PACK_RGB(0xD4, 0x30, 0x30);
+	surf->fill32(color, 64, 41, 192, 1);
 
 	if (_title)
 		_title->draw(surf, 64, 34);

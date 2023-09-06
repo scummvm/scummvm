@@ -23,6 +23,7 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/mouse.h"
@@ -136,7 +137,8 @@ void DifficultyGump::OnFocus(bool gain) {
 void DifficultyGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// Paint a highlight around the current level
 	int highlihght_y = BUTTON_Y + ((_highlighted - 1) * (BUTTON_SPACE + BUTTON_HEIGHT));
-	surf->Fill32(0xFF808080, BUTTON_X - 1, highlihght_y - 1, _buttonWidth + 2, _buttonHeight + 2);
+	uint32 color = TEX32_PACK_RGB(0x80, 0x80, 0x80);
+	surf->fill32(color, BUTTON_X - 1, highlihght_y - 1, _buttonWidth + 2, _buttonHeight + 2);
 	ModalGump::PaintThis(surf, lerp_factor, scaled);
 }
 

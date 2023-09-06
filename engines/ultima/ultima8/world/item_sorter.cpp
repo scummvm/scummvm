@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/ultima8.h"
 
@@ -253,7 +254,8 @@ void ItemSorter::AddItem(const Item *add) {
 void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 	if (_sortLimit) {
 		// Clear the surface when debugging the sorter
-		surf->Fill32(0, _clipWindow);
+		uint32 color = TEX32_PACK_RGB(0, 0, 0);
+		surf->fill32(color, _clipWindow);
 	}
 
 	SortItem *it = _items;

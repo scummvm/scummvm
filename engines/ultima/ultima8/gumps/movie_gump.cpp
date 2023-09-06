@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -203,7 +204,7 @@ void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 			subtitle->getLocation(x, y);
 			subtitle->GetDims(textdims);
 			surf->GetSurfaceDims(screendims);
-			surf->Fill32(0x000000,
+			surf->fill32(TEX32_PACK_RGB(0, 0, 0),
 						 screendims.width() / 2 - 300 - screendims.left,
 						 y - 3,
 						 600,

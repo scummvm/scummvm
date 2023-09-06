@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/kernel/mouse.h"
 
@@ -120,7 +121,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	dims.grow(-1);
 
 	// Fill the background
-	surf->Fill32(0xFF000000, dims);
+	surf->fill32(TEX32_PACK_RGB(0, 0, 0), dims);
 
 	// Center on avatar
 	int sx = _ax - dims.width() / 2;

@@ -284,16 +284,11 @@ bool RenderSurface::IsFlipped() const {
 	return _flipped;
 }
 
-//
-// RenderSurface::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h)
-//
-// Desc: Fill buffer (using a RGB colour)
-//
-void RenderSurface::Fill32(uint32 rgb, const Rect &r) {
+void RenderSurface::fill32(uint32 rgb, const Rect &r) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 	rect.translate(_ox, _oy);
-	rgb = _surface->format.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+	rgb = _surface->format.RGBToColor(TEX32_R(rgb), TEX32_G(rgb), TEX32_B(rgb));
 	_surface->fillRect(rect, rgb);
 }
 
@@ -402,7 +397,7 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 void RenderSurface::FillBlended(uint32 rgba, const Rect &r) {
 	int alpha = TEX32_A(rgba);
 	if (alpha == 0xFF) {
-		Fill32(rgba, r);
+		fill32(rgba, r);
 		return;
 	} else if (!alpha) {
 		return;

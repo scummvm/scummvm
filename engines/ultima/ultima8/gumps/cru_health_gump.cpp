@@ -24,6 +24,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -68,8 +69,8 @@ void CruHealthGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	int g = HEALTH_BAR_G;
 	int b = HEALTH_BAR_B;
 	gamepal->transformRGB(r, g, b);
-	uint32 fillcolor = (r << 16) | (g << 8) | b;
-	surf->Fill32(fillcolor, 34, 7, width, 14);
+	uint32 color = TEX32_PACK_RGB(r, g, b);
+	surf->fill32(color, 34, 7, width, 14);
 }
 
 void CruHealthGump::saveData(Common::WriteStream *ws) {

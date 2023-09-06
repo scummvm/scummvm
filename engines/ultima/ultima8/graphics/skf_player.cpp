@@ -104,7 +104,8 @@ void SKFPlayer::parseEventList(Common::ReadStream *eventlist) {
 }
 
 void SKFPlayer::start() {
-	_buffer->Fill32(0, 0, 0, _width, _height);
+	uint32 color = TEX32_PACK_RGB(0, 0, 0);
+	_buffer->fill32(color, 0, 0, _width, _height);
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(0);
 	_playing = true;

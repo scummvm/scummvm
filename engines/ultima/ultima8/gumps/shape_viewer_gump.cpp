@@ -37,6 +37,7 @@
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/mouse_shape_archive.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
@@ -50,9 +51,24 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump)
 
+static const uint32 background_colors[] = {
+	TEX32_PACK_RGB(0x10, 0x10, 0x10),
+	TEX32_PACK_RGB(0x90, 0x90, 0x90)
+};
+
+static const uint32 grid_colors[] = {
+	TEX32_PACK_RGB(0x20, 0x20, 0x20),
+	TEX32_PACK_RGB(0xA0, 0xA0, 0xA0)
+};
+
+static const uint32 axis_colors[] = {
+	TEX32_PACK_RGB(0x10, 0x30, 0x10),
+	TEX32_PACK_RGB(0x90, 0xB0, 0x90)
+};
+
 ShapeViewerGump::ShapeViewerGump()
 	: ModalGump(), _curArchive(0), _curShape(0), _curFrame(0),
-	  _background(0x101010), _fontNo(0), _showGrid(false), _mirrored(false),
+	  _background(0), _fontNo(0), _showGrid(false), _mirrored(false),
 	  _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
 
 }
@@ -62,7 +78,7 @@ ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
 								 uint32 flags, int32 layer)
 		: ModalGump(x, y, width, height, 0, flags, layer), _archives(archives),
 		  _curArchive(0), _curShape(0), _curFrame(0),
-		  _background(0x101010), _fontNo(0), _showGrid(false), _mirrored(false),
+		  _background(0), _fontNo(0), _showGrid(false), _mirrored(false),
 		  _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
 
 	if (GAME_IS_CRUSADER) {
@@ -89,7 +105,8 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		return;
 	}
 
-	surf->Fill32(_background, _dims);
+	uint32 color = background_colors[_background];
+	surf->fill32(color, _dims);
 
 	int32 posx = (_dims.width() - _shapeW) / 2 + _shapeX;
 	int32 posy = (_dims.height() - _shapeH) / 2 + _shapeY - 25;
@@ -97,7 +114,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	if (_showGrid) {
 		const int step = 16;
 
-		uint32 color = _background + 0x101010;
+		color = grid_colors[_background];
 		for (int i = step; i < _dims.width(); i += step) {
 			int32 x = posx + i;
 			if (x < _dims.right)
@@ -118,7 +135,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 				surf->DrawLine32(color, _dims.left, y, _dims.right - 1, y);
 		}
 
-		color = _background + 0x002000;
+		color = axis_colors[_background];
 		surf->DrawLine32(color, posx, _dims.top, posx, _dims.bottom - 1);
 		surf->DrawLine32(color, _dims.left, posy, _dims.right - 1, posy);
 	}
@@ -312,8 +329,7 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 	}
 	break;
 	case Common::KEYCODE_b: {
-		_background += 0x808080;
-		_background &= 0xF0F0F0;
+		_background = _background ? 0 : 1;
 	} break;
 	case Common::KEYCODE_ESCAPE: {
 		Close();
