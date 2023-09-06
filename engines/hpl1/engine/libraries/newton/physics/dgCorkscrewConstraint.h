@@ -27,8 +27,7 @@
 
 class dgCorkscrewConstraint;
 
-
-typedef dgUnsigned32(dgApi *dgCorkscrewJointAcceleration)(const dgCorkscrewConstraint &hinge, dgJointCallBackParam *param);
+typedef dgUnsigned32(dgApi *dgCorkscrewJointAcceleration)(const NewtonJoint *const corkscrew, NewtonHingeSliderUpdateDesc *const desc);
 
 class dgCorkscrewConstraint: public dgBilateralConstraint {
 public:

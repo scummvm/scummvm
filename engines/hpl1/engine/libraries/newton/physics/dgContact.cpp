@@ -551,8 +551,8 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 
 				processContacts = 1;
 				if (material->m_aabbOverlap) {
-					processContacts = material->m_aabbOverlap(*material, *body0, *body1,
-					                  threadIndex);
+					processContacts = material->m_aabbOverlap(reinterpret_cast<const NewtonMaterial *>(material), reinterpret_cast<const NewtonBody *>(body0), reinterpret_cast<const NewtonBody *>(body1),
+															  threadIndex);
 				}
 				if (processContacts) {
 					NEWTON_ASSERT(

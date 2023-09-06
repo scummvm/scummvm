@@ -596,7 +596,7 @@ dgInt32 dgBroadPhaseCollision::ConvexCast(dgCollision *const shape,
 									//                                  if (body != sentinel) {
 									if (!body->m_collision->IsType(
 									            dgCollision::dgCollisionNull_RTTI)) {
-										if (!PREFILTER_RAYCAST(prefilter, body, collision, userData)) {
+										if (!PREFILTER_RAYCAST(prefilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(collision), userData)) {
 											dgInt32 count;
 											dgFloat32 time;
 

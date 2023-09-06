@@ -320,7 +320,7 @@ dgVector dgCollisionPoint::SupportVertexSimd(const dgVector &dir) const {
 }
 
 dgFloat32 dgCollisionSphere::RayCast(const dgVector &p0, const dgVector &p1, dgContactPoint &contactOut, OnRayPrecastAction preFilter, const dgBody *const body, void *const userData) const {
-	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
+	if (PREFILTER_RAYCAST(preFilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(this), userData)) {
 		return dgFloat32(1.2f);
 	}
 

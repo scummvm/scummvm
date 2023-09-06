@@ -1517,8 +1517,8 @@ dgInt32 dgCollisionCompound::CalculateContactsToSingle(
 				processContacts = 1;
 				if (pair->m_material && pair->m_material->m_compoundAABBOverlap) {
 					processContacts = pair->m_material->m_compoundAABBOverlap(
-					                      *pair->m_material, *compoundBody, *otherBody,
-					                      proxy.m_threadIndex);
+						reinterpret_cast<const NewtonMaterial *>(pair->m_material), reinterpret_cast<const NewtonBody *>(compoundBody), reinterpret_cast<const NewtonBody *>(otherBody),
+						proxy.m_threadIndex);
 				}
 				if (processContacts) {
 					proxy.m_referenceCollision = me->m_shape;
@@ -1598,8 +1598,8 @@ dgInt32 dgCollisionCompound::CalculateContactsToCompound(
 
 				processContacts = 1;
 				if (pair->m_material && pair->m_material->m_compoundAABBOverlap) {
-					processContacts = pair->m_material->m_compoundAABBOverlap(
-					                      *pair->m_material, *myBody, *otherBody, proxy.m_threadIndex);
+					processContacts = pair->m_material->m_compoundAABBOverlap(reinterpret_cast<const NewtonMaterial *>(pair->m_material), reinterpret_cast<const NewtonBody *>(myBody), reinterpret_cast<const NewtonBody *>(otherBody),
+																			  proxy.m_threadIndex);
 				}
 				if (processContacts) {
 					proxy.m_referenceCollision = me->m_shape;

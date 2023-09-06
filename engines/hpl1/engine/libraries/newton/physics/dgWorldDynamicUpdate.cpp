@@ -299,8 +299,8 @@ void dgSolverWorlkerThreads::ThreadExecute() {
 								if (material->m_aabbOverlap) {
 									NEWTON_ASSERT(contact->m_body0);
 									NEWTON_ASSERT(contact->m_body1);
-									material->m_aabbOverlap(*material, *contact->m_body0,
-									                        *contact->m_body1, m_threadIndex);
+									material->m_aabbOverlap(reinterpret_cast<const NewtonMaterial *>(material), reinterpret_cast<const NewtonBody *>(contact->m_body0),
+															reinterpret_cast<const NewtonBody *>(contact->m_body1), m_threadIndex);
 								}
 								dgCollidingPairCollector::dgPair pair;
 								pair.m_body0 = contact->m_body0;
@@ -398,8 +398,8 @@ void dgSolverWorlkerThreads::ThreadExecute() {
 								if (material->m_aabbOverlap) {
 									NEWTON_ASSERT(contact->m_body0);
 									NEWTON_ASSERT(contact->m_body1);
-									material->m_aabbOverlap(*material, *contact->m_body0,
-									                        *contact->m_body1, m_threadIndex);
+									material->m_aabbOverlap(reinterpret_cast<const NewtonMaterial *>(material), reinterpret_cast<const NewtonBody *>(contact->m_body0),
+															reinterpret_cast<const NewtonBody *>(contact->m_body1), m_threadIndex);
 								}
 								dgCollidingPairCollector::dgPair pair;
 								pair.m_body0 = contact->m_body0;
@@ -1905,7 +1905,7 @@ void dgJacobianMemory::ApplyExternalForcesAndAcceleration(
 		for (dgInt32 i = 0; i < m_jointCount; i++) {
 			if (constraintArray[i].m_joint->m_updaFeedbackCallback) {
 				constraintArray[i].m_joint->m_updaFeedbackCallback(
-				    *constraintArray[i].m_joint, m_timeStep, m_threadIndex);
+					reinterpret_cast<const NewtonJoint *>(constraintArray[i].m_joint), m_timeStep, m_threadIndex);
 			}
 		}
 	}
@@ -5779,7 +5779,7 @@ void dgJacobianMemory::CalculateForcesGameMode(dgInt32 iterations,
 		for (dgInt32 i = 0; i < m_jointCount; i++) {
 			if (constraintArray[i].m_joint->m_updaFeedbackCallback) {
 				constraintArray[i].m_joint->m_updaFeedbackCallback(
-				    *constraintArray[i].m_joint, m_timeStep, m_threadIndex);
+					reinterpret_cast<const NewtonJoint *>(constraintArray[i].m_joint), m_timeStep, m_threadIndex);
 			}
 		}
 	}
@@ -7222,7 +7222,7 @@ void dgJacobianMemory::CalculateForcesGameModeParallel(dgInt32 iterations,
 		for (dgInt32 i = 0; i < m_jointCount; i++) {
 			if (constraintArray[i].m_joint->m_updaFeedbackCallback) {
 				constraintArray[i].m_joint->m_updaFeedbackCallback(
-				    *constraintArray[i].m_joint, m_timeStep, m_threadIndex);
+					reinterpret_cast<const NewtonJoint *>(constraintArray[i].m_joint), m_timeStep, m_threadIndex);
 			}
 		}
 	}

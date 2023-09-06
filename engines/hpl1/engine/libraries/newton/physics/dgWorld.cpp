@@ -494,7 +494,7 @@ dgBody *dgWorld::CreateBody(dgCollision *const collision,
 
 void dgWorld::DestroyBody(dgBody *const body) {
 	if (body->m_destructor) {
-		body->m_destructor(*body);
+		body->m_destructor(reinterpret_cast<const NewtonBody *>(body));
 	}
 
 	dgBroadPhaseCollision::Remove(body);

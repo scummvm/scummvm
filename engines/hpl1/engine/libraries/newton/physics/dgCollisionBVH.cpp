@@ -283,7 +283,7 @@ dgFloat32 dgCollisionBVH::RayCastSimd(const dgVector &localP0,
                                       const dgVector &localP1, dgContactPoint &contactOut,
                                       OnRayPrecastAction preFilter, const dgBody *const body,
                                       void *const userData) const {
-	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
+	if (PREFILTER_RAYCAST(preFilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(this), userData)) {
 		return dgFloat32(1.2f);
 	}
 
@@ -321,7 +321,7 @@ dgFloat32 dgCollisionBVH::RayCast(const dgVector &localP0,
                                   const dgVector &localP1, dgContactPoint &contactOut,
                                   OnRayPrecastAction preFilter, const dgBody *const body,
                                   void *const userData) const {
-	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
+	if (PREFILTER_RAYCAST(preFilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(this), userData)) {
 		return dgFloat32(1.2f);
 	}
 

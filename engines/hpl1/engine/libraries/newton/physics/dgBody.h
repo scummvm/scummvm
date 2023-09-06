@@ -60,12 +60,12 @@ public:
 	const dgBody *m_hitBody;         // body hit at contact point
 };
 
-typedef void(dgApi *OnBodyDestroy)(dgBody &me);
-typedef void(dgApi *OnApplyExtForceAndTorque)(dgBody &me, dgFloat32 timestep, dgInt32 threadIndex);
-typedef void(dgApi *OnMatrixUpdateCallback)(const dgBody &me, const dgMatrix &matrix, dgInt32 threadIndex);
-typedef dgUnsigned32(dgApi *OnRayPrecastAction)(const dgBody *const body, const dgCollision *const collision, void *const userData);
-typedef dgFloat32(dgApi *OnRayCastAction)(const dgBody *const body, const dgVector &normal, dgInt32 collisionID, void *const userData, dgFloat32 intersetParam);
-typedef dgUnsigned32(dgApi *GetBuoyancyPlane)(void *collisionID, void *context, const dgMatrix &matrix, dgPlane &plane);
+typedef void(dgApi *OnBodyDestroy)(const NewtonBody *const me);
+typedef void(dgApi *OnApplyExtForceAndTorque)(NewtonBody *const me, dFloat timestep, int threadIndex);
+typedef void(dgApi *OnMatrixUpdateCallback)(const NewtonBody *const body, const dFloat *const matrix, int threadIndex);
+typedef dgUnsigned32(dgApi *OnRayPrecastAction)(const NewtonBody *const body, const NewtonCollision *const collision, void *const userData);
+typedef dgFloat32(dgApi *OnRayCastAction)(const NewtonBody *const body, const dFloat *const hitNormal, int collisionID, void *const userData, dFloat intersectParam);
+typedef dgUnsigned32(dgApi *GetBuoyancyPlane)(const int collisionID, void *const context, const dFloat *const globalSpaceMatrix, dFloat *const globalSpacePlane);
 
 #define OverlapTest(body0, body1) dgOverlapTest((body0)->m_minAABB, (body0)->m_maxAABB, (body1)->m_minAABB, (body1)->m_maxAABB)
 //#define OverlapTest_SSE(body0,body1) dgOverlapTest_SSE ((body0)->m_minAABB, (body0)->m_maxAABB, (body1)->m_minAABB, (body1)->m_maxAABB)
@@ -570,7 +570,7 @@ inline void dgBody::ApplyExtenalForces(dgFloat32 timestep, dgInt32 threadIndex) 
 	m_accel = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	m_alpha = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	if (m_applyExtForces) {
-		m_applyExtForces(*this, timestep, threadIndex);
+		m_applyExtForces(reinterpret_cast<NewtonBody *>(this), timestep, threadIndex);
 	}
 }
 

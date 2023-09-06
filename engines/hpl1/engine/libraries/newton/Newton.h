@@ -264,17 +264,17 @@ typedef void (*NewtonDestroyWorld)(const NewtonWorld *const newtonWorld);
 
 typedef unsigned(*NewtonGetTicksCountCallback)();
 
-typedef void (*NewtonSerialize)(void *const serializeHandle, const void *buffer, int size);
-typedef void (*NewtonDeserialize)(void *const serializeHandle, void *buffer, int size);
+typedef void (*NewtonSerialize)(void *const serializeHandle, const void *buffer, size_t size);
+typedef void (*NewtonDeserialize)(void *const serializeHandle, void *buffer, size_t size);
 
 // user collision callbacks
 typedef void (*NewtonUserMeshCollisionDestroyCallback)(void *const userData);
 typedef void (*NewtonUserMeshCollisionCollideCallback)(NewtonUserMeshCollisionCollideDesc *const collideDescData);
 typedef dFloat(*NewtonUserMeshCollisionRayHitCallback)(NewtonUserMeshCollisionRayHitDesc *const lineDescData);
 typedef void (*NewtonUserMeshCollisionGetCollisionInfo)(void *const userData, NewtonCollisionInfoRecord *const infoRecord);
-typedef int (*NewtonUserMeshCollisionGetFacesInAABB)(void *const userData, const dFloat *const p0, const dFloat *const p1,
-        const dFloat **const vertexArray, int *const vertexCount, int *const vertexStrideInBytes,
-        const int *const indexList, int maxIndexCount, const int *const userDataList);
+typedef void (*NewtonUserMeshCollisionGetFacesInAABB)(void *const userData, const dFloat *const p0, const dFloat *const p1,
+													  const dFloat *const *const vertexArray, int *const vertexCount, int *const vertexStrideInBytes,
+													  const int *const indexList, int maxIndexCount, const int *const userDataList);
 
 typedef dFloat(*NewtonCollisionTreeRayCastCallback)(const NewtonBody *const body, const NewtonCollision *const treeCollision, dFloat interception, dFloat *normal, int faceId, void *usedData);
 typedef dFloat(*NewtonHeightFieldRayCastCallback)(const NewtonBody *const body, const NewtonCollision *const heightFieldCollision, dFloat interception, int row, int col, dFloat *normal, int faceId, void *usedData);

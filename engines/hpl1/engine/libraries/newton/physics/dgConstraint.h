@@ -43,7 +43,7 @@ class dgWorld;
 class dgConstraint;
 class dgBilateralBounds;
 
-typedef void (dgApi *ConstraintsForceFeeback)(const dgConstraint &me, dgFloat32 timestep, dgInt32 threadIndex);
+typedef void(dgApi *ConstraintsForceFeeback)(const NewtonJoint *const userJoint, dFloat timestep, int threadIndex);
 
 class dgConstraintInfo {
 public:
@@ -163,7 +163,7 @@ enum dgConstraintID {
 	dgUnknownConstraintId
 };
 
-typedef void (dgApi *OnConstraintDestroy)(dgConstraint &me);
+typedef void(dgApi *OnConstraintDestroy)(const NewtonJoint *const me);
 
 DG_MSC_VECTOR_ALIGMENT
 class dgConstraint {

@@ -30,7 +30,7 @@
 // template<class T>    class dgPool;
 
 class dgBallConstraint;
-typedef dgUnsigned32(dgApi *dgBallJointFriction)(const dgBallConstraint &ball, dgFloat32 timestep);
+typedef void(dgApi *dgBallJointFriction)(const NewtonJoint *const ball, dFloat timestep);
 
 class dgBallConstraint : public dgBilateralConstraint {
 public:

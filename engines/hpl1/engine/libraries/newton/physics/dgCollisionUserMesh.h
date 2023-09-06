@@ -27,12 +27,12 @@
 
 
 typedef void (dgApi *OnUserMeshDestroyCallback)(void *const userData);
-typedef void (dgApi *OnUserMeshCollideCallback)(dgPolygonMeshDesc &collideData);
-typedef dgFloat32(dgApi *OnUserMeshRayHitCallback)(dgCollisionMeshRayHitDesc &rayHitdata);
+typedef void(dgApi *OnUserMeshCollideCallback)(NewtonUserMeshCollisionCollideDesc *const collideDescData);
+typedef dgFloat32(dgApi *OnUserMeshRayHitCallback)(NewtonUserMeshCollisionRayHitDesc *const lineDescData);
 typedef void (dgApi *UserMeshCollisionInfo)(void *userData, dgCollisionInfo *infoRecord);
-typedef void (dgApi *UserMeshFacesInAABB)(void *userData, const dgFloat32 *p0, const dgFloat32 *p1,
-        const dgFloat32 * const *vertexArray, dgInt32 *vertexCount, dgInt32 *vertexStrideInBytes,
-        const dgInt32 *indexList, dgInt32 maxIndexCount, const dgInt32 *faceAttribute);
+typedef void(dgApi *UserMeshFacesInAABB)(void *const userData, const dFloat *const p0, const dFloat *const p1,
+										 const dFloat *const *const vertexArray, int *const vertexCount, int *const vertexStrideInBytes,
+										 const int *const indexList, int maxIndexCount, const int *const userDataList);
 
 class dgUserMeshCreation {
 public:

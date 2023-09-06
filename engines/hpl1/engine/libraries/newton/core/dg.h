@@ -60,4 +60,23 @@
 #include "dgPolyhedraMassProperties.h"
 #include "dgDelaunayTetrahedralization.h"
 
+class NewtonMesh;
+class NewtonBody;
+class NewtonWorld;
+class NewtonJoint;
+class NewtonMaterial;
+class NewtonCollision;
+class NewtonSceneProxy;
+class NewtonbreakableComponentMesh;
+
+typedef struct NewtonUserMeshCollisionCollideDesc NewtonUserMeshCollisionCollideDesc;
+typedef struct NewtonUserMeshCollisionRayHitDesc NewtonUserMeshCollisionRayHitDesc;
+typedef struct NewtonHingeSliderUpdateDesc NewtonHingeSliderUpdateDesc;
+
+#ifdef __USE_DOUBLE_PRECISION__
+#define dFloat double
+#else
+#define dFloat float
+#endif
+
 #endif

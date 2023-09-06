@@ -167,7 +167,7 @@ dgUnsigned32 dgHingeConstraint::JacobianDerivative(dgContraintDescritor &params)
 		axisParam.m_minFriction = DG_MIN_BOUND;
 		axisParam.m_maxFriction = DG_MAX_BOUND;
 
-		if (m_jointAccelFnt(*this, &axisParam)) {
+		if (m_jointAccelFnt(reinterpret_cast<NewtonJoint *>(this), reinterpret_cast<NewtonHingeSliderUpdateDesc *>(&axisParam))) {
 			if ((axisParam.m_minFriction > DG_MIN_BOUND) || (axisParam.m_maxFriction < DG_MAX_BOUND)) {
 				params.m_forceBounds[5].m_low = axisParam.m_minFriction;
 				params.m_forceBounds[5].m_upper = axisParam.m_maxFriction;
