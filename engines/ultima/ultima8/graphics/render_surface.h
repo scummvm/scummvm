@@ -141,7 +141,10 @@ public:
 	//! Fill the region doing alpha blending with a color in the TEX32_PACK_RGBA format
 	void fillBlended(uint32 rgba, const Rect &r);
 
-	//
+	//! Fill the region with a color in the TEX32_PACK_RGB format
+	void frameRect32(uint32 rgb, const Rect &r);
+
+		//
 	// The rule for painting methods:
 	//
 	// First arg are the source object to 'draw' with

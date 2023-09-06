@@ -43,7 +43,7 @@ void FastAreaVisGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 	CurrentMap *currentmap = world->getCurrentMap();
 
 	uint32 color = TEX32_PACK_RGB(0xFF, 0, 0);
-	surf->fill32(color, 0, 0, MAP_NUM_CHUNKS + 2, MAP_NUM_CHUNKS + 2);
+	surf->frameRect32(color, _dims);
 
 	color = TEX32_PACK_RGB(0, 0, 0);
 	surf->fill32(color, 1, 1, MAP_NUM_CHUNKS, MAP_NUM_CHUNKS);

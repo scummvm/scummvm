@@ -111,10 +111,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		color = HIGHLIGHT_COLOR;
 
 	// Draw the border
-	surf->drawLine32(color, _dims.left, _dims.top, _dims.right - 1, _dims.top);
-	surf->drawLine32(color, _dims.left, _dims.top, _dims.left, _dims.bottom - 1);
-	surf->drawLine32(color, _dims.left, _dims.bottom - 1, _dims.right - 1, _dims.bottom - 1);
-	surf->drawLine32(color, _dims.right -1, _dims.top, _dims.right - 1, _dims.bottom - 1);
+	surf->frameRect32(color, _dims);
 
 	// Dimensions minus border
 	Rect dims = _dims;
