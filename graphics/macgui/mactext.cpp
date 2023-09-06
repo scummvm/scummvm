@@ -835,6 +835,17 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					break;
 					}
 
+				case 'l': { // \016lLLllll -- link len and text
+					s++;
+
+					uint16 len;
+
+					s = readHex(&len, s, 2);
+					current_format.link = Common::U32String(s, len);
+					s += len;
+					break;
+					}
+
 				default: {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 
@@ -2231,7 +2242,10 @@ Common::U32String MacText::getMouseLink(int x, int y) {
 	if (!_textLines[row].picfname.empty())
 		return _textLines[row].pictitle;
 
-	return _textLines[row].chunks[chunk].text;
+	if (!_textLines[row].chunks[chunk].link.empty())
+		return _textLines[row].chunks[chunk].link;
+
+	return Common::U32String();
 }
 
 int MacText::getAlignOffset(int row) {

@@ -613,6 +613,11 @@ Common::U32String stripFormat(const Common::U32String &str) {
 					s += len;
 				} else if (*s == 't') { // font
 					s += 5;
+				} else if (*s == 'l') { // link
+					s++;
+					uint16 len;
+					s = readHex(&len, s, 2);
+					s += len;
 				} else
 					s += 22;
 			} else {
