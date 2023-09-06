@@ -207,7 +207,7 @@ float cPhysicsMaterialNewton::Combine(ePhysicsMaterialCombMode aMode, float afX,
 
 //-----------------------------------------------------------------------
 int cPhysicsMaterialNewton::BeginContactCallback(const NewtonMaterial *material,
-												 const NewtonBody *body0, const NewtonBody *body1, int) {
+												 const NewtonBody *body0, const NewtonBody *body1, int32) {
 	iPhysicsBody *contactBody0 = (cPhysicsBodyNewton *)NewtonBodyGetUserData(body0);
 	iPhysicsBody *contactBody1 = (cPhysicsBodyNewton *)NewtonBodyGetUserData(body1);
 
@@ -347,7 +347,7 @@ void ContactProcessor::endProcessing() {
 	_contactBody1->OnCollide(_contactBody0, &_contactData);
 }
 
-void cPhysicsMaterialNewton::ProcessContactCallback(const NewtonJoint *joint, float, int) {
+void cPhysicsMaterialNewton::ProcessContactCallback(const NewtonJoint *joint, float, int32) {
 	ContactProcessor processor(joint);
 
 	while (processor.processNext()) {
