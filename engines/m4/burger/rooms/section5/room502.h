@@ -29,6 +29,9 @@ namespace Burger {
 namespace Rooms {
 
 class Room502 : public Section5Room {
+private:
+	static const BorkPoint BORK_TABLE[];
+
 public:
 	Room502() : Section5Room() {}
 	~Room502() override {}

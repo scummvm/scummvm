@@ -26,7 +26,11 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+machine *Section5::_bork;
+
 Section5::Section5() : Rooms::Section() {
+	_bork = nullptr;
+
 	add(501, &_room501);
 	add(502, &_room502);
 	add(503, &_room503);
