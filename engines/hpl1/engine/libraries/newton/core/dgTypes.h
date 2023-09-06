@@ -22,9 +22,11 @@
 #ifndef AFX_DGTYPES__42YH_HY78GT_YHJ63Y__INCLUDED_
 #define AFX_DGTYPES__42YH_HY78GT_YHJ63Y__INCLUDED_
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 
+// NB: Disable this section of header as not necessary and would require forbidden symbol exceptions to compile
+// FIXME: Remove completely if all ports are happy with this...
+#if 0
 #include <ctype.h>
 #include <math.h>
 #include <new>
@@ -108,6 +110,9 @@
 #endif
 
 #endif
+
+#endif
+// NB: End of disabled header section
 
 //************************************************************
 #ifndef _WIN32

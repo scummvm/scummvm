@@ -22,7 +22,6 @@
 #ifndef __NEWTON_H_INCLUDED__
 #define __NEWTON_H_INCLUDED__
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 
 #define NEWTON_MAJOR_VERSION 2
