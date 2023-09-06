@@ -71,6 +71,10 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	case 1:
 		title = _("Common keyboard commands:");
 		ADD_BIND("F5", _("Save / Load dialog"));
+		// I18N: "Selection screen" is what the English game manual
+		// calls it. It contains various options, a sound test, etc.
+		if (gameId == GID_LOOM && platform == Common::kPlatformPCEngine)
+			ADD_BIND("F6", _("Selection screen"));
 		ADD_BIND(".", _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
