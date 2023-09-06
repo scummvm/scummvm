@@ -21,6 +21,7 @@
 
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gumps/target_gump.h"
 
@@ -60,7 +61,7 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 			// Background is partially transparent
 			if (_fadedModal && dynamic_cast<ModalGump *>(g) &&
 			        !dynamic_cast<TargetGump *>(g) && !g->IsHidden())
-				surf->FillBlended(0x7F000000, _dims);
+				surf->fillBlended(TEX32_PACK_RGBA(0, 0, 0, 0x80), _dims);
 
 			g->Paint(surf, lerp_factor, scaled);
 		}

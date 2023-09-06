@@ -115,7 +115,7 @@ void MessageBoxGump::Close(bool no_del) {
 
 void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled*/) {
 	// Background is partially transparent
-	surf->FillBlended(0x80000000, _dims);
+	surf->fillBlended(TEX32_PACK_RGBA(0, 0, 0, 0x80), _dims);
 
 	uint32 color = TEX32_PACK_RGB(0xFF, 0xFF, 0xFF);
 	if (!IsFocus())

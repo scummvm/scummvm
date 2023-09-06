@@ -389,12 +389,7 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 
 } // End of anonymous namespace
 
-//
-// RenderSurface::FillBlended(uint32 rgba, Rect r)
-//
-// Desc: Fill the region doing alpha blending
-//
-void RenderSurface::FillBlended(uint32 rgba, const Rect &r) {
+void RenderSurface::fillBlended(uint32 rgba, const Rect &r) {
 	int alpha = TEX32_A(rgba);
 	if (alpha == 0xFF) {
 		fill32(rgba, r);

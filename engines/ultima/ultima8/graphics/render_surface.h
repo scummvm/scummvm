@@ -142,7 +142,7 @@ public:
 	void FillAlpha(uint8 alpha, const Rect &r);
 
 	//! Fill the region doing alpha blending with a color in the TEX32_PACK_RGBA format
-	void FillBlended(uint32 rgba, const Rect &r);
+	void fillBlended(uint32 rgba, const Rect &r);
 
 	//
 	// The rule for painting methods:
