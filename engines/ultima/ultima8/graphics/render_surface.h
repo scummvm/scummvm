@@ -138,9 +138,6 @@ public:
 	//! Fill the region with a color in the TEX32_PACK_RGB format
 	void fill32(uint32 rgb, const Rect &r);
 
-	//! Fill alpha channel
-	void FillAlpha(uint8 alpha, const Rect &r);
-
 	//! Fill the region doing alpha blending with a color in the TEX32_PACK_RGBA format
 	void fillBlended(uint32 rgba, const Rect &r);
 

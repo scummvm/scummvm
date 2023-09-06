@@ -292,69 +292,6 @@ void RenderSurface::fill32(uint32 rgb, const Rect &r) {
 	_surface->fillRect(rect, rgb);
 }
 
-
-// #define CHECK_ALPHA_FILLS
-namespace {
-
-template<typename uintX>
-void inline fillAlphaLogic(uint8 *pixels, int32 pitch, uint8 alpha, const Common::Rect &rect, const Graphics::PixelFormat &format) {
-	uint32 aMask = format.aMax() << format.aShift;
-	int32 w = rect.width();
-	int32 h = rect.height();
-
-	if (!w || !h || !aMask)
-		return;
-
-	uint32 a = (((uint32)alpha) << format.aShift) & aMask;
-
-#ifdef CHECK_ALPHA_FILLS
-	uint32 c;
-	uint32 m;
-	if (a == 0) {
-		uint32 bMask = format.bMax() << format.bShift;
-		c = (bMask >> 1) & bMask;
-		m = bMask;
-	} else {
-		uint32 rMask = format.rMax() << format.rShift;
-		c = (rMask >> 1) & rMask;
-		m = rMask;
-	}
-#endif
-
-	uint8 *pixel = pixels + rect.top * pitch + rect.left * format.bytesPerPixel;
-	int diff = pitch - w * format.bytesPerPixel;
-
-	for (int y = 0; y < h; ++y) {
-		for (int x = 0; x < w; ++x) {
-			uintX *dest = reinterpret_cast<uintX *>(pixel);
-			*dest = (*dest & ~aMask) | a;
-#ifdef CHECK_ALPHA_FILLS
-			*dest = (*dest & ~m) | (c + (((*dest & m) >> 1) & m));
-#endif
-			pixel += format.bytesPerPixel;
-		}
-
-		pixel += diff;
-	}
-}
-
-} // End of anonymous namespace
-
-//
-// RenderSurface::FillAlpha(uint8 alpha, Rect r)
-//
-// Desc: Fill alpha channel
-//
-void RenderSurface::FillAlpha(uint8 alpha, const Rect &r) {
-	Common::Rect rect(r.left, r.top, r.right, r.bottom);
-	rect.clip(_clipWindow);
-
-	if (_surface->format.bytesPerPixel == 4)
-		fillAlphaLogic<uint32>(_pixels, _pitch, alpha, rect, _surface->format);
-	else if (_surface->format.bytesPerPixel == 2)
-		fillAlphaLogic<uint16>(_pixels, _pitch, alpha, rect, _surface->format);
-}
-
 namespace {
 
 template<typename uintX>
