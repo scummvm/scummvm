@@ -687,7 +687,7 @@ void Ultima8Engine::paint() {
 
 #ifdef DEBUG
 	// Fill the screen with an annoying color so we can see fast area bugs
-	_screen->Fill32(0xFF10FF10, r);
+	_screen->fill32(TEX32_PACK_RGB(0x10, 0xFF, 0x10), r);
 #endif
 
 	_desktopGump->Paint(_screen, _lerpFactor, false);

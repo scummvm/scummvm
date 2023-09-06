@@ -42,6 +42,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+static const uint32 TRANSPARENT_COLOR = TEX32_PACK_RGBA(0x7F, 0x00, 0x00, 0x7F);
+static const uint32 HIGHLIGHT_COLOR = TEX32_PACK_RGBA(0xFF, 0xFF, 0x00, 0x1F);
+
 ItemSorter::ItemSorter(int capacity) :
 	_shapes(nullptr), _clipWindow(0, 0, 0, 0), _items(nullptr), _itemsTail(nullptr),
 	_itemsUnused(nullptr), _painted(nullptr), _camSx(0), _camSy(0),
@@ -276,7 +279,8 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 				                          it->_sxBot,
 				                          it->_syBot,
 				                          it->_trans,
-				                          (it->_flags & Item::FLG_FLIPPED) != 0, 0x1f00ffff);
+				                          (it->_flags & Item::FLG_FLIPPED) != 0,
+										  HIGHLIGHT_COLOR);
 			}
 
 			it = it->_next;
@@ -318,9 +322,9 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 		//	if (wire) si->info->draw_box_back(s, dispx, dispy, 255);
 
 		if (si->_extFlags & Item::EXT_HIGHLIGHT && si->_extFlags & Item::EXT_TRANSPARENT)
-			surf->PaintHighlightInvis(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
+			surf->PaintHighlightInvis(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, TRANSPARENT_COLOR);
 		if (si->_extFlags & Item::EXT_HIGHLIGHT)
-			surf->PaintHighlight(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
+			surf->PaintHighlight(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, TRANSPARENT_COLOR);
 		else if (si->_extFlags & Item::EXT_TRANSPARENT)
 			surf->PaintInvisible(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0);
 		else if (si->_flags & Item::FLG_FLIPPED)

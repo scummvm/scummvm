@@ -178,7 +178,7 @@ void MovieGump::run() {
 				widget->InitGump(this);
 				widget->setRelativePosition(BOTTOM_CENTER, 0, -10);
 				// Subtitles should be white.
-				widget->setBlendColour(0xffffffff);
+				widget->setBlendColour(TEX32_PACK_RGBA(0xFF, 0xFF, 0xFF, 0xFF));
 				_subtitleWidget = widget->getObjId();
 			}
 		}

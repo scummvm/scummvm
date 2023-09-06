@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
 
@@ -158,7 +159,7 @@ uint32 PaletteFaderProcess::I_fadeToBlack(const uint8 *args,
 		}
 	}
 
-	_fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, nsteps, true);
+	_fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0x00, 0x00, 0x00, 0x00), false, 0x7FFF, nsteps, true);
 	return Kernel::get_instance()->addProcess(_fader);
 }
 
@@ -179,7 +180,7 @@ uint32 PaletteFaderProcess::I_fadeFromBlack(const uint8 *args,
 		}
 	}
 
-	_fader = new PaletteFaderProcess(0x00000000, true, 0x7FFF, nsteps, false);
+	_fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0x00, 0x00, 0x00, 0x00), true, 0x7FFF, nsteps, false);
 	return Kernel::get_instance()->addProcess(_fader);
 }
 
@@ -190,7 +191,7 @@ uint32 PaletteFaderProcess::I_fadeToWhite(const uint8 * /*args*/,
 	else if (_fader && !_fader->is_terminated())
 		_fader->terminate();
 
-	_fader = new PaletteFaderProcess(0x00FFFFFF, false, 0x7FFF, 30, true);
+	_fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0xFF, 0xFF, 0xFF, 0x00), false, 0x7FFF, 30, true);
 	return Kernel::get_instance()->addProcess(_fader);
 }
 
@@ -201,7 +202,7 @@ uint32 PaletteFaderProcess::I_fadeFromWhite(const uint8 * /*args*/,
 	else if (_fader && !_fader->is_terminated())
 		_fader->terminate();
 
-	_fader = new PaletteFaderProcess(0x00FFFFFF, true, 0x7FFF, 30, false);
+	_fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0xFF, 0xFF, 0xFF, 0x00), true, 0x7FFF, 30, false);
 	return Kernel::get_instance()->addProcess(_fader);
 }
 
@@ -212,7 +213,7 @@ uint32 PaletteFaderProcess::I_lightningBolt(const uint8 * /*args*/,
 	else if (_fader && !_fader->is_terminated())
 		_fader->terminate();
 
-	_fader = new PaletteFaderProcess(0x3FCFCFCF, true, -1, 10, false);
+	_fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0xCF, 0xCF, 0xCF, 0x3F), true, -1, 10, false);
 	return Kernel::get_instance()->addProcess(_fader);
 }
 

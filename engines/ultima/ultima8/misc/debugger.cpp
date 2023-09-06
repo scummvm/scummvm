@@ -31,6 +31,7 @@
 #include "ultima/ultima8/graphics/inverter_process.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
@@ -1827,6 +1828,7 @@ bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
 	surface->BeginPainting();
 
 	uint32 start, end;
+	uint32 blendColor = TEX32_PACK_RGBA(0x7F, 0x00, 0x00, 0x7F);
 
 	start = g_system->getMillis();
 	for (int i = 0; i < count; i++) {
@@ -1858,14 +1860,14 @@ bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
 
 	start = g_system->getMillis();
 	for (int i = 0; i < count; i++) {
-		surface->PaintHighlight(s, frame, 160, 100, false, false, 0x7F00007F);
+		surface->PaintHighlight(s, frame, 160, 100, false, false, blendColor);
 	}
 	end = g_system->getMillis();
 	debugPrintf("PaintHighlight: %d\n", end - start);
 
 	start = g_system->getMillis();
 	for (int i = 0; i < count; i++) {
-		surface->PaintHighlightInvis(s, frame, 160, 100, false, false, 0x7F00007F);
+		surface->PaintHighlightInvis(s, frame, 160, 100, false, false, blendColor);
 	}
 	end = g_system->getMillis();
 	debugPrintf("PaintHighlightInvis: %d\n", end - start);

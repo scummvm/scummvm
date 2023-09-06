@@ -94,7 +94,7 @@ void MessageBoxGump::InitGump(Gump *newparent, bool take_focus) {
 	// Buttons (right aligned)
 	int off = _dims.width() - buttons_w;
 	for (size_t i = 0; i < _buttons.size(); i++) {
-		w = new ButtonWidget(off, _dims.height() - 23, _buttons[i], false, 1, 0x80D000D0);
+		w = new ButtonWidget(off, _dims.height() - 23, _buttons[i], false, 1, TEX32_PACK_RGBA(0xD0, 0x00, 0xD0, 0x80));
 		w->SetIndex(static_cast<int32>(i));
 		w->InitGump(this, false);
 		width = height = 0;

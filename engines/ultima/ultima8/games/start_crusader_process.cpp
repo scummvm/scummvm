@@ -32,6 +32,7 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -137,7 +138,7 @@ void StartCrusaderProcess::run() {
 		avatar->setActorFlag(Actor::ACT_WEAPONREADY);
 	}
 
-	Process *fader = new PaletteFaderProcess(0x00FFFFFF, true, 0x7FFF, 60, false);
+	Process *fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0xFF, 0xFF, 0xFF, 0x00), true, 0x7FFF, 60, false);
 	Kernel::get_instance()->addProcess(fader);
 
 	Ultima8Engine::get_instance()->setAvatarInStasis(false);
