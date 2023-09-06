@@ -301,7 +301,7 @@ typedef dFloat(*NewtonWorldRayFilterCallback)(const NewtonBody *const body, cons
 
 
 typedef int (*NewtonOnAABBOverlap)(const NewtonMaterial *const material, const NewtonBody *const body0, const NewtonBody *const body1, int32 threadIndex);
-typedef void (*NewtonContactsProcess)(const NewtonJoint *const contact, dFloat timestep, int threadIndex);
+typedef void (*NewtonContactsProcess)(const NewtonJoint *const contact, dFloat timestep, int32 threadIndex);
 
 typedef void (*NewtonBodyIterator)(const NewtonBody *const body, void *const userData);
 typedef void (*NewtonJointIterator)(const NewtonJoint *const joint, void *const userData);
