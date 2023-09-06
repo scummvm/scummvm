@@ -61,6 +61,7 @@ struct MacFontRun {
 	bool wordContinuation;
 	const Font *font;
 	MacWindowManager *wm;
+	Common::String link;  // Substitute to return when hover or click
 
 	MacFontRun() {
 		wm = nullptr;

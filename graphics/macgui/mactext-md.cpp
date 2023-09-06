@@ -195,7 +195,7 @@ int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, con
 		return 0;
 
 	Common::String res = Common::String::format("\001" "\016i%02x" "%02x%s",
-			50, (uint)link->size, Common::String((const char *)link->data, link->size).c_str());
+			80, (uint)link->size, Common::String((const char *)link->data, link->size).c_str());
 
 	if (alt)
 		res += Common::String::format("%02x%s", (uint)alt->size, Common::String((const char *)alt->data, alt->size).c_str());
@@ -228,7 +228,9 @@ int render_link(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, cons
 	const Common::SDDataBuffer *text = content ? content : link;
 
 	Common::String res = Common::String::format("\001" "\016+%02x00" "\001\016[%04x%04x%04x"
-		"%s" "\001\016]" "\001\016-%02x00", kMacFontUnderline, mdstate->linkr, mdstate->linkg, mdstate->linkb,
+		"\001\016l%02x%s" "%s" "\001\016l00" "\001\016]" "\001\016-%02x00", kMacFontUnderline,
+		mdstate->linkr, mdstate->linkg, mdstate->linkb,
+		(uint)link->size, Common::String((const char *)link->data , link->size).c_str(),
 		Common::String((const char *)text->data , text->size).c_str(), kMacFontUnderline);
 
 	sd_bufput(ob, res.c_str(), res.size());
