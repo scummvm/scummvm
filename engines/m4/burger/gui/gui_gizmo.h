@@ -25,6 +25,7 @@
 
 #include "m4/m4_types.h"
 #include "m4/gui/gui_vmng_core.h"
+#include "m4/graphics/gr_buff.h"
 
 namespace M4 {
 namespace Burger {
@@ -46,6 +47,22 @@ struct Gizmo_Globals {
 	char *_assetName = nullptr;
 	int _spriteCount = 0;
 	M4sprite **_sprites = nullptr;
+};
+
+struct Gizmo {
+	GrBuff *_grBuff = nullptr;
+	int _field4 = 0;
+	int _field8 = 0;
+	int _fieldC = 0;
+	EventHandler _eventHandler = nullptr;
+};
+
+struct GizmoItem {
+	// TODO
+};
+
+struct GizmoButton {
+	// TODO
 };
 
 extern void gizmo_anim(RGB8 *pal);

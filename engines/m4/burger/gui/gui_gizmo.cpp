@@ -35,14 +35,19 @@ static void gizmo_restore_interface(bool fade);
 static void gizmo_free_gui(ScreenContext *screenContext);
 static bool gizmo_load_sprites(const char *name, size_t count);
 static void gizmo_free_sprites();
+static ScreenContext *gui_create_gizmo(M4sprite *sprite, int zero1, int zero2, int v505);
 
 void gizmo_anim(RGB8 *pal) {
 	if (!_GIZMO(initialized))
 		gizmo_initialize(pal);
 
-	gizmo_load_sprites("500gizmo", 58);
+	if (gizmo_load_sprites("500gizmo", 58)) {
+		_GIZMO(gui) = gui_create_gizmo(_GIZMO(sprites)[0], 0, 0, 505);
 
-	// TODO
+		if (_GIZMO(gui)) {
+			// TODO
+		}
+	}
 }
 
 void gizmo_initialize(RGB8 *pal) {
@@ -59,7 +64,6 @@ void gizmo_initialize(RGB8 *pal) {
 
 		_GIZMO(palette) = pal;
 		krn_fade_to_grey(pal, 5, 1);
-
 	}
 }
 
@@ -145,6 +149,22 @@ static void gizmo_free_sprites() {
 		_GIZMO(sprites) = nullptr;
 		_GIZMO(spriteCount) = 0;
 	}
+}
+
+static ScreenContext *gui_create_gizmo(M4sprite *sprite, int zero1, int zero2, int v505) {
+	if (!sprite)
+		return nullptr;
+
+	Gizmo *gui = (Gizmo *)mem_alloc(sizeof(Gizmo), "*gui gizmo");
+	if (!gui)
+		return nullptr;
+
+	GrBuff *grBuff = new GrBuff(sprite->w, sprite->h);
+	gui->_grBuff = grBuff;
+
+
+	// TODO: More stuff
+	return nullptr;
 }
 
 } // namespace GUI
