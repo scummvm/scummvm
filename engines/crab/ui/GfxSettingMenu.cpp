@@ -122,6 +122,8 @@ int GfxSettingMenu::handleEvents(const Common::Event &event) {
 // Purpose: Keep button settings synced with our screen settings
 //------------------------------------------------------------------------
 void GfxSettingMenu::internalEvents() {
+	g_engine->_screenSettings->internalEvents();
+
 	_fullscreen._state = g_engine->_screenSettings->_fullscreen;
 	_vsync._state = g_engine->_screenSettings->_vsync;
 	_border._state = g_engine->_screenSettings->_border;

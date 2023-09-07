@@ -59,6 +59,14 @@ void ScreenSettings::load(rapidxml::xml_node<char> *node) {
 		_vsync = ConfMan.getBool("vsync");
 }
 
+void ScreenSettings::internalEvents() {
+	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode))
+		_fullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+
+	if (g_system->hasFeature(OSystem::kFeatureVSync))
+		_vsync = g_system->getFeatureState(OSystem::kFeatureVSync);
+}
+
 void ScreenSettings::toggleFullScreen() {
 	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
 		_fullscreen = !_fullscreen;

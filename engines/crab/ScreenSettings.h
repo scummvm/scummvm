@@ -127,6 +127,8 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
+	void internalEvents();
+
 	void toggleFullScreen();
 	void toggleVsync();
 
