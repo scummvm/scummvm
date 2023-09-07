@@ -24,6 +24,7 @@
 #define M4_BURGER_GUI_GIZMO_H
 
 #include "m4/m4_types.h"
+#include "m4/gui/gui_vmng_core.h"
 
 namespace M4 {
 namespace Burger {
@@ -38,10 +39,18 @@ struct Gizmo_Globals {
 	bool _lowMemory1 = false;
 	bool _lowMemory2 = false;
 	int _val1 = 0;
+	ScreenContext *_gui = nullptr;
+	MemHandle _seriesHandle = nullptr;
+	int32 _celsOffset = 0;
+	int32 _palOffset = 0;
+	char *_assetName = nullptr;
+	int _spriteCount = 0;
+	M4sprite **_sprites = nullptr;
 };
 
+extern void gizmo_anim(RGB8 *pal);
 extern void gizmo_initialize(RGB8 *pal);
-extern void gizmo_shutdown(bool fade);
+extern void gizmo_shutdown(void *, void *);
 
 } // namespace GUI
 } // namespace Burger
