@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-06 05:56+0000\n"
-"PO-Revision-Date: 2023-09-07 12:41+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2023-09-07 17:04+0000\n"
+"Last-Translator: Bo Mortensen <pighat@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
 "Language: da\n"
@@ -157,7 +157,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Åbn følgende link"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -169,6 +169,8 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Den vil automatisk videresendt data til ScummVM og advare dig hvis der "
+"skulle opstå fejl"
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
@@ -10373,19 +10375,16 @@ msgid "Dance move right"
 msgstr "Flyt til højre"
 
 #: engines/wintermute/keymapper_tables.h:1283
-#, fuzzy
 msgid "Cancel input"
 msgstr "Annuller"
 
 #: engines/wintermute/keymapper_tables.h:1345
-#, fuzzy
 msgid "Toggle subtitles"
-msgstr "Museindfangning til/fra"
+msgstr "Undertekster til/fra"
 
 #: engines/wintermute/keymapper_tables.h:1409
-#, fuzzy
 msgid "Hide hints"
-msgstr "Skjul andre"
+msgstr "Skjul ledetråde"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
@@ -10395,63 +10394,58 @@ msgstr ""
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1566
-#, fuzzy
 msgid "Chapayev's action"
-msgstr "Fo~r~rige"
+msgstr "Chapayevs handling g"
 
 #: engines/wintermute/keymapper_tables.h:1614
 #: engines/wintermute/keymapper_tables.h:1867
 #: engines/wintermute/keymapper_tables.h:1963
 msgid "Settings"
-msgstr ""
+msgstr "Indstillinger"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "Dialogsvar 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "Dialogsvar 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "Dialogsvar"
 
 #: engines/wintermute/keymapper_tables.h:1634
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "Dialogsvar"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Spin wheel slower"
-msgstr ""
+msgstr "Rotér"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1653
 msgid "Spin wheel faster"
-msgstr ""
+msgstr "Rotér hjul hurtigere"
 
 #: engines/wintermute/keymapper_tables.h:1731
-#, fuzzy
 msgid "Zoom out"
-msgstr "Formindsk"
+msgstr "Zoom"
 
 #: engines/wintermute/keymapper_tables.h:1738
-#, fuzzy
 msgid "Zoom in"
-msgstr "Formindsk"
+msgstr "Zoom"
 
 #: engines/wintermute/keymapper_tables.h:1751
 #: engines/wintermute/keymapper_tables.h:1957
-#, fuzzy
 msgid "Show journal"
-msgstr "Vis alle"
+msgstr "Vis journal"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
-#, fuzzy
 msgid "Bezier window"
-msgstr "Tilpas til vindue"
+msgstr "Bezier"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1901
@@ -10471,9 +10465,8 @@ msgid "Drop"
 msgstr "Smi~d~ side"
 
 #: engines/wintermute/keymapper_tables.h:2043
-#, fuzzy
 msgid "Player 1: Up"
-msgstr "Spilletid: "
+msgstr "Spiller"
 
 #: engines/wintermute/keymapper_tables.h:2048
 #, fuzzy
@@ -10486,9 +10479,8 @@ msgid "Player 1: Down"
 msgstr "Spilletid: "
 
 #: engines/wintermute/keymapper_tables.h:2058
-#, fuzzy
 msgid "Player 1: Right"
-msgstr "Spilletid: "
+msgstr "Spiller 1: Højre"
 
 #: engines/wintermute/keymapper_tables.h:2063
 #, fuzzy
