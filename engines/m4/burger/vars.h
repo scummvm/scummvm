@@ -27,6 +27,7 @@
 #include "m4/burger/core/release_trigger.h"
 #include "m4/burger/core/stream_break.h"
 #include "m4/burger/gui/gui.h"
+#include "m4/burger/gui/gui_gizmo.h"
 #include "m4/burger/gui/game_menu.h"
 #include "m4/burger/flags.h"
 #include "m4/burger/hotkeys.h"
@@ -94,6 +95,7 @@ public:
 	Burger::Flags _flags;
 	GameMode _executing = WHOLE_GAME;
 	GUI::GUI_Globals _gui;
+	GUI::Gizmo_Globals _gizmo;
 	GUI::Interface _interface;
 	Burger::Hotkeys _hotkeys;
 	GUI::MenuGlobals _menu;

@@ -85,6 +85,7 @@ MODULE_OBJS = \
 	burger/core/stream_break.o \
 	burger/gui/game_menu.o \
 	burger/gui/gui_cheapo.o \
+	burger/gui/gui_gizmo.o \
 	burger/gui/interface.o \
 	burger/rooms/room.o \
 	burger/rooms/section.o \

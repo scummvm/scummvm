@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section5/section5.h"
+#include "m4/burger/gui/gui_gizmo.h"
 #include "m4/burger/vars.h"
 #include "m4/burger/burger.h"
 #include "m4/gui/gui_sys.h"
@@ -314,7 +315,7 @@ machine *Section5::_bork;
 
 Section5::Section5() : Rooms::Section() {
 	_bork = nullptr;
-	Common::fill(_gizmoRoomNums, _gizmoRoomNums + 15, 0);
+	Common::fill(_gizmoRoomNums, _gizmoRoomNums + 15, false);
 
 	add(501, &_room501);
 	add(502, &_room502);
@@ -359,7 +360,7 @@ void Section5::parser() {
 
 void Section5::takeGizmo(RGB8 *pal) {
 	if (player_commands_allowed() && INTERFACE_VISIBLE &&
-			!_G(pal_fade_in_progress) && !_flag1) {
+			!_G(pal_fade_in_progress) && !_GIZMO(initialized)) {
 		gizmoAnim(pal);
 		player_set_commands_allowed(false);
 

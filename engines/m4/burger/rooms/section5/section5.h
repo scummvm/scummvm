@@ -58,7 +58,6 @@ private:
 	Room511 _room513;
 	Room512 _room512;
 	Room513 _room511;
-	bool _flag1 = false;
 	bool _gizmoRoomNums[15];
 
 	void takeGizmo(RGB8 *pal);
