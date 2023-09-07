@@ -120,13 +120,6 @@ public:
 	};
 
 	//
-	// Surface Palettes
-	//
-
-	void CreateNativePalette(Palette *palette, int maxindex = 0);
-
-
-	//
 	// Surface Filling
 	//
 

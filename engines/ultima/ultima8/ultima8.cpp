@@ -748,7 +748,7 @@ void Ultima8Engine::GraphicSysInit() {
 	}
 
 	if (_desktopGump) {
-		_paletteManager->RenderSurfaceChanged(new_screen);
+		_paletteManager->PixelFormatChanged(new_screen->getRawSurface()->format);
 		static_cast<DesktopGump *>(_desktopGump)->RenderSurfaceChanged(new_screen);
 		_screen = new_screen;
 		paint();
@@ -773,7 +773,7 @@ void Ultima8Engine::GraphicSysInit() {
 		showSplashScreen();
 	}
 
-	_paletteManager = new PaletteManager(new_screen);
+	_paletteManager = new PaletteManager(new_screen->getRawSurface()->format);
 
 	ConfMan.registerDefault("fadedModal", true);
 	bool faded_modal = ConfMan.getBool("fadedModal");

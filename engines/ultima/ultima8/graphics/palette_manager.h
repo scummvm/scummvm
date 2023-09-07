@@ -24,15 +24,14 @@
 
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/shared/std/containers.h"
+#include "graphics/pixelformat.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class RenderSurface;
-
 class PaletteManager {
 public:
-	explicit PaletteManager(RenderSurface *rs);
+	explicit PaletteManager(const Graphics::PixelFormat &format);
 	~PaletteManager();
 
 	static PaletteManager *get_instance() {
@@ -77,8 +76,8 @@ public:
 	// Alpha will set how much of original palette to keep. 0 = keep none
 	static void getTransformMatrix(int16 matrix[12], uint32 col32);
 
-	//! Change the Render Surface used by the PaletteManager
-	void RenderSurfaceChanged(RenderSurface *rs);
+	//! Change the pixel format used by the PaletteManager
+	void PixelFormatChanged(const Graphics::PixelFormat &format);
 
 	//! Reset the Palette Manager
 	void reset();
@@ -86,9 +85,11 @@ public:
 	//! Reset all the transforms back to default
 	void resetTransforms();
 
+	void createNativePalette(Palette *palette, int maxindex, const Graphics::PixelFormat &format);
+
 private:
 	Std::vector<Palette *> _palettes;
-	RenderSurface *_renderSurface;
+	Graphics::PixelFormat _format;
 
 	static PaletteManager *_paletteManager;
 };
