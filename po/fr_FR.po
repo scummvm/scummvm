@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-06 05:56+0000\n"
-"PO-Revision-Date: 2023-09-03 05:39+0000\n"
+"PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8311,10 +8311,8 @@ msgid "Save / Load dialog"
 msgstr "Écran de Sauvegarde/Chargement"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
-#| msgid "Select shader"
 msgid "Selection screen"
-msgstr "Sélectionner un shader"
+msgstr "Ecran de sélection"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
