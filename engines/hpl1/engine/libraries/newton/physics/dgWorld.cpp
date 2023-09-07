@@ -20,8 +20,8 @@
  */
 
 #include "dgWorld.h"
+#include "hpl1/debug.h"
 #include "hpl1/engine/libraries/newton/core/dg.h"
-
 
 #include "dgCollisionBox.h"
 #include "dgCollisionCapsule.h"
@@ -288,13 +288,7 @@ dgWorld::dgWorld(dgMemoryAllocator *allocator) : // dgThreadHive(),
 
 	m_cpu = dgNoSimdPresent;
 	m_numberOfTheads = 1;
-
-	SetHardwareMode(1);
-	SetThreadsCount(DG_MAXIMUN_THREADS);
-	m_maxTheads = m_numberOfTheads;
-
-	SetHardwareMode(0);
-	SetThreadsCount(1);
+	m_maxTheads = 1;
 
 	dgBroadPhaseCollision::Init();
 	dgCollidingPairCollector::Init();
@@ -350,10 +344,7 @@ void dgWorld::SetFrictionMode(dgInt32 mode) {
 }
 
 void dgWorld::SetHardwareMode(dgInt32 mode) {
-	m_cpu = dgNoSimdPresent;
-	if (mode) {
-		m_cpu = dgGetCpuType();
-	}
+	HPL1_UNIMPLEMENTED(dgWorld::SetHardwareMode);
 }
 
 dgInt32 dgWorld::GetHardwareMode(char *description) const {
