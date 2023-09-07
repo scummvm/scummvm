@@ -142,7 +142,9 @@ void RichTextWidget::createWidget() {
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
 	uint32 fg = _wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
 
-	Graphics::MacFont macFont(Graphics::kMacFontNewYork, 30, Graphics::kMacFontRegular);
+	const int fontHeight = g_gui.xmlEval()->getVar("Globals.Font.Height", 25);
+
+	Graphics::MacFont macFont(Graphics::kMacFontNewYork, fontHeight, Graphics::kMacFontRegular);
 
 	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 
