@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-06 05:56+0000\n"
-"PO-Revision-Date: 2021-11-07 02:48+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2023-09-07 12:41+0000\n"
+"Last-Translator: Bo Mortensen <pighat@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
 "Language: da\n"
@@ -113,13 +113,11 @@ msgstr "Hurtigtilstand"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "Vil bede dig køre den lokale Webserver"
 
 #: gui/cloudconnectionwizard.cpp:189
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
-msgstr "Kør lokal webserver"
+msgstr "Kræver den lokalewebserver"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
@@ -130,6 +128,8 @@ msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"Denne tilstand kræver at den lokale Webserver kører, så din browser kan "
+"videresende data til ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3660
 msgid "Stop server"
