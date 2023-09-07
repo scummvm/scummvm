@@ -216,13 +216,13 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	};
 
 	const Common::Path langs[] = {
-		"",
 		language(),
 		"en",
 		"de-es-fr-it-en",
 		"en-es-fr-de-it",
 		"es-en-fr-de-it",
-		"de-en-es-fr-it"
+		"de-en-es-fr-it",
+		""
 	};
 
 	// Note: the audio files for a few videos have a weird path
