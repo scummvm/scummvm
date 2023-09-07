@@ -267,11 +267,6 @@ dgConvexHull4d::~dgConvexHull4d(void) {
 
 void dgConvexHull4d::BuildHull(dgMemoryAllocator *const allocator,
                                const dgBigVector *const vertexCloud, dgInt32 count, dgFloat64 distTol) {
-#ifdef _WIN32
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-
 	//    InitVertexArray(vertexCloud, count);
 
 	dgInt32 treeCount = count / (DG_VERTEX_CLUMP_SIZE_4D >> 1);
@@ -288,10 +283,6 @@ void dgConvexHull4d::BuildHull(dgMemoryAllocator *const allocator,
 	if (m_count >= 4) {
 		CalculateConvexHull(&treePool[0], &points[0], count, distTol);
 	}
-
-#ifdef _WIN32
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
 }
 
 void dgConvexHull4d::TessellateTriangle(dgInt32 level, const dgVector &p0,
@@ -1101,11 +1092,6 @@ dgConvexHull4d::dgListNode *dgConvexHull4d::FindFacingNode(
 }
 
 dgInt32 dgConvexHull4d::AddVertex(const dgBigVector &vertex) {
-#ifdef _WIN32
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-
 	dgInt32 index = -1;
 	dgListNode *const faceNode = FindFacingNode(vertex);
 	if (faceNode) {
@@ -1124,10 +1110,6 @@ dgInt32 dgConvexHull4d::AddVertex(const dgBigVector &vertex) {
 			DeleteFace(node);
 		}
 	}
-
-#ifdef _WIN32
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
 
 	return index;
 }

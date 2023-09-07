@@ -346,11 +346,6 @@ static dgInt32 QuickSortVertices(dgFloat64 *const vertList, dgInt32 stride,
 dgInt32 dgVertexListToIndexList(dgFloat64 *const vertList,
                                 dgInt32 strideInBytes, dgInt32 compareCount, dgInt32 vertexCount,
                                 dgInt32 *const indexListOut, dgFloat64 tolerance) {
-#ifdef _WIN32
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-
 	if (strideInBytes < 3 * dgInt32(sizeof(dgFloat64))) {
 		return 0;
 	}
@@ -398,10 +393,6 @@ dgInt32 dgVertexListToIndexList(dgFloat64 *const vertList,
 		indexListOut[i1] = index;
 		m += stride2;
 	}
-
-#ifdef _WIN32
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
 
 	return count;
 }

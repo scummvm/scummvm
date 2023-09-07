@@ -23,9 +23,6 @@
 #define AFX_DGBALLCONSTRAINT_H__7C9E1F9A_5EC6_48BE_8C9F_FB90132C6619__INCLUDED_
 #include "dgBilateralConstraint.h"
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
-#endif
 
 // template<class T>    class dgPool;
 

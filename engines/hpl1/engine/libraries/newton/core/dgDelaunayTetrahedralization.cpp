@@ -29,10 +29,6 @@ dgDelaunayTetrahedralization::dgDelaunayTetrahedralization(
     dgMemoryAllocator *const allocator, const dgFloat64 *const vertexCloud,
     dgInt32 count, dgInt32 strideInByte, dgFloat64 distTol) :
 	dgConvexHull4d(allocator) {
-#ifdef _WIN32
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
 
 	dgStack<dgBigVector> pool(count);
 
@@ -98,28 +94,15 @@ dgDelaunayTetrahedralization::dgDelaunayTetrahedralization(
 #ifdef _DEBUG
 	SortVertexArray();
 #endif
-
-#ifdef _WIN32
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
 }
 
 dgDelaunayTetrahedralization::~dgDelaunayTetrahedralization() {
 }
 
 dgInt32 dgDelaunayTetrahedralization::AddVertex(const dgBigVector &vertex) {
-#ifdef _WIN32
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-
 	dgBigVector p(vertex);
 	p.m_w = p % p;
 	dgInt32 index = dgConvexHull4d::AddVertex(p);
-
-#ifdef _WIN32
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
 	return index;
 }
 
@@ -156,11 +139,6 @@ void dgDelaunayTetrahedralization::SortVertexArray() {
 #endif
 
 void dgDelaunayTetrahedralization::RemoveUpperHull() {
-#ifdef _WIN32
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-
 	dgListNode *nextNode = NULL;
 //	const dgHullVector* const points = &m_points[0];
 	for (dgListNode *node = GetFirst(); node; node = nextNode) {
@@ -179,10 +157,6 @@ void dgDelaunayTetrahedralization::RemoveUpperHull() {
 			DeleteFace(node);
 		}
 	}
-
-#ifdef _WIN32
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
 }
 
 void dgDelaunayTetrahedralization::DeleteFace(dgListNode *const node) {

@@ -115,13 +115,7 @@
 // NB: End of disabled header section
 
 //************************************************************
-#ifndef _WIN32
-#ifdef _DEBUG
 #define _ASSERTE(x) assert(x)
-#else
-#define _ASSERTE(x)
-#endif
-#endif
 
 #define __USE_CPU_FOUND__
 
@@ -624,13 +618,6 @@ enum dgCpuClass {
 
 #define PointerToInt(x) ((size_t)x)
 #define IntToPointer(x) ((void *)(size_t(x)))
-
-#ifndef _WIN64
-#define dgControlFP(x, y) _controlfp(x, y)
-#else
-#define dgControlFP(x, y) x
-#define stricmp(x, y) strcasecmp(x, y)
-#endif
 
 DG_INLINE dgFloat32 dgAbsf(dgFloat32 x) {
 #if 0

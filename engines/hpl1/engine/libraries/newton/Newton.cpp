@@ -34,12 +34,6 @@ void NewtonDestroyGlobals() {
 }
 
 
-#ifdef _WIN32
-#ifdef _DEBUG
-//#define DG_USED_DEBUG_EXCEPTIONS
-#endif // _DEBUG
-#endif // _WIN32
-
 #ifdef _DEBUG
 
 void TraceFuntionName(const char *name) {

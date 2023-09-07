@@ -122,11 +122,6 @@ dgConvexHull3d::~dgConvexHull3d(void) {
 }
 
 void dgConvexHull3d::BuildHull(const dgFloat64 *const vertexCloud, dgInt32 strideInBytes, dgInt32 count, dgFloat64 distTol, dgInt32 maxVertexCount) {
-#ifdef _WIN32
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-
 	dgInt32 treeCount = count / (DG_VERTEX_CLUMP_SIZE_3D >> 1);
 	if (treeCount < 4) {
 		treeCount = 4;
@@ -140,10 +135,6 @@ void dgConvexHull3d::BuildHull(const dgFloat64 *const vertexCloud, dgInt32 strid
 	if (m_count >= 4) {
 		CalculateConvexHull(&treePool[0], &points[0], count, distTol, maxVertexCount);
 	}
-
-#ifdef _WIN32
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
 }
 
 dgInt32 dgConvexHull3d::ConvexCompareVertex(const dgHullVertex *const  A, const dgHullVertex *const B, void *const context) {
