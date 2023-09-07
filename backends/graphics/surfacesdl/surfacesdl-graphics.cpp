@@ -2050,7 +2050,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		if (format->aBits() > 0)
 			formatWithAlpha = *format;
 
-		const uint outBPP = format->bytesPerPixel;
+		const uint outBPP = formatWithAlpha.bytesPerPixel;
 
 		Common::Array<byte> maskedImage;
 		maskedImage.resize(numPixels * outBPP);
