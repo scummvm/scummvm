@@ -115,8 +115,6 @@
 // NB: End of disabled header section
 
 //************************************************************
-#define _ASSERTE(x) assert(x)
-
 #define __USE_CPU_FOUND__
 
 #define DG_MAXIMUN_THREADS 8
