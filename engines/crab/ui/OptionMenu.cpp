@@ -418,7 +418,7 @@ void OptionMenu::internalEvents() {
 }
 
 void OptionMenu::saveState() {
-	warning("STUB: OptionMenu::saveState()");
+	ConfMan.flushToDisk();
 
 #if 0
 	rapidxml::xml_document<char> doc;

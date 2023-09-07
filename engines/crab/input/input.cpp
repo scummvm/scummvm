@@ -306,8 +306,6 @@ void InputManager::save() {
 
 		keymap->saveMappings();
 	}
-
-	ConfMan.flushToDisk();
 }
 
 } // End of namespace Crab
