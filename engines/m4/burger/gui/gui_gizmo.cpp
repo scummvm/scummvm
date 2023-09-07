@@ -24,10 +24,26 @@
 #include "m4/core/errors.h"
 #include "m4/adv_r/adv_background.h"
 #include "m4/adv_r/adv_control.h"
+#include "m4/mem/mem.h"
 
 namespace M4 {
 namespace Burger {
 namespace GUI {
+
+static void gizmo_dispose_gui();
+static void gizmo_restore_interface(bool fade);
+static void gizmo_free_gui(ScreenContext *screenContext);
+static bool gizmo_load_sprites(const char *name, size_t count);
+static void gizmo_free_sprites();
+
+void gizmo_anim(RGB8 *pal) {
+	if (!_GIZMO(initialized))
+		gizmo_initialize(pal);
+
+	gizmo_load_sprites("500gizmo", 58);
+
+	// TODO
+}
 
 void gizmo_initialize(RGB8 *pal) {
 	if (!_GIZMO(initialized)) {
@@ -47,7 +63,12 @@ void gizmo_initialize(RGB8 *pal) {
 	}
 }
 
-void gizmo_shutdown(bool fade) {
+void gizmo_shutdown(void *, void *) {
+	gizmo_dispose_gui();
+	gizmo_restore_interface(true);
+}
+
+static void gizmo_restore_interface(bool fade) {
 	if (_GIZMO(initialized)) {
 		_GIZMO(val1) = 0;
 
@@ -69,6 +90,60 @@ void gizmo_shutdown(bool fade) {
 		mouse_unlock_sprite();
 		game_pause(false);
 		_GIZMO(initialized) = false;
+	}
+}
+
+static void gizmo_dispose_gui() {
+	if (_GIZMO(gui)) {
+		vmng_screen_dispose(_GIZMO(gui));
+		gizmo_free_gui(_GIZMO(gui));
+		gizmo_free_sprites();
+		_GIZMO(gui) = 0;
+	}
+}
+
+static void gizmo_free_gui(ScreenContext *screenContext) {
+	// TODO
+}
+
+static bool gizmo_load_sprites(const char *name, size_t count) {
+	if (LoadSpriteSeries(name, &_GIZMO(seriesHandle), &_GIZMO(celsOffset),
+			&_GIZMO(palOffset), _GIZMO(palette)) > 0) {
+		gr_pal_set_range(_GIZMO(palette), 64, 192);
+		_GIZMO(assetName) = mem_strdup(name);
+
+		_GIZMO(spriteCount) = count;
+		_GIZMO(sprites) = (M4sprite **)mem_alloc(count * sizeof(M4sprite *), "*sprites array");
+
+		for (size_t idx = 0; idx < count; ++idx) {
+			_GIZMO(sprites)[idx] = CreateSprite(_GIZMO(seriesHandle), _GIZMO(celsOffset),
+				idx, nullptr, nullptr);
+			if (!_GIZMO(sprites)[idx])
+				return false;
+		}
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+static void gizmo_free_sprites() {
+	if (_GIZMO(assetName)) {
+		rtoss(_GIZMO(assetName));
+		mem_free(_GIZMO(assetName));
+
+		_GIZMO(assetName) = nullptr;
+		_GIZMO(seriesHandle) = 0;
+		_GIZMO(celsOffset) = -1;
+		_GIZMO(palOffset) = -1;
+
+		for (int idx = 0; idx < _GIZMO(spriteCount); ++idx)
+			mem_free(_GIZMO(sprites)[idx]);
+
+		mem_free(_GIZMO(sprites));
+		_GIZMO(sprites) = nullptr;
+		_GIZMO(spriteCount) = 0;
 	}
 }
 
