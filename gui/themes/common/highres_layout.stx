@@ -153,8 +153,12 @@
 
 	<dialog name = 'Launcher' overlays = 'screen' resolution = 'y<=x'>
 		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 40'>
-			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
-				<space size  = 'Globals.Button.Height' />
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 0'>
+				<widget name = 'HelpButton'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+						rtl = 'yes'
+				/>
 				<space />
 				<widget name = 'Logo'
 						width = '287'
@@ -162,11 +166,7 @@
 						rtl = 'no'
 				/>
 				<space />
-				<widget name = 'HelpButton'
-						height = 'Globals.Button.Height'
-						width = 'Globals.Button.Height'
-						rtl = 'yes'
-				/>
+				<space size  = 'Globals.Button.Height' />
 			</layout>
 			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
 				<widget name = 'SearchPic'
@@ -2545,7 +2545,7 @@
 	</dialog>
 
 	<dialog name = 'ImageAlbum' overlays = 'screen' inset = '8' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8' align = 'center'> 
+		<layout type = 'vertical' padding = '8, 8, 8, 8' align = 'center'>
 			<widget name = 'Title' height = 'Globals.Line.Height'/>
 			<widget name = 'ImageContainer' />
 			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
