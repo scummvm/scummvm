@@ -49,8 +49,11 @@ void ScreenSettings::load(rapidxml::xml_node<char> *node) {
 	//loadBool(_fullscreen, "fullscreen", node);
 	loadBool(_border, "border", node);
 	loadBool(_saveOnExit, "save_on_exit", node);
-	loadBool(_mouseTrap, "mouse_trap", node);
+	//loadBool(_mouseTrap, "mouse_trap", node);
 	loadBool(_quality, "quality", node);
+
+	if (ConfMan.hasKey("mousetrap"))
+		_mouseTrap = ConfMan.getBool("mousetrap");
 
 	if (ConfMan.hasKey("fullscreen"))
 		_fullscreen = ConfMan.getBool("fullscreen");
@@ -88,6 +91,7 @@ void ScreenSettings::toggleVsync() {
 void ScreenSettings::saveState() {
 	ConfMan.setBool("fullscreen", _fullscreen);
 	ConfMan.setBool("vsync", _vsync);
+	ConfMan.setBool("mousetrap", _mouseTrap);
 
 #if 0
 	root->append_attribute(doc.allocate_attribute("version", g_engine->_stringPool->get(_version)));

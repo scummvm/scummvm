@@ -99,6 +99,9 @@ void GeneralSettingMenu::handleEvents(const Common::Event &event) {
 
 	if (_mouseTrap.handleEvents(event) != BUAC_IGNORE) {
 		g_engine->_screenSettings->_mouseTrap = !g_engine->_screenSettings->_mouseTrap;
+
+		// Maybe move this to ScreenSettings itself
+		g_system->lockMouse(g_engine->_screenSettings->_mouseTrap);
 	}
 
 	int result = _textSpeed.handleEvents(event);

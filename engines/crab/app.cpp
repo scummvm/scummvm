@@ -181,11 +181,16 @@ void App::loadSettings(const Common::String &filename) {
 
 			// Start the sound subsystem
 			g_engine->_musicManager->load(node);
+
+			g_system->lockMouse(g_engine->_screenSettings->_mouseTrap);
 		}
 	}
 }
 
 App::~App() {
+	// Return setting to default when game exits
+	g_system->lockMouse(false);
+
 	g_engine->_imageManager->quit();
 	g_engine->_musicManager->quit();
 	g_engine->_textManager->quit();
