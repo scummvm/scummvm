@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-06 05:56+0000\n"
 "PO-Revision-Date: 2023-09-07 12:41+0000\n"
-"Last-Translator: Bo Mortensen <pighat@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
 "Language: da\n"
@@ -22,9 +22,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(bygget %s)"
+msgstr "(bygget %s med %s"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
@@ -98,7 +98,7 @@ msgstr "Vælg"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Cloud Forbindelse Wizard"
 
 #: gui/cloudconnectionwizard.cpp:183
 #, fuzzy
