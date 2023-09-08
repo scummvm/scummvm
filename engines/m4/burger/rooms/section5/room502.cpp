@@ -67,6 +67,200 @@ static const char *SAID[][4] = {
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
+const seriesStreamBreak Room502::SERIES1[] = {
+	{  14, "502Z001", 1, 255, -1, 0, nullptr, 0 },
+	{  71, "502Z002", 1, 255, -1, 0, nullptr, 0 },
+	{  92, "502Z003", 1, 255, -1, 0, nullptr, 0 },
+	{ 124, "502Z004", 1, 255, -1, 0, nullptr, 0 },
+	{ 155, "502f001", 1, 255, -1, 0, nullptr, 0 },
+	{ 162, "502f002", 1, 255, -1, 0, nullptr, 0 },
+	{ 201, nullptr,   0,   0, 20, 0, nullptr, 0 },
+	{ 210, "502i001", 1, 255, -1, 0, nullptr, 0 },
+	{ 243, "502i002", 1, 255, -1, 0, nullptr, 0 },
+	{ 258, "502Z005", 1, 255, -1, 0, nullptr, 0 },
+	{ 289, "502i003", 1, 255, -1, 0, nullptr, 0 },
+	{ 310, "502Z006", 1, 255, -1, 0, nullptr, 0 },
+	{ 334, "502Z007", 1, 255, -1, 0, nullptr, 0 },
+	{ 407, "502_005", 2, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+const seriesStreamBreak Room502::SERIES2[] = {
+	{ 44, "502_005", 2, 255, -1, 0, nullptr, 0 },
+	{ -1, nullptr,   0,   0, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY1[] = {
+	{  0,  2, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{  3,  6, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{  7, 12, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 13, 18, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 19, 22, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 23, 27, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 28, 32, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 33, 39, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 40, -1, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY2[] = {
+	{  0,  0, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{  1,  6, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{  7, 12, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 13, 17, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 18, 22, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 24, 29, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 30, 35, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 36, 40, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 41, -1, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY3[] = {
+	{  0,  2, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{  3,  6, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{  7, 12, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 13, 16, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY4[] = {
+	{  0,  0, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{  1,  6, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{  7, 12, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 13, 17, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 18, 22, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 24, 27, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY5[] = {
+	{ 48, 42, nullptr, 0, 0, -1, 2, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY6[] = {
+	{  0, 14, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ 15, 15, "502_001", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 16, -1, nullptr,   0,   0, 17, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY7[] = {
+	{  5, 14, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ 15, 15, "502_001", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 16, -1, nullptr,   0,   0, 17, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY8[] = {
+	{ 28, 29, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 30, 35, "502_008b", 1, 100, -1, 0, 0, 0, 0 },
+	{ 36, 40, "502_008a", 1, 100, -1, 0, 0, 0, 0 },
+	{ 41, -1, "502_008b", 1, 100, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY9[] = {
+	{ 0,  4, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ 5, -1, "502_003", 1, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY10[] = {
+	{  0, 21, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 22, -1, nullptr, 0, 0, 19, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY11[] = {
+	{  0, 15, "502b005a", 2, 255, -1, 0, 0, &_state1, 1 },
+	{  0, 15, "502b005b", 2, 255, -1, 0, 0, &_state1, 2 },
+	{  0, 15, "502b005c", 2, 255, -1, 0, 0, &_state1, 3 },
+	{  0, 15, "502b005d", 2, 255, -1, 0, 0, &_state1, 4 },
+	{  0, 15, "502b005e", 2, 255, -1, 0, 0, &_state1, 5 },
+	{  0, 15, "502b005f", 2, 255, -1, 0, 0, &_state1, 6 },
+	{  0, 15, "502b005g", 2, 255, -1, 0, 0, &_state1, 7 },
+	{  0, 15, "502b005h", 2, 255, -1, 0, 0, &_state1, 8 },
+	{  0, 15, "502b005i", 2, 255, -1, 0, 0, &_state1, 9 },
+	{ 16, -1, "502b005a", 2, 255, -1, 0, 0, &_state2, 1 },
+	{ 16, -1, "502b005b", 2, 255, -1, 0, 0, &_state2, 2 },
+	{ 16, -1, "502b005c", 2, 255, -1, 0, 0, &_state2, 3 },
+	{ 16, -1, "502b005d", 2, 255, -1, 0, 0, &_state2, 4 },
+	{ 16, -1, "502b005e", 2, 255, -1, 0, 0, &_state2, 5 },
+	{ 16, -1, "502b005f", 2, 255, -1, 0, 0, &_state2, 6 },
+	{ 16, -1, "502b005g", 2, 255, -1, 0, 0, &_state2, 7 },
+	{ 16, -1, "502b005h", 2, 255, -1, 0, 0, &_state2, 8 },
+	{ 16, -1, "502b005i", 2, 255, -1, 0, 0, &_state2, 9 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY12[] = {
+	{ 0, 2, nullptr,    0,   0, -1, 0, 0, nullptr,  0 },
+	{ 3, 4, "502_002",  2, 255, -1, 0, 3, nullptr,  0 },
+	{ 5, 9, "502b008a", 2, 255, -1, 0, 0, &_state1, 1 },
+	{ 5, 9, "502b008b", 2, 255, -1, 0, 0, &_state1, 2 },
+	{ 5, 9, "502b008c", 2, 255, -1, 0, 0, &_state1, 3 },
+	{ 5, 9, "502b008d", 2, 255, -1, 0, 0, &_state1, 4 },
+	{ 5, 9, "502b008e", 2, 255, -1, 0, 0, &_state1, 5 },
+	{ 9, 9, nullptr,    0,   0, -1, 0, 2, nullptr,  0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY13[] = {
+	{ 0, 9, "502b007a", 2, 255, -1, 0, 0, &_state1, 1 },
+	{ 0, 9, "502b007b", 2, 255, -1, 0, 0, &_state1, 2 },
+	{ 3, 0, nullptr,    0,   0, -1, 2, 0, nullptr,  0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY14[] = {
+	{ 0, 13, "502b006a", 2, 255, -1, 0, 0, &_state1, 1 },
+	{ 0, 13, "502b006b", 2, 255, -1, 0, 0, &_state1, 2 },
+	{ 0, 13, "502b006c", 2, 255, -1, 0, 0, &_state1, 3 },
+	{ 14, 14, nullptr,   0,   0, 16, 0, 0, &_state4, 3 },
+	{ 14, 17, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ 18, -1, nullptr,   0,   0,  7, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY15[] = {
+	{ 0, 4, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 3, 3, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 1, 1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY16[] = {
+	{  0, 10, "502_007", 1, 255, -1,    0, 0, nullptr, 0 },
+	{ 11, 11, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 12, -1, "500_003", 2, 255, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room502::PLAY17[] = {
+	{ 1, -1, "500_008", 2, 255, -1, 4, 0, &_state3, 1 },
+	{ 1, -1, "500_009", 2, 255, -1, 4, 0, &_state3, 2 },
+	{ 1, -1, "500_010", 2, 255, -1, 4, 0, &_state3, 3 },
+	{ 1, -1, "500_011", 2, 255, -1, 4, 0, &_state3, 4 },
+	{ 1, -1, "500_012", 2, 255, -1, 4, 0, &_state3, 5 },
+	{ 1, -1, "500_013", 2, 255, -1, 4, 0, &_state3, 6 },
+	PLAY_BREAK_END
+};
+
+long Room502::_state1;
+long Room502::_state2;
+long Room502::_state3;
+long Room502::_state4;
+
+
+Room502::Room502() : Section5Room() {
+	_state1 = 0;
+	_state2 = 0;
+	_state3 = 0;
+	_state4 = 0;
+}
 
 void Room502::init() {
 	_G(flags)[V194] = 0;
@@ -129,6 +323,15 @@ void Room502::init() {
 }
 
 void Room502::daemon() {
+	switch (_G(kernel).trigger) {
+	case 5002:
+		enable_player();
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room502::pre_parser() {
@@ -194,7 +397,7 @@ void Room502::parser() {
 			!player_said("LAXATIVE")) {
 		player_set_commands_allowed(false);
 		_val3 = 26;
-		++_val2;
+		++_state4;
 	} else if (player_said("TAKE", "KINDLING ")) {
 		if (!_G(flags)[V198] && !inv_player_has("KINDLING")) {
 			_val1 = 10;

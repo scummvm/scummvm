@@ -30,13 +30,37 @@ namespace Rooms {
 
 class Room502 : public Section5Room {
 private:
+	static const seriesStreamBreak SERIES1[];
+	static const seriesStreamBreak SERIES2[];
+	static const seriesPlayBreak PLAY1[];
+	static const seriesPlayBreak PLAY2[];
+	static const seriesPlayBreak PLAY3[];
+	static const seriesPlayBreak PLAY4[];
+	static const seriesPlayBreak PLAY5[];
+	static const seriesPlayBreak PLAY6[];
+	static const seriesPlayBreak PLAY7[];
+	static const seriesPlayBreak PLAY8[];
+	static const seriesPlayBreak PLAY9[];
+	static const seriesPlayBreak PLAY10[];
+	static const seriesPlayBreak PLAY11[];
+	static const seriesPlayBreak PLAY12[];
+	static const seriesPlayBreak PLAY13[];
+	static const seriesPlayBreak PLAY14[];
+	static const seriesPlayBreak PLAY15[];
+	static const seriesPlayBreak PLAY16[];
+	static const seriesPlayBreak PLAY17[];
+	static long _state1;
+	static long _state2;
+	static long _state3;
+	static long _state4;
+
+private:
 	static const BorkPoint BORK_TABLE[];
 	noWalkRect *_walk1 = nullptr;
 	Series _series1;
 	machine *_series2 = nullptr;
 	bool _flag1 = false;
 	int _val1 = 0;
-	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
@@ -50,7 +74,7 @@ private:
 	void setup3();
 
 public:
-	Room502() : Section5Room() {}
+	Room502();
 	~Room502() override {}
 
 	void init() override;
