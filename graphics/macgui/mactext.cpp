@@ -710,7 +710,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 					s = readHex(&headSize, s, 1);
 					if (headSize >= 1 && headSize <= 6) { // set
-						const float sizes[] = { 1, 3.0f, 2.5f, 2.0f, 1.75f, 1.5f, 1.25f };
+						const float sizes[] = { 1, 2.0f, 1.41f, 1.155f, 1.0f, .894f, .816f };
 						current_format.fontSize = _defaultFormatting.fontSize * sizes[headSize];
 					}
 
