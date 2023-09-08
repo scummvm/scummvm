@@ -40,6 +40,7 @@ private:
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
+	int _val6 = 0;
 
 	void loadSeries1();
 	void loadSeries2();
