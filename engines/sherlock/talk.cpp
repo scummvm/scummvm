@@ -703,6 +703,7 @@ void Talk::doScript(const Common::String &script) {
 	if (_scriptMoreFlag) {
 		_scriptMoreFlag = 0;
 		str = _scriptStart + _scriptSaveIndex;
+		assert(str <= _scriptEnd);
 	}
 
 	// Check if the script begins with a Stealh Mode Active command
