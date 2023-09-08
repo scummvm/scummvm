@@ -170,7 +170,38 @@ HelpDialog::HelpDialog()
 	RichTextWidget *saftext = new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText3);
 	saftext->setImageArchive("android-help.zip");
 
-	tab->addTab(_("Paths"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Keyboard"), "GlobalOptions_Graphics", false);
+
+	Common::U32String helpText4 = _(
+"## Keyboard shortcuts\n"
+"\n"
+"ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the **Keymaps tab**, or in the **configuration file**.\n"
+"\n"
+"For game-specific controls, see the [wiki entry](https://wiki.scummvm.org/index.php?title=Category:Supported_Games) for the game you are playing.\n"
+"\n"
+"Default shortcuts are shown in the table.\n"
+"\n"
+"| Shortcut      | Description\n"
+"| --------------------------------\n"
+"| `Ctrl+F5` -- Displays the Global Main Menu\n"
+"| `Cmd+q`    -- Quit (macOS)\n"
+"| `Ctrl+q`  -- Quit (Linux/Unix)\n"
+"| `Alt+F4`  -- Quit (Windows)\n"
+"| `Ctrl+z`  -- Quit (other platforms)\n"
+"| `Ctrl+u`  -- Mutes all sounds\n"
+"| `Ctrl+m`  -- Toggles mouse capture\n"
+"| `Ctrl+Alt` and `9` or `0` -- Cycles forwards/backwards between graphics filters\n"
+"| `Ctrl+Alt` and `+` or `-` -- Increases/decreases the scale factor\n"
+"| `Ctrl+Alt+a` -- Toggles aspect ratio correction on/off\n"
+"| `Ctrl+Alt+f` -- Toggles between nearest neighbor and bilinear interpolation (graphics filtering on/off)\n"
+"| `Ctrl+Alt+s` -- Cycles through stretch modes\n"
+"| `Alt+Enter`   -- Toggles full screen/windowed mode\n"
+"| `Alt+s`          -- Takes a screenshot\n"
+"| `Ctrl+F7`       -- Opens virtual keyboard (if enabled). This can also be opened with a long press of the middle mouse button or wheel.\n"
+"| `Ctrl+Alt+d` -- Opens the ScummVM debugger\n"
+	);
+
+	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText4);
 
 	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
