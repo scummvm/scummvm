@@ -162,6 +162,11 @@ Common::Error SherlockEngine::run() {
 		// Reset the data for the player character (Sherlock)
 		_people->reset();
 
+		// If this is still set from the previous scene, something went wrong.
+		// The next scene's path script or a continued script would be
+		// incorrectly aborted
+		assert(!_talk->_talkToAbort);
+
 		// Initialize and load the scene.
 		_scene->selectScene();
 
