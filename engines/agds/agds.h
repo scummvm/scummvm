@@ -56,19 +56,21 @@ namespace Graphics { struct TransparentSurface; }
 namespace AGDS {
 
 class Animation;
+using AnimationPtr = Common::SharedPtr<Animation>;
 class Character;
 class Font;
 class Object;
-typedef Common::SharedPtr<Object> ObjectPtr;
+using ObjectPtr = Common::SharedPtr<Object>;
 struct ObjectPatch;
-typedef Common::SharedPtr<ObjectPatch> ObjectPatchPtr;
+using ObjectPatchPtr = Common::SharedPtr<ObjectPatch>;
 struct Patch;
-typedef Common::SharedPtr<Patch> PatchPtr;
+using PatchPtr = Common::SharedPtr<Patch>;
 class Process;
-typedef Common::SharedPtr<Process> ProcessPtr;
+using ProcessPtr = Common::SharedPtr<Process>;
 struct Region;
-typedef Common::SharedPtr<Region> RegionPtr;
+using RegionPtr = Common::SharedPtr<Region>;
 struct MouseRegion;
+
 class MJPGPlayer;
 class Screen;
 class SystemVariable;
@@ -194,9 +196,9 @@ public:
 	void loadFont(int id, const Common::String &name, int gw, int gh);
 	Font *getFont(int id) const;
 
-	Animation * loadAnimation(const Common::String &name);
-	Animation * loadMouseCursor(const Common::String &name);
-	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
+	AnimationPtr loadAnimation(const Common::String &name);
+	AnimationPtr loadMouseCursor(const Common::String &name);
+	AnimationPtr findAnimationByPhaseVar(const Common::String &phaseVar);
 	void loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object);
 	Character * getCharacter(const Common::String &name) {
 		return _currentCharacterName == name? _currentCharacter: nullptr;
@@ -324,7 +326,7 @@ private:
 	Common::String				_nextScreenName;
 	ScreenLoadingType			_nextScreenType;
 	Common::String 				_defaultMouseCursorName;
-	Animation *					_defaultMouseCursor;
+	AnimationPtr				_defaultMouseCursor;
 	Common::Point				_mouse;
 	bool						_userEnabled;
 	bool						_systemUserEnabled;

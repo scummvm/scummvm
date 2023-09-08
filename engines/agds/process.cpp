@@ -37,8 +37,7 @@ Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
 	_animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
 	_phaseVarControlled(false), _animationSpeed(100),
 	_samplePeriodic(false), _sampleAmbient(false), _sampleVolume(100),
-	_filmSubtitlesResource(-1),
-	_processAnimation(nullptr)
+	_filmSubtitlesResource(-1)
 	{
 	updateWithCurrentMousePosition();
 }
@@ -158,7 +157,7 @@ void Process::updateWithCurrentMousePosition() {
 }
 
 
-void Process::setupAnimation(Animation *animation) {
+void Process::setupAnimation(const AnimationPtr & animation) {
 	animation->position(_animationPosition);
 	animation->z(_animationZ);
 	animation->process(getName());

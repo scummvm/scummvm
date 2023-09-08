@@ -37,20 +37,21 @@ namespace Graphics {
 namespace AGDS {
 
 class AGDSEngine;
-class Object;
 class Animation;
-typedef Common::SharedPtr<Object> ObjectPtr;
+using AnimationPtr = Common::SharedPtr<Animation>;
+class Object;
+using ObjectPtr = Common::SharedPtr<Object>;
 struct Region;
-typedef Common::SharedPtr<Region> RegionPtr;
+using RegionPtr = Common::SharedPtr<Region>;
 struct Patch;
-typedef Common::SharedPtr<Patch> PatchPtr;
+using PatchPtr = Common::SharedPtr<Patch>;
 
 class Screen {
 	static int ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b);
-	static int AnimationZCompare(const Animation *a, const Animation *b);
+	static int AnimationZCompare(const AnimationPtr & a, const AnimationPtr & b);
 
-	typedef Common::SortedArray<Animation *, const Animation *> AnimationsType;
-	typedef Common::SortedArray<ObjectPtr, const ObjectPtr &> ChildrenType;
+	using Animations = Common::SortedArray<AnimationPtr, const AnimationPtr &>;
+	using Children = Common::SortedArray<ObjectPtr, const ObjectPtr &>;
 
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
@@ -59,8 +60,8 @@ class Screen {
 	Common::String	_name;
 	ScreenLoadingType _loadingType;
 	Common::String	_previousScreen;
-	ChildrenType	_children;
-	AnimationsType	_animations;
+	Children		_children;
+	Animations		_animations;
 	RegionPtr		_region;
 	bool			_applyingPatch;
 	int				_characterNear, _characterFar;
@@ -121,11 +122,11 @@ public:
 		_region = region;
 	}
 
-	const ChildrenType & children() const {
+	const Children & children() const {
 		return _children;
 	}
 
-	const AnimationsType & animations() const {
+	const Animations & animations() const {
 		return _animations;
 	}
 	void scrollTo(Common::Point scroll);
@@ -134,8 +135,8 @@ public:
 	}
 
 	bool add(ObjectPtr object);
-	void add(Animation * animation);
-	bool remove(Animation * animation);
+	void add(AnimationPtr animation);
+	bool remove(const AnimationPtr  &animation);
 
 	void update(const ObjectPtr &object) {
 		bool found = remove(object);
@@ -155,7 +156,7 @@ public:
 	Common::Array<ObjectPtr> find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);
-	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
+	AnimationPtr findAnimationByPhaseVar(const Common::String &phaseVar);
 
 	void load(const PatchPtr &patch);
 	void save(const PatchPtr &patch);

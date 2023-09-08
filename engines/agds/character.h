@@ -35,14 +35,15 @@ namespace AGDS {
 
 class AGDSEngine;
 class Object;
-typedef Common::SharedPtr<Object> ObjectPtr;
+using ObjectPtr = Common::SharedPtr<Object>;
 class Animation;
+using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Character {
 	using FogPtr = Common::ScopedPtr<Graphics::TransparentSurface>;
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
-	Animation *		_animation;
+	AnimationPtr	_animation;
 	FogPtr			_fog;
 	bool			_jokes;
 	Common::String 	_name;

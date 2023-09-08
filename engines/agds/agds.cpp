@@ -468,8 +468,8 @@ void AGDSEngine::tick() {
 	runProcesses();
 }
 
-Animation *AGDSEngine::loadMouseCursor(const Common::String &name) {
-	Animation *animation = loadAnimation(name);
+AnimationPtr AGDSEngine::loadMouseCursor(const Common::String &name) {
+	auto animation = loadAnimation(name);
 	animation->loop(true);
 	animation->phaseVar(Common::String());
 	return animation;
@@ -678,7 +678,7 @@ Common::Error AGDSEngine::run() {
 		Graphics::Surface *backbuffer = _system->lockScreen();
 		backbuffer->fillRect(backbuffer->getRect(), 0);
 
-		Animation *mouseCursor = NULL;
+		AnimationPtr mouseCursor;
 
 		if (userEnabled() && _currentScreen) {
 			auto objects = _currentScreen->find(_mouse);
@@ -689,7 +689,7 @@ Common::Error AGDSEngine::run() {
 			}
 
 
-			Animation *cursor = nullptr;
+			AnimationPtr cursor;
 			for(auto & object : objects) {
 				cursor = object->getMouseCursor();
 				if (cursor)
@@ -735,7 +735,7 @@ Common::Error AGDSEngine::run() {
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect())) {
 					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
-			} else if (auto *cursor = (_currentInventoryObject? _currentInventoryObject->getMouseCursor(): nullptr)) {
+			} else if (auto cursor = (_currentInventoryObject? _currentInventoryObject->getMouseCursor(): AnimationPtr())) {
 				cursor->rotate(_currentInventoryObject->rotation());
 				cursor->tick();
 				auto pos = _mouse;
@@ -864,20 +864,21 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 	}
 }
 
-Animation *AGDSEngine::loadAnimation(const Common::String &name) {
+AnimationPtr AGDSEngine::loadAnimation(const Common::String &name) {
 	debug("loadAnimation %s", name.c_str());
 
 	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
 	if (!stream)
 		error("could not load animation from %s", name.c_str());
-	Animation *animation = new Animation(this, name);
+
+	Common::SharedPtr<Animation> animation(new Animation(this, name));
 	if (!animation->load(stream, name))
 		error("could not load animation from %s", name.c_str());
 
 	return animation;
 }
 
-Animation *AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
+AnimationPtr AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	return _currentScreen? _currentScreen->findAnimationByPhaseVar(phaseVar): nullptr;
 }
 
