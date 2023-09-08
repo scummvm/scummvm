@@ -60,6 +60,9 @@ private:
 		Common::String getFileName() const override {
 			return _name;
 		}
+		Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override {
+			return nullptr;
+		}
 	};
 	typedef Common::SharedPtr<ArchiveMember> ArchiveMemberPtr;
 
