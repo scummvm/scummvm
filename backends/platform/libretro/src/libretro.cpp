@@ -590,7 +590,6 @@ void parse_command_params(char *cmdline) {
 }
 
 static void exit_to_frontend(void) {
-	log_scummvm_exit_code();
 	environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
 }
 
@@ -794,6 +793,7 @@ void retro_init(void) {
 void retro_deinit(void) {
 	LIBRETRO_G_SYSTEM->destroy();
 	free(sound_buffer);
+	log_scummvm_exit_code();
 }
 
 void retro_set_controller_port_device(unsigned port, unsigned device) {
