@@ -158,6 +158,7 @@ void Process::loadAnimation() {
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
 		setupAnimation(animation);
+		_processAnimation = animation;
 		_engine->getCurrentScreen()->add(animation);
 	}
 }
