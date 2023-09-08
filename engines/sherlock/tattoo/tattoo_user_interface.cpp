@@ -380,7 +380,8 @@ void TattooUserInterface::doStandardControl() {
 	Common::Point mousePos = events.mousePos();
 
 	// Don't do any input processing whilst the prolog is running
-	if (vm._runningProlog)
+	// or the cursor is hidden (e.g. by a call to cmdMouseOnOff())
+	if (vm._runningProlog || !events.isCursorVisible())
 		return;
 
 	// When the end credits are active, any press will open the ScummVM global main menu
