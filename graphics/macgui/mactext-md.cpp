@@ -162,7 +162,12 @@ int render_codespan(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, 
 	if (!text)
 		return 0;
 
-	warning("STUB: render_codespan(%s)", PR(text));
+	Common::String res = Common::String::format("\001\016t%04x" "%s" "\001\016tffff",
+			kMacFontMonaco, Common::String((const char *)text->data , text->size).c_str());
+
+	sd_bufput(ob, res.c_str(), res.size());
+
+	debug(1, "render_codespan(%s)", PR(text));
 	return 1;
 }
 
