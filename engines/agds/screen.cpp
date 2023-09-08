@@ -126,11 +126,12 @@ void Screen::add(Animation * animation) {
 bool Screen::remove(Animation * animation) {
 	bool removed = false;
 	for(auto i = _animations.begin(); i != _animations.end(); ) {
-		if (*i == animation) {
-			_animations.erase(i++);
-			removed = true;
-		} else
+		if (*i != animation)
 			++i;
+		else {
+			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
+			*i = nullptr;
+		}
 	}
 	return removed;
 }
@@ -174,7 +175,7 @@ bool Screen::remove(const Common::String &name) {
 Animation *Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	for (auto i = _animations.begin(); i != _animations.end(); ++i) {
 		Animation *animation = *i;
-		if (animation->phaseVar() == phaseVar)
+		if (animation && animation->phaseVar() == phaseVar)
 			return animation;
 	}
 	return NULL;
@@ -183,10 +184,11 @@ Animation *Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 void Screen::tick() {
 	for(uint i = 0; i < _animations.size(); ) {
 		Animation *animation = _animations.data()[i];
-		if (animation->tick())
+		if (animation && animation->tick())
 			++i;
 		else {
-			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
+			if (animation)
+				debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
 			_animations.erase(_animations.begin() + i);
 		}
 	}
@@ -201,6 +203,10 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 	while(child != _children.end() || animation != _animations.end() || character) {
 		bool child_valid = child != _children.end();
 		bool animation_valid = animation != _animations.end();
+		if (animation_valid && !*animation) {
+			++animation;
+			continue;
+		}
 
 		bool z_valid = false;
 		int z = 0;
