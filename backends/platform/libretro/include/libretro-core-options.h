@@ -155,19 +155,19 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_analog_deadzone",
-		"Cursor > Analog Deadzone (Percent)",
-		"Analog Deadzone (Percent)",
-		"Sets the deadzone of the RetroPad analog sticks. Used to eliminate cursor drift/unwanted input.",
+		"Cursor > Analog Deadzone",
+		"Analog Deadzone",
+		"Sets the deadzone in percentage of the RetroPad analog sticks. Used to eliminate cursor drift/unwanted input.",
 		NULL,
 		"cursor",
 		{
-			{"0", NULL},
-			{"5", NULL},
-			{"10", NULL},
-			{"15", NULL},
-			{"20", NULL},
-			{"25", NULL},
-			{"30", NULL},
+			{"0", "0 %"},
+			{"5", "5 %"},
+			{"10", "10 %"},
+			{"15", "15 %"},
+			{"20", "20 %"},
+			{"25", "25 %"},
+			{"30", "30 %"},
 			{NULL, NULL},
 		},
 		"15"
@@ -204,6 +204,21 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{NULL, NULL},
 		},
 		"1.0"
+	},
+	{
+		"scummvm_mouse_fine_control_speed_reduction",
+		"Cursor > Mouse Fine Control Speed Reduction",
+		"Mouse Fine Control Speed Reduction",
+		"Sets the mouse cursor speed reduction as percentage of normal speed when fine control is activated.",
+		NULL,
+		"cursor",
+		{
+			{"2", "50 %"},
+			{"4", "20 %"},
+			{"10", "10 %"},
+			{NULL, NULL},
+		},
+		"4"
 	},
 	{
 		"scummvm_frameskip_type",

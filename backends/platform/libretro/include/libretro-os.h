@@ -49,6 +49,7 @@ extern uint16 retro_setting_get_sample_rate(void);
 extern int retro_setting_get_analog_deadzone(void);
 extern bool retro_setting_get_analog_response_is_quadratic(void);
 extern float retro_setting_get_mouse_speed(void);
+extern int retro_setting_get_mouse_fine_control_speed_reduction(void);
 extern float retro_setting_get_gamepad_cursor_speed(void);
 extern float retro_setting_get_gamepad_acceleration_time(void);
 extern void reset_performance_tuner(void);

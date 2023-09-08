@@ -32,7 +32,7 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int
 		return;
 
 	if (_cursorStatus & CURSOR_STATUS_DOING_SLOWER)
-		deltaAcc *= 0.2f;
+		deltaAcc /= retro_setting_get_mouse_fine_control_speed_reduction();
 
 	if (doing_x) {
 		_cursorStatus |= CURSOR_STATUS_DOING_X;

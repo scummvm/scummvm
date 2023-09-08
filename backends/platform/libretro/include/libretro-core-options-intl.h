@@ -86,10 +86,10 @@ struct retro_core_option_v2_category option_cats_it[] = {
 		"Impostazioni relative al timing"
 	},
 	{
-                "retropad",
-                "Mappatura RetroPad",
-                "Configura la mappatura del RetroPad"
-        },
+		"retropad",
+		"Mappatura RetroPad",
+		"Configura la mappatura del RetroPad"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -134,9 +134,9 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_analog_deadzone",
-		"Cursore > Zona morta analogica (percentuale)",
-		"Zona morta analogica (percentuale)",
-		"Zona morta della leva analogica sinistra del RetroPad. Può essere usata per eliminare scorrimenti indesiderati del cursore.",
+		"Cursore > Zona morta analogica",
+		"Zona morta analogica",
+		"Zona morta percentuale delle leve analogiche del RetroPad. Può essere usata per eliminare scorrimenti indesiderati del cursore.",
 		NULL,
 		NULL,
 		{
@@ -149,6 +149,18 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"Cursore > Velocità del mouse",
 		"Velocità del mouse",
 		"Moltiplicatore della velocità del cursore del mouse quando si usa RetroMouse.",
+		NULL,
+		NULL,
+		{
+			{NULL, NULL},
+		},
+		NULL
+	},
+	{
+		"scummvm_mouse_fine_control_speed_reduction",
+		"Cursore > Riduzione velocità con controllo fine del mouse",
+		"Riduzione velocità con controllo fine del mouse",
+		"Riduzione della velocità del cursore del mouse come percentuale della velocità normale quando il controllo fine è attivato.",
 		NULL,
 		NULL,
 		{

@@ -75,6 +75,7 @@ static bool analog_response_is_quadratic = false;
 
 static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
+static int mouse_fine_control_speed_reduction = 4;
 
 static bool timing_inaccuracies_enabled = false;
 
@@ -230,6 +231,12 @@ static void update_variables(void) {
 	mouse_speed = 1.0f;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		mouse_speed = (float)atof(var.value);
+	}
+
+	var.key = "scummvm_mouse_fine_control_speed_reduction";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mouse_fine_control_speed_reduction = (int)atoi(var.value);
 	}
 
 	var.key = "scummvm_allow_timing_inaccuracies";
@@ -522,6 +529,10 @@ bool retro_setting_get_analog_response_is_quadratic(void) {
 
 float retro_setting_get_mouse_speed(void) {
 	return mouse_speed;
+}
+
+int retro_setting_get_mouse_fine_control_speed_reduction(void) {
+	return mouse_fine_control_speed_reduction;
 }
 
 float retro_setting_get_gamepad_acceleration_time(void) {
