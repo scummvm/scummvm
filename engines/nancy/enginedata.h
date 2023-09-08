@@ -73,6 +73,12 @@ struct VIEW : public EngineData {
 	Common::Rect bounds;
 };
 
+struct PCAL : public EngineData {
+	PCAL(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Common::String> calNames;
+};
+
 struct INV : public EngineData {
 	struct ItemDescription {
 		Common::String name;

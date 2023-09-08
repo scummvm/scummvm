@@ -363,7 +363,6 @@ void NancyEngine::bootGameEngine() {
 	IFF *boot = new IFF("boot");
 	if (!boot->load())
 		error("Failed to load boot script");
-	preloadCals(*boot);
 
 	// Load BOOT chunks data
 	Common::SeekableReadStream *chunkStream = nullptr;
@@ -375,6 +374,7 @@ void NancyEngine::bootGameEngine() {
 
 	LOAD_BOOT(BSUM)
 	LOAD_BOOT(VIEW)
+	LOAD_BOOT(PCAL)
 	LOAD_BOOT(INV)
 	LOAD_BOOT(TBOX)
 	LOAD_BOOT(HELP)
@@ -411,6 +411,8 @@ void NancyEngine::bootGameEngine() {
 
 	#undef LOAD_BOOT_L
 	#undef LOAD_BOOT
+
+	preloadCals();
 
 	_sound->initSoundChannels();
 	_sound->loadCommonSounds(boot);
@@ -495,33 +497,18 @@ void NancyEngine::destroyState(NancyState::NancyState state) const {
 	}
 }
 
-void NancyEngine::preloadCals(const IFF &boot) {
-	const byte *buf;
-	uint size;
-	buf = boot.getChunk(ID_PCAL, size);
+void NancyEngine::preloadCals() {
+	const PCAL *pcal = (const PCAL *)getEngineData("PCAL");
+	if (!pcal) {
+		// CALs only appeared in nancy2 so a PCAL chunk may not exist
+		return;
+	}
 
-	if (buf) {
-		Common::MemoryReadStream stream(buf, size);
-		uint16 count = stream.readUint16LE();
-		debugC(1, kDebugEngine, "Preloading %d CALs", count);
-		int nameLen = size / count;
-
-		char *name = new char[nameLen];
-
-		for (uint i = 0; i < count; i++) {
-			stream.read(name, nameLen);
-			name[nameLen - 1] = 0;
-			debugC(1, kDebugEngine, "Preloading CAL '%s'", name);
-			if (!_resource->loadCifTree(name, "cal"))
-				error("Failed to preload CAL '%s'", name);
+	for (const Common::String &name : pcal->calNames) {
+		if (!_resource->loadCifTree(name, "cal")) {
+			error("Failed to preload CAL '%s'", name.c_str());
 		}
-
-		delete[] name;
-
-		if (stream.err())
-			error("Error reading PCAL chunk");
-	} else
-		debugC(1, kDebugEngine, "No PCAL chunk found");
+	}
 }
 
 void NancyEngine::readDatFile() {

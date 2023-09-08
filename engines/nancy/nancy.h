@@ -138,8 +138,7 @@ private:
 	State::State *getStateObject(NancyState::NancyState state) const;
 	void destroyState(NancyState::NancyState state) const;
 
-	void preloadCals(const IFF &boot);
-
+	void preloadCals();
 	void readDatFile();
 
 	Common::Error synchronize(Common::Serializer &serializer);

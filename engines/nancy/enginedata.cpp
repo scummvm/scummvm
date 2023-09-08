@@ -33,7 +33,6 @@ EngineData::EngineData(Common::SeekableReadStream *chunkStream) {
 }
 
 BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
@@ -89,8 +88,14 @@ VIEW::VIEW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, bounds);
 }
 
+PCAL::PCAL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	assert(chunkStream);
+	uint num = chunkStream->readUint16LE();
+	readFilenameArray(*chunkStream, calNames, num);
+}
+
 INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-		Common::Serializer s(chunkStream, nullptr);
+	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
 	readRect(*chunkStream, scrollbarSrcBounds);
