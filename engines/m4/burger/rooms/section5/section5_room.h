@@ -38,6 +38,7 @@ protected:
 	machine *_walker1 = nullptr;
 	HotSpotRec _borkHotspot;
 	int _borkThreshold = 0;
+	bool _flag1 = false;
 
 public:
 	Section5Room() : Rooms::Room() {
@@ -45,6 +46,7 @@ public:
 	~Section5Room() override {}
 
 	void preload() override;
+	void init() override;
 
 	/**
 	 * Used to tell if x,y is over the walker hotspot

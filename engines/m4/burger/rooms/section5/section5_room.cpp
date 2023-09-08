@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section5/section5_room.h"
+#include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
 #include "m4/wscript/wst_regs.h"
 
@@ -30,6 +31,49 @@ namespace Rooms {
 void Section5Room::preload() {
 	Rooms::Room::preload();
 	_G(flags)[V186] = 0;
+	_flag1 = false;
+}
+
+void Section5Room::init() {
+	if (_flag1) {
+		_flag1 = false;
+		kernel_timing_trigger(120, 5004);
+	}
+
+	if (Section5::_digiName != 0) {
+		digi_stop(3);
+		digi_unload(Section5::_digiName);
+	}
+	Section5::_digiName = nullptr;
+
+	int vol = 125;
+
+	switch (_G(game).room_id) {
+	case 502:
+		if (_G(flags)[V198])
+			Section5::_digiName = "500_002";
+		break;
+
+	case 505:
+		Section5::_digiName = "505_002";
+		break;
+
+	case 506:
+		Section5::_digiName = _G(flags)[V218] == 5003 ? "500_002" : "506_005";
+		break;
+
+	case 508:
+		Section5::_digiName = "500_029";
+		break;
+
+	default:
+		break;
+	}
+
+	if (Section5::_digiName) {
+		digi_preload(Section5::_digiName);
+		digi_play_loop(Section5::_digiName, 3, vol);
+	}
 }
 
 HotSpotRec *Section5Room::custom_hotspot_which(int32 x, int32 y) {

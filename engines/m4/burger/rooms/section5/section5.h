@@ -66,6 +66,7 @@ private:
 
 public:
 	static machine *_bork;
+	static const char *_digiName;
 
 public:
 	Section5();

@@ -31,6 +31,22 @@ namespace Rooms {
 class Room502 : public Section5Room {
 private:
 	static const BorkPoint BORK_TABLE[];
+	noWalkRect *_walk1 = nullptr;
+	Series _series1;
+	machine *_series2 = nullptr;
+	bool _flag1 = false;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+
+	void loadSeries1();
+	void loadSeries2();
+	void loadSeries3();
+	void setup1();
+	void setup2();
+	void setup3();
 
 public:
 	Room502() : Section5Room() {}

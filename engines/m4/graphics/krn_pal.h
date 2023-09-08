@@ -90,7 +90,8 @@ extern void pal_fade_init(int32 firstPalEntry, int32 lastPalEntry, int32 targetP
 extern void pal_fade_init(int32 triggerNum);
 
 extern void disable_player_commands_and_fade_init(int trigger);
-extern void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks, int32 totalTicks, int32 triggerNum);
+extern void pal_cycle_init(int32 firstPalEntry, int32 lastPalEntry, int32 delayTicks,
+	int32 totalTicks = -1, int32 triggerNum = -1);
 
 /**
  * Returns true if color cycling is on
