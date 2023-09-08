@@ -4686,7 +4686,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("monja", "", "MONJA.EXE", "5bc2c8a824528ec4de0f8d8feb8f004e", 212008995, Common::JA_JPN, 404),
 
 	// Norwegian release: "Lek gjemsel med Mummitrollet"
-	WINGAME2t_l("moominhide", "Windows", "MUMIN.EXE", "c51444be1e70bb731d0c465d5bdd8ed2", 696095,
+	MACGAME2_l("moominhide", "", "MUMIN", "8b138db44d4421cc7294a9dc792ccf1b", 499776,
+				"01DALEN.DXR", "def141fe9bfc70f177ae721e640bebfe", 4015310, Common::NB_NOR, 404),
+	WINGAME2t_l("moominhide", "", "MUMIN.EXE", "c51444be1e70bb731d0c465d5bdd8ed2", 696095,
 				"01DALEN.DXR", "a100f801a8f0408a286d84c51e822182", 4016704, Common::NB_NOR, 404),
 
 	MACGAME1_l("moritaka", "", "WATARASE-BASHI", "c761bfe3a0865ca0f43cb5556230ed5b", 107527, Common::JA_JPN, 404),
