@@ -1088,9 +1088,6 @@ void MacText::render(int from, int to, int shadow) {
 			int xOffset = (_textLines[i].width - _textLines[i].charwidth) / 2;
 			Common::Rect bbox(xOffset, _textLines[i].y, xOffset + _textLines[i].charwidth, _textLines[i].y + _textLines[i].height);
 
-			// Pre-fill images with white to accommodate transparency
-			surface->fillRect(bbox, surface->format.RGBToColor(0xff, 0x0, 0x0));
-
 			if (image)
 				surface->blitFrom(image, Common::Rect(0, 0, image->w, image->h), bbox);
 
