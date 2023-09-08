@@ -130,7 +130,7 @@ void RichTextWidget::recalc() {
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
-	_verticalScroll->_singleStep = 30 * 3;
+	_verticalScroll->_singleStep = _h / 4;
 	_verticalScroll->setPos(_textWidth, 0);
 	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
 
