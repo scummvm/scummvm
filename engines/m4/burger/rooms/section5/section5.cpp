@@ -312,9 +312,11 @@ static const char *PARSER[] = {
 };
 
 machine *Section5::_bork;
+const char *Section5::_digiName;
 
 Section5::Section5() : Rooms::Section() {
 	_bork = nullptr;
+	_digiName = nullptr;
 	Common::fill(_gizmoRoomNums, _gizmoRoomNums + 15, false);
 
 	add(501, &_room501);
