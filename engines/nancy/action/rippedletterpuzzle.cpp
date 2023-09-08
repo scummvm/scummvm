@@ -61,32 +61,71 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readFilename(stream, _imageName);
 
-	readRectArray(stream, _srcRects, 24);
-	readRectArray(stream, _destRects, 24);
+	byte width = 6;
+	byte height = 4;
+
+	if (g_nancy->getGameType() >= kGameTypeNancy5) {
+		width = stream.readByte();
+		height = stream.readByte();
+	}
+
+	_srcRects.resize(width * height);
+	_destRects.resize(width * height);
+	for (uint i = 0; i < height; ++i) {
+		for (uint j = 0; j < width; ++j) {
+			readRect(stream, _srcRects[i * width + j]);
+		}
+		stream.skip((6 - width) * 16);
+	}
+	stream.skip((4 - height) * 6 * 16);
+
+	for (uint i = 0; i < height; ++i) {
+		for (uint j = 0; j < width; ++j) {
+			readRect(stream, _destRects[i * width + j]);
+		}
+		stream.skip((6 - width) * 16);
+	}
+	stream.skip((4 - height) * 6 * 16);
 
 	readRect(stream, _rotateHotspot);
 	readRect(stream, _takeHotspot);
 	readRect(stream, _dropHotspot);
 
-	_initOrder.resize(24);
-	for (uint i = 0; i < 24; ++i) {
-		_initOrder[i] = stream.readByte();
+	_initOrder.resize(width * height);
+	for (uint i = 0; i < height; ++i) {
+		for (uint j = 0; j < width; ++j) {
+			_initOrder[i * width + j] = stream.readByte();
+		}
+		stream.skip((6 - width));
 	}
+	stream.skip((4 - height) * 6);
 
-	_initRotations.resize(24);
-	for (uint i = 0; i < 24; ++i) {
-		_initRotations[i] = stream.readByte();
+	_initRotations.resize(width * height);
+	for (uint i = 0; i < height; ++i) {
+		for (uint j = 0; j < width; ++j) {
+			_initRotations[i * width + j] = stream.readByte();
+		}
+		stream.skip((6 - width));
 	}
+	stream.skip((4 - height) * 6);
 
-	_solveOrder.resize(24);
-	for (uint i = 0; i < 24; ++i) {
-		_solveOrder[i] = stream.readByte();
+	_solveOrder.resize(width * height);
+	for (uint i = 0; i < height; ++i) {
+		for (uint j = 0; j < width; ++j) {
+			_solveOrder[i * width + j] = stream.readByte();
+		}
+		stream.skip((6 - width));
 	}
+	stream.skip((4 - height) * 6);
 
-	_solveRotations.resize(24);
-	for (uint i = 0; i < 24; ++i) {
-		_solveRotations[i] = stream.readByte();
+	_solveRotations.resize(width * height);
+	for (uint i = 0; i < height; ++i) {
+		for (uint j = 0; j < width; ++j) {
+			_solveRotations[i * width + j] = stream.readByte();
+		}
+		stream.skip((6 - width));
 	}
+	stream.skip((4 - height) * 6);
 
 	_takeSound.readNormal(stream);
 	_dropSound.readNormal(stream);
@@ -110,7 +149,7 @@ void RippedLetterPuzzle::execute() {
 			_puzzleState->playerHasTriedPuzzle = true;
 		}
 
-		for (uint i = 0; i < 24; ++i) {
+		for (uint i = 0; i < _puzzleState->order.size(); ++i) {
 			drawPiece(i, _puzzleState->rotations[i], _puzzleState->order[i]);
 		}
 
@@ -123,7 +162,7 @@ void RippedLetterPuzzle::execute() {
 	case kRun:
 		switch (_solveState) {
 		case kNotSolved :
-			for (uint i = 0; i < 24; ++i) {
+			for (uint i = 0; i < _puzzleState->order.size(); ++i) {
 				if (_puzzleState->order[i] != _solveOrder[i] || _puzzleState->rotations[i] != _solveRotations[i]) {
 					return;
 				}
@@ -166,7 +205,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	for (uint i = 0; i < 24; ++i) {
+	for (uint i = 0; i < _puzzleState->order.size(); ++i) {
 		Common::Rect screenHotspot = NancySceneState.getViewport().convertViewportToScreen(_destRects[i]);
 		if (screenHotspot.contains(input.mousePos)) {
 			Common::Rect insideRect;
