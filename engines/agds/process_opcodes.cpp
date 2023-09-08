@@ -155,7 +155,7 @@ void Process::loadPicture() {
 void Process::loadAnimation() {
 	Common::String name = popText();
 	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _phaseVarControlled? "(phase-var)": "");
-	Animation *animation = _engine->loadAnimation(name);
+	auto animation = _engine->loadAnimation(name);
 	if (animation) {
 		setupAnimation(animation);
 		_processAnimation = animation;
@@ -566,7 +566,7 @@ void Process::loadMouseCursorFromObject() {
 	auto inventoryObject = _engine->currentInventoryObject();
 	bool changeInventoryObject = (inventoryObject && inventoryObject->getName() == getName());
 	debug("loadMouseCursorFromObject %s inventory: %d", !name.empty()? name.c_str(): "<remove>", changeInventoryObject);
-	Animation *cursor = !name.empty()? _engine->loadMouseCursor(name): nullptr;
+	auto cursor = !name.empty()? _engine->loadMouseCursor(name): nullptr;
 	_object->setMouseCursor(cursor); //overlay cursor
 }
 
@@ -1045,7 +1045,7 @@ void Process::restartAnimation() {
 		warning("no phaseVar");
 		return;
 	}
-	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
+	auto animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
 		if (_engine->getGlobal(phaseVar) == -1 && !animation->paused()) {
 			debug("restartAnimation: rewind");
@@ -1068,7 +1068,7 @@ void Process::animationNextFrame() {
 		warning("no phaseVar");
 		return;
 	}
-	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
+	auto animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
 		auto value = _engine->getGlobal(phaseVar);
 		if (value >= -1) {
@@ -1090,7 +1090,7 @@ void Process::signalAnimationEnd() {
 		warning("no phaseVar");
 		return;
 	}
-	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
+	auto animation = _engine->findAnimationByPhaseVar(phaseVar);
 	if (animation) {
 		_engine->setGlobal(phaseVar, -2);
 	} else {
@@ -1107,7 +1107,7 @@ void Process::setShadowIntensity() {
 void Process::pauseAnimation() {
 	int arg = pop();
 	Common::String phaseVar = popString();
-	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
+	auto animation = _engine->findAnimationByPhaseVar(phaseVar);
 	debug("pauseAnimation: phaseVar %s, arg %d", phaseVar.c_str(), arg);
 	if (animation) {
 		animation->pause();
@@ -1730,7 +1730,7 @@ void Process::loadPictureFromObject() {
 void Process::loadAnimationFromObject() {
 	Common::String name = popText();
 	debug("loadAnimationFromObject %s %s", name.c_str(), _phaseVarControlled? "(phase-var)": "");
-	Animation *animation = _engine->loadAnimation(name);
+	auto animation = _engine->loadAnimation(name);
 	if (animation) {
 		_animationCycles = 0;
 		_animationLoop = true;

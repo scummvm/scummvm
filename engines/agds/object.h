@@ -37,8 +37,9 @@ namespace AGDS {
 
 class AGDSEngine;
 struct Region;
-typedef Common::SharedPtr<Region> RegionPtr;
+using RegionPtr = Common::SharedPtr<Region>;
 class Animation;
+using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Object {
 public:
@@ -68,8 +69,8 @@ private:
 	Graphics::TransparentSurface *	_rotatedPicture;
 	RegionPtr						_region;
 	RegionPtr						_trapRegion;
-	Animation *						_animation;
-	Animation *						_mouseCursor;
+	AnimationPtr					_animation;
+	AnimationPtr					_mouseCursor;
 	Common::Point					_pos, _animationPos, _offset;
 	Common::Point					_regionOffset;
 	Common::Rect					_srcRect;
@@ -133,11 +134,11 @@ public:
 		return _code;
 	}
 
-	void setAnimation(Animation *animation) {
+	void setAnimation(const AnimationPtr & animation) {
 		_animation = animation;
 	}
 
-	Animation *getAnimation() const {
+	const AnimationPtr & getAnimation() const {
 		return _animation;
 	}
 
@@ -145,11 +146,12 @@ public:
 		_animationPos = animationPos;
 	}
 
-	void setMouseCursor(Animation *mouseCursor) {
+	void setMouseCursor(const AnimationPtr & mouseCursor) {
 		_mouseCursor = mouseCursor;
 		freeRotated();
 	}
-	Animation *getMouseCursor() const {
+
+	const AnimationPtr & getMouseCursor() const {
 		return _mouseCursor;
 	}
 

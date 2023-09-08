@@ -34,6 +34,8 @@ namespace AGDS {
 
 class AGDSEngine;
 class Screen;
+class Animation;
+using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Process {
 public:
@@ -71,7 +73,7 @@ private:
 	int32			_sampleVolume;
 	Common::Point	_mousePosition;
 	int				_filmSubtitlesResource;
-	Animation *		_processAnimation;
+	AnimationPtr	_processAnimation;
 
 private:
 	void debug(const char *str, ...);
@@ -125,7 +127,7 @@ private:
 	void suspend(ProcessExitCode exitCode, int arg1 = 0, int arg2 = 0);
 
 	ProcessExitCode resume();
-	void setupAnimation(Animation *animation);
+	void setupAnimation(const AnimationPtr & animation);
 	void attachInventoryObjectToMouse(bool flag);
 	void leaveCharacter(const Common::String &name, const Common::String &regionName, int dir);
 

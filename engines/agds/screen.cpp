@@ -36,7 +36,7 @@ int Screen::ObjectZCompare(const ObjectPtr &a, const ObjectPtr &b) {
 	return b->z() - a->z();
 }
 
-int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
+int Screen::AnimationZCompare(const AnimationPtr & a, const AnimationPtr & b) {
 	return b->z() - a->z();
 }
 
@@ -97,7 +97,7 @@ bool Screen::add(ObjectPtr object) {
 		warning("refusing to add null to scene");
 		return false;
 	}
-	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
+	for (auto i = _children.begin(); i != _children.end(); ) {
 		if (*i == object) {
 			if (object->alive()) {
 				debug("double adding object %s", object->getName().c_str());
@@ -115,7 +115,7 @@ bool Screen::add(ObjectPtr object) {
 	return true;
 }
 
-void Screen::add(Animation * animation) {
+void Screen::add(AnimationPtr animation) {
 	if (animation)
 		_animations.insert(animation);
 	else
@@ -123,21 +123,21 @@ void Screen::add(Animation * animation) {
 }
 
 
-bool Screen::remove(Animation * animation) {
+bool Screen::remove(const AnimationPtr & animation) {
 	bool removed = false;
 	for(auto i = _animations.begin(); i != _animations.end(); ) {
 		if (*i != animation)
 			++i;
 		else {
 			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
-			*i = nullptr;
+			i->reset();
 		}
 	}
 	return removed;
 }
 
 ObjectPtr Screen::find(const Common::String &name) {
-	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
+	for (auto i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr &object = *i;
 		if (object->getName() == name)
 			return *i;
@@ -146,7 +146,7 @@ ObjectPtr Screen::find(const Common::String &name) {
 }
 
 bool Screen::remove(const ObjectPtr &object) {
-	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
+	for (auto i = _children.begin(); i != _children.end(); ++i) {
 		if (*i == object) {
 			if (object->locked())
 				object->alive(false);
@@ -159,7 +159,7 @@ bool Screen::remove(const ObjectPtr &object) {
 }
 
 bool Screen::remove(const Common::String &name) {
-	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
+	for (auto i = _children.begin(); i != _children.end(); ++i) {
 		const ObjectPtr & object = *i;
 		if (object->getName() == name) {
 			if (object->locked())
@@ -172,9 +172,9 @@ bool Screen::remove(const Common::String &name) {
 	return false;
 }
 
-Animation *Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
+AnimationPtr Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	for (auto i = _animations.begin(); i != _animations.end(); ++i) {
-		Animation *animation = *i;
+		const auto & animation = *i;
 		if (animation && animation->phaseVar() == phaseVar)
 			return animation;
 	}
@@ -183,7 +183,7 @@ Animation *Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 
 void Screen::tick() {
 	for(uint i = 0; i < _animations.size(); ) {
-		Animation *animation = _animations.data()[i];
+		const auto & animation = _animations.data()[i];
 		if (animation && animation->tick())
 			++i;
 		else {
@@ -281,8 +281,8 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 	Common::Array<ObjectPtr> objects;
 	objects.reserve(_children.size());
-	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
-		ObjectPtr object = *i;
+	for (auto i = _children.begin(); i != _children.end(); ++i) {
+		const auto & object = *i;
 		auto visiblePos = (object->scale() >= 0)? pos + _scroll: pos;
 		if (object->pointIn(visiblePos) && object->alive()) {
 			objects.insert_at(0, object);
@@ -293,8 +293,8 @@ Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 
 Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 	KeyHandler keyHandler;
-	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
-		ObjectPtr object = *i;
+	for (auto i = _children.begin(); i != _children.end(); ++i) {
+		const auto & object = *i;
 		if (!object->alive())
 			continue;
 
@@ -332,8 +332,8 @@ void Screen::save(const PatchPtr &patch) {
 	patch->prevScreenName = _previousScreen;
 	patch->loadingType = _loadingType;
 	patch->objects.clear();
-	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
-		ObjectPtr object = *i;
+	for (auto i = _children.begin(); i != _children.end(); ++i) {
+		const auto & object = *i;
 		if (!object->persistent() || !object->alive() || object->getName() == _name)
 			continue;
 		debug("saving patch object %s %d", object->getName().c_str(), object->alive());
