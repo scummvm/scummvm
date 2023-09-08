@@ -193,24 +193,17 @@ void Textbox::drawTextbox() {
 						break;
 					}
 
-					if (curToken[1] == '0' && colorTokens.size() == 0) {
+					if (curToken[1] == '0' && colorTokens.size() % 2 == 0) {
 						// Found a color end token ("c0") without a corresponding begin ("c1"),
-						// insert a fake one at the beginning of the queue to make the color logic work.
-						// This happens in nancy5's intro
-						colorTokens.push(0);
+						// or following another color end token. This is invalid, so we just skip it
+						// This happens in nancy4's intro, and nancy5's beginning cutscene
+						continue;
 					}
 
 					if (curToken[1] == '1' && colorTokens.size() % 2 == 1) {
 						// Found a color begin token ("c1") following another color begin token.
 						// This is invalid, so we just skip it
 						// This probably also happens somewhere
-						continue;
-					}
-
-					if (curToken[1] == '0' && colorTokens.size() % 2 == 0) {
-						// Found a color end token ("c0") following another color end token.
-						// This is invalid, so we just skip it
-						// This happens in nancy5's intro
 						continue;
 					}
 					
