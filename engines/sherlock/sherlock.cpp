@@ -146,6 +146,8 @@ Common::Error SherlockEngine::run() {
 			_startupAutosave = true;
 	}
 
+	_events->showCursor();
+
 	while (!shouldQuit()) {
 		// Prepare for scene, and handle any game-specific scenes. This allows
 		// for game specific cutscenes or mini-games that aren't standard scenes
