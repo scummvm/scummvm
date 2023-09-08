@@ -71,6 +71,7 @@ private:
 	int32			_sampleVolume;
 	Common::Point	_mousePosition;
 	int				_filmSubtitlesResource;
+	Animation *		_processAnimation;
 
 private:
 	void debug(const char *str, ...);
