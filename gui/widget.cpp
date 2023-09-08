@@ -922,7 +922,7 @@ int SliderWidget::valueToPos(int value) {
 }
 
 int SliderWidget::posToValue(int pos) {
-	return (pos) * (_valueMax - _valueMin) / (_w - 1) + _valueMin;
+	return (((pos) * 2 * (_valueMax - _valueMin) / (_w - 1) + 1) / 2 + _valueMin);
 }
 
 #pragma mark -
