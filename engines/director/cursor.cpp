@@ -190,6 +190,12 @@ void Cursor::readFromResource(Datum resourceId) {
 				break;
 		}
 
+		// Cursors can be located in the main archive, which may not
+		// be in _allOpenResFiles
+		if (!readSuccessful && g_director->getPlatform() == Common::kPlatformMacintosh) {
+			readSuccessful = readFromArchive(g_director->getMainArchive(), resourceId.asInt());
+		}
+
 		// TODO: figure out where to read custom cursor in windows platform
 		// currently, let's just set arrow for default one.
 		if (g_director->getPlatform() == Common::kPlatformWindows) {
