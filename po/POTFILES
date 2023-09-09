@@ -107,6 +107,7 @@ backends/platform/ios7/ios7_options.mm
 backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/ios7/ios7_osys_main.cpp
 backends/platform/maemo/maemo.cpp
+backends/platform/sdl/sdl.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/macosx/macosx.cpp
 backends/platform/sdl/miyoo/miyoo.cpp
