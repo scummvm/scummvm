@@ -71,6 +71,13 @@ void DarkEngine::loadAssetsCPCFullGame() {
 		addECDs(it._value);
 		addSkanner(it._value);
 	}
+	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
+	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
+	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
+	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
 }
 
 void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
@@ -90,9 +97,9 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int ecds = _gameStateVars[kVariableActiveECDs];
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 200, 137, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 200, 137 + 9, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 200, 137 + 9, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 199, 137, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 199, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 199, 153, front, back, surface);
 
 	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 72, 168, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 72, 177, front, back, surface);
@@ -133,7 +140,7 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 		surface->fillRect(energyBar, front);
 	}
 	drawBinaryClock(surface, 300, 124, front, back);
-	//drawIndicator(surface, 152, 140);
+	drawIndicator(surface, 160, 136);
 }
 
 } // End of namespace Freescape
