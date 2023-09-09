@@ -61,6 +61,21 @@ private:
 	static long _state4;
 	static long _state5;
 	static long _state6;
+	int16 _array1[5];
+	int16 _array2[5];
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	noWalkRect *_walk1 = nullptr;
+	machine *_series1 = nullptr;
+
+	void loadSeries1();
 
 public:
 	Room503();
