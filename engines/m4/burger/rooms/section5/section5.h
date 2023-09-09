@@ -68,6 +68,9 @@ public:
 	static machine *_bork;
 	static const char *_digiName;
 
+	static bool checkFlags();
+	static void flagsTrigger();
+
 public:
 	Section5();
 	virtual ~Section5() {}

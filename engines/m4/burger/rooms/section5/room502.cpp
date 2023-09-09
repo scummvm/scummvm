@@ -283,19 +283,19 @@ void Room502::init() {
 	case 505:
 		ws_demand_location(237, 235, 9);
 		ws_hide_walker();
-		_should = _G(flags)[V196] ? 6 : 4;
+		_G(wilbur_should) = _G(flags)[V196] ? 6 : 4;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 506:
 		ws_demand_location(402, 272, 1);
-		_should = 12;
+		_G(wilbur_should) = 12;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 510:
 		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
-		_should = 10001;
+		_G(wilbur_should) = 10001;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
@@ -324,6 +324,10 @@ void Room502::init() {
 
 void Room502::daemon() {
 	switch (_G(kernel).trigger) {
+	case 1:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _val6);
+		break;
+
 	case 5:
 		loadSeries3();
 		loadSeries2();
@@ -349,12 +353,12 @@ void Room502::daemon() {
 
 		if (_G(flags)[V185]) {
 			digi_unload_stream_breaks(SERIES2);
-			_should = 10001;
+			_G(wilbur_should) = 10001;
 		} else {
 			digi_unload_stream_breaks(SERIES1);
 			ws_unhide_walker();
 			_val2 = 13;
-			_should = 1;
+			_G(wilbur_should) = 1;
 		}
 
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
@@ -386,7 +390,7 @@ void Room502::daemon() {
 
 		case 17:
 			player_set_commands_allowed(true);
-			_should = 10001;
+			_G(wilbur_should) = 10001;
 			wilbur_speech("502w010");
 			break;
 
@@ -419,12 +423,273 @@ void Room502::daemon() {
 		}
 		break;
 
+	case 9:
+		if (!_flag1 && !digi_play_state(1)) {
+			_flag1 = true;
+			_series1.terminate();
+			kernel_trigger_dispatch_now(10);
+		} else {
+			kernel_timing_trigger(15, 9);
+		}
+		break;
+
+	case 10:
+		switch (_val3) {
+		case 20:
+			_flag1 = false;
+			_val3 = 21;
+			kernel_trigger_dispatch_now(10);
+			break;
+
+		case 21:
+			_val3 = imath_ranged_rand(22, 24);
+			kernel_timing_trigger(240, 360);
+			_series1.show("502bk01", 0x400);
+			break;
+
+		case 22:
+			_state1 = imath_ranged_rand(1, 9);
+			_state2 = imath_ranged_rand(1, 9);
+			_val3 = 20;
+			series_play_with_breaks(PLAY11, "502bk01", 0x400, 10, 3);
+			break;
+
+		case 23:
+			_state1 = imath_ranged_rand(1, 5);
+			_val3 = 20;
+			series_play_with_breaks(PLAY12, "502bk02", 0x400, 10, 3);
+			break;
+
+		case 24:
+			_val3 = 20;
+			series_play_with_breaks(PLAY15, "502bk01", 0x400, 10, 3);
+			break;
+
+		case 25:
+			_series1.terminate();
+			_state1 = imath_ranged_rand(1, 2);
+			_val3 = 20;
+			series_play_with_breaks(PLAY13, "502bk03", 0x400, 10, 3);
+			break;
+
+		case 26:
+			_val2 = 17;
+			_state1 = imath_ranged_rand(1, 3);
+			_val3 = 20;
+			series_play_with_breaks(PLAY14, "502bk04", 0x400, 10, 3);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case 11:
+		if (_G(flags)[V200] != 5003) {
+			player_update_info();
+
+			if ((_G(player_info).x < 242 || _G(player_info).y > 265) &&
+					!_flag1 && !digi_play_state(1)) {
+				_flag1 = true;
+				loadSeries3();
+				_val4 = _val7;
+				kernel_trigger_dispatch_now(13);
+			} else {
+				kernel_timing_trigger(15, 11);
+			}
+		}
+		break;
+
+	case 13:
+		switch (_val4) {
+		case 20:
+			digi_stop(2);
+			digi_unload("502_006");
+			_flag1 = false;
+			_val4 = 27;
+			kernel_trigger_dispatch_now(13);
+			break;
+
+		case 27:
+			_G(flags)[V200] = 5000;
+			_G(flags)[V186] = 0;
+			_walker1.terminate();
+			_val7 = imath_rand_bool(3) ? 29 : 28;
+
+			kernel_timing_trigger(imath_ranged_rand(240, 360), 11);
+			break;
+
+		case 28:
+			_val8 = 0;
+			kernel_trigger_dispatch_now(14);
+			_G(flags)[V200] = 5001;
+			_G(flags)[V186] = 1;
+			kernel_trigger_dispatch_now(8);
+			_val4 = 32;
+			_walker1.play("502bkst", 0xc00, 16, 13, 6, 0, 100, 0, 0, 0, 8);
+			break;
+
+		case 29:
+			_val8 = 0;
+			kernel_trigger_dispatch_now(14);
+			_G(flags)[V200] = 5001;
+			_G(flags)[V186] = 1;
+			kernel_trigger_dispatch_now(8);
+			_val4 = 30;
+			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 0, 8);
+			break;
+
+		case 30:
+			kernel_trigger_dispatch_now(22);
+			_val4 = 31;
+			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 9, 18);
+			break;
+
+		case 31:
+			_val8 = 1;
+			kernel_trigger_dispatch_now(14);
+			_val4 = 32;
+			_walker1.play("502bkst", 0xc00, 0, 13, 6, 2, 100, 0, 0, 19, 22);
+			break;
+
+		case 32:
+			digi_stop(2);
+			digi_unload("502_007");
+			_walker1.terminate();
+			_val4 = 33;
+			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 23, 32);
+			break;
+
+		case 33:
+			_G(flags)[V200] = 5002;
+			_val4 = 20;
+			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 33, 44);
+			digi_preload("502_006");
+			digi_play("502_006", 2);
+			break;
+
+		case 34:
+			if (_flag1) {
+				kernel_timing_trigger(30, 13);
+			} else {
+				_flag1 = true;
+				_val8 = 2;
+				kernel_trigger_dispatch_now(14);
+				_val4 = 35;
+				series_play_with_breaks(PLAY16, "502bk09", 0xc00, 13, 3);
+			}
+			break;
+
+		case 35:
+			Section5::flagsTrigger();
+			_flag1 = false;
+			kernel_trigger_dispatch_now(18);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case 14:
+		switch (_val8) {
+		case 0:
+			digi_play((imath_ranged_rand(1, 2) == 1) ? "502b001a" : "502b001b", 2);
+			break;
+
+		case 1:
+			digi_play((imath_ranged_rand(1, 2) == 1) ? "502b003a" : "502b003b", 2);
+			break;
+
+		case 2:
+			digi_play("502b004", 2);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 15:
+		_G(flags)[V206] = 5005;
+		kernel_trigger_dispatch_now(5015);
+		break;
+
+	case 16:
+		_G(flags)[V206] = 5006;
+		kernel_trigger_dispatch_now(5015);
+		break;
+
+	case 17:
+		switch (_val5) {
+		case 36:
+			series_show("502soap2", 0xaff);
+			break;
+
+		case 37:
+			_val5 = 38;
+			series_play("502soap1", 0xaff, 0, 17);
+			break;
+
+		case 38:
+			_val5 = 36;
+			series_play("502soap", 0xaff, 0, 17, 6, 4);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 18:
+		series_show("502windo", 0xf00);
+		break;
+
+	case 19:
+		_G(flags)[V198] = 1;
+		digi_play_loop("500_002", 3, 125);
+		series_play("502fire", 0xc00, 4);
+		break;
+
+	case 20:
+		inv_give_to_player("GIZMO");
+		break;
+
+	case 21:
+		if ((_G(flags)[V200] == 5000 || _G(flags)[V200] == 5003) &&
+			!_flag1 && !digi_play_state(1)) {
+			_flag1 = true;
+			kernel_trigger_dispatch_now(22);
+		}
+
+		kernel_timing_trigger(imath_ranged_rand(240, 360), 21);
+		break;
+
+	case 22:
+		terminateMachineAndNull(_series2);
+		_state3 = imath_ranged_rand(1, 6);
+		series_play_with_breaks(PLAY17, "502spark", 0xc00, 23, 2);
+		break;
+
+	case 23:
+		if (_G(flags)[V200] == 5000 || _G(flags)[V200] == 5003)
+			_flag1 = false;
+
+		_series2 = series_show("502spark", 0xc00);
+		break;
+
+	case 24:
+		series_play("502smoke", 0x500);
+		break;
+
 	case 5002:
 		enable_player();
 		break;
 
 	case gCHANGE_WILBUR_ANIMATION:
-		switch (_should) {
+		switch (_G(wilbur_should)) {
 		case 1:
 			kernel_trigger_dispatch_now(7);
 			break;
@@ -442,7 +707,7 @@ void Room502::daemon() {
 			break;
 
 		case 4:
-			_should = 10001;
+			_G(wilbur_should) = 10001;
 			series_play_with_breaks(PLAY2, "502wi03", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5);
 			break;
 
@@ -454,23 +719,23 @@ void Room502::daemon() {
 			series_load("502bk09");
 			ws_demand_location(237, 235, 9);
 			ws_hide_walker();
-			_should = 8;
+			_G(wilbur_should) = 8;
 			series_play_with_breaks(PLAY3, "502wi02", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5);
 			break;
 
 		case 6:
-			_should = 7;
+			_G(wilbur_should) = 7;
 			series_play_with_breaks(PLAY4, "502wi03", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5);
 			break;
 
 		case 7:
-			_should = 8;
+			_G(wilbur_should) = 8;
 			series_play_with_breaks(PLAY5, "502wi05", 0xc01, gCHANGE_WILBUR_ANIMATION, 2, 5);
 			break;
 
 		case 8:
 			_val5 = 37;
-			_should = 9;
+			_G(wilbur_should) = 9;
 
 			if (_G(flags)[V196]) {
 				series_play_with_breaks(PLAY7, "502wi05", 0xc01, gCHANGE_WILBUR_ANIMATION, 2);
@@ -483,11 +748,11 @@ void Room502::daemon() {
 
 		case 9:
 			if (_G(flags)[V200] == 5003) {
-				_should = 10001;
+				_G(wilbur_should) = 10001;
 			} else {
 				_G(flags)[V200] = 5003;
 				_val2 = 19;
-				_should = 1;
+				_G(wilbur_should) = 1;
 			}
 
 			inv_move_object("SOAPY WATER", NOWHERE);
@@ -498,13 +763,13 @@ void Room502::daemon() {
 		case 10:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
-			_should = 11;
+			_G(wilbur_should) = 11;
 			series_play_with_breaks(PLAY9, "502wi06", 0x801, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 11:
 			inv_give_to_player("KINDLING");
-			_should = 10001;
+			_G(wilbur_should) = 10001;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			break;
 
@@ -512,7 +777,7 @@ void Room502::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_val2 = 18;
-			_should = 1;
+			_G(wilbur_should) = 1;
 			series_play_with_breaks(PLAY10, "502wi07", 0xbff, gCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
@@ -577,13 +842,13 @@ void Room502::parser() {
 	} else if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
 	} else if (player_said("GEAR", "FRONT DOOR")) {
-		_should = 2;
+		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("KITCHEN") && player_said_any("LOOK AT", "GEAR")) {
 		_val6 = 5007;
 		kernel_trigger_dispatch_now(1);
 	} else if (player_said("GEAR", "STAIRS")) {
-		_should = 3;
+		_G(wilbur_should) = 3;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BORK ") && player_said("LOOK AT") &&
 			!player_said_any("GIZMO", "ROLLING PIN", "DIRTY SOCK", "SOAPY WATER", "RUBBER GLOVES") &&
@@ -593,14 +858,14 @@ void Room502::parser() {
 		++_state4;
 	} else if (player_said("TAKE", "KINDLING ")) {
 		if (!_G(flags)[V198] && !inv_player_has("KINDLING")) {
-			_should = 10;
+			_G(wilbur_should) = 10;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("SOAPY WATER", "RAILING")) {
-		_should = 5;
+		_G(wilbur_should) = 5;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BURNING KINDLING", "FIREPLACE")) {
-		_should = 12;
+		_G(wilbur_should) = 12;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		inv_move_object("BURNING KINDLING", NOWHERE);
 	} else {

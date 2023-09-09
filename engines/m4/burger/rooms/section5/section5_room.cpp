@@ -78,12 +78,12 @@ void Section5Room::init() {
 
 HotSpotRec *Section5Room::custom_hotspot_which(int32 x, int32 y) {
 	HotSpotRec *hotspot = Rooms::Room::custom_hotspot_which(x, y);
-	if (hotspot != nullptr || _G(flags)[V186] == 0 || !verifyMachineExists(_walker1) ||
+	if (hotspot != nullptr || _G(flags)[V186] == 0 || !_walker1 ||
 		(_G(game).room_id != 502 && _G(game).room_id != 505))
 		return hotspot;
 
 	assert(_borkTable);
-	int index = _walker1->myAnim8->myRegs[IDX_CELS_INDEX];
+	int index = _walker1.regs()[IDX_CELS_INDEX];
 	int x1 = _borkTable[index]._x;
 	int y1 = _borkTable[index]._y;
 	int total = (x - x1) * (x - x1) + (y - y1) * (y - y1);
