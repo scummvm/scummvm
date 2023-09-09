@@ -1831,6 +1831,13 @@ public:
 
 	/**
 	 * Return list of strings used for building help dialog
+	 *
+	 * The strings represented in triplets:
+	 *   - Name of a tab (will be translated)
+	 *   - ZIP pack name with images (optional)
+	 *   - Text of the tab with Markdown formatting (also be translated)
+	 *
+	 * The string list is null-terminated.
 	 */
 	 virtual const char **buildHelpDialogData() { return nullptr; }
 
