@@ -289,7 +289,7 @@ void Room101::daemon() {
 				_G(walker).wilbur_speech("101w532", 7);
 			}
 		} else if (!_G(flags)[ROOM101_FLAG16]) {
-			switch (_G(flags)[ROOM101_FLAG17]) {
+			switch (_G(flags)[V185]) {
 			case 0:
 			case 1:
 				_G(walker).wilbur_speech("101w550", 7);

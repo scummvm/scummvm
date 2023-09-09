@@ -60,7 +60,8 @@ private:
 	Series _series1;
 	machine *_series2 = nullptr;
 	bool _flag1 = false;
-	int _val1 = 0;
+	int _should = 0;
+	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
