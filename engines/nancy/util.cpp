@@ -31,7 +31,7 @@ void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
 	inRect.bottom = stream.readSint32LE();
 
 	// TVD's rects are non-inclusive
-	if (g_nancy->getGameType() > kGameTypeVampire) {
+	if (g_nancy->getGameType() > kGameTypeVampire && !inRect.isEmpty()) {
 		++inRect.right;
 		++inRect.bottom;
 	}
@@ -46,36 +46,52 @@ void readRect(Common::Serializer &stream, Common::Rect &inRect, Common::Serializ
 		stream.syncAsSint32LE(inRect.bottom);
 
 		// TVD's rects are non-inclusive
-		if (version > kGameTypeVampire) {
+		if (version > kGameTypeVampire && !inRect.isEmpty()) {
 			++inRect.right;
 			++inRect.bottom;
 		}
 	}
 }
 
-void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num) {
-	inArray.resize(num);
-	for (Common::Rect &rect : inArray) {
-		readRect(stream, rect);
+void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum) {
+	uint startSize = inArray.size();
+	inArray.resize(num + startSize);
+
+	for (Common::Rect *rect = &inArray[startSize]; rect != inArray.end(); ++rect) {
+		readRect(stream, *rect);
 	}
+
+	if (totalNum == 0) {
+		totalNum = num;
+	}
+
+	stream.skip((totalNum - num) * 16);
 }
 
-void readRectArray(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void readRectArray(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	Common::Serializer::Version version = stream.getVersion();
 	if (version >= minVersion && version <= maxVersion) {
-		inArray.resize(num);
-		for (Common::Rect &rect : inArray) {
-			stream.syncAsSint32LE(rect.left);
-			stream.syncAsSint32LE(rect.top);
-			stream.syncAsSint32LE(rect.right);
-			stream.syncAsSint32LE(rect.bottom);
+		uint startSize = inArray.size();
+		inArray.resize(num + startSize);
+
+		for (Common::Rect *rect = &inArray[startSize]; rect != inArray.end(); ++rect) {
+			stream.syncAsSint32LE(rect->left);
+			stream.syncAsSint32LE(rect->top);
+			stream.syncAsSint32LE(rect->right);
+			stream.syncAsSint32LE(rect->bottom);
 
 			// TVD's rects are non-inclusive
-			if (version > kGameTypeVampire) {
-				++rect.right;
-				++rect.bottom;
+			if (version > kGameTypeVampire && !rect->isEmpty()) {
+				++rect->right;
+				++rect->bottom;
 			}
 		}
+
+		if (totalNum == 0) {
+			totalNum = num;
+		}
+
+		stream.skip((totalNum - num) * 16);
 	}
 }
 
@@ -86,7 +102,7 @@ void readRect16(Common::SeekableReadStream &stream, Common::Rect &inRect) {
 	inRect.bottom = stream.readSint16LE();
 
 	// TVD's rects are non-inclusive
-	if (g_nancy->getGameType() > kGameTypeVampire) {
+	if (g_nancy->getGameType() > kGameTypeVampire && !inRect.isEmpty()) {
 		++inRect.right;
 		++inRect.bottom;
 	}
@@ -101,36 +117,52 @@ void readRect16(Common::Serializer &stream, Common::Rect &inRect, Common::Serial
 		stream.syncAsSint16LE(inRect.bottom);
 
 		// TVD's rects are non-inclusive
-		if (version > kGameTypeVampire) {
+		if (version > kGameTypeVampire && !inRect.isEmpty()) {
 			++inRect.right;
 			++inRect.bottom;
 		}
 	}
 }
 
-void readRectArray16(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num) {
-	inArray.resize(num);
-	for (Common::Rect &rect : inArray) {
-		readRect16(stream, rect);
+void readRectArray16(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum) {
+	uint startSize = inArray.size();
+	inArray.resize(num + startSize);
+
+	for (Common::Rect *rect = &inArray[startSize]; rect != inArray.end(); ++rect) {
+		readRect16(stream, *rect);
 	}
+
+	if (totalNum == 0) {
+		totalNum = num;
+	}
+
+	stream.skip((totalNum - num) * 8);
 }
 
-void readRectArray16(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+void readRectArray16(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	Common::Serializer::Version version = stream.getVersion();
 	if (version >= minVersion && version <= maxVersion) {
-		inArray.resize(num);
-		for (Common::Rect &rect : inArray) {
-			stream.syncAsSint16LE(rect.left);
-			stream.syncAsSint16LE(rect.top);
-			stream.syncAsSint16LE(rect.right);
-			stream.syncAsSint16LE(rect.bottom);
+		uint startSize = inArray.size();
+		inArray.resize(num + startSize);
+
+		for (Common::Rect *rect = &inArray[startSize]; rect != inArray.end(); ++rect) {
+			stream.syncAsSint16LE(rect->left);
+			stream.syncAsSint16LE(rect->top);
+			stream.syncAsSint16LE(rect->right);
+			stream.syncAsSint16LE(rect->bottom);
 
 			// TVD's rects are non-inclusive
-			if (version > kGameTypeVampire) {
-				++rect.right;
-				++rect.bottom;
+			if (version > kGameTypeVampire && !rect->isEmpty()) {
+				++rect->right;
+				++rect->bottom;
 			}
 		}
+
+		if (totalNum == 0) {
+			totalNum = num;
+		}
+
+		stream.skip((totalNum - num) * 8);
 	}
 }
 

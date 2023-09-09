@@ -86,24 +86,20 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		_itemsStayDown = false;
 	}
 
-	readRectArray(stream, _down1Rects, numElements);
-	ser.skip(16 * (15 - numElements), kGameTypeNancy1);
+	readRectArray(ser, _down1Rects, numElements, numElements, kGameTypeVampire, kGameTypeVampire);
+	readRectArray(ser, _down1Rects, numElements, 15, kGameTypeNancy1);
 
 	if (isOrderItems) {
-		readRectArray(stream, _up2Rects, numElements);
-		ser.skip(16 * (15 - numElements));
-
-		readRectArray(stream, _down2Rects, numElements);
-		ser.skip(16 * (15 - numElements));
+		readRectArray(stream, _up2Rects, numElements, 15);
+		readRectArray(stream, _down2Rects, numElements, 15);
 	}
 
-	readRectArray(stream, _destRects, numElements);
-	ser.skip(16 * (15 - numElements), kGameTypeNancy1);
+	readRectArray(ser, _destRects, numElements, numElements, kGameTypeVampire, kGameTypeVampire);
+	readRectArray(ser, _destRects, numElements, 15, kGameTypeNancy1);
 
 	_hotspots.resize(numElements);
 	if (isPiano) {
-		readRectArray(stream, _hotspots, numElements);
-		ser.skip(16 * (15 - numElements));
+		readRectArray(stream, _hotspots, numElements, 15);
 	} else {
 		_hotspots = _destRects;
 	}

@@ -133,11 +133,8 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 	stream.skip((5 - numPieces) * 4);
 
-	readRectArray(stream, _pieceSrcs, numPieces);
-	stream.skip((5 - numPieces) * 16);
-
-	readRectArray(stream, _homeSrcs, numPieces);
-	stream.skip((5 - numPieces) * 16);
+	readRectArray(stream, _pieceSrcs, numPieces, 5);
+	readRectArray(stream, _homeSrcs, numPieces, 5);
 	
 	readRect(stream, _verticalWallSrc);
 	readRect(stream, _horizontalWallSrc);

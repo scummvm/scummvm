@@ -69,21 +69,13 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 		height = stream.readByte();
 	}
 
-	_srcRects.resize(width * height);
-	_destRects.resize(width * height);
 	for (uint i = 0; i < height; ++i) {
-		for (uint j = 0; j < width; ++j) {
-			readRect(stream, _srcRects[i * width + j]);
-		}
-		stream.skip((6 - width) * 16);
+		readRectArray(stream, _srcRects, width, 6);
 	}
 	stream.skip((4 - height) * 6 * 16);
 
 	for (uint i = 0; i < height; ++i) {
-		for (uint j = 0; j < width; ++j) {
-			readRect(stream, _destRects[i * width + j]);
-		}
-		stream.skip((6 - width) * 16);
+		readRectArray(stream, _destRects, width, 6);
 	}
 	stream.skip((4 - height) * 6 * 16);
 

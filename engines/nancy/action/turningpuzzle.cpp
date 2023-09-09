@@ -139,11 +139,8 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 	stream.skip((16 - numSpindles) * 2);
 
-	readRectArray(stream, _destRects, numSpindles);
-	stream.skip((16 - numSpindles) * 16);
-
-	readRectArray(stream, _hotspots, numSpindles);
-	stream.skip((16 - numSpindles) * 16);
+	readRectArray(stream, _destRects, numSpindles, 16);
+	readRectArray(stream, _hotspots, numSpindles, 16);
 
 	_separateRows = stream.readByte();
 

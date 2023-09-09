@@ -76,8 +76,7 @@ void TowerPuzzle::readData(Common::SeekableReadStream &stream) {
 			// so it only has one rect per pole; second-biggest can
 			// be in bottom-most and one position above it, so it has
 			// two rects per pole, etc. Skipped data is array of 0xFF.
-			readRectArray(stream, _destRects[ringID][poleID], ringID + 1);
-			stream.skip((6 - ringID - 1) * 16);
+			readRectArray(stream, _destRects[ringID][poleID], ringID + 1, 6);
 		}
 	}
 

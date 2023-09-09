@@ -56,16 +56,11 @@ void OverrideLockPuzzle::readData(Common::SeekableReadStream &stream) {
 	_popButtons = stream.readByte();
 	_randomizeLights = stream.readByte();
 
-	readRectArray(stream, _buttonSrcs, num);
-	stream.skip((10 - num) * 16);
-	readRectArray(stream, _buttonDests, num);
-	stream.skip((10 - num) * 16);
-	readRectArray(stream, _hotspots, num);
-	stream.skip((10 - num) * 16);
-	readRectArray(stream, _lightSrcs, num);
-	stream.skip((10 - num) * 16);
-	readRectArray(stream, _lightDests, num);
-	stream.skip((10 - num) * 16);
+	readRectArray(stream, _buttonSrcs, num, 10);
+	readRectArray(stream, _buttonDests, num, 10);
+	readRectArray(stream, _hotspots, num, 10);
+	readRectArray(stream, _lightSrcs, num, 10);
+	readRectArray(stream, _lightDests, num, 10);
 
 	_buttonSound.readNormal(stream);
 	_wrongSound.readNormal(stream);

@@ -55,40 +55,24 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 	_width = stream.readUint16LE();
 	_height = stream.readUint16LE();
 
-	_srcRects.reserve(_height);
+	_srcRects.resize(_height);
 	for (uint y = 0; y < _height; ++y) {
-		_srcRects.push_back(Common::Array<Common::Rect>());
-		_srcRects.back().reserve(_width);
-
-		for (uint x = 0; x < _width; ++x) {
-			_srcRects.back().push_back(Common::Rect());
-			readRect(stream, _srcRects.back().back());
-		}
-
-		stream.skip((6 - _width) * 16);
+		readRectArray(stream, _srcRects[y], _width, 6);
 	}
-
 	stream.skip((6 - _height) * 6 * 16);
 
-	_destRects.reserve(_height);
+	_destRects.resize(_height);
 	for (uint y = 0; y < _height; ++y) {
-		_destRects.push_back(Common::Array<Common::Rect>());
-		_destRects.back().reserve(_width);
-
-		for (uint x = 0; x < _width; ++x) {
-			_destRects.back().push_back(Common::Rect());
-			readRect(stream, _destRects.back().back());
-
-			if (x == 0 && y == 0) {
-				_screenPosition = _destRects.back().back();
-			} else {
-				_screenPosition.extend(_destRects.back().back());
-			}
-		}
-		stream.skip((6 - _width) * 16);
+		readRectArray(stream, _destRects[y], _width, 6);
 	}
-
 	stream.skip((6 - _height) * 6 * 16);
+
+	_screenPosition = _destRects[0][0];
+	for (uint y = 0; y < _height; ++y) {
+		for (uint x = 0; x < _width; ++x) {
+			_screenPosition.extend(_destRects[y][x]);
+		}
+	}
 
 	_correctTileOrder.reserve(_height);
 	for (uint y = 0; y < _height; ++y) {
