@@ -29,8 +29,20 @@ namespace Burger {
 namespace Rooms {
 
 class Room506 : public Section5Room {
+private:
+	static const char *SAID[][4];
+	static const seriesStreamBreak SERIES1[];
+	static const seriesPlayBreak PLAY1[];
+	static const seriesPlayBreak PLAY2[];
+	static const seriesPlayBreak PLAY3[];
+	static const seriesPlayBreak PLAY4[];
+	static const seriesPlayBreak PLAY5[];
+	static const seriesPlayBreak PLAY6[];
+	static long _state1;
+	static long _state2;
+
 public:
-	Room506() : Section5Room() {}
+	Room506();
 	~Room506() override {}
 
 	void init() override;

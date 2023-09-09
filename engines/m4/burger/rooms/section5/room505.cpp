@@ -37,6 +37,19 @@ const Section5Room::BorkPoint Room505::BORK[] = {
 	{ -1, -1 }, { -1, -1 }
 };
 
+const seriesPlayBreak Room505::PLAY1[] = {
+	{ 0,  3, "505_003a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 4, -1, "505_003b", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room505::PLAY2[] = {
+	{ 0,  2, nullptr,    0,   0, -1, 0, 0, nullptr, 0 },
+	{ 3, -1, "505_003a", 1, 100, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 void Room505::init() {
 }
 
