@@ -1020,11 +1020,16 @@ _s(
 "\n"
 "| Shortcut      | Description\n"
 "| --------------------------------\n"
-"| `Ctrl+F5` -- Displays the Global Main Menu\n"
-"| `Cmd+q`    -- Quit (macOS)\n"
-"| `Ctrl+q`  -- Quit (Linux/Unix)\n"
-"| `Alt+F4`  -- Quit (Windows)\n"
-"| `Ctrl+z`  -- Quit (other platforms)\n"
+"| `Ctrl+F5` -- Displays the Global Main Menu\n")
+#ifdef MACOSX
+_s("| `Cmd+q`    -- Quit (macOS)\n")
+#elif WIN32
+_s("| `Alt+F4`  -- Quit (Windows)\n")
+#else
+_s("| `Ctrl+q`  -- Quit (Linux/Unix)\n")
+_s("| `Ctrl+z`  -- Quit (other platforms)\n")
+#endif
+_s(
 "| `Ctrl+u`  -- Mutes all sounds\n"
 "| `Ctrl+m`  -- Toggles mouse capture\n"
 "| `Ctrl+Alt` and `9` or `0` -- Cycles forwards/backwards between graphics filters\n"
