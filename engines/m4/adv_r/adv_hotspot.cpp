@@ -282,6 +282,9 @@ void hotspot_set_active_xy(HotSpotRec *head, const char *name, int32 x, int32 y,
 				i->active = active_or_not;
 }
 
+void hotspot_set_active_xy(const char *name, int32 x, int32 y, bool active_or_not) {
+	hotspot_set_active_xy(_G(currentSceneDef).hotspots, name, x, y, active_or_not);
+}
 
 //-----------------------------------------------------------------------
 

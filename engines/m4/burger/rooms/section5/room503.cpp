@@ -293,6 +293,88 @@ Room503::Room503() : Section5Room() {
 }
 
 void Room503::init() {
+	Section5Room::init();
+	_val1 = 0;
+
+	for (_val2 = 0; _val2 < 5; ++_val2)
+		_array1[_val2] = _array2[_val2] = -1;
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	case 502:
+		ws_demand_location(33, 294, 3);
+
+		if (player_been_here(503)) {
+			ws_walk(195, 294, nullptr, -1);
+		} else {
+			_val4 = 9;
+			ws_walk(195, 294, nullptr, 13);
+		}
+		break;
+
+	case 504:
+		ws_demand_location(170, 253, 3);
+		ws_walk(230, 253, nullptr, -1, 3);
+		break;
+
+	case 510:
+		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	default:
+		ws_demand_location(263, 333, 3);
+		break;
+	}
+
+	_state2 = 0;
+	_val5 = 0;
+	hotspot_set_active("BORK", false);
+
+	if (_G(flags)[V203] == 13) {
+		_val6 = 28;
+		kernel_trigger_dispatch_now(14);
+		kernel_trigger_dispatch_now(15);
+	} else if (inv_player_has("ROLLING PIN") && _G(flags)[V203] != 16) {
+		_val6 = 27;
+		kernel_trigger_dispatch_now(14);
+	} else if (_G(flags)[V203] != 16) {
+		loadSeries1();
+		_val5 = 1;
+		_walk1 = intr_add_no_walk_rect(272, 250, 414, 300, 260, 300);
+		hotspot_set_active("BORK", false);
+		hotspot_set_active_xy("BORK", 340, 250, true);
+		_val6 = 14;
+		kernel_trigger_dispatch_now(14);
+	}
+
+	_state5 = inv_player_has("ROLLING PIN") ? 1 : 0;
+	hotspot_set_active("ROLLING PIN", false);
+	_val7 = 0;
+
+	if (inv_where_is("RUBBER GLOVES") == 503) {
+		hotspot_set_active("RUBBER GLOVES ", true);
+		_series1 = series_show("503glove", 0xb00);
+	} else {
+		hotspot_set_active("RUBBER GLOVES ", false);
+	}
+
+	_val8 = 0;
+	if (_G(flags)[V203] == 16) {
+		_val9 = 34;
+	} else if (_G(flags)[V203] != 13) {
+		_val9 = 33;
+	}
+
+	kernel_trigger_dispatch_now(23);
+	if (_G(flags)[V207])
+		kernel_trigger_dispatch_now(20);
+
+	_flag1 = true;
+	Section5Room::init();
 }
 
 void Room503::daemon() {
@@ -304,6 +386,23 @@ void Room503::pre_parser() {
 
 void Room503::parser() {
 
+}
+
+void Room503::loadSeries1() {
+	static const char *NAMES[] = {
+		"503bk01", "503bk01s", "503bk02", "503bk02s", "503bk17",
+		"503bk17s", "503bk06", "503bk06s", "503bk07", "503bk07s",
+		"503bk06", "503bk06s", "503bk09", "503bk09s", "503bk10",
+		"503bk11", "503bk11s", "503bk12", "503bk13", "503bk13s"
+	};
+	for (int i = 0; i < 20; ++i)
+		series_load(NAMES[i]);
+
+	if (!_G(flags)[V207]) {
+		series_load("503bk08");
+		series_load("503bk08s");
+		series_load("503windo");
+	}
 }
 
 } // namespace Rooms
