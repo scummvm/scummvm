@@ -100,6 +100,7 @@ backends/networking/sdl_net/localwebserver.cpp
 backends/networking/sdl_net/uploadfileclienthandler.cpp
 backends/platform/3ds/options-dialog.cpp
 backends/platform/3ds/osystem-events.cpp
+backends/platform/android/android.cpp
 backends/platform/android/options.cpp
 backends/platform/ds/ds-graphics.cpp
 backends/platform/ds/osystem_ds.cpp
