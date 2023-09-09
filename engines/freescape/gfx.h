@@ -132,6 +132,8 @@ public:
 	int _underFireBackgroundColor;
 	byte _stipples[16][128];
 
+	int _scale;
+
 	/**
 	 * Select the window where to render
 	 *

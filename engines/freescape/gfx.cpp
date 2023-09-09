@@ -55,6 +55,8 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 		}
 		_colorPair[i] = 0;
 	}
+
+	_scale = 1;
 }
 
 Renderer::~Renderer() {}
