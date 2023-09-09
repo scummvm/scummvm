@@ -262,6 +262,7 @@ public:
 	bool isRunningInMainThread() { return pthread_self() == _main_thread; }
 #endif
 
+	virtual const char **buildHelpDialogData() override;
 };
 
 #endif
