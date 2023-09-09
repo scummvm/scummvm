@@ -283,19 +283,19 @@ void Room502::init() {
 	case 505:
 		ws_demand_location(237, 235, 9);
 		ws_hide_walker();
-		_val1 = _G(flags)[V196] ? 6 : 4;
+		_should = _G(flags)[V196] ? 6 : 4;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 506:
 		ws_demand_location(402, 272, 1);
-		_val1 = 12;
+		_should = 12;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 510:
 		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
-		_val1 = 10001;
+		_should = 10001;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		break;
 
@@ -324,9 +324,202 @@ void Room502::init() {
 
 void Room502::daemon() {
 	switch (_G(kernel).trigger) {
+	case 5:
+		loadSeries3();
+		loadSeries2();
+		_series1.show("502bk01", 0x400);
+		_series2 = series_show("502spark", 0xc00);
+
+		if (_G(flags)[V185]) {
+			kernel_trigger_dispatch_now(20);
+			digi_preload_stream_breaks(SERIES2);
+			series_stream_with_breaks(SERIES2, "502end", 6, 0x100, 6);
+		} else {
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "502intro", 6, 0x100, 6);
+		}
+		break;
+
+	case 6:
+		_series1.terminate();
+		terminateMachineAndNull(_series2);
+		setup1();
+		setup2();
+		setup3();
+
+		if (_G(flags)[V185]) {
+			digi_unload_stream_breaks(SERIES2);
+			_should = 10001;
+		} else {
+			digi_unload_stream_breaks(SERIES1);
+			ws_unhide_walker();
+			_val2 = 13;
+			_should = 1;
+		}
+
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 7:
+		ws_unhide_walker();
+
+		switch (_val2) {
+		case 13:
+			player_set_commands_allowed(true);
+			wilbur_speech("502w001");
+			break;
+
+		case 14:
+			player_set_commands_allowed(true);
+			wilbur_speech("502w002");
+			break;
+
+		case 15:
+			player_set_commands_allowed(true);
+			wilbur_speech("502w005");
+			break;
+
+		case 16:
+			player_set_commands_allowed(true);
+			wilbur_speech("502w006");
+			break;
+
+		case 17:
+			player_set_commands_allowed(true);
+			_should = 10001;
+			wilbur_speech("502w010");
+			break;
+
+		case 18:
+			player_set_commands_allowed(true);
+			wilbur_speech("502w025z");
+			break;
+
+		case 19:
+			_val4 = 34;
+			wilbur_speech("500w047");
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 8:
+		if (_G(flags)[V200] == 5001) {
+			player_update_info();
+
+			if (_G(player_info).x < 242 && _G(player_info).y < 265) {
+				ws_walk(_G(player_info).x, _G(player_info).y, nullptr, -1);
+				player_set_commands_allowed(false);
+				kernel_trigger_dispatch_now(15);
+			} else {
+				kernel_timing_trigger(15, 8);
+			}
+		}
+		break;
+
 	case 5002:
 		enable_player();
 		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_should) {
+		case 1:
+			kernel_trigger_dispatch_now(7);
+			break;
+
+		case 2:
+			_G(flags)[V195] = 1;
+			break;
+
+		case 3:
+			ws_demand_location(237, 235);
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_val6 = 5009;
+			series_play_with_breaks(PLAY1, "502wi02", 0xc01, 1, 3, 5);
+			break;
+
+		case 4:
+			_should = 10001;
+			series_play_with_breaks(PLAY2, "502wi03", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5);
+			break;
+
+		case 5:
+			player_set_commands_allowed(false);
+			series_load("502wi02");
+			series_load("502wi03");
+			series_load("502wi05");
+			series_load("502bk09");
+			ws_demand_location(237, 235, 9);
+			ws_hide_walker();
+			_should = 8;
+			series_play_with_breaks(PLAY3, "502wi02", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5);
+			break;
+
+		case 6:
+			_should = 7;
+			series_play_with_breaks(PLAY4, "502wi03", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5);
+			break;
+
+		case 7:
+			_should = 8;
+			series_play_with_breaks(PLAY5, "502wi05", 0xc01, gCHANGE_WILBUR_ANIMATION, 2, 5);
+			break;
+
+		case 8:
+			_val5 = 37;
+			_should = 9;
+
+			if (_G(flags)[V196]) {
+				series_play_with_breaks(PLAY7, "502wi05", 0xc01, gCHANGE_WILBUR_ANIMATION, 2);
+			} else {
+				series_play_with_breaks(PLAY6, "502wi05", 0xc01, gCHANGE_WILBUR_ANIMATION, 2);
+			}
+
+			_G(flags)[V196] = 0;
+			break;
+
+		case 9:
+			if (_G(flags)[V200] == 5003) {
+				_should = 10001;
+			} else {
+				_G(flags)[V200] = 5003;
+				_val2 = 19;
+				_should = 1;
+			}
+
+			inv_move_object("SOAPY WATER", NOWHERE);
+			inv_give_to_player("BOTTLE");
+			series_play_with_breaks(PLAY8, "502wi03", 0xc01, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 10:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_should = 11;
+			series_play_with_breaks(PLAY9, "502wi06", 0x801, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 11:
+			inv_give_to_player("KINDLING");
+			_should = 10001;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 12:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_val2 = 18;
+			_should = 1;
+			series_play_with_breaks(PLAY10, "502wi07", 0xbff, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
 
 	default:
 		_G(kernel).continue_handling_trigger = true;
@@ -384,13 +577,13 @@ void Room502::parser() {
 	} else if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
 	} else if (player_said("GEAR", "FRONT DOOR")) {
-		_val1 = 2;
+		_should = 2;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("KITCHEN") && player_said_any("LOOK AT", "GEAR")) {
 		_val6 = 5007;
 		kernel_trigger_dispatch_now(1);
 	} else if (player_said("GEAR", "STAIRS")) {
-		_val1 = 3;
+		_should = 3;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BORK ") && player_said("LOOK AT") &&
 			!player_said_any("GIZMO", "ROLLING PIN", "DIRTY SOCK", "SOAPY WATER", "RUBBER GLOVES") &&
@@ -400,14 +593,14 @@ void Room502::parser() {
 		++_state4;
 	} else if (player_said("TAKE", "KINDLING ")) {
 		if (!_G(flags)[V198] && !inv_player_has("KINDLING")) {
-			_val1 = 10;
+			_should = 10;
 			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("SOAPY WATER", "RAILING")) {
-		_val1 = 5;
+		_should = 5;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BURNING KINDLING", "FIREPLACE")) {
-		_val1 = 12;
+		_should = 12;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		inv_move_object("BURNING KINDLING", NOWHERE);
 	} else {
