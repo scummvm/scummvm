@@ -113,9 +113,12 @@ void FreescapeEngine::borderScreen() {
 		return;
 
 	if (isDriller()) {
+		if (isAmiga() || isAtariST())
+			return; // TODO: add animation
+
 		drawBorderScreenAndWait(nullptr);
 
-		if (isAmiga() || isAtariST() || isDemo())
+		if (isDemo())
 			return;
 	}
 
