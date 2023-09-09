@@ -415,6 +415,12 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			xMoveCur = _xMove + (int16)READ_LE_UINT16(p + 0);
 			yMoveCur = _yMove + (int16)READ_LE_UINT16(p + 2);
 
+			// WORKAROUND bug #13532: There is a frame (of Freddi's eye) in US release of Freddi 3 accidentaly being big
+			// and an horizontal line at the bottom, causing this line to appear at the bottom of the screen.
+			// We draw the whole frame one pixel down so it does not appear on screen.
+			if (_vm->_game.id == GID_FREDDI3 && _vm->_language == Common::EN_USA && a->_costume == 258 && (code & AKC_CelMask) == 35 && _vm->_enableEnhancements)
+				yMoveCur += 1;
+
 			if (i == extra - 1) {
 				_xMove += lastDx;
 				_yMove -= lastDy;
