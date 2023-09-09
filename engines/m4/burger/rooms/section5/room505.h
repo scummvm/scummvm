@@ -31,6 +31,8 @@ namespace Rooms {
 class Room505 : public Section5Room {
 private:
 	static const BorkPoint BORK[];
+	static const seriesPlayBreak PLAY1[];
+	static const seriesPlayBreak PLAY2[];
 
 public:
 	Room505() : Section5Room() {}
