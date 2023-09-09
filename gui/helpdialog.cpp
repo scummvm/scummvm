@@ -90,6 +90,8 @@ HelpDialog::HelpDialog()
 		}
 	}
 
+	 tab->setActiveTab(0);
+
 	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
 
