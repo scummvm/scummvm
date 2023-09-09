@@ -203,6 +203,29 @@ HelpDialog::HelpDialog()
 
 	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText4);
 
+	const char **backendTabs = g_system->buildHelpDialogData();
+
+	if (backendTabs) {
+		while (*backendTabs) {
+			Common::U32String tabName(_(*backendTabs++));
+			const char *imagePack = nullptr;
+
+			if (*backendTabs && **backendTabs)
+				imagePack = *backendTabs;
+
+			backendTabs++;
+
+			Common::U32String tabText(_(*backendTabs++));
+
+			tab->addTab(tabName, "GlobalOptions_Graphics", false);
+
+			RichTextWidget *rt = new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, tabText);
+
+			if (imagePack)
+				rt->setImageArchive(imagePack);
+		}
+	}
+
 	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
 
