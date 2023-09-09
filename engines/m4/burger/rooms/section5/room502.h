@@ -60,12 +60,13 @@ private:
 	Series _series1;
 	machine *_series2 = nullptr;
 	bool _flag1 = false;
-	int _should = 0;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
 
 	void loadSeries1();
 	void loadSeries2();

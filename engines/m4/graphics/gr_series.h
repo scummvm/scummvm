@@ -72,6 +72,10 @@ struct Series {
 		return _series != nullptr;
 	}
 
+	frac16 *regs() const {
+		return _series->myAnim8->myRegs;
+	}
+
 	static void series_play(const char *seriesName, frac16 layer, uint32 flags = 0,
 		int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = -1, int32 s = 100,
 		int32 x = 0, int32 y = 0, int32 firstFrame = 0, int32 lastFrame = -1);

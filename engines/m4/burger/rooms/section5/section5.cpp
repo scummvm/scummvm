@@ -397,6 +397,23 @@ void Section5::gizmoDigiPlay(const char *name, int vol, bool &done) {
 	}
 }
 
+bool Section5::checkFlags() {
+	return _G(flags)[V197] && _G(flags)[V200] == 5003 &&
+		_G(flags)[V210] == 5002 && _G(flags)[V218] == 5003 &&
+		_G(flags)[V223] == 2 && _G(flags)[V227] != 0;
+}
+
+void Section5::flagsTrigger() {
+	player_set_commands_allowed(false);
+
+	if (checkFlags()) {
+		_G(wilbur_should) = 5003;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else {
+		kernel_trigger_dispatch_now(5002);
+	}
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
