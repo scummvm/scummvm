@@ -4240,6 +4240,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "ac2game.dat", "c0d0009485795a4ff0cf9dbe5ad82a2f", 3183902196, nullptr), // Mac v3?
 	GAME_ENTRY_PLUGIN_STEAM_NOLAUNCHLOAD("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3187004654, nullptr), // Win-Linux v3.0
 	GAME_ENTRY_PLUGIN_STEAM_NOLAUNCHLOAD("strangeland", "ac2game.dat", "e037ab3414dec971b90715c7dbb56f4c", 3183901914, nullptr), // Mac
+	GAME_ENTRY_PLUGIN_STEAM_NOLAUNCHLOAD("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186428869, nullptr), // Win 2.3
 	GAME_ENTRY("sulifallenharmony", "Suli Fallen Harmony.exe", "8a58836830dce896e4366f57791ab6cc", 35900870),  // v1.4 itch.io En-Fr
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886),  // En-Fr-De-Es
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "b4407ac542f316456f549fc8a60dccae", 170634789),
