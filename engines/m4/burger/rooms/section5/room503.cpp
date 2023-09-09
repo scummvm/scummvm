@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section5/room503.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_hotspot.h"
 
 namespace M4 {
 namespace Burger {
@@ -331,7 +332,7 @@ void Room503::init() {
 	}
 
 	_state2 = 0;
-	_val5 = 0;
+	_flag1 = 0;
 	hotspot_set_active("BORK", false);
 
 	if (_G(flags)[V203] == 13) {
@@ -343,7 +344,7 @@ void Room503::init() {
 		kernel_trigger_dispatch_now(14);
 	} else if (_G(flags)[V203] != 16) {
 		loadSeries1();
-		_val5 = 1;
+		_flag1 = 1;
 		_walk1 = intr_add_no_walk_rect(272, 250, 414, 300, 260, 300);
 		hotspot_set_active("BORK", false);
 		hotspot_set_active_xy("BORK", 340, 250, true);
@@ -381,7 +382,50 @@ void Room503::daemon() {
 }
 
 void Room503::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if ((player_said("GEAR", "MICROWAVE") || player_said("TAKE", "MICROWAVE")) &&
+			!_val8 && _G(flags)[V203] != 13 && _G(flags)[V203] != 16) {
+		_val8 = 1;
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 2;
+		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TAKE", "RUBBER GLOVES ") && !_val7 &&
+			_G(flags)[V203] == 13 && _G(flags)[V203] != 16) {
+		_val7 = 1;
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 2;
+		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("BORK", "ROLLING PIN") &&
+			(_G(flags)[V203] == 12 || _G(flags)[V203] == 11)) {
+		_flag1 = 0;
+		intr_remove_no_walk_rect(_walk1);
+		_val6 = 26;
+		_val4 = 11;
+		_G(wilbur_should) = 1;
+		player_set_commands_allowed(false);
+		player_hotspot_walk_override(346, 283, 2, gCHANGE_WILBUR_ANIMATION);
+	} else {
+		if (_flag1) {
+			player_update_info();
+			HotSpotRec *hotspot = hotspot_which(_G(hotspot_x), _G(hotspot_y));
+
+			if (_G(hotspot_x) > 272 && _G(hotspot_y) < 300 && player_said("FLOOR")) {
+				ws_walk(_G(hotspot_x), 301, nullptr, -1, 1);
+			} else if (hotspot->feet_x > 272 && hotspot->feet_y < 300) {
+				player_hotspot_walk_override(hotspot->feet_x, 301, 1);
+			}
+		}
+
+		if (player_said("PARLOUR") && player_said_any("ENTER", "LOOK AT", "GEAR"))
+			player_set_facing_hotspot();
+
+		if (player_said("BASEMENT") && player_said_any("ENTER", "LOOK AT", "GEAR"))
+			player_set_facing_hotspot();
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room503::parser() {

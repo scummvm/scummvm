@@ -246,6 +246,10 @@ HotSpotRec *hotspot_which(HotSpotRec *head, int x, int y) {
 	return nullptr;
 }
 
+HotSpotRec *hotspot_which(int x, int y) {
+	return hotspot_which(_G(currentSceneDef).hotspots, x, y);
+}
+
 void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not) {
 	char name_str[MAX_FILENAME_SIZE];
 	HotSpotRec *i;
