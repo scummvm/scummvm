@@ -185,7 +185,7 @@ void OSystem_libretro::processInputs(void) {
 	retropad_value = mapper_get_mapper_key_status(RETROKE_RIGHT_BUTTON);
 	if (retropad_value & (1 << RETRO_DEVICE_KEY_CHANGED)) {
 		Common::Event ev;
-		ev.type = eventID[0][(retropad_value & (1 << RETRO_DEVICE_KEY_STATUS)) ? 0 : 1];
+		ev.type = eventID[1][(retropad_value & (1 << RETRO_DEVICE_KEY_STATUS)) ? 0 : 1];
 		ev.mouse.x = _mouseX;
 		ev.mouse.y = _mouseY;
 		_events.push_back(ev);
