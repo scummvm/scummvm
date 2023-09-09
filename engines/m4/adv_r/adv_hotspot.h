@@ -98,6 +98,7 @@ extern void hotspot_newPrep(HotSpotRec *h, const char *prep);
  * @returns		A pointer to the hotspot we're inside, or nullptr if there's nothing.
  */
 extern HotSpotRec *hotspot_which(HotSpotRec *head, int x, int y);
+extern HotSpotRec *hotspot_which(int x, int y);
 extern void kill_hotspot_node(HotSpotRec *h);
 
 extern void hotspot_restore_all();
