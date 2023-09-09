@@ -215,6 +215,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new CollisionPuzzle();
 	case 212:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kOrderItems);
+	case 214:
+		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kKeypad);
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;

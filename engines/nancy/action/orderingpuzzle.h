@@ -27,13 +27,18 @@
 namespace Nancy {
 namespace Action {
 
-// Implements three different action record types: OrderingPuzzle,
-// PianoPuzzle, and OrderItemsPuzzle. All three have the same goal:
-// click on a series of items in the same order (hence the name).
+// Class implementing several action records of the type where
+// the player has to press a sequence of buttons in a certain order.
+//		- OrderingPuzzle: The most simple type. Allows for manual depressing of buttons
+//		- PianoPuzzle: Buttons always auto-depress; every button has unique sound file
+//		- OrderItemsPuzzle: Buttons may depress or stay down, but player can't depress manually.
+//			Has second button state that is activated when player is holding a specific item. (see fingerprint keypad puzzle in nancy4)
+//		- KeypadPuzzle: Buttons may auto-depress, stay down, and can be depressed manually by player.
+//			Adds an optional button for manually checking for correct solution, and doubles the number of possible buttons.
 class OrderingPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	enum PuzzleType { kOrdering, kPiano, kOrderItems };
+	enum PuzzleType { kOrdering, kPiano, kOrderItems, kKeypad };
 	OrderingPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
 	virtual ~OrderingPuzzle() {}
 
@@ -55,6 +60,9 @@ protected:
 	Common::String _imageName;
 	bool _hasSecondState = false;
 	bool _itemsStayDown = true;
+	bool _needButtonToCheckSuccess = false;
+	Common::Rect _checkButtonSrc;
+	Common::Rect _checkButtonDest;
 	Common::Array<Common::Rect> _down1Rects;
 	Common::Array<Common::Rect> _up2Rects;
 	Common::Array<Common::Rect> _down2Rects;
@@ -82,6 +90,7 @@ protected:
 	Common::Array<bool> _downItems;
 	Common::Array<bool> _secondStateItems;
 	Time _solveSoundPlayTime;
+	bool _checkButtonPressed = false;
 
 	PuzzleType _puzzleType;
 };
