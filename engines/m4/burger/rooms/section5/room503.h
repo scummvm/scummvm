@@ -67,9 +67,10 @@ private:
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
+	int _val5 = 0;
 	int _val6 = 0;
-	int _val7 = 0;
-	int _val8 = 0;
+	int _flag3 = 0;
+	int _flag2 = 0;
 	int _val9 = 0;
 	bool _flag1 = false;
 	noWalkRect *_walk1 = nullptr;

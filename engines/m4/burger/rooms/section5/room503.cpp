@@ -354,7 +354,7 @@ void Room503::init() {
 
 	_state5 = inv_player_has("ROLLING PIN") ? 1 : 0;
 	hotspot_set_active("ROLLING PIN", false);
-	_val7 = 0;
+	_flag3 = 0;
 
 	if (inv_where_is("RUBBER GLOVES") == 503) {
 		hotspot_set_active("RUBBER GLOVES ", true);
@@ -363,7 +363,7 @@ void Room503::init() {
 		hotspot_set_active("RUBBER GLOVES ", false);
 	}
 
-	_val8 = 0;
+	_flag2 = 0;
 	if (_G(flags)[V203] == 16) {
 		_val9 = 34;
 	} else if (_G(flags)[V203] != 13) {
@@ -385,14 +385,14 @@ void Room503::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if ((player_said("GEAR", "MICROWAVE") || player_said("TAKE", "MICROWAVE")) &&
-			!_val8 && _G(flags)[V203] != 13 && _G(flags)[V203] != 16) {
-		_val8 = 1;
+			!_flag2 && _G(flags)[V203] != 13 && _G(flags)[V203] != 16) {
+		_flag2 = 1;
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
 		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
-	} else if (player_said("TAKE", "RUBBER GLOVES ") && !_val7 &&
+	} else if (player_said("TAKE", "RUBBER GLOVES ") && !_flag3 &&
 			_G(flags)[V203] == 13 && _G(flags)[V203] != 16) {
-		_val7 = 1;
+		_flag3 = 1;
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
 		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
@@ -429,7 +429,89 @@ void Room503::pre_parser() {
 }
 
 void Room503::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+	bool borkFlag = player_said("BORK") && _G(flags)[V203] == 12;
+	bool microwaveFlag = player_said("MICROWAVE");
+	bool ovenFlag = player_said("OVEN") && _G(flags)[V203] == 16;
+	bool prunesFlag = player_said("PRUNES") && _G(flags)[V203] == 16;
 
+	if (borkFlag && player_said("LOOK AT")) {
+		wilbur_speech("503w005");
+	} else if (borkFlag && player_said("GEAR")) {
+		wilbur_speech("503w006");
+	} else if (player_said("RUBBER DUCKY") && player_said("BORK")) {
+		wilbur_speech("500w031");
+	} else if (player_said("RUBBER DUCKY") && player_said("SINK")) {
+		wilbur_speech("500w034");
+	} else if (player_said("SOAPY WATER", "SINK")) {
+		wilbur_speech("500w049");
+	} else if (microwaveFlag && player_said("LOOK AT") && _G(flags)[V203] == 16) {
+		wilbur_speech("503w011");
+	} else if (microwaveFlag && player_said("LOOK AT") && _G(flags)[V203] == 13) {
+		wilbur_speech("503w010");
+	} else if (microwaveFlag && player_said("TAKE") && _G(flags)[V203] == 16) {
+		wilbur_speech("503w013");
+	} else if (microwaveFlag && player_said("TAKE") && _flag2) {
+		wilbur_speech("503w013");
+	} else if (microwaveFlag && player_said("GEAR") && _G(flags)[V203] == 16) {
+		wilbur_speech("503w013");
+	} else if (microwaveFlag && player_said("GEAR") && _flag2 && _G(flags)[V203] != 13) {
+		wilbur_speech("503w012");
+	} else if (player_said("RUBBER GLOVES ") && player_said("TAKE") &&
+			_G(flags)[V203] != 16 && _G(flags)[V203] != 13 && _flag3) {
+		wilbur_speech("503w012");
+	} else if (player_said("RUBBER GLOVES ") && player_said("GEAR")) {
+		wilbur_speech("503w015");
+	} else if (ovenFlag && player_said("LOOK AT")) {
+		wilbur_speech("503w021");
+	} else if (ovenFlag && player_said("GEAR")) {
+		wilbur_speech("503w023");
+	} else if (player_said("GEAR", "OVEN") && _G(flags)[V203] == 16 &&
+			_G(flags)[V203] != 13) {
+		wilbur_speech("503w022");
+	} else if (player_said("LOOK AT", "CUPBOARD ") && inv_player_has("RUBBER GLOVES")) {
+		wilbur_speech("503w027");
+	} else if (prunesFlag && player_said("LOOK AT")) {
+		wilbur_speech("503w030");
+	} else if (prunesFlag && (player_said("TAKE") || player_said("GEAR"))) {
+		wilbur_speech("503w032");
+	} else if (player_said("GEAR", "WINDOW") && _G(flags)[V207] != 0) {
+		wilbur_speech("503w033");
+	} else if (_G(walker).wilbur_said(SAID1)) {
+		// Already handled
+	} else if (player_said("TAKE", "ROLLING PIN ")) {
+		_G(wilbur_should) = 3;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TAKE", "RUBBER GLOVES ") &&
+			(_G(flags)[V203] == 16 || _G(flags)[V203] == 13)) {
+		_G(wilbur_should) = 7;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("BORK") && player_said("LOOK AT") &&
+			(_G(flags)[V203] == 0 || _G(flags)[V203] == 1) &&
+			!player_said_any("GIZMO", "ROLLING PIN", "SOCK", "SOAPY WATER", "RUBBER_GLOVES") &&
+			!player_said("LAXATIVE")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 2;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("GEAR", "MICROWAVE") && _G(flags)[V203] == 13) {
+		_G(wilbur_should) = 5;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("GEAR", "OVEN") && (_G(flags)[V203] == 16 || _G(flags)[V203] == 13)) {
+		_G(wilbur_should) = 8;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("PARLOUR") && player_said_any("ENTER", "LOOK AT", "GEAR")) {
+		term_message("Going into 502!");
+		_val5 = 5006;
+		kernel_trigger_dispatch_now(4);
+	} else if (player_said("BASEMENT") && player_said_any("ENTER", "LOOK AT", "GEAR")) {
+		term_message("Going into 504!");
+		_val5 = 5008;
+		kernel_trigger_dispatch_now(4);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room503::loadSeries1() {
