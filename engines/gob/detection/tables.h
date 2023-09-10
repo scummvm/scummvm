@@ -66,6 +66,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"adi4", "ADI 4"},
 	{"adi5", "ADI 5"},
 	{"adibou1", "Adibou 1"},
+	{"adibou1cd", "Adibou 1 CD"},
 	{"adibou2", "Adibou 2"},
 	{"adibou3", "Adibou 3"},
 	{"adiboudessin", "Adibou presente Dessin"},

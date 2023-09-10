@@ -75,13 +75,13 @@
 
 {
 	{ // 1994 CD version
-		"adibou1",
-		"ADI Jr. 4-6 Jahre (CD)",
+		"adibou1cd",
+		"ADI Jr. 4-6 Jahre",
 		AD_ENTRY2s("intro.stk", "4d4c23da4cd7e080cb1769b49ace1805", 4731020,
 				   "l51.stk", "0397e893892ffe1d6c64d28841437fd7", 7308050),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_TESTING | ADGF_CD,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
@@ -90,13 +90,13 @@
 },
 {
 	{ // 1994 CD version
-		"adibou1",
-		"ADI Jr. 6-7 Jahre (CD)",
+		"adibou1cd",
+		"ADI Jr. 6-7 Jahre",
 		AD_ENTRY2s("intro.stk", "4d4c23da4cd7e080cb1769b49ace1805", 4731020,
 				   "c61.stk", "1aca103ed84241487c5cf394ae37e8d7", 5966096),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_TESTING | ADGF_CD,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	 kGameTypeAdibou1,
