@@ -74,8 +74,6 @@
 
 namespace Wage {
 
-static const uint32 WAGEflag = MKTAG('W', 'A', 'G', 'E');
-
 //TODO: make sure these are calculated right: (we add flag, description, etc)
 #define VARS_INDEX 0x005E
 #define SCENES_INDEX 0x0232
@@ -334,36 +332,7 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	}
 
 	// the following is appended by ScummVM
-	int32 appendixOffset = out->pos();
-	if (appendixOffset < 0) {
-		warning("OutSaveFile::pos() failed");
-	}
-	out->writeUint32BE(WAGEflag);
-
-	// Write description of saved game, limited to WAGE_SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
-	const int WAGE_SAVEDGAME_DESCRIPTION_LEN = 127;
-	char description[WAGE_SAVEDGAME_DESCRIPTION_LEN + 1];
-
-	memset(description, 0, sizeof(description));
-	strncpy(description, descriptionString.c_str(), WAGE_SAVEDGAME_DESCRIPTION_LEN);
-	assert(WAGE_SAVEDGAME_DESCRIPTION_LEN + 1 == 128); // safety
-	out->write(description, 128);
-
-	out->writeByte(SAVEGAME_CURRENT_VERSION);
-	debug(9, "Writing save game version (%d)", SAVEGAME_CURRENT_VERSION);
-
-	// Thumbnail
-	Graphics::saveThumbnail(*out);
-
-	out->writeUint32BE(appendixOffset);
-
-	// this one to make checking easier:
-	// it couldn't be added to the beginning
-	// and we won't be able to find it in the middle,
-	// so these would be the last 4 bytes of the file
-	out->writeUint32BE(WAGEflag);
-
-	g_engine->getMetaEngine()->appendExtendedSave(out, g_engine->getTotalPlayTime(), description, fileName.contains("auto"));
+	g_engine->getMetaEngine()->appendExtendedSave(out, g_engine->getTotalPlayTime(), descriptionString, fileName.contains("auto"));
 
 	out->finalize();
 	if (out->err()) {
