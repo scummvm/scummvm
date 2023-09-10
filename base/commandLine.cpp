@@ -1512,7 +1512,7 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 		printf("%-30s %-58s %s\n",
 		       buildQualifiedGameName(v->engineId, v->gameId).c_str(),
 		       v->description.c_str(),
-		       v->path.c_str());
+		       v->path.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	return buildQualifiedGameName(candidates[0].engineId, candidates[0].gameId);

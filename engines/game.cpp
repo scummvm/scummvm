@@ -208,12 +208,12 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 	Common::U32String report = Common::U32String::format(
 			translate ? _(reportStart) : Common::U32String(reportStart),
-			fullPath ? detectedGames[0].path.c_str() : detectedGames[0].shortPath.c_str(),
+			fullPath ? detectedGames[0].path.toString(Common::Path::kNativeSeparator).c_str() : detectedGames[0].shortPath.c_str(),
 			"https://bugs.scummvm.org/"
 	);
 	report += Common::U32String("\n");
 
-	FilePropertiesMap matchedFiles;
+	CachedPropertiesMap matchedFiles;
 
 	Common::String currentEngineId;
 	for (uint i = 0; i < detectedGames.size(); i++) {
@@ -243,7 +243,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
-			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(it->_value.md5prop).c_str(), it->_key.c_str());
+			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(it->_value.md5prop).c_str(), it->_key.punycodeEncode().toString('/').c_str());
 			matchedFiles.setVal(key, it->_value);
 		}
 	}
@@ -255,7 +255,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 	report += Common::U32String("\n\n");
 
 	Common::StringArray filenames;
-	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file) {
+	for (CachedPropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file) {
 		filenames.push_back(file->_key);
 	}
 	Common::sort(filenames.begin(), filenames.end());

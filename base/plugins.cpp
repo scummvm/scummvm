@@ -787,7 +787,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	addStringToConf("description", game.description, domain);
 	addStringToConf("language", Common::getLanguageCode(game.language), domain);
 	addStringToConf("platform", Common::getPlatformCode(game.platform), domain);
-	addStringToConf("path", game.path, domain);
+	addStringToConf("path", game.path.toString(Common::Path::kNativeSeparator), domain);
 	addStringToConf("extra", game.extra, domain);
 	addStringToConf("guioptions", game.getGUIOptions(), domain);
 
