@@ -409,7 +409,7 @@ protected:
 	/**
 	 * A hashmap of files and their MD5 checksums.
 	 */
-	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 
 	/**
 	 * An (optional) generic fallback detection function that is invoked
@@ -467,10 +467,10 @@ protected:
 	 *
 	 * Removes trailing dots and ignores case in the process.
 	 */
-	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
+	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName = Common::Path()) const;
 
 	/** Get the properties (size and MD5) of this file. */
-	bool getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const;
+	bool getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const;
 
 	/** Convert an AD game description into the shared game description format. */
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo = nullptr) const;
@@ -515,7 +515,7 @@ public:
 	/**
 	 * A hashmap of files and their MD5 checksums.
 	 */
-	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 
 	/**
 	 * An (optional) generic fallback detection function that is invoked
@@ -539,7 +539,7 @@ public:
 	 *
 	 * Based on @ref MetaEngine::getFileProperties.
 	 */
-	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const;
+	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const;
 
 protected:
 	/**
@@ -575,23 +575,23 @@ protected:
  */
 class AdvancedDetectorCacheManager : public Common::Singleton<AdvancedDetectorCacheManager> {
 public:
-	void setMD5(Common::String fname, Common::String md5) {
+	void setMD5(const Common::String &fname, const Common::String &md5) {
 		md5HashMap.setVal(fname, md5);
 	}
 
-	Common::String getMD5(Common::String fname) {
+	const Common::String &getMD5(const Common::String &fname) const {
 		return md5HashMap.getVal(fname);
 	}
 
-	void setSize(Common::String fname, int64 size) {
+	void setSize(const Common::String &fname, int64 size) {
 		sizeHashMap.setVal(fname, size);
 	}
 
-	int64 getSize(Common::String fname) {
+	int64 getSize(const Common::String &fname) const {
 		return sizeHashMap.getVal(fname);
 	}
 
-	bool containsMD5(Common::String fname) {
+	bool containsMD5(const Common::String &fname) const {
 		return (md5HashMap.contains(fname) && sizeHashMap.contains(fname));
 	}
 
@@ -599,7 +599,7 @@ public:
 		if (!archivePtr)
 			return;
 
-		Common::String filename = node.getPath();
+		Common::Path filename = node.getPath();
 		
 		if (archiveHashMap.contains(filename)) {
 			delete archiveHashMap[filename];
@@ -608,9 +608,8 @@ public:
 		archiveHashMap.setVal(filename, archivePtr);
 	}
 
-	Common::Archive *getArchive(const Common::FSNode &node) {
-		Common::Archive *ret = nullptr;
-		return archiveHashMap.tryGetVal(node.getPath(), ret) ? ret : nullptr;
+	Common::Archive *getArchive(const Common::FSNode &node) const {
+		return archiveHashMap.getValOrDefault(node.getPath(), nullptr);
 	}
 
 	AdvancedDetectorCacheManager() {
@@ -635,7 +634,7 @@ private:
 
 	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileHashMap;
 	typedef Common::HashMap<Common::String, int64, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeHashMap;
-	typedef Common::HashMap<Common::String, Common::Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ArchiveHashMap;
+	typedef Common::HashMap<Common::Path, Common::Archive *, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> ArchiveHashMap;
 	FileHashMap md5HashMap;
 	SizeHashMap sizeHashMap;
 	ArchiveHashMap archiveHashMap;

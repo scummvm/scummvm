@@ -195,7 +195,7 @@ Engine::~Engine() {
 }
 
 void Engine::initializePath(const Common::FSNode &gamePath) {
-	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4);
+	SearchMan.addDirectory(gamePath, 0, 4);
 }
 
 void initCommonGFX() {

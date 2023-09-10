@@ -131,7 +131,7 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 	}
 
 	String cfgFileName = String::format("%s-%s.ini", platform, appId);
-	SeekableReadStream *stream = cfgZip->createReadStreamForMember(cfgFileName);
+	SeekableReadStream *stream = cfgZip->createReadStreamForMember(Common::Path(cfgFileName));
 	if (!stream) {
 		delete cfgZip;
 		warning("%s is not found in achievements.dat. Achievements messages are unavailable", cfgFileName.c_str());
