@@ -28,19 +28,19 @@ namespace Burger {
 namespace Rooms {
 
 const char *Room504::SAID[][4] = {
-	{ "WILBUR'S ROOM", nullptr,   "500w001", nullptr },
-	{ "BATHROOM",      nullptr,   "500w001", nullptr },
-	{ "AUNT POLLY'S ROOM", nullptr, "500w001", nullptr },
-	{ "STAIRS",        nullptr,   "505w001", "500w001" },
-	{ "STAIRWAY BORK", "505w003", "500w002", "500w002" },
-	{ "RAILING",       "505w004", nullptr,   "505w006" },
-	{ "WINDOW",        "500w003", nullptr,   "500w004" },
-	{ "CEILING FAN",   "505w008", nullptr,   nullptr   },
-	{ "CHANDELIER",    "505w009", nullptr,   nullptr   },
-	{ "VASE",          "505w010", "505w011", "505w012" },
-	{ "PICTURE",       "505w013", "500w005", "505w014" },
-	{ "PICTURE ",      "505w015", "500w005", "505w014" },
-	{ "PICTURE  ",     "505w016", "500w005", "505w014" },
+	{ "STAIRS",         "504w002", "500w001", nullptr   },
+	{ "BORK",           "504w007", "500w002", "500w002" },
+	{ "BORK GUTS",      "504w009", "504w010", "504w010" },
+	{ "DIRTY SOCK ",    "504w011", nullptr,   nullptr   },
+	{ "WRINGER",        "504w013", "504w015", "504w016" },
+	{ "BREAKER BOX",    "504w017", nullptr,   "504w019" },
+	{ "INSIDE BREAKER", "504w020", "504w021", nullptr   },
+	{ "OUTSIDE BREAKER","504w024", "504w021", nullptr   },
+	{ "WASHING MACHINE","504w026", nullptr,   "504w027" },
+	{ "PAINT CAN",      "504w028", "504w029", "504w030" },
+	{ "HOLE",           nullptr,   "500w001", "500w001" },
+	{ "LAUNDRY HAMPER", "504w030", "504w016", "504w016" },
+	{ "LAUNDRY HAMPER ","504w030", "504w016", "504w016" },
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -193,17 +193,150 @@ Room504::Room504() : Section5Room() {
 }
 
 void Room504::init() {
+	Section5Room::init();
+	_initFlag = false;
+
+	if (_G(flags)[V210] == 5002) {
+		series_show("504bk10", 0x910);
+		series_show("504bk10s", 0x910);
+		hotspot_set_active("BORK", false);
+		hotspot_set_active("BORK GUTS", true);
+	} else {
+		_val1 = 25;
+		kernel_trigger_dispatch_now(25);
+		_G(kernel).call_daemon_every_loop = true;
+		hotspot_set_active("BORK GUTS", false);
+		hotspot_set_active("BORK", true);
+	}
+
+	if (!_G(flags)[V213]) {
+		_val2 = 31;
+		kernel_trigger_dispatch_now(7);
+	} else if (_G(flags)[V210] == 5002) {
+		_G(flags)[V213] = 2;
+		_val2 = 32;
+		kernel_trigger_dispatch_now(7);
+	}
+
+	_val3 = (_G(flags)[V211] == 5001) ? 35 : 34;
+	kernel_trigger_dispatch_now(8);
+	_val4 = (_G(flags)[V212] == 5001) ? 35 : 34;
+	kernel_trigger_dispatch_now(9);
+
+	if (inv_object_is_here("DIRTY SOCK") && _G(flags)[V210] != 5002) {
+		_series1 = series_show("504SOCK", 0xf00);
+	} else {
+		hotspot_set_active("DIRTY SOCK ", false);
+	}
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	case 501:
+		player_set_commands_allowed(true);
+		ws_demand_location(133, 320);
+		break;
+
+	case 503:
+		_G(wilbur_should) = 2;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 510:
+		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	default:
+		player_set_commands_allowed(true);
+		ws_demand_location(133, 320);
+		break;
+	}
+
+	_initFlag = true;
+	Section5Room::init();
 }
 
 void Room504::daemon() {
 }
 
 void Room504::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (player_said("STAIRS") && player_said_any("CLIMB", "GEAR"))
+		player_set_facing_hotspot();
 }
 
 void Room504::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (player_said("LOOK AT", "BORK")) {
+		switch (_G(flags)[V210]) {
+		case 5000:
+			wilbur_speech("504w003");
+			break;
+		case 5001:
+			wilbur_speech("504w008");
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("RUBBER DUCKY", "BORK")) {
+		wilbur_speech("500w036");
+	} else if (player_said("SOAPY WATER", "BORK")) {
+		wilbur_speech("500w050");
+	} else if (player_said("GEAR", "DIRTY SOCK ")) {
+		wilbur_speech("500w012");
+	} else if (player_said("LOOK AT", "WRINGER") && _G(flags)[V210] == 5002) {
+		wilbur_speech("504w014");
+	} else if (player_said("LOOK AT", "OUTSIDE BREAKER") && _G(flags)[V212] == 5000) {
+		wilbur_speech("504w025");
+	} else if (player_said("GEAR", "WASHING MACHINE") && _G(flags)[V210] == 5002) {
+		wilbur_speech("504w016");
+	} else if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("CLIMB", "STAIRS") || player_said("GEAR", "STAIRS")) {
+		player_set_commands_allowed(false);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		_G(wilbur_should) = 3;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TAKE", "DIRTY SOCK ")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 5;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("DIRTY SOCK", "WRINGER")) {
+		player_set_commands_allowed(false);
+		_flag1 = true;
+	} else if (player_said("GEAR", "INSIDE BREAKER")) {
+		if (_G(flags)[V211] == 5000) {
+			_G(wilbur_should) = 8;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else {
+			_G(wilbur_should) = 7;
+			_G(flags)[V211] = 5000;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("GEAR", "OUTSIDE BREAKER")) {
+		if (_G(flags)[V212] == 5000) {
+			_G(wilbur_should) = 11;
+			_G(flags)[V212] = 5001;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else {
+			_G(wilbur_should) = 10;
+			_G(flags)[V212] = 5000;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("LOOK AT", "HOLE")) {
+		_val5 = 19;
+		kernel_trigger_dispatch_now(4);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms

@@ -31,12 +31,12 @@ namespace Rooms {
 void Section5Room::preload() {
 	Rooms::Room::preload();
 	_G(flags)[V186] = 0;
-	_flag1 = false;
+	_initFlag = false;
 }
 
 void Section5Room::init() {
-	if (_flag1) {
-		_flag1 = false;
+	if (_initFlag) {
+		_initFlag = false;
 		kernel_timing_trigger(120, 5004);
 	}
 

@@ -38,7 +38,7 @@ protected:
 	Series _walker1;
 	HotSpotRec _borkHotspot;
 	int _borkThreshold = 0;
-	bool _flag1 = false;
+	bool _initFlag = false;
 
 public:
 	Section5Room() : Rooms::Room() {
