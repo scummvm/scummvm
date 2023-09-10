@@ -268,7 +268,7 @@ void Flags::reset4() {
 	inv_move_object("BURNING KINDLING", 502);
 	inv_move_object("GIZMO", 502);
 
-	(*this)[V203] = 0;
+	(*this)[gBORK_STATE] = 0;
 	(*this)[V204] = 5000;
 	(*this)[V205] = 0;
 	(*this)[V207] = 0;
