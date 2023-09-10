@@ -87,7 +87,7 @@ bool DefaultAudioCDManager::existExtractedCDAudioFiles(uint track) {
 	for (Common::Array<Common::String>::iterator i = trackNames.begin(); i != trackNames.end(); ++i) {
 		for (const char **ext = extensions; *ext; ++ext) {
 			const Common::String &filename = Common::String::format("%s.%s", i->c_str(), *ext);
-			if (Common::File::exists(filename)) {
+			if (Common::File::exists(Common::Path(filename, '/'))) {
 				return true;
 			}
 		}
@@ -113,7 +113,7 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 		Audio::SeekableAudioStream *stream = nullptr;
 
 		for (Common::Array<Common::String>::iterator i = trackNames.begin(); !stream && i != trackNames.end(); ++i) {
-			stream = Audio::SeekableAudioStream::openStreamFile(*i);
+			stream = Audio::SeekableAudioStream::openStreamFile(Common::Path(*i, '/'));
 		}
 
 		if (stream != nullptr) {
@@ -219,7 +219,7 @@ bool DefaultAudioCDManager::openRealCD() {
 
 	// If not an integer, treat as a drive path
 	if (endPos == cdrom.c_str())
-		return openCD(cdrom);
+		return openCD(Common::Path::fromConfig(cdrom));
 
 	if (drive < 0)
 		return false;

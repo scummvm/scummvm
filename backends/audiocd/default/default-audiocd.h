@@ -73,7 +73,7 @@ protected:
 	 * @param drive The name of the drive/path
 	 * @note The drive parameter is platform-specific
 	 */
-	virtual bool openCD(const Common::String &drive) { return false; }
+	virtual bool openCD(const Common::Path &drive) { return false; }
 
 	Audio::SoundHandle _handle;
 	bool _emulating;
