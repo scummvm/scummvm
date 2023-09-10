@@ -41,12 +41,7 @@ Common::Error Hpl1MetaEngine::createInstance(OSystem *syst, Engine **engine, con
 }
 
 bool Hpl1MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSavesUseExtendedFormat) ||
-		   (f == kSimpleSavesNames) ||
-		   (f == kSupportsListSaves) ||
-		   (f == kSupportsDeleteSave) ||
-		   (f == kSavesSupportMetaInfo) ||
-		   (f == kSavesSupportThumbnail) ||
+	return checkExtendedSaves(f) ||
 		   (f == kSupportsLoadingDuringStartup);
 }
 
