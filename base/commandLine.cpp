@@ -1658,9 +1658,9 @@ static void runDetectorTest() {
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
 		Common::String gameid(iter->_value.getVal("gameid"));
-		Common::String path(iter->_value.getVal("path"));
+		Common::Path path(Common::Path::fromConfig(iter->_value.getVal("path")));
 		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
-				name.c_str(), gameid.c_str(), path.c_str());
+				name.c_str(), gameid.c_str(), path.toString(Common::Path::kNativeSeparator).c_str());
 		if (path.empty()) {
 			printf(" ... no path specified, skipping\n");
 			continue;
@@ -1733,7 +1733,7 @@ void upgradeTargets() {
 		Common::ConfigManager::Domain &dom = iter->_value;
 		Common::String name(iter->_key);
 		Common::String gameid(dom.getVal("gameid"));
-		Common::String path(dom.getVal("path"));
+		Common::Path path(Common::Path::fromConfig(iter->_value.getVal("path")));
 		printf("Looking at target '%s', gameid '%s' ...\n",
 				name.c_str(), gameid.c_str());
 		if (path.empty()) {
