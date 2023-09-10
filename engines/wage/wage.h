@@ -54,6 +54,7 @@
 #include "common/rect.h"
 #include "common/macresman.h"
 #include "common/random.h"
+#include "common/timer.h"
 
 #include "wage/debugger.h"
 
@@ -159,7 +160,6 @@ private:
 	void performHealingMagic(Chr *chr, Obj *magicalObject);
 
 	void doClose();
-	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 
 public:
 	void takeObj(Obj *obj);
@@ -212,7 +212,11 @@ public:
 
 	Common::String _inputText;
 
+	Common::List<int> _soundQueue;
+	Common::String _soundToPlay;
+
 	void playSound(Common::String soundName);
+	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
 	void gameOver();

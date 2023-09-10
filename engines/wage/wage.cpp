@@ -160,6 +160,11 @@ Common::Error WageEngine::run() {
 		_gui->draw();
 		g_system->updateScreen();
 		g_system->delayMillis(50);
+
+		if (!_soundToPlay.empty()) {
+			playSound(_soundToPlay);
+			_soundToPlay.clear();
+		}
 	}
 
 	return Common::kNoError;
