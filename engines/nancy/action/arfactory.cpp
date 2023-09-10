@@ -212,9 +212,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 210:
 		return new SafeLockPuzzle();
 	case 211:
-		return new CollisionPuzzle();
+		return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kCollision);
 	case 212:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kOrderItems);
+	case 213:
+		return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kTileMove);
 	case 214:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kKeypad);
 	default:

@@ -44,20 +44,79 @@ void CollisionPuzzle::init() {
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_image.setTransparentColor(_drawSurface.getTransparentColor());
 
-	_pieces.resize(_pieceSrcs.size(), Piece());
-	for (uint i = 0; i < _pieceSrcs.size(); ++i) {
-		_pieces[i]._drawSurface.create(_image, _pieceSrcs[i]);
-		Common::Rect pos = getScreenPosition(_startLocations[i]);
-		if (_lineWidth == 6) {
-			pos.translate(-1, 0); // Improvement
+	if (_puzzleType == kCollision) {
+		_pieces.resize(_pieceSrcs.size(), Piece());
+		for (uint i = 0; i < _pieceSrcs.size(); ++i) {
+			_pieces[i]._drawSurface.create(_image, _pieceSrcs[i]);
+			Common::Rect pos = getScreenPosition(_startLocations[i]);
+			if (_lineWidth == 6) {
+				pos.translate(-1, 0); // Improvement
+			}
+			_pieces[i].moveTo(pos);
+			_pieces[i]._gridPos = _startLocations[i];
+			_pieces[i].setVisible(true);
+			_pieces[i].setTransparent(true);
 		}
-		_pieces[i].moveTo(pos);
-		_pieces[i]._gridPos = _startLocations[i];
-		_pieces[i].setVisible(true);
-		_pieces[i].setTransparent(true);
+	} else {
+		for (uint y = 0; y < _grid.size(); ++y) {
+			for (uint x = 0; x < _grid[0].size(); ++x) {
+				if (_grid[y][x] == 0) {
+					continue;
+				}
+
+				Piece newPiece;
+				uint id = _grid[y][x];
+
+				switch (id) {
+				case 1 :
+					newPiece._w = 2;
+					break;
+				case 2 :
+					newPiece._h = 2;
+					break;
+				case 3 :
+					newPiece._w = 3;
+					break;
+				case 4 :
+					newPiece._h = 3;
+					break;
+				case 5 :
+					newPiece._w = 2;
+					newPiece._h = 2;
+					break;
+				case 6 :
+					newPiece._w = 2;
+					break;
+				default :
+					continue;
+				}
+
+				newPiece._drawSurface.create(_image, _pieceSrcs[id - 1]);
+				Common::Rect pos = getScreenPosition(Common::Point(x, y));
+				if (_lineWidth == 6) {
+					pos.translate(-1, 0); // Improvement
+				}
+				pos.setWidth(newPiece._drawSurface.w);
+				pos.setHeight(newPiece._drawSurface.h);
+				newPiece.moveTo(pos);
+				newPiece._gridPos = Common::Point(x, y);
+				newPiece.setVisible(true);
+				newPiece.setTransparent(true);
+
+				if (id == 6) {
+					// The solve piece is pushed to the front
+					_pieces.insert_at(0, newPiece);
+				} else {
+					_pieces.push_back(newPiece);
+				}
+			}
+		}
 	}
 
-	drawGrid();
+	if (_puzzleType == kCollision) {
+		drawGrid();
+	}
+
 	registerGraphics();
 }
 
@@ -80,7 +139,7 @@ void CollisionPuzzle::updateGraphics() {
 
 		int maxFrames = _framesPerMove * abs(diff);
 		if (_currentAnimFrame > maxFrames) {
-			if (_grid[_pieces[_currentlyAnimating]._gridPos.y][_pieces[_currentlyAnimating]._gridPos.x] == _currentlyAnimating + 1) {
+			if (_puzzleType == kCollision && _grid[_pieces[_currentlyAnimating]._gridPos.y][_pieces[_currentlyAnimating]._gridPos.x] == _currentlyAnimating + 1) {
 				g_nancy->_sound->playSound(_homeSound);
 			} else {
 				g_nancy->_sound->playSound(_wallHitSound);
@@ -112,10 +171,19 @@ void CollisionPuzzle::updateGraphics() {
 
 void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
+	uint16 numPieces = 0;
 
 	uint16 width = stream.readUint16LE();
 	uint16 height = stream.readUint16LE();
-	uint16 numPieces = stream.readUint16LE();
+
+	if (_puzzleType == kCollision) {
+		numPieces = stream.readUint16LE();
+	} else {
+		_tileMoveExitPos.y = stream.readUint16LE();
+		_tileMoveExitPos.x = stream.readUint16LE();
+		_tileMoveExitSize = stream.readUint16LE();
+		numPieces = 6;
+	}	
 
 	_grid.resize(height, Common::Array<uint16>(width));
 	for (uint y = 0; y < height; ++y) {
@@ -126,19 +194,23 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 	stream.skip((8 - height) * 8 * 2);
 
-	_startLocations.resize(numPieces);
-	for (uint i = 0; i < numPieces; ++i) {
-		_startLocations[i].x = stream.readUint16LE(); 
-		_startLocations[i].y = stream.readUint16LE();
-	}
-	stream.skip((5 - numPieces) * 4);
+	if (_puzzleType == kCollision) {
+		_startLocations.resize(numPieces);
+		for (uint i = 0; i < numPieces; ++i) {
+			_startLocations[i].x = stream.readUint16LE(); 
+			_startLocations[i].y = stream.readUint16LE();
+		}
+		stream.skip((5 - numPieces) * 4);
 
-	readRectArray(stream, _pieceSrcs, numPieces, 5);
-	readRectArray(stream, _homeSrcs, numPieces, 5);
-	
-	readRect(stream, _verticalWallSrc);
-	readRect(stream, _horizontalWallSrc);
-	readRect(stream, _blockSrc);
+		readRectArray(stream, _pieceSrcs, numPieces, 5);
+		readRectArray(stream, _homeSrcs, numPieces, 5);
+		
+		readRect(stream, _verticalWallSrc);
+		readRect(stream, _horizontalWallSrc);
+		readRect(stream, _blockSrc);
+	} else {
+		readRectArray(stream, _pieceSrcs, 6);
+	}
 
 	_gridPos.x = stream.readUint32LE();
 	_gridPos.y = stream.readUint32LE();
@@ -149,7 +221,9 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(3);
 
 	_moveSound.readNormal(stream);
-	_homeSound.readNormal(stream);
+	if (_puzzleType == kCollision) {
+		_homeSound.readNormal(stream);
+	}
 	_wallHitSound.readNormal(stream);
 
 	_solveScene.readData(stream);
@@ -174,8 +248,21 @@ void CollisionPuzzle::execute() {
 			return;
 		}
 
-		for (uint i = 0; i < _pieces.size(); ++i) {
-			if (_grid[_pieces[i]._gridPos.y][_pieces[i]._gridPos.x] != i + 1) {
+		if (_puzzleType == kCollision) {
+			// Check if every tile is in its "home"
+			for (uint i = 0; i < _pieces.size(); ++i) {
+				if (_grid[_pieces[i]._gridPos.y][_pieces[i]._gridPos.x] != i + 1) {
+					return;
+				}
+			}
+		} else {
+			// Check if either:
+			// - the solve tile is over the exit or;
+			// - the solve tile is outside the bounds of the grid (and is thus inside the exit)
+			Common::Point pos = _pieces[0]._gridPos;
+			Common::Rect posRect(pos.x, pos.y, pos.x + _pieces[0]._w, pos.y + _pieces[0]._h);
+			Common::Rect gridRect(_grid.size(), _grid[0].size());
+			if (!posRect.contains(_tileMoveExitPos) && gridRect.contains(pos)) {
 				return;
 			}
 		}
@@ -258,8 +345,14 @@ Common::Point CollisionPuzzle::movePiece(uint pieceID, WallType direction) {
 		return { -1, -1 };
 	}
 
+	// Set the last possible position to check before the piece would be out of bounds
 	int lastPos = inc > 0 ? (horizontal ? (int)_grid[0].size() : (int)_grid.size()) : -1;
-	for (int i = (horizontal ? newPos.x : newPos.y) + inc; i != lastPos; i += inc) {
+	if (lastPos != -1) {
+		// For TileMove, ensure wider pieces won't clip out
+		lastPos -= inc * ((horizontal ? _pieces[pieceID]._w : _pieces[pieceID]._h) - 1);
+	}
+
+	for (int i = (horizontal ? newPos.x : newPos.y) + inc; (inc > 0 ? i < lastPos : i > lastPos); i += inc) {
 		// First, check if other pieces would block
 		Common::Point comparePos = newPos;
 		if (horizontal) {
@@ -268,12 +361,18 @@ Common::Point CollisionPuzzle::movePiece(uint pieceID, WallType direction) {
 			comparePos.y = i;
 		}
 
+		Common::Rect compareRect(comparePos.x, comparePos.y, comparePos.x + _pieces[pieceID]._w, comparePos.y + _pieces[pieceID]._h);
+
 		for (uint j = 0; j < _pieces.size(); ++j) {
 			if (pieceID == j) {
 				continue;
 			}
 
-			if (_pieces[j]._gridPos == comparePos) {
+			Common::Rect pieceBounds(	_pieces[j]._gridPos.x,
+										_pieces[j]._gridPos.y,
+										_pieces[j]._gridPos.x + _pieces[j]._w,
+										_pieces[j]._gridPos.y + _pieces[j]._h);
+			if (pieceBounds.intersects(compareRect)) {
 				done = true;
 				break;
 			}
@@ -283,18 +382,20 @@ Common::Point CollisionPuzzle::movePiece(uint pieceID, WallType direction) {
 			break;
 		}
 
-		// Next, check the grid for blocking walls
-		uint16 evalVal = horizontal ? _grid[newPos.y][i] : _grid[i][newPos.x];
-		if (evalVal == postStopWallType) {
-			if (horizontal) {
-				newPos.x = i;
-			} else {
-				newPos.y = i;
+		if (_puzzleType == kCollision) {
+			// Next, check the grid for blocking walls
+			uint16 evalVal = horizontal ? _grid[newPos.y][i] : _grid[i][newPos.x];
+			if (evalVal == postStopWallType) {
+				if (horizontal) {
+					newPos.x = i;
+				} else {
+					newPos.y = i;
+				}
+				
+				break;
+			} else if (evalVal == preStopWallType || evalVal == kBlock) {
+				break;
 			}
-			
-			break;
-		} else if (evalVal == preStopWallType || evalVal == kBlock) {
-			break;
 		}
 
 		if (horizontal) {
@@ -304,13 +405,33 @@ Common::Point CollisionPuzzle::movePiece(uint pieceID, WallType direction) {
 		}
 	}
 
+	// Move result outside of grid when the exit is at an edge, and the moved piece is on top of the exit
+	if (_puzzleType == kTileMove && pieceID == 0) {
+		Common::Rect compareRect(newPos.x, newPos.y, newPos.x + _pieces[pieceID]._w, newPos.y + _pieces[pieceID]._h);
+		if (compareRect.contains(_tileMoveExitPos)) {
+			if (horizontal && (_tileMoveExitPos.x == 0 || _tileMoveExitPos.x == (int)_grid[0].size() - 1)) {
+				newPos.x += inc * _tileMoveExitSize;
+			} else if (!horizontal && (_tileMoveExitPos.y == 0 || _tileMoveExitPos.y == (int)_grid.size() - 1)) {
+				newPos.y += inc * _tileMoveExitSize;
+			}
+		}
+	}
+
 	return newPos;
 }
 
 Common::Rect CollisionPuzzle::getScreenPosition(Common::Point gridPos) {
-	Common::Rect dest = _pieces[0]._drawSurface.getBounds();
+	Common::Rect dest = _pieceSrcs[0];
+
+	dest.moveTo(0, 0);
+	 
 	dest.right -= 1;
 	dest.bottom -= 1;
+
+	if (_puzzleType == kTileMove) {
+		dest.setWidth(dest.width() / 2);
+	}
+
 	dest.moveTo(_gridPos);
 	dest.translate(gridPos.x * dest.width(), gridPos.y *dest.height());
 	dest.translate(gridPos.x * _lineWidth, gridPos.y * _lineWidth);
@@ -404,95 +525,115 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	Common::Rect left, right, up, down;
-	left.setWidth(10);
-	left.setHeight(_pieceSrcs[0].height() - 20);
-	left.moveTo(0, 10);
-	right = left;
-	right.translate(_pieceSrcs[0].width() - 10, 0);
-
-	up.setHeight(10);
-	up.setWidth(_pieceSrcs[0].width() - 20);
-	up.moveTo(10, 0);
-	down = up;
-	down.translate(0, _pieceSrcs[0].width() - 10);
+	if (_currentlyAnimating != -1) {
+		return;
+	}
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
-		Common::Rect gridPos = getScreenPosition(_pieces[i]._gridPos);
+		Common::Point checkPos;
+		Common::Rect left, right, up, down;
+		Common::Rect screenPos = _pieces[i].getScreenPosition();
 
-		left.translate(gridPos.left, gridPos.top);
-		right.translate(gridPos.left, gridPos.top);
-		up.translate(gridPos.left, gridPos.top);
-		down.translate(gridPos.left, gridPos.top);
+		if (_pieces[i]._w == _pieces[i]._h) {
+			// Width == height, all movement is permitted, hotspots are 10 pixels wide
+			left.setWidth(10);
+			left.setHeight(screenPos.height() - 20);
+			left.moveTo(screenPos.left, screenPos.top + 10);
+			right = left;
+			right.translate(screenPos.width() - 10, 0);
 
-		Common::Point checkPos = movePiece(i, kWallLeft);
-		if (checkPos != _pieces[i]._gridPos) {
-			if (NancySceneState.getViewport().convertViewportToScreen(left).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kTurnLeft);
+			up.setHeight(10);
+			up.setWidth(screenPos.width() - 20);
+			up.moveTo(screenPos.left + 10, screenPos.top);
+			down = up;
+			down.translate(0, screenPos.height() - 10);
+		} else if (_pieces[i]._w > _pieces[i]._h) {
+			// Width > height, only left/right movement is permitted, hotspots are the size of 1 cell
+			left.setWidth(screenPos.width() / _pieces[i]._w);
+			left.setHeight(screenPos.height() / _pieces[i]._h);
+			left.moveTo(screenPos.left, screenPos.top);
+			right = left;
+			right.translate(right.width() * (_pieces[i]._w - 1), 0);
+		} else {
+			// Width < height, only up/down movement is permitted, hotspots are the size of 1 cell
+			up.setWidth(screenPos.width() / _pieces[i]._w);
+			up.setHeight(screenPos.height() / _pieces[i]._h);
+			up.moveTo(screenPos.left, screenPos.top);
+			down = up;
+			down.translate(0, down.height() * (_pieces[i]._h - 1));
+		}
 
-				if (input.input & NancyInput::kLeftMouseButtonUp) {
-					_lastPosition = _pieces[i]._gridPos;
-					_pieces[i]._gridPos = checkPos;
-					_currentlyAnimating = i;
-					g_nancy->_sound->playSound(_moveSound);
+		if (!left.isEmpty()) {
+			if (left.contains(input.mousePos)) {
+				checkPos = movePiece(i, kWallLeft);
+				if (checkPos != _pieces[i]._gridPos) {
+					g_nancy->_cursorManager->setCursorType(CursorManager::kTurnLeft);
+
+					if (input.input & NancyInput::kLeftMouseButtonUp) {
+						_lastPosition = _pieces[i]._gridPos;
+						_pieces[i]._gridPos = checkPos;
+						_currentlyAnimating = i;
+						g_nancy->_sound->playSound(_moveSound);
+					}
+
+					return;
 				}
-
-				return;
 			}
 		}
 
-		checkPos = movePiece(i, kWallRight);
-		if (checkPos != _pieces[i]._gridPos) {
-			if (NancySceneState.getViewport().convertViewportToScreen(right).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kTurnRight);
+		if (!right.isEmpty()) {
+			if (right.contains(input.mousePos)) {
+				checkPos = movePiece(i, kWallRight);
+				if (checkPos != _pieces[i]._gridPos) {
+					g_nancy->_cursorManager->setCursorType(CursorManager::kTurnRight);
 
-				if (input.input & NancyInput::kLeftMouseButtonUp) {
-					_lastPosition = _pieces[i]._gridPos;
-					_pieces[i]._gridPos = checkPos;
-					_currentlyAnimating = i;
-					g_nancy->_sound->playSound(_moveSound);
+					if (input.input & NancyInput::kLeftMouseButtonUp) {
+						_lastPosition = _pieces[i]._gridPos;
+						_pieces[i]._gridPos = checkPos;
+						_currentlyAnimating = i;
+						g_nancy->_sound->playSound(_moveSound);
+					}
+
+					return;
 				}
-
-				return;
 			}
 		}
 
-		checkPos = movePiece(i, kWallUp);
-		if (checkPos != _pieces[i]._gridPos) {
-			if (NancySceneState.getViewport().convertViewportToScreen(up).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kMoveUp);
+		if (!up.isEmpty()) {
+			if (up.contains(input.mousePos)) {
+				checkPos = movePiece(i, kWallUp);
+				if (checkPos != _pieces[i]._gridPos) {
+					g_nancy->_cursorManager->setCursorType(CursorManager::kMoveUp);
 
-				if (input.input & NancyInput::kLeftMouseButtonUp) {
-					_lastPosition = _pieces[i]._gridPos;
-					_pieces[i]._gridPos = checkPos;
-					_currentlyAnimating = i;
-					g_nancy->_sound->playSound(_moveSound);
+					if (input.input & NancyInput::kLeftMouseButtonUp) {
+						_lastPosition = _pieces[i]._gridPos;
+						_pieces[i]._gridPos = checkPos;
+						_currentlyAnimating = i;
+						g_nancy->_sound->playSound(_moveSound);
+					}
+
+					return;
 				}
-
-				return;
 			}
 		}
 
-		checkPos = movePiece(i, kWallDown);
-		if (checkPos != _pieces[i]._gridPos) {
-			if (NancySceneState.getViewport().convertViewportToScreen(down).contains(input.mousePos)) {
-				g_nancy->_cursorManager->setCursorType(CursorManager::kMoveDown);
+		if (!down.isEmpty()) {
+			if (down.contains(input.mousePos)) {
+				checkPos = movePiece(i, kWallDown);
+				if (checkPos != _pieces[i]._gridPos) {
+					g_nancy->_cursorManager->setCursorType(CursorManager::kMoveDown);
 
-				if (input.input & NancyInput::kLeftMouseButtonUp) {
-					_lastPosition = _pieces[i]._gridPos;
-					_pieces[i]._gridPos = checkPos;
-					_currentlyAnimating = i;
-					g_nancy->_sound->playSound(_moveSound);
+					if (input.input & NancyInput::kLeftMouseButtonUp) {
+						_lastPosition = _pieces[i]._gridPos;
+						_pieces[i]._gridPos = checkPos;
+						_currentlyAnimating = i;
+						g_nancy->_sound->playSound(_moveSound);
+					}
+
+					return;
 				}
-
-				return;
 			}
 		}
-
-		left.translate(-gridPos.left, -gridPos.top);
-		right.translate(-gridPos.left, -gridPos.top);
-		up.translate(-gridPos.left, -gridPos.top);
-		down.translate(-gridPos.left, -gridPos.top);
 	}
 }
 

@@ -27,9 +27,18 @@
 namespace Nancy {
 namespace Action {
 
+// Class responsible for two similar puzzle types, both of which have
+// rectangular tiles on a grid, which can move up/down/left/right until they
+// hit a wall or another tile
+// - CollisionPuzzle: Several 1x1 tiles, each of which has a "home" it needs to reach.
+//		The grid contains walls. Tiles move in all directions.
+// - TileMovePuzzle: Many differently-sized tiles, one of which must reach the exit.
+//		Rectangular tiles can only move in the directions parallel to their longer sides.
+//		Exit is outside of the tile grid.
 class CollisionPuzzle : public RenderActionRecord {
 public:
-	CollisionPuzzle() : RenderActionRecord(7) {}
+	enum PuzzleType { kCollision, kTileMove };
+	CollisionPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
 	virtual ~CollisionPuzzle() {}
 
 	void init() override;
@@ -50,12 +59,14 @@ protected:
 		virtual ~Piece() {}
 
 		Common::Point _gridPos;
+		uint _w = 1;
+		uint _h = 1;
 	
 	protected:
 		bool isViewportRelative() const override { return true; }
 	};
 
-	Common::String getRecordTypeName() const override { return "CollisionPuzzle"; };
+	Common::String getRecordTypeName() const override { return _puzzleType == kCollision ? "CollisionPuzzle" : "TileMovePuzzle"; };
 	bool isViewportRelative() const override { return true; }
 
 	Common::Point movePiece(uint pieceID, WallType direction);
@@ -73,6 +84,9 @@ protected:
 	Common::Rect _verticalWallSrc;
 	Common::Rect _horizontalWallSrc;
 	Common::Rect _blockSrc;
+
+	Common::Point _tileMoveExitPos = Common::Point(-1, -1);
+	uint _tileMoveExitSize = 0;
 
 	Common::Point _gridPos;
 
@@ -99,6 +113,8 @@ protected:
 
 	uint32 _solveSoundPlayTime = 0;
 	bool _solved = false;
+	
+	PuzzleType _puzzleType;
 };
 
 } // End of namespace Action
