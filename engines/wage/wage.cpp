@@ -102,7 +102,7 @@ WageEngine::~WageEngine() {
 
 bool WageEngine::pollEvent(Common::Event &event) {
 	return _eventMan->pollEvent(event);
-} 
+}
 
 Common::Error WageEngine::run() {
 	debug("WageEngine::init");
@@ -248,7 +248,7 @@ bool WageEngine::saveDialog() {
 	buttons.push_back(new Graphics::MacDialogButton("Yes", 112, 67, 68, 28));
 	buttons.push_back(new Graphics::MacDialogButton("Cancel", 205, 67, 68, 28));
 
-	Graphics::MacFont font; 
+	Graphics::MacFont font;
 
 	Graphics::MacText saveBeforeCloseMessage(*_world->_saveBeforeCloseMessage, _gui->_wm, &font, Graphics::kColorBlack,
 									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
@@ -290,7 +290,10 @@ void WageEngine::aboutDialog() {
 }
 
 void WageEngine::saveGame() {
-	warning("STUB: saveGame()");
+	if (_defaultSaveSlot != -1 && _defaultSaveSlot != getAutosaveSlot())
+		saveGameState(_defaultSaveSlot, _defaultSaveDescritpion, false);
+	else
+		scummVMSaveLoadDialog(true);
 }
 
 void WageEngine::performInitialSetup() {

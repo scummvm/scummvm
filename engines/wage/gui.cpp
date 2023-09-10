@@ -281,11 +281,8 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 		break;
 
 	case kMenuActionSave:
-		if (_engine->_defaultSaveSlot != -1 && _engine->_defaultSaveSlot != _engine->getAutosaveSlot()) {
-			_engine->saveGameState(_engine->_defaultSaveSlot, _engine->_defaultSaveDescritpion, false);
-			break;
-		}
-		// falltrhough
+		_engine->saveGame();
+		break;
 
 	case kMenuActionSaveAs:
 		_engine->scummVMSaveLoadDialog(true);
