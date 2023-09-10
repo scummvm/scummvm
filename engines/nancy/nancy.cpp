@@ -242,7 +242,11 @@ Common::Error NancyEngine::run() {
 	while (!shouldQuit()) {
 		uint32 frameEndTime = _system->getMillis() + 16;
 
-		_cursorManager->setCursorType(CursorManager::kNormalArrow);
+		bool graphicsWereSuppressed = _graphicsManager->_isSuppressed;
+		if (!graphicsWereSuppressed) {
+			_cursorManager->setCursorType(CursorManager::kNormalArrow);
+		}
+
 		_input->processEvents();
 
 		State::State *s;
@@ -276,39 +280,44 @@ Common::Error NancyEngine::run() {
 
 		_system->updateScreen();
 
-		// Use the spare time until the next frame to load larger data objects
-		// Some loading is guaranteed to happen even with no time left, to ensure
-		// slower systems won't be stuck waiting forever
-		if (_deferredLoaderObjects.size()) {
-			uint i = _deferredLoaderObjects.size() - 1;
-			int32 timePerObj = (frameEndTime - g_system->getMillis()) / _deferredLoaderObjects.size();
+		// In cases where the graphics were not drawn for a frame, we want to make sure the next
+		// frame is processed as fast as possible. Thus, we skip deferred loaders and the time
+		// delay that normally maintains 60fps
+		if (!graphicsWereSuppressed) {
+			// Use the spare time until the next frame to load larger data objects
+			// Some loading is guaranteed to happen even with no time left, to ensure
+			// slower systems won't be stuck waiting forever
+			if (_deferredLoaderObjects.size()) {
+				uint i = _deferredLoaderObjects.size() - 1;
+				int32 timePerObj = (frameEndTime - g_system->getMillis()) / _deferredLoaderObjects.size();
 
-			if (timePerObj < 0) {
-				timePerObj = 0;
-			}
+				if (timePerObj < 0) {
+					timePerObj = 0;
+				}
 
-			for (auto *iter = _deferredLoaderObjects.begin(); iter < _deferredLoaderObjects.end(); ++iter) {
-				if (iter->expired()) {
-					iter = _deferredLoaderObjects.erase(iter);
-				} else {
-					auto objectPtr = iter->lock();
-					if (objectPtr) {
-						if (objectPtr->load(frameEndTime - (i * timePerObj))) {
-							iter = _deferredLoaderObjects.erase(iter);
+				for (auto *iter = _deferredLoaderObjects.begin(); iter < _deferredLoaderObjects.end(); ++iter) {
+					if (iter->expired()) {
+						iter = _deferredLoaderObjects.erase(iter);
+					} else {
+						auto objectPtr = iter->lock();
+						if (objectPtr) {
+							if (objectPtr->load(frameEndTime - (i * timePerObj))) {
+								iter = _deferredLoaderObjects.erase(iter);
+							}
+							--i;
 						}
-						--i;
-					}
 
-					if (_system->getMillis() > frameEndTime) {
-						break;
+						if (_system->getMillis() > frameEndTime) {
+							break;
+						}
 					}
 				}
 			}
-		}
 
-		uint32 frameFinishTime = _system->getMillis();
-		if (frameFinishTime < frameEndTime) {
-			_system->delayMillis(frameEndTime - frameFinishTime);
+			uint32 frameFinishTime = _system->getMillis();
+			if (frameFinishTime < frameEndTime) {
+				_system->delayMillis(frameEndTime - frameFinishTime);
+			}
 		}
 	}
 

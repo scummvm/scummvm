@@ -736,6 +736,7 @@ void Scene::load() {
 	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 
 	g_nancy->_sound->recalculateSoundEffects();
+	g_nancy->_graphicsManager->suppressNextDraw();
 
 	_state = kStartSound;
 }
