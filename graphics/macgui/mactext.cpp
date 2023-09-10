@@ -1994,16 +1994,16 @@ void MacText::undrawCursor() {
 	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
 }
 
-void MacText::setImageArchive(Common::String fname) {
+void MacText::setImageArchive(const Common::Path &fname) {
 	_imageArchive = Common::makeZipArchive(fname);
 
 	if (!_imageArchive)
-		warning("MacText::setImageArchive(): Could not find %s. Images will not be rendered", fname.c_str());
+		warning("MacText::setImageArchive(): Could not find %s. Images will not be rendered", fname.toString().c_str());
 }
 
-const Surface *MacText::getImageSurface(Common::String &fname) {
+const Surface *MacText::getImageSurface(const Common::Path &fname) {
 #ifndef USE_PNG
-	warning("MacText::getImageSurface(): PNG support not compiled. Cannot load file %s", fname.c_str());
+	warning("MacText::getImageSurface(): PNG support not compiled. Cannot load file %s", fname.toString().c_str());
 
 	return nullptr;
 #else
@@ -2018,7 +2018,7 @@ const Surface *MacText::getImageSurface(Common::String &fname) {
 	Common::SeekableReadStream *stream = _imageArchive->createReadStreamForMember(fname);
 
 	if (!stream) {
-		warning("MacText::getImageSurface(): Cannot open file %s", fname.c_str());
+		warning("MacText::getImageSurface(): Cannot open file %s", fname.toString().c_str());
 		return nullptr;
 	}
 
@@ -2027,7 +2027,7 @@ const Surface *MacText::getImageSurface(Common::String &fname) {
 	if (!_imageCache[fname]->loadStream(*stream)) {
 		delete _imageCache[fname];
 
-		warning("MacText::getImageSurface(): Cannot load file %s", fname.c_str());
+		warning("MacText::getImageSurface(): Cannot load file %s", fname.toString().c_str());
 
 		return nullptr;
 	}

@@ -34,7 +34,7 @@
 
 namespace Graphics {
 
-#define MACGUI_DATA_BUNDLE Common::String("macgui.dat")
+static const char * const MACGUI_DATA_BUNDLE = "macgui.dat";
 
 struct BorderName {
 	uint32 type;
@@ -80,7 +80,7 @@ Common::String windowTypeName(uint32 windowType) {
 void MacWindowManager::loadDataBundle() {
 	_dataBundle = Common::makeZipArchive(MACGUI_DATA_BUNDLE);
 	if (!_dataBundle) {
-		warning("MACGUI: Couldn't load data bundle '%s'.", MACGUI_DATA_BUNDLE.c_str());
+		warning("MACGUI: Couldn't load data bundle '%s'.", MACGUI_DATA_BUNDLE);
 	}
 }
 
@@ -106,20 +106,21 @@ Common::SeekableReadStream *MacWindowManager::getBorderFile(uint32 windowType, u
 	filename += (flags & kWindowBorderActive) ? "_act" : "_inac";
 	filename += (flags & kWindowBorderTitle) ? "_title" : "";
 	filename += ".bmp";
-	if (!_dataBundle->hasFile(filename)) {
+	Common::Path path(filename, Common::Path::kNoSeparator);
+	if (!_dataBundle->hasFile(path)) {
 		warning("Missing border file '%s' in data bundle", filename.c_str());
 		return NULL;
 	}
 
-	return _dataBundle->createReadStreamForMember(filename);
+	return _dataBundle->createReadStreamForMember(path);
 }
 
-Common::SeekableReadStream *MacWindowManager::getFile(const Common::String &filename) {
+Common::SeekableReadStream *MacWindowManager::getFile(const Common::Path &filename) {
 	if (!_dataBundle)
 		return NULL;
 
 	if (!_dataBundle->hasFile(filename)) {
-		warning("Missing file '%s' in data bundle", filename.c_str());
+		warning("Missing file '%s' in data bundle", filename.toString().c_str());
 		return NULL;
 	}
 

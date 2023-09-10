@@ -156,9 +156,9 @@ public:
 	Common::String getFontName(uint16 id);
 
 	void loadFonts(Common::SeekableReadStream *stream);
-	void loadFonts(const Common::String &fileName);
+	void loadFonts(const Common::Path &fileName);
 	void loadFonts(Common::MacResManager *fontFile);
-	void loadWindowsFont(const Common::String fileName);
+	void loadWindowsFont(const Common::Path &fileName);
 
 	/**
 	 * Register a font name if it doesn't already exist.

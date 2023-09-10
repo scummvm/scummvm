@@ -584,10 +584,10 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 #define BDF_FONTCACHE_TAG MKTAG('S', 'V', 'F', 'C')
 #define BDF_FONTCACHE_VERSION 1
 
-bool BdfFont::cacheFontData(const BdfFont &font, const Common::String &filename) {
+bool BdfFont::cacheFontData(const BdfFont &font, const Common::Path &filename) {
 	Common::DumpFile cacheFile;
 	if (!cacheFile.open(filename)) {
-		warning("BdfFont::cacheFontData: Couldn't open file '%s' for writing", filename.c_str());
+		warning("BdfFont::cacheFontData: Couldn't open file '%s' for writing", filename.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 

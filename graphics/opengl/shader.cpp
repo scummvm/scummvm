@@ -80,7 +80,7 @@ static const char *compatUniformBool =
 
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
-	Common::String shaderDir;
+	Common::Path shaderDir;
 
 #ifndef RELEASE_BUILD
 	// Allow load shaders from source code directory without install them.
@@ -100,9 +100,9 @@ static const GLchar *readFile(const Common::String &filename) {
 		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.getPath("extrapath")), 0, 2);
 	}
 #if !defined(IPHONE)
-	shaderDir = "shaders/";
+	shaderDir = Common::Path("shaders/", '/');
 #endif
-	file.open(shaderDir + filename);
+	file.open(shaderDir.appendComponent(filename));
 	if (!file.isOpen())
 		error("Could not open shader %s!", filename.c_str());
 

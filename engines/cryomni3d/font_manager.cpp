@@ -142,9 +142,9 @@ void FontManager::loadTTFList(const Common::Path &ttfList, Common::CodePage code
 		bool bold = sizeFlags.contains('B');
 		bool italic = sizeFlags.contains('I');
 
-		Common::Array<Common::String> fontFiles;
+		Common::Array<Common::Path> fontFiles;
 		fontFiles.push_back(fontFile);
-		fontFiles.push_back(ttfParentDir.appendComponent(fontFile).toString());
+		fontFiles.push_back(ttfParentDir.appendComponent(fontFile));
 
 		// Use 96 dpi as it's the default under Windows
 		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -(int)size,

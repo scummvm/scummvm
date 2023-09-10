@@ -364,7 +364,7 @@ public:
 
 	BorderOffsets getBorderOffsets(uint32 windowType);
 	Common::SeekableReadStream *getBorderFile(uint32 windowType, uint32 flags);
-	Common::SeekableReadStream *getFile(const Common::String &filename);
+	Common::SeekableReadStream *getFile(const Common::Path &filename);
 
 	void setTextInClipboard(const Common::U32String &str);
 	/**

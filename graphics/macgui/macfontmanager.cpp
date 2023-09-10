@@ -229,7 +229,7 @@ void MacFontManager::loadFontsBDF() {
 	dat->listMembers(list);
 
 	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
+		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getPathInArchive());
 
 		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
 
@@ -287,7 +287,7 @@ void MacFontManager::loadFonts() {
 	dat->listMembers(list);
 
 	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
+		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getPathInArchive());
 
 		loadFonts(stream);
 	}
@@ -315,7 +315,7 @@ void MacFontManager::loadJapaneseFonts() {
 	dat->listMembers(list);
 
 	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
+		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getPathInArchive());
 		Common::String fontName = (*it)->getName();
 
 		// Trim the .ttf extension
@@ -349,7 +349,7 @@ void MacFontManager::loadFonts(Common::SeekableReadStream *stream) {
 	loadFonts(&fontFile);
 }
 
-void MacFontManager::loadFonts(const Common::String &fileName) {
+void MacFontManager::loadFonts(const Common::Path &fileName) {
 	Common::MacResManager fontFile;
 
 	if (!fontFile.open(fileName))
@@ -436,12 +436,13 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 	}
 }
 
-void MacFontManager::loadWindowsFont(const Common::String fileName) {
+void MacFontManager::loadWindowsFont(const Common::Path &fileName) {
 	Graphics::WinFont *winFont = new Graphics::WinFont();
 	bool isLoaded = winFont->loadFromFON(fileName);
 
 	if (!isLoaded) {
-		warning("MacFontManager::loadWindowsFont(): Windows Font data from file %s not loaded", fileName.c_str());
+		warning("MacFontManager::loadWindowsFont(): Windows Font data from file %s not loaded",
+				fileName.toString(Common::Path::kNativeSeparator).c_str());
 		delete winFont;
 		return;
 	}
