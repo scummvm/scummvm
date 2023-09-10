@@ -225,7 +225,7 @@ struct Event {
 	CustomEventType customType;
 
 	/** The path of the file or directory dragged to the ScummVM window. */
-	Common::String path;
+	Common::Path path;
 
 	/**
 	 * Mouse movement since the last mouse movement event.

@@ -51,7 +51,7 @@ bool RISCOSSdlEventSource::handleSysWMEvent(SDL_Event &ev, Common::Event &event)
 		case 3: // Message_DataLoad
 			filename = (char *)(pollBlock) + 44;
 			event.type = Common::EVENT_DROP_FILE;
-			event.path = RISCOS_Utils::toUnix(Common::String(filename));
+			event.path = Common::Path(RISCOS_Utils::toUnix(Common::String(filename)));
 
 			// Acknowledge that the event has been received
 			pollBlock[4] = 4; // Message_DataLoadAck
