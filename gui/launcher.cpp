@@ -623,7 +623,7 @@ void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	Dialog::handleOtherEvent(evt);
 	if (evt.type == Common::EVENT_DROP_FILE) {
 		// If the path is a file, take the parent directory for the detection
-		Common::String path = evt.path;
+		Common::Path path = evt.path;
 		Common::FSNode node(path);
 		if (!node.isDirectory())
 			path = node.getParent().getPath();
@@ -631,7 +631,7 @@ void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	}
 }
 
-bool LauncherDialog::doGameDetection(const Common::String &path) {
+bool LauncherDialog::doGameDetection(const Common::Path &path) {
 	// Allow user to add a new game to the list.
 	// 2) try to auto detect which game is in the directory, if we cannot
 	//    determine it uniquely present a list of candidates to the user

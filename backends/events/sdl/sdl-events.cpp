@@ -554,7 +554,7 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 
 	case SDL_DROPFILE:
 		event.type = Common::EVENT_DROP_FILE;
-		event.path = Common::String(ev.drop.file);
+		event.path = Common::Path(ev.drop.file, Common::Path::kNativeSeparator);
 		SDL_free(ev.drop.file);
 		return true;
 

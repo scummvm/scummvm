@@ -171,7 +171,7 @@ bool DownloadDialog::selectDirectories() {
 void DownloadDialog::handleTickle() {
 	if (_close) {
 		if (_launcher)
-			_launcher->doGameDetection(_localDirectory.toString('/'));
+			_launcher->doGameDetection(_localDirectory);
 		close();
 		_close = false;
 		return;
