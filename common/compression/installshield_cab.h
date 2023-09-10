@@ -49,7 +49,7 @@ class SeekableReadStream;
  * 
  * @param baseName The base filename, e.g. the "data" in "data1.cab"
  */
-Archive *makeInstallShieldArchive(const Common::String &baseName);
+Archive *makeInstallShieldArchive(const Common::Path &baseName);
 
 /**
  * This factory method creates an Archive instance corresponding to the content

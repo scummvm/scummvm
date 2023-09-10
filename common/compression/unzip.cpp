@@ -318,8 +318,8 @@ typedef struct {
 	unz_file_info_internal cur_file_info_internal;	/* private info about it*/
 } cached_file_in_zip;
 
-typedef Common::HashMap<Common::String, cached_file_in_zip, Common::IgnoreCase_Hash,
-	Common::IgnoreCase_EqualTo> ZipHash;
+typedef Common::HashMap<Common::Path, cached_file_in_zip, Common::Path::IgnoreCase_Hash,
+	Common::Path::IgnoreCase_EqualTo> ZipHash;
 
 /* unz_s contain internal information about the zipfile
 */
@@ -535,12 +535,14 @@ unzFile unzOpen(Common::SeekableReadStream *stream, bool flattenTree) {
 		fe.cur_file_info = us->cur_file_info;
 		fe.cur_file_info_internal = us->cur_file_info_internal;
 
-		Common::String name(szCurrentFileName);
-
 		bool isDirectory = false;
-		if (name.hasSuffix("/") || name.hasSuffix("\\")) {
-			isDirectory = true;
-			name = name.substr(0, name.size() - 1);
+		if (*szCurrentFileName) {
+			char *szCurrentFileNameSuffix = szCurrentFileName + strlen(szCurrentFileName) - 1;
+			if (*szCurrentFileNameSuffix == '/' || *szCurrentFileNameSuffix == '\\') {
+				isDirectory = true;
+				// Strip trailing path terminator
+				*szCurrentFileNameSuffix = '\0';
+			}
 		}
 
 		// If platform is specified as MS-DOS or Unix, check the directory flag
@@ -564,20 +566,21 @@ unzFile unzOpen(Common::SeekableReadStream *stream, bool flattenTree) {
 			}
 		}
 
+		const char *name = szCurrentFileName;
 		if (flattenTree) {
 			if (isDirectory)
 				continue;
 
-			size_t slashPos = name.findLastOf('\\');
-			if (slashPos != Common::String::npos)
-				name = name.substr(slashPos + 1);
-
-			slashPos = name.findLastOf('/');
-			if (slashPos != Common::String::npos)
-				name = name.substr(slashPos + 1);
+			for (const char *p = szCurrentFileName; *p; p++)
+				if (*p == '\\' || *p == '/')
+					name = p + 1;
+		} else {
+			for (char *p = szCurrentFileName; *p; p++)
+				if (*p == '\\')
+					*p = '/';
 		}
 
-		us->_hash[name] = fe;
+		us->_hash[Common::Path(name)] = fe;
 
 		// Move to the next file
 		err = unzGoToNextFile((unzFile)us);
@@ -832,13 +835,10 @@ int unzGoToNextFile(unzFile file) {
   UNZ_OK if the file is found. It becomes the current file.
   UNZ_END_OF_LIST_OF_FILE if the file is not found
 */
-int unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
+int unzLocateFile(unzFile file, const Common::Path &szFileName, int iCaseSensitivity) {
 	unz_s *s;
 
 	if (file == nullptr)
-		return UNZ_PARAMERROR;
-
-	if (strlen(szFileName) >= UNZ_MAXFILENAMEINZIP)
 		return UNZ_PARAMERROR;
 
 	s=(unz_s *)file;
@@ -846,7 +846,7 @@ int unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
 		return UNZ_END_OF_LIST_OF_FILE;
 
 	// Check to see if the entry exists
-	ZipHash::iterator i = s->_hash.find(Common::String(szFileName));
+	ZipHash::iterator i = s->_hash.find(szFileName);
 	if (i == s->_hash.end())
 		return UNZ_END_OF_LIST_OF_FILE;
 
@@ -1039,9 +1039,9 @@ public:
 	bool isPathDirectory(const Path &path) const override;
 	int listMembers(ArchiveMemberList &list) const override;
 	const ArchiveMemberPtr getMember(const Path &path) const override;
-	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
-	Common::String translatePath(const Common::Path &path) const override {
-		return _flattenTree ? path.getLastComponent().toString() : path.toString();
+	Common::SharedArchiveContents readContentsForPath(const Common::Path &translated) const override;
+	Common::Path translatePath(const Common::Path &path) const override {
+		return _flattenTree ? path.getLastComponent() : path;
 	}
 };
 
@@ -1072,14 +1072,11 @@ ZipArchive::~ZipArchive() {
 }
 
 bool ZipArchive::hasFile(const Path &path) const {
-	String name = path.toString();
-	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
+	return (unzLocateFile(_zipFile, path, 2) == UNZ_OK);
 }
 
 bool ZipArchive::isPathDirectory(const Path &path) const {
-	String name = path.toString();
-
-	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
+	if (unzLocateFile(_zipFile, path, 2) != UNZ_OK)
 		return false;
 
 	unz_file_info fi;
@@ -1103,15 +1100,14 @@ int ZipArchive::listMembers(ArchiveMemberList &list) const {
 }
 
 const ArchiveMemberPtr ZipArchive::getMember(const Path &path) const {
-	String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return ArchiveMemberPtr();
 
 	return ArchiveMemberPtr(new GenericArchiveMember(path, *this));
 }
 
-Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::String& name) const {
-	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
+Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::Path &path) const {
+	if (unzLocateFile(_zipFile, path, 2) != UNZ_OK)
 		return Common::SharedArchiveContents();
 #ifndef USE_ZLIB
 	return unzOpenCurrentFile(_zipFile, _crc);
@@ -1120,7 +1116,7 @@ Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::Stri
 #endif
 }
 
-Archive *makeZipArchive(const String &name, bool flattenTree) {
+Archive *makeZipArchive(const Path &name, bool flattenTree) {
 	return makeZipArchive(SearchMan.createReadStreamForMember(name), flattenTree);
 }
 

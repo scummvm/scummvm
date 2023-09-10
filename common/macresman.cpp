@@ -177,7 +177,7 @@ SeekableReadStream *MacResManager::openAppleDoubleWithAppleOrOSXNaming(Archive& 
         const Common::FSNode *plainFsNode = dynamic_cast<const Common::FSNode *>(archiveMember.get());
 
 	// Try finding __MACOSX
-	Common::StringArray components = (plainFsNode ? Common::Path(plainFsNode->getPath(), '/') : fileName).splitComponents();
+	Common::StringArray components = (plainFsNode ? plainFsNode->getPath() : fileName).splitComponents();
 	if (components.empty() || components[components.size() - 1].empty())
 		return nullptr;
 	for (int i = components.size() - 1; i >= 0; i--) {
@@ -512,20 +512,20 @@ bool MacResManager::getFileFinderInfo(const Path &fileName, MacFinderInfo &outFi
 	return getFileFinderInfo(fileName, SearchMan, outFinderInfo, outFinderExtendedInfo);
 }
 
-void MacResManager::listFiles(StringArray &files, const String &pattern) {
+void MacResManager::listFiles(Array<Path> &files, const Path &pattern) {
 	// Base names discovered so far.
-	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> BaseNameSet;
+	typedef HashMap<Path, bool, Path::IgnoreCase_Hash, Path::IgnoreCase_EqualTo> BaseNameSet;
 	BaseNameSet baseNames;
 
 	// List files itself.
 	ArchiveMemberList memberList;
 	SearchMan.listMatchingMembers(memberList, pattern);
-	SearchMan.listMatchingMembers(memberList, pattern + ".rsrc");
-	SearchMan.listMatchingMembers(memberList, pattern + ".bin");
+	SearchMan.listMatchingMembers(memberList, pattern.append(".rsrc"));
+	SearchMan.listMatchingMembers(memberList, pattern.append(".bin"));
 	SearchMan.listMatchingMembers(memberList, constructAppleDoubleName(pattern));
 
 	for (ArchiveMemberList::const_iterator i = memberList.begin(), end = memberList.end(); i != end; ++i) {
-		String filename = (*i)->getName();
+		String filename = (*i)->getFileName();
 
 		// For raw resource forks and MacBinary files we strip the extension
 		// here to obtain a valid base name.
@@ -560,12 +560,13 @@ void MacResManager::listFiles(StringArray &files, const String &pattern) {
 
 		// Strip AppleDouble '._' prefix if applicable.
 		bool isAppleDoubleName = false;
-		const String filenameAppleDoubleStripped = disassembleAppleDoubleName(filename, &isAppleDoubleName).toString();
+		const Path filenameAppleDoubleStripped = disassembleAppleDoubleName(
+				Common::Path(filename, Common::Path::kNoSeparator), &isAppleDoubleName);
 
 		if (isAppleDoubleName) {
 			SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream->readUint32BE() == 0x00051607) {
-				filename = filenameAppleDoubleStripped;
+				filename = filenameAppleDoubleStripped.baseName();
 			}
 			// TODO: Should we really keep filenames suggesting AppleDouble
 			// but not being AppleDouble around? This might depend on the
@@ -573,7 +574,8 @@ void MacResManager::listFiles(StringArray &files, const String &pattern) {
 			delete stream;
 		}
 
-		baseNames[filename] = true;
+		Common::Path basePath((*i)->getPathInArchive().getParent().appendComponent(filename));
+		baseNames[basePath] = true;
 	}
 
 	// Append resulting base names to list to indicate found files.
@@ -1011,25 +1013,28 @@ void MacResManager::readMap() {
 	}
 }
 
-Path MacResManager::constructAppleDoubleName(Path name) {
+Path MacResManager::constructAppleDoubleName(const Path &name) {
 	// Insert "._" before the last portion of a path name
-	Path parent = name.getParent();
+	Path ret = name.getParent();
 	Path lastComponent = name.getLastComponent();
-	return parent.append("._").append(lastComponent);
+	return ret.appendInPlace("._").appendInPlace(lastComponent);
 }
 
-Path MacResManager::disassembleAppleDoubleName(Path name, bool *isAppleDouble) {
+Path MacResManager::disassembleAppleDoubleName(const Path &name, bool *isAppleDouble) {
 	if (isAppleDouble) {
 		*isAppleDouble = false;
 	}
 
 	// Remove "._" before the last portion of a path name.
-	Path parent = name.getParent();
-	Path lastComponent = name.getLastComponent();
-	String lastComponentString = lastComponent.toString();
-	if (!lastComponentString.hasPrefix("._"))
+	Path ret = name.getParent();
+	String lastComponent = name.baseName();
+	if (!lastComponent.hasPrefix("._"))
 		return name;
-	return parent.appendComponent(lastComponentString.substr(2));
+	ret = ret.appendComponent(lastComponent.substr(2));
+	if (name.isSeparatorTerminated()) {
+		ret.appendInPlace("/");
+	}
+	return ret;
 }
 
 void MacResManager::dumpRaw() {
@@ -1048,10 +1053,10 @@ void MacResManager::dumpRaw() {
 				dataSize = len;
 			}
 
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", _baseFileName.toString().c_str(), tag2str(_resTypes[i].id), j);
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", _baseFileName.baseName().c_str(), tag2str(_resTypes[i].id), j);
 			_stream->read(data, len);
 
-			if (!out.open(filename)) {
+			if (!out.open(Common::Path(filename, '/'))) {
 				warning("MacResManager::dumpRaw(): Can not open dump file %s", filename.c_str());
 				return;
 			}

@@ -43,7 +43,7 @@ namespace Common {
  */
 
 class Archive;
-class String;
+class Path;
 class SeekableReadStream;
 
 /**
@@ -55,7 +55,7 @@ class SeekableReadStream;
  *
  * @return                The StuffIt archive
  */
-Archive *createStuffItArchive(const String &fileName, bool flattenTree = false);
+Archive *createStuffItArchive(const Path &fileName, bool flattenTree = false);
 Archive *createStuffItArchive(SeekableReadStream *stream, bool flattenTree = false);
 
 /** @} */

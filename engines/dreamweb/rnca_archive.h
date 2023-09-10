@@ -34,7 +34,7 @@ public:
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList&) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::Path &translated) const override;
 
 	static RNCAArchive* open(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose = DisposeAfterUse::NO);
 	
@@ -53,7 +53,7 @@ private:
 		RNCAFileDescriptor() : _fileDataOffset(0) {}
 	};
 
-	typedef Common::HashMap<Common::String, RNCAFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, RNCAFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 
 	RNCAArchive(FileMap files, Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose)
 		: _files(files), _stream(stream, dispose) {

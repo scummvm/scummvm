@@ -581,29 +581,26 @@ bool DecompressingStream::rewind() {
 
 class ArchiveItem : public Common::ArchiveMember {
 public:
-	ArchiveItem(Common::SeekableReadStream *stream, Common::Mutex *guardMutex, const Common::String &path, const Common::String &name, int64 filePos, uint compressedSize, uint decompressedSize, bool isCompressed);
+	ArchiveItem(Common::SeekableReadStream *stream, Common::Mutex *guardMutex, const Common::Path &path, int64 filePos, uint compressedSize, uint decompressedSize, bool isCompressed);
 
 	Common::SeekableReadStream *createReadStream() const override;
 	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
-	Common::String getName() const override;
-	Common::Path getPathInArchive() const override { return getName(); }
-	Common::String getFileName() const override { return getName(); }
-
-	const Common::String &getPath() const;
+	Common::String getName() const override { return getFileName(); }
+	Common::Path getPathInArchive() const override { return _path; }
+	Common::String getFileName() const override { return _path.getLastComponent().toString(); }
 
 private:
 	Common::SeekableReadStream *_stream;
 	Common::Mutex *_guardMutex;
-	Common::String _path;
-	Common::String _name;
+	Common::Path _path;
 	int64 _filePos;
 	uint _compressedSize;
 	uint _decompressedSize;
 	bool _isCompressed;
 };
 
-ArchiveItem::ArchiveItem(Common::SeekableReadStream *stream, Common::Mutex *guardMutex, const Common::String &path, const Common::String &name, int64 filePos, uint compressedSize, uint decompressedSize, bool isCompressed)
-	: _stream(stream), _guardMutex(guardMutex), _path(path), _name(name), _filePos(filePos), _compressedSize(compressedSize), _decompressedSize(decompressedSize), _isCompressed(isCompressed) {
+ArchiveItem::ArchiveItem(Common::SeekableReadStream *stream, Common::Mutex *guardMutex, const Common::Path &path, int64 filePos, uint compressedSize, uint decompressedSize, bool isCompressed)
+	: _stream(stream), _guardMutex(guardMutex), _path(path), _filePos(filePos), _compressedSize(compressedSize), _decompressedSize(decompressedSize), _isCompressed(isCompressed) {
 }
 
 Common::SeekableReadStream *ArchiveItem::createReadStream() const {
@@ -627,14 +624,6 @@ Common::SeekableReadStream *ArchiveItem::createReadStreamForAltStream(Common::Al
 	return nullptr;
 }
 
-Common::String ArchiveItem::getName() const {
-	return _name;
-}
-
-const Common::String &ArchiveItem::getPath() const {
-	return _path;
-}
-
 class PackageArchive : public Common::Archive {
 public:
 	explicit PackageArchive(Common::SeekableReadStream *stream);
@@ -656,7 +645,7 @@ private:
 	static Common::String normalizePath(const Common::Path &path);
 
 	Common::Array<Common::SharedPtr<ArchiveItem> > _items;
-	Common::HashMap<Common::String, uint> _pathToItemIndex;
+	Common::HashMap<Common::Path, uint, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _pathToItemIndex;
 
 	Common::SeekableReadStream *_stream;
 };
@@ -792,23 +781,12 @@ bool PackageArchive::load(const char *prefix) {
 
 			if (fileName.hasPrefix(prefix)) {
 				fileName = fileName.substr(strlen(prefix));
+				fileName.replace('\\', '/');
+				Common::Path path(fileName, '/');
 
-				size_t bsPos = fileName.findFirstOf('\\');
-				while (bsPos != Common::String::npos) {
-					fileName.replace(bsPos, 1, "/");
-					bsPos = fileName.findFirstOf('\\');
-				}
+				Common::SharedPtr<ArchiveItem> item(new ArchiveItem(_stream, getGuardMutex(), path, dataStart, static_cast<uint>(dataEnd - dataStart), decompressedSize, isCompressed));
 
-				Common::String fileNameNoDir = fileName;
-
-				size_t lastSlashPos = fileNameNoDir.findLastOf('/');
-				if (lastSlashPos != Common::String::npos)
-					fileNameNoDir = fileNameNoDir.substr(lastSlashPos + 1);
-
-				Common::SharedPtr<ArchiveItem> item(new ArchiveItem(_stream, getGuardMutex(), fileName, fileNameNoDir, dataStart, static_cast<uint>(dataEnd - dataStart), decompressedSize, isCompressed));
-
-				fileName.toLowercase();
-				_pathToItemIndex[fileName] = _items.size();
+				_pathToItemIndex[path] = _items.size();
 
 				_items.push_back(item);
 			}
@@ -852,7 +830,7 @@ Common::String PackageArchive::normalizePath(const Common::Path &path) {
 }
 
 bool PackageArchive::hasFile(const Common::Path &path) const {
-	return _pathToItemIndex.find(normalizePath(path)) != _pathToItemIndex.end();
+	return _pathToItemIndex.find(path) != _pathToItemIndex.end();
 }
 
 int PackageArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -863,12 +841,11 @@ int PackageArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 int PackageArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern, bool matchPathComponents) const {
-	Common::String patternString = pattern.toString();
 	int matches = 0;
 	const char *wildcardExclusions = matchPathComponents ? NULL : "/";
 
 	for (const Common::SharedPtr<ArchiveItem> &item : _items) {
-		if (item->getPath().matchString(patternString, true, wildcardExclusions)) {
+		if (normalizePath(item->getPathInArchive()).matchString(normalizePath(pattern), false, wildcardExclusions)) {
 			list.push_back(item.staticCast<Common::ArchiveMember>());
 			matches++;
 		}
@@ -878,7 +855,7 @@ int PackageArchive::listMatchingMembers(Common::ArchiveMemberList &list, const C
 }
 
 const Common::ArchiveMemberPtr PackageArchive::getMember(const Common::Path &path) const {
-	Common::HashMap<Common::String, uint>::const_iterator it = _pathToItemIndex.find(normalizePath(path));
+	Common::HashMap<Common::Path, uint, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo>::const_iterator it = _pathToItemIndex.find(path);
 	if (it == _pathToItemIndex.end())
 		return nullptr;
 

@@ -76,14 +76,14 @@ int MpsInstaller::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr MpsInstaller::getMember(const Common::Path &path) const {
-	Common::String translated = translatePath(path);
+	Common::Path translated = translatePath(path);
 	if (!_files.contains(translated))
 		return nullptr;
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, *this));
 }
 
-Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::String& translated) const {
+Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Path &translated) const {
 	if (!_files.contains(translated))
 		return Common::SharedArchiveContents();
 	FileDescriptor desc = _files.getVal(translated);

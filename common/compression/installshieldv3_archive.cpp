@@ -34,7 +34,7 @@ InstallShieldV3::~InstallShieldV3() {
 	close();
 }
 
-bool InstallShieldV3::open(const Common::String &filename) {
+bool InstallShieldV3::open(const Common::Path &filename) {
 	close();
 
 	_stream = SearchMan.createReadStreamForMember(filename);
@@ -74,8 +74,7 @@ void InstallShieldV3::close() {
 }
 
 bool InstallShieldV3::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return _map.contains(name);
+	return _map.contains(path);
 }
 
 int InstallShieldV3::listMembers(Common::ArchiveMemberList &list) const {
@@ -86,20 +85,14 @@ int InstallShieldV3::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	// Make sure "/" is converted to "\"
-	while (name.contains("/"))
-		Common::replace(name, "/", "\\");
-
-	if (!_stream || !_map.contains(name))
+	if (!_stream || !_map.contains(path))
 		return nullptr;
 
-	const FileEntry &entry = _map[name];
+	const FileEntry &entry = _map[path];
 
 	// Seek to our offset and then send it off to the decompressor
 	_stream->seek(entry.offset);
@@ -178,7 +171,7 @@ bool InstallShieldV3::read() {
 			if (!dirNames[i].empty())
 				name = dirNames[i] + "\\" + name;
 
-			_map[name] = entry;
+			_map[Path(name, '\\')] = entry;
 			debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
 					entry.offset, entry.compressedSize, entry.uncompressedSize);
 		}

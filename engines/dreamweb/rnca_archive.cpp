@@ -59,7 +59,7 @@ RNCAArchive* RNCAArchive::open(Common::SeekableReadStream *stream, DisposeAfterU
 		ptr++;
 		uint32 off = READ_BE_UINT32(ptr);
 		eptr = ptr + 4;
-		files[fileName] = RNCAFileDescriptor(fileName, off);
+		files[Common::Path(fileName, Common::Path::kNoSeparator)] = RNCAFileDescriptor(fileName, off);
 	}
 
 	delete[] metadata;
@@ -80,14 +80,14 @@ int RNCAArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr RNCAArchive::getMember(const Common::Path &path) const {
-	Common::String translated = translatePath(path);
+	Common::Path translated = translatePath(path);
 	if (!_files.contains(translated))
 		return nullptr;
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, *this));
 }
 
-Common::SharedArchiveContents RNCAArchive::readContentsForPath(const Common::String& translated) const {
+Common::SharedArchiveContents RNCAArchive::readContentsForPath(const Common::Path &translated) const {
 	if (!_files.contains(translated))
 		return Common::SharedArchiveContents();
 	const RNCAFileDescriptor& desc = _files.getVal(translated);

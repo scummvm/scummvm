@@ -655,12 +655,13 @@ int ResourceManager::addAppropriateSources() {
 #endif
 	} else if (Common::MacResManager::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
-		Common::StringArray files;
+		Common::Array<Common::Path> files;
 		Common::MacResManager::listFiles(files, "Data#");
 		Common::MacResManager::listFiles(files, "Data##");
 
-		for (Common::StringArray::const_iterator x = files.begin(); x != files.end(); ++x) {
-			addSource(new MacResourceForkResourceSource(*x, atoi(x->c_str() + 4)));
+		for (Common::Array<Common::Path>::const_iterator x = files.begin(); x != files.end(); ++x) {
+			Common::String path(x->toString());
+			addSource(new MacResourceForkResourceSource(path, atoi(path.c_str() + 4)));
 		}
 
 #ifdef ENABLE_SCI32

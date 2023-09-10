@@ -349,12 +349,12 @@ Common::Error SagaEngine::run() {
 	setTotalPlayTime(0);
 
 	if (getFeatures() & GF_INSTALLER) {
-		Common::Array<Common::String> filenames;
+		Common::Array<Common::Path> filenames;
 		for (const ADGameFileDescription *gameArchiveDescription = getArchivesDescriptions();
 		     gameArchiveDescription->fileName; gameArchiveDescription++)
 			filenames.push_back(gameArchiveDescription->fileName);
 		Common::Archive *archive = nullptr;
-		if (filenames.size() == 1 && filenames[0].hasSuffix(".exe"))
+		if (filenames.size() == 1 && filenames[0].baseName().hasSuffix(".exe"))
 			archive = Common::makeZipArchive(filenames[0], true);
 		else
 			archive = Common::makeArjArchive(filenames, true);
