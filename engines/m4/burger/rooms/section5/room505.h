@@ -30,6 +30,7 @@ namespace Rooms {
 
 class Room505 : public Section5Room {
 private:
+	static const char *SAID[][4];
 	static const BorkPoint BORK[];
 	static const seriesPlayBreak PLAY1[];
 	static const seriesPlayBreak PLAY2[];

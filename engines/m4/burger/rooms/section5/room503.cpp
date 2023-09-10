@@ -28,7 +28,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-const char *Room503::SAID1[][4] = {
+const char *Room503::SAID[][4] = {
 	{ "PARLOUR",        nullptr,   "500w001", nullptr   },
 	{ "BASEMENT",       nullptr,   "500w001", nullptr   },
 	{ "BORK",           "503w004", "500w002", "500w002" },
@@ -50,23 +50,6 @@ const char *Room503::SAID1[][4] = {
 	{ "TOASTER",        "503w039", "503w040", "503w040" },
 	{ "COOKIES",        "503w041", "503w042", "503w043" },
 	{ "WIRES",          "503w044", "503w045", "503w045" },
-	{ nullptr, nullptr, nullptr, nullptr }
-};
-
-const char *Room503::SAID2[][4] = {
-	{ "STAIRS",         "504w002", "500w001", nullptr   },
-	{ "BORK",           "504w007", "500w002", "500w002" },
-	{ "BORK GUTS",      "504w009", "504w010", "504w010" },
-	{ "DIRTY SOCK ",    "504w011", nullptr,   nullptr   },
-	{ "WRINGER",        "504w013", "504w015", "504w016" },
-	{ "BREAKER BOX",    "504w017", nullptr,   "504w019" },
-	{ "INSIDE BREAKER", "504w020", "504w021", nullptr   },
-	{ "OUTSIDE BREAKER","504w024", "504w021", nullptr   },
-	{ "WASHING MACHINE","504w026", nullptr,   "504w027" },
-	{ "PAINT CAN",      "504w028", "504w029", "504w030" },
-	{ "HOLE",           nullptr,   "500w001", "500w001" },
-	{ "LAUNDRY HAMPER", "504w030", "504w016", "504w016" },
-	{ "LAUNDRY HAMPER ","504w030", "504w016", "504w016" },
 	{ nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -377,7 +360,7 @@ void Room503::init() {
 	if (_G(flags)[V207])
 		kernel_trigger_dispatch_now(20);
 
-	_flag1 = true;
+	_initFlag = true;
 	Section5Room::init();
 }
 
@@ -968,7 +951,7 @@ void Room503::parser() {
 		wilbur_speech("503w032");
 	} else if (player_said("GEAR", "WINDOW") && _G(flags)[V207] != 0) {
 		wilbur_speech("503w033");
-	} else if (_G(walker).wilbur_said(SAID1)) {
+	} else if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
 	} else if (player_said("TAKE", "ROLLING PIN ")) {
 		_G(wilbur_should) = 3;

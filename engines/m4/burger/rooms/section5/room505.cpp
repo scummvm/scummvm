@@ -27,6 +27,23 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+const char *Room505::SAID[][4] = {
+	{ "WILBUR'S ROOM", nullptr,   "500w001", nullptr },
+	{ "BATHROOM",      nullptr,   "500w001", nullptr },
+	{ "AUNT POLLY'S ROOM", nullptr, "500w001", nullptr },
+	{ "STAIRS",        nullptr,   "505w001", "500w001" },
+	{ "STAIRWAY BORK", "505w003", "500w002", "500w002" },
+	{ "RAILING",       "505w004", nullptr,   "505w006" },
+	{ "WINDOW",        "500w003", nullptr,   "500w004" },
+	{ "CEILING FAN",   "505w008", nullptr,   nullptr   },
+	{ "CHANDELIER",    "505w009", nullptr,   nullptr   },
+	{ "VASE",          "505w010", "505w011", "505w012" },
+	{ "PICTURE",       "505w013", "500w005", "505w014" },
+	{ "PICTURE ",      "505w015", "500w005", "505w014" },
+	{ "PICTURE  ",     "505w016", "500w005", "505w014" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
 const Section5Room::BorkPoint Room505::BORK[] = {
 	{ -1, -1 }, { 257, 255 }, { 266, 257 }, { 271, 250 }, { 292, 246 },
 	{ 317, 251 }, { 323, 256 }, { 338, 237 }, { 370, 227 }, { 348, 187 },
