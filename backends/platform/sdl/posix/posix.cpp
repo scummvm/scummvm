@@ -328,7 +328,7 @@ void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 		if (dataNode.exists() && dataNode.isDirectory()) {
 			// This is the same priority which is used for the data path (below),
 			// but we insert this one first, so it will be searched first.
-			s.add(dataNode.getPath(), new Common::FSDirectory(dataNode, 4), priority);
+			s.addDirectory(dataNode, priority, 4);
 		}
 	}
 #endif

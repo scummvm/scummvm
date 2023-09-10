@@ -50,31 +50,6 @@ class WriteStream;
 class SeekableWriteStream;
 
 /**
- * A minimal and temporary class which can act like a Path and like a String
- * This is used to ease transition of getPath() from String to Path
- * FIXME: Remove this class when it's not needed anymore
- */
-class PathProxy : public Path {
-private:
-	String str() const { return toString(Path::kNativeSeparator); }
-public:
-	using Path::Path;
-
-	operator String() const { return str(); };
-	operator U32String() const { return decode(); }
-
-	const char *c_str() const { return str().c_str(); }
-	U32String decode(CodePage page = kUtf8) const { return str().decode(page); }
-	bool matchString(const char *pat, bool ignoreCase = false, const char *wildcardExclusions = NULL) const {
-		return str().matchString(pat, ignoreCase, wildcardExclusions);
-	}
-
-	String substr(size_t pos = 0, size_t len = String::npos) const {
-		return str().substr(pos, len);
-	}
-};
-
-/**
  * List of multiple file system nodes. For example, the contents of a given directory.
  * This is a subclass instead of just a typedef so that forward declarations
  * of it can be used in other places.
@@ -226,7 +201,7 @@ public:
 	 *
 	 * @return The 'path' represented by this file system node.
 	 */
-	PathProxy getPath() const;
+	Path getPath() const;
 
 	/**
 	 * Get the parent node of this node. If this node has no parent node,
