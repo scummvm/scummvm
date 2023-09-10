@@ -74,7 +74,7 @@ public:
 	int getFontSize() const;
 
 	static BdfFont *loadFont(Common::SeekableReadStream &stream);
-	static bool cacheFontData(const BdfFont &font, const Common::String &filename);
+	static bool cacheFontData(const BdfFont &font, const Common::Path &filename);
 	static BdfFont *loadFromCache(Common::SeekableReadStream &stream);
 	static BdfFont *scaleFont(const BdfFont *src, int newSize);
 private:

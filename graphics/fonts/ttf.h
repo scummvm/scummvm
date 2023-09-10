@@ -30,6 +30,10 @@
 #include "common/stream.h"
 #include "common/ustr.h"
 
+namespace Common {
+class Path;
+}
+
 namespace Graphics {
 
 class Font;
@@ -136,7 +140,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
  *                   supported.
  * @return 0 in case loading fails, otherwise a pointer to the Font object.
  */
-Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32String &faceName, bool bold, bool italic, int size, uint dpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0);
+Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32String &faceName, bool bold, bool italic, int size, uint dpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0);
 
 void shutdownTTF();
 

@@ -52,11 +52,11 @@ public:
 	 *
 	 * If dirEntry is not given, the first font in the FONTDIR will be loaded
 	 */
-	bool loadFromFON(const Common::String &fileName, const WinFontDirEntry &dirEntry = WinFontDirEntry());
+	bool loadFromFON(const Common::Path &fileName, const WinFontDirEntry &dirEntry = WinFontDirEntry());
 	bool loadFromFON(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry = WinFontDirEntry());
 
 	/** Open a font from an FNT file */
-	bool loadFromFNT(const Common::String &fileName);
+	bool loadFromFNT(const Common::Path &fileName);
 
 	/** Close this font */
 	void close();
@@ -72,7 +72,7 @@ public:
 
 	static WinFont *scaleFont(const WinFont *src, int newSize);
 private:
-	bool loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry);
+	bool loadFromEXE(Common::WinResources *exe, const Common::Path &fileName, const WinFontDirEntry &dirEntry);
 
 	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
 	Common::String getFONFontName(Common::SeekableReadStream &stream);

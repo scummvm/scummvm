@@ -75,7 +75,7 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 	return entry;
 }
 
-bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
+bool WinFont::loadFromFON(const Common::Path &fileName, const WinFontDirEntry &dirEntry) {
 	Common::WinResources *exe = Common::WinResources::createFromEXE(fileName);
 	if (!exe)
 		return false;
@@ -90,16 +90,16 @@ bool WinFont::loadFromFON(Common::SeekableReadStream &stream, const WinFontDirEn
 	if (!exe)
 		return false;
 
-	bool ok = loadFromEXE(exe, Common::String("stream"), dirEntry);
+	bool ok = loadFromEXE(exe, Common::Path("stream"), dirEntry);
 	delete exe;
 	return ok;
 }
 
-bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry) {
+bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::Path &fileName, const WinFontDirEntry &dirEntry) {
 	// Let's pull out the font directory
 	Common::SeekableReadStream *fontDirectory = exe->getResource(Common::kWinFontDir, Common::String("FONTDIR"));
 	if (!fontDirectory) {
-		warning("No font directory in '%s'", fileName.c_str());
+		warning("No font directory in '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -109,14 +109,16 @@ bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::String &fileN
 
 	// Couldn't match the face name
 	if (fontId == 0xffffffff) {
-		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(), fileName.c_str());
+		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(),
+				fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	// Actually go get our font now...
 	Common::SeekableReadStream *fontStream = exe->getResource(Common::kWinFont, fontId);
 	if (!fontStream) {
-		warning("Could not find font %d in %s", fontId, fileName.c_str());
+		warning("Could not find font %d in %s", fontId,
+				fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -162,7 +164,7 @@ Common::String WinFont::getFONFontName(Common::SeekableReadStream& stream) {
 	return fontName;
 }
 
-bool WinFont::loadFromFNT(const Common::String &fileName) {
+bool WinFont::loadFromFNT(const Common::Path &fileName) {
 	Common::File file;
 
 	return file.open(fileName) && loadFromFNT(file);
