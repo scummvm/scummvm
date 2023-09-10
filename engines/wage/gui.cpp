@@ -269,12 +269,15 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	case kMenuActionNew:
 	case kMenuActionClose:
 	case kMenuActionRevert:
-	case kMenuActionQuit:
 		warning("STUB: executeMenuCommand: action: %d", action);
 		break;
 
 	case kMenuActionOpen:
 		_engine->scummVMSaveLoadDialog(false);
+		break;
+
+	case kMenuActionQuit:
+		_engine->saveDialog();
 		break;
 
 	case kMenuActionSave:
