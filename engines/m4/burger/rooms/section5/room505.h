@@ -34,9 +34,15 @@ private:
 	static const BorkPoint BORK[];
 	static const seriesPlayBreak PLAY1[];
 	static const seriesPlayBreak PLAY2[];
+	char _bork[8], _lookAt[8];
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	machine *_series1 = nullptr;
 
 public:
-	Room505() : Section5Room() {}
+	Room505();
 	~Room505() override {}
 
 	void init() override;
