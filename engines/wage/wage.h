@@ -206,6 +206,8 @@ public:
 	bool _commandWasQuick;
 
 	bool _shouldQuit;
+	int _defaultSaveSlot = -1;
+	Common::String _defaultSaveDescritpion;
 
 	Common::String _inputText;
 

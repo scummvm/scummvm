@@ -61,6 +61,7 @@
 #include "wage/wage.h"
 #include "wage/world.h"
 #include "wage/entities.h"
+#include "wage/gui.h"
 
 #define SAVEGAME_CURRENT_VERSION 1
 
@@ -687,23 +688,45 @@ int WageEngine::loadGame(int slotId) {
 	_aim = aim;
 	_opponentAim = opponentAim;
 
+	// Load the savaegame header
+	ExtendedSavegameHeader header;
+	if (!MetaEngine::readSavegameHeader(data, &header, true))
+		error("Invalid savegame");
+
+	_defaultSaveDescritpion = header.description;
+
 	delete data;
 	return 0;
 }
 
 Common::Error WageEngine::loadGameState(int slot) {
-	if (loadGame(slot) == 0)
+	if (loadGame(slot) == 0) {
+		if (slot != getAutosaveSlot()) {
+			_defaultSaveSlot = slot;
+			// save description is set inside of loadGame()
+			_gui->enableSave();
+		}
+
 		return Common::kNoError;
-	else
+	} else {
 		return Common::kUnknownError;
+	}
 }
 
 Common::Error WageEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	Common::String saveLoadSlot = getSaveStateName(slot);
-	if (saveGame(saveLoadSlot, description) == 0)
+	if (saveGame(saveLoadSlot, description) == 0) {
+		if (slot != getAutosaveSlot()) {
+			_defaultSaveSlot = slot;
+			_defaultSaveDescritpion = description;
+
+			_gui->enableSave();
+		}
+
 		return Common::kNoError;
-	else
+	} else {
 		return Common::kUnknownError;
+	}
 }
 
 bool WageEngine::scummVMSaveLoadDialog(bool isSave) {

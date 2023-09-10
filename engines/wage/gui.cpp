@@ -67,7 +67,7 @@ static const Graphics::MacMenuData menuSubItems[] = {
 	{ kMenuFile, "New",			kMenuActionNew, 0, false },
 	{ kMenuFile, "Open...",		kMenuActionOpen, 0, true },
 	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
-	{ kMenuFile, "Save",		kMenuActionSave, 0, true },
+	{ kMenuFile, "Save",		kMenuActionSave, 0, false },
 	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
 	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
 	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
@@ -278,6 +278,12 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 		break;
 
 	case kMenuActionSave:
+		if (_engine->_defaultSaveSlot != -1 && _engine->_defaultSaveSlot != _engine->getAutosaveSlot()) {
+			_engine->saveGameState(_engine->_defaultSaveSlot, _engine->_defaultSaveDescritpion, false);
+			break;
+		}
+		// falltrhough
+
 	case kMenuActionSaveAs:
 		_engine->scummVMSaveLoadDialog(true);
 		break;
@@ -398,6 +404,10 @@ void Gui::enableNewGameMenus() {
 	_menu->enableCommand(kMenuFile, kMenuActionNew, true);
 	_menu->enableCommand(kMenuFile, kMenuActionOpen, true);
 	_menu->enableCommand(kMenuFile, kMenuActionQuit, true);
+}
+
+void Gui::enableSave() {
+	_menu->enableCommand(kMenuFile, kMenuActionSave, true);
 }
 
 } // End of namespace Wage
