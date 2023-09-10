@@ -258,9 +258,9 @@ public:
 	Common::List<Common::String> _extraSearchPath;
 
 	// Owner of all Archive objects.
-	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> _allSeenResFiles;
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualTo> _allSeenResFiles;
 	// Handles to resource files that were opened by OpenResFile.
-	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> _openResFiles;
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualTo> _openResFiles;
 	// List of all currently open resource files
 	Common::List<Common::Path> _allOpenResFiles;
 
