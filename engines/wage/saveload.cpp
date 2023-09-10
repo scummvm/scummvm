@@ -363,6 +363,8 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	// so these would be the last 4 bytes of the file
 	out->writeUint32BE(WAGEflag);
 
+	g_engine->getMetaEngine()->appendExtendedSave(out, g_engine->getTotalPlayTime(), description, fileName.contains("auto"));
+
 	out->finalize();
 	if (out->err()) {
 		warning("Can't write file '%s'. (Disk full?)", fileName.c_str());

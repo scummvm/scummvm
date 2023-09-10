@@ -29,7 +29,7 @@
 #include "wage/wage.h"
 
 namespace Wage {
-	
+
 uint32 WageEngine::getFeatures() {
 	return _gameDescription->flags;
 }
@@ -55,11 +55,8 @@ public:
 };
 
 bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSimpleSavesNames);
+	return checkExtendedSaves(f) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
 bool Wage::WageEngine::hasFeature(EngineFeature f) const {
