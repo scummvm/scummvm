@@ -112,9 +112,9 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
-	Common::String gamePath(ConfMan.get("path", _domain));
-	Common::String extraPath(ConfMan.get("extrapath", _domain));
-	Common::String savePath(ConfMan.get("savepath", _domain));
+	Common::Path gamePath(ConfMan.getPath("path", _domain));
+	Common::Path extraPath(ConfMan.getPath("extrapath", _domain));
+	Common::Path savePath(ConfMan.getPath("savepath", _domain));
 
 	// GAME: Determine the description string
 	Common::String description(ConfMan.get("description", domain));
@@ -308,14 +308,14 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), Common::U32String(), kCmdGameBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), Common::U32String(), kCmdGameBrowser);
-	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
+	_gamePathWidget = new PathWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
 	if (!g_gui.useLowResGUI())
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
-	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used by the game"));
+	_extraPathWidget = new PathWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _c("None", "path"), _("Specifies path to additional data used by the game"));
 
 	_extraPathClearButton = addClearButton(tab, "GameOptions_Paths.ExtraPathClearButton", kCmdExtraPathClear);
 
@@ -324,7 +324,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your saved games are put"), kCmdSaveBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your saved games are put"), kCmdSaveBrowser);
-	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your saved games are put"));
+	_savePathWidget = new PathWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Default"), _("Specifies where your saved games are put"));
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
@@ -360,16 +360,6 @@ void EditGameDialog::setupGraphicsTab() {
 
 void EditGameDialog::open() {
 	OptionsDialog::open();
-
-	Common::String extraPath(ConfMan.get("extrapath", _domain));
-	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPathWidget->setLabel(_c("None", "path"));
-	}
-
-	Common::String savePath(ConfMan.get("savepath", _domain));
-	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePathWidget->setLabel(_("Default"));
-	}
 
 	int sel, i;
 	bool e;
@@ -460,19 +450,19 @@ void EditGameDialog::apply() {
 			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 	}
 
-	Common::U32String gamePath(_gamePathWidget->getLabel());
+	Common::Path gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
-		ConfMan.set("path", gamePath, _domain);
+		ConfMan.setPath("path", gamePath, _domain);
 
-	Common::U32String extraPath(_extraPathWidget->getLabel());
-	if (!extraPath.empty() && (extraPath != _c("None", "path")))
-		ConfMan.set("extrapath", extraPath, _domain);
+	Common::Path extraPath(_extraPathWidget->getLabel());
+	if (!extraPath.empty())
+		ConfMan.setPath("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
 
-	Common::U32String savePath(_savePathWidget->getLabel());
-	if (!savePath.empty() && (savePath != _("Default")))
-		ConfMan.set("savepath", savePath, _domain);
+	Common::Path savePath(_savePathWidget->getLabel());
+	if (!savePath.empty())
+		ConfMan.setPath("savepath", savePath, _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
 
@@ -527,7 +517,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (file.getPath() != Common::convertFromU32String(_c("None", "path"))))
+			if (!file.getPath().empty())
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);
@@ -594,11 +584,11 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 
 	case kCmdExtraPathClear:
-		_extraPathWidget->setLabel(_c("None", "path"));
+		_extraPathWidget->setLabel(Common::Path());
 		break;
 
 	case kCmdSavePathClear:
-		_savePathWidget->setLabel(_("Default"));
+		_savePathWidget->setLabel(Common::Path());
 		break;
 
 	case kOKCmd:

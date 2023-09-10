@@ -52,7 +52,7 @@ void saveGUISnapshot(Graphics::Surface surf, const Common::String &filename) {
 	Common::DumpFile outFile;
 	Common::String outName = Common::String::format("snapshots/%s", filename.c_str());
 
-	if (outFile.open(outName)) {
+	if (outFile.open(Common::Path(outName, '/'))) {
 		Image::writePNG(outFile, surf);
 		outFile.finalize();
 		outFile.close();

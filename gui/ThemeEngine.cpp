@@ -337,7 +337,7 @@ bool ThemeEngine::init() {
 		Common::FSNode node(_themeFile);
 		if (node.isDirectory()) {
 			_themeArchive = new Common::FSDirectory(node);
-		} else if (_themeFile.matchString("*.zip", true)) {
+		} else if (_themeFile.baseName().matchString("*.zip", true)) {
 			// TODO: Also use "node" directly?
 			// Look for the zip file via SearchMan
 			Common::ArchiveMemberPtr member = SearchMan.getMember(_themeFile);
@@ -349,7 +349,7 @@ bool ThemeEngine::init() {
 			} else {
 				_themeArchive = Common::makeZipArchive(node);
 				if (!_themeArchive) {
-					warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
+					warning("Failed to open Zip archive '%s'.", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 				}
 			}
 		}
@@ -362,7 +362,7 @@ bool ThemeEngine::init() {
 	// We pass the theme file here by default, so the user will
 	// have a descriptive error message. The only exception will
 	// be the builtin theme which has no filename.
-	loadTheme(_themeFile.empty() ? _themeId : _themeFile);
+	loadTheme(_themeFile.empty() ? _themeId : _themeFile.toString(Common::Path::kNativeSeparator));
 
 	return ready();
 }
@@ -648,7 +648,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 
 	if (!scalablefile.empty()) {
 		Common::ArchiveMemberList members;
-		_themeFiles.listMatchingMembers(members, scalablefile);
+		_themeFiles.listMatchingMembers(members, Common::Path(scalablefile, '/'));
 		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 			Common::SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream) {
@@ -668,7 +668,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 #ifdef USE_PNG
 		Image::PNGDecoder decoder;
 		Common::ArchiveMemberList members;
-		_themeFiles.listMatchingMembers(members, filename);
+		_themeFiles.listMatchingMembers(members, Common::Path(filename, '/'));
 		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 			Common::SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream) {
@@ -691,7 +691,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 		// If not, try to load the bitmap via the BitmapDecoder class.
 		Image::BitmapDecoder bitmapDecoder;
 		Common::ArchiveMemberList members;
-		_themeFiles.listMatchingMembers(members, filename);
+		_themeFiles.listMatchingMembers(members, Common::Path(filename, '/'));
 		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 			Common::SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream) {
@@ -1723,7 +1723,7 @@ const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filena
 		return font;
 
 	Common::ArchiveMemberList members;
-	_themeFiles.listMatchingMembers(members, filename);
+	_themeFiles.listMatchingMembers(members, Common::Path(filename, '/'));
 
 	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 		Common::SeekableReadStream *stream = (*i)->createReadStream();
@@ -1753,14 +1753,15 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, Comm
 		return font;
 
 	Common::ArchiveMemberList members;
-	const Common::String cacheFilename(genCacheFilename(filename));
+	const Common::Path pathName(filename);
+	const Common::Path cacheFilename(genCacheFilename(filename));
 	_themeFiles.listMatchingMembers(members, cacheFilename);
-	_themeFiles.listMatchingMembers(members, filename);
+	_themeFiles.listMatchingMembers(members, pathName);
 
 	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 		Common::SeekableReadStream *stream = (*i)->createReadStream();
 		if (stream) {
-			if ((*i)->getName().equalsIgnoreCase(cacheFilename)) {
+			if ((*i)->getPathInArchive().equalsIgnoreCase(cacheFilename)) {
 				font = Graphics::BdfFont::loadFromCache(*stream);
 			} else {
 				font = Graphics::BdfFont::loadFont(*stream);
@@ -2013,7 +2014,7 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 
 	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
 		// We will only process zip files for now
-		if (!i->getPath().matchString("*.zip", true))
+		if (!i->getPath().baseName().matchString("*.zip", true))
 			continue;
 
 		td.name.clear();
@@ -2046,22 +2047,23 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 		listUsableThemes(*i, list, depth == -1 ? - 1 : depth - 1);
 }
 
-Common::String ThemeEngine::getThemeFile(const Common::String &id) {
+Common::Path ThemeEngine::getThemeFile(const Common::String &id) {
 	// FIXME: Actually "default" rather sounds like it should use
 	// our default theme which would mean "scummremastered" instead
 	// of the builtin one.
 	if (id.equalsIgnoreCase("default"))
-		return Common::String();
+		return Common::Path();
 
 	// For our builtin theme we don't have to do anything for now too
 	if (id.equalsIgnoreCase("builtin"))
-		return Common::String();
+		return Common::Path();
 
-	Common::FSNode node(id);
+	Common::Path path(id, Common::Path::kNativeSeparator);
+	Common::FSNode node(path);
 
 	// If the given id is a full path we'll just use it
 	if (node.exists() && (node.isDirectory() || node.getName().matchString("*.zip", true)))
-		return id;
+		return path;
 
 	// FIXME:
 	// A very ugly hack to map a id to a filename, this will generate
@@ -2079,10 +2081,10 @@ Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 
 	// If no matching id has been found we will
 	// just fall back to the builtin theme
-	return Common::String();
+	return Common::Path();
 }
 
-Common::String ThemeEngine::getThemeId(const Common::String &filename) {
+Common::String ThemeEngine::getThemeId(const Common::Path &filename) {
 	// If no filename has been given we will initialize the builtin theme
 	if (filename.empty())
 		return "builtin";

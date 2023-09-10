@@ -37,8 +37,8 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 	Archive *dat;
 	bool changed = false;
 
-	if (!ConfMan.get(packsPath).empty()) {
-		FSDirectory *iconDir = new FSDirectory(ConfMan.get(packsPath));
+	if (!ConfMan.getPath(packsPath).empty()) {
+		FSDirectory *iconDir = new FSDirectory(ConfMan.getPath(packsPath));
 		ArchiveMemberList iconFiles;
 
 		iconDir->listMatchingMembers(iconFiles, packsMask);

@@ -51,7 +51,7 @@ protected:
 	int _textWidth;
 	int _textHeight;
 
-	Common::String _imageArchive;
+	Common::Path _imageArchive;
 
 public:
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
@@ -74,7 +74,7 @@ public:
 
 	bool containsWidget(Widget *) const override;
 
-	void setImageArchive(Common::String fname) { _imageArchive = fname; }
+	void setImageArchive(const Common::Path &fname) { _imageArchive = fname; }
 
 protected:
 	void init();

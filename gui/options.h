@@ -54,6 +54,7 @@ class CommandSender;
 class GuiObject;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
+class PathWidget;
 class OptionsContainerWidget;
 
 class OptionsDialog : public Dialog {
@@ -80,7 +81,7 @@ protected:
 	Common::String _domain;
 
 	ButtonWidget *_soundFontButton;
-	StaticTextWidget *_soundFont;
+	PathWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
 
 	virtual void build();
@@ -121,7 +122,7 @@ protected:
 	int _midiTabId;
 	int _pathsTabId;
 
-	StaticTextWidget *_shader;
+	PathWidget *_shader;
 	ButtonWidget *_shaderClearButton;
 	ButtonWidget *_updateShadersButton = nullptr;
 
@@ -275,20 +276,20 @@ protected:
 
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 
-	StaticTextWidget *_savePath;
+	PathWidget       *_savePath;
 	ButtonWidget	 *_savePathClearButton;
-	StaticTextWidget *_themePath;
+	PathWidget       *_themePath;
 	ButtonWidget	 *_themePathClearButton;
-	StaticTextWidget *_iconPath;
+	PathWidget       *_iconPath;
 	ButtonWidget	 *_iconPathClearButton;
 #ifdef USE_DLC
-	StaticTextWidget *_dlcPath;
+	PathWidget       *_dlcPath;
 	ButtonWidget	 *_dlcPathClearButton;
 #endif
-	StaticTextWidget *_extraPath;
+	PathWidget       *_extraPath;
 	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
-	StaticTextWidget *_pluginsPath;
+	PathWidget       *_pluginsPath;
 	ButtonWidget	 *_pluginsPathClearButton;
 #endif
 	StaticTextWidget *_browserPath;
@@ -376,7 +377,7 @@ protected:
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
 	ButtonWidget	 *_rootPathButton;
-	StaticTextWidget *_rootPath;
+	PathWidget       *_rootPath;
 	ButtonWidget	 *_rootPathClearButton;
 	StaticTextWidget *_serverPortDesc;
 	EditTextWidget   *_serverPort;

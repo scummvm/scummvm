@@ -751,14 +751,15 @@ const PluginList &EngineManager::getPlugins(const PluginType fetchPluginType) co
 	return PluginManager::instance().getPlugins(fetchPluginType);
 }
 
-namespace {
-
-void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
+static void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
 	if (!value.empty())
 		ConfMan.set(key, value, domain);
 }
 
-} // End of anonymous namespace
+static void addPathToConf(const Common::String &key, const Common::Path &value, const Common::String &domain) {
+	if (!value.empty())
+		ConfMan.setPath(key, value, domain);
+}
 
 Common::String EngineManager::generateUniqueDomain(const Common::String gameId) {
 	Common::String domainName(gameId);
@@ -787,7 +788,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	addStringToConf("description", game.description, domain);
 	addStringToConf("language", Common::getLanguageCode(game.language), domain);
 	addStringToConf("platform", Common::getPlatformCode(game.platform), domain);
-	addStringToConf("path", game.path.toString(Common::Path::kNativeSeparator), domain);
+	addPathToConf("path", game.path, domain);
 	addStringToConf("extra", game.extra, domain);
 	addStringToConf("guioptions", game.getGUIOptions(), domain);
 
