@@ -38,17 +38,17 @@ enum {
 
 class ShaderBrowserDialog : public Dialog {
 public:
-	ShaderBrowserDialog(const Common::String &initialSelection);
+	ShaderBrowserDialog(const Common::Path &initialSelection);
 
 	void open() override;
 	void reflowLayout() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	Common::String getResult() { return Dialog::getResult() ? _fileName->getEditString().encode() : Common::String(); }
+	Common::Path getResult() { return Dialog::getResult() ? _fileName->getLabel() : Common::Path(); }
 
 protected:
-	EditTextWidget   *_fileName;
+	PathWidget       *_fileName;
 	ListWidget	     *_fileList;
 	Common::SearchSet _shaderSet;
 	Common::String	  _search;
@@ -61,7 +61,7 @@ protected:
 	ButtonWidget     *_searchClearButton;
 
 	void updateListing();
-	void normalieFileName();
+	void normalizeFileName();
 };
 
 } // End of namespace GUI

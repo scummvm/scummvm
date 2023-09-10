@@ -104,7 +104,7 @@ void BrowserDialog::open() {
 	Dialog::open();
 
 	if (ConfMan.hasKey("browser_lastpath"))
-		_node = Common::FSNode(ConfMan.get("browser_lastpath"));
+		_node = Common::FSNode(ConfMan.getPath("browser_lastpath"));
 
 	if (!_node.isDirectory())
 		_node = Common::FSNode(".");
@@ -119,7 +119,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	switch (cmd) {
 	//Search for typed-in directory
 	case kPathEditedCmd:
-		_node = Common::FSNode(Common::convertFromU32String(_currentPath->getEditString()));
+		_node = Common::FSNode(Common::Path(Common::convertFromU32String(_currentPath->getEditString()), Common::Path::kNativeSeparator));
 		updateListing();
 		break;
 	//Search by text input

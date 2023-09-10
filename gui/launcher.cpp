@@ -1136,7 +1136,7 @@ void LauncherSimple::updateListing() {
 
 		if (scanEntries) {
 			Common::String path;
-			if (!iter->domain->tryGetVal("path", path) || !Common::FSNode(path).isDirectory()) {
+			if (!iter->domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) {
 				color = ThemeEngine::kFontColorAlternate;
 				// If more conditions which grey out entries are added we should consider
 				// enabling this so that it is easy to spot why a certain game entry cannot
@@ -1576,7 +1576,7 @@ void LauncherGrid::updateListing() {
 		iter->domain->tryGetVal("language", language);
 		iter->domain->tryGetVal("platform", platform);
 		iter->domain->tryGetVal("extra", extra);
-		valid_path = (!iter->domain->tryGetVal("path", path) || !Common::FSNode(path).isDirectory()) ? false : true;
+		valid_path = (!iter->domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) ? false : true;
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->description, iter->title, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path));
 		_domains.push_back(iter->key);
 	}

@@ -298,7 +298,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("stretch_mode", "default");
 	ConfMan.registerDefault("scaler", "default");
 	ConfMan.registerDefault("scale_factor", -1);
-	ConfMan.registerDefault("shader", "default");
+	ConfMan.registerDefault("shader", Common::Path("default", Common::Path::kNoSeparator));
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("dirtyrects", true);
 	ConfMan.registerDefault("vsync", true);
@@ -333,7 +333,7 @@ void registerDefaults() {
 #endif
 
 	// Game specific
-	ConfMan.registerDefault("path", "");
+	ConfMan.registerDefault("path", Common::Path());
 	ConfMan.registerDefault("platform", Common::kPlatformDOS);
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("subtitles", false);
@@ -2127,7 +2127,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		if (!ConfMan.hasKey(key)) { \
 			Common::FSNode node(path); \
 			if (node.exists() && node.isDirectory() && node.isReadable()) \
-				ConfMan.set(key, path, Common::ConfigManager::kSessionDomain); \
+				ConfMan.setPath(key, path, Common::ConfigManager::kSessionDomain); \
 		}
 
 	ADD_DEFAULT_PATH("themepath", "gui/themes/")

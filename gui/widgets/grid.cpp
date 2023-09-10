@@ -344,14 +344,15 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 // Load an image file by String name, provide additional render dimensions for SVG images.
 // TODO: Add BMP support, and add scaling of non-vector images.
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int renderWidth = 0, int renderHeight = 0) {
+	Common::Path path(name);
 	Graphics::ManagedSurface *surf = nullptr;
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
 		const Graphics::Surface *srcSurface = nullptr;
 		Image::PNGDecoder decoder;
 		g_gui.lockIconsSet();
-		if (g_gui.getIconsSet().hasFile(name)) {
-			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
+		if (g_gui.getIconsSet().hasFile(path)) {
+			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(path);
 			if (!decoder.loadStream(*stream)) {
 				g_gui.unlockIconsSet();
 				warning("Error decoding PNG");
@@ -374,8 +375,8 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 #endif
 	} else if (name.hasSuffix(".svg")) {
 		g_gui.lockIconsSet();
-		if (g_gui.getIconsSet().hasFile(name)) {
-			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
+		if (g_gui.getIconsSet().hasFile(path)) {
+			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(path);
 			surf = new Graphics::SVGBitmap(stream, renderWidth, renderHeight);
 			delete stream;
 		} else {

@@ -70,9 +70,9 @@ protected:
 	EditTextWidget *_descriptionWidget;
 	DomainEditTextWidget *_domainWidget;
 
-	StaticTextWidget *_gamePathWidget;
-	StaticTextWidget *_extraPathWidget;
-	StaticTextWidget *_savePathWidget;
+	PathWidget *_gamePathWidget;
+	PathWidget *_extraPathWidget;
+	PathWidget *_savePathWidget;
 	ButtonWidget *_extraPathClearButton;
 	ButtonWidget *_savePathClearButton;
 

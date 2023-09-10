@@ -96,15 +96,16 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	Common::ConfigManager::DomainMap::const_iterator iter;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-		Common::String path(iter->_value.getVal("path"));
+		Common::Path path(Common::Path::fromConfig(iter->_value.getVal("path")));
+
 		// Remove trailing slash, so that "/foo" and "/foo/" match.
 		// This works around a bug in the POSIX FS code (and others?)
 		// where paths are not normalized (so FSNodes refering to identical
 		// FS objects may return different values in path()).
-		while (path != "/" && path.lastChar() == '/')
-			path.deleteLastChar();
-		if (!path.empty())
+		path.removeTrailingSeparators();
+		if (!path.empty()) {
 			_pathToTargets[path].push_back(iter->_key);
+		}
 	}
 }
 
@@ -193,11 +194,8 @@ void MassAddDialog::handleTickle() {
 		for (DetectedGames::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
 			const DetectedGame &result = *cand;
 
-			Common::String path = dir.getPath();
-
-			// Remove trailing slashes
-			while (path != "/" && path.lastChar() == '/')
-				path.deleteLastChar();
+			Common::Path path = dir.getPath();
+			path.removeTrailingSeparators();
 
 			// Check for existing config entries for this path/engineid/gameid/lang/platform combination
 			if (_pathToTargets.contains(path)) {
