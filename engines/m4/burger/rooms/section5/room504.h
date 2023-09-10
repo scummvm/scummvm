@@ -58,7 +58,16 @@ private:
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
 	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
+	machine *_series3s = nullptr;
+	machine *_series4 = nullptr;
+	machine *_series5 = nullptr;
+	const char *_sparkName = nullptr;
 
 public:
 	Room504();
