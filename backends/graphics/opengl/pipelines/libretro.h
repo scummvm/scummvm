@@ -55,7 +55,7 @@ public:
 	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) override;
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
-	bool open(const Common::String &shaderPath, Common::SearchSet &archSet);
+	bool open(const Common::Path &shaderPath, Common::SearchSet &archSet);
 	void close();
 
 	/* Called by OpenGLGraphicsManager */

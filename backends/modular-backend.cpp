@@ -73,7 +73,7 @@ int ModularGraphicsBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
-bool ModularGraphicsBackend::setShader(const Common::String &fileName) {
+bool ModularGraphicsBackend::setShader(const Common::Path &fileName) {
 	return _graphicsManager->setShader(fileName);
 }
 

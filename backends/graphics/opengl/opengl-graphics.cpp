@@ -341,12 +341,12 @@ uint OpenGLGraphicsManager::getScaleFactor() const {
 #endif
 
 #if !USE_FORCED_GLES
-bool OpenGLGraphicsManager::setShader(const Common::String &fileName) {
+bool OpenGLGraphicsManager::setShader(const Common::Path &fileName) {
 	assert(_transactionMode != kTransactionNone);
 
 	// Special case for the 'default' shader
-	if (fileName == "default")
-		_currentState.shader = "";
+	if (fileName == Common::Path("default", Common::Path::kNoSeparator))
+		_currentState.shader.clear();
 	else
 		_currentState.shader = fileName;
 
@@ -354,7 +354,7 @@ bool OpenGLGraphicsManager::setShader(const Common::String &fileName) {
 }
 #endif
 
-bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
+bool OpenGLGraphicsManager::loadShader(const Common::Path &fileName) {
 #if !USE_FORCED_GLES
 	if (!_libretroPipeline) {
 		warning("Libretro is not supported");
@@ -368,7 +368,7 @@ bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
 	// Load selected shader preset
 	if (!fileName.empty()) {
 		if (!_libretroPipeline->open(fileName, shaderSet)) {
-			warning("Failed to load shader %s", fileName.c_str());
+			warning("Failed to load shader %s", fileName.toString().c_str());
 			return false;
 		}
 	} else {
@@ -489,7 +489,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 				}
 				// If the shader failed and we had not a valid old state, try to unset the shader and do it again
 				if (!shaderOK && !_currentState.shader.empty()) {
-					_currentState.shader = "";
+					_currentState.shader.clear();
 					_transactionMode = kTransactionRollback;
 					continue;
 				}
