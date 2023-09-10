@@ -919,7 +919,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 	debug("Target '%s' lacks an engine ID, upgrading...", target.c_str());
 
 	Common::String oldGameId = domain->getVal("gameid");
-	Common::String path = domain->getVal("path");
+	Common::Path path = Common::Path::fromConfig(domain->getVal("path"));
 
 	// At this point the game ID and game path must be known
 	if (oldGameId.empty()) {
@@ -943,7 +943,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		Common::FSNode dir(path);
 		Common::FSList files;
 		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-			warning("Failed to access path '%s' when upgrading target '%s'", path.c_str(), target.c_str());
+			warning("Failed to access path '%s' when upgrading target '%s'", path.toString(Common::Path::kNativeSeparator).c_str(), target.c_str());
 			return;
 		}
 
@@ -956,7 +956,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",
-			        metaEngine.getName(), path.c_str(), target.c_str());
+			        metaEngine.getName(), path.toString(Common::Path::kNativeSeparator).c_str(), target.c_str());
 			return;
 		}
 

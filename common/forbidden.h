@@ -352,7 +352,7 @@
 	#endif
 
 	// ScummVM has no equivalent for getting the current directory.
-	// However, you can use ConfMan.get("path") to get the
+	// However, you can use ConfMan.getPath("path") to get the
 	// running game's directory
 	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 	#undef getcwd
@@ -360,7 +360,7 @@
 	#endif
 
 	// ScummVM has no equivalent for getting the current directory.
-	// However, you can use ConfMan.get("path") to get the
+	// However, you can use ConfMan.getPath("path") to get the
 	// running game's directory
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_getwd
 	#undef getwd

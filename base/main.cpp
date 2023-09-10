@@ -173,7 +173,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	assert(enginePlugin);
 
 	// Determine the game data path, for validation and error messages
-	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.getPath("path"));
 	Common::String target = ConfMan.getActiveDomainName();
 	Common::Error err = Common::kNoError;
 	Engine *engine = nullptr;
