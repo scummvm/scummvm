@@ -204,6 +204,7 @@ public:
 	bool _temporarilyHidden;
 	bool _isGameOver;
 	bool _commandWasQuick;
+	bool _restartRequested = false;
 
 	bool _shouldQuit;
 	int _defaultSaveSlot = -1;
@@ -241,6 +242,8 @@ private:
 	Scene *getSceneByOffset(int offset) const;
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
 	int loadGame(int slotId);
+
+	void restart();
 
 private:
 	const ADGameDescription *_gameDescription;

@@ -154,12 +154,36 @@ Common::Error WageEngine::run() {
 	while (!_shouldQuit) {
 		processEvents();
 
+		if (_restartRequested)
+			restart();
+
 		_gui->draw();
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}
 
 	return Common::kNoError;
+}
+
+void WageEngine::restart() {
+	_restartRequested = false;
+	delete _gui;
+	delete _world;
+
+	_world = new World(this);
+
+	if (!_world->loadWorld(_resManager))
+		return;
+
+	_shouldQuit = false;
+
+	_gui = new Gui(this);
+
+	_temporarilyHidden = true;
+	performInitialSetup();
+
+	Common::String input("look");
+	processTurn(&input, NULL);
 }
 
 void WageEngine::processEvents() {
@@ -189,6 +213,7 @@ void WageEngine::processEvents() {
 
 					processTurn(&_inputText, NULL);
 					_gui->disableUndo();
+					_gui->enableRevert();
 					break;
 				}
 			default:
@@ -365,7 +390,7 @@ void WageEngine::wearObjs(Chr* chr) {
 }
 
 void WageEngine::doClose() {
-	warning("STUB: doClose()");
+	// No op on ScummVM since we do not allow to load arbitrary games
 }
 
 Scene *WageEngine::getSceneByName(Common::String &location) {

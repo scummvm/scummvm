@@ -700,6 +700,7 @@ int WageEngine::loadGame(int slotId) {
 }
 
 Common::Error WageEngine::loadGameState(int slot) {
+	warning("LOADING %d", slot);
 	if (loadGame(slot) == 0) {
 		if (slot != getAutosaveSlot()) {
 			_defaultSaveSlot = slot;
