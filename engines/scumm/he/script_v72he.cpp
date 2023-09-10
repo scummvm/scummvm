@@ -901,7 +901,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_talkColor = pop();
 		// WORKAROUND bug #13730: defined subtitles color 16 is very dark and hard to read on the dark background.
 		// we change it to brighter color to ease reading.
-		if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && a->_talkColor == 16)
+		if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && a->_talkColor == 16 && _enableEnhancements)
 			a->_talkColor = 200;
 		break;
 	case SO_ACTOR_NAME:
@@ -2183,7 +2183,7 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 			_string[m].color = pop();
 			// WORKAROUND bug #13730: defined subtitles color 16 is very dark and hard to read on the dark background.
 			// we change it to brighter color to ease reading.
-			if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && _string[m].color == 16)
+			if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && _string[m].color == 16 && _enableEnhancements)
 				_string[m].color = 200;
 		} else {
 			push(colors);
