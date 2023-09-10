@@ -55,6 +55,7 @@ private:
 	static const seriesPlayBreak PLAY21[];
 	static const seriesPlayBreak PLAY22[];
 	static const seriesPlayBreak PLAY23[];
+	static const seriesPlayBreak PLAY24[];
 	static long _state1;
 	static long _state2;
 	static long _state3;
@@ -63,19 +64,25 @@ private:
 	static long _state6;
 	int16 _array1[5];
 	int16 _array2[5];
-	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	int _flag3 = 0;
-	int _flag2 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
 	int _val9 = 0;
+	int _val10 = 0;
 	bool _flag1 = false;
+	bool _flag2 = false;
+	bool _flag3 = false;
+	bool _flag4 = false;
+	bool _flag5 = false;
 	noWalkRect *_walk1 = nullptr;
 	machine *_series1 = nullptr;
-
+	Series _series2;
+	machine *_series3 = nullptr;
+	machine *_series4 = nullptr;
+	machine *_series5 = nullptr;
 	void loadSeries1();
 
 public:
