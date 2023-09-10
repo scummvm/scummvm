@@ -29,6 +29,15 @@
 
 namespace Nancy {
 
+CursorManager::CursorManager()  :
+	_isInitialized(false),
+	_curItemID(-1),
+	_curCursorType(kNormal),
+	_curCursorID(0),
+	_hasItem(false),
+	_numCursorTypes(0),
+	_puzzleExitCursor((g_nancy->getGameType() >= kGameTypeNancy4) ? kMoveBackward : kExit) {}
+
 void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

@@ -516,8 +516,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		// For some reason, this puzzle uses the backwards arrow for exit
-		g_nancy->_cursorManager->setCursorType(CursorManager::kMoveBackward);
+		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;

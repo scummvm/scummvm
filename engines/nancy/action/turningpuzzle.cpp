@@ -249,7 +249,7 @@ void TurningPuzzle::execute() {
 
 void TurningPuzzle::handleInput(NancyInput &input) {
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kExit);
+		g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;

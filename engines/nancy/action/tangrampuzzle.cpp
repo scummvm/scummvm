@@ -232,7 +232,7 @@ void TangramPuzzle::handleInput(NancyInput &input) {
 
 		// No tile under cursor, check exit hotspot
 		if (_exitHotspot.contains(mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kExit);
+			g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_state = kActionTrigger;

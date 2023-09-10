@@ -51,13 +51,7 @@ public:
 		kHotspotArrow
 	};
 
-	CursorManager() :
-		_isInitialized(false),
-		_curItemID(-1),
-		_curCursorType(kNormal),
-		_curCursorID(0),
-		_hasItem(false),
-		_numCursorTypes(0) {}
+	CursorManager();
 
 	void init(Common::SeekableReadStream *chunkStream);
 
@@ -72,6 +66,8 @@ public:
 	const Common::Point &getCurrentCursorHotspot() { return _cursors[_curCursorID].hotspot;}
 	const Common::Rect &getPrimaryVideoInactiveZone() { return _primaryVideoInactiveZone; }
 	const Common::Point &getPrimaryVideoInitialPos() { return _primaryVideoInitialPos; }
+
+	const CursorType _puzzleExitCursor;
 
 private:
 	void showCursor(bool shouldShow);
