@@ -916,7 +916,7 @@ public:
 	 *
 	 * @return True if the switch was successful, false otherwise.
 	 */
-	virtual bool setShader(const Common::String &fileName) { return false; }
+	virtual bool setShader(const Common::Path &fileName) { return false; }
 
 	/**
 	 * Retrieve a list of all stretch modes supported by this backend.

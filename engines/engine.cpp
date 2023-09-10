@@ -224,7 +224,7 @@ void initCommonGFX() {
 			g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
 
 		if (gameDomain->contains("shader"))
-			g_system->setShader(ConfMan.get("shader"));
+			g_system->setShader(ConfMan.getPath("shader"));
 
 		// TODO: switching between OpenGL and SurfaceSDL is quite fragile
 		// and the SDL backend doesn't really need this so leave it out

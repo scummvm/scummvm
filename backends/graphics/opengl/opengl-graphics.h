@@ -86,7 +86,7 @@ public:
 #endif
 
 #if !USE_FORCED_GLES
-	bool setShader(const Common::String &fileNode) override;
+	bool setShader(const Common::Path &fileNode) override;
 #endif
 
 	void beginGFXTransaction() override;
@@ -199,7 +199,7 @@ protected:
 		uint scalerIndex;
 		int scaleFactor;
 
-		Common::String shader;
+		Common::Path shader;
 
 		bool operator==(const VideoState &right) {
 			return gameWidth == right.gameWidth && gameHeight == right.gameHeight
@@ -273,7 +273,7 @@ protected:
 	 */
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
-	bool loadShader(const Common::String &fileName);
+	bool loadShader(const Common::Path &fileName);
 
 	/**
 	 * Refresh the screen contents.

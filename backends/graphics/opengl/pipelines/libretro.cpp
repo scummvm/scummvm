@@ -345,7 +345,7 @@ void LibRetroPipeline::deactivateInternal() {
 	// Don't call Pipeline::deactivateInternal as our framebuffer is passed to _outputPipeline
 }
 
-bool LibRetroPipeline::open(const Common::String &shaderPreset, Common::SearchSet &archSet) {
+bool LibRetroPipeline::open(const Common::Path &shaderPreset, Common::SearchSet &archSet) {
 	close();
 
 	_shaderPreset = LibRetro::parsePreset(shaderPreset, archSet);

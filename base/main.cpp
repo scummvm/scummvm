@@ -362,7 +362,7 @@ static void setupGraphics(OSystem &system) {
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 		system.setStretchMode(ConfMan.get("stretch_mode").c_str());
 		system.setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
-		system.setShader(ConfMan.get("shader"));
+		system.setShader(ConfMan.getPath("shader"));
 
 #if defined(OPENDINGUX) || defined(MIYOO) || defined(MIYOOMINI)
 		// 0, 0 means "autodetect" but currently only SDL supports
