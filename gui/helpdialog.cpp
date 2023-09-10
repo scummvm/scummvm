@@ -50,7 +50,7 @@ HelpDialog::HelpDialog()
 
 	TabWidget *tab = new TabWidget(this, 10, 10, _w - 10, tabHeight);
 
-	tab->addTab(_("General"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("General"), "HelpDialog", false);
 	Common::U32String helpText1 = _(
 "## Where to get the games\n"
 "\n"
@@ -81,7 +81,7 @@ HelpDialog::HelpDialog()
 
 			Common::U32String tabText(_(*backendTabs++));
 
-			tab->addTab(tabName, "GlobalOptions_Graphics", false);
+			tab->addTab(tabName, "HelpDialog", false);
 
 			RichTextWidget *rt = new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, tabText);
 
