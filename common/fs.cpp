@@ -203,9 +203,9 @@ FSNode FSNode::getParent() const {
 	}
 }
 
-PathProxy FSNode::getPath() const {
+Path FSNode::getPath() const {
 	assert(_realNode);
-	return PathProxy(_realNode->getPath(), Common::Path::kNativeSeparator);
+	return Path(_realNode->getPath(), Common::Path::kNativeSeparator);
 }
 
 bool FSNode::isDirectory() const {
