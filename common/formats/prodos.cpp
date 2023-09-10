@@ -351,7 +351,7 @@ void ProDOSDisk::getVolumeBitmap(VolHeader *h) {
 
 /* Gets the volume information and parses the filesystem, adding file objects to a map as it goes */
 
-bool ProDOSDisk::open(const Common::String filename) {
+bool ProDOSDisk::open(const Common::Path &filename) {
 	_disk.open(filename);
 	_disk.read(_loader1, kBlockSize);
 	_disk.read(_loader2, kBlockSize);
@@ -371,7 +371,7 @@ bool ProDOSDisk::open(const Common::String filename) {
 
 /* Constructor simply calls open(), and if it is successful it prints a statement */
 
-ProDOSDisk::ProDOSDisk(const Common::String filename) {
+ProDOSDisk::ProDOSDisk(const Common::Path &filename) {
 	if (open(filename)) {
 		//debug("%s has been loaded", filename.c_str());
 	}

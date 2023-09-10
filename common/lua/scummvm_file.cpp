@@ -29,7 +29,7 @@ LuaFileProxy *LuaFileProxy::create(const Common::String &filename, const Common:
 	if (filename.contains("config.lua"))
 		return new LuaFileConfig(filename, mode);
 
-	return new LuaFileRead(filename, mode);
+	return new LuaFileRead(Common::Path(filename, '/'), mode);
 }
 
 LuaFileConfig::LuaFileConfig(const Common::String &filename, const Common::String &mode) : _readPos(0) {
@@ -235,10 +235,10 @@ void LuaFileConfig::setLanguage(const Common::String &lang) {
 }
 
 
-LuaFileRead::LuaFileRead(const Common::String &filename, const Common::String &mode) {
+LuaFileRead::LuaFileRead(const Common::Path &filename, const Common::String &mode) {
 	assert(mode == "r");
 	if (!_file.open(filename))
-		error("Could not open file %s", filename.c_str());
+		error("Could not open file %s", filename.toString().c_str());
 
 	_size = _file.size();
 }

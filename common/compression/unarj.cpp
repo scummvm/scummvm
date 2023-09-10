@@ -697,24 +697,24 @@ struct ArjFileChunk {
 	ArjFileChunk(ArjHeader* header, uint volume) : _header(header), _volume(volume) {}
 };
 
-typedef HashMap<String, Array<ArjFileChunk>, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
+typedef HashMap<Path, Array<ArjFileChunk>, Path::IgnoreCase_Hash, Path::IgnoreCase_EqualTo> ArjHeadersMap;
 
 class ArjArchive : public MemcachingCaseInsensitiveArchive {
 	ArjHeadersMap _headers;
-	Array<String> _arjFilenames;
+	Array<Path> _arjFilenames;
 	bool _flattenTree;
 
 public:
-	ArjArchive(const Array<String> &names, bool flattenTree);
+	ArjArchive(const Array<Path> &names, bool flattenTree);
 	virtual ~ArjArchive();
 
 	// Archive implementation
 	bool hasFile(const Path &path) const override;
 	int listMembers(ArchiveMemberList &list) const override;
 	const ArchiveMemberPtr getMember(const Path &path) const override;
-	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
-	Common::String translatePath(const Common::Path &path) const override {
-		return _flattenTree ? path.getLastComponent().toString() : path.toString();
+	Common::SharedArchiveContents readContentsForPath(const Common::Path &translated) const override;
+	Common::Path translatePath(const Common::Path &path) const override {
+		return _flattenTree ? path.getLastComponent() : path;
 	}
 };
 
@@ -727,7 +727,7 @@ ArjArchive::~ArjArchive() {
        }
 }
 
-ArjArchive::ArjArchive(const Array<String> &filenames, bool flattenTree) : _arjFilenames(filenames), _flattenTree(flattenTree) {
+ArjArchive::ArjArchive(const Array<Path> &filenames, bool flattenTree) : _arjFilenames(filenames), _flattenTree(flattenTree) {
 	for (uint i = 0; i < _arjFilenames.size(); i++) {
 		File arjFile;
 
@@ -753,21 +753,28 @@ ArjArchive::ArjArchive(const Array<String> &filenames, bool flattenTree) : _arjF
 		while ((header = readHeader(arjFile)) != nullptr) {
 			const char *name = header->filename;
 
-			if (_flattenTree)
-				for (const char *p = header->filename; *p; p++)
-					if (*p == '\\' || *p == '/')
+			if (_flattenTree) {
+				for (const char *p = header->filename; *p; p++) {
+					if (*p == '\\' || *p == '/') {
 						name = p + 1;
-			_headers[name].push_back(ArjFileChunk(header, i));
+					}
+				}
+			} else {
+				for (char *p = header->filename; *p; p++) {
+					if (*p == '\\')
+						*p = '/';
+				}
+			}
+			_headers[Path(name)].push_back(ArjFileChunk(header, i));
 			arjFile.seek(header->compSize, SEEK_CUR);
 		}
 	}
 
-	debug(0, "ArjArchive::ArjArchive(%d volume(s) starting with %s): Located %d files", filenames.size(), filenames.empty() ? "" : filenames[0].c_str(), _headers.size());
+	debug(0, "ArjArchive::ArjArchive(%d volume(s) starting with %s): Located %d files", filenames.size(), filenames.empty() ? "" : filenames[0].toString(Common::Path::kNativeSeparator).c_str(), _headers.size());
 }
 
 bool ArjArchive::hasFile(const Path &path) const {
-	String name = path.toString();
-	return _headers.contains(name);
+	return _headers.contains(path);
 }
 
 int ArjArchive::listMembers(ArchiveMemberList &list) const {
@@ -775,7 +782,7 @@ int ArjArchive::listMembers(ArchiveMemberList &list) const {
 
 	ArjHeadersMap::const_iterator it = _headers.begin();
 	for ( ; it != _headers.end(); ++it) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(Common::String(it->_value[0]._header->filename), *this)));
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(Path(it->_value[0]._header->filename), *this)));
 		matches++;
 	}
 
@@ -783,19 +790,18 @@ int ArjArchive::listMembers(ArchiveMemberList &list) const {
 }
 
 const ArchiveMemberPtr ArjArchive::getMember(const Path &path) const {
-	String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return ArchiveMemberPtr();
 
-	return ArchiveMemberPtr(new GenericArchiveMember(name, *this));
+	return ArchiveMemberPtr(new GenericArchiveMember(path, *this));
 }
 
-Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::String& name) const {
-	if (!_headers.contains(name)) {
+Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::Path &path) const {
+	if (!_headers.contains(path)) {
 		return Common::SharedArchiveContents();
 	}
 
-	const Array <ArjFileChunk>& hdrs = _headers[name];
+	const Array <ArjFileChunk>& hdrs = _headers[path];
 
 	uint64 uncompressedSize = 0;
 	uint totalChunks;
@@ -848,11 +854,11 @@ Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::Stri
 	return Common::SharedArchiveContents(uncompressedData, uncompressedSize);
 }
 
-Archive *makeArjArchive(const String &name, bool flattenTree) {
+Archive *makeArjArchive(const Path &name, bool flattenTree) {
 	return new ArjArchive({name}, flattenTree);
 }
 
-Archive *makeArjArchive(const Array<String> &names, bool flattenTree) {
+Archive *makeArjArchive(const Array<Path> &names, bool flattenTree) {
 	return new ArjArchive(names, flattenTree);
 }
 

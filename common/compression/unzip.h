@@ -45,7 +45,7 @@ class SeekableReadStream;
  *
  * May return 0 in case of a failure.
  */
-Archive *makeZipArchive(const String &name, bool flattenTree = false);
+Archive *makeZipArchive(const Path &name, bool flattenTree = false);
 
 /**
  * This factory method creates an Archive instance corresponding to the content

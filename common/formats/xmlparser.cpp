@@ -41,7 +41,7 @@ XMLParser::~XMLParser() {
 	_layoutList.clear();
 }
 
-bool XMLParser::loadFile(const String &filename) {
+bool XMLParser::loadFile(const Path &filename) {
 	_stream = SearchMan.createReadStreamForMember(filename);
 	if (!_stream)
 		return false;
@@ -96,7 +96,7 @@ bool XMLParser::parserError(const String &errStr) {
 	assert(_stream->pos() == startPosition);
 	currentPosition = startPosition;
 
-	Common::String errorMessage = Common::String::format("\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
+	Common::String errorMessage = Common::String::format("\n  File <%s>, line %d:\n", _fileName.toString().c_str(), lineCount);
 
 	if (startPosition > 1) {
 		int keyOpening = 0;

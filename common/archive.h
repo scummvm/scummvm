@@ -272,20 +272,18 @@ public:
 	SeekableReadStream *createReadStreamForMember(const Path &path) const;
 	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, Common::AltStreamType altStreamType) const;
 
-	virtual String translatePath(const Path &path) const {
-		// Most of users of this class implement DOS-like archives.
-		// Others override this method.
-		return normalizePath(path.toString('\\'), '\\');
+	virtual Path translatePath(const Path &path) const {
+		return path.normalize();
 	}
 
-	virtual SharedArchiveContents readContentsForPath(const String &translatedPath) const = 0;
-	virtual SharedArchiveContents readContentsForPathAltStream(const String &translatedPath, AltStreamType altStreamType) const;
+	virtual SharedArchiveContents readContentsForPath(const Path &translatedPath) const = 0;
+	virtual SharedArchiveContents readContentsForPathAltStream(const Path &translatedPath, AltStreamType altStreamType) const;
 
 private:
 	struct CacheKey {
 		CacheKey();
 
-		String path;
+		Path path;
 		AltStreamType altStreamType;
 	};
 

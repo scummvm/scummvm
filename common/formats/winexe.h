@@ -37,6 +37,7 @@ namespace Common {
  * @{
  */
 
+class Path;
 class SeekableReadStream;
 
 /** The default Windows resources. */
@@ -114,10 +115,10 @@ public:
 	virtual void clear() = 0;
 
 	/** Load from an EXE file. */
-	virtual bool loadFromEXE(const String &fileName);
+	virtual bool loadFromEXE(const Path &fileName);
 
 	/** Load from a Windows compressed EXE file. */
-	virtual bool loadFromCompressedEXE(const String &fileName);
+	virtual bool loadFromCompressedEXE(const Path &fileName);
 
 	/** Load from a stream. */
 	virtual bool loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES) = 0;
@@ -139,7 +140,7 @@ public:
 		return getResource(type, id);
 	}
 
-	static WinResources *createFromEXE(const String &fileName);
+	static WinResources *createFromEXE(const Path &fileName);
 	static WinResources *createFromEXE(SeekableReadStream *stream);
 
 	typedef Common::HashMap<Common::String, Common::U32String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VersionHash;

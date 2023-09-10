@@ -33,11 +33,11 @@ namespace MADS {
 class MpsInstaller : public Common::MemcachingCaseInsensitiveArchive {
 public:
 	bool hasFile(const Common::Path &path) const override;
-	int listMembers(Common::ArchiveMemberList&) const override;
+	int listMembers(Common::ArchiveMemberList &) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SharedArchiveContents readContentsForPath(const Common::String& translatedPath) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::Path &translatedPath) const override;
 
-	static MpsInstaller* open(const Common::Path& baseName);
+	static MpsInstaller* open(const Common::Path &baseName);
 
 private:
 	// Similar to FileDescriptionBin but in native-endian and native strings.
@@ -73,7 +73,7 @@ private:
 		friend class MpsInstaller;
 	};
 
-    	typedef Common::HashMap<Common::String, FileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, FileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 
 	MpsInstaller(const FileMap& files,
 		     const Common::Path& baseName) : _files(files), _baseName(baseName) {}

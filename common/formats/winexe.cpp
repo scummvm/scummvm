@@ -82,7 +82,7 @@ String WinResourceID::toString() const {
 	return "";
 }
 
-bool WinResources::loadFromEXE(const String &fileName) {
+bool WinResources::loadFromEXE(const Path &fileName) {
 	if (fileName.empty())
 		return false;
 
@@ -96,7 +96,7 @@ bool WinResources::loadFromEXE(const String &fileName) {
 	return loadFromEXE(file);
 }
 
-bool WinResources::loadFromCompressedEXE(const String &fileName) {
+bool WinResources::loadFromCompressedEXE(const Path &fileName) {
 	// Based on http://www.cabextract.org.uk/libmspack/doc/szdd_kwaj_format.html
 
 	// TODO: Merge this with with loadFromEXE() so the handling of the compressed
@@ -172,7 +172,7 @@ bool WinResources::loadFromCompressedEXE(const String &fileName) {
 }
 
 
-WinResources *WinResources::createFromEXE(const String &fileName) {
+WinResources *WinResources::createFromEXE(const Path &fileName) {
 	WinResources *exe;
 
 	// First try loading via the NE code

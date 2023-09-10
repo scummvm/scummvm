@@ -116,11 +116,11 @@ class ProDOSDisk : public Common::Archive {
 public:
 	static const int kBlockSize = 512;		// A ProDOS block is always 512 bytes (should this be an enum?)
 
-	ProDOSDisk(const Common::String filename);
+	ProDOSDisk(const Common::Path &filename);
 	~ProDOSDisk();							// Frees the memory used in the dictionary and the volume bitmap
 
 	// Called from the constructor, it parses the volume and fills the hashmap with files
-	bool open(const Common::String filename);
+	bool open(const Common::Path &filename);
 
 	// These are the Common::Archive related methods
 	bool hasFile(const Common::Path &path) const override;

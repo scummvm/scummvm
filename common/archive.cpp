@@ -239,7 +239,7 @@ SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMemberI
 	return memStream;
 }
 
-SharedArchiveContents MemcachingCaseInsensitiveArchive::readContentsForPathAltStream(const String &translatedPath, AltStreamType altStreamType) const {
+SharedArchiveContents MemcachingCaseInsensitiveArchive::readContentsForPathAltStream(const Path &translatedPath, AltStreamType altStreamType) const {
 	return SharedArchiveContents();
 }
 
@@ -251,7 +251,7 @@ bool MemcachingCaseInsensitiveArchive::CacheKey_EqualTo::operator()(const CacheK
 }
 
 uint MemcachingCaseInsensitiveArchive::CacheKey_Hash::operator()(const CacheKey &x) const {
-	return static_cast<uint>(hashit_lower(x.path) * 1000003u) ^ static_cast<uint>(x.altStreamType);
+	return static_cast<uint>(x.path.hashIgnoreCase() * 1000003u) ^ static_cast<uint>(x.altStreamType);
 };
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {

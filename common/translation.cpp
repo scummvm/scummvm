@@ -227,7 +227,7 @@ bool TranslationManager::openTranslationsFile(File &inFile) {
 
 	// Then try to open it using the SearchMan.
 	ArchiveMemberList fileList;
-	SearchMan.listMatchingMembers(fileList, _translationsFileName);
+	SearchMan.listMatchingMembers(fileList, Common::Path(_translationsFileName, Common::Path::kNoSeparator));
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
 		ArchiveMember       const &m      = **it;
 		SeekableReadStream *const  stream = m.createReadStream();
