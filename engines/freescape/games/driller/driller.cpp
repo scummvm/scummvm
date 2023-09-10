@@ -166,7 +166,8 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_currentArea->_skyColor = 0;
 		_currentArea->_usualBackgroundColor = 0;
 	} else if (isCPC()) {
-		_currentArea->_skyColor = _currentArea->_usualBackgroundColor;
+		_currentArea->_usualBackgroundColor = 1;
+		_currentArea->_skyColor = 1;
 	}
 
 	resetInput();

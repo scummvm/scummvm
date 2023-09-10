@@ -495,8 +495,8 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
 	swapPalette(areaID);
-	_currentArea->_skyColor = 0;
-	_currentArea->_usualBackgroundColor = 0;
+	_currentArea->_skyColor = isCPC() ? 1 : 0;
+	_currentArea->_usualBackgroundColor = isCPC() ? 1 : 0;
 
 	resetInput();
 }

@@ -361,6 +361,18 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 
 	if (_colorRemaps && _colorRemaps->contains(index)) {
 		index = (*_colorRemaps)[index];
+		if (index == 0) {
+			r1 = g1 = b1 = 0;
+			r2 = r1;
+			g2 = g1;
+			b2 = b1;
+			return true;
+		}
+		readFromPalette(index, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+		return true;
 	}
 
 	assert (_renderMode == Common::kRenderCPC);
