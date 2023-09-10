@@ -349,7 +349,7 @@ class FSDirectory : public Archive {
 
 	// Caches are case insensitive, clashes are dealt with when creating
 	// Key is stored in lowercase.
-	typedef HashMap<Path, FSNode, Path::IgnoreCaseAndMac_Hash, Path::IgnoreCaseAndMac_EqualsTo> NodeCache;
+	typedef HashMap<Path, FSNode, Path::IgnoreCaseAndMac_Hash, Path::IgnoreCaseAndMac_EqualTo> NodeCache;
 	mutable NodeCache	_fileCache, _subDirCache;
 	mutable bool _cached;
 

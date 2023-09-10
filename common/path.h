@@ -61,7 +61,7 @@ public:
 	 * to match both "xn--Sound Manager 3.1  SoundLib-lba84k/Sound"
 	 * and "Sound Manager 3.1 : SoundLib/Sound"
 	 */
-	struct IgnoreCaseAndMac_EqualsTo {
+	struct IgnoreCaseAndMac_EqualTo {
 		bool operator()(const Path& x, const Path& y) const;
 	};
 

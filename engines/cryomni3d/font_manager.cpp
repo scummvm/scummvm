@@ -67,7 +67,7 @@ void FontManager::loadFonts(const Common::Array<Common::Path> &fontFiles,
 	_fonts.reserve(fontFiles.size());
 
 	Common::HashMap<Common::Path, Graphics::Font *,
-		Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> fontsCache;
+		Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualTo> fontsCache;
 
 	for (Common::Array<Common::Path>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
 	        it++) {

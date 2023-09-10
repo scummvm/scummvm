@@ -423,7 +423,7 @@ bool Path::matchPattern(const Path& pattern) const {
 	return true;
 }
 
-bool Path::IgnoreCaseAndMac_EqualsTo::operator()(const Path& x, const Path& y) const {
+bool Path::IgnoreCaseAndMac_EqualTo::operator()(const Path& x, const Path& y) const {
 	return x.getIdentifierString().equalsIgnoreCase(y.getIdentifierString());
 }
 
