@@ -558,7 +558,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
-	// Sync sound data
+	g_nancy->_graphicsManager->suppressNextDraw();
 }
 
 UI::Clock *Scene::getClock() {
