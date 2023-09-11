@@ -251,6 +251,10 @@ void Room505::daemon() {
 		kernel_trigger_dispatch_now(5015);
 		break;
 
+	case 7:
+		_series1 = series_play("505fan", 0xbff);
+		break;
+
 	case gCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:

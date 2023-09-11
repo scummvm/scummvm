@@ -40,6 +40,14 @@ private:
 	static const seriesPlayBreak PLAY6[];
 	static long _state1;
 	static long _state2;
+	noWalkRect *_walk1 = nullptr;
+	int _array1[5];
+	int _ctr = 0;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+
+	void loadSeries();
 
 public:
 	Room506();
