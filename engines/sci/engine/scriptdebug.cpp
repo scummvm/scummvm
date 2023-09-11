@@ -152,7 +152,12 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 	debugN("%-5s", opcodeNames[opcode]);
 #endif
 
-	static const char *defaultSeparator = "\t\t; ";
+	static const char *defaultSeparator = "\t\t;";
+	
+	// Provide additional selector name context for push0, push1, push2 opcodes.
+	if (opcode >= op_push0 && opcode <= op_push2) {
+		debugN("\t%s%s", defaultSeparator, kernel->getSelectorName(opcode - op_push0).c_str());
+	}
 
 	i = 0;
 	while (g_sci->_opcode_formats[opcode][i]) {
@@ -256,10 +261,8 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 					separator = ", ";
 				}
 
-				// Provide additional selector name context for all integer push scenarios.
-				if (opcode >= op_push0 && opcode <= op_push2) {
-    				debugN("%s%s", separator, kernel->getSelectorName(opcode - op_push0).c_str());
-				} else if (opcode == op_pushi && param_value < kernel->getSelectorNamesSize()) {
+				// Provide additional selector name context for pushi opcodes.
+				if (opcode == op_pushi && param_value < kernel->getSelectorNamesSize()) {
 					debugN("%s%s", separator, kernel->getSelectorName(param_value).c_str());
 				}
 			}
