@@ -28,7 +28,7 @@
 
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/action/bombpuzzle.h"
+#include "engines/nancy/action/puzzle/bombpuzzle.h"
 
 namespace Nancy {
 namespace Action {

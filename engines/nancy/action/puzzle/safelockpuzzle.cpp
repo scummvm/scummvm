@@ -28,7 +28,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
-#include "engines/nancy/action/safelockpuzzle.h"
+#include "engines/nancy/action/puzzle/safelockpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 

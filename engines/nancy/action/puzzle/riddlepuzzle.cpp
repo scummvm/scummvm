@@ -28,7 +28,7 @@
 #include "engines/nancy/puzzledata.h"
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/action/riddlepuzzle.h"
+#include "engines/nancy/action/puzzle/riddlepuzzle.h"
 
 #include "common/random.h"
 

@@ -28,7 +28,7 @@
 #include "engines/nancy/puzzledata.h"
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/action/tangrampuzzle.h"
+#include "engines/nancy/action/puzzle/tangrampuzzle.h"
 
 namespace Nancy {
 namespace Action {

@@ -26,7 +26,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
-#include "engines/nancy/action/telephone.h"
+#include "engines/nancy/action/puzzle/telephone.h"
 
 #include "engines/nancy/state/scene.h"
 

@@ -29,7 +29,7 @@
 #include "engines/nancy/puzzledata.h"
 
 #include "engines/nancy/state/scene.h"
-#include "engines/nancy/action/rippedletterpuzzle.h"
+#include "engines/nancy/action/puzzle/rippedletterpuzzle.h"
 
 #include "graphics/transform_struct.h"
 

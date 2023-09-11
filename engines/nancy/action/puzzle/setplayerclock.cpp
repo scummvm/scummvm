@@ -19,7 +19,7 @@
  *
  */
 
-#include "engines/nancy/action/setplayerclock.h"
+#include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/ui/clock.h"
 

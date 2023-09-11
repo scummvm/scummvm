@@ -28,7 +28,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
-#include "engines/nancy/action/rotatinglockpuzzle.h"
+#include "engines/nancy/action/puzzle/rotatinglockpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 

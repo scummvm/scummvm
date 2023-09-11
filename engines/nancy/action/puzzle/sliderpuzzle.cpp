@@ -27,7 +27,7 @@
 #include "engines/nancy/util.h"
 #include "engines/nancy/puzzledata.h"
 
-#include "engines/nancy/action/sliderpuzzle.h"
+#include "engines/nancy/action/puzzle/sliderpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 

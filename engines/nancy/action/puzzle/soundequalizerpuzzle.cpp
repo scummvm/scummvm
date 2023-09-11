@@ -19,7 +19,7 @@
  *
  */
 
-#include "engines/nancy/action/soundequalizerpuzzle.h"
+#include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/ui/scrollbar.h"
 

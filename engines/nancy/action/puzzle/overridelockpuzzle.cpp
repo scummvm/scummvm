@@ -28,7 +28,7 @@
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/ui/viewport.h"
 
-#include "engines/nancy/action/overridelockpuzzle.h"
+#include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 
 #include "common/random.h"
 

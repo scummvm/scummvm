@@ -28,7 +28,7 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
-#include "engines/nancy/action/orderingpuzzle.h"
+#include "engines/nancy/action/puzzle/orderingpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 

@@ -27,7 +27,7 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/resource.h"
 
-#include "engines/nancy/action/raycastpuzzle.h"
+#include "engines/nancy/action/puzzle/raycastpuzzle.h"
 #include "engines/nancy/state/scene.h"
 
 #include "common/stack.h"

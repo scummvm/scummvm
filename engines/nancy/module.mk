@@ -4,29 +4,31 @@ MODULE_OBJS = \
   action/actionmanager.o \
   action/actionrecord.o \
   action/arfactory.o \
-  action/bombpuzzle.o \
-  action/collisionpuzzle.o \
+  action/navigationrecords.o \
+  action/soundrecords.o \
+  action/miscrecords.o \
   action/conversation.o \
-  action/leverpuzzle.o \
-  action/orderingpuzzle.o \
   action/overlay.o \
-  action/overridelockpuzzle.o \
-  action/passwordpuzzle.o \
-  action/raycastpuzzle.o \
-  action/recordtypes.o \
-  action/riddlepuzzle.o \
-  action/rippedletterpuzzle.o \
-  action/rotatinglockpuzzle.o \
-  action/safelockpuzzle.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
-  action/setplayerclock.o \
-  action/sliderpuzzle.o \
-  action/soundequalizerpuzzle.o \
-  action/tangrampuzzle.o \
-  action/towerpuzzle.o \
-  action/turningpuzzle.o \
-  action/telephone.o \
+  action/puzzle/bombpuzzle.o \
+  action/puzzle/collisionpuzzle.o \
+  action/puzzle/leverpuzzle.o \
+  action/puzzle/orderingpuzzle.o \
+  action/puzzle/overridelockpuzzle.o \
+  action/puzzle/passwordpuzzle.o \
+  action/puzzle/raycastpuzzle.o \
+  action/puzzle/riddlepuzzle.o \
+  action/puzzle/rippedletterpuzzle.o \
+  action/puzzle/rotatinglockpuzzle.o \
+  action/puzzle/safelockpuzzle.o \
+  action/puzzle/setplayerclock.o \
+  action/puzzle/sliderpuzzle.o \
+  action/puzzle/soundequalizerpuzzle.o \
+  action/puzzle/tangrampuzzle.o \
+  action/puzzle/telephone.o \
+  action/puzzle/towerpuzzle.o \
+  action/puzzle/turningpuzzle.o \
   ui/fullscreenimage.o \
   ui/animatedbutton.o \
   ui/button.o \
