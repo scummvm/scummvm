@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-06 05:56+0000\n"
-"PO-Revision-Date: 2023-09-03 05:59+0000\n"
+"PO-Revision-Date: 2023-09-11 12:20+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -8389,10 +8389,8 @@ msgid "Save / Load dialog"
 msgstr "Διάλογος Αποθήκευσης / Φόρτωσης"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
-#| msgid "Select shader"
 msgid "Selection screen"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Οθόνη Επιλογών"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
