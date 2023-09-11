@@ -125,7 +125,7 @@ void Room506::init() {
 	pal_cycle_init(112, 127, 6);
 
 	for (_ctr = 0; _ctr < 5; ++_ctr)
-		_array1[_ctr] = -1;
+		_triggers[_ctr] = -1;
 
 	if (_G(flags)[V219]) {
 		kernel_trigger_dispatch_now(12);
@@ -200,7 +200,254 @@ void Room506::init() {
 }
 
 void Room506::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		ws_walk(434, 254, nullptr, 2, 9);
+		break;
+
+	case 2:
+		player_set_commands_allowed(true);
+		break;
+
+	case 3:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _val3);
+		break;
+
+	case 4:
+		for (_ctr = 0; _ctr < 5; ++_ctr) {
+			if (_triggers[_ctr] != -1) {
+				kernel_trigger_dispatch_now(_triggers[_ctr]);
+				_triggers[_ctr] = -1;
+			}
+		}
+		break;
+
+	case 5:
+		inv_put_thing_in("KINDLING", NOWHERE);
+		break;
+
+	case 6:
+		ws_unhide_walker();
+
+		switch (_val4) {
+		case 9:
+			wilbur_speech("506w001");
+			break;
+
+		case 10:
+			wilbur_speech("506w002");
+			break;
+
+		case 11:
+			wilbur_speech("506w003", 5001);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 7:
+		switch (_val2) {
+		case 12:
+			kernel_trigger_dispatch_now(8);
+			_G(flags)[V218] = 5000;
+			_val2 = imath_ranged_rand(0, 2) == 0 ? 14 : 13;
+			_loopCount = imath_ranged_rand(2, 4);
+
+			series_play("506bk01", 0x3ff, 0, 7, 6, _loopCount, 100, 6, 10, 0, 8);
+			series_play("506bk01s", 0x400, 0, -1, 6, _loopCount, 100, 6, 10, 0, 8);
+			break;
+
+		case 13:
+			_G(flags)[V218] = 5001;
+			_val1 = 20;
+			kernel_trigger_dispatch_now(10);
+
+			_state1 = imath_ranged_rand(1, 2);
+			_val2 = 12;
+			series_play_with_breaks(PLAY4, "506bk01", 0x3ff, 7, 3, 6, 100, 6, 10);
+			break;
+
+		case 14:
+			_G(flags)[V218] = 5002;
+			_val1 = 22;
+			kernel_trigger_dispatch_now(10);
+
+			_state1 = imath_ranged_rand(1, 2);
+			_val2 = 12;
+			series_play_with_breaks(PLAY5, "506bk01", 0x3ff, 7, 3, 6, 100, 6, 10);
+			break;
+
+		case 15:
+			_state1 = imath_ranged_rand(1, 2);
+			_val4 = 10;
+			_val2 = 16;
+			series_play_with_breaks(PLAY6, "506bk02", 0x3ff, 7, 3, 6, 100, 6, 10);
+			break;
+
+		case 16:
+			_val2 = 12;
+			kernel_trigger_dispatch_now(7);
+			player_set_commands_allowed(true);
+			break;
+
+		case 17:
+			_G(wilbur_should) = 5;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 18:
+			intr_remove_no_walk_rect(_walk1);
+			hotspot_set_active("BORK", false);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 8:
+		digi_play(Common::String::format("506b001%c", 'a' + imath_ranged_rand(0, 5)).c_str(), 2);
+		break;
+
+	case 9:
+		_G(flags)[V206] = 5004;
+		kernel_trigger_dispatch_now(5015);
+		break;
+
+	case 10:
+		switch (_val1) {
+		case 19:
+			term_message("The game is Defender!");
+			_series1 = series_play("506game", 0x2fe, 2, -1, 10, -1, 100, 0, 0, 5, 21);
+			break;
+
+		case 20:
+			term_message("There is an explosion on the screen!");
+			terminateMachineAndNull(_series1);
+
+			_val1 = 19;
+			_series1 = series_play("506game", 0x2fe, 1, 10, 10, 3, 100, 0, 0, 2, 3);
+			break;
+
+		case 21:
+			term_message("There is a really big explosion on the screen!");
+			_series1 = series_play("506game", 0x2fe, 1, 10, 10, 3, 100, 0, 0, 2, 4);
+			break;
+
+		case 22:
+			terminateMachineAndNull(_series1);
+			_val1 = 21;
+			_series1 = series_play("506game", 0x2fe, 1, 10, 10, 1, 100, 0, 0, 0, 1);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 11:
+		digi_play_loop("500_002", 3, 125);
+		break;
+
+	case 12:
+		_G(flags)[V219] = 1;
+		terminateMachineAndNull(_series1);
+		hotspot_set_active("JOYSTICK", false);
+		hotspot_set_active("FIRE", true);
+		_series2 = series_play("506fire", 0x2fe, 4, -1, 6, -1);
+		break;
+
+	case 13:
+		series_show("506windo", 0xf00);
+		_G(flags)[V219] = 1;
+		hotspot_set_active("ROOF", true);
+		break;
+
+	case 5002:
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			player_set_commands_allowed(true);
+			kernel_trigger_dispatch_now(6);
+			break;
+
+		case 2:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+
+			_val3 = 5012;
+			kernel_timing_trigger(180, 3);
+			series_play_with_breaks(PLAY1, "506wi01", 0x800, -1, 3);
+			break;
+
+		case 3:
+			player_demand_location(157, 313, 3);
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY2, "506wi02", 0x800, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 4:
+			player_set_commands_allowed(false);
+			_val2 = 17;
+			break;
+
+		case 5:
+			terminateMachineAndNull(_series1);
+			ws_hide_walker();
+
+			_G(flags)[V218] = 5003;
+			_G(flags)[V220] = 1;
+			_state1 = imath_ranged_rand(1, 3);
+			_G(wilbur_should) = 6;
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "506wi03", 6, 0x100, gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 6:
+			digi_unload_stream_breaks(SERIES1);
+			_val2 = 18;
+			kernel_trigger_dispatch_now(7);
+			kernel_trigger_dispatch_now(12);
+			kernel_trigger_dispatch_now(13);
+			_val4 = 11;
+			kernel_trigger_dispatch_now(6);
+			break;
+
+		case 7:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+
+			_val3 = 5006;
+			_triggers[0] = 3;
+			_triggers[1] = gCHANGE_WILBUR_ANIMATION;
+			_G(wilbur_should) = 8;
+			series_play_with_breaks(PLAY3, "506wi05", 0x2fe, 4, 3);
+			break;
+
+		case 8:
+			series_show("506wi05", 0x2fe, 0, -1, -1, 46);
+			series_show("506wi05s", 0x2ff, 0, -1, -1, 46);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room506::pre_parser() {

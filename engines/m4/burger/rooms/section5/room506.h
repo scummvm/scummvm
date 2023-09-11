@@ -41,11 +41,15 @@ private:
 	static long _state1;
 	static long _state2;
 	noWalkRect *_walk1 = nullptr;
-	int _array1[5];
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	int _triggers[5];
 	int _ctr = 0;
+	int _loopCount = 0;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
+	int _val4 = 0;
 
 	void loadSeries();
 
