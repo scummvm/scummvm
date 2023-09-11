@@ -54,7 +54,7 @@ HelpDialog::HelpDialog()
 	Common::U32String helpText1 = _(
 "## Where to get the games\n"
 "\n"
-"Many games supported by ScummVM can still be bought from companies at the links below. Not all games on this list are supported by ScummVM, please check the compatibility page beforehand.\n"
+"Many games supported by ScummVM can still be bought from companies at the links below. Not all games on this list are supported by ScummVM, please check [the compatibility page](https://scummvm.org/compatibility) beforehand.\n"
 "\n"
 "Several games have been released for free legal download by their respective copyright holders. You can download them from [our website](https://scummvm.org/games).\n"
 "\n"
