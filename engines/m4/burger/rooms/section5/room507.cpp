@@ -228,17 +228,194 @@ Room507::Room507() : Section5Room() {
 }
 
 void Room507::init() {
+	Section5Room::init();
+	pal_cycle_init(112, 127, 6);
+
+	for (_ctr = 0; _ctr < 5; ++_ctr)
+		_triggers[_ctr] = -1;
+
+	player_set_commands_allowed(false);
+	_G(flags)[V246] = 0;
+	_flag1 = _flag2 = false;
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	case 505:
+		ws_demand_location(610, 280, 1);
+
+		if (player_been_here(507)) {
+			ws_walk(343, 323, nullptr, -1);
+		} else {
+			_val1 = 12;
+			ws_walk(343, 323, nullptr, 3);
+		}
+		break;
+
+	case 510:
+		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	default:
+		player_set_commands_allowed(true);
+		ws_demand_location(343, 323);
+		break;
+	}
+
+	_state5 = 0;
+	hotspot_set_active("BORK", false);
+
+	if (_G(flags)[V223] != 2) {
+		loadSeries();
+
+		if (_G(flags)[V223] == 1) {
+			hotspot_set_active_xy("BORK", 123, 218, true);
+			_val2 = 22;
+		} else {
+			hotspot_set_active_xy("BORK", 320, 220, true);
+			_val2 = 15;
+			kernel_trigger_dispatch_now(5);
+		}
+
+		kernel_trigger_dispatch_now(6);
+	}
+
+	switch (inv_where_is("RUBBER DUCKY")) {
+	case 500:
+		hotspot_set_active("RUBBER DUCKY ", false);
+		hotspot_set_active("RUBBER DUCKY  ", true);
+		break;
+
+	case  507:
+		_series1 = series_show("507duck", 0xa00);
+		hotspot_set_active("RUBBER DUCKY ", true);
+		hotspot_set_active("RUBBER DUCKY  ", false);
+		break;
+
+	default:
+		hotspot_set_active("RUBBER DUCKY ", false);
+		hotspot_set_active("RUBBER DUCKY  ", false);
+		break;
+	}
+
+	if (_G(flags)[V223] != 1) {
+		_val3 = inv_where_is("RUBBER DUCKY") == 500 ? 27 : 26;
+		kernel_trigger_dispatch_now(9);
+	}
+
+	kernel_trigger_dispatch_now(10);
+	series_show("507tub", 0xf00);
+
+	if (_G(flags)[V228])
+		series_show("507windo", 0xf00);
+
+	_initFlag = true;
+	Section5Room::init();
 }
 
 void Room507::daemon() {
 }
 
 void Room507::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (player_said("HALLWAY") && player_said_any("GEAR", "LOOK AT", "ENTER"))
+		player_set_facing_hotspot();
 }
 
 void Room507::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+	bool tubFlag = player_said("TUB") && _G(flags)[V223] != 0;
 
+	if (player_said("LOOK AT", "BORK") && _G(flags)[V223] == 1) {
+		wilbur_speech("507w003");
+	} else if (player_said("RUBBER DUCKY") && player_said("TUB")) {
+		wilbur_speech(_G(flags)[223] ? "500w040" : "500w039");
+	} else if (player_said("RUBBER DUCKY") && player_said("SINK")) {
+		wilbur_speech("500w041");
+	} else if (player_said("SOAPY WATER", "SINK")) {
+		wilbur_speech("500w057");
+	} else if (player_said("LOOK AT") && player_said_any("TOILET", "FLUSH CHAIN") &&
+			_G(flags)[V223] == 1) {
+		wilbur_speech("507w008");
+	} else if (tubFlag && player_said("LOOK AT")) {
+		wilbur_speech("507w009");
+	} else if (tubFlag && player_said("GEAR")) {
+		wilbur_speech("507w010");
+	} else if (player_said("GEAR", "WINDOW") && _G(flags)[V228]) {
+		wilbur_speech("507w011");
+	} else if (player_said("GEAR") && (player_said("SHOWER CURTAIN") || player_said("SHOWERHEAD")) &&
+			_G(flags)[V223] == 2) {
+		// No implementation
+	} else if (_G(walker).wilbur_said(SAID)) {
+		// No implementation
+	} else if (player_said("LOOK AT", "HALLWAY") || player_said("GEAR", "HALLWAY")) {
+		_val4 = 5009;
+		kernel_trigger_dispatch_now(2);
+	} else if (_G(flags)[V223] != 1 && player_said("RUBBER DUCKY", "BORK")) {
+		player_set_commands_allowed(false);
+		_val5 = 6;
+		_val6 = 19;
+		kernel_trigger_dispatch_now(4);
+	} else if (_G(flags)[V223] != 1 && player_said("BORK") && !player_said("LOOK AT") &&
+			!player_said_any("GIZMO", "ROLLING PIN", "DIRTY SOCK", "SOAPY WATER", "RUBBER GLOVES") &&
+			!player_said("LAXATIVE")) {
+		player_set_commands_allowed(false);
+		_val2 = 23;
+	} else if (player_said("TAKE", "RUBBER DUCKY ")) {
+		_G(wilbur_should) = 2;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("RUBBER DUCKY") && player_said_any("GEAR", "WILBUR")) {
+		_G(wilbur_should) = 3;
+		ws_walk(197, 274, nullptr, gCHANGE_WILBUR_ANIMATION, 9);
+	} else if (player_said("RUBBER DUCKY", "TOILET")) {
+		_flag2 = true;
+		_G(wilbur_should) = 3;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("GEAR") && player_said_any("TOILET", "FLUSH CHAIN")) {
+		if (_G(flags)[V223] == 1 || _G(flags)[V223] == 2) {
+			_G(wilbur_should) = 9;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else if (inv_where_is("RUBBER DUCKY") == 500) {
+			_val5 = 9;
+			_val6 = 21;
+			kernel_trigger_dispatch_now(4);
+		} else {
+			_val5 = 9;
+			_val6 = 20;
+			kernel_trigger_dispatch_now(4);
+		}
+	} else if (player_said("BOTTLE") && player_said_any("SOAPY WATER ", "TUB ")) {
+		if (_G(flags)[V223] == 1 || _G(flags)[V223] == 2) {
+			_G(wilbur_should) = 11;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else {
+			wilbur_speech("507w038");
+		}
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room507::loadSeries() {
+	digi_preload("507b012a");
+	digi_preload("507b012b");
+	digi_preload("507b012c");
+	digi_preload("507b012d");
+	digi_preload("507b012e");
+
+	if (_G(flags)[V223] != 1) {
+		series_load("507bk01");
+		series_load("507bk03");
+		series_load("507bk04");
+		series_load("507bk08");
+	}
 }
 
 } // namespace Rooms
