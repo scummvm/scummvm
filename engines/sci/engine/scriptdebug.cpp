@@ -152,7 +152,7 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 	debugN("%-5s", opcodeNames[opcode]);
 #endif
 
-	static const char *defaultSeparator = "\t\t;";
+	static const char *defaultSeparator = "\t\t; ";
 	
 	// Provide additional selector name context for push0, push1, push2 opcodes.
 	if (opcode >= op_push0 && opcode <= op_push2) {
