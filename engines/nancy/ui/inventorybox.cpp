@@ -125,7 +125,6 @@ void InventoryBox::handleInput(NancyInput &input) {
 					NancySceneState.removeItemFromInventory(_itemHotspots[i].itemID);
 					_highlightedHotspot = -1;
 					hoveredHotspot = -1;
-					g_nancy->_sound->playSound("GLOB");
 				}
 			}
 			break;

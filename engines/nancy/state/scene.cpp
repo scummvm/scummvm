@@ -299,6 +299,8 @@ void Scene::addItemToInventory(uint16 id) {
 	if (_flags.heldItem == id) {
 		setHeldItem(-1);
 	}
+	
+	g_nancy->_sound->playSound("BUOK");
 
 	_inventoryBox.addItem(id);
 }
@@ -309,6 +311,8 @@ void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
 	if (pickUp) {
 		setHeldItem(id);
 	}
+	
+	g_nancy->_sound->playSound("BUOK");
 
 	_inventoryBox.removeItem(id);
 }
