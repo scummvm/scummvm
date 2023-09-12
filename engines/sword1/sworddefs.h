@@ -26,8 +26,7 @@
 
 namespace Sword1 {
 
-#define LOOPED 1
-
+#define LOOPED                1
 #define DEFAULT_FRAME_TIME    80  // 80ms, for exactly 12.5Hz
 #define FAST_FRAME_TIME       10  // 10ms, for 100Hz
 #define SLOW_FRAME_TIME       500 // 500ms, for 2Hz
@@ -38,6 +37,7 @@ namespace Sword1 {
 #define PALETTE_FADE_USEC     16667
 #define SCREEN_WIDTH          640
 #define SCREEN_DEPTH          400
+#define SCREEN_FULL_DEPTH     480 // Including top and bottom 40+40 px spaces for menu bars
 #define SCREEN_LEFT_EDGE      128
 #define SCREEN_RIGHT_EDGE     (128+SCREEN_WIDTH-1)
 #define SCREEN_TOP_EDGE       128
@@ -136,6 +136,12 @@ struct WalkGridHeader {
 	int32 scaleB;
 	int32 numBars;
 	int32 numNodes;
+} PACKED_STRUCT;
+
+struct Sprite {
+	Header header;
+	int32 totalSprites;
+	uint32 spriteOffset[2];
 } PACKED_STRUCT;
 
 #include "common/pack-end.h"    // END STRUCT PACKING

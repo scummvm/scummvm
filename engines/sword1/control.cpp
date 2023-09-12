@@ -70,162 +70,118 @@ enum LangStrings {
 	STR_DRIVE_FULL
 };
 
-enum ButtonIds {
-	BUTTON_DONE = 1,
-	BUTTON_MAIN_PANEL,
-	BUTTON_SAVE_PANEL,
-	BUTTON_RESTORE_PANEL,
-	BUTTON_RESTART,
-	BUTTON_QUIT,
-	BUTTON_SPEED,
-	BUTTON_VOLUME_PANEL,
-	BUTTON_TEXT,
-	BUTTON_CONFIRM,
-//-
-	BUTTON_SCROLL_UP_FAST,
-	BUTTON_SCROLL_UP_SLOW,
-	BUTTON_SCROLL_DOWN_SLOW,
-	BUTTON_SCROLL_DOWN_FAST,
-	BUTTON_SAVE_SELECT1,
-	BUTTON_SAVE_SELECT2,
-	BUTTON_SAVE_SELECT3,
-	BUTTON_SAVE_SELECT4,
-	BUTTON_SAVE_SELECT5,
-	BUTTON_SAVE_SELECT6,
-	BUTTON_SAVE_SELECT7,
-	BUTTON_SAVE_SELECT8,
-	BUTTON_SAVE_RESTORE_OKAY,
-	BUTTON_SAVE_CANCEL,
-//-
-	CONFIRM_OKAY,
-	CONFIRM_CANCEL
+const Button Control::panelButtons[8] = {
+	{ 145, 188, 165, 214 },
+	{ 145, 224, 165, 250 },
+	{ 145, 260, 165, 286 },
+	{ 145, 296, 165, 322 },
+	{ 475, 188, 495, 214 },
+	{ 475, 224, 495, 250 },
+	{ 475, 260, 495, 286 },
+	{ 475, 332, 495, 358 }
 };
 
-enum TextModes {
-	TEXT_LEFT_ALIGN = 0,
-	TEXT_CENTER,
-	TEXT_RIGHT_ALIGN,
-	TEXT_RED_FONT = 128
+const Button Control::deathButtons[8] = {
+	{   0,   0,   0,   0 },
+	{ 250, 224, 270, 250 },
+	{ 250, 260, 270, 286 },
+	{ 250, 296, 270, 322 },
+
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 }
 };
 
-ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 flag, ResMan *pResMan, uint8 *screenBuf, OSystem *system) {
-	_x = x;
-	_y = y;
-	_id = id;
-	_flag = flag;
-	_resId = resId;
-	_resMan = pResMan;
-	_frameIdx = 0;
-	_resMan->resOpen(_resId);
-	FrameHeader *tmp = _resMan->fetchFrame(_resMan->fetchRes(_resId), 0);
-	_width = _resMan->getUint16(tmp->width);
-	_width = (_width > SCREEN_WIDTH) ? SCREEN_WIDTH : _width;
-	_height = _resMan->getUint16(tmp->height);
-	if ((x == 0) && (y == 0)) { // center the frame (used for panels);
-		_x = (((640 - _width) / 2) < 0) ? 0 : ((640 - _width) / 2);
-		_y = (((480 - _height) / 2) < 0) ? 0 : ((480 - _height) / 2);
+const Button Control::confirmButtons[2] = {
+	{ 260, 192, 284, 216 },
+	{ 260, 256, 284, 280 }
+};
+
+const Button Control::speedButtons[3] = {
+	{ 240, 136, 264, 160 },
+	{ 240, 200, 264, 224 },
+	{ 380, 256, 404, 280 }
+};
+
+const Button Control::saveButtons[SAVEBUTTONS] = {
+	{ 114,  32, 490,  67 },
+	{ 114,  68, 490, 103 },
+	{ 114, 104, 490, 139 },
+	{ 114, 140, 490, 175 },
+	{ 114, 176, 490, 211 },
+	{ 114, 212, 490, 247 },
+	{ 114, 248, 490, 283 },
+	{ 114, 284, 490, 319 },
+
+	{ 516,  25, 532,  40 },
+	{ 516,  45, 532,  60 },
+	{ 516, 289, 532, 305 },
+	{ 516, 310, 532, 325 },
+
+	{ 125, 338, 149, 366 },
+	{ 462, 338, 485, 366 }
+};
+
+const Button Control::restoreButtons[SAVEBUTTONS] = {
+	{ 110, 100, SCREEN_FULL_DEPTH, 140 },
+
+	{ 516,  45, 532,  60 },
+	{ 516,  25, 532,  40 },
+	{ 516, 289, 532, 305 },
+	{ 516, 310, 532, 325 },
+
+	{ 125, 338, 149, 366 },
+	{ 462, 338, 485, 366 },
+
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 },
+	{   0,   0,   0,   0 }
+};
+
+const Button Control::volumeButtons[25] = {
+
+	{ VD1X + 30,      VDY, VD1X + 60, VDY + 30 },
+	{ VD1X + 60, VDY + 10, VD1X + 80, VDY + 30 },
+	{ VD1X + 60, VDY + 30, VD1X + 90, VDY + 60 },
+	{ VD1X + 60, VDY + 60, VD1X + 80, VDY + 80 },
+	{ VD1X + 30, VDY + 60, VD1X + 60, VDY + 90 },
+	{ VD1X + 10, VDY + 60, VD1X + 30, VDY + 80 },
+	{ VD1X +  0, VDY + 30, VD1X + 30, VDY + 60 },
+	{ VD1X + 10, VDY + 10, VD1X + 30, VDY + 30 },
+
+	{ VD2X + 30,      VDY, VD2X + 60, VDY + 30 },
+	{ VD2X + 60, VDY + 10, VD2X + 80, VDY + 30 },
+	{ VD2X + 60, VDY + 30, VD2X + 90, VDY + 60 },
+	{ VD2X + 60, VDY + 60, VD2X + 80, VDY + 80 },
+	{ VD2X + 30, VDY + 60, VD2X + 60, VDY + 90 },
+	{ VD2X + 10, VDY + 60, VD2X + 30, VDY + 80 },
+	{ VD2X +  0, VDY + 30, VD2X + 30, VDY + 60 },
+	{ VD2X + 10, VDY + 10, VD2X + 30, VDY + 30 },
+
+	{ VD3X + 30,      VDY, VD3X + 60, VDY + 30 },
+	{ VD3X + 60, VDY + 10, VD3X + 80, VDY + 30 },
+	{ VD3X + 60, VDY + 30, VD3X + 90, VDY + 60 },
+	{ VD3X + 60, VDY + 60, VD3X + 80, VDY + 80 },
+	{ VD3X + 30, VDY + 60, VD3X + 60, VDY + 90 },
+	{ VD3X + 10, VDY + 60, VD3X + 30, VDY + 80 },
+	{ VD3X +  0, VDY + 30, VD3X + 30, VDY + 60 },
+	{ VD3X + 10, VDY + 10, VD3X + 30, VDY + 30 },
+
+	{       472,      340,       496,      364 }
+
+};
+
+static int volToBalance(int volL, int volR) {
+	if (volL + volR == 0) {
+		return 50;
+	} else {
+		return (100 * volL / (volL + volR));
 	}
-	_dstBuf = screenBuf + _y * SCREEN_WIDTH + _x;
-	_system = system;
-}
-
-ControlButton::~ControlButton() {
-	_resMan->resClose(_resId);
-}
-
-bool ControlButton::isSaveslot() {
-	return ((_resId >= SR_SLAB1) && (_resId <= SR_SLAB4));
-}
-
-void ControlButton::draw() {
-	FrameHeader *fHead = _resMan->fetchFrame(_resMan->fetchRes(_resId), _frameIdx);
-	uint8 *src = (uint8 *)fHead + sizeof(FrameHeader);
-	uint8 *dst = _dstBuf;
-
-	if (SwordEngine::isPsx() && _resId) {
-		uint8 *HIFbuf = (uint8 *)malloc(_resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
-		memset(HIFbuf, 0, _resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
-		Screen::decompressHIF(src, HIFbuf);
-		src = HIFbuf;
-
-		if (_resMan->readUint16(&fHead->width) < 300)
-			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
-				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
-					if (src[cntx])
-						dst[cntx] = src[cntx];
-
-				dst += SCREEN_WIDTH;
-				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
-					if (src[cntx])
-						dst[cntx] = src[cntx];
-
-				dst += SCREEN_WIDTH;
-				src += _resMan->readUint16(&fHead->width);
-			}
-		else if (_resId == SR_DEATHPANEL) { // Check for death panel psx version (which is 1/3 of original width)
-			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height) / 2; cnt++) {
-				//Stretched panel is bigger than 640px, check we don't draw outside screen
-				for (uint16 cntx = 0; (cntx < (_resMan->readUint16(&fHead->width)) / 3) && (cntx < (SCREEN_WIDTH - 3)); cntx++)
-					if (src[cntx]) {
-						dst[cntx * 3] = src[cntx];
-						dst[cntx * 3 + 1] = src[cntx];
-						dst[cntx * 3 + 2] = src[cntx];
-					}
-				dst += SCREEN_WIDTH;
-
-				for (uint16 cntx = 0; cntx < (_resMan->readUint16(&fHead->width)) / 3; cntx++)
-					if (src[cntx]) {
-						dst[cntx * 3] = src[cntx];
-						dst[cntx * 3 + 1] = src[cntx];
-						dst[cntx * 3 + 2] = src[cntx];
-					}
-				dst += SCREEN_WIDTH;
-				src += _resMan->readUint16(&fHead->width) / 3;
-			}
-		} else { //save slots needs to be multiplied by 2 in height
-			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
-				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width) / 2; cntx++)
-					if (src[cntx]) {
-						dst[cntx * 2] = src[cntx];
-						dst[cntx * 2 + 1] = src[cntx];
-					}
-
-				dst += SCREEN_WIDTH;
-				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width) / 2; cntx++)
-					if (src[cntx]) {
-						dst[cntx * 2] = src[cntx];
-						dst[cntx * 2 + 1] = src[cntx];
-					}
-
-				dst += SCREEN_WIDTH;
-				src += _resMan->readUint16(&fHead->width) / 2;
-			}
-		}
-
-		free(HIFbuf);
-	} else
-		for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
-			for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
-				if (src[cntx])
-					dst[cntx] = src[cntx];
-
-			dst += SCREEN_WIDTH;
-			src += _resMan->readUint16(&fHead->width);
-		}
-
-	_system->copyRectToScreen(_dstBuf, SCREEN_WIDTH, _x, _y, _width, _height);
-}
-
-bool ControlButton::wasClicked(uint16 mouseX, uint16 mouseY) {
-	if ((_x <= mouseX) && (_y <= mouseY) && (_x + _width >= mouseX) && (_y + _height >= mouseY))
-		return true;
-	else
-		return false;
-}
-
-void ControlButton::setSelected(uint8 selected) {
-	_frameIdx = selected;
-	draw();
 }
 
 Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen, Logic *pLogic) {
@@ -244,215 +200,77 @@ Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *
 	_selectedButton = 255;
 	_panelShown = false;
 	_tempThumbnail = 0;
-}
 
-void Control::askForCd() {
-	_screenBuf = (uint8 *)malloc(640 * 480);
-	uint32 fontId = SR_FONT;
-	if (SwordEngine::_systemVars.language == BS1_CZECH)
-		fontId = CZECH_SR_FONT;
-	_font = (uint8 *)_resMan->openFetchRes(fontId);
-	uint8 *pal = (uint8 *)_resMan->openFetchRes(SR_PALETTE);
-	uint8 *palOut = (uint8 *)malloc(256 * 3);
-	for (uint16 cnt = 1; cnt < 256; cnt++) {
-		palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
-		palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
-		palOut[cnt * 3 + 2] = pal[cnt * 3 + 2] << 2;
-	}
-	palOut[0] = palOut[1] = palOut[2] = 0;
-	_resMan->resClose(SR_PALETTE);
-	_system->getPaletteManager()->setPalette(palOut, 0, 256);
-	free(palOut);
-
-	char fName[10];
-	uint8 textA[50];
-	Common::sprintf_s(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);
-	Common::sprintf_s(textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
-	bool notAccepted = true;
-	bool refreshText = true;
-	do {
-		if (refreshText) {
-			memset(_screenBuf, 0, 640 * 480);
-			renderText(textA, 320, 220, TEXT_CENTER);
-			renderText(_lStrings[STR_INSERT_CD_B], 320, 240, TEXT_CENTER);
-			_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
-		}
-		delay(300);
-		if (_keyPressed.keycode) {
-			if (!Common::File::exists(fName)) {
-				memset(_screenBuf, 0, 640 * 480);
-				renderText(_lStrings[STR_INCORRECT_CD], 320, 230, TEXT_CENTER);
-				_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
-				delay(2000);
-				refreshText = true;
-			} else {
-				notAccepted = false;
-			}
-		}
-	} while (notAccepted && (!Engine::shouldQuit()));
-
-	_resMan->resClose(fontId);
-	free(_screenBuf);
-}
-
-static int volToBalance(int volL, int volR) {
-	if (volL + volR == 0) {
-		return 50;
-	} else {
-		return (100 * volL / (volL + volR));
+	for (int i = 0; i < ARRAYSIZE(_slabs); i++) {
+		_slabs[i] = nullptr;
 	}
 }
 
-uint8 Control::runPanel() {
-	// Make a thumbnail of the screen before displaying the menu in case we want to save
-	// the game from the menu.
+bool Control::savegamesExist() {
+	Common::String pattern = "sword1.???";
+	Common::StringArray saveNames = _saveFileMan->listSavefiles(pattern);
+	return saveNames.size() > 0;
+}
+
+bool Control::isPanelShown() {
+	return _panelShown;
+}
+
+void Control::getPlayerOptions() {
+	debug(1, "Control::getPlayerOptions(): Entering Control Panel");
+	_panelShown = true;
+
+	_screenBuf = (uint8 *)malloc(SCREEN_WIDTH * SCREEN_FULL_DEPTH);
+	// Make a thumbnail of the screen before displaying the menu
+	// in case we want to save the game from the menu.
 	_tempThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Graphics::saveThumbnail(*_tempThumbnail);
+
+	// Reset because it was previously used when 'F5' or 'ESC' were pressed
+	SwordEngine::_systemVars.saveGameFlag = SGF_DONE;
 
 	_logic->fnWipeHands(nullptr, 0, 0, 0, 0, 0, 0, 0);
 	_logic->fnEndMenu(nullptr, 0, 0, 0, 0, 0, 0, 0);
 
-	// Fade video and sounds down
+	int safeCurrentMusic = Logic::_scriptVars[CURRENT_MUSIC];
+
+	// Play music only if we actually have a music file to run..
+	if (!SwordEngine::_systemVars.runningFromCd || SwordEngine::_systemVars.currentCD)
+		_logic->fnPlayMusic(nullptr, 0, 61, LOOPED, 0, 0, 0, 0); // Control panel music ("2m29")
+
+	Logic::_scriptVars[CURRENT_MUSIC] = safeCurrentMusic;
+
 	_screen->startFadePaletteDown(1);
 	_vm->waitForFade();
 	_sound->quitScreen();
-
-	int previousMusic = Logic::_scriptVars[CURRENT_MUSIC];
-	_logic->fnPlayMusic(nullptr, 0, 61, LOOPED, 0, 0, 0, 0);
-	Logic::_scriptVars[CURRENT_MUSIC] = previousMusic;
-
-	_panelShown = true;
-	_mouseDown = false;
-	_restoreBuf = NULL;
 	_keyPressed.reset();
-	_numButtons = 0;
 
-	// Clear the whole screen
-	_screenBuf = (uint8 *)malloc(640 * 480);
-	memset(_screenBuf, 0, 640 * 480);
-	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
+	while (SwordEngine::_systemVars.snrStatus != SNR_BLANK && !Engine::shouldQuit()) {
+		delay(DEFAULT_FRAME_TIME / 2);
 
-	// Gather font resources
-	uint32 fontId = SR_FONT, redFontId = SR_REDFONT;
-	if (SwordEngine::_systemVars.language == BS1_CZECH) {
-		fontId = CZECH_SR_FONT;
-		redFontId = CZECH_SR_REDFONT;
-	}
-	_font = (uint8 *)_resMan->openFetchRes(fontId);
-	_redFont = (uint8 *)_resMan->openFetchRes(redFontId);
+		// TODO: audio
+		// SetCrossFadeIncrement();
 
-	// Set up mouse
-	_mouse->controlPanel(true);
-
-	uint8 mode = BUTTON_MAIN_PANEL, newMode = 0;
-	bool fullRefresh = false;
-	uint8 retVal = CONTROL_NOTHING_DONE;
-
-	// Set up the image and the correct palette for fading up
-	if (SwordEngine::isPsx())
-		destroyButtons();
-	setupMainPanel();
-
-	_screen->fnSetFadeTargetPalette(0, 256, SR_PALETTE);
-	_screen->fnSetFadeTargetPalette(0, 1, 0, true);
-
-	// Fade up
-	_screen->startFadePaletteUp(1);
-	_vm->waitForFade();
-
-	do {
-		if (newMode) {
-			mode = newMode;
-			fullRefresh = true;
-			destroyButtons();
-			memset(_screenBuf, 0, 640 * 480);
-			if (mode != BUTTON_SAVE_PANEL)
-				_cursorVisible = false;
-		}
-		switch (mode) {
-		case BUTTON_MAIN_PANEL:
-			if (fullRefresh)
-				setupMainPanel();
-			break;
-		case BUTTON_SAVE_PANEL:
-			if (fullRefresh) {
-				setupSaveRestorePanel(true);
-			}
-			if (_selectedSavegame < 255) {
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-				bool visible = _cursorVisible;
-				_cursorTick++;
-				if (_cursorTick == 7)
-					_cursorVisible = true;
-				else if (_cursorTick == 14) {
-					_cursorVisible = false;
-					_cursorTick = 0;
-				}
-				if (_keyPressed.keycode)
-					handleSaveKey(_keyPressed);
-				else if (_cursorVisible != visible)
-					showSavegameNames();
-			} else {
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-			}
-			break;
-		case BUTTON_RESTORE_PANEL:
-			if (fullRefresh)
-				setupSaveRestorePanel(false);
-			break;
-		case BUTTON_VOLUME_PANEL:
-			if (fullRefresh)
-				setupVolumePanel();
-			break;
-		default:
-			break;
-		}
-		if (fullRefresh) {
-			fullRefresh = false;
-			_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
-		}
-		delay(DEFAULT_FRAME_TIME);
-		newMode = getClicks(mode, &retVal);
-	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!Engine::shouldQuit()));
-
-	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
-		uint8 volL, volR;
-		_music->giveVolume(&volL, &volR);
-		int vol = (int)((volR + volL) / 2);
-		int volBalance = volToBalance(volL, volR);
-		if (vol != ConfMan.getInt("music_volume"))
-			ConfMan.setInt("music_volume", vol);
-		if (volBalance != ConfMan.getInt("music_balance"))
-			ConfMan.setInt("music_balance", volBalance);
-
-		_sound->giveSpeechVol(&volL, &volR);
-		vol = (int)((volR + volL) / 2);
-		volBalance = volToBalance(volL, volR);
-		if (vol != ConfMan.getInt("speech_volume"))
-			ConfMan.setInt("speech_volume", vol);
-		if (volBalance != ConfMan.getInt("speech_balance"))
-			ConfMan.setInt("speech_balance", volBalance);
-
-		_sound->giveSfxVol(&volL, &volR);
-		vol = (int)((volR + volL) / 2);
-		volBalance = volToBalance(volL, volR);
-		if (vol != ConfMan.getInt("sfx_volume"))
-			ConfMan.setInt("sfx_volume", vol);
-		if (volBalance != ConfMan.getInt("sfx_balance"))
-			ConfMan.setInt("sfx_balance", volBalance);
-
-		if (SwordEngine::_systemVars.showText != ConfMan.getBool("subtitles"))
-			ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
-		ConfMan.flushToDisk();
+		_mouse->animate();
+		// TODO: audio
+		// UpdateSampleStreaming(); // stream music
+		saveRestoreScreen();
 	}
 
-	// Fade out video and sounds
-	bool didRestoreRestartOrQuit =
-		Engine::shouldQuit() ||
-		(retVal & CONTROL_RESTART_GAME) ||
-		(retVal & CONTROL_GAME_RESTORED);
+	_keyPressed.reset();
 
-	if (didRestoreRestartOrQuit || (Logic::_scriptVars[CURRENT_MUSIC] == 0)) {
+	saveRestoreScreen();
+
+	debug(1, "Control::getPlayerOptions(): Returning from Control Panel: saveGameFlag = %d",
+		SwordEngine::_systemVars.saveGameFlag);
+
+	// Stop music now, if we're not returning to any in-game music...
+	bool wontReloadMusic =
+		SwordEngine::_systemVars.saveGameFlag == SGF_RESTORE ||
+		SwordEngine::_systemVars.saveGameFlag == SGF_RESTART ||
+		SwordEngine::_systemVars.saveGameFlag == SGF_QUIT;
+
+	if (wontReloadMusic || (Logic::_scriptVars[CURRENT_MUSIC] == 0)) {
 		_logic->fnStopMusic(nullptr, 0, 0, 0, 0, 0, 0, 0);
 	}
 
@@ -462,456 +280,2572 @@ uint8 Control::runPanel() {
 	_logic->fnNormalMouse(nullptr, 0, 0, 0, 0, 0, 0, 0);
 	Logic::_scriptVars[NEW_PALETTE] = 1;
 
-	// Clear the control panel resources and the free the temp screen buffer
-	destroyButtons();
-	_resMan->resClose(fontId);
-	_resMan->resClose(redFontId);
-	memset(_screenBuf, 0, 640 * 480);
-	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
-	free(_screenBuf);
+	if (SwordEngine::_systemVars.saveGameFlag == SGF_SAVE) {
+		saveGame();
+	} else if (SwordEngine::_systemVars.saveGameFlag == SGF_QUIT) {
+		// TODO: audio
+		// FadeMusicDown(1);
 
-	// Restore mouse
-	_mouse->controlPanel(false);
+		Engine::quitGame();
+	}
 
-	// If DONE or SAVE was selected, try restoring audio
-	if (!didRestoreRestartOrQuit) {
+	// Reset again (because it may have been set in fnDeathScreen())
+	SwordEngine::_systemVars.controlPanelMode = CP_NORMAL;
+
+	// If DONE or SAVE was selected, try restoring audio...
+	if (SwordEngine::_systemVars.saveGameFlag == SGF_DONE || SwordEngine::_systemVars.saveGameFlag == SGF_SAVE) {
 		// Restore sound effects...
 		for (int j = 0; j < TOTAL_FX_PER_ROOM; j++) {
-			if (int fxNo = Sound::_roomsFixedFx[Logic::_scriptVars[SCREEN]][j]) {
+			if (int32 fxNo = Sound::_roomsFixedFx[Logic::_scriptVars[SCREEN]][j]) { // search the room's fixed fx list (see 'fx_list.c')
 				if (Sound::_fxList[fxNo].type == FX_LOOP)
 					_logic->fnPlayFx(nullptr, 0, fxNo, 0, 0, 0, 0, 0);
 			} else {
 				break; // Drop out as soon as we come across a zero, rather than searching the whole list...
 			}
 		}
-
 		// Restore in-game music...
 		if (Logic::_scriptVars[CURRENT_MUSIC]) {
 			_logic->fnPlayMusic(nullptr, 0, Logic::_scriptVars[CURRENT_MUSIC], LOOPED, 0, 0, 0, 0);
 		}
 	}
 
-	// Delete the temporary thumbnail
-	delete _tempThumbnail;
-	_tempThumbnail = 0;
+	_screen->clearScreen();
+	free(_screenBuf);
 
+	debug(1, "Control::getPlayerOptions(): Finished getPlayerOptions()");
 	_panelShown = false;
 
-	return retVal;
+	// Was being set to true in initialiseControlPanel(),
+	// but we have to wait until here to set it to false
+	_mouse->controlPanel(false);
+
+	// Delete the temporary thumbnail
+	delete _tempThumbnail;
+	_tempThumbnail = nullptr;
 }
 
-uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
-	uint8 checkButtons = _numButtons;
-	if (mode == BUTTON_VOLUME_PANEL) {
-		handleVolumeClicks();
-		checkButtons = 1;
+void Control::askForCdMessage(uint32 needCD, bool incorrectCDPhase) {
+	uint8 buf[255];
+	_screenBuf = (uint8 *)malloc(SCREEN_WIDTH * SCREEN_FULL_DEPTH);
+	if (!_screenBuf)
+		return;
+
+	if (!incorrectCDPhase) {
+		//ScreenOpen(640 / XBLOCKSIZE, 400 / YBLOCKSIZE); // sets up global structure screenDef
+		memset(_screenBuf, 0, SCREEN_WIDTH * SCREEN_DEPTH);
+
+		Common::sprintf_s(buf, "%s%d", _lStrings[STR_INSERT_CD_A], needCD);
+		renderText(buf, (640 - getTextLength(buf, true)) / 2, 190, true);
+
+		Common::sprintf_s(buf, "%s", _lStrings[STR_INSERT_CD_B]);
+		renderText(buf, (640 - getTextLength(buf, true)) / 2, 210, true);
+
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+	} else {
+		//if (displayInfo.backBuffer == 0) {
+		memset(_screenBuf, 0, SCREEN_WIDTH * SCREEN_DEPTH);
+			_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+		//}
+
+		memset(_screenBuf, 0, SCREEN_WIDTH * SCREEN_DEPTH);
+
+		Common::sprintf_s(buf, "%s", _lStrings[STR_INCORRECT_CD]);
+		renderText(buf, (640 - getTextLength(buf, true)) / 2, 160, true);
+
+		Common::sprintf_s(buf, "%s%d", _lStrings[STR_INSERT_CD_A], needCD);
+		renderText(buf, (640 - getTextLength(buf, true)) / 2, 190, true);
+
+		Common::sprintf_s(buf, "%s", _lStrings[STR_INSERT_CD_B]);
+		renderText(buf, (640 - getTextLength(buf, true)) / 2, 210, true);
+
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
 	}
+	free(_screenBuf);
+}
 
-	uint8 flag = 0;
-	if (_keyPressed.keycode == Common::KEYCODE_ESCAPE)
-		flag = kButtonCancel;
-	else if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER)
-		flag = kButtonOk;
+void Control::saveRestoreScreen() {
+	int32 rv;
 
-	if (flag) {
-		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
-			if (_buttons[cnt]->_flag == flag)
-				return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
-	}
+	if (_oldSnrStatus != SwordEngine::_systemVars.snrStatus) {
+		// Tidy up after snr section
+		if (_oldSnrStatus == SNR_BLANK) {
+			memset(_screenBuf, 0, SCREEN_WIDTH * SCREEN_FULL_DEPTH);
+			_newPal = true;
+		}
 
-	if (!_mouseState)
-		return 0;
-	if (_mouseState & BS1L_BUTTON_DOWN)
-		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
-			if (_buttons[cnt]->wasClicked(_mouseCoord.x, _mouseCoord.y)) {
-				_selectedButton = cnt;
-				_buttons[cnt]->setSelected(1);
-				if (_buttons[cnt]->isSaveslot())
-					showSavegameNames();
+		switch (_oldSnrStatus) {
+		case SNR_BLANK:
+			memset(_screenBuf, 0, SCREEN_WIDTH * SCREEN_FULL_DEPTH);
+			break;
+		case SNR_MAINPANEL:
+			removeControlPanel();
+			setVolumes();
+			break;
+		case SNR_SAVE:
+			removeSave();
+			break;
+		case SNR_RESTORE:
+			removeRestore();
+			break;
+		case SNR_RESTART:
+		case SNR_QUIT:
+			removeConfirmation();
+			break;
+		case SNR_SPEED:
+			removeSpeed();
+			break;
+		case SNR_VOLUME:
+			removeVolume();
+			setVolumes();
+			break;
+		case SNR_DRIVEFULL:
+			removeConfirmation();
+			break;
+		}
+
+		// Initialise new snr section
+		switch (SwordEngine::_systemVars.snrStatus) {
+		case SNR_BLANK:
+			releaseResources();
+			break;
+		case SNR_MAINPANEL:
+			if (_oldSnrStatus == SNR_BLANK) {
+				initialiseResources();
 			}
-	if (_mouseState & BS1L_BUTTON_UP) {
-		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
-			if (_buttons[cnt]->wasClicked(_mouseCoord.x, _mouseCoord.y))
-				if (_selectedButton == cnt) {
-					// saveslots stay selected after clicking
-					if (!_buttons[cnt]->isSaveslot())
-						_buttons[cnt]->setSelected(0);
-					_selectedButton = 255;
-					return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
-				}
-		if (_selectedButton < checkButtons) {
-			_buttons[_selectedButton]->setSelected(0);
-			if (_buttons[_selectedButton]->isSaveslot())
-				showSavegameNames();
-		}
-		_selectedButton = 255;
-	}
-	if (_mouseState & BS1_WHEEL_UP) {
-		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
-			if (_buttons[cnt]->_id == BUTTON_SCROLL_UP_SLOW)
-				return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
-	}
-	if (_mouseState & BS1_WHEEL_DOWN) {
-		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
-			if (_buttons[cnt]->_id == BUTTON_SCROLL_DOWN_SLOW)
-				return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
-	}
-	return 0;
-}
 
-uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
-	switch (mode) {
-	case BUTTON_MAIN_PANEL:
-		if (id == BUTTON_RESTART) {
-			if (SwordEngine::_systemVars.controlPanelMode) // if player is dead or has just started, don't ask for confirmation
-				*retVal |= CONTROL_RESTART_GAME;
-			else if (getConfirm(_lStrings[STR_RESTART]))
-				*retVal |= CONTROL_RESTART_GAME;
-			else
-				return mode;
-		} else if ((id == BUTTON_RESTORE_PANEL) || (id == BUTTON_SAVE_PANEL) ||
-		           (id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
-			return id;
-		else if (id == BUTTON_TEXT) {
-			SwordEngine::_systemVars.showText = !SwordEngine::_systemVars.showText;
-			_buttons[5]->setSelected(SwordEngine::_systemVars.showText ? 1 : 0);
-		} else if (id == BUTTON_QUIT) {
-			if (getConfirm(_lStrings[STR_QUIT]))
-				Engine::quitGame();
-			return mode;
-		}
-		break;
-	case BUTTON_SAVE_PANEL:
-	case BUTTON_RESTORE_PANEL:
-		if ((id >= BUTTON_SCROLL_UP_FAST) && (id <= BUTTON_SCROLL_DOWN_FAST))
-			saveNameScroll(id, mode == BUTTON_SAVE_PANEL);
-		else if ((id >= BUTTON_SAVE_SELECT1) && (id <= BUTTON_SAVE_SELECT8))
-			saveNameSelect(id, mode == BUTTON_SAVE_PANEL);
-		else if (id == BUTTON_SAVE_RESTORE_OKAY) {
-			if (mode == BUTTON_SAVE_PANEL) {
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-				if (saveToFile()) // don't go back to main panel if save fails.
-					return BUTTON_DONE;
+			//GetVolumes();
+			initialiseControlPanel();
+			break;
+		case SNR_SAVE:
+			initialiseSave();
+			break;
+		case SNR_RESTORE:
+			initialiseRestore();
+			break;
+		case SNR_RESTART:
+			if (SwordEngine::_systemVars.controlPanelMode == CP_NEWGAME) {
+				SwordEngine::_systemVars.snrStatus = SNR_BLANK;
+				_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
 			} else {
-				if (restoreFromFile()) { // don't go back to main panel if restore fails.
-					*retVal |= CONTROL_GAME_RESTORED;
-					return BUTTON_MAIN_PANEL;
-				}
+				initialiseConfirmation(_lStrings[STR_RESTART]);
 			}
-		} else if (id == BUTTON_SAVE_CANCEL) {
-			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-			return BUTTON_MAIN_PANEL; // mode down to main panel
+
+			break;
+		case SNR_QUIT:
+			initialiseConfirmation(_lStrings[STR_QUIT]);
+			break;
+		case SNR_SPEED:
+			initialiseSpeed();
+			break;
+		case SNR_VOLUME:
+			//GetVolumes();
+			initialiseVolume();
+			break;
+		case SNR_DRIVEFULL:
+			initialiseConfirmation(_lStrings[STR_DRIVE_FULL]);
+			break;
 		}
+
+		_oldSnrStatus = SwordEngine::_systemVars.snrStatus;
+	}
+
+	// Implement snr section
+
+	switch (SwordEngine::_systemVars.snrStatus) {
+	case SNR_BLANK:
 		break;
-	case BUTTON_VOLUME_PANEL:
-		return id;
-	default:
+	case SNR_MAINPANEL:
+		implementControlPanel();
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+
+		if (_newPal) {
+			_newPal = false;
+			_screen->startFadePaletteUp(1);
+		}
+
+		break;
+	case SNR_SAVE:
+		implementSave();
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+
+		break;
+	case SNR_RESTORE:
+		implementRestore();
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+
+		break;
+	case SNR_RESTART:
+		rv = implementConfirmation();
+		if (rv) {
+			if (rv == 1) {
+				SwordEngine::_systemVars.saveGameFlag = SGF_RESTART;
+				SwordEngine::_systemVars.snrStatus = SNR_BLANK;
+			} else {
+				SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
+			}
+		}
+
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+
+		break;
+	case SNR_QUIT:
+		rv = implementConfirmation();
+		if (rv) {
+			if (rv == 1) {
+				SwordEngine::_systemVars.saveGameFlag = SGF_QUIT;
+				SwordEngine::_systemVars.snrStatus = SNR_BLANK;
+			} else {
+				SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
+			}
+		}
+
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+
+		break;
+	case SNR_SPEED:
+		implementSpeed();
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+		break;
+	case SNR_VOLUME:
+		implementVolume();
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+		break;
+	case SNR_SUBTITLES:
+		SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
+		break;
+	case SNR_DONE:
+		SwordEngine::_systemVars.snrStatus = SNR_BLANK;
+		break;
+	case SNR_DRIVEFULL:
+		rv = implementConfirmation();
+
+		if (rv == 1) {
+			SwordEngine::_systemVars.snrStatus = SNR_SAVE;
+		}
+
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
 		break;
 	}
+}
+
+void Control::renderSlab(int32 start, int32 i) {
+	uint8 *src, *dst;
+	FrameHeader *f;
+
+	if (start + 1 == _slabSelected) {
+		f = (FrameHeader *)((uint8 *)_slabs[start] + _resMan->getUint32(_slabs[start]->spriteOffset[1]));
+	} else {
+		f = (FrameHeader *)((uint8 *)_slabs[start] + _resMan->getUint32(_slabs[start]->spriteOffset[0]));
+	}
+
+	src = (uint8 *)f + sizeof(FrameHeader);
+
+	if (start + 1 == _slabSelected) {
+		dst = _screenBuf + saveButtons[i].x1 + SCREEN_WIDTH * (saveButtons[i].y1 - 1);
+	} else {
+		dst = _screenBuf + saveButtons[i].x1 + SCREEN_WIDTH * saveButtons[i].y1;
+	}
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_SLAB, src, dst, f);
+	} else {
+		for (int j = 0; j < _resMan->getUint16(f->height); j++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+}
+
+void Control::renderSlabs() {
+	uint8 *src, *dst;
+	int32 start;
+	FrameHeader *f;
+
+	start = _firstDescription;
+	while (start >= (SAVEBUTTONS - 6))
+		start -= (SAVEBUTTONS - 6);
+
+	for (int i = 0; i < SAVEBUTTONS - 6; i++) {
+		if (i + 1 == _slabSelected)
+			continue;
+
+		f = (FrameHeader *)((uint8 *)_slabs[start] + _resMan->getUint32(_slabs[start]->spriteOffset[0]));
+		src = (uint8 *)f + sizeof(FrameHeader);
+		dst = _screenBuf + saveButtons[i].x1 + SCREEN_WIDTH * saveButtons[i].y1;
+
+		if (SwordEngine::isPsx()) {
+			drawPsxComponent(PSX_SLAB, src, dst, f);
+		} else {
+			for (int j = 0; j < _resMan->getUint16(f->height); j++) {
+				memcpy(dst, src, _resMan->getUint16(f->width));
+				src += _resMan->getUint16(f->width);
+				dst += SCREEN_WIDTH;
+			}
+		}
+
+		start += 1;
+		if (start == SAVEBUTTONS - 6)
+			start = 0;
+	}
+
+	if (_slabSelected) {
+		start = _firstDescription;
+		while (start >= (SAVEBUTTONS - 6))
+			start -= (SAVEBUTTONS - 6);
+
+		start += (_slabSelected - 1);
+		if (start >= (SAVEBUTTONS - 6))
+			start -= (SAVEBUTTONS - 6);
+
+		f = (FrameHeader *)((uint8 *)_slabs[start] + _resMan->getUint32(_slabs[start]->spriteOffset[1]));
+		src = (uint8 *)f + sizeof(FrameHeader);
+		dst = _screenBuf + saveButtons[_slabSelected - 1].x1 + SCREEN_WIDTH * (saveButtons[_slabSelected - 1].y1 - 1);
+
+		if (SwordEngine::isPsx()) {
+			drawPsxComponent(PSX_SLAB, src, dst, f);
+		} else {
+			for (int j = 0; j < _resMan->getUint16(f->height); j++) {
+				memcpy(dst, src, _resMan->getUint16(f->width));
+				src += _resMan->getUint16(f->width);
+				dst += SCREEN_WIDTH;
+			}
+		}
+	}
+}
+
+void Control::renderText(const uint8 *str, int32 x, int32 y, bool useSpeechFont) {
+	uint8 *src, *dst;
+	int32 i, l;
+	FrameHeader *f;
+	Sprite *srFont;
+
+	if (useSpeechFont) {
+		if (SwordEngine::_systemVars.language == BS1_CZECH) {
+			srFont = (Sprite *)_resMan->fetchRes(CZECH_GAME_FONT);
+		} else {
+			srFont = (Sprite *)_resMan->fetchRes(GAME_FONT);
+		}
+	} else {
+		if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN) {
+			if (SwordEngine::_systemVars.language == BS1_CZECH) {
+				srFont = (Sprite *)_resMan->fetchRes(CZECH_SR_DEATHFONT);
+			} else {
+				srFont = (Sprite *)_resMan->fetchRes(_resMan->getDeathFontId());
+			}
+		} else {
+			if (SwordEngine::_systemVars.language == BS1_CZECH) {
+				srFont = (Sprite *)_resMan->fetchRes(CZECH_SR_FONT);
+			} else {
+				srFont = (Sprite *)_resMan->fetchRes(SR_FONT);
+			}
+		}
+	}
+
+	i = 0;
+	l = 0;
+
+	while (str[i] != 0) {
+		f = (FrameHeader *)((uint8 *)srFont + _resMan->getUint32(srFont->spriteOffset[str[i] - 32]));
+		dst = _screenBuf + SCREEN_WIDTH * y + x + l;
+		src = (uint8 *)f + sizeof(FrameHeader);
+
+		if (SwordEngine::isPsx()) {
+			src = decompressPsxGfx(src, f);
+			uint8 *initialPtr = src;
+
+			for (int k = 0; k < _resMan->getUint16(f->height); k++) {
+				for (int j = 0; j < _resMan->getUint16(f->width); j++) {
+					if (src[j])
+						dst[j] = src[j];
+				}
+
+				// On PSX version we need to double horizontal lines
+				if (SwordEngine::isPsx()) {
+					dst += SCREEN_WIDTH;
+					for (int j = 0; j < _resMan->getUint16(f->width); j++)
+						if (src[j])
+							dst[j] = src[j];
+				}
+
+				src += _resMan->getUint16(f->width);
+				dst += SCREEN_WIDTH;
+			}
+
+			free(initialPtr);
+		} else {
+			// Copy the data onto the sprite
+			for (int k = 0; k < _resMan->getUint16(f->height); k++) {
+				for (int j = 0; j < _resMan->getUint16(f->width); j++) {
+					if (*src) {
+						*dst = *src;
+					}
+
+					dst += 1;
+					src += 1;
+				}
+
+				dst += SCREEN_WIDTH - _resMan->getUint16(f->width);
+			}
+		}
+
+		l += _resMan->getUint16(f->width);
+		l -= useSpeechFont ? SP_OVERLAP : OVERLAP;
+		i += 1;
+	}
+}
+
+void Control::renderRedText(const uint8 *str, int32 x, int32 y) {
+	uint8 *src, *dst;
+	int32 i, l;
+	FrameHeader *f;
+	Sprite *srRedfont;
+
+	if (SwordEngine::_systemVars.language == BS1_CZECH) {
+		srRedfont = (Sprite *)_resMan->fetchRes(CZECH_SR_REDFONT);
+	} else {
+		srRedfont = (Sprite *)_resMan->fetchRes(SR_REDFONT);
+	}
+
+	i = 0;
+	l = 0;
+	while (str[i] != 0) {
+		f = (FrameHeader *)((uint8 *)srRedfont + _resMan->getUint32(srRedfont->spriteOffset[str[i] - 32]));
+		dst = _screenBuf + SCREEN_WIDTH * y + x + l;
+		src = (uint8 *)f + sizeof(FrameHeader);
+
+		if (SwordEngine::isPsx()) {
+			drawPsxComponent(PSX_TEXT, src, dst, f);
+		} else {
+			// Copy the data onto the sprite
+			for (int k = 0; k < _resMan->getUint16(f->height); k++) {
+				for (int j = 0; j < _resMan->getUint16(f->width); j++) {
+					if (*src) {
+						*dst = *src;
+					}
+					dst += 1;
+					src += 1;
+				}
+				dst += SCREEN_WIDTH - _resMan->getUint16(f->width);
+			}
+		}
+
+		l += (_resMan->getUint16(f->width) - OVERLAP);
+		i += 1;
+	}
+}
+
+void Control::renderTexts() {
+	char string[40];
+
+	for (int i = 0; i < SAVEBUTTONS - 6; i++) {
+		Common::sprintf_s(string, "%d", _firstDescription + i + 1);
+		if (_slabSelected == i + 1) {
+			renderRedText((const uint8 *)string, saveButtons[i].x1 + 12, saveButtons[i].y1 + 5);
+			renderRedText((const uint8 *)_fileDescriptions[_firstDescription + i], saveButtons[i].x1 + 42, saveButtons[i].y1 + 5);
+		} else {
+			renderText((const uint8 *)string, saveButtons[i].x1 + 12, saveButtons[i].y1 + 5);
+			renderText((const uint8 *)_fileDescriptions[_firstDescription + i], saveButtons[i].x1 + 42, saveButtons[i].y1 + 5);
+		}
+	}
+}
+
+int32 Control::getTextLength(const uint8 *str, bool useSpeechFont) {
+	int32 i;
+	int32 l;
+	FrameHeader *f;
+	Sprite *srFont;
+
+	if (useSpeechFont) {
+		if (SwordEngine::_systemVars.language == BS1_CZECH) {
+			srFont = (Sprite *)_resMan->fetchRes(CZECH_GAME_FONT);
+		} else {
+			srFont = (Sprite *)_resMan->fetchRes(GAME_FONT);
+		}
+	} else {
+		if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN) {
+			if (SwordEngine::_systemVars.language == BS1_CZECH) {
+				srFont = (Sprite *)_resMan->fetchRes(CZECH_SR_DEATHFONT);
+			} else {
+				srFont = (Sprite *)_resMan->fetchRes(_resMan->getDeathFontId());
+			}
+		} else {
+			if (SwordEngine::_systemVars.language == BS1_CZECH) {
+				srFont = (Sprite *)_resMan->fetchRes(CZECH_SR_FONT);
+			} else {
+				srFont = (Sprite *)_resMan->fetchRes(SR_FONT);
+			}
+		}
+	}
+
+	i = 0;
+	l = 0;
+
+	while (str[i] != 0) {
+		f = (FrameHeader *)((uint8 *)srFont +  _resMan->getUint32(srFont->spriteOffset[str[i] - 32]));
+		l += _resMan->getUint16(f->width);
+		l -= useSpeechFont ? SP_OVERLAP : OVERLAP;
+		i += 1;
+	}
+
+	return l;
+}
+
+void Control::putButton(int32 x, int32 y, int32 index) {
+	uint8 *src, *dst;
+	FrameHeader *f;
+	Sprite *srButton;
+
+	srButton = (Sprite *)_resMan->fetchRes(SR_BUTTON);
+
+	f = (FrameHeader *)((uint8 *)srButton + _resMan->getUint32(srButton->spriteOffset[index]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + SCREEN_WIDTH * y + x;
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_BUTTON, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			for (int j = 0; j < _resMan->getUint16(f->width); j++)
+				if (*(src + j))
+					*(dst + j) = *(src + j);
+
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+}
+
+void Control::putSpriteButton(Sprite *spr, int32 x, int32 y, int32 index) {
+	uint8 *src, *dst;
+	FrameHeader *f;
+
+	f = (FrameHeader *)((uint8 *)spr + _resMan->getUint32(spr->spriteOffset[index]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + SCREEN_WIDTH * y + x;
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_BUTTON, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			for (int j = 0; j < _resMan->getUint16(f->width); j++)
+				if (*(src + j))
+					*(dst + j) = *(src + j);
+
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+}
+
+void Control::putTextButton(int32 index) {
+	uint8 *src, *dst;
+	int32 x, y;
+	FrameHeader *f;
+	Sprite *srTextButton;
+
+	srTextButton = (Sprite *)_resMan->fetchRes(SR_TEXT_BUTTON);
+
+	x = 475;
+	y = 260;
+
+	f = (FrameHeader *)((uint8 *)srTextButton + _resMan->getUint32(srTextButton->spriteOffset[index]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + SCREEN_WIDTH * y + x;
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_BUTTON, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+}
+
+int32 Control::getCurrentButton(const Button b[]) {
+	for (int i = 0; i < _numButtons; i++) {
+		if ((_mouseCoord.x > b[i].x1) && (_mouseCoord.y - 40 > b[i].y1) &&
+			(_mouseCoord.x < b[i].x2) && (_mouseCoord.y - 40 < b[i].y2)) {
+			return i + 1;
+		}
+	}
+
 	return 0;
 }
 
-void Control::deselectSaveslots() {
-	for (uint8 cnt = 0; cnt < 8; cnt++)
-		_buttons[cnt]->setSelected(0);
-}
+void Control::initialiseConfirmation(const uint8 *title) {
+	uint8 *src, *dst;
+	FrameHeader *f;
+	Sprite *srConfirm;
 
-void Control::setupMainPanel() {
-	uint32 panelId;
+	srConfirm = (Sprite *)_resMan->openFetchRes(SR_CONFIRM);
 
-	if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN)
-		panelId = SR_DEATHPANEL;
-	else {
-		if (SwordEngine::_systemVars.realLanguage == Common::EN_USA)
-			panelId = SR_PANEL_AMERICAN;
-		else if (SwordEngine::_systemVars.language <= BS1_SPANISH)
-			panelId = SR_PANEL_ENGLISH + SwordEngine::_systemVars.language;
-		else
-			panelId = SR_PANEL_ENGLISH;
-	}
+	f = (FrameHeader *)((uint8 *)srConfirm + _resMan->getUint32(srConfirm->spriteOffset[0]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf +
+		((SCREEN_WIDTH - _resMan->getUint16(f->width)) / 2) +
+		(SCREEN_WIDTH * ((SCREEN_DEPTH - _resMan->getUint16(f->height)) / 2));
 
-	ControlButton *panel = new ControlButton(0, 0, panelId, 0, 0, _resMan, _screenBuf, _system);
-	panel->draw();
-	delete panel;
-
-	if (SwordEngine::_systemVars.controlPanelMode != CP_NORMAL)
-		createButtons(_deathButtons, 3);
-	else {
-		createButtons(_panelButtons, 7);
-		_buttons[5]->setSelected(SwordEngine::_systemVars.showText ? 1 : 0);
-	}
-
-	if (SwordEngine::_systemVars.controlPanelMode == CP_THEEND) // end of game
-		renderText(_lStrings[STR_THE_END], 480, 188 + 40, TEXT_RIGHT_ALIGN);
-
-	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) { // normal panel
-		renderText(_lStrings[STR_SAVE], 180, 188 + 40, TEXT_LEFT_ALIGN);
-		renderText(_lStrings[STR_DONE], 460, 332 + 40, TEXT_RIGHT_ALIGN);
-		renderText(_lStrings[STR_RESTORE], 180, 224 + 40, TEXT_LEFT_ALIGN);
-		renderText(_lStrings[STR_RESTART], 180, 260 + 40, TEXT_LEFT_ALIGN);
-		renderText(_lStrings[STR_QUIT], 180, 296 + 40, TEXT_LEFT_ALIGN);
-
-		renderText(_lStrings[STR_VOLUME], 460, 188 + 40, TEXT_RIGHT_ALIGN);
-		renderText(_lStrings[STR_TEXT], 460, 224 + 40, TEXT_RIGHT_ALIGN);
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_CONFIRM, src, dst, f);
 	} else {
-		renderText(_lStrings[STR_RESTORE], 285, 224 + 40, TEXT_LEFT_ALIGN);
-		if (SwordEngine::_systemVars.controlPanelMode == CP_NEWGAME) // just started game
-			renderText(_lStrings[STR_START], 285, 260 + 40, TEXT_LEFT_ALIGN);
-		else
-			renderText(_lStrings[STR_RESTART], 285, 260 + 40, TEXT_LEFT_ALIGN);
-		renderText(_lStrings[STR_QUIT], 285, 296 + 40, TEXT_LEFT_ALIGN);
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
 	}
-}
 
-void Control::setupSaveRestorePanel(bool saving) {
-	readSavegameDescriptions();
+	_resMan->resClose(SR_CONFIRM);
 
-	FrameHeader *savePanel = _resMan->fetchFrame(_resMan->openFetchRes(SR_WINDOW), 0);
-	uint16 panelX = (640 - _resMan->getUint16(savePanel->width)) / 2;
-	uint16 panelY = (480 - _resMan->getUint16(savePanel->height)) / 2;
-	ControlButton *panel = new ControlButton(panelX, panelY, SR_WINDOW, 0, 0, _resMan, _screenBuf, _system);
-	panel->draw();
-	delete panel;
-	_resMan->resClose(SR_WINDOW);
-	createButtons(_saveButtons, 14);
-	renderText(_lStrings[STR_CANCEL], _saveButtons[13].x - 10, _saveButtons[13].y, TEXT_RIGHT_ALIGN);
-	if (saving) {
-		renderText(_lStrings[STR_SAVE], _saveButtons[12].x + 30, _saveButtons[13].y, TEXT_LEFT_ALIGN);
+	renderText(title, (SCREEN_WIDTH - getTextLength(title)) / 2, 120);
+
+	if (SwordEngine::_systemVars.snrStatus == SNR_DRIVEFULL) {
+		_numButtons = 1; // only top (OK) button used
 	} else {
-		renderText(_lStrings[STR_RESTORE], _saveButtons[12].x + 30, _saveButtons[13].y, TEXT_LEFT_ALIGN);
+		_numButtons = 2;
 	}
-	readSavegameDescriptions();
-	_selectedSavegame = 255;
-	showSavegameNames();
+
+	for (int i = 0; i < _numButtons; i++)
+		putButton(confirmButtons[i].x1, confirmButtons[i].y1, 0);
+
+	renderText(_lStrings[STR_OK], SCREEN_WIDTH - confirmButtons[0].x1 - getTextLength(_lStrings[STR_OK]), confirmButtons[0].y1);
+
+	if (SwordEngine::_systemVars.snrStatus != SNR_DRIVEFULL)
+		renderText(_lStrings[STR_CANCEL], SCREEN_WIDTH - confirmButtons[1].x1 - getTextLength(_lStrings[STR_CANCEL]), confirmButtons[1].y1);
 }
 
-void Control::setupVolumePanel() {
-	ControlButton *panel = new ControlButton(0, 0, SR_VOLUME, 0, 0, _resMan, _screenBuf, _system);
-	panel->draw();
-	delete panel;
+int32 Control::implementConfirmation() {
+	_currentButton = getCurrentButton(&confirmButtons[0]);
 
-	renderText(_lStrings[STR_MUSIC], 149, 39 + 40, TEXT_LEFT_ALIGN);
-	renderText(_lStrings[STR_SPEECH], 320, 39 + 40, TEXT_CENTER);
-	renderText(_lStrings[STR_FX], 449, 39 + 40, TEXT_CENTER);
+	if ((_buttonPressed) && (!_currentButton)) {
+		// Reset button pressed
+		putButton(confirmButtons[_buttonPressed - 1].x1, confirmButtons[_buttonPressed - 1].y1, 0);
+		_buttonPressed = 0;
+	}
 
-	createButtons(_volumeButtons, 4);
-	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
+	if (_mouseState != 0) {
+		if ((_mouseState & BS1L_BUTTON_DOWN) && (_currentButton)) {
+			// Set button pressed
+			_buttonPressed = _currentButton;
+			putButton(confirmButtons[_buttonPressed - 1].x1, confirmButtons[_buttonPressed - 1].y1, 1);
+		}
+
+		if ((_mouseState & BS1L_BUTTON_UP) && (_buttonPressed)) {
+			if (_buttonPressed == 1) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+void Control::removeConfirmation() {
+	// Dummy in the original
+}
+
+void Control::renderVolumeLight(int32 i) {
+	// TODO: This function has been mangled to accomodate the current
+	// audio engine, which will partly get rewritten in the immediate
+	// future :)
+
+	uint8 *src, *dst;
+	uint8 vol[2] = { 0, 0 };
+	int32 x;
+	FrameHeader *f;
+	Sprite *srVlight;
+
+	switch (i) {
+	case 0: //music
+		_music->giveVolume(&vol[0], &vol[1]);
+		//vol[0] = volMusic[0];
+		//vol[1] = volMusic[1];
+		x = 158;
+		break;
+	case 1: //speech
+		_sound->giveSpeechVol(&vol[0], &vol[1]);
+		//vol[0] = volSpeech[0];
+		//vol[1] = volSpeech[1];
+		x = 291;
+		break;
+	case 2: //fx
+		_sound->giveSfxVol(&vol[0], &vol[1]);
+		//vol[0] = volFX[0];
+		//vol[1] = volFX[1];
+		x = 424;
+		break;
+	default:
+		x = 0;
+		break;
+	}
+
+	srVlight = (Sprite *)_resMan->fetchRes(SR_VLIGHT);
+
+	// Render left light
+	f = (FrameHeader *)((uint8 *)srVlight + _resMan->getUint32(srVlight->spriteOffset[vol[0] >> 4]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + x + 211 * SCREEN_WIDTH;
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_BUTTON, src, dst, f);
+	} else {
+		for (int y = 0; y < _resMan->getUint16(f->height); y++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+
+	// Render right light
+	f = (FrameHeader *)((uint8 *)srVlight + _resMan->getUint32(srVlight->spriteOffset[vol[1] >> 4]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + x + 32 + 211 * SCREEN_WIDTH;
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_BUTTON, src, dst, f);
+	} else {
+		for (int y = 0; y < _resMan->getUint16(f->height); y++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+}
+
+void Control::setVolumes() {
+	// TODO: This function has been mangled to accomodate the current
+	// audio engine, which will partly get rewritten in the immediate
+	// future :)
 
 	uint8 volL, volR;
 	_music->giveVolume(&volL, &volR);
-	renderVolumeBar(1, volL, volR);
+	int vol = (int)((volR + volL) / 2);
+	int volBalance = volToBalance(volL, volR);
+	if (vol != ConfMan.getInt("music_volume"))
+		ConfMan.setInt("music_volume", vol);
+	if (volBalance != ConfMan.getInt("music_balance"))
+		ConfMan.setInt("music_balance", volBalance);
+
 	_sound->giveSpeechVol(&volL, &volR);
-	renderVolumeBar(2, volL, volR);
+	vol = (int)((volR + volL) / 2);
+	volBalance = volToBalance(volL, volR);
+	if (vol != ConfMan.getInt("speech_volume"))
+		ConfMan.setInt("speech_volume", vol);
+	if (volBalance != ConfMan.getInt("speech_balance"))
+		ConfMan.setInt("speech_balance", volBalance);
+
 	_sound->giveSfxVol(&volL, &volR);
-	renderVolumeBar(3, volL, volR);
+	vol = (int)((volR + volL) / 2);
+	volBalance = volToBalance(volL, volR);
+	if (vol != ConfMan.getInt("sfx_volume"))
+		ConfMan.setInt("sfx_volume", vol);
+	if (volBalance != ConfMan.getInt("sfx_balance"))
+		ConfMan.setInt("sfx_balance", volBalance);
+
+	if (SwordEngine::_systemVars.showText != ConfMan.getBool("subtitles"))
+		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
+	ConfMan.flushToDisk();
 }
 
-void Control::handleVolumeClicks() {
-	if (_mouseDown) {
-		uint8 clickedId = 0;
-		for (uint8 cnt = 1; cnt < 4; cnt++)
-			if (_buttons[cnt]->wasClicked(_mouseCoord.x, _mouseCoord.y))
-				clickedId = cnt;
-		if (clickedId) { // these are circle shaped, so check again if it was clicked.
-			uint8 clickDest = 0;
-			int16 mouseDiffX = _mouseCoord.x - (_volumeButtons[clickedId].x + 48);
-			int16 mouseDiffY = _mouseCoord.y - (_volumeButtons[clickedId].y + 48);
-			int16 mouseOffs = (int16)sqrt((double)(mouseDiffX * mouseDiffX + mouseDiffY * mouseDiffY));
-			// check if the player really hit the button (but not the center).
-			if ((mouseOffs <= 42) && (mouseOffs >= 8)) {
-				if (mouseDiffX > 8) { // right part
-					if (mouseDiffY < -8) // upper right
-						clickDest = 2;
-					else if (ABS(mouseDiffY) <= 8) // right
-						clickDest = 3;
-					else                 // lower right
-						clickDest = 4;
-				} else if (mouseDiffX < -8) { // left part
-					if (mouseDiffY < -8) // upper left
-						clickDest = 8;
-					else if (ABS(mouseDiffY) <= 8) // left
-						clickDest = 7;
-					else                 // lower left
-						clickDest = 6;
-				} else { // middle
-					if (mouseDiffY < -8)
-						clickDest = 1; // upper
-					else if (mouseDiffY > 8)
-						clickDest = 5; // lower
+void Control::volUp(int32 i, int32 j) {
+	// TODO: This function has been mangled to accomodate the current
+	// audio engine, which will partly get rewritten in the immediate
+	// future :)
+
+	uint32 vol[2] = { 0, 0 };
+
+	switch (i) {
+	case 0:
+		_music->giveVolume((uint8 *)&vol[0], (uint8 *)&vol[1]);
+		//vol = &volMusic[j];
+		break;
+	case 1:
+		_sound->giveSpeechVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
+		//vol = &volSpeech[j];
+		break;
+	case 2:
+		_sound->giveSfxVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
+		//vol = &volFX[j];
+		break;
+	}
+
+	if ((vol[j] >> 4) < 16)
+		vol[j] += 1 << 4;
+
+	vol[j] = CLIP<uint32>(vol[j], 0, 255);
+
+	switch (i) {
+	case 0:
+		_music->setVolume((uint8)vol[0], (uint8)vol[1]);
+		//vol = &volMusic[j];
+		break;
+	case 1:
+		_sound->setSpeechVol((uint8)vol[0], (uint8)vol[1]);
+		//vol = &volSpeech[j];
+		break;
+	case 2:
+		_sound->setSfxVol((uint8)vol[0], (uint8)vol[1]);
+		//vol = &volFX[j];
+		break;
+	}
+}
+
+void Control::volDown(int32 i, int32 j) {
+	// TODO: This function has been mangled to accomodate the current
+	// audio engine, which will partly get rewritten in the immediate
+	// future :)
+
+	uint32 vol[2] = {0, 0};
+
+	switch (i) {
+	case 0:
+		_music->giveVolume((uint8 *)&vol[0], (uint8 *)&vol[1]);
+		//vol = &volMusic[j];
+		break;
+	case 1:
+		_sound->giveSpeechVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
+		//vol = &volSpeech[j];
+		break;
+	case 2:
+		_sound->giveSfxVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
+		//vol = &volFX[j];
+		break;
+	}
+
+	if (vol[j] > 1 << 4)
+		vol[j] -= 1 << 4;
+
+	vol[j] = CLIP<uint32>(vol[j], 0, 255);
+
+	switch (i) {
+	case 0:
+		_music->setVolume((uint8)vol[0], (uint8)vol[1]);
+		//vol = &volMusic[j];
+		break;
+	case 1:
+		_sound->setSpeechVol((uint8)vol[0], (uint8)vol[1]);
+		//vol = &volSpeech[j];
+		break;
+	case 2:
+		_sound->setSfxVol((uint8)vol[0], (uint8)vol[1]);
+		//vol = &volFX[j];
+		break;
+	}
+}
+
+void Control::renderVolumeDisc(int32 i, int32 j) {
+	uint8 *src, *dst;
+	int32 x = 0;
+	FrameHeader *f;
+	Sprite *srVnob;
+
+	switch (i) {
+	case 0:
+		x = VD1X;
+		break;
+	case 1:
+		x = VD2X;
+		break;
+	case 2:
+		x = VD3X;
+		break;
+	default:
+		break;
+	}
+
+	srVnob = (Sprite *)_resMan->fetchRes(SR_VKNOB);
+
+	// Render the disc
+	f = (FrameHeader *)((uint8 *)srVnob + _resMan->getUint32(srVnob->spriteOffset[j]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + x + VDY * SCREEN_WIDTH;
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_BUTTON, src, dst, f);
+	} else {
+		for (int y = 0; y < _resMan->getUint16(f->height); y++) {
+			for (int z = 0; z < _resMan->getUint16(f->width); z++)
+				if (*(src + z))
+					*(dst + z) = *(src + z);
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+}
+
+void Control::initialiseVolume() {
+	uint8 *src, *dst;
+	FrameHeader *f;
+	Sprite *srVolume;
+
+	_resMan->resOpen(SR_VLIGHT);
+	_resMan->resOpen(SR_VKNOB);
+
+	srVolume = (Sprite *)_resMan->openFetchRes(SR_VOLUME);
+	f = (FrameHeader *)((uint8 *)srVolume + _resMan->getUint32(srVolume->spriteOffset[0]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf +
+		((SCREEN_WIDTH - _resMan->getUint16(f->width)) / 2) +
+		(SCREEN_WIDTH * ((SCREEN_DEPTH - _resMan->getUint16(f->height)) / 2));
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_PANEL, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+
+	_resMan->resClose(SR_VOLUME);
+
+	renderText(_lStrings[STR_MUSIC], 149, 39);
+	renderText(_lStrings[STR_SPEECH], (SCREEN_WIDTH - getTextLength(_lStrings[STR_SPEECH])) / 2, 39);
+	renderText(_lStrings[STR_FX], 438, 39);
+	_numButtons = 25;
+	putButton(volumeButtons[24].x1, volumeButtons[24].y1, 0);
+
+	renderText(_lStrings[STR_DONE], (volumeButtons[24].x1 - getTextLength(_lStrings[STR_DONE]) - 20), volumeButtons[24].y1);
+
+	renderVolumeLight(0);
+	renderVolumeLight(1);
+	renderVolumeLight(2);
+
+	renderVolumeDisc(0, 0);
+	renderVolumeDisc(1, 0);
+	renderVolumeDisc(2, 0);
+}
+
+void Control::implementVolume() {
+	int32 i, j;
+
+	_currentButton = getCurrentButton(&volumeButtons[0]);
+
+	if (_buttonPressed) {
+		if (!_currentButton) {
+			// Reset button pressed
+			if (_buttonPressed == 25)
+				putButton(volumeButtons[_buttonPressed - 1].x1, volumeButtons[_buttonPressed - 1].y1, 0);
+
+			_buttonPressed = 0;
+		} else {
+			if (_buttonPressed != 25) {
+				if (--_buttonHold == 0) {
+					_buttonHold = 4;
+					i = (_buttonPressed - 1) / 8;
+					j = _buttonPressed - i * 8;
+
+					switch (j) {
+					case 1:
+						volUp(i, 0);
+						volUp(i, 1);
+						break;
+					case 2:
+						volUp(i, 1);
+						break;
+					case 3:
+						volDown(i, 0);
+						volUp(i, 1);
+						break;
+					case 4:
+						volDown(i, 1);
+						break;
+					case 5:
+						volDown(i, 0);
+						volDown(i, 1);
+						break;
+					case 6:
+						volDown(i, 0);
+						break;
+					case 7:
+						volUp(i, 0);
+						volDown(i, 1);
+						break;
+					case 8:
+						volUp(i, 0);
+						break;
+					default:
+						break;
+					}
+
+					renderVolumeLight(i);
 				}
 			}
-			_buttons[clickedId]->setSelected(clickDest);
-			changeVolume(clickedId, clickDest);
 		}
-	} else if (_mouseState & BS1L_BUTTON_UP) {
-		_buttons[1]->setSelected(0);
-		_buttons[2]->setSelected(0);
-		_buttons[3]->setSelected(0);
+	}
+
+	if (_mouseState) {
+		if ((_mouseState & BS1L_BUTTON_DOWN) && (_currentButton)) {
+			// Set button pressed
+			_buttonPressed = _currentButton;
+			_buttonHold = 15;
+
+			if (_buttonPressed == 25) {
+				putButton(volumeButtons[_buttonPressed - 1].x1, volumeButtons[_buttonPressed - 1].y1, 1);
+			} else {
+				i = (_buttonPressed - 1) / 8;
+				j = _buttonPressed - i * 8;
+				renderVolumeDisc(i, _buttonPressed - i * 8);
+
+				switch (j) {
+				case 1:
+					volUp(i, 0);
+					volUp(i, 1);
+					break;
+				case 2:
+					volUp(i, 1);
+					break;
+				case 3:
+					volDown(i, 0);
+					volUp(i, 1);
+					break;
+				case 4:
+					volDown(i, 1);
+					break;
+				case 5:
+					volDown(i, 0);
+					volDown(i, 1);
+					break;
+				case 6:
+					volDown(i, 0);
+					break;
+				case 7:
+					volUp(i, 0);
+					volDown(i, 1);
+					break;
+				case 8:
+					volUp(i, 0);
+					break;
+				default:
+					break;
+				}
+
+				renderVolumeLight(i);
+			}
+		}
+
+		if (_mouseState & BS1L_BUTTON_UP) {
+			if (_buttonPressed) {
+				if (_buttonPressed == 25) {
+					SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
+				} else {
+					i = (_buttonPressed - 1) / 8;
+					renderVolumeDisc(i, 0);
+				}
+
+				_buttonPressed = 0;
+			} else {
+				// Avoid stuck volume discs
+				renderVolumeDisc(0, 0);
+				renderVolumeDisc(1, 0);
+				renderVolumeDisc(2, 0);
+			}
+		}
 	}
 }
 
-void Control::changeVolume(uint8 id, uint8 action) {
-	// ids: 1 = music, 2 = speech, 3 = sfx
-	uint8 volL = 0, volR = 0;
-	if (id == 1)
-		_music->giveVolume(&volL, &volR);
-	else if (id == 2)
-		_sound->giveSpeechVol(&volL, &volR);
-	else if (id == 3)
-		_sound->giveSfxVol(&volL, &volR);
+void Control::removeVolume() {
+	_resMan->resClose(SR_VLIGHT);
+	_resMan->resClose(SR_VKNOB);
+}
 
-	int8 direction = 0;
-	if ((action >= 4) && (action <= 6)) // lower part of the button => decrease volume
-		direction = -1;
-	else if ((action == 8) || (action == 1) || (action == 2)) // upper part => increase volume
-		direction = 1;
-	else if ((action == 3) || (action == 7)) // middle part => pan volume
-		direction = 1;
-	int8 factorL = 8, factorR = 8;
-	if ((action >= 6) && (action <= 8)) { // left part => left pan
-		factorL = 8;
-		factorR = (action == 7) ? -8 : 0;
-	} else if ((action >= 2) && (action <= 4)) { // right part
-		factorR = 8;
-		factorL = (action == 3) ? -8 : 0;
+void Control::renderScrolls() {
+	uint8 *src, *dst;
+	FrameHeader *f;
+	Sprite *srScroll1, *srScroll2;
+
+	srScroll1 = (Sprite *)_resMan->fetchRes(SR_SCROLL1);
+	srScroll2 = (Sprite *)_resMan->fetchRes(SR_SCROLL2);
+
+	f = (FrameHeader *)((uint8 *)srScroll1 + _resMan->getUint32(srScroll1->spriteOffset[_scrollIndex[0]]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + SCROLL1X + SCREEN_WIDTH * SCROLL1Y;
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_CONFIRM, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
 	}
-	int16 resVolL = volL + direction * factorL;
-	int16 resVolR = volR + direction * factorR;
 
-	volL = (uint8)MAX((int16)0, MIN(resVolL, (int16)255));
-	volR = (uint8)MAX((int16)0, MIN(resVolR, (int16)255));
+	f = (FrameHeader *)((uint8 *)srScroll2 + _resMan->getUint32(srScroll2->spriteOffset[_scrollIndex[1]]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf + SCROLL2X + SCREEN_WIDTH * SCROLL2Y;
 
-	if (id == 1)
-		_music->setVolume(volL, volR);
-	else if (id == 2)
-		_sound->setSpeechVol(volL, volR);
-	else if (id == 3)
-		_sound->setSfxVol(volL, volR);
-
-	renderVolumeBar(id, volL, volR);
-}
-
-bool Control::getConfirm(const uint8 *title) {
-	ControlButton *panel = new ControlButton(0, 0, SR_CONFIRM, 0, 0, _resMan, _screenBuf, _system);
-	panel->draw();
-	delete panel;
-	renderText(title, 320, 160, TEXT_CENTER);
-	ControlButton *buttons[2];
-	buttons[0] = new ControlButton(260, 192 + 40, SR_BUTTON, 0, 0, _resMan, _screenBuf, _system);
-	renderText(_lStrings[STR_OK], 640 - 260, 192 + 40, TEXT_RIGHT_ALIGN);
-	buttons[1] = new ControlButton(260, 256 + 40, SR_BUTTON, 0, 0, _resMan, _screenBuf, _system);
-	renderText(_lStrings[STR_CANCEL], 640 - 260, 256 + 40, TEXT_RIGHT_ALIGN);
-	uint8 retVal = 0;
-	uint8 clickVal = 0;
-	do {
-		buttons[0]->draw();
-		buttons[1]->draw();
-		delay(1000 / 12);
-		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE)
-			retVal = 2;
-		else if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER)
-			retVal = 1;
-		if (_mouseState & BS1L_BUTTON_DOWN) {
-			if (buttons[0]->wasClicked(_mouseCoord.x, _mouseCoord.y))
-				clickVal = 1;
-			else if (buttons[1]->wasClicked(_mouseCoord.x, _mouseCoord.y))
-				clickVal = 2;
-			else
-				clickVal = 0;
-			if (clickVal)
-				buttons[clickVal - 1]->setSelected(1);
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_CONFIRM, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
 		}
-		if ((_mouseState & BS1L_BUTTON_UP) && (clickVal)) {
-			if (buttons[clickVal - 1]->wasClicked(_mouseCoord.x, _mouseCoord.y))
-				retVal = clickVal;
-			else
-				buttons[clickVal - 1]->setSelected(0);
-			clickVal = 0;
-		}
-	} while (!retVal);
-	delete buttons[0];
-	delete buttons[1];
-	return retVal == 1;
-}
-
-bool Control::keyAccepted(uint16 ascii) {
-	static const char allowedSpecials[] = ",.:-()?! \"\'";
-	if (((ascii >= 'A') && (ascii <= 'Z')) ||
-	        ((ascii >= 'a') && (ascii <= 'z')) ||
-	        ((ascii >= '0') && (ascii <= '9')) ||
-	        strchr(allowedSpecials, ascii))
-		return true;
-	else
-		return false;
-}
-
-void Control::handleSaveKey(Common::KeyState kbd) {
-	if (_selectedSavegame < 255) {
-		uint8 len = _saveNames[_selectedSavegame].size();
-		if ((kbd.keycode == Common::KEYCODE_BACKSPACE) && len)  // backspace
-			_saveNames[_selectedSavegame].deleteLastChar();
-		else if (kbd.ascii && keyAccepted(kbd.ascii) && (len < 31)) {
-			_saveNames[_selectedSavegame].insertChar(kbd.ascii, len);
-		}
-		showSavegameNames();
 	}
 }
 
-bool Control::saveToFile() {
-	if ((_selectedSavegame == 255) || _saveNames[_selectedSavegame].size() == 0)
-		return false; // no saveslot selected or no name entered
-	saveGameToFile(_selectedSavegame);
-	return true;
+void Control::initialiseSpeed() {
+	uint8 *src, *dst;
+	FrameHeader *f;
+	Sprite *srSpeed;
+
+	_resMan->resOpen(SR_SCROLL1);
+	_resMan->resOpen(SR_SCROLL2);
+
+	srSpeed = (Sprite *)_resMan->openFetchRes(SR_SPEED);
+
+	f = (FrameHeader *)((uint8 *)srSpeed + _resMan->getUint32(srSpeed->spriteOffset[0]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf +
+		((SCREEN_WIDTH - _resMan->getUint16(f->width)) / 2) +
+		(SCREEN_WIDTH * ((SCREEN_DEPTH - _resMan->getUint16(f->height)) / 2));
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_PANEL, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+
+	_resMan->resClose(SR_SPEED);
+
+	_scrollIndex[0] = 0;
+	_scrollIndex[1] = 0;
+
+	renderText(_lStrings[STR_SPEED], 216, 100);
+	_numButtons = 3;
+	putButton(speedButtons[0].x1, speedButtons[0].y1, _speedFlag);
+	putButton(speedButtons[1].x1, speedButtons[1].y1, 1 - _speedFlag);
+	putButton(speedButtons[2].x1, speedButtons[2].y1, 0);
+
+	renderText(_lStrings[STR_DONE], (speedButtons[2].x1 - getTextLength(_lStrings[STR_DONE]) - 20), speedButtons[2].y1);
+	renderScrolls();
 }
 
-bool Control::restoreFromFile() {
-	if (_selectedSavegame < 255) {
-		return restoreGameFromFile(_selectedSavegame);
-	} else
-		return false;
+void Control::implementSpeed() {
+	Sprite *srScroll1, *srScroll2;
+
+	srScroll1 = (Sprite *)_resMan->fetchRes(SR_SCROLL1);
+	srScroll2 = (Sprite *)_resMan->fetchRes(SR_SCROLL2);
+
+	if (++_scrollIndex[0] == (int32)_resMan->getUint32(srScroll1->totalSprites))
+		_scrollIndex[0] = 0;
+	if (++_scrollIndex[1] == (int32)_resMan->getUint32(srScroll2->totalSprites))
+		_scrollIndex[1] = 0;
+
+	renderScrolls();
+
+	_currentButton = getCurrentButton(&speedButtons[0]);
+
+	if ((_buttonPressed == 3) && (!_currentButton)) {
+		//Reset button pressed
+		putButton(speedButtons[_buttonPressed - 1].x1, speedButtons[_buttonPressed - 1].y1, 0);
+		_buttonPressed = 0;
+	}
+
+	if (_mouseState) {
+		if ((_mouseState & BS1L_BUTTON_DOWN) && (_currentButton)) {
+			//Set button pressed
+			_buttonPressed = _currentButton;
+			if (_buttonPressed == 3) {
+				putButton(speedButtons[2].x1, speedButtons[2].y1, 1);
+			} else {
+				if (_speedFlag == _buttonPressed - 1) {
+					_speedFlag = 2 - _buttonPressed;
+					putButton(speedButtons[0].x1, speedButtons[0].y1, _speedFlag);
+					putButton(speedButtons[1].x1, speedButtons[1].y1, 1 - _speedFlag);
+				}
+			}
+		}
+
+		if ((_mouseState & BS1L_BUTTON_UP) && (_buttonPressed)) {
+			if (_buttonPressed == 3) {
+				SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
+			}
+
+			_buttonPressed = 0;
+		}
+	}
 }
 
-void Control::readSavegameDescriptions() {
+void Control::removeSpeed() {
+	_resMan->resClose(SR_SCROLL1);
+	_resMan->resClose(SR_SCROLL2);
+
+	SwordEngine::_systemVars.parallaxOn = 1 - _speedFlag;
+}
+
+int16 Control::readFileDescriptions() {
 	char saveName[40];
 	Common::String pattern = "sword1.???";
 	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically...)
 
-	_saveNames.clear();
-
-	int num = 0;
+	int16 totalFiles = 0;
 	int slotNum = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
 
-		while (num < slotNum) {
-			_saveNames.push_back("");
-			num++;
+		while (totalFiles < slotNum) {
+			Common::strcpy_s(_fileDescriptions[totalFiles], 1, "");
+			totalFiles++;
 		}
 
-		if (slotNum >= 0 && slotNum <= 999) {
-			num++;
+		if (slotNum >= 0 && slotNum < MAXSAVEGAMES) {
 			Common::InSaveFile *in = _saveFileMan->openForLoading(*file);
 			if (in) {
 				in->readUint32LE(); // header
 				in->read(saveName, 40);
-				_saveNames.push_back(saveName);
+				Common::strcpy_s(_fileDescriptions[totalFiles], sizeof(_fileDescriptions[totalFiles]), saveName);
 				delete in;
+			}
+
+			totalFiles++;
+		}
+	}
+
+	for (int i = totalFiles; i < MAXSAVEGAMES; i++)
+		Common::strcpy_s(_fileDescriptions[i], 1, "");
+
+	return totalFiles;
+}
+
+void Control::setEditDescription(int32 line) {
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
+	_editingDescription = line;
+	_textCursor = 0;
+	_curCharCount = 1;
+
+	Common::strcpy_s(_oldString, sizeof(_oldString), _fileDescriptions[_editingDescription + _firstDescription - 1]);
+	_slabSelected = line;
+}
+
+bool Control::driveSpaceAvailable() {
+	char fName[15];
+	int slot = _firstDescription + _editingDescription - 1;
+	Common::sprintf_s(fName, "sword1.%03d", slot);
+
+	// We are going to write a fake savegame file, to see if
+	// we are actually able to write anything with that size.
+	// Why are we even doing this? Can't we save right now?
+	// Turns out: no; we need to save at the end of getPlayerOptions(),
+	// after some clean-up operations are carried out. Right now,
+	// we only want to know if we are even able to save.
+	Common::OutSaveFile *outf;
+	outf = _saveFileMan->openForSaving(fName, false);
+	if (!outf) {
+		return false;
+	}
+
+	int sizeOfFakeSavegame = 30000;
+	outf->writeUint32LE(SAVEGAME_HEADER);
+	outf->write(_fileDescriptions[slot], 40);
+	outf->writeByte(SAVEGAME_VERSION);
+
+	for (int i = 0; i < sizeOfFakeSavegame; i++)
+		outf->writeByte(i % 256);
+
+	outf->finalize();
+
+	if (outf->err())
+		return false;
+
+	return true;
+}
+
+bool Control::attemptSave() {
+	// If this slot already has a savegame, or there's enough space for a new savegame
+	if (strlen(_oldString) || driveSpaceAvailable()) {
+		_selectedSavegame = _firstDescription + _editingDescription - 1;
+		if (_firstDescription + _editingDescription > _gamesSaved)
+			_gamesSaved = _firstDescription + _editingDescription;
+
+		uneditDescription();
+
+		SwordEngine::_systemVars.saveGameFlag = SGF_SAVE;
+		SwordEngine::_systemVars.snrStatus = SNR_BLANK;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void Control::editDescription() {
+	char string[40];
+	int32 len;
+	int32 index;
+
+	if (_keyPressed.keycode) {
+		uint16 ch = _keyPressed.ascii;
+		_keyPressed.reset();
+
+		index = _editingDescription + _firstDescription - 1;
+		len = Common::strnlen(_fileDescriptions[index], sizeof(_fileDescriptions[index]));
+		if ((ch != CR) && (ch != ESCAPE)) {
+			if ((ch >= FIRSTFONTCHAR) && (ch <= LASTFONTCHAR)) {
+				if ((len < 32) && (getTextLength((const uint8 *)_fileDescriptions[index]) < 310)) {
+					_fileDescriptions[index][len] = ch;
+					_fileDescriptions[index][len + 1] = '\0';
+					_curCharCount = 1;
+				}
+			}
+		}
+
+		if (ch == BACKSPACE) {
+			if (len) {
+				_fileDescriptions[index][len - 1] = '\0';
+				_curCharCount = 1;
+			}
+		}
+
+		if ((ch == ESCAPE) || (ch == CR)) {
+			if ((ch == ESCAPE) || ((ch == CR) && (len == 0))) {
+				_textCursor = 1;
+				_curCharCount = 10;
+				Common::strcpy_s(_fileDescriptions[index], sizeof(_fileDescriptions[index]), _oldString);
+				uneditDescription();
+			} else {
+				if (!attemptSave())
+					SwordEngine::_systemVars.snrStatus = SNR_DRIVEFULL;
 			}
 		}
 	}
 
-	for (int i = _saveNames.size(); i < 1000; i++)
-		_saveNames.push_back("");
+	if (SwordEngine::_systemVars.snrStatus != SNR_BLANK) {
+		if (--_curCharCount == 0) {
+			_curCharCount = 10;
+			_textCursor ^= 1;
+			if (_textCursor) {
+				// Add cursor to line
+				Common::strcpy_s(string, sizeof(string), _fileDescriptions[_editingDescription + _firstDescription - 1]);
+				len = strlen(string);
+				string[len] = '_';
+				string[len + 1] = '\0';
+			} else {
+				// Remove cursor from line
+				Common::strcpy_s(string, sizeof(string), _fileDescriptions[_editingDescription + _firstDescription - 1]);
+			}
 
-	_saveScrollPos = 0;
-	_selectedSavegame = 255;
-	_saveFiles = _numSaves = _saveNames.size();
+			renderSlab(_slabSelected - 1, _editingDescription - 1);
+			renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 42, saveButtons[_editingDescription - 1].y1 + 5);
+			Common::sprintf_s(string, sizeof(string), "%d", _firstDescription + _editingDescription);
+			renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 12, saveButtons[_editingDescription - 1].y1 + 5);
+		}
+	}
 }
 
-bool Control::isPanelShown() {
-	return _panelShown;
+void Control::restoreSelected() {
+	if (_keyPressed.keycode) {
+		char ch = _keyPressed.ascii;
+		_keyPressed.reset();
+
+		if ((ch == ESCAPE) || (ch == CR)) {
+			if (ch == ESCAPE) {
+				uneditDescription();
+			} else {
+				// Restore the game here
+				_selectedSavegame = _editingDescription + _firstDescription - 1;
+				uneditDescription();
+				SwordEngine::_systemVars.saveGameFlag = SGF_RESTORE;
+				SwordEngine::_systemVars.snrStatus = SNR_BLANK;
+			}
+		}
+	}
+}
+
+void Control::uneditDescription(void) {
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+
+	_slabSelected = 0;
+
+	renderSlabs();
+	renderTexts();
+	_textCursor = 0;
+	_editingDescription = 0;
+}
+
+bool Control::saveGame() {
+	if (Common::strnlen(_fileDescriptions[_selectedSavegame], sizeof(_fileDescriptions[_selectedSavegame]) > 0)) {
+		saveGameToFile(_selectedSavegame);
+		return true;
+	}
+
+	return false;
+}
+
+void Control::initialiseSave() {
+	uint8 *src, *dst;
+	int32 size;
+	FrameHeader *f;
+	Sprite *srWindow;
+	Sprite *srButuf, *srButus, *srButds, *srButdf;
+	Sprite *srSlab1, *srSlab2, *srSlab3, *srSlab4;
+
+	if (SwordEngine::_systemVars.language == BS1_CZECH)
+		_resMan->resOpen(CZECH_SR_REDFONT);
+	else
+		_resMan->resOpen(SR_REDFONT);
+
+	srWindow = (Sprite *)_resMan->openFetchRes(SR_WINDOW);
+
+	f = (FrameHeader *)((uint8 *)srWindow + _resMan->getUint32(srWindow->spriteOffset[0]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf +
+		((SCREEN_WIDTH - _resMan->getUint16(f->width)) / 2) +
+		(SCREEN_WIDTH * ((SCREEN_DEPTH - _resMan->getUint16(f->height)) / 2));
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_PANEL, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+
+	_resMan->resClose(SR_WINDOW);
+
+	_numButtons = SAVEBUTTONS;
+	putButton(saveButtons[SAVEBUTTONS - 2].x1, saveButtons[SAVEBUTTONS - 2].y1, 0);
+	putButton(saveButtons[SAVEBUTTONS - 1].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
+
+	srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+	putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 0);
+	_resMan->resClose(SR_BUTUF);
+
+	srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+	putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 0);
+	_resMan->resClose(SR_BUTUS);
+
+	srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+	putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 0);
+	_resMan->resClose(SR_BUTDS);
+
+	srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+	putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 0);
+	_resMan->resClose(SR_BUTDF);
+
+	renderText(_lStrings[STR_SAVE], saveButtons[SAVEBUTTONS - 2].x1 + 40, saveButtons[SAVEBUTTONS - 2].y1);
+	renderText(_lStrings[STR_CANCEL], saveButtons[SAVEBUTTONS - 1].x1 - 15 - getTextLength(_lStrings[STR_CANCEL]), saveButtons[SAVEBUTTONS - 1].y1);
+
+	_gamesSaved = readFileDescriptions();
+
+	// Create the slabs here
+	srSlab1 = (Sprite *)_resMan->openFetchRes(SR_SLAB1);
+
+	if (SwordEngine::isPsx()) {
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[0]));
+		size = sizeof(Sprite) + sizeof(FrameHeader) + _resMan->getUint16(f->width) / 2 * _resMan->getUint16(f->height);
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[1]));
+		size += (sizeof(FrameHeader) + _resMan->getUint16(f->width) / 2 * _resMan->getUint16(f->height));
+	} else {
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[0]));
+		size = sizeof(Sprite) + sizeof(FrameHeader) + _resMan->getUint16(f->width) * _resMan->getUint16(f->height);
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[1]));
+		size += (sizeof(FrameHeader) + _resMan->getUint16(f->width) * _resMan->getUint16(f->height));
+	}
+
+	for (int i = 0; i < SAVEBUTTONS - 6; i++) {
+		_slabs[i] = (Sprite *)malloc(size);
+	}
+
+	memcpy((uint8 *)_slabs[0], (uint8 *)srSlab1, size);
+	memcpy((uint8 *)_slabs[4], (uint8 *)srSlab1, size);
+	_resMan->resClose(SR_SLAB1);
+
+	srSlab2 = (Sprite *)_resMan->openFetchRes(SR_SLAB2);
+	memcpy((uint8 *)_slabs[1], (uint8 *)srSlab2, size);
+	memcpy((uint8 *)_slabs[5], (uint8 *)srSlab2, size);
+	_resMan->resClose(SR_SLAB2);
+
+	srSlab3 = (Sprite *)_resMan->openFetchRes(SR_SLAB3);
+	memcpy((uint8 *)_slabs[2], (uint8 *)srSlab3, size);
+	memcpy((uint8 *)_slabs[6], (uint8 *)srSlab3, size);
+	_resMan->resClose(SR_SLAB3);
+
+	srSlab4 = (Sprite *)_resMan->openFetchRes(SR_SLAB4);
+	memcpy((uint8 *)_slabs[3], (uint8 *)srSlab4, size);
+	memcpy((uint8 *)_slabs[7], (uint8 *)srSlab4, size);
+	_resMan->resClose(SR_SLAB4);
+
+	renderSlabs();
+	renderTexts();
+}
+
+void Control::implementSave() {
+	Sprite *srButuf, *srButus, *srButds, *srButdf;
+
+	_currentButton = getCurrentButton(&saveButtons[0]);
+
+	if ((_buttonPressed) && (!_currentButton)) {
+		// Reset button pressed
+		if (_buttonPressed > SAVEBUTTONS - 6) {
+			switch (_buttonPressed) {
+			case (SAVEBUTTONS - 5):
+				srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+				putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 0);
+				_resMan->resClose(SR_BUTUF);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 4):
+				srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+				putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 0);
+				_resMan->resClose(SR_BUTUS);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 3):
+				srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+				putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 0);
+				_resMan->resClose(SR_BUTDS);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 2):
+				srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+				putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 0);
+				_resMan->resClose(SR_BUTDF);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 1):
+			case (SAVEBUTTONS):
+				putButton(saveButtons[_buttonPressed - 1].x1, saveButtons[_buttonPressed - 1].y1, 0);
+				break;
+			}
+		}
+
+		_buttonPressed = 0;
+	}
+
+	// Enhancement! Scrollable savegames list! :-)
+	bool useWheelScroll = false;
+	if (_mouseState && _currentButton >= 1 && _currentButton <= 8) {
+		if (_mouseState & BS1_WHEEL_DOWN) {
+			_buttonPressed = (SAVEBUTTONS - 3);
+			useWheelScroll = true;
+		} else if (_mouseState & BS1_WHEEL_UP) {
+			_buttonPressed = (SAVEBUTTONS - 4);
+			useWheelScroll = true;
+		}
+	}
+
+	if (_mouseState) {
+		if ((useWheelScroll || (_mouseState & BS1L_BUTTON_DOWN)) && (_currentButton)) {
+			// Set button pressed
+			if (!useWheelScroll)
+				_buttonPressed = _currentButton;
+
+			if (_buttonPressed) {
+				if (_buttonPressed > SAVEBUTTONS - 6) {
+					switch (_buttonPressed) {
+					case (SAVEBUTTONS - 5):
+						srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+						putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 1);
+						_resMan->resClose(SR_BUTUF);
+
+						if (!_editingDescription) {
+							_scroll = 1;
+							_scrollCount = 10;
+							if (_firstDescription > 0) {
+								if (_firstDescription - (SAVEBUTTONS - 6) < 0)
+									_firstDescription = 0;
+								else
+									_firstDescription -= (SAVEBUTTONS - 6);
+								renderSlabs();
+								renderTexts();
+							}
+						}
+
+						break;
+					case (SAVEBUTTONS - 4):
+						// Don't render the button as pressed when using wheel scrolling
+						if (!useWheelScroll) {
+							srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+							putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 1);
+							_resMan->resClose(SR_BUTUS);
+						}
+
+						if (!_editingDescription) {
+							_scroll = 2;
+							_scrollCount = 10;
+							if (_firstDescription > 0) {
+								_firstDescription -= 1;
+								renderSlabs();
+								renderTexts();
+							}
+						}
+
+						break;
+					case (SAVEBUTTONS - 3):
+						// Don't render the button as pressed when using wheel scrolling
+						if (!useWheelScroll) {
+							srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+							putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 1);
+							_resMan->resClose(SR_BUTDS);
+						}
+
+						if (!_editingDescription) {
+							_scroll = 3;
+							_scrollCount = 10;
+							if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+								_firstDescription += 1;
+								renderSlabs();
+								renderTexts();
+							}
+						}
+
+						break;
+					case (SAVEBUTTONS - 2):
+						srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+						putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 1);
+						_resMan->resClose(SR_BUTDF);
+
+						if (!_editingDescription) {
+							_scroll = 4;
+							_scrollCount = 10;
+							if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+								if (_firstDescription + (SAVEBUTTONS - 6) > MAXSAVEGAMES - (SAVEBUTTONS - 6))
+									_firstDescription = MAXSAVEGAMES - (SAVEBUTTONS - 6);
+								else
+									_firstDescription += (SAVEBUTTONS - 6);
+								renderSlabs();
+								renderTexts();
+							}
+						}
+
+						break;
+					case (SAVEBUTTONS - 1):
+					case (SAVEBUTTONS):
+						putButton(saveButtons[_buttonPressed - 1].x1, saveButtons[_buttonPressed - 1].y1, 1);
+						break;
+					}
+				} else {
+					if (_editingDescription) {
+						if (_buttonPressed != _editingDescription) {
+							Common::strcpy_s(
+								_fileDescriptions[_editingDescription + _firstDescription - 1],
+								sizeof(_fileDescriptions[_editingDescription + _firstDescription - 1]),
+								_oldString);
+							_slabSelected = 0;
+							uneditDescription();
+
+							setEditDescription(_buttonPressed);
+						}
+					} else {
+						setEditDescription(_buttonPressed);
+					}
+				}
+			}
+		}
+
+		if ((_mouseState & BS1L_BUTTON_UP) && (_buttonPressed)) {
+			if (_buttonPressed > SAVEBUTTONS - 6) {
+				switch (_buttonPressed) {
+				case (SAVEBUTTONS - 5):
+					srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+					putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 0);
+					_resMan->resClose(SR_BUTUF);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 4):
+					srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+					putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 0);
+					_resMan->resClose(SR_BUTUS);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 3):
+					srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+					putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 0);
+					_resMan->resClose(SR_BUTDS);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 2):
+					srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+					putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 0);
+					_resMan->resClose(SR_BUTDF);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 1):
+					putButton(saveButtons[SAVEBUTTONS - 2].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
+					if ((_editingDescription) && (strlen(_fileDescriptions[_editingDescription + _firstDescription - 1]))) {
+						if (!attemptSave())
+							SwordEngine::_systemVars.snrStatus = SNR_DRIVEFULL;
+					}
+					break;
+				case (SAVEBUTTONS):
+					putButton(saveButtons[SAVEBUTTONS - 1].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
+					if (_editingDescription)
+						uneditDescription();
+					SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
+					break;
+				}
+			}
+
+			_buttonPressed = 0;
+		}
+	}
+
+	if (_scroll) {
+		if (--_scrollCount == 0) {
+
+			_scrollCount = 2;
+
+			switch (_scroll) {
+			case 1:
+				if (_firstDescription > 0) {
+					if (_firstDescription - (SAVEBUTTONS - 6) < 0)
+						_firstDescription = 0;
+					else
+						_firstDescription -= (SAVEBUTTONS - 6);
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			case 2:
+				if (_firstDescription > 0) {
+					_firstDescription -= 1;
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			case 3:
+				if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+					_firstDescription += 1;
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			case 4:
+				if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+					if (_firstDescription + (SAVEBUTTONS - 6) > MAXSAVEGAMES - (SAVEBUTTONS - 6))
+						_firstDescription = MAXSAVEGAMES - (SAVEBUTTONS - 6);
+					else
+						_firstDescription += (SAVEBUTTONS - 6);
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			}
+		}
+	}
+
+	if (_editingDescription)
+		editDescription();
+}
+
+void Control::removeSave() {
+	for (int i = 0; i < ARRAYSIZE(_slabs); i++) {
+		free(_slabs[i]);
+		_slabs[i] = nullptr;
+	}
+
+	if (SwordEngine::_systemVars.language == BS1_CZECH) {
+		_resMan->resClose(CZECH_SR_REDFONT);
+	} else {
+		_resMan->resClose(SR_REDFONT);
+	}
+
+	setVolumes();
+}
+
+bool Control::restoreGame() {
+	if (_selectedSavegame < MAXSAVEGAMES) {
+		restoreGameFromFile(_selectedSavegame);
+		doRestore();
+
+		return true;
+	}
+
+	return false;
+}
+
+void Control::initialiseRestore() {
+	uint8 *src, *dst;
+	int32 size;
+	FrameHeader *f;
+	Sprite *srWindow;
+	Sprite *srButuf, *srButus, *srButds, *srButdf;
+	Sprite *srSlab1, *srSlab2, *srSlab3, *srSlab4;
+
+	if (SwordEngine::_systemVars.language == BS1_CZECH)
+		_resMan->resOpen(CZECH_SR_REDFONT);
+	else
+		_resMan->resOpen(SR_REDFONT);
+
+	srWindow = (Sprite *)_resMan->openFetchRes(SR_WINDOW);
+
+	f = (FrameHeader *)((uint8 *)srWindow + _resMan->getUint32(srWindow->spriteOffset[0]));
+	src = (uint8 *)f + sizeof(FrameHeader);
+	dst = _screenBuf +
+		((SCREEN_WIDTH - _resMan->getUint16(f->width)) / 2) +
+		(SCREEN_WIDTH * ((SCREEN_DEPTH - _resMan->getUint16(f->height)) / 2));
+
+	if (SwordEngine::isPsx()) {
+		drawPsxComponent(PSX_PANEL, src, dst, f);
+	} else {
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			memcpy(dst, src, _resMan->getUint16(f->width));
+			src += _resMan->getUint16(f->width);
+			dst += SCREEN_WIDTH;
+		}
+	}
+
+	_resMan->resClose(SR_WINDOW);
+
+	_numButtons = SAVEBUTTONS;
+	putButton(saveButtons[SAVEBUTTONS - 2].x1, saveButtons[SAVEBUTTONS - 2].y1, 0);
+	putButton(saveButtons[SAVEBUTTONS - 1].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
+
+	srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+	putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 0);
+	_resMan->resClose(SR_BUTUF);
+
+	srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+	putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 0);
+	_resMan->resClose(SR_BUTUS);
+
+	srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+	putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 0);
+	_resMan->resClose(SR_BUTDS);
+
+	srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+	putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 0);
+	_resMan->resClose(SR_BUTDF);
+
+	renderText(_lStrings[STR_RESTORE], saveButtons[SAVEBUTTONS - 2].x1 + 40, saveButtons[SAVEBUTTONS - 2].y1);
+	renderText(_lStrings[STR_CANCEL], saveButtons[SAVEBUTTONS - 1].x1 - 15 - getTextLength(_lStrings[STR_CANCEL]), saveButtons[SAVEBUTTONS - 1].y1);
+
+	_gamesSaved = readFileDescriptions();
+
+	// Create the slabs here
+	srSlab1 = (Sprite *)_resMan->openFetchRes(SR_SLAB1);
+
+	if (SwordEngine::isPsx()) {
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[0]));
+		size = sizeof(Sprite) + sizeof(FrameHeader) + _resMan->getUint16(f->width) / 2 * _resMan->getUint16(f->height);
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[1]));
+		size += (sizeof(FrameHeader) + _resMan->getUint16(f->width) / 2 * _resMan->getUint16(f->height));
+	} else {
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[0]));
+		size = sizeof(Sprite) + sizeof(FrameHeader) + _resMan->getUint16(f->width) * _resMan->getUint16(f->height);
+		f = (FrameHeader *)((uint8 *)srSlab1 + _resMan->getUint32(srSlab1->spriteOffset[1]));
+		size += (sizeof(FrameHeader) + _resMan->getUint16(f->width) * _resMan->getUint16(f->height));
+	}
+
+	for (int i = 0; i < SAVEBUTTONS - 6; i++) {
+		_slabs[i] = (Sprite *)malloc(size);
+	}
+
+	memcpy((uint8 *)_slabs[0], (uint8 *)srSlab1, size);
+	memcpy((uint8 *)_slabs[4], (uint8 *)srSlab1, size);
+	_resMan->resClose(SR_SLAB1);
+
+	srSlab2 = (Sprite *)_resMan->openFetchRes(SR_SLAB2);
+	memcpy((uint8 *)_slabs[1], (uint8 *)srSlab2, size);
+	memcpy((uint8 *)_slabs[5], (uint8 *)srSlab2, size);
+	_resMan->resClose(SR_SLAB2);
+
+	srSlab3 = (Sprite *)_resMan->openFetchRes(SR_SLAB3);
+	memcpy((uint8 *)_slabs[2], (uint8 *)srSlab3, size);
+	memcpy((uint8 *)_slabs[6], (uint8 *)srSlab3, size);
+	_resMan->resClose(SR_SLAB3);
+
+	srSlab4 = (Sprite *)_resMan->openFetchRes(SR_SLAB4);
+	memcpy((uint8 *)_slabs[3], (uint8 *)srSlab4, size);
+	memcpy((uint8 *)_slabs[7], (uint8 *)srSlab4, size);
+	_resMan->resClose(SR_SLAB4);
+
+	renderSlabs();
+	renderTexts();
+}
+
+void Control::implementRestore() {
+	char string[40];
+
+	Sprite *srButuf, *srButus, *srButds, *srButdf;
+
+	_currentButton = getCurrentButton(&saveButtons[0]);
+
+	if ((_buttonPressed) && (!_currentButton)) {
+		//Reset button pressed
+		if (_buttonPressed > SAVEBUTTONS - 6) {
+			switch (_buttonPressed) {
+			case (SAVEBUTTONS - 5):
+				srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+				putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 0);
+				_resMan->resClose(SR_BUTUF);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 4):
+				srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+				putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 0);
+				_resMan->resClose(SR_BUTUS);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 3):
+				srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+				putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 0);
+				_resMan->resClose(SR_BUTDS);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 2):
+				srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+				putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 0);
+				_resMan->resClose(SR_BUTDF);
+				_scroll = 0;
+				break;
+			case (SAVEBUTTONS - 1):
+			case (SAVEBUTTONS):
+				putButton(saveButtons[_buttonPressed - 1].x1, saveButtons[_buttonPressed - 1].y1, 0);
+				break;
+			}
+		}
+
+		_buttonPressed = 0;
+	}
+
+	// Enhancement! Scrollable savegames list! :-)
+	bool useWheelScroll = false;
+	if (_mouseState && _currentButton >= 1 && _currentButton <= 8) {
+		if (_mouseState & BS1_WHEEL_DOWN) {
+			_buttonPressed = (SAVEBUTTONS - 3);
+			useWheelScroll = true;
+		} else if (_mouseState & BS1_WHEEL_UP) {
+			_buttonPressed = (SAVEBUTTONS - 4);
+			useWheelScroll = true;
+		}
+	}
+
+	if (_mouseState) {
+		if ((useWheelScroll || (_mouseState & BS1L_BUTTON_DOWN)) && (_currentButton)) {
+			// Set button pressed
+			if (!useWheelScroll)
+				_buttonPressed = _currentButton;
+
+			if (_buttonPressed) {
+				if (_buttonPressed > SAVEBUTTONS - 6) {
+					switch (_buttonPressed) {
+					case (SAVEBUTTONS - 5):
+						srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+						putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 1);
+						_resMan->resClose(SR_BUTUF);
+
+						if (_editingDescription) {
+							uneditDescription();
+						}
+
+						_scroll = 1;
+						_scrollCount = 10;
+						if (_firstDescription > 0) {
+							if (_firstDescription - (SAVEBUTTONS - 6) < 0)
+								_firstDescription = 0;
+							else
+								_firstDescription -= (SAVEBUTTONS - 6);
+							renderSlabs();
+							renderTexts();
+						}
+
+						break;
+					case (SAVEBUTTONS - 4):
+						// Don't render the button as pressed when using wheel scrolling
+						if (!useWheelScroll) {
+							srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+							putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 1);
+							_resMan->resClose(SR_BUTUS);
+						}
+
+						if (_editingDescription) {
+							uneditDescription();
+						}
+
+						_scroll = 2;
+						_scrollCount = 10;
+						if (_firstDescription > 0) {
+							_firstDescription -= 1;
+							renderSlabs();
+							renderTexts();
+						}
+
+						break;
+					case (SAVEBUTTONS - 3):
+						// Don't render the button as pressed when using wheel scrolling
+						if (!useWheelScroll) {
+							srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+							putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 1);
+							_resMan->resClose(SR_BUTDS);
+						}
+
+						if (_editingDescription) {
+							uneditDescription();
+						}
+
+						_scroll = 3;
+						_scrollCount = 10;
+						if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+							_firstDescription += 1;
+							renderSlabs();
+							renderTexts();
+						}
+
+						break;
+					case (SAVEBUTTONS - 2):
+						srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+						putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 1);
+						_resMan->resClose(SR_BUTDF);
+
+						if (_editingDescription) {
+							uneditDescription();
+						}
+
+						_scroll = 4;
+						_scrollCount = 10;
+						if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+							if (_firstDescription + (SAVEBUTTONS - 6) > MAXSAVEGAMES - (SAVEBUTTONS - 6))
+								_firstDescription = MAXSAVEGAMES - (SAVEBUTTONS - 6);
+							else
+								_firstDescription += (SAVEBUTTONS - 6);
+							renderSlabs();
+							renderTexts();
+						}
+
+						break;
+					case (SAVEBUTTONS - 1):
+					case (SAVEBUTTONS):
+						putButton(saveButtons[_buttonPressed - 1].x1, saveButtons[_buttonPressed - 1].y1, 1);
+						break;
+					}
+				} else {
+					if (_editingDescription) {
+						if ((_buttonPressed != _editingDescription) && (strlen(_fileDescriptions[_buttonPressed + _firstDescription - 1]))) {
+							Common::strcpy_s(_fileDescriptions[_editingDescription + _firstDescription - 1], _oldString);
+							_slabSelected = 0;
+							uneditDescription();
+
+							setEditDescription(_buttonPressed);
+
+							renderSlab(_slabSelected - 1, _editingDescription - 1);
+							Common::strcpy_s(string, _fileDescriptions[_editingDescription + _firstDescription - 1]);
+							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 42, saveButtons[_editingDescription - 1].y1 + 5);
+							Common::sprintf_s(string, "%d", _firstDescription + _editingDescription);
+							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 12, saveButtons[_editingDescription - 1].y1 + 5);
+						}
+					} else {
+						if (strlen(_fileDescriptions[_buttonPressed + _firstDescription - 1])) {
+							setEditDescription(_buttonPressed);
+							renderSlab(_slabSelected - 1, _editingDescription - 1);
+							Common::strcpy_s(string, _fileDescriptions[_editingDescription + _firstDescription - 1]);
+							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 42, saveButtons[_editingDescription - 1].y1 + 5);
+							Common::sprintf_s(string, "%d", _firstDescription + _editingDescription);
+							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 12, saveButtons[_editingDescription - 1].y1 + 5);
+						}
+					}
+				}
+			}
+		}
+
+		if ((_mouseState & BS1L_BUTTON_UP) && (_buttonPressed)) {
+			if (_buttonPressed > SAVEBUTTONS - 6) {
+				switch (_buttonPressed) {
+				case (SAVEBUTTONS - 5):
+					srButuf = (Sprite *)_resMan->openFetchRes(SR_BUTUF);
+					putSpriteButton(srButuf, saveButtons[SAVEBUTTONS - 6].x1, saveButtons[SAVEBUTTONS - 6].y1, 0);
+					_resMan->resClose(SR_BUTUF);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 4):
+					srButus = (Sprite *)_resMan->openFetchRes(SR_BUTUS);
+					putSpriteButton(srButus, saveButtons[SAVEBUTTONS - 5].x1, saveButtons[SAVEBUTTONS - 5].y1, 0);
+					_resMan->resClose(SR_BUTUS);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 3):
+					srButds = (Sprite *)_resMan->openFetchRes(SR_BUTDS);
+					putSpriteButton(srButds, saveButtons[SAVEBUTTONS - 4].x1, saveButtons[SAVEBUTTONS - 4].y1, 0);
+					_resMan->resClose(SR_BUTDS);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 2):
+					srButdf = (Sprite *)_resMan->openFetchRes(SR_BUTDF);
+					putSpriteButton(srButdf, saveButtons[SAVEBUTTONS - 3].x1, saveButtons[SAVEBUTTONS - 3].y1, 0);
+					_resMan->resClose(SR_BUTDF);
+					_scroll = 0;
+					break;
+				case (SAVEBUTTONS - 1):
+					putButton(saveButtons[SAVEBUTTONS - 2].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
+					if ((_editingDescription) && (strlen(_fileDescriptions[_editingDescription + _firstDescription - 1]))) {
+						//Restore game here
+						_selectedSavegame = _firstDescription + _editingDescription - 1;
+						//Common::sprintf_s(saveFilename, "savegame.%.3d", _firstDescription + _editingDescription - 1);
+						uneditDescription();
+						SwordEngine::_systemVars.saveGameFlag = SGF_RESTORE;
+						SwordEngine::_systemVars.snrStatus = SNR_BLANK;
+					}
+					break;
+				case (SAVEBUTTONS):
+					putButton(saveButtons[SAVEBUTTONS - 1].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
+					if (_editingDescription)
+						uneditDescription();
+					SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
+					break;
+				}
+			}
+
+			_buttonPressed = 0;
+		}
+	}
+
+	if (_scroll) {
+		if (--_scrollCount == 0) {
+			_scrollCount = 2;
+
+			switch (_scroll) {
+			case 1:
+				if (_firstDescription > 0) {
+					if (_firstDescription - (SAVEBUTTONS - 6) < 0)
+						_firstDescription = 0;
+					else
+						_firstDescription -= (SAVEBUTTONS - 6);
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			case 2:
+				if (_firstDescription > 0) {
+					_firstDescription -= 1;
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			case 3:
+				if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+					_firstDescription += 1;
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			case 4:
+				if (_firstDescription < MAXSAVEGAMES - (SAVEBUTTONS - 6)) {
+					if (_firstDescription + (SAVEBUTTONS - 6) > MAXSAVEGAMES - (SAVEBUTTONS - 6))
+						_firstDescription = MAXSAVEGAMES - (SAVEBUTTONS - 6);
+					else
+						_firstDescription += (SAVEBUTTONS - 6);
+					renderSlabs();
+					renderTexts();
+				}
+				break;
+			}
+		}
+	}
+
+	if (_editingDescription)
+		restoreSelected();
+}
+
+void Control::removeRestore() {
+	for (int i = 0; i < ARRAYSIZE(_slabs); i++) {
+		free(_slabs[i]);
+		_slabs[i] = nullptr;
+	}
+
+	if (SwordEngine::_systemVars.language == BS1_CZECH) {
+		_resMan->resClose(CZECH_SR_REDFONT);
+	} else {
+		_resMan->resClose(SR_REDFONT);
+	}
+
+	setVolumes();
+}
+
+void Control::initialiseControlPanel() {
+	uint8 *src;
+	uint8 *dst;
+	FrameHeader *f;
+	Sprite *srPanel = nullptr;
+
+	_resMan->resOpen(SR_TEXT_BUTTON);
+	_mouse->controlPanel(true);
+
+	// Clear the render buffer and copy the control panel into it
+	memset(_screenBuf, 0, SCREEN_WIDTH * SCREEN_FULL_DEPTH);
+	_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_FULL_DEPTH);
+
+	if (SwordEngine::_systemVars.controlPanelMode != CP_DEATHSCREEN) { // NOT THE DEATH SCREEN ie. start game panel, normal control panel, or end of game
+		switch (SwordEngine::_systemVars.language) {
+		case BS1_ENGLISH:
+			if (SwordEngine::_systemVars.realLanguage == Common::EN_USA) {
+				srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_AMERICAN);
+			} else {
+				srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_ENGLISH);
+			}
+
+			break;
+		case BS1_FRENCH:
+			srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_FRENCH);
+			break;
+		case BS1_GERMAN:
+			srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_GERMAN);
+			break;
+		case BS1_ITALIAN:
+			srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_ITALIAN);
+			break;
+		case BS1_SPANISH:
+			srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_SPANISH);
+			break;
+		case BS1_CZECH:
+			srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_SPANISH);
+			break;
+		case BS1_PORT:
+			srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_SPANISH);
+			break;
+		default:
+			break;
+		}
+	} else {
+		srPanel = (Sprite *)_resMan->openFetchRes(SR_DEATHPANEL);
+	}
+
+	if (srPanel) {
+		f = (FrameHeader *)((uint8 *)srPanel + _resMan->getUint32(srPanel->spriteOffset[0]));
+		src = (uint8 *)f + sizeof(FrameHeader);
+
+		if (SwordEngine::isPsx()) {
+			int component = SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN ? PSX_DEATHPANEL : PSX_PANEL;
+			dst = _screenBuf +
+				  SCREEN_WIDTH * (SCREEN_DEPTH - _resMan->getUint16(f->height)) / 2 +
+				  (SCREEN_WIDTH - _resMan->getUint16(f->width)) / 2;
+
+			if (component == PSX_DEATHPANEL)
+				dst = _screenBuf;
+
+			drawPsxComponent(component, src, dst, f);
+		} else {
+			dst = _screenBuf + SCREEN_WIDTH * (SCREEN_DEPTH - _resMan->getUint16(f->height)) / 2 + (SCREEN_WIDTH - _resMan->getUint16(f->width)) / 2;
+			for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+				memcpy(dst, src, _resMan->getUint16(f->width));
+				dst += SCREEN_WIDTH;
+				src += _resMan->getUint16(f->width);
+			}
+		}
+
+		_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+	}
+
+	if (SwordEngine::_systemVars.controlPanelMode != CP_DEATHSCREEN) {
+		switch (SwordEngine::_systemVars.language) {
+		case BS1_ENGLISH:
+			if (SwordEngine::_systemVars.realLanguage == Common::EN_USA) {
+				_resMan->resClose(SR_PANEL_AMERICAN);
+			} else {
+				_resMan->resClose(SR_PANEL_ENGLISH);
+			}
+
+			break;
+		case BS1_FRENCH:
+			_resMan->resClose(SR_PANEL_FRENCH);
+			break;
+		case BS1_GERMAN:
+			_resMan->resClose(SR_PANEL_GERMAN);
+			break;
+		case BS1_ITALIAN:
+			_resMan->resClose(SR_PANEL_ITALIAN);
+			break;
+		case BS1_SPANISH:
+			_resMan->resClose(SR_PANEL_SPANISH);
+			break;
+		case BS1_CZECH:
+			_resMan->resClose(SR_PANEL_SPANISH);
+			break;
+		case BS1_PORT:
+			_resMan->resClose(SR_PANEL_SPANISH);
+			break;
+		default:
+			break;
+		}
+	} else {
+		_resMan->resClose(SR_DEATHPANEL);
+	}
+
+	// Draw the buttons...
+	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
+		_numButtons = 8;
+
+		for (int i = 0; i < _numButtons; i++) {
+			putButton(panelButtons[i].x1, panelButtons[i].y1, 0);
+		}
+
+		putTextButton(SwordEngine::_systemVars.showText ? 1 : 0);
+	} else {
+		_numButtons = 4;
+
+		for (int i = 1; i < _numButtons; i++) {
+			putButton(deathButtons[i].x1, deathButtons[i].y1, 0);
+		}
+	}
+
+	// Render text elements...
+	if (SwordEngine::_systemVars.controlPanelMode == CP_THEEND)
+		renderText(_lStrings[STR_THE_END], (SCREEN_WIDTH - getTextLength(_lStrings[STR_THE_END])) / 2, 188);
+
+	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
+		renderText(_lStrings[STR_SAVE], 180, 188);
+		renderText(_lStrings[STR_DONE], 460 - getTextLength(_lStrings[STR_DONE]), 332);
+
+		renderText(_lStrings[STR_RESTORE], 180, 224);
+		renderText(_lStrings[STR_RESTART], 180, 260);
+		renderText(_lStrings[STR_QUIT], 180, 296);
+	} else { // Start-game panel, death panel & end-game panel
+		renderText(_lStrings[STR_RESTORE], 285, 224);
+
+		if (SwordEngine::_systemVars.controlPanelMode == CP_NEWGAME) { // Start-game panel
+			renderText(_lStrings[STR_START], 285, 260);
+		} else {
+			renderText(_lStrings[STR_RESTART], 285, 260);
+		}
+
+		renderText(_lStrings[STR_QUIT], 285, 296);
+	}
+
+	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
+		renderText(_lStrings[STR_SPEED], 460 - getTextLength(_lStrings[STR_SPEED]), 188);
+		renderText(_lStrings[STR_VOLUME], 460 - getTextLength(_lStrings[STR_VOLUME]), 224);
+		renderText(_lStrings[STR_TEXT], 460 - getTextLength(_lStrings[STR_TEXT]), 260);
+	}
+}
+
+void Control::implementControlPanel() {
+	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
+		_currentButton = getCurrentButton(&panelButtons[0]);
+	} else {
+		_currentButton = getCurrentButton(&deathButtons[0]);
+	}
+
+	if ((_buttonPressed) && (!_currentButton)) {
+		// Reset button pressed
+		if (_buttonPressed != TEXTBUTTONID) {
+			if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
+				putButton(panelButtons[_buttonPressed - 1].x1, panelButtons[_buttonPressed - 1].y1, 0);
+			} else {
+				putButton(deathButtons[_buttonPressed - 1].x1, deathButtons[_buttonPressed - 1].y1, 0);
+			}
+		}
+
+		_buttonPressed = 0;
+	}
+
+	if (_mouseState) {
+		if ((_mouseState & BS1L_BUTTON_DOWN) && (_currentButton)) {
+			// Set button pressed
+			_buttonPressed = _currentButton;
+			if (_buttonPressed != TEXTBUTTONID) {
+				if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
+					putButton(panelButtons[_buttonPressed - 1].x1, panelButtons[_buttonPressed - 1].y1, 1);
+				} else {
+					putButton(deathButtons[_buttonPressed - 1].x1, deathButtons[_buttonPressed - 1].y1, 1);
+				}
+			} else {
+				SwordEngine::_systemVars.showText = !SwordEngine::_systemVars.showText;
+				putTextButton(SwordEngine::_systemVars.showText ? 1 : 0);
+			}
+		}
+
+		if ((_mouseState & BS1L_BUTTON_UP) && (_buttonPressed)) {
+			SwordEngine::_systemVars.snrStatus = _buttonPressed + 1;
+			_buttonPressed = 0;
+		}
+	}
+}
+
+void Control::removeControlPanel() {
+	_resMan->resClose(SR_TEXT_BUTTON);
+}
+
+void Control::initialiseResources() {
+	if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN) {
+		if (SwordEngine::_systemVars.language == BS1_CZECH) {
+			_resMan->resOpen(CZECH_SR_DEATHFONT);
+		} else {
+			_resMan->resOpen(_resMan->getDeathFontId());
+		}
+	} else {
+		if (SwordEngine::_systemVars.language == BS1_CZECH) {
+			_resMan->resOpen(CZECH_SR_FONT);
+		} else {
+			_resMan->resOpen(SR_FONT);
+		}
+	}
+
+	_resMan->resOpen(SR_BUTTON);
+
+	_screen->fnSetFadeTargetPalette(0, 256, SR_PALETTE);
+	_screen->fnSetFadeTargetPalette(0, 1, 0, BORDER_BLACK);
+}
+
+void Control::releaseResources() {
+	_resMan->resClose(SR_BUTTON);
+
+	if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN) {
+		if (SwordEngine::_systemVars.language == BS1_CZECH) {
+			_resMan->resClose(CZECH_SR_DEATHFONT);
+		} else {
+			_resMan->resClose(_resMan->getDeathFontId());
+		}
+	} else {
+		if (SwordEngine::_systemVars.language == BS1_CZECH) {
+			_resMan->resClose(CZECH_SR_FONT);
+		} else {
+			_resMan->resClose(SR_FONT);
+		}
+	}
+}
+
+void Control::delay(uint32 msecs) {
+	Common::Event event;
+
+	uint32 now = _system->getMillis();
+	uint32 endTime = now + msecs;
+	_keyPressed.reset();
+	_mouseState = 0;
+
+	do {
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				_keyPressed = event.kbd;
+				// we skip the rest of the delay and return immediately
+				// to handle keyboard input
+				return;
+			case Common::EVENT_MOUSEMOVE:
+				_mouseCoord = event.mouse;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_mouseState |= BS1L_BUTTON_DOWN;
+				_mouseCoord = event.mouse;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				_mouseState |= BS1L_BUTTON_UP;
+				_mouseCoord = event.mouse;
+				break;
+			case Common::EVENT_WHEELUP:
+				_mouseState |= BS1_WHEEL_UP;
+				_mouseCoord = event.mouse;
+				break;
+			case Common::EVENT_WHEELDOWN:
+				_mouseState |= BS1_WHEEL_DOWN;
+				break;
+			default:
+				break;
+			}
+		}
+
+		_system->updateScreen();
+		_system->delayMillis(10);
+	} while (_system->getMillis() < endTime);
+}
+
+uint8 *Control::decompressPsxGfx(uint8 *src, FrameHeader *f) {
+	uint8 *dst = (uint8 *)malloc(_resMan->getUint16(f->height) * _resMan->getUint16(f->width));
+	memset(dst, 0, _resMan->getUint16(f->height) * _resMan->getUint16(f->width));
+	Screen::decompressHIF(src, dst);
+	return dst;
+}
+
+void Control::drawPsxComponent(int componentType, uint8 *src, uint8 *dst, FrameHeader *f) {
+	src = decompressPsxGfx(src, f);
+	uint8 *initialPtr = src;
+
+	switch (componentType) {
+	case PSX_PANEL:
+	case PSX_SLAB:
+		// Draw the source image at double the resolution
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			for (int j = 0; j < _resMan->getUint16(f->width) / 2; j++) {
+				if (src[j]) {
+					dst[j * 2] = src[j];
+					dst[j * 2 + 1] = src[j];
+				}
+			}
+
+			dst += SCREEN_WIDTH;
+
+			for (int j = 0; j < _resMan->getUint16(f->width) / 2; j++) {
+				if (src[j]) {
+					dst[j * 2] = src[j];
+					dst[j * 2 + 1] = src[j];
+				}
+			}
+
+			dst += SCREEN_WIDTH;
+
+			src += _resMan->getUint16(f->width) / 2;
+		}
+
+		break;
+	case PSX_DEATHPANEL:
+		// The PSX death panel  is 1/3 of the original width, so adjust for that...
+		for (int i = 0; i < _resMan->getUint16(f->height) / 2; i++) {
+			for (int j = 0; (j < (_resMan->getUint16(f->width)) / 3) && (j < (SCREEN_WIDTH - 3)); j++) {
+				if (src[j]) {
+					dst[j * 3] = src[j];
+					dst[j * 3 + 1] = src[j];
+					dst[j * 3 + 2] = src[j];
+				}
+			}
+
+			dst += SCREEN_WIDTH;
+
+			for (int j = 0; j < (_resMan->getUint16(f->width)) / 3; j++) {
+				if (src[j]) {
+					dst[j * 3] = src[j];
+					dst[j * 3 + 1] = src[j];
+					dst[j * 3 + 2] = src[j];
+				}
+			}
+
+			dst += SCREEN_WIDTH;
+			src += _resMan->getUint16(f->width) / 3;
+		}
+
+		break;
+	case PSX_TEXT:
+	case PSX_BUTTON:
+	case PSX_CONFIRM:
+	case PSX_SCROLL:
+		for (int i = 0; i < _resMan->getUint16(f->height); i++) {
+			for (int j = 0; j < _resMan->getUint16(f->width); j++) {
+				if (src[j])
+					dst[j] = src[j];
+			}
+
+			dst += SCREEN_WIDTH;
+
+			for (int j = 0; j < _resMan->getUint16(f->width); j++) {
+				if (src[j])
+					dst[j] = src[j];
+			}
+
+			dst += SCREEN_WIDTH;
+			src += _resMan->getUint16(f->width);
+		}
+
+		break;
+	default:
+		break;
+	};
+
+	free(initialPtr);
 }
 
 int Control::displayMessage(const char *altButton, const char *message, ...) {
@@ -926,12 +2860,6 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	int result = dialog.runModal();
 	_mouse->setPointer(MSE_POINTER, 0);
 	return result;
-}
-
-bool Control::savegamesExist() {
-	Common::String pattern = "sword1.???";
-	Common::StringArray saveNames = _saveFileMan->listSavefiles(pattern);
-	return saveNames.size() > 0;
 }
 
 void Control::checkForOldSaveGames() {
@@ -981,194 +2909,6 @@ void Control::checkForOldSaveGames() {
 	_saveFileMan->removeSavefile("SAVEGAME.INF");
 }
 
-void Control::showSavegameNames() {
-	for (uint8 cnt = 0; cnt < 8; cnt++) {
-		_buttons[cnt]->draw();
-		uint8 textMode = TEXT_LEFT_ALIGN;
-		uint16 ycoord = _saveButtons[cnt].y + 2;
-		Common::String savegameNameStr = Common::String::format("%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
-		if (cnt + _saveScrollPos == _selectedSavegame) {
-			textMode |= TEXT_RED_FONT;
-			ycoord += 2;
-			if (_cursorVisible) {
-				savegameNameStr += "_";
-			}
-		}
-		renderText((const uint8*)savegameNameStr.c_str(), _saveButtons[cnt].x + 6, ycoord, textMode);
-	}
-}
-
-void Control::saveNameSelect(uint8 id, bool saving) {
-	deselectSaveslots();
-	_buttons[id - BUTTON_SAVE_SELECT1]->setSelected(1);
-	uint8 num = (id - BUTTON_SAVE_SELECT1) + _saveScrollPos;
-	if (saving && (_selectedSavegame != 255)) // the player may have entered something, clear it again
-		_saveNames[_selectedSavegame] = _oldName;
-	if (num < _saveFiles) {
-		_selectedSavegame = num;
-		_oldName = _saveNames[num]; // save for later
-	} else {
-		if (!saving)
-			_buttons[id - BUTTON_SAVE_SELECT1]->setSelected(0); // no save in slot, deselect it
-		else {
-			if (_saveFiles <= num)
-				_saveFiles = num + 1;
-			_selectedSavegame = num;
-			_oldName.clear();
-		}
-	}
-	if (_selectedSavegame < 255)
-		_cursorTick = 0;
-	showSavegameNames();
-}
-
-void Control::saveNameScroll(uint8 scroll, bool saving) {
-	uint16 maxScroll;
-	if (saving)
-		maxScroll = 64;
-	else
-		maxScroll = _saveFiles; // for loading, we can only scroll as far as there are savegames
-	if (scroll == BUTTON_SCROLL_UP_FAST) {
-		if (_saveScrollPos >= 8)
-			_saveScrollPos -= 8;
-		else
-			_saveScrollPos = 0;
-	} else if (scroll == BUTTON_SCROLL_UP_SLOW) {
-		if (_saveScrollPos >= 1)
-			_saveScrollPos--;
-	} else if (scroll == BUTTON_SCROLL_DOWN_SLOW) {
-		if (_saveScrollPos + 8 < maxScroll)
-			_saveScrollPos++;
-	} else if (scroll == BUTTON_SCROLL_DOWN_FAST) {
-		if (_saveScrollPos + 16 < maxScroll)
-			_saveScrollPos += 8;
-		else {
-			if (maxScroll >= 8)
-				_saveScrollPos = maxScroll - 8;
-			else
-				_saveScrollPos = 0;
-		}
-	}
-	_selectedSavegame = 255; // deselect savegame
-	deselectSaveslots();
-	showSavegameNames();
-}
-
-void Control::createButtons(const ButtonInfo *buttons, uint8 num) {
-	for (uint8 cnt = 0; cnt < num; cnt++) {
-		_buttons[cnt] = new ControlButton(buttons[cnt].x, buttons[cnt].y, buttons[cnt].resId, buttons[cnt].id, buttons[cnt].flag, _resMan, _screenBuf, _system);
-		_buttons[cnt]->draw();
-	}
-	_numButtons = num;
-}
-
-void Control::destroyButtons() {
-	for (uint8 cnt = 0; cnt < _numButtons; cnt++)
-		delete _buttons[cnt];
-	_numButtons = 0;
-}
-
-uint16 Control::getTextWidth(const uint8 *str) {
-	uint16 width = 0;
-	while (*str) {
-		width += _resMan->getUint16(_resMan->fetchFrame(_font, *str - 32)->width) - 3;
-		str++;
-	}
-	return width;
-}
-
-void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
-	uint8 *font = _font;
-	if (mode & TEXT_RED_FONT) {
-		mode &= ~TEXT_RED_FONT;
-		font = _redFont;
-	}
-
-	if (mode == TEXT_RIGHT_ALIGN) // negative x coordinate means right-aligned.
-		x -= getTextWidth(str);
-	else if (mode == TEXT_CENTER)
-		x -= getTextWidth(str) / 2;
-
-	uint16 destX = x;
-	while (*str) {
-		uint8 *dst = _screenBuf + y * SCREEN_WIDTH + destX;
-
-		FrameHeader *chSpr = _resMan->fetchFrame(font, *str - 32);
-		uint8 *sprData = (uint8 *)chSpr + sizeof(FrameHeader);
-		uint8 *HIFbuf = NULL;
-
-		if (SwordEngine::isPsx()) { //Text fonts are compressed in psx version
-			HIFbuf = (uint8 *)malloc(_resMan->getUint16(chSpr->height) * _resMan->getUint16(chSpr->width));
-			memset(HIFbuf, 0, _resMan->getUint16(chSpr->height) * _resMan->getUint16(chSpr->width));
-			Screen::decompressHIF(sprData, HIFbuf);
-			sprData = HIFbuf;
-		}
-
-		for (uint16 cnty = 0; cnty < _resMan->getUint16(chSpr->height); cnty++) {
-			for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++) {
-				if (sprData[cntx])
-					dst[cntx] = sprData[cntx];
-			}
-
-			if (SwordEngine::isPsx()) { //On PSX version we need to double horizontal lines
-				dst += SCREEN_WIDTH;
-				for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++)
-					if (sprData[cntx])
-						dst[cntx] = sprData[cntx];
-			}
-
-			sprData += _resMan->getUint16(chSpr->width);
-			dst += SCREEN_WIDTH;
-		}
-		destX += _resMan->getUint16(chSpr->width) - 3;
-		str++;
-
-		free(HIFbuf);
-	}
-
-	_system->copyRectToScreen(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
-}
-
-void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
-	uint16 destX = _volumeButtons[id].x + 20;
-	uint16 destY = _volumeButtons[id].y + 116;
-
-	for (uint8 chCnt = 0; chCnt < 2; chCnt++) {
-		uint8 vol = (chCnt == 0) ? volL : volR;
-		FrameHeader *frHead = _resMan->fetchFrame(_resMan->openFetchRes(SR_VLIGHT), (vol + 15) >> 4);
-		uint8 *destMem = _screenBuf + destY * SCREEN_WIDTH + destX;
-		uint8 *srcMem = (uint8 *)frHead + sizeof(FrameHeader);
-		uint16 barHeight = _resMan->getUint16(frHead->height);
-		uint8 *psxVolBuf = NULL;
-
-		if (SwordEngine::isPsx()) {
-			psxVolBuf = (uint8 *)malloc(_resMan->getUint16(frHead->height) / 2 * _resMan->getUint16(frHead->width));
-			memset(psxVolBuf, 0, _resMan->getUint16(frHead->height) / 2 * _resMan->getUint16(frHead->width));
-			Screen::decompressHIF(srcMem, psxVolBuf);
-			srcMem = psxVolBuf;
-			barHeight /= 2;
-		}
-
-		for (uint16 cnty = 0; cnty < barHeight; cnty++) {
-			memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
-
-			if (SwordEngine::isPsx()) { //linedoubling
-				destMem += SCREEN_WIDTH;
-				memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
-			}
-
-			srcMem += _resMan->getUint16(frHead->width);
-			destMem += SCREEN_WIDTH;
-		}
-
-		_system->copyRectToScreen(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, _resMan->getUint16(frHead->width), _resMan->getUint16(frHead->height));
-		_resMan->resClose(SR_VLIGHT);
-		destX += 32;
-
-		free(psxVolBuf);
-	}
-}
-
 void Control::saveGameToFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
@@ -1183,7 +2923,7 @@ void Control::saveGameToFile(uint8 slot) {
 	}
 
 	outf->writeUint32LE(SAVEGAME_HEADER);
-	outf->write(_saveNames[slot].c_str(), 40);
+	outf->write(_fileDescriptions[slot], 40);
 	outf->writeByte(SAVEGAME_VERSION);
 
 	// Saving can occur either delayed from the GMM (in which case the panel is now shown and we can make
@@ -1409,97 +3149,6 @@ void Control::doRestore() {
 	if (SwordEngine::_systemVars.isDemo)
 		Logic::_scriptVars[PLAYINGDEMO] = 1;
 }
-
-void Control::delay(uint32 msecs) {
-	Common::Event event;
-
-	uint32 now = _system->getMillis();
-	uint32 endTime = now + msecs;
-	_keyPressed.reset();
-	_mouseState = 0;
-
-	do {
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				_keyPressed = event.kbd;
-				// we skip the rest of the delay and return immediately
-				// to handle keyboard input
-				return;
-			case Common::EVENT_MOUSEMOVE:
-				_mouseCoord = event.mouse;
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				_mouseDown = true;
-				_mouseState |= BS1L_BUTTON_DOWN;
-				_mouseCoord = event.mouse;
-				break;
-			case Common::EVENT_LBUTTONUP:
-				_mouseDown = false;
-				_mouseState |= BS1L_BUTTON_UP;
-				_mouseCoord = event.mouse;
-				break;
-			case Common::EVENT_WHEELUP:
-				_mouseDown = false;
-				_mouseState |= BS1_WHEEL_UP;
-				_mouseCoord = event.mouse;
-				break;
-			case Common::EVENT_WHEELDOWN:
-				_mouseDown = false;
-				_mouseState |= BS1_WHEEL_DOWN;
-				break;
-			default:
-				break;
-			}
-		}
-
-		_system->updateScreen();
-		_system->delayMillis(10);
-	} while (_system->getMillis() < endTime);
-}
-
-const ButtonInfo Control::_deathButtons[3] = {
-	{250, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0 },
-	{250, 260 + 40, SR_BUTTON, BUTTON_RESTART, kButtonOk },
-	{250, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel }
-};
-
-const ButtonInfo Control::_panelButtons[7] = {
-	{145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL, 0 },
-	{145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0 },
-	{145, 260 + 40, SR_BUTTON, BUTTON_RESTART, 0 },
-	{145, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel },
-	{475, 188 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL, 0 },
-	{475, 224 + 40, SR_TEXT_BUTTON, BUTTON_TEXT, 0 },
-	{475, 332 + 40, SR_BUTTON, BUTTON_DONE, kButtonOk }
-};
-
-const ButtonInfo Control::_saveButtons[16] = {
-	{114,  32 + 40, SR_SLAB1, BUTTON_SAVE_SELECT1, 0 },
-	{114,  68 + 40, SR_SLAB2, BUTTON_SAVE_SELECT2, 0 },
-	{114, 104 + 40, SR_SLAB3, BUTTON_SAVE_SELECT3, 0 },
-	{114, 140 + 40, SR_SLAB4, BUTTON_SAVE_SELECT4, 0 },
-	{114, 176 + 40, SR_SLAB1, BUTTON_SAVE_SELECT5, 0 },
-	{114, 212 + 40, SR_SLAB2, BUTTON_SAVE_SELECT6, 0 },
-	{114, 248 + 40, SR_SLAB3, BUTTON_SAVE_SELECT7, 0 },
-	{114, 284 + 40, SR_SLAB4, BUTTON_SAVE_SELECT8, 0 },
-
-	{516,  25 + 40, SR_BUTUF, BUTTON_SCROLL_UP_FAST, 0 },
-	{516,  45 + 40, SR_BUTUS, BUTTON_SCROLL_UP_SLOW, 0 },
-	{516, 289 + 40, SR_BUTDS, BUTTON_SCROLL_DOWN_SLOW, 0 },
-	{516, 310 + 40, SR_BUTDF, BUTTON_SCROLL_DOWN_FAST, 0 },
-
-	{125, 338 + 40, SR_BUTTON, BUTTON_SAVE_RESTORE_OKAY, kButtonOk},
-	{462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL, kButtonCancel }
-};
-
-const ButtonInfo Control::_volumeButtons[4] = {
-	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL, kButtonOk },
-	{ 138, 135, SR_VKNOB, 0, 0 },
-	{ 273, 135, SR_VKNOB, 0, 0 },
-	{ 404, 135, SR_VKNOB, 0, 0 },
-};
 
 bool Control::loadCustomStrings(const char *filename) {
 	Common::File f;

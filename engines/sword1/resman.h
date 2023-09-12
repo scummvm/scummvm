@@ -103,6 +103,7 @@ public:
 		return (_isBigEndian) ? TO_BE_32(value) : TO_LE_32(value);
 	}
 
+	uint32 getDeathFontId();
 
 private:
 	uint32     resLength(uint32 id);

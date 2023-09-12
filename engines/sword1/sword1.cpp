@@ -112,13 +112,15 @@ Common::Error SwordEngine::init() {
 	_systemVars.justRestoredGame = 0;
 	_systemVars.currentCD = 0;
 	_systemVars.controlPanelMode = CP_NEWGAME;
-	_systemVars.forceRestart = false;
+	_systemVars.saveGameFlag = SGF_DONE;
+	_systemVars.snrStatus = SNR_BLANK;
 	_systemVars.wantFade = true;
 	_systemVars.realLanguage = Common::parseLanguage(ConfMan.get("language"));
 	_systemVars.isLangRtl = false;
 	_systemVars.debugMode = (gDebugLevel >= 0);
 	_systemVars.slowMode = false;
 	_systemVars.fastMode = false;
+	_systemVars.parallaxOn = true;
 
 	switch (_systemVars.realLanguage) {
 	case Common::DE_DEU:
@@ -250,67 +252,57 @@ void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
 	}
 }
 
-uint8 SwordEngine::checkKeys() {
-	uint8 retCode = 0;
-	if (_systemVars.forceRestart) {
-		retCode = CONTROL_RESTART_GAME;
-	} else {
+void SwordEngine::checkKeys() {
+	switch (_keyPressed.keycode) {
+	case Common::KEYCODE_F5:
+	case Common::KEYCODE_ESCAPE:
+		if ((Logic::_scriptVars[MOUSE_STATUS] & 1) && (Logic::_scriptVars[GEORGE_HOLDING_PIECE] == 0)) {
+			_systemVars.saveGameFlag = SGF_SAVE;
+			_systemVars.snrStatus = SNR_MAINPANEL;
+		}
+
+		break;
+	default:
+		break;
+	}
+
+	// Debug keys!
+	if (!_systemVars.isDemo && _systemVars.debugMode) {
 		switch (_keyPressed.keycode) {
-		case Common::KEYCODE_F5:
-		case Common::KEYCODE_ESCAPE:
-			if ((Logic::_scriptVars[MOUSE_STATUS] & 1) && (Logic::_scriptVars[GEORGE_HOLDING_PIECE] == 0)) {
-				retCode = _control->runPanel();
-				if (retCode == CONTROL_NOTHING_DONE) {
-					_screen->fullRefresh(true);
-					Logic::_scriptVars[NEW_PALETTE] = 1;
+		case Common::KEYCODE_1: // Slow mode
+			{
+				if (_systemVars.slowMode) {
+					_systemVars.slowMode = false;
+					_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
+				} else {
+					_systemVars.slowMode = true;
+					_targetFrameTime = SLOW_FRAME_TIME; // 2Hz
 				}
 
+				_systemVars.fastMode = false; // For good measure...
+
+				_rate = _targetFrameTime / 10;
+			}
+			break;
+		case Common::KEYCODE_4: // Fast mode
+			{
+				if (_systemVars.fastMode) {
+					_systemVars.fastMode = false;
+					_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
+				} else {
+					_systemVars.fastMode = true;
+					_targetFrameTime = FAST_FRAME_TIME; // 100Hz
+				}
+
+				_systemVars.slowMode = false; // For good measure...
+
+				_rate = _targetFrameTime / 10;
 			}
 			break;
 		default:
 			break;
 		}
-
-		// Debug keys!
-		if (!_systemVars.isDemo && _systemVars.debugMode) {
-			switch (_keyPressed.keycode) {
-			case Common::KEYCODE_1: // Slow mode
-				{
-					if (_systemVars.slowMode) {
-						_systemVars.slowMode = false;
-						_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
-					} else {
-						_systemVars.slowMode = true;
-						_targetFrameTime = SLOW_FRAME_TIME; // 2Hz
-					}
-
-					_systemVars.fastMode = false; // For good measure...
-
-					_rate = _targetFrameTime / 10;
-				}
-				break;
-			case Common::KEYCODE_4: // Fast mode
-				{
-					if (_systemVars.fastMode) {
-						_systemVars.fastMode = false;
-						_targetFrameTime = DEFAULT_FRAME_TIME; // 12.5Hz
-					} else {
-						_systemVars.fastMode = true;
-						_targetFrameTime = FAST_FRAME_TIME; // 100Hz
-					}
-
-					_systemVars.slowMode = false; // For good measure...
-
-					_rate = _targetFrameTime / 10;
-				}
-				break;
-			default:
-				break;
-			}
-		}
 	}
-
-	return retCode;
 }
 
 static const char *const errorMsgs[] = {
@@ -647,8 +639,9 @@ Common::Error SwordEngine::go() {
 	_screen->initFadePaletteServer();
 	installTimerRoutines();
 
+	bool startedFromGMM = false;
 	uint16 startPos = ConfMan.getInt("boot_param");
-	_control->readSavegameDescriptions();
+
 	if (startPos) {
 		_logic->startPositions(startPos);
 	} else {
@@ -657,31 +650,41 @@ Common::Error SwordEngine::go() {
 		// but their filenames are numbered starting from 0.
 		if (saveSlot >= 0 && _control->savegamesExist() && _control->restoreGameFromFile(saveSlot)) {
 			_control->doRestore();
+			startedFromGMM = true;
+			_systemVars.controlPanelMode = CP_NORMAL;
 		} else if (_control->savegamesExist()) {
+			_systemVars.snrStatus = SNR_MAINPANEL;
 			_systemVars.controlPanelMode = CP_NEWGAME;
-			if (_control->runPanel() == CONTROL_GAME_RESTORED)
-				_control->doRestore();
-			else if (!shouldQuit())
-				_logic->startPositions(0);
-		} else {
-			// no savegames, start new game.
-			_logic->startPositions(0);
+			_control->getPlayerOptions();
+
+			// If player clicked on "Start" (Restart)
+			// just ignore it - so game can start from 'startPos'
+			// (which will be '0' for normal game anyway)
+			if (_systemVars.saveGameFlag == SGF_RESTART)
+				_systemVars.saveGameFlag = SGF_DONE;
 		}
 	}
-	_systemVars.controlPanelMode = CP_NORMAL;
 
 	while (!shouldQuit()) {
-		uint8 action = mainLoop();
+		if (_systemVars.saveGameFlag == SGF_RESTORE) {
+			debug(1, "SwordEngine::go(): Restoring game");
+			if (!_control->restoreGame())
+				warning("SwordEngine::go(): Couldn't restore game");
+
+		} else if (_systemVars.saveGameFlag == SGF_RESTART) {
+			debug(1, "SwordEngine::go(): Restarting game");
+			startPos = 0;
+			_logic->startPositions(startPos);
+		} else if (!startedFromGMM) { // START GAME
+			_logic->startPositions(startPos);
+			startPos = 0;
+		}
+
+		mainLoop();
 
 		if (!shouldQuit()) {
 			// the mainloop was left, we have to reinitialize.
 			reinitialize();
-			if (action == CONTROL_GAME_RESTORED)
-				_control->doRestore();
-			else if (action == CONTROL_RESTART_GAME)
-				_logic->startPositions(1);
-			_systemVars.forceRestart = false;
-			_systemVars.controlPanelMode = CP_NORMAL;
 		}
 	}
 
@@ -696,13 +699,13 @@ void SwordEngine::checkCd() {
 		if (needCd == 0) { // needCd == 0 means we can use either CD1 or CD2.
 			if (_systemVars.currentCD == 0) {
 				_systemVars.currentCD = 1; // if there is no CD currently inserted, ask for CD1.
-				_control->askForCd();
+				askForCd();
 			} // else: there is already a cd inserted and we don't care if it's cd1 or cd2.
 		} else if (needCd != _systemVars.currentCD) { // we need a different CD than the one in drive.
 			_music->startMusic(0, 0); //
 			_sound->closeCowSystem(); // close music and sound files before changing CDs
 			_systemVars.currentCD = needCd; // askForCd will ask the player to insert _systemVars.currentCd,
-			_control->askForCd();           // so it has to be updated before calling it.
+			askForCd();           // so it has to be updated before calling it.
 		}
 	} else {        // we're running from HDD, we don't have to care about music files and Sound will take care of
 		if (needCd) // switching sound.clu files on Sound::newScreen by itself, so there's nothing to be done.
@@ -712,11 +715,78 @@ void SwordEngine::checkCd() {
 	}
 }
 
+void SwordEngine::askForCd() {
+	char buf[255];
+
+	_control->askForCdMessage(SwordEngine::_systemVars.currentCD, false);
+
+	_screen->fnSetFadeTargetPalette(0, 1, 0, BORDER_BLACK); // Set colour 0 to black - for screen borders
+	_screen->fnSetFadeTargetPalette(193, 1, 0, TEXT_WHITE); // Set colours 193 to white - for letters
+
+	while (!shouldQuit()) {
+		_screen->startFadePaletteUp(1);
+
+		uint32 startTime = _system->getMillis();
+		while (_screen->stillFading()) {
+			if (_vblCount >= _rate)
+				_vblCount = 0;
+
+			pollInput(0);
+
+			// In the remote event that this wait cycle gets
+			// stuck during debugging, trigger a timeout
+			if (_system->getMillis() - startTime > 1000)
+				break;
+		}
+
+		while (_keyPressed.keycode == Common::KEYCODE_INVALID && !shouldQuit()) {
+			pollInput(0);
+		}
+
+		_screen->startFadePaletteDown(1);
+
+		startTime = _system->getMillis();
+		while (_screen->stillFading()) {
+			if (_vblCount >= _rate)
+				_vblCount = 0;
+
+			pollInput(0);
+
+			// In the remote event that this wait cycle gets
+			// stuck during debugging, trigger a timeout
+			if (_system->getMillis() - startTime > 1000)
+				break;
+		}
+
+		startTime = _system->getMillis();
+		while (_system->getMillis() - startTime < 500) {
+			pollInput(0);
+		};
+
+		_keyPressed.reset();
+
+		// At this point the original code sets colors 1 to 180 to grey;
+		// the only visible effect of this is that the screen flashes when
+		// loading a save state. It's not clear what the original wanted to do.
+		// for (int i = 1; i < 180; i++) {
+		//     SetPalette(i, 1, _grey);
+		// }
+
+		Common::sprintf_s(buf, "cd%d.id", SwordEngine::_systemVars.currentCD);
+		if (Common::File::exists(buf))
+			break;
+
+		_control->askForCdMessage(SwordEngine::_systemVars.currentCD, true);
+	}
+}
+
 uint8 SwordEngine::mainLoop() {
-	uint8 retCode = 0;
 	_keyPressed.reset();
 
-	while ((retCode == 0) && (!shouldQuit())) {
+	do {
+		if (shouldQuit())
+			break;
+
 		// do we need the section45-hack from sword.c here?
 		checkCd();
 
@@ -730,6 +800,8 @@ uint8 SwordEngine::mainLoop() {
 			uint32 frameTime = _system->getMillis();
 
 			bool scrollFrameShown = false;
+
+			_systemVars.saveGameFlag = SGF_DONE;
 
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
@@ -756,14 +828,21 @@ uint8 SwordEngine::mainLoop() {
 
 			_mouse->engine(_mouseCoord.x, _mouseCoord.y, _mouseState);
 
-			retCode = checkKeys();
+			checkKeys();
+
+			if (_systemVars.saveGameFlag == SGF_SAVE) {
+				_control->getPlayerOptions();
+				debug(1, "SwordEngine::mainLoop(): Returned to mainloop() from getPlayerOptions()");
+			}
 
 			_mouseState = 0;
 			_keyPressed.reset();
 
-		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!shouldQuit()));
+		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) &&
+			(_systemVars.saveGameFlag == SGF_DONE || _systemVars.saveGameFlag == SGF_SAVE) &&
+			(!shouldQuit()));
 
-		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!shouldQuit())) {
+		if ((Logic::_scriptVars[SCREEN] != 53) && !shouldQuit()) {
 			_screen->startFadePaletteDown(1);
 		}
 
@@ -773,8 +852,9 @@ uint8 SwordEngine::mainLoop() {
 		_sound->quitScreen(); // Purge the sound AFTER they've been faded
 
 		_objectMan->closeSection(Logic::_scriptVars[SCREEN]); // Close the section that PLAYER has just left, if it's empty now
-	}
-	return retCode;
+	} while ((_systemVars.saveGameFlag < SGF_RESTORE) && (!shouldQuit()));
+
+	return 0;
 }
 
 void SwordEngine::waitForFade() {

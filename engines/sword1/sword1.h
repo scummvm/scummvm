@@ -65,7 +65,8 @@ struct SystemVars {
 	uint32           currentCD;          // starts at zero, then either 1 or 2 depending on section being played
 	uint32           justRestoredGame;   // see main() in sword.c & New_screen() in gtm_core.c
 	uint8            controlPanelMode;   // 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
-	bool             forceRestart;
+	uint8            saveGameFlag;
+	int              snrStatus;
 	bool             wantFade;           // when true => fade during scene change, else cut.
 	bool             playSpeech;
 	bool             showText;
@@ -78,11 +79,13 @@ struct SystemVars {
 	bool             debugMode;
 	bool             slowMode;
 	bool             fastMode;
+	bool             parallaxOn;
 };
 
 class SwordEngine : public Engine {
 	friend class SwordConsole;
 	friend class Screen;
+	friend class Control;
 
 public:
 	SwordEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -135,10 +138,12 @@ protected:
 	}
 private:
 	void pollInput(uint32 delay);
-	uint8 checkKeys();
+	void checkKeys();
 
 	void checkCdFiles();
 	void checkCd();
+	void askForCd();
+
 	void showFileErrorMsg(uint8 type, bool *fileExists);
 	void flagsToBool(bool *dest, uint8 flags);
 

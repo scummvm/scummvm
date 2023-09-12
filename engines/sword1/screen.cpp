@@ -198,11 +198,11 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id) {
 	_system->getPaletteManager()->setPalette(_targetPalette + 3 * start, start, length);
 }
 
-void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool toBlack) {
+void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, int singleColor) {
 	const uint8 *rgbData = nullptr;
 
-	if (toBlack) {
-		rgbData = _black;
+	if (singleColor != -1) {
+		rgbData = singleColor == TEXT_WHITE ? _white : _black;
 	} else {
 		rgbData = (const uint8 *) _resMan->openFetchRes(id);
 	}
@@ -215,7 +215,7 @@ void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool 
 		memcpy(_currentPalette + (start * 3), rgbData, length * 3);
 	}
 
-	if (!toBlack) {
+	if (singleColor == -1) {
 		_resMan->resClose(id);
 	}
 }
@@ -309,10 +309,10 @@ void Screen::updateScreen() {
 	if (_updatePalette) {
 		fnSetFadeTargetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0]);
 		fnSetFadeTargetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1]);
-		fnSetFadeTargetPalette(0, 1, 0, true);
+		fnSetFadeTargetPalette(0, 1, 0, BORDER_BLACK);
 		// Bug #8636: Force color 255 to black
 		if (SwordEngine::isMac())
-			fnSetFadeTargetPalette(255, 1, 0, true);
+			fnSetFadeTargetPalette(255, 1, 0, BORDER_BLACK);
 
 		startFadePaletteUp(1);
 		_updatePalette = false;
@@ -538,22 +538,24 @@ void Screen::draw() {
 	for (cnt = 0; cnt < _sortLength; cnt++)
 		processImage(_sortList[cnt].id);
 
-	if ((_currentScreen != 54) && _parallax[0])
-		renderParallax(_parallax[0]); // screens other than 54 have FOREGROUND parallax layer in parallax[0]
-	if (_parallax[1])
-		renderParallax(_parallax[1]);
+	if (SwordEngine::_systemVars.parallaxOn) {
+		if ((_currentScreen != 54) && _parallax[0])
+			renderParallax(_parallax[0]); // screens other than 54 have FOREGROUND parallax layer in parallax[0]
+		if (_parallax[1])
+			renderParallax(_parallax[1]);
 
-	// PSX version has parallax layer for this room in an external file (TRAIN.PLX)
-	if (SwordEngine::isPsx() && _currentScreen == 63) {
-		// FIXME: this should be handled in a cleaner way...
-		if (!_psxCache.extPlxCache) {
-			Common::File parallax;
-			parallax.open("TRAIN.PLX");
-			_psxCache.extPlxCache = (uint8 *)malloc(parallax.size());
-			parallax.read(_psxCache.extPlxCache, parallax.size());
-			parallax.close();
+		// PSX version has parallax layer for this room in an external file (TRAIN.PLX)
+		if (SwordEngine::isPsx() && _currentScreen == 63) {
+			// FIXME: this should be handled in a cleaner way...
+			if (!_psxCache.extPlxCache) {
+				Common::File parallax;
+				parallax.open("TRAIN.PLX");
+				_psxCache.extPlxCache = (uint8 *)malloc(parallax.size());
+				parallax.read(_psxCache.extPlxCache, parallax.size());
+				parallax.close();
+			}
+			renderParallax(_psxCache.extPlxCache);
 		}
-		renderParallax(_psxCache.extPlxCache);
 	}
 
 	for (cnt = 0; cnt < _foreLength; cnt++)

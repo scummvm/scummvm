@@ -765,7 +765,7 @@ namespace Sword1 {
 #define GAME_FONT				 0x04000000
 #define OTHER_SR_FONT			 0x04000001
 #define OTHER_SR_REDFONT		 0x04000002
-#define SR_DEATHFONT			 0x04000003
+#define SR_DEATHFONT_ALT		 0x04000003
 #define CZECH_GAME_FONT			 0x04000004
 #define CZECH_SR_FONT			 0x04000005
 #define CZECH_SR_REDFONT		 0x04000006
@@ -1026,6 +1026,8 @@ namespace Sword1 {
 #define SR_BUTDS				 0x04050019
 #define SR_BUTDF				 0x0405001A
 #define SR_DEATHPANEL			 0x0405001B // 0x04050019
+#define SR_DEATHFONT			 0x0405001C
+
 	// 26 entities in TXTs, 29 in datafiles.
 	// george
 #define GEORGE_MEGA				 0x04060000
