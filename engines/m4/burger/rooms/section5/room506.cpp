@@ -387,7 +387,7 @@ void Room506::daemon() {
 			break;
 
 		case 3:
-			player_demand_location(157, 313, 3);
+			ws_demand_location(157, 313, 3);
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 

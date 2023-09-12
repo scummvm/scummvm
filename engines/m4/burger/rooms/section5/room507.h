@@ -55,6 +55,9 @@ private:
 	static long _state4;
 	static long _state5;
 	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
+	machine *_series4 = nullptr;
 	int _ctr = 0;
 	int _triggers[5];
 	bool _flag1 = false;
@@ -65,6 +68,9 @@ private:
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
 
 	void loadSeries();
 

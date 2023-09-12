@@ -318,6 +318,359 @@ void Room507::init() {
 }
 
 void Room507::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		for (_ctr = 0; _ctr < 5; ++_ctr) {
+			if (_triggers[_ctr] != -1) {
+				kernel_trigger_dispatch_now(_triggers[_ctr]);
+				term_message("Multiple Trigger Dispatch: %d", _triggers[_ctr]);
+				_triggers[_ctr] = -1;
+			}
+		}
+		break;
+
+	case 2:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _val4);
+		break;
+
+	case 3:
+		ws_unhide_walker();
+
+		switch (_val1) {
+		case 12:
+			wilbur_speech("507w001");
+			break;
+
+		case 13:
+			player_set_commands_allowed(false);
+			_val1 = 14;
+			kernel_timing_trigger(120, 3);
+			break;
+
+		case 14:
+			player_set_commands_allowed(false);
+			wilbur_speech("507w002", 5001);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 4:
+		player_set_commands_allowed(false);
+		_val2 = 25;
+		break;
+
+	case 5:
+		if (!_G(flags)[V223]) {
+			player_update_info();
+
+			if (_G(player_info).x > 270 && _G(player_info).x < 350 &&
+					_G(player_info).y < 280 && !_flag1) {
+				_flag1 = true;
+				player_set_commands_allowed(false);
+				intr_cancel_sentence();
+				_val2 = 23;
+				ws_walk(250, 275, nullptr, -1, 2);
+			}
+		}
+
+		if (_G(flags)[V223] != 1 && _G(flags)[V223] != 2)
+			kernel_timing_trigger(15, 5);
+		break;
+
+	case 6:
+		switch (_val2) {
+		case 15:
+			_val2 = imath_ranged_rand(1, 2) == 1 ? 16 : 17;
+			kernel_trigger_dispatch_now(6);
+			break;
+
+		case 16:
+			_G(flags)[V223] = 0;
+			_state1 = imath_ranged_rand(1, 4);
+			_state2 = imath_ranged_rand(1, 6);
+			_state3 = imath_ranged_rand(1, 6);
+			_state4 = imath_ranged_rand(1, 6);
+			_val2 = 15;
+			series_play_with_breaks(PLAY9, "507bk01", 0xb00, 6, 2);
+			break;
+
+		case 17:
+			_G(flags)[V223] = 0;
+			_val2 = 15;
+			series_play_with_breaks(PLAY10, "507bk04", 0xb00, 6, 2);
+			break;
+
+		case 18:
+			_state1 = imath_ranged_rand(1, 3);
+			_state2 = imath_ranged_rand(1, 3);
+			_val2 = 15;
+			series_play_with_breaks(PLAY11, "507bk02", 0xb00, 6, 2);
+			break;
+
+		case 19:
+			_val2 = 24;
+			_triggers[0] = 6;
+			_val7 = 1;
+			_val8 = 11;
+			_state1 = imath_ranged_rand(1, 2);
+			_state2 = imath_ranged_rand(1, 2);
+			_state3 = imath_ranged_rand(1, 2);
+			series_play_with_breaks(PLAY12, "507bk03", 0xb00, 1, 2);
+			break;
+
+		case 20:
+			_state1 = imath_ranged_rand(1, 3);
+			_state2 = imath_ranged_rand(1, 2);
+			_val2 = 24;
+			series_play_with_breaks(PLAY13, "507bk05", 0x8fe, 6, 3);
+			break;
+
+		case 21:
+			_G(flags)[V223] = 1;
+			hotspot_set_active("BORK", false);
+			hotspot_set_active_xy("BORK", 123, 218, true);
+			_val2 = 22;
+			series_play_with_breaks(PLAY14, "507bk06", 0x8fe, 6, 3);
+			break;
+
+		case 22:
+			player_set_commands_allowed(true);
+			kernel_trigger_dispatch_now(7);
+			_series3 = series_play("507bk07", 0x8fe, 4, -1, 6, -1);
+			break;
+
+		case 23:
+			player_set_commands_allowed(true);
+			++_state5;
+			_state1 = imath_ranged_rand(1, 3);
+			_val2 = 24;
+			series_play_with_breaks(PLAY16, "507bk08", 0xb00, 6, 2);
+			break;
+
+		case 24:
+			_flag1 = false;
+			player_set_commands_allowed(true);
+			_val2 = 15;
+			kernel_trigger_dispatch_now(6);
+			break;
+
+		case 25:
+			_G(wilbur_should) = _val5;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			_val2 = _val6;
+			kernel_trigger_dispatch_now(6);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 7:
+		if (_G(flags)[V223] != 2) {
+			digi_play(Common::String::format("507b012%c", 'a' + imath_ranged_rand(0, 4)).c_str(),
+				2, 255, 7);
+		}
+		break;
+
+	case 8:
+		_G(flags)[V206] = 5001;
+		kernel_trigger_dispatch_now(5015);
+		break;
+
+	case 9:
+		switch (_val3) {
+		case 26:
+			if (_G(flags)[V223] == 2 && !Section5::checkFlags())
+				player_set_commands_allowed(true);
+
+			terminateMachineAndNull(_series4);
+			_series4 = series_show("507tlt01", 0x8ff);
+			break;
+
+		case 27:
+			terminateMachineAndNull(_series4);
+			hotspot_set_active("RUBBER DUCKY ", false);
+			hotspot_set_active("RUBBER DUCKY  ", true);
+			_series4 = series_play("507wi04", 0x8ff, 16, -1, 6, 0, 100, 0, 0, 24, 24);
+			break;
+
+		case 28:
+			terminateMachineAndNull(_series4);
+			_val3 = 31;
+			series_play_with_breaks(PLAY17, "507tlt01", 0x8ff, 9, 2);
+			break;
+
+		case 29:
+			digi_play("507_003", 1, 255, -1, 507);
+			terminateMachineAndNull(_series4);
+			hotspot_set_active("RUBBER DUCKY ", false);
+			hotspot_set_active("RUBBER DUCKY  ", false);
+			inv_move_object("RUBBER DUCKY", NOWHERE);
+			_val3 = 31;
+			series_play("507tlt02", 0x8ff, 0, 9);
+			break;
+
+		case 30:
+			digi_play("507_003", 1, 255, -1, 507);
+			hotspot_set_active("BORK", false);
+			_G(flags)[V223] = 2;
+			player_set_commands_allowed(false);
+
+			_val1 = 13;
+			_triggers[0] = 3;
+			_val3 = 31;
+			_val8 = 9;
+			_val9 = 10;
+			terminateMachineAndNull(_series3);
+			series_play_with_breaks(PLAY15, "507bk09", 0x8ff, 1, 2);
+			break;
+
+		case 31:
+			_val3 = 26;
+			series_play_with_breaks(PLAY18, "507tlt01", 0x8ff, 9, 2);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 10:
+		_series2 = series_show("5070flush", 0xf00);
+		break;
+
+	case 11:
+		switch (_val7) {
+		case 0:
+			inv_give_to_player("RUBBER DUCKY");
+			terminateMachineAndNull(_series1);
+			hotspot_set_active("RUBBER DUCKY ", false);
+			hotspot_set_active("RUBBER DUCKY  ", false);
+			break;
+
+		case 1:
+			inv_move_object("RUBBER DUCKY", 507);
+			hotspot_set_active("RUBBER DUCKY ", true);
+			hotspot_set_active("RUBBER DUCKY  ", false);
+			_series1 = series_show("507duck", 0xa00);
+			break;
+
+		case 2:
+			inv_move_object("RUBBER DUCKY", 500);
+			_val3 = 27;
+			kernel_trigger_dispatch_now(9);
+			break;
+
+		case 3:
+			inv_give_to_player("SOAPY WATER");
+			inv_move_object("BOTTLE", NOWHERE);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 5002:
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			player_set_commands_allowed(true);
+			kernel_trigger_dispatch_now(3);
+			break;
+
+		case 2:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_val7 = 0;
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY2, "507wi01", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 3:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 4;
+			_val2 = 18;
+			series_play_with_breaks(PLAY5, "507wi04", 0x8ff, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 4:
+			ws_hide_walker();
+			player_update_info();
+			_G(wilbur_should) = _flag2 ? 8 : 5;
+			series_play_with_breaks(PLAY3, "507wi02", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 5:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY6, "507wi04", 0x8ff, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 6:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 7;
+			series_play_with_breaks(PLAY1, "507wi03", 0xaff, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 7:
+			ws_unhide_walker();
+			break;
+
+		case 8:
+			_G(flags)[V224] = 1;
+			_val7 = 2;
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY4, "507wi04", 0x8ff, 11, 3);
+			break;
+
+		case 9:
+			terminateMachineAndNull(_series2);
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 7;
+
+			if (_G(flags)[V223] == 1) {
+				_val3 = 30;
+			} else if (inv_where_is("RUBBER DUCKY") == 500) {
+				_val3 = 29;
+			} else {
+				_val3 = 28;
+			}
+
+			_triggers[0] = gCHANGE_WILBUR_ANIMATION;
+			_val8 = 10;
+			series_play_with_breaks(PLAY7, "507wi05", 0x8ff, 1, 3);
+			break;
+
+		case 11:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY8, "507wi06", 0xd00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room507::pre_parser() {
