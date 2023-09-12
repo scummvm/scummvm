@@ -47,14 +47,30 @@ private:
 	static long _state2;
 	static long _state3;
 	static long _state4;
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	machine *_series3 = nullptr;
+	machine *_series4 = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
+	bool _flag3 = false;
+
+	void loadSeries();
+	void setup();
 
 public:
 	Room508();
 	~Room508() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
-	void pre_parser() override;
 	void parser() override;
 };
 
