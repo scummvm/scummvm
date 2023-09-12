@@ -31,6 +31,7 @@
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
+#include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/orderingpuzzle.h"
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
@@ -223,6 +224,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kTileMove);
 	case 214:
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kKeypad);
+	case 215:
+		return new MazeChasePuzzle();
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;
