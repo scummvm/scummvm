@@ -380,6 +380,12 @@ struct ImageChunk : public EngineData {
 	uint16 height;
 };
 
+struct CVTX : public EngineData {
+	CVTX(Common::SeekableReadStream *chunkStream);
+
+	Common::HashMap<Common::String, Common::String> texts;
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H

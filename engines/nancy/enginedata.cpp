@@ -92,7 +92,6 @@ VIEW::VIEW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 PCAL::PCAL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	assert(chunkStream);
 	uint num = chunkStream->readUint16LE();
 	readFilenameArray(*chunkStream, calNames, num);
 }
@@ -185,11 +184,8 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	assert(chunkStream);
-
 	bool isVampire = g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire;
 
-	chunkStream->seek(0);
 	readRect(*chunkStream, scrollbarSrcBounds);
 
 	chunkStream->seek(0x20);
@@ -318,11 +314,7 @@ HELP::HELP(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 CRED::CRED(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	assert(chunkStream);
-
 	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
-	chunkStream->seek(0);
-
 	readFilename(*chunkStream, imageName);
 
 	textNames.resize(isVampire ? 7 : 1);
@@ -537,20 +529,12 @@ CLOK::CLOK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 SPEC::SPEC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
-
 	fadeToBlackNumFrames = chunkStream->readByte();
 	fadeToBlackFrameTime = chunkStream->readUint16LE();
 	crossDissolveNumFrames = chunkStream->readUint16LE();
 }
 
 RCLB::RCLB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
-
 	lightSwitchID = chunkStream->readUint16LE();
 	unk2 = chunkStream->readUint16LE();
 
@@ -628,10 +612,6 @@ RCLB::RCLB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 RCPR::RCPR(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	assert(chunkStream);
-
-	chunkStream->seek(0);
-
 	readRectArray(*chunkStream, screenViewportSizes, 6);
 	viewportSizeUsed = chunkStream->readUint16LE();
 
@@ -694,6 +674,30 @@ ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) : EngineData(chu
 	readFilename(*chunkStream, imageName);
 	width = chunkStream->readUint16LE();
 	height = chunkStream->readUint16LE();
+}
+
+CVTX::CVTX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	uint16 numEntries = chunkStream->readUint16LE();
+
+	char *buf = nullptr;
+	uint bufSize = 0;
+	Common::String keyName;
+
+	for (uint i = 0; i < numEntries; ++i) {
+		readFilename(*chunkStream, keyName);
+		uint16 stringSize = chunkStream->readUint16LE();
+		if (stringSize > bufSize) {
+			delete buf;
+			buf = new char[stringSize * 2];
+			bufSize = stringSize * 2;
+
+			chunkStream->read(buf, stringSize);
+			buf[stringSize] = '\0';
+			texts.setVal(keyName, buf);
+		}
+	}
+
+	delete buf;
 }
 
 } // End of namespace Nancy
