@@ -36,6 +36,7 @@
 #include "sword1/music.h"
 #include "sword1/swordres.h"
 #include "sword1/animation.h"
+#include "sword1/control.h"
 
 #include "sword1/debug.h"
 
@@ -947,8 +948,8 @@ int Logic::fnSetWholePalette(Object *cpt, int32 id, int32 spritePal, int32 d, in
 }
 
 int Logic::fnSetFadeTargetPalette(Object *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fnSetFadeTargetPalette(0, 184, spritePal, false);
-	_screen->fnSetFadeTargetPalette(0, 1, 0, true);
+	_screen->fnSetFadeTargetPalette(0, 184, spritePal);
+	_screen->fnSetFadeTargetPalette(0, 1, 0, BORDER_BLACK);
 	return SCRIPT_CONT;
 }
 
@@ -1653,7 +1654,7 @@ int Logic::fnCheckCD(Object *cpt, int32 id, int32 screen, int32 b, int32 c, int3
 }
 
 int Logic::fnRestartGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	SwordEngine::_systemVars.forceRestart = true;
+	SwordEngine::_systemVars.saveGameFlag = SGF_RESTART;
 	cpt->o_logic = LOGIC_quit;
 	return SCRIPT_STOP;
 }
@@ -1669,6 +1670,8 @@ int Logic::fnQuitGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d,
 }
 
 int Logic::fnDeathScreen(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+	SwordEngine::_systemVars.saveGameFlag = SGF_SAVE;
+	SwordEngine::_systemVars.snrStatus = SNR_MAINPANEL;
 
 	if (_scriptVars[FINALE_OPTION_FLAG] == 4) // successful end of game!
 		SwordEngine::_systemVars.controlPanelMode = CP_THEEND;

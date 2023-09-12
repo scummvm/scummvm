@@ -25,6 +25,7 @@
 
 #include "sword1/memman.h"
 #include "sword1/resman.h"
+#include "sword1/sword1.h"
 #include "sword1/swordres.h"
 
 #include "gui/message.h"
@@ -187,6 +188,7 @@ void ResMan::flush() {
 
 void *ResMan::fetchRes(uint32 id) {
 	MemHandle *memHandle = resHandle(id);
+
 	if (!memHandle) {
 		warning("fetchRes:: resource %d out of bounds", id);
 		return NULL;
@@ -247,6 +249,7 @@ void *ResMan::cptResOpen(uint32 id) {
 
 void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 	MemHandle *memHandle = resHandle(id);
+
 	if (!memHandle)
 		return;
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
@@ -496,6 +499,31 @@ void ResMan::openScriptResourceLittleEndian(uint32 id) {
 	}
 }
 
+uint32 ResMan::getDeathFontId() {
+	// At some point in the releases (as evidenced by the disasms of all
+	// known executables, and by the source code in our possession), Revolution
+	// changed the resource offsets for some files. I have tried EVERYTHING to
+	// try and discern which file we are dealing with and spectacularly failed.
+	// The only choice which seems to work correctly is to check the file size,
+	// as the newer GENERAL.CLU file is bigger. Sorry.
+	if (SwordEngine::isPsx())
+		return SR_FONT;
+
+	Common::File fp;
+	if (fp.open(SwordEngine::isMac() ? "GENERAL.CLM" : "GENERAL.CLU")) {
+		fp.seek(0, SEEK_END);
+		int64 fileSize = fp.pos();
+
+		if (fileSize < 6295679) {
+			return SR_DEATHFONT;
+		} else {
+			return SR_DEATHFONT_ALT;
+		}
+	}
+
+	return 0;
+}
+
 
 uint32 ResMan::_srIdList[29] = { // the file numbers differ for the control panel file IDs, so we need this array
 	OTHER_SR_FONT,      // SR_FONT
@@ -526,7 +554,7 @@ uint32 ResMan::_srIdList[29] = { // the file numbers differ for the control pane
 	0x04050017,         // SR_BUTDS
 	0x04050018,         // SR_BUTDF
 	0x04050019,         // SR_DEATHPANEL
-	0,
+	SR_DEATHFONT,
 };
 
 } // End of namespace Sword1

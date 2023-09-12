@@ -63,6 +63,7 @@ struct PSXDataCache { // Cache for PSX screen, to avoid decompressing background
 #define BORDER_GREEN 3
 #define BORDER_PURPLE 4
 #define BORDER_BLACK 5
+#define TEXT_WHITE 6
 
 class ResMan;
 class ObjectMan;
@@ -88,7 +89,7 @@ public:
 	void startFadePaletteUp(int speed);
 	void fadePalette();
 	void fnSetPalette(uint8 start, uint16 length, uint32 id);
-	void fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, bool toBlack = false);
+	void fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, int singleColor = -1);
 	int16 stillFading();
 	void fullRefresh(bool soft = false);
 
@@ -102,15 +103,17 @@ public:
 	static void decompressHIF(uint8 *src, uint8 *dest);
 
 private:
-	// The original values are 6-bit RGB numbers, so they have to be shifted
-	const uint8 _white[3]  = { 63 << 2, 63 << 2, 63 << 2};
-	const uint8 _red[3]    = { 63 << 2, 0  << 2, 0  << 2};
-	const uint8 _blue[3]   = { 0  << 2, 0  << 2, 63 << 2};
-	const uint8 _yellow[3] = { 63 << 2, 63 << 2, 0  << 2};
-	const uint8 _green[3]  = { 0  << 2, 63 << 2, 0  << 2};
-	const uint8 _purple[3] = { 32 << 2, 0  << 2, 32 << 2};
-	const uint8 _black[3]  = { 0  << 2, 0  << 2, 0  << 2};
-	//const uint8 _grey[3]   = { 32 << 2, 32 << 2, 32 << 2};
+	// The original values are 6-bit RGB numbers, so they have to be shifted,
+	// except for white, which for some reason has to stay unshifted in order
+	// to work correctly.
+	const uint8 _white[3]  = {      63,      63,      63 };
+	const uint8 _red[3]    = { 63 << 2, 0  << 2, 0  << 2 };
+	const uint8 _blue[3]   = { 0  << 2, 0  << 2, 63 << 2 };
+	const uint8 _yellow[3] = { 63 << 2, 63 << 2, 0  << 2 };
+	const uint8 _green[3]  = { 0  << 2, 63 << 2, 0  << 2 };
+	const uint8 _purple[3] = { 32 << 2, 0  << 2, 32 << 2 };
+	const uint8 _black[3]  = { 0  << 2, 0  << 2, 0  << 2 };
+	//const uint8 _grey[3]   = { 32 << 2, 32 << 2, 32 << 2 };
 
 	struct PaletteFadeInfo {
 		int16 paletteStatus;
