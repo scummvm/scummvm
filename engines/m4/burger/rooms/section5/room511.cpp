@@ -79,18 +79,52 @@ Room511::Room511() : Section5Room() {
 	_state2 = 0;
 }
 
+void Room511::preload() {
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room511::init() {
+	_G(flags)[V194] = 1;
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room511::daemon() {
-}
+	if (_G(kernel).trigger == 1) {
+		_state1 = imath_ranged_rand(1, 10);
+		_val1 = imath_ranged_rand(1, 5);
 
-void Room511::pre_parser() {
+		switch (_G(flags)[V206]) {
+		case 5000:
+			series_stream_with_breaks(SERIES1, "511bk03", 8, 1, 5016);
+			break;
 
-}
+		case 5001:
+			series_stream_with_breaks(SERIES1, "511bk07", 8, 1, 5016);
+			break;
 
-void Room511::parser() {
+		case 5002:
+			series_stream_with_breaks(SERIES1, "511bk04", 8, 1, 5016);
+			break;
 
+		case 5003:
+			series_stream_with_breaks(SERIES1, "511bk08", 8, 1, 5016);
+			break;
+
+		case 5004:
+			series_stream_with_breaks(SERIES1, "511bk06", 8, 1, 5016);
+			break;
+
+		case 5005:
+			series_stream_with_breaks(SERIES1, "511bk05", 8, 1, 5016);
+			break;
+
+		default:
+			series_stream_with_breaks(SERIES1, "511bk02", 8, 1, 5016);
+			break;
+		}
+	} else {
+		_G(kernel).continue_handling_trigger = true;
+	}
 }
 
 } // namespace Rooms

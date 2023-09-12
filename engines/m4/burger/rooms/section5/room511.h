@@ -35,15 +35,15 @@ private:
 	static const seriesStreamBreak SERIES3[];
 	static long _state1;
 	static long _state2;
+	int _val1 = 0;
 
 public:
 	Room511();
 	~Room511() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
-	void pre_parser() override;
-	void parser() override;
 };
 
 } // namespace Rooms
