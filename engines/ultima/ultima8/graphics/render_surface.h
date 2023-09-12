@@ -150,13 +150,10 @@ public:
 	//
 
 	//! Paint a Shape
-	void Paint(const Shape *s, uint32 frame, int32 x, int32 y);
+	void Paint(const Shape *s, uint32 frame, int32 x, int32 y, bool mirrored = false);
 
 	//! Paint a Translucent Shape.
-	void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y);
-
-	//! Paint a Mirrored Shape
-	void PaintMirrored(const Shape *s, uint32 frame, int32 x, int32 y, bool trans = false);
+	void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y, bool mirrored = false);
 
 	//! Paint an Invisible Shape
 	void PaintInvisible(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored);

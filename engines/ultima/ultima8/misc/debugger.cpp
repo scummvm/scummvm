@@ -1846,7 +1846,7 @@ bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
 
 	start = g_system->getMillis();
 	for (int i = 0; i < count; i++) {
-		surface->PaintMirrored(s, frame, 160, 100);
+		surface->Paint(s, frame, 160, 100, true);
 	}
 	end = g_system->getMillis();
 	debugPrintf("PaintMirrored: %d\n", end - start);

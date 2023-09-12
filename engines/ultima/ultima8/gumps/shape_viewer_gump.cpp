@@ -143,11 +143,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	ShapeArchive *archive = _archives[_curArchive]._archive;
 	const Shape *shape = archive->getShape(_curShape);
 	if (shape && _curFrame < shape->frameCount()) {
-		if (_mirrored) {
-			surf->PaintMirrored(shape, _curFrame, posx, posy);
-		} else {
-			surf->Paint(shape, _curFrame, posx, posy);
-		}
+		surf->Paint(shape, _curFrame, posx, posy, _mirrored);
 	}
 
 	RenderedText *rendtext;

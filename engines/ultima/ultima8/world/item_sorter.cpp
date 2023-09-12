@@ -327,12 +327,10 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 			surf->PaintHighlight(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, TRANSPARENT_COLOR);
 		else if (si->_extFlags & Item::EXT_TRANSPARENT)
 			surf->PaintInvisible(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0);
-		else if (si->_flags & Item::FLG_FLIPPED)
-			surf->PaintMirrored(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans);
 		else if (si->_trans)
-			surf->PaintTranslucent(si->_shape, si->_frame, si->_sxBot, si->_syBot);
+			surf->PaintTranslucent(si->_shape, si->_frame, si->_sxBot, si->_syBot, (si->_flags & Item::FLG_FLIPPED) != 0);
 		else
-			surf->Paint(si->_shape, si->_frame, si->_sxBot, si->_syBot);
+			surf->Paint(si->_shape, si->_frame, si->_sxBot, si->_syBot, (si->_flags & Item::FLG_FLIPPED) != 0);
 
 	//	if (wire) si->info->draw_box_front(s, dispx, dispy, 255);
 
@@ -347,7 +345,7 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 				const Shape *wo_shape = GameData::get_instance()->getMainShapes()->getShape(wo_shapenum);
 				surf->Paint(wo_shape, wo_frame->_frame,
 							si->_sxBot + wo_frame->_xOff,
-							si->_syBot + wo_frame->_yOff);
+							si->_syBot + wo_frame->_yOff, false);
 			}
 		}
 	}
