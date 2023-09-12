@@ -73,8 +73,8 @@ class RBTreeIterator:
                 parent = self.current_node.dereference()["parent"]
         return value
 
-class StableMapPrinter:
-    "Prints Common::StableMap"
+class RBTreeMapPrinter:
+    "Prints Common::StableMap and Common::MultiMap"
 
     class _iterator:
         def __init__(self, rb_tree):
@@ -152,7 +152,8 @@ def build_pretty_printer():
     pp.add_printer('String', '^Common::String$', StringPrinter)
     pp.add_printer('U32String', '^Common::U32String$', StringPrinter)
     pp.add_printer('Array', '^Common::Array<.*>$', ArrayPrinter)
-    pp.add_printer('StableMap', '^Common::StableMap<.*>$', StableMapPrinter)
+    pp.add_printer('StableMap', '^Common::StableMap<.*>$', RBTreeMapPrinter)
+    pp.add_printer('MultiMap', '^Common::MultiMap<.*>$', RBTreeMapPrinter)
     pp.add_printer('List', '^Common::List<.*>$',  ListPrinter)
     return pp
 
