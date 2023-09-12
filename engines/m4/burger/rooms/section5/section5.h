@@ -55,9 +55,9 @@ private:
 	Room508 _room508;
 	Room509 _room509;
 	Room510 _room510;
-	Room511 _room513;
+	Room511 _room511;
 	Room512 _room512;
-	Room513 _room511;
+	Room513 _room513;
 	bool _gizmoRoomNums[15];
 
 	void takeGizmo(RGB8 *pal);
