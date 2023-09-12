@@ -43,6 +43,9 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
 	s.skip(0x43, kGameTypeNancy2);
 
+	readFilename(s, conversationTextsFilename, kGameTypeNancy6);
+	readFilename(s, autotextFilename, kGameTypeNancy6);
+
 	s.syncAsUint16LE(firstScene.sceneID);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
 	s.syncAsUint16LE(firstScene.frameID);
@@ -359,7 +362,14 @@ SET::SET(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	chunkStream->skip(20); // image info
 	chunkStream->skip(16); // bounds for all scrollbars
 
-	uint numButtons = g_nancy->getGameType() == kGameTypeVampire ? 5 : 4;
+	uint numButtons;
+	if (g_nancy->getGameType() == kGameTypeVampire)  {
+		numButtons = 5;
+	} else if (g_nancy->getGameType() <= kGameTypeNancy5) {
+		numButtons = 4;
+	} else {
+		numButtons = 3;
+	}
 
 	readRectArray(*chunkStream, _scrollbarBounds, 3);
 	readRectArray(*chunkStream, _buttonDests, numButtons);

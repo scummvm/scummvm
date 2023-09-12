@@ -38,6 +38,9 @@ struct BSUM : public EngineData {
 
 	byte header[90];
 
+	Common::String conversationTextsFilename;
+	Common::String autotextFilename;
+
 	// Game start section
 	SceneChangeDescription firstScene;
 	uint16 startTimeHours;
