@@ -691,6 +691,7 @@ protected:
 	void setupOpcodesFunc() override;
 	void setupOpcodesGob() override;
 
+	void o7_appligarden();
 	void o7_draw0x0C();
 	void o7_setCursorToLoadFromExec();
 	void o7_freeMult();
@@ -732,6 +733,7 @@ protected:
 
 	void o7_oemToANSI(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);
+	void o7_appligarden(OpGobParams &params);
 
 private:
 	INIConfig _inis;

@@ -106,6 +106,7 @@ void Inter_v7::setupOpcodesGob() {
 
 	OPCODEGOB(420, o7_oemToANSI);
 	OPCODEGOB(513, o7_gob0x201);
+	OPCODEGOB(777, o7_appligarden);
 }
 
 void Inter_v7::o7_draw0x0C() {
@@ -1412,4 +1413,10 @@ void Inter_v7::o7_gob0x201(OpGobParams &params) {
 
 	WRITE_VAR(varIndex, 1);
 }
+
+void Inter_v7::o7_appligarden(OpGobParams &params) {
+	_vm->_game->_script->skip(0);
+	return;
+}
+
 } // End of namespace Gob
