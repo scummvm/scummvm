@@ -91,43 +91,59 @@
 	const uint8 keycolor = frame->_keycolor;
 
 	Common::Rect srcRect(0, 0, src.w, src.h);
-	Common::Rect dstRect(x, y, x, y + src.h);
+	Common::Rect dstRect(x, y, x, y);
 
 	const int srcStep = sizeof(uint8);
 	int dstStep = sizeof(uintX);
 
 	if (mirrored) {
-		dstRect.translate(frame->_xoff, -frame->_yoff);
-		dstRect.left = dstRect.right - src.w;
-		dstStep = -dstStep;
+		dstRect.right += frame->_xoff + 1;
+		dstRect.left = dstRect.right - srcRect.width();
+
+		if (dstRect.left < clipWindow.left) {
+			srcRect.right += dstRect.left - clipWindow.left;
+			dstRect.left = clipWindow.left;
+		}
+
+		if (dstRect.right > clipWindow.right) {
+			srcRect.left += dstRect.right - clipWindow.right;
+			dstRect.right = clipWindow.right;
+		}
 	} else {
-		dstRect.translate(-frame->_xoff, -frame->_yoff);
-		dstRect.right = dstRect.left + src.w;
+		dstRect.left -= frame->_xoff;
+		dstRect.right = dstRect.left + srcRect.width();
+
+		if (dstRect.left < clipWindow.left) {
+			srcRect.left -= dstRect.left - clipWindow.left;
+			dstRect.left = clipWindow.left;
+		}
+
+		if (dstRect.right > clipWindow.right) {
+			srcRect.right -= dstRect.right - clipWindow.right;
+			dstRect.right = clipWindow.right;
+		}
 	}
 
-	if (dstRect.left < clipWindow.left) {
-		if (mirrored) {
-			srcRect.right += dstRect.left - clipWindow.left;
-		} else {
-			srcRect.left -= dstRect.left - clipWindow.left;
-		}
-		dstRect.left = clipWindow.left;
-	}
+	dstRect.top -= frame->_yoff;
+	dstRect.bottom = dstRect.top + srcRect.height();
+
 	if (dstRect.top < clipWindow.top) {
 		srcRect.top -= dstRect.top - clipWindow.top;
 		dstRect.top = clipWindow.top;
 	}
-	if (dstRect.right > clipWindow.right) {
-		if (mirrored) {
-			srcRect.left += dstRect.right - clipWindow.right;
-		} else {
-			srcRect.right -= dstRect.right - clipWindow.right;
-		}
-		dstRect.right = clipWindow.right;
-	}
+
 	if (dstRect.bottom > clipWindow.bottom) {
 		srcRect.bottom -= dstRect.bottom - clipWindow.bottom;
 		dstRect.bottom = clipWindow.bottom;
+	}
+
+	if (mirrored) {
+		x = dstRect.right - 1;
+		y = dstRect.top;
+		dstStep = -dstStep;
+	} else {
+		x = dstRect.left;
+		y = dstRect.top;
 	}
 
 	const int w = srcRect.width();
@@ -136,7 +152,7 @@
 	const int dstDelta = pitch - (w * dstStep);
 
 	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(srcRect.left, srcRect.top));
-	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + (mirrored ? dstRect.right - 1 : dstRect.left) * sizeof(uintX) + pitch * dstRect.top);
+	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + x * sizeof(uintX) + pitch * y);
 
 	for (int i = 0; i < h; i++)  {
 		for (int j = 0; j < w; j++) {
