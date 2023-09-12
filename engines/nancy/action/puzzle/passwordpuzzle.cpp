@@ -55,7 +55,7 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint numPasswords = 1;
 	char buf[20];
 
-	s.syncAsUint16LE(numNames);
+	s.syncAsUint16LE(numNames, kGameTypeNancy4);
 	_names.resize(numNames);
 	for (uint i = 0; i < numNames; ++i) {
 		stream.read(buf, 20);
@@ -64,9 +64,9 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 
 		_maxNameLength = MAX(_maxNameLength, _names[i].size());
 	}
-	s.skip((5 - numNames) * 20);
+	s.skip((5 - numNames) * 20, kGameTypeNancy4);
 
-	s.syncAsUint16LE(numPasswords);
+	s.syncAsUint16LE(numPasswords, kGameTypeNancy4);
 	_passwords.resize(numPasswords);
 	for (uint i = 0; i < numPasswords; ++i) {
 		stream.read(buf, 20);
@@ -75,7 +75,7 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 
 		_maxPasswordLength = MAX(_maxPasswordLength, _passwords[i].size());
 	}
-	s.skip((5 - numPasswords) * 20);
+	s.skip((5 - numPasswords) * 20, kGameTypeNancy4);
 
 	_solveExitScene.readData(stream);
 	_solveSound.readNormal(stream);
