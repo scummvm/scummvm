@@ -58,7 +58,6 @@ void GraphicsManager::draw(bool updateScreen) {
 	}
 
 	g_nancy->_cursorManager->applyCursor();
-	Common::List<Common::Rect> dirtyRects;
 
 	// Update graphics for all RenderObjects and determine
 	// the areas of the screen that need to be redrawn
@@ -71,14 +70,14 @@ void GraphicsManager::draw(bool updateScreen) {
 			if (current._isVisible) {
 				if (current.hasMoved() && !current.getPreviousScreenPosition().isEmpty()) {
 					// Object moved to a new location on screen, update the previous one
-					dirtyRects.push_back(current.getPreviousScreenPosition());
+					_dirtyRects.push_back(current.getPreviousScreenPosition());
 				}
 
 				// Redraw the current location
-				dirtyRects.push_back(current.getScreenPosition());
+				_dirtyRects.push_back(current.getScreenPosition());
 			} else if (!current.getPreviousScreenPosition().isEmpty()) {
 				// Object just turned invisible, redraw the last location
-				dirtyRects.push_back(current.getPreviousScreenPosition());
+				_dirtyRects.push_back(current.getPreviousScreenPosition());
 			}
 		}
 
@@ -87,10 +86,10 @@ void GraphicsManager::draw(bool updateScreen) {
 	}
 
 	// Filter out dirty rects that are completely inside others to reduce overdraw
-	for (auto outer = dirtyRects.begin(); outer != dirtyRects.end(); ++outer) {
-		for (auto inner = dirtyRects.begin(); inner != dirtyRects.end(); ++inner) {
+	for (auto outer = _dirtyRects.begin(); outer != _dirtyRects.end(); ++outer) {
+		for (auto inner = _dirtyRects.begin(); inner != _dirtyRects.end(); ++inner) {
 			if (inner != outer && (*outer).contains(*inner)) {
-				dirtyRects.erase(inner);
+				_dirtyRects.erase(inner);
 				break;
 			}
 		}
@@ -104,7 +103,7 @@ void GraphicsManager::draw(bool updateScreen) {
 			continue;
 		}
 
-		for (Common::Rect rect : dirtyRects) {
+		for (Common::Rect rect : _dirtyRects) {
 			if (rect.intersects(current.getScreenPosition())) {
 				blitToScreen(current, rect.findIntersectingRect(current.getScreenPosition()));
 			}
@@ -115,6 +114,9 @@ void GraphicsManager::draw(bool updateScreen) {
 	if (updateScreen) {
 		_screen.update();
 	}
+
+	// Remove all dirty rects for the next frame
+	_dirtyRects.clear();
 }
 
 void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
@@ -144,6 +146,8 @@ void GraphicsManager::addObject(RenderObject *object) {
 void GraphicsManager::removeObject(RenderObject *object) {
 	for (auto &r : _objects) {
 		if (r == object) {
+			// Make sure the object gets properly cleared
+			_dirtyRects.push_back(r->getPreviousScreenPosition());
 			_objects.erase(&r);
 			break;
 		}

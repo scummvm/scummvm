@@ -87,6 +87,8 @@ private:
 	Graphics::Screen _screen;
 	Common::Array<Font> _fonts;
 
+	Common::List<Common::Rect> _dirtyRects;
+
 	bool _isSuppressed;
 };
 
