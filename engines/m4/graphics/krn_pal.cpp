@@ -781,7 +781,7 @@ void pal_fx_update() {
 	}
 }
 
-void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent) {
+void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent) {
 	int32 i;
 	int32 r, g, b, dr, dg, db;
 	RGB8 color, targetColor;

@@ -99,6 +99,8 @@ const seriesPlayBreak Room509::PLAY8[] = {
 	PLAY_BREAK_END
 };
 
+static const RGB8 PALETTE[1] = { { 0x6E, 0x46, 0x1E } };
+
 long Room509::_state1;
 long Room509::_state2;
 
@@ -173,7 +175,263 @@ void Room509::init() {
 }
 
 void Room509::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		wilbur_speech("509w001");
+		break;
+
+	case 2:
+		switch (_val1) {
+		case 15:
+			_state2 = imath_ranged_rand(1, 2);
+			_val1 = 16;
+			series_play_with_breaks(PLAY8, "509bk01", 0xf00, 2, 2, 6);
+			break;
+
+		case 16:
+			_val1 = 15;
+			series_show("509bk01", 0xf00, 0, 2, imath_ranged_rand(120, 240));
+			digi_play_loop(Common::String::format("508b001%c",
+				'a' + imath_ranged_rand(0, 3)).c_str(), 2, 255);
+			break;
+
+		case 17:
+			series_show("509bk01", 0xF00);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		if (!_G(flags)[V197] && !_flag1) {
+			_state1 = 1;
+			digi_play("509_001", 2);
+			_flag1 = true;
+		} else if (!_flag1) {
+			digi_play("509_003", 2, 255, -1, 509);
+			_flag1 = true;
+		}
+
+		_G(flags)[V197] = 1;
+		DAC_tint_range(PALETTE, _val4, 32, 255, true);
+		_val3 = imath_ranged_rand(0, 1);
+
+		if (_val3)
+			_val4 += 7;
+		else
+			_val4 -= 7;
+		_val4 = CLIP(_val4, 0, 70);
+
+		kernel_timing_trigger(6, (_val5 == 1) ? 3 : 4);
+		break;
+
+	case 4:
+		_flag1 = false;
+		_val4 -= 7;
+		if (_val4 < 0) {
+			_val4 = _val5 = 0;
+		}
+
+		DAC_tint_range(PALETTE, _val4, 32, 255, true);
+
+		if (_val5 == 2)
+			kernel_timing_trigger(6, 4);
+		break;
+
+
+
+	case 5002:
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 2;
+
+			terminateMachineAndNull(_series1);
+			series_play_with_breaks(PLAY1, (_G(flags)[V212] == 5000) ? "509wi03" : "509wi01");
+			break;
+
+		case 2:
+			hotspot_set_active("CHRISTMAS LIGHTS  ", false);
+
+			if (_G(flags)[V212] == 5000) {
+				_general.show("509wi03", 0xc00, 0, -1, -1, 31);
+				inv_give_to_player("CHRISTMAS LIGHTS ");
+			} else {
+				_general.show("509wi01", 0xc00, 0, -1, -1, 31);
+				inv_give_to_player("CHRISTMAS LIGHTS");
+			}
+
+			player_set_commands_allowed(true);
+			break;
+
+		case 3:
+			hotspot_set_active("CHRISTMAS LIGHTS  ", true);
+			player_set_commands_allowed(false);
+			inv_move_object("CHRISTMAS LIGHTS", NOWHERE);
+			inv_move_object("CHRISTMAS LIGHTS ", NOWHERE);
+			_G(wilbur_should) = 14;
+
+			series_play_with_breaks(PLAY2, (_G(flags)[V212] == 5000) ? "509wi04" : "509wi02",
+				0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 4:
+			_general.terminate();
+			_G(wilbur_should) = 5;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 5:
+			player_set_commands_allowed(false);
+			terminateMachineAndNull(_series2);
+
+			if (_G(flags)[V212] == 5000) {
+				if (_G(flags)[V234]) {
+					_G(wilbur_should) = 6;
+					_val5 = 1;
+					series_play_with_breaks(PLAY3, "509wi05", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+				} else {
+					_G(wilbur_should) = 7;
+					series_play_with_breaks(PLAY4, "509wi05", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+				}
+			} else {
+				_G(wilbur_should) = 8;
+				series_play_with_breaks(PLAY5, "509wi07", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);				
+			}
+			break;
+
+		case 6:
+			_val5 = 2;
+			hotspot_set_active("CHRISTMAS LIGHTS  ", true);
+			_G(wilbur_should) = 8;
+			series_play_with_breaks(PLAY6, "609wi08", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 7:
+			_G(wilbur_should) = 5004;
+			series_play_with_breaks(PLAY7, "509wi06", 0xc00, 5016, 3);
+			break;
+
+		case 8:
+			if (_state1) {
+				_G(wilbur_should) = 10;
+			} else if (_G(flags)[V212] == 5001) {
+				_G(wilbur_should) = 11;
+			} else {
+				_G(wilbur_should) = 10001;
+			}
+
+			inv_move_object("CHRISTMAS LIGHTS", NOWHERE);
+			inv_move_object("CHRISTMAS LIGHTS ", NOWHERE);
+			hotspot_set_active("CHRISTMAS LIGHTS  ", true);
+			_series2 = series_show("509wire", 0x900);
+			_series1 = series_show((_G(flags)[V212] == 5000) ? "509lgt02" : "509lgt01", 0xc00);
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 9:
+			_G(wilbur_should) = 6;
+			break;
+
+		case 10:
+			_state1 = 0;
+			ws_unhide_walker();
+			wilbur_speech("500w087", 5001);
+			break;
+
+		case 11:
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+			wilbur_speech("500w088");
+			break;
+
+		case 12:
+			player_set_commands_allowed(false);
+			_G(wilbur_should) = 13;
+
+			switch (_val2) {
+			case 0:
+				digi_play("500w079", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 1:
+				digi_play("500w080", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 2:
+				digi_play("500w089", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 3:
+				digi_play("500w090", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 4:
+				digi_play("500w091", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 5:
+				_G(wilbur_should) = 4;
+				digi_play("500w084", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			case 6:
+				_G(wilbur_should) = 4;
+				digi_play("500w085", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				break;
+
+			default:
+				break;
+			}
+
+			if (_G(flags)[V212] == 5000) {
+				_general.play("509wi03", 0xc00, 4, -1, 0, -1, 100, 0, 0, 16, 18);
+			} else {
+				_general.play("509wi01", 0xc00, 4, -1, 0, -1, 100, 0, 0, 16, 18);
+			}
+			break;
+
+		case 13:
+			_general.terminate();
+			_G(wilbur_should) = 2;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 14:
+			_G(kernel).trigger_mode = KT_PARSE;
+
+			if (_G(flags)[V212] == 5000) {
+				_series1 = series_show("509lgt02", 0xc00);
+			} else {
+				_series1 = series_show("509lgt01", 0xc00);
+			}
+
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+			_G(wilbur_should) = 10002;
+			_G(player).command_ready = true;
+			_G(player).need_to_walk = true;
+			_G(player).ready_to_walk = true;
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room509::pre_parser() {
@@ -202,8 +460,7 @@ void Room509::pre_parser() {
 		}
 
 		_G(player).ready_to_walk = false;
-		terminateMachineAndNull(_general1);
-		terminateMachineAndNull(_general2);
+		_general.terminate();
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
 	}

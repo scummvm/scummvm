@@ -117,7 +117,7 @@ extern void pal_fx_update();
  * This is used to effect the screen colours (not the master palette) temporarily
  * until something else updates the DAC e.g. refresh_DAC()
  */
-extern void DAC_tint_range(RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent);
+extern void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent);
 
 extern void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay);
 
