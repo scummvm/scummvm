@@ -28,14 +28,44 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+#define BUTTON_COUNT 7
+
 class Room510 : public Section5Room {
+private:
+	struct ButtonDef {
+		int _val1;
+		int _val2;
+		int _val3;
+		int _val4;
+		int _index0;
+		int _index1;
+		int _index2;
+		int _index3;
+		int _state;
+		int _val10;
+	};
+	struct Button : public ButtonDef {
+		machine *_series = nullptr;
+		Button() : ButtonDef() {}
+		Button(const ButtonDef &src) : ButtonDef(src) {}
+	};
+	static const ButtonDef _BUTTONS[BUTTON_COUNT];
+	Button _buttons[BUTTON_COUNT];
+	machine *_buttonSeries[BUTTON_COUNT];
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+
+	void setupButton(int index);
+	void setButtonState(int index, int state);
+
 public:
-	Room510() : Section5Room() {}
+	Room510();
 	~Room510() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
-	void pre_parser() override;
 	void parser() override;
 };
 
