@@ -7,6 +7,7 @@ gui/downloadpacksdialog.cpp
 gui/editgamedialog.cpp
 gui/editrecorddialog.cpp
 gui/error.cpp
+gui/integrity-dialog.cpp
 gui/filebrowser-dialog.cpp
 gui/fluidsynth-dialog.cpp
 gui/gui-manager.cpp

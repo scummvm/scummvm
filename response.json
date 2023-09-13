@@ -1,0 +1,17 @@
+{
+	"files": [
+		{
+			"status": "ok",
+			"name": "Packet.001"
+		},
+		{
+			"status": "ok",
+			"name": "drascula.doc"
+		},
+		{
+			"status": "size_mismatch",
+			"name": "readme.txt"
+		}
+	],
+	"error": 1
+}

@@ -36,6 +36,7 @@
 #include "gui/recorderdialog.h"
 #include "gui/EventRecorder.h"
 #endif
+#include "gui/integrity-dialog.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
@@ -76,6 +77,7 @@ enum {
 	kCmdGameBrowser = 'PGME',
 	kCmdSaveBrowser = 'PSAV',
 	kCmdSavePathClear = 'PSAC',
+	kCmdCheckIntegrity = 'PCHI',
 
 	kGraphicsTabContainerReflowCmd = 'gtcr'
 };
@@ -302,6 +304,9 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
+
+	// GUI: Check integrity button
+	_checkIntegrityButton = new ButtonWidget(tab, "GameOptions_Paths.Checkintegrity", _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
 
 	// GUI:  Button + Label for the game path
 	if (g_system->getOverlayWidth() > 320)
@@ -600,6 +605,12 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kCmdSavePathClear:
 		_savePathWidget->setLabel(_("Default"));
 		break;
+
+	case kCmdCheckIntegrity: {
+		IntegrityDialog wizard("http://gamesdb.sev.zone/endpoints/validate.php", _domain);
+		wizard.runModal();
+		break;
+	}
 
 	case kOKCmd:
 	{

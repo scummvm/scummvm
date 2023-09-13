@@ -553,6 +553,11 @@ size_t strnlen(const char *src, size_t maxSize);
  */
 String toPrintable(const String &src, bool keepNewLines = true);
 
+/**
+ * Converts string with special URL characters to URL encoded (percent encoded) strings
+ */
+String percentEncodeString(const String &src);
+
 /** @} */
 
 } // End of namespace Common

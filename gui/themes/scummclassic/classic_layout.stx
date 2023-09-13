@@ -1390,6 +1390,10 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+			<space size='16'/>
+			<widget name = 'Checkintegrity'
+					type = 'Button'
+			/>
 		</layout>
 	</dialog>
 
