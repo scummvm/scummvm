@@ -445,7 +445,8 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 
 	assert(_areaMap.contains(areaID));
-	bool sameArea = _currentArea ? areaID == _currentArea->getAreaID() : false;
+	int16 previousArea = _currentArea ? _currentArea->getAreaID() : -127;
+	bool sameArea = areaID == previousArea;
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
 
@@ -457,18 +458,47 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (sameArea || entranceID == 0) {
 		int newPos = -1;
+		/*
+		This code needed some modificatins to deal with the area transition
+		in the poles. Only the light side is considered, since the dark side
+		pole is only reached at the end of the game using a single path.
+		*/
 		if (_position.z() < 200 || _position.z() >= 3800) {
 			if (_position.z() < 200)
 				newPos = 4000;
 			else
 				newPos = 100;
-			_position.setValue(2, newPos);
+			// Correct position and yaw for transtions to and from the light side
+			if (previousArea == 14 && areaID == 18) {
+				_position.setValue(2, _position.x());
+				_position.setValue(0, 100);
+				_yaw = 0;
+			} else if (previousArea == 18 && areaID == 17) {
+				_yaw = 90;
+			} else if (previousArea == 17 && areaID == 18) {
+				_yaw = 90;
+			} else if (previousArea == 16 && areaID == 18) {
+				_position.setValue(2, 4000 - _position.x());
+				_position.setValue(0, 4000);
+				_yaw = 180;
+			} else
+				_position.setValue(2, newPos);
 		} else if(_position.x() < 200 || _position.x() >= 3800)  {
 			if (_position.x() < 200)
 				newPos = 4000;
 			else
 				newPos = 100;
-			_position.setValue(0, newPos);
+			// Correct position and yaw for transtions to and from the light side
+			if (previousArea == 18 && areaID == 14) {
+				_position.setValue(0, _position.z());
+				_position.setValue(2, 100);
+				_yaw = 90;
+			} else if (previousArea == 18 && areaID == 16) {
+				_position.setValue(0, 4000 - _position.z());
+				_position.setValue(2, 100);
+				_yaw = 90;
+			} else
+				_position.setValue(0, newPos);
 		}
 		assert(newPos != -1);
 		_sensors = _currentArea->getSensors();
