@@ -611,85 +611,253 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 namespace {
 
 template<typename uintX>
-
 void inline paintLogic(uint8 *pixels, int32 pitch,
 					   const Common::Rect &clipWindow,
 					   const Graphics::PixelFormat &format,
 					   const ShapeFrame *frame, int32 x, int32 y, bool mirrored,
 					   const uint32 *map) {
-#include "ultima/ultima8/graphics/render_surface.inl"
+	const Graphics::Surface &src = frame->getSurface();
+	Common::Rect srcRect(0, 0, src.w, src.h);
+	Common::Rect dstRect(x, y, x, y);
+
+	if (mirrored) {
+		dstRect.right += frame->_xoff + 1;
+		dstRect.left = dstRect.right - srcRect.width();
+
+		if (dstRect.left < clipWindow.left) {
+			srcRect.right += dstRect.left - clipWindow.left;
+			dstRect.left = clipWindow.left;
+		}
+
+		if (dstRect.right > clipWindow.right) {
+			srcRect.left += dstRect.right - clipWindow.right;
+			dstRect.right = clipWindow.right;
+		}
+	} else {
+		dstRect.left -= frame->_xoff;
+		dstRect.right = dstRect.left + srcRect.width();
+
+		if (dstRect.left < clipWindow.left) {
+			srcRect.left -= dstRect.left - clipWindow.left;
+			dstRect.left = clipWindow.left;
+		}
+
+		if (dstRect.right > clipWindow.right) {
+			srcRect.right -= dstRect.right - clipWindow.right;
+			dstRect.right = clipWindow.right;
+		}
+	}
+
+	dstRect.top -= frame->_yoff;
+	dstRect.bottom = dstRect.top + srcRect.height();
+
+	if (dstRect.top < clipWindow.top) {
+		srcRect.top -= dstRect.top - clipWindow.top;
+		dstRect.top = clipWindow.top;
+	}
+
+	if (dstRect.bottom > clipWindow.bottom) {
+		srcRect.bottom -= dstRect.bottom - clipWindow.bottom;
+		dstRect.bottom = clipWindow.bottom;
+	}
+
+	const int srcStep = sizeof(uint8);
+	int dstStep = sizeof(uintX);
+
+	if (mirrored) {
+		x = dstRect.right - 1;
+		y = dstRect.top;
+		dstStep = -dstStep;
+	} else {
+		x = dstRect.left;
+		y = dstRect.top;
+	}
+
+	const int w = srcRect.width();
+	const int h = srcRect.height();
+	const int srcDelta = src.pitch - (w * srcStep);
+	const int dstDelta = pitch - (w * dstStep);
+
+	const uint8 keycolor = frame->_keycolor;
+	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(srcRect.left, srcRect.top));
+	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + x * sizeof(uintX) + pitch * y);
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			const uint8 color = *srcPixels;
+			if (color != keycolor) {
+				uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
+				*dstpix = static_cast<uintX>(map[color]);
+			}
+			srcPixels += srcStep;
+			dstPixels += dstStep;
+		}
+
+		srcPixels += srcDelta;
+		dstPixels += dstDelta;
+	}
 }
 
-template<class uintX>
-void inline paintTranslucentLogic(uint8 *pixels, int32 pitch,
-								  const Common::Rect &clipWindow,
-								  const Graphics::PixelFormat &format,
-								  const ShapeFrame *frame, int32 x, int32 y, bool mirrored,
-								  const uint32 *map, const uint32 *xform_map) {
-#define XFORM_SHAPES
-#include "ultima/ultima8/graphics/render_surface.inl"
-#undef XFORM_SHAPES
-}
+template<typename uintX>
+void inline paintBlendedLogic(uint8 *pixels, int32 pitch,
+							  const Common::Rect &clipWindow,
+							  const Graphics::PixelFormat &format,
+							  const ShapeFrame *frame, int32 x, int32 y,
+							  bool mirrored, bool invisible, uint32 highlight,
+							  const uint32 *map, const uint32 *xform_map) {
+	const Graphics::Surface &src = frame->getSurface();
+	Common::Rect srcRect(0, 0, src.w, src.h);
+	Common::Rect dstRect(x, y, x, y);
 
-template<class uintX>
-void inline paintInvisibleLogic(uint8 *pixels, int32 pitch,
-								const Common::Rect &clipWindow,
-								const Graphics::PixelFormat &format,
-								const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored,
-								const uint32 *map, const uint32 *xform_map) {
-#define XFORM_SHAPES
-#define XFORM_CONDITIONAL trans
-#define BLEND_SHAPES(src, dst) BlendInvisible(src, dst, format)
+	if (mirrored) {
+		dstRect.right += frame->_xoff + 1;
+		dstRect.left = dstRect.right - srcRect.width();
 
-#include "ultima/ultima8/graphics/render_surface.inl"
+		if (dstRect.left < clipWindow.left) {
+			srcRect.right += dstRect.left - clipWindow.left;
+			dstRect.left = clipWindow.left;
+		}
 
-#undef XFORM_SHAPES
-#undef XFORM_CONDITIONAL
-#undef BLEND_SHAPES
-}
+		if (dstRect.right > clipWindow.right) {
+			srcRect.left += dstRect.right - clipWindow.right;
+			dstRect.right = clipWindow.right;
+		}
+	} else {
+		dstRect.left -= frame->_xoff;
+		dstRect.right = dstRect.left + srcRect.width();
 
-template<class uintX>
-void inline paintHighlightLogic(uint8 *pixels, int32 pitch,
-								const Common::Rect &clipWindow,
-								const Graphics::PixelFormat &format,
-								const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32,
-								const uint32 *map, const uint32 *xform_map) {
-#define XFORM_SHAPES
-#define XFORM_CONDITIONAL trans
-#define BLEND_SHAPES(src, dst) BlendHighlight(src, cr, cg, cb, ca, 255 - ca, format)
+		if (dstRect.left < clipWindow.left) {
+			srcRect.left -= dstRect.left - clipWindow.left;
+			dstRect.left = clipWindow.left;
+		}
 
-	uint32 ca = TEX32_A(col32);
-	uint32 cr = TEX32_R(col32);
-	uint32 cg = TEX32_G(col32);
-	uint32 cb = TEX32_B(col32);
+		if (dstRect.right > clipWindow.right) {
+			srcRect.right -= dstRect.right - clipWindow.right;
+			dstRect.right = clipWindow.right;
+		}
+	}
 
-#include "ultima/ultima8/graphics/render_surface.inl"
+	dstRect.top -= frame->_yoff;
+	dstRect.bottom = dstRect.top + srcRect.height();
 
-#undef XFORM_SHAPES
-#undef XFORM_CONDITIONAL
-#undef BLEND_SHAPES
-}
+	if (dstRect.top < clipWindow.top) {
+		srcRect.top -= dstRect.top - clipWindow.top;
+		dstRect.top = clipWindow.top;
+	}
 
-template<class uintX>
-void inline paintHighlightInvisLogic(uint8 *pixels, int32 pitch,
-									 const Common::Rect &clipWindow,
-									 const Graphics::PixelFormat &format,
-									 const ShapeFrame *frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32,
-									 const uint32 *map, const uint32 *xform_map) {
-#define XFORM_SHAPES
-#define XFORM_CONDITIONAL trans
-#define BLEND_SHAPES(src, dst) BlendHighlightInvis(src, dst, cr, cg, cb, ca, 255 - ca, format)
+	if (dstRect.bottom > clipWindow.bottom) {
+		srcRect.bottom -= dstRect.bottom - clipWindow.bottom;
+		dstRect.bottom = clipWindow.bottom;
+	}
 
-	uint32 ca = TEX32_A(col32);
-	uint32 cr = TEX32_R(col32);
-	uint32 cg = TEX32_G(col32);
-	uint32 cb = TEX32_B(col32);
+	const int srcStep = sizeof(uint8);
+	int dstStep = sizeof(uintX);
 
-#include "ultima/ultima8/graphics/render_surface.inl"
+	if (mirrored) {
+		x = dstRect.right - 1;
+		y = dstRect.top;
+		dstStep = -dstStep;
+	} else {
+		x = dstRect.left;
+		y = dstRect.top;
+	}
 
-#undef XFORM_SHAPES
-#undef XFORM_CONDITIONAL
-#undef BLEND_SHAPES
+	const int w = srcRect.width();
+	const int h = srcRect.height();
+	const int srcDelta = src.pitch - (w * srcStep);
+	const int dstDelta = pitch - (w * dstStep);
+
+	const uint8 keycolor = frame->_keycolor;
+	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(srcRect.left, srcRect.top));
+	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + x * sizeof(uintX) + pitch * y);
+
+	if (highlight && invisible) {
+		uint32 ca = TEX32_A(highlight);
+		uint32 cr = TEX32_R(highlight);
+		uint32 cg = TEX32_G(highlight);
+		uint32 cb = TEX32_B(highlight);
+
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				const uint8 color = *srcPixels;
+				if (color != keycolor) {
+					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
+					if (xform_map && xform_map[color]) {
+						*dstpix = static_cast<uintX>(BlendHighlightInvis(BlendPreModulated(xform_map[color], *dstpix, format), *dstpix, cr, cg, cb, ca, 255 - ca, format));
+					} else {
+						*dstpix = static_cast<uintX>(BlendHighlightInvis(map[color], *dstpix, cr, cg, cb, ca, 255 - ca, format));
+					}
+				}
+				srcPixels += srcStep;
+				dstPixels += dstStep;
+			}
+
+			srcPixels += srcDelta;
+			dstPixels += dstDelta;
+		}
+	} else if (highlight) {
+		uint32 ca = TEX32_A(highlight);
+		uint32 cr = TEX32_R(highlight);
+		uint32 cg = TEX32_G(highlight);
+		uint32 cb = TEX32_B(highlight);
+
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				const uint8 color = *srcPixels;
+				if (color != keycolor) {
+					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
+					if (xform_map && xform_map[color]) {
+						*dstpix = static_cast<uintX>(BlendHighlight(BlendPreModulated(xform_map[color], *dstpix, format), cr, cg, cb, ca, 255 - ca, format));
+					} else {
+						*dstpix = static_cast<uintX>(BlendHighlight(map[color], cr, cg, cb, ca, 255 - ca, format));
+					}
+				}
+				srcPixels += srcStep;
+				dstPixels += dstStep;
+			}
+
+			srcPixels += srcDelta;
+			dstPixels += dstDelta;
+		}
+	} else if (invisible) {
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				const uint8 color = *srcPixels;
+				if (color != keycolor) {
+					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
+					if (xform_map && xform_map[color]) {
+						*dstpix = static_cast<uintX>(BlendInvisible(BlendPreModulated(xform_map[color], *dstpix, format), *dstpix, format));
+					} else {
+						*dstpix = static_cast<uintX>(BlendInvisible(map[color], *dstpix, format));
+					}
+				}
+				srcPixels += srcStep;
+				dstPixels += dstStep;
+			}
+
+			srcPixels += srcDelta;
+			dstPixels += dstDelta;
+		}
+	} else {
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				const uint8 color = *srcPixels;
+				if (color != keycolor) {
+					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
+					if (xform_map && xform_map[color]) {
+						*dstpix = static_cast<uintX>(BlendPreModulated(xform_map[color], *dstpix, format));
+					} else {
+						*dstpix = static_cast<uintX>(map[color]);
+					}
+				}
+				srcPixels += srcStep;
+				dstPixels += dstStep;
+			}
+
+			srcPixels += srcDelta;
+			dstPixels += dstDelta;
+		}
+	}
 }
 
 } // End of anonymous namespace
@@ -726,9 +894,9 @@ void RenderSurface::PaintTranslucent(const Shape *s, uint32 framenum, int32 x, i
 	const uint32 *xform_map = s->getPalette()->_xform;
 
 	if (_surface->format.bytesPerPixel == 4)
-		paintTranslucentLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map, xform_map);
+		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, 0, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintTranslucentLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map, xform_map);
+		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, 0, map, xform_map);
 }
 
 //
@@ -742,12 +910,12 @@ void RenderSurface::PaintInvisible(const Shape *s, uint32 framenum, int32 x, int
 		return;
 
 	const uint32 *map = s->getPalette()->_native;
-	const uint32 *xform_map = s->getPalette()->_xform;
+	const uint32 *xform_map = trans ? s->getPalette()->_xform : nullptr;
 
 	if (_surface->format.bytesPerPixel == 4)
-		paintInvisibleLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, map, xform_map);
+		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, 0, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintInvisibleLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, map, xform_map);
+		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, 0, map, xform_map);
 }
 
 //
@@ -761,12 +929,12 @@ void RenderSurface::PaintHighlight(const Shape *s, uint32 framenum, int32 x, int
 		return;
 
 	const uint32 *map = s->getPalette()->_native;
-	const uint32 *xform_map = s->getPalette()->_xform;
+	const uint32 *xform_map = trans ? s->getPalette()->_xform : nullptr;
 
 	if (_surface->format.bytesPerPixel == 4)
-		paintHighlightLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
+		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintHighlightLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
+		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, col32, map, xform_map);
 }
 
 //
@@ -780,12 +948,12 @@ void RenderSurface::PaintHighlightInvis(const Shape *s, uint32 framenum, int32 x
 		return;
 
 	const uint32 *map = s->getPalette()->_native;
-	const uint32 *xform_map = s->getPalette()->_xform;
+	const uint32 *xform_map = trans ? s->getPalette()->_xform : nullptr;
 
 	if (_surface->format.bytesPerPixel == 4)
-		paintHighlightInvisLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
+		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
-		paintHighlightInvisLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, trans, mirrored, col32, map, xform_map);
+		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, col32, map, xform_map);
 }
 
 } // End of namespace Ultima8
