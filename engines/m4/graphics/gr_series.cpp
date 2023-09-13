@@ -44,7 +44,7 @@ void Series::show(const char *seriesName, frac16 layer, uint32 flags,
 	_series = M4::series_show(seriesName, layer, flags, triggerNum, duration,
 		index, s, x, y);
 	_seriesS = M4::series_show(seriesName, layer + 1, flags, -1, duration,
-		index, s, x, y);
+		index ? index + 1 : index, s, x, y);
 }
 
 void Series::show(const char *series1, const char *series2, int layer) {

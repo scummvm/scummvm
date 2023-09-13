@@ -43,8 +43,7 @@ private:
 protected:
 	static HotSpotRec _wilburHotspot;
 	Series _roomSeries1;
-	machine *_general1 = nullptr;
-	machine *_general2 = nullptr;
+	Series _general;
 
 public:
 	static void setWilburHotspot();

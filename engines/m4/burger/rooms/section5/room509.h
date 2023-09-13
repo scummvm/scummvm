@@ -45,6 +45,10 @@ private:
 	machine *_series2 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	bool _flag1 = false;
 
 public:
 	Room509();
