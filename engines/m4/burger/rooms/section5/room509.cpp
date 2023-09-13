@@ -109,17 +109,132 @@ Room509::Room509() : Section5Room() {
 }
 
 void Room509::init() {
+	Section5Room::init();
+	pal_cycle_init(109, 124, 6);
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		if (inv_player_has("CHRISTMAS LIGHTS") || inv_player_has("CHRISTMAS LIGHTS ")) {
+			disable_player();
+			_G(wilbur_should) = 2;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+		break;
+
+	case 505:
+		ws_demand_location(4, 286, 3);
+		ws_unhide_walker();
+
+		if (player_been_here(509)) {
+			ws_walk(272, 325, nullptr, -1);
+		} else {
+			ws_walk(272, 325, nullptr, 1);
+		}
+		break;
+
+	default:
+		ws_demand_location(272, 325);
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+	}
+
+	_state1 = 0;
+
+	if (_G(flags)[V227]) {
+		_val1 = 17;
+	} else {
+		digi_preload("508b001a");
+		digi_preload("508b001b");
+		digi_preload("508b001c");
+		digi_preload("508b001d");
+		_val1 = 15;
+	}
+
+	kernel_trigger_dispatch_now(2);
+
+	if (_G(flags)[V229] == 0 && !inv_player_has("CHRISTMAS LIGHTS") &&
+			!inv_player_has("CHRISTMAS LIGHTS ")) {
+		hotspot_set_active("CHRISTMAS LIGHTS  ", true);
+		series_load("509wi05");
+		series_load("509wi06");
+		series_load("509wi07");
+		series_load("509wi08");
+
+		series_show((_G(flags)[V212] == 5000) ? "509lgt02" : "509lgt01", 0xc00);			
+	} else {
+		hotspot_set_active("CHRISTMAS LIGHTS  ", false);
+	}
+
+	_series2 = series_show("509wire", 0x900);
+
+	_initFlag = true;
+	Section5Room::init();
 }
 
 void Room509::daemon() {
+	// TODO
 }
 
 void Room509::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (!inv_player_has("CHRISTMAS LIGHTS") && !inv_player_has("CHRISTMAS LIGHTS ")) {
+		if (player_said("HALLWAY") && !player_said_any("LEAVE", "LOOK AT", "GEAR"))
+			player_set_facing_hotspot();
+	} else {
+		_G(wilbur_should) = 12;
+
+		if (player_said("CHRISTMAS LIGHTS ", "PHONE CORD")) {
+			_val2 = _G(flags)[V234] ? 6 : 5;
+		} else if (player_said("CHRISTMAS LIGHTS", "PHONE CORD")) {
+			_G(wilbur_should) = 5;
+		} else if (player_said("LOOK AT") && player_said_any("CHRISTMAS LIGHTS", "CHRISTMAS LIGHTS ")) {
+			_val2 = player_said("CHRISTMAS LIGHTS") ? 1 : 0;
+		} else if (player_said("HOLE") && player_said_any("CHRISTMAS LIGHTS", "CHRISTMAS LIGHTS ")) {
+			_val2 = 2;
+		} else if (player_said("CHRISTMAS LIGHTS") || player_said("CHRISTMAS LIGHTS ")) {
+			_val2 = 4;
+			intr_cancel_sentence();
+			_G(player).need_to_walk = false;
+		} else {
+			_G(wilbur_should) = 3;
+		}
+
+		_G(player).ready_to_walk = false;
+		terminateMachineAndNull(_general1);
+		terminateMachineAndNull(_general2);
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		_G(player).command_ready = false;
+	}
 }
 
 void Room509::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (player_said("LOOK AT", "CHRISTMAS LIGHTS  ") && _G(flags)[V212] == 5001) {
+		wilbur_speech("509w003");
+	} else if (player_said("GEAR", "CHRISTMAS LIGHTS  ")) {
+		wilbur_speech("509w004");
+	} else if (player_said_any("CHRISTMAS LIGHTS", "CHRISTMAS LIGHTS ") && player_said("HOLE")) {
+		_val2 = 2;
+		kernel_trigger_dispatch_now(12);
+	} else if (player_said("LOOK AT", "HOLE") && _G(flags)[V227] != 0) {
+		wilbur_speech("500w003");
+	} else if (player_said("TAKE", "TELEPHONE") && _G(flags)[V197]) {
+		wilbur_speech("500w005");
+	} else if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("HALLWAY") && player_said_any("LEAVE", "LOOK AT", "GEAR")) {
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 5009);
+	} else if (player_said("TAKE", "CHRISTMAS LIGHTS  ")) {
+		_G(wilbur_should) = 1;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
