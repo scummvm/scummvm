@@ -26,6 +26,84 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+const seriesPlayBreak Room207::PLAY1[] = {
+	{ 0, 22, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY2[] = {
+	{ 22, 17, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 18, 25, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 31, 33, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 34, 31, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY3[] = {
+	{  0, 13, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 25, 29, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY4[] = {
+	{ 29, 25, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 13,  0, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY5[] = {
+	{ 35, 37, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 37, 35, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY6[] = {
+	{ 0, 17, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY7[] = {
+	{ 29, 22, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY8[] = {
+	{ 5, 23, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY9[] = {
+	{ 23, 5, 0, 0, 0, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY10[] = {
+	{ 31, 24, 0, 0, 0, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY11[] = {
+	{ 24, 31, 0, 0, 0, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room207::PLAY12[] = {
+	{ 18, 22, 0, 0, 0, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesStreamBreak Room207::SERIES1[] = {
+	{ 0, 0, 0, 0, -1, 0, 0, 0 },
+	{ 18, "207w001", 1, 255, -1, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+const seriesStreamBreak Room207::SERIES2[] = {
+	{ 0, 0, 0, 0, -1, 0, 0, 0 },
+	STREAM_BREAK_END
+};
+
+
 void Room207::preload() {
 	_G(player).walker_in_this_scene = false;
 }
@@ -59,7 +137,248 @@ void Room207::init() {
 }
 
 void Room207::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		switch (_val2) {
+		case 15:
+			switch (_val1) {
+			case 1:
+				_val1 = 7;
+				_series1.play("207as03", 0x200, 4, -1, 6, -1, 100, 0, 0, 31, 34);
+				digi_play(conv_sound_to_play(), 1, 255, 1);
+				break;
+
+			case 7:
+				_series1.terminate();
+				_val1 = 10;
+				conv_resume_curr();
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			case 8:
+				_val2 = 16;
+				_val1 = 8;
+				series_play_with_breaks(PLAY4, "207as03", 0x200, 5, 1);
+				break;
+
+			case 10:
+				_val1 = getVal();
+				series_show("207as03", 0x200, 0, 1, 30, 30);
+				series_show("207as03s", 0x201, 0, -1, 30, 30);
+				break;
+
+			case 11:
+				_val1 = 10;
+				series_play_with_breaks(PLAY5, "207as03", 0x200, 1, 1);
+				break;
+
+			case 12:
+				_val2 = 17;
+				_val1 = 12;
+				series_play_with_breaks(PLAY10, "207as04", 0x200, 1, 1);
+				break;
+
+			case 13:
+				_val2 = 0;
+				series_play_with_breaks(PLAY7, "207as03", 0x200, 1, 1);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 16:
+			switch (_val1) {
+			case 1:
+				_val1 = 7;
+				_series1.play("207as01", 0x200, 4, -1, 6, -1, 100, 0, 0, 26, 30);
+				digi_play(conv_sound_to_play(), 1, 255, 1);
+				break;
+
+			case 7:
+				_series1.terminate();
+				_val1 = 8;
+				conv_resume_curr();
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			case 8:
+				_val1 = getVal();
+				_series1.show("207as01", 0x200, 0, 1, 30, 23);
+				break;
+
+			case 9:
+				_val1 = 8;
+				series_play_with_breaks(PLAY2, "207as01", 0x200, 1, 1);
+				break;
+
+			case 10:
+				_val2 = 15;
+				_val1 = 10;
+				series_play_with_breaks(PLAY3, "207as03", 0x200, 1, 1);
+				break;
+
+			case 12:
+				_val2 = 17;
+				_val1 = 12;
+				series_play_with_breaks(PLAY8, "207as04", 0x200, 1, 1);
+				break;
+
+			case 13:
+				_val2 = 0;
+				series_play_with_breaks(PLAY6, "207as03", 0x200, 1, 1);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 17:
+			switch (_val1) {
+			case 1:
+				_val1 = 7;
+				_series1.play("207as04", 0x200, 4, -1, 6, -1, 100, 0, 0, 0, 4);
+				digi_play(conv_sound_to_play(), 1, 255, 1);
+				break;
+
+			case 7:
+				_series1.terminate();
+				_val1 = 12;
+				conv_resume_curr();
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			case 8:
+				_val2 = 16;
+				_val1 = 8;
+				series_play_with_breaks(PLAY9, "207as04", 0x200, 5, 1);
+				break;
+
+			case 10:
+				_val2 = 15;
+				_val1 = 10;
+				series_play_with_breaks(PLAY11, "207as04", 0x200, 1, 1);
+				break;
+
+			case 12:
+				_val1 = getVal();
+				series_show("207as04", 0x200, 0, 1, 30, 0);
+				series_show("207as04s", 0x201, 0, -1, 30, 0);
+				break;
+
+			case 13:
+				_val2 = 15;
+				series_play_with_breaks(PLAY11, "207as03", 0x200, 1, 1);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			switch (_val1) {
+			case 5:
+				_val2 = 16;
+				_val1 = 8;
+				series_play_with_breaks(PLAY1, "207as01", 0x200, 1, 1);
+				break;
+
+			case 13:
+				digi_play(conv_sound_to_play(), 1, 255, 6);
+				_series1.play("207as03", 0x200, 1, -1, 6, -1, 100, 0, 0, 18, 22);
+				break;
+
+			default:
+				break;
+			}
+			break;
+		}
+		break;
+
+	case 2:
+		conv_load_and_prepare(_conv1, 7);
+		conv_play_curr();
+
+		_G(wilbur_should) = 4;
+		_val2 = 0;
+		_val1 = 5;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(1);
+		break;
+
+	case 3:
+		gr_backup_palette();
+		digi_preload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES1, "207a", 6, 0x100, 4);
+		pal_fade_init(_G(kernel).first_fade, 255, 100, 0, -1);
+		break;
+
+	case 4:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		series_stream_with_breaks(SERIES2, "207b", 6, 0xf00, -1);
+		gr_restore_palette();
+		release_trigger_on_digi_state(2, 1);
+		break;
+
+	case 5:
+		series_play_with_breaks(PLAY12, "207as01", 0x200, 1, 1);
+		break;
+
+	case 6:
+		_series1.terminate();
+		series_show("207as03", 0x200, 0, -1, -1, 22);
+		series_show("207as03s", 0x201, 0, -1, -1, 22);
+		conv_resume_curr();
+		break;
+
+	case 7:
+		player_set_commands_allowed(false);
+		disable_player_commands_and_fade_init(8);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			if (!strcmp(conv_sound_to_play(), "53p0101")) {
+				_G(wilbur_should) = 3;
+				conv_resume_curr();
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			} else {
+				_G(wilbur_should) = 2;
+				digi_play(conv_sound_to_play(), 1, 255, gCHANGE_WILBUR_ANIMATION);
+				_general1 = series_play("207wi01", 0x400, 4);
+			}
+			break;
+
+		case 2:
+			terminateMachineAndNull(_general1);
+			_G(wilbur_should) = 3;
+			conv_resume_curr();
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 3:
+			_G(wilbur_should) = getShould();
+			series_show("207wi01", 0x400, 0, gCHANGE_WILBUR_ANIMATION, 30, 0);
+			break;
+
+		case 4:
+			_G(wilbur_should) = getShould();
+			series_play("207wi01", 0x400, 1, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 2);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room207::parser() {
@@ -128,6 +447,59 @@ void Room207::handleConv() {
 			_val1 = 1;
 		}
 	}
+}
+
+int Room207::getVal() const {
+	int rand = imath_ranged_rand(1, 24);
+
+	switch (_val2) {
+	case 15:
+		switch (rand) {
+		case 1:
+			return 8;
+		case 2:
+			return 11;
+		case 3:
+			return 12;
+		default:
+			return 10;
+		}
+		break;
+
+	case 16:
+		switch (rand) {
+		case 1:
+			return 10;
+		case 2:
+		case 3:
+			return 9;
+		case 4:
+			return 12;
+
+		default:
+			return 8;
+		}
+		break;
+
+	case 17:
+		switch (rand) {
+		case 1:
+			return 8;
+		case 2:
+			return 10;
+		default:
+			return 12;
+		}
+		break;
+
+	default:
+		return _val1;
+	}
+}
+
+int Room207::getShould() const {
+	int rand = imath_ranged_rand(1, 8);
+	return (rand == 1) ? 4 : 3;
 }
 
 } // namespace Rooms
