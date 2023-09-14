@@ -27,18 +27,43 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+const seriesStreamBreak Room513::SERIES1[] = {
+	{   0, "513_001", 3,  40, -1, (uint)-1, nullptr, 0 },
+	{   0, "513w001", 1, 255, -1,  0, nullptr, 0 },
+	{  33, "513w002", 1, 255, -1,  0, nullptr, 0 },
+	{  44, "513z001", 1, 255, -1,  0, nullptr, 0 },
+	{  51, "513w003", 1, 255, -1,  0, nullptr, 0 },
+	{  67, "513z002", 1, 255, -1,  0, nullptr, 0 },
+	{ 117, "513z003", 1, 255, -1,  0, nullptr, 0 },
+	{ 196, "513w005", 1, 255, -1,  0, nullptr, 0 },
+	{ 209, "513z004", 1, 255, -1,  0, nullptr, 0 },
+	{ 244, "513w006", 1, 255, -1,  0, nullptr, 0 },
+	{ 292, "513z005", 1, 255, -1,  0, nullptr, 0 },
+	{ 310, "513z006", 1, 255, -1,  0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+
+void Room513::preload() {
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room513::init() {
+	_G(flags)[V184] = 1;
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room513::daemon() {
-}
+	switch (_G(kernel).trigger) {
+	case 1:
+		digi_preload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES1, "513OUTRO", 6, 1, g10027);
+		break;
 
-void Room513::pre_parser() {
-
-}
-
-void Room513::parser() {
-
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms

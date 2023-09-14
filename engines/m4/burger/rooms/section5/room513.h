@@ -29,14 +29,16 @@ namespace Burger {
 namespace Rooms {
 
 class Room513 : public Section5Room {
+private:
+	static const seriesStreamBreak SERIES1[];
+
 public:
 	Room513() : Section5Room() {}
 	~Room513() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
-	void pre_parser() override;
-	void parser() override;
 };
 
 } // namespace Rooms

@@ -288,7 +288,7 @@ void Room101::daemon() {
 			} else {
 				_G(walker).wilbur_speech("101w532", 7);
 			}
-		} else if (!_G(flags)[ROOM101_FLAG16]) {
+		} else if (!_G(flags)[V184]) {
 			switch (_G(flags)[V185]) {
 			case 0:
 			case 1:
@@ -328,7 +328,7 @@ void Room101::daemon() {
 		loadSounds();
 		ws_hide_walker(_G(my_walker));
 
-		if (_G(flags)[V241] || _G(flags)[ROOM101_FLAG16])
+		if (_G(flags)[V241] || _G(flags)[V184])
 			series_load("101wi13s", -1, nullptr);
 		if (_G(flags)[ROOM101_FLAG10])
 			series_load("101wi12s", -1, nullptr);
@@ -388,7 +388,7 @@ void Room101::daemon() {
 	case 15:
 		daemon15();
 
-		if (_G(flags)[ROOM101_FLAG10] && (_G(flags)[ROOM101_FLAG16] || _G(flags)[V220])) {
+		if (_G(flags)[ROOM101_FLAG10] && (_G(flags)[V184] || _G(flags)[V220])) {
 			terminateMachineAndNull(_machine1);
 			terminateMachineAndNull(_machine2);
 			kernel_timing_trigger(1, 16);
@@ -407,7 +407,7 @@ void Room101::daemon() {
 	case 18:
 		daemon18();
 
-		if (_G(flags)[ROOM101_FLAG16]) {
+		if (_G(flags)[V184]) {
 			if (_G(flags)[ROOM101_FLAG20] || _G(flags)[V220]) {
 				terminateMachineAndNull(_machine1);
 				terminateMachineAndNull(_machine2);
@@ -807,7 +807,7 @@ void Room101::daemon15() {
 }
 
 void Room101::daemon18() {
-	if (_G(flags)[V220] || _G(flags)[ROOM101_FLAG16]) {
+	if (_G(flags)[V220] || _G(flags)[V184]) {
 		inv_give_to_player("laxative");
 		inv_give_to_player("amplifier");
 		_G(flags)[V067] = 1;
