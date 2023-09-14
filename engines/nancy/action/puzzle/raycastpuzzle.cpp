@@ -86,7 +86,6 @@ public:
 	void writeDoors(uint startX, uint startY, uint themeID);
 	void writeLightSwitch(uint startX, uint startY, uint quadrant);
 	void writeExitFloorTexture(uint themeID);
-	void validateMap();
 
 	Common::Array<uint32> _wallMap, _infoMap;
 	Common::Array<int16> _floorMap, _ceilingMap;
@@ -140,7 +139,6 @@ RaycastLevelBuilder::RaycastLevelBuilder(uint width, uint height, uint verticalH
 	fillWalls();
 	fillLocalWallAndInfo();
 	writeThemesAndExitFloor();
-	validateMap();
 }
 
 void RaycastLevelBuilder::fillCells() {
@@ -762,6 +760,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 		}
 
 		// Subtract 2 from all lightmap values when a door is added
+		// This looks extremely ugly but the original devs must've added it for a reason
 		byte lowWall, midWall, highWall;
 		lowWall = lightmapValue & 0xF;
 		midWall = (lightmapValue >> 4) & 0xF;
@@ -786,7 +785,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 	}
 }
 
-void RaycastLevelBuilder::writeLightSwitch(uint startX, uint startY, uint quadrant) {
+void RaycastLevelBuilder::writeLightSwitch(uint startX, uint startY, uint switchID) {
 	bool foundSwitchLocation = false;
 
 	for (uint checkedCells = 0; checkedCells < _fullNumCells && !foundSwitchLocation; ++checkedCells) {
@@ -798,7 +797,7 @@ void RaycastLevelBuilder::writeLightSwitch(uint startX, uint startY, uint quadra
 		}
 
 		if (foundSwitchLocation) {
-			_infoMap[y * _fullWidth + x] = (quadrant << 8) | 2;
+			_infoMap[y * _fullWidth + x] = (switchID << 8) | 2;
 
 			uint lightmapValue = _floorCeilingLightMap[y * _fullWidth + x];
 
@@ -844,19 +843,26 @@ void RaycastLevelBuilder::writeExitFloorTexture(uint themeID) {
 	}
 }
 
-void RaycastLevelBuilder::validateMap() {
-	for (uint y = 0; y < _fullHeight; ++y) {
-		for (uint x = 0; x < _fullWidth; ++x) {
-			if (_wallMap[y * _fullWidth + x] == 1) {
+void RaycastPuzzle::validateMap() {
+	for (uint y = 0; y < _mapFullHeight; ++y) {
+		for (uint x = 0; x < _mapFullWidth; ++x) {
+			if (_wallMap[y * _mapFullWidth + x] == 1) {
 				error("wallMap not complete at coordinates x = %d, y = %d", x, y);
 			}
 
-			if (_floorMap[y * _fullWidth + x] == -1) {
+			if (_floorMap[y * _mapFullWidth + x] == -1) {
 				error("floorMap not complete at coordinates x = %d, y = %d", x, y);
 			}
 
-			if (_ceilingMap[y * _fullWidth + x] == -1) {
+			if (_ceilingMap[y * _mapFullWidth + x] == -1) {
 				error("wallMap not complete at coordinates x = %d, y = %d", x, y);
+			}
+
+			// Find light switches
+			if ((_infoMap[y * _mapFullWidth + x] & 0xFF) == 2) {
+				_lightSwitchIDs.push_back((_infoMap[y * _mapFullWidth + x] >> 8) & 0xFF);
+				_lightSwitchPositions.push_back(Common::Point(x, y));
+				_lightSwitchStates.push_back(false);
 			}
 		}
 	}
@@ -877,7 +883,7 @@ public:
 private:
 	bool loadInner() override;
 
-	enum State { kInitDrawSurface, kCopyData, kInitMap, kInitTables1, kInitTables2, kLoadTextures };
+	enum State { kInitDrawSurface, kInitPlayerLocationRotation, kCopyData, kInitMap, kInitTables1, kInitTables2, kLoadTextures };
 
 	State _loadState;
 
@@ -898,9 +904,31 @@ bool RaycastDeferredLoader::loadInner() {
 		_owner._drawSurface.create(viewport.width(), viewport.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 		_owner.setTransparent(true);
 
-		_loadState = kCopyData;
+		_loadState = kInitPlayerLocationRotation;
 		break;
 	}
+	case kInitPlayerLocationRotation :
+		if (	_builder._wallMap[_builder._startY * _builder._fullWidth + _builder._startX + 1] == 0 &&
+					_builder._wallMap[_builder._startY * _builder._fullWidth + _builder._startX + 2] == 0) {
+			_owner._playerRotation = 0;
+		} else if (	_builder._wallMap[(_builder._startY - 1) * _builder._fullWidth + _builder._startX] == 0 &&
+					_builder._wallMap[(_builder._startY - 2) * _builder._fullWidth + _builder._startX] == 0) {
+			_owner._playerRotation = 1024;
+		} else if (	_builder._wallMap[_builder._startY * _builder._fullWidth + _builder._startX - 1] == 0 &&
+					_builder._wallMap[_builder._startY * _builder._fullWidth + _builder._startX - 2] == 0) {
+			_owner._playerRotation = 2048;
+		} else if (	_builder._wallMap[(_builder._startY + 1) * _builder._fullWidth + _builder._startX] == 0 &&
+					_builder._wallMap[(_builder._startY + 2) * _builder._fullWidth + _builder._startX] == 0) {
+			_owner._playerRotation = 3072;
+		} else {
+			_owner._playerRotation = 512;
+		}
+
+		_owner._playerX = _builder._startX * 128 + 64;
+		_owner._playerY = _builder._startY * 128 + 64;
+
+		_loadState = kCopyData;
+		break;
 	case kCopyData :
 		_owner._wallMap.swap(_builder._wallMap);
 		_owner._infoMap.swap(_builder._infoMap);
@@ -909,24 +937,17 @@ bool RaycastDeferredLoader::loadInner() {
 		_owner._heightMap.swap(_builder._heightMap);
 		_owner._wallLightMap.swap(_builder._wallLightMap);
 		_owner._floorCeilingLightMap.swap(_builder._floorCeilingLightMap);
+		_owner._wallLightMapBackup = _owner._wallLightMap;
+		_owner._floorCeilingLightMapBackup = _owner._floorCeilingLightMap;
 		_owner._mapFullWidth = _builder._fullWidth;
 		_owner._mapFullHeight = _builder._fullHeight;
 
 		_loadState = kInitMap;
 		break;
 	case kInitMap : {
-		// TODO map is a debug feature, make sure to hide it
-		// Also, fix the fact that it's rendered upside-down
-		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
-		assert(bootSummary);
-
-		_owner._map._drawSurface.create(_owner._mapFullWidth, _owner._mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
-		Common::Rect mapPos(bootSummary->textboxScreenPosition);
-		mapPos.setWidth(_owner._mapFullWidth * 2);
-		mapPos.setHeight(_owner._mapFullHeight * 2);
-		_owner._map.moveTo(mapPos);
-		_owner._map.init();
 		_owner.drawMap();
+		// TODO: Add console command for setting debug features (map, player height, screen size, ghost mode, etc.)
+		_owner._map.setVisible(false);
 
 		_loadState = kInitTables1;
 		break;
@@ -1032,10 +1053,7 @@ bool RaycastDeferredLoader::loadInner() {
 				}
 			}
 
-			// TODO these need to be set according to the start position in _infoMap
-			_owner._playerRotation = 2048;
-			_owner._playerX = _owner._playerY = 320;
-			
+			_owner.validateMap();			
 			_isDone = true;
 		}
 
@@ -1092,16 +1110,28 @@ void RaycastPuzzle::execute() {
 		init();
 		break;
 	case kRun:
-		// TODO check light switches
-		// TODO check exit
+		checkSwitch();
+		checkExit();
 
 		break;
 	case kActionTrigger:
+		if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			return;
+		}
+
+		g_nancy->_sound->stopSound(_solveSound);
+		g_nancy->_sound->stopSound(_dummySound);
+		_solveScene.execute();
+		finishExecution();
 		break;
 	}
 }
 
 void RaycastPuzzle::handleInput(NancyInput &input) {
+	if (_state != kRun) {
+		return;
+	}
+	
 	uint32 time = g_nancy->getTotalPlayTime();
 	uint32 deltaTime = time - _lastMovementTime;
 	_lastMovementTime = time;
@@ -1152,24 +1182,24 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 
 	clampRotation(_playerRotation);
 
-	int32 newX = _playerX;
-	int32 newY = _playerY;
+	float newX = _playerX;
+	float newY = _playerY;
 	bool hasMoved = false;
 	bool hasMovedSlowdown = false;
 
 	// Move forward/backwards
-
-	// Invert the rotation to avoid some annoying precision errors
-	int32 invertedRotation = 4095 - (_playerRotation + 2048);
-	clampRotation(invertedRotation);
+	// Improvement: we do _not_ use the sin/cos tables since they produce wonky movement
+	float fRotation = (float)(4095 - _playerRotation) / 4096.0;
+	float dX = sin(fRotation * _pi * 2) * deltaPosition;
+	float dY = cos(fRotation * _pi * 2) * deltaPosition;
 
 	if (input.input & NancyInput::kMoveUp || (input.input & NancyInput::kLeftMouseButtonHeld && mouseIsInBounds)) {
 		if (input.input & NancyInput::kMoveFastModifier) {
-			newX = _playerX - (int32)(_sinTable[invertedRotation] * deltaPosition) * 2;
-			newY = _playerY - (int32)(_cosTable[invertedRotation] * deltaPosition) * 2;
+			newX = _playerX + dX * 2;
+			newY = _playerY + dY * 2;
 		} else {
-			newX = _playerX - (int32)(_sinTable[invertedRotation] * deltaPosition);
-			newY = _playerY - (int32)(_cosTable[invertedRotation] * deltaPosition);
+			newX = _playerX + dX;
+			newY = _playerY + dY;
 		}
 
 		hasMoved = true;
@@ -1177,17 +1207,19 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 
 	if (input.input & NancyInput::kMoveDown || (input.input & NancyInput::kRightMouseButtonHeld && mouseIsInBounds)) {
 		if (input.input & NancyInput::kMoveFastModifier) {
-			newX = _playerX + (int32)(_sinTable[invertedRotation] * deltaPosition) * 2;
-			newY = _playerY + (int32)(_cosTable[invertedRotation] * deltaPosition) * 2;
+			newX = _playerX - dX * 2;
+			newY = _playerY - dY * 2;
 		} else {
-			newX = _playerX + (int32)(_sinTable[invertedRotation] * deltaPosition);
-			newY = _playerY + (int32)(_cosTable[invertedRotation] * deltaPosition);
+			newX = _playerX - dX;
+			newY = _playerY - dY;
 		}
 
 		hasMoved = true;
 	}
 
 	// Perform slowdown
+	// Improvement: the original engine's slowdown is VERY buggy
+	// and almost never actually works
 	if (!hasMoved && _nextSlowdownMovementTime < time && _slowdownFramesLeft > 0) {
 		_slowdownDeltaX = (float)_slowdownDeltaX * 9.0 / 10.0;
 		_slowdownDeltaY = (float)_slowdownDeltaY * 9.0 / 10.0;
@@ -1201,8 +1233,13 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 
 	// Perform collision
 	if (hasMoved) {
-		uint yGrid = newX >> 7;
-		uint xGrid = newY >> 7;
+		uint yGrid = ((int32)newX) >> 7;
+		uint xGrid = ((int32)newY) >> 7;
+
+		int32 xCell = ((int32)newX) & 0x7F;
+		int32 yCell = ((int32)newY) & 0x7F;
+
+		int collisionSize = 48;
 
 		// Check neighboring cells
 		uint32 cellLeft = xGrid > 0 ? _wallMap[yGrid * _mapFullWidth + xGrid - 1] : 1;
@@ -1216,31 +1253,26 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 		cellRight = (cellRight & kDoor) ? 0 : cellRight;
 		cellBottom = (cellBottom & kDoor) ? 0 : cellBottom;
 
-		int collisionSize = 48;
-
-		int32 xCell = newX & 0x7F;
-		int32 yCell = newY & 0x7F;
-
 		if (cellLeft && yCell < collisionSize) {
-			newY = (newY & 0xFF80) + collisionSize;
+			newY = (((int32)newY) & 0xFF80) + collisionSize;
 		}
 
 		if (cellTop && xCell < collisionSize) {
-			newX = (newX & 0xFF80) + collisionSize;
+			newX = (((int32)newX) & 0xFF80) + collisionSize;
 		}
 
 		if (cellRight && yCell > (128 - collisionSize)) {
-			newY = (newY & 0xFF80) + (128 - collisionSize);
+			newY = (((int32)newY) & 0xFF80) + (128 - collisionSize);
 		}
 
 		if (cellBottom && xCell > (128 - collisionSize)) {
-			newX = (newX & 0xFF80) + (128 - collisionSize);
+			newX = (((int32)newX) & 0xFF80) + (128 - collisionSize);
 		}
 
-		yGrid = newX >> 7;
-		xGrid = newY >> 7;
-		yCell = newX & 0x7F;
-		xCell = newY & 0x7F;
+		yGrid = ((int32)newX) >> 7;
+		xGrid = ((int32)newY) >> 7;
+		yCell = ((int32)newX) & 0x7F;
+		xCell = ((int32)newY) & 0x7F;
 
 		cellLeft = xGrid > 0 ? _wallMap[yGrid * _mapFullWidth + xGrid - 1] : 1;
 		cellTop = yGrid > 0 ? _wallMap[(yGrid - 1) * _mapFullWidth + xGrid] : 1;
@@ -1262,24 +1294,39 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 		cellBottomLeft = (cellBottomLeft & kDoor) ? 0 : cellBottomLeft;
 		cellBottomRight = (cellBottomRight & kDoor) ? 0 : cellBottomRight;
 
-		collisionSize = 21;
-
 		// Make sure the player doesn't clip diagonally into a wall
-		// TODO this is still wonky
+		// Improvement: in the original engine the player just gets stuck when hitting a corner;
+		// instead, we move along smoothly 
 		if (cellTopLeft && !cellLeft && !cellTop && (yCell < collisionSize) && (xCell < collisionSize)) {
-			return;
+			if (yCell > xCell) {
+				newX = (((int32)newX) & 0xFF80) + collisionSize;
+			} else {
+				newY = (((int32)newY) & 0xFF80) + collisionSize;
+			}
 		}
 
 		if (cellTopRight && !cellRight && !cellTop && (yCell < collisionSize) && (xCell > (128 - collisionSize))) {
-			return;
+			if (yCell > (128 - xCell)) {
+				newX = (((int32)newX) & 0xFF80) + collisionSize;
+			} else {
+				newY = (((int32)newY) & 0xFF80) + (128 - collisionSize);
+			}
 		}
 
 		if (cellBottomLeft && !cellLeft && !cellBottom && (yCell > (128 - collisionSize)) && (xCell < collisionSize)) {
-			return;
+			if (128 - yCell > xCell) {
+				newX = (((int32)newX) & 0xFF80) + (128 - collisionSize);
+			} else {
+				newY = (((int32)newY) & 0xFF80) + collisionSize;
+			}
 		}
 
 		if (cellBottomRight && !cellRight && !cellBottom && (yCell > (128 - collisionSize)) && (xCell > (128 - collisionSize))) {
-			return;
+			if (128 - yCell > 128 - xCell) {
+				newX = (((int32)newX) & 0xFF80) + (128 - collisionSize);
+			} else {
+				newY = (((int32)newY) & 0xFF80) + (128 - collisionSize);
+			}
 		}
 
 		if (!hasMovedSlowdown) {
@@ -1291,22 +1338,31 @@ void RaycastPuzzle::handleInput(NancyInput &input) {
 
 		_playerX = newX;
 		_playerY = newY;
-
-		debug("x = %u, y = %u", _playerX, _playerY);
 	}
 }
 
 void RaycastPuzzle::updateGraphics() {
 	if (_state == kRun) {
 		drawMaze();
+		updateMap();
 	}
 }
 
 void RaycastPuzzle::drawMap() {
-	_map._drawSurface.clear();
+	// Improvement: the original map is drawn upside-down; ours isn't
+	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bootSummary);
+
+	_mapBaseSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
+	_map._drawSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());
+	Common::Rect mapPos(bootSummary->textboxScreenPosition);
+	mapPos.setWidth(_mapFullWidth * 2);
+	mapPos.setHeight(_mapFullHeight * 2);
+	_map.moveTo(mapPos);
+	_map.init();
 
 	uint16 *pixelPtr;
-	Graphics::PixelFormat &format = _map._drawSurface.format;
+	Graphics::PixelFormat &format = _mapBaseSurface.format;
 
 	uint16 wallColor = format.RGBToColor(_puzzleData->wallColor[0], _puzzleData->wallColor[1], _puzzleData->wallColor[2]);
 	uint16 uColor6 = format.RGBToColor(_puzzleData->uColor6[0], _puzzleData->uColor6[1], _puzzleData->uColor6[2]);
@@ -1319,7 +1375,7 @@ void RaycastPuzzle::drawMap() {
 	uint16 exitColor = format.RGBToColor(_puzzleData->exitColor[0], _puzzleData->exitColor[1], _puzzleData->exitColor[2]);
 
 	for (uint y = 0; y < _mapFullHeight; ++y) {
-		pixelPtr = (uint16 *)_map._drawSurface.getBasePtr(0, y);
+		pixelPtr = (uint16 *)_mapBaseSurface.getBasePtr(0, _mapFullHeight - y - 1);
 		for (uint x = 0; x < _mapFullWidth; ++x) {
 			uint32 wallMapCell = _wallMap[y * _mapFullHeight + x];
 			uint32 infoMapCell = _infoMap[y * _mapFullHeight + x];
@@ -1362,18 +1418,24 @@ void RaycastPuzzle::drawMap() {
 			++pixelPtr;
 		}
 	}
-
-	_map.setVisible(true);
 }
 
-void RaycastPuzzle::loadTextures() {
-	// TODO this is slow and freezes the engine for a few seconds
-	
+void RaycastPuzzle::updateMap() {
+	if (_map.isVisible()) {
+		_map._drawSurface.blitFrom(_mapBaseSurface);
+		Graphics::PixelFormat &format = _mapBaseSurface.format;
+		uint16 playerColor = format.RGBToColor(_puzzleData->playerColor[0], _puzzleData->playerColor[1], _puzzleData->playerColor[2]);
+		_map._drawSurface.setPixel((((uint)_playerY) >> 7), _mapFullWidth - 1 - (((uint)_playerX) >> 7), playerColor);
+
+		_map.setVisible(true);
+	}
 }
 
 void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::String &textureName) {
 	Graphics::PixelFormat format = g_nancy->_graphicsManager->getInputPixelFormat();
 	array->resize(8);
+
+	uint16 transColor = g_nancy->_graphicsManager->getTransColor();
 
 	g_nancy->_resource->loadImage(textureName, (*array)[0]);
 
@@ -1389,17 +1451,26 @@ void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSu
 	for (uint y = 0; y < height; ++y) {
 		for (uint x = 0; x < width; ++x) {
 			uint offset = y * width + x;
-			byte r, g, b, rStep, gStep, bStep;
-			format.colorToRGB(((uint16 *)(*array)[0].getPixels())[offset], r, g, b);
-			rStep = (float)r / 8.0 * 65536.0;
-			gStep = (float)g / 8.0 * 65536.0;
-			bStep = (float)b / 8.0 * 65536.0;
-			for (uint i = 1; i < 8; ++i) {
-				r -= rStep;
-				g -= gStep;
-				b -= bStep;
-				((uint16 *)(*array)[i].getPixels())[offset] = format.RGBToColor(r, g, b);
+			uint16 color = ((uint16 *)(*array)[0].getPixels())[offset];
+			if (color == transColor) {
+				for (uint i = 1; i < 8; ++i) {
+					// Do not darken transparent color
+					((uint16 *)(*array)[i].getPixels())[offset] = color;
+				}
+			} else {
+				byte r, g, b, rStep, gStep, bStep;
+				format.colorToRGB(color, r, g, b);
+				rStep = (float)r / 8.0;
+				gStep = (float)g / 8.0;
+				bStep = (float)b / 8.0;
+				for (uint i = 1; i < 8; ++i) {
+					r -= rStep;
+					g -= gStep;
+					b -= bStep;
+					((uint16 *)(*array)[i].getPixels())[offset] = format.RGBToColor(r, g, b);
+				}
 			}
+			
 		}
 	}
 }
@@ -1416,7 +1487,7 @@ void RaycastPuzzle::drawMaze() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
 	// Draw walls
-	for (int x = viewBounds.left; x <= viewBounds.right; ++x) {
+	for (int x = viewBounds.left; x < viewBounds.right; ++x) {
 		int32 columnAngleForX = _wallCastColumnAngles[x];
 		int32 rotatedColumnAngleForX = columnAngleForX + _playerRotation;
 		clampRotation(rotatedColumnAngleForX);
@@ -1481,7 +1552,7 @@ void RaycastPuzzle::drawMaze() {
 			Common::Point yGrid(-1, -1);
 
 			if (xDist < _maxWorldDistance) {
-				xGrid.y = (int)xRayX >> 7;
+				xGrid.y = ((int)xRayX) >> 7;
 				xGrid.x = (int)(xRayY / 128.0);
 
 				if (xGrid.x < _mapFullWidth && xGrid.y < _mapFullHeight && xGrid.x >= 0 && xGrid.y >= 0) {
@@ -1491,7 +1562,7 @@ void RaycastPuzzle::drawMaze() {
 
 			if (yDist < _maxWorldDistance) {
 				yGrid.y = (int)(yRayX / 128.0);
-				yGrid.x = (int)yRayY >> 7;
+				yGrid.x = ((int)yRayY) >> 7;
 
 				if (yGrid.x < _mapFullWidth && yGrid.y < _mapFullHeight && yGrid.x >= 0 && yGrid.y >= 0) {
 					yGridTile = _wallMap[yGrid.y * _mapFullWidth + yGrid.x];
@@ -1685,7 +1756,7 @@ void RaycastPuzzle::drawMaze() {
 			if (drawnWallHeight > 1) {
 				uint16 *destPixel = (uint16 *)_drawSurface.getBasePtr(x, drawnWallBottom);
 				byte *zBufferDestPixel = &_zBuffer[drawnWallBottom * _drawSurface.w + x];
-				byte baseLightVal = MIN<byte>(_depthBuffer[x] / 128, 7);
+				byte baseLightVal = MIN<byte>(_depthBuffer[x] / 768, 7);
 				uint srcYSubtractVal = (uint)(((float)numSrcPixelsToDraw / (float)drawnWallHeight) * 65536.0);
 
 				srcY <<= 16;
@@ -1844,7 +1915,6 @@ void RaycastPuzzle::drawMaze() {
 	}
 
 	// Draw floors and ceilings
-	// TODO exit does not get rendered correctly
 	int32 leftAngle = _playerRotation + _leftmostAngle;
 	int32 rightAngle = _playerRotation + _rightmostAngle;
 
@@ -1890,7 +1960,7 @@ void RaycastPuzzle::drawMaze() {
 
 		for (int x = viewBounds.left; x < viewBounds.right; ++x) {
 			if (_zBuffer[floorY * _drawSurface.w + x] != curZBufferDepth) {
-				byte offset = (floorSrcFracY >> 23) * _mapFullWidth + (floorSrcFracX >> 23);
+				uint16 offset = (floorSrcFracY >> 23) * _mapFullWidth + (floorSrcFracX >> 23);
 				*floorDest = *(int16 *)_floorTextures[_floorMap[offset]][_floorCeilingLightMap[offset] & 0xF].getBasePtr((floorSrcFracX >> 16) & 0x7F, (floorSrcFracY >> 16) & 0x7F);
 			}
 
@@ -1899,7 +1969,7 @@ void RaycastPuzzle::drawMaze() {
 			floorSrcFracY += floorSrcIncrementY;
 
 			if (_zBuffer[ceilingY * _drawSurface.w + x] != curZBufferDepth) {
-				byte offset = (ceilingSrcFracY >> 23) * _mapFullWidth + (ceilingSrcFracX >> 23);
+				uint16 offset = (ceilingSrcFracY >> 23) * _mapFullWidth + (ceilingSrcFracX >> 23);
 				*ceilingDest = *(int16 *)_ceilingTextures[_ceilingMap[offset]][(_floorCeilingLightMap[offset] >> 4) & 0xF].getBasePtr((ceilingSrcFracX >> 16) & 0x7F, (ceilingSrcFracY >> 16) & 0x7F);
 			}
 
@@ -1926,7 +1996,73 @@ void RaycastPuzzle::clearZBuffer() {
 }
 
 void RaycastPuzzle::checkSwitch() {
+	// X/Y swapping intentional. The axes get mixed up somewhere between level generation
+	// and running and I'm not really sure where
+	Common::Point gridPos(((uint)_playerY) >> 7, ((uint)_playerX) >> 7);
 
+	for (int i = 0; i < (int)_lightSwitchPositions.size(); ++i) {
+		if (_lightSwitchPositions[i] == gridPos) {
+			if (_lightSwitchPlayerIsOn != i) {
+				// Player just stepped on light switch
+				_lightSwitchPlayerIsOn = i;
+
+				if (_lightSwitchStates[i] == false) {
+					// Switch was unpressed, press and turn light ON
+					for (uint y = 0; y < _mapFullHeight; ++y) {
+						for (uint x = 0; x < _mapFullWidth; ++x) {
+							if ((_wallLightMap[y * _mapFullWidth + x] >> 0xC) == _lightSwitchIDs[i]) {
+								_wallLightMap[y * _mapFullWidth + x] &= 0xF000;
+							}
+
+							if ((_floorCeilingLightMap[y * _mapFullWidth + x] >> 0xC) == _lightSwitchIDs[i]) {
+								_floorCeilingLightMap[y * _mapFullWidth + x] &= 0xF000;
+							}
+						}
+					}
+
+					_dummySound.name = _switchSoundName;
+					_dummySound.channelID = _switchSoundChannelID;
+					g_nancy->_sound->loadSound(_dummySound);
+					g_nancy->_sound->playSound(_dummySound);
+
+					_lightSwitchStates[i] = true;
+				} else {
+					// Switch was pressed, unpress and turn light OFF
+					for (uint y = 0; y < _mapFullHeight; ++y) {
+						for (uint x = 0; x < _mapFullWidth; ++x) {
+							if ((_wallLightMap[y * _mapFullWidth + x] >> 0xC) == _lightSwitchIDs[i]) {
+								_wallLightMap[y * _mapFullWidth + x] = _wallLightMapBackup[y * _mapFullWidth + x];
+							}
+
+							if ((_floorCeilingLightMap[y * _mapFullWidth + x] >> 0xC) == _lightSwitchIDs[i]) {
+								_floorCeilingLightMap[y * _mapFullWidth + x] = _floorCeilingLightMapBackup[y * _mapFullWidth + x];
+							}
+						}
+					}
+
+					_lightSwitchStates[i] = false;
+				}
+			}
+		} else {
+			if (_lightSwitchPlayerIsOn == i) {
+				// Player just stepped off light switch
+
+				_lightSwitchPlayerIsOn = -1;
+			}
+		}
+	}
+}
+
+void RaycastPuzzle::checkExit() {
+	// X/Y swapping intentional; see above
+	Common::Point gridPos(((uint)_playerY) >> 7, ((uint)_playerX) >> 7);
+
+	if (_infoMap[gridPos.y * _mapFullWidth + gridPos.x] == 1) {
+		g_nancy->_sound->loadSound(_solveSound);
+		g_nancy->_sound->playSound(_solveSound);
+
+		_state = kActionTrigger;
+	}
 }
 
 } // End of namespace Action
