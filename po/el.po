@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-14 06:23+0000\n"
-"PO-Revision-Date: 2023-09-11 12:20+0000\n"
+"PO-Revision-Date: 2023-09-14 08:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1095,14 +1095,13 @@ msgid "Global ~O~pts..."
 msgstr "~Κ~αθολ Επιλ..."
 
 #: gui/launcher.cpp:271
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Κατεβάστε αρχεία παιχνιδιού"
+msgstr "Λήψη Παιχνιδιών"
 
 #: gui/launcher.cpp:271
 msgid "Download freeware games for ScummVM"
 msgstr ""
+"Μεταφόρτωση δωρεάν (freeware) παιχνιδιών για ελεύθερη χρήση με το ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:278
@@ -1832,17 +1831,13 @@ msgid "Default"
 msgstr "Προκαθορισμένη"
 
 #: gui/options.cpp:2465
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Φάκελος Παιχνιδιού:"
+msgstr "Φάκελος για DLC:"
 
 #: gui/options.cpp:2467
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Φάκελος Παιχνιδιού:"
+msgstr "Φάκελος για DLC:"
 
 #: gui/options.cpp:2475 gui/options.cpp:2477 gui/options.cpp:2478
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2302,10 +2297,8 @@ msgstr ""
 "διεπαφή χρήστη (ΓΔΧ ή αλλιώς GUI) του launcher"
 
 #: gui/options.cpp:3195
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Επιλέξτε φάκελο για πρόσθετα"
+msgstr "Επιλέξτε φάκελο για DLC"
 
 #: gui/options.cpp:3206
 msgid "Select directory for extra files"
