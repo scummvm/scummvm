@@ -674,7 +674,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	if (hdr.ver == VER(7))
 		hdr.ver = VER(8);
 
-	hdr.name[sizeof(hdr.name)-1] = 0;
+	hdr.name[sizeof(hdr.name) - 1] = 0;
 	_saveLoadDescription = hdr.name;
 
 	// Set to 0 during load to minimize stuttering
@@ -693,8 +693,13 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	// If we don't have iMUSE at all we may as well stop the sounds. The previous
 	// default behavior here was to stopAllSounds on all state restores.
 
-	if (!_imuse || _saveSound || !_saveTemporaryState)
+	if (!_imuse || _saveSound || !_saveTemporaryState) {
 		_sound->stopAllSounds();
+	} else if (_saveTemporaryState && !_imuseDigital) {
+		// Still, we have to stop the talking sound even
+		// if the save state is temporary.
+		_sound->stopTalkSound();
+	}
 
 #ifdef ENABLE_SCUMM_7_8
 	if (_imuseDigital) {
