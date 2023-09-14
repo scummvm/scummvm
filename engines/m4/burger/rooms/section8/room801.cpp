@@ -506,7 +506,7 @@ void Room801::daemon() {
 		break;
 
 	case 36:
-		_G(flags)[ROOM101_FLAG2] = 1;
+		_G(flags)[V287] = 1;
 		adv_kill_digi_between_rooms(1);
 		kernel_trigger_dispatch_now(g10027);
 		break;
