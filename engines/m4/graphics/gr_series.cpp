@@ -44,12 +44,17 @@ void Series::show(const char *seriesName, frac16 layer, uint32 flags,
 	_series = M4::series_show(seriesName, layer, flags, triggerNum, duration,
 		index, s, x, y);
 	_seriesS = M4::series_show(seriesName, layer + 1, flags, -1, duration,
-		index ? index + 1 : index, s, x, y);
+		index, s, x, y);
 }
 
 void Series::show(const char *series1, const char *series2, int layer) {
 	_series = M4::series_show(series1, layer);
 	_seriesS = M4::series_show(series2, layer + 1);
+}
+
+void Series::show_index2(const char *series1, const char *series2, int layer, int index1, int index2) {
+	_series = M4::series_show(series1, layer, 0, -1, -1, index1);
+	_seriesS = M4::series_show(series2, layer + 1, 0, -1, -1, index1 + 1);
 }
 
 void Series::series_play(const char *seriesName, frac16 layer, uint32 flags,

@@ -66,6 +66,7 @@ struct Series {
 		int16 triggerNum = -1, int32 duration = -1, int32 index = 0, int32 s = 100,
 		int32 x = 0, int32 y = 0);
 	void show(const char *series1, const char *series2, int layer);
+	void show_index2(const char *series1, const char *series2, int layer, int index1, int index2);
 	void terminate();
 
 	operator bool() const {

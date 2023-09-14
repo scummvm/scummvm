@@ -30,12 +30,31 @@ namespace Rooms {
 
 class Room207 : public Room {
 private:
+	static const seriesPlayBreak PLAY1[];
+	static const seriesPlayBreak PLAY2[];
+	static const seriesPlayBreak PLAY3[];
+	static const seriesPlayBreak PLAY4[];
+	static const seriesPlayBreak PLAY5[];
+	static const seriesPlayBreak PLAY6[];
+	static const seriesPlayBreak PLAY7[];
+	static const seriesPlayBreak PLAY8[];
+	static const seriesPlayBreak PLAY9[];
+	static const seriesPlayBreak PLAY10[];
+	static const seriesPlayBreak PLAY11[];
+	static const seriesPlayBreak PLAY12[];
+	static const seriesStreamBreak SERIES1[];
+	static const seriesStreamBreak SERIES2[];
 	const char *_conv1 = nullptr;
 	const char *_conv2 = nullptr;
+	Series _series1;
+	machine *_general1 = nullptr;
 	int _val1 = 0;
+	int _val2 = 0;
 
 	const char *getConvName();
 	void handleConv();
+	int getVal() const;
+	int getShould() const;
 
 public:
 	Room207() : Room() {}
