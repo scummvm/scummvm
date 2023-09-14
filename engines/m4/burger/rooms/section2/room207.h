@@ -29,10 +29,19 @@ namespace Burger {
 namespace Rooms {
 
 class Room207 : public Room {
+private:
+	const char *_conv1 = nullptr;
+	const char *_conv2 = nullptr;
+	int _val1 = 0;
+
+	const char *getConvName();
+	void handleConv();
+
 public:
 	Room207() : Room() {}
 	~Room207() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 	void parser() override;

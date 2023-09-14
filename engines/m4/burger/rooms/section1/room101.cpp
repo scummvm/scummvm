@@ -187,7 +187,7 @@ void Room101::init() {
 		ws_demand_facing(_G(my_walker), 5);
 
 		if (_G(game).previous_section > 1) {
-			if (_G(flags)[ROOM101_FLAG2]) {
+			if (_G(flags)[V287]) {
 				ws_demand_location(_G(my_walker), 280, 309);
 				ws_demand_facing(_G(my_walker), 8);
 				player_set_commands_allowed(false);
@@ -246,7 +246,7 @@ void Room101::daemon() {
 		break;
 
 	case 6:
-		if (!_G(flags)[ROOM101_FLAG2]) {
+		if (!_G(flags)[V287]) {
 			uint idx = _G(flags)[NEURO_TEST_COUNTER];
 			assert(idx < 8);
 
@@ -272,8 +272,8 @@ void Room101::daemon() {
 			} else {
 				_G(walker).wilbur_speech("101w524", 7);
 			}
-		} else if (!_G(flags)[ROOM101_FLAG10]) {
-			if (_G(flags)[ROOM101_FLAG11] <= 1) {
+		} else if (!_G(flags)[V099]) {
+			if (_G(flags)[V100] <= 1) {
 				_G(walker).wilbur_speech("101w530", 7);
 			} else if (!_G(flags)[ROOM101_FLAG12] && !_G(flags)[ROOM101_FLAG13]) {
 				_G(walker).wilbur_speech("101w531", 7);
@@ -281,7 +281,7 @@ void Room101::daemon() {
 			} else if (_G(flags)[ROOM101_FLAG12] && !_G(flags)[ROOM101_FLAG14]) {
 				_G(walker).wilbur_speech("101w533", 7);
 				_G(flags)[ROOM101_FLAG14] = 1;
-			} else if (_G(flags)[ROOM101_FLAG12] && _G(flags)[ROOM101_FLAG11] >= 5 &&
+			} else if (_G(flags)[ROOM101_FLAG12] && _G(flags)[V100] >= 5 &&
 					!_G(flags)[ROOM101_FLAG15]) {
 				_G(walker).wilbur_speech("101w534", 7);
 				_G(flags)[ROOM101_FLAG15] = 1;
@@ -307,7 +307,7 @@ void Room101::daemon() {
 				break;
 			}
 		} else if (!_G(flags)[ROOM101_FLAG20]) {
-			switch (_G(flags)[ROOM101_FLAG21]) {
+			switch (_G(flags)[V153]) {
 			case 0:
 			case 1:
 				_G(walker).wilbur_speech("101w570", 7);
@@ -330,7 +330,7 @@ void Room101::daemon() {
 
 		if (_G(flags)[V241] || _G(flags)[V184])
 			series_load("101wi13s", -1, nullptr);
-		if (_G(flags)[ROOM101_FLAG10])
+		if (_G(flags)[V099])
 			series_load("101wi12s", -1, nullptr);
 		if (_G(flags)[ROOM101_FLAG20])
 			series_load("101wi11s", -1, nullptr);
@@ -367,7 +367,7 @@ void Room101::daemon() {
 		daemon12();
 
 		if (_G(flags)[V241]) {
-			if (_G(flags)[ROOM101_FLAG10] || _G(flags)[V112] ||
+			if (_G(flags)[V099] || _G(flags)[V112] ||
 					_G(flags)[V080] || _G(flags)[V126]) {
 				terminateMachineAndNull(_machine1);
 				terminateMachineAndNull(_machine2);
@@ -388,7 +388,7 @@ void Room101::daemon() {
 	case 15:
 		daemon15();
 
-		if (_G(flags)[ROOM101_FLAG10] && (_G(flags)[V184] || _G(flags)[V220])) {
+		if (_G(flags)[V099] && (_G(flags)[V184] || _G(flags)[V220])) {
 			terminateMachineAndNull(_machine1);
 			terminateMachineAndNull(_machine2);
 			kernel_timing_trigger(1, 16);
@@ -761,7 +761,7 @@ void Room101::daemon12() {
 }
 
 void Room101::daemon15() {
-	if (_G(flags)[V002] || !_G(flags)[V126] || _G(flags)[ROOM101_FLAG10]) {
+	if (_G(flags)[V002] || !_G(flags)[V126] || _G(flags)[V099]) {
 		inv_give_to_player("PHONE BILL");
 		inv_give_to_player("WHISTLE");
 		_G(flags)[V079] = 0;
@@ -771,7 +771,7 @@ void Room101::daemon15() {
 		_G(flags)[V080] = 0;
 	}
 
-	if (_G(flags)[V126] || _G(flags)[ROOM101_FLAG10]) {
+	if (_G(flags)[V126] || _G(flags)[V099]) {
 		inv_give_to_player("CARROT JUICE");
 		_G(flags)[V088] = 1;
 		_G(flags)[V091] = 1;
@@ -780,7 +780,7 @@ void Room101::daemon15() {
 		_G(flags)[V091] = 0;
 	}
 
-	if (_G(flags)[ROOM101_FLAG12] || _G(flags)[ROOM101_FLAG10]) {
+	if (_G(flags)[ROOM101_FLAG12] || _G(flags)[V099]) {
 		_G(flags).set_boonsville_time(6001);
 		_G(flags)[V000] = 1002;
 		_G(flags)[V001] = 0;
@@ -802,7 +802,7 @@ void Room101::daemon15() {
 	_G(flags)[V063] = 0;
 	_G(flags)[V092] = 0;
 
-	if (_G(flags)[ROOM101_FLAG10])
+	if (_G(flags)[V099])
 		_G(flags).set_boonsville_time(6600);
 }
 
