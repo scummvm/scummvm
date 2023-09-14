@@ -31,6 +31,23 @@ Section2::Section2() : Rooms::Section() {
 	add(207, &_room207);
 }
 
+void Section2::daemon() {
+	switch (_G(kernel).trigger) {
+	case 2001:
+		_G(game).new_room = 204;
+		break;
+
+	case 2002:
+		_G(game).new_room = 207;
+		break;
+
+	default:
+		break;
+	}
+
+	_G(kernel).continue_handling_trigger = true;
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
