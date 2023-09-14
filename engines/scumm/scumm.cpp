@@ -3753,7 +3753,7 @@ bool ScummEngine::startManiac() {
 void ScummEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
 		// Pause sound & video
-		if (_sound) {
+		if (_sound && canPauseSoundsDuringSave()) {
 			_oldSoundsPaused = _sound->_soundsPaused;
 			_sound->pauseSounds(true);
 		}
@@ -3770,7 +3770,7 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 		_system->updateScreen();
 
 		// Resume sound & video
-		if (_sound)
+		if (_sound && canPauseSoundsDuringSave())
 			_sound->pauseSounds(_oldSoundsPaused);
 	}
 }

@@ -567,7 +567,13 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 	bool saveFailed = false;
 
+	// We can't just use _saveTemporaryState here, because at
+	// this point it might not contain an updated value.
+	_pauseSoundsDuringSave = !compat;
+
 	PauseToken pt = pauseEngine();
+
+	_pauseSoundsDuringSave = true;
 
 	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
 	if (!out) {
@@ -698,7 +704,8 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 
 	_sound->stopCD();
 
-	_sound->pauseSounds(true);
+	if (!_saveTemporaryState)
+		_sound->pauseSounds(true);
 
 	closeRoom();
 

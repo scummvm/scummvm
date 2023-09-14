@@ -903,6 +903,7 @@ protected:
 	byte _saveLoadFlag = 0, _saveLoadSlot = 0;
 	uint32 _lastSaveTime = 0;
 	bool _saveTemporaryState = false;
+	bool _pauseSoundsDuringSave = true;
 	bool _loadFromLauncher = false;
 	bool _videoModeChanged = false;
 	Common::String _saveLoadFileName;
@@ -939,6 +940,7 @@ public:
 	void requestLoad(int slot);
 
 	Common::String getTargetName() const { return _targetName; }
+	bool canPauseSoundsDuringSave() const { return _pauseSoundsDuringSave; }
 
 // thumbnail + info stuff
 public:
