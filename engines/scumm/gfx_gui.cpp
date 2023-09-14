@@ -1787,6 +1787,8 @@ void ScummEngine::showMainMenu() {
 	if (VAR_PRE_SAVELOAD_SCRIPT != 0xFF)
 		runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
+	int oldSaveSound = _saveSound;
+
 	_saveSound = 1;
 	_shakeTempSavedState = _shakeEnabled;
 	setShake(0);
@@ -1960,6 +1962,8 @@ void ScummEngine::showMainMenu() {
 					break;
 		}
 	}
+
+	_saveSound = oldSaveSound;
 
 	_mainMenuIsActive = false;
 
