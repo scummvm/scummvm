@@ -75,7 +75,7 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
 
-	uint16 numElements;
+	uint16 numElements = 5;
 	uint16 maxNumElements = 15;
 	if (ser.getVersion() == kGameTypeVampire) {
 		// Hardcoded in The Vampire Diaries
