@@ -1875,7 +1875,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// Set video mode var to the current actual mode, not the one that was enabled when the game was saved.
 	// At least for Loom this fixes glitches, since the game actually reads the var and makes actor palette
 	// adjustments based on that. This is a bug that happens in the original interpreter, too.
-	if (s.isLoading() && VAR_VIDEOMODE != 0xFF) {
+	if (s.isLoading() && VAR_VIDEOMODE != 0xFF && _game.heversion == 0) {
 		int videoModeSaved = VAR(VAR_VIDEOMODE);
 		setVideoModeVarToCurrentConfig();
 		// For MI1EGA we need to know if the savegame is from a different render mode, so we can apply some
