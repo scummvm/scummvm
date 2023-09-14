@@ -678,7 +678,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	_saveLoadDescription = hdr.name;
 
 	// Set to 0 during load to minimize stuttering
-	if (_musicEngine)
+	if (_musicEngine && !_saveTemporaryState)
 		_musicEngine->setMusicVolume(0);
 
 	// Unless specifically requested with _saveSound, we do not save the iMUSE
