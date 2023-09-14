@@ -128,7 +128,7 @@ public:
 	bool isPanelShown();
 
 	void setSaveDescription(int slot, const char *desc) {
-		Common::strcpy_s(_fileDescriptions[slot], sizeof(_fileDescriptions[slot]), desc);
+		Common::strcpy_s((char *)_fileDescriptions[slot], sizeof(_fileDescriptions[slot]), desc);
 	}
 
 private:
@@ -228,7 +228,7 @@ private:
 	int32 _buttonHold = 0;
 	int32 _slabSelected = 0;
 	int32 _firstDescription = 0;
-	char  _fileDescriptions[MAXSAVEGAMES][40];
+	byte  _fileDescriptions[MAXSAVEGAMES][40];
 	int32 _editingDescription = 0;
 	int32 _gamesSaved = 0;
 	int32 _textCursor;

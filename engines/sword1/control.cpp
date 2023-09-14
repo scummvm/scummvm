@@ -1498,7 +1498,7 @@ int16 Control::readFileDescriptions() {
 		slotNum = atoi(file->c_str() + file->size() - 3);
 
 		while (totalFiles < slotNum) {
-			Common::strcpy_s(_fileDescriptions[totalFiles], 1, "");
+			Common::strcpy_s((char *)_fileDescriptions[totalFiles], 1, "");
 			totalFiles++;
 		}
 
@@ -1507,7 +1507,7 @@ int16 Control::readFileDescriptions() {
 			if (in) {
 				in->readUint32LE(); // header
 				in->read(saveName, 40);
-				Common::strcpy_s(_fileDescriptions[totalFiles], sizeof(_fileDescriptions[totalFiles]), saveName);
+				Common::strcpy_s((char *)_fileDescriptions[totalFiles], sizeof(_fileDescriptions[totalFiles]), saveName);
 				delete in;
 			}
 
@@ -1516,7 +1516,7 @@ int16 Control::readFileDescriptions() {
 	}
 
 	for (int i = totalFiles; i < MAXSAVEGAMES; i++)
-		Common::strcpy_s(_fileDescriptions[i], 1, "");
+		Common::strcpy_s((char *)_fileDescriptions[i], 1, "");
 
 	return totalFiles;
 }
@@ -1528,7 +1528,7 @@ void Control::setEditDescription(int32 line) {
 	_textCursor = 0;
 	_curCharCount = 1;
 
-	Common::strcpy_s(_oldString, sizeof(_oldString), _fileDescriptions[_editingDescription + _firstDescription - 1]);
+	Common::strcpy_s(_oldString, sizeof(_oldString), (const char *)_fileDescriptions[_editingDescription + _firstDescription - 1]);
 	_slabSelected = line;
 }
 
@@ -1593,7 +1593,7 @@ void Control::editDescription() {
 		_keyPressed.reset();
 
 		index = _editingDescription + _firstDescription - 1;
-		len = Common::strnlen(_fileDescriptions[index], sizeof(_fileDescriptions[index]));
+		len = Common::strnlen((char *)_fileDescriptions[index], sizeof(_fileDescriptions[index]));
 		if ((ch != CR) && (ch != ESCAPE)) {
 			if ((ch >= FIRSTFONTCHAR) && (ch <= LASTFONTCHAR)) {
 				if ((len < 32) && (getTextLength((const uint8 *)_fileDescriptions[index]) < 310)) {
@@ -1615,7 +1615,7 @@ void Control::editDescription() {
 			if ((ch == ESCAPE) || ((ch == CR) && (len == 0))) {
 				_textCursor = 1;
 				_curCharCount = 10;
-				Common::strcpy_s(_fileDescriptions[index], sizeof(_fileDescriptions[index]), _oldString);
+				Common::strcpy_s((char *)_fileDescriptions[index], sizeof(_fileDescriptions[index]), _oldString);
 				uneditDescription();
 			} else {
 				if (!attemptSave())
@@ -1630,13 +1630,13 @@ void Control::editDescription() {
 			_textCursor ^= 1;
 			if (_textCursor) {
 				// Add cursor to line
-				Common::strcpy_s(string, sizeof(string), _fileDescriptions[_editingDescription + _firstDescription - 1]);
+				Common::strcpy_s(string, sizeof(string), (const char *)_fileDescriptions[_editingDescription + _firstDescription - 1]);
 				len = strlen(string);
 				string[len] = '_';
 				string[len + 1] = '\0';
 			} else {
 				// Remove cursor from line
-				Common::strcpy_s(string, sizeof(string), _fileDescriptions[_editingDescription + _firstDescription - 1]);
+				Common::strcpy_s(string, sizeof(string), (const char *)_fileDescriptions[_editingDescription + _firstDescription - 1]);
 			}
 
 			renderSlab(_slabSelected - 1, _editingDescription - 1);
@@ -1678,7 +1678,7 @@ void Control::uneditDescription(void) {
 }
 
 bool Control::saveGame() {
-	if (Common::strnlen(_fileDescriptions[_selectedSavegame], sizeof(_fileDescriptions[_selectedSavegame]) > 0)) {
+	if (Common::strnlen((char *)_fileDescriptions[_selectedSavegame], sizeof(_fileDescriptions[_selectedSavegame]) > 0)) {
 		saveGameToFile(_selectedSavegame);
 		return true;
 	}
@@ -1935,7 +1935,7 @@ void Control::implementSave() {
 					if (_editingDescription) {
 						if (_buttonPressed != _editingDescription) {
 							Common::strcpy_s(
-								_fileDescriptions[_editingDescription + _firstDescription - 1],
+								(char *)_fileDescriptions[_editingDescription + _firstDescription - 1],
 								sizeof(_fileDescriptions[_editingDescription + _firstDescription - 1]),
 								_oldString);
 							_slabSelected = 0;
@@ -1979,7 +1979,7 @@ void Control::implementSave() {
 					break;
 				case (SAVEBUTTONS - 1):
 					putButton(saveButtons[SAVEBUTTONS - 2].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
-					if ((_editingDescription) && (strlen(_fileDescriptions[_editingDescription + _firstDescription - 1]))) {
+					if ((_editingDescription) && (strlen((char *)_fileDescriptions[_editingDescription + _firstDescription - 1]))) {
 						if (!attemptSave())
 							SwordEngine::_systemVars.snrStatus = SNR_DRIVEFULL;
 					}
@@ -2328,7 +2328,7 @@ void Control::implementRestore() {
 					}
 				} else {
 					if (_editingDescription) {
-						if ((_buttonPressed != _editingDescription) && (strlen(_fileDescriptions[_buttonPressed + _firstDescription - 1]))) {
+						if ((_buttonPressed != _editingDescription) && (strlen((char *)_fileDescriptions[_buttonPressed + _firstDescription - 1]))) {
 							Common::strcpy_s(_fileDescriptions[_editingDescription + _firstDescription - 1], _oldString);
 							_slabSelected = 0;
 							uneditDescription();
@@ -2336,16 +2336,16 @@ void Control::implementRestore() {
 							setEditDescription(_buttonPressed);
 
 							renderSlab(_slabSelected - 1, _editingDescription - 1);
-							Common::strcpy_s(string, _fileDescriptions[_editingDescription + _firstDescription - 1]);
+							Common::strcpy_s(string, (char *)_fileDescriptions[_editingDescription + _firstDescription - 1]);
 							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 42, saveButtons[_editingDescription - 1].y1 + 5);
 							Common::sprintf_s(string, "%d", _firstDescription + _editingDescription);
 							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 12, saveButtons[_editingDescription - 1].y1 + 5);
 						}
 					} else {
-						if (strlen(_fileDescriptions[_buttonPressed + _firstDescription - 1])) {
+						if (strlen((char *)_fileDescriptions[_buttonPressed + _firstDescription - 1])) {
 							setEditDescription(_buttonPressed);
 							renderSlab(_slabSelected - 1, _editingDescription - 1);
-							Common::strcpy_s(string, _fileDescriptions[_editingDescription + _firstDescription - 1]);
+							Common::strcpy_s(string, (char *)_fileDescriptions[_editingDescription + _firstDescription - 1]);
 							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 42, saveButtons[_editingDescription - 1].y1 + 5);
 							Common::sprintf_s(string, "%d", _firstDescription + _editingDescription);
 							renderRedText((const uint8 *)string, saveButtons[_editingDescription - 1].x1 + 12, saveButtons[_editingDescription - 1].y1 + 5);
@@ -2384,7 +2384,7 @@ void Control::implementRestore() {
 					break;
 				case (SAVEBUTTONS - 1):
 					putButton(saveButtons[SAVEBUTTONS - 2].x1, saveButtons[SAVEBUTTONS - 1].y1, 0);
-					if ((_editingDescription) && (strlen(_fileDescriptions[_editingDescription + _firstDescription - 1]))) {
+					if ((_editingDescription) && (strlen((char *)_fileDescriptions[_editingDescription + _firstDescription - 1]))) {
 						//Restore game here
 						_selectedSavegame = _firstDescription + _editingDescription - 1;
 						//Common::sprintf_s(saveFilename, "savegame.%.3d", _firstDescription + _editingDescription - 1);
