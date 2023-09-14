@@ -27,18 +27,68 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+const seriesStreamBreak Room512::SERIES1[] = {
+	{  0, "608_003",  3, 100, -1, 0, nullptr, 0 },
+	{  1, "512f003a", 1, 255, -1, 0, &_state1, 11 },
+	{  1, "512f003b", 1, 255, -1, 0, &_state1, 12 },
+	{  1, "512f001a", 1, 255, -1, 0, &_state1, 21 },
+	{  1, "512f001b", 1, 255, -1, 0, &_state1, 22 },
+	{  1, "512f001c", 1, 255, -1, 0, &_state1, 23 },
+	{  1, "512f002a", 1, 255, -1, 0, &_state1, 31 },
+	{ 33, "608_001",  2, 200, -1, 0, nullptr,   0 },
+	{ 48, "608_002",  2, 200, -1, 0, nullptr,   0 },
+	STREAM_BREAK_END
+};
+
+long Room512::_state1;
+
+
+Room512::Room512() : Section5Room() {
+	_state1 = 0;
+}
+
+void Room512::preload() {
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room512::init() {
+	pal_cycle_init(101, 110, 6);
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room512::daemon() {
-}
+	switch (_G(kernel).trigger) {
+	case 1:
+		switch (_G(wilbur_should)) {
+		case gCHANGE_WILBUR_ANIMATION:
+			_state1 = imath_ranged_rand(11, 12);
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "512burnt", 6, 1, 2);
+			break;
 
-void Room512::pre_parser() {
+		case 5004:
+			_state1 = 31;
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "512burnt", 6, 1, 2);
+			break;
 
-}
+		default:
+			_state1 = imath_ranged_rand(21, 23);
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "512burnt", 6, 1, 2);
+			break;
+		}
+		break;
 
-void Room512::parser() {
+	case 2:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		release_trigger_on_digi_state(g10027, 1);
+		break;
 
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
