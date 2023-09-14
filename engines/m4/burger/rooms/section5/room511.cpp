@@ -41,42 +41,11 @@ const seriesStreamBreak Room511::SERIES1[] = {
 	STREAM_BREAK_END
 };
 
-const seriesStreamBreak Room511::SERIES2[] = {
-	{  0, "608_003",  3, 100, -1, 0, nullptr, 0 },
-	{  1, "512f003a", 1, 255, -1, 0, &_state2, 11 },
-	{  1, "512f003b", 1, 255, -1, 0, &_state2, 12 },
-	{  1, "512f001a", 1, 255, -1, 0, &_state2, 21 },
-	{  1, "512f001b", 1, 255, -1, 0, &_state2, 22 },
-	{  1, "512f001c", 1, 255, -1, 0, &_state2, 23 },
-	{  1, "512f002a", 1, 255, -1, 0, &_state2, 31 },
-	{ 33, "608_001",  2, 200, -1, 0, nullptr,   0 },
-	{ 48, "608_002",  2, 200, -1, 0, nullptr,   0 },
-	STREAM_BREAK_END
-};
-
-const seriesStreamBreak Room511::SERIES3[] = {
-	{   0, "513_001", 3,  40, -1, (uint)-1, nullptr, 0 },
-	{   0, "513w001", 1, 255, -1,  0, nullptr, 0 },
-	{  33, "513w002", 1, 255, -1,  0, nullptr, 0 },
-	{  44, "513z001", 1, 255, -1,  0, nullptr, 0 },
-	{  51, "513w003", 1, 255, -1,  0, nullptr, 0 },
-	{  67, "513z002", 1, 255, -1,  0, nullptr, 0 },
-	{ 117, "513z003", 1, 255, -1,  0, nullptr, 0 },
-	{ 196, "513w005", 1, 255, -1,  0, nullptr, 0 },
-	{ 209, "513z004", 1, 255, -1,  0, nullptr, 0 },
-	{ 244, "513w006", 1, 255, -1,  0, nullptr, 0 },
-	{ 292, "513z005", 1, 255, -1,  0, nullptr, 0 },
-	{ 310, "513z006", 1, 255, -1,  0, nullptr, 0 },
-	STREAM_BREAK_END
-};
-
 long Room511::_state1;
-long Room511::_state2;
 
 
 Room511::Room511() : Section5Room() {
 	_state1 = 0;
-	_state2 = 0;
 }
 
 void Room511::preload() {
