@@ -69,7 +69,7 @@ public:
 	Common::Rect _actorClipOverride;	// HE specific
 
 	int _heTimers[16];
-	uint32 _pauseStartTime;
+	uint32 _pauseStartTime = 0;
 
 	int getHETimer(int timer);
 	void setHETimer(int timer);
