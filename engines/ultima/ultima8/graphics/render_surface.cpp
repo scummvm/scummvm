@@ -24,7 +24,6 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/ultima8.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -228,7 +227,15 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 		for (int x = 0; x < w; ++x) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
 			uint32 d = *dest;
-			*dest = (d & aMask) | BlendPreModFast(rgba, d, format);
+			uint8 dr, dg, db;
+			format.colorToRGB(d, dr, dg, db);
+
+			uint32 ia = 256 - TEX32_A(rgba);
+			uint32 r = (dr * ia + 256 * TEX32_R(rgba)) >> 8;
+			uint32 g = (dg * ia + 256 * TEX32_G(rgba)) >> 8;
+			uint32 b = (db * ia + 256 * TEX32_B(rgba)) >> 8;
+
+			*dest = (d & aMask) | format.RGBToColor(r, g, b);
 			pixel += format.bytesPerPixel;
 		}
 
@@ -390,7 +397,11 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 				// Uh, not supported right now
 				// if (TEX32_A(*texel))
 				{
-					*(reinterpret_cast<uintX *>(pixel)) = BlendHighlight(*texel, r, g, b, 1, ia, format);
+					uint8 sr, sg, sb;
+					format.colorToRGB(*texel, sr, sg, sb);
+					*(reinterpret_cast<uintX *>(pixel)) = format.RGBToColor((sr * ia + r) >> 8,
+																			(sg * ia + g) >> 8,
+																			(sb * ia + b) >> 8);
 				}
 				pixel += format.bytesPerPixel;
 				texel++;
@@ -536,7 +547,11 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 				// Uh, not completely supported right now
 				// if ((*texel & format.a_mask) && (*dest & format.a_mask))
 				if (*dest & aMask) {
-					*dest = BlendHighlight(*texel, r, g, b, 1, ia, format);
+					uint8 sr, sg, sb;
+					format.colorToRGB(*texel, sr, sg, sb);
+					*dest = format.RGBToColor((sr * ia + r) >> 8,
+											  (sg * ia + g) >> 8,
+											  (sb * ia + b) >> 8);
 				}
 				pixel += format.bytesPerPixel;
 				texel++;
@@ -771,65 +786,55 @@ void inline paintBlendedLogic(uint8 *pixels, int32 pitch,
 	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(srcRect.left, srcRect.top));
 	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + x * sizeof(uintX) + pitch * y);
 
-	if (highlight && invisible) {
+	if (highlight || invisible) {
 		uint32 ca = TEX32_A(highlight);
 		uint32 cr = TEX32_R(highlight);
 		uint32 cg = TEX32_G(highlight);
 		uint32 cb = TEX32_B(highlight);
+		uint32 ica = 255 - ca;
 
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
 				const uint8 color = *srcPixels;
 				if (color != keycolor) {
 					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
-					if (xform_map && xform_map[color]) {
-						*dstpix = static_cast<uintX>(BlendHighlightInvis(BlendPreModulated(xform_map[color], *dstpix, format), *dstpix, cr, cg, cb, ca, 255 - ca, format));
-					} else {
-						*dstpix = static_cast<uintX>(BlendHighlightInvis(map[color], *dstpix, cr, cg, cb, ca, 255 - ca, format));
-					}
-				}
-				srcPixels += srcStep;
-				dstPixels += dstStep;
-			}
+					uint8 dr, dg, db;
+					uint8 sr, sg, sb;
+					format.colorToRGB(*dstpix, dr, dg, db);
 
-			srcPixels += srcDelta;
-			dstPixels += dstDelta;
-		}
-	} else if (highlight) {
-		uint32 ca = TEX32_A(highlight);
-		uint32 cr = TEX32_R(highlight);
-		uint32 cg = TEX32_G(highlight);
-		uint32 cb = TEX32_B(highlight);
-
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				const uint8 color = *srcPixels;
-				if (color != keycolor) {
-					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
 					if (xform_map && xform_map[color]) {
-						*dstpix = static_cast<uintX>(BlendHighlight(BlendPreModulated(xform_map[color], *dstpix, format), cr, cg, cb, ca, 255 - ca, format));
-					} else {
-						*dstpix = static_cast<uintX>(BlendHighlight(map[color], cr, cg, cb, ca, 255 - ca, format));
-					}
-				}
-				srcPixels += srcStep;
-				dstPixels += dstStep;
-			}
+						uint32 val = xform_map[color];
 
-			srcPixels += srcDelta;
-			dstPixels += dstDelta;
-		}
-	} else if (invisible) {
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				const uint8 color = *srcPixels;
-				if (color != keycolor) {
-					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
-					if (xform_map && xform_map[color]) {
-						*dstpix = static_cast<uintX>(BlendInvisible(BlendPreModulated(xform_map[color], *dstpix, format), *dstpix, format));
+						uint32 ia = 256 - TEX32_A(val);
+						uint32 r = (dr * ia + 256 * TEX32_R(val)) >> 8;
+						uint32 g = (dg * ia + 256 * TEX32_G(val)) >> 8;
+						uint32 b = (db * ia + 256 * TEX32_B(val)) >> 8;
+
+						sr = r > 0xFF ? 0xFF : r;
+						sg = g > 0xFF ? 0xFF : g;
+						sb = b > 0xFF ? 0xFF : b;
 					} else {
-						*dstpix = static_cast<uintX>(BlendInvisible(map[color], *dstpix, format));
+						format.colorToRGB(map[color], sr, sg, sb);
 					}
+
+					if (highlight && invisible) {
+						dr = (((sr * ica + cr * ca) >> 1) + (dr << 7)) >> 8;
+						dg = (((sg * ica + cg * ca) >> 1) + (dg << 7)) >> 8;
+						db = (((sb * ica + cb * ca) >> 1) + (db << 7)) >> 8;
+					}
+					else if (highlight)
+					{
+						dr = (sr * ica + cr * ca) >> 8;
+						dg = (sg * ica + cg * ca) >> 8;
+						db = (sb * ica + cb * ca) >> 8;
+					}
+					else if (invisible)
+					{
+						dr = (sr * 128 + dr * 128) >> 8;
+						dg = (sg * 128 + dg * 128) >> 8,
+						db = (sb * 128 + db * 128) >> 8;
+					}
+					*dstpix = static_cast<uintX>(format.RGBToColor(dr, dg, db));
 				}
 				srcPixels += srcStep;
 				dstPixels += dstStep;
@@ -845,7 +850,19 @@ void inline paintBlendedLogic(uint8 *pixels, int32 pitch,
 				if (color != keycolor) {
 					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
 					if (xform_map && xform_map[color]) {
-						*dstpix = static_cast<uintX>(BlendPreModulated(xform_map[color], *dstpix, format));
+						uint8 dr, dg, db;
+						format.colorToRGB(*dstpix, dr, dg, db);
+
+						uint32 val = xform_map[color];
+						uint32 ia = 256 - TEX32_A(val);
+						uint32 r = (dr * ia + 256 * TEX32_R(val)) >> 8;
+						uint32 g = (dg * ia + 256 * TEX32_G(val)) >> 8;
+						uint32 b = (db * ia + 256 * TEX32_B(val)) >> 8;
+
+						dr = r > 0xFF ? 0xFF : r;
+						dg = g > 0xFF ? 0xFF : g;
+						db = b > 0xFF ? 0xFF : b;
+						*dstpix = static_cast<uintX>(format.RGBToColor(dr, dg, db));
 					} else {
 						*dstpix = static_cast<uintX>(map[color]);
 					}
