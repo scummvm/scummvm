@@ -71,7 +71,59 @@ void Room510::init() {
 }
 
 void Room510::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		_G(game).new_room = _G(game).previous_room;
+		break;
+
+	case 2:
+	case 3:
+		_val4 = -1;
+		player_set_commands_allowed(true);
+
+		for (int i = 0; i < BUTTON_COUNT; ++i) {
+			if (_buttons[i]._state != GUI::NOTHING)
+				setButtonState(i, GUI::IN_CONTROL);
+		}
+		break;
+
+	case 4:
+		buttonAction(1, 0, 4);
+		break;
+
+	case 5:
+		buttonAction(2, 5, 9);
+		break;
+
+	case 6:
+		buttonAction(3, 10, 15);
+		break;
+
+	case 7:
+		buttonAction(4, 16, 19);
+		break;
+
+	case 8:
+		buttonAction(5, 20, 24);
+		break;
+
+	case 9:
+		buttonAction(6, 25, 29);
+		break;
+
+	case 10:
+		buttonAction(7, 30, 34);
+		break;
+
+	case gCALLED_EACH_LOOP:
+		if (player_commands_allowed())
+			updateButtons();
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room510::parser() {
@@ -139,31 +191,31 @@ void Room510::parser() {
 	} else if (player_said("GEAR")) {
 		if (player_said("RED BUTTON")) {
 			_G(kernel).call_daemon_every_loop = false;
-			setButtonState(0, 3);
+			setButtonState(0, GUI::SELECTED);
 			kernel_trigger_dispatch_now(4);
 		} else if (player_said("ORANGE BUTTON")) {
 			_G(kernel).call_daemon_every_loop = false;
-			setButtonState(1, 3);
+			setButtonState(1, GUI::SELECTED);
 			kernel_trigger_dispatch_now(5);
 		} else if (player_said("YELLOW BUTTON")) {
 			_G(kernel).call_daemon_every_loop = false;
-			setButtonState(2, 3);
+			setButtonState(2, GUI::SELECTED);
 			kernel_trigger_dispatch_now(6);
 		} else if (player_said("GREEN BUTTON")) {
 			_G(kernel).call_daemon_every_loop = false;
-			setButtonState(3, 3);
+			setButtonState(3, GUI::SELECTED);
 			kernel_trigger_dispatch_now(7);
 		} else if (player_said("BLUE BUTTON")) {
 			_G(kernel).call_daemon_every_loop = false;
-			setButtonState(4, 3);
+			setButtonState(4, GUI::SELECTED);
 			kernel_trigger_dispatch_now(8);
 		} else if (player_said("PURPLE BUTTON")) {
 			_G(kernel).call_daemon_every_loop = false;
-			setButtonState(5, 3);
+			setButtonState(5, GUI::SELECTED);
 			kernel_trigger_dispatch_now(9);
 		} else if (player_said("PINK BUTTON")) {
 			_G(kernel).call_daemon_every_loop = false;
-			setButtonState(6, 3);
+			setButtonState(6, GUI::SELECTED);
 			kernel_trigger_dispatch_now(10);
 		} else {
 			return;
@@ -197,16 +249,47 @@ void Room510::setupButton(int index) {
 	}
 }
 
-void Room510::setButtonState(int index, int state) {
+void Room510::setButtonState(int index, GUI::ControlStatus state) {
 	if (index >= 0) {
 		Button &btn = _buttons[index];
 
-		if (btn._state != 0 && btn._state != state) {
+		if (btn._state != GUI::NOTHING && btn._state != state) {
 			terminateMachineAndNull(btn._series);
 			btn._state = state;
 			setupButton(index);
 		}
 	}
+}
+
+void Room510::buttonAction(int index, int firstFrame, int lastFrame) {
+	digi_play(Common::String::format("510b00%d%c", index, 'a' + imath_ranged_rand(0, 2)).c_str(), 2);
+	series_play("510waves", 0, 0, 2, 6, 2, 100, 0, 0, firstFrame, lastFrame);
+}
+
+void Room510::updateButtons() {
+	_val3 = getHighlightedButton();
+
+	if (_val2 != -1) {
+		setButtonState(_val2, (_val2 == _val3) ? GUI::SELECTED : GUI::IN_CONTROL);
+	} else if (_val3 == -1) {
+		setButtonState(_val4, GUI::IN_CONTROL);
+	} else if (_val3 != _val4) {
+		setButtonState(_val4, GUI::IN_CONTROL);
+		setButtonState(_val3, GUI::OVER_CONTROL);
+	}
+}
+
+int Room510::getHighlightedButton() const {
+	for (int i = 0; i < BUTTON_COUNT; ++i) {
+		const Button &btn = _buttons[i];
+		if (_G(MouseState).CursorColumn >= btn._x1 &&
+				_G(MouseState).CursorColumn <= btn._x2 &&
+				_G(MouseState).CursorRow >= btn._y1 &&
+				_G(MouseState).CursorRow <= btn._y2)
+			return i;
+	}
+
+	return -1;
 }
 
 } // namespace Rooms

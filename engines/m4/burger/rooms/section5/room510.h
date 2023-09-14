@@ -23,6 +23,7 @@
 #define M4_BURGER_ROOMS_SECTION5_ROOM510_H
 
 #include "m4/burger/rooms/section5/section5_room.h"
+#include "m4/burger/gui/gui_cheapo.h"
 
 namespace M4 {
 namespace Burger {
@@ -33,10 +34,10 @@ namespace Rooms {
 class Room510 : public Section5Room {
 private:
 	struct ButtonDef {
-		int _val1;
-		int _val2;
-		int _val3;
-		int _val4;
+		int _x1;
+		int _y1;
+		int _x2;
+		int _y2;
 		int _index0;
 		int _index1;
 		int _index2;
@@ -57,7 +58,10 @@ private:
 	int _val4 = 0;
 
 	void setupButton(int index);
-	void setButtonState(int index, int state);
+	void setButtonState(int index, GUI::ControlStatus state);
+	void buttonAction(int index, int firstFrame, int lastFrame);
+	void updateButtons();
+	int getHighlightedButton() const;
 
 public:
 	Room510();
