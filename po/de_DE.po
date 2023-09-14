@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-14 06:23+0000\n"
-"PO-Revision-Date: 2023-09-07 07:30+0000\n"
+"PO-Revision-Date: 2023-09-14 10:59+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1092,14 +1092,12 @@ msgid "Global ~O~pts..."
 msgstr "Globale ~O~pts..."
 
 #: gui/launcher.cpp:271
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Spieldateien herunterladen"
+msgstr "Spiele herunterladen"
 
 #: gui/launcher.cpp:271
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Freeware-Spiele für ScummVM herunterladen"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:278
@@ -1821,17 +1819,13 @@ msgid "Default"
 msgstr "Standard"
 
 #: gui/options.cpp:2465
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Spielpfad:"
+msgstr "DLC-Pfad:"
 
 #: gui/options.cpp:2467
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Spielpfad:"
+msgstr "DLC-Pfad:"
 
 #: gui/options.cpp:2475 gui/options.cpp:2477 gui/options.cpp:2478
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2270,10 +2264,8 @@ msgid "Select directory for GUI launcher thumbnails"
 msgstr "Verzeichnis für Spiele-Thumbnails in der GUI"
 
 #: gui/options.cpp:3195
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Verzeichnis für Plugins auswählen"
+msgstr "Verzeichnis für DLC-Inhalte auswählen"
 
 #: gui/options.cpp:3206
 msgid "Select directory for extra files"
