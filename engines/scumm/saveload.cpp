@@ -692,10 +692,14 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	//
 	// If we don't have iMUSE at all we may as well stop the sounds. The previous
 	// default behavior here was to stopAllSounds on all state restores.
+	//
+	// HE games explicitly do not stop sounds when loading a "heap save",
+	// under version 80!
 
-	if (!_imuse || _saveSound || !_saveTemporaryState) {
+	if ((!_imuse || _saveSound || !_saveTemporaryState) &&
+		!(_saveTemporaryState && _game.heversion < 80)) {
 		_sound->stopAllSounds();
-	} else if (_saveTemporaryState && !_imuseDigital) {
+	} else if (_saveTemporaryState && !_imuseDigital && _game.heversion == 0) {
 		// Still, we have to stop the talking sound even
 		// if the save state is temporary.
 		_sound->stopTalkSound();
