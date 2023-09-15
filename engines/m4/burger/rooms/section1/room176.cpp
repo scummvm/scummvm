@@ -28,6 +28,32 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID[][4] = {
+	{ "HALLWAY",        nullptr,   "176w001", nullptr   },
+	{ "PUZ DISPENSER ", "176w002", nullptr,   "176w003" },
+	{ "ROBOT",          "176w004", "176w005", "176w006" },
+	{ "WINDOW",         nullptr,   "176w001", "176w010" },
+	{ "BED",            nullptr,   nullptr,   "176w016" },
+	{ "COMIC BOOK",     "176w007", "176w008", "176w008" },
+	{ "COMIC BOOK ",    nullptr,   "176w008", "176w008" },
+	{ "GERBIL CAGE",    "176w009", "176w005", "176w005" },
+	{ "TELEVISION",     "176w011", "176w015", "176w015" },
+	{ "WARDROBE",       "176w017", nullptr,   "176w001" },
+	{ "DRESSER",        "176w018", nullptr,   "176w001" },
+	{ "BOOKS",          nullptr,   "176w008", "176w008" },
+	{ "MODEL ROCKET",   "176w006", "176w005", "176w006" },
+	{ "MODEL ROCKET ",  "176w019", "176w005", "176w006" },
+	{ "MODEL ROCKET  ", "176w020", "176w005", "176w006" },
+	{ "POSTER",         "176w021", "176w005", nullptr   },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const seriesPlayBreak PLAY1[] = {
+	{ 0, 22, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 void Room176::init() {
 }
 

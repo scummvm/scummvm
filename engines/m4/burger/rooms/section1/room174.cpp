@@ -28,6 +28,43 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID[][4] = {
+	{ "HALLWAY",     nullptr,   "174w001", nullptr   },
+	{ "TOILET",      "174w002", "174w001", nullptr   },
+	{ "TOILET LID",  "174w002", "174w001", nullptr   },
+	{ "TOILET TANK", "174w002", "174w001", nullptr   },
+	{ "FLUSH CHAIN", "174w002", "174w001", nullptr   },
+	{ "TUB",         "174w004", "174w001", "174w005" },
+	{ "WINDOW",      nullptr,   "174w001", "174w006" },
+	{ "SHOWERHEAD",  "174w007", "174w008", nullptr   },
+	{ "CLOSET",      "174w009", "174w010", "174w010" },
+	{ "MIRROR",      "174w011", nullptr,   "174w011" },
+	{ "LAXATIVE ",   "174w012", nullptr,   "174w014" },
+	{ "MEDICATIONS", "174w015", "174w016", "174w017" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const seriesPlayBreak PLAY1[] = {
+	{ 0, 7, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 6, 0, nullptr, 0, 0,  1, 2, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY2[] = {
+	{ 0, 18, 0, 0, 0, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY3[] = {
+	{ 0,  3, "507_003", 2, 255, -1, 1, 5, nullptr, 0 },
+	{ 4, -1, nullptr,   0,   0, -1, 0, 0, nullptr, 0 },
+	{ 6,  6, nullptr,   0,   0, -1, 0, 5, nullptr, 0 },
+	{ 5,  5, nullptr,   0,   0, -1, 0, 5, nullptr, 0 },
+	{ 4,  4, nullptr,   0,   0, -1, 0, 5, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 void Room174::init() {
 }
 
