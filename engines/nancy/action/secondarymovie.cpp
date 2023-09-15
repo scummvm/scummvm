@@ -45,18 +45,15 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
 
-	readFilename(stream, _videoName);
-	readFilename(stream, _paletteName);
-	ser.skip(10, kGameTypeVampire, kGameTypeVampire); // skip _bitmapOverlayName for now
+	readFilename(ser, _videoName);
+	readFilename(ser, _paletteName, kGameTypeVampire, kGameTypeVampire);
+	readFilename(ser, _bitmapOverlayName);
 
-	ser.skip(0x2); // videoPlaySource
-
-	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // smallSize
+	ser.skip(2); // videoPlaySource
+	ser.skip(2); // smallSize
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
-	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // hasBitmapOverlaySurface
-	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // unknown, probably related to playing a sfx
-
-	ser.skip(6, kGameTypeNancy1);
+	ser.skip(2); // hasBitmapOverlaySurface
+	ser.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
 
 	ser.syncAsUint16LE(_videoSceneChange);
 	ser.syncAsUint16LE(_playerCursorAllowed);
@@ -113,62 +110,6 @@ void PlaySecondaryMovie::init() {
 	RenderObject::init();
 }
 
-void PlaySecondaryMovie::updateGraphics() {
-	if (!_decoder.isVideoLoaded()) {
-		return;
-	}
-
-	if (!_decoder.isPlaying() && _isVisible && !_isFinished) {
-		_decoder.start();
-
-		if (_playDirection == kPlayMovieReverse) {
-			_decoder.setRate(-_decoder.getRate());
-			_decoder.seekToFrame(_lastFrame);
-		} else {
-			_decoder.seekToFrame(_firstFrame);
-		}
-	}
-
-	if (_decoder.needsUpdate()) {
-		uint descID = 0;
-
-		for (uint i = 0; i < _videoDescs.size(); ++i) {
-			if (_videoDescs[i].frameID == _curViewportFrame) {
-				descID = i;
-			}
-		}
-
-		GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteName.size() > 0);
-		_drawSurface.create(_fullFrame, _fullFrame.getBounds());
-		moveTo(_videoDescs[descID].destRect);
-
-		_needsRedraw = true;
-
-		for (auto &f : _frameFlags) {
-			if (_decoder.getCurFrame() == f.frameID) {
-				NancySceneState.setEventFlag(f.flagDesc);
-			}
-		}
-	}
-
-	if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
-		(_decoder.getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
-		_decoder.atEnd()) {
-
-		// Stop the video and block it from starting again, but also wait for
-		// sound to end before changing state
-		_decoder.pauseVideo(true);
-		_isFinished = true;
-
-		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
-			g_nancy->_sound->stopSound(_sound);
-			_state = kActionTrigger;
-		}
-	}
-
-	RenderObject::updateGraphics();
-}
-
 void PlaySecondaryMovie::onPause(bool pause) {
 	_decoder.pauseVideo(pause);
 	RenderActionRecord::onPause(pause);
@@ -206,6 +147,59 @@ void PlaySecondaryMovie::execute() {
 				setVisible(true);
 			} else {
 				setVisible(false);
+			}
+		}
+
+		// We update the decoder here instead of in updateGraphics() to avoid an
+		// edge case in nancy4 (scene 3180) where the very last frame has a frameFlag that should trigger
+		// another action record, but doesn't do so, because updateGraphics() gets called after all
+		// action record execution. Instead, the movie's own scene change (which is inexplicably enabled)
+		// gets triggered, and teleports the player to the wrong place instead of making them lose the game
+		if (!_decoder.isPlaying() && _isVisible && !_isFinished) {
+			_decoder.start();
+
+			if (_playDirection == kPlayMovieReverse) {
+				_decoder.setRate(-_decoder.getRate());
+				_decoder.seekToFrame(_lastFrame);
+			} else {
+				_decoder.seekToFrame(_firstFrame);
+			}
+		}
+
+		if (_decoder.needsUpdate()) {
+			uint descID = 0;
+
+			for (uint i = 0; i < _videoDescs.size(); ++i) {
+				if (_videoDescs[i].frameID == _curViewportFrame) {
+					descID = i;
+				}
+			}
+
+			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteName.size() > 0);
+			_drawSurface.create(_fullFrame, _fullFrame.getBounds());
+			moveTo(_videoDescs[descID].destRect);
+
+			_needsRedraw = true;
+
+			for (auto &f : _frameFlags) {
+				if (_decoder.getCurFrame() == f.frameID) {
+					NancySceneState.setEventFlag(f.flagDesc);
+				}
+			}
+		}
+
+		if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
+			(_decoder.getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
+			_decoder.atEnd()) {
+
+			// Stop the video and block it from starting again, but also wait for
+			// sound to end before changing state
+			_decoder.pauseVideo(true);
+			_isFinished = true;
+
+			if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+				g_nancy->_sound->stopSound(_sound);
+				_state = kActionTrigger;
 			}
 		}
 

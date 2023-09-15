@@ -48,7 +48,6 @@ public:
 	virtual ~PlaySecondaryMovie();
 
 	void init() override;
-	void updateGraphics() override;
 	void onPause(bool pause) override;
 
 	void readData(Common::SeekableReadStream &stream) override;
@@ -56,6 +55,7 @@ public:
 
 	Common::String _videoName;
 	Common::String _paletteName;
+	Common::String _bitmapOverlayName;
 
 	uint16 _videoSceneChange = kMovieNoSceneChange;
 	byte _playerCursorAllowed = kPlayerCursorAllowed;
