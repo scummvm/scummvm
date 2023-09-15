@@ -29,15 +29,83 @@ namespace Burger {
 namespace Rooms {
 
 void Room172::init() {
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
+	case 171:
+		if (!_G(flags)[V092] && !_G(flags)[V091]) {
+			player_set_commands_allowed(false);
+			series_load("172aplt");
+			series_load("172aplts");
+			series_load("172ap02t");
+			digi_preload("172p906");
+
+			_val1 = 4;
+			kernel_trigger_dispatch_now(1);
+			ws_demand_location(300, 325, 3);
+			ws_walk(368, 359, 0, -1, 2);
+
+		} else {
+			ws_demand_location(11, 296, 3);
+			ws_walk(156, 297, 0, -1, -1);
+		}
+		break;
+
+	case 173:
+		ws_demand_location(171, 254, 3);
+		ws_walk(250, 270, 0, -1, -1);
+		break;
+
+	default:
+		ws_demand_location(312, 292, 5);
+		break;
+	}
+
+	hotspot_set_active("AUNT POLLY", false);
+
+	if (_G(flags)[V092]) {
+		_val1 = 15;
+		kernel_trigger_dispatch_now(1);
+		_walk1 = intr_add_no_walk_rect(357, 311, 639, 353, 356, 354);
+		hotspot_set_active("AUNT POLLY", true);
+	} else {
+		_series1 = series_show(_G(flags)[V091] ? "172fud2" : "172fud", 0x700);
+		series_show("172fuds", 0x701);
+	}
+
+	if (inv_player_has("CARROT JUICE") || inv_player_has("BOTTLE") ||
+			inv_player_has("SOAPY WATER")) {
+		hotspot_set_active("CARROT JUICE ", false);
+	} else {
+		_series3.show("172jug", 0x700);
+	}
 }
 
 void Room172::daemon() {
+	// TODO
 }
 
 void Room172::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(flags)[V092] && _G(player).walk_x >= 357 && _G(player).walk_x <= 639 &&
+			_G(player).walk_y >= 311 && _G(player).walk_y <= 353)
+		player_hotspot_walk_override(356, 332, 3);
+
+	if (player_said_any("GEAR", "LOOK AT")) {
+		if (player_said("PARLOUR"))
+			player_set_facing_at(84, 300);
+
+		if (player_said("BASEMENT"))
+			player_set_facing_at(171, 254);
+	}
 }
 
 void Room172::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	// TODO
 }
 
 } // namespace Rooms
