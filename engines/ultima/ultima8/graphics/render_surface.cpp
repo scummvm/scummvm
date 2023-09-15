@@ -292,7 +292,7 @@ void RenderSurface::Blit(const Graphics::ManagedSurface &src, const Common::Rect
 
 namespace {
 
-template<typename uintX>
+template<typename uintDst, typename uintSrc>
 void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 						   const Common::Rect &clipWindow,
 						   const Graphics::PixelFormat &format,
@@ -331,87 +331,53 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 	if (py != dy)
 		sy += dy - py;
 
-	uint8 *pixel = pixels + dy * pitch + dx * format.bytesPerPixel;
-	int diff = pitch - w * format.bytesPerPixel;
-
 	uint32 a = TEX32_A(col32);
 	uint32 ia = 256 - a;
 	uint32 r = (TEX32_R(col32) * a);
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	const Graphics::PixelFormat &texformat = src.format;
+	uint8 *dstPixels = pixels + dy * pitch + dx * sizeof(uintDst);
+	int dstStep = sizeof(uintDst);
+	int dstDelta = pitch - w * sizeof(uintDst);
 
-	if (texformat.bpp() == 32) {
-		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
-		int tex_diff = src.w - w;
+	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(sx, sy));
+	int srcStep = sizeof(uintSrc);
+	int srcDelta = src.pitch - w * sizeof(uintSrc);
 
-		for (int y = 0; y < h; ++y) {
-			for (int x = 0; x < w; ++x) {
-				uint8 sa, sr, sg, sb;
-				texformat.colorToARGB(*texel, sa, sr, sg, sb);
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w; ++x) {
+			uint8 sa, sr, sg, sb;
+			const uint32 color = *(reinterpret_cast<const uintSrc *>(srcPixels));
+			src.format.colorToARGB(color, sa, sr, sg, sb);
 
-				if (!alpha_blend) {
-					if (sa) {
-						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(
-							format.RGBToColor(
-								(sr * ia + r) >> 8,
-								(sg * ia + g) >> 8,
-								(sb * ia + b) >> 8));
-					}
-				} else {
-					if (sa == 0xFF) {
-						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(
-							format.RGBToColor(
-								(sr * ia + r) >> 8,
-								(sg * ia + g) >> 8,
-								(sb * ia + b) >> 8));
-					} else if (sa) {
-						uintX *dest = reinterpret_cast<uintX *>(pixel);
+			if (sa == 0xFF || (sa  && !alpha_blend)) {
+				uintDst *dest = reinterpret_cast<uintDst *>(dstPixels);
+				*dest = format.RGBToColor((sr * ia + r) >> 8,
+										  (sg * ia + g) >> 8,
+										  (sb * ia + b) >> 8);
+			} else if (sa) {
+				uintDst *dest = reinterpret_cast<uintDst *>(dstPixels);
 
-						uint8 r2, g2, b2;
-						format.colorToRGB(*dest, r2, g2, b2);
+				uint8 r2, g2, b2;
+				format.colorToRGB(*dest, r2, g2, b2);
 
-						uint32 dr = r2 * (256 - sa);
-						uint32 dg = g2 * (256 - sa);
-						uint32 db = b2 * (256 - sa);
-						dr += sr * ia + ((r * sa) >> 8);
-						dg += sg * ia + ((g * sa) >> 8);
-						db += sb * ia + ((b * sa) >> 8);
+				uint32 dr = r2 * (256 - sa);
+				uint32 dg = g2 * (256 - sa);
+				uint32 db = b2 * (256 - sa);
+				dr += sr * ia + ((r * sa) >> 8);
+				dg += sg * ia + ((g * sa) >> 8);
+				db += sb * ia + ((b * sa) >> 8);
 
-						*dest = format.RGBToColor(dr >> 8, dg >> 8, db >> 8);
-					}
-				}
-				pixel += format.bytesPerPixel;
-				texel++;
-			}
-			pixel += diff;
-			texel += tex_diff;
-		}
-	} else if (texformat == format) {
-		const uintX *texel = reinterpret_cast<const uintX *>(src.getBasePtr(sx, sy));
-		int tex_diff = src.w - w;
-
-		for (int y = 0; y < h; ++y) {
-			for (int x = 0; x < w; ++x) {
-				// Uh, not supported right now
-				// if (TEX32_A(*texel))
-				{
-					uint8 sr, sg, sb;
-					format.colorToRGB(*texel, sr, sg, sb);
-					*(reinterpret_cast<uintX *>(pixel)) = format.RGBToColor((sr * ia + r) >> 8,
-																			(sg * ia + g) >> 8,
-																			(sb * ia + b) >> 8);
-				}
-				pixel += format.bytesPerPixel;
-				texel++;
+				*dest = format.RGBToColor(dr >> 8, dg >> 8, db >> 8);
 			}
 
-			pixel += diff;
-			texel += tex_diff;
+			srcPixels += srcStep;
+			dstPixels += dstStep;
 		}
-	} else {
-		error("FadedBlit not supported from %d bpp to %d bpp", texformat.bpp(), format.bpp());
+
+		srcPixels += srcDelta;
+		dstPixels += dstDelta;
 	}
 }
 
@@ -423,15 +389,35 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
 void RenderSurface::FadedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
-	if (_surface->format.bytesPerPixel == 4)
-		fadedBlitLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
-	else if (_surface->format.bytesPerPixel == 2)
-		fadedBlitLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+	if (_surface->format.bytesPerPixel == 4) {
+		if (src.format.bytesPerPixel == 4) {
+			fadedBlitLogic<uint32, uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		}
+		else if (src.format.bytesPerPixel == 2) {
+			fadedBlitLogic<uint32, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		}
+		else {
+			error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		}
+	} else if (_surface->format.bytesPerPixel == 2) {
+		if (src.format.bytesPerPixel == 4) {
+			fadedBlitLogic<uint16, uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		}
+		else if (src.format.bytesPerPixel == 2) {
+			fadedBlitLogic<uint16, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		}
+		else {
+			error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		}
+	}
+	else {
+		error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+	}
 }
 
 namespace {
 
-template<typename uintX>
+template<typename uintDst, typename uintSrc>
 void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 							const Common::Rect &clipWindow,
 							const Graphics::PixelFormat &format,
@@ -470,9 +456,6 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 	if (py != dy)
 		sy += dy - py;
 
-	uint8 *pixel = pixels + dy * pitch + dx * format.bytesPerPixel;
-	int diff = pitch - w * format.bytesPerPixel;
-
 	uint32 a = TEX32_A(col32);
 	uint32 ia = 256 - a;
 	uint32 r = (TEX32_R(col32) * a);
@@ -481,87 +464,47 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 
 	uint32 aMask = format.aMax() << format.aShift;
 
-	const Graphics::PixelFormat &texformat = src.format;
+	uint8 *dstPixels = pixels + dy * pitch + dx * sizeof(uintDst);
+	int dstStep = sizeof(uintDst);
+	int dstDelta = pitch - w * sizeof(uintDst);
 
-	if (texformat.bpp() == 32) {
-		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
-		int tex_diff = src.w - w;
+	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(sx, sy));
+	int srcStep = sizeof(uintSrc);
+	int srcDelta = src.pitch - w * sizeof(uintSrc);
 
-		for (int y = 0; y < h; ++y) {
-			for (int x = 0; x < w; ++x) {
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w; ++x) {
+			uintDst *dest = reinterpret_cast<uintDst *>(dstPixels);
+			if (!aMask || (*dest & aMask)) {
 				uint8 sa, sr, sg, sb;
-				texformat.colorToARGB(*texel, sa, sr, sg, sb);
+				const uint32 color = *(reinterpret_cast<const uintSrc *>(srcPixels));
+				src.format.colorToARGB(color, sa, sr, sg, sb);
 
-				if (!alpha_blend) {
-					uintX *dest = reinterpret_cast<uintX *>(pixel);
-
-					if (sa) {
-						if (!aMask || (*dest & aMask)) {
-							*dest = static_cast<uintX>(
-								format.RGBToColor(
-									(sr * ia + r) >> 8,
-									(sg * ia + g) >> 8,
-									(sb * ia + b) >> 8));
-						}
-					}
-				} else {
-					uintX *dest = reinterpret_cast<uintX *>(pixel);
-
-					if (!aMask || (*dest & aMask)) {
-						if (sa == 0xFF) {
-							*dest = static_cast<uintX>(
-								format.RGBToColor(
-									(sr * ia + r) >> 8,
-									(sg * ia + g) >> 8,
-									(sb * ia + b) >> 8));
-						} else if (sa) {
-							uint8 r2, g2, b2;
-							format.colorToRGB(*dest, r2, g2, b2);
-
-							uint32 dr = r2 * (256 - sa);
-							uint32 dg = g2 * (256 - sa);
-							uint32 db = b2 * (256 - sa);
-							dr += sr * ia + ((r * sa) >> 8);
-							dg += sg * ia + ((g * sa) >> 8);
-							db += sb * ia + ((b * sa) >> 8);
-
-							*dest = format.RGBToColor(dr >> 8, dg >> 8, db >> 8);
-						}
-					}
-				}
-				pixel += format.bytesPerPixel;
-				texel++;
-			}
-
-			pixel += diff;
-			texel += tex_diff;
-		}
-	} else if (texformat == format) {
-		const uintX *texel = reinterpret_cast<const uintX *>(src.getBasePtr(sx, sy));
-		int tex_diff = src.w - w;
-
-		for (int y = 0; y < h; ++y) {
-			for (int x = 0; x < w; ++x) {
-				uintX *dest = reinterpret_cast<uintX *>(pixel);
-
-				// Uh, not completely supported right now
-				// if ((*texel & format.a_mask) && (*dest & format.a_mask))
-				if (*dest & aMask) {
-					uint8 sr, sg, sb;
-					format.colorToRGB(*texel, sr, sg, sb);
+				if (sa == 0xFF || (sa && !alpha_blend)) {
 					*dest = format.RGBToColor((sr * ia + r) >> 8,
 											  (sg * ia + g) >> 8,
 											  (sb * ia + b) >> 8);
+				} else if (sa) {
+					uint8 r2, g2, b2;
+					format.colorToRGB(*dest, r2, g2, b2);
+
+					uint32 dr = r2 * (256 - sa);
+					uint32 dg = g2 * (256 - sa);
+					uint32 db = b2 * (256 - sa);
+					dr += sr * ia + ((r * sa) >> 8);
+					dg += sg * ia + ((g * sa) >> 8);
+					db += sb * ia + ((b * sa) >> 8);
+
+					*dest = format.RGBToColor(dr >> 8, dg >> 8, db >> 8);
 				}
-				pixel += format.bytesPerPixel;
-				texel++;
 			}
 
-			pixel += diff;
-			texel += tex_diff;
+			srcPixels += srcStep;
+			dstPixels += dstStep;
 		}
-	} else {
-		error("unsupported texture format %d bpp", texformat.bpp());
+
+		srcPixels += srcDelta;
+		dstPixels += dstDelta;
 	}
 }
 
@@ -574,10 +517,25 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 //
 //
 void RenderSurface::MaskedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
-	if (_surface->format.bytesPerPixel == 4)
-		maskedBlitLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
-	else if (_surface->format.bytesPerPixel == 2)
-		maskedBlitLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+	if (_surface->format.bytesPerPixel == 4) {
+		if (src.format.bytesPerPixel == 4) {
+			maskedBlitLogic<uint32, uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		} else if (src.format.bytesPerPixel == 2) {
+			maskedBlitLogic<uint32, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		} else {
+			error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		}
+	} else if (_surface->format.bytesPerPixel == 2) {
+		if (src.format.bytesPerPixel == 4) {
+			maskedBlitLogic<uint16, uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		} else if (src.format.bytesPerPixel == 2) {
+			maskedBlitLogic<uint16, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		} else {
+			error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		}
+	} else {
+		error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+	}
 }
 
 //
