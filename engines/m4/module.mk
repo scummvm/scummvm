@@ -114,7 +114,23 @@ MODULE_OBJS = \
 	burger/rooms/section2/section2.o \
 	burger/rooms/section2/room204.o \
 	burger/rooms/section2/room207.o \
-	burger/rooms/section1/section2.o \
+	burger/rooms/section3/section3.o \
+	burger/rooms/section3/room301.o \
+	burger/rooms/section3/room302.o \
+	burger/rooms/section3/room303.o \
+	burger/rooms/section3/room304.o \
+	burger/rooms/section3/room305.o \
+	burger/rooms/section3/room306.o \
+	burger/rooms/section3/room307.o \
+	burger/rooms/section3/room310.o \
+	burger/rooms/section3/room319.o \
+	burger/rooms/section4/section4.o \
+	burger/rooms/section4/room401.o \
+	burger/rooms/section4/room402.o \
+	burger/rooms/section4/room404.o \
+	burger/rooms/section4/room405.o \
+	burger/rooms/section4/room406.o \
+	burger/rooms/section4/room407.o \
 	burger/rooms/section5/section5.o \
 	burger/rooms/section5/section5_room.o \
 	burger/rooms/section5/room501.o \

@@ -247,8 +247,8 @@ BurgerEngine::BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		M4Engine(syst, gameDesc) {
 	_sections.push_back(&_section1);
 	_sections.push_back(&_section2);
-	_sections.push_back(&_section1);	// TODO: Replace me
-	_sections.push_back(&_section1);	// TODO: Replace me
+	_sections.push_back(&_section3);
+	_sections.push_back(&_section4);
 	_sections.push_back(&_section5);
 	_sections.push_back(&_section6);
 	_sections.push_back(&_section7);
