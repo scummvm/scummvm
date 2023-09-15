@@ -48,30 +48,60 @@ void Font::read(Common::SeekableReadStream &stream) {
 	stream.skip(2);
 	_spaceWidth = stream.readUint16LE();
 	stream.skip(2);
-	_uppercaseOffset = stream.readUint16LE();
-	_lowercaseOffset = stream.readUint16LE();
-	_digitOffset = stream.readUint16LE();
-	_periodOffset = stream.readUint16LE();
-	_commaOffset = stream.readUint16LE();
-	_equalitySignOffset = stream.readUint16LE();
-	_colonOffset = stream.readUint16LE();
-	_dashOffset = stream.readUint16LE();
-	_questionMarkOffset = stream.readUint16LE();
-	_exclamationMarkOffset = stream.readUint16LE();
-	_percentOffset = stream.readUint16LE();
-	_ampersandOffset = stream.readUint16LE();
-	_asteriskOffset = stream.readUint16LE();
-	_leftBracketOffset = stream.readUint16LE();
-	_rightBracketOffset = stream.readUint16LE();
-	_plusOffset = stream.readUint16LE();
-	_apostropheOffset = stream.readUint16LE();
-	_semicolonOffset = stream.readUint16LE();
-	_slashOffset = stream.readUint16LE();
+	_uppercaseOffset					= stream.readUint16LE();
+	_lowercaseOffset					= stream.readUint16LE();
+	_digitOffset						= stream.readUint16LE();
+	_periodOffset						= stream.readUint16LE();
+	_commaOffset						= stream.readUint16LE();
+	_equalitySignOffset					= stream.readUint16LE();
+	_colonOffset						= stream.readUint16LE();
+	_dashOffset							= stream.readUint16LE();
+	_questionMarkOffset					= stream.readUint16LE();
+	_exclamationMarkOffset				= stream.readUint16LE();
+	_percentOffset						= stream.readUint16LE();
+	_ampersandOffset					= stream.readUint16LE();
+	_asteriskOffset						= stream.readUint16LE();
+	_leftBracketOffset					= stream.readUint16LE();
+	_rightBracketOffset					= stream.readUint16LE();
+	_plusOffset							= stream.readUint16LE();
+	_apostropheOffset					= stream.readUint16LE();
+	_semicolonOffset					= stream.readUint16LE();
+	_slashOffset						= stream.readUint16LE();
 
-	_symbolRects.reserve(78);
-	for (uint i = 0; i < 78; ++i) {
-		_symbolRects.push_back(Common::Rect());
-		Common::Rect &cur = _symbolRects[i];
+	if (g_nancy->getGameType() >= kGameTypeNancy6) {
+		// Nancy6 added more characters to its fonts
+		_aWithGraveOffset 				= stream.readUint16LE();
+		_cWithCedillaOffset				= stream.readUint16LE();
+		_eWithGraveOffset 				= stream.readUint16LE();
+		_eWithAcuteOffset 				= stream.readUint16LE();
+		_eWithCircumflexOffset			= stream.readUint16LE();
+		_eWithDiaeresisOffset			= stream.readUint16LE();
+		_oWithCircumflexOffset			= stream.readUint16LE();
+		_uppercaseAWithGraveOffset		= stream.readUint16LE();
+		_aWithCircumflexOffset			= stream.readUint16LE();
+		_iWithCircumflexOffset			= stream.readUint16LE();
+		_uWithGraveOffset 				= stream.readUint16LE();
+		_uppercaseAWithDiaeresisOffset	= stream.readUint16LE();
+		_aWithDiaeresisOffset			= stream.readUint16LE();
+		_uppercaseOWithDiaeresisOffset	= stream.readUint16LE();
+		_oWithDiaeresisOffset			= stream.readUint16LE();
+		_uppercaseUWithDiaeresisOffset	= stream.readUint16LE();
+		_uWithDiaeresisOffset			= stream.readUint16LE();
+		_invertedExclamationMarkOffset	= stream.readUint16LE();
+		_invertedQuestionMarkOffset		= stream.readUint16LE();
+		_uppercaseNWithTildeOffset		= stream.readUint16LE();
+		_nWithTildeOffset				= stream.readUint16LE();
+		_uppercaseEWithAcuteOffset		= stream.readUint16LE();
+		_aWithAcuteOffset				= stream.readUint16LE();
+		_iWithAcuteOffset				= stream.readUint16LE();
+		_oWithAcuteOffset				= stream.readUint16LE();
+		_uWithAcuteOffset				= stream.readUint16LE();
+		_eszettOffset					= stream.readUint16LE();
+	}
+
+	_characterRects.resize(g_nancy->getGameType() >= kGameTypeNancy6 ? 105 : 78);
+	for (uint i = 0; i < _characterRects.size(); ++i) {
+		Common::Rect &cur = _characterRects[i];
 		readRect(stream, cur);
 
 		if (g_nancy->getGameType() == kGameTypeVampire) {
@@ -160,18 +190,109 @@ void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Commo
 }
 
 Common::Rect Font::getCharacterSourceRect(char chr) const {
+	// Map a character to its source rect inside the font data.
+	// The original engine devs had some _interesting_ ideas on how to store font data,
+	// which makes the ridiculous switch statements below a necessity
 	using namespace Common;
-	uint offset = 0;
+	int offset = -1;
 	Common::Rect ret;
 
-	if (isUpper(chr)) {
+	if (chr < 0) {
+		// Nancy6 introduced extended ASCII characters
+		switch (chr) {
+		case '\xe0':
+			offset = _aWithGraveOffset;
+			break;
+		case '\xe7':
+			offset = _cWithCedillaOffset;
+			break;
+		case '\xe8':
+			offset = _eWithGraveOffset;
+			break;
+		case '\xe9':
+			offset = _eWithAcuteOffset;
+			break;
+		case '\xea':
+			offset = _eWithCircumflexOffset;
+			break;
+		case '\xeb':
+			offset = _eWithDiaeresisOffset;
+			break;
+		case '\xf4':
+			offset = _oWithCircumflexOffset;
+			break;
+		case '\xc0':
+			offset = _uppercaseAWithGraveOffset;
+			break;
+		case '\xe2':
+			offset = _aWithCircumflexOffset;
+			break;
+		case '\xee':
+			offset = _iWithCircumflexOffset;
+			break;
+		case '\xf9':
+			offset = _uWithGraveOffset;
+			break;
+		case '\xc4':
+			offset = _uppercaseAWithDiaeresisOffset;
+			break;
+		case '\xe4':
+			offset = _aWithDiaeresisOffset;
+			break;
+		case '\xd6':
+			offset = _uppercaseOWithDiaeresisOffset;
+			break;
+		case '\xf6':
+			offset = _oWithDiaeresisOffset;
+			break;
+		case '\xdc':
+			offset = _uppercaseUWithDiaeresisOffset;
+			break;
+		case '\xfc':
+			offset = _uWithDiaeresisOffset;
+			break;
+		case '\xa1':
+			offset = _invertedExclamationMarkOffset;
+			break;
+		case '\xbf':
+			offset = _invertedQuestionMarkOffset;
+			break;
+		case '\xd1':
+			offset = _uppercaseNWithTildeOffset;
+			break;
+		case '\xf1':
+			offset = _nWithTildeOffset;
+			break;
+		case '\xc9':
+			offset = _uppercaseEWithAcuteOffset;
+			break;
+		case '\xe1':
+			offset = _aWithAcuteOffset;
+			break;
+		case '\xed':
+			offset = _iWithAcuteOffset;
+			break;
+		case '\xf3':
+			offset = _oWithAcuteOffset;
+			break;
+		case '\xfa':
+			offset = _uWithAcuteOffset;
+			break;
+		case '\xdf':
+			offset = _eszettOffset;
+			break;
+		default:
+			offset = -1;
+			break;
+		}
+	} else if (isUpper(chr)) {
 		offset = chr + _uppercaseOffset - 0x41;
 	} else if (isLower(chr)) {
 		offset = chr + _lowercaseOffset - 0x61;
 	} else if (isDigit(chr)) {
 		offset = chr + _digitOffset - 0x30;
 	} else if (isSpace(chr)) {
-		ret.setWidth(_spaceWidth - 1); // Not sure why we sutract 1
+		ret.setWidth(_spaceWidth - 1);
 		return ret;
 	} else if (isPunct(chr)) {
 		switch (chr) {
@@ -224,14 +345,22 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			offset = _slashOffset;
 			break;
 		default:
-			// Replace unknown characters with question marks. This shouldn't happen normally,
-			// but we need it to support displaying saves that were originally made in the GMM
-			// inside the in-game load/save menu.
-			offset = _questionMarkOffset;
+			offset = -1;
 			break;
 		}
 	}
-	ret = _symbolRects[offset];
+
+	if (offset == -1) {
+		// There is at least one malformed string in nancy4 that will reach this.
+		// Also, this helps support displaying saves that were originally made in the GMM
+		// inside the in-game load/save menu, since those _may_ contain characters not present in the font
+
+		// When reaching an invalid char, the original engine repeated the last printed character,
+		// but we print a question mark instead.
+		offset = _questionMarkOffset;
+	}
+
+	ret = _characterRects[offset];
 	return ret;
 }
 

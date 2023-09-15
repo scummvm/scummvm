@@ -56,29 +56,61 @@ public:
 private:
 	Common::Rect getCharacterSourceRect(char chr) const;
 
-	Common::String _description;				// 0xA
-	Common::Point _colorCoordsOffset;			// 0x32
-	uint16 _spaceWidth;							// 0x38
-	uint16 _uppercaseOffset;					// 0x3C
-	uint16 _lowercaseOffset;					// 0x3E
-	uint16 _digitOffset;						// 0x40
-	uint16 _periodOffset;						// 0x42
-	uint16 _commaOffset;						// 0x44
-	uint16 _equalitySignOffset;					// 0x46
-	uint16 _colonOffset;						// 0x48
-	uint16 _dashOffset;							// 0x4A
-	uint16 _questionMarkOffset;					// 0x4C
-	uint16 _exclamationMarkOffset;				// 0x4E
-	uint16 _percentOffset;						// 0x50
-	uint16 _ampersandOffset;					// 0x52
-	uint16 _asteriskOffset;						// 0x54
-	uint16 _leftBracketOffset;					// 0x56
-	uint16 _rightBracketOffset;					// 0x58
-	uint16 _plusOffset;							// 0x5A
-	uint16 _apostropheOffset;					// 0x5C
-	uint16 _semicolonOffset;					// 0x5E
-	uint16 _slashOffset;						// 0x60
-	Common::Array<Common::Rect> _symbolRects;	// 0x62
+	Common::String _description;
+	Common::Point _colorCoordsOffset; // Added to source rects when colored text is requested
+	uint16 _spaceWidth;
+
+	// Specific offsets into the _characterRects array
+	uint16 _uppercaseOffset			= 0;
+	uint16 _lowercaseOffset			= 0;
+	uint16 _digitOffset				= 0;
+	uint16 _periodOffset			= 0;
+	uint16 _commaOffset				= 0;
+	uint16 _equalitySignOffset		= 0;
+	uint16 _colonOffset				= 0;
+	uint16 _dashOffset				= 0;
+	uint16 _questionMarkOffset		= 0;
+	uint16 _exclamationMarkOffset	= 0;
+	uint16 _percentOffset			= 0;
+	uint16 _ampersandOffset			= 0;
+	uint16 _asteriskOffset			= 0;
+	uint16 _leftBracketOffset		= 0;
+	uint16 _rightBracketOffset		= 0;
+	uint16 _plusOffset				= 0;
+	uint16 _apostropheOffset		= 0;
+	uint16 _semicolonOffset			= 0;
+	uint16 _slashOffset				= 0;
+
+	// More specific offsets for extended ASCII characters. Introduced in nancy6
+	int16 _aWithGraveOffset					= -1;
+	int16 _cWithCedillaOffset				= -1;
+	int16 _eWithGraveOffset					= -1;
+	int16 _eWithAcuteOffset					= -1;
+	int16 _eWithCircumflexOffset			= -1;
+	int16 _eWithDiaeresisOffset				= -1;
+	int16 _oWithCircumflexOffset			= -1;
+	int16 _uppercaseAWithGraveOffset		= -1;
+	int16 _aWithCircumflexOffset			= -1;
+	int16 _iWithCircumflexOffset			= -1;
+	int16 _uWithGraveOffset 				= -1;
+	int16 _uppercaseAWithDiaeresisOffset	= -1;
+	int16 _aWithDiaeresisOffset				= -1;
+	int16 _uppercaseOWithDiaeresisOffset	= -1;
+	int16 _oWithDiaeresisOffset				= -1;
+	int16 _uppercaseUWithDiaeresisOffset	= -1;
+	int16 _uWithDiaeresisOffset				= -1;
+	int16 _invertedExclamationMarkOffset	= -1;
+	int16 _invertedQuestionMarkOffset		= -1;
+	int16 _uppercaseNWithTildeOffset		= -1;
+	int16 _nWithTildeOffset					= -1;
+	int16 _uppercaseEWithAcuteOffset		= -1;
+	int16 _aWithAcuteOffset					= -1;
+	int16 _iWithAcuteOffset					= -1;
+	int16 _oWithAcuteOffset					= -1;
+	int16 _uWithAcuteOffset					= -1;
+	int16 _eszettOffset						= -1;
+
+	Common::Array<Common::Rect> _characterRects;
 
 	Graphics::ManagedSurface _image;
 
