@@ -744,7 +744,10 @@ void inline paintBlendedLogic(uint8 *pixels, int32 pitch,
 	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(srcRect.left, srcRect.top));
 	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + x * sizeof(uintX) + pitch * y);
 
-	if (highlight || invisible) {
+	uint8 dr, dg, db;
+	uint8 sr, sg, sb;
+
+	if (highlight) {
 		uint32 ca = TEX32_A(highlight);
 		uint32 cr = TEX32_R(highlight);
 		uint32 cg = TEX32_G(highlight);
@@ -756,8 +759,6 @@ void inline paintBlendedLogic(uint8 *pixels, int32 pitch,
 				const uint8 color = *srcPixels;
 				if (color != keycolor) {
 					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
-					uint8 dr, dg, db;
-					uint8 sr, sg, sb;
 					format.colorToRGB(*dstpix, dr, dg, db);
 
 					if (xform_map && xform_map[color]) {
@@ -775,23 +776,51 @@ void inline paintBlendedLogic(uint8 *pixels, int32 pitch,
 						format.colorToRGB(map[color], sr, sg, sb);
 					}
 
-					if (highlight && invisible) {
+					if (invisible) {
 						dr = (((sr * ica + cr * ca) >> 1) + (dr << 7)) >> 8;
 						dg = (((sg * ica + cg * ca) >> 1) + (dg << 7)) >> 8;
 						db = (((sb * ica + cb * ca) >> 1) + (db << 7)) >> 8;
-					}
-					else if (highlight)
-					{
+					} else {
 						dr = (sr * ica + cr * ca) >> 8;
 						dg = (sg * ica + cg * ca) >> 8;
 						db = (sb * ica + cb * ca) >> 8;
 					}
-					else if (invisible)
-					{
-						dr = (sr * 128 + dr * 128) >> 8;
-						dg = (sg * 128 + dg * 128) >> 8,
-						db = (sb * 128 + db * 128) >> 8;
+					*dstpix = static_cast<uintX>(format.RGBToColor(dr, dg, db));
+				}
+				srcPixels += srcStep;
+				dstPixels += dstStep;
+			}
+
+			srcPixels += srcDelta;
+			dstPixels += dstDelta;
+		}
+	} else if (invisible) {
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				const uint8 color = *srcPixels;
+				if (color != keycolor) {
+					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
+					format.colorToRGB(*dstpix, dr, dg, db);
+
+					if (xform_map && xform_map[color]) {
+						uint32 val = xform_map[color];
+
+						uint32 ia = 256 - TEX32_A(val);
+						uint32 r = (dr * ia + 256 * TEX32_R(val)) >> 8;
+						uint32 g = (dg * ia + 256 * TEX32_G(val)) >> 8;
+						uint32 b = (db * ia + 256 * TEX32_B(val)) >> 8;
+
+						sr = r > 0xFF ? 0xFF : r;
+						sg = g > 0xFF ? 0xFF : g;
+						sb = b > 0xFF ? 0xFF : b;
+					} else {
+						format.colorToRGB(map[color], sr, sg, sb);
 					}
+
+					dr = (sr * 128 + dr * 128) >> 8;
+					dg = (sg * 128 + dg * 128) >> 8,
+					db = (sb * 128 + db * 128) >> 8;
+
 					*dstpix = static_cast<uintX>(format.RGBToColor(dr, dg, db));
 				}
 				srcPixels += srcStep;
@@ -808,7 +837,6 @@ void inline paintBlendedLogic(uint8 *pixels, int32 pitch,
 				if (color != keycolor) {
 					uintX *dstpix = reinterpret_cast<uintX *>(dstPixels);
 					if (xform_map && xform_map[color]) {
-						uint8 dr, dg, db;
 						format.colorToRGB(*dstpix, dr, dg, db);
 
 						uint32 val = xform_map[color];
