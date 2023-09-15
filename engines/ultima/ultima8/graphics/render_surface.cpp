@@ -213,12 +213,11 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 	if (!w || !h)
 		return;
 
-	uint32 aMask = format.aMax() << format.aShift;
-	int alpha = TEX32_A(rgba);
-	rgba = TEX32_PACK_RGBA((TEX32_R(rgba) * alpha) >> 8,
-						   (TEX32_G(rgba) * alpha) >> 8,
-						   (TEX32_B(rgba) * alpha) >> 8,
-						   (255 * alpha) >> 8);
+	uint32 sa = TEX32_A(rgba);
+	uint32 sr = TEX32_R(rgba);
+	uint32 sg = TEX32_G(rgba);
+	uint32 sb = TEX32_B(rgba);
+	uint32 ia = 256 - TEX32_A(rgba);
 
 	uint8 *pixel = pixels + rect.top * pitch + rect.left * format.bytesPerPixel;
 	int diff = pitch - w * format.bytesPerPixel;
@@ -226,16 +225,16 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
-			uint32 d = *dest;
-			uint8 dr, dg, db;
-			format.colorToRGB(d, dr, dg, db);
+			uint8 dr, dg, db, da;
+			format.colorToARGB(*dest, da, dr, dg, db);
 
-			uint32 ia = 256 - TEX32_A(rgba);
-			uint32 r = (dr * ia + 256 * TEX32_R(rgba)) >> 8;
-			uint32 g = (dg * ia + 256 * TEX32_G(rgba)) >> 8;
-			uint32 b = (db * ia + 256 * TEX32_B(rgba)) >> 8;
+			if (da) {
+				dr = (dr * ia + sr * sa) >> 8;
+				dg = (dg * ia + sg * sa) >> 8;
+				db = (db * ia + sb * sa) >> 8;
 
-			*dest = (d & aMask) | format.RGBToColor(r, g, b);
+				*dest = format.ARGBToColor(da, dr, dg, db);
+			}
 			pixel += format.bytesPerPixel;
 		}
 
