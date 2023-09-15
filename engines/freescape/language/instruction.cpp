@@ -604,11 +604,11 @@ void FreescapeEngine::executeToggleBit(FCLInstruction &instruction) {
 }
 
 bool FreescapeEngine::executeEndIfBitNotEqual(FCLInstruction &instruction) {
-	uint16 index = instruction._source - 1; // Starts in 1
+	uint16 index = instruction._source;
 	uint16 value = instruction._destination;
-	assert(index < 32);
+	assert(index <= 32);
 	debugC(1, kFreescapeDebugCode, "End condition if bit %d is not equal to %d!", index, value);
-	return (((_gameStateBits[_currentArea->getAreaID()] >> index) & 1) != value);
+	return (getGameBit(index) != value);
 }
 
 void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {

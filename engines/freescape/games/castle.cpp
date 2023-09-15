@@ -253,8 +253,6 @@ void CastleEngine::loadAssetsAmigaDemo() {
 
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
-	if (!_gameStateBits.contains(areaID))
-		_gameStateBits[areaID] = 0;
 
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
@@ -332,10 +330,10 @@ void CastleEngine::initGameState() {
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
-	for (auto &it : _areaMap) {
+	for (auto &it : _areaMap)
 		it._value->resetArea();
-		_gameStateBits[it._key] = 0;
-	}
+
+	_gameStateBits = 0;
 
 	//_gameStateVars[k8bitVariableEnergy] = _initialFuel;
 	//_gameStateVars[k8bitVariableShield] = _initialShield;

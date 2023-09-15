@@ -111,8 +111,6 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
-	if (!_gameStateBits.contains(areaID))
-		_gameStateBits[areaID] = 0;
 
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];

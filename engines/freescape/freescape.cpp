@@ -674,24 +674,26 @@ bool FreescapeEngine::checkIfGameEnded() {
 }
 
 void FreescapeEngine::setGameBit(int index) {
-	_gameStateBits[_currentArea->getAreaID()] |= (1 << (index - 1));
+	_gameStateBits |= (1 << (index - 1));
 }
 
 void FreescapeEngine::clearGameBit(int index) {
-	_gameStateBits[_currentArea->getAreaID()] &= ~(1 << (index - 1));
+	_gameStateBits &= ~(1 << (index - 1));
 }
 
 void FreescapeEngine::toggleGameBit(int index) {
-	_gameStateBits[_currentArea->getAreaID()] ^= (1 << (index - 1));
+	_gameStateBits ^= (1 << (index - 1));
 }
 
+bool FreescapeEngine::getGameBit(int index) {
+	return (_gameStateBits >> (index - 1)) & 1;
+}
 
 void FreescapeEngine::initGameState() {
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
-	for (auto &it : _areaMap)
-		_gameStateBits[it._key] = 0;
+	_gameStateBits = 0;
 }
 
 void FreescapeEngine::rotate(float xoffset, float yoffset) {
@@ -786,10 +788,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 		_gameStateVars[key] = stream->readUint32LE();
 	}
 
-	for (uint i = 0; i < _gameStateBits.size(); i++) {
-		uint16 key = stream->readUint16LE();
-		_gameStateBits[key] = stream->readUint32LE();
-	}
+	_gameStateBits = stream->readUint32LE();
 
 	for (uint i = 0; i < _areaMap.size(); i++) {
 		uint16 key = stream->readUint16LE();
@@ -829,10 +828,7 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 		stream->writeUint32LE(it._value);
 	}
 
-	for (auto &it : _gameStateBits) {
-		stream->writeUint16LE(it._key);
-		stream->writeUint32LE(it._value);
-	}
+	stream->writeUint32LE(_gameStateBits);
 
 	for (auto &it : _areaMap) {
 		stream->writeUint16LE(it._key);
