@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-14 06:23+0000\n"
-"PO-Revision-Date: 2023-08-09 05:40+0000\n"
+"PO-Revision-Date: 2023-09-15 23:41+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1085,10 +1085,8 @@ msgid "Global ~O~pts..."
 msgstr "~O~pcs. globals..."
 
 #: gui/launcher.cpp:271
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Baixa els fitxers del joc"
+msgstr "Baixa els jocs"
 
 #: gui/launcher.cpp:271
 msgid "Download freeware games for ScummVM"
@@ -1814,17 +1812,13 @@ msgid "Default"
 msgstr "Per defecte"
 
 #: gui/options.cpp:2465
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Camí del joc:"
+msgstr "Camí del DLC:"
 
 #: gui/options.cpp:2467
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Camí del joc:"
+msgstr "Camí del DLC:"
 
 #: gui/options.cpp:2475 gui/options.cpp:2477 gui/options.cpp:2478
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2267,10 +2261,8 @@ msgstr ""
 "Seleccioneu el directori per a les miniatures del llançador de la interfície"
 
 #: gui/options.cpp:3195
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Seleccioneu el directori dels connectors"
+msgstr "Seleccioneu el directori per a les baixades de DLC"
 
 #: gui/options.cpp:3206
 msgid "Select directory for extra files"
@@ -5548,10 +5540,8 @@ msgid ""
 msgstr ""
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Interaccionar"
+msgstr "Parla/Interactua"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -5569,10 +5559,8 @@ msgid "Accept"
 msgstr ""
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "~A~nterior"
+msgstr "Anterior"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
@@ -5603,8 +5591,6 @@ msgid "Next Page"
 msgstr "Pàgina següent"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous Page"
 msgstr "Pàgina anterior"
 
@@ -5613,10 +5599,8 @@ msgid "Map"
 msgstr "Assigna"
 
 #: engines/crab/input/input.cpp:246
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Mostra el diari"
+msgstr "Diari"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:149
@@ -5635,14 +5619,10 @@ msgid "Traits"
 msgstr ""
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quick Save"
 msgstr "Desament ràpid"
 
 #: engines/crab/input/input.cpp:271
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick Load"
 msgstr "Càrrega ràpida"
 
@@ -5773,10 +5753,8 @@ msgid "Invert Y-axis on mouse"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:102
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Utilitza una paleta alternativa"
+msgstr "Utilitza controls alternatius de càmera"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7944,10 +7922,8 @@ msgid "Save / Load dialog"
 msgstr "Diàleg de desat / càrrega"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
-#| msgid "Select shader"
 msgid "Selection screen"
-msgstr "Seleccioneu un shader"
+msgstr "Pantalla de selecció"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
