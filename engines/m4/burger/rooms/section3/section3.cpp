@@ -26,6 +26,16 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const seriesPlayBreak PLAY1[] = {
+	{  0, 15, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 16, 46, "300w039", 1, 255, -1,    0, 0, nullptr, 0 },
+	{ 47, 60, "300_006", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 60, 60, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 60, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 Section3::Section3() : Rooms::Section() {
 	add(301, &_room301);
 	add(302, &_room302);

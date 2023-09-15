@@ -26,6 +26,68 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+
+const char *Room304::SAID[][4] = {
+	{ "DOOR",        "304w002", "300w002", nullptr   },
+	{ "BED",         "304w007", "300w003", "304w008" },
+	{ "PICTURE",     "304w009", "304w010", "300w005" },
+	{ "MATCHES ",    "304w003", nullptr,   "304w004" },
+	{ "MAP",         nullptr,   "304w013", "304w014" },
+	{ "CRATE",       "304w015", "300w004", "300w004" },
+	{ "STOVE",       "304w016", "304w017", "304w018" },
+	{ "KETTLE",      "304w019", "304w018", "304w018" },
+	{ "MUG",         "304w019", nullptr,   nullptr   },
+	{ "RECIPE BOOK", nullptr,   "304w021", "304w022" },
+	{ "WASHTUB",     "304w023", "304w024", "304w024" },
+	{ "POT",         "304w025", "304w018", "304w018" },
+	{ "FRYING PAN",  "304w026", "304w027", "304w018" },
+	{ "WINDOW",      "304w028", "300w002", "304w029" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+const seriesPlayBreak Room304::PLAY1[] = {
+	{  0,  3, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{  4, 16, "304_001", 2, 255, -1, 2048, 0, nullptr, 0 },
+	{ 17, -1, "304_002", 2, 255, -1, 2048, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room304::PLAY2[] = {
+	{  0,  3, nullptr,   1,   0, -1, 2050,  0, nullptr, 0 },
+	{  0,  0, "304w020", 1, 255, -1,    0, 10, nullptr, 0 },
+	{  0,  6, nullptr,   0,   0, -1,    0,  0, nullptr, 0 },
+	{  7,  7, nullptr,   0,   0, -1,    0,  5, nullptr, 0 },
+	{  8, 12, nullptr,   0,   0, -1,    0,  0, nullptr, 0 },
+	{ 13, -1, "304_004", 2, 255, -1,    0,  0, nullptr, 0 },
+	{  7,  7, nullptr,   0,   0, -1,    0,  3, nullptr, 0 },
+	{  8, 12, nullptr,   0,   0, -1,    0,  0, nullptr, 0 },
+	{ 13, -1, "304_004", 2, 255, -1,    0,  0, nullptr, 0 },
+	{  7,  7, nullptr,   0,   0, -1,    0,  5, nullptr, 0 },
+	{  7,  3, nullptr,   0,   0, -1,    0,  0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room304::PLAY3[] = {
+	{ 0,  3, nullptr, 1, 0, -1, 0, 0, nullptr, 0 },
+	{ 4,  5, nullptr, 0, 0,  6, 0, 0, nullptr, 0 },
+	{ 6, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room304::PLAY4[] = {
+	{  0, 24, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 25, 36, "300_003", 2, 255, -1, 2048, 0, nullptr, 0 },
+	{ 37, -1, nullptr,   0,   0,  3,    0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+const seriesPlayBreak Room304::PLAY5[] = {
+	{ 17, 17, nullptr,   0,   0, -1,    0, 5, nullptr, 0 },
+	{ 17, 21, "304_002", 2, 255, -1, 2048, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 void Room304::init() {
 }
 

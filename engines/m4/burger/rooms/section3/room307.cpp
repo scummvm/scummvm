@@ -26,6 +26,24 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+const seriesStreamBreak Room307::SERIES1[] = {
+	{ 0, "307z001", 1, 255, -1, 0, nullptr, 0 },
+	STREAM_BREAK_END
+};
+
+const seriesPlayBreak Room307::PLAY1[] = {
+	{ 0,  5, "307z002w", 1, 255, -1, 2052, -1, nullptr, 0 },
+	{ 0,  0, nullptr,    0,   0, -1,    0,  2, nullptr, 0 },
+	{ 0,  5, "307z002x", 1, 255, -1, 2052, -1, nullptr, 0 },
+	{ 0,  0, nullptr,    0,   0, -1,    0,  2, nullptr, 0 },
+	{ 0,  5, "307z002y", 1, 255, -1, 2052, -1, nullptr, 0 },
+	{ 0,  0, nullptr,    0,   0, -1,    0,  0, nullptr, 0 },
+	{ 0,  5, "307z002z", 1, 255, -1, 2052, -1, nullptr, 0 },
+	{ 6, -1, nullptr,    0,   0, -1,    0,  0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 void Room307::init() {
 }
 
