@@ -61,17 +61,14 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 		_sound.readNormal(stream);
 	}
 
-	char *rawText = new char[1500];
-	ser.syncBytes((byte *)rawText, 1500);
-	UI::Textbox::assembleTextLine(rawText, _text, 1500);
-	delete[] rawText;
+	readCaptionText(stream);
 
 	if (ser.getVersion() <= kGameTypeNancy1) {
 		_sound.readNormal(stream);
 	}
 
 	_responseGenericSound.readNormal(stream);
-	ser.skip(1);
+	ser.skip(1); // RESPONSE_STARTUP_CLEAR_ALL, RESPONSE_STARTUP_KEEP_OLD; never used (tested up to nancy5)
 	ser.syncAsByte(_conditionalResponseCharacterID);
 	ser.syncAsByte(_goodbyeResponseCharacterID);
 	ser.syncAsByte(_defaultNextScene);
@@ -82,24 +79,20 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 
 	uint16 numResponses = 0;
 	ser.syncAsUint16LE(numResponses);
-	rawText = new char[400];
 
 	_responses.resize(numResponses);
 	for (uint i = 0; i < numResponses; ++i) {
 		ResponseStruct &response = _responses[i];
 		response.conditionFlags.read(stream);
-		ser.syncBytes((byte*)rawText, 400);
-		UI::Textbox::assembleTextLine(rawText, response.text, 400);
+		readResponseText(stream, response);
 		readFilename(stream, response.soundName);
-		ser.skip(1);
+		ser.skip(1); // RESPONSE_ADD_IF_NOT_FOUND, RESPONSE_REMOVE_AND_ADD_TO_END, or RESPONSE_REMOVE
 		response.sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 		ser.syncAsSint16LE(response.flagDesc.label);
 		ser.syncAsByte(response.flagDesc.flag);
 		ser.skip(0x32, kGameTypeVampire, kGameTypeNancy1);
 		ser.skip(2, kGameTypeNancy2);
 	}
-
-	delete[] rawText;
 
 	uint16 numSceneBranchStructs = stream.readUint16LE();
 	_sceneBranchStructs.resize(numSceneBranchStructs);
@@ -289,6 +282,20 @@ void ConversationSound::execute() {
 
 		break;
 	}
+}
+
+void ConversationSound::readCaptionText(Common::SeekableReadStream &stream) {
+	char *rawText = new char[1500];
+	stream.read(rawText, 1500);
+	UI::Textbox::assembleTextLine(rawText, _text, 1500);
+	delete[] rawText;
+}
+
+void ConversationSound::readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
+	char *rawText = new char[400];
+	stream.read(rawText, 400);
+	UI::Textbox::assembleTextLine(rawText, response.text, 400);
+	delete[] rawText;
 }
 
 void ConversationSound::addConditionalDialogue() {
@@ -706,6 +713,46 @@ ConversationCel::Cel &ConversationCel::loadCel(const Common::String &name, const
 	Cel &newCel = _celCache.getOrCreateVal(name);
 	g_nancy->_resource->loadImage(name, newCel.surf, treeName, &newCel.src, &newCel.dest);
 	return _celCache[name];
+}
+
+void ConversationSoundT::readCaptionText(Common::SeekableReadStream &stream) {
+	Common::String key;
+	readFilename(stream, key);
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	_text = convo->texts[key];
+}
+
+void ConversationSoundT::readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
+	Common::String key;
+	readFilename(stream, key);
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	response.text = convo->texts[key];
+}
+
+void ConversationCelT::readCaptionText(Common::SeekableReadStream &stream) {
+	Common::String key;
+	readFilename(stream, key);
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	_text = convo->texts[key];
+}
+
+void ConversationCelT::readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
+	Common::String key;
+	readFilename(stream, key);
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	response.text = convo->texts[key];
 }
 
 } // End of namespace Action

@@ -87,6 +87,10 @@ protected:
 	Common::String getRecordTypeName() const override { return "ConversationSound"; }
 	bool isViewportRelative() const override { return true; }
 
+	// Functions for reading captions are virtual to allow easier support for the terse Conversation variants
+	virtual void readCaptionText(Common::SeekableReadStream &stream);
+	virtual void readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response);
+
 	// Functions for handling the built-in dialogue responses found in the executable
 	void addConditionalDialogue();
 	void addGoodbye();
@@ -193,6 +197,22 @@ protected:
 
 	Common::HashMap<Common::String, Cel> _celCache;
 	Common::SharedPtr<ConversationCelLoader> _loaderPtr;
+};
+
+class ConversationSoundT : public ConversationSound {
+protected:
+	Common::String getRecordTypeName() const override { return "ConversationSoundT"; }
+
+	void readCaptionText(Common::SeekableReadStream &stream) override;
+	void readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) override;
+};
+
+class ConversationCelT : public ConversationCel {
+protected:
+	Common::String getRecordTypeName() const override { return "ConversationCelT"; }
+
+	void readCaptionText(Common::SeekableReadStream &stream) override;
+	void readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) override;
 };
 
 } // End of namespace Action

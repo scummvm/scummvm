@@ -120,8 +120,15 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new ConversationCel();
 	case 58:
 		return new ConversationSound();
+	case 59:
+		return new ConversationCelT();
 	case 60:
-		return new MapCall();
+		if (g_nancy->getGameType() <= kGameTypeNancy5) {
+			// Only used in tvd and nancy1
+			return new MapCall();
+		} else {
+			return new ConversationSoundT();
+		}
 	case 61:
 		return new MapCallHot1Fr();
 	case 62:
