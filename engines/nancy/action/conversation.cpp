@@ -334,7 +334,18 @@ void ConversationSound::addConditionalDialogue() {
 			_responses.push_back(ResponseStruct());
 			ResponseStruct &newResponse = _responses.back();
 			newResponse.soundName = res.soundID;
-			newResponse.text = g_nancy->getStaticData().conditionalDialogueTexts[res.textID];
+
+			if (g_nancy->getGameType() <= kGameTypeNancy5) {
+				// String is also inside nancy.dat
+				newResponse.text = g_nancy->getStaticData().conditionalDialogueTexts[res.textID];
+			} else {
+				// String is inside the CVTX chunk in the CONVO file. Sound ID doubles as string key
+				const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+				assert(convo);
+
+				newResponse.text = convo->texts[res.soundID];
+			}
+			
 			newResponse.sceneChange.sceneID = res.sceneID;
 			newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
 		}
@@ -346,7 +357,17 @@ void ConversationSound::addGoodbye() {
 	_responses.push_back(ResponseStruct());
 	ResponseStruct &newResponse = _responses.back();
 	newResponse.soundName = res.soundID;
-	newResponse.text = g_nancy->getStaticData().goodbyeTexts[_goodbyeResponseCharacterID];
+
+	if (g_nancy->getGameType() <= kGameTypeNancy5) {
+		// String is also inside nancy.dat
+		newResponse.text = g_nancy->getStaticData().goodbyeTexts[_goodbyeResponseCharacterID];
+	} else {
+		// String is inside the CVTX chunk in the CONVO file. Sound ID doubles as string key
+		const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+		assert(convo);
+
+		newResponse.text = convo->texts[res.soundID];
+	}
 
 	// Evaluate conditions to pick from the collection of replies
 	uint sceneChangeID = 0;

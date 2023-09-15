@@ -389,6 +389,19 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 			}
 
 			break;
+		case MKTAG('C', 'D', 'L', '2') :
+			// Conditional dialogue, no strings (nancy6 and up)
+			num = stream.readUint16LE();
+			conditionalDialogue.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				uint16 num2 = stream.readUint16LE();
+				conditionalDialogue[i].resize(num2);
+				for (uint j = 0; j < num2; ++j) {
+					conditionalDialogue[i][j].readData(stream);
+				}
+			}
+
+			break;
 		case MKTAG('G', 'D', 'B', 'Y') :
 			// Goodbyes
 			num = stream.readUint16LE();
@@ -409,6 +422,15 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 				}
 
 				stream.seek(endOffset);
+			}
+
+			break;
+		case MKTAG('G', 'D', 'B', '2') :
+			// Goodbyes, no strings (nancy6 and up)
+			num = stream.readUint16LE();
+			goodbyes.resize(num);
+			for (uint16 i = 0; i < num; ++i) {
+				goodbyes[i].readData(stream);
 			}
 
 			break;
