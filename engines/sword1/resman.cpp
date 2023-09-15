@@ -514,7 +514,21 @@ uint32 ResMan::getDeathFontId() {
 		fp.seek(0, SEEK_END);
 		int64 fileSize = fp.pos();
 
-		if (fileSize < 6295679) {
+		if (SwordEngine::_systemVars.realLanguage == Common::RU_RUS) {
+			switch (fileSize) {
+			case 6081261: // Akella
+				return SR_DEATHFONT;
+			case 6354790: // Mediahauz
+				return SR_FONT;
+			case 6350630: // Novy Disk
+				return SR_DEATHFONT_ALT;
+			default:
+				warning("ResMan::getDeathFontId(): Unrecognized version of russian GENERAL.CLU, size %d", (int)fileSize);
+				break;
+			}
+
+			return SR_FONT;
+		} else if (fileSize < 6295679) {
 			return SR_DEATHFONT;
 		} else {
 			return SR_DEATHFONT_ALT;
