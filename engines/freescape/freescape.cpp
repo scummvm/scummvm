@@ -912,6 +912,8 @@ void FreescapeEngine::getTimeFromCountdown(int &seconds, int &minutes, int &hour
 
 static void countdownCallback(void *refCon) {
 	FreescapeEngine* self = (FreescapeEngine *)refCon;
+	if (self->isPaused())
+		return;
 	self->_ticks++;
 	if (self->_ticks % 50 == 0)
 		self->_countdown--;

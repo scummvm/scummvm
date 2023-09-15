@@ -729,6 +729,7 @@ void DarkEngine::drawSensorShoot(Sensor *sensor) {
 }
 
 void DarkEngine::drawInfoMenu() {
+	PauseToken pauseToken = pauseEngine();
 	_savedScreen = _gfx->getScreenshot();
 	uint32 color = 0;
 	switch (_renderMode) {
@@ -810,6 +811,7 @@ void DarkEngine::drawInfoMenu() {
 	delete _savedScreen;
 	surface->free();
 	delete surface;
+	pauseToken.clear();
 }
 
 void DarkEngine::loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number) {

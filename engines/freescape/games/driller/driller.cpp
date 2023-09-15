@@ -198,6 +198,7 @@ void DrillerEngine::loadAssetsFullGame() {
 }
 
 void DrillerEngine::drawInfoMenu() {
+	PauseToken pauseToken = pauseEngine();
 	_savedScreen = _gfx->getScreenshot();
 
 	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
@@ -331,6 +332,7 @@ void DrillerEngine::drawInfoMenu() {
 	delete _savedScreen;
 	surface->free();
 	delete surface;
+	pauseToken.clear();
 }
 
 Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vector3d normal) {
