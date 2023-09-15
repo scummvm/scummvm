@@ -678,7 +678,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	_saveLoadDescription = hdr.name;
 
 	// Set to 0 during load to minimize stuttering
-	if (_musicEngine && !_saveTemporaryState)
+	if (_musicEngine && !compat)
 		_musicEngine->setMusicVolume(0);
 
 	// Unless specifically requested with _saveSound, we do not save the iMUSE
@@ -696,10 +696,10 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	// HE games explicitly do not stop sounds when loading a "heap save",
 	// under version 80!
 
-	if ((!_imuse || _saveSound || !_saveTemporaryState) &&
-		!(_saveTemporaryState && _game.heversion < 80)) {
+	if ((!_imuse || _saveSound || !compat) &&
+		!(compat && _game.heversion < 80)) {
 		_sound->stopAllSounds();
-	} else if (_saveTemporaryState && !_imuseDigital && _game.heversion == 0) {
+	} else if (compat && !_imuseDigital && _game.heversion == 0) {
 		// Still, we have to stop the talking sound even
 		// if the save state is temporary.
 		_sound->stopTalkSound();
