@@ -26,11 +26,12 @@
 #include "nancy3_data.h"
 #include "nancy4_data.h"
 #include "nancy5_data.h"
+#include "nancy6_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 1
 #define NANCYDAT_MINOR_VERSION 0
 
-#define NANCYDAT_NUM_GAMES 6
+#define NANCYDAT_NUM_GAMES 7
 
 /**
  * Format specifications for nancy.dat:
@@ -64,6 +65,7 @@
  * 		Nancy Drew: Message in a Haunted Mansion
  * 		Nancy Drew: Treasure in the Royal Tower
  * 		Nancy Drew: The Final Scene
+ * 		Nancy Drew: Secret of the Scarlet Hand
 */
 
 // Add the offset to the next tagged section before the section itself for easier navigation
@@ -111,10 +113,22 @@ void writeConditionalDialogue(File &output, const Common::Array<Common::Array<Co
 	writeMultilangArray(output, dialogueTexts);
 }
 
+// Version without text array, used in nancy6 and up
+void writeConditionalDialogue(File &output, const Common::Array<Common::Array<ConditionalDialogue>> &conditionalDialogue) {
+	output.writeUint32(MKTAG('C', 'D', 'L', '2'));
+	writeToFile(output, conditionalDialogue);
+}
+
 void writeGoodbyes(File &output, const Common::Array<Goodbye> &goodbyes, const Common::Array<Common::Array<const char *>> &goodbyeTexts) {
 	output.writeUint32(MKTAG('G', 'D', 'B', 'Y'));
 	writeToFile(output, goodbyes);
 	writeMultilangArray(output, goodbyeTexts);
+}
+
+// Version without text array, used in nancy6 and up
+void writeGoodbyes(File &output, const Common::Array<Goodbye> &goodbyes) {
+	output.writeUint32(MKTAG('G', 'D', 'B', '2'));
+	writeToFile(output, goodbyes);
 }
 
 void writeHints(File &output, const Common::Array<Common::Array<Hint>> &hints, const SceneChangeDescription &hintSceneChange, const Common::Array<Common::Array<const char *>> &hintTexts) {
@@ -197,7 +211,7 @@ int main(int argc, char *argv[]) {
 	// Nancy Drew: Message in a Haunted Mansion data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy3Constants))
-	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to5SoundChannelInfo))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to6SoundChannelInfo))
 	WRAPWITHOFFSET(writeLanguages(output, _nancy3LanguagesOrder))
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy3ConditionalDialogue, _nancy3ConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy3Goodbyes, _nancy3GoodbyeTexts))
@@ -208,7 +222,7 @@ int main(int argc, char *argv[]) {
 	// Nancy Drew: Treasure in the Royal Tower data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy4Constants))
-	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to5SoundChannelInfo))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to6SoundChannelInfo))
 	WRAPWITHOFFSET(writeLanguages(output, _nancy4LanguagesOrder))
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy4ConditionalDialogue, _nancy4ConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy4Goodbyes, _nancy4GoodbyeTexts))
@@ -219,13 +233,24 @@ int main(int argc, char *argv[]) {
 	// Nancy Drew: The Final Scene data
 	gameOffsets.push_back(output.pos());
 	WRAPWITHOFFSET(writeConstants(output, _nancy5Constants))
-	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to5SoundChannelInfo))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to6SoundChannelInfo))
 	WRAPWITHOFFSET(writeLanguages(output, _nancy5LanguagesOrder))
 	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy5ConditionalDialogue, _nancy5ConditionalDialogueTexts))
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy5Goodbyes, _nancy5GoodbyeTexts))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy5TelephoneRinging))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy5EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy5EventFlagNames))
+
+	// Nancy Drew: Secret of the Scarlet Hand
+	gameOffsets.push_back(output.pos());
+	WRAPWITHOFFSET(writeConstants(output, _nancy6Constants))
+	WRAPWITHOFFSET(writeSoundChannels(output, _nancy3to6SoundChannelInfo))
+	WRAPWITHOFFSET(writeLanguages(output, _nancy6LanguagesOrder))
+	WRAPWITHOFFSET(writeConditionalDialogue(output, _nancy6ConditionalDialogue))
+	WRAPWITHOFFSET(writeGoodbyes(output, _nancy6Goodbyes))
+	WRAPWITHOFFSET(writeRingingTexts(output, _nancy6TelephoneRinging))
+	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy6EmptySaveStrings))
+	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy6EventFlagNames))
 
 	// Write the offsets for each game in the header
 	output.seek(offsetsOffset);
