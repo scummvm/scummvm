@@ -28,6 +28,69 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID[][4] = {
+	{ "AUNT POLLY",    "172w001", "172w002", "172w002" },
+	{ "PARLOUR",       "172w002", nullptr,   nullptr   },
+	{ "BASEMENT",      nullptr,   "172w002", nullptr   },
+	{ "MICROWAVE",     "172w003", nullptr,   nullptr   },
+	{ "REFRIGERATOR",  "172w005", "172w002", nullptr   },
+	{ "OVEN",          nullptr,   "172w002", nullptr   },
+	{ "SINK",          "172w008", "172w009", nullptr   },
+	{ "HUTCH",         "172w011", "172w012", "172w002" },
+	{ "BROOM",         "172w013", "172w014", "172w015" },
+	{ "WINDOW",        "172w016", "172w002", "172w017" },
+	{ "CALENDAR",      "172w018", "172w019", "172w018" },
+	{ "CUPBOARD ",     "172w021", "172w002", nullptr   },
+	{ "CUPBOARD",      "172w022", "172w002", nullptr   },
+	{ "POTS AND PANS", "172w023", "172w024", "172w024" },
+	{ "COOKIES",       "172w025", "172w026", "172w027" },
+	{ "PRESERVES",     "172w028", "172w029", "172w029" },
+	{ "CARROT JUICE ", "172w030", nullptr,   "172w031" },
+	{ "JUICER",        "172w032", nullptr,   "172w033" },
+	{ "VEGGIES",       "172w034", "172w035", "172w035" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const seriesPlayBreak PLAY1[] = {
+	{  0,  9, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 10, -1, nullptr, 0, 0,  2, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY2[] = {
+	{ 8, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY3[] = {
+	{  0, 27, "172_001", 2, 255, -1, 0,  0, nullptr, 0 },
+	{ 28, 30, "172_005", 3, 125, -1, 0, -1, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY4[] = {
+	{ 44, 45, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 45, 45, nullptr, 0, 0, -1, 0, 3, nullptr, 0 },
+	{ 45, 44, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY5[] = {
+	{ 36, 43, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 36, 36, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY6[] = {
+	{ 46, 48, "172_004", 3, 125, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY7[] = {
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
 void Room172::init() {
 	switch (_G(game).previous_room) {
 	case RESTORING_GAME:

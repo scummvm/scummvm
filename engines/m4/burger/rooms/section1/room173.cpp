@@ -28,6 +28,31 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+static const char *SAID[][4] = {
+	{ "STAIRS",          "173w002", "173w003", nullptr   },
+	{ "WRINGER",         "173w009", "173w010", "173w008" },
+	{ "BREAKER BOX",     "504w017", nullptr,   nullptr   },
+	{ "WASHING MACHINE", "173w007", nullptr,   "173w008" },
+	{ "SHORTS",          "173w004", "173w005", "173w005" },
+	{ "FAN BOY TOWEL",   "173w004", "173w005", "173w005" },
+	{ "SOCK",            "173w004", "173w005", "173w005" },
+	{ "T-SHIRT",         "173w004", "173w005", "173w005" },
+	{ "LAUNDRY",         "173w004", "173w006", "173w006" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+static const seriesPlayBreak PLAY1[] = {
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+static const seriesPlayBreak PLAY2[] = {
+	{ 0,  5, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 6, -1, nullptr, 0, 0,  1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
+};
+
+
 void Room173::init() {
 }
 
