@@ -685,7 +685,7 @@ void FreescapeEngine::toggleGameBit(int index) {
 	_gameStateBits ^= (1 << (index - 1));
 }
 
-bool FreescapeEngine::getGameBit(int index) {
+uint16 FreescapeEngine::getGameBit(int index) {
 	return (_gameStateBits >> (index - 1)) & 1;
 }
 

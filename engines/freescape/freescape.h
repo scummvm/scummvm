@@ -396,7 +396,7 @@ public:
 	void setGameBit(int index);
 	void clearGameBit(int index);
 	void toggleGameBit(int index);
-	bool getGameBit(int index);
+	uint16 getGameBit(int index);
 
 	StateVars _gameStateVars;
 	uint32 _gameStateBits;
