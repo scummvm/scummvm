@@ -25,6 +25,8 @@
 #include "m4/m4.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/rooms/section2/section2.h"
+#include "m4/burger/rooms/section3/section3.h"
+#include "m4/burger/rooms/section4/section4.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/rooms/section6/section6.h"
 #include "m4/burger/rooms/section7/section7.h"
@@ -38,8 +40,8 @@ class BurgerEngine : public M4Engine {
 private:
 	Rooms::Section1 _section1;
 	Rooms::Section2 _section2;
-	Rooms::Section1 _section3;
-	Rooms::Section1 _section4;
+	Rooms::Section3 _section3;
+	Rooms::Section4 _section4;
 	Rooms::Section5 _section5;
 	Rooms::Section6 _section6;
 	Rooms::Section7 _section7;
