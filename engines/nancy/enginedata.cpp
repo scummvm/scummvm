@@ -690,11 +690,11 @@ CVTX::CVTX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 			delete buf;
 			buf = new char[stringSize * 2];
 			bufSize = stringSize * 2;
-
-			chunkStream->read(buf, stringSize);
-			buf[stringSize] = '\0';
-			texts.setVal(keyName, buf);
 		}
+
+		chunkStream->read(buf, stringSize);
+		buf[stringSize] = '\0';
+		texts.setVal(keyName, buf);
 	}
 
 	delete buf;
