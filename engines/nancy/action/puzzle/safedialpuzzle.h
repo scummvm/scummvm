@@ -19,21 +19,20 @@
  *
  */
 
-#ifndef NANCY_ACTION_SAFELOCKPUZZLE_H
-#define NANCY_ACTION_SAFELOCKPUZZLE_H
+#ifndef NANCY_ACTION_SAFEDIALPUZZLE_H
+#define NANCY_ACTION_SAFEDIALPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {
 
-// Handles a specific type of puzzle where clicking an object rotates it,
-// as well as several other objects linked to it. Examples are the sun/moon
-// and staircase spindle puzzles in nancy3
-class SafeLockPuzzle : public RenderActionRecord {
+// Handles the nancy3 safe puzzle with Chinese characters on the dial,
+// as well as nancy4's sextant puzzle
+class SafeDialPuzzle : public RenderActionRecord {
 public:
-	SafeLockPuzzle() : RenderActionRecord(7) {}
-	virtual ~SafeLockPuzzle() {}
+	SafeDialPuzzle() : RenderActionRecord(7) {}
+	virtual ~SafeDialPuzzle() {}
 
 	void init() override;
 	void updateGraphics() override;
@@ -44,7 +43,7 @@ public:
 
 protected:
 	enum AnimState { kNone, kSpin, kSelect, kReset, kResetAnim };
-	Common::String getRecordTypeName() const override { return "SafeLockPuzzle"; }
+	Common::String getRecordTypeName() const override { return "SafeDialPuzzle"; }
 	bool isViewportRelative() const override { return true; }
 
 	void drawDialFrame(uint frame);
@@ -53,6 +52,8 @@ protected:
 	Common::String _imageName1;
 	Common::String _imageName2;
 	Common::String _resetImageName;
+
+	bool _enableWraparound = true;
 
 	Common::Rect _dialDest;
 
@@ -72,6 +73,8 @@ protected:
 	Common::Rect _ccwHotspot;
 	Common::Rect _cwHotspot;
 
+	bool _useMoveArrows = false;
+
 	SoundDescription _spinSound;
 	SoundDescription _selectSound;
 	SoundDescription _resetSound;
@@ -85,6 +88,8 @@ protected:
 
 	Graphics::ManagedSurface _image1, _image2, _resetImage;
 
+	uint _numInbetweens = 1;
+
 	Common::Array<uint16> _playerSequence;
 	bool _solved = false;
 	AnimState _animState = kNone;
@@ -95,4 +100,4 @@ protected:
 } // End of namespace Action
 } // End of namespace Nancy
 
-#endif // NANCY_ACTION_SAFELOCKPUZZLE_H
+#endif // NANCY_ACTION_SAFEDIALPUZZLE_H

@@ -22,7 +22,7 @@ MODULE_OBJS = \
   action/puzzle/riddlepuzzle.o \
   action/puzzle/rippedletterpuzzle.o \
   action/puzzle/rotatinglockpuzzle.o \
-  action/puzzle/safelockpuzzle.o \
+  action/puzzle/safedialpuzzle.o \
   action/puzzle/setplayerclock.o \
   action/puzzle/sliderpuzzle.o \
   action/puzzle/soundequalizerpuzzle.o \

@@ -39,7 +39,7 @@
 #include "engines/nancy/action/puzzle/riddlepuzzle.h"
 #include "engines/nancy/action/puzzle/rippedletterpuzzle.h"
 #include "engines/nancy/action/puzzle/rotatinglockpuzzle.h"
-#include "engines/nancy/action/puzzle/safelockpuzzle.h"
+#include "engines/nancy/action/puzzle/safedialpuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
 #include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
@@ -222,7 +222,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 209:
 		return new TurningPuzzle();
 	case 210:
-		return new SafeLockPuzzle();
+		return new SafeDialPuzzle();
 	case 211:
 		return new CollisionPuzzle(CollisionPuzzle::PuzzleType::kCollision);
 	case 212:
