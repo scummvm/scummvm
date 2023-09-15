@@ -90,9 +90,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 			return new HotMultiframeSceneChange(CursorManager::kMoveDown);
 		}
 	case 22:
-		return new Hot1FrSceneChange(CursorManager::kTurnLeft);
+		return new Hot1FrSceneChange(CursorManager::kMoveLeft);
 	case 23:
-		return new Hot1FrSceneChange(CursorManager::kTurnRight);
+		return new Hot1FrSceneChange(CursorManager::kMoveRight);
 	case 24:
 		return new HotMultiframeMultisceneCursorTypeSceneChange();
 	case 40:

@@ -120,8 +120,10 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = 5;
 		} else if (gameType ==  kGameTypeNancy3) {
 			_curCursorID = 8;
-		} else {
+		} else if (gameType <= kGameTypeNancy5) {
 			_curCursorID = 12;
+		} else {
+			_curCursorID = 16;
 		}
 
 		return;
@@ -130,27 +132,45 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = 5;
 		} else if (gameType == kGameTypeNancy2) {
 			_curCursorID = 6;
-		} else if (gameType ==  kGameTypeNancy3) {
+		} else if (gameType == kGameTypeNancy3) {
 			_curCursorID = 9;
-		} else {
+		} else if (gameType <= kGameTypeNancy5) {
 			_curCursorID = 13;
+		} else {
+			_curCursorID = 17;
 		}
 
 		return;
-	case kTurnLeft:
+	case kRotateLeft:
+		// Only valid for nancy6 and up
+		if (gameType >= kGameTypeNancy6) {
+			_curCursorID = kRotateLeft;
+			return;
+		}
+
+		// fall through
+	case kMoveLeft:
 		// Only valid for nancy3 and up
 		if (gameType >= kGameTypeNancy3) {
-			_curCursorID = kTurnLeft;
+			_curCursorID = kMoveLeft;
 			return;
 		} else {
 			type = kMove;
 		}
 
 		break;
-	case kTurnRight:
+	case kRotateRight:
+		// Only valid for nancy6 and up
+		if (gameType >= kGameTypeNancy6) {
+			_curCursorID = kRotateRight;
+			return;
+		}
+
+		// fall through
+	case kMoveRight:
 		// Only valid for nancy3 and up
 		if (gameType >= kGameTypeNancy3) {
-			_curCursorID = kTurnRight;
+			_curCursorID = kMoveRight;
 			return;
 		} else {
 			type = kMove;
@@ -185,6 +205,14 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		}
 
 		break;
+	case kSwivelLeft:
+		// Only valid for nancy6 and up, but we don't need a check for now
+		_curCursorID = kSwivelLeft;
+		return;
+	case kSwivelRight:
+		// Only valid for nancy6 and up, but we don't need a check for now
+		_curCursorID = kSwivelRight;
+		return;
 	default:
 		break;
 	}
@@ -224,26 +252,14 @@ void CursorManager::applyCursor() {
 		surf = &g_nancy->_graphicsManager->_object0;
 	}
 
-	// Create a temporary surface to hold the cursor since giving replaceCursor() a pointer
-	// to the original surface results in garbage. This also makes it so we don't have to deal
-	// with TVD's palettes
-	Graphics::ManagedSurface temp;
-	temp.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
-	temp.blitFrom(*surf, bounds, Common::Point());
+	Graphics::ManagedSurface temp(*surf, bounds);
 
-	// Convert the trans color from the original format to the screen format
-	uint transColor;
+	CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, g_nancy->_graphicsManager->getTransColor(), false);
 	if (g_nancy->getGameType() == kGameTypeVampire) {
-		uint8 palette[1 * 3];
-		surf->grabPalette(palette, 1, 1);
-		transColor = temp.format.RGBToColor(palette[0], palette[1], palette[2]);
-	} else {
-		uint8 r, g, b;
-		surf->format.colorToRGB(g_nancy->_graphicsManager->getTransColor(), r, g, b);
-		transColor = temp.format.RGBToColor(r, g, b);
+		byte palette[3 * 256];
+		surf->grabPalette(palette, 0, 256);
+		CursorMan.replaceCursorPalette(palette, 0, 256);
 	}
-
-	CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, transColor, false);
 }
 
 void CursorManager::showCursor(bool shouldShow) {

@@ -92,9 +92,9 @@ protected:
 			return "Hot1FrUpSceneChange";
 		case CursorManager::kMoveDown:
 			return "Hot1FrDownSceneChange";
-		case CursorManager::kTurnLeft:
+		case CursorManager::kMoveLeft:
 			return "Hot1FrLeftSceneChange";
-		case CursorManager::kTurnRight:
+		case CursorManager::kMoveRight:
 			return "Hot1FrUpSceneChange";
 		default:
 			return "Hot1FrSceneChange";

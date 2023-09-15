@@ -121,9 +121,9 @@ void Viewport::handleInput(NancyInput &input) {
 
 	if (direction) {
 		if (direction & kLeft) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kTurnLeft);
+			g_nancy->_cursorManager->setCursorType(CursorManager::kRotateLeft);
 		} else if (direction & kRight) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kTurnRight);
+			g_nancy->_cursorManager->setCursorType(CursorManager::kRotateRight);
 		} else if (direction & kUp) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kMoveUp);
 		} else if (direction & kDown) {

@@ -35,18 +35,22 @@ class CursorManager {
 
 public:
 	enum CursorType {
-		kNormal 		= 0,
-		kHotspot 		= 1,
-		kMove 			= 2,
-		kExit 			= 3,
-		kRotateCW 		= 4,
-		kRotateCCW 		= 5,
-		kTurnLeft 		= 6,
-		kTurnRight 		= 7,
-		kMoveForward	= 8,
-		kMoveBackward	= 9,
-		kMoveUp			= 10,
-		kMoveDown		= 11,
+		kNormal 		= 0, // Eyeglass (except in TVD), non-highlighted
+		kHotspot 		= 1, // Eyeglass (except in TVD), highlighted
+		kMove 			= 2, // Used for movement in early games
+		kExit 			= 3, // Used for movement, some games use it for exiting puzzles
+		kRotateCW 		= 4, // Used in puzzles only
+		kRotateCCW 		= 5, // Used in puzzles only
+		kMoveLeft 		= 6, // Used for movement, some games used it for turning in 360 scenes
+		kMoveRight 		= 7, // Used for movement, some games used it for turning in 360 scenes
+		kMoveForward	= 8, // Used for movement
+		kMoveBackward	= 9, // Used for movement, some games use it for exiting puzzles
+		kMoveUp			= 10, // Used for movement
+		kMoveDown		= 11, // Used for movement
+		kRotateLeft		= 12, // Used in 360 scenes in nancy6 and up
+		kRotateRight	= 13, // Used in 360 scenes in nancy6 and up
+		kSwivelLeft		= 14, // Not sure where this is used, subject to renaming
+		kSwivelRight	= 15, // Not sure where this is used, subject to renaming
 		kNormalArrow,
 		kHotspotArrow
 	};
