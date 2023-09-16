@@ -60,15 +60,10 @@ void ActionManager::handleInput(NancyInput &input) {
 				processDependency(rec->_dependencies, *rec, false);
 
 				if (!rec->_dependencies.satisfied) {
-					if (g_nancy->getGameType() >= kGameTypeNancy2 && rec->_cursorDependency != nullptr) {
-						const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
-						assert(inventoryData);
-
-						const SoundDescription &sound = inventoryData->itemDescriptions[rec->_cursorDependency->label].specificCantSound;
-						g_nancy->_sound->loadSound(sound);
-						g_nancy->_sound->playSound(sound);
+					if (rec->_cursorDependency != nullptr) {
+						NancySceneState.playItemCantSound(rec->_cursorDependency->label);
 					} else {
-						g_nancy->_sound->playSound("CANT");
+						NancySceneState.playItemCantSound();
 					}
 				} else {
 					rec->_state = ActionRecord::ExecutionState::kActionTrigger;

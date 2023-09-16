@@ -285,6 +285,20 @@ protected:
 	bool isViewportRelative() const override { return true; }
 };
 
+class InventorySoundOverride : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	byte _command = 0;
+	uint16 _itemID = 0;
+	SoundDescription _sound;
+	Common::String _caption;
+
+protected:
+	Common::String getRecordTypeName() const override { return "InventorySoundOverride"; }
+};
+
 class HintSystem : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;

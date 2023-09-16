@@ -115,6 +115,8 @@ struct INV : public EngineData {
 	Common::Rect curtainsScreenPosition;
 	uint16 curtainsFrameTime;
 
+	uint16 captionAutoClearTime = 3000;
+
 	Common::String inventoryBoxIconsImageName;
 	Common::String inventoryCursorsImageName;
 

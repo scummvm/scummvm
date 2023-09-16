@@ -137,6 +137,9 @@ public:
 	void setHeldItem(int16 id);
 	byte hasItem(int16 id) const { return _flags.items[id]; }
 
+	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
+	void playItemCantSound(int16 itemID = -1);
+
 	void setEventFlag(int16 label, byte flag);
 	void setEventFlag(FlagDescription eventFlag);
 	bool getEventFlag(int16 label, byte flag) const;
@@ -241,6 +244,12 @@ private:
 		int16 primaryVideoResponsePicked = -1;
 	};
 
+	struct InventorySoundOverride {
+		bool isDefault = false; // When true, other fields are ignored
+		SoundDescription sound;
+		Common::String caption;
+	};
+
 	// UI
 	UI::FullScreenImage _frame;
 	UI::Viewport _viewport;
@@ -267,6 +276,7 @@ private:
 	int16 _lastHintCharacter;
 	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
+	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides;
 
 	Misc::Lightning *_lightning;
 	Common::Queue<Misc::SpecialEffect> _specialEffects;

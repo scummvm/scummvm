@@ -295,6 +295,119 @@ void Scene::setHeldItem(int16 id)  {
 	_flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id);
 }
 
+void Scene::installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID) {
+	InventorySoundOverride newOverride;
+
+	switch (command) {
+	case kInvSoundOverrideCommandNoSound :
+		// Make the sound silent
+		newOverride.sound = sound;
+		newOverride.sound.name = "NO SOUND";
+		newOverride.caption = caption; // Assumes the caption will be empty
+		_inventorySoundOverrides.setVal(itemID, newOverride);
+		break;
+	case kInvSoundOverrideCommandNewSound :
+		newOverride.sound = sound;
+		newOverride.caption = caption;
+		_inventorySoundOverrides.setVal(itemID, newOverride);
+		break;
+	case kInvSoundOverrideCommandICant :
+		// Make the sound the default "I can't use that here"
+		newOverride.isDefault = true;
+		_inventorySoundOverrides.setVal(itemID, newOverride);
+		break;
+	case kInvSoundOverrideCommandTurnOff :
+		// Remove any previous override
+		_inventorySoundOverrides.erase(itemID);
+		break;
+	default :
+		return;
+	}
+}
+
+void Scene::playItemCantSound(int16 itemID) {
+	// Improvement: nancy2 never shows the caption text, even though it exists in the data; we show it
+	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	assert(inventoryData);
+
+	if (itemID < 0) {
+		if (inventoryData->cantSound.name.size()) {
+			// Play default "can't" inside inventory data (if present)
+			g_nancy->_sound->loadSound(inventoryData->cantSound);
+			g_nancy->_sound->playSound(inventoryData->cantSound);
+
+			if (ConfMan.getBool("subtitles")) {
+				_textbox.addTextLine(inventoryData->cantText);
+			}
+		} else {
+			// TVD and nancy1 contain no sound data in INV, and have no captions
+			g_nancy->_sound->playSound("CANT");
+		}
+	} else if ((uint)itemID < _flags.items.size()) {
+		if (_inventorySoundOverrides.contains(itemID)) {
+			// We have an override installed
+			InventorySoundOverride &override = _inventorySoundOverrides[itemID];
+			if (!override.isDefault) {
+				// Not set to the default sound, play the override
+				g_nancy->_sound->loadSound(override.sound);
+				g_nancy->_sound->playSound(override.sound);
+
+				if (ConfMan.getBool("subtitles")) {
+					_textbox.addTextLine(override.caption);
+				}
+				return;
+			} else {
+				// Play the default "I can't" sound
+				const INV::ItemDescription item = inventoryData->itemDescriptions[itemID];
+
+				if (item.generalCantSound.name.size()) {
+					// This field only exists in nancy2
+					g_nancy->_sound->loadSound(item.generalCantSound);
+					g_nancy->_sound->playSound(item.generalCantSound);
+
+					if (ConfMan.getBool("subtitles")) {
+						_textbox.addTextLine(item.generalCantText);
+					}
+				} else if (inventoryData->cantSound.name.size()) {
+					g_nancy->_sound->loadSound(inventoryData->cantSound);
+					g_nancy->_sound->playSound(inventoryData->cantSound);
+
+					if (ConfMan.getBool("subtitles")) {
+						_textbox.addTextLine(inventoryData->cantText);
+					}
+				} else {
+					// Should be unreachable
+					g_nancy->_sound->playSound("CANT");
+				}
+			}
+		}
+
+		// No override installed
+		const INV::ItemDescription item = inventoryData->itemDescriptions[itemID];
+
+		if (item.specificCantSound.name.size()) {
+			// The inventory data contains a custom "can't" sound for this item
+			g_nancy->_sound->loadSound(item.specificCantSound);
+			g_nancy->_sound->playSound(item.specificCantSound);
+
+			if (ConfMan.getBool("subtitles")) {
+				_textbox.addTextLine(item.specificCantText);
+			}
+		} else if (inventoryData->cantSound.name.size()) {
+			// No custom sound, play default "can't" inside inventory data. Should (?) be unreachable
+			g_nancy->_sound->loadSound(inventoryData->cantSound);
+			g_nancy->_sound->playSound(inventoryData->cantSound);
+
+			if (ConfMan.getBool("subtitles")) {
+				_textbox.addTextLine(inventoryData->cantText);
+			}
+		} else {
+			// TVD and nancy1 contain no sound data in INV, and have no captions
+			g_nancy->_sound->playSound("CANT");
+		}
+	}
+}
+
 void Scene::setEventFlag(int16 label, byte flag) {
 	if (label >= 1000) {
 		// In nancy3 and onwards flags begin from 1000
@@ -708,6 +821,11 @@ void Scene::load() {
 			_viewport.disableEdges(kUp | kDown);
 		}
 	}
+
+	for (auto &override : _inventorySoundOverrides) {
+		g_nancy->_sound->stopSound(override._value.sound);
+	}
+	_inventorySoundOverrides.clear();
 
 	_timers.sceneTime = 0;
 

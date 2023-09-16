@@ -43,36 +43,42 @@ class NancyEngine;
 // Other, more specific constants are declared within their related classes,
 // so as not to litter the namespace
 
-static const int8 kFlagNoLabel			= -1;
-static const int8 kEvNoEvent			= -1;
-static const int8 kFrNoFrame			= -1;
+static const int8 kFlagNoLabel						= -1;
+static const int8 kEvNoEvent						= -1;
+static const int8 kFrNoFrame						= -1;
 
 // Inventory items use types
-static const byte kInvItemUseThenLose	= 0;
-static const byte kInvItemKeepAlways	= 1;
-static const byte kInvItemReturn		= 2;
+static const byte kInvItemUseThenLose				= 0;
+static const byte kInvItemKeepAlways				= 1;
+static const byte kInvItemReturn					= 2;
+
+// Inventory item sound override commands
+static const byte kInvSoundOverrideCommandNoSound	= 0;
+static const byte kInvSoundOverrideCommandTurnOff	= 1;
+static const byte kInvSoundOverrideCommandNewSound	= 2;
+static const byte kInvSoundOverrideCommandICant		= 3;
 
 // Dependency types
-static const byte kFlagEvent			= 1;
-static const byte kFlagInventory		= 2;
-static const byte kFlagCursor			= 3;
+static const byte kFlagEvent						= 1;
+static const byte kFlagInventory					= 2;
+static const byte kFlagCursor						= 3;
 
 // Scene sound flags
-static const byte kContinueSceneSound	= 1;
-static const byte kLoadSceneSound		= 0;
+static const byte kContinueSceneSound				= 1;
+static const byte kLoadSceneSound					= 0;
 
 // Clock bump types
-static const byte kAbsoluteClockBump 	= 1;
-static const byte kRelativeClockBump 	= 2;
+static const byte kAbsoluteClockBump 				= 1;
+static const byte kRelativeClockBump 				= 2;
 
 // Time of day
-static const byte kPlayerDay			= 0;
-static const byte kPlayerNight			= 1;
-static const byte kPlayerDuskDawn		= 2;
+static const byte kPlayerDay						= 0;
+static const byte kPlayerNight						= 1;
+static const byte kPlayerDuskDawn					= 2;
 
 // Video
-static const byte kSmallVideoFormat		= 1;
-static const byte kLargeVideoFormat		= 2;
+static const byte kSmallVideoFormat					= 1;
+static const byte kLargeVideoFormat					= 2;
 
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 

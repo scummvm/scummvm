@@ -115,7 +115,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(s, curtainsScreenPosition);
 	s.syncAsUint16LE(curtainsFrameTime);
 
-	s.skip(2, kGameTypeNancy3); // Unknown, 3000
+	s.syncAsUint16LE(captionAutoClearTime, kGameTypeNancy3);
 
 	readFilename(s, inventoryBoxIconsImageName);
 	readFilename(s, inventoryCursorsImageName);

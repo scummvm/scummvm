@@ -385,6 +385,22 @@ void ShowInventoryItem::execute() {
 	}
 }
 
+void InventorySoundOverride::readData(Common::SeekableReadStream &stream) {
+	_command = stream.readByte();
+	_itemID = stream.readUint16LE();
+	stream.skip(2);
+	char buf[61];
+	stream.read(buf, 60);
+	buf[60] = '\0';
+	_caption = buf;
+	_sound.readNormal(stream);
+}
+
+void InventorySoundOverride::execute() {
+	NancySceneState.installInventorySoundOverride(_command, _sound, _caption, _itemID);
+	_isDone = true;
+}
+
 void HintSystem::readData(Common::SeekableReadStream &stream) {
 	_characterID = stream.readByte();
 	_genericSound.readNormal(stream);

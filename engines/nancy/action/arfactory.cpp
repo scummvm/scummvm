@@ -183,6 +183,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new RemoveInventoryNoHS();
 	case 122:
 		return new ShowInventoryItem();
+	case 123:
+		return new InventorySoundOverride();
 	case 150:
 		return new PlayDigiSoundAndDie();
 	case 151:
