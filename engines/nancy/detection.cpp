@@ -27,6 +27,7 @@ const char *const directoryGlobs[] = {
 	"game",
 	"iff",
 	"cifTree",
+	"datafiles",
 	nullptr
 };
 
@@ -47,6 +48,9 @@ static const PlainGameDescriptor nancyGames[] = {
 	{ "nancy4", "Nancy Drew: Treasure in the Royal Tower" },
 	{ "nancy5", "Nancy Drew: The Final Scene" },
 	{ "nancy6", "Nancy Drew: Secret of the Scarlet Hand" },
+	{ "nancy7", "Nancy Drew: Ghost Dogs of Moon Lake" },
+	{ "nancy8", "Nancy Drew: The Haunted Carousel" },
+	{ "nancy9", "Nancy Drew: Danger on Deception Island" },
 	{ nullptr, nullptr }
 };
 
@@ -107,7 +111,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ciftree.dat", "fa4293d728a1b31407961cd82e86a015", 7784516),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 			GUIO0()
 		},
 		Nancy::kGameTypeNancy2
@@ -371,7 +375,43 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		Nancy::kGameTypeNancy6
-	}
+	},
+	{
+		{
+			"nancy7", nullptr,
+			AD_ENTRY1s("ciftree.dat", "e49e6f56a47c363e2651bd19a70ff557", 55835579),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			GUIO0()
+		},
+		Nancy::kGameTypeNancy7
+	},
+	{
+		{
+			"nancy8", nullptr,
+			AD_ENTRY1s("ciftree.dat", "d85192a942a207017ebf0a19207ac698", 19498032),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			GUIO0()
+		},
+		Nancy::kGameTypeNancy8
+	},
+	{
+		{
+			"nancy9", nullptr,
+			AD_ENTRY1s("ciftree.dat", "3a756e09631f4a2c8f48bf316e77b5d5", 26610718),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			GUIO0()
+		},
+		Nancy::kGameTypeNancy9
+	},
+
+	// Do not delete
+	{ AD_TABLE_END_MARKER, Nancy::kGameTypeNone }
 };
 
 class NancyMetaEngineDetection : public AdvancedMetaEngineDetection {
