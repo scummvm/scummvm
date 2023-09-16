@@ -182,7 +182,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for rendering issue at MainActor::teleport 41 17627 16339 48
 	 * Wall with window should render after non-window wall
 	 */
-	void test_nonflat_tranparent_sort() {
+	void test_nonflat_transparent_sort() {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
@@ -195,6 +195,28 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si2._trans = true;
 		si2._solid = true;
 		si2._land = true;
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
+	 * Overlapping lower Z position transparent non-solid draw after
+	 * Test case for rendering issue at MainActor::teleport 50 2316 7812 48
+	 * Skeleton in niche should render before cobweb
+	 */
+	void test_ignore_z_transparent_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(2212, 7804, 64, 192, 32, 8);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+		si1._land = true;
+
+		Ultima::Ultima8::Box b2(2207, 7839, 48, 0, 96, 48);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._trans = true;
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));

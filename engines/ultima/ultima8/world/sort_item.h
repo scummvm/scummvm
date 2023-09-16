@@ -414,7 +414,7 @@ inline bool SortItem::below(const SortItem &si2) const {
 	// If an object's base (z-bottom) is higher another's, it should be rendered after.
 	// This check must be on the z-bottom and not the z-top because two objects with the
 	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
-	if (si1._z != si2._z)
+	if (si1._z != si2._z && (si1._solid == si2._solid || si1._trans == si2._trans))
 		return si1._z < si2._z;
 
 	// Are overlapping in all 3 dimensions if we come here
