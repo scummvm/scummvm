@@ -2041,6 +2041,9 @@ void RaycastPuzzle::checkSwitch() {
 					}
 
 					_lightSwitchStates[i] = false;
+					_dummySound.name = _switchSoundName;
+					_dummySound.channelID = _switchSoundChannelID;
+					g_nancy->_sound->playSound(_dummySound);
 				}
 			}
 		} else {
