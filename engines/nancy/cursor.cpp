@@ -43,20 +43,10 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 
 	chunkStream->seek(0);
 
-	switch(g_nancy->getGameType()) {
-	case kGameTypeVampire:
-		// fall thorugh
-	case kGameTypeNancy1:
-		_numCursorTypes = 4;
-		break;
-	case kGameTypeNancy2:
-		_numCursorTypes = 5;
-		break;
-	case kGameTypeNancy3:
-		_numCursorTypes = 8;
-		break;
-	default:
-		_numCursorTypes = 12;
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		_numCursorTypes = g_nancy->getStaticData().numNonItemCursors / 2;
+	} else {
+		_numCursorTypes = g_nancy->getStaticData().numNonItemCursors / 3;
 	}
 
 	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * _numCursorTypes;
@@ -106,8 +96,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 
 	_hasItem = false;
 
-	// kNormalArrow, kHotspotArrow, kExit, kTurnLeft and kTurnRight are
-	// cases where the selected cursor is _always_ shown, regardless
+	// For all cases below, the selected cursor is _always_ shown, regardless
 	// of whether or not an item is held. All other types of cursor
 	// are overridable when holding an item. Every item cursor has
 	// _numItemCursor variants, one corresponding to every numbered
