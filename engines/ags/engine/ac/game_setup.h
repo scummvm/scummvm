@@ -104,6 +104,8 @@ struct GameSetup {
 	bool  override_upscale; // whether upscale old games that supported that
 	// assume game data version when restoring legacy save format
 	GameDataVersion dataver_for_legacysavs = kGameVersion_Undefined;
+	// allow to read mismatching number of guis from legacy save file
+	bool  legacysaves_let_gui_diff = false;
 	// Optional keys for calling built-in save/restore dialogs;
 	// primarily meant for the test runs of the games where save functionality
 	// is not implemented (or does not work correctly).

@@ -255,6 +255,10 @@ HError ReadGUI(Stream *in, bool is_savegame = false);
 void WriteGUI(Stream *out);
 // Converts legacy GUIVisibility into appropriate GUIMain properties
 void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
+
+// Rebuilds GUIs, connecting them to the child controls in memory.
+// WARNING: the data is processed in the global arrays (guis, guibuts, and so on)
+HError RebuildGUI();
 }
 
 } // namespace Shared
