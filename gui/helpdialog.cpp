@@ -54,13 +54,23 @@ HelpDialog::HelpDialog()
 	Common::U32String helpText1 = _(
 "## Where to get the games\n"
 "\n"
-"Many games supported by ScummVM can still be bought from companies at the links below. Not all games on this list are supported by ScummVM, please check [the compatibility page](https://scummvm.org/compatibility) beforehand.\n"
+"Many games supported by ScummVM can still be bought from companies at the links on "
+"[our Wiki](https://wiki.scummvm.org/index.php?title=Where_to_get_the_games).\n"
 "\n"
-"Several games have been released for free legal download by their respective copyright holders. You can download them from [our website](https://scummvm.org/games).\n"
+"Several games have been released for free legal download by their respective copyright "
+"holders. You can download them from [our website](https://scummvm.org/games).\n"
 "\n"
-"For other (out of print) games try Amazon, eBay, Game Trading Zone or other auction sites but beware of faulty games (e.g., scratched discs) and illegal game copies (e.g., from Butterfly Media).\n"
+"Also, we maintain a comprehensive [list of downloadable demos](https://www.scummvm.org/demos/).\n"
 "\n"
-"The ScummVM team does not recommend any individual supplier of games and this list is for reference purposes only. The ScummVM project does get a cut from every purchase on [GOG.com](https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) and [ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through one of the links with the added affiliate referrer though.\n"
+"For other (out of print) games try Amazon, eBay, Game Trading Zone or other auction "
+"sites but beware of faulty games (e.g., scratched discs) and illegal game copies "
+"(e.g., from Butterfly Media).\n"
+"\n"
+"The ScummVM team does not recommend any individual supplier of games and thesr lists are "
+"for reference purposes only. However, the ScummVM project does get a cut from every purchase on "
+"[GOG.com](https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) and "
+"[ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) "
+"through one of the links with the added affiliate referrer though.\n"
 	);
 
 	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText1);
