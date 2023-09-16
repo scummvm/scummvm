@@ -96,6 +96,7 @@ void DarkEngine::addWalls(Area *area) {
 		if (target > 0) {
 			area->addObjectFromArea(id, _areaMap[255]);
 			GeometricObject *gobj = (GeometricObject *)area->objectWithID(id);
+			assert(gobj);
 			assert((*(gobj->_condition[0]._thenInstructions))[0].getType() == Token::Type::GOTO);
 			assert((*(gobj->_condition[0]._thenInstructions))[0]._destination == 0);
 			(*(gobj->_condition[0]._thenInstructions))[0].setSource(target);
