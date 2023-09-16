@@ -22,9 +22,7 @@
 #ifndef COMMON_FORMATS_CUE_H
 #define COMMON_FORMATS_CUE_H
 
-#include "common/hash-str.h"
-#include "common/str.h"
-#include "common/types.h"
+#include "common/array.h"
 
 namespace Common {
 
@@ -37,6 +35,20 @@ class CueSheet {
 public:
 	CueSheet(const char *sheet);
 
+public:
+	enum CueFileType {
+		kCueFileTypeBinary,
+		kCueFileTypeAIFF,
+		kCueFileTypeWave,
+		kCueFileTypeMP3,
+		kCueFileTypeMotorola,
+	};
+
+	struct CueFile {
+		String name;
+		CueFileType type = kCueFileTypeBinary;
+	};
+
 private:
 	void parseHeaderContext(const char *line);
 	void parseFilesContext(const char *line);
@@ -44,6 +56,9 @@ private:
 
 private:
 	int _context;
+	int _currentFile = -1;
+
+	Common::Array<CueFile> _files;
 };
 
 } // End of namespace Common

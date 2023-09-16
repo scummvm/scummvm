@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/str.h"
 #include "common/formats/cue.h"
 
 namespace Common {
@@ -106,7 +107,50 @@ CueSheet::CueSheet(const char *sheet) {
 	}
 }
 
+struct LookupTable {
+	const char *key;
+	int value;
+};
+
+static int lookupInTable(LookupTable *table, const char *key) {
+	while (table->key) {
+		if (!strcmp(key, table->key))
+			return table->value;
+
+		table++;
+	}
+
+	error("CueSheet::lookupInTable(): Unknown token %s", key);
+}
+
+LookupTable fileTypes[] = {
+	{ "BINARY",   CueSheet::kCueFileTypeBinary },
+	{ "AIFF",     CueSheet::kCueFileTypeAIFF },
+	{ "WAVE",     CueSheet::kCueFileTypeWave },
+	{ "MP3",      CueSheet::kCueFileTypeMP3 },
+	{ "MOTOROLA", CueSheet::kCueFileTypeMotorola },
+	{ 0, 0 }
+};
+
 void CueSheet::parseHeaderContext(const char *line) {
+	const char *s = line;
+
+	String command = nexttok(s, &s);
+
+	if (command == "FILE") {
+		_files.push_back(CueFile());
+
+		_currentFile++;
+
+		_files[_currentFile].name = nexttok(s, &s);
+
+		String type = nexttok(s, &s);
+
+		_files[_currentFile].type = kCueFileTypeBinary;
+		_files[_currentFile].type = (CueFileType)lookupInTable(fileTypes, type.c_str());
+
+		_context = kCueContextFiles;
+	}
 }
 
 void CueSheet::parseFilesContext(const char *line) {
