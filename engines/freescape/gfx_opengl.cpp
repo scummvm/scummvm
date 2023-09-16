@@ -316,7 +316,7 @@ void OpenGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 void OpenGLRenderer::polygonOffset(bool enabled) {
 	if (enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(-40.0f / MIN(4, _scale), 1.0f);
+		glPolygonOffset(-10.0f, 1.0f);
 	} else {
 		glPolygonOffset(0, 0);
 		glDisable(GL_POLYGON_OFFSET_FILL);
