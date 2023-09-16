@@ -77,7 +77,7 @@ HelpDialog::HelpDialog()
 
 
 	// Now add backend-specific tabs if any
-	const char **backendTabs = g_system->buildHelpDialogData();
+	const char * const *backendTabs = g_system->buildHelpDialogData();
 
 	if (backendTabs) {
 		while (*backendTabs) {

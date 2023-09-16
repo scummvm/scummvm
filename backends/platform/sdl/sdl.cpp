@@ -1006,7 +1006,7 @@ void OSystem_SDL::clearGraphicsModes() {
 }
 #endif
 
-static const char *helpTabs[] = {
+static const char * const helpTabs[] = {
 _s("Keyboard"),
 "",
 _s(
@@ -1046,6 +1046,6 @@ _s(
 0,
 	};
 
-const char **OSystem_SDL::buildHelpDialogData() {
+const char * const *OSystem_SDL::buildHelpDialogData() {
 	return helpTabs;
 }

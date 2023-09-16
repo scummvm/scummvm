@@ -1839,7 +1839,7 @@ public:
 	 *
 	 * The string list is null-terminated.
 	 */
-	 virtual const char **buildHelpDialogData() { return nullptr; }
+	 virtual const char * const *buildHelpDialogData() { return nullptr; }
 
 	/**
 	 * Notify the backend that the settings editable from the game tab in the

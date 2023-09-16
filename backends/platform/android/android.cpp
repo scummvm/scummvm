@@ -1024,7 +1024,7 @@ void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
 }
 #endif
 
-static const char *helpTabs[] = {
+static const char * const helpTabs[] = {
 _s("Controls"),
 "",
 _s(
@@ -1128,7 +1128,7 @@ _s(
 0 // End of list
 };
 
-const char **OSystem_Android::buildHelpDialogData() {
+const char * const *OSystem_Android::buildHelpDialogData() {
 	return helpTabs;
 }
 
