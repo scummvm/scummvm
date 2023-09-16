@@ -54,15 +54,77 @@ static const seriesPlayBreak PLAY2[] = {
 
 
 void Room173::init() {
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
+	case 172:
+		ws_demand_location(136, 318, 5);
+		_G(wilbur_should) = player_been_here(173) ? 1 : 2;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	default:
+		ws_demand_location(332, 333, 5);
+		break;
+	}
 }
 
 void Room173::daemon() {
-}
+	switch (_G(kernel).trigger) {
+	case 1:
+		disable_player_commands_and_fade_init(1019);
+		break;
 
-void Room173::pre_parser() {
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			disable_player();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY1, "173wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 2:
+			disable_player();
+			_G(wilbur_should) = 3;
+			series_play_with_breaks(PLAY1, "173wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 3:
+			enable_player();
+			wilbur_speech("173w001");
+			break;
+
+		case 4:
+			disable_player();
+			series_play_with_breaks(PLAY2, "173wi02", 0x200, -1, 3);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room173::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("GEAR", "STAIRS")) {
+		_G(wilbur_should) = 4;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
