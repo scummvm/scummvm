@@ -546,7 +546,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 gasPocketY = 0;
 	uint8 gasPocketRadius = 0;
 	// Castle specific
-	uint8 extraColor[4];
+	uint8 extraColor[4] = {};
 	if (isEclipse()) {
 		byte idx = file->readByte();
 		name = idx < 8 ? eclipseRoomName[idx] : eclipseRoomName[8];
