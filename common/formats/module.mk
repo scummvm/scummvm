@@ -1,6 +1,7 @@
 MODULE := common/formats
 
 MODULE_OBJS := \
+	cue.o \
 	formatinfo.o \
 	iff_container.o \
 	ini-file.o \
