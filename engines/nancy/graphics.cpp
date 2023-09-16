@@ -40,6 +40,18 @@ GraphicsManager::GraphicsManager() :
 	_isSuppressed(false) {}
 
 void GraphicsManager::init() {
+	const BSUM *bsum = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bsum);
+
+	// Extract transparent color from the boot summary
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		_transColor = bsum->paletteTrans;
+	} else {
+		_transColor = 	(bsum->rTrans << _inputPixelFormat.rShift) |
+						(bsum->gTrans << _inputPixelFormat.gShift) |
+						(bsum->bTrans << _inputPixelFormat.bShift);
+	}
+
 	initGraphics(640, 480, &_screenPixelFormat);
 	_screen.create(640, 480, _screenPixelFormat);
 	_screen.setTransparentColor(getTransColor());
@@ -120,12 +132,14 @@ void GraphicsManager::draw(bool updateScreen) {
 }
 
 void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
+	const BSUM *bsum = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bsum);
 	assert(chunkStream);
 
 	chunkStream->seek(0);
-	while (chunkStream->pos() < chunkStream->size() - 1) {
-		_fonts.push_back(Font());
-		_fonts.back().read(*chunkStream);
+	_fonts.resize(bsum->numFonts);
+	for (uint i = 0; i < _fonts.size(); ++i) {
+		_fonts[i].read(*chunkStream);
 	}
 
 	delete chunkStream;
@@ -357,14 +371,6 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
 
 const Graphics::PixelFormat &GraphicsManager::getScreenPixelFormat() {
 	return _screenPixelFormat;
-}
-
-uint GraphicsManager::getTransColor() {
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
-	} else {
-		return _inputPixelFormat.ARGBToColor(0, 0, 255, 0);
-	}
 }
 
 void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray) {

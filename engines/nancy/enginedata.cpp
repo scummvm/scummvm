@@ -72,15 +72,26 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(s, helpButtonHighlightSrc, kGameTypeNancy2);
 	readRect(s, clockHighlightSrc, kGameTypeNancy2);
 
-	s.skip(0xE, kGameTypeVampire, kGameTypeVampire);
-	s.skip(9, kGameTypeNancy1);
+	s.skip(0x2, kGameTypeVampire, kGameTypeVampire);
+	s.syncAsByte(paletteTrans, kGameTypeVampire, kGameTypeVampire);
+	s.skip(0x2, kGameTypeVampire, kGameTypeVampire);
+	s.syncAsByte(rTrans);
+	s.syncAsByte(gTrans);
+	s.syncAsByte(bTrans);
+	s.skip(6); // Black and white
+
 	s.syncAsUint16LE(horizontalEdgesSize);
 	s.syncAsUint16LE(verticalEdgesSize);
 
-	s.skip(0x1A, kGameTypeVampire, kGameTypeVampire);
-	s.skip(0x1C, kGameTypeNancy1);
+	s.syncAsUint16LE(numFonts);
+
+	// Skip data for debug features (diagnostics, version...)
+	s.skip(0x18, kGameTypeVampire, kGameTypeVampire);
+	s.skip(0x1A, kGameTypeNancy1);
+
 	s.syncAsSint16LE(playerTimeMinuteLength);
 	s.syncAsUint16LE(buttonPressTimeDelay);
+	s.skip(4, kGameTypeNancy6);
 	s.syncAsByte(overrideMovementTimeDeltas);
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);

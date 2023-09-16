@@ -60,8 +60,13 @@ struct BSUM : public EngineData {
 	Common::Rect helpButtonHighlightSrc;
 	Common::Rect clockHighlightSrc;
 
+	// Transparent color
+	byte paletteTrans, rTrans, gTrans, bTrans;
+
 	uint16 horizontalEdgesSize;
 	uint16 verticalEdgesSize;
+
+	uint16 numFonts;
 
 	uint16 playerTimeMinuteLength;
 	uint16 buttonPressTimeDelay;

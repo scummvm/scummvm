@@ -54,7 +54,7 @@ public:
 
 	const Graphics::PixelFormat &getInputPixelFormat();
 	const Graphics::PixelFormat &getScreenPixelFormat();
-	uint getTransColor();
+	uint32 getTransColor() { return _transColor; }
 
 	void grabViewportObjects(Common::Array<RenderObject *> &inArray);
 	void screenshotViewport(Graphics::ManagedSurface &inSurf);
@@ -88,6 +88,8 @@ private:
 	Common::Array<Font> _fonts;
 
 	Common::List<Common::Rect> _dirtyRects;
+
+	uint32 _transColor = 0;
 
 	bool _isSuppressed;
 };
