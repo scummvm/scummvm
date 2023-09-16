@@ -37,6 +37,9 @@ namespace Rooms {
 
 class Section4 : public Rooms::Section {
 private:
+	static const char *PARSER[];
+
+private:
 	Room401 _room401;
 	Room402 _room402;
 	Room404 _room404;

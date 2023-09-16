@@ -26,6 +26,16 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+const char *Room407::SAID[][4] = {
+	{ "TOUR BUS",     "407w001", "407w002", "407w003" },
+	{ "ROXY",         nullptr,   "400w001", "400w001" },
+	{ "DRUMZ",        "407w007", "400w001", "400w001" },
+	{ "INSTRUMENTS",  "407w009", "407w010", "407w010" },
+	{ "FORCE FIELD",  "400w005", nullptr,   "400w001" },
+	{ "FORCE FIELD ", "400w005", nullptr,   "400w001" }
+};
+
+
 void Room407::init() {
 }
 

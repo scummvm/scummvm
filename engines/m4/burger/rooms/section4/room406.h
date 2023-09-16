@@ -23,14 +23,60 @@
 #define M4_BURGER_ROOMS_SECTION4_ROOM406_H
 
 #include "m4/burger/rooms/room.h"
+#include "m4/burger/walker.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
 class Room406 : public Room {
+private:
+	static const char *SAID[][4];
+	static const WilburMatch MATCH[];
+	static const seriesStreamBreak SERIES1[];
+	static const seriesPlayBreak PLAY1[];
+	static const seriesPlayBreak PLAY2[];
+	static const seriesPlayBreak PLAY3[];
+	static const seriesPlayBreak PLAY4[];
+	static const seriesPlayBreak PLAY5[];
+	static const seriesPlayBreak PLAY6[];
+	static const seriesPlayBreak PLAY7[];
+	static const seriesPlayBreak PLAY8[];
+	static const seriesPlayBreak PLAY9[];
+	static const seriesPlayBreak PLAY10[];
+	static const seriesPlayBreak PLAY11[];
+	static const seriesPlayBreak PLAY12[];
+	static const seriesPlayBreak PLAY13[];
+	static const seriesPlayBreak PLAY14[];
+	static const seriesPlayBreak PLAY15[];
+	static const seriesPlayBreak PLAY16[];
+	static const seriesPlayBreak PLAY17[];
+	static const seriesPlayBreak PLAY18[];
+	static const seriesPlayBreak PLAY19[];
+	static const seriesPlayBreak PLAY20[];
+	static const seriesPlayBreak PLAY21[];
+	static const seriesPlayBreak PLAY22[];
+	static const seriesPlayBreak PLAY23[];
+	static const seriesPlayBreak PLAY24[];
+	static const seriesPlayBreak PLAY25[];
+	static const seriesPlayBreak PLAY26[];
+	static const seriesPlayBreak PLAY27[];
+	static const seriesPlayBreak PLAY28[];
+	static const seriesPlayBreak PLAY29[];
+	static const seriesPlayBreak PLAY30[];
+	static const seriesPlayBreak PLAY31[];
+	static const seriesPlayBreak PLAY32[];
+	static const seriesPlayBreak PLAY33[];
+	static const seriesPlayBreak PLAY34[];
+	static const seriesPlayBreak PLAY35[];
+	static const seriesPlayBreak PLAY36[];
+	static long _state1;
+	static long _state2;
+	static long _state3;
+	static long _state4;
+
 public:
-	Room406() : Room() {}
+	Room406();
 	~Room406() override {}
 
 	void init() override;
