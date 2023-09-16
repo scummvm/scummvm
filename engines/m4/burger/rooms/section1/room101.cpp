@@ -247,7 +247,7 @@ void Room101::daemon() {
 
 	case 6:
 		if (!_G(flags)[V287]) {
-			uint idx = _G(flags)[NEURO_TEST_COUNTER];
+			uint idx = _G(flags)[kNEURO_TEST_COUNTER];
 			assert(idx < 8);
 
 			static const char *const NAMES[8] = {
@@ -306,7 +306,7 @@ void Room101::daemon() {
 				}
 				break;
 			}
-		} else if (!_G(flags)[ROOM101_FLAG20]) {
+		} else if (!_G(flags)[V152]) {
 			switch (_G(flags)[V153]) {
 			case 0:
 			case 1:
@@ -332,7 +332,7 @@ void Room101::daemon() {
 			series_load("101wi13s", -1, nullptr);
 		if (_G(flags)[V099])
 			series_load("101wi12s", -1, nullptr);
-		if (_G(flags)[ROOM101_FLAG20])
+		if (_G(flags)[V152])
 			series_load("101wi11s", -1, nullptr);
 
 		_machine1 = series_play("101wi14s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
@@ -408,7 +408,7 @@ void Room101::daemon() {
 		daemon18();
 
 		if (_G(flags)[V184]) {
-			if (_G(flags)[ROOM101_FLAG20] || _G(flags)[V220]) {
+			if (_G(flags)[V152] || _G(flags)[V220]) {
 				terminateMachineAndNull(_machine1);
 				terminateMachineAndNull(_machine2);
 				kernel_timing_trigger(1, 19);
@@ -817,7 +817,7 @@ void Room101::daemon18() {
 }
 
 void Room101::daemon20() {
-	if (_G(flags)[V177] || _G(flags)[ROOM101_FLAG20]) {
+	if (_G(flags)[V177] || _G(flags)[V152]) {
 		inv_move_object("KEYS", 138);
 		inv_give_to_player("JAWZ O' LIFE");
 		_G(flags)[V046] = 0;

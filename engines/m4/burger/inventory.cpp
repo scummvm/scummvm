@@ -96,5 +96,10 @@ void Inventory::remove(const Common::String &name) {
 	_GI(inventory)->_must_redraw_all = true;
 }
 
+void Inventory::reset() {
+	for (const InvObject *item = INVENTORY_ITEMS; item->_name; ++item)
+		inv_move_object(item->_name, item->_scene);
+}
+
 } // namespace Burger
 } // namespace M4

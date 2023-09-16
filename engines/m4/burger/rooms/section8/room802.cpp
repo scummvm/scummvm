@@ -137,7 +137,7 @@ void Room802::init() {
 	_flag1 = false;
 	_flag2 = false;
 
-	if (_G(flags)[NEURO_TEST_COUNTER] > 1) {
+	if (_G(flags)[kNEURO_TEST_COUNTER] > 1) {
 		kernel_trigger_dispatch_now(24);
 		digi_preload_stream_breaks(SERIES1);
 		kernel_trigger_dispatch_now(14);
@@ -172,7 +172,7 @@ void Room802::daemon() {
 		break;
 
 	case 3:
-		switch (_G(flags)[NEURO_TEST_COUNTER]) {
+		switch (_G(flags)[kNEURO_TEST_COUNTER]) {
 		case 0:
 			release_trigger_on_digi_state(4, 1);
 			break;
@@ -225,7 +225,7 @@ void Room802::daemon() {
 		digi_preload("802_019");
 		digi_play_loop("802_019", 3, 128);
 
-		if (_G(flags)[NEURO_TEST_COUNTER] == 0) {
+		if (_G(flags)[kNEURO_TEST_COUNTER] == 0) {
 			player_set_commands_allowed(true);
 			digi_unload_stream_breaks(SERIES3);
 

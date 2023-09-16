@@ -122,7 +122,7 @@ void Room207::init() {
 	series_load("207AS04");
 	series_load("207AS04S");
 
-	_conv1 = getConvName();
+	_conv1 = _G(flags).getConvName();
 	if (!_conv1)
 		_conv1 = "conv51";
 
@@ -388,42 +388,6 @@ void Room207::parser() {
 		handleConv();
 		_G(player).command_ready = false;
 	}
-}
-
-const char *Room207::getConvName() {
-	_conv2 = nullptr;
-	if (_G(flags)[V287] && !_G(flags)[V242])
-		_conv2 = "conv51";
-
-	if (_G(flags)[V242] == 5 && _G(flags)[V241] == 0 && !player_been_here(612)) {
-		if (_G(flags)[V248])
-			_conv2 = "conv52";
-		else
-			--_G(flags)[V242];
-	}
-
-	if (_G(flags)[V241] && !_G(flags)[V100])
-		_conv2 = "conv53";
-
-	if (_G(flags)[V100] == 5 && !_G(flags)[V099] && !player_been_here(310) &&
-			!player_been_here(311) && !player_been_here(312) && !player_been_here(313) &&
-			!player_been_here(314) && !player_been_here(315) && !player_been_here(316) &&
-			!player_been_here(317) && !player_been_here(318) && !player_been_here(319))
-		_conv2 = "conv54";
-
-	if (_G(flags)[V099] && !_G(flags)[V185])
-		_conv2 = "conv55";
-
-	if (_G(flags)[V185] == 5 && !_G(flags)[V184])
-		_conv2 = "conv56";
-
-	if (_G(flags)[V184] && !_G(flags)[V153])
-		_conv2 = "conv57";
-
-	if (_G(flags)[V153] == 5)
-		_conv2 = "conv58";
-
-	return _conv2;
 }
 
 void Room207::handleConv() {

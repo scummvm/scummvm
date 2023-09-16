@@ -45,13 +45,11 @@ private:
 	static const seriesStreamBreak SERIES1[];
 	static const seriesStreamBreak SERIES2[];
 	const char *_conv1 = nullptr;
-	const char *_conv2 = nullptr;
 	Series _series1;
 	machine *_general1 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
 
-	const char *getConvName();
 	void handleConv();
 	int getVal() const;
 	int getShould() const;

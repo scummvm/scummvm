@@ -321,14 +321,14 @@ void Room503::init() {
 	_flag1 = false;
 	hotspot_set_active("BORK", false);
 
-	if (_G(flags)[gBORK_STATE] == 13) {
+	if (_G(flags)[kBORK_STATE] == 13) {
 		_val6 = 28;
 		kernel_trigger_dispatch_now(14);
 		kernel_trigger_dispatch_now(15);
-	} else if (inv_player_has("ROLLING PIN") && _G(flags)[gBORK_STATE] != 16) {
+	} else if (inv_player_has("ROLLING PIN") && _G(flags)[kBORK_STATE] != 16) {
 		_val6 = 27;
 		kernel_trigger_dispatch_now(14);
-	} else if (_G(flags)[gBORK_STATE] != 16) {
+	} else if (_G(flags)[kBORK_STATE] != 16) {
 		loadSeries1();
 		_flag1 = true;
 		_walk1 = intr_add_no_walk_rect(272, 250, 414, 300, 260, 300);
@@ -350,9 +350,9 @@ void Room503::init() {
 	}
 
 	_flag2 = false;
-	if (_G(flags)[gBORK_STATE] == 16) {
+	if (_G(flags)[kBORK_STATE] == 16) {
 		_val9 = 34;
-	} else if (_G(flags)[gBORK_STATE] != 13) {
+	} else if (_G(flags)[kBORK_STATE] != 13) {
 		_val9 = 33;
 	}
 
@@ -475,7 +475,7 @@ void Room503::daemon() {
 	case 14:
 		switch (_val6) {
 		case 13:
-			_G(flags)[gBORK_STATE] = 0;
+			_G(flags)[kBORK_STATE] = 0;
 			_val8 = 1;
 			hotspot_set_active("BORK", false);
 			hotspot_set_active_xy("BORK", 340, 250, true);
@@ -485,7 +485,7 @@ void Room503::daemon() {
 
 		case 14:
 			_val8 = 2;
-			_G(flags)[gBORK_STATE] = 1;
+			_G(flags)[kBORK_STATE] = 1;
 			_val6 = 15;
 			series_play_with_breaks(PLAY2, "503bk02", 0x900, 14, 3, 8);
 			break;
@@ -512,7 +512,7 @@ void Room503::daemon() {
 		case 16:
 			_val6 = 15;
 			series_play_with_breaks(PLAY3, "503bk17", 0x900, 14, 3, 8);
-			_G(flags)[gBORK_STATE] = 1;
+			_G(flags)[kBORK_STATE] = 1;
 			break;
 
 		case 17:
@@ -521,7 +521,7 @@ void Room503::daemon() {
 			kernel_trigger_dispatch_now(24);
 			_val7 = 32;
 
-			switch (_G(flags)[gBORK_STATE]) {
+			switch (_G(flags)[kBORK_STATE]) {
 			case 0:
 				_val6 = 14;
 				break;
@@ -534,21 +534,21 @@ void Room503::daemon() {
 				_val6 = 13;
 				break;
 			default:
-				term_message("bork state should not be %d in SNARL_AT_WILBUR!", _G(flags)[gBORK_STATE]);
+				term_message("bork state should not be %d in SNARL_AT_WILBUR!", _G(flags)[kBORK_STATE]);
 				break;
 			}
 
 			_array2[0] = 14;
 			_array2[1] = 24;
 			_array2[2] = 3;
-			_G(flags)[gBORK_STATE] = 2;
+			_G(flags)[kBORK_STATE] = 2;
 			_state1 = imath_ranged_rand(1, 3);
 			_val4 = 10;
 			series_play_with_breaks(PLAY4, "503bk05", 0x900, 1, 3, 8);
 			break;
 
 		case 18:
-			_G(flags)[gBORK_STATE] = 3;
+			_G(flags)[kBORK_STATE] = 3;
 			_val10 = imath_ranged_rand(0, 1);
 			_val6 = _val10 ? 21 : 19;
 			_state1 = imath_ranged_rand(1, 2);
@@ -564,11 +564,11 @@ void Room503::daemon() {
 			_state4 = imath_ranged_rand(1, 2);
 
 			if (_G(flags)[V205]) {
-				_G(flags)[gBORK_STATE] = 4;
+				_G(flags)[kBORK_STATE] = 4;
 				_val6 = 13;
 				series_play_with_breaks(PLAY6, "503bk07", 0x900, 14, 3, 8);
 			} else {
-				_G(flags)[gBORK_STATE] = 5;
+				_G(flags)[kBORK_STATE] = 5;
 				_G(flags)[V205] = 1;
 				_val6 = 20;
 				series_play_with_breaks(PLAY7, "503bk07", 0x900, 14, 3, 8);
@@ -579,7 +579,7 @@ void Room503::daemon() {
 			hotspot_set_active("BORK", false);
 			hotspot_set_active_xy("BORK", 430, 209, true);
 			hotspot_set_active_xy("BORK", 445, 200, true);
-			_G(flags)[gBORK_STATE] = 6;
+			_G(flags)[kBORK_STATE] = 6;
 			_G(flags)[V207] = 1;
 			_val6 = 13;
 			_array1[0] = 14;
@@ -594,21 +594,21 @@ void Room503::daemon() {
 		case 21:
 			hotspot_set_active("BORK", false);
 			hotspot_set_active_xy("BORK", 415, 155, true);
-			_G(flags)[gBORK_STATE] = 7;
+			_G(flags)[kBORK_STATE] = 7;
 			_state1 = imath_ranged_rand(1, 3);
 			_val6 = 22;
 			series_play_with_breaks(PLAY11, "503bk09", 0x900, 14, 3, 6, 100, 0, -2);
 			break;
 
 		case 22:
-			_G(flags)[gBORK_STATE] = 8;
+			_G(flags)[kBORK_STATE] = 8;
 			_state1 = imath_ranged_rand(1, 5);
 			_val6 = 25;
 			series_play_with_breaks(PLAY12, "503bk10", 0x900, 14, 2, 6, 100, 0, -2);
 			break;
 
 		case 23:
-			_G(flags)[gBORK_STATE] = 9;
+			_G(flags)[kBORK_STATE] = 9;
 			_G(flags)[V204] = 5002;
 			_val6 = 24;
 			series_play_with_breaks(PLAY15, "503bk11", 0x900, 14, 3, 6, 100, 0, -2);
@@ -620,7 +620,7 @@ void Room503::daemon() {
 			if (_state5) {
 				kernel_trigger_dispatch_now(18);
 			} else {
-				_G(flags)[gBORK_STATE] = 10;
+				_G(flags)[kBORK_STATE] = 10;
 				_val6 = 13;
 				series_play_with_breaks(PLAY16, "503bk12", 0x900, 14, 3, 8, 100, 0, -2);
 			}
@@ -629,20 +629,20 @@ void Room503::daemon() {
 		case 25:
 			hotspot_set_active("BORK", false);
 			hotspot_set_active_xy("BORK", 397, 197, true);
-			_G(flags)[gBORK_STATE] = 11;
+			_G(flags)[kBORK_STATE] = 11;
 			_val6 = 26;
 			series_play_with_breaks(PLAY13, "503bk13", 0x900, 14, 3, 6, 100, 0, -2);
 			break;
 
 		case 26:
-			_G(flags)[gBORK_STATE] = 12;
+			_G(flags)[kBORK_STATE] = 12;
 			digi_play("503_003", 2);
 			_val6 = 27;
 			_series2.play("503bk13", 0x900, 1, 14, 6, 6, 100, 0, -2, 15, 17);
 			break;
 
 		case 27:
-			_G(flags)[gBORK_STATE] = 14;
+			_G(flags)[kBORK_STATE] = 14;
 			_val6 = 23;
 			series_play_with_breaks(PLAY14, "503bk13", 0x900, 14, 1, 6, 100, 0, -2);
 			hotspot_set_active("BORK", false);
@@ -656,14 +656,14 @@ void Room503::daemon() {
 			break;
 
 		case 29:
-			_G(flags)[gBORK_STATE] = 15;
+			_G(flags)[kBORK_STATE] = 15;
 			_state1 = imath_ranged_rand(1, 3);
 			series_play_with_breaks(PLAY19, "503bk14", 0x900, 18, 3, 6, 100, 0, -2);
 			break;
 
 		case 30:
 			terminateMachineAndNull(_series3);
-			_G(flags)[gBORK_STATE] = 16;
+			_G(flags)[kBORK_STATE] = 16;
 			_state1 = imath_ranged_rand(1, 4);
 			_val4 = 12;
 			_G(wilbur_should) = 1;
@@ -773,7 +773,7 @@ void Room503::daemon() {
 			break;
 
 		case 2:
-			switch (_G(flags)[gBORK_STATE]) {
+			switch (_G(flags)[kBORK_STATE]) {
 			case 0:
 			case 1:
 			case 4:
@@ -810,7 +810,7 @@ void Room503::daemon() {
 			_array1[2] = 15;
 			_state1 = imath_ranged_rand(1, 5);
 			series_play_with_breaks(PLAY21, "503wi02", 0x800, 2, 3);
-			_G(flags)[gBORK_STATE] = 13;
+			_G(flags)[kBORK_STATE] = 13;
 			break;
 
 		case 5:
@@ -859,19 +859,19 @@ void Room503::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if ((player_said("GEAR", "MICROWAVE") || player_said("TAKE", "MICROWAVE")) &&
-			!_flag2 && _G(flags)[gBORK_STATE] != 13 && _G(flags)[gBORK_STATE] != 16) {
+			!_flag2 && _G(flags)[kBORK_STATE] != 13 && _G(flags)[kBORK_STATE] != 16) {
 		_flag2 = true;
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
 		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "RUBBER GLOVES ") && !_flag3 &&
-			_G(flags)[gBORK_STATE] == 13 && _G(flags)[gBORK_STATE] != 16) {
+			_G(flags)[kBORK_STATE] == 13 && _G(flags)[kBORK_STATE] != 16) {
 		_flag3 = true;
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
 		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BORK", "ROLLING PIN") &&
-			(_G(flags)[gBORK_STATE] == 12 || _G(flags)[gBORK_STATE] == 11)) {
+			(_G(flags)[kBORK_STATE] == 12 || _G(flags)[kBORK_STATE] == 11)) {
 		_flag1 = false;
 		intr_remove_no_walk_rect(_walk1);
 		_val6 = 26;
@@ -904,10 +904,10 @@ void Room503::pre_parser() {
 
 void Room503::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool borkFlag = player_said("BORK") && _G(flags)[gBORK_STATE] == 12;
+	bool borkFlag = player_said("BORK") && _G(flags)[kBORK_STATE] == 12;
 	bool microwaveFlag = player_said("MICROWAVE");
-	bool ovenFlag = player_said("OVEN") && _G(flags)[gBORK_STATE] == 16;
-	bool prunesFlag = player_said("PRUNES") && _G(flags)[gBORK_STATE] == 16;
+	bool ovenFlag = player_said("OVEN") && _G(flags)[kBORK_STATE] == 16;
+	bool prunesFlag = player_said("PRUNES") && _G(flags)[kBORK_STATE] == 16;
 
 	if (borkFlag && player_said("LOOK AT")) {
 		wilbur_speech("503w005");
@@ -919,20 +919,20 @@ void Room503::parser() {
 		wilbur_speech("500w034");
 	} else if (player_said("SOAPY WATER", "SINK")) {
 		wilbur_speech("500w049");
-	} else if (microwaveFlag && player_said("LOOK AT") && _G(flags)[gBORK_STATE] == 16) {
+	} else if (microwaveFlag && player_said("LOOK AT") && _G(flags)[kBORK_STATE] == 16) {
 		wilbur_speech("503w011");
-	} else if (microwaveFlag && player_said("LOOK AT") && _G(flags)[gBORK_STATE] == 13) {
+	} else if (microwaveFlag && player_said("LOOK AT") && _G(flags)[kBORK_STATE] == 13) {
 		wilbur_speech("503w010");
-	} else if (microwaveFlag && player_said("TAKE") && _G(flags)[gBORK_STATE] == 16) {
+	} else if (microwaveFlag && player_said("TAKE") && _G(flags)[kBORK_STATE] == 16) {
 		wilbur_speech("503w013");
 	} else if (microwaveFlag && player_said("TAKE") && _flag2) {
 		wilbur_speech("503w013");
-	} else if (microwaveFlag && player_said("GEAR") && _G(flags)[gBORK_STATE] == 16) {
+	} else if (microwaveFlag && player_said("GEAR") && _G(flags)[kBORK_STATE] == 16) {
 		wilbur_speech("503w013");
-	} else if (microwaveFlag && player_said("GEAR") && _flag2 && _G(flags)[gBORK_STATE] != 13) {
+	} else if (microwaveFlag && player_said("GEAR") && _flag2 && _G(flags)[kBORK_STATE] != 13) {
 		wilbur_speech("503w012");
 	} else if (player_said("RUBBER GLOVES ") && player_said("TAKE") &&
-			_G(flags)[gBORK_STATE] != 16 && _G(flags)[gBORK_STATE] != 13 && _flag3) {
+			_G(flags)[kBORK_STATE] != 16 && _G(flags)[kBORK_STATE] != 13 && _flag3) {
 		wilbur_speech("503w012");
 	} else if (player_said("RUBBER GLOVES ") && player_said("GEAR")) {
 		wilbur_speech("503w015");
@@ -940,8 +940,8 @@ void Room503::parser() {
 		wilbur_speech("503w021");
 	} else if (ovenFlag && player_said("GEAR")) {
 		wilbur_speech("503w023");
-	} else if (player_said("GEAR", "OVEN") && _G(flags)[gBORK_STATE] == 16 &&
-			_G(flags)[gBORK_STATE] != 13) {
+	} else if (player_said("GEAR", "OVEN") && _G(flags)[kBORK_STATE] == 16 &&
+			_G(flags)[kBORK_STATE] != 13) {
 		wilbur_speech("503w022");
 	} else if (player_said("LOOK AT", "CUPBOARD ") && inv_player_has("RUBBER GLOVES")) {
 		wilbur_speech("503w027");
@@ -957,20 +957,20 @@ void Room503::parser() {
 		_G(wilbur_should) = 3;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "RUBBER GLOVES ") &&
-			(_G(flags)[gBORK_STATE] == 16 || _G(flags)[gBORK_STATE] == 13)) {
+			(_G(flags)[kBORK_STATE] == 16 || _G(flags)[kBORK_STATE] == 13)) {
 		_G(wilbur_should) = 7;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BORK") && player_said("LOOK AT") &&
-			(_G(flags)[gBORK_STATE] == 0 || _G(flags)[gBORK_STATE] == 1) &&
+			(_G(flags)[kBORK_STATE] == 0 || _G(flags)[kBORK_STATE] == 1) &&
 			!player_said_any("GIZMO", "ROLLING PIN", "SOCK", "SOAPY WATER", "RUBBER_GLOVES") &&
 			!player_said("LAXATIVE")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
-	} else if (player_said("GEAR", "MICROWAVE") && _G(flags)[gBORK_STATE] == 13) {
+	} else if (player_said("GEAR", "MICROWAVE") && _G(flags)[kBORK_STATE] == 13) {
 		_G(wilbur_should) = 5;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
-	} else if (player_said("GEAR", "OVEN") && (_G(flags)[gBORK_STATE] == 16 || _G(flags)[gBORK_STATE] == 13)) {
+	} else if (player_said("GEAR", "OVEN") && (_G(flags)[kBORK_STATE] == 16 || _G(flags)[kBORK_STATE] == 13)) {
 		_G(wilbur_should) = 8;
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("PARLOUR") && player_said_any("ENTER", "LOOK AT", "GEAR")) {
