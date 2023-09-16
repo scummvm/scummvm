@@ -29,6 +29,11 @@ namespace Burger {
 namespace Rooms {
 
 class Room401 : public Room {
+private:
+	static const seriesStreamBreak SERIES1[];
+	static const seriesStreamBreak SERIES2[];
+	static const seriesStreamBreak SERIES3[];
+
 public:
 	Room401() : Room() {}
 	~Room401() override {}
