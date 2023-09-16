@@ -267,7 +267,7 @@ static HSaveError restore_game_gui(Stream *in) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed, guierr);
 
 	HSaveError err;
-	const bool warn_only = _GP(usetup).legacysaves_let_gui_diff;
+	const bool warn_only = _GP(usetup).legacysave_let_gui_diff;
 	if (!AssertAndCopyGameContent(res_guis, _GP(guis), err, "GUIs", warn_only) ||
 		!AssertAndCopyGameContent(res_guibuts, _GP(guibuts), err, "GUI Buttons", warn_only) ||
 		!AssertAndCopyGameContent(res_guiinv, _GP(guiinv), err, "GUI InvWindows", warn_only) ||

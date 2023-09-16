@@ -1034,6 +1034,7 @@ bool try_restore_save(int slot) {
 
 bool try_restore_save(const Shared::String &path, int slot) {
 	bool data_overwritten;
+	Debug::Printf(kDbgMsg_Info, "Restoring saved game '%s'", path.GetCStr());
 	HSaveError err = load_game(path, slot, data_overwritten);
 	if (!err) {
 		String error = String::FromFormat("Unable to restore the saved game.\n%s",

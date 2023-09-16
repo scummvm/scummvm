@@ -656,8 +656,8 @@ HSaveError RestoreGameState(Stream *in, SavegameVersion svg_version) {
 	if (svg_version >= kSvgVersion_Components) {
 		err = SavegameComponents::ReadAll(in, svg_version, pp, r_data);
 	} else {
-		GameDataVersion use_dataver = _GP(usetup).dataver_for_legacysavs != kGameVersion_Undefined ? _GP(usetup).dataver_for_legacysavs
-																								   : _G(loaded_game_file_version);
+		GameDataVersion use_dataver = _GP(usetup).legacysave_assume_dataver != kGameVersion_Undefined ? _GP(usetup).legacysave_assume_dataver
+																									  : _G(loaded_game_file_version);
 		err = restore_save_data_v321(in, use_dataver, pp, r_data);
 	}
 	if (!err)

@@ -376,8 +376,8 @@ void apply_config(const ConfigTree &cfg) {
 			_GP(usetup).override_script_os = eOS_Mac;
 		}
 		_GP(usetup).override_upscale = CfgReadBoolInt(cfg, "override", "upscale", _GP(usetup).override_upscale);
-		_GP(usetup).dataver_for_legacysavs = static_cast<GameDataVersion>(CfgReadInt(cfg, "override", "dataver_for_legacysaves", kGameVersion_Undefined));
-		_GP(usetup).legacysaves_let_gui_diff = CfgReadBoolInt(cfg, "override", "legacysaves_let_gui_diff");
+		_GP(usetup).legacysave_assume_dataver = static_cast<GameDataVersion>(CfgReadInt(cfg, "override", "legacysave_assume_dataver", kGameVersion_Undefined));
+		_GP(usetup).legacysave_let_gui_diff = CfgReadBoolInt(cfg, "override", "legacysave_let_gui_diff");
 		_GP(usetup).key_save_game = CfgReadInt(cfg, "override", "save_game_key", 0);
 		_GP(usetup).key_restore_game = CfgReadInt(cfg, "override", "restore_game_key", 0);
 	}
