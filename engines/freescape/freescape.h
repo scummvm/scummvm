@@ -602,7 +602,7 @@ public:
 private:
 	void addECDs(Area *area);
 	void addECD(Area *area, const Math::Vector3d position, int index);
-	void restoreECD(Area *area, int index);
+	void restoreECD(Area &area, int index);
 	bool checkECD(uint16 areaID, int index);
 	bool tryDestroyECD(int index);
 	bool tryDestroyECDFullGame(int index);

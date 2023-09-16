@@ -131,12 +131,12 @@ void DarkEngine::addECD(Area *area, const Math::Vector3d position, int index) {
 	}
 }
 
-void DarkEngine::restoreECD(Area *area, int index) {
+void DarkEngine::restoreECD(Area &area, int index) {
 	Object *obj = nullptr;
 	int16 id = 227 + index * 6;
 	for (int i = 0; i < 4; i++) {
 		debugC(1, kFreescapeDebugParser, "Restoring object %d to from ECD %d", id, index);
-		obj = (GeometricObject *)area->objectWithID(id);
+		obj = (GeometricObject *)area.objectWithID(id);
 		obj->restore();
 		obj->makeVisible();
 		id--;
@@ -359,15 +359,13 @@ void DarkEngine::addSkanner(Area *area) {
 bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		int index = _gameStateVars[kVariableDarkECD] - 1;
-		//insertTemporaryMessage(Common::String::format("%-14d", _gameStateVars[kVariableDarkECD] - 1), _countdown - 2);
-		//restoreECD(_currentArea, _gameStateVars[kVariableDarkECD] - 1);
 		bool destroyed = tryDestroyECD(index);
 		if (destroyed) {
 			_gameStateVars[kVariableActiveECDs] -= 4;
 			_gameStateVars[k8bitVariableScore] += 52750;
 			insertTemporaryMessage(_messagesList[2], _countdown - 2);
 		} else {
-			restoreECD(_currentArea, index);
+			restoreECD(*_currentArea, index);
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
