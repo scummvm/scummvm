@@ -473,6 +473,18 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._roof != si2._roof)
 		return si1._roof > si2._roof;
 
+	// X-Flat gets drawn after
+	bool xFlat1 = si1._xLeft == si1._x;
+	bool xFlat2 = si2._xLeft == si2._x;
+	if (xFlat1 != xFlat2)
+		return xFlat1 < xFlat2;
+
+	// Y-Flat gets drawn after
+	bool yFlat1 = si1._yFar == si1._y;
+	bool yFlat2 = si2._yFar == si2._y;
+	if (yFlat1 != yFlat2)
+		return yFlat1 < yFlat2;
+
 	// Partial in X + Y front
 	if (si1._x + si1._y != si2._x + si2._y)
 		return (si1._x + si1._y < si2._x + si2._y);
