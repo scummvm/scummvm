@@ -470,11 +470,11 @@ void BurgerEngine::global_daemon() {
 		break;
 
 	case gTELEPROTED2:
-		
+		testDone();
 		break;
 
 	case 10027:
-		error("TODO: global_daemon 10027");
+		wilburTeleported();
 		break;
 
 	case 10033:
@@ -621,6 +621,274 @@ bool BurgerEngine::saidofInterest() const {
 		player_said_any("fan belt", "spring", "mirror", "PHONE BILL") ||
 		player_said_any("ray gun", "BLOCK OF ICE", "rolling pin", "rubber duck") ||
 		player_said_any("LAXATIVE", "money", "crow bar", "Wilbur");
+}
+
+void BurgerEngine::testDone() {
+	player_set_commands_allowed(false);
+	if (_G(flags).getConvName())
+		_G(game).setRoom(207);
+	else
+		handleTestDone();
+}
+
+void BurgerEngine::handleTestDone() {
+	if (_G(flags)[V287]) {
+		testDone1();
+
+		if (_G(flags)[V241]) {
+			testDone2();
+
+			if (_G(flags)[V099]) {
+				testDone3();
+
+				if (_G(flags)[V184]) {
+					testDone4();
+
+					if (_G(flags)[V152]) {
+						testDone5();
+
+						_G(game).setRoom(701);
+						_G(flags).set_boonsville_time(505200);
+					} else {
+						_G(game).setRoom(_G(flags)[V153] ? 402 : 401);
+						_G(flags).set_boonsville_time(393600);
+					}
+				} else {
+					_G(game).setRoom(_G(flags)[V185] ? 502 : 501);
+					_G(flags).set_boonsville_time(282000);
+				}
+			} else {
+				_G(game).setRoom(_G(flags)[V100] ? 302 : 301);
+				_G(flags).set_boonsville_time(170400);
+			}
+		} else {
+			_G(game).setRoom(_G(flags)[V242] ? 604 : 601);
+			_G(flags).set_boonsville_time(58800);
+		}
+	} else {
+		_G(game).setRoom(801);
+		_G(flags).set_boonsville_time(37200);
+	}
+}
+
+void BurgerEngine::testDone1() {
+	_G(flags)[V287] = 1;
+	if (!_G(flags)[kNEURO_TEST_COUNTER])
+		_G(flags)[kNEURO_TEST_COUNTER]++;
+}
+
+void BurgerEngine::testDone2() {
+	if (!_G(flags)[V242])
+		_G(flags)[V242]++;
+
+	_G(flags)[V241] = 1;
+	_G(flags)[V243] = 6007;
+	_G(flags)[V244] = 6004;
+	_G(flags)[V245] = 10031;
+	_G(flags)[V246] = 0;
+	_G(flags)[V247] = 1;
+	_G(flags)[V248] = 1;
+	_G(flags)[V249] = 1;
+	_G(flags)[V250] = 1;
+	_G(flags)[V251] = 1;
+	_G(flags)[V255] = 1;
+	_G(flags)[V256] = 2;
+	_G(flags)[V257] = -140;
+	_G(flags)[V258] = 0;
+	_G(flags)[V259] = 1;
+	_G(flags)[V260] = 1;
+	_G(flags)[V261] = 1;
+	_G(flags)[V263] = 0;
+	_G(flags)[V265] = 1;
+	_G(flags)[V266] = 0;
+	_G(flags)[V269] = 1;
+	_G(flags)[V270] = 6001;
+	_G(flags)[V273] = 1;
+	_G(flags)[V274] = 1;
+	_G(flags)[V277] = 6003;
+	_G(flags)[V278] = 1;
+
+	inv_move_object("ray gun", NOWHERE);
+	inv_move_object("kibble", NOWHERE);
+	inv_move_object("block of ice", NOWHERE);
+	inv_move_object("pantyhose", NOWHERE);
+}
+
+void BurgerEngine::testDone3() {
+	if (!_G(flags)[V100])
+		_G(flags)[V100]++;
+
+	inv_move_object("BURGER MORSEL", NOWHERE);
+	inv_move_object("MATCHES", NOWHERE);
+	inv_move_object("JUG", NOWHERE);
+	inv_move_object("DISTILLED CARROT JUICE", NOWHERE);
+	inv_move_object("CARROT JUICE", NOWHERE);
+	inv_give_to_player("BOTTLE");
+
+	_G(flags)[V099] = 1;
+	_G(flags)[V101] = 1;
+	_G(flags)[V107] = 1;
+	_G(flags)[V108] = 1;
+	_G(flags)[V109] = 1;
+	_G(flags)[V110] = 1;
+	_G(flags)[V111] = 1;
+	_G(flags)[V112] = 1;
+	_G(flags)[V115] = 5;
+	_G(flags)[V116] = 1;
+	_G(flags)[V117] = 1;
+	_G(flags)[V118] = 3002;
+	_G(flags)[V119] = 0;
+	_G(flags)[V120] = 1;
+	_G(flags)[V121] = 3003;
+	_G(flags)[V122] = 1;
+	_G(flags)[V123] = 1;
+	_G(flags)[V124] = 1;
+	_G(flags)[V129] = 1;
+	_G(flags)[V130] = 1;
+	_G(flags)[V134] = 1;
+	_G(flags)[V140] = 1;
+	_G(flags)[V144] = 1;
+	_G(flags)[V145] = 1;
+}
+
+void BurgerEngine::testDone4() {
+	if (!_G(flags)[V185])
+		_G(flags)[V185]++;
+
+	inv_move_object("GIZMO", NOWHERE);
+	inv_move_object("CHRISTMAS LIGHTS", NOWHERE);
+	inv_move_object("CHRISTMAS LIGHTS ", NOWHERE);
+	inv_move_object("RUBBER DUCKY", NOWHERE);
+	inv_move_object("SOAPY WATER", NOWHERE);
+	inv_move_object("DIRTY SOCK", NOWHERE);
+	inv_move_object("ROLLING PIN", NOWHERE);
+	inv_move_object("RUBBER GLOVES", NOWHERE);
+	inv_move_object("KINDLING", NOWHERE);
+	inv_move_object("BURNING KINDLING", NOWHERE);
+	inv_move_object("GIZMO", NOWHERE);
+	inv_move_object("GIZMO", NOWHERE);
+	inv_give_to_player("BOTTLE");
+
+	_G(flags)[V184] = 1;
+	_G(flags)[V186] = 0;
+	_G(flags)[V195] = 1;
+	_G(flags)[V196] = 0;
+	_G(flags)[V197] = 1;
+	_G(flags)[V198] = 1;
+	_G(flags)[V199] = 1;
+	_G(flags)[V200] = 5003;
+	_G(flags)[kBORK_STATE] = 16;
+	_G(flags)[V204] = 5003;
+	_G(flags)[V205] = 1;
+	_G(flags)[V206] = 0;
+	_G(flags)[V207] = 1;
+	_G(flags)[V210] = 5002;
+	_G(flags)[V211] = 5000;
+	_G(flags)[V212] = 5000;
+	_G(flags)[V213] = 2;
+	_G(flags)[V214] = 0;
+	_G(flags)[V218] = 5003;
+	_G(flags)[V219] = 1;
+	_G(flags)[V223] = 2;
+	_G(flags)[V224] = 0;
+	_G(flags)[V227] = 1;
+	_G(flags)[V228] = 1;
+	_G(flags)[V229] = 0;
+	_G(flags)[V234] = 1;
+}
+
+void BurgerEngine::testDone5() {
+	if (!_G(flags)[V153])
+		_G(flags)[V153]++;
+
+	_G(flags)[V152] = 1;
+	_G(flags)[V157] = 1;
+	_G(flags)[V158] = 1;
+	_G(flags)[V159] = 1;
+	_G(flags)[V162] = 1;
+	_G(flags)[V165] = 1;
+	_G(flags)[V166] = 1;
+	_G(flags)[V167] = 1;
+	_G(flags)[V175] = 1;
+	_G(flags)[V171] = 4003;
+	_G(flags)[V172] = 10026;
+	_G(flags)[V173] = 0;
+	_G(flags)[V174] = 4004;
+	_G(flags)[V176] = 1;
+	_G(flags)[V181] = 1;
+
+	inv_move_object("QUARTER", NOWHERE);
+	inv_move_object("FISH", NOWHERE);
+	inv_move_object("RECORDS", NOWHERE);
+	inv_move_object("DOG COLLAR", NOWHERE);
+}
+
+#define MAX_INT 0x7FFFFFFF
+
+void BurgerEngine::wilburTeleported() {
+	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	int oldSection = _G(game).section_id;
+
+	switch (oldSection) {
+	case 3:
+		if (_G(flags)[V100] < MAX_INT)
+			_G(flags)[V100]++;
+		break;
+
+	case 4:
+		if (_G(flags)[V153] < MAX_INT)
+			_G(flags)[V153]++;
+		break;
+
+	case 5:
+		if (_G(flags)[V185] < MAX_INT)
+			_G(flags)[V100]++;
+		break;
+
+	case 6:
+		if (_G(flags)[V242] < MAX_INT)
+			_G(flags)[V242]++;
+		break;
+
+	case 8:
+		if (_G(flags)[kNEURO_TEST_COUNTER] < MAX_INT)
+			_G(flags)[kNEURO_TEST_COUNTER]++;
+		break;
+
+	default:
+		break;
+	}
+
+	if (_G(executing) != WHOLE_GAME) {
+		_G(game).setRoom(604);
+	} else {
+		if (_G(flags)[V152]) {
+			testDone5();
+			kernel_trigger_dispatch_now(10033);
+		} else if (_G(flags)[V184] && !_G(flags)[V153]) {
+			testDone4();
+			_G(game).setRoom(207);
+		} else if (_G(flags)[V099] && !_G(flags)[V185]) {
+			testDone3();
+			_G(game).setRoom(207);
+		} else if (_G(flags)[V241] && !_G(flags)[V100]) {
+			testDone2();
+			_G(game).setRoom(207);
+		} else if (_G(flags)[V287] && !_G(flags)[V242]) {
+			testDone1();
+			_G(game).setRoom(204);
+		} else {
+			static_cast<Inventory *>(_G(inventory))->reset();
+			_G(flags).reset5();
+			_G(flags).reset4();
+			_G(flags).reset3();
+			_G(flags).reset2();
+			_G(flags).reset1();
+			_G(game).setRoom(101);
+		}
+	}
+
+	_G(kernel).trigger_mode = oldMode;
 }
 
 } // namespace Burger

@@ -185,7 +185,7 @@ enum {
 	V149 = 149,
 	V150 = 150,
 	V151 = 151,
-	ROOM101_FLAG20 = 152,
+	V152 = 152,
 	V153 = 153,
 	V154 = 154,
 	V155 = 155,
@@ -237,7 +237,7 @@ enum {
 	V200 = 200,
 	V201 = 201,
 	V202 = 202,
-	gBORK_STATE = 203,
+	kBORK_STATE = 203,
 	V204 = 204,
 	V205 = 205,
 	V206 = 206,
@@ -322,7 +322,7 @@ enum {
 	V285 = 285,
 	V286 = 286,
 	V287 = 287,
-	NEURO_TEST_COUNTER = 288,
+	kNEURO_TEST_COUNTER = 288,
 	ROOM101_FLAG9 = 289,
 	ROOM101_FLAG7 = 290,
 	V291 = 291,
@@ -588,6 +588,8 @@ public:
 		assert(idx < FLAGS_COUNT);
 		return _flags[idx];
 	}
+
+	const char *getConvName();
 };
 
 } // namespace Burger

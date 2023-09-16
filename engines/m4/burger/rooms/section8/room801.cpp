@@ -146,7 +146,7 @@ void Room801::init() {
 
 		kernel_trigger_dispatch_now(20);
 	} else {
-		switch (_G(flags)[NEURO_TEST_COUNTER]) {
+		switch (_G(flags)[kNEURO_TEST_COUNTER]) {
 		case 0:
 			term_message(HEADER);
 			term_message("FIRST ATTEMPT AT NEURO TEST");
@@ -216,7 +216,7 @@ void Room801::daemon() {
 	case 6:
 		compact_mem_and_report();
 
-		if (_G(flags)[NEURO_TEST_COUNTER] == 0) {
+		if (_G(flags)[kNEURO_TEST_COUNTER] == 0) {
 			release_trigger_on_digi_state(7, 3);
 		} else {
 			release_trigger_on_digi_state(10, 3);
@@ -239,7 +239,7 @@ void Room801::daemon() {
 		pal_cycle_stop();
 		compact_mem_and_report();
 
-		if (_G(flags)[NEURO_TEST_COUNTER] == 2) {
+		if (_G(flags)[kNEURO_TEST_COUNTER] == 2) {
 			release_trigger_on_digi_state(20, 1);
 		} else {
 			release_trigger_on_digi_state(10, 1);
@@ -261,7 +261,7 @@ void Room801::daemon() {
 		digi_unload_stream_breaks(SERIES8);
 		compact_mem_and_report();
 
-		if (_G(flags)[NEURO_TEST_COUNTER] == 0) {
+		if (_G(flags)[kNEURO_TEST_COUNTER] == 0) {
 			kernel_trigger_dispatch_now(13);
 		} else {
 			_G(wilbur_should) = getWilburShould();
@@ -424,7 +424,7 @@ void Room801::daemon() {
 	case 23:
 		if (_G(flags)[GLB_TEMP_5] == 1) {
 			kernel_trigger_dispatch_now(24);
-		} else if (_G(flags)[NEURO_TEST_COUNTER] <= 2) {
+		} else if (_G(flags)[kNEURO_TEST_COUNTER] <= 2) {
 			digi_unload("804_003");
 			digi_unload("807_002");
 			adv_kill_digi_between_rooms(false);

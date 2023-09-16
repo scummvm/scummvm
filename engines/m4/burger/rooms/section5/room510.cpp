@@ -134,7 +134,7 @@ void Room510::parser() {
 		if (player_said("RED BUTTON")) {
 			if (!player_been_here(503)) {
 				wilbur_speech("510w003");
-			} else if (_G(flags)[gBORK_STATE] != 16) {
+			} else if (_G(flags)[kBORK_STATE] != 16) {
 				wilbur_speech("510w004");
 			} else {
 				wilbur_speech("510w005");

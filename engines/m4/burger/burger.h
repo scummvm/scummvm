@@ -53,6 +53,15 @@ private:
 	 */
 	bool saidofInterest() const;
 
+	void testDone();
+	void handleTestDone();
+	void testDone1();
+	void testDone2();
+	void testDone3();
+	void testDone4();
+	void testDone5();
+	void wilburTeleported();
+
 protected:
 	/**
 	 * Creates the structure that holds all the global variables
