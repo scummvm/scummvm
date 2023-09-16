@@ -55,15 +55,75 @@ static const seriesPlayBreak PLAY1[] = {
 
 
 void Room176::init() {
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
+	case 175:
+		ws_demand_location(546, 239, 9);
+		ws_walk(447, 251, nullptr, -1);
+		break;
+
+	default:
+		ws_demand_location(340, 279, 5);
+		break;
+	}
+
+	if (inv_player_has("PUZ DISPENSER") || inv_player_has("BROKEN PUZ DISPENSER")) {
+		hotspot_set_active("PUZ DISPENSER ", false);
+	} else {
+		_puzDispenser = series_show("176pez", 0x500);
+	}
 }
 
 void Room176::daemon() {
+	switch (_G(kernel).trigger) {
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			disable_player();
+			terminateMachineAndNull(_puzDispenser);
+			_G(wilbur_should) = 2;
+			series_play_with_breaks(PLAY1, "176wi01", 0x500, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 2:
+			enable_player();
+			inv_give_to_player("BROKEN PUZ DISPENSER");
+			hotspot_set_active("PUZ DISPENSER ", false);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room176::pre_parser() {
+	if (player_said("HALLWAY") && player_said_any("GEAR", "LOOK AT"))
+		player_set_facing_at(487, 238);
 }
 
 void Room176::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said_any("GEAR", "LOOK AT") && player_said("HALLWAY")) {
+		disable_player_commands_and_fade_init(1022);
+	} else if (player_said("TAKE", "PUZ DISPENSER ")) {
+		_G(wilbur_should) = 1;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
