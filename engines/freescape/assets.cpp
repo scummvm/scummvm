@@ -128,11 +128,14 @@ void FreescapeEngine::loadDataBundle() {
 Graphics::Surface *FreescapeEngine::loadBundledImage(const Common::String &name) {
 	Image::BitmapDecoder decoder;
 	Common::String bmpFilename = name + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp";
-	debug("Loading %s from bundled archive", bmpFilename.c_str());
-	assert(_dataBundle->hasFile(bmpFilename));
+	debugC(1, kFreescapeDebugParser, "Loading %s from bundled archive", bmpFilename.c_str());
+	if (!_dataBundle->hasFile(bmpFilename))
+		error("Failed to open file %s from bundle", bmpFilename.c_str());
 
 	Common::SeekableReadStream *bmpFile = _dataBundle->createReadStreamForMember(bmpFilename);
-	decoder.loadStream(*bmpFile);
+	if (!decoder.loadStream(*bmpFile))
+		error("Failed to decode bmp file %s from bundle", bmpFilename.c_str());
+
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*decoder.getSurface());
 	decoder.destroy();
