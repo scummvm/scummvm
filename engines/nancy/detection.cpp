@@ -253,7 +253,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 		},
 		Nancy::kGameTypeNancy4
 	},
-		{ // MD5 by eriktorbjorn
+	{ // MD5 by eriktorbjorn
 		{
 			"nancy4", nullptr,
 			{
@@ -356,7 +356,22 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 		},
 		Nancy::kGameTypeNancy6
 	},
-	{ AD_TABLE_END_MARKER, Nancy::kGameTypeNone }
+	{ // MD5 by eriktorbjorn
+		{
+			"nancy6", nullptr,
+			{
+				{ "data1.hdr", 0, "6a45cdf632301ae1b55fd7474bec3650", 298551 },
+				{ "data1.cab", 0, "399b83b188bfc05077d81cc1eadd456c", 4470086 },
+				{ "data2.cab", 0, "30ca94b596f6b5971a22c111b24d6764", 206382511 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			GUIO0()
+		},
+		Nancy::kGameTypeNancy6
+	}
 };
 
 class NancyMetaEngineDetection : public AdvancedMetaEngineDetection {
