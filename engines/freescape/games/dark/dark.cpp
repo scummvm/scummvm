@@ -137,6 +137,7 @@ void DarkEngine::restoreECD(Area &area, int index) {
 	for (int i = 0; i < 4; i++) {
 		debugC(1, kFreescapeDebugParser, "Restoring object %d to from ECD %d", id, index);
 		obj = (GeometricObject *)area.objectWithID(id);
+		assert(obj);
 		obj->restore();
 		obj->makeVisible();
 		id--;
