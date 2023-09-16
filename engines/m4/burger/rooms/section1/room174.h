@@ -29,6 +29,12 @@ namespace Burger {
 namespace Rooms {
 
 class Room174 : public Room {
+private:
+	machine *_series1 = nullptr;
+	machine *_series2 = nullptr;
+	Series _laxative;
+	int _action = 0;
+
 public:
 	Room174() : Room() {}
 	~Room174() override {}
