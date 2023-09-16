@@ -117,7 +117,8 @@ public:
 	void recalculateSoundEffects();
 
 	// Used when changing scenes
-	void stopAndUnloadSpecificSounds();
+	void stopAndUnloadSceneSpecificSounds();
+	void pauseSceneSpecificSounds(bool pause);
 
 	static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 overrideSamplesPerSec = 0);
 

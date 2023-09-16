@@ -149,7 +149,7 @@ void Scene::process() {
 	case kStartSound:
 		_state = kRun;
 		if (_sceneState.currentScene.continueSceneSound == kLoadSceneSound) {
-			g_nancy->_sound->stopAndUnloadSpecificSounds();
+			g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
 			g_nancy->_sound->loadSound(_sceneState.summary.sound);
 			g_nancy->_sound->playSound(_sceneState.summary.sound);
 		}
@@ -180,7 +180,7 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 		if (prevState == NancyState::kPause) {
 			g_nancy->_sound->pauseAllSounds(false);
 		} else {
-			unpauseSceneSpecificSounds();
+			g_nancy->_sound->pauseSceneSpecificSounds(false);
 		}
 
 		g_nancy->_sound->stopSound("MSND");
@@ -201,7 +201,7 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	if (nextState == NancyState::kPause) {
 		g_nancy->_sound->pauseAllSounds(true);
 	} else {
-		pauseSceneSpecificSounds();
+		g_nancy->_sound->pauseSceneSpecificSounds(true);
 	}
 
 	_gameStateRequested = NancyState::kNone;
@@ -232,32 +232,6 @@ void Scene::popScene() {
 	_sceneState.pushedScene.continueSceneSound = true;
 	changeScene(_sceneState.pushedScene);
 	_sceneState.isScenePushed = false;
-}
-
-void Scene::pauseSceneSpecificSounds() {
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance() && g_nancy->getState() != NancyState::kMap) {
-		uint currentScene = _sceneState.currentScene.sceneID;
-		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
-			g_nancy->_sound->pauseSound(NancyMapState.getSound(), true);
-		}
-	}
-
-	for (uint i = 0; i < 10; ++i) {
-		g_nancy->_sound->pauseSound(i, true);
-	}
-}
-
-void Scene::unpauseSceneSpecificSounds() {
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
-		uint currentScene = _sceneState.currentScene.sceneID;
-		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
-			g_nancy->_sound->pauseSound(NancyMapState.getSound(), false);
-		}
-	}
-
-	for (uint i = 0; i < 10; ++i) {
-		g_nancy->_sound->pauseSound(i, false);
-	}
 }
 
 void Scene::setPlayerTime(Time time, byte relative) {

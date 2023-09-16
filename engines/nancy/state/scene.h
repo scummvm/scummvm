@@ -125,10 +125,7 @@ public:
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene();
 	void popScene();
-
-	void pauseSceneSpecificSounds();
-	void unpauseSceneSpecificSounds();
-
+	
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }

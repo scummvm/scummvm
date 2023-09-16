@@ -583,7 +583,7 @@ void SoundManager::recalculateSoundEffects() {
 	}
 }
 
-void SoundManager::stopAndUnloadSpecificSounds() {
+void SoundManager::stopAndUnloadSceneSpecificSounds() {
 	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
 
 	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
@@ -599,6 +599,23 @@ void SoundManager::stopAndUnloadSpecificSounds() {
 	}
 
 	stopSound("MSND");
+}
+
+void SoundManager::pauseSceneSpecificSounds(bool pause) {
+	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		if (!pause || g_nancy->getState() != NancyState::kMap) {
+			// Stop the map sound in certain scenes
+			uint currentScene = NancySceneState.getSceneInfo().sceneID;
+			if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
+				g_nancy->_sound->pauseSound(NancyMapState.getSound(), pause);
+			}
+		}
+	}
+
+	for (uint i = 0; i < numSSChans; ++i) {
+		g_nancy->_sound->pauseSound(i, pause);
+	}
 }
 
 void SoundManager::initSoundChannels() {

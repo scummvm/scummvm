@@ -231,7 +231,7 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void LoseGame::execute() {
-	g_nancy->_sound->stopAndUnloadSpecificSounds();
+	g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
 	NancySceneState.setDestroyOnExit();
 
 	if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
@@ -268,7 +268,7 @@ void WinGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void WinGame::execute() {
-	g_nancy->_sound->stopAndUnloadSpecificSounds();
+	g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
 	NancySceneState.setDestroyOnExit();
 	g_nancy->setState(NancyState::kCredits, NancyState::kMainMenu);
 
