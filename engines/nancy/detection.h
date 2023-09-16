@@ -56,6 +56,10 @@ enum NancyDebugChannels {
 	kDebugSound			= 1 << 3
 };
 
+#define GAMEOPTION_PLAYER_SPEECH GUIO_GAMEOPTIONS1
+#define GAMEOPTION_CHARACTER_SPEECH GUIO_GAMEOPTIONS2
+#define GAMEOPTION_AUTO_MOVE GUIO_GAMEOPTIONS3
+
 } // End of namespace Nancy
 
 #endif // NANCY_DETECTION_H

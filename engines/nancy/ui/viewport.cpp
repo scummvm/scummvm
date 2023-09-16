@@ -31,6 +31,8 @@
 
 #include "engines/nancy/ui/viewport.h"
 
+#include "common/config-manager.h"
+
 namespace Nancy {
 namespace UI {
 
@@ -55,6 +57,8 @@ void Viewport::init() {
 void Viewport::handleInput(NancyInput &input) {
 	Time systemTime = g_system->getMillis();
 	byte direction = 0;
+
+	_autoMove = ConfMan.getBool("auto_move", ConfMan.getActiveDomainName());
 
 	// Make cursor sticky when scrolling the viewport
 	if (	g_nancy->getGameType() != kGameTypeVampire &&
@@ -132,7 +136,7 @@ void Viewport::handleInput(NancyInput &input) {
 
 		if (input.input & NancyInput::kRightMouseButton) {
 			direction |= kMoveFast;
-		} else if ((input.input & NancyInput::kLeftMouseButton) == 0) {
+		} else if ((input.input & NancyInput::kLeftMouseButton) == 0 && _autoMove == false) {
 			direction = 0;
 		}
 

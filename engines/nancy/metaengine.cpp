@@ -33,7 +33,7 @@
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GUIO_GAMEOPTIONS1,
+		GAMEOPTION_PLAYER_SPEECH,
 		{
 			_s("Player Speech"),
 			_s("Enable player speech. Only works if speech is enabled in the Audio settings."),
@@ -44,11 +44,22 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GUIO_GAMEOPTIONS2,
+		GAMEOPTION_CHARACTER_SPEECH,
 		{
 			_s("Character Speech"),
 			_s("Enable NPC speech. Only works if speech is enabled in the Audio settings."),
 			"character_speech",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AUTO_MOVE,
+		{
+			_s("Auto Move"),
+			_s("Automatically rotate the viewport when the mouse reaches an edge."),
+			"auto_move",
 			true,
 			0,
 			0

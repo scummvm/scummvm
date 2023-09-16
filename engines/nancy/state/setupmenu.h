@@ -57,6 +57,8 @@ private:
 
 	void registerGraphics();
 
+	const Common::String getToggleConfManKey(uint id);
+
 	enum State { kInit, kRun, kStop };
 
 	UI::FullScreenImage _background;

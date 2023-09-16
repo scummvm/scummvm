@@ -52,7 +52,8 @@ public:
 		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
 		_panningType(kPanNone),
-		_decoder(AVFDecoder::kLoadBidirectional) {}
+		_decoder(AVFDecoder::kLoadBidirectional),
+		_autoMove(false) {}
 
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
@@ -98,6 +99,8 @@ protected:
 	Common::Rect _format1Bounds;
 	Common::Rect _format2Bounds;
 	Common::Point _stickyCursorPos;
+
+	bool _autoMove;
 };
 
 } // End of namespace UI

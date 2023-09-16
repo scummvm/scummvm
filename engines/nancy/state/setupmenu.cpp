@@ -89,6 +89,44 @@ void SetupMenu::registerGraphics() {
 	}
 }
 
+const Common::String SetupMenu::getToggleConfManKey(uint id) {
+	GameType gameType = g_nancy->getGameType();
+			
+	if (gameType == kGameTypeVampire) {
+		// Note that toggle id 1 (interlaced video) is ignored since we don't support that option
+		switch (id) {
+		case 0 :
+			return "subtitles";
+		case 2 :
+			return "player_speech";
+		case 3 :
+			return "character_speech";
+		default:
+			return "";
+		}
+	} else if (gameType <= kGameTypeNancy5) {
+		switch (id) {
+		case 0 :
+			return "subtitles";
+		case 1 :
+			return "player_speech";
+		case 2 :
+			return "character_speech";
+		default:
+			return "";
+		}
+	} else {
+		switch (id) {
+		case 0 :
+			return "subtitles";
+		case 1 :
+			return "auto_move";
+		default:
+			return "";
+		}
+	}
+}
+
 void SetupMenu::init() {
 	_setupData = (const SET*)g_nancy->getEngineData("SET");
 	assert(_setupData);
@@ -123,14 +161,9 @@ void SetupMenu::init() {
 	}
 
 	// Set toggle visibility
-	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
-	if (isVampire) {
-		// Interlaced video, currently useless
-		_toggles[1]->setState(false);
+	for (uint i = 0; i < _toggles.size(); ++i) {
+		_toggles[i]->setState(ConfMan.getBool(getToggleConfManKey(i), ConfMan.getActiveDomainName()));
 	}
-	_toggles[0]->setState(ConfMan.getBool("subtitles"));
-	_toggles[isVampire ? 2 : 1]->setState(ConfMan.getBool("player_speech"));
-	_toggles[isVampire ? 3 : 2]->setState(ConfMan.getBool("character_speech"));
 
 	for (uint i = 0; i < _setupData->_scrollbarSrcs.size(); ++i) {
 		_scrollbars.push_back(new UI::Scrollbar(7, _setupData->_scrollbarSrcs[i],
@@ -192,28 +225,10 @@ void SetupMenu::run() {
 		auto *tog = _toggles[i];
 		tog->handleInput(input);
 		if (tog->_stateChanged) {
-			bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
-			uint toggleID = i;
-			// Make sure we ignore the interlaced video toggle
-			if (isVampire) {
-				if (i == 1) {
-					toggleID = 99;
-				} else if (i > 1) {
-					--toggleID;
-				}
-			}
-			switch (toggleID) {
-			case 0 :
-				ConfMan.setBool("subtitles", tog->_toggleState);
-				break;
-			case 1 :
-				ConfMan.setBool("player_speech", tog->_toggleState);
-				break;
-			case 2 :
-				ConfMan.setBool("character_speech", tog->_toggleState);
-				break;
-			default:
-				break;
+			Common::String key = getToggleConfManKey(i);
+			if (key.size()) {
+				// Make sure we don't write an empty string as a key in ConfMan
+				ConfMan.setBool(key, tog->_toggleState, ConfMan.getActiveDomainName());
 			}
 		}
 	}
