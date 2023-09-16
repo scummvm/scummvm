@@ -237,14 +237,27 @@ Common::String Overlay::getRecordTypeName() const {
 void Overlay::setFrame(uint frame) {
 	_currentFrame = frame;
 
+	Common::Rect srcRect;
+
 	// Workaround for:
 	// - the fireplace in nancy2 scene 2491, where one of the rects is invalid.
 	// - the ball thing in nancy2 scene 1562, where one of the rects is twice as tall as it should be
 	// Assumes all rects in a single animation have the same dimensions
-	Common::Rect srcRect = _srcRects[frame];
+	srcRect = _srcRects[frame];
 	if (!srcRect.isValidRect() || srcRect.height() > _srcRects[0].height()) {
 		srcRect.setWidth(_srcRects[0].width());
 		srcRect.setHeight(_srcRects[0].height());
+	}
+
+	if (_overlayType == kPlayOverlayStatic && srcRect.isEmpty()) {
+		// In static mode the srcRect above may be empty (see "out of service" sign in nancy5 scenes 2056, 2075),
+		// in which case we need to take the rect from the bitmap struct instead. Note that this is a backup,
+		// since if we use the bitmap src rect in all cases rendering can be incorrect (see same sign in nancy5 scene 2000)
+		for (uint i = 0; i < _bitmaps.size(); ++i) {
+			if (_currentViewportFrame == _bitmaps[i].frameID) {
+				srcRect = _bitmaps[i].src;
+			}
+		}
 	}
 
 	_drawSurface.create(_fullSurface, srcRect);
