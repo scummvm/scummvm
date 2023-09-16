@@ -146,7 +146,174 @@ void Room172::init() {
 }
 
 void Room172::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		switch (_val1) {
+		case 4:
+			_val1 = 5;
+			series_play_with_breaks(PLAY2, "172ap01", 0x600, 1, 3, 8);
+			digi_play("172p906", 2, 255, 1);
+			break;
+
+		case 5:
+			_G(flags)[V092] = 1;
+			hotspot_set_active("AUNT POLLY", true);
+			_val1 = 7;
+			_series5.play("172ap1t", 0x400, 4, -1, 6);
+			break;
+
+		case 6:
+			freeSeries5();
+			_val1 = 8;
+			npc_say("172p907", 1, "172ap1t", 0x400, true);
+			break;
+
+		case 7:
+			digi_unload("172p906");
+			freeSeries5();
+			_series5.show("172ap1t", 0x400);
+			wilbur_speech("172w902", 1);
+			break;
+
+		case 8:
+			_G(flags)[V091] = true;
+			terminateMachineAndNull(_series1);
+			terminateMachineAndNull(_series1s);
+			_val1 = 9;
+			series_play_with_breaks(PLAY3, "172ap02", 0x400, 1, 3, 8);
+			break;
+
+		case 9:
+			_series5.play("172ap02", 0x400, 0, -1, 8, -1, 100, 0, 0, 28, 30);
+			kernel_trigger_dispatch_now(3);
+			playDigi3();
+			break;
+
+		case 10:
+			freeSeries7();
+			_val1 = 11;
+			series_play_with_breaks(PLAY4, "172ap02", 0x400, 1, 3, 8);
+			break;
+
+		case 11:
+			freeSeries7();
+			_val1 = 14;
+			npc_say(conv_sound_to_play(), 1, "172ap02", 0x400, 1, 31, 35);
+			break;
+
+		case 12:
+			player_set_commands_allowed(false);
+			_G(flags)[V298] = 1;
+			freeSeries7();
+			_series5.terminate();
+			_val1 = 15;
+			npc_say(conv_sound_to_play(), 1, "172ap02", 0x400, 1, 31, 35);
+			break;
+
+		case 13:
+			freeSeries7();
+			series_play_with_breaks(PLAY5, "172ap02", 0x400, 10001, 3, 8);
+			break;
+
+		case 14:
+			_series5.play("172ap02", 0x400, 0, -1, 8, -1, 100, 0, 0, 28, 30);
+			playDigi3();
+			conv_resume_curr();
+			break;
+
+		case 15:
+			_G(flags)[V298] = 0;
+			player_set_commands_allowed(true);
+			_series5.play("172ap02", 0x400, 0, -1, 8, -1, 100, 0, 0, 28, 30);
+			playDigi3();
+			break;
+
+		case 16:
+			freeSeries7();
+			_val1 = 17;
+			series_play_with_breaks(PLAY6, "172ap02", 0x400, 1, 3, 8);
+			break;
+
+		case 17:
+			freeSeries5();
+			hotspot_set_active("AUNT POLLY", false);
+			_series1 = series_show("172fud2", 0x700);
+			_series1s = series_show("172fuds", 0x701);
+			intr_remove_no_walk_rect(_walk1);
+			_val1 = 18;
+			series_play_with_breaks(PLAY7, "172ap03", 0x600, 1, 3, 8);
+			break;
+
+		case 18:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			term_message("ERROR!!!! polly_should not set!");
+			break;
+		}
+		break;
+
+	case 2:
+		_series3.terminate();
+		break;
+
+	case 3:
+		_G(flags)[V298] = 1;
+		_G(flags)[V299] = 1;
+		conv_load_and_prepare("conv41", 4);
+		conv_export_value_curr(_G(flags)[V088], 0);
+		conv_export_value_curr(inv_player_has("WHISTLE") ? 1 : 0, 1);
+		conv_export_pointer_curr(&_G(flags)[V093], 2);
+		conv_play_curr();
+		break;
+
+	case 4:
+		freeSeries5();
+
+		if (_G(flags)[V092]) {
+			freeSeries7();
+			_val1 = 15;
+		} else {
+			_G(flags)[V088] = 1;
+			_val1 = 16;
+		}
+
+		kernel_trigger_dispatch_now(1);
+		_G(flags)[V298] = 0;
+		_G(flags)[V299] = 0;
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			_convName = _G(flags)[V087] ? "172p903" : "172p902";
+			_val1 = 12;
+			kernel_trigger_dispatch_now(1);
+			break;
+
+		case 2:
+			disable_player();
+			_G(wilbur_should) = 3;
+			series_play_with_breaks(PLAY1, "172wi01", 0x700, gCHANGE_WILBUR_ANIMATION, 3, 8);
+			break;
+
+		case 3:
+			enable_player();
+			hotspot_set_active("CARROT JUICE ", false);
+			inv_give_to_player("CARROT JUICE");
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room172::pre_parser() {
@@ -168,7 +335,136 @@ void Room172::pre_parser() {
 void Room172::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	// TODO
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("conv41")) {
+		conv41();
+	} else if (player_said_any("GEAR", "LOOK AT") && player_said("PARLOUR")) {
+		disable_player_commands_and_fade_init(1018);
+	} else if (player_said_any("GEAR", "LOOK AT") && player_said("BASEMENT")) {
+		disable_player_commands_and_fade_init(1020);
+	} else if (player_said("TAKE", "CARROT JUICE ")) {
+		if (_G(flags)[V092]) {
+			_convName = "172p950";
+			_val1 = 12;
+			kernel_trigger_dispatch_now(1);
+		} else {
+			_G(wilbur_should) = 2;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("WHISTLE", "AUNT POLLY")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 1;
+		wilbur_speech("172w901", gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TALK", "AUNT POLLY")) {
+		kernel_trigger_dispatch_now(3);
+	} else if (player_said("AUNT POLLY") && player_said_any("PHONE BILL", "CARROT JUICE")) {
+		_convName = imath_rand_bool(2) ? "172p901" : "172904";
+		_val1 = 12;
+		kernel_trigger_dispatch_now(1);
+	} else if (player_said("MICROWAVE")) {
+		parserAction("172w004");
+	} else if (player_said("GEAR", "REFRIGERATOR")) {
+		parserAction("172w005");
+	} else if (player_said("GEAR", "OVEN")) {
+		parserAction("172w007");
+	} else if (player_said("SINK")) {
+		parserAction("172w010");
+	} else if (player_said("GEAR") && player_said_any("CUPBOARD", "CUPBOARD ")) {
+		parserAction("172w036");
+	} else if (player_said("TAKE", "JUICER")) {
+		if (_G(flags)[V092]) {
+			_convName = imath_rand_bool(2) ? "172p905a" : "172p905b";
+			_val1 = 12;
+			kernel_trigger_dispatch_now(1);
+		} else {
+			wilbur_speech("172w033");
+		}
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room172::parserAction(const char *name) {
+	if (_G(flags)[V092]) {
+		_convName = "172p950";
+		_val1 = 12;
+		kernel_trigger_dispatch_now(1);
+	} else {
+		wilbur_speech(name);
+	}
+}
+
+void Room172::freeSeries7() {
+	digi_stop(2);
+	terminateMachineAndNull(_series7);
+}
+
+void Room172::playDigi3() {
+	loadSeries7();
+	digi_preload("172_003");
+	digi_play_loop("172_003", 3, 125);
+}
+
+void Room172::loadSeries7() {
+	digi_preload("172p909");
+	digi_play_loop("172p909", 2, 255);
+	_series7 = series_play("172ap02t", 0x3ff, 4, -1, 4);
+}
+
+void Room172::conv41() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (sound) {
+		if (who == 1) {
+			wilbur_speech(sound, 10001);
+		} else {
+			freeSeries5();
+
+			switch (node) {
+			case 0:
+				_val1 = 4;
+				kernel_trigger_dispatch_now(1);
+				break;
+
+			case 2:
+				switch (entry) {
+				case 0:
+					_val1 = 10;
+					kernel_trigger_dispatch_now(1);
+					break;
+
+				case 1:
+					freeSeries7();
+					_G(flags)[V092] = 0;
+					_val1 = 14;
+					npc_say(sound, 1, "172ap02", 0x400, 1, 31, 35);
+					break;
+
+				default:
+					break;
+				}
+				break;
+
+			case 3:
+				freeSeries7();
+				_val1 = 13;
+				npc_say(sound, 1, "172ap02", 0x400, 1, 31, 35);
+				break;
+
+			default:
+				freeSeries7();
+				_val1 = 14;
+				npc_say(sound, 1, "172ap02", 0x400, 1, 31, 35);
+				break;
+			}
+		}
+	}
 }
 
 } // namespace Rooms

@@ -31,14 +31,23 @@ namespace Rooms {
 class Room172 : public Room {
 private:
 	machine *_series1 = nullptr;
-	machine *_series2 = nullptr;
+	machine *_series1s = nullptr;
 	Series _series3;
 	machine *_series4 = nullptr;
-	machine *_series5 = nullptr;
-	machine *_series6 = nullptr;
+	Series _series5;
 	machine *_series7 = nullptr;
 	noWalkRect *_walk1 = nullptr;
+	const char *_convName = nullptr;
 	int _val1 = 0;
+
+	void loadSeries7();
+	void freeSeries5() {
+		_series5.terminate();
+	}
+	void freeSeries7();
+	void playDigi3();
+	void conv41();
+	void parserAction(const char *name);
 
 public:
 	Room172() : Room() {}
