@@ -337,7 +337,7 @@ void Scene::playItemCantSound(int16 itemID) {
 			g_nancy->_sound->playSound(inventoryData->cantSound);
 
 			if (ConfMan.getBool("subtitles")) {
-				_textbox.addTextLine(inventoryData->cantText);
+				_textbox.addTextLine(inventoryData->cantText, inventoryData->captionAutoClearTime);
 			}
 		} else {
 			// TVD and nancy1 contain no sound data in INV, and have no captions
@@ -353,7 +353,7 @@ void Scene::playItemCantSound(int16 itemID) {
 				g_nancy->_sound->playSound(override.sound);
 
 				if (ConfMan.getBool("subtitles")) {
-					_textbox.addTextLine(override.caption);
+					_textbox.addTextLine(override.caption, inventoryData->captionAutoClearTime);
 				}
 				return;
 			} else {
@@ -366,14 +366,14 @@ void Scene::playItemCantSound(int16 itemID) {
 					g_nancy->_sound->playSound(item.generalCantSound);
 
 					if (ConfMan.getBool("subtitles")) {
-						_textbox.addTextLine(item.generalCantText);
+						_textbox.addTextLine(item.generalCantText, inventoryData->captionAutoClearTime);
 					}
 				} else if (inventoryData->cantSound.name.size()) {
 					g_nancy->_sound->loadSound(inventoryData->cantSound);
 					g_nancy->_sound->playSound(inventoryData->cantSound);
 
 					if (ConfMan.getBool("subtitles")) {
-						_textbox.addTextLine(inventoryData->cantText);
+						_textbox.addTextLine(inventoryData->cantText, inventoryData->captionAutoClearTime);
 					}
 				} else {
 					// Should be unreachable
@@ -391,7 +391,7 @@ void Scene::playItemCantSound(int16 itemID) {
 			g_nancy->_sound->playSound(item.specificCantSound);
 
 			if (ConfMan.getBool("subtitles")) {
-				_textbox.addTextLine(item.specificCantText);
+				_textbox.addTextLine(item.specificCantText, inventoryData->captionAutoClearTime);
 			}
 		} else if (inventoryData->cantSound.name.size()) {
 			// No custom sound, play default "can't" inside inventory data. Should (?) be unreachable
@@ -399,7 +399,7 @@ void Scene::playItemCantSound(int16 itemID) {
 			g_nancy->_sound->playSound(inventoryData->cantSound);
 
 			if (ConfMan.getBool("subtitles")) {
-				_textbox.addTextLine(inventoryData->cantText);
+				_textbox.addTextLine(inventoryData->cantText, inventoryData->captionAutoClearTime);
 			}
 		} else {
 			// TVD and nancy1 contain no sound data in INV, and have no captions

@@ -84,6 +84,10 @@ void Textbox::registerGraphics() {
 }
 
 void Textbox::updateGraphics() {
+	if (_autoClearTime && g_nancy->getTotalPlayTime() > _autoClearTime) {
+		clear();
+	}
+
 	if (_needsTextRedraw) {
 		drawTextbox();
 	}
@@ -352,14 +356,19 @@ void Textbox::clear() {
 		_fontIDOverride = -1;
 		onScrollbarMove();
 		_needsRedraw = true;
+		_autoClearTime = 0;
 	}
 }
 
-void Textbox::addTextLine(const Common::String &text) {
-	// Scan for the hotspot token and assume the text is the main text if not found
+void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
 	_textLines.push_back(text);
-
 	_needsTextRedraw = true;
+
+	if (autoClearTime != 0) {
+		// Start a timer, after which the textbox will automatically be cleared.
+		// Currently only used by inventory closed captions
+		_autoClearTime = g_nancy->getTotalPlayTime() + autoClearTime;
+	}
 }
 
 // A text line will often be broken up into chunks separated by nulls, use

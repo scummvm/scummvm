@@ -47,7 +47,7 @@ public:
 	void drawTextbox();
 	void clear();
 
-	void addTextLine(const Common::String &text);
+	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
 	void overrideFontID(const uint fontID) { _fontIDOverride = fontID; };
 
 	static void assembleTextLine(char *rawCaption, Common::String &output, uint size);
@@ -76,6 +76,8 @@ private:
 
 	bool _needsTextRedraw;
 	float _scrollbarPos;
+
+	uint32 _autoClearTime = 0;
 
 	int _fontIDOverride;
 };
