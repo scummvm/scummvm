@@ -520,6 +520,10 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
+	// Color remaps are not restored in Dark Side
+	// since they are used to simulate a fade to black effect
+	// that should not persist
+	_currentArea->_colorRemaps.clear();
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
 	swapPalette(areaID);
