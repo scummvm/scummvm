@@ -29,6 +29,9 @@ namespace Burger {
 namespace Rooms {
 
 class Room176 : public Room {
+private:
+	machine *_puzDispenser = nullptr;
+
 public:
 	Room176() : Room() {}
 	~Room176() override {}
