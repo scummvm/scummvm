@@ -157,6 +157,7 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 			} else {
 				debugC(1, kFreescapeDebugParser, "Incomplete group operation %d", opcode);
 				byteSizeOfObject = 0;
+				delete operation;
 				continue;
 			}
 		}
@@ -238,6 +239,7 @@ Group *FreescapeEngine::load8bitGroupV2(Common::SeekableReadStream *file, byte r
 				byteSizeOfObject = byteSizeOfObject - 3;
 			} else {
 				byteSizeOfObject = 0;
+				delete operation;
 				continue;
 			}
 		}
