@@ -424,23 +424,19 @@ void OptionsDialog::build() {
 	}
 
 	// Shader options
-	if (_shader) {
-		if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-			Common::String shader(ConfMan.get("shader", _domain));
-			if (ConfMan.isKeyTemporary("shader")) {
-				_shader->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
-			}
-			if (shader.empty() || shader == "default" || !ConfMan.hasKey("shader", _domain)) {
-				_shader->setLabel(_c("None", "shader"));
-				_shaderClearButton->setEnabled(false);
-			} else {
-				_shader->setLabel(shader);
-				_shaderClearButton->setEnabled(true);
-			}
+	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
+
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+		Common::String shader(ConfMan.get("shader", _domain));
+		if (ConfMan.isKeyTemporary("shader")) {
+			_shader->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+		}
+		if (shader.empty() || shader == "default" || !ConfMan.hasKey("shader", _domain)) {
+			_shader->setLabel(_c("None", "shader"));
+			_shaderClearButton->setEnabled(false);
 		} else {
-			_shader->setVisible(false);
-			_shaderButton->setVisible(false);
-			_shaderClearButton->setVisible(false);
+			_shader->setLabel(shader);
+			_shaderClearButton->setEnabled(true);
 		}
 	}
 
@@ -744,7 +740,7 @@ void OptionsDialog::apply() {
 	Common::U32String previousShader;
 
 	// Shader options
-	if (_shader) {
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
 		if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
 			previousShader = ConfMan.get("shader", _domain);
 
@@ -1256,18 +1252,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		}
 	}
 
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		_shaderButton->setEnabled(enabled);
-		_shader->setEnabled(enabled);
-		_shaderClearButton->setEnabled(enabled);
-	} else {
-		// Happens when we switch to backend that doesn't support shaders
-		if (_shader) {
-			_shaderButton->setEnabled(false);
-			_shader->setEnabled(false);
-			_shaderClearButton->setEnabled(false);
-		}
-	}
+	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
 
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
 		_filteringCheckbox->setEnabled(enabled);
@@ -1628,21 +1613,21 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		updateScaleFactors(_scalerPopUp->getSelectedTag());
 	}
 
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		if (g_system->getOverlayWidth() > 320)
-			_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Shader:"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
-		else
-			_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
-		_shader = new StaticTextWidget(boss, prefix + "grShader", _c("None", "shader"), _("Specifies path to the shader used for scaling the game screen"));
+	if (g_system->getOverlayWidth() > 320)
+		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Shader:"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
+	else
+		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
+	_shader = new StaticTextWidget(boss, prefix + "grShader", _c("None", "shader"), _("Specifies path to the shader used for scaling the game screen"));
 
-		_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
+	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
-		new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Update Shaders"), _("Check for updates of shader packs"), kUpdateShadersCmd);
+	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Update Shaders"), _("Check for updates of shader packs"), kUpdateShadersCmd);
 #endif
 #endif
-	}
+
+	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
 
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), Common::U32String(), kFullscreenToggled);
@@ -1691,6 +1676,15 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games"));
 
 	_enableGraphicSettings = true;
+}
+
+void OptionsDialog::enableShaderControls(bool enable) {
+	_shaderButton->setEnabled(enable);
+	_shader->setEnabled(enable);
+	_shaderClearButton->setVisible(enable);
+
+	if (_updateShadersButton)
+		_updateShadersButton->setEnabled(enable);
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
@@ -2015,9 +2009,7 @@ void OptionsDialog::setupGraphicsTab() {
 	if (_graphicsTabId != -1) {
 		// Since we do not create shader controls, the rebuild is required
 		// Fixes crash when switching from SDL Surface to OpenGL
-		if (!_shader && g_system->hasFeature(OSystem::kFeatureShaders)) {
-			rebuild();
-		} else if (!_scalerPopUp && g_system->hasFeature(OSystem::kFeatureScalers)) {
+		if (!_scalerPopUp && g_system->hasFeature(OSystem::kFeatureScalers)) {
 			rebuild();
 		} else if (!_stretchPopUp && g_system->hasFeature(OSystem::kFeatureStretchMode)) {
 			rebuild();
@@ -2050,11 +2042,7 @@ void OptionsDialog::setupGraphicsTab() {
 		_scaleFactorPopUp->setVisible(true);
 	}
 
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		_shaderButton->setVisible(true);
-		_shader->setVisible(true);
-		_shaderClearButton->setVisible(true);
-	}
+	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
 }
 
 void OptionsDialog::updateScaleFactors(uint32 tag) {

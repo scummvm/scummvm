@@ -108,6 +108,8 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
+	void enableShaderControls(bool enabled);
+
 	virtual void setupGraphicsTab();
 	void updateScaleFactors(uint32 tag);
 
@@ -121,6 +123,7 @@ protected:
 
 	StaticTextWidget *_shader;
 	ButtonWidget *_shaderClearButton;
+	ButtonWidget *_updateShadersButton = nullptr;
 
 private:
 
