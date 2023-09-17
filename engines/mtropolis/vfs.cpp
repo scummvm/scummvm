@@ -93,7 +93,7 @@ VirtualFileSystem::VirtualFileSystem(const VirtualFileSystemLayout &layout) : _p
 
 		VirtualFile vf;
 		vf._archiveMember = tempLayoutFiles[ctofNode._value]._archiveMember;
-		vf._virtualPath = ctovIt->_value;
+		vf._virtualPath = Common::Path(ctovIt->_value, _pathSeparator);
 
 		_virtualFiles.push_back(vf);
 	}
@@ -212,11 +212,11 @@ Common::SeekableReadStream *VirtualFileSystem::VFSArchiveMember::createReadStrea
 }
 
 Common::String VirtualFileSystem::VFSArchiveMember::getName() const {
-	return _virtualFile->_virtualPath;
+	return _virtualFile->_virtualPath.toString(_pathSeparator);
 }
 
 Common::Path VirtualFileSystem::VFSArchiveMember::getPathInArchive() const {
-	return Common::Path(_virtualFile->_virtualPath, _pathSeparator);
+	return _virtualFile->_virtualPath;
 }
 
 Common::String VirtualFileSystem::VFSArchiveMember::getFileName() const {
