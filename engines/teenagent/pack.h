@@ -34,7 +34,7 @@ protected:
 public:
 	Pack(): _fileCount(0) {}
 	virtual ~Pack() {}
-	virtual bool open(const Common::String &filename) = 0;
+	virtual bool open(const Common::Path &filename) = 0;
 	virtual void close() = 0;
 
 	virtual uint32 fileCount() const { return _fileCount; }
@@ -52,7 +52,7 @@ public:
 	FilePack();
 	~FilePack() override;
 
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 	void close() override;
 
 	uint32 getSize(uint32 id) const override;
@@ -65,13 +65,13 @@ public:
  **/
 class TransientFilePack : public Pack {
 	uint32 *offsets;
-	Common::String _filename;
+	Common::Path _filename;
 
 public:
 	TransientFilePack();
 	~TransientFilePack() override;
 
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 	void close() override;
 
 	uint32 getSize(uint32 id) const override;
@@ -102,7 +102,7 @@ class MemoryPack : public Pack {
 	Common::Array<Chunk> chunks;
 
 public:
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 	void close() override;
 
 	uint32 getSize(uint32 id) const override;
