@@ -49,6 +49,8 @@ private:
 	machine *_series5 = nullptr;
 	int _series6 = -1;
 	machine *_series7 = nullptr;
+	machine *_series8 = nullptr;
+	machine *_series9 = nullptr;
 	int _triggers[5];
 	int _ctr = 0;
 	int _timer = 0;
@@ -58,8 +60,14 @@ private:
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
 
 	void frontYard();
+	void doDaemon(int trigger);
+	void freeSeries1();
+	void freeSeries2();
 
 protected:
 	const char *getDigi() override;
