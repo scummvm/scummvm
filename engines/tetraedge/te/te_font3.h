@@ -51,7 +51,7 @@ public:
 	TeFont3();
 	virtual ~TeFont3();
 
-	bool load(const Common::String &path);
+	bool load(const Common::Path &path);
 	bool load(const Common::FSNode &node);
 	void unload();
 
@@ -64,7 +64,7 @@ private:
 	Graphics::Font *getAtSize(uint size) override;
 	Common::File _fontFile;
 	Common::HashMap<uint, Graphics::Font *> _fonts;
-	Common::String _loadedPath;
+	Common::Path _loadedPath;
 	Common::HashMap<uint, TeIntrusivePtr<Te3DTexture>> _fontSizeData;
 };
 

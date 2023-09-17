@@ -33,10 +33,10 @@ namespace Tetraedge {
 BonusMenu::BonusMenu() : _pageNo(0) {
 }
 
-void BonusMenu::enter(const Common::String &scriptName) {
+void BonusMenu::enter(const Common::Path &scriptName) {
 	bool loaded = load(scriptName);
 	if (!loaded)
-		error("BonusMenu::enter: failed to load %s", scriptName.c_str());
+		error("BonusMenu::enter: failed to load %s", scriptName.toString(Common::Path::kNativeSeparator).c_str());
 	Application *app = g_engine->getApplication();
 	app->frontLayout().addChild(layoutChecked("menu"));
 	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
@@ -102,7 +102,7 @@ void BonusMenu::enter(const Common::String &scriptName) {
 		rightBtn->onMouseClickValidated().add(this, &BonusMenu::onRightButton);
 
 	// TODO: more stuff here with "text" values
-	warning("TODO: Finish BonusMenu::enter(%s)", scriptName.c_str());
+	warning("TODO: Finish BonusMenu::enter(%s)", scriptName.toString(Common::Path::kNativeSeparator).c_str());
 
 	TeButtonLayout *pictureBtn = buttonLayout("fullScreenPictureButton");
 	if (pictureBtn) {
@@ -240,7 +240,7 @@ Common::String BonusMenu::SaveButton::path() const {
 bool BonusMenu::SaveButton::onLoadSave() {
 	_menu->buttonLayoutChecked("menu")->setVisible(false);
 	TeSpriteLayout *pic = _menu->spriteLayoutChecked("fullScreenPicture");
-	const Common::String picName = child(0)->child(4)->name();
+	const Common::Path picName(child(0)->child(4)->name());
 	pic->load(picName);
 
 	TeSpriteLayout *picLayout = _menu->spriteLayoutChecked("fullScreenPictureLayout");

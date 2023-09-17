@@ -207,7 +207,7 @@ void TetraedgeEngine::closeGameDialogs() {
 }
 
 void TetraedgeEngine::configureSearchPaths() {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	if (_gameDescription->platform != Common::kPlatformIOS)
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 5);
 }

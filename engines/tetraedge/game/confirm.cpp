@@ -32,7 +32,7 @@ namespace Tetraedge {
 Confirm::Confirm() {
 }
 
-void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
+void Confirm::enter(const Common::Path &guiPath, const Common::String &y) {
 	_gui.load(guiPath);
 	TeLayout *backgroundLayout = _gui.layout("background");
 	if (!backgroundLayout) {

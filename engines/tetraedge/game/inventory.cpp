@@ -515,8 +515,8 @@ void Inventory::selectedObject(InventoryObject *obj) {
 		pos.z() = selection->position().z();
 		selection->setPosition(pos);
 
-		const Common::String spritePathStr = obj->spritePath();
-		game->setCurrentObjectSprite(spritePathStr);
+		const Common::Path spritePath = obj->spritePath();
+		game->setCurrentObjectSprite(spritePath);
 
 		if (!g_engine->gameIsAmerzone()) {
 			const Common::String &objId = obj->name();
@@ -536,7 +536,7 @@ void Inventory::selectedObject(InventoryObject *obj) {
 					textObj->child(i)->setVisible(false);
 				}
 			}
-			game->inGameGui().spriteLayoutChecked("selectedObject")->load(spritePathStr);
+			game->inGameGui().spriteLayoutChecked("selectedObject")->load(spritePath);
 		}
 	}
 }

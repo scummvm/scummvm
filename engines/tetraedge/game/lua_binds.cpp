@@ -62,7 +62,7 @@ static int tolua_ExportedFunctions_LoadObjectMaterials00(lua_State *L) {
 
 static void LoadObjectMaterials(const Common::String &imgname, const Common::String &objname) {
 	Game *game = g_engine->getGame();
-	bool result = game->scene().loadObjectMaterials(imgname, objname);
+	bool result = game->scene().loadObjectMaterials(Common::Path(imgname), objname);
 	if (!result)
 		error("[LoadObjectMaterials] Object \"%s\" doesn't exist in scene : \"%s\" or there is no material for this object.",
 				objname.c_str(), imgname.c_str());
@@ -89,17 +89,17 @@ static void PlayMovie(Common::String vidpath, Common::String musicpath) {
 		musicpath = "Videos/019.ogg";
 	if (vidpath == "Videos/sc18.ogv") {
 		// Need the correct path for callback, call this first.
-		game->playMovie(vidpath, musicpath);
+		game->playMovie(Common::Path(vidpath), Common::Path(musicpath));
 		vidpath = "Videos/I_018_P2_001.ogv";
 	}
 
-	game->playMovie(vidpath, musicpath);
+	game->playMovie(Common::Path(vidpath), Common::Path(musicpath));
 }
 
 static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath, double volume) {
 	Game *game = g_engine->getGame();
 
-	if (!game->playMovie(vidpath, musicpath, (float)volume)) {
+	if (!game->playMovie(Common::Path(vidpath), Common::Path(musicpath), (float)volume)) {
 		warning("[PlayMovie] Movie \"%s\" doesn't exist.", vidpath.c_str());
 		return;
 	}
@@ -163,7 +163,7 @@ static int tolua_ExportedFunctions_PlayMovieAndWaitForEnd00(lua_State *L) {
 static void AddRandomSound(const Common::String &s1, const Common::String &s2, float f1, float f2){
 	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
 	assert(game);
-	game->addRandomSound(s1, s2, f1, f2);
+	game->addRandomSound(s1, Common::Path(s2), f1, f2);
 }
 
 static int tolua_ExportedFunctions_AddRandomSound00(lua_State *L) {
@@ -644,7 +644,7 @@ static int tolua_ExportedFunctions_DeleteCallbackPlayer00(lua_State *L) {
 static void AddMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y,
 				const Common::String &loctype, const Common::String &markerVal, float anchorX, float anchorY) {
 	Game *game = g_engine->getGame();
-	game->scene().addMarker(markerName, imgPath, x, y, loctype, markerVal, anchorX, anchorY);
+	game->scene().addMarker(markerName, Common::Path(imgPath), x, y, loctype, markerVal, anchorX, anchorY);
 }
 
 static int tolua_ExportedFunctions_AddMarker00(lua_State *L) {
@@ -1478,7 +1478,7 @@ static int tolua_ExportedFunctions_RequestMainMenu00(lua_State *L) {
 
 static void SetBackground(const Common::String &name) {
 	Game *game = g_engine->getGame();
-	if (!game->setBackground(name))
+	if (!game->setBackground(Common::Path(name)))
 		warning("[SetBackground] Background \"%s\" doesn't exist.", name.c_str());
 }
 
@@ -1552,7 +1552,7 @@ static void PushAnswer(const Common::String &val, const Common::String &gui) {
 		locValStr = *locVal;
 	}
 	Game *game = g_engine->getGame();
-	game->question2().pushAnswer(val, locValStr, gui);
+	game->question2().pushAnswer(val, locValStr, Common::Path(gui));
 }
 
 static int tolua_ExportedFunctions_PushAnswer00(lua_State *L) {
@@ -2011,7 +2011,7 @@ static void PlayMusic(const Common::String &path, float volume) {
 	// change repeat value after starting.
 	music.stop();
 	music.repeat(g_engine->gameIsAmerzone());
-	music.load(path);
+	music.load(Common::Path(path));
 	if (!g_engine->getApplication()->musicOn())
 		return;
 	music.play();

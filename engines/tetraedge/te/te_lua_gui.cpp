@@ -154,7 +154,7 @@ TeButtonLayout *TeLuaGUI::buttonLayoutChecked(const Common::String &name) {
 	TeButtonLayout *l = buttonLayout(name);
 	if (!l) {
 		error("No button '%s' in gui data '%s'", name.c_str(),
-			  _scriptPath.c_str());
+			  _scriptPath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	return l;
 }
@@ -163,7 +163,7 @@ TeLayout *TeLuaGUI::layoutChecked(const Common::String &name) {
 	TeLayout *l = layout(name);
 	if (!l) {
 		error("No layout '%s' in gui data '%s'", name.c_str(),
-			  _scriptPath.c_str());
+			  _scriptPath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	return l;
 }
@@ -172,12 +172,12 @@ TeSpriteLayout *TeLuaGUI::spriteLayoutChecked(const Common::String &name) {
 	TeSpriteLayout *l = spriteLayout(name);
 	if (!l) {
 		error("No sprite layout '%s' in gui data '%s'", name.c_str(),
-			  _scriptPath.c_str());
+			  _scriptPath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	return l;
 }
 
-bool TeLuaGUI::load(const Common::String &subPath) {
+bool TeLuaGUI::load(const Common::Path &subPath) {
 	TeCore *core = g_engine->getCore();
 	return load(core->findFile(subPath));
 }

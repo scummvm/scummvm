@@ -40,7 +40,7 @@ void TeInterpolation::load(Common::ReadStream &stream) {
 void TeInterpolation::load(Common::FSNode &node) {
 	Common::File f;
 	if (!f.open(node))
-		error("Couldn't open %s", node.getPath().c_str());
+		error("Couldn't open %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	load(f);
 }

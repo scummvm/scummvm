@@ -106,7 +106,7 @@ public:
 	const Common::String &firstWarpPath() { return _firstWarpPath; }
 	const Common::String &firstZone() { return _firstZone; }
 	const Common::String &firstScene() { return _firstScene; }
-	const Common::String &defaultCursor() { return _defaultCursor; }
+	const Common::Path &defaultCursor() { return _defaultCursor; }
 	TeLayout &frontLayout() { return _frontLayout; };
 	TeLayout &frontOrientationLayout() { return _frontOrientationLayout; }
 	TeLayout &backLayout() { return _backLayout; }
@@ -151,7 +151,7 @@ private:
 	Common::String _firstWarpPath;
 	Common::String _firstZone;
 	Common::String _firstScene;
-	Common::String _defaultCursor;
+	Common::Path _defaultCursor;
 
 	Common::Array<Common::String> _unrecalAnims;
 

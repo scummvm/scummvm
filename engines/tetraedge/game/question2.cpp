@@ -91,13 +91,13 @@ bool Question2::onAnswerValidated(Answer &answer) {
 	return false;
 }
 
-void Question2::pushAnswer(const Common::String &name, const Common::String &locName, const Common::String &path) {
+void Question2::pushAnswer(const Common::String &name, const Common::String &locName, const Common::Path &path) {
 	Answer *answer = new Answer();
 	answer->load(name, locName, path);
 	answer->_onButtonValidatedSignal.add(this, &Question2::onAnswerValidated);
 	TeButtonLayout *blayout = dynamic_cast<TeButtonLayout *>(answer->layout());
 	if (!blayout)
-		error("No Answer button layout after loading %s!", path.c_str());
+		error("No Answer button layout after loading %s!", path.toString(Common::Path::kNativeSeparator).c_str());
 
 	blayout->setState(TeButtonLayout::BUTTON_STATE_UP);
 	_answers.push_back(answer);
@@ -105,7 +105,7 @@ void Question2::pushAnswer(const Common::String &name, const Common::String &loc
 	float xpos;
 	blayout->setSizeType(RELATIVE_TO_PARENT);
 	blayout->setPositionType(RELATIVE_TO_PARENT);
-	if (!path.contains("Cal_FIN.lua")) {
+	if (!path.baseName().contains("Cal_FIN.lua")) {
 		blayout->setSize(TeVector3f32(0.45f, 0.065f, 1.0f));
 		xpos = 0.3f;
 	} else {
@@ -133,7 +133,7 @@ TeLayout *Question2::Answer::layout() {
 	return _gui.layout("answer");
 }
 
-void Question2::Answer::load(const Common::String &name, const Common::String &locName, const Common::String &path) {
+void Question2::Answer::load(const Common::String &name, const Common::String &locName, const Common::Path &path) {
 	_str = name;
 	_gui.load(path);
 	TeButtonLayout *answerButton = _gui.buttonLayout("answer");

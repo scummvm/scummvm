@@ -44,19 +44,19 @@ bool TeImagesSequence::matchExtension(const Common::String &extn) {
 }
 
 static bool compareNodes(const Common::FSNode &left, const Common::FSNode &right) {
-	return left.getPath() < right.getPath();
+	return left.getPath().toString('/') < right.getPath().toString('/');
 }
 
 bool TeImagesSequence::load(const Common::FSNode &directory) {
-	const Common::String path = directory.getPath();
+	const Common::String path = directory.getPath().toString('/');
 	if (!directory.isDirectory()) {
-		warning("TeImagesSequence::load:: not a directory %s", path.c_str());
+		warning("TeImagesSequence::load:: not a directory %s", directory.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Common::FSList children;
 	if (!directory.getChildren(children, Common::FSNode::kListFilesOnly) || children.empty()) {
-		warning("TeImagesSequence::load:: couldn't get children of %s", path.c_str());
+		warning("TeImagesSequence::load:: couldn't get children of %s", directory.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -80,7 +80,7 @@ bool TeImagesSequence::load(const Common::FSNode &directory) {
 
 		Common::SeekableReadStream *stream = child.createReadStream();
 		if (!stream) {
-			warning("TeImagesSequence::load can't open %s", child.getPath().c_str());
+			warning("TeImagesSequence::load can't open %s", child.getPath().toString(Common::Path::kNativeSeparator).c_str());
 			continue;
 		}
 
@@ -89,7 +89,7 @@ bool TeImagesSequence::load(const Common::FSNode &directory) {
 		if (!_width || (_width < 100 && _height < 100)) {
 			Image::PNGDecoder png;
 			if (!png.loadStream(*stream)) {
-				warning("Image sequence failed to load png %s", child.getPath().c_str());
+				warning("Image sequence failed to load png %s", child.getPath().toString(Common::Path::kNativeSeparator).c_str());
 				delete stream;
 				return false;
 			}

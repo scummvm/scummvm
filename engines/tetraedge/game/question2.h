@@ -36,7 +36,7 @@ public:
 	class Answer {
 	public:
 		TeLayout *layout();
-		void load(const Common::String &name, const Common::String &unk, const Common::String &path);
+		void load(const Common::String &name, const Common::String &unk, const Common::Path &path);
 		void unload();
 		bool onButtonValidated();
 
@@ -50,7 +50,7 @@ public:
 	void load();
 	bool isEntered() const { return _entered; }
 	bool onAnswerValidated(Answer &answer);
-	void pushAnswer(const Common::String &name, const Common::String &unk, const Common::String &path);
+	void pushAnswer(const Common::String &name, const Common::String &unk, const Common::Path &path);
 	void unload();
 	TeLuaGUI &gui() { return _gui; }
 	TeSignal1Param<const Common::String &> &onAnswerSignal() { return _onAnswerSignal; }

@@ -83,14 +83,14 @@ public:
 
 	//void pauseMovie(); // Unused
 	//void pauseSounds() {}; // Unused, does nothing?
-	bool playMovie(const Common::String &vidPath, const Common::String &musicPath, float volume = 1.0f);
+	bool playMovie(const Common::Path &vidPath, const Common::Path &musicPath, float volume = 1.0f);
 	void playSound(const Common::String &name, int param_2, float volume);
 	void removeNoScale2Child(TeLayout *layout);
 	void resumeMovie();
 	void resumeSounds() {}; // does nothing?
 	void saveBackup(const Common::String &saveName);
-	bool setBackground(const Common::String &name);
-	void setCurrentObjectSprite(const Common::String &spritePath);
+	bool setBackground(const Common::Path &name);
+	void setCurrentObjectSprite(const Common::Path &spritePath);
 	bool showMarkers(bool val);
 	bool startAnimation(const Common::String &animName, int loopcount, bool reversed);
 	// void startAnimationPart(const Common::String &param_1, int param_2, int param_3, int param_4, bool param_5) {}; // Unused.

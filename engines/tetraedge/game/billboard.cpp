@@ -32,14 +32,14 @@ namespace Tetraedge {
 Billboard::Billboard() : _hasPos2(false) {
 }
 
-bool Billboard::load(const Common::String &path) {
+bool Billboard::load(const Common::Path &path) {
 	_model = new TeModel();
 	TeIntrusivePtr<Te3DTexture> texture = Te3DTexture::makeInstance();
 	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
 	TeCore *core = g_engine->getCore();
 	Common::FSNode texnode = core->findFile(game->sceneZonePath().join(path));
 	texture->load(texnode);
-	_model->setName(path);
+	_model->setName(path.toString('/'));
 	Common::Array<TeVector3f32> quad;
 	quad.resize(4);
 	_model->setQuad(texture, quad, TeColor(0xff, 0xff, 0xff, 0xff));

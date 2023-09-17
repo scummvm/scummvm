@@ -113,7 +113,7 @@ void Te3DTextureTinyGL::forceTexData(uint gltexture, uint xsize, uint ysize) {
 }
 
 bool Te3DTextureTinyGL::load(const TeImage &img) {
-	setAccessName(img.getAccessName() + ".3dtex");
+	setAccessName(img.getAccessName().append(".3dtex"));
 
 	_width = img.w;
 	_height = img.h;
@@ -184,7 +184,7 @@ void Te3DTextureTinyGL::update(const TeImage &img, uint xoff, uint yoff) {
 	if (!img.w || !img.h)
 		return;
 
-	setAccessName(img.getAccessName() + ".3dtex");
+	setAccessName(img.getAccessName().append(".3dtex"));
 	tglBindTexture(TGL_TEXTURE_2D, _glTexture);
 	// Note: these are unsupported in TGL but should be the defaults?
 	//tglPixelStorei(TGL_UNPACK_SWAP_BYTES, TGL_FALSE);

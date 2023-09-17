@@ -95,9 +95,9 @@ public:
 	//int getAnimationFrame(const Common::String &name); // unused
 	bool hasObjectOrAnim(const Common::String &name) const;
 	void init();
-	void load(const Common::String &path, bool flag);
+	void load(const Common::Path &path, bool flag);
 	//void loadTextures(); // unused
-	//void preload(const Common::String &path); // unused
+	//void preload(const Common::Path &path); // unused
 	void putObject(const Common::String &name, bool enable);
 	void update();
 	void render();
@@ -126,7 +126,7 @@ private:
 	bool onMarkerValidated(const Common::String &name);
 
 	Common::File _file;
-	Common::String _warpPath;
+	Common::Path _warpPath;
 	TeCamera _camera;
 	bool _markersActive;
 	bool _visible1;
@@ -140,6 +140,7 @@ private:
 	TeFrustum _frustum;
 
 	Common::Array<TeWarpMarker *> _warpMarkers;
+	// FIXME: Seems useless
 	Common::List<Common::String> _paths;
 	Common::Array<AnimData *> _putAnimData;
 	Common::List<TeWarp::Exit> _exitList;

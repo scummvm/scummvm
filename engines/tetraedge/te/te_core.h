@@ -57,7 +57,7 @@ public:
 
 	bool onActivityTrackingAlarm();
 	void enableActivityTracking(bool enable);
-	void setActivityTrackingFolder(const Common::String &path);
+	void setActivityTrackingFolder(const Common::Path &path);
 
 	// Note: this is not in the original, but it's not clear how the original
 	// adds things like "PC-MacOSX" to the path, and there is not clear logic

@@ -111,7 +111,7 @@ void Te3DTextureOpenGL::forceTexData(uint gltexture, uint xsize, uint ysize) {
 }
 
 bool Te3DTextureOpenGL::load(const TeImage &img) {
-	setAccessName(img.getAccessName() + ".3dtex");
+	setAccessName(img.getAccessName().append(".3dtex"));
 
 	_width = img.w;
 	_height = img.h;
@@ -221,7 +221,7 @@ void Te3DTextureOpenGL::update(const TeImage &img, uint xoff, uint yoff) {
 	if (!img.w || !img.h)
 		return;
 
-	setAccessName(img.getAccessName() + ".3dtex");
+	setAccessName(img.getAccessName().append(".3dtex"));
 	glBindTexture(GL_TEXTURE_2D, _glTexture);
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
 	glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);

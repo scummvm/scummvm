@@ -142,13 +142,13 @@ public:
 		_blockingObjects.push_back(obj);
 	}
 	void addCallbackAnimation2D(const Common::String &param_1, const Common::String &param_2, float param_3);
-	bool addMarker(const Common::String &name, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal, float anchorX, float anchorY);
+	bool addMarker(const Common::String &name, const Common::Path &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal, float anchorX, float anchorY);
 	static float angularDistance(float a1, float a2);
 	bool aroundAnchorZone(const AnchorZone *zone);
 	TeLayout *background();
 	Billboard *billboard(const Common::String &name);
 	TeVector2f32 boundLayerSize();
-	bool changeBackground(const Common::String &name);
+	bool changeBackground(const Common::Path &name);
 	Character *character(const Common::String &name);
 	virtual void close() override;
 	// Original has a typo, "converPathToMesh", corrected.
@@ -178,7 +178,7 @@ public:
 	Common::Path getLightsFileName() const;
 	float getHeadHorizontalRotation(Character *cter, const TeVector3f32 &vec);
 	float getHeadVerticalRotation(Character *cter, const TeVector3f32 &vec);
-	Common::String imagePathMarker(const Common::String &name);
+	Common::Path imagePathMarker(const Common::String &name);
 	void initScroll();
 	bool isMarker(const Common::String &name);
 	bool isObjectBlocking(const Common::String &name);
@@ -195,7 +195,7 @@ public:
 	void loadMarkers(const Common::FSNode &node);
 	bool loadObject(const Common::String &oname);
 	bool loadObjectMaterials(const Common::String &name);
-	bool loadObjectMaterials(const Common::String &path, const Common::String &name);
+	bool loadObjectMaterials(const Common::Path &path, const Common::String &name);
 	bool loadPlayerCharacter(const Common::String &cname);
 
 	// Syberia 2 specific data..
@@ -228,7 +228,7 @@ public:
 	void removeBlockingObject(const Common::String &oname);
 
 	void reset();
-	void setImagePathMarker(const Common::String &markerName, const Common::String &path);
+	void setImagePathMarker(const Common::String &markerName, const Common::Path &path);
 	void setPositionCharacter(const Common::String &charName, const Common::String &freeMoveZoneName, const TeVector3f32 &position);
 	void setPositionMarker(const Common::String &name, const TeVector3f32 &vec);
 	void setStep(const Common::String &scene, const Common::String &step1, const Common::String &step2);

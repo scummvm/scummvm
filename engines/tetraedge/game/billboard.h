@@ -36,7 +36,7 @@ class Billboard : public TeObject {
 public:
 	Billboard();
 
-	bool load(const Common::String &path);
+	bool load(const Common::Path &path);
 
 	void calcVertex();
 	void position(const TeVector3f32 &pos);

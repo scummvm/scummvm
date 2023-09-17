@@ -46,7 +46,7 @@ public:
 
 	uint imageFormat();
 	bool isLoaded();
-	bool load(const Common::String &path);
+	bool load(const Common::Path &path);
 	bool load(const TeImage &image);
 	bool load(const TeIntrusivePtr<Te3DTexture> &texture);
 	uint32 numberOfColumns() const;

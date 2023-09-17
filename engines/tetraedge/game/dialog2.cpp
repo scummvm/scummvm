@@ -63,7 +63,7 @@ void Dialog2::launchNextDialog() {
 		const Common::String formatStr = _gui.value("textFormat").toString();
 		Common::String formattedVal = Common::String::format(formatStr.c_str(), _currentDialogData._stringVal.c_str());
 		_gui.textLayout("text")->setText(formattedVal);
-		_music.load(_currentDialogData._sound.toString());
+		_music.load(_currentDialogData._sound);
 		_music.setChannelName("dialog");
 		_music.play();
 		if (!_currentDialogData._charname.empty()) {
