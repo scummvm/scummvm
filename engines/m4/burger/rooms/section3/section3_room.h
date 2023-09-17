@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION3_ROOM301_H
-#define M4_BURGER_ROOMS_SECTION3_ROOM301_H
+#ifndef M4_BURGER_ROOMS_SECTION3_ROOM_H
+#define M4_BURGER_ROOMS_SECTION3_ROOM_H
 
 #include "m4/burger/rooms/room.h"
 
@@ -28,20 +28,21 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room301 : public Room {
+class Section3Room : public Rooms::Room {
 private:
-	static const seriesStreamBreak SERIES1[];
-	static const seriesStreamBreak SERIES2[];
-	static const seriesStreamBreak SERIES3[];
-	static const seriesStreamBreak SERIES4[];
+	const char *_digiName = nullptr;
+
+protected:
+	int _digiVolume = 0;
+
+	virtual const char *getDigi() = 0;
 
 public:
-	Room301() : Room() {}
-	~Room301() override {}
+	Section3Room() {}
+	virtual ~Section3Room() {}
 
 	void preload() override;
-	void init() override;
-	void daemon() override;
+	void setup();
 };
 
 } // namespace Rooms

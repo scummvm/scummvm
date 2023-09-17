@@ -22,15 +22,20 @@
 #ifndef M4_BURGER_ROOMS_SECTION3_ROOM319_H
 #define M4_BURGER_ROOMS_SECTION3_ROOM319_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section3/section3_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room319 : public Room {
+class Room319 : public Section3Room {
+protected:
+	const char *getDigi() override {
+		return "300_004";
+	}
+
 public:
-	Room319() : Room() {}
+	Room319() : Section3Room() {}
 	~Room319() override {}
 
 	void init() override;

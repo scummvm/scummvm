@@ -163,7 +163,7 @@ const seriesPlayBreak Room302::PLAY13[] = {
 long Room302::_state1;
 
 
-Room302::Room302() : Room() {
+Room302::Room302() : Section3Room() {
 	_state1 = 0;
 }
 

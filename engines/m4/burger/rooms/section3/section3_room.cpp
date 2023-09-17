@@ -19,33 +19,33 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION3_ROOM301_H
-#define M4_BURGER_ROOMS_SECTION3_ROOM301_H
-
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section3/section3_room.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room301 : public Room {
-private:
-	static const seriesStreamBreak SERIES1[];
-	static const seriesStreamBreak SERIES2[];
-	static const seriesStreamBreak SERIES3[];
-	static const seriesStreamBreak SERIES4[];
+void Section3Room::preload() {
+	Rooms::Room::preload();
+	_digiName = nullptr;
+}
 
-public:
-	Room301() : Room() {}
-	~Room301() override {}
+void Section3Room::setup() {
+	if (_digiName) {
+		digi_stop(3);
+		digi_unload(_digiName);
+	}
 
-	void preload() override;
-	void init() override;
-	void daemon() override;
-};
+	_digiVolume = 75;
+	_digiName = getDigi();
+
+	if (_digiName) {
+		digi_preload(_digiName);
+		digi_play_loop(_digiName, 3, _digiVolume);
+	}
+}
 
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
-
-#endif

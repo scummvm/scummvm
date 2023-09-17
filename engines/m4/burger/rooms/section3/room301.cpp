@@ -106,8 +106,12 @@ const seriesStreamBreak Room301::SERIES4[] = {
 	STREAM_BREAK_END
 };
 
+void Room301::preload() {
+	_G(player).walker_in_this_scene = false;
+}
 
 void Room301::init() {
+	
 }
 
 void Room301::daemon() {

@@ -115,6 +115,7 @@ MODULE_OBJS = \
 	burger/rooms/section2/room204.o \
 	burger/rooms/section2/room207.o \
 	burger/rooms/section3/section3.o \
+	burger/rooms/section3/section3_room.o \
 	burger/rooms/section3/room301.o \
 	burger/rooms/section3/room302.o \
 	burger/rooms/section3/room303.o \
