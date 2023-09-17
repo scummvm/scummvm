@@ -136,7 +136,7 @@ public:
 	Archive();
 	virtual ~Archive();
 
-	bool openFile(const Common::String &fileName);
+	bool openFile(const Common::Path &fileName);
 	virtual bool openStream(Common::SeekableReadStream *stream) = 0;
 	void close();
 

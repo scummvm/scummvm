@@ -176,7 +176,7 @@ public:
 	void playFlybyMovie(MystStack stack);
 	void playSkippableMovie(const VideoEntryPtr &video, bool looping);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
-	Common::String selectLocalizedMovieFilename(const Common::String &movieName);
+	Common::Path selectLocalizedMovieFilename(const Common::Path &movieName);
 
 	void playSoundBlocking(uint16 id);
 
@@ -228,7 +228,7 @@ private:
 
 	void dropPage();
 
-	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
+	Common::Path wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
 	void loadStackArchives(MystStack stackId);
 	void loadArchive(const char *archiveName, const char *language, bool mandatory);

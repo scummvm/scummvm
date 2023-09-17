@@ -118,9 +118,9 @@ public:
 	void pauseMovie(bool pause);
 
 protected:
-	static Common::String convertMystVideoName(const Common::String &name);
+	static Common::Path convertMystVideoName(const Common::String &name);
 
-	Common::String _videoFile;
+	Common::Path _videoFile;
 	int16 _left;
 	int16 _top;
 	uint16 _loop;

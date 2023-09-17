@@ -761,8 +761,8 @@ public:
 private:
 	Common::INIFile _bookInfoFile;
 
-	Common::String getBookInfoFileName() const;
-	void loadBookInfo(const Common::String &filename);
+	Common::Path getBookInfoFileName() const;
+	void loadBookInfo(const Common::Path &filename);
 
 	Common::String stringForMode(LBMode mode);
 

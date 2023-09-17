@@ -38,7 +38,7 @@ Archive::~Archive() {
 	close();
 }
 
-bool Archive::openFile(const Common::String &fileName) {
+bool Archive::openFile(const Common::Path &fileName) {
 	Common::File *file = new Common::File();
 
 	if (!file->open(fileName)) {

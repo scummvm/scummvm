@@ -127,7 +127,7 @@ private:
 // The cursor manager for Mac applications
 class MacCursorManager : public CursorManager {
 public:
-	explicit MacCursorManager(const Common::String &appName);
+	explicit MacCursorManager(const Common::Path &appName);
 	~MacCursorManager() override;
 
 	void setCursor(uint16 id) override;
@@ -175,13 +175,13 @@ private:
 // The cursor manager for NE EXE's
 class NECursorManager : public WinCursorManager {
 public:
-	explicit NECursorManager(const Common::String &appName);
+	explicit NECursorManager(const Common::Path &appName);
 };
 
 // The cursor manager for PE EXE's
 class PECursorManager : public WinCursorManager {
 public:
-	explicit PECursorManager(const Common::String &appName);
+	explicit PECursorManager(const Common::Path &appName);
 };
 
 } // End of namespace Mohawk

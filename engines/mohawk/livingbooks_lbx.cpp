@@ -35,7 +35,7 @@ protected:
 	Common::INIFile _dataFile;
 	Common::String _curSection;
 
-	void open(const Common::String &filename);
+	void open(const Common::Path &filename);
 	bool sectionExists(const Common::String &section);
 };
 
@@ -62,7 +62,7 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 		if (params.size() != 1)
 			error("incorrect number of parameters (%d) to LBXDataFile::open", params.size());
 
-		open(params[0].toString());
+		open(Common::Path(params[0].toString()));
 		return false;
 
 	case kLBXDataFileAddSection:
@@ -133,7 +133,7 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 	}
 }
 
-void LBXDataFile::open(const Common::String &filename) {
+void LBXDataFile::open(const Common::Path &filename) {
 	_dataFile.clear();
 
 	if (_dataFile.loadFromFile(filename))
@@ -141,7 +141,7 @@ void LBXDataFile::open(const Common::String &filename) {
 
 	// FIXME: try savegames
 
-	error("LBXDataFile::open: couldn't open '%s'", filename.c_str());
+	error("LBXDataFile::open: couldn't open '%s'", filename.toString().c_str());
 }
 
 Common::SharedPtr<LBXObject> createLBXObject(MohawkEngine_LivingBooks *vm, uint16 type) {

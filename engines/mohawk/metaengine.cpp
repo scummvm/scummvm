@@ -82,7 +82,7 @@ uint8 MohawkEngine::getGameType() const {
 	return _gameDescription->gameType;
 }
 
-Common::String MohawkEngine_LivingBooks::getBookInfoFileName() const {
+Common::Path MohawkEngine_LivingBooks::getBookInfoFileName() const {
 	return _gameDescription->desc.filesDescriptions[0].fileName;
 }
 
