@@ -376,7 +376,7 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 				error("playMusic: Can't load music from 'MOD%d.PAK'", music);
 		} else {
 			Common::File *file = new Common::File();
-			if (!file->open(Common::String::format("MOD%d.MUS", music)))
+			if (!file->open(Common::Path(Common::String::format("MOD%d.MUS", music))))
 				error("playMusic: Can't load music from 'MOD%d.MUS'", music);
 			str = file;
 		}
@@ -655,7 +655,7 @@ void AGOSEngine::loadMidiSfx() {
 	Common::File fxb_file;
 
 	Common::String filename = getGameType() == GType_ELVIRA2 ? "MYLIB.FXB" : "WAX.FXB";
-	fxb_file.open(filename);
+	fxb_file.open(Common::Path(filename));
 	if (!fxb_file.isOpen())
 		error("loadMidiSfx: Can't open sound effect bank '%s'", filename.c_str());
 

@@ -33,7 +33,7 @@ void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requested
 
 	isMusicDrvFile = false;
 
-	if (!driverStream->open(filename)) {
+	if (!driverStream->open(Common::Path(filename))) {
 		error("%s: unable to open file", filename.c_str());
 	}
 
