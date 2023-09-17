@@ -303,7 +303,7 @@ public:
 	void SPRINTCHR(char c, int fontNum);
 	void PRINTCHR(Common::String msg, int fontNum);
 
-	bool playMovie(const Common::String &filename, const Common::Point &pos);
+	bool playMovie(const Common::Path &filename, const Common::Point &pos);
 };
 
 } // End of namespace Access

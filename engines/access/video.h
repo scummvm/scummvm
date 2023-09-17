@@ -64,7 +64,7 @@ public:
 	 * Start up a video
 	 */
 	void setVideo(BaseSurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate);
-	void setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::String filename, int rate);
+	void setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::Path &filename, int rate);
 
 	/**
 	 * Decodes a frame of the video

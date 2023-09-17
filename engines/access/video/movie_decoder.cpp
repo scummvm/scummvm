@@ -692,13 +692,13 @@ Audio::AudioStream *AccessVIDMovieDecoder::StreamAudioTrack::getAudioStream() co
 	return _audioStream;
 }
 
-bool AccessEngine::playMovie(const Common::String &filename, const Common::Point &pos) {
+bool AccessEngine::playMovie(const Common::Path &filename, const Common::Point &pos) {
 	AccessVIDMovieDecoder videoDecoder;
 
 	Common::Point framePos(pos.x, pos.y);
 
 	if (!videoDecoder.loadFile(filename)) {
-		warning("AccessVIDMoviePlay: could not open '%s'", filename.c_str());
+		warning("AccessVIDMoviePlay: could not open '%s'", filename.toString().c_str());
 		return false;
 	}
 

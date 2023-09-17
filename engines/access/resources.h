@@ -80,7 +80,7 @@ protected:
 	 */
 	virtual void load(Common::SeekableReadStream &s);
 public:
-	Common::StringArray FILENAMES;
+	Common::Array<Common::Path> FILENAMES;
 	Common::Array< Common::Array<byte> > CHARTBL;
 	Common::Array<RoomEntry> ROOMTBL;
 	Common::Array<DeathEntry> DEATHS;

@@ -154,7 +154,7 @@ void AccessEngine::setVGA() {
 
 void AccessEngine::initialize() {
 	if (isCD()) {
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 		// The CD version contains two versions of the game.
 		// - The MCGA version, in the CDROM folder
 		// - The VESA version, in the TDROM folder
