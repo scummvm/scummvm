@@ -127,7 +127,7 @@ PrivateEngine::~PrivateEngine() {
 }
 
 void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
-	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
+	SearchMan.addDirectory(gamePath, 0, 10);
 }
 
 Common::SeekableReadStream *PrivateEngine::loadAssets() {
@@ -1172,7 +1172,7 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	return Common::kNoError;
 }
 
-Common::String PrivateEngine::convertPath(const Common::String &name) {
+Common::Path PrivateEngine::convertPath(const Common::String &name) {
 	Common::String path(name);
 	Common::String s1("\\");
 	Common::String s2("/");
@@ -1187,17 +1187,17 @@ Common::String PrivateEngine::convertPath(const Common::String &name) {
 	Common::replace(path, s1, s2);
 
 	path.toLowercase();
-	return path;
+	return Common::Path(path);
 }
 
 void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopOthers, bool background) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), loops, stopOthers, background);
 
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 
 	if (!file)
-		error("unable to find sound file %s", path.c_str());
+		error("unable to find sound file %s", path.toString().c_str());
 
 	Audio::LoopingAudioStream *stream;
 	stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), loops);
@@ -1224,14 +1224,14 @@ bool PrivateEngine::isSoundActive() {
 void PrivateEngine::playVideo(const Common::String &name) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	//stopSound(true);
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 
 	if (!file)
-		error("unable to find video file %s", path.c_str());
+		error("unable to find video file %s", path.toString().c_str());
 
 	if (!_videoDecoder->loadStream(file))
-		error("unable to load video %s", path.c_str());
+		error("unable to load video %s", path.toString().c_str());
 	_videoDecoder->start();
 }
 
@@ -1255,7 +1255,7 @@ void PrivateEngine::stopSound(bool all) {
 
 Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	Common::ScopedPtr<Common::SeekableReadStream> file(Common::MacResManager::openFileOrDataFork(path));
 	if (!file)
 		error("unable to load image %s", name.c_str());
@@ -1268,7 +1268,7 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 	byte *currentPalette;
 
 	uint16 ncolors = _image->getPaletteColorCount();
-	if (ncolors < 256 || path.hasPrefix("intro")) { // For some reason, requires color remapping
+	if (ncolors < 256 || path.toString('/').hasPrefix("intro")) { // For some reason, requires color remapping
 		currentPalette = (byte *) malloc(3*256);
 		drawScreen();
 		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
