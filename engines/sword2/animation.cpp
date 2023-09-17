@@ -104,7 +104,7 @@ bool MoviePlayer::load(const char *name) {
 	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
 		initGraphics(g_system->getWidth(), g_system->getHeight(), nullptr);
 
-	if (!_decoder->loadFile(filename)) {
+	if (!_decoder->loadFile(Common::Path(filename))) {
 		// Go back to 8bpp color
 		if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
 			initGraphics(g_system->getWidth(), g_system->getHeight());
@@ -418,7 +418,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 
 	filename = Common::String::format("%s.str", name);
 
-	if (Common::File::exists(filename)) {
+	if (Common::File::exists(Common::Path(filename))) {
 #ifdef USE_RGB_COLOR
 		Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x, frameCount);
 		return new MoviePlayer(vm, system, psxDecoder, kVideoDecoderPSX);
@@ -431,14 +431,14 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 
 	filename = Common::String::format("%s.smk", name);
 
-	if (Common::File::exists(filename)) {
+	if (Common::File::exists(Common::Path(filename))) {
 		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder();
 		return new MoviePlayer(vm, system, smkDecoder, kVideoDecoderSMK);
 	}
 
 	filename = Common::String::format("%s.dxa", name);
 
-	if (Common::File::exists(filename)) {
+	if (Common::File::exists(Common::Path(filename))) {
 		Video::DXADecoder *dxaDecoder = new Video::DXADecoder();
 		return new MoviePlayer(vm, system, dxaDecoder, kVideoDecoderDXA);
 	}
@@ -446,7 +446,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 	// Old MPEG2 cutscenes
 	filename = Common::String::format("%s.mp2", name);
 
-	if (Common::File::exists(filename)) {
+	if (Common::File::exists(Common::Path(filename))) {
 #ifdef USE_MPEG2
 		// HACK: Old ScummVM builds ignored the AVI frame rate field and forced the video
 		// to be played back at 12fps.
