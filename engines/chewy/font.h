@@ -29,7 +29,7 @@ namespace Chewy {
 
 class ChewyFont {
 public:
-	ChewyFont(Common::String filename);
+	ChewyFont(const Common::Path &filename);
 	virtual ~ChewyFont();
 
 	Graphics::Surface *getLine(const Common::String &texts);
