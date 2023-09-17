@@ -1445,6 +1445,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_HOYLE5_SAVELOAD },
 
+	// Hoyle Solitaire - Macintosh CD
+	// VERSION file reports "1.000.000"
+	{"hoyle5solitaire", "", {
+		{"Data1", 0, "38283be5a7e21098cb34f6e6789b7180", 401393},
+		{"Data2", 0, "f007f4a13260d2b26b85b5d8379ac8d1", 15066173},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_HOYLE5 },
+
 #undef GUIO_HOYLE5
 #undef GUIO_HOYLE5_SAVELOAD
 
