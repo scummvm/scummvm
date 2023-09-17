@@ -73,7 +73,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_previousScene = nullptr;
 
 	// Add default search directories
-	const Common::FSNode gamePath(ConfMan.get("path"));
+	const Common::FSNode gamePath(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gamePath, "vids");
 	SearchMan.addSubDirectoryMatching(gamePath, "music");
 

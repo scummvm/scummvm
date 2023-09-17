@@ -159,7 +159,7 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 		filename = Common::String::format("mov%03d.avi", videoNumber);
 	else
 		filename = Common::String::format("mov%03d.smk", videoNumber);
-	play(filename, Config.showMovieSubtitles);
+	play(Common::Path(filename), Config.showMovieSubtitles);
 
 	// Cleanup and switch to previous event handler
 	getCursor()->show();
@@ -167,7 +167,7 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 	_vm->switchEventHandler(handler);
 }
 
-void VideoPlayer::play(const Common::String &filename, bool showSubtitles) {
+void VideoPlayer::play(const Common::Path &filename, bool showSubtitles) {
 	if (!_decoder->loadFile(filename))
 		error("[Video::playVideo] Invalid video index (%d)", _currentMovie);
 
@@ -218,7 +218,7 @@ void VideoPlayer::play(const Common::String &filename, bool showSubtitles) {
 
 			if (showSubtitles) {
 				int32 currentFrame = _decoder->getCurFrame() + 1;
-				debugC(kDebugLevelVideo, "[Video] {%s} Playing Frame %d", filename.c_str(), currentFrame);
+				debugC(kDebugLevelVideo, "[Video] {%s} Playing Frame %d", filename.toString(Common::Path::kNativeSeparator).c_str(), currentFrame);
 				// Check for next frame
 				if (currentFrame > frameEnd) {
 					if (index < _subtitles.size()) {
