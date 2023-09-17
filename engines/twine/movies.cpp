@@ -378,7 +378,7 @@ bool Movies::playMovie(const char *name) {
 	_fadeOutFrames = 0;
 
 	_file.close();
-	if (!_file.open(fileNamePath + FLA_EXT)) {
+	if (!_file.open(Common::Path(fileNamePath + FLA_EXT))) {
 		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
 		playGIFMovie(fileNamePath.c_str());
 		return true;

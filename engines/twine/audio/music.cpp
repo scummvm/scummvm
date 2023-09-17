@@ -236,7 +236,7 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	stopMidiMusic();
 
 	if (_engine->isDotEmuEnhanced() || _engine->isLba1Classic()) {
-		const Common::String &trackName = Common::String::format("lba1-%02i", midiIdx + 1);
+		Common::Path trackName(Common::String::format("lba1-%02i", midiIdx + 1));
 		Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);
 		if (stream != nullptr) {
 			const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
