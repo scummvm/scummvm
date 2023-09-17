@@ -616,9 +616,10 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		if (!stream) {
 			if (!_bookIni.hasKey(Common::String::format("%d", param1), "Data"))
 				return 0;
-			filename = getFilename("Data", param1);
+			Common::Path path = getFilename("Data", param1);
 			Common::SeekableReadStream *file =
-				Common::MacResManager::openFileOrDataFork(filename);
+				Common::MacResManager::openFileOrDataFork(path);
+			filename = path.toString(Common::Path::kNativeSeparator);
 			if (!file)
 				error("couldn't open '%s' to get vars id '%d'", filename.c_str(), param1);
 			stream = file;
@@ -684,14 +685,14 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncLoadData:
 		debug(3, "kFuncLoadData(%d, %d, %d)", param1, param2, param3);
 		{
-		Common::String filename = getFilename("Data", param1);
+		Common::Path filename = getFilename("Data", param1);
 		Common::File *file = new Common::File();
 		if (!file->open(filename))
-			error("couldn't open '%s' to get data id '%d'", filename.c_str(), param1);
+			error("couldn't open '%s' to get data id '%d'", filename.toString(Common::Path::kNativeSeparator).c_str(), param1);
 		if (param3 == 0)
 			param3 = 1000;
 		if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
-			error("can't read %d entries into %d from file '%s' for data id '%d'", param3, param2, filename.c_str(), param1);
+			error("can't read %d entries into %d from file '%s' for data id '%d'", param3, param2, filename.toString(Common::Path::kNativeSeparator).c_str(), param1);
 		for (uint i = 0; i < (uint)param3; i++) {
 			if (file->pos() + 1 > file->size())
 				break;

@@ -219,8 +219,8 @@ private:
 
 	Common::String getSaveStateName(int slot) const override;
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
-	Common::String getFilename(const Common::String &section, uint id);
-	Common::String mangleFilename(Common::String filename);
+	Common::Path getFilename(const Common::String &section, uint id);
+	Common::Path mangleFilename(Common::String filename);
 	void loadLibrary(uint id);
 	void unloadLibrary(uint id);
 
