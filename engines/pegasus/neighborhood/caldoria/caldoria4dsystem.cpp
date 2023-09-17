@@ -385,7 +385,7 @@ void Caldoria4DSystem::playSound(const Common::String &baseFileName) {
 	if (g_vm->isDVD())
 		fileName += ".44K";
 
-	_owner->loadLoopSound1(fileName + ".aiff");
+	_owner->loadLoopSound1(Common::Path(fileName + ".aiff"));
 }
 
 } // End of namespace Pegasus

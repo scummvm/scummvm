@@ -79,22 +79,22 @@ void Surface::allocateSurface(const Common::Rect &bounds) {
 	_ownsSurface = true;
 }
 
-void Surface::getImageFromPICTFile(const Common::String &fileName) {
+void Surface::getImageFromPICTFile(const Common::Path &fileName) {
 	Common::File pict;
 	if (!pict.open(fileName))
-		error("Could not open picture '%s'", fileName.c_str());
+		error("Could not open picture '%s'", fileName.toString().c_str());
 
 	if (!getImageFromPICTStream(&pict))
-		error("Failed to load PICT '%s'", fileName.c_str());
+		error("Failed to load PICT '%s'", fileName.toString().c_str());
 }
 
 void Surface::getImageFromPICTResource(Common::MacResManager *resFork, uint16 id) {
 	Common::SeekableReadStream *res = resFork->getResource(MKTAG('P', 'I', 'C', 'T'), id);
 	if (!res)
-		error("Could not open PICT resource %d from '%s'", id, resFork->getBaseFileName().toString().c_str());
+		error("Could not open PICT resource %d from '%s'", id, resFork->getBaseFileName().toString(Common::Path::kNativeSeparator).c_str());
 
 	if (!getImageFromPICTStream(res))
-		error("Failed to load PICT resource %d from '%s'", id, resFork->getBaseFileName().toString().c_str());
+		error("Failed to load PICT resource %d from '%s'", id, resFork->getBaseFileName().toString(Common::Path::kNativeSeparator).c_str());
 
 	delete res;
 }
@@ -337,7 +337,7 @@ void PixelImage::drawImage(const Common::Rect &sourceBounds, const Common::Rect 
 		copyToCurrentPort(sourceBounds, destBounds);
 }
 
-void Frame::initFromPICTFile(const Common::String &fileName, bool transparent) {
+void Frame::initFromPICTFile(const Common::Path &fileName, bool transparent) {
 	getImageFromPICTFile(fileName);
 	_transparent = transparent;
 }
@@ -368,7 +368,7 @@ void Picture::draw(const Common::Rect &r) {
 	drawImage(r2, r1);
 }
 
-void Picture::initFromPICTFile(const Common::String &fileName, bool transparent) {
+void Picture::initFromPICTFile(const Common::Path &fileName, bool transparent) {
 	Frame::initFromPICTFile(fileName, transparent);
 
 	Common::Rect surfaceBounds;

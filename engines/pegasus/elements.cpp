@@ -234,7 +234,7 @@ FrameSequence::~FrameSequence() {
 	delete _resFork;
 }
 
-void FrameSequence::useFileName(const Common::String &fileName) {
+void FrameSequence::useFileName(const Common::Path &fileName) {
 	_resFork->open(fileName);
 }
 

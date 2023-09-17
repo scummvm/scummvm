@@ -78,12 +78,12 @@ protected:
 
 class AIPlayMessageAction : public AIAction {
 public:
-	AIPlayMessageAction(const Common::String &movieName, bool keepLastFrame, const InputBits = kWarningInterruption);
+	AIPlayMessageAction(const Common::Path &movieName, bool keepLastFrame, const InputBits = kWarningInterruption);
 
 	void performAIAction(AIRule *) override;
 
 protected:
-	Common::String _movieName;
+	Common::Path _movieName;
 	InputBits _interruptionFilter;
 	bool _keepLastFrame;
 };

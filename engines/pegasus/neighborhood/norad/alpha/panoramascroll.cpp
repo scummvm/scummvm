@@ -31,7 +31,7 @@ PanoramaScroll::PanoramaScroll(const DisplayElementID id) : IdlerAnimation(id) {
 	_totalWidth = 0;
 }
 
-void PanoramaScroll::initFromMovieFile(const Common::String &fileName) {
+void PanoramaScroll::initFromMovieFile(const Common::Path &fileName) {
 	_panorama.initFromMovieFile(fileName);
 
 	Common::Rect r;
@@ -39,7 +39,7 @@ void PanoramaScroll::initFromMovieFile(const Common::String &fileName) {
 	_totalWidth = r.width();
 }
 
-void PanoramaScroll::initMaskFromPICTFile(const Common::String &fileName) {
+void PanoramaScroll::initMaskFromPICTFile(const Common::Path &fileName) {
 	if (!_panorama.isPanoramaOpen())
 		return;
 

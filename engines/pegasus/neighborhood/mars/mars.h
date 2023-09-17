@@ -91,10 +91,10 @@ public:
 	void decreaseRobotShuttleEnergy(const int, Common::Point impactPoint);
 	void setUpNextDropTime();
 
-	Common::String getBriefingMovie() override;
-	Common::String getEnvScanMovie() override;
+	Common::Path getBriefingMovie() override;
+	Common::Path getEnvScanMovie() override;
 	uint getNumHints() override;
-	Common::String getHintMovie(uint) override;
+	Common::Path getHintMovie(uint) override;
 
 	void shieldOn() override;
 	void shieldOff() override;
@@ -197,8 +197,8 @@ protected:
 	void updateCursor(const Common::Point, const Hotspot *) override;
 	void playSpaceAmbient();
 
-	Common::String getSoundSpotsName() override;
-	Common::String getNavMovieName() override;
+	Common::Path getSoundSpotsName() override;
+	Common::Path getNavMovieName() override;
 
 	Movie _extraMovie;
 	NotificationCallBack _extraMovieCallBack;

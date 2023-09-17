@@ -77,9 +77,9 @@ protected:
 	Common::Rect _highlightBounds;
 	bool _active, _shouldDrawHighlight;
 
-	Common::String _pictName;
-	Common::String _movieName;
-	Common::String _highlightName;
+	Common::Path _pictName;
+	Common::Path _movieName;
+	Common::Path _highlightName;
 	uint16 _itemsPerRow;
 	uint16 _numberOfRows;
 	uint16 _itemWidth;

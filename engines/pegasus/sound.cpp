@@ -48,12 +48,12 @@ void Sound::disposeSound() {
 	delete _stream; _stream = nullptr;
 }
 
-void Sound::initFromAIFFFile(const Common::String &fileName) {
+void Sound::initFromAIFFFile(const Common::Path &fileName) {
 	disposeSound();
 
 	Common::File *file = new Common::File();
 	if (!file->open(fileName)) {
-		warning("Failed to open AIFF file '%s'", fileName.c_str());
+		warning("Failed to open AIFF file '%s'", fileName.toString().c_str());
 		delete file;
 		return;
 	}
@@ -64,18 +64,18 @@ void Sound::initFromAIFFFile(const Common::String &fileName) {
 
 	if (!_stream) {
 		delete stream;
-		warning("AIFF stream '%s' is not seekable", fileName.c_str());
+		warning("AIFF stream '%s' is not seekable", fileName.toString().c_str());
 		return;
 	}
 }
 
-void Sound::initFromQuickTime(const Common::String &fileName) {
+void Sound::initFromQuickTime(const Common::Path &fileName) {
 	disposeSound();
 
 	_stream = Audio::makeQuickTimeStream(fileName);
 
 	if (!_stream)
-		warning("Failed to open QuickTime file '%s'", fileName.c_str());
+		warning("Failed to open QuickTime file '%s'", fileName.toString().c_str());
 }
 
 void Sound::attachFader(SoundFader *fader) {

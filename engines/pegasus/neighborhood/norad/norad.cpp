@@ -283,7 +283,7 @@ uint16 Norad::getDateResID() const {
 	return kDate2112ID;
 }
 
-Common::String Norad::getBriefingMovie() {
+Common::Path Norad::getBriefingMovie() {
 	return "Images/AI/Norad/XNO";
 }
 

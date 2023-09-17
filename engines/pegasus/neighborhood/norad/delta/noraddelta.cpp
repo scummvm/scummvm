@@ -835,7 +835,7 @@ Hotspot *NoradDelta::getItemScreenSpot(Item *item, DisplayElement *element) {
 	return Norad::getItemScreenSpot(item, element);
 }
 
-Common::String NoradDelta::getEnvScanMovie() {
+Common::Path NoradDelta::getEnvScanMovie() {
 	return "Images/AI/Norad/XNE2";
 }
 
@@ -877,8 +877,8 @@ uint NoradDelta::getNumHints() {
 	return numHints;
 }
 
-Common::String NoradDelta::getHintMovie(uint hintNum) {
-	Common::String movieName = Neighborhood::getHintMovie(hintNum);
+Common::Path NoradDelta::getHintMovie(uint hintNum) {
+	Common::Path movieName = Neighborhood::getHintMovie(hintNum);
 
 	if (movieName.empty()) {
 		switch (GameState.getCurrentRoomAndView()) {
@@ -973,11 +973,11 @@ void NoradDelta::setSoundFXLevel(const uint16 level) {
 		_loop2Fader.setMasterVolume(level);
 }
 
-Common::String NoradDelta::getSoundSpotsName() {
+Common::Path NoradDelta::getSoundSpotsName() {
 	return "Sounds/Norad/Norad Delta Spots";
 }
 
-Common::String NoradDelta::getNavMovieName() {
+Common::Path NoradDelta::getNavMovieName() {
 	return "Images/Norad Delta/Norad Delta.movie";
 }
 

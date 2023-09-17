@@ -34,8 +34,8 @@ public:
 	PanoramaScroll(const DisplayElementID);
 	~PanoramaScroll() override {}
 
-	void initFromMovieFile(const Common::String &);
-	void initMaskFromPICTFile(const Common::String &);
+	void initFromMovieFile(const Common::Path &);
+	void initMaskFromPICTFile(const Common::Path &);
 
 	void releasePanorama();
 

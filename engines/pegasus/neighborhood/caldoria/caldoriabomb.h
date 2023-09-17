@@ -125,7 +125,7 @@ public:
 	void setAmbienceLevel(const uint16) override;
 
 	long getNumHints() override;
-	Common::String getHintMovie(uint) override;
+	Common::Path getHintMovie(uint) override;
 	void doSolve() override;
 	bool canSolve() override;
 
@@ -138,7 +138,7 @@ protected:
 	void clickInHotspot(const Input &, const Hotspot *) override;
 	void handleInput(const Input &, const Hotspot *) override;
 	InputBits getInputFilter() override;
-	void startBombAmbient(Common::String);
+	void startBombAmbient(const Common::Path &);
 
 	Notification *_neighborhoodNotification;
 	BombGrid _grid;

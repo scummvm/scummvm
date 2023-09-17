@@ -64,9 +64,9 @@ public:
 
 	void loadAmbientLoops() override;
 
-	Common::String getEnvScanMovie() override;
+	Common::Path getEnvScanMovie() override;
 	uint getNumHints() override;
-	Common::String getHintMovie(uint) override;
+	Common::Path getHintMovie(uint) override;
 	void setUpAIRules() override;
 
 	void setSubPrepFailed(bool value) { _subPrepFailed = value; }
@@ -117,8 +117,8 @@ protected:
 
 	bool _subPrepFailed;
 
-	Common::String getSoundSpotsName() override;
-	Common::String getNavMovieName() override;
+	Common::Path getSoundSpotsName() override;
+	Common::Path getNavMovieName() override;
 };
 
 } // End of namespace Pegasus

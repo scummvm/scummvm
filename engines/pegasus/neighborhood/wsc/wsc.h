@@ -58,8 +58,8 @@ public:
 
 	void setSoundFXLevel(const uint16) override;
 
-	void prepareForAIHint(const Common::String &) override;
-	void cleanUpAfterAIHint(const Common::String &) override;
+	void prepareForAIHint(const Common::Path &) override;
+	void cleanUpAfterAIHint(const Common::Path &) override;
 
 	void init() override;
 	void start() override;
@@ -142,17 +142,17 @@ protected:
 	void spotCompleted() override;
 	void activateHotspots() override;
 	void setUpAIRules() override;
-	Common::String getBriefingMovie() override;
-	Common::String getEnvScanMovie() override;
+	Common::Path getBriefingMovie() override;
+	Common::Path getEnvScanMovie() override;
 	uint getNumHints() override;
-	Common::String getHintMovie(uint) override;
+	Common::Path getHintMovie(uint) override;
 	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
 	void setUpPoison();
 	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
 	void timerExpired(const uint32) override;
 
-	Common::String getSoundSpotsName() override;
-	Common::String getNavMovieName() override;
+	Common::Path getSoundSpotsName() override;
+	Common::Path getNavMovieName() override;
 
 	FlagsArray<byte, kNumWSCPrivateFlags> _privateFlags;
 	const Hotspot *_cachedZoomSpot;

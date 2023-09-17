@@ -681,8 +681,8 @@ void Prehistoric::spotCompleted() {
 		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA15", kArthurPrehistoricAtCliffEdge);
 }
 
-Common::String Prehistoric::getBriefingMovie() {
-	Common::String movieName = Neighborhood::getBriefingMovie();
+Common::Path Prehistoric::getBriefingMovie() {
+	Common::Path movieName = Neighborhood::getBriefingMovie();
 
 	if (movieName.empty())
 		movieName = "Images/AI/Prehistoric/XPE";
@@ -690,8 +690,8 @@ Common::String Prehistoric::getBriefingMovie() {
 	return movieName;
 }
 
-Common::String Prehistoric::getEnvScanMovie() {
-	Common::String movieName = Neighborhood::getEnvScanMovie();
+Common::Path Prehistoric::getEnvScanMovie() {
+	Common::Path movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
 		if (!_vm->isOldDemo()) {
@@ -733,8 +733,8 @@ uint Prehistoric::getNumHints() {
 	return numHints;
 }
 
-Common::String Prehistoric::getHintMovie(uint hintNum) {
-	Common::String movieName = Neighborhood::getHintMovie(hintNum);
+Common::Path Prehistoric::getHintMovie(uint hintNum) {
+	Common::Path movieName = Neighborhood::getHintMovie(hintNum);
 
 	if (movieName.empty()) {
 		switch (GameState.getCurrentRoomAndView()) {
@@ -805,11 +805,11 @@ void Prehistoric::bumpIntoWall() {
 	Neighborhood::bumpIntoWall();
 }
 
-Common::String Prehistoric::getNavMovieName() {
+Common::Path Prehistoric::getNavMovieName() {
 	return "Images/Prehistoric/Prehistoric.movie";
 }
 
-Common::String Prehistoric::getSoundSpotsName() {
+Common::Path Prehistoric::getSoundSpotsName() {
 	return "Sounds/Prehistoric/Prehistoric Spots";
 }
 

@@ -55,12 +55,12 @@ public:
 	// We only have one access point here because we should
 	// only be opening an AIFF file from a file name. We're
 	// not using the resource fork string resources.
-	void initFromAIFFFile(const Common::String &fileName);
+	void initFromAIFFFile(const Common::Path &fileName);
 
 	// Unlike the original game, we're going to use a regular
 	// audio stream for sound spots. The original treated them
 	// as movies.
-	void initFromQuickTime(const Common::String &fileName);
+	void initFromQuickTime(const Common::Path &fileName);
 
 	void disposeSound();
 	bool isSoundLoaded() const;

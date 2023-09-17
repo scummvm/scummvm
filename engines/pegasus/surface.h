@@ -73,7 +73,7 @@ public:
 	void scaleTransparentCopy(const Common::Rect &, const Common::Rect &) const;
 	void scaleTransparentCopyGlow(const Common::Rect &, const Common::Rect &) const;
 
-	virtual void getImageFromPICTFile(const Common::String &fileName);
+	virtual void getImageFromPICTFile(const Common::Path &fileName);
 	virtual void getImageFromPICTResource(Common::MacResManager *resFork, uint16 id);
 	virtual void getImageFromMovieFrame(Video::VideoDecoder *, TimeValue);
 
@@ -107,7 +107,7 @@ public:
 	Frame() {}
 	~Frame() override {}
 
-	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);
+	virtual void initFromPICTFile(const Common::Path &fileName, bool transparent = false);
 	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false);
 	virtual void initFromMovieFrame(Video::VideoDecoder *, TimeValue, bool transparent = false);
 };
@@ -127,7 +127,7 @@ public:
 	Picture(const DisplayElementID id) : DisplayElement(id) {}
 	~Picture() override {}
 
-	void initFromPICTFile(const Common::String &fileName, bool transparent = false) override;
+	void initFromPICTFile(const Common::Path &fileName, bool transparent = false) override;
 	void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false) override;
 	void initFromMovieFrame(Video::VideoDecoder *, TimeValue, bool transparent = false) override;
 
