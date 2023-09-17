@@ -528,7 +528,7 @@ void dumpResource(hResContext *con, uint32 id) {
 
 	Common::DumpFile out;
 
-	Common::String path = Common::String::format("./dumps/mus%s.dat", tag2strP(id));
+	Common::Path path(Common::String::format("./dumps/mus%s.dat", tag2strP(id)));
 
 	if (out.open(path, true)) {
 		out.write(buffer, size);
