@@ -98,7 +98,7 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "database");
 
@@ -3418,7 +3418,7 @@ void ToucheEngine::initMusic() {
 	// Detect External Music Files
 	bool extMusic = true;
 	for (int num = 0; num < 26 && extMusic; num++) {
-		Common::String extMusicFilename = Common::String::format("track%02d", num+1);
+		Common::Path extMusicFilename(Common::String::format("track%02d", num+1));
 		Audio::SeekableAudioStream *musicStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
 		if (!musicStream)
 			extMusic = false;
@@ -3443,10 +3443,10 @@ void ToucheEngine::startMusic(int num) {
 		_fData.seek(offs);
 		_midiPlayer->play(_fData, size, true);
 	} else {
-		Common::String extMusicFilename = Common::String::format("track%02d", num);
+		Common::Path extMusicFilename(Common::String::format("track%02d", num));
 		Audio::SeekableAudioStream *extMusicFileStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
 		if (!extMusicFileStream) {
-			error("Unable to open %s for reading", extMusicFilename.c_str());
+			error("Unable to open %s for reading", extMusicFilename.toString().c_str());
 		}
 		Audio::LoopingAudioStream *loopStream = new Audio::LoopingAudioStream(extMusicFileStream, 0);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream, -1, _musicVolume);
