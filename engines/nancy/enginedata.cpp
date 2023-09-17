@@ -355,7 +355,7 @@ CRED::CRED(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, imageName);
 
 	textNames.resize(isVampire ? 7 : 1);
-	for (Common::String &str : textNames) {
+	for (Common::Path &str : textNames) {
 		readFilename(*chunkStream, str);
 	}
 
@@ -698,16 +698,17 @@ RCPR::RCPR(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	uColor10[1] = chunkStream->readByte();
 	uColor10[2] = chunkStream->readByte();
 
-	Common::String tmp;
+	Common::Path tmp;
 	while (chunkStream->pos() < chunkStream->size()) {
 		readFilename(*chunkStream, tmp);
-		if (tmp.hasPrefixIgnoreCase("Wall")) {
+		Common::String baseName(tmp.baseName());
+		if (baseName.hasPrefixIgnoreCase("Wall")) {
 			wallNames.push_back(tmp);
-		} else if (tmp.hasPrefixIgnoreCase("SpW")) {
+		} else if (baseName.hasPrefixIgnoreCase("SpW")) {
 			specialWallNames.push_back(tmp);
-		} else if (tmp.hasPrefixIgnoreCase("Ceil")) {
+		} else if (baseName.hasPrefixIgnoreCase("Ceil")) {
 			ceilingNames.push_back(tmp);
-		} else if (tmp.hasPrefixIgnoreCase("Floor")) {
+		} else if (baseName.hasPrefixIgnoreCase("Floor")) {
 			floorNames.push_back(tmp);
 		}
 	}

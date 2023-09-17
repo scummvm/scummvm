@@ -58,7 +58,7 @@ protected:
 	void popUp(uint id);
 	void clearAllElements();
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	bool _hasSecondState = false;
 	bool _itemsStayDown = true;
 	bool _needButtonToCheckSuccess = false;

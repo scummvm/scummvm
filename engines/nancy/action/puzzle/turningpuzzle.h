@@ -51,7 +51,7 @@ protected:
 	void drawObject(uint objectID, uint faceID, uint frameID);
 	void turnLogic(uint objectID);
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	uint16 _numFaces = 0;
 	uint16 _numFramesPerTurn = 0;

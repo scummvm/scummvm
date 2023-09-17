@@ -43,7 +43,7 @@ protected:
 	Common::String getRecordTypeName() const override { return "BBallPuzzle"; };
 	bool isViewportRelative() const override { return true; }
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	uint16 _positions = 0;
 	uint16 _powers = 0;

@@ -47,7 +47,7 @@ struct CifInfo {
 		kResCompression = 2
 	};
 
-	Common::String name;
+	Common::Path name;
 	ResType type = kResTypeEmpty; // ResType
 	ResCompression comp = kResCompressionNone; // ResCompression
 	uint16 width = 0, pitch = 0, height = 0;
@@ -64,7 +64,7 @@ private:
 friend class ResourceManager;
 	CifFile() : _stream(nullptr) {}
 public:
-	CifFile(Common::SeekableReadStream *stream, const Common::String &name);
+	CifFile(Common::SeekableReadStream *stream, const Common::Path &name);
 	~CifFile();
 
 	Common::SeekableReadStream *createReadStream() const;
@@ -82,12 +82,12 @@ class CifTree : public Common::Archive {
 protected:
 friend class ResourceManager;
 	CifTree() : _stream(nullptr) {}
-	CifTree(Common::SeekableReadStream *stream, const Common::String &name);
+	CifTree(Common::SeekableReadStream *stream, const Common::Path &name);
 	virtual ~CifTree();
 
 public:
 	// Used for extracting additional image data for conversation cels (nancy2 and up)
-	const CifInfo &getCifInfo(const Common::String &name) const;
+	const CifInfo &getCifInfo(const Common::Path &name) const;
 
 	// Archive interface
 	bool hasFile(const Common::Path &path) const override;
@@ -96,7 +96,7 @@ public:
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
-	Common::String getName() const { return _name; }
+	Common::Path getName() const { return _name; }
 
 	static CifTree *makeCifTreeArchive(const Common::String &name, const Common::String &ext);
 
@@ -104,21 +104,21 @@ private:
 	bool sync(Common::Serializer &ser);
 	Common::SeekableReadStream *createReadStreamRaw(const Common::Path &path) const;
 
-	Common::String _name;
+	Common::Path _name;
 	Common::SeekableReadStream *_stream;
-	Common::HashMap<Common::String, CifInfo, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _fileMap;
+	Common::HashMap<Common::Path, CifInfo, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _fileMap;
 	Common::Array<CifInfo> _writeFileMap;
 };
 
 // Ciftree that only provides a file if a certain ConfMan flag is true. Used for handling game patches
 class PatchTree : public CifTree {
 public:
-	PatchTree(Common::SeekableReadStream *stream, const Common::String &name) : CifTree(stream, name) {}
+	PatchTree(Common::SeekableReadStream *stream, const Common::Path &name) : CifTree(stream, name) {}
 	virtual ~PatchTree() {}
 
 	bool hasFile(const Common::Path &path) const override;
 
-	Common::Array<Common::Pair<Common::Array<Common::Pair<Common::String, Common::String>>, Common::StringArray>> _associations;
+	Common::Array<Common::Pair<Common::Array<Common::Pair<Common::String, Common::String>>, Common::Array<Common::Path>>> _associations;
 };
 
 } // End of namespace Nancy

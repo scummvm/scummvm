@@ -38,8 +38,8 @@ void PlaySecondaryVideo::init() {
 		_decoder.close();
 	}
 
-	if (!_decoder.loadFile(_filename + ".avf")) {
-		error("Couldn't load video file %s", _filename.c_str());
+	if (!_decoder.loadFile(_filename.append(".avf"))) {
+		error("Couldn't load video file %s", _filename.toString().c_str());
 	}
 
 	// Every secondary video frame (in nancy1) plays exactly 12ms slower than what its metadata says.
@@ -47,7 +47,7 @@ void PlaySecondaryVideo::init() {
 	_decoder.addFrameTime(12);
 	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
 
-	if (_paletteFilename.size()) {
+	if (!_paletteFilename.empty()) {
 		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteFilename);
 	}
 
@@ -103,7 +103,7 @@ void PlaySecondaryVideo::updateGraphics() {
 
 		if (_decoder.isPlaying()) {
 			if (_decoder.needsUpdate()) {
-				GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteFilename.size(), _videoFormat == kSmallVideoFormat);
+				GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, !_paletteFilename.empty(), _videoFormat == kSmallVideoFormat);
 				_needsRedraw = true;
 			}
 

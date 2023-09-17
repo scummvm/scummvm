@@ -49,7 +49,7 @@ protected:
 
 	void rotateBase(int dir);
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	Common::Rect _cwCursorDest;
 	Common::Rect _ccwCursorDest;

@@ -38,7 +38,7 @@ namespace Action {
 
 void Overlay::init() {
 	// Autotext overlays need special handling when blitting
-	if (_imageName.hasPrefix("USE_")) {
+	if (_imageName.baseName().hasPrefix("USE_")) {
 		_usesAutotext = true;
 	}
 	

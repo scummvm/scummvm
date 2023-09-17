@@ -48,7 +48,7 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	Common::Rect _buttonSrc;
 	Common::Rect _buttonDest;

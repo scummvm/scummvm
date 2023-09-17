@@ -43,7 +43,7 @@ protected:
 	Common::String getRecordTypeName() const override { return "BombPuzzle"; }
 	bool isViewportRelative() const override { return true; }
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	Common::Array<Common::Rect> _wireSrcs;
 	Common::Array<Common::Rect> _wireDests;
 	Common::Array<Common::Rect> _digitSrcs;

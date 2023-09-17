@@ -100,11 +100,11 @@ void PlaySecondaryMovie::init() {
 	}
 
 	if (!_decoder->isVideoLoaded()) {
-		if (!_decoder->loadFile(_videoName + (_videoType == kVideoPlaytypeAVF ? ".avf" : ".bik"))) {
-			error("Couldn't load video file %s", _videoName.c_str());
+		if (!_decoder->loadFile(_videoName.append(_videoType == kVideoPlaytypeAVF ? ".avf" : ".bik"))) {
+			error("Couldn't load video file %s", _videoName.toString().c_str());
 		}
 
-		if (_paletteName.size()) {
+		if (!_paletteName.empty()) {
 			GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
 			GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
 		}

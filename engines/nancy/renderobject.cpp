@@ -95,7 +95,7 @@ void RenderObject::grabPalette(byte *colors, uint paletteStart, uint paletteSize
 	}
 }
 
-void RenderObject::setPalette(const Common::String &paletteName, uint paletteStart, uint paletteSize) {
+void RenderObject::setPalette(const Common::Path &paletteName, uint paletteStart, uint paletteSize) {
 	GraphicsManager::loadSurfacePalette(_drawSurface, paletteName, paletteStart, paletteSize);
 	_needsRedraw = true;
 }

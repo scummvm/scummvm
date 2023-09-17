@@ -52,7 +52,7 @@ public:
 
 	// Only used by The Vampire Diaries
 	void grabPalette(byte *colors, uint paletteStart = 0, uint paletteSize = 256);
-	void setPalette(const Common::String &paletteName, uint paletteStart = 0, uint paletteSize = 256);
+	void setPalette(const Common::Path &paletteName, uint paletteStart = 0, uint paletteSize = 256);
 	void setPalette(const byte *colors, uint paletteStart = 0, uint paletteSize = 256);
 
 	bool hasMoved() const { return _previousScreenPosition != _screenPosition; }

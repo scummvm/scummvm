@@ -134,7 +134,7 @@ void SetupMenu::init() {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		// There is a setup.bmp an the top directory of the first disk,
 		// which we need to avoid
-		_background.init("ART/" + _setupData->_imageName);
+		_background.init(Common::Path("ART/").joinInPlace(_setupData->_imageName));
 	} else {
 		_background.init(_setupData->_imageName);
 	}

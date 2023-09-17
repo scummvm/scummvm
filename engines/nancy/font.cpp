@@ -34,7 +34,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	_fontHeight = 0;
 	uint16 numCharacters = 78;
 
-	Common::String imageName;
+	Common::Path imageName;
 	readFilename(stream, imageName);
 
 	g_nancy->_resource->loadImage(imageName, _image);

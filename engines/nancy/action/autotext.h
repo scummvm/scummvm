@@ -53,7 +53,7 @@ protected:
 	uint16 _surfHeight = 0;
 
 	// Data for displaying images inside text; not supported yet
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	Common::Array<uint16> _imageLineIDs;
 	Common::Array<Common::Rect> _imageSrcs;

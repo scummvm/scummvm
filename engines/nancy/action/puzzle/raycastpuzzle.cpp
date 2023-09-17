@@ -1434,7 +1434,7 @@ void RaycastPuzzle::updateMap() {
 	}
 }
 
-void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::String &textureName) {
+void RaycastPuzzle::createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::Path &textureName) {
 	Graphics::PixelFormat format = g_nancy->_graphicsManager->getInputPixelFormat();
 	array->resize(8);
 

@@ -231,7 +231,7 @@ void LoadSaveMenu::init() {
 		Common::Point(), g_nancy->_graphicsManager->getTransColor());
 
 	// Load the "Your game has been saved" popup graphic
-	if (_loadSaveData->_gameSavedPopup.size()) {
+	if (!_loadSaveData->_gameSavedPopup.empty()) {
 		g_nancy->_resource->loadImage(_loadSaveData->_gameSavedPopup, _successOverlay._drawSurface);
 		Common::Rect destBounds = Common::Rect(0,0, _successOverlay._drawSurface.w, _successOverlay._drawSurface.h);
 		destBounds.moveTo(640 / 2 - destBounds.width() / 2,

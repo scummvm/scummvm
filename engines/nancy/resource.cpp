@@ -35,17 +35,18 @@ static char treePrefix[] = "_tree_";
 
 namespace Nancy {
 
-bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSurface &surf, const Common::String treeName, Common::Rect *outSrc, Common::Rect *outDest) {
+bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurface &surf, const Common::String &treeName, Common::Rect *outSrc, Common::Rect *outDest) {
 	// Detect and load autotext surfaces
-	if (name.hasPrefixIgnoreCase("USE_")) {
+	Common::String baseName(name.baseName());
+	if (baseName.hasPrefixIgnoreCase("USE_")) {
 		int surfID = -1;
 
-		if (name.hasPrefixIgnoreCase("USE_AUTOTEXT")) {
-			surfID = name[12] - '1';
-		} else if (name.hasPrefixIgnoreCase("USE_AUTOJOURNAL")) { // nancy6/7
-			surfID = name.substr(15).asUint64() + 2;
-		} else if (name.hasPrefixIgnoreCase("USE_AUTOLIST")) { // nancy8
-			surfID = name.substr(12).asUint64() + 2;
+		if (baseName.hasPrefixIgnoreCase("USE_AUTOTEXT")) {
+			surfID = baseName[12] - '1';
+		} else if (baseName.hasPrefixIgnoreCase("USE_AUTOJOURNAL")) { // nancy6/7
+			surfID = baseName.substr(15).asUint64() + 2;
+		} else if (baseName.hasPrefixIgnoreCase("USE_AUTOLIST")) { // nancy8
+			surfID = baseName.substr(12).asUint64() + 2;
 		}
 
 		if (surfID >= 0) {
@@ -59,7 +60,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 
 	// First, check for external .bmp (TVD only; can also be enabled via a hidden ConfMan option)
 	if (g_nancy->getGameType() == kGameTypeVampire || ConfMan.getBool("external_bmp", ConfMan.getActiveDomainName())) {
-		stream = SearchMan.createReadStreamForMember(name + ".bmp");
+		stream = SearchMan.createReadStreamForMember(name.append(".bmp"));
 		if (stream) {
 			// Found external image
 			Image::BitmapDecoder bmpDec;
@@ -76,7 +77,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 	
 	// Check for loose .cif images. This bypasses tree search even with a provided treeName
 	if (!stream) {
-		stream = SearchMan.createReadStreamForMember(name + ".cif");
+		stream = SearchMan.createReadStreamForMember(name.append(".cif"));
 		if (stream) {
 			// .cifs are compressed, so we need to extract
 			CifFile cifFile(stream, name); // cifFile takes ownership of the current stream
@@ -93,16 +94,16 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 			upper.toUppercase();
 			const CifTree *tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 
-			stream = tree->createReadStreamForMember(name);
+			stream = tree->createReadStreamForMember(Common::Path(name));
 			info = tree->getCifInfo(name);
 		}
 
 		if (!stream) {
 			// Tree name was not provided, or lookup failed. Use SearchMan
-			stream = SearchMan.createReadStreamForMember(name);
+			stream = SearchMan.createReadStreamForMember(Common::Path(name));
 
 			if (!stream) {
-				warning("Couldn't open image file %s", name.c_str());
+				warning("Couldn't open image file %s", name.toString().c_str());
 				return false;
 			}
 
@@ -112,7 +113,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 				// No provided tree name, check inside every loaded tree
 				Common::String upper = _cifTreeNames[i];
 				upper.toUppercase();
-				if (SearchMan.getArchive(treePrefix + upper)->hasFile(name)) {
+				if (SearchMan.getArchive(treePrefix + upper)->hasFile(Common::Path(name))) {
 					tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 					break;
 				}
@@ -129,13 +130,13 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 
 	// Sanity checks
 	if (info.type != CifInfo::kResTypeImage) {
-		warning("Resource '%s' is not an image", name.c_str());
+		warning("Resource '%s' is not an image", name.toString().c_str());
 		delete stream;
 		return false;
 	}
 
 	if (info.depth != 16) {
-		warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
+		warning("Image '%s' has unsupported depth %i", name.toString().c_str(), info.depth);
 		delete stream;
 		return false;
 	}
@@ -166,9 +167,9 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 	return true;
 }
 
-IFF *ResourceManager::loadIFF(const Common::String &name) {
+IFF *ResourceManager::loadIFF(const Common::Path &name) {
 	// First, try to load external .cif
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name + ".cif");
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name.append(".cif"));
 	if (stream) {
 		// .cifs are compressed, so we need to extract
 		CifFile cifFile(stream, name); // cifFile takes ownership of the current stream
@@ -177,11 +178,11 @@ IFF *ResourceManager::loadIFF(const Common::String &name) {
 
 	if (!stream) {
 		// Then, look for external .iff. These are uncompressed
-		stream = SearchMan.createReadStreamForMember(name + ".iff");
+		stream = SearchMan.createReadStreamForMember(name.append(".iff"));
 
 		// Finally, look inside ciftrees
 		if (!stream) {
-			stream = SearchMan.createReadStreamForMember(name);
+			stream = SearchMan.createReadStreamForMember(Common::Path(name));
 		}
 	}
 
@@ -213,7 +214,7 @@ PatchTree *ResourceManager::readPatchTree(Common::SeekableReadStream *stream, co
 		return nullptr;
 	}
 
-	PatchTree *tree = new PatchTree(stream, name);
+	PatchTree *tree = new PatchTree(stream, Common::Path(name));
 	Common::Serializer ser(stream, nullptr);
 
 	if (!tree->sync(ser)) {
@@ -228,7 +229,7 @@ PatchTree *ResourceManager::readPatchTree(Common::SeekableReadStream *stream, co
 	return tree;
 }
 
-Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::String &name) const {
+Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::Path &name) const {
 	const CifTree *tree = nullptr;
 	if (treeName.size()) {
 		Common::String upper = treeName;
@@ -253,7 +254,7 @@ Common::String ResourceManager::getCifDescription(const Common::String &treeName
 	const CifInfo &info = tree->getCifInfo(name);
 
 	Common::String desc;
-	desc = Common::String::format("Name: %s\n", info.name.c_str());
+	desc = Common::String::format("Name: %s\n", info.name.toString().c_str());
 	desc += Common::String::format("Type: %i\n", info.type);
 	desc += Common::String::format("Compression: %i\n", info.comp);
 	desc += Common::String::format("Size: %i\n", info.size);
@@ -266,7 +267,7 @@ Common::String ResourceManager::getCifDescription(const Common::String &treeName
 	return desc;
 }
 
-void ResourceManager::list(const Common::String &treeName, Common::StringArray &outList, CifInfo::ResType type) const {
+void ResourceManager::list(const Common::String &treeName, Common::Array<Common::Path> &outList, CifInfo::ResType type) const {
 	if (treeName.size()) {
 		Common::String upper = treeName;
 		upper.toUppercase();
@@ -294,14 +295,14 @@ void ResourceManager::list(const Common::String &treeName, Common::StringArray &
 	}
 }
 
-bool ResourceManager::exportCif(const Common::String &treeName, const Common::String &name) {
+bool ResourceManager::exportCif(const Common::String &treeName, const Common::Path &name) {
 	if (!SearchMan.hasFile(name)) {
 		return false;
 	}
 
 	// First, look for a loose .cif file
 	CifInfo info;
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name + ".cif");
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name.append(".cif"));
 	if (stream) {
 		// .cifs are compressed, so we need to extract
 		CifFile cifFile(stream, name); // cifFile takes ownership of the current stream
@@ -311,7 +312,7 @@ bool ResourceManager::exportCif(const Common::String &treeName, const Common::St
 
 	if (!stream) {
 		// Then, look for an external .iff. These are uncompressed
-		stream = SearchMan.createReadStreamForMember(name + ".iff");
+		stream = SearchMan.createReadStreamForMember(name.append(".iff"));
 		if (stream) {
 			info.comp = CifInfo::kResCompressionNone;
 			info.type = CifInfo::kResTypeScript;
@@ -337,7 +338,7 @@ bool ResourceManager::exportCif(const Common::String &treeName, const Common::St
 				// would regularly not be in a ciftree (e.g. sounds)
 				stream = SearchMan.createReadStreamForMember(name);
 				if (!stream) {
-					warning("Couldn't open resource %s", name.c_str());
+					warning("Couldn't open resource %s", name.toString().c_str());
 					return false;
 				}
 
@@ -353,7 +354,7 @@ bool ResourceManager::exportCif(const Common::String &treeName, const Common::St
 	file._info = info;
 
 	Common::DumpFile dump;
-	dump.open(name + ".cif");
+	dump.open(name.append(".cif"));
 
 	Common::Serializer ser(nullptr, &dump);
 	file.sync(ser);
@@ -365,7 +366,7 @@ bool ResourceManager::exportCif(const Common::String &treeName, const Common::St
 	return true;
 }
 
-bool ResourceManager::exportCifTree(const Common::String &treeName, const Common::StringArray &names) {
+bool ResourceManager::exportCifTree(const Common::String &treeName, const Common::Array<Common::Path> &names) {
 	Common::Array<Common::SeekableReadStream *> resStreams;
 	CifTree file;
 
@@ -386,23 +387,24 @@ bool ResourceManager::exportCifTree(const Common::String &treeName, const Common
 	}
 
 	for (uint i = 0; i < names.size(); ++i) {
+		const Common::Path &path = names[i];
 		// First, look for loose .cif files
 		CifInfo info;
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(names[i] + ".cif");
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(path.append(".cif"));
 		if (stream) {
 			// .cifs are compressed, so we need to extract
-			CifFile cifFile(stream, names[i]); // cifFile takes ownership of the current stream
+			CifFile cifFile(stream, path); // cifFile takes ownership of the current stream
 			stream = cifFile.createReadStreamRaw();
 			info = cifFile._info;
 		}
 
 		if (!stream) {
 			// Then, look for external .iff. These are uncompressed
-			stream = SearchMan.createReadStreamForMember(names[i] + ".iff");
+			stream = SearchMan.createReadStreamForMember(path.append(".iff"));
 			if (stream) {
 				info.comp = CifInfo::kResCompressionNone;
 				info.type = CifInfo::kResTypeScript;
-				info.name = names[i];
+				info.name = path;
 				info.compressedSize = info.size = stream->size();
 			} else {
 				// Look inside ciftrees
@@ -410,27 +412,27 @@ bool ResourceManager::exportCifTree(const Common::String &treeName, const Common
 				for (uint j = 0; j < _cifTreeNames.size(); ++j) {
 					Common::String upper = _cifTreeNames[j];
 					upper.toUppercase();
-					if (SearchMan.getArchive(treePrefix + upper)->hasFile(names[i])) {
+					if (SearchMan.getArchive(treePrefix + upper)->hasFile(path)) {
 						tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 						break;
 					}
 				}
 
 				if (tree) {
-					stream = tree->createReadStreamRaw(names[i]);
-					info = tree->getCifInfo(names[i]);
+					stream = tree->createReadStreamRaw(path);
+					info = tree->getCifInfo(path);
 				} else {
 					// Finally, use SearchMan to get a loose file. This is useful if we want to add files that
 					// would regularly not be in a ciftree (e.g. sounds)
-					stream = SearchMan.createReadStreamForMember(names[i]);
+					stream = SearchMan.createReadStreamForMember(path);
 					if (!stream) {
-						warning("Couldn't open resource %s", names[i].c_str());
+						warning("Couldn't open resource %s", path.toString().c_str());
 						continue;
 					}
 
 					info.comp = CifInfo::kResCompressionNone;
 					info.type = CifInfo::kResTypeScript;
-					info.name = names[i];
+					info.name = path;
 					info.compressedSize = info.size = stream->size();
 				}
 			}
@@ -449,7 +451,7 @@ bool ResourceManager::exportCifTree(const Common::String &treeName, const Common
 	}
 
 	Common::DumpFile dump;
-	dump.open(treeName + ".dat");
+	dump.open(Common::Path(treeName + ".dat"));
 
 	Common::Serializer ser(nullptr, &dump);
 	file.sync(ser);

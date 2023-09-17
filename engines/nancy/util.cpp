@@ -230,6 +230,23 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String>
 	}
 }
 
+void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::Path> &inArray, uint num) {
+	inArray.resize(num);
+	for (Common::Path &str : inArray) {
+		readFilename(stream, str);
+	}
+}
+
+void readFilenameArray(Common::Serializer &stream, Common::Array<Common::Path> &inArray, uint num, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	Common::Serializer::Version version = stream.getVersion();
+	if (version >= minVersion && version <= maxVersion) {
+		inArray.resize(num);
+		for (Common::Path &str : inArray) {
+			readFilename(stream, str, minVersion, maxVersion);
+		}
+	}
+}
+
 // A text line will often be broken up into chunks separated by nulls, use
 // this function to put it back together as a Common::String
 void assembleTextLine(char *rawCaption, Common::String &output, uint size) {

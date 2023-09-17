@@ -63,7 +63,7 @@ protected:
 		void init() override;
 		void updateGraphics() override;
 
-		void loadVideo(const Common::String &filename, const Common::String &palette = Common::String());
+		void loadVideo(const Common::Path &filename, const Common::Path &palette = Common::Path());
 		void playVideo() { _decoder.start(); }
 		void unloadVideo() { _decoder.close(); }
 

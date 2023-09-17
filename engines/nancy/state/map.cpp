@@ -168,20 +168,20 @@ void Map::MapViewport::updateGraphics() {
 	}
 }
 
-void Map::MapViewport::loadVideo(const Common::String &filename, const Common::String &palette) {
+void Map::MapViewport::loadVideo(const Common::Path &filename, const Common::Path &palette) {
 	if (_decoder.isVideoLoaded()) {
 		_decoder.close();
 	}
 
-	if (!_decoder.loadFile(filename + ".avf")) {
-		error("Couldn't load video file %s", filename.c_str());
+	if (!_decoder.loadFile(filename.append(".avf"))) {
+		error("Couldn't load video file %s", filename.toString().c_str());
 	}
 
-	if (palette.size()) {
+	if (!palette.empty()) {
 		setPalette(palette);
 	}
 
-	GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, palette.size());
+	GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, !palette.empty());
 	_needsRedraw = true;
 }
 

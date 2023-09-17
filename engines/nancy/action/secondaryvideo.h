@@ -50,9 +50,9 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	Common::String _filename;
-	Common::String _paletteFilename;
-	// Common::String _bitmapOverlayFilename
+	Common::Path _filename;
+	Common::Path _paletteFilename;
+	// Common::Path _bitmapOverlayFilename
 
 	// TVD only
 	uint16 _videoFormat = kLargeVideoFormat;
