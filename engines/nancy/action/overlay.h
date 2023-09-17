@@ -36,24 +36,6 @@ namespace Action {
 // - Overlay: nancy2 and above, supports static mode
 class Overlay : public RenderActionRecord {
 public:
-	static const byte kPlayOverlayPlain				= 1;
-	static const byte kPlayOverlayTransparent		= 2;
-
-	static const byte kPlayOverlaySceneChange		= 1;
-	static const byte kPlayOverlayNoSceneChange 	= 2;
-
-	static const byte kPlayOverlayStatic			= 1;
-	static const byte kPlayOverlayAnimated			= 2;
-
-	static const byte kPlayOverlayOnce				= 1;
-	static const byte kPlayOverlayLoop				= 2;
-
-	static const byte kPlayOverlayForward			= 1;
-	static const byte kPlayOverlayReverse			= 2;
-
-	static const byte kPlayOverlayWithHotspot		= 1;
-	static const byte kPlayOverlayNoHotspot			= 2;
-
 	Overlay(bool interruptible) : RenderActionRecord(7), _isInterruptible(interruptible) {}
 	virtual ~Overlay() { _fullSurface.free(); }
 

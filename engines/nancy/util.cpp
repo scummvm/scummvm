@@ -230,6 +230,29 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String>
 	}
 }
 
+// A text line will often be broken up into chunks separated by nulls, use
+// this function to put it back together as a Common::String
+void assembleTextLine(char *rawCaption, Common::String &output, uint size) {
+	for (uint i = 0; i < size; ++i) {
+		// A single line can be broken up into bits, look for them and
+		// concatenate them when we're done
+		if (rawCaption[i] != 0) {
+			Common::String newBit(rawCaption + i);
+			output += newBit;
+			i += newBit.size();
+		}
+	}
+
+	// Fix spaces at the end of the string in nancy1
+	output.trim();
+
+	// Scan the text line for doubly-closed tokens; happens in some strings in The Vampire Diaries
+	uint pos = Common::String::npos;
+	while (pos = output.find(">>"), pos != Common::String::npos) {
+		output.replace(pos, 2, ">");
+	}
+}
+
 bool DeferredLoader::load(uint32 endTime) {
 	uint32 loopStartTime = g_system->getMillis();
 	uint32 loopTime = 0; // Stores the loop that took the longest time to complete

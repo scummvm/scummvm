@@ -48,6 +48,7 @@ MODULE_OBJS = \
   state/savedialog.o \
   state/scene.o \
   state/setupmenu.o \
+  misc/hypertext.o \
   misc/lightning.o \
   misc/specialeffect.o \
   commontypes.o \

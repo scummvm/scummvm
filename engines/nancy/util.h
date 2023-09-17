@@ -41,6 +41,8 @@ void readFilename(Common::Serializer &stream, Common::String &inString, Common::
 void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::String> &inArray, uint num);
 void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 
+void assembleTextLine(char *rawCaption, Common::String &output, uint size);
+
 // Abstract base class used for loading data that would take too much time in a single frame
 class DeferredLoader {
 public:

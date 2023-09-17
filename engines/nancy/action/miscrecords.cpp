@@ -105,7 +105,7 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 	stream.read(buf, size);
 	buf[size - 1] = '\0';
 
-	UI::Textbox::assembleTextLine(buf, _text, size);
+	assembleTextLine(buf, _text, size);
 
 	delete[] buf;
 }

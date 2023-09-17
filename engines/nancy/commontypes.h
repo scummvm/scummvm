@@ -80,6 +80,25 @@ static const byte kPlayerDuskDawn					= 2;
 static const byte kSmallVideoFormat					= 1;
 static const byte kLargeVideoFormat					= 2;
 
+// Overlay
+static const byte kPlayOverlayPlain					= 1;
+static const byte kPlayOverlayTransparent			= 2;
+
+static const byte kPlayOverlaySceneChange			= 1;
+static const byte kPlayOverlayNoSceneChange			= 2;
+
+static const byte kPlayOverlayStatic				= 1;
+static const byte kPlayOverlayAnimated				= 2;
+
+static const byte kPlayOverlayOnce					= 1;
+static const byte kPlayOverlayLoop					= 2;
+
+static const byte kPlayOverlayForward				= 1;
+static const byte kPlayOverlayReverse				= 2;
+
+static const byte kPlayOverlayWithHotspot			= 1;
+static const byte kPlayOverlayNoHotspot				= 2;
+
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 
 // Separate namespace to remove possible clashes

@@ -287,14 +287,14 @@ void ConversationSound::execute() {
 void ConversationSound::readCaptionText(Common::SeekableReadStream &stream) {
 	char *rawText = new char[1500];
 	stream.read(rawText, 1500);
-	UI::Textbox::assembleTextLine(rawText, _text, 1500);
+	assembleTextLine(rawText, _text, 1500);
 	delete[] rawText;
 }
 
 void ConversationSound::readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
 	char *rawText = new char[400];
 	stream.read(rawText, 400);
-	UI::Textbox::assembleTextLine(rawText, response.text, 400);
+	assembleTextLine(rawText, response.text, 400);
 	delete[] rawText;
 }
 

@@ -22,6 +22,7 @@
 #ifndef NANCY_UI_TEXTBOX_H
 #define NANCY_UI_TEXTBOX_H
 
+#include "engines/nancy/misc/hypertext.h"
 #include "engines/nancy/renderobject.h"
 
 namespace Nancy {
@@ -34,7 +35,7 @@ namespace UI {
 
 class Scrollbar;
 
-class Textbox : public Nancy::RenderObject {
+class Textbox : public Nancy::RenderObject, public Misc::HypertextParser {
 public:
 	Textbox();
 	virtual ~Textbox();
@@ -45,40 +46,21 @@ public:
 	void handleInput(NancyInput &input);
 
 	void drawTextbox();
-	void clear();
+	void clear() override;
 
 	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
-	void overrideFontID(const uint fontID) { _fontIDOverride = fontID; };
-
-	static void assembleTextLine(char *rawCaption, Common::String &output, uint size);
+	void overrideFontID(const uint fontID);
 
 private:
 	uint16 getInnerHeight() const;
 	void onScrollbarMove();
 
-	struct Response {
-		Common::String text;
-		Common::Rect hotspot;
-	};
-
-	Graphics::ManagedSurface _fullSurface;
-	Graphics::ManagedSurface _textHighlightSurface;
-
 	RenderObject _highlightRObj;
-
 	Scrollbar *_scrollbar;
 
-	Common::Array<Common::String> _textLines;
-	Common::Array<Common::Rect> _hotspots;
-
-	uint16 _numLines;
-	bool _lastResponseisMultiline;
-
-	bool _needsTextRedraw;
 	float _scrollbarPos;
 
-	uint32 _autoClearTime = 0;
-
+	uint32 _autoClearTime;
 	int _fontIDOverride;
 };
 

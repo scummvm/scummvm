@@ -78,7 +78,7 @@ void PlayDigiSoundCC::readData(Common::SeekableReadStream &stream) {
 	if (textSize) {
 		char *strBuf = new char[textSize];
 		stream.read(strBuf, textSize);
-		UI::Textbox::assembleTextLine(strBuf, _ccText, textSize);
+		assembleTextLine(strBuf, _ccText, textSize);
 		delete[] strBuf;
 	}
 }
