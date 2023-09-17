@@ -179,6 +179,8 @@ void CueSheet::parseHeaderContext(const char *line) {
 		} else if (subcommand == "GENRE") {
 			_metadata.genre = nexttok(s, &s);
 			debug(5, "Genre: %s", _metadata.genre.c_str());
+		} else if (subcommand == "COMMENT") {
+			debug(5, "Skipping Comment: %s", s);
 		} else {
 			warning("CueSheet: Unprocessed REM subcommand %s", subcommand.c_str());
 		}
