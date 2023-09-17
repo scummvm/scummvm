@@ -41,7 +41,7 @@ BonesMesh::BonesMesh(Object *parent, byte subType, uint16 index, const Common::S
 }
 
 void BonesMesh::readData(Formats::XRCReadStream *stream) {
-	_filename = stream->readString();
+	_filename = Common::Path(stream->readString());
 	_archiveName = stream->getArchiveName();
 }
 
@@ -59,7 +59,7 @@ Model *BonesMesh::getModel() {
 }
 
 void BonesMesh::printData() {
-	debug("filename: %s", _filename.c_str());
+	debug("filename: %s", _filename.toString().c_str());
 }
 
 } // End of namespace Resources

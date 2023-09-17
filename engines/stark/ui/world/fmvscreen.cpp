@@ -52,18 +52,20 @@ FMVScreen::~FMVScreen() {
 	delete _surfaceRenderer;
 }
 
-void FMVScreen::play(const Common::String &name) {
+void FMVScreen::play(const Common::Path &name) {
 	Common::SeekableReadStream *stream = nullptr;
 
 	// Play the low-resolution video, if possible
 	if (!StarkSettings->getBoolSetting(Settings::kHighFMV) && StarkSettings->hasLowResFMV()) {
-		Common::String lowResName = name;
-		lowResName.erase(lowResName.size() - 4);
-		lowResName += "_lo_res.bbb";
+		Common::String lowResBaseName = name.baseName();
+		lowResBaseName.erase(lowResBaseName.size() - 4);
+		lowResBaseName += "_lo_res.bbb";
+
+		Common::Path lowResName(name.getParent().appendComponent(lowResBaseName));
 
 		stream = StarkArchiveLoader->getExternalFile(lowResName, "Global/");
 		if (!stream) {
-			debug("Could not open %s", lowResName.c_str());
+			debug("Could not open %s", lowResName.toString().c_str());
 		}
 	}
 
@@ -73,13 +75,13 @@ void FMVScreen::play(const Common::String &name) {
 	}
 
 	if (!stream) {
-		warning("Could not open %s", name.c_str());
+		warning("Could not open %s", name.toString().c_str());
 		return;
 	}
 
 	_decoder->loadStream(stream);
 	if (!_decoder->isVideoLoaded()) {
-		error("Could not open %s", name.c_str());
+		error("Could not open %s", name.toString().c_str());
 	}
 	_decoder->setOutputPixelFormat(_bitmap->getBestPixelFormat());
 	_decoder->start();

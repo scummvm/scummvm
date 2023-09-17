@@ -235,7 +235,7 @@ void AnimProp::readData(Formats::XRCReadStream *stream) {
 
 	uint32 meshCount = stream->readUint32LE();
 	for (uint i = 0; i < meshCount; i++) {
-		_meshFilenames.push_back(stream->readString());
+		_meshFilenames.push_back(Common::Path(stream->readString()));
 	}
 
 	_textureFilename = stream->readString();
@@ -264,9 +264,9 @@ void AnimProp::printData() {
 
 	Common::String description;
 	for (uint32 i = 0; i < _meshFilenames.size(); i++) {
-		debug("meshFilename[%d]: %s", i, _meshFilenames[i].c_str());
+		debug("meshFilename[%d]: %s", i, _meshFilenames[i].toString().c_str());
 	}
-	debug("textureFilename: %s", _textureFilename.c_str());
+	debug("textureFilename: %s", _textureFilename.toString().c_str());
 	debug("movementSpeed: %d", _movementSpeed);
 }
 
@@ -352,21 +352,23 @@ void AnimVideo::onAllLoaded() {
 }
 
 Common::SeekableReadStream *AnimVideo::openOverrideFile(const Common::String &extension) const {
-	if (!_smackerFile.hasSuffixIgnoreCase(".sss")) {
+	Common::String baseName(_smackerFile.baseName());
+	if (!baseName.hasSuffixIgnoreCase(".sss")) {
 		return nullptr;
 	}
+	baseName = Common::String(baseName.c_str(), baseName.size() - 4) + extension;
 
-	Common::String filename = Common::String(_smackerFile.c_str(), _smackerFile.size() - 4) + extension;
-	Common::String filePath = StarkArchiveLoader->getExternalFilePath(filename, _archiveName);
+	Common::Path filePath(_smackerFile.getParent().appendComponent(baseName));
+	filePath = StarkArchiveLoader->getExternalFilePath(filePath, _archiveName);
 
-	debugC(kDebugModding, "Attempting to load %s", filePath.c_str());
+	debugC(kDebugModding, "Attempting to load %s", filePath.toString(Common::Path::kNativeSeparator).c_str());
 
 	Common::SeekableReadStream *smkStream = SearchMan.createReadStreamForMember(filePath);
 	if (!smkStream) {
 		return nullptr;
 	}
 
-	debugC(kDebugModding, "Loaded %s", filePath.c_str());
+	debugC(kDebugModding, "Loaded %s", filePath.toString(Common::Path::kNativeSeparator).c_str());
 
 	return smkStream;
 }
@@ -463,7 +465,7 @@ void AnimVideo::saveLoadCurrent(ResourceSerializer *serializer) {
 void AnimVideo::printData() {
 	Anim::printData();
 
-	debug("smackerFile: %s", _smackerFile.c_str());
+	debug("smackerFile: %s", _smackerFile.toString().c_str());
 	debug("size: x %d, y %d", _width, _height);
 
 	Common::String description;
@@ -664,7 +666,7 @@ uint32 AnimSkeleton::getIdleActionFrequency() const {
 void AnimSkeleton::printData() {
 	Anim::printData();
 
-	debug("filename: %s", _animFilename.c_str());
+	debug("filename: %s", _animFilename.toString().c_str());
 	debug("castsShadow: %d", _castsShadow);
 	debug("loop: %d", _loop);
 	debug("movementSpeed: %d", _movementSpeed);

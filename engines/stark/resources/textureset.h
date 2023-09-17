@@ -22,6 +22,7 @@
 #ifndef STARK_RESOURCES_TEXTURE_SET_H
 #define STARK_RESOURCES_TEXTURE_SET_H
 
+#include "common/path.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
@@ -69,8 +70,8 @@ protected:
 	void printData() override;
 	Gfx::TextureSet *readOverrideDdsArchive();
 
-	Common::String _filename;
-	Common::String _archiveName;
+	Common::Path _filename;
+	Common::Path _archiveName;
 
 	Gfx::TextureSet *_textureSet;
 };

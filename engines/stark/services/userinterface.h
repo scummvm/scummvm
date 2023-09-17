@@ -93,7 +93,7 @@ public:
 	bool shouldExit() { return _exitGame; }
 
 	/** Start playing a FMV */
-	void requestFMVPlayback(const Common::String &name);
+	void requestFMVPlayback(const Common::Path &name);
 
 	/** FMV playback has just ended */
 	void onFMVStopped();
@@ -229,7 +229,7 @@ private:
 
 	// TODO: Generalize to all screen changes
 	bool _shouldGoBackToPreviousScreen;
-	Common::String _shouldPlayFmv;
+	Common::Path _shouldPlayFmv;
 
 	Graphics::Surface *_gameWindowThumbnail;
 };

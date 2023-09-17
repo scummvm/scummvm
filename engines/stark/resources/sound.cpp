@@ -76,9 +76,11 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 
 	if (!audioStream) {
 		// The 2 CD version uses Ogg Vorbis
-		Common::String filename = _filename;
-		if (_filename.hasSuffix(".iss") || _filename.hasSuffix(".isn")) {
-			filename = Common::String(_filename.c_str(), _filename.size() - 4) + ".ovs";
+		Common::Path filename = _filename;
+		Common::String baseName(filename.baseName());
+		if (baseName.hasSuffix(".iss") || baseName.hasSuffix(".isn")) {
+			baseName = Common::String(baseName.c_str(), baseName.size() - 4) + ".ovs";
+			filename = _filename.getParent().appendComponent(baseName);
 		}
 
 		stream = StarkArchiveLoader->getExternalFile(filename, _archiveName);
@@ -86,14 +88,14 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 #ifdef USE_VORBIS
 			audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 #else
-			warning("Cannot decode sound '%s', Vorbis support is not compiled in", filename.c_str());
+			warning("Cannot decode sound '%s', Vorbis support is not compiled in", filename.toString().c_str());
 			delete stream;
 #endif
 		}
 	}
 
 	if (!audioStream) {
-		warning("Unable to load sound '%s'", _filename.c_str());
+		warning("Unable to load sound '%s'", _filename.toString().c_str());
 	}
 
 	return audioStream;
@@ -169,7 +171,7 @@ void Sound::readData(Formats::XRCReadStream *stream) {
 }
 
 void Sound::printData() {
-	debug("filename: %s", _filename.c_str());
+	debug("filename: %s", _filename.toString().c_str());
 	debug("enabled: %d", _enabled);
 	debug("looping: %d", _looping);
 	debug("field_64: %d", _field_64);

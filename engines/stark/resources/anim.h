@@ -215,10 +215,10 @@ protected:
 	void printData() override;
 
 	Common::String _field_3C;
-	Common::Array<Common::String> _meshFilenames;
-	Common::String _textureFilename;
+	Common::Array<Common::Path> _meshFilenames;
+	Common::Path _textureFilename;
 	uint32 _movementSpeed;
-	Common::String _archiveName;
+	Common::Path _archiveName;
 
 	VisualProp *_visual;
 };
@@ -256,8 +256,8 @@ protected:
 	/** Update the position of the video for the current frame */
 	void updateSmackerPosition();
 
-	Common::String _smackerFile;
-	Common::String _archiveName;
+	Common::Path _smackerFile;
+	Common::Path _archiveName;
 
 	VisualSmacker *_smacker;
 
@@ -313,8 +313,8 @@ protected:
 	void printData() override;
 
 	bool _castsShadow;
-	Common::String _archiveName;
-	Common::String _animFilename;
+	Common::Path _archiveName;
+	Common::Path _animFilename;
 	bool _loop;
 	uint32 _movementSpeed;
 	uint32 _idleActionFrequency;

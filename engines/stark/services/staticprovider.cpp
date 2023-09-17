@@ -116,14 +116,14 @@ Resources::Sound *StaticProvider::getUISound(UISound sound) const {
 	return sounds->findChildWithOrder<Resources::Sound>(sound);
 }
 
-Common::String StaticProvider::buildLocationArchiveName(const char *locationName) const {
-	return Common::String::format("static/%s/%s.xarc", locationName, locationName);
+Common::Path StaticProvider::buildLocationArchiveName(const char *locationName) const {
+	return Common::Path(Common::String::format("static/%s/%s.xarc", locationName, locationName));
 }
 
 Resources::Location *StaticProvider::loadLocation(const char *locationName) {
 	assert(!_location);
 
-	Common::String archiveName = buildLocationArchiveName(locationName);
+	Common::Path archiveName = buildLocationArchiveName(locationName);
 
 	_archiveLoader->load(archiveName);
 	_location = _archiveLoader->useRoot<Resources::Location>(archiveName);
@@ -145,7 +145,7 @@ void StaticProvider::unloadLocation(Resources::Location *location) {
 
 	location->onExitLocation();
 
-	Common::String archiveName = buildLocationArchiveName(location->getName().c_str());
+	Common::Path archiveName = buildLocationArchiveName(location->getName().c_str());
 	_archiveLoader->returnRoot(archiveName);
 	_archiveLoader->unloadUnused();
 

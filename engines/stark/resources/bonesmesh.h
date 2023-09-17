@@ -22,6 +22,7 @@
 #ifndef STARK_RESOURCES_BONES_MESH_H
 #define STARK_RESOURCES_BONES_MESH_H
 
+#include "common/path.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
@@ -56,8 +57,8 @@ public:
 protected:
 	void printData() override;
 
-	Common::String _filename;
-	Common::String _archiveName;
+	Common::Path _filename;
+	Common::Path _archiveName;
 
 	Model *_model;
 };

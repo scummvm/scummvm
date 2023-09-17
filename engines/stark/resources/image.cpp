@@ -96,7 +96,7 @@ Visual *Image::getVisual() {
 }
 
 void Image::printData() {
-	debug("filename: %s", _filename.c_str());
+	debug("filename: %s", _filename.toString().c_str());
 	debug("hotspot: x %d, y %d", _hotspot.x, _hotspot.y);
 	debug("transparent: %d", _transparent);
 	debug("transparentColor: %d", _transparentColor);
@@ -230,14 +230,16 @@ void ImageStill::initVisual() {
 }
 
 bool ImageStill::loadPNGOverride(VisualImageXMG *visual) const {
-	if (!_filename.hasSuffixIgnoreCase(".xmg")) {
+	if (!_filename.baseName().hasSuffixIgnoreCase(".xmg")) {
 		return false;
 	}
 
-	Common::String pngFilename = Common::String(_filename.c_str(), _filename.size() - 4) + ".png";
-	Common::String pngFilePath = StarkArchiveLoader->getExternalFilePath(pngFilename, _archiveName);
+	Common::String pngFilename = _filename.baseName();
+	pngFilename = Common::String(pngFilename.c_str(), pngFilename.size() - 4) + ".png";
+	Common::Path pngFilePath = _filename.getParent().appendComponent(pngFilename);
+	pngFilePath = StarkArchiveLoader->getExternalFilePath(pngFilePath, _archiveName);
 
-	debugC(kDebugModding, "Attempting to load %s", pngFilePath.c_str());
+	debugC(kDebugModding, "Attempting to load %s", pngFilePath.toString(Common::Path::kNativeSeparator).c_str());
 
 	Common::SeekableReadStream *pngStream = SearchMan.createReadStreamForMember(pngFilePath);
 	if (!pngStream) {
@@ -245,12 +247,12 @@ bool ImageStill::loadPNGOverride(VisualImageXMG *visual) const {
 	}
 
 	if (!visual->loadPNG(pngStream)) {
-		warning("Failed to load %s. It is not a valid PNG file.", pngFilePath.c_str());
+		warning("Failed to load %s. It is not a valid PNG file.", pngFilePath.toString(Common::Path::kNativeSeparator).c_str());
 		delete pngStream;
 		return false;
 	}
 
-	debugC(kDebugModding, "Loaded %s", pngFilePath.c_str());
+	debugC(kDebugModding, "Loaded %s", pngFilePath.toString(Common::Path::kNativeSeparator).c_str());
 
 	delete pngStream;
 	return true;

@@ -78,8 +78,8 @@ protected:
 
 	virtual void initVisual() = 0;
 
-	Common::String _filename;
-	Common::String _archiveName;
+	Common::Path _filename;
+	Common::Path _archiveName;
 
 	Visual *_visual;
 

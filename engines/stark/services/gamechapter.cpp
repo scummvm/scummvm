@@ -23,6 +23,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/global.h"
 
+#include "common/path.h"
 #include "common/tokenizer.h"
 #include "common/formats/ini-file.h"
 
