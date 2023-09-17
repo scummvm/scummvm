@@ -80,7 +80,7 @@ bool CryOmni3DEngine_Versailles::hasFeature(EngineFeature f) const {
 
 void CryOmni3DEngine_Versailles::initializePath(const Common::FSNode &gamePath) {
 	// This works if the user has installed the game as required in the Wiki
-	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4, false);
+	SearchMan.addDirectory(gamePath, 0, 4, false);
 
 	// CDs/DVD path
 	SearchMan.addSubDirectoryMatching(gamePath, "datas_v", 0, 4, false);
@@ -285,7 +285,7 @@ bool CryOmni3DEngine_Versailles::shouldAbort() {
 static bool checkFilePath(const Common::Path &basePath, Common::String &baseName, const char * const *extensions, Common::Path &fullPath) {
 	if (!extensions) {
 		fullPath = basePath.appendComponent(baseName);
-		debug(3, "Trying file %s", fullPath.toString().c_str());
+		debug(3, "Trying file %s", fullPath.toString(Common::Path::kNativeSeparator).c_str());
 		return Common::File::exists(fullPath);
 	}
 
@@ -293,7 +293,7 @@ static bool checkFilePath(const Common::Path &basePath, Common::String &baseName
 	while (*extensions != nullptr) {
 		baseName += *extensions;
 		fullPath = basePath.appendComponent(baseName);
-		debug(3, "Trying file %s", fullPath.toString().c_str());
+		debug(3, "Trying file %s", fullPath.toString(Common::Path::kNativeSeparator).c_str());
 		if (Common::File::exists(fullPath)) {
 			return true;
 		}
@@ -456,7 +456,7 @@ Common::Path CryOmni3DEngine_Versailles::getFilePath(FileType fileType,
 
 	if (!hasLevel) {
 		warning("Failed to find file %s in %s", baseName.c_str(), baseDir);
-		return baseName;
+		return Common::Path(baseName);
 	}
 
 	assert(baseName_.size() > 0);
@@ -464,7 +464,7 @@ Common::Path CryOmni3DEngine_Versailles::getFilePath(FileType fileType,
 			baseName_[0] > '7' ||
 			uint(baseName_[0] - '0') == _currentLevel) {
 		warning("Failed to find file %s in %s (level %d)", baseName.c_str(), baseDir, _currentLevel);
-		return baseName;
+		return Common::Path(baseName);
 	}
 
 	int fileLevel = baseName_[0] - '0';
@@ -475,7 +475,7 @@ Common::Path CryOmni3DEngine_Versailles::getFilePath(FileType fileType,
 	}
 
 	warning("Failed to find file %s in %s (levels %d and %d)", baseName.c_str(), baseDir, _currentLevel, fileLevel);
-	return baseName;
+	return Common::Path(baseName);
 }
 
 void CryOmni3DEngine_Versailles::setupFonts() {
@@ -987,7 +987,7 @@ void CryOmni3DEngine_Versailles::setupLevelWarps(int level) {
 	Common::File wamFile;
 	Common::Path wamPath = getFilePath(kFileTypeWAM, Common::String::format("level%d.wam", level));
 	if (!wamFile.open(wamPath)) {
-		error("Can't open WAM file '%s'", wamPath.toString().c_str());
+		error("Can't open WAM file '%s'", wamPath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	_wam.loadStream(wamFile);
 
@@ -1943,10 +1943,10 @@ void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface
 		Common::Path bmp = getFilePath(kFileTypeSpriteBmp, Common::String::format(pattern, i));
 
 		if (!file.open(bmp)) {
-			error("Failed to open BMP file: %s", bmp.toString().c_str());
+			error("Failed to open BMP file: %s", bmp.toString(Common::Path::kNativeSeparator).c_str());
 		}
 		if (!bmpDecoder.loadStream(file)) {
-			error("Failed to load BMP file: %s", bmp.toString().c_str());
+			error("Failed to load BMP file: %s", bmp.toString(Common::Path::kNativeSeparator).c_str());
 		}
 		bmps[i].copyFrom(*bmpDecoder.getSurface());
 		bmpDecoder.destroy();

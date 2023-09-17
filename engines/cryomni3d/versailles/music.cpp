@@ -71,7 +71,7 @@ void CryOmni3DEngine_Versailles::musicUpdate() {
 
 	Common::File *musicFile = new Common::File();
 	if (!musicFile->open(musicPath)) {
-		warning("Failed to open music file %s/%s", musicBName, musicPath.toString().c_str());
+		warning("Failed to open music file %s/%s", musicBName, musicPath.toString(Common::Path::kNativeSeparator).c_str());
 		delete musicFile;
 		return;
 	}
@@ -81,7 +81,7 @@ void CryOmni3DEngine_Versailles::musicUpdate() {
 	musicFile = nullptr;
 
 	if (!musicDecoder) {
-		warning("Failed to decode music file %s/%s", musicBName, musicPath.toString().c_str());
+		warning("Failed to decode music file %s/%s", musicBName, musicPath.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 

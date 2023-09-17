@@ -40,7 +40,7 @@ void CryoExtFont::load(const Common::Path &fontFile, Common::CodePage codepage) 
 	Common::File *crf = new Common::File();
 
 	if (!crf->open(fontFile)) {
-		error("can't open file %s", fontFile.toString().c_str());
+		error("can't open file %s", fontFile.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	_crf = crf;
@@ -63,7 +63,7 @@ void CryoExtFont::load(const Common::Path &fontFile, Common::CodePage codepage) 
 	_crf->read(_comment, sizeof(_comment));
 	//debug("Comment %s", _comment);
 
-	Common::String offsetsFile = fontFile.getLastComponent().toString();
+	Common::String offsetsFile = fontFile.baseName();
 	offsetsFile.setChar('I', offsetsFile.size() - 1);
 	loadOffsets(fontFile.getParent().appendComponent(offsetsFile));
 }
@@ -72,7 +72,7 @@ void CryoExtFont::loadOffsets(const Common::Path &offsetsFile) {
 	Common::File cri;
 
 	if (!cri.open(offsetsFile)) {
-		error("can't open file %s", offsetsFile.toString().c_str());
+		error("can't open file %s", offsetsFile.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	uint32 counts = cri.size() / sizeof(uint32);
