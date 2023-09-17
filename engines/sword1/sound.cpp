@@ -819,7 +819,7 @@ void Sound::stopSample(int32 fxNo) {
 	stopFX(fxNo);
 }
 
-bool Sound::prepareMusicStreaming(Common::String filename, int newHandleId, int32 tuneId, uint32 volume, int8 pan, MusCompMode assignedMode) {
+bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId, int32 tuneId, uint32 volume, int8 pan, MusCompMode assignedMode) {
 	int sampleRate = DEFAULT_SAMPLE_RATE;
 	WaveHeader wavHead;
 	bool isStereo = false;
@@ -828,7 +828,7 @@ bool Sound::prepareMusicStreaming(Common::String filename, int newHandleId, int3
 		return false;
 
 	if (!_musicFile[newHandleId].open(filename)) {
-		debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
+		debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.toString().c_str());
 		return false;
 	}
 
@@ -836,7 +836,7 @@ bool Sound::prepareMusicStreaming(Common::String filename, int newHandleId, int3
 
 	if (assignedMode == MusWav) {
 		if (_musicFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
-			debug(5, "Sound::streamMusicFile(): couldn't read from file %s, bailing out...", filename.c_str());
+			debug(5, "Sound::streamMusicFile(): couldn't read from file %s, bailing out...", filename.toString().c_str());
 			_musicFile[newHandleId].close();
 			return false;
 		}
@@ -891,7 +891,7 @@ bool Sound::prepareMusicStreaming(Common::String filename, int newHandleId, int3
 	}
 
 	if (assignedMode != MusWav && !_compressedMusicStream[newHandleId]) {
-		debug(5, "Sound::streamMusicFile(): couldn't process compressed file %s, bailing out...", filename.c_str());
+		debug(5, "Sound::streamMusicFile(): couldn't process compressed file %s, bailing out...", filename.toString().c_str());
 		_musicFile[newHandleId].close();
 		return false;
 	}
@@ -916,25 +916,25 @@ void Sound::streamMusicFile(int32 tuneId, int32 looped) {
 	Common::String filename(_tuneList[tuneId]);
 
 	MusCompMode assignedMode = MusWav;
-	if (tmp.exists(filename + ".wav")) {
+	if (tmp.exists(Common::Path(filename + ".wav"))) {
 		filename = filename + ".wav";
 		assignedMode = MusWav;
 	} else if (SwordEngine::isPsx() && tmp.exists("tunes.dat") && tmp.exists("tunes.tab")) {
 		filename = "tunes.dat";
 		assignedMode = MusPSX;
-	} else if (tmp.exists(filename + ".fla")) {
+	} else if (tmp.exists(Common::Path(filename + ".fla"))) {
 		filename = filename + ".fla";
 		assignedMode = MusFLAC;
-	} else if (tmp.exists(filename + ".ogg")) {
+	} else if (tmp.exists(Common::Path(filename + ".ogg"))) {
 		filename = filename + ".ogg";
 		assignedMode = MusVorbis;
-	} else if (tmp.exists(filename + ".mp3")) {
+	} else if (tmp.exists(Common::Path(filename + ".mp3"))) {
 		filename = filename + ".mp3";
 		assignedMode = MusMP3;
-	} else if (tmp.exists(filename + ".flac")) {
+	} else if (tmp.exists(Common::Path(filename + ".flac"))) {
 		filename = filename + ".flac";
 		assignedMode = MusFLAC;
-	} else if (tmp.exists(filename + ".aif")) {
+	} else if (tmp.exists(Common::Path(filename + ".aif"))) {
 		filename = filename + ".aif";
 		assignedMode = MusAif;
 	} else {
@@ -960,7 +960,7 @@ void Sound::streamMusicFile(int32 tuneId, int32 looped) {
 			_mixer->stopHandle(_hSampleMusic[newHandleId]);
 			_musicFile[newHandleId].close();
 
-			bool success = prepareMusicStreaming(filename, newHandleId, tuneId,
+			bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId,
 												 2 * (2 * (_volMusic[0] + _volMusic[1])),
 												 scalePan(64 + (4 * (_volMusic[1] - _volMusic[0]))),
 												 assignedMode);
@@ -971,7 +971,7 @@ void Sound::streamMusicFile(int32 tuneId, int32 looped) {
 			return;
 		} else {
 			// All good! We got the non-busy one :-)
-			bool success = prepareMusicStreaming(filename, newHandleId, tuneId,
+			bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId,
 												 0,
 												 scalePan(64 + (4 * (_volMusic[1] - _volMusic[0]))),
 												 assignedMode);
@@ -981,7 +981,7 @@ void Sound::streamMusicFile(int32 tuneId, int32 looped) {
 		}
 	} else {
 		// No streams are busy, let's go!
-		bool success = prepareMusicStreaming(filename, newHandleId, tuneId,
+		bool success = prepareMusicStreaming(Common::Path(filename), newHandleId, tuneId,
 											 2 * (3 * (_volMusic[0] + _volMusic[1])),
 											 scalePan(64 + (4 * (_volMusic[1] - _volMusic[0]))),
 											 assignedMode);

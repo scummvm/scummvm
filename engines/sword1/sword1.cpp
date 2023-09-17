@@ -51,7 +51,7 @@ SwordEngine::SwordEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_systemVars.platform = gameDesc->platform;
 
 	// Add default file directories
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "speech");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX videos
