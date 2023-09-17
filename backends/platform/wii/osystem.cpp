@@ -163,7 +163,7 @@ void OSystem_Wii::quit() {
 
 void OSystem_Wii::engineInit() {
 	_gameRunning = true;
-	WiiFilesystemFactory::instance().umountUnused(ConfMan.get("path"));
+	WiiFilesystemFactory::instance().umountUnused(ConfMan.getPath("path").toString(Common::Path::kNativeSeparator));
 }
 
 void OSystem_Wii::engineDone() {
