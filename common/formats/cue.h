@@ -65,6 +65,7 @@ public:
 		String title;
 		String performer;
 		Array<int> indices;
+		int pregap = 0;
 	};
 
 	struct CueFile {
