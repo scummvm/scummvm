@@ -34,7 +34,7 @@ InstallerArchive::~InstallerArchive() {
 	close();
 }
 
-bool InstallerArchive::open(const Common::String &filename) {
+bool InstallerArchive::open(const Common::Path &filename) {
 	close();
 
 	_stream = SearchMan.createReadStreamForMember(filename);
@@ -92,7 +92,7 @@ bool InstallerArchive::open(const Common::String &filename) {
 
 		_stream->skip(13); // Unknown
 
-		_map[name] = entry;
+		_map[Common::Path(name, '\\')] = entry;
 
 		debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
 				entry.offset, entry.compressedSize, entry.uncompressedSize);
@@ -107,8 +107,7 @@ void InstallerArchive::close() {
 }
 
 bool InstallerArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return _map.contains(name);
+	return _map.contains(path);
 }
 
 int InstallerArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -119,16 +118,14 @@ int InstallerArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr InstallerArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *InstallerArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!_stream || !_map.contains(name))
+	if (!_stream || !_map.contains(path))
 		return nullptr;
 
-	const FileEntry &entry = _map[name];
+	const FileEntry &entry = _map[path];
 
 	// Seek to our offset and then send it off to the decompressor
 	_stream->seek(entry.offset);

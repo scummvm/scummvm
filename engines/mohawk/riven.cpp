@@ -91,7 +91,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	// file. The following directories allow Riven to be played directly
 	// from the DVD.
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "exe");
@@ -536,7 +536,7 @@ void MohawkEngine_Riven::loadLanguageDatafile(char prefix, uint16 stackId) {
 		return;
 	}
 
-	Common::String languageDatafile = Common::String::format("%c_data_%s.mhk", prefix, languageDesc->archiveSuffix);
+	Common::Path languageDatafile(Common::String::format("%c_data_%s.mhk", prefix, languageDesc->archiveSuffix));
 
 	MohawkArchive *mhk = new MohawkArchive();
 	if (mhk->openFile(languageDatafile)) {

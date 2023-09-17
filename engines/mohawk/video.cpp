@@ -40,7 +40,7 @@ namespace Mohawk {
 VideoEntry::VideoEntry() : _video(nullptr), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
 }
 
-VideoEntry::VideoEntry(Video::VideoDecoder *video, const Common::String &fileName) : _video(video), _fileName(fileName), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
+VideoEntry::VideoEntry(Video::VideoDecoder *video, const Common::Path &fileName) : _video(video), _fileName(fileName), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
 }
 
 VideoEntry::VideoEntry(Video::VideoDecoder *video, int id) : _video(video), _id(id), _x(0), _y(0), _loop(false), _enabled(true) {
@@ -192,14 +192,15 @@ void VideoManager::stopVideos() {
 	_videos.clear();
 }
 
-VideoEntryPtr VideoManager::playMovie(const Common::String &fileName, Audio::Mixer::SoundType soundType) {
+VideoEntryPtr VideoManager::playMovie(const Common::Path &fileName, Audio::Mixer::SoundType soundType) {
 	VideoEntryPtr ptr = open(fileName, soundType);
 	if (!ptr)
 		return VideoEntryPtr();
 
+	Common::String baseName(fileName.baseName());
 
-	Common::String subtitlesName = Common::String::format("%s.srt", fileName.substr(0, fileName.size() - 4).c_str());
-	ptr->loadSubtitles(subtitlesName.c_str());
+	Common::String subtitlesName = Common::String::format("%s.srt", baseName.substr(0, baseName.size() - 4).c_str());
+	ptr->loadSubtitles(fileName.getParent().appendComponent(subtitlesName));
 
 	ptr->start();
 	return ptr;
@@ -347,7 +348,7 @@ VideoEntryPtr VideoManager::open(uint16 id) {
 	return entry;
 }
 
-VideoEntryPtr VideoManager::open(const Common::String &fileName, Audio::Mixer::SoundType soundType) {
+VideoEntryPtr VideoManager::open(const Common::Path &fileName, Audio::Mixer::SoundType soundType) {
 	// If this video is already playing, return that entry
 	VideoEntryPtr oldVideo = findVideo(fileName);
 	if (oldVideo)
@@ -389,7 +390,7 @@ VideoEntryPtr VideoManager::findVideo(uint16 id) {
 	return VideoEntryPtr();
 }
 
-VideoEntryPtr VideoManager::findVideo(const Common::String &fileName) {
+VideoEntryPtr VideoManager::findVideo(const Common::Path &fileName) {
 	if (fileName.empty())
 		return VideoEntryPtr();
 
@@ -439,7 +440,7 @@ void VideoManager::checkEnableDither(VideoEntryPtr &entry) {
 		if (entry->getFileName().empty())
 			error("Failed to set dither for video tMOV %d", entry->getID());
 		else
-			error("Failed to set dither for video %s", entry->getFileName().c_str());
+			error("Failed to set dither for video %s", entry->getFileName().toString().c_str());
 	}
 }
 

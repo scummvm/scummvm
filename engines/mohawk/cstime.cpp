@@ -41,7 +41,7 @@ MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescript
 	_rnd = new Common::RandomSource("cstime");
 
 	// If the user just copied the CD contents, the fonts are in a subdirectory.
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	// They're in setup/data32 for 'Where in Time is Carmen Sandiego?'.
 	SearchMan.addSubDirectoryMatching(gameDataDir, "setup/data32");
 	// They're in 95instal for 'Carmen Sandiego's Great Chase Through Time'.
@@ -238,10 +238,10 @@ void MohawkEngine_CSTime::nextScene() {
 	// TODO: maybe startMusic();
 }
 
-void MohawkEngine_CSTime::loadResourceFile(Common::String name) {
+void MohawkEngine_CSTime::loadResourceFile(const Common::Path &name) {
 	MohawkArchive *archive = new MohawkArchive();
-	if (!archive->openFile(name + ".mhk"))
-		error("failed to open %s.mhk", name.c_str());
+	if (!archive->openFile(name.append(".mhk")))
+		error("failed to open %s.mhk", name.toString().c_str());
 	_mhk.push_back(archive);
 }
 

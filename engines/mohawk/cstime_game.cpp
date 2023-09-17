@@ -650,11 +650,11 @@ void CSTimeConversation::unhighlightLine(uint line) {
 }
 
 CSTimeCase::CSTimeCase(MohawkEngine_CSTime *vm, uint id) : _vm(vm), _id(id) {
-	_vm->loadResourceFile(Common::String::format("Cases/C%dText", id));
+	_vm->loadResourceFile(Common::Path(Common::String::format("Cases/C%dText", id)));
 	// We load this early, so we can use the text for debugging.
 	loadRolloverText();
 
-	_vm->loadResourceFile(Common::String::format("Cases/C%dInfo", id));
+	_vm->loadResourceFile(Common::Path(Common::String::format("Cases/C%dInfo", id)));
 	Common::SeekableReadStream *caseInfoStream = _vm->getResource(ID_CINF, 1);
 	uint16 numScenes = caseInfoStream->readUint16BE();
 	uint16 numInvObjs = caseInfoStream->readUint16BE();
@@ -667,8 +667,8 @@ CSTimeCase::CSTimeCase(MohawkEngine_CSTime *vm, uint id) : _vm(vm), _id(id) {
 	for (uint i = 0; i < numInvObjs; i++)
 		_inventoryObjs.push_back(loadInventoryObject(i));
 
-	_vm->loadResourceFile(Common::String::format("Cases/C%dArt", id));
-	_vm->loadResourceFile(Common::String::format("Cases/C%dDlog", id));
+	_vm->loadResourceFile(Common::Path(Common::String::format("Cases/C%dArt", id)));
+	_vm->loadResourceFile(Common::Path(Common::String::format("Cases/C%dDlog", id)));
 
 	debug("Loading %d scenes...", numScenes);
 	for (uint i = 0; i < numScenes; i++)

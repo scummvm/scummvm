@@ -140,7 +140,7 @@ void MystCursorManager::setDefaultCursor() {
 
 #endif
 
-MacCursorManager::MacCursorManager(const Common::String &appName) {
+MacCursorManager::MacCursorManager(const Common::Path &appName) {
 	if (!appName.empty()) {
 		_resFork = new Common::MacResManager();
 
@@ -210,7 +210,7 @@ void LivingBooksCursorManager_v2::setCursor(const Common::String &name) {
 		setCursor(id);
 }
 
-NECursorManager::NECursorManager(const Common::String &appName) {
+NECursorManager::NECursorManager(const Common::Path &appName) {
 	Common::NEResources *exe = new Common::NEResources();
 	if (exe->loadFromEXE(appName)) {
 		// Not all have cursors anyway, so it's not a problem if this fails
@@ -219,7 +219,7 @@ NECursorManager::NECursorManager(const Common::String &appName) {
 	delete exe;
 }
 
-PECursorManager::PECursorManager(const Common::String &appName) {
+PECursorManager::PECursorManager(const Common::Path &appName) {
 	Common::PEResources *exe = new Common::PEResources();
 	if (exe->loadFromEXE(appName)) {
 		// Not all have cursors anyway, so it's not a problem if this fails

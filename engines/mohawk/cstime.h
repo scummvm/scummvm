@@ -145,7 +145,7 @@ public:
 	CSTimeCase *getCase() { return _case; }
 	CSTimeInterface *getInterface() { return _interface; }
 
-	void loadResourceFile(Common::String name);
+	void loadResourceFile(const Common::Path &name);
 
 	void addEvent(const CSTimeEvent &event);
 	void addEventList(const Common::Array<CSTimeEvent> &list);
