@@ -52,7 +52,7 @@
 namespace Griffon {
 
 GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
 	_rnd = new Common::RandomSource("griffon");
