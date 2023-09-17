@@ -323,7 +323,7 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	}
 
 	Common::DumpFile *outFile = new Common::DumpFile();
-	outFile->open(outFileName);
+	outFile->open(Common::Path(outFileName, Common::Path::kNativeSeparator));
 
 	byte *data = new byte[inFile->size()];
 	inFile->read(data, inFile->size());
@@ -344,8 +344,8 @@ bool Console::Cmd_SourcePath(int argc, const char **argv) {
 		debugPrintf("Usage: %s <source path>\n", argv[0]);
 		return true;
 	} else {
-		if (CONTROLLER->setSourcePath(Common::String(argv[1])).getErrorCode() == OK) {
-			debugPrintf("Source path set to '%s'\n", CONTROLLER->getSourcePath().c_str());
+		if (CONTROLLER->setSourcePath(Common::Path(argv[1], Common::Path::kNativeSeparator)).getErrorCode() == OK) {
+			debugPrintf("Source path set to '%s'\n", CONTROLLER->getSourcePath().toString(Common::Path::kNativeSeparator).c_str());
 		} else {
 			debugPrintf("Error setting source path. Note that \"\" is illegal.");
 		}

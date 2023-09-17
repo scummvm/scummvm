@@ -226,9 +226,9 @@ public:
 			if (!file->getName().hasSuffixIgnoreCase(".dcp")) continue;
 
 			FileProperties tmp;
-			if (AdvancedMetaEngine::getFilePropertiesExtern(md5Bytes, allFiles, kMD5Head, file->getName(), tmp)) {
+			if (AdvancedMetaEngine::getFilePropertiesExtern(md5Bytes, allFiles, kMD5Head, file->getPathInArchive(), tmp)) {
 				game.hasUnknownFiles = true;
-				game.matchedFiles[file->getName()] = tmp;
+				game.matchedFiles[file->getPathInArchive()] = tmp;
 			}
 		}
 

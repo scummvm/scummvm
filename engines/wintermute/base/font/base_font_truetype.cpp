@@ -574,7 +574,7 @@ bool BaseFontTT::initFont() {
 		return STATUS_FAILED;
 	}
 #ifdef USE_FREETYPE2
-	Common::String fallbackFilename;
+	const char *fallbackFilename;
 	// Handle Bold atleast for the fallback-case.
 	// TODO: Handle italic. (Needs a test-case)
 	if (_isBold) {
@@ -608,7 +608,7 @@ bool BaseFontTT::initFont() {
 	// Fallback3: Try to ask FontMan for the FreeSans.ttf ScummModern.zip uses:
 	if (!_font) {
 		// Really not desireable, as we will get a font with dpi-72 then
-		Common::String fontName = Common::String::format("%s-%s@%d", fallbackFilename.c_str(), "ASCII", _fontHeight);
+		Common::String fontName = Common::String::format("%s-%s@%d", fallbackFilename, "ASCII", _fontHeight);
 		warning("Looking for %s", fontName.c_str());
 		_font = FontMan.getFontByName(fontName);
 	}
