@@ -37,7 +37,7 @@
 
 namespace NGI {
 
-bool SoundList::load(MfcArchive &file, const Common::String &fname) {
+bool SoundList::load(MfcArchive &file, const Common::Path &fname) {
 	debugC(5, kDebugLoading, "SoundList::load()");
 
 	uint32 count = file.readUint32LE();
@@ -56,7 +56,7 @@ bool SoundList::load(MfcArchive &file, const Common::String &fname) {
 	return true;
 }
 
-bool SoundList::loadFile(const Common::String &fname, const Common::String &libname) {
+bool SoundList::loadFile(const Common::Path &fname, const Common::Path &libname) {
 	Common::File file;
 
 	if (!file.open(fname))
@@ -339,20 +339,20 @@ int NGIEngine::getSceneTrack() {
 	return res;
 }
 
-void NGIEngine::startSoundStream1(const Common::String &trackName) {
+void NGIEngine::startSoundStream1(const Common::Path &trackName) {
 	stopAllSoundStreams();
 
 	playOggSound(trackName, _soundStream1);
 }
 
-void NGIEngine::playOggSound(const Common::String &trackName, Audio::SoundHandle &stream) {
+void NGIEngine::playOggSound(const Common::Path &trackName, Audio::SoundHandle &stream) {
 #ifdef USE_VORBIS
 	if (_mixer->isSoundHandleActive(stream))
 		return;
 
 	Common::File *track = new Common::File();
 	if (!track->open(trackName)) {
-		warning("Could not open %s", trackName.c_str());
+		warning("Could not open %s", trackName.toString().c_str());
 		delete track;
 		return;
 	}

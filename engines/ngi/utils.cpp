@@ -33,7 +33,7 @@
 
 namespace NGI {
 
-bool CObject::loadFile(const Common::String &fname) {
+bool CObject::loadFile(const Common::Path &fname) {
 	Common::File file;
 
 	if (!file.open(fname))
@@ -124,11 +124,13 @@ MemoryObject::~MemoryObject() {
 
 bool MemoryObject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MemoryObject::load()");
-	_memfilename = file.readPascalString();
+	Common::String filename = file.readPascalString();
 
-	while (_memfilename.contains('\\')) {
-		_memfilename.deleteChar(0);
+	while (filename.contains('\\')) {
+		filename.deleteChar(0);
 	}
+
+	_memfilename = Common::Path(filename);
 
 	if (g_nmi->_currArchive) {
 		_mfield_14 = 0;
@@ -138,8 +140,8 @@ bool MemoryObject::load(MfcArchive &file) {
 	return true;
 }
 
-void MemoryObject::loadFile(const Common::String &filename) {
-	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename.c_str());
+void MemoryObject::loadFile(const Common::Path &filename) {
+	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename.toString().c_str());
 
 	if (filename.empty())
 		return;
@@ -157,7 +159,7 @@ void MemoryObject::loadFile(const Common::String &filename) {
 
 			_dataSize = s->size();
 
-			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename.c_str(), _dataSize);
+			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename.toString().c_str(), _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
 			delete s;
@@ -185,7 +187,7 @@ byte *MemoryObject::loadData() {
 }
 
 void MemoryObject::freeData() {
-	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename.c_str());
+	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename.toString().c_str());
 
 	if (_data)
 		free(_data);
@@ -218,7 +220,7 @@ bool MemoryObject2::load(MfcArchive &file) {
 
 	_mflags |= 1;
 
-	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename.c_str());
+	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename.toString().c_str());
 
 	if (!_memfilename.empty()) {
 		MemoryObject::loadFile(_memfilename);
@@ -453,7 +455,7 @@ void MfcArchive::writeObject(CObject *obj) {
 	}
 }
 
-Common::String genFileName(int superId, int sceneId, const char *ext) {
+Common::Path genFileName(int superId, int sceneId, const char *ext) {
 	Common::String s;
 
 	if (superId) {
@@ -464,7 +466,7 @@ Common::String genFileName(int superId, int sceneId, const char *ext) {
 
 	debugC(7, kDebugLoading, "genFileName: %s", s.c_str());
 
-	return s;
+	return Common::Path(s);
 }
 
 // Translates cp-1251..utf-8

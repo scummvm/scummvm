@@ -88,11 +88,11 @@ bool SceneTag::load(MfcArchive &file) {
 }
 
 void SceneTag::loadScene() {
-	Common::String archname = genFileName(0, _sceneId, "nl");
+	Common::Path archname = genFileName(0, _sceneId, "nl");
 
 	Common::Archive *arch = makeNGIArchive(archname);
 
-	Common::String fname = genFileName(0, _sceneId, "sc");
+	Common::Path fname = genFileName(0, _sceneId, "sc");
 
 	Common::ScopedPtr<Common::SeekableReadStream> file(arch->createReadStreamForMember(fname));
 
@@ -144,7 +144,7 @@ bool Scene::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		int aniNum = file.readUint16LE();
-		Common::String aniname = genFileName(0, aniNum, "ani");
+		Common::Path aniname = genFileName(0, aniNum, "ani");
 
 		Common::SeekableReadStream *f = g_nmi->_currArchive->createReadStreamForMember(aniname);
 
@@ -165,7 +165,7 @@ bool Scene::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		int qNum = file.readUint16LE();
-		Common::String qname = genFileName(0, qNum, "qu");
+		Common::Path qname = genFileName(0, qNum, "qu");
 
 		Common::SeekableReadStream *f = g_nmi->_currArchive->createReadStreamForMember(qname);
 		MfcArchive archive(f);
@@ -210,7 +210,7 @@ bool Scene::load(MfcArchive &file) {
 		}
 	}
 
-	Common::String shdname = genFileName(0, _sceneId, "shd");
+	Common::Path shdname = genFileName(0, _sceneId, "shd");
 
 	Shadows *shd = new Shadows();
 
@@ -219,13 +219,13 @@ bool Scene::load(MfcArchive &file) {
 	else
 		delete shd;
 
-	Common::String slsname = genFileName(0, _sceneId, "sls");
+	Common::Path slsname = genFileName(0, _sceneId, "sls");
 
 	if (g_nmi->_soundEnabled) {
 		_soundList.reset(new SoundList());
 
 		if (g_nmi->_flgSoundList) {
-			Common::String nlname = genFileName(17, _sceneId, "nl");
+			Common::Path nlname = genFileName(17, _sceneId, "nl");
 
 			_soundList->loadFile(slsname, nlname);
 		} else {
