@@ -32,7 +32,7 @@ class ZVision;
 class FogFx : public GraphicsEffect {
 public:
 
-	FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds);
+	FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::Path &clouds);
 	~FogFx() override;
 
 	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect) override;

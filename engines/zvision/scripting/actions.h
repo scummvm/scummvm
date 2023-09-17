@@ -221,7 +221,7 @@ public:
 	bool execute() override;
 
 private:
-	Common::String _fileName;
+	Common::Path _fileName;
 	bool _loop;
 	ValueSlot *_volume;
 	bool _universe;
@@ -248,7 +248,7 @@ public:
 	bool execute() override;
 
 private:
-	Common::String _fileName;
+	Common::Path _fileName;
 	uint32 _x;
 	uint32 _y;
 	uint32 _x2;
@@ -283,7 +283,7 @@ public:
 	bool execute() override;
 
 private:
-	Common::String _fileName;
+	Common::Path _fileName;
 	int32 _mask;
 	int32 _framerate;
 };
@@ -344,7 +344,7 @@ public:
 	bool execute() override;
 
 private:
-	Common::String _fileName;
+	Common::Path _fileName;
 };
 
 class ActionRotateTo : public ResultAction {
@@ -365,7 +365,7 @@ public:
 private:
 	uint _x;
 	uint _y;
-	Common::String _fileName;
+	Common::Path _fileName;
 	int32 _backgroundColor;
 };
 
@@ -375,7 +375,7 @@ public:
 	bool execute() override;
 
 private:
-	Common::String _fileName;
+	Common::Path _fileName;
 };
 
 class ActionStop : public ResultAction {
@@ -397,7 +397,7 @@ private:
 		DIFFERENT_DIMENSIONS = 0x1 // 0x1 flags that the destRect dimensions are different from the original video dimensions
 	};
 
-	Common::String _fileName;
+	Common::Path _fileName;
 	uint _x1;
 	uint _y1;
 	uint _x2;
@@ -413,7 +413,7 @@ public:
 
 private:
 	int _syncto;
-	Common::String _fileName;
+	Common::Path _fileName;
 };
 
 class ActionTimer : public ResultAction {
@@ -432,7 +432,7 @@ public:
 	bool execute() override;
 
 private:
-	Common::String _filename;
+	Common::Path _filename;
 	uint32 _delay;
 	Common::Rect _r;
 };

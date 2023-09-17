@@ -36,7 +36,7 @@ class String;
 namespace ZVision {
 class ttyTextNode : public ScriptingEffect {
 public:
-	ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay);
+	ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, const Common::Rect &r, int32 delay);
 	~ttyTextNode() override;
 
 	/**

@@ -118,9 +118,9 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 
 	Common::File file;
 	Graphics::Font *newFont;
-	if (!file.open(newFontName) && !_engine->getSearchManager()->openFile(file, newFontName) &&
-		!file.open(liberationFontName) && !_engine->getSearchManager()->openFile(file, liberationFontName) &&
-		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName)) {
+	if (!file.open(Common::Path(newFontName)) && !_engine->getSearchManager()->openFile(file, Common::Path(newFontName)) &&
+		!file.open(Common::Path(liberationFontName)) && !_engine->getSearchManager()->openFile(file, Common::Path(liberationFontName)) &&
+		!file.open(Common::Path(freeFontName)) && !_engine->getSearchManager()->openFile(file, Common::Path(freeFontName))) {
 		newFont = Graphics::loadTTFFontFromArchive(liberationFontName, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 	} else {
 		newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));

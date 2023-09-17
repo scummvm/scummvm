@@ -28,7 +28,7 @@
 
 namespace ZVision {
 
-ZfsArchive::ZfsArchive(const Common::String &fileName) : _fileName(fileName) {
+ZfsArchive::ZfsArchive(const Common::Path &fileName) : _fileName(fileName) {
 	Common::File zfsFile;
 	memset(&_header, 0, sizeof(_header));
 
@@ -39,13 +39,13 @@ ZfsArchive::ZfsArchive(const Common::String &fileName) : _fileName(fileName) {
 
 	readHeaders(&zfsFile);
 
-	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
+	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.toString(Common::Path::kNativeSeparator).c_str(), _entryHeaders.size());
 }
 
-ZfsArchive::ZfsArchive(const Common::String &fileName, Common::SeekableReadStream *stream) : _fileName(fileName) {
+ZfsArchive::ZfsArchive(const Common::Path &fileName, Common::SeekableReadStream *stream) : _fileName(fileName) {
 	readHeaders(stream);
 
-	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
+	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.toString(Common::Path::kNativeSeparator).c_str(), _entryHeaders.size());
 }
 
 ZfsArchive::~ZfsArchive() {
@@ -120,11 +120,10 @@ int ZfsArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr ZfsArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!_entryHeaders.contains(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *ZfsArchive::createReadStreamForMember(const Common::Path &path) const {

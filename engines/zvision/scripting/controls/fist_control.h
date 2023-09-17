@@ -71,7 +71,7 @@ public:
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:
-	void readDescFile(const Common::String &fileName);
+	void readDescFile(const Common::Path &fileName);
 	void clearFistArray(Common::Array< Common::Array<Common::Rect> > &arr);
 	uint32 readBits(const char *str);
 	int mouseIn(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);

@@ -175,9 +175,9 @@ void ZVision::saveSettings() {
 }
 
 void ZVision::initialize() {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
-	_searchManager = new SearchManager(ConfMan.get("path"), 6);
+	_searchManager = new SearchManager(ConfMan.getPath("path"), 6);
 
 	_searchManager->addDir("FONTS");
 	_searchManager->addDir("addon");
@@ -291,9 +291,9 @@ Common::Error ZVision::run() {
 			liberationFontName += liberationFontSuffixes[j];
 			liberationFontName += ".ttf";
 
-			if (!Common::File::exists(fontName) && !_searchManager->hasFile(fontName) &&
-				!Common::File::exists(liberationFontName) && !_searchManager->hasFile(liberationFontName) &&
-				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName) &&
+			if (!Common::File::exists(Common::Path(fontName)) && !_searchManager->hasFile(Common::Path(fontName)) &&
+				!Common::File::exists(Common::Path(liberationFontName)) && !_searchManager->hasFile(Common::Path(liberationFontName)) &&
+				!Common::File::exists(Common::Path(freeFontName)) && !_searchManager->hasFile(Common::Path(freeFontName)) &&
 				!Common::File::exists("fonts.dat") && !_searchManager->hasFile("fonts.dat")) {
 				foundAllFonts = false;
 				break;

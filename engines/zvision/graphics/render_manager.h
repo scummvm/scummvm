@@ -150,7 +150,7 @@ public:
 	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 */
-	void renderImageToBackground(const Common::String &fileName, int16 destinationX, int16 destinationY);
+	void renderImageToBackground(const Common::Path &fileName, int16 destinationX, int16 destinationY);
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -160,7 +160,7 @@ public:
 	 * @param destY      Y position where the image should be put. Coords are in working window space, not screen space!
 	 * @param colorkey   Transparent color
 	 */
-	void renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, uint32 colorkey);
+	void renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY, uint32 colorkey);
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -171,7 +171,7 @@ public:
 	 * @param keyX       X position of transparent color
 	 * @param keyY       Y position of transparent color
 	 */
-	void renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, int16 keyX, int16 keyY);
+	void renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY, int16 keyX, int16 keyY);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
@@ -179,7 +179,7 @@ public:
 	 *
 	 * @param fileName    The name of the image file
 	 */
-	void setBackgroundImage(const Common::String &fileName);
+	void setBackgroundImage(const Common::Path &fileName);
 
 	/**
 	 * Set the background position (_backgroundOffset). If the current RenderState is PANORAMA, the offset
@@ -259,8 +259,8 @@ public:
 	Graphics::Surface *getBkgRect(Common::Rect &rect);
 
 	// Load image into new surface
-	Graphics::Surface *loadImage(Common::String file);
-	Graphics::Surface *loadImage(Common::String file, bool transposed);
+	Graphics::Surface *loadImage(const Common::Path &file);
+	Graphics::Surface *loadImage(const Common::Path &file, bool transposed);
 
 	// Clear whole/area of menu surface
 	void clearMenuSurface();
@@ -281,7 +281,7 @@ public:
 	 * @param fileName       The name of a .tga file
 	 * @param destination    A reference to the Surface to store the pixel data in
 	 */
-	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
+	void readImageToSurface(const Common::Path &fileName, Graphics::Surface &destination);
 
 	/**
 	 * Reads an image file pixel data into a Surface buffer. Also, if the image
@@ -293,7 +293,7 @@ public:
 	 * @param destination    A reference to the Surface to store the pixel data in
 	 * @param transposed     Transpose flag
 	 */
-	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed);
+	void readImageToSurface(const Common::Path &fileName, Graphics::Surface &destination, bool transposed);
 
 	// Add visual effect to effects list
 	void addEffect(GraphicsEffect *_effect);

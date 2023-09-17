@@ -216,7 +216,7 @@ bool Console::cmdLocation(int argc, const char **argv) {
 	return true;
 }
 
-void dumpFile(Common::SeekableReadStream *s, const char *outName) {
+void dumpFile(Common::SeekableReadStream *s, const Common::Path &outName) {
 	byte *buffer = new byte[s->size()];
 	s->read(buffer, s->size());
 
@@ -248,7 +248,7 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 }
 
 bool Console::cmdDumpFiles(int argc, const char **argv) {
-	Common::String fileName;
+	Common::Path fileName;
 	Common::SeekableReadStream *in;
 
 	if (argc != 2) {
@@ -261,11 +261,11 @@ bool Console::cmdDumpFiles(int argc, const char **argv) {
 
 	for (SearchManager::MatchList::iterator iter = fileList.begin(); iter != fileList.end(); ++iter) {
 		fileName = iter->_value.name;
-		debugPrintf("Dumping %s\n", fileName.c_str());
+		debugPrintf("Dumping %s\n", fileName.toString().c_str());
 
 		in = iter->_value.arch->createReadStreamForMember(iter->_value.name);
 		if (in)
-			dumpFile(in, fileName.c_str());
+			dumpFile(in, fileName);
 		delete in;
 	}
 
@@ -278,28 +278,29 @@ bool Console::cmdDumpImage(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String fileName = argv[1];
-	if (!fileName.hasSuffix(".tga")) {
+	Common::Path fileName = Common::Path(argv[1], Common::Path::kNativeSeparator);
+	Common::String baseName(fileName.baseName());
+	if (!baseName.hasSuffix(".tga")) {
 		debugPrintf("%s is not an image file", argv[1]);
 	}
 
 	Common::File f;
-	if (!_engine->getSearchManager()->openFile(f, argv[1])) {
+	if (!_engine->getSearchManager()->openFile(f, fileName)) {
 		warning("File not found: %s", argv[1]);
 		return true;
 	}
 
 	Graphics::Surface surface;
-	_engine->getRenderManager()->readImageToSurface(argv[1], surface, false);
+	_engine->getRenderManager()->readImageToSurface(fileName, surface, false);
 
 	// Open file
 	Common::DumpFile out;
 
-	fileName.setChar('b', fileName.size() - 3);
-	fileName.setChar('m', fileName.size() - 2);
-	fileName.setChar('p', fileName.size() - 1);
+	baseName.setChar('b', baseName.size() - 3);
+	baseName.setChar('m', baseName.size() - 2);
+	baseName.setChar('p', baseName.size() - 1);
 
-	out.open(fileName);
+	out.open(fileName.getParent().appendComponent(baseName));
 
 	// Write BMP header
 	out.writeByte('B');

@@ -317,7 +317,7 @@ private:
 	 * @param fileName    Name of the .scr file
 	 * @param isGlobal    Are the puzzles included in the file global (true). AKA, the won't be purged during location changes
 	 */
-	void parseScrFile(const Common::String &fileName, ScriptScope &scope);
+	void parseScrFile(const Common::Path &fileName, ScriptScope &scope);
 
 	/**
 	 * Parses the stream into a Puzzle object

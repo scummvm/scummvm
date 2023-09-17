@@ -254,11 +254,11 @@ Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 	Common::SeekableReadStream *saveFile = g_system->getSavefileManager()->openForLoading(_engine->getSaveStateName(slot));
 	if (saveFile == NULL) {
 		// Try to load standard save file
-		Common::String filename;
+		Common::Path filename;
 		if (_engine->getGameId() == GID_GRANDINQUISITOR)
-			filename = Common::String::format("inqsav%u.sav", slot);
+			filename = Common::Path(Common::String::format("inqsav%u.sav", slot));
 		else if (_engine->getGameId() == GID_NEMESIS)
-			filename = Common::String::format("nemsav%u.sav", slot);
+			filename = Common::Path(Common::String::format("nemsav%u.sav", slot));
 
 		saveFile = _engine->getSearchManager()->openFile(filename);
 		if (saveFile == NULL) {

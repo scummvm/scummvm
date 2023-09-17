@@ -56,7 +56,7 @@ public:
 
 class MusicNode : public MusicNodeBASE {
 public:
-	MusicNode(ZVision *engine, uint32 key, Common::String &file, bool loop, uint8 volume);
+	MusicNode(ZVision *engine, uint32 key, Common::Path &file, bool loop, uint8 volume);
 	~MusicNode() override;
 
 	/**

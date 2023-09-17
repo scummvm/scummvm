@@ -59,7 +59,7 @@ public:
 	const Common::String getTextLine(uint stringNumber);
 
 private:
-	void loadStrFile(const Common::String &fileName);
+	void loadStrFile(const Common::Path &fileName);
 };
 
 } // End of namespace ZVision
