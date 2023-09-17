@@ -113,11 +113,11 @@ void ResourceManager::reset() {
 	_archives.clear();
 }
 
-bool ResourceManager::loadArchive(const Common::String &name) {
+bool ResourceManager::loadArchive(const Common::Path &name) {
 	HPFArchive *archive = new HPFArchive(name);
 
 	if (archive->count() == 0) {
-		debugC(2, kLastExpressDebugResource, "Error opening archive: %s", name.c_str());
+		debugC(2, kLastExpressDebugResource, "Error opening archive: %s", name.toString(Common::Path::kNativeSeparator).c_str());
 
 		delete archive;
 
@@ -132,25 +132,25 @@ bool ResourceManager::loadArchive(const Common::String &name) {
 // Get a stream to file in the archive
 //  - same as createReadStreamForMember except it checks if the file exists and will assert / output a debug message if not
 Common::SeekableReadStream *ResourceManager::getFileStream(const Common::String &name) const {
+	Common::Path path(name);
 
 	// Check if the file exits in the archive
-	if (!hasFile(name)) {
+	if (!hasFile(path)) {
 		debugC(2, kLastExpressDebugResource, "Error opening file: %s", name.c_str());
 		return nullptr;
 	}
 
 	debugC(2, kLastExpressDebugResource, "Opening file: %s", name.c_str());
 
-	return createReadStreamForMember(name);
+	return createReadStreamForMember(path);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Archive functions
 //////////////////////////////////////////////////////////////////////////
 bool ResourceManager::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
 	for (Common::Array<HPFArchive *>::const_iterator it = _archives.begin(); it != _archives.end(); ++it) {
-		if ((*it)->hasFile(name))
+		if ((*it)->hasFile(path))
 			return true;
 	}
 
@@ -172,18 +172,15 @@ int ResourceManager::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr ResourceManager::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	for (Common::Array<HPFArchive *>::const_iterator it = _archives.begin(); it != _archives.end(); ++it) {
-
-		Common::SeekableReadStream *stream = (*it)->createReadStreamForMember(name);
+		Common::SeekableReadStream *stream = (*it)->createReadStreamForMember(path);
 
 		if (stream)
 			return stream;
@@ -196,8 +193,10 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Com
 // Resource loading
 
 Background *ResourceManager::loadBackground(const Common::String &name) const {
+	Common::Path path(name);
+	path.appendInPlace(".bg");
 	// Open the resource
-	Common::SeekableReadStream *stream = createReadStreamForMember(name + ".bg");
+	Common::SeekableReadStream *stream = createReadStreamForMember(path);
 	if (!stream)
 		return nullptr;
 

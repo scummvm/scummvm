@@ -32,17 +32,17 @@
 
 namespace LastExpress {
 
-HPFArchive::HPFArchive(const Common::String &path) {
+HPFArchive::HPFArchive(const Common::Path &path) {
 	_filename = path;
 
 	// Open a stream to the archive
 	Common::SeekableReadStream *archive = SearchMan.createReadStreamForMember(_filename);
 	if (!archive) {
-		debugC(2, kLastExpressDebugResource, "Error opening file: %s", path.c_str());
+		debugC(2, kLastExpressDebugResource, "Error opening file: %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
-	debugC(2, kLastExpressDebugResource, "Opened archive: %s", path.c_str());
+	debugC(2, kLastExpressDebugResource, "Opened archive: %s", path.toString(Common::Path::kNativeSeparator).c_str());
 
 	// Read header to get the number of files
 	uint32 numFiles = archive->readUint32LE();
@@ -90,11 +90,10 @@ int HPFArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr HPFArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *HPFArchive::createReadStreamForMember(const Common::Path &path) const {

@@ -331,7 +331,7 @@ void SoundEntry::initDelayedActivate(unsigned activateDelay) {
 	_status |= kSoundFlagDelayedActivate;
 }
 
-void SoundEntry::setSubtitles(Common::String filename) {
+void SoundEntry::setSubtitles(const Common::String &filename) {
 	_subtitle = new SubtitleEntry(_engine);
 	_subtitle->load(filename, this);
 
@@ -444,7 +444,7 @@ SubtitleEntry::~SubtitleEntry() {
 	_engine = nullptr;
 }
 
-void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
+void SubtitleEntry::load(const Common::String &filename, SoundEntry *soundEntry) {
 	// Add ourselves to the list of active subtitles
 	getSoundQueue()->addSubtitle(this);
 
@@ -453,7 +453,7 @@ void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
 	_sound = soundEntry;
 
 	// Load subtitle data
-	if (_engine->getResourceManager()->hasFile(_filename)) {
+	if (_engine->getResourceManager()->hasFile(Common::Path(_filename))) {
 		if (getSoundQueue()->getSubtitleFlag() & 2)
 			return;
 
