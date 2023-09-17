@@ -117,10 +117,10 @@ Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
 	_gui.refreshAfterSceneChanged();
 
 	EncryptedFile scriptFile;
-	Common::String fileName = Common::String::format("scrn%d%s.atn", sceneId, partB ? "b" : "");
+	Common::Path fileName(Common::String::format("scrn%d%s.atn", sceneId, partB ? "b" : ""));
 	scriptFile.open(fileName);
 	if (!scriptFile.isOpen()) {
-		reportFileMissingError(fileName.c_str());
+		reportFileMissingError(fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return nullptr;
 	}
 

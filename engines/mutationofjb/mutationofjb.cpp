@@ -51,7 +51,7 @@ MutationOfJBEngine::MutationOfJBEngine(OSystem *syst, const ADGameDescription *g
 	  _cursorState(CURSOR_IDLE),
 	  _currentScreen(nullptr) {
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 }
 
