@@ -60,7 +60,7 @@ void INIFile::clear() {
 	_sections.clear();
 }
 
-bool INIFile::loadFromFile(const String &filename) {
+bool INIFile::loadFromFile(const Path &filename) {
 	File file;
 	if (file.open(filename))
 		return loadFromStream(file);
@@ -68,7 +68,7 @@ bool INIFile::loadFromFile(const String &filename) {
 		return false;
 }
 
-bool INIFile::loadFromFileOrDataFork(const String &filename) {
+bool INIFile::loadFromFileOrDataFork(const Path &filename) {
 	SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(filename);
 	if (file)
 		return loadFromStream(*file);
@@ -212,7 +212,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 	return (!stream.err() || stream.eos());
 }
 
-bool INIFile::saveToFile(const String &filename) {
+bool INIFile::saveToFile(const Path &filename) {
 	DumpFile file;
 	if (file.open(filename))
 		return saveToStream(file);
