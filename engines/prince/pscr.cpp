@@ -61,7 +61,7 @@ bool PScr::loadFromStream(Common::SeekableReadStream &stream) {
 	_y = stream.readUint16LE();
 	_step = stream.readUint16LE();
 
-	const Common::String pscrStreamName = Common::String::format("PS%02d", file);
+	const Common::Path pscrStreamName(Common::String::format("PS%02d", file));
 	Common::SeekableReadStream *pscrStream = SearchMan.createReadStreamForMember(pscrStreamName);
 	if (pscrStream != nullptr) {
 		pscrStream = Resource::getDecompressedStream(pscrStream);

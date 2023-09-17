@@ -284,7 +284,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 
-	void playVideo(Common::String videoFilename);
+	void playVideo(const Common::Path &videoFilename);
 
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
