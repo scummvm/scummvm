@@ -130,7 +130,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_highPalette[i] = 0;
 	_introPlaying = false;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game", 0, 4);
 }
 
