@@ -358,7 +358,7 @@ TestExitStatus CloudTests::testUploading() {
 		return kTestSkipped;
 	}
 
-	const Common::String &path = ConfMan.get("path");
+	const Common::Path &path = ConfMan.getPath("path");
 	Common::FSDirectory gameRoot(path);
 	Common::FSDirectory *directory = gameRoot.getSubDirectory("test1");
 	Common::FSNode node = directory->getFSNode().getChild("file.txt");
@@ -374,10 +374,10 @@ TestExitStatus CloudTests::testUploading() {
 			Testsuite::logPrintf("Warning! No Request is returned!\n");
 		}
 	} else {
-		Common::String filepath = node.getPath();
+		Common::Path filepath = node.getPath();
 		if (CloudMan.getCurrentStorage()->upload(
 				Common::String(getRemoteTestPath()) + "/testfile.txt",
-				filepath.c_str(),
+				filepath,
 				new Common::GlobalFunctionCallback<const Cloud::Storage::UploadResponse &>(&fileUploadedCallback),
 				new Common::GlobalFunctionCallback<const Networking::ErrorResponse &>(&errorCallback)
 			) == nullptr) {
@@ -441,13 +441,13 @@ TestExitStatus CloudTests::testDownloading() {
 		return kTestSkipped;
 	}
 
-	const Common::String &path = ConfMan.get("path");
+	const Common::Path &path = ConfMan.getPath("path");
 	Common::FSDirectory gameRoot(path);
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_file.txt");
-	Common::String filepath = node.getPath();
+	Common::Path filepath = node.getPath();
 	if (CloudMan.getCurrentStorage()->download(
 			Common::String(getRemoteTestPath()) + "/testfile.txt",
-			filepath.c_str(),
+			filepath,
 			new Common::GlobalFunctionCallback<const Cloud::Storage::BoolResponse &>(&fileDownloadedCallback),
 			new Common::GlobalFunctionCallback<const Networking::ErrorResponse &>(&errorCallback)
 		) == nullptr) {
@@ -488,13 +488,13 @@ TestExitStatus CloudTests::testFolderDownloading() {
 		return kTestSkipped;
 	}
 
-	const Common::String &path = ConfMan.get("path");
+	const Common::Path &path = ConfMan.getPath("path");
 	Common::FSDirectory gameRoot(path);
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
-	Common::String filepath = node.getPath();
+	Common::Path filepath = node.getPath();
 	if (CloudMan.downloadFolder(
 			getRemoteTestPath(),
-			filepath.c_str(),
+			filepath,
 			new Common::GlobalFunctionCallback<const Cloud::Storage::FileArrayResponse &>(&directoryDownloadedCallback),
 			new Common::GlobalFunctionCallback<const Networking::ErrorResponse &>(&errorCallback)
 		) == nullptr) {
@@ -535,10 +535,10 @@ TestExitStatus CloudTests::testSavesSync() {
 		return kTestSkipped;
 	}
 
-	const Common::String &path = ConfMan.get("path");
+	Common::Path path = ConfMan.getPath("path");
 	Common::FSDirectory gameRoot(path);
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
-	Common::String filepath = node.getPath();
+	Common::Path filepath = node.getPath();
 	if (CloudMan.syncSaves(
 			new Common::GlobalFunctionCallback<const Cloud::Storage::BoolResponse &>(&savesSyncedCallback),
 			new Common::GlobalFunctionCallback<const Networking::ErrorResponse &>(&errorCallback)

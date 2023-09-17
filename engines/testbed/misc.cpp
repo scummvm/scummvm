@@ -275,7 +275,7 @@ uint ImageAlbumImageSupplier::getNumSlots() const {
 }
 
 Common::U32String ImageAlbumImageSupplier::getDefaultFileNameForSlot(uint slot) const {
-	return Common::U32String(_slots[slot]._path.getLastComponent().toString());
+	return Common::U32String(_slots[slot]._path.baseName());
 }
 
 ImageAlbumImageSupplier::FileInfo::FileInfo(const Common::Path &path, Common::FormatInfo::FormatID format, bool dontReportFormat) {
