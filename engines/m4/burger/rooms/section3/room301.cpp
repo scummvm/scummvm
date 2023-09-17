@@ -111,10 +111,151 @@ void Room301::preload() {
 }
 
 void Room301::init() {
-	
+	setup();
+	_G(flags).reset3();
+	digi_preload_stream_breaks(SERIES1);
+	digi_preload_stream_breaks(SERIES2);
+	digi_preload_stream_breaks(SERIES3);
+	digi_preload_stream_breaks(SERIES4);
+
+	if (_G(executing) != WHOLE_GAME) {
+		inv_give_to_player("JUG");
+		inv_give_to_player("CARROT JUICE");
+		inv_give_to_player("WHISTLE");
+	}
+
+	_G(kernel).suppress_fadeup = true;
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room301::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		pal_fade_set_start(0);
+		series_stream_with_breaks(SERIES1, "301lab01", 6, 1, 2);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		break;
+
+	case 2:
+		pal_fade_set_start(0);
+		pal_cycle_stop();
+		kernel_timing_trigger(6, 3);
+		break;
+
+	case 3:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 4);
+		break;
+
+	case 4:
+		pal_fade_set_start(0);
+		series_stream_with_breaks(SERIES3, "301orb01", 6, 1, 5);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		break;
+
+	case 5:
+		pal_fade_set_start(0);
+		pal_cycle_stop();
+		kernel_timing_trigger(6, 8);
+		break;
+
+	case 6:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 7);
+		break;
+
+	case 7:
+		digi_unload_stream_breaks(SERIES1);
+		pal_fade_set_start(0);
+		series_stream_with_breaks(SERIES2, "301lab02", 6, 1, 9);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		break;
+
+	case 8:
+		pal_fade_set_start(0);
+		pal_cycle_stop();
+		kernel_timing_trigger(6, 9);
+		break;
+
+	case 9:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 10);
+		break;
+
+	case 10:
+		pal_fade_set_start(0);
+		digi_unload_stream_breaks(SERIES3);
+		series_stream_with_breaks(SERIES4, "301orb02", 6, 1, 11);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		break;
+
+	case 11:
+		pal_fade_set_start(0);
+		pal_cycle_stop();
+		kernel_timing_trigger(6, 12);
+		digi_unload_stream_breaks(SERIES2);
+		break;
+
+	case 12:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 3001);
+		break;
+
+	case 13:
+		gr_pal_set_range(120, 8);
+		pal_cycle_init(118, 127, 6, -1, -1);
+		break;
+
+	case 14:
+		break;
+
+	case 15:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, -1);
+		break;
+
+	case 16:
+		pal_fade_set_start(0);
+		digi_unload_stream_breaks(SERIES3);
+		pal_fade_init(_G(kernel).first_fade, 255, 100, 30, 13);
+		break;
+
+	case 17:
+		pal_fade_set_start(0);
+		pal_mirror_colours(120, 122);
+		pal_fade_init(_G(kernel).first_fade, 255, 100, 30, 14);
+		break;
+
+	case 18:
+		pal_fade_set_start(0);
+		pal_mirror_colours(32, 39);
+		pal_fade_init(_G(kernel).first_fade, 255, 100, 30, 19);
+		break;
+
+	case 19:
+		gr_pal_set_range(32, 16);
+		pal_cycle_init(32, 47, 6, -1);
+		break;
+
+	case 20:
+		pal_cycle_stop();
+		break;
+
+	case 3001:
+		_G(kernel).suppress_fadeup = false;
+		digi_unload_stream_breaks(SERIES1);
+		digi_unload_stream_breaks(SERIES1);
+		digi_unload_stream_breaks(SERIES3);
+		digi_unload_stream_breaks(SERIES4);
+		digi_preload("301_016");
+		digi_play("301_016", 1, 255);
+		adv_kill_digi_between_rooms(false);
+		_G(game).setRoom(302);
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
