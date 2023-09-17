@@ -37,13 +37,13 @@ Screen::Screen(XeenEngine *vm) : _vm(vm) {
 	Common::fill(&_mainPalette[0], &_mainPalette[PALETTE_SIZE], 0);
 }
 
-void Screen::loadPalette(const Common::String &name) {
+void Screen::loadPalette(const Common::Path &name) {
 	File f(name);
 	for (int i = 0; i < PALETTE_SIZE; ++i)
 		_tempPalette[i] = f.readByte() << 2;
 }
 
-void Screen::loadBackground(const Common::String &name) {
+void Screen::loadBackground(const Common::Path &name) {
 	File f(name);
 
 	assert(f.size() == (SCREEN_WIDTH * SCREEN_HEIGHT));
@@ -180,14 +180,14 @@ bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 	// Load hand sprites
 	SpriteResource *hand[16];
 	for (int i = 0; i < 16; ++i) {
-		Common::String name = Common::String::format("hand%02d.vga", i);
+		Common::Path name(Common::String::format("hand%02d.vga", i));
 		hand[i] = new SpriteResource(name);
 	}
 
 	// Load marb sprites
 	SpriteResource *marb[5];
 	for (int i = 0; i < 4; ++i) {
-		Common::String name = Common::String::format("marb%02d.vga", i + 1);
+		Common::Path name(Common::String::format("marb%02d.vga", i + 1));
 		marb[i] = new SpriteResource(name);
 	}
 

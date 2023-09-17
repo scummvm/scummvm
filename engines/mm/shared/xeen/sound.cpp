@@ -62,28 +62,28 @@ void Sound::playSound(Common::SeekableReadStream &s, int unused) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
 }
 
-void Sound::playSound(const Common::String &name, int unused) {
+void Sound::playSound(const Common::Path &name, int unused) {
 	File f;
 	if (!f.open(name))
-		error("Could not open sound - %s", name.c_str());
+		error("Could not open sound - %s", name.toString().c_str());
 
 	playSound(f);
 }
 
 #ifdef ENABLE_XEEN
-void Sound::playSound(const Common::String &name, int ccNum, int unused) {
+void Sound::playSound(const Common::Path &name, int ccNum, int unused) {
 	File f;
 	if (!f.open(name, ccNum))
-		error("Could not open sound - %s", name.c_str());
+		error("Could not open sound - %s", name.toString().c_str());
 
 	playSound(f);
 }
 #endif
 
 #ifdef ENABLE_XEEN
-void Sound::playVoice(const Common::String &name, int ccMode) {
+void Sound::playVoice(const Common::Path &name, int ccMode) {
 #else
-void Sound::playVoice(const Common::String &name) {
+void Sound::playVoice(const Common::Path &name) {
 #endif
 	stopSound();
 	if (!_fxOn)
@@ -96,7 +96,7 @@ void Sound::playVoice(const Common::String &name) {
 #endif
 
 	if (!result)
-		error("Could not open sound - %s", name.c_str());
+		error("Could not open sound - %s", name.toString().c_str());
 	Common::SeekableReadStream *srcStream = f.readStream(f.size());
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
@@ -208,7 +208,7 @@ void Sound::playSong(Common::SeekableReadStream &stream) {
 	_SoundDriver->playSong(_songData);
 }
 
-void Sound::playSong(const Common::String &name, int param) {
+void Sound::playSong(const Common::Path &name, int param) {
 	if (isMusicPlaying() && name == _currentMusic)
 		return;
 	_currentMusic = name;

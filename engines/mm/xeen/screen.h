@@ -72,12 +72,12 @@ public:
 	/**
 	 * Load a palette resource into the temporary palette
 	 */
-	void loadPalette(const Common::String &name);
+	void loadPalette(const Common::Path &name);
 
 	/**
 	 * Load a background resource into memory
 	 */
-	void loadBackground(const Common::String &name);
+	void loadBackground(const Common::Path &name);
 
 	/**
 	 * Copy a loaded background into a display page

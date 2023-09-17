@@ -244,14 +244,14 @@ int StringInput::execute(bool type, const Common::String &expected,
 			MirrorEntry me;
 			scripts._mirror.clear();
 
-			File f(Common::String::format("%smirr.txt", files._ccNum ? "dark" : "xeen"), 1);
+			File f(Common::Path(Common::String::format("%smirr.txt", files._ccNum ? "dark" : "xeen")), 1);
 			while (me.synchronize(f))
 				scripts._mirror.push_back(me);
 			f.close();
 
 			// Load in any extended mirror entries
 			Common::File f2;
-			if (f2.open(Common::String::format("%smirr.ext", files._ccNum ? "dark" : "xeen"))) {
+			if (f2.open(Common::Path(Common::String::format("%smirr.ext", files._ccNum ? "dark" : "xeen")))) {
 				while (me.synchronize(f2))
 					scripts._mirror.push_back(me);
 				f2.close();

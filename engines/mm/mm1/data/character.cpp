@@ -244,8 +244,8 @@ void Character::synchronize(Common::Serializer &s, int portraitNum) {
 
 void Character::loadFaceSprites() {
 	if (_portrait != 0xff && g_engine->isEnhanced()) {
-		Common::String cname = Common::String::format("char%02d.fac",
-			_portrait * 2 + (_sex == MALE ? 0 : 1) + 1);
+		Common::Path cname(Common::String::format("char%02d.fac",
+			_portrait * 2 + (_sex == MALE ? 0 : 1) + 1));
 		_faceSprites.load(cname);
 	}
 }

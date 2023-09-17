@@ -25,12 +25,12 @@
 namespace MM {
 namespace Xeen {
 
-SpriteResource::SpriteResource(const Common::String &filename, int ccMode) {
+SpriteResource::SpriteResource(const Common::Path &filename, int ccMode) {
 	_data = nullptr;
 	load(filename, ccMode);
 }
 
-void SpriteResource::load(const Common::String &filename, int ccMode) {
+void SpriteResource::load(const Common::Path &filename, int ccMode) {
 	_filename = filename;
 	File f(filename, ccMode);
 	Shared::Xeen::SpriteResource::load(f);

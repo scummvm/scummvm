@@ -64,7 +64,7 @@ void Map::loadMazeData() {
 
 void Map::loadOverlay() {
 	Common::File f;
-	if (!f.open(Common::String::format("%s.ovr", _name.c_str())))
+	if (!f.open(Common::Path(Common::String::format("%s.ovr", _name.c_str()))))
 		error("Could not open %s.ovr overlay", _name.c_str());
 
 	int magicId = f.readUint16LE();

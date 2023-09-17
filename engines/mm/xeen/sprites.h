@@ -40,21 +40,21 @@ private:
 
 public:
 	SpriteResource() : Shared::Xeen::SpriteResource() {}
-	SpriteResource(const Common::String &filename) :
+	SpriteResource(const Common::Path &filename) :
 		Shared::Xeen::SpriteResource(filename) {}
-	SpriteResource(const Common::String &filename, int ccMode);
+	SpriteResource(const Common::Path &filename, int ccMode);
 
 	/**
 	 * Load a sprite resource from a given file
 	 */
-	void load(const Common::String &filename) {
+	void load(const Common::Path &filename) {
 		Shared::Xeen::SpriteResource::load(filename);
 	}
 
 	/**
 	 * Load a sprite resource from a given file and archive
 	 */
-	void load(const Common::String &filename, int ccMode);
+	void load(const Common::Path &filename, int ccMode);
 
 	/**
 	 * Draw a sprite onto a surface

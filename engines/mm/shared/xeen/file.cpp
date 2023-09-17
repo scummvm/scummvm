@@ -29,16 +29,16 @@ namespace MM {
 namespace Shared {
 namespace Xeen {
 
-File::File(const Common::String &filename) {
+File::File(const Common::Path &filename) {
 	File::open(filename);
 }
 
-File::File(const Common::String &filename, Common::Archive &archive) {
+File::File(const Common::Path &filename, Common::Archive &archive) {
 	File::open(filename, archive);
 }
 
 #ifdef ENABLE_XEEN
-File::File(const Common::String &filename, int ccMode) {
+File::File(const Common::Path &filename, int ccMode) {
 	File::open(filename, ccMode);
 }
 #endif
@@ -54,16 +54,16 @@ bool File::open(const Common::Path &filename) {
 			if (!fm._currentArchive || !Common::File::open(filename, *fm._currentArchive)) {
 				// Could not find in current archive, so try intro.cc or in folder
 				if (!Common::File::open(filename))
-					error("Could not open file - %s", filename.toString().c_str());
+					error("Could not open file - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 			}
 		}
 	} else {
 		if (!Common::File::open(filename))
-			error("Could not open file - %s", filename.toString().c_str());
+			error("Could not open file - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	}
 #else
 	if (!Common::File::open(filename))
-		error("Could not open file - %s", filename.toString().c_str());
+		error("Could not open file - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 #endif
 
 	return true;
@@ -71,12 +71,12 @@ bool File::open(const Common::Path &filename) {
 
 bool File::open(const Common::Path &filename, Common::Archive &archive) {
 	if (!Common::File::open(filename, archive))
-		error("Could not open file - %s", filename.toString().c_str());
+		error("Could not open file - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	return true;
 }
 
 #ifdef ENABLE_XEEN
-bool File::open(const Common::String &filename, int ccMode) {
+bool File::open(const Common::Path &filename, int ccMode) {
 	MM::Xeen::XeenEngine *engine = dynamic_cast<MM::Xeen::XeenEngine *>(g_engine);
 	assert(engine);
 
@@ -133,7 +133,7 @@ Common::String File::readString() {
 	return result;
 }
 
-bool File::exists(const Common::String &filename) {
+bool File::exists(const Common::Path &filename) {
 #ifdef ENABLE_XEEN
 	MM::Xeen::XeenEngine *engine = dynamic_cast<MM::Xeen::XeenEngine *>(g_engine);
 
@@ -157,7 +157,7 @@ bool File::exists(const Common::String &filename) {
 }
 
 #ifdef ENABLE_XEEN
-bool File::exists(const Common::String &filename, int ccMode) {
+bool File::exists(const Common::Path &filename, int ccMode) {
 	MM::Xeen::XeenEngine *engine = dynamic_cast<MM::Xeen::XeenEngine *>(g_engine);
 	assert(engine);
 	MM::Xeen::FileManager &fm = *engine->_files;
@@ -171,7 +171,7 @@ bool File::exists(const Common::String &filename, int ccMode) {
 }
 #endif
 
-bool File::exists(const Common::String &filename, Common::Archive &archive) {
+bool File::exists(const Common::Path &filename, Common::Archive &archive) {
 	return archive.hasFile(filename);
 }
 

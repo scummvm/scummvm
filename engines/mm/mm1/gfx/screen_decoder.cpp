@@ -40,7 +40,7 @@ void ScreenDecoder::destroy() {
 	_surface.free();
 }
 
-bool ScreenDecoder::loadFile(const Common::String &fname,
+bool ScreenDecoder::loadFile(const Common::Path &fname,
 		int16 w, int16 h) {
 	Common::File f;
 	if (!f.open(fname))

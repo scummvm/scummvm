@@ -29,7 +29,7 @@ namespace WorldOfXeen {
 #define WAIT(TIME) if (_subtitles.wait(TIME)) return false
 #define ROTATE_BG screen.horizMerge(_mergeX); \
 	_mergeX = (_mergeX + 1) % SCREEN_WIDTH
-#define LOAD_VORTEX loadScreen(Common::String::format("vort%02u.frm", cloudsCtr)); \
+#define LOAD_VORTEX loadScreen(Common::Path(Common::String::format("vort%02u.frm", cloudsCtr))); \
 	if (++cloudsCtr > 20) \
 		cloudsCtr = 1
 
@@ -420,7 +420,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	screen.loadBackground("blank.raw");
 	screen.loadPalette("mm4e.pal");
 
-	loadScreen(Common::String::format("prec00%02u.frm", 1));
+	loadScreen(Common::Path(Common::String::format("prec00%02u.frm", 1)));
 	prec.draw(0, 0);
 	prec.draw(0, 1, Common::Point(160, 0));
 	screen.fadeIn();
@@ -432,7 +432,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	// Initial animation of vortex & lightning in the sky
 	for (int idx = 1; idx < 42; ++idx) {
 		// Load up the background frame of swirling clouds
-		loadScreen(Common::String::format("prec00%02u.frm", idx));
+		loadScreen(Common::Path(Common::String::format("prec00%02u.frm", idx)));
 
 		// Render castle in front of it
 		prec.draw(0, 0, Common::Point(0, 0));
@@ -462,11 +462,11 @@ bool CloudsCutscenes::showCloudsEnding1() {
 
 	SpriteResource cast1[7], cast2[7], darkLord[3];
 	for (int idx = 1; idx < 7; ++idx)
-		cast1[idx - 1].load(Common::String::format("cast%02d.end", idx));
+		cast1[idx - 1].load(Common::Path(Common::String::format("cast%02d.end", idx)));
 	for (int idx = 1; idx < 7; ++idx)
-		cast2[idx - 1].load(Common::String::format("casb%02d.end", idx));
+		cast2[idx - 1].load(Common::Path(Common::String::format("casb%02d.end", idx)));
 	for (int idx = 1; idx < 4; ++idx)
-		darkLord[idx - 1].load(Common::String::format("darklrd%d.end", idx));
+		darkLord[idx - 1].load(Common::Path(Common::String::format("darklrd%d.end", idx)));
 
 	// Castle close-up
 	int cloudsCtr = 1;
@@ -803,8 +803,8 @@ bool CloudsCutscenes::showCloudsEnding3() {
 	// Loop through showing each monster
 	for (int monsterCtr = 0; monsterCtr < 73; ++monsterCtr) {
 		MonsterStruct &mon = map._monsterData[MONSTER_INDEXES[monsterCtr]];
-		monSprites.load(Common::String::format("%03d.mon", mon._imageNumber));
-		attackSprites.load(Common::String::format("%03d.att", mon._imageNumber));
+		monSprites.load(Common::Path(Common::String::format("%03d.mon", mon._imageNumber)));
+		attackSprites.load(Common::Path(Common::String::format("%03d.att", mon._imageNumber)));
 
 		for (int frameCtr = 0; frameCtr < 8; ++frameCtr) {
 			ROTATE_BG;
@@ -825,7 +825,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 
 		for (int frameCtr = 0; frameCtr < 3; ++frameCtr) {
 			if (frameCtr == 2)
-				sound.playVoice(Common::String::format("%s.voc", mon._attackVoc.c_str()));
+				sound.playVoice(Common::Path(Common::String::format("%s.voc", mon._attackVoc.c_str())));
 
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
@@ -862,7 +862,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 
 		int powNum = getSpeakingFrame(0, 5);
 		sound.stopSound();
-		sound.playSound(Common::String::format("pow%d.voc", powNum));
+		sound.playSound(Common::Path(Common::String::format("pow%d.voc", powNum)));
 
 		for (int idx = 0; idx < 7; ++idx) {
 			ROTATE_BG;
@@ -1010,7 +1010,7 @@ bool CloudsCutscenes::showCloudsEnding5() {
 	return true;
 }
 
-void CloudsCutscenes::loadScreen(const Common::String &name) {
+void CloudsCutscenes::loadScreen(const Common::Path &name) {
 	Screen &screen = *_vm->_screen;
 	File fSrc(name);
 	byte *destP = (byte *)screen.getPixels();

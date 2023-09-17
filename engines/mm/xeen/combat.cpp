@@ -587,7 +587,7 @@ void Combat::monstersAttack() {
 		}
 	}
 
-	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
+	_powSprites.load(Common::Path(Common::String::format("pow%d.icn", (int)powNum)));
 	sound.playFX(ATTACK_TYPE_FX[monsterData->_attackType]);
 
 	for (int charNum = 0; charNum < MAX_PARTY_COUNT; ++charNum) {
@@ -839,7 +839,7 @@ void Combat::doMonsterTurn(int monsterId) {
 		intf.draw3d(true);
 		intf.draw3d(true);
 
-		sound.playSound(Common::String::format("%s.voc", monsterData._attackVoc.c_str()));
+		sound.playSound(Common::Path(Common::String::format("%s.voc", monsterData._attackVoc.c_str())));
 		monsterId = monster._spriteId;
 	}
 
@@ -1483,7 +1483,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 
 			sound.stopSound();
 			int powNum = (_attackWeaponId > XEEN_SLAYER_SWORD) ? 0 : POW_WEAPON_VOCS[_attackWeaponId];
-			File powVoc(Common::String::format("pow%d.voc", powNum));
+			File powVoc(Common::Path(Common::String::format("pow%d.voc", powNum)));
 			sound.playFX(60 + powNum);
 			sound.playSound(powVoc, 1);
 
@@ -1870,7 +1870,7 @@ void Combat::rangedAttack(PowType powNum) {
 	}
 
 	intf._charsShooting = true;
-	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
+	_powSprites.load(Common::Path(Common::String::format("pow%d.icn", (int)powNum)));
 	int attackDurationCtr = _attackDurationCtr;
 	int monster2Attack = _monster2Attack;
 	bool attackedFlag = false;

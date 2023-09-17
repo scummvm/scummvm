@@ -45,7 +45,7 @@ SpriteResource::SpriteResource() {
 	_data = nullptr;
 }
 
-SpriteResource::SpriteResource(const Common::String &filename) {
+SpriteResource::SpriteResource(const Common::Path &filename) {
 	_data = nullptr;
 	load(filename);
 }
@@ -77,7 +77,7 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 	return *this;
 }
 
-void SpriteResource::load(const Common::String &filename) {
+void SpriteResource::load(const Common::Path &filename) {
 	_filename = filename;
 	Common::File f;
 	if (g_engine->getGameID() == GType_MightAndMagic1 && f.open(filename)) {
