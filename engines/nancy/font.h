@@ -41,7 +41,7 @@ public:
 
 	void read(Common::SeekableReadStream &stream);
 
-	int getFontHeight() const override { return _fontHeight; }
+	int getFontHeight() const override { return _fontHeight - 1; }
 	int getMaxCharWidth() const override { return _maxCharWidth; }
 	int getCharWidth(uint32 chr) const override;
 	int getKerningOffset(uint32 left, uint32 right) const override { return 1; }
@@ -57,7 +57,9 @@ private:
 	Common::Rect getCharacterSourceRect(char chr) const;
 
 	Common::String _description;
-	Common::Point _colorCoordsOffset; // Added to source rects when colored text is requested
+	Common::Point _color0CoordsOffset;
+	Common::Point _color1CoordsOffset; // Added to source rects when colored text is requested
+	int16 _charSpace;
 	uint16 _spaceWidth;
 
 	// Specific offsets into the _characterRects array

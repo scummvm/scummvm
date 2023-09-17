@@ -33,10 +33,13 @@ struct ColorChange {
 	byte colorID;
 };
 
-void HypertextParser::initSurfaces(uint width, uint height, const Graphics::PixelFormat &format) {
+void HypertextParser::initSurfaces(uint width, uint height, const Graphics::PixelFormat &format, uint32 backgroundColor, uint32 highlightBackgroundColor) {
+	_backgroundColor = backgroundColor;
+	_highlightBackgroundColor = highlightBackgroundColor;
 	_fullSurface.create(width, height, format);
-	_fullSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
-	_textHighlightSurface.copyFrom(_fullSurface);
+	_fullSurface.clear(backgroundColor);
+	_textHighlightSurface.create(width, height, format);
+	_textHighlightSurface.clear(highlightBackgroundColor);
 }
 
 void HypertextParser::addTextLine(const Common::String &text) {
@@ -44,8 +47,12 @@ void HypertextParser::addTextLine(const Common::String &text) {
 	_needsTextRedraw = true;
 }
 
-void HypertextParser::drawAllText(Common::Point startOffset, uint maxWidth, uint lineHeight, uint leading, uint fontID, uint highlightFontID) {
+void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, uint highlightFontID) {
 	using namespace Common;
+
+	// Used to get tab width
+	const TBOX *tbox = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(tbox);
 
 	_numDrawnLines = 0;
 
@@ -89,7 +96,9 @@ void HypertextParser::drawAllText(Common::Point startOffset, uint maxWidth, uint
 					continue;
 				case 't' :
 					// Tab
-					currentLine += "    ";
+					for (uint i = 0; i < tbox->tabWidth; ++i) {
+						currentLine += " ";
+					}
 					continue;
 				case 'c' :
 					// Color tokens
@@ -121,13 +130,13 @@ void HypertextParser::drawAllText(Common::Point startOffset, uint maxWidth, uint
 
 		// Do word wrapping on the text, sans tokens
 		Array<Common::String> wrappedLines;
-		font->wordWrap(currentLine, maxWidth, wrappedLines, 0);
+		font->wordWrap(currentLine, textBounds.width(), wrappedLines, 0);
 
 		// Setup most of the hotspot
 		if (hasHotspot) {
-			hotspot.left = startOffset.x;
-			hotspot.top = startOffset.y - lineHeight + (_numDrawnLines * leading) - 1;
-			hotspot.setHeight((wrappedLines.size() * leading) - (leading - lineHeight));
+			hotspot.left = textBounds.left;
+			hotspot.top = textBounds.top + ((_numDrawnLines - 1) * font->getFontHeight()) - 1;
+			hotspot.setHeight(wrappedLines.size() * font->getFontHeight());
 			hotspot.setWidth(0);
 		}
 
@@ -174,18 +183,18 @@ void HypertextParser::drawAllText(Common::Point startOffset, uint maxWidth, uint
 				// Draw the normal text
 				font->drawString(				&_fullSurface,
 												stringToDraw,
-												startOffset.x + horizontalOffset,
-												startOffset.y - font->getFontHeight() + _numDrawnLines * leading,
-												maxWidth,
+												textBounds.left + horizontalOffset,
+												textBounds.top + (_numDrawnLines - 1) * font->getFontHeight(),
+												textBounds.width(),
 												colorID);
 
 				// Then, draw the highlight
 				if (hasHotspot) {
 					highlightFont->drawString(	&_textHighlightSurface,
 												stringToDraw,
-												startOffset.x + horizontalOffset,
-												startOffset.y - highlightFont->getFontHeight() + _numDrawnLines * leading,
-												maxWidth,
+												textBounds.left + horizontalOffset,
+												textBounds.top + (_numDrawnLines - 1) * highlightFont->getFontHeight(),
+												textBounds.width(),
 												colorID);
 				}
 
@@ -200,6 +209,9 @@ void HypertextParser::drawAllText(Common::Point startOffset, uint maxWidth, uint
 
 			++totalCharsDrawn; // Account for newlines, which are removed from the string when doing word wrap
 			++_numDrawnLines;
+
+			// Record the height of the text currently drawn. Used for textbox scrolling
+			_drawnTextHeight = (_numDrawnLines - 1) * font->getFontHeight();
 		}
 
 		// Add the hotspot to the list
@@ -229,11 +241,12 @@ void HypertextParser::drawAllText(Common::Point startOffset, uint maxWidth, uint
 
 void HypertextParser::clear() {
 	if (_textLines.size()) {
-		_fullSurface.clear();
-		_textHighlightSurface.clear(_textHighlightSurface.getTransparentColor());
+		_fullSurface.clear(_backgroundColor);
+		_textHighlightSurface.clear(_highlightBackgroundColor);
 		_textLines.clear();
 		_hotspots.clear();
 		_numDrawnLines = 0;
+		_drawnTextHeight = 0;
 	}
 }
 

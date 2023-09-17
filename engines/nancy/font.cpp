@@ -37,17 +37,19 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 	g_nancy->_resource->loadImage(imageName, _image);
 
-	char desc[0x20];
-	stream.read(desc, 0x20);
-	desc[0x1F] = '\0';
+	char desc[31];
+	stream.read(desc, 30);
+	desc[30] = '\0';
 	_description = desc;
-	stream.skip(8);
-	_colorCoordsOffset.x = stream.readUint16LE();
-	_colorCoordsOffset.y = stream.readUint16LE();
 
-	stream.skip(2);
+	_color0CoordsOffset.x = stream.readUint32LE();
+	_color0CoordsOffset.y = stream.readUint32LE();
+	_color1CoordsOffset.x = stream.readUint32LE();
+	_color1CoordsOffset.y = stream.readUint32LE();
+
 	_spaceWidth = stream.readUint16LE();
-	stream.skip(2);
+	_charSpace = stream.readSint16LE() - 1; // Account for the added pixel in readRect
+
 	_uppercaseOffset					= stream.readUint16LE();
 	_lowercaseOffset					= stream.readUint16LE();
 	_digitOffset						= stream.readUint16LE();
@@ -110,18 +112,20 @@ void Font::read(Common::SeekableReadStream &stream) {
 		}
 
 		_maxCharWidth = MAX<int>(cur.width(), _maxCharWidth);
-		_fontHeight = MAX<int>(cur.height(), _maxCharWidth);
+		_fontHeight = MAX<int>(cur.height(), _fontHeight);
 	}
 }
 
 int Font::getCharWidth(uint32 chr) const {
-	return getCharacterSourceRect(chr).width();
+	return getCharacterSourceRect(chr).width() + _charSpace;
 }
 
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	Common::Rect srcRect = getCharacterSourceRect(chr);
-	if (color != 0) {
-		srcRect.translate(_colorCoordsOffset.x, _colorCoordsOffset.y);
+	if (color == 0) {
+		srcRect.translate(_color0CoordsOffset.x, _color0CoordsOffset.y);
+	} else if (color == 1) {
+		srcRect.translate(_color1CoordsOffset.x, _color1CoordsOffset.y);
 	}
 
 	uint vampireAdjust = g_nancy->getGameType() == kGameTypeVampire ? 1 : 0;

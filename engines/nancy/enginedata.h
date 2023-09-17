@@ -140,17 +140,23 @@ struct TBOX : public EngineData {
 	Common::Point scrollbarDefaultPos;
 	uint16 scrollbarMaxScroll;
 
-	uint16 firstLineOffset;
-	uint16 lineHeight;
-	uint16 borderWidth;
-	uint16 maxWidthDifference;
+	uint16 upOffset;
+	uint16 downOffset;
+	uint16 leftOffset;
+	uint16 rightOffset;
 
 	Common::Array<Common::Rect> ornamentSrcs;
 	Common::Array<Common::Rect> ornamentDests;
 
 	uint16 defaultFontID;
+	uint16 defaultTextColor;
 	uint16 conversationFontID;
 	uint16 highlightConversationFontID;
+	uint16 tabWidth;
+	uint16 pageScrollPercent;
+
+	uint32 textBackground;
+	uint32 highlightTextBackground;
 };
 
 // Contains data about the map state. Only used in TVD and nancy1

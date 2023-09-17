@@ -22,6 +22,7 @@
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/graphics.h"
 
 #include "common/serializer.h"
 
@@ -206,35 +207,48 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	scrollbarDefaultPos.y = chunkStream->readUint16LE();
 	scrollbarMaxScroll = chunkStream->readUint16LE();
 
-	firstLineOffset = chunkStream->readUint16LE() + 1;
-	lineHeight = chunkStream->readUint16LE() + (isVampire ? 1 : 0);
-	borderWidth = chunkStream->readUint16LE() - 1;
-	maxWidthDifference = chunkStream->readUint16LE();
+	upOffset = chunkStream->readUint16LE() + 1;
+	downOffset = chunkStream->readUint16LE();
+	leftOffset = chunkStream->readUint16LE() - 1;
+	rightOffset = chunkStream->readUint16LE();
 
-	if (isVampire) {
-		ornamentSrcs.resize(14);
-		ornamentDests.resize(14);
+	readRectArray(*chunkStream, ornamentSrcs, 14);
+	readRectArray(*chunkStream, ornamentDests, 14);
 
-		chunkStream->seek(0x3E);
-		for (uint i = 0; i < 14; ++i) {
-			readRect(*chunkStream, ornamentSrcs[i]);
-		}
-
-		for (uint i = 0; i < 14; ++i) {
-			readRect(*chunkStream, ornamentDests[i]);
-		}
-	}
-
-	chunkStream->seek(0x1FE);
 	defaultFontID = chunkStream->readUint16LE();
+	defaultTextColor = chunkStream->readUint16LE();
 
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
-		chunkStream->skip(2);
 		conversationFontID = chunkStream->readUint16LE();
 		highlightConversationFontID = chunkStream->readUint16LE();
 	} else {
 		conversationFontID = defaultFontID;
 		highlightConversationFontID = defaultFontID;
+	}
+
+	tabWidth = chunkStream->readUint16LE();
+	pageScrollPercent = chunkStream->readUint16LE(); // Not implemented yet
+
+	Graphics::PixelFormat format = g_nancy->_graphicsManager->getInputPixelFormat();
+	if (g_nancy->getGameType() >= kGameTypeNancy2) {
+		byte r, g, b;
+		r = chunkStream->readByte();
+		g = chunkStream->readByte();
+		b = chunkStream->readByte();
+
+		textBackground =			(r << format.rShift) |
+									(g << format.gShift) |
+									(b << format.bShift);
+
+		r = chunkStream->readByte();
+		g = chunkStream->readByte();
+		b = chunkStream->readByte();
+
+		highlightTextBackground =	(r << format.rShift) |
+									(g << format.gShift) |
+									(b << format.bShift);
+	} else {
+		textBackground = highlightTextBackground = 0;
 	}
 }
 

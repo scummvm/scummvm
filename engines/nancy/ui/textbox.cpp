@@ -48,15 +48,16 @@ Textbox::~Textbox() {
 }
 
 void Textbox::init() {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
-	assert(bootSummary);
+	const BSUM *bsum = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bsum);
 
-	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
-	assert(textboxData);
+	const TBOX *tbox = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(tbox);
 
-	moveTo(bootSummary->textboxScreenPosition);
-	_highlightRObj.moveTo(bootSummary->textboxScreenPosition);
-	initSurfaces(textboxData->innerBoundingBox.width(), textboxData->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	moveTo(bsum->textboxScreenPosition);
+	_highlightRObj.moveTo(bsum->textboxScreenPosition);
+	initSurfaces(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat(),
+		tbox->textBackground, tbox->highlightTextBackground);
 
 	Common::Rect outerBoundingBox = _screenPosition;
 	outerBoundingBox.moveTo(0, 0);
@@ -66,9 +67,9 @@ void Textbox::init() {
 
 	// zOrder bumped by 2 to avoid overlap with the inventory box curtains in The Vampire Diaries
 	_scrollbar = new Scrollbar(	11,
-								textboxData->scrollbarSrcBounds,
-								textboxData->scrollbarDefaultPos,
-								textboxData->scrollbarMaxScroll - textboxData->scrollbarDefaultPos.y);
+								tbox->scrollbarSrcBounds,
+								tbox->scrollbarDefaultPos,
+								tbox->scrollbarMaxScroll - tbox->scrollbarDefaultPos.y);
 	_scrollbar->init();
 }
 
@@ -134,15 +135,18 @@ void Textbox::handleInput(NancyInput &input) {
 }
 
 void Textbox::drawTextbox() {
-	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
-	assert(textboxData);
+	const TBOX *tbox = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(tbox);
 
-	HypertextParser::drawAllText(	Common::Point(textboxData->borderWidth, textboxData->firstLineOffset),				// x, y offset from surface edge
-									_fullSurface.w - textboxData->maxWidthDifference - textboxData->borderWidth - 1,	// maximum width of text
-									textboxData->lineHeight,															// expected height of text line
-									textboxData->lineHeight + textboxData->lineHeight / 4,								// leading (vertical distance between two lines' bottoms)
-									_fontIDOverride != -1 ? _fontIDOverride : textboxData->conversationFontID,			// font for basic text
-									textboxData->highlightConversationFontID);											// font for highlight text
+	Common::Rect textBounds = _fullSurface.getBounds();
+	textBounds.top += tbox->upOffset;
+	textBounds.bottom -= tbox->downOffset;
+	textBounds.left += tbox->leftOffset;
+	textBounds.right -= tbox->rightOffset;
+
+	HypertextParser::drawAllText(	textBounds,															// bounds of text within full surface
+									_fontIDOverride != -1 ? _fontIDOverride : tbox->conversationFontID,	// font for basic text
+									tbox->highlightConversationFontID);									// font for highlight text
 
 	setVisible(true);
 }
@@ -169,10 +173,10 @@ void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
 }
 
 void Textbox::overrideFontID(const uint fontID) {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
-	assert(bootSummary);
+	const BSUM *bsum = (const BSUM *)g_nancy->getEngineData("BSUM");
+	assert(bsum);
 
-	if (fontID >= bootSummary->numFonts) {
+	if (fontID >= bsum->numFonts) {
 		error("Requested invalid override font ID %u in Textbox", fontID);
 	}
 
@@ -199,16 +203,10 @@ void Textbox::onScrollbarMove() {
 }
 
 uint16 Textbox::getInnerHeight() const {
-	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
-	assert(textboxData);
+	const TBOX *tbox = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(tbox);
 
-	// These calculations are _almost_ correct, but off by a pixel sometimes
-	uint lineDist = textboxData->lineHeight + textboxData->lineHeight / 4;
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		return _numDrawnLines * lineDist + textboxData->firstLineOffset + 1;
-	} else {
-		return _numDrawnLines * lineDist + textboxData->firstLineOffset + lineDist / 2 - 1;
-	}
+	return _drawnTextHeight + tbox->upOffset + tbox->downOffset;
 }
 
 } // End of namespace UI

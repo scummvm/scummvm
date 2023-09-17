@@ -33,24 +33,29 @@ class HypertextParser {
 public:
 	HypertextParser() :
 		_numDrawnLines(0),
+		_drawnTextHeight(0),
 		_needsTextRedraw(false) {}
 	virtual ~HypertextParser() {};
 
 protected:
-	void initSurfaces(uint width, uint height, const struct Graphics::PixelFormat &format);
+	void initSurfaces(uint width, uint height, const struct Graphics::PixelFormat &format, uint32 backgroundColor, uint32 highlightBackgroundColor);
 
 	void addTextLine(const Common::String &text);
 
-	void drawAllText(Common::Point startOffset, uint maxWidth, uint lineHeight, uint leading, uint fontID, uint highlightFontID);
+	void drawAllText(const Common::Rect &textBounds, uint fontID, uint highlightFontID);
 	virtual void clear();
 
 	Graphics::ManagedSurface _fullSurface; 			// Contains all rendered text (may be cropped)
 	Graphics::ManagedSurface _textHighlightSurface; // Same as above, but drawn with the highlight font
 
+	uint32 _backgroundColor;
+	uint32 _highlightBackgroundColor;
+
 	Common::Array<Common::String> _textLines;
 	Common::Array<Common::Rect> _hotspots;
 
 	uint16 _numDrawnLines;
+	uint16 _drawnTextHeight;
 	bool _needsTextRedraw;
 };
 
