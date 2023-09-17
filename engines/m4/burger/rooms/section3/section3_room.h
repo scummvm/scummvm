@@ -44,7 +44,7 @@ public:
 	virtual ~Section3Room() {}
 
 	void preload() override;
-	void setup();
+	void setupDigi();
 };
 
 } // namespace Rooms

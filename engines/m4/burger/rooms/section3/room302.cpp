@@ -168,9 +168,168 @@ Room302::Room302() : Section3Room() {
 }
 
 void Room302::init() {
+	setupDigi();
+
+	if (!_G(flags)[V111]) {
+		static const char *NAMES[12] = {
+			"302t001a", "302t001b", "302t001c", "302t001d", "302t001e",
+			"302t001f", "302t001g", "302t001h", "302t002", "302t003",
+			"302t004", "302t005"
+		};
+		for (int i = 0; i < 12; ++i)
+			digi_preload(NAMES[i], 302);
+	}
+
+	player_set_commands_allowed(false);
+	pal_cycle_init(112, 127, 6, -1, -1);
+
+	if (_G(flags)[V111]) {
+		hotspot_set_active("TRUFFLES", false);
+	} else if (_G(flags)[V112]) {
+		series_load("302tr01");
+		series_load("302tr01s");
+		series_load("302tr02");
+		series_load("302tr02s");
+		series_load("302tr03");
+		series_load("302tr03s");
+		_val1 = 24;
+		kernel_trigger_dispatch_now(9);
+	} else {
+		_val1 = 21;
+		kernel_trigger_dispatch_now(9);
+	}
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	case 303:
+		_G(wilbur_should) = _G(flags)[V125] ? 6 : 5;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 304:
+		_G(wilbur_should) = 4;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 305:
+		_G(wilbur_should) = 2;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	default:
+		ws_demand_location(341, 287, 9);
+		ws_hide_walker();
+		_state1 = imath_ranged_rand(0, 2);
+
+		if (_G(flags)[V112]) {
+			_G(flags)[V113] = 1;
+			_val3 = 125;
+			_val4 = 29;
+		} else {
+			_val4 = 30;
+		}
+
+		kernel_trigger_dispatch_now(10);
+		_G(flags)[V107] = 1;
+		break;
+	}
+
+	if (_G(flags)[V107]) {
+		hotspot_set_active("BURGER MORSEL ", false);
+	} else {
+		_series1 = series_show("302BURG", 0x200);
+		hotspot_set_active("BURGER MORSEL ", true);
+	}
 }
 
 void Room302::daemon() {
+}
+
+void Room302::pre_parser() {
+	if (player_said_any("BACKYARD", "BACKYARD ") && player_said_any("LOOK AT", "GEAR", "ENTER"))
+		player_set_facing_hotspot();
+}
+
+void Room302::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("LOOK AT", "BURGER MORSEL ")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 13;
+		wilbur_speech("302w009y", gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("LOOK AT", "DOOR")) {
+		wilbur_speech(player_been_here(304) ? "302w006" : "302w005");
+	} else if (player_said("DISTILLED CARROT JUICE", "CRASHED ROCKET")) {
+		wilbur_speech("300w032");
+	} else if (player_said("CARROT JUICE", "CRASHED ROCKET")) {
+		wilbur_speech("300w045");
+	} else if (player_said("MATCHES", "CRASHED ROCKET")) {
+		wilbur_speech("300w018");
+	} else if (player_said("TAKE", "BURGER MORSEL ")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 10;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("ENTER", "DOOR") || player_said("GEAR", "DOOR")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 3;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("MATCHES", "PROBE")) {
+		wilbur_speech("300w023");
+	} else if (player_said("BOTTLE", "TROUGH")) {
+		wilbur_speech("300w073");
+	} else if (player_said("LOOK AT", "STORM CELLAR")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 1;
+		wilbur_speech("302w007", gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said_any("GEAR", "ENTER") && player_said("STORM CELLAR")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 1;
+
+		if (_G(flags)[V133]) {
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else {
+			term_message("Wilbur: Here we go...!");
+			wilbur_speech("302w008", gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("CARROT JUICE", "TROUGH")) {
+		wilbur_speech("300w044");
+	} else if (player_said("BACKYARD") && player_said_any("LOOK AT", "GEAR", "ENTER")) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 6, 3002);
+		_G(flags)[V125] = 0;
+	} else if (player_said("BACKYARD ") && player_said_any("LOOK AT", "GEAR", "ENTER")) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 6, 3002);
+		_G(flags)[V125] = 1;
+	} else if (player_said("TRUFFLES")) {
+		if (player_said("BURGER MORSEL")) {
+			player_set_commands_allowed(false);
+			_G(wilbur_should) = 16;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else if (player_said("LOOK AT")) {
+			wilbur_speech(_G(flags)[V109] ? "302w012" : "302w011");
+		} else if (player_said("MATCHES")) {
+			wilbur_speech("300w016");
+		} else if (player_said("DISTILLED CARROT JUICE")) {
+			wilbur_speech("300w031");
+		} else if (player_said("CARROT JUICE")) {
+			wilbur_speech("300w044");
+		} else if (player_said("BOTTLE")) {
+			wilbur_speech("300w072");
+		} else {
+			_val1 = 25;
+			return;
+		}
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms

@@ -31,7 +31,7 @@ void Section3Room::preload() {
 	_digiName = nullptr;
 }
 
-void Section3Room::setup() {
+void Section3Room::setupDigi() {
 	if (_digiName) {
 		digi_stop(3);
 		digi_unload(_digiName);

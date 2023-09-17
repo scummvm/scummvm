@@ -275,13 +275,13 @@ void Room101::daemon() {
 		} else if (!_G(flags)[V099]) {
 			if (_G(flags)[V100] <= 1) {
 				_G(walker).wilbur_speech("101w530", 7);
-			} else if (!_G(flags)[ROOM101_FLAG12] && !_G(flags)[ROOM101_FLAG13]) {
+			} else if (!_G(flags)[V113] && !_G(flags)[ROOM101_FLAG13]) {
 				_G(walker).wilbur_speech("101w531", 7);
 				_G(flags)[ROOM101_FLAG13] = 1;
-			} else if (_G(flags)[ROOM101_FLAG12] && !_G(flags)[ROOM101_FLAG14]) {
+			} else if (_G(flags)[V113] && !_G(flags)[ROOM101_FLAG14]) {
 				_G(walker).wilbur_speech("101w533", 7);
 				_G(flags)[ROOM101_FLAG14] = 1;
-			} else if (_G(flags)[ROOM101_FLAG12] && _G(flags)[V100] >= 5 &&
+			} else if (_G(flags)[V113] && _G(flags)[V100] >= 5 &&
 					!_G(flags)[ROOM101_FLAG15]) {
 				_G(walker).wilbur_speech("101w534", 7);
 				_G(flags)[ROOM101_FLAG15] = 1;
@@ -780,7 +780,7 @@ void Room101::daemon15() {
 		_G(flags)[V091] = 0;
 	}
 
-	if (_G(flags)[ROOM101_FLAG12] || _G(flags)[V099]) {
+	if (_G(flags)[V113] || _G(flags)[V099]) {
 		_G(flags).set_boonsville_time(6001);
 		_G(flags)[V000] = 1002;
 		_G(flags)[V001] = 0;
