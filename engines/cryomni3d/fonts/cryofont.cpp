@@ -31,7 +31,7 @@ void CryoFont::load(const Common::Path &fontFile) {
 	Common::File crf;
 
 	if (!crf.open(fontFile)) {
-		error("can't open file %s", fontFile.toString().c_str());
+		error("can't open file %s", fontFile.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	byte magic[8];

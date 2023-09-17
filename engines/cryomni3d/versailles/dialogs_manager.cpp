@@ -106,14 +106,14 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(g_system->getScreenFormat(), true);
 
 	if (!videoDecoder->loadFile(videoPath)) {
-		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString().c_str());
+		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString(Common::Path::kNativeSeparator).c_str());
 		delete videoDecoder;
 		return;
 	}
 
 	Common::File *audioFile = new Common::File();
 	if (!audioFile->open(soundPath)) {
-		warning("Failed to open sound file %s/%s", sound.c_str(), soundPath.toString().c_str());
+		warning("Failed to open sound file %s/%s", sound.c_str(), soundPath.toString(Common::Path::kNativeSeparator).c_str());
 		delete videoDecoder;
 		delete audioFile;
 		return;
@@ -357,7 +357,7 @@ void Versailles_DialogsManager::loadFrame(const Common::String &video) {
 	Video::HNMDecoder videoDecoder(g_system->getScreenFormat());
 
 	if (!videoDecoder.loadFile(videoPath)) {
-		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString().c_str());
+		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 

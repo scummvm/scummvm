@@ -110,7 +110,7 @@ void CryOmni3DEngine::playHNM(const Common::Path &filepath, Audio::Mixer::SoundT
 	videoDecoder->setSoundType(soundType);
 
 	if (!videoDecoder->loadFile(filepath)) {
-		warning("Failed to open movie file %s", filepath.toString().c_str());
+		warning("Failed to open movie file %s", filepath.toString(Common::Path::kNativeSeparator).c_str());
 		delete videoDecoder;
 		return;
 	}
@@ -167,14 +167,14 @@ Image::ImageDecoder *CryOmni3DEngine::loadHLZ(const Common::Path &filepath) {
 	Common::File file;
 
 	if (!file.open(filepath)) {
-		warning("Failed to open hlz file %s", filepath.toString().c_str());
+		warning("Failed to open hlz file %s", filepath.toString(Common::Path::kNativeSeparator).c_str());
 		return nullptr;
 	}
 
 	Image::ImageDecoder *imageDecoder = new Image::HLZFileDecoder();
 
 	if (!imageDecoder->loadStream(file)) {
-		warning("Failed to load hlz file %s", filepath.toString().c_str());
+		warning("Failed to load hlz file %s", filepath.toString(Common::Path::kNativeSeparator).c_str());
 		delete imageDecoder;
 		imageDecoder = nullptr;
 		return nullptr;
