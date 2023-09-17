@@ -102,7 +102,7 @@ protected:
 	 * @param w				Width of tiles
 	 * @param h				Height of files
 	 */
-	void load(const Common::String &name, uint bpp, uint16 w = 16, uint16 h = 16);
+	void load(const Common::Path &name, uint bpp, uint16 w = 16, uint16 h = 16);
 public:
 	/**
 	 * Destructor

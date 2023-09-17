@@ -509,11 +509,11 @@ unsigned int ViewManager::get_display_weight(float weight) {
 }
 
 // beginning of custom doll functions shared between DollWidget and DollViewGump
-Std::string ViewManager::getDollDataDirString() {
+Common::Path ViewManager::getDollDataDirString() {
 	if (!DollDataDirString.empty())
 		return DollDataDirString;
 	DollDataDirString = GUI::get_gui()->get_data_dir();
-	Std::string path;
+	Common::Path path;
 	build_path(DollDataDirString, "images", path);
 	DollDataDirString = path;
 	build_path(DollDataDirString, "gumps", path);
@@ -526,7 +526,7 @@ Std::string ViewManager::getDollDataDirString() {
 
 Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig) {
 	char filename[17]; //avatar_nn_nn.bmp\0
-	Std::string imagefile;
+	Common::Path imagefile;
 	uint8 portrait_num = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
 	Common::sprintf_s(filename, "avatar_%s_%02d.bmp", get_game_tag(Game::get_game()->get_game_type()), portrait_num);
@@ -547,7 +547,7 @@ Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurf
 
 Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig) {
 	char filename[17]; //actor_nn_nnn.bmp\0
-	Std::string imagefile;
+	Common::Path imagefile;
 
 	if (actor_doll)
 		delete actor_doll;
@@ -569,7 +569,7 @@ Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::Manage
 
 Graphics::ManagedSurface *ViewManager::loadGenericDollImage(bool orig) {
 	char filename[14]; //avatar_nn.bmp\0
-	Std::string imagefile;
+	Common::Path imagefile;
 
 	Common::sprintf_s(filename, "actor_%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
 	if (orig) {

@@ -83,7 +83,7 @@ protected:
 	SunMoonRibbon *ribbon;
 	MDSkyStripWidget *mdSkyWidget;
 
-	Std::string DollDataDirString;
+	Common::Path DollDataDirString;
 
 public:
 
@@ -153,7 +153,7 @@ public:
 	unsigned int get_display_weight(float weight);
 
 // custom doll functions shared between DollWidget and DollViewGump
-	Std::string getDollDataDirString();
+	Common::Path getDollDataDirString();
 	Graphics::ManagedSurface *loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig = false);
 	Graphics::ManagedSurface *loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig = false);
 	Graphics::ManagedSurface *loadGenericDollImage(bool orig);

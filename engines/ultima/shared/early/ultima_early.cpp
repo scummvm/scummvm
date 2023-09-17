@@ -151,7 +151,7 @@ bool UltimaEarlyEngine::canSaveGameStateCurrently(bool isAutosave) {
 	return _game->canSaveGameStateCurrently();
 }
 
-bool UltimaEarlyEngine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+bool UltimaEarlyEngine::isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima1";
 	majorVersion = 1;
 	minorVersion = 0;

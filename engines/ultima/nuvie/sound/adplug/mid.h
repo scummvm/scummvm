@@ -33,8 +33,8 @@ public:
 	CmidPlayer(Copl *newopl);
 	~CmidPlayer() override;
 
-	bool load(const Std::string &filename) override;
-	bool load(Std::string &filename, int song_index);
+	bool load(const Common::Path &filename) override;
+	bool load(const Common::Path &filename, int song_index);
 	//bool load(const Std::string &filename, const CFileProvider &fp);
 	bool update() override;
 	void rewind(int subsong) override;

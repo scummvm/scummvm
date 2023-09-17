@@ -22,7 +22,7 @@
 #ifndef NUVIE_FILES_UTILS_H
 #define NUVIE_FILES_UTILS_H
 
-#include "ultima/shared/std/string.h" // exception handling include
+#include "common/path.h"
 #include "common/stream.h"
 
 namespace Ultima {
@@ -30,10 +30,10 @@ namespace Nuvie {
 
 bool openFile(
 	Common::ReadStream *&in,    // Input stream to open.
-	const char *fname           // Filename
+	const Common::Path &fname   // Filename
 );
 
-extern bool fileExists(const char *fname);
+extern bool fileExists(const Common::Path &fname);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

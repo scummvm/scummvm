@@ -46,12 +46,12 @@ private:
 	char _buffer[STRING_BUFFER_SIZE];
 	char *_bufferP;
 protected:
-	Common::String _filename;
+	Common::Path _filename;
 protected:
 	/**
 	 * Constructor
 	 */
-	ResourceFile(const Common::String &filename);
+	ResourceFile(const Common::Path &filename);
 
 	/**
 	 * Destructor
@@ -93,12 +93,12 @@ protected:
 	/**
 	 * Constructor
 	 */
-	LocalResourceFile(const Common::String &filename) : ResourceFile(filename), _owner(nullptr), _file(DisposeAfterUse::YES) {}
+	LocalResourceFile(const Common::Path &filename) : ResourceFile(filename), _owner(nullptr), _file(DisposeAfterUse::YES) {}
 
 	/**
 	 * Constructor
 	 */
-	LocalResourceFile(Resources *owner, const Common::String &filename) : ResourceFile(filename),
+	LocalResourceFile(Resources *owner, const Common::Path &filename) : ResourceFile(filename),
 		_owner(owner), _file(DisposeAfterUse::YES) {}
 
 	/**
@@ -127,11 +127,11 @@ public:
  */
 class Resources : public Common::Archive {
 	struct LocalResource {
-		Common::String _name;
+		Common::Path _name;
 		Common::Array<byte> _data;
 	};
 	struct FileResource {
-		Common::String _name;
+		Common::Path _name;
 		size_t _offset, _size;
 
 		/**
@@ -159,7 +159,7 @@ public:
 	 * later opened like a normal file. Just as it will when eventually shifted to the
 	 * data file for the engine
 	 */
-	void addResource(const Common::String &name, const byte *data, size_t size);
+	void addResource(const Common::Path &name, const byte *data, size_t size);
 
 	// Archive implementation
 	/**

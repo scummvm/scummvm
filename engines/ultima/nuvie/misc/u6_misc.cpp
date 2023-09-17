@@ -73,8 +73,9 @@ const char *get_game_tag(int game_type) {
 	return "";
 }
 
-void config_get_path(const Configuration *config, const Std::string &filename, Std::string &path) {
-	Std::string key, game_name, game_dir, tmp_path;
+void config_get_path(const Configuration *config, const Std::string &filename, Common::Path &path) {
+	Std::string key, game_name;
+	Common::Path game_dir, tmp_path;
 
 	config->value("config/GameName", game_name);
 
@@ -84,12 +85,12 @@ void config_get_path(const Configuration *config, const Std::string &filename, S
 
 	config->pathFromValue(key, "", game_dir);
 
-	tmp_path = game_dir + filename;
+	tmp_path = game_dir.appendComponent(filename);
 
 	path = tmp_path;
 }
 
-int mkdir_recursive(const Std::string &path, int mode) {
+int mkdir_recursive(const Common::Path &path, int mode) {
 #ifdef TODO
 	vector<string> directories;
 	string tmp_path;
@@ -147,15 +148,8 @@ nuvie_game_t get_game_type(const Configuration *config) {
 	return (nuvie_game_t)game_type;
 }
 
-void build_path(const Std::string &path, const Std::string &filename, Std::string &full_path) {
-	full_path = path;
-
-	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
-		full_path += U6PATH_DELIMITER + filename;
-	else
-		full_path += filename;
-
-	return;
+void build_path(const Common::Path &path, const Std::string &filename, Common::Path &full_path) {
+	full_path = path.appendComponent(filename);
 }
 
 bool has_fmtowns_support(const Configuration *config) {
@@ -167,12 +161,12 @@ bool has_fmtowns_support(const Configuration *config) {
 	return false;
 }
 
-bool directory_exists(const char *directory) {
-	Common::FSNode gameDir(ConfMan.get("path"));
-	return Common::FSNode(directory).exists() || gameDir.getChild(directory).exists();
+bool directory_exists(const Common::Path &directory) {
+	return Common::FSNode(directory).exists() ||
+		Common::FSNode(ConfMan.getPath("path").joinInPlace(directory)).exists();
 }
 
-bool file_exists(const char *path) {
+bool file_exists(const Common::Path &path) {
 	return Common::File::exists(path);
 }
 

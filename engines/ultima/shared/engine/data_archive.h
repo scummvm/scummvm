@@ -24,7 +24,7 @@
 
 #include "common/archive.h"
 #include "common/fs.h"
-#include "common/str.h"
+#include "common/path.h"
 
 namespace Ultima {
 namespace Shared {
@@ -38,16 +38,16 @@ namespace Shared {
 class UltimaDataArchive : public Common::Archive {
 private:
 	Common::Archive *_zip;
-	Common::String _publicFolder;
-	Common::String _innerfolder;
+	Common::Path _publicFolder;
+	Common::Path _innerfolder;
 
 
-	UltimaDataArchive(Common::Archive *zip, const Common::String &subfolder) :
-		_zip(zip), _publicFolder("data/"), _innerfolder(subfolder + "/") {}
+	UltimaDataArchive(Common::Archive *zip, const Common::Path &subfolder) :
+		_zip(zip), _publicFolder("data/"), _innerfolder(subfolder) {}
 
-	Common::String innerToPublic(const Common::String &filename) const {
-		assert(filename.hasPrefixIgnoreCase(_publicFolder));
-		return _innerfolder + Common::String(filename.c_str() + _publicFolder.size());
+	Common::Path innerToPublic(const Common::Path &filename) const {
+		assert(filename.isRelativeTo(_publicFolder));
+		return _innerfolder.join(filename.relativeTo(_publicFolder));
 	}
 public:
 	/**
@@ -59,7 +59,7 @@ public:
 	 * if the required data is found, it returns the new archive.
 	 * Otherwise, returns an error message in the errorMsg field
 	 */
-	static bool load(const Common::String &subfolder,
+	static bool load(const Common::Path &subfolder,
 		int reqMajorVersion, int reqMinorVersion, Common::U32String &errorMsg);
 public:
 	~UltimaDataArchive() override {
@@ -118,14 +118,14 @@ class UltimaDataArchiveProxy : public Common::Archive {
 	friend class UltimaDataArchive;
 private:
 	Common::FSNode _folder;
-	const Common::String _publicFolder;
+	const Common::Path _publicFolder;
 
 	UltimaDataArchiveProxy(const Common::FSNode &folder) : _folder(folder), _publicFolder("data/") {}
 
 	/**
 	 * Gets a file node from the passed filename
 	 */
-	Common::FSNode getNode(const Common::String &name) const;
+	Common::FSNode getNode(const Common::Path &name) const;
 public:
 	~UltimaDataArchiveProxy() override {
 	}
@@ -136,8 +136,7 @@ public:
 	 * replacement.
 	 */
 	bool hasFile(const Common::Path &path) const override {
-		Common::String name = path.toString();
-		return name.hasPrefixIgnoreCase(_publicFolder) && getNode(name).exists();
+		return path.isRelativeTo(_publicFolder) && getNode(path).exists();
 	}
 
 	/**

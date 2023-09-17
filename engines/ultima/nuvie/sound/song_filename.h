@@ -30,8 +30,8 @@ namespace Nuvie {
 class SongFilename : public Song {
 public:
 	~SongFilename() override;
-	bool Init(const char *path, const char *fileId) override;
-	bool Init(const char *path, const char *fileId, uint16 song_num) override;
+	bool Init(const Common::Path &path, const char *fileId) override;
+	bool Init(const Common::Path &path, const char *fileId, uint16 song_num) override;
 	bool Play(bool looping = false) override;
 	bool Stop() override;
 	bool SetVolume(uint8 volume) override;

@@ -43,10 +43,10 @@ public:
 	void playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume);
 
 private:
-	bool loadSfxMapFile(Std::string cfg_filename, Common::HashMap<uint16, uint16> *m);
+	bool loadSfxMapFile(const Common::Path &cfg_filename, Common::HashMap<uint16, uint16> *m);
 
 private:
-	Std::string custom_filepath;
+	Common::Path custom_filepath;
 
 	Common::HashMap<uint16, uint16> *sfx_map;
 };

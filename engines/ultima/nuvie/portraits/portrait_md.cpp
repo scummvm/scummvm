@@ -38,7 +38,7 @@ namespace Ultima {
 namespace Nuvie {
 
 bool PortraitMD::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	avatar_portrait_num = 0;
 
@@ -47,7 +47,7 @@ bool PortraitMD::init() {
 
 	config_get_path(config, "mdfaces.lzc", filename);
 	if (faces.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 
@@ -110,7 +110,7 @@ unsigned char *PortraitMD::get_portrait_data(Actor *actor) {
 U6Shape *PortraitMD::get_background_shape(uint8 actor_num) {
 	U6Lib_n file;
 	U6Shape *bg = new U6Shape();
-	Std::string filename;
+	Common::Path filename;
 	config_get_path(config, "mdback.lzc", filename);
 	file.open(filename, 4, NUVIE_GAME_MD);
 	unsigned char *temp_buf = file.get_item(get_background_shape_num(actor_num));

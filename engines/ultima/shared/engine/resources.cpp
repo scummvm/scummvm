@@ -44,7 +44,7 @@ bool Resources::open() {
 	return true;
 }
 
-void Resources::addResource(const Common::String &name, const byte *data, size_t size) {
+void Resources::addResource(const Common::Path &name, const byte *data, size_t size) {
 	// Add a new entry to the local resources list for the passed data
 	_localResources.push_back(LocalResource());
 	LocalResource &lr = _localResources[_localResources.size() - 1];
@@ -55,9 +55,8 @@ void Resources::addResource(const Common::String &name, const byte *data, size_t
 }
 
 bool Resources::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
 	for (uint idx = 0; idx < _localResources.size(); ++idx)
-		if (!_localResources[idx]._name.compareToIgnoreCase(name))
+		if (_localResources[idx]._name.equalsIgnoreCase(path))
 			return true;
 
 	return false;
@@ -72,18 +71,16 @@ int Resources::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr Resources::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *Resources::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	for (uint idx = 0; idx < _localResources.size(); ++idx) {
 		const LocalResource &lr = _localResources[idx];
-		if (!lr._name.compareToIgnoreCase(name))
+		if (lr._name.equalsIgnoreCase(path))
 			return new Common::MemoryReadStream(&lr._data[0], lr._data.size());
 	}
 
@@ -100,7 +97,7 @@ void Resources::FileResource::load(File &f) {
 
 /*-------------------------------------------------------------------*/
 
-ResourceFile::ResourceFile(const Common::String &filename) : _filename(filename), _bufferP(_buffer) {
+ResourceFile::ResourceFile(const Common::Path &filename) : _filename(filename), _bufferP(_buffer) {
 	Common::fill(_buffer, _buffer + STRING_BUFFER_SIZE, 0);
 }
 

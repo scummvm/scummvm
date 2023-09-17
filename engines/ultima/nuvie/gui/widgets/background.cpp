@@ -49,7 +49,7 @@ Background::~Background() {
 }
 
 bool Background::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	if (!Game::get_game()->is_new_style()) {
 		switch (game_type) {

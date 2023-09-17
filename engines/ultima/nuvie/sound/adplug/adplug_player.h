@@ -25,6 +25,10 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/sound/adplug/opl.h"
 
+namespace Common {
+class Path;
+}
+
 namespace Ultima {
 namespace Nuvie {
 
@@ -36,7 +40,7 @@ public:
 	/***** Operational methods *****/
 	void seek(unsigned long ms);
 
-	virtual bool load(const Std::string &filename) = 0; // loads file
+	virtual bool load(const Common::Path &filename) = 0; // loads file
 	virtual bool update() = 0;          // executes replay code for 1 tick
 	virtual void rewind(int subsong = -1) = 0;  // rewinds to specified subsong
 	virtual float getrefresh() = 0;         // returns needed timer refresh rate

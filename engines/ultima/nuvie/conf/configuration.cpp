@@ -54,7 +54,7 @@ bool Configuration::readConfigFile(const Std::string &fname, const Std::string &
 	_configFilename = fname;
 	Shared::XMLTree *tree = new Shared::XMLTree();
 
-	if (!tree->readConfigFile(fname)) {
+	if (!tree->readConfigFile(Common::Path(fname))) {
 		delete tree;
 		return false;
 	}
@@ -164,13 +164,11 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 	ret = defaultvalue;
 }
 
-void Configuration::pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path) const {
-	value(key, full_path);
+void Configuration::pathFromValue(const Std::string &key, const Std::string &file, Common::Path &full_path) const {
+	Std::string tmp;
+	value(key, tmp);
 
-	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
-		full_path += U6PATH_DELIMITER + file;
-	else
-		full_path += file;
+	full_path = Common::Path(tmp).joinInPlace(file);
 }
 
 bool Configuration::set(const Std::string &key, const Std::string &value) {

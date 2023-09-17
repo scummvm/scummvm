@@ -76,7 +76,7 @@ void Sprite::draw(Graphics::ManagedSurface &dest, const Common::Point &pt) {
 
 /*-------------------------------------------------------------------*/
 
-void Sprites::load(const Common::String &name, uint bpp, uint16 w, uint16 h) {
+void Sprites::load(const Common::Path &name, uint bpp, uint16 w, uint16 h) {
 	_spriteSize = Point(w, h);
 
 	// Open the tiles for access

@@ -187,7 +187,7 @@ void DollWidget::set_actor(Actor *a) {
 				actor_doll = vm->loadCustomActorDollImage(actor_doll, actor->get_actor_num(), true);
 			setColorKey(actor_doll);
 			if (actor_doll) {
-				Std::string imagefile;
+				Common::Path imagefile;
 				build_path(vm->getDollDataDirString(), "orig_style", imagefile);
 				build_path(imagefile, "doll_bg.bmp", imagefile);
 				NuvieBmpFile bmp;
@@ -215,7 +215,7 @@ void DollWidget::load_md_doll_shp() {
 
 	md_doll_shp = new U6Shape();
 	U6Lib_n file;
-	Std::string filename;
+	Common::Path filename;
 	config_get_path(config, "mdinv.lzc", filename);
 	file.open(filename, 4, NUVIE_GAME_MD);
 	uint8 num = actor->get_actor_num() + 1;

@@ -41,13 +41,13 @@ SongAdPlug::SongAdPlug(Audio::Mixer *m, CEmuopl *o) {
 SongAdPlug::~SongAdPlug() {
 }
 
-bool SongAdPlug::Init(const char *filename, const char *fileId, uint16 song_num) {
+bool SongAdPlug::Init(const Common::Path &filename, const char *fileId, uint16 song_num) {
 	if (filename == nullptr)
 		return false;
 
-	m_Filename = filename; // SB-X
+	m_Filename = filename.toString('/'); // SB-X
 
-	stream = new U6AdPlugDecoderStream(opl, string(filename), song_num);
+	stream = new U6AdPlugDecoderStream(opl, filename, song_num);
 
 	return true;
 }

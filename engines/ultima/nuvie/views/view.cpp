@@ -192,16 +192,15 @@ GUI_status View::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	return GUI_PASS;
 }
 
-GUI_Button *View::loadButton(Std::string dir, Std::string name, uint16 x, uint16 y) {
+GUI_Button *View::loadButton(const Common::Path &dir, Std::string name, uint16 x, uint16 y) {
 	GUI_Button *button;
-	Std::string imagefile;
-	Std::string path;
+	Common::Path imagefile;
 
 	Graphics::ManagedSurface *image, *image1;
 	build_path(dir, name + "_btn_up.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
 	build_path(dir, name + "_btn_down.bmp", imagefile);
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image1 = SDL_LoadBMP(imagefile);
 
 	button = new GUI_Button(nullptr, x, y, image, image1, this);
 	this->AddWidget(button);

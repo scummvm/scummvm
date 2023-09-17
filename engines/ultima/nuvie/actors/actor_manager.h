@@ -135,10 +135,10 @@ protected:
 private:
 
 	bool loadCustomTiles(nuvie_game_t game_type);
-	void loadNPCTiles(const Std::string &datadir);
-	void loadAvatarTiles(const Std::string &datadir);
-	void loadCustomBaseTiles(const Std::string &datadir);
-	Std::set<Std::string> getCustomTileFilenames(const Std::string &datadir, const Std::string &filenamePrefix);
+	void loadNPCTiles(const Common::Path &datadir);
+	void loadAvatarTiles(const Common::Path &datadir);
+	void loadCustomBaseTiles(const Common::Path &datadir);
+	Std::set<Std::string> getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix);
 };
 
 } // End of namespace Nuvie

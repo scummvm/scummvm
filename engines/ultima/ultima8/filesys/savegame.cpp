@@ -38,7 +38,8 @@ class FileEntryArchive : public Common::Archive {
 		FileEntry() : _offset(0), _size(0) {}
 	};
 private:
-	Common::HashMap<Common::String, FileEntry> _index;
+	typedef Common::HashMap<Common::Path, FileEntry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> IndexMap;
+	IndexMap _index;
 	Common::SeekableReadStream *_file;
 
 public:
@@ -65,7 +66,7 @@ FileEntryArchive::FileEntryArchive(Common::SeekableReadStream *rs) : _file(rs) {
 		fe._size = _file->readUint32LE();
 		fe._offset = _file->pos();
 
-		_index[Common::String(name)] = fe;
+		_index[Common::Path(name, Common::Path::kNoSeparator)] = fe;
 		_file->skip(fe._size);
 	}
 }
@@ -74,12 +75,12 @@ FileEntryArchive::~FileEntryArchive() {
 }
 
 bool FileEntryArchive::hasFile(const Common::Path &path) const {
-	return _index.contains(path.toString());
+	return _index.contains(path);
 }
 
 int FileEntryArchive::listMembers(Common::ArchiveMemberList &list) const {
 	list.clear();
-	for (Common::HashMap<Common::String, FileEntry>::const_iterator it = _index.begin(); it != _index.end(); ++it)
+	for (IndexMap::const_iterator it = _index.begin(); it != _index.end(); ++it)
 		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(it->_key, *this)));
 
 	return list.size();
@@ -89,14 +90,13 @@ const Common::ArchiveMemberPtr FileEntryArchive::getMember(const Common::Path &p
 	if (!hasFile(path))
 		return nullptr;
 
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *FileEntryArchive::createReadStreamForMember(const Common::Path &path) const {
-	assert(hasFile(path));
+	assert(_index.contains(path));
 
-	const FileEntry &fe = _index[path.toString()];
+	const FileEntry &fe = _index[path];
 	uint8 *data = (uint8 *)malloc(fe._size);
 	_file->seek(fe._offset);
 	_file->read(data, fe._size);
@@ -170,7 +170,7 @@ SavegameReader::State SavegameReader::isValid() const {
 	return SAVE_VALID;
 }
 
-Common::SeekableReadStream *SavegameReader::getDataSource(const Std::string &name) {
+Common::SeekableReadStream *SavegameReader::getDataSource(const Common::Path &name) {
 	assert(_archive);
 
 	return _archive->createReadStreamForMember(name);

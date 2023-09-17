@@ -767,9 +767,9 @@ void Debugger::dumpCurrentMap() {
 	s->EndPainting();
 
 #ifdef USE_PNG
-	Std::string filename = Common::String::format("map_%03d.png", currentMap->getNum());
+	Common::Path filename(Common::String::format("map_%03d.png", currentMap->getNum()));
 #else
-	Std::string filename = Common::String::format("map_%03d.bmp", currentMap->getNum());
+	Common::Path filename(Common::String::format("map_%03d.bmp", currentMap->getNum()));
 #endif
 
 	Common::DumpFile dumpFile;
@@ -783,9 +783,9 @@ void Debugger::dumpCurrentMap() {
 	}
 
 	if (result) {
-		debugPrintf("Map dumped: %s\n", filename.c_str());
+		debugPrintf("Map dumped: %s\n", filename.toString().c_str());
 	} else {
-		debugPrintf("Could not write file: %s\n", filename.c_str());
+		debugPrintf("Could not write file: %s\n", filename.toString().c_str());
 	}
 
 	delete g;

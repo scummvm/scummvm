@@ -80,7 +80,7 @@ void SaveGame::init(ObjManager *obj_manager) {
 
 
 bool SaveGame::load_new() {
-	Std::string filename;
+	Common::Path filename;
 	U6Lzw lzw;
 	NuvieIOBuffer buf;
 	uint32 decomp_size;
@@ -135,7 +135,8 @@ bool SaveGame::load_new() {
 }
 
 bool SaveGame::load_original() {
-	Std::string path, objlist_filename, objblk_filename;
+	Std::string objblk_filename;
+	Common::Path path, objlist_filename;
 	char x, y;
 	uint16 len;
 	NuvieIOFileRead objlist_file;
@@ -210,7 +211,7 @@ bool SaveGame::transfer_character() {
 	Common::FSNode folder = dialog.getResult();
 
 	// TODO: Load in character data from given folder and start new game
-	g_engine->GUIError(Common::String::format("Load party file from folder - %s", folder.getPath().c_str()));
+	g_engine->GUIError(Common::String::format("Load party file from folder - %s", folder.getPath().toString(Common::Path::kNativeSeparator).c_str()));
 
 	return false;
 }

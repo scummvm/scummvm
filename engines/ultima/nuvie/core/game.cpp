@@ -673,12 +673,12 @@ void Game::update_once_display() {
 /* return the fullpath to the datafile. First look for it in the savegame directory.
  * Then in the app data directory.
  */
-Std::string Game::get_data_file_path(Std::string datafile) {
-	Std::string path;
-	build_path("data", datafile, path);
+Common::Path Game::get_data_file_path(const Common::Path &datafile) {
+	Common::Path path("data");
+	path.joinInPlace(datafile);
 
-	if (!file_exists(path.c_str())) {
-		build_path(gui->get_data_dir(), datafile, path);
+	if (!file_exists(path)) {
+		path = gui->get_data_dir().joinInPlace(datafile);
 	}
 
 	return path;

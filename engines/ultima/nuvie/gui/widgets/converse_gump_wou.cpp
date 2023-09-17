@@ -69,8 +69,8 @@ ConverseGumpWOU::ConverseGumpWOU(const Configuration *cfg, Font *f, Screen *s)
 		GUI_Widget::Init(nullptr, x_off + 8, y_off + 8, 160, 160);
 		bg_color = converse_bg_color = 0x31; //17;
 		if (game->get_game_width() >= 335) {
-			Std::string imagefile;
-			Std::string datadir = GUI::get_gui()->get_data_dir();
+			Common::Path imagefile;
+			Common::Path datadir = GUI::get_gui()->get_data_dir();
 			build_path(datadir, "U6_WOU_Scroll_bg.bmp", imagefile);
 			NuvieBmpFile bmp;
 			bg_image = bmp.getSdlSurface32(imagefile);

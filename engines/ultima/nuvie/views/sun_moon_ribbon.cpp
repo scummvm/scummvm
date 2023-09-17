@@ -58,9 +58,9 @@ void SunMoonRibbon::init(Screen *) {
 
 void SunMoonRibbon::loadBgImage(uint8 num) {
 	char filename[6]; // "n.bmp\0"
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 	NuvieBmpFile bmp;
 
 	build_path(datadir, "images", path);

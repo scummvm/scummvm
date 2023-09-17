@@ -117,7 +117,7 @@ bool U6Shape::init(uint16 w, uint16 h, uint16 hx, uint16 hy) {
 	return true;
 }
 
-bool U6Shape::load(Std::string filename) {
+bool U6Shape::load(const Common::Path &filename) {
 	return false;
 }
 
@@ -134,7 +134,7 @@ bool U6Shape::load(U6Lib_n *file, uint32 index) {
 	return false;
 }
 
-bool U6Shape::load_from_lzc(const Std::string &filename, uint32 idx, uint32 sub_idx) {
+bool U6Shape::load_from_lzc(const Common::Path &filename, uint32 idx, uint32 sub_idx) {
 	U6Lib_n lib_n;
 
 	if (!lib_n.open(filename, 4, NUVIE_GAME_MD)) {
@@ -283,7 +283,7 @@ bool U6Shape::load(unsigned char *buf) {
 // TODO - allow for failure
 bool U6Shape::load_WoU_background(const Configuration *config, nuvie_game_t game_type) {
 	U6Lib_n file;
-	Std::string filename;
+	Common::Path filename;
 
 	if (game_type == NUVIE_GAME_MD)
 		config_get_path(config, "mdscreen.lzc", filename);

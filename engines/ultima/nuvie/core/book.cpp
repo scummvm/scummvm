@@ -37,7 +37,7 @@ Book::~Book() {
 }
 
 bool Book::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	config_get_path(config, "book.dat", filename);
 

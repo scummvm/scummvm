@@ -56,14 +56,14 @@ int SDL_FillRect(Graphics::ManagedSurface *surf, const Common::Rect *rect, uint 
 	return 0;
 }
 
-Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
+Graphics::ManagedSurface *SDL_LoadBMP(const Common::Path &filename) {
 	Common::File f;
 	Image::BitmapDecoder decoder;
 
 	if (!f.open(filename))
-		error("Could not open file - %s", filename);
+		error("Could not open file - %s", filename.toString().c_str());
 	if (!decoder.loadStream(f))
-		error("Could not load bitmap - %s", filename);
+		error("Could not load bitmap - %s", filename.toString().c_str());
 
 	const Graphics::Surface *src = decoder.getSurface();
 	Screen *const screen = Game::get_game()->get_screen();

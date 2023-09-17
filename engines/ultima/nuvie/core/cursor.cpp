@@ -45,7 +45,8 @@ Cursor::Cursor() : cursor_id(0), cur_x(-1), cur_y(-1), cleanup(nullptr),
 /* Returns true if mouse pointers file was loaded.
  */
 bool Cursor::init(const Configuration *c, Screen *s, nuvie_game_t game_type) {
-	Std::string file, filename;
+	Std::string file;
+	Common::Path filename;
 	bool enable_cursors;
 
 	config = c;
@@ -82,7 +83,7 @@ bool Cursor::init(const Configuration *c, Screen *s, nuvie_game_t game_type) {
 /* Load pointers from `filename'. (lzw -> s_lib_32 -> shapes)
  * Returns the number found in the file.
  */
-uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
+uint32 Cursor::load_all(const Common::Path &filename, nuvie_game_t game_type) {
 	U6Lzw decompressor;
 	U6Lib_n pointer_list;
 	NuvieIOBuffer iobuf;

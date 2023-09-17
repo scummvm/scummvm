@@ -65,7 +65,7 @@ public:
 	NuvieFileList();
 	~NuvieFileList();
 
-	bool open(const char *directory, const char *restrict, uint8 sort_mode);
+	bool open(const Common::Path &directory, const char *restrict, uint8 sort_mode);
 
 	Std::string *next();
 	const Std::string *get_latest() const;

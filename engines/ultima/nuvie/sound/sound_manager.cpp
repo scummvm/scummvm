@@ -166,7 +166,7 @@ bool SoundManager::nuvieStartup(const Configuration *config) {
 		if (game_type == NUVIE_GAME_U6)
 			LoadNativeU6Songs(); //FIX need to handle MD & SE music too.
 	} else if (music_style == "custom")
-		LoadCustomSongs(sound_dir);
+		LoadCustomSongs(Common::Path(sound_dir));
 	else
 		DEBUG(0, LEVEL_WARNING, "Unknown music style '%s'\n", music_style.c_str());
 
@@ -240,70 +240,70 @@ bool SoundManager::initAudio() {
 bool SoundManager::LoadNativeU6Songs() {
 	Song *song;
 
-	string filename;
+	Common::Path filename;
 	string fileId;
 
 	fileId = "brit.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-// loadSong(song, filename.c_str());
-	loadSong(song, filename.c_str(), fileId.c_str(), "Rule Britannia");
+// loadSong(song, filename);
+	loadSong(song, filename, fileId.c_str(), "Rule Britannia");
 	groupAddSong("random", song);
 
 	fileId = "forest.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-	loadSong(song, filename.c_str(), fileId.c_str(), "Wanderer (Forest)");
+	loadSong(song, filename, fileId.c_str(), "Wanderer (Forest)");
 	groupAddSong("random", song);
 
 	fileId = "stones.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-	loadSong(song, filename.c_str(), fileId.c_str(), "Stones");
+	loadSong(song, filename, fileId.c_str(), "Stones");
 	groupAddSong("random", song);
 
 	fileId = "ultima.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-	loadSong(song, filename.c_str(), fileId.c_str(), "Ultima VI Theme");
+	loadSong(song, filename, fileId.c_str(), "Ultima VI Theme");
 	groupAddSong("random", song);
 
 	fileId = "engage.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-	loadSong(song, filename.c_str(), fileId.c_str(), "Engagement and Melee");
+	loadSong(song, filename, fileId.c_str(), "Engagement and Melee");
 	groupAddSong("combat", song);
 
 	fileId = "hornpipe.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-	loadSong(song, filename.c_str(), fileId.c_str(), "Captain Johne's Hornpipe");
+	loadSong(song, filename, fileId.c_str(), "Captain Johne's Hornpipe");
 	groupAddSong("boat", song);
 
 	fileId = "gargoyle.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-	loadSong(song, filename.c_str(), fileId.c_str(), "Audchar Gargl Zenmur");
+	loadSong(song, filename, fileId.c_str(), "Audchar Gargl Zenmur");
 	groupAddSong("gargoyle", song);
 
 	fileId = "dungeon.m";
 	config_get_path(m_Config, fileId, filename);
 	song = new SongFilename();
-	loadSong(song, filename.c_str(), fileId.c_str(), "Dungeon");
+	loadSong(song, filename, fileId.c_str(), "Dungeon");
 	groupAddSong("dungeon", song);
 
 	return true;
 }
 
-bool SoundManager::LoadCustomSongs(string sound_dir) {
+bool SoundManager::LoadCustomSongs(const Common::Path &sound_dir) {
 	char seps[] = ";\r\n";
 	char *token1;
 	char *token2;
 	char *sz;
 	NuvieIOFileRead niof;
 	Song *song;
-	Std::string scriptname;
-	Std::string filename;
+	Common::Path scriptname;
+	Common::Path filename;
 
 	build_path(sound_dir, "music.cfg", scriptname);
 
@@ -324,7 +324,7 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 			// Note: the base class Song does not have an implementation for
 			// Init, so loading custom songs does not work.
 			song = new Song;
-			if (!loadSong(song, filename.c_str(), token2))
+			if (!loadSong(song, filename, token2))
 				continue; //error loading song
 		}
 
@@ -337,19 +337,19 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 	return true;
 }
 
-bool SoundManager::loadSong(Song *song, const char *filename, const char *fileId) {
+bool SoundManager::loadSong(Song *song, const Common::Path &filename, const char *fileId) {
 	if (song->Init(filename, fileId)) {
 		m_Songs.push_back(song);       //add it to our global list
 		return true;
 	} else {
-		DEBUG(0, LEVEL_ERROR, "could not load %s\n", filename);
+		DEBUG(0, LEVEL_ERROR, "could not load %s\n", filename.toString().c_str());
 	}
 
 	return false;
 }
 
 // (SB-X)
-bool SoundManager::loadSong(Song *song, const char *filename, const char *fileId, const char *title) {
+bool SoundManager::loadSong(Song *song, const Common::Path &filename, const char *fileId, const char *title) {
 	if (loadSong(song, filename, fileId) == true) {
 		song->SetTitle(title);
 		return true;
@@ -574,7 +574,7 @@ void SoundManager::musicPlay() {
 		uint32 decompressed_filesize;
 		U6Lzw lzw;
 
-		_musicData = lzw.decompress_file(m_pCurrentSong->GetName(), decompressed_filesize);
+		_musicData = lzw.decompress_file(Common::Path(m_pCurrentSong->GetName()), decompressed_filesize);
 
 		bool result = _midiParser->loadMusic(_musicData, decompressed_filesize);
 		if (result) {
@@ -599,14 +599,14 @@ void SoundManager::musicPlay() {
 }
 
 void SoundManager::musicPlay(const char *filename, uint16 song_num) {
-	string path;
+	Common::Path path;
 
 	if (!music_enabled || !audio_enabled)
 		return;
 
 	config_get_path(m_Config, filename, path);
 	SongFilename *song = new SongFilename();
-	song->Init(path.c_str(), filename, song_num);
+	song->Init(path, filename, song_num);
 
 	Common::StackLock lock(_musicMutex);
 
@@ -824,7 +824,7 @@ Sound *SoundManager::RequestSong(const string &group) {
 	return nullptr;
 }
 
-Audio::SoundHandle SoundManager::playTownsSound(Std::string filename, uint16 sample_num) {
+Audio::SoundHandle SoundManager::playTownsSound(const Common::Path &filename, uint16 sample_num) {
 	FMtownsDecoderStream *stream = new FMtownsDecoderStream(filename, sample_num);
 	Audio::SoundHandle handle;
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream, -1);

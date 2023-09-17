@@ -50,7 +50,7 @@ protected:
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+	virtual bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
 		return false;
 	}
 

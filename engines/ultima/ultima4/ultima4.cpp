@@ -186,7 +186,7 @@ Common::Error Ultima4Engine::run() {
 	return Common::kNoError;
 }
 
-bool Ultima4Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+bool Ultima4Engine::isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima4";
 	majorVersion = 1;
 	minorVersion = 0;

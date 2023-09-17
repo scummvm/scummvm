@@ -28,7 +28,7 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-void Bitmap::load(const Common::String &filename) {
+void Bitmap::load(const Common::Path &filename) {
 	File srcFile(filename);
 	Common::MemoryWriteStreamDynamic decompressedFile(DisposeAfterUse::YES);
 	decompress(&srcFile, &decompressedFile);

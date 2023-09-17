@@ -48,12 +48,12 @@ typedef enum {
 
 Std::string config_get_game_key(const Configuration *config);
 const char *get_game_tag(int game_type);
-void config_get_path(const Configuration *config, const Std::string &filename, Std::string &path);
+void config_get_path(const Configuration *config, const Std::string &filename, Common::Path &path);
 uint8 get_game_type(const char *string);
 nuvie_game_t get_game_type(const Configuration *config);
-void build_path(const Std::string &path, const Std::string &filename, Std::string &full_path);
-bool directory_exists(const char *directory);
-bool file_exists(const char *path);
+void build_path(const Common::Path &path, const Std::string &filename, Common::Path &full_path);
+bool directory_exists(const Common::Path &directory);
+bool file_exists(const Common::Path &path);
 void print_b(DebugLevelType level, uint8 num);
 void print_b16(DebugLevelType level, uint16 num);
 void print_indent(DebugLevelType level, uint8 indent);
@@ -90,7 +90,7 @@ inline uint32 divide_time(uint32 this_time, uint32 &last_time, uint32 *passed_ti
 	return (fraction);
 }
 
-int mkdir_recursive(const Std::string &path, int mode);
+int mkdir_recursive(const Common::Path &path, int mode);
 
 void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, uint16 w, uint16 h);
 

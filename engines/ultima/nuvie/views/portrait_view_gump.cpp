@@ -56,9 +56,9 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	portrait = por;
 	set_actor(a);
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -68,7 +68,7 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	gump_button = loadButton(datadir, "gump", 0, 67);
 
 	build_path(datadir, "portrait_bg.bmp", imagefile);
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	set_bg_color_key(0, 0x70, 0xfc);
 
@@ -78,15 +78,15 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "left_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
+	image1 = SDL_LoadBMP(imagefile);
 
 	left_button = new GUI_Button(this, 23, 6, image, image1, this);
 	this->AddWidget(left_button);
 
 	build_path(datadir, "right_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
+	image1 = SDL_LoadBMP(imagefile);
 
 	right_button = new GUI_Button(this, 166, 6, image, image1, this);
 	this->AddWidget(right_button);

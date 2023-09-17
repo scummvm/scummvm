@@ -33,11 +33,11 @@ namespace Shared {
 class UltimaDataArchiveMember : public Common::ArchiveMember {
 private:
 	Common::SharedPtr<Common::ArchiveMember> _member;
-	Common::String _publicFolder;
-	Common::String _innerfolder;
+	Common::Path _publicFolder;
+	Common::Path _innerfolder;
 public:
 	UltimaDataArchiveMember(Common::SharedPtr<Common::ArchiveMember> member,
-		const Common::String &subfolder) :
+		const Common::Path &subfolder) :
 		_member(member), _publicFolder("data/"), _innerfolder(subfolder) {
 	}
 	~UltimaDataArchiveMember() override {}
@@ -47,22 +47,22 @@ public:
 	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override {
 		return _member->createReadStreamForAltStream(altStreamType);
 	}
-	Common::String getName() const override {
-		Common::String name = _member->getName();
-		assert(name.hasPrefixIgnoreCase(_innerfolder));
-		return _publicFolder + Common::String(name.c_str() + _innerfolder.size());
+	Common::Path getPathInArchive() const override {
+		Common::Path name = _member->getPathInArchive();
+		assert(name.isRelativeTo(_innerfolder));
+		return _publicFolder.join(name.relativeTo(_innerfolder));
 	}
 	Common::U32String getDisplayName() const override {
 		return _member->getDisplayName();
 	}
 	
-	Common::String getFileName() const override { return getName(); }
-	Common::Path getPathInArchive() const override { return getName(); }
+	Common::String getFileName() const override { return getFileName(); }
+	Common::String getName() const override { return getPathInArchive().toString('/'); }
 };
 
 /*-------------------------------------------------------------------*/
 
-bool UltimaDataArchive::load(const Common::String &subfolder,
+bool UltimaDataArchive::load(const Common::Path &subfolder,
 		int reqMajorVersion, int reqMinorVersion, Common::U32String &errorMsg) {
 	Common::Archive *dataArchive = nullptr;
 	Common::File f;
@@ -70,9 +70,9 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 #ifndef RELEASE_BUILD
 	Common::FSNode folder;
 	if (ConfMan.hasKey("extrapath")) {
-		if ((folder = Common::FSNode(ConfMan.get("extrapath"))).exists()
+		if ((folder = Common::FSNode(ConfMan.getPath("extrapath"))).exists()
 				&& (folder = folder.getChild("files")).exists()
-				&& (folder = folder.getChild(subfolder)).exists()) {
+				&& (folder = folder.getChild(subfolder.baseName())).exists()) {
 			f.open(folder.getChild("version.txt"));
 		}
 	}
@@ -81,7 +81,7 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 	if (!f.isOpen()) {
 		if (!Common::File::exists(DATA_FILENAME) ||
 			(dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
-			!f.open(Common::String::format("%s/version.txt", subfolder.c_str()), *dataArchive)) {
+			!f.open(subfolder.join("version.txt"), *dataArchive)) {
 			delete dataArchive;
 			errorMsg = Common::U32String::format(_("Could not locate engine data %s"), DATA_FILENAME);
 			return false;
@@ -122,17 +122,16 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 /*-------------------------------------------------------------------*/
 
 bool UltimaDataArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!name.hasPrefixIgnoreCase(_publicFolder))
+	if (!path.isRelativeTo(_publicFolder))
 		return false;
 
-	Common::String realFilename = innerToPublic(name);
+	Common::Path realFilename = innerToPublic(path);
 	return _zip->hasFile(realFilename);
 }
 
 int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern, bool matchPathComponents) const {
-	Common::String patt = pattern.toString();
-	if (patt.hasPrefixIgnoreCase(_publicFolder))
+	Common::Path patt(pattern);
+	if (patt.isRelativeTo(_publicFolder))
 		patt = innerToPublic(patt);
 
 	// Get any matching files
@@ -166,17 +165,15 @@ int UltimaDataArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr UltimaDataArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (hasFile(name)) {
-		Common::String filename = innerToPublic(name);
+	if (hasFile(path)) {
+		Common::Path filename = innerToPublic(path);
 		return _zip->createReadStreamForMember(filename);
 	}
 
@@ -188,36 +185,36 @@ Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const C
 #ifndef RELEASE_BUILD
 
 const Common::ArchiveMemberPtr UltimaDataArchiveProxy::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *UltimaDataArchiveProxy::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (hasFile(name))
-		return getNode(name).createReadStream();
+	if (hasFile(path))
+		return getNode(path).createReadStream();
 
 	return nullptr;
 }
 
-Common::FSNode UltimaDataArchiveProxy::getNode(const Common::String &name) const {
-	Common::String remainingName = name.substr(_publicFolder.size());
+Common::FSNode UltimaDataArchiveProxy::getNode(const Common::Path &name) const {
+	Common::Path remainingName = name.relativeTo(_publicFolder);
 	Common::FSNode node = _folder;
-	size_t pos;
 
-	while ((pos = remainingName.findFirstOf('/')) != Common::String::npos) {
-		node = node.getChild(remainingName.substr(0, pos));
-		if (!node.exists())
-			return node;
+	Common::StringArray components = remainingName.splitComponents();
 
-		remainingName = remainingName.substr(pos + 1);
+	if (components.empty()) {
+		return node;
 	}
 
-	if (!remainingName.empty())
-		node = node.getChild(remainingName);
+	for(Common::StringArray::const_iterator it = components.begin(); it != components.end() - 1; it++) {
+		node = node.getChild(*it);
+		if (!node.exists())
+			return node;
+	}
+
+	node = node.getChild(*(components.end() - 1));
 
 	return node;
 }

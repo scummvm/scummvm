@@ -41,7 +41,7 @@ Look::~Look() {
 }
 
 bool Look::init() {
-	Std::string filename;
+	Common::Path filename;
 	U6Lzw lzw;
 	uint32 decomp_size;
 	unsigned char *ptr;

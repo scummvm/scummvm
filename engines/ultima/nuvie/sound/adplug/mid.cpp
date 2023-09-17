@@ -112,11 +112,11 @@ unsigned long CmidPlayer::getval() {
 	return v;
 }
 
-bool CmidPlayer::load(const Std::string &filename) {
+bool CmidPlayer::load(const Common::Path &filename) {
 	return false;
 }
 
-bool CmidPlayer::load(Std::string &filename, int song_index) {
+bool CmidPlayer::load(const Common::Path &filename, int song_index) {
 	U6Lib_n f;
 	f.open(filename, 4, NUVIE_GAME_MD);
 	//binistream *f = fp.open(filename); if(!f) return false;

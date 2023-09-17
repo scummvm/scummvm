@@ -47,9 +47,9 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 
 	SetRect(area.left, area.top, 162, 108);
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 
 	Graphics::ManagedSurface *image, *image1;
 
@@ -59,9 +59,9 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 	datadir = path;
 
 	build_path(datadir, "gump_btn_up.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
 	build_path(datadir, "gump_btn_down.bmp", imagefile);
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image1 = SDL_LoadBMP(imagefile);
 
 	gump_button = new GUI_Button(nullptr, 0, 9, image, image1, this);
 	this->AddWidget(gump_button);
@@ -70,15 +70,15 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 	datadir = path;
 
 	build_path(datadir, "spellbook_left_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str()); //we load this twice as they are freed in ~GUI_Button()
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile); //we load this twice as they are freed in ~GUI_Button()
+	image1 = SDL_LoadBMP(imagefile);
 
 	left_button = new GUI_Button(this, 27, 4, image, image1, this);
 	this->AddWidget(left_button);
 
 	build_path(datadir, "spellbook_right_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
+	image1 = SDL_LoadBMP(imagefile);
 
 	right_button = new GUI_Button(this, 132, 4, image, image1, this);
 	this->AddWidget(right_button);
@@ -94,8 +94,8 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	uint8 count = SpellView::fill_cur_spell_list();
 
 	//load spell images
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -104,13 +104,13 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	build_path(datadir, "spellbook", path);
 	datadir = path;
 
-	Std::string imagefile;
+	Common::Path imagefile;
 	build_path(datadir, "spellbook_bg.bmp", imagefile);
 
 	delete bg_image;
 	bg_image = bmp.getSdlSurface32(imagefile);
 	if (bg_image == nullptr) {
-		DEBUG(0, LEVEL_ERROR, "Failed to load spellbook_bg.bmp from '%s' directory\n", datadir.c_str());
+		DEBUG(0, LEVEL_ERROR, "Failed to load spellbook_bg.bmp from '%s' directory\n", datadir.toString().c_str());
 		return count;
 	}
 
@@ -122,7 +122,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 		build_path(datadir, filename, imagefile);
 		Graphics::ManagedSurface *spell_image = bmp.getSdlSurface32(imagefile);
 		if (spell_image == nullptr) {
-			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.c_str());
+			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.toString().c_str());
 		} else {
 			Common::Rect dst;
 
@@ -145,8 +145,8 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	return count;
 }
 
-void SpellViewGump::loadCircleString(const Std::string &datadir) {
-	Std::string imagefile;
+void SpellViewGump::loadCircleString(const Common::Path &datadir) {
+	Common::Path imagefile;
 	char filename[7]; // n.bmp\0
 
 	Common::sprintf_s(filename, "%d.bmp", level);
@@ -174,8 +174,8 @@ void SpellViewGump::loadCircleString(const Std::string &datadir) {
 	}
 }
 
-void SpellViewGump::loadCircleSuffix(const Std::string &datadir, const Std::string &image) {
-	Std::string imagefile;
+void SpellViewGump::loadCircleSuffix(const Common::Path &datadir, const Std::string &image) {
+	Common::Path imagefile;
 
 	build_path(datadir, image, imagefile);
 	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);

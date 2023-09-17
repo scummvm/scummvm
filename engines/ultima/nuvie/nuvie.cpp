@@ -64,7 +64,7 @@ NuvieEngine::~NuvieEngine() {
 	g_engine = nullptr;
 }
 
-bool NuvieEngine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+bool NuvieEngine::isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima6";
 	majorVersion = 1;
 	minorVersion = 1;
@@ -213,10 +213,10 @@ void NuvieEngine::assignGameConfigValues(uint8 gameType) {
 }
 
 bool NuvieEngine::checkGameDir(uint8 gameType) {
-	Std::string path;
+	Common::Path path;
 
 	config_get_path(_config, "", path);
-	ConsoleAddInfo("gamedir: \"%s\"", path.c_str());
+	ConsoleAddInfo("gamedir: \"%s\"", path.toString().c_str());
 
 	return true;
 }

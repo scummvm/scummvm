@@ -23,6 +23,7 @@
 #define SHARED_CONF_XML_TREE_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/util.h"
@@ -36,16 +37,16 @@ class XMLTree {
 	friend class XMLNode;
 private:
 	XMLNode *_tree;
-	Common::String _filename;
+	Common::Path _filename;
 	bool _isFile;
 	bool _readOnly;
 public:
 	XMLTree();
-	XMLTree(const Common::String &fname);
+	XMLTree(const Common::Path &fname);
 	XMLTree(Common::SeekableReadStream *stream);
 	~XMLTree();
 
-	bool readConfigFile(const Common::String &fname);
+	bool readConfigFile(const Common::Path &fname);
 	bool readConfigStream(Common::SeekableReadStream *stream);
 	bool readConfigString(const Common::String &s);
 

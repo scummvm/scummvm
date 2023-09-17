@@ -49,7 +49,7 @@ namespace Nuvie {
 
 
 bool PortraitU6::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	avatar_portrait_num = 0;
 
@@ -58,17 +58,17 @@ bool PortraitU6::init() {
 
 	config_get_path(config, "portrait.a", filename);
 	if (portrait_a.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 	config_get_path(config, "portrait.b", filename);
 	if (portrait_b.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 	config_get_path(config, "portrait.z", filename);
 	if (portrait_z.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 

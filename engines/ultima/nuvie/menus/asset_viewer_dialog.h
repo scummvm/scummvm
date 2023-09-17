@@ -49,7 +49,7 @@ protected:
 	int _shapeIdx;
 	ViewMode _viewMode;
 	U6Shape *_curShape;
-	Std::string _screenFile;
+	Common::Path _screenFile;
 public:
 	AssetViewerDialog(CallBack *callback);
 	~AssetViewerDialog() override;

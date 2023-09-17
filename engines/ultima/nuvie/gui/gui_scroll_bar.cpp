@@ -67,22 +67,22 @@ GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
 
 
 void GUI_ScrollBar::loadButtons() {
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
 	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "ScrollBarUp_1.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
 	build_path(datadir, "ScrollBarUp_2.bmp", imagefile);
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image1 = SDL_LoadBMP(imagefile);
 
 	up_button = new GUI_Button(nullptr, 0, 0, image, image1, this);
 	this->AddWidget(up_button);
 
 	build_path(datadir, "ScrollBarDown_1.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
 	build_path(datadir, "ScrollBarDown_2.bmp", imagefile);
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image1 = SDL_LoadBMP(imagefile);
 
 	button_height = image->h;
 

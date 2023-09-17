@@ -45,7 +45,7 @@ UltimaEngine::~UltimaEngine() {
 }
 
 bool UltimaEngine::initialize() {
-	Common::String folder;
+	Common::Path folder;
 	int reqMajorVersion, reqMinorVersion;
 
 	// Call syncSoundSettings to get default volumes set
@@ -90,7 +90,7 @@ GameId UltimaEngine::getGameId() const {
 }
 
 Common::FSNode UltimaEngine::getGameDirectory() const {
-	return Common::FSNode(ConfMan.get("path"));
+	return Common::FSNode(ConfMan.getPath("path"));
 }
 
 } // End of namespace Shared

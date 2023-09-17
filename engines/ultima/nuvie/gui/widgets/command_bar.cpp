@@ -202,7 +202,7 @@ bool CommandBar::init_buttons() {
 		icon[9] = &placeholder_tile; // quick save
 		icon[10] = &placeholder_tile; // quick load
 
-		Std::string filename;
+		Common::Path filename;
 		Configuration *config = Game::get_game()->get_config();
 		config_get_path(config, "mdscreen.lzc", filename);
 		lever_up = new U6Shape();
