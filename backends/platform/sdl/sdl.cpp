@@ -1021,9 +1021,9 @@ _s(
 "| Shortcut      | Description\n"
 "| --------------------------------\n"
 "| `Ctrl+F5` -- Displays the Global Main Menu\n")
-#ifdef MACOSX
+#if defined(MACOSX)
 _s("| `Cmd+q`    -- Quit (macOS)\n")
-#elif WIN32
+#elif defined(WIN32)
 _s("| `Alt+F4`  -- Quit (Windows)\n")
 #else
 _s("| `Ctrl+q`  -- Quit (Linux/Unix)\n")
