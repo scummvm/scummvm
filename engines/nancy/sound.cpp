@@ -303,7 +303,8 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 		*effectData = nullptr;
 	}
 
-	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
+	Common::Path path(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(path);
 	if (file) {
 		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES, description.samplesPerSec);
 	}

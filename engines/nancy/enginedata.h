@@ -39,8 +39,8 @@ struct BSUM : public EngineData {
 
 	byte header[90];
 
-	Common::String conversationTextsFilename;
-	Common::String autotextFilename;
+	Common::Path conversationTextsFilename;
+	Common::Path autotextFilename;
 
 	// Game start section
 	SceneChangeDescription firstScene;
@@ -132,8 +132,8 @@ struct INV : public EngineData {
 
 	uint16 captionAutoClearTime = 3000;
 
-	Common::String inventoryBoxIconsImageName;
-	Common::String inventoryCursorsImageName;
+	Common::Path inventoryBoxIconsImageName;
+	Common::Path inventoryCursorsImageName;
 
 	SoundDescription cantSound;
 	Common::String cantText;
@@ -181,8 +181,8 @@ struct MAP : public EngineData {
 
 	MAP(Common::SeekableReadStream *chunkStream);
 
-	Common::Array<Common::String> mapNames;
-	Common::Array<Common::String> mapPaletteNames;
+	Common::Array<Common::Path> mapNames;
+	Common::Array<Common::Path> mapPaletteNames;
 	Common::Array<SoundDescription> sounds;
 
 	// Globe section, TVD only
@@ -207,7 +207,7 @@ struct MAP : public EngineData {
 struct HELP : public EngineData {
 	HELP(Common::SeekableReadStream *chunkStream);
 
-	Common::String imageName;
+	Common::Path imageName;
 	Common::Rect buttonDest;
 	Common::Rect buttonSrc;
 	Common::Rect buttonHoverSrc;
@@ -217,8 +217,8 @@ struct HELP : public EngineData {
 struct CRED : public EngineData {
 	CRED(Common::SeekableReadStream *chunkStream);
 
-	Common::String imageName;
-	Common::Array<Common::String> textNames;
+	Common::Path imageName;
+	Common::Array<Common::Path> textNames;
 	Common::Rect textScreenPosition;
 	uint16 updateTime;
 	uint16 pixelsToScroll;
@@ -229,7 +229,7 @@ struct CRED : public EngineData {
 struct MENU : public EngineData {
 	MENU(Common::SeekableReadStream *chunkStream);
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	Common::Array<Common::Rect> _buttonDests;
 	Common::Array<Common::Rect> _buttonDownSrcs;
 	Common::Array<Common::Rect> _buttonHighlightSrcs;
@@ -240,7 +240,7 @@ struct MENU : public EngineData {
 struct SET : public EngineData {
 	SET(Common::SeekableReadStream *chunkStream);
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	// Common::Rect _scrollbarsBounds
 	Common::Array<Common::Rect> _scrollbarBounds;
 	Common::Array<Common::Rect> _buttonDests;
@@ -259,7 +259,7 @@ struct SET : public EngineData {
 struct LOAD : public EngineData {
 	LOAD(Common::SeekableReadStream *chunkStream);
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	int16 _mainFontID;
 	int16 _highlightFontID;
@@ -291,7 +291,7 @@ struct LOAD : public EngineData {
 	Common::Rect _cancelButtonHighlightSrc;
 	Common::Rect _cancelButtonDisabledSrc;
 
-	Common::String _gameSavedPopup;
+	Common::Path _gameSavedPopup;
 	// Common::Rect _gameSavedBounds
 };
 
@@ -301,7 +301,7 @@ struct SDLG : public EngineData {
 	struct Dialog {
 		Dialog(Common::SeekableReadStream *chunkStream);
 		
-		Common::String imageName;
+		Common::Path imageName;
 
 		Common::Rect yesDest;
 		Common::Rect noDest;
@@ -421,17 +421,17 @@ struct RCPR : public EngineData {
 	byte transparentWallColor[3];
 	byte uColor10[3];
 
-	Common::Array<Common::String> wallNames;
-	Common::Array<Common::String> specialWallNames;
-	Common::Array<Common::String> ceilingNames;
-	Common::Array<Common::String> floorNames;
+	Common::Array<Common::Path> wallNames;
+	Common::Array<Common::Path> specialWallNames;
+	Common::Array<Common::Path> ceilingNames;
+	Common::Array<Common::Path> floorNames;
 };
 
 // Contains the name and dimensions of an image.
 struct ImageChunk : public EngineData {
 	ImageChunk(Common::SeekableReadStream *chunkStream);
 
-	Common::String imageName;
+	Common::Path imageName;
 	uint16 width;
 	uint16 height;
 };

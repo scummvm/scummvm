@@ -45,7 +45,7 @@ protected:
 	Common::String getRecordTypeName() const override { return "MouseLightPuzzle"; };
 	bool isViewportRelative() const override { return true; }
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	byte _radius = 0;
 	bool _smoothEdges = false;
 

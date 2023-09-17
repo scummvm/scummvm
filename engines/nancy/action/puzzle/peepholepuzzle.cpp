@@ -40,7 +40,7 @@ void PeepholePuzzle::init() {
 
 	g_nancy->_resource->loadImage(_innerImageName, _innerImage);
 
-	if (!_buttonsImageName.size()) {
+	if (_buttonsImageName.empty()) {
 		// Empty image name for buttons, use other image as source
 		_buttonsImage.create(_innerImage, _innerImage.getBounds());
 	} else {

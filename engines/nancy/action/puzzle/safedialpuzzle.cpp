@@ -63,7 +63,7 @@ void SafeDialPuzzle::updateGraphics() {
 	}
 
 	if (_animState == kReset && _nextAnim < g_nancy->getTotalPlayTime()) {
-		if (_resetImageName.size()) {
+		if (!_resetImageName.empty()) {
 			_animState = kResetAnim;
 		} else {
 			_animState = kNone;
@@ -92,7 +92,7 @@ void SafeDialPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName2);
 	readFilename(stream, _resetImageName);
 
-	_numInbetweens = (_imageName2.size() ? 1 : 0);
+	_numInbetweens = (!_imageName2.empty() ? 1 : 0);
 
 	uint16 num = 10;
 	if (g_nancy->getGameType() >= kGameTypeNancy4) {
@@ -297,7 +297,7 @@ void SafeDialPuzzle::handleInput(NancyInput &input) {
 
 void SafeDialPuzzle::drawDialFrame(uint frame) {
 	debug("%u", frame);
-	if (frame >= _dialSrcs.size() / 2 && _imageName2.size()) {
+	if (frame >= _dialSrcs.size() / 2 && !_imageName2.empty()) {
 		_drawSurface.blitFrom(_image2, _dialSrcs[frame], _dialDest);
 	} else {
 		_drawSurface.blitFrom(_image1, _dialSrcs[frame], _dialDest);

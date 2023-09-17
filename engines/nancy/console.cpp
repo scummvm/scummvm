@@ -81,7 +81,7 @@ void NancyConsole::postEnter() {
 		if (dec->loadFile(_videoFile)) {
 			Graphics::ManagedSurface surf;
 
-			if (_paletteFile.size()) {
+			if (!_paletteFile.empty()) {
 				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
 			}
 
@@ -98,7 +98,7 @@ void NancyConsole::postEnter() {
 				if (dec->needsUpdate()) {
 					const Graphics::Surface *frame = dec->decodeNextFrame();
 					if (frame) {
-						GraphicsManager::copyToManaged(*frame, surf, _paletteFile.size());
+						GraphicsManager::copyToManaged(*frame, surf, !_paletteFile.empty());
 						g_nancy->_graphicsManager->debugDrawToScreen(surf);
 					}
 				}
@@ -108,7 +108,7 @@ void NancyConsole::postEnter() {
 
 			g_nancy->_graphicsManager->redrawAll();
 		} else {
-			debugPrintf("Failed to load '%s'\n", _videoFile.c_str());
+			debugPrintf("Failed to load '%s'\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
 		}
 
 		_videoFile.clear();
@@ -119,7 +119,7 @@ void NancyConsole::postEnter() {
 	if (!_imageFile.empty()) {
 		Graphics::ManagedSurface surf;
 		if (g_nancy->_resource->loadImage(_imageFile, surf)) {
-			if (_paletteFile.size()) {
+			if (!_paletteFile.empty()) {
 				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
 			}
 
@@ -141,7 +141,7 @@ void NancyConsole::postEnter() {
 
 			g_nancy->_graphicsManager->redrawAll();
 		} else {
-			debugPrintf("Failed to load image '%s'\n", _imageFile.c_str());
+			debugPrintf("Failed to load image '%s'\n", _imageFile.toString().c_str());
 		}
 
 		_imageFile.clear();
@@ -173,7 +173,7 @@ bool NancyConsole::Cmd_ciftreeExport(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::StringArray files;
+	Common::Array<Common::Path> files;
 
 	for (int i = 2; i < argc; ++i) {
 		files.push_back(argv[i]);
@@ -193,10 +193,15 @@ bool NancyConsole::Cmd_cifList(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::Array<Common::String> list;
+	Common::Array<Common::Path> list;
 	g_nancy->_resource->list((argc == 2 ? "" : argv[2]), list, (CifInfo::ResType)atoi(argv[1]));
 
-	debugPrintColumns(list);
+	Common::StringArray listStr;
+	listStr.resize(list.size());
+	for (unsigned int i = 0; i < list.size(); i++) {
+		listStr[i] = list[i].toString();
+	}
+	debugPrintColumns(listStr);
 
 	return true;
 }
@@ -251,7 +256,7 @@ bool NancyConsole::Cmd_chunkExport(int argc, const char **argv) {
 	filename += '_';
 	filename += argv[2];
 	filename += ".dat";
-	dumpfile.open(filename);
+	dumpfile.open(Common::Path(filename));
 	dumpfile.write(buf, size);
 	dumpfile.close();
 	delete iff;
@@ -354,7 +359,7 @@ bool NancyConsole::Cmd_exportImage(int argc, const char **argv) {
 	Graphics::ManagedSurface surf;
 	if (g_nancy->_resource->loadImage(argv[1], surf)) {
 		Common::DumpFile f;
-		if (!f.open(Common::String(argv[1]) + ".bmp")) {
+		if (!f.open(Common::Path(argv[1]).appendInPlace(".bmp"))) {
 			debugPrintf("Couldn't open file for writing!");
 
 			return true;
@@ -376,7 +381,7 @@ bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
 		}
 
 		_videoFile = argv[1];
-		_videoFile += ".avf";
+		_videoFile.appendInPlace(".avf");
 		_paletteFile = argv[2];
 		return cmdExit(0, nullptr);
 	} else {
@@ -387,7 +392,7 @@ bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
 		}
 
 		_videoFile = argv[1];
-		_videoFile += ".avf";
+		_videoFile.appendInPlace(".avf");
 		return cmdExit(0, nullptr);
 	}
 }
@@ -412,7 +417,7 @@ bool NancyConsole::Cmd_playSound(int argc, const char **argv) {
 	}
 
 	Common::File *f = new Common::File;
-	if (!f->open(Common::String(argv[1]) + ".his")) {
+	if (!f->open(Common::Path(argv[1]).appendInPlace(".his"))) {
 		debugPrintf("Failed to open '%s.his'\n", argv[1]);
 		delete f;
 		return true;
@@ -442,7 +447,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String sceneName = Common::String::format("S%s", argv[1]);
+	Common::Path sceneName(Common::String::format("S%s", argv[1]));
 	IFF *iff = g_nancy->_resource->loadIFF(sceneName);
 	if (!iff) {
 		debugPrintf("Invalid scene S%s\n", argv[1]);
@@ -610,7 +615,7 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 		Common::Queue<uint> unknownTypes;
 		Common::Queue<Common::String> unknownDescs;
 		Common::SeekableReadStream *chunk;
-		IFF *sceneIFF = g_nancy->_resource->loadIFF("S" + s);
+		IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path("S" + s));
 		if (!sceneIFF) {
 			debugPrintf("Invalid scene S%s\n", argv[1]);
 			return true;
@@ -692,15 +697,15 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 		}
 	}
 
-	Common::Array<Common::String> list;
+	Common::Array<Common::Path> list;
 	// Action records only appear in the ciftree and promotree
 	g_nancy->_resource->list("ciftree", list, CifInfo::kResTypeScript);
 	g_nancy->_resource->list("promotree", list, CifInfo::kResTypeScript);
 
 	char descBuf[0x30];
 
-	for (Common::String &cifName : list) {
-		Common::String name = cifName;
+	for (Common::Path &cifName : list) {
+		Common::String name = cifName.baseName();
 		if (name.hasSuffixIgnoreCase(".iff")) {
 			name = name.substr(0, name.size() - 4);
 		}
@@ -734,7 +739,7 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 						chunk->seek(0);
 						chunk->read(descBuf, 0x30);
 						descBuf[0x2F] = '\0';
-						debugPrintf("%s: ACT chunk %u, %s\n", cifName.c_str(), num, descBuf);
+						debugPrintf("%s: ACT chunk %u, %s\n", cifName.toString().c_str(), num, descBuf);
 					}
 
 					++num;

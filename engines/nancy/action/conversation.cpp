@@ -512,7 +512,7 @@ bool ConversationSound::ConversationFlags::isSatisfied() const {
 }
 
 void ConversationVideo::init() {
-	if (!_decoder.loadFile(_videoName + ".avf")) {
+	if (!_decoder.loadFile(Common::Path(_videoName + ".avf"))) {
 		error("Couldn't load video file %s", _videoName.c_str());
 	}
 
@@ -672,7 +672,7 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	
 	readFilenameArray(stream, _treeNames, 4);
 
-	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(xsheetName);
+	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(Common::Path(xsheetName));
 
 	// Read the xsheet and load all images into the arrays
 	// Completely unoptimized, the original engine uses a buffer
@@ -689,7 +689,7 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	_frameTime = xsheet->readUint16LE();
 	xsheet->skip(2);
 
-	_celNames.resize(4, Common::Array<Common::String>(numFrames));
+	_celNames.resize(4, Common::Array<Common::Path>(numFrames));
 	for (uint i = 0; i < numFrames; ++i) {
 		for (uint j = 0; j < _celNames.size(); ++j) {
 			readFilename(*xsheet, _celNames[j][i]);
@@ -729,7 +729,7 @@ bool ConversationCel::isVideoDonePlaying() {
 	return _curFrame >= MIN<uint>(_lastFrame, _celNames[0].size()) && _nextFrameTime <= g_nancy->getTotalPlayTime();
 }
 
-ConversationCel::Cel &ConversationCel::loadCel(const Common::String &name, const Common::String &treeName) {
+ConversationCel::Cel &ConversationCel::loadCel(const Common::Path &name, const Common::String &treeName) {
 	// Assumes head and body cels will be named differently
 	if (_celCache.contains(name)) {
 		return _celCache[name];

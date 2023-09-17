@@ -79,10 +79,10 @@ public:
 		// SSUM and TSUM
 		// Default values set to match those applied when loading from a TSUM chunk
 		Common::String description;
-		Common::String videoFile;
+		Common::Path videoFile;
 		
 		uint16 videoFormat = kLargeVideoFormat;
-		Common::Array<Common::String> palettes;
+		Common::Array<Common::Path> palettes;
 		SoundDescription sound;
 		
 		byte panningType = kPan360;

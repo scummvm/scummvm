@@ -78,8 +78,8 @@ protected:
 
 	bool checkBuffer(const Tile &tile) const;
 
-	Common::String _tileImageName;
-	Common::String _maskImageName;
+	Common::Path _tileImageName;
+	Common::Path _maskImageName;
 
 	Common::Array<Common::Rect> _tileSrcs;
 	Common::Array<Common::Rect> _tileDests;

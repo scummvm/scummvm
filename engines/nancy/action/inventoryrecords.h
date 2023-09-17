@@ -67,7 +67,7 @@ public:
 	void init() override;
 
 	uint16 _objectID = 0;
-	Common::String _imageName;
+	Common::Path _imageName;
 	Common::Array<FrameBlitDescription> _blitDescriptions;
 
 	int16 _drawnFrameID = -1;

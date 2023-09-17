@@ -375,7 +375,7 @@ void NancyEngine::pauseEngineIntern(bool pause) {
 
 void NancyEngine::bootGameEngine() {
 	// Load paths
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "ciftree");
@@ -464,7 +464,7 @@ void NancyEngine::bootGameEngine() {
 
 	// Load convo texts and autotext
 	auto *bsum = GetEngineData(BSUM);
-	if (bsum && bsum->conversationTextsFilename.size() && bsum->autotextFilename.size())  {
+	if (bsum && !bsum->conversationTextsFilename.empty() && !bsum->autotextFilename.empty()) {
 		iff = _resource->loadIFF(bsum->conversationTextsFilename);
 		if (!iff) {
 			error("Could not load CONVO IFF");

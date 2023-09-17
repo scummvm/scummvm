@@ -46,7 +46,7 @@ protected:
 
 	void drawTime(uint16 hours, uint16 minutes);
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	Common::Rect _minutesDest;
 	Common::Rect _hoursDest;

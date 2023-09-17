@@ -73,7 +73,7 @@ protected:
 	Common::Rect getScreenPosition(Common::Point gridPos);
 	void drawGrid();
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	Common::Array<Common::Array<uint16>> _grid;
 	Common::Array<Common::Point> _startLocations;

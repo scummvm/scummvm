@@ -49,9 +49,9 @@ protected:
 	void drawDialFrame(uint frame);
 	void pushSequence(uint id);
 
-	Common::String _imageName1;
-	Common::String _imageName2;
-	Common::String _resetImageName;
+	Common::Path _imageName1;
+	Common::Path _imageName2;
+	Common::Path _resetImageName;
 
 	bool _enableWraparound = true;
 

@@ -55,7 +55,7 @@ protected:
 
 	void validateMap();
 
-	void createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::String &textureName);
+	void createTextureLightSourcing(Common::Array<Graphics::ManagedSurface> *array, const Common::Path &textureName);
 
 	void drawMap();
 	void updateMap();

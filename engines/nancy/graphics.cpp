@@ -213,9 +213,9 @@ void GraphicsManager::suppressNextDraw() {
 	_isSuppressed = true;
 }
 
-void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename, uint paletteStart, uint paletteSize) {
+void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::Path &paletteFilename, uint paletteStart, uint paletteSize) {
 	Common::File f;
-	if (f.open(paletteFilename + ".bmp")) {
+	if (f.open(paletteFilename.append(".bmp"))) {
 		Image::BitmapDecoder dec;
 		if (dec.loadStream(f)) {
 			inSurf.setPalette(dec.getPalette(), paletteStart, paletteSize);

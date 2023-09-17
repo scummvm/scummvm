@@ -38,8 +38,20 @@ void readRectArray16(Common::Serializer &stream, Common::Array<Common::Rect> &in
 
 void readFilename(Common::SeekableReadStream &stream, Common::String &inString);
 void readFilename(Common::Serializer &stream, Common::String &inString, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+inline void readFilename(Common::SeekableReadStream &stream, Common::Path &inPath) {
+	Common::String inString;
+	readFilename(stream, inString);
+	inPath = Common::Path(inString);
+}
+inline void readFilename(Common::Serializer &stream, Common::Path &inPath, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
+	Common::String inString;
+	readFilename(stream, inString, minVersion, maxVersion);
+	inPath = Common::Path(inString);
+}
 void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::String> &inArray, uint num);
 void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::Path> &inArray, uint num);
+void readFilenameArray(Common::Serializer &stream, Common::Array<Common::Path> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 
 void assembleTextLine(char *rawCaption, Common::String &output, uint size);
 

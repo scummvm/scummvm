@@ -357,7 +357,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 	byte *patchBuf = nullptr;
 	uint32 patchBufSize = 0;
 	Common::Array<Common::Array<Common::String>> confManProps;
-	Common::Array<Common::Array<Common::String>> fileIDs;
+	Common::Array<Common::Array<Common::Path>> fileIDs;
 
 	while (stream.pos() < endPos) {
 		uint32 nextSectionOffset = stream.readUint32LE();
@@ -564,7 +564,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 				num2 = stream.readUint16LE();
 				fileIDs[i].resize(num2);
 				for (uint j = 0; j < num2; ++j) {
-					fileIDs[i][j] = stream.readString();
+					fileIDs[i][j] = Common::Path(stream.readString());
 				}
 			}
 

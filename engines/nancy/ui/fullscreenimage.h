@@ -32,7 +32,7 @@ public:
 	FullScreenImage() : RenderObject(0) {}
 	virtual ~FullScreenImage() = default;
 
-	void init(const Common::String &imageName);
+	void init(const Common::Path &imageName);
 
 protected:
 	void init() override {}

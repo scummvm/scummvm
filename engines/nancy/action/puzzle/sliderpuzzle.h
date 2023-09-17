@@ -46,7 +46,7 @@ public:
 	const SPUZ *_spuzData = nullptr;
 	SliderPuzzleData *_puzzleState = nullptr;
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	uint16 _width = 0;
 	uint16 _height = 0;
 	Common::Array<Common::Array<Common::Rect>> _srcRects;

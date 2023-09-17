@@ -64,9 +64,9 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	Common::String _videoName;
-	Common::String _paletteName;
-	Common::String _bitmapOverlayName;
+	Common::Path _videoName;
+	Common::Path _paletteName;
+	Common::Path _bitmapOverlayName;
 
 	uint16 _videoType = kVideoPlaytypeAVF;
 	uint16 _videoFormat = kLargeVideoFormat;

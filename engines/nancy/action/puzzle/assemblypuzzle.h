@@ -60,7 +60,7 @@ protected:
 		int curRotation = 0;
 	};
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	uint16 _height = 0;
 

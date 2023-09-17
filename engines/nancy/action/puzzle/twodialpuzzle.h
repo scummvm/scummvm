@@ -44,7 +44,7 @@ protected:
 	Common::String getRecordTypeName() const override { return "TwoDialPuzzle"; }
 	bool isViewportRelative() const override { return true; }
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	bool _isClockwise[2] = { false, false };
 	uint16 _startPositions[2] = { 0, 0 };

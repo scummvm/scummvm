@@ -47,8 +47,8 @@ protected:
 	void drawInner();
 	void checkButtons();
 
-	Common::String _innerImageName;
-	Common::String _buttonsImageName;
+	Common::Path _innerImageName;
+	Common::Path _buttonsImageName;
 
 	uint16 _transparency = 0;
 

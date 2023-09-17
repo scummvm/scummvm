@@ -52,7 +52,7 @@ protected:
 
 	enum SolveState { kNotSolved, kSolved };
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	byte _popButtons = kButtonsStayDown;
 	byte _randomizeLights = kLightsCircular;

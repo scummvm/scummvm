@@ -141,7 +141,7 @@ protected:
 	Common::String getRecordTypeName() const override;
 
 	Common::String _videoName;
-	Common::String _paletteName;
+	Common::Path _paletteName;
 	uint _videoFormat = kLargeVideoFormat;
 	uint16 _firstFrame = 0;
 	int16 _lastFrame = 0;
@@ -184,9 +184,9 @@ protected:
 	static const byte kCelOverrideTreeRectsOn	= 2;
 
 	bool isVideoDonePlaying() override;
-	Cel &loadCel(const Common::String &name, const Common::String &treeName);
+	Cel &loadCel(const Common::Path &name, const Common::String &treeName);
 
-	Common::Array<Common::Array<Common::String>> _celNames;
+	Common::Array<Common::Array<Common::Path>> _celNames;
 	Common::Array<Common::String> _treeNames;
 
 	uint16 _frameTime = 0;
@@ -205,7 +205,7 @@ protected:
 
 	Common::Array<RenderedCel> _celRObjects;
 
-	Common::HashMap<Common::String, Cel> _celCache;
+	Common::HashMap<Common::Path, Cel, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _celCache;
 	Common::SharedPtr<ConversationCelLoader> _loaderPtr;
 };
 

@@ -52,7 +52,7 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	Common::Array<Common::Rect> _srcRects;
 	Common::Array<Common::Rect> _destRects;
 	SoundDescription _genericDialogueSound;

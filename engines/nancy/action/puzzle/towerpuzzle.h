@@ -49,7 +49,7 @@ protected:
 
 	void drawRing(uint poleID, uint position, uint ringID, bool clear = false);
 
-	Common::String _imageName;
+	Common::Path _imageName;
 	Common::Array<uint16> _numRingsByDifficulty;
 
 	Common::Array<Common::Rect> _droppedRingSrcs;
