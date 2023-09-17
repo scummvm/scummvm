@@ -1326,7 +1326,7 @@ FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, b
 		setStream(_outSave);
 
 	} else if (fmode == filemode_Read) {
-		if (_file.open(fname)) {
+		if (_file.open(Common::Path(fname))) {
 			setStream(&_file);
 		} else {
 			_inSave = g_system->getSavefileManager()->openForLoading(fname);
@@ -1550,7 +1550,7 @@ bool FileReference::exists() const {
 	Common::String filename;
 
 	if (_slotNumber == -1) {
-		if (Common::File::exists(_filename))
+		if (Common::File::exists(Common::Path(_filename)))
 			return true;
 		filename = _filename;
 	} else {

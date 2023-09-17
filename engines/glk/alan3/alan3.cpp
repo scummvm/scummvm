@@ -92,7 +92,7 @@ bool Alan3::initialize() {
 
 	// In Alan 3, the text data comes from the adventure file itself
 	Common::File *txt = new Common::File();
-	if (!txt->open(getFilename())) {
+	if (!txt->open(Common::Path(getFilename()))) {
 	    GUIErrorMessage("Could not open adventure file for text data");
 	    delete txt;
 	    return false;

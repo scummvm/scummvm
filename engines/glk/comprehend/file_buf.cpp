@@ -29,7 +29,7 @@ namespace Comprehend {
 FileBuffer::FileBuffer(const Common::String &filename) : _pos(0) {
 	// Open the file
 	Common::File f;
-	if (!f.open(filename))
+	if (!f.open(Common::Path(filename)))
 		error("Could not open - %s", filename.c_str());
 
 	_data.resize(f.size());
@@ -45,7 +45,7 @@ FileBuffer::FileBuffer(Common::ReadStream *stream, size_t size) : _pos(0) {
 
 
 bool FileBuffer::exists(const Common::String &filename) {
-	return Common::File::exists(filename);
+	return Common::File::exists(Common::Path(filename));
 }
 
 void FileBuffer::close() {

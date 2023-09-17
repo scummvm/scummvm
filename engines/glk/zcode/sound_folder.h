@@ -25,7 +25,7 @@
 #include "glk/zcode/frotz_types.h"
 #include "common/archive.h"
 #include "common/fs.h"
-#include "common/hash-str.h"
+#include "common/hashmap.h"
 
 namespace Glk {
 namespace ZCode {
@@ -38,7 +38,8 @@ namespace ZCode {
 class SoundSubfolder : public Common::Archive {
 private:
 	Common::FSNode _folder;
-	Common::StringMap _filenames;
+	typedef Common::HashMap<Common::Path, Common::String, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
+	FileMap _filenames;
 private:
 	/**
 	 * Constructor
@@ -86,7 +87,8 @@ public:
 class SoundZip : public Common::Archive {
 private:
 	Common::Archive *_zip;
-	Common::StringMap _filenames;
+	typedef Common::HashMap<Common::Path, Common::Path, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
+	FileMap _filenames;
 private:
 	/**
 	 * Constructor

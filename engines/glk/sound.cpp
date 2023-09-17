@@ -96,11 +96,11 @@ uint SoundChannel::play(uint soundNum, uint repeats, uint notify) {
 	// Find a sound of the given name
 	Audio::AudioStream *stream;
 	Common::File f;
-	Common::String nameSnd = Common::String::format("sound%u.snd", soundNum);
-	Common::String nameWav = Common::String::format("sound%u.wav", soundNum);
-	Common::String nameAiff = Common::String::format("sound%u.aiff", soundNum);
+	Common::Path nameSnd(Common::String::format("sound%u.snd", soundNum));
+	Common::Path nameWav(Common::String::format("sound%u.wav", soundNum));
+	Common::Path nameAiff(Common::String::format("sound%u.aiff", soundNum));
 #ifdef USE_MAD
-	Common::String nameMp3 = Common::String::format("sound%u.mp3", soundNum);
+	Common::Path nameMp3(Common::String::format("sound%u.mp3", soundNum));
 #endif
 
 	if (f.exists(nameSnd) && f.open(nameSnd)) {

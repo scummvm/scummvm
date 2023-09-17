@@ -301,7 +301,7 @@ type32 Magnetic::gms_gameid_read_uint32(int offset, Common::SeekableReadStream *
 void Magnetic::gms_gameid_identify_game(const Common::String &text_file) {
 	Common::File stream;
 
-	if (!stream.open(text_file))
+	if (!stream.open(Common::Path(text_file)))
 		error("Error opening game file");
 
 	type32 game_size, game_pc;

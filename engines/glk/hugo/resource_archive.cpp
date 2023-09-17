@@ -48,10 +48,9 @@ bool ResourceArchive::splitName(const Common::String &name,
 
 
 bool ResourceArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
 	Common::String filename, resName;
 
-	if (!splitName(name, filename, resName))
+	if (!splitName(path.baseName(), filename, resName))
 		return false;
 	size_t resLength = g_vm->FindResource(filename.c_str(), resName.c_str());
 	g_vm->hugo_fclose(g_vm->resource_file);
@@ -60,19 +59,17 @@ bool ResourceArchive::hasFile(const Common::Path &path) const {
 }
 
 const Common::ArchiveMemberPtr ResourceArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *ResourceArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	Common::String filename, resName;
 
 	// Split up the file and resource entry; return if it's not one
-	if (!splitName(name, filename, resName))
+	if (!splitName(path.baseName(), filename, resName))
 		return nullptr;
 
 	// Try and get the entry details from the given file

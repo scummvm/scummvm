@@ -196,7 +196,7 @@ class File : public Common::File {
 public:
 	static File *openForReading(const Common::String &name) {
 		File *f = new File();
-		if (f->open(name))
+		if (f->open(Common::Path(name)))
 			return f;
 
 		delete f;
@@ -205,7 +205,7 @@ public:
 
 	static Common::WriteStream *openForWriting(const Common::String &name) {
 		Common::DumpFile *df = new Common::DumpFile();
-		if (df->open(name))
+		if (df->open(Common::Path(name)))
 			return df;
 
 		delete df;
@@ -213,7 +213,7 @@ public:
 	}
 public:
 	File() : Common::File() {}
-	File(const Common::String &name) {
+	File(const Common::Path &name) {
 		Common::File::open(name);
 		assert(isOpen());
 	}

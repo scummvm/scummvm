@@ -111,7 +111,7 @@ void GeasGlkInterface::set_background(String s) {
  */
 String GeasGlkInterface::get_file(const String &fname) const {
 	Common::File f;
-	if (!f.open(fname)) {
+	if (!f.open(Common::Path(fname))) {
 		glk_put_cstring("Couldn't open ");
 		glk_put_cstring(fname.c_str());
 		g_vm->glk_put_char(0x0a);

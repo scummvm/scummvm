@@ -100,13 +100,12 @@ void Pics::ImageContext::lineFixes() {
 
 /*-------------------------------------------------------*/
 
-Pics::ImageFile::ImageFile(const Common::String &filename, bool isSingleImage) {
+Pics::ImageFile::ImageFile(const Common::String &filename, bool isSingleImage) : _filename(filename) {
 	Common::File f;
 	uint16 version;
 	int i;
 
-	_filename = filename;
-	if (!f.open(filename))
+	if (!f.open(_filename))
 		error("Could not open file - %s", filename.c_str());
 
 	if (isSingleImage) {
@@ -363,7 +362,7 @@ int Pics::getPictureNumber(const Common::String &filename) const {
 }
 
 bool Pics::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
+	Common::String name = path.baseName();
 	int num = getPictureNumber(name);
 	if (num == -1)
 		return false;
@@ -383,18 +382,17 @@ int Pics::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr Pics::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
+	Common::String name = path.baseName();
 	// Get the picture number
 	int num = getPictureNumber(name);
-	if (num == -1 || !hasFile(name))
+	if (num == -1 || !hasFile(path))
 		return nullptr;
 
 	// Draw the image

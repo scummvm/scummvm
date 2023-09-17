@@ -141,7 +141,7 @@ template<class META, class ENG>bool create(OSystem *syst,
 
 Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) const {
 	// Get the list of files in the folder and return detection against them
-	Common::FSNode folder = Common::FSNode(ConfMan.get("path"));
+	Common::FSNode folder = Common::FSNode(ConfMan.getPath("path"));
 	Common::FSList fslist;
 	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
 
@@ -192,7 +192,7 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 
 	// Get the MD5
 	Common::File f;
-	if (!f.open(Common::FSNode(ConfMan.get("path")).getChild(gameDesc._filename)))
+	if (!f.open(Common::FSNode(ConfMan.getPath("path")).getChild(gameDesc._filename)))
 		return Common::kNoGameDataFoundError;
 
 	Common::String fileName = f.getName();

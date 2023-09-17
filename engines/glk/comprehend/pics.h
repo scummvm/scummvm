@@ -76,7 +76,7 @@ class Pics : public Common::Archive {
 	struct ImageFile {
 	private:
 		Common::Array<uint16> _imageOffsets;
-		Common::String _filename;
+		Common::Path _filename;
 
 	private:
 		bool doImageOp(ImageContext *ctx) const;
