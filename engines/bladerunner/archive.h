@@ -34,15 +34,15 @@ public:
 	~MIXArchive();
 
 	static int32 getHash(const Common::String &name);
-	static bool exists(const Common::String &filename);
+	static bool exists(const Common::Path &filename);
 
-	bool open(const Common::String &filename);
+	bool open(const Common::Path &filename);
 	void close();
 	bool isOpen() const;
 
 	Common::String getName() const { return _fd.getName(); }
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name);
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &name);
 
 private:
 	Common::File _fd;

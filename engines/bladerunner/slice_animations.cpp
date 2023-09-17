@@ -136,7 +136,7 @@ bool SliceAnimations::openFrames(int fileNumber) {
 		}
 		_framesPageFile._fileNumber = fileNumber;
 
-		if (_framesPageFile.open(Common::String::format("CD%d/CDFRAMES.DAT", fileNumber), fileNumber)) {
+		if (_framesPageFile.open(Common::Path(Common::String::format("CD%d/CDFRAMES.DAT", fileNumber)), fileNumber)) {
 			return true;
 		}
 
@@ -145,7 +145,7 @@ bool SliceAnimations::openFrames(int fileNumber) {
 			return true;
 		}
 
-		if (_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", fileNumber), fileNumber)) {
+		if (_framesPageFile.open(Common::Path(Common::String::format("CDFRAMES%d.DAT", fileNumber)), fileNumber)) {
 			return true;
 		}
 	} else {
@@ -156,14 +156,14 @@ bool SliceAnimations::openFrames(int fileNumber) {
 			_framesPageFile.close(i);
 			if (i == 1
 			    && (!_framesPageFile.open("CDFRAMES.DAT", i))
-			    && (!_framesPageFile.open(Common::String::format("CD%d/CDFRAMES.DAT", i), i))
-			    && (!_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i))
+			    && (!_framesPageFile.open(Common::Path(Common::String::format("CD%d/CDFRAMES.DAT", i)), i))
+			    && (!_framesPageFile.open(Common::Path(Common::String::format("CDFRAMES%d.DAT", i)), i))
 			) {
 				// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 				return false;
 			} else if (i != 1 &&
-				   (!_framesPageFile.open(Common::String::format("CD%d/CDFRAMES.DAT", i), i)) &&
-			          !_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i)
+				   (!_framesPageFile.open(Common::Path(Common::String::format("CD%d/CDFRAMES.DAT", i)), i)) &&
+			          !_framesPageFile.open(Common::Path(Common::String::format("CDFRAMES%d.DAT", i)), i)
 			) {
 				return false;
 			}
@@ -174,7 +174,7 @@ bool SliceAnimations::openFrames(int fileNumber) {
 	return false;
 }
 
-bool SliceAnimations::PageFile::open(const Common::String &name, int8 fileIdx) {
+bool SliceAnimations::PageFile::open(const Common::Path &name, int8 fileIdx) {
 	if (!_files[fileIdx].open(name))
 		return false;
 
