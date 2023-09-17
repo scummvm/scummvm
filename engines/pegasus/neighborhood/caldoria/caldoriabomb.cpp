@@ -1234,7 +1234,7 @@ void CaldoriaBomb::closeInteraction() {
 	_neighborhoodNotification->cancelNotification(this);
 }
 
-void CaldoriaBomb::startBombAmbient(Common::String ambient) {
+void CaldoriaBomb::startBombAmbient(const Common::Path &ambient) {
 	_owner->loadLoopSound1(ambient);
 }
 
@@ -1266,7 +1266,7 @@ void CaldoriaBomb::receiveNotification(Notification *notification, const Notific
 			_currentLevel++;
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -1;
-			startBombAmbient(Common::String::format("Sounds/Caldoria/BmbLoop%d.22K.AIFF", _owner->getLastExtra() - kCaldoria56BombStage1 + 1));
+			startBombAmbient(Common::Path(Common::String::format("Sounds/Caldoria/BmbLoop%d.22K.AIFF", _owner->getLastExtra() - kCaldoria56BombStage1 + 1)));
 			break;
 		case kCaldoria56BombStage7:
 			_owner->requestDeleteCurrentInteraction();
@@ -1454,7 +1454,7 @@ long CaldoriaBomb::getNumHints() {
 	return 2;
 }
 
-Common::String CaldoriaBomb::getHintMovie(uint hintNum) {
+Common::Path CaldoriaBomb::getHintMovie(uint hintNum) {
 	return (hintNum == 1) ? "Images/AI/Caldoria/X56EH2" : "Images/AI/Caldoria/X56EH3";
 }
 

@@ -62,7 +62,7 @@ public:
 	Panorama();
 	virtual ~Panorama();
 
-	void initFromMovieFile(const Common::String &);
+	void initFromMovieFile(const Common::Path &);
 	void releasePanorama();
 	bool isPanoramaOpen() { return _panoramaMovie.isMovieValid(); }
 

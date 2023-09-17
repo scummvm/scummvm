@@ -140,7 +140,7 @@ public:
 	FrameSequence(const DisplayElementID);
 	~FrameSequence() override;
 
-	void useFileName(const Common::String &fileName);
+	void useFileName(const Common::Path &fileName);
 
 	virtual void openFrameSequence();
 	virtual void closeFrameSequence();

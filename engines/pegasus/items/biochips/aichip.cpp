@@ -210,7 +210,7 @@ void AIChip::clearClicked() {
 }
 
 void AIChip::clickInAIHotspot(HotSpotID id) {
-	Common::String movieName;
+	Common::Path movieName;
 
 	switch (id) {
 	case kAIBriefingSpotID:

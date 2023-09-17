@@ -45,8 +45,8 @@ public:
 	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
 protected:
-	Common::String getBriefingMovie() override;
-	Common::String getEnvScanMovie() override;
+	Common::Path getBriefingMovie() override;
+	Common::Path getEnvScanMovie() override;
 	void loadAmbientLoops() override;
 	void clickInHotspot(const Input &, const Hotspot *) override;
 
@@ -61,8 +61,8 @@ protected:
 	void showMainJumpMenu();
 	void receiveNotification(Notification *, const NotificationFlags) override;
 
-	Common::String getNavMovieName() override;
-	Common::String getSoundSpotsName() override { return ""; }
+	Common::Path getNavMovieName() override;
+	Common::Path getSoundSpotsName() override { return Common::Path(); }
 };
 
 } // End of namespace Pegasus

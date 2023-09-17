@@ -4433,8 +4433,8 @@ void Mars::didntFindBomb() {
 	die(kDeathDidntFindMarsBomb);
 }
 
-Common::String Mars::getBriefingMovie() {
-	Common::String movieName = Neighborhood::getBriefingMovie();
+Common::Path Mars::getBriefingMovie() {
+	Common::Path movieName = Neighborhood::getBriefingMovie();
 
 	if (!movieName.empty())
 		return movieName;
@@ -4442,8 +4442,8 @@ Common::String Mars::getBriefingMovie() {
 	return "Images/AI/Mars/XM01";
 }
 
-Common::String Mars::getEnvScanMovie() {
-	Common::String movieName = Neighborhood::getEnvScanMovie();
+Common::Path Mars::getEnvScanMovie() {
+	Common::Path movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
 		RoomID room = GameState.getCurrentRoom();
@@ -4536,8 +4536,8 @@ uint Mars::getNumHints() {
 	return numHints;
 }
 
-Common::String Mars::getHintMovie(uint hintNum) {
-	Common::String movieName = Neighborhood::getHintMovie(hintNum);
+Common::Path Mars::getHintMovie(uint hintNum) {
+	Common::Path movieName = Neighborhood::getHintMovie(hintNum);
 
 	if (movieName.empty()) {
 		switch (GameState.getCurrentRoomAndView()) {
@@ -4592,7 +4592,7 @@ Common::String Mars::getHintMovie(uint hintNum) {
 			return "Images/AI/Globals/XGLOB3F";
 		case MakeRoomView(kMars56, kEast):
 			if (getCurrentActivation() == kActivateReactorReadyForNitrogen)
-				return Common::String::format("Images/AI/Mars/XM57SD%d", hintNum);
+				return Common::Path(Common::String::format("Images/AI/Mars/XM57SD%d", hintNum));
 
 			if (hintNum == 1) {
 				if (GameState.isTakenItemID(kShieldBiochip))
@@ -4635,11 +4635,11 @@ void Mars::doSolve() {
 	}
 }
 
-Common::String Mars::getSoundSpotsName() {
+Common::Path Mars::getSoundSpotsName() {
 	return "Sounds/Mars/Mars Spots";
 }
 
-Common::String Mars::getNavMovieName() {
+Common::Path Mars::getNavMovieName() {
 	return "Images/Mars/Mars.movie";
 }
 

@@ -53,7 +53,7 @@ void Movie::releaseMovie() {
 	setBounds(Common::Rect(0, 0, 0, 0));
 }
 
-void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) {
+void Movie::initFromMovieFile(const Common::Path &fileName, bool transparent) {
 	_transparent = transparent;
 
 	releaseMovie();
@@ -62,14 +62,14 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 		// Replace any colon with an underscore, since only macOS
 		// supports that. See PegasusEngine::detectOpeningClosingDirectory()
 		// for more info.
-		Common::String newName(fileName);
+		Common::String newName(fileName.toString('/'));
 		if (newName.contains(':'))
 			for (uint i = 0; i < newName.size(); i++)
 				if (newName[i] == ':')
 					newName.setChar('_', i);
 
-		if (!_video->loadFile(newName))
-			error("Could not load video '%s'", fileName.c_str());
+		if (!_video->loadFile(Common::Path(newName)))
+			error("Could not load video '%s'", fileName.toString().c_str());
 	}
 
 	Common::Rect bounds(0, 0, _video->getWidth(), _video->getHeight());

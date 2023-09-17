@@ -273,7 +273,7 @@ void AIArea::playAIAreaSequence(const LowerClientSignature, const LowerAreaSigna
 	unlockAI();
 }
 
-bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::String &movieName, bool keepLastFrame, const InputBits interruptFilter) {
+bool AIArea::playAIMovie(const LowerAreaSignature area, const Common::Path &movieName, bool keepLastFrame, const InputBits interruptFilter) {
 	lockAIOut();
 
 	InputDevice.waitInput(interruptFilter);

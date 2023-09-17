@@ -58,15 +58,15 @@ void Panorama::releasePanorama() {
 static const uint32 kPanoramaResType = MKTAG('P', 'a', 'n', 'I'); // Panorama Information.
 static const uint16 kPanoramaResID = 128;
 
-void Panorama::initFromMovieFile(const Common::String &fileName) {
+void Panorama::initFromMovieFile(const Common::Path &fileName) {
 	// First, we need the resource fork for other reasons -- PanI resource
 	Common::MacResManager *resFork = new Common::MacResManager();
 	if (!resFork->open(fileName) || !resFork->hasResFork())
-		error("Could not open the resource fork of '%s'", fileName.c_str());
+		error("Could not open the resource fork of '%s'", fileName.toString().c_str());
 
 	Common::SeekableReadStream *resource = resFork->getResource(kPanoramaResType, kPanoramaResID);
 	if (!resource)
-		error("No panorama information in the resource fork of '%s'", fileName.c_str());
+		error("No panorama information in the resource fork of '%s'", fileName.toString().c_str());
 
 	_panoramaWidth = resource->readUint16BE();
 	_panoramaHeight = resource->readUint16BE();

@@ -828,8 +828,8 @@ Hotspot *NoradAlpha::getItemScreenSpot(Item *item, DisplayElement *element) {
 	return Norad::getItemScreenSpot(item, element);
 }
 
-Common::String NoradAlpha::getEnvScanMovie() {
-	Common::String movieName = Neighborhood::getEnvScanMovie();
+Common::Path NoradAlpha::getEnvScanMovie() {
+	Common::Path movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
 		RoomID room = GameState.getCurrentRoom();
@@ -879,8 +879,8 @@ uint NoradAlpha::getNumHints() {
 	return numHints;
 }
 
-Common::String NoradAlpha::getHintMovie(uint hintNum) {
-	Common::String movieName = Neighborhood::getHintMovie(hintNum);
+Common::Path NoradAlpha::getHintMovie(uint hintNum) {
+	Common::Path movieName = Neighborhood::getHintMovie(hintNum);
 
 	if (movieName.empty()) {
 		switch (GameState.getCurrentRoomAndView()) {
@@ -958,11 +958,11 @@ void NoradAlpha::doSolve() {
 	}
 }
 
-Common::String NoradAlpha::getNavMovieName() {
+Common::Path NoradAlpha::getNavMovieName() {
 	return "Images/Norad Alpha/Norad Alpha.movie";
 }
 
-Common::String NoradAlpha::getSoundSpotsName() {
+Common::Path NoradAlpha::getSoundSpotsName() {
 	return "Sounds/Norad/Norad Alpha Spots";
 }
 

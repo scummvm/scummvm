@@ -41,7 +41,7 @@ public:
 	Movie(const DisplayElementID);
 	~Movie() override;
 
-	virtual void initFromMovieFile(const Common::String &fileName, bool transparent = false);
+	virtual void initFromMovieFile(const Common::Path &fileName, bool transparent = false);
 
 	bool isMovieValid() { return _video != 0; }
 

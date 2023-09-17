@@ -649,11 +649,11 @@ void WSC::setUpAIRules() {
 	}
 }
 
-Common::String WSC::getBriefingMovie() {
+Common::Path WSC::getBriefingMovie() {
 	return "Images/AI/WSC/XWO";
 }
 
-Common::String WSC::getEnvScanMovie() {
+Common::Path WSC::getEnvScanMovie() {
 	RoomID room = GameState.getCurrentRoom();
 
 	if (room >= kWSC01 && room <= kWSC04)
@@ -770,7 +770,7 @@ uint WSC::getNumHints() {
 	return 0;
 }
 
-Common::String WSC::getHintMovie(uint hintNum) {
+Common::Path WSC::getHintMovie(uint hintNum) {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kWSC10, kWest):
 	case MakeRoomView(kWSC28, kWest):
@@ -786,7 +786,7 @@ Common::String WSC::getHintMovie(uint hintNum) {
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
 				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
 				!GameState.getWSCDesignedAntidote())
-			return Common::String::format("Images/AI/WSC/XWPH%d", hintNum);
+			return Common::Path(Common::String::format("Images/AI/WSC/XWPH%d", hintNum));
 
 		return "Images/AI/Globals/XGLOB1C";
 	case MakeRoomView(kWSC61, kEast):
@@ -853,14 +853,14 @@ Common::String WSC::getHintMovie(uint hintNum) {
 	case MakeRoomView(kWSC04, kEast):
 	case MakeRoomView(kWSC04, kWest):
 		// analyzer hint
-		return Common::String::format("Images/AI/WSC/XWPH%d", hintNum);
+		return Common::Path(Common::String::format("Images/AI/WSC/XWPH%d", hintNum));
 	case MakeRoomView(kWSC02Messages, kSouth):
 	case MakeRoomView(kWSC02Morph, kSouth):
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
 				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
 				!GameState.getWSCDesignedAntidote())
 			// analyzer hint
-			return Common::String::format("Images/AI/WSC/XWPH%d", hintNum);
+			return Common::Path(Common::String::format("Images/AI/WSC/XWPH%d", hintNum));
 
 		return "Images/AI/Globals/XGLOB1C";
 	case MakeRoomView(kWSC98, kWest):
@@ -872,12 +872,12 @@ Common::String WSC::getHintMovie(uint hintNum) {
 	return "";
 }
 
-void WSC::prepareForAIHint(const Common::String &movieName) {
+void WSC::prepareForAIHint(const Common::Path &movieName) {
 	if (movieName == "Images/AI/WSC/XW98WH2" && isEventTimerRunning())
 		pauseTimer();
 }
 
-void WSC::cleanUpAfterAIHint(const Common::String &movieName) {
+void WSC::cleanUpAfterAIHint(const Common::Path &movieName) {
 	if (movieName == "Images/AI/WSC/XW98WH2" && isEventTimerRunning())
 		resumeTimer();
 }
@@ -2958,11 +2958,11 @@ void WSC::setSoundFXLevel(const uint16 level) {
 		_welcomeSound.setVolume(level);
 }
 
-Common::String WSC::getNavMovieName() {
+Common::Path WSC::getNavMovieName() {
 	return "Images/World Science Center/WSC.movie";
 }
 
-Common::String WSC::getSoundSpotsName() {
+Common::Path WSC::getSoundSpotsName() {
 	return "Sounds/World Science Center/WSC Spots";
 }
 

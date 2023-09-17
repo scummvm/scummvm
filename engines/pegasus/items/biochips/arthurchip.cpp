@@ -238,7 +238,7 @@ void ArthurChip::clickInArthurHotspot(HotSpotID id) {
 	setItemState(state);
 }
 
-void ArthurChip::playArthurMovie(const Common::String &movieName) {
+void ArthurChip::playArthurMovie(const Common::Path &movieName) {
 	if (g_AIArea) {
 		g_AIArea->playAIMovie(kRightAreaSignature, movieName, false, kHintInterruption);
 		if (movieName != "Images/AI/Globals/XGLOB00" &&
@@ -250,7 +250,7 @@ void ArthurChip::playArthurMovie(const Common::String &movieName) {
 	}
 }
 
-bool ArthurChip::playArthurMovieForEvent(const Common::String &movieName, ArthurEvent event) {
+bool ArthurChip::playArthurMovieForEvent(const Common::Path &movieName, ArthurEvent event) {
 	if (g_vm->isDVD() && g_vm->playerHasItemID(kArthurBiochip) &&
 		g_vm->isChattyArthur() && !Arthur._arthurFlags.getFlag(event)) {
 		Arthur._arthurFlags.setFlag(event, true);

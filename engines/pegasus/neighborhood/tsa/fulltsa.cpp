@@ -733,8 +733,8 @@ void FullTSA::flushGameState() {
 	GameState.setTSAFuseTimeLimit(_utilityFuse.getTimeRemaining());
 }
 
-Common::String FullTSA::getBriefingMovie() {
-	Common::String movieName = Neighborhood::getBriefingMovie();
+Common::Path FullTSA::getBriefingMovie() {
+	Common::Path movieName = Neighborhood::getBriefingMovie();
 
 	if (movieName.empty()) {
 		RoomID room = GameState.getCurrentRoom();
@@ -791,8 +791,8 @@ Common::String FullTSA::getBriefingMovie() {
 	return movieName;
 }
 
-Common::String FullTSA::getEnvScanMovie() {
-	Common::String movieName = Neighborhood::getEnvScanMovie();
+Common::Path FullTSA::getEnvScanMovie() {
+	Common::Path movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
 		switch (GameState.getTSAState()) {
@@ -859,11 +859,11 @@ uint FullTSA::getNumHints() {
 	return numHints;
 }
 
-Common::String FullTSA::getHintMovie(uint hintNum) {
-	Common::String movieName = Neighborhood::getHintMovie(hintNum);
+Common::Path FullTSA::getHintMovie(uint hintNum) {
+	Common::Path movieName = Neighborhood::getHintMovie(hintNum);
 
 	if (movieName.empty())
-		movieName = Common::String::format("Images/AI/TSA/XT20NH%d", hintNum);
+		movieName = Common::Path(Common::String::format("Images/AI/TSA/XT20NH%d", hintNum));
 
 	return movieName;
 }
@@ -3548,11 +3548,11 @@ void FullTSA::updateCursor(const Common::Point where, const Hotspot *cursorSpot)
 	Neighborhood::updateCursor(where, cursorSpot);
 }
 
-Common::String FullTSA::getNavMovieName() {
+Common::Path FullTSA::getNavMovieName() {
 	return "Images/TSA/Full TSA.movie";
 }
 
-Common::String FullTSA::getSoundSpotsName() {
+Common::Path FullTSA::getSoundSpotsName() {
 	return "Sounds/TSA/TSA Spots";
 }
 

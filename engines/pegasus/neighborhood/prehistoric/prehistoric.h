@@ -110,10 +110,10 @@ public:
 	void arriveAt(const RoomID, const DirectionConstant) override;
 	void activateHotspots() override;
 	void clickInHotspot(const Input &, const Hotspot *) override;
-	Common::String getBriefingMovie() override;
-	Common::String getEnvScanMovie() override;
+	Common::Path getBriefingMovie() override;
+	Common::Path getEnvScanMovie() override;
 	uint getNumHints() override;
-	Common::String getHintMovie(uint) override;
+	Common::Path getHintMovie(uint) override;
 
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 	void dropItemIntoRoom(Item *, Hotspot *) override;
@@ -149,8 +149,8 @@ protected:
 
 	FlagsArray<byte, kNumPrehistoricPrivateFlags> _privateFlags;
 
-	Common::String getNavMovieName() override;
-	Common::String getSoundSpotsName() override;
+	Common::Path getNavMovieName() override;
+	Common::Path getSoundSpotsName() override;
 };
 
 } // End of namespace Pegasus

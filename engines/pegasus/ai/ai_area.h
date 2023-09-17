@@ -115,7 +115,7 @@ public:
 	// For PlayAIMovie, it is assumed that the client is the AI itself.
 	// This is used to play AI messages as well as Optical Memory video.
 	// Returns true if the movie played all the way through, false if it was interrupted.
-	bool playAIMovie(const LowerAreaSignature, const Common::String &movieName, bool keepLastFrame, const InputBits);
+	bool playAIMovie(const LowerAreaSignature, const Common::Path &movieName, bool keepLastFrame, const InputBits);
 
 	// Loop the requested sequence indefinitely.
 	void loopAIAreaSequence(const LowerClientSignature, const LowerAreaSignature, const TimeValue, const TimeValue);
