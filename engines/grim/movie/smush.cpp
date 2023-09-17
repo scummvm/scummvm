@@ -56,14 +56,21 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 	if (!_demo)
 		success = _videoDecoder->loadStream(g_resourceloader->openNewStreamFile(filename.c_str()));
 	else
-		success = _videoDecoder->loadFile(filename);
+		success = _videoDecoder->loadFile(Common::Path(filename));
 
 	if (!success) {
 #if defined (USE_THEORADEC)
-		Common::String theoraFilename = "MoviesHD/" + filename;
-		theoraFilename.erase(theoraFilename.size() - 4);
-		theoraFilename += ".ogv";
-		debug(2, "Trying to open %s", theoraFilename.c_str());
+		Common::Path theoraFilename(filename);
+
+		Common::String baseName(theoraFilename.baseName());
+		baseName.erase(baseName.size() - 4);
+		baseName += ".ogv";
+
+		theoraFilename = "MoviesHD";
+		theoraFilename.join(theoraFilename.getParent());
+		theoraFilename.appendComponent(baseName);
+
+		debug(2, "Trying to open %s", theoraFilename.toString().c_str());
 		success = _theoraDecoder->loadFile(theoraFilename);
 		_videoDecoder = _theoraDecoder;
 		_currentVideoIsTheora = true;

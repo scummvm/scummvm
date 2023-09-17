@@ -104,7 +104,7 @@ bool BinkPlayer::loadFile(const Common::String &filename) {
 		bool ret = MoviePlayer::loadFile(_fname);
 
 		// Load subtitles from adjacent .sub file, if present
-		Common::SeekableReadStream *substream = SearchMan.createReadStreamForMember(subname);
+		Common::SeekableReadStream *substream = SearchMan.createReadStreamForMember(Common::Path(subname));
 		if (substream) {
 			TextSplitter tsSub("", substream);
 			while (!tsSub.isEof()) {
@@ -126,7 +126,7 @@ bool BinkPlayer::loadFile(const Common::String &filename) {
 
 	_fname += ".m4b";
 
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_fname);
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(Common::Path(_fname));
 	if (!stream) {
 		warning("BinkPlayer::loadFile(): Can't create stream for: %s", _fname.c_str());
 		return false;

@@ -66,14 +66,13 @@ LangFilter::~LangFilter() {
 }
 
 bool LangFilter::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
 	if (!_arc)
 		return false;
 
-	return (_arc->hasFile(kLanguages1[_lang] + name)) ||
-			(_arc->hasFile(kLanguages1[kCommon] + name)) ||
-			(_arc->hasFile(kLanguages2[_lang] + name)) ||
-			(_arc->hasFile(kLanguages2[kCommon] + name));
+	return (_arc->hasFile(Common::Path(kLanguages1[_lang]).appendInPlace(path))) ||
+			(_arc->hasFile(Common::Path(kLanguages1[kCommon]).appendInPlace(path))) ||
+			(_arc->hasFile(Common::Path(kLanguages2[_lang]).appendInPlace(path))) ||
+			(_arc->hasFile(Common::Path(kLanguages2[kCommon]).appendInPlace(path)));
 }
 
 int LangFilter::listMembers(Common::ArchiveMemberList &list) const {
@@ -102,7 +101,7 @@ int LangFilter::listMembers(Common::ArchiveMemberList &list) const {
 		} else
 			continue;
 		name.toLowercase();
-		list.push_back(getMember(name));
+		list.push_back(getMember(Common::Path(name)));
 		++num;
 	}
 
@@ -114,18 +113,17 @@ const Common::ArchiveMemberPtr LangFilter::getMember(const Common::Path &path) c
 }
 
 Common::SeekableReadStream *LangFilter::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	if (!_arc)
 		return nullptr;
 
 	// Search the right file
-	Common::String fullName;
-	Common::List<Common::String> namesToTry;
-	namesToTry.push_front(kLanguages1[_lang] + name);
-	namesToTry.push_front(kLanguages1[kCommon] + name);
-	namesToTry.push_front(kLanguages2[_lang] + name);
-	namesToTry.push_front(kLanguages2[kCommon] + name);
-	for (Common::List<Common::String>::const_iterator it = namesToTry.begin(); it != namesToTry.end(); ++it)
+	Common::Path fullName;
+	Common::List<Common::Path> pathsToTry;
+	pathsToTry.push_front(Common::Path(kLanguages1[_lang]).appendInPlace(path));
+	pathsToTry.push_front(Common::Path(kLanguages1[kCommon]).appendInPlace(path));
+	pathsToTry.push_front(Common::Path(kLanguages2[_lang]).appendInPlace(path));
+	pathsToTry.push_front(Common::Path(kLanguages2[kCommon]).appendInPlace(path));
+	for (Common::List<Common::Path>::const_iterator it = pathsToTry.begin(); it != pathsToTry.end(); ++it)
 		if (_arc->hasFile(*it)) {
 			fullName = *it;
 			break;

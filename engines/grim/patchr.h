@@ -35,7 +35,7 @@ namespace Grim {
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
  */
-Common::SeekableReadStream *wrapPatchedFile(Common::SeekableReadStream *rs, const Common::String &filename);
+Common::SeekableReadStream *wrapPatchedFile(Common::SeekableReadStream *rs, const Common::Path &filename);
 
 } // end of namespace Grim
 
