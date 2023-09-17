@@ -105,8 +105,8 @@ Registry::Registry() :
 
 	// Read settings
 	_spewOnError.setString(ConfMan.get("spew_on_error"));
-	_dataPath.setString(ConfMan.get("path"));
-	_savePath.setString(ConfMan.get("savepath"));
+	_dataPath.setString(ConfMan.getPath("path").toString(Common::Path::kNativeSeparator));
+	_savePath.setString(ConfMan.getPath("savepath").toString(Common::Path::kNativeSeparator));
 	_develMode.setBool(ConfMan.getBool("game_devel_mode"));
 	_lastSet.setString(ConfMan.get("last_set"));
 	_musicVolume.setInt(convertVolumeFromMixer(ConfMan.getInt("music_volume")));
@@ -293,8 +293,8 @@ void Registry::save() {
 		return;
 
 	ConfMan.set("spew_on_error", _spewOnError.getString());
-	ConfMan.set("path", _dataPath.getString());
-	ConfMan.set("savepath", _savePath.getString());
+	ConfMan.setPath("path", Common::Path(_dataPath.getString(), Common::Path::kNativeSeparator));
+	ConfMan.setPath("savepath", Common::Path(_savePath.getString(), Common::Path::kNativeSeparator));
 	if (ConfMan.hasKey("last_set")) {
 		ConfMan.set("last_set", _lastSet.getString());
 	}

@@ -182,7 +182,7 @@ bool MoviePlayer::play(const Common::String &filename, bool looping, int x, int 
 }
 
 bool MoviePlayer::loadFile(const Common::String &filename) {
-	return _videoDecoder->loadFile(filename);
+	return _videoDecoder->loadFile(Common::Path(filename));
 }
 
 void MoviePlayer::saveState(SaveGame *state) {

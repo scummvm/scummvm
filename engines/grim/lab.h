@@ -34,12 +34,12 @@ class Lab;
 
 class LabEntry : public Common::ArchiveMember {
 	Lab *_parent;
-	Common::String _name;
+	Common::Path _name;
 	uint32 _offset, _len;
 public:
-	LabEntry(const Common::String &name, uint32 offset, uint32 len, Lab *parent);
-	Common::String getName() const override { return _name; }
-	Common::String getFileName() const override { return _name; }
+	LabEntry(const Common::Path &name, uint32 offset, uint32 len, Lab *parent);
+	Common::String getName() const override { return _name.baseName(); }
+	Common::String getFileName() const override { return _name.baseName(); }
 	Common::Path getPathInArchive() const override { return _name; }
 	Common::SeekableReadStream *createReadStream() const override;
 	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override { return nullptr; }
@@ -48,7 +48,7 @@ public:
 
 class Lab : public Common::Archive {
 public:
-	bool open(const Common::String &filename, bool keepStream = false);
+	bool open(const Common::Path &filename, bool keepStream = false);
 	Lab();
 	~Lab();
 	// Common::Archive implementation
@@ -61,9 +61,9 @@ private:
 	void parseGrimFileTable(Common::File *_f);
 	void parseMonkey4FileTable(Common::File *_f);
 
-	Common::String _labFileName;
+	Common::Path _labFileName;
 	typedef Common::SharedPtr<LabEntry> LabEntryPtr;
-	typedef Common::HashMap<Common::String, LabEntryPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;
+	typedef Common::HashMap<Common::Path, LabEntryPtr, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> LabMap;
 	LabMap _entries;
 	Common::SeekableReadStream *_stream;
 };
