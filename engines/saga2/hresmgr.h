@@ -112,7 +112,7 @@ protected:
 
 public:
 	bool            _valid;
-	Common::String  _filename;
+	Common::Path    _filename;
 
 	hResContext();
 	hResContext(hResContext *sire, hResID id, const char []);
@@ -137,8 +137,8 @@ public:
 	bool        skip(uint32 amount);
 	bool        get(hResID id, void *buffer, uint32 size);
 	uint32       getSize(hResID id, const char desc[]);
-	byte       *loadResource(hResID id, const char desc[], Common::String filename = "");
-	byte       *loadIndexResource(int16 index, const char desc[], Common::String filename = "");
+	byte       *loadResource(hResID id, const char desc[], const Common::Path &filename = Common::Path());
+	byte       *loadIndexResource(int16 index, const char desc[], const Common::Path &filename = Common::Path());
 	void        releaseIndexData();
 	Common::File     *resFileHandle() {
 		return _handle;

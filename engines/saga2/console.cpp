@@ -427,7 +427,7 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 		sur.create(drawMap._size.x, drawMap._size.y, Graphics::PixelFormat::createFormatCLUT8());
 		sur.setPixels(drawMap._data);
 
-		Common::String pngFile = Common::String::format("%s-mapdump.png", _vm->getMetaEngine()->getName());
+		Common::Path pngFile(Common::String::format("%s-mapdump.png", _vm->getMetaEngine()->getName()));
 		Common::DumpFile dump;
 		dump.open(pngFile);
 

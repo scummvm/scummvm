@@ -41,7 +41,7 @@ void Saga2Engine::startVideo(const char *fileName, int x, int y) {
 	if (!_smkDecoder)
 		_smkDecoder = new Video::SmackerDecoder();
 
-	if (!_smkDecoder->loadFile(fname)) {
+	if (!_smkDecoder->loadFile(Common::Path(fname))) {
 		warning("startVideo: Cannot open file %s", fname.c_str());
 
 		return;

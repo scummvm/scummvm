@@ -61,7 +61,7 @@ Saga2Engine *g_vm;
 
 Saga2Engine::Saga2Engine(OSystem *syst, const SAGA2GameDescription *desc)
 	: Engine(syst), _gameDescription(desc) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("saga2");
