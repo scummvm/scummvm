@@ -12276,6 +12276,47 @@ static const uint16 phant1MacVideoQualityPatch[] = {
 	PATCH_END
 };
 
+// In chapter 5, clicking on the dragon projection in room 16200 locks up the
+//  game if ego is standing in front of it. sPassageReveal sets ego's heading
+//  based on room position, but it's missing a handler for position 9. This bug
+//  occurs the first time the passage is opened. sPassageOpen is used afterwards
+//  and it has the missing code.
+//
+// We fix this by adding a default handler for position 9 to sPassageReveal.
+//  To make room, we combine the identical handlers for positions 11 and 12.
+//
+// Applies to: All versions
+// Responsible method: sPassageReveal:changeState(0)
+// Fixes bug: #14568
+static const uint16 phant1DragonPassageSignature[] = {
+	0x1a,                               // eq? [ global125 == 11 ]
+	SIG_ADDTOOFFSET(+16),
+	0x3c,                               // dup
+	0x35, SIG_MAGICDWORD, 0x0c,         // ldi 0c
+	0x1a,                               // eq? [ global125 == 12 ]
+	0x31, 0x0c,                         // bnt 0c
+	0x38, SIG_SELECTOR16(setHeading),   // pushi setHeading
+	0x7a,                               // push2
+	0x39, 0x2d,                         // pushi 2d
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ ego setHeading: 45 self ]
+	SIG_END
+};
+
+static const uint16 phant1DragonPassagePatch[] = {
+	0x20,                               // ge? [ global125 >= 11]
+	PATCH_ADDTOOFFSET(+16),
+	0x38, PATCH_SELECTOR16(setHeading), // pushi setHeading
+	0x38, PATCH_UINT16(0x0003),         // pushi 0003
+	0x38, PATCH_UINT16(0x002d),         // pushi 002d
+	0x7c,                               // pushSelf
+	0x38, PATCH_UINT16(0x000f),         // pushi 000f
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x000a),         // send 0a [ ego setHeading: 45 self 15 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,     0, "mac: set high video quality",                 1, phant1MacVideoQualitySignature,  phant1MacVideoQualityPatch },
@@ -12286,6 +12327,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,   901, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   901, "fix delete save",                             1, phant1DeleteSaveSignature,       phant1DeleteSavePatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
+	{  true, 16200, "fix dragon passage",                          1, phant1DragonPassageSignature,    phant1DragonPassagePatch },
 	{  true, 20100, "fix basement fast-forward",                   1, phant1BasementFastForwardSignature, phant1BasementFastForwardPatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
