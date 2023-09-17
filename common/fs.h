@@ -263,7 +263,7 @@ public:
 	 *
 	 * @return Pointer to the stream object, nullptr in case of a failure.
 	 */
-	SeekableReadStream *createReadStream() const;
+	SeekableReadStream *createReadStream() const override;
 
 	/**
 	 * Create a SeekableReadStream instance corresponding to an alternate stream
@@ -273,7 +273,7 @@ public:
 	 *
 	 * @return Pointer to the stream object, nullptr in case of a failure.
 	 */
-	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const;
+	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const override;
 
 	/**
 	 * Create a WriteStream instance corresponding to the file
