@@ -63,6 +63,7 @@ public:
 		int number = 0;
 		CueTrackType type;
 		String title;
+		String performer;
 		Array<int> indices;
 	};
 

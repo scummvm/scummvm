@@ -128,7 +128,7 @@ int CueSheet::parseMSF(const char *str) {
 	if (sscanf(str, "%d:%d:%d", &min, &sec, &frm) != 3)
 		warning("Malformed MSF at line %d: %s", _lineNum, str);
 
-	return frm + 75 * sec + 75 * 60 * min;
+	return frm + 75 * (sec + 60 * min);
 }
 
 LookupTable fileTypes[] = {
@@ -255,6 +255,10 @@ void CueSheet::parseTracksContext(const char *line) {
 		debug(5, "Index: %d, frames: %d", indexNum, frames);
 	} else if (command == "FILE") {
 		parseHeaderContext(line);
+	} else if (command == "PERFORMER") {
+		_files[_currentFile].tracks[_currentTrack].performer = nexttok(s, &s);
+
+		debug(5, "Track performer: %s", _files[_currentFile].tracks[_currentTrack].performer.c_str());
 	} else {
 		warning("CueSheet: Unprocessed track command %s", command.c_str());
 	}
