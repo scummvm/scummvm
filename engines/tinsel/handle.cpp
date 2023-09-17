@@ -174,7 +174,7 @@ void Handle::OpenCDGraphFile() {
 
 	_cdGraphStream = new Common::File;
 	if (!_cdGraphStream->open(_szCdPlayFile))
-		error(CANNOT_FIND_FILE, _szCdPlayFile.c_str());
+		error(CANNOT_FIND_FILE, _szCdPlayFile.toString().c_str());
 }
 
 void Handle::LoadCDGraphData(MEMHANDLE *pH) {

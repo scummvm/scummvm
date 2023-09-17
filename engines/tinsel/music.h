@@ -177,7 +177,7 @@ protected:
 	int32 _scriptIndex;
 	SCNHANDLE _hScript;
 	SCNHANDLE _hSegment;
-	Common::String _filename;
+	Common::Path _filename;
 
 	uint8 _volume;
 
