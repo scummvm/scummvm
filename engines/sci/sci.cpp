@@ -141,7 +141,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	assert(g_sci == nullptr);
 	g_sci = this;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");	// KQ6 hi-res portraits
 	SearchMan.addSubDirectoryMatching(gameDataDir, "aud");	// resource.aud and audio files
@@ -1053,14 +1053,14 @@ void SciEngine::updateSoundMixerVolumes() {
 }
 
 void SciEngine::loadMacExecutable() {
-	Common::String filename = _resMan->getMacExecutableName();
+	Common::Path filename = _resMan->getMacExecutableName();
 	if (filename.empty())
 		return;
 
 	if (!_macExecutable.open(filename) || !_macExecutable.hasResFork()) {
 		// KQ6/Freddy require the executable to load their icon bar palettes
 		if (hasMacIconBar())
-			error("Could not load Mac resource fork '%s'", filename.c_str());
+			error("Could not load Mac resource fork '%s'", filename.toString().c_str());
 	}
 }
 
@@ -1086,8 +1086,8 @@ void SciEngine::loadMacFonts() {
 				_gfxMacFontManager = nullptr;
 			}
 		} else {
-			Common::String filename = _resMan->getMacExecutableName();
-			warning("Macintosh executable \"%s\" not found, using SCI fonts", filename.c_str());
+			Common::Path filename = _resMan->getMacExecutableName();
+			warning("Macintosh executable \"%s\" not found, using SCI fonts", filename.toString().c_str());
 		}
 		break;
 	case GID_LSL6:

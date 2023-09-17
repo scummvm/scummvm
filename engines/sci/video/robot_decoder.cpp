@@ -361,12 +361,12 @@ RobotDecoder::~RobotDecoder() {
 #pragma mark RobotDecoder - Initialization
 
 void RobotDecoder::initStream(const GuiResourceId robotId) {
-	const Common::String fileName = Common::String::format("%d.rbt", robotId);
+	const Common::Path fileName(Common::String::format("%d.rbt", robotId));
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
 	_fileOffset = 0;
 
 	if (stream == nullptr) {
-		error("Unable to open robot file %s", fileName.c_str());
+		error("Unable to open robot file %s", fileName.toString().c_str());
 	}
 
 	_robotId = robotId;
@@ -374,7 +374,7 @@ void RobotDecoder::initStream(const GuiResourceId robotId) {
 	const uint16 id = stream->readUint16LE();
 	// TODO: id 0x3d for PQ:SWAT demo?
 	if (id != 0x16) {
-		error("Invalid robot file %s", fileName.c_str());
+		error("Invalid robot file %s", fileName.toString().c_str());
 	}
 
 	// Determine the robot file's endianness by examining the version field.
@@ -388,7 +388,7 @@ void RobotDecoder::initStream(const GuiResourceId robotId) {
 	_stream = new Common::SeekableReadStreamEndianWrapper(stream, bigEndian, DisposeAfterUse::YES);
 	_stream->seek(2, SEEK_SET);
 	if (_stream->readUint32BE() != MKTAG('S', 'O', 'L', 0)) {
-		error("Resource %s is not Robot type!", fileName.c_str());
+		error("Resource %s is not Robot type!", fileName.toString().c_str());
 	}
 }
 

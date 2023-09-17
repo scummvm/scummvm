@@ -501,7 +501,7 @@ reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
 	// Used by script 90 of MUMG Deluxe from the main menu to toggle between
 	// English and Spanish in some versions and English and Spanish and
 	// French and German in others.
-	const Common::String audioDirectory = s->_segMan->getString(argv[0]);
+	const Common::Path audioDirectory(s->_segMan->getString(argv[0]));
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		g_sci->getResMan()->changeMacAudioDirectory(audioDirectory);
 	} else {

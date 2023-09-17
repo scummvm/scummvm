@@ -215,7 +215,7 @@ private:
 
 	SciEngine *_engine;
 	DebugState &_debugState;
-	Common::String _videoFile;
+	Common::Path _videoFile;
 	int _videoFrameDelay;
 	uint16 _gameFlagsGlobal;
 };

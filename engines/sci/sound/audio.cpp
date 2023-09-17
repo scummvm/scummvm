@@ -150,7 +150,7 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 			if (fileName[i] == '\\')
 				fileName.setChar('/', i);
 		}
-		sciAudioFile->open("sciAudio/" + fileName);
+		sciAudioFile->open(Common::Path("sciAudio/" + fileName, '/'));
 
 		Audio::RewindableAudioStream *audioStream = nullptr;
 

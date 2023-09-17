@@ -191,7 +191,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		// If no matching savestate exists: fall back to reading from a regular
 		// file
 		if (!inFile)
-			inFile = SearchMan.createReadStreamForMember(englishName);
+			inFile = SearchMan.createReadStreamForMember(Common::Path(englishName));
 
 		if (mode == kFileOpenModeOpenOrFail && !inFile) {
 			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());
@@ -213,7 +213,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		// If no matching savestate exists: fall back to reading from a regular
 		// file
 		if (!inFile)
-			inFile = SearchMan.createReadStreamForMember(englishName);
+			inFile = SearchMan.createReadStreamForMember(Common::Path(englishName));
 
 		if (!inFile)
 			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());

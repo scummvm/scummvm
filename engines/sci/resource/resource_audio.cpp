@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, const Common::String &name, ResourceSource *map, int volNum)
+AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, const Common::Path &name, ResourceSource *map, int volNum)
 	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
 
 	_audioCompressionType = 0;
@@ -55,7 +55,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		_audioCompressionType = compressionType;
 		const uint32 numEntries = fileStream->readUint32LE();
 		if (!numEntries) {
-			error("Compressed audio volume %s has no relocation table entries", name.c_str());
+			error("Compressed audio volume %s has no relocation table entries", name.toString().c_str());
 		}
 
 		CompressedTableEntry *lastEntry = nullptr;
@@ -161,7 +161,7 @@ bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
 }
 
 void ResourceManager::addNewGMPatch(SciGameId gameId) {
-	Common::String gmPatchFile;
+	const char *gmPatchFile = nullptr;
 
 	switch (gameId) {
 	case GID_ECOQUEST:
@@ -189,17 +189,17 @@ void ResourceManager::addNewGMPatch(SciGameId gameId) {
 		gmPatchFile = "TALEGM.PAT";
 		break;
 	default:
-		break;
+		return;
 	}
 
-	if (!gmPatchFile.empty() && Common::File::exists(gmPatchFile)) {
+	if (Common::File::exists(gmPatchFile)) {
 		ResourceSource *psrcPatch = new PatchResourceSource(gmPatchFile);
 		processPatch(psrcPatch, kResourceTypePatch, 4);
 	}
 }
 
 void ResourceManager::addNewD110Patch(SciGameId gameId) {
-	Common::String patchFile;
+	const char *patchFile = nullptr;
 
 	switch (gameId) {
 	case GID_CAMELOT:
@@ -231,16 +231,16 @@ void ResourceManager::addNewD110Patch(SciGameId gameId) {
 		break;
 	default:
 		// There's also a CB.000, but unfortunately that file contains an MT-32 patch
-		break;
+		return;
 	}
 
-	if (!patchFile.empty() && Common::File::exists(patchFile)) {
+	if (Common::File::exists(patchFile)) {
 		ResourceSource *psrcPatch = new PatchResourceSource(patchFile);
 		processPatch(psrcPatch, kResourceTypePatch, 0);
 	}
 }
 
-void ResourceManager::processWavePatch(ResourceId resourceId, const Common::String &name) {
+void ResourceManager::processWavePatch(ResourceId resourceId, const Common::Path &name) {
 	ResourceSource *resSrc = new WaveResourceSource(name);
 	Common::File file;
 	file.open(name);
@@ -248,7 +248,7 @@ void ResourceManager::processWavePatch(ResourceId resourceId, const Common::Stri
 	updateResource(resourceId, resSrc, 0, file.size(), name);
 	_sources.push_back(resSrc);
 
-	debugC(1, kDebugLevelResMan, "Patching %s - OK", name.c_str());
+	debugC(1, kDebugLevelResMan, "Patching %s - OK", name.toString().c_str());
 }
 
 void ResourceManager::readWaveAudioPatches() {
@@ -257,10 +257,10 @@ void ResourceManager::readWaveAudioPatches() {
 	SearchMan.listMatchingMembers(files, "*.wav");
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		Common::String name = (*x)->getName();
+		Common::String name = (*x)->getFileName();
 
 		if (Common::isDigit(name[0]))
-			processWavePatch(ResourceId(kResourceTypeAudio, atoi(name.c_str())), name);
+			processWavePatch(ResourceId(kResourceTypeAudio, atoi(name.c_str())), (*x)->getPathInArchive());
 	}
 }
 
@@ -277,9 +277,9 @@ void ResourceManager::readAIFFAudioPatches() {
 	SearchMan.listMatchingMembers(files, "####");
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		Common::String name = (*x)->getName();
+		Common::String name = (*x)->getFileName();
 
-		processWavePatch(ResourceId(kResourceTypeAudio, atoi(name.c_str())), name);
+		processWavePatch(ResourceId(kResourceTypeAudio, atoi(name.c_str())), (*x)->getPathInArchive());
 	}
 }
 #endif
@@ -395,7 +395,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 	Common::SeekableReadStream *fileStream = getVolumeFile(src);
 
 	if (!fileStream) {
-		warning("Failed to open file stream for %s", src->getLocationName().c_str());
+		warning("Failed to open file stream for %s", src->getLocationName().toString().c_str());
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 	}
 
@@ -664,7 +664,7 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 		uint32 size = file.readUint32LE();
 
 		if (file.eos() || file.err()) {
-			warning("Error while reading %s", map->getLocationName().c_str());
+			warning("Error while reading %s", map->getLocationName().toString().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
 
@@ -731,8 +731,8 @@ void ResourceManager::setAudioLanguage(int language) {
 		_audioMapSCI1 = nullptr;
 	}
 
-	Common::String filename = Common::String::format("AUDIO%03d", language);
-	Common::String fullname = filename + ".MAP";
+	Common::Path filename(Common::String::format("AUDIO%03d", language));
+	Common::Path fullname = filename.append(".MAP");
 	if (!Common::File::exists(fullname)) {
 		warning("No audio map found for language %i", language);
 		return;
@@ -742,13 +742,13 @@ void ResourceManager::setAudioLanguage(int language) {
 
 	// Search for audio volumes for this language and add them to the source list
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, filename + ".0##");
+	SearchMan.listMatchingMembers(files, filename.append(".0##"));
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String name = (*x)->getName();
+		const Common::String name = (*x)->getFileName();
 		const char *dot = strrchr(name.c_str(), '.');
 		int number = atoi(dot + 1);
 
-		addSource(new AudioVolumeResourceSource(this, name, _audioMapSCI1, number));
+		addSource(new AudioVolumeResourceSource(this, (*x)->getPathInArchive(), _audioMapSCI1, number));
 	}
 
 	scanNewSources();
@@ -1154,15 +1154,11 @@ bool ResourceManager::addAudioSources() {
 	return true;
 }
 
-void ResourceManager::changeAudioDirectory(Common::String path) {
-	if (!path.empty()) {
-		path += "/";
-	}
-
-	const Common::String resAudPath = path + "RESOURCE.AUD";
+void ResourceManager::changeAudioDirectory(const Common::Path &path) {
+	const Common::Path resAudPath = path.join("RESOURCE.AUD");
 
 	if (!SearchMan.hasFile(resAudPath)) {
-		error("Could not find %s", resAudPath.c_str());
+		error("Could not find %s", resAudPath.toString().c_str());
 	}
 
 	// When a IntMapResourceSource is scanned, it will not update existing
@@ -1207,7 +1203,7 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 		}
 
 		AudioVolumeResourceSource *volSource = dynamic_cast<AudioVolumeResourceSource *>(*it);
-		if (volSource && volSource->getLocationName().contains("RESOURCE.AUD")) {
+		if (volSource && volSource->getLocationName().baseName() == "RESOURCE.AUD") {
 			delete volSource;
 			it = _sources.erase(it);
 			continue;
@@ -1219,13 +1215,13 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 	// # is used as the first pattern character to avoid matching non-audio maps
 	// like RESOURCE.MAP
 	Common::ArchiveMemberList mapFiles;
-	SearchMan.listMatchingMembers(mapFiles, path + "#*.MAP");
+	SearchMan.listMatchingMembers(mapFiles, path.join("#*.MAP"));
 
 	for (Common::ArchiveMemberList::const_iterator it = mapFiles.begin(); it != mapFiles.end(); ++it) {
 		const Common::ArchiveMemberPtr &file = *it;
 		assert(file);
 
-		const Common::String fileName = file->getName();
+		const Common::String fileName = file->getFileName();
 		const int mapNo = atoi(fileName.c_str());
 
 		// Sound effects are the same across all audio directories, so ignore
@@ -1234,7 +1230,7 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 			continue;
 		}
 
-		ResourceSource *newSource = new PatchResourceSource(path + fileName);
+		ResourceSource *newSource = new PatchResourceSource(path.appendComponent(fileName));
 		processPatch(newSource, kResourceTypeMap, mapNo);
 		Resource *mapResource = _resMap.getVal(ResourceId(kResourceTypeMap, mapNo));
 		assert(mapResource);
@@ -1246,7 +1242,7 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 	scanNewSources();
 }
 
-void ResourceManager::changeMacAudioDirectory(Common::String path) {
+void ResourceManager::changeMacAudioDirectory(const Common::Path &path_) {
 	// delete all Audio36 resources so that they can be replaced with
 	//  different patch files from the new directory.
 	for (ResourceMap::iterator it = _resMap.begin(); it != _resMap.end(); ++it) {
@@ -1271,21 +1267,22 @@ void ResourceManager::changeMacAudioDirectory(Common::String path) {
 		}
 	}
 
+	Common::Path path(path_);
 	if (path.empty()) {
 		path = "english";
 	}
-	path = "voices/" + path + "/";
+	path = Common::Path("voices").join(path);
 
 	// add all Audio36 wave patch files from language directory
 	Common::ArchiveMemberList audio36Files;
-	SearchMan.listMatchingMembers(audio36Files, path + "A???????.???");
+	SearchMan.listMatchingMembers(audio36Files, path.join("A???????.???"));
 	for (Common::ArchiveMemberList::const_iterator it = audio36Files.begin(); it != audio36Files.end(); ++it) {
 		const Common::ArchiveMemberPtr &file = *it;
 		assert(file);
 
-		const Common::String fileName = file->getName();
-		ResourceId resource36 = convertPatchNameBase36(kResourceTypeAudio36, fileName);
-		processWavePatch(resource36, path + fileName);
+		const Common::Path fileName = file->getPathInArchive();
+		ResourceId resource36 = convertPatchNameBase36(kResourceTypeAudio36, file->getFileName());
+		processWavePatch(resource36, path.join(fileName));
 	}
 }
 

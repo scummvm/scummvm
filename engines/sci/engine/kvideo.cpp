@@ -129,7 +129,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	bool switchedGraphicsMode = false;
 
 	if (argv[0].isPointer()) {
-		Common::String filename = s->_segMan->getString(argv[0]);
+		Common::Path filename(s->_segMan->getString(argv[0]));
 
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 			// Mac QuickTime
@@ -156,7 +156,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 			videoDecoder.reset(new Video::QuickTimeDecoder());
 			if (!videoDecoder->loadFile(filename))
-				error("Could not open '%s'", filename.c_str());
+				error("Could not open '%s'", filename.toString().c_str());
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
@@ -164,7 +164,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			videoDecoder.reset(new SEQDecoder(argv[1].toUint16()));
 
 			if (!videoDecoder->loadFile(filename)) {
-				warning("Failed to open movie file %s", filename.c_str());
+				warning("Failed to open movie file %s", filename.toString().c_str());
 				videoDecoder.reset();
 			}
 		}
@@ -211,7 +211,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef ENABLE_SCI32
 reg_t kShowMovie32(EngineState *s, int argc, reg_t *argv) {
-	Common::String fileName = s->_segMan->getString(argv[0]);
+	Common::Path fileName(s->_segMan->getString(argv[0]));
 	const int16 numTicks = argv[1].toSint16();
 	const int16 x = argc > 3 ? argv[2].toSint16() : 0;
 	const int16 y = argc > 3 ? argv[3].toSint16() : 0;
@@ -315,7 +315,7 @@ reg_t kShowMovieWinOpen(EngineState *s, int argc, reg_t *argv) {
 		//--argc;
 	}
 
-	const Common::String fileName = s->_segMan->getString(argv[0]);
+	const Common::Path fileName(s->_segMan->getString(argv[0]));
 	return make_reg(0, g_sci->_video32->getAVIPlayer().open(fileName));
 }
 
@@ -394,7 +394,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayVMDOpen(EngineState *s, int argc, reg_t *argv) {
-	const Common::String fileName = s->_segMan->getString(argv[0]);
+	const Common::Path fileName(s->_segMan->getString(argv[0]));
 	// argv[1] is an optional cache size argument which we do not use
 	// const uint16 cacheSize = argc > 1 ? CLIP<int16>(argv[1].toSint16(), 16, 1024) : 0;
 	const VMDPlayer::OpenFlags flags = argc > 2 ? (VMDPlayer::OpenFlags)argv[2].toUint16() : VMDPlayer::kOpenFlagNone;

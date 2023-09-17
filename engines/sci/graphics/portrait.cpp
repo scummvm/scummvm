@@ -83,7 +83,7 @@ void Portrait::init() {
 	// 4 bytes appended, seem to be random
 	//   9E11120E for alex
 	//   9E9E9E9E for vizier
-	Common::String fileName = "actors/" + _resourceName + ".bin";
+	Common::Path fileName("actors/" + _resourceName + ".bin", '/');
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(fileName);
 
 	if (!file) {
@@ -92,7 +92,7 @@ void Portrait::init() {
 		if (!file)
 			error("portrait %s.bin not found", _resourceName.c_str());
 	}
-	_fileData->allocateFromStream(*file, Common::kSpanMaxSize, fileName);
+	_fileData->allocateFromStream(*file, Common::kSpanMaxSize, fileName.toString('/'));
 	delete file;
 
 	if (strncmp((const char *)_fileData->getUnsafeDataAt(0, 3), "WIN", 3)) {

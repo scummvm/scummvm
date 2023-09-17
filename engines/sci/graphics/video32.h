@@ -25,10 +25,10 @@
 #ifdef USE_RGB_COLOR
 #include "common/config-manager.h" // for ConfMan
 #endif
+#include "common/path.h"          // for Path
 #include "common/ptr.h"
 #include "common/rect.h"          // for Rect
 #include "common/scummsys.h"      // for int16, uint8, uint16, int32
-#include "common/str.h"           // for String
 #include "sci/engine/vm_types.h"  // for reg_t
 #include "sci/video/robot_decoder.h" // for RobotDecoder
 #include "sci/sound/audio32.h"    // for Audio32::kMaxVolume
@@ -93,7 +93,7 @@ protected:
 	 * ensure that the current system is actually capable of playing back the
 	 * video.
 	 */
-	bool open(const Common::String &fileName);
+	bool open(const Common::Path &fileName);
 
 	/**
 	 * Reinitializes the system hardware surface for playback of high-quality
@@ -219,7 +219,7 @@ public:
 	 * Plays a SEQ animation with the given file name, with each frame being
 	 * displayed for `numTicks` ticks.
 	 */
-	void play(const Common::String &fileName, const int16 numTicks, const int16 x, const int16 y);
+	void play(const Common::Path &fileName, const int16 numTicks, const int16 x, const int16 y);
 };
 
 #pragma mark -
@@ -249,7 +249,7 @@ public:
 	/**
 	 * Opens a stream to an AVI resource.
 	 */
-	IOStatus open(const Common::String &fileName);
+	IOStatus open(const Common::Path &fileName);
 
 	/**
 	 * Initializes the AVI rendering parameters for the current AVI. This must
@@ -300,7 +300,7 @@ public:
 	/**
 	 * Plays a QuickTime animation with the given file name
 	 */
-	void play(const Common::String& fileName);
+	void play(const Common::Path &fileName);
 };
 
 #pragma mark -
@@ -355,7 +355,7 @@ public:
 	/**
 	 * Opens a stream to a VMD resource.
 	 */
-	IOStatus open(const Common::String &fileName, const OpenFlags flags);
+	IOStatus open(const Common::Path &fileName, const OpenFlags flags);
 
 	/**
 	 * Initializes the VMD rendering parameters for the current VMD. This must
