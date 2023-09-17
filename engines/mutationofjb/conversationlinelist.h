@@ -22,8 +22,9 @@
 #ifndef MUTATIONOFJB_CONVERSATIONLINELIST_H
 #define MUTATIONOFJB_CONVERSATIONLINELIST_H
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/path.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 
@@ -50,11 +51,11 @@ public:
 		Common::String _extra;
 	};
 
-	ConversationLineList(const Common::String &fileName);
+	ConversationLineList(const Common::Path &fileName);
 	const Line *getLine(uint index) const;
 
 private:
-	bool parseFile(const Common::String &fileName);
+	bool parseFile(const Common::Path &fileName);
 
 	Common::Array<Line> _lines;
 };

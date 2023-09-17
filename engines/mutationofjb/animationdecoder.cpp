@@ -26,19 +26,19 @@
 
 namespace MutationOfJB {
 
-AnimationDecoder::AnimationDecoder(const Common::String &fileName) : _fileName(fileName), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {
+AnimationDecoder::AnimationDecoder(const Common::Path &fileName) : _fileName(fileName), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {
 	_surface.create(IMAGE_WIDTH, IMAGE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_owningSurface = true;
 }
 
-AnimationDecoder::AnimationDecoder(const Common::String &fileName, const Graphics::Surface &outSurface) : _fileName(fileName), _surface(outSurface), _owningSurface(false), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {}
+AnimationDecoder::AnimationDecoder(const Common::Path &fileName, const Graphics::Surface &outSurface) : _fileName(fileName), _surface(outSurface), _owningSurface(false), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {}
 
 bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 	EncryptedFile file;
 	file.open(_fileName);
 
 	if (!file.isOpen()) {
-		reportFileMissingError(_fileName.c_str());
+		reportFileMissingError(_fileName.toString(Common::Path::kNativeSeparator).c_str());
 
 		return false;
 	}

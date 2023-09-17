@@ -26,7 +26,7 @@
 
 namespace MutationOfJB {
 
-Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight) :
+Font::Font(const Common::Path &fileName, int horizSpacing, int lineHeight) :
 	_horizSpacing(horizSpacing),
 	_lineHeight(lineHeight),
 	_maxCharWidth(0) {
@@ -34,11 +34,11 @@ Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight) :
 	load(fileName);
 }
 
-bool Font::load(const Common::String &fileName) {
+bool Font::load(const Common::Path &fileName) {
 	EncryptedFile file;
 	file.open(fileName);
 	if (!file.isOpen()) {
-		reportFileMissingError(fileName.c_str());
+		reportFileMissingError(fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
