@@ -67,7 +67,7 @@ extern bool allowAnyFilename;
 Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2,
 		const char *er, int &fileVersion) {
 	Common::File *fp = new Common::File();
-	if (!fp->open(filename)) {
+	if (!fp->open(Common::Path(filename))) {
 		fatal("Can't open file", filename);
 		return NULL;
 	}

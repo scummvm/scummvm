@@ -250,7 +250,7 @@ builtIn(fileExists) {
 	bool exist = false;
 
 	Common::File fd;
-	if (fd.open(aaaaa)) {
+	if (fd.open(Common::Path(aaaaa))) {
 		exist = true;
 		fd.close();
 	} else {
@@ -884,7 +884,8 @@ builtIn(launch) {
 		return BR_CONTINUE;
 	}
 
-	Common::String gameDir = ConfMan.get("path");
+	// Convert game path to URL
+	Common::String gameDir = ConfMan.getPath("path").toString('/');
 	newText = gameDir + newText;
 
 	// local webpage?
@@ -2386,7 +2387,7 @@ builtIn(_rem_launchWith) {
 	trimStack(fun->stack);
 
 	if (filename.hasSuffix(".exe")) {
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 		Common::FSList files;
 		gameDataDir.getChildren(files, Common::FSNode::kListFilesOnly);
 

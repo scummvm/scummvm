@@ -223,7 +223,7 @@ void ResourceManager::dumpFile(int num, const char *pattern) {
 		return;
 
 	Common::DumpFile dumpFile;
-	dumpFile.open(Common::String("dumps/") + Common::String::format(pattern, num));
+	dumpFile.open(Common::Path("dumps/").appendComponent(Common::String::format(pattern, num)));
 	uint32 pos = _bigDataFile->pos();
 
 	_bigDataFile->seek(_startOfDataIndex + (num << 2), 0);
