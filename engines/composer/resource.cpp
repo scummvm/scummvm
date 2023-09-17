@@ -41,7 +41,7 @@ Archive::~Archive() {
 	close();
 }
 
-bool Archive::openFile(const Common::String &fileName) {
+bool Archive::openFile(const Common::Path &fileName) {
 	Common::SeekableReadStream *file
 		= Common::MacResManager::openFileOrDataFork(fileName);
 
