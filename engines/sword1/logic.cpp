@@ -980,7 +980,14 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 
 int Logic::fnIdle(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_tree.o_script_level = 0; // force to level 0
-	cpt->o_logic = LOGIC_idle;
+
+	// George never idles, he just does rest anims (if in suitable pose)
+	if (id == GEORGE) {
+		fnNewScript(cpt, id, SCR_george_rest_anim_script, 0, 0, 0, 0, 0);
+	} else {
+		cpt->o_logic = LOGIC_idle;
+	}
+
 	return SCRIPT_STOP;
 }
 
