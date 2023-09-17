@@ -143,60 +143,11 @@ static const uint16 sig_uninitread_hoyle5_1[] = {
 	SIG_END
 };
 
-//                Game: Hoyle 5 (Solitaire)
-//      Calling methods: roomScript::changeState, beleaguered_castle::init, strategy::init
-//   Subroutine offsets: 0x25f4 (script 6001), 0x1d7a (script 6004), 0x239d (script 6002)
-// Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_2[] = {
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x7d, SIG_ADDTOOFFSET(8),
-	      0x2e, 0x73, 0x63, 0x00,    // file "calculat.sc" / "belcastl.sc" / "strategy.sc"
-	0x3f, 0x02,                      // link 02
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x8d, 0x00,                      // lst temp[0]
-	0x35, 0x00,                      // ldi 00
-	0x1a,                            // eq?
-	SIG_END
-};
-
-//                Game: Hoyle 5 (Solitaire)
-//      Calling method: roomScript::changeState
-//   Subroutine offset: 0x494a (script 6023)
-// Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_3[] = {
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x7d, 0x67, 0x61, 0x70,	0x73,
-	      0x2e, 0x73, 0x63, 0x00,    // file "gaps.sc"
-	0x3f, 0x02,                      // link 02
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x8d, 0x00,                      // lst temp[0]
-	0x35, 0x00,                      // ldi 00
-	0x1a,                            // eq?
-	SIG_END
-};
-
-//                Game: Hoyle 5 (Solitaire)
-//      Calling method: roomScript::changeState
-//   Subroutine offset: 0x2097 (script 6011)
-// Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_4[] = {
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x7d, 0x6c, 0x61, 0x62, 0x65,
-	      0x6c, 0x6c, 0x65,
-	      0x2e, 0x73, 0x63, 0x00,    // file "labelle.sc"
-	0x3f, 0x02,                      // link 02
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x8d, 0x00,                      // lst temp[0]
-	0x35, 0x00,                      // ldi 00
-	0x1a,                            // eq?
-	SIG_END
-};
-
 //                Game: Hoyle 5
 //      Calling method: LeadSeat_NoTrump::think
 //   Subroutine offset: 0x22e (script 753)
 // Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_5[] = {
+static const uint16 sig_uninitread_hoyle5_2[] = {
 	0x7e, SIG_ADDTOOFFSET(2),        // line N
 	0x7d, 0x73, 0x74, 0x67, 0x62, 0x64, 0x6c, 0x6e, 0x74,
 		  0x2e, 0x73, 0x63, 0x00,               // file "stgbdlnt.sc"
@@ -431,19 +382,12 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "makeContractMinusAce",         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
 	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "think",                        nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge, objects LeadSeat_NoTrump and others
 	{ GID_HOYLE5,        700,    -1,  1,               "Code", "doit",                         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in Bridge, objects c2_tree, other1_tree, compwe_tree - bugs #11168, #11169, #11170, #11183
-	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_5,     4,     6, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
+	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_2,     4,     6, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
 	{ GID_HOYLE5,        700,  1115,  0,              nullptr, "select",                       nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
 	{ GID_HOYLE5,       1100,    18,  0,               "Tray", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing Poker
 	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                  nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
 	{ GID_HOYLE5,       6029,  6029,  1,        "ControlIcon", "select",                       nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // Solitaire: when changing any slider in the Card Flip mini-game's options window
 	{ GID_HOYLE5,         -1,  6000,  1,              "sHand", "handleEvent",                  nullptr,     4,     4, { WORKAROUND_FAKE,   0 } }, // Solitaire: when clicking on an empty card base in any game
-	{ GID_HOYLE5,       6001,  6001,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Calculation
-	{ GID_HOYLE5,       6004,  6004,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
-	{ GID_HOYLE5,       6004,  6004,  0, "beleaguered_castle", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
-	{ GID_HOYLE5,       6023,  6023,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_3,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Gaps
-	{ GID_HOYLE5,       6011,  6011,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_4,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting La Belle Lucie
-	{ GID_HOYLE5,       6002,  6002,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
-	{ GID_HOYLE5,       6002,  6002,  0,           "strategy", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                nullptr,    58,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                         nullptr,     3,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                nullptr,    14,    15, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temps 14 and 15

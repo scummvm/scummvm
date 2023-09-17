@@ -2638,12 +2638,41 @@ static const uint16 hoyle5PatchBridgeArithmetic[] = {
 	PATCH_END
 };
 
+// Hoyle5 Solitaire has a script typo in five games that attempts to initialize
+//  a temp variable to zero but instead compares it. This affects Calculation,
+//  Strategy, Beleaguered Castle, La Belle Lucie, and Gaps.
+//
+// We fix this with a single script patch as opposed to many workaround entries
+//  because this occurs in local procedures with different bytecode in Windows
+//  and Mac versions.
+//
+// Applies to: All versions
+// Responsible methods: local procedures in scripts 6001, 6002, 6004, 6011, 6023
+static const uint16 hoyle5SignatureSolitaireInit[] = {
+	0x8d, 0x00,                         // lst 00
+	0x35, SIG_MAGICDWORD, 0x00,         // ldi 00
+	0x1a,                               // eq? [ temp0 == 0 ]
+	0x8d, 0x00,                         // lst 00
+	SIG_END
+};
+
+static const uint16 hoyle5PatchSolitaireInit[] = {
+	0x34, PATCH_UINT16(0x0000),         // ldi 0000
+	0xa5, 0x00,                         // sat 00 [ temp0 = 0 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,   200, "fix setScale calls",                         11, hoyle5SetScaleSignature,          hoyle5PatchSetScale },
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,  6001, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
+	{  true,  6002, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
+	{  true,  6004, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
+	{  true,  6011, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
+	{  true,  6023, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,   733, "bridge arithmetic against object",            1, hoyle5SignatureBridgeArithmetic,  hoyle5PatchBridgeArithmetic },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
