@@ -106,15 +106,15 @@ Script::Script(Common::SeekableReadStream *data, int num, WageEngine *engine) : 
 
 	if (ConfMan.getBool("dump_scripts")) {
 		Common::DumpFile out;
-		Common::String name;
+		Common::Path name;
 
 		if (num == -1)
-			name = Common::String::format("./dumps/%s-global.txt", _engine->getTargetName());
+			name = Common::Path(Common::String::format("./dumps/%s-global.txt", _engine->getTargetName()));
 		else
-			name = Common::String::format("./dumps/%s-%d.txt", _engine->getTargetName(), num);
+			name = Common::Path(Common::String::format("./dumps/%s-%d.txt", _engine->getTargetName(), num));
 
 		if (!out.open(name)) {
-			warning("Can not open dump file %s", name.c_str());
+			warning("Can not open dump file %s", name.toString().c_str());
 			return;
 		}
 
