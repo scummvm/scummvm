@@ -77,8 +77,7 @@ bool CFilesManager::loadResourceIndex() {
 }
 
 bool CFilesManager::fileExists(const CString &name) {
-	Common::File f;
-	return f.exists(name);
+	return Common::File::exists(Common::Path(name));
 }
 
 bool CFilesManager::scanForFile(const CString &name) {
