@@ -61,7 +61,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 		// The y222.avi is the bells animation for the music room.
 		// It needs on the fly fixing for the video header
 		_decoder->loadStream(new y222());
-	} else if (!_decoder->loadFile(_movieName)) {
+	} else if (!_decoder->loadFile(Common::Path(_movieName))) {
 		error("Could not open video - %s", key.getString().c_str());
 	}
 
