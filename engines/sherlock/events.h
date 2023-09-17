@@ -69,7 +69,7 @@ public:
 	/**
 	 * Load a set of cursors from the specified file
 	 */
-	void loadCursors(const Common::String &filename);
+	void loadCursors(const Common::Path &filename);
 
 	/**
 	 * Set the cursor to show

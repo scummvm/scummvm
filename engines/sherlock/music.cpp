@@ -407,7 +407,7 @@ bool Music::playMusic(const Common::String &name) {
 			return false;
 
 		Common::String midiMusicName = (IS_SERRATED_SCALPEL) ? name + ".MUS" : name + ".XMI";
-		Common::SeekableReadStream *stream = _vm->_res->load(midiMusicName, "MUSIC.LIB");
+		Common::SeekableReadStream *stream = _vm->_res->load(Common::Path(midiMusicName), "MUSIC.LIB");
 
 		byte *midiMusicData     = new byte[stream->size()];
 		int32 midiMusicDataSize = stream->size();
@@ -476,7 +476,8 @@ bool Music::playMusic(const Common::String &name) {
 	} else {
 		// 3DO: sample based
 		Audio::AudioStream *musicStream;
-		Common::String digitalMusicName = "music/" + name + "_MW22.aifc";
+		Common::Path digitalMusicName("music/");
+		digitalMusicName.appendInPlace(name + "_MW22.aifc");
 
 		if (isPlaying()) {
 			_mixer->stopHandle(_digitalMusicHandle);
@@ -484,7 +485,7 @@ bool Music::playMusic(const Common::String &name) {
 
 		Common::File *digitalMusicFile = new Common::File();
 		if (!digitalMusicFile->open(digitalMusicName)) {
-			warning("playMusic: can not open 3DO music '%s'", digitalMusicName.c_str());
+			warning("playMusic: can not open 3DO music '%s'", digitalMusicName.toString().c_str());
 			delete digitalMusicFile;
 			return false;
 		}
@@ -492,7 +493,7 @@ bool Music::playMusic(const Common::String &name) {
 		// Try to load the given file as AIFF/AIFC
 		musicStream = Audio::makeAIFFStream(digitalMusicFile, DisposeAfterUse::YES);
 		if (!musicStream) {
-			warning("playMusic: can not load 3DO music '%s'", digitalMusicName.c_str());
+			warning("playMusic: can not load 3DO music '%s'", digitalMusicName.toString().c_str());
 			return false;
 		}
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, musicStream);
@@ -589,7 +590,7 @@ void Music::getSongNames(Common::StringArray &songs) {
 	songs.clear();
 	if (IS_SERRATED_SCALPEL) {
 		if (IS_3DO) {
-			Common::FSDirectory gameDirectory(ConfMan.get("path"));
+			Common::FSDirectory gameDirectory(ConfMan.getPath("path"));
 			Common::FSDirectory *musicDirectory = gameDirectory.getSubDirectory("music");
 			Common::ArchiveMemberList files;
 

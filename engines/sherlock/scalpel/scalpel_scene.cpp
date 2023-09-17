@@ -44,7 +44,7 @@ ScalpelScene::~ScalpelScene() {
 		delete _canimShapes[idx];
 }
 
-bool ScalpelScene::loadScene(const Common::String &filename) {
+bool ScalpelScene::loadScene(const Common::Path &filename) {
 	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
 	bool result = Scene::loadScene(filename);
 
@@ -572,7 +572,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 		if (tpPos.x != -1)
 			people[HOLMES]._type = REMOVE;
 
-		Common::String fname = cAnim._name + ".vgs";
+		Common::Path fname(cAnim._name + ".vgs");
 		if (!res.isInCache(fname)) {
 			// Set up RRM scene data
 			Common::SeekableReadStream *roomStream = res.load(_roomFilename);

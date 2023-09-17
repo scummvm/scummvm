@@ -54,7 +54,7 @@ Events::~Events() {
 	delete _cursorImages;
 }
 
-void Events::loadCursors(const Common::String &filename) {
+void Events::loadCursors(const Common::Path &filename) {
 	hideCursor();
 	delete _cursorImages;
 

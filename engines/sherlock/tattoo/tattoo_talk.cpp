@@ -182,7 +182,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm), _passwor
 	_opcodeTable = OPCODE_METHODS;
 }
 
-void TattooTalk::talkTo(const Common::String filename) {
+void TattooTalk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
@@ -728,11 +728,12 @@ OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
 	Person &person = people[npcNum];
 
 	// Build up walk library name for the given NPC
-	person._walkVGSName = "";
+	Common::String walkVGSName;
 	for (int idx = 0; idx < 8 && str[idx + 1] != '~'; ++idx)
-		person._walkVGSName += str[idx + 1];
+		walkVGSName += str[idx + 1];
 
-	person._walkVGSName += ".VGS";
+	walkVGSName += ".VGS";
+	person._walkVGSName = Common::Path(walkVGSName);
 	people._forceWalkReload = true;
 	str += 8;
 

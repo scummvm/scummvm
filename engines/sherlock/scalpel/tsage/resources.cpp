@@ -51,7 +51,7 @@ uint16 BitReader::readToken() {
 
 /*-------------------------------------------------------------------------*/
 
-TLib::TLib(const Common::String &filename) : _filename(filename) {
+TLib::TLib(const Common::Path &filename) : _filename(filename) {
 
 	// If the resource strings list isn't yet loaded, load them
 	if (_resStrings.size() == 0) {
@@ -65,7 +65,7 @@ TLib::TLib(const Common::String &filename) : _filename(filename) {
 	}
 
 	if (!_file.open(filename))
-		error("Missing file %s", filename.c_str());
+		error("Missing file %s", filename.toString().c_str());
 
 	loadIndex();
 }

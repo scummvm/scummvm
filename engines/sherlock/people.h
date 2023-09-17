@@ -70,7 +70,7 @@ public:
 	Common::String _npcName;
 
 	// Rose Tattoo fields
-	Common::String _walkVGSName;		// Name of walk library person is using
+	Common::Path _walkVGSName;		// Name of walk library person is using
 public:
 	Person();
 	~Person() override {}

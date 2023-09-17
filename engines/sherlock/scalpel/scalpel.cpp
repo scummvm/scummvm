@@ -992,7 +992,7 @@ void ScalpelEngine::loadInventory() {
 	inv.push_back(InventoryItem(586, "Pawn ticket", fixedText_PawnTicket, "_ITEM16A"));
 }
 
-void ScalpelEngine::showLBV(const Common::String &filename) {
+void ScalpelEngine::showLBV(const Common::Path &filename) {
 	Common::SeekableReadStream *stream = _res->load(filename, "title.lib");
 	ImageFile images(*stream);
 	delete stream;
@@ -1269,7 +1269,7 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 	delete dialog;
 }
 
-bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool isPortrait) {
+bool ScalpelEngine::play3doMovie(const Common::Path &filename, const Common::Point &pos, bool isPortrait) {
 	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
 	Video::ThreeDOMovieDecoder *videoDecoder = new Video::ThreeDOMovieDecoder();
 	Graphics::ManagedSurface tempSurface;
@@ -1279,7 +1279,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	bool frameShown = false;
 
 	if (!videoDecoder->loadFile(filename)) {
-		warning("Scalpel3DOMoviePlay: could not open '%s'", filename.c_str());
+		warning("Scalpel3DOMoviePlay: could not open '%s'", filename.toString().c_str());
 		delete videoDecoder;
 		return false;
 	}

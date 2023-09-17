@@ -33,7 +33,7 @@ static const int NO_FRAMES = FRAMES_END;
 Animation::Animation(SherlockEngine *vm) : _vm(vm) {
 }
 
-bool Animation::play(const Common::String &filename, bool intro, int minDelay, int fade,
+bool Animation::play(const Common::Path &filename, bool intro, int minDelay, int fade,
 		bool setPalette, int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -44,7 +44,8 @@ bool Animation::play(const Common::String &filename, bool intro, int minDelay, i
 	const int *soundFrames = checkForSoundFrames(filename, intro);
 
 	// Add on the VDX extension
-	Common::String vdxName = filename + ".vdx";
+	Common::Path vdxName(filename);
+	vdxName.appendInPlace(".vdx");
 
 	// Load the animation
 	Common::SeekableReadStream *stream;
@@ -56,7 +57,8 @@ bool Animation::play(const Common::String &filename, bool intro, int minDelay, i
 		stream = _vm->_res->load(vdxName, "epilogue.lib");
 
 	// Load initial image
-	Common::String vdaName = filename + ".vda";
+	Common::Path vdaName(filename);
+	vdaName.appendInPlace(".vda");
 	ImageFile images(vdaName, true, true);
 
 	events.wait(minDelay);
@@ -105,18 +107,18 @@ bool Animation::play(const Common::String &filename, bool intro, int minDelay, i
 				++soundNumber;
 				++soundFrames;
 
-				Common::String sampleFilename;
+				Common::Path sampleFilename;
 
 				if (!intro) {
 					// regular animation, append 1-digit number
-					sampleFilename = Common::String::format("%s%01d", filename.c_str(), soundNumber);
+					sampleFilename = filename.append(Common::String::format("%01d", soundNumber));
 				} else {
 					// intro animation, append 2-digit number
-					sampleFilename = Common::String::format("%s%02d", filename.c_str(), soundNumber);
+					sampleFilename = filename.append(Common::String::format("%02d", soundNumber));
 				}
 
 				if (sound._voices)
-					sound.playSound(sampleFilename, WAIT_RETURN_IMMEDIATELY, 100, _soundLibraryFilename.c_str());
+					sound.playSound(sampleFilename, WAIT_RETURN_IMMEDIATELY, 100, _soundLibraryFilename);
 			}
 
 			events.wait(speed * 3);
@@ -142,7 +144,7 @@ bool Animation::play(const Common::String &filename, bool intro, int minDelay, i
 	return !skipped && !_vm->shouldQuit();
 }
 
-bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay, bool fadeFromGrey,
+bool Animation::play3DO(const Common::Path &filename, bool intro, int minDelay, bool fadeFromGrey,
 		int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -159,17 +161,21 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 	const int *soundFrames = checkForSoundFrames(filename, intro);
 
 	// Add the VDX extension
-	Common::String indexName = "prologue/" + filename + ".3dx";
+	Common::Path indexName("prologue/");
+	indexName.appendInPlace(filename);
+	indexName.appendInPlace(".3dx");
 
 	// Load the animation
 	Common::File indexStream;
 	if (!indexStream.open(indexName)) {
-		warning("unable to open %s\n", indexName.c_str());
+		warning("unable to open %s\n", indexName.toString().c_str());
 		return false;
 	}
 
 	// Load initial image
-	Common::String graphicsName = "prologue/" + filename + ".3da";
+	Common::Path graphicsName("prologue/");
+	graphicsName.appendInPlace(filename);
+	graphicsName.appendInPlace(".3da");
 	ImageFile3DO images(graphicsName, kImageFile3DOType_Animation);
 
 	events.wait(minDelay);
@@ -234,10 +240,10 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 				++soundNumber;
 				++soundFrames;
 
-				Common::String sampleFilename;
-
 				// append 1-digit number
-				sampleFilename = Common::String::format("prologue/sounds/%s%01d", filename.c_str(), soundNumber);
+				Common::Path sampleFilename("prologue/sounds/");
+				sampleFilename.appendInPlace(filename);
+				sampleFilename.appendInPlace(Common::String::format("%01d", soundNumber));
 
 				if (sound._voices)
 					sound.playSound(sampleFilename, WAIT_RETURN_IMMEDIATELY, 100); // no sound library
@@ -294,7 +300,7 @@ void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
 	}
 }
 
-const int *Animation::checkForSoundFrames(const Common::String &filename, bool intro) {
+const int *Animation::checkForSoundFrames(const Common::Path &filename, bool intro) {
 	const int *frames = &NO_FRAMES;
 
 	if (!intro) {
