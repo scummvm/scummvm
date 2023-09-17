@@ -66,7 +66,7 @@ public:
 
 private:
 	struct VirtualFile {
-		Common::String _virtualPath;
+		Common::Path _virtualPath;
 		Common::ArchiveMemberPtr _archiveMember;
 
 		Common::ArchiveMemberPtr _vfsArchiveMember;
