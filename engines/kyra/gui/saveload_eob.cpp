@@ -568,11 +568,11 @@ void EoBCoreEngine::makeFaceShapes(int charId) {
 	_screen->_curPage = 0;
 }
 
-bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile) {
-	Common::Array<Common::String> origFiles;
+bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const Common::Path &sourceFile) {
+	Common::Array<Common::Path> origFiles;
 	Common::Array<int> newSlots;
 
-	if (sourceFile) {
+	if (!sourceFile.empty()) {
 		// If a source file is specified via the console command we just check whether it exists.
 		if (Common::File::exists(sourceFile))
 			origFiles.push_back(sourceFile);
@@ -583,7 +583,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 		int numMax = (_flags.gameID == GI_EOB1) ? 1 : 6;
 		const char *pattern = (_flags.gameID == GI_EOB1) ? "EOBDATA.SAV" : "EOBDATA%d.SAV";
 		for (int i = 0; i < numMax; ++i) {
-			Common::String temp = Common::String::format(pattern, i);
+			Common::Path temp(Common::String::format(pattern, i));
 			Common::SeekableReadStream *fs = _res->createReadStream(temp);
 			if (fs) {
 				Common::U32String dsc;
@@ -595,7 +595,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 				}
 
 				delete fs;
-				::GUI::MessageDialog dialog(Common::U32String::format(_("The following original saved game file has been found in your game path:\n\n%s %S\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
+				::GUI::MessageDialog dialog(Common::U32String::format(_("The following original saved game file has been found in your game path:\n\n%s %S\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.toString(Common::Path::kNativeSeparator).c_str(), dsc.c_str()), _("Yes"), _("No"));
 				if (dialog.runModal() == ::GUI::kMessageOK)
 					origFiles.push_back(temp);
 			}
@@ -638,14 +638,14 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 	for (int i = 0; i < numFilesFound; i++) {
 		Common::String desc = readOriginalSaveFile(origFiles[i]);
 		if (desc.empty()) {
-			warning("Unable to import original save file '%s'", origFiles[i].c_str());
+			warning("Unable to import original save file '%s'", origFiles[i].toString().c_str());
 		} else {
 			// We can't make thumbnails here, since we do not want to load all the level data, monsters, etc. for each save we convert.
 			// Instead, we use an empty surface to avoid that createThumbnailFromScreen() makes a completely pointless thumbnail from
 			// whatever screen that is currently shown when this function is called.
 			Graphics::Surface dummy;
 			saveGameStateIntern(newSlots[i], desc.c_str(), &dummy);
-			warning("Imported original save file '%s' ('%s')", origFiles[i].c_str(), desc.c_str());
+			warning("Imported original save file '%s' ('%s')", origFiles[i].toString().c_str(), desc.c_str());
 			importedCount++;
 		}
 	}
@@ -668,7 +668,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 	return true;
 }
 
-Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
+Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 	Common::String desc;
 
 	Common::SeekableReadStream *fs = _res->createReadStream(file);
@@ -789,7 +789,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		if (c->effectFlags && _flags.gameID == GI_EOB1) {
 			// Spell effect flags are completely different in EOB I. We only use EOB II style flags in ScummVM.
 			// Doesn't matter much, since these are only temporary spell effects.
-			warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled character effect flags encountered in original EOB1 save file '%s' ('%s')", file.c_str(), desc.c_str());
+			warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled character effect flags encountered in original EOB1 save file '%s' ('%s')", file.toString().c_str(), desc.c_str());
 			c->effectFlags = 0;
 		}
 		c->damageTaken = in.readByte();
@@ -809,7 +809,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	if (_partyEffectFlags && _flags.gameID == GI_EOB1) {
 		// Spell effect flags are completely different in EOB I. We only use EOB II style flags in ScummVM.
 		// Doesn't matter much, since these are only temporary spell effects.
-		warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled party effect flags encountered in original EOB1 save file '%s' ('%s')", file.c_str(), desc.c_str());
+		warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled party effect flags encountered in original EOB1 save file '%s' ('%s')", file.toString().c_str(), desc.c_str());
 		_partyEffectFlags = 0;
 	}
 	if (_flags.gameID == GI_EOB2)
@@ -1080,9 +1080,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 	if (_flags.gameID == GI_EOB2 && (slot < 0 || slot > 5))
 		return false;
 
-	Common::String dir = ConfMan.get("savepath");
-	if (dir == "None")
-		dir.clear();
+	Common::Path dir = ConfMan.getPath("savepath");
 
 	Common::FSNode nd(dir);
 	if (!nd.isDirectory())

@@ -70,8 +70,8 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String file) override;
-	void loadSfxFile(Common::String file) override;
+	void loadSoundFile(const Common::Path &file) override;
+	void loadSfxFile(const Common::Path &file) override;
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -93,7 +93,7 @@ private:
 	bool _fadeMusicOut;
 
 	// Midi file related
-	Common::String _mFileName, _sFileName;
+	Common::Path _mFileName, _sFileName;
 	byte *_musicFile, *_sfxFile;
 
 	MidiParser *_music;
@@ -105,7 +105,7 @@ private:
 
 	// misc
 	kType _type;
-	Common::String getFileName(const Common::String &str);
+	Common::Path getFileName(const Common::Path &str);
 
 	bool _nativeMT32;
 	MidiDriver *_driver;
@@ -128,7 +128,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String) override {}
+	void loadSoundFile(const Common::Path &) override {}
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -182,7 +182,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String file) override;
+	void loadSoundFile(const Common::Path &file) override;
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -218,7 +218,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override {}
-	void loadSoundFile(Common::String file) override;
+	void loadSoundFile(const Common::Path &file) override;
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -333,7 +333,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String) override {}
+	void loadSoundFile(const Common::Path &) override {}
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -369,7 +369,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint) const override { return true; }
 	void loadSoundFile(uint) override {}
-	void loadSoundFile(Common::String) override {}
+	void loadSoundFile(const Common::Path &) override {}
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
 	void playSoundEffect(uint16 track, uint8) override;
@@ -423,7 +423,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String name) override;
+	void loadSoundFile(const Common::Path &name) override;
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -477,8 +477,8 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override { return false; }
 	void loadSoundFile(uint) override {}
-	void loadSoundFile(Common::String file) override;
-	void unloadSoundFile(Common::String file) override;
+	void loadSoundFile(const Common::Path &file) override;
+	void unloadSoundFile(const Common::String &file) override;
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
 	void playSoundEffect(uint16 track, uint8 volume = 0xFF) override;
@@ -513,8 +513,8 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override { return false; }
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String file) override {}
-	void loadSfxFile(Common::String file) override;
+	void loadSoundFile(const Common::Path &file) override {}
+	void loadSfxFile(const Common::Path &file) override;
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
 	void playSoundEffect(uint16 track, uint8) override;
@@ -548,7 +548,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override { return true; }
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String name) override;
+	void loadSoundFile(const Common::Path &name) override;
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -580,7 +580,7 @@ private:
 	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 
-	Common::String _soundFileLoaded;
+	Common::Path _soundFileLoaded;
 
 	MidiDriver::DeviceHandle _dev;
 	kType _drvType;
@@ -600,7 +600,7 @@ public:
 	void selectAudioResourceSet(int) override {}
 	bool hasSoundFile(uint file) const override { return false; }
 	void loadSoundFile(uint file) override {}
-	void loadSoundFile(Common::String file) override {}
+	void loadSoundFile(const Common::Path &file) override {}
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
 	void playSoundEffect(uint16 track, uint8 volume) override;

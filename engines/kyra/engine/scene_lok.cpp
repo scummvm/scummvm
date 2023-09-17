@@ -1261,7 +1261,7 @@ void KyraEngine_LoK::setupSceneResource(int sceneId) {
 	if (!_flags.isTalkie)
 		return;
 
-	Common::String file;
+	Common::Path file;
 
 	if (_currentRoom != 0xFFFF) {
 		assert(_currentRoom < _roomTableSize);
@@ -1270,9 +1270,9 @@ void KyraEngine_LoK::setupSceneResource(int sceneId) {
 
 		// unload our old room
 		file = _roomFilenameTable[tableId];
-		_res->unloadPakFile(file + ".VRM");
-		_res->unloadPakFile(file + ".PAK");
-		_res->unloadPakFile(file + ".APK");
+		_res->unloadPakFile(file.append(".VRM"));
+		_res->unloadPakFile(file.append(".PAK"));
+		_res->unloadPakFile(file.append(".APK"));
 	}
 
 	assert(sceneId < _roomTableSize);
@@ -1280,16 +1280,16 @@ void KyraEngine_LoK::setupSceneResource(int sceneId) {
 	assert(tableId < _roomFilenameTableSize);
 
 	// load our new room
-	file = Common::String(_roomFilenameTable[tableId]) + ".VRM";
-	if (_res->exists(file.c_str()))
+	file = Common::Path(_roomFilenameTable[tableId]).appendInPlace(".VRM");
+	if (_res->exists(file))
 		_res->loadPakFile(file);
 
-	file = Common::String(_roomFilenameTable[tableId]) + ".PAK";
-	if (_res->exists(file.c_str()))
+	file = Common::Path(_roomFilenameTable[tableId]).appendInPlace(".PAK");
+	if (_res->exists(file))
 		_res->loadPakFile(file);
 
-	file = Common::String(_roomFilenameTable[tableId]) + ".APK";
-	if (_res->exists(file.c_str()))
+	file = Common::Path(_roomFilenameTable[tableId]).appendInPlace(".APK");
+	if (_res->exists(file))
 		_res->loadPakFile(file);
 }
 

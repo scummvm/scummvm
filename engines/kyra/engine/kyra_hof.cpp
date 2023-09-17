@@ -1386,21 +1386,21 @@ void KyraEngine_HoF::restoreGfxRect32x32(int x, int y) {
 #pragma mark -
 
 void KyraEngine_HoF::openTalkFile(int newFile) {
-	Common::String talkFilename;
+	Common::Path talkFilename;
 
 	if (_oldTalkFile > 0) {
-		talkFilename = Common::String::format("CH%dVOC.TLK", _oldTalkFile);
+		talkFilename = Common::Path(Common::String::format("CH%dVOC.TLK", _oldTalkFile));
 		_res->unloadPakFile(talkFilename);
 		_oldTalkFile = -1;
 	}
 
-	talkFilename = newFile ? Common::String::format("CH%dVOC.TLK", newFile) : "ANYTALK.TLK";
+	talkFilename = newFile ? Common::Path(Common::String::format("CH%dVOC.TLK", newFile)) : Common::Path("ANYTALK.TLK");
 
 	_oldTalkFile = newFile;
 
 	if (!_res->loadPakFile(talkFilename)) {
 		if (speechEnabled()) {
-			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename.c_str());
+			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename.toString().c_str());
 			_configVoice = 0;
 
 			// Sync the config manager with the new settings

@@ -123,10 +123,10 @@ void SoundTowns_Darkmoon::loadSoundFile(uint file) {
 		loadSoundFile(_fileList[file]);
 }
 
-void SoundTowns_Darkmoon::loadSoundFile(Common::String name) {
-	Common::SeekableReadStream *s = _vm->resource()->createReadStream(Common::String::format("%s.SDT", name.c_str()));
+void SoundTowns_Darkmoon::loadSoundFile(const Common::Path &name) {
+	Common::SeekableReadStream *s = _vm->resource()->createReadStream(name.append(".SDT"));
 	if (!s)
-		error("Failed to load sound file '%s.SDT'", name.c_str());
+		error("Failed to load sound file '%s.SDT'", name.toString().c_str());
 
 	for (int i = 0; i < 120; i++) {
 		_soundTable[i].type = s->readSByte();
@@ -137,7 +137,7 @@ void SoundTowns_Darkmoon::loadSoundFile(Common::String name) {
 	delete s;
 
 	uint32 bytesLeft;
-	uint8 *pmb = _vm->resource()->fileData(Common::String::format("%s.PMB", name.c_str()).c_str(), &bytesLeft);
+	uint8 *pmb = _vm->resource()->fileData(name.append(".PMB"), &bytesLeft);
 
 	_vm->delay(300);
 
@@ -159,7 +159,7 @@ void SoundTowns_Darkmoon::loadSoundFile(Common::String name) {
 
 		delete[] pmb;
 	} else {
-		warning("Sound file '%s.PMB' not found.", name.c_str());
+		warning("Sound file '%s.PMB' not found.", name.toString().c_str());
 		// TODO
 	}
 }

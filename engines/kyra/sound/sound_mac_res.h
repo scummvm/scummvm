@@ -45,7 +45,7 @@ public:
 	Common::SeekableReadStream *getResource(uint16 id, uint32 type);
 
 private:
-	Common::String _kyraMacExe;
+	Common::Path _kyraMacExe;
 	Common::MacResManager *_resMan;
 	Common::Archive *_stuffItArchive;
 	Common::Mutex _mutex;

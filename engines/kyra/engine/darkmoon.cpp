@@ -227,10 +227,10 @@ void DarkMoonEngine::loadMonsterShapes(const char *filename, int monsterIndex, b
 		return;
 	}
 
-	Common::String tmp = Common::String::format("%s.MNT", filename);
+	Common::Path tmp(Common::String::format("%s.MNT", filename));
 	Common::SeekableReadStream *s = _res->createReadStream(tmp);
 	if (!s)
-		error("Screen_EoB::loadMonsterShapes(): Failed to load file '%s'", tmp.c_str());
+		error("Screen_EoB::loadMonsterShapes(): Failed to load file '%s'", tmp.toString().c_str());
 
 	for (int i = 0; i < 6; i++)
 		_monsterShapes[monsterIndex + i] = loadFMTownsShape(s);
@@ -685,7 +685,7 @@ void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 		if (valNew >= 0 && valNew != valCur) {
 			if (i < 2 && valCur >= 0 && _amigaCurSoundIndex)
 				_sound->unloadSoundFile(Common::String::format("%s.SAM", _amigaLevelSoundList1[_amigaSoundIndex1[_amigaCurSoundIndex]]));
-			_sound->loadSoundFile(Common::String::format("%s.CPS", _amigaLevelSoundList1[valNew]));
+			_sound->loadSoundFile(Common::Path(Common::String::format("%s.CPS", _amigaLevelSoundList1[valNew])));
 			assert(_amigaLevelSoundList2[valNew]);
 			_amigaSoundMap[36 + i] = _amigaLevelSoundList2[valNew][0] ? _amigaLevelSoundList2[valNew] : 0;
 		} else if (valNew == -2) {
@@ -695,7 +695,7 @@ void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 		}
 	}
 
-	_sound->loadSoundFile(Common::String::format(sub ? "LEVEL%da.SAM" : "LEVEL%d.SAM", level));
+	_sound->loadSoundFile(Common::Path(Common::String::format(sub ? "LEVEL%da.SAM" : "LEVEL%d.SAM", level)));
 
 	_amigaCurSoundIndex = sndIndex;
 }

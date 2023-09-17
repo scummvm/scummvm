@@ -315,9 +315,10 @@ void KyraEngine_MR::loadScenePal() {
 }
 
 void KyraEngine_MR::loadSceneMsc() {
-	Common::String filename = Common::String(_sceneList[_mainCharacter.sceneId].filename1) + ".MSC";
+	Common::Path filename(_sceneList[_mainCharacter.sceneId].filename1);
+	filename.appendInPlace(".MSC");
 
-	_res->exists(filename.c_str(), true);
+	_res->exists(filename, true);
 	Common::SeekableReadStream *stream = _res->createReadStream(filename);
 	assert(stream);
 	int16 minY = 0, height = 0;
@@ -330,7 +331,7 @@ void KyraEngine_MR::loadSceneMsc() {
 
 	_screen->setShapePages(5, 3, _maskPageMinY, _maskPageMaxY);
 
-	_screen->loadBitmap(filename.c_str(), 5, 5, nullptr, true);
+	_screen->loadBitmap(filename.toString('/').c_str(), 5, 5, nullptr, true);
 
 	// HACK
 	uint8 *data = new uint8[320*200];
@@ -347,7 +348,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	Common::String filename = Common::String(scene.filename1) + ".DAT";
 
 	_res->exists(filename.c_str(), true);
-	Common::SeekableReadStream *stream = _res->createReadStream(filename);
+	Common::SeekableReadStream *stream = _res->createReadStream(Common::Path(filename));
 	assert(stream);
 	stream->seek(2, SEEK_CUR);
 

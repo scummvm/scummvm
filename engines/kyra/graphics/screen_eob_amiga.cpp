@@ -298,25 +298,21 @@ void AmigaDOSFont::unload() {
 	delete[] _content;
 }
 
-AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileName) {
+AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::Path &fileName) {
 	Common::SeekableReadStreamEndian *str = _res->createEndianAwareReadStream(fileName);
 
-	if (!str && fileName.contains('/')) {
+	if (!str && !fileName.getParent().empty()) {
 		// These content files are usually located in sub directories (i. e. the eobf8.font
 		// has a sub dir named 'eobf8' with a file '8' in it). In case someone put the content
 		// files directly in the game directory we still try to open it.
-		Common::String fileNameAlt = fileName;
-		while (fileNameAlt.firstChar() != '/')
-			fileNameAlt.deleteChar(0);
-		fileNameAlt.deleteChar(0);
-
+		Common::Path fileNameAlt(fileName.baseName(), Common::Path::kNoSeparator);
 		str = _res->createEndianAwareReadStream(fileNameAlt);
 
 		if (!str) {
 			// Someone might even have copied the floppy disks to the game directory with the
 			// full sub directory structure. So we also try that...
-			fileNameAlt = "fonts/";
-			fileNameAlt += fileName;
+			fileNameAlt = Common::Path("fonts");
+			fileNameAlt.joinInPlace(fileName);
 
 			str = _res->createEndianAwareReadStream(fileNameAlt);
 		}

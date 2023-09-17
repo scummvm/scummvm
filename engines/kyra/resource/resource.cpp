@@ -33,7 +33,7 @@
 namespace Kyra {
 
 Common::Archive *Resource::loadKyra1MacInstaller() {
-	Common::String kyraInstaller = Util::findMacResourceFile("Install Legend of Kyrandia");
+	Common::Path kyraInstaller = Util::findMacResourceFile("Install Legend of Kyrandia");
 
 	if (!kyraInstaller.empty()) {
 		Common::Archive *archive = loadStuffItArchive(kyraInstaller, "Install Legend of Kyrandia");
@@ -47,12 +47,12 @@ Common::Archive *Resource::loadKyra1MacInstaller() {
 	if (!kyraInstaller.empty()) {
 		Common::Array<Common::SharedPtr<Common::SeekableReadStream>> parts;
 		for (int i = 1; i <= 5; i++) {
-			Common::String partName = i == 1 ? kyraInstaller : Common::String::format("%s.%d", kyraInstaller.c_str(), i);
+			Common::Path partName = i == 1 ? kyraInstaller : kyraInstaller.append(Common::String::format(".%d", i));
 			Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(partName);
 			if (!stream)
-				error("Failed to load Legend of Kyrandia installer file part %s", partName.c_str());
+				error("Failed to load Legend of Kyrandia installer file part %s", partName.toString().c_str());
 			if (stream->size() <= 100)
-				error("Legend of Kyrandia installer file part %s is too short", partName.c_str());
+				error("Legend of Kyrandia installer file part %s is too short", partName.toString().c_str());
 			parts.push_back(Common::SharedPtr<Common::SeekableReadStream>(new Common::SeekableSubReadStream(stream, 100, stream->size(), DisposeAfterUse::YES)));
 		}
 		return loadStuffItArchive(new Common::ConcatReadStream(parts), "Install Legend of Kyrandia", "Legend of Kyrandia(TM) Installer.*");
@@ -65,15 +65,15 @@ Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles
 	initializeLoaders();
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::Platform::kPlatformMacintosh)
-		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "runtime");
+		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.getPath("path")), "runtime");
 
 	// Initialize directories for playing from CD or with original
 	// directory structure
 	if (_vm->game() == GI_KYRA3)
-		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "malcolm");
+		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.getPath("path")), "malcolm");
 
 	if (_vm->game() == GI_LOL)
-		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "data", 0, 2);
+		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.getPath("path")), "data", 0, 2);
 
 	_files.add("global_search", &Common::SearchManager::instance(), 3, false);
 	// compressed installer archives are added at level '2',
@@ -93,10 +93,10 @@ Resource::~Resource() {
 bool Resource::reset() {
 	unloadAllPakFiles();
 
-	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.getPath("path"));
 
 	if (!dir.exists() || !dir.isDirectory())
-		error("invalid game path '%s'", dir.getPath().c_str());
+		error("invalid game path '%s'", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::kPlatformMacintosh && _vm->gameFlags().useInstallerPackage) {
 		Common::Archive *archive = loadKyra1MacInstaller();
@@ -155,7 +155,7 @@ bool Resource::reset() {
 				if (name == ((_vm->gameFlags().lang == Common::EN_ANY) ? "JMC.PAK" : "EMC.PAK"))
 					continue;
 
-				Common::Archive *archive = loadArchive(name, *i);
+				Common::Archive *archive = loadArchive((*i)->getName(), *i);
 
 				if (archive) {
 					// Hack for the Spanish version of EOB1. It has an invalid item.dat file in the
@@ -203,32 +203,34 @@ bool Resource::reset() {
 	return true;
 }
 
-bool Resource::loadPakFile(Common::String filename) {
-	filename.toUppercase();
+bool Resource::loadPakFile(const Common::Path &filename) {
+	Common::Path filenameFixed(filename);
+	filenameFixed.toUppercase();
 
-	Common::ArchiveMemberPtr file = _files.getMember(filename);
+	Common::ArchiveMemberPtr file = _files.getMember(filenameFixed);
 	if (!file)
 		return false;
 
-	return loadPakFile(filename, file);
+	return loadPakFile(filenameFixed.toString('/'), file);
 }
 
-bool Resource::loadPakFile(Common::String name, Common::ArchiveMemberPtr file) {
-	name.toUppercase();
+bool Resource::loadPakFile(const Common::String &name, Common::ArchiveMemberPtr file) {
+	Common::String nameFixed(name);
+	nameFixed.toUppercase();
 
-	if (_archiveFiles.hasArchive(name) || _protectedFiles.hasArchive(name))
+	if (_archiveFiles.hasArchive(nameFixed) || _protectedFiles.hasArchive(nameFixed))
 		return true;
 
-	Common::Archive *archive = loadArchive(name, file);
+	Common::Archive *archive = loadArchive(nameFixed, file);
 	if (!archive)
 		return false;
 
-	_archiveFiles.add(name, archive, 0, false);
+	_archiveFiles.add(nameFixed, archive, 0, false);
 
 	return true;
 }
 
-bool Resource::loadFileList(const Common::String &filedata) {
+bool Resource::loadFileList(const Common::Path &filedata) {
 	Common::SeekableReadStream *f = createReadStream(filedata);
 
 	if (!f)
@@ -248,12 +250,13 @@ bool Resource::loadFileList(const Common::String &filedata) {
 		filename.toUppercase();
 
 		if (filename.hasSuffix(".PAK")) {
-			if (!exists(filename.c_str()) && _vm->gameFlags().isDemo) {
+			Common::Path path(filename);
+			if (!exists(path) && _vm->gameFlags().isDemo) {
 				// the demo version supplied with Kyra3 does not
 				// contain all pak files listed in filedata.fdt
 				// so we don't do anything here if they are non
 				// existent.
-			} else if (!loadPakFile(filename)) {
+			} else if (!loadPakFile(path)) {
 				delete f;
 				error("couldn't load file '%s'", filename.c_str());
 				return false;   // for compilers that don't support NORETURN
@@ -295,31 +298,34 @@ bool Resource::loadProtectedFiles(const char *const *list) {
 	return true;
 }
 
-void Resource::unloadPakFile(Common::String filename, bool remFromCache) {
-	filename.toUppercase();
+void Resource::unloadPakFile(const Common::String &name, bool remFromCache) {
+	Common::String nameFixed(name);
+	nameFixed.toUppercase();
 
 	// We do not remove files from '_protectedFiles' here, since
 	// those are protected against unloading.
-	if (_archiveFiles.hasArchive(filename)) {
-		_archiveFiles.remove(filename);
+	if (_archiveFiles.hasArchive(nameFixed)) {
+		_archiveFiles.remove(nameFixed);
 		if (remFromCache) {
-			ArchiveMap::iterator iter = _archiveCache.find(filename);
+			ArchiveMap::iterator iter = _archiveCache.find(nameFixed);
 			if (iter != _archiveCache.end()) {
 				delete iter->_value;
-				_archiveCache.erase(filename);
+				_archiveCache.erase(nameFixed);
 			}
 		}
 	}
 }
 
-bool Resource::isInPakList(Common::String filename) {
-	filename.toUppercase();
-	return (_archiveFiles.hasArchive(filename) || _protectedFiles.hasArchive(filename));
+bool Resource::isInPakList(const Common::String &name) {
+	Common::String nameFixed(name);
+	nameFixed.toUppercase();
+	return (_archiveFiles.hasArchive(nameFixed) || _protectedFiles.hasArchive(nameFixed));
 }
 
-bool Resource::isInCacheList(Common::String name) {
-	name.toUppercase();
-	return (_archiveCache.find(name) != _archiveCache.end());
+bool Resource::isInCacheList(const Common::String &name) {
+	Common::String nameFixed(name);
+	nameFixed.toUppercase();
+	return (_archiveCache.find(nameFixed) != _archiveCache.end());
 }
 
 void Resource::unloadAllPakFiles() {
@@ -327,11 +333,11 @@ void Resource::unloadAllPakFiles() {
 	_protectedFiles.clear();
 }
 
-void Resource::listFiles(const Common::String &pattern, Common::ArchiveMemberList &list) {
+void Resource::listFiles(const Common::Path &pattern, Common::ArchiveMemberList &list) {
 	_files.listMatchingMembers(list, pattern);
 }
 
-uint8 *Resource::fileData(const char *file, uint32 *size) {
+uint8 *Resource::fileData(const Common::Path &file, uint32 *size) {
 	Common::SeekableReadStream *stream = createReadStream(file);
 	if (!stream)
 		return nullptr;
@@ -346,15 +352,15 @@ uint8 *Resource::fileData(const char *file, uint32 *size) {
 	return buffer;
 }
 
-bool Resource::exists(const char *file, bool errorOutOnFail) {
+bool Resource::exists(const Common::Path &file, bool errorOutOnFail) {
 	if (_files.hasFile(file))
 		return true;
 	else if (errorOutOnFail)
-		error("File '%s' can't be found", file);
+		error("File '%s' can't be found", file.toString().c_str());
 	return false;
 }
 
-uint32 Resource::getFileSize(const char *file) {
+uint32 Resource::getFileSize(const Common::Path &file) {
 	Common::SeekableReadStream *stream = createReadStream(file);
 	if (!stream)
 		return 0;
@@ -364,7 +370,7 @@ uint32 Resource::getFileSize(const char *file) {
 	return size;
 }
 
-bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
+bool Resource::loadFileToBuf(const Common::Path &file, void *buf, uint32 maxSize) {
 	Common::SeekableReadStream *stream = createReadStream(file);
 	if (!stream)
 		return false;
@@ -380,11 +386,11 @@ Common::Archive *Resource::getCachedArchive(const Common::String &file) const {
 	return a != _archiveCache.end() ? a->_value : 0;
 }
 
-Common::SeekableReadStream *Resource::createReadStream(const Common::String &file) {
+Common::SeekableReadStream *Resource::createReadStream(const Common::Path &file) {
 	return _files.createReadStreamForMember(file);
 }
 
-Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::String &file, int endianness) {
+Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::Path &file, int endianness) {
 	Common::SeekableReadStream *stream = _files.createReadStreamForMember(file);
 	return stream ? new Common::SeekableReadStreamEndianWrapper(stream, (endianness == kForceBE) ? true : (endianness == kForceLE ? false : _bigEndianPlatForm), DisposeAfterUse::YES) : nullptr;
 }
@@ -421,8 +427,9 @@ Common::Archive *Resource::loadArchive(const Common::String &name, Common::Archi
 	return archive;
 }
 
-Common::Archive *Resource::loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset) {
-	ArchiveMap::iterator cachedArchive = _archiveCache.find(file);
+Common::Archive *Resource::loadInstallerArchive(const Common::Path &file, const Common::String &ext, const uint8 offset) {
+	Common::String name(file.toString('/'));
+	ArchiveMap::iterator cachedArchive = _archiveCache.find(name);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
@@ -430,11 +437,11 @@ Common::Archive *Resource::loadInstallerArchive(const Common::String &file, cons
 	if (!archive)
 		return nullptr;
 
-	_archiveCache[file] = archive;
+	_archiveCache[name] = archive;
 	return archive;
 }
 
-Common::Archive *Resource::loadStuffItArchive(const Common::String &file, const Common::String& canonicalName) {
+Common::Archive *Resource::loadStuffItArchive(const Common::Path &file, const Common::String &canonicalName) {
 	ArchiveMap::iterator cachedArchive = _archiveCache.find(canonicalName);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
@@ -447,7 +454,7 @@ Common::Archive *Resource::loadStuffItArchive(const Common::String &file, const 
 	return archive;
 }
 
-Common::Archive *Resource::loadStuffItArchive(Common::SeekableReadStream *stream, const Common::String& canonicalName, const Common::String& debugName) {
+Common::Archive *Resource::loadStuffItArchive(Common::SeekableReadStream *stream, const Common::String &canonicalName, const Common::String &debugName) {
 	ArchiveMap::iterator cachedArchive = _archiveCache.find(canonicalName);
 	if (cachedArchive != _archiveCache.end()) {
 		delete stream;

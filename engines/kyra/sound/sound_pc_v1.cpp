@@ -211,13 +211,14 @@ void SoundPC_v1::loadSoundFile(uint file) {
 		internalLoadFile(res()->fileList[file]);
 }
 
-void SoundPC_v1::loadSoundFile(Common::String file) {
-	internalLoadFile(Common::move(file));
+void SoundPC_v1::loadSoundFile(const Common::Path &file) {
+	internalLoadFile(file);
 }
 
-void SoundPC_v1::internalLoadFile(Common::String file) {
-	file += ((_version == 1) ? ".DAT" : (_type == kPCSpkr ? ".SND" : ".ADL"));
-	if (_soundFileLoaded == file)
+void SoundPC_v1::internalLoadFile(const Common::Path &file) {
+	Common::Path path(file);
+	path.appendInPlace((_version == 1) ? ".DAT" : (_type == kPCSpkr ? ".SND" : ".ADL"));
+	if (_soundFileLoaded == path)
 		return;
 
 	if (_soundDataPtr)
@@ -225,9 +226,9 @@ void SoundPC_v1::internalLoadFile(Common::String file) {
 
 	uint8 *fileData = nullptr; uint32 fileSize = 0;
 
-	fileData = _vm->resource()->fileData(file.c_str(), &fileSize);
+	fileData = _vm->resource()->fileData(path, &fileSize);
 	if (!fileData) {
-		warning("Couldn't find music file: '%s'", file.c_str());
+		warning("Couldn't find music file: '%s'", path.toString().c_str());
 		return;
 	}
 
@@ -259,7 +260,7 @@ void SoundPC_v1::internalLoadFile(Common::String file) {
 	delete[] fileData;
 	delete[] oldData;
 
-	_soundFileLoaded = file;
+	_soundFileLoaded = path;
 }
 
 } // End of namespace Kyra

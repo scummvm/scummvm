@@ -172,18 +172,18 @@ void LoLEngine::setupPrologueData(bool load) {
 
 	const char *const *fileList = _flags.isTalkie ? (_flags.isDemo ? fileListCDDemo : fileListCD) : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 
-	Common::String filename;
+	Common::Path filename;
 	for (uint i = 0; fileList[i]; ++i) {
 		filename.clear();
 
 		if (_flags.isTalkie && !_flags.isDemo)
-			filename = Common::String(_languageExt[_lang]) + "/";
+			filename = Common::Path(_languageExt[_lang]);
 
-		filename += fileList[i];
+		filename.joinInPlace(fileList[i]);
 
 		if (load) {
 			if (!_res->loadPakFile(filename))
-				error("Couldn't load file: '%s'", filename.c_str());
+				error("Couldn't load file: '%s'", filename.toString().c_str());
 		} else {
 			_res->unloadPakFile(filename);
 		}
@@ -1064,18 +1064,18 @@ void LoLEngine::setupEpilogueData(bool load) {
 	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 	assert(fileList);
 
-	Common::String filename;
+	Common::Path filename;
 	for (uint i = 0; fileList[i]; ++i) {
 		filename.clear();
 
 		if (_flags.isTalkie)
-			filename = Common::String(_languageExt[_lang]) + "/";
+			filename = Common::Path(_languageExt[_lang]);
 
-		filename += fileList[i];
+		filename.joinInPlace(fileList[i]);
 
 		if (load) {
 			if (!_res->loadPakFile(filename))
-				error("Couldn't load file: '%s'", filename.c_str());
+				error("Couldn't load file: '%s'", filename.toString().c_str());
 		} else {
 			_res->unloadPakFile(filename);
 		}

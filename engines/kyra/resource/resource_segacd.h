@@ -40,7 +40,7 @@ public:
 	SegaCDResource(Resource *res);
 	~SegaCDResource();
 
-	bool loadContainer(const Common::String &filename, uint32 offset = 0, uint32 size = 0);
+	bool loadContainer(const Common::Path &filename, uint32 offset = 0, uint32 size = 0);
 	void unloadContainer();
 
 	Common::SeekableReadStreamEndian *resStreamEndian(int resID);
@@ -60,7 +60,7 @@ private:
 	TableEntry *_resTable;
 	int _numResources;
 	Common::SeekableReadStreamEndian *_str;
-	Common::String _curFile;
+	Common::Path _curFile;
 	uint32 _curOffset;
 	uint32 _curSize;
 };

@@ -41,7 +41,7 @@ void EoBCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bo
 	generateMonsterPalettes(filename, monsterIndex);
 
 	if (hasDecorations) {
-		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.DCR", filename));
+		Common::SeekableReadStream *s = _res->createReadStream(Common::Path(Common::String::format("%s.DCR", filename)));
 		if (s)
 			loadMonsterDecoration(s, monsterIndex);
 		delete s;

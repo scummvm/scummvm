@@ -232,14 +232,14 @@ void SoundMidiPC::loadSoundFile(uint file) {
 		loadSoundFile(res()->fileList[file]);
 }
 
-void SoundMidiPC::loadSoundFile(Common::String file) {
+void SoundMidiPC::loadSoundFile(const Common::Path &file) {
 	Common::StackLock lock(_mutex);
-	file = getFileName(file);
+	Common::Path path = getFileName(file);
 
-	if (_mFileName == file)
+	if (_mFileName == path)
 		return;
 
-	if (!_vm->resource()->exists(file.c_str()))
+	if (!_vm->resource()->exists(path))
 		return;
 
 	haltTrack();
@@ -249,8 +249,8 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 
 	delete[] _musicFile;
 	uint32 fileSize = 0;
-	_musicFile = _vm->resource()->fileData(file.c_str(), &fileSize);
-	_mFileName = file;
+	_musicFile = _vm->resource()->fileData(path, &fileSize);
+	_mFileName = path;
 
 	_music->loadMusic(_musicFile, fileSize);
 
@@ -269,7 +269,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	// are sent in a different order, but that makes no practical difference.)
 	// The initial pitch bend neutral events are then sent again when the track
 	// loops.
-	if (file == "LOREINTR.XMI" && fileSize >= 0x6221 && _musicFile[0x6210] == 0xE1) {
+	if (path == "LOREINTR.XMI" && fileSize >= 0x6221 && _musicFile[0x6210] == 0xE1) {
 		// MT-32 floppy version.
 
 		// Overwrite first pitch bend event with for loop event.
@@ -281,7 +281,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 		_musicFile[0x621F] = 0xE1;
 		_musicFile[0x6220] = 0x00;
 		_musicFile[0x6221] = 0x40;
-	} else if (file == "LOREINTR.C55" && fileSize >= 0x216D && _musicFile[0x215C] == 0xE0) {
+	} else if (path == "LOREINTR.C55" && fileSize >= 0x216D && _musicFile[0x215C] == 0xE0) {
 		// GM floppy and CD version.
 
 		// Overwrite first pitch bend event with for loop event.
@@ -304,19 +304,19 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	}
 }
 
-void SoundMidiPC::loadSfxFile(Common::String file) {
+void SoundMidiPC::loadSfxFile(const Common::Path &file) {
 	Common::StackLock lock(_mutex);
 
 	// Kyrandia 1 doesn't use a special sfx file
 	if (_vm->game() == GI_KYRA1)
 		return;
 
-	file = getFileName(file);
+	Common::Path path = getFileName(file);
 
-	if (_sFileName == file)
+	if (_sFileName == path)
 		return;
 
-	if (!_vm->resource()->exists(file.c_str()))
+	if (!_vm->resource()->exists(path))
 		return;
 
 	stopAllSoundEffects();
@@ -324,8 +324,8 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 	delete[] _sfxFile;
 
 	uint32 fileSize = 0;
-	_sfxFile = _vm->resource()->fileData(file.c_str(), &fileSize);
-	_sFileName = file;
+	_sfxFile = _vm->resource()->fileData(path, &fileSize);
+	_sFileName = path;
 
 	for (int i = 0; i < 3; ++i) {
 		_sfx[i]->loadMusic(_sfxFile, fileSize);
@@ -437,19 +437,19 @@ void SoundMidiPC::onTimer(void *data) {
 	}
 }
 
-Common::String SoundMidiPC::getFileName(const Common::String &str) {
-	Common::String file = str;
+Common::Path SoundMidiPC::getFileName(const Common::Path &str) {
+	Common::Path file(str);
 	if (_type == kMidiMT32)
-		file += ".XMI";
+		file.appendInPlace(".XMI");
 	else if (_type == kMidiGM)
-		file += ".C55";
+		file.appendInPlace(".C55");
 	else if (_type == kPCSpkr)
-		file += ".PCS";
+		file.appendInPlace(".PCS");
 
-	if (_vm->resource()->exists(file.c_str()))
+	if (_vm->resource()->exists(file))
 		return file;
 
-	return str + ".XMI";
+	return str.append(".XMI");
 }
 
 } // End of namespace Kyra

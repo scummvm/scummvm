@@ -448,7 +448,7 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
 	Common::String tmp = Common::String::format(_cpsFilePattern.c_str(), file);
-	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
+	Common::SeekableReadStream *s = _vm->resource()->createReadStream(Common::Path(tmp));
 	bool loadAlternative = false;
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
@@ -491,7 +491,7 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 
 		} else {
 			tmp.setChar('X', 0);
-			s = _vm->resource()->createReadStream(tmp);
+			s = _vm->resource()->createReadStream(Common::Path(tmp));
 
 			if (!s)
 				error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);

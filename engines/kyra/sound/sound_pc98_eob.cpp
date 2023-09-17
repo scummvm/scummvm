@@ -78,7 +78,7 @@ void SoundPC98_EoB::loadSoundFile(uint file) {
 	delete s;
 }
 
-void SoundPC98_EoB::loadSfxFile(Common::String file) {
+void SoundPC98_EoB::loadSfxFile(const Common::Path &file) {
 	if (!_ready)
 		return;
 
