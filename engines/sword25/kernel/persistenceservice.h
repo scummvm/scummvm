@@ -51,7 +51,7 @@ public:
 	// -----------------------------------------------------------------------------
 
 	static uint getSlotCount();
-	static Common::String getSavegameDirectory();
+	static Common::Path getSavegameDirectory();
 
 	void            reloadSlots();
 	bool            isSlotOccupied(uint slotID);

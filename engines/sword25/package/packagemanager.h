@@ -87,7 +87,7 @@ private:
 	Common::FSNode _rootFolder;
 	Common::List<ArchiveEntry *> _archiveList;
 	bool _extractedFiles;
-	Common::String _directoryName;
+	Common::Path _directoryName;
 
 	bool _useEnglishSpeech;
 	Common::String ensureSpeechLang(const Common::String &fileName);
@@ -107,7 +107,7 @@ public:
 	 *
 	 * Set the PackageManager to run on extracted game files.s
 	 */
-	void setRunWithExtractedFiles(const Common::String &directoryName) {
+	void setRunWithExtractedFiles(const Common::Path &directoryName) {
 		_extractedFiles = true;
 		_directoryName = directoryName;
 	}
@@ -118,14 +118,14 @@ public:
 	 * @param MountPosition The directory name under which the package should be mounted
 	 * @return              Returns true if the mount was successful, otherwise false.
 	 */
-	bool loadPackage(const Common::String &fileName, const Common::String &mountPosition);
+	bool loadPackage(const Common::Path &fileName, const Common::String &mountPosition);
 	/**
 	 * Mounts the contents of a directory in the specified directory in the directory tree.
 	 * @param               The name of the directory to mount
 	 * @param MountPosition The directory name under which the package should be mounted
 	 * @return              Returns true if the mount was successful, otherwise false.
 	 */
-	bool loadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition);
+	bool loadDirectoryAsPackage(const Common::Path &directoryName, const Common::String &mountPosition);
 	/**
 	 * Downloads a file from the directory tree
 	 * @param FileName      The filename of the file to load

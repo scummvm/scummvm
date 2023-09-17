@@ -36,18 +36,21 @@
 
 namespace Sword25 {
 
-Common::String FileSystemUtil::getUserdataDirectory() {
+Common::Path FileSystemUtil::getUserdataDirectoryPath() {
 	// FIXME: This code is a hack which bypasses the savefile API,
 	// and should eventually be removed.
-	Common::String path = ConfMan.get("savepath");
+	Common::Path path = ConfMan.getPath("savepath");
 
 	if (path.empty()) {
 		error("No save path has been defined");
-		return "";
 	}
 
-	// Return the path
 	return path;
+}
+
+Common::String FileSystemUtil::getUserdataDirectory() {
+	// Return the path using / separator
+	return getUserdataDirectoryPath().toString('/');
 }
 
 Common::String FileSystemUtil::getPathSeparator() {
@@ -58,7 +61,7 @@ Common::String FileSystemUtil::getPathSeparator() {
 
 bool FileSystemUtil::fileExists(const Common::String &filename) {
 	Common::File f;
-	if (f.exists(filename))
+	if (f.exists(Common::Path(filename)))
 		return true;
 
 	// Check if the file exists in the save folder
