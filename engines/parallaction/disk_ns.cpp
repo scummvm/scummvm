@@ -158,10 +158,11 @@ const Common::ArchiveMemberPtr NSArchive::getMember(const Common::Path &path) co
 	Common::String name = path.toString();
 	uint32 index = lookup(name.c_str());
 
-	const char *item = nullptr;
-	if (index < _numFiles) {
-		item = _archiveDir[index];
+	if (index >= _numFiles) {
+		return Common::ArchiveMemberPtr();
 	}
+
+	const char *item = _archiveDir[index];
 
 	return Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(Common::String(item), *this));
 }
@@ -173,7 +174,7 @@ const Common::ArchiveMemberPtr NSArchive::getMember(const Common::Path &path) co
 #define LOWEST_ARCHIVE_PRIORITY		1
 
 Disk_ns::Disk_ns(Parallaction *vm) : _vm(vm) {
-	Common::FSDirectory *baseDir = new Common::FSDirectory(ConfMan.get("path"));
+	Common::FSDirectory *baseDir = new Common::FSDirectory(ConfMan.getPath("path"));
 	_sset.add("basedir", baseDir, HIGHEST_PRIORITY);
 }
 
@@ -194,7 +195,7 @@ Common::SeekableReadStream *Disk_ns::openFile(const char *filename) {
 
 
 void Disk_ns::addArchive(const Common::String& name, int priority) {
-	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
+	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(Common::Path(name));
 	if (!stream)
 		error("Disk_ns::addArchive() couldn't find archive '%s'", name.c_str());
 
