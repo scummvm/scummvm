@@ -195,7 +195,7 @@ TestExitStatus SoundSubsystem::modPlayback() {
 		return kTestSkipped;
 	}
 
-	Common::FSNode gameRoot(ConfMan.get("path"));
+	Common::FSNode gameRoot(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
 
 	Common::File f;
@@ -353,7 +353,7 @@ SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("MODPlayback", &SoundSubsystem::modPlayback, true);
 
 	// Make audio-files discoverable
-	Common::FSNode gameRoot(ConfMan.get("path"));
+	Common::FSNode gameRoot(ConfMan.getPath("path"));
 	if (gameRoot.exists()) {
 		SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
 		if (SearchMan.hasFile("track01.mp3") && SearchMan.hasFile("track02.mp3") && SearchMan.hasFile("track03.mp3") && SearchMan.hasFile("track04.mp3")) {

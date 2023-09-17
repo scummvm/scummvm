@@ -225,13 +225,13 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 
 Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() const {
 	// Look for config file using SearchMan
-	Common::SeekableReadStream *rs = SearchMan.createReadStreamForMember(_configFileName);
+	Common::SeekableReadStream *rs = SearchMan.createReadStreamForMember(Common::Path(_configFileName));
 	return rs;
 }
 
 Common::WriteStream *TestbedConfigManager::getConfigWriteStream() const {
 	// Look for config file in game-path
-	const Common::String &path = ConfMan.get("path");
+	const Common::Path &path = ConfMan.getPath("path");
 	Common::WriteStream *ws;
 	Common::FSNode gameRoot(path);
 	Common::FSNode config = gameRoot.getChild(_configFileName);
