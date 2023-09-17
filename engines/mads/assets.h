@@ -83,7 +83,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int flags);
+	SpriteAsset(MADSEngine *vm, const Common::Path &resourceName, int flags);
 
 	/**
 	 * Constructor

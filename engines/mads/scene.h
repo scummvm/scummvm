@@ -175,7 +175,7 @@ public:
 	 * @param prefix		Prefix to use for retrieving animation data
 	 * @param palFlag		Flag for whether to reset the high/lo palette areas
 	 */
-	void loadScene(int sceneId, const Common::String &prefix, bool palFlag);
+	void loadScene(int sceneId, const Common::Path &prefix, bool palFlag);
 
 	/**
 	 * Loads the hotstpots for the scene
@@ -212,7 +212,7 @@ public:
 	/**
 	 * Load an animation
 	 */
-	int loadAnimation(const Common::String &resName, int trigger = 0);
+	int loadAnimation(const Common::Path &resName, int trigger = 0);
 
 	/**
 	 * Returns a vocab entry

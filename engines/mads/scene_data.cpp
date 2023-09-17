@@ -133,11 +133,11 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	bool sceneFlag = sceneId >= 0;
 
 	// Figure out the resource to use
-	Common::String resourceName;
+	Common::Path resourceName;
 	if (sceneFlag) {
 		resourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".DAT");
 	} else {
-		resourceName = "*" + Resources::formatResource(resName, resName);
+		resourceName = Common::Path("*").appendInPlace(Resources::formatResource(resName, resName));
 	}
 
 	// Open the scene info resource for access
@@ -275,7 +275,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 				setResName += "*";
 			setResName += setNames[i];
 
-			SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
+			SpriteAsset *sprites = new SpriteAsset(_vm, Common::Path(setResName), flags);
 			spriteSets.push_back(sprites);
 			usageList.push_back(sprites->_usageIndex);
 		}
@@ -302,7 +302,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 
 void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
-	Common::String resourceName;
+	Common::Path resourceName;
 	bool isV2 = (_vm->getGameID() != GType_RexNebular);
 	Common::String extension = !isV2 ? ".ART" : ".TT";
 	int paletteStream = !isV2 ? 0 : 2;
@@ -311,7 +311,7 @@ void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &r
 	if (sceneFlag) {
 		resourceName = Resources::formatName(RESPREFIX_RM, artFileNum, extension);
 	} else {
-		resourceName = "*" + Resources::formatResource(resName, resName);
+		resourceName = Common::Path("*").appendInPlace(Resources::formatResource(resName, resName));
 	}
 
 	// Load in the ART header and palette
@@ -354,14 +354,14 @@ void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &r
 
 void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
-	Common::String resourceName;
+	Common::Path resourceName;
 	Common::SeekableReadStream *stream;
 
 	// Get the ART resource
 	if (sceneFlag) {
 		resourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".ART");
 	} else {
-		resourceName = "*" + Resources::formatResource(resName, resName);
+		resourceName = Common::Path("*").appendInPlace(Resources::formatResource(resName, resName));
 	}
 
 	// Load in the ART data
@@ -399,7 +399,7 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 }
 
 void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface) {
-	Common::String tileMapResourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".MM");
+	Common::Path tileMapResourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".MM");
 	File tileMapFile(tileMapResourceName);
 	MadsPack tileMapPack(&tileMapFile);
 	Common::SeekableReadStream *mapStream = tileMapPack.getItemStream(0);
@@ -430,7 +430,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 
 	// Tile data, which needs to be kept compressed, as the tile map offsets refer to
 	// the compressed data. Each tile is then uncompressed separately
-	Common::String tileDataResourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".TT");
+	Common::Path tileDataResourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".TT");
 	File tileDataFile(tileDataResourceName);
 	MadsPack tileDataPack(&tileDataFile);
 	Common::SeekableReadStream *tileDataUncomp = tileDataPack.getItemStream(0);

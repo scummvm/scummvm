@@ -80,7 +80,7 @@ bool MenuView::onEvent(Common::Event &event) {
 }
 
 Common::String MenuView::getResourceName() {
-	Common::String s(_filename);
+	Common::String s(_filename.baseName());
 	s.toLowercase();
 	while (s.contains('.'))
 		s.deleteLastChar();
@@ -96,9 +96,9 @@ char TextView::_resourceName[100];
 #define TV_NUM_FADE_STEPS 40
 #define TV_FADE_DELAY_MILLI 50
 
-void TextView::execute(MADSEngine *vm, const Common::String &resName) {
-	assert(resName.size() < 100);
-	Common::strlcpy(_resourceName, resName.c_str(), sizeof(_resourceName));
+void TextView::execute(MADSEngine *vm, const Common::Path &resName) {
+	assert(resName.toString('/').size() < 100);
+	Common::strlcpy(_resourceName, resName.toString('/').c_str(), sizeof(_resourceName));
 	vm->_dialogs->_pendingDialog = DIALOG_TEXTVIEW;
 }
 
@@ -127,8 +127,8 @@ TextView::~TextView() {
 }
 
 void TextView::load() {
-	Common::String scriptName(_resourceName);
-	scriptName += ".txr";
+	Common::Path scriptName(_resourceName);
+	scriptName.appendInPlace(".txr");
 
 	_filename = scriptName;
 	if (!_script.open(scriptName))
@@ -454,9 +454,9 @@ void TextView::scriptDone() {
 
 char AnimationView::_resourceName[100];
 
-void AnimationView::execute(MADSEngine *vm, const Common::String &resName) {
-	assert(resName.size() < 100);
-	Common::strlcpy(_resourceName, resName.c_str(), sizeof(_resourceName));
+void AnimationView::execute(MADSEngine *vm, const Common::Path &resName) {
+	assert(resName.toString('/').size() < 100);
+	Common::strlcpy(_resourceName, resName.toString('/').c_str(), sizeof(_resourceName));
 	vm->_dialogs->_pendingDialog = DIALOG_ANIMVIEW;
 }
 
@@ -500,13 +500,13 @@ AnimationView::~AnimationView() {
 }
 
 void AnimationView::load() {
-	Common::String resName(_resourceName);
-	if (!resName.hasSuffix("."))
-		resName += ".res";
+	Common::Path resName(_resourceName);
+	if (!resName.baseName().hasSuffix("."))
+		resName.appendInPlace(".res");
 
 	_filename = resName;
 	if (!_script.open(resName))
-		error("Could not open resource %s", resName.c_str());
+		error("Could not open resource %s", resName.toString().c_str());
 
 	processLines();
 }
@@ -628,7 +628,7 @@ void AnimationView::loadNextResource() {
 	// Set the sound data for the animation
 	_vm->_sound->setEnabled(resEntry._soundFlag);
 
-	Common::String dsrName = _currentAnimation->_header._dsrName;
+	Common::Path dsrName(_currentAnimation->_header._dsrName);
 	if (!dsrName.empty())
 		_vm->_audio->setSoundGroup(dsrName);
 
@@ -704,7 +704,7 @@ void AnimationView::processLines() {
 				}
 
 				// Add resource into list along with any set state information
-				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag,
+				_resources.push_back(ResourceEntry(Common::Path(resName), _sfx, _soundFlag,
 					_bgLoadFlag, _showWhiteBars));
 
 				// Fx resets between resource entries

@@ -201,13 +201,13 @@ public:
 	/**
 	 * Loads animation data
 	 */
-	void load(MSurface &backSurface, DepthSurface &depthSurface, const Common::String &resName,
+	void load(MSurface &backSurface, DepthSurface &depthSurface, const Common::Path &resName,
 		int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
 
 	/**
 	 * Preload animation data for the scene
 	 */
-	void preLoad(const Common::String &resName, int level);
+	void preLoad(const Common::Path &resName, int level);
 
 	/**
 	 * Setups up a loaded animation for playback

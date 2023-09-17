@@ -35,7 +35,7 @@ class MenuView: public FullScreenDialog {
 protected:
 	bool _breakFlag;
 	bool _redrawFlag;
-	Common::String _filename;
+	Common::Path _filename;
 
 	virtual void doFrame() = 0;
 
@@ -125,7 +125,7 @@ public:
 	/**
 	 * Queue the given text resource for display
 	 */
-	static void execute(MADSEngine *vm, const Common::String &resName);
+	static void execute(MADSEngine *vm, const Common::Path &resName);
 
 	TextView(MADSEngine *vm);
 
@@ -135,14 +135,14 @@ public:
 enum ResyncMode { NEVER, ALWAYS, BEGINNING };
 
 struct ResourceEntry {
-	Common::String _resourceName;
+	Common::Path _resourceName;
 	int _fx;
 	bool _soundFlag;
 	bool _bgFlag;
 	bool _showWhiteBars;
 
 	ResourceEntry() {}
-	ResourceEntry(const Common::String &resName, int fx, bool soundFlag,
+	ResourceEntry(const Common::Path &resName, int fx, bool soundFlag,
 			bool bgFlag, bool showWhiteBars) {
 		_resourceName = resName;
 		_fx = fx;
@@ -220,7 +220,7 @@ public:
 	/**
 	* Queue the given text resource for display
 	*/
-	static void execute(MADSEngine *vm, const Common::String &resName);
+	static void execute(MADSEngine *vm, const Common::Path &resName);
 
 	AnimationView(MADSEngine *vm);
 

@@ -55,7 +55,7 @@ Font *Font::getFont(const Common::String &fontName) {
 	if (_fonts->contains(fontName)) {
 		return _fonts->getVal(fontName);
 	} else {
-		Font *font = new Font(fontName);
+		Font *font = new Font(Common::Path(fontName));
 		_fonts->setVal(fontName, font);
 		return font;
 	}
@@ -68,7 +68,7 @@ Font::Font() {
 	setFont(FONT_INTERFACE);
 }
 
-Font::Font(const Common::String &filename) {
+Font::Font(const Common::Path &filename) {
 	_charWidths = nullptr;
 	_charOffs = nullptr;
 	_charData = nullptr;
@@ -81,16 +81,16 @@ Font::~Font() {
 	delete[] _charData;
 }
 
-void Font::setFont(const Common::String &filename) {
+void Font::setFont(const Common::Path &filename) {
 	if (!_filename.empty() && (filename == _filename))
 		// Already using specified font, so don't bother reloading
 		return;
 
 	_filename = filename;
 
-	Common::String resName = filename;
-	if (!resName.hasSuffix(".FF"))
-		resName += ".FF";
+	Common::Path resName = filename;
+	if (!resName.baseName().hasSuffix(".FF"))
+		resName.appendInPlace(".FF");
 
 	MadsPack fontData(resName, _vm);
 	Common::SeekableReadStream *fontFile = fontData.getItemStream(0);

@@ -568,7 +568,7 @@ void PictureDialog::save() {
 	_vm->_screen->translate(map);
 
 	// Load the inventory picture
-	Common::String setName = Common::String::format("*OB%.3d.SS", _objectId);
+	Common::Path setName(Common::String::format("*OB%.3d.SS", _objectId));
 	SpriteAsset *asset = new SpriteAsset(_vm, setName, 0x8000);
 	palette.setFullPalette(palette._mainPalette);
 

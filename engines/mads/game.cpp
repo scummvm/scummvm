@@ -463,7 +463,14 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		s.syncAsSint16LE(_trigger);
 		s.syncAsUint16LE(_triggerSetupMode);
 		s.syncAsUint16LE(_triggerMode);
-		s.syncString(_aaName);
+		if (s.isSaving()) {
+			Common::String name(_aaName.toString('/'));
+			s.syncString(name);
+		} else {
+			Common::String name;
+			s.syncString(name);
+			_aaName = Common::Path(name, '/');
+		}
 		s.syncAsSint16LE(_lastSave);
 
 		_scene.synchronize(s);

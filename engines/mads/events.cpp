@@ -51,7 +51,7 @@ EventsManager::~EventsManager() {
 	freeCursors();
 }
 
-void EventsManager::loadCursors(const Common::String &spritesName) {
+void EventsManager::loadCursors(const Common::Path &spritesName) {
 	delete _cursorSprites;
 	_cursorSprites = new SpriteAsset(_vm, spritesName, 0x4000);
 }

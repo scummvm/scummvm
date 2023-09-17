@@ -386,7 +386,7 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 	}
 }
 
-int SpriteSets::addSprites(const Common::String &resName, int flags) {
+int SpriteSets::addSprites(const Common::Path &resName, int flags) {
 	return add(new SpriteAsset(_vm, resName, flags));
 }
 

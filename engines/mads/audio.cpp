@@ -65,7 +65,7 @@ void AudioPlayer::setDefaultSoundGroup() {
 	}
 }
 
-void AudioPlayer::setSoundGroup(const Common::String &filename) {
+void AudioPlayer::setSoundGroup(const Common::Path &filename) {
 	if (_filename != filename) {
 		_dsrEntries.clear();
 
