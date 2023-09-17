@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-16 22:56+0000\n"
-"PO-Revision-Date: 2023-09-14 10:59+0000\n"
+"PO-Revision-Date: 2023-09-17 09:02+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -4336,8 +4336,6 @@ msgid "Magnify Mode Off"
 msgstr "Vergrößerungs-Modus deaktiviert"
 
 #: backends/platform/android/android.cpp:1028
-#, fuzzy
-#| msgid "Control"
 msgid "Controls"
 msgstr "Steuerung"
 
@@ -4408,10 +4406,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/android.cpp:1069
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "Spiel ~h~inzufügen..."
+msgstr "Spiele hinzufügen"
 
 #: backends/platform/android/android.cpp:1072
 msgid ""
