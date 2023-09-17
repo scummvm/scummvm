@@ -30,19 +30,19 @@ namespace Illusions {
 byte *ResourceReaderFileReader::readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) {
 	debug("ResourceReaderFileReader::readResource(%08X, %08X)", sceneId, resId);
 
-	Common::String filename = buildResourceFilename(resId);
+	Common::Path filename = buildResourceFilename(resId);
 	Common::File fd;
 	if (!fd.open(filename))
-		error("Resource::loadData() Could not open %s for reading", filename.c_str());
+		error("Resource::loadData() Could not open %s for reading", filename.toString().c_str());
 	dataSize = fd.size();
 	byte *data = (byte*)malloc(dataSize);
 	fd.read(data, dataSize);
 	return data;
 }
 
-Common::String ResourceReaderFileReader::buildResourceFilename(uint32 resId) {
+Common::Path ResourceReaderFileReader::buildResourceFilename(uint32 resId) {
 	const char *ext = getResourceExtension(resId);
-	return Common::String::format("%08X%s", resId, ext);
+	return Common::Path(Common::String::format("%08X%s", resId, ext));
 }
 
 const char *ResourceReaderFileReader::getResourceExtension(uint32 resId) {

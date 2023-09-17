@@ -47,12 +47,12 @@ void BBDOUVideoPlayer::start(uint32 videoId, uint32 objectId, uint32 priority, u
 	Control *videoControl = _vm->_dict->getObjectControl(objectId);
 	videoControl->_flags |= 0x0008;
 	_vm->_input->discardAllEvents();
-	Common::String filename = Common::String::format("%08x.avi", videoId);
+	Common::Path filename(Common::String::format("%08x.avi", videoId));
 	_videoDecoder = new Video::AVIDecoder();
 	if (!_videoDecoder->loadFile(filename)) {
 		delete _videoDecoder;
 		_videoDecoder = nullptr;
-		warning("Unable to open video %s", filename.c_str());
+		warning("Unable to open video %s", filename.toString().c_str());
 		notifyCallingThread();
 		return;
 	}
