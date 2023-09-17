@@ -275,7 +275,7 @@ void FileIO::m_new(int nargs) {
 		if (!inFile) {
 			Common::File *f = new Common::File;
 
-			if (!f->open(origpath)) {
+			if (!f->open(Common::Path(origpath, g_director->_dirSeparator))) {
 				delete f;
 				saveFileError();
 				me->dispose();

@@ -1277,7 +1277,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	bool skipdump = false;
 
 	if (ConfMan.getBool("dump_scripts")) {
-		Common::String buf;
+		Common::Path buf;
 		if (scriptFlags & kScriptFlagFactoryDef) {
 			buf = dumpFactoryName(encodePathForDump(archName).c_str(), factoryName.c_str(), "lscr");
 		} else {
@@ -1285,10 +1285,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		}
 
 		if (!out.open(buf, true)) {
-			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.c_str());
+			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.toString(Common::Path::kNativeSeparator).c_str());
 			skipdump = true;
 		} else {
-			warning("Lingo::addCodeV4(): Dumping Lscr to %s", buf.c_str());
+			warning("Lingo::addCodeV4(): Dumping Lscr to %s", buf.toString(Common::Path::kNativeSeparator).c_str());
 		}
 	}
 

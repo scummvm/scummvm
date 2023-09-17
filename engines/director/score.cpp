@@ -1201,7 +1201,7 @@ void Score::screenShot() {
 	Common::String currentPath = _vm->getCurrentPath().c_str();
 	Common::replace(currentPath, Common::String(g_director->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), Common::punycode_encodefilename(_movie->getMacName()).c_str());
-	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, g_director->_framesRan, "png");
+	Common::Path filename = dumpScriptName(prefix.c_str(), kMovieScript, g_director->_framesRan, "png");
 
 	const char *buildNumber = getenv("BUILD_NUMBER");
 
@@ -1210,8 +1210,8 @@ void Score::screenShot() {
 		// The filename is in the form:
 		// ./dumps/theapartment/25/xn--Main Menu-zd0e-19.png
 
-		Common::String buildDir = Common::String::format("%s/%s", ConfMan.get("screenshotpath").c_str(),
-			g_director->getTargetName().c_str());
+		Common::Path buildDir(Common::String::format("%s/%s", ConfMan.get("screenshotpath").c_str(),
+			g_director->getTargetName().c_str()), '/');
 
 		// We run for the first time, let's check if we had the directory previously
 		if (_previousBuildBotBuild == -1) {
@@ -1227,7 +1227,7 @@ void Score::screenShot() {
 
 		// Now we try to find any previous dump
 		while (prevbuild > 0) {
-			filename = Common::String::format("%s/%d/%s-%d.png", buildDir.c_str(), prevbuild, prefix.c_str(), g_director->_framesRan);
+			filename = buildDir.join(Common::Path(Common::String::format("%d/%s-%d.png", prevbuild, prefix.c_str(), g_director->_framesRan), '/'));
 
 			Common::FSNode fs(filename);
 
@@ -1245,14 +1245,14 @@ void Score::screenShot() {
 
 			if (stream && decoder.loadStream(*stream)) {
 				if (checkShotSimilarity(decoder.getSurface(), newSurface)) {
-					warning("Screenshot is equal to previous one, skipping: %s", filename.c_str());
+					warning("Screenshot is equal to previous one, skipping: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 					newSurface->free();
 					delete newSurface;
 					delete stream;
 					return;
 				}
 			} else {
-				warning("Error loading previous screenshot %s", filename.c_str());
+				warning("Error loading previous screenshot %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 			}
 
 			delete stream;
@@ -1262,16 +1262,16 @@ void Score::screenShot() {
 		// the screenshot was different from the previous one.
 		//
 		// Regenerate file name with the correct build number
-		filename = Common::String::format("%s/%s/%s-%d.png", buildDir.c_str(), buildNumber, prefix.c_str(), g_director->_framesRan);
+		filename = buildDir.join(Common::Path(Common::String::format("%s/%s-%d.png", buildNumber, prefix.c_str(), g_director->_framesRan), '/'));
 	}
 
 	Common::DumpFile screenshotFile;
 	if (screenshotFile.open(filename, true)) {
-		debug("Dumping screenshot to %s", filename.c_str());
+		debug("Dumping screenshot to %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 		Image::writePNG(screenshotFile, *newSurface);
 	} else {
-		warning("Cannot write screenshot to %s", filename.c_str());
+		warning("Cannot write screenshot to %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	newSurface->free();

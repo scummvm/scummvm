@@ -142,11 +142,11 @@ void Window::testFontScaling() {
 }
 
 void Window::testFonts() {
-	Common::String fontName("Helvetica");
+	Common::Path fontName("Helvetica");
 
 	Common::MacResManager *fontFile = new Common::MacResManager();
 	if (!fontFile->open(fontName))
-		error("testFonts(): Could not open %s as a resource fork", fontName.c_str());
+		error("testFonts(): Could not open %s as a resource fork", fontName.toString(Common::Path::kNativeSeparator).c_str());
 
 	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
 	if (fonds.size() > 0) {
@@ -167,7 +167,7 @@ void Window::testFonts() {
 //////////////////////
 // Movie iteration
 //////////////////////
-Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::String &folder) {
+Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::Path &folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
 	const char *sharedMMMname;
@@ -192,7 +192,7 @@ Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::Strin
 			}
 
 			warning("name: %s", i->getName().c_str());
-			Archive *arc = _vm->openArchive(i->getName());
+			Archive *arc = _vm->openArchive(i->getPathInArchive());
 			Movie *m = new Movie(this);
 			m->setArchive(arc);
 			nameMap->setVal(m->getMacName(), m);
@@ -205,7 +205,7 @@ Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::Strin
 }
 
 void Window::enqueueAllMovies() {
-	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.getPath("path"));
 	Common::FSList files;
 	if (!dir.getChildren(files, Common::FSNode::kListFilesOnly)) {
 		warning("DirectorEngine::enqueueAllMovies(): Failed inquiring file list");

@@ -553,10 +553,10 @@ void BitmapCastMember::load() {
 					return;
 				} else {
 					delete decoder;
-					warning("BUILDBOT: BitmapCastMember::load(): wrong format for external picture '%s'", location.toString().c_str());
+					warning("BUILDBOT: BitmapCastMember::load(): wrong format for external picture '%s'", location.toString(Common::Path::kNativeSeparator).c_str());
 				}
 			} else {
-				warning("BitmapCastMember::load(): cannot open external picture '%s'", location.toString().c_str());
+				warning("BitmapCastMember::load(): cannot open external picture '%s'", location.toString(Common::Path::kNativeSeparator).c_str());
 			}
 		}
 	} else {

@@ -167,7 +167,7 @@ public:
 	bool processEvent(Common::Event &event) override;
 
 	// tests.cpp
-	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
+	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::Path &folder);
 	void testFontScaling();
 	void testFonts();
 	void enqueueAllMovies();

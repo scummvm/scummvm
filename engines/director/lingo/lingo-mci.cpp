@@ -433,7 +433,7 @@ void Lingo::func_mci(const Common::String &name) {
     case MCI_OPEN: {
         Common::File *file = new Common::File();
 
-        if (!file->open(parsedCmd.device)) {
+        if (!file->open(Common::Path(parsedCmd.device, g_director->_dirSeparator))) {
             warning("func_mci(): Failed to open %s", parsedCmd.device.c_str());
             delete file;
             return;

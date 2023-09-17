@@ -59,9 +59,9 @@ public:
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
 	virtual void close();
 
-	Common::String getPathName() const { return _pathName; }
+	Common::Path getPathName() const { return _pathName; }
 	Common::String getFileName() const;
-	void setPathName(const Common::String &name) { _pathName = name; }
+	void setPathName(const Common::Path &name) { _pathName = name; }
 	int getFileSize();
 
 	bool isOpen() const { return _stream != 0; }
@@ -94,7 +94,7 @@ protected:
 	TypeMap _types;
 	MovieChunkMap _movieChunks;
 
-	Common::String _pathName;
+	Common::Path _pathName;
 };
 
 class MacArchive : public Archive {
@@ -179,7 +179,7 @@ private:
 		uint32 offset;
 		uint32 size;
 	};
-	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, Entry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 	FileMap _files;
 	Common::Path _path;
 

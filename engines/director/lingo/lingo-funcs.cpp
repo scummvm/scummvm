@@ -178,7 +178,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	}
 
 	if (movie.type != VOID) {
-		ref.movie = _vm->getCurrentMovie()->_movieArchive->getPathName();
+		ref.movie = _vm->getCurrentMovie()->_movieArchive->getPathName().toString(g_director->_dirSeparator);
 	}
 	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrameNum();
 

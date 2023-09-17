@@ -1181,7 +1181,7 @@ void LB::b_closeResFile(int nargs) {
 	}
 
 	Datum d = g_lingo->pop();
-	Common::String resFileName = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
+	Common::Path resFileName(g_director->getCurrentWindow()->getCurrentPath() + d.asString(), g_director->_dirSeparator);
 
 	if (g_director->_openResFiles.contains(resFileName)) {
 		g_director->_openResFiles.erase(resFileName);
@@ -1230,7 +1230,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	if (cache) {
 		Common::ArchiveMemberList files;
 
-		cache->listMatchingMembers(files, path.toString() + (path.empty() ? "*" : "/*"), true);
+		cache->listMatchingMembers(files, path.append(path.empty() ? "*" : "/*", '/'), true);
 
 		for (auto &fi : files) {
 			fileNameList.push_back(Common::lastPathComponent(fi->getName(), '/'));
@@ -1241,7 +1241,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	if (d.exists()) {
 		Common::FSList f;
 		if (!d.getChildren(f, Common::FSNode::kListAll)) {
-			warning("Cannot access directory %s", path.toString().c_str());
+			warning("Cannot access directory %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		} else {
 			for (uint i = 0; i < f.size(); i++)
 				fileNameList.push_back(f[i].getName());
@@ -1279,7 +1279,7 @@ void LB::b_openDA(int nargs) {
 
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
-	Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
+	Common::Path resPath(g_director->getCurrentWindow()->getCurrentPath() + d.asString(), g_director->_dirSeparator);
 
 	if (g_director->getPlatform() == Common::kPlatformWindows) {
  		warning("STUB: BUILDBOT: b_openResFile(%s) on Windows", d.asString().c_str());
@@ -1288,7 +1288,7 @@ void LB::b_openResFile(int nargs) {
 
 	if (!g_director->_allSeenResFiles.contains(resPath)) {
 		MacArchive *arch = new MacArchive();
-		if (arch->openFile(findPath(resPath).toString())) {
+		if (arch->openFile(findPath(resPath))) {
 			g_director->_openResFiles.setVal(resPath, arch);
 			g_director->_allSeenResFiles.setVal(resPath, arch);
 			g_director->addArchiveToOpenList(resPath);
@@ -1306,7 +1306,7 @@ void LB::b_openXlib(int nargs) {
 	Datum d = g_lingo->pop();
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
 		// try opening the file as a Macintosh resource fork
-		Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
+		Common::Path resPath(g_director->getCurrentWindow()->getCurrentPath() + d.asString(), g_director->_dirSeparator);
 		MacArchive *resFile = new MacArchive();
 		if (resFile->openFile(resPath)) {
 			uint32 XCOD = MKTAG('X', 'C', 'O', 'D');

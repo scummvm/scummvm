@@ -104,9 +104,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_wm = nullptr;
 
-	_gameDataDir = Common::FSNode(ConfMan.get("path"));
+	_gameDataDir = Common::FSNode(ConfMan.getPath("path"));
 
-	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
+	SearchMan.addDirectory(_gameDataDir, 0, 5);
 
 	for (uint i = 0; Director::directoryGlobs[i]; i++) {
 		Common::String directoryGlob = directoryGlobs[i];
@@ -390,8 +390,8 @@ StartMovie DirectorEngine::getStartMovie() const {
 	return _options.startMovie;
 }
 
-Common::String DirectorEngine::getStartupPath() const {
-	return _options.startupPath;
+Common::Path DirectorEngine::getStartupPath() const {
+	return Common::Path(_options.startupPath, g_director->_dirSeparator);
 }
 
 bool DirectorEngine::desktopEnabled() {

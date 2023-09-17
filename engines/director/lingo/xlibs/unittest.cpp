@@ -99,7 +99,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 
 	Common::SeekableWriteStream *stream = file.createWriteStream();
 	if (!stream) {
-		warning("UnitTest::b_UTScreenshot(): could not open file %s", file.getPath().c_str());
+		warning("UnitTest::b_UTScreenshot(): could not open file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -114,7 +114,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 	success = Image::writeBMP(*stream, *windowSurface);
 #endif
 	if (!success) {
-		warning("UnitTest::b_UTScreenshot(): error writing screenshot data to file %s", file.getPath().c_str());
+		warning("UnitTest::b_UTScreenshot(): error writing screenshot data to file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	stream->finalize();
 	delete stream;

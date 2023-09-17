@@ -886,7 +886,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheTraceLogFile:
 		d.type = STRING;
-		d.u.s = new Common::String(g_director->_traceLogFile);
+		d.u.s = new Common::String(g_director->_traceLogFile.toString(Common::Path::kNativeSeparator));
 		break;
 	case kTheUpdateMovieEnabled:
 		d = g_lingo->_updateMovieEnabled;
@@ -1195,14 +1195,14 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheTraceLogFile:
 	{
 		if (d.asString().size()) {
-			Common::String logPath = ConfMan.get("path") + "/" + d.asString();
+			Common::Path logPath = ConfMan.getPath("path").appendComponent(d.asString());
 			Common::FSNode out(logPath);
 			if (!out.exists())
 				out.createWriteStream();
 			if (out.isWritable())
 				g_director->_traceLogFile = logPath;
 			else
-				warning("traceLogFile '%s' is not writeable", logPath.c_str());
+				warning("traceLogFile '%s' is not writeable", logPath.toString(Common::Path::kNativeSeparator).c_str());
 		} else {
 			g_director->_traceLogFile.clear();
 		}
