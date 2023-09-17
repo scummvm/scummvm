@@ -421,11 +421,12 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 				sfxPath.trim();
 			}
 
-			sfxPath = Common::String("Sfx/") + sfxPath;
+			Common::Path sfxPath_("Sfx/");
+			sfxPath_.appendInPlace(sfxPath);
 
 			Common::File f;
-			if (!f.open(sfxPath)) {
-				warning("SfxData::load: Could not open sample file '%s'", sfxPath.c_str());
+			if (!f.open(sfxPath_)) {
+				warning("SfxData::load: Could not open sample file '%s'", sfxPath_.toString(Common::Path::kNativeSeparator).c_str());
 				continue;
 			}
 
@@ -2874,7 +2875,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 		} else if (_gameID == GID_REAH) {
 			_scriptSet.reset();
 
-			Common::String logicFileName = Common::String::format("Log/Room%02i.log", static_cast<int>(roomNumber));
+			Common::Path logicFileName(Common::String::format("Log/Room%02i.log", static_cast<int>(roomNumber)));
 			Common::File logicFile;
 			if (logicFile.open(logicFileName)) {
 				_scriptSet = compileReahLogicFile(logicFile, static_cast<uint>(logicFile.size()), logicFileName);
@@ -2886,7 +2887,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 		_map.clear();
 
-		Common::String mapFileName = Common::String::format("Map/Room%02i.map", static_cast<int>(roomNumber));
+		Common::Path mapFileName(Common::String::format("Map/Room%02i.map", static_cast<int>(roomNumber)));
 		Common::File mapFile;
 
 		if (mapFile.open(mapFileName)) {
@@ -3382,7 +3383,7 @@ void Runtime::changeMusicTrack(int track) {
 	if (_musicMute && !_musicMuteDisabled)
 		return;
 
-	Common::String wavFileName = Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track));
+	Common::Path wavFileName(Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track)));
 	Common::File *wavFile = new Common::File();
 	if (wavFile->open(wavFileName)) {
 		if (Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(wavFile, DisposeAfterUse::YES)) {
@@ -3392,7 +3393,7 @@ void Runtime::changeMusicTrack(int track) {
 			_musicPlayer->play(applyVolumeScale(_musicVolume), 0);
 		}
 	} else {
-		warning("Music file '%s' is missing", wavFileName.c_str());
+		warning("Music file '%s' is missing", wavFileName.toString(Common::Path::kNativeSeparator).c_str());
 		delete wavFile;
 	}
 }
@@ -3419,7 +3420,8 @@ void Runtime::startScoreSection() {
 			if (sectionDef.musicFileName.empty()) {
 				_scoreSectionEndTime = sectionDef.volumeOrDurationInSeconds * 1000u + g_system->getMillis();
 			} else {
-				Common::String trackFileName = Common::String("Sfx/") + sectionDef.musicFileName;
+				Common::Path trackFileName("Sfx/");
+				trackFileName.appendInPlace(sectionDef.musicFileName);
 
 				Common::File *trackFile = new Common::File();
 				if (trackFile->open(trackFileName)) {
@@ -3429,11 +3431,11 @@ void Runtime::startScoreSection() {
 
 						_scoreSectionEndTime = static_cast<uint32>(audioStream->getLength().msecs()) + g_system->getMillis();
 					} else {
-						warning("Couldn't create Vorbis stream for music file '%s'", trackFileName.c_str());
+						warning("Couldn't create Vorbis stream for music file '%s'", trackFileName.toString(Common::Path::kNativeSeparator).c_str());
 						delete trackFile;
 					}
 				} else {
-					warning("Music file '%s' is missing", trackFileName.c_str());
+					warning("Music file '%s' is missing", trackFileName.toString(Common::Path::kNativeSeparator).c_str());
 				}
 			}
 		}
@@ -3490,7 +3492,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		_animDecoder.reset();
 		_animDecoderState = kAnimDecoderStateStopped;
 
-		Common::String aviFileName = Common::String::format("Anims/Anim%04i.avi", animFile);
+		Common::Path aviFileName(Common::String::format("Anims/Anim%04i.avi", animFile));
 		Common::File *aviFile = new Common::File();
 
 		if (aviFile->open(aviFileName)) {
@@ -3506,7 +3508,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 		applyAnimationVolume();
 
-		Common::String sfxFileName = Common::String::format("Sfx/Anim%04i.sfx", animFile);
+		Common::Path sfxFileName(Common::String::format("Sfx/Anim%04i.sfx", animFile));
 		Common::File sfxFile;
 
 		_sfxData.reset();
@@ -3515,14 +3517,14 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 			_sfxData.load(sfxFile, _mixer);
 		sfxFile.close();
 
-		Common::String dtaFileName = Common::String::format("Anims/Anim%04i.dta", animFile);
+		Common::Path dtaFileName(Common::String::format("Anims/Anim%04i.dta", animFile));
 		Common::File dtaFile;
 
 		if (dtaFile.open(dtaFileName))
 			loadFrameData(&dtaFile);
 		dtaFile.close();
 
-		Common::String twoDtFileName = Common::String::format("Dta/Anim%04i.2dt", animFile);
+		Common::Path twoDtFileName(Common::String::format("Dta/Anim%04i.2dt", animFile));
 		Common::File twoDtFile;
 
 		if (twoDtFile.open(twoDtFileName))
@@ -4231,11 +4233,11 @@ Common::SharedPtr<ScriptSet> Runtime::compileSchizmLogicSet(const uint *roomNumb
 		if (roomNumber < _roomDuplicationOffsets.size())
 			roomFile -= _roomDuplicationOffsets[roomNumber];
 
-		Common::String logicFileName = Common::String::format("Log/Room%02u.log", roomFile);
+		Common::Path logicFileName(Common::String::format("Log/Room%02u.log", roomFile));
 
 		Common::File logicFile;
 		if (logicFile.open(logicFileName)) {
-			debug(1, "Compiling script %s...", logicFileName.c_str());
+			debug(1, "Compiling script %s...", logicFileName.toString(Common::Path::kNativeSeparator).c_str());
 			compileSchizmLogicFile(*scriptSet, roomNumber, roomFile, logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
 			logicFile.close();
 		}
@@ -4704,11 +4706,13 @@ Common::String Runtime::getFileNameForItemGraphic(uint itemID) const {
 }
 
 Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &graphicName, bool required) {
-	Common::String filePath = Common::String("Gfx/") + graphicName + ".bmp";
+	Common::Path filePath("Gfx/");
+	filePath.appendInPlace(graphicName);
+	filePath.appendInPlace(".bmp");
 
 	Common::File f;
 	if (!f.open(filePath)) {
-		warning("Couldn't open BMP file '%s'", filePath.c_str());
+		warning("Couldn't open BMP file '%s'", filePath.toString(Common::Path::kNativeSeparator).c_str());
 		return nullptr;
 	}
 
@@ -4718,7 +4722,7 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 
 	Image::BitmapDecoder bmpDecoder;
 	if (!bmpDecoder.loadStream(f)) {
-		warning("Failed to load BMP file '%s'", filePath.c_str());
+		warning("Failed to load BMP file '%s'", filePath.toString(Common::Path::kNativeSeparator).c_str());
 		return nullptr;
 	}
 
@@ -4729,7 +4733,7 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 }
 
 bool Runtime::loadSubtitles(Common::CodePage codePage, bool guessCodePage) {
-	Common::String filePath = Common::String::format("Log/Speech%02u.txt", _languageIndex);
+	Common::Path filePath(Common::String::format("Log/Speech%02u.txt", _languageIndex));
 
 	Common::INIFile ini;
 

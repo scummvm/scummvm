@@ -150,7 +150,7 @@ struct ScriptNamedInstruction {
 
 class ScriptCompiler {
 public:
-	ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs);
+	ScriptCompiler(TextParser &parser, const Common::Path &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs);
 
 	void compileScriptSet(ScriptSet *ss);
 
@@ -179,7 +179,7 @@ private:
 
 	TextParser &_parser;
 	NumberParsingMode _numberParsingMode;
-	const Common::String _blamePath;
+	const Common::Path _blamePath;
 
 	ScriptDialect _dialect;
 	uint _loadAsRoom;
@@ -226,7 +226,7 @@ private:
 	Common::Array<Common::SharedPtr<Script> > _functions;
 };
 
-ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs)
+ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::Path &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs)
 	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _loadAsRoom(loadAsRoom), _fileRoom(fileRoom), _gs(gs),
 	  _scrToken(nullptr), _eroomToken(nullptr) {
 }
@@ -1355,7 +1355,7 @@ ScriptSet::ScriptSet() {
 IScriptCompilerGlobalState::~IScriptCompilerGlobalState() {
 }
 
-static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs) {
+static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs) {
 	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
 	TextParser parser(&unscrambleStream);
 
@@ -1368,14 +1368,14 @@ Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState() 
 	return Common::SharedPtr<IScriptCompilerGlobalState>(new ScriptCompilerGlobalState());
 }
 
-Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath) {
+Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath) {
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
 
 	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, 0, 0, nullptr);
 	return scriptSet;
 }
 
-void compileSchizmLogicFile(ScriptSet &scriptSet, uint loadAsRoom, uint fileRoom, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs) {
+void compileSchizmLogicFile(ScriptSet &scriptSet, uint loadAsRoom, uint fileRoom, Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath, IScriptCompilerGlobalState *gs) {
 	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, loadAsRoom, fileRoom, gs);
 }
 
