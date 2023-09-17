@@ -158,7 +158,7 @@ void Player_HE::loadAdLibBank() {
 
 	drvName += "drv";
 
-	if (!file.open(drvName))
+	if (!file.open(Common::Path(drvName)))
 		error("Player_HE::loadAdLibBank(): could not open %s", drvName.c_str());
 
 	uint32 size = (uint32)file.size();

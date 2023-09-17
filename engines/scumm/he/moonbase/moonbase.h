@@ -108,7 +108,7 @@ private:
 	int32 _fowRenderTable[32768];
 
 	Common::PEResources *_exe;
-	Common::String _fileName;
+	Common::Path _fileName;
 };
 
 } // End of namespace Scumm

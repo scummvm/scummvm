@@ -100,7 +100,7 @@ bool Moonbase::setFOWImage(int image) {
 				_fileName = _vm->generateFilename(-3);
 
 				if (!_exe->loadFromEXE(_fileName))
-					error("Cannot open file %s", _fileName.c_str());
+					error("Cannot open file %s", _fileName.toString(Common::Path::kNativeSeparator).c_str());
 			}
 
 			Common::SeekableReadStream *stream = _exe->getResource(Common::kWinRCData, resId);

@@ -29,7 +29,7 @@
 
 namespace Scumm {
 
-MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) {
+MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
 	switch (vm->_game.id) {
 	case GID_INDY3:
 		_impl = new MacIndy3Gui(vm, resourceFile);

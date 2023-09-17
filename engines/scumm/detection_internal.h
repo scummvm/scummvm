@@ -652,7 +652,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 	Common::File tmp;
 	if (!tmp.open(d.node)) {
-		warning("SCUMM testGame: failed to open '%s' for read access", d.node.getPath().c_str());
+		warning("SCUMM testGame: failed to open '%s' for read access", d.node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 

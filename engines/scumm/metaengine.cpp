@@ -47,7 +47,7 @@
 
 namespace Scumm {
 
-Common::String ScummEngine::generateFilename(const int room) const {
+Common::Path ScummEngine::generateFilename(const int room) const {
 	const int diskNumber = (room > 0) ? _res->_types[rtRoom][room]._roomno : 0;
 	Common::String result;
 
@@ -78,10 +78,10 @@ Common::String ScummEngine::generateFilename(const int room) const {
 		}
 	}
 
-	return result;
+	return Common::Path(result, Common::Path::kNoSeparator);
 }
 
-Common::String ScummEngine_v60he::generateFilename(const int room) const {
+Common::Path ScummEngine_v60he::generateFilename(const int room) const {
 	Common::String result;
 	char id = 0;
 
@@ -117,10 +117,10 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 		return ScummEngine::generateFilename(room);
 	}
 
-	return result;
+	return Common::Path(result, Common::Path::kNoSeparator);
 }
 
-Common::String ScummEngine_v70he::generateFilename(const int room) const {
+Common::Path ScummEngine_v70he::generateFilename(const int room) const {
 	Common::String result;
 	char id = 0;
 
@@ -194,7 +194,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 		return ScummEngine_v60he::generateFilename(room);
 	}
 
-	return result;
+	return Common::Path(result, Common::Path::kNoSeparator);
 }
 
 bool ScummEngine::isMacM68kIMuse() const {
@@ -271,7 +271,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 
 	// Fetch the list of files in the current directory.
 	Common::FSList fslist;
-	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.getPath("path"));
 	if (!dir.isDirectory())
 		return Common::kPathNotDirectory;
 	if (!dir.getChildren(fslist, Common::FSNode::kListAll))

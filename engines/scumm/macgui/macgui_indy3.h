@@ -39,7 +39,7 @@ public:
 		kScrollDown
 	};
 
-	MacIndy3Gui(ScummEngine *vm, Common::String resourceFile);
+	MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacIndy3Gui();
 
 	const Common::String name() const { return "Indy"; }

@@ -27,7 +27,7 @@ class Mixer;
 }
 
 namespace Common {
-class String;
+class Path;
 }
 
 namespace Video {
@@ -44,7 +44,7 @@ public:
 	~MoviePlayer();
 
 	int getImageNum();
-	int load(const Common::String &filename, int flags, int image = 0);
+	int load(const Common::Path &filename, int flags, int image = 0);
 
 	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
 	void handleNextFrame();

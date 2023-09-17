@@ -61,12 +61,12 @@ int MoviePlayer::getImageNum() {
 	return _wizResNum;
 }
 
-int MoviePlayer::load(const Common::String &filename, int flags, int image) {
+int MoviePlayer::load(const Common::Path &filename, int flags, int image) {
 	if (_video->isVideoLoaded())
 		_video->close();
 
 	if (!_video->loadFile(filename)) {
-		warning("Failed to load video file %s", filename.c_str());
+		warning("Failed to load video file %s", filename.toString().c_str());
 		return -1;
 	}
 
@@ -75,7 +75,7 @@ int MoviePlayer::load(const Common::String &filename, int flags, int image) {
 
 	_video->start();
 
-	debug(1, "Playing video %s", filename.c_str());
+	debug(1, "Playing video %s", filename.toString().c_str());
 
 	if (flags & 2)
 		_vm->_wiz->createWizEmptyImage(image, 0, 0, _video->getWidth(), _video->getHeight());

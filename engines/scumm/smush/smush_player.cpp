@@ -1020,7 +1020,7 @@ void SmushPlayer::parseNextFrame() {
 			delete _base;
 
 			ScummFile *tmp = new ScummFile(_vm);
-			if (!g_scumm->openFile(*tmp, _seekFile))
+			if (!g_scumm->openFile(*tmp, Common::Path(_seekFile)))
 				error("SmushPlayer: Unable to open file %s", _seekFile.c_str());
 			_base = tmp;
 			_base->readUint32BE();

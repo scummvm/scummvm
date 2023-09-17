@@ -55,7 +55,7 @@ protected:
 	Graphics::Surface *_surface = nullptr;
 	MacGuiImpl::MacDialogWindow *_bannerWindow = nullptr;
 
-	Common::String _resourceFile;
+	Common::Path _resourceFile;
 
 	bool _menuIsActive = false;
 	bool _cursorWasVisible = false;
@@ -589,7 +589,7 @@ public:
 		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
 	};
 
-	MacGuiImpl(ScummEngine *vm, Common::String resourceFile);
+	MacGuiImpl(ScummEngine *vm, const Common::Path &resourceFile);
 	virtual ~MacGuiImpl();
 
 	Graphics::MacWindowManager *_windowManager = nullptr;

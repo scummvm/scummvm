@@ -79,7 +79,7 @@ public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v60he() override;
 
-	Common::String generateFilename(const int room) const override;
+	Common::Path generateFilename(const int room) const override;
 
 	void resetScumm() override;
 
@@ -99,7 +99,7 @@ protected:
 	void decodeParseString(int a, int b) override;
 	void swapObjects(int object1, int object2);
 
-	Common::String convertFilePath(const byte *src);
+	Common::Path convertFilePath(const byte *src);
 	Common::String convertSavePath(const byte *src);
 	Common::String convertSavePathOld(const byte *src);
 
@@ -208,7 +208,7 @@ public:
 	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v70he() override;
 
-	Common::String generateFilename(const int room) const override;
+	Common::Path generateFilename(const int room) const override;
 
 	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
 

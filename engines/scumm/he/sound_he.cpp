@@ -461,7 +461,7 @@ void SoundHE::setOverrideFreq(int freq) {
 
 void SoundHE::setupHEMusicFile() {
 	uint32 id, len;
-	Common::String musicFilename(_vm->generateFilename(-4));
+	Common::Path musicFilename(_vm->generateFilename(-4));
 
 	// For engine restarts
 	if (_heSpoolingMusicFile.isOpen())
@@ -487,7 +487,7 @@ void SoundHE::setupHEMusicFile() {
 					_heSpoolingMusicFile.seek(len - 8 - 4, SEEK_CUR);
 				} else {
 					_heSpoolingMusicFile.close();
-					debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGHD tag, found %s", musicFilename.c_str(), tag2str(id));
+					debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGHD tag, found %s", musicFilename.toString().c_str(), tag2str(id));
 					return;
 				}
 			}
@@ -504,7 +504,7 @@ void SoundHE::setupHEMusicFile() {
 						len = _heSpoolingMusicFile.readUint32BE();
 						if (id != MKTAG('S', 'G', 'E', 'N')) {
 							_heSpoolingMusicFile.close();
-							debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGEN tag, found %s", musicFilename.c_str(), tag2str(id));
+							debug(5, "setupHEMusicFile(): Invalid spooling file '%s', couldn't find SGEN tag, found %s", musicFilename.toString().c_str(), tag2str(id));
 							return;
 						}
 					}
@@ -536,13 +536,13 @@ void SoundHE::setupHEMusicFile() {
 
 				_heMixer->setSpoolingSongsTable(_heSpoolingMusicTable, _heSpoolingMusicCount);
 			} else {
-				debug(5, "setupHEMusicFile(): Can't allocate table for spooling music file '%s'", musicFilename.c_str());
+				debug(5, "setupHEMusicFile(): Can't allocate table for spooling music file '%s'", musicFilename.toString().c_str());
 			}
 		} else {
-			debug(5, "setupHEMusicFile(): Invalid file '%s', couldn't find SONG tag, found %s", musicFilename.c_str(), tag2str(id));
+			debug(5, "setupHEMusicFile(): Invalid file '%s', couldn't find SONG tag, found %s", musicFilename.toString().c_str(), tag2str(id));
 		}
 	} else {
-		debug(5, "setupHEMusicFile(): Can't open spooling music file '%s'", musicFilename.c_str());
+		debug(5, "setupHEMusicFile(): Can't open spooling music file '%s'", musicFilename.toString().c_str());
 	}
 }
 
@@ -895,7 +895,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 				debug(5, "SoundHE::triggerSpoolingSound(): Starting spooling sound %d with offset %d, on channel %d with flags %d",
 					song, offset, channel, flags);
 
-				Common::String filename(_vm->generateFilename(-4));
+				Common::Path filename(_vm->generateFilename(-4));
 				int fileOffset = 0;
 				int songsize = 0;
 				uint32 id, len;
@@ -919,7 +919,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 					filename = _heSpoolingMusicTable[i].filename;
 
 					if (!_heSpoolingMusicFile.open(filename)) {
-						debug("SoundHE::triggerSpoolingSound(): Can't open music file '%s'", filename.c_str());
+						debug("SoundHE::triggerSpoolingSound(): Can't open music file '%s'", filename.toString().c_str());
 						if (_vm->_game.heversion < 95) {
 							_vm->VAR(_vm->VAR_ERROR_FLAG) = -1;
 						} else {
@@ -1056,7 +1056,7 @@ void SoundHE::triggerSpoolingSound(int song, int offset, int channel, int flags,
 					if (offset)
 						debug("SoundHE::triggerSpoolingSound(): Starting offsets into music files not supported with Miles currently");
 
-					_heMixer->milesStartSpoolingChannel(channel, filename.c_str(), fileOffset, flags, modifiers);
+					_heMixer->milesStartSpoolingChannel(channel, filename.toString('/').c_str(), fileOffset, flags, modifiers);
 				} else {
 					// Start the music track at a specified offset
 					if (offset) {
@@ -1510,7 +1510,7 @@ void SoundHE::playVoice(uint32 offset, uint32 length) {
 	}
 
 	ScummFile file(_vm);
-	if (!_vm->openFile(file, _sfxFilename)) {
+	if (!_vm->openFile(file, Common::Path(_sfxFilename))) {
 		warning("SoundHE::playVoice(): Could not open speech file %s", _sfxFilename.c_str());
 		return;
 	}

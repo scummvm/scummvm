@@ -32,7 +32,7 @@ class MacGuiImpl;
 
 class MacLoomGui : public MacGuiImpl {
 public:
-	MacLoomGui(ScummEngine *vm, Common::String resourceFile);
+	MacLoomGui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacLoomGui();
 
 	const Common::String name() const { return "Loom"; }

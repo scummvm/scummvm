@@ -802,7 +802,7 @@ void IMuseDriver_Amiga::loadInstrument(int program) {
 	}
 
 	for (int fileNo = 1; fileNo != -1 && !ims.isOpen(); ) {
-		if (!ims.open(Common::String::format("amiga%d.ims", fileNo))) {
+		if (!ims.open(Common::Path(Common::String::format("amiga%d.ims", fileNo)))) {
 			_missingFiles |= (1 << (fileNo - 1));
 			return;
 		}

@@ -90,7 +90,7 @@ void ScummEngine_v60he::setupOpcodes() {
 	_opcodes[0xed].setProc(nullptr, nullptr);
 }
 
-Common::String ScummEngine_v60he::convertFilePath(const byte *src) {
+Common::Path ScummEngine_v60he::convertFilePath(const byte *src) {
 	debug(2, "convertFilePath in: '%s'", (const char *)src);
 
 	int srcSize = resStrLen(src);
@@ -136,21 +136,14 @@ Common::String ScummEngine_v60he::convertFilePath(const byte *src) {
 
 	debug(2, "convertFilePath out: '%s'", dst.c_str());
 
-	return dst;
+	return Common::Path(dst, '/');
 }
 
 Common::String ScummEngine_v60he::convertSavePath(const byte *src) {
 	debug(2, "convertSavePath in: '%s'", (const char *)src);
 
-	Common::String filePath = convertFilePath(src);
-
 	// Strip us down to only the file
-	for (int32 i = filePath.size() - 1; i >= 0; i--) {
-		if (filePath[i] == '/') {
-			filePath = Common::String(filePath.c_str() + i + 1);
-			break;
-		}
-	}
+	Common::String filePath = convertFilePath(src).baseName();
 
 	// Prepend the target name
 	filePath = _targetName + '-' + filePath;
