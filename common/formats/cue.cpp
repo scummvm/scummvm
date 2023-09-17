@@ -253,6 +253,10 @@ void CueSheet::parseTracksContext(const char *line) {
 		_files[_currentFile].tracks[_currentTrack].indices[indexNum] = frames;
 
 		debug(5, "Index: %d, frames: %d", indexNum, frames);
+	} else if (command == "PREGAP") {
+		_files[_currentFile].tracks[_currentTrack].pregap = parseMSF(nexttok(s, &s).c_str());
+
+		debug(5, "Track pregap: %d", _files[_currentFile].tracks[_currentTrack].pregap);
 	} else if (command == "FILE") {
 		parseHeaderContext(line);
 	} else if (command == "PERFORMER") {
