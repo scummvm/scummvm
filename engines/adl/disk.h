@@ -50,14 +50,14 @@ class Files {
 public:
 	virtual ~Files() { }
 
-	virtual const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const = 0;
-	virtual Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const = 0;
-	virtual bool exists(const Common::String &filename) const = 0;
+	virtual const DataBlockPtr getDataBlock(const Common::Path &filename, uint offset = 0) const = 0;
+	virtual Common::SeekableReadStream *createReadStream(const Common::Path &filename, uint offset = 0) const = 0;
+	virtual bool exists(const Common::Path &filename) const = 0;
 
 protected:
 	class DataBlock : public Adl::DataBlock {
 	public:
-		DataBlock(const Files *files, const Common::String &filename, uint offset) :
+		DataBlock(const Files *files, const Common::Path &filename, uint offset) :
 				_files(files),
 				_filename(filename),
 				_offset(offset) { }
@@ -67,7 +67,7 @@ protected:
 		}
 
 	private:
-		const Common::String _filename;
+		const Common::Path _filename;
 		uint _offset;
 		const Files *_files;
 	};
@@ -87,7 +87,7 @@ public:
 		delete _stream;
 	}
 
-	bool open(const Common::String &filename);
+	bool open(const Common::Path &filename);
 	const DataBlockPtr getDataBlock(uint track, uint sector, uint offset = 0, uint size = 0) const;
 	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0, uint sectorsUsed = 0) const;
 	void setSectorLimit(uint sectorLimit) { _sectorLimit = sectorLimit; } // Maximum number of sectors to read per track before stepping
@@ -124,9 +124,9 @@ protected:
 // Data in plain files
 class Files_Plain : public Files {
 public:
-	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const override;
-	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const override;
-	bool exists(const Common::String &filename) const override { return Common::File::exists(filename); }
+	const DataBlockPtr getDataBlock(const Common::Path &filename, uint offset = 0) const override;
+	Common::SeekableReadStream *createReadStream(const Common::Path &filename, uint offset = 0) const override;
+	bool exists(const Common::Path &filename) const override { return Common::File::exists(filename); }
 };
 
 // Data in files contained in Apple DOS 3.3 disk image
@@ -135,10 +135,10 @@ public:
 	Files_AppleDOS();
 	~Files_AppleDOS() override;
 
-	bool open(const Common::String &filename);
-	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const override;
-	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const override;
-	bool exists(const Common::String &filename) const override { return _toc.contains(filename); }
+	bool open(const Common::Path &filename);
+	const DataBlockPtr getDataBlock(const Common::Path &filename, uint offset = 0) const override;
+	Common::SeekableReadStream *createReadStream(const Common::Path &filename, uint offset = 0) const override;
+	bool exists(const Common::Path &filename) const override { return _toc.contains(filename); }
 
 private:
 	enum FileType {
@@ -169,7 +169,7 @@ private:
 	Common::SeekableReadStream *createReadStreamBinary(const TOCEntry &entry) const;
 
 	DiskImage *_disk;
-	Common::HashMap<Common::String, TOCEntry> _toc;
+	Common::HashMap<Common::Path, TOCEntry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _toc;
 };
 
 // On the Apple II, sector headers contain a disk volume number. This number

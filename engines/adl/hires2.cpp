@@ -62,7 +62,7 @@ void HiResBaseEngine::init() {
 
 	_disk = new DiskImage();
 	if (!_disk->open(getDiskImageName(0)))
-		error("Failed to open disk image '%s'", getDiskImageName(0).c_str());
+		error("Failed to open disk image '%s'", getDiskImageName(0).toString(Common::Path::kNativeSeparator).c_str());
 
 	_disk->setSectorLimit(13);
 
