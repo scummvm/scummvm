@@ -112,6 +112,10 @@ const seriesPlayBreak Room303::PLAY10[] = {
 	PLAY_BREAK_END
 };
 
+Room303::Room303() : Section3Room() {
+	Common::fill(_triggers, _triggers + 5, -1);
+}
+
 const char *Room303::getDigi() {
 	if (_G(flags)[V118] == 3002) {
 		_digiVolume = 125;
@@ -124,10 +128,197 @@ const char *Room303::getDigi() {
 }
 
 void Room303::init() {
+	setupDigi();
+	pal_cycle_init(112, 127, 0, -1, -1);
+
+	_val1 = _val2 = 0;
+	_series1 = nullptr;
+	series_load("303ft");
+	series_load("303burnr");
+	series_load("303stil");
+	series_load("303stilb");
+	Common::fill(_triggers, _triggers + 5, -1);
+
+	if (_G(flags)[V117]) {
+		_series2 = series_load("303ft_on");
+		_series3 = series_play("303ft_on", 0xd00);
+		_val3 = 2;
+	} else {
+		_series2 = series_load("303ft");
+		_series3 = series_show("303ft", 0xd00);
+		_val3 = 4;
+	}
+
+	if (_G(flags)[V118] == 3002) {
+		_series4 = series_load("303burn");
+		_series5 = series_play("303burn", 0xd14, 0, -1, 0, -1);
+		_val4 = 7;
+	} else {
+		_series4 = series_load("303burnr");
+		_series5 = series_show("303burnr", 0xd14);
+		_val4 = 9;
+	}
+
+	_series6 = series_load("303stil");
+	_series7 = series_show("303stil", 0xd10);
+	series_show("303stilb", 0xd15);
+
+	_val5 = 0;
+	kernel_trigger_dispatch_now(11);
+
+	switch (_G(flags)[V121]) {
+	case 3001:
+		_val6 = _G(flags)[V122] ? 32 : 30;
+		kernel_trigger_dispatch_now(10);
+		break;
+
+	case 3002:
+		_val6 = _G(flags)[V122] ? 33 : 31;
+		kernel_trigger_dispatch_now(10);
+		break;
+
+	default:
+		break;
+	}
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		if (_G(flags)[V117])
+			_timer = timer_read_60();
+		break;
+
+	case 302:
+		if (_G(flags)[V125]) {
+			ws_demand_location(51, 276, 3);
+			kernel_trigger_dispatch_now(3);
+		} else {
+			ws_demand_location(245, 373, 1);
+			kernel_trigger_dispatch_now(2);
+		}
+		break;
+
+	default:
+		player_set_commands_allowed(true);
+		if (_G(flags)[V117])
+			_timer = timer_read_60();
+
+		ws_demand_location(290, 325, 1);
+		break;
+	}
 }
 
 void Room303::daemon() {
 }
+
+void Room303::pre_parser() {
+	if (player_said("GEAR", "BOILER") && !_G(flags)[V119]) {
+		_G(wilbur_should) = 15;
+		player_hotspot_walk_override(409, 312, 3, gCHANGE_WILBUR_ANIMATION);
+		_G(player).command_ready = false;
+	} else {
+		if (player_said("FRONT YARD") && player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER"))
+			player_set_facing_hotspot();
+
+		if (player_said("FRONT YARD ") && player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER"))
+			player_set_facing_hotspot();
+	}
+}
+
+void Room303::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("FRONT YARD") && player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER")) {
+		frontYard();
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 6, 3001);
+		_G(flags)[V125] = 0;
+	} else if (player_said("FRONT YARD ") && player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER")) {
+		frontYard();
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 6, 3001);
+		_G(flags)[V125] = 1;
+	} else if (player_said("DISTILLED CARROT JUICE", "BURNER")) {
+		wilbur_speech("300w033");
+	} else if (player_said("DISTILLED CARROT JUICE", "BOILER")) {
+		wilbur_speech("300w034");
+	} else if (player_said("JUG", "BOILER")) {
+		wilbur_speech("300w027");
+	} else if (player_said("JUG", "STOOL") || player_said("DISTILLED CARROT JUICE", "STOOL")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 11;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("JUG", "JUG ", "JUG  ") && player_said("CARROT JUICE")) {
+		wilbur_speech("300w046");
+	} else if (player_said("JUG", "STUMP") || player_said("DISTILLED CARROT JUICE", "STUMP")) {
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 14;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("BOTTLE", "BOILER")) {
+		wilbur_speech("300w074");
+	} else if (player_said("BOTTLE", "STOOL")) {
+		wilbur_speech("300w075");
+	} else if (player_said("CARROT JUICE", "BURNER")) {
+		wilbur_speech("300w047");
+	} else if (player_said("CARROT JUICE", "STOOL")) {
+		wilbur_speech("300w049");
+	} else if (player_said("MATCHES", "STUMP") || player_said("MATCHES", "WOOD")) {
+		wilbur_speech("300w019");
+	} else if (player_said("GEAR", "FUEL TANK")) {
+		player_set_commands_allowed(false);
+		_val3 = _G(flags)[V117] ? 3 : 1;
+		kernel_trigger_dispatch_now(7);
+	} else if (player_said("LOOK AT", "BURNER")) {
+		_G(wilbur_should) = 21;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("GEAR", "BURNER")) {
+		_G(wilbur_should) = 22;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("MATCHES", "BURNER")) {
+		if (_G(flags)[V118] == 3001) {
+			player_set_commands_allowed(false);
+			_val4 = _G(flags)[V117] ? 5 : 6;
+			kernel_trigger_dispatch_now(8);
+		}
+	} else if (player_said("GEAR", "BOILER")) {
+		if (_G(flags)[V119])
+			_G(wilbur_should) = 24;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);		
+	} else if (player_said("BOILER", "CARROT JUICE")) {
+		_G(wilbur_should) = 16;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TAKE", "JUG ") || player_said("TAKE", "DISTILLED CARROT JUICE ")) {
+		_G(wilbur_should) = 12;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TAKE", "JUG  ") || player_said("TAKE", "DISTILLED CARROT JUICE  ")) {
+		_G(wilbur_should) = 13;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("LOOK AT", "KEG")) {
+		wilbur_speech(_G(flags)[V120] ? "303w027" : "303w026");
+	} else if (player_said("BURNER")) {
+		wilbur_speech("303w013");
+	} else if (player_said("BOILER")) {
+		wilbur_speech("303w018");
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room303::frontYard() {
+	term_message("------- %ld %ld %ld", _G(flags)[V119], _G(flags)[V118], _G(flags)[V121]);
+
+	if (_G(flags)[V119] && _G(flags)[V118] == 3002 && _G(flags)[V121] == 3002) {
+		term_message("jug filled with distilled juice!!");
+		_G(flags)[V122] = 1;
+		_G(flags)[V120] = 1;
+		_G(flags)[V119] = 0;
+	}
+}
+
 
 } // namespace Rooms
 } // namespace Burger
