@@ -1603,7 +1603,7 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 }
 #endif
 
-CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile)
+CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::Path &fontFile)
 	 : CharsetRendererCommon(vm) {
 
 	// The original Macintosh interpreter didn't use the correct spacing

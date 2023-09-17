@@ -40,7 +40,7 @@ namespace Scumm {
 // loading, etc.
 // ===========================================================================
 
-MacGuiImpl::MacGuiImpl(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
+MacGuiImpl::MacGuiImpl(ScummEngine *vm, const Common::Path &resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
 	_fonts.clear();
 
 	// kMacRomanConversionTable is a conversion table from Mac Roman

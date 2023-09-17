@@ -126,7 +126,7 @@ bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 		_fileName = _vm->generateFilename(-3);
 
 		if (!_exe->loadFromEXE(_fileName))
-			error("Cannot open file %s", _fileName.c_str());
+			error("Cannot open file %s", _fileName.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(_exe, id);
@@ -169,8 +169,9 @@ bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 	// Create the MacResManager if not created already
 	if (_resMgr == nullptr) {
 		_resMgr = new Common::MacResManager();
-		if (!_resMgr->open(_vm->generateFilename(-3)))
-			error("Cannot open file %s", _fileName.c_str());
+		_fileName = _vm->generateFilename(-3);
+		if (!_resMgr->open(_fileName))
+			error("Cannot open file %s", _fileName.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	Common::SeekableReadStream *dataStream = _resMgr->getResource('crsr', id + 1000);

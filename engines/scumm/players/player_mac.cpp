@@ -40,7 +40,7 @@ Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChan
 	assert(mixer);
 }
 
-void Player_Mac::init(const Common::String &instrumentFile) {
+void Player_Mac::init(const Common::Path &instrumentFile) {
 	_instrumentFile = instrumentFile;
 	_channel = new Player_Mac::Channel[_numberOfChannels];
 

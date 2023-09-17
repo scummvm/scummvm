@@ -41,7 +41,7 @@ private:
 	MacGuiImpl *_impl = nullptr;
 
 public:
-	MacGui(ScummEngine *vm, Common::String resourceFile);
+	MacGui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacGui();
 
 	void initialize();

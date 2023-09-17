@@ -1426,10 +1426,11 @@ void ScummNESFile::close() {
 	_debugName.clear();
 }
 
-bool ScummNESFile::openSubFile(const Common::String &filename) {
+bool ScummNESFile::openSubFile(const Common::Path &filename) {
 	assert(_baseStream);
 
-	const char *ext = strrchr(filename.c_str(), '.');
+	Common::String basename = filename.baseName();
+	const char *ext = strrchr(basename.c_str(), '.');
 	char resNum[3];
 	int res;
 

@@ -1985,7 +1985,7 @@ void ScummEngine_v72he::o72_readINI() {
 	case SO_STRING: // string
 		writeVar(0, 0);
 		if (!strcmp((char *)option, "HE3File")) {
-			Common::String fileName = generateFilename(-3);
+			Common::String fileName = generateFilename(-3).toString('/');
 			int len = resStrLen((const byte *)fileName.c_str());
 			data = defineArray(0, kStringArray, 0, 0, 0, len);
 			memcpy(data, fileName.c_str(), len);

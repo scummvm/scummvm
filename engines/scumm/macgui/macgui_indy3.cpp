@@ -874,7 +874,7 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 // the work to the individual widgets.
 // ---------------------------------------------------------------------------
 
-MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, Common::String resourceFile) :
+MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile) :
 	MacGuiImpl(vm, resourceFile), _visible(false) {
 
 	Common::Rect verbGuiArea(640, 112);

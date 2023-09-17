@@ -798,7 +798,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 			if (!file)
 				error("startTalkSound: Out of memory");
 
-			if (!_vm->openFile(*file, _sfxFilename)) {
+			if (!_vm->openFile(*file, Common::Path(_sfxFilename))) {
 				warning("startTalkSound: could not open sfx file %s", _sfxFilename.c_str());
 				return;
 			}
@@ -915,7 +915,7 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 		if (!file)
 			error("startTalkSound: Out of memory");
 
-		if (!_vm->openFile(*file, _sfxFilename)) {
+		if (!_vm->openFile(*file, Common::Path(_sfxFilename))) {
 			warning("startTalkSound: could not open sfx file %s", _sfxFilename.c_str());
 			return;
 		}
@@ -1316,7 +1316,7 @@ void Sound::setupSfxFile() {
 	 * same directory */
 
 	Common::String basename[2];
-	Common::String tmp;
+	Common::Path tmp;
 
 	const char *ptr = strchr(_vm->_filenamePattern.pattern, '.');
 	if (ptr) {
@@ -1331,11 +1331,12 @@ void Sound::setupSfxFile() {
 		if ((_vm->_game.heversion <= 62 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
 			tmp = _vm->generateFilename(-2);
 		} else {
-			tmp = basename[0] + "tlk";
+			tmp = basename[0];
+			tmp.appendInPlace("tlk");
 		}
 
-		if (file.open(tmp))
-			_sfxFilename = tmp;
+		if (file.open(Common::Path(tmp)))
+			_sfxFilename = tmp.toString('/');
 
 		if (_vm->_game.heversion <= 74)
 			_sfxFileEncByte = 0x69;
@@ -1344,10 +1345,11 @@ void Sound::setupSfxFile() {
 	} else {
 		for (uint j = 0; j < 2 && !file.isOpen(); ++j) {
 			for (int i = 0; extensions[i].ext; ++i) {
-				tmp = basename[j] + extensions[i].ext;
+				tmp = basename[j];
+				tmp.appendInPlace(extensions[i].ext);
 				if (_vm->openFile(file, tmp)) {
 					_soundMode = extensions[i].mode;
-					_sfxFilename = tmp;
+					_sfxFilename = tmp.toString('/');
 					break;
 				}
 			}

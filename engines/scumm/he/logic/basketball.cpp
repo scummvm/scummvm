@@ -163,13 +163,13 @@ int LogicHEbasketball::op_1050(int32 *args) {
 		"Moon", "Barn"
 	};
 
-	Common::String courtFileName = Common::String::format("data/courts/%s.cof", courtNames[args[0] - 1]);
+	Common::Path courtFileName = Common::Path(Common::String::format("data/courts/%s.cof", courtNames[args[0] - 1]));
 
 	Common::File file;
 	if (!file.open(courtFileName))
-		error("Could not open file '%s'", courtFileName.c_str());
+		error("Could not open file '%s'", courtFileName.toString(Common::Path::kNativeSeparator).c_str());
 
-	debug(0, "Loading court data from '%s'", courtFileName.c_str());
+	debug(0, "Loading court data from '%s'", courtFileName.toString(Common::Path::kNativeSeparator).c_str());
 
 	// First, read in the header
 	file.readUint32LE(); // Header size (?)
