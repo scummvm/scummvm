@@ -166,7 +166,7 @@ public:
 	RMResUpdate();
 	~RMResUpdate();
 
-	void init(const Common::String &fileName);
+	void init(const Common::Path &fileName);
 	MpalHandle queryResource(uint32 dwRes);
 };
 

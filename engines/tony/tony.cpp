@@ -46,7 +46,7 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	setDebugger(new Debugger());
 
 	// Add folders to the search directory list
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Roasted");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Music");

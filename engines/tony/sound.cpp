@@ -51,15 +51,15 @@ static int remapVolume(int volume) {
 }
 
 // Another obvious rip from gob engine. Hi DrMcCoy!
-Common::String setExtension(const Common::String &str, const Common::String &ext) {
+Common::Path setExtension(const Common::String &str, const Common::String &ext) {
 	if (str.empty())
-		return str;
+		return Common::Path();
 
 	const char *dot = strrchr(str.c_str(), '.');
 	if (dot)
-		return Common::String(str.c_str(), dot - str.c_str()) + ext;
+		return Common::Path(str.c_str(), dot - str.c_str()).appendInPlace(ext);
 
-	return str + ext;
+	return Common::Path(str + ext);
 }
 
 /****************************************************************************\
@@ -551,7 +551,7 @@ bool FPStream::loadFile(const Common::String &fileName, int bufSize) {
 	SoundCodecs codec = FPCODEC_UNKNOWN;
 
 	// Open the file stream for reading
-	if (_file.open(fileName))
+	if (_file.open(Common::Path(fileName)))
 		codec = FPCODEC_ADPCM;
 	else if (_file.open(setExtension(fileName, ".MP3")))
 		codec = FPCODEC_MP3;
@@ -560,7 +560,7 @@ bool FPStream::loadFile(const Common::String &fileName, int bufSize) {
 	else if (_file.open(setExtension(fileName, ".FLA")))
 		codec = FPCODEC_FLAC;
 	// Fallback: try with an extra '0' prefix
-	else if (_file.open("0" + fileName)) {
+	else if (_file.open(Common::Path("0" + fileName))) {
 		codec = FPCODEC_ADPCM;
 		warning("FPStream::loadFile(): Fallback from %s to %s", fileName.c_str(), _file.getName());
 	} else if (_file.open(setExtension("0" + fileName, ".MP3"))) {
