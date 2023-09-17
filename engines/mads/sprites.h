@@ -226,7 +226,7 @@ public:
 	/**
 	 * Adds a sprite asset to the list by name
 	 */
-	int addSprites(const Common::String &resName, int flags = 0);
+	int addSprites(const Common::Path &resName, int flags = 0);
 
 	/**
 	 * Remove an asset from the list

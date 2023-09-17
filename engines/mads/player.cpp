@@ -147,8 +147,8 @@ bool Player::loadSprites(const Common::String &prefix) {
 	_numSprites = 0;
 	if (!_spritesPrefix.empty()) {
 		for (int fileIndex = 0; fileIndex < PLAYER_SPRITES_FILE_COUNT; ++fileIndex) {
-			Common::String setName = Common::String::format("*%s_%c.SS",
-				newPrefix.c_str(), suffixList[fileIndex]);
+			Common::Path setName(Common::String::format("*%s_%c.SS",
+				newPrefix.c_str(), suffixList[fileIndex]));
 			if (fileIndex >= 5)
 				_highSprites = true;
 

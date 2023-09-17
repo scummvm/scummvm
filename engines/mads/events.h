@@ -84,7 +84,7 @@ public:
 	/**
 	 * Loads the sprite set containing the cursors
 	 */
-	void loadCursors(const Common::String &spritesName);
+	void loadCursors(const Common::Path &spritesName);
 
 	/**
 	 * Sets the cursor

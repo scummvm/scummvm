@@ -50,7 +50,7 @@ MpsInstaller* MpsInstaller::open(const Common::Path& baseName) {
 		filecnt = (indexSize - 12) / kEntryLength;
 
 	for (uint i = 0; i < filecnt; i++) {
-		Common::String name = indexFile.readString('\0', kNameFieldLength);
+		Common::Path name(indexFile.readString('\0', kNameFieldLength));
 		uint16 compression = indexFile.readUint16LE();
 		uint16 volumeNumber = indexFile.readUint16LE();
 		uint32 offsetInVolume = indexFile.readUint32LE();
@@ -89,7 +89,7 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Pa
 	FileDescriptor desc = _files.getVal(translated);
 
 	if (desc._compressionAlgo != 0 && desc._compressionAlgo != 1) {
-		debug ("Unsupported compression algorithm %d for %s", desc._compressionAlgo, desc._fileName.c_str());
+		debug ("Unsupported compression algorithm %d for %s", desc._compressionAlgo, desc._fileName.toString().c_str());
 		return Common::SharedArchiveContents();
 	}
 
@@ -103,14 +103,14 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Pa
 		Common::File fvol;
 		Common::Path volumePath = _baseName.append(Common::String::format(".%03d", vol));
 		if (!fvol.open(volumePath)) {
-			error("Failed to open volume %s.%03d", volumePath.toString().c_str(), vol);
+			error("Failed to open volume %s.%03d", volumePath.toString(Common::Path::kNativeSeparator).c_str(), vol);
 			delete[] compressedBuf;
 			return Common::SharedArchiveContents();
 		}
 		fvol.seek(off);
 		int32 actual = fvol.read(outptr, rem);
 		if (actual <= 0) {
-			warning("Read failure in volume %s.%03d", volumePath.toString().c_str(), vol);
+			warning("Read failure in volume %s.%03d", volumePath.toString(Common::Path::kNativeSeparator).c_str(), vol);
 			delete[] compressedBuf;
 			return Common::SharedArchiveContents();
 		}
@@ -137,7 +137,7 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Pa
 			if (!Common::decompressDCL(&compressedReadStream, uncompressedBuf, desc._compressedSize, uncompressedSize)) {
 				delete[] compressedBuf;
 				delete[] uncompressedBuf;
-				error("Unable to decompress %s", desc._fileName.c_str());
+				error("Unable to decompress %s", desc._fileName.toString().c_str());
 				return Common::SharedArchiveContents();
 			}
 			delete[] compressedBuf;

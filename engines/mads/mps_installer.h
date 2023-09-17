@@ -50,7 +50,7 @@ private:
 				   _offsetInVolume(0),
 				   _volumeNumber(0) {}
 	protected:
-		FileDescriptor(const Common::String& name,
+		FileDescriptor(const Common::Path &name,
 			       uint16 compression,
 			       uint16 volumeNumber,
 			       uint32 offsetInVolume,
@@ -63,7 +63,7 @@ private:
 			_compressedSize(compressedSize),
 			_uncompressedSize(uncompressedSize) {}
 		
-		Common::String _fileName;
+		Common::Path _fileName;
 		uint _compressionAlgo;
 		uint _volumeNumber;
 		uint32 _offsetInVolume;

@@ -303,7 +303,7 @@ NebularScene::NebularScene(MADSEngine *vm) : SceneLogic(vm),
 		_action(vm->_game->_scene._action) {
 }
 
-Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {
+Common::Path NebularScene::formAnimName(char sepChar, int suffixNum) {
 	return Resources::formatName(_scene->_currentSceneId, sepChar, suffixNum,
 		EXT_NONE, "");
 }

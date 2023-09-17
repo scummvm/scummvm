@@ -220,7 +220,7 @@ public:
 	/**
 	* Loads an interface from a specified resource
 	*/
-	void load(const Common::String &resName) override;
+	void load(const Common::Path &resName) override;
 
 	/**
 	* Set up the interface

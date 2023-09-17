@@ -1354,7 +1354,7 @@ protected:
 	/**
 	 * Forms an animation resource name
 	 */
-	Common::String formAnimName(char sepChar, int suffixNum);
+	Common::Path formAnimName(char sepChar, int suffixNum);
 
 	/**
 	 * Plays appropriate sound for entering various rooms

@@ -42,7 +42,7 @@ public:
 	AudioPlayer(Audio::Mixer *mixer, uint32 gameID);
 	~AudioPlayer();
 
-	void setSoundGroup(const Common::String &filename);
+	void setSoundGroup(const Common::Path &filename);
 	void setDefaultSoundGroup();
 	void playSound(int soundIndex, bool loop = false);
 	void stop();
@@ -55,7 +55,7 @@ public:
 	uint32 _gameID;
 
 	File _dsrFile;
-	Common::String _filename;
+	Common::Path _filename;
 	Common::Array<DSREntry> _dsrEntries;
 };
 

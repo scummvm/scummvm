@@ -75,7 +75,7 @@ void MainMenu::display() {
 
 	// Load each of the menu item assets and add to the scene sprites list
 	for (int i = 0; i < 7; ++i) {
-		Common::String spritesName = Resources::formatName(NEBULAR_MENUSCREEN,
+		Common::Path spritesName = Resources::formatName(NEBULAR_MENUSCREEN,
 			'A', i + 1, EXT_SS, "");
 		_menuItems[i] = new SpriteAsset(_vm, spritesName, 0);
 		_menuItemIndexes[i] = scene._sprites.add(_menuItems[i]);

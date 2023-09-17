@@ -71,11 +71,11 @@ void GameConversations::load(int id) {
 	_conversations[slotIndex]._convId = id;
 
 	// Load the conversation data
-	Common::String cnvFilename = Common::String::format("CONV%03d.CNV", id);
+	Common::Path cnvFilename(Common::String::format("CONV%03d.CNV", id));
 	_conversations[slotIndex]._data.load(cnvFilename);
 
 	// Load the conversation's CND data
-	Common::String cndFilename = Common::String::format("CONV%03d.CND", id);
+	Common::Path cndFilename(Common::String::format("CONV%03d.CND", id));
 	_conversations[slotIndex]._cnd.load(cndFilename);
 }
 
@@ -132,7 +132,7 @@ void GameConversations::run(int id) {
 
 	// Load sprite data for speaker portraits
 	for (uint idx = 0; idx < _runningConv->_data._speakerCount; ++idx) {
-		const Common::String &portraitName = _runningConv->_data._portraits[idx];
+		const Common::Path &portraitName = _runningConv->_data._portraits[idx];
 		_speakerSeries[idx] = _vm->_game->_scene._sprites.addSprites(portraitName, PALFLAG_RESERVED);
 
 		if (_speakerSeries[idx] > 0) {
@@ -607,7 +607,7 @@ bool GameConversations::scriptNode(ScriptEntry &scrEntry) {
 
 /*------------------------------------------------------------------------*/
 
-void ConversationData::load(const Common::String &filename) {
+void ConversationData::load(const Common::Path &filename) {
 	Common::File inFile;
 	char buffer[16];
 
@@ -740,7 +740,7 @@ ConversationConditionals::ConversationConditionals() : _numImports(0) {
 	_currentNode = -1;
 }
 
-void ConversationConditionals::load(const Common::String &filename) {
+void ConversationConditionals::load(const Common::Path &filename) {
 	Common::File inFile;
 	Common::SeekableReadStream *convFile;
 

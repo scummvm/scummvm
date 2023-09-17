@@ -50,7 +50,7 @@ private:
 public:
 	static bool isCompressed(Common::SeekableReadStream *stream);
 	MadsPack(Common::SeekableReadStream *stream);
-	MadsPack(const Common::String &resourceName, MADSEngine *_vm);
+	MadsPack(const Common::Path &resourceName, MADSEngine *_vm);
 	~MadsPack();
 
 	int getCount() const { return _count; }

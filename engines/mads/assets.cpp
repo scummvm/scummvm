@@ -26,10 +26,11 @@
 
 namespace MADS {
 
-SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int flags) : _vm(vm) {
-	Common::String resName = resourceName;
-	if (!resName.hasSuffix(".SS") && !resName.hasSuffix(".ss"))
-		resName += ".SS";
+SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::Path &resourceName, int flags) : _vm(vm) {
+	Common::Path resName = resourceName;
+	Common::String baseName(resName.baseName());
+	if (!baseName.hasSuffix(".SS") && !baseName.hasSuffix(".ss"))
+		resName.appendInPlace(".SS");
 	_srcSize = 0;
 
 	File file(resName);

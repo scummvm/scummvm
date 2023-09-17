@@ -324,7 +324,7 @@ public:
 	 * @param filename		Specifies the adlib sound player file to use
 	 * @param dataOffset	Offset in the file of the data segment
 	 */
-	ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filename, int dataOffset);
+	ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename, int dataOffset);
 
 	/**
 	 * Destructor
