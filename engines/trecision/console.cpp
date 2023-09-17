@@ -66,11 +66,11 @@ bool Console::Cmd_DumpAnim(int argc, const char **argv) {
 
 	FastFile animFile;
 
-	Common::String fileName = argv[1];
+	Common::Path fileName(argv[1]);
 
 	bool found = false;
 	for (int i = 1; i <= 3; i++) {
-		Common::String animFileName = Common::String::format("nlanim.cd%d", i);
+		Common::Path animFileName(Common::String::format("nlanim.cd%d", i));
 		animFile.open(_vm, animFileName);
 
 		if (animFile.hasFile(fileName)) {
@@ -88,7 +88,7 @@ bool Console::Cmd_DumpAnim(int argc, const char **argv) {
 	Common::SeekableReadStream *dataFile = animFile.createReadStreamForMember(fileName);
 
 	Common::DumpFile outFile;
-	Common::String outName = fileName + ".dump";
+	Common::Path outName = fileName.append(".dump");
 	outFile.open(outName);
 	outFile.writeStream(dataFile, dataFile->size());
 	outFile.finalize();
@@ -105,17 +105,17 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String fileName = argv[1];
+	Common::Path fileName(argv[1]);
 
 	if (!_vm->_dataFile.hasFile(fileName)) {
 		debugPrintf("File not found\n");
 		return true;
 	}
 
-	Common::SeekableReadStream *dataFile = fileName.hasSuffix(".cr") ? _vm->_dataFile.createReadStreamForCompressedMember(fileName) : _vm->_dataFile.createReadStreamForMember(fileName);
+	Common::SeekableReadStream *dataFile = fileName.baseName().hasSuffix(".cr") ? _vm->_dataFile.createReadStreamForCompressedMember(fileName) : _vm->_dataFile.createReadStreamForMember(fileName);
 
 	Common::DumpFile outFile;
-	Common::String outName = fileName + ".dump";
+	Common::Path outName = fileName.append(".dump");
 	outFile.open(outName);
 	outFile.writeStream(dataFile, dataFile->size());
 	outFile.finalize();

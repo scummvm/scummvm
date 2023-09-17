@@ -37,7 +37,7 @@ FastFile::~FastFile() {
 	close();
 }
 
-const FileEntry *FastFile::getEntry(const Common::String &name) const {
+const FileEntry *FastFile::getEntry(const Common::Path &name) const {
 	for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it) {
 		if (it->name.equalsIgnoreCase(name))
 			return it;
@@ -46,7 +46,7 @@ const FileEntry *FastFile::getEntry(const Common::String &name) const {
 	return nullptr;
 }
 
-bool FastFile::open(TrecisionEngine *vm, const Common::String &name) {
+bool FastFile::open(TrecisionEngine *vm, const Common::Path &name) {
 	close();
 
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
@@ -58,7 +58,7 @@ bool FastFile::open(TrecisionEngine *vm, const Common::String &name) {
 	_fileEntries.resize(numFiles);
 	for (int i = 0; i < numFiles; ++i) {
 		FileEntry *entry = &_fileEntries[i];
-		entry->name = _stream->readString(0, 12);
+		entry->name = Common::Path(_stream->readString(0, 12));
 		entry->offset = _stream->readUint32();
 	}
 
@@ -74,8 +74,7 @@ void FastFile::close() {
 }
 
 bool FastFile::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	const FileEntry *entry = getEntry(name);
+	const FileEntry *entry = getEntry(path);
 	return entry != nullptr;
 }
 
@@ -92,12 +91,11 @@ const Common::ArchiveMemberPtr FastFile::getMember(const Common::Path &path) con
 }
 
 Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	if (!_stream)
 		return nullptr;
 
 	Common::SeekableReadStream *stream = nullptr;
-	const FileEntry *entry = getEntry(name);
+	const FileEntry *entry = getEntry(path);
 	if (entry) {
 		uint32 size = (entry + 1)->offset - entry->offset;
 		if ((int32)(entry->offset + size) <= _stream->size()) {
@@ -108,14 +106,14 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::Pa
 	if (!stream) {
 		// Load data from external file
 		Common::File *file = new Common::File();
-		if (file->open(name)) {
+		if (file->open(path)) {
 			stream = file;
 		} else {
 			delete file;
 		}
 	}
 	if (!stream) {
-		warning("FastFile - %s not found", name.c_str());
+		warning("FastFile - %s not found", path.toString().c_str());
 	}
 	return stream;
 }
@@ -160,16 +158,16 @@ void FastFile::decompress(const uint8 *src, uint32 srcSize, uint8 *dst, uint32 d
 }
 
 #define FAST_COOKIE 0xFA57F00D
-Common::SeekableReadStream *FastFile::createReadStreamForCompressedMember(const Common::String &name) {
+Common::SeekableReadStream *FastFile::createReadStreamForCompressedMember(const Common::Path &name) {
 	Common::SeekableReadStream *ff = createReadStreamForMember(name);
 	if (ff == nullptr)
-		error("createReadStreamForCompressedMember - File not found %s", name.c_str());
+		error("createReadStreamForCompressedMember - File not found %s", name.toString().c_str());
 
 	const int32 dataSize = ff->size() - 8;
 
 	const uint32 signature = ff->readUint32LE();
 	if (signature != FAST_COOKIE)
-		error("createReadStreamForCompressedMember - %s has a bad signature and can't be loaded", name.c_str());
+		error("createReadStreamForCompressedMember - %s has a bad signature and can't be loaded", name.toString().c_str());
 
 	const int32 decompSize = ff->readSint32LE();
 

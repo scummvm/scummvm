@@ -31,7 +31,7 @@ namespace Trecision {
 class TrecisionEngine;
 
 struct FileEntry {
-	Common::String name;
+	Common::Path name;
 	uint32 offset;
 };
 
@@ -40,10 +40,10 @@ public:
 	FastFile();
 	~FastFile() override;
 
-	bool open(TrecisionEngine *vm, const Common::String &filename);
+	bool open(TrecisionEngine *vm, const Common::Path &filename);
 	void close();
 	bool isOpen() const { return _stream != 0; }
-	Common::SeekableReadStream *createReadStreamForCompressedMember(const Common::String &name);
+	Common::SeekableReadStream *createReadStreamForCompressedMember(const Common::Path &name);
 
 	// Common::Archive API implementation
 	bool hasFile(const Common::Path &path) const override;
@@ -57,7 +57,7 @@ private:
 	Common::Array<FileEntry> _fileEntries;
 
 	uint8 *_compBuffer;
-	const FileEntry *getEntry(const Common::String &name) const;
+	const FileEntry *getEntry(const Common::Path &name) const;
 	void decompress(const uint8 *src, uint32 srcSize, uint8 *dst, uint32 decompSize);
 };
 

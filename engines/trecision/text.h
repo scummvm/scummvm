@@ -52,7 +52,7 @@ class TextManager {
 	uint16 _subStringStart;
 	uint16 _curSentenceId;
 	uint16 _curSubString;
-	Common::String _lastFilename;
+	Common::Path _lastFilename;
 	uint16 _talkingPersonId;
 	SDText _curString;
 	SDText _oldString;

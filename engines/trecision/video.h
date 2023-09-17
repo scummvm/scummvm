@@ -50,6 +50,7 @@ public:
 class NightlongAmigaDecoder : public NightlongVideoDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
+	bool addAudioSideTrack(const Common::Path &path);
 	bool forceSeekToFrame(uint frame) override;
 	bool endOfFrames() const override;
 	const Common::Rect *getNextDirtyRect() override;
@@ -61,7 +62,7 @@ private:
 
 	class AmigaVideoTrack : public VideoTrack {
 	public:
-		AmigaVideoTrack(const Common::String &fileName);
+		AmigaVideoTrack(Common::SeekableReadStream *stream);
 
 	private:
 		byte _palette[3 * 256];
@@ -81,7 +82,7 @@ private:
 
 	class AmigaAudioTrack : public AudioTrack {
 	public:
-		AmigaAudioTrack(const Common::String &fileName);
+		AmigaAudioTrack(Common::SeekableReadStream *stream);
 	private:
 		Audio::AudioStream *getAudioStream() const override { return _audioStream; }
 		Audio::AudioStream *_audioStream;

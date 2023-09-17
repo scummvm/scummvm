@@ -53,7 +53,7 @@ namespace Trecision {
 TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	_gameId = !strcmp(_gameDescription->gameId, "nl") ? GID_NightLong : GID_ArkOfTime;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "AUTORUN");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "DATA");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FMV");
@@ -382,13 +382,13 @@ void TrecisionEngine::reEvent() {
 }
 
 Common::SeekableReadStreamEndian *TrecisionEngine::getLocStream() {
-	Common::String filename;
+	Common::Path filename(_room[_curRoom]._baseName);
 
 	if (isAmiga()) {
-		filename = Common::String::format("%s.bm", _room[_curRoom]._baseName);
+		filename.appendInPlace(".bm");
 		return readEndian(_dataFile.createReadStreamForMember(filename));
 	} else {
-		filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
+		filename.appendInPlace(".cr");
 		return readEndian(_dataFile.createReadStreamForCompressedMember(filename));
 	}
 }
@@ -409,7 +409,7 @@ void TrecisionEngine::readLoc() {
 	if (_room[_curRoom]._sounds[0] != 0)
 		_soundMgr->loadRoomSounds();
 
-	Common::String fname = Common::String::format("%s.3d", _room[_curRoom]._baseName);
+	Common::Path fname(Common::String::format("%s.3d", _room[_curRoom]._baseName));
 	read3D(fname);
 
 	if (_room[_curRoom]._bkgAnim) {

@@ -110,10 +110,10 @@ void TrecisionEngine::loadAll() {
 	dataNl.close();
 }
 
-byte *TrecisionEngine::readData(const Common::String &fileName) {
+byte *TrecisionEngine::readData(const Common::Path &fileName) {
 	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
 	if (stream == nullptr)
-		error("readData(): File %s not found", fileName.c_str());
+		error("readData(): File %s not found", fileName.toString().c_str());
 
 	byte *buf = new byte[stream->size()];
 	stream->read(buf, stream->size());
@@ -122,10 +122,10 @@ byte *TrecisionEngine::readData(const Common::String &fileName) {
 	return buf;
 }
 
-void TrecisionEngine::read3D(const Common::String &filename) {
+void TrecisionEngine::read3D(const Common::Path &filename) {
 	Common::SeekableReadStreamEndian *ff = readEndian(_dataFile.createReadStreamForMember(filename));
 	if (ff == nullptr)
-		error("read3D: Can't open 3D file %s", filename.c_str());
+		error("read3D: Can't open 3D file %s", filename.toString().c_str());
 
 	_actor->read3D(ff);
 	_pathFind->read3D(ff);
