@@ -439,11 +439,11 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	// 11th Hour uses SAMPLE.AD/SAMPLE.OPL/SAMPLE.MT
 	switch (musicType) {
 	case MT_ADLIB:
-		_driver = _multisourceDriver = Audio::MidiDriver_Miles_AdLib_create(gtlName + ".AD", gtlName + ".OPL");
+		_driver = _multisourceDriver = Audio::MidiDriver_Miles_AdLib_create(Common::Path(gtlName + ".AD"), Common::Path(gtlName + ".OPL"));
 		break;
 	case MT_MT32:
 		Audio::MidiDriver_Miles_Midi *milesDriver;
-		milesDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, gtlName + ".MT");
+		milesDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, Common::Path(gtlName + ".MT"));
 		_milesXmidiTimbres = milesDriver;
 		_driver = _multisourceDriver = milesDriver;
 		break;
@@ -668,7 +668,7 @@ bool MusicPlayerMac_v2::load(uint32 fileref, bool loop) {
 	info.filename.deleteLastChar();
 	info.filename += "mov";
 
-	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(info.filename);
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(Common::Path(info.filename));
 
 	if (!file) {
 		warning("Could not find file '%s'", info.filename.c_str());
@@ -753,7 +753,7 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	}
 
 	// Create the audio stream
-	Audio::SeekableAudioStream *seekStream = Audio::SeekableAudioStream::openStreamFile(info.filename);
+	Audio::SeekableAudioStream *seekStream = Audio::SeekableAudioStream::openStreamFile(Common::Path(info.filename));
 
 	if (!seekStream) {
 		warning("Could not play audio file '%s'", info.filename.c_str());
@@ -820,7 +820,7 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 		filename += ".mpg";
 
 	// Create the audio stream from fileref
-	_file->open(filename);
+	_file->open(Common::Path(filename));
 	Audio::SeekableAudioStream *seekStream = nullptr;
 	if (_file->isOpen()) {
 		if (filename.hasSuffix(".m4a"))

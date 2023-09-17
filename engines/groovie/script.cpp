@@ -166,7 +166,7 @@ bool Script::loadScript(Common::String filename) {
 		scriptfile = _vm->_macResFork->getResource(filename);
 	} else {
 		// Try to open the script file
-		scriptfile = SearchMan.createReadStreamForMember(filename);
+		scriptfile = SearchMan.createReadStreamForMember(Common::Path(filename));
 	}
 
 	if (!scriptfile)

@@ -44,15 +44,15 @@ public:
 	Common::SeekableReadStream *open(const ResInfo &resInfo);
 
 	void dumpResource(const Common::String &fileName);
-	void dumpResource(uint32 fileRef, const Common::String &fileName);
-	void dumpResource(Common::SeekableReadStream *inFile, const Common::String &fileName, bool dispose = true);
+	void dumpResource(uint32 fileRef, const Common::Path &fileName);
+	void dumpResource(Common::SeekableReadStream *inFile, const Common::Path &fileName, bool dispose = true);
 
 	Common::String getGjdName(const ResInfo &resInfo);
 	virtual uint32 getRef(Common::String name) = 0;
 	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;
 
 protected:
-	Common::Array<Common::String> _gjds;
+	Common::Array<Common::Path> _gjds;
 
 	uint16 _lastGjd;
 };

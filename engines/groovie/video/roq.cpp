@@ -294,7 +294,7 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 #endif
 
 	Common::DumpFile out;
-	if (!out.open(tname)) {
+	if (!out.open(Common::Path(tname))) {
 		warning("failed to write debug image to %s", tname.c_str());
 		return;
 	}
