@@ -79,7 +79,7 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 	debugEngine("loadSample slot %d, name %s", sampleSlot, normalizedPath.c_str());
 
 	freeSample(sampleSlot);
-	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(normalizedPath);
+	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(Common::Path(normalizedPath));
 	if (sampleStream == nullptr) {
 		delete sampleStream;
 		error("Can't load sample %s to slot %d", normalizedPath.c_str(), sampleSlot);
@@ -103,7 +103,7 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	}
 
 	freeSample(sampleSlot);
-	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(streamName);
+	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(Common::Path(streamName));
 	if (sampleStream == nullptr) {
 		warning("loadVoice: Can't open %s", streamName.c_str());
 		_missingVoice = true;	// Insert END tag if needed

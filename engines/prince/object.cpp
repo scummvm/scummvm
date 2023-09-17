@@ -70,7 +70,7 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	_x = x;
 	_y = stream.readSint16LE(); // skull mini-game has some signed y coords
 
-	const Common::String obStreamName = Common::String::format("OB%02d", stream.readUint16LE());
+	const Common::Path obStreamName(Common::String::format("OB%02d", stream.readUint16LE()));
 	Common::SeekableReadStream *obStream = SearchMan.createReadStreamForMember(obStreamName);
 	if (obStream) {
 		obStream = Resource::getDecompressedStream(obStream);

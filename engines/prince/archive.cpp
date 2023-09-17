@@ -45,7 +45,7 @@ static void decrypt(byte *buffer, uint32 size) {
 	}
 }
 
-bool PtcArchive::open(const Common::String &filename) {
+bool PtcArchive::open(const Common::Path &filename) {
 	_stream = SearchMan.createReadStreamForMember(filename);
 	if (!_stream)
 		return false;
@@ -78,7 +78,7 @@ bool PtcArchive::open(const Common::String &filename) {
 	return true;
 }
 
-bool PtcArchive::openTranslation(const Common::String &filename) {
+bool PtcArchive::openTranslation(const Common::Path &filename) {
 	_stream = SearchMan.createReadStreamForMember(filename);
 	if (!_stream)
 		return false;
@@ -147,11 +147,10 @@ int PtcArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr PtcArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!_items.contains(name)) {
+	if (!hasFile(path)) {
 		Common::ArchiveMemberPtr();
 	}
-	return Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::Path &path) const {
