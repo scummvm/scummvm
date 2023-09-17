@@ -996,7 +996,7 @@ Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
 void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 	if (TinselV1PSX) {
 		// Add subfolders needed for PSX versions of Discworld 1
-		SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 3, true);
+		SearchMan.addDirectory(gamePath, 0, 3, true);
 	} else {
 		// Add DW2 subfolder to search path in case user is running directly from the CDs
 		SearchMan.addSubDirectoryMatching(gamePath, "dw2");

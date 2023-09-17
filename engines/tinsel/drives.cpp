@@ -168,15 +168,15 @@ TinselFile::~TinselFile() {
 	delete _stream;
 }
 
-bool TinselFile::openInternal(const Common::String &filename) {
+bool TinselFile::openInternal(const Common::Path &filename) {
 	_stream = SearchMan.createReadStreamForMember(filename);
 	if (!_stream)
-		_stream = SearchMan.createReadStreamForMember(filename + ".");
+		_stream = SearchMan.createReadStreamForMember(filename.append("."));
 	return _stream != 0;
 }
 
 bool TinselFile::open(const Common::String &filename) {
-	if (openInternal(filename))
+	if (openInternal(Common::Path(filename)))
 		return true;
 
 	if (TinselVersion <= 1)
