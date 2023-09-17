@@ -82,7 +82,7 @@ IllusionsEngine_Duckman::IllusionsEngine_Duckman(OSystem *syst, const IllusionsG
 Common::Error IllusionsEngine_Duckman::run() {
 
 	// Init search paths
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");

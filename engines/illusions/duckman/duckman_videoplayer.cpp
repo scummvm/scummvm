@@ -41,12 +41,12 @@ void DuckmanVideoPlayer::start(uint32 videoId, uint32 callingThreadId) {
 	debug(0, "DuckmanVideoPlayer::play(%08X, %08X)", videoId, callingThreadId);
 	_callingThreadId = callingThreadId;
 	_vm->_input->discardAllEvents();
-	Common::String filename = Common::String::format("%08x.avi", videoId);
+	Common::Path filename(Common::String::format("%08x.avi", videoId));
 	_videoDecoder = new Video::AVIDecoder();
 	if (!_videoDecoder->loadFile(filename)) {
 		delete _videoDecoder;
 		_videoDecoder = nullptr;
-		warning("Unable to open video %s", filename.c_str());
+		warning("Unable to open video %s", filename.toString().c_str());
 		return;
 	}
 	_videoDecoder->start();
