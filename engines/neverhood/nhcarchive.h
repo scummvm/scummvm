@@ -49,7 +49,7 @@ class NhcArchive {
 public:
 	NhcArchive() {}
 	~NhcArchive() {}
-	bool open(const Common::String &filename, bool isOptional);
+	bool open(const Common::Path &filename, bool isOptional);
 	void load(uint index, byte *buffer, uint32 size);
 	void load(NhcArchiveEntry *entry, byte *buffer, uint32 size);
 	uint32 getSize(uint index) { return _entries[index].size; }

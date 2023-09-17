@@ -54,7 +54,7 @@ class BlbArchive {
 public:
 	BlbArchive();
 	~BlbArchive();
-	bool open(const Common::String &filename, bool isOptional);
+	bool open(const Common::Path &filename, bool isOptional);
 	void load(uint index, byte *buffer, uint32 size);
 	void load(BlbArchiveEntry *entry, byte *buffer, uint32 size);
 	byte *getEntryExtData(uint index);
