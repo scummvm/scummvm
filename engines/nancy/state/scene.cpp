@@ -190,7 +190,10 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 }
 
 bool Scene::onStateExit(const NancyState::NancyState nextState) {
-	g_nancy->_graphicsManager->screenshotScreen(_lastScreenshot);
+	if (_state == kRun) {
+		// Exiting the state outside the kRun state means we've encountered an error
+		g_nancy->_graphicsManager->screenshotScreen(_lastScreenshot);
+	}
 
 	if (nextState != NancyState::kPause) {
 		_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
@@ -748,6 +751,7 @@ void Scene::load() {
 	}
 
 	clearSceneData();
+	g_nancy->_graphicsManager->suppressNextDraw();
 
 	// Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100
 	Common::String sceneName = Common::String::format("S%u", _sceneState.nextScene.sceneID);
@@ -832,7 +836,6 @@ void Scene::load() {
 	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 
 	g_nancy->_sound->recalculateSoundEffects();
-	g_nancy->_graphicsManager->suppressNextDraw();
 
 	_state = kStartSound;
 }

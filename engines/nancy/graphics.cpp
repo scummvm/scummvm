@@ -64,7 +64,7 @@ void GraphicsManager::init() {
 }
 
 void GraphicsManager::draw(bool updateScreen) {
-	if (_isSuppressed) {
+	if (_isSuppressed && updateScreen) {
 		_isSuppressed = false;
 		return;
 	}
