@@ -239,8 +239,8 @@ class DefaultFont : public Font {
 	 void loadFont(FontData *font, uint32 fontResourceId);
 	 void loadFont(FontData *font, const ByteArray& fontResourceData, bool isBigEndian);
 	 void loadChineseFontIHNM(FontData *font, uint32 fontResourceId);
-	 void loadChineseFontITE(const Common::String& fileName);
-	 void loadKoreanFontIHNM(const Common::String& fileName);
+	 void loadChineseFontITE(const Common::Path &fileName);
+	 void loadKoreanFontIHNM(const Common::Path &fileName);
 	 void saveBig5Index(byte head, byte tail, uint curIdx);
 	 void createOutline(FontData *font);
 	 void blitGlyph(const Common::Point &textPoint, const byte* bitmap, int charWidth, int charHeight, int rowLength, byte color);
