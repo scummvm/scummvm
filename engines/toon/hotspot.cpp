@@ -95,8 +95,8 @@ int32 Hotspots::find(int16 x, int16 y) {
 	return foundId;
 }
 
-bool Hotspots::loadRif(const Common::String &rifName, const Common::String &additionalRifName) {
-	debugC(1, kDebugHotspot, "loadRif(%s, %s)", rifName.c_str(), additionalRifName.c_str());
+bool Hotspots::loadRif(const Common::Path &rifName, const Common::Path &additionalRifName) {
+	debugC(1, kDebugHotspot, "loadRif(%s, %s)", rifName.toString().c_str(), additionalRifName.toString().c_str());
 
 	uint32 size = 0;
 	uint8 *rifData = _vm->resources()->getFileData(rifName, &size);
@@ -107,7 +107,7 @@ bool Hotspots::loadRif(const Common::String &rifName, const Common::String &addi
 	uint8 *rifData2 = 0;
 
 	// English demo seems to have some invalid additional Rif data so do not load it
-	if (!_vm->isEnglishDemo() && additionalRifName.size())
+	if (!_vm->isEnglishDemo() && !additionalRifName.empty())
 		rifData2 = _vm->resources()->getFileData(additionalRifName, &size2);
 
 	// figure out the number of hotspots based on file size

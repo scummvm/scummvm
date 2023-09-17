@@ -321,7 +321,7 @@ void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &o
 	}
 }
 
-bool FontRenderer::loadDemoFont(const Common::String& filename) {
+bool FontRenderer::loadDemoFont(const Common::Path &filename) {
 	uint32 fileSize = 0;
 	uint8 *fileData = _vm->resources()->getFileData(filename, &fileSize);
 	if (!fileData)

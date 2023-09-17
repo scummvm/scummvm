@@ -32,7 +32,7 @@ bool Animation::loadAnimation(const Common::String &file) {
 	debugC(1, kDebugAnim, "loadAnimation(%s)", file.c_str());
 
 	uint32 fileSize = 0;
-	uint8 *fileData = _vm->resources()->getFileData(file, &fileSize);
+	uint8 *fileData = _vm->resources()->getFileData(Common::Path(file), &fileSize);
 	if (!fileData)
 		return false;
 

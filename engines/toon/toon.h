@@ -128,7 +128,7 @@ public:
 	void exitScene();
 	void loadCursor();
 	void setCursor(int32 type, bool inventory = false, int32 offsetX = 0, int offsetY = 0);
-	void loadAdditionalPalette(const Common::String &fileName, int32 mode);
+	void loadAdditionalPalette(const Common::Path &fileName, int32 mode);
 	void setupGeneralPalette();
 	void render();
 	void update(int32 timeIncrement);
@@ -169,7 +169,7 @@ public:
 	void rearrangeInventory();
 	void createMouseItem(int32 item);
 	void deleteMouseItem();
-	void showCutaway(const Common::String &cutawayPicture);
+	void showCutaway(const Common::Path &cutawayPicture);
 	void hideCutaway();
 	void drawPalette();
 	void newGame();
@@ -192,7 +192,7 @@ public:
 	int32 handleInventoryOnDrew(int32 itemId);
 	int32 pauseSceneAnimationScript(int32 animScriptId, int32 tickToWait);
 	void updateTimer(int32 timeIncrement);
-	Common::String createRoomFilename(const Common::String &name);
+	Common::Path createRoomFilename(const Common::String &name);
 	void createShadowLUT();
 	void playTalkAnimOnCharacter(int32 animID, int32 characterId, bool talker);
 	void updateScrolling(bool force, int32 timeIncrement);
@@ -203,7 +203,7 @@ public:
 	void makeLineNonWalkable(int32 x, int32 y, int32 x2, int32 y2);
 	void makeLineWalkable(int32 x, int32 y, int32 x2, int32 y2);
 	void renderInventory();
-	void viewInventoryItem(const Common::String &str, int32 lineId, int32 itemDest);
+	void viewInventoryItem(const Common::Path &str, int32 lineId, int32 itemDest);
 	void storePalette();
 	void restorePalette();
 	const char *getSpecialConversationMusic(int32 locationId);

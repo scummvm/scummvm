@@ -78,8 +78,8 @@ Movie::~Movie() {
 void Movie::init() const {
 }
 
-void Movie::play(const Common::String &video, int32 flags) {
-	debugC(1, kDebugMovie, "play(%s, %d)", video.c_str(), flags);
+void Movie::play(const Common::Path &video, int32 flags) {
+	debugC(1, kDebugMovie, "play(%s, %d)", video.toString().c_str(), flags);
 	bool isFirstIntroVideo = false;
 	if (video == "209_1M.SMK")
 		isFirstIntroVideo = true;
@@ -87,12 +87,12 @@ void Movie::play(const Common::String &video, int32 flags) {
 	_playing = true;
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(0);
-	if (!_decoder->loadFile(video.c_str())) {
+	if (!_decoder->loadFile(video)) {
 		if (flags & 2)
 			return;
-		error("Unable to play video %s", video.c_str());
+		error("Unable to play video %s", video.toString().c_str());
 	}
-	_subtitle->load(video.c_str());
+	_subtitle->load(video);
 	playVideo(isFirstIntroVideo);
 	_vm->flushPalette(true);
 	if (flags & 1)

@@ -98,7 +98,7 @@ void ToonEngine::init() {
 
 	_firstFrame = false;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MISC");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "ACT1");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "ACT2");
@@ -1939,58 +1939,58 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	// load package
 	if (!resources()->openPackage(createRoomFilename(locationName + ".PAK"))) {
 		const char *msg = _s("Unable to locate the '%s' data file.");
-		Common::String roomFileName = createRoomFilename(locationName + ".PAK");
+		Common::Path roomFileName = createRoomFilename(locationName + ".PAK");
 
-		Common::U32String buf = Common::U32String::format(_(msg), roomFileName.c_str());
+		Common::U32String buf = Common::U32String::format(_(msg), roomFileName.toString(Common::Path::kNativeSeparator).c_str());
 		GUIErrorMessage(buf);
-		warning(msg, roomFileName.c_str());
+		warning(msg, roomFileName.toString().c_str());
 		_shouldQuit = true;
 		return;
 	}
 
-	loadAdditionalPalette(locationName + ".NPP", 0);
+	loadAdditionalPalette(Common::Path(locationName + ".NPP"), 0);
 
 	_additionalPalette2Present = false;
-	loadAdditionalPalette(locationName + ".NP2", 1);
+	loadAdditionalPalette(Common::Path(locationName + ".NP2"), 1);
 
-	loadAdditionalPalette(locationName + ".CUP", 2);
+	loadAdditionalPalette(Common::Path(locationName + ".CUP"), 2);
 
 	// load artwork
 	delete _currentPicture;
 	_currentPicture = new Picture(this);
-	_currentPicture->loadPicture(locationName + ".CPS");
+	_currentPicture->loadPicture(Common::Path(locationName + ".CPS"));
 	_currentPicture->setupPalette();
 
 	delete _currentMask;
 	_currentMask = new Picture(this);
-	if (_currentMask->loadPicture(locationName + ".MSC"))
+	if (_currentMask->loadPicture(Common::Path(locationName + ".MSC")))
 		_pathFinding->init(_currentMask);
 
 	delete _roomTexts;
 	_roomTexts = new TextResource(this);
-	_roomTexts->loadTextResource(locationName + ".TRE");
+	_roomTexts->loadTextResource(Common::Path(locationName + ".TRE"));
 
 	uint32 fileSize;
-	uint8 *sceneData = resources()->getFileData(locationName + ".DAT", &fileSize);
+	uint8 *sceneData = resources()->getFileData(Common::Path(locationName + ".DAT"), &fileSize);
 	if (sceneData) {
 		delete[] _roomScaleData;
 		_roomScaleData = new uint8[fileSize];
 		memcpy(_roomScaleData, sceneData, fileSize);
 	}
 
-	_audioManager->loadAudioPack(1, locationName + ".SVI", createRoomFilename(locationName + ".SVL"));
-	_audioManager->loadAudioPack(3, locationName + ".SEI", locationName + ".SEL");
+	_audioManager->loadAudioPack(1, Common::Path(locationName + ".SVI"), createRoomFilename(locationName + ".SVL"));
+	_audioManager->loadAudioPack(3, Common::Path(locationName + ".SEI"), Common::Path(locationName + ".SEL"));
 
 	if (state()->_locations[SceneId]._flags & 0x40) {
 		Common::String cutaway = state()->_locations[SceneId]._cutaway;
-		_hotspots->loadRif(locationName + ".RIC", cutaway + ".RIC");
+		_hotspots->loadRif(Common::Path(locationName + ".RIC"), Common::Path(cutaway + ".RIC"));
 	} else {
-		_hotspots->loadRif(locationName + ".RIC", "");
+		_hotspots->loadRif(Common::Path(locationName + ".RIC"), "");
 	}
 	restoreRifFlags(_gameState->_currentScene);
 
 	uint32 convfileSize;
-	uint8 *convData = resources()->getFileData(locationName + ".CNV", &convfileSize);
+	uint8 *convData = resources()->getFileData(Common::Path(locationName + ".CNV"), &convfileSize);
 	if (convData) {
 		assert(convfileSize < 4096 * sizeof(int16));
 		memcpy(_conversationData , convData, convfileSize);
@@ -2081,7 +2081,7 @@ void ToonEngine::setupGeneralPalette() {
 		_drew->setupPalette();
 }
 
-void ToonEngine::loadAdditionalPalette(const Common::String &fileName, int32 mode) {
+void ToonEngine::loadAdditionalPalette(const Common::Path &fileName, int32 mode) {
 
 	uint32 size = 0;
 	uint8 *palette = resources()->getFileData(fileName, &size);
@@ -3561,14 +3561,14 @@ void ToonEngine::deleteMouseItem() {
 	setCursor(0);
 }
 
-void ToonEngine::showCutaway(const Common::String &cutawayPicture) {
+void ToonEngine::showCutaway(const Common::Path &cutawayPicture) {
 	_gameState->_inCutaway = true;
 	delete _currentCutaway;
 	_currentCutaway = nullptr;
 	_currentCutaway = new Picture(this);
 	if (cutawayPicture.empty()) {
 		Common::String name = _gameState->_locations[_gameState->_currentScene]._cutaway;
-		_currentCutaway->loadPicture(name + ".CPS");
+		_currentCutaway->loadPicture(Common::Path(name + ".CPS"));
 	} else {
 		_currentCutaway->loadPicture(cutawayPicture);
 	}
@@ -4234,7 +4234,7 @@ const char *ToonEngine::getSpecialConversationMusic(int32 conversationId) {
 	return specialMusic[randRange(0, 1) + conversationId * 2];
 }
 
-void ToonEngine::viewInventoryItem(const Common::String &str, int32 lineId, int32 itemDest) {
+void ToonEngine::viewInventoryItem(const Common::Path &str, int32 lineId, int32 itemDest) {
 	storePalette();
 	fadeOut(5);
 
@@ -5335,8 +5335,8 @@ int32 ToonEngine::pauseSceneAnimationScript(int32 animScriptId, int32 tickToWait
 	return nextTicks;
 }
 
-Common::String ToonEngine::createRoomFilename(const Common::String& name) {
-	Common::String file = Common::String::format("ACT%d/%s/%s", _gameState->_currentChapter, _gameState->_locations[_gameState->_currentScene]._name, name.c_str());
+Common::Path ToonEngine::createRoomFilename(const Common::String& name) {
+	Common::Path file(Common::String::format("ACT%d/%s/%s", _gameState->_currentChapter, _gameState->_locations[_gameState->_currentScene]._name, name.c_str()));
 	return file;
 }
 

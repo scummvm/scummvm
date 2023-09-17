@@ -66,16 +66,16 @@ void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber
 	_vm->_system->copyRectToScreen(_subSurface->getBasePtr(0, 0), _subSurface->pitch, 0, 0, _subSurface->w,  _subSurface->h);
 }
 
-bool SubtitleRenderer::load(const Common::String &video) {
+bool SubtitleRenderer::load(const Common::Path &video) {
 	// warning(video.c_str());
 
 	_hasSubtitles = false;
 
-	Common::String subfile(video);
+	Common::String subfile(video.baseName());
 	Common::String ext("tss");
 	subfile.replace(subfile.size() - ext.size(), ext.size(), ext);
 
-	Common::ScopedPtr<Common::SeekableReadStream> subsStream(_vm->resources()->openFile(subfile));
+	Common::ScopedPtr<Common::SeekableReadStream> subsStream(_vm->resources()->openFile(video.getParent().appendComponent(subfile)));
 	if (subsStream == nullptr) {
 		return false;
 	}

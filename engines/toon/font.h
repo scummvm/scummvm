@@ -34,7 +34,7 @@ public:
 	~FontRenderer();
 
 	void setFont(Animation *font);
-	bool loadDemoFont(const Common::String &filename);
+	bool loadDemoFont(const Common::Path &filename);
 	void computeSize(const Common::String &origText, int16 *retX, int16 *retY);
 	void renderText(int16 x, int16 y, const Common::String &origText, int32 mode);
 	void renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode, Graphics::Surface &frame);
