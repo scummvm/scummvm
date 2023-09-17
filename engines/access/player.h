@@ -121,7 +121,7 @@ public:
 
 	void loadTexPalette();
 
-	void loadSprites(const Common::String &name);
+	void loadSprites(const Common::Path &name);
 
 	void freeSprites();
 

@@ -34,7 +34,7 @@ class AccessEngine;
 class Debugger : public GUI::Debugger {
 protected:
 	AccessEngine *_vm;
-	Common::String _playMovieFile;
+	Common::Path _playMovieFile;
 
 	bool Cmd_LoadScene(int argc, const char **argv);
 	bool Cmd_Cheat(int argc, const char **argv);

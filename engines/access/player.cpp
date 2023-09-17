@@ -144,7 +144,7 @@ void Player::loadTexPalette() {
 	memcpy(_manPal1, texPal->data(), size);
 }
 
-void Player::loadSprites(const Common::String &name) {
+void Player::loadSprites(const Common::Path &name) {
 	freeSprites();
 
 	Resource *data = _vm->_files->loadFile(name);

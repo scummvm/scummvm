@@ -103,7 +103,7 @@ Resource *FileManager::loadFile(const FileIdent &fileIdent) {
 	return loadFile(fileIdent._fileNum, fileIdent._subfile);
 }
 
-Resource *FileManager::loadFile(const Common::String &filename) {
+Resource *FileManager::loadFile(const Common::Path &filename) {
 	Resource *res = new Resource();
 
 	// Open the file
@@ -117,16 +117,15 @@ Resource *FileManager::loadFile(const Common::String &filename) {
 	return res;
 }
 
-bool FileManager::existFile(const Common::String &filename) {
-	Common::File f;
-	return f.exists(filename);
+bool FileManager::existFile(const Common::Path &filename) {
+	return Common::File::exists(filename);
 }
 
-void FileManager::openFile(Resource *res, const Common::String &filename) {
+void FileManager::openFile(Resource *res, const Common::Path &filename) {
 	// Open up the file
 	_fileNumber = -1;
 	if (!res->_file.open(filename))
-		error("Could not open file - %s", filename.c_str());
+		error("Could not open file - %s", filename.toString().c_str());
 }
 
 void FileManager::loadScreen(Graphics::ManagedSurface *dest, int fileNum, int subfile) {
@@ -163,7 +162,7 @@ void FileManager::loadScreen(int fileNum, int subfile) {
 	loadScreen(_vm->_screen, fileNum, subfile);
 }
 
-void FileManager::loadScreen(const Common::String &filename) {
+void FileManager::loadScreen(const Common::Path &filename) {
 	Resource *res = loadFile(filename);
 	handleScreen(_vm->_screen, res);
 	delete res;
@@ -198,7 +197,7 @@ void FileManager::handleFile(Resource *res) {
 void FileManager::setAppended(Resource *res, int fileNum) {
 	// Open the file for access
 	if (!res->_file.open(_vm->_res->FILENAMES[fileNum]))
-		error("Could not open file %s", _vm->_res->FILENAMES[fileNum].c_str());
+		error("Could not open file %s", _vm->_res->FILENAMES[fileNum].toString().c_str());
 
 	// If a different file has been opened then previously, load its index
 	if (_fileNumber != fileNum) {

@@ -70,7 +70,7 @@ class FileManager {
 private:
 	AccessEngine *_vm;
 
-	void openFile(Resource *res, const Common::String &filename);
+	void openFile(Resource *res, const Common::Path &filename);
 
 	/**
 	 * Handles setting up the resource with a stream for the located resource
@@ -102,7 +102,7 @@ public:
 	/**
 	 * Check the existence of a given file
 	 */
-	bool existFile(const Common::String &filename);
+	bool existFile(const Common::Path &filename);
 
 	/**
 	 * Load a given subfile from a container file
@@ -117,7 +117,7 @@ public:
 	/**
 	 * Load a given file by name
 	 */
-	Resource *loadFile(const Common::String &filename);
+	Resource *loadFile(const Common::Path &filename);
 
 	/**
 	 * Load a given scren from a container file
@@ -127,7 +127,7 @@ public:
 	/**
 	* Load a given screen by name
 	*/
-	void loadScreen(const Common::String &filename);
+	void loadScreen(const Common::Path &filename);
 
 	/**
 	 * Load a screen resource onto a designated surface
