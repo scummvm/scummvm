@@ -83,6 +83,7 @@
 #include "common/mutex.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 #include "graphics/cursorman.h"
 
 const char *android_log_tag = "ScummVM";
