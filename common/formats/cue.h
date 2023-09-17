@@ -63,30 +63,38 @@ public:
 		int number = 0;
 		CueTrackType type;
 		String title;
+		Array<int> indices;
 	};
 
 	struct CueFile {
 		String name;
 		CueFileType type = kCueFileTypeBinary;
+		Array<CueTrack> tracks;
 	};
 
-	struct CueMetadate {
+	struct CueMetadata {
 		String title;
 		String date;
 		String genre;
+		String performer;
 	};
 
 private:
+	int parseMSF(const char *str);
+
 	void parseHeaderContext(const char *line);
 	void parseFilesContext(const char *line);
 	void parseTracksContext(const char *line);
 
 private:
+	int _lineNum = 0;
 	int _context;
 	int _currentFile = -1;
+	int _currentTrack = -1;
 
 	Array<CueFile> _files;
-	CueMetadate _metadata;
+	CueMetadata _metadata;
+
 };
 
 } // End of namespace Common
