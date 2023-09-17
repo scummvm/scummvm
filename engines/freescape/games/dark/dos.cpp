@@ -126,11 +126,13 @@ void DarkEngine::loadAssetsDOSDemo() {
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
 
+	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
+	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
 	_indicators.push_back(loadBundledImage("dark_walk_indicator"));
 	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
 
-	_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
-	_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
 }
 
 void DarkEngine::loadAssetsDOSFullGame() {
