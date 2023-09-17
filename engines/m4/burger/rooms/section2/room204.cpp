@@ -110,7 +110,6 @@ void Room204::daemon() {
 		disable_player_commands_and_fade_init(2002);
 		break;
 
-
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;

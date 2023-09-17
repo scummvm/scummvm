@@ -112,6 +112,16 @@ const seriesPlayBreak Room303::PLAY10[] = {
 	PLAY_BREAK_END
 };
 
+const char *Room303::getDigi() {
+	if (_G(flags)[V118] == 3002) {
+		_digiVolume = 125;
+		return "303_005";
+	} else if (_G(flags)[V117]) {
+		return "303_006";
+	} else {
+		return "300_005";
+	}
+}
 
 void Room303::init() {
 }

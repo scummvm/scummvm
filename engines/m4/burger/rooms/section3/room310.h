@@ -22,13 +22,13 @@
 #ifndef M4_BURGER_ROOMS_SECTION3_ROOM310_H
 #define M4_BURGER_ROOMS_SECTION3_ROOM310_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section3/section3_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room310 : public Room {
+class Room310 : public Section3Room {
 private:
 	static const char *SAID[][4];
 	static const seriesPlayBreak PLAY1[];
@@ -38,6 +38,11 @@ private:
 	static const seriesPlayBreak PLAY5[];
 	static const seriesPlayBreak PLAY6[];
 	static long _state1;
+
+protected:
+	const char *getDigi() override {
+		return "310_001";
+	}
 
 public:
 	Room310();

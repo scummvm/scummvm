@@ -77,7 +77,7 @@ const seriesPlayBreak Room310::PLAY6[] = {
 long Room310::_state1;
 
 
-Room310::Room310() : Room() {
+Room310::Room310() : Section3Room() {
 	_state1 = 0;
 }
 
