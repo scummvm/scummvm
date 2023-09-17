@@ -239,7 +239,7 @@ bool Debugger::cmdHelp(int, const char **) {
  */
 bool Debugger::cmdListFiles(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
-		Common::String filter(const_cast<char *>(argv[1]));
+		Common::Path filter(const_cast<char *>(argv[1]));
 
 		// Load the proper archive
 		if (argc == 3) {
@@ -333,7 +333,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 				return true;
 		}
 
-		if (!_engine->getResourceManager()->hasFile(filename)) {
+		if (!_engine->getResourceManager()->hasFile(Common::Path(filename))) {
 			debugPrintf("Cannot find file: %s\n", filename.c_str());
 			return true;
 		}
@@ -395,7 +395,7 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 				return true;
 		}
 
-		if (!_engine->getResourceManager()->hasFile(filename + ".BG")) {
+		if (!_engine->getResourceManager()->hasFile(Common::Path(filename + ".BG"))) {
 			debugPrintf("Cannot find file: %s\n", (filename + ".BG").c_str());
 			return true;
 		}
@@ -450,7 +450,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 				return true;
 		}
 
-		if (!_engine->getResourceManager()->hasFile(filename)) {
+		if (!_engine->getResourceManager()->hasFile(Common::Path(filename))) {
 			debugPrintf("Cannot find file: %s\n", filename.c_str());
 			return true;
 		}
@@ -531,7 +531,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 		if (!name.contains('.'))
 			name += ".SND";
 
-		if (!_engine->getResourceManager()->hasFile(name)) {
+		if (!_engine->getResourceManager()->hasFile(Common::Path(name))) {
 			debugPrintf("Cannot find file: %s\n", name.c_str());
 			return true;
 		}
@@ -567,7 +567,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 
 		filename += ".sbe";
 
-		if (!_engine->getResourceManager()->hasFile(filename)) {
+		if (!_engine->getResourceManager()->hasFile(Common::Path(filename))) {
 			debugPrintf("Cannot find file: %s\n", filename.c_str());
 			return true;
 		}
@@ -633,7 +633,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 		}
 
 		// If we got a nis filename, check that the file exists
-		if (name.contains('.') && !_engine->getResourceManager()->hasFile(name)) {
+		if (name.contains('.') && !_engine->getResourceManager()->hasFile(Common::Path(name))) {
 			debugPrintf("Cannot find file: %s\n", name.c_str());
 			return true;
 		}

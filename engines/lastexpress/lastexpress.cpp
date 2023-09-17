@@ -65,7 +65,7 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
 	Engine::syncSoundSettings();
 
 	// Adding the default directories
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 }
 
