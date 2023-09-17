@@ -26,7 +26,7 @@
 
 namespace ZVision {
 
-Subtitle::Subtitle(ZVision *engine, const Common::String &subname, bool upscaleToHires) :
+Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool upscaleToHires) :
 	_engine(engine),
 	_areaId(-1),
 	_subId(-1) {
@@ -50,7 +50,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::String &subname, bool upscaleT
 				char filename[64];
 				sscanf(str.c_str(), "%*[^:]:%s", filename);
 				Common::File txt;
-				if (_engine->getSearchManager()->openFile(txt, filename)) {
+				if (_engine->getSearchManager()->openFile(txt, Common::Path(filename))) {
 					while (!txt.eos()) {
 						Common::String txtline = readWideLine(txt);
 						sub curSubtitle;

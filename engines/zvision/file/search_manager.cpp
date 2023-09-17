@@ -28,7 +28,7 @@
 
 namespace ZVision {
 
-SearchManager::SearchManager(const Common::String &rootPath, int depth) {
+SearchManager::SearchManager(const Common::Path &rootPath, int depth) {
 	Common::FSNode fsNode(rootPath);
 
 	// Retrieve the root path from the FSNode, since it may not be the
@@ -36,22 +36,16 @@ SearchManager::SearchManager(const Common::String &rootPath, int depth) {
 	// the current directory.
 
 	_root = fsNode.getPath();
-	if (_root.hasSuffix("\\") || _root.hasSuffix("/"))
-		_root.deleteLastChar();
 
 	listDirRecursive(_dirList, fsNode, depth);
 
-	for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end();) {
-		if ((*it).hasSuffix("\\") || (*it).hasSuffix("/"))
-			(*it).deleteLastChar();
-
-		if (it->size() == _root.size())
+	for (Common::List<Common::Path>::iterator it = _dirList.begin(); it != _dirList.end();) {
+		*it = it->relativeTo(_root);
+		if (it->empty()) {
 			it = _dirList.erase(it);
-		else if (it->size() > _root.size()) {
-			*it = Common::String(it->c_str() + _root.size() + 1);
+		} else {
 			it++;
-		} else
-			it++;
+		}
 	}
 }
 
@@ -65,7 +59,7 @@ SearchManager::~SearchManager() {
 	_archList.clear();
 }
 
-void SearchManager::addFile(const Common::String &name, Common::Archive *arch) {
+void SearchManager::addFile(const Common::Path &name, Common::Archive *arch) {
 	bool addArch = true;
 	Common::List<Common::Archive *>::iterator it = _archList.begin();
 	while (it != _archList.end()) {
@@ -78,7 +72,7 @@ void SearchManager::addFile(const Common::String &name, Common::Archive *arch) {
 	if (addArch)
 		_archList.push_back(arch);
 
-	Common::String lowerCaseName = name;
+	Common::Path lowerCaseName = name;
 	lowerCaseName.toLowercase();
 
 	SearchManager::Node nod;
@@ -101,11 +95,8 @@ void SearchManager::addFile(const Common::String &name, Common::Archive *arch) {
 	}
 }
 
-Common::File *SearchManager::openFile(const Common::String &name) {
-	Common::String lowerCaseName = name;
-	lowerCaseName.toLowercase();
-
-	SearchManager::MatchList::iterator fit = _files.find(lowerCaseName);
+Common::File *SearchManager::openFile(const Common::Path &name) {
+	SearchManager::MatchList::iterator fit = _files.find(name);
 
 	if (fit != _files.end()) {
 		Common::File *tmp = new Common::File();
@@ -115,29 +106,23 @@ Common::File *SearchManager::openFile(const Common::String &name) {
 	return NULL;
 }
 
-bool SearchManager::openFile(Common::File &file, const Common::String &name) {
-	Common::String lowerCaseName = name;
-	lowerCaseName.toLowercase();
-
-	SearchManager::MatchList::iterator fit = _files.find(lowerCaseName);
+bool SearchManager::openFile(Common::File &file, const Common::Path &name) {
+	SearchManager::MatchList::iterator fit = _files.find(name);
 
 	if (fit != _files.end())
 		return file.open(fit->_value.name, *fit->_value.arch);
 	return false;
 }
 
-bool SearchManager::hasFile(const Common::String &name) {
-	Common::String lowerCaseName = name;
-	lowerCaseName.toLowercase();
-
-	SearchManager::MatchList::iterator fit = _files.find(lowerCaseName);
+bool SearchManager::hasFile(const Common::Path &name) {
+	SearchManager::MatchList::iterator fit = _files.find(name);
 
 	if (fit != _files.end())
 		return true;
 	return false;
 }
 
-bool SearchManager::loadZix(const Common::String &name) {
+bool SearchManager::loadZix(const Common::Path &name) {
 	Common::File file;
 	if (!file.open(name))
 		return false;
@@ -151,7 +136,7 @@ bool SearchManager::loadZix(const Common::String &name) {
 	}
 
 	if (file.eos())
-		error("Corrupt ZIX file: %s", name.c_str());
+		error("Corrupt ZIX file: %s", name.toString(Common::Path::kNativeSeparator).c_str());
 
 	Common::Array<Common::Archive *> archives;
 
@@ -188,27 +173,29 @@ bool SearchManager::loadZix(const Common::String &name) {
 				path.deleteLastChar();
 
 			// Handle paths in case-sensitive file systems (bug #6775)
-			if (path.size()) {
-				for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end(); ++it) {
-					if (path.equalsIgnoreCase(*it)) {
-						path = *it;
+			Common::Path path_(path);
+			if (!path_.empty()) {
+				for (Common::List<Common::Path>::iterator it = _dirList.begin(); it != _dirList.end(); ++it) {
+					// FIXME: ignoreCase
+					if (path_ == *it) {
+						path_ = *it;
 						break;
 					}
 				}
 			}
 
 			if (path.matchString("*.zfs", true)) {
-				arc = new ZfsArchive(path);
+				arc = new ZfsArchive(path_);
 			} else {
-				path = Common::String::format("%s/%s", _root.c_str(), path.c_str());
-				arc = new Common::FSDirectory(path);
+				path_ = _root.join(path_);
+				arc = new Common::FSDirectory(path_);
 			}
 			archives.push_back(arc);
 		}
 	}
 
 	if (file.eos())
-		error("Corrupt ZIX file: %s", name.c_str());
+		error("Corrupt ZIX file: %s", name.toString(Common::Path::kNativeSeparator).c_str());
 
 	while (!file.eos()) {
 		line = file.readLine();
@@ -217,7 +204,7 @@ bool SearchManager::loadZix(const Common::String &name) {
 		char buf[32];
 		if (sscanf(line.c_str(), "%u %s", &dr, buf) == 2) {
 			if (dr <= archives.size() && dr > 0) {
-				addFile(Common::String(buf), archives[dr - 1]);
+				addFile(buf, archives[dr - 1]);
 			}
 		}
 	}
@@ -225,19 +212,20 @@ bool SearchManager::loadZix(const Common::String &name) {
 	return true;
 }
 
-void SearchManager::addDir(const Common::String &name) {
-	Common::String path;
-	for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end(); ++it)
-		if (name.equalsIgnoreCase(*it)) {
+void SearchManager::addDir(const Common::Path &name) {
+	Common::Path path;
+	for (Common::List<Common::Path>::iterator it = _dirList.begin(); it != _dirList.end(); ++it)
+		// FIXME: ignore case
+		if (name == *it) {
 			path = *it;
 			break;
 		}
 
-	if (path.size() == 0)
+	if (path.empty())
 		return;
 
-	path = Common::String::format("%s/%s", _root.c_str(), path.c_str());
 
+	path = _root.join(path);
 	Common::FSDirectory *dir = new Common::FSDirectory(path);
 
 	Common::ArchiveMemberList list;
@@ -246,13 +234,13 @@ void SearchManager::addDir(const Common::String &name) {
 	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 		Common::String flname = (*iter)->getName();
 
-		ZfsArchive *zfs = new ZfsArchive(Common::String::format("%s/%s", name.c_str(), flname.c_str()));
+		ZfsArchive *zfs = new ZfsArchive(name.join(flname));
 
 		Common::ArchiveMemberList zfslist;
 		zfs->listMembers(zfslist);
 
 		for (Common::ArchiveMemberList::iterator ziter = zfslist.begin(); ziter != zfslist.end(); ++ziter) {
-			Common::String zfsFileName = (*ziter)->getName();
+			Common::Path zfsFileName = (*ziter)->getPathInArchive();
 			addFile(zfsFileName, zfs);
 		}
 	}
@@ -261,12 +249,12 @@ void SearchManager::addDir(const Common::String &name) {
 	dir->listMembers(list);
 
 	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-		Common::String flname = (*iter)->getName();
+		Common::Path flname = (*iter)->getPathInArchive();
 		addFile(flname, dir);
 	}
 }
 
-void SearchManager::listDirRecursive(Common::List<Common::String> &_list, const Common::FSNode &fsNode, int depth) {
+void SearchManager::listDirRecursive(Common::List<Common::Path> &_list, const Common::FSNode &fsNode, int depth) {
 	Common::FSList fsList;
 	if (fsNode.getChildren(fsList)) {
 
@@ -280,7 +268,7 @@ void SearchManager::listDirRecursive(Common::List<Common::String> &_list, const 
 
 void SearchManager::listMembersWithExtension(MatchList &fileList, Common::String extension) {
 	for (SearchManager::MatchList::iterator it = _files.begin(); it != _files.end(); ++it) {
-		if (it->_key.hasSuffix(extension))
+		if (it->_key.baseName().hasSuffix(extension))
 			fileList[it->_key] = it->_value;
 	}
 }

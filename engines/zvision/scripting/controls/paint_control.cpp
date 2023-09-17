@@ -60,11 +60,11 @@ PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		} else if (param.matchString("cursor", true)) {
 			_cursor = _engine->getCursorManager()->getCursorId(values);
 		} else if (param.matchString("brush_file", true)) {
-			_brush = _engine->getRenderManager()->loadImage(values, false);
+			_brush = _engine->getRenderManager()->loadImage(Common::Path(values), false);
 		} else if (param.matchString("venus_id", true)) {
 			_venusId = atoi(values.c_str());
 		} else if (param.matchString("paint_file", true)) {
-			_paint = _engine->getRenderManager()->loadImage(values, false);
+			_paint = _engine->getRenderManager()->loadImage(Common::Path(values), false);
 		} else if (param.matchString("eligible_objects", true)) {
 			char buf[256];
 			memset(buf, 0, 256);

@@ -47,7 +47,7 @@ TitlerControl::TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("string_resource_file", true)) {
-			readStringsFile(values);
+			readStringsFile(Common::Path(values));
 		} else if (param.matchString("rectangle", true)) {
 			int x;
 			int y;
@@ -87,10 +87,10 @@ void TitlerControl::setString(int strLine) {
 	}
 }
 
-void TitlerControl::readStringsFile(const Common::String &fileName) {
+void TitlerControl::readStringsFile(const Common::Path &fileName) {
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		warning("String_resource_file %s could could be opened", fileName.c_str());
+		warning("String_resource_file %s could could be opened", fileName.toString().c_str());
 		return;
 	}
 

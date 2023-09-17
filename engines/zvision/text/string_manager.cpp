@@ -47,10 +47,10 @@ void StringManager::initialize(ZVisionGameId gameId) {
 		loadStrFile("inquis.str");
 }
 
-void StringManager::loadStrFile(const Common::String &fileName) {
+void StringManager::loadStrFile(const Common::Path &fileName) {
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName))
-		error("%s does not exist. String parsing failed", fileName.c_str());
+		error("%s does not exist. String parsing failed", fileName.toString().c_str());
 
 	uint lineNumber = 0;
 	while (!file.eos()) {

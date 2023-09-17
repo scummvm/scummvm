@@ -29,7 +29,7 @@
 
 namespace ZVision {
 
-FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds):
+FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::Path &clouds):
 	GraphicsEffect(engine, key, region, ported) {
 
 	_map = Map;

@@ -40,8 +40,8 @@
 
 namespace ZVision {
 
-Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
-	Common::String tmpFileName = fileName;
+Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
+	Common::String tmpFileName = fileName.baseName();
 	tmpFileName.toLowercase();
 	Video::VideoDecoder *animation = NULL;
 
@@ -56,15 +56,15 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
 	}
 #endif
 	else
-		error("Unknown suffix for animation %s", fileName.c_str());
+		error("Unknown suffix for animation %s", fileName.toString().c_str());
 
-	Common::File *_file = getSearchManager()->openFile(tmpFileName);
+	Common::File *_file = getSearchManager()->openFile(fileName);
 	if (!_file)
-		error("Error opening %s", tmpFileName.c_str());
+		error("Error opening %s", fileName.toString().c_str());
 
 	bool loaded = animation->loadStream(_file);
 	if (!loaded)
-		error("Error loading animation %s", tmpFileName.c_str());
+		error("Error loading animation %s", fileName.toString().c_str());
 
 	return animation;
 }

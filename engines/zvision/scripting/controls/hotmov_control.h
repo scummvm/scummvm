@@ -52,7 +52,7 @@ public:
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:
-	void readHsFile(const Common::String &fileName);
+	void readHsFile(const Common::Path &fileName);
 };
 
 } // End of namespace ZVision

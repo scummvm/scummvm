@@ -148,7 +148,7 @@ void RenderManager::copyToScreen(const Graphics::Surface &surface, Common::Rect 
 	delete outSurface;
 }
 
-void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY) {
+void RenderManager::renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY) {
 	Graphics::Surface surface;
 	readImageToSurface(fileName, surface);
 
@@ -156,7 +156,7 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 	surface.free();
 }
 
-void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, uint32 keycolor) {
+void RenderManager::renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY, uint32 keycolor) {
 	Graphics::Surface surface;
 	readImageToSurface(fileName, surface);
 
@@ -164,7 +164,7 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 	surface.free();
 }
 
-void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, int16  keyX, int16 keyY) {
+void RenderManager::renderImageToBackground(const Common::Path &fileName, int16 destX, int16 destY, int16  keyX, int16 keyY) {
 	Graphics::Surface surface;
 	readImageToSurface(fileName, surface);
 
@@ -174,16 +174,16 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 	surface.free();
 }
 
-void RenderManager::readImageToSurface(const Common::String &fileName, Graphics::Surface &destination) {
+void RenderManager::readImageToSurface(const Common::Path &fileName, Graphics::Surface &destination) {
 	bool isTransposed = _renderTable.getRenderState() == RenderTable::PANORAMA;
 	readImageToSurface(fileName, destination, isTransposed);
 }
 
-void RenderManager::readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed) {
+void RenderManager::readImageToSurface(const Common::Path &fileName, Graphics::Surface &destination, bool transposed) {
 	Common::File file;
 
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		warning("Could not open file %s", fileName.c_str());
+		warning("Could not open file %s", fileName.toString().c_str());
 		return;
 	}
 
@@ -306,7 +306,7 @@ RenderTable *RenderManager::getRenderTable() {
 	return &_renderTable;
 }
 
-void RenderManager::setBackgroundImage(const Common::String &fileName) {
+void RenderManager::setBackgroundImage(const Common::Path &fileName) {
 	readImageToSurface(fileName, _currentBackgroundImage);
 	_backgroundWidth = _currentBackgroundImage.w;
 	_backgroundHeight = _currentBackgroundImage.h;
@@ -566,13 +566,13 @@ Graphics::Surface *RenderManager::getBkgRect(Common::Rect &rect) {
 	return srf;
 }
 
-Graphics::Surface *RenderManager::loadImage(Common::String file) {
+Graphics::Surface *RenderManager::loadImage(const Common::Path &file) {
 	Graphics::Surface *tmp = new Graphics::Surface;
 	readImageToSurface(file, *tmp);
 	return tmp;
 }
 
-Graphics::Surface *RenderManager::loadImage(Common::String file, bool transposed) {
+Graphics::Surface *RenderManager::loadImage(const Common::Path &file, bool transposed) {
 	Graphics::Surface *tmp = new Graphics::Surface;
 	readImageToSurface(file, *tmp, transposed);
 	return tmp;

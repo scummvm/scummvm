@@ -88,10 +88,10 @@ LeverControl::~LeverControl() {
 	delete[] _frameInfo;
 }
 
-void LeverControl::parseLevFile(const Common::String &fileName) {
+void LeverControl::parseLevFile(const Common::Path &fileName) {
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		warning("LEV file %s could could be opened", fileName.c_str());
+		warning("LEV file %s could could be opened", fileName.toString().c_str());
 		return;
 	}
 
@@ -106,7 +106,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 		if (param.matchString("animation_id", true)) {
 			// Not used
 		} else if (param.matchString("filename", true)) {
-			_animation = _engine->loadAnimation(values);
+			_animation = _engine->loadAnimation(Common::Path(values));
 		} else if (param.matchString("skipcolor", true)) {
 			// Not used
 		} else if (param.matchString("anim_coords", true)) {

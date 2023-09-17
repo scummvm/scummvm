@@ -35,18 +35,18 @@ ZorkCursor::ZorkCursor()
 	  _hotspotY(0) {
 }
 
-ZorkCursor::ZorkCursor(ZVision *engine, const Common::String &fileName)
+ZorkCursor::ZorkCursor(ZVision *engine, const Common::Path &fileName)
 	: _width(0),
 	  _height(0),
 	  _hotspotX(0),
 	  _hotspotY(0) {
 	Common::File file;
 	if (!engine->getSearchManager()->openFile(file, fileName))
-		error("Cursor file %s does not exist", fileName.c_str());
+		error("Cursor file %s does not exist", fileName.toString().c_str());
 
 	uint32 magic = file.readUint32BE();
 	if (magic != MKTAG('Z', 'C', 'R', '1')) {
-		warning("%s is not a Zork Cursor file", fileName.c_str());
+		warning("%s is not a Zork Cursor file", fileName.toString().c_str());
 		return;
 	}
 

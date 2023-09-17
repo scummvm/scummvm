@@ -32,7 +32,7 @@
 
 namespace ZVision {
 
-AnimationEffect::AnimationEffect(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse)
+AnimationEffect::AnimationEffect(ZVision *engine, uint32 controlKey, const Common::Path &fileName, int32 mask, int32 frate, bool disposeAfterUse)
 	: ScriptingEffect(engine, controlKey, SCRIPTING_EFFECT_ANIM),
 	  _disposeAfterUse(disposeAfterUse),
 	  _mask(mask),

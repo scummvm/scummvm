@@ -55,7 +55,7 @@ namespace ZVision {
 83, 86, 89, 92, 96, 99, 103, 107, 111, 115, 119, 123, 128, 133, 137, 143,
 148, 153, 159, 165, 171, 177, 184, 191, 198, 205, 212, 220, 228, 237, 245, 255};*/
 
-MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool loop, uint8 volume)
+MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool loop, uint8 volume)
 	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_loop = loop;
 	_volume = volume;
@@ -70,7 +70,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 
 	Audio::RewindableAudioStream *audioStream = NULL;
 
-	if (filename.contains(".wav")) {
+	if (filename.baseName().contains(".wav")) {
 		Common::File *file = new Common::File();
 		if (_engine->getSearchManager()->openFile(*file, filename)) {
 			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
@@ -93,13 +93,14 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 			_engine->getScriptManager()->setStateValue(_key, 1);
 
 		// Change filename.raw into filename.sub
-		Common::String subname = filename;
+		Common::String subname = filename.baseName();
 		subname.setChar('s', subname.size() - 3);
 		subname.setChar('u', subname.size() - 2);
 		subname.setChar('b', subname.size() - 1);
 
-		if (_engine->getSearchManager()->hasFile(subname))
-			_sub = new Subtitle(_engine, subname);
+		Common::Path subpath(filename.getParent().appendComponent(subname));
+		if (_engine->getSearchManager()->hasFile(subpath))
+			_sub = new Subtitle(_engine, subpath);
 
 		_loaded = true;
 	}

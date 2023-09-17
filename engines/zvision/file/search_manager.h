@@ -33,34 +33,34 @@ namespace ZVision {
 
 class SearchManager {
 public:
-	SearchManager(const Common::String &rootPath, int depth);
+	SearchManager(const Common::Path &rootPath, int depth);
 	~SearchManager();
 
-	void addFile(const Common::String &name, Common::Archive *arch);
-	void addDir(const Common::String &name);
+	void addFile(const Common::Path &name, Common::Archive *arch);
+	void addDir(const Common::Path &name);
 
-	Common::File *openFile(const Common::String &name);
-	bool openFile(Common::File &file, const Common::String &name);
-	bool hasFile(const Common::String &name);
+	Common::File *openFile(const Common::Path &name);
+	bool openFile(Common::File &file, const Common::Path &name);
+	bool hasFile(const Common::Path &name);
 
-	bool loadZix(const Common::String &name);
+	bool loadZix(const Common::Path &name);
 
 	struct Node {
-		Common::String name;
+		Common::Path name;
 		Common::Archive *arch;
 	};
 
-	typedef Common::HashMap<Common::String, Node, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MatchList;
+	typedef Common::HashMap<Common::Path, Node, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> MatchList;
 
 	void listMembersWithExtension(MatchList &fileList, Common::String extension);
 
 private:
 
-	void listDirRecursive(Common::List<Common::String> &dirList, const Common::FSNode &fsNode, int depth);
+	void listDirRecursive(Common::List<Common::Path> &dirList, const Common::FSNode &fsNode, int depth);
 
-	Common::List<Common::String> _dirList;
+	Common::List<Common::Path> _dirList;
 	Common::List<Common::Archive *> _archList;
-	Common::String _root;
+	Common::Path _root;
 	MatchList _files;
 };
 

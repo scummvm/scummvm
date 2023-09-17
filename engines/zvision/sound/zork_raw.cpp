@@ -240,46 +240,37 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 	return new RawZorkStream(rate, stereo, disposeAfterUse, stream);
 }
 
-Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine) {
+Audio::RewindableAudioStream *makeRawZorkStream(const Common::Path &filePath, ZVision *engine) {
 	Common::File *file = new Common::File();
-	Common::String actualName = filePath;
-	bool found = engine->getSearchManager()->openFile(*file, actualName);
-	bool isRaw = actualName.hasSuffix(".raw");
+	bool found = engine->getSearchManager()->openFile(*file, filePath);
+	Common::String baseName = filePath.baseName();
+	bool isRaw = baseName.hasSuffix(".raw");
 
 	if ((!found && isRaw) || (found && isRaw && file->size() < 10)) {
 		if (found)
 			file->close();
 
 		// Check for an audio patch (.src)
-		actualName.setChar('s', actualName.size() - 3);
-		actualName.setChar('r', actualName.size() - 2);
-		actualName.setChar('c', actualName.size() - 1);
+		baseName.setChar('s', baseName.size() - 3);
+		baseName.setChar('r', baseName.size() - 2);
+		baseName.setChar('c', baseName.size() - 1);
 
-		if (!engine->getSearchManager()->openFile(*file, actualName))
+		if (!engine->getSearchManager()->openFile(*file, filePath.getParent().appendComponent(baseName)))
 			return NULL;
 	} else if (!found && !isRaw) {
 		return NULL;
 	}
 
-	// Get the file name
-	Common::StringTokenizer tokenizer(actualName, "/\\");
-	Common::String fileName;
-	while (!tokenizer.empty()) {
-		fileName = tokenizer.nextToken();
-	}
-
-	fileName.toLowercase();
-
 	const SoundParams *soundParams = NULL;
 
 	if (engine->getGameId() == GID_NEMESIS) {
 		for (int i = 0; i < 32; ++i) {
-			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == (fileName[6]))
+			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == (baseName[6]))
 				soundParams = &RawZorkStream::_zNemSoundParamLookupTable[i];
 		}
 	} else if (engine->getGameId() == GID_GRANDINQUISITOR) {
 		for (int i = 0; i < 24; ++i) {
-			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == (fileName[7]))
+			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == (baseName[7]))
 				soundParams = &RawZorkStream::_zgiSoundParamLookupTable[i];
 		}
 	}

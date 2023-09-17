@@ -55,8 +55,8 @@ typedef Common::HashMap<Common::String, ZfsEntryHeader *, Common::IgnoreCase_Has
 
 class ZfsArchive : public Common::Archive {
 public:
-	ZfsArchive(const Common::String &fileName);
-	ZfsArchive(const Common::String &fileName, Common::SeekableReadStream *stream);
+	ZfsArchive(const Common::Path &fileName);
+	ZfsArchive(const Common::Path &fileName, Common::SeekableReadStream *stream);
 	~ZfsArchive() override;
 
 	/**
@@ -88,7 +88,7 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
-	const Common::String _fileName;
+	const Common::Path _fileName;
 	ZfsHeader _header;
 	ZfsEntryHeaderMap _entryHeaders;
 

@@ -59,7 +59,7 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("animation", true)) {
-			_animation = _engine->loadAnimation(values);
+			_animation = _engine->loadAnimation(Common::Path(values));
 			_animation->start();
 		} else if (param.matchString("rectangle", true)) {
 			int x;

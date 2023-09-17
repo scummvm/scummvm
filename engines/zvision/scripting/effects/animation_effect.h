@@ -40,7 +40,7 @@ class ZVision;
 
 class AnimationEffect : public ScriptingEffect {
 public:
-	AnimationEffect(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse = true);
+	AnimationEffect(ZVision *engine, uint32 controlKey, const Common::Path &fileName, int32 mask, int32 frate, bool disposeAfterUse = true);
 	~AnimationEffect() override;
 
 	struct playnode {

@@ -650,15 +650,15 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		cleanScriptScope(room);
 		cleanScriptScope(world);
 
-		Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
 		parseScrFile(fileName, nodeview);
 		addPuzzlesToReferenceTable(nodeview);
 
-		fileName = Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room);
+		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
 		parseScrFile(fileName, room);
 		addPuzzlesToReferenceTable(room);
 
-		fileName = Common::String::format("%c.scr", _nextLocation.world);
+		fileName = Common::Path(Common::String::format("%c.scr", _nextLocation.world));
 		parseScrFile(fileName, world);
 		addPuzzlesToReferenceTable(world);
 	} else if (_nextLocation.room != _currentLocation.room) {
@@ -667,11 +667,11 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 
 		addPuzzlesToReferenceTable(world);
 
-		Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
 		parseScrFile(fileName, nodeview);
 		addPuzzlesToReferenceTable(nodeview);
 
-		fileName = Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room);
+		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
 		parseScrFile(fileName, room);
 		addPuzzlesToReferenceTable(room);
 
@@ -681,7 +681,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		addPuzzlesToReferenceTable(room);
 		addPuzzlesToReferenceTable(world);
 
-		Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
 		parseScrFile(fileName, nodeview);
 		addPuzzlesToReferenceTable(nodeview);
 	}
