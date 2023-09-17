@@ -74,7 +74,7 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 			if (_vm->checkGameVersion("Demo"))
 				pack = new ResourcePack("res.002");
 			else
-				pack = new ResourcePack(Common::String::format("mus.%03d", _musicPackId));
+				pack = new ResourcePack(Common::Path(Common::String::format("mus.%03d", _musicPackId)));
 		} else {
 			if (packId == kResourcePackSharedSound) {
 				if (_vm->checkGameVersion("Demo")) {
@@ -86,7 +86,7 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 				if (_cdNumber == -1)
 					error("[ResourceManager::get] Cd number has not been set!");
 
-				pack = new ResourcePack(Common::String::format("res.%01d%02d", _cdNumber, packId));
+				pack = new ResourcePack(Common::Path(Common::String::format("res.%01d%02d", _cdNumber, packId)));
 
 				// WORKAROUND to support combined resource packs (used by GOG and Steam versions)
 				if (pack->_packFile.size() == 299872422)
@@ -94,7 +94,7 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 						if (_cdNumber == patchedSizes[i].cdNumber)
 							pack->_resources[RESOURCE_INDEX(patchedSizes[i].resourceId)].size = patchedSizes[i].size;
 			} else {
-				pack = new ResourcePack(Common::String::format("res.%03d", packId));
+				pack = new ResourcePack(Common::Path(Common::String::format("res.%03d", packId)));
 			}
 		}
 
@@ -119,7 +119,7 @@ void ResourceManager::unload(ResourcePackId id) {
 //////////////////////////////////////////////////////////////////////////
 // ResourcePack
 //////////////////////////////////////////////////////////////////////////
-ResourcePack::ResourcePack(const Common::String &filename) {
+ResourcePack::ResourcePack(const Common::Path &filename) {
 	init(filename);
 }
 
@@ -131,9 +131,9 @@ ResourcePack::~ResourcePack() {
 	_packFile.close();
 }
 
-void ResourcePack::init(const Common::String &filename) {
+void ResourcePack::init(const Common::Path &filename) {
 	if (!_packFile.open(filename))
-		error("[ResourcePack::init] Could not open resource file: %s", filename.c_str());
+		error("[ResourcePack::init] Could not open resource file: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	uint32 entryCount = _packFile.readUint32LE();
 	_resources.resize(entryCount);
