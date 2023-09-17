@@ -292,10 +292,6 @@ void SoundManager::playSound(uint16 channelID) {
 	Channel &chan = _channels[channelID];
 	chan.stream->seek(0);
 
-	if (chan.playCommands != 1) {
-		debugC(kDebugSound, "Unhandled playCommand type 0x%08x! Sound name: %s", chan.playCommands, chan.name.c_str());
-	}
-
 	// Init 3D sound
 	if (chan.playCommands & ~kPlaySequential && chan.effectData) {
 		uint16 playCommands = chan.playCommands;
@@ -791,9 +787,9 @@ void SoundManager::soundEffectMaintenance(uint16 channelID) {
 		}
 
 		// Attenuate sound based on distance
-		if (dist < chan.effectData->minDistance) {
+		if (dist <= chan.effectData->minDistance) {
 			volume = 255;
-		} else if (dist > chan.effectData->maxDistance) {
+		} else if (dist >= chan.effectData->maxDistance) {
 			volume = 255.0 / (2 * log2f(chan.effectData->maxDistance - chan.effectData->minDistance + 1));
 		} else {
 			float dlog = (2 * log2f(dist - chan.effectData->minDistance + 1));
