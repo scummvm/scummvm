@@ -100,7 +100,7 @@ ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 const Gob::GOBGameDescription *GobMetaEngineDetection::detectOnceUponATime(const Common::FSList &fslist) {
 	// Add the game path to the search manager
 	SearchMan.clear();
-	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
+	SearchMan.addDirectory(fslist.begin()->getParent());
 
 	// Open the archives
 	Gob::DataIO dataIO;

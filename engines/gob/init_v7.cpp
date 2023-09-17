@@ -33,7 +33,7 @@ Init_v7::~Init_v7() {
 }
 
 void Init_v7::initGame() {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	// Add the environment directory
 	SearchMan.addSubDirectoryMatching(gameDataDir, "envir");

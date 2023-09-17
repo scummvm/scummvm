@@ -724,7 +724,7 @@ void Inter_v7::o7_setActiveCD() {
 	Common::String str1 = _vm->_game->_script->evalString();
 
 	Common::ArchiveMemberDetailsList files;
-	SearchMan.listMatchingMembers(files, str0);
+	SearchMan.listMatchingMembers(files, Common::Path(str0));
 	Common::String savedCDpath = _currentCDPath;
 
 	for (Common::ArchiveMemberDetails file : files) {
@@ -739,7 +739,7 @@ void Inter_v7::o7_setActiveCD() {
 }
 
 void Inter_v7::o7_findFile() {
-	Common::String file_pattern = getFile(_vm->_game->_script->evalString());
+	Common::Path file_pattern(getFile(_vm->_game->_script->evalString()));
 	Common::ArchiveMemberList files;
 
 	SearchMan.listMatchingMembers(files, file_pattern);
@@ -758,7 +758,7 @@ void Inter_v7::o7_findFile() {
 	}
 
 	debugC(5, kDebugFileIO, "o7_findFile(%s): %d matches (%d including duplicates)",
-		   file_pattern.c_str(),
+		   file_pattern.toString().c_str(),
 		   filesWithoutDuplicates.size(),
 		   files.size());
 
@@ -769,7 +769,7 @@ void Inter_v7::o7_findFile() {
 		Common::String file = files.front()->getName();
 		filesWithoutDuplicates.pop_front();
 		debugC(5, kDebugFileIO, "o7_findFile(%s): first match = %s",
-			   file_pattern.c_str(),
+			   file_pattern.toString().c_str(),
 			   file.c_str());
 
 		storeString(file.c_str());
@@ -961,7 +961,7 @@ void Inter_v7::o7_opendBase() {
 	dbFile += ".DBF";
 
 	_databases.setLanguage(_vm->_language);
-	if (!_databases.open(id, dbFile)) {
+	if (!_databases.open(id, Common::Path(dbFile))) {
 		WRITE_VAR(27, 0); // Failure
 		return;
 	}
@@ -1250,7 +1250,7 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		if (indexAppli == -1) {
 			// New appli, find the first directory containing an application still not installed, and set it as "current CD" path.
 			Common::ArchiveMemberDetailsList files;
-			SearchMan.listMatchingMembers(files, file); // Search for CD.INF files
+			SearchMan.listMatchingMembers(files, Common::Path(file)); // Search for CD.INF files
 			for (Common::ArchiveMemberDetails &cdInfFile : files) {
 				Common::SeekableReadStream *stream = cdInfFile.arcMember->createReadStream();
 				while (stream->pos() + 4 <= stream->size()) {
@@ -1266,7 +1266,7 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
 			// Already installed appli, find its directory and set it as "current CD" path
 			int32 applicationNumber = installedApplications[indexAppli - 1];
-			Common::String appliVmdName = Common::String::format("appli_%02d.vmd", applicationNumber);
+			Common::Path appliVmdName(Common::String::format("appli_%02d.vmd", applicationNumber));
 			Common::ArchiveMemberDetailsList matchingFiles;
 			SearchMan.listMatchingMembers(matchingFiles, appliVmdName);
 			for (Common::ArchiveMemberDetails &matchingFile : matchingFiles) {

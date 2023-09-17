@@ -38,7 +38,7 @@ public:
 
 	void setLanguage(Common::Language language);
 
-	bool open(const Common::String &id, const Common::String &file);
+	bool open(const Common::String &id, const Common::Path &file);
 	bool close(const Common::String &id);
 
 	bool getString(const Common::String &id, Common::String group,

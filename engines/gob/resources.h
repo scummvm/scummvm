@@ -25,6 +25,7 @@
 #include "common/str.h"
 
 namespace Common {
+class Path;
 class SeekableReadStream;
 }
 
@@ -88,7 +89,7 @@ public:
 	byte *getTexts() const;
 
 	bool dumpResource(const Resource &resource,
-			const Common::String &fileName) const;
+			const Common::Path &fileName) const;
 	bool dumpResource(const Resource &resource, uint16 id,
 			const Common::String &ext = "dmp") const;
 

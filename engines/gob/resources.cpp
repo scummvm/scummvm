@@ -586,7 +586,7 @@ byte *Resources::getTexts() const {
 }
 
 bool Resources::dumpResource(const Resource &resource,
-		const Common::String &fileName) const {
+		const Common::Path &fileName) const {
 
 	Common::DumpFile dump;
 
@@ -614,7 +614,7 @@ bool Resources::dumpResource(const Resource &resource, uint16 id,
 	fileName += ".";
 	fileName += ext;
 
-	return dumpResource(resource, fileName);
+	return dumpResource(resource, Common::Path(fileName));
 }
 
 Resource *Resources::getTOTResource(uint16 id) const {

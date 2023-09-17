@@ -90,7 +90,7 @@ private:
 
 	Common::Array<Archive *> _archives;
 
-	Archive *openArchive(const Common::String &name);
+	Archive *openArchive(const Common::Path &name);
 	bool closeArchive(Archive &archive);
 
 	File *findFile(const Common::String &name);

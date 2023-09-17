@@ -75,7 +75,9 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 	config.config  = new Common::INIFile();
 	config.created = false;
 
-	if (!config.config->loadFromFile(file)) {
+	// GOB uses \ as a path separator but
+	// it almost always manipulates base names
+	if (!config.config->loadFromFile(Common::Path(file, '\\'))) {
 		delete config.config;
 		config.config = nullptr;
 		return false;
