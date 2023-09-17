@@ -87,20 +87,20 @@ void WinnieEngine::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
 }
 
 uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
-	Common::String fileName;
+	Common::Path fileName;
 
 	if (getPlatform() == Common::kPlatformDOS)
-		fileName = Common::String::format(IDS_WTP_ROOM_DOS, iRoom);
+		fileName = Common::Path(Common::String::format(IDS_WTP_ROOM_DOS, iRoom));
 	else if (getPlatform() == Common::kPlatformAmiga)
-		fileName = Common::String::format(IDS_WTP_ROOM_AMIGA, iRoom);
+		fileName = Common::Path(Common::String::format(IDS_WTP_ROOM_AMIGA, iRoom));
 	else if (getPlatform() == Common::kPlatformC64)
-		fileName = Common::String::format(IDS_WTP_ROOM_C64, iRoom);
+		fileName = Common::Path(Common::String::format(IDS_WTP_ROOM_C64, iRoom));
 	else if (getPlatform() == Common::kPlatformApple2)
-		fileName = Common::String::format(IDS_WTP_ROOM_APPLE, iRoom);
+		fileName = Common::Path(Common::String::format(IDS_WTP_ROOM_APPLE, iRoom));
 
 	Common::File file;
 	if (!file.open(fileName)) {
-		warning("Could not open file \'%s\'", fileName.c_str());
+		warning("Could not open file \'%s\'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return 0;
 	}
 
@@ -120,20 +120,20 @@ uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 }
 
 uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
-	Common::String fileName;
+	Common::Path fileName;
 
 	if (getPlatform() == Common::kPlatformDOS)
-		fileName = Common::String::format(IDS_WTP_OBJ_DOS, iObj);
+		fileName = Common::Path(Common::String::format(IDS_WTP_OBJ_DOS, iObj));
 	else if (getPlatform() == Common::kPlatformAmiga)
-		fileName = Common::String::format(IDS_WTP_OBJ_AMIGA, iObj);
+		fileName = Common::Path(Common::String::format(IDS_WTP_OBJ_AMIGA, iObj));
 	else if (getPlatform() == Common::kPlatformC64)
-		fileName = Common::String::format(IDS_WTP_OBJ_C64, iObj);
+		fileName = Common::Path(Common::String::format(IDS_WTP_OBJ_C64, iObj));
 	else if (getPlatform() == Common::kPlatformApple2)
-		fileName = Common::String::format(IDS_WTP_OBJ_APPLE, iObj);
+		fileName = Common::Path(Common::String::format(IDS_WTP_OBJ_APPLE, iObj));
 
 	Common::File file;
 	if (!file.open(fileName)) {
-		warning("Could not open file \'%s\'", fileName.c_str());
+		warning("Could not open file \'%s\'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return 0;
 	}
 
@@ -1062,17 +1062,17 @@ void WinnieEngine::gameLoop() {
 }
 
 void WinnieEngine::drawPic(const char *szName) {
-	Common::String fileName = szName;
+	Common::Path fileName(szName);
 
 	if (getPlatform() != Common::kPlatformAmiga)
-		fileName += ".pic";
+		fileName.appendInPlace(".pic");
 	else
-		fileName = "misc/" + fileName;
+		fileName = Common::Path("misc/").append(fileName);
 
 	Common::File file;
 
 	if (!file.open(fileName)) {
-		warning("Could not open file \'%s\'", fileName.c_str());
+		warning("Could not open file \'%s\'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -1136,7 +1136,7 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 		return false;
 	}
 
-	Common::String fileName = Common::String::format(IDS_WTP_SND_DOS, iSound);
+	Common::Path fileName(Common::String::format(IDS_WTP_SND_DOS, iSound));
 
 	Common::File file;
 	if (!file.open(fileName))

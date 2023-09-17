@@ -41,11 +41,11 @@ private:
 	void overwriteSaveRestoreDialogCharacter();
 	void overwriteExtendedWithRussianSet();
 
-	void loadFontScummVMFile(Common::String fontFilename);
+	void loadFontScummVMFile(const Common::Path &fontFilename);
 	void loadFontMickey();
 	void loadFontAmigaPseudoTopaz();
 	void loadFontAppleIIgs();
-	void loadFontAtariST(Common::String fontFilename);
+	void loadFontAtariST(const Common::Path &fontFilename);
 	void loadFontHercules();
 
 	const uint8 *_fontData; // pointer to the currently used font

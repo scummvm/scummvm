@@ -617,8 +617,8 @@ public:
 class AgiLoader_v1 : public AgiLoader {
 private:
 	AgiEngine *_vm;
-	Common::String _filenameDisk0;
-	Common::String _filenameDisk1;
+	Common::Path _filenameDisk0;
+	Common::Path _filenameDisk1;
 
 	int loadDir_DDP(AgiDir *agid, int offset, int max);
 	int loadDir_BC(AgiDir *agid, int offset, int max);
