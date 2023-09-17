@@ -169,8 +169,9 @@ void GraphicsManager::clearVesaScreen() {
 /**
  * Load Image
  */
-void GraphicsManager::loadImage(const Common::String &file) {
-	Common::String filename	= Common::String::format("%s.PCX", file.c_str());
+void GraphicsManager::loadImage(const Common::Path &file) {
+	Common::Path filename(file);
+	filename.appendInPlace(".PCX");
 	loadScreen(filename);
 	initColorTable(165, 170, _palette);
 }
@@ -178,7 +179,7 @@ void GraphicsManager::loadImage(const Common::String &file) {
 /**
  * Load VGA Image
  */
-void GraphicsManager::loadVgaImage(const Common::String &file) {
+void GraphicsManager::loadVgaImage(const Common::Path &file) {
 	setScreenWidth(SCREEN_WIDTH);
 	clearScreen();
 	loadPCX320(_backBuffer, file, _palette);
@@ -195,7 +196,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 /**
  * Load Screen
  */
-void GraphicsManager::loadScreen(const Common::String &file) {
+void GraphicsManager::loadScreen(const Common::Path &file) {
 	Common::File f;
 	assert(!_videoPtr);
 
@@ -204,7 +205,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	_vm->_fileIO->searchCat(file, RES_PIC, fileFoundFl);
 	if (!fileFoundFl) {
 		if (!f.open(file))
-			error("loadScreen - %s", file.c_str());
+			error("loadScreen - %s", file.toString().c_str());
 
 		f.seek(0, SEEK_END);
 		f.close();
@@ -298,7 +299,7 @@ void GraphicsManager::fillSurface(byte *surface, byte *col, int size) {
 	}
 }
 
-void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
+void GraphicsManager::loadPCX640(byte *surface, const Common::Path &file, byte *palette, bool typeFlag) {
 	Common::File f;
 	Image::PCXDecoder pcxDecoder;
 
@@ -313,12 +314,12 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 	} else {
 		// Load stand alone PCX file
 		if (!f.open(file))
-		  error("Error opening PCX %s.", file.c_str());
+		  error("Error opening PCX %s.", file.toString().c_str());
 	}
 
 	// Decode the PCX
 	if (!pcxDecoder.loadStream(f))
-		error("Error decoding PCX %s", file.c_str());
+		error("Error decoding PCX %s", file.toString().c_str());
 
 	const Graphics::Surface *s = pcxDecoder.getSurface();
 
@@ -333,10 +334,10 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 	f.close();
 }
 
-void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte *palette) {
+void GraphicsManager::loadPCX320(byte *surface, const Common::Path &file, byte *palette) {
 	Common::File f;
 	if (!f.open(file))
-		error("File not found - %s", file.c_str());
+		error("File not found - %s", file.toString().c_str());
 
 	size_t filesize = f.size();
 
@@ -1752,8 +1753,9 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 	} while (yCtr != 1);
 }
 
-void GraphicsManager::initScreen(const Common::String &file, int mode, bool initializeScreen) {
-	Common::String filename = file + ".ini";
+void GraphicsManager::initScreen(const Common::Path &file, int mode, bool initializeScreen) {
+	Common::Path filename(file);
+	filename.appendInPlace(".ini");
 	bool fileFoundFl = false;
 
 	byte *ptr = _vm->_fileIO->searchCat(filename, RES_INI, fileFoundFl);
@@ -1763,7 +1765,8 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	}
 
 	if (!mode) {
-		filename = file + ".spr";
+		filename = file;
+		filename.appendInPlace(".spr");
 		_vm->_globals->_levelSpriteBuf = _vm->_globals->freeMemory(_vm->_globals->_levelSpriteBuf);
 		if (initializeScreen) {
 			fileFoundFl = false;
@@ -1776,7 +1779,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		}
 	}
 	if (READ_BE_UINT24(ptr) != MKTAG24('I', 'N', 'I')) {
-		error("Invalid INI File %s", file.c_str());
+		error("Invalid INI File %s", file.toString().c_str());
 	} else {
 		bool doneFlag = false;
 		int dataOffset = 1;
@@ -1801,7 +1804,8 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	_vm->_globals->freeMemory(ptr);
 	_vm->_globals->_answerBuffer = _vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 
-	filename = file + ".rep";
+	filename = file;
+	filename.appendInPlace(".rep");
 	fileFoundFl = false;
 	byte *dataP = _vm->_fileIO->searchCat(filename, RES_REP, fileFoundFl);
 	if (!fileFoundFl)

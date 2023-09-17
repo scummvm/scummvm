@@ -76,7 +76,7 @@ void ComputerManager::setTextMode() {
 	_vm->_graphicsMan->_lineNbr = SCREEN_WIDTH;
 	_vm->_fontMan->_font = _vm->_globals->freeMemory(_vm->_fontMan->_font);
 
-	Common::String filename = "STFONT.SPR";
+	Common::Path filename("STFONT.SPR");
 	Common::File f;
 	if (!f.exists(filename))
 		filename = "FONTE.SPR"; // Used by the BeOS and OS/2 versions as an alternative
@@ -493,7 +493,7 @@ void ComputerManager::restoreFBIRoom() {
 void ComputerManager::readText(int idx) {
 	_vm->_events->_escKeyFl = false;
 
-	Common::String filename;
+	Common::Path filename;
 	switch (_vm->_globals->_language) {
 	case LANG_EN:
 		filename = "THOPKAN.TXT";
@@ -652,10 +652,10 @@ void ComputerManager::newLevel() {
 	_breakoutLevel = (int16 *)_vm->_globals->freeMemory((byte *)_breakoutLevel);
 
 	++_breakoutLevelNbr;
-	Common::String file;
+	Common::Path file;
 	Common::File f;
 	while (!_vm->shouldQuit()) {
-		file = Common::String::format("TAB%d.TAB", _breakoutLevelNbr);
+		file = Common::Path(Common::String::format("TAB%d.TAB", _breakoutLevelNbr));
 		if (f.open(file))
 			break;
 

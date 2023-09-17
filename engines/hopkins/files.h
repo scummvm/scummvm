@@ -23,9 +23,11 @@
 #define HOPKINS_FILES_H
 
 #include "common/scummsys.h"
-#include "common/hash-str.h"
-#include "common/str.h"
-#include "common/stream.h"
+
+namespace Common {
+class ReadStream;
+class Path;
+}
 
 namespace Hopkins {
 
@@ -44,12 +46,12 @@ public:
 
 	FileManager(HopkinsEngine *vm);
 
-	bool fileExists(const Common::String &file);
-	byte *loadFile(const Common::String &file);
+	bool fileExists(const Common::Path &file);
+	byte *loadFile(const Common::Path &file);
 	int readStream(Common::ReadStream &stream, void *buf, size_t nbytes);
 	void initCensorship();
-	byte *searchCat(const Common::String &file, CatMode mode, bool &fileFoundFl);
-	uint32 fileSize(const Common::String &filename);
+	byte *searchCat(const Common::Path &file, CatMode mode, bool &fileFoundFl);
+	uint32 fileSize(const Common::Path &filename);
 };
 
 } // End of namespace Hopkins

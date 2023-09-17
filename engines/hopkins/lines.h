@@ -175,7 +175,7 @@ public:
 	void setMaxLineIdx(int idx);
 	int checkInventoryHotspots(int posX, int posY);
 	void addZoneLine(int idx, int fromX, int fromY, int destX, int destY, int bobZoneIdx);
-	void loadLines(const Common::String &file);
+	void loadLines(const Common::Path &file);
 	void addLine(int lineIdx, Directions direction, int fromX, int fromY, int destX, int destY);
 	void initRoute();
 	RouteItem *findRoute(int fromX, int fromY, int destX, int destY);

@@ -88,21 +88,21 @@ private:
 	SoundItem _sound[SOUND_COUNT];
 	MusicItem _music;
 
-	void playMod(const Common::String &file);
-	void loadMusic(const Common::String &file);
+	void playMod(const Common::Path &file);
+	void loadMusic(const Common::Path &file);
 	void playMusic();
 	void stopMusic();
 	void delMusic();
 	bool checkVoiceStatus(int voiceIndex);
-	bool loadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
+	bool loadVoice(const Common::Path &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
 	void stopVoice(int voiceIndex);
 	void playVoice();
 	void delWav(int wavIndex);
 	void checkVoiceActivity();
-	Common::String setExtension(const Common::String &str, const Common::String &ext);
+	Common::Path setExtension(const Common::Path &str, const Common::String &ext);
 	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
 	bool removeWavSample(int wavIndex);
-	void loadWavSample(int wavIndex, const Common::String &filename, bool freeSample);
+	void loadWavSample(int wavIndex, const Common::Path &filename, bool freeSample);
 	void playWavSample(int voiceIndex, int wavIndex);
 
 public:
@@ -123,13 +123,13 @@ public:
 	void loadAnimSound();
 	void playAnimSound(int animFrame);
 
-	void loadSample(int wavIndex, const Common::String &file);
+	void loadSample(int wavIndex, const Common::Path &file);
 	void playSample(int wavIndex, int voiceMode = 9);
 	void removeSample(int soundIndex);
 
 	void checkSoundEnd();
 	void checkSounds();
-	void playSoundFile(const Common::String &file);
+	void playSoundFile(const Common::Path &file);
 	void playSound(int soundNumber);
 	void stopSound();
 
@@ -141,9 +141,9 @@ public:
 	void setMODSampleVolume();
 	void setMODVoiceVolume();
 
-	void loadWav(const Common::String &file, int wavIndex);
+	void loadWav(const Common::Path &file, int wavIndex);
 	void playWav(int wavIndex);
-	void directPlayWav(const Common::String &file2);
+	void directPlayWav(const Common::Path &file2);
 };
 
 } // End of namespace Hopkins
