@@ -395,7 +395,9 @@ private:
 
 	MacMenu *_menu;
 
+#ifdef USE_PNG
 	Common::HashMap<Common::String, Image::PNGDecoder *> _imageCache;
+#endif
 	Common::Archive *_imageArchive = nullptr;
 };
 

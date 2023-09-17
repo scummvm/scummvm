@@ -273,8 +273,10 @@ MacText::~MacText() {
 	delete _cursorSurface;
 	delete _cursorSurface2;
 
+#ifdef USE_PNG
 	for (auto &i : _imageCache)
 		delete i._value;
+#endif
 
 	delete _imageArchive;
 }
@@ -2793,6 +2795,11 @@ void MacText::setImageArchive(Common::String fname) {
 }
 
 const Surface *MacText::getImageSurface(Common::String &fname) {
+#ifndef USE_PNG
+	warning("MacText::getImageSurface(): PNG support not compiled. Cannot load file %s", fname.c_str());
+
+	return nullptr;
+#else
 	if (_imageCache.contains(fname))
 		return _imageCache[fname]->getSurface();
 
@@ -2807,12 +2814,6 @@ const Surface *MacText::getImageSurface(Common::String &fname) {
 		warning("MacText::getImageSurface(): Cannot open file %s", fname.c_str());
 		return nullptr;
 	}
-
-#ifndef USE_PNG
-	warning("MacText::getImageSurface(): PNG support not compiled. Cannot load file %s", fname.c_str());
-
-	return nullptr;
-#else
 
 	_imageCache[fname] = new Image::PNGDecoder();
 
