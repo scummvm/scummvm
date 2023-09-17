@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/str.h"
+#include "common/debug.h"
 #include "common/formats/cue.h"
 
 namespace Common {
@@ -150,8 +150,41 @@ void CueSheet::parseHeaderContext(const char *line) {
 		_files[_currentFile].type = (CueFileType)lookupInTable(fileTypes, type.c_str());
 
 		_context = kCueContextFiles;
+
+		debug(5, "File: %s, type: %s (%d)", _files[_currentFile].name.c_str(), type.c_str(), _files[_currentFile].type);
+	} else if (command == "TITLE") {
+		_metadata.title = nexttok(s, &s);
+
+		debug(5, "Title: %s", _metadata.title.c_str());
+	} else if (command == "REM") {
+		String subcommand = nexttok(s, &s);
+
+		if (subcommand == "DATE") {
+			_metadata.date = nexttok(s, &s);
+			debug(5, "Date: %s", _metadata.date.c_str());
+		} else if (subcommand == "GENRE") {
+			_metadata.genre = nexttok(s, &s);
+			debug(5, "Genre: %s", _metadata.genre.c_str());
+		} else {
+			warning("Unprocessed REM subcommand %s", subcommand.c_str());
+		}
 	}
 }
+
+LookupTable trackTypes[] = {
+	{ "AUDIO",      CueSheet::kCueFileTypeAudio }, // Audio (sector size: 2352)
+	{ "CDG",        CueSheet::kCueFileTypeCDG }, // Karaoke CD+G (sector size: 2448)
+	{ "MODE1_RAW",  CueSheet::kCueFileTypeMode1_Raw }, // CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
+	{ "MODE1/2048", CueSheet::kCueFileTypeMode1_2048 }, // CD-ROM Mode 1 data (cooked) (sector size: 2048)
+	{ "MODE1/2352", CueSheet::kCueFileTypeMode1_2352 }, // CD-ROM Mode 1 data (raw) (sector size: 2352)
+	{ "MODE2_RAW",  CueSheet::kCueFileTypeMode2_Raw }, // CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
+	{ "MODE2/2048", CueSheet::kCueFileTypeMode2_2048 }, // CD-ROM Mode 2 XA form-1 data (sector size: 2048)
+	{ "MODE2/2324", CueSheet::kCueFileTypeMode2_2324 }, // CD-ROM Mode 2 XA form-2 data (sector size: 2324)
+	{ "MODE2/2336", CueSheet::kCueFileTypeMode2_2366 }, // CD-ROM Mode 2 data (sector size: 2336)
+	{ "MODE2/2352", CueSheet::kCueFileTypeMode2_2352 }, // CD-ROM Mode 2 data (raw) (sector size: 2352)
+	{ "CDI/2336",   CueSheet::kCueFileTypeCDI_2336 }, // CDI Mode 2 data
+	{ "CDI/2352",   CueSheet::kCueFileTypeCDI_2352 }, // CDI Mode 2 data
+};
 
 void CueSheet::parseFilesContext(const char *line) {
 }

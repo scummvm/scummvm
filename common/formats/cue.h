@@ -44,9 +44,36 @@ public:
 		kCueFileTypeMotorola,
 	};
 
+	enum CueTrackType {
+		kCueFileTypeAudio,
+		kCueFileTypeCDG,
+		kCueFileTypeMode1_Raw,
+		kCueFileTypeMode1_2048,
+		kCueFileTypeMode1_2352,
+		kCueFileTypeMode2_Raw,
+		kCueFileTypeMode2_2048,
+		kCueFileTypeMode2_2324,
+		kCueFileTypeMode2_2366,
+		kCueFileTypeMode2_2352,
+		kCueFileTypeCDI_2336,
+		kCueFileTypeCDI_2352,
+	};
+
+	struct CueTrack {
+		int number = 0;
+		CueTrackType type;
+		String title;
+	};
+
 	struct CueFile {
 		String name;
 		CueFileType type = kCueFileTypeBinary;
+	};
+
+	struct CueMetadate {
+		String title;
+		String date;
+		String genre;
 	};
 
 private:
@@ -58,7 +85,8 @@ private:
 	int _context;
 	int _currentFile = -1;
 
-	Common::Array<CueFile> _files;
+	Array<CueFile> _files;
+	CueMetadate _metadata;
 };
 
 } // End of namespace Common
