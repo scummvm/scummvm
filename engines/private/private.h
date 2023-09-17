@@ -195,7 +195,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
 
-	Common::String convertPath(const Common::String &);
+	Common::Path convertPath(const Common::String &);
 	void playVideo(const Common::String &);
 	void skipVideo();
 
