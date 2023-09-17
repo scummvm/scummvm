@@ -41,7 +41,7 @@ public:
 	Common::String readSetting(const Common::String &section, const Common::String &key, const Common::String &defaultValue) const;
 	int32 readIntSetting(const Common::String &section, const Common::String &key, int32 defaultValue) const;
 
-	void readFile(const Common::String &filename);
+	void readFile(const char *filename);
 };
 
 } // End of namespace ICB
