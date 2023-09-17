@@ -57,7 +57,7 @@ FilePaths::FilePaths() : _common("res/levels/common.xml"),
 	_appdata = "./";
 }
 
-void FilePaths::loadLevel(const Common::String &filename) {
+void FilePaths::loadLevel(const Common::Path &filename) {
 	_level.clear();
 	XMLDoc lev_list(filename);
 	if (lev_list.ready()) {
@@ -75,7 +75,7 @@ void FilePaths::loadLevel(const Common::String &filename) {
 	}
 }
 
-void FilePaths::load(const Common::String &filename) {
+void FilePaths::load(const Common::Path &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("paths");
@@ -108,27 +108,27 @@ void FilePaths::load(const Common::String &filename) {
 
 			if (nodeValid("mod", node)) {
 				rapidxml::xml_node<char> *modnode = node->first_node("mod");
-				loadStr(_modPath, "path", modnode);
+				loadPath(_modPath, "path", modnode);
+				loadPath(_modCur, "cur", modnode);
 				loadStr(_modExt, "ext", modnode);
-				loadStr(_modCur, "cur", modnode);
 			}
 
 			if (nodeValid("main_menu", node)) {
 				rapidxml::xml_node<char> *menunode = node->first_node("main_menu");
-				loadStr(_mainmenuL, "l", menunode);
-				loadStr(_mainmenuR, "r", menunode);
+				loadPath(_mainmenuL, "l", menunode);
+				loadPath(_mainmenuR, "r", menunode);
 				_currentR = _mainmenuR;
 			}
 
 			if (nodeValid("sound", node)) {
 				rapidxml::xml_node<char> *soundnode = node->first_node("sound");
-				loadStr(_soundEffect, "effect", soundnode);
-				loadStr(_soundMusic, "music", soundnode);
+				loadPath(_soundEffect, "effect", soundnode);
+				loadPath(_soundMusic, "music", soundnode);
 			}
 
 			if (nodeValid("save", node)) {
 				rapidxml::xml_node<char> *savenode = node->first_node("save");
-				loadStr(_saveDir, "dir", savenode);
+				loadPath(_saveDir, "dir", savenode);
 				loadStr(_saveExt, "ext", savenode);
 
 				Common::String custom_path;

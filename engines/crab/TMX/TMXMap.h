@@ -104,7 +104,7 @@ public:
 	~TMXMap() {}
 
 	void reset();
-	void load(const Common::String &path, const Common::String &filename);
+	void load(const Common::Path &path, const Common::String &filename);
 
 	void drawDebug(const Rect &camera);
 

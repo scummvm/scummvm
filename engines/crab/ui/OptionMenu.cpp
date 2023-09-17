@@ -38,7 +38,7 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::music;
 
-void OptionMenu::load(const Common::String &filename) {
+void OptionMenu::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("option");

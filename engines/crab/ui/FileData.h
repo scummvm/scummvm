@@ -44,7 +44,8 @@ public:
 
 class SaveFileData : public FileData {
 public:
-	Common::String _locId, _locName, _charName, _diff, _time, _preview;
+	Common::String _locId, _locName, _charName, _diff, _time;
+	Common::Path _preview;
 
 	// This is to account for the first save slot, called "New Save", which doesn't actually have a file
 	bool _blank;
@@ -55,7 +56,8 @@ public:
 
 class ModFileData : public FileData {
 public:
-	Common::String _author, _version, _info, _website, _preview;
+	Common::String _author, _version, _info, _website;
+	Common::Path _preview;
 	ModFileData(const Common::String &filepath);
 };
 

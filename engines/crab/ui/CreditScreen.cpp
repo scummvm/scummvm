@@ -44,7 +44,7 @@ void CreditScreen::reset() {
 	_speed._cur = _speed._slow;
 }
 
-void CreditScreen::load(const Common::String &filename) {
+void CreditScreen::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("credits");

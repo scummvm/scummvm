@@ -37,7 +37,7 @@ using namespace pyrodactyl::event;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
-void PersonScreen::load(const Common::String &filename) {
+void PersonScreen::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("character");

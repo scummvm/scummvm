@@ -36,7 +36,7 @@
 namespace Crab {
 
 void LoadingScreen::load() {
-	const Common::String &filename = "res/layout/loading.xml";
+	Common::Path filename("res/layout/loading.xml");
 	XMLDoc doc(filename);
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.doc()->first_node("loading");

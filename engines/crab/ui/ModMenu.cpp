@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void ModMenu::load(const Common::String &filename) {
+void ModMenu::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("mod_menu");
@@ -49,7 +49,7 @@ void ModMenu::load(const Common::String &filename) {
 		if (nodeValid("preview", node)) {
 			auto prnode = node->first_node("preview");
 			_img._pos.load(prnode);
-			loadStr(_img._noPreviewPath, "path", prnode);
+			loadPath(_img._noPreviewPath, "path", prnode);
 		}
 
 		if (nodeValid("offset", node)) {

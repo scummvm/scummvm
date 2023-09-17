@@ -67,7 +67,7 @@ bool Image::load(Graphics::ManagedSurface *surface) {
 	return true;
 }
 
-bool Image::load(const Common::String &path) {
+bool Image::load(const Common::Path &path) {
 	// Get rid of preexisting texture
 	deleteImage();
 
@@ -83,7 +83,7 @@ bool Image::load(const Common::String &path) {
 
 		file.close();
 
-		debugC(kDebugFilePath, "Image::load() Image Texture(%s): w: %d h: %d", path.c_str(), _w, _h);
+		debugC(kDebugFilePath, "Image::load() Image Texture(%s): w: %d h: %d", path.toString(Common::Path::kNativeSeparator).c_str(), _w, _h);
 	}
 
 	return _texture != nullptr;

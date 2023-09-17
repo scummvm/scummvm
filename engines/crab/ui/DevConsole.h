@@ -73,7 +73,7 @@ public:
 
 	void handleEvents(const Common::Event &event);
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 	void draw(pyrodactyl::event::Info &info);
 
 	void internalEvents();

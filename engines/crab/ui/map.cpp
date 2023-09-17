@@ -42,7 +42,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Load stuff that can't be modified by the user
 //------------------------------------------------------------------------
-void Map::load(const Common::String &filename, pyrodactyl::event::Info &info) {
+void Map::load(const Common::Path &filename, pyrodactyl::event::Info &info) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");

@@ -60,7 +60,7 @@ void Game::loadGame() {
 	init(g_engine->_filePath->_modCur);
 }
 
-void Game::init(const Common::String &filename) {
+void Game::init(const Common::Path &filename) {
 	g_engine->_loadingScreen->dim();
 	g_engine->_eventStore->clear();
 	_gameOver.clear(false);
@@ -75,34 +75,34 @@ void Game::init(const Common::String &filename) {
 
 		_info.load(node);
 
-		Common::String path;
+		Common::Path path;
 		if (nodeValid("level", node)) {
-			loadStr(path, "list", node->first_node("level"));
+			loadPath(path, "list", node->first_node("level"));
 			g_engine->_filePath->loadLevel(path);
 		}
 
 		if (nodeValid("hud", node)) {
-			loadStr(path, "layout", node->first_node("hud"));
+			loadPath(path, "layout", node->first_node("hud"));
 			_hud.load(path, _level._talkNotify, _level._destMarker);
 		}
 
 		if (nodeValid("sprite", node)) {
-			loadStr(path, "animation", node->first_node("sprite"));
+			loadPath(path, "animation", node->first_node("sprite"));
 			_level.loadMoves(path);
 
-			loadStr(path, "constant", node->first_node("sprite"));
+			loadPath(path, "constant", node->first_node("sprite"));
 			_level.loadConst(path);
 		}
 
 		if (nodeValid("event", node)) {
 			_gem.load(node->first_node("event"), _popDefault);
 
-			loadStr(path, "store", node->first_node("event"));
+			loadPath(path, "store", node->first_node("event"));
 			g_engine->_eventStore->load(path);
 		}
 
 		if (nodeValid("map", node)) {
-			loadStr(path, "layout", node->first_node("map"));
+			loadPath(path, "layout", node->first_node("map"));
 			_map.load(path, _info);
 		}
 
@@ -110,7 +110,7 @@ void Game::init(const Common::String &filename) {
 			_savefile.load(node->first_node("save"));
 
 		if (nodeValid("debug", node)) {
-			loadStr(path, "layout", node->first_node("debug"));
+			loadPath(path, "layout", node->first_node("debug"));
 			_debugConsole.load(path);
 		}
 	}
@@ -760,7 +760,7 @@ void Game::saveState(Common::SeekableWriteStream *stream) {
 	root->append_attribute(doc.allocate_attribute("file", _savefile._ironman.c_str()));
 
 	// Preview image used
-	root->append_attribute(doc.allocate_attribute("preview", _level._previewPath.c_str()));
+	root->append_attribute(doc.allocate_attribute("preview", _level._previewPath.toString('/').c_str()));
 
 	// Time played
 	Common::String playtime = _clock.getTime();

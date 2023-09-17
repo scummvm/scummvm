@@ -42,7 +42,7 @@ struct TileSet {
 	Common::String _name;
 
 	// The location of the tileset image on the disk
-	Common::String _loc;
+	Common::Path _loc;
 
 	// The first gid of the tileset
 	GidFormat _firstGid;
@@ -73,12 +73,12 @@ struct TileSet {
 		init();
 	}
 
-	TileSet(const Common::String &path, rapidxml::xml_node<char> *node) {
+	TileSet(const Common::Path &path, rapidxml::xml_node<char> *node) {
 		init();
 		load(path, node);
 	}
 
-	void load(const Common::String &path, rapidxml::xml_node<char> *node);
+	void load(const Common::Path &path, rapidxml::xml_node<char> *node);
 	void draw(const Vector2i &pos, const TileInfo &tile);
 	void preDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf);
 };
@@ -97,7 +97,7 @@ public:
 
 	void reset();
 
-	void load(const Common::String &path, rapidxml::xml_node<char> *node);
+	void load(const Common::Path &path, rapidxml::xml_node<char> *node);
 	void draw(MapLayer &layer, const Rect &camera, const Vector2i &tileSize, const Rect &playerPos, pyrodactyl::image::Image &img);
 	void preDraw(MapLayer &layer, const Vector2i &tileSize, Graphics::ManagedSurface *surf);
 	void forceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tileSize, const Rect &playerPos);

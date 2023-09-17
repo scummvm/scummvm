@@ -75,13 +75,13 @@ struct MusicData {
 		loadNum(_id, "id", node);
 		loadNum(_fadeInDuration, "fade_in", node);
 
-		Common::String cleansedPath = cleansePath(node->first_attribute("path")->value());
+		Common::Path cleansedPath = cleansePath(Common::Path(node->first_attribute("path")->value(), '/'));
 		if (_file.open(cleansedPath)) {
 			Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(&_file, DisposeAfterUse::NO);
 			// loops=0 means infinite here.
 			_track = Audio::makeLoopingAudioStream(stream, 0, 0, 0);
 		} else {
-			warning("Could not open file %s", cleansedPath.c_str());
+			warning("Could not open file %s", cleansedPath.toString().c_str());
 		}
 	}
 };

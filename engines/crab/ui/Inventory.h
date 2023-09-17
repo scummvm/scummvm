@@ -51,7 +51,7 @@ class Inventory {
 	// pyrodactyl::stat::StatDrawHelper helper;
 
 	// The file where all the item information is stored
-	Common::String _itemfile;
+	Common::Path _itemfile;
 
 	// Used to draw the money value
 	Button _money;
@@ -69,7 +69,7 @@ public:
 	void delItem(const Common::String &charId, const Common::String &itemId);
 	bool hasItem(const Common::String &charId, const Common::String &container, const Common::String &itemId);
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 	void draw(pyrodactyl::people::Person &obj, const int &moneyVal);
 
 	void handleEvents(const Common::String &string, const Common::Event &Event);

@@ -121,7 +121,7 @@ private:
 public:
 	Game() : _isInited(false), _state(STATE_GAME) {}
 
-	void init(const Common::String &filename);
+	void init(const Common::Path &filename);
 
 	void startNewGame();
 	void loadGame();

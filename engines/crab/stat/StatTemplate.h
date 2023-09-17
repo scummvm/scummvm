@@ -32,6 +32,7 @@
 #define CRAB_STATTEMPLATE_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "crab/stat/Stat.h"
 
 namespace Crab {
@@ -45,7 +46,7 @@ public:
 	StatTemplates() {}
 	~StatTemplates() {}
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl

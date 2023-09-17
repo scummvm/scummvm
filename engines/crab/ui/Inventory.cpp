@@ -41,7 +41,7 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load layout
 //------------------------------------------------------------------------
-void Inventory::load(const Common::String &filename) {
+void Inventory::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("inventory");

@@ -81,7 +81,7 @@ void Info::load(rapidxml::xml_node<char> *node) {
 	_inv.itemFile(node->first_node("item")->first_attribute("list")->value());
 }
 
-void Info::loadPeople(const Common::String &filename) {
+void Info::loadPeople(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("people");

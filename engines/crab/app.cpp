@@ -167,7 +167,7 @@ void App::run() {
 	delete _game;
 }
 
-void App::loadSettings(const Common::String &filename) {
+void App::loadSettings(const Common::Path &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("settings");

@@ -111,7 +111,7 @@ public:
 
 	~CreditScreen() {}
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 	void reset();
 
 	bool handleEvents(Common::Event &event);

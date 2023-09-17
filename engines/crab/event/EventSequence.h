@@ -76,7 +76,7 @@ public:
 	}
 
 	// Load and save
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 
 	void saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name);
 	void loadState(rapidxml::xml_node<char> *node);

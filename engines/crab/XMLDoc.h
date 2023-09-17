@@ -45,7 +45,7 @@ public:
 		_text = nullptr;
 	}
 
-	XMLDoc(const Common::String &filename) {
+	XMLDoc(const Common::Path &filename) {
 		_text = nullptr;
 		load(filename);
 	}
@@ -61,7 +61,7 @@ public:
 
 	// Load the text from the specified file into the rapidxml format
 	// Each function that references it must parse it there
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 
 	// Check if document is ready for parsing
 	bool ready() const {

@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::text;
 
-void ColorPool::load(const Common::String &filename) {
+void ColorPool::load(const Common::Path &filename) {
 	_pool.clear();
 	XMLDoc colList(filename);
 	if (colList.ready()) {

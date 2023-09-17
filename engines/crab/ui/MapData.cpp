@@ -37,8 +37,8 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 void MapData::load(rapidxml::xml_node<char> *node) {
-	loadStr(_pathBg, "bg", node);
-	loadStr(_pathOverlay, "overlay", node);
+	loadPath(_pathBg, "bg", node);
+	loadPath(_pathOverlay, "overlay", node);
 }
 
 void MapData::destAdd(const Common::String &name, const int &x, const int &y) {

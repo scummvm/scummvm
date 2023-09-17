@@ -52,7 +52,7 @@ static bool compSpriteLayer(const Sprite &a, const Sprite &b) {
 //------------------------------------------------------------------------
 // Purpose: Load the level
 //------------------------------------------------------------------------
-void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
+void Level::load(const Common::Path &filename, pyrodactyl::event::Info &info,
 				 pyrodactyl::event::TriggerSet &gameOver, const int &playerX, const int &playerY) {
 	reset();
 	XMLDoc conf(filename);
@@ -67,7 +67,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				_showmap.set(true);
 
 			if (nodeValid("preview", node))
-				loadStr(_previewPath, "path", node->first_node("preview"));
+				loadPath(_previewPath, "path", node->first_node("preview"));
 
 			if (nodeValid("music", node)) {
 				loadNum(_music._id, "id", node->first_node("music"));
@@ -76,8 +76,9 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 			if (nodeValid("map", node)) {
 				rapidxml::xml_node<char> *mapnode = node->first_node("map");
-				Common::String path, tmxfile;
-				loadStr(path, "path", mapnode);
+				Common::Path path;
+				Common::String tmxfile;
+				loadPath(path, "path", mapnode);
 				loadStr(tmxfile, "file", mapnode);
 
 				_terrain.load(path, tmxfile);
@@ -176,7 +177,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 //------------------------------------------------------------------------
 // Purpose: Build an index of all animation files, called once at start
 //------------------------------------------------------------------------
-void Level::loadMoves(const Common::String &filename) {
+void Level::loadMoves(const Common::Path &filename) {
 	XMLDoc movList(filename);
 	if (movList.ready()) {
 		rapidxml::xml_node<char> *node = movList.doc()->first_node("movelist");
@@ -190,10 +191,10 @@ void Level::loadMoves(const Common::String &filename) {
 			// See if there is an alternate moveset for low quality setting
 			// If no, just load the regular one
 			if (!g_engine->_screenSettings->_quality) {
-				if (!loadStr(_animSet[pos], "path_low", n))
-					loadStr(_animSet[pos], "path", n);
+				if (!loadPath(_animSet[pos], "path_low", n))
+					loadPath(_animSet[pos], "path", n);
 			} else
-				loadStr(_animSet[pos], "path", n);
+				loadPath(_animSet[pos], "path", n);
 		}
 	}
 }
@@ -201,7 +202,7 @@ void Level::loadMoves(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Load the default sprite constant parameters
 //------------------------------------------------------------------------
-void Level::loadConst(const Common::String &filename) {
+void Level::loadConst(const Common::Path &filename) {
 	XMLDoc doc(filename);
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.doc()->first_node("constant");

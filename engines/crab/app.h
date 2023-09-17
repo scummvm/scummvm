@@ -31,7 +31,7 @@
 #ifndef CRAB_APP_H
 #define CRAB_APP_H
 
-#include "common/str.h"
+#include "common/path.h"
 
 namespace Crab {
 class Game;
@@ -39,7 +39,7 @@ class Game;
 class App {
 private:
 	Game *_game;
-	void loadSettings(const Common::String &filename);
+	void loadSettings(const Common::Path &filename);
 public:
 	~App();
 

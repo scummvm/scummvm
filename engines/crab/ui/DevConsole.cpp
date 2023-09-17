@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void DebugConsole::load(const Common::String &filename) {
+void DebugConsole::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("debug");

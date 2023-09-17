@@ -116,7 +116,7 @@ public:
 		_imgOverlay.deleteImage();
 	}
 
-	void load(const Common::String &filename, pyrodactyl::event::Info &info);
+	void load(const Common::Path &filename, pyrodactyl::event::Info &info);
 
 	void draw(pyrodactyl::event::Info &info);
 	bool handleEvents(pyrodactyl::event::Info &info, const Common::Event &event);
