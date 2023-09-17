@@ -37,7 +37,7 @@ Interaction::Interaction(const Common::String &name, int portrait) : PartyView(n
 
 	if (portrait != -1) {
 		_frame.load("frame.fac");
-		_portrait.load(Common::String::format("face%02d.fac", portrait));
+		_portrait.load(Common::Path(Common::String::format("face%02d.fac", portrait)));
 	}
 }
 

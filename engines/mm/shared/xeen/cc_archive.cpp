@@ -28,11 +28,11 @@ namespace MM {
 namespace Shared {
 namespace Xeen {
 
-uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) {
+uint16 BaseCCArchive::convertNameToId(const Common::Path &resourceName) {
 	if (resourceName.empty())
 		return 0xffff;
 
-	Common::String name = resourceName;
+	Common::String name = resourceName.baseName();
 	name.toUppercase();
 
 	// Check if a resource number is being directly specified
@@ -119,12 +119,11 @@ void BaseCCArchive::saveIndex(Common::WriteStream &stream) {
 }
 
 bool BaseCCArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
 	CCEntry ccEntry;
-	return getHeaderEntry(name, ccEntry);
+	return getHeaderEntry(path, ccEntry);
 }
 
-bool BaseCCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const {
+bool BaseCCArchive::getHeaderEntry(const Common::Path &resourceName, CCEntry &ccEntry) const {
 	return getHeaderEntry(convertNameToId(resourceName), ccEntry);
 }
 
@@ -142,11 +141,10 @@ bool BaseCCArchive::getHeaderEntry(uint16 id, CCEntry &ccEntry) const {
 }
 
 const Common::ArchiveMemberPtr BaseCCArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(Common::String(name), *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -156,24 +154,24 @@ int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 /*------------------------------------------------------------------------*/
 
-CCArchive::CCArchive(const Common::String &filename, bool encoded) :
+CCArchive::CCArchive(const Common::Path &filename, bool encoded) :
 	BaseCCArchive(), _filename(filename), _encoded(encoded) {
 
 	Common::File f;
 	if (!f.open(filename, SearchMan))
-		error("Could not open file - %s", filename.c_str());
+		error("Could not open file - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	loadIndex(f);
 }
 
-CCArchive::CCArchive(const Common::String &filename, const Common::String &prefix,
+CCArchive::CCArchive(const Common::Path &filename, const Common::String &prefix,
 	bool encoded) : BaseCCArchive(), _filename(filename),
 	_prefix(prefix), _encoded(encoded) {
 	_prefix.toLowercase();
 
 	Common::File f;
 	if (!f.open(filename, SearchMan))
-		error("Could not open file - %s", filename.c_str());
+		error("Could not open file - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	loadIndex(f);
 }
@@ -181,8 +179,8 @@ CCArchive::CCArchive(const Common::String &filename, const Common::String &prefi
 CCArchive::~CCArchive() {
 }
 
-bool CCArchive::getHeaderEntry(const Common::String &resourceName, Shared::Xeen::CCEntry &ccEntry) const {
-	Common::String resName = resourceName;
+bool CCArchive::getHeaderEntry(const Common::Path &resourceName, Shared::Xeen::CCEntry &ccEntry) const {
+	Common::String resName = resourceName.baseName();
 
 	if (!_prefix.empty() && resName.contains('|')) {
 		resName.toLowercase();
@@ -197,14 +195,13 @@ bool CCArchive::getHeaderEntry(const Common::String &resourceName, Shared::Xeen:
 			return false;
 	}
 
-	return BaseCCArchive::getHeaderEntry(resName, ccEntry);
+	return BaseCCArchive::getHeaderEntry(resourceName.getParent().appendComponent(resName), ccEntry);
 }
 
 Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	Shared::Xeen::CCEntry ccEntry;
 
-	if (getHeaderEntry(name, ccEntry)) {
+	if (getHeaderEntry(path, ccEntry)) {
 		// Open the correct CC file
 		Common::File f;
 		if (!f.open(_filename))

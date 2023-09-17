@@ -44,7 +44,7 @@ Roster::Roster() {
 
 		if (idx < XEEN_TOTAL_CHARACTERS) {
 			// Load new character resource
-			Common::String name = Common::String::format("char%02d.fac", idx + 1);
+			Common::Path name(Common::String::format("char%02d.fac", idx + 1));
 			_charFaces[idx].load(name);
 			operator[](idx)._faceSprites = &_charFaces[idx];
 		} else {

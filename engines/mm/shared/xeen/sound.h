@@ -59,7 +59,7 @@ private:
 public:
 	bool _fxOn;
 	bool _musicOn;
-	Common::String _currentMusic;
+	Common::Path _currentMusic;
 	int _musicSide;
 	bool _subtitles;
 public:
@@ -101,7 +101,7 @@ public:
 	/**
 	 * Plays a song
 	 */
-	void playSong(const Common::String &name, int param = 0);
+	void playSong(const Common::Path &name, int param = 0);
 
 	/**
 	 * Returns true if music is playing
@@ -136,12 +136,12 @@ public:
 	/**
 	 * Play a given sound
 	 */
-	void playSound(const Common::String &name, int unused = 0);
+	void playSound(const Common::Path &name, int unused = 0);
 #ifdef ENABLE_XEEN
 	/**
 	 * Play a given sound
 	 */
-	void playSound(const Common::String &name, int ccNum, int unused);
+	void playSound(const Common::Path &name, int ccNum, int unused);
 #endif
 	/**
 	 * Stop playing a sound loaded from a .m file
@@ -159,9 +159,9 @@ public:
 	 * Play a given voice file
 	 */
 #ifdef ENABLE_XEEN
-	void playVoice(const Common::String &name, int ccMode = -1);
+	void playVoice(const Common::Path &name, int ccMode = -1);
 #else
-	void playVoice(const Common::String &name);
+	void playVoice(const Common::Path &name);
 #endif
 };
 

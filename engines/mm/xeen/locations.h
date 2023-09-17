@@ -49,7 +49,7 @@ protected:
 	int _townMaxId;
 	const int &_ccNum;
 	int _animFrame;
-	Common::String _vocName, _songName;
+	Common::Path _vocName, _songName;
 	Common::Point _animPos;
 	int _drawFrameIndex;
 	uint _farewellTime;

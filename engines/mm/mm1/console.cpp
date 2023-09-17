@@ -75,7 +75,7 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 			f.close();
 		}
 
-		if (f.open(Common::String::format("%s.ovr", map->getName().c_str()))) {
+		if (f.open(Common::Path(Common::String::format("%s.ovr", map->getName().c_str())))) {
 			int magicId = f.readUint16LE();
 			int codePtr = f.readUint16LE();
 			int codeSize = f.readUint16LE();
@@ -217,7 +217,7 @@ bool Console::cmdMapString(int argc, const char **argv) {
 		int offset = strToInt(Common::String::format(
 			"%sh", argv[2]).c_str());
 
-		if (!f.open(Common::String::format("%s.ovr", map->getName().c_str())))
+		if (!f.open(Common::Path(Common::String::format("%s.ovr", map->getName().c_str()))))
 			error("Failed to open map");
 
 		f.readUint16LE();

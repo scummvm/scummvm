@@ -71,8 +71,8 @@ int BaseLocation::show() {
 
 	// Load the needed sprite sets for the location
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
-		Common::String shapesName = Common::String::format("%s%d.twn",
-			Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1);
+		Common::Path shapesName(Common::String::format("%s%d.twn",
+			Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1));
 		_townSprites[idx].load(shapesName);
 	}
 
@@ -1084,7 +1084,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 			sound.stopSound();
 			_drawFrameIndex = 0;
 
-			Common::String name;
+			Common::Path name;
 			if (c->_level._permanent >= maxLevel()) {
 				name = _ccNum ? "gtlost.voc" : "trainin1.voc";
 			} else {
@@ -2373,7 +2373,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 		loadButtons();
 
 	_townSprites.resize(2);
-	_townSprites[0].load(Common::String::format("face%02d.fac", portrait));
+	_townSprites[0].load(Common::Path(Common::String::format("face%02d.fac", portrait)));
 	_townSprites[1].load("frame.fac");
 
 	if (!w._enabled)

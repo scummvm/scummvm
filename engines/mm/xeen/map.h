@@ -105,7 +105,7 @@ private:
 public:
 	MonsterData();
 
-	void load(const Common::String &name);
+	void load(const Common::Path &name);
 };
 
 class SurroundingMazes {
@@ -416,7 +416,7 @@ public:
 	/**
 	 * Load the animation info objects in the game
 	 */
-	void load(const Common::String &name);
+	void load(const Common::Path &name);
 };
 
 class Map {

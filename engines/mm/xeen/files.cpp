@@ -108,11 +108,9 @@ SaveArchive::~SaveArchive() {
 }
 
 Common::SeekableReadStream *SaveArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-
 	// If the given resource has already been perviously "written" to the
 	// save manager, then return that new resource
-	uint16 id = BaseCCArchive::convertNameToId(name);
+	uint16 id = BaseCCArchive::convertNameToId(path);
 	return createReadStreamForMember(id);
 }
 
@@ -168,7 +166,7 @@ void SaveArchive::reset(CCArchive *src) {
 	g_vm->_files->setGameCc(g_vm->getGameID() == GType_DarkSide ? 1 : 0);
 	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
 	for (int i = 0; i < 6; ++i) {
-		Common::String filename = Common::String::format("%.4x", RESOURCES[i]);
+		Common::Path filename(Common::String::format("%.4x", RESOURCES[i]));
 		if (src->hasFile(filename)) {
 			// Read in the next resource
 			fIn.open(filename, *src);
@@ -178,7 +176,7 @@ void SaveArchive::reset(CCArchive *src) {
 
 			if (fIn.read(data, size) != size) {
 				delete[] data;
-				error("Failed to read %zu bytes from resource '%s' in save archive", size, filename.c_str());
+				error("Failed to read %zu bytes from resource '%s' in save archive", size, filename.toString().c_str());
 			}
 
 			// Copy it to the combined savefile resource
@@ -262,17 +260,17 @@ void SaveArchive::replaceEntry(uint16 id, const byte *data, size_t size) {
 
 /*------------------------------------------------------------------------*/
 
-OutFile::OutFile(const Common::String &filename) :
+OutFile::OutFile(const Common::Path &filename) :
 		_filename(filename), _backingStream(DisposeAfterUse::YES) {
 	FileManager &files = *g_vm->_files;
 	_archive = files._currentSave;
 }
 
-OutFile::OutFile(const Common::String &filename, SaveArchive *archive) :
+OutFile::OutFile(const Common::Path &filename, SaveArchive *archive) :
 	_filename(filename), _archive(archive), _backingStream(DisposeAfterUse::YES) {
 }
 
-OutFile::OutFile(const Common::String &filename, int ccMode) :
+OutFile::OutFile(const Common::Path &filename, int ccMode) :
 		_filename(filename), _backingStream(DisposeAfterUse::YES) {
 	FileManager &files = *g_vm->_files;
 	g_vm->_files->setGameCc(ccMode);

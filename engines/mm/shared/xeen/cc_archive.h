@@ -66,7 +66,7 @@ protected:
 	 * Given a resource name, returns whether an entry exists, and returns
 	 * the header index data for that entry
 	 */
-	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
+	virtual bool getHeaderEntry(const Common::Path &resourceName, CCEntry &ccEntry) const;
 
 	/**
 	 * Given a resource Id, returns whether an entry exists, and returns
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Hash a given filename to produce the Id that represents it
 	 */
-	static uint16 convertNameToId(const Common::String &resourceName);
+	static uint16 convertNameToId(const Common::Path &resourceName);
 public:
 	BaseCCArchive() {
 	}
@@ -93,14 +93,14 @@ public:
  */
 class CCArchive : public BaseCCArchive {
 private:
-	Common::String _filename;
+	Common::Path _filename;
 	Common::String _prefix;
 	bool _encoded;
 protected:
-	bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const override;
+	bool getHeaderEntry(const Common::Path &resourceName, CCEntry &ccEntry) const override;
 public:
-	CCArchive(const Common::String &filename, bool encoded);
-	CCArchive(const Common::String &filename, const Common::String &prefix, bool encoded);
+	CCArchive(const Common::Path &filename, bool encoded);
+	CCArchive(const Common::Path &filename, const Common::String &prefix, bool encoded);
 	~CCArchive() override;
 
 	// Archive implementation

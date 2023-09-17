@@ -31,7 +31,7 @@ Common::SeekableReadStream *DTA::load(uint entryIndex) {
 	Common::File f;
 
 	if (!f.open(_fname))
-		error("Could not open - %s", _fname.c_str());
+		error("Could not open - %s", _fname.toString().c_str());
 
 	uint indexSize = f.readUint16LE();
 	assert(entryIndex < (indexSize / 4));

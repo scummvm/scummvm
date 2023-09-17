@@ -35,8 +35,8 @@ ViewAnimation::ViewAnimation(const char *prefix, uint count, uint frameCount) :
 	_backgrounds.resize(count);
 
 	for (uint i = 0; i < _backgrounds.size(); ++i) {
-		Common::String name = Common::String::format(
-			"%s%d.twn", prefix, i + 1);
+		Common::Path name(Common::String::format(
+			"%s%d.twn", prefix, i + 1));
 		_backgrounds[i].load(name);
 	}
 }

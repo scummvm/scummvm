@@ -470,7 +470,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory category) {
 	if (_iconSprites.empty())
-		_iconSprites.load(Common::String::format("%s.icn", (mode == ITEMMODE_CHAR_INFO) ? "items" : "buy"));
+		_iconSprites.load(Common::Path(Common::String::format("%s.icn", (mode == ITEMMODE_CHAR_INFO) ? "items" : "buy")));
 	if (_equipSprites.empty())
 		_equipSprites.load("equip.icn");
 

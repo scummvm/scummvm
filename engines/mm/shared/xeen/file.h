@@ -50,10 +50,10 @@ public:
 public:
 	File() : Common::File() {
 	}
-	File(const Common::String &filename);
-	File(const Common::String &filename, Common::Archive &archive);
+	File(const Common::Path &filename);
+	File(const Common::Path &filename, Common::Archive &archive);
 #ifdef ENABLE_XEEN
-	File(const Common::String &filename, int ccMode);
+	File(const Common::Path &filename, int ccMode);
 #endif
 	~File() override {}
 
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	virtual bool open(const Common::String &filename, int ccMode);
+	virtual bool open(const Common::Path &filename, int ccMode);
 #endif
 
 	/**
@@ -98,7 +98,7 @@ public:
 	 * @param	filename	the file to check for
 	 * @return	true if the file exists, false otherwise
 	 */
-	static bool exists(const Common::String &filename);
+	static bool exists(const Common::Path &filename);
 
 #ifdef ENABLE_XEEN
 	/**
@@ -108,7 +108,7 @@ public:
 	 * @param	ccMode		Archive to use
 	 * @return	true if the file exists, false otherwise
 	 */
-	static bool exists(const Common::String &filename, int ccMode);
+	static bool exists(const Common::Path &filename, int ccMode);
 #endif
 
 	/**
@@ -118,7 +118,7 @@ public:
 	 * @param	archive		Archive to use
 	 * @return	true if the file exists, false otherwise
 	 */
-	static bool exists(const Common::String &filename, Common::Archive &archive);
+	static bool exists(const Common::Path &filename, Common::Archive &archive);
 };
 
 } // namespace Xeen

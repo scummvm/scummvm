@@ -33,9 +33,9 @@ namespace Gfx {
 
 class DTA {
 public:
-	Common::String _fname;
+	Common::Path _fname;
 public:
-	DTA(const Common::String &fname) : _fname(fname) {
+	DTA(const Common::Path &fname) : _fname(fname) {
 	}
 
 	/**

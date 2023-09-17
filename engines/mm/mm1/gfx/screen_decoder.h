@@ -39,7 +39,7 @@ public:
 	~ScreenDecoder() override;
 
 	void destroy() override;
-	bool loadFile(const Common::String &fname,
+	bool loadFile(const Common::Path &fname,
 		int16 w = 320, int16 h = 200);
 	bool loadStream(Common::SeekableReadStream &stream, int16 w, int16 h);
 	bool loadStream(Common::SeekableReadStream &stream) override {

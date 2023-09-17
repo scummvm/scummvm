@@ -33,11 +33,11 @@ namespace MM {
 class DataArchiveMember : public Common::ArchiveMember {
 private:
 	Common::SharedPtr<Common::ArchiveMember> _member;
-	Common::String _publicFolder;
-	Common::String _innerfolder;
+	Common::Path _publicFolder;
+	Common::Path _innerfolder;
 public:
 	DataArchiveMember(Common::SharedPtr<Common::ArchiveMember> member,
-		const Common::String &subfolder, const Common::String &publicFolder) :
+		const Common::Path &subfolder, const Common::Path &publicFolder) :
 			_member(member), _publicFolder(publicFolder), _innerfolder(subfolder) {
 	}
 	~DataArchiveMember() override {
@@ -48,16 +48,16 @@ public:
 	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override {
 		return nullptr;
 	}
-	Common::String getName() const override {
-		Common::String name = _member->getName();
-		assert(name.hasPrefixIgnoreCase(_innerfolder));
-		return _publicFolder + Common::String(name.c_str() + _innerfolder.size());
+	Common::Path getPathInArchive() const override {
+		Common::Path name = _member->getPathInArchive();
+		assert(name.isRelativeTo(_innerfolder));
+		return _publicFolder.join(name.relativeTo(_innerfolder));
 	}
 	Common::U32String getDisplayName() const override {
 		return _member->getDisplayName();
 	}
-	Common::String getFileName() const override { return getName(); }
-	Common::Path getPathInArchive() const override { return getName(); }
+	Common::String getFileName() const override { return _member->getFileName(); }
+	Common::String getName() const override { return getPathInArchive().toString(); }
 };
 
 /**
@@ -67,16 +67,16 @@ public:
 class DataArchive : public Common::Archive {
 private:
 	Common::Archive *_zip;
-	Common::String _publicFolder;
-	Common::String _innerfolder;
+	Common::Path _publicFolder;
+	Common::Path _innerfolder;
 
-	Common::String innerToPublic(const Common::String &filename) const {
-		assert(filename.hasPrefixIgnoreCase(_publicFolder));
-		return _innerfolder + Common::String(filename.c_str() + _publicFolder.size());
+	Common::Path publicToInner(const Common::Path &filename) const {
+		assert(filename.isRelativeTo(_publicFolder));
+		return _innerfolder.join(filename.relativeTo(_publicFolder));
 	}
 public:
-	DataArchive(Common::Archive *zip, const Common::String &subfolder, bool useDataPrefix) :
-		_zip(zip), _publicFolder(useDataPrefix ? "data/" : ""), _innerfolder(subfolder + "/") {
+	DataArchive(Common::Archive *zip, const Common::Path &subfolder, bool useDataPrefix) :
+		_zip(zip), _publicFolder(useDataPrefix ? "data/" : ""), _innerfolder(subfolder) {
 	}
 	~DataArchive() override {
 		delete _zip;
@@ -125,12 +125,12 @@ class DataArchiveProxy : public Common::Archive {
 	friend class DataArchive;
 private:
 	Common::FSNode _folder;
-	const Common::String _publicFolder;
+	const Common::Path _publicFolder;
 
 	/**
 	 * Gets a file node from the passed filename
 	 */
-	Common::FSNode getNode(const Common::String &name) const;
+	Common::FSNode getNode(const Common::Path &name) const;
 public:
 	DataArchiveProxy(const Common::FSNode &folder, bool useDataPrefix) :
 		_folder(folder), _publicFolder(useDataPrefix ? "data/" : "") {}
@@ -142,8 +142,7 @@ public:
 	 * replacement.
 	 */
 	bool hasFile(const Common::Path &path) const override {
-		Common::String name = path.toString();
-		return name.hasPrefixIgnoreCase(_publicFolder) && getNode(name).exists();
+		return path.isRelativeTo(_publicFolder) && getNode(path).exists();
 	}
 
 	/**
@@ -174,11 +173,10 @@ public:
 #endif
 
 bool DataArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!name.hasPrefixIgnoreCase(_publicFolder))
+	if (!path.isRelativeTo(_publicFolder))
 		return false;
 
-	Common::String realFilename = innerToPublic(name);
+	Common::Path realFilename = publicToInner(path);
 	return _zip->hasFile(realFilename);
 }
 
@@ -198,17 +196,15 @@ int DataArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr DataArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *DataArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (hasFile(name)) {
-		Common::String filename = innerToPublic(name);
+	if (hasFile(path)) {
+		Common::Path filename = publicToInner(path);
 		return _zip->createReadStreamForMember(filename);
 	}
 
@@ -220,36 +216,36 @@ Common::SeekableReadStream *DataArchive::createReadStreamForMember(const Common:
 #ifndef RELEASE_BUILD
 
 const Common::ArchiveMemberPtr DataArchiveProxy::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *DataArchiveProxy::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (hasFile(name))
-		return getNode(name).createReadStream();
+	if (hasFile(path))
+		return getNode(path).createReadStream();
 
 	return nullptr;
 }
 
-Common::FSNode DataArchiveProxy::getNode(const Common::String &name) const {
-	Common::String remainingName = name.substr(_publicFolder.size());
+Common::FSNode DataArchiveProxy::getNode(const Common::Path &name) const {
+	Common::Path remainingName = name.relativeTo(_publicFolder);
 	Common::FSNode node = _folder;
-	size_t pos;
 
-	while ((pos = remainingName.findFirstOf('/')) != Common::String::npos) {
-		node = node.getChild(remainingName.substr(0, pos));
-		if (!node.exists())
-			return node;
+	Common::StringArray components = remainingName.splitComponents();
 
-		remainingName = remainingName.substr(pos + 1);
+	if (components.empty()) {
+		return node;
 	}
 
-	if (!remainingName.empty())
-		node = node.getChild(remainingName);
+	for(Common::StringArray::const_iterator it = components.begin(); it != components.end() - 1; it++) {
+		node = node.getChild(*it);
+		if (!node.exists())
+			return node;
+	}
+
+	node = node.getChild(*(components.end() - 1));
 
 	return node;
 }
@@ -266,7 +262,7 @@ bool load_engine_data(const Common::String &subfolder, int reqMajorVersion,
 #ifndef RELEASE_BUILD
 	Common::FSNode folder;
 	if (ConfMan.hasKey("extrapath")) {
-		if ((folder = Common::FSNode(ConfMan.get("extrapath"))).exists()
+		if ((folder = Common::FSNode(ConfMan.getPath("extrapath"))).exists()
 			&& (folder = folder.getChild("files")).exists()
 			&& (folder = folder.getChild(subfolder)).exists()) {
 			f.open(folder.getChild("version.txt"));
@@ -277,7 +273,7 @@ bool load_engine_data(const Common::String &subfolder, int reqMajorVersion,
 	if (!f.isOpen()) {
 		if (!Common::File::exists(DATA_FILENAME) ||
 			(dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
-			!f.open(Common::String::format("%s/version.txt", subfolder.c_str()), *dataArchive)) {
+			!f.open(Common::Path(Common::String::format("%s/version.txt", subfolder.c_str())), *dataArchive)) {
 			delete dataArchive;
 			errorMsg = Common::U32String::format(_("Could not locate engine data %s"), DATA_FILENAME);
 			return false;
@@ -309,7 +305,7 @@ bool load_engine_data(const Common::String &subfolder, int reqMajorVersion,
 		archive = new DataArchiveProxy(folder, useDataPrefix);
 	else
 #endif
-		archive = new DataArchive(dataArchive, subfolder, useDataPrefix);
+		archive = new DataArchive(dataArchive, Common::Path(subfolder), useDataPrefix);
 
 	SearchMan.add("data", archive);
 	return true;

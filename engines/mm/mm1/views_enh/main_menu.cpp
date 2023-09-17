@@ -39,7 +39,7 @@ void MainMenu::drawCircles() {
 	decoder._indexes[3] = 15;
 
 	for (int i = 0; i < 2; ++i) {
-		if (decoder.loadFile(Common::String::format("screen%d", i))) {
+		if (decoder.loadFile(Common::Path(Common::String::format("screen%d", i)))) {
 			const Graphics::Surface *src = decoder.getSurface();
 
 			if (i == 0) {
