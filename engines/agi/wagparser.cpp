@@ -207,7 +207,7 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 			_parsedOk = endOfProperties(*stream) && property.readOk();
 
 			if (!_parsedOk) // Error parsing stream
-				warning("Error parsing WAG file (%s). WAG file ignored", node.getPath().c_str());
+				warning("Error parsing WAG file (%s). WAG file ignored", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		} else {
 			// Invalid WinAGI version string or it couldn't be read
 			// Let's try to read WAG file as newer INI format
@@ -220,11 +220,11 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 				addPropFromIni(iniWagFile, "General", "GameVersion", WagProperty::PC_GAMEVERSION);
 				addPropFromIni(iniWagFile, "General", "LastEdit", WagProperty::PC_GAMELAST);
 			} else
-				warning("Invalid WAG file (%s) version or error reading it. WAG file ignored", node.getPath().c_str());
+				warning("Invalid WAG file (%s) version or error reading it. WAG file ignored", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		}
 
 	} else // Couldn't open file
-		warning("Couldn't open WAG file (%s). WAG file ignored", node.getPath().c_str());
+		warning("Couldn't open WAG file (%s). WAG file ignored", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	delete stream;
 	return _parsedOk;

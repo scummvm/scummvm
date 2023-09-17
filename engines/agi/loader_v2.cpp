@@ -145,10 +145,9 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 	char x[6];
 	Common::File fp;
 	unsigned int sig;
-	Common::String path;
+	Common::Path path(Common::String::format("vol.%i", agid->volume));
 
-	path = Common::String::format("vol.%i", agid->volume);
-	debugC(3, kDebugLevelResources, "Vol res: path = %s", path.c_str());
+	debugC(3, kDebugLevelResources, "Vol res: path = %s", path.toString().c_str());
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		debugC(3, kDebugLevelResources, "loading resource at offset %d", agid->offset);

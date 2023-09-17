@@ -34,10 +34,10 @@ int AgiLoader_v3::detectGame() {
 	bool found = false;
 
 	Common::FSList fslist;
-	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.getPath("path"));
 
 	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
-		warning("AgiEngine: invalid game path '%s'", dir.getPath().c_str());
+		warning("AgiEngine: invalid game path '%s'", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return errInvalidAGIFile;
 	}
 
@@ -106,17 +106,17 @@ int AgiLoader_v3::init() {
 	int i;
 	uint16 xd[4];
 	Common::File fp;
-	Common::String path;
+	Common::Path path;
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		path = Common::String("dirs");
+		path = Common::Path("dirs");
 		_vm->_game.name[0] = 0; // Empty prefix
 	} else {
-		path = Common::String(_vm->_game.name) + DIR_;
+		path = Common::Path(Common::String(_vm->_game.name) + DIR_);
 	}
 
 	if (!fp.open(path)) {
-		warning("Failed to open '%s'", path.c_str());
+		warning("Failed to open '%s'", path.toString().c_str());
 		return errBadFileOpen;
 	}
 	// build offset table for v3 directory format
@@ -200,7 +200,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 	char x[8];
 	uint8 *data = nullptr, *compBuffer;
 	Common::File fp;
-	Common::String path;
+	Common::Path path;
 
 	debugC(3, kDebugLevelResources, "(%p)", (void *)agid);
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
@@ -214,7 +214,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 		fp.read(&x, 7);
 
 		if (READ_BE_UINT16((uint8 *) x) != 0x1234) {
-			debugC(3, kDebugLevelResources, "path = %s", path.c_str());
+			debugC(3, kDebugLevelResources, "path = %s", path.toString().c_str());
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
 			error("ACK! BAD RESOURCE");

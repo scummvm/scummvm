@@ -233,8 +233,8 @@ public:
 private:
 	// Loader methods
 	bool loadInstruments();
-	bool loadInstrumentHeaders(Common::String &exePath, const IIgsExeInfo &exeInfo);
-	bool loadWaveFile(Common::String &wavePath, const IIgsExeInfo &exeInfo);
+	bool loadInstrumentHeaders(const Common::Path &exePath, const IIgsExeInfo &exeInfo);
+	bool loadWaveFile(const Common::Path &wavePath, const IIgsExeInfo &exeInfo);
 
 	const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) const;
 	void setProgramChangeMapping(const IIgsMidiProgramMapping *mapping);

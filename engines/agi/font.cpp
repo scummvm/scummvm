@@ -167,7 +167,7 @@ void GfxFont::overwriteExtendedWithRussianSet() {
 //  Atari ST - "agi-font-atarist.bin" -> should be the Atari ST 8x8 system font
 //  Amiga    - "agi-font-amiga.bin"   -> should be the Amiga 8x8 Topaz font
 //  DOS      - "agi-font-dos.bin"
-void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
+void GfxFont::loadFontScummVMFile(const Common::Path &fontFilename) {
 	Common::File fontFile;
 	int32 fontFileSize = 0;
 
@@ -181,7 +181,7 @@ void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
 	if (fontFileSize != (256 * 8)) {
 		// unexpected file size
 		fontFile.close();
-		warning("Fontfile '%s': unexpected file size", fontFilename.c_str());
+		warning("Fontfile '%s': unexpected file size", fontFilename.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -460,7 +460,7 @@ void GfxFont::loadFontAppleIIgs() {
 
 // Loads Atari ST font file
 // It's found inside Atari ST ROMs. Just search for "8x8 system font". Font starts 4 bytes before that.
-void GfxFont::loadFontAtariST(Common::String fontFilename) {
+void GfxFont::loadFontAtariST(const Common::Path &fontFilename) {
 	Common::File fontFile;
 	uint16 header_FirstChar = 0;
 	uint16 header_LastChar = 0;

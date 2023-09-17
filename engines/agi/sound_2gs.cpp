@@ -644,8 +644,8 @@ bool SoundGen2GS::loadInstruments() {
 		return false;
 	}
 
-	Common::String exeName  = exeNames.front()->getName();
-	Common::String waveName = waveNames.front()->getName();
+	Common::Path exeName  = exeNames.front()->getPathInArchive();
+	Common::Path waveName = waveNames.front()->getPathInArchive();
 
 	// Set the MIDI program change to instrument number mapping and
 	// load the instrument headers and their sample data.
@@ -742,14 +742,14 @@ const IIgsExeInfo *SoundGen2GS::getIIgsExeInfo(enum AgiGameID gameid) const {
 	return nullptr;
 }
 
-bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeInfo &exeInfo) {
+bool SoundGen2GS::loadInstrumentHeaders(const Common::Path &exePath, const IIgsExeInfo &exeInfo) {
 	Common::File file;
 
 	// Open the executable file and check that it has correct size
 	file.open(exePath);
 	if (file.size() != (int32)exeInfo.exeSize) {
 		debugC(3, kDebugLevelSound, "Apple IIGS executable (%s) has wrong size (Is %d, should be %d)",
-		       exePath.c_str(), (int)file.size(), exeInfo.exeSize);
+		       exePath.toString(Common::Path::kNativeSeparator).c_str(), (int)file.size(), exeInfo.exeSize);
 	}
 
 	// Read the whole executable file into memory
@@ -761,7 +761,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 
 	// Check that we got enough data to be able to parse the instruments
 	if (!data || data->size() < (int32)(exeInfo.instSetStart + exeInfo.instSet->byteCount)) {
-		warning("Error loading instruments from Apple IIGS executable (%s)", exePath.c_str());
+		warning("Error loading instruments from Apple IIGS executable (%s)", exePath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -770,7 +770,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	uint16 instSetByteCount = data->readUint16LE();
 	if (instSetByteCount != exeInfo.instSet->byteCount) {
 		debugC(3, kDebugLevelSound, "Wrong instrument set size (Is %d, should be %d) in Apple IIGS executable (%s)",
-		       instSetByteCount, exeInfo.instSet->byteCount, exePath.c_str());
+		       instSetByteCount, exeInfo.instSet->byteCount, exePath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	// Check instrument set's md5sum
@@ -778,7 +778,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	Common::String md5str = Common::computeStreamMD5AsString(*data, exeInfo.instSet->byteCount);
 	if (md5str != exeInfo.instSet->md5) {
 		warning("Unknown Apple IIGS instrument set (md5: %s) in %s, trying to use it nonetheless",
-		        md5str.c_str(), exePath.c_str());
+		        md5str.c_str(), exePath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	// Read in the instrument set one instrument at a time
@@ -791,7 +791,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	for (uint i = 0; i < exeInfo.instSet->instCount; i++) {
 		if (!instrument.read(*data)) {
 			warning("Error loading Apple IIGS instrument (%d. of %d) from %s, not loading more instruments",
-			        i + 1, exeInfo.instSet->instCount, exePath.c_str());
+			        i + 1, exeInfo.instSet->instCount, exePath.toString(Common::Path::kNativeSeparator).c_str());
 			break;
 		}
 		instrument.finalize(_wavetable, SIERRASTANDARD_SIZE);
@@ -802,7 +802,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	return (_instruments.size() == exeInfo.instSet->instCount);
 }
 
-bool SoundGen2GS::loadWaveFile(Common::String &wavePath, const IIgsExeInfo &exeInfo) {
+bool SoundGen2GS::loadWaveFile(const Common::Path &wavePath, const IIgsExeInfo &exeInfo) {
 	Common::File file;
 
 	// Open the wave file and read it into memory
@@ -815,7 +815,7 @@ bool SoundGen2GS::loadWaveFile(Common::String &wavePath, const IIgsExeInfo &exeI
 
 	// Check that we got the whole wave file
 	if (!uint8Wave || (uint8Wave->size() != SIERRASTANDARD_SIZE)) {
-		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.c_str());
+		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
