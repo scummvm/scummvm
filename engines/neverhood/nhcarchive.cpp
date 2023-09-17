@@ -24,12 +24,12 @@
 
 namespace Neverhood {
 
-bool NhcArchive::open(const Common::String &filename, bool isOptional) {
+bool NhcArchive::open(const Common::Path &filename, bool isOptional) {
 	_entries.clear();
 
 	if (!_fd.open(filename)) {
 		if (!isOptional)
-			error("NhcArchive::open() Could not open %s", filename.c_str());
+			error("NhcArchive::open() Could not open %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -40,7 +40,7 @@ bool NhcArchive::open(const Common::String &filename, bool isOptional) {
 	/* totalSize = */ _fd.readUint32LE();
 	uint32 fileCount = _fd.readUint32LE();
 
-	debug(4, "%s: fileCount = %d", filename.c_str(), fileCount);
+	debug(4, "%s: fileCount = %d", filename.toString(Common::Path::kNativeSeparator).c_str(), fileCount);
 
 	_entries.reserve(fileCount);
 

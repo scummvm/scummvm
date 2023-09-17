@@ -36,14 +36,14 @@ ResourceMan::ResourceMan() {
 ResourceMan::~ResourceMan() {
 }
 
-void ResourceMan::addArchive(const Common::String &filename, bool isOptional) {
+void ResourceMan::addArchive(const Common::Path &filename, bool isOptional) {
 	BlbArchive *archive = new BlbArchive();
 	if (!archive->open(filename, isOptional)) {
 		delete archive;
 		return;
 	}
 	_archives.push_back(archive);
-	debug(3, "ResourceMan::addArchive(%s) %d files", filename.c_str(), archive->getCount());
+	debug(3, "ResourceMan::addArchive(%s) %d files", filename.toString(Common::Path::kNativeSeparator).c_str(), archive->getCount());
 	for (uint archiveEntryIndex = 0; archiveEntryIndex < archive->getCount(); archiveEntryIndex++) {
 		BlbArchiveEntry *archiveEntry = archive->getEntry(archiveEntryIndex);
 		ResourceFileEntry *entry = findEntrySimple(archiveEntry->fileHash);
@@ -64,14 +64,14 @@ void ResourceMan::addArchive(const Common::String &filename, bool isOptional) {
 	}
 }
 
-bool ResourceMan::addNhcArchive(const Common::String &filename) {
+bool ResourceMan::addNhcArchive(const Common::Path &filename) {
 	NhcArchive *archive = new NhcArchive();
 	if (!archive->open(filename, true)) {
 		delete archive;
 		return false;
 	}
 	_nhcArchives.push_back(archive);
-	debug(3, "ResourceMan::addArchive(%s) %d files", filename.c_str(), archive->getCount());
+	debug(3, "ResourceMan::addArchive(%s) %d files", filename.toString(Common::Path::kNativeSeparator).c_str(), archive->getCount());
 	for (uint archiveEntryIndex = 0; archiveEntryIndex < archive->getCount(); archiveEntryIndex++) {
 		NhcArchiveEntry *archiveEntry = archive->getEntry(archiveEntryIndex);
 		ResourceFileEntry *entry = findEntrySimple(archiveEntry->fileHash);
