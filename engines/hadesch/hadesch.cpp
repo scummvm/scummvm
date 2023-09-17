@@ -478,7 +478,7 @@ Common::Error HadeschEngine::run() {
 	_transMan->setLanguage(TransMan.getCurrentLanguage());
 #endif
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN9x");
 
 	Common::ErrorCode err = loadCursors();
@@ -514,7 +514,7 @@ Common::Error HadeschEngine::run() {
 	// on cdScenePath
 	const char *const scenepaths[] = {"CDAssets/", "Scenes/"};
 	for (uint i = 0; i < ARRAYSIZE(scenepaths); ++i) {
-		Common::ScopedPtr<Common::SeekableReadStream> stream(Common::MacResManager::openFileOrDataFork(Common::String(scenepaths[i]) + "OLYMPUS/OL.POD"));
+		Common::ScopedPtr<Common::SeekableReadStream> stream(Common::MacResManager::openFileOrDataFork(Common::Path(scenepaths[i]).appendInPlace("OLYMPUS/OL.POD")));
 		if (stream) {
 			_cdScenesPath = scenepaths[i];
 			break;

@@ -119,7 +119,7 @@ VideoRoom::VideoRoom(const Common::String &dir, const Common::String &pod,
 		     const Common::String &assetMapFile) : _layers(layerComparator) {
 	Common::String podPath = g_vm->getCDScenesPath() + dir + "/" + pod + ".pod";
 	_podFile = Common::SharedPtr<PodFile>(new PodFile(podPath));
-	_podFile->openStore(podPath);
+	_podFile->openStore(Common::Path(podPath));
 	_smkPath = g_vm->getCDScenesPath() + dir;
 	Common::SharedPtr<Common::SeekableReadStream> assetMapStream(assetMapFile != "" ? openFile(assetMapFile) : nullptr);
 	if (assetMapStream) {
@@ -762,7 +762,7 @@ void VideoRoom::playVideo(const Common::String &name, int zValue,
 	if (mappedName == "") {
 		mappedName = name;
 	}
-	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(_smkPath + "/" + mappedName + ".SMK");
+	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(Common::Path(_smkPath + "/" + mappedName + ".SMK"));
 
 	if (!stream || !decoder->loadStream(stream)) {
 		debug("Video file %s can't be opened", name.c_str());
