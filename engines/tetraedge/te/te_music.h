@@ -49,20 +49,20 @@ public:
 
 	byte currentData();
 	void entry();
-	const Common::String &filePath() const {
+	const Common::Path &filePath() const {
 		return _rawPath;
 	}
 	bool isPlaying();
-	bool load(const Common::String &path);
+	bool load(const Common::Path &path);
 	bool onSoundManagerVolumeChanged();
-	Common::String path();
+	Common::Path path();
 	void setChannelName(const Common::String &name) {
 		_channelName = name;
 	}
 	const Common::String &channelName() const {
 		return _channelName;
 	}
-	void setFilePath(const Common::String &name);
+	void setFilePath(const Common::Path &name);
 	void update();
 	void volume(float vol);
 	float volume();
@@ -72,10 +72,8 @@ public:
 	void setRetain(bool retain) { _retain = retain; }
 	bool retain() const { return _retain; }
 
-	const Common::String &rawPath() { return _rawPath; }
-
 private:
-	Common::String _rawPath; // Plain name of file requested
+	Common::Path _rawPath; // Plain name of file requested
 	Common::FSNode _fileNode; // file after finding it
 	Common::String _channelName;
 

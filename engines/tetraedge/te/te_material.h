@@ -46,7 +46,7 @@ public:
 
 	// Note: apply() function from original moved to TeRenderer to remove OGL specific code from here
 	void defaultValues();
-	static void deserialize(Common::SeekableReadStream &stream, TeMaterial &material, const Common::String &path);
+	static void deserialize(Common::SeekableReadStream &stream, TeMaterial &material, const Common::Path &path);
 	static void serialize(Common::SeekableWriteStream &stream, TeMaterial &material);
 
 	bool operator==(const TeMaterial &other) const;

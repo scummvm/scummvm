@@ -256,7 +256,7 @@ bool PuzzleComputerHydra::registerNewDigit(int digit) {
 	_enteredCoord[_axisNo] = digit;
 	_axisNo++;
 	const Common::String dname = Common::String::format("digit%d", _axisNo);
-	const Common::String dimg = Common::String::format("2D/puzzles/Computer_Hydra/%d.png", digit);
+	const Common::Path dimg(Common::String::format("2D/puzzles/Computer_Hydra/%d.png", digit));
 	_gui.spriteLayoutChecked(dname)->load(dimg);
 	_gui.spriteLayoutChecked(dname)->setVisible(true);
 	if (_axisNo == 3) {

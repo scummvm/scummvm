@@ -83,8 +83,8 @@ public:
 	void updateSurface();
 	void updateVideoProperties();
 
-	const Common::String &loadedPath() const { return _loadedPath; }
-	void setLoadedPath(const Common::String &p) { _loadedPath = p; }
+	const Common::Path &loadedPath() const { return _loadedPath; }
+	void setLoadedPath(const Common::Path &p) { _loadedPath = p; }
 
 	TeFrameAnim _frameAnim;
 
@@ -106,7 +106,7 @@ private:
 
 	TeImage::Format _imgFormat;
 
-	Common::String _loadedPath;
+	Common::Path _loadedPath;
 
 };
 

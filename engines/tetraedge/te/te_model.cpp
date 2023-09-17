@@ -422,7 +422,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 bool TeModel::load(const Common::Path &path) {
 	Common::File modelFile;
 	if (!modelFile.open(path)) {
-		warning("[TeModel::load] Can't open file : %s.", path.toString().c_str());
+		warning("[TeModel::load] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 

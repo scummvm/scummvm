@@ -50,7 +50,7 @@ void OptionsMenu::enter() {
 	app->frontLayout().addChild(_gui2.buttonLayoutChecked("tuto"));
 	_gui2.buttonLayoutChecked("tuto")->setVisible(false);
 
-	const Common::String musicPath = value("musicPath").toString();
+	const Common::Path musicPath(value("musicPath").toString());
 	if (!app->music().isPlaying() || (app->music().getAccessName() != musicPath)) {
 		app->music().load(musicPath);
 		app->music().play();
@@ -157,7 +157,7 @@ bool OptionsMenu::onDialogVolumeMinusButton() {
 	if (!_music1.isPlaying()) {
 		_music1.setChannelName("dialog");
 		_music1.repeat(false);
-		_music1.load(value("dialogTestPath").toString());
+		_music1.load(Common::Path(value("dialogTestPath").toString()));
 		_music1.play();
 	}
 	return false;
@@ -176,7 +176,7 @@ bool OptionsMenu::onDialogVolumePlusButton() {
 	if (!_music1.isPlaying()) {
 		_music1.setChannelName("dialog");
 		_music1.repeat(false);
-		_music1.load(value("dialogTestPath").toString());
+		_music1.load(Common::Path(value("dialogTestPath").toString()));
 		_music1.play();
 	}
 	return false;

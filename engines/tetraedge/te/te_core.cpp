@@ -84,7 +84,7 @@ TeICodec *TeCore::createVideoCodec(const Common::String &extn) {
 }
 
 TeICodec *TeCore::createVideoCodec(const Common::Path &path) {
-	const Common::String filename = path.getLastComponent().toString();
+	const Common::String filename = path.baseName();
 	if (!filename.contains('.'))
 		return nullptr;
 	Common::String extn = filename.substr(filename.findLastOf('.') + 1);
@@ -152,7 +152,7 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	if (node.exists())
 		return node;
 
-	const Common::FSNode gameRoot(ConfMan.get("path"));
+	const Common::FSNode gameRoot(ConfMan.getPath("path"));
 	if (!gameRoot.isDirectory())
 		error("Game directory should be a directory");
 	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
@@ -160,7 +160,7 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	if (!resNode.isDirectory())
 		error("Resources directory should exist in game");
 
-	Common::String fname = path.getLastComponent().toString();
+	Common::String fname = path.baseName();
 
 	// Slight HACK: Remove 'comments' used to specify animated pngs
 	if (fname.contains('#'))
@@ -216,7 +216,7 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	};
 
 	const Common::Path langs[] = {
-		language(),
+		Common::Path(language()),
 		"en",
 		"de-es-fr-it-en",
 		"en-es-fr-de-it",
@@ -257,7 +257,7 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	}
 
 	// Didn't find it at all..
-	debug("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
+	debug("TeCore::findFile Searched but didn't find %s", path.toString(Common::Path::kNativeSeparator).c_str());
 	return Common::FSNode(path);
 }
 

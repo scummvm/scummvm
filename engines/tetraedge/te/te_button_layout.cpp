@@ -107,28 +107,28 @@ bool TeButtonLayout::isMouseIn(const TeVector2s32 &mouseloc) {
 	}
 }
 
-void TeButtonLayout::load(const Common::String &upImg, const Common::String &downImg, const Common::String &overImg) {
+void TeButtonLayout::load(const Common::Path &upImg, const Common::Path &downImg, const Common::Path &overImg) {
 	TeSpriteLayout *upSprite = nullptr;
-	if (upImg.size()) {
+	if (!upImg.empty()) {
 		upSprite = new TeSpriteLayout();
 		if (!upSprite->load(upImg))
-			warning("Failed to load button up img %s", upImg.c_str());
+			warning("Failed to load button up img %s", upImg.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	setUpLayout(upSprite);
 
 	TeSpriteLayout *downSprite = nullptr;
-	if (downImg.size()) {
+	if (!downImg.empty()) {
 		downSprite = new TeSpriteLayout();
 		if (!downSprite->load(downImg))
-			warning("Failed to load button down img %s", downImg.c_str());
+			warning("Failed to load button down img %s", downImg.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	setDownLayout(downSprite);
 
 	TeSpriteLayout *overSprite = nullptr;
-	if (overImg.size()) {
+	if (!overImg.empty()) {
 		overSprite = new TeSpriteLayout();
 		if (!overSprite->load(overImg))
-			warning("Failed to load button over img %s", overImg.c_str());
+			warning("Failed to load button over img %s", overImg.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	setRollOverLayout(overSprite);
 	setHitZone(nullptr);

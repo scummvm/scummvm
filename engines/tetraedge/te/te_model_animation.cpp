@@ -184,7 +184,7 @@ bool TeModelAnimation::load(const Common::Path &path) {
 	Common::FSNode foundFile = g_engine->getCore()->findFile(path);
 	Common::File modelFile;
 	if (!modelFile.open(foundFile)) {
-		warning("[TeModel::load] Can't open file : %s.", path.toString().c_str());
+		warning("[TeModel::load] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	bool retval;

@@ -174,8 +174,8 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		warpMarker->marker()->visible(false);
 		frontLayout.removeChild(&warpMarker->marker()->button());
 	} else {
-		Common::String markerPath = Common::String::format("2D/Menus/InGame/Marker_%d.png#anim", markerImgNo);
-		Common::String markerPathDown = Common::String::format("2D/Menus/InGame/Marker_%d_over.png", markerImgNo);
+		Common::Path markerPath(Common::String::format("2D/Menus/InGame/Marker_%d.png#anim", markerImgNo));
+		Common::Path markerPathDown(Common::String::format("2D/Menus/InGame/Marker_%d_over.png", markerImgNo));
 		if (!exit)
 			warpMarker->setName(objname);
 		else
@@ -184,7 +184,7 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		warpMarker->marker()->button().load(markerPath, markerPathDown, "");
 		TeSpriteLayout *btnUp = dynamic_cast<TeSpriteLayout*>(warpMarker->marker()->button().upLayout());
 		if (!btnUp)
-			error("Loading button image %s failed", markerPath.c_str());
+			error("Loading button image %s failed", markerPath.toString(Common::Path::kNativeSeparator).c_str());
 		//warning("TeWarp::configMarker: set anim values and something else here?");
 		btnUp->_tiledSurfacePtr->_frameAnim.setLoopCount(-1);
 		btnUp->play();
@@ -236,7 +236,7 @@ void TeWarp::init() {
 	warning("TODO: Finish TeWarp::init?");
 }
 
-void TeWarp::load(const Common::String &path, bool flag) {
+void TeWarp::load(const Common::Path &path, bool flag) {
 	if (_warpPath == path && _loaded)
 		return;
 	_warpPath = path;
@@ -247,7 +247,7 @@ void TeWarp::load(const Common::String &path, bool flag) {
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(_warpPath);
 	if (!node.isReadable()) {
-		error("Couldn't find TeWarp path data '%s'", _warpPath.c_str());
+		error("Couldn't find TeWarp path data '%s'", _warpPath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	if (_preloaded)
@@ -257,7 +257,7 @@ void TeWarp::load(const Common::String &path, bool flag) {
 	header[6] = '\0';
 	_file.read(header, 6);
 	if (Common::String(header) != "TeWarp")
-		error("Invalid header in warp data %s", _warpPath.c_str());
+		error("Invalid header in warp data %s", _warpPath.toString(Common::Path::kNativeSeparator).c_str());
 	uint32 globalTexDataOffset = _file.readUint32LE();
 	_texEncodingType = _file.readPascalString();
 	_xCount = _file.readUint32LE();

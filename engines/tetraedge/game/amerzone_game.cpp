@@ -81,11 +81,12 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 		_warpY->setFov((float)(fov * M_PI / 180.0));
 	}
 
-	Common::String zone = rawZone;
+	Common::Path zone;
 	if (rawZone.contains('\\')) {
-		// Replace '\'s which our core understands
-		Common::Path converted(rawZone, '\\');
-		zone = converted.toString();
+		// Split path components on '\'
+		zone = Common::Path(rawZone, '\\');
+	} else {
+		zone = Common::Path(rawZone, '/');
 	}
 
 	_warpY->load(zone, false);
@@ -108,13 +109,13 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	}
 	_gameSounds.clear();
 
-	Common::String sceneXml = zone;
+	Common::String sceneXml = zone.baseName();
 	size_t dotpos = sceneXml.rfind('.');
 	if (dotpos != Common::String::npos)
 		sceneXml = sceneXml.substr(0, dotpos);
 	sceneXml += ".xml";
 	TeSceneWarp sceneWarp;
-	sceneWarp.load(sceneXml, _warpY, false);
+	sceneWarp.load(zone.getParent().appendComponent(sceneXml), _warpY, false);
 
 	// NOTE: Original uses FLT_MAX here but that can cause overflows, just use a big number.
 	_xAngleMin = 1e8;
@@ -125,7 +126,7 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	dotpos = sceneXml.rfind('.');
 	Common::String sceneLua = sceneXml.substr(0, dotpos);
 	sceneLua += ".lua";
-	_luaScript.load(core->findFile(sceneLua));
+	_luaScript.load(core->findFile(zone.getParent().appendComponent(sceneLua)));
 	_luaScript.execute();
 	_luaScript.execute("OnWarpEnter");
 	if (fadeFlag) {
@@ -579,7 +580,7 @@ bool AmerzoneGame::onVideoFinished() {
 	_inGameGui.buttonLayoutChecked("videoBackgroundButton")->setVisible(false);
 	_inGameGui.buttonLayoutChecked("skipVideoButton")->setVisible(false);
 	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
-	Common::String vidPath = video->_tiledSurfacePtr->loadedPath();
+	Common::Path vidPath = video->_tiledSurfacePtr->loadedPath();
 	video->setVisible(false);
 	video->_tiledSurfacePtr->unload();
 	video->_tiledSurfacePtr->setLoadedPath("");
@@ -588,7 +589,7 @@ bool AmerzoneGame::onVideoFinished() {
 	if (app->musicOn())
 		app->music().play();
 	_running = true;
-	_luaScript.execute("OnMovieFinished", vidPath);
+	_luaScript.execute("OnMovieFinished", vidPath.toString('/'));
 	return false;
 }
 

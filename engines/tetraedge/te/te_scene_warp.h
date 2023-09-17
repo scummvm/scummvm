@@ -77,7 +77,7 @@ public:
 	const Exit *getExit(const Common::String &linkedWarp);
 	const Object *getObject(const Common::String &name);
 	const WarpEvent *getWarpEvent(const Common::String &name); // TODO: what's the right return type?
-	bool load(const Common::String &name, TeWarp *warp, bool flag);
+	bool load(const Common::Path &name, TeWarp *warp, bool flag);
 	//void moveIndicator(const Common::String &, const Common::String &, const TeVector2s32 &)); // unused
 	//void popBlockToExit(const Common::String &name, TePickMesh *mesh); // unused
 	//void pushBlockToExit(const Common::String &name, TePickMesh *mesh); // unused 
@@ -95,7 +95,7 @@ private:
 	Common::List<Exit> _exits;
 	Common::List<Animation> _animations;
 	Common::List<WarpEvent> _warpEvents;
-	Common::String _name;
+	Common::Path _name;
 	TeWarp *_warp;
 	int _numExitsCreated;
 };

@@ -37,7 +37,7 @@ TeFont2::TeFont2() : _numChars(0), _hasKernData(false), _maxHeight(0) {
 TeFont2::~TeFont2() {
 }
 
-bool TeFont2::load(const Common::String &path) {
+bool TeFont2::load(const Common::Path &path) {
 	if (_loadedPath == path)
 		return true; // already open
 
@@ -47,14 +47,14 @@ bool TeFont2::load(const Common::String &path) {
 }
 
 bool TeFont2::load(const Common::FSNode &node) {
-	const Common::String path = node.getPath();
+	const Common::Path path = node.getPath();
 
 	unload();
 	setAccessName(path);
 	_loadedPath = path;
 
 	if (!node.isReadable()) {
-		warning("TeFont2::load: Can't read from %s", path.c_str());
+		warning("TeFont2::load: Can't read from %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -62,7 +62,7 @@ bool TeFont2::load(const Common::FSNode &node) {
 	file.open(node);
 
 	if (!Te3DObject2::loadAndCheckFourCC(file, "TESF")) {
-		warning("TeFont2::load: Invalid magic in %s", path.c_str());
+		warning("TeFont2::load: Invalid magic in %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -113,7 +113,7 @@ bool TeFont2::load(const Common::FSNode &node) {
 	}
 
 	if (!_texture.load(file, "png")) {
-		warning("Invalid png data in %s", path.c_str());
+		warning("Invalid png data in %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 

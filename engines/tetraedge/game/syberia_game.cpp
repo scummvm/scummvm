@@ -64,18 +64,19 @@ SyberiaGame::~SyberiaGame() {
 	delete _randomSound;
 }
 
-bool SyberiaGame::addAnimToSet(const Common::String &anim) {
+bool SyberiaGame::addAnimToSet(const Common::Path &anim) {
 	// Get path to lua script, eg scenes/ValVoralberg/14040/Set14040.lua
-	const Common::Path animPath(Common::String("scenes/") + anim + "/");
+	Common::Path animPath("scenes/");
+	animPath.joinInPlace(anim);
 
 	if (Common::File::exists(animPath)) {
-		const Common::StringArray parts = TetraedgeEngine::splitString(anim, '/');
+		const Common::StringArray parts = anim.splitComponents();
 		assert(parts.size() >= 2);
 
 		const Common::String layoutName = parts[1];
-		const Common::String path = Common::String("scenes/") + parts[0] + "/" + parts[1] + "/Set" + parts[1];
+		const Common::Path path = Common::Path("scenes/").appendComponent(parts[0]).appendComponent(parts[1]).appendComponent(Common::String::format("Set%s.lua", parts[1].c_str()));
 
-		_setAnimGui.load(path + ".lua");
+		_setAnimGui.load(path);
 
 		// Note: game makes this here, but never uses it..
 		// it seems like a random memory leak??
@@ -151,7 +152,7 @@ void SyberiaGame::addNoScaleChildren() {
 	_noScaleLayout->addChild(&_documentsBrowser.zoomedLayout());
 }
 
-void SyberiaGame::addRandomSound(const Common::String &name, const Common::String &path, float f1, float volume) {
+void SyberiaGame::addRandomSound(const Common::String &name, const Common::Path &path, float f1, float volume) {
 	if (!_randomSounds.contains(name)) {
 		_randomSounds[name] = Common::Array<RandomSound*>();
 	}
@@ -167,9 +168,7 @@ void SyberiaGame::addToBag(const Common::String &objid) {
 	if (_inventory.objectCount(objid) != 0)
 		return;
 	_inventory.addObject(objid);
-	Common::String imgpath("Inventory/Objects/");
-	imgpath += objid;
-	imgpath += ".png";
+	Common::Path imgpath = Common::Path("Inventory/Objects/").appendComponent(objid + ".png");
 	_notifier.push(_inventory.objectName(objid), imgpath);
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		if (objid == OBJECTS_TAKEN_IDS[i] && !_objectsTakenBits[i]) {
@@ -1130,7 +1129,7 @@ bool SyberiaGame::onVideoFinished() {
 	app->captureFade();
 
 	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
-	Common::String vidPath = video->_tiledSurfacePtr->loadedPath();
+	Common::String vidPath = video->_tiledSurfacePtr->loadedPath().toString('/');
 	TeButtonLayout *btn = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
 	btn->setVisible(false);
 	btn = _inGameGui.buttonLayoutChecked("skipVideoButton");
@@ -1228,7 +1227,7 @@ void SyberiaGame::playRandomSound(const Common::String &name) {
 		sound->_music.volume(sound->_volume);
 		sound->_music.onStopSignal().remove(sound, &RandomSound::onSoundFinished);
 		sound->_music.onStopSignal().add(sound, &RandomSound::onSoundFinished);
-		sound->_music.load(sound->_path.toString());
+		sound->_music.load(sound->_path);
 		sound->_music.repeat(false);
 		sound->_music.play();
 		// TODO: set a flag that it's playing?

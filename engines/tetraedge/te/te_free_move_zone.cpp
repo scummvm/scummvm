@@ -185,13 +185,13 @@ bool TeFreeMoveZone::loadAStar(const Common::Path &path, const TeVector2s32 &siz
 	Common::FSNode node = g_engine->getCore()->findFile(path);
 	Common::File file;
 	if (!node.isReadable() || !file.open(node)) {
-		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString().c_str());
+		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeVector2s32 readSize;
 	readSize.deserialize(file, readSize);
 	if (size != readSize) {
-		warning("[TeFreeMoveZone::loadAStar] Wrong file : %s.", path.toString().c_str());
+		warning("[TeFreeMoveZone::loadAStar] Wrong file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	uint32 bytes = file.readUint32LE();
@@ -653,7 +653,7 @@ bool TeFreeMoveZone::loadBin(Common::ReadStream &stream, const Common::Array<TeB
 	_actzones = actzones;
 	updateGrid(false);
 	Common::Path p(name());
-	setName(p.getLastComponent().toString());
+	setName(p.baseName());
 
 	return true;
 }

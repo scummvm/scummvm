@@ -126,7 +126,7 @@ public:
 	int leftStepFrame(enum WalkPart walkpart);
 	int rightStepFrame(enum WalkPart walkpart);
 	bool loadModel(const Common::String &name, bool unused);
-	static bool loadSettings(const Common::String &path);
+	static bool loadSettings(const Common::Path &path);
 
 	bool onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneMatrix);
 	bool onModelAnimationFinished();

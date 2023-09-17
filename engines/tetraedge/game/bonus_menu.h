@@ -48,7 +48,7 @@ public:
 	};
 
 	virtual void enter() override;
-	virtual void enter(const Common::String &scriptName);
+	virtual void enter(const Common::Path &scriptName);
 	void leave() override;
 
 	void loadGame(Common::String &name) {

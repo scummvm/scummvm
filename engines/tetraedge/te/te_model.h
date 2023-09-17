@@ -134,14 +134,14 @@ public:
 	TeIntrusivePtr<TeTiledTexture> tiledTexture() { return _tiledTexture; }
 
 	void setEnableLights(bool val) { _enableLights = val; }
-	void setTexturePath(const Common::String &path) { _texturePath = path; }
+	void setTexturePath(const Common::Path &path) { _texturePath = path; }
 	void setMeshCount(uint count);
 
 protected:
 	TeMatrix4x4 lerpElementsMatrix(uint weightNum, const Common::Array<TeMatrix4x4> &matricies);
 	void optimize();
 
-	Common::String _texturePath;
+	Common::Path _texturePath;
 	TeIntrusivePtr<TeTiledTexture> _tiledTexture;
 
 	bool _enableLights;

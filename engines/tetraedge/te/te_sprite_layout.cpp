@@ -73,7 +73,7 @@ bool TeSpriteLayout::onParentWorldColorChanged() {
 	return false;
 }
 
-bool TeSpriteLayout::load(const Common::String &path) {
+bool TeSpriteLayout::load(const Common::Path &path) {
 	if (path.empty()) {
 		_tiledSurfacePtr->unload();
 		return true;
@@ -86,7 +86,7 @@ bool TeSpriteLayout::load(const Common::String &path) {
 	return true;
 }
 
-bool TeSpriteLayout::load(const Common::FSNode &node, const Common::String *forcePath) {
+bool TeSpriteLayout::load(const Common::FSNode &node, const Common::Path *forcePath) {
 	if (!node.exists()) {
 		_tiledSurfacePtr->unload();
 		return false;
@@ -95,7 +95,7 @@ bool TeSpriteLayout::load(const Common::FSNode &node, const Common::String *forc
 	stop();
 	unload();
 
-	_tiledSurfacePtr->setLoadedPath(forcePath ? *forcePath : Common::String());
+	_tiledSurfacePtr->setLoadedPath(forcePath ? *forcePath : Common::Path());
 	if (_tiledSurfacePtr->load(node)) {
 		const TeVector2s32 texSize = _tiledSurfacePtr->tiledTexture()->totalSize();
 		if (texSize._y <= 0) {
@@ -108,7 +108,7 @@ bool TeSpriteLayout::load(const Common::FSNode &node, const Common::String *forc
 		}
 		updateMesh();
 	} else {
-		debug("Failed to load TeSpriteLayout %s", node.getPath().c_str());
+		debug("Failed to load TeSpriteLayout %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		_tiledSurfacePtr->setLoadedPath("");
 	}
 	return true;
@@ -131,7 +131,7 @@ bool TeSpriteLayout::load(TeIntrusivePtr<Te3DTexture> &texture) {
 		updateMesh();
 		return true;
 	} else {
-		debug("Failed to load TeSpriteLayout from texture %s", texture->getAccessName().c_str());
+		debug("Failed to load TeSpriteLayout from texture %s", texture->getAccessName().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	return false;
 }
@@ -153,7 +153,7 @@ bool TeSpriteLayout::load(TeImage &img) {
 		updateMesh();
 		return true;
 	} else {
-		debug("Failed to load TeSpriteLayout from texture %s", img.getAccessName().c_str());
+		debug("Failed to load TeSpriteLayout from texture %s", img.getAccessName().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	return false;
 }

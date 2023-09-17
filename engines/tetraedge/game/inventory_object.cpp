@@ -38,8 +38,8 @@ void InventoryObject::load(const Common::String &newName) {
 	// TODO: btn->setDoubleValidationProtectionEnabled(false)
 }
 
-Common::String InventoryObject::spritePath() {
-	return Common::Path("Inventory/Objects").join(name()).append(".png").toString();
+Common::Path InventoryObject::spritePath() {
+	return Common::Path("Inventory/Objects").join(name()).append(".png");
 }
 
 bool InventoryObject::onButtonDown() {

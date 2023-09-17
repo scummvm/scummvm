@@ -295,7 +295,7 @@ void Game::pauseMovie() {
 }
 */
 
-bool Game::playMovie(const Common::String &vidPath, const Common::String &musicPath, float volume /* = 1.0f */) {
+bool Game::playMovie(const Common::Path &vidPath, const Common::Path &musicPath, float volume /* = 1.0f */) {
 	Application *app = g_engine->getApplication();
 	app->captureFade();
 	TeButtonLayout *videoBackgroundButton = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
@@ -339,7 +339,7 @@ bool Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 		app->fade();
 		return true;
 	} else {
-		warning("Failed to load movie %s", vidPath.c_str());
+		warning("Failed to load movie %s", vidPath.toString(Common::Path::kNativeSeparator).c_str());
 		// Ensure the correct finished event gets called anyway.
 		videoSpriteLayout->_tiledSurfacePtr->setLoadedPath(vidPath);
 		onVideoFinished();
@@ -356,7 +356,7 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 		sound->setName(name);
 		sound->setChannelName("sfx");
 		sound->repeat(false);
-		sound->load(name);
+		sound->load(Common::Path(name));
 		sound->volume(volume);
 		if (!sound->play()) {
 			game->luaScript().execute("OnFreeSoundFinished", name);
@@ -369,9 +369,10 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 			_gameSounds.push_back(sound);
 		}
 	} else if (repeats == -1) {
+		const Common::Path pathName(name);
 		for (GameSound *snd : _gameSounds) {
-			const Common::String accessName = snd->getAccessName();
-			if (accessName == name) {
+			const Common::Path accessName = snd->getAccessName();
+			if (accessName == pathName) {
 				snd->setRetain(true);
 				return;
 			}
@@ -379,7 +380,7 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 
 		GameSound *sound = new GameSound();
 		sound->setChannelName("sfx");
-		sound->load(name);
+		sound->load(pathName);
 		sound->volume(volume);
 		if (!sound->play()) {
 			game->luaScript().execute("OnFreeSoundFinished", name);
@@ -420,11 +421,11 @@ void Game::saveBackup(const Common::String &saveName) {
 	app->showLoadingIcon(false);
 }
 
-bool Game::setBackground(const Common::String &name) {
+bool Game::setBackground(const Common::Path &name) {
 	return _scene.changeBackground(name);
 }
 
-void Game::setCurrentObjectSprite(const Common::String &spritePath) {
+void Game::setCurrentObjectSprite(const Common::Path &spritePath) {
 	TeSpriteLayout *currentSprite = _inGameGui.spriteLayout("currentObjectSprite");
 	if (currentSprite) {
 		if (spritePath.empty())
@@ -460,9 +461,10 @@ bool Game::startAnimation(const Common::String &animName, int loopcount, bool re
 }
 
 void Game::stopSound(const Common::String &name) {
+	Common::Path path(name);
 	for (uint i = 0; i < _gameSounds.size(); i++) {
 		GameSound *sound = _gameSounds[i];
-		if (sound->rawPath() == name) {
+		if (sound->filePath() == path) {
 			sound->stop();
 			sound->deleteLater();
 			_gameSounds.remove_at(i);
@@ -518,10 +520,10 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 		s.syncAsByte(_objectsTakenBits[i]);
 	s.syncAsUint32LE(_dialogsTold);
 	s.syncString(_prevSceneName);
-	Common::String mpath = _videoMusic.rawPath();
+	Common::String mpath(_videoMusic.filePath().toString('/'));
 	s.syncString(mpath);
 	if (s.isLoading())
-		_videoMusic.load(mpath);
+		_videoMusic.load(Common::Path(mpath, '/'));
 	if (!g_engine->gameIsAmerzone()) {
 		assert(_scene._character);
 		s.syncString(_scene._character->walkModeStr());

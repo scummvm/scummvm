@@ -105,7 +105,7 @@ void InGameScene::addAnchorZone(const Common::String &s1, const Common::String &
 	_anchorZones.push_back(zone);
 }
 
-bool InGameScene::addMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal, float anchorX, float anchorY) {
+bool InGameScene::addMarker(const Common::String &markerName, const Common::Path &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal, float anchorX, float anchorY) {
 	const TeMarker *marker = findMarker(markerName);
 	if (!marker) {
 		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
@@ -204,7 +204,7 @@ Billboard *InGameScene::billboard(const Common::String &name) {
 	return nullptr;
 }
 
-bool InGameScene::changeBackground(const Common::String &name) {
+bool InGameScene::changeBackground(const Common::Path &name) {
 	Common::FSNode node = g_engine->getCore()->findFile(name);
 	if (node.isReadable()) {
 		_bgGui.spriteLayoutChecked("root")->load(node);
@@ -616,9 +616,9 @@ float InGameScene::getHeadVerticalRotation(Character *cter, const TeVector3f32 &
 	return angle;
 }
 
-Common::String InGameScene::imagePathMarker(const Common::String &name) {
+Common::Path InGameScene::imagePathMarker(const Common::String &name) {
 	if (!isMarker(name))
-		return Common::String();
+		return Common::Path();
 	Game *game = g_engine->getGame();
 	TeLayout *bg = game->forGui().layoutChecked("background");
 	for (Te3DObject2 *child : bg->childList()) {
@@ -627,7 +627,7 @@ Common::String InGameScene::imagePathMarker(const Common::String &name) {
 			return spritelayout->_tiledSurfacePtr->loadedPath();
 		}
 	}
-	return Common::String();
+	return Common::Path();
 }
 
 void InGameScene::initScroll() {
@@ -819,7 +819,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		//
 		Common::File xmlFile;
 		if (!xmlFile.open(node))
-			error("InGameScene::loadXml: Can't open %s", node.getPath().c_str());
+			error("InGameScene::loadXml: Can't open %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		const int64 bufsize = xmlFile.size();
 		char *buf = new char[bufsize+1];
 		buf[bufsize] = '\0';
@@ -839,11 +839,11 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	} else {
 		// Regular loading.
 		if (!parser.loadFile(node))
-			error("InGameScene::loadXml: Can't load %s", node.getPath().c_str());
+			error("InGameScene::loadXml: Can't load %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	if (!parser.parse())
-		error("InGameScene::loadXml: Can't parse %s", node.getPath().c_str());
+		error("InGameScene::loadXml: Can't parse %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	// loadFlamme and loadSnowCustom are handled by the above.
 
@@ -867,9 +867,9 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		ParticleXmlParser pparser;
 		pparser._scene = this;
 		if (!pparser.loadFile(pnode))
-			error("InGameScene::loadXml: Can't load %s", pnode.getPath().c_str());
+			error("InGameScene::loadXml: Can't load %s", pnode.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		if (!pparser.parse())
-			error("InGameScene::loadXml: Can't parse %s", pnode.getPath().c_str());
+			error("InGameScene::loadXml: Can't parse %s", pnode.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	TeMatrix4x4 camMatrix = currentCamera() ?
@@ -951,9 +951,9 @@ bool InGameScene::loadLights(const Common::FSNode &node) {
 	SceneLightsXmlParser parser(&_lights);
 
 	if (!parser.loadFile(node))
-		error("InGameScene::loadLights: Can't load %s", node.getPath().c_str());
+		error("InGameScene::loadLights: Can't load %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	if (!parser.parse())
-		error("InGameScene::loadLights: Can't parse %s", node.getPath().c_str());
+		error("InGameScene::loadLights: Can't parse %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	_shadowColor = parser.getShadowColor();
 	_shadowLightNo = parser.getShadowLightNo();
@@ -1037,9 +1037,9 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 	return retval;
 }
 
-bool InGameScene::loadObjectMaterials(const Common::String &path, const Common::String &name) {
+bool InGameScene::loadObjectMaterials(const Common::Path &path, const Common::String &name) {
 	// Seems like this is never used?
-	error("InGameScene::loadObjectMaterials(%s, %s)", path.c_str(), name.c_str());
+	error("InGameScene::loadObjectMaterials(%s, %s)", path.toString(Common::Path::kNativeSeparator).c_str(), name.c_str());
 }
 
 bool InGameScene::loadPlayerCharacter(const Common::String &name) {
@@ -1085,7 +1085,7 @@ bool InGameScene::loadCurve(const Common::String &name) {
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(path);
 	if (!node.isReadable()) {
-		warning("[InGameScene::loadCurve] Can't open file : %s.", path.toString().c_str());
+		warning("[InGameScene::loadCurve] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeIntrusivePtr<TeBezierCurve> curve = new TeBezierCurve();
@@ -1100,7 +1100,7 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 	Common::FSNode datnode = g_engine->getCore()->findFile(pdat);
 	Common::FSNode texnode = g_engine->getCore()->findFile(ptex);
 	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString().c_str());
+		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -1158,7 +1158,7 @@ bool InGameScene::loadLight(const Common::String &name, const Common::String &zo
 	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
 	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
 	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadLight] Can't open file : %s.", datpath.toString().c_str());
+		warning("[InGameScene::loadLight] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -1181,7 +1181,7 @@ bool InGameScene::loadMask(const Common::String &name, const Common::String &tex
 	Common::Path texpath = _sceneFileNameBase(zone, scene).joinInPlace(texture);
 	Common::FSNode datnode = core->findFile(datpath);
 	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadMask] Can't open file : %s.", datpath.toString().c_str());
+		warning("[InGameScene::loadMask] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
@@ -1268,7 +1268,7 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
 	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
 	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadShadowReceivingObject] Can't open file : %s.", datpath.toString().c_str());
+		warning("[InGameScene::loadShadowReceivingObject] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
@@ -1313,7 +1313,7 @@ bool InGameScene::loadZBufferObject(const Common::String &name, const Common::St
 	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
 	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
 	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datpath.toString().c_str());
+		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
@@ -1371,7 +1371,7 @@ void InGameScene::loadBlockers() {
 
 	Common::File blockersfile;
 	if (!blockersfile.open(blockersPath)) {
-		warning("Couldn't open blockers file %s.", blockersPath.toString().c_str());
+		warning("Couldn't open blockers file %s.", blockersPath.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -1432,7 +1432,7 @@ bool InGameScene::loadBillboard(const Common::String &name) {
 	if (b)
 		return true;
 	b = new Billboard();
-	if (b->load(name)) {
+	if (b->load(Common::Path(name))) {
 		_billboards.push_back(b);
 		return true;
 	} else {
@@ -1532,7 +1532,7 @@ TeLight *InGameScene::shadowLight() {
 	return _lights[_shadowLightNo].get();
 }
 
-void InGameScene::setImagePathMarker(const Common::String &markerName, const Common::String &path) {
+void InGameScene::setImagePathMarker(const Common::String &markerName, const Common::Path &path) {
 	if (!isMarker(markerName))
 		return;
 

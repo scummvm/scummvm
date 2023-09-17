@@ -78,7 +78,7 @@ public:
 	void setClickPassThrough(bool val) {
 		_clickPassThrough = val;
 	}
-	void setValidationSound(const Common::String &val) {
+	void setValidationSound(const Common::Path &val) {
 		_validationSound = val;
 	}
 	void setValidationSoundVolume(float val) {
@@ -98,7 +98,7 @@ public:
 	void setIgnoreMouseEvents(bool val) { _ignoreMouseEvents = val; }
 
 	// From TeSpriteButton, a direct way to load the images.
-	void load(const Common::String &upImg, const Common::String &downImg, const Common::String &overImg);
+	void load(const Common::Path &upImg, const Common::Path &downImg, const Common::Path &overImg);
 
 private:
 	static bool _mousePositionChangedCatched;
@@ -111,7 +111,7 @@ private:
 
 	bool _clickPassThrough;
 	State _currentState;
-	Common::String _validationSound;
+	Common::Path _validationSound;
 	float _validationSoundVolume;
 
 	Common::Array<uint> _intArr;

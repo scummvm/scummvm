@@ -33,7 +33,7 @@ class Confirm {
 public:
 	Confirm();
 
-	void enter(const Common::String &guiPath, const Common::String &y);
+	void enter(const Common::Path &guiPath, const Common::String &y);
 	void leave();
 
 	bool onButtonNo();
