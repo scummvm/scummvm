@@ -882,8 +882,10 @@ Script::~Script() {
 }
 
 bool Script::init() {
-	Std::string dir, path;
-	config->value("config/datadir", dir, "");
+	Std::string tmp;
+	Common::Path dir, path;
+	config->value("config/datadir", tmp, "");
+	dir = Common::Path(tmp);
 	build_path(dir, "scripts", path);
 	dir = path;
 
@@ -902,7 +904,7 @@ bool Script::init() {
 
 	if (run_script(init_str.c_str()) == false) {
 		Std::string errorStr = "Loading ";
-		errorStr.append(path);
+		errorStr.append(path.toString());
 		ConsoleAddError(errorStr);
 		return false;
 	}
@@ -1389,19 +1391,20 @@ ScriptThread *Script::call_function_in_thread(const char *function_name) {
 }
 
 bool Script::run_lua_file(const char *filename) {
-	Std::string dir, path;
-	Script::get_script()->get_config()->value("config/datadir", dir, "");
+	Std::string tmp;
+	Script::get_script()->get_config()->value("config/datadir", tmp, "");
 
+	Common::Path dir(tmp), path;
 	build_path(dir, "scripts", path);
 	dir = path;
 	build_path(dir, filename, path);
 
-	if (luaL_loadfile(L, path.c_str()) != 0) {
-		DEBUG(0, LEVEL_ERROR, "loading script file %s", path.c_str());
+	if (luaL_loadfile(L, path.toString(Common::Path::kNativeSeparator).c_str()) != 0) {
+		DEBUG(0, LEVEL_ERROR, "loading script file %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
-	return call_function(path.c_str(), 0, 0);
+	return call_function(path.toString(Common::Path::kNativeSeparator).c_str(), 0, 0);
 }
 
 bool Script::call_moonstone_set_loc(uint8 phase, MapCoord location) {
@@ -2351,16 +2354,18 @@ static int nscript_display_prompt(lua_State *L) {
  */
 static int nscript_load(lua_State *L) {
 	const char *file = luaL_checkstring(L, 1);
-	string dir;
-	string path;
+	string tmp;
+	Common::Path dir;
+	Common::Path path;
 
-	Script::get_script()->get_config()->value("config/datadir", dir, "");
+	Script::get_script()->get_config()->value("config/datadir", tmp, "");
+	dir = Common::Path(tmp);
 
 	build_path(dir, "scripts", path);
 	dir = path;
 	build_path(dir, file, path);
 
-	if (luaL_loadfile(L, path.c_str()) == LUA_ERRFILE) {
+	if (luaL_loadfile(L, path.toString(Common::Path::kNativeSeparator).c_str()) == LUA_ERRFILE) {
 		lua_pop(L, 1);
 		return 0;
 	}
@@ -3220,19 +3225,19 @@ static int nscript_tileset_export(lua_State *L) {
 		overwriteFile = (bool)lua_toboolean(L, 1);
 	}
 
-	Std::string path;
+	Common::Path path;
 	path = "data";
 	build_path(path, "images", path);
 	build_path(path, "tiles", path);
 	build_path(path, get_game_tag(game->get_game_type()), path);
 
-	if (!directory_exists(path.c_str())) {
+	if (!directory_exists(path)) {
 		mkdir_recursive(path, 0700);
 	}
 
 	build_path(path, "custom_tiles.bmp", path);
 
-	if (!overwriteFile && file_exists(path.c_str())) {
+	if (!overwriteFile && file_exists(path)) {
 		lua_pushboolean(L, false);
 	} else {
 		game->get_tile_manager()->exportTilesetToBmpFile(path, false);
@@ -4595,7 +4600,7 @@ static int nscript_load_text_from_lzc(lua_State *L) {
 	Std::string filename(lua_tostring(L, 1));
 	U6Lib_n lib_n;
 
-	Std::string path;
+	Common::Path path;
 
 	config_get_path(Game::get_game()->get_config(), filename, path);
 

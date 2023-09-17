@@ -2565,8 +2565,8 @@ void MapWindow::set_roof_mode(bool roofs) {
 }
 
 void MapWindow::loadRoofTiles() {
-	const Std::string imagefile = map->getRoofTilesetFilename();
-	roof_tiles = SDL_LoadBMP(imagefile.c_str());
+	const Common::Path imagefile = map->getRoofTilesetFilename();
+	roof_tiles = SDL_LoadBMP(imagefile);
 	if (roof_tiles) {
 		roof_tiles->setTransparentColor(roof_tiles->format.RGBToColor(0, 0x70, 0xfc));
 	}

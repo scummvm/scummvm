@@ -36,7 +36,7 @@ extern uint32 SDL_GetTicks();
 extern int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
 	Graphics::ManagedSurface *dst, Common::Rect *dstrect);
 extern int SDL_FillRect(Graphics::ManagedSurface *surf, const Common::Rect *rect, uint color);
-extern Graphics::ManagedSurface *SDL_LoadBMP(const char *filename);
+extern Graphics::ManagedSurface *SDL_LoadBMP(const Common::Path &filename);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

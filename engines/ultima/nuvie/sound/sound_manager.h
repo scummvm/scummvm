@@ -85,7 +85,7 @@ public:
 	void musicPlay(const char *filename, uint16 song_num = 0);
 
 	void musicStop(); // SB-X
-	Audio::SoundHandle playTownsSound(Std::string filename, uint16 sample_num);
+	Audio::SoundHandle playTownsSound(const Common::Path &filename, uint16 sample_num);
 	bool isSoundPLaying(Audio::SoundHandle handle);
 
 	bool playSfx(uint16 sfx_id, bool async = false);
@@ -129,10 +129,10 @@ public:
 	bool stop_music_on_group_change;
 
 private:
-	bool LoadCustomSongs(string scriptname);
+	bool LoadCustomSongs(const Common::Path &scriptname);
 	bool LoadNativeU6Songs();
-	bool loadSong(Song *song, const char *filename, const char *fileId);
-	bool loadSong(Song *song, const char *filename, const char *fileId, const char *title);
+	bool loadSong(Song *song, const Common::Path &filename, const char *fileId);
+	bool loadSong(Song *song, const Common::Path &filename, const char *fileId, const char *title);
 	bool groupAddSong(const char *group, Song *song);
 
 	//bool LoadObjectSamples(string sound_dir);

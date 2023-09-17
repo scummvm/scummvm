@@ -41,15 +41,15 @@ BMPFont::~BMPFont() {
 		free(font_width_data);
 }
 
-bool BMPFont::init(Std::string bmp_filename, bool dual_fontmap) {
+bool BMPFont::init(const Common::Path &bmp_filename, bool dual_fontmap) {
 	dual_font_mode = dual_fontmap;
 	num_chars = 256;
 
-	Std::string full_filename = bmp_filename;
+	Common::Path full_filename = bmp_filename;
 
-	full_filename += ".bmp";
+	full_filename.appendInPlace(".bmp");
 
-	font_surface = SDL_LoadBMP(full_filename.c_str());
+	font_surface = SDL_LoadBMP(full_filename);
 
 	font_surface->setTransparentColor(font_surface->format.RGBToColor(0, 0x70, 0xfc));
 
@@ -58,7 +58,7 @@ bool BMPFont::init(Std::string bmp_filename, bool dual_fontmap) {
 
 	//read font width data. For variable width fonts.
 	full_filename = bmp_filename;
-	full_filename += ".dat";
+	full_filename.appendInPlace(".dat");
 
 	NuvieIOFileRead font_width_data_file;
 	if (font_width_data_file.open(full_filename)) {

@@ -1106,18 +1106,18 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 	sound_manager = sm;
 
 	//FIXME this should be loaded by script.
-	Std::string path;
+	Common::Path path;
 
 
 	font = new WOUFont();
 
 	if (game_type == NUVIE_GAME_U6) {
 		config_get_path(config, "u6.set", path);
-		font->init(path.c_str());
+		font->init(path);
 	}
 	//FIXME load other fonts for MD / SE if needed here.
 	if (game_type == NUVIE_GAME_SE) {
-		Std::string filePath;
+		Common::Path filePath;
 		U6Lib_n lib_file;
 
 		config_get_path(config, "savage.fnt", filePath);
@@ -1129,7 +1129,7 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 	}
 
 	if (game_type == NUVIE_GAME_MD) {
-		Std::string filePath;
+		Common::Path filePath;
 		U6Lib_n lib_file;
 
 		config_get_path(config, "fonts.lzc", filePath);
@@ -1160,7 +1160,7 @@ bool ScriptCutscene::is_lzc(const char *filename) {
 	return false;
 }
 
-CSImage *ScriptCutscene::load_image_from_lzc(Std::string filename, uint16 idx, uint16 sub_idx) {
+CSImage *ScriptCutscene::load_image_from_lzc(const Common::Path &filename, uint16 idx, uint16 sub_idx) {
 	CSImage *image = nullptr;
 	U6Lib_n lib_n;
 	unsigned char *buf = nullptr;
@@ -1195,7 +1195,7 @@ CSImage *ScriptCutscene::load_image_from_lzc(Std::string filename, uint16 idx, u
 
 CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) {
 	U6Lib_n lib_n;
-	Std::string path;
+	Common::Path path;
 	CSImage *image = nullptr;
 
 	config_get_path(config, filename, path);
@@ -1210,7 +1210,7 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 		U6Lzw lzw;
 
 		uint32 decomp_size;
-		unsigned char *buf = lzw.decompress_file(path.c_str(), decomp_size);
+		unsigned char *buf = lzw.decompress_file(path, decomp_size);
 		NuvieIOBuffer io;
 		io.open(buf, decomp_size, false);
 		{
@@ -1236,7 +1236,7 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 }
 
 Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char *filename) {
-	Std::string path;
+	Common::Path path;
 	CSImage *image = nullptr;
 
 	config_get_path(config, filename, path);
@@ -1272,7 +1272,7 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 		}
 	} else {
 		uint32 decomp_size;
-		buf = lzw.decompress_file(path.c_str(), decomp_size);
+		buf = lzw.decompress_file(path, decomp_size);
 		if (!buf) // failed to open or decompress
 			return v;
 		NuvieIOBuffer io;
@@ -1323,7 +1323,7 @@ void load_images_from_lib(Std::vector<CSImage *> *images, U6Lib_n *lib, uint32 i
 }
 
 Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filename) {
-	Std::string path;
+	Common::Path path;
 	U6Lib_n lib_n;
 	Std::vector<CSMidGameData> v;
 	nuvie_game_t game_type = Game::get_game()->get_game_type();
@@ -1360,7 +1360,7 @@ Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filenam
 }
 
 Std::vector<Std::string> ScriptCutscene::load_text(const char *filename, uint8 idx) {
-	Std::string path;
+	Common::Path path;
 	U6Lib_n lib_n;
 	Std::vector<string> v;
 	unsigned char *buf = nullptr;
@@ -1452,12 +1452,12 @@ void ScriptCutscene::load_palette(const char *filename, int idx) {
 	NuvieIOFileRead file;
 	uint8 buf[0x240 + 1];
 	uint8 unpacked_palette[0x300];
-	Std::string path;
+	Common::Path path;
 
 	config_get_path(config, filename, path);
 
 
-	if (file.open(path.c_str()) == false) {
+	if (file.open(path) == false) {
 		DEBUG(0, LEVEL_ERROR, "loading palette.\n");
 		return;
 	}

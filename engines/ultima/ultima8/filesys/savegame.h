@@ -53,7 +53,7 @@ public:
 	/**
 	 * Get an entry/section within the save
 	 */
-	Common::SeekableReadStream *getDataSource(const Std::string &name);
+	Common::SeekableReadStream *getDataSource(const Common::Path &name);
 };
 
 class SavegameWriter {

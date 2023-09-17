@@ -47,15 +47,15 @@ GUI_Dialog::~GUI_Dialog() {
 
 void GUI_Dialog::loadBorderImages() {
 	char filename[15]; // BorderU6_x.bmp\0
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
 
 	for (int i = 0; i < 8; i++) {
 		Common::sprintf_s(filename, "Border%s_%d.bmp", "U6", i + 1);
 		build_path(datadir, filename, imagefile);
-		border[i] = SDL_LoadBMP(imagefile.c_str());
+		border[i] = SDL_LoadBMP(imagefile);
 		if (border[i] == nullptr) {
-			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.c_str());
+			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.toString().c_str());
 		}
 	}
 }

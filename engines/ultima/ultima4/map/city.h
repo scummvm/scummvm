@@ -75,7 +75,7 @@ public:
 	Common::String _name;
 	Common::String _type;
 	PersonList _persons;
-	Common::String _tlkFname;
+	Common::Path _tlkFname;
 	PersonRoleList _personRoles;
 	Std::vector<Dialogue *> _extraDialogues;
 };

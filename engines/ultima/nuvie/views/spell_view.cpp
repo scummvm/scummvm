@@ -66,7 +66,7 @@ bool SpellView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y,
 	View::init(x, y, f, p, tm, om);
 
 	SetRect(area.left, area.top, NEWMAGIC_BMP_W, NEWMAGIC_BMP_H + 16);
-	string filename;
+	Common::Path filename;
 
 	config_get_path(config, "newmagic.bmp", filename);
 	background = new U6Bmp();

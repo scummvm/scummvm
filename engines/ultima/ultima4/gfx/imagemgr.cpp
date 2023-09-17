@@ -508,7 +508,7 @@ Common::String ImageMgr::guessFileType(const Common::String &filename) {
 }
 
 bool ImageMgr::imageExists(ImageInfo *info) {
-	if (info->_filename == "") //If it is an abstract image like "screen"
+	if (info->_filename.empty()) //If it is an abstract image like "screen"
 		return true;
 	Common::File *file = getImageFile(info);
 	if (file) {
@@ -528,11 +528,11 @@ Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 	Common::File *file = new Common::File();
 	if (!info->_xu4Graphic) {
 		// It's a file in the game folder
-		if (file->open(filename))
+		if (file->open(Common::Path(filename)))
 			return file;
 	}
 
-	if (file->open("data/graphics/" + filename))
+	if (file->open(Common::Path("data/graphics/").joinInPlace(filename)))
 		return file;
 
 	delete file;

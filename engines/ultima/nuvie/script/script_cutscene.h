@@ -201,7 +201,7 @@ public:
 
 private:
 	bool is_lzc(const char *filename);
-	CSImage *load_image_from_lzc(Std::string filename, uint16 idx, uint16 sub_idx);
+	CSImage *load_image_from_lzc(const Common::Path &filename, uint16 idx, uint16 sub_idx);
 	void display_wrapped_text(CSSprite *s);
 	int display_wrapped_text_line(Std::string str, uint8 text_color, int x, int y, uint8 align_val);
 };

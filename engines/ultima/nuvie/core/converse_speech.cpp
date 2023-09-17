@@ -64,7 +64,7 @@ void ConverseSpeech::update() {
 }
 
 void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
-	Std::string sample_file;
+	Common::Path sample_file;
 	char filename[20]; // "/speech/charxxx.sam"
 	TownsSound sound;
 	SoundManager *sm = Game::get_game()->get_sound_manager();
@@ -86,7 +86,7 @@ void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
 
 	config->pathFromValue("config/townsdir", filename, sample_file);
 
-	DEBUG(0, LEVEL_DEBUGGING, "Loading Speech Sample %s:%d\n", sample_file.c_str(), sample_num);
+	DEBUG(0, LEVEL_DEBUGGING, "Loading Speech Sample %s:%d\n", sample_file.toString().c_str(), sample_num);
 
 	sound.filename = sample_file;
 	sound.sample_num = sample_num;
@@ -99,7 +99,7 @@ void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
 	return;
 }
 
-NuvieIOBuffer *ConverseSpeech::load_speech(Std::string filename, uint16 sample_num) {
+NuvieIOBuffer *ConverseSpeech::load_speech(const Common::Path &filename, uint16 sample_num) {
 	unsigned char *compressed_data, *raw_audio, *wav_data;
 	sint16 *converted_audio;
 	uint32 decomp_size;

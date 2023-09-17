@@ -105,7 +105,7 @@ bool PortraitView::init(uint16 x, uint16 y, Font *f, Party *p, Player *player, T
 void PortraitView::load_background(const char *f, uint8 lib_offset) {
 	U6Lib_n file;
 	bg_data = new U6Shape();
-	Std::string path;
+	Common::Path path;
 	config_get_path(config, f, path);
 	file.open(path, 4, gametype);
 	unsigned char *temp_buf = file.get_item(lib_offset);

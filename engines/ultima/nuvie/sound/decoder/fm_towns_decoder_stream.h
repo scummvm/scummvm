@@ -20,7 +20,6 @@
  */
 
 #include "ultima/nuvie/sound/decoder/random_collection_audio_stream.h"
-#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -28,8 +27,6 @@ namespace Nuvie {
 class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
-
-using Std::string;
 
 class FMtownsDecoderStream : public Audio::RewindableAudioStream {
 public:
@@ -39,7 +36,7 @@ public:
 	}
 
 	FMtownsDecoderStream(unsigned char *buf, uint32 len);
-	FMtownsDecoderStream(Std::string filename, uint16 sample_num, bool isCompressed = true);
+	FMtownsDecoderStream(const Common::Path &filename, uint16 sample_num, bool isCompressed = true);
 	~FMtownsDecoderStream() override;
 
 	uint32 getLengthInMsec();

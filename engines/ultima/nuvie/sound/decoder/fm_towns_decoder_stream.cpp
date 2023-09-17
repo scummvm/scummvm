@@ -35,7 +35,7 @@ FMtownsDecoderStream::FMtownsDecoderStream(unsigned char *buf, uint32 len) {
 	should_free_raw_data = false;
 }
 
-FMtownsDecoderStream::FMtownsDecoderStream(Std::string filename, uint16 sample_num, bool isCompressed) {
+FMtownsDecoderStream::FMtownsDecoderStream(const Common::Path &filename, uint16 sample_num, bool isCompressed) {
 	unsigned char *item_data;
 	uint32 decomp_size;
 	U6Lib_n sam_file;

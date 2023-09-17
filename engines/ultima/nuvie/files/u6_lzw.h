@@ -84,7 +84,7 @@ public:
 
 	unsigned char *decompress_buffer(unsigned char *source, uint32 source_length, uint32 &destination_length);
 	bool decompress_buffer(unsigned char *source, uint32 source_length, unsigned char *destination, uint32 destination_length);
-	unsigned char *decompress_file(Std::string filename, uint32 &destination_length);
+	unsigned char *decompress_file(const Common::Path &filename, uint32 &destination_length);
 	unsigned char *compress_buffer(unsigned char *src, uint32 src_len,
 	                               uint32 &dest_len);
 	const char *strerror() const {

@@ -108,7 +108,7 @@ TileManager::~TileManager() {
 }
 
 bool TileManager::loadTiles() {
-	Std::string maptiles_path, masktype_path, path;
+	Common::Path maptiles_path, masktype_path, path;
 	NuvieIOFileRead objtiles_vga;
 	NuvieIOFileRead tileindx_vga;
 	NuvieIOFileRead file;
@@ -138,20 +138,20 @@ bool TileManager::loadTiles() {
 	case NUVIE_GAME_U6 :
 		tile_data = lzw->decompress_file(maptiles_path, maptiles_size);
 		if (tile_data == nullptr) {
-			ConsoleAddError("Decompressing " + maptiles_path);
+			ConsoleAddError("Decompressing " + maptiles_path.toString());
 			return false;
 		}
 
 		masktype = lzw->decompress_file(masktype_path, masktype_size);
 		if (masktype == nullptr) {
-			ConsoleAddError("Decompressing " + masktype_path);
+			ConsoleAddError("Decompressing " + masktype_path.toString());
 			return false;
 		}
 		break;
 	case NUVIE_GAME_MD :
 	case NUVIE_GAME_SE :
 		if (lib_file.open(maptiles_path, 4, game_type) == false) {
-			ConsoleAddError("Opening " + maptiles_path);
+			ConsoleAddError("Opening " + maptiles_path.toString());
 			return false;
 		}
 		maptiles_size = lib_file.get_item_size(0);
@@ -160,7 +160,7 @@ bool TileManager::loadTiles() {
 		lib_file.close();
 
 		if (lib_file.open(masktype_path, 4, game_type) == false) {
-			ConsoleAddError("Opening " + masktype_path);
+			ConsoleAddError("Opening " + masktype_path.toString());
 			return false;
 		}
 		//masktype_size = lib_file.get_item_size(0);
@@ -182,7 +182,7 @@ bool TileManager::loadTiles() {
 
 	config_get_path(config, "objtiles.vga", path);
 	if (objtiles_vga.open(path) == false) {
-		ConsoleAddError("Opening " + path);
+		ConsoleAddError("Opening " + path.toString());
 		return false;
 	}
 
@@ -195,7 +195,7 @@ bool TileManager::loadTiles() {
 	config_get_path(config, "tileindx.vga", path);
 
 	if (tileindx_vga.open(path) == false) {
-		ConsoleAddError("Opening " + path);
+		ConsoleAddError("Opening " + path.toString());
 		return false;
 	}
 
@@ -392,7 +392,7 @@ void TileManager::update() {
 
 
 bool TileManager::loadTileFlag() {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead file;
 	uint16 i;
 
@@ -454,7 +454,7 @@ bool TileManager::loadTileFlag() {
 }
 
 bool TileManager::loadAnimData() {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead file;
 	int gameType;
 	config->value("config/GameType", gameType);
@@ -546,7 +546,7 @@ void TileManager::decodePixelBlockTile(const unsigned char *tile_data, uint16 ti
 
 
 bool TileManager::loadAnimMask() {
-	Std::string filename;
+	Common::Path filename;
 	U6Lzw lzw;
 	uint16 i;
 	unsigned char *animmask;
@@ -791,7 +791,7 @@ const Tile *TileManager::get_gump_cursor_tile() {
 	return &gump_cursor;
 }
 
-Tile *TileManager::loadCustomTiles(const Std::string filename, bool overwrite_tiles, bool copy_tileflags, uint16 tile_num_start_offset) {
+Tile *TileManager::loadCustomTiles(const Common::Path &filename, bool overwrite_tiles, bool copy_tileflags, uint16 tile_num_start_offset) {
 	NuvieBmpFile bmp;
 
 	if (bmp.load(filename) == false) {
@@ -891,7 +891,7 @@ void TileManager::freeCustomTiles() {
 	}
 }
 
-void TileManager::exportTilesetToBmpFile(Std::string filename, bool fixupU6Shoreline) {
+void TileManager::exportTilesetToBmpFile(const Common::Path &filename, bool fixupU6Shoreline) {
 	NuvieBmpFile bmp;
 
 	unsigned char pal[256 * 4];

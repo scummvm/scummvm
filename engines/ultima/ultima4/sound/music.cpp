@@ -124,7 +124,7 @@ void Music::playMusic(const Common::String &filename) {
 
 bool Music::startMusic(const Common::String &filename) {
 	Common::File musicFile;
-	if (!musicFile.open(Common::String::format("data/mid/%s", filename.c_str())))
+	if (!musicFile.open(Common::Path(Common::String::format("data/mid/%s", filename.c_str()))))
 		// No such file exists
 		return false;
 

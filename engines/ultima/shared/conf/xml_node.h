@@ -22,10 +22,11 @@
 #ifndef SHARED_CONF_XML_NODE_H
 #define SHARED_CONF_XML_NODE_H
 
-#include "common/util.h"
-#include "common/str.h"
 #include "common/array.h"
 #include "common/hash-str.h"
+#include "common/path.h"
+#include "common/str.h"
+#include "common/util.h"
 
 namespace Ultima {
 namespace Shared {
@@ -55,7 +56,7 @@ private:
 	/**
 	 * Parses a specified file and returns the root node for it
 	 */
-	static XMLNode *xmlParseFile(XMLTree *tree, const Common::String &fname);
+	static XMLNode *xmlParseFile(XMLTree *tree, const Common::Path &fname);
 
 	static Common::String closeTag(const Common::String &s);
 	static Common::String encodeEntity(const Common::String &s);

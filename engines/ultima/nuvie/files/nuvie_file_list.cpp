@@ -35,7 +35,7 @@ NuvieFileList::NuvieFileList() : sort_mode(NUVIE_SORT_NAME_ASC) {
 NuvieFileList::~NuvieFileList() {
 }
 
-bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode) {
+bool NuvieFileList::open(const Common::Path &directory, const char *search, uint8 s_mode) {
 	Common::FSNode dir(directory);
 	Common::FSList list;
 
@@ -43,12 +43,12 @@ bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode
 	sort_mode = s_mode;
 
 	if (!dir.isDirectory()) {
-		ConsoleAddWarning(Std::string("Failed to open ") + directory);
+		ConsoleAddWarning(Std::string("Failed to open ") + directory.toString());
 		return false;
 	}
 
 	if (!dir.getChildren(list, Common::FSNode::kListFilesOnly)) {
-		ConsoleAddWarning(Std::string("Failed to get children of ") + directory);
+		ConsoleAddWarning(Std::string("Failed to get children of ") + directory.toString());
 		return false;
 	};
 	for (const Common::FSNode &node : list)
@@ -63,7 +63,7 @@ bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode
 bool NuvieFileList::add_filename(const Common::FSNode &file) {
 	NuvieFileDesc filedesc;
 	filedesc.m_time = 0;
-	filedesc.filename.assign(file.getName());
+	filedesc.filename.assign(file.getFileName());
 
 	file_list.push_front(filedesc);
 

@@ -306,7 +306,7 @@ public:
 	uint16 get_game_y_offset() const {
 		return game_y_offset;
 	}
-	Std::string get_data_file_path(Std::string datafile);
+	Common::Path get_data_file_path(const Common::Path &datafile);
 
 	/* Return instances of Game classes */
 	static Game *get_game()          {

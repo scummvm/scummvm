@@ -41,7 +41,7 @@ public:
 
 
 
-	bool load(const Std::string &filename) override;
+	bool load(const Common::Path &filename) override;
 	bool update() override;
 	void rewind(int subsong) override;
 	float getrefresh() override;

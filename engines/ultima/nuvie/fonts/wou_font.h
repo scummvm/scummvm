@@ -43,7 +43,7 @@ public:
 	WOUFont();
 	~WOUFont() override;
 
-	bool init(const char *filename);
+	bool init(const Common::Path &filename);
 	bool initWithBuffer(unsigned char *buffer, uint32 buffer_len);
 
 

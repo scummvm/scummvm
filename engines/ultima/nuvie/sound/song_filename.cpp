@@ -32,15 +32,15 @@ namespace Nuvie {
 SongFilename::~SongFilename() {
 }
 
-bool SongFilename::Init(const char *path, const char *fileId) {
+bool SongFilename::Init(const Common::Path &path, const char *fileId) {
 	return Init(path, fileId, 0);
 }
 
-bool SongFilename::Init(const char *filename, const char *fileId, uint16 song_num) {
-	if (filename == nullptr)
+bool SongFilename::Init(const Common::Path &filename, const char *fileId, uint16 song_num) {
+	if (filename.empty())
 		return false;
 
-	m_Filename = filename; // SB-X
+	m_Filename = filename.toString(); // SB-X
 	m_FileId = fileId;
 
 	return true;

@@ -32,7 +32,7 @@ namespace Ultima {
 namespace Nuvie {
 
 CustomSfxManager::CustomSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
-	Std::string cfg_filename;
+	Common::Path cfg_filename;
 
 	sfx_map = new Common::HashMap<uint16, uint16>();
 
@@ -48,7 +48,7 @@ CustomSfxManager::~CustomSfxManager() {
 }
 
 
-bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Common::HashMap<uint16, uint16> *m) {
+bool CustomSfxManager::loadSfxMapFile(const Common::Path &cfg_filename, Common::HashMap<uint16, uint16> *m) {
 	char seps[] = ";\r\n";
 	char *token1;
 	char *token2;
@@ -56,7 +56,7 @@ bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Common::HashMap<
 	char *sz;
 
 	if (niof.open(cfg_filename) == false) {
-		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", cfg_filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", cfg_filename.toString().c_str());
 		return false;
 	}
 
@@ -98,7 +98,7 @@ bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *hand
 void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume) {
 	Audio::AudioStream *stream = nullptr;
 	Audio::SoundHandle handle;
-	Std::string filename;
+	Common::Path filename;
 	char wavefile[10]; // "nnnnn.wav\0"
 
 	Common::sprintf_s(wavefile, "%d.wav", sample_num);
@@ -107,7 +107,7 @@ void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *lo
 
 	Common::File *readStream = new Common::File();
 	if (!readStream->open(filename)) {
-		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", filename.toString().c_str());
 		delete readStream;
 		return;
 	}

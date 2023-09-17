@@ -69,7 +69,7 @@ public:
 		unload_all();
 	}
 	bool init(const Configuration *c, Screen *s, nuvie_game_t game_type);
-	uint32 load_all(Std::string filename, nuvie_game_t game_type);
+	uint32 load_all(const Common::Path &filename, nuvie_game_t game_type);
 	void unload_all();
 	bool set_pointer(uint8 ptr_num);
 

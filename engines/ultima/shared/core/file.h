@@ -36,7 +36,7 @@ private:
 	int32 _filesize;
 public:
 	File() : Common::File(), _filesize(-1) {}
-	File(const Common::String &name);
+	File(const Common::Path &name);
 
 	/**
 	 * Open the file with the given filename, by searching SearchMan.

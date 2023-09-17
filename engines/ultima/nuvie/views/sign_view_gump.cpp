@@ -36,9 +36,9 @@ static const int SIGN_BG_H = 101;
 SignViewGump::SignViewGump(const Configuration *cfg) : DraggableView(cfg), sign_text(nullptr) {
 	font = new BMPFont();
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -71,9 +71,9 @@ bool SignViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *
 	View::init(x_off, y_off, f, p, tm, om);
 	SetRect(area.left, area.top, SIGN_BG_W, SIGN_BG_H);
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -83,7 +83,7 @@ bool SignViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *
 	datadir = path;
 
 	build_path(datadir, "sign_bg.bmp", imagefile);
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	set_bg_color_key(0, 0x70, 0xfc);
 

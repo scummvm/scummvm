@@ -37,10 +37,10 @@ public:
 
 	SongAdPlug(Audio::Mixer *m, CEmuopl *o);
 	~SongAdPlug() override;
-	bool Init(const char *filename, const char *fileId) override {
-		return Init(filename, fileId, 0);
+	bool Init(const Common::Path &path, const char *fileId) override {
+		return Init(path, fileId, 0);
 	}
-	bool Init(const char *filename, const char *fileId, uint16 song_num) override;
+	bool Init(const Common::Path &path, const char *fileId, uint16 song_num) override;
 	bool Play(bool looping = false) override;
 	bool Stop() override;
 	bool SetVolume(uint8 volume) override;

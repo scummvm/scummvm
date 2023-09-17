@@ -40,7 +40,7 @@ MDSkyStripWidget::~MDSkyStripWidget() {
 
 
 void MDSkyStripWidget::init(sint16 x, sint16 y) {
-	Std::string filename;
+	Common::Path filename;
 
 	GUI_Widget::Init(nullptr, x, y, 112, 11);
 	config_get_path(config, "mdscreen.lzc", filename);

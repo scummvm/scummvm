@@ -97,7 +97,7 @@ public:
 	void value(const Std::string &key, int &ret, int defaultvalue = 0) const;
 	void value(const Std::string &key, bool &ret, bool defaultvalue = false) const;
 
-	void pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path) const;
+	void pathFromValue(const Std::string &key, const Std::string &file, Common::Path &full_path) const;
 
 	// set value
 	bool set(const Std::string &key, const Std::string &value);

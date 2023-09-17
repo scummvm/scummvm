@@ -45,7 +45,7 @@ Dither::~Dither() {
 }
 
 bool Dither::load_data() {
-	Std::string path;
+	Common::Path path;
 	NuvieIOFileRead file;
 
 	config_get_path(config, "dither", path);

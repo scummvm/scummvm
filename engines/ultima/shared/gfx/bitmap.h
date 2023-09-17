@@ -35,7 +35,7 @@ public:
 	/**
 	 * Loads an Ultima 6 bitmap
 	 */
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 
 	/**
 	 * Flips a bitmap horizontally

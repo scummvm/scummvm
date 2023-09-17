@@ -109,7 +109,7 @@ IntroBinData::~IntroBinData() {
 }
 
 void IntroBinData::openFile(Shared::File &f, const Common::String &name) {
-	f.open(Common::String::format("data/intro/%s.dat", name.c_str()));
+	f.open(Common::Path(Common::String::format("data/intro/%s.dat", name.c_str())));
 }
 
 bool IntroBinData::load() {

@@ -55,9 +55,9 @@ bool ContainerViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, u
 
 	//actor = p->get_actor(p->get_leader()); don't have party leader as default, get owner of container obj or leave nullptr (moved to init_container_type)
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -75,7 +75,7 @@ bool ContainerViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, u
 	return true;
 }
 
-void ContainerViewGump::init_container_type(Std::string datadir, Obj *obj_type) {
+void ContainerViewGump::init_container_type(const Common::Path &datadir, Obj *obj_type) {
 
 
 	if (obj_type != nullptr) {
@@ -105,24 +105,23 @@ void ContainerViewGump::init_container_type(Std::string datadir, Obj *obj_type) 
 	return init_backpack(datadir, obj_type ? !obj_type->is_in_inventory() : true);
 }
 
-void ContainerViewGump::init_backpack(Std::string datadir, bool extend_area_w) {
-	Std::string imagefile, path;
+void ContainerViewGump::init_backpack(const Common::Path &datadir, bool extend_area_w) {
+	Common::Path imagefile, path;
 	uint8 check_y = 27;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
 	build_path(datadir, "container", path);
-	datadir = path;
 
-	up_arrow_button = loadButton(datadir, "cont_up", 83, 35);
-	down_arrow_button = loadButton(datadir, "cont_down", 83, 66);
+	up_arrow_button = loadButton(path, "cont_up", 83, 35);
+	down_arrow_button = loadButton(path, "cont_down", 83, 66);
 
-	build_path(datadir, "backpack_bg.bmp", imagefile);
+	build_path(path, "backpack_bg.bmp", imagefile);
 
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
-	doll_button = loadButton(datadir, "cont_doll", area.left + 18, area.top + bg_image->h);
-	left_arrow_button = loadButton(datadir, "cont_left", area.left + 18 + 11, area.top + bg_image->h);
-	right_arrow_button = loadButton(datadir, "cont_right", area.left + 18 + 22, area.top + bg_image->h);
+	doll_button = loadButton(path, "cont_doll", area.left + 18, area.top + bg_image->h);
+	left_arrow_button = loadButton(path, "cont_left", area.left + 18 + 11, area.top + bg_image->h);
+	right_arrow_button = loadButton(path, "cont_right", area.left + 18 + 22, area.top + bg_image->h);
 
 	SetRect(area.left, area.top, bg_image->w, bg_image->h + 16); //111, 101);
 
@@ -135,20 +134,19 @@ void ContainerViewGump::init_backpack(Std::string datadir, bool extend_area_w) {
 		area.right += 4;
 }
 
-void ContainerViewGump::init_chest(Std::string datadir) {
-	Std::string imagefile, path;
+void ContainerViewGump::init_chest(const Common::Path &datadir) {
+	Common::Path imagefile, path;
 	uint8 check_y = 56;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
 	build_path(datadir, "container", path);
-	datadir = path;
 
-	up_arrow_button = loadButton(datadir, "cont_up", 85, 31);
-	down_arrow_button = loadButton(datadir, "cont_down", 85, 47);
+	up_arrow_button = loadButton(path, "cont_up", 85, 31);
+	down_arrow_button = loadButton(path, "cont_down", 85, 47);
 
-	build_path(datadir, "chest_bg.bmp", imagefile);
+	build_path(path, "chest_bg.bmp", imagefile);
 
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	SetRect(area.left, area.top, bg_image->w, bg_image->h + 16); //111, 101);
 
@@ -159,20 +157,19 @@ void ContainerViewGump::init_chest(Std::string datadir) {
 	AddWidget(container_widget);
 }
 
-void ContainerViewGump::init_crate(Std::string datadir) {
-	Std::string imagefile, path;
+void ContainerViewGump::init_crate(const Common::Path &datadir) {
+	Common::Path imagefile, path;
 	uint8 check_y = 63;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
 	build_path(datadir, "container", path);
-	datadir = path;
 
-	up_arrow_button = loadButton(datadir, "cont_up", 100, 15);
-	down_arrow_button = loadButton(datadir, "cont_down", 100, 46);
+	up_arrow_button = loadButton(path, "cont_up", 100, 15);
+	down_arrow_button = loadButton(path, "cont_down", 100, 46);
 
-	build_path(datadir, "crate_bg.bmp", imagefile);
+	build_path(path, "crate_bg.bmp", imagefile);
 
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	SetRect(area.left, area.top, bg_image->w, bg_image->h);
 
@@ -183,20 +180,19 @@ void ContainerViewGump::init_crate(Std::string datadir) {
 	AddWidget(container_widget);
 }
 
-void ContainerViewGump::init_barrel(Std::string datadir) {
-	Std::string imagefile, path;
+void ContainerViewGump::init_barrel(const Common::Path &datadir) {
+	Common::Path imagefile, path;
 	uint8 check_y = 55;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
 	build_path(datadir, "container", path);
-	datadir = path;
 
-	up_arrow_button = loadButton(datadir, "cont_up", 102, 28);
-	down_arrow_button = loadButton(datadir, "cont_down", 102, 42);
+	up_arrow_button = loadButton(path, "cont_up", 102, 28);
+	down_arrow_button = loadButton(path, "cont_down", 102, 42);
 
-	build_path(datadir, "barrel_bg.bmp", imagefile);
+	build_path(path, "barrel_bg.bmp", imagefile);
 
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	SetRect(area.left, area.top, bg_image->w, bg_image->h);
 
@@ -207,20 +203,19 @@ void ContainerViewGump::init_barrel(Std::string datadir) {
 	AddWidget(container_widget);
 }
 
-void ContainerViewGump::init_corpse(Std::string datadir, Std::string bg_filename) {
-	Std::string imagefile, path;
+void ContainerViewGump::init_corpse(const Common::Path &datadir, Std::string bg_filename) {
+	Common::Path imagefile, path;
 	uint8 check_y = 25;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
 	build_path(datadir, "container", path);
-	datadir = path;
 
 	up_arrow_button = loadButton(datadir, "cont_up", 67, 28);
 	down_arrow_button = loadButton(datadir, "cont_down", 67, 78);
 
-	build_path(datadir, bg_filename, imagefile);
+	build_path(path, bg_filename, imagefile);
 
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	SetRect(area.left, area.top, bg_image->w, bg_image->h);
 

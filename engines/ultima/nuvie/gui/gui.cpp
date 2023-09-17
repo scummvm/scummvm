@@ -397,12 +397,12 @@ void GUI::lock_input(GUI_Widget *widget) {
 	}
 }
 
-Std::string GUI::get_data_dir() const {
+Common::Path GUI::get_data_dir() const {
 	Std::string datadir;
 
 	config->value("config/datadir", datadir, "");
 
-	return datadir;
+	return Common::Path(datadir);
 }
 
 } // End of namespace Nuvie

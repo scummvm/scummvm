@@ -72,7 +72,7 @@ TownsSfxManager::~TownsSfxManager() {
 }
 
 void TownsSfxManager::loadSound1Dat() {
-	Std::string filename;
+	Common::Path filename;
 	U6Lzw decompressor;
 	U6Lib_n lib;
 	NuvieIOBuffer iobuf;
@@ -82,7 +82,7 @@ void TownsSfxManager::loadSound1Dat() {
 	unsigned char *slib32_data = decompressor.decompress_file(filename, slib32_len);
 
 	if (slib32_len == 0) {
-		error("Failed to load FM-Towns sound file %s", filename.c_str());
+		error("Failed to load FM-Towns sound file %s", filename.toString().c_str());
 		return;
 	}
 
@@ -90,7 +90,7 @@ void TownsSfxManager::loadSound1Dat() {
 	free(slib32_data);
 
 	if (!lib.open(&iobuf, 4)) {
-		error("Failed to load FM-Towns sound file %s", filename.c_str());
+		error("Failed to load FM-Towns sound file %s", filename.toString().c_str());
 		return;
 	}
 

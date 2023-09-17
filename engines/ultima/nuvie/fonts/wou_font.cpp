@@ -42,7 +42,7 @@ WOUFont::~WOUFont() {
 		free(char_buf);
 }
 
-bool WOUFont::init(const char *filename) {
+bool WOUFont::init(const Common::Path &filename) {
 
 	U6Lzw lzw;
 	uint32 decomp_size;

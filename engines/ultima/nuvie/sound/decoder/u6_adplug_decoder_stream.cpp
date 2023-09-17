@@ -27,17 +27,17 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6AdPlugDecoderStream::U6AdPlugDecoderStream(CEmuopl *o, Std::string filename, uint16 song_num) {
+U6AdPlugDecoderStream::U6AdPlugDecoderStream(CEmuopl *o, const Common::Path &filename, uint16 song_num) {
 	is_midi_track = false;
 	opl = o;
 	samples_left = 0;
-	if (has_file_extension(filename.c_str(), ".lzc")) {
+	if (has_file_extension(filename.baseName().c_str(), ".lzc")) {
 		player = new CmidPlayer(opl);
 		((CmidPlayer *)player)->load(filename, song_num);
 		is_midi_track = true;
 	} else {
 		player = new Cu6mPlayer(opl);
-		player->load(filename.c_str());
+		player->load(filename);
 	}
 	player_refresh_count = (int)(opl->getRate() / player->getrefresh());
 

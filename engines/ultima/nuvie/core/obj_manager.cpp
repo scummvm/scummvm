@@ -111,7 +111,7 @@ ObjManager::~ObjManager() {
 }
 
 bool ObjManager::load_basetile() {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead basetile;
 
 	config_get_path(config, "basetile", filename);
@@ -128,7 +128,7 @@ bool ObjManager::load_basetile() {
 }
 
 bool ObjManager::load_weight_table() {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead tileflag;
 
 	config_get_path(config, "tileflag", filename);

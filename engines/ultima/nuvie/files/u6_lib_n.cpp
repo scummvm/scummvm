@@ -38,7 +38,7 @@ U6Lib_n::~U6Lib_n(void) {
 }
 
 // load u6lib from `filename'
-bool U6Lib_n::open(const Std::string &filename, uint8 size, uint8 type) {
+bool U6Lib_n::open(const Common::Path &filename, uint8 size, uint8 type) {
 	NuvieIOFileRead *file;
 
 	file = new NuvieIOFileRead();
@@ -89,10 +89,10 @@ void U6Lib_n::close() {
 
 /* Open a ^new^ file for writing, with lib_size and type.
  */
-bool U6Lib_n::create(const Std::string &filename, uint8 size, uint8 type) {
+bool U6Lib_n::create(const Common::Path &filename, uint8 size, uint8 type) {
 	NuvieIOFileWrite *file = new NuvieIOFileWrite();
 	if (!file->open(filename)) {
-		DEBUG(0, LEVEL_ERROR, "U6Lib: Error creating %s\n", filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "U6Lib: Error creating %s\n", filename.toString().c_str());
 		delete file;
 		return false;
 	}

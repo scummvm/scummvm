@@ -36,10 +36,10 @@ TMXMap::~TMXMap() {
 
 }
 
-bool TMXMap::exportTmxMapFiles(Std::string dir, nuvie_game_t type) {
+bool TMXMap::exportTmxMapFiles(const Common::Path &dir, nuvie_game_t type) {
 	savedir = dir;
 	savename = get_game_tag(type);
-	Std::string filename;
+	Common::Path filename;
 	build_path(savedir, savename + "_tileset.bmp", filename);
 
 
@@ -59,8 +59,8 @@ void TMXMap::writeRoofTileset(uint8 level) {
 		return;
 	}
 
-	Std::string filename = map->getRoofTilesetFilename();
-	Std::string destFilename;
+	Common::Path filename = map->getRoofTilesetFilename();
+	Common::Path destFilename;
 	build_path(savedir, savename + "_roof_tileset.bmp", destFilename);
 	NuvieIOFileRead read;
 	NuvieIOFileWrite write;
@@ -190,7 +190,7 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	uint16 width = map->get_width(level);
 	mapdata = map->get_map_data(level);
 	Common::String level_string = Common::String::format("%d", level); // 'nn\0'
-	Std::string filename;
+	Common::Path filename;
 	build_path(savedir, savename + "_" + Std::string(level_string.c_str()) + ".tmx", filename);
 
 	tmx.open(filename);

@@ -367,7 +367,7 @@ XMLNode *XMLNode::xmlParse(XMLTree *tree, const Common::String &s, size_t &pos) 
 				// Element is a placeholder for inclusion of a secondary XML file
 				Common::String fname = node->_attributes["href"];
 				delete node;
-				node = xmlParseFile(tree, fname);
+				node = xmlParseFile(tree, Common::Path(fname, '/'));
 			}
 
 			return node;
@@ -436,13 +436,13 @@ void XMLNode::parseNodeText(const Common::String &nodeText) {
 	}
 }
 
-XMLNode *XMLNode::xmlParseFile(XMLTree *tree, const Common::String &fname) {
-	const Common::String rootFile = tree->_filename;
-	Common::String filename = Common::String(rootFile.c_str(), rootFile.findLastOf('/') + 1) + fname;
+XMLNode *XMLNode::xmlParseFile(XMLTree *tree, const Common::Path &fname) {
+	const Common::Path rootFile = tree->_filename;
+	Common::Path filename = rootFile.getParent().join(fname);
 
 	Common::File f;
 	if (!f.open(filename))
-		error("Could not open xml file - %s", filename.c_str());
+		error("Could not open xml file - %s", filename.toString().c_str());
 
 	// Read in the file contents
 	char *buf = new char[f.size() + 1];
@@ -455,7 +455,7 @@ XMLNode *XMLNode::xmlParseFile(XMLTree *tree, const Common::String &fname) {
 	// Parse the sub-xml
 	XMLNode *result = xmlParseDoc(tree, text);
 	if (!result)
-		error("Error passing xml - %s", fname.c_str());
+		error("Error passing xml - %s", fname.toString().c_str());
 
 	return result;
 }

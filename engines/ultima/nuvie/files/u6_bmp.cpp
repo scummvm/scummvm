@@ -38,14 +38,14 @@ U6Bmp::~U6Bmp() {
 }
 
 
-bool U6Bmp::load(Std::string filename) {
+bool U6Bmp::load(const Common::Path &filename) {
 	U6Lzw lzw;
 	uint32 data_size;
 
 	if (data != nullptr)
 		return false;
 
-	if (filename.length() == 0)
+	if (filename.empty())
 		return false;
 
 	data = lzw.decompress_file(filename, data_size);

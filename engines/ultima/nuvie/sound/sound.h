@@ -50,6 +50,7 @@ public:
 		return m_FileId;
 	}
 protected:
+	// TODO: determine if filename should be a Common::Path
 	string m_Filename;
 	string m_Title;
 	string m_FileId;
