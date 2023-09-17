@@ -64,7 +64,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 	_showHotspots = false;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MAPS");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "PICS");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "SOUNDS");
@@ -381,14 +381,14 @@ void KingdomGame::unloadKingArt() {
 }
 
 Common::SeekableReadStream *KingdomGame::loadAResource(int reznum) {
-	Common::String path = Common::String(_rezNames[reznum]);
+	Common::Path path(_rezNames[reznum]);
 	path.toUppercase();
 
-	debug("Loading resource: %i (%s)\n", reznum, path.c_str());
+	debug("Loading resource: %i (%s)\n", reznum, path.toString().c_str());
 
 	Common::File *file = new Common::File();
 	if(!file->open(path)) {
-		warning("Failed to open %s", path.c_str());
+		warning("Failed to open %s", path.toString().c_str());
 		delete file;
 		return nullptr;
 	} else {
@@ -485,7 +485,7 @@ void KingdomGame::playMovie(int movieNum) {
 	readMouse();
 	_mouseButton = 0;
 	_keyActive = false;
-	const Common::String path = Common::String::format("King%.3d.mve", movieNum);
+	const Common::Path path(Common::String::format("King%.3d.mve", movieNum));
 
 	// Check if the file is available. If not the original does the following: _ATimer = 55, display of error with a check of timer, exit
 	// That can be replaced by an error()
