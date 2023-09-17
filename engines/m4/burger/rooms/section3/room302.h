@@ -50,9 +50,10 @@ private:
 	static long _state1;
 	machine *_series1 = nullptr;
 	Series _series2;
+	machine *_series3 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	int _volume = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
