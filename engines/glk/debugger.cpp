@@ -55,9 +55,9 @@ bool Debugger::cmdDumpPic(int argc, const char **argv) {
 		Common::File f;
 		int picNum = strToInt(argv[1]);
 
-		Common::String filename = Common::String::format("pic%d.png", picNum);
+		Common::Path filename(Common::String::format("pic%d.png", picNum));
 		if (!f.exists(filename))
-			filename = Common::String::format("pic%d.jpg", picNum);
+			filename = Common::Path(Common::String::format("pic%d.jpg", picNum));
 
 		if (f.open(filename)) {
 			// png or jpeg file
@@ -74,15 +74,15 @@ bool Debugger::cmdDumpPic(int argc, const char **argv) {
 			} else {
 				debugPrintf("Could not find specified picture\n");
 			}
-		} else if (f.exists(Common::String::format("pic%d.rect", picNum))) {
+		} else if (f.exists(Common::Path(Common::String::format("pic%d.rect", picNum)))) {
 			debugPrintf("Picture is only a placeholder rectangle\n");
-		} else if (f.open(Common::String::format("pic%d.raw", picNum))) {
+		} else if (f.open(Common::Path(Common::String::format("pic%d.raw", picNum)))) {
 			// Raw picture
 #ifdef USE_PNG
 			Common::DumpFile df;
 			RawDecoder rd;
 
-			if (rd.loadStream(f) && df.open(Common::String::format("pic%d.png", picNum))) {
+			if (rd.loadStream(f) && df.open(Common::Path(Common::String::format("pic%d.png", picNum)))) {
 				saveRawPicture(rd, df);
 				debugPrintf("Dumped picture\n");
 			} else {

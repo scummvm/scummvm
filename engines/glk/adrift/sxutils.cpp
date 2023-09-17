@@ -144,7 +144,7 @@ void sx_free(void *pointer) {
 Common::SeekableReadStream *sx_fopen(const sc_char *name, const sc_char *extension, const sc_char *mode) {
 	assert(name && extension && mode);
 
-	Common::String filename = Common::String::format("%s.%s", name, extension);
+	Common::Path filename(Common::String::format("%s.%s", name, extension));
 	Common::File *f = new Common::File();
 
 	if (f->open(filename))

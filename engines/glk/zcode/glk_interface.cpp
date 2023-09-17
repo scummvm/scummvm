@@ -229,7 +229,7 @@ void GlkInterface::initialize() {
 }
 
 void GlkInterface::addSound() {
-	Common::FSNode gameDir(ConfMan.get("path"));
+	Common::FSNode gameDir(ConfMan.getPath("path"));
 	SoundSubfolder::check(gameDir);
 	SoundZip::check(gameDir, _storyId);
 }

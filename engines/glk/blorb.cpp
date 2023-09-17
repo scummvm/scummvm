@@ -26,7 +26,7 @@ namespace Glk {
 
 /*--------------------------------------------------------------------------*/
 
-Blorb::Blorb(const Common::String &filename, InterpreterType interpType) :
+Blorb::Blorb(const Common::Path &filename, InterpreterType interpType) :
 		Common::Archive(), _filename(filename), _interpType(interpType) {
 	if (load() != Common::kNoError)
 		error("Could not parse blorb file");
@@ -39,9 +39,8 @@ Blorb::Blorb(const Common::FSNode &fileNode, InterpreterType interpType) :
 }
 
 bool Blorb::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
-		if (_chunks[idx]._filename.equalsIgnoreCase(name))
+		if (_chunks[idx]._filename.equalsIgnoreCase(path))
 			return true;
 	}
 
@@ -57,19 +56,17 @@ int Blorb::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr Blorb::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		const ChunkEntry &ce = _chunks[idx];
 
-		if (ce._filename.equalsIgnoreCase(name)) {
+		if (ce._filename.equalsIgnoreCase(path)) {
 			Common::File f;
 			if ((!_filename.empty() && !f.open(_filename)) ||
 					(_filename.empty() && !f.open(_fileNode)))
@@ -116,32 +113,33 @@ Common::ErrorCode Blorb::load() {
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		ChunkEntry &ce = _chunks[idx];
 
+		Common::String filename;
 		if (ce._type == ID_Pict) {
-			ce._filename = Common::String::format("pic%u", ce._number);
+			filename = Common::String::format("pic%u", ce._number);
 			if (ce._id == ID_JPEG)
-				ce._filename += ".jpg";
+				filename += ".jpg";
 			else if (ce._id == ID_PNG)
-				ce._filename += ".png";
+				filename += ".png";
 			else if (ce._id == ID_Rect)
-				ce._filename += ".rect";
+				filename += ".rect";
 
 		} else if (ce._type == ID_Snd) {
-			ce._filename = Common::String::format("sound%u", ce._number);
+			filename = Common::String::format("sound%u", ce._number);
 			if (ce._id == ID_MIDI)
-				ce._filename += ".midi";
+				filename += ".midi";
 			else if (ce._id == ID_MP3)
-				ce._filename += ".mp3";
+				filename += ".mp3";
 			else if (ce._id == ID_WAVE)
-				ce._filename += ".wav";
+				filename += ".wav";
 			else if (ce._id == ID_AIFF || ce._id == ID_FORM)
-				ce._filename += ".aiff";
+				filename += ".aiff";
 			else if (ce._id == ID_OGG)
-				ce._filename += ".ogg";
+				filename += ".ogg";
 			else if (ce._id == ID_MOD)
-				ce._filename += ".mod";
+				filename += ".mod";
 
 		} else if (ce._type == ID_Data) {
-			ce._filename = Common::String::format("data%u", ce._number);
+			filename = Common::String::format("data%u", ce._number);
 
 		} else if (ce._type == ID_Exec) {
 			if (
@@ -154,15 +152,15 @@ Common::ErrorCode Blorb::load() {
 				(_interpType == INTERPRETER_ZCODE && ce._id == ID_ZCOD)
 			) {
 				// Game executable
-				ce._filename = "game";
+				filename = "game";
 			} else {
 				char buffer[5];
 				WRITE_BE_UINT32(buffer, ce._id);
 				buffer[4] = '\0';
-				Common::String type(buffer);
-				ce._filename = type;
+				filename = Common::String(buffer);
 			}
 		}
+		ce._filename = Common::Path(filename);
 	}
 
 	// Check through any optional remaining chunks for an adaptive palette list
@@ -251,7 +249,7 @@ bool Blorb::isBlorb(Common::SeekableReadStream &stream, uint32 type) {
 	return false;
 }
 
-bool Blorb::isBlorb(const Common::String &filename, uint32 type) {
+bool Blorb::isBlorb(const Common::Path &filename, uint32 type) {
 	Common::File f;
 	if (!filename.empty() && !f.open(filename))
 		return false;
@@ -265,10 +263,10 @@ bool Blorb::hasBlorbExt(const Common::String &filename) {
 		|| filename.hasSuffixIgnoreCase(".zlb") || filename.hasSuffixIgnoreCase(".a3r");
 }
 
-void Blorb::getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
+void Blorb::getBlorbFilenames(const Common::Path &srcFilename, Common::Array<Common::Path> &filenames,
 		InterpreterType interpType, const Common::String &gameId) {
 	// Strip off the source filename extension
-	Common::String filename = srcFilename;
+	Common::String filename = srcFilename.baseName();
 	if (!filename.contains('.')) {
 		filename += '.';
 	} else {
@@ -278,18 +276,18 @@ void Blorb::getBlorbFilenames(const Common::String &srcFilename, Common::StringA
 
 	// Add in the different possible filenames
 	filenames.clear();
-	filenames.push_back(filename + "blorb");
-	filenames.push_back(filename + "blb");
+	filenames.push_back(srcFilename.getParent().appendComponent(filename + "blorb"));
+	filenames.push_back(srcFilename.getParent().appendComponent(filename + "blb"));
 
 	switch (interpType) {
 	case INTERPRETER_ALAN3:
-		filenames.push_back(filename + "a3r");
+		filenames.push_back(srcFilename.getParent().appendComponent(filename + "a3r"));
 		break;
 	case INTERPRETER_GLULX:
-		filenames.push_back(filename + "gblorb");
+		filenames.push_back(srcFilename.getParent().appendComponent(filename + "gblorb"));
 		break;
 	case INTERPRETER_ZCODE:
-		filenames.push_back(filename + "zblorb");
+		filenames.push_back(srcFilename.getParent().appendComponent(filename + "zblorb"));
 		getInfocomBlorbFilenames(filenames, gameId);
 		break;
 	default:
@@ -297,7 +295,7 @@ void Blorb::getBlorbFilenames(const Common::String &srcFilename, Common::StringA
 	}
 }
 
-void Blorb::getInfocomBlorbFilenames(Common::StringArray &filenames, const Common::String &gameId) {
+void Blorb::getInfocomBlorbFilenames(Common::Array<Common::Path> &filenames, const Common::String &gameId) {
 	if (gameId == "beyondzork")
 		filenames.push_back("beyondzork.blb");
 	else if (gameId == "journey")

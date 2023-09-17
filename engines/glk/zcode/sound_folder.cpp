@@ -39,7 +39,7 @@ SoundSubfolder::SoundSubfolder(const Common::FSNode &folder) : _folder(folder) {
 			Common::String filename = files[idx].getName();
 			if (filename.hasSuffixIgnoreCase(".snd")) {
 				int fileNum = atoi(filename.c_str() + filename.size() - 6);
-				Common::String newName = Common::String::format("sound%d.snd", fileNum);
+				Common::Path newName(Common::String::format("sound%d.snd", fileNum));
 
 				_filenames[newName] = filename;
 			}
@@ -48,13 +48,12 @@ SoundSubfolder::SoundSubfolder(const Common::FSNode &folder) : _folder(folder) {
 }
 
 bool SoundSubfolder::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return _filenames.contains(name);
+	return _filenames.contains(path);
 }
 
 int SoundSubfolder::listMembers(Common::ArchiveMemberList &list) const {
 	int total = 0;
-	for (Common::StringMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
+	for (FileMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
 		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, *this)));
 		++total;
 	}
@@ -63,17 +62,15 @@ int SoundSubfolder::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr SoundSubfolder::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *SoundSubfolder::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	Common::File *f = new Common::File();
-	if (_filenames.contains(name) && f->open(_folder.getChild(_filenames[name])))
+	if (_filenames.contains(path) && f->open(_folder.getChild(_filenames[path])))
 		return f;
 
 	delete f;
@@ -100,10 +97,11 @@ SoundZip::SoundZip(Common::Archive *zip) : _zip(zip) {
 	zip->listMembers(files);
 
 	for (Common::ArchiveMemberList::iterator i = files.begin(); i != files.end(); ++i) {
-		Common::String filename = (*i)->getName();
-		if (filename.hasSuffixIgnoreCase(".snd")) {
-			int fileNum = atoi(filename.c_str() + filename.size() - 6);
-			Common::String newName = Common::String::format("sound%d.snd", fileNum);
+		Common::Path filename = (*i)->getPathInArchive();
+		Common::String basename(filename.baseName());
+		if (basename.hasSuffixIgnoreCase(".snd")) {
+			int fileNum = atoi(basename.c_str() + basename.size() - 6);
+			Common::Path newName(Common::String::format("sound%d.snd", fileNum));
 
 			_filenames[newName] = filename;
 		}
@@ -115,14 +113,13 @@ SoundZip::~SoundZip() {
 }
 
 bool SoundZip::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return _filenames.contains(name);
+	return _filenames.contains(path);
 }
 
 int SoundZip::listMembers(Common::ArchiveMemberList &list) const {
 	int total = 0;
 
-	for (Common::StringMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
+	for (FileMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
 		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, *this)));
 		++total;
 	}
@@ -131,20 +128,18 @@ int SoundZip::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr SoundZip::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 
 }
 
 Common::SeekableReadStream *SoundZip::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!_filenames.contains(name))
+	if (!_filenames.contains(path))
 		return nullptr;
 
-	return _zip->createReadStreamForMember(_filenames[name]);
+	return _zip->createReadStreamForMember(_filenames[path]);
 }
 
 } // End of namespace ZCode

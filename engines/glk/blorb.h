@@ -38,7 +38,7 @@ struct ChunkEntry {
 	uint _id;
 	size_t _offset;
 	size_t _size;
-	Common::String _filename;
+	Common::Path _filename;
 };
 
 enum {
@@ -81,7 +81,7 @@ enum {
  */
 class Blorb : public Common::Archive {
 private:
-	Common::String _filename;
+	Common::Path _filename;
 	Common::FSNode _fileNode;
 	InterpreterType _interpType;
 	Common::Array<ChunkEntry> _chunks;	///< list of chunk descriptors
@@ -94,12 +94,12 @@ private:
 	/**
 	 * Add possible Blorb filenames for Infocom games
 	 */
-	static void getInfocomBlorbFilenames(Common::StringArray &filenames, const Common::String &gameId);
+	static void getInfocomBlorbFilenames(Common::Array<Common::Path> &filenames, const Common::String &gameId);
 public:
 	/**
 	 * Constructor
 	 */
-	Blorb(const Common::String &filename, InterpreterType interpType);
+	Blorb(const Common::Path &filename, InterpreterType interpType);
 
 	/**
 	 * Constructor
@@ -146,7 +146,7 @@ public:
 	/**
 	 * Returns true if a given filename specifies a Blorb file
 	 */
-	static bool isBlorb(const Common::String &filename, uint32 type = 0);
+	static bool isBlorb(const Common::Path &filename, uint32 type = 0);
 
 	/**
 	 * Returns true if a given filename has a Blorb file extension
@@ -156,7 +156,7 @@ public:
 	/**
 	 * Return a list of possible filenames for blorb files
 	 */
-	static void getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
+	static void getBlorbFilenames(const Common::Path &srcFilename, Common::Array<Common::Path> &filenames,
 		InterpreterType interpType, const Common::String &gameId);
 };
 
