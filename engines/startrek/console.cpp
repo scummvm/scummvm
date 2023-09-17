@@ -137,7 +137,7 @@ void Console::dumpFile(Common::String fileName) {
 	delete stream;
 
 	Common::DumpFile out;
-	out.open(fileName);
+	out.open(Common::Path(fileName));
 	out.write(data, size);
 	out.flush();
 	out.close();
