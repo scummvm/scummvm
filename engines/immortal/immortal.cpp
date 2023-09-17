@@ -37,7 +37,7 @@ ImmortalEngine::ImmortalEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_immortal = this;
 
 	// Add the game folder to the search manager path variable
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 
 	// Confirm that the engine was created
