@@ -45,7 +45,7 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 
 	g_engine = this;
 	g_screen = nullptr;
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "back");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cut");

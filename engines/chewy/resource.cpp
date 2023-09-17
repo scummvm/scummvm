@@ -31,24 +31,27 @@
 
 namespace Chewy {
 
-Resource::Resource(Common::String filename) {
+Resource::Resource(const Common::Path &filename) {
 	const uint32 headerGeneric = MKTAG('N', 'G', 'S', '\0');
 	const uint32 headerTxtDec  = MKTAG('T', 'C', 'F', '\0');
 	const uint32 headerTxtEnc  = MKTAG('T', 'C', 'F', '\1');
 	const uint32 headerSprite  = MKTAG('T', 'A', 'F', '\0');
 	const uint32 headerBarrier = MKTAG('G', 'E', 'P', '\0');
 
-	filename.toLowercase();
+
 	_stream.open(filename);
+
+	Common::String basename = filename.baseName();
+	basename.toLowercase();
 
 	const uint32 header = _stream.readUint32BE();
 	const bool isText = (header == headerTxtDec || header == headerTxtEnc);
 	const bool isSprite = (header == headerSprite);
-	//const bool isSpeech = filename.contains("speech.tvp");
+	//const bool isSpeech = basename.contains("speech.tvp");
 	const bool isBarrier = (header == headerBarrier);
 
 	if (header != headerGeneric && !isSprite && !isText && !isBarrier)
-		error("Invalid resource - %s", filename.c_str());
+		error("Invalid resource - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (isText) {
 		_resType = kResourceTCF;
@@ -64,7 +67,7 @@ Resource::Resource(Common::String filename) {
 		_encrypted = false;
 	}
 
-	if (filename.contains("atds.tap"))
+	if (basename.contains("atds.tap"))
 		_encrypted = true;
 
 	_chunkCount = _stream.readUint16LE();
@@ -162,7 +165,7 @@ uint8 *Resource::getChunkData(uint num) {
 	return data;
 }
 
-void Resource::initSprite(Common::String filename) {
+void Resource::initSprite(const Common::Path &filename) {
 	_resType = kResourceTAF;
 	_encrypted = false;
 	/*screenMode = */_stream.readUint16LE();
@@ -177,7 +180,7 @@ void Resource::initSprite(Common::String filename) {
 		_stream.skip(1);
 
 	if ((int32)nextSpriteOffset != _stream.pos())
-		error("Invalid sprite resource - %s", filename.c_str());
+		error("Invalid sprite resource - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	for (uint i = 0; i < _chunkCount; i++) {
 		Chunk cur;
@@ -191,7 +194,7 @@ void Resource::initSprite(Common::String filename) {
 		_stream.skip(1);
 
 		if ((int32)spriteImageOffset != _stream.pos())
-			error("Invalid sprite resource - %s", filename.c_str());
+			error("Invalid sprite resource - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 		cur.size = nextSpriteOffset - cur.pos - 15;
 
@@ -199,7 +202,7 @@ void Resource::initSprite(Common::String filename) {
 		_chunkList.push_back(cur);
 
 		if (_stream.err())
-			error("Sprite stream error - %s", filename.c_str());
+			error("Sprite stream error - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	_spriteCorrectionsTable = new uint16[_chunkCount * 2];
@@ -340,7 +343,7 @@ Common::SeekableReadStream *VideoResource::getVideoStream(uint num) {
 	return new Common::SeekableSubReadStream(&_stream, chunk->pos, chunk->pos + chunk->size);
 }
 
-DialogResource::DialogResource(Common::String filename) : Resource(filename) {
+DialogResource::DialogResource(const Common::Path &filename) : Resource(filename) {
 	_dialogBuffer = new byte[_stream.size()];
 	_stream.seek(0, SEEK_SET);
 	_dialogStream = new Common::MemorySeekableReadWriteStream(_dialogBuffer, _stream.size());
