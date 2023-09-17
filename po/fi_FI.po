@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 10:15+0000\n"
+"POT-Creation-Date: 2023-09-17 12:40+0000\n"
 "PO-Revision-Date: 2023-09-07 21:20+0000\n"
 "Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4305,13 +4305,13 @@ msgstr "Suurennustila poissa. Siirrytään raahaustilaan..."
 msgid "Magnify Mode Off"
 msgstr "Suurennustila poissa"
 
-#: backends/platform/android/android.cpp:1028
+#: backends/platform/android/android.cpp:1029
 #, fuzzy
 #| msgid "Control"
 msgid "Controls"
 msgstr "Kontrollit"
 
-#: backends/platform/android/android.cpp:1031
+#: backends/platform/android/android.cpp:1032
 msgid ""
 "## Touch controls\n"
 "\n"
@@ -4377,13 +4377,13 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1069
+#: backends/platform/android/android.cpp:1070
 #, fuzzy
 #| msgid "~A~dd Game..."
 msgid "Adding Games"
 msgstr "~L~isää peli..."
 
-#: backends/platform/android/android.cpp:1072
+#: backends/platform/android/android.cpp:1073
 msgid ""
 "## Adding SAF paths to ScummVM directory list\n"
 "\n"

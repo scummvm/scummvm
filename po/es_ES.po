@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 10:15+0000\n"
+"POT-Creation-Date: 2023-09-17 12:40+0000\n"
 "PO-Revision-Date: 2023-09-17 10:13+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4344,11 +4344,11 @@ msgstr "Modo aumentado desactivado. Reactivando modo de arrastre..."
 msgid "Magnify Mode Off"
 msgstr "Modo aumentado desactivado"
 
-#: backends/platform/android/android.cpp:1028
+#: backends/platform/android/android.cpp:1029
 msgid "Controls"
 msgstr "Controles"
 
-#: backends/platform/android/android.cpp:1031
+#: backends/platform/android/android.cpp:1032
 msgid ""
 "## Touch controls\n"
 "\n"
@@ -4485,11 +4485,11 @@ msgstr ""
 "campo de texto.\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1069
+#: backends/platform/android/android.cpp:1070
 msgid "Adding Games"
 msgstr "Añadir juegos"
 
-#: backends/platform/android/android.cpp:1072
+#: backends/platform/android/android.cpp:1073
 msgid ""
 "## Adding SAF paths to ScummVM directory list\n"
 "\n"

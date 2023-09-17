@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 10:15+0000\n"
+"POT-Creation-Date: 2023-09-17 12:40+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4343,13 +4343,13 @@ msgstr "Forstørrelsesmodus av. Reaktiverer Dra-modus ..."
 msgid "Magnify Mode Off"
 msgstr "Forstørrelsesmodus av"
 
-#: backends/platform/android/android.cpp:1028
+#: backends/platform/android/android.cpp:1029
 #, fuzzy
 #| msgid "Control"
 msgid "Controls"
 msgstr "Kontroll"
 
-#: backends/platform/android/android.cpp:1031
+#: backends/platform/android/android.cpp:1032
 msgid ""
 "## Touch controls\n"
 "\n"
@@ -4415,14 +4415,14 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1069
+#: backends/platform/android/android.cpp:1070
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid "Add Game..."
 msgid "Adding Games"
 msgstr "Legg til spill..."
 
-#: backends/platform/android/android.cpp:1072
+#: backends/platform/android/android.cpp:1073
 msgid ""
 "## Adding SAF paths to ScummVM directory list\n"
 "\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 10:15+0000\n"
+"POT-Creation-Date: 2023-09-17 12:40+0000\n"
 "PO-Revision-Date: 2023-09-17 09:02+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4335,11 +4335,11 @@ msgstr "Vergrößerungs-Modus deaktiviert. Aktiviere Drag-Modus..."
 msgid "Magnify Mode Off"
 msgstr "Vergrößerungs-Modus deaktiviert"
 
-#: backends/platform/android/android.cpp:1028
+#: backends/platform/android/android.cpp:1029
 msgid "Controls"
 msgstr "Steuerung"
 
-#: backends/platform/android/android.cpp:1031
+#: backends/platform/android/android.cpp:1032
 msgid ""
 "## Touch controls\n"
 "\n"
@@ -4405,11 +4405,11 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1069
+#: backends/platform/android/android.cpp:1070
 msgid "Adding Games"
 msgstr "Spiele hinzufügen"
 
-#: backends/platform/android/android.cpp:1072
+#: backends/platform/android/android.cpp:1073
 msgid ""
 "## Adding SAF paths to ScummVM directory list\n"
 "\n"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 10:15+0000\n"
+"POT-Creation-Date: 2023-09-17 12:40+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4347,13 +4347,13 @@ msgstr "Рэжым павелічэння выключаны. Зварот да 
 msgid "Magnify Mode Off"
 msgstr "Рэжым павелічэння выключаны"
 
-#: backends/platform/android/android.cpp:1028
+#: backends/platform/android/android.cpp:1029
 #, fuzzy
 #| msgid "Control"
 msgid "Controls"
 msgstr "Кіраванне"
 
-#: backends/platform/android/android.cpp:1031
+#: backends/platform/android/android.cpp:1032
 msgid ""
 "## Touch controls\n"
 "\n"
@@ -4419,14 +4419,14 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1069
+#: backends/platform/android/android.cpp:1070
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid "Add Game..."
 msgid "Adding Games"
 msgstr "Доб. игру"
 
-#: backends/platform/android/android.cpp:1072
+#: backends/platform/android/android.cpp:1073
 msgid ""
 "## Adding SAF paths to ScummVM directory list\n"
 "\n"
