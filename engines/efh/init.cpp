@@ -230,7 +230,7 @@ void TeamChar::init() {
 }
 
 EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "gendata");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "images");
