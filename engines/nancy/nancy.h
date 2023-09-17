@@ -79,6 +79,7 @@ public:
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
 
+	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
 	bool hasFeature(EngineFeature f) const override;
 
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;

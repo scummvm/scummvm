@@ -134,6 +134,29 @@ void NancyEngine::secondChance() {
 	saveGameState(secondChanceSlot, "SECOND CHANCE", true);
 }
 
+void NancyEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
+	if (State::Scene::hasInstance()) {
+		if (NancySceneState._state == State::Scene::kLoad) {
+			// Error while loading scene
+			snprintf(buf_output, buf_output_size, "While loading scene S%u, frame %u, action record %u:\n%s",
+				NancySceneState._sceneState.currentScene.sceneID,
+				NancySceneState._sceneState.currentScene.frameID,
+				NancySceneState._actionManager.getActionRecords().size(),
+				buf_input);
+		} else {
+			// Error while running
+			snprintf(buf_output, buf_output_size, "In current scene S%u, frame %u:\n%s",
+				NancySceneState._sceneState.currentScene.sceneID,
+				NancySceneState._sceneState.currentScene.frameID,
+				buf_input);
+		}
+	} else {
+		strncpy(buf_output, buf_input, buf_output_size);
+		if (buf_output_size > 0)
+			buf_output[buf_output_size - 1] = '\0';
+	}
+}
+
 bool NancyEngine::hasFeature(EngineFeature f) const {
 	return  (f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
