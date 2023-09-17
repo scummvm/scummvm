@@ -118,20 +118,20 @@ bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
 }
 
 template<class ImageDecoder>
-static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::String &fileName, int32 seconds) {
+static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::Path &fileName, int32 seconds) {
 	ImageDecoder decoder;
 	Common::File fileHandle;
 	if (!fileHandle.open(fileName)) {
-		warning("Failed to open %s", fileName.c_str());
+		warning("Failed to open %s", fileName.toString().c_str());
 		return false;
 	}
 	if (!decoder.loadStream(fileHandle)) {
-		warning("Failed to load %s", fileName.c_str());
+		warning("Failed to load %s", fileName.toString().c_str());
 		return false;
 	}
 	const Graphics::Surface *src = decoder.getSurface();
 	if (src == nullptr) {
-		warning("Failed to decode %s", fileName.c_str());
+		warning("Failed to decode %s", fileName.toString().c_str());
 		return false;
 	}
 	Graphics::ManagedSurface &target = engine->_frontVideoBuffer;
@@ -154,7 +154,8 @@ static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::String &
 }
 
 bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
-	Common::String filename(image);
+	Common::Path path(image);
+	Common::String filename = path.baseName();
 	size_t extPos = filename.rfind(".");
 	if (extPos == Common::String::npos) {
 		warning("Failed to extract extension %s", image);
@@ -163,7 +164,7 @@ bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
 
 	struct ImageLoader {
 		const char *extension;
-		bool (*loadImageDelay)(TwinEEngine *engine, const Common::String &fileName, int32 seconds);
+		bool (*loadImageDelay)(TwinEEngine *engine, const Common::Path &fileName, int32 seconds);
 	};
 
 	static const ImageLoader s_imageLoaders[] = {
@@ -174,7 +175,7 @@ bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
 	const Common::String &ext = filename.substr(extPos + 1);
 	for (const ImageLoader *loader = s_imageLoaders; loader->extension; ++loader) {
 		if (!scumm_stricmp(loader->extension, ext.c_str())) {
-			return loader->loadImageDelay(_engine, filename, seconds);
+			return loader->loadImageDelay(_engine, path, seconds);
 		}
 	}
 	warning("Failed to find suitable image handler %s", image);

@@ -130,7 +130,7 @@ bool Sound::playVoxSample(const TextEntry *text) {
 	}
 
 	if (_engine->isAndroid()) {
-		const Common::String &basename = Common::String::format("%s%03i", _engine->_text->_currentOggBaseFile.c_str(), text->index);
+		Common::Path basename(Common::String::format("%s%03i", _engine->_text->_currentOggBaseFile.c_str(), text->index));
 		Audio::SeekableAudioStream *audioStream = Audio::SeekableAudioStream::openStreamFile(basename);
 		if (audioStream != nullptr) {
 			return playSample(channelIdx, text->index, audioStream, 1, _engine->_text->_currentOggBaseFile.c_str(), Audio::Mixer::kSpeechSoundType);
