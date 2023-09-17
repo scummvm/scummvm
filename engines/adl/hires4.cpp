@@ -83,7 +83,7 @@ void HiRes4BaseEngine::init() {
 
 	_boot = new DiskImage();
 	if (!_boot->open(getDiskImageName(0)))
-		error("Failed to open disk image '%s'", getDiskImageName(0).c_str());
+		error("Failed to open disk image '%s'", getDiskImageName(0).toString(Common::Path::kNativeSeparator).c_str());
 
 	insertDisk(1);
 }

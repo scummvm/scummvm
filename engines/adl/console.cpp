@@ -118,22 +118,22 @@ bool Console::Cmd_ValidCommands(int argc, const char **argv) {
 	return true;
 }
 
-void Console::dumpScripts(const Common::String &prefix) {
+void Console::dumpScripts(const Common::Path &prefix) {
 	for (byte roomNr = 1; roomNr <= _engine->_state.rooms.size(); ++roomNr) {
 		_engine->loadRoom(roomNr);
 		if (_engine->_roomData.commands.size() != 0) {
-			_engine->_dumpFile->open(prefix + Common::String::format("%03d.ADL", roomNr).c_str());
+			_engine->_dumpFile->open(prefix.append(Common::String::format("%03d.ADL", roomNr)));
 			_engine->doAllCommands(_engine->_roomData.commands, IDI_ANY, IDI_ANY);
 			_engine->_dumpFile->close();
 		}
 	}
 	_engine->loadRoom(_engine->_state.room);
 
-	_engine->_dumpFile->open(prefix + "GLOBAL.ADL");
+	_engine->_dumpFile->open(prefix.append("GLOBAL.ADL"));
 	_engine->doAllCommands(_engine->_globalCommands, IDI_ANY, IDI_ANY);
 	_engine->_dumpFile->close();
 
-	_engine->_dumpFile->open(prefix + "RESPONSE.ADL");
+	_engine->_dumpFile->open(prefix.append("RESPONSE.ADL"));
 	_engine->doAllCommands(_engine->_roomCommands, IDI_ANY, IDI_ANY);
 	_engine->_dumpFile->close();
 }
@@ -159,7 +159,7 @@ bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 
 		for (byte regionNr = 1; regionNr <= _engine->_state.regions.size(); ++regionNr) {
 			_engine->switchRegion(regionNr);
-			dumpScripts(Common::String::format("%03d-", regionNr));
+			dumpScripts(Common::Path(Common::String::format("%03d-", regionNr)));
 		}
 
 		_engine->switchRegion(oldRegion);
