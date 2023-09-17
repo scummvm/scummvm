@@ -225,7 +225,7 @@ bool AGSConsole::Cmd_dumpSprite(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String pngFile = Common::String::format("%s-sprite%03d.png", _vm->getGameId().c_str(), spriteId);
+	Common::Path pngFile(Common::String::format("%s-sprite%03d.png", _vm->getGameId().c_str(), spriteId));
 	Common::DumpFile df;
 	if (df.open(pngFile)) {
 		byte *palette = nullptr;

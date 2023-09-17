@@ -124,7 +124,7 @@ Common::Error AGSEngine::run() {
 	if (debugChannelSet(-1, kDebugScan)) {
 		// Scan the given folder and subfolders for unknown games
 		AGS3::GameScanner scanner;
-		scanner.scan(ConfMan.get("path"));
+		scanner.scan(ConfMan.getPath("path"));
 		return Common::kNoError;
 	}
 
@@ -295,7 +295,7 @@ bool AGSEngine::is64BitGame() const {
 }
 
 Common::FSNode AGSEngine::getGameFolder() {
-	return Common::FSNode(ConfMan.get("path"));
+	return Common::FSNode(ConfMan.getPath("path"));
 }
 
 bool AGSEngine::canLoadGameStateCurrently(Common::U32String *msg) {

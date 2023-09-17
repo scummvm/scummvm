@@ -46,7 +46,7 @@ extern bool define_gamedata_location(const AGS::Shared::String &exe_path);
 extern bool engine_try_init_gamedata(AGS::Shared::String gamepak_path);
 
 
-void GameScanner::scan(const Common::String &startFolder) {
+void GameScanner::scan(const Common::Path &startFolder) {
 	detectClashes();
 
 	Common::FSNode folder(startFolder);
@@ -91,13 +91,13 @@ void GameScanner::scanFolder(const Common::FSNode &folder) {
 		} else if (filename.hasSuffixIgnoreCase(".exe") ||
 		           filename.hasSuffixIgnoreCase(".ags") ||
 		           filename.equalsIgnoreCase("ac2game.dat")) {
-			Common::String path = node.getPath();
+			Common::Path path = node.getPath();
 			scanFile(path);
 		}
 	}
 }
 
-void GameScanner::scanFile(const Common::String &filename) {
+void GameScanner::scanFile(const Common::Path &filename) {
 #ifdef TODO
 	Common::File f;
 	Common::FSNode fsNode(filename);

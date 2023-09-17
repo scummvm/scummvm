@@ -132,12 +132,12 @@ String FindGameData(const String &path, bool(*fn_testfile)(const String &)) {
 	if (folder.getChildren(files, Common::FSNode::kListFilesOnly)) {
 		for (Common::FSList::iterator it = files.begin(); it != files.end(); ++it) {
 			Common::String test_file = it->getName();
-			Common::String filePath = it->getPath();
+			Common::Path filePath = it->getPath();
 
 			if (test_file.hasSuffixIgnoreCase(".ags") ||
 			        test_file.equalsIgnoreCase("ac2game.dat") ||
 			        test_file.hasSuffixIgnoreCase(".exe")) {
-				if (IsMainGameLibrary(test_file.c_str()) && fn_testfile(filePath.c_str())) {
+				if (IsMainGameLibrary(test_file.c_str()) && fn_testfile(filePath.toString('/'))) {
 					Debug::Printf("Found game data pak: %s", test_file.c_str());
 					return test_file.c_str();
 				}

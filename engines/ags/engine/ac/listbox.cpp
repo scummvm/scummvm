@@ -86,7 +86,7 @@ void FillDirList(std::set<String> &files, const String &path) {
 		String subDir = dirName.Mid(_GP(ResPaths).DataDir.GetLength());
 		if (!subDir.IsEmpty() && subDir[0u] == '/')
 			subDir.ClipLeft(1);
-		dirName = ConfMan.get("path");
+		dirName = ConfMan.getPath("path").toString('/');
 	} else if (dirName.CompareLeftNoCase(get_save_game_directory()) == 0) {
 		// Save files listing
 		FillSaveList(files, filePattern);

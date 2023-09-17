@@ -147,14 +147,14 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		if (file->isDirectory())
 			continue;
 
-		Common::String filename = file->getName();
-		if (!filename.hasSuffixIgnoreCase(".exe") &&
-		        !filename.hasSuffixIgnoreCase(".ags") &&
+		Common::Path filename = file->getPathInArchive();
+		if (!filename.baseName().hasSuffixIgnoreCase(".exe") &&
+		        !filename.baseName().hasSuffixIgnoreCase(".ags") &&
 		        !filename.equalsIgnoreCase("ac2game.dat"))
 			// Neither, so move on
 			continue;
 
-		filename = Common::punycode_encodefilename(filename);
+		filename = filename.punycodeEncode();
 		Common::File f;
 		if (!allFiles.contains(filename) || !f.open(allFiles[filename]))
 			continue;
@@ -177,7 +177,7 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 
 			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
 			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
-			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filename.c_str();
+			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filename.toString('/').c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = f.size();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();
 
