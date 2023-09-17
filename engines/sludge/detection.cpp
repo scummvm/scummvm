@@ -115,9 +115,9 @@ ADDetectedGame SludgeMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 		if (file->isDirectory())
 			continue;
 
-		Common::String fileName = file->getName();
+		Common::Path fileName = file->getPathInArchive();
 		fileName.toLowercase();
-		if (!(fileName.hasSuffix(".slg") || fileName == "gamedata"))
+		if (!(fileName.baseName().hasSuffix(".slg") || fileName == "gamedata"))
 			continue;
 
 		Common::File f;
@@ -141,7 +141,7 @@ ADDetectedGame SludgeMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 			continue;
 		}
 
-		strncpy(s_fallbackFileNameBuffer, fileName.c_str(), 50);
+		strncpy(s_fallbackFileNameBuffer, fileName.toString('/').c_str(), 50);
 		s_fallbackFileNameBuffer[50] = '\0';
 		s_fallbackDesc.desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
