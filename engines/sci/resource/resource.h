@@ -295,7 +295,7 @@ public:
 	Common::SeekableReadStream *makeStream() const;
 #endif
 
-	const Common::String &getResourceLocation() const;
+	const Common::Path &getResourceLocation() const;
 
 	// FIXME: This audio specific method is a hack. After all, why should a
 	// Resource have audio specific methods? But for now we keep this, as it
@@ -409,8 +409,8 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
-	void changeAudioDirectory(Common::String path);
-	void changeMacAudioDirectory(Common::String path);
+	void changeAudioDirectory(const Common::Path &path);
+	void changeMacAudioDirectory(const Common::Path &path);
 	bool isGMTrackIncluded();
 	bool isSci11Mac() const { return _volVersion == kResVersionSci11Mac; }
 	ViewType getViewType() const { return _viewType; }
@@ -512,7 +512,7 @@ protected:
 	 * Add a path to the resource manager's list of sources.
 	 * @return a pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addPatchDir(const Common::String &path);
+	ResourceSource *addPatchDir(const Common::Path &path);
 
 	ResourceSource *findVolume(ResourceSource *map, int volume_nr);
 
@@ -530,7 +530,7 @@ protected:
 	 * @param volume_nr  The volume number the map starts at, 0 for <SCI2.1
 	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addExternalMap(const Common::String &filename, int volume_nr = 0);
+	ResourceSource *addExternalMap(const Common::Path &filename, int volume_nr = 0);
 
 	ResourceSource *addExternalMap(const Common::FSNode *mapFile, int volume_nr = 0);
 
@@ -562,10 +562,10 @@ protected:
 	void disposeVolumeFileStream(Common::SeekableReadStream *fileStream, ResourceSource *source);
 	void loadResource(Resource *res);
 	void freeOldResources();
-	bool validateResource(const ResourceId &resourceId, const Common::String &sourceMapLocation, const Common::String &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const;
-	Resource *addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0, const Common::String &sourceMapLocation = Common::String("(no map location)"));
-	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size, const Common::String &sourceMapLocation = Common::String("(no map location)"));
-	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation = Common::String("(no map location)"));
+	bool validateResource(const ResourceId &resourceId, const Common::Path &sourceMapLocation, const Common::Path &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const;
+	Resource *addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0, const Common::Path &sourceMapLocation = Common::Path("(no map location)"));
+	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size, const Common::Path &sourceMapLocation = Common::Path("(no map location)"));
+	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::Path &sourceMapLocation = Common::Path("(no map location)"));
 	void removeAudioResource(ResourceId resId);
 
 	/**--- Resource map decoding functions ---*/
@@ -624,7 +624,7 @@ protected:
 	 * Process wave files as patches for Audio resources.
 	 */
 	void readWaveAudioPatches();
-	void processWavePatch(ResourceId resourceId, const Common::String &name);
+	void processWavePatch(ResourceId resourceId, const Common::Path &name);
 
 	/**
 	 * Process AIFF files as patches for Audio resources.
@@ -656,7 +656,7 @@ protected:
 
 public:
 	/** Returns the file name of the game's Mac executable. */
-	Common::String getMacExecutableName() const;
+	Common::Path getMacExecutableName() const;
 	bool isKoreanMessageMap(ResourceSource *source);
 
 private:

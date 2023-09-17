@@ -343,7 +343,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		unwrapFilename = false;
 
 		// LSL6hires version is in a file with an empty extension
-		if (Common::File::exists(name + ".")) {
+		if (Common::File::exists(Common::Path(name + "."))) {
 			name += ".";
 		}
 	}
@@ -849,7 +849,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	// phantsg.dir, and possibly even keeping it open persistently
 
 	// Check for regular file
-	exists = Common::File::exists(name);
+	exists = Common::File::exists(Common::Path(name));
 
 	// Check for a savegame with the name
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
@@ -909,7 +909,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	// case someone has a "HalfDome.bin" file, etc.
 	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
 			(name == "HalfDome" || name == "Kq6Movie"))
-		exists = Common::MacResManager::exists(name);
+		exists = Common::MacResManager::exists(Common::Path(name));
 
 	debugC(kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
 	return make_reg(0, exists);

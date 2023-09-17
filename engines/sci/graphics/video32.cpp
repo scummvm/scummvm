@@ -54,9 +54,9 @@ namespace Graphics { struct Surface; }
 
 namespace Sci {
 
-bool VideoPlayer::open(const Common::String &fileName) {
+bool VideoPlayer::open(const Common::Path &fileName) {
 	if (!_decoder->loadFile(fileName)) {
-		warning("Failed to load %s", fileName.c_str());
+		warning("Failed to load %s", fileName.toString().c_str());
 		return false;
 	}
 
@@ -346,7 +346,7 @@ void VideoPlayer::setDrawRect(const int16 x, const int16 y, const int16 width, c
 SEQPlayer::SEQPlayer(EventManager *eventMan) :
 	VideoPlayer(eventMan) {}
 
-void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const int16, const int16) {
+void SEQPlayer::play(const Common::Path &fileName, const int16 numTicks, const int16, const int16) {
 
 	_decoder.reset(new SEQDecoder(numTicks));
 
@@ -389,7 +389,7 @@ AVIPlayer::AVIPlayer(EventManager *eventMan) :
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 }
 
-AVIPlayer::IOStatus AVIPlayer::open(const Common::String &fileName) {
+AVIPlayer::IOStatus AVIPlayer::open(const Common::Path &fileName) {
 	if (_status != kAVINotOpen) {
 		close();
 	}
@@ -545,7 +545,7 @@ uint16 AVIPlayer::getDuration() const {
 QuickTimePlayer::QuickTimePlayer(EventManager *eventMan) :
 	VideoPlayer(eventMan) {}
 
-void QuickTimePlayer::play(const Common::String& fileName) {
+void QuickTimePlayer::play(const Common::Path &fileName) {
 	_decoder.reset(new Video::QuickTimeDecoder());
 
 	if (!VideoPlayer::open(fileName)) {
@@ -619,16 +619,16 @@ VMDPlayer::~VMDPlayer() {
 #pragma mark -
 #pragma mark VMDPlayer - Playback
 
-VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFlags flags) {
+VMDPlayer::IOStatus VMDPlayer::open(const Common::Path &fileName, const OpenFlags flags) {
 	if (_isOpen) {
-		error("Attempted to play %s, but another VMD was loaded", fileName.c_str());
+		error("Attempted to play %s, but another VMD was loaded", fileName.toString().c_str());
 	}
 
 	if (g_sci->_features->VMDOpenStopsAudio()) {
 		g_sci->_audio32->stop(kAllChannels);
 	}
 
-	Resource *bundledVmd = g_sci->getResMan()->findResource(ResourceId(kResourceTypeVMD, fileName.asUint64()), true);
+	Resource *bundledVmd = g_sci->getResMan()->findResource(ResourceId(kResourceTypeVMD, fileName.baseName().asUint64()), true);
 
 	if (bundledVmd != nullptr) {
 		Common::SeekableReadStream *stream = bundledVmd->makeStream();
@@ -649,8 +649,8 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 		}
 
 		// Try load fan-made SRT subtitles for current video
-		Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
-		_subtitles.loadSRTFile(subtitlesName.c_str());
+		Common::Path subtitlesName(fileName.append(".srt"));
+		_subtitles.loadSRTFile(subtitlesName);
 
 		return kIOSuccess;
 	}
@@ -1188,7 +1188,7 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 		error("Attempted to play %u.duk, but another video was loaded", resourceId);
 	}
 
-	const Common::String fileName = Common::String::format("%u.duk", resourceId);
+	const Common::Path fileName(Common::String::format("%u.duk", resourceId));
 
 	if (!VideoPlayer::open(fileName)) {
 		return;
@@ -1219,8 +1219,8 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 	}
 
 	// Try load fan-made SRT subtitles for current video
-	Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
-	_subtitles.loadSRTFile(subtitlesName.c_str());
+	Common::Path subtitlesName(fileName.append(".srt"));
+	_subtitles.loadSRTFile(subtitlesName);
 
 	_status = kDuckOpen;
 }

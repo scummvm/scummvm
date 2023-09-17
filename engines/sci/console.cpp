@@ -291,9 +291,9 @@ void Console::postEnter() {
 	if (!_videoFile.empty()) {
 		Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
-		if (_videoFile.hasSuffix(".seq")) {
+		if (_videoFile.baseName().hasSuffix(".seq")) {
 			videoDecoder.reset(new SEQDecoder(_videoFrameDelay));
-		} else if (_videoFile.hasSuffix(".avi")) {
+		} else if (_videoFile.baseName().hasSuffix(".avi")) {
 			videoDecoder.reset(new Video::AVIDecoder());
 		} else {
 			warning("Unrecognized video type");
@@ -304,7 +304,7 @@ void Console::postEnter() {
 			playVideo(*videoDecoder);
 			_engine->_gfxCursor->kernelShow();
 		} else
-			warning("Could not play video %s\n", _videoFile.c_str());
+			warning("Could not play video %s\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
 
 		_videoFile.clear();
 		_videoFrameDelay = 0;
@@ -881,7 +881,7 @@ void Console::cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, u
 		outFile->finalize();
 		outFile->close();
 		delete outFile;
-		debugPrintf("Resource %s (located in %s) has been dumped to disk\n", outFileName, resource->getResourceLocation().c_str());
+		debugPrintf("Resource %s (located in %s) has been dumped to disk\n", outFileName, resource->getResourceLocation().toString(Common::Path::kNativeSeparator).c_str());
 	} else {
 		debugPrintf("Resource %s not found\n", outFileName);
 	}
@@ -1032,7 +1032,7 @@ bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
 				extension = getResourceTypeExtension(resType);
 				assert(*extension != '\0');
 
-				const Common::String filesGlob = Common::String::format("*.%s", extension).c_str();
+				const Common::Path filesGlob(Common::String::format("*.%s", extension));
 				Common::ArchiveMemberList files;
 				const int numMatches = SearchMan.listMatchingMembers(files, filesGlob);
 				if (numMatches > 0) {
@@ -1069,7 +1069,7 @@ bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
 					Common::MemoryReadStream stream = resource->toStream();
 					writeIntegrityDumpLine(statusName, resourceName, outFile, &stream, resource->size(), true);
 				} else if (videoFiles && *extension != '\0') {
-					const Common::String fileName = Common::String::format("%u.%s", it->getNumber(), extension);
+					const Common::Path fileName(Common::String::format("%u.%s", it->getNumber(), extension));
 					Common::File file;
 					Common::ReadStream *stream = nullptr;
 					if (file.open(fileName)) {
@@ -1179,7 +1179,7 @@ bool Console::cmdResourceInfo(int argc, const char **argv) {
 		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			debugPrintf("Resource size: %u\n", resource->size());
-			debugPrintf("Resource location: %s\n", resource->getResourceLocation().c_str());
+			debugPrintf("Resource location: %s\n", resource->getResourceLocation().toString().c_str());
 			Common::MemoryReadStream stream = resource->toStream();
 			const Common::String hash = Common::computeStreamMD5AsString(stream);
 			debugPrintf("Resource hash (decompressed): %s\n", hash.c_str());
@@ -1552,9 +1552,9 @@ bool Console::cmdAudioDump(int argc, const char **argv) {
 	Common::MemoryReadStream stream = resource->toStream();
 
 	Common::DumpFile outFile;
-	const Common::String fileName = Common::String::format("%s.wav", id.toString().c_str());
+	const Common::Path fileName(Common::String::format("%s.wav", id.toString().c_str()));
 	if (!outFile.open(fileName)) {
-		debugPrintf("Could not open dump file %s.\n", fileName.c_str());
+		debugPrintf("Could not open dump file %s.\n", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return true;
 	}
 
@@ -1660,7 +1660,7 @@ bool Console::cmdAudioDump(int argc, const char **argv) {
 		error("Impossible situation");
 	}
 
-	debugPrintf("Written to %s successfully.\n", fileName.c_str());
+	debugPrintf("Written to %s successfully.\n", fileName.toString(Common::Path::kNativeSeparator).c_str());
 #else
 	debugPrintf("SCI32 isn't included in this compiled executable\n");
 #endif
@@ -3286,13 +3286,13 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 	}
 
 	Common::DumpFile out;
-	Common::String outFileName;
+	Common::Path outFileName;
 	uint32 bytesWritten;
 
 	switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
 	case SEG_TYPE_BITMAP: {
-		outFileName = Common::String::format("%04x_%04x.tga", PRINT_REG(reg));
+		outFileName = Common::Path(Common::String::format("%04x_%04x.tga", PRINT_REG(reg)));
 		out.open(outFileName);
 		SciBitmap &bitmap = *_engine->_gamestate->_segMan->lookupBitmap(reg);
 		const Color *color = g_sci->_gfxPalette32->getCurrentPalette().colors;
@@ -3348,7 +3348,7 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 			debugPrintf("Block size less than or equal to %d\n", size);
 		}
 
-		outFileName = Common::String::format("%04x_%04x.dmp", PRINT_REG(reg));
+		outFileName = Common::Path(Common::String::format("%04x_%04x.dmp", PRINT_REG(reg)));
 		out.open(outFileName);
 		bytesWritten = out.write(block.raw, size);
 		break;
@@ -3358,7 +3358,7 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 	out.finalize();
 	out.close();
 
-	debugPrintf("Wrote %u bytes to %s\n", bytesWritten, outFileName.c_str());
+	debugPrintf("Wrote %u bytes to %s\n", bytesWritten, outFileName.toString(Common::Path::kNativeSeparator).c_str());
 	return true;
 }
 

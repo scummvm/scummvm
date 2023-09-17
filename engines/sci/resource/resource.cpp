@@ -251,7 +251,7 @@ uint32 AudioVolumeResourceSource::getAudioCompressionType() const {
 	return _audioCompressionType;
 }
 
-ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, int volNum, const Common::FSNode *resFile)
+ResourceSource::ResourceSource(ResSourceType type, const Common::Path &name, int volNum, const Common::FSNode *resFile)
  : _sourceType(type), _name(name), _volumeNumber(volNum), _resourceFile(resFile) {
 	_scanned = false;
 }
@@ -259,7 +259,7 @@ ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, i
 ResourceSource::~ResourceSource() {
 }
 
-MacResourceForkResourceSource::MacResourceForkResourceSource(const Common::String &name, int volNum)
+MacResourceForkResourceSource::MacResourceForkResourceSource(const Common::Path &name, int volNum)
  : ResourceSource(kSourceMacResourceFork, name, volNum) {
 	_macResMan = new Common::MacResManager();
 }
@@ -272,7 +272,7 @@ MacResourceForkResourceSource::~MacResourceForkResourceSource() {
 
 // Resource source list management
 
-ResourceSource *ResourceManager::addExternalMap(const Common::String &filename, int volume_nr) {
+ResourceSource *ResourceManager::addExternalMap(const Common::Path &filename, int volume_nr) {
 	ResourceSource *newsrc = new ExtMapResourceSource(filename, volume_nr);
 
 	_sources.push_back(newsrc);
@@ -280,7 +280,7 @@ ResourceSource *ResourceManager::addExternalMap(const Common::String &filename, 
 }
 
 ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, int volume_nr) {
-	ResourceSource *newsrc = new ExtMapResourceSource(mapFile->getName(), volume_nr, mapFile);
+	ResourceSource *newsrc = new ExtMapResourceSource(mapFile->getPathInArchive(), volume_nr, mapFile);
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -293,7 +293,7 @@ ResourceSource *ResourceManager::addSource(ResourceSource *newsrc) {
 	return newsrc;
 }
 
-ResourceSource *ResourceManager::addPatchDir(const Common::String &dirname) {
+ResourceSource *ResourceManager::addPatchDir(const Common::Path &dirname) {
 	ResourceSource *newsrc = new DirectoryResourceSource(dirname);
 
 	_sources.push_back(newsrc);
@@ -343,9 +343,9 @@ bool Resource::loadPatch(Common::SeekableReadStream *file) {
 
 bool Resource::loadFromPatchFile() {
 	Common::File file;
-	const Common::String &filename = _source->getLocationName();
+	const Common::Path &filename = _source->getLocationName();
 	if (!file.open(filename)) {
-		warning("Failed to open patch file %s", filename.c_str());
+		warning("Failed to open patch file %s", filename.toString().c_str());
 		unalloc();
 		return false;
 	}
@@ -368,12 +368,13 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	if (source->_resourceFile)
 		return source->_resourceFile->createReadStream();
 
-	const char *filename = source->getLocationName().c_str();
+	// TODO: check if it still works
+	const Common::String filename = source->getLocationName().toString('/');
 
 	// check if file is already opened
 	while (it != _volumeFiles.end()) {
 		file = *it;
-		if (scumm_stricmp(file->getName(), filename) == 0) {
+		if (scumm_stricmp(file->getName(), filename.c_str()) == 0) {
 			// move file to top
 			if (it != _volumeFiles.begin()) {
 				_volumeFiles.erase(it);
@@ -385,7 +386,7 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	}
 	// adding a new file
 	file = new Common::File;
-	if (file->open(filename)) {
+	if (file->open(source->getLocationName())) {
 		if (_volumeFiles.size() == MAX_OPENED_VOLUMES) {
 			it = --_volumeFiles.end();
 			delete *it;
@@ -586,7 +587,7 @@ Common::SeekableReadStream *ResourceSource::getVolumeFile(ResourceManager *resMa
 	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
 
 	if (!fileStream) {
-		warning("Failed to open %s", getLocationName().c_str());
+		warning("Failed to open %s", getLocationName().toString().c_str());
 		resMan->_hasBadResources = true;
 		if (res)
 			res->unalloc();
@@ -617,7 +618,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	int error = res->decompress(volVersion, fileStream);
 	if (error) {
 		warning("Error %d occurred while reading %s from resource file %s: %s",
-				error, res->_id.toString().c_str(), res->getResourceLocation().c_str(),
+				error, res->_id.toString().c_str(), res->getResourceLocation().toString().c_str(),
 				s_errorDescriptions[error]);
 		res->unalloc();
 	}
@@ -642,11 +643,11 @@ int ResourceManager::addAppropriateSources() {
 
 		Common::sort(files.begin(), files.end(), Common::ArchiveMemberListComparator());
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-			const Common::String name = (*x)->getName();
+			const Common::String name = (*x)->getFileName();
 			const char *dot = strrchr(name.c_str(), '.');
 			int number = atoi(dot + 1);
 
-			addSource(new VolumeResourceSource(name, map, number));
+			addSource(new VolumeResourceSource((*x)->getPathInArchive(), map, number));
 		}
 #ifdef ENABLE_SCI32
 		// GK1CD hires content
@@ -660,8 +661,8 @@ int ResourceManager::addAppropriateSources() {
 		Common::MacResManager::listFiles(files, "Data##");
 
 		for (Common::Array<Common::Path>::const_iterator x = files.begin(); x != files.end(); ++x) {
-			Common::String path(x->toString());
-			addSource(new MacResourceForkResourceSource(path, atoi(path.c_str() + 4)));
+			Common::String baseName(x->baseName());
+			addSource(new MacResourceForkResourceSource(*x, atoi(baseName.c_str() + 4)));
 		}
 
 #ifdef ENABLE_SCI32
@@ -683,17 +684,17 @@ int ResourceManager::addAppropriateSources() {
 
 		Common::sort(mapFiles.begin(), mapFiles.end(), Common::ArchiveMemberListComparator());
 		for (Common::ArchiveMemberList::const_iterator mapIterator = mapFiles.begin(); mapIterator != mapFiles.end(); ++mapIterator) {
-			Common::String mapName = (*mapIterator)->getName();
+			Common::String mapName = (*mapIterator)->getFileName();
 			int mapNumber = atoi(strrchr(mapName.c_str(), '.') + 1);
 			bool foundVolume = false;
 
 			for (Common::ArchiveMemberList::const_iterator fileIterator = files.begin(); fileIterator != files.end(); ++fileIterator) {
-				Common::String resName = (*fileIterator)->getName();
+				Common::String resName = (*fileIterator)->getFileName();
 				int resNumber = atoi(strrchr(resName.c_str(), '.') + 1);
 
 				if (mapNumber == resNumber) {
 					foundVolume = true;
-					addSource(new VolumeResourceSource(resName, addExternalMap(mapName, mapNumber), mapNumber));
+					addSource(new VolumeResourceSource((*fileIterator)->getPathInArchive(), addExternalMap((*mapIterator)->getPathInArchive(), mapNumber), mapNumber));
 					break;
 				}
 			}
@@ -758,7 +759,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 		if (file->isDirectory())
 			continue;
 
-		Common::String filename = file->getName();
+		Common::String filename = file->getFileName();
 		filename.toLowercase();
 
 		if (filename.contains("resource.map"))
@@ -790,7 +791,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 
 #ifdef ENABLE_SCI32
 	if (sci21PatchMap && sci21PatchRes)
-		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap, kResPatVolumeNumber, sci21PatchRes));
+		addSource(new VolumeResourceSource(sci21PatchRes->getPathInArchive(), sci21PatchMap, kResPatVolumeNumber, sci21PatchRes));
 #endif
 
 	// Now find all the resource.0?? files
@@ -798,20 +799,20 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 		if (file->isDirectory())
 			continue;
 
-		Common::String filename = file->getName();
+		Common::String filename = file->getFileName();
 		filename.toLowercase();
 
 		if (filename.contains("resource.0")) {
 			const char *dot = strrchr(filename.c_str(), '.');
 			int number = atoi(dot + 1);
 
-			addSource(new VolumeResourceSource(file->getName(), map, number, file));
+			addSource(new VolumeResourceSource(file->getPathInArchive(), map, number, file));
 		} else if (filename.contains("ressci.0")) {
 			const char *dot = strrchr(filename.c_str(), '.');
 			int number = atoi(dot + 1);
 
 			// Match this volume to its own map
-			addSource(new VolumeResourceSource(file->getName(), sci21Maps[number], number, file));
+			addSource(new VolumeResourceSource(file->getPathInArchive(), sci21Maps[number], number, file));
 		}
 	}
 
@@ -914,7 +915,7 @@ void IntMapResourceSource::scanSource(ResourceManager *resMan) {
 // dw offset
 // dw length
 
-ChunkResourceSource::ChunkResourceSource(const Common::String &name, uint16 number)
+ChunkResourceSource::ChunkResourceSource(const Common::Path &name, uint16 number)
 	: ResourceSource(kSourceChunk, name) {
 
 	_number = number;
@@ -981,7 +982,7 @@ void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 }
 
 void ResourceManager::addResourcesFromChunk(uint16 id) {
-	addSource(new ChunkResourceSource(Common::String::format("Chunk %d", id), id));
+	addSource(new ChunkResourceSource(Common::Path(Common::String::format("Chunk %d", id)), id));
 	scanNewSources();
 }
 
@@ -1500,7 +1501,7 @@ bool ResourceManager::detectSci2Mac() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		ResourceSource *rsrc = *it;
 		if (rsrc->getSourceType() == kSourceMacResourceFork) {
-			if (macResManager.open(rsrc->getLocationName().c_str())) {
+			if (macResManager.open(rsrc->getLocationName())) {
 				const uint32 scriptTypeID = MKTAG('S', 'C', 'R', ' ');
 				const uint32 objectScriptID = 64999;
 				Common::SeekableReadStream *resource = macResManager.getResource(scriptTypeID, objectScriptID);
@@ -1577,7 +1578,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	ResourceType checkForType = resourceType;
 
 	if (isBlacklistedPatch(resId)) {
-		debug("Skipping blacklisted patch file %s", source->getLocationName().c_str());
+		debug("Skipping blacklisted patch file %s", source->getLocationName().toString().c_str());
 		delete source;
 		return;
 	}
@@ -1593,7 +1594,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	} else {
 		Common::File *file = new Common::File();
 		if (!file->open(source->getLocationName())) {
-			warning("ResourceManager::processPatch(): failed to open %s", source->getLocationName().c_str());
+			warning("ResourceManager::processPatch(): failed to open %s", source->getLocationName().toString().c_str());
 			delete source;
 			delete file;
 			return;
@@ -1603,7 +1604,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 
 	int fsize = fileStream->size();
 	if (fsize < 3) {
-		debug("Patching %s failed - file too small", source->getLocationName().c_str());
+		debug("Patching %s failed - file too small", source->getLocationName().toString().c_str());
 		delete source;
 		delete fileStream;
 		return;
@@ -1667,14 +1668,14 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	delete fileStream;
 
 	if (patchType != checkForType) {
-		debug("Patching %s failed - resource type mismatch", source->getLocationName().c_str());
+		debug("Patching %s failed - resource type mismatch", source->getLocationName().toString().c_str());
 		delete source;
 		return;
 	}
 
 	if (patchDataOffset >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
-		      source->getLocationName().c_str(), patchDataOffset, fsize);
+		      source->getLocationName().toString().c_str(), patchDataOffset, fsize);
 		delete source;
 		return;
 	}
@@ -1683,7 +1684,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	newrsc = updateResource(resId, source, 0, fsize - patchDataOffset, source->getLocationName());
 	newrsc->_headerSize = patchDataOffset;
 
-	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().c_str());
+	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().toString().c_str());
 }
 
 ResourceId convertPatchNameBase36(ResourceType type, const Common::String &filename) {
@@ -1733,7 +1734,8 @@ void ResourceManager::readResourcePatchesBase36() {
 		}
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-			Common::String name = (*x)->getName();
+			Common::Path path = (*x)->getPathInArchive();
+			Common::String name(path.baseName());
 			name.toUppercase();
 
 			// The S/T prefixes often conflict with non-patch files and generate
@@ -1754,12 +1756,12 @@ void ResourceManager::readResourcePatchesBase36() {
 
 			// Make sure that the audio patch is a valid resource
 			if (i == kResourceTypeAudio36) {
-				Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
+				Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(path);
 				uint32 tag = stream->readUint32BE();
 
 				if (tag == MKTAG('R','I','F','F') || tag == MKTAG('F','O','R','M')) {
 					delete stream;
-					processWavePatch(resource36, name);
+					processWavePatch(resource36, path);
 					continue;
 				}
 
@@ -1774,7 +1776,7 @@ void ResourceManager::readResourcePatchesBase36() {
 				delete stream;
 			}
 
-			ResourceSource *psrcPatch = new PatchResourceSource(name);
+			ResourceSource *psrcPatch = new PatchResourceSource(path);
 			processPatch(psrcPatch, (ResourceType)i, resource36.getNumber(), resource36.getTuple());
 		}
 	}
@@ -1785,7 +1787,7 @@ void ResourceManager::readResourcePatches() {
 	// this function tries to read patch file with any supported naming scheme,
 	// regardless of s_sciVersion value
 
-	Common::String mask, name;
+	Common::Path mask, name;
 	Common::ArchiveMemberList files;
 	uint16 resourceNr = 0;
 	const char *szResType;
@@ -1800,11 +1802,11 @@ void ResourceManager::readResourcePatches() {
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
 		mask = szResType;
-		mask += ".###";
+		mask.appendInPlace(".###");
 		SearchMan.listMatchingMembers(files, mask);
 		// SCI1 and later naming - nnn.typ
 		mask = "*.";
-		mask += s_resourceTypeSuffixes[i];
+		mask.appendInPlace(s_resourceTypeSuffixes[i]);
 		SearchMan.listMatchingMembers(files, mask);
 
 		if (i == kResourceTypeView) {
@@ -1822,19 +1824,20 @@ void ResourceManager::readResourcePatches() {
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			bool bAdd = false;
-			name = (*x)->getName();
+			name = (*x)->getPathInArchive();
+			Common::String baseName(name.baseName());
 
 			// SCI1 scheme
-			if (Common::isDigit(name[0])) {
+			if (Common::isDigit(baseName[0])) {
 				char *end = nullptr;
-				resourceNr = strtol(name.c_str(), &end, 10);
+				resourceNr = strtol(baseName.c_str(), &end, 10);
 				bAdd = (*end == '.'); // Ensure the next character is the period
 			} else {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
-				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0
-					&& !Common::isAlpha(name[resname_len + 1])) {
-					resourceNr = atoi(name.c_str() + resname_len + 1);
+				if (scumm_strnicmp(baseName.c_str(), szResType, resname_len) == 0
+					&& !Common::isAlpha(baseName[resname_len + 1])) {
+					resourceNr = atoi(baseName.c_str() + resname_len + 1);
 					bAdd = true;
 				}
 			}
@@ -1880,7 +1883,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 		if (fileStream->eos() || fileStream->err()) {
 			delete fileStream;
-			warning("Error while reading %s", map->getLocationName().c_str());
+			warning("Error while reading %s", map->getLocationName().toString().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
 
@@ -1958,7 +1961,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 		resMap[type].wOffset = fileStream->readUint16LE();
 		if (fileStream->eos()) {
 			delete fileStream;
-			warning("Premature end of file %s", map->getLocationName().c_str());
+			warning("Premature end of file %s", map->getLocationName().toString().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
 
@@ -1993,7 +1996,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			}
 			if (fileStream->eos() || fileStream->err()) {
 				delete fileStream;
-				warning("Error while reading %s", map->getLocationName().c_str());
+				warning("Error while reading %s", map->getLocationName().toString().c_str());
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 			resId = ResourceId(convertResType(type), number);
@@ -2038,7 +2041,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				IntMapResourceSource *audioMap = new IntMapResourceSource(source->getLocationName(), mapVolumeNr, resId.getNumber());
 				addSource(audioMap);
 
-				Common::String volumeName;
+				Common::Path volumeName;
 				if (mapVolumeNr == kResPatVolumeNumber) {
 					if (resId.getNumber() == 65535) {
 						volumeName = "RESSCI.PAT";
@@ -2046,7 +2049,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 						volumeName = "RESAUD.001";
 					}
 				} else if (resId.getNumber() == 65535) {
-					volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
+					volumeName = Common::Path(Common::String::format("RESSFX.%03d", mapVolumeNr));
 
 					if (g_sci && g_sci->getGameId() == GID_RAMA && !Common::File::exists(volumeName)) {
 						if (Common::File::exists("RESOURCE.SFX")) {
@@ -2056,7 +2059,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 						}
 					}
 				} else {
-					volumeName = Common::String::format("RESAUD.%03d", mapVolumeNr);
+					volumeName = Common::Path(Common::String::format("RESAUD.%03d", mapVolumeNr));
 				}
 
 				ResourceSource *audioVolume = addSource(new AudioVolumeResourceSource(this, volumeName, audioMap, mapVolumeNr));
@@ -2112,8 +2115,8 @@ static Common::Array<uint32> resTypeToMacTags(ResourceType type) {
 }
 
 void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
-	if (!_macResMan->open(getLocationName().c_str()))
-		error("%s is not a valid Mac resource fork", getLocationName().c_str());
+	if (!_macResMan->open(getLocationName()))
+		error("%s is not a valid Mac resource fork", getLocationName().toString().c_str());
 
 	Common::MacResTagArray tagArray = _macResMan->getResTagArray();
 
@@ -2168,15 +2171,15 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 	}
 }
 
-bool ResourceManager::validateResource(const ResourceId &resourceId, const Common::String &sourceMapLocation, const Common::String &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const {
+bool ResourceManager::validateResource(const ResourceId &resourceId, const Common::Path &sourceMapLocation, const Common::Path &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const {
 	if (size != 0) {
 		if (offset + size > sourceSize) {
-			warning("Resource %s from %s points beyond end of %s (%u + %u > %u)", resourceId.toString().c_str(), sourceMapLocation.c_str(), sourceName.c_str(), offset, size, sourceSize);
+			warning("Resource %s from %s points beyond end of %s (%u + %u > %u)", resourceId.toString().c_str(), sourceMapLocation.toString().c_str(), sourceName.toString().c_str(), offset, size, sourceSize);
 			return false;
 		}
 	} else {
 		if (offset >= sourceSize) {
-			warning("Resource %s from %s points beyond end of %s (%u >= %u)", resourceId.toString().c_str(), sourceMapLocation.c_str(), sourceName.c_str(), offset, sourceSize);
+			warning("Resource %s from %s points beyond end of %s (%u >= %u)", resourceId.toString().c_str(), sourceMapLocation.toString().c_str(), sourceName.toString().c_str(), offset, sourceSize);
 			return false;
 		}
 	}
@@ -2184,7 +2187,7 @@ bool ResourceManager::validateResource(const ResourceId &resourceId, const Commo
 	return true;
 }
 
-Resource *ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
+Resource *ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::Path &sourceMapLocation) {
 	// Adding new resource only if it does not exist
 	// Hoyle 4 contains each audio resource twice. The first file is in an unknown
 	// format and only static sounds are heard when it's played. The second file
@@ -2197,7 +2200,7 @@ Resource *ResourceManager::addResource(ResourceId resId, ResourceSource *src, ui
 	}
 }
 
-Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 size, const Common::String &sourceMapLocation) {
+Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 size, const Common::Path &sourceMapLocation) {
 	uint32 offset = 0;
 	if (_resMap.contains(resId)) {
 		const Resource *res = _resMap.getVal(resId);
@@ -2206,7 +2209,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	return updateResource(resId, src, offset, size, sourceMapLocation);
 }
 
-Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
+Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::Path &sourceMapLocation) {
 	// Update a patched resource, whether it exists or not
 	Resource *res = _resMap.getValOrDefault(resId, nullptr);
 
@@ -2216,13 +2219,13 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	if (src->getSourceType() != kSourceMacResourceFork) {
 		volumeFile = getVolumeFile(src);
 		if (volumeFile == nullptr) {
-			error("Could not open %s for reading", src->getLocationName().c_str());
+			error("Could not open %s for reading", src->getLocationName().toString().c_str());
 		}
 	}
 
 	AudioVolumeResourceSource *avSrc = dynamic_cast<AudioVolumeResourceSource *>(src);
 	if (avSrc != nullptr && !avSrc->relocateMapOffset(offset, size)) {
-		warning("Compressed volume %s does not contain a valid entry for %s (map offset %u)", src->getLocationName().c_str(), resId.toString().c_str(), offset);
+		warning("Compressed volume %s does not contain a valid entry for %s (map offset %u)", src->getLocationName().toString().c_str(), resId.toString().c_str(), offset);
 		_hasBadResources = true;
 		if (volumeFile != nullptr)
 			disposeVolumeFileStream(volumeFile, src);
@@ -2410,7 +2413,7 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 			const uint32 audioSize = READ_LE_UINT32(ptr + 9);
 			const uint32 calculatedTotalSize = audioSize + headerSize + kResourceHeaderSize;
 			if (calculatedTotalSize != _size) {
-				warning("Unexpected audio file size: the size of %s in %s is %d, but the volume says it should be %d", _id.toString().c_str(), _source->getLocationName().c_str(), calculatedTotalSize, _size);
+				warning("Unexpected audio file size: the size of %s in %s is %d, but the volume says it should be %d", _id.toString().c_str(), _source->getLocationName().toString().c_str(), calculatedTotalSize, _size);
 			}
 			_size = MIN(_size - kResourceHeaderSize, headerSize + audioSize);
 		}
@@ -3099,7 +3102,7 @@ Common::String ResourceManager::findSierraGameId(const bool isBE) {
 // Eventually they should be used for native menus and possibly even splash screens.
 // For example, LSL6 can't function without native menus. (bug #11356)
 // Executables that we currently don't use are commented out.
-Common::String ResourceManager::getMacExecutableName() const {
+Common::Path ResourceManager::getMacExecutableName() const {
 	switch (g_sci->getGameId()) {
 	case GID_CASTLEBRAIN: return "Castle of Dr. Brain"; // fonts, splash screen
 	case GID_FREDDYPHARKAS: return "Freddy Pharkas"; // fonts, icon bar, menu, splash screen
@@ -3121,7 +3124,7 @@ bool ResourceManager::isKoreanMessageMap(ResourceSource *source) {
 	return source->getLocationName() == "message.map" && g_sci && g_sci->getLanguage() == Common::KO_KOR;
 }
 
-const Common::String &Resource::getResourceLocation() const {
+const Common::Path &Resource::getResourceLocation() const {
 	return _source->getLocationName();
 }
 
