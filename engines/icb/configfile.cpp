@@ -26,6 +26,7 @@
 
 #include "engines/icb/configfile.h"
 
+#include "common/path.h"
 #include "common/textconsole.h"
 #include "common/formats/ini-file.h"
 
@@ -33,10 +34,10 @@ namespace ICB {
 
 ConfigFile::ConfigFile() {}
 
-void ConfigFile::readFile(const Common::String &filename) {
+void ConfigFile::readFile(const char *filename) {
 	Common::INIFile file;
-	if (!file.loadFromFile(filename)) {
-		error("Opening file '%s' failed'", filename.c_str());
+	if (!file.loadFromFile(Common::Path(filename, '/'))) {
+		error("Opening file '%s' failed'", filename);
 		return;
 	}
 
