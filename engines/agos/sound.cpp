@@ -43,15 +43,15 @@ namespace AGOS {
 
 class BaseSound : Common::NonCopyable {
 protected:
-	const Common::String _filename;
+	const Common::Path _filename;
 	uint32 *_offsets;
 	Audio::Mixer *_mixer;
 	bool _freeOffsets;
 
 	Common::SeekableReadStream *getSoundStream(uint sound) const;
 public:
-	BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base, bool bigEndian);
-	BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets);
+	BaseSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 base, bool bigEndian);
+	BaseSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 *offsets);
 	virtual ~BaseSound();
 
 	void playSound(uint sound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) {
@@ -61,7 +61,7 @@ public:
 	virtual Audio::RewindableAudioStream *makeAudioStream(uint sound) = 0;
 };
 
-BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base, bool bigEndian)
+BaseSound::BaseSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 base, bool bigEndian)
 	: _mixer(mixer), _filename(filename), _offsets(nullptr) {
 
 	uint res = 0;
@@ -69,7 +69,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32
 
 	Common::File file;
 	if (!file.open(_filename))
-		error("BaseSound: Could not open file \"%s\"", filename.c_str());
+		error("BaseSound: Could not open file \"%s\"", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(base + sizeof(uint32), SEEK_SET);
 	if (bigEndian)
@@ -98,7 +98,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32
 	_offsets[res] = file.size();
 }
 
-BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets)
+BaseSound::BaseSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 *offsets)
 	: _mixer(mixer), _filename(filename), _offsets(offsets), _freeOffsets(false) {
 }
 
@@ -113,7 +113,7 @@ Common::SeekableReadStream *BaseSound::getSoundStream(uint sound) const {
 
 	Common::File *file = new Common::File();
 	if (!file->open(_filename)) {
-		warning("BaseSound::getSoundStream: Could not open file \"%s\"", _filename.c_str());
+		warning("BaseSound::getSoundStream: Could not open file \"%s\"", _filename.toString(Common::Path::kNativeSeparator).c_str());
 		delete file;
 		return nullptr;
 	}
@@ -189,9 +189,9 @@ void BaseSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType ty
 
 class WavSound : public BaseSound {
 public:
-	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0)
+	WavSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 base = 0)
 		: BaseSound(mixer, filename, base, false) {}
-	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets) : BaseSound(mixer, filename, offsets) {}
+	WavSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 *offsets) : BaseSound(mixer, filename, offsets) {}
 	Audio::RewindableAudioStream *makeAudioStream(uint sound) override;
 };
 
@@ -208,7 +208,7 @@ Audio::RewindableAudioStream *WavSound::makeAudioStream(uint sound) {
 class VocSound : public BaseSound {
 	const byte _flags;
 public:
-	VocSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
+	VocSound(Audio::Mixer *mixer, const Common::Path &filename, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
 		: BaseSound(mixer, filename, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::RewindableAudioStream *makeAudioStream(uint sound) override;
 };
@@ -227,7 +227,7 @@ Audio::RewindableAudioStream *VocSound::makeAudioStream(uint sound) {
 class RawSound : public BaseSound {
 	const byte _flags;
 public:
-	RawSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned)
+	RawSound(Audio::Mixer *mixer, const Common::Path &filename, bool isUnsigned)
 		: BaseSound(mixer, filename, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::RewindableAudioStream *makeAudioStream(uint sound) override;
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) override;
@@ -239,7 +239,7 @@ Audio::RewindableAudioStream *RawSound::makeAudioStream(uint sound) {
 
 	Common::File *file = new Common::File();
 	if (!file->open(_filename)) {
-		warning("RawSound::makeAudioStream: Could not open file \"%s\"", _filename.c_str());
+		warning("RawSound::makeAudioStream: Could not open file \"%s\"", _filename.toString(Common::Path::kNativeSeparator).c_str());
 		delete file;
 		return nullptr;
 	}
@@ -263,7 +263,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 #ifdef USE_MAD
 class MP3Sound : public BaseSound {
 public:
-	MP3Sound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
+	MP3Sound(Audio::Mixer *mixer, const Common::Path &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
 	Audio::RewindableAudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
@@ -279,7 +279,7 @@ public:
 #ifdef USE_VORBIS
 class VorbisSound : public BaseSound {
 public:
-	VorbisSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
+	VorbisSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
 	Audio::RewindableAudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
@@ -295,7 +295,7 @@ public:
 #ifdef USE_FLAC
 class FLACSound : public BaseSound {
 public:
-	FLACSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
+	FLACSound(Audio::Mixer *mixer, const Common::Path &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
 	Audio::RewindableAudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
@@ -308,23 +308,29 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-static BaseSound *makeSound(Audio::Mixer *mixer, const Common::String &basename) {
+static BaseSound *makeSound(Audio::Mixer *mixer, const Common::Path &basename) {
+	Common::Path tmp;
 #ifdef USE_FLAC
-	if (Common::File::exists(basename + ".fla"))
-		return new FLACSound(mixer, basename + ".fla");
+	tmp = basename.append(".fla");
+	if (Common::File::exists(tmp))
+		return new FLACSound(mixer, tmp);
 #endif
 #ifdef USE_VORBIS
-	if (Common::File::exists(basename + ".ogg"))
-		return new VorbisSound(mixer, basename + ".ogg");
+	tmp = basename.append(".ogg");
+	if (Common::File::exists(tmp))
+		return new VorbisSound(mixer, tmp);
 #endif
 #ifdef USE_MAD
-	if (Common::File::exists(basename + ".mp3"))
-		return new MP3Sound(mixer, basename + ".mp3");
+	tmp = basename.append(".mp3");
+	if (Common::File::exists(tmp))
+		return new MP3Sound(mixer, tmp);
 #endif
-	if (Common::File::exists(basename + ".wav"))
-		return new WavSound(mixer, basename + ".wav");
-	if (Common::File::exists(basename + ".voc"))
-		return new VocSound(mixer, basename + ".voc", true);
+	tmp = basename.append(".wav");
+	if (Common::File::exists(tmp))
+		return new WavSound(mixer, tmp);
+	tmp = basename.append(".voc");
+	if (Common::File::exists(tmp))
+		return new VocSound(mixer, tmp, true);
 	return nullptr;
 }
 
@@ -430,14 +436,14 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 }
 
 // This method is only used by Simon1 Amiga CD32 & Windows
-void Sound::readSfxFile(const Common::String &filename) {
+void Sound::readSfxFile(const Common::Path &filename) {
 	if (_hasEffectsFile)
 		return;
 
 	_mixer->stopHandle(_effectsHandle);
 
 	if (!Common::File::exists(filename)) {
-		error("readSfxFile: Can't load sfx file %s", filename.c_str());
+		error("readSfxFile: Can't load sfx file %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	const bool dataIsUnsigned = (_vm->getGameId() != GID_SIMON1CD32);
@@ -462,11 +468,11 @@ void Sound::loadSfxTable(const char *gameFilename, uint32 base) {
 }
 
 // This method is only used by Simon1 Amiga CD32
-void Sound::readVoiceFile(const Common::String &filename) {
+void Sound::readVoiceFile(const Common::Path &filename) {
 	_mixer->stopHandle(_voiceHandle);
 
 	if (!Common::File::exists(filename))
-		error("readVoiceFile: Can't load voice file %s", filename.c_str());
+		error("readVoiceFile: Can't load voice file %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	const bool dataIsUnsigned = false;
 

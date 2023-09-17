@@ -79,9 +79,9 @@ protected:
 	void loadSfxFile(const GameSpecificSettings *gss);
 
 public:
-	void readSfxFile(const Common::String &filename);
+	void readSfxFile(const Common::Path &filename);
 	void loadSfxTable(const char *gameFilename, uint32 base);
-	void readVoiceFile(const Common::String &filename);
+	void readVoiceFile(const Common::Path &filename);
 
 	void playVoice(uint sound);
 	void playEffects(uint sound);
