@@ -40,7 +40,7 @@ public:
 	bool showTitleSequence();
 	bool showMainMenu();
 	bool returnToMainMenu();
-	bool playMovie(const Common::String &background, const Common::String &movie, int movieLeft, int movieTop);
+	bool playMovie(const Common::Path &background, const Common::Path &movie, int movieLeft, int movieTop);
 	bool showClosingScreen();
 	bool showFeaturesScreen();
 	bool startNewGame(bool walkthrough = false, bool introMovie = false);

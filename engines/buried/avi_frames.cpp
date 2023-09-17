@@ -32,7 +32,7 @@
 
 namespace Buried {
 
-AVIFrames::AVIFrames(const Common::String &fileName, uint cachedFrames) {
+AVIFrames::AVIFrames(const Common::Path &fileName, uint cachedFrames) {
 	_maxCachedFrames = 0;
 	_video = nullptr;
 	_cacheEnabled = false;
@@ -48,7 +48,7 @@ AVIFrames::~AVIFrames() {
 	close();
 }
 
-bool AVIFrames::open(const Common::String &fileName, uint cachedFrames) {
+bool AVIFrames::open(const Common::Path &fileName, uint cachedFrames) {
 	if (fileName.empty())
 		return false;
 

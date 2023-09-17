@@ -47,30 +47,30 @@ public:
 	void shutDown();
 
 	// AMBIENT SOUND CHANNEL FUNCTIONS
-	bool setAmbientSound(const Common::String &fileName = "", bool fade = false, byte finalVolumeLevel = 64);
+	bool setAmbientSound(const Common::Path &fileName = Common::Path(), bool fade = false, byte finalVolumeLevel = 64);
 	bool adjustAmbientSoundVolume(byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);
 	bool isAmbientSoundPlaying();
 
-	bool setSecondaryAmbientSound(const Common::String &fileName = "", bool fade = false, byte finalVolumeLevel = 64);
+	bool setSecondaryAmbientSound(const Common::Path &fileName = Common::Path(), bool fade = false, byte finalVolumeLevel = 64);
 	bool adjustSecondaryAmbientSoundVolume(byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);
 	uint32 getSecondaryAmbientPosition();
 	bool restartSecondaryAmbientSound();
 
 	// AI SOUND CHANNEL FUNCTIONS
-	bool playSynchronousAIComment(const Common::String &fileName);
-	bool playAsynchronousAIComment(const Common::String &fileName);
+	bool playSynchronousAIComment(const Common::Path &fileName);
+	bool playAsynchronousAIComment(const Common::Path &fileName);
 	bool isAsynchronousAICommentPlaying();
 	void stopAsynchronousAIComment();
 
 	// SOUND EFFECTS FUNCTIONS
-	int playSoundEffect(const Common::String &fileName, int volume = 127, bool loop = false, bool oneShot = true);
-	bool playSynchronousSoundEffect(const Common::String &fileName, int volume = 127);
+	int playSoundEffect(const Common::Path &fileName, int volume = 127, bool loop = false, bool oneShot = true);
+	bool playSynchronousSoundEffect(const Common::Path &fileName, int volume = 127);
 	bool stopSoundEffect(int effectID);
 	bool isSoundEffectPlaying (int effectID);
 	bool adjustSoundEffectSoundVolume(int effectID, byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);
 
 	// Interface sound functions
-	bool playInterfaceSound(const Common::String &fileName);
+	bool playInterfaceSound(const Common::Path &fileName);
 	bool stopInterfaceSound();
 	bool isInterfaceSoundPlaying();
 
@@ -115,7 +115,7 @@ private:
 		Sound();
 		~Sound();
 
-		bool load(const Common::String &fileName);
+		bool load(const Common::Path &fileName);
 		bool start();
 		bool isPlaying() const;
 		bool stop();
@@ -145,11 +145,11 @@ private:
 	bool _paused;
 
 	int _fileIDFootsteps;
-	Common::String _ambientFileNames[2];
+	Common::Path _ambientFileNames[2];
 	int _lastAmbient;
-	Common::String _effectsFileNames[2];
-	Common::String _interfaceFileName;
-	Common::String _arthurFileName;
+	Common::Path _effectsFileNames[2];
+	Common::Path _interfaceFileName;
+	Common::Path _arthurFileName;
 };
 
 } // End of namespace Buried
