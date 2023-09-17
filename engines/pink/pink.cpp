@@ -47,7 +47,7 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _screen(nullptr), _pdaMgr(this) {
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 
 	g_paletteLookup = new Graphics::PaletteLookup;
@@ -76,7 +76,7 @@ Common::Error PinkEngine::init() {
 	initGraphics(640, 480);
 
 	_exeResources = new Common::PEResources();
-	Common::String fileName = isPeril() ? "pptp.exe" : "hpp.exe";
+	Common::Path fileName = isPeril() ? "pptp.exe" : "hpp.exe";
 
 	if ((_desc->flags & GF_COMPRESSED) && isPeril()) {
 		fileName = "pptp.ex_";
@@ -97,8 +97,8 @@ Common::Error PinkEngine::init() {
 
 	initMenu();
 
-	Common::String orbName;
-	Common::String broName;
+	Common::Path orbName;
+	Common::Path broName;
 	if (isPeril()) {
 		orbName = "PPTP.ORB";
 		broName = "PPTP.BRO";
