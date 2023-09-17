@@ -639,7 +639,7 @@ void ConversationCel::registerGraphics() {
 void ConversationCel::updateGraphics() {
 	uint32 currentTime = g_nancy->getTotalPlayTime();
 
-	if (_state == kRun && currentTime > _nextFrameTime && _curFrame <= _lastFrame) {
+	if (_state == kRun && currentTime > _nextFrameTime && _curFrame < MIN<uint>(_lastFrame + 1, _celNames[0].size())) {
 		for (uint i = 0; i < _celRObjects.size(); ++i) {
 			Cel &cel = loadCel(_celNames[i][_curFrame], _treeNames[i]);
 			if (_overrideTreeRects[i] == kCelOverrideTreeRectsOn) {
@@ -722,7 +722,7 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 }
 
 bool ConversationCel::isVideoDonePlaying() {
-	return _curFrame >= _lastFrame && _nextFrameTime <= g_nancy->getTotalPlayTime();
+	return _curFrame >= MIN<uint>(_lastFrame, _celNames[0].size()) && _nextFrameTime <= g_nancy->getTotalPlayTime();
 }
 
 ConversationCel::Cel &ConversationCel::loadCel(const Common::String &name, const Common::String &treeName) {
