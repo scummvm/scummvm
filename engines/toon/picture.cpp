@@ -29,8 +29,8 @@
 
 namespace Toon {
 
-bool Picture::loadPicture(const Common::String &file) {
-	debugC(1, kDebugPicture, "loadPicture(%s)", file.c_str());
+bool Picture::loadPicture(const Common::Path &file) {
+	debugC(1, kDebugPicture, "loadPicture(%s)", file.toString().c_str());
 
 	uint32 size = 0;
 	uint8 *fileData = _vm->resources()->getFileData(file, &size);

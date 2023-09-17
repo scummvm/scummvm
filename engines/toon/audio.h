@@ -102,7 +102,7 @@ public:
 	AudioStreamPackage(ToonEngine *vm);
 	~AudioStreamPackage();
 
-	bool loadAudioPackage(const Common::String &indexFile, const Common::String &streamFile);
+	bool loadAudioPackage(const Common::Path &indexFile, const Common::Path &streamFile);
 	void getInfo(int32 id, int32 *offset, int32 *size);
 	Common::SeekableReadStream *getStream(int32 id, bool ownMemory = false);
 protected:
@@ -152,7 +152,7 @@ public:
 	void setAmbientSFXVolume(int32 id, int volume);
 
 	void closeAudioPack(int32 id);
-	bool loadAudioPack(int32 id, const Common::String &indexFile, const Common::String &packFile);
+	bool loadAudioPack(int32 id, const Common::Path &indexFile, const Common::Path &packFile);
 
 	AudioStreamInstance *_channels[16];  // 0-1 : music
 	                                     // 2 : voice

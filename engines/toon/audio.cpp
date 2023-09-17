@@ -87,11 +87,11 @@ int AudioManager::playMusic(const Common::String &dir, const Common::String &mus
 	debugC(1, kDebugAudio, "playMusic(%s, %s)", dir.c_str(), music.c_str());
 
 	// two musics can be played at same time
-	Common::String path;
+	Common::Path path;
 	if (dir == "") {
-		path = Common::String::format("%s.MUS", music.c_str());
+		path = Common::Path(Common::String::format("%s.MUS", music.c_str()));
 	} else {
-		path = Common::String::format("ACT%d/%s/%s.MUS", _vm->state()->_currentChapter, dir.c_str(), music.c_str());
+		path = Common::Path(Common::String::format("ACT%d/%s/%s.MUS", _vm->state()->_currentChapter, dir.c_str(), music.c_str()));
 	}
 
 	if (_currentMusicName == music)
@@ -205,8 +205,8 @@ void AudioManager::closeAudioPack(int32 id) {
 	_audioPacks[id] = nullptr;
 }
 
-bool AudioManager::loadAudioPack(int32 id, const Common::String &indexFile, const Common::String &packFile) {
-	debugC(4, kDebugAudio, "loadAudioPack(%d, %s, %s)", id, indexFile.c_str(), packFile.c_str());
+bool AudioManager::loadAudioPack(int32 id, const Common::Path &indexFile, const Common::Path &packFile) {
+	debugC(4, kDebugAudio, "loadAudioPack(%d, %s, %s)", id, indexFile.toString().c_str(), packFile.toString().c_str());
 
 	closeAudioPack(id);
 	_audioPacks[id] = new AudioStreamPackage(_vm);
@@ -497,8 +497,8 @@ AudioStreamPackage::~AudioStreamPackage() {
 	delete _file;
 }
 
-bool AudioStreamPackage::loadAudioPackage(const Common::String &indexFile, const Common::String &streamFile) {
-	debugC(4, kDebugAudio, "loadAudioPackage(%s, %s)", indexFile.c_str(), streamFile.c_str());
+bool AudioStreamPackage::loadAudioPackage(const Common::Path &indexFile, const Common::Path &streamFile) {
+	debugC(4, kDebugAudio, "loadAudioPackage(%s, %s)", indexFile.toString().c_str(), streamFile.toString().c_str());
 
 	uint32 size = 0;
 	uint8 *fileData = _vm->resources()->getFileData(indexFile, &size);
