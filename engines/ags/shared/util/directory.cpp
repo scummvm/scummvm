@@ -86,7 +86,8 @@ String GetCurrentDirectory() {
 	Path::FixupPath(str);
 	return str;
 #else
-	return ConfMan.get("path");
+	// Use / separator
+	return ConfMan.getPath("path").toString('/');
 #endif
 }
 

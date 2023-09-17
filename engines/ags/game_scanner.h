@@ -50,7 +50,7 @@ private:
 	/**
 	 * Scans a single file that may be an AGS game
 	 */
-	void scanFile(const Common::String &filename);
+	void scanFile(const Common::Path &filename);
 
 	/**
 	 * Convert a game name to an appropriate game Id
@@ -65,7 +65,7 @@ public:
 	/**
 	 * Main execution method
 	 */
-	void scan(const Common::String &startFolder);
+	void scan(const Common::Path &startFolder);
 };
 
 } // namespace AGS3

@@ -64,7 +64,7 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 	_langPopUp = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + ".translation");
 	_langPopUp->appendEntry(_("<default>"), (uint32) - 1);
 
-	Common::String path = ConfMan.get("path", _domain);
+	Common::Path path = ConfMan.getPath("path", _domain);
 	Common::FSDirectory dir(path);
 	Common::ArchiveMemberList traFileList;
 	dir.listMatchingMembers(traFileList, "*.tra");

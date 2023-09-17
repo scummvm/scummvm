@@ -67,7 +67,7 @@ enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 class AGSMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
-	mutable Common::String _filename;
+	mutable Common::Path _filename;
 	mutable Common::String _md5;
 
 	static const DebugChannelDef debugFlagList[];
