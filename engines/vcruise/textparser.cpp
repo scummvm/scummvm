@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/path.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
@@ -125,36 +126,36 @@ void TextParser::requeue(const Common::String &str, const TextParserState &state
 	requeue(str.c_str(), str.size(), state);
 }
 
-void TextParser::expectToken(Common::String &outToken, const Common::String &blamePath) {
+void TextParser::expectToken(Common::String &outToken, const Common::Path &blamePath) {
 	TextParserState state;
 	expectTokenInternal(outToken, blamePath, state);
 }
 
-void TextParser::expectShort(int16 &outInt, const Common::String &blamePath) {
+void TextParser::expectShort(int16 &outInt, const Common::Path &blamePath) {
 	int i;
 	expectInt(i, blamePath);
 	outInt = static_cast<int16>(i);
 }
 
-void TextParser::expectInt(int &outInt, const Common::String &blamePath) {
+void TextParser::expectInt(int &outInt, const Common::Path &blamePath) {
 	Common::String token;
 	TextParserState state;
 	expectTokenInternal(token, blamePath, state);
 
 	if (!sscanf(token.c_str(), "%i", &outInt))
-		error("Parsing error in '%s' at line %i col %i: Integer was malformed", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
+		error("Parsing error in '%s' at line %i col %i: Integer was malformed", blamePath.toString(Common::Path::kNativeSeparator).c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
 }
 
-void TextParser::expectUInt(uint &outUInt, const Common::String &blamePath) {
+void TextParser::expectUInt(uint &outUInt, const Common::Path &blamePath) {
 	Common::String token;
 	TextParserState state;
 	expectTokenInternal(token, blamePath, state);
 
 	if (!sscanf(token.c_str(), "%u", &outUInt))
-		error("Parsing error in '%s' at line %i col %i: Unsigned integer was malformed", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
+		error("Parsing error in '%s' at line %i col %i: Unsigned integer was malformed", blamePath.toString(Common::Path::kNativeSeparator).c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
 }
 
-void TextParser::expectLine(Common::String &outToken, const Common::String &blamePath, bool continueToNextLine) {
+void TextParser::expectLine(Common::String &outToken, const Common::Path &blamePath, bool continueToNextLine) {
 	outToken.clear();
 
 	char c = 0;
@@ -187,13 +188,13 @@ void TextParser::expectLine(Common::String &outToken, const Common::String &blam
 		outToken = outToken.substr(0, nonWhitespaceLength);
 }
 
-void TextParser::expect(const char *str, const Common::String &blamePath) {
+void TextParser::expect(const char *str, const Common::Path &blamePath) {
 	Common::String token;
 	TextParserState state;
 	expectTokenInternal(token, blamePath, state);
 
 	if (token != str)
-		error("Parsing error in '%s' at line %i col %i: Expected token '%s' but found '%s'", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col), str, token.c_str());
+		error("Parsing error in '%s' at line %i col %i: Expected token '%s' but found '%s'", blamePath.toString(Common::Path::kNativeSeparator).c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col), str, token.c_str());
 }
 
 void TextParser::skipToEOL() {
@@ -236,9 +237,9 @@ bool TextParser::checkEOL() {
 	}
 }
 
-void TextParser::expectTokenInternal(Common::String &outToken, const Common::String &blamePath, TextParserState &outState) {
+void TextParser::expectTokenInternal(Common::String &outToken, const Common::Path &blamePath, TextParserState &outState) {
 	if (!parseToken(outToken, outState))
-		error("Parsing error in '%s' unexpected end of file", blamePath.c_str());
+		error("Parsing error in '%s' unexpected end of file", blamePath.toString(Common::Path::kNativeSeparator).c_str());
 }
 
 bool TextParser::parseToken(Common::String &outString, TextParserState &outState) {
