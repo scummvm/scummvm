@@ -246,7 +246,7 @@ void Scene::selectScene() {
 	ui._menuMode = STD_MODE;
 
 	// Load the scene
-	Common::String sceneFile = Common::String::format("res%02d", _goToScene);
+	Common::Path sceneFile(Common::String::format("res%02d", _goToScene));
 	// _rrmName gets set during loadScene()
 	// _rrmName is for ScalpelScene::startCAnim
 	_currentScene = _goToScene;
@@ -303,7 +303,7 @@ void Scene::freeScene() {
 	_currentScene = -1;
 }
 
-bool Scene::loadScene(const Common::String &filename) {
+bool Scene::loadScene(const Common::Path &filename) {
 	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;
 	People &people = *_vm->_people;
@@ -331,7 +331,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 	if (!IS_3DO) {
 		// PC version
-		Common::String roomFilename = filename + ".rrm";
+		Common::Path roomFilename = filename.append(".rrm");
 		_roomFilename = roomFilename;
 
 		flag = _vm->_res->exists(roomFilename);
@@ -659,7 +659,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 	} else {
 		// === 3DO version ===
-		_roomFilename = "rooms/" + filename + ".rrm";
+		_roomFilename = Common::Path("rooms/").appendInPlace(filename).appendInPlace(".rrm");
 		flag = _vm->_res->exists(_roomFilename);
 		if (!flag)
 			error("loadScene: 3DO room data file not found");
@@ -956,14 +956,16 @@ bool Scene::loadScene(const Common::String &filename) {
 		// load from file rooms\[filename].bg
 		// it's uncompressed 15-bit RGB555 data
 
-		Common::String roomBackgroundFilename = "rooms/" + filename + ".bg";
+		Common::Path roomBackgroundFilename("rooms/");
+		roomBackgroundFilename.appendInPlace(filename);
+		roomBackgroundFilename.appendInPlace(".bg");
 		flag = _vm->_res->exists(roomBackgroundFilename);
 		if (!flag)
-			error("loadScene: 3DO room background file not found (%s)", roomBackgroundFilename.c_str());
+			error("loadScene: 3DO room background file not found (%s)", roomBackgroundFilename.toString().c_str());
 
 		Common::File roomBackgroundStream;
 		if (!roomBackgroundStream.open(roomBackgroundFilename))
-			error("Could not open file - %s", roomBackgroundFilename.c_str());
+			error("Could not open file - %s", roomBackgroundFilename.toString().c_str());
 
 		int totalPixelCount = SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT;
 		uint16 *roomBackgroundDataPtr = nullptr;
@@ -1058,7 +1060,7 @@ void Scene::loadSceneSounds() {
 	Sound &sound = *_vm->_sound;
 
 	for (uint idx = 0; idx < _sounds.size(); ++idx)
-		sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
+		sound.loadSound(Common::Path(_sounds[idx]._name), _sounds[idx]._priority);
 }
 
 void Scene::checkSceneStatus() {

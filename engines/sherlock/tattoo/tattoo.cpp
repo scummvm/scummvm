@@ -104,7 +104,7 @@ void TattooEngine::startScene() {
 	case 53:
 	case 68:
 		// Load overlay mask(s) for the scene
-		ui._mask = _res->load(Common::String::format("res%02d.msk", _scene->_goToScene));
+		ui._mask = _res->load(Common::Path(Common::String::format("res%02d.msk", _scene->_goToScene)));
 		if (_scene->_goToScene == 8)
 			ui._mask1 = _res->load("res08a.msk");
 		else if (_scene->_goToScene == 18 || _scene->_goToScene == 68)

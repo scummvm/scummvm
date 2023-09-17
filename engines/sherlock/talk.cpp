@@ -130,7 +130,7 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_talkHistory.resize(IS_ROSE_TATTOO ? 1500 : 500);
 }
 
-void Talk::talkTo(const Common::String filename) {
+void Talk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
@@ -590,8 +590,8 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	}
 
 	const char *chP = strchr(filename.c_str(), '.');
-	Common::String talkFile = chP ? Common::String(filename.c_str(), chP) + ".tlk" :
-		Common::String(filename.c_str(), filename.c_str() + 7) + ".tlk";
+	Common::Path talkFile = chP ? Common::Path(Common::String(filename.c_str(), chP)).appendInPlace(".tlk") :
+		Common::Path(Common::String(filename.c_str(), filename.c_str() + 7)).appendInPlace(".tlk");
 
 	// Create the base of the sound filename used for talking in Rose Tattoo
 	if (IS_ROSE_TATTOO && _scriptMoreFlag != 1)
@@ -880,7 +880,7 @@ int Talk::waitForMore(int delay) {
 	// Handle playing any speech associated with the text being displayed
 	switchSpeaker();
 	if (sound._speechOn && IS_ROSE_TATTOO) {
-		sound.playSpeech(sound._talkSoundFile);
+		sound.playSpeech(Common::Path(sound._talkSoundFile));
 		sound._talkSoundFile.setChar(sound._talkSoundFile.lastChar() + 1, sound._talkSoundFile.size() - 1);
 	}
 	playingSpeech = sound.isSpeechPlaying();

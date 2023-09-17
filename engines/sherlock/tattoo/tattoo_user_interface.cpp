@@ -137,7 +137,7 @@ void TattooUserInterface::lookAtObject() {
 							if (!soundName.contains('.'))
 								soundName += ".wav";
 
-							sound.playSound(soundName, WAIT_RETURN_IMMEDIATELY);
+							sound.playSound(Common::Path(soundName), WAIT_RETURN_IMMEDIATELY);
 						}
 
 						break;

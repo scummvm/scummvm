@@ -23,7 +23,7 @@
 #define SHERLOCK_ANIMATION_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
+#include "common/path.h"
 #include "common/array.h"
 
 namespace Sherlock {
@@ -44,10 +44,10 @@ private:
 	/**
 	 * Checks for whether an animation is being played that has associated sound
 	 */
-	const int *checkForSoundFrames(const Common::String &filename, bool intro);
+	const int *checkForSoundFrames(const Common::Path &filename, bool intro);
 public:
-	Common::String _soundLibraryFilename;
-	Common::String _gfxLibraryFilename;
+	Common::Path _soundLibraryFilename;
+	Common::Path _gfxLibraryFilename;
 
 public:
 	Animation(SherlockEngine *vm);
@@ -75,9 +75,9 @@ public:
 	/**
 	 * Play a full-screen animation
 	 */
-	bool play(const Common::String &filename, bool intro, int minDelay, int fade, bool setPalette, int speed);
+	bool play(const Common::Path &filename, bool intro, int minDelay, int fade, bool setPalette, int speed);
 
-	bool play3DO(const Common::String &filename, bool intro, int minDelay, bool fadeFromGrey, int speed);
+	bool play3DO(const Common::Path &filename, bool intro, int minDelay, bool fadeFromGrey, int speed);
 };
 
 } // End of namespace Sherlock

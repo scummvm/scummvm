@@ -65,7 +65,7 @@ TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm), _labWidget(vm) {
 	_labTableScene = false;
 }
 
-bool TattooScene::loadScene(const Common::String &filename) {
+bool TattooScene::loadScene(const Common::Path &filename) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;

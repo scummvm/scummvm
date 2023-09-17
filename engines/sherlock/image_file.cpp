@@ -37,7 +37,7 @@ ImageFile::ImageFile() {
 	_stream = nullptr;
 }
 
-ImageFile::ImageFile(const Common::String &name, bool skipPal, bool animImages) {
+ImageFile::ImageFile(const Common::Path &name, bool skipPal, bool animImages) {
 	// When we have a filename, the ImageFile class is responsible for
 	// decoding frames on demand, not all at once. But we don't want to
 	// recreate the stream every time since in the case where resources
@@ -326,12 +326,12 @@ void ImageFile3DO::setVm(SherlockEngine *vm) {
 	_vm = vm;
 }
 
-ImageFile3DO::ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType) {
+ImageFile3DO::ImageFile3DO(const Common::Path &name, ImageFile3DOType imageFile3DOType) {
 #if 0
 	Common::File *dataStream = new Common::File();
 
 	if (!dataStream->open(name)) {
-		error("unable to open %s\n", name.c_str());
+		error("unable to open %s\n", name.toString().c_str());
 	}
 #endif
 	Common::SeekableReadStream *dataStream = _vm->_res->load(name);

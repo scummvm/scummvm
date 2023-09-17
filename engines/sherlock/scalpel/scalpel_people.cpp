@@ -396,7 +396,7 @@ void ScalpelPeople::setTalking(int speaker) {
 
 	if (_portraitsOn) {
 		delete _talkPics;
-		Common::String filename = Common::String::format("%s.vgs", _characters[speaker]._portrait);
+		Common::Path filename(Common::String::format("%s.vgs", _characters[speaker]._portrait));
 		_talkPics = new ImageFile(filename);
 
 		// Load portrait sequences

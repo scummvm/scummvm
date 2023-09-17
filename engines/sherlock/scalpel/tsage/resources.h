@@ -110,7 +110,7 @@ private:
 	Common::StringArray _resStrings;
 private:
 	Common::File _file;
-	Common::String _filename;
+	Common::Path _filename;
 	ResourceList _resources;
 	SectionList _sections;
 
@@ -120,10 +120,10 @@ private:
 	static bool scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum, ResourceEntry &resEntry);
 	static void loadSection(Common::File &f, ResourceList &resources);
 public:
-	TLib(const Common::String &filename);
+	TLib(const Common::Path &filename);
 	~TLib();
 
-	const Common::String &getFilename() { return _filename; }
+	const Common::Path &getFilename() { return _filename; }
 	const SectionList &getSections() { return _sections; }
 	Common::SeekableReadStream *getResource(uint16 id, bool suppressErrors = false);
 	Common::SeekableReadStream *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);

@@ -111,7 +111,7 @@ public:
 	 *	In their case, the conversation display is simply suppressed, and control is passed on to
 	 *	doScript to implement whatever action is required.
 	 */
-	void talkTo(const Common::String filename) override;
+	void talkTo(const Common::String &filename) override;
 
 	/**
 	 * Push the details of a passed object onto the saved sequences stack

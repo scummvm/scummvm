@@ -55,13 +55,13 @@ private:
 	/**
 	 * Handle playing a sound or speech
 	 */
-	bool playSoundResource(const Common::String &name, const Common::String &libFilename,
+	bool playSoundResource(const Common::Path &name, const Common::Path &libFilename,
 		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle);
 
 	/**
 	 * Form a filename from a passed sound resource name
 	 */
-	Common::String formFilename(const Common::String &name);
+	Common::Path formFilename(const Common::Path &name);
 public:
 	bool _digitized;
 	int _voices;
@@ -83,17 +83,17 @@ public:
 	/**
 	 * Load a sound
 	 */
-	void loadSound(const Common::String &name, int priority);
+	void loadSound(const Common::Path &name, int priority);
 
 	/**
 	 * Play the sound in the specified resource
 	 */
-	bool playSound(const Common::String &name, WaitType waitType, int priority = 100, const char *libraryFilename = nullptr);
+	bool playSound(const Common::Path &name, WaitType waitType, int priority = 100, const Common::Path &libraryFilename = Common::Path());
 
 	/**
 	 * Play the specified AIFF file. (Used for the 3DO Scalpel intro.)
 	 */
-	void playAiff(const Common::String &name, int volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+	void playAiff(const Common::Path &name, int volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
 
 	/**
 	 * Stop the AIFF sound that was started with playAiff().
@@ -130,7 +130,7 @@ public:
 	/**
 	 * Play a specified voice resource
 	 */
-	void playSpeech(const Common::String &name);
+	void playSpeech(const Common::Path &name);
 
 	/**
 	 * Stop any currently playing speech

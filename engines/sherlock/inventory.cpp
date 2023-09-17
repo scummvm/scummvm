@@ -94,7 +94,7 @@ void Inventory::loadGraphics() {
 		// Get the name of the item to be displayed, figure out its accompanying
 		// .VGS file with its picture, and then load it
 		int invNum = findInv((*this)[idx]._name);
-		Common::String filename = Common::String::format("item%02d.vgs", invNum + 1);
+		Common::Path filename(Common::String::format("item%02d.vgs", invNum + 1));
 
 		if (!IS_3DO) {
 			// PC

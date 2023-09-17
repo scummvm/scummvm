@@ -91,7 +91,7 @@ void Sound::syncSoundSettings() {
 	_voices = _digitized ? 1 : 0;
 }
 
-void Sound::loadSound(const Common::String &name, int priority) {
+void Sound::loadSound(const Common::Path &name, int priority) {
 	// No implementation required in ScummVM
 	//warning("loadSound");
 }
@@ -118,16 +118,16 @@ byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 	return reference;
 }
 
-bool Sound::playSound(const Common::String &name, WaitType waitType, int priority, const char *libraryFilename) {
+bool Sound::playSound(const Common::Path &name, WaitType waitType, int priority, const Common::Path &libraryFilename) {
 	// Scalpel has only a single sound handle, so it must be stopped before starting a new sound
 	if (IS_SERRATED_SCALPEL)
 		stopSound();
 
-	Common::String filename = formFilename(name);
+	Common::Path filename = formFilename(name);
 
 	Audio::SoundHandle &soundHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
 	if (!playSoundResource(filename, libraryFilename, Audio::Mixer::kSFXSoundType, soundHandle))
-		error("Could not find sound resource - %s", filename.c_str());
+		error("Could not find sound resource - %s", filename.toString().c_str());
 
 	_soundPlaying = true;
 	_curPriority = priority;
@@ -152,22 +152,22 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	return retval;
 }
 
-Common::String Sound::formFilename(const Common::String &name) {
-	Common::String filename = name;
+Common::Path Sound::formFilename(const Common::Path &name) {
+	Common::Path filename = name;
 
-	if (!filename.contains('.')) {
+	if (!filename.baseName().contains('.')) {
 		if (!IS_3DO) {
 			if (IS_SERRATED_SCALPEL) {
-				filename += ".SND";
+				filename.appendInPlace(".SND");
 			} else {
-				filename += ".WAV";
+				filename.appendInPlace(".WAV");
 			}
 		} else {
 			// 3DO uses .aiff extension
-			filename += ".AIFF";
-			if (!filename.contains('/')) {
+			filename.appendInPlace(".AIFF");
+			if (filename.getParent().empty()) {
 				// if no directory was given, use the room sounds directory
-				filename = "rooms/sounds/" + filename;
+				filename = Common::Path("rooms/sounds/").appendInPlace(filename);
 			}
 		}
 	}
@@ -175,7 +175,7 @@ Common::String Sound::formFilename(const Common::String &name) {
 	return filename;
 }
 
-void Sound::playAiff(const Common::String &name, int volume, bool loop) {
+void Sound::playAiff(const Common::Path &name, int volume, bool loop) {
 	Common::File *file = new Common::File();
 	if (!file->open(name)) {
 		delete file;
@@ -207,7 +207,7 @@ void Sound::playLoadedSound(int bufNum, WaitType waitType) {
 		stopSound();
 	}
 
-	playSound(_vm->_scene->_sounds[bufNum]._name, waitType, _vm->_scene->_sounds[bufNum]._priority);
+	playSound(Common::Path(_vm->_scene->_sounds[bufNum]._name), waitType, _vm->_scene->_sounds[bufNum]._priority);
 }
 
 void Sound::freeLoadedSounds() {
@@ -245,7 +245,7 @@ void Sound::setVolume(int volume) {
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
-void Sound::playSpeech(const Common::String &name) {
+void Sound::playSpeech(const Common::Path &name) {
 	Resources &res = *_vm->_res;
 	Scene &scene = *_vm->_scene;
 
@@ -253,14 +253,15 @@ void Sound::playSpeech(const Common::String &name) {
 	stopSpeech();
 
 	if (IS_SERRATED_SCALPEL) {
-		Common::String filename = formFilename(name);
-		if (playSoundResource(filename, Common::String(), Audio::Mixer::kSFXSoundType, _speechHandle))
+		Common::Path filename = formFilename(name);
+		if (playSoundResource(filename, Common::Path(), Audio::Mixer::kSFXSoundType, _speechHandle))
 			_speechPlaying = true;
 	} else {
 		// Figure out which speech library to use
-		Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);
-		if ((!scumm_strnicmp(name.c_str(), "SLVE12S", 7)) || (!scumm_strnicmp(name.c_str(), "WATS12X", 7))
-				|| (!scumm_strnicmp(name.c_str(), "HOLM12X", 7)))
+		Common::Path libraryName(Common::String::format("speech%02d.lib", scene._currentScene));
+		Common::String baseName(name.baseName());
+		if ((!scumm_strnicmp(baseName.c_str(), "SLVE12S", 7)) || (!scumm_strnicmp(baseName.c_str(), "WATS12X", 7))
+				|| (!scumm_strnicmp(baseName.c_str(), "HOLM12X", 7)))
 			libraryName = "SPEECH12.LIB";
 
 		// If the speech library file doesn't even exist, then we can't play anything
@@ -286,7 +287,7 @@ bool Sound::isSpeechPlaying() {
 	return _speechPlaying;
 }
 
-bool Sound::playSoundResource(const Common::String &name, const Common::String &libFilename,
+bool Sound::playSoundResource(const Common::Path &name, const Common::Path &libFilename,
 		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle) {
 	Resources &res = *_vm->_res;
 	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(name) : res.load(name, libFilename, true);
