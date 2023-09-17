@@ -31,7 +31,7 @@ class BlankListingProvider : public ListingProvider {
 public:
 	BlankListingProvider();
 	~BlankListingProvider() override;
-	Listing *getListing(const Common::String &filename, ErrorCode &error) override;
+	Listing *getListing(const Common::Path &filename, ErrorCode &error) override;
 };
 } // End of namespace Wintermute
 #endif

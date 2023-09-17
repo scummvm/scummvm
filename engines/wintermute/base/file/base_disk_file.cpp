@@ -40,12 +40,14 @@
 
 namespace Wintermute {
 
-void correctSlashes(Common::String &fileName) {
-	for (size_t i = 0; i < fileName.size(); i++) {
-		if (fileName[i] == '\\') {
-			fileName.setChar('/', i);
+Common::Path correctSlashes(const Common::String &fileName) {
+	Common::String ret(fileName);
+	for (size_t i = 0; i < ret.size(); i++) {
+		if (ret[i] == '\\') {
+			ret.setChar('/', i);
 		}
 	}
+	return Common::Path(ret);
 }
 
 // Parse a relative path in the game-folder, and if it exists, return a FSNode to it.
@@ -60,42 +62,22 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 	}
 
 	// Relative path:
-	Common::String fixedFilename = filename;
-	correctSlashes(fixedFilename);
-	if (fixedFilename.contains('/')) {
-		Common::StringTokenizer path(fixedFilename, "/");
+	Common::Path fixedFilename = correctSlashes(filename);
+	Common::Path absolutePath(ConfMan.getPath("path"));
+	absolutePath.joinInPlace(fixedFilename);
 
-		// Start traversing relative to the game-data-dir
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
-		Common::FSNode curNode = gameDataDir;
-
-		// Parse all path-elements
-		while (!path.empty()) {
-			// Get the next path-component by slicing on '/'
-			Common::String pathPart = path.nextToken();
-			// Get the next FSNode in the chain, if it exists as a child from the previous.
-			curNode = curNode.getChild(pathPart);
-			if (!curNode.isReadable()) {
-				// Return an invalid FSNode.
-				return Common::FSNode();
-			}
-			// Following the comments in common/fs.h, anything not a directory is a file.
-			if (!curNode.isDirectory()) {
-				if (!path.empty()) {
-					error("Relative path %s reached a file before the end of the path", filename.c_str());
-				}
-				return curNode;
-			}
-		}
+	Common::FSNode node(absolutePath);
+	if (node.exists()) {
+		return node;
+	} else {
+		return Common::FSNode();
 	}
-	// Return an invalid FSNode to mark that we didn't find the requested file.
-	return Common::FSNode();
 }
 
 bool diskFileExists(const Common::String &filename) {
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, filename);
+	SearchMan.listMatchingMembers(files, Common::Path(filename));
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
 		if ((*it)->getName() == filename) {
@@ -112,19 +94,18 @@ bool diskFileExists(const Common::String &filename) {
 
 
 int listMatchingDiskFileMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
-	return Common::FSDirectory(ConfMan.get("path")).listMatchingMembers(list, pattern);
+	return Common::FSDirectory(ConfMan.getPath("path")).listMatchingMembers(list, Common::Path(pattern));
 }
 
 Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = nullptr;
-	Common::String fixedFilename = filename;
-	correctSlashes(fixedFilename);
+	Common::Path fixedFilename = correctSlashes(filename);
 
 	// HACK: There are a few games around which mistakenly refer to absolute paths in the scripts.
 	// The original interpreter on Windows usually simply ignores them when it can't find them.
 	// We try to turn the known ones into relative paths.
-	if (fixedFilename.contains(':')) {
+	if (filename.contains(':')) {
 		const char* const knownPrefixes[] = { // Known absolute paths
 				"c:/documents and settings/radimk/plocha/projekt/", // Basis Octavus refers to several files named "c:\documents and settings\radimk\plocha\projekt\sprites\clock*.bmp"
 				"c:/program files/wme devkit beta/projects/amu/data/", // Five Magical Amulets refers to "c:\program files\wme devkit beta\projects\amu\data\scenes\prvnimenu\scr\scene_init.script"
@@ -158,8 +139,9 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 		bool matched = false;
 
 		for (uint i = 0; i < ARRAYSIZE(knownPrefixes); i++) {
-			if (fixedFilename.hasPrefix(knownPrefixes[i])) {
-				fixedFilename = fixedFilename.c_str() + strlen(knownPrefixes[i]);
+			Common::Path root(knownPrefixes[i], '/');
+			if (fixedFilename.isRelativeTo(root)) {
+				fixedFilename = fixedFilename.relativeTo(root);
 				matched = true;
 			}
 		}
@@ -175,7 +157,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	SearchMan.listMatchingMembers(files, fixedFilename);
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
-		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(fixedFilename,'/'))) {
+		if ((*it)->getName().equalsIgnoreCase(fixedFilename.baseName())) {
 			file = (*it)->createReadStream();
 			break;
 		}

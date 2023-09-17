@@ -287,11 +287,11 @@ uint32 DebuggerController::getLastLine() const {
 	return _lastLine;
 }
 
-Common::String DebuggerController::getSourcePath() const {
+Common::Path DebuggerController::getSourcePath() const {
 	return _sourceListingProvider->getPath();
 }
 
-Error DebuggerController::setSourcePath(const Common::String &sourcePath) {
+Error DebuggerController::setSourcePath(const Common::Path &sourcePath) {
 	ErrorCode err = _sourceListingProvider->setPath(sourcePath);
 	return Error((err == OK ? SUCCESS : ERROR), err);
 }

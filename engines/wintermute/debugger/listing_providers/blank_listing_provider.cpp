@@ -26,7 +26,7 @@ BlankListingProvider::BlankListingProvider() {}
 
 BlankListingProvider::~BlankListingProvider() {}
 
-Listing *BlankListingProvider::getListing(const Common::String &filename, ErrorCode &error) {
+Listing *BlankListingProvider::getListing(const Common::Path &filename, ErrorCode &error) {
 	Listing *l = new BlankListing(filename);
 	error = OK;
 	return l; // Delete this sometime please.
