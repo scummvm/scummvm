@@ -100,7 +100,7 @@ int VideoWindow::getFrameCount() {
 	return 0;
 }
 
-bool VideoWindow::openVideo(const Common::String &fileName) {
+bool VideoWindow::openVideo(const Common::Path &fileName) {
 	closeVideo();
 
 	_video = new Video::AVIDecoder();

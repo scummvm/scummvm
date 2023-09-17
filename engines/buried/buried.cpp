@@ -66,7 +66,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_yielding = false;
 	_allowVideoSkip = true;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN31/MANUAL", 0, 2); // v1.05 era
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN95/MANUAL", 0, 2); // v1.10 era (Trilogy release)
 
@@ -114,16 +114,16 @@ Common::Error BuriedEngine::run() {
 
 	if (isCompressed()) {
 		if (!_mainEXE->loadFromCompressedEXE(getEXEName()))
-			error("Failed to load main EXE '%s'", getEXEName().c_str());
+			error("Failed to load main EXE '%s'", getEXEName().toString(Common::Path::kNativeSeparator).c_str());
 
 		if (_library && !_library->loadFromCompressedEXE(getLibraryName()))
-			error("Failed to load library DLL '%s'", getLibraryName().c_str());
+			error("Failed to load library DLL '%s'", getLibraryName().toString(Common::Path::kNativeSeparator).c_str());
 	} else {
 		if (!_mainEXE->loadFromEXE(getEXEName()))
-			error("Failed to load main EXE '%s'", getEXEName().c_str());
+			error("Failed to load main EXE '%s'", getEXEName().toString(Common::Path::kNativeSeparator).c_str());
 
 		if (_library && !_library->loadFromEXE(getLibraryName()))
-			error("Failed to load library DLL '%s'", getLibraryName().c_str());
+			error("Failed to load library DLL '%s'", getLibraryName().toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	syncSoundSettings();
@@ -198,13 +198,13 @@ Common::String BuriedEngine::getString(uint32 stringID) {
 	return result;
 }
 
-Common::String BuriedEngine::getFilePath(uint32 stringID) {
+Common::Path BuriedEngine::getFilePath(uint32 stringID) {
 	Common::String path = getString(stringID);
-	Common::String output;
 
 	if (path.empty())
-		return output;
+		return Common::Path();
 
+	Common::String output;
 	uint i = 0;
 
 	// The non-demo paths have CD info followed by a backslash.
@@ -229,7 +229,7 @@ Common::String BuriedEngine::getFilePath(uint32 stringID) {
 			output += path[i];
 	}
 
-	return output;
+	return Common::Path(output, '/');
 }
 
 Graphics::WinCursorGroup *BuriedEngine::getCursorGroup(uint32 cursorGroupID) {
@@ -543,7 +543,7 @@ uint32 BuriedEngine::getVersion() {
 	return result;
 }
 
-Common::String BuriedEngine::getFilePath(int timeZone, int environment, int fileOffset) {
+Common::Path BuriedEngine::getFilePath(int timeZone, int environment, int fileOffset) {
 	return getFilePath(computeFileNameResourceID(timeZone, environment, fileOffset));
 }
 

@@ -180,7 +180,7 @@ bool FrameWindow::returnToMainMenu() {
 	return true;
 }
 
-bool FrameWindow::playMovie(const Common::String &background, const Common::String &movie, int movieLeft, int movieTop) {
+bool FrameWindow::playMovie(const Common::Path &background, const Common::Path &movie, int movieLeft, int movieTop) {
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
 

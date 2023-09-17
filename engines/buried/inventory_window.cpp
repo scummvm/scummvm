@@ -85,7 +85,7 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 
 	if (_vm->isDemo()) {
 		// The demo uses a video for drag frames
-		Common::String dragFramesFileName;
+		const char *dragFramesFileName;
 		if (_vm->isTrueColor())
 			dragFramesFileName = "COMMON/INVDRAG.BTV";
 		else

@@ -81,7 +81,7 @@ Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
 }
 
 Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
-	Common::String defaultBaseName = bold ? "arialbd.ttf" : "arial.ttf";
+	const char *defaultBaseName = bold ? "arialbd.ttf" : "arial.ttf";
 
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(defaultBaseName);
 
@@ -185,19 +185,19 @@ Graphics::Surface *GraphicsManager::getBitmap(uint32 bitmapID) {
 	return surface;
 }
 
-Graphics::Surface *GraphicsManager::getBitmap(const Common::String &fileName, bool required) {
+Graphics::Surface *GraphicsManager::getBitmap(const Common::Path &fileName, bool required) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
 
 	if (!stream) {
 		if (required)
-			error("Could not find bitmap '%s'", fileName.c_str());
+			error("Could not find bitmap '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return nullptr;
 	}
 
 	Graphics::Surface *surface = getBitmap(stream);
 	if (!surface) {
 		if (required)
-			error("Failed to decode bitmap '%s'", fileName.c_str());
+			error("Failed to decode bitmap '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return nullptr;
 	}
 

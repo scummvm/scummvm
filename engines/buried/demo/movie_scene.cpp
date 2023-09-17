@@ -32,7 +32,7 @@
 
 namespace Buried {
 
-MovieDisplayWindow::MovieDisplayWindow(BuriedEngine *vm, Window *parent, const Common::String &background, const Common::String &movie, int movieLeft, int movieTop)
+MovieDisplayWindow::MovieDisplayWindow(BuriedEngine *vm, Window *parent, const Common::Path &background, const Common::Path &movie, int movieLeft, int movieTop)
 		: Window(vm, parent) {
 	_background = _vm->_gfx->getBitmap(background);
 
@@ -47,7 +47,7 @@ MovieDisplayWindow::MovieDisplayWindow(BuriedEngine *vm, Window *parent, const C
 	_movie = new VideoWindow(_vm, this);
 
 	if (!_movie->openVideo(movie))
-		error("Failed to open movie '%s'", movie.c_str());
+		error("Failed to open movie '%s'", movie.toString(Common::Path::kNativeSeparator).c_str());
 
 	_movie->setWindowPos(nullptr, movieLeft, movieTop, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 	_movie->enableWindow(false);
