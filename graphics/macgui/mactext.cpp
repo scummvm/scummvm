@@ -2247,6 +2247,9 @@ Common::U32String MacText::getMouseLink(int x, int y) {
 	int row, chunk;
 	getRowCol(x, y, nullptr, nullptr, &row, nullptr, &chunk);
 
+	if (chunk < 0)
+		return Common::U32String();
+
 	if (!_textLines[row].picfname.empty())
 		return _textLines[row].pictitle;
 
@@ -2288,6 +2291,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 	nrow = lb;
 
 	nsy = _textLines[nrow].y;
+	int chunk = -1;
 
 	if (_textLines[nrow].chunks.size() > 0) {
 		int alignOffset = getAlignOffset(nrow) + _textLines[nrow].indent + _textLines[nrow].firstLineIndent;;
@@ -2295,8 +2299,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 		int width = 0, pwidth = 0;
 		int mcol = 0, pmcol = 0;
 
-		uint chunk;
-		for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
+		for (chunk = 0; chunk < (int)_textLines[nrow].chunks.size(); chunk++) {
 			pwidth = width;
 			pmcol = mcol;
 			if (!_textLines[nrow].chunks[chunk].text.empty()) {
@@ -2308,8 +2311,8 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 				break;
 		}
 
-		if (chunk == _textLines[nrow].chunks.size())
-			chunk--;
+		if (chunk >= _textLines[nrow].chunks.size())
+			chunk = _textLines[nrow].chunks.size() - 1;
 
 		if (chunk_)
 			*chunk_ = (int)chunk;
@@ -2339,6 +2342,8 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 		*col = ncol;
 	if (row)
 		*row = nrow;
+	if (chunk_)
+		*chunk_ = (int)chunk;
 }
 
 // If adjacent chunks have same format, then skip the format definition
