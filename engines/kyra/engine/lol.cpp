@@ -1861,7 +1861,7 @@ void LoLEngine::loadTalkFile(int index) {
 	if (index > 0)
 		_curTlkFile = index;
 
-	_res->loadPakFile(Common::String::format("%02d.TLK", index));
+	_res->loadPakFile(Common::Path(Common::String::format("%02d.TLK", index)));
 }
 
 int LoLEngine::characterSays(int track, int charId, bool redraw) {

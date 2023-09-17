@@ -77,12 +77,12 @@ int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volum
 }
 
 Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) const {
-	Common::String filename;
+	Common::Path filename;
 
 	Audio::SeekableAudioStream *audioStream = nullptr;
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		filename = file;
-		filename += _supportedCodecs[i].fileext;
+		filename.appendInPlace(_supportedCodecs[i].fileext);
 
 		Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 		if (!stream)
@@ -213,13 +213,13 @@ void MixedSoundDriver::loadSoundFile(uint file) {
 	_sfx->loadSoundFile(file);
 }
 
-void MixedSoundDriver::loadSoundFile(Common::String file) {
+void MixedSoundDriver::loadSoundFile(const Common::Path &file) {
 	_music->loadSoundFile(file);
-	_sfx->loadSoundFile(Common::move(file));
+	_sfx->loadSoundFile(file);
 }
 
-void MixedSoundDriver::loadSfxFile(Common::String file) {
-	_sfx->loadSoundFile(Common::move(file));
+void MixedSoundDriver::loadSfxFile(const Common::Path &file) {
+	_sfx->loadSoundFile(file);
 }
 
 void MixedSoundDriver::playTrack(uint8 track) {

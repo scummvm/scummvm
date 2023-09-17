@@ -948,8 +948,8 @@ protected:
 	virtual void makeNameShapes(int charId = -1) {}
 	virtual void makeFaceShapes(int charId = -1);
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
-	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
-	Common::String readOriginalSaveFile(Common::String &file);
+	bool importOriginalSaveFile(int destSlot, const Common::Path &sourceFile = Common::Path());
+	Common::String readOriginalSaveFile(const Common::Path &file);
 	bool saveAsOriginalSaveFile(int slot = -1);
 
 	void *generateMonsterTempData(LevelTempData *tmp) override;

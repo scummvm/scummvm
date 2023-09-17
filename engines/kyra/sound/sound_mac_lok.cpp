@@ -54,7 +54,7 @@ bool SoundMacRes::init() {
 	if (!_resMan)
 		return false;
 
-	_kyraMacExe = _stuffItArchive ? "Legend of Kyrandia\xaa" : Util::findMacResourceFile("Legend of Kyrandia");
+	_kyraMacExe = _stuffItArchive ? Common::Path("Legend of Kyrandia\xaa") : Util::findMacResourceFile("Legend of Kyrandia");
 	if (_kyraMacExe.empty() && _isTalkie)
 		_kyraMacExe = Util::findMacResourceFile("LK");
 
@@ -99,23 +99,23 @@ Common::SeekableReadStream *SoundMacRes::getResource(uint16 id, uint32 type) {
 
 bool SoundMacRes::setQuality(bool hi) {
 	Common::StackLock lock(_mutex);
-	Common::String s[2];
+	Common::Path s[2];
 	s[0] = hi ? "HQ_Music.res" : "LQ_Music.res";
 	s[1] = _kyraMacExe;
 	int err = 0;
 
 	if (_stuffItArchive) {
 		for (int i = 0; i < 2; ++i)
-			err |= (_resMan[i].open(Common::Path(s[i]), *_stuffItArchive) ? 0 : (1 << i));
+			err |= (_resMan[i].open(s[i], *_stuffItArchive) ? 0 : (1 << i));
 	} else {
 		for (int i = 0; i < 2; ++i)
-			err |= (_resMan[i].open(Common::Path(s[i])) ? 0 : (1 << i));
+			err |= (_resMan[i].open(s[i]) ? 0 : (1 << i));
 	}
 
 	if (err) {
 		for (int i = 0; i < 2; ++i) {
 			if (err & (1 << i))
-				warning("SoundMacRes::setQuality(): Error opening resource container: '%s'", s[i].c_str());
+				warning("SoundMacRes::setQuality(): Error opening resource container: '%s'", s[i].toString().c_str());
 		}
 		return false;
 	}

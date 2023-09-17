@@ -1219,7 +1219,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalett
 
 	if (_config->cpsFiles) {
 		file = _config->cpsFiles[index];
-		s = _vm->resource()->createReadStream(file);
+		s = _vm->resource()->createReadStream(Common::Path(file));
 	}
 
 	if (s) {
@@ -1254,7 +1254,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalett
 	} else {
 		if (!s) {
 			file.setChar('X', 0);
-			s = _vm->resource()->createReadStream(file);
+			s = _vm->resource()->createReadStream(Common::Path(file));
 		}
 
 		if (!s)

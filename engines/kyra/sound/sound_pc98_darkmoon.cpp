@@ -89,27 +89,28 @@ void SoundPC98_Darkmoon::loadSoundFile(uint file) {
 		loadSoundFile(res()->fileList[file]);
 }
 
-void SoundPC98_Darkmoon::loadSoundFile(Common::String name) {
+void SoundPC98_Darkmoon::loadSoundFile(const Common::Path &name) {
 	if (!_ready)
 		return;
 
 	haltTrack();
 	stopAllSoundEffects();
 
-	name += (_drvType == kPC98 ? ".SDO" : ".SDM");
-	if (!_ready || _soundFileLoaded == name)
+	Common::Path path(name);
+	path.appendInPlace(_drvType == kPC98 ? ".SDO" : ".SDM");
+	if (!_ready || _soundFileLoaded == path)
 		return;
 
-	Common::SeekableReadStream *in = _vm->resource()->createReadStream(name.c_str());
+	Common::SeekableReadStream *in = _vm->resource()->createReadStream(path);
 	if (!in)
-		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", name.c_str());
+		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", path.toString().c_str());
 
 	uint16 sz = in->readUint16LE();
 	uint8 cmp = in->readByte();
 	in->seek(1, SEEK_CUR);
 	uint32 outSize = in->readUint32LE();
 	if ((cmp == 0 && outSize > 10500) || (cmp != 0 && outSize > 20600))
-		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", name.c_str());
+		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", path.toString().c_str());
 	sz -= in->pos();
 	in->seek(2, SEEK_CUR);
 
@@ -126,12 +127,12 @@ void SoundPC98_Darkmoon::loadSoundFile(Common::String name) {
 	} else if (cmp == 4) {
 		Screen::decodeFrame4(_fileBuffer, _soundData, outSize);
 	} else {
-		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", name.c_str());
+		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", path.toString().c_str());
 	}
 
 	uint16 instrOffs = READ_LE_UINT16(_soundData);
 	if (instrOffs >= 20600)
-		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", name.c_str());
+		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", path.toString().c_str());
 	
 	_driver->loadFMInstruments(_soundData + instrOffs);
 	_driver->reset();

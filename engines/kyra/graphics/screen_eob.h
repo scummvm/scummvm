@@ -344,7 +344,7 @@ private:
 		const int16 *kerning;
 	};
 
-	TextFont *loadContentFile(const Common::String fileName);
+	TextFont *loadContentFile(const Common::Path &fileName);
 	void selectMode(int mode);
 
 	struct FontContent {

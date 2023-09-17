@@ -603,7 +603,7 @@ void EoBEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool h
 		0x0e, 0x0c, 0x08, 0x0f, 0x14, 0x12, 0x09, 0x0b, 0x0a, 0x13, 0x11, 0x15, 0x0d
 	};
 
-	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+	_sres->loadContainer(Common::Path(Common::String::format("L%d", _currentLevel)));
 	uint8 *data = _sres->resData(monsterIndex >> 4, 0);
 	const uint8 *pos = data;
 
@@ -684,7 +684,7 @@ void EoBEngine::readLevelFileData(int level) {
 		EoBCoreEngine::readLevelFileData(level);
 		return;
 	}
-	_sres->loadContainer(Common::String::format("L%d", level));
+	_sres->loadContainer(Common::Path(Common::String::format("L%d", level)));
 	Common::SeekableReadStream *s = _sres->resStream(7);
 	_screen->loadFileDataToPage(s, 5, 15000);
 	delete s;
@@ -695,7 +695,7 @@ void EoBEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 		_lastBlockDataFile = file;
 	delete[] _vcnBlocks;
 
-	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile.c_str());
+	Common::Path fn(Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile.c_str()));
 	if (_flags.platform == Common::kPlatformAmiga) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
 		uint32 vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
@@ -705,9 +705,9 @@ void EoBEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 		in->read(_vcnBlocks, vcnSize);
 		delete in;
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_vcnBlocks = _res->fileData(fn.c_str(), 0);
+		_vcnBlocks = _res->fileData(fn, 0);
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
-		_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+		_sres->loadContainer(Common::Path(Common::String::format("L%d", _currentLevel)));
 		_vcnBlocks = _sres->resData(5, 0);
 	} else {
 		EoBCoreEngine::loadVcnData(file, cgaMapping);
@@ -717,14 +717,14 @@ void EoBEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 Common::SeekableReadStreamEndian *EoBEngine::getVmpData(const char *file) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return EoBCoreEngine::getVmpData(file);
-	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+	_sres->loadContainer(Common::Path(Common::String::format("L%d", _currentLevel)));
 	return _sres->resStreamEndian(3);
 }
 
 const uint8 *EoBEngine::getBlockFileData(int level) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return EoBCoreEngine::getBlockFileData(level);
-	_sres->loadContainer(Common::String::format("L%d", level));
+	_sres->loadContainer(Common::Path(Common::String::format("L%d", level)));
 	Common::SeekableReadStream *s = _sres->resStream(6);
 	_screen->loadFileDataToPage(s, 15, s->size());
 	delete s;
@@ -735,7 +735,7 @@ const uint8 *EoBEngine::getBlockFileData(int level) {
 Common::SeekableReadStreamEndian *EoBEngine::getDecDefinitions(const char *decFile) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return EoBCoreEngine::getDecDefinitions(decFile);
-	_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+	_sres->loadContainer(Common::Path(Common::String::format("L%d", _currentLevel)));
 	return _sres->resStreamEndian(4);
 }
 
@@ -745,7 +745,7 @@ void EoBEngine::loadDecShapesToPage3(const char *shpFile) {
 		return;
 	}
 	if (_dcrResCur != _currentLevel) {
-		_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+		_sres->loadContainer(Common::Path(Common::String::format("L%d", _currentLevel)));
 		Common::SeekableReadStream *s = _sres->resStream(2);
 		_screen->loadFileDataToPage(s, 3, s->size());
 		_dcrShpDataPos = _screen->getCPagePtr(3);
@@ -760,7 +760,7 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	const int shapeId[2] = { shapeId1, shapeId2 };
 
 	if (_flags.platform == Common::kPlatformSegaCD) {
-		_sres->loadContainer(Common::String::format("L%d", _currentLevel));
+		_sres->loadContainer(Common::Path(Common::String::format("L%d", _currentLevel)));
 		Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(8);
 		_screen->loadFileDataToPage(in, 2, in->size());
 		delete in;
@@ -983,12 +983,12 @@ void EoBEngine::snd_loadAmigaSounds(int level, int) {
 
 	for (int i = 0; i < 2; ++i) {
 		if (_amigaLevelSoundList1[level * 2 + i][0])
-			_sound->loadSoundFile(Common::String::format("%s.CPS", _amigaLevelSoundList1[level * 2 + i]));
+			_sound->loadSoundFile(Common::Path(Common::String::format("%s.CPS", _amigaLevelSoundList1[level * 2 + i])));
 		if (_amigaLevelSoundList2[level * 2 + i][0])
-			_sound->loadSoundFile(Common::String::format("%s.CPS", _amigaLevelSoundList2[level * 2 + i]));
+			_sound->loadSoundFile(Common::Path(Common::String::format("%s.CPS", _amigaLevelSoundList2[level * 2 + i])));
 	}
 
-	_sound->loadSoundFile(Common::String::format("LEVELSAM%d.CPS", level));
+	_sound->loadSoundFile(Common::Path(Common::String::format("LEVELSAM%d.CPS", level)));
 
 	_amigaCurSoundFile = level;
 }

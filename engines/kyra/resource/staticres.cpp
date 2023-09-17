@@ -142,7 +142,7 @@ bool StaticResource::loadStaticResourceFile() {
 		return true;
 
 	Common::ArchiveMemberList kyraDatFiles;
-	res->listFiles(staticDataFilename(), kyraDatFiles);
+	res->listFiles(Common::Path(staticDataFilename()), kyraDatFiles);
 
 	bool foundWorkingKyraDat = false;
 	for (Common::ArchiveMemberList::iterator i = kyraDatFiles.begin(); i != kyraDatFiles.end(); ++i) {
@@ -218,7 +218,7 @@ Common::SeekableReadStream *StaticResource::loadIdMap(Common::Language lang) {
 
 
 	// load the ID map for our game
-	const Common::String filenamePattern = Common::String::format("0%01X%01X%01X000%01X", game, platform, special, lng);
+	const Common::Path filenamePattern(Common::String::format("0%01X%01X%01X000%01X", game, platform, special, lng));
 	return _vm->resource()->createReadStream(filenamePattern);
 }
 
@@ -368,7 +368,7 @@ bool StaticResource::prefetchId(int id) {
 	ResData data;
 	data.id = id;
 	data.type = dDesc->_value.type;
-	Common::SeekableReadStream *fileStream = _vm->resource()->createReadStream(Common::String::format("%08X", dDesc->_value.filename));
+	Common::SeekableReadStream *fileStream = _vm->resource()->createReadStream(Common::Path(Common::String::format("%08X", dDesc->_value.filename)));
 	if (!fileStream)
 		return false;
 

@@ -62,7 +62,7 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String file) override;
+	void loadSoundFile(const Common::Path &file) override;
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;
@@ -75,7 +75,7 @@ public:
 	int checkTrigger() override;
 	void resetTrigger() override;
 private:
-	void internalLoadFile(Common::String file);
+	void internalLoadFile(const Common::Path &file);
 
 	void play(uint8 track, uint8 volume);
 
@@ -91,7 +91,7 @@ private:
 	uint8 *_soundDataPtr;
 	int _sfxPlayingSound;
 
-	Common::String _soundFileLoaded;
+	Common::Path _soundFileLoaded;
 
 	int _numSoundTriggers;
 	const int *_soundTriggers;

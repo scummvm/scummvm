@@ -76,12 +76,12 @@ void SoundAmiga_EoB::selectAudioResourceSet(int set) {
 	_currentResourceSet = set;
 }
 
-void SoundAmiga_EoB::loadSoundFile(Common::String file) {
+void SoundAmiga_EoB::loadSoundFile(const Common::Path &file) {
 	if (!_ready)
 		return;
 
 	Common::SeekableReadStream *in = _vm->resource()->createReadStream(file);
-	debugC(6, kDebugLevelSound, "SoundAmiga_EoB::loadSoundFile(): Attempting to load sound file '%s'...%s", file.c_str(), in ? "SUCCESS" : "FILE NOT FOUND");
+	debugC(6, kDebugLevelSound, "SoundAmiga_EoB::loadSoundFile(): Attempting to load sound file '%s'...%s", file.toString().c_str(), in ? "SUCCESS" : "FILE NOT FOUND");
 	if (!in)
 		return;
 
@@ -110,17 +110,17 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 	} else if (cmp == 4) {
 		Screen::decodeFrame4(_fileBuffer, buf, outSize);
 	} else {
-		error("SoundAmiga_EoB::loadSoundFile(): Failed to load sound file '%s'", file.c_str());
+		error("SoundAmiga_EoB::loadSoundFile(): Failed to load sound file '%s'", file.toString().c_str());
 	}
 
 	Common::MemoryReadStream soundFile(buf, outSize);
 	if (!_driver->loadRessourceFile(&soundFile))
-		error("SoundAmiga_EoB::loadSoundFile(): Failed to load sound file '%s'", file.c_str());
+		error("SoundAmiga_EoB::loadSoundFile(): Failed to load sound file '%s'", file.toString().c_str());
 
 	delete[] buf;
 }
 
-void SoundAmiga_EoB::unloadSoundFile(Common::String file) {
+void SoundAmiga_EoB::unloadSoundFile(const Common::String &file) {
 	if (!_ready)
 		return;
 	debugC(5, kDebugLevelSound, "SoundAmiga_EoB::unloadSoundFile(): Attempting to free resource '%s'...%s", file.c_str(), _driver->stopSound(file) ? "SUCCESS" : "FAILURE");

@@ -150,10 +150,10 @@ int SoundDigital_MR::playSound(const char *filename, uint8 priority, Audio::Mixe
 	Common::SeekableReadStream *stream = nullptr;
 	int usedCodec = -1;
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		Common::String file = filename;
-		file += _supportedCodecs[i].fileext;
+		Common::Path file(filename);
+		file.appendInPlace(_supportedCodecs[i].fileext);
 
-		if (!_vm->resource()->exists(file.c_str()))
+		if (!_vm->resource()->exists(file))
 			continue;
 
 		stream = _vm->resource()->createReadStream(file);

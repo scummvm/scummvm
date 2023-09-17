@@ -733,7 +733,7 @@ void KyraEngine_MR::openTalkFile(int file) {
 	}
 
 	_currentTalkFile = file;
-	if (!_res->loadPakFile(talkFilename)) {
+	if (!_res->loadPakFile(Common::Path(talkFilename))) {
 		if (speechEnabled()) {
 			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename.c_str());
 			_configVoice = 0;
