@@ -61,7 +61,6 @@ CueSheet::CueSheet(const char *sheet) {
 	String line;
 	_context = kCueContextHeader;
 	const char *s = sheet;
-	int lineNum = 0;
 
 	while (*s) {
 		line.clear();
@@ -73,7 +72,7 @@ CueSheet::CueSheet(const char *sheet) {
 		// Skip any newlines and line feeds
 		while (*s == '\n' || *s == '\r') {
 			if (*s == '\n')
-				lineNum++;
+				_lineNum++;
 
 			s++;
 		}
@@ -102,7 +101,7 @@ CueSheet::CueSheet(const char *sheet) {
 			break;
 
 		default:
-			error("CueSheet: bad context %d at line %d", _context, lineNum);
+			error("CueSheet: bad context %d at line %d", _context, _lineNum);
 		}
 	}
 }
@@ -121,6 +120,15 @@ static int lookupInTable(LookupTable *table, const char *key) {
 	}
 
 	error("CueSheet::lookupInTable(): Unknown token %s", key);
+}
+
+int CueSheet::parseMSF(const char *str) {
+	int min = 0, sec = 0, frm = 0;
+
+	if (sscanf(str, "%d:%d:%d", &min, &sec, &frm) != 3)
+		warning("Malformed MSF at line %d: %s", _lineNum, str);
+
+	return frm + 75 * sec + 75 * 60 * min;
 }
 
 LookupTable fileTypes[] = {
@@ -151,11 +159,17 @@ void CueSheet::parseHeaderContext(const char *line) {
 
 		_context = kCueContextFiles;
 
+		_currentTrack = -1;
+
 		debug(5, "File: %s, type: %s (%d)", _files[_currentFile].name.c_str(), type.c_str(), _files[_currentFile].type);
 	} else if (command == "TITLE") {
 		_metadata.title = nexttok(s, &s);
 
 		debug(5, "Title: %s", _metadata.title.c_str());
+	} else if (command == "PERFORMER") {
+		_metadata.performer = nexttok(s, &s);
+
+		debug(5, "Performer: %s", _metadata.performer.c_str());
 	} else if (command == "REM") {
 		String subcommand = nexttok(s, &s);
 
@@ -166,8 +180,10 @@ void CueSheet::parseHeaderContext(const char *line) {
 			_metadata.genre = nexttok(s, &s);
 			debug(5, "Genre: %s", _metadata.genre.c_str());
 		} else {
-			warning("Unprocessed REM subcommand %s", subcommand.c_str());
+			warning("CueSheet: Unprocessed REM subcommand %s", subcommand.c_str());
 		}
+	} else {
+		warning("CueSheet: Unprocessed command %s", command.c_str());
 	}
 }
 
@@ -187,9 +203,59 @@ LookupTable trackTypes[] = {
 };
 
 void CueSheet::parseFilesContext(const char *line) {
+	const char *s = line;
+
+	String command = nexttok(s, &s);
+
+	if (command == "TRACK") {
+		int trackNum = atoi(nexttok(s, &s).c_str());
+		String trackType = nexttok(s, &s);
+
+		if (trackNum < 0 || (_currentTrack > 0 && _currentTrack + 1 != trackNum)) {
+			warning("CueSheet: Incorrect track number. Expected %d but got %d", _currentTrack + 1, trackNum);
+		} else {
+			for (int i = _files[_currentFile].tracks.size(); i <= trackNum; i++)
+				_files[_currentFile].tracks.push_back(CueTrack());
+
+			_currentTrack = trackNum;
+			_files[_currentFile].tracks[_currentTrack].type = (CueTrackType)lookupInTable(trackTypes, trackType.c_str());
+
+			debug(5, "Track: %d type: %s (%d)", trackNum, trackType.c_str(), _files[_currentFile].tracks[_currentTrack].type);
+		}
+
+		_context = kCueContextTracks;
+	} else {
+		warning("CueSheet: Unprocessed file command %s", command.c_str());
+	}
+
 }
 
 void CueSheet::parseTracksContext(const char *line) {
+	const char *s = line;
+
+	String command = nexttok(s, &s);
+
+	if (command == "TRACK") {
+		parseFilesContext(line);
+	} else if (command == "TITLE") {
+		_files[_currentFile].tracks[_currentTrack].title = nexttok(s, &s);
+
+		debug(5, "Track title: %s", _files[_currentFile].tracks[_currentTrack].title.c_str());
+	} else if (command == "INDEX") {
+		int indexNum = atoi(nexttok(s, &s).c_str());
+		int frames = parseMSF(nexttok(s, &s).c_str());
+
+		for (int i = _files[_currentFile].tracks[_currentTrack].indices.size(); i <= indexNum; i++)
+			_files[_currentFile].tracks[_currentTrack].indices.push_back(0);
+
+		_files[_currentFile].tracks[_currentTrack].indices[indexNum] = frames;
+
+		debug(5, "Index: %d, frames: %d", indexNum, frames);
+	} else if (command == "FILE") {
+		parseHeaderContext(line);
+	} else {
+		warning("CueSheet: Unprocessed track command %s", command.c_str());
+	}
 }
 
 } // End of namespace Common
