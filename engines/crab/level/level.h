@@ -59,7 +59,7 @@ class Level {
 	Common::MultiMap<int, pyrodactyl::anim::Sprite *> _objSeq;
 
 	// The file index which contains the fighting moves of all characters
-	Common::Array<Common::String> _animSet;
+	Common::Array<Common::Path> _animSet;
 
 	// The movement sets for sprites in levels
 	Common::Array<pyrodactyl::ai::MovementSet> _moveSet;
@@ -133,7 +133,7 @@ public:
 	pyrodactyl::ui::ParagraphData _pop;
 
 	// The path of the preview image
-	Common::String _previewPath;
+	Common::Path _previewPath;
 
 	// A full rendered image of the level
 	pyrodactyl::image::Image _img;
@@ -183,12 +183,12 @@ public:
 	void calcProperties(pyrodactyl::event::Info &info);
 
 	// Loading function
-	void load(const Common::String &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &gameOver,
+	void load(const Common::Path &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &gameOver,
 			  const int &playerX = -1, const int &playerY = -1);
 
 	// One time load called first-time
-	void loadMoves(const Common::String &filename);
-	void loadConst(const Common::String &filename);
+	void loadMoves(const Common::Path &filename);
+	void loadConst(const Common::Path &filename);
 
 	// Used to see if a sprite collides with a rectangle
 	void calcTrigCollide(pyrodactyl::event::Info &info);

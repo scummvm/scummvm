@@ -68,6 +68,15 @@ bool loadStr(Common::String &val, const Common::String &name, rapidxml::xml_node
 	return true;
 }
 
+bool loadPath(Common::Path &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo) {
+	Common::String str;
+	if (!loadStr(str, name, node, echo)) {
+		return false;
+	}
+	val = Common::Path(str, '/');
+	return true;
+}
+
 bool loadColor(Color &col, rapidxml::xml_node<char> *node, const bool &echo,
 	const Common::String &rName, const Common::String &gName, const Common::String &bName) {
 	int r = 0, g = 0, b = 0;
@@ -175,7 +184,7 @@ bool loadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, 
 	return false;
 }
 
-uint version(const Common::String &filename) {
+uint version(const Common::Path &filename) {
 	uint version = 0;
 
 	XMLDoc doc(filename);

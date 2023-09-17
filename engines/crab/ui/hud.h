@@ -97,7 +97,7 @@ public:
 
 	void State(const int &val);
 
-	void load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm);
+	void load(const Common::Path &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm);
 
 	HUDSignal handleEvents(pyrodactyl::event::Info &info, const Common::Event &event);
 

@@ -73,7 +73,7 @@ class Info {
 	// This image changes to reflect the playable character
 	int _playerImg;
 
-	void loadPeople(const Common::String &filename);
+	void loadPeople(const Common::Path &filename);
 
 public:
 	// The player's one stop shop for objectives and lore

@@ -41,14 +41,14 @@ bool Layer::load(rapidxml::xml_node<char> *node) {
 	return false;
 }
 
-bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) {
+bool MapLayer::load(const Common::Path &path, rapidxml::xml_node<char> *node) {
 	if (Layer::load(node)) {
 		if (nodeValid("image", node, false)) {
 			_type = LAYER_IMAGE;
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 
 			if (imgnode->first_attribute("source") != nullptr)
-				_img.load((path + imgnode->first_attribute("source")->value()));
+				_img.load(path.append(imgnode->first_attribute("source")->value()));
 		} else {
 			_type = LAYER_NORMAL;
 			int i = 0;

@@ -38,7 +38,7 @@ class File;
 
 namespace Crab {
 
-Common::String cleansePath(const Common::String &path);
+Common::Path cleansePath(const Common::Path &path);
 bool fileOpen(const Common::Path &path, char *&data);
 bool fileOpen(const Common::Path &path, Common::File *file);
 

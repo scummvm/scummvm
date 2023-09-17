@@ -38,13 +38,11 @@ namespace rapidxml {
 
 namespace Crab {
 
-void XMLDoc::load(const Common::String &filename) {
-	const Common::Path path(filename);
-
+void XMLDoc::load(const Common::Path &filename) {
 	if (ready())
 		_doc.clear();
 
-	if (fileOpen(path, _text) && _text)
+	if (fileOpen(filename, _text) && _text)
 		_doc.parse<0>(_text);
 }
 

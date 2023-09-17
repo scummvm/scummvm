@@ -39,7 +39,7 @@ namespace pyrodactyl {
 namespace ui {
 struct MapData {
 	// The paths of set of map images - background and the fully revealed map overlay
-	Common::String _pathBg, _pathOverlay;
+	Common::Path _pathBg, _pathOverlay;
 
 	// The places the player has revealed in this world map
 	Common::Array<Rect> _reveal;

@@ -37,7 +37,7 @@ namespace Crab {
 
 using namespace TMX;
 
-void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
+void TileSet::load(const Common::Path &path, rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		loadNum(_firstGid, "firstgid", node);
 		loadStr(_name, "name", node);
@@ -51,7 +51,7 @@ void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 			Common::String filename;
 			loadStr(filename, "source", imgnode);
-			_loc = path + filename;
+			_loc = path.appendComponent(filename);
 
 			_img.load(_loc);
 			_totalRows = _img.h() / _tileH;
@@ -73,7 +73,7 @@ void TileSetGroup::reset() {
 	_tileset.clear();
 }
 
-void TileSetGroup::load(const Common::String &path, rapidxml::xml_node<char> *node) {
+void TileSetGroup::load(const Common::Path &path, rapidxml::xml_node<char> *node) {
 	reset();
 	for (auto n = node->first_node("tileset"); n != nullptr; n = n->next_sibling("tileset")) {
 		TileSet t;

@@ -42,7 +42,7 @@ namespace Crab {
 // The index for all levels in the game
 struct LevelPath {
 	// The file paths
-	Common::String _layout, _asset;
+	Common::Path _layout, _asset;
 
 	// The name of the level
 	Common::String _name;
@@ -51,52 +51,54 @@ struct LevelPath {
 
 	void load(rapidxml::xml_node<char> *node) {
 		loadStr(_name, "name", node);
-		loadStr(_layout, "layout", node);
-		loadStr(_asset, "res", node);
+		loadPath(_layout, "layout", node);
+		loadPath(_asset, "res", node);
 	}
 };
 
 // Stores all layout paths for the game
 struct FilePaths {
 	// Resources common to all levels and states
-	Common::String _common;
+	Common::Path _common;
 
 	// Mod file location, current mod and their extension
-	Common::String _modPath, _modExt, _modCur;
+	Common::Path _modPath, _modCur;
+	Common::String _modExt;
 
 	// Main menu resources
-	Common::String _mainmenuL, _mainmenuR;
+	Common::Path _mainmenuL, _mainmenuR;
 
 	// Sounds
-	Common::String _soundEffect, _soundMusic;
+	Common::Path _soundEffect, _soundMusic;
 
 	// Fonts and window icon file
-	Common::String _font, _icon;
+	Common::Path _font, _icon;
 
 	// Save directory and extension
-	Common::String _saveDir, _saveExt;
+	Common::Path _saveDir;
+	Common::String _saveExt;
 
 	// The location of the shader index file
-	Common::String _shaders;
+	Common::Path _shaders;
 
 	// The location of the color index file
-	Common::String _colors;
+	Common::Path _colors;
 
 	// The list of levels in the game
 	Common::HashMap<Common::String, LevelPath> _level;
 
 	// The file path of the current resource file
-	Common::String _currentR;
+	Common::Path _currentR;
 
 	// The application data path (where saves and settings are stored)
-	Common::String _appdata;
+	Common::Path _appdata;
 
 	// Has this been loaded?
 	bool _loaded;
 
 	FilePaths();
-	void load(const Common::String &filename);
-	void loadLevel(const Common::String &filename);
+	void load(const Common::Path &filename);
+	void loadLevel(const Common::Path &filename);
 };
 
 // Storage pool used for saving numbers as strings

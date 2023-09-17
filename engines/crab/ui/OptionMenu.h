@@ -105,7 +105,7 @@ public:
 		return _keybind.disableHotkeys();
 	}
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 	void draw(Button &back);
 	bool handleEvents(Button &back, const Common::Event &event);
 	void internalEvents();

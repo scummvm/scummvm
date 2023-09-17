@@ -41,7 +41,7 @@ namespace pyrodactyl {
 namespace ui {
 class SlideShow {
 	// The list of images and where they are located, and the current image
-	Common::Array<Common::String> _path;
+	Common::Array<Common::Path> _path;
 
 	// We only load the current image in memory
 	pyrodactyl::image::Image _img;

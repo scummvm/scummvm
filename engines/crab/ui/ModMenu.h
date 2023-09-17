@@ -42,7 +42,7 @@ public:
 	ModMenu() {}
 	~ModMenu() {}
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 
 	bool handleEvents(const Common::Event &event);
 	void draw();

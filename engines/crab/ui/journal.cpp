@@ -40,7 +40,7 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Load game
 //------------------------------------------------------------------------
-void Journal::load(const Common::String &filename) {
+void Journal::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("objectives");

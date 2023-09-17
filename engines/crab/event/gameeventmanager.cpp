@@ -61,9 +61,9 @@ void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 
 				for (auto n = loc->first_node("file"); n != nullptr; n = n->next_sibling("file")) {
 					uint id;
-					Common::String path;
+					Common::Path path;
 					loadNum(id, "name", n);
-					loadStr(path, "path", n);
+					loadPath(path, "path", n);
 					_eventMap[locName].addSeq(id, path);
 				}
 			}

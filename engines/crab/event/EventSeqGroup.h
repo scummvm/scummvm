@@ -50,7 +50,7 @@ public:
 	EventSeqGroup() {}
 	~EventSeqGroup() {}
 
-	void addSeq(const uint &id, Common::String &path);
+	void addSeq(const uint &id, const Common::Path &path);
 	void endSeq(const uint &id);
 	bool eventInProgress(const uint &id);
 	bool activeSeq(uint &activeSeq);

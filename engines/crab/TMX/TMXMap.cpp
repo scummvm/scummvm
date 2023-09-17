@@ -61,8 +61,8 @@ TMXMap::TMXMap() {
 // Purpose: Load stuff via a .tmx file set to xml storage (no compression)
 //------------------------------------------------------------------------
 
-void TMXMap::load(const Common::String &path, const Common::String &filename) {
-	XMLDoc conf((path + filename));
+void TMXMap::load(const Common::Path &path, const Common::String &filename) {
+	XMLDoc conf(path.appendComponent(filename));
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
 		if (nodeValid(node)) {

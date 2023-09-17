@@ -40,7 +40,7 @@ void EventSeqGroup::endSeq(const uint &id) {
 	_end.push_back(id);
 }
 
-void EventSeqGroup::addSeq(const uint &id, Common::String &path) {
+void EventSeqGroup::addSeq(const uint &id, const Common::Path &path) {
 	_seq[id].load(path);
 }
 

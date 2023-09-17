@@ -68,7 +68,7 @@ public:
 
 	~PersonScreen() {}
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 	void Cache(pyrodactyl::event::Info &info, const Common::String &id, pyrodactyl::level::Level &level);
 
 	void handleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &event);

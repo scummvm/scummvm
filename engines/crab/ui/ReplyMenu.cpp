@@ -41,7 +41,7 @@ using namespace pyrodactyl::music;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
 
-void ReplyMenu::load(const Common::String &filename) {
+void ReplyMenu::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("conversation");

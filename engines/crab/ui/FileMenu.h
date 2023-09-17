@@ -56,7 +56,8 @@ protected:
 	Common::String _selected;
 
 	// The extension and directory used by this menu
-	Common::String _extension, _directory;
+	Common::String _extension;
+	Common::Path _directory;
 
 	// The save information for each slot
 	Common::Array<FileType> _slotInfo;
@@ -72,7 +73,7 @@ protected:
 		pyrodactyl::image::Image _preview;
 
 		// Fallback path if there is no preview image or if we fail to load it
-		Common::String _noPreviewPath;
+		Common::Path _noPreviewPath;
 
 		// Position of image
 		Element _pos;
@@ -140,7 +141,7 @@ public:
 		if (nodeValid("preview", node)) {
 			auto prnode = node->first_node("preview");
 			_img._pos.load(prnode);
-			loadStr(_img._noPreviewPath, "path", prnode);
+			loadPath(_img._noPreviewPath, "path", prnode);
 		}
 
 		if (nodeValid("offset", node)) {
@@ -164,7 +165,7 @@ public:
 		}
 
 		_extension = g_engine->_filePath->_saveExt;
-		_directory = (g_engine->_filePath->_appdata + g_engine->_filePath->_saveDir);
+		_directory = g_engine->_filePath->_appdata.join(g_engine->_filePath->_saveDir);
 		scanDir();
 	}
 
@@ -199,8 +200,8 @@ public:
 			if (!_img._loaded || _prevHover != i) {
 				_img._loaded = true;
 				_prevHover = i;
-				if (!_img._preview.load(_slotInfo[i]._preview))
-					_img._preview.load(_img._noPreviewPath);
+				if (!_img._preview.load(Common::Path(_slotInfo[i]._preview)))
+					_img._preview.load(Common::Path(_img._noPreviewPath));
 			}
 
 			_hover = true;

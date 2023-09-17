@@ -44,7 +44,7 @@ void GameEventStore::addConv(rapidxml::xml_node<char> *node, uint &index) {
 	_con.push_back(c);
 }
 
-void GameEventStore::load(const Common::String &filename) {
+void GameEventStore::load(const Common::Path &filename) {
 
 	// Request current user stats from Steam
 	// m_pSteamUserStats = SteamUserStats();

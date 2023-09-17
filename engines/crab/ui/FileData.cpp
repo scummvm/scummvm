@@ -65,7 +65,7 @@ SaveFileData::SaveFileData(const Common::String &file) {
 				loadStr(_locName, "loc_name", node);
 				loadStr(_charName, "char_name", node);
 				loadStr(_time, "time", node);
-				loadStr(_preview, "preview", node);
+				loadPath(_preview, "preview", node);
 				_blank = false;
 			}
 		}

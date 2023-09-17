@@ -77,7 +77,7 @@ struct GameEventStore {
 		_anim.clear();
 	}
 
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 
 	void addConv(rapidxml::xml_node<char> *node, uint &index);
 	void setAchievement(const int &id);

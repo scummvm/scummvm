@@ -36,7 +36,7 @@ namespace Crab {
 
 using namespace pyrodactyl::stat;
 
-void StatTemplates::load(const Common::String &filename) {
+void StatTemplates::load(const Common::Path &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("templates");

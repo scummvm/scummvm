@@ -98,7 +98,7 @@ public:
 	}
 
 	// Load the image
-	bool load(const Common::String &path);
+	bool load(const Common::Path &path);
 	bool load(rapidxml::xml_node<char> *node, const char *name);
 	bool load(Graphics::Surface *surface);
 	bool load(Graphics::ManagedSurface *surface);

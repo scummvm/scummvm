@@ -46,7 +46,7 @@ using namespace pyrodactyl::image;
 //------------------------------------------------------------------------
 // Purpose: Load assets here.
 //------------------------------------------------------------------------
-void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
+void ImageManager::loadMap(const Common::Path &filename, const MapID &mapid) {
 	for (auto &it : _map[mapid])
 		it._value.deleteImage();
 
@@ -62,18 +62,18 @@ void ImageManager::loadMap(const Common::String &filename, const MapID &mapid) {
 				// if yes, load it  - if no, just load the higher quality one
 
 				bool valid = false;
-				Common::String path;
+				Common::Path path;
 
 				if (!g_engine->_screenSettings->_quality)
-					valid = loadStr(path, "path_low", n, false);
+					valid = loadPath(path, "path_low", n, false);
 
 				if (!valid)
-					valid = loadStr(path, "path", n, false);
+					valid = loadPath(path, "path", n, false);
 
 				if (valid)
 					_map[mapid][key].load(path);
 				else
-					error("ImageManager::loadMap : Unable to load image id %u from %s!", key, path.c_str());
+					error("ImageManager::loadMap : Unable to load image id %u from %s!", key, path.toString(Common::Path::kNativeSeparator).c_str());
 			}
 		}
 

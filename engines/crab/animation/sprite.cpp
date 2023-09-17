@@ -54,7 +54,7 @@ Sprite::Sprite() : _imgSize(1, 1), _velMod(1.0f, 1.0f) {
 //------------------------------------------------------------------------
 // Purpose: Load sprite from XML and animations from the index of all animation files
 //------------------------------------------------------------------------
-void Sprite::load(rapidxml::xml_node<char> *node, Common::Array<Common::String> &animations) {
+void Sprite::load(rapidxml::xml_node<char> *node, Common::Array<Common::Path> &animations) {
 	using namespace pyrodactyl::image;
 
 	if (nodeValid(node)) {
