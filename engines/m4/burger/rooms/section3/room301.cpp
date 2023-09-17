@@ -111,7 +111,7 @@ void Room301::preload() {
 }
 
 void Room301::init() {
-	setup();
+	setupDigi();
 	_G(flags).reset3();
 	digi_preload_stream_breaks(SERIES1);
 	digi_preload_stream_breaks(SERIES2);
