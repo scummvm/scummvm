@@ -132,7 +132,7 @@ public:
 	void loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
 	void loadSceneLevel(const char *buf, const Common::String &name, const Common::String &next, const Common::String &prefix);
 
-	LibFile *loadLib(const Filename &prefix, const Filename &filename, bool encrypted);
+	LibFile *loadLib(const Common::Path &prefix, const Common::Path &filename, bool encrypted);
 
 	// User input
 	void clickedHotspot(Common::Point);
@@ -149,8 +149,8 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return (isDemo() ? false : true); }
 	Common::String _checkpoint;
 
-	Common::String _prefixDir;
-	Common::String convertPath(const Common::String &);
+	Common::Path _prefixDir;
+	Common::Path convertPath(const Common::String &);
 	void playVideo(MVideo &video);
 	void skipVideo(MVideo &video);
 

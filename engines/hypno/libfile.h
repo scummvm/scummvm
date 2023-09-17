@@ -31,7 +31,7 @@
 namespace Hypno {
 
 typedef struct FileEntry {
-	Common::String name;
+	Common::Path name;
 	uint32 start;
 	uint32 size;
 } FileEntry;
@@ -41,7 +41,7 @@ public:
 	LibFile();
 	~LibFile() override;
 
-	bool open(const Common::String &prefix, const Common::String &filename, bool encrypted);
+	bool open(const Common::Path &prefix, const Common::Path &filename, bool encrypted);
 	void close();
 
 	// Common::Archive API implementation
@@ -53,7 +53,7 @@ public:
 private:
 	bool _encrypted;
 	Common::File *_libfile;
-	Common::String _prefix;
+	Common::Path _prefix;
 	Common::Array<FileEntry> _fileEntries;
 	const FileEntry *getEntry(const Common::Path &path) const;
 };
