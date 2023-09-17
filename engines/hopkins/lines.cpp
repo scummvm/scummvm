@@ -120,8 +120,8 @@ int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
 /**
  * Load lines
  */
-void LinesManager::loadLines(const Common::String &file) {
-	debugC(5, kDebugPath, "loadLines(%s)", file.c_str());
+void LinesManager::loadLines(const Common::Path &file) {
+	debugC(5, kDebugPath, "loadLines(%s)", file.toString().c_str());
 	resetLines();
 	_linesNumb = 0;
 	_lastLine = 0;

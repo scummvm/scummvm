@@ -73,7 +73,7 @@ Audio::RewindableAudioStream *makeAPCStream(Common::SeekableReadStream *stream, 
 
 class TwaAudioStream : public Audio::AudioStream {
 public:
-	TwaAudioStream(Common::String name, Common::SeekableReadStream *stream) {
+	TwaAudioStream(const Common::Path &name, Common::SeekableReadStream *stream) {
 		_name = name;
 		_cueSheet.clear();
 		_cueStream = nullptr;
@@ -149,39 +149,41 @@ protected:
 		_cueStream = nullptr;
 		_loadedCue = _cueSheet[nr];
 
-		Common::String filename = Common::String::format("%s_%02d", _name.c_str(), _cueSheet[nr]);
+		Common::Path filename(_name);
+		filename.appendInPlace(Common::String::format("_%02d", _cueSheet[nr]));
+
 		Common::File *file = new Common::File();
 
-		if (file->open(filename + ".APC")) {
+		if (file->open(filename.append(".APC"))) {
 			_cueStream = makeAPCStream(file, DisposeAfterUse::YES);
 			return true;
 		}
 
-		if (file->open(filename + ".WAV")) {
+		if (file->open(filename.append(".WAV"))) {
 			_cueStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 			return true;
 		}
 
-		if (file->open(filename + ".RAW")) {
+		if (file->open(filename.append(".RAW"))) {
 			_cueStream = Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 			return true;
 		}
 
-		warning("TwaAudioStream::loadCue: Missing cue %d (%s)", nr, filename.c_str());
+		warning("TwaAudioStream::loadCue: Missing cue %d (%s)", nr, filename.toString().c_str());
 		_loadedCue = -1;
 		delete file;
 		return false;
 	}
 
 private:
-	Common::String _name;
+	Common::Path _name;
 	Common::Array<int> _cueSheet;
 	Audio::RewindableAudioStream *_cueStream;
 	uint _cue;
 	int _loadedCue;
 };
 
-Audio::AudioStream *makeTwaStream(Common::String name, Common::SeekableReadStream *stream) {
+Audio::AudioStream *makeTwaStream(const Common::Path &name, Common::SeekableReadStream *stream) {
 	return new TwaAudioStream(name, stream);
 }
 
@@ -377,10 +379,10 @@ void SoundManager::stopSound() {
 	}
 }
 
-void SoundManager::playMod(const Common::String &file) {
+void SoundManager::playMod(const Common::Path &file) {
 	if (_musicOffFl)
 		return;
-	Common::String modFile = file;
+	Common::String modFile = file.baseName();
 
 	// HACK
 	if (modFile == "URAVOLGA" && (_vm->getPlatform() == Common::kPlatformWindows || _vm->getPlatform() == Common::kPlatformLinux))
@@ -403,21 +405,22 @@ void SoundManager::playMod(const Common::String &file) {
 		_modPlayingFl = false;
 	}
 
-	loadMusic(modFile);
+	loadMusic(file.getParent().appendComponent(modFile));
 	playMusic();
 	_modPlayingFl = true;
 }
 
-void SoundManager::loadMusic(const Common::String &file) {
+void SoundManager::loadMusic(const Common::Path &file) {
 	if (_music._active)
 		delMusic();
 
 	Common::File f;
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
-		Common::String filename = Common::String::format("%s.MOD", file.c_str());
+		Common::Path filename(file);
+		filename.append(".MOD");
 
 		if (!f.open(filename))
-			error("Error opening file %s", filename.c_str());
+			error("Error opening file %s", filename.toString().c_str());
 
 		Modules::Module *module;
 		Audio::AudioStream *modStream = Audio::makeProtrackerStream(&f, 0, 44100, true, &module);
@@ -434,12 +437,13 @@ void SoundManager::loadMusic(const Common::String &file) {
 		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, modStream);
 
 	} else {
-		Common::String filename = Common::String::format("%s.TWA", file.c_str());
+		Common::Path filename(file);
+		filename.append(".TWA");
 
 		if (!f.open(filename))
-			error("Error opening file %s", filename.c_str());
+			error("Error opening file %s", filename.toString().c_str());
 
-		Audio::AudioStream *twaStream = makeTwaStream(file.c_str(), &f);
+		Audio::AudioStream *twaStream = makeTwaStream(file, &f);
 		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, twaStream);
 		f.close();
 	}
@@ -481,7 +485,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	int fileNumber;
 	bool breakFlag;
 	Common::String prefix;
-	Common::String filename;
+	Common::Path filename;
 	Common::File f;
 	size_t catPos, catLen;
 
@@ -524,10 +528,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 			mappedFileNumber = fileNumber - 1;
 	}
 
-	filename = Common::String::format("%s%d", prefix.c_str(), mappedFileNumber);
+	filename = Common::Path(Common::String::format("%s%d", prefix.c_str(), mappedFileNumber));
 
 	bool fileFoundFl = false;
-	_vm->_fileIO->searchCat(filename + ".WAV", RES_VOI, fileFoundFl);
+	_vm->_fileIO->searchCat(filename.append(".WAV"), RES_VOI, fileFoundFl);
 	if (fileFoundFl) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 			filename = "ENG_VOI.RES";
@@ -551,7 +555,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		catPos = _vm->_fileIO->_catalogPos;
 		catLen = _vm->_fileIO->_catalogSize;
 	} else {
-		_vm->_fileIO->searchCat(filename + ".APC", RES_VOI, fileFoundFl);
+		_vm->_fileIO->searchCat(filename.append(".APC"), RES_VOI, fileFoundFl);
 		if (fileFoundFl) {
 			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 				filename = "ENG_VOI.RES";
@@ -575,7 +579,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 			catPos = _vm->_fileIO->_catalogPos;
 			catLen = _vm->_fileIO->_catalogSize;
 		} else {
-			_vm->_fileIO->searchCat(filename + ".RAW", RES_VOI, fileFoundFl);
+			_vm->_fileIO->searchCat(filename.append(".RAW"), RES_VOI, fileFoundFl);
 			if (fileFoundFl) {
 				if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 					filename = "ENG_VOI.RES";
@@ -599,12 +603,12 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 				catPos = _vm->_fileIO->_catalogPos;
 				catLen = _vm->_fileIO->_catalogSize;
 			} else {
-				if (!f.exists(filename + ".WAV")) {
-					if (!f.exists(filename + ".APC"))
+				if (!f.exists(filename.append(".WAV"))) {
+					if (!f.exists(filename.append(".APC")))
 						return false;
-					filename = filename + ".APC";
+					filename.appendInPlace(".APC");
 				} else
-					filename = filename + ".WAV";
+					filename.appendInPlace(".WAV");
 
 				catPos = 0;
 				catLen = 0;
@@ -674,7 +678,7 @@ void SoundManager::removeSample(int soundIndex) {
 	_sound[soundIndex]._active = false;
 }
 
-void SoundManager::playSoundFile(const Common::String &file) {
+void SoundManager::playSoundFile(const Common::Path &file) {
 	if (_soundOffFl)
 		return;
 
@@ -682,7 +686,7 @@ void SoundManager::playSoundFile(const Common::String &file) {
 	// The BeOS and OS/2 versions don't play sound at this point.
 	// sound20 sounds very close to bruit2 from the linux and Win95 versions.
 	Common::File f;
-	Common::String filename;
+	Common::Path filename;
 	if (file == "bruit2.wav" && !f.exists(file))
 		filename = "sound20.wav";
 	else
@@ -694,7 +698,7 @@ void SoundManager::playSoundFile(const Common::String &file) {
 	playWav(1);
 }
 
-void SoundManager::directPlayWav(const Common::String &file) {
+void SoundManager::directPlayWav(const Common::Path &file) {
 	if (_soundOffFl)
 		return;
 
@@ -723,7 +727,7 @@ void SoundManager::setMODMusicVolume(int volume) {
 		_vm->_mixer->setChannelVolume(_musicHandle, volume * 255 / 16);
 }
 
-void SoundManager::loadSample(int wavIndex, const Common::String &file) {
+void SoundManager::loadSample(int wavIndex, const Common::Path &file) {
 	loadWavSample(wavIndex, file, false);
 	_sound[wavIndex]._active = true;
 }
@@ -798,7 +802,7 @@ bool SoundManager::removeWavSample(int wavIndex) {
 	return true;
 }
 
-bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item) {
+bool SoundManager::loadVoice(const Common::Path &filename, size_t fileOffset, size_t entryLength, SwavItem &item) {
 	Common::File f;
 	if (!f.open(filename)) {
 		// Fallback to APC...
@@ -806,7 +810,7 @@ bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, 
 			// The English demo doesn't include the speech file.
 			// This avoids it to crash when discussing with other characters
 			if (!_vm->getIsDemo())
-				error("Could not open %s for reading", filename.c_str());
+				error("Could not open %s for reading", filename.toString().c_str());
 			return false;
 		}
 	}
@@ -818,7 +822,7 @@ bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, 
 	return true;
 }
 
-void SoundManager::loadWavSample(int wavIndex, const Common::String &filename, bool freeSample) {
+void SoundManager::loadWavSample(int wavIndex, const Common::Path &filename, bool freeSample) {
 	if (_sWav[wavIndex]._active)
 		removeWavSample(wavIndex);
 
@@ -830,7 +834,7 @@ void SoundManager::loadWavSample(int wavIndex, const Common::String &filename, b
 	}
 }
 
-void SoundManager::loadWav(const Common::String &file, int wavIndex) {
+void SoundManager::loadWav(const Common::Path &file, int wavIndex) {
 	loadWavSample(wavIndex, file, true);
 }
 
@@ -931,14 +935,15 @@ Audio::RewindableAudioStream *SoundManager::makeSoundStream(Common::SeekableRead
 }
 
 // Blatant rip from gob engine. Hi DrMcCoy!
-Common::String SoundManager::setExtension(const Common::String &str, const Common::String &ext) {
+Common::Path SoundManager::setExtension(const Common::Path &str, const Common::String &ext) {
 	if (str.empty())
 		return str;
 
-	const char *dot = strrchr(str.c_str(), '.');
+	Common::String basename(str.baseName());
+	const char *dot = strrchr(basename.c_str(), '.');
 	if (dot)
-		return Common::String(str.c_str(), dot - str.c_str()) + ext;
+		return str.getParent().appendComponent(Common::String(basename.c_str(), dot - basename.c_str()) + ext);
 
-	return str + ext;
+	return str.append(ext);
 }
 } // End of namespace Hopkins

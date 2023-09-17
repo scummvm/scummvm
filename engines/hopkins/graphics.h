@@ -26,7 +26,6 @@
 #include "common/array.h"
 #include "common/endian.h"
 #include "common/rect.h"
-#include "common/str.h"
 #include "graphics/surface.h"
 
 namespace Hopkins {
@@ -70,9 +69,9 @@ private:
 
 	bool _manualScroll;
 
-	void loadScreen(const Common::String &file);
-	void loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
-	void loadPCX320(byte *surface, const Common::String &file, byte *palette);
+	void loadScreen(const Common::Path &file);
+	void loadPCX640(byte *surface, const Common::Path &file, byte *palette, bool typeFlag);
+	void loadPCX320(byte *surface, const Common::Path &file, byte *palette);
 	void fadeIn(const byte *palette, int step, const byte *surface);
 	void fadeOut(const byte *palette, int step, const byte *surface);
 	void changePalette(const byte *palette);
@@ -140,8 +139,8 @@ public:
 	void displayLines();
 	void displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect, uint32 color = 0xffffff);
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
-	void loadImage(const Common::String &file);
-	void loadVgaImage(const Common::String &file);
+	void loadImage(const Common::Path &file);
+	void loadVgaImage(const Common::Path &file);
 	void fadeInLong();
 	void fadeInBreakout();
 	void fadeInDefaultLength(const byte *surface);
@@ -166,7 +165,7 @@ public:
 	void scrollScreen(int amount);
 	int zoomIn(int v, int percentage);
 	int zoomOut(int v, int percentage);
-	void initScreen(const Common::String &file, int mode, bool initializeScreen);
+	void initScreen(const Common::Path &file, int mode, bool initializeScreen);
 	void displayAllBob();
 	void endDisplayBob();
 	void updateScreen();

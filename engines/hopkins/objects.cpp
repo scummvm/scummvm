@@ -351,7 +351,7 @@ void ObjectsManager::removeObjectDataBuf() {
 /**
  * Load Sprite from file
  */
-byte *ObjectsManager::loadSprite(const Common::String &file) {
+byte *ObjectsManager::loadSprite(const Common::Path &file) {
 	return _vm->_fileIO->loadFile(file);
 }
 
@@ -1720,7 +1720,7 @@ void ObjectsManager::goHome2() {
 /**
  * Load Zone
  */
-void ObjectsManager::loadZone(const Common::String &file) {
+void ObjectsManager::loadZone(const Common::Path &file) {
 	for (int i = 1; i <= 100; i++) {
 		ZoneItem *curZone = &_vm->_linesMan->_zone[i];
 		curZone->_destX = 0;
@@ -1742,7 +1742,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 
 	Common::File f;
 	if (!f.exists(file))
-		error("File not found : %s", file.c_str());
+		error("File not found : %s", file.toString().c_str());
 
 	byte *ptr = _vm->_fileIO->loadFile(file);
 	int bufId = 0;
@@ -2613,7 +2613,7 @@ void ObjectsManager::takeInventoryObject(int idx) {
 
 void ObjectsManager::loadObjectIniFile() {
 	byte *data;
-	Common::String file;
+	Common::Path file;
 	int lastOpcodeResult = 1;
 
 	file = "OBJET1.ini";
@@ -2622,11 +2622,11 @@ void ObjectsManager::loadObjectIniFile() {
 	if (!fileFoundFl) {
 		data = _vm->_fileIO->loadFile(file);
 		if (data == nullptr)
-			error("INI file %s not found", file.c_str());
+			error("INI file %s not found", file.toString().c_str());
 	}
 
 	if (READ_BE_UINT24(data) != MKTAG24('I', 'N', 'I'))
-		error("File %s is not an INI file", file.c_str());
+		error("File %s is not an INI file", file.toString().c_str());
 
 	for (;;) {
 		int opcodeType = _vm->_script->handleOpcode(data + 20 * lastOpcodeResult);
@@ -3130,15 +3130,15 @@ int ObjectsManager::getBobPosX(int idx) {
 	return _bob[idx]._xp;
 }
 
-void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) {
+void ObjectsManager::loadLinkFile(const Common::Path &file, bool skipDetails) {
 	Common::File f;
-	Common::String filename = file + ".LNK";
+	Common::Path filename = file.append(".LNK");
 	bool fileFoundFl = false;
 	byte *ptr = _vm->_fileIO->searchCat(filename, RES_LIN, fileFoundFl);
 	size_t nbytes = _vm->_fileIO->_catalogSize;
 	if (!fileFoundFl) {
 		if (!f.open(filename))
-			error("Error opening file - %s", filename.c_str());
+			error("Error opening file - %s", filename.toString().c_str());
 
 		nbytes = f.size();
 		ptr = _vm->_globals->allocMemory(nbytes);
@@ -3153,7 +3153,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) 
 
 		resetHidingItems();
 
-		Common::String filename2 = Common::String((const char *)ptr + 1000);
+		Common::Path filename2(Common::String((const char *)ptr + 1000));
 		if (!filename2.empty()) {
 			fileFoundFl = false;
 			_hidingItemData[1] = _vm->_fileIO->searchCat(filename2, RES_SLI, fileFoundFl);
@@ -3761,8 +3761,8 @@ void ObjectsManager::lockAnimX(int idx, int x) {
 /**
  * Game scene control method
  */
-void ObjectsManager::sceneControl(const Common::String &backgroundFile, const Common::String &linkFile,
-							   const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
+void ObjectsManager::sceneControl(const Common::Path &backgroundFile, const Common::Path &linkFile,
+							   const Common::Path &animFile, const Common::Path &s4, int soundNum, bool initializeScreen) {
 	_vm->_dialog->_inventFl = false;
 	_vm->_events->_gameKey = KEY_NONE;
 	_vm->_dialog->enableInvent();
@@ -3849,8 +3849,8 @@ void ObjectsManager::sceneControl(const Common::String &backgroundFile, const Co
 /**
  * Game scene control method
  */
-void ObjectsManager::sceneControl2(const Common::String &backgroundFile, const Common::String &linkFile,
-								const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
+void ObjectsManager::sceneControl2(const Common::Path &backgroundFile, const Common::Path &linkFile,
+								const Common::Path &animFile, const Common::Path &s4, int soundNum, bool initializeScreen) {
 	_vm->_dialog->_inventFl = false;
 	_vm->_events->_gameKey = KEY_NONE;
 	_verb = 4;
@@ -4008,10 +4008,10 @@ void ObjectsManager::setHidingUseCount(int idx) {
 }
 
 // Load Hiding Items
-void ObjectsManager::loadHidingItems(const Common::String &file) {
+void ObjectsManager::loadHidingItems(const Common::Path &file) {
 	resetHidingItems();
 	byte *ptr = _vm->_fileIO->loadFile(file);
-	Common::String filename = Common::String((const char *)ptr);
+	Common::Path filename((const char *)ptr);
 
 	Common::File f;
 	if (!f.exists(filename))

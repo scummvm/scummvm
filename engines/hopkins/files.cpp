@@ -43,16 +43,16 @@ FileManager::FileManager(HopkinsEngine *vm) {
 /**
  * Load a file
  */
-byte *FileManager::loadFile(const Common::String &file) {
+byte *FileManager::loadFile(const Common::Path &file) {
 	Common::File f;
 	if (!f.open(file))
-		error("Error opening %s", file.c_str());
+		error("Error opening %s", file.toString().c_str());
 
 	// Allocate space for the file contents
 	size_t filesize = f.size();
 	byte *data = _vm->_globals->allocMemory(filesize+1);
 	if (!data)
-		error("Error allocating space for file being loaded - %s", file.c_str());
+		error("Error allocating space for file being loaded - %s", file.toString().c_str());
 
 	readStream(f, data, filesize);
 	f.close();
@@ -79,7 +79,7 @@ void FileManager::initCensorship() {
 /**
  * Check if a file is present
  */
-bool FileManager::fileExists(const Common::String &file) {
+bool FileManager::fileExists(const Common::Path &file) {
 	Common::File f;
 
 	return f.exists(file);
@@ -88,13 +88,13 @@ bool FileManager::fileExists(const Common::String &file) {
 /**
  * Search file in Cat file
  */
-byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fileFoundFl) {
+byte *FileManager::searchCat(const Common::Path &file, CatMode mode, bool &fileFoundFl) {
 	byte *ptr = nullptr;
 	fileFoundFl = true;
 	Common::File f;
 
-	Common::String filename = file;
-	Common::String secondaryFilename = "";
+	Common::String filename = file.toString('/');
+	Common::Path secondaryFilename;
 	filename.toUppercase();
 
 	switch (mode) {
@@ -166,7 +166,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 		break;
 
 	case RES_VOI: {
-		Common::String tmpFilename;
+		Common::Path tmpFilename;
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			tmpFilename = "ENG_VOI.CAT";
 		// Win95 and Linux versions uses another set of names
@@ -226,7 +226,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 
 	_vm->_globals->freeMemory(ptr);
 
-	if (secondaryFilename != "") {
+	if (!secondaryFilename.empty()) {
 		if (!f.open(secondaryFilename))
 			error("CHARGE_FICHIER");
 
@@ -249,12 +249,12 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 /**
  * Returns the size of a file. Throws an error if the file can't be found
  */
-uint32 FileManager::fileSize(const Common::String &filename) {
+uint32 FileManager::fileSize(const Common::Path &filename) {
 	Common::File f;
 	uint32 size;
 
 	if (!f.open(filename))
-		error("Could not find file %s", filename.c_str());
+		error("Could not find file %s", filename.toString().c_str());
 
 	size = f.size();
 	f.close();

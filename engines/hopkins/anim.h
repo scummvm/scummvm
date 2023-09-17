@@ -24,7 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
-#include "common/str.h"
+#include "common/path.h"
 #include "graphics/surface.h"
 
 namespace Hopkins {
@@ -32,7 +32,7 @@ namespace Hopkins {
 struct BankItem {
 	byte *_data;
 	bool _loadedFl;
-	Common::String _filename;
+	Common::Path _filename;
 	int _fileHeader;
 	int _objDataIdx;
 };
@@ -51,7 +51,7 @@ private:
 	HopkinsEngine *_vm;
 
 	void initAnimBqe();
-	int loadSpriteBank(int idx, const Common::String &filename);
+	int loadSpriteBank(int idx, const Common::Path &filename);
 	void searchAnim(const byte *data, int animIndex, int count);
 
 public:
@@ -61,12 +61,12 @@ public:
 	AnimationManager(HopkinsEngine *vm);
 	void clearAll();
 
-	void loadAnim(const Common::String &animName);
+	void loadAnim(const Common::Path &animName);
 	void clearAnim();
-	void playAnim(const Common::String &hiresName, const Common::String &lowresName, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
-	void playAnim2(const Common::String &hiresName, const Common::String &lowresName, uint32 rate1, uint32 rate2, uint32 rate3);
-	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl, bool noColFl = false);
-	void playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
+	void playAnim(const Common::Path &hiresName, const Common::Path &lowresName, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
+	void playAnim2(const Common::Path &hiresName, const Common::Path &lowresName, uint32 rate1, uint32 rate2, uint32 rate3);
+	void playSequence(const Common::Path &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl, bool noColFl = false);
+	void playSequence2(const Common::Path &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
 
 	void setClearAnimFlag()   { _clearAnimationFl = true; }
 	void unsetClearAnimFlag() { _clearAnimationFl = false; }
