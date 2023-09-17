@@ -231,7 +231,7 @@ bool DataIO::openArchive(Common::String name, bool base) {
 		name += ".stk";
 
 	// Try to open
-	*archive = openArchive(name);
+	*archive = openArchive(Common::Path(name));
 	if (!*archive)
 		return false;
 
@@ -245,14 +245,14 @@ static void replaceChar(char *str, char c1, char c2) {
 		*str = c2;
 }
 
-DataIO::Archive *DataIO::openArchive(const Common::String &name) {
+DataIO::Archive *DataIO::openArchive(const Common::Path &name) {
 	Archive *archive = new Archive;
 	if (!archive->file.open(name)) {
 		delete archive;
 		return nullptr;
 	}
 
-	archive->name = name;
+	archive->name = name.toString('/');
 
 	uint16 fileCount = archive->file.readUint16LE();
 	for (uint16 i = 0; i < fileCount; i++) {
@@ -316,7 +316,7 @@ bool DataIO::hasFile(const Common::String &name){
 		return true;
 
 	// Else, look if a plain file that matches exists
-	return Common::File::exists(name);
+	return Common::File::exists(Common::Path(name));
 }
 
 int32 DataIO::fileSize(const Common::String &name) {
@@ -342,7 +342,7 @@ int32 DataIO::fileSize(const Common::String &name) {
 
 	// Else, try to find a matching plain file
 	Common::File f;
-	if (!f.open(name))
+	if (!f.open(Common::Path(name)))
 		return -1;
 
 	return f.size();
@@ -359,7 +359,7 @@ Common::SeekableReadStream *DataIO::getFile(const Common::String &name) {
 
 	// Else, try to open a matching plain file
 	Common::File f;
-	if (!f.open(name))
+	if (!f.open(Common::Path(name)))
 		return nullptr;
 
 	return f.readStream(f.size());
@@ -376,7 +376,7 @@ byte *DataIO::getFile(const Common::String &name, int32 &size) {
 
 	// Else, try to open a matching plain file
 	Common::File f;
-	if (!f.open(name))
+	if (!f.open(Common::Path(name)))
 		return nullptr;
 
 	size = f.size();

@@ -58,7 +58,7 @@ void Databases::setLanguage(Common::Language language) {
 	_language = lang;
 }
 
-bool Databases::open(const Common::String &id, const Common::String &file) {
+bool Databases::open(const Common::String &id, const Common::Path &file) {
 	if (_databases.contains(id)) {
 		warning("Databases::open(): A database with the ID \"%s\" already exists", id.c_str());
 		return false;
@@ -66,13 +66,13 @@ bool Databases::open(const Common::String &id, const Common::String &file) {
 
 	Common::File dbFile;
 	if (!dbFile.open(file)) {
-		warning("Databases::open(): No such file \"%s\"", file.c_str());
+		warning("Databases::open(): No such file \"%s\"", file.toString().c_str());
 		return false;
 	}
 
 	dBase db;
 	if (!db.load(dbFile)) {
-		warning("Databases::open(): Failed loading database file \"%s\"", file.c_str());
+		warning("Databases::open(): Failed loading database file \"%s\"", file.toString().c_str());
 		return false;
 	}
 
@@ -81,7 +81,7 @@ bool Databases::open(const Common::String &id, const Common::String &file) {
 	assert(map != _databases.end());
 
 	if (!buildMap(db, map->_value)) {
-		warning("Databases::open(): Failed building a map for database \"%s\"", file.c_str());
+		warning("Databases::open(): Failed building a map for database \"%s\"", file.toString().c_str());
 		_databases.erase(map);
 		return false;
 	}
