@@ -60,7 +60,7 @@
 namespace Stark {
 namespace Formats {
 
-XRCReadStream::XRCReadStream(const Common::String &archiveName,
+XRCReadStream::XRCReadStream(const Common::Path &archiveName,
 		Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream) :
 		SeekableSubReadStream(parentStream, 0, parentStream->size(), disposeParentStream),
 		_archiveName(archiveName) {
@@ -126,7 +126,7 @@ bool XRCReadStream::isDataLeft() {
 	return pos() < size();
 }
 
-Common::String XRCReadStream::getArchiveName() const {
+Common::Path XRCReadStream::getArchiveName() const {
 	return _archiveName;
 }
 
@@ -135,14 +135,14 @@ Resources::Object *XRCReader::importTree(XARCArchive *archive) {
 	Common::ArchiveMemberList members;
 	archive->listMatchingMembers(members, "*.xrc");
 	if (members.size() == 0) {
-		error("No resource tree in archive '%s'", archive->getFilename().c_str());
+		error("No resource tree in archive '%s'", archive->getFilename().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	if (members.size() > 1) {
-		error("Too many resource scripts in archive '%s'", archive->getFilename().c_str());
+		error("Too many resource scripts in archive '%s'", archive->getFilename().toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	// Open the XRC file
-	Common::SeekableReadStream *stream = archive->createReadStreamForMember(members.front()->getName());
+	Common::SeekableReadStream *stream = archive->createReadStreamForMember(members.front()->getPathInArchive());
 	XRCReadStream *xrcStream = new XRCReadStream(archive->getFilename(), stream);
 
 	// Import the resource tree

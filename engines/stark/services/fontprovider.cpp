@@ -124,7 +124,8 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::S
 	_scaledHeight = StarkGfx->scaleHeightOriginalToCurrent(_originalHeight);
 
 	// Fetch the font file name
-	Common::String ttfFileName = "fonts/" + fontProvider->_ttfFileMap[_name];
+	Common::Path ttfFileName("fonts");
+	ttfFileName.joinInPlace(fontProvider->_ttfFileMap[_name]);
 
 	// Initialize the font
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(ttfFileName);
@@ -138,7 +139,7 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::S
 		);
 		delete s;
 	} else {
-		warning("Unable to load the font '%s'", ttfFileName.c_str());
+		warning("Unable to load the font '%s'", ttfFileName.toString().c_str());
 	}
 }
 

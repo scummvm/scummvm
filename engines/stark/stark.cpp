@@ -266,7 +266,7 @@ static bool modsCompare(const Common::FSNode &a, const Common::FSNode &b) {
 }
 
 void StarkEngine::addModsToSearchPath() const {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	const Common::FSNode modsDir = gameDataDir.getChild("mods");
 	if (modsDir.exists()) {
 		Common::FSList list;
@@ -290,7 +290,7 @@ void StarkEngine::checkRecommendedDatafiles() {
 
 	Common::String message = _("You are missing recommended data files:");
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	Common::FSNode fontsDir = gameDataDir.getChild("fonts");
 	if (!fontsDir.isDirectory()) {
 		fontsDir = gameDataDir.getChild("Fonts"); // FSNode is case sensitive

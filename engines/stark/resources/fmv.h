@@ -22,6 +22,7 @@
 #ifndef STARK_RESOURCES_FMV_H
 #define STARK_RESOURCES_FMV_H
 
+#include "common/path.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
@@ -53,7 +54,7 @@ public:
 protected:
 	void printData() override;
 
-	Common::String _filename;
+	Common::Path _filename;
 	bool _diaryAddEntryOnPlay;
 	uint32 _gameDisc;
 };

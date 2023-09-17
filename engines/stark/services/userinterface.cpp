@@ -213,7 +213,7 @@ void UserInterface::selectInventoryItem(int16 itemIndex) {
 	_gameScreen->getInventoryWindow()->setSelectedInventoryItem(itemIndex);
 }
 
-void UserInterface::requestFMVPlayback(const Common::String &name) {
+void UserInterface::requestFMVPlayback(const Common::Path &name) {
 	_shouldPlayFmv = name;
 }
 

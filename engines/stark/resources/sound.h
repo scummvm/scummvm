@@ -24,6 +24,7 @@
 
 #include "audio/mixer.h"
 
+#include "common/path.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
@@ -98,8 +99,8 @@ protected:
 	Audio::RewindableAudioStream *makeAudioStream();
 	Audio::Mixer::SoundType getMixerSoundType();
 
-	Common::String _filename;
-	Common::String _archiveName;
+	Common::Path _filename;
+	Common::Path _archiveName;
 	uint32 _enabled;
 	bool _looping;
 	uint32 _field_64;

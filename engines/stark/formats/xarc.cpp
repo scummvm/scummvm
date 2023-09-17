@@ -40,15 +40,15 @@ public:
 
 	Common::SeekableReadStream *createReadStream() const override;
 	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
-	Common::String getName() const override { return _name; }
+	Common::String getName() const override { return _name.baseName(); }
 	Common::Path getPathInArchive() const override { return _name; }
-	Common::String getFileName() const override { return _name; }
+	Common::String getFileName() const override { return _name.baseName(); }
 	uint32 getLength() const { return _length; }
 	uint32 getOffset() const { return _offset; }
 
 private:
 	const XARCArchive *_xarc;
-	Common::String _name;
+	Common::Path _name;
 	uint32 _offset;
 	uint32 _length;
 
@@ -60,16 +60,16 @@ XARCMember::XARCMember(const XARCArchive *xarc, Common::ReadStream &stream, uint
 	_xarc = xarc;
 
 	// Read the information about this archive member
-	_name = readString(stream);
+	_name = Common::Path(readString(stream));
 	_offset = offset;
 	_length = stream.readUint32LE();
-	debugC(20, kDebugArchive, "Stark::XARC Member: \"%s\" starts at offset=%d and has length=%d", _name.c_str(), _offset, _length);
+	debugC(20, kDebugArchive, "Stark::XARC Member: \"%s\" starts at offset=%d and has length=%d", _name.toString().c_str(), _offset, _length);
 
 	// Unknown value. English: 0, others: 1
 	uint32 unknown = stream.readUint32LE();
-	debugC(kDebugUnknown, "Stark::XARC Member: \"%s\" has unknown=%d", _name.c_str(), unknown);
+	debugC(kDebugUnknown, "Stark::XARC Member: \"%s\" has unknown=%d", _name.toString().c_str(), unknown);
 	if (unknown != 0 && unknown != 1) {
-		warning("Stark::XARC Member: \"%s\" has unknown=%d with unknown meaning", _name.c_str(), unknown);
+		warning("Stark::XARC Member: \"%s\" has unknown=%d with unknown meaning", _name.toString().c_str(), unknown);
 	}
 }
 
@@ -102,7 +102,7 @@ Common::String XARCMember::readString(Common::ReadStream &stream) {
 
 // ARCHIVE
 
-bool XARCArchive::open(const Common::String &filename) {
+bool XARCArchive::open(const Common::Path &filename) {
 	Common::File stream;
 	if (!stream.open(filename)) {
 		return false;
@@ -112,18 +112,18 @@ bool XARCArchive::open(const Common::String &filename) {
 
 	// Unknown: always 1? version?
 	uint32 unknown = stream.readUint32LE();
-	debugC(kDebugUnknown, "Stark::XARC: \"%s\" has unknown=%d", _filename.c_str(), unknown);
+	debugC(kDebugUnknown, "Stark::XARC: \"%s\" has unknown=%d", _filename.toString(Common::Path::kNativeSeparator).c_str(), unknown);
 	if (unknown != 1) {
-		warning("Stark::XARC: \"%s\" has unknown=%d with unknown meaning", _filename.c_str(), unknown);
+		warning("Stark::XARC: \"%s\" has unknown=%d with unknown meaning", _filename.toString(Common::Path::kNativeSeparator).c_str(), unknown);
 	}
 
 	// Read the number of contained files
 	uint32 numFiles = stream.readUint32LE();
-	debugC(20, kDebugArchive, "Stark::XARC: \"%s\" contains %d files", _filename.c_str(), numFiles);
+	debugC(20, kDebugArchive, "Stark::XARC: \"%s\" contains %d files", _filename.toString(Common::Path::kNativeSeparator).c_str(), numFiles);
 
 	// Read the offset to the contents of the first file
 	uint32 offset = stream.readUint32LE();
-	debugC(20, kDebugArchive, "Stark::XARC: \"%s\"'s first file has offset=%d", _filename.c_str(), offset);
+	debugC(20, kDebugArchive, "Stark::XARC: \"%s\"'s first file has offset=%d", _filename.toString(Common::Path::kNativeSeparator).c_str(), offset);
 
 	for (uint32 i = 0; i < numFiles; i++) {
 		XARCMember *member = new XARCMember(this, stream, offset);
@@ -136,7 +136,7 @@ bool XARCArchive::open(const Common::String &filename) {
 	return true;
 }
 
-Common::String XARCArchive::getFilename() const {
+Common::Path XARCArchive::getFilename() const {
 	return _filename;
 }
 
