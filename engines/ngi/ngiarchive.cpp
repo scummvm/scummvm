@@ -32,7 +32,7 @@
 
 namespace NGI {
 
-NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) {
+NGIArchive::NGIArchive(const Common::Path &filename) : _ngiFilename(filename) {
 	Common::File ngiFile;
 
 	if (!ngiFile.open(_ngiFilename)) {
@@ -91,7 +91,7 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 
 	g_nmi->_currArchive = this;
 
-	debug(4, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
+	debug(4, "NGIArchive::NGIArchive(%s): Located %d files", filename.toString().c_str(), _headers.size());
 }
 
 NGIArchive::~NGIArchive() {
@@ -100,8 +100,7 @@ NGIArchive::~NGIArchive() {
 }
 
 bool NGIArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return _headers.contains(name);
+	return _headers.contains(path);
 }
 
 int NGIArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -117,20 +116,18 @@ int NGIArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr NGIArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!_headers.contains(name)) {
+	if (!_headers.contains(path)) {
 		return nullptr;
 	}
 
-	NgiHeader *hdr = _headers[name].get();
+	NgiHeader *hdr = _headers[path].get();
 
 	Common::File archiveFile;
 	archiveFile.open(_ngiFilename);
@@ -145,7 +142,7 @@ Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::
 	return new Common::MemoryReadStream(data, hdr->size, DisposeAfterUse::YES);
 }
 
-NGIArchive *makeNGIArchive(const Common::String &name) {
+NGIArchive *makeNGIArchive(const Common::Path &name) {
 	return new NGIArchive(name);
 }
 

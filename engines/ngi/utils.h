@@ -113,7 +113,7 @@ public:
 	virtual void save(MfcArchive &out) { error("Not implemented for obj type: %d", _objtype); }
 	virtual ~CObject() {}
 
-	bool loadFile(const Common::String &fname);
+	bool loadFile(const Common::Path &fname);
 };
 
 template <class T>
@@ -141,7 +141,7 @@ class MemoryObject : CObject {
 	friend class Scene;
 
  protected:
-	Common::String _memfilename;
+	Common::Path _memfilename;
 	int _mfield_8;
 	int _mfield_C;
 	int _mfield_10;
@@ -156,7 +156,7 @@ class MemoryObject : CObject {
 	~MemoryObject() override;
 
 	bool load(MfcArchive &file) override;
-	void loadFile(const Common::String &filename);
+	void loadFile(const Common::Path &filename);
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();
@@ -191,7 +191,7 @@ class DWordArray : public Common::Array<int32>, public CObject {
 	bool load(MfcArchive &file) override;
 };
 
-Common::String genFileName(int superId, int sceneId, const char *ext);
+Common::Path genFileName(int superId, int sceneId, const char *ext);
 byte *transCyrillic(const Common::String &str);
 
 } // End of namespace NGI

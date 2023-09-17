@@ -22,8 +22,8 @@
 #ifndef NGI_NGIARCHIVE_H
 #define NGI_NGIARCHIVE_H
 
+#include "common/path.h"
 #include "common/ptr.h"
-#include "common/str.h"
 
 namespace NGI {
 
@@ -39,14 +39,14 @@ struct NgiHeader {
 	char  filename[NGI_FILENAME_MAX];
 };
 
-typedef Common::HashMap<Common::String, Common::ScopedPtr<NgiHeader>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> NgiHeadersMap;
+typedef Common::HashMap<Common::Path, Common::ScopedPtr<NgiHeader>, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> NgiHeadersMap;
 
 class NGIArchive : public Common::Archive {
 	NgiHeadersMap _headers;
-	Common::String _ngiFilename;
+	Common::Path _ngiFilename;
 
 public:
-	NGIArchive(const Common::String &name);
+	NGIArchive(const Common::Path &name);
 	~NGIArchive() override;
 
 	// Archive implementation
@@ -62,7 +62,7 @@ public:
  *
  * May return 0 in case of a failure.
  */
-NGIArchive *makeNGIArchive(const Common::String &name);
+NGIArchive *makeNGIArchive(const Common::Path &name);
 
 } // End of namespace NGI
 

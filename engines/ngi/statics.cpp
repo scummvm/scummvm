@@ -179,7 +179,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 	for (int i = 0; i < count; i++) {
 		int movNum = file.readUint16LE();
 
-		Common::String movname = genFileName(_id, movNum, "mov");
+		Common::Path movname = genFileName(_id, movNum, "mov");
 
 		Common::ScopedPtr<Common::SeekableReadStream> f(g_nmi->_currArchive->createReadStreamForMember(movname));
 
