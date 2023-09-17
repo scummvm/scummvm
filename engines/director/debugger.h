@@ -125,7 +125,7 @@ private:
 
 
 	Common::DumpFile _out;
-	Common::String _outName;
+	Common::Path _outName;
 
 	bool _nextFrame;
 	int _nextFrameCounter;

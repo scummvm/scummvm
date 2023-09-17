@@ -33,23 +33,24 @@ namespace Director {
 int castNumToNum(const char *str);
 char *numToCastNum(int num);
 
-bool isAbsolutePath(Common::String &path);
+bool isAbsolutePath(const Common::String &path);
 
-Common::Path toSafePath(Common::String &path);
-Common::String convertPath(Common::String &path);
+Common::Path toSafePath(const Common::String &path);
+Common::String convertPath(const Common::String &path);
 
 Common::String unixToMacPath(const Common::String &path);
 
-Common::String getPath(Common::String path, Common::String cwd);
+Common::String getPath(const Common::String &path, const Common::String &cwd);
 
-Common::Path resolveFSPath(Common::String &path, Common::Path &base, bool directory);
-Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory, const char **exts);
-Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory, const char **exts);
-Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts);
-Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts);
-Common::Path findPath(Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
-Common::Path findMoviePath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
-Common::Path findAudioPath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
+Common::Path resolveFSPath(const Common::String &path, const Common::Path &base, bool directory);
+Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path findPath(const Common::Path &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
+Common::Path findPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
+Common::Path findMoviePath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
+Common::Path findAudioPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 
 
 bool hasExtension(Common::String filename);
@@ -60,8 +61,8 @@ Common::String stripMacPath(const char *name);
 
 Common::String convertMacFilename(const char *name);
 
-Common::String dumpScriptName(const char *prefix, int type, int id, const char *ext);
-Common::String dumpFactoryName(const char *prefix, const char *name, const char *ext);
+Common::Path dumpScriptName(const char *prefix, int type, int id, const char *ext);
+Common::Path dumpFactoryName(const char *prefix, const char *name, const char *ext);
 
 bool isButtonSprite(SpriteType spriteType);
 

@@ -365,11 +365,11 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 		file.close();
 	}
 
-	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(), _fileName.toString().c_str());
+	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(), _fileName.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (!fileExists) {
-		warning("Movie %s does not exist", _fileName.toString().c_str());
-		_fileName.set("");
+		warning("Movie %s does not exist", _fileName.toString(Common::Path::kNativeSeparator).c_str());
+		_fileName.clear();
 		return false;
 	}
 
@@ -392,7 +392,7 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 	Common::Path previousSharedCastPath;
 	Common::Path newSharedCastPath = getSharedCastPath();
 	if (previousSharedCast && previousSharedCast->getArchive()) {
-		previousSharedCastPath = Common::Path(previousSharedCast->getArchive()->getPathName(), g_director->_dirSeparator);
+		previousSharedCastPath = previousSharedCast->getArchive()->getPathName();
 	}
 
 	// Check if previous and new sharedCasts are the same
@@ -401,7 +401,7 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 		previousSharedCast->releaseCastMemberWidget();
 		_currentMovie->_sharedCast = previousSharedCast;
 
-		debugC(1, kDebugLoading, "Skipping loading already loaded shared cast, path: %s", previousSharedCastPath.toString().c_str());
+		debugC(1, kDebugLoading, "Skipping loading already loaded shared cast, path: %s", previousSharedCastPath.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 

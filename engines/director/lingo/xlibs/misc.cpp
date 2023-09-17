@@ -81,7 +81,7 @@ void Misc::m_getProfileString(int nargs) {
     }
 
     Common::INIFile config;
-    config.loadFromFile(filePath.toString());
+    config.loadFromFile(filePath);
 
     Common::String value;
     if (config.getKey(entry, section, value)) {

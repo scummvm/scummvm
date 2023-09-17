@@ -43,13 +43,13 @@ Archive::~Archive() {
 	close();
 }
 
-Common::String Archive::getFileName() const { return Director::getFileName(_pathName); }
+Common::String Archive::getFileName() const { return Director::getFileName(_pathName.toString(g_director->_dirSeparator)); }
 
 bool Archive::openFile(const Common::Path &path) {
 	Common::File *file = new Common::File();
 
 	if (path.empty() || !file->open(path)) {
-		warning("Archive::openFile(): Error opening file %s", path.toString().c_str());
+		warning("Archive::openFile(): Error opening file %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		delete file;
 		return false;
 	}
@@ -57,7 +57,7 @@ bool Archive::openFile(const Common::Path &path) {
 	_pathName = path.toString(g_director->_dirSeparator);
 
 	if (!openStream(file)) {
-		warning("Archive::openFile(): Error loading stream from file %s", path.toString().c_str());
+		warning("Archive::openFile(): Error loading stream from file %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		close();
 		return false;
 	}
@@ -107,7 +107,7 @@ void Archive::listUnaccessedChunks() {
 	}
 
 	if (!s.empty())
-		debugC(5, kDebugLoading, "Unaccessed Chunks in '%s':\n%s", _pathName.c_str(), s.c_str());
+		debugC(5, kDebugLoading, "Unaccessed Chunks in '%s':\n%s", _pathName.toString(g_director->_dirSeparator).c_str(), s.c_str());
 }
 
 int Archive::getFileSize() {
@@ -267,12 +267,12 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 		dataSize = resStream->size();
 	}
 
-	Common::String prepend = _pathName.size() ? _pathName : "stream";
-	Common::String filename = Common::String::format("./dumps/%s-%s-%d", encodePathForDump(prepend).c_str(), tag2str(res.tag), res.index);
+	Common::Path prepend = _pathName.empty() ? _pathName : "stream";
+	Common::Path filename(Common::String::format("./dumps/%s-%s-%d", encodePathForDump(prepend.toString(g_director->_dirSeparator)).c_str(), tag2str(res.tag), res.index), '/');
 	resStream->read(data, len);
 
 	if (!out.open(filename, true)) {
-		warning("Archive::dumpChunk(): Can not open dump file %s", filename.c_str());
+		warning("Archive::dumpChunk(): Can not open dump file %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	} else {
 		out.write(data, len);
 		out.flush();
@@ -317,10 +317,12 @@ bool MacArchive::openFile(const Common::Path &path) {
 		return false;
 	}
 
-	_pathName = _resFork->getBaseFileName().toString(g_director->_dirSeparator);
-	if (_pathName.hasSuffix(".bin")) {
+	_pathName = _resFork->getBaseFileName();
+	Common::String basename(_pathName.baseName());
+	if (basename.hasSuffix(".bin")) {
 		for (int i = 0; i < 4; i++)
-			_pathName.deleteLastChar();
+			basename.deleteLastChar();
+		_pathName = _pathName.getParent().appendComponent(basename);
 	}
 
 	readTags();
@@ -344,7 +346,7 @@ bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffs
 	}
 
 	_pathName = "<stream>";
-	_resFork->setBaseFileName(_pathName);
+	_resFork->setBaseFileName(Common::Path(_pathName));
 
 	readTags();
 

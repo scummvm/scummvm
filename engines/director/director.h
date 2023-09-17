@@ -177,7 +177,7 @@ public:
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
 	Common::String getCurrentAbsolutePath();
-	Common::String getStartupPath() const;
+	Common::Path getStartupPath() const;
 
 	// graphics.cpp
 	bool hasFeature(EngineFeature f) const override;
@@ -308,7 +308,7 @@ private:
 
 public:
 	int _tickBaseline;
-	Common::String _traceLogFile;
+	Common::Path _traceLogFile;
 
 	uint16 _framesRan = 0; // used by kDebugFewFramesOnly
 };

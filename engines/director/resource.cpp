@@ -85,7 +85,7 @@ Common::Error Window::loadInitialMovie() {
 		_currentMovie->loadSharedCastsFrom(sharedCastPath);
 
 	// load startup movie
-	Common::String startupPath = g_director->getStartupPath();
+	Common::Path startupPath = g_director->getStartupPath();
 	if (!startupPath.empty()) {
 		Common::SeekableReadStream *const stream = SearchMan.createReadStreamForMember(startupPath);
 		if (stream) {
@@ -158,7 +158,7 @@ void Window::probeResources(Archive *archive) {
 					_currentMovie = nullptr;
 				}
 
-				Archive *subMovie = g_director->openArchive(moviePath.toString());
+				Archive *subMovie = g_director->openArchive(moviePath);
 				if (subMovie) {
 					probeResources(subMovie);
 				}
@@ -174,8 +174,8 @@ void Window::probeResources(Archive *archive) {
 		// fork of the file to state which XObject or HyperCard XCMD/XFCNs
 		// need to be loaded in.
 		MacArchive *resFork = new MacArchive();
-		Common::String resForkPathName = archive->getPathName();
-		if (resFork->openFile(findPath(resForkPathName).toString())) {
+		Common::Path resForkPathName = archive->getPathName();
+		if (resFork->openFile(findPath(resForkPathName))) {
 			if (resFork->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
 				Common::Array<uint16> xcod = resFork->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
 				for (auto &iterator : xcod) {
@@ -237,7 +237,7 @@ Archive *DirectorEngine::openArchive(const Common::Path &path) {
 			return nullptr;
 		}
 	}
-	result->setPathName(path.toString(g_director->_dirSeparator));
+	result->setPathName(path);
 	_allSeenResFiles.setVal(path, result);
 
 	addArchiveToOpenList(path);
@@ -286,7 +286,7 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 			return nullptr;
 		}
 	} else {
-		Common::WinResources *exe = Common::WinResources::createFromEXE(movie.toString());
+		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
 		if (!exe) {
 			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Failed to open EXE '%s'", movie.toString().c_str());
 			delete exeStream;
@@ -330,14 +330,14 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 		}
 
 		if (result) {
-			result->setPathName(movie.toString(g_director->_dirSeparator));
+			result->setPathName(movie);
 		}
 
 		return result;
 	}
 
 	if (result)
-		result->setPathName(movie.toString(g_director->_dirSeparator));
+		result->setPathName(movie);
 	else
 		delete exeStream;
 
@@ -533,7 +533,7 @@ Archive *DirectorEngine::loadMac(const Common::Path &movie) {
 			return nullptr;
 		}
 		result = new RIFXArchive();
-		result->setPathName(movie.toString(g_director->_dirSeparator));
+		result->setPathName(movie);
 
 		// First we need to detect PPC vs. 68k
 
@@ -717,7 +717,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		// subtract 8 since we want to include tag and size as well
 		entry.offset = static_cast<uint32>(stream->pos() - 8);
 		entry.size = size + 8;
-		_files[path.toString()] = entry;
+		_files[path] = entry;
 
 		// Align size for the next seek.
 		size += (size % 2);
@@ -734,8 +734,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 }
 
 bool ProjectorArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return (_files.find(name) != _files.end());
+	return (_files.find(path) != _files.end());
 }
 
 int ProjectorArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -750,17 +749,14 @@ int ProjectorArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr ProjectorArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *ProjectorArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	FileMap::const_iterator fDesc = _files.find(name);
+	FileMap::const_iterator fDesc = _files.find(path);
 
 	if (fDesc == _files.end())
 		return nullptr;

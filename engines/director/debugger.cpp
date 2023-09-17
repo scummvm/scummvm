@@ -262,7 +262,7 @@ bool Debugger::cmdInfo(int argc, const char **argv) {
 	Score *score = movie->getScore();
 	Archive *archive = movie->getArchive();
 	Cast *cast = movie->getCast();
-	debugPrintf("Movie path: %s\n", archive->getPathName().c_str());
+	debugPrintf("Movie path: %s\n", archive->getPathName().toString(g_director->_dirSeparator).c_str());
 	debugPrintf("Movie file size: %d\n", archive->getFileSize());
 	debugPrintf("Movie archive format: %s\n", archive->formatArchiveInfo().c_str());
 	debugPrintf("Movie platform: %s (%s)\n", Common::getPlatformCode(movie->_platform), Common::getPlatformDescription(movie->_platform));
