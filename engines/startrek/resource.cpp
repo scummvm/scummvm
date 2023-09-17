@@ -201,9 +201,10 @@ Common::MemoryReadStreamEndian *Resource::loadFile(Common::String filename, int 
 	bool bigEndian = _platform == Common::kPlatformAmiga;
 
 	// Load external patches
-	if (Common::File::exists(filename)) {
+	Common::Path path(filename);
+	if (Common::File::exists(path)) {
 		Common::File *patch = new Common::File();
-		patch->open(filename);
+		patch->open(path);
 		int32 size = patch->size();
 		byte *data = (byte *)malloc(size);
 		patch->read(data, size);

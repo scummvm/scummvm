@@ -124,7 +124,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_awayMission.sins.missionScore = 0;
 	_awayMission.veng.missionScore = 0;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
 }
 
@@ -363,7 +363,7 @@ void StarTrekEngine::playMovieMac(Common::String filename) {
 
 	Video::QuickTimeDecoder *qtDecoder = new Video::QuickTimeDecoder();
 
-	if (!qtDecoder->loadFile(filename))
+	if (!qtDecoder->loadFile(Common::Path(filename)))
 		error("Could not open '%s'", filename.c_str());
 
 	bool continuePlaying = true;

@@ -214,12 +214,12 @@ void Sound::playVoc(const Common::String &baseSoundName) {
 		if (_vm->_system->getMixer()->isSoundHandleActive(_sfxHandles[i]))
 			continue;
 
-		Common::String soundName = Common::String("voc/sfx/") + baseSoundName + ".voc";
+		Common::Path soundName = Common::Path("voc/sfx/").appendComponent(baseSoundName + ".voc");
 		Common::SeekableReadStream *readStream = SearchMan.createReadStreamForMember(soundName);
 		if (readStream == nullptr)
-			error("Couldn't open '%s'", soundName.c_str());
+			error("Couldn't open '%s'", soundName.toString().c_str());
 
-		debugC(5, kDebugSound, "Playing sound effect '%s'", soundName.c_str());
+		debugC(5, kDebugSound, "Playing sound effect '%s'", soundName.toString().c_str());
 
 		Audio::RewindableAudioStream *srcStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		Audio::AudioStream *audioStream;
@@ -249,11 +249,11 @@ void Sound::playSpeech(const Common::String &basename) {
 			i++;
 		}
 
-		Common::String filename = "voc/" + Common::String(name.c_str(), name.c_str() + i) + ".voc";
-		debugC(5, kDebugSound, "Playing speech '%s'", filename.c_str());
+		Common::Path filename = Common::Path("voc/").appendComponent(Common::String(name.c_str(), name.c_str() + i) + ".voc");
+		debugC(5, kDebugSound, "Playing speech '%s'", filename.toString().c_str());
 		Common::SeekableReadStream *readStream = SearchMan.createReadStreamForMember(filename);
 		if (readStream == nullptr)
-			error("Couldn't open '%s'", filename.c_str());
+			error("Couldn't open '%s'", filename.toString().c_str());
 
 		Audio::AudioStream *audioStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		if (audioStream != nullptr) {
