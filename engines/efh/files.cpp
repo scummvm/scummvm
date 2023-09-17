@@ -24,11 +24,11 @@
 
 namespace Efh {
 
-int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
-	debugC(1, kDebugUtils, "readFileToBuffer %s", filename.c_str());
+int32 EfhEngine::readFileToBuffer(const Common::Path &filename, uint8 *destBuffer) {
+	debugC(1, kDebugUtils, "readFileToBuffer %s", filename.toString().c_str());
 	Common::File f;
 	if (!f.open(filename))
-		error("Unable to find file %s", filename.c_str());
+		error("Unable to find file %s", filename.toString().c_str());
 
 	int size = f.size();
 
@@ -38,10 +38,10 @@ int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
 void EfhEngine::readAnimInfo() {
 	debugC(6, kDebugEngine, "readAnimInfo");
 
-	Common::String fileName = "animinfo";
+	Common::Path fileName("animinfo");
 	Common::File f;
 	if (!f.open(fileName))
-		error("Unable to find file %s", fileName.c_str());
+		error("Unable to find file %s", fileName.toString().c_str());
 
 	for (int i = 0; i < 100; ++i) {
 		for (int id = 0; id < 15; ++id) {
@@ -77,24 +77,24 @@ void EfhEngine::findMapFile(int16 mapId) {
 	if (!_introDoneFl)
 		return;
 
-	Common::String fileName = Common::String::format("map.%d", mapId);
+	Common::Path fileName(Common::String::format("map.%d", mapId));
 	Common::File f;
 	// The original was checking for the file and eventually asking to change floppies
 	if (!f.open(fileName))
-		error("File not found: %s", fileName.c_str());
+		error("File not found: %s", fileName.toString().c_str());
 
 	f.close();
 }
 
-void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer) {
-	debugC(1, kDebugUtils, "rImageFile %s", filename.c_str());
+void EfhEngine::rImageFile(const Common::Path &filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer) {
+	debugC(1, kDebugUtils, "rImageFile %s", filename.toString().c_str());
 	readFileToBuffer(filename, packedBuffer);
 
 	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
 	if (ConfMan.getBool("dump_scripts")) {
 		// dump a decompressed image file
 		Common::DumpFile dump;
-		dump.open(filename + ".dump");
+		dump.open(filename.append(".dump"));
 		dump.write(targetBuffer, size);
 		dump.flush();
 		dump.close();
@@ -119,7 +119,7 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 void EfhEngine::readImpFile(int16 id, bool techMapFl) {
 	debugC(6, kDebugEngine, "readImpFile %d %s", id, techMapFl ? "True" : "False");
 
-	Common::String fileName = Common::String::format("imp.%d", id);
+	Common::Path fileName(Common::String::format("imp.%d", id));
 
 	if (techMapFl)
 		readFileToBuffer(fileName, _imp1);
@@ -132,10 +132,10 @@ void EfhEngine::readImpFile(int16 id, bool techMapFl) {
 void EfhEngine::readItems() {
 	debugC(7, kDebugEngine, "readItems");
 
-	Common::String fileName = "items";
+	Common::Path fileName("items");
 	Common::File f;
 	if (!f.open(fileName))
-		error("Unable to find file %s", fileName.c_str());
+		error("Unable to find file %s", fileName.toString().c_str());
 
 	for (int i = 0; i < 300; ++i) {
 		for (uint idx = 0; idx < 15; ++idx)
@@ -191,7 +191,7 @@ void EfhEngine::loadAnimImageSet() {
 void EfhEngine::loadHistory() {
 	debugC(2, kDebugEngine, "loadHistory");
 
-	Common::String fileName = "history";
+	Common::Path fileName("history");
 	readFileToBuffer(fileName, _history);
 }
 
@@ -232,7 +232,7 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 
 	if (_fullPlaceId < minPlace || _fullPlaceId > maxPlace || forceReloadFl) {
 		_lastMainPlaceId = _fullPlaceId / 20;
-		Common::String fileName = Common::String::format("places.%d", _lastMainPlaceId);
+		Common::Path fileName(Common::String::format("places.%d", _lastMainPlaceId));
 		readFileToBuffer(fileName, _decompBuf);
 		uncompressBuffer(_decompBuf, _places);
 	}
@@ -242,10 +242,10 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 void EfhEngine::readTileFact() {
 	debugC(7, kDebugEngine, "readTileFact");
 
-	Common::String fileName = "tilefact";
+	Common::Path fileName("tilefact");
 	Common::File f;
 	if (!f.open(fileName))
-		error("Unable to find file %s", fileName.c_str());
+		error("Unable to find file %s", fileName.toString().c_str());
 
 	for (int i = 0; i < 432; ++i) {
 		_tileFact[i]._status = f.readByte();
@@ -256,10 +256,10 @@ void EfhEngine::readTileFact() {
 void EfhEngine::loadNPCS() {
 	debugC(7, kDebugEngine, "loadNPCS");
 
-	Common::String fileName("npcs");
+	Common::Path fileName("npcs");
 	Common::File f;
 	if (!f.open(fileName))
-		error("Unable to find file %s", fileName.c_str());
+		error("Unable to find file %s", fileName.toString().c_str());
 
 	for (int i = 0; i < 99; ++i) {
 		for (int idx = 0; idx < 11; ++idx)
@@ -328,11 +328,11 @@ void EfhEngine::preLoadMaps() {
 		dump.open("efhMaps.dump");
 
 	for (int idx = 0; idx < 19; ++idx) {
-		Common::String fileName = Common::String::format("tech.%d", idx);
+		Common::Path fileName(Common::String::format("tech.%d", idx));
 		readFileToBuffer(fileName, _decompBuf);
 		uncompressBuffer(_decompBuf, _techDataArr[idx]);
 
-		fileName = Common::String::format("map.%d", idx);
+		fileName = Common::Path(Common::String::format("map.%d", idx));
 		readFileToBuffer(fileName, _decompBuf);
 		uncompressBuffer(_decompBuf, _mapArr[idx]);
 

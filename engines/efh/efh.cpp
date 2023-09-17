@@ -420,11 +420,11 @@ void EfhEngine::initEngine() {
 	loadImageSetToTileBank(2, 5);
 
 	// Load 320*200 Menu screen
-	Common::String fileName = Common::String::format("imageset.%d", 10);
+	Common::Path fileName(Common::String::format("imageset.%d", 10));
 	readFileToBuffer(fileName, _menuBuf);
 
 	// Load 96*64 Window with pink border and yellow bottom
-	fileName = Common::String::format("imageset.%d", 12);
+	fileName = Common::Path(Common::String::format("imageset.%d", 12));
 	readFileToBuffer(fileName, _windowWithBorderBuf);
 
 	readAnimInfo();
@@ -2497,11 +2497,11 @@ void EfhEngine::loadEfhGame() {
 	// The savegame is used to initialize the engine, so this part is reimplemented.
 	// The check for existence is replaced by an error.
 
-	Common::String fileName("savegame");
+	Common::Path fileName("savegame");
 	Common::File f;
 
 	if (!f.open(fileName))
-		error("Missing file %s", fileName.c_str());
+		error("Missing file %s", fileName.toString().c_str());
 
 	_techId = f.readSint16LE();
 	_fullPlaceId = f.readUint16LE();

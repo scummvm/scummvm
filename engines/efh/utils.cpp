@@ -78,7 +78,7 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 
 void EfhEngine::loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer) {
 	debugC(1, kDebugUtils, "loadImageSet %d", imageSetId);
-	Common::String fileName = Common::String::format("imageset.%d", imageSetId);
+	Common::Path fileName(Common::String::format("imageset.%d", imageSetId));
 	rImageFile(fileName, buffer, subFilesArray, destBuffer);
 }
 
