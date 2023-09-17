@@ -35,7 +35,9 @@ private:
 protected:
 	int _digiVolume = 0;
 
-	virtual const char *getDigi() = 0;
+	virtual const char *getDigi() {
+		return nullptr;
+	}
 
 public:
 	Section3Room() {}

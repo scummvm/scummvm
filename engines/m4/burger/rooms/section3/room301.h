@@ -22,13 +22,13 @@
 #ifndef M4_BURGER_ROOMS_SECTION3_ROOM301_H
 #define M4_BURGER_ROOMS_SECTION3_ROOM301_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section3/section3_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room301 : public Room {
+class Room301 : public Section3Room {
 private:
 	static const seriesStreamBreak SERIES1[];
 	static const seriesStreamBreak SERIES2[];
@@ -36,7 +36,7 @@ private:
 	static const seriesStreamBreak SERIES4[];
 
 public:
-	Room301() : Room() {}
+	Room301() : Section3Room() {}
 	~Room301() override {}
 
 	void preload() override;
