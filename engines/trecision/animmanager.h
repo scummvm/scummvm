@@ -61,8 +61,8 @@ private:
 	int _curCD;
 	bool _bgAnimRestarted;
 
-	void openSmk(int slot, Common::SeekableReadStream *stream);
-	void openSmkAnim(int slot, const Common::String &name);
+	void openSmk(int slot, const Common::Path &name);
+	void openSmkAnim(int slot, const Common::Path &name);
 	void toggleMuteBgAnim(uint16 animation);
 	void closeSmk(int slot);
 	void drawFrame(NightlongVideoDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
@@ -89,7 +89,7 @@ public:
 	void smkStop(uint16 slot);
 	void refreshActionAnimation() { refreshSmkAnim(_playingAnims[kSmackerAction]); }
 	bool isActionActive() const { return _playingAnims[kSmackerAction] != 0; }
-	void playMovie(const Common::String &filename, int startFrame = 0, int endFrame = -1, bool singleChoice = false);
+	void playMovie(const Common::Path &filename, int startFrame = 0, int endFrame = -1, bool singleChoice = false);
 	void startFullMotion();
 	void stopFullMotion();
 

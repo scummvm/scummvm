@@ -123,16 +123,8 @@ bool NightlongSmackerDecoder::endOfFrames() const {
 
 // ----------------------------------------------------------------------------
 
-NightlongAmigaDecoder::AmigaVideoTrack::AmigaVideoTrack(const Common::String &fileName) {
+NightlongAmigaDecoder::AmigaVideoTrack::AmigaVideoTrack(Common::SeekableReadStream *stream) {
 	memset(_palette, 0, sizeof(_palette));
-
-	Common::File *stream = new Common::File();
-	stream->open(fileName);
-
-	if (!stream->isOpen()) {
-		delete stream;
-		return;
-	}
 
 	_curFrame = 0;
 	_frameCount = 10; // TODO: Anything > 1 to keep playing till the audio is done
@@ -175,10 +167,8 @@ const Graphics::Surface *NightlongAmigaDecoder::AmigaVideoTrack::decodeNextFrame
 	return nullptr;
 }
 
-NightlongAmigaDecoder::AmigaAudioTrack::AmigaAudioTrack(const Common::String &fileName) :
+NightlongAmigaDecoder::AmigaAudioTrack::AmigaAudioTrack(Common::SeekableReadStream *stream) :
 	AudioTrack(Audio::Mixer::SoundType::kSFXSoundType) {
-	Common::File *stream = new Common::File();
-	stream->open(fileName);
 	_audioStream = Audio::makeRawStream(stream, 11025, 0, DisposeAfterUse::YES);
 }
 
@@ -192,14 +182,17 @@ void NightlongAmigaDecoder::readNextPacket() {
 }
 
 bool NightlongAmigaDecoder::loadStream(Common::SeekableReadStream *stream) {
-	Common::File *file = dynamic_cast<Common::File *>(stream);
-	if (!file)
-		return false;
-	Common::String fileName = file->getName();
-	addTrack(new AmigaVideoTrack(fileName));
-	if (Common::File::exists("a" + fileName))
-		addTrack(new AmigaAudioTrack("a" + fileName));
+	addTrack(new AmigaVideoTrack(stream));
+	return true;
+}
 
+bool NightlongAmigaDecoder::addAudioSideTrack(const Common::Path &path) {
+	Common::File *file = new Common::File();
+	if (!file->open(path)) {
+		delete file;
+		return false;
+	}
+	addTrack(new AmigaAudioTrack(file));
 	return true;
 }
 

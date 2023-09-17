@@ -177,7 +177,7 @@ public:
 
 	// Data files
 	Common::SeekableReadStreamEndian *readEndian(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
-	void read3D(const Common::String &c);
+	void read3D(const Common::Path &c);
 
 	// Inventory
 	void setInventoryStart(uint8 startIcon, uint8 startLine);
@@ -238,7 +238,7 @@ public:
 	void readPositionerSnapshots();
 
 	// Data files
-	byte *readData(const Common::String &fileName);
+	byte *readData(const Common::Path &fileName);
 
 	const ADGameDescription *_gameDescription;
 

@@ -146,9 +146,9 @@ void TextManager::characterContinueTalk() {
 
 	if (!_vm->_flagDialogActive) {
 		if (_curSubString)
-			_lastFilename = Common::String::format("s%04d%c.wav", _curSentenceId, _curSubString + 'a');
+			_lastFilename = Common::Path(Common::String::format("s%04d%c.wav", _curSentenceId, _curSubString + 'a'));
 		else
-			_lastFilename = Common::String::format("s%04d.wav", _curSentenceId);
+			_lastFilename = Common::Path(Common::String::format("s%04d.wav", _curSentenceId));
 	}
 
 	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
@@ -194,9 +194,9 @@ void TextManager::someoneContinueTalk() {
 		addText(pos, _subString[_curSubString], HYELLOW);
 
 	if (_curSubString)
-		_lastFilename = Common::String::format("s%04d%c.wav", _curSentenceId, _curSubString + 'a');
+		_lastFilename = Common::Path(Common::String::format("s%04d%c.wav", _curSentenceId, _curSubString + 'a'));
 	else
-		_lastFilename = Common::String::format("s%04d.wav", _curSentenceId);
+		_lastFilename = Common::Path(Common::String::format("s%04d.wav", _curSentenceId));
 
 	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
 	if (!_talkTime)

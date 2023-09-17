@@ -748,10 +748,10 @@ void GraphicsManager::hideCursor() {
 }
 
 void GraphicsManager::loadFont() {
-	Common::String fileName = "nlfont.fnt";
+	const char *fileName = "nlfont.fnt";
 	Common::SeekableReadStream *fontStream = _vm->_dataFile.createReadStreamForMember(fileName);
 	if (fontStream == nullptr)
-		error("readData(): File %s not found", fileName.c_str());
+		error("readData(): File %s not found", fileName);
 
 	uint16 fontDataOffset = 768;
 

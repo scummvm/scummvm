@@ -77,7 +77,7 @@ public:
 	void stopAll();
 	void stopAllExceptMusic();
 	void soundStep(int midx, int midz, int act, int frame);
-	int32 talkStart(const Common::String &name);
+	int32 talkStart(const Common::Path &name);
 	void loadRoomSounds();
 
 	void loadSamples(Common::SeekableReadStreamEndian *stream);
