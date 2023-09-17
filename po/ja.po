@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-16 22:56+0000\n"
-"PO-Revision-Date: 2023-09-15 13:41+0000\n"
+"PO-Revision-Date: 2023-09-17 10:13+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4265,8 +4265,6 @@ msgid "Magnify Mode Off"
 msgstr "拡大モードOFF"
 
 #: backends/platform/android/android.cpp:1028
-#, fuzzy
-#| msgid "Control"
 msgid "Controls"
 msgstr "操作"
 
@@ -4337,10 +4335,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/android.cpp:1069
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "ゲームを追加(~A~)..."
+msgstr "ゲームを追加"
 
 #: backends/platform/android/android.cpp:1072
 msgid ""
@@ -4608,7 +4604,7 @@ msgstr "クリックモード"
 
 #: backends/platform/sdl/sdl.cpp:1010
 msgid "Keyboard"
-msgstr ""
+msgstr "キーボード"
 
 #: backends/platform/sdl/sdl.cpp:1013
 msgid ""
@@ -4630,19 +4626,19 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1025
 msgid "| `Cmd+q`    -- Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    -- 終了(macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1027
 msgid "| `Alt+F4`  -- Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  -- 終了(Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1029
 msgid "| `Ctrl+q`  -- Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  -- 終了(Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1030
 msgid "| `Ctrl+z`  -- Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  -- 終了(その他OS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1033
 msgid ""
