@@ -200,8 +200,8 @@ uint PersistenceService::getSlotCount() {
 	return SLOT_COUNT;
 }
 
-Common::String PersistenceService::getSavegameDirectory() {
-	Common::FSNode node(FileSystemUtil::getUserdataDirectory());
+Common::Path PersistenceService::getSavegameDirectory() {
+	Common::FSNode node(FileSystemUtil::getUserdataDirectoryPath());
 	Common::FSNode childNode = node.getChild(SAVEGAME_DIRECTORY);
 
 	// Try and return the path using the savegame subfolder. But if doesn't exist, fall back on the data directory

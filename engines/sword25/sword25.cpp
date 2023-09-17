@@ -103,7 +103,7 @@ Common::Error Sword25Engine::appStart() {
 	// Load packages
 	PackageManager *packageManagerPtr = Kernel::getInstance()->getPackage();
 	if (getGameFlags() & GF_EXTRACTED) {
-		Common::String gameDirectory = ConfMan.get("path");
+		Common::Path gameDirectory = ConfMan.getPath("path");
 		packageManagerPtr->setRunWithExtractedFiles(gameDirectory);
 		if (!packageManagerPtr->loadDirectoryAsPackage(gameDirectory, "/"))
 			return Common::kUnknownError;
@@ -157,7 +157,7 @@ bool Sword25Engine::loadPackages() {
 		return false;
 
 	// Get the contents of the main program directory and sort them alphabetically
-	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.getPath("path"));
 	Common::FSList files;
 	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll)) {
 		warning("Game data path does not exist or is not a directory");
@@ -174,7 +174,7 @@ bool Sword25Engine::loadPackages() {
 	// existing files in the virtual file system, if they include files with the same name.
 	for (Common::FSList::const_iterator it = files.begin(); it != files.end(); ++it) {
 		if (it->getName().matchString("patch???.b25c", true))
-			if (!packageManagerPtr->loadPackage(it->getName(), "/"))
+			if (!packageManagerPtr->loadPackage(it->getPathInArchive(), "/"))
 				return false;
 	}
 
@@ -182,7 +182,7 @@ bool Sword25Engine::loadPackages() {
 	// The filename of the packages have the form lang_*.b25c (eg. lang_de.b25c)
 	for (Common::FSList::const_iterator it = files.begin(); it != files.end(); ++it) {
 		if (it->getName().matchString("lang_*.b25c", true))
-			if (!packageManagerPtr->loadPackage(it->getName(), "/"))
+			if (!packageManagerPtr->loadPackage(it->getPathInArchive(), "/"))
 				return false;
 	}
 
