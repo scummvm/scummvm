@@ -501,12 +501,13 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 			sz--;
 		if (sz > 0)
 			sz--;
+		Common::Path filePath;
 		if (_vm->getFeatures() & GF_ITE_FLOPPY)
-			fileName = Common::String::format("%s%02d.adf", fileName.substr(0, sz).c_str(), resourceData->diskNum + 1);
+			filePath = Common::Path(Common::String::format("%s%02d.adf", fileName.substr(0, sz).c_str(), resourceData->diskNum + 1));
 		else
-			fileName = Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum);
-		if (!actualFile.open(fileName))
-			error("Resource::loadResource() failed to open %s", fileName.c_str());
+			filePath = Common::Path(Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum));
+		if (!actualFile.open(filePath))
+			error("Resource::loadResource() failed to open %s", filePath.toString().c_str());
 		file = &actualFile;
 	}
 
