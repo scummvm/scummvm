@@ -42,16 +42,36 @@ private:
 	static const seriesPlayBreak PLAY8[];
 	static const seriesPlayBreak PLAY9[];
 	static const seriesPlayBreak PLAY10[];
+	machine *_series1 = nullptr;
+	int _series2 = -1;
+	machine *_series3 = nullptr;
+	int _series4 = -1;
+	machine *_series5 = nullptr;
+	int _series6 = -1;
+	machine *_series7 = nullptr;
+	int _triggers[5];
+	int _ctr = 0;
+	int _timer = 0;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+
+	void frontYard();
 
 protected:
 	const char *getDigi() override;
 
 public:
-	Room303() : Section3Room() {}
+	Room303();
 	~Room303() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
