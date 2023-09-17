@@ -352,7 +352,7 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 
 Common::Error BladeRunnerEngine::run() {
 	Common::Array<Common::String> missingFiles;
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "base");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cd1");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cd2");
@@ -531,7 +531,7 @@ Common::Error BladeRunnerEngine::run() {
 bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) {
 	missingFiles.clear();
 
-	Common::Array<Common::String> requiredFiles;
+	Common::Array<const char *> requiredFiles;
 
 	if (_enhancedEdition) {
 		requiredFiles.push_back("BladeRunner.kpf");
@@ -565,7 +565,7 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 
 	if (!hasHdFrames) {
 		for (uint i = 1; i <= 4; ++i) {
-			if (!Common::File::exists(Common::String::format("CDFRAMES%d.DAT", i)) && !Common::File::exists(Common::String::format("CD%d/CDFRAMES.DAT", i))) {
+			if (!Common::File::exists(Common::Path(Common::String::format("CDFRAMES%d.DAT", i))) && !Common::File::exists(Common::Path(Common::String::format("CD%d/CDFRAMES.DAT", i)))) {
 				missingFiles.push_back(Common::String::format("CD%d/CDFRAMES.DAT", i));
 			}
 		}
@@ -2421,7 +2421,7 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 		error("openArchive: No more archive slots");
 	}
 
-	_archives[i].open(name);
+	_archives[i].open(Common::Path(name));
 	return _archives[i].isOpen();
 }
 
@@ -2514,10 +2514,11 @@ void BladeRunnerEngine::setSubtitlesEnabled(bool newVal) {
 }
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {
+	Common::Path path(name);
 	// If the file is extracted from MIX files use it directly, it is used by Russian translation patched by Siberian Studio
-	if (Common::File::exists(name)) {
+	if (Common::File::exists(path)) {
 		Common::File directFile;
-		if (directFile.open(name)) {
+		if (directFile.open(path)) {
 			Common::SeekableReadStream *stream = directFile.readStream(directFile.size());
 			directFile.close();
 			return stream;
@@ -2526,7 +2527,7 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 
 	if (_enhancedEdition) {
 		assert(_archive != nullptr);
-		return _archive->createReadStreamForMember(name);
+		return _archive->createReadStreamForMember(path);
 	}
 
 	for (int i = 0; i != kArchiveCount; ++i) {
@@ -2535,7 +2536,7 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 		}
 
 		// debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
-		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(name);
+		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(path);
 		if (stream) {
 			return stream;
 		}

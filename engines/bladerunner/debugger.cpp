@@ -3073,8 +3073,8 @@ bool Debugger::cmdPlayVqa(int argc, const char** argv) {
 		basename.erase(startOfExt);
 	}
 
-	Common::String basenameVQA = Common::String::format("%s.VQA", basename.c_str());
-	Common::String basenameVQP = Common::String::format("%s.VQP", basename.c_str());
+	Common::Path basenameVQA(Common::String::format("%s.VQA", basename.c_str()));
+	Common::Path basenameVQP(Common::String::format("%s.VQP", basename.c_str()));
 
 	// Check for existence of VQP
 	bool vqpFileExists = false;
@@ -3082,13 +3082,13 @@ bool Debugger::cmdPlayVqa(int argc, const char** argv) {
 	// Use Common::File exists() check instead of Common::FSNode directly
 	// to allow the file to be placed within SearchMan accessible locations
 	if (!Common::File::exists(basenameVQP)) {
-		debugPrintf("Warning: VQP file %s does not exist\n", basenameVQP.c_str());
+		debugPrintf("Warning: VQP file %s does not exist\n", basenameVQP.toString(Common::Path::kNativeSeparator).c_str());
 	} else {
 		vqpFileExists = true;
 	}
 
 	if (!Common::File::exists(basenameVQA)) {
-		debugPrintf("Warning: VQA file %s does not exist\n", basenameVQA.c_str());
+		debugPrintf("Warning: VQA file %s does not exist\n", basenameVQA.toString(Common::Path::kNativeSeparator).c_str());
 		return true;
 	}
 
