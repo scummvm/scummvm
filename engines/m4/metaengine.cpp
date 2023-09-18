@@ -24,6 +24,7 @@
 #include "m4/metaengine.h"
 #include "m4/detection.h"
 #include "m4/burger/burger.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 
@@ -58,6 +59,9 @@ Common::Error M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const
 	switch (gd->gameType) {
 	case M4::GType_Burger:
 		*engine = new M4::Burger::BurgerEngine(syst, desc);
+		break;
+	case M4::GType_Riddle:
+		*engine = new M4::Riddle::RiddleEngine(syst, desc);
 		break;
 	default:
 		return Common::kUnsupportedGameidError;

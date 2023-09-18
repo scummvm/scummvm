@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_BURGER_BURGER_VARS_H
-#define M4_BURGER_BURGER_VARS_H
+#ifndef M4_BURGER_VARS_H
+#define M4_BURGER_VARS_H
 
 #include "common/textconsole.h"
 #include "m4/vars.h"
