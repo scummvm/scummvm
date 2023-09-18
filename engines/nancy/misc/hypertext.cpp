@@ -50,6 +50,9 @@ void HypertextParser::addTextLine(const Common::String &text) {
 void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, uint highlightFontID) {
 	using namespace Common;
 
+	const Font *font = nullptr;
+	const Font *highlightFont = nullptr;
+
 	// Used to get tab width
 	const TBOX *tbox = (const TBOX *)g_nancy->getEngineData("TBOX");
 	assert(tbox);
@@ -125,8 +128,8 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 			currentLine += curToken;
 		}
 		
-		const Font *font = g_nancy->_graphicsManager->getFont(curFontID);
-		const Font *highlightFont = g_nancy->_graphicsManager->getFont(highlightFontID);
+		font = g_nancy->_graphicsManager->getFont(curFontID);
+		highlightFont = g_nancy->_graphicsManager->getFont(highlightFontID);
 
 		// Do word wrapping on the text, sans tokens
 		Array<Common::String> wrappedLines;
@@ -159,6 +162,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 				hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(line)));
 			}
 
+			bool hasSplit = false;
 			while (!line.empty()) {
 				Common::String subLine;
 
@@ -174,11 +178,19 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 						// There's a token inside the current line, so split off the part before it
 						subLine = line.substr(0, colorChanges.front().numChars - totalCharsDrawn);
 						line = line.substr(subLine.size());
+						hasSplit = true;
 					}
 				}
 
 				// Choose whether to draw the subLine, or the full line
 				Common::String &stringToDraw = subLine.size() ? subLine : line;
+
+				// Clear (single!) whitespace from beginning of line. We do this after
+				bool clearedSpaceAtStart = false;
+				if (!hasSplit && line.firstChar() == ' ' && line.size() > 1 && line[1] != ' ') {
+					line.deleteChar(0);
+					clearedSpaceAtStart = true;
+				}
 
 				// Draw the normal text
 				font->drawString(				&_fullSurface,
@@ -196,6 +208,11 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 												textBounds.top + (_numDrawnLines - 1) * highlightFont->getFontHeight(),
 												textBounds.width(),
 												colorID);
+				}
+
+				// Account for space cleared at start to make sure color calculations are correct
+				if (clearedSpaceAtStart) {
+					++totalCharsDrawn;
 				}
 
 				if (subLine.size()) {
@@ -234,6 +251,12 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 
 		// Add a newline after every full piece of text
 		++_numDrawnLines;
+		_drawnTextHeight += font->getFontHeight();
+	}
+
+	// Add a line's height at end of text to replicate original behavior 
+	if (font) {
+		_drawnTextHeight += font->getFontHeight();
 	}
 
 	_needsTextRedraw = false;
