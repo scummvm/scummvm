@@ -106,12 +106,12 @@ CueSheet::CueSheet(const char *sheet) {
 	}
 }
 
-struct LookupTable {
+struct CueLookupTable {
 	const char *key;
 	int value;
 };
 
-static int lookupInTable(LookupTable *table, const char *key) {
+int CueSheet::lookupInTable(CueLookupTable *table, const char *key) {
 	while (table->key) {
 		if (!strcmp(key, table->key))
 			return table->value;
@@ -119,7 +119,7 @@ static int lookupInTable(LookupTable *table, const char *key) {
 		table++;
 	}
 
-	error("CueSheet::lookupInTable(): Unknown token %s", key);
+	error("CueSheet::lookupInTable(): Unknown lookup token %s at line %d", key, _lineNum);
 }
 
 int CueSheet::parseMSF(const char *str) {
@@ -131,7 +131,7 @@ int CueSheet::parseMSF(const char *str) {
 	return frm + 75 * (sec + 60 * min);
 }
 
-LookupTable fileTypes[] = {
+CueLookupTable fileTypes[] = {
 	{ "BINARY",   CueSheet::kCueFileTypeBinary },
 	{ "AIFF",     CueSheet::kCueFileTypeAIFF },
 	{ "WAVE",     CueSheet::kCueFileTypeWave },
@@ -186,14 +186,14 @@ void CueSheet::parseHeaderContext(const char *line) {
 		} else if (subcommand == "COMMENT") {
 			debug(5, "Skipping Comment: %s", s);
 		} else {
-			warning("CueSheet: Unprocessed REM subcommand %s", subcommand.c_str());
+			warning("CueSheet: Unprocessed REM subcommand %s at line %d", subcommand.c_str(), _lineNum);
 		}
 	} else {
-		warning("CueSheet: Unprocessed command %s", command.c_str());
+		warning("CueSheet: Unprocessed command %s at line %d", command.c_str(), _lineNum);
 	}
 }
 
-LookupTable trackTypes[] = {
+CueLookupTable trackTypes[] = {
 	{ "AUDIO",      CueSheet::kCueFileTypeAudio },		// Audio (sector size: 2352)
 	{ "CDG",        CueSheet::kCueFileTypeCDG },		// Karaoke CD+G (sector size: 2448)
 	{ "MODE1_RAW",  CueSheet::kCueFileTypeMode1_Raw },	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
@@ -209,7 +209,7 @@ LookupTable trackTypes[] = {
 	{ 0, 0 }
 };
 
-LookupTable trackTypesSectorSizes[] = {
+CueLookupTable trackTypesSectorSizes[] = {
 	{ "AUDIO",      2352 },
 	{ "CDG",        2448 },
 	{ "MODE1_RAW",  2352 },
@@ -235,7 +235,7 @@ void CueSheet::parseFilesContext(const char *line) {
 		String trackType = nexttok(s, &s);
 
 		if (trackNum < 0 || (_currentTrack > 0 && _currentTrack + 1 != trackNum)) {
-			warning("CueSheet: Incorrect track number. Expected %d but got %d", _currentTrack + 1, trackNum);
+			warning("CueSheet: Incorrect track number. Expected %d but got %d at line %d", _currentTrack + 1, trackNum, _lineNum);
 		} else {
 			for (int i = _files[_currentFile].tracks.size(); i <= trackNum; i++)
 				_files[_currentFile].tracks.push_back(CueTrack());
@@ -249,12 +249,12 @@ void CueSheet::parseFilesContext(const char *line) {
 
 		_context = kCueContextTracks;
 	} else {
-		warning("CueSheet: Unprocessed file command %s", command.c_str());
+		warning("CueSheet: Unprocessed file command %s at line %d", command.c_str(), _lineNum);
 	}
 
 }
 
-LookupTable trackFlags[] = {
+CueLookupTable trackFlags[] = {
 	{ "4CH",  CueSheet::kCueTrackFlag4ch  },
 	{ "DCP",  CueSheet::kCueTrackFlagDCP  },
 	{ "PRE",  CueSheet::kCueTrackFlagPre  },
@@ -307,7 +307,7 @@ void CueSheet::parseTracksContext(const char *line) {
 
 		debug(5, "Track performer: %s", _files[_currentFile].tracks[_currentTrack].performer.c_str());
 	} else {
-		warning("CueSheet: Unprocessed track command %s", command.c_str());
+		warning("CueSheet: Unprocessed track command %s at line %d", command.c_str(), _lineNum);
 	}
 }
 
