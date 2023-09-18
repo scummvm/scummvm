@@ -45,18 +45,25 @@ public:
 	};
 
 	enum CueTrackType {
-		kCueFileTypeAudio,
-		kCueFileTypeCDG,
-		kCueFileTypeMode1_Raw,
-		kCueFileTypeMode1_2048,
-		kCueFileTypeMode1_2352,
-		kCueFileTypeMode2_Raw,
-		kCueFileTypeMode2_2048,
-		kCueFileTypeMode2_2324,
-		kCueFileTypeMode2_2366,
-		kCueFileTypeMode2_2352,
-		kCueFileTypeCDI_2336,
-		kCueFileTypeCDI_2352,
+		kCueFileTypeAudio,		// Audio (sector size: 2352)
+		kCueFileTypeCDG,		// Karaoke CD+G (sector size: 2448)
+		kCueFileTypeMode1_Raw,	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
+		kCueFileTypeMode1_2048,	// CD-ROM Mode 1 data (cooked) (sector size: 2048)
+		kCueFileTypeMode1_2352,	// CD-ROM Mode 1 data (raw) (sector size: 2352)
+		kCueFileTypeMode2_Raw,	// CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
+		kCueFileTypeMode2_2048,	// CD-ROM Mode 2 XA form-1 data (sector size: 2048)
+		kCueFileTypeMode2_2324,	// CD-ROM Mode 2 XA form-2 data (sector size: 2324)
+		kCueFileTypeMode2_2366,	// CD-ROM Mode 2 data (sector size: 2336)
+		kCueFileTypeMode2_2352,	// CD-ROM Mode 2 data (raw) (sector size: 2352)
+		kCueFileTypeCDI_2336,	// CDI Mode 2 data
+		kCueFileTypeCDI_2352,	// CDI Mode 2 data
+	};
+
+	enum CueTrackFlags {
+		kCueTrackFlag4ch  = 1 << 0, // Four channel audio
+		kCueTrackFlagDCP  = 1 << 1, // Digital copy permitted
+		kCueTrackFlagPre  = 1 << 2, // Pre-emphasis enabled, for audio tracks only
+		kCueTrackFlagSCMS = 1 << 3, // Serial copy management system
 	};
 
 	struct CueTrack {
@@ -66,6 +73,7 @@ public:
 		String performer;
 		Array<int> indices;
 		int pregap = 0;
+		uint32 flags;
 	};
 
 	struct CueFile {
@@ -79,6 +87,7 @@ public:
 		String date;
 		String genre;
 		String performer;
+		String catalog;
 	};
 
 private:

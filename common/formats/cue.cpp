@@ -170,6 +170,10 @@ void CueSheet::parseHeaderContext(const char *line) {
 		_metadata.performer = nexttok(s, &s);
 
 		debug(5, "Performer: %s", _metadata.performer.c_str());
+	} else if (command == "CATALOG") {
+		_metadata.catalog = nexttok(s, &s);
+
+		debug(5, "Catalog: %s", _metadata.catalog.c_str());
 	} else if (command == "REM") {
 		String subcommand = nexttok(s, &s);
 
@@ -190,18 +194,19 @@ void CueSheet::parseHeaderContext(const char *line) {
 }
 
 LookupTable trackTypes[] = {
-	{ "AUDIO",      CueSheet::kCueFileTypeAudio }, // Audio (sector size: 2352)
-	{ "CDG",        CueSheet::kCueFileTypeCDG }, // Karaoke CD+G (sector size: 2448)
-	{ "MODE1_RAW",  CueSheet::kCueFileTypeMode1_Raw }, // CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
-	{ "MODE1/2048", CueSheet::kCueFileTypeMode1_2048 }, // CD-ROM Mode 1 data (cooked) (sector size: 2048)
-	{ "MODE1/2352", CueSheet::kCueFileTypeMode1_2352 }, // CD-ROM Mode 1 data (raw) (sector size: 2352)
-	{ "MODE2_RAW",  CueSheet::kCueFileTypeMode2_Raw }, // CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
-	{ "MODE2/2048", CueSheet::kCueFileTypeMode2_2048 }, // CD-ROM Mode 2 XA form-1 data (sector size: 2048)
-	{ "MODE2/2324", CueSheet::kCueFileTypeMode2_2324 }, // CD-ROM Mode 2 XA form-2 data (sector size: 2324)
-	{ "MODE2/2336", CueSheet::kCueFileTypeMode2_2366 }, // CD-ROM Mode 2 data (sector size: 2336)
-	{ "MODE2/2352", CueSheet::kCueFileTypeMode2_2352 }, // CD-ROM Mode 2 data (raw) (sector size: 2352)
-	{ "CDI/2336",   CueSheet::kCueFileTypeCDI_2336 }, // CDI Mode 2 data
-	{ "CDI/2352",   CueSheet::kCueFileTypeCDI_2352 }, // CDI Mode 2 data
+	{ "AUDIO",      CueSheet::kCueFileTypeAudio },		// Audio (sector size: 2352)
+	{ "CDG",        CueSheet::kCueFileTypeCDG },		// Karaoke CD+G (sector size: 2448)
+	{ "MODE1_RAW",  CueSheet::kCueFileTypeMode1_Raw },	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
+	{ "MODE1/2048", CueSheet::kCueFileTypeMode1_2048 },	// CD-ROM Mode 1 data (cooked) (sector size: 2048)
+	{ "MODE1/2352", CueSheet::kCueFileTypeMode1_2352 },	// CD-ROM Mode 1 data (raw) (sector size: 2352)
+	{ "MODE2_RAW",  CueSheet::kCueFileTypeMode2_Raw },	// CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
+	{ "MODE2/2048", CueSheet::kCueFileTypeMode2_2048 },	// CD-ROM Mode 2 XA form-1 data (sector size: 2048)
+	{ "MODE2/2324", CueSheet::kCueFileTypeMode2_2324 },	// CD-ROM Mode 2 XA form-2 data (sector size: 2324)
+	{ "MODE2/2336", CueSheet::kCueFileTypeMode2_2366 },	// CD-ROM Mode 2 data (sector size: 2336)
+	{ "MODE2/2352", CueSheet::kCueFileTypeMode2_2352 },	// CD-ROM Mode 2 data (raw) (sector size: 2352)
+	{ "CDI/2336",   CueSheet::kCueFileTypeCDI_2336 },	// CDI Mode 2 data
+	{ "CDI/2352",   CueSheet::kCueFileTypeCDI_2352 },	// CDI Mode 2 data
+	{ 0, 0 }
 };
 
 void CueSheet::parseFilesContext(const char *line) {
@@ -232,6 +237,14 @@ void CueSheet::parseFilesContext(const char *line) {
 
 }
 
+LookupTable trackFlags[] = {
+	{ "4CH",  CueSheet::kCueTrackFlag4ch  },
+	{ "DCP",  CueSheet::kCueTrackFlagDCP  },
+	{ "PRE",  CueSheet::kCueTrackFlagPre  },
+	{ "SCMS", CueSheet::kCueTrackFlagSCMS },
+	{ 0, 0 }
+};
+
 void CueSheet::parseTracksContext(const char *line) {
 	const char *s = line;
 
@@ -257,6 +270,19 @@ void CueSheet::parseTracksContext(const char *line) {
 		_files[_currentFile].tracks[_currentTrack].pregap = parseMSF(nexttok(s, &s).c_str());
 
 		debug(5, "Track pregap: %d", _files[_currentFile].tracks[_currentTrack].pregap);
+	} else if (command == "FLAGS") {
+		String flag;
+		uint32 flags = 0;
+
+		while (*s) {
+			flag = nexttok(s, &s);
+
+			flags |= lookupInTable(trackFlags, flag.c_str());
+		}
+
+		_files[_currentFile].tracks[_currentTrack].flags = flags;
+
+		debug(5, "Track flags: %d", _files[_currentFile].tracks[_currentTrack].flags);
 	} else if (command == "FILE") {
 		parseHeaderContext(line);
 	} else if (command == "PERFORMER") {
