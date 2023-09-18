@@ -209,6 +209,22 @@ LookupTable trackTypes[] = {
 	{ 0, 0 }
 };
 
+LookupTable trackTypesSectorSizes[] = {
+	{ "AUDIO",      2352 },
+	{ "CDG",        2448 },
+	{ "MODE1_RAW",  2352 },
+	{ "MODE1/2048", 2048 },
+	{ "MODE1/2352", 2352 },
+	{ "MODE2_RAW",  2352 },
+	{ "MODE2/2048", 2048 },
+	{ "MODE2/2324", 2324 },
+	{ "MODE2/2336", 2336 },
+	{ "MODE2/2352", 2352 },
+	{ "CDI/2336",   2336 },
+	{ "CDI/2352",   2352 },
+	{ 0, 0 }
+};
+
 void CueSheet::parseFilesContext(const char *line) {
 	const char *s = line;
 
@@ -226,6 +242,7 @@ void CueSheet::parseFilesContext(const char *line) {
 
 			_currentTrack = trackNum;
 			_files[_currentFile].tracks[_currentTrack].type = (CueTrackType)lookupInTable(trackTypes, trackType.c_str());
+			_files[_currentFile].tracks[_currentTrack].size = lookupInTable(trackTypesSectorSizes, trackType.c_str());
 
 			debug(5, "Track: %d type: %s (%d)", trackNum, trackType.c_str(), _files[_currentFile].tracks[_currentTrack].type);
 		}

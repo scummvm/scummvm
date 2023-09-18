@@ -74,6 +74,7 @@ public:
 		Array<int> indices;
 		int pregap = 0;
 		uint32 flags;
+		int size = 2352;
 	};
 
 	struct CueFile {
