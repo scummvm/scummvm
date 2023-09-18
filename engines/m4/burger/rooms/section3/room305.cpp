@@ -67,6 +67,42 @@ const seriesPlayBreak Room305::PLAY2[] = {
 
 
 void Room305::init() {
+	setupDigi();
+	set_palette_brightness(60);
+	pal_cycle_init(96, 111, 6, -1, -1);
+	_G(flags)[V149] = 0;
+
+	if (_G(flags)[V134] && !_G(flags)[V135] && !_G(flags)[V137]) {
+		hotspot_set_active("DARKNESS", true);
+		hotspot_set_active("MINE", false);
+	} else {
+		hotspot_set_active("DARKNESS", false);
+		hotspot_set_active("MINE", true);
+	}
+
+	_series1 = series_show(_G(flags)[V134] ? "305genx" : "305gen", 0x200);
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	case 302:
+		_G(wilbur_should) = 101;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 319:
+		player_set_commands_allowed(true);
+		ws_demand_location(-50, 200);
+		kernel_trigger_dispatch_now(301);
+		break;
+
+	default:
+		player_set_commands_allowed(true);
+		ws_demand_location(320, 290, 7);
+		break;
+	}
 }
 
 void Room305::daemon() {
