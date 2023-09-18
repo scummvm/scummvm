@@ -256,6 +256,16 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 		return;
 	}
 
+	Channel &existing = _channels[description.channelID];
+	if (existing.stream != nullptr) {
+		// There's a channel already loaded. Check if we're trying to reload the exact same sound
+		if (	description.name == existing.name &&
+				description.numLoops == existing.numLoops &&
+				description.playCommands == existing.playCommands) {
+			return;
+		}
+	}
+
 	if (_mixer->isSoundHandleActive(_channels[description.channelID].handle)) {
 		_mixer->stopHandle(_channels[description.channelID].handle);
 	}
@@ -286,7 +296,7 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 }
 
 void SoundManager::playSound(uint16 channelID) {
-	if (channelID >= _channels.size() || _channels[channelID].stream == nullptr)
+	if (channelID >= _channels.size() || _channels[channelID].stream == nullptr || isSoundPlaying(channelID))
 		return;
 
 	Channel &chan = _channels[channelID];
