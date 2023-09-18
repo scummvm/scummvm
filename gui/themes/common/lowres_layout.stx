@@ -224,10 +224,20 @@
 	</dialog>
 	<dialog name = 'LauncherGrid' overlays = 'screen'>
 		<layout type = 'vertical' align = 'center' padding = '4, 4, 2, 2' spacing = '2'>
-			<widget name = 'Version'
-					height = 'Globals.Line.Height'
-					textalign = 'center'
-			/>
+			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 0'>
+				<widget name = 'HelpButton'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+						rtl = 'yes'
+				/>
+				<space />
+				<widget name = 'Version'
+						height = 'Globals.Line.Height'
+						textalign = 'center'
+				/>
+				<space />
+				<space size  = 'Globals.Button.Height' />
+			</layout>
 			<layout type = 'horizontal' spacing = '2' padding = '0, 0, 0, 0'>
 				<widget name = 'SearchDesc'
 						width = '45'
