@@ -103,13 +103,19 @@ static bool launcherDialog() {
 	// blindly be passed to the first game launched from the launcher.
 	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 
+	// If the backend does not allow quitting, loop on the launcher until a game is started
+	bool noQuit = g_system->hasFeature(OSystem::kFeatureNoQuit);
+	bool status = true;
+	do {
 #if defined(__DC__)
-	DCLauncherDialog dlg;
+		DCLauncherDialog dlg;
 #else
-	GUI::LauncherChooser dlg;
-	dlg.selectLauncher();
+		GUI::LauncherChooser dlg;
+		dlg.selectLauncher();
 #endif
-	return (dlg.runModal() != -1);
+		status = (dlg.runModal() != -1);
+	} while (noQuit && nullptr == ConfMan.getActiveDomain());
+	return status;
 }
 
 static const Plugin *detectPlugin() {
