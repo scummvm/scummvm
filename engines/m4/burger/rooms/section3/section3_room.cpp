@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section3/section3_room.h"
 #include "m4/burger/vars.h"
+#include "m4/core/errors.h"
 
 namespace M4 {
 namespace Burger {
@@ -44,6 +45,26 @@ void Section3Room::setupDigi() {
 		digi_preload(_digiName);
 		digi_play_loop(_digiName, 3, _digiVolume);
 	}
+}
+
+void Section3Room::set_palette_brightness(int start, int finish, int percent) {
+	if (finish < start || finish > 255 || start < 0)
+		error_show(FL, 'Burg', "set_palette_brightness index error");
+
+	RGB8 *pal = &_G(master_palette)[start];
+	for (int index = start; index < finish; ++index, ++pal) {
+		int r = (double)pal->r * (double)percent / (double)100;
+		int g = (double)pal->g * (double)percent / (double)100;
+		int b = (double)pal->b * (double)percent / (double)100;
+
+		pal->r = CLIP(r, 0, 255);
+		pal->g = CLIP(g, 0, 255);
+		pal->b = CLIP(b, 0, 255);
+	}
+}
+
+void Section3Room::set_palette_brightness(int percent) {
+	set_palette_brightness(32, 95, percent);
 }
 
 } // namespace Rooms

@@ -92,9 +92,28 @@ const char *Room304::getDigi() {
 }
 
 void Room304::init() {
+	setupDigi();
+	// TODO: set_palette_brightness(70);
+
+	if (inv_player_has("MATCHES")) {
+		hotspot_set_active("MATCHES ", false);
+	} else {
+		_matches = series_show("304match", 0xa00);
+		hotspot_set_active("MATCHES ", true);
+	}
+
+	// TODO
 }
 
 void Room304::daemon() {
+}
+
+void Room304::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+}
+
+void Room304::parser() {
+
 }
 
 } // namespace Rooms

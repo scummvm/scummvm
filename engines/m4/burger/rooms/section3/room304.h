@@ -36,6 +36,7 @@ private:
 	static const seriesPlayBreak PLAY3[];
 	static const seriesPlayBreak PLAY4[];
 	static const seriesPlayBreak PLAY5[];
+	machine *_matches = nullptr;
 
 protected:
 	const char *getDigi() override;
@@ -46,6 +47,8 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

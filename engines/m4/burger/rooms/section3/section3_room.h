@@ -39,6 +39,9 @@ protected:
 		return nullptr;
 	}
 
+	void set_palette_brightness(int start, int finish, int percent);
+	void set_palette_brightness(int percent);
+
 public:
 	Section3Room() {}
 	virtual ~Section3Room() {}
