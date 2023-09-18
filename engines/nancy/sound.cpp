@@ -566,6 +566,8 @@ void SoundManager::setRate(const Common::String &chunkName, uint32 rate) {
 void SoundManager::recalculateSoundEffects() {
 	_shouldRecalculate = true;
 
+	_positionLerp = 0;
+
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
 		const Nancy::State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
 		SceneChangeDescription &sceneInfo = NancySceneState.getSceneInfo();
@@ -648,6 +650,19 @@ SoundManager::Channel::~Channel() {
 }
 
 void SoundManager::soundEffectMaintenance() {
+	// Interpolate position and rotation when scene has changed to avoid audible chop in sound
+	if (_position != NancySceneState.getSceneSummary().listenerPosition) {
+		++_positionLerp;
+	}
+
+	if (_positionLerp != 0) {
+		++_positionLerp;
+		if (_positionLerp == 10) {
+			_position = NancySceneState.getSceneSummary().listenerPosition;
+			_positionLerp = 0;
+		}
+	}
+
 	for (uint i = 0; i < _channels.size(); ++i) {
 		soundEffectMaintenance(i);
 	}
@@ -664,7 +679,7 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 
 	// Handle sound effects and 3D sound, which started being used from nancy3.
 	// The original engine used DirectSound 3D, whose effects are only approximated.
-// In particular, there are some slight but noticeable differences in panning
+	// In particular, there are some slight but noticeable differences in panning
 	bool hasStepped = force;
 	if (g_nancy->getGameType() >= 3 && chan.effectData) {
 		uint16 playCommands = chan.playCommands;
@@ -779,7 +794,8 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 	if (g_nancy->getGameType() >= 3 && chan.effectData &&
 			(chan.playCommands & ~kPlaySequential) & (kPlaySequentialFrameAnchor | kPlayRandomPosition | kPlayMoveLinear)) {
 
-		const Math::Vector3d &listenerPos = NancySceneState.getSceneSummary().listenerPosition;
+		// Interpolate position when we've changed scenes				
+		Math::Vector3d listenerPos = Math::Vector3d::interpolate(_position, NancySceneState.getSceneSummary().listenerPosition, (float)_positionLerp / 10.0);
 		float dist = listenerPos.getDistanceTo(chan.position);
 		float volume;
 
@@ -808,6 +824,12 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 			// Sounds that are closer to the listener shouldn't pan as hard
 			// note: slightly inaccurate, compare the ticking sound in nancy3 scene 4015
 			pan -= pan / dlog;
+		}
+
+		// (Non-linearly) interpolate pan as well
+		if (_positionLerp) {
+			float lastPan = _mixer->getChannelBalance(chan.handle) / 127.0;
+			pan = lastPan + (pan - lastPan) * ((float)_positionLerp / 10.0);
 		}
 
 		// Doppler effect is affected by the velocities of the source and listener,

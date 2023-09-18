@@ -153,7 +153,10 @@ protected:
 	Common::HashMap<Common::String, SoundDescription> _commonSounds;
 
 	bool _shouldRecalculate;
+
 	Math::Vector3d _orientation;
+	Math::Vector3d _position;
+	uint _positionLerp = 0;
 };
 
 } // End of namespace Nancy
