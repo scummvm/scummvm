@@ -35,6 +35,7 @@ struct CueLookupTable;
 class CueSheet {
 public:
 	CueSheet(const char *sheet);
+	CueSheet(SeekableReadStream *stream);
 
 public:
 	enum CueFileType {
@@ -93,6 +94,8 @@ public:
 	};
 
 private:
+	void parse(const char *sheet);
+
 	int lookupInTable(CueLookupTable *table, const char *key);
 	int parseMSF(const char *str);
 
