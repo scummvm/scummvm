@@ -66,7 +66,7 @@ protected:
 
 	Common::Array<Common::Rect> _resetDialSrcs;
 
-	uint16 _resetTurns;
+	uint16 _resetTurns = 0;
 
 	Common::Array<uint16> _correctSequence;
 
@@ -80,7 +80,7 @@ protected:
 	SoundDescription _resetSound;
 
 	SceneChangeWithFlag _solveScene;
-	uint _solveSoundDelay;
+	uint _solveSoundDelay = 0;
 	SoundDescription _solveSound;
 
 	SceneChangeWithFlag _exitScene;

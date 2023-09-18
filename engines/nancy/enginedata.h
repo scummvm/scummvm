@@ -336,10 +336,10 @@ struct CLOK : public EngineData {
 	Common::Rect staticImageSrc;
 	Common::Rect staticImageDest;
 
-	uint32 timeToKeepOpen;
-	uint16 frameTime;
+	uint32 timeToKeepOpen = 0;
+	uint16 frameTime = 0;
 
-	uint32 nancy5CountdownTime;
+	uint32 nancy5CountdownTime = 0;
 	Common::Array<Common::Rect> nancy5DaySrcs;
 	Common::Array<Common::Rect> nancy5CountdownSrcs;
 };

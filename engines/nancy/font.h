@@ -59,8 +59,8 @@ private:
 	Common::String _description;
 	Common::Point _color0CoordsOffset;
 	Common::Point _color1CoordsOffset; // Added to source rects when colored text is requested
-	int16 _charSpace;
-	uint16 _spaceWidth;
+	int16 _charSpace = 0;
+	uint16 _spaceWidth = 0;
 
 	// Specific offsets into the _characterRects array
 	uint16 _uppercaseOffset			= 0;

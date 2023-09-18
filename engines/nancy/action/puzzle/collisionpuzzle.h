@@ -90,15 +90,15 @@ protected:
 
 	Common::Point _gridPos;
 
-	uint16 _lineWidth;
-	uint16 _framesPerMove;
+	uint16 _lineWidth = 0;
+	uint16 _framesPerMove = 0;
 
 	SoundDescription _moveSound;
 	SoundDescription _homeSound;
 	SoundDescription _wallHitSound;
 
 	SceneChangeWithFlag _solveScene;
-	uint16 _solveSoundDelay;
+	uint16 _solveSoundDelay = 0;
 	SoundDescription _solveSound;
 
 	SceneChangeWithFlag _exitScene;

@@ -712,17 +712,21 @@ CVTX::CVTX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		readFilename(*chunkStream, keyName);
 		uint16 stringSize = chunkStream->readUint16LE();
 		if (stringSize > bufSize) {
-			delete buf;
+			delete[] buf;
 			buf = new char[stringSize * 2];
 			bufSize = stringSize * 2;
 		}
 
-		chunkStream->read(buf, stringSize);
-		buf[stringSize] = '\0';
-		texts.setVal(keyName, buf);
+		if (buf) {
+			chunkStream->read(buf, stringSize);
+			buf[stringSize] = '\0';
+			texts.setVal(keyName, buf);
+		} else {
+			texts.setVal(keyName, Common::String());
+		}
 	}
 
-	delete buf;
+	delete[] buf;
 }
 
 } // End of namespace Nancy
