@@ -17,10 +17,6 @@
 #ifndef BACKENDS_LIBRETRO_OS_H
 #define BACKENDS_LIBRETRO_OS_H
 
-#include <libretro.h>
-#include <features/features_cpu.h>
-#include <retro_miscellaneous.h>
-
 #include "audio/mixer_intern.h"
 #include "base/main.h"
 #include "backends/base-backend.h"
@@ -39,24 +35,6 @@
 #define CURSOR_STATUS_DOING_SLOWER    (1 << 4)
 
 #define LIBRETRO_G_SYSTEM dynamic_cast<OSystem_libretro *>(g_system)
-
-/* libretro.cpp functions */
-extern retro_log_printf_t retro_log_cb;
-extern retro_input_state_t retro_input_cb;
-extern bool retro_setting_get_timing_inaccuracies_enabled(void);
-extern float retro_setting_get_frame_rate(void);
-extern uint16 retro_setting_get_sample_rate(void);
-extern int retro_setting_get_analog_deadzone(void);
-extern bool retro_setting_get_analog_response_is_quadratic(void);
-extern float retro_setting_get_mouse_speed(void);
-extern int retro_setting_get_mouse_fine_control_speed_reduction(void);
-extern float retro_setting_get_gamepad_cursor_speed(void);
-extern float retro_setting_get_gamepad_acceleration_time(void);
-extern void reset_performance_tuner(void);
-extern void retro_osd_notification(const char* msg);
-extern int retro_get_input_device(void);
-extern const char * retro_get_system_dir(void);
-extern const char * retro_get_save_dir(void);
 
 /**
  *  Dummy mutex implementation

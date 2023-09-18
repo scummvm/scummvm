@@ -17,10 +17,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 
-#include <libretro.h>
+#include "backends/platform/libretro/include/libretro-defs.h"
+#include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-mapper.h"
-#include "backends/platform/libretro/include/libretro-defs.h"
 
 void OSystem_libretro::updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int doing_x) {
 	int *mouseXY;

@@ -1,8 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
- *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
- * file distributed with this source distribution.
+/* Copyright (C) 2023 Giovanni Cascione <ing.cascione@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +17,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <libretro.h>
 #include "audio/mixer_intern.h"
 #include "base/main.h"
 #include "common/scummsys.h"
@@ -50,10 +45,11 @@
 #define INCLUDED_FROM_BASE_VERSION_CPP
 #include "base/internal_version.h"
 
+#include "backends/platform/libretro/include/libretro-defs.h"
+#include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-threads.h"
 #include "backends/platform/libretro/include/libretro-core-options.h"
 #include "backends/platform/libretro/include/libretro-os.h"
-#include "backends/platform/libretro/include/libretro-defs.h"
 #include "backends/platform/libretro/include/libretro-mapper.h"
 
 static struct retro_game_info game_buf;

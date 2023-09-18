@@ -20,9 +20,11 @@
 
 #include "common/list.h"
 #include "common/events.h"
+
+#include "backends/platform/libretro/include/libretro-defs.h"
+#include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
-#include "backends/platform/libretro/include/libretro-defs.h"
 
 Common::List<Common::Event> OSystem_libretro::_events;
 

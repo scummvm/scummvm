@@ -118,7 +118,7 @@ endif
 INCLUDES     += -I$(ROOT_PATH)/include
 MODULE_PATHS += $(CORE_PATH)
 
-LIBRETRO_OBJS := $(CORE_PATH)/libretro.o \
+LIBRETRO_OBJS := $(CORE_PATH)/libretro-core.o \
 	$(CORE_PATH)/libretro-fs.o \
 	$(CORE_PATH)/libretro-fs-factory.o \
 	$(CORE_PATH)/libretro-os-base.o \

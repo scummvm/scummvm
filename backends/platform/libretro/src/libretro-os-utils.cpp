@@ -17,11 +17,14 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time
 
 #include <features/features_cpu.h>
+
 #include "common/tokenizer.h"
 #include "common/config-manager.h"
 #include "base/commandLine.h"
-#include "backends/platform/libretro/include/libretro-os.h"
+
 #include "backends/platform/libretro/include/libretro-defs.h"
+#include "backends/platform/libretro/include/libretro-core.h"
+#include "backends/platform/libretro/include/libretro-os.h"
 
 void OSystem_libretro::getTimeAndDate(TimeDate &t, bool skipRecord) const {
 	uint32 curTime = (uint32) (cpu_features_get_time_usec() / 1000000);

@@ -23,15 +23,19 @@
 #define FS_SYSTEM_FACTORY LibRetroFilesystemFactory
 #endif
 
+#include <features/features_cpu.h>
+
 #include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "graphics/surface.h"
+
 #include "backends/saves/default/default-saves.h"
+#include "backends/platform/libretro/include/libretro-defs.h"
+#include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-os.h"
-#include "backends/platform/libretro/include/libretro-defs.h"
 
 OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _mixer(0), _startTime(0), _threadSwitchCaller(0), _cursorStatus(0) {
 	_fsFactory = new FS_SYSTEM_FACTORY();

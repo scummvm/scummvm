@@ -17,13 +17,14 @@
 
 #include <retro_inline.h>
 
-//#include "common/system.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+
+#include "backends/platform/libretro/include/libretro-defs.h"
+#include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
-#include "backends/platform/libretro/include/libretro-defs.h"
 
 static INLINE void blit_uint8_uint16_fast(Graphics::Surface &aOut, const Graphics::Surface &aIn, const LibretroPalette &aColors) {
 	for (int i = 0; i < aIn.h; i++) {
