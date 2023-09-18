@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-17 22:35+0000\n"
-"PO-Revision-Date: 2023-09-18 06:48+0000\n"
+"PO-Revision-Date: 2023-09-18 12:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1533,9 +1533,7 @@ msgstr "Filtrer les graphismes"
 
 #: gui/options.cpp:1672
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
-"Utiliser une interpolation bi-linéaire lors du changement d'échelle des "
-"graphismes"
+msgstr "Utilise un filtre linéaire lors de mises à l'échelle des graphismes"
 
 #: gui/options.cpp:1676
 msgid "Aspect ratio correction"
@@ -3697,7 +3695,7 @@ msgstr "Résolution : %dx%d"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Active graphics filter:"
-msgstr "Mode graphique actif :"
+msgstr "Filtre graphique actif :"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
@@ -4359,8 +4357,6 @@ msgid "Magnify Mode Off"
 msgstr "Mode Loupe désactivé"
 
 #: backends/platform/android/android.cpp:1029
-#, fuzzy
-#| msgid "Control"
 msgid "Controls"
 msgstr "Contrôles"
 
@@ -4793,22 +4789,37 @@ msgid ""
 "| --------------------------------\n"
 "| `Ctrl+F5` -- Displays the Global Main Menu\n"
 msgstr ""
+"## Raccourcis clavier\n"
+"\n"
+"ScummVM gère plusieurs raccourcis clavier et souris en cours de jeu, et "
+"depuis la version 2.2.0, ceux-ci peuvent être configurés manuellement dans **"
+"l'onglet Config. Touches**, ou dans le **fichier de configuration**.\n"
+"\n"
+"Pour les contrôles spécifiques à un jeu, consultez l'[article wiki] "
+"(https://wiki.scummvm.org/index.php?title=Category:Supported_Games) du jeu "
+"auquel vous jouez.\n"
+"\n"
+"Les raccourcis par défaut sont indiqués dans le tableau.\n"
+"\n"
+"| Raccourci     | Description\n"
+"| --------------------------------\n"
+"| `Ctrl+F5` -- Affiche le menu principal global\n"
 
 #: backends/platform/sdl/sdl.cpp:1025
 msgid "| `Cmd+q`    -- Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    -- Quitter (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1027
 msgid "| `Alt+F4`  -- Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  -- Quitter (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1029
 msgid "| `Ctrl+q`  -- Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  -- Quitter (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1030
 msgid "| `Ctrl+z`  -- Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  -- Quitter (autres plateformes)\n"
 
 #: backends/platform/sdl/sdl.cpp:1033
 msgid ""
@@ -4827,6 +4838,20 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` -- Opens the ScummVM debugger\n"
 msgstr ""
+"| `Ctrl+u`  -- Coupe tous les sons\n"
+"| `Ctrl+m`  -- Active/Désactive la capture à la souris\n"
+"| `Ctrl+Alt` and `9` or `0` -- Passe au filtre graphique suivant/précédent\n"
+"| `Ctrl+Alt` and `+` or `-` -- Augmente/diminue le facteur d'échelle\n"
+"| `Ctrl+Alt+a` -- Active/désactive la correction du rapport d'aspect\n"
+"| `Ctrl+Alt+f` -- Bascule entre le plus proche voisin et l'interpolation "
+"bilinéaire (filtre graphique activé/désactivé)\n"
+"| `Ctrl+Alt+s` -- Passe d'un mode d'étirement à l'autre\n"
+"| `Alt+Enter`   -- Bascule entre le mode plein écran et le mode fenêtré\n"
+"| `Alt+s`          -- Prend une capture d'écran\n"
+"| `Ctrl+F7`       --  Ouvre le clavier virtuel (si activé). Il peut "
+"également être ouvert par un appui long sur le bouton du milieu de la souris "
+"ou sur la molette.\n"
+"| `Ctrl+Alt+d` -- Ouvre le débogueur ScummVM\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
@@ -8690,7 +8715,7 @@ msgstr "Jouer en mode très rapide (*)"
 
 #: engines/scumm/help.cpp:102
 msgid "Switch between graphics filters"
-msgstr "Changer de filtre graphique"
+msgstr "Passer d'un filtre graphique à l'autre"
 
 #: engines/scumm/help.cpp:103
 msgid "Increase / Decrease scale factor"
