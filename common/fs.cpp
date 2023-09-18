@@ -168,8 +168,13 @@ U32String FSNode::getDisplayName() const {
 
 String FSNode::getName() const {
 	assert(_realNode);
+
 	// We transparently decode any punycode-named files
-	return punycode_decodefilename(_realNode->getName());
+	String name = _realNode->getName();
+	if (!punycode_hasprefix(name))
+		return name;
+
+	return punycode_decodefilename(name);
 }
 
 String FSNode::getFileName() const {
