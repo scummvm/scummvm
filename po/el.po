@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 18:38+0000\n"
+"POT-Creation-Date: 2023-09-17 22:35+0000\n"
 "PO-Revision-Date: 2023-09-14 08:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5553,8 +5553,8 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:2510
 #: engines/mohawk/detection_tables.h:3612
 #: engines/mohawk/detection_tables.h:3627 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5275
-#: engines/sci/detection_tables.h:5283 engines/stark/detection.cpp:319
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5283
+#: engines/sci/detection_tables.h:5291 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
 #: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:129
 msgid "Missing game code"
@@ -8144,13 +8144,13 @@ msgstr "Casio MT-540"
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
-#: engines/sci/detection_tables.h:4511
+#: engines/sci/detection_tables.h:4519
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 "Το demo αυτό χρησιμοποιεί μια έκδοση των βίντεο Robot που δεν έχει "
 "υλοποιηθει ακόμα"
 
-#: engines/sci/detection_tables.h:4566
+#: engines/sci/detection_tables.h:4574
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Εντοπίστηκε ελλιπές παιχνίδι. Χρειάζεται να αντιγράψετε τα δεδομένα από όλα "
