@@ -48,6 +48,8 @@ struct MessageTuple {
 
 class CursorStack : public Common::Stack<MessageTuple> {
 public:
+	CursorStack() : Common::Stack<MessageTuple>(), _module(0) {}
+
 	void init(int module, MessageTuple t) {
 		clear();
 		push(t);

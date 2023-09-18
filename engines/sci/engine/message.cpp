@@ -184,6 +184,15 @@ public:
 #endif
 
 bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &record) {
+	if (stack.empty()) {
+		// SSCI did not check for an empty stack, it would just use the first element
+		// from its zero-initialized array and return false when message lookup failed.
+		// We know that this occurs from crash analytics. kMessage(K_MESSAGE_NEXT)
+		// somehow gets called before an initializing kMessage call. Bug #14613
+		warning("Message: stack is empty");
+		return false;
+	}
+
 	// find a workaround for the requested message and use the prescribed module
 	int module = stack.getModule();
 	MessageTuple &tuple = stack.top();
@@ -317,7 +326,10 @@ int MessageState::nextMessage(reg_t buf) {
 			g_sci->_tts->setMessage(record.string);
 			return record.talker;
 		} else {
-			MessageTuple &t = _cursorStack.top();
+			MessageTuple t;
+			if (!_cursorStack.empty()) {
+				t = _cursorStack.top();
+			}
 			outputString(buf, Common::String::format("Msg %d: %s not found", _cursorStack.getModule(), t.toString().c_str()));
 			return 0;
 		}
